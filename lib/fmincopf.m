@@ -1,38 +1,52 @@
 function [busout, genout, branchout, f, success, info, et, g, jac] = ...
       fmincopf(baseMVA, bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt)
-% FMINCOPF:  Optimal AC Power Flow using FMINCON from Optimization Toolbox 2.x.
+%FMINCOPF  Solves an AC optimal power flow using FMINCON (Opt Tbx 2.x & later).
 %
-%Usage:
+%   [bus, gen, branch, f, success] = fmincopf(casefile, mpopt)
 %
-%[bus, gen, branch, f, success] = fmincopf(casefile)
+%   [bus, gen, branch, f, success] = fmincopf(casefile, A, l, u, mpopt)
 %
-%[bus, gen, branch, f, success] = fmincopf(casefile, option)
+%   [bus, gen, branch, f, success] = fmincopf(baseMVA, bus, gen, branch,...
+%                                    areas,  gencost, mpopt)
 %
-%[bus, gen, branch, f, success] = fmincopf(casefile, A, l, u, option)
+%   [bus, gen, branch, f, success] = fmincopf(baseMVA, bus, gen, branch,...
+%                                    areas, gencost, A, l, u, mpopt)
 %
-%[bus, gen, branch, f, success] = fmincopf(baseMVA, bus, gen, branch, areas, ...
-%                                 gencost)
+%   [bus, gen, branch, f, success, info, et, g, jac] = fmincopf(casefile)
 %
-%[bus, gen, branch, f, success] = fmincopf(baseMVA, bus, gen, branch, areas, ...
-%                                 gencost, A, l, u)
+%   The data for the problem can be specified in one of 3 ways: (1) the name of
+%   a case file which defines the data matrices baseMVA, bus, gen, branch,
+%   areas and gencost, (2) a struct containing the data matrices as fields, or
+%   (3) the data matrices themselves.
 %
-%[bus, gen, branch, f, success] = fmincopf(baseMVA, bus, gen, branch, areas, ...
-%                                 gencost, A, l, u, option)
+%   When specified, A, l, u represent additional linear constraints on the
+%   optimization variables, l <= A*x <= u. For an explanation of the
+%   formulation used and instructions for forming the A matrix, type
+%   'help genform'.
 %
-%[bus, gen, branch, f, success, info, et, g, jacobian] = fmincopf(casefile)
+%   The optional mpopt vector specifies MATPOWER options. Type 'help mpoption'
+%   for details and default values.
 %
-% When specified, A, l, u represent additional linear constraints on the
-% optimization variables, l <= A*x <= u.  For help on the option
-% vector, type 'help mpoption'.  For an explanation of the formulation
-% used, type 'help genform'.
+%   The solved case is returned in the data matrices, bus, gen and branch. Also,
+%   returned are the final objective function value (f) and a flag which is
+%   true if the algorithm was successful in finding a solution (success).
+%   Additional optional return values are an algorithm specific return status
+%   (info), elapsed time in seconds (et), the constraint vector (g) and the
+%   Jacobian matrix (jac).
+% 
+%   Rules for A matrix: If the user specifies an A matrix that has more columns
+%   than the combined number of "x" (OPF) and "y" (pwl cost) variables, thus
+%   allowing for extra linearly costed and linearly constrained "z" variables,
+%   then it is the user's responsibility to fill the overall linear cost in the
+%   last row of A, including that reflected in the "y" variables.
 %
-% NOTE: The shadow prices (lambda's and mu's) produced by fmincon appear to
-%       be slightly inaccurate.
+%   NOTE: The shadow prices (lambda's and mu's) produced by fmincon appear to
+%         be slightly inaccurate.
 
 %   MATPOWER
 %   $Id$
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
-%   Copyright (c) 2000-2004 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2000-2005 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 % Sort out input arguments

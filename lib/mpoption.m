@@ -65,18 +65,15 @@ function [options, names] = mpoption(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p1
 %                                   when converting from polynomial to
 %                                   piece-wise linear costs
 %       16 - OPF_VIOLATION, 5e-6    constraint violation tolerance
-%       17 - CONSTR_TOL_X, 1e-4     termination tol on x for 'constr'
-%       18 - CONSTR_TOL_F, 1e-4     termination tol on F for 'constr'
-%       19 - CONSTR_MAX_IT, 0       max number of iterations for 'constr'
+%       17 - CONSTR_TOL_X, 1e-4     termination tol on x for copf & fmincopf
+%       18 - CONSTR_TOL_F, 1e-4     termination tol on F for copf & fmincopf
+%       19 - CONSTR_MAX_IT, 0       max number of iterations for copf & fmincopf
 %                                   [       0 => 2*nb + 150             ]
-%       20 - LPC_TOL_GRAD, 3e-3     termination tolerance on gradient
-%                                   for 'LPconstr'
-%       21 - LPC_TOL_X, 1e-4        termination tolerance on x (min
-%                                   step size) for 'LPconstr'
-%       22 - LPC_MAX_IT, 400        maximum number of iterations for
-%                                   'LPconstr'
-%       23 - LPC_MAX_RESTART, 5     maximum number of restarts for
-%                                   'LPconstr'
+%       20 - LPC_TOL_GRAD, 3e-3     termination tolerance on gradient for lpopf
+%       21 - LPC_TOL_X, 1e-4        termination tolerance on x (min step size)
+%                                   for lpopf
+%       22 - LPC_MAX_IT, 400        maximum number of iterations for lpopf
+%       23 - LPC_MAX_RESTART, 5     maximum number of restarts for lpopf
 %       24 - OPF_P_LINE_LIM, 0      use active power instead of apparent power
 %                                   for line flow limits    [   0 or 1  ]
 %   output options
@@ -115,12 +112,13 @@ function [options, names] = mpoption(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p1
 %   other options
 %       51 - SPARSE_QP, 1           pass sparse matrices to QP and LP
 %                                   solvers if possible     [   0 or 1  ]
-%   MINOS OPF options
+%   MINOPF options
 %       61 - MNS_FEASTOL, 0 (1E-3)  primal feasibility tolerance,
 %                                   set to value of OPF_VIOLATION by default
 %       62 - MNS_ROWTOL, 0  (1E-3)  row tolerance
 %                                   set to value of OPF_VIOLATION by default
 %       63 - MNS_XTOL, 0     (1E-3) x tolerance
+%                                   set to value of CONSTR_TOL_X by default
 %       64 - MNS_MAJDAMP, 0 (0.5)   major damping parameter
 %       65 - MNS_MINDAMP, 0 (2.0)   minor damping parameter
 %       66 - MNS_PENALTY_PARM, 0 (1.0)  penalty parameter
