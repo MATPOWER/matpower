@@ -275,10 +275,10 @@ names = str2mat(    names, ...
                     'LPC_TOL_X', ...            %% 21
                     'LPC_MAX_IT', ...           %% 22
                     'LPC_MAX_RESTART', ...      %% 23
-                    'NEWTON_TOL_X', ...         %% 24
-                    'NEWTON_TOL_F', ...         %% 25
-                    'NEWTON_POLY_MAX_IT', ...   %% 26
-                    'NEWTON_PWL_MAX_IT', ...    %% 27
+                    'RESERVED24', ...           %% 24
+                    'RESERVED25', ...           %% 25
+                    'RESERVED26', ...           %% 26
+                    'RESERVED27', ...           %% 27
                     'RESERVED28', ...           %% 28
                     'RESERVED29', ...           %% 29
                     'RESERVED30'    );          %% 30
