@@ -5,20 +5,19 @@ function [MVAbase, bus, gen, branch, success, et] = runpf(casename, mpopt, fname
 %           runpf(casename, mpopt, fname, solvedcase)
 %
 %   Runs a power flow (full AC Newton's method by default) and optionally
-%   returns the solved values in the data matrices, a flag which is true
-%   if the algorithm was successful in finding a
-%   solution, and the elapsed time in seconds. All input arguments are
-%   optional. If casename is provided it specifies the name of the input
-%   data file or struct (see also 'help caseformat' and 'help loadcase')
-%   containing the power flow data. The default value is 'case9'. If the
-%   mpopt is provided it overrides the default MATPOWER options vector and
-%   can be used to specify the solution algorithm and output options among
-%   other things (see 'help mpoption' for details). If the 3rd argument is
-%   given the pretty printed output will be appended to the file whose name
-%   is given in fname. If solvedcase is specified the solved case will be
-%   written to a case file in MATPOWER format with the specified name. If
-%   solvedcase ends with '.mat' it saves the case as a MAT-file otherwise it
-%   saves it as an M-file.
+%   returns the solved values in the data matrices, a flag which is true if
+%   the algorithm was successful in finding a solution, and the elapsed time
+%   in seconds. All input arguments are optional. If casename is provided it
+%   specifies the name of the input data file or struct (see also 'help
+%   caseformat' and 'help loadcase') containing the power flow data. The
+%   default value is 'case9'. If the mpopt is provided it overrides the
+%   default MATPOWER options vector and can be used to specify the solution
+%   algorithm and output options among other things (see 'help mpoption' for
+%   details). If the 3rd argument is given the pretty printed output will be
+%   appended to the file whose name is given in fname. If solvedcase is
+%   specified the solved case will be written to a case file in MATPOWER
+%   format with the specified name. If solvedcase ends with '.mat' it saves
+%   the case as a MAT-file otherwise it saves it as an M-file.
 
 %   MATPOWER
 %   $Id$
