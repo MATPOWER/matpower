@@ -1,7 +1,7 @@
 function [Ay, by]  = makeAy(baseMVA, ng, gencost, pgbas, qgbas, ybas)
 % makeAy:  Make the A matrix and RHS for the CCV formulation.
 %
-% [Ay, by]  = makeAy(ng, gencost, pgbas, qgbas, ybas) constructs
+% [Ay, by]  = makeAy(baseMVA, ng, gencost, pgbas, qgbas, ybas) constructs
 % a matrix Ay and vector by such that the "basin constraints" on Pg,
 % Qg and Y that the CCV cost formulation uses are expressed as
 %  Ay * x <= by
