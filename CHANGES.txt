@@ -2,7 +2,7 @@
  Change history for MATPOWER
 -----------------------------
 
-Version:    3.0b4
+Version:    3.0b4+
 
 maintained by Ray Zimmerman <rz10@cornell.edu>
 
@@ -10,6 +10,14 @@ MATPOWER
 $Id$
 Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
+
+
+Changes since 3.0b4
+-------------------
+
+2/3/05
+    - In mp_lp.m and mp_qp.m, on Windows it now makes sure BPMPD_MEX is not
+      called in verbose mode which causes a Matlab crash.
 
 
 Changes since 3.0b3
@@ -86,14 +94,10 @@ Changes since 3.0b3
 12/13/04
     - Added mpver.m to print version information.
 
-11/18/04
-    - Fixed bug in extras/smartmarket/off2case.m for inputs containing
-      zero quantity bids.
-
 9/23/04
     - Fixed bugs in cdf2matp.m which prevented it from working at all
       when not specifying both input parameters and caused it to
-      sometimes no add the warnings at the end of the file.
+      sometimes not add the warnings at the end of the file.
     - Fixed typo in name of lower bound input argument in opf.m. Only
       affected those calling opf directly with extra linear constraints.
 
