@@ -25,6 +25,11 @@ Please report any bugs you find to Ray Zimmerman <rz10@cornell.edu>.
 Changes since 2.0
 -----------------
 
+7/8/04
+	- Updated mp_lp.m and mp_qp.m to try linprog() and quadprog()
+	  after trying bp, since lp() and qp() are no longer included
+	  in the Optimization Toolbox as of version 3.
+
 7/7/04
 	- Removed case.m, added caseformat.m, made case9.m the default
 	  case and fixed function names in other case files to avoid
