@@ -2,7 +2,7 @@
  MATPOWER - A Matlab Power System Simulation Package
 =====================================================
 
-Version:    3.0b4
+Version:    3.0b4+
 
 Home Page:  http://www.pserc.cornell.edu/matpower/
 
