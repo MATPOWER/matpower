@@ -18,6 +18,7 @@ global t_num_of_tests;
 global t_counter;
 global t_ok_cnt;
 global t_not_ok_cnt;
+global t_skip_cnt;
 
 %% figure out padding for printing
 if ~verbose
@@ -34,6 +35,7 @@ num_of_tests = 0;
 counter = 0;
 ok_cnt = 0;
 not_ok_cnt = 0;
+skip_cnt = 0;
 
 t0 = clock;
 for k = 1:length(test_names)
@@ -50,18 +52,27 @@ for k = 1:length(test_names)
     counter         = counter       + t_counter;
     ok_cnt          = ok_cnt        + t_ok_cnt;
     not_ok_cnt      = not_ok_cnt    + t_not_ok_cnt;
+    skip_cnt        = skip_cnt      + t_skip_cnt;
 end
 
 if verbose
     fprintf('\n\n----------  Summary  ----------\n');
 end
-if counter == num_of_tests & ok_cnt == counter & not_ok_cnt == 0
-    fprintf('All tests successful (%d of %d).\n', ok_cnt, num_of_tests);
+if counter == num_of_tests & counter == ok_cnt + skip_cnt & not_ok_cnt == 0
+    if skip_cnt
+        fprintf('All tests successful (%d passed, %d skipped of %d)', ...
+            ok_cnt, skip_cnt, num_of_tests);
+    else
+        fprintf('All tests successful (%d of %d)', ok_cnt, num_of_tests);
+    end
 else
-    fprintf('Ran %d of %d tests: %d passed, %d failed.\n', ...
+    fprintf('Ran %d of %d tests: %d passed, %d failed', ...
         counter, num_of_tests, ok_cnt, not_ok_cnt);
+    if skip_cnt
+        fprintf(', %d skipped', skip_cnt);
+    end
 end
-fprintf('Elapsed time %.2f seconds.\n', etime(clock, t0));
+fprintf('\nElapsed time %.2f seconds.\n', etime(clock, t0));
 
 
 return;
