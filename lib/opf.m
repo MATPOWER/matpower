@@ -1,5 +1,5 @@
 function [buso, gen, branch, f, success, info, et, g, jac] = opf(baseMVA, bus,...
-          gen, branch, areas, gencost, Au, lu, ubu, mpopt)
+          gen, branch, areas, gencost, Au, lbu, ubu, mpopt)
 %OPF  Solves an optimal power flow.
 %
 %If the OPF algorithm is not set explicitly in the options, it will choose
