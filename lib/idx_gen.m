@@ -2,7 +2,7 @@ function [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
     MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN] = idx_gen
 %IDX_GEN   Defines variables for column indices to gen.
 %   [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, ...
-%   PMAX, PMIN, START, MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN] = idx_gen
+%   PMAX, PMIN, MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN] = idx_gen
 
 %   MATPOWER
 %   $Id$
