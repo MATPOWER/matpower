@@ -5,16 +5,20 @@ function [MVAbase, bus, gen, gencost, branch, f, success, et] = ...
 %   [baseMVA, bus, gen, gencost, branch, f, success, et] = ...
 %           rundcopf(casename, mpopt, fname, solvedcase)
 %   
-%   Runs a DC optimal power flow where casename is the name of the m-file
-%   (without the .m extension) containing the opf data, and mpopt is a
-%   MATPOWER options vector (see 'help mpoption' for details). Uses default
-%   options if 2nd parameter is not given, and 'case9' if 1st parameter
-%   is not given. The results may optionally be printed to a file (appended
-%   if the file exists) whose name is given in fname (in addition to
-%   printing to STDOUT). Optionally returns the final values of baseMVA,
-%   bus, gen, gencost, branch, f, success, and et. If a name is given in
-%   solvedcase, the solved case will be written to a case file in MATPOWER
-%   format with the specified name with a '.m' extension added.
+%   Runs a DC optimal power flow and optionally returns the solved values in
+%   the data matrices, the objective function value, a flag which is true if
+%   the algorithm was successful in finding a solution, and the elapsed time
+%   in seconds. All input arguments are optional. If casename is provided it
+%   specifies the name of the input data file or struct (see also 'help
+%   caseformat' and 'help loadcase') containing the opf data. The default
+%   value is 'case9'. If the mpopt is provided it overrides the default
+%   MATPOWER options vector and can be used to specify the solution
+%   algorithm and output options among other things (see 'help mpoption' for
+%   details). If the 3rd argument is given the pretty printed output will be
+%   appended to the file whose name is given in fname. If solvedcase is
+%   specified the solved case will be written to a case file in MATPOWER
+%   format with the specified name. If solvedcase ends with '.mat' it saves
+%   the case as a MAT-file otherwise it saves it as an M-file.
 
 %   MATPOWER
 %   $Id$
