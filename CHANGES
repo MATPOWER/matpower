@@ -25,6 +25,12 @@ Please report any bugs you find to Ray Zimmerman <rz10@cornell.edu>.
 Changes since 2.0
 -----------------
 
+7/7/04
+	- Removed case.m, added caseformat.m, made case9.m the default
+	  case and fixed function names in other case files to avoid
+	  use of reserved word 'case'.
+	- Fixed bugs in runcomp.m.
+
 6/23/04
 	- Fixed bug in newtonpf.m which caused algorithm to diverge when
 	  the Newton step resulted in a negative voltage magnitude.
