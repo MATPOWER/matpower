@@ -229,7 +229,7 @@ if verbose > 1                      %% print QP progress for verbose levels 2 & 
 else
     qpverbose = -1;
 end
-if mpopt(51) == 0                   %% QP solver can't handle sparse matrices?
+if ~have_sparse_qp | mpopt(51) == 0 %% don't use sparse matrices
     AA = full(AA);
     H = full(H);
 end
