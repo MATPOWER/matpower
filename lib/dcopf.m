@@ -182,7 +182,7 @@ if mpopt(51) == 0					%% QP solver can't handle sparse matrices?
 	H = full(H);
 end
 
-[x, lambda, how] = qp(H, c, AA, bb, [], [], x, mpopt(15), qpverbose);
+[x, lambda, how] = mp_qp(H, c, AA, bb, [], [], x, mpopt(15), qpverbose);
 
 if how(1) ~= 'o'
 	success = 0;
