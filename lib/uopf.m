@@ -1,12 +1,16 @@
-function [best_bus, best_gen, best_branch, best_f, best_success, et] = ...
+function [bus0, gen0, branch0, f0, success0, et] = ...
 		uopf(baseMVA, bus, gen, gencost, branch, area, mpopt)
 %UOPF  Solves combined unit decommitment / optimal power flow.
 %   [bus, gen, branch, f, success, et] = uopf(baseMVA, bus, gen, gencost, ...
 %                   branch, area, mpopt)
 %   Solves a combined unit decommitment and optimal power flow for a single
-%   time period. Uses a heuristic that shuts off one generator at a time until
-%   all generators dispatched at Pmin have Pmin * lambda greater than or equal
-%   to the generator's cost of operating at Pmin (i.e. lambda >= avg cost).
+%   time period. Uses an algorithm similar to dynamic programming. It proceeds
+%   through a sequence of stages, where stage N has N generators shut down,
+%   starting with N=0. In each stage, it forms a list of candidates (gens at
+%   their Pmin limits) and computes the cost with each one of them shut down.
+%   It selects the least cost case as the starting point for the next stage,
+%   continuing until there are no more candidates to be shut down or no
+%   more improvement can be gained by shutting something down.
 %   If VERBOSE in mpopt (see 'help mpoption') is true, it prints progress
 %   info, if it's > 1 it prints the output of each individual opf.
 
@@ -73,122 +77,93 @@ while sum(Pmin) > load_capacity
 	Pmin = gen(on, PMIN);
 end
 
-%% do further decommitment as necessary
+%% run initial opf
+%% turn down verbosity one level for call to opf
+[ref, pv, pq] = bustypes(bus, gen);
+if verbose
+	mpopt = mpoption(mpopt, 'VERBOSE', verbose-1);
+end
+if dc								%% DC formulation
+	[bus, gen, branch, f, success, et] = dcopf(baseMVA, bus, gen, gencost, branch, ...
+						Bbus, Bf, Pbusinj, Pfinj, ref, pv, pq, mpopt);
+else								%% AC formulation
+	[bus, gen, branch, f, success, et] = opf(baseMVA, bus, gen, gencost, branch, ...
+						area, Ybus, Yf, Yt, ref, pv, pq, mpopt);
+end
+
+%% best case so far
+bus1 = bus;
+gen1 = gen;
+branch1 = branch;
+success1 = success;
+f1 = f;
+
+%% best case for this stage (ie. with n gens shut down, n=0,1,2 ...)
+bus0 = bus1;
+gen0 = gen1;
+branch0 = branch1;
+success0 = success1;
+f0 = f1;
+
 while 1
-	count = count + 1;
-	
-	%% reassign bus types
-	[ref, pv, pq] = bustypes(bus, gen);
-
-	%% run opf
-	%% turn down verbosity one level for call to opf
-	if verbose
-		mpopt = mpoption(mpopt, 'VERBOSE', verbose-1);
-	end
-	if dc								%% DC formulation
-		[bus, gen, branch, f, success, et] = dcopf(baseMVA, bus, gen, gencost, branch, ...
-							Bbus, Bf, Pbusinj, Pfinj, ref, pv, pq, mpopt);
-	else								%% AC formulation
-		[bus, gen, branch, f, success, et] = opf(baseMVA, bus, gen, gencost, branch, ...
-							area, Ybus, Yf, Yt, ref, pv, pq, mpopt);
-	end
-		
-	if count == 1
-		%% set "best" variables to new values
-		best_bus		= bus;
-		best_gen		= gen;
-		best_branch		= branch;
-		best_f			= f;
-		best_success	= success;
-		ignore			= find(gen(:, GEN_STATUS) <= 0);
-		if ~success
-			if verbose
-				fprintf('UOPF: non-convergent OPF.\n');
-			end
-			break;
-		end
-	else
-		if success
-			if f < best_f
-				%% made some progress, record solution
-				best_bus		= bus;
-				best_gen		= gen;
-				best_branch		= branch;
-				best_f			= f;
-				best_success	= success;
-				ignore			= find(gen(:, GEN_STATUS) <= 0);
-			else
-				%% return previous OPF solution
-				if verbose
-					fprintf('Cost did not decrease, restarting generator %d.\n', i);
-				end
-
-				%% restart generator i
-				bus		= best_bus;
-				gen		= best_gen;
-				branch	= best_branch;
-				f		= best_f;
-				success	= best_success;
-				ignore	= [ignore; i]; 	%% generator i no longer a candidate to be shut down
-				di(ignore) = zeros(size(ignore));
-	
-				%% any other candidates to be shut down?
-				if ~any(di > 1e-5)
-					break;
-				end
-			end
-		else
-			%% OPF didn't converge, return previous commitment schedule
-			if verbose
-				fprintf('UOPF: non-convergent OPF, restarting generator %d.\n', i);
-			end
-			
-			%% restart generator i
-			bus		= best_bus;
-			gen		= best_gen;
-			branch	= best_branch;
-			f		= best_f;
-			success	= best_success;
-			ignore	= [ignore; i]; 	%% generator i no longer a candidate to be shut down
-			di(ignore) = zeros(size(ignore));
-
-			%% any other candidates to be shut down?
-			if ~any(di > 1e-5)
-				break;
-			end
-		end
-	end
-
-	%% compute relative cost savings for shutting down each generator
-	%% call it the "decommitment index"
-	di = totcost(gencost, gen(:, PG)) - bus(gen(:, GEN_BUS), LAM_P) .* gen(:, PG);
-	if sum(di > 0) > 4		%% compare prices alone, rather than price * qty
-		ng = size(gen, 1);
-		di = zeros(ng, 1);
-		nzg = find(gen(:, PG));
-		di(nzg) = totcost(gencost(nzg, :), gen(nzg, PG)) ./ gen(nzg, PG) - bus(gen(nzg, GEN_BUS), LAM_P);
-	end
-	di(ignore) = zeros(size(ignore));	%% generators which are no longer candidates
-	if verbose > 1
-		fprintf('\nDecommitment indices:\n');
-		fprintf('\t%.4g\n', di);
-	end
-	
-	%% check for units to decommit
-	if any(di > 1e-5)
-		%% shut down generator with largest decommitment index
-		[junk, i] = fairmax(di);
-		if verbose
-			fprintf('Shutting down generator %d.\n', i);
-		end
-
-		%% set generation to zero
-		gen(i, PG)			= 0;
-		gen(i, QG)			= 0;
-		gen(i, GEN_STATUS)	= 0;
-	else
+	%% get candidates for shutdown
+	candidates = find(gen0(:, MU_PMIN) > 0);
+	if isempty(candidates)
 		break;
 	end
+	done = 1;	%% do not check for further decommitment unless we
+				%%  see something better during this stage
+	for i = 1:length(candidates)
+		k = candidates(i);
+		%% start with best for this stage
+		gen = gen0;
+		
+		%% shut down gen k
+		gen(k, PG)			= 0;
+		gen(k, QG)			= 0;
+		gen(k, GEN_STATUS)	= 0;
+		
+		%% run opf
+		%% turn down verbosity one level for call to opf
+		[ref, pv, pq] = bustypes(bus, gen);
+		if verbose
+			mpopt = mpoption(mpopt, 'VERBOSE', verbose-1);
+		end
+		if dc								%% DC formulation
+			[bus, gen, branch, f, success, et] = dcopf(baseMVA, bus0, gen, gencost, branch0, ...
+								Bbus, Bf, Pbusinj, Pfinj, ref, pv, pq, mpopt);
+		else								%% AC formulation
+			[bus, gen, branch, f, success, et] = opf(baseMVA, bus0, gen, gencost, branch0, ...
+								area, Ybus, Yf, Yt, ref, pv, pq, mpopt);
+		end
+		
+		%% something better?
+		if success & f < f1
+			bus1 = bus;
+			gen1 = gen;
+			branch1 = branch;
+			success1 = success;
+			f1 = f;
+			k1 = k;
+			done = 0;	%% make sure we check for further decommitment
+		end
+	end
+
+	if done
+		%% decommits at this stage did not help, so let's quit
+		break;
+	else
+		%% shutting something else down helps, so let's keep going
+		if verbose
+			fprintf('Shutting down generator %d.\n', k1);
+		end
+		
+		bus0 = bus1;
+		gen0 = gen1;
+		branch0 = branch1;
+		success0 = success1;
+		f0 = f1;
+	end	
 end
 
 %% compute elapsed time
