@@ -16,6 +16,9 @@ Changes since 3.0b1
 -------------------
 
 9/1/04
+    - Fixed bug in savecase.m introduced when making areas and gencost
+      optional.
+    - Updated opf_slvr.m with options for MINOS and fmincon.
     - Removed option 15 OPF_NEQ from docs (not a user option). Removed option
       52 VAR_LOAD_PF (unused, always behaves as if this option were 1).
       Changed semantics and default value for option 51 SPARSE_QP. By default
