@@ -6,7 +6,7 @@ function [bus, gen, branch] = pfsoln(baseMVA, bus0, gen0, branch0, Ybus, Yf, Yt,
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2005 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% constants
@@ -48,17 +48,26 @@ gen(:, QG) = zeros(size(gen, 1), 1);                %% zero out all Qg
 gen(on, QG) = imag(Sg) * baseMVA + bus(gbus, QD);   %% inj Q + local Qd
 %% ... at this point any buses with more than one generator will have
 %% the total Q dispatch for the bus assigned to each generator. This
-%% must be split between them. We do it equally.
+%% must be split between them. We do it first equally, then in proportion
+%% to the reactive range of the generator.
 
 if length(on) > 1
     %% build connection matrix, element i, j is 1 if gen on(j) at bus i is ON
     nb = size(bus, 1);
     ngon = size(on, 1);
-    Cg = sparse(gbus, [1:ngon]', ones(ngon, 1), nb, ngon);
+    Cg = sparse([1:ngon]', gbus, ones(ngon, 1), ngon, nb);
 
     %% divide Qg by number of generators at the bus to distribute equally
-    gen(on, QG) = gen(on, QG) ./ (Cg' * sum(Cg')');
-end
+    gen(on, QG) = gen(on, QG) ./ (Cg * sum(Cg)');
+    
+    %% divide proportionally
+    Cmin = sparse([1:ngon]', gbus, gen(on, QMIN), ngon, nb);
+    Cmax = sparse([1:ngon]', gbus, gen(on, QMAX), ngon, nb);
+    Qg_tot = Cg' * gen(on, QG);     %% nb x 1 vector of total Qg at each bus
+    gen(on, QG) = gen(on, QMIN) + ...
+        (Cg * ((Qg_tot - sum(Cmin)')./(sum(Cmax)' - sum(Cmin)' + eps))) .* ...
+            (gen(on, QMAX) - gen(on, QMIN));    %% avoid div by 0 ^
+end                                             %% (terms are mult by 0 anyway)
 
 %% update Pg for swing bus
 gen(on(refgen(1)), PG) = real(Sg(refgen(1))) * baseMVA + bus(ref, PD);  %% inj P + local Pd
