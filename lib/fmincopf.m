@@ -150,10 +150,27 @@ end
 % Find out if any of these "generators" are actually dispatchable loads.
 % (see 'help isload' for details on what consitutes a dispatchable load)
 % Dispatchable loads are modeled as generators with an added constant
-% power factor constraint. The power factor is derived from the
-% original value of (Pg, Qg).  If both are zero, a unity power factor
-% is assumed.
-vload = find( isload(gen) );
+% power factor constraint. The power factor is derived from the original
+% value of Pmin and either Qmin (for inductive loads) or Qmax (for capacitive
+% loads). If both Qmin and Qmax are zero, this implies a unity power factor
+% without the need for an additional constraint.
+vload = find( isload(gen) & (gen(:, QMIN) ~= 0 | gen(:, QMAX) ~= 0) );
+% At least one of the Q limits must be zero (corresponding to Pmax == 0)
+if any( gen(vload, QMIN) ~= 0 & gen(vload, QMAX) ~= 0 )
+	error('Either Qmin or Qmax must be equal to zero for each dispatchable load.');
+end
+% Initial values of PG and QG must be consistent with specified power factor
+% This is to prevent a user from unknowingly using a case file which would
+% have defined a different power factor constraint under a previous version
+% which used PG and QG to define the power factor.
+Qlim = (gen(vload, QMIN) == 0) .* gen(vload, QMAX) + ...
+    (gen(vload, QMAX) == 0) .* gen(vload, QMIN);
+if any( abs( gen(vload, QG) - gen(vload, PG) .* Qlim ./ gen(vload, PMIN) ) > 1e-4 )
+    errstr = sprintf('%s\n', ...
+        'For a dispatchable load, PG and QG must be consistent', ...
+        'with the power factor defined by PMIN and the Q limits.' );
+    error(errstr);
+end
 
 % Find out problem dimensions
 nb = size(bus, 1);                             % buses
@@ -163,7 +180,7 @@ iycost = find(gencost(:, MODEL) == PW_LINEAR); % y variables for pwl cost
 ny = size(iycost, 1);
 neqc = 2 * nb;                                 % nonlinear equalities
 nx = 2*nb + 2*ng;                              % control variables
-nvl = size(vload, 1);                          % price-sensitive injections
+nvl = size(vload, 1);                          % dispatchable loads
 nz = size(Au,2) - 2*nb - 2*ng - ny;            % number of extra z variables
 nz = max(nz,0);
 
@@ -185,11 +202,10 @@ stbas   = sfend+1;        stend   = stbas+nl-1;
 [Ay, by]  = makeAy(baseMVA, ng, gencost, pgbas, qgbas, ybas);
 ncony = size(Ay,1);
 
-% Make Avl, lvl, uvl in case there is a need for price-sensitive injections
+% Make Avl, lvl, uvl in case there is a need for dispatchable loads
 if nvl > 0
-  xx = gen(vload, PG);
-  yy = gen(vload, QG);
-  xx = xx + ((xx == 0) & (yy == 0)); % if Pg=Qg=0, force unity pwr factor
+  xx = gen(vload, PMIN);
+  yy = Qlim;
   pftheta = atan2(yy, xx);
   pc = sin(pftheta);
   qc = -cos(pftheta);
