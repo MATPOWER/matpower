@@ -16,7 +16,7 @@ Changes since 2.0
 -----------------
 
 8/24/04
-    - Made mpoption() throw and error if passed an invalid option name.
+    - Made mpoption() throw an error if passed an invalid option name.
 
 8/23/04
     - Added an fmincon based OPF solver for the generalized formulation
