@@ -1,8 +1,46 @@
 function [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
     VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus
-%IDX_BUS   Defines variables for column indices to bus.
+%IDX_BUS   Defines constants for named column indices to bus matrix.
 %   [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
 %   VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus
+%
+%   Some examples of usage, after defining the constants using the line above,
+%   are:
+%
+%    Pd = bus(4, PD);       % get the real power demand at bus 4
+%    bus(:, VMIN) = 0.95;   % set the min voltage magnitude to 0.95 at all buses
+% 
+%   The index, name and meaning of each column of the bus matrix is given
+%   below:
+%
+%   columns 1-13 must be included in input matrix (in case file)
+%    1  BUS_I       bus number (1 to 29997)
+%    2  BUS_TYPE    bus type (1 = PQ, 2 = PV, 3 = ref, 4 = isolated)
+%    3  PD          Pd, real power demand (MW)
+%    4  QD          Qd, reactive power demand (MVAr)
+%    5  GS          Gs, shunt conductance (MW at V = 1.0 p.u.)
+%    6  BS          Bs, shunt susceptance (MVAr at V = 1.0 p.u.)
+%    7  BUS_AREA    area number, 1-100
+%    8  VM          Vm, voltage magnitude (p.u.)
+%    9  VA          Va, voltage angle (degrees)
+%    10 BASE_KV     baseKV, base voltage (kV)
+%    11 ZONE        zone, loss zone (1-999)
+%    12 VMAX        maxVm, maximum voltage magnitude (p.u.)
+%    13 VMIN        minVm, minimum voltage magnitude (p.u.)
+%   
+%   columns 14-17 are added to matrix after OPF solution
+%   they are typically not present in the input matrix
+%                   (assume OPF objective function has units, u)
+%    14 LAM_P       Lagrange multiplier on real power mismatch (u/MW)
+%    15 LAM_Q       Lagrange multiplier on reactive power mismatch (u/MVAr)
+%    16 MU_VMAX     Kuhn-Tucker multiplier on upper voltage limit (u/p.u.)
+%    17 MU_VMIN     Kuhn-Tucker multiplier on lower voltage limit (u/p.u.)
+% 
+%   additional constants, used to assign/compare values in the BUS_TYPE column
+%    1  PQ    PQ bus
+%    2  PV    PV bus
+%    3  REF   reference bus
+%    4  NONE  isolated bus
 
 %   MATPOWER
 %   $Id$
