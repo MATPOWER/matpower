@@ -8,7 +8,8 @@ function [bus, gen, branch, f, success, et] = dcopf(baseMVA, bus, gen, gencost, 
 
 %   MATPOWER
 %   $Id$
-%   by Ray Zimmerman, PSERC Cornell
+%   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
+%   and Ray Zimmerman, PSERC Cornell
 %   Copyright (c) 1996-2003 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.
 
