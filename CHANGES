@@ -2,7 +2,7 @@
  Change history for MATPOWER
 -----------------------------
 
-Version:    3.0b3+
+Version:    3.0b4
 
 maintained by Ray Zimmerman <rz10@cornell.edu>
 
@@ -14,6 +14,17 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 
 Changes since 3.0b3
 -------------------
+
+1/28/05
+    - Released version 3.0b4.
+
+1/27/05
+    - Added case6ww.m and case4gs.m.
+    - Minor modifications to printpf.m to handle larger bus numbers.
+
+1/26/05
+    - Minor changes to uopf.m to make sure it plays nicely with dispatchable
+      loads.
 
 1/25/05
     - Major updates to user manual.

@@ -2,7 +2,7 @@
  MATPOWER - A Matlab Power System Simulation Package
 =====================================================
 
-Version:    3.0b3+
+Version:    3.0b4
 
 Home Page:  http://www.pserc.cornell.edu/matpower/
 
@@ -10,7 +10,7 @@ Authors:    Ray Zimmerman               <rz10@cornell.edu>
             Carlos E. Murillo-Sanchez   <carlos_murillo@ieee.org>
             Deqiang (David) Gan         <dgan@zju.edu.cn>
 
-            Mon, Sep 20, 2004
+            Fri, Jan 28, 2005
 
 $Id$
 Copyright (c) 1997-2004 by Power System Engineering Research Center (PSERC)
@@ -113,7 +113,7 @@ New features:
 - Loading of input data from M-files, MAT-files, or structs.
 - Improved decommitment algorithm.
 - Added a very incomplete test suite.
-- Handling of price sensitive loads in OPF, modeled as negative
+- Handling of dispatchable loads in OPF, modeled as negative
   generators with constant power factor constraint.
 
 Bugs fixed:
