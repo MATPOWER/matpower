@@ -25,6 +25,10 @@ Please report any bugs you find to Ray Zimmerman <rz10@cornell.edu>.
 Changes since 2.0
 -----------------
 
+6/23/04
+	- Fixed bug in newtonpf.m which caused algorithm to diverge when
+	  the Newton step resulted in a negative voltage magnitude.
+
 4/17/03
 	- Changed uopf.m to use a dynamic programming approach. More
 	  computationally expensive, but should find significanly better
