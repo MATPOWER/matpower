@@ -16,7 +16,7 @@ Changes since 3.0b1
 -------------------
 
 9/7/04
-    - Released version 3.0b1.
+    - Released version 3.0b2.
     - Added OPF_P_LINE_LIM option to mpoptions to use active power
       instead of apparent power for line limits (thanks to Pan Wei
       for the suggestion and some code).
