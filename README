@@ -1,7 +1,7 @@
 -----------------------------------------------------------------
-MINOS-based solver calls bp() and therefore REQUIRES bpmpd.
-LP-based solver calls lp() and will use bpmpd, if installed.
-DC-opf solver calls qp() and will use bpmpd, if installed.
+MINOS-based solver (sqpopf.m) calls bp() and therefore REQUIRES bpmpd.
+LP-based solver calls mp_lp() and will use bpmpd, if installed.
+DC-opf solver calls mp_qp() and will use bpmpd, if installed.
 Old versions of constr (from Opt Tbx v.1) call qp() and will use bpmpd, if installed.
 -----------------------------------------------------------------
 
@@ -52,9 +52,9 @@ project (see http://www.pserc.cornell.edu/powerweb/).
 
 More documentation is available in the User's Manual (manual.pdf) and in
 the m-files themselves (type: help <name of m-file> at the Matlab
-prompt). Documentation for the case file format can be found in case9.m.
-Where something is still unclear, the source code IS the documentation
-:-)
+prompt). Documentation for the case file format can be found by typing
+'help caseformat'. Where something is still unclear, the source code IS
+the documentation :-)
 
 MATPOWER is free. Anyone may use it. Anyone may modify it for their own
 use as long as the original copyright notices remain in place. Please
