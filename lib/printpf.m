@@ -97,7 +97,10 @@ nzld = find(bus(:, PD) | bus(:, QD));
 sorted_areas = sort(bus(:, BUS_AREA));
 s_areas = sorted_areas([1; find(diff(sorted_areas))+1]);    %% area numbers
 na = length(s_areas);                           %% number of areas
-on = find(gen(:, GEN_STATUS) > 0);
+nzsh = find(bus(:, GS) | bus(:, BS));
+allg = find(gen(:, PMIN) >= 0 & gen(:, PMAX) >  0);
+ong  = find(gen(:, GEN_STATUS) > 0 & gen(:, PMIN) >= 0 & gen(:, PMAX) >  0);
+onld = find(gen(:, GEN_STATUS) > 0 & gen(:, PMIN) <  0 & gen(:, PMAX) <= 0);
 V = bus(:, VM) .* exp(sqrt(-1) * pi/180 * bus(:, VA));
 out = find(branch(:, BR_STATUS) == 0);          %% out-of-service branches
 nout = length(out);
@@ -131,17 +134,20 @@ if OUT_SYS_SUM
     fprintf(fd, '\n================================================================================');
     fprintf(fd, '\n|     System Summary                                                           |');
     fprintf(fd, '\n================================================================================');
-    fprintf(fd, '\n\nHow many?                  How much?              P (MW)       Q (MVAr)');
-    fprintf(fd, '\n---------------------      --------------------  --------  -----------------');
-    fprintf(fd, '\nBuses          %5d       Total Gen Capacity    %7.1f  %7.1f to +%.1f', nb, sum(gen(:, PMAX)), sum(gen(:, QMIN)), sum(gen(:, QMAX)));
-    fprintf(fd, '\nGenerators     %5d       On-line Capacity      %7.1f  %7.1f to +%.1f', ng, sum(gen(on, PMAX)), sum(gen(on, QMIN)), sum(gen(on, QMAX)));
-    fprintf(fd, '\nCommitted Gens %5d       Generation (current)  %7.1f      %7.1f', length(on), sum(gen(on, PG)), sum(gen(on, QG)));
-    fprintf(fd, '\nLoads          %5d       Load                  %7.1f      %7.1f', length(nzld), sum(bus(nzld, PD)), sum(bus(nzld, QD)));
-    fprintf(fd, '\nBranches       %5d       Losses (I^2 * Z)      %8.2f     %8.2f', nl, sum(real(loss)), sum(imag(loss)) );
-    fprintf(fd, '\nTransformers   %5d       Branch Charging (inj)      -       %7.1f', length(xfmr), sum(fchg) + sum(tchg) );
-    fprintf(fd, '\nAreas          %5d       Shunt (inj)           %7.1f      %7.1f', length(s_areas), ...
-        -sum(bus(:, VM) .^ 2 .* bus(:, GS)), sum(bus(:, VM) .^ 2 .* bus(:, BS)) );
-    fprintf(fd, '\nInter-ties     %5d       Total Inter-tie Flow  %7.1f      %7.1f', length(ties), sum(abs(branch(ties, PF)-branch(ties, PT))) / 2, sum(abs(branch(ties, QF)-branch(ties, QT))) / 2);
+    fprintf(fd, '\n\nHow many?                How much?              P (MW)            Q (MVAr)');
+    fprintf(fd, '\n---------------------    -------------------  -------------  -----------------');
+    fprintf(fd, '\nBuses         %6d     Total Gen Capacity   %7.1f       %7.1f to %.1f', nb, sum(gen(allg, PMAX)), sum(gen(allg, QMIN)), sum(gen(allg, QMAX)));
+    fprintf(fd, '\nGenerators     %5d     On-line Capacity     %7.1f       %7.1f to %.1f', length(allg), sum(gen(ong, PMAX)), sum(gen(ong, QMIN)), sum(gen(ong, QMAX)));
+    fprintf(fd, '\nCommitted Gens %5d     Generation (actual)  %7.1f           %7.1f', length(ong), sum(gen(ong, PG)), sum(gen(ong, QG)));
+    fprintf(fd, '\nLoads          %5d     Load                 %7.1f           %7.1f', length(nzld)+length(onld), sum(bus(nzld, PD))-sum(gen(onld, PG)), sum(bus(nzld, QD))-sum(gen(onld, QG)));
+    fprintf(fd, '\n  Fixed        %5d       Fixed              %7.1f           %7.1f', length(nzld), sum(bus(nzld, PD)), sum(bus(nzld, QD)));
+    fprintf(fd, '\n  Dispatchable %5d       Dispatchable       %7.1f of %-7.1f%7.1f', length(onld), -sum(gen(onld, PG)), -sum(gen(onld, PMIN)), -sum(gen(onld, QG)));
+    fprintf(fd, '\nShunts         %5d     Shunt (inj)          %7.1f           %7.1f', length(nzsh), ...
+        -sum(bus(nzsh, VM) .^ 2 .* bus(nzsh, GS)), sum(bus(nzsh, VM) .^ 2 .* bus(nzsh, BS)) );
+    fprintf(fd, '\nBranches       %5d     Losses (I^2 * Z)     %8.2f          %8.2f', nl, sum(real(loss)), sum(imag(loss)) );
+    fprintf(fd, '\nTransformers   %5d     Branch Charging (inj)     -            %7.1f', length(xfmr), sum(fchg) + sum(tchg) );
+    fprintf(fd, '\nInter-ties     %5d     Total Inter-tie Flow %7.1f           %7.1f', length(ties), sum(abs(branch(ties, PF)-branch(ties, PT))) / 2, sum(abs(branch(ties, QF)-branch(ties, QT))) / 2);
+    fprintf(fd, '\nAreas          %5d', length(s_areas));
     fprintf(fd, '\n');
     fprintf(fd, '\n                          Minimum                      Maximum');
     fprintf(fd, '\n                 -------------------------  --------------------------------');
@@ -172,15 +178,17 @@ if OUT_AREA_SUM
     fprintf(fd, '\n================================================================================');
     fprintf(fd, '\n|     Area Summary                                                             |');
     fprintf(fd, '\n================================================================================');
-    fprintf(fd, '\nArea  # of   # of   Gens   # of   # of   # of   # of    Total Gen    On-line');
-    fprintf(fd, '\n Num  Buses  Gens  Online  Loads  Brchs  Xfmrs  Ties     Capacity    Capacity');
-    fprintf(fd, '\n----  -----  ----  ------  -----  -----  -----  ----   -----------  -----------');
+    fprintf(fd, '\nArea  # of      # of Gens        # of Loads         # of    # of   # of   # of');
+    fprintf(fd, '\n Num  Buses   Total  Online   Total  Fixed  Disp    Shunt   Brchs  Xfmrs   Ties');
+    fprintf(fd, '\n----  -----   -----  ------   -----  -----  -----   -----   -----  -----  -----');
     for i=1:length(s_areas)
         a = s_areas(i);
         ib = find(bus(:, BUS_AREA) == a);
-        ig = find(bus(e2i(gen(:, GEN_BUS)), BUS_AREA) == a);
-        igon = find(bus(e2i(gen(:, GEN_BUS)), BUS_AREA) == a & gen(:, GEN_STATUS) > 0);
+        ig = find(bus(e2i(gen(:, GEN_BUS)), BUS_AREA) == a & gen(:, PMIN) >= 0 & gen(:, PMAX) > 0);
+        igon = find(bus(e2i(gen(:, GEN_BUS)), BUS_AREA) == a & gen(:, GEN_STATUS) > 0 & gen(:, PMIN) >= 0 & gen(:, PMAX) > 0);
+        ildon = find(bus(e2i(gen(:, GEN_BUS)), BUS_AREA) == a & gen(:, GEN_STATUS) > 0 & gen(:, PMIN) < 0 & gen(:, PMAX) <= 0);
         inzld = find(bus(:, BUS_AREA) == a & (bus(:, PD) | bus(:, QD)));
+        inzsh = find(bus(:, BUS_AREA) == a & (bus(:, GS) | bus(:, BS)));
         ibrch = find(bus(e2i(branch(:, F_BUS)), BUS_AREA) == a & bus(e2i(branch(:, T_BUS)), BUS_AREA) == a);
         in_tie = find(bus(e2i(branch(:, F_BUS)), BUS_AREA) == a & bus(e2i(branch(:, T_BUS)), BUS_AREA) ~= a);
         out_tie = find(bus(e2i(branch(:, F_BUS)), BUS_AREA) ~= a & bus(e2i(branch(:, T_BUS)), BUS_AREA) == a);
@@ -189,41 +197,81 @@ if OUT_AREA_SUM
         else
             nxfmr = 0;
         end
-        fprintf(fd, '\n%3d   %5d %5d  %5d  %5d  %5d  %5d %5d    %7.1f MW   %7.1f MW', ...
-            a, length(ib), length(ig), length(igon), length(inzld), length(ibrch), nxfmr, ...
-            length(in_tie)+length(out_tie), sum(gen(ig, PMAX)), sum(gen(igon, PMAX)));
+        fprintf(fd, '\n%3d  %6d   %5d  %5d   %5d  %5d  %5d   %5d   %5d  %5d  %5d', ...
+            a, length(ib), length(ig), length(igon), ...
+            length(inzld)+length(ildon), length(inzld), length(ildon), ...
+            length(inzsh), length(ibrch), nxfmr, length(in_tie)+length(out_tie));
     end
-    fprintf(fd, '\n----  -----  ----  ------  -----  -----  -----  ----   -----------  -----------');
-    fprintf(fd, '\nTot:  %5d %5d  %5d  %5d  %5d  %5d %5d    %7.1f MW   %7.1f MW', ...
-        nb, ng, length(on), length(nzld), nl, length(xfmr), ...
-        length(ties), sum(gen(:, PMAX)), sum(gen(on, PMAX)));
+    fprintf(fd, '\n----  -----   -----  ------   -----  -----  -----   -----   -----  -----  -----');
+    fprintf(fd, '\nTot: %6d   %5d  %5d   %5d  %5d  %5d   %5d   %5d  %5d  %5d', ...
+        nb, length(allg), length(ong), length(nzld)+length(onld), ...
+        length(nzld), length(onld), length(nzsh), nl, length(xfmr), length(ties));
     fprintf(fd, '\n');
-    fprintf(fd, '\nArea   Generation       Load          Losses       Net Export    Brnch   Shunt');
-    fprintf(fd, '\n Num   MW    MVAr     MW    MVAr     MW    MVAr    MW     MVAr   Chrgng   MVAr');
-    fprintf(fd, '\n---- ------ ------  ------ ------  ------ ------  ------ ------  ------  ------');
+    fprintf(fd, '\nArea      Total Gen Capacity           On-line Gen Capacity         Generation');
+    fprintf(fd, '\n Num     MW           MVAr            MW           MVAr             MW    MVAr');
+    fprintf(fd, '\n----   ------  ------------------   ------  ------------------    ------  ------');
     for i=1:length(s_areas)
         a = s_areas(i);
-        ib = find(bus(:, BUS_AREA) == a);
-        ig = find(bus(e2i(gen(:, GEN_BUS)), BUS_AREA) == a);
-        igon = find(bus(e2i(gen(:, GEN_BUS)), BUS_AREA) == a & gen(:, GEN_STATUS) > 0);
+        ig = find(bus(e2i(gen(:, GEN_BUS)), BUS_AREA) == a & gen(:, PMIN) >= 0 & gen(:, PMAX) > 0);
+        igon = find(bus(e2i(gen(:, GEN_BUS)), BUS_AREA) == a & gen(:, GEN_STATUS) > 0 & gen(:, PMIN) >= 0 & gen(:, PMAX) > 0);
+        fprintf(fd, '\n%3d   %7.1f  %7.1f to %-7.1f  %7.1f  %7.1f to %-7.1f   %7.1f %7.1f', ...
+            a, sum(gen(ig, PMAX)), sum(gen(ig, QMIN)), sum(gen(ig, QMAX)), ...
+            sum(gen(igon, PMAX)), sum(gen(igon, QMIN)), sum(gen(igon, QMAX)), ...
+            sum(gen(igon, PG)), sum(gen(igon, QG)) );
+    end
+    fprintf(fd, '\n----   ------  ------------------   ------  ------------------    ------  ------');
+    fprintf(fd, '\nTot:  %7.1f  %7.1f to %-7.1f  %7.1f  %7.1f to %-7.1f   %7.1f %7.1f', ...
+            sum(gen(allg, PMAX)), sum(gen(allg, QMIN)), sum(gen(allg, QMAX)), ...
+            sum(gen(ong, PMAX)), sum(gen(ong, QMIN)), sum(gen(ong, QMAX)), ...
+            sum(gen(ong, PG)), sum(gen(ong, QG)) );
+    fprintf(fd, '\n');
+    fprintf(fd, '\nArea    Disp Load Cap       Disp Load         Fixed Load        Total Load');
+    fprintf(fd, '\n Num      MW     MVAr       MW     MVAr       MW     MVAr       MW     MVAr');
+    fprintf(fd, '\n----    ------  ------    ------  ------    ------  ------    ------  ------');
+    for i=1:length(s_areas)
+        a = s_areas(i);
+        ildon = find(bus(e2i(gen(:, GEN_BUS)), BUS_AREA) == a & gen(:, GEN_STATUS) > 0 & gen(:, PMIN) < 0 & gen(:, PMAX) <= 0);
         inzld = find(bus(:, BUS_AREA) == a & (bus(:, PD) | bus(:, QD)));
+        fprintf(fd, '\n%3d    %7.1f %7.1f   %7.1f %7.1f   %7.1f %7.1f   %7.1f %7.1f', ...
+            a, -sum(gen(ildon, PMIN)), ...
+            -sum(gen(ildon, PMIN) .* gen(ildon, QG) ./ gen(ildon, PG)), ...
+            -sum(gen(ildon, PG)), -sum(gen(ildon, QG)), ...
+            sum(bus(inzld, PD)), sum(bus(inzld, QD)), ...
+            -sum(gen(ildon, PG)) + sum(bus(inzld, PD)), ...
+            -sum(gen(ildon, QG)) + sum(bus(inzld, QD)) );
+    end
+    fprintf(fd, '\n----    ------  ------    ------  ------    ------  ------    ------  ------');
+    fprintf(fd, '\nTot:   %7.1f %7.1f   %7.1f %7.1f   %7.1f %7.1f   %7.1f %7.1f', ...
+            -sum(gen(onld, PMIN)), ...
+            -sum(gen(onld, PMIN) .* gen(onld, QG) ./ gen(onld, PG)), ...
+            -sum(gen(onld, PG)), -sum(gen(onld, QG)), ...
+            sum(bus(nzld, PD)), sum(bus(nzld, QD)), ...
+            -sum(gen(onld, PG)) + sum(bus(nzld, PD)), ...
+            -sum(gen(onld, QG)) + sum(bus(nzld, QD)) );
+    fprintf(fd, '\n');
+    fprintf(fd, '\nArea      Shunt Inj        Branch      Series Losses      Net Export');
+    fprintf(fd, '\n Num      MW     MVAr     Charging      MW     MVAr       MW     MVAr');
+    fprintf(fd, '\n----    ------  ------    --------    ------  ------    ------  ------');
+    for i=1:length(s_areas)
+        a = s_areas(i);
+        inzsh = find(bus(:, BUS_AREA) == a & (bus(:, GS) | bus(:, BS)));
         ibrch = find(bus(e2i(branch(:, F_BUS)), BUS_AREA) == a & bus(e2i(branch(:, T_BUS)), BUS_AREA) == a & branch(:, BR_STATUS));
         in_tie = find(bus(e2i(branch(:, F_BUS)), BUS_AREA) ~= a & bus(e2i(branch(:, T_BUS)), BUS_AREA) == a & branch(:, BR_STATUS));
         out_tie = find(bus(e2i(branch(:, F_BUS)), BUS_AREA) == a & bus(e2i(branch(:, T_BUS)), BUS_AREA) ~= a & branch(:, BR_STATUS));
-        fprintf(fd, '\n%3d %7.1f%7.1f %7.1f%7.1f%7.2f %7.2f %7.1f%7.1f %7.1f %7.1f', ...
-            a, sum(gen(igon, PG)), sum(gen(igon, QG)), sum(bus(inzld, PD)), sum(bus(inzld, QD)), ...
+        fprintf(fd, '\n%3d    %7.1f %7.1f    %7.1f    %7.2f %7.2f   %7.1f %7.1f', ...
+            a, -sum(bus(inzsh, VM) .^ 2 .* bus(inzsh, GS)), ...
+            sum(bus(inzsh, VM) .^ 2 .* bus(inzsh, BS)), ...
+            sum(fchg(ibrch)) + sum(tchg(ibrch)) + sum(fchg(out_tie)) + sum(tchg(in_tie)), ...
             sum(real(loss(ibrch))) + sum(real(loss([in_tie; out_tie]))) / 2, ...
             sum(imag(loss(ibrch))) + sum(imag(loss([in_tie; out_tie]))) / 2, ...
-            sum(branch(in_tie, PT))+sum(branch(out_tie, PF)), ...
-            sum(branch(in_tie, QT))+sum(branch(out_tie, QF)), ...
-            sum(fchg(ibrch)) + sum(tchg(ibrch)) + sum(fchg(out_tie)) + sum(tchg(in_tie)), ...
-            sum(bus(ib, VM) .^ 2 .* bus(ib, BS))    );
+            sum(branch(in_tie, PT))+sum(branch(out_tie, PF)) - sum(real(loss([in_tie; out_tie]))) / 2, ...
+            sum(branch(in_tie, QT))+sum(branch(out_tie, QF)) - sum(imag(loss([in_tie; out_tie]))) / 2  );
     end
-    fprintf(fd, '\n---- ------ ------  ------ ------  ------ ------  ------ ------  ------  ------');
-    fprintf(fd, '\nTot:%7.1f%7.1f %7.1f%7.1f%7.2f %7.2f %7s%7s %7.1f %7.1f', ...
-        sum(gen(on, PG)), sum(gen(on, QG)), sum(bus(nzld, PD)), sum(bus(nzld, QD)), ...
-        sum(real(loss)), sum(imag(loss)), '-  ', '-  ', ...
-        sum(fchg) + sum(tchg), sum(bus(:, VM) .^ 2 .* bus(:, BS))   );
+    fprintf(fd, '\n----    ------  ------    --------    ------  ------    ------  ------');
+    fprintf(fd, '\nTot:   %7.1f %7.1f    %7.1f    %7.2f %7.2f       -       -', ...
+        -sum(bus(nzsh, VM) .^ 2 .* bus(nzsh, GS)), ...
+        sum(bus(nzsh, VM) .^ 2 .* bus(nzsh, BS)), ...
+        sum(fchg) + sum(tchg), sum(real(loss)), sum(imag(loss)) );
     fprintf(fd, '\n');
 end
 
@@ -236,14 +284,15 @@ if OUT_GEN
     fprintf(fd, '\n================================================================================');
     fprintf(fd, '\n|     Generator Data                                                           |');
     fprintf(fd, '\n================================================================================');
-    fprintf(fd, '\nGen  Bus  Status     Pg        Qg   ');
+    fprintf(fd, '\n Gen   Bus   Status     Pg        Qg   ');
     if isOPF, fprintf(fd, '   Lambda ($/MVA-hr)'); end
-    fprintf(fd, '\n #    #             (MW)     (MVAr) ');
+    fprintf(fd, '\n  #     #              (MW)     (MVAr) ');
     if isOPF, fprintf(fd, '     P         Q    '); end
-    fprintf(fd, '\n---  ---  ------  --------  --------');
+    fprintf(fd, '\n----  -----  ------  --------  --------');
     if isOPF, fprintf(fd, '  --------  --------'); end
-    for i = 1:ng
-        fprintf(fd, '\n%3d%5d    %2d ', i, gen(i, GEN_BUS), gen(i, GEN_STATUS));
+    for k = 1:length(ong)
+        i = ong(k);
+        fprintf(fd, '\n%3d %6d     %2d ', i, gen(i, GEN_BUS), gen(i, GEN_STATUS));
         if gen(i, GEN_STATUS) > 0 & (gen(i, PG) | gen(i, QG))
             fprintf(fd, '%10.2f%10.2f', gen(i, PG), gen(i, QG));
         else
@@ -251,9 +300,33 @@ if OUT_GEN
         end
         if isOPF, fprintf(fd, '%10.2f%10.2f', genlamP(i), genlamQ(i)); end
     end
-    fprintf(fd, '\n                  --------  --------');
-    fprintf(fd, '\n          Total:%9.2f%10.2f', sum(gen(on, PG)), sum(gen(on, QG)));
+    fprintf(fd, '\n                     --------  --------');
+    fprintf(fd, '\n            Total: %9.2f%10.2f', sum(gen(ong, PG)), sum(gen(ong, QG)));
     fprintf(fd, '\n');
+    if length(onld) > 0
+        fprintf(fd, '\n================================================================================');
+        fprintf(fd, '\n|     Dispatchable Load Data                                                   |');
+        fprintf(fd, '\n================================================================================');
+        fprintf(fd, '\n Gen   Bus   Status     Pd        Qd   ');
+        if isOPF, fprintf(fd, '   Lambda ($/MVA-hr)'); end
+        fprintf(fd, '\n  #     #              (MW)     (MVAr) ');
+        if isOPF, fprintf(fd, '     P         Q    '); end
+        fprintf(fd, '\n----  -----  ------  --------  --------');
+        if isOPF, fprintf(fd, '  --------  --------'); end
+        for k = 1:length(onld)
+            i = onld(k);
+            fprintf(fd, '\n%3d %6d     %2d ', i, gen(i, GEN_BUS), gen(i, GEN_STATUS));
+            if gen(i, GEN_STATUS) > 0 & (gen(i, PG) | gen(i, QG))
+                fprintf(fd, '%10.2f%10.2f', -gen(i, PG), -gen(i, QG));
+            else
+                fprintf(fd, '       -         -  ');
+            end
+            if isOPF, fprintf(fd, '%10.2f%10.2f', genlamP(i), genlamQ(i)); end
+        end
+        fprintf(fd, '\n                     --------  --------');
+        fprintf(fd, '\n            Total: %9.2f%10.2f', -sum(gen(onld, PG)), -sum(gen(onld, QG)));
+        fprintf(fd, '\n');
+    end
 end
         
 %% bus data
@@ -269,19 +342,27 @@ if OUT_BUS
     if isOPF, fprintf(fd, '  -------  -------'); end
     for i = 1:nb
         fprintf(fd, '\n%3d%8.3f%10.3f', bus(i, [BUS_I, VM, VA]));
-        g = find(gen(:, GEN_STATUS) > 0 & gen(:, GEN_BUS) == bus(i, BUS_I));
+        g  = find(gen(:, GEN_STATUS) > 0 & gen(:, GEN_BUS) == bus(i, BUS_I) & ...
+                    gen(:, PMIN) >= 0 & gen(:, PMAX) > 0);
+        ld = find(gen(:, GEN_STATUS) > 0 & gen(:, GEN_BUS) == bus(i, BUS_I) & ...
+                    gen(:, PMIN) < 0 & gen(:, PMAX) <= 0);
         if ~isempty(g)
             fprintf(fd, '%10.2f%10.2f', sum(gen(g, PG)), sum(gen(g, QG)));
         else
             fprintf(fd, '       -         -  ');
         end
-        if bus(i, PD) | bus(i, QD)
-            fprintf(fd, '%10.2f%10.2f', bus(i, [PD, QD]));
+        if bus(i, PD) | bus(i, QD) | ~isempty(ld)
+            if ~isempty(ld)
+                fprintf(fd, '%10.2f*%9.2f*', bus(i, PD) - sum(gen(ld, PG)), ...
+                                             bus(i, QD) - sum(gen(ld, QG)));
+            else
+                fprintf(fd, '%10.2f%10.2f ', bus(i, [PD, QD]));
+            end
         else
-            fprintf(fd, '       -         -  ');
+            fprintf(fd, '       -         -   ');
         end
         if isOPF
-            fprintf(fd, '%10.3f', bus(i, LAM_P));
+            fprintf(fd, '%9.3f', bus(i, LAM_P));
             if abs(bus(i, LAM_Q)) > 1e-6
                 fprintf(fd, '%8.3f', bus(i, LAM_Q));
             else
@@ -291,7 +372,9 @@ if OUT_BUS
     end
     fprintf(fd, '\n                        --------  --------  --------  --------');
     fprintf(fd, '\n               Total: %9.2f %9.2f %9.2f %9.2f', ...
-        sum(gen(on, PG)), sum(gen(on, QG)), sum(bus(nzld, PD)), sum(bus(nzld, QD)));
+        sum(gen(ong, PG)), sum(gen(ong, QG)), ...
+        sum(bus(nzld, PD)) - sum(gen(onld, PG)), ...
+        sum(bus(nzld, QD)) - sum(gen(onld, QG)));
     fprintf(fd, '\n');
 end
 
@@ -350,22 +433,22 @@ if isOPF
         
     %% generator P constraints
     if OUT_PG_LIM == 2 | OUT_QG_LIM == 2 | ...
-            (OUT_PG_LIM == 1 & (any(gen(on, PG) < gen(on, PMIN) + ctol) | ...
-                                any(gen(on, PG) > gen(on, PMAX) - ctol))) | ...
-            (OUT_QG_LIM == 1 & (any(gen(on, QG) < gen(on, QMIN) + ctol) | ...
-                                any(gen(on, QG) > gen(on, QMAX) - ctol)))
+            (OUT_PG_LIM == 1 & (any(gen(ong, PG) < gen(ong, PMIN) + ctol) | ...
+                                any(gen(ong, PG) > gen(ong, PMAX) - ctol))) | ...
+            (OUT_QG_LIM == 1 & (any(gen(ong, QG) < gen(ong, QMIN) + ctol) | ...
+                                any(gen(ong, QG) > gen(ong, QMAX) - ctol)))
         fprintf(fd, '\n================================================================================');
         fprintf(fd, '\n|     Generation Constraints                                                   |');
         fprintf(fd, '\n================================================================================');
     end
     if OUT_PG_LIM == 2 | (OUT_PG_LIM == 1 & ...
-                             (any(gen(on, PG) < gen(on, PMIN) + ctol) | ...
-                              any(gen(on, PG) > gen(on, PMAX) - ctol)))
+                             (any(gen(ong, PG) < gen(ong, PMIN) + ctol) | ...
+                              any(gen(ong, PG) > gen(ong, PMAX) - ctol)))
         fprintf(fd, '\nGen  Bus               Active Power Limits');
-        fprintf(fd, '\n #    #   Pmin mu    Pmin       P        Pmax    Pmax mu');
+        fprintf(fd, '\n #    #   Pmin mu    Pmin       Pg       Pmax    Pmax mu');
         fprintf(fd, '\n---  ---  -------  --------  --------  --------  -------');
-        for k = 1:length(on)
-            i = on(k);
+        for k = 1:length(ong)
+            i = ong(k);
             if OUT_PG_LIM == 2 | (OUT_PG_LIM == 1 & ...
                         (gen(i, PG) < gen(i, PMIN) + ctol | ...
                          gen(i, PG) > gen(i, PMAX) - ctol))
@@ -392,13 +475,88 @@ if isOPF
         
     %% generator Q constraints
     if OUT_QG_LIM == 2 | (OUT_QG_LIM == 1 & ...
-                             (any(gen(on, QG) < gen(on, QMIN) + ctol) | ...
-                              any(gen(on, QG) > gen(on, QMAX) - ctol)))
+                             (any(gen(ong, QG) < gen(ong, QMIN) + ctol) | ...
+                              any(gen(ong, QG) > gen(ong, QMAX) - ctol)))
         fprintf(fd, '\nGen  Bus              Reactive Power Limits');
-        fprintf(fd, '\n #    #   Qmin mu    Qmin       Q        Qmax    Qmax mu');
+        fprintf(fd, '\n #    #   Qmin mu    Qmin       Qg       Qmax    Qmax mu');
         fprintf(fd, '\n---  ---  -------  --------  --------  --------  -------');
-        for k = 1:length(on)
-            i = on(k);
+        for k = 1:length(ong)
+            i = ong(k);
+            if OUT_QG_LIM == 2 | (OUT_QG_LIM == 1 & ...
+                        (gen(i, QG) < gen(i, QMIN) + ctol | ...
+                         gen(i, QG) > gen(i, QMAX) - ctol))
+                fprintf(fd, '\n%3d%5d', i, gen(i, GEN_BUS));
+                if gen(i, QG) < gen(i, QMIN) + ctol
+                    fprintf(fd, '%8.3f', gen(i, MU_QMIN));
+                else
+                    fprintf(fd, '     -  ');
+                end
+                if gen(i, QG)
+                    fprintf(fd, '%10.2f%10.2f%10.2f', gen(i, [QMIN, QG, QMAX]));
+                else
+                    fprintf(fd, '%10.2f       -  %10.2f', gen(i, [QMIN, QMAX]));
+                end
+                if gen(i, QG) > gen(i, QMAX) - ctol
+                    fprintf(fd, '%9.3f', gen(i, MU_QMAX));
+                else
+                    fprintf(fd, '      -  ');
+                end
+            end
+        end
+        fprintf(fd, '\n');
+    end
+        
+    %% dispatchable load P constraints
+    if OUT_PG_LIM == 2 | OUT_QG_LIM == 2 | ...
+            (OUT_PG_LIM == 1 & (any(gen(onld, PG) < gen(onld, PMIN) + ctol) | ...
+                                any(gen(onld, PG) > gen(onld, PMAX) - ctol))) | ...
+            (OUT_QG_LIM == 1 & (any(gen(onld, QG) < gen(onld, QMIN) + ctol) | ...
+                                any(gen(onld, QG) > gen(onld, QMAX) - ctol)))
+        fprintf(fd, '\n================================================================================');
+        fprintf(fd, '\n|     Dispatchable Load Constraints                                            |');
+        fprintf(fd, '\n================================================================================');
+    end
+    if OUT_PG_LIM == 2 | (OUT_PG_LIM == 1 & ...
+                             (any(gen(onld, PG) < gen(onld, PMIN) + ctol) | ...
+                              any(gen(onld, PG) > gen(onld, PMAX) - ctol)))
+        fprintf(fd, '\nGen  Bus               Active Power Limits');
+        fprintf(fd, '\n #    #   Pmin mu    Pmin       Pg       Pmax    Pmax mu');
+        fprintf(fd, '\n---  ---  -------  --------  --------  --------  -------');
+        for k = 1:length(onld)
+            i = onld(k);
+            if OUT_PG_LIM == 2 | (OUT_PG_LIM == 1 & ...
+                        (gen(i, PG) < gen(i, PMIN) + ctol | ...
+                         gen(i, PG) > gen(i, PMAX) - ctol))
+                fprintf(fd, '\n%3d%5d', i, gen(i, GEN_BUS));
+                if gen(i, PG) < gen(i, PMIN) + ctol
+                    fprintf(fd, '%8.3f', gen(i, MU_PMIN));
+                else
+                    fprintf(fd, '     -  ');
+                end
+                if gen(i, PG)
+                    fprintf(fd, '%10.2f%10.2f%10.2f', gen(i, [PMIN, PG, PMAX]));
+                else
+                    fprintf(fd, '%10.2f       -  %10.2f', gen(i, [PMIN, PMAX]));
+                end
+                if gen(i, PG) > gen(i, PMAX) - ctol
+                    fprintf(fd, '%9.3f', gen(i, MU_PMAX));
+                else
+                    fprintf(fd, '      -  ');
+                end
+            end
+        end
+        fprintf(fd, '\n');
+    end
+        
+    %% dispatchable load Q constraints
+    if OUT_QG_LIM == 2 | (OUT_QG_LIM == 1 & ...
+                             (any(gen(onld, QG) < gen(onld, QMIN) + ctol) | ...
+                              any(gen(onld, QG) > gen(onld, QMAX) - ctol)))
+        fprintf(fd, '\nGen  Bus              Reactive Power Limits');
+        fprintf(fd, '\n #    #   Qmin mu    Qmin       Qg       Qmax    Qmax mu');
+        fprintf(fd, '\n---  ---  -------  --------  --------  --------  -------');
+        for k = 1:length(onld)
+            i = onld(k);
             if OUT_QG_LIM == 2 | (OUT_QG_LIM == 1 & ...
                         (gen(i, QG) < gen(i, QMIN) + ctol | ...
                          gen(i, QG) > gen(i, QMAX) - ctol))
