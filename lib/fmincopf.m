@@ -400,18 +400,22 @@ branchout = branchorg;
 genout(comgen, : ) = gen;
 branchout(onbranch, :)  = branch;
 % And zero out appropriate fields of non-comitted generators and lines
-tmp = zeros(length(offgen), 1);
-genout(offgen, PG) = tmp;
-genout(offgen, QG) = tmp;
-genout(offgen, MU_PMAX) = tmp;
-genout(offgen, MU_PMIN) = tmp;
-tmp = zeros(length(offbranch), 1);
-branchout(offbranch, PF) = tmp;
-branchout(offbranch, QF) = tmp;
-branchout(offbranch, PT) = tmp;
-branchout(offbranch, QT) = tmp;
-branchout(offbranch, MU_SF) = tmp;
-branchout(offbranch, MU_ST) = tmp;
+if ~isempty(offgen)
+  tmp = zeros(length(offgen), 1);
+  genout(offgen, PG) = tmp;
+  genout(offgen, QG) = tmp;
+  genout(offgen, MU_PMAX) = tmp;
+  genout(offgen, MU_PMIN) = tmp;
+end
+if ~isempty(offbranch)
+  tmp = zeros(length(offbranch), 1);
+  branchout(offbranch, PF) = tmp;
+  branchout(offbranch, QF) = tmp;
+  branchout(offbranch, PT) = tmp;
+  branchout(offbranch, QT) = tmp;
+  branchout(offbranch, MU_SF) = tmp;
+  branchout(offbranch, MU_ST) = tmp;
+end
 
 et = etime(clock,t1);
 if  (nargout == 0) & ( success )
