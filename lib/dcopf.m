@@ -1,6 +1,10 @@
 function [buso, geno, brancho, f, success, info, et, g, jac] = dcopf(baseMVA, ...
                    bus, gen, branch, areas, gencost, mpopt)
 %DCOPF  Solves a DC optimal power flow.
+%   [bus, gen, branch, f, success, info, et] = dcopf(casefile)
+%   [bus, gen, branch, f, success, info, et] = dcopf(casefile, mpopt)
+%   [bus, gen, branch, f, success, info, et] = dcopf(baseMVA, bus, gen, ...
+%          branch, areas, gencost)
 %   [bus, gen, branch, f, success, info, et] = dcopf(baseMVA, bus, gen, ...
 %          branch, areas, gencost, mpopt)
 
@@ -100,15 +104,6 @@ else
     if any(find(gencost(:, N) ~= 3))
         error('DC opf with polynomial costs can only handle quadratic costs.');
     end
-end
-
-%% move Pmin and Pmax limits out slightly to avoid problems
-%% caused by rounding errors when corner point of cost
-%% function lies at exactly Pmin or Pmax
-if any(i_pwln)
-    ng = size(gen, 1);
-    gen(:, PMIN) = gen(:, PMIN) - 10 * mpopt(16) * ones(ng, 1);
-    gen(:, PMAX) = gen(:, PMAX) + 10 * mpopt(16) * ones(ng, 1);
 end
 
 %% convert polynomials to piece-wise linear (if necessary)
