@@ -322,22 +322,22 @@ if isOPF
         fprintf(fd, '\n|     Voltage Constraints                                                      |');
         fprintf(fd, '\n================================================================================');
         fprintf(fd, '\nBus');
-        fprintf(fd, '\n #   Vmin mu  Vmin    |V|   Vmax   Vmax mu');
-        fprintf(fd, '\n---  -------  -----  -----  -----  -------');
+        fprintf(fd, '\n  #   Vmin mu    Vmin    |V|   Vmax    Vmax mu');
+        fprintf(fd, '\n----  --------   -----  -----  -----   --------');        
         for i = 1:nb
             if OUT_V_LIM == 2 | (OUT_V_LIM == 1 & ...
                          (bus(i, MU_VMIN) > 1e-6 | bus(i, MU_VMAX) > 1e-6))
-                fprintf(fd, '\n%3d', bus(i, BUS_I));
+                fprintf(fd, '\n%4d', bus(i, BUS_I));
                 if bus(i, MU_VMIN) > 1e-6
-                    fprintf(fd, '%8.3f', bus(i, MU_VMIN));
+                    fprintf(fd, '%10.3f', bus(i, MU_VMIN));                    
                 else
-                    fprintf(fd, '     -  ');
+                    fprintf(fd, '      -   ');
                 end
                 fprintf(fd, '%8.3f%7.3f%7.3f', bus(i, [VMIN, VM, VMAX]));
                 if bus(i, MU_VMAX) > 1e-6
-                    fprintf(fd, '%8.3f', bus(i, MU_VMAX));
+                    fprintf(fd, '%10.3f', bus(i, MU_VMAX));
                 else
-                    fprintf(fd, '     -   ');
+                    fprintf(fd, '      -    ');
                 end
             end
         end
