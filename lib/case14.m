@@ -1,5 +1,10 @@
-
 function [baseMVA, bus, gen, branch, area, gencost] = case14
+%CASE14    Power flow data for 14 bus, 5 generator case.
+%   Please see 'help caseformat' for details on the case file format.
+%
+%   MATPOWER
+%   $Id$
+
 baseMVA = 100.0; 
 
 %bus type  Pd      Qd       Gs      Bs    area  Vm      Va      baseKV zone   Vmax   Vmin

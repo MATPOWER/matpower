@@ -1,5 +1,10 @@
 function [baseMVA, bus, gen, branch, area, gencost] = case118
-% 08/25/93 UW ARCHIVE           100.0  1961 W IEEE 57 Bus Test Case
+%CASE118    Power flow data for IEEE 118 bus test case.
+%   Please see 'help caseformat' for details on the case file format.
+%
+%   MATPOWER
+%   $Id$
+
 % The test system data was originally in IEEE Common Data Format.
 % Its format has been converted to matpower format by cdf2matp.
 

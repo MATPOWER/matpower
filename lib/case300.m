@@ -1,6 +1,12 @@
 function [baseMVA, bus, gen, branch, area, gencost] = case300
+%CASE300    Power flow data for IEEE 300 bus test case.
+%   Please see 'help caseformat' for details on the case file format.
+%
+%   MATPOWER
+%   $Id$
+
 % 13/05/91 CYME INTERNATIONAL    100.0 1991 S IEEE 300-BUS TEST SYSTEM
-% The system data was originally in IEEE CDF, 
+% The system data was originally in IEEE CDF,
 % converted to matpower format by cdf2matp.
 
 baseMVA = 100.0; 

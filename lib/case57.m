@@ -1,6 +1,11 @@
 function [baseMVA, bus, gen, branch, area, gencost] = case57
+%CASE57    Power flow data for IEEE 57 bus test case.
+%   Please see 'help caseformat' for details on the case file format.
+%
+%   MATPOWER
+%   $Id$
+
 % 09/25/93 UW ARCHIVE           100.0  1961 W IEEE 57 Bus Test Case
-% The test system data is written in matpower format  
 
 baseMVA = 100.0; 
 
