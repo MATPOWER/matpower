@@ -3,9 +3,10 @@ function [baseMVA, bus, gen, branch, area, gencost, info] = loadcase(casefile)
 %
 %   [baseMVA, bus, gen, branch, area, gencost ] = loadcase(casefile)
 %
-%   Here casefile is a string containing the name of the file.  If casefile
-%   contains the extension '.mat' or '.m', then that explicit file is
-%   searched. If casefile containts no extension, then CASELOAD looks for
+%   Here casefile is either a struct containing the fields baseMVA, bus,
+%   gen, branch, area, gencost, or a string containing the name of the file.
+%   If casefile contains the extension '.mat' or '.m', then the explicit file
+%   is searched. If casefile containts no extension, then CASELOAD looks for
 %   a '.mat' file first, then for a '.m' file.  If the file does not exist
 %   or doesn't define all matrices, the routine aborts with an appropriate
 %   error message.  Alternatively, it can be called with the syntax:
@@ -15,8 +16,8 @@ function [baseMVA, bus, gen, branch, area, gencost, info] = loadcase(casefile)
 %   In this case, the function will not abort, but info will contain an exit
 %   code as follows:
 %
-%       0:  all variables succesfully defined
-%       1:  input argument is not a string
+%       0:  all variables successfully defined
+%       1:  input argument is not a string or struct
 %       2:  specified extension-less file name does not exist in search path
 %       3:  specified .MAT file does not exist in search path
 %       4:  specified .M file does not exist in search path
@@ -24,9 +25,29 @@ function [baseMVA, bus, gen, branch, area, gencost, info] = loadcase(casefile)
 
 %   MATPOWER
 %   $Id$
-%   by Carlos Murillo, PSERC Cornell
-%   Copyright (c) 1996-2003 by Power System Engineering Research Center (PSERC)
+%   by Carlos Murillo & Ray Zimmerman, PSERC Cornell
+%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.
+
+if isstruct(casefile)
+	if nargout < 7
+		if ~isfield(casefile,'baseMVA') | ~isfield(casefile,'bus') | ...
+				~isfield(casefile,'gen') | ~isfield(casefile,'branch') | ...
+				~isfield(casefile,'area') | ~isfield(casefile,'gencost') 
+			info = 5;
+			baseMVA = []; bus = []; gen = []; branch = []; area = []; gencost = [];
+			return;
+		end
+	end
+	baseMVA	= casefile.baseMVA;
+	bus		= casefile.bus;
+	gen		= casefile.gen;
+	branch	= casefile.branch;
+	area	= casefile.area;
+	gencost	= casefile.gencost;
+	info	= 0;
+	return;
+end
 
 if ~isstr(casefile)
   if nargout < 7
