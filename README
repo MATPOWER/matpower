@@ -104,6 +104,7 @@ CHANGES file in the docs directory for all the gory details.
 New features:
 - Compatibility with Matlab 7 and Optimization Toolbox 3.
 - DC power flow and DC OPF solvers added.
+- Option to enforce generator reactive power limits in AC power flow solution.
 - Gauss-Seidel power flow solver added.
 - Support for MINOS-based OPF solver added (separate package,
   see http://www.pserc.cornell.edu/minopf/ for more details)
