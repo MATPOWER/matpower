@@ -95,8 +95,8 @@ tap(xfmr) = branch(xfmr, TAP);					%% include transformer tap ratios
 tap = tap .* exp(-j*pi/180 * branch(:, SHIFT));	%% add phase shifters
 nzld = find(bus(:, PD) | bus(:, QD));
 sorted_areas = sort(bus(:, BUS_AREA));
-areas = sorted_areas([1; find(diff(sorted_areas))+1]);	%% area numbers
-na = length(areas);								%% number of areas
+s_areas = sorted_areas([1; find(diff(sorted_areas))+1]);	%% area numbers
+na = length(s_areas);							%% number of areas
 on = find(gen(:, GEN_STATUS) > 0);
 V = bus(:, VM) .* exp(sqrt(-1) * pi/180 * bus(:, VA));
 out = find(branch(:, BR_STATUS) == 0);			%% out-of-service branches
@@ -135,7 +135,7 @@ if OUT_SYS_SUM
 	fprintf(fd, '\nLoads          %5d       Load                  %7.1f      %7.1f', length(nzld), sum(bus(nzld, PD)), sum(bus(nzld, QD)));
 	fprintf(fd, '\nBranches       %5d       Losses (I^2 * Z)      %8.2f     %8.2f', nl, sum(real(loss)), sum(imag(loss)) );
 	fprintf(fd, '\nTransformers   %5d       Branch Charging (inj)      -       %7.1f', length(xfmr), sum(fchg) + sum(tchg) );
-	fprintf(fd, '\nAreas          %5d       Shunt (inj)           %7.1f      %7.1f', length(areas), ...
+	fprintf(fd, '\nAreas          %5d       Shunt (inj)           %7.1f      %7.1f', length(s_areas), ...
 		-sum(bus(:, VM) .^ 2 .* bus(:, GS)), sum(bus(:, VM) .^ 2 .* bus(:, BS))	);
 	fprintf(fd, '\nInter-ties     %5d       Total Inter-tie Flow  %7.1f      %7.1f', length(ties), sum(abs(branch(ties, PF)-branch(ties, PT))) / 2, sum(abs(branch(ties, QF)-branch(ties, QT))) / 2);
 	fprintf(fd, '\n');
@@ -169,8 +169,8 @@ if OUT_AREA_SUM
 	fprintf(fd, '\nArea  # of   # of   Gens   # of   # of   # of   # of    Total Gen    On-line');
 	fprintf(fd, '\n Num  Buses  Gens  Online  Loads  Brchs  Xfmrs  Ties     Capacity    Capacity');
 	fprintf(fd, '\n----  -----  ----  ------  -----  -----  -----  ----   -----------  -----------');
-	for i=1:length(areas)
-		a = areas(i);
+	for i=1:length(s_areas)
+		a = s_areas(i);
 		ib = find(bus(:, BUS_AREA) == a);
 		ig = find(bus(e2i(gen(:, GEN_BUS)), BUS_AREA) == a);
 		igon = find(bus(e2i(gen(:, GEN_BUS)), BUS_AREA) == a & gen(:, GEN_STATUS) > 0);
@@ -195,8 +195,8 @@ if OUT_AREA_SUM
 	fprintf(fd, '\nArea   Generation       Load          Losses       Net Export    Brnch   Shunt');
 	fprintf(fd, '\n Num   MW    MVAr     MW    MVAr     MW    MVAr    MW     MVAr   Chrgng   MVAr');
 	fprintf(fd, '\n---- ------ ------  ------ ------  ------ ------  ------ ------  ------  ------');
-	for i=1:length(areas)
-		a = areas(i);
+	for i=1:length(s_areas)
+		a = s_areas(i);
 		ib = find(bus(:, BUS_AREA) == a);
 		ig = find(bus(e2i(gen(:, GEN_BUS)), BUS_AREA) == a);
 		igon = find(bus(e2i(gen(:, GEN_BUS)), BUS_AREA) == a & gen(:, GEN_STATUS) > 0);
