@@ -2,7 +2,7 @@
  Change history for MATPOWER
 -----------------------------
 
-Version:    3.0b3
+Version:    3.0b3+
 
 maintained by Ray Zimmerman <rz10@cornell.edu>
 
@@ -12,6 +12,17 @@ Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
 
 
+Changes since 3.0b3
+-------------------
+
+9/23/04
+    - Fixed bugs in cdf2matp.m which prevented it from working at all
+      when not specifying both input parameters and caused it to
+      sometimes no add the warnings at the end of the file.
+    - Fixed typo in name of lower bound input argument in opf.m. Only
+      affected those calling opf directly with extra linear constraints.
+
+    
 Changes since 3.0b2
 -------------------
 
