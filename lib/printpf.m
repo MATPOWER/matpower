@@ -101,8 +101,12 @@ on = find(gen(:, GEN_STATUS) > 0);
 V = bus(:, VM) .* exp(sqrt(-1) * pi/180 * bus(:, VA));
 out = find(branch(:, BR_STATUS) == 0);			%% out-of-service branches
 nout = length(out);
-loss = baseMVA * abs(V(e2i(branch(:, F_BUS))) ./ tap - V(e2i(branch(:, T_BUS)))) .^ 2 ./ ...
+if dc
+	loss = zeros(nl,1);
+else
+	loss = baseMVA * abs(V(e2i(branch(:, F_BUS))) ./ tap - V(e2i(branch(:, T_BUS)))) .^ 2 ./ ...
 				(branch(:, BR_R) - j * branch(:, BR_X));
+end
 fchg = abs(V(e2i(branch(:, F_BUS))) ./ tap) .^ 2 .* branch(:, BR_B) * baseMVA / 2;
 tchg = abs(V(e2i(branch(:, T_BUS)))       ) .^ 2 .* branch(:, BR_B) * baseMVA / 2;
 loss(out) = zeros(nout, 1);
