@@ -2,7 +2,7 @@
  Change history for MATPOWER
 -----------------------------
 
-Version:    3.0b2+
+Version:    3.0b3
 
 maintained by Ray Zimmerman <rz10@cornell.edu>
 
@@ -10,6 +10,31 @@ MATPOWER
 $Id$
 Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
+
+
+Changes since 3.0b2
+-------------------
+
+9/20/04
+    - Released version 3.0b3.
+    - Generated clean versions of all included case files using latest
+      cdf2matp and savecase. Added documentation for source of data
+      for case files.
+    - More enhancements to cdf2matp.m. Adds comments at beginning, appends
+      conversion warnings as comments at end of file. Uses savecase.m to
+      save the data.
+    - Updated savecase.m to use %g instead of %f many places, correctly
+      handle multi-line comments, include headers for extra columns for
+      solved cases. Optionally returns filename with extension.
+
+9/17/04
+    - Fixed bug in grad_std.m, introduced in 3.0b2, which prevented constr
+      and LP-based OPF solvers from working for polynomial cost functions.
+
+9/15/04
+    - In cdf2matp.m, added input args, updated docs, switched to named
+      indexing of data matrices, new method for creating gen costs.
+    - Documentation fixes and additions from Pan Wei.
 
 
 Changes since 3.0b1
