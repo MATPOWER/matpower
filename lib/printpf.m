@@ -8,8 +8,8 @@ function printpf(baseMVA, bus, gen, branch, f, success, et, fd, mpopt)
 %   opf) in et.
 
 %   MATPOWER Version 2.5b3
-%   by Ray Zimmerman, PSERC Cornell    7/16/99
-%   Copyright (c) 1996-1999 by Power System Engineering Research Center (PSERC)
+%   by Ray Zimmerman, PSERC Cornell    10/23/02
+%   Copyright (c) 1996-2002 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.
 
 %%----- initialization -----
@@ -142,10 +142,10 @@ if OUT_SYS_SUM
 	fprintf(fd, '\n                 -------------------------  --------------------------------');
 	[minv, mini] = min(bus(:, VM));
 	[maxv, maxi] = max(bus(:, VM));
-	fprintf(fd, '\nVoltage Magnitude %7.3f p.u. @ bus %-4d     %7.3f p.u. @ bus %-4d', minv, mini, maxv, maxi);
+	fprintf(fd, '\nVoltage Magnitude %7.3f p.u. @ bus %-4d     %7.3f p.u. @ bus %-4d', minv, bus(mini, BUS_I), maxv, bus(maxi, BUS_I));
 	[minv, mini] = min(bus(:, VA));
 	[maxv, maxi] = max(bus(:, VA));
-	fprintf(fd, '\nVoltage Angle   %8.2f deg   @ bus %-4d   %8.2f deg   @ bus %-4d', minv, mini, maxv, maxi);
+	fprintf(fd, '\nVoltage Angle   %8.2f deg   @ bus %-4d   %8.2f deg   @ bus %-4d', minv, bus(mini, BUS_I), maxv, bus(maxi, BUS_I));
 	[maxv, maxi] = max(real(loss));
 	fprintf(fd, '\nP Losses (I^2*R)             -              %8.2f MW    @ line %d-%d', maxv, branch(maxi, F_BUS), branch(maxi, T_BUS));
 	[maxv, maxi] = max(imag(loss));
@@ -153,10 +153,10 @@ if OUT_SYS_SUM
 	if isOPF
 		[minv, mini] = min(bus(:, LAM_P));
 		[maxv, maxi] = max(bus(:, LAM_P));
-		fprintf(fd, '\nLambda P        %8.2f $/MWh @ bus %-4d   %8.2f $/MWh @ bus %-4d', minv, mini, maxv, maxi);
+		fprintf(fd, '\nLambda P        %8.2f $/MWh @ bus %-4d   %8.2f $/MWh @ bus %-4d', minv, bus(mini, BUS_I), maxv, bus(maxi, BUS_I));
 		[minv, mini] = min(bus(:, LAM_Q));
 		[maxv, maxi] = max(bus(:, LAM_Q));
-		fprintf(fd, '\nLambda Q        %8.2f $/MWh @ bus %-4d   %8.2f $/MWh @ bus %-4d', minv, mini, maxv, maxi);
+		fprintf(fd, '\nLambda Q        %8.2f $/MWh @ bus %-4d   %8.2f $/MWh @ bus %-4d', minv, bus(mini, BUS_I), maxv, bus(maxi, BUS_I));
 	end
 	fprintf(fd, '\n');
 end
@@ -236,13 +236,12 @@ if OUT_GEN
 	fprintf(fd, '\n---  ---  --------  --------');
 	if isOPF, fprintf(fd, '  --------  --------'); end
 	for i = 1:ng
-		if gen(i, PG)
+		if gen(i, PG) | gen(i, QG)
 			fprintf(fd, '\n%3d%5d%9.2f%10.2f%10.2f%10.2f', i, gen(i, GEN_BUS), gen(i, PG), gen(i, QG));
-			if isOPF, fprintf(fd, '%10.2f%10.2f', genlamP(i), genlamQ(i)); end
 		else
-			fprintf(fd, '\n%3d%5d      -         -', i, gen(i, GEN_BUS));
-			if isOPF, fprintf(fd, '         -         -'); end
+			fprintf(fd, '\n%3d%5d      -         -  ', i, gen(i, GEN_BUS));
 		end
+		if isOPF, fprintf(fd, '%10.2f%10.2f', genlamP(i), genlamQ(i)); end
 	end
 	fprintf(fd, '\n          --------  --------');
 	fprintf(fd, '\n  Total:%9.2f%10.2f', sum(gen(:, PG)), sum(gen(:, QG)));

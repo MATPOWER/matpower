@@ -1,8 +1,8 @@
 -----------------------------
- Change history for MATPOWER        Tue, Nov 9, 1999
+ Change history for MATPOWER        Wed, Oct 23, 2002
 -----------------------------
 
-Version:    2.5b3
+Version:    2.5b3+
 
 maintained by Ray Zimmerman <rz10@cornell.edu>
 
@@ -22,6 +22,25 @@ Please report any bugs you find to Ray Zimmerman <rz10@cornell.edu>.
 
 Changes since 2.0
 -----------------
+
+10/23/02
+	- Fixed bus numbering bug in System Summary section of printpf.m.
+
+6/20/00
+	- Fixed a bug in printpf.m in the generator section, where
+	  the generator was assumed to be off if it's real power
+	  output was zero, even if the reactive output was non-zero.
+	- Modified printpf.m to print out lambdas in generation section
+	  for generators that are shut down.
+
+6/8/00
+	- Modified cdf2matp.m so that Pd also includes any generation at
+	  buses specified as PQ buses. Also modified identification of
+	  generator buses to include only PV or reference buses. (Thanks
+	  to Venkat)
+	- Modified cdf2matp.m so that it always treats the input values
+	  for Gs and Bs as per unit values and converts them to actual
+	  values expected by MATPOWER (Thanks to D. Devaraj)
 
 version 2.5b3
 11/9/99
