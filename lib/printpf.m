@@ -335,14 +335,14 @@ if OUT_BUS
     fprintf(fd, '\n================================================================================');
     fprintf(fd, '\n|     Bus Data                                                                 |');
     fprintf(fd, '\n================================================================================');
-    fprintf(fd, '\nBus      Voltage           Generation             Load        ');
+    fprintf(fd, '\n Bus      Voltage          Generation             Load        ');
     if isOPF, fprintf(fd, '  Lambda($/MVA-hr)'); end
-    fprintf(fd, '\n #   Mag(pu)  Ang(deg)   P (MW)   Q (MVAr)   P (MW)   Q (MVAr)');
+    fprintf(fd, '\n  #   Mag(pu) Ang(deg)   P (MW)   Q (MVAr)   P (MW)   Q (MVAr)');
     if isOPF, fprintf(fd, '     P        Q   '); end
-    fprintf(fd, '\n---  -------  --------  --------  --------  --------  --------');
+    fprintf(fd, '\n----- ------- --------  --------  --------  --------  --------');
     if isOPF, fprintf(fd, '  -------  -------'); end
     for i = 1:nb
-        fprintf(fd, '\n%3d%8.3f%10.3f', bus(i, [BUS_I, VM, VA]));
+        fprintf(fd, '\n%5d%7.3f%9.3f', bus(i, [BUS_I, VM, VA]));
         g  = find(gen(:, GEN_STATUS) > 0 & gen(:, GEN_BUS) == bus(i, BUS_I) & ...
                     ~isload(gen));
         ld = find(gen(:, GEN_STATUS) > 0 & gen(:, GEN_BUS) == bus(i, BUS_I) & ...
@@ -367,7 +367,7 @@ if OUT_BUS
             if abs(bus(i, LAM_Q)) > 1e-6
                 fprintf(fd, '%8.3f', bus(i, LAM_Q));
             else
-                fprintf(fd, '     -   ');
+                fprintf(fd, '     -');
             end
         end
     end
@@ -408,14 +408,13 @@ if isOPF
         fprintf(fd, '\n================================================================================');
         fprintf(fd, '\n|     Voltage Constraints                                                      |');
         fprintf(fd, '\n================================================================================');
-        fprintf(fd, '\nBus');
-        fprintf(fd, '\n  #   Vmin mu    Vmin    |V|   Vmax    Vmax mu');
-        fprintf(fd, '\n----  --------   -----  -----  -----   --------');        
+        fprintf(fd, '\nBus #  Vmin mu    Vmin    |V|   Vmax    Vmax mu');
+        fprintf(fd, '\n-----  --------   -----  -----  -----   --------');        
         for i = 1:nb
             if OUT_V_LIM == 2 | (OUT_V_LIM == 1 & ...
                          (bus(i, VM) < bus(i, VMIN) + ctol | ...
                           bus(i, VM) > bus(i, VMAX) - ctol))
-                fprintf(fd, '\n%4d', bus(i, BUS_I));
+                fprintf(fd, '\n%5d', bus(i, BUS_I));
                 if bus(i, VM) < bus(i, VMIN) + ctol
                     fprintf(fd, '%10.3f', bus(i, MU_VMIN));                    
                 else
@@ -445,15 +444,15 @@ if isOPF
     if OUT_PG_LIM == 2 | (OUT_PG_LIM == 1 & ...
                              (any(gen(ong, PG) < gen(ong, PMIN) + ctol) | ...
                               any(gen(ong, PG) > gen(ong, PMAX) - ctol)))
-        fprintf(fd, '\nGen  Bus               Active Power Limits');
-        fprintf(fd, '\n #    #   Pmin mu    Pmin       Pg       Pmax    Pmax mu');
-        fprintf(fd, '\n---  ---  -------  --------  --------  --------  -------');
+        fprintf(fd, '\n Gen   Bus                Active Power Limits');
+        fprintf(fd, '\n  #     #    Pmin mu    Pmin       Pg       Pmax    Pmax mu');
+        fprintf(fd, '\n----  -----  -------  --------  --------  --------  -------');
         for k = 1:length(ong)
             i = ong(k);
             if OUT_PG_LIM == 2 | (OUT_PG_LIM == 1 & ...
                         (gen(i, PG) < gen(i, PMIN) + ctol | ...
                          gen(i, PG) > gen(i, PMAX) - ctol))
-                fprintf(fd, '\n%3d%5d', i, gen(i, GEN_BUS));
+                fprintf(fd, '\n%4d%6d ', i, gen(i, GEN_BUS));
                 if gen(i, PG) < gen(i, PMIN) + ctol
                     fprintf(fd, '%8.3f', gen(i, MU_PMIN));
                 else
