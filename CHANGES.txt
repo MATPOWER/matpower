@@ -2,7 +2,7 @@
  Change history for MATPOWER
 -----------------------------
 
-Version:    3.0b1+
+Version:    3.0b2
 
 maintained by Ray Zimmerman <rz10@cornell.edu>
 
@@ -16,6 +16,7 @@ Changes since 3.0b1
 -------------------
 
 9/7/04
+    - Released version 3.0b1.
     - Added OPF_P_LINE_LIM option to mpoptions to use active power
       instead of apparent power for line limits (thanks to Pan Wei
       for the suggestion and some code).
