@@ -2,22 +2,11 @@
  Change history for MATPOWER
 -----------------------------
 
-Version:    2.5b3+
+Version:    3.0
 
 maintained by Ray Zimmerman <rz10@cornell.edu>
 $Id$
-Copyright (c) 1996-2003 by Power System Engineering Research Center (PSERC)
-
-
-Known Bugs
-----------
-
-Please report any bugs you find to Ray Zimmerman <rz10@cornell.edu>.
-
-- MathWorks bug: constr in version 1 of the Optimization Toolbox does
-  not correctly handle negative lambdas
-- identification of binding constraints in printpf.m should
-  use OPF_VIOLATION instead of size of MU
+Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
 
 
 Changes since 2.0
@@ -147,7 +136,7 @@ version 2.5b3
       power flow formulation to be used for power flow and optimal
       power flow is a DC approximation or full AC representation.
       Merged rundcpf.m with runpf.m and rundcopf.m with runopf.m
-      so that the appropriate solver will be used base on the
+      so that the appropriate solver will be used based on the
       value of the PF_DC flag in the options. The functions rundcpf.m
       and rundcopf.m were modified to simply call runpf.m and
       runopf.m, respectively, with the PF_DC flag set to 1.
