@@ -23,7 +23,10 @@ function [Ay, by]  = makeAy(baseMVA, ng, gencost, pgbas, qgbas, ybas)
 
 [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 
+% find all pwl cost rows in gencost, either real or reactive
 iycost = find(gencost(:, MODEL) == PW_LINEAR);
+
+% this is the number of extra "y" variables needed to model those costs
 ny = size(iycost, 1);
 
 if ny == 0
@@ -33,7 +36,7 @@ if ny == 0
 end
 
 % if p(i),p(i+1),c(i),c(i+1) define one of the cost segments, then
-% the corresponding constraint on Pg and Y is
+% the corresponding constraint on Pg (or Qg) and Y is
 %                                             c(i+1) - c(i)
 %  Y   >=   c(i) + m * (Pg - p(i)),      m = ---------------
 %                                             p(i+1) - p(i)
@@ -45,7 +48,7 @@ end
 % same order as the compressed column sparse format used by matlab;
 % this should be the quickest.
 
-m = sum(gencost(iycost, NCOST));
+m = sum(gencost(iycost, NCOST));  % total number of cost points
 Ay = sparse([], [], [], m-ny, ybas+ny-1, 2*(m-ny)); 
 by = [];
 % First fill the Pg or Qg coefficients (since their columns come first)
@@ -62,13 +65,10 @@ for i=iycost'
    b = m .* p(1:ns-1) - c(1:ns-1);        % and rhs
    by = [by;  b'];
    if i > ng
-     sidx = qgbas + (i-ng) - 1;
+     sidx = qgbas + (i-ng) - 1;           % this was for a q cost
    else
-     sidx = pgbas + i - 1;
+     sidx = pgbas + i - 1;                % this was for a p cost
    end
-%   if (length(k:k+ns-2) ~= length(m)) | isempty(m)
-%     keyboard
-%   end
    Ay(k:k+ns-2, sidx) = m';
    k = k + ns - 1;
 end
@@ -82,3 +82,4 @@ for i=iycost'
    j = j + 1;
 end
 
+return;
