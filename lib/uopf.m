@@ -46,8 +46,9 @@ end
 t0 = clock;                                 %% start timer
 
 %% check for sum(Pmin) > total load, decommit as necessary
-load_capacity   = sum(bus(:, PD));      %% compute total load capacity
-on = find(gen(:, GEN_STATUS) > 0);      %% which generators are on?
+on   = find( gen(:, GEN_STATUS) > 0 & ~isload(gen) );   %% gens in service
+onld = find( gen(:, GEN_STATUS) > 0 &  isload(gen) );   %% disp loads in serv
+load_capacity = sum(bus(:, PD)) - sum(gen(onld, PMIN)); %% total load capacity
 Pmin = gen(on, PMIN);
 while sum(Pmin) > load_capacity
     %% shut down most expensive unit
@@ -65,7 +66,7 @@ while sum(Pmin) > load_capacity
     gen(i, GEN_STATUS)  = 0;
     
     %% update minimum gen capacity
-    on = find(gen(:, GEN_STATUS) > 0);      %% which generators are on?
+    on  = find( gen(:, GEN_STATUS) > 0 & ~isload(gen) );   %% gens in service
     Pmin = gen(on, PMIN);
 end
 
