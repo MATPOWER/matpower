@@ -21,13 +21,16 @@ if nargin < 3 | isempty(prec)
     prec = 5;
 end
 
-cond = ( max(max(abs(got - expected))) < 10^(-prec) );
+got_minus_expected = got - expected;
+max_diff = max(max(abs(got_minus_expected)));
+cond = ( max_diff < 10^(-prec) );
 
 t_ok(cond, msg);
 if ~cond
     got
     expected
-    got_minus_expected = got - expected
+    got_minus_expected
+    fprintf('max diff = %g (allowed tol = %g)\n\n', max_diff, 10^(-prec));
 end
 
 return;
