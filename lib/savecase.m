@@ -1,8 +1,9 @@
 function savecase(fname, p1, p2, p3, p4, p5, p6, p7)
 %SAVECASE  Saves a MATPOWER case file, given a filename and the data matrices.
 %
+%   savecase(fname, baseMVA, bus, gen, branch)
 %   savecase(fname, baseMVA, bus, gen, branch, areas, gencost)
-%       or
+%   savecase(fname, comment, baseMVA, bus, gen, branch)
 %   savecase(fname, comment, baseMVA, bus, gen, branch, areas, gencost)
 %
 %   Writes a MATPOWER case file, given a filename and the data matrices.
@@ -28,21 +29,25 @@ function savecase(fname, p1, p2, p3, p4, p5, p6, p7)
 
 %% default arguments
 if isstr(p1)
-  comment = p1;
-  baseMVA = p2;
-  bus     = p3;
-  gen     = p4;
-  branch  = p5;
-  areas   = p6;
-  gencost = p7;
+	comment = p1;
+	baseMVA = p2;
+	bus     = p3;
+	gen     = p4;
+	branch  = p5;
+	if nargin > 6
+		areas   = p6;
+		gencost = p7;
+	end
 else
-  comment = '';
-  baseMVA = p1;
-  bus     = p2;
-  gen     = p3;
-  branch  = p4;
-  areas   = p5;
-  gencost = p6;
+	comment = '';
+	baseMVA = p1;
+	bus     = p2;
+	gen     = p3;
+	branch  = p4;
+	if nargin > 5
+		areas   = p5;
+		gencost = p6;
+	end
 end
 
 %% verify valid filename
@@ -67,7 +72,11 @@ end
 
 %% open and write the file
 if strcmp(extension, '.mat')		%% MAT-file
-	eval(['save ', rootname, ' baseMVA bus gen branch areas gencost;']);
+	if exist(gencost) == 1
+		eval(['save ', rootname, ' baseMVA bus gen branch areas gencost;']);
+	else
+		eval(['save ', rootname, ' baseMVA bus gen branch;']);
+	end
 else								%% M-file
 	%% open file
 	[fd, msg] = fopen(fname, 'wt');		%% print it to an m-file
@@ -76,10 +85,10 @@ else								%% M-file
 	end
 	
 	%% function header, etc.
-	if isempty(areas) | isempty(gencost)
-		fprintf(fd, 'function [baseMVA, bus, gen, branch] = %s\n\n', rootname);
-	else
+	if exist(gencost) == 1 & ~isempty(gencost)
 		fprintf(fd, 'function [baseMVA, bus, gen, branch, areas, gencost] = %s\n', rootname);
+	else
+		fprintf(fd, 'function [baseMVA, bus, gen, branch] = %s\n\n', rootname);
 	end
 	if length(comment) ~= 0
 		fprintf(fd, '%% %s\n', comment);
@@ -127,33 +136,35 @@ else								%% M-file
 	fprintf(fd, '];\n\n');
 	
 	%% OPF data
-	%% area data
-	fprintf(fd, '%%%%-----  OPF Data  -----%%%%\n');
-	fprintf(fd, '%%%% area data\n');
-	fprintf(fd, 'areas = [\n');
-	if ~isempty(areas)
-		fprintf(fd, '\t%d\t%d;\n', areas(:, 1:PRICE_REF_BUS).');
-	end
-	fprintf(fd, '];\n\n');
-		
-	%% generator cost data
-	fprintf(fd, '%%%% generator cost data\n');
-	fprintf(fd, '%%\t1\tstartup\tshutdown\tn\tx0\ty0\t...\txn\tyn\n');
-	fprintf(fd, '%%\t2\tstartup\tshutdown\tn\tc(n-1)\t...\tc0\n');
-	fprintf(fd, 'gencost = [\n');
-	if ~isempty(gencost)
-		n = gencost(1, N);
-		if gencost(1, MODEL) == PW_LINEAR
-			n = 2 * n;
+	if exist(gencost) == 1 & ~isempty(gencost)
+		%% area data
+		fprintf(fd, '%%%%-----  OPF Data  -----%%%%\n');
+		fprintf(fd, '%%%% area data\n');
+		fprintf(fd, 'areas = [\n');
+		if ~isempty(areas)
+			fprintf(fd, '\t%d\t%d;\n', areas(:, 1:PRICE_REF_BUS).');
 		end
-		template = '\t%d\t%.2f\t%.2f\t%d';
-		for i = 1:n
-			template = [template, '\t%.6f'];
+		fprintf(fd, '];\n\n');
+			
+		%% generator cost data
+		fprintf(fd, '%%%% generator cost data\n');
+		fprintf(fd, '%%\t1\tstartup\tshutdown\tn\tx0\ty0\t...\txn\tyn\n');
+		fprintf(fd, '%%\t2\tstartup\tshutdown\tn\tc(n-1)\t...\tc0\n');
+		fprintf(fd, 'gencost = [\n');
+		if ~isempty(gencost)
+			n = gencost(1, N);
+			if gencost(1, MODEL) == PW_LINEAR
+				n = 2 * n;
+			end
+			template = '\t%d\t%.2f\t%.2f\t%d';
+			for i = 1:n
+				template = [template, '\t%.6f'];
+			end
+			template = [template, ';\n'];
+			fprintf(fd, template, gencost.');
 		end
-		template = [template, ';\n'];
-		fprintf(fd, template, gencost.');
+		fprintf(fd, '];\n\n');
 	end
-	fprintf(fd, '];\n\n');
 	
 	%% end
 	fprintf(fd, 'return\n');
