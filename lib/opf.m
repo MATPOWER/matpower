@@ -85,8 +85,8 @@ comgen = find(gen(:, GEN_STATUS) > 0);
 if size(gencost, 1) == 2*size(gen,1)
   comgen = [comgen; comgen];
 end
-i_pwln = find((model == PW_LINEAR) & comgen);
-i_poly = find((model == POLYNOMIAL) & comgen);
+i_pwln = find(model(comgen) == PW_LINEAR);
+i_poly = find(model(comgen) == POLYNOMIAL);
 
 % Start clock
 t1 = clock;
