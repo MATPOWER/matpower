@@ -32,7 +32,9 @@ function [options, names] = mpoption(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p1
 %       5  - PF_MAX_IT_GS, 1000     maximum number of iterations for 
 %                                   Gauss-Seidel method
 %       10 - PF_DC, 0               use DC power flow formulation, for
-%                                   power flow and OPF      [   0 or 1  ]
+%                                   power flow and OPF
+%           [    0 - use AC formulation & corresponding algorithm opts  ]
+%           [    1 - use DC formulation, ignore AC algorithm options    ]
 %   OPF options
 %       11 - OPF_ALG, 0             algorithm to use for OPF
 %           [    0 - choose best default solver available in the        ]
@@ -62,9 +64,6 @@ function [options, names] = mpoption(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p1
 %       14 - OPF_POLY2PWL_PTS, 10   number of evaluation points to use
 %                                   when converting from polynomial to
 %                                   piece-wise linear costs
-%       15 - OPF_NEQ, 0             number of equality constraints
-%                                   (0 => 2*nb, set by program, not a
-%                                   user option)
 %       16 - OPF_VIOLATION, 5e-6    constraint violation tolerance
 %       17 - CONSTR_TOL_X, 1e-4     termination tol on x for 'constr'
 %       18 - CONSTR_TOL_F, 1e-4     termination tol on F for 'constr'
@@ -112,12 +111,8 @@ function [options, names] = mpoption(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p1
 %       43 - OUT_RAW, 0             print raw data for Perl database
 %                                   interface code          [   0 or 1  ]
 %   other options
-%       51 - SPARSE_QP, 0           QP solver can handle sparse matrices
-%                                                           [   0 or 1  ]
-%       52 - VAR_LOAD_PF, 1         generators with negative PMIN are
-%                                   treated as demands with constant power
-%                                   factor (currently only works with MINOS)
-%                                                           [   0 or 1  ]
+%       51 - SPARSE_QP, 1           pass sparse matrices to QP and LP
+%                                   solvers if possible     [   0 or 1  ]
 %   MINOS OPF options
 %       61 - MNS_FEASTOL, 0 (1E-3)  primal feasibility tolerance,
 %                                   set to value of OPF_VIOLATION by default
@@ -171,7 +166,8 @@ else                    %% even number of parameters
         100;    %% 12 - OPF_ALG_POLY
         200;    %% 13 - OPF_ALG_PWL
         10;     %% 14 - OPF_POLY2PWL_PTS
-        0;      %% 15 - OPF_NEQ
+        0;      %% 15 - OPF_NEQ, not a user option (number of eq constraints for
+                %%          copf, lpopf and dcopf algorithms, set by program)
         5e-6;   %% 16 - OPF_VIOLATION
         1e-4;   %% 17 - CONSTR_TOL_X
         1e-4;   %% 18 - CONSTR_TOL_F
@@ -211,8 +207,8 @@ else                    %% even number of parameters
         0;      %% 50 - RESERVED50
         
         %% other options
-        0;      %% 51 - SPARSE_QP
-        1;      %% 52 - VAR_LOAD_PF
+        1;      %% 51 - SPARSE_QP
+        0;      %% 52 - RESERVED52
         0;      %% 53 - RESERVED53
         0;      %% 54 - RESERVED54
         0;      %% 55 - RESERVED55
@@ -309,7 +305,7 @@ names = str2mat(    names, ...
 %% other options
 names = str2mat(    names, ...
                     'SPARSE_QP', ...            %% 51
-                    'VAR_LOAD_PF', ...          %% 52
+                    'RESERVED52', ...           %% 52
                     'RESERVED53', ...           %% 53
                     'RESERVED54', ...           %% 54
                     'RESERVED55', ...           %% 55
