@@ -17,13 +17,9 @@ end
 test_list = {   't_loadcase', ...
                 't_jacobian', ...
                 't_pf', ...
-                't_opf' };
-
-%% add smartmarket tests if available
-nt = size(test_list, 2);
-if exist('runmkt')
-    test_list{1,nt+1} = 't_auction';
-end
+                't_opf', ...
+                't_auction'
+            };
 
 t_run_tests( test_list, verbose );
 
