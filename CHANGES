@@ -15,6 +15,9 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 2.0
 -----------------
 
+8/24/04
+    - Made mpoption() throw and error if passed an invalid option name.
+
 8/23/04
     - Added an fmincon based OPF solver for the generalized formulation
       previously used by mopf (Carlos).
