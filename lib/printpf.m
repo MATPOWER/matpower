@@ -1,5 +1,5 @@
 function printpf(baseMVA, bus, gen, branch, f, success, et, fd, mpopt)
-%PRINTOPF   Prints optimal power flow results.
+%PRINTPF   Prints power flow results.
 %   printpf(baseMVA, bus, gen, branch, f, success, et, fd, mpopt) prints
 %   powerflow results to fd (a file descriptor which defaults to STDOUT).
 %   mpopt is a MATPOWER options vector (see 'help mpoption' for details).
