@@ -26,6 +26,8 @@ Changes since 2.0
 8/13/04
 	- Renamed 'area' variable to 'areas' to avoid masking the built-in
 	  function of the same name.
+	- Made OPF data matrices 'areas' and 'gencost' optional for running
+	  simple power flow.
 
 7/15/04
 	- The loadcase function (and therefore all of the run* functions
