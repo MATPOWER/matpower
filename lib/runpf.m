@@ -15,9 +15,10 @@ function [MVAbase, bus, gen, branch, success, et] = runpf(casename, mpopt, fname
 %   solved case will be written to a MATPOWER case file whose type is determined
 %   by a '.m' or '.mat' extension ('.m' is assumed if no extension is given).
 
-%   MATPOWER Version 2.5b3
-%   by Ray Zimmerman, PSERC Cornell    9/21/99
-%   Copyright (c) 1996-1999 by Power System Engineering Research Center (PSERC)
+%   MATPOWER
+%   $Id$
+%   by Ray Zimmerman, PSERC Cornell
+%   Copyright (c) 1996-2003 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.
 
 %%-----  initialize  -----
