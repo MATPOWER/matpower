@@ -1,9 +1,19 @@
 %CASEFORMAT    Defines the MATPOWER case file format.
 %   A MATPOWER case file is an M-file or MAT-file which defines the variables
-%   baseMVA, bus, gen, branch, areas, and gencost. The format of the data is
-%   similar to PTI format except where noted. An item marked with (+) indicates
-%   that it is included in this data but is not part of the PTI format. An item
-%   marked with (-) is one that is in the PTI format but is not included here.
+%   baseMVA, bus, gen, branch, areas, and gencost. With the exception of
+%   baseMVA, a scalar, each data variable is a matrix, where a row corresponds
+%   to a single bus, branch, gen, etc. The format of the data is similar to
+%   the PTI format described in
+%       http://www.ee.washington.edu/research/pstca/formats/pti.txt
+%   except where noted. An item marked with (+) indicates that it is included
+%   in this data but is not part of the PTI format. An item marked with (-) is
+%   one that is in the PTI format but is not included here. The columns for
+%   each data matrix are given below.
+%
+%   See also IDX_BUS, IDX_BRCH, IDX_GEN, IDX_AREA and IDX_COST regarding
+%   constants which can be used as named column indices for the data matrices.
+%   Also described in the first three are additional columns that are added
+%   to the bus, branch and gen matrices by the power flow and OPF solvers.
 %
 %   Bus Data Format
 %       1   bus number (1 to 29997)
@@ -77,13 +87,15 @@
 %       2   startup, startup cost in US dollars
 %       3   shutdown, shutdown cost in US dollars
 %       4   n, number of cost coefficients to follow for polynomial
-%           (or data points for piecewise linear) total cost function
-%       5 and following, cost data, piecewise linear data as:
-%                   x0, y0, x1, y1, x2, y2, ...
-%           and polynomial data as, e.g.:
+%           cost function, or number of data points for piecewise linear
+%       5 and following, cost data defining total cost function
+%           For polynomial cost:
 %                   c2, c1, c0
 %           where the polynomial is c0 + c1*P + c2*P^2
-%
+%           For piecewise linear cost:
+%                   x0, y0, x1, y1, x2, y2, ...
+%           where x0 < x1 < x2 < ... and the points (x0,y0), (x1,y1),
+%           (x2,y2), ... are the end- and break-points of the cost function.
 
 %   MATPOWER
 %   $Id$
