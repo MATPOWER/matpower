@@ -7,9 +7,10 @@ function printpf(baseMVA, bus, gen, branch, f, success, et, fd, mpopt)
 %   function value is given in f and the elapsed time (seconds to compute
 %   opf) in et.
 
-%   MATPOWER Version 2.5b3
-%   by Ray Zimmerman, PSERC Cornell    10/23/02
-%   Copyright (c) 1996-2002 by Power System Engineering Research Center (PSERC)
+%   MATPOWER
+%   $Id$
+%   by Ray Zimmerman, PSERC Cornell
+%   Copyright (c) 1996-2003 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.
 
 %%----- initialization -----

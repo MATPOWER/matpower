@@ -6,9 +6,10 @@ function totalcost = totcost(gencost, Pg)
 %   of gencost is used to evaluate the cost at the points specified in the
 %   corresponding row of Pg.
 
-%   MATPOWER Version 2.5b3
-%   by Ray Zimmerman, PSERC Cornell    9/19/97
-%   Copyright (c) 1997 by Power System Engineering Research Center (PSERC)
+%   MATPOWER
+%   $Id$
+%   by Ray Zimmerman, PSERC Cornell
+%   Copyright (c) 1996-2003 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.
 
 [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, N, COST] = idx_cost;

@@ -22,9 +22,10 @@ function [baseMVA, bus, gen, branch, area, gencost, info] = loadcase(casefile)
 %       4:  specified .M file does not exist in search path
 %       5:  specified file fails to define all matrices
 
-%   MATPOWER Version 2.5b3
-%   by Carlos Murillo, PSERC Cornell    9/21/99
-%   Copyright (c) 1996-1999 by Power System Engineering Research Center (PSERC)
+%   MATPOWER
+%   $Id$
+%   by Carlos Murillo, PSERC Cornell
+%   Copyright (c) 1996-2003 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.
 
 if ~isstr(casefile)

@@ -10,9 +10,10 @@ function savecase(fname, p1, p2, p3, p4, p5, p6, p7)
 %   overwritten. If fname ends with '.mat' it saves the case as a MAT-file
 %   otherwise it saves it as an M-file.
 
-%   MATPOWER Version 2.5b3
-%   by Ray Zimmerman & Carlos Murillo, PSERC Cornell    6/20/00
-%   Copyright (c) 1996-2000 by Power System Engineering Research Center (PSERC)
+%   MATPOWER
+%   $Id$
+%   by Ray Zimmerman & Carlos Murillo, PSERC Cornell
+%   Copyright (c) 1996-2003 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.
 
 %% define named indices into bus, gen, branch matrices

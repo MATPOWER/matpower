@@ -7,9 +7,10 @@ function Va = dcpf(B, Pbus, Va0, ref, pv, pq)
 %   the lists of bus indices for the swing bus, PV buses, and PQ buses,
 %   respectively. Returns a vector of bus voltage angles in radians.
 
-%   MATPOWER Version 2.5b3
-%   by Ray Zimmerman, PSERC Cornell    7/16/99
-%   Copyright (c) 1996-1999 by Power System Engineering Research Center (PSERC)
+%   MATPOWER
+%   $Id$
+%   by Ray Zimmerman, PSERC Cornell
+%   Copyright (c) 1996-2003 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.
 
 %% initialize result vector

@@ -4,9 +4,10 @@ function [ref, pv, pq] = bustypes(bus, gen)
 %   Generators with "out-of-service" status are treated as PQ buses with
 %   zero generation (regardless of Pg/Qg values in gen).
 
-%   MATPOWER Version 2.5b3
-%   by Ray Zimmerman, PSERC Cornell    12/1/98
-%   Copyright (c) 1996-1998 by Power System Engineering Research Center (PSERC)
+%   MATPOWER
+%   $Id$
+%   by Ray Zimmerman, PSERC Cornell
+%   Copyright (c) 1996-2003 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.
 
 %% constants

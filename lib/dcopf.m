@@ -6,9 +6,10 @@ function [bus, gen, branch, f, success, et] = dcopf(baseMVA, bus, gen, gencost, 
 %   Assumes that B, Bf, Pbusinj, Pfinj, V, ref, pv, pq are consistent with
 %   (or override) data in bus, gen, branch.
 
-%   MATPOWER Version 2.5b3
-%   by Ray Zimmerman, PSERC Cornell    9/9/99
-%   Copyright (c) 1996-1999 by Power System Engineering Research Center (PSERC)
+%   MATPOWER
+%   $Id$
+%   by Ray Zimmerman, PSERC Cornell
+%   Copyright (c) 1996-2003 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.
 
 %%----- initialization -----

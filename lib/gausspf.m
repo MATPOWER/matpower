@@ -15,10 +15,11 @@ function [V, converged, i] = gausspf(Ybus, Sbus, V0, ref, pv, pq, mpopt)
 %   voltages, a flag which indicates whether it converged or not, and
 %   the number of iterations performed.
 
-%   MATPOWER Version 2.5b3
-%   by Ray Zimmerman, PSERC Cornell    4/29/99
+%   MATPOWER
+%   $Id$
+%   by Ray Zimmerman, PSERC Cornell
 %	and Alberto Borghetti, University of Bologna, Italy
-%   Copyright (c) 1996-1999 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2003 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.
 
 %% default arguments

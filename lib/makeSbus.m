@@ -4,9 +4,10 @@ function Sbus = makeSbus(baseMVA, bus, gen)
 %   power injections, that is, generation minus load. Power is expressed
 %   in per unit.
 
-%   MATPOWER Version 2.5b3
-%   by Ray Zimmerman, PSERC Cornell    7/15/99
-%   Copyright (c) 1996-1999 by Power System Engineering Research Center (PSERC)
+%   MATPOWER
+%   $Id$
+%   by Ray Zimmerman, PSERC Cornell
+%   Copyright (c) 1996-2003 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.
 
 %% constants

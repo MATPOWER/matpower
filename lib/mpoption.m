@@ -152,9 +152,10 @@ function [options, names] = mpoption(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p1
 %       72 - MNS_SUPBASIC_LIM, 0 (2*ng) superbasics limit
 %       73 - MNS_MULT_PRICE, 0 (30) multiple price
 
-%   MATPOWER Version 2.5b3
-%   by Ray Zimmerman, PSERC Cornell    9/15/99
-%   Copyright (c) 1996-1999 by Power System Engineering Research Center (PSERC)
+%   MATPOWER
+%   $Id$
+%   by Ray Zimmerman, PSERC Cornell
+%   Copyright (c) 1996-2003 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.
 
 %%-----  set up default option values  -----

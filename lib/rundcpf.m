@@ -15,9 +15,10 @@ function [MVAbase, bus, gen, branch, success, et] = rundcpf(casename, mpopt, fna
 %   solved case will be written to a case file in MATPOWER format with the
 %   specified name with a '.m' extension added.
 
-%   MATPOWER Version 2.5b3
-%   by Ray Zimmerman, PSERC Cornell    7/16/99
-%   Copyright (c) 1996-1999 by Power System Engineering Research Center (PSERC)
+%   MATPOWER
+%   $Id$
+%   by Ray Zimmerman, PSERC Cornell
+%   Copyright (c) 1996-2003 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.
 
 %% default arguments

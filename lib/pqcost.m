@@ -7,9 +7,10 @@ function [pcost, qcost] = pqcost(gencost, ng, on)
 %   If on is specified (list of indices of generators which are on line)
 %   it only returns the rows corresponding to these generators.
 
-%   MATPOWER Version 2.5b3
-%   by Ray Zimmerman, PSERC Cornell    9/19/97
-%   Copyright (c) 1997 by Power System Engineering Research Center (PSERC)
+%   MATPOWER
+%   $Id$
+%   by Ray Zimmerman, PSERC Cornell
+%   Copyright (c) 1996-2003 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.
 
 if nargin < 3

@@ -10,9 +10,10 @@ function [best_bus, best_gen, best_branch, best_f, best_success, et] = ...
 %   If VERBOSE in mpopt (see 'help mpoption') is true, it prints progress
 %   info, if it's > 1 it prints the output of each individual opf.
 
-%   MATPOWER Version 2.5b3
-%   by Ray Zimmerman, PSERC Cornell    9/9/99
-%   Copyright (c) 1996-1999 by Power System Engineering Research Center (PSERC)
+%   MATPOWER
+%   $Id$
+%   by Ray Zimmerman, PSERC Cornell
+%   Copyright (c) 1996-2003 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.
 
 %%----- initialization -----

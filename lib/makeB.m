@@ -4,9 +4,10 @@ function [Bp, Bpp] = makeB(baseMVA, bus, branch, alg)
 %   matrices B prime and B double prime used in the fast decoupled power
 %   flow. Does appropriate conversions to p.u.
 
-%   MATPOWER Version 2.5b3
-%   by Ray Zimmerman, PSERC Cornell    7/12/99
-%   Copyright (c) 1996-1999 by Power System Engineering Research Center (PSERC)
+%   MATPOWER
+%   $Id$
+%   by Ray Zimmerman, PSERC Cornell
+%   Copyright (c) 1996-2003 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.
 
 %% constants
