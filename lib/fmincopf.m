@@ -117,6 +117,7 @@ end
 
 % Renumber buses consecutively
 [i2e, bus, gen, branch, areas] = ext2int(bus, gen, branch, areas);
+[ref, pv, pq] = bustypes(bus, gen);
 
 % Sort generators in order of increasing bus number;
 ng = size(gen,1);
