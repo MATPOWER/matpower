@@ -68,8 +68,8 @@ Ybus = spdiags(Ysh, 0, nb, nb) + ...            %% shunt admittance
 %% at each branch's "from" bus, and Yt is the same for the "to" bus end
 if nargout > 1
     i = [[1:nl]'; [1:nl]'];     %% double set of row indices    
-    Yf = sparse(i, [f; t], [Yff; Yft]);
-    Yt = sparse(i, [f; t], [Ytf; Ytt]);
+    Yf = sparse(i, [f; t], [Yff; Yft], nl, nb);
+    Yt = sparse(i, [f; t], [Ytf; Ytt], nl, nb);
 end
 
 return;
