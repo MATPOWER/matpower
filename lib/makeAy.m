@@ -17,8 +17,8 @@ function [Ay, by]  = makeAy(baseMVA, ng, gencost, pgbas, qgbas, ybas)
 
 %   MATPOWER
 %   $Id$
-%   by Carlos Murillo-Sanchez, PSERC Cornell
-%   Copyright (c) 1996-2003 by Power System Engineering Research Center (PSERC)
+%   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
+%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.
 
 [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
