@@ -7,7 +7,7 @@ function [baseMVA, bus, gen, branch, areas, gencost, info] = loadcase(casefile)
 %   Here casefile is either a struct containing the fields baseMVA, bus,
 %   gen, branch, areas, gencost, or a string containing the name of the file.
 %   If casefile contains the extension '.mat' or '.m', then the explicit file
-%   is searched. If casefile containts no extension, then CASELOAD looks for
+%   is searched. If casefile containts no extension, then LOADCASE looks for
 %   a '.mat' file first, then for a '.m' file.  If the file does not exist
 %   or doesn't define all matrices, the routine aborts with an appropriate
 %   error message.  Alternatively, it can be called with the syntax:

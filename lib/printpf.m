@@ -135,7 +135,7 @@ if OUT_SYS_SUM
     fprintf(fd, '\n---------------------      --------------------  --------  -----------------');
     fprintf(fd, '\nBuses          %5d       Total Gen Capacity    %7.1f  %7.1f to +%.1f', nb, sum(gen(:, PMAX)), sum(gen(:, QMIN)), sum(gen(:, QMAX)));
     fprintf(fd, '\nGenerators     %5d       On-line Capacity      %7.1f  %7.1f to +%.1f', ng, sum(gen(on, PMAX)), sum(gen(on, QMIN)), sum(gen(on, QMAX)));
-    fprintf(fd, '\nCommited Gens  %5d       Generation (current)  %7.1f      %7.1f', length(on), sum(gen(on, PG)), sum(gen(on, QG)));
+    fprintf(fd, '\nCommitted Gens %5d       Generation (current)  %7.1f      %7.1f', length(on), sum(gen(on, PG)), sum(gen(on, QG)));
     fprintf(fd, '\nLoads          %5d       Load                  %7.1f      %7.1f', length(nzld), sum(bus(nzld, PD)), sum(bus(nzld, QD)));
     fprintf(fd, '\nBranches       %5d       Losses (I^2 * Z)      %8.2f     %8.2f', nl, sum(real(loss)), sum(imag(loss)) );
     fprintf(fd, '\nTransformers   %5d       Branch Charging (inj)      -       %7.1f', length(xfmr), sum(fchg) + sum(tchg) );
