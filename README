@@ -1,0 +1,119 @@
+=============================================================
+ MATPOWER - Matlab routines for solving power flow problems.
+=============================================================
+
+Version:    2.0
+
+Home Page:  http://www.pserc.cornell.edu/matpower/matpower.html
+
+Authors:    Ray Zimmerman           <rz10@cornell.edu>
+            Deqiang (David) Gan     <deqiang@ee.cornell.edu>
+
+            Wed, Dec 24, 1997
+
+Copyright (c) 1997 by Power System Engineering Research Center (PSERC)
+See http://www.pserc.cornell.edu/ for more info.
+
+
+--------------
+ INTRODUCTION
+--------------
+
+MATPOWER is a package of Matlab m-files for solving power flow and
+optimal power flow problems. It is intended as a simulation tool for
+researchers and educators which will be easy to use and modify. MATPOWER
+is designed to give the best performance possible while keeping the code
+simple to understand and modify.
+
+It was developed by Ray Zimmerman and Deqiang Gan of PSERC at Cornell
+University (http://www.pserc.cornell.edu/) under the direction of Robert
+Thomas. The initial need for Matlab based power flow and optimal power
+flow code was born out of the computational requirements of the PowerWeb
+project (see http://www.pserc.cornell.edu/powerweb/).
+
+More documentation is available in the User's Manual (manual.pdf) and in
+the m-files themselves (type: help <name of m-file> at the Matlab
+prompt). Documentation for the case file format can be found in case.m.
+Where something is still unclear, the source code IS the documentation
+:-)
+
+MATPOWER is free. Anyone may use it. Anyone may modify it for their own
+use as long as the original copyright notices remain in place. Please
+don't distribute modified versions of MATPOWER without written
+permission from us.
+
+We do welcome contributions of code which you feel would be a worthwhile
+addition to MATPOWER.
+
+
+------------
+ WHAT'S NEW
+------------
+
+Here is a list of primary changes from version 1 to version 2:
+
+- greatly enhanced output options
+- added fast-decoupled power flow
+- optimized building of Ybus and Jacobian matrices
+  (much faster on large systems, especially in Matlab 5)
+- highly improved unit decommitment algorithm
+- included optional costs for reactive power generation in OPF
+- completely rewritten LP-based OPF solver
+- consolidated parameters in MATPOWER options vector
+
+... and of course ...
+
+- fixed some bugs
+
+
+-------------
+ QUICK START
+-------------
+
+What you need:
+    a Mac, UNIX box, or PC with ...
+        - Matlab 4 or higher
+        - Optimization Toolbox (for some OPF algorithms)
+
+Installation:
+    - Unpack the distribution
+    - Copy all of the m-files in the MATPOWER distribution to a
+      location in your Matlab path.
+
+To run a simple power flow with default 9-bus system and all default
+options, at the Matlab prompt, type:
+    >> runpf
+
+To run a power flow on the 118-bus system:
+    >> runpf('case118')
+
+To run an optimal power flow on the 9-bus system with all defaults:
+    >> runopf
+
+To run an OPF on the 30-bus system:
+    >> runopf('case30')
+
+To run an OPF with option to decommit expensive generators:
+    >> runuopf('case30')
+
+For info on other parameters and options, try these:
+    >> help runpf
+    >> help runopf
+    >> help runuopf
+    >> help mpoption
+
+or:
+    >> help <name of any other m-file>
+
+
+------------
+ KNOWN BUGS
+------------
+
+Please report any bugs you find to Ray Zimmerman <rz10@cornell.edu>.
+
+- MathWorks bug: constr does not correctly handle negative lambdas
+- identification of binding constraints in printpf.m should
+  use OPF_VIOLATION instead of size of MU
+- 'area' is the name of an m-file in Matlab 5, my variable 'area'
+  masks this m-file
