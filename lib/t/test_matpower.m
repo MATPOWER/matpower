@@ -15,11 +15,13 @@ if nargin < 1
 end
 
 test_list = {	't_loadcase', ...
-				't_jacobian'	};
+				't_jacobian', ...
+				't_pf'	};
 
 %% add smartmarket tests if available
+nt = size(test_list, 2);
 if exist('runmkt')
-	test_list{1,3} = 't_auction';
+	test_list{1,nt+1} = 't_auction';
 end
 
 t_run_tests( test_list, verbose );
