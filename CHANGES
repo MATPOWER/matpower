@@ -26,6 +26,9 @@ Changes since 2.0
 -----------------
 
 4/17/03
+	- Changed uopf.m to use a dynamic programming approach. More
+	  computationally expensive, but should find significanly better
+	  results when there are many gens to shut down.
 	- Added mp_lp.m and mp_qp.m, equivalents to lp.m and qp.m,
 	  respectively that call bpmpd if available. Modified LPrelax.m,
 	  LPsetup.m and dcopf.m to call these new functions.
