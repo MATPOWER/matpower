@@ -155,19 +155,7 @@ nvl = size(vload, 1);                          % price-sensitive injections
 nz = size(Au,2) - 2*nb - 2*ng - ny;            % number of extra z variables
 nz = max(nz,0);
 
-
-% Form vector of indexes into table columns; this vector is needed
-% by minopf.mex$(PLATFORM)
-c1 = [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
-      VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN];
-c2 = [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, ...
-        GEN_STATUS, PMAX, PMIN, MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN];
-c3 = [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST];
-c4 = [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, ...
-        RATE_C, TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST];
-col = [ c1 c2 c3 c4];
-
-% Definition of indexes into optimization variable vector and contraint 
+% Definition of indexes into optimization variable vector and constraint 
 % vector.
 thbas = 1;                thend    = thbas+nb-1;
 vbas     = thend+1;       vend     = vbas+nb-1;
