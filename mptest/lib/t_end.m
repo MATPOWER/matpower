@@ -14,11 +14,14 @@ global t_num_of_tests;
 global t_counter;
 global t_ok_cnt;
 global t_not_ok_cnt;
+global t_skip_cnt;
 global t_clock;
 
 t_counter = t_counter - 1;
 
-if t_counter == t_num_of_tests & t_ok_cnt == t_counter & t_not_ok_cnt == 0
+if t_counter == t_num_of_tests & ...
+        t_counter == t_ok_cnt + t_skip_cnt & ...
+        t_not_ok_cnt == 0
     all_ok = 1;
 else
     all_ok = 0;
@@ -26,20 +29,35 @@ end
 
 if t_quiet
     if all_ok
-        fprintf('ok\n');
+        fprintf('ok');
+        if t_skip_cnt
+            fprintf(' (%d skipped)', t_skip_cnt);
+        end
     else
         fprintf('not ok\n');
-        fprintf('\t#####  Ran %d of %d tests: %d passed, %d failed.\n', ...
+        fprintf('\t#####  Ran %d of %d tests: %d passed, %d failed', ...
             t_counter, t_num_of_tests, t_ok_cnt, t_not_ok_cnt);
+        if t_skip_cnt
+            fprintf(', %d skipped', t_skip_cnt);
+        end
     end
+    fprintf('\n');
 else
     if all_ok
-        fprintf('All tests successful (%d of %d).\n', t_ok_cnt, t_num_of_tests);
+        if t_skip_cnt
+            fprintf('All tests successful (%d passed, %d skipped of %d)', ...
+                t_ok_cnt, t_skip_cnt, t_num_of_tests);
+        else
+            fprintf('All tests successful (%d of %d)', t_ok_cnt, t_num_of_tests);
+        end
     else
-        fprintf('Ran %d of %d tests: %d passed, %d failed.\n', ...
+        fprintf('Ran %d of %d tests: %d passed, %d failed', ...
             t_counter, t_num_of_tests, t_ok_cnt, t_not_ok_cnt);
+        if t_skip_cnt
+            fprintf(', %d skipped', t_skip_cnt);
+        end
     end
-    fprintf('Elapsed time %.2f seconds.\n', etime(clock, t_clock));
+    fprintf('\nElapsed time %.2f seconds.\n', etime(clock, t_clock));
 end
 
 return;
