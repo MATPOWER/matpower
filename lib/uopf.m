@@ -161,7 +161,13 @@ while 1
 
 	%% compute relative cost savings for shutting down each generator
 	%% call it the "decommitment index"
-	di = totcost(gencost, gen(:, PG)) -  bus(gen(:, GEN_BUS), LAM_P) .* gen(:, PG);
+	di = totcost(gencost, gen(:, PG)) - bus(gen(:, GEN_BUS), LAM_P) .* gen(:, PG);
+	if sum(di > 0) > 4		%% compare prices alone, rather than price * qty
+		ng = size(gen, 1);
+		di = zeros(ng, 1);
+		nzg = find(gen(:, PG));
+		di(nzg) = totcost(gencost(nzg, :), gen(nzg, PG)) ./ gen(nzg, PG) - bus(gen(nzg, GEN_BUS), LAM_P);
+	end
 	di(ignore) = zeros(size(ignore));	%% generators which are no longer candidates
 	if verbose > 1
 		fprintf('\nDecommitment indices:\n');
