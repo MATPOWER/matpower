@@ -31,7 +31,9 @@ end
 
 %% options
 verbose	= mpopt(31);
-dc = mpopt(10);							%% use DC formulation?
+if verbose		%% turn down verbosity one level for calls to opf
+	mpopt = mpoption(mpopt, 'VERBOSE', verbose-1);
+end
 
 %% define named indices into bus, gen, branch matrices
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
@@ -42,16 +44,6 @@ dc = mpopt(10);							%% use DC formulation?
 
 %%-----  do combined unit commitment/optimal power flow  -----
 t0 = clock;									%% start timer
-
-%% build network matrices
-if dc								%% DC formulation
-	%% build B matrices and phase shift injections
-	[Bbus, Bf, Pbusinj, Pfinj] = makeBdc(baseMVA, bus, branch);
-else								%% AC formulation
-	%% build admittance matrices
-	[Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
-end
-
 
 %% check for sum(Pmin) > total load, decommit as necessary
 load_capacity	= sum(bus(:, PD));		%% compute total load capacity
@@ -78,18 +70,8 @@ while sum(Pmin) > load_capacity
 end
 
 %% run initial opf
-%% turn down verbosity one level for call to opf
-[ref, pv, pq] = bustypes(bus, gen);
-if verbose
-	mpopt = mpoption(mpopt, 'VERBOSE', verbose-1);
-end
-if dc								%% DC formulation
-	[bus, gen, branch, f, success, et] = dcopf(baseMVA, bus, gen, gencost, branch, ...
-						Bbus, Bf, Pbusinj, Pfinj, ref, pv, pq, mpopt);
-else								%% AC formulation
-	[bus, gen, branch, f, success, et] = opf(baseMVA, bus, gen, gencost, branch, ...
-						areas, Ybus, Yf, Yt, ref, pv, pq, mpopt);
-end
+[bus, gen, branch, f, success, info, et] = opf(baseMVA, bus, gen, branch, ...
+                                   areas, gencost, mpopt);
 
 %% best case so far
 bus1 = bus;
@@ -124,18 +106,8 @@ while 1
 		gen(k, GEN_STATUS)	= 0;
 		
 		%% run opf
-		%% turn down verbosity one level for call to opf
-		[ref, pv, pq] = bustypes(bus, gen);
-		if verbose
-			mpopt = mpoption(mpopt, 'VERBOSE', verbose-1);
-		end
-		if dc								%% DC formulation
-			[bus, gen, branch, f, success, et] = dcopf(baseMVA, bus0, gen, gencost, branch0, ...
-								Bbus, Bf, Pbusinj, Pfinj, ref, pv, pq, mpopt);
-		else								%% AC formulation
-			[bus, gen, branch, f, success, et] = opf(baseMVA, bus0, gen, gencost, branch0, ...
-								areas, Ybus, Yf, Yt, ref, pv, pq, mpopt);
-		end
+		[bus, gen, branch, f, success, info, et] = opf(baseMVA, bus0, gen, branch0, ...
+										   areas, gencost, mpopt);
 		
 		%% something better?
 		if success & f < f1
