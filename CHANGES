@@ -2,7 +2,7 @@
  Change history for MATPOWER
 -----------------------------
 
-Version:    3.0
+Version:    3.0b1
 
 maintained by Ray Zimmerman <rz10@cornell.edu>
 $Id$
@@ -11,6 +11,13 @@ Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
 
 Changes since 2.0
 -----------------
+
+8/23/04
+	- Added an fmincon based OPF solver for the generalized formulation
+	  previously used by mopf (Carlos).
+	- Restructured opf.m so all OPF solvers have a similar API based
+	  on the one from mopf.m (Carlos).
+	- Added some quick tests for runpf and runopf for each algorithm.
 
 8/13/04
 	- Renamed 'area' variable to 'areas' to avoid masking the built-in
