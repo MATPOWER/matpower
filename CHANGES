@@ -25,6 +25,12 @@ Please report any bugs you find to Ray Zimmerman <rz10@cornell.edu>.
 Changes since 2.0
 -----------------
 
+7/15/04
+	- The loadcase function (and therefore all of the run* functions
+	  now optionally accept a struct with the data matrices as fields
+	  in place of the case file name.
+	- Added t subdirectory with various tests and testing tools.
+
 7/8/04
 	- Updated mp_lp.m and mp_qp.m to try linprog() and quadprog()
 	  after trying bp, since lp() and qp() are no longer included
