@@ -315,9 +315,11 @@ end
     
 %%-----  constraint data  -----
 if isOPF
+    ctol = mpopt(16);   %% constraint violation tolerance
     %% voltage constraints
     if OUT_V_LIM == 2 | (OUT_V_LIM == 1 & ...
-                         (any(bus(:, MU_VMIN) > 1e-6) | any(bus(:, MU_VMAX) > 1e-6)))
+                         (any(bus(:, VM) < bus(:, VMIN) + ctol) | ...
+                          any(bus(:, VM) > bus(:, VMAX) - ctol)))
         fprintf(fd, '\n================================================================================');
         fprintf(fd, '\n|     Voltage Constraints                                                      |');
         fprintf(fd, '\n================================================================================');
@@ -326,15 +328,16 @@ if isOPF
         fprintf(fd, '\n----  --------   -----  -----  -----   --------');        
         for i = 1:nb
             if OUT_V_LIM == 2 | (OUT_V_LIM == 1 & ...
-                         (bus(i, MU_VMIN) > 1e-6 | bus(i, MU_VMAX) > 1e-6))
+                         (bus(i, VM) < bus(i, VMIN) + ctol | ...
+                          bus(i, VM) > bus(i, VMAX) - ctol))
                 fprintf(fd, '\n%4d', bus(i, BUS_I));
-                if bus(i, MU_VMIN) > 1e-6
+                if bus(i, VM) < bus(i, VMIN) + ctol
                     fprintf(fd, '%10.3f', bus(i, MU_VMIN));                    
                 else
                     fprintf(fd, '      -   ');
                 end
                 fprintf(fd, '%8.3f%7.3f%7.3f', bus(i, [VMIN, VM, VMAX]));
-                if bus(i, MU_VMAX) > 1e-6
+                if bus(i, VM) > bus(i, VMAX) - ctol
                     fprintf(fd, '%10.3f', bus(i, MU_VMAX));
                 else
                     fprintf(fd, '      -    ');
@@ -346,21 +349,27 @@ if isOPF
         
     %% generator P constraints
     if OUT_PG_LIM == 2 | OUT_QG_LIM == 2 | ...
-            (OUT_PG_LIM == 1 & (any(gen(:, MU_PMIN) > 1e-6) | any(gen(:, MU_PMAX) > 1e-6))) | ...
-            (OUT_QG_LIM == 1 & (any(gen(:, MU_QMIN) > 1e-6) | any(gen(:, MU_QMAX) > 1e-6)))
+            (OUT_PG_LIM == 1 & (any(gen(on, PG) < gen(on, PMIN) + ctol) | ...
+                                any(gen(on, PG) > gen(on, PMAX) - ctol))) | ...
+            (OUT_QG_LIM == 1 & (any(gen(on, QG) < gen(on, QMIN) + ctol) | ...
+                                any(gen(on, QG) > gen(on, QMAX) - ctol)))
         fprintf(fd, '\n================================================================================');
         fprintf(fd, '\n|     Generation Constraints                                                   |');
         fprintf(fd, '\n================================================================================');
     end
     if OUT_PG_LIM == 2 | (OUT_PG_LIM == 1 & ...
-                         (any(gen(:, MU_PMIN) > 1e-6) | any(gen(:, MU_PMAX) > 1e-6)))
+                             (any(gen(on, PG) < gen(on, PMIN) + ctol) | ...
+                              any(gen(on, PG) > gen(on, PMAX) - ctol)))
         fprintf(fd, '\nGen  Bus               Active Power Limits');
         fprintf(fd, '\n #    #   Pmin mu    Pmin       P        Pmax    Pmax mu');
         fprintf(fd, '\n---  ---  -------  --------  --------  --------  -------');
-        for i = 1:ng
-            if OUT_PG_LIM == 2 | (OUT_PG_LIM == 1 & (gen(i, MU_PMIN) > 1e-6 | gen(i, MU_PMAX) > 1e-6))
+        for k = 1:length(on)
+            i = on(k);
+            if OUT_PG_LIM == 2 | (OUT_PG_LIM == 1 & ...
+                        (gen(i, PG) < gen(i, PMIN) + ctol | ...
+                         gen(i, PG) > gen(i, PMAX) - ctol))
                 fprintf(fd, '\n%3d%5d', i, gen(i, GEN_BUS));
-                if gen(i, MU_PMIN) > 1e-6
+                if gen(i, PG) < gen(i, PMIN) + ctol
                     fprintf(fd, '%8.3f', gen(i, MU_PMIN));
                 else
                     fprintf(fd, '     -  ');
@@ -370,7 +379,7 @@ if isOPF
                 else
                     fprintf(fd, '%10.2f       -  %10.2f', gen(i, [PMIN, PMAX]));
                 end
-                if gen(i, MU_PMAX) > 1e-6
+                if gen(i, PG) > gen(i, PMAX) - ctol
                     fprintf(fd, '%9.3f', gen(i, MU_PMAX));
                 else
                     fprintf(fd, '      -  ');
@@ -382,14 +391,18 @@ if isOPF
         
     %% generator Q constraints
     if OUT_QG_LIM == 2 | (OUT_QG_LIM == 1 & ...
-                         (any(gen(:, MU_QMIN) > 1e-6) | any(gen(:, MU_QMAX) > 1e-6)))
+                             (any(gen(on, QG) < gen(on, QMIN) + ctol) | ...
+                              any(gen(on, QG) > gen(on, QMAX) - ctol)))
         fprintf(fd, '\nGen  Bus              Reactive Power Limits');
         fprintf(fd, '\n #    #   Qmin mu    Qmin       Q        Qmax    Qmax mu');
         fprintf(fd, '\n---  ---  -------  --------  --------  --------  -------');
-        for i = 1:ng
-            if OUT_QG_LIM == 2 | (OUT_QG_LIM == 1 & (gen(i, MU_QMIN) > 1e-6 | gen(i, MU_QMAX) > 1e-6))
+        for k = 1:length(on)
+            i = on(k);
+            if OUT_QG_LIM == 2 | (OUT_QG_LIM == 1 & ...
+                        (gen(i, QG) < gen(i, QMIN) + ctol | ...
+                         gen(i, QG) > gen(i, QMAX) - ctol))
                 fprintf(fd, '\n%3d%5d', i, gen(i, GEN_BUS));
-                if gen(i, MU_QMIN) > 1e-6
+                if gen(i, QG) < gen(i, QMIN) + ctol
                     fprintf(fd, '%8.3f', gen(i, MU_QMIN));
                 else
                     fprintf(fd, '     -  ');
@@ -399,7 +412,7 @@ if isOPF
                 else
                     fprintf(fd, '%10.2f       -  %10.2f', gen(i, [QMIN, QMAX]));
                 end
-                if gen(i, MU_QMAX) > 1e-6
+                if gen(i, QG) > gen(i, QMAX) - ctol
                     fprintf(fd, '%9.3f', gen(i, MU_QMAX));
                 else
                     fprintf(fd, '      -  ');
@@ -410,36 +423,37 @@ if isOPF
     end
         
     %% line flow constraints
+    if mpopt(24) == 1   %% P limit
+        Sf = branch(:, PF);
+        St = branch(:, PT);
+        str = '\n  #     Bus    Pf  mu     Pf      |Pmax|      Pt      Pt  mu   Bus';
+    else                %% |S| limit
+        Sf = abs(branch(:, PF) + j * branch(:, QF));
+        St = abs(branch(:, PT) + j * branch(:, QT));
+        str = '\n  #     Bus   |Sf| mu    |Sf|     |Smax|     |St|    |St| mu   Bus';
+    end
     if OUT_LINE_LIM == 2 | (OUT_LINE_LIM == 1 & ...
-                         (any(branch(:, MU_SF) > 1e-6) | any(branch(:, MU_ST) > 1e-6)))
+                        (any(abs(Sf) > branch(:, RATE_A) - ctol) | ...
+                         any(abs(St) > branch(:, RATE_A) - ctol)))
         fprintf(fd, '\n================================================================================');
         fprintf(fd, '\n|     Branch Flow Constraints                                                  |');
         fprintf(fd, '\n================================================================================');
         fprintf(fd, '\nBrnch   From     "From" End        Limit       "To" End        To');
-        if mpopt(24) == 1   %% P limit
-            fprintf(fd, '\n  #     Bus    Pf  mu     Pf      |Pmax|      Pt      Pt  mu   Bus');    % Pan Wei
-        else                %% |S| limit
-            fprintf(fd, '\n  #     Bus   |Sf| mu    |Sf|     |Smax|     |St|    |St| mu   Bus');
-        end
+        fprintf(fd, str);
         fprintf(fd, '\n-----  -----  -------  --------  --------  --------  -------  -----');
         for i = 1:nl
             if OUT_LINE_LIM == 2 | (OUT_LINE_LIM == 1 & ...
-                         (branch(i, MU_SF) > 1e-6 | branch(i, MU_ST) > 1e-6))
+                         (Sf(i) > branch(i, RATE_A) - ctol | ...
+                          St(i) > branch(i, RATE_A) - ctol))
                 fprintf(fd, '\n%4d%7d', i, branch(i, F_BUS));
-                if branch(i, MU_SF) > 1e-6
+                if Sf(i) > branch(i, RATE_A) - ctol
                     fprintf(fd, '%10.3f', branch(i, MU_SF));
                 else
                     fprintf(fd, '      -   ');
                 end
-                if mpopt(24) == 1   %% P limit    % Pan Wei
-                    fprintf(fd, '%9.2f%10.2f%10.2f', ...
-                        [branch(i, PF), branch(i, RATE_A), branch(i, PT)]);
-                else                %% |S| limit
-                    fprintf(fd, '%9.2f%10.2f%10.2f', ...
-                        [abs(branch(i, PF) + j * branch(i, QF)), ...
-                        branch(i, RATE_A), abs(branch(i, PT) + j * branch(i, QT))]);
-                end
-                if branch(i, MU_ST) > 1e-6
+                fprintf(fd, '%9.2f%10.2f%10.2f', ...
+                    [Sf(i), branch(i, RATE_A), St(i)]);
+                if St(i) > branch(i, RATE_A) - ctol
                     fprintf(fd, '%10.3f', branch(i, MU_ST));
                 else
                     fprintf(fd, '      -   ');
