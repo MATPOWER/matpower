@@ -35,8 +35,11 @@ MATPOWER can be downloaded from the MATPOWER home page above.
  TERMS OF USE
 --------------
 
-- MATPOWER is free. Anyone may use it.
-- Any publications derived from the use of MATPOWER must cite MATPOWER
+- MATPOWER is free of charge. Anyone may use it.
+- We make no warranties, express or implied. Specifically, we make no
+  guarantees regarding the correctness MATPOWER's code or its fitness for any
+  particular purpose.
+- Any publications derived from the use of MATPOWER must acknowledge MATPOWER
   <http://www.pserc.cornell.edu/matpower/>.
 - Anyone may modify MATPOWER for their own use as long as the original
   copyright notices remain in place.
