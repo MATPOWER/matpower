@@ -42,9 +42,9 @@ switch tag
     case 'smartmarket'
         TorF = exist(which('runmkt')) == 2;
     case 'sparse_lp'
-        TorF = have_fcn('bpmpd') | have_fcn('linprog')
+        TorF = have_fcn('bpmpd') | have_fcn('linprog');
     case 'sparse_qp'
-        TorF = have_fcn('bpmpd') | have_fcn('quadprog')
+        TorF = have_fcn('bpmpd') | have_fcn('quadprog');
     otherwise
         error(sprintf('have_fcn: unknown functionality %s', tag));
 end
