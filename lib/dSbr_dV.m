@@ -77,10 +77,10 @@ else						%% dense version
 	diagIt		= diag(It);
 	diagV		= diag(V);
 	diagVnorm	= diag(Vnorm);
-	temp1		= zeros(nl, nb);	temp1(1:nl, f) = V(f);
-	temp2		= zeros(nl, nb);	temp2(1:nl, f) = Vnorm(f);
-	temp3		= zeros(nl, nb);	temp3(1:nl, t) = V(t);
-	temp4		= zeros(nl, nb);	temp4(1:nl, t) = Vnorm(t);
+	temp1		= zeros(nl, nb);	temp1(sub2ind([nl,nb],[1:nl]', f)) = V(f);
+	temp2		= zeros(nl, nb);	temp2(sub2ind([nl,nb],[1:nl]', f)) = Vnorm(f);
+	temp3		= zeros(nl, nb);	temp3(sub2ind([nl,nb],[1:nl]', t)) = V(t);
+	temp4		= zeros(nl, nb);	temp4(sub2ind([nl,nb],[1:nl]', t)) = Vnorm(t);
 	
 	dSf_dVa = j * (conj(diagIf) * temp1 - diagVf * conj(Yf * diagV));
 	dSf_dVm = diagVf * conj(Yf * diagVnorm)	+ conj(diagIf) * temp2;
