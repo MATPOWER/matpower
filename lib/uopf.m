@@ -107,7 +107,7 @@ f0 = f1;
 
 while 1
 	%% get candidates for shutdown
-	candidates = find(gen0(:, MU_PMIN) > 0 & gen0(:, PMIN) >= 0);
+	candidates = find(gen0(:, MU_PMIN) > 0 & gen0(:, PMIN) > 0);
 	if isempty(candidates)
 		break;
 	end
