@@ -4,9 +4,9 @@ function [ref, pv, pq] = bustypes(bus, gen)
 %   Generators with "out-of-service" status are treated as PQ buses with
 %   zero generation (regardless of Pg/Qg values in gen).
 
-%   MATPOWER Version 2.0
-%   by Ray Zimmerman, PSERC Cornell    9/19/97
-%   Copyright (c) 1996, 1997 by Power System Engineering Research Center (PSERC)
+%   MATPOWER Version 2.5b3
+%   by Ray Zimmerman, PSERC Cornell    12/1/98
+%   Copyright (c) 1996-1998 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.
 
 %% constants
@@ -16,8 +16,14 @@ function [ref, pv, pq] = bustypes(bus, gen)
 	GEN_STATUS, PMAX, PMIN, MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN] = idx_gen;
 
 %% get generator status
-bus_gen_status = zeros(size(bus, 1), 1);
-bus_gen_status(gen(:, GEN_BUS)) = gen(:, GEN_STATUS);
+% bus_gen_status = zeros(size(bus, 1), 1);
+% bus_gen_status(gen(:, GEN_BUS)) = gen(:, GEN_STATUS) > 0;
+nb = size(bus, 1);
+ng = size(gen, 1);
+Cg = sparse(gen(:, GEN_BUS), [1:ng]', gen(:, GEN_STATUS) > 0, nb, ng);	%% gen connection matrix
+										%% element i, j is 1 if, generator j at bus i is ON
+bus_gen_status = Cg * ones(ng, 1);		%% number of generators at each bus that are ON
+
 
 %% form index lists for slack, PV, and PQ buses
 ref	= find(bus(:, BUS_TYPE) == REF & bus_gen_status);	%% reference bus index

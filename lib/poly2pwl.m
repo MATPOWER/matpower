@@ -6,7 +6,7 @@ function pwlcost = poly2pwl(polycost, Pmin, Pmax, npts)
 %   Pmin <= 0 (such as for reactive power, where P really means Q) it just
 %   uses npts evenly spaced points between Pmin and Pmax.
 
-%   MATPOWER Version 2.0
+%   MATPOWER Version 2.5b3
 %   by Ray Zimmerman, PSERC Cornell    9/19/97
 %   Copyright (c) 1997 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.

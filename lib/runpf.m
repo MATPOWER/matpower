@@ -1,78 +1,122 @@
-function [MVAbase, bus, gen, branch, success, et] = runpf(casename, mpopt, fname)
+function [MVAbase, bus, gen, branch, success, et] = runpf(casename, mpopt, fname, solvedcase)
 %RUNPF  Runs a power flow.
 %
-%   [baseMVA, bus, gen, branch, success, et] = runpf(casename, mpopt, fname)
+%   [baseMVA, bus, gen, branch, success, et] = ...
+%           runpf(casename, mpopt, fname, solvedcase)
 %
-%   Runs a full Newton's method power flow where casename is the name of
-%   the m-file (without the .m extension) containing the power flow data,
-%   and mpopt is a MATPOWER options vector (see 'help mpoption' for details).
-%   Uses default options if 2nd parameter is not given, and 'case' if 1st
-%   parameter is not given. The results may optionally be printed to a file
+%   Runs a power flow (full AC Newton's method by default) where casename is
+%   the name of the M-file or MAT-file containing the power flow data,
+%   and mpopt is a MATPOWER options vector (see 'help mpoption' for
+%   details). Uses default options if 2nd parameter is not given, and 'case' if
+%   1st parameter is not given. The results may optionally be printed to a file
 %   (appended if the file exists) whose name is given in fname (in addition
 %   to printing to STDOUT). Optionally returns the final values of baseMVA,
-%   bus, gen, branch, success, and et.
+%   bus, gen, branch, success, and et. If a name is given in solvedcase, the
+%   solved case will be written to a MATPOWER case file whose type is determined
+%   by a '.m' or '.mat' extension ('.m' is assumed if no extension is given).
 
-%   MATPOWER Version 2.0
-%   by Ray Zimmerman, PSERC Cornell    12/24/97
-%   Copyright (c) 1996, 1997 by Power System Engineering Research Center (PSERC)
+%   MATPOWER Version 2.5b3
+%   by Ray Zimmerman, PSERC Cornell    9/21/99
+%   Copyright (c) 1996-1999 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.
-tic;
+
+%%-----  initialize  -----
 %% define named indices into bus, gen, branch matrices
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
 	VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
+[F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, ...
+	RATE_C, TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST] = idx_brch;
 [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, ...
 	GEN_STATUS, PMAX, PMIN, MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN] = idx_gen;
 
 %% default arguments
-if nargin < 3
-	fname = '';					%% don't print results to a file
-	if nargin < 2
-		mpopt = mpoption;		%% use default options
-		if nargin < 1
-			casename = 'case';	%% default data file is 'case.m'
+if nargin < 4
+	solvedcase = '';				%% don't save solved case
+	if nargin < 3
+		fname = '';					%% don't print results to a file
+		if nargin < 2
+			mpopt = mpoption;		%% use default options
+			if nargin < 1
+				casename = 'case';	%% default data file is 'case.m'
+			end
 		end
 	end
 end
 
 %% options
-alg = mpopt(1);
+dc = mpopt(10);						%% use DC formulation?
 
 %% read data & convert to internal bus numbering
-[baseMVA, bus, gen, branch] = feval(casename);
+[baseMVA, bus, gen, branch, area, gencost] = loadcase(casename);
 [i2e, bus, gen, branch] = ext2int(bus, gen, branch);
 
 %% get bus index lists of each type of bus
 [ref, pv, pq] = bustypes(bus, gen);
 
-%% build admittance matrices
-[Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
-
-%% compute complex bus power injections (generation - load)
-Sbus = makeSbus(baseMVA, bus, gen);
-
 %% generator info
-on = find(gen(:, GEN_STATUS));				%% which generators are on?
+on = find(gen(:, GEN_STATUS) > 0);		%% which generators are on?
+gbus = gen(on, GEN_BUS);				%% what buses are they at?
 
-%% initialize V and Pg from data from case file
-% V0	= ones(size(bus, 1), 1);		%% flat start
-V0	= bus(:, VM) .* exp(sqrt(-1) * pi/180 * bus(:, VA));
-V0(gen(on, GEN_BUS)) = gen(on, VG) ./ abs(V0(gen(on, GEN_BUS))).* V0(gen(on, GEN_BUS));
-
-%% run the power flow
+%%-----  run the power flow  -----
 t0 = clock;
-if alg == 1
-	[V, success, iterations] = newtonpf(Ybus, Sbus, V0, ref, pv, pq, mpopt);
-elseif alg == 2 | alg == 3
-	[Bp, Bpp] = makeB(baseMVA, bus, branch, alg);
-	[V, success, iterations] = fdpf(Ybus, Sbus, V0, Bp, Bpp, ref, pv, pq, mpopt);
-else
-	error('Only Newton''s method and fast-decoupled power flow algorithms currently implemented.');
+if dc								%% DC formulation
+	%% initial state
+	Va0	= bus(:, VA) * (pi/180);
+	
+	%% build B matrices and phase shift injections
+	[B, Bf, Pbusinj, Pfinj] = makeBdc(baseMVA, bus, branch);
+	
+	%% compute complex bus power injections (generation - load)
+	%% adjusted for phase shifters and real shunts
+	Pbus = real(makeSbus(baseMVA, bus, gen)) - Pbusinj - bus(:, GS) / baseMVA;
+	
+	%% "run" the power flow
+	Va = dcpf(B, Pbus, Va0, ref, pv, pq);
+	
+	%% update data matrices with solution
+	branch(:, [QF, QT]) = zeros(size(branch, 1), 2);
+	branch(:, PF) = (Bf * Va + Pfinj) * baseMVA;
+	branch(:, PT) = -branch(:, PF);
+	bus(:, VM) = ones(size(bus, 1), 1);
+	bus(:, VA) = Va * (180/pi);
+	%% update Pg for swing generator (note: other gens at ref bus are accounted for in Pbus)
+	%%		Pg = Pinj + Pload + Gs
+	%%		newPg = oldPg + newPinj - oldPinj
+	refgen = find(gbus == ref);				%% which is(are) the reference gen(s)?
+	gen(on(refgen(1)), PG) = gen(on(refgen(1)), PG) + (B(ref, :) * Va - Pbus(ref)) * baseMVA;
+	
+	success = 1;
+else								%% AC formulation
+	%% initial state
+	% V0	= ones(size(bus, 1), 1);			%% flat start
+	V0	= bus(:, VM) .* exp(sqrt(-1) * pi/180 * bus(:, VA));
+	V0(gbus) = gen(on, VG) ./ abs(V0(gbus)).* V0(gbus);
+	
+	%% build admittance matrices
+	[Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
+	
+	%% compute complex bus power injections (generation - load)
+	Sbus = makeSbus(baseMVA, bus, gen);
+	
+	%% run the power flow
+	alg = mpopt(1);
+	if alg == 1
+		[V, success, iterations] = newtonpf(Ybus, Sbus, V0, ref, pv, pq, mpopt);
+	elseif alg == 2 | alg == 3
+		[Bp, Bpp] = makeB(baseMVA, bus, branch, alg);
+		[V, success, iterations] = fdpf(Ybus, Sbus, V0, Bp, Bpp, ref, pv, pq, mpopt);
+	elseif alg == 4
+		[V, success, iterations] = gausspf(Ybus, Sbus, V0, ref, pv, pq, mpopt);
+	else
+		error('Only Newton''s method, fast-decoupled, and Gauss-Seidel power flow algorithms currently implemented.');
+	end
+	
+	%% update data matrices with solution
+	[bus, gen, branch] = pfsoln(baseMVA, bus, gen, branch, Ybus, Yf, Yt, V, ref, pv, pq);
 end
-
-%% compute flows etc.
-[bus, gen, branch] = pfsoln(baseMVA, bus, gen, branch, Ybus, Yf, Yt, V, ref, pv, pq);
 et = etime(clock, t0);
 
+%%-----  output results  -----
 %% convert back to original bus numbering & print results
 [bus, gen, branch] = int2ext(i2e, bus, gen, branch);
 if fname
@@ -85,6 +129,11 @@ if fname
 	end
 end
 printpf(baseMVA, bus, gen, branch, [], success, et, 1, mpopt);
+
+%% save solved case
+if solvedcase
+	savecase(solvedcase, baseMVA, bus, gen, branch, area, gencost);
+end
 
 %% this is just to prevent it from printing baseMVA
 %% when called with no output arguments

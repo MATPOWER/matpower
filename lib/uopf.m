@@ -1,28 +1,32 @@
 function [best_bus, best_gen, best_branch, best_f, best_success, et] = ...
-		uopf(baseMVA, bus, gen, gencost, branch, Ybus, Yf, Yt, mpopt)
-%UOPF  Solves combined unit commitment / optimal power flow.
+		uopf(baseMVA, bus, gen, gencost, branch, area, mpopt)
+%UOPF  Solves combined unit decommitment / optimal power flow.
 %   [bus, gen, branch, f, success, et] = uopf(baseMVA, bus, gen, gencost, ...
-%                   branch, Ybus, Yf, Yt, mpopt)
-%   Assumes that Ybus, Yf, Yt are consistent with (or override) data in bus,
-%   gen, branch. If VERBOSE in mpopt (see 'help mpoption') is true, it prints
-%   progress info, if it's > 1 it prints the output of each individual opf.
+%                   branch, area, mpopt)
+%   Solves a combined unit decommitment and optimal power flow for a single
+%   time period. Uses a heuristic that shuts off one generator at a time until
+%   all generators dispatched at Pmin have Pmin * lambda greater than or equal
+%   to the generator's cost of operating at Pmin (i.e. lambda >= avg cost).
+%   If VERBOSE in mpopt (see 'help mpoption') is true, it prints progress
+%   info, if it's > 1 it prints the output of each individual opf.
 
-%   MATPOWER Version 2.0
-%   by Ray Zimmerman, PSERC Cornell    12/11/97
-%   Copyright (c) 1996, 1997 by Power System Engineering Research Center (PSERC)
+%   MATPOWER Version 2.5b3
+%   by Ray Zimmerman, PSERC Cornell    9/9/99
+%   Copyright (c) 1996-1999 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.
 
 %%----- initialization -----
 count		= 0;
-i			= 0;		%% this is to work around a bug in Matlab (4 and 5)
+i			= 0;	%% this is to work around a bug in Matlab (4 and 5)
 
 %% default arguments
-if nargin < 9
-	mpopt = mpoption;		%% use default options
+if nargin < 6
+	mpopt = mpoption;					%% use default options
 end
 
 %% options
 verbose	= mpopt(31);
+dc = mpopt(10);							%% use DC formulation?
 
 %% define named indices into bus, gen, branch matrices
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
@@ -34,8 +38,41 @@ verbose	= mpopt(31);
 %%-----  do combined unit commitment/optimal power flow  -----
 t0 = clock;									%% start timer
 
-%% do decommitment as necessary
-count = 0;
+%% build network matrices
+if dc								%% DC formulation
+	%% build B matrices and phase shift injections
+	[Bbus, Bf, Pbusinj, Pfinj] = makeBdc(baseMVA, bus, branch);
+else								%% AC formulation
+	%% build admittance matrices
+	[Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
+end
+
+
+%% check for sum(Pmin) > total load, decommit as necessary
+load_capacity	= sum(bus(:, PD));		%% compute total load capacity
+on = find(gen(:, GEN_STATUS) > 0);		%% which generators are on?
+Pmin = gen(on, PMIN);
+while sum(Pmin) > load_capacity
+	%% shut down most expensive unit
+	avgPmincost = totcost(gencost(on, :), Pmin) ./ Pmin;
+	[junk, i] = fairmax(avgPmincost);	%% pick one with max avg cost at Pmin
+	i = on(i);							%% convert to generator index
+
+	if verbose
+		fprintf('Shutting down generator %d so all Pmin limits can be satisfied.\n', i);
+	end
+
+	%% set generation to zero
+	gen(i, PG)			= 0;
+	gen(i, QG)			= 0;
+	gen(i, GEN_STATUS)	= 0;
+	
+	%% update minimum gen capacity
+	on = find(gen(:, GEN_STATUS) > 0);		%% which generators are on?
+	Pmin = gen(on, PMIN);
+end
+
+%% do further decommitment as necessary
 while 1
 	count = count + 1;
 	
@@ -47,8 +84,13 @@ while 1
 	if verbose
 		mpopt = mpoption(mpopt, 'VERBOSE', verbose-1);
 	end
-	[bus, gen, branch, f, success, et] =  opf(baseMVA, bus, gen, gencost, branch, ...
-					Ybus, Yf, Yt, ref, pv, pq, mpopt);
+	if dc								%% DC formulation
+		[bus, gen, branch, f, success, et] = dcopf(baseMVA, bus, gen, gencost, branch, ...
+							Bbus, Bf, Pbusinj, Pfinj, ref, pv, pq, mpopt);
+	else								%% AC formulation
+		[bus, gen, branch, f, success, et] = opf(baseMVA, bus, gen, gencost, branch, ...
+							area, Ybus, Yf, Yt, ref, pv, pq, mpopt);
+	end
 		
 	if count == 1
 		%% set "best" variables to new values
@@ -57,10 +99,10 @@ while 1
 		best_branch		= branch;
 		best_f			= f;
 		best_success	= success;
-		ignore			= find(gen(:, GEN_STATUS) == 0);
+		ignore			= find(gen(:, GEN_STATUS) <= 0);
 		if ~success
 			if verbose
-				fprintf('\nUOFP: non-convergent OPF.\n');
+				fprintf('UOPF: non-convergent OPF.\n');
 			end
 			break;
 		end
@@ -73,11 +115,11 @@ while 1
 				best_branch		= branch;
 				best_f			= f;
 				best_success	= success;
-				ignore			= find(gen(:, GEN_STATUS) == 0);
+				ignore			= find(gen(:, GEN_STATUS) <= 0);
 			else
 				%% return previous OPF solution
 				if verbose
-					fprintf('\nCost did not decrease, restarting generator %d.\n', i);
+					fprintf('Cost did not decrease, restarting generator %d.\n', i);
 				end
 
 				%% restart generator i
@@ -86,8 +128,7 @@ while 1
 				branch	= best_branch;
 				f		= best_f;
 				success	= best_success;
-				ignore	= find(gen(:, GEN_STATUS) == 0);
-				ignore	= [ignore, i]; 	%% generator i no longer a candidate to be shut down
+				ignore	= [ignore; i]; 	%% generator i no longer a candidate to be shut down
 				di(ignore) = zeros(size(ignore));
 	
 				%% any other candidates to be shut down?
@@ -98,7 +139,7 @@ while 1
 		else
 			%% OPF didn't converge, return previous commitment schedule
 			if verbose
-				fprintf('\nUOFP: non-convergent OPF, restarting generator %d.\n', i);
+				fprintf('UOPF: non-convergent OPF, restarting generator %d.\n', i);
 			end
 			
 			%% restart generator i
@@ -107,8 +148,7 @@ while 1
 			branch	= best_branch;
 			f		= best_f;
 			success	= best_success;
-			ignore	= find(gen(:, GEN_STATUS) == 0);
-			ignore	= [ignore, i]; 	%% generator i no longer a candidate to be shut down
+			ignore	= [ignore; i]; 	%% generator i no longer a candidate to be shut down
 			di(ignore) = zeros(size(ignore));
 
 			%% any other candidates to be shut down?
@@ -130,7 +170,7 @@ while 1
 	%% check for units to decommit
 	if any(di > 1e-5)
 		%% shut down generator with largest decommitment index
-		[junk, i] = max(di);
+		[junk, i] = fairmax(di);
 		if verbose
 			fprintf('Shutting down generator %d.\n', i);
 		end

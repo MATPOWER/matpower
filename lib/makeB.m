@@ -4,9 +4,9 @@ function [Bp, Bpp] = makeB(baseMVA, bus, branch, alg)
 %   matrices B prime and B double prime used in the fast decoupled power
 %   flow. Does appropriate conversions to p.u.
 
-%   MATPOWER Version 2.0
-%   by Ray Zimmerman, PSERC Cornell    12/19/97
-%   Copyright (c) 1996, 1997 by Power System Engineering Research Center (PSERC)
+%   MATPOWER Version 2.5b3
+%   by Ray Zimmerman, PSERC Cornell    7/12/99
+%   Copyright (c) 1996-1999 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.
 
 %% constants
@@ -31,11 +31,13 @@ end
 Bp = -imag( makeYbus(baseMVA, temp_bus, temp_branch) );
 
 %%-----  form Bpp (B double prime)  -----
-temp_branch = branch;						%% modify a copy of branch
-temp_branch(:, SHIFT) = zeros(nl, 1);		%% zero out phase shifters
-if alg == 3									%% if BX method
-	temp_branch(:, BR_R) = zeros(nl, 1);		%% zero out line resistance
+if nargout == 2
+	temp_branch = branch;						%% modify a copy of branch
+	temp_branch(:, SHIFT) = zeros(nl, 1);		%% zero out phase shifters
+	if alg == 3									%% if BX method
+		temp_branch(:, BR_R) = zeros(nl, 1);		%% zero out line resistance
+	end
+	Bpp = -imag( makeYbus(baseMVA, bus, temp_branch) );
 end
-Bpp = -imag( makeYbus(baseMVA, bus, temp_branch) );
 
 return;

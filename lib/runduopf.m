@@ -1,11 +1,11 @@
 function [MVAbase, bus, gen, gencost, branch, f, success, et] = ...
 				runuopf(casename, mpopt, fname, solvedcase)
-%RUNUOPF  Runs an optimal power flow with unit-decommitment heuristic.
+%RUNDUOPF  Runs a DC optimal power flow with unit-decommitment heuristic.
 %
 %   [baseMVA, bus, gen, gencost, branch, f, success, et] = ...
-%           runuopf(casename, mpopt, fname, solvedcase)
+%           runduopf(casename, mpopt, fname, solvedcase)
 %
-%   Runs an optimal power flow with a heuristic which allows it to shut down
+%   Runs a DC optimal power flow with a heuristic which allows it to shut down
 %   "expensive" generators where casename is the name of the m-file (without
 %   the .m extension) containing the opf data, and mpopt is a MATPOWER
 %   options vector (see 'help mpoption' for details). Uses default
@@ -18,11 +18,10 @@ function [MVAbase, bus, gen, gencost, branch, f, success, et] = ...
 %   format with the specified name with a '.m' extension added.
 
 %   MATPOWER Version 2.5b3
-%   by Ray Zimmerman, PSERC Cornell    9/21/99
+%   by Ray Zimmerman, PSERC Cornell    7/19/99
 %   Copyright (c) 1996-1999 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.
 
-%%-----  initialize  -----
 %% default arguments
 if nargin < 4
 	solvedcase = '';				%% don't save solved case
@@ -37,30 +36,9 @@ if nargin < 4
 	end
 end
 
-%% read data & convert to internal bus numbering
-[baseMVA, bus, gen, branch, area, gencost] = loadcase(casename);
-[i2e, bus, gen, branch, area] = ext2int(bus, gen, branch, area);
-
-%% run unit commitment / optimal power flow
-[bus, gen, branch, f, success, et] = uopf(baseMVA, bus, gen, gencost, branch, area, mpopt);
-
-%% convert back to original bus numbering & print results
-[bus, gen, branch, area] = int2ext(i2e, bus, gen, branch, area);
-if fname
-	[fd, msg] = fopen(fname, 'at');
-	if fd == -1
-		error(msg);
-	else
-		printpf(baseMVA, bus, gen, branch, f, success, et, fd, mpopt);
-		fclose(fd);
-	end
-end
-printpf(baseMVA, bus, gen, branch, f, success, et, 1, mpopt);
-
-%% save solved case
-if solvedcase
-	savecase(solvedcase, baseMVA, bus, gen, branch, area, gencost);
-end
+mpopt = mpoption(mpopt, 'PF_DC', 1);
+[baseMVA, bus, gen, gencost, branch, f, success, et] = ...
+			runuopf(casename, mpopt, fname, solvedcase);
 
 %% this is just to prevent it from printing baseMVA
 %% when called with no output arguments

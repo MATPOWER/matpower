@@ -1,9 +1,9 @@
 function [MVAbase, bus, gen, gencost, branch, f, success, et] = ...
-				runopf(casename, mpopt, fname)
+				runopf(casename, mpopt, fname, solvedcase)
 %RUNOPF  Runs an optimal power flow.
 %
 %   [baseMVA, bus, gen, gencost, branch, f, success, et] = ...
-%           runopf(casename, mpopt, fname)
+%           runopf(casename, mpopt, fname, solvedcase)
 %   
 %   Runs an optimal power flow where casename is the name of the m-file
 %   (without the .m extension) containing the opf data, and mpopt is a
@@ -12,44 +12,58 @@ function [MVAbase, bus, gen, gencost, branch, f, success, et] = ...
 %   is not given. The results may optionally be printed to a file (appended
 %   if the file exists) whose name is given in fname (in addition to
 %   printing to STDOUT). Optionally returns the final values of baseMVA,
-%   bus, gen, gencost, branch, f, success, and et.
+%   bus, gen, gencost, branch, f, success, and et. If a name is given in
+%   solvedcase, the solved case will be written to a case file in MATPOWER
+%   format with the specified name with a '.m' extension added.
 
-%   MATPOWER Version 2.0
-%   by Ray Zimmerman, PSERC Cornell    12/16/97
-%   Copyright (c) 1996, 1997 by Power System Engineering Research Center (PSERC)
+%   MATPOWER Version 2.5b3
+%   by Ray Zimmerman, PSERC Cornell    9/21/99
+%   Copyright (c) 1996-1999 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.
 
-%% define named indices into data matrices
-[PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
-	VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
-[GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, ...
-	GEN_STATUS, PMAX, PMIN, MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN] = idx_gen;
-
+%%-----  initialize  -----
 %% default arguments
-if nargin < 3
-	fname = '';					%% don't print results to a file
-	if nargin < 2
-		mpopt = mpoption;		%% use default options
-		if nargin < 1
-			casename = 'case';	%% default data file is 'case.m'
+if nargin < 4
+	solvedcase = '';				%% don't save solved case
+	if nargin < 3
+		fname = '';					%% don't print results to a file
+		if nargin < 2
+			mpopt = mpoption;		%% use default options
+			if nargin < 1
+				casename = 'case';	%% default data file is 'case.m'
+			end
 		end
 	end
 end
 
+%% options
+dc = mpopt(10);						%% use DC formulation?
+
 %% read data & convert to internal bus numbering
-[baseMVA, bus, gen, branch, area, gencost] = feval(casename);
+[baseMVA, bus, gen, branch, area, gencost] = loadcase(casename);
 [i2e, bus, gen, branch, area] = ext2int(bus, gen, branch, area);
 
 %% get bus index lists of each type of bus
 [ref, pv, pq] = bustypes(bus, gen);
 
-%% build admittance matrices
-[Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
+%%-----  run the optimal power flow  -----
+if dc								%% DC formulation
+	%% build B matrices and phase shift injections
+	[Bbus, Bf, Pbusinj, Pfinj] = makeBdc(baseMVA, bus, branch);
+	
+	%% run the optimal power flow
+	[bus, gen, branch, f, success, et] = dcopf(baseMVA, bus, gen, gencost, branch, ...
+						Bbus, Bf, Pbusinj, Pfinj, ref, pv, pq, mpopt);
+else								%% AC formulation
+	%% build admittance matrices
+	[Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
+	
+	%% run the optimal power flow
+	[bus, gen, branch, f, success, et] = opf(baseMVA, bus, gen, gencost, branch, ...
+						area, Ybus, Yf, Yt, ref, pv, pq, mpopt);
+end
 
-%% run the optimal power flow
-[bus, gen, branch, f, success, et] = opf(baseMVA, bus, gen, gencost, branch, ...
-					Ybus, Yf, Yt, ref, pv, pq, mpopt);
-
+%%-----  output results  -----
 %% convert back to original bus numbering & print results
 [bus, gen, branch, area] = int2ext(i2e, bus, gen, branch, area);
 if fname
@@ -62,6 +76,11 @@ if fname
 	end
 end
 printpf(baseMVA, bus, gen, branch, f, success, et, 1, mpopt);
+
+%% save solved case
+if solvedcase
+	savecase(solvedcase, baseMVA, bus, gen, branch, area, gencost);
+end
 
 %% this is just to prevent it from printing baseMVA
 %% when called with no output arguments

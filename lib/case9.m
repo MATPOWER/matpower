@@ -14,9 +14,9 @@ function [baseMVA, bus, gen, branch, area, gencost] = case
 %               reference bus   = 3
 %               isolated bus    = 4
 %       3   Pd, real power demand (MW)
-%       4   Qd, reactive power demand (MVAR)
+%       4   Qd, reactive power demand (MVAr)
 %       5   Gs, shunt conductance (MW (demanded?) at V = 1.0 p.u.)
-%       6   Bs, shunt susceptance (MVAR (injected?) at V = 1.0 p.u.)
+%       6   Bs, shunt susceptance (MVAr (injected?) at V = 1.0 p.u.)
 %       7   area number, 1-100
 %       8   Vm, voltage magnitude (p.u.)
 %       9   Va, voltage angle (degrees)
@@ -30,17 +30,18 @@ function [baseMVA, bus, gen, branch, area, gencost] = case
 %       1   bus number
 %   (-)     (machine identifier, 0-9, A-Z)
 %       2   Pg, real power output (MW)
-%       3   Qg, reactive power output (MVAR)
-%       4   Qmax, maximum reactive power output (MVAR)
-%       5   Qmin, minimum reactive power output (MVAR)
+%       3   Qg, reactive power output (MVAr)
+%       4   Qmax, maximum reactive power output (MVAr)
+%       5   Qmin, minimum reactive power output (MVAr)
 %       6   Vg, voltage magnitude setpoint (p.u.)
 %   (-)     (remote controlled bus index)
 %       7   mBase, total MVA base of this machine, defaults to baseMVA
 %   (-)     (machine impedance, p.u. on mBase)
 %   (-)     (step up transformer impedance, p.u. on mBase)
 %   (-)     (step up transformer off nominal turns ratio)
-%       8   status, 1 - machine in service, 0 - machine out of service
-%   (-)     (% of total VARS to come from this gen in order to hold V at
+%       8   status,  >  0 - machine in service
+%                    <= 0 - machine out of service
+%   (-)     (% of total VAr's to come from this gen in order to hold V at
 %               remote bus controlled by several generators)
 %       9   Pmax, maximum real power output (MW)
 %       10  Pmin, minimum real power output (MW)

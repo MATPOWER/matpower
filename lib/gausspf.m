@@ -1,6 +1,6 @@
-function [V, converged, i] = newtonpf(Ybus, Sbus, V0, ref, pv, pq, mpopt)
-%NEWTONPF  Solves the power flow using a full Newton's method.
-%   [V, converged, i] = newtonpf(Ybus, Sbus, V0, ref, pv, pq, mpopt)
+function [V, converged, i] = gausspf(Ybus, Sbus, V0, ref, pv, pq, mpopt)
+%GAUSSPF  Solves the power flow using a Gauss-Seidel method.
+%   [V, converged, i] = gausspf(Ybus, Sbus, V0, ref, pv, pq, mpopt)
 %   solves for bus voltages given the full system admittance matrix (for
 %   all buses), the complex bus power injection vector (for all buses),
 %   the initial vector of complex bus voltages, and column vectors with
@@ -17,6 +17,7 @@ function [V, converged, i] = newtonpf(Ybus, Sbus, V0, ref, pv, pq, mpopt)
 
 %   MATPOWER Version 2.5b3
 %   by Ray Zimmerman, PSERC Cornell    4/29/99
+%	and Alberto Borghetti, University of Bologna, Italy
 %   Copyright (c) 1996-1999 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.
 
@@ -27,7 +28,7 @@ end
 
 %% options
 tol		= mpopt(2);
-max_it	= mpopt(3);
+max_it	= mpopt(5);
 verbose	= mpopt(31);
 
 %% initialize
@@ -64,49 +65,26 @@ if normF < tol
 	end
 end
 
-%% do Newton iterations
+%% do Gauss-Seidel iterations
 while (~converged & i < max_it)
 	%% update iteration counter
 	i = i + 1;
-	
-	%% evaluate Jacobian
-	[dSbus_dVm, dSbus_dVa] = dSbus_dV(Ybus, V);
-	
-	%% selecting a subset of rows of a large sparse matrix is very slow
-	%% in Matlab 5 (but not Matlab 4 ... go figure), but selecting a
-	%% subset of the columns is fast, and so is transposing, so instead
-	%% of doing this ...
-% 	j11 = real(dSbus_dVa([pv; pq], [pv; pq]));
-% 	j12 = real(dSbus_dVm([pv; pq], pq));
-% 	j21 = imag(dSbus_dVa(pq, [pv; pq]));
-% 	j22 = imag(dSbus_dVm(pq, pq));
-
-	%% ... we do the equivalent thing using
-	%% a temporary matrix and transposing
-	temp = real(dSbus_dVa(:, [pv; pq]))';
-	j11 = temp(:, [pv; pq])';
-	temp = real(dSbus_dVm(:, pq))';
-	j12 = temp(:, [pv; pq])';
-	temp = imag(dSbus_dVa(:, [pv; pq]))';
-	j21 = temp(:, pq)';
-	temp = imag(dSbus_dVm(:, pq))';
-	j22 = temp(:, pq)';
-	
-	J = [	j11 j12;
-			j21 j22;	];
-
-	%% compute update step
-	dx = -(J \ F);
 
 	%% update voltage
+	%% at PQ buses
+	for k = pq(1:npq)'
+		V(k) =	V(k) + (conj(Sbus(k) / V(k)) - Ybus(k,:) * V ) / Ybus(k,k);
+	end
+
+	%% at PV buses
 	if npv
-		Va(pv) = Va(pv) + dx(j1:j2);
+		for k = pv(1:npv)'
+			Sbus(k) = real(Sbus(k)) + j * imag( V(k) .* conj(Ybus(k,:) * V));
+			V(k) =	V(k) + (conj(Sbus(k) / V(k)) - Ybus(k,:) * V ) / Ybus(k,k);
+% 			V(k) = Vm(k) * V(k) / abs(V(k));
+		end
+		V(pv) = Vm(pv) .* V(pv) ./ abs(V(pv));
 	end
-	if npq
-		Va(pq) = Va(pq) + dx(j3:j4);
-		Vm(pq) = Vm(pq) + dx(j5:j6);
-	end
-	V = Vm .* exp(j * Va);
 
 	%% evalute F(x)
 	mis = V .* conj(Ybus * V) - Sbus;
@@ -122,13 +100,13 @@ while (~converged & i < max_it)
 	if normF < tol
 		converged = 1;
 		if verbose
-			fprintf('\nNewton''s method power flow converged in %d iterations.\n', i);
+			fprintf('\nGauss-Seidel power flow converged in %d iterations.\n', i);
 		end
 	end
 end
 
 if verbose
 	if ~converged
-		fprintf('\nNewton''s method power did not converge in %d iterations.\n', i);
+		fprintf('\nGauss-Seidel power did not converge in %d iterations.\n', i);
 	end
 end

@@ -30,7 +30,7 @@ function [dSbus_dVm, dSbus_dVa] = dSbus_dV(Ybus, V)
 %              = j * diag(V) * conj(diag(Ibus) - Ybus * diag(V))
 %
 
-%   MATPOWER Version 2.0
+%   MATPOWER Version 2.5b3
 %   by Ray Zimmerman, PSERC Cornell    9/19/97
 %   Copyright (c) 1996, 1997 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.

@@ -1,19 +1,19 @@
 function [bus, gen, branch, f, success, et] = opf(baseMVA, bus, gen, gencost, ...
-					branch, Ybus, Yf, Yt, ref, pv, pq, mpopt)
+					branch, area, Ybus, Yf, Yt, ref, pv, pq, mpopt)
 %OPF  Solves an optimal power flow.
 %   [bus, gen, branch, f, success, et] = opf(baseMVA, bus, gen, gencost, ...
-%                   branch, Ybus, Yf, Yt, ref, pv, pq, mpopt)
+%                   branch, area, Ybus, Yf, Yt, ref, pv, pq, mpopt)
 %   Assumes that Ybus, Yf, Yt, V, ref, pv, pq are consistent with
 %   (or override) data in bus, gen, branch.
 
-%   MATPOWER Version 2.0
-%   by Ray Zimmerman & David Gan, PSERC Cornell    12/24/97
-%   Copyright (c) 1996, 1997 by Power System Engineering Research Center (PSERC)
+%   MATPOWER Version 2.5b3
+%   by Ray Zimmerman, PSERC Cornell    9/15/99
+%   Copyright (c) 1996-1999 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.
 
 %%----- initialization -----
 %% default arguments
-if nargin < 12
+if nargin < 13
 	mpopt = mpoption;		%% use default options
 end
 
@@ -55,14 +55,14 @@ end
 alg = mpopt(11);
 formulation = opf_form(alg);
 
-%% move Pmin and Pmax limits out slightly to avoid problems
-%% caused by rounding errors when corner point of cost
-%% function lies at exactly Pmin or Pmax
-if any(i_pwln)
-	ng = size(gen, 1);
-	gen(:, PMIN) = gen(:, PMIN) - 1e-6 * ones(ng, 1);
-	gen(:, PMAX) = gen(:, PMAX) + 1e-6 * ones(ng, 1);
-end
+% %% move Pmin and Pmax limits out slightly to avoid problems
+% %% with lambdas caused by rounding errors when corner point
+% %% of cost function lies at exactly Pmin or Pmax
+% if any(i_pwln)
+% 	ng = size(gen, 1);
+% 	gen(:, PMIN) = gen(:, PMIN) - 10 * mpopt(16) * ones(ng, 1);
+% 	gen(:, PMAX) = gen(:, PMAX) + 10 * mpopt(16) * ones(ng, 1);
+% end
 
 %% check cost model/algorithm consistency
 if any( i_pwln ) & formulation == 1
@@ -90,17 +90,20 @@ end
 %% start timer
 t0 = clock;
 
+%% gen info
+on = find(gen(:, GEN_STATUS) > 0);		%% which generators are on?
+gbus = gen(on, GEN_BUS);				%% what buses are they at?
+
 %% sizes of things
 nb = size(bus, 1);
 nl = size(branch, 1);
 npv	= length(pv);
 npq	= length(pq);
-ng = npv + 1;			%% number of generators that are turned on
+ng = length(on);						%% number of generators that are turned on
 
 %% initial state
-on = find(gen(:, GEN_STATUS));				%% which generators are on?
 V	= bus(:, VM) .* exp(sqrt(-1) * pi/180 * bus(:, VA));
-V(gen(on, GEN_BUS)) = gen(on, VG) ./ abs(V(gen(on, GEN_BUS))).* V(gen(on, GEN_BUS));
+V(gbus) = gen(on, VG) ./ abs(V(gbus)).* V(gbus);
 Pg	= gen(on, PG) / baseMVA;
 Qg	= gen(on, QG) / baseMVA;
 
@@ -111,10 +114,10 @@ Qg	= gen(on, QG) / baseMVA;
 j1 = 1;			j2	= npv;				%% j1:j2	- V angle of pv buses
 j3 = j2 + 1;	j4	= j2 + npq;			%% j3:j4	- V angle of pq buses
 j5 = j4 + 1;	j6	= j4 + nb;			%% j5:j6	- V mag of all buses
-j7 = j6 + 1;	j8	= j6 + npv + 1;		%% j7:j8	- P of generators
-j9 = j8 + 1;	j10	= j8 + npv + 1;		%% j9:j10	- Q of generators
-% j11 = j10 + 1;	j12	= j10 + npv + 1;	%% j11:j12	- Cp, cost of Pg
-% j13 = j12 + 1;	j14	= j12 + npv + 1;	%% j13:j14	- Cq, cost of Qg
+j7 = j6 + 1;	j8	= j6 + ng;			%% j7:j8	- P of generators
+j9 = j8 + 1;	j10	= j8 + ng;			%% j9:j10	- Q of generators
+j11 = j10 + 1;	j12	= j10 + ng;			%% j11:j12	- Cp, cost of Pg
+j13 = j12 + 1;	j14	= j12 + ng;			%% j13:j14	- Cq, cost of Qg
 
 %% set up x
 if formulation == 1
@@ -140,6 +143,9 @@ if opf_slvr(alg) == 0			%% use CONSTR
 	otopt = foptions;				%% get default options for constr
 	otopt(1) = (verbose > 0);		%% set verbose flag appropriately
 	% otopt(9) = 1;					%% check user supplied gradients?
+	otopt(2)  = mpopt(17);			%% termination tolerance on 'x'
+	otopt(3)  = mpopt(18);			%% termination tolerance on 'F'
+	otopt(4)  = mpopt(16);			%% termination tolerance on constraint violation
 	otopt(13) = mpopt(15);			%% number of equality constraints
 	otopt(14) = mpopt(19);			%% maximum number of iterations
 	
@@ -186,7 +192,6 @@ else							%% use LPCONSTR
 	f = feval(fun, x, baseMVA, bus, gen, gencost, branch, Ybus, Yf, Yt, V, ref, pv, pq, mpopt);
 end
 
-%%-----  calculate return values  -----
 %% reconstruct V
 Va = zeros(nb, 1);
 Va([ref; pv; pq]) = [angle(V(ref)); x(j1:j2); x(j3:j4)];
@@ -196,6 +201,7 @@ V = Vm .* exp(j * Va);
 %% grab Pg & Qg
 Sg = x(j7:j8) + j * x(j9:j10);		%% complex power generation in p.u.
 
+%%-----  calculate return values  -----
 %% update bus, gen, branch with solution info
 [bus, gen, branch] = opfsoln(baseMVA, bus, gen, branch, ...
 						Ybus, Yf, Yt, V, Sg, lambda, ref, pv, pq, mpopt);

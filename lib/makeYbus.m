@@ -6,9 +6,9 @@ function [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch)
 %   currents injected into each line from the "from" and "to" buses
 %   respectively of each line. Does appropriate conversions to p.u.
 
-%   MATPOWER Version 2.0
-%   by Ray Zimmerman, PSERC Cornell    12/19/97
-%   Copyright (c) 1996, 1997 by Power System Engineering Research Center (PSERC)
+%   MATPOWER Version 2.5b3
+%   by Ray Zimmerman, PSERC Cornell    9/21/99
+%   Copyright (c) 1996-1999 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.
 
 %% constants
@@ -29,9 +29,9 @@ end
 
 %% for each branch, compute the elements of the branch admittance matrix where
 %%
-%%		| If |   | Yff  Yft |   | Vf |;
-%%		|    | = |          | * |    |;
-%%		| It |   | Ytf  Ytt |   | Vt |;
+%%		| If |   | Yff  Yft |   | Vf |
+%%		|    | = |          | * |    |
+%%		| It |   | Ytf  Ytt |   | Vt |
 %%
 stat = branch(:, BR_STATUS);					%% ones at in-service branches
 Ys = stat ./ (branch(:, BR_R) + j * branch(:, BR_X));	%% series admittance
@@ -39,25 +39,25 @@ Bc = stat .* branch(:, BR_B);							%% line charging susceptance
 tap = ones(nl, 1);								%% default tap ratio = 1
 i = find(branch(:, TAP));						%% indices of non-zero tap ratios
 tap(i) = branch(i, TAP);						%% assign non-zero tap ratios
-tap = tap .* exp(j*pi/180 * branch(:, SHIFT));	%% add phase shifters
+tap = tap .* exp(-j*pi/180 * branch(:, SHIFT));	%% add phase shifters
 Ytt = Ys + j*Bc/2;
 Yff = Ytt ./ (tap .* conj(tap));
 Yft = - Ys ./ conj(tap);
 Ytf = - Ys ./ tap;
 
 %% compute shunt admittance
-%% if Ps is the real power consumed by the shunt at V = 1.0 p.u.
-%% and Qs is the reactive power injected by the shunt at V = 1.0 p.u.
-%% then Ps - j Qs = V * conj(Ys * V) = conj(Ys) = Gs - j Bs,
-%% i.e. Ys = Ps + j Qs, so ...
-Ys = (bus(:, GS) + j * bus(:, BS)) / baseMVA;	%% vector of shunt admittances
+%% if Psh is the real power consumed by the shunt at V = 1.0 p.u.
+%% and Qsh is the reactive power injected by the shunt at V = 1.0 p.u.
+%% then Psh - j Qsh = V * conj(Ysh * V) = conj(Ysh) = Gs - j Bs,
+%% i.e. Ysh = Psh + j Qsh, so ...
+Ysh = (bus(:, GS) + j * bus(:, BS)) / baseMVA;	%% vector of shunt admittances
 
 %% build Ybus
 f = branch(:, F_BUS);							%% list of "from" buses
 t = branch(:, T_BUS);							%% list of "to" buses
 Cf = sparse(f, 1:nl, ones(nl, 1), nb, nl);		%% connection matrix for line & from buses
 Ct = sparse(t, 1:nl, ones(nl, 1), nb, nl);		%% connection matrix for line & to buses
-Ybus = spdiags(Ys, 0, nb, nb) + ...				%% shunt admittance
+Ybus = spdiags(Ysh, 0, nb, nb) + ...			%% shunt admittance
 	Cf * spdiags(Yff, 0, nl, nl) * Cf' + ...	%% Yff term of branch admittance
 	Cf * spdiags(Yft, 0, nl, nl) * Ct' + ...	%% Yft term of branch admittance
 	Ct * spdiags(Ytf, 0, nl, nl) * Cf' + ...	%% Ytf term of branch admittance

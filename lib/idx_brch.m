@@ -4,7 +4,7 @@ function [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, ...
 %   [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, ...
 %   RATE_C, TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST] = idx_brch
 
-%   MATPOWER Version 2.0
+%   MATPOWER Version 2.5b3
 %   by Ray Zimmerman, PSERC Cornell    9/19/97
 %   Copyright (c) 1996, 1997 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.
@@ -24,9 +24,9 @@ BR_STATUS	= 11;	%% initial branch status, 1 - in service, 0 - out of service
 
 %% included in power flow solution, not necessarily in input
 PF			= 12;	%% real power injected at "from" bus end (MW)		(not in PTI format)
-QF			= 13;	%% reactive power injected at "from" bus end (MVAR)	(not in PTI format)
+QF			= 13;	%% reactive power injected at "from" bus end (MVAr)	(not in PTI format)
 PT			= 14;	%% real power injected at "to" bus end (MW)			(not in PTI format)
-QT			= 15;	%% reactive power injected at "to" bus end (MVAR)	(not in PTI format)
+QT			= 15;	%% reactive power injected at "to" bus end (MVAr)	(not in PTI format)
 
 %% included in opf solution, not necessarily in input
 %% assume objective function has units, u

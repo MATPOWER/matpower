@@ -6,9 +6,9 @@ function [i2e, bus, gen, branch, area] = ext2int(bus, gen, branch, area)
 %   May be called as [i2e, bus, gen, branch] = ext2int(bus, gen, branch) if
 %   area data is not available/needed.
 
-%   MATPOWER Version 2.0
-%   by Ray Zimmerman, PSERC Cornell    9/19/97
-%   Copyright (c) 1997 by Power System Engineering Research Center (PSERC)
+%   MATPOWER Version 2.5b3
+%   by Ray Zimmerman, PSERC Cornell    2/10/99
+%   Copyright (c) 1997-1999 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.
 
 %% define names for columns to data matrices
@@ -29,7 +29,9 @@ gen(:, GEN_BUS)				= e2i( gen(:, GEN_BUS)			);
 branch(:, F_BUS)			= e2i( branch(:, F_BUS)			);
 branch(:, T_BUS)			= e2i( branch(:, T_BUS)			);
 if nargin > 3 & nargout > 4
-	area(:, PRICE_REF_BUS)	= e2i( area(:, PRICE_REF_BUS)	);
+	if ~isempty(area)
+		area(:, PRICE_REF_BUS)	= e2i( area(:, PRICE_REF_BUS)	);
+	end
 end
 
 return;

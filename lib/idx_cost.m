@@ -2,7 +2,7 @@ function [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, N, COST] = idx_cost
 %IDX_COST   Defines variables for column indices to gencost.
 %   [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, N, COST] = idx_cost
 
-%   MATPOWER Version 2.0
+%   MATPOWER Version 2.5b3
 %   by Ray Zimmerman, PSERC Cornell    9/19/97
 %   Copyright (c) 1997 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.

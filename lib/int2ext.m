@@ -5,7 +5,7 @@ function [bus, gen, branch, area] = int2ext(i2e, bus, gen, branch, area)
 %   May be called as [bus, gen, branch] = int2ext(i2e, bus, gen, branch) if
 %   area data is not available/needed.
 
-%   MATPOWER Version 2.0
+%   MATPOWER Version 2.5b3
 %   by Ray Zimmerman, PSERC Cornell    9/19/97
 %   Copyright (c) 1997 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.
