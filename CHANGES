@@ -2,7 +2,7 @@
  Change history for MATPOWER
 -----------------------------
 
-Version:    3.0b4+
+Version:    3.0.0
 
 maintained by Ray Zimmerman <rz10@cornell.edu>
 
@@ -14,6 +14,9 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 
 Changes since 3.0b4
 -------------------
+
+2/14/05
+    - Released version 3.0.0.
 
 2/3/05
     - In mp_lp.m and mp_qp.m, on Windows it now makes sure BPMPD_MEX is not
