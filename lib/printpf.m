@@ -151,10 +151,12 @@ if OUT_SYS_SUM
 	[minv, mini] = min(bus(:, VA));
 	[maxv, maxi] = max(bus(:, VA));
 	fprintf(fd, '\nVoltage Angle   %8.2f deg   @ bus %-4d   %8.2f deg   @ bus %-4d', minv, bus(mini, BUS_I), maxv, bus(maxi, BUS_I));
-	[maxv, maxi] = max(real(loss));
-	fprintf(fd, '\nP Losses (I^2*R)             -              %8.2f MW    @ line %d-%d', maxv, branch(maxi, F_BUS), branch(maxi, T_BUS));
-	[maxv, maxi] = max(imag(loss));
-	fprintf(fd, '\nQ Losses (I^2*X)             -              %8.2f MVAr  @ line %d-%d', maxv, branch(maxi, F_BUS), branch(maxi, T_BUS));
+	if ~dc
+		[maxv, maxi] = max(real(loss));
+		fprintf(fd, '\nP Losses (I^2*R)             -              %8.2f MW    @ line %d-%d', maxv, branch(maxi, F_BUS), branch(maxi, T_BUS));
+		[maxv, maxi] = max(imag(loss));
+		fprintf(fd, '\nQ Losses (I^2*X)             -              %8.2f MVAr  @ line %d-%d', maxv, branch(maxi, F_BUS), branch(maxi, T_BUS));
+	end
 	if isOPF
 		[minv, mini] = min(bus(:, LAM_P));
 		[maxv, maxi] = max(bus(:, LAM_P));
