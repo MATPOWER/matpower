@@ -147,15 +147,13 @@ else
   gencost = gencost( [igen; igen+ng], :);
 end
 
-% Find out if any of these "generators" are actually curtailable/price
-% sensitive loads.  The current test for this is that Pmin < 0 and
-% Pmax <= 0. This may need to be revised to allow sensible specification
-% of both elastic demand and pumped storage units.
-% Price sensitive loads are modeled as generators with an added constant
+% Find out if any of these "generators" are actually dispatchable loads.
+% (see 'help isload' for details on what consitutes a dispatchable load)
+% Dispatchable loads are modeled as generators with an added constant
 % power factor constraint. The power factor is derived from the
 % original value of (Pg, Qg).  If both are zero, a unity power factor
 % is assumed.
-vload = find( (gen(:, PMIN) < 0) & (gen(:, PMAX) <= 0) );
+vload = find( isload(gen) );
 
 % Find out problem dimensions
 nb = size(bus, 1);                             % buses

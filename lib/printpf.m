@@ -98,9 +98,9 @@ sorted_areas = sort(bus(:, BUS_AREA));
 s_areas = sorted_areas([1; find(diff(sorted_areas))+1]);    %% area numbers
 na = length(s_areas);                           %% number of areas
 nzsh = find(bus(:, GS) | bus(:, BS));
-allg = find(gen(:, PMIN) >= 0 & gen(:, PMAX) >  0);
-ong  = find(gen(:, GEN_STATUS) > 0 & gen(:, PMIN) >= 0 & gen(:, PMAX) >  0);
-onld = find(gen(:, GEN_STATUS) > 0 & gen(:, PMIN) <  0 & gen(:, PMAX) <= 0);
+allg = find( ~isload(gen) );
+ong  = find( gen(:, GEN_STATUS) > 0 & ~isload(gen) );
+onld = find( gen(:, GEN_STATUS) > 0 &  isload(gen) );
 V = bus(:, VM) .* exp(sqrt(-1) * pi/180 * bus(:, VA));
 out = find(branch(:, BR_STATUS) == 0);          %% out-of-service branches
 nout = length(out);
@@ -184,9 +184,9 @@ if OUT_AREA_SUM
     for i=1:length(s_areas)
         a = s_areas(i);
         ib = find(bus(:, BUS_AREA) == a);
-        ig = find(bus(e2i(gen(:, GEN_BUS)), BUS_AREA) == a & gen(:, PMIN) >= 0 & gen(:, PMAX) > 0);
-        igon = find(bus(e2i(gen(:, GEN_BUS)), BUS_AREA) == a & gen(:, GEN_STATUS) > 0 & gen(:, PMIN) >= 0 & gen(:, PMAX) > 0);
-        ildon = find(bus(e2i(gen(:, GEN_BUS)), BUS_AREA) == a & gen(:, GEN_STATUS) > 0 & gen(:, PMIN) < 0 & gen(:, PMAX) <= 0);
+        ig = find(bus(e2i(gen(:, GEN_BUS)), BUS_AREA) == a & ~isload(gen));
+        igon = find(bus(e2i(gen(:, GEN_BUS)), BUS_AREA) == a & gen(:, GEN_STATUS) > 0 & ~isload(gen));
+        ildon = find(bus(e2i(gen(:, GEN_BUS)), BUS_AREA) == a & gen(:, GEN_STATUS) > 0 & isload(gen));
         inzld = find(bus(:, BUS_AREA) == a & (bus(:, PD) | bus(:, QD)));
         inzsh = find(bus(:, BUS_AREA) == a & (bus(:, GS) | bus(:, BS)));
         ibrch = find(bus(e2i(branch(:, F_BUS)), BUS_AREA) == a & bus(e2i(branch(:, T_BUS)), BUS_AREA) == a);
@@ -212,8 +212,8 @@ if OUT_AREA_SUM
     fprintf(fd, '\n----   ------  ------------------   ------  ------------------    ------  ------');
     for i=1:length(s_areas)
         a = s_areas(i);
-        ig = find(bus(e2i(gen(:, GEN_BUS)), BUS_AREA) == a & gen(:, PMIN) >= 0 & gen(:, PMAX) > 0);
-        igon = find(bus(e2i(gen(:, GEN_BUS)), BUS_AREA) == a & gen(:, GEN_STATUS) > 0 & gen(:, PMIN) >= 0 & gen(:, PMAX) > 0);
+        ig = find(bus(e2i(gen(:, GEN_BUS)), BUS_AREA) == a & ~isload(gen));
+        igon = find(bus(e2i(gen(:, GEN_BUS)), BUS_AREA) == a & gen(:, GEN_STATUS) > 0 & ~isload(gen));
         fprintf(fd, '\n%3d   %7.1f  %7.1f to %-7.1f  %7.1f  %7.1f to %-7.1f   %7.1f %7.1f', ...
             a, sum(gen(ig, PMAX)), sum(gen(ig, QMIN)), sum(gen(ig, QMAX)), ...
             sum(gen(igon, PMAX)), sum(gen(igon, QMIN)), sum(gen(igon, QMAX)), ...
@@ -230,7 +230,7 @@ if OUT_AREA_SUM
     fprintf(fd, '\n----    ------  ------    ------  ------    ------  ------    ------  ------');
     for i=1:length(s_areas)
         a = s_areas(i);
-        ildon = find(bus(e2i(gen(:, GEN_BUS)), BUS_AREA) == a & gen(:, GEN_STATUS) > 0 & gen(:, PMIN) < 0 & gen(:, PMAX) <= 0);
+        ildon = find(bus(e2i(gen(:, GEN_BUS)), BUS_AREA) == a & gen(:, GEN_STATUS) > 0 & isload(gen));
         inzld = find(bus(:, BUS_AREA) == a & (bus(:, PD) | bus(:, QD)));
         fprintf(fd, '\n%3d    %7.1f %7.1f   %7.1f %7.1f   %7.1f %7.1f   %7.1f %7.1f', ...
             a, -sum(gen(ildon, PMIN)), ...
@@ -343,9 +343,9 @@ if OUT_BUS
     for i = 1:nb
         fprintf(fd, '\n%3d%8.3f%10.3f', bus(i, [BUS_I, VM, VA]));
         g  = find(gen(:, GEN_STATUS) > 0 & gen(:, GEN_BUS) == bus(i, BUS_I) & ...
-                    gen(:, PMIN) >= 0 & gen(:, PMAX) > 0);
+                    ~isload(gen));
         ld = find(gen(:, GEN_STATUS) > 0 & gen(:, GEN_BUS) == bus(i, BUS_I) & ...
-                    gen(:, PMIN) < 0 & gen(:, PMAX) <= 0);
+                    isload(gen));
         if ~isempty(g)
             fprintf(fd, '%10.2f%10.2f', sum(gen(g, PG)), sum(gen(g, QG)));
         else
