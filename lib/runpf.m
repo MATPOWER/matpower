@@ -5,8 +5,8 @@ function [MVAbase, bus, gen, branch, success, et] = runpf(casename, mpopt, fname
 %           runpf(casename, mpopt, fname, solvedcase)
 %
 %   Runs a power flow (full AC Newton's method by default) and optionally
-%   returns the solved values in the data matrices, the objective function
-%   value, a flag which is true if the algorithm was successful in finding a
+%   returns the solved values in the data matrices, a flag which is true
+%   if the algorithm was successful in finding a
 %   solution, and the elapsed time in seconds. All input arguments are
 %   optional. If casename is provided it specifies the name of the input
 %   data file or struct (see also 'help caseformat' and 'help loadcase')
