@@ -1,6 +1,6 @@
-function [i2e, bus, gen, branch, area] = ext2int(bus, gen, branch, area)
+function [i2e, bus, gen, branch, areas] = ext2int(bus, gen, branch, areas)
 %EXT2INT   Converts external to internal bus numbering.
-%   [i2e, bus, gen, branch, area] = ext2int(bus, gen, branch, area) converts
+%   [i2e, bus, gen, branch, areas] = ext2int(bus, gen, branch, areas) converts
 %   external bus numbers (possibly non-consecutive) to consecutive internal
 %   bus numbers which start at 1.
 %   May be called as [i2e, bus, gen, branch] = ext2int(bus, gen, branch) if
@@ -30,8 +30,8 @@ gen(:, GEN_BUS)				= e2i( gen(:, GEN_BUS)			);
 branch(:, F_BUS)			= e2i( branch(:, F_BUS)			);
 branch(:, T_BUS)			= e2i( branch(:, T_BUS)			);
 if nargin > 3 & nargout > 4
-	if ~isempty(area)
-		area(:, PRICE_REF_BUS)	= e2i( area(:, PRICE_REF_BUS)	);
+	if ~isempty(areas)
+		areas(:, PRICE_REF_BUS)	= e2i( areas(:, PRICE_REF_BUS)	);
 	end
 end
 

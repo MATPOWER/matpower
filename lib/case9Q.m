@@ -1,4 +1,4 @@
-function [baseMVA, bus, gen, branch, area, gencost] = case9Q
+function [baseMVA, bus, gen, branch, areas, gencost] = case9Q
 %CASE9Q    Case 9 with costs for reactive generation.
 %   Please see 'help caseformat' for details on the case file format.
 
@@ -44,7 +44,7 @@ branch = [
 
 %%-----  OPF Data  -----%%
 %% area data
-area = [
+areas = [
 	1	5;
 ];
 

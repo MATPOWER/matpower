@@ -134,5 +134,3 @@ Please report any bugs you find to Ray Zimmerman <rz10@cornell.edu>.
 - MathWorks bug: constr does not correctly handle negative lambdas
 - identification of binding constraints in printpf.m should
   use OPF_VIOLATION instead of size of MU
-- 'area' is the name of an m-file in Matlab 5, my variable 'area'
-  masks this m-file

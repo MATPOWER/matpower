@@ -1,4 +1,4 @@
-function [baseMVA, bus, gen, branch, area, gencost] = case39
+function [baseMVA, bus, gen, branch, areas, gencost] = case39
 %CASE39    Power flow data for 39 bus case.
 %   Please see 'help caseformat' for details on the case file format.
 
@@ -114,7 +114,7 @@ branch = [
   19   20   0.00070  0.01380  0.00000  9900.00     0.00      0.00  1.06000    0.000     1
 ];	
 
-area = [
+areas = [
    1      1
 ];	
 

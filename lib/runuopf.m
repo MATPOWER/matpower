@@ -39,14 +39,14 @@ if nargin < 4
 end
 
 %% read data & convert to internal bus numbering
-[baseMVA, bus, gen, branch, area, gencost] = loadcase(casename);
-[i2e, bus, gen, branch, area] = ext2int(bus, gen, branch, area);
+[baseMVA, bus, gen, branch, areas, gencost] = loadcase(casename);
+[i2e, bus, gen, branch, areas] = ext2int(bus, gen, branch, areas);
 
 %% run unit commitment / optimal power flow
-[bus, gen, branch, f, success, et] = uopf(baseMVA, bus, gen, gencost, branch, area, mpopt);
+[bus, gen, branch, f, success, et] = uopf(baseMVA, bus, gen, gencost, branch, areas, mpopt);
 
 %% convert back to original bus numbering & print results
-[bus, gen, branch, area] = int2ext(i2e, bus, gen, branch, area);
+[bus, gen, branch, areas] = int2ext(i2e, bus, gen, branch, areas);
 if fname
 	[fd, msg] = fopen(fname, 'at');
 	if fd == -1
@@ -60,7 +60,7 @@ printpf(baseMVA, bus, gen, branch, f, success, et, 1, mpopt);
 
 %% save solved case
 if solvedcase
-	savecase(solvedcase, baseMVA, bus, gen, branch, area, gencost);
+	savecase(solvedcase, baseMVA, bus, gen, branch, areas, gencost);
 end
 
 %% this is just to prevent it from printing baseMVA

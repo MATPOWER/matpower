@@ -1,17 +1,17 @@
-function [baseMVA, bus, gen, branch, area, gencost, info] = loadcase(casefile)
+function [baseMVA, bus, gen, branch, areas, gencost, info] = loadcase(casefile)
 %LOADCASE   Load .m or .mat case files or data struct in MATPOWER format
 %
-%   [baseMVA, bus, gen, branch, area, gencost ] = loadcase(casefile)
+%   [baseMVA, bus, gen, branch, areas, gencost ] = loadcase(casefile)
 %
 %   Here casefile is either a struct containing the fields baseMVA, bus,
-%   gen, branch, area, gencost, or a string containing the name of the file.
+%   gen, branch, areas, gencost, or a string containing the name of the file.
 %   If casefile contains the extension '.mat' or '.m', then the explicit file
 %   is searched. If casefile containts no extension, then CASELOAD looks for
 %   a '.mat' file first, then for a '.m' file.  If the file does not exist
 %   or doesn't define all matrices, the routine aborts with an appropriate
 %   error message.  Alternatively, it can be called with the syntax:
 %
-%   [baseMVA, bus, gen, branch, area, gencost, info] = loadcase(casefile)
+%   [baseMVA, bus, gen, branch, areas, gencost, info] = loadcase(casefile)
 %
 %   In this case, the function will not abort, but info will contain an exit
 %   code as follows:
@@ -30,13 +30,13 @@ function [baseMVA, bus, gen, branch, area, gencost, info] = loadcase(casefile)
 %   See http://www.pserc.cornell.edu/ for more info.
 
 %% initialize as empty matrices in case of error
-baseMVA = []; bus = []; gen = []; branch = []; area = []; gencost = [];
+baseMVA = []; bus = []; gen = []; branch = []; areas = []; gencost = [];
 
 if isstruct(casefile)				%% first param is a struct
 	if nargout < 7
 		if ~isfield(casefile,'baseMVA') | ~isfield(casefile,'bus') | ...
 				~isfield(casefile,'gen') | ~isfield(casefile,'branch') | ...
-				~isfield(casefile,'area') | ~isfield(casefile,'gencost') 
+				~isfield(casefile,'areas') | ~isfield(casefile,'gencost') 
 			info = 5;
 			return;
 		end
@@ -45,7 +45,7 @@ if isstruct(casefile)				%% first param is a struct
 	bus		= casefile.bus;
 	gen		= casefile.gen;
 	branch	= casefile.branch;
-	area	= casefile.area;
+	areas	= casefile.areas;
 	gencost	= casefile.gencost;
 	info	= 0;
 	return;
@@ -79,7 +79,7 @@ if exist('rootname') ~= 1			%% no explicit extension
   if exist([casefile '.mat']) == 2
      load(casefile);
   elseif exist([casefile '.m']) == 2
-    [baseMVA, bus, gen, branch, area, gencost] = feval(casefile);
+    [baseMVA, bus, gen, branch, areas, gencost] = feval(casefile);
   else
     if nargout < 7
       error('loadcase: specified case not in MATLAB''s search path');
@@ -102,7 +102,7 @@ else								%% explicit extension given
     end
   elseif strcmp(extension,'.m')
     if exist([rootname '.m']) == 2
-      [baseMVA, bus, gen, branch, area, gencost] = feval(rootname);
+      [baseMVA, bus, gen, branch, areas, gencost] = feval(rootname);
     else
       if nargout < 7
         error('loadcase: specified M file does not exist');
@@ -115,7 +115,7 @@ else								%% explicit extension given
 end
 
 if ~( exist('baseMVA') == 1 & exist('bus') == 1 & exist('branch') == 1 ...
-		& exist('gen') == 1 & exist('area') == 1 & exist('gencost') == 1)
+		& exist('gen') == 1 & exist('areas') == 1 & exist('gencost') == 1)
   	if nargout < 7
     	error('loadcase: one or more of the data matrices is undefined');
   	else

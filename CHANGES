@@ -18,12 +18,14 @@ Please report any bugs you find to Ray Zimmerman <rz10@cornell.edu>.
   not correctly handle negative lambdas
 - identification of binding constraints in printpf.m should
   use OPF_VIOLATION instead of size of MU
-- 'area' is the name of an m-file in Matlab 5, my variable 'area'
-  masks this m-file
 
 
 Changes since 2.0
 -----------------
+
+8/13/04
+	- Renamed 'area' variable to 'areas' to avoid masking the built-in
+	  function of the same name.
 
 7/15/04
 	- The loadcase function (and therefore all of the run* functions

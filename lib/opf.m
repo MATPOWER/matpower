@@ -1,8 +1,8 @@
 function [bus, gen, branch, f, success, et] = opf(baseMVA, bus, gen, gencost, ...
-					branch, area, Ybus, Yf, Yt, ref, pv, pq, mpopt)
+					branch, areas, Ybus, Yf, Yt, ref, pv, pq, mpopt)
 %OPF  Solves an optimal power flow.
 %   [bus, gen, branch, f, success, et] = opf(baseMVA, bus, gen, gencost, ...
-%                   branch, area, Ybus, Yf, Yt, ref, pv, pq, mpopt)
+%                   branch, areas, Ybus, Yf, Yt, ref, pv, pq, mpopt)
 %   Assumes that Ybus, Yf, Yt, V, ref, pv, pq are consistent with
 %   (or override) data in bus, gen, branch.
 
@@ -96,7 +96,7 @@ if formulation == 5
 		mpopt(62) = mpopt(16);
 	end
 	[bus, gen, branch, f, info, g, jac, et] = mopf(baseMVA, ...
-				bus, gen, branch, area, gencost, sparse(0,0), [], [], mpopt);
+				bus, gen, branch, areas, gencost, sparse(0,0), [], [], mpopt);
 	success = ~info;
 else
 	%% start timer

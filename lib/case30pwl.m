@@ -1,4 +1,4 @@
-function [baseMVA, bus, gen, branch, area, gencost] = case30pwl
+function [baseMVA, bus, gen, branch, areas, gencost] = case30pwl
 %CASE30PWL    Case 30 with piece-wise linear generator costs.
 %   Please see 'help caseformat' for details on the case file format.
 
@@ -100,7 +100,7 @@ branch = [
 
 %%-----  OPF Data  -----%%
 %% area data
-area = [
+areas = [
 	1	8;
 	2	23;
 	3	26;

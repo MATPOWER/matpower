@@ -1,8 +1,8 @@
 function [bus0, gen0, branch0, f0, success0, et] = ...
-		uopf(baseMVA, bus, gen, gencost, branch, area, mpopt)
+		uopf(baseMVA, bus, gen, gencost, branch, areas, mpopt)
 %UOPF  Solves combined unit decommitment / optimal power flow.
 %   [bus, gen, branch, f, success, et] = uopf(baseMVA, bus, gen, gencost, ...
-%                   branch, area, mpopt)
+%                   branch, areas, mpopt)
 %   Solves a combined unit decommitment and optimal power flow for a single
 %   time period. Uses an algorithm similar to dynamic programming. It proceeds
 %   through a sequence of stages, where stage N has N generators shut down,
@@ -88,7 +88,7 @@ if dc								%% DC formulation
 						Bbus, Bf, Pbusinj, Pfinj, ref, pv, pq, mpopt);
 else								%% AC formulation
 	[bus, gen, branch, f, success, et] = opf(baseMVA, bus, gen, gencost, branch, ...
-						area, Ybus, Yf, Yt, ref, pv, pq, mpopt);
+						areas, Ybus, Yf, Yt, ref, pv, pq, mpopt);
 end
 
 %% best case so far
@@ -134,7 +134,7 @@ while 1
 								Bbus, Bf, Pbusinj, Pfinj, ref, pv, pq, mpopt);
 		else								%% AC formulation
 			[bus, gen, branch, f, success, et] = opf(baseMVA, bus0, gen, gencost, branch0, ...
-								area, Ybus, Yf, Yt, ref, pv, pq, mpopt);
+								areas, Ybus, Yf, Yt, ref, pv, pq, mpopt);
 		end
 		
 		%% something better?

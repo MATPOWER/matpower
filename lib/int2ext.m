@@ -1,6 +1,6 @@
-function [bus, gen, branch, area] = int2ext(i2e, bus, gen, branch, area)
+function [bus, gen, branch, areas] = int2ext(i2e, bus, gen, branch, areas)
 %INT2EXT   Converts internal to external bus numbering.
-%   [bus, gen, branch, area] = int2ext(i2e, bus, gen, branch, area) converts
+%   [bus, gen, branch, areas] = int2ext(i2e, bus, gen, branch, areas) converts
 %   from the consecutive internal bus numbers back to the originals.
 %   May be called as [bus, gen, branch] = int2ext(i2e, bus, gen, branch) if
 %   area data is not available/needed.
@@ -25,7 +25,7 @@ gen(:, GEN_BUS)				= i2e( gen(:, GEN_BUS)			);
 branch(:, F_BUS)			= i2e( branch(:, F_BUS)			);
 branch(:, T_BUS)			= i2e( branch(:, T_BUS)			);
 if nargin > 4 & nargout > 3
-	area(:, PRICE_REF_BUS)	= i2e( area(:, PRICE_REF_BUS)	);
+	areas(:, PRICE_REF_BUS)	= i2e( areas(:, PRICE_REF_BUS)	);
 end
 
 return;

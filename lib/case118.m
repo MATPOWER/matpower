@@ -1,4 +1,4 @@
-function [baseMVA, bus, gen, branch, area, gencost] = case118
+function [baseMVA, bus, gen, branch, areas, gencost] = case118
 %CASE118    Power flow data for IEEE 118 bus test case.
 %   Please see 'help caseformat' for details on the case file format.
 
@@ -380,7 +380,7 @@ branch = [
   76  118   0.01640  0.05440  0.01356  9900.00     0.00      0.00  0.00000    0.000     1
 ];
 
-area = [
+areas = [
    1      1
 ];	
 

@@ -1,9 +1,9 @@
 function savecase(fname, p1, p2, p3, p4, p5, p6, p7)
 %SAVECASE  Saves a MATPOWER case file, given a filename and the data matrices.
 %
-%   savecase(fname, baseMVA, bus, gen, branch, area, gencost)
+%   savecase(fname, baseMVA, bus, gen, branch, areas, gencost)
 %       or
-%   savecase(fname, comment, baseMVA, bus, gen, branch, area, gencost)
+%   savecase(fname, comment, baseMVA, bus, gen, branch, areas, gencost)
 %
 %   Writes a MATPOWER case file, given a filename and the data matrices.
 %   The fname parameter is the name of the file to be created or
@@ -33,7 +33,7 @@ if isstr(p1)
   bus     = p3;
   gen     = p4;
   branch  = p5;
-  area    = p6;
+  areas   = p6;
   gencost = p7;
 else
   comment = '';
@@ -41,7 +41,7 @@ else
   bus     = p2;
   gen     = p3;
   branch  = p4;
-  area    = p5;
+  areas   = p5;
   gencost = p6;
 end
 
@@ -67,7 +67,7 @@ end
 
 %% open and write the file
 if strcmp(extension, '.mat')		%% MAT-file
-	eval(['save ', rootname, ' baseMVA bus gen branch area gencost;']);
+	eval(['save ', rootname, ' baseMVA bus gen branch areas gencost;']);
 else								%% M-file
 	%% open file
 	[fd, msg] = fopen(fname, 'wt');		%% print it to an m-file
@@ -76,10 +76,10 @@ else								%% M-file
 	end
 	
 	%% function header, etc.
-	if isempty(area) | isempty(gencost)
+	if isempty(areas) | isempty(gencost)
 		fprintf(fd, 'function [baseMVA, bus, gen, branch] = %s\n\n', rootname);
 	else
-		fprintf(fd, 'function [baseMVA, bus, gen, branch, area, gencost] = %s\n', rootname);
+		fprintf(fd, 'function [baseMVA, bus, gen, branch, areas, gencost] = %s\n', rootname);
 	end
 	if length(comment) ~= 0
 		fprintf(fd, '%% %s\n', comment);
@@ -130,9 +130,9 @@ else								%% M-file
 	%% area data
 	fprintf(fd, '%%%%-----  OPF Data  -----%%%%\n');
 	fprintf(fd, '%%%% area data\n');
-	fprintf(fd, 'area = [\n');
-	if ~isempty(area)
-		fprintf(fd, '\t%d\t%d;\n', area(:, 1:PRICE_REF_BUS).');
+	fprintf(fd, 'areas = [\n');
+	if ~isempty(areas)
+		fprintf(fd, '\t%d\t%d;\n', areas(:, 1:PRICE_REF_BUS).');
 	end
 	fprintf(fd, '];\n\n');
 		
