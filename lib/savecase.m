@@ -101,7 +101,7 @@ else                                %% M-file
     %% bus data
     ncols = size(bus, 2);
     fprintf(fd, '%%%% bus data\n');
-    fprintf(fd, '%%\ttype\tPd\tQd\tGs\tBs\tarea\tVm\tVa\tbaseKV\tzone\tVmax\tVmin\n');
+    fprintf(fd, '%%\tbus_i\ttype\tPd\tQd\tGs\tBs\tarea\tVm\tVa\tbaseKV\tzone\tVmax\tVmin\n');
     fprintf(fd, 'bus = [\n');
     if ncols < MU_VMIN              %% opf NOT SOLVED, save without lambda's & mu's
         fprintf(fd, '\t%d\t%d\t%.4f\t%.4f\t%.4f\t%.4f\t%d\t%.8f\t%.8f\t%.4f\t%d\t%.4f\t%.4f;\n', bus(:, 1:VMIN).');
@@ -168,7 +168,7 @@ else                                %% M-file
     end
     
     %% end
-    fprintf(fd, 'return\n');
+    fprintf(fd, 'return;\n');
     
     %% close file
     if fd ~= 1
