@@ -2,7 +2,7 @@
  Change history for MATPOWER
 -----------------------------
 
-Version:    3.0b1
+Version:    3.0b1+
 
 maintained by Ray Zimmerman <rz10@cornell.edu>
 
@@ -12,8 +12,26 @@ Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
 
 
+Changes since 3.0b1
+-------------------
+
+9/1/04
+    - Removed option 15 OPF_NEQ from docs (not a user option). Removed option
+      52 VAR_LOAD_PF (unused, always behaves as if this option were 1).
+      Changed semantics and default value for option 51 SPARSE_QP. By default
+      (value = 1) it will use sparse matrices if a sparse QP/LP solver is
+      available and full matrices otherwise. Setting the value to 0
+      will force it to use full matrices even with a sparse-capable solver.
+    - Cleaned up checking for optional functionality, and fixed a bug
+      that would miss MEX files if there was an identically named directory
+      by adding have_fcn.m.
+      
+
 Changes since 2.0
 -----------------
+
+8/25/04
+    - Released version 3.0b1.
 
 8/24/04
     - Made mpoption() throw an error if passed an invalid option name.
