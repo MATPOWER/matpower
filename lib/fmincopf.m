@@ -24,7 +24,10 @@ function [busout, genout, branchout, f, success, info, et, g, jac] = ...
 % When specified, A, l, u represent additional linear constraints on the
 % optimization variables, l <= A*x <= u.  For help on the option
 % vector, type 'help mpoption'.  For an explanation of the formulation
-% used, type 'help genform' .
+% used, type 'help genform'.
+%
+% NOTE: The shadow prices (lambda's and mu's) produced by fmincon appear to
+%       be slightly inaccurate.
 
 %   MATPOWER
 %   $Id$
