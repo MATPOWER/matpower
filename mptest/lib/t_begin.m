@@ -8,8 +8,8 @@ function t_begin(num_of_tests, quiet)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
-%   See http://www.pserc.cornell.edu/ for more info.
+%   Copyright (c) 2004 by Power System Engineering Research Center (PSERC)
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 global t_quiet;
 global t_num_of_tests;
@@ -19,7 +19,7 @@ global t_not_ok_cnt;
 global t_clock;
 
 if nargin < 2
-	quiet = 0;
+    quiet = 0;
 end
 
 t_quiet = quiet;
@@ -30,7 +30,7 @@ t_not_ok_cnt = 0;
 t_clock = clock;
 
 if ~t_quiet
-	fprintf('1..%d\n', num_of_tests);
+    fprintf('1..%d\n', num_of_tests);
 end
 
 return;

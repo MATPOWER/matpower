@@ -5,76 +5,79 @@
 Version:    3.0b1
 
 maintained by Ray Zimmerman <rz10@cornell.edu>
+
+MATPOWER
 $Id$
 Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
+See http://www.pserc.cornell.edu/matpower/ for more info.
 
 
 Changes since 2.0
 -----------------
 
 8/23/04
-	- Added an fmincon based OPF solver for the generalized formulation
-	  previously used by mopf (Carlos).
-	- Restructured opf.m so all OPF solvers have a similar API based
-	  on the one from mopf.m (Carlos).
-	- Added some quick tests for runpf and runopf for each algorithm.
+    - Added an fmincon based OPF solver for the generalized formulation
+      previously used by mopf (Carlos).
+    - Restructured opf.m so all OPF solvers have a similar API based
+      on the one from mopf.m (Carlos).
+    - Added some quick tests for runpf and runopf for each algorithm.
 
 8/13/04
-	- Renamed 'area' variable to 'areas' to avoid masking the built-in
-	  function of the same name.
-	- Made OPF data matrices 'areas' and 'gencost' optional for running
-	  simple power flow.
+    - Renamed 'area' variable to 'areas' to avoid masking the built-in
+      function of the same name.
+    - Made OPF data matrices 'areas' and 'gencost' optional for running
+      simple power flow.
 
 7/15/04
-	- The loadcase function (and therefore all of the run* functions
-	  now optionally accept a struct with the data matrices as fields
-	  in place of the case file name.
-	- Added t subdirectory with various tests and testing tools.
+    - The loadcase function (and therefore all of the run* functions
+      now optionally accept a struct with the data matrices as fields
+      in place of the case file name.
+    - Added t subdirectory with various tests and testing tools.
 
 7/8/04
-	- Updated mp_lp.m and mp_qp.m to try linprog() and quadprog()
-	  after trying bp, since lp() and qp() are no longer included
-	  in the Optimization Toolbox as of version 3.
+    - Updated mp_lp.m and mp_qp.m to try linprog() and quadprog()
+      after trying bp, since lp() and qp() are no longer included
+      in the Optimization Toolbox as of version 3.
 
 7/7/04
-	- Removed case.m, added caseformat.m, made case9.m the default
-	  case and fixed function names in other case files to avoid
-	  use of reserved word 'case'.
-	- Fixed bugs in runcomp.m.
+    - Removed case.m, added caseformat.m, made case9.m the default
+      case and fixed function names in other case files to avoid
+      use of reserved word 'case'.
+    - Fixed bugs in runcomp.m.
 
 6/23/04
-	- Fixed bug in newtonpf.m which caused algorithm to diverge when
-	  the Newton step resulted in a negative voltage magnitude.
+    - Fixed bug in newtonpf.m which caused algorithm to diverge when
+      the Newton step resulted in a negative voltage magnitude.
 
 4/17/03
-	- Changed uopf.m to use a dynamic programming approach. More
-	  computationally expensive, but should find significanly better
-	  results when there are many gens to shut down.
-	- Added mp_lp.m and mp_qp.m, equivalents to lp.m and qp.m,
-	  respectively that call bpmpd if available. Modified LPrelax.m,
-	  LPsetup.m and dcopf.m to call these new functions.
+    - Changed uopf.m to use a dynamic programming approach. More
+      computationally expensive, but should find significanly better
+      results when there are many gens to shut down.
+    - Added mp_lp.m and mp_qp.m, equivalents to lp.m and qp.m,
+      respectively that call bpmpd if available. Modified LPrelax.m,
+      LPsetup.m and dcopf.m to call these new functions.
 
 4/14/03
-	- Fixed a bug in pfsoln.m which for cases with a single generator.
+    - Fixed a bug in pfsoln.m which for cases with a single generator.
 
 10/23/02
-	- Fixed bus numbering bug in System Summary section of printpf.m.
+    - Fixed bus numbering bug in System Summary section of printpf.m.
 
 6/20/00
-	- Fixed a bug in printpf.m in the generator section, where
-	  the generator was assumed to be off if it's real power
-	  output was zero, even if the reactive output was non-zero.
-	- Modified printpf.m to print out lambdas in generation section
-	  for generators that are shut down.
+    - Fixed a bug in printpf.m in the generator section, where
+      the generator was assumed to be off if it's real power
+      output was zero, even if the reactive output was non-zero.
+    - Modified printpf.m to print out lambdas in generation section
+      for generators that are shut down.
 
 6/8/00
-	- Modified cdf2matp.m so that Pd also includes any generation at
-	  buses specified as PQ buses. Also modified identification of
-	  generator buses to include only PV or reference buses. (Thanks
-	  to Venkat)
-	- Modified cdf2matp.m so that it always treats the input values
-	  for Gs and Bs as per unit values and converts them to actual
-	  values expected by MATPOWER (Thanks to D. Devaraj)
+    - Modified cdf2matp.m so that Pd also includes any generation at
+      buses specified as PQ buses. Also modified identification of
+      generator buses to include only PV or reference buses. (Thanks
+      to Venkat)
+    - Modified cdf2matp.m so that it always treats the input values
+      for Gs and Bs as per unit values and converts them to actual
+      values expected by MATPOWER (Thanks to D. Devaraj)
 
 version 2.5b3
 11/9/99

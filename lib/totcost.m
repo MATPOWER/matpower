@@ -9,8 +9,9 @@ function totalcost = totcost(gencost, Pg)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2003 by Power System Engineering Research Center (PSERC)
-%   See http://www.pserc.cornell.edu/ for more info.
+%   & Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
+%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, N, COST] = idx_cost;
 

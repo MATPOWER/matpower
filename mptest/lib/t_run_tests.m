@@ -7,11 +7,11 @@ function t_run_tests(test_names, verbose)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
-%   See http://www.pserc.cornell.edu/ for more info.
+%   Copyright (c) 2004 by Power System Engineering Research Center (PSERC)
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 if nargin < 2
-	verbose = 0;
+    verbose = 0;
 end
 
 global t_num_of_tests;
@@ -21,12 +21,12 @@ global t_not_ok_cnt;
 
 %% figure out padding for printing
 if ~verbose
-	maxlen = 0;
-	len = zeros(length(test_names), 1);
-	for k = 1:length(test_names)
-		len(k) = length(test_names{k});
-	end
-	maxlen = max(len);
+    maxlen = 0;
+    len = zeros(length(test_names), 1);
+    for k = 1:length(test_names)
+        len(k) = length(test_names{k});
+    end
+    maxlen = max(len);
 end
 
 %% initialize statistics
@@ -37,29 +37,29 @@ not_ok_cnt = 0;
 
 t0 = clock;
 for k = 1:length(test_names)
-	if verbose
-		fprintf('\n----------  %s  ----------\n', test_names{k});
-	else
-		pad = maxlen + 4 - length(test_names{k});
-		fprintf('%s', test_names{k});
-		for m = 1:pad, fprintf('.'); end
-	end
-	feval( test_names{k}, ~verbose );
-	
-	num_of_tests	= num_of_tests	+ t_num_of_tests;
-	counter			= counter		+ t_counter;
-	ok_cnt			= ok_cnt		+ t_ok_cnt;
-	not_ok_cnt		= not_ok_cnt	+ t_not_ok_cnt;
+    if verbose
+        fprintf('\n----------  %s  ----------\n', test_names{k});
+    else
+        pad = maxlen + 4 - length(test_names{k});
+        fprintf('%s', test_names{k});
+        for m = 1:pad, fprintf('.'); end
+    end
+    feval( test_names{k}, ~verbose );
+    
+    num_of_tests    = num_of_tests  + t_num_of_tests;
+    counter         = counter       + t_counter;
+    ok_cnt          = ok_cnt        + t_ok_cnt;
+    not_ok_cnt      = not_ok_cnt    + t_not_ok_cnt;
 end
 
 if verbose
-	fprintf('\n\n----------  Summary  ----------\n');
+    fprintf('\n\n----------  Summary  ----------\n');
 end
 if counter == num_of_tests & ok_cnt == counter & not_ok_cnt == 0
-	fprintf('All tests successful (%d of %d).\n', ok_cnt, num_of_tests);
+    fprintf('All tests successful (%d of %d).\n', ok_cnt, num_of_tests);
 else
-	fprintf('Ran %d of %d tests: %d passed, %d failed.\n', ...
-		counter, num_of_tests, ok_cnt, not_ok_cnt);
+    fprintf('Ran %d of %d tests: %d passed, %d failed.\n', ...
+        counter, num_of_tests, ok_cnt, not_ok_cnt);
 end
 fprintf('Elapsed time %.2f seconds.\n', etime(clock, t0));
 

@@ -11,23 +11,23 @@ function t_is(got, expected, prec, msg)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
-%   See http://www.pserc.cornell.edu/ for more info.
+%   Copyright (c) 2004 by Power System Engineering Research Center (PSERC)
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 if nargin < 4
-	msg = '';
+    msg = '';
 end
 if nargin < 3 | isempty(prec)
-	prec = 5;
+    prec = 5;
 end
 
 cond = ( max(max(abs(got - expected))) < 10^(-prec) );
 
 t_ok(cond, msg);
 if ~cond
-	got
-	expected
-	got_minus_expected = got - expected
+    got
+    expected
+    got_minus_expected = got - expected
 end
 
 return;

@@ -1,5 +1,5 @@
 function [MVAbase, bus, gen, gencost, branch, f, success, et] = ...
-				rundcopf(casename, mpopt, fname, solvedcase)
+                rundcopf(casename, mpopt, fname, solvedcase)
 %RUNDCOPF  Runs a DC optimal power flow.
 %
 %   [baseMVA, bus, gen, gencost, branch, f, success, et] = ...
@@ -23,26 +23,26 @@ function [MVAbase, bus, gen, gencost, branch, f, success, et] = ...
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2003 by Power System Engineering Research Center (PSERC)
-%   See http://www.pserc.cornell.edu/ for more info.
+%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% default arguments
 if nargin < 4
-	solvedcase = '';				%% don't save solved case
-	if nargin < 3
-		fname = '';					%% don't print results to a file
-		if nargin < 2
-			mpopt = mpoption;		%% use default options
-			if nargin < 1
-				casename = 'case9';	%% default data file is 'case9.m'
-			end
-		end
-	end
+    solvedcase = '';                %% don't save solved case
+    if nargin < 3
+        fname = '';                 %% don't print results to a file
+        if nargin < 2
+            mpopt = mpoption;       %% use default options
+            if nargin < 1
+                casename = 'case9'; %% default data file is 'case9.m'
+            end
+        end
+    end
 end
 
 mpopt = mpoption(mpopt, 'PF_DC', 1);
 [baseMVA, bus, gen, gencost, branch, f, success, et] = ...
-			runopf(casename, mpopt, fname, solvedcase);
+            runopf(casename, mpopt, fname, solvedcase);
 
 %% this is just to prevent it from printing baseMVA
 %% when called with no output arguments

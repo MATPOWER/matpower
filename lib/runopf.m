@@ -1,5 +1,5 @@
 function [MVAbase, bus, gen, gencost, branch, f, success, et] = ...
-				runopf(casename, mpopt, fname, solvedcase)
+                runopf(casename, mpopt, fname, solvedcase)
 %RUNOPF  Runs an optimal power flow.
 %
 %   [baseMVA, bus, gen, gencost, branch, f, success, et] = ...
@@ -24,21 +24,21 @@ function [MVAbase, bus, gen, gencost, branch, f, success, et] = ...
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
 %   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
-%   See http://www.pserc.cornell.edu/ for more info.
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %%-----  initialize  -----
 %% default arguments
 if nargin < 4
-	solvedcase = '';				%% don't save solved case
-	if nargin < 3
-		fname = '';					%% don't print results to a file
-		if nargin < 2
-			mpopt = mpoption;		%% use default options
-			if nargin < 1
-				casename = 'case9';	%% default data file is 'case9.m'
-			end
-		end
-	end
+    solvedcase = '';                %% don't save solved case
+    if nargin < 3
+        fname = '';                 %% don't print results to a file
+        if nargin < 2
+            mpopt = mpoption;       %% use default options
+            if nargin < 1
+                casename = 'case9'; %% default data file is 'case9.m'
+            end
+        end
+    end
 end
 
 %% read data
@@ -50,19 +50,19 @@ end
 
 %%-----  output results  -----
 if fname
-	[fd, msg] = fopen(fname, 'at');
-	if fd == -1
-		error(msg);
-	else
-		printpf(baseMVA, bus, gen, branch, f, success, et, fd, mpopt);
-		fclose(fd);
-	end
+    [fd, msg] = fopen(fname, 'at');
+    if fd == -1
+        error(msg);
+    else
+        printpf(baseMVA, bus, gen, branch, f, success, et, fd, mpopt);
+        fclose(fd);
+    end
 end
 printpf(baseMVA, bus, gen, branch, f, success, et, 1, mpopt);
 
 %% save solved case
 if solvedcase
-	savecase(solvedcase, baseMVA, bus, gen, branch, areas, gencost);
+    savecase(solvedcase, baseMVA, bus, gen, branch, areas, gencost);
 end
 
 %% this is just to prevent it from printing baseMVA

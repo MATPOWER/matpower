@@ -4,11 +4,11 @@ function t_jacobian(quiet)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
-%   See http://www.pserc.cornell.edu/ for more info.
+%   Copyright (c) 2004 by Power System Engineering Research Center (PSERC)
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 if nargin < 1
-	quiet = 0;
+    quiet = 0;
 end
 
 t_begin(12, quiet);
@@ -17,9 +17,9 @@ casefile = 'case30';
 
 %% define named indices into bus, gen, branch matrices
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
-	VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
+    VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
 [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, ...
-	RATE_C, TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST] = idx_brch;
+    RATE_C, TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST] = idx_brch;
 
 %% run powerflow to get solved case
 opt = mpoption('VERBOSE', 0, 'OUT_ALL', 0);
@@ -28,15 +28,15 @@ opt = mpoption('VERBOSE', 0, 'OUT_ALL', 0);
 %% switch to internal bus numbering and build admittance matrices
 [i2e, bus, gen, branch] = ext2int(bus, gen, branch);
 [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
-Ybus_full	= full(Ybus);
-Yf_full 	= full(Yf);
-Yt_full 	= full(Yt);
+Ybus_full   = full(Ybus);
+Yf_full     = full(Yf);
+Yt_full     = full(Yt);
 j = sqrt(-1);
 V = bus(:, VM) .* exp(j * pi/180 * bus(:, VA));
 Vm = abs(V);
 Va = angle(V);
-f = branch(:, F_BUS);		%% list of "from" buses
-t = branch(:, T_BUS);		%% list of "to" buses
+f = branch(:, F_BUS);       %% list of "from" buses
+t = branch(:, T_BUS);       %% list of "to" buses
 nl = length(f);
 nb = length(V);
 pert = 1e-8;

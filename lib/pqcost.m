@@ -10,21 +10,21 @@ function [pcost, qcost] = pqcost(gencost, ng, on)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2003 by Power System Engineering Research Center (PSERC)
-%   See http://www.pserc.cornell.edu/ for more info.
+%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 if nargin < 3
-	on = [1:ng]';
+    on = [1:ng]';
 end
 
 if size(gencost, 1) == ng
-	pcost = gencost(on, :);
-	qcost = [];
+    pcost = gencost(on, :);
+    qcost = [];
 elseif size(gencost, 1) == 2 * ng
-	pcost = gencost(on, :);
-	qcost = gencost(on+ng, :);
+    pcost = gencost(on, :);
+    qcost = gencost(on+ng, :);
 else
-	error('gencost has wrong number of rows');
+    error('gencost has wrong number of rows');
 end
 
 return;

@@ -9,8 +9,8 @@ function t_ok(cond, msg)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
-%   See http://www.pserc.cornell.edu/ for more info.
+%   Copyright (c) 2004 by Power System Engineering Research Center (PSERC)
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 global t_quiet;
 global t_counter;
@@ -18,20 +18,20 @@ global t_ok_cnt;
 global t_not_ok_cnt;
 
 if nargin < 2 | strcmp(msg, '')
-	msg = '';
+    msg = '';
 else
-	msg = [' - ', msg];
+    msg = [' - ', msg];
 end
 if cond
-	t_ok_cnt = t_ok_cnt + 1;
+    t_ok_cnt = t_ok_cnt + 1;
 else
-	t_not_ok_cnt = t_not_ok_cnt + 1;
-	if ~t_quiet
-		fprintf('not ');
-	end
+    t_not_ok_cnt = t_not_ok_cnt + 1;
+    if ~t_quiet
+        fprintf('not ');
+    end
 end
 if ~t_quiet
-	fprintf('ok %d%s\n', t_counter, msg);
+    fprintf('ok %d%s\n', t_counter, msg);
 end
 t_counter = t_counter + 1;
 

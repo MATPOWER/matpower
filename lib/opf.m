@@ -8,8 +8,8 @@ function [buso, gen, branch, f, success, info, et, g, jac] = opf(baseMVA, bus,..
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
-%   Copyright (c) 1996-2003 by Power System Engineering Research Center (PSERC)
-%   See http://www.pserc.cornell.edu/ for more info.
+%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 
 % Sort out args
@@ -59,18 +59,18 @@ end
 
 %%----- initialization -----
 %% options
-verbose	= mpopt(31);
-npts = mpopt(14);		%% number of points to evaluate when converting
-						%% polynomials to piece-wise linear
+verbose = mpopt(31);
+npts = mpopt(14);       %% number of points to evaluate when converting
+                        %% polynomials to piece-wise linear
 
 %% define constants
 j = sqrt(-1);
 
 %% define named indices into data matrices
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
-	VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
+    VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
 [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, ...
-	GEN_STATUS, PMAX, PMIN, MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN] = idx_gen;
+    GEN_STATUS, PMAX, PMIN, MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN] = idx_gen;
 [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, N, COST] = idx_cost;
 
 %%-----  check/convert costs, set default algorithm  -----
@@ -105,15 +105,15 @@ else % AC optimal power flow requested
       mpopt(11) = 500; % MINOS generalized
     elseif have_fmincon
       mpopt(11) = 520; % FMINCON generalized
-	%% use default for this cost model
-	elseif any(i_pwln)		%% some piece-wise linear, use appropriate alg
-	  mpopt(11) = mpopt(13);
+    %% use default for this cost model
+    elseif any(i_pwln)      %% some piece-wise linear, use appropriate alg
+      mpopt(11) = mpopt(13);
       if any(i_poly) & verbose
         fprintf('opf.m: not all generators use same cost model, all will be converted\n       to piece-wise linear\n');
       end
-	else					%% must all be polynomial
-		mpopt(11) = mpopt(12);
-	end
+    else                    %% must all be polynomial
+        mpopt(11) = mpopt(12);
+    end
   end
   alg = mpopt(11);
   formulation = opf_form(alg); % 1, 2 or 5
@@ -121,40 +121,40 @@ else % AC optimal power flow requested
   %% check cost model/algorithm consistency
   if any( i_pwln ) & formulation == 1
     error(sprintf('opf.m: algorithm %d does not handle piece-wise linear cost functions', alg));
-	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	%%	Eventually put code here to fit polynomials to piece-wise linear as needed.
-	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%  Eventually put code here to fit polynomials to piece-wise linear as needed.
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   end
 
   if (formulation ~= 5) & ~isempty(Au)
-	error('opf.m: Selected algorithm cannot handle general linear constraints');
+    error('opf.m: Selected algorithm cannot handle general linear constraints');
   end
   
   %% convert polynomials to piece-wise linear
   if any(i_poly)  & formulation == 2
-	if verbose
-		fprintf('converting from polynomial to piece-wise linear cost model\n');
-	end
-	[pcost, qcost] = pqcost(gencost, size(gen, 1));
-	i_poly = find(pcost(:, MODEL) == POLYNOMIAL);
+    if verbose
+        fprintf('converting from polynomial to piece-wise linear cost model\n');
+    end
+    [pcost, qcost] = pqcost(gencost, size(gen, 1));
+    i_poly = find(pcost(:, MODEL) == POLYNOMIAL);
     tmp = poly2pwl(pcost(i_poly, :), gen(i_poly, PMIN), gen(i_poly, PMAX), npts);
     pcost(i_poly, 1:size(tmp,2)) = tmp;
-	if ~isempty(qcost)
-		i_poly = find(qcost(:, MODEL) == POLYNOMIAL);
-		tmp = poly2pwl(qcost(i_poly, :), gen(i_poly, QMIN), gen(i_poly, QMAX), npts);
-		qcost(i_poly, 1:size(tmp,2)) = tmp;
-	end
-	gencost = [pcost; qcost];
+    if ~isempty(qcost)
+        i_poly = find(qcost(:, MODEL) == POLYNOMIAL);
+        tmp = poly2pwl(qcost(i_poly, :), gen(i_poly, QMIN), gen(i_poly, QMAX), npts);
+        qcost(i_poly, 1:size(tmp,2)) = tmp;
+    end
+    gencost = [pcost; qcost];
   end
 
   %%-----  run opf  -----
   if formulation == 5 % Generalized
     if mpopt(61) == 0       % MNS_FEASTOL
-	  mpopt(61) = mpopt(16);
-	end
+      mpopt(61) = mpopt(16);
+    end
     if mpopt(62) == 0       % MNS_ROWTOL
-	  mpopt(62) = mpopt(16);
-	end
+      mpopt(62) = mpopt(16);
+    end
     if mpopt(63) == 0       % MNS_XTOL
       mpopt(63) = mpopt(17);
     end
@@ -166,9 +166,9 @@ else % AC optimal power flow requested
           bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt);
     end
   else
-	if opf_slvr(alg) == 0			%% use CONSTR
-	  %% set some options
-	  if mpopt(19) == 0
+    if opf_slvr(alg) == 0           %% use CONSTR
+      %% set some options
+      if mpopt(19) == 0
         mpopt(19) = 2 * size(bus,1) + 150;  %% set max number of iterations for constr
       end
    
@@ -176,13 +176,13 @@ else % AC optimal power flow requested
       [bus, gen, branch, f, success, info, et, g, jac] = copf(baseMVA, ...
               bus, gen, branch, areas, gencost, mpopt);
   
-	else							%% use LPCONSTR
+    else                            %% use LPCONSTR
       [bus, gen, branch, f, success, info, et, g, jac] = lpopf(baseMVA, ...
               bus, gen ,branch, areas, gencost, mpopt);
     end
   end
 end
-	
+    
 %% compute elapsed time
 et = etime(clock, t1);
 if (nargout == 0) & ( success )

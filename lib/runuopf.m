@@ -1,5 +1,5 @@
 function [MVAbase, bus, gen, gencost, branch, f, success, et] = ...
-				runuopf(casename, mpopt, fname, solvedcase)
+                runuopf(casename, mpopt, fname, solvedcase)
 %RUNUOPF  Runs an optimal power flow with unit-decommitment heuristic.
 %
 %   [baseMVA, bus, gen, gencost, branch, f, success, et] = ...
@@ -24,22 +24,22 @@ function [MVAbase, bus, gen, gencost, branch, f, success, et] = ...
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2003 by Power System Engineering Research Center (PSERC)
-%   See http://www.pserc.cornell.edu/ for more info.
+%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %%-----  initialize  -----
 %% default arguments
 if nargin < 4
-	solvedcase = '';				%% don't save solved case
-	if nargin < 3
-		fname = '';					%% don't print results to a file
-		if nargin < 2
-			mpopt = mpoption;		%% use default options
-			if nargin < 1
-				casename = 'case9';	%% default data file is 'case9.m'
-			end
-		end
-	end
+    solvedcase = '';                %% don't save solved case
+    if nargin < 3
+        fname = '';                 %% don't print results to a file
+        if nargin < 2
+            mpopt = mpoption;       %% use default options
+            if nargin < 1
+                casename = 'case9'; %% default data file is 'case9.m'
+            end
+        end
+    end
 end
 
 %% read data & convert to internal bus numbering
@@ -52,19 +52,19 @@ end
 %% convert back to original bus numbering & print results
 [bus, gen, branch, areas] = int2ext(i2e, bus, gen, branch, areas);
 if fname
-	[fd, msg] = fopen(fname, 'at');
-	if fd == -1
-		error(msg);
-	else
-		printpf(baseMVA, bus, gen, branch, f, success, et, fd, mpopt);
-		fclose(fd);
-	end
+    [fd, msg] = fopen(fname, 'at');
+    if fd == -1
+        error(msg);
+    else
+        printpf(baseMVA, bus, gen, branch, f, success, et, fd, mpopt);
+        fclose(fd);
+    end
 end
 printpf(baseMVA, bus, gen, branch, f, success, et, 1, mpopt);
 
 %% save solved case
 if solvedcase
-	savecase(solvedcase, baseMVA, bus, gen, branch, areas, gencost);
+    savecase(solvedcase, baseMVA, bus, gen, branch, areas, gencost);
 end
 
 %% this is just to prevent it from printing baseMVA

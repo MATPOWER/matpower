@@ -89,4 +89,4 @@
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
 %   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
-%   See http://www.pserc.cornell.edu/ for more info.
+%   See http://www.pserc.cornell.edu/matpower/ for more info.

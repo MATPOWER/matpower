@@ -4,7 +4,7 @@ function [dSbus_dVm, dSbus_dVa] = dSbus_dV(Ybus, V)
 %   partial derivatives of the complex bus power injections w.r.t voltage
 %   magnitude and voltage angle respectively (for all buses). If Ybus is a
 %   sparse matrix, the return values will be also. The following explains
-%	the expressions used to form the matrices:
+%   the expressions used to form the matrices:
 %
 %   S = diag(V) * conj(Ibus) = diag(conj(Ibus)) * V
 %
@@ -33,21 +33,21 @@ function [dSbus_dVm, dSbus_dVa] = dSbus_dV(Ybus, V)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2003 by Power System Engineering Research Center (PSERC)
-%   See http://www.pserc.cornell.edu/ for more info.
+%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 j = sqrt(-1);
 n = length(V);
 Ibus = Ybus * V;
 
-if issparse(Ybus)			%% sparse version (if Ybus is sparse)
-	diagV		= spdiags(V, 0, n, n);
-	diagIbus	= spdiags(Ibus, 0, n, n);
-	diagVnorm	= spdiags(V./abs(V), 0, n, n);
-else						%% dense version
-	diagV		= diag(V);
-	diagIbus	= diag(Ibus);
-	diagVnorm	= diag(V./abs(V));
+if issparse(Ybus)           %% sparse version (if Ybus is sparse)
+    diagV       = spdiags(V, 0, n, n);
+    diagIbus    = spdiags(Ibus, 0, n, n);
+    diagVnorm   = spdiags(V./abs(V), 0, n, n);
+else                        %% dense version
+    diagV       = diag(V);
+    diagIbus    = diag(Ibus);
+    diagVnorm   = diag(V./abs(V));
 end
 
 dSbus_dVm = diagV * conj(Ybus * diagVnorm) + conj(diagIbus) * diagVnorm;

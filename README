@@ -6,15 +6,15 @@ Version:    3.0b1
 
 Home Page:  http://www.pserc.cornell.edu/matpower/
 
-Authors:    Ray Zimmerman           	<rz10@cornell.edu>
-			Carlos E. Murillo-S‡nchez	<carlos_murillo@ieee.org>
-            Deqiang (David) Gan  	    <dgan@zju.edu.cn>
+Authors:    Ray Zimmerman               <rz10@cornell.edu>
+            Carlos E. Murillo-S‡nchez   <carlos_murillo@ieee.org>
+            Deqiang (David) Gan         <dgan@zju.edu.cn>
 
-            Wed, Sep 1, 2004
+            Wed, Aug 25, 2004
 
 $Id$
 Copyright (c) 1997-2004 by Power System Engineering Research Center (PSERC)
-See http://www.pserc.cornell.edu/ for more info.
+See http://www.pserc.cornell.edu/matpower/ for more info.
 
 
 --------------
@@ -51,14 +51,14 @@ MATPOWER can be downloaded from the MATPOWER home page above.
 
 System Requirements
 -------------------
-	- Matlab version 5 or later
-	- Matlab Optimization Toolbox (required only for some OPF algorithms)
+    - Matlab version 5 or later
+    - Matlab Optimization Toolbox (required only for some OPF algorithms)
 
 Installation
 ------------
-	1. Unzip the downloaded file.
-	2. Place files in a location on your Matlab path.
-	3. Start up Matlab.
+    1. Unzip the downloaded file.
+    2. Place files in a location on your Matlab path.
+    3. Start up Matlab.
 
 Running MATPOWER
 ----------------
@@ -66,18 +66,18 @@ To run a simple Newton power flow on the 9-bus system specified in the
 file case9.m, with the default algorithm options, at the Matlab prompt,
 type:
 
-	>> runpf('case9')
+    >> runpf('case9')
 
 To run an optimal power flow on the 30-bus system whose data is in
 case30.m, with the default algorithm options, at the Matlab prompt,
 type:
 
-	>> runopf('case30')
+    >> runopf('case30')
 
 To run an optimal power flow on the same system, but with the option for
 MATPOWER to shut down (decommit) expensive generators, type:
 
-	>> runuopf('case30')
+    >> runuopf('case30')
 
 For info on other parameters and options, try these:
     >> help runpf
@@ -88,7 +88,7 @@ For info on other parameters and options, try these:
 
 To run the test suite, place the files in the 't' subdirectory in your
 Matlab path, and type:
-	>> test_matpower
+    >> test_matpower
 
 
 ---------------------------
@@ -128,8 +128,8 @@ Bugs fixed:
 ---------------
 
 There are two primary sources of documentation for MATPOWER.
-	- Matlab's 'help' command
-	- MATPOWER User's Manual
+    - Matlab's 'help' command
+    - MATPOWER User's Manual
 
 The User's Manual is included in the distribution (manual.pdf in docs
 directory) or it can be downloaded separately from the link above.
@@ -155,8 +155,8 @@ There are two optional packages to enhance the performance of MATPOWER
 that may be downloaded separately.
 
  - MINOPF      A MINOS-based OPF solver which is typically much faster than
-			   MATPOWER's other OPF solvers.
-			   See http://www.pserc.cornell.edu/minopf/
+               MATPOWER's other OPF solvers.
+               See http://www.pserc.cornell.edu/minopf/
 
  - BPMPD_MEX   MEX-file version of the high performance BPMPD interior
                point LP and QP solver. Speeds up DC and LP-based OPF solvers,

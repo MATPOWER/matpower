@@ -18,18 +18,18 @@ function [V, converged, i] = fdpf(Ybus, Sbus, V0, Bp, Bpp, ref, pv, pq, mpopt)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2003 by Power System Engineering Research Center (PSERC)
-%   See http://www.pserc.cornell.edu/ for more info.
+%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% default arguments
 if nargin < 7
-	mpopt = mpoption;
+    mpopt = mpoption;
 end
 
 %% options
-tol		= mpopt(2);
-max_it	= mpopt(4);
-verbose	= mpopt(31);
+tol     = mpopt(2);
+max_it  = mpopt(4);
+verbose = mpopt(31);
 
 %% initialize
 j = sqrt(-1);
@@ -40,11 +40,11 @@ Va = angle(V);
 Vm = abs(V);
 
 %% set up indexing for updating V
-npv	= length(pv);
-npq	= length(pq);
-j1 = 1;			j2 = npv;			%% j1:j2 - V angle of pv buses
-j3 = j2 + 1;	j4 = j2 + npq;		%% j3:j4 - V angle of pq buses
-j5 = j4 + 1;	j6 = j4 + npq;		%% j5:j6 - V mag of pq buses
+npv = length(pv);
+npq = length(pq);
+j1 = 1;         j2 = npv;           %% j1:j2 - V angle of pv buses
+j3 = j2 + 1;    j4 = j2 + npq;      %% j3:j4 - V angle of pq buses
+j5 = j4 + 1;    j6 = j4 + npq;      %% j5:j6 - V mag of pq buses
 
 %% evaluate initial mismatch
 mis = (V .* conj(Ybus * V) - Sbus) ./ Vm;
@@ -55,16 +55,16 @@ Q = imag(mis(pq));
 normP = norm(P, inf);
 normQ = norm(Q, inf);
 if verbose > 1
-	fprintf('\niteration     max mismatch (p.u.)  ');
-	fprintf('\ntype   #        P            Q     ');
-	fprintf('\n---- ----  -----------  -----------');
-	fprintf('\n  -  %3d   %10.3e   %10.3e', i, normP, normQ);
+    fprintf('\niteration     max mismatch (p.u.)  ');
+    fprintf('\ntype   #        P            Q     ');
+    fprintf('\n---- ----  -----------  -----------');
+    fprintf('\n  -  %3d   %10.3e   %10.3e', i, normP, normQ);
 end
 if normP < tol & normQ < tol
-	converged = 1;
-	if verbose > 1
-		fprintf('\nConverged!\n');
-	end
+    converged = 1;
+    if verbose > 1
+        fprintf('\nConverged!\n');
+    end
 end
 
 %% reduce B matrices
@@ -83,64 +83,64 @@ Bpp = temp(:, pq)';
 
 %% do P and Q iterations
 while (~converged & i < max_it)
-	%% update iteration counter
-	i = i + 1;
+    %% update iteration counter
+    i = i + 1;
 
-	%%-----  do P iteration, update Va  -----
-	dVa = -( Up \  (Lp \ (Pp * P)));
+    %%-----  do P iteration, update Va  -----
+    dVa = -( Up \  (Lp \ (Pp * P)));
 
-	%% update voltage
-	Va([pv; pq]) = Va([pv; pq]) + dVa;
-	V = Vm .* exp(j * Va);
+    %% update voltage
+    Va([pv; pq]) = Va([pv; pq]) + dVa;
+    V = Vm .* exp(j * Va);
 
-	%% evalute mismatch
-	mis = (V .* conj(Ybus * V) - Sbus) ./ Vm;
-	P = real(mis([pv; pq]));
-	Q = imag(mis(pq));
-	
-	%% check tolerance
-	normP = norm(P, inf);
-	normQ = norm(Q, inf);
-	if verbose > 1
-		fprintf('\n  P  %3d   %10.3e   %10.3e', i, normP, normQ);
-	end
-	if normP < tol & normQ < tol
-		converged = 1;
-		if verbose
-			fprintf('\nFast-decoupled power flow converged in %d P-iterations and %d Q-iterations.\n', i, i-1);
-		end
-		break;
-	end
+    %% evalute mismatch
+    mis = (V .* conj(Ybus * V) - Sbus) ./ Vm;
+    P = real(mis([pv; pq]));
+    Q = imag(mis(pq));
+    
+    %% check tolerance
+    normP = norm(P, inf);
+    normQ = norm(Q, inf);
+    if verbose > 1
+        fprintf('\n  P  %3d   %10.3e   %10.3e', i, normP, normQ);
+    end
+    if normP < tol & normQ < tol
+        converged = 1;
+        if verbose
+            fprintf('\nFast-decoupled power flow converged in %d P-iterations and %d Q-iterations.\n', i, i-1);
+        end
+        break;
+    end
 
-	%%-----  do Q iteration, update Vm  -----
-	dVm = -( Upp \ (Lpp \ (Ppp * Q)) );
+    %%-----  do Q iteration, update Vm  -----
+    dVm = -( Upp \ (Lpp \ (Ppp * Q)) );
 
-	%% update voltage
-	Vm(pq) = Vm(pq) + dVm;
-	V = Vm .* exp(j * Va);
+    %% update voltage
+    Vm(pq) = Vm(pq) + dVm;
+    V = Vm .* exp(j * Va);
 
-	%% evalute mismatch
-	mis = (V .* conj(Ybus * V) - Sbus) ./ Vm;
-	P = real(mis([pv; pq]));
-	Q = imag(mis(pq));
-	
-	%% check tolerance
-	normP = norm(P, inf);
-	normQ = norm(Q, inf);
-	if verbose > 1
-		fprintf('\n  Q  %3d   %10.3e   %10.3e', i, normP, normQ);
-	end
-	if normP < tol & normQ < tol
-		converged = 1;
-		if verbose
-			fprintf('\nFast-decoupled power flow converged in %d P-iterations and %d Q-iterations.\n', i, i);
-		end
-		break;
-	end
+    %% evalute mismatch
+    mis = (V .* conj(Ybus * V) - Sbus) ./ Vm;
+    P = real(mis([pv; pq]));
+    Q = imag(mis(pq));
+    
+    %% check tolerance
+    normP = norm(P, inf);
+    normQ = norm(Q, inf);
+    if verbose > 1
+        fprintf('\n  Q  %3d   %10.3e   %10.3e', i, normP, normQ);
+    end
+    if normP < tol & normQ < tol
+        converged = 1;
+        if verbose
+            fprintf('\nFast-decoupled power flow converged in %d P-iterations and %d Q-iterations.\n', i, i);
+        end
+        break;
+    end
 end
 
 if verbose
-	if ~converged
-		fprintf('\nFast-decoupled power flow did not converge in %d iterations.\n', i);
-	end
+    if ~converged
+        fprintf('\nFast-decoupled power flow did not converge in %d iterations.\n', i);
+    end
 end

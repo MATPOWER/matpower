@@ -30,7 +30,7 @@ function [busout, genout, branchout, f, success, info, et, g, jac] = ...
 %   $Id$
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
 %   Copyright (c) 2000-2004 by Power System Engineering Research Center (PSERC)
-%   See http://www.pserc.cornell.edu/ for more info.
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 % Sort out input arguments
 t1 = clock;

@@ -18,18 +18,18 @@ function [V, converged, i] = newtonpf(Ybus, Sbus, V0, ref, pv, pq, mpopt)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2003 by Power System Engineering Research Center (PSERC)
-%   See http://www.pserc.cornell.edu/ for more info.
+%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% default arguments
 if nargin < 7
-	mpopt = mpoption;
+    mpopt = mpoption;
 end
 
 %% options
-tol		= mpopt(2);
-max_it	= mpopt(3);
-verbose	= mpopt(31);
+tol     = mpopt(2);
+max_it  = mpopt(3);
+verbose = mpopt(31);
 
 %% initialize
 j = sqrt(-1);
@@ -40,98 +40,98 @@ Va = angle(V);
 Vm = abs(V);
 
 %% set up indexing for updating V
-npv	= length(pv);
-npq	= length(pq);
-j1 = 1;			j2 = npv;			%% j1:j2 - V angle of pv buses
-j3 = j2 + 1;	j4 = j2 + npq;		%% j3:j4 - V angle of pq buses
-j5 = j4 + 1;	j6 = j4 + npq;		%% j5:j6 - V mag of pq buses
+npv = length(pv);
+npq = length(pq);
+j1 = 1;         j2 = npv;           %% j1:j2 - V angle of pv buses
+j3 = j2 + 1;    j4 = j2 + npq;      %% j3:j4 - V angle of pq buses
+j5 = j4 + 1;    j6 = j4 + npq;      %% j5:j6 - V mag of pq buses
 
 %% evaluate F(x0)
 mis = V .* conj(Ybus * V) - Sbus;
-F = [	real(mis([pv; pq]));
-		imag(mis(pq))	];
+F = [   real(mis([pv; pq]));
+        imag(mis(pq))   ];
 
 %% check tolerance
 normF = norm(F, inf);
 if verbose > 1
-	fprintf('\n it    max P & Q mismatch (p.u.)');
-	fprintf('\n----  ---------------------------');
-	fprintf('\n%3d        %10.3e', i, normF);
+    fprintf('\n it    max P & Q mismatch (p.u.)');
+    fprintf('\n----  ---------------------------');
+    fprintf('\n%3d        %10.3e', i, normF);
 end
 if normF < tol
-	converged = 1;
-	if verbose > 1
-		fprintf('\nConverged!\n');
-	end
+    converged = 1;
+    if verbose > 1
+        fprintf('\nConverged!\n');
+    end
 end
 
 %% do Newton iterations
 while (~converged & i < max_it)
-	%% update iteration counter
-	i = i + 1;
-	
-	%% evaluate Jacobian
-	[dSbus_dVm, dSbus_dVa] = dSbus_dV(Ybus, V);
-	
-	%% selecting a subset of rows of a large sparse matrix is very slow
-	%% in Matlab 5 (but not Matlab 4 ... go figure), but selecting a
-	%% subset of the columns is fast, and so is transposing, so instead
-	%% of doing this ...
-% 	j11 = real(dSbus_dVa([pv; pq], [pv; pq]));
-% 	j12 = real(dSbus_dVm([pv; pq], pq));
-% 	j21 = imag(dSbus_dVa(pq, [pv; pq]));
-% 	j22 = imag(dSbus_dVm(pq, pq));
+    %% update iteration counter
+    i = i + 1;
+    
+    %% evaluate Jacobian
+    [dSbus_dVm, dSbus_dVa] = dSbus_dV(Ybus, V);
+    
+    %% selecting a subset of rows of a large sparse matrix is very slow
+    %% in Matlab 5 (but not Matlab 4 ... go figure), but selecting a
+    %% subset of the columns is fast, and so is transposing, so instead
+    %% of doing this ...
+%   j11 = real(dSbus_dVa([pv; pq], [pv; pq]));
+%   j12 = real(dSbus_dVm([pv; pq], pq));
+%   j21 = imag(dSbus_dVa(pq, [pv; pq]));
+%   j22 = imag(dSbus_dVm(pq, pq));
 
-	%% ... we do the equivalent thing using
-	%% a temporary matrix and transposing
-	temp = real(dSbus_dVa(:, [pv; pq]))';
-	j11 = temp(:, [pv; pq])';
-	temp = real(dSbus_dVm(:, pq))';
-	j12 = temp(:, [pv; pq])';
-	temp = imag(dSbus_dVa(:, [pv; pq]))';
-	j21 = temp(:, pq)';
-	temp = imag(dSbus_dVm(:, pq))';
-	j22 = temp(:, pq)';
-	
-	J = [	j11 j12;
-			j21 j22;	];
+    %% ... we do the equivalent thing using
+    %% a temporary matrix and transposing
+    temp = real(dSbus_dVa(:, [pv; pq]))';
+    j11 = temp(:, [pv; pq])';
+    temp = real(dSbus_dVm(:, pq))';
+    j12 = temp(:, [pv; pq])';
+    temp = imag(dSbus_dVa(:, [pv; pq]))';
+    j21 = temp(:, pq)';
+    temp = imag(dSbus_dVm(:, pq))';
+    j22 = temp(:, pq)';
+    
+    J = [   j11 j12;
+            j21 j22;    ];
 
-	%% compute update step
-	dx = -(J \ F);
+    %% compute update step
+    dx = -(J \ F);
 
-	%% update voltage
-	if npv
-		Va(pv) = Va(pv) + dx(j1:j2);
-	end
-	if npq
-		Va(pq) = Va(pq) + dx(j3:j4);
-		Vm(pq) = Vm(pq) + dx(j5:j6);
-	end
-	V = Vm .* exp(j * Va);
-	Vm = abs(V);			%% update Vm and Va again in case
-	Va = angle(V);			%% we wrapped around with a negative Vm
+    %% update voltage
+    if npv
+        Va(pv) = Va(pv) + dx(j1:j2);
+    end
+    if npq
+        Va(pq) = Va(pq) + dx(j3:j4);
+        Vm(pq) = Vm(pq) + dx(j5:j6);
+    end
+    V = Vm .* exp(j * Va);
+    Vm = abs(V);            %% update Vm and Va again in case
+    Va = angle(V);          %% we wrapped around with a negative Vm
 
-	%% evalute F(x)
-	mis = V .* conj(Ybus * V) - Sbus;
-	F = [	real(mis(pv));
-			real(mis(pq));
-			imag(mis(pq))	];
+    %% evalute F(x)
+    mis = V .* conj(Ybus * V) - Sbus;
+    F = [   real(mis(pv));
+            real(mis(pq));
+            imag(mis(pq))   ];
 
-	%% check for convergence
-	normF = norm(F, inf);
-	if verbose > 1
-		fprintf('\n%3d        %10.3e', i, normF);
-	end
-	if normF < tol
-		converged = 1;
-		if verbose
-			fprintf('\nNewton''s method power flow converged in %d iterations.\n', i);
-		end
-	end
+    %% check for convergence
+    normF = norm(F, inf);
+    if verbose > 1
+        fprintf('\n%3d        %10.3e', i, normF);
+    end
+    if normF < tol
+        converged = 1;
+        if verbose
+            fprintf('\nNewton''s method power flow converged in %d iterations.\n', i);
+        end
+    end
 end
 
 if verbose
-	if ~converged
-		fprintf('\nNewton''s method power did not converge in %d iterations.\n', i);
-	end
+    if ~converged
+        fprintf('\nNewton''s method power did not converge in %d iterations.\n', i);
+    end
 end

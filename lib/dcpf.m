@@ -11,8 +11,8 @@ function Va = dcpf(B, Pbus, Va0, ref, pv, pq)
 %   $Id$
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
 %   and Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2003 by Power System Engineering Research Center (PSERC)
-%   See http://www.pserc.cornell.edu/ for more info.
+%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% initialize result vector
 Va = Va0;
@@ -20,9 +20,9 @@ Va = Va0;
 %% Since pulling off rows of a large sparse matrix like B
 %% can be slow in Matlab 5, we do this ...
 temp = B(:, [pv; pq])';
-B_pvpq_rows	= temp(:, [pv; pq])';
+B_pvpq_rows = temp(:, [pv; pq])';
 temp = B(:, ref)';
-B_ref_row	= temp(:, [pv; pq])';
+B_ref_row   = temp(:, [pv; pq])';
 Va([pv; pq]) = B_pvpq_rows \ (Pbus([pv; pq]) - B_ref_row * Va0(ref));
 
 %% ... instead of this ...

@@ -5,24 +5,24 @@ function t_pf(quiet)
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
 %   Copyright (c) 2004 by Power System Engineering Research Center (PSERC)
-%   See http://www.pserc.cornell.edu/ for more info.
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 if nargin < 1
-	quiet = 0;
+    quiet = 0;
 end
 
 t_begin(20, quiet);
 
 casefile = 't_case9_pf';
 if quiet
-	verbose = 0;
+    verbose = 0;
 else
-	verbose = 1;
+    verbose = 1;
 end
 mpopt = mpoption('OUT_ALL', 0, 'VERBOSE', verbose);
 
 %% get solved AC power flow case from MAT-file
-load soln9_pf;		%% defines bus_soln, gen_soln, branch_soln
+load soln9_pf;      %% defines bus_soln, gen_soln, branch_soln
 
 %% run Newton PF
 t = 'Newton PF : ';
@@ -61,7 +61,7 @@ t_is(gen, gen_soln, 5, [t 'gen']);
 t_is(branch, branch_soln, 5, [t 'branch']);
 
 %% get solved AC power flow case from MAT-file
-load soln9_dcpf;		%% defines bus_soln, gen_soln, branch_soln
+load soln9_dcpf;        %% defines bus_soln, gen_soln, branch_soln
 
 %% run DC PF
 t = 'DC PF : ';

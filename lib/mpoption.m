@@ -146,223 +146,223 @@ function [options, names] = mpoption(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p1
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2003 by Power System Engineering Research Center (PSERC)
-%   See http://www.pserc.cornell.edu/ for more info.
+%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %%-----  set up default option values  -----
 i = 1;
-if rem(nargin, 2)		%% odd number of arguments
-	options = p1;			%% base options vector passed in
-	i = 2;					%% start processing parameters with 2nd one
-else					%% even number of parameters
-	options = [				%% use defaults for base options vector
-	
-		%% power flow options
-		1;		%% 1  - PF_ALG
-		1e-8;	%% 2  - PF_TOL
-		10;		%% 3  - PF_MAX_IT
-		30;		%% 4  - PF_MAX_IT_FD
-		1000;	%% 5  - PF_MAX_IT_GS
-		0;		%% 6  - RESERVED6
-		0;		%% 7  - RESERVED7
-		0;		%% 8  - RESERVED8
-		0;		%% 9  - RESERVED9
-		0;		%% 10 - PF_DC
-		
-		%% OPF options
-		0;		%% 11 - OPF_ALG_POLY
-		100;	%% 12 - OPF_ALG_POLY
-		200;	%% 13 - OPF_ALG_PWL
-		10;		%% 14 - OPF_POLY2PWL_PTS
-		0;		%% 15 - OPF_NEQ
-		5e-6;	%% 16 - OPF_VIOLATION
-		1e-4;	%% 17 - CONSTR_TOL_X
-		1e-4;	%% 18 - CONSTR_TOL_F
-		0;		%% 19 - CONSTR_MAX_IT
-		3e-3;	%% 20 - LPC_TOL_GRAD
-		1e-4;	%% 21 - LPC_TOL_X
-		400;	%% 22 - LPC_MAX_IT
-		5;		%% 23 - LPC_MAX_RESTART
-		1e-4;	%% 24 - NEWTON_TOL_X
-		1e-4;	%% 25 - NEWTON_TOL_F
-		400;	%% 26 - NEWTON_POLY_MAX_IT
-		400;	%% 27 - NEWTON_PWL_MAX_IT
-		0;		%% 28 - RESERVED28
-		0;		%% 29 - RESERVED29
-		0;		%% 30 - RESERVED30
-		
-		%% output options
-		1;		%% 31 - VERBOSE
-		-1;		%% 32 - OUT_ALL
-		1;		%% 33 - OUT_SYS_SUM
-		0;		%% 34 - OUT_AREA_SUM
-		1;		%% 35 - OUT_BUS
-		1;		%% 36 - OUT_BRANCH
-		0;		%% 37 - OUT_GEN
-		-1;		%% 38 - OUT_ALL_LIM
-		1;		%% 39 - OUT_V_LIM
-		1;		%% 40 - OUT_LINE_LIM
-		1;		%% 41 - OUT_PG_LIM
-		1;		%% 42 - OUT_QG_LIM
-		0;		%% 43 - OUT_RAW
-		0;		%% 44 - RESERVED44
-		0;		%% 45 - RESERVED45
-		0;		%% 46 - RESERVED46
-		0;		%% 47 - RESERVED47
-		0;		%% 48 - RESERVED48
-		0;		%% 49 - RESERVED49
-		0;		%% 50 - RESERVED50
-		
-		%% other options
-		0;		%% 51 - SPARSE_QP
-		1;		%% 52 - VAR_LOAD_PF
-		0;		%% 53 - RESERVED53
-		0;		%% 54 - RESERVED54
-		0;		%% 55 - RESERVED55
-		0;		%% 56 - RESERVED56
-		0;		%% 57 - RESERVED57
-		0;		%% 58 - RESERVED58
-		0;		%% 59 - RESERVED59
-		0;		%% 60 - RESERVED60
-		
-		%% other options
-		0;		%% 61 - MNS_FEASTOL
-		0;		%% 62 - MNS_ROWTOL
-		0;		%% 63 - MNS_XTOL
-		0;		%% 64 - MNS_MAJDAMP
-		0;		%% 65 - MNS_MINDAMP
-		0;		%% 66 - MNS_PENALTY_PARM
-		0;		%% 67 - MNS_MAJOR_IT
-		0;		%% 68 - MNS_MINOR_IT
-		0;		%% 69 - MNS_MAX_IT
-		-1;		%% 70 - MNS_VERBOSITY
-		0;		%% 71 - MNS_CORE
-		0;		%% 72 - MNS_SUPBASIC_LIM
-		0;		%% 73 - MNS_MULT_PRICE
-		0;		%% 74 - RESERVED74
-		0;		%% 75 - RESERVED75
-		0;		%% 76 - RESERVED76
-		0;		%% 77 - RESERVED77
-		0;		%% 78 - RESERVED78
-		0;		%% 79 - RESERVED79
-		0;		%% 80 - RESERVED80
-	];
+if rem(nargin, 2)       %% odd number of arguments
+    options = p1;           %% base options vector passed in
+    i = 2;                  %% start processing parameters with 2nd one
+else                    %% even number of parameters
+    options = [             %% use defaults for base options vector
+    
+        %% power flow options
+        1;      %% 1  - PF_ALG
+        1e-8;   %% 2  - PF_TOL
+        10;     %% 3  - PF_MAX_IT
+        30;     %% 4  - PF_MAX_IT_FD
+        1000;   %% 5  - PF_MAX_IT_GS
+        0;      %% 6  - RESERVED6
+        0;      %% 7  - RESERVED7
+        0;      %% 8  - RESERVED8
+        0;      %% 9  - RESERVED9
+        0;      %% 10 - PF_DC
+        
+        %% OPF options
+        0;      %% 11 - OPF_ALG_POLY
+        100;    %% 12 - OPF_ALG_POLY
+        200;    %% 13 - OPF_ALG_PWL
+        10;     %% 14 - OPF_POLY2PWL_PTS
+        0;      %% 15 - OPF_NEQ
+        5e-6;   %% 16 - OPF_VIOLATION
+        1e-4;   %% 17 - CONSTR_TOL_X
+        1e-4;   %% 18 - CONSTR_TOL_F
+        0;      %% 19 - CONSTR_MAX_IT
+        3e-3;   %% 20 - LPC_TOL_GRAD
+        1e-4;   %% 21 - LPC_TOL_X
+        400;    %% 22 - LPC_MAX_IT
+        5;      %% 23 - LPC_MAX_RESTART
+        1e-4;   %% 24 - NEWTON_TOL_X
+        1e-4;   %% 25 - NEWTON_TOL_F
+        400;    %% 26 - NEWTON_POLY_MAX_IT
+        400;    %% 27 - NEWTON_PWL_MAX_IT
+        0;      %% 28 - RESERVED28
+        0;      %% 29 - RESERVED29
+        0;      %% 30 - RESERVED30
+        
+        %% output options
+        1;      %% 31 - VERBOSE
+        -1;     %% 32 - OUT_ALL
+        1;      %% 33 - OUT_SYS_SUM
+        0;      %% 34 - OUT_AREA_SUM
+        1;      %% 35 - OUT_BUS
+        1;      %% 36 - OUT_BRANCH
+        0;      %% 37 - OUT_GEN
+        -1;     %% 38 - OUT_ALL_LIM
+        1;      %% 39 - OUT_V_LIM
+        1;      %% 40 - OUT_LINE_LIM
+        1;      %% 41 - OUT_PG_LIM
+        1;      %% 42 - OUT_QG_LIM
+        0;      %% 43 - OUT_RAW
+        0;      %% 44 - RESERVED44
+        0;      %% 45 - RESERVED45
+        0;      %% 46 - RESERVED46
+        0;      %% 47 - RESERVED47
+        0;      %% 48 - RESERVED48
+        0;      %% 49 - RESERVED49
+        0;      %% 50 - RESERVED50
+        
+        %% other options
+        0;      %% 51 - SPARSE_QP
+        1;      %% 52 - VAR_LOAD_PF
+        0;      %% 53 - RESERVED53
+        0;      %% 54 - RESERVED54
+        0;      %% 55 - RESERVED55
+        0;      %% 56 - RESERVED56
+        0;      %% 57 - RESERVED57
+        0;      %% 58 - RESERVED58
+        0;      %% 59 - RESERVED59
+        0;      %% 60 - RESERVED60
+        
+        %% other options
+        0;      %% 61 - MNS_FEASTOL
+        0;      %% 62 - MNS_ROWTOL
+        0;      %% 63 - MNS_XTOL
+        0;      %% 64 - MNS_MAJDAMP
+        0;      %% 65 - MNS_MINDAMP
+        0;      %% 66 - MNS_PENALTY_PARM
+        0;      %% 67 - MNS_MAJOR_IT
+        0;      %% 68 - MNS_MINOR_IT
+        0;      %% 69 - MNS_MAX_IT
+        -1;     %% 70 - MNS_VERBOSITY
+        0;      %% 71 - MNS_CORE
+        0;      %% 72 - MNS_SUPBASIC_LIM
+        0;      %% 73 - MNS_MULT_PRICE
+        0;      %% 74 - RESERVED74
+        0;      %% 75 - RESERVED75
+        0;      %% 76 - RESERVED76
+        0;      %% 77 - RESERVED77
+        0;      %% 78 - RESERVED78
+        0;      %% 79 - RESERVED79
+        0;      %% 80 - RESERVED80
+    ];
 end
 
 %%-----  set up option names  -----
 %% power flow options
-names = str2mat(	'PF_ALG', ...				%% 1
-					'PF_TOL', ...				%% 2
-					'PF_MAX_IT', ...			%% 3
-					'PF_MAX_IT_FD', ...			%% 4
-					'PF_MAX_IT_GS', ...			%% 5
-					'RESERVED6', ...			%% 6
-					'RESERVED7', ...			%% 7
-					'RESERVED8', ...			%% 8
-					'RESERVED9', ...			%% 9
-					'PF_DC'	);					%% 10
+names = str2mat(    'PF_ALG', ...               %% 1
+                    'PF_TOL', ...               %% 2
+                    'PF_MAX_IT', ...            %% 3
+                    'PF_MAX_IT_FD', ...         %% 4
+                    'PF_MAX_IT_GS', ...         %% 5
+                    'RESERVED6', ...            %% 6
+                    'RESERVED7', ...            %% 7
+                    'RESERVED8', ...            %% 8
+                    'RESERVED9', ...            %% 9
+                    'PF_DC' );                  %% 10
 
 %% OPF options
-names = str2mat(	names, ...
-					'OPF_ALG', ...				%% 11
-					'OPF_ALG_POLY', ...			%% 12
-					'OPF_ALG_PWL', ...			%% 13
-					'OPF_POLY2PWL_PTS', ...		%% 14
-					'OPF_NEQ', ...				%% 15
-					'OPF_VIOLATION', ...		%% 16
-					'CONSTR_TOL_X', ...			%% 17
-					'CONSTR_TOL_F', ...			%% 18
-					'CONSTR_MAX_IT', ...		%% 19
-					'LPC_TOL_GRAD'	);			%% 20
-names = str2mat(	names, ...
-					'LPC_TOL_X', ...			%% 21
-					'LPC_MAX_IT', ...			%% 22
-					'LPC_MAX_RESTART', ...		%% 23
-					'NEWTON_TOL_X', ...			%% 24
-					'NEWTON_TOL_F', ...			%% 25
-					'NEWTON_POLY_MAX_IT', ...	%% 26
-					'NEWTON_PWL_MAX_IT', ...	%% 27
-					'RESERVED28', ...			%% 28
-					'RESERVED29', ...			%% 29
-					'RESERVED30'	);			%% 30
-	
+names = str2mat(    names, ...
+                    'OPF_ALG', ...              %% 11
+                    'OPF_ALG_POLY', ...         %% 12
+                    'OPF_ALG_PWL', ...          %% 13
+                    'OPF_POLY2PWL_PTS', ...     %% 14
+                    'OPF_NEQ', ...              %% 15
+                    'OPF_VIOLATION', ...        %% 16
+                    'CONSTR_TOL_X', ...         %% 17
+                    'CONSTR_TOL_F', ...         %% 18
+                    'CONSTR_MAX_IT', ...        %% 19
+                    'LPC_TOL_GRAD'  );          %% 20
+names = str2mat(    names, ...
+                    'LPC_TOL_X', ...            %% 21
+                    'LPC_MAX_IT', ...           %% 22
+                    'LPC_MAX_RESTART', ...      %% 23
+                    'NEWTON_TOL_X', ...         %% 24
+                    'NEWTON_TOL_F', ...         %% 25
+                    'NEWTON_POLY_MAX_IT', ...   %% 26
+                    'NEWTON_PWL_MAX_IT', ...    %% 27
+                    'RESERVED28', ...           %% 28
+                    'RESERVED29', ...           %% 29
+                    'RESERVED30'    );          %% 30
+    
 %% output options
-names = str2mat(	names, ...
-					'VERBOSE', ...				%% 31
-					'OUT_ALL', ...				%% 32
-					'OUT_SYS_SUM', ...			%% 33
-					'OUT_AREA_SUM', ...			%% 34
-					'OUT_BUS', ...				%% 35
-					'OUT_BRANCH', ...			%% 36
-					'OUT_GEN', ...				%% 37
-					'OUT_ALL_LIM', ...			%% 38
-					'OUT_V_LIM', ...			%% 39
-					'OUT_LINE_LIM'	);			%% 40
-names = str2mat(	names, ...
-					'OUT_PG_LIM', ...			%% 41
-					'OUT_QG_LIM', ...			%% 42
-					'OUT_RAW', ...				%% 43
-					'RESERVED44', ...			%% 44
-					'RESERVED45', ...			%% 45
-					'RESERVED46', ...			%% 46
-					'RESERVED47', ...			%% 47
-					'RESERVED48', ...			%% 48
-					'RESERVED49', ...			%% 49
-					'RESERVED50'	);			%% 50
+names = str2mat(    names, ...
+                    'VERBOSE', ...              %% 31
+                    'OUT_ALL', ...              %% 32
+                    'OUT_SYS_SUM', ...          %% 33
+                    'OUT_AREA_SUM', ...         %% 34
+                    'OUT_BUS', ...              %% 35
+                    'OUT_BRANCH', ...           %% 36
+                    'OUT_GEN', ...              %% 37
+                    'OUT_ALL_LIM', ...          %% 38
+                    'OUT_V_LIM', ...            %% 39
+                    'OUT_LINE_LIM'  );          %% 40
+names = str2mat(    names, ...
+                    'OUT_PG_LIM', ...           %% 41
+                    'OUT_QG_LIM', ...           %% 42
+                    'OUT_RAW', ...              %% 43
+                    'RESERVED44', ...           %% 44
+                    'RESERVED45', ...           %% 45
+                    'RESERVED46', ...           %% 46
+                    'RESERVED47', ...           %% 47
+                    'RESERVED48', ...           %% 48
+                    'RESERVED49', ...           %% 49
+                    'RESERVED50'    );          %% 50
 %% other options
-names = str2mat(	names, ...
-					'SPARSE_QP', ...			%% 51
-					'VAR_LOAD_PF', ...			%% 52
-					'RESERVED53', ...			%% 53
-					'RESERVED54', ...			%% 54
-					'RESERVED55', ...			%% 55
-					'RESERVED56', ...			%% 56
-					'RESERVED57', ...			%% 57
-					'RESERVED58', ...			%% 58
-					'RESERVED59', ...			%% 59
-					'RESERVED60'	);			%% 60
+names = str2mat(    names, ...
+                    'SPARSE_QP', ...            %% 51
+                    'VAR_LOAD_PF', ...          %% 52
+                    'RESERVED53', ...           %% 53
+                    'RESERVED54', ...           %% 54
+                    'RESERVED55', ...           %% 55
+                    'RESERVED56', ...           %% 56
+                    'RESERVED57', ...           %% 57
+                    'RESERVED58', ...           %% 58
+                    'RESERVED59', ...           %% 59
+                    'RESERVED60'    );          %% 60
 %% MINOS options
-names = str2mat(	names, ...
-					'MNS_FEASTOL', ...			%% 61
-					'MNS_ROWTOL', ...			%% 62
-					'MNS_XTOL', ...				%% 63
-					'MNS_MAJDAMP', ...			%% 64
-					'MNS_MINDAMP', ...			%% 65
-					'MNS_PENALTY_PARM', ...		%% 66
-					'MNS_MAJOR_IT', ...			%% 67
-					'MNS_MINOR_IT', ...			%% 68
-					'MNS_MAX_IT', ...			%% 69
-					'MNS_VERBOSITY'	);			%% 70
+names = str2mat(    names, ...
+                    'MNS_FEASTOL', ...          %% 61
+                    'MNS_ROWTOL', ...           %% 62
+                    'MNS_XTOL', ...             %% 63
+                    'MNS_MAJDAMP', ...          %% 64
+                    'MNS_MINDAMP', ...          %% 65
+                    'MNS_PENALTY_PARM', ...     %% 66
+                    'MNS_MAJOR_IT', ...         %% 67
+                    'MNS_MINOR_IT', ...         %% 68
+                    'MNS_MAX_IT', ...           %% 69
+                    'MNS_VERBOSITY' );          %% 70
 %% other flags
-names = str2mat(	names, ...
-					'MNS_CORE', ...				%% 71
-					'MNS_SUPBASIC_LIM', ...		%% 72
-					'MNS_MULT_PRICE', ...		%% 73
-					'RESERVED74', ...			%% 74
-					'RESERVED75', ...			%% 75
-					'RESERVED76', ...			%% 76
-					'RESERVED77', ...			%% 77
-					'RESERVED78', ...			%% 78
-					'RESERVED79', ...			%% 79
-					'RESERVED80'	);			%% 80
+names = str2mat(    names, ...
+                    'MNS_CORE', ...             %% 71
+                    'MNS_SUPBASIC_LIM', ...     %% 72
+                    'MNS_MULT_PRICE', ...       %% 73
+                    'RESERVED74', ...           %% 74
+                    'RESERVED75', ...           %% 75
+                    'RESERVED76', ...           %% 76
+                    'RESERVED77', ...           %% 77
+                    'RESERVED78', ...           %% 78
+                    'RESERVED79', ...           %% 79
+                    'RESERVED80'    );          %% 80
 
 %%-----  process parameters  -----
 while i <= nargin
-	%% get parameter name and value
-	pname = eval(['p' int2str(i)]);
-	pval = eval(['p' int2str(i+1)]);
-	
-	%% get parameter index
-	namestr = names';
-	namestr = namestr(:)';
-	namelen = size(names, 2);
-	pidx = ceil(findstr([pname blanks(namelen-length(pname))], namestr) / namelen);
-	% fprintf('''%s'' (%d) = %d\n', pname, pidx, pval);
+    %% get parameter name and value
+    pname = eval(['p' int2str(i)]);
+    pval = eval(['p' int2str(i+1)]);
+    
+    %% get parameter index
+    namestr = names';
+    namestr = namestr(:)';
+    namelen = size(names, 2);
+    pidx = ceil(findstr([pname blanks(namelen-length(pname))], namestr) / namelen);
+    % fprintf('''%s'' (%d) = %d\n', pname, pidx, pval);
 
-	%% update option
-	options(pidx) = pval;
+    %% update option
+    options(pidx) = pval;
 
-	i = i + 2;								%% go to next parameter
+    i = i + 2;                              %% go to next parameter
 end
 
 return;
