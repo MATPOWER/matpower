@@ -416,7 +416,11 @@ if isOPF
         fprintf(fd, '\n|     Branch Flow Constraints                                                  |');
         fprintf(fd, '\n================================================================================');
         fprintf(fd, '\nBrnch   From     "From" End        Limit       "To" End        To');
-        fprintf(fd, '\n  #     Bus   |Sf| mu    |Sf|     |Smax|     |St|    |St| mu   Bus');
+        if mpopt(24) == 1   %% P limit
+            fprintf(fd, '\n  #     Bus    Pf  mu     Pf      |Pmax|      Pt      Pt  mu   Bus');    % Pan Wei
+        else                %% |S| limit
+            fprintf(fd, '\n  #     Bus   |Sf| mu    |Sf|     |Smax|     |St|    |St| mu   Bus');
+        end
         fprintf(fd, '\n-----  -----  -------  --------  --------  --------  -------  -----');
         for i = 1:nl
             if OUT_LINE_LIM == 2 | (OUT_LINE_LIM == 1 & ...
@@ -427,9 +431,14 @@ if isOPF
                 else
                     fprintf(fd, '      -   ');
                 end
-                fprintf(fd, '%9.2f%10.2f%10.2f', ...
-                    [abs(branch(i, PF) + j * branch(i, QF)), ...
-                    branch(i, RATE_A), abs(branch(i, PT) + j * branch(i, QT))]);
+                if mpopt(24) == 1   %% P limit    % Pan Wei
+                    fprintf(fd, '%9.2f%10.2f%10.2f', ...
+                        [branch(i, PF), branch(i, RATE_A), branch(i, PT)]);
+                else                %% |S| limit
+                    fprintf(fd, '%9.2f%10.2f%10.2f', ...
+                        [abs(branch(i, PF) + j * branch(i, QF)), ...
+                        branch(i, RATE_A), abs(branch(i, PT) + j * branch(i, QT))]);
+                end
                 if branch(i, MU_ST) > 1e-6
                     fprintf(fd, '%10.3f', branch(i, MU_ST));
                 else

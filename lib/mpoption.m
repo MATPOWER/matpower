@@ -77,6 +77,8 @@ function [options, names] = mpoption(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p1
 %                                   'LPconstr'
 %       23 - LPC_MAX_RESTART, 5     maximum number of restarts for
 %                                   'LPconstr'
+%       24 - OPF_P_LINE_LIM, 0      use active power instead of apparent power
+%                                   for line flow limits    [   0 or 1  ]
 %   output options
 %       31 - VERBOSE, 1             amount of progress info printed
 %           [   0 - print no progress info                              ]
@@ -176,7 +178,7 @@ else                    %% even number of parameters
         1e-4;   %% 21 - LPC_TOL_X
         400;    %% 22 - LPC_MAX_IT
         5;      %% 23 - LPC_MAX_RESTART
-        0;      %% 24 - RESERVED24
+        0;      %% 24 - OPF_P_LINE_LIM
         0;      %% 25 - RESERVED25
         0;      %% 26 - RESERVED26
         0;      %% 27 - RESERVED27
@@ -271,7 +273,7 @@ names = str2mat(    names, ...
                     'LPC_TOL_X', ...            %% 21
                     'LPC_MAX_IT', ...           %% 22
                     'LPC_MAX_RESTART', ...      %% 23
-                    'RESERVED24', ...           %% 24
+                    'OPF_P_LINE_LIM', ...       %% 24
                     'RESERVED25', ...           %% 25
                     'RESERVED26', ...           %% 26
                     'RESERVED27', ...           %% 27
