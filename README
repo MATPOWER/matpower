@@ -1,4 +1,12 @@
 -----------------------------------------------------------------
+MINOS-based solver calls bp() and therefore REQUIRES bpmpd.
+LP-based solver calls lp() and will use bpmpd, if installed.
+DC-opf solver calls qp() and will use bpmpd, if installed.
+Old versions of constr (from Opt Tbx v.1) call qp() and will use bpmpd, if installed.
+-----------------------------------------------------------------
+
+
+-----------------------------------------------------------------
 This is the README from 2.0 and is out of date. Please see the
 CHANGES file for an up-to-date change history. It should be
 accurate for this distribution with the exception that everything
