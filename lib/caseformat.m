@@ -84,3 +84,9 @@
 %                   c2, c1, c0
 %           where the polynomial is c0 + c1*P + c2*P^2
 %
+
+%   MATPOWER
+%   $Id$
+%   by Ray Zimmerman, PSERC Cornell
+%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
+%   See http://www.pserc.cornell.edu/ for more info.
