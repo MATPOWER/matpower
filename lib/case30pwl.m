@@ -1,7 +1,7 @@
 function [baseMVA, bus, gen, branch, area, gencost] = case30pwl
 %CASE30PWL    Case 30 with piece-wise linear generator costs.
 %   Please see 'help caseformat' for details on the case file format.
-%
+
 %   MATPOWER
 %   $Id$
 

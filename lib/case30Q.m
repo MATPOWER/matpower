@@ -1,7 +1,7 @@
 function [baseMVA, bus, gen, branch, area, gencost] = case30Q
 %CASE30Q    Case 30 with costs for reactive generation.
 %   Please see 'help caseformat' for details on the case file format.
-%
+
 %   MATPOWER
 %   $Id$
 

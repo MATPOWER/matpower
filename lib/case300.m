@@ -1,7 +1,7 @@
 function [baseMVA, bus, gen, branch, area, gencost] = case300
 %CASE300    Power flow data for IEEE 300 bus test case.
 %   Please see 'help caseformat' for details on the case file format.
-%
+
 %   MATPOWER
 %   $Id$
 
