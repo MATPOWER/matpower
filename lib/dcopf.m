@@ -1,25 +1,38 @@
-function [bus, gen, branch, f, success, et] = dcopf(baseMVA, bus, gen, gencost, ...
-					branch, B, Bf, Pbusinj, Pfinj, ref, pv, pq, mpopt)
+function [buso, geno, brancho, f, success, info, et, g, jac] = dcopf(baseMVA, ...
+                   bus, gen, branch, areas, gencost, mpopt)
 %DCOPF  Solves a DC optimal power flow.
-%   [bus, gen, branch, f, success, et] = dcopf(baseMVA, bus, gen, gencost, ...
-%                   branch, B, Bf, Pbusinj, Pfinj, ref, pv, pq, mpopt)
-%   Assumes that B, Bf, Pbusinj, Pfinj, V, ref, pv, pq are consistent with
-%   (or override) data in bus, gen, branch.
+%   [bus, gen, branch, f, success, info, et] = dcopf(baseMVA, bus, gen, ...
+%          branch, areas, gencost, mpopt)
 
 %   MATPOWER
 %   $Id$
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
 %   and Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2003 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.
 
 %%----- initialization -----
-%% default arguments
-if nargin < 12
-	mpopt = mpoption;		%% use default options
+%% Sort arguments
+if isstr(baseMVA) | isstruct(baseMVA)
+  casefile = baseMVA;
+  if nargin == 1
+    mpopt = mpoption;
+  elseif nargin == 2
+    mpopt = bus;
+  else
+    error('dcopf.m: Incorrect input parameter order, number or type');
+  end
+  [baseMVA, bus, gen, branch, areas, gencost] = loadcase(casefile);
+else
+  if nargin == 6
+    mpopt = mpoption;
+  elseif nargin ~= 7
+    error('dcopf.m: Incorrect input parameter order, number or type');
+  end
 end
 
 %% options
+mpopt(10) = 1;  % force DC treatment
 verbose	= mpopt(31);
 npts = mpopt(14);		%% number of points to evaluate when converting
 						%% polynomials to piece-wise linear
@@ -35,6 +48,42 @@ j = sqrt(-1);
 [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, ...
 	GEN_STATUS, PMAX, PMIN, MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN] = idx_gen;
 [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, N, COST] = idx_cost;
+
+% If tables do not have multiplier/extra columns, append zero cols
+if size(bus,2) < MU_VMIN
+  bus = [bus zeros(size(bus,1),MU_VMIN-size(bus,2)) ];
+end
+if size(gen,2) < MU_QMIN
+  gen = [ gen zeros(size(gen,1),MU_QMIN-size(gen,2)) ];
+end
+if size(branch,2) < MU_ST
+  branch = [ branch zeros(size(branch,1),MU_ST-size(branch,2)) ];
+end
+
+% Filter out inactive generators and branches; save original bus & branch
+comgen = find(gen(:,GEN_STATUS) > 0);
+offgen = find(gen(:,GEN_STATUS) <= 0);
+onbranch  = find(branch(:,BR_STATUS) ~= 0);
+offbranch = find(branch(:,BR_STATUS) == 0);
+genorg = gen;
+branchorg = branch;
+ng = size(gen,1);         % original size(gen), at least temporally
+gen   = gen(comgen, :);
+branch = branch(onbranch, :);
+if size(gencost,1) == ng
+  gencost = gencost(comgen, :);
+else
+  gencost = gencost( [comgen; comgen+ng], :);
+end
+
+% Renumber buses consecutively
+[i2e, bus, gen, branch, areas] = ext2int(bus, gen, branch, areas);
+
+%% get bus index lists of each type of bus
+[ref, pv, pq] = bustypes(bus, gen);
+
+%% build B matrices and phase shift injections
+[B, Bf, Pbusinj, Pfinj] = makeBdc(baseMVA, bus, branch);
 
 %%-----  check/convert costs, set default algorithm  -----
 %% get cost model, check consistency
@@ -69,10 +118,12 @@ if any(i_poly) & formulation == 2
 	end
 	[pcost, qcost] = pqcost(gencost, size(gen, 1));
 	i_poly = find(pcost(:, MODEL) == POLYNOMIAL);
-	pcost = poly2pwl(pcost(i_poly, :), gen(i_poly, PMIN), gen(i_poly, PMAX), npts);
+	tmp = poly2pwl(pcost(i_poly, :), gen(i_poly, PMIN), gen(i_poly, PMAX), npts);
+	pcost(i_poly, 1:size(tmp,2)) = tmp;
 	if ~isempty(qcost)
 		i_poly = find(qcost(:, MODEL) == POLYNOMIAL);
-		qcost = poly2pwl(qcost(i_poly, :), gen(i_poly, QMIN), gen(i_poly, QMAX), npts);
+		tmp = poly2pwl(qcost(i_poly, :), gen(i_poly, QMIN), gen(i_poly, QMAX), npts);
+		qcost(i_poly, 1:size(tmp,2)) = tmp;
 	end
 	gencost = [pcost; qcost];
 end
@@ -185,6 +236,8 @@ end
 
 [x, lambda, how, success] = mp_qp(H, c, AA, bb, [], [], x, mpopt(15), qpverbose);
 
+info = success;
+
 %% update solution data
 Va = x(j1:j2);
 Pg = x(j3:j4);
@@ -211,7 +264,39 @@ gen(on, MU_PMAX)	= lambda(i5:i6) / baseMVA;
 branch(:, MU_SF)	= lambda(i7:i8) / baseMVA;
 branch(:, MU_ST)	= lambda(i9:i10) / baseMVA;
 
+g = [];
+jac = [];
+
+% convert to original external bus ordering
+[bus, gen, branch, areas] = int2ext(i2e, bus, gen, branch, areas);
+
+% Now create output matrices with all lines, all generators, committed and
+% non-committed
+geno = genorg;
+brancho = branchorg;
+geno(comgen, : ) = gen;
+brancho(onbranch, :)  = branch;
+% And zero out appropriate fields of non-comitted generators and lines
+tmp = zeros(length(offgen), 1);
+geno(offgen, PG) = tmp;
+geno(offgen, QG) = tmp;
+geno(offgen, MU_PMAX) = tmp;
+geno(offgen, MU_PMIN) = tmp;
+tmp = zeros(length(offbranch), 1);
+brancho(offbranch, PF) = tmp;
+brancho(offbranch, QF) = tmp;
+brancho(offbranch, PT) = tmp;
+brancho(offbranch, QT) = tmp;
+brancho(offbranch, MU_SF) = tmp;
+brancho(offbranch, MU_ST) = tmp;
+
 %% compute elapsed time
 et = etime(clock, t0);
+
+if (nargout == 0) & (info > 0)
+  printpf(baseMVA, bus, geno, brancho, f, success, et, 1, mpopt);
+end
+
+if nargout, buso = bus; end
 
 return;
