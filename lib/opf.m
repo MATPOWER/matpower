@@ -177,7 +177,7 @@ else % AC optimal power flow requested
     if opf_slvr(alg) == 0           %% use CONSTR
       if ~have_constr
         error(['opf.m: OPF_ALG ', num2str(alg), ' requires ', ...
-            'constr (Optimization Toolbox 1.x)']);
+            'constr (Optimization Toolbox 1.x/2.x)']);
       end
       %% set some options
       if mpopt(19) == 0
