@@ -1,18 +1,33 @@
-function [buso, geno, brancho, f, success, info, et, g, jac] = dcopf(baseMVA, ...
+function [buso, geno, brancho, f, success, info, et] = dcopf(baseMVA, ...
                    bus, gen, branch, areas, gencost, mpopt)
 %DCOPF  Solves a DC optimal power flow.
+%
+%   [bus, gen, branch, f, success] = dcopf(casefile, mpopt)
+%
+%   [bus, gen, branch, f, success] = dcopf(baseMVA, bus, gen, branch, areas, ...
+%                                    gencost, mpopt)
+%
 %   [bus, gen, branch, f, success, info, et] = dcopf(casefile)
-%   [bus, gen, branch, f, success, info, et] = dcopf(casefile, mpopt)
-%   [bus, gen, branch, f, success, info, et] = dcopf(baseMVA, bus, gen, ...
-%          branch, areas, gencost)
-%   [bus, gen, branch, f, success, info, et] = dcopf(baseMVA, bus, gen, ...
-%          branch, areas, gencost, mpopt)
+%
+%   The data for the problem can be specified in one of 3 ways: (1) the name of
+%   a case file which defines the data matrices baseMVA, bus, gen, branch,
+%   areas and gencost, (2) a struct containing the data matrices as fields, or
+%   (3) the data matrices themselves.
+%
+%   The optional mpopt vector specifies MATPOWER options. Type 'help mpoption'
+%   for details and default values.
+%
+%   The solved case is returned in the data matrices, bus, gen and branch. Also,
+%   returned are the final objective function value (f) and a flag which is
+%   true if the algorithm was successful in finding a solution (success).
+%   Additional optional return values are an algorithm specific return status
+%   (info), elapsed time in seconds (et).
 
 %   MATPOWER
 %   $Id$
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
 %   and Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2005 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %%----- initialization -----
@@ -258,9 +273,6 @@ gen(on, MU_PMIN)    = lambda(i3:i4) / baseMVA;
 gen(on, MU_PMAX)    = lambda(i5:i6) / baseMVA;
 branch(:, MU_SF)    = lambda(i7:i8) / baseMVA;
 branch(:, MU_ST)    = lambda(i9:i10) / baseMVA;
-
-g = [];
-jac = [];
 
 % convert to original external bus ordering
 [bus, gen, branch, areas] = int2ext(i2e, bus, gen, branch, areas);
