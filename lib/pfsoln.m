@@ -49,13 +49,15 @@ gen(on, QG) = imag(Sg) * baseMVA + bus(gbus, QD);	%% inj Q + local Qd
 %% the total Q dispatch for the bus assigned to each generator. This
 %% must be split between them. We do it equally.
 
-%% build connection matrix, element i, j is 1 if gen on(j) at bus i is ON
-nb = size(bus, 1);
-ngon = size(on, 1);
-Cg = sparse(gbus, [1:ngon]', ones(ngon, 1), nb, ngon);
+if length(on) > 1
+	%% build connection matrix, element i, j is 1 if gen on(j) at bus i is ON
+	nb = size(bus, 1);
+	ngon = size(on, 1);
+	Cg = sparse(gbus, [1:ngon]', ones(ngon, 1), nb, ngon);
 
-%% divide Qg by number of generators at the bus to distribute equally
-gen(on, QG) = gen(on, QG) ./ (Cg' * sum(Cg')');
+	%% divide Qg by number of generators at the bus to distribute equally
+	gen(on, QG) = gen(on, QG) ./ (Cg' * sum(Cg')');
+end
 
 %% update Pg for swing bus
 gen(on(refgen(1)), PG) = real(Sg(refgen(1))) * baseMVA + bus(ref, PD);	%% inj P + local Pd
