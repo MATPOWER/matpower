@@ -94,7 +94,7 @@ t1 = clock;
 %% set algorithm
 dc = mpopt(10);
 if dc % DC OPF
-  [buso, gen, branch, f, success, info, et ] = dcopf(baseMVA, bus, gen, ...
+  [bus, gen, branch, f, success, info, et ] = dcopf(baseMVA, bus, gen, ...
                                             branch, areas, gencost, mpopt);
 else % AC optimal power flow requested
   if any(model ~= PW_LINEAR & model ~= POLYNOMIAL)
