@@ -106,8 +106,8 @@ while (~converged & i < max_it)
 	end
 	if normP < tol & normQ < tol
 		converged = 1;
-		if verbose > 1
-			fprintf('\nPower flow converged in %d P-iterations and %d Q-iterations.\n', i, i-1);
+		if verbose
+			fprintf('\nFast-decoupled power flow converged in %d P-iterations and %d Q-iterations.\n', i, i-1);
 		end
 		break;
 	end
@@ -132,7 +132,7 @@ while (~converged & i < max_it)
 	end
 	if normP < tol & normQ < tol
 		converged = 1;
-		if verbose > 1
+		if verbose
 			fprintf('\nFast-decoupled power flow converged in %d P-iterations and %d Q-iterations.\n', i, i);
 		end
 		break;
