@@ -25,6 +25,11 @@ Please report any bugs you find to Ray Zimmerman <rz10@cornell.edu>.
 Changes since 2.0
 -----------------
 
+4/17/03
+	- Added mp_lp.m and mp_qp.m, equivalents to lp.m and qp.m,
+	  respectively that call bpmpd if available. Modified LPrelax.m,
+	  LPsetup.m and dcopf.m to call these new functions.
+
 4/14/03
 	- Fixed a bug in pfsoln.m which for cases with a single generator.
 
