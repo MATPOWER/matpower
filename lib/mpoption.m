@@ -180,10 +180,10 @@ else                    %% even number of parameters
         1e-4;   %% 21 - LPC_TOL_X
         400;    %% 22 - LPC_MAX_IT
         5;      %% 23 - LPC_MAX_RESTART
-        1e-4;   %% 24 - NEWTON_TOL_X
-        1e-4;   %% 25 - NEWTON_TOL_F
-        400;    %% 26 - NEWTON_POLY_MAX_IT
-        400;    %% 27 - NEWTON_PWL_MAX_IT
+        0;      %% 24 - RESERVED24
+        0;      %% 25 - RESERVED25
+        0;      %% 26 - RESERVED26
+        0;      %% 27 - RESERVED27
         0;      %% 28 - RESERVED28
         0;      %% 29 - RESERVED29
         0;      %% 30 - RESERVED30
