@@ -15,6 +15,9 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 3.0b3
 -------------------
 
+1/4/05
+    - Fixed potential bug in dimensions of Yf and Yt created in makeYbus.m.
+
 12/17/04
     - Added feasibility check to mp_lp.m and mp_qp.m to work around a
       recently discovered bug in BPMPD_MEX 2.21 where it sometimes returns an
