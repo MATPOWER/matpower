@@ -52,7 +52,7 @@ project (see http://www.pserc.cornell.edu/powerweb/).
 
 More documentation is available in the User's Manual (manual.pdf) and in
 the m-files themselves (type: help <name of m-file> at the Matlab
-prompt). Documentation for the case file format can be found in case.m.
+prompt). Documentation for the case file format can be found in case9.m.
 Where something is still unclear, the source code IS the documentation
 :-)
 

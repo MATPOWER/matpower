@@ -8,7 +8,7 @@ function [MVAbase, bus, gen, gencost, branch, f, success, et] = ...
 %   Runs a DC optimal power flow where casename is the name of the m-file
 %   (without the .m extension) containing the opf data, and mpopt is a
 %   MATPOWER options vector (see 'help mpoption' for details). Uses default
-%   options if 2nd parameter is not given, and 'case' if 1st parameter
+%   options if 2nd parameter is not given, and 'case9' if 1st parameter
 %   is not given. The results may optionally be printed to a file (appended
 %   if the file exists) whose name is given in fname (in addition to
 %   printing to STDOUT). Optionally returns the final values of baseMVA,
@@ -30,7 +30,7 @@ if nargin < 4
 		if nargin < 2
 			mpopt = mpoption;		%% use default options
 			if nargin < 1
-				casename = 'case';	%% default data file is 'case.m'
+				casename = 'case9';	%% default data file is 'case9.m'
 			end
 		end
 	end
