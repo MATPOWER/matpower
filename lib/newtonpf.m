@@ -108,6 +108,8 @@ while (~converged & i < max_it)
 		Vm(pq) = Vm(pq) + dx(j5:j6);
 	end
 	V = Vm .* exp(j * Va);
+	Vm = abs(V);			%% update Vm and Va again in case
+	Va = angle(V);			%% we wrapped around with a negative Vm
 
 	%% evalute F(x)
 	mis = V .* conj(Ybus * V) - Sbus;
