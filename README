@@ -155,7 +155,8 @@ the source code *is* the documentation ;-)
 -------------------
 
 There are two optional packages to enhance the performance of MATPOWER
-that may be downloaded separately.
+that may be downloaded separately. Both have more restrictive licenses
+than MATPOWER. Please see the individual Terms of Use for details.
 
  - MINOPF      A MINOS-based OPF solver which is typically much faster than
                MATPOWER's other OPF solvers.
