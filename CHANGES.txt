@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 3.0b3
 -------------------
 
+11/18/04
+    - Fixed bug in extras/smartmarket/off2case.m for inputs containing
+      zero quantity bids.
+
 9/23/04
     - Fixed bugs in cdf2matp.m which prevented it from working at all
       when not specifying both input parameters and caused it to
