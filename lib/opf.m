@@ -159,14 +159,26 @@ else % AC optimal power flow requested
       mpopt(63) = mpopt(17);
     end
     if alg == 500       % MINOS
+      if ~have_minopf
+        error(['opf.m: OPF_ALG ', num2str(alg), ' requires ', ...
+            'MINOPF (see http://www.pserc.cornell.edu/minopf/)']);
+      end
       [bus, gen, branch, f, success, info, et, g, jac] = mopf(baseMVA, ...
           bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt);
     elseif alg == 520   % FMINCON
+      if ~have_fmincon
+        error(['opf.m: OPF_ALG ', num2str(alg), ' requires ', ...
+            'fmincon (Optimization Toolbox 2.x or later)']);
+      end
       [bus, gen, branch, f, success, info, et, g, jac] = fmincopf(baseMVA, ...
           bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt);
     end
   else
     if opf_slvr(alg) == 0           %% use CONSTR
+      if ~have_constr
+        error(['opf.m: OPF_ALG ', num2str(alg), ' requires ', ...
+            'constr (Optimization Toolbox 1.x)']);
+      end
       %% set some options
       if mpopt(19) == 0
         mpopt(19) = 2 * size(bus,1) + 150;  %% set max number of iterations for constr
