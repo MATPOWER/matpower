@@ -82,7 +82,7 @@ ng = size(gen, 1);      %% number of generators
 %% zero out some data to make printout consistent for DC case
 if dc
     bus(:, [QD, BS])            = zeros(nb, 2);
-    gen(:, [VG, QMAX, QMIN])    = zeros(ng, 3);
+    gen(:, [QG, QMAX, QMIN])    = zeros(ng, 3);
     branch(:, [BR_R, BR_B])     = zeros(nl, 2);
 end
 
