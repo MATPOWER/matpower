@@ -73,7 +73,7 @@ end
 
 %% open and write the file
 if strcmp(extension, '.mat')        %% MAT-file
-    if exist(gencost) == 1
+    if exist('gencost') == 1
         eval(['save ', rootname, ' baseMVA bus gen branch areas gencost;']);
     else
         eval(['save ', rootname, ' baseMVA bus gen branch;']);
@@ -86,7 +86,7 @@ else                                %% M-file
     end
     
     %% function header, etc.
-    if exist(gencost) == 1 & ~isempty(gencost)
+    if exist('gencost') == 1 & ~isempty(gencost)
         fprintf(fd, 'function [baseMVA, bus, gen, branch, areas, gencost] = %s\n', rootname);
     else
         fprintf(fd, 'function [baseMVA, bus, gen, branch] = %s\n\n', rootname);
@@ -137,7 +137,7 @@ else                                %% M-file
     fprintf(fd, '];\n\n');
     
     %% OPF data
-    if exist(gencost) == 1 & ~isempty(gencost)
+    if exist('gencost') == 1 & ~isempty(gencost)
         %% area data
         fprintf(fd, '%%%%-----  OPF Data  -----%%%%\n');
         fprintf(fd, '%%%% area data\n');
