@@ -16,7 +16,8 @@ end
 
 test_list = {	't_loadcase', ...
 				't_jacobian', ...
-				't_pf'	};
+				't_pf', ...
+				't_opf'	};
 
 %% add smartmarket tests if available
 nt = size(test_list, 2);
