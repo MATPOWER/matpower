@@ -74,11 +74,6 @@ j = sqrt(-1);
 [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, N, COST] = idx_cost;
 
 %%-----  check/convert costs, set default algorithm  -----
-have_minopf = (exist('minopf') == 3); % minopf.mex$(PLATFORM) exists
-have_bpmpd  = (exist('bp') == 3);     % bp.mex$(PLATFORM) exists
-have_fmincon = (exist('fmincon') == 2); % fmincon.m is around
-have_constr = (exist('constr') == 2); % interesting when 
-                                      %    have_constr & ~have_fmincon
 %% get cost model, check consistency
 model = gencost(:, MODEL);
 comgen = find(gen(:, GEN_STATUS) > 0);
@@ -101,9 +96,9 @@ else % AC optimal power flow requested
     error('opf.m: unknown generator cost model in gencost data');
   end
   if mpopt(11) == 0  % OPF_ALG not set, choose best option
-    if have_minopf
+    if have_fcn('minopf')
       mpopt(11) = 500; % MINOS generalized
-    elseif have_fmincon
+    elseif have_fcn('fmincon')
       mpopt(11) = 520; % FMINCON generalized
     %% use default for this cost model
     elseif any(i_pwln)      %% some piece-wise linear, use appropriate alg
@@ -159,14 +154,14 @@ else % AC optimal power flow requested
       mpopt(63) = mpopt(17);
     end
     if alg == 500       % MINOS
-      if ~have_minopf
+      if ~have_fcn('minopf')
         error(['opf.m: OPF_ALG ', num2str(alg), ' requires ', ...
             'MINOPF (see http://www.pserc.cornell.edu/minopf/)']);
       end
       [bus, gen, branch, f, success, info, et, g, jac] = mopf(baseMVA, ...
           bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt);
     elseif alg == 520   % FMINCON
-      if ~have_fmincon
+      if ~have_fcn('fmincon')
         error(['opf.m: OPF_ALG ', num2str(alg), ' requires ', ...
             'fmincon (Optimization Toolbox 2.x or later)']);
       end
@@ -175,7 +170,7 @@ else % AC optimal power flow requested
     end
   else
     if opf_slvr(alg) == 0           %% use CONSTR
-      if ~have_constr
+      if ~have_fcn('constr')
         error(['opf.m: OPF_ALG ', num2str(alg), ' requires ', ...
             'constr (Optimization Toolbox 1.x/2.x)']);
       end
