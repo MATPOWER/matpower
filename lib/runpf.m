@@ -48,7 +48,7 @@ end
 dc = mpopt(10);						%% use DC formulation?
 
 %% read data & convert to internal bus numbering
-[baseMVA, bus, gen, branch, area, gencost] = loadcase(casename);
+[baseMVA, bus, gen, branch] = loadcase(casename);
 [i2e, bus, gen, branch] = ext2int(bus, gen, branch);
 
 %% get bus index lists of each type of bus
@@ -133,7 +133,7 @@ printpf(baseMVA, bus, gen, branch, [], success, et, 1, mpopt);
 
 %% save solved case
 if solvedcase
-	savecase(solvedcase, baseMVA, bus, gen, branch, area, gencost);
+	savecase(solvedcase, baseMVA, bus, gen, branch);
 end
 
 %% this is just to prevent it from printing baseMVA
