@@ -15,6 +15,54 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 3.0b3
 -------------------
 
+1/25/05
+    - Major updates to user manual.
+
+1/24/05
+    - Switched to using the new isload() to check for dispatchable load.
+    - For dispatchable loads, switched from using PG and QG to PMIN and either
+      QMIN (for inductive loads) or QMAX (for capacitive loads) to define the
+      constant power factor constraint. This prevents the power factor
+      information from being lost when it is dispatched to zero. If the initial
+      values of PG and QG are not consistent with the ratio defined by PMIN
+      and the appropriate Q limit it gives an error. This is to prevent a user
+      from unknowingly using a case file which would have defined a different
+      power factor constraint under previous versions of MATPOWER.
+      If both QMIN and QMAX are zero, it no longer includes the redundant
+      unity power factor constraint.
+
+1/20/05
+    - Updated printpf.m to display dispatchable loads and generators
+      separately. Reorganized the area summary section and corrected the net
+      exports value (subtracted half of tie-line loss) to make the numbers
+      add up correctly.
+
+1/18/05
+    - Added to runpf.m the ability to enforce generator reactive power limits
+      by allowing the voltage to deviate from the set-point. This option is
+      controlled by the new ENFORCE_Q_LIMS option, which is off by default.
+          (Thanks to Mu Lin of Lincoln University, New Zealand
+           whose contributions inspired this feature).
+    - Modified pfsoln.m to divide reactive power dispatch between multiple
+      generators at a bus in proportion to each gen's reactive power range,
+      as opposed to equally. This means that all generators at a bus will
+      reach their upper (or lower) limits simultaneously.
+    - Added generator status column to generator section of printpf.m output.
+      Fixed bugs where non-zero output of decommitted generators was displayed
+      and included in generation totals in generator and bus sections.
+
+1/14/05
+    - Moved some setting of MNS_* default options from opf.m to mopf.m.
+    - Eliminated unused output args in dcopf.m.
+    - Modified printpf.m to zero out reactive generator output for DC cases
+      and to use OPF_VIOLATION tolerance to detect binding constraints, as
+      opposed to non-zero Kuhn-Tucker multipliers.
+
+1/12/05
+    - Modified bpmpd portion of mp_qp.m and mp_lp.m to use default value for
+      TFEAS2 and eliminate variable limits which appear to be artificial
+      large values used to indicate free variables.
+
 1/4/05
     - Fixed potential bug in dimensions of Yf and Yt created in makeYbus.m.
 
@@ -38,7 +86,7 @@ Changes since 3.0b3
     - Fixed typo in name of lower bound input argument in opf.m. Only
       affected those calling opf directly with extra linear constraints.
 
-    
+
 Changes since 3.0b2
 -------------------
 
