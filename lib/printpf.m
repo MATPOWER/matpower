@@ -236,22 +236,23 @@ if OUT_GEN
     fprintf(fd, '\n================================================================================');
     fprintf(fd, '\n|     Generator Data                                                           |');
     fprintf(fd, '\n================================================================================');
-    fprintf(fd, '\nGen  Bus     Pg        Qg   ');
+    fprintf(fd, '\nGen  Bus  Status     Pg        Qg   ');
     if isOPF, fprintf(fd, '   Lambda ($/MVA-hr)'); end
-    fprintf(fd, '\n #    #     (MW)     (MVAr) ');
+    fprintf(fd, '\n #    #             (MW)     (MVAr) ');
     if isOPF, fprintf(fd, '     P         Q    '); end
-    fprintf(fd, '\n---  ---  --------  --------');
+    fprintf(fd, '\n---  ---  ------  --------  --------');
     if isOPF, fprintf(fd, '  --------  --------'); end
     for i = 1:ng
-        if gen(i, PG) | gen(i, QG)
-            fprintf(fd, '\n%3d%5d%9.2f%10.2f%10.2f%10.2f', i, gen(i, GEN_BUS), gen(i, PG), gen(i, QG));
+        fprintf(fd, '\n%3d%5d    %2d ', i, gen(i, GEN_BUS), gen(i, GEN_STATUS));
+        if gen(i, GEN_STATUS) > 0 & (gen(i, PG) | gen(i, QG))
+            fprintf(fd, '%10.2f%10.2f', gen(i, PG), gen(i, QG));
         else
-            fprintf(fd, '\n%3d%5d      -         -  ', i, gen(i, GEN_BUS));
+            fprintf(fd, '       -         -  ');
         end
         if isOPF, fprintf(fd, '%10.2f%10.2f', genlamP(i), genlamQ(i)); end
     end
-    fprintf(fd, '\n          --------  --------');
-    fprintf(fd, '\n  Total:%9.2f%10.2f', sum(gen(:, PG)), sum(gen(:, QG)));
+    fprintf(fd, '\n                  --------  --------');
+    fprintf(fd, '\n          Total:%9.2f%10.2f', sum(gen(on, PG)), sum(gen(on, QG)));
     fprintf(fd, '\n');
 end
         
@@ -268,8 +269,8 @@ if OUT_BUS
     if isOPF, fprintf(fd, '  -------  -------'); end
     for i = 1:nb
         fprintf(fd, '\n%3d%8.3f%10.3f', bus(i, [BUS_I, VM, VA]));
-        g = find(gen(:, GEN_BUS) == bus(i, BUS_I));
-        if any(gen(g, GEN_STATUS) > 0)
+        g = find(gen(:, GEN_STATUS) > 0 & gen(:, GEN_BUS) == bus(i, BUS_I));
+        if ~isempty(g)
             fprintf(fd, '%10.2f%10.2f', sum(gen(g, PG)), sum(gen(g, QG)));
         else
             fprintf(fd, '       -         -  ');
@@ -290,7 +291,7 @@ if OUT_BUS
     end
     fprintf(fd, '\n                        --------  --------  --------  --------');
     fprintf(fd, '\n               Total: %9.2f %9.2f %9.2f %9.2f', ...
-        sum(gen(:, PG)), sum(gen(:, QG)), sum(bus(nzld, PD)), sum(bus(nzld, QD)));
+        sum(gen(on, PG)), sum(gen(on, QG)), sum(bus(nzld, PD)), sum(bus(nzld, QD)));
     fprintf(fd, '\n');
 end
 
