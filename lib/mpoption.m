@@ -35,33 +35,30 @@ function [options, names] = mpoption(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p1
 %                                   power flow and OPF      [   0 or 1  ]
 %   OPF options
 %       11 - OPF_ALG, 0             algorithm to use for OPF
-%           [   (see README for more info on formulations/algorithms)   ]
-%           [   The algorithm code = F * 100 + S * 20, where ...        ]
-%           [       F specifies one of the following OPF formulations   ]
-%           [           1 - standard (polynomial cost in obj fcn)       ]
-%           [           2 - CCV (constrained cost variables)            ]
-%           [           5 - generalized, includes 1 & 2 and more        ]
-%           [       S specifies one of the following solvers            ]
-%           [           0 - MINOS if F=5, else 'constr' from Opt Tbx    ]
-%           [           1 - Dense LP-based method                       ]
-%           [           2 - Sparse LP-based method w/relaxed constraints]
-%           [           3 - Sparse LP-based method w/full constraints   ]
-%           [   This yields the following 9 codes:                      ]
-%           [         0 - choose appropriate default from OPF_ALG_POLY  ]
-%           [             or OPF_ALG_PWL                                ]
-%           [       100 - standard formulation, constr                  ]
-%           [       120 - standard formulation, dense LP                ]
-%           [       140 - standard formulation, sparse LP (relaxed)     ]
-%           [       160 - standard formulation, sparse LP (full)        ]
-%           [       200 - CCV formulation, constr                       ]
-%           [       220 - CCV formulation, dense LP                     ]
-%           [       240 - CCV formulation, sparse LP (relaxed)          ]
-%           [       260 - CCV formulation, sparse LP (full)             ]
-%           [       500 - generalized formulation, MINOS                ]
+%           [    0 - choose best default solver available in the        ]
+%           [        following order, 500, 520 then 100/200             ]
+%           [ Otherwise the first digit specifies the problem           ]
+%           [ formulation and the second specifies the solver,          ]
+%           [ as follows, (see the User's Manual for more details)      ]
+%           [  100 - standard formulation (old), constr                 ]
+%           [  120 - standard formulation (old), dense LP               ]
+%           [  140 - standard formulation (old), sparse LP (relaxed)    ]
+%           [  160 - standard formulation (old), sparse LP (full)       ]
+%           [  200 - CCV formulation (old), constr                      ]
+%           [  220 - CCV formulation (old), dense LP                    ]
+%           [  240 - CCV formulation (old), sparse LP (relaxed)         ]
+%           [  260 - CCV formulation (old), sparse LP (full)            ]
+%           [  500 - generalized formulation, MINOS                     ]
+%           [  520 - generalized formulation, fmincon                   ]
+%           [ See the User's Manual for details on the formulations.    ]
 %       12 - OPF_ALG_POLY, 100      default OPF algorithm for use with
 %                                   polynomial cost functions
+%                                   (used only if no solver available
+%                                   for generalized formulation)
 %       13 - OPF_ALG_PWL, 200       default OPF algorithm for use with
 %                                   piece-wise linear cost functions
+%                                   (used only if no solver available
+%                                   for generalized formulation)
 %       14 - OPF_POLY2PWL_PTS, 10   number of evaluation points to use
 %                                   when converting from polynomial to
 %                                   piece-wise linear costs
@@ -357,6 +354,9 @@ while i <= nargin
     namestr = namestr(:)';
     namelen = size(names, 2);
     pidx = ceil(findstr([pname blanks(namelen-length(pname))], namestr) / namelen);
+    if isempty(pidx)
+        error(sprintf('"%s" is not a valid named option', pname));
+    end
     % fprintf('''%s'' (%d) = %d\n', pname, pidx, pval);
 
     %% update option
