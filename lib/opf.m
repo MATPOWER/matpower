@@ -1,8 +1,34 @@
 function [buso, gen, branch, f, success, info, et, g, jac] = opf(baseMVA, bus,...
           gen, branch, areas, gencost, Au, lu, ubu, mpopt)
 %OPF  Solves an optimal power flow.
-%   [bus, gen, branch, f, success, info, et, g, jac] = opf(baseMVA, bus, ...
-%               gen, branch, areas, gencost, A, l, u, mpopt)
+%
+%If the OPF algorithm is not set explicitly in the options, it will choose
+%the best available solver, searching in the following order:
+%MINOPF, fmincon, constr.
+%
+%Usage:
+%
+%[bus, gen, branch, f, success] = opf(casefile)
+%
+%[bus, gen, branch, f, success] = opf(casefile, option)
+%
+%[bus, gen, branch, f, success] = opf(casefile, A, l, u, option)
+%
+%[bus, gen, branch, f, success] = opf(baseMVA, bus, gen, branch, areas, ...
+%                                 gencost)
+%
+%[bus, gen, branch, f, success] = opf(baseMVA, bus, gen, branch, areas, ...
+%                                 gencost, A, l, u)
+%
+%[bus, gen, branch, f, success] = opf(baseMVA, bus, gen, branch, areas, ...
+%                                 gencost, A, l, u, option)
+%
+%[bus, gen, branch, f, success, info, et, g, jacobian] = opf(casefile)
+%
+% When specified, A, l, u represent additional linear constraints on the
+% optimization variables, l <= A*x <= u. These are only available for solvers
+% which use the generalized formulation (see 'help genform'), namely fmincon
+% and MINOPF. For help on the option vector, type 'help mpoption'.
 
 %   MATPOWER
 %   $Id$
