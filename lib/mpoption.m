@@ -31,6 +31,8 @@ function [options, names] = mpoption(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p1
 %                                   fast decoupled method
 %       5  - PF_MAX_IT_GS, 1000     maximum number of iterations for 
 %                                   Gauss-Seidel method
+%       6  - ENFORCE_Q_LIMS, 0      enforce gen reactive power limits,
+%                                   at expense of |V|       [   0 or 1  ]
 %       10 - PF_DC, 0               use DC power flow formulation, for
 %                                   power flow and OPF
 %           [    0 - use AC formulation & corresponding algorithm opts  ]
@@ -155,7 +157,7 @@ else                    %% even number of parameters
         10;     %% 3  - PF_MAX_IT
         30;     %% 4  - PF_MAX_IT_FD
         1000;   %% 5  - PF_MAX_IT_GS
-        0;      %% 6  - RESERVED6
+        0;      %% 6  - ENFORCE_Q_LIMS
         0;      %% 7  - RESERVED7
         0;      %% 8  - RESERVED8
         0;      %% 9  - RESERVED9
@@ -249,7 +251,7 @@ names = str2mat(    'PF_ALG', ...               %% 1
                     'PF_MAX_IT', ...            %% 3
                     'PF_MAX_IT_FD', ...         %% 4
                     'PF_MAX_IT_GS', ...         %% 5
-                    'RESERVED6', ...            %% 6
+                    'ENFORCE_Q_LIMS', ...       %% 6
                     'RESERVED7', ...            %% 7
                     'RESERVED8', ...            %% 8
                     'RESERVED9', ...            %% 9

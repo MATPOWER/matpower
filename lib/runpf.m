@@ -1,4 +1,5 @@
-function [MVAbase, bus, gen, branch, success, et] = runpf(casename, mpopt, fname, solvedcase)
+function [MVAbase, bus, gen, branch, success, et] = ...
+    			runpf(casename, mpopt, fname, solvedcase)
 %RUNPF  Runs a power flow.
 %
 %   [baseMVA, bus, gen, branch, success, et] = ...
@@ -18,11 +19,23 @@ function [MVAbase, bus, gen, branch, success, et] = runpf(casename, mpopt, fname
 %   specified the solved case will be written to a case file in MATPOWER
 %   format with the specified name. If solvedcase ends with '.mat' it saves
 %   the case as a MAT-file otherwise it saves it as an M-file.
+%
+%   If the ENFORCE_Q_LIMS options is set to true (default is false) then if
+%   any generator reactive power limit is violated after running the AC power
+%   flow, the corresponding bus is converted to a PQ bus, with Qg at the
+%   limit, and the case is re-run. The voltage magnitude at the bus will
+%   deviate from the specified value in order to satisfy the reactive power
+%   limit. If the reference bus is converted to PQ, the first remaining PV
+%   bus will be used as the slack bus for the next iteration. This may
+%   result in the real power output at this generator being slightly off
+%   from the specified values.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
+%   Enforcing of generator Q limits inspired by contributions
+%   from Mu Lin, Lincoln University, New Zealand (1/14/05).
+%   Copyright (c) 1996-2005 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %%-----  initialize  -----
@@ -49,6 +62,8 @@ if nargin < 4
 end
 
 %% options
+verbose = mpopt(31);
+qlim = mpopt(6);                    %% enforce Q limits on gens?
 dc = mpopt(10);                     %% use DC formulation?
 
 %% read data & convert to internal bus numbering
@@ -97,27 +112,92 @@ else                                %% AC formulation
     V0  = bus(:, VM) .* exp(sqrt(-1) * pi/180 * bus(:, VA));
     V0(gbus) = gen(on, VG) ./ abs(V0(gbus)).* V0(gbus);
     
-    %% build admittance matrices
-    [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
-    
-    %% compute complex bus power injections (generation - load)
-    Sbus = makeSbus(baseMVA, bus, gen);
-    
-    %% run the power flow
-    alg = mpopt(1);
-    if alg == 1
-        [V, success, iterations] = newtonpf(Ybus, Sbus, V0, ref, pv, pq, mpopt);
-    elseif alg == 2 | alg == 3
-        [Bp, Bpp] = makeB(baseMVA, bus, branch, alg);
-        [V, success, iterations] = fdpf(Ybus, Sbus, V0, Bp, Bpp, ref, pv, pq, mpopt);
-    elseif alg == 4
-        [V, success, iterations] = gausspf(Ybus, Sbus, V0, ref, pv, pq, mpopt);
-    else
-        error('Only Newton''s method, fast-decoupled, and Gauss-Seidel power flow algorithms currently implemented.');
+    if qlim
+        ref0 = ref;                         %% save index and angle of
+        Varef0 = bus(ref0, VA);             %%   original reference bus
+        limited = [];                       %% list of indices of gens @ Q lims
+        fixedQg = zeros(size(gen, 1), 1);   %% Qg of gens at Q limits
     end
-    
-    %% update data matrices with solution
-    [bus, gen, branch] = pfsoln(baseMVA, bus, gen, branch, Ybus, Yf, Yt, V, ref, pv, pq);
+    repeat = 1;
+    while (repeat)
+        %% build admittance matrices
+        [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
+        
+        %% compute complex bus power injections (generation - load)
+        Sbus = makeSbus(baseMVA, bus, gen);
+        
+        %% run the power flow
+        alg = mpopt(1);
+        if alg == 1
+            [V, success, iterations] = newtonpf(Ybus, Sbus, V0, ref, pv, pq, mpopt);
+        elseif alg == 2 | alg == 3
+            [Bp, Bpp] = makeB(baseMVA, bus, branch, alg);
+            [V, success, iterations] = fdpf(Ybus, Sbus, V0, Bp, Bpp, ref, pv, pq, mpopt);
+        elseif alg == 4
+            [V, success, iterations] = gausspf(Ybus, Sbus, V0, ref, pv, pq, mpopt);
+        else
+            error('Only Newton''s method, fast-decoupled, and Gauss-Seidel power flow algorithms currently implemented.');
+        end
+        
+        %% update data matrices with solution
+        [bus, gen, branch] = pfsoln(baseMVA, bus, gen, branch, Ybus, Yf, Yt, V, ref, pv, pq);
+        
+        if qlim             %% enforce generator Q limits
+            %% find gens with violated Q constraints
+            mx = find( gen(:, GEN_STATUS) > 0 & gen(:, QG) > gen(:, QMAX) );
+            mn = find( gen(:, GEN_STATUS) > 0 & gen(:, QG) < gen(:, QMIN) );
+            
+            if ~isempty(mx) | ~isempty(mn)  %% we have some Q limit violations
+                if verbose & ~isempty(mx)
+                    fprintf('Gen %d at upper Q limit, converting to PQ bus\n', mx);
+                end
+                if verbose & ~isempty(mn)
+                    fprintf('Gen %d at lower Q limit, converting to PQ bus\n', mn);
+                end
+                
+                %% save corresponding limit values
+                fixedQg(mx) = gen(mx, QMAX);
+                fixedQg(mn) = gen(mn, QMIN);
+                mx = [mx;mn];
+                
+                %% convert to PQ bus
+                gen(mx, QG) = fixedQg(mx);      %% set Qg to binding limit
+                gen(mx, GEN_STATUS) = 0;        %% temporarily turn off gen,
+                for i = 1:length(mx)            %% (one at a time, since
+                    bi = gen(mx(i), GEN_BUS);   %%  they may be at same bus)
+                    bus(bi, [PD,QD]) = ...      %% adjust load accordingly,
+                        bus(bi, [PD,QD]) - gen(mx(i), [PG,QG]);
+                end
+                bus(gen(mx, GEN_BUS), BUS_TYPE) = PQ;   %% & set bus type to PQ
+                
+                %% update bus index lists of each type of bus
+                ref_temp = ref;
+                [ref, pv, pq] = bustypes(bus, gen);
+                if verbose & ref ~= ref_temp
+                    fprintf('Bus %d is new slack bus\n', ref);
+                end
+                limited = [limited; mx];
+            else
+                repeat = 0; %% no more generator Q limits violated
+            end
+        else
+            repeat = 0;     %% don't enforce generator Q limits, once is enough
+        end
+    end
+    if qlim & ~isempty(limited)
+        %% restore injections from limited gens (those at Q limits)
+        gen(limited, QG) = fixedQg(limited);    %% restore Qg value,
+        for i = 1:length(limited)               %% (one at a time, since
+            bi = gen(limited(i), GEN_BUS);      %%  they may be at same bus)
+            bus(bi, [PD,QD]) = ...              %% re-adjust load,
+                bus(bi, [PD,QD]) + gen(limited(i), [PG,QG]);
+        end
+        gen(limited, GEN_STATUS) = 1;               %% and turn gen back on
+        if ref ~= ref0
+            %% adjust voltage angles to make original ref bus correct
+            bus(:, VA) = bus(:, VA) - bus(ref0, VA) + Varef0;
+        end
+    end
 end
 et = etime(clock, t0);
 
