@@ -11,8 +11,8 @@ function savecase(fname, p1, p2, p3, p4, p5, p6, p7)
 %   otherwise it saves it as an M-file.
 
 %   MATPOWER Version 2.5b3
-%   by Ray Zimmerman & Carlos Murillo, PSERC Cornell    9/21/99
-%   Copyright (c) 1996-1999 by Power System Engineering Research Center (PSERC)
+%   by Ray Zimmerman & Carlos Murillo, PSERC Cornell    6/20/00
+%   Copyright (c) 1996-2000 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.
 
 %% define named indices into bus, gen, branch matrices
@@ -86,7 +86,6 @@ else								%% M-file
 	fprintf(fd, '\n%%%%-----  Power Flow Data  -----%%%%\n');
 	fprintf(fd, '%%%% system MVA base\n');
 	fprintf(fd, 'baseMVA = %.4f;\n\n', baseMVA);
-	fprintf(fd, '\n');
 	
 	%% bus data
 	ncols = size(bus, 2);
@@ -139,7 +138,7 @@ else								%% M-file
 	%% generator cost data
 	fprintf(fd, '%%%% generator cost data\n');
 	fprintf(fd, '%%\t1\tstartup\tshutdown\tn\tx0\ty0\t...\txn\tyn\n');
-	fprintf(fd, '%%\t2\tstartup\tshutdown\tn\tcn\t...\tc0\n');
+	fprintf(fd, '%%\t2\tstartup\tshutdown\tn\tc(n-1)\t...\tc0\n');
 	fprintf(fd, 'gencost = [\n');
 	if ~isempty(gencost)
 		n = gencost(1, N);
