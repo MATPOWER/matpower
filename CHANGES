@@ -15,6 +15,15 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 3.0b3
 -------------------
 
+12/17/04
+    - Added feasibility check to mp_lp.m and mp_qp.m to work around a
+      recently discovered bug in BPMPD_MEX 2.21 where it sometimes returns an
+      incorrect (infeasible) solution for a DC OPF problem. This bug has yet
+      to be encountered in any other context.
+
+12/13/04
+    - Added mpver.m to print version information.
+
 11/18/04
     - Fixed bug in extras/smartmarket/off2case.m for inputs containing
       zero quantity bids.
