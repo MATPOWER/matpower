@@ -145,78 +145,73 @@ else
 	[fun, grad]	= fg_names(alg);
 	mpopt(15)	= 2 * nb;				%% set number of equality constraints
 	
-	if opf_slvr(alg) == 4				%% use NEWTON based solver
-		[V, Sg, lambda, f, success] = NEWTONOPF(formulation, baseMVA, bus, gen, gencost, ...
-							branch, Ybus, V, ref, pv, pq, mpopt);
-	else
-		if opf_slvr(alg) == 0			%% use CONSTR
-			%% set some options
-			if mpopt(19) == 0
-				mpopt(19) = 2 * nb + 150;	%% set max number of iterations for constr
-			end
+	if opf_slvr(alg) == 0			%% use CONSTR
+		%% set some options
+		if mpopt(19) == 0
+			mpopt(19) = 2 * nb + 150;	%% set max number of iterations for constr
+		end
+	
+		%% set up options for Optim Tbx's constr
+		otopt = foptions;				%% get default options for constr
+		otopt(1) = (verbose > 0);		%% set verbose flag appropriately
+		% otopt(9) = 1;					%% check user supplied gradients?
+		otopt(2)  = mpopt(17);			%% termination tolerance on 'x'
+		otopt(3)  = mpopt(18);			%% termination tolerance on 'F'
+		otopt(4)  = mpopt(16);			%% termination tolerance on constraint violation
+		otopt(13) = mpopt(15);			%% number of equality constraints
+		otopt(14) = mpopt(19);			%% maximum number of iterations
 		
-			%% set up options for Optim Tbx's constr
-			otopt = foptions;				%% get default options for constr
-			otopt(1) = (verbose > 0);		%% set verbose flag appropriately
-			% otopt(9) = 1;					%% check user supplied gradients?
-			otopt(2)  = mpopt(17);			%% termination tolerance on 'x'
-			otopt(3)  = mpopt(18);			%% termination tolerance on 'F'
-			otopt(4)  = mpopt(16);			%% termination tolerance on constraint violation
-			otopt(13) = mpopt(15);			%% number of equality constraints
-			otopt(14) = mpopt(19);			%% maximum number of iterations
-			
-			%% run optimization
-			[x, otopt, lambda] = constr(fun, x, otopt, [], [], grad, ...
-								baseMVA, bus, gen, gencost, branch, Ybus, Yf, Yt, V, ref, pv, pq, mpopt);
-			
-			%% get final objective function value & constraint values
-			[f, g] = feval(fun, x, baseMVA, bus, gen, gencost, branch, Ybus, Yf, Yt, V, ref, pv, pq, mpopt);
-			
-			%% check for convergence
-			if otopt(10) >= otopt(14)	| max(abs(g(1:otopt(13))))			> otopt(4) ...
-										| max(g((otopt(13)+1):length(g)))	> otopt(4)
-				success = 0;				%% did NOT converge
-			else
-				success = 1;				%% DID converge
-			end
-		else							%% use LPCONSTR
-			%% run load flow to get starting point
-			[x, success_lf] = LPeqslvr(x, baseMVA, bus, gen, gencost, branch, Ybus, Yf, Yt, V, ref, pv, pq, mpopt);
-			if success_lf ~= 1
-				error('Sorry, cannot find a starting point using power flow, please check data!'); 
-			end
-			
-			%% set step size
-			cstep = 0;
-			if ~isempty(Cp)
-				cstep = max(abs(Cp));
-				if cstep < 1.0e6, cstep = 1.0e6; end
-			end
-			step0=[2*ones(nb-1,1);					%% starting stepsize for Vangle
-					ones(nb,1);						%% Vmag
-					0.6*ones(ng,1);					%% Pg
-					0.3*ones(ng,1);					%% Qg
-					cstep*ones(length(Cp),1);		%% Cp
-					cstep*ones(length(Cq),1)];		%% Cq
-			idx_xi = [];
+		%% run optimization
+		[x, otopt, lambda] = constr(fun, x, otopt, [], [], grad, ...
+							baseMVA, bus, gen, gencost, branch, Ybus, Yf, Yt, V, ref, pv, pq, mpopt);
 		
-			%% run optimization
-			[x, lambda, success] = LPconstr(fun, x, idx_xi, mpopt, step0, [], [], grad, 'LPeqslvr', ...
-								baseMVA, bus, gen, gencost, branch, Ybus, Yf, Yt, V, ref, pv, pq, mpopt);
+		%% get final objective function value & constraint values
+		[f, g] = feval(fun, x, baseMVA, bus, gen, gencost, branch, Ybus, Yf, Yt, V, ref, pv, pq, mpopt);
 		
-			%% get final objective function value & constraint values
-			f = feval(fun, x, baseMVA, bus, gen, gencost, branch, Ybus, Yf, Yt, V, ref, pv, pq, mpopt);
+		%% check for convergence
+		if otopt(10) >= otopt(14)	| max(abs(g(1:otopt(13))))			> otopt(4) ...
+									| max(g((otopt(13)+1):length(g)))	> otopt(4)
+			success = 0;				%% did NOT converge
+		else
+			success = 1;				%% DID converge
+		end
+	else							%% use LPCONSTR
+		%% run load flow to get starting point
+		[x, success_lf] = LPeqslvr(x, baseMVA, bus, gen, gencost, branch, Ybus, Yf, Yt, V, ref, pv, pq, mpopt);
+		if success_lf ~= 1
+			error('Sorry, cannot find a starting point using power flow, please check data!'); 
 		end
 		
-		%% reconstruct V
-		Va = zeros(nb, 1);
-		Va([ref; pv; pq]) = [angle(V(ref)); x(j1:j2); x(j3:j4)];
-		Vm = x(j5:j6);
-		V = Vm .* exp(j * Va);
-		
-		%% grab Pg & Qg
-		Sg = x(j7:j8) + j * x(j9:j10);		%% complex power generation in p.u.
+		%% set step size
+		cstep = 0;
+		if ~isempty(Cp)
+			cstep = max(abs(Cp));
+			if cstep < 1.0e6, cstep = 1.0e6; end
+		end
+		step0=[2*ones(nb-1,1);					%% starting stepsize for Vangle
+				ones(nb,1);						%% Vmag
+				0.6*ones(ng,1);					%% Pg
+				0.3*ones(ng,1);					%% Qg
+				cstep*ones(length(Cp),1);		%% Cp
+				cstep*ones(length(Cq),1)];		%% Cq
+		idx_xi = [];
+	
+		%% run optimization
+		[x, lambda, success] = LPconstr(fun, x, idx_xi, mpopt, step0, [], [], grad, 'LPeqslvr', ...
+							baseMVA, bus, gen, gencost, branch, Ybus, Yf, Yt, V, ref, pv, pq, mpopt);
+	
+		%% get final objective function value & constraint values
+		f = feval(fun, x, baseMVA, bus, gen, gencost, branch, Ybus, Yf, Yt, V, ref, pv, pq, mpopt);
 	end
+	
+	%% reconstruct V
+	Va = zeros(nb, 1);
+	Va([ref; pv; pq]) = [angle(V(ref)); x(j1:j2); x(j3:j4)];
+	Vm = x(j5:j6);
+	V = Vm .* exp(j * Va);
+	
+	%% grab Pg & Qg
+	Sg = x(j7:j8) + j * x(j9:j10);		%% complex power generation in p.u.
 	
 	%%-----  calculate return values  -----
 	%% update bus, gen, branch with solution info

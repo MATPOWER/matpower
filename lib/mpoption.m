@@ -46,7 +46,6 @@ function [options, names] = mpoption(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p1
 %           [           1 - Dense LP-based method                       ]
 %           [           2 - Sparse LP-based method w/relaxed constraints]
 %           [           3 - Sparse LP-based method w/full constraints   ]
-%           [           4 - Newton-based method                         ]
 %           [   This yields the following 9 codes:                      ]
 %           [         0 - choose appropriate default from OPF_ALG_POLY  ]
 %           [             or OPF_ALG_PWL                                ]
@@ -54,12 +53,10 @@ function [options, names] = mpoption(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p1
 %           [       120 - standard formulation, dense LP                ]
 %           [       140 - standard formulation, sparse LP (relaxed)     ]
 %           [       160 - standard formulation, sparse LP (full)        ]
-%           [       180 - standard formulation, Newton                  ]
 %           [       200 - CCV formulation, constr                       ]
 %           [       220 - CCV formulation, dense LP                     ]
 %           [       240 - CCV formulation, sparse LP (relaxed)          ]
 %           [       260 - CCV formulation, sparse LP (full)             ]
-%           [       280 - CCV formulation, Newton                       ]
 %           [       500 - generalized formulation, MINOS                ]
 %       12 - OPF_ALG_POLY, 100      default OPF algorithm for use with
 %                                   polynomial cost functions
@@ -84,12 +81,6 @@ function [options, names] = mpoption(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p1
 %                                   'LPconstr'
 %       23 - LPC_MAX_RESTART, 5     maximum number of restarts for
 %                                   'LPconstr'
-%       24 - NEWTON_TOL_X, 1e-4     termination tol on x for Newton OPF
-%       25 - NEWTON_TOL_F, 1e-4     termination tol on F for Newton OPF
-%       26 - NEWTON_POLY_MAX_IT,400 max number of iterations for Newton
-%                                   OPF with polynomial costs
-%       27 - NEWTON_PWL_MAX_IT, 400 max number of iterations for Newton
-%                                   OPF with piece-wise linear costs
 %   output options
 %       31 - VERBOSE, 1             amount of progress info printed
 %           [   0 - print no progress info                              ]

@@ -54,12 +54,6 @@ Changes since 2.0
 
 version 2.5b3
 11/9/99
-    - Incorporated changes from Taiyou:
-        - Fixed bugs with indexing of lambdas
-        - Fixed use of NEWTON_TOL_X, NEWTON_TOL_F, and OPF_VIOLATION in
-          termination criteria.
-    - Replaced 'mod' with 'rem' in NEWTON_POLY.m and NEWTON_PWL.m to
-      make compatible with Matlab 4.
 
 9/22/99
     - Modified grad_*.m to return sparse matrices, unless using
@@ -117,8 +111,6 @@ version 2.5b3
       for piecewise linear cost case in dcopf.m.
 
 7/16/99
-    - Fixed bug in mpoption.m which wasn't recognizing new option
-      names for Newton OPF solver.
     - Added the flag QP_SPARSE to mpoption.m to indicate whether the
       QP solver being used can accept sparse matrices. Also modified
       dcopf.m to use this flag.
@@ -157,10 +149,6 @@ version 2.5b2
 6/2/99
     - Modified print2mp.m to include line flows and Lagrange
       and Kuhn-Tucker multipliers in output if available.
-
-5/28/99
-    - Included first version of Taiyou Yong's Newton-based OPF
-      solver.
 
 4/29/99
     - Included a Gauss-Seidel power flow solver gausspf.m, and

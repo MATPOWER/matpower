@@ -9,14 +9,9 @@ Old versions of constr (from Opt Tbx v.1) call qp() and will use bpmpd, if insta
 -----------------------------------------------------------------
 This is the README from 2.0 and is out of date. Please see the
 CHANGES file for an up-to-date change history. It should be
-accurate for this distribution with the exception that everything
-related to the MINOS and NEWTON based OPF solvers has been
-removed since they were not ready for distribution.
+accurate for this distribution.
 
-NOTE: THIS DISTRIBUTION HAS NOT BEEN TESTED SINCE THESE PIECES
-      WERE REMOVED, SO IT MAY HAVE CAUSED PROBLEMS.
-
-Ray Zimmerman, March 31, 2000
+Ray Zimmerman, Thu, Apr 17, 2003
 -----------------------------------------------------------------
 
 
