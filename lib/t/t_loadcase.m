@@ -22,7 +22,6 @@ pfmatfile  = 't_mat9_pf';
 
 %% save as .mat file
 eval(['save ' matfile ' baseMVA bus gen branch areas gencost']);
-eval(['save ' pfmatfile ' baseMVA bus gen branch']);
 
 t = 'loadcase(opf_M_file) without .m extension : ';
 [baseMVA1, bus1, gen1, branch1, area1, gencost1] = loadcase(casefile);
@@ -59,6 +58,10 @@ t_is(gen1,      gen,        12, [t 'gen']);
 t_is(branch1,   branch,     12, [t 'branch']);
 t_is(area1,     areas,      12, [t 'areas']);
 t_is(gencost1,  gencost,    12, [t 'gencost']);
+
+
+[baseMVA, bus, gen, branch] = feval(pfcasefile);
+eval(['save ' pfmatfile ' baseMVA bus gen branch']);
 
 t = 'loadcase(pf_M_file) without .m extension : ';
 [baseMVA1, bus1, gen1, branch1] = loadcase(pfcasefile);
@@ -108,7 +111,7 @@ t_is(gencost2,  gencost,    12, [t 'gencost']);
 
 t = 'runpf(my_M_file)';
 opt = mpoption('VERBOSE', 0, 'OUT_ALL', 0);
-[baseMVA3, bus3, gen3, branch3, success, et] = runpf(casefile, opt);
+[baseMVA3, bus3, gen3, branch3, success, et] = runpf(pfcasefile, opt);
 t_ok( success, t );
 
 t = 'runpf(my_struct)';
