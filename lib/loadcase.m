@@ -1,5 +1,5 @@
 function [baseMVA, bus, gen, branch, area, gencost, info] = loadcase(casefile)
-%CASELOAD   Load .m or .mat case files in MATPOWER format
+%LOADCASE   Load .m or .mat case files or data struct in MATPOWER format
 %
 %   [baseMVA, bus, gen, branch, area, gencost ] = loadcase(casefile)
 %
@@ -29,13 +29,15 @@ function [baseMVA, bus, gen, branch, area, gencost, info] = loadcase(casefile)
 %   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/ for more info.
 
-if isstruct(casefile)
+%% initialize as empty matrices in case of error
+baseMVA = []; bus = []; gen = []; branch = []; area = []; gencost = [];
+
+if isstruct(casefile)				%% first param is a struct
 	if nargout < 7
 		if ~isfield(casefile,'baseMVA') | ~isfield(casefile,'bus') | ...
 				~isfield(casefile,'gen') | ~isfield(casefile,'branch') | ...
 				~isfield(casefile,'area') | ~isfield(casefile,'gencost') 
 			info = 5;
-			baseMVA = []; bus = []; gen = []; branch = []; area = []; gencost = [];
 			return;
 		end
 	end
@@ -47,18 +49,18 @@ if isstruct(casefile)
 	gencost	= casefile.gencost;
 	info	= 0;
 	return;
+else								%% OK, better be a string, else give up
+	if ~isstr(casefile)
+		if nargout < 7
+			error('loadcase: input arg should be a string containing a filename');
+	  	else
+			info = 1;
+			return;
+	  	end
+	end
 end
 
-if ~isstr(casefile)
-  if nargout < 7
-    error('loadcase: input arg should be a string containing a filename');
-  else
-    info = 1;
-    baseMVA = []; bus = []; gen = []; branch = []; area = []; gencost = [];
-    return
-  end
-end
-
+%% check for explicit extension
 l = length(casefile);
 if l > 2
   if strcmp(casefile(l-1:l), '.m')
@@ -72,7 +74,8 @@ if l > 2
   end
 end
 
-if exist('rootname') ~= 1
+%% get data from file
+if exist('rootname') ~= 1			%% no explicit extension
   if exist([casefile '.mat']) == 2
      load(casefile);
   elseif exist([casefile '.m']) == 2
@@ -82,11 +85,10 @@ if exist('rootname') ~= 1
       error('loadcase: specified case not in MATLAB''s search path');
     else
       info = 2;
-      baseMVA = []; bus = []; gen = []; branch = []; area = []; gencost = [];
-      return
+      return;
     end
   end
-else
+else								%% explicit extension given
   if strcmp(extension,'.mat')
     if exist([rootname '.mat']) == 2
       load(rootname) ;
@@ -95,8 +97,7 @@ else
         error('loadcase: specified MAT file does not exist');
       else
         info = 3;
-        baseMVA = []; bus = []; gen = []; branch = []; area = []; gencost = [];
-        return
+        return;
       end
     end
   elseif strcmp(extension,'.m')
@@ -107,23 +108,21 @@ else
         error('loadcase: specified M file does not exist');
       else
         info = 4;
-        baseMVA = []; bus = []; gen = []; branch = []; area = []; gencost = [];
-        return
+        return;
       end
     end
   end
 end
 
 if ~( exist('baseMVA') == 1 & exist('bus') == 1 & exist('branch') == 1 ...
-     & exist('area') == 1 & exist('gencost') == 1)
-  if nargout < 7
-    error('loadcase: one or more of the data matrices is undefined');
-  else
-    info = 1;
-    baseMVA = []; bus = []; gen = []; branch = []; area = []; gencost = [];
-  end
+		& exist('gen') == 1 & exist('area') == 1 & exist('gencost') == 1)
+  	if nargout < 7
+    	error('loadcase: one or more of the data matrices is undefined');
+  	else
+    	info = 5;
+  	end
 else
-  info = 0;
+  	info = 0;
 end
 
 return;
