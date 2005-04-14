@@ -171,7 +171,7 @@ else                                %% M-file
             
         %% generator cost data
         fprintf(fd, '%%%% generator cost data\n');
-        fprintf(fd, '%%\t1\tstartup\tshutdown\tn\tx0\ty0\t...\txn\tyn\n');
+        fprintf(fd, '%%\t1\tstartup\tshutdown\tn\tx1\ty1\t...\txn\tyn\n');
         fprintf(fd, '%%\t2\tstartup\tshutdown\tn\tc(n-1)\t...\tc0\n');
         fprintf(fd, 'gencost = [\n');
         if ~isempty(gencost)
