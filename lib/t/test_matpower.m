@@ -1,5 +1,5 @@
 function test_matpower(verbose)
-%TEST_ALL  Run all MATPOWER tests.
+%TEST_MATPOWER  Run all MATPOWER tests.
 %   test_matpower runs all of the MATPOWER tests.
 %   test_matpower(verbose) prints the details of the individual tests
 %   if verbose is true.
