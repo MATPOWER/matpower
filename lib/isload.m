@@ -12,8 +12,9 @@ function TorF = isload(gen)
 %   Copyright (c) 2005 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-[GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, ...
-        GEN_STATUS, PMAX, PMIN, MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN] = idx_gen;
+[GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, ...
+    PMAX, PMIN, MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, QMAX2, QMIN2, ...
+    RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q] = idx_gen;
 
 TorF = gen(:, PMIN) < 0 & gen(:, PMAX) == 0;
 
