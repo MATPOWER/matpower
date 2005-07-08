@@ -1,19 +1,25 @@
-function fname_out = savecase(fname, p1, p2, p3, p4, p5, p6, p7)
+function fname_out = savecase(fname, varargin)
 %SAVECASE  Saves a MATPOWER case file, given a filename and the data matrices.
 %
+%   savecase(fname, casestruct)
+%   savecase(fname, comment, casestruct)
+%   savecase(fname, casestruct, version)
+%   savecase(fname, comment, casestruct, version)
 %   savecase(fname, baseMVA, bus, gen, branch)
-%   savecase(fname, baseMVA, bus, gen, branch, areas, gencost)
 %   savecase(fname, comment, baseMVA, bus, gen, branch)
+%   savecase(fname, baseMVA, bus, gen, branch, areas, gencost)
 %   savecase(fname, comment, baseMVA, bus, gen, branch, areas, gencost)
 %   fname = savecase(fname, comment, baseMVA, bus, gen, branch, areas, gencost)
 %
-%   Writes a MATPOWER case file, given a filename and the data matrices.
-%   The fname parameter is the name of the file to be created or
+%   Writes a MATPOWER case file, given a filename and data struct or list of
+%   data matrices. The fname parameter is the name of the file to be created or
 %   overwritten. If fname ends with '.mat' it saves the case as a MAT-file
 %   otherwise it saves it as an M-file. Optionally returns the filename,
-%   with extension added if necessary. The optional comment argument is
+%   with extension added if necessary. The optional 'comment' argument is
 %   either string (single line comment) or a cell array of strings which
-%   are inserted as comments.
+%   are inserted as comments. When using a MATPOWER case struct, if the
+%   optional 'version' argument is '1' it will modify the data matrices to
+%   version 1 format before saving.
 
 %   MATPOWER
 %   $Id$
@@ -25,34 +31,83 @@ function fname_out = savecase(fname, p1, p2, p3, p4, p5, p6, p7)
 %% define named indices into bus, gen, branch matrices
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
     VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
-[GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, ...
-    GEN_STATUS, PMAX, PMIN, MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN] = idx_gen;
-[F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, ...
-    RATE_C, TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST] = idx_brch;
+[GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, ...
+    PMAX, PMIN, MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, QMAX2, QMIN2, ...
+    RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q] = idx_gen;
+[F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
+    TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
+    ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 [AREA_I, PRICE_REF_BUS] = idx_area;
 [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, N, COST] = idx_cost;
 
 %% default arguments
-if isstr(p1) | iscell(p1)
-    comment = p1;
-    baseMVA = p2;
-    bus     = p3;
-    gen     = p4;
-    branch  = p5;
-    if nargin > 6
-        areas   = p6;
-        gencost = p7;
-    end
+if isstr(varargin{1}) | iscell(varargin{1})
+    comment = varargin{1};
+%     args = cell(1, length(varargin)-1);
+%     args{1:end} = varargin{2:end};
+    [args{1:(length(varargin)-1)}] = deal(varargin{2:end});
 else
     comment = '';
-    baseMVA = p1;
-    bus     = p2;
-    gen     = p3;
-    branch  = p4;
-    if nargin > 5
-        areas   = p5;
-        gencost = p6;
+%     args = cell(length(varargin), 1);
+    args = varargin;
+end
+mpc_ver = '2';              %% default MATPOWER case file version
+if isstruct(args{1})        %% 1st real argument is a struct
+    mpc = args{1};
+    if length(args) > 1
+        mpc.version = args{2};
+        mpc_ver = mpc.version;
     end
+    baseMVA = mpc.baseMVA;
+    bus     = mpc.bus;
+    gen     = mpc.gen;
+    branch  = mpc.branch;
+    if isfield(mpc, 'areas') & isfield(mpc, 'gencost')
+        areas   = mpc.areas;
+        gencost = mpc.gencost;
+    end
+else                        %% 1st real argument is NOT a struct
+    baseMVA = args{1};
+    bus     = args{2};
+    gen     = args{3};
+    branch  = args{4};
+    mpc.baseMVA = baseMVA;
+    mpc.bus     = bus;
+    mpc.gen     = gen;
+    mpc.branch  = branch;
+    if length(args) > 5
+        areas   = args{5};
+        gencost = args{6};
+        mpc.areas   = areas;
+        mpc.gencost = gencost;
+    end
+end
+
+%% modifications for version 1 format
+if strcmp(mpc_ver, '1')
+    %% remove extra columns of gen
+    if size(gen, 2) >= MU_QMIN
+        gen = gen(:, [1:PMIN, MU_PMAX:MU_QMIN]);
+    else
+        gen = gen(:, 1:PMIN);
+    end
+    %% use the version 1 values for column names
+    shift = MU_PMAX - PMIN - 1;
+    tmp = num2cell([MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN] - shift);
+    [MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN] = deal(tmp{:});
+    
+    %% remove extra columns of branch
+    if size(branch, 2) >= MU_ST
+        branch = branch(:, [1:BR_STATUS, PF:MU_ST]);
+    elseif size(branch, 2) >= QT
+        branch = branch(:, [1:BR_STATUS, PF:QT]);
+    else
+        branch = branch(:, 1:BR_STATUS);
+    end
+    %% use the version 1 values for column names
+    shift = PF - BR_STATUS - 1;
+    tmp = num2cell([PF, QF, PT, QT, MU_SF, MU_ST] - shift);
+    [PF, QF, PT, QT, MU_SF, MU_ST] = deal(tmp{:});
 end
 
 %% verify valid filename
@@ -77,10 +132,14 @@ end
 
 %% open and write the file
 if strcmp(extension, '.mat')        %% MAT-file
-    if exist('gencost') == 1
-        eval(['save ', rootname, ' baseMVA bus gen branch areas gencost;']);
+    if strcmp(mpc_ver, '1')
+        if exist('gencost') == 1
+            eval(['save ', rootname, ' baseMVA bus gen branch areas gencost;']);
+        else
+            eval(['save ', rootname, ' baseMVA bus gen branch;']);
+        end
     else
-        eval(['save ', rootname, ' baseMVA bus gen branch;']);
+        eval(['save ', rootname, ' mpc;']);
     end
 else                                %% M-file
     %% open file
@@ -90,10 +149,16 @@ else                                %% M-file
     end
     
     %% function header, etc.
-    if exist('gencost') == 1 & ~isempty(gencost)
-        fprintf(fd, 'function [baseMVA, bus, gen, branch, areas, gencost] = %s\n', rootname);
+    if strcmp(mpc_ver, '1')
+        if exist('gencost') == 1 & ~isempty(gencost)
+            fprintf(fd, 'function [baseMVA, bus, gen, branch, areas, gencost] = %s\n', rootname);
+        else
+            fprintf(fd, 'function [baseMVA, bus, gen, branch] = %s\n', rootname);
+        end
+        prefix = '';
     else
-        fprintf(fd, 'function [baseMVA, bus, gen, branch] = %s\n', rootname);
+        fprintf(fd, 'function mpc = %s\n', rootname);
+        prefix = 'mpc.';
     end
     if length(comment) ~= 0
         if isstr(comment)
@@ -104,9 +169,13 @@ else                                %% M-file
             end
         end
     end
+    fprintf(fd, '\n%%%% MATPOWER Case Format : Version %s\n', mpc_ver);    
+    if ~strcmp(mpc_ver, '1')
+        fprintf(fd, 'mpc.version = ''%s'';\n', mpc_ver);    
+    end
     fprintf(fd, '\n%%%%-----  Power Flow Data  -----%%%%\n');
     fprintf(fd, '%%%% system MVA base\n');
-    fprintf(fd, 'baseMVA = %g;\n\n', baseMVA);
+    fprintf(fd, '%sbaseMVA = %g;\n\n', prefix, baseMVA);
     
     %% bus data
     ncols = size(bus, 2);
@@ -115,7 +184,7 @@ else                                %% M-file
     if ncols >= MU_VMIN             %% opf SOLVED, save with lambda's & mu's
         fprintf(fd, '\tlam_P\tlam_Q\tmu_Vmax\tmu_Vmin');
     end
-    fprintf(fd, '\nbus = [\n');
+    fprintf(fd, '\n%sbus = [\n', prefix);
     if ncols < MU_VMIN              %% opf NOT SOLVED, save without lambda's & mu's
         fprintf(fd, '\t%d\t%d\t%g\t%g\t%g\t%g\t%d\t%.8g\t%.8g\t%g\t%d\t%g\t%g;\n', bus(:, 1:VMIN).');
     else                            %% opf SOLVED, save with lambda's & mu's
@@ -127,14 +196,25 @@ else                                %% M-file
     ncols = size(gen, 2);
     fprintf(fd, '%%%% generator data\n');
     fprintf(fd, '%%\tbus\tPg\tQg\tQmax\tQmin\tVg\tmBase\tstatus\tPmax\tPmin');
+    if ~strcmp(mpc_ver, '1')
+        fprintf(fd, '\tQmax2\tQmin2\tramp_agc\tramp_10\tramp_30\tramp_q');
+    end
     if ncols >= MU_QMIN             %% opf SOLVED, save with mu's
         fprintf(fd, '\tmu_Pmax\tmu_Pmin\tmu_Qmax\tmu_Qmin');
     end
-    fprintf(fd, '\ngen = [\n');
+    fprintf(fd, '\n%sgen = [\n', prefix);
     if ncols < MU_QMIN              %% opf NOT SOLVED, save without mu's
-        fprintf(fd, '\t%d\t%g\t%g\t%g\t%g\t%.8g\t%g\t%d\t%g\t%g;\n', gen(:, 1:PMIN).');
-    else                            %% opf SOLVED, save with mu's
-        fprintf(fd, '\t%d\t%g\t%g\t%g\t%g\t%.8g\t%g\t%d\t%g\t%g\t%.4f\t%.4f\t%.4f\t%.4f;\n', gen(:, 1:MU_QMIN).');
+        if strcmp(mpc_ver, '1')
+            fprintf(fd, '\t%d\t%g\t%g\t%g\t%g\t%.8g\t%g\t%d\t%g\t%g;\n', gen(:, 1:PMIN).');
+        else
+            fprintf(fd, '\t%d\t%g\t%g\t%g\t%g\t%.8g\t%g\t%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g;\n', gen(:, 1:RAMP_Q).');
+        end
+    else
+        if strcmp(mpc_ver, '1')
+            fprintf(fd, '\t%d\t%g\t%g\t%g\t%g\t%.8g\t%g\t%d\t%g\t%g\t%.4f\t%.4f\t%.4f\t%.4f;\n', gen(:, 1:MU_QMIN).');
+        else
+            fprintf(fd, '\t%d\t%g\t%g\t%g\t%g\t%.8g\t%g\t%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%.4f\t%.4f\t%.4f\t%.4f;\n', gen(:, 1:MU_QMIN).');
+        end
     end
     fprintf(fd, '];\n\n');
     
@@ -142,19 +222,40 @@ else                                %% M-file
     ncols = size(branch, 2);
     fprintf(fd, '%%%% branch data\n');
     fprintf(fd, '%%\tfbus\ttbus\tr\tx\tb\trateA\trateB\trateC\tratio\tangle\tstatus');
+    if ~strcmp(mpc_ver, '1')
+        fprintf(fd, '\tangmin\tangmax');
+    end
     if ncols >= QT                  %% power flow SOLVED, save with line flows
         fprintf(fd, '\tPf\tQf\tPt\tQt');
     end
     if ncols >= MU_ST               %% opf SOLVED, save with mu's
         fprintf(fd, '\tmu_Sf\tmu_St');
+%% uncomment below if we every implement something that computes these multipliers
+%         if ~strcmp(mpc_ver, '1')
+%             fprintf(fd, '\tmu_angmin\tmu_angmax');
+%         end
     end
-    fprintf(fd, '\nbranch = [\n');
+    fprintf(fd, '\n%sbranch = [\n', prefix);
     if ncols < QT                   %% power flow NOT SOLVED, save without line flows or mu's
-        fprintf(fd, '\t%d\t%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%d;\n', branch(:, 1:BR_STATUS).');
+        if strcmp(mpc_ver, '1')
+            fprintf(fd, '\t%d\t%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%d;\n', branch(:, 1:BR_STATUS).');
+        else
+            fprintf(fd, '\t%d\t%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%d\t%g\t%g;\n', branch(:, 1:ANGMAX).');
+        end
     elseif ncols < MU_ST            %% power flow SOLVED, save with line flows but without mu's
-        fprintf(fd, '\t%d\t%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%d\t%.4f\t%.4f\t%.4f\t%.4f;\n', branch(:, 1:QT).');
+        if strcmp(mpc_ver, '1')
+            fprintf(fd, '\t%d\t%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%d\t%.4f\t%.4f\t%.4f\t%.4f;\n', branch(:, 1:QT).');
+        else
+            fprintf(fd, '\t%d\t%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%d\t%g\t%g\t%.4f\t%.4f\t%.4f\t%.4f;\n', branch(:, 1:QT).');
+       end
     else                            %% opf SOLVED, save with lineflows & mu's
-        fprintf(fd, '\t%d\t%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%d\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f;\n', branch(:, 1:MU_ST).');
+        if strcmp(mpc_ver, '1')
+            fprintf(fd, '\t%d\t%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%d\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f;\n', branch(:, 1:MU_ST).');
+        else
+            fprintf(fd, '\t%d\t%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%d\t%g\t%g\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f;\n', branch(:, 1:MU_ST).');
+%% uncomment below if we every implement something that computes these multipliers
+%             fprintf(fd, '\t%d\t%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%d\t%g\t%g\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f;\n', branch(:, 1:MU_ANGMAX).');
+        end
     end
     fprintf(fd, '];\n\n');
     
@@ -163,7 +264,7 @@ else                                %% M-file
         %% area data
         fprintf(fd, '%%%%-----  OPF Data  -----%%%%\n');
         fprintf(fd, '%%%% area data\n');
-        fprintf(fd, 'areas = [\n');
+        fprintf(fd, '%sareas = [\n', prefix);
         if ~isempty(areas)
             fprintf(fd, '\t%d\t%d;\n', areas(:, 1:PRICE_REF_BUS).');
         end
@@ -173,7 +274,7 @@ else                                %% M-file
         fprintf(fd, '%%%% generator cost data\n');
         fprintf(fd, '%%\t1\tstartup\tshutdown\tn\tx1\ty1\t...\txn\tyn\n');
         fprintf(fd, '%%\t2\tstartup\tshutdown\tn\tc(n-1)\t...\tc0\n');
-        fprintf(fd, 'gencost = [\n');
+        fprintf(fd, '%sgencost = [\n', prefix);
         if ~isempty(gencost)
             n = gencost(1, N);
             if gencost(1, MODEL) == PW_LINEAR

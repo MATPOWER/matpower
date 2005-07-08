@@ -12,6 +12,16 @@ Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
 
 
+Changes since 3.0.0
+-------------------
+
+7/8/05
+    - Updated loadcase.m, savecase.m, idx_bus.m, idx_gen.m, caseformat.m
+      and tests for version 2 case file format, which includes piece-wise
+      linear generator capability curves, generator ramp rates and branch
+      angle difference limits.
+    
+
 Changes since 3.0b4
 -------------------
 

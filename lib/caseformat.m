@@ -7,8 +7,20 @@
 %       http://www.ee.washington.edu/research/pstca/formats/pti.txt
 %   except where noted. An item marked with (+) indicates that it is included
 %   in this data but is not part of the PTI format. An item marked with (-) is
-%   one that is in the PTI format but is not included here. The columns for
+%   one that is in the PTI format but is not included here. Those marked with
+%   (2) were added for version 2 of the case file format. The columns for
 %   each data matrix are given below.
+%
+%   MATPOWER Case Version Information:
+%   A version 1 case file defined the data matrices directly. The last two,
+%   areas and gencost, were optional since they were not needed for running
+%   a simple power flow. In version 2, each of the data matrices are stored
+%   as fields in a struct. It is this struct, rather than the individual
+%   matrices that is returned by a version 2 M-casefile. Likewise a version 2
+%   MAT-casefile stores a struct named 'mpc' (for MATPOWER case). The struct
+%   also contains a 'version' field so MATPOWER knows how to interpret the
+%   data. Any case file which does not return a struct, or any struct which
+%   does not have a 'version' field is considered to be in version 1 format.
 %
 %   See also IDX_BUS, IDX_BRCH, IDX_GEN, IDX_AREA and IDX_COST regarding
 %   constants which can be used as named column indices for the data matrices.
@@ -54,6 +66,12 @@
 %               remote bus controlled by several generators)
 %       9   Pmax, maximum real power output (MW)
 %       10  Pmin, minimum real power output (MW)
+%   (2) 11  Qmax2, maximum reactive power output at Pmax (MVAr)
+%   (2) 12  Qmin2, minimum reactive power output at Pmax (MVAr)
+%   (2) 13  ramp rate for load following/AGC (MW/min)
+%   (2) 14  ramp rate for 10 minute reserves (MW)
+%   (2) 15  ramp rate for 30 minute reserves (MW)
+%   (2) 16  ramp rate for reactive power (2 sec timescale) (MVAr/min)
 %
 %   Branch Data Format
 %       1   f, from bus number
@@ -73,6 +91,8 @@
 %   (-)     (Gt, shunt conductance at to bus p.u.)
 %   (-)     (Bt, shunt susceptance at to bus p.u.)
 %       11  initial branch status, 1 - in service, 0 - out of service
+%   (2) 12  minimum angle difference, angle(Vf) - angle(Vt) (degrees)
+%   (2) 13  maximum angle difference, angle(Vf) - angle(Vt) (degrees)
 %
 % (+) Area Data Format
 %       1   i, area number
@@ -100,5 +120,5 @@
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2005 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.

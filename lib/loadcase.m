@@ -1,8 +1,11 @@
 function [baseMVA, bus, gen, branch, areas, gencost, info] = loadcase(casefile)
 %LOADCASE   Load .m or .mat case files or data struct in MATPOWER format
 %
-%   [baseMVA, bus, gen, branch, areas, gencost ] = loadcase(casefile)
-%   [baseMVA, bus, gen, branch ] = loadcase(casefile)
+%   [baseMVA, bus, gen, branch, areas, gencost] = loadcase(casefile)
+%   [baseMVA, bus, gen, branch] = loadcase(casefile)
+%   mpc = loadcase(casefile)
+%
+%   Returns the individual data matrices or a struct containing them as fields.
 %
 %   Here casefile is either a struct containing the fields baseMVA, bus,
 %   gen, branch, areas, gencost, or a string containing the name of the file.
@@ -14,6 +17,7 @@ function [baseMVA, bus, gen, branch, areas, gencost, info] = loadcase(casefile)
 %
 %   [baseMVA, bus, gen, branch, areas, gencost, info] = loadcase(casefile)
 %   [baseMVA, bus, gen, branch, info] = loadcase(casefile)
+%   [mpc, info] = loadcase(casefile)
 %
 %   In this case, the function will not abort, but info will contain an exit
 %   code as follows:
@@ -24,126 +28,224 @@ function [baseMVA, bus, gen, branch, areas, gencost, info] = loadcase(casefile)
 %       3:  specified .MAT file does not exist in search path
 %       4:  specified .M file does not exist in search path
 %       5:  specified file fails to define all matrices
+%
+%   If the input data is not a struct containing a 'version' field, it is
+%   assumed to be a MATPOWER case file in version 1 format, and will be
+%   converted to version 2 format.
 
 %   MATPOWER
 %   $Id$
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
 %   and Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2005 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-%% initialize as empty matrices in case of error
-baseMVA = []; bus = []; gen = []; branch = []; areas = []; gencost = [];
-
-if isstruct(casefile)               %% first param is a struct
-    if ~( isfield(casefile,'baseMVA') & isfield(casefile,'bus') & ...
-            isfield(casefile,'gen') & isfield(casefile,'branch') ) | ...
-            (nargout > 4 & ~( isfield(casefile,'areas') & isfield(casefile,'gencost') ) )
-        if nargout < 7
-            error('loadcase: one or more of the data matrices is undefined');
-        else
-            info = 5;
-            return;
-        end
-    end
-    baseMVA = casefile.baseMVA;
-    bus     = casefile.bus;
-    gen     = casefile.gen;
-    branch  = casefile.branch;
-    if nargout > 5
-        areas   = casefile.areas;
-        gencost = casefile.gencost;
-    end
-    info    = 0;
-    return;
-else                                %% OK, better be a string, else give up
-    if ~isstr(casefile)
-        if nargout < 7
-            error('loadcase: input arg should be a string containing a filename');
-        else
-            info = 1;
-            return;
-        end
-    end
+info = 0;
+if nargout < 3
+    return_as_struct = logical(1);
+else
+    return_as_struct = logical(0);
+end
+if nargout > 5
+    expect_opf_data = logical(1);
+else
+    expect_opf_data = logical(0);
 end
 
-%% check for explicit extension
-l = length(casefile);
-if l > 2
-    if strcmp(casefile(l-1:l), '.m')
-        rootname = casefile(1:l-2);
-        extension = '.m';
-    elseif l > 4
-        if strcmp(casefile(l-3:l), '.mat')
-            rootname = casefile(1:l-4);
+%%-----  read data into struct  -----
+if isstr(casefile)
+    %% check for explicit extension
+    l = length(casefile);
+    if l > 2
+        if strcmp(casefile(l-1:l), '.m')
+            rootname = casefile(1:l-2);
+            extension = '.m';
+        elseif l > 4
+            if strcmp(casefile(l-3:l), '.mat')
+                rootname = casefile(1:l-4);
+                extension = '.mat';
+            end
+        end
+    end
+
+    %% set extension if not specified explicitly
+    if exist('rootname') ~= 1
+        rootname = casefile;
+        if exist([casefile '.mat']) == 2
             extension = '.mat';
-        end
-    end
-end
-
-%% get data from file
-if exist('rootname') ~= 1           %% no explicit extension
-    if exist([casefile '.mat']) == 2
-        load(casefile);
-    elseif exist([casefile '.m']) == 2
-        if nargout > 5
-            [baseMVA, bus, gen, branch, areas, gencost] = feval(casefile);
-        else
-            [baseMVA, bus, gen, branch] = feval(casefile);
-        end
-    else
-        if nargout < 7
-            error('loadcase: specified case not in MATLAB''s search path');
+        elseif exist([casefile '.m']) == 2
+            extension = '.m';
         else
             info = 2;
-            return;
         end
     end
-else                                %% explicit extension given
-    if strcmp(extension,'.mat')
-        if exist([rootname '.mat']) == 2
-            load(rootname) ;
-        else
-            if nargout < 7
-                error('loadcase: specified MAT file does not exist');
-            else
+    
+    %% attempt to read file
+    if info == 0
+        if strcmp(extension,'.mat')         %% from MAT file
+            try
+                s = load(rootname);
+                if isfield(s, 'mpc')
+                    s = s.mpc;
+                end
+            catch
                 info = 3;
-                return;
             end
-        end
-    elseif strcmp(extension,'.m')
-        if exist([rootname '.m']) == 2
-            if nargout > 5
-                [baseMVA, bus, gen, branch, areas, gencost] = feval(rootname);
-            else
-                [baseMVA, bus, gen, branch] = feval(rootname);
-            end
-        else
-            if nargout < 7
-                error('loadcase: specified M file does not exist');
-            else
+        elseif strcmp(extension,'.m')       %% from M file
+            try                     %% assume it returns a struct
+                s = feval(rootname);
+            catch
                 info = 4;
-                return;
             end
+            if ~isstruct(s)     %% if not try individual data matrices
+                s = struct;
+                if expect_opf_data
+                    try
+                        [s.baseMVA, s.bus, s.gen, s.branch, ...
+                            s.areas, s.gencost] = feval(rootname);
+                    catch
+                        info = 4;
+                    end
+                else
+                    if return_as_struct
+                        try
+                            [s.baseMVA, s.bus, s.gen, s.branch, ...
+                                s.areas, s.gencost] = feval(rootname);
+                        catch
+                            try
+                                [s.baseMVA, s.bus, s.gen, s.branch] = feval(rootname);
+                            catch
+                                info = 4;
+                            end
+                        end
+                    else
+                        try
+                            [s.baseMVA, s.bus, s.gen, s.branch] = feval(rootname);
+                        catch
+                            info = 4;
+                        end
+                    end
+                end
+                if info == 4 & exist([rootname '.m']) == 2
+                    info = 5;
+                end
+            end
+        end
+    end
+elseif isstruct(casefile)
+    s = casefile;
+else
+    info = 1;
+end
+
+%%-----  check contents of struct  -----
+if info == 0
+    %% check for required fields
+    if ~( isfield(s,'baseMVA') & isfield(s,'bus') & ...
+            isfield(s,'gen') & isfield(s,'branch') ) | ...
+            ( expect_opf_data & ...
+                ~( isfield(s,'areas') & isfield(s,'gencost') ) )
+        info = 5;           %% missing some expected fields
+    else
+        %% all fields present, copy to mpc
+        mpc = s;
+        if ~isfield(mpc, 'version')
+            mpc.version = '1';
+        end
+        if strcmp(mpc.version, '1')
+            % convert from version 1 to version 2
+            [mpc.gen, mpc.branch] = mpc_1to2(mpc.gen, mpc.branch);
+            mpc.version = '2';
         end
     end
 end
 
-%% check for undefined data matrices
-if ~( exist('baseMVA') == 1 & exist('bus') == 1 & exist('branch') == 1 ...
-        & exist('gen') == 1 ) | ...
-        ( nargout > 5 & ~(exist('areas') == 1 & exist('gencost') == 1) )
-    if nargout < 7
-        error('loadcase: one or more of the data matrices is undefined');
-    else
-        info = 5;
-    end
-else
-    info = 0;
+%%-----  define output variables  -----
+if return_as_struct
+    bus = info;
+elseif ~expect_opf_data
+    areas = info;
 end
 
-if nargout < 6
-    areas = info;
+if info == 0    %% no errors
+    if return_as_struct
+        baseMVA = mpc;
+    else
+        baseMVA = mpc.baseMVA;
+        bus     = mpc.bus;
+        gen     = mpc.gen;
+        branch  = mpc.branch;
+        if isfield(mpc, 'gencost')
+            areas   = mpc.areas;
+            gencost = mpc.gencost;
+        end
+    end
+else            %% we have a problem captain
+    if nargout == 2 | nargout == 5 | nargout == 7   %% return error code
+        if return_as_struct
+            baseMVA = struct;
+        else
+            baseMVA = []; bus = []; gen = []; branch = [];
+            if expect_opf_data
+                areas = []; gencost = [];
+            end
+        end
+    else                                            %% die on error
+        switch info
+            case 1,
+                error('loadcase: input arg should be a struct or a string containing a filename');
+            case 2,
+                error('loadcase: specified case not in MATLAB''s search path');
+            case 3,
+                error('loadcase: specified MAT file does not exist');
+            case 4,
+                error('loadcase: specified M file does not exist');
+            case 5,
+                error('loadcase: one or more of the data matrices is undefined');
+            otherwise,
+                error('loadcase: unknown error');
+        end
+    end
+end
+
+return;
+
+
+function [gen, branch] = mpc_1to2(gen, branch)
+
+%% define named indices into bus, gen, branch matrices
+[GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, ...
+    PMAX, PMIN, MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, QMAX2, QMIN2, ...
+    RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q] = idx_gen;
+[F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
+    TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
+    ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
+
+%% use the version 1 values for column names
+shift = MU_PMAX - PMIN - 1;
+tmp = num2cell([MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN] - shift);
+[MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN] = deal(tmp{:});
+shift = PF - BR_STATUS - 1;
+tmp = num2cell([PF, QF, PT, QT, MU_SF, MU_ST] - shift);
+[PF, QF, PT, QT, MU_SF, MU_ST] = deal(tmp{:});
+
+%% add extra columns to gen
+tmp = [gen(:, [QMAX QMIN]) zeros(size(gen, 1), 4)];
+if size(gen, 2) >= MU_QMIN
+    gen = [ gen(:, 1:PMIN) tmp gen(:, MU_PMAX:MU_QMIN) ];
+else
+    gen = [ gen(:, 1:PMIN) tmp ];
+end
+
+%% add extra columns to branch
+tmp = [ ones(size(branch, 1), 1) * [-360 360] ];
+tmp2 = [ zeros(size(branch, 1), 2) ];
+if size(branch, 2) >= MU_ST
+    branch = [ branch(:, 1:BR_STATUS) tmp branch(:, PF:MU_ST) tmp2 ];
+elseif size(branch, 2) >= QT
+    branch = [ branch(:, 1:BR_STATUS) tmp branch(:, PF:QT) ];
+else
+    branch = [ branch(:, 1:BR_STATUS) tmp ];
 end
 
 return;
