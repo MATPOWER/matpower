@@ -15,6 +15,13 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 3.0.0
 -------------------
 
+8/5/05
+    - Modified identification of binding constraints in printpf.m. A
+      constraint is now considered to be binding if the tolerance is less
+      than or equal to OPF_VIOLATION tolerance -OR- if the corresponding
+      Kuhn-Tucker multiplier is non-zero. This allows binding generator
+      capability curves to be reported via multipliers on Pg and Qg limits.
+
 7/8/05
     - Updated loadcase.m, savecase.m, idx_bus.m, idx_gen.m, caseformat.m
       and tests for version 2 case file format, which includes piece-wise
