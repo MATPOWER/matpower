@@ -33,7 +33,7 @@ function fname_out = savecase(fname, varargin)
     VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
 [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, ...
     PMAX, PMIN, MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, QMAX2, QMIN2, ...
-    RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q] = idx_gen;
+    RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
 [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
     TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
@@ -197,7 +197,7 @@ else                                %% M-file
     fprintf(fd, '%%%% generator data\n');
     fprintf(fd, '%%\tbus\tPg\tQg\tQmax\tQmin\tVg\tmBase\tstatus\tPmax\tPmin');
     if ~strcmp(mpc_ver, '1')
-        fprintf(fd, '\tQmax2\tQmin2\tramp_agc\tramp_10\tramp_30\tramp_q');
+        fprintf(fd, '\tQmax2\tQmin2\tramp_agc\tramp_10\tramp_30\tramp_q\tapf');
     end
     if ncols >= MU_QMIN             %% opf SOLVED, save with mu's
         fprintf(fd, '\tmu_Pmax\tmu_Pmin\tmu_Qmax\tmu_Qmin');
@@ -207,7 +207,7 @@ else                                %% M-file
         if strcmp(mpc_ver, '1')
             fprintf(fd, '\t%d\t%g\t%g\t%g\t%g\t%.8g\t%g\t%d\t%g\t%g;\n', gen(:, 1:PMIN).');
         else
-            fprintf(fd, '\t%d\t%g\t%g\t%g\t%g\t%.8g\t%g\t%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g;\n', gen(:, 1:RAMP_Q).');
+            fprintf(fd, '\t%d\t%g\t%g\t%g\t%g\t%.8g\t%g\t%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g;\n', gen(:, 1:APF).');
         end
     else
         if strcmp(mpc_ver, '1')

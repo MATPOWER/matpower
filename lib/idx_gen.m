@@ -1,11 +1,11 @@
 function [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
     MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, QMAX2, QMIN2, ...
-    RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q] = idx_gen
+    RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen
 %IDX_GEN   Defines constants for named column indices to gen matrix.
 %
 %   [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, ...
 %   PMAX, PMIN, MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, QMAX2, QMIN2, ...
-%   RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q] = idx_gen
+%   RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen
 %
 %   Some examples of usage, after defining the constants using the line above,
 %   are:
@@ -33,14 +33,15 @@ function [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
 %    14 RAMP_10     ramp rate for 10 minute reserves (MW)
 %    15 RAMP_30     ramp rate for 30 minute reserves (MW)
 %    16 RAMP_Q      ramp rate for reactive power (2 sec timescale) (MVAr/min)
+%    17 APF         area participation factor
 %   
 %   columns 17-20 are added to matrix after OPF solution
 %   they are typically not present in the input matrix
 %                   (assume OPF objective function has units, u)
-%    17 MU_PMAX     Kuhn-Tucker multiplier on upper Pg limit (u/MW)
-%    18 MU_PMIN     Kuhn-Tucker multiplier on lower Pg limit (u/MW)
-%    19 MU_QMAX     Kuhn-Tucker multiplier on upper Qg limit (u/MVAr)
-%    20 MU_QMIN     Kuhn-Tucker multipcd lier on lower Qg limit (u/MVAr)
+%    18 MU_PMAX     Kuhn-Tucker multiplier on upper Pg limit (u/MW)
+%    19 MU_PMIN     Kuhn-Tucker multiplier on lower Pg limit (u/MW)
+%    20 MU_QMAX     Kuhn-Tucker multiplier on upper Qg limit (u/MVAr)
+%    21 MU_QMIN     Kuhn-Tucker multiplier on lower Qg limit (u/MVAr)
 
 %   MATPOWER
 %   $Id$
@@ -65,13 +66,14 @@ RAMP_AGC    = 13;   %% ramp rate for load following/AGC (MW/min)
 RAMP_10     = 14;   %% ramp rate for 10 minute reserves (MW)
 RAMP_30     = 15;   %% ramp rate for 30 minute reserves (MW)
 RAMP_Q      = 16;   %% ramp rate for reactive power (2 sec timescale) (MVAr/min)
+APF         = 17;   %% area participation factor
 
 %% included in opf solution, not necessarily in input
 %% assume objective function has units, u
-MU_PMAX     = 17;   %% Kuhn-Tucker multiplier on upper Pg limit (u/MW)
-MU_PMIN     = 18;   %% Kuhn-Tucker multiplier on lower Pg limit (u/MW)
-MU_QMAX     = 19;   %% Kuhn-Tucker multiplier on upper Qg limit (u/MVAr)
-MU_QMIN     = 20;   %% Kuhn-Tucker multiplier on lower Qg limit (u/MVAr)
+MU_PMAX     = 18;   %% Kuhn-Tucker multiplier on upper Pg limit (u/MW)
+MU_PMIN     = 19;   %% Kuhn-Tucker multiplier on lower Pg limit (u/MW)
+MU_QMAX     = 20;   %% Kuhn-Tucker multiplier on upper Qg limit (u/MVAr)
+MU_QMIN     = 21;   %% Kuhn-Tucker multiplier on lower Qg limit (u/MVAr)
 
 %% Note: When QMAX2 and QMAX are not equal (generator capability curve is
 %% not simply a box) and the upper Qg limit is binding, the multiplier on
