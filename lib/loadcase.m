@@ -27,7 +27,7 @@ function [baseMVA, bus, gen, branch, areas, gencost, info] = loadcase(casefile)
 %       2:  specified extension-less file name does not exist in search path
 %       3:  specified .MAT file does not exist in search path
 %       4:  specified .M file does not exist in search path
-%       5:  specified file fails to define all matrices
+%       5:  specified file fails to define all matrices or contains syntax err
 %
 %   If the input data is not a struct containing a 'version' field, it is
 %   assumed to be a MATPOWER case file in version 1 format, and will be
@@ -92,12 +92,12 @@ if isstr(casefile)
                 info = 3;
             end
         elseif strcmp(extension,'.m')       %% from M file
-            try                     %% assume it returns a struct
+            try                         %% assume it returns a struct
                 s = feval(rootname);
             catch
                 info = 4;
             end
-            if ~isstruct(s)     %% if not try individual data matrices
+            if info == 0 & ~isstruct(s) %% if not try individual data matrices
                 s = struct;
                 if expect_opf_data
                     try
@@ -126,9 +126,10 @@ if isstr(casefile)
                         end
                     end
                 end
-                if info == 4 & exist([rootname '.m']) == 2
-                    info = 5;
-                end
+            end
+            if info == 4 & exist([rootname '.m']) == 2
+                info = 5;
+                err5 = lasterr;
             end
         end
     end
@@ -146,6 +147,7 @@ if info == 0
             ( expect_opf_data & ...
                 ~( isfield(s,'areas') & isfield(s,'gencost') ) )
         info = 5;           %% missing some expected fields
+        err5 = 'missing data';
     else
         %% all fields present, copy to mpc
         mpc = s;
@@ -201,7 +203,7 @@ else            %% we have a problem captain
             case 4,
                 error('loadcase: specified M file does not exist');
             case 5,
-                error('loadcase: one or more of the data matrices is undefined');
+                error(sprintf('loadcase: syntax error or undefined data matrix(ices) in the file\n%s', err5));
             otherwise,
                 error('loadcase: unknown error');
         end
@@ -216,7 +218,7 @@ function [gen, branch] = mpc_1to2(gen, branch)
 %% define named indices into bus, gen, branch matrices
 [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, ...
     PMAX, PMIN, MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, QMAX2, QMIN2, ...
-    RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q] = idx_gen;
+    RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
 [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
     TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
@@ -230,7 +232,7 @@ tmp = num2cell([PF, QF, PT, QT, MU_SF, MU_ST] - shift);
 [PF, QF, PT, QT, MU_SF, MU_ST] = deal(tmp{:});
 
 %% add extra columns to gen
-tmp = [gen(:, [QMAX QMIN]) zeros(size(gen, 1), 4)];
+tmp = [gen(:, [QMAX QMIN]) zeros(size(gen, 1), 5)];
 if size(gen, 2) >= MU_QMIN
     gen = [ gen(:, 1:PMIN) tmp gen(:, MU_PMAX:MU_QMIN) ];
 else
