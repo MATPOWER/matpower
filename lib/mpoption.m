@@ -78,6 +78,8 @@ function [options, names] = mpoption(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p1
 %       23 - LPC_MAX_RESTART, 5     maximum number of restarts for lpopf
 %       24 - OPF_P_LINE_LIM, 0      use active power instead of apparent power
 %                                   for line flow limits    [   0 or 1  ]
+%       25 - OPF_IGNORE_ANG_LIM, 0  ignore angle difference limits for branches
+%                                   even if specified       [   0 or 1  ]
 %   output options
 %       31 - VERBOSE, 1             amount of progress info printed
 %           [   0 - print no progress info                              ]
@@ -179,7 +181,7 @@ else                    %% even number of parameters
         400;    %% 22 - LPC_MAX_IT
         5;      %% 23 - LPC_MAX_RESTART
         0;      %% 24 - OPF_P_LINE_LIM
-        0;      %% 25 - RESERVED25
+        0;      %% 25 - OPF_IGNORE_ANG_LIM
         0;      %% 26 - RESERVED26
         0;      %% 27 - RESERVED27
         0;      %% 28 - RESERVED28
@@ -274,7 +276,7 @@ names = str2mat(    names, ...
                     'LPC_MAX_IT', ...           %% 22
                     'LPC_MAX_RESTART', ...      %% 23
                     'OPF_P_LINE_LIM', ...       %% 24
-                    'RESERVED25', ...           %% 25
+                    'OPF_IGNORE_ANG_LIM', ...   %% 25
                     'RESERVED26', ...           %% 26
                     'RESERVED27', ...           %% 27
                     'RESERVED28', ...           %% 28
