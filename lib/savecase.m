@@ -207,7 +207,7 @@ else                                %% M-file
         if strcmp(mpc_ver, '1')
             fprintf(fd, '\t%d\t%g\t%g\t%g\t%g\t%.8g\t%g\t%d\t%g\t%g;\n', gen(:, 1:PMIN).');
         else
-            fprintf(fd, '\t%d\t%g\t%g\t%g\t%g\t%.8g\t%g\t%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g;\n', gen(:, 1:APF).');
+            fprintf(fd, '\t%d\t%g\t%g\t%g\t%g\t%.8g\t%g\t%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g;\n', gen(:, 1:APF).');
         end
     else
         if strcmp(mpc_ver, '1')
