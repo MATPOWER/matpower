@@ -31,9 +31,9 @@ function fname_out = savecase(fname, varargin)
 %% define named indices into bus, gen, branch matrices
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
     VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
-[GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, ...
-    PMAX, PMIN, MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, QMAX2, QMIN2, ...
-    RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
+[GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
+    MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
+    QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
 [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
     TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
@@ -43,12 +43,9 @@ function fname_out = savecase(fname, varargin)
 %% default arguments
 if isstr(varargin{1}) | iscell(varargin{1})
     comment = varargin{1};
-%     args = cell(1, length(varargin)-1);
-%     args{1:end} = varargin{2:end};
     [args{1:(length(varargin)-1)}] = deal(varargin{2:end});
 else
     comment = '';
-%     args = cell(length(varargin), 1);
     args = varargin;
 end
 mpc_ver = '2';              %% default MATPOWER case file version
@@ -197,7 +194,7 @@ else                                %% M-file
     fprintf(fd, '%%%% generator data\n');
     fprintf(fd, '%%\tbus\tPg\tQg\tQmax\tQmin\tVg\tmBase\tstatus\tPmax\tPmin');
     if ~strcmp(mpc_ver, '1')
-        fprintf(fd, '\tQmax2\tQmin2\tramp_agc\tramp_10\tramp_30\tramp_q\tapf');
+        fprintf(fd, '\tPc1\tPc2\tQc1min\tQc1max\tQc2min\tQc2max\tramp_agc\tramp_10\tramp_30\tramp_q\tapf');
     end
     if ncols >= MU_QMIN             %% opf SOLVED, save with mu's
         fprintf(fd, '\tmu_Pmax\tmu_Pmin\tmu_Qmax\tmu_Qmin');
@@ -207,13 +204,13 @@ else                                %% M-file
         if strcmp(mpc_ver, '1')
             fprintf(fd, '\t%d\t%g\t%g\t%g\t%g\t%.8g\t%g\t%d\t%g\t%g;\n', gen(:, 1:PMIN).');
         else
-            fprintf(fd, '\t%d\t%g\t%g\t%g\t%g\t%.8g\t%g\t%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g;\n', gen(:, 1:APF).');
+            fprintf(fd, '\t%d\t%g\t%g\t%g\t%g\t%.8g\t%g\t%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g;\n', gen(:, 1:APF).');
         end
     else
         if strcmp(mpc_ver, '1')
             fprintf(fd, '\t%d\t%g\t%g\t%g\t%g\t%.8g\t%g\t%d\t%g\t%g\t%.4f\t%.4f\t%.4f\t%.4f;\n', gen(:, 1:MU_QMIN).');
         else
-            fprintf(fd, '\t%d\t%g\t%g\t%g\t%g\t%.8g\t%g\t%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%.4f\t%.4f\t%.4f\t%.4f;\n', gen(:, 1:MU_QMIN).');
+            fprintf(fd, '\t%d\t%g\t%g\t%g\t%g\t%.8g\t%g\t%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%.4f\t%.4f\t%.4f\t%.4f;\n', gen(:, 1:MU_QMIN).');
         end
     end
     fprintf(fd, '];\n\n');
@@ -230,7 +227,7 @@ else                                %% M-file
     end
     if ncols >= MU_ST               %% opf SOLVED, save with mu's
         fprintf(fd, '\tmu_Sf\tmu_St');
-%% uncomment below if we every implement something that computes these multipliers
+%% uncomment below if we ever implement something that computes these multipliers
 %         if ~strcmp(mpc_ver, '1')
 %             fprintf(fd, '\tmu_angmin\tmu_angmax');
 %         end

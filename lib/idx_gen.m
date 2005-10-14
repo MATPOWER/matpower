@@ -1,11 +1,11 @@
 function [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
-    MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, QMAX2, QMIN2, ...
-    RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen
+    MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
+    QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen
 %IDX_GEN   Defines constants for named column indices to gen matrix.
 %
-%   [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, ...
-%   PMAX, PMIN, MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, QMAX2, QMIN2, ...
-%   RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen
+%   [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
+%   MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
+%   QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
 %
 %   Some examples of usage, after defining the constants using the line above,
 %   are:
@@ -27,21 +27,25 @@ function [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
 %    8  GEN_STATUS  status, 1 - in service, 0 - out of service
 %    9  PMAX        Pmax, maximum real power output (MW)
 %    10 PMIN        Pmin, minimum real power output (MW)
-%    11 QMAX2       Qmax2, maximum reactive power output at Pmax (MVAr)
-%    12 QMIN2       Qmin2, minimum reactive power output at Pmax (MVAr)
-%    13 RAMP_AGC    ramp rate for load following/AGC (MW/min)
-%    14 RAMP_10     ramp rate for 10 minute reserves (MW)
-%    15 RAMP_30     ramp rate for 30 minute reserves (MW)
-%    16 RAMP_Q      ramp rate for reactive power (2 sec timescale) (MVAr/min)
-%    17 APF         area participation factor
+%    11 PC1         Pc1, lower real power output of PQ capability curve (MW)
+%    12 PC2         Pc2, upper real power output of PQ capability curve (MW)
+%    13 QC1MIN      Qc1min, minimum reactive power output at Pc1 (MVAr)
+%    14 QC1MAX      Qc1max, maximum reactive power output at Pc1 (MVAr)
+%    15 QC2MIN      Qc2min, minimum reactive power output at Pc2 (MVAr)
+%    16 QC2MAX      Qc2max, maximum reactive power output at Pc2 (MVAr)
+%    17 RAMP_AGC    ramp rate for load following/AGC (MW/min)
+%    18 RAMP_10     ramp rate for 10 minute reserves (MW)
+%    19 RAMP_30     ramp rate for 30 minute reserves (MW)
+%    20 RAMP_Q      ramp rate for reactive power (2 sec timescale) (MVAr/min)
+%    21 APF         area participation factor
 %   
-%   columns 17-20 are added to matrix after OPF solution
+%   columns 22-25 are added to matrix after OPF solution
 %   they are typically not present in the input matrix
 %                   (assume OPF objective function has units, u)
-%    18 MU_PMAX     Kuhn-Tucker multiplier on upper Pg limit (u/MW)
-%    19 MU_PMIN     Kuhn-Tucker multiplier on lower Pg limit (u/MW)
-%    20 MU_QMAX     Kuhn-Tucker multiplier on upper Qg limit (u/MVAr)
-%    21 MU_QMIN     Kuhn-Tucker multiplier on lower Qg limit (u/MVAr)
+%    22 MU_PMAX     Kuhn-Tucker multiplier on upper Pg limit (u/MW)
+%    23 MU_PMIN     Kuhn-Tucker multiplier on lower Pg limit (u/MW)
+%    24 MU_QMAX     Kuhn-Tucker multiplier on upper Qg limit (u/MVAr)
+%    25 MU_QMIN     Kuhn-Tucker multiplier on lower Qg limit (u/MVAr)
 
 %   MATPOWER
 %   $Id$
@@ -60,24 +64,28 @@ MBASE       = 7;    %% mBase, total MVA base of this machine, defaults to baseMV
 GEN_STATUS  = 8;    %% status, 1 - machine in service, 0 - machine out of service
 PMAX        = 9;    %% Pmax, maximum real power output (MW)
 PMIN        = 10;   %% Pmin, minimum real power output (MW)
-QMAX2       = 11;   %% maximum reactive power output at Pmax (MVAr)
-QMIN2       = 12;   %% minimum reactive power output at Pmax (MVAr)
-RAMP_AGC    = 13;   %% ramp rate for load following/AGC (MW/min)
-RAMP_10     = 14;   %% ramp rate for 10 minute reserves (MW)
-RAMP_30     = 15;   %% ramp rate for 30 minute reserves (MW)
-RAMP_Q      = 16;   %% ramp rate for reactive power (2 sec timescale) (MVAr/min)
-APF         = 17;   %% area participation factor
+PC1         = 11;   %% Pc1, lower real power output of PQ capability curve (MW)
+PC2         = 12;   %% Pc2, upper real power output of PQ capability curve (MW)
+QC1MIN      = 13;   %% Qc1min, minimum reactive power output at Pc1 (MVAr)
+QC1MAX      = 14;   %% Qc1max, maximum reactive power output at Pc1 (MVAr)
+QC2MIN      = 15;   %% Qc2min, minimum reactive power output at Pc2 (MVAr)
+QC2MAX      = 16;   %% Qc2max, maximum reactive power output at Pc2 (MVAr)
+RAMP_AGC    = 17;   %% ramp rate for load following/AGC (MW/min)
+RAMP_10     = 18;   %% ramp rate for 10 minute reserves (MW)
+RAMP_30     = 19;   %% ramp rate for 30 minute reserves (MW)
+RAMP_Q      = 20;   %% ramp rate for reactive power (2 sec timescale) (MVAr/min)
+APF         = 21;   %% area participation factor
 
 %% included in opf solution, not necessarily in input
 %% assume objective function has units, u
-MU_PMAX     = 18;   %% Kuhn-Tucker multiplier on upper Pg limit (u/MW)
-MU_PMIN     = 19;   %% Kuhn-Tucker multiplier on lower Pg limit (u/MW)
-MU_QMAX     = 20;   %% Kuhn-Tucker multiplier on upper Qg limit (u/MVAr)
-MU_QMIN     = 21;   %% Kuhn-Tucker multiplier on lower Qg limit (u/MVAr)
+MU_PMAX     = 22;   %% Kuhn-Tucker multiplier on upper Pg limit (u/MW)
+MU_PMIN     = 23;   %% Kuhn-Tucker multiplier on lower Pg limit (u/MW)
+MU_QMAX     = 24;   %% Kuhn-Tucker multiplier on upper Qg limit (u/MVAr)
+MU_QMIN     = 25;   %% Kuhn-Tucker multiplier on lower Qg limit (u/MVAr)
 
-%% Note: When QMAX2 and QMAX are not equal (generator capability curve is
-%% not simply a box) and the upper Qg limit is binding, the multiplier on
-%% this constraint is split into it's P and Q components and combined with the
-%% appropriate MU_Pxxx and MU_Qxxx values. Likewise for the lower Q limits.
+%% Note: When a generator's PQ capability curve is not simply a box and the
+%% upper Qg limit is binding, the multiplier on this constraint is split into
+%% it's P and Q components and combined with the appropriate MU_Pxxx and
+%% MU_Qxxx values. Likewise for the lower Q limits.
 
 return;

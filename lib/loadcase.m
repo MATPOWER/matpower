@@ -216,28 +216,32 @@ return;
 function [gen, branch] = mpc_1to2(gen, branch)
 
 %% define named indices into bus, gen, branch matrices
-[GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, ...
-    PMAX, PMIN, MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, QMAX2, QMIN2, ...
-    RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
+[GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
+    MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
+    QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
 [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
     TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 
+%%-----  gen  -----
 %% use the version 1 values for column names
 shift = MU_PMAX - PMIN - 1;
 tmp = num2cell([MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN] - shift);
 [MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN] = deal(tmp{:});
-shift = PF - BR_STATUS - 1;
-tmp = num2cell([PF, QF, PT, QT, MU_SF, MU_ST] - shift);
-[PF, QF, PT, QT, MU_SF, MU_ST] = deal(tmp{:});
 
 %% add extra columns to gen
-tmp = [gen(:, [QMAX QMIN]) zeros(size(gen, 1), 5)];
+tmp = zeros(size(gen, 1), shift);
 if size(gen, 2) >= MU_QMIN
     gen = [ gen(:, 1:PMIN) tmp gen(:, MU_PMAX:MU_QMIN) ];
 else
     gen = [ gen(:, 1:PMIN) tmp ];
 end
+
+%%-----  branch  -----
+%% use the version 1 values for column names
+shift = PF - BR_STATUS - 1;
+tmp = num2cell([PF, QF, PT, QT, MU_SF, MU_ST] - shift);
+[PF, QF, PT, QT, MU_SF, MU_ST] = deal(tmp{:});
 
 %% add extra columns to branch
 tmp = [ ones(size(branch, 1), 1) * [-360 360] ];

@@ -66,12 +66,17 @@
 %               remote bus controlled by several generators)
 %       9   Pmax, maximum real power output (MW)
 %       10  Pmin, minimum real power output (MW)
-%   (2) 11  Qmax2, maximum reactive power output at Pmax (MVAr)
-%   (2) 12  Qmin2, minimum reactive power output at Pmax (MVAr)
-%   (2) 13  ramp rate for load following/AGC (MW/min)
-%   (2) 14  ramp rate for 10 minute reserves (MW)
-%   (2) 15  ramp rate for 30 minute reserves (MW)
-%   (2) 16  ramp rate for reactive power (2 sec timescale) (MVAr/min)
+%   (2) 11  Pc1, lower real power output of PQ capability curve (MW)
+%   (2) 12  Pc2, upper real power output of PQ capability curve (MW)
+%   (2) 13  Qc1min, minimum reactive power output at Pc1 (MVAr)
+%   (2) 14  Qc1max, maximum reactive power output at Pc1 (MVAr)
+%   (2) 15  Qc2min, minimum reactive power output at Pc2 (MVAr)
+%   (2) 16  Qc2max, maximum reactive power output at Pc2 (MVAr)
+%   (2) 17  ramp rate for load following/AGC (MW/min)
+%   (2) 18  ramp rate for 10 minute reserves (MW)
+%   (2) 19  ramp rate for 30 minute reserves (MW)
+%   (2) 20  ramp rate for reactive power (2 sec timescale) (MVAr/min)
+%   (2) 21  APF, area participation factor
 %
 %   Branch Data Format
 %       1   f, from bus number
