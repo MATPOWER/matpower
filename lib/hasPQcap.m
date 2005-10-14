@@ -3,7 +3,7 @@ function TorF = hasPQcap(gen, hilo)
 %   TorF = hasPQcap(gen, hilo) returns a column vector of 1's and 0's. The 1's
 %   correspond to rows of the gen matrix which correspond to generators which
 %   have defined a capability curve (with sloped upper and/or lower bound on
-%   Q).
+%   Q) and require that additional linear constraints be added to the OPF.
 %
 %   The gen matrix in version 2 of the MATPOWER case format includes columns
 %   for specifying a P-Q capability curve for a generator defined as the
@@ -12,10 +12,11 @@ function TorF = hasPQcap(gen, hilo)
 %   connecting (Pc1, Qc1max) and (Pc2, Qc2max) and the area above the line
 %   connecting (Pc1, Qc1min) and (Pc2, Qc2min).
 %
-%   If the optional second argument is 'U' this function returns true only for
-%   rows with a sloped upper portion. If it is 'L', it only looks at the lower
-%   portion. If it is absent or has any other value it returns true for gens
-%   specifying either upper or lower sloped capability curves.
+%   If the optional 2nd argument is 'U' this function returns true only for
+%   rows corresponding to generators that require the upper constraint on Q.
+%   If it is 'L', only for those requiring the lower constraint. If the 2nd
+%   argument is not specified or has any other value it returns true for rows
+%   corresponding to gens that require either or both of the constraints.
 %
 %   It is smart enough to return true only if the corresponding linear
 %   constraint is not redundant w.r.t the box constraints.
