@@ -31,7 +31,7 @@ if t_quiet
     if all_ok
         fprintf('ok');
         if t_skip_cnt
-            fprintf(' (%d skipped)', t_skip_cnt);
+            fprintf(' (%d of %d skipped)', t_skip_cnt, t_num_of_tests);
         end
     else
         fprintf('not ok\n');
