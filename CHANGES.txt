@@ -2,18 +2,26 @@
  Change history for MATPOWER
 -----------------------------
 
-Version:    3.0.0
+Version:    3.1b1
 
 maintained by Ray Zimmerman <rz10@cornell.edu>
 
 MATPOWER
 $Id$
-Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
+Copyright (c) 1996-2005 by Power System Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
 
 
 Changes since 3.0.0
 -------------------
+
+10/14/05
+    - Updated version 2 case file format to modify generator PQ capability
+      curve specifications.
+    - Added hasPQcap.m and test for gen PQ capability curve in OPF.
+
+8/22/05
+    - Added OPF_IGNORE_ANG_LIM option to mpoption.m.
 
 8/5/05
     - Modified identification of binding constraints in printpf.m. A

@@ -2,7 +2,7 @@
  MATPOWER - A Matlab Power System Simulation Package
 =====================================================
 
-Version:    3.0.0
+Version:    3.1b1
 
 Home Page:  http://www.pserc.cornell.edu/matpower/
 
@@ -10,10 +10,10 @@ Authors:    Ray Zimmerman               <rz10@cornell.edu>
             Carlos E. Murillo-Sanchez   <carlos_murillo@ieee.org>
             Deqiang (David) Gan         <dgan@zju.edu.cn>
 
-            Mon, Feb 14, 2005
+            Fri, Oct 14, 2005
 
 $Id$
-Copyright (c) 1997-2004 by Power System Engineering Research Center (PSERC)
+Copyright (c) 1997-2005 by Power System Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
 
 
