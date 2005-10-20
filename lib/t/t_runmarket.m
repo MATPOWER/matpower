@@ -137,9 +137,9 @@ t_is( co.Q.qty, co5.Q.qty, 8, [t ' : gen Q quantities'] );
 t_is( cb.Q.qty, cb5.Q.qty, 8, [t ' : load Q quantities'] );
 
 t_is( co.Q.qty, co5.Q.qty, 4, [t ' : Q offer quantities'] );
-t_is( co.Q.prc, co5.Q.prc, 6, [t ' : Q offer prices'] );
+t_is( co.Q.prc, co5.Q.prc, 4, [t ' : Q offer prices'] );
 t_is( cb.Q.qty, cb5.Q.qty, 4, [t ' : Q bid quantities'] );
-t_is( cb.Q.prc, cb5.Q.prc, 6, [t ' : Q bid prices'] );
+t_is( cb.Q.prc, cb5.Q.prc, 4, [t ' : Q bid prices'] );
 
 t_end;
 
