@@ -4,14 +4,14 @@ function t_off2case(quiet)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2004 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2005 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 if nargin < 1
     quiet = 0;
 end
 
-n_tests = 25;
+n_tests = 27;
 
 t_begin(n_tests, quiet);
 
@@ -22,13 +22,13 @@ t_begin(n_tests, quiet);
 [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, N, COST] = idx_cost;
 
 %% generator data
-%	bus	Pg	Qg	Qmax	Qmin	Vg	mBase	status	Pmax	Pmin	Qmax2	Qmin2	ramp_agc	ramp_10	ramp_30	ramp_q	apf
+%	bus	Pg	Qg	Qmax	Qmin	Vg	mBase	status	Pmax	Pmin	Pc1	Pc2	Qc1min	Qc1max	Qc2min	Qc2max	ramp_agc	ramp_10	ramp_30	ramp_q	apf
 gen0 = [
-	1	10	0	60	-15	1	100	1	60	10	60	-15	0	0	0	0	0;
-	2	10	0	60	-15	1	100	1	60	12	60	-15	0	0	0	0	0;
-	7	-30	-15	0	-15	1	100	1	0	-30	0	-15	0	0	0	0	0;
-	13	10	0	60	-15	1	100	1	60	12	60	-15	0	0	0	0	0;
-	30	-30	7.5	7.5	0	1	100	1	0	-30	7.5	0	0	0	0	0	0;
+	1	10	0	60	-15	1	100	1	60	10	0	0	0	0	0	0	0	0	0	0	0;
+	2	10	0	60	-15	1	100	1	60	12	0	0	0	0	0	0	0	0	0	0	0;
+	7	-30	-15	0	-15	1	100	1	0	-30	0	0	0	0	0	0	0	0	0	0	0;
+	13	10	0	60	-15	1	100	1	60	12	0	0	0	0	0	0	0	0	0	0	0;
+	30	-30	7.5	7.5	0	1	100	1	0	-30	0	0	0	0	0	0	0	0	0	0	0;
 ];
 %% generator cost data
 %	1	startup	shutdown	n	x1	y1	...	xn	yn
@@ -218,8 +218,7 @@ else
 		12	50	-10	10;
 		-30	0	-15	0;
 		12	25	0	30;
-		-12	0	0	3	];
-	gen1(5, GEN_STATUS) = 0;
+		0	0	0	0	];
 	t_is( gen, gen1, 8, [t ' - gen'] );
 	
 	gencost1 = gencost0(:, 1:12);
@@ -268,8 +267,34 @@ else
 		12	50	-10	10;
 		-10	0	-5	0;
 		12	25	0	30;
-		-12	0	0	3	];
-	gen1(5, GEN_STATUS) = 0;
+		0	0	0	0	];
+	t_is( gen, gen1, 8, [t ' - gen'] );
+	
+	gencost1 = gencost0(:, 1:12);
+	gencost1(:, N:(N+8)) = [ ...
+		2	0	0	10	100	0	0	0	0;
+		3	0	0	20	500	50	2450	0	0;
+		2	-10	-1000	0	0	0	0	0	0;
+		2	0	0	25	1250	0	0	0	0;
+		2	-12	-840	0	0	0	0	0	0;
+		4	-15	150	0	0	5	50	10	150;
+		3	-10	0	0	0	10	50	0	0;
+		2	-10	-50	0	0	0	0	0	0;
+		3	0	0	15	15	30	165	0	0;
+		2	0	0	0	0	0	0	0	0	];
+	t_is( gencost, gencost1, 8, [t ' - gencost'] );
+
+	t = 'PQ offers & PQ bids, zero Q load w/P bid, shutdown bugfix';
+	gen1 = gen0;
+	gen1(5, [QG, QMIN, QMAX]) = 0;
+	[gen, gencost] = off2case(gen1, gencost0, offers, bids, lim);
+	
+	gen1(:, [PMIN PMAX QMIN QMAX]) = [ ...
+		10	10	-15	10;
+		12	50	-10	10;
+		-10	0	-5	0;
+		12	25	0	30;
+		-12	0	0	0	];
 	t_is( gen, gen1, 8, [t ' - gen'] );
 	
 	gencost1 = gencost0(:, 1:12);
