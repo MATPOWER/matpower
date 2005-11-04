@@ -110,7 +110,7 @@ t_is(gencost1,  gencost,    12, [t 'gencost']);
 
 t = 'loadcase(opf_struct_v1) (no version): ';
 [baseMVA1, bus1, gen1, branch1, areas1, gencost1] = feval(casefile);
-c = struct;
+clear c;
 c.baseMVA   = baseMVA1;
 c.bus       = bus1;
 c.gen       = gen1;
@@ -136,7 +136,7 @@ t_is(areas2,    areas,      12, [t 'areas']);
 t_is(gencost2,  gencost,    12, [t 'gencost']);
 
 t = 'loadcase(opf_struct_v2) : ';
-c = struct;
+clear c;
 c.baseMVA   = baseMVA;
 c.bus       = bus;
 c.gen       = gen;
@@ -227,7 +227,7 @@ t_is(mpc1.gencost,  gencost,    12, [t 'gencost']);
 
 t = 'mpc = loadcase(opf_struct_v1) (no version): ';
 [baseMVA1, bus1, gen1, branch1, areas1, gencost1] = feval(casefile);
-c = struct;
+clear c;
 c.baseMVA   = baseMVA1;
 c.bus       = bus1;
 c.gen       = gen1;
@@ -253,7 +253,7 @@ t_is(mpc2.areas,    areas,      12, [t 'areas']);
 t_is(mpc2.gencost,  gencost,    12, [t 'gencost']);
 
 t = 'mpc = loadcase(opf_struct_v2) : ';
-c = struct;
+clear c;
 c.baseMVA   = baseMVA;
 c.bus       = bus;
 c.gen       = gen;
@@ -340,7 +340,7 @@ t_is(branch1,   branch,     12, [t 'branch']);
 
 t = 'loadcase(pf_struct_v1) (no version): ';
 [baseMVA1, bus1, gen1, branch1] = feval(pfcasefile);
-c = struct;
+clear c;
 c.baseMVA   = baseMVA1;
 c.bus       = bus1;
 c.gen       = gen1;
@@ -360,7 +360,7 @@ t_is(gen2,      gen,        12, [t 'gen']);
 t_is(branch2,   branch,     12, [t 'branch']);
 
 t = 'loadcase(pf_struct_v2) : ';
-c = struct;
+clear c;
 c.baseMVA   = baseMVA;
 c.bus       = bus;
 c.gen       = gen;
@@ -442,7 +442,7 @@ t_is(mpc1.branch,   branch,     12, [t 'branch']);
 
 t = 'mpc = loadcase(pf_struct_v1) (no version): ';
 [baseMVA1, bus1, gen1, branch1] = feval(pfcasefile);
-c = struct;
+clear c;
 c.baseMVA   = baseMVA1;
 c.bus       = bus1;
 c.gen       = gen1;
@@ -462,7 +462,7 @@ t_is(mpc2.gen,      gen,        12, [t 'gen']);
 t_is(mpc2.branch,   branch,     12, [t 'branch']);
 
 t = 'mpc = loadcase(pf_struct_v2) : ';
-c = struct;
+clear c;
 c.baseMVA   = baseMVA;
 c.bus       = bus;
 c.gen       = gen;

@@ -98,7 +98,7 @@ if isstr(casefile)
                 info = 4;
             end
             if info == 0 & ~isstruct(s) %% if not try individual data matrices
-                s = struct;
+                clear s;
                 if expect_opf_data
                     try
                         [s.baseMVA, s.bus, s.gen, s.branch, ...
@@ -185,7 +185,7 @@ if info == 0    %% no errors
 else            %% we have a problem captain
     if nargout == 2 | nargout == 5 | nargout == 7   %% return error code
         if return_as_struct
-            baseMVA = struct;
+            baseMVA = struct([]);
         else
             baseMVA = []; bus = []; gen = []; branch = [];
             if expect_opf_data
