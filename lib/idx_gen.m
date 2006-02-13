@@ -16,7 +16,7 @@ function [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
 %   The index, name and meaning of each column of the gen matrix is given
 %   below:
 %
-%   columns 1-03 must be included in input matrix (in case file)
+%   columns 1-21 must be included in input matrix (in case file)
 %    1  GEN_BUS     bus number
 %    2  PG          Pg, real power output (MW)
 %    3  QG          Qg, reactive power output (MVAr)
