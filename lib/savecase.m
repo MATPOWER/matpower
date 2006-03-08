@@ -25,7 +25,7 @@ function fname_out = savecase(fname, varargin)
 %   $Id$
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
 %   and Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2006 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% define named indices into bus, gen, branch matrices
@@ -38,7 +38,7 @@ function fname_out = savecase(fname, varargin)
     TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 [AREA_I, PRICE_REF_BUS] = idx_area;
-[PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, N, COST] = idx_cost;
+[PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 
 %% default arguments
 if isstr(varargin{1}) | iscell(varargin{1})
@@ -273,7 +273,7 @@ else                                %% M-file
         fprintf(fd, '%%\t2\tstartup\tshutdown\tn\tc(n-1)\t...\tc0\n');
         fprintf(fd, '%sgencost = [\n', prefix);
         if ~isempty(gencost)
-            n = gencost(1, N);
+            n = gencost(1, NCOST);
             if gencost(1, MODEL) == PW_LINEAR
                 n = 2 * n;
             end

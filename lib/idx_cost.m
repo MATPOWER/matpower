@@ -1,13 +1,13 @@
-function [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, N, COST] = idx_cost
+function [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost
 %IDX_COST   Defines constants for named column indices to gencost matrix.
 %
-%   [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, N, COST] = idx_cost
+%   [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost
 %
 %   Some examples of usage, after defining the constants using the line above,
 %   are:
 %
 %    start = gencost(4, STARTUP);       % get startup cost of generator 4
-%    gencost(2, [MODEL, N:COST+1]) = [ POLYNOMIAL 2 30 0 ];
+%    gencost(2, [MODEL, NCOST:COST+1]) = [ POLYNOMIAL 2 30 0 ];
 %    % set the cost of generator 2 to a linear function COST = 30 * Pg
 % 
 %   The index, name and meaning of each column of the gencost matrix is given
@@ -17,7 +17,7 @@ function [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, N, COST] = idx_cost
 %    1  MODEL       cost model, 1 - piecewise linear, 2 - polynomial
 %    2  STARTUP     startup cost in US dollars
 %    3  SHUTDOWN    shutdown cost in US dollars
-%    4  N           number of cost coefficients to follow for polynomial cost
+%    4  NCOST       number of cost coefficients to follow for polynomial cost
 %                   function, or number of data points for piecewise linear
 %    5  COST        1st column of cost parameters
 %                   cost data defining total cost function
@@ -37,7 +37,7 @@ function [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, N, COST] = idx_cost
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2006 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% define cost models
@@ -48,7 +48,7 @@ POLYNOMIAL  = 2;
 MODEL       = 1;    %% cost model, 1 - piecewise linear, 2 - polynomial 
 STARTUP     = 2;    %% startup cost in US dollars
 SHUTDOWN    = 3;    %% shutdown cost in US dollars
-N           = 4;    %% number breakpoints in piecewise linear cost function,
+NCOST       = 4;    %% number breakpoints in piecewise linear cost function,
                     %% or number of coefficients in polynomial cost function
 COST        = 5;    %% beginning of cost parameters,
                     %% piecewise linear data as:

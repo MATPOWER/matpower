@@ -27,7 +27,7 @@ function [buso, geno, brancho, f, success, info, et] = dcopf(baseMVA, ...
 %   $Id$
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
 %   and Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2005 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2006 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %%----- initialization -----
@@ -68,7 +68,7 @@ j = sqrt(-1);
 [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
     MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
     QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
-[PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, N, COST] = idx_cost;
+[PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 
 % If tables do not have multiplier/extra columns, append zero cols
 if size(bus,2) < MU_VMIN
@@ -114,11 +114,11 @@ i_poly = find(model == POLYNOMIAL);
 if any(i_pwln) & any(i_poly) & verbose
     fprintf('not all generators use same cost model, all will be converted to piece-wise linear\n');
 end
-if any(i_pwln) | any(find(gencost(:, N) > 3))
+if any(i_pwln) | any(find(gencost(:, NCOST) > 3))
     formulation = 2;    %% use piecewise linear formulation
 else
     formulation = 1;    %% use polynomial cost formulation
-    if any(find(gencost(:, N) ~= 3))
+    if any(find(gencost(:, NCOST) ~= 3))
         error('DC opf with polynomial costs can only handle quadratic costs.');
     end
 end
@@ -181,7 +181,7 @@ i7 = i6 + 1;    i8 = i6 + nl;       %% i7:i8 - |Pf| line limit
 i9 = i8 + 1;    i10 = i8 + nl;      %% i9:i10 - |Pt| line limit
 if formulation == 2             %% piece-wise linear costs
     %% compute cost constraints [ Cp >= m * Pg + b ] => [ m * Pg - Cp <= -b ]
-    nsegs = pcost(:, N) - 1;            %% number of cost constraints for each gen
+    nsegs = pcost(:, NCOST) - 1;        %% number of cost constraints for each gen
     ncc = sum(nsegs);                   %% total number of cost constraints
     Acc = sparse(ncc, nb+ng+nc);
     bcc = zeros(ncc, 1);

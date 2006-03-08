@@ -4,7 +4,7 @@ function t_off2case(quiet)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2005 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2005-2006 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 if nargin < 1
@@ -19,7 +19,7 @@ t_begin(n_tests, quiet);
 [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
     MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
     QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
-[PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, N, COST] = idx_cost;
+[PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 
 %% generator data
 %	bus	Pg	Qg	Qmax	Qmin	Vg	mBase	status	Pmax	Pmin	Pc1	Pc2	Qc1min	Qc1max	Qc2min	Qc2max	ramp_agc	ramp_10	ramp_30	ramp_q	apf
@@ -62,7 +62,7 @@ else
 	t_is( gen, gen1, 8, [t ' - gen'] );
 	
 	gencost1 = gencost0;
-	gencost1(G, N:(N+8)) = [[2 0 0 25 250; 2 0 0 26 1300; 2 0 0 27 2700] zeros(3,4)];
+	gencost1(G, NCOST:(NCOST+8)) = [[2 0 0 25 250; 2 0 0 26 1300; 2 0 0 27 2700] zeros(3,4)];
 	
 	t_is( gencost, gencost1, 8, [t ' - gencost'] );
 	
@@ -84,7 +84,7 @@ else
 	t_is( gen, gen1, 8, [t ' - gen'] );
 	
 	gencost1 = gencost0;
-	gencost1(G(1:2), N:(N+8)) = [[2 0 0 25 250; 2 0 0 26 1300] zeros(2,4)];
+	gencost1(G(1:2), NCOST:(NCOST+8)) = [[2 0 0 25 250; 2 0 0 26 1300] zeros(2,4)];
 	t_is( gencost, gencost1, 8, [t ' - gencost'] );
 	
 	t = 'P offers & P bids';
@@ -98,8 +98,8 @@ else
 	t_is( gen, gen1, 8, [t ' - gen'] );
 	
 	gencost1 = gencost0(:, 1:8);
-	gencost1(G, N:(N+4)) = [2 0 0 25 250; 2 0 0 26 1300; 2 0 0 27 2700];
-	gencost1(L, N:(N+4)) = [2 -20 -2000 0 0; 2 -28 -280 0 0];
+	gencost1(G, NCOST:(NCOST+4)) = [2 0 0 25 250; 2 0 0 26 1300; 2 0 0 27 2700];
+	gencost1(L, NCOST:(NCOST+4)) = [2 -20 -2000 0 0; 2 -28 -280 0 0];
 	t_is( gencost, gencost1, 8, [t ' - gencost'] );
 	
 	t = 'P offers & P bids (all rows in bid)';
@@ -124,8 +124,8 @@ else
 	t_is( gen, gen1, 8, [t ' - gen'] );
 	
 	gencost1 = gencost0(:, 1:10);
-	gencost1(G, N:(N+6)) = [2 0 0 25 250 0 0; 3 -3 -150 0 0 26 1300; 2 0 0 27 2700 0 0];
-	gencost1(L, N:(N+6)) = [[2 -20 -2000 0 0; 2 -28 -280 0 0] zeros(2,2)];
+	gencost1(G, NCOST:(NCOST+6)) = [2 0 0 25 250 0 0; 3 -3 -150 0 0 26 1300; 2 0 0 27 2700 0 0];
+	gencost1(L, NCOST:(NCOST+6)) = [[2 -20 -2000 0 0; 2 -28 -280 0 0] zeros(2,2)];
 	t_is( gencost, gencost1, 8, [t ' - gencost'] );
 	
 	t = 'P offers & P bids, lim.P.max_offer/min_bid';
@@ -141,8 +141,8 @@ else
 	t_is( gen, gen1, 8, [t ' - gen'] );
 	
 	gencost1 = gencost0;
-	gencost1(G(1:2), N:(N+8)) = [[2 0 0 25 250; 2 0 0 26 1300] zeros(2,4)];
-	gencost1(L(1), N:(N+8)) = [2 -20 -2000 0 0 0 0 0 0];
+	gencost1(G(1:2), NCOST:(NCOST+8)) = [[2 0 0 25 250; 2 0 0 26 1300] zeros(2,4)];
+	gencost1(L(1), NCOST:(NCOST+8)) = [2 -20 -2000 0 0 0 0 0 0];
 	t_is( gencost, gencost1, 8, [t ' - gencost'] );
 	
 	t = 'P offers & P bids, lim.P.max_offer/min_bid, multi-block';
@@ -158,8 +158,8 @@ else
 	t_is( gen, gen1, 8, [t ' - gen'] );
 	
 	gencost1 = gencost0(:, 1:10);
-	gencost1(G, N:(N+6)) = [2 0 0 10 100 0 0; 3 0 0 20 500 50 2450; 2 0 0 25 1250 0 0];
-	gencost1(L, N:(N+6)) = [3 -30 -2600 -20 -2000 0 0; 2 -12 -840 0 0 0 0];
+	gencost1(G, NCOST:(NCOST+6)) = [2 0 0 10 100 0 0; 3 0 0 20 500 50 2450; 2 0 0 25 1250 0 0];
+	gencost1(L, NCOST:(NCOST+6)) = [3 -30 -2600 -20 -2000 0 0; 2 -12 -840 0 0 0 0];
 	t_is( gencost, gencost1, 8, [t ' - gencost'] );
 	
 	%%-----  reactive  -----
@@ -194,8 +194,8 @@ else
 	t_is( gen, gen1, 8, [t ' - gen'] );
 	
 	gencost1 = gencost0;
-	gencost1(G, N:(N+8))     = [[2 0 0 25 250; 2 0 0 26 1300; 2 0 0 27 2700] zeros(3,4)];
-	gencost1(G+nGL, N:(N+8)) = [[2 0 0 10 100; 2 0 0 20 100; 2 0 0 30 30] zeros(3,4)];
+	gencost1(G, NCOST:(NCOST+8))     = [[2 0 0 25 250; 2 0 0 26 1300; 2 0 0 27 2700] zeros(3,4)];
+	gencost1(G+nGL, NCOST:(NCOST+8)) = [[2 0 0 10 100; 2 0 0 20 100; 2 0 0 30 30] zeros(3,4)];
 	
 	t_is( gencost, gencost1, 8, [t ' - gencost'] );
 	
@@ -222,7 +222,7 @@ else
 	t_is( gen, gen1, 8, [t ' - gen'] );
 	
 	gencost1 = gencost0(:, 1:12);
-	gencost1(:, N:(N+8)) = [ ...
+	gencost1(:, NCOST:(NCOST+8)) = [ ...
 		2	0	0	10	100	0	0	0	0;
 		3	0	0	20	500	50	2450	0	0;
 		3	-30	-2600	-20	-2000	0	0	0	0;
@@ -243,7 +243,7 @@ else
 	gen1(2, [QMIN QMAX]) = [0	0];
 	t_is( gen, gen1, 8, [t ' - gen'] );
 	
-	gencost1([2,7], N:(N+8)) = [ ...
+	gencost1([2,7], NCOST:(NCOST+8)) = [ ...
 		3	0	0	20	500	50	2450	0	0;
 		2	0	0	0	0	0	0	0	0	];
 	t_is( gencost, gencost1, 8, [t ' - gencost'] );
@@ -271,7 +271,7 @@ else
 	t_is( gen, gen1, 8, [t ' - gen'] );
 	
 	gencost1 = gencost0(:, 1:12);
-	gencost1(:, N:(N+8)) = [ ...
+	gencost1(:, NCOST:(NCOST+8)) = [ ...
 		2	0	0	10	100	0	0	0	0;
 		3	0	0	20	500	50	2450	0	0;
 		2	-10	-1000	0	0	0	0	0	0;
@@ -298,7 +298,7 @@ else
 	t_is( gen, gen1, 8, [t ' - gen'] );
 	
 	gencost1 = gencost0(:, 1:12);
-	gencost1(:, N:(N+8)) = [ ...
+	gencost1(:, NCOST:(NCOST+8)) = [ ...
 		2	0	0	10	100	0	0	0	0;
 		3	0	0	20	500	50	2450	0	0;
 		2	-10	-1000	0	0	0	0	0	0;

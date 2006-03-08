@@ -10,10 +10,10 @@ function totalcost = totcost(gencost, Pg)
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
 %   & Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
-%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2006 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-[PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, N, COST] = idx_cost;
+[PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 
 [ng, m] = size(gencost);
 totalcost = zeros(ng, size(Pg, 2));
@@ -25,15 +25,15 @@ if ~isempty(gencost)
     x = gencost(:, COST:2:(m-1));
     y = gencost(:, (COST+1):2:m);
     for i = ipwl'
-      if gencost(i, N) > 0
-        j1 = 1:(gencost(i, N) - 1);    j2 = 2:gencost(i, N);
-        pp = mkpp(x(i, 1:gencost(i, N))', [(y(i,j2) - y(i,j1)) ./ (x(i,j2) - x(i,j1));  y(i,j1)]');
+      if gencost(i, NCOST) > 0
+        j1 = 1:(gencost(i, NCOST) - 1);    j2 = 2:gencost(i, NCOST);
+        pp = mkpp(x(i, 1:gencost(i, NCOST))', [(y(i,j2) - y(i,j1)) ./ (x(i,j2) - x(i,j1));  y(i,j1)]');
         totalcost(i,:) = ppval(pp, Pg(i,:));
       end
     end
   end
   for i = ipol'
-    totalcost(i,:)= polyval(gencost(i, COST:(COST+gencost(i, N)-1) ), Pg(i,:) );
+    totalcost(i,:)= polyval(gencost(i, COST:(COST+gencost(i, NCOST)-1) ), Pg(i,:) );
   end
 end
 

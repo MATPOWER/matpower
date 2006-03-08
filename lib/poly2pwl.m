@@ -9,16 +9,16 @@ function pwlcost = poly2pwl(polycost, Pmin, Pmax, npts)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2006 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-[PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, N, COST] = idx_cost;
+[PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 
 pwlcost = polycost;
 [m, n] = size(polycost);                                %% size of piece being changed
-pwlcost(:, MODEL) = PW_LINEAR * ones(m, 1);             %% change cost model
+pwlcost(:, MODEL)  = PW_LINEAR * ones(m, 1);            %% change cost model
 pwlcost(:, COST:n) = zeros(size(pwlcost(:, COST:n)));   %% zero out old data
-pwlcost(:, N) = npts * ones(m, 1);                      %% change number of data points
+pwlcost(:, NCOST)  = npts * ones(m, 1);                 %% change number of data points
 
 for i = 1:m
     if Pmin(i) == 0
