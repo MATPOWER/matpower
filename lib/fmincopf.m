@@ -1,16 +1,21 @@
 function [busout, genout, branchout, f, success, info, et, g, jac] = ...
-      fmincopf(baseMVA, bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt)
+      fmincopf(baseMVA, bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt, ...
+           N, fparm, H, Cw)
 %FMINCOPF  Solves an AC optimal power flow using FMINCON (Opt Tbx 2.x & later).
 %
 %   [bus, gen, branch, f, success] = fmincopf(casefile, mpopt)
 %
 %   [bus, gen, branch, f, success] = fmincopf(casefile, A, l, u, mpopt)
 %
-%   [bus, gen, branch, f, success] = fmincopf(baseMVA, bus, gen, branch,...
-%                                    areas,  gencost, mpopt)
+%   [bus, gen, branch, f, success] = fmincopf(baseMVA, bus, gen, branch, ...
+%                                    areas, gencost, mpopt)
 %
-%   [bus, gen, branch, f, success] = fmincopf(baseMVA, bus, gen, branch,...
+%   [bus, gen, branch, f, success] = fmincopf(baseMVA, bus, gen, branch, ...
 %                                    areas, gencost, A, l, u, mpopt)
+%
+%   [bus, gen, branch, f, success] = fmincopf(baseMVA, bus, gen, branch, ...
+%                                    areas, gencost, A, l, u, mpopt, ...
+%                                    N, fparm, H, Cw)
 %
 %   [bus, gen, branch, f, success, info, et, g, jac] = fmincopf(casefile)
 %
@@ -20,25 +25,31 @@ function [busout, genout, branchout, f, success, info, et, g, jac] = ...
 %   (3) the data matrices themselves.
 %
 %   When specified, A, l, u represent additional linear constraints on the
-%   optimization variables, l <= A*x <= u. For an explanation of the
+%   optimization variables, l <= A*[x; z] <= u. For an explanation of the
 %   formulation used and instructions for forming the A matrix, type
 %   'help genform'.
+%
+%   A generalized cost on all variables can be applied if input arguments
+%   N, fparm, H and Cw are specified.  First, a linear transformation
+%   of the optimization variables is defined by means of r = N * [x; z].
+%   Then, to each element of r a function is applied as encoded in the
+%   fparm matrix (see manual or type 'help generalcost').  If the
+%   resulting vector is now named w, then H and Cw define a quadratic
+%   cost on w:  (1/2)*w'*H*w + Cw * w .
 %
 %   The optional mpopt vector specifies MATPOWER options. Type 'help mpoption'
 %   for details and default values.
 %
-%   The solved case is returned in the data matrices, bus, gen and branch. Also,
+%   The solved case is returned in the data matrices, bus, gen and branch. Also
 %   returned are the final objective function value (f) and a flag which is
 %   true if the algorithm was successful in finding a solution (success).
 %   Additional optional return values are an algorithm specific return status
 %   (info), elapsed time in seconds (et), the constraint vector (g) and the
 %   Jacobian matrix (jac).
-% 
+%
 %   Rules for A matrix: If the user specifies an A matrix that has more columns
-%   than the combined number of "x" (OPF) and "y" (pwl cost) variables, thus
-%   allowing for extra linearly costed and linearly constrained "z" variables,
-%   then it is the user's responsibility to fill the overall linear cost in the
-%   last row of A, including that reflected in the "y" variables.
+%   than the number of "x" (OPF) variables, then there are extra linearly
+%   constrained "z" variables.
 %
 %   NOTE: The shadow prices (lambda's and mu's) produced by fmincon appear to
 %         be slightly inaccurate.
@@ -46,75 +57,112 @@ function [busout, genout, branchout, f, success, info, et, g, jac] = ...
 %   MATPOWER
 %   $Id$
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
-%   Copyright (c) 2000-2005 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2000-2006 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 % Sort out input arguments
 t1 = clock;
-if isstr(baseMVA) | isstruct(baseMVA)
-  casefile = baseMVA;
-  if nargin == 5
-    Au = bus;
-    lbu = gen;
-    ubu = branch;
-    mpopt = areas;
-  elseif nargin == 4
-    Au = bus;
-    lbu = gen;
-    ubu = branch;
-    mpopt = mpoption;
-  elseif nargin == 2
-    Au = sparse(0,0);
-    lbu = [];
-    ubu = [];
-    mpopt = bus;
-  elseif nargin == 1
-    Au = sparse(0,0);
-    lbu = [];
-    ubu = [];
-    mpopt = mpoption;
+if isstr(baseMVA) | isstruct(baseMVA)   % passing filename or struct
+  % 14  fmincopf(baseMVA,  bus, gen, branch, areas, gencost, Au,    lbu, ubu, mpopt, N, fparm, H, Cw)
+  % 9   fmincopf(casefile, Au,  lbu, ubu,    mpopt, N,       fparm, H,   Cw)
+  % 5   fmincopf(casefile, Au,  lbu, ubu,    mpopt)
+  % 4   fmincopf(casefile, Au,  lbu, ubu)
+  % 2   fmincopf(casefile, mpopt)
+  % 1   fmincopf(casefile)
+  if any(nargin == [1, 2, 4, 5, 9])
+    casefile = baseMVA;
+    if nargin == 9
+      N     = gencost;
+      fparm = Au;
+      H     = lbu;
+      Cw    = ubu;
+    else
+      N     = [];
+      fparm = [];
+      H     = [];
+      Cw    = [];
+    end
+    if nargin < 4
+      Au  = sparse(0,0);
+      lbu = [];
+      ubu = [];
+    else
+      Au  = bus;
+      lbu = gen;
+      ubu = branch;
+    end
+    if nargin == 9 | nargin == 5
+      mpopt = areas;
+    elseif nargin == 2
+      mpopt = bus;
+    else
+      mpopt = [];
+    end
   else
     error('fmincopf.m: Incorrect input parameter order, number or type');
-  end;
+  end
   [baseMVA, bus, gen, branch, areas, gencost] = loadcase(casefile);
-else
-  if nargin == 9 
-    mpopt = mpoption;
-  elseif nargin == 7
-    mpopt = Au;
-    Au = sparse(0,0);
-    lbu = [];
-    ubu = [];
-  elseif nargin == 6
-    mpopt = mpoption;
-    Au = sparse(0,0);
-    lbu = [];
-    ubu = [];
-  elseif nargin ~= 10
+else    % passing individual data matrices
+  % 14  fmincopf(baseMVA,  bus, gen, branch, areas, gencost, Au,    lbu, ubu, mpopt, N, fparm, H, Cw)
+  % 10  fmincopf(baseMVA,  bus, gen, branch, areas, gencost, Au,    lbu, ubu, mpopt)
+  % 9   fmincopf(baseMVA,  bus, gen, branch, areas, gencost, Au,    lbu, ubu)
+  % 7   fmincopf(baseMVA,  bus, gen, branch, areas, gencost, mpopt)
+  % 6   fmincopf(baseMVA,  bus, gen, branch, areas, gencost)
+  if any(nargin == [6, 7, 9, 10, 14])
+    if nargin ~= 14
+      N     = [];
+      fparm = [];
+      H     = [];
+      Cw    = [];
+    end
+    if nargin == 7
+      mpopt = Au;
+    elseif nargin == 6 | nargin == 9
+      mpopt = [];
+    end
+    if nargin < 9
+      Au  = sparse(0,0);
+      lbu = [];
+      ubu = [];
+    end
+  else
     error('fmincopf.m: Incorrect input parameter order, number or type');
   end
+end
+if size(N, 1) > 0
+  if size(N, 1) ~= size(fparm, 1) | size(N, 1) ~= size(H, 1) | ...
+     size(N, 1) ~= size(H, 2) | size(N, 1) ~= length(Cw)
+    error('fmincopf.m: wrong dimensions in generalized cost parameters');
+  end
+  if size(Au, 1) > 0 & size(N, 2) ~= size(Au, 2)
+    error('fmincopf.m: A and N must have the same number of columns');
+  end
+end
+if isempty(mpopt)
+  mpopt = mpoption;
 end
 
 % Load column indexes for case tables.
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
     VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
-[F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
-    TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
-    ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
     MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
     QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
+[F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
+    TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
+    ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 
-% If tables do not have multiplier/extra columns, append zero cols
+% If tables do not have multiplier/extra columns, append zero cols.
+% Update whenever the data format changes!
 if size(bus,2) < MU_VMIN
   bus = [bus zeros(size(bus,1),MU_VMIN-size(bus,2)) ];
 end
 if size(gen,2) < MU_QMIN
   gen = [ gen zeros(size(gen,1),MU_QMIN-size(gen,2)) ];
 end
-if size(branch,2) < MU_ST
-  branch = [ branch zeros(size(branch,1),MU_ST-size(branch,2)) ];
+if size(branch,2) < MU_ANGMAX
+  branch = [ branch zeros(size(branch,1),MU_ANGMAX-size(branch,2)) ];
 end
 
 % Filter out inactive generators and branches; save original bus & branch
@@ -149,8 +197,17 @@ else
   gencost = gencost( [igen; igen+ng], :);
 end
 
+% Print a warning if there is more than one reference bus
+if size(find(bus(:, BUS_TYPE) == REF), 1) > 1
+  errstr = ['\nfmincopf: Warning: more than one reference bus detected in bus table data.\n', ...
+              '      For a system with islands, a reference bus in each island\n', ...
+              '      might help convergence but in a fully connected system such\n', ...
+              '      a situation is probably not reasonable.\n\n' ];
+  fprintf(errstr);
+end
+
 % Find out if any of these "generators" are actually dispatchable loads.
-% (see 'help isload' for details on what consitutes a dispatchable load)
+% (see 'help isload' for details on what constitutes a dispatchable load)
 % Dispatchable loads are modeled as generators with an added constant
 % power factor constraint. The power factor is derived from the original
 % value of Pmin and either Qmin (for inductive loads) or Qmax (for capacitive
@@ -159,7 +216,7 @@ end
 vload = find( isload(gen) & (gen(:, QMIN) ~= 0 | gen(:, QMAX) ~= 0) );
 % At least one of the Q limits must be zero (corresponding to Pmax == 0)
 if any( gen(vload, QMIN) ~= 0 & gen(vload, QMAX) ~= 0 )
-	error('Either Qmin or Qmax must be equal to zero for each dispatchable load.');
+    error('fmincopf.m: Either Qmin or Qmax must be equal to zero for each dispatchable load.');
 end
 % Initial values of PG and QG must be consistent with specified power factor
 % This is to prevent a user from unknowingly using a case file which would
@@ -174,19 +231,42 @@ if any( abs( gen(vload, QG) - gen(vload, PG) .* Qlim ./ gen(vload, PMIN) ) > 1e-
     error(errstr);
 end
 
-% Find out problem dimensions
-nb = size(bus, 1);                             % buses
-ng = size(gen, 1);                             % variable injections
-nl = size(branch, 1);                          % branches
-iycost = find(gencost(:, MODEL) == PW_LINEAR); % y variables for pwl cost
-ny = size(iycost, 1);
-neqc = 2 * nb;                                 % nonlinear equalities
-nx = 2*nb + 2*ng;                              % control variables
-nvl = size(vload, 1);                          % dispatchable loads
-nz = size(Au,2) - 2*nb - 2*ng - ny;            % number of extra z variables
-nz = max(nz,0);
+% Find out which generators require additional linear constraints
+% (as opposed to simple box constraints) on (Pg,Qg) to correctly
+% model their PQ capability curves
+ipqh = find( hasPQcap(gen, 'U') );
+ipql = find( hasPQcap(gen, 'L') );
 
-% Definition of indexes into optimization variable vector and constraint 
+
+% Find out problem dimensions
+nb = size(bus, 1);                              % buses
+ng = size(gen, 1);                              % variable injections
+nl = size(branch, 1);                           % branches
+iycost = find(gencost(:, MODEL) == PW_LINEAR);  % y variables for pwl cost
+ny    = size(iycost, 1);
+neqc  = 2 * nb;                                 % nonlinear equalities
+nusr  = size(Au, 1);                            % # linear user constraints
+nx    = 2*nb + 2*ng;                            % control variables
+nvl   = size(vload, 1);                         % dispatchable loads
+npqh  = size(ipqh, 1);                          % general pq capability curves
+npql  = size(ipql, 1);
+if isempty(Au)
+  nz = 0;
+  Au = sparse(0,nx);
+  if ~isempty(N)        % still need to check number of columns of N
+    if size(N,2) ~= nx;
+      error(sprintf('fmincopf.m: user supplied N matrix must have %d columns.', nx));
+    end
+  end
+else
+  nz = size(Au,2) - nx;                       % additional linear variables
+  if nz < 0
+    error(sprintf('fmincopf.m: user supplied A matrix must have at least %d columns.', nx));
+  end
+end
+nxyz = nx+ny+nz;                                % total # of vars of all types
+
+% Definition of indexes into optimization variable vector and constraint
 % vector.
 thbas = 1;                thend    = thbas+nb-1;
 vbas     = thend+1;       vend     = vbas+nb-1;
@@ -199,10 +279,27 @@ pmsmbas = 1;              pmsmend = pmsmbas+nb-1;
 qmsmbas = pmsmend+1;      qmsmend = qmsmbas+nb-1;
 sfbas   = qmsmend+1;      sfend   = sfbas+nl-1;
 stbas   = sfend+1;        stend   = stbas+nl-1;
+usrbas  = stend+1;        usrend  = usrbas+nusr-1; % warning: nusr could be 0
+pqhbas  = usrend+1;       pqhend  = pqhbas+npqh-1; % warning: npqh could be 0
+pqlbas  = pqhend+1;       pqlend  = pqlbas+npql-1; % warning: npql could be 0
+vlbas   = pqlend+1;       vlend   = vlbas+nvl-1; % not done yet, need # of
+                                                 % Ay constraints.
 
 % Let makeAy deal with any y-variable for piecewise-linear convex costs.
-[Ay, by]  = makeAy(baseMVA, ng, gencost, pgbas, qgbas, ybas);
+% note that if there are z variables then Ay doesn't have the columns
+% that would span the z variables, so we append them.
+if ny > 0
+  [Ay, by]  = makeAy(baseMVA, ng, gencost, pgbas, qgbas, ybas);
+  if nz > 0
+    Ay = [ Ay  sparse(size(Ay,1), nz) ];
+  end
+else
+  Ay = [];
+  by =[];
+end
 ncony = size(Ay,1);
+yconbas = vlend+1;        yconend = yconbas+ncony-1; % finally done with
+                                                     % constraint indexing
 
 % Make Avl, lvl, uvl in case there is a need for dispatchable loads
 if nvl > 0
@@ -213,7 +310,7 @@ if nvl > 0
   qc = -cos(pftheta);
   ii = [ (1:nvl)'; (1:nvl)' ];
   jj = [ pgbas+vload-1; qgbas+vload-1 ];
-  Avl = sparse(ii, jj, [pc; qc], nvl, yend);
+  Avl = sparse(ii, jj, [pc; qc], nvl, nxyz);
   lvl = zeros(nvl, 1);
   uvl = lvl;
 else
@@ -222,46 +319,95 @@ else
   uvl =[];
 end
 
-% Now form the overall linear restriction matrix; note the order
-% of the constraints.
+% Make Apqh if there is a need to add general PQ capability curves;
+% use normalized coefficient rows so multipliers have right scaling
+% in $$/pu
+if npqh > 0
+  Apqhdata = [gen(ipqh,QC1MAX)-gen(ipqh,QC2MAX), gen(ipqh,PC2)-gen(ipqh,PC1)];
+  ubpqh = (gen(ipqh,QC1MAX)-gen(ipqh,QC2MAX)) .* gen(ipqh,PC1) ...
+         + (gen(ipqh,PC2)-gen(ipqh,PC1)) .* gen(ipqh,QC1MAX);
+  for i=1:npqh,
+    tmp = norm(Apqhdata(i,:));
+    Apqhdata(i,:) = Apqhdata(i, :) / tmp;
+    ubpqh(i) = ubpqh(i) / tmp;
+  end
+  Apqh = sparse([1:npqh, 1:npqh]', [(pgbas-1)+ipqh;(qgbas-1)+ipqh], ...
+                Apqhdata(:), npqh, nxyz);
+  ubpqh = ubpqh / baseMVA;
+  lbpqh = -1e10*ones(npqh,1);
+else
+  Apqh = [];
+  ubpqh = [];
+  lbpqh = [];
+end
 
-if (nz > 0)
-  % user defined z variables thus becoming responsible for
-  % defining any Ay needed as well as the cost row (whether there are
-  % y variables or not) in the last row of Au.
-  A = [ Avl  sparse(size(Avl,1), size(Au,2)-size(Avl,2));
-        Au ];
-  l = [ lvl;
-        lbu ];
-  u = [ uvl;
-        ubu ];
-else               % no z variables
-  if (ncony > 0 )  % ... but some y variables from pwl costs; we supply linear
-    A = [ Au;      % cost for y variables in last row.
-          Avl;
-          Ay; 
-        sparse(ones(1,ny), ybas:yend, ones(1,ny), 1, yend ) ]; % "linear" cost
-    l = [ lbu; 
-          lvl;
-         -1e10*ones(ncony+1, 1) ];
-    u = [ ubu;
-          uvl;
-          by;
-          1e10];
-  else                 % No y variables (no pwl costs) and no z variables
-    A = [ Au;  Avl ];  % but perhaps we have user linear constraints in Au
-    l = [ lbu; lvl ];  % on (theta,V,Pg,Qg) variables.
-    u = [ ubu; uvl ];
+% similarly Apql
+if npql > 0
+  Apqldata = [gen(ipql,QC2MIN)-gen(ipql,QC1MIN), gen(ipql,PC1)-gen(ipql,PC2)];
+  ubpql= (gen(ipql,QC2MIN)-gen(ipql,QC1MIN)) .* gen(ipql,PC1) ...
+         - (gen(ipql,PC2)-gen(ipql,PC1)) .* gen(ipql,QC1MIN) ;
+  for i=1:npql,
+    tmp = norm(Apqldata(i, : ));
+    Apqldata(i, :) = Apqldata(i, :) / tmp;
+    ubpql(i) = ubpql(i) / tmp;
+  end
+  Apql = sparse([1:npql, 1:npql]', [(pgbas-1)+ipql;(qgbas-1)+ipql], ...
+                Apqldata(:), npql, nxyz);
+  ubpql = ubpql / baseMVA;
+  lbpql = -1e10*ones(npql,1);
+else
+  Apql = [];
+  ubpql = [];
+  lbpql = [];
+end
+
+% Insert y columns in Au and N as necessary
+if ny > 0
+  if nz > 0
+    Au = [ Au(:,1:qgend) sparse(nusr, ny) Au(:, qgend+(1:nz)) ];
+    if ~isempty(N)
+        N = [ N(:,1:qgend) sparse(size(N,1), ny) N(:, qgend+(1:nz)) ];
+    end
+  else
+    Au = [ Au sparse(nusr, ny) ];
+    if ~isempty(N)
+        N = [ N sparse(size(N,1), ny) ];
+    end
   end
 end
+
+% Now form the overall linear restriction matrix;
+% note the order of the constraints.
+
+if (ncony > 0 )
+  A = [ Au;
+        Apqh;
+        Apql;
+        Avl;
+        Ay;
+        sparse(ones(1,ny), ybas:yend, ones(1,ny), 1, nxyz ) ];  % "linear" cost
+  l = [ lbu;
+        lbpqh;
+        lbpql;
+        lvl;
+       -1e10*ones(ncony+1, 1) ];
+  u = [ ubu;
+        ubpqh;
+        ubpql;
+        uvl;
+        by;
+        1e10];
+else
+  A = [ Au; Apqh; Apql; Avl ];
+  l = [ lbu; lbpqh; lbpql; lvl ];
+  u = [ ubu; ubpqh; ubpql; uvl ];
+end
+
 
 % So, can we do anything good about lambda initialization?
 if all(bus(:, LAM_P) == 0)
   bus(:, LAM_P) = (10)*ones(nb, 1);
 end
-
-% total number of variables
-nxyz = nx+ny+nz;
 
 
 % --------------------------------------------------------------
@@ -302,10 +448,10 @@ parms = [ ...
     stend;% 28
 ];
 
-% If there are z variables or y variables the last row of A should be
-% holding a linear cost vector of length nxyz.  Let us excise it from A
-% explicitly if it exists; otherwise it is zero.
-if ny+nz > 0
+% If there are y variables the last row of A is a linear cost vector
+% of length nxyz. Let us excise it from A explicitly if it exists;
+% otherwise it is zero.
+if ny > 0
   nn = size(A,1);
   ccost = full(A(nn, :));
   A(nn, :) = [];
@@ -372,7 +518,7 @@ Afeq = full(Afeq);
 [x, f, info, Output, Lambda, Jac] = ...
   fmincon('costfmin', x0, Af, bf, Afeq, bfeq, LB, UB, 'consfmin', fmoptions, ...
          baseMVA, bus, gen, gencost, branch, areas, Ybus, Yf, Yt, mpopt, ...
-         parms, ccost);
+         parms, ccost, N, fparm, H, Cw);
 success = (info > 0);
 
 % Unpack optimal x
@@ -406,6 +552,73 @@ bus(:, MU_VMAX)  = Lambda.upper(vbas:vend);
 bus(:, MU_VMIN)  = Lambda.lower(vbas:vend);
 branch(:, MU_SF) = Lambda.ineqnonlin(1:nl) / baseMVA; 
 branch(:, MU_ST) = Lambda.ineqnonlin(nl+1:2*nl) / baseMVA;
+
+% extract lambdas from linear constraints
+nlt = length(ilt);
+ngt = length(igt);
+nbx = length(ibx);
+lam = zeros(size(u));
+lam(ieq) = Lambda.eqlin;
+lam(ilt) = Lambda.ineqlin(1:nlt);
+lam(igt) = Lambda.ineqlin(nlt+[1:ngt]);
+lam(ibx) = Lambda.ineqlin(nlt+ngt+[1:nbx]) + Lambda.ineqlin(nlt+ngt+nbx+[1:nbx]);
+
+% stick in non-linear constraints too, so we can use the indexing variables
+% we've defined, and negate so it looks like the pimul from MINOS
+pimul = [ zeros(stend,1); -lam ];
+
+% If we succeeded and there were generators with general pq curve
+% characteristics, this is the time to re-compute the multipliers,
+% splitting any nonzero multiplier on one of the linear bounds among the
+% Pmax, Pmin, Qmax or Qmin limits, producing one multiplier for a P limit and
+% another for a Q limit. For upper Q limit, if we are neither at Pmin nor at 
+% Pmax, the limit is taken at Pmin if the Qmax line's normal has a negative P
+% component, Pmax if it has a positive P component. Messy but there really
+% are many cases.
+if success & (npqh > 0)
+  k = 1;
+  for i = ipqh'
+    if gen(i, MU_PMAX) > 0
+      gen(i,MU_PMAX)=gen(i,MU_PMAX)-pimul(pqhbas+k-1)*Apqhdata(k,1)/baseMVA;
+      gen(i,MU_QMAX)=gen(i,MU_QMAX)-pimul(pqhbas+k-1)*Apqhdata(k,2)/baseMVA;
+    elseif gen(i, MU_PMIN) < 0
+      gen(i,MU_PMIN)=gen(i,MU_PMIN)+pimul(pqhbas+k-1)*Apqhdata(k,1)/baseMVA;
+      gen(i,MU_QMAX)=gen(i,MU_QMAX)-pimul(pqhbas+k-1)*Apqhdata(k,2)/baseMVA;
+    else
+      if Apqhdata(k, 1) >= 0
+         gen(i, MU_PMAX) = -pimul(pqhbas+k-1)*Apqhdata(k,1)/baseMVA;
+      else
+         gen(i, MU_PMIN) = pimul(pqhbas+k-1)*Apqhdata(k,1)/baseMVA;
+      end
+      gen(i, MU_QMAX)= gen(i,MU_QMAX)-pimul(pqhbas+k-1)*Apqhdata(k,2)/baseMVA;
+    end
+    k = k + 1;
+  end
+end
+
+if success & (npql > 0)
+  k = 1;
+  for i = ipql'
+    if gen(i, MU_PMAX) > 0
+      gen(i,MU_PMAX)=gen(i,MU_PMAX)-pimul(pqlbas+k-1)*Apqldata(k,1)/baseMVA;
+      gen(i,MU_QMIN)=gen(i,MU_QMIN)-pimul(pqlbas+k-1)*Apqldata(k,2)/baseMVA;
+    elseif gen(i, MU_PMIN) > 0
+      gen(i,MU_PMIN)=gen(i,MU_PMIN)-pimul(pqlbas+k-1)*Apqldata(k,1)/baseMVA;
+      gen(i,MU_QMIN)=gen(i,MU_QMIN)+pimul(pqlbas+k-1)*Apqldata(k,2)/baseMVA;
+    else
+      if Apqldata(k,1) >= 0
+        gen(i,MU_PMAX)= -pimul(pqlbas+k-1)*Apqldata(k,1)/baseMVA;
+      else
+        gen(i,MU_PMIN)= pimul(pqlbas+k-1)*Apqldata(k,1)/baseMVA;
+      end
+      gen(i,MU_QMIN)=gen(i,MU_QMIN)+pimul(pqlbas+k-1)*Apqldata(k,2)/baseMVA;
+    end
+    k = k + 1;
+  end
+end
+
+% With these modifications, printpf must then look for multipliers
+% if available in order to determine if a limit has been hit.
 
 % We are done with standard opf but we may need to provide the
 % constraints and their Jacobian also.
@@ -453,6 +666,5 @@ if  (nargout == 0) & ( success )
 end
 
 if nargout, busout = bus; end
-
 
 return;
