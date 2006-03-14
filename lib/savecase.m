@@ -129,15 +129,20 @@ end
 
 %% open and write the file
 if strcmp(extension, '.mat')        %% MAT-file
+    vflag = '';
+    if str2num(version('-release')) > 13
+        vflag = ' -V6';
+    end
     if strcmp(mpc_ver, '1')
         if exist('gencost') == 1
-            eval(['save ', rootname, ' baseMVA bus gen branch areas gencost;']);
+            cmd = sprintf('save %s baseMVA bus gen branch areas gencost%s;', rootname, vflag); 
         else
-            eval(['save ', rootname, ' baseMVA bus gen branch;']);
+            cmd = sprintf('save %s baseMVA bus gen branch%s;', rootname, vflag); 
         end
     else
-        eval(['save ', rootname, ' mpc;']);
+        cmd = sprintf('save %s mpc%s;', rootname, vflag); 
     end
+    eval(cmd);
 else                                %% M-file
     %% open file
     [fd, msg] = fopen(fname, 'wt');     %% print it to an m-file
