@@ -1,5 +1,5 @@
 function [buso, gen, branch, f, success, info, et, g, jac] = opf(baseMVA, bus,...
-          gen, branch, areas, gencost, Au, lbu, ubu, mpopt)
+          gen, branch, areas, gencost, Au, lbu, ubu, mpopt, N, fparm, H, Cw)
 %OPF  Solves an optimal power flow.
 %
 %   For an AC OPF, if the OPF algorithm is not set explicitly in the options,
@@ -16,6 +16,10 @@ function [buso, gen, branch, f, success, info, et, g, jac] = opf(baseMVA, bus,..
 %   [bus, gen, branch, f, success] = opf(baseMVA, bus, gen, branch, areas, ...
 %                                    gencost, A, l, u, mpopt)
 %
+%   [bus, gen, branch, f, success] = opf(baseMVA, bus, gen, branch, areas, ...
+%                                    gencost, A, l, u, mpopt, ...
+%                                    N, fparm, H, Cw)
+%
 %   [bus, gen, branch, f, success, info, et, g, jac] = opf(casefile)
 %
 %   The data for the problem can be specified in one of 3 ways: (1) the name of
@@ -24,72 +28,122 @@ function [buso, gen, branch, f, success, info, et, g, jac] = opf(baseMVA, bus,..
 %   (3) the data matrices themselves.
 %
 %   When specified, A, l, u represent additional linear constraints on the
-%   optimization variables, l <= A*x <= u. These are only available for solvers
-%   which use the generalized formulation, namely fmincon and MINOPF. For an
-%   explanation of the formulation used and instructions for forming the A
-%   matrix, type 'help genform'.
+%   optimization variables, l <= A*[x; z] <= u. For an explanation of the
+%   formulation used and instructions for forming the A matrix, type
+%   'help genform'.
+%
+%   A generalized cost on all variables can be applied if input arguments
+%   N, fparm, H and Cw are specified.  First, a linear transformation
+%   of the optimization variables is defined by means of r = N * [x; z].
+%   Then, to each element of r a function is applied as encoded in the
+%   fparm matrix (see manual or type 'help generalcost').  If the
+%   resulting vector is now named w, then H and Cw define a quadratic
+%   cost on w:  (1/2)*w'*H*w + Cw * w .
+%
+%   The additional linear constraints and generalized cost are only available
+%   for solvers which use the generalized formulation, namely fmincon and
+%   MINOPF.
 %
 %   The optional mpopt vector specifies MATPOWER options. Type 'help mpoption'
 %   for details and default values.
 %
-%   The solved case is returned in the data matrices, bus, gen and branch. Also,
+%   The solved case is returned in the data matrices, bus, gen and branch. Also
 %   returned are the final objective function value (f) and a flag which is
 %   true if the algorithm was successful in finding a solution (success).
 %   Additional optional return values are an algorithm specific return status
 %   (info), elapsed time in seconds (et), the constraint vector (g) and the
 %   Jacobian matrix (jac).
+%
+%   Rules for A matrix: If the user specifies an A matrix that has more columns
+%   than the number of "x" (OPF) variables, then there are extra linearly
+%   constrained "z" variables.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
-%   Copyright (c) 1996-2005 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2006 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-
-% Sort out args
-if isstr(baseMVA) | isstruct(baseMVA)
-  casefile = baseMVA;
-  if nargin == 5
-    Au = bus;
-    lbu = gen;
-    ubu = branch;
-    mpopt = areas;
-  elseif nargin == 4
-    Au = bus;
-    lbu = gen;
-    ubu = branch;
-    mpopt = mpoption;
-  elseif nargin == 2
-    Au = sparse(0,0);
-    lbu = [];
-    ubu = [];
-    mpopt = bus;
-  elseif nargin == 1
-    Au = sparse(0,0);
-    lbu = [];
-    ubu = [];
-    mpopt = mpoption;
+% Sort out input arguments
+if isstr(baseMVA) | isstruct(baseMVA)   % passing filename or struct
+  % 14  opf(baseMVA,  bus, gen, branch, areas, gencost, Au,    lbu, ubu, mpopt, N, fparm, H, Cw)
+  % 9   opf(casefile, Au,  lbu, ubu,    mpopt, N,       fparm, H,   Cw)
+  % 5   opf(casefile, Au,  lbu, ubu,    mpopt)
+  % 4   opf(casefile, Au,  lbu, ubu)
+  % 2   opf(casefile, mpopt)
+  % 1   opf(casefile)
+  if any(nargin == [1, 2, 4, 5, 9])
+    casefile = baseMVA;
+    if nargin == 9
+      N     = gencost;
+      fparm = Au;
+      H     = lbu;
+      Cw    = ubu;
+    else
+      N     = [];
+      fparm = [];
+      H     = [];
+      Cw    = [];
+    end
+    if nargin < 4
+      Au  = sparse(0,0);
+      lbu = [];
+      ubu = [];
+    else
+      Au  = bus;
+      lbu = gen;
+      ubu = branch;
+    end
+    if nargin == 9 | nargin == 5
+      mpopt = areas;
+    elseif nargin == 2
+      mpopt = bus;
+    else
+      mpopt = [];
+    end
   else
     error('opf.m: Incorrect input parameter order, number or type');
-  end;
+  end
   [baseMVA, bus, gen, branch, areas, gencost] = loadcase(casefile);
-else
-  if nargin == 9
-    mpopt = mpoption;
-  elseif nargin == 7
-    mpopt = Au;
-    Au = sparse(0,0);
-    lbu = [];
-    ubu = [];
-  elseif nargin == 6
-    mpopt = mpoption;
-    Au = sparse(0,0);
-    lbu = [];
-    ubu = [];
-  elseif nargin ~= 10
+else    % passing individual data matrices
+  % 14  opf(baseMVA,  bus, gen, branch, areas, gencost, Au,    lbu, ubu, mpopt, N, fparm, H, Cw)
+  % 10  opf(baseMVA,  bus, gen, branch, areas, gencost, Au,    lbu, ubu, mpopt)
+  % 9   opf(baseMVA,  bus, gen, branch, areas, gencost, Au,    lbu, ubu)
+  % 7   opf(baseMVA,  bus, gen, branch, areas, gencost, mpopt)
+  % 6   opf(baseMVA,  bus, gen, branch, areas, gencost)
+  if any(nargin == [6, 7, 9, 10, 14])
+    if nargin ~= 14
+      N     = [];
+      fparm = [];
+      H     = [];
+      Cw    = [];
+    end
+    if nargin == 7
+      mpopt = Au;
+    elseif nargin == 6 | nargin == 9
+      mpopt = [];
+    end
+    if nargin < 9
+      Au  = sparse(0,0);
+      lbu = [];
+      ubu = [];
+    end
+  else
     error('opf.m: Incorrect input parameter order, number or type');
   end
+end
+if size(N, 1) > 0
+  if size(N, 1) ~= size(fparm, 1) | size(N, 1) ~= size(H, 1) | ...
+     size(N, 1) ~= size(H, 2) | size(N, 1) ~= length(Cw)
+    error('opf.m: wrong dimensions in generalized cost parameters');
+  end
+  if size(Au, 1) > 0 & size(N, 2) ~= size(Au, 2)
+    error('opf.m: A and N must have the same number of columns');
+  end
+end
+if isempty(mpopt)
+  mpopt = mpoption;
 end
 
 %%----- initialization -----
@@ -187,14 +241,14 @@ else % AC optimal power flow requested
             'MINOPF (see http://www.pserc.cornell.edu/minopf/)']);
       end
       [bus, gen, branch, f, success, info, et, g, jac] = mopf(baseMVA, ...
-          bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt);
+          bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt, N, fparm, H, Cw);
     elseif alg == 520   % FMINCON
       if ~have_fcn('fmincon')
         error(['opf.m: OPF_ALG ', num2str(alg), ' requires ', ...
             'fmincon (Optimization Toolbox 2.x or later)']);
       end
       [bus, gen, branch, f, success, info, et, g, jac] = fmincopf(baseMVA, ...
-          bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt);
+          bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt, N, fparm, H, Cw);
     end
   else
     if opf_slvr(alg) == 0           %% use CONSTR
