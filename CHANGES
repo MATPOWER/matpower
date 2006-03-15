@@ -8,12 +8,32 @@ maintained by Ray Zimmerman <rz10@cornell.edu>
 
 MATPOWER
 $Id$
-Copyright (c) 1996-2005 by Power System Engineering Research Center (PSERC)
+Copyright (c) 1996-2006 by Power System Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
 
 
 Changes since 3.0.0
 -------------------
+
+3/15/06
+    - INCOMPATIBLE CHANGE: Updated opf.m, fmincopf.m, costfmin.m, consfmin.m to
+      be able to be compatible with latest MINOPF. User supplied A matrix for
+      general linear constraints no longer includes columns for y variables
+      (helper vars for piecewise linear gen costs), and now requires columns
+      for all x (OPF) variables. Added generalized cost model and generator PQ
+      capability curves.
+    - Modified savecase.m to always save MAT files with -V6 under newer Matlab
+      versions.
+    - Added a number of tests to t_opf.m for MINOPF and fmincopf for generalized
+      costs and additional linear constraints. Added test for fmincopf for
+      generator PQ capability curves.
+
+3/10/06
+    - Added baseKV data to case118.m from PSAP file 
+      <http://www.ee.washington.edu/research/pstca/pf118/ieee118psp.txt>.
+
+3/8/06
+   - Renamed col 5 of gencost from N to NCOST everywhere.
 
 10/14/05
     - Updated version 2 case file format to modify generator PQ capability
