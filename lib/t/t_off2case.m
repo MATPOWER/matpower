@@ -245,12 +245,12 @@ else
 	[gen, gencost] = off2case(gen0, gencost0, offers, bids, lim);
 	
 	gen1 = gen0;
-	gen1(:, [PMIN PMAX QMIN QMAX]) = [ ...
-		10	10	-15	10;
-		12	50	-10	10;
-		-30	0	-15	0;
-		12	25	0	30;
-		0	0	0	0	];
+	gen1(:, [GEN_STATUS PMIN PMAX QMIN QMAX]) = [ ...
+		1	10	10	-15	10;
+		1	12	50	-10	10;
+		1	-30	0	-15	0;
+		1	12	25	0	30;
+		0	-30	0	0	7.5	];
 	t_is( gen, gen1, 8, [t ' - gen'] );
 	
 	gencost1 = gencost0(:, 1:12);
@@ -259,7 +259,7 @@ else
 		3	0	0	20	500	50	2450	0	0;
 		3	-30	-2600	-20	-2000	0	0	0	0;
 		2	0	0	25	1250	0	0	0	0;
-		2	-12	-840	0	0	0	0	0	0;
+		4	-30	0	-20	1000	-10	2000	0	3000;
 		4	-15	150	0	0	5	50	10	150;
 		3	-10	0	0	0	10	50	0	0;
 		2	-15	-75	0	0	0	0	0	0;
@@ -309,12 +309,12 @@ else
 	[gen, gencost] = off2case(gen0, gencost0, offers, bids, lim);
 	
 	gen1 = gen0;
-	gen1(:, [PMIN PMAX QMIN QMAX]) = [ ...
-		10	10	-15	10;
-		12	50	-10	10;
-		-10	0	-5	0;
-		12	25	0	30;
-		0	0	0	0	];
+	gen1(:, [GEN_STATUS PMIN PMAX QMIN QMAX]) = [ ...
+		1	10	10	-15	10;
+		1	12	50	-10	10;
+		1	-10	0	-5	0;
+		1	12	25	0	30;
+		0	-30	0	0	7.5	];
 	t_is( gen, gen1, 8, [t ' - gen'] );
 	
 	gencost1 = gencost0(:, 1:12);
@@ -323,7 +323,7 @@ else
 		3	0	0	20	500	50	2450	0	0;
 		2	-10	-1000	0	0	0	0	0	0;
 		2	0	0	25	1250	0	0	0	0;
-		2	-12	-840	0	0	0	0	0	0;
+		4	-30	0	-20	1000	-10	2000	0	3000;
 		4	-15	150	0	0	5	50	10	150;
 		3	-10	0	0	0	10	50	0	0;
 		2	-10	-50	0	0	0	0	0	0;
@@ -372,15 +372,12 @@ else
 	[gen, gencost] = off2case(gen0, gencost0, offers, bids, lim);
 	
 	gen1 = gen0;
-	gen1(:, [PMIN PMAX QMIN QMAX]) = [ ...
-		10	10	-15	10;
-		12	50	-10	10;
-		-30	0	-15	0;
-		12	25	0	30;
-		0	0	0	0	];
-	gen1(3, GEN_STATUS) = 0;
-% [ gen(3, [GEN_STATUS, PMIN, PMAX, QMIN, QMAX]);
-%  gen1(3, [GEN_STATUS, PMIN, PMAX, QMIN, QMAX])]
+	gen1(:, [GEN_STATUS PMIN PMAX QMIN QMAX]) = [ ...
+		1	10	10	-15	10;
+		1	12	50	-10	10;
+		0	-30	0	-15	0;
+		1	12	25	0	30;
+		0	-30	0	0	7.5	];
 	t_is( gen, gen1, 8, [t ' - gen'] );
 	
 	gencost1 = gencost0(:, 1:12);
@@ -389,17 +386,12 @@ else
 		3	0	0	20	500	50	2450	0	0;
 		4	-30	0	-20	1000	-10	2000	0	3000;
 		2	0	0	25	1250	0	0	0	0;
-		2	-12	-840	0	0	0	0	0	0;
+		4	-30	0	-20	1000	-10	2000	0	3000;
 		4	-15	150	0	0	5	50	10	150;
 		3	-10	0	0	0	10	50	0	0;
-% 		2	-15	-75	0	0	0	0	0	0;
 		3	-20	-15	-10	-10	0	0	0	0;
 		3	0	0	15	15	30	165	0	0;
 		2	0	0	0	0	0	0	0	0	];
-% [ gencost(3, NCOST:(NCOST+8));
-%  gencost1(3, NCOST:(NCOST+8));
-%   gencost(8, NCOST:(NCOST+8));
-%  gencost1(8, NCOST:(NCOST+8)) ]
 	t_is( gencost, gencost1, 8, [t ' - gencost'] );
 end
 
