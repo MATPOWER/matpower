@@ -11,7 +11,7 @@ if nargin < 1
     quiet = 0;
 end
 
-n_tests = 27;
+n_tests = 35;
 
 t_begin(n_tests, quiet);
 
@@ -72,6 +72,22 @@ else
 	t_is( gen, gen1, 8, [t ' (all rows in offer) - gen'] );
 	t_is( gencost, gencost1, 8, [t ' (all rows in offer) - gencost'] );
 	
+	t = 'P offers only (GEN_STATUS=0 for 0 qty offer)';
+	offers.P.qty = [0; 26; 27];
+	offers.P.prc = [10; 50; 100];
+	[gen, gencost] = off2case(gen0, gencost0, offers);
+	
+	gen1 = gen0;
+	gen1(G(2:3), PMAX) = offers.P.qty(2:3);
+	gen1(G(1), GEN_STATUS) = 0;
+	gen1(L, GEN_STATUS) = 0;
+	t_is( gen, gen1, 8, [t ' - gen'] );
+	
+	gencost1 = gencost0;
+	gencost1(G(2:3), NCOST:(NCOST+8)) = [[2 0 0 26 1300; 2 0 0 27 2700] zeros(2,4)];
+	
+	t_is( gencost, gencost1, 8, [t ' - gencost'] );
+
 	t = 'P offers, lim.P.max_offer';
 	offers.P.qty = [25; 26; 27];
 	offers.P.prc = [10; 50; 100];
@@ -108,6 +124,22 @@ else
 	[gen, gencost] = off2case(gen0, gencost0, offers, bids);
 	
 	t_is( gen, gen1, 8, [t ' - gen'] );
+	t_is( gencost, gencost1, 8, [t ' - gencost'] );
+	
+	t = 'P offers & P bids (GEN_STATUS=0 for 0 qty bid)';
+	bids.P.qty = [0; 28];
+	bids.P.prc = [100; 10];
+	[gen, gencost] = off2case(gen0, gencost0, offers, bids);
+	
+	gen1 = gen0;
+	gen1(G, PMAX) = offers.P.qty;
+	gen1(L(1), GEN_STATUS) = 0;
+	gen1(L(2), [PMIN QMIN QMAX]) = [-28 0 7];
+	t_is( gen, gen1, 8, [t ' - gen'] );
+	
+	gencost1 = gencost0;
+	gencost1(G, NCOST:(NCOST+8)) = [[2 0 0 25 250; 2 0 0 26 1300; 2 0 0 27 2700] zeros(3,4)];
+	gencost1(L(2), NCOST:(NCOST+8)) = [[2 -28 -280 0 0] zeros(1,4)];
 	t_is( gencost, gencost1, 8, [t ' - gencost'] );
 	
 	t = 'P offers & P bids (1 gen with both)';
@@ -235,15 +267,30 @@ else
 		2	0	0	0	0	0	0	0	0	];
 	t_is( gencost, gencost1, 8, [t ' - gencost'] );
 	
-	t = 'PQ offers & PQ bids, no Q, no shutdown';
+	t = 'PQ offers & PQ bids, for gen, no P, no shutdown';
+	gen2 = gen0;
+	gen2(1, PMIN) = 0;
+	offers.P.qty = [0 40; 20 30; 25 25];
+	[gen, gencost] = off2case(gen2, gencost0, offers, bids, lim);
+	
+	gen1(1, [PMIN PMAX QMIN QMAX]) = [ 0 0 -15 10 ];
+	t_is( gen, gen1, 8, [t ' - gen'] );
+	
+	gencost1(1, NCOST:(NCOST+8)) = gencost0(1, NCOST:(NCOST+8));
+	t_is( gencost, gencost1, 8, [t ' - gencost'] );
+	
+	t = 'PQ offers & PQ bids, for gen, no Q, no shutdown';
+	offers.P.qty = [10 40; 20 30; 25 25];
 	offers.Q.qty = [5 5; 0 10; 15 15];
 	bids.Q.qty = [15; 0; 15; 15; 0];
 	[gen, gencost] = off2case(gen0, gencost0, offers, bids, lim);
 	
-	gen1(2, [QMIN QMAX]) = [0	0];
+	gen1(1, [PMIN PMAX QMIN QMAX]) = [ 10 10 -15 10 ];	%% restore original
+	gen1(2, [PMIN PMAX QMIN QMAX]) = [ 12 50 0 0 ];
 	t_is( gen, gen1, 8, [t ' - gen'] );
 	
-	gencost1([2,7], NCOST:(NCOST+8)) = [ ...
+	gencost1([1,2,7], NCOST:(NCOST+8)) = [ ...
+		2	0	0	10	100	0	0	0	0;
 		3	0	0	20	500	50	2450	0	0;
 		2	0	0	0	0	0	0	0	0	];
 	t_is( gencost, gencost1, 8, [t ' - gencost'] );
@@ -309,6 +356,50 @@ else
 		2	-10	-50	0	0	0	0	0	0;
 		3	0	0	15	15	30	165	0	0;
 		2	0	0	0	0	0	0	0	0	];
+	t_is( gencost, gencost1, 8, [t ' - gencost'] );
+
+	t = 'PQ offers & PQ bids, non-zero Q load w/no P bid, shutdown bugfix';
+	offers.P.qty = [10 40; 20 30; 25 25];
+	offers.P.prc = [10 100; 25 65; 50 90];
+	bids.P.qty = [0 10; 12 18];
+	bids.P.prc = [100 40; 70 10];
+	offers.Q.qty = [5 5; 10 10; 15 15];
+	offers.Q.prc = [10 20; 5 60; 1 10];
+	bids.Q.qty = [15; 10; 15; 15; 0];
+	bids.Q.prc = [-10; 0; 5; -20; 10];
+	lim.Q.max_offer = 50;
+	lim.Q.min_bid = -15;
+	[gen, gencost] = off2case(gen0, gencost0, offers, bids, lim);
+	
+	gen1 = gen0;
+	gen1(:, [PMIN PMAX QMIN QMAX]) = [ ...
+		10	10	-15	10;
+		12	50	-10	10;
+		-30	0	-15	0;
+		12	25	0	30;
+		0	0	0	0	];
+	gen1(3, GEN_STATUS) = 0;
+% [ gen(3, [GEN_STATUS, PMIN, PMAX, QMIN, QMAX]);
+%  gen1(3, [GEN_STATUS, PMIN, PMAX, QMIN, QMAX])]
+	t_is( gen, gen1, 8, [t ' - gen'] );
+	
+	gencost1 = gencost0(:, 1:12);
+	gencost1(:, NCOST:(NCOST+8)) = [ ...
+		2	0	0	10	100	0	0	0	0;
+		3	0	0	20	500	50	2450	0	0;
+		4	-30	0	-20	1000	-10	2000	0	3000;
+		2	0	0	25	1250	0	0	0	0;
+		2	-12	-840	0	0	0	0	0	0;
+		4	-15	150	0	0	5	50	10	150;
+		3	-10	0	0	0	10	50	0	0;
+% 		2	-15	-75	0	0	0	0	0	0;
+		3	-20	-15	-10	-10	0	0	0	0;
+		3	0	0	15	15	30	165	0	0;
+		2	0	0	0	0	0	0	0	0	];
+% [ gencost(3, NCOST:(NCOST+8));
+%  gencost1(3, NCOST:(NCOST+8));
+%   gencost(8, NCOST:(NCOST+8));
+%  gencost1(8, NCOST:(NCOST+8)) ]
 	t_is( gencost, gencost1, 8, [t ' - gencost'] );
 end
 
