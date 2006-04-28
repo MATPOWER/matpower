@@ -31,6 +31,10 @@ if nargout > 0
     mpv = v{1}.Version;
 else
     for n = 1:3
+        if n == 3 & isempty(v{3})
+            fprintf('\n%-22s -- not installed --', 'Optimization Toolbox');
+            continue;
+        end
         fprintf('\n%-22s Version %-9s  %11s', v{n}.Name, v{n}.Version, v{n}.Date);
         if ~isempty(v{n}.Release)
             fprintf('   Release: %-10s', v{n}.Release);
