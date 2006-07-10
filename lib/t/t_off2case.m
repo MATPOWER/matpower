@@ -1,5 +1,5 @@
 function t_off2case(quiet)
-%T_AUCTION  Tests for code in auction.m.
+%T_OFF2CASE  Tests for code in off2case.m.
 
 %   MATPOWER
 %   $Id$
