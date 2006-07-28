@@ -15,6 +15,13 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 3.0.0
 -------------------
 
+8/1/06
+    - Released version 3.1b1.
+
+4/28/06
+    - Fixed mpver.m so it will properly handle case where the Optimization
+      Toolbox is not installed.
+
 3/15/06
     - INCOMPATIBLE CHANGE: Updated opf.m, fmincopf.m, costfmin.m, consfmin.m to
       be able to be compatible with latest MINOPF. User supplied A matrix for
