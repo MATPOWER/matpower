@@ -35,7 +35,8 @@ function [busout, genout, branchout, f, success, info, et, g, jac] = ...
 %   Then, to each element of r a function is applied as encoded in the
 %   fparm matrix (see manual or type 'help generalcost').  If the
 %   resulting vector is now named w, then H and Cw define a quadratic
-%   cost on w:  (1/2)*w'*H*w + Cw * w .
+%   cost on w:  (1/2)*w'*H*w + Cw * w . H and N should be sparse matrices
+%   and H should also be symmetric.
 %
 %   The optional mpopt vector specifies MATPOWER options. Type 'help mpoption'
 %   for details and default values.

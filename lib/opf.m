@@ -38,7 +38,8 @@ function [buso, gen, branch, f, success, info, et, g, jac] = opf(baseMVA, bus,..
 %   Then, to each element of r a function is applied as encoded in the
 %   fparm matrix (see manual or type 'help generalcost').  If the
 %   resulting vector is now named w, then H and Cw define a quadratic
-%   cost on w:  (1/2)*w'*H*w + Cw * w .
+%   cost on w:  (1/2)*w'*H*w + Cw * w . H and N should be sparse matrices
+%   and H should also be symmetric.
 %
 %   The additional linear constraints and generalized cost are only available
 %   for solvers which use the generalized formulation, namely fmincon and
