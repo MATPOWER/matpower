@@ -13,7 +13,7 @@ Authors:    Ray Zimmerman               <rz10@cornell.edu>
             Tue, Aug 1, 2006
 
 $Id$
-Copyright (c) 1997-2005 by Power System Engineering Research Center (PSERC)
+Copyright (c) 1997-2006 by Power System Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
 
 
