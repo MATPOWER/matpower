@@ -561,12 +561,18 @@ nbx = length(ibx);
 lam = zeros(size(u));
 lam(ieq) = Lambda.eqlin;
 lam(ilt) = Lambda.ineqlin(1:nlt);
-lam(igt) = Lambda.ineqlin(nlt+[1:ngt]);
-lam(ibx) = Lambda.ineqlin(nlt+ngt+[1:nbx]) + Lambda.ineqlin(nlt+ngt+nbx+[1:nbx]);
+lam(igt) = -Lambda.ineqlin(nlt+[1:ngt]);
+lam(ibx) = Lambda.ineqlin(nlt+ngt+[1:nbx]) - Lambda.ineqlin(nlt+ngt+nbx+[1:nbx]);
 
 % stick in non-linear constraints too, so we can use the indexing variables
 % we've defined, and negate so it looks like the pimul from MINOS
-pimul = [ zeros(stend,1); -lam ];
+pimul = [
+  -Lambda.eqnonlin(1:nb);
+  -Lambda.eqnonlin(nb+1:2*nb);
+  -Lambda.ineqnonlin(1:nl);
+  -Lambda.ineqnonlin(nl+1:2*nl);
+  -lam
+];
 
 % If we succeeded and there were generators with general pq curve
 % characteristics, this is the time to re-compute the multipliers,
