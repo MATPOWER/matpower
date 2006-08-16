@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 3.1b1
 -------------------
 
+8/16/06
+    - Added optional outputs xr, pimul to fmincopf and opf.m to make them
+      fully interchangeable with mopf.m.
+
 8/15/06
     - Added branch angle difference constraints to general OPF formulation
       in fmincopf.m (and mopf.m).
