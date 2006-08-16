@@ -12,6 +12,16 @@ Copyright (c) 1996-2006 by Power System Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
 
 
+Changes since 3.1b1
+-------------------
+
+8/15/06
+    - Added branch angle difference constraints to general OPF formulation
+      in fmincopf.m (and mopf.m).
+    - Fixed (invisible) bug with multipliers of lower bounded linear
+      constraints in fmincopf.m.
+
+
 Changes since 3.0.0
 -------------------
 

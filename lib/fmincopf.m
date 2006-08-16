@@ -1,4 +1,4 @@
-function [busout, genout, branchout, f, success, info, et, g, jac] = ...
+function [busout, genout, branchout, f, success, info, et, g, jac, x, pimul] = ...
       fmincopf(baseMVA, bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt, ...
            N, fparm, H, Cw)
 %FMINCOPF  Solves an AC optimal power flow using FMINCON (Opt Tbx 2.x & later).
@@ -17,7 +17,7 @@ function [busout, genout, branchout, f, success, info, et, g, jac] = ...
 %                                    areas, gencost, A, l, u, mpopt, ...
 %                                    N, fparm, H, Cw)
 %
-%   [bus, gen, branch, f, success, info, et, g, jac] = fmincopf(casefile)
+%   [bus, gen, branch, f, success, info, et, g, jac, xr, pimul] = fmincopf(casefile)
 %
 %   The data for the problem can be specified in one of 3 ways: (1) the name of
 %   a case file which defines the data matrices baseMVA, bus, gen, branch,
@@ -238,6 +238,16 @@ end
 ipqh = find( hasPQcap(gen, 'U') );
 ipql = find( hasPQcap(gen, 'L') );
 
+% Find out which branches require angle constraints
+if mpopt(25)        % OPF_IGNORE_ANG_LIM
+  nang = 0;
+else
+  iang = find((branch(:, ANGMIN) & branch(:, ANGMIN) > -360) | ...
+              (branch(:, ANGMAX) & branch(:, ANGMAX) < 360));
+  iangl = find(branch(iang, ANGMIN));
+  iangh = find(branch(iang, ANGMAX));
+  nang = length(iang);
+end
 
 % Find out problem dimensions
 nb = size(bus, 1);                              % buses
@@ -283,7 +293,8 @@ stbas   = sfend+1;        stend   = stbas+nl-1;
 usrbas  = stend+1;        usrend  = usrbas+nusr-1; % warning: nusr could be 0
 pqhbas  = usrend+1;       pqhend  = pqhbas+npqh-1; % warning: npqh could be 0
 pqlbas  = pqhend+1;       pqlend  = pqlbas+npql-1; % warning: npql could be 0
-vlbas   = pqlend+1;       vlend   = vlbas+nvl-1; % not done yet, need # of
+vlbas   = pqlend+1;       vlend   = vlbas+nvl-1;   % warning: nvl could be 0
+angbas  = vlend+1;        angend  = angbas+nang-1; % not done yet, need # of
                                                  % Ay constraints.
 
 % Let makeAy deal with any y-variable for piecewise-linear convex costs.
@@ -299,8 +310,23 @@ else
   by =[];
 end
 ncony = size(Ay,1);
-yconbas = vlend+1;        yconend = yconbas+ncony-1; % finally done with
+yconbas = angend+1;       yconend = yconbas+ncony-1; % finally done with
                                                      % constraint indexing
+
+% Make Aang, lang, uang for branch angle difference limits
+if nang > 0
+  ii = [(1:nang)'; (1:nang)'];
+  jj = [branch(iang, F_BUS); branch(iang, T_BUS)];
+  Aang = sparse(ii, jj, [ones(nang, 1); -ones(nang, 1)], nang, nxyz);
+  uang = 1e10*ones(nang,1);
+  lang = -uang;
+  lang(iangl) = branch(iang(iangl), ANGMIN) * pi/180;
+  uang(iangh) = branch(iang(iangh), ANGMAX) * pi/180;
+else
+  Aang =[];
+  lang =[];
+  uang =[];
+end
 
 % Make Avl, lvl, uvl in case there is a need for dispatchable loads
 if nvl > 0
@@ -385,23 +411,26 @@ if (ncony > 0 )
         Apqh;
         Apql;
         Avl;
+        Aang;
         Ay;
         sparse(ones(1,ny), ybas:yend, ones(1,ny), 1, nxyz ) ];  % "linear" cost
   l = [ lbu;
         lbpqh;
         lbpql;
         lvl;
+        lang;
        -1e10*ones(ncony+1, 1) ];
   u = [ ubu;
         ubpqh;
         ubpql;
         uvl;
+        uang;
         by;
         1e10];
 else
-  A = [ Au; Apqh; Apql; Avl ];
-  l = [ lbu; lbpqh; lbpql; lvl ];
-  u = [ ubu; ubpqh; ubpql; uvl ];
+  A = [ Au; Apqh; Apql; Avl; Aang ];
+  l = [ lbu; lbpqh; lbpql; lvl; lang ];
+  u = [ ubu; ubpqh; ubpql; uvl; uang ];
 end
 
 
@@ -581,7 +610,7 @@ pimul = [
 % another for a Q limit. For upper Q limit, if we are neither at Pmin nor at 
 % Pmax, the limit is taken at Pmin if the Qmax line's normal has a negative P
 % component, Pmax if it has a positive P component. Messy but there really
-% are many cases.
+% are many cases.  Remember multipliers in pimul() are negative.
 if success & (npqh > 0)
   k = 1;
   for i = ipqh'
@@ -622,6 +651,15 @@ if success & (npql > 0)
     end
     k = k + 1;
   end
+end
+
+% angle limit constraints
+if success & (nang > 0)
+  temp = [angbas:angend];
+  ii = find(pimul(temp) > 0);
+  branch(iang(ii), MU_ANGMIN) = pimul(temp(ii)) * pi/180;
+  ii = find(pimul(temp) < 0);
+  branch(iang(ii), MU_ANGMAX) = -pimul(temp(ii)) * pi/180;
 end
 
 % With these modifications, printpf must then look for multipliers
