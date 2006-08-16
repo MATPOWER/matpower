@@ -1,5 +1,6 @@
-function [buso, gen, branch, f, success, info, et, g, jac] = opf(baseMVA, bus,...
-          gen, branch, areas, gencost, Au, lbu, ubu, mpopt, N, fparm, H, Cw)
+function [buso, gen, branch, f, success, info, et, g, jac, xr, pimul] = ...
+    opf(baseMVA, bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt, ...
+        N, fparm, H, Cw)
 %OPF  Solves an optimal power flow.
 %
 %   For an AC OPF, if the OPF algorithm is not set explicitly in the options,
@@ -20,7 +21,7 @@ function [buso, gen, branch, f, success, info, et, g, jac] = opf(baseMVA, bus,..
 %                                    gencost, A, l, u, mpopt, ...
 %                                    N, fparm, H, Cw)
 %
-%   [bus, gen, branch, f, success, info, et, g, jac] = opf(casefile)
+%   [bus, gen, branch, f, success, info, et, g, jac, xr, pimul] = opf(casefile)
 %
 %   The data for the problem can be specified in one of 3 ways: (1) the name of
 %   a case file which defines the data matrices baseMVA, bus, gen, branch,
@@ -174,6 +175,9 @@ end
 i_pwln = find(model(comgen) == PW_LINEAR);
 i_poly = find(model(comgen) == POLYNOMIAL);
 
+%% initialize optional output args
+g = []; jac = []; xr = []; pimul = [];
+
 % Start clock
 t1 = clock;
 
@@ -182,7 +186,6 @@ dc = mpopt(10);
 if dc % DC OPF
   [bus, gen, branch, f, success, info, et] = dcopf(baseMVA, bus, gen, ...
                                             branch, areas, gencost, mpopt);
-  g = []; jac = [];     %% not currently available from DC OPF
 else % AC optimal power flow requested
   if any(model ~= PW_LINEAR & model ~= POLYNOMIAL)
     error('opf.m: unknown generator cost model in gencost data');
@@ -241,15 +244,27 @@ else % AC optimal power flow requested
         error(['opf.m: OPF_ALG ', num2str(alg), ' requires ', ...
             'MINOPF (see http://www.pserc.cornell.edu/minopf/)']);
       end
-      [bus, gen, branch, f, success, info, et, g, jac] = mopf(baseMVA, ...
-          bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt, N, fparm, H, Cw);
+      if nargout > 7
+        [bus, gen, branch, f, success, info, et, g, jac, xr, pimul] = ...
+            mopf(baseMVA, bus, gen, branch, areas, gencost, Au, lbu, ubu, ...
+                mpopt, N, fparm, H, Cw);
+      else
+        [bus, gen, branch, f, success, info, et] = mopf(baseMVA, ...
+            bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt, N, fparm, H, Cw);
+      end
     elseif alg == 520   % FMINCON
       if ~have_fcn('fmincon')
         error(['opf.m: OPF_ALG ', num2str(alg), ' requires ', ...
             'fmincon (Optimization Toolbox 2.x or later)']);
       end
-      [bus, gen, branch, f, success, info, et, g, jac] = fmincopf(baseMVA, ...
-          bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt, N, fparm, H, Cw);
+      if nargout > 7
+        [bus, gen, branch, f, success, info, et, g, jac, xr, pimul] = ...
+            fmincopf(baseMVA, bus, gen, branch, areas, gencost, Au, lbu, ubu, ...
+                mpopt, N, fparm, H, Cw);
+      else
+        [bus, gen, branch, f, success, info, et] = fmincopf(baseMVA, ...
+            bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt, N, fparm, H, Cw);
+      end
     end
   else
     if opf_slvr(alg) == 0           %% use CONSTR
@@ -263,13 +278,18 @@ else % AC optimal power flow requested
       end
    
       %% run optimization
-      [bus, gen, branch, f, success, info, et, g, jac] = copf(baseMVA, ...
-              bus, gen, branch, areas, gencost, mpopt);
-  
+      if nargout > 8
+        [bus, gen, branch, f, success, info, et, g, jac] = ...
+            copf(baseMVA, bus, gen, branch, areas, gencost, mpopt);
+      else
+        [bus, gen, branch, f, success, info, et, g] = ...
+            copf(baseMVA, bus, gen, branch, areas, gencost, mpopt);
+      end
     else                            %% use LPCONSTR
-      [bus, gen, branch, f, success, info, et, g, jac] = lpopf(baseMVA, ...
+      [bus, gen, branch, f, success, info, et] = lpopf(baseMVA, ...
               bus, gen ,branch, areas, gencost, mpopt);
     end
+    
   end
 end
     
