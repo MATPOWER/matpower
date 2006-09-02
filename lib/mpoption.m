@@ -135,8 +135,8 @@ function [options, names] = mpoption(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p1
 %           [   1 - print only termination status message               ]
 %           [   2 - print termination status and screen progress        ]
 %           [   3 - print screen progress, report file (usually fort.9) ]
-%       71 - MNS_CORE, 1200 * nb + 5000 
-%       72 - MNS_SUPBASIC_LIM, 0 (2*ng) superbasics limit
+%       71 - MNS_CORE, 1200 * nb + 2 * (nb + ng)^2 
+%       72 - MNS_SUPBASIC_LIM, 0 (2*nb + 2*ng) superbasics limit
 %       73 - MNS_MULT_PRICE, 0 (30) multiple price
 
 %   MATPOWER
