@@ -33,7 +33,7 @@ noslack = find([1:nb]' ~= slack_bus);
 
 %% check that bus numbers are equal to indices to bus (one set of bus numbers)
 if any(bus(:, BUS_I) ~= [1:nb]')
-    error('makePTDF: buses must appear in order by bus number')
+    error('makePTDF: buses must be numbered consecutively in bus matrix')
 end
 
 %% compute PTDF for single slack_bus
