@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 3.1b1
 -------------------
 
+9/12/06
+    - Added makePDFT.m which builds the DC PTDF matrix for a specified
+      slack distribution.
+
 8/16/06
     - Added optional outputs xr, pimul to fmincopf and opf.m to make them
       fully interchangeable with mopf.m.
