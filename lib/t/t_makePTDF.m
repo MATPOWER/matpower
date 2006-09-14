@@ -13,11 +13,11 @@ end
 
 t_begin(24, quiet);
 
-casefile = 'soln9dcopf';
+casefile = 't_case9_opf';
 if quiet
     verbose = 0;
 else
-    verbose = 1;
+    verbose = 0;
 end
 
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
@@ -30,19 +30,22 @@ end
     QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
 
 %% load case
-mpc = loadcase(casefile);
-nb  = size(mpc.bus, 1);
-nbr = size(mpc.branch, 1);
-ng  = size(mpc.gen, 1);
+mpopt = mpoption('OUT_ALL', 0, 'VERBOSE', verbose);
+[baseMVA, bus, gen, gencost, branch, f, success, et] = ...
+	rundcopf(casefile, mpopt);
+[i2e, bus, gen, branch, areas] = ext2int(bus, gen, branch, []);
+nb  = size(bus, 1);
+nbr = size(branch, 1);
+ng  = size(gen, 1);
 
 %% compute injections and flows
-Cg = sparse(mpc.gen(:, GEN_BUS), [1:ng]', ones(ng, 1), nb, ng);
-Pg = Cg * mpc.gen(:, PG);
-Pd = mpc.bus(:, PD);
+Cg = sparse(gen(:, GEN_BUS), [1:ng]', ones(ng, 1), nb, ng);
+Pg = Cg * gen(:, PG);
+Pd = bus(:, PD);
 P  = Pg - Pd;
 ig = find(P > 0);
 il = find(P <= 0);
-F  = mpc.branch(:, PF);
+F  = branch(:, PF);
 
 %% create corresponding slack distribution matrices
 e1 = zeros(nb, 1);  e1(1) = 1;
@@ -54,11 +57,11 @@ Dg  = eye(nb) - Pd/sum(Pd) * ones(1, nb);
 Dd  = eye(nb) - Pg/sum(Pg) * ones(1, nb);
 
 %% create some PTDF matrices
-H1  = makePTDF(mpc.baseMVA, mpc.bus, mpc.branch, 1);
-H4  = makePTDF(mpc.baseMVA, mpc.bus, mpc.branch, 4);
-Heq = makePTDF(mpc.baseMVA, mpc.bus, mpc.branch, ones(nb, 1));
-Hg  = makePTDF(mpc.baseMVA, mpc.bus, mpc.branch, Pd);
-Hd  = makePTDF(mpc.baseMVA, mpc.bus, mpc.branch, Pg);
+H1  = makePTDF(baseMVA, bus, branch, 1);
+H4  = makePTDF(baseMVA, bus, branch, 4);
+Heq = makePTDF(baseMVA, bus, branch, ones(nb, 1));
+Hg  = makePTDF(baseMVA, bus, branch, Pd);
+Hd  = makePTDF(baseMVA, bus, branch, Pg);
 
 %% matrices get properly transformed by slack dist matrices
 t_is(H1,  H1 * D1, 8,  'H1  == H1 * D1');
