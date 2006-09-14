@@ -242,7 +242,7 @@ else                    %% even number of parameters
         0;      %% 77 - RESERVED77
         0;      %% 78 - RESERVED78
         0;      %% 79 - RESERVED79
-        0;      %% 80 - RESERVED80
+        0;      %% 80 - FORCE_PC_EQ_P0, for c3sopf
     ];
 end
 
@@ -282,7 +282,7 @@ names = str2mat(    names, ...
                     'RESERVED28', ...           %% 28
                     'RESERVED29', ...           %% 29
                     'RESERVED30'    );          %% 30
-    
+
 %% output options
 names = str2mat(    names, ...
                     'VERBOSE', ...              %% 31
@@ -341,7 +341,7 @@ names = str2mat(    names, ...
                     'RESERVED77', ...           %% 77
                     'RESERVED78', ...           %% 78
                     'RESERVED79', ...           %% 79
-                    'RESERVED80'    );          %% 80
+                    'FORCE_PC_EQ_P0'    );      %% 80
 
 %%-----  process parameters  -----
 while i <= nargin
