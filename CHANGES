@@ -2,7 +2,7 @@
  Change history for MATPOWER
 -----------------------------
 
-Version:    3.1b1
+Version:    3.1b2
 
 maintained by Ray Zimmerman <rz10@cornell.edu>
 
@@ -14,6 +14,9 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 
 Changes since 3.1b1
 -------------------
+
+9/15/06
+    - Released version 3.1b2.
 
 9/12/06
     - Added makePDFT.m which builds the DC PTDF matrix for a specified
