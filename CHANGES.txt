@@ -28,7 +28,11 @@ Changes since 3.1b1
 
 8/15/06
     - Added branch angle difference constraints to general OPF formulation
-      in fmincopf.m (and mopf.m).
+      in fmincopf.m (and mopf.m). These limits are specified by non-zero
+      values in the ANGMIN and/or ANGMAX columns of the branch matrix.
+      If limits are provided in the data, they are enforced by default.
+      This can be overridden by setting the 'OPF_IGNORE_ANG_LIM' option
+      to 1 using mpoption.
     - Fixed (invisible) bug with multipliers of lower bounded linear
       constraints in fmincopf.m.
 
