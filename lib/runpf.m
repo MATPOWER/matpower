@@ -150,6 +150,17 @@ else                                %% AC formulation
             mn = find( gen(:, GEN_STATUS) > 0 & gen(:, QG) < gen(:, QMIN) );
             
             if ~isempty(mx) | ~isempty(mn)  %% we have some Q limit violations
+                if isempty(pv)
+                	if verbose
+                		if ~isempty(mx)	
+		                	fprintf('Gen %d (only one left) exceeds upper Q limit : INFEASIBLE PROBLEM\n', mx);
+                		else
+		                	fprintf('Gen %d (only one left) exceeds lower Q limit : INFEASIBLE PROBLEM\n', mn);
+                		end
+	                end
+                	success = 0;
+                	break;
+                end
                 if verbose & ~isempty(mx)
                     fprintf('Gen %d at upper Q limit, converting to PQ bus\n', mx);
                 end

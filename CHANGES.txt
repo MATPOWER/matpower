@@ -12,6 +12,17 @@ Copyright (c) 1996-2006 by Power System Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
 
 
+Changes since 3.1b2
+-------------------
+
+?/?/?
+    - Released version 3.1.0.
+
+9/29/06
+    - Added check to runpf.m for case where all gens hit Q limits when
+      ENFORCE_Q_LIMS is enabled.
+
+
 Changes since 3.1b1
 -------------------
 
