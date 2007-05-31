@@ -54,6 +54,12 @@ function [options, names] = mpoption(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p1
 %           [  260 - CCV formulation (old), sparse LP (full)            ]
 %           [  500 - generalized formulation, MINOS                     ]
 %           [  520 - generalized formulation, fmincon                   ]
+%           [  540 - generalized formulation, PDIPM                     ]
+%           [        primal/dual interior point method                  ]
+%           [  545 - generalized formulation (except CCV), SCPDIPM      ]
+%           [        step-controlled primal/dual interior point method  ]
+%           [  550 - generalized formulation, TRALM                     ]
+%           [        trust region based augmented Langrangian method    ]
 %           [ See the User's Manual for details on the formulations.    ]
 %       12 - OPF_ALG_POLY, 100      default OPF algorithm for use with
 %                                   polynomial cost functions
@@ -138,6 +144,28 @@ function [options, names] = mpoption(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p1
 %       71 - MNS_CORE, 1200 * nb + 2 * (nb + ng)^2 
 %       72 - MNS_SUPBASIC_LIM, 0 (2*nb + 2*ng) superbasics limit
 %       73 - MNS_MULT_PRICE, 0 (30) multiple price
+%
+%   PDIPM, SC-PDIPM, and TRALM options
+%       81 - PDIPM_FEASTOL, 1e-5    feasibility (equality) tolerance for 
+%                                   PDIPM and SC-PDIPM
+%       82 - PDIPM_GRADTOL, 1e-5    gradient tolerance for PDIPM 
+%                                   and SC-PDIPM
+%       83 - PDIPM_COMPTOL, 1e-5    complementary condition (inequality) 
+%                                   tolerance for PDIPM and SC-PDIPM
+%       84 - PDIPM_COSTTOL, 1e-5    optimality tolerance for PDIPM and 
+%                                   SC-PDIPM
+%       85 - PDIPM_MAX_IT,  50      maximum number of iterations for 
+%                                   PDIPM and SC-PDIPM
+%       86 - SCPDIPM_RED_IT, 20     maximum number of SC-PDIPM reductions 
+%                                   per iteration
+%       87 - TRALM_FEASTOL, 1e-4    feasibility tolerance for TRALM
+%       88 - TRALM_PRIMETOL, 1e-2   prime variable tolerance for TRALM
+%       89 - TRALM_DUALTOL, 5e-3    dual variable tolerance for TRALM
+%       90 - TRALM_COSTTOL, 1e-4    optimality tolerance for TRALM
+%       91 - TRALM_MAJOR_IT, 40     maximum number of major iterations
+%       92 - TRALM_MINOR_IT, 100     maximum number of minor iterations
+%       93 - SMOOTHING_RATIO, 0.04  piecewise linear curve smoothing ratio
+%                                   used in SC-PDIPM and TRALM
 
 %   MATPOWER
 %   $Id$
@@ -243,6 +271,21 @@ else                    %% even number of parameters
         0;      %% 78 - RESERVED78
         0;      %% 79 - RESERVED79
         0;      %% 80 - FORCE_PC_EQ_P0, for c3sopf
+        
+        %% PDIPM options
+        1e-5;   %% 81 - PDIPM_FEASTOL
+        1e-5;   %% 82 - PDIPM_GRADTOL
+        1e-5;   %% 83 - PDIPM_COMPTOL
+        1e-5;   %% 84 - PDIPM_COSTTOL
+        50;     %% 85 - PDIPM_MAX_IT
+        20;     %% 86 - SCPDIPM_RED_IT
+        1e-4;   %% 87 - TRALM_FEASTOL
+        1e-2;   %% 88 - TRALM_PRIMETOL
+        5e-3;   %% 89 - TRALM_DUALTOL
+        1e-4;   %% 90 - TRALM_COSTTOL
+        40;     %% 91 - TRALM_MAJOR_IT
+        100;    %% 92 - TRALM_MINOR_IT
+        0.04;   %% 93 - SMOOTHING_RATIO        
     ];
 end
 
@@ -343,6 +386,22 @@ names = str2mat(    names, ...
                     'RESERVED79', ...           %% 79
                     'FORCE_PC_EQ_P0'    );      %% 80
 
+%% PDIPM, SC-PDIPM, and TRALM options                
+names = str2mat(    names, ...
+                    'PDIPM_FEASTOL', ...        %% 81
+                    'PDIPM_GRADTOL', ...        %% 82
+                    'PDIPM_COMPTOL', ...        %% 83
+                    'PDIPM_COSTTOL', ...        %% 84
+                    'PDIPM_MAX_IT', ...         %% 85
+                    'SCPDIPM_RED_IT', ...       %% 86
+                    'TRALM_FEASTOL', ...        %% 87
+                    'TRALM_PRIMETOL', ...       %% 88
+                    'TRALM_DUALTOL', ...        %% 89
+                    'TRALM_COSTTOL', ...        %% 90
+                    'TRALM_MAJOR_IT', ...       %% 91
+                    'TRALM_MINOR_IT', ...       %% 92
+                    'SMOOTHING_RATIO'    );     %% 93
+                
 %%-----  process parameters  -----
 while i <= nargin
     %% get parameter name and value

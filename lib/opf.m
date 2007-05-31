@@ -1,6 +1,6 @@
 function [buso, gen, branch, f, success, info, et, g, jac, xr, pimul] = ...
     opf(baseMVA, bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt, ...
-        N, fparm, H, Cw)
+        N, fparm, H, Cw, z0)
 %OPF  Solves an optimal power flow.
 %
 %   For an AC OPF, if the OPF algorithm is not set explicitly in the options,
@@ -20,6 +20,10 @@ function [buso, gen, branch, f, success, info, et, g, jac, xr, pimul] = ...
 %   [bus, gen, branch, f, success] = opf(baseMVA, bus, gen, branch, areas, ...
 %                                    gencost, A, l, u, mpopt, ...
 %                                    N, fparm, H, Cw)
+%
+%   [bus, gen, branch, f, success] = opf(baseMVA, bus, gen, branch, areas, ...
+%                                    gencost, A, l, u, mpopt, ...
+%                                    N, fparm, H, Cw, z0)
 %
 %   [bus, gen, branch, f, success, info, et, g, jac, xr, pimul] = opf(casefile)
 %
@@ -68,8 +72,11 @@ function [buso, gen, branch, f, success, info, et, g, jac, xr, pimul] = ...
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 % Sort out input arguments
+if nargin ~= 15
+  z0 = [];
+end
 if isstr(baseMVA) | isstruct(baseMVA)   % passing filename or struct
-  % 14  opf(baseMVA,  bus, gen, branch, areas, gencost, Au,    lbu, ubu, mpopt, N, fparm, H, Cw)
+  % 15  opf(baseMVA,  bus, gen, branch, areas, gencost, Au,    lbu, ubu, mpopt, N, fparm, H, Cw, z0)
   % 9   opf(casefile, Au,  lbu, ubu,    mpopt, N,       fparm, H,   Cw)
   % 5   opf(casefile, Au,  lbu, ubu,    mpopt)
   % 4   opf(casefile, Au,  lbu, ubu)
@@ -109,6 +116,7 @@ if isstr(baseMVA) | isstruct(baseMVA)   % passing filename or struct
   end
   [baseMVA, bus, gen, branch, areas, gencost] = loadcase(casefile);
 else    % passing individual data matrices
+  % 15  opf(baseMVA,  bus, gen, branch, areas, gencost, Au,    lbu, ubu, mpopt, N, fparm, H, Cw, z0)
   % 14  opf(baseMVA,  bus, gen, branch, areas, gencost, Au,    lbu, ubu, mpopt, N, fparm, H, Cw)
   % 10  opf(baseMVA,  bus, gen, branch, areas, gencost, Au,    lbu, ubu, mpopt)
   % 9   opf(baseMVA,  bus, gen, branch, areas, gencost, Au,    lbu, ubu)
@@ -131,7 +139,7 @@ else    % passing individual data matrices
       lbu = [];
       ubu = [];
     end
-  else
+  elseif nargin ~= 15
     error('opf.m: Incorrect input parameter order, number or type');
   end
 end
@@ -264,6 +272,32 @@ else % AC optimal power flow requested
       else
         [bus, gen, branch, f, success, info, et] = fmincopf(baseMVA, ...
             bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt, N, fparm, H, Cw);
+      end
+    elseif alg == 540 || alg == 545 || alg == 550  % PDIPM_OPF, SCPDIPM_OPF, or TRALM_OPF
+      if alg == 540       % PDIPM_OPF
+        if ~have_fcn('pdipmopf')
+          error(['opf.m: OPF_ALG ', num2str(alg), ' requires ', ...
+              'PDIPMOPF (see http://www.pserc.cornell.edu/tspopf/)']);
+        end
+      elseif alg == 545       % SCPDIPM_OPF
+        if ~have_fcn('scpdipmopf')
+          error(['opf.m: OPF_ALG ', num2str(alg), ' requires ', ...
+              'SCPDIPMOPF (see http://www.pserc.cornell.edu/tspopf/)']);
+        end
+      elseif alg == 550       % TRALM_OPF
+        if ~have_fcn('tralmopf')
+          error(['opf.m: OPF_ALG ', num2str(alg), ' requires ', ...
+              'TRALMOPF (see http://www.pserc.cornell.edu/tspopf/)']);
+        end
+      end
+      if nargout > 7
+        [bus, gen, branch, f, success, info, et, g, jac, xr, pimul] = ...
+            tspopf(baseMVA, bus, gen, branch, areas, gencost, Au, lbu, ubu, ...
+                mpopt, N, fparm, H, Cw, z0);
+      else
+        [bus, gen, branch, f, success, info, et] = ...
+            tspopf(baseMVA, bus, gen, branch, areas, gencost, Au, lbu, ubu, ...
+                mpopt, N, fparm, H, Cw, z0);
       end
     end
   else

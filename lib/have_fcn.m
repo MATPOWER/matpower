@@ -12,9 +12,13 @@ function TorF = have_fcn(tag)
 %       minopf      - minopf(), MINOPF, MINOS-based OPF solver
 %       quadprog    - quadprog(), QP solver from Optimization Toolbox 2.x +
 %       qp          - qp(), QP solver from Optimization Toolbox 1.x/2.x
+%       pdipmopf    - pdipmopf(), primal-dual interior point method OPF solver
+%       scpdipmopf  - scpdipmopf(), step-controlled PDIPM OPF solver
 %       smartmarket - runmkt() and friends, for running an auction
 %       sparse_lp   - LP solver used by mp_lp can handle sparse matrices
 %       sparse_qp   - QP solver used by mp_qp can handle sparse matrices
+%       tralmopf    - tralmopf(), trust region based augmented Langrangian
+%                     OPF solver
 
 %   MATPOWER
 %   $Id$
@@ -39,12 +43,18 @@ switch tag
         TorF = exist(which('quadprog')) == 2;
     case 'qp'
         TorF = exist(which('qp')) == 2;
+    case 'pdipmopf'
+        TorF = exist(which('pdipmopf')) == 3;
+    case 'scpdipmopf'
+        TorF = exist(which('scpdipmopf')) == 3;
     case 'smartmarket'
         TorF = exist(which('runmkt')) == 2;
     case 'sparse_lp'
         TorF = have_fcn('bpmpd') | have_fcn('linprog');
     case 'sparse_qp'
         TorF = have_fcn('bpmpd') | have_fcn('quadprog');
+    case 'tralmopf'
+        TorF = exist(which('tralmopf')) == 3;
     otherwise
         error(sprintf('have_fcn: unknown functionality %s', tag));
 end

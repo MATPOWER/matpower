@@ -61,6 +61,22 @@ else
     else
         fprintf('MINOPF                 not installed\n');
     end
+    if have_fcn('pdipmopf')
+        pdipmopfver;
+    else
+        fprintf('PDIPMOPF               not installed\n');
+    end
+    if have_fcn('scpdipmopf')
+        scpdipmopfver;
+    else
+        fprintf('SCPDIPMOPF             not installed\n');
+    end
+    if have_fcn('tralmopf')
+        tralmopfver;
+    else
+        fprintf('PDIPMOPF               not installed\n');
+    end
+
     fprintf('Architecture:          %s\n\n', computer);
 end
 
