@@ -16,7 +16,6 @@ function [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, ...
 %   below:
 %
 %   columns 1-11 must be included in input matrix (in case file)
-%    1  BUS_I       bus number (1 to 29997)
 %    1  F_BUS       f, from bus number
 %    2  T_BUS       t, to bus number
 %    3  BR_R        r, resistance (p.u.)
