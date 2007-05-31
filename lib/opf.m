@@ -273,7 +273,7 @@ else % AC optimal power flow requested
         [bus, gen, branch, f, success, info, et] = fmincopf(baseMVA, ...
             bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt, N, fparm, H, Cw);
       end
-    elseif alg == 540 || alg == 545 || alg == 550  % PDIPM_OPF, SCPDIPM_OPF, or TRALM_OPF
+    elseif alg == 540 | alg == 545 | alg == 550  % PDIPM_OPF, SCPDIPM_OPF, or TRALM_OPF
       if alg == 540       % PDIPM_OPF
         if ~have_fcn('pdipmopf')
           error(['opf.m: OPF_ALG ', num2str(alg), ' requires ', ...
