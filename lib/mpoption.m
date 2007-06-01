@@ -146,8 +146,9 @@ function [options, names] = mpoption(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p1
 %       73 - MNS_MULT_PRICE, 0 (30) multiple price
 %
 %   PDIPM, SC-PDIPM, and TRALM options
-%       81 - PDIPM_FEASTOL, 1e-5    feasibility (equality) tolerance for 
+%       81 - PDIPM_FEASTOL, 0       feasibility (equality) tolerance for 
 %                                   PDIPM and SC-PDIPM
+%                                   set to value of OPF_VIOLATION by default
 %       82 - PDIPM_GRADTOL, 1e-5    gradient tolerance for PDIPM 
 %                                   and SC-PDIPM
 %       83 - PDIPM_COMPTOL, 1e-5    complementary condition (inequality) 
@@ -158,7 +159,8 @@ function [options, names] = mpoption(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p1
 %                                   PDIPM and SC-PDIPM
 %       86 - SCPDIPM_RED_IT, 20     maximum number of SC-PDIPM reductions 
 %                                   per iteration
-%       87 - TRALM_FEASTOL, 1e-4    feasibility tolerance for TRALM
+%       87 - TRALM_FEASTOL, 0       feasibility tolerance for TRALM
+%                                   set to value of OPF_VIOLATION by default
 %       88 - TRALM_PRIMETOL, 1e-2   prime variable tolerance for TRALM
 %       89 - TRALM_DUALTOL, 5e-3    dual variable tolerance for TRALM
 %       90 - TRALM_COSTTOL, 1e-4    optimality tolerance for TRALM
@@ -273,13 +275,13 @@ else                    %% even number of parameters
         0;      %% 80 - FORCE_PC_EQ_P0, for c3sopf
         
         %% PDIPM options
-        1e-5;   %% 81 - PDIPM_FEASTOL
+        0;      %% 81 - PDIPM_FEASTOL
         1e-5;   %% 82 - PDIPM_GRADTOL
         1e-5;   %% 83 - PDIPM_COMPTOL
         1e-5;   %% 84 - PDIPM_COSTTOL
         50;     %% 85 - PDIPM_MAX_IT
         20;     %% 86 - SCPDIPM_RED_IT
-        1e-4;   %% 87 - TRALM_FEASTOL
+        0;      %% 87 - TRALM_FEASTOL
         1e-2;   %% 88 - TRALM_PRIMETOL
         5e-3;   %% 89 - TRALM_DUALTOL
         1e-4;   %% 90 - TRALM_COSTTOL
