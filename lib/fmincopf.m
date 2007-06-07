@@ -608,26 +608,26 @@ pimul = [
 % splitting any nonzero multiplier on one of the linear bounds among the
 % Pmax, Pmin, Qmax or Qmin limits, producing one multiplier for a P limit and
 % another for a Q limit. For upper Q limit, if we are neither at Pmin nor at 
-% Pmax, the limit is taken at Pmin if the Qmax line's normal has a negative P
+% Pmax, the limit is taken as Pmin if the Qmax line's normal has a negative P
 % component, Pmax if it has a positive P component. Messy but there really
 % are many cases.  Remember multipliers in pimul() are negative.
+muPmax = gen(:, MU_PMAX);
+muPmin = gen(:, MU_PMIN);
 if success & (npqh > 0)
   k = 1;
   for i = ipqh'
-    if gen(i, MU_PMAX) > 0
+    if muPmax(i) > 0
       gen(i,MU_PMAX)=gen(i,MU_PMAX)-pimul(pqhbas+k-1)*Apqhdata(k,1)/baseMVA;
-      gen(i,MU_QMAX)=gen(i,MU_QMAX)-pimul(pqhbas+k-1)*Apqhdata(k,2)/baseMVA;
-    elseif gen(i, MU_PMIN) < 0
+    elseif muPmin(i) > 0
       gen(i,MU_PMIN)=gen(i,MU_PMIN)+pimul(pqhbas+k-1)*Apqhdata(k,1)/baseMVA;
-      gen(i,MU_QMAX)=gen(i,MU_QMAX)-pimul(pqhbas+k-1)*Apqhdata(k,2)/baseMVA;
     else
       if Apqhdata(k, 1) >= 0
-         gen(i, MU_PMAX) = -pimul(pqhbas+k-1)*Apqhdata(k,1)/baseMVA;
+         gen(i,MU_PMAX)=gen(i,MU_PMAX)-pimul(pqhbas+k-1)*Apqhdata(k,1)/baseMVA;
       else
-         gen(i, MU_PMIN) = pimul(pqhbas+k-1)*Apqhdata(k,1)/baseMVA;
+         gen(i,MU_PMIN)=gen(i,MU_PMIN)+pimul(pqhbas+k-1)*Apqhdata(k,1)/baseMVA;
       end
-      gen(i, MU_QMAX)= gen(i,MU_QMAX)-pimul(pqhbas+k-1)*Apqhdata(k,2)/baseMVA;
     end
+    gen(i,MU_QMAX)=gen(i,MU_QMAX)-pimul(pqhbas+k-1)*Apqhdata(k,2)/baseMVA;
     k = k + 1;
   end
 end
@@ -635,20 +635,18 @@ end
 if success & (npql > 0)
   k = 1;
   for i = ipql'
-    if gen(i, MU_PMAX) > 0
+    if muPmax(i) > 0
       gen(i,MU_PMAX)=gen(i,MU_PMAX)-pimul(pqlbas+k-1)*Apqldata(k,1)/baseMVA;
-      gen(i,MU_QMIN)=gen(i,MU_QMIN)-pimul(pqlbas+k-1)*Apqldata(k,2)/baseMVA;
-    elseif gen(i, MU_PMIN) > 0
-      gen(i,MU_PMIN)=gen(i,MU_PMIN)-pimul(pqlbas+k-1)*Apqldata(k,1)/baseMVA;
-      gen(i,MU_QMIN)=gen(i,MU_QMIN)+pimul(pqlbas+k-1)*Apqldata(k,2)/baseMVA;
+    elseif muPmin(i) > 0
+      gen(i,MU_PMIN)=gen(i,MU_PMIN)+pimul(pqlbas+k-1)*Apqldata(k,1)/baseMVA;
     else
       if Apqldata(k,1) >= 0
-        gen(i,MU_PMAX)= -pimul(pqlbas+k-1)*Apqldata(k,1)/baseMVA;
+        gen(i,MU_PMAX)=gen(i,MU_PMAX)-pimul(pqlbas+k-1)*Apqldata(k,1)/baseMVA;
       else
-        gen(i,MU_PMIN)= pimul(pqlbas+k-1)*Apqldata(k,1)/baseMVA;
+        gen(i,MU_PMIN)=gen(i,MU_PMIN)+pimul(pqlbas+k-1)*Apqldata(k,1)/baseMVA;
       end
-      gen(i,MU_QMIN)=gen(i,MU_QMIN)+pimul(pqlbas+k-1)*Apqldata(k,2)/baseMVA;
     end
+    gen(i,MU_QMIN)=gen(i,MU_QMIN)+pimul(pqlbas+k-1)*Apqldata(k,2)/baseMVA;
     k = k + 1;
   end
 end
