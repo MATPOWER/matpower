@@ -653,11 +653,11 @@ end
 
 % angle limit constraints
 if success & (nang > 0)
-  temp = [angbas:angend];
-  ii = find(pimul(temp) > 0);
-  branch(iang(ii), MU_ANGMIN) = pimul(temp(ii)) * pi/180;
-  ii = find(pimul(temp) < 0);
-  branch(iang(ii), MU_ANGMAX) = -pimul(temp(ii)) * pi/180;
+  tmp = [angbas:angend];
+  ii = find(pimul(tmp) > 0);
+  branch(iang(ii), MU_ANGMIN) = pimul(tmp(ii)) * pi/180;
+  ii = find(pimul(tmp) < 0);
+  branch(iang(ii), MU_ANGMAX) = -pimul(tmp(ii)) * pi/180;
 end
 
 % With these modifications, printpf must then look for multipliers
