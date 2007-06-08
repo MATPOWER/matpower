@@ -43,18 +43,35 @@ switch tag
         TorF = exist(which('quadprog')) == 2;
     case 'qp'
         TorF = exist(which('qp')) == 2;
-    case 'pdipmopf'
-        TorF = exist(which('pdipmopf')) == 3;
-    case 'scpdipmopf'
-        TorF = exist(which('scpdipmopf')) == 3;
     case 'smartmarket'
         TorF = exist(which('runmkt')) == 2;
     case 'sparse_lp'
         TorF = have_fcn('bpmpd') | have_fcn('linprog');
     case 'sparse_qp'
         TorF = have_fcn('bpmpd') | have_fcn('quadprog');
-    case 'tralmopf'
-        TorF = exist(which('tralmopf')) == 3;
+    case {'pdipmopf', 'scpdipmopf', 'tralmopf'}
+        v = ver('Matlab');
+        %% requires >= Matlab 6.5 (R13) (released 20-Jun-2002)
+        %% older versions do not have mxCreateDoubleScalar() function
+        %% (they have mxCreateScalarDouble() instead)
+        if datenum(v.Date) >= 731387
+            switch tag
+                case 'pdipmopf'
+                    TorF = exist(which('pdipmopf')) == 3;
+                case 'scpdipmopf'
+                    TorF = exist(which('scpdipmopf')) == 3;
+                case 'tralmopf'
+                    %% requires >= Matlab 7.3 (R2006b) (released 03-Aug-2006)
+                    %% older versions do not include the needed form of chol()
+                    if datenum(v.Date) >= 732892
+                        TorF = exist(which('tralmopf')) == 3;
+                    else
+                        TorF = 0;
+                    end
+            end
+        else
+            TorF = 0;
+        end
     otherwise
         error(sprintf('have_fcn: unknown functionality %s', tag));
 end
