@@ -15,8 +15,22 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 3.1b2
 -------------------
 
-?/?/?
-    - Released version 3.1.0.
+6/15/07
+    - Added t_auction_pdipm.m and renamed t_auction.m to
+      t_auction_minopf.m.
+
+6/8/07
+    - Updated have_fcn.m to check for appropriate minimum versions of
+      Matlab, for TSPOPF.
+
+6/7/07
+    - Modified printpf.m to correctly detect binding line limits when
+      a limit of 0 is taken to mean unconstrained.
+    - Fixed bugs in handling of multipliers for general PQ capability
+      curves in fmincopf.m (also in mopf.m and tspopf.m).
+    - Refactored t_opf.m into separate files for each solver.
+    - Modified opf.m, mpoption.m, mpver.m, have_fcn.m to include
+      support for TSPOPF, a new optional package of OPF solvers.
 
 9/29/06
     - Added check to runpf.m for case where all gens hit Q limits when
