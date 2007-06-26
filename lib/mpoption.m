@@ -82,8 +82,10 @@ function [options, names] = mpoption(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p1
 %                                   for lpopf
 %       22 - LPC_MAX_IT, 400        maximum number of iterations for lpopf
 %       23 - LPC_MAX_RESTART, 5     maximum number of restarts for lpopf
-%       24 - OPF_P_LINE_LIM, 0      use active power instead of apparent power
-%                                   for line flow limits    [   0 or 1  ]
+%       24 - OPF_FLOW_LIM, 0        qty to limit for branch flow constraints
+%           [   0 - apparent power flow (limit in MVA)                  ]
+%           [   1 - active power flow (limit in MW)                     ]
+%           [   2 - current magnitude (limit in MVA at 1 p.u. voltage   ]
 %       25 - OPF_IGNORE_ANG_LIM, 0  ignore angle difference limits for branches
 %                                   even if specified       [   0 or 1  ]
 %   output options
@@ -165,7 +167,7 @@ function [options, names] = mpoption(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p1
 %       89 - TRALM_DUALTOL, 5e-4    dual variable tolerance for TRALM
 %       90 - TRALM_COSTTOL, 1e-5    optimality tolerance for TRALM
 %       91 - TRALM_MAJOR_IT, 40     maximum number of major iterations
-%       92 - TRALM_MINOR_IT, 100     maximum number of minor iterations
+%       92 - TRALM_MINOR_IT, 100    maximum number of minor iterations
 %       93 - SMOOTHING_RATIO, 0.04  piecewise linear curve smoothing ratio
 %                                   used in SC-PDIPM and TRALM
 
@@ -210,7 +212,7 @@ else                    %% even number of parameters
         1e-4;   %% 21 - LPC_TOL_X
         400;    %% 22 - LPC_MAX_IT
         5;      %% 23 - LPC_MAX_RESTART
-        0;      %% 24 - OPF_P_LINE_LIM
+        0;      %% 24 - OPF_FLOW_LIM
         0;      %% 25 - OPF_IGNORE_ANG_LIM
         0;      %% 26 - RESERVED26
         0;      %% 27 - RESERVED27
@@ -320,7 +322,7 @@ names = str2mat(    names, ...
                     'LPC_TOL_X', ...            %% 21
                     'LPC_MAX_IT', ...           %% 22
                     'LPC_MAX_RESTART', ...      %% 23
-                    'OPF_P_LINE_LIM', ...       %% 24
+                    'OPF_FLOW_LIM', ...         %% 24
                     'OPF_IGNORE_ANG_LIM', ...   %% 25
                     'RESERVED26', ...           %% 26
                     'RESERVED27', ...           %% 27

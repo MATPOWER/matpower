@@ -15,6 +15,18 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 3.1b2
 -------------------
 
+6/22/07
+    - INCOMPATIBLE CHANGE: Name of option 24 in mpoption change from
+      OPF_P_LINE_LIM to OPF_FLOW_LIM.
+    - Added option to use current magnitude instead of apparent power
+      for line flow limits. Set OPF_FLOW_LIM to 2.
+
+6/21/07
+    - INCOMPATIBLE CHANGE: Changed the sign convention used for
+      phase shifters to be consistent with PTI, PowerWorld, PSAT, etc.
+      E.g. A phase shift of 10 deg now means the voltage at the "to"
+      end is delayed by 10 degrees.
+
 6/15/07
     - Added t_auction_pdipm.m and renamed t_auction.m to
       t_auction_minopf.m.

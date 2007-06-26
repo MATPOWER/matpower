@@ -608,17 +608,21 @@ if isOPF
         
     %% line flow constraints
     if mpopt(24) == 1   %% P limit
-        Sf = branch(:, PF);
-        St = branch(:, PT);
+        Ff = branch(:, PF);
+        Ft = branch(:, PT);
         str = '\n  #     Bus    Pf  mu     Pf      |Pmax|      Pt      Pt  mu   Bus';
+    elseif mpopt(24) == 2   %% |I| limit
+        Ff = abs( (branch(:, PF) + j * branch(:, QF)) ./ V(e2i(branch(:, F_BUS))) );
+        Ft = abs( (branch(:, PT) + j * branch(:, QT)) ./ V(e2i(branch(:, T_BUS))) );
+        str = '\n  #     Bus   |If| mu    |If|     |Imax|     |It|    |It| mu   Bus';
     else                %% |S| limit
-        Sf = abs(branch(:, PF) + j * branch(:, QF));
-        St = abs(branch(:, PT) + j * branch(:, QT));
+        Ff = abs(branch(:, PF) + j * branch(:, QF));
+        Ft = abs(branch(:, PT) + j * branch(:, QT));
         str = '\n  #     Bus   |Sf| mu    |Sf|     |Smax|     |St|    |St| mu   Bus';
     end
     if OUT_LINE_LIM == 2 | (OUT_LINE_LIM == 1 & ...
-                        (any(branch(:, RATE_A) ~= 0 & abs(Sf) > branch(:, RATE_A) - ctol) | ...
-                         any(branch(:, RATE_A) ~= 0 & abs(St) > branch(:, RATE_A) - ctol) | ...
+                        (any(branch(:, RATE_A) ~= 0 & abs(Ff) > branch(:, RATE_A) - ctol) | ...
+                         any(branch(:, RATE_A) ~= 0 & abs(Ft) > branch(:, RATE_A) - ctol) | ...
                          any(branch(:, MU_SF) > 1e-6) | ...
                          any(branch(:, MU_ST) > 1e-6)))
         fprintf(fd, '\n================================================================================');
@@ -629,18 +633,18 @@ if isOPF
         fprintf(fd, '\n-----  -----  -------  --------  --------  --------  -------  -----');
         for i = 1:nl
             if OUT_LINE_LIM == 2 | (OUT_LINE_LIM == 1 & ...
-                   ((branch(:, RATE_A) ~= 0 & abs(Sf(i)) > branch(i, RATE_A) - ctol) | ...
-                    (branch(:, RATE_A) ~= 0 & abs(St(i)) > branch(i, RATE_A) - ctol) | ...
+                   ((branch(:, RATE_A) ~= 0 & abs(Ff(i)) > branch(i, RATE_A) - ctol) | ...
+                    (branch(:, RATE_A) ~= 0 & abs(Ft(i)) > branch(i, RATE_A) - ctol) | ...
                     branch(i, MU_SF) > 1e-6 | branch(i, MU_ST) > 1e-6))
                 fprintf(fd, '\n%4d%7d', i, branch(i, F_BUS));
-                if Sf(i) > branch(i, RATE_A) - ctol | branch(i, MU_SF) > 1e-6
+                if Ff(i) > branch(i, RATE_A) - ctol | branch(i, MU_SF) > 1e-6
                     fprintf(fd, '%10.3f', branch(i, MU_SF));
                 else
                     fprintf(fd, '      -   ');
                 end
                 fprintf(fd, '%9.2f%10.2f%10.2f', ...
-                    [Sf(i), branch(i, RATE_A), St(i)]);
-                if St(i) > branch(i, RATE_A) - ctol | branch(i, MU_ST) > 1e-6
+                    [Ff(i), branch(i, RATE_A), Ft(i)]);
+                if Ft(i) > branch(i, RATE_A) - ctol | branch(i, MU_ST) > 1e-6
                     fprintf(fd, '%10.3f', branch(i, MU_ST));
                 else
                     fprintf(fd, '      -   ');
