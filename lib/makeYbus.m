@@ -41,7 +41,7 @@ Bc = stat .* branch(:, BR_B);                           %% line charging suscept
 tap = ones(nl, 1);                              %% default tap ratio = 1
 i = find(branch(:, TAP));                       %% indices of non-zero tap ratios
 tap(i) = branch(i, TAP);                        %% assign non-zero tap ratios
-tap = tap .* exp(-j*pi/180 * branch(:, SHIFT)); %% add phase shifters
+tap = tap .* exp(j*pi/180 * branch(:, SHIFT));  %% add phase shifters
 Ytt = Ys + j*Bc/2;
 Yff = Ytt ./ (tap .* conj(tap));
 Yft = - Ys ./ conj(tap);

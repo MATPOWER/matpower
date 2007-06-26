@@ -58,7 +58,7 @@ Bbus =  Cf * spdiags(b, 0, nl, nl) * Cf' + ...  %% Bff term of branch admittance
         Ct * spdiags(b, 0, nl, nl) * Ct';       %% Btt term of branch admittance
 
 %% build phase shift injection vectors
-Pfinj = b .* (branch(:, SHIFT) * pi/180);       %% injected at the from bus ...
+Pfinj = b .* (-branch(:, SHIFT) * pi/180);      %% injected at the from bus ...
     % Ptinj = -Pfinj;                           %% ... and extracted at the to bus
 Pbusinj = (Cf - Ct) * Pfinj;                    %% Pbusinj = Cf * Pfinj + Ct * Ptinj;
 

@@ -94,7 +94,7 @@ ties = find(bus(e2i(branch(:, F_BUS)), BUS_AREA) ~= bus(e2i(branch(:, T_BUS)), B
 tap = ones(nl, 1);                              %% default tap ratio = 1 for lines
 xfmr = find(branch(:, TAP));                    %% indices of transformers
 tap(xfmr) = branch(xfmr, TAP);                  %% include transformer tap ratios
-tap = tap .* exp(-j*pi/180 * branch(:, SHIFT)); %% add phase shifters
+tap = tap .* exp(j*pi/180 * branch(:, SHIFT)); %% add phase shifters
 nzld = find(bus(:, PD) | bus(:, QD));
 sorted_areas = sort(bus(:, BUS_AREA));
 s_areas = sorted_areas([1; find(diff(sorted_areas))+1]);    %% area numbers
