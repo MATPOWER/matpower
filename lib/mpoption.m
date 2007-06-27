@@ -138,7 +138,7 @@ function [options, names] = mpoption(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p1
 %       68 - MNS_MINOR_IT, 0 (2500) minor iterations
 %       69 - MNS_MAX_IT, 0 (2500)   iterations limit
 %       70 - MNS_VERBOSITY, -1
-%           [  -1 - controlled by VERBOSE flag (0 or 1 below)           ]
+%           [  -1 - controlled by VERBOSE flag                          ]
 %           [   0 - print nothing                                       ]
 %           [   1 - print only termination status message               ]
 %           [   2 - print termination status and screen progress        ]
