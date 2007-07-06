@@ -1,6 +1,6 @@
 function [busout, genout, branchout, f, success, info, et, g, jac, x, pimul] = ...
       fmincopf(baseMVA, bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt, ...
-           N, fparm, H, Cw)
+           N, fparm, H, Cw, z0, zl, zu)
 %FMINCOPF  Solves an AC optimal power flow using FMINCON (Opt Tbx 2.x & later).
 %
 %   [bus, gen, branch, f, success] = fmincopf(casefile, mpopt)
@@ -16,6 +16,10 @@ function [busout, genout, branchout, f, success, info, et, g, jac, x, pimul] = .
 %   [bus, gen, branch, f, success] = fmincopf(baseMVA, bus, gen, branch, ...
 %                                    areas, gencost, A, l, u, mpopt, ...
 %                                    N, fparm, H, Cw)
+%
+%   [bus, gen, branch, f, success] = fmincopf(baseMVA, bus, gen, branch, ...
+%                                    areas, gencost, A, l, u, mpopt, ...
+%                                    N, fparm, H, Cw, z0, zl, zu)
 %
 %   [bus, gen, branch, f, success, info, et, g, jac, xr, pimul] = fmincopf(casefile)
 %
@@ -45,8 +49,9 @@ function [busout, genout, branchout, f, success, info, et, g, jac, x, pimul] = .
 %   returned are the final objective function value (f) and a flag which is
 %   true if the algorithm was successful in finding a solution (success).
 %   Additional optional return values are an algorithm specific return status
-%   (info), elapsed time in seconds (et), the constraint vector (g) and the
-%   Jacobian matrix (jac).
+%   (info), elapsed time in seconds (et), the constraint vector (g), the
+%   Jacobian matrix (jac), and the vector of variables (xr) as well 
+%   as the constraint multipliers (pimul).
 %
 %   Rules for A matrix: If the user specifies an A matrix that has more columns
 %   than the number of "x" (OPF) variables, then there are extra linearly
@@ -64,15 +69,25 @@ function [busout, genout, branchout, f, success, info, et, g, jac, x, pimul] = .
 % Sort out input arguments
 t1 = clock;
 if isstr(baseMVA) | isstruct(baseMVA)   % passing filename or struct
-  % 14  fmincopf(baseMVA,  bus, gen, branch, areas, gencost, Au,    lbu, ubu, mpopt, N, fparm, H, Cw)
+  %---- fmincopf(baseMVA,  bus, gen, branch, areas, gencost, Au,    lbu, ubu, mpopt, N,  fparm, H, Cw, z0, zl, zu)
+  % 12  fmincopf(casefile, Au,  lbu, ubu,    mpopt, N,       fparm, H,   Cw,  z0,    zl, zu)
   % 9   fmincopf(casefile, Au,  lbu, ubu,    mpopt, N,       fparm, H,   Cw)
   % 5   fmincopf(casefile, Au,  lbu, ubu,    mpopt)
   % 4   fmincopf(casefile, Au,  lbu, ubu)
   % 2   fmincopf(casefile, mpopt)
   % 1   fmincopf(casefile)
-  if any(nargin == [1, 2, 4, 5, 9])
+  if any(nargin == [1, 2, 4, 5, 9, 12])
     casefile = baseMVA;
-    if nargin == 9
+    if nargin == 12
+      z0 = mpopt;
+      zl = N;
+      zu = fparm;
+    else
+      z0 = [];
+      zl = [];
+      zu = [];
+    end
+    if nargin == 12 | nargin == 9
       N     = gencost;
       fparm = Au;
       H     = lbu;
@@ -92,7 +107,7 @@ if isstr(baseMVA) | isstruct(baseMVA)   % passing filename or struct
       lbu = gen;
       ubu = branch;
     end
-    if nargin == 9 | nargin == 5
+    if nargin >= 5
       mpopt = areas;
     elseif nargin == 2
       mpopt = bus;
@@ -104,13 +119,20 @@ if isstr(baseMVA) | isstruct(baseMVA)   % passing filename or struct
   end
   [baseMVA, bus, gen, branch, areas, gencost] = loadcase(casefile);
 else    % passing individual data matrices
-  % 14  fmincopf(baseMVA,  bus, gen, branch, areas, gencost, Au,    lbu, ubu, mpopt, N, fparm, H, Cw)
-  % 10  fmincopf(baseMVA,  bus, gen, branch, areas, gencost, Au,    lbu, ubu, mpopt)
-  % 9   fmincopf(baseMVA,  bus, gen, branch, areas, gencost, Au,    lbu, ubu)
-  % 7   fmincopf(baseMVA,  bus, gen, branch, areas, gencost, mpopt)
-  % 6   fmincopf(baseMVA,  bus, gen, branch, areas, gencost)
-  if any(nargin == [6, 7, 9, 10, 14])
-    if nargin ~= 14
+  %---- fmincopf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu, mpopt, N, fparm, H, Cw, z0, zl, zu)
+  % 17  fmincopf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu, mpopt, N, fparm, H, Cw, z0, zl, zu)
+  % 14  fmincopf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu, mpopt, N, fparm, H, Cw)
+  % 10  fmincopf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu, mpopt)
+  % 9   fmincopf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu)
+  % 7   fmincopf(baseMVA, bus, gen, branch, areas, gencost, mpopt)
+  % 6   fmincopf(baseMVA, bus, gen, branch, areas, gencost)
+  if any(nargin == [6, 7, 9, 10, 14, 17])
+    if nargin < 17
+      z0 = [];
+      zl = [];
+      zu = [];
+    end
+    if nargin < 14
       N     = [];
       fparm = [];
       H     = [];
@@ -502,15 +524,19 @@ bf  = [ u(ilt);   -l(igt);     u(ibx);    -l(ibx)];
 Afeq = A(ieq, :);
 bfeq = u(ieq);
 
-% bounds on optimization vars; y and z vars unbounded at box bounds;
-% if needed, user must do this via the Ax < l mechanism if needed and hope that
-% fmincon handles singleton rows elegantly.
+% bounds on optimization vars; y vars unbounded
 UB = Inf * ones(nxyz, 1);
 LB = -UB;
 LB(thbas+ref-1) = bus(ref, VA)*pi/180;  UB(thbas+ref-1) = bus(ref, VA)*pi/180;
 LB(vbas:vend)   = bus(:, VMIN);         UB(vbas:vend)   = bus(:, VMAX);
 LB(pgbas:pgend) = gen(:, PMIN)/baseMVA; UB(pgbas:pgend) = gen(:, PMAX)/baseMVA;
 LB(qgbas:qgend) = gen(:, QMIN)/baseMVA; UB(qgbas:qgend) = gen(:, QMAX)/baseMVA;
+if ~isempty(zl)
+  LB(zbas:zend) = zl;
+end
+if ~isempty(zu)
+  UB(zbas:zend) = zu;
+end
 
 % Compute initial vector
 x0 = zeros(nxyz, 1);
@@ -519,8 +545,10 @@ x0(vbas:vend)   = bus(:, VM);
 x0(vbas+gen(:,GEN_BUS)-1) = gen(:, VG);   % buses w. gens init V from gen data
 x0(pgbas:pgend) = gen(:, PG) / baseMVA;
 x0(qgbas:qgend) = gen(:, QG) / baseMVA;
-% no ideas to initialize z, y variables, though, and no mechanism yet
-% to ask for user-provided initial z, y.
+% no ideas to initialize y variables
+if ~isempty(z0)
+  x0(zbas:zend) = z0;
+end
 
 % build admittance matrices
 [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);

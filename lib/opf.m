@@ -11,19 +11,19 @@ function [buso, gen, branch, f, success, info, et, g, jac, xr, pimul] = ...
 %
 %   [bus, gen, branch, f, success] = opf(casefile, A, l, u, mpopt)
 %
-%   [bus, gen, branch, f, success] = opf(baseMVA, bus, gen, branch, areas, ...
-%                                    gencost, mpopt)
+%   [bus, gen, branch, f, success] = opf(baseMVA, bus, gen, branch, ...
+%                                    areas, gencost, mpopt)
 %
-%   [bus, gen, branch, f, success] = opf(baseMVA, bus, gen, branch, areas, ...
-%                                    gencost, A, l, u, mpopt)
+%   [bus, gen, branch, f, success] = opf(baseMVA, bus, gen, branch, ...
+%                                    areas, gencost, A, l, u, mpopt)
 %
-%   [bus, gen, branch, f, success] = opf(baseMVA, bus, gen, branch, areas, ...
-%                                    gencost, A, l, u, mpopt, ...
+%   [bus, gen, branch, f, success] = opf(baseMVA, bus, gen, branch, ...
+%                                    areas, gencost, A, l, u, mpopt, ...
 %                                    N, fparm, H, Cw)
 %
-%   [bus, gen, branch, f, success] = opf(baseMVA, bus, gen, branch, areas, ...
-%                                    gencost, A, l, u, mpopt, ...
-%                                    N, fparm, H, Cw, z0)
+%   [bus, gen, branch, f, success] = opf(baseMVA, bus, gen, branch, ...
+%                                    areas, gencost, A, l, u, mpopt, ...
+%                                    N, fparm, H, Cw, z0, zl, zu)
 %
 %   [bus, gen, branch, f, success, info, et, g, jac, xr, pimul] = opf(casefile)
 %
@@ -57,8 +57,9 @@ function [buso, gen, branch, f, success, info, et, g, jac, xr, pimul] = ...
 %   returned are the final objective function value (f) and a flag which is
 %   true if the algorithm was successful in finding a solution (success).
 %   Additional optional return values are an algorithm specific return status
-%   (info), elapsed time in seconds (et), the constraint vector (g) and the
-%   Jacobian matrix (jac).
+%   (info), elapsed time in seconds (et), the constraint vector (g), the
+%   Jacobian matrix (jac), and the vector of variables (xr) as well 
+%   as the constraint multipliers (pimul).
 %
 %   Rules for A matrix: If the user specifies an A matrix that has more columns
 %   than the number of "x" (OPF) variables, then there are extra linearly
@@ -72,19 +73,26 @@ function [buso, gen, branch, f, success, info, et, g, jac, xr, pimul] = ...
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 % Sort out input arguments
-if nargin ~= 15
-  z0 = [];
-end
 if isstr(baseMVA) | isstruct(baseMVA)   % passing filename or struct
-  % 15  opf(baseMVA,  bus, gen, branch, areas, gencost, Au,    lbu, ubu, mpopt, N, fparm, H, Cw, z0)
+  %---- opf(baseMVA,  bus, gen, branch, areas, gencost, Au,    lbu, ubu, mpopt, N,  fparm, H, Cw, z0, zl, zu)
+  % 12  opf(casefile, Au,  lbu, ubu,    mpopt, N,       fparm, H,   Cw,  z0,    zl, zu)
   % 9   opf(casefile, Au,  lbu, ubu,    mpopt, N,       fparm, H,   Cw)
   % 5   opf(casefile, Au,  lbu, ubu,    mpopt)
   % 4   opf(casefile, Au,  lbu, ubu)
   % 2   opf(casefile, mpopt)
   % 1   opf(casefile)
-  if any(nargin == [1, 2, 4, 5, 9])
+  if any(nargin == [1, 2, 4, 5, 9, 12])
     casefile = baseMVA;
-    if nargin == 9
+    if nargin == 12
+      z0 = mpopt;
+      zl = N;
+      zu = fparm;
+    else
+      z0 = [];
+      zl = [];
+      zu = [];
+    end
+    if nargin == 12 | nargin == 9
       N     = gencost;
       fparm = Au;
       H     = lbu;
@@ -104,7 +112,7 @@ if isstr(baseMVA) | isstruct(baseMVA)   % passing filename or struct
       lbu = gen;
       ubu = branch;
     end
-    if nargin == 9 | nargin == 5
+    if nargin >= 5
       mpopt = areas;
     elseif nargin == 2
       mpopt = bus;
@@ -116,14 +124,20 @@ if isstr(baseMVA) | isstruct(baseMVA)   % passing filename or struct
   end
   [baseMVA, bus, gen, branch, areas, gencost] = loadcase(casefile);
 else    % passing individual data matrices
-  % 15  opf(baseMVA,  bus, gen, branch, areas, gencost, Au,    lbu, ubu, mpopt, N, fparm, H, Cw, z0)
-  % 14  opf(baseMVA,  bus, gen, branch, areas, gencost, Au,    lbu, ubu, mpopt, N, fparm, H, Cw)
-  % 10  opf(baseMVA,  bus, gen, branch, areas, gencost, Au,    lbu, ubu, mpopt)
-  % 9   opf(baseMVA,  bus, gen, branch, areas, gencost, Au,    lbu, ubu)
-  % 7   opf(baseMVA,  bus, gen, branch, areas, gencost, mpopt)
-  % 6   opf(baseMVA,  bus, gen, branch, areas, gencost)
-  if any(nargin == [6, 7, 9, 10, 14])
-    if nargin ~= 14
+  %---- opf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu, mpopt, N, fparm, H, Cw, z0, zl, zu)
+  % 17  opf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu, mpopt, N, fparm, H, Cw, z0, zl, zu)
+  % 14  opf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu, mpopt, N, fparm, H, Cw)
+  % 10  opf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu, mpopt)
+  % 9   opf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu)
+  % 7   opf(baseMVA, bus, gen, branch, areas, gencost, mpopt)
+  % 6   opf(baseMVA, bus, gen, branch, areas, gencost)
+  if any(nargin == [6, 7, 9, 10, 14, 17])
+    if nargin < 17
+      z0 = [];
+      zl = [];
+      zu = [];
+    end
+    if nargin < 14
       N     = [];
       fparm = [];
       H     = [];
@@ -139,8 +153,8 @@ else    % passing individual data matrices
       lbu = [];
       ubu = [];
     end
-  elseif nargin ~= 15
-    error('opf.m: Incorrect input parameter order, number or type');
+  else
+    error('tspopf.m: Incorrect input parameter order, number or type');
   end
 end
 if size(N, 1) > 0
@@ -255,10 +269,11 @@ else % AC optimal power flow requested
       if nargout > 7
         [bus, gen, branch, f, success, info, et, g, jac, xr, pimul] = ...
             mopf(baseMVA, bus, gen, branch, areas, gencost, Au, lbu, ubu, ...
-                mpopt, N, fparm, H, Cw);
+                mpopt, N, fparm, H, Cw, z0, zl, zu);
       else
         [bus, gen, branch, f, success, info, et] = mopf(baseMVA, ...
-            bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt, N, fparm, H, Cw);
+            bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt, ...
+            N, fparm, H, Cw, z0, zl, zu);
       end
     elseif alg == 520   % FMINCON
       if ~have_fcn('fmincon')
@@ -268,10 +283,11 @@ else % AC optimal power flow requested
       if nargout > 7
         [bus, gen, branch, f, success, info, et, g, jac, xr, pimul] = ...
             fmincopf(baseMVA, bus, gen, branch, areas, gencost, Au, lbu, ubu, ...
-                mpopt, N, fparm, H, Cw);
+                mpopt, N, fparm, H, Cw, z0, zl, zu);
       else
         [bus, gen, branch, f, success, info, et] = fmincopf(baseMVA, ...
-            bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt, N, fparm, H, Cw);
+            bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt, ...
+            N, fparm, H, Cw, z0, zl, zu);
       end
     elseif alg == 540 | alg == 545 | alg == 550  % PDIPM_OPF, SCPDIPM_OPF, or TRALM_OPF
       if alg == 540       % PDIPM_OPF
@@ -293,11 +309,11 @@ else % AC optimal power flow requested
       if nargout > 7
         [bus, gen, branch, f, success, info, et, g, jac, xr, pimul] = ...
             tspopf(baseMVA, bus, gen, branch, areas, gencost, Au, lbu, ubu, ...
-                mpopt, N, fparm, H, Cw, z0);
+                mpopt, N, fparm, H, Cw, z0, zl, zu);
       else
-        [bus, gen, branch, f, success, info, et] = ...
-            tspopf(baseMVA, bus, gen, branch, areas, gencost, Au, lbu, ubu, ...
-                mpopt, N, fparm, H, Cw, z0);
+        [bus, gen, branch, f, success, info, et] = tspopf(baseMVA, ...
+            bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt, ...
+            N, fparm, H, Cw, z0, zl, zu);
       end
     end
   else
