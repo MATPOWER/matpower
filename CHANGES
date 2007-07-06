@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 3.1b2
 -------------------
 
+7/6/07
+    - Added ability in opf.m and fmincopf.m to specify initial value
+      and bounds on user variables via new input arguments z0, zl, zh.
+
 6/22/07
     - INCOMPATIBLE CHANGE: Name of option 24 in mpoption change from
       OPF_P_LINE_LIM to OPF_FLOW_LIM.
