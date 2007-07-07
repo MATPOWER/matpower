@@ -628,7 +628,8 @@ pimul = [
   -Lambda.eqnonlin(nb+1:2*nb);
   -Lambda.ineqnonlin(1:nl);
   -Lambda.ineqnonlin(nl+1:2*nl);
-  -lam
+  -lam;
+  Lambda.lower - Lambda.upper
 ];
 
 % If we succeeded and there were generators with general pq curve
