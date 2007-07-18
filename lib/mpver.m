@@ -74,7 +74,7 @@ else
     if have_fcn('tralmopf')
         tralmopfver;
     else
-        fprintf('PDIPMOPF               not installed\n');
+        fprintf('TRALMOPF               not installed\n');
     end
 
     fprintf('Architecture:          %s\n\n', computer);
