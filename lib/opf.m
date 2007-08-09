@@ -1,6 +1,6 @@
 function [buso, gen, branch, f, success, info, et, g, jac, xr, pimul] = ...
     opf(baseMVA, bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt, ...
-        N, fparm, H, Cw, z0)
+        N, fparm, H, Cw, z0, zl, zu)
 %OPF  Solves an optimal power flow.
 %
 %   For an AC OPF, if the OPF algorithm is not set explicitly in the options,
