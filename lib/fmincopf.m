@@ -410,6 +410,22 @@ else
   lbpql = [];
 end
 
+% % reorder columns of Au and N according to new gen ordering
+% if ~isempty(Au)
+%   if nz > 0
+%     Au = Au(:, [[1:vend]'; vend+[igen; ng+igen]; qgend+[1:nz]']);
+%   else
+%     Au = Au(:, [[1:vend]'; vend+[igen; ng+igen]]);
+%   end
+% end
+% if ~isempty(N)
+%   if nz > 0
+%     N =  N(:, [[1:vend]'; vend+[igen; ng+igen]; qgend+[1:nz]']);
+%   else
+%     N =  N(:, [[1:vend]'; vend+[igen; ng+igen]]);
+%   end
+% end
+
 % Insert y columns in Au and N as necessary
 if ny > 0
   if nz > 0
@@ -629,6 +645,7 @@ pimul = [
   -Lambda.ineqnonlin(1:nl);
   -Lambda.ineqnonlin(nl+1:2*nl);
   -lam;
+  -1;       %% dummy entry corresponding to linear cost row in A (in MINOS)
   Lambda.lower - Lambda.upper
 ];
 
