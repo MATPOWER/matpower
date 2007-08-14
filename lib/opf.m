@@ -84,40 +84,77 @@ if isstr(baseMVA) | isstruct(baseMVA)   % passing filename or struct
   if any(nargin == [1, 2, 4, 5, 9, 12])
     casefile = baseMVA;
     if nargin == 12
-      z0 = mpopt;
-      zl = N;
-      zu = fparm;
-    else
-      z0 = [];
-      zl = [];
-      zu = [];
-    end
-    if nargin == 12 | nargin == 9
-      N     = gencost;
-      fparm = Au;
-      H     = lbu;
+      zu    = fparm;
+      zl    = N;
+      z0    = mpopt;
       Cw    = ubu;
-    else
-      N     = [];
-      fparm = [];
-      H     = [];
-      Cw    = [];
-    end
-    if nargin < 4
-      Au  = sparse(0,0);
-      lbu = [];
-      ubu = [];
-    else
-      Au  = bus;
-      lbu = gen;
-      ubu = branch;
-    end
-    if nargin >= 5
+      H     = lbu;
+      fparm = Au;
+      N     = gencost;
       mpopt = areas;
+      ubu   = branch;
+      lbu   = gen;
+      Au    = bus;
+    elseif nargin == 9
+      zu    = [];
+      zl    = [];
+      z0    = [];
+      Cw    = ubu;
+      H     = lbu;
+      fparm = Au;
+      N     = gencost;
+      mpopt = areas;
+      ubu   = branch;
+      lbu   = gen;
+      Au    = bus;
+    elseif nargin == 5
+      zu    = [];
+      zl    = [];
+      z0    = [];
+      Cw    = [];
+      H     = [];
+      fparm = [];
+      N     = [];
+      mpopt = areas;
+      ubu   = branch;
+      lbu   = gen;
+      Au    = bus;
+    elseif nargin == 4
+      zu    = [];
+      zl    = [];
+      z0    = [];
+      Cw    = [];
+      H     = [];
+      fparm = [];
+      N     = [];
+      mpopt = mpoption;
+      ubu   = branch;
+      lbu   = gen;
+      Au    = bus;
     elseif nargin == 2
+      zu    = [];
+      zl    = [];
+      z0    = [];
+      Cw    = [];
+      H     = [];
+      fparm = [];
+      N     = [];
       mpopt = bus;
-    else
-      mpopt = [];
+      ubu   = [];
+      lbu   = [];
+      Au    = sparse(0,0);
+    elseif nargin == 1
+      zu    = [];
+      zl    = [];
+      z0    = [];
+      Cw    = [];
+      H     = [];
+      fparm = [];
+      N     = [];
+      mpopt = mpoption;
+      ubu   = [];
+      lbu   = [];
+      Au    = sparse(0,0);
     end
   else
     error('opf.m: Incorrect input parameter order, number or type');
@@ -132,26 +169,51 @@ else    % passing individual data matrices
   % 7   opf(baseMVA, bus, gen, branch, areas, gencost, mpopt)
   % 6   opf(baseMVA, bus, gen, branch, areas, gencost)
   if any(nargin == [6, 7, 9, 10, 14, 17])
-    if nargin < 17
-      z0 = [];
-      zl = [];
-      zu = [];
-    end
-    if nargin < 14
-      N     = [];
-      fparm = [];
-      H     = [];
+    if nargin == 14
+      zu    = [];
+      zl    = [];
+      z0    = [];
+    elseif nargin == 10
+      zu    = [];
+      zl    = [];
+      z0    = [];
       Cw    = [];
-    end
-    if nargin == 7
+      H     = [];
+      fparm = [];
+      N     = [];
+    elseif nargin == 9
+      zu    = [];
+      zl    = [];
+      z0    = [];
+      Cw    = [];
+      H     = [];
+      fparm = [];
+      N     = [];
+      mpopt = mpoption;
+    elseif nargin == 7
+      zu    = [];
+      zl    = [];
+      z0    = [];
+      Cw    = [];
+      H     = [];
+      fparm = [];
+      N     = [];
       mpopt = Au;
-    elseif nargin == 6 | nargin == 9
-      mpopt = [];
-    end
-    if nargin < 9
-      Au  = sparse(0,0);
-      lbu = [];
-      ubu = [];
+      ubu   = [];
+      lbu   = [];
+      Au    = sparse(0,0);
+    elseif nargin == 6
+      zu    = [];
+      zl    = [];
+      z0    = [];
+      Cw    = [];
+      H     = [];
+      fparm = [];
+      N     = [];
+      mpopt = mpoption;
+      ubu   = [];
+      lbu   = [];
+      Au    = sparse(0,0);
     end
   else
     error('tspopf.m: Incorrect input parameter order, number or type');
