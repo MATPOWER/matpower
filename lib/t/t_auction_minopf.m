@@ -24,7 +24,7 @@ t_begin(n_tests, quiet);
 if ~have_fcn('smartmarket')
     t_skip(n_tests, 'smartmarket code not available');
 elseif ~have_fcn('minopf')
-    t_skip(n_tests, 't_auction requires MINOPF');
+    t_skip(n_tests, 't_auction_minopf requires MINOPF');
 else
     mpopt = mpoption('OPF_ALG', 500, 'OUT_ALL_LIM', 1, 'OUT_BRANCH', 0, 'OUT_SYS_SUM', 0, 'OUT_ALL', 0, 'VERBOSE', 0);
     q = [
