@@ -282,7 +282,7 @@ else
         runmkt('t_auction_case', q, p, 1110, 100, [], [], mpopt);
     cp1 = cp;
     t_is( cq, cq5, 8, [t ' : quantities'] );
-    t_is( cp, cp5, 5, [t ' : prices'] );
+    t_is( cp, cp5, 4, [t ' : prices'] );
     
     t = 'marginal offer @ $50, bid @ $54.50, auction_type = 2';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
@@ -315,7 +315,7 @@ else
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p, 1160, 100, [], [], mpopt);
     t_is( cq, cq5, 8, [t ' : quantities'] );
-    t_is( cp, cp5, 8, [t ' : prices'] );
+    t_is( cp, cp5, 4, [t ' : prices'] );
     
     t = 'marginal offer @ $50, bid @ $54.50, auction_type = 7';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
@@ -327,7 +327,7 @@ else
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p, 1180, 100, [], [], mpopt);
     t_is( cq, cq5, 8, [t ' : quantities'] );
-    t_is( cp, cp5, 5, [t ' : prices'] );
+    t_is( cp, cp5, 4, [t ' : prices'] );
     
     t = 'marginal offer @ $50, bid @ $54.50, auction_type = 0';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
