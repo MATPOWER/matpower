@@ -277,6 +277,8 @@ else % AC optimal power flow requested
   if mpopt(11) == 0  % OPF_ALG not set, choose best option
     if have_fcn('minopf')
       mpopt(11) = 500; % MINOS generalized
+    elseif have_fcn('pdipmopf')
+      mpopt(11) = 540; % PDIPM generalized
     elseif have_fcn('fmincon')
       mpopt(11) = 520; % FMINCON generalized
     %% use default for this cost model

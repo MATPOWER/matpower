@@ -40,7 +40,7 @@ function [options, names] = mpoption(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p1
 %   OPF options
 %       11 - OPF_ALG, 0             algorithm to use for OPF
 %           [    0 - choose best default solver available in the        ]
-%           [        following order, 500, 520 then 100/200             ]
+%           [        following order, 500, 540, 520 then 100/200        ]
 %           [ Otherwise the first digit specifies the problem           ]
 %           [ formulation and the second specifies the solver,          ]
 %           [ as follows, (see the User's Manual for more details)      ]
