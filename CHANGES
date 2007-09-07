@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 3.1b2
 -------------------
 
+9/7/07
+    - Fixed bug in pfsoln.m which caused incorrect value for Qg when
+      Qmin == Qmax for all generators at a bus.
+
 7/6/07
     - Added ability in opf.m and fmincopf.m to specify initial value
       and bounds on user variables via new input arguments z0, zl, zh.

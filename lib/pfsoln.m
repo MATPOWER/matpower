@@ -54,21 +54,29 @@ gen(on, QG) = imag(Sg) * baseMVA + bus(gbus, QD);   %% inj Q + local Qd
 %% to the reactive range of the generator.
 
 if length(on) > 1
-    %% build connection matrix, element i, j is 1 if gen on(j) at bus i is ON
+    %% build connection matrix, element i, j is 1 if gen on(i) at bus j is ON
     nb = size(bus, 1);
     ngon = size(on, 1);
     Cg = sparse([1:ngon]', gbus, ones(ngon, 1), ngon, nb);
 
     %% divide Qg by number of generators at the bus to distribute equally
-    gen(on, QG) = gen(on, QG) ./ (Cg * sum(Cg)');
+    ngb = sum(Cg)';         %% nb x 1, number of gens at this bus
+    ngg = Cg * sum(Cg)';    %% ngon x 1, number of gens at this gen's bus
+    gen(on, QG) = gen(on, QG) ./ ngg;
+    
     
     %% divide proportionally
     Cmin = sparse([1:ngon]', gbus, gen(on, QMIN), ngon, nb);
     Cmax = sparse([1:ngon]', gbus, gen(on, QMAX), ngon, nb);
     Qg_tot = Cg' * gen(on, QG);     %% nb x 1 vector of total Qg at each bus
+    Qg_min = sum(Cmin)';            %% nb x 1 vector of min total Qg at each bus
+    Qg_max = sum(Cmax)';            %% nb x 1 vector of max total Qg at each bus
+    ig = find(Cg * Qg_min == Cg * Qg_max);  %% gens at buses with Qg range = 0
+    Qg_save = gen(on(ig), QG);
     gen(on, QG) = gen(on, QMIN) + ...
-        (Cg * ((Qg_tot - sum(Cmin)')./(sum(Cmax)' - sum(Cmin)' + eps))) .* ...
-            (gen(on, QMAX) - gen(on, QMIN));    %% avoid div by 0 ^
+        (Cg * ((Qg_tot - Qg_min)./(Qg_max - Qg_min + eps))) .* ...
+            (gen(on, QMAX) - gen(on, QMIN));    %%    ^ avoid div by 0
+    gen(on(ig), QG) = Qg_save;
 end                                             %% (terms are mult by 0 anyway)
 
 %% update Pg for swing bus
