@@ -18,6 +18,11 @@ Changes since 3.1b2
 9/7/07
     - Fixed bug in pfsoln.m which caused incorrect value for Qg when
       Qmin == Qmax for all generators at a bus.
+    - Added 5 larger scale (> 2000 bus) cases for Polish system.
+      Thanks to Roman Korab <roman.korab@polsl.pl>.
+    - Modified default OPF algorithm selection to use PDIPMOPF
+      if available and MINOPF is not. Order of precedence is now
+      500, 540, 520, 100/200.
 
 7/6/07
     - Added ability in opf.m and fmincopf.m to specify initial value
