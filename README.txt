@@ -2,7 +2,7 @@
  MATPOWER - A Matlab Power System Simulation Package
 =====================================================
 
-Version:    3.1b2
+Version:    3.2
 
 Home Page:  http://www.pserc.cornell.edu/matpower/
 
@@ -10,7 +10,7 @@ Authors:    Ray Zimmerman               <rz10@cornell.edu>
             Carlos E. Murillo-Sanchez   <carlos_murillo@ieee.org>
             Deqiang (David) Gan         <dgan@zju.edu.cn>
 
-            Fri, Sep 15, 2006
+            Tue, Sep 11, 2007
 
 $Id$
 Copyright (c) 1997-2006 by Power System Engineering Research Center (PSERC)
@@ -54,7 +54,7 @@ MATPOWER can be downloaded from the MATPOWER home page above.
 
 System Requirements
 -------------------
-    - Matlab version 5 or later
+    - Matlab version 6 or later
     - Matlab Optimization Toolbox (required only for some OPF algorithms)
 
 Installation
@@ -95,37 +95,48 @@ Matlab path, and type:
 
 
 ---------------------------
- WHAT'S NEW IN VERSION 3.0
+ WHAT'S NEW IN VERSION 3.2
 ---------------------------
 
-Below is a summary of the changes since version 2.0 of MATPOWER. See the
+Below is a summary of the changes since version 3.0 of MATPOWER. See the
 CHANGES file in the docs directory for all the gory details.
 
 New features:
-- Compatibility with Matlab 7 and Optimization Toolbox 3.
-- DC power flow and DC OPF solvers added.
-- Option to enforce generator reactive power limits in AC power flow solution.
-- Gauss-Seidel power flow solver added.
-- Support for MINOS-based OPF solver added (separate package,
-  see http://www.pserc.cornell.edu/minopf/ for more details)
-- Multiple generators at a single bus.
-- Saving of solved cases as M-files or MAT-files.
-- Loading of input data from M-files, MAT-files, or structs.
-- Improved decommitment algorithm.
-- Added a very incomplete test suite.
-- Handling of dispatchable loads in OPF, modeled as negative
-  generators with constant power factor constraint.
+- AC OPF formulation enhancements
+  - new generalized cost model
+  - piece-wise linear generator PQ capability curves
+  - branch angle difference constraints
+  - option to use current magnitude for line flow limits
+	(Set OPF_FLOW_LIM to 2, fmincopf solver only)
+- AC OPF solvers
+  - support for TSPOPF, a new optional package of three OPF solvers,
+    implemented as C MEX files, suitable for large scale systems
+  - ability to specify initial value and bounds on user variables z
+- New case file format (v. 2)
+  - all data in a single struct
+  - generator PQ capability curves
+  - generator ramp rates
+  - branch angle difference limits
+- New function to build DC PDTF matrix (makePTDF.m)
+- Added 5 larger scale (> 2000 bus) cases for Polish system.
+  (Thanks to Roman Korab).
+- Improved identification of binding constraints in printout.
+- Many new tests in test suite.
 
 Bugs fixed:
-- Phase shifters shifted the wrong direction.
-- Minor fixes to IEEE CDF to MATPOWER format conversion
-  (reported by D. Devaraj and Venkat)
-- Flows on out-of-service lines were not being zeroed out.
-  (reported by Ramazan Caglar)
-- Reported total inter-tie flow values and area export values
-  were incorrect.
-- Several other bugs in solution printouts.
+- Phase shifters shifted the wrong direction, again (v.2 had it right).
+- Fixed bug in pfsoln.m which caused incorrect value for Qg when
+  Qmin == Qmax for all generators at a bus in power flow solution.
 
+INCOMPATIBLE CHANGES:
+- User supplied A matrix for general linear constraints in OPF no
+  longer includes columns for helper variables for piecewise linear
+  gen costs, and now requires columns for all x (OPF) variables.
+- Changed the sign convention used for phase shifters to be consistent
+  with PTI, PowerWorld, PSAT, etc. E.g. A phase shift of 10 deg now
+  means the voltage at the "to" end is delayed by 10 degrees.
+- Name of option 24 in mpoption changed from OPF_P_LINE_LIM to
+  OPF_FLOW_LIM.
 
 ---------------
  DOCUMENTATION
@@ -155,12 +166,16 @@ the source code *is* the documentation ;-)
  OPTIONAL PACKAGES
 -------------------
 
-There are two optional packages to enhance the performance of MATPOWER
-that may be downloaded separately. Both have more restrictive licenses
-than MATPOWER. Please see the individual Terms of Use for details.
+There are three optional packages to enhance the performance of MATPOWER
+that may be downloaded separately. MINOPF and BPMPDMEX have more
+restrictive licenses than MATPOWER. Please see the individual
+Terms of Use for details.
 
- - MINOPF      A MINOS-based OPF solver which is typically much faster than
-               MATPOWER's other OPF solvers.
+ - TSPOPF      A package of three AC OPF solvers implemented as C MEX files.
+               Suitable for larger scale problems.
+               See http://www.pserc.cornell.edu/tspopf/
+
+ - MINOPF      A MINOS-based AC OPF solver implemented as a Fortran MEX file.
                See http://www.pserc.cornell.edu/minopf/
 
  - BPMPD_MEX   MEX-file version of the high performance BPMPD interior
@@ -193,10 +208,10 @@ making it available on the MATPOWER web site.
 Joining the list
 ----------------
 To join the MATPOWER mailing list, send an e-mail to
-<listproc@cornell.edu> with the following line in the body of the
+<lyris@cornell.edu> with the following line in the body of the
 message, where "John Doe" is replaced by your real name.
 
-    subscribe MATPOWER-L John Doe
+    join MATPOWER-L "John Doe"
 
 Sending mail to the list
 ------------------------
@@ -207,7 +222,7 @@ subscribers are permitted to send e-mail to the list.
 Leaving the list
 ----------------
 You can unsubscribe from the list at any time by sending an e-mail to
-<listproc@cornell.edu> with the following line in the body of the
+<lyris@cornell.edu> with the following line in the body of the
 message.
 
-    unsubscribe MATPOWER-L
+    leave MATPOWER-L
