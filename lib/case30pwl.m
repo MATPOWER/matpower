@@ -112,7 +112,7 @@ areas = [
 ];
 
 %% generator cost data
-%	1	startup	shutdown	n	x0	y0	...	xn	yn
+%	1	startup	shutdown	n	x1	y1	...	xn	yn
 %	2	startup	shutdown	n	c(n-1)	...	c0
 gencost = [
 	1	0	0	4	0	0	12	144	36	1008	60	2832;
