@@ -8,15 +8,18 @@ maintained by Ray Zimmerman <rz10@cornell.edu>
 
 MATPOWER
 $Id$
-Copyright (c) 1996-2006 by Power System Engineering Research Center (PSERC)
+Copyright (c) 1996-2007 by Power System Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
 
 
 Changes since 3.1b2
 -------------------
 
-9/11/07
+9/21/07
     - Released version 3.2.
+
+9/17/07
+    - Added option to cdf2matp.m to specify output case file version.
 
 9/7/07
     - Fixed bug in pfsoln.m which caused incorrect value for Qg when
