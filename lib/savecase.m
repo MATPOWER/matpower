@@ -164,10 +164,10 @@ else                                %% M-file
     end
     if length(comment) ~= 0
         if isstr(comment)
-            fprintf(fd, '%% %s\n', comment);
+            fprintf(fd, '%%%s\n', comment);
         elseif iscell(comment)
             for k = 1:length(comment)
-                fprintf(fd, '%% %s\n', comment{k});
+                fprintf(fd, '%%%s\n', comment{k});
             end
         end
     end
