@@ -98,45 +98,46 @@ Matlab path, and type:
  WHAT'S NEW IN VERSION 3.2
 ---------------------------
 
-Below is a summary of the changes since version 3.0 of MATPOWER. See the
+Below is a summary of the changes since version 3.0.0 of MATPOWER. See the
 CHANGES file in the docs directory for all the gory details.
 
-New features:
-- AC OPF formulation enhancements
-  - new generalized cost model
-  - piece-wise linear generator PQ capability curves
-  - branch angle difference constraints
-  - option to use current magnitude for line flow limits
-	(Set OPF_FLOW_LIM to 2, fmincopf solver only)
-- AC OPF solvers
-  - support for TSPOPF, a new optional package of three OPF solvers,
-    implemented as C MEX files, suitable for large scale systems
-  - ability to specify initial value and bounds on user variables z
-- New case file format (v. 2)
-  - all data in a single struct
-  - generator PQ capability curves
-  - generator ramp rates
-  - branch angle difference limits
-- New function to build DC PDTF matrix (makePTDF.m)
-- Added 5 larger scale (> 2000 bus) cases for Polish system.
-  (Thanks to Roman Korab).
-- Improved identification of binding constraints in printout.
-- Many new tests in test suite.
-
-Bugs fixed:
-- Phase shifters shifted the wrong direction, again (v.2 had it right).
-- Fixed bug in pfsoln.m which caused incorrect value for Qg when
-  Qmin == Qmax for all generators at a bus in power flow solution.
-
-INCOMPATIBLE CHANGES:
-- User supplied A matrix for general linear constraints in OPF no
-  longer includes columns for helper variables for piecewise linear
-  gen costs, and now requires columns for all x (OPF) variables.
-- Changed the sign convention used for phase shifters to be consistent
-  with PTI, PowerWorld, PSAT, etc. E.g. A phase shift of 10 deg now
-  means the voltage at the "to" end is delayed by 10 degrees.
-- Name of option 24 in mpoption changed from OPF_P_LINE_LIM to
-  OPF_FLOW_LIM.
+* New features:
+  - AC OPF formulation enhancements
+    - new generalized cost model
+    - piece-wise linear generator PQ capability curves
+    - branch angle difference constraints
+    - simplified interface for specifying additional linear constraints
+    - option to use current magnitude for line flow limits
+      (Set OPF_FLOW_LIM to 2, fmincopf solver only)
+  - AC OPF solvers
+    - support for TSPOPF, a new optional package of three OPF solvers,
+      implemented as C MEX files, suitable for large scale systems
+    - ability to specify initial value and bounds on user variables z
+  - New (v. 2) case file format
+    - all data in a single struct
+    - generator PQ capability curves
+    - generator ramp rates
+    - branch angle difference limits
+  - New function to build DC PDTF matrix (makePTDF.m)
+  - Added 5 larger scale (> 2000 bus) cases for Polish system.
+    (Thanks to Roman Korab).
+  - Improved identification of binding constraints in printout.
+  - Many new tests in test suite.
+  
+* Bugs fixed:
+  - Phase shifters shifted the wrong direction, again (v.2 had it right).
+  - Fixed bug in pfsoln.m which caused incorrect value for Qg when
+    Qmin == Qmax for all generators at a bus in power flow solution.
+  
+* INCOMPATIBLE CHANGES:
+  - User supplied A matrix for general linear constraints in OPF no
+    longer includes columns for helper variables for piecewise linear
+    gen costs, and now requires columns for all x (OPF) variables.
+  - Changed the sign convention used for phase shifters to be consistent
+    with PTI, PowerWorld, PSAT, etc. E.g. A phase shift of 10 deg now
+    means the voltage at the "to" end is delayed by 10 degrees.
+  - Name of option 24 in mpoption changed from OPF_P_LINE_LIM to
+    OPF_FLOW_LIM.
 
 ---------------
  DOCUMENTATION
