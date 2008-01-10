@@ -54,23 +54,22 @@ Ytf = - Ys ./ tap;
 %% i.e. Ysh = Psh + j Qsh, so ...
 Ysh = (bus(:, GS) + j * bus(:, BS)) / baseMVA;  %% vector of shunt admittances
 
-%% build Ybus
+%% build connection matrices
 f = branch(:, F_BUS);                           %% list of "from" buses
 t = branch(:, T_BUS);                           %% list of "to" buses
-Cf = sparse(f, 1:nl, ones(nl, 1), nb, nl);      %% connection matrix for line & from buses
-Ct = sparse(t, 1:nl, ones(nl, 1), nb, nl);      %% connection matrix for line & to buses
-Ybus = spdiags(Ysh, 0, nb, nb) + ...            %% shunt admittance
-    Cf * spdiags(Yff, 0, nl, nl) * Cf' + ...    %% Yff term of branch admittance
-    Cf * spdiags(Yft, 0, nl, nl) * Ct' + ...    %% Yft term of branch admittance
-    Ct * spdiags(Ytf, 0, nl, nl) * Cf' + ...    %% Ytf term of branch admittance
-    Ct * spdiags(Ytt, 0, nl, nl) * Ct';         %% Ytt term of branch admittance
+Cf = sparse(1:nl, f, ones(nl, 1), nl, nb);      %% connection matrix for line & from buses
+Ct = sparse(1:nl, t, ones(nl, 1), nl, nb);      %% connection matrix for line & to buses
 
-%% Build Yf and Yt such that Yf * V is the vector of complex branch currents injected
+%% build Yf and Yt such that Yf * V is the vector of complex branch currents injected
 %% at each branch's "from" bus, and Yt is the same for the "to" bus end
-if nargout > 1
-    i = [[1:nl]'; [1:nl]'];     %% double set of row indices    
-    Yf = sparse(i, [f; t], [Yff; Yft], nl, nb);
-    Yt = sparse(i, [f; t], [Ytf; Ytt], nl, nb);
-end
+i = [[1:nl]'; [1:nl]'];                         %% double set of row indices
+Yf = sparse(i, [f; t], [Yff; Yft], nl, nb);
+Yt = sparse(i, [f; t], [Ytf; Ytt], nl, nb);
+% Yf = spdiags(Yff, 0, nl, nl) * Cf + spdiags(Yft, 0, nl, nl) * Ct;
+% Yt = spdiags(Ytf, 0, nl, nl) * Cf + spdiags(Ytt, 0, nl, nl) * Ct;
+
+%% build Ybus
+Ybus = Cf' * Yf + Ct' * Yt + ...                %% branch admittances
+        spdiags(Ysh, 0, nb, nb);                %% shunt admittance
 
 return;

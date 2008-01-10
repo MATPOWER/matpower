@@ -47,26 +47,22 @@ i = find(branch(:, TAP));                       %% indices of non-zero tap ratio
 tap(i) = branch(i, TAP);                        %% assign non-zero tap ratios
 b = b ./ tap;
 
-%% build Bbus
+%% build connection matrix Cft = Cf - Ct for line and from - to buses
 f = branch(:, F_BUS);                           %% list of "from" buses
 t = branch(:, T_BUS);                           %% list of "to" buses
-Cf = sparse(f, 1:nl, ones(nl, 1), nb, nl);      %% connection matrix for line & from buses
-Ct = sparse(t, 1:nl, ones(nl, 1), nb, nl);      %% connection matrix for line & to buses
-Bbus =  Cf * spdiags(b, 0, nl, nl) * Cf' + ...  %% Bff term of branch admittance
-        Cf * spdiags(-b, 0, nl, nl) * Ct' + ... %% Bft term of branch admittance
-        Ct * spdiags(-b, 0, nl, nl) * Cf' + ... %% Btf term of branch admittance
-        Ct * spdiags(b, 0, nl, nl) * Ct';       %% Btt term of branch admittance
+i = [[1:nl]'; [1:nl]'];                          %% double set of row indices
+Cft = sparse(i, [f;t], [ones(nl, 1); -ones(nl, 1)], nl, nb);    %% connection matrix
+
+%% build Bf such that Bf * Va is the vector of real branch powers injected
+%% at each branch's "from" bus
+Bf = sparse(i, [f; t], [b; -b]);    % = spdiags(b, 0, nl, nl) * Cft;
+
+%% build Bbus
+Bbus = Cft' * Bf;
 
 %% build phase shift injection vectors
 Pfinj = b .* (-branch(:, SHIFT) * pi/180);      %% injected at the from bus ...
     % Ptinj = -Pfinj;                           %% ... and extracted at the to bus
-Pbusinj = (Cf - Ct) * Pfinj;                    %% Pbusinj = Cf * Pfinj + Ct * Ptinj;
-
-%% Build Bf such that Bf * Va is the vector of real branch powers injected
-%% at each branch's "from" bus
-if nargout > 1
-    i = [[1:nl]'; [1:nl]'];     %% double set of row indices    
-    Bf = sparse(i, [f; t], [b; -b]);
-end
+Pbusinj = Cft' * Pfinj;                         %% Pbusinj = Cf * Pfinj + Ct * Ptinj;
 
 return;
