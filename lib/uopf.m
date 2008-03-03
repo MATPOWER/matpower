@@ -1,8 +1,28 @@
 function [bus0, gen0, branch0, f0, success0, et] = ...
-        uopf(baseMVA, bus, gen, gencost, branch, areas, mpopt)
+        uopf(baseMVA, bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt, ...
+        N, fparm, H, Cw, z0, zl, zu)
 %UOPF  Solves combined unit decommitment / optimal power flow.
-%   [bus, gen, branch, f, success, et] = uopf(baseMVA, bus, gen, gencost, ...
-%                   branch, areas, mpopt)
+%
+%   [bus, gen, branch, f, success] = uopf(casefile, mpopt)
+%
+%   [bus, gen, branch, f, success] = uopf(casefile, A, l, u, mpopt)
+%
+%   [bus, gen, branch, f, success] = uopf(baseMVA, bus, gen, branch, ...
+%                                    areas, gencost, mpopt)
+%
+%   [bus, gen, branch, f, success] = uopf(baseMVA, bus, gen, branch, ...
+%                                    areas, gencost, A, l, u, mpopt)
+%
+%   [bus, gen, branch, f, success] = uopf(baseMVA, bus, gen, branch, ...
+%                                    areas, gencost, A, l, u, mpopt, ...
+%                                    N, fparm, H, Cw)
+%
+%   [bus, gen, branch, f, success] = uopf(baseMVA, bus, gen, branch, ...
+%                                    areas, gencost, A, l, u, mpopt, ...
+%                                    N, fparm, H, Cw, z0, zl, zu)
+%
+%   [bus, gen, branch, f, success, et] = uopf(casefile)
+%
 %   Solves a combined unit decommitment and optimal power flow for a single
 %   time period. Uses an algorithm similar to dynamic programming. It proceeds
 %   through a sequence of stages, where stage N has N generators shut down,
@@ -17,8 +37,168 @@ function [bus0, gen0, branch0, f0, success0, et] = ...
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2006 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2008 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
+
+% Sort out input arguments
+if isstr(baseMVA) | isstruct(baseMVA)   % passing filename or struct
+  %---- uopf(baseMVA,  bus, gen, branch, areas, gencost, Au,    lbu, ubu, mpopt, N,  fparm, H, Cw, z0, zl, zu)
+  % 12  uopf(casefile, Au,  lbu, ubu,    mpopt, N,       fparm, H,   Cw,  z0,    zl, zu)
+  % 9   uopf(casefile, Au,  lbu, ubu,    mpopt, N,       fparm, H,   Cw)
+  % 5   uopf(casefile, Au,  lbu, ubu,    mpopt)
+  % 4   uopf(casefile, Au,  lbu, ubu)
+  % 2   uopf(casefile, mpopt)
+  % 1   uopf(casefile)
+  if any(nargin == [1, 2, 4, 5, 9, 12])
+    casefile = baseMVA;
+    if nargin == 12
+      zu    = fparm;
+      zl    = N;
+      z0    = mpopt;
+      Cw    = ubu;
+      H     = lbu;
+      fparm = Au;
+      N     = gencost;
+      mpopt = areas;
+      ubu   = branch;
+      lbu   = gen;
+      Au    = bus;
+    elseif nargin == 9
+      zu    = [];
+      zl    = [];
+      z0    = [];
+      Cw    = ubu;
+      H     = lbu;
+      fparm = Au;
+      N     = gencost;
+      mpopt = areas;
+      ubu   = branch;
+      lbu   = gen;
+      Au    = bus;
+    elseif nargin == 5
+      zu    = [];
+      zl    = [];
+      z0    = [];
+      Cw    = [];
+      H     = [];
+      fparm = [];
+      N     = [];
+      mpopt = areas;
+      ubu   = branch;
+      lbu   = gen;
+      Au    = bus;
+    elseif nargin == 4
+      zu    = [];
+      zl    = [];
+      z0    = [];
+      Cw    = [];
+      H     = [];
+      fparm = [];
+      N     = [];
+      mpopt = mpoption;
+      ubu   = branch;
+      lbu   = gen;
+      Au    = bus;
+    elseif nargin == 2
+      zu    = [];
+      zl    = [];
+      z0    = [];
+      Cw    = [];
+      H     = [];
+      fparm = [];
+      N     = [];
+      mpopt = bus;
+      ubu   = [];
+      lbu   = [];
+      Au    = sparse(0,0);
+    elseif nargin == 1
+      zu    = [];
+      zl    = [];
+      z0    = [];
+      Cw    = [];
+      H     = [];
+      fparm = [];
+      N     = [];
+      mpopt = mpoption;
+      ubu   = [];
+      lbu   = [];
+      Au    = sparse(0,0);
+    end
+  else
+    error('uopf.m: Incorrect input parameter order, number or type');
+  end
+  [baseMVA, bus, gen, branch, areas, gencost] = loadcase(casefile);
+else    % passing individual data matrices
+  %---- uopf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu, mpopt, N, fparm, H, Cw, z0, zl, zu)
+  % 17  uopf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu, mpopt, N, fparm, H, Cw, z0, zl, zu)
+  % 14  uopf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu, mpopt, N, fparm, H, Cw)
+  % 10  uopf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu, mpopt)
+  % 9   uopf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu)
+  % 7   uopf(baseMVA, bus, gen, branch, areas, gencost, mpopt)
+  % 6   uopf(baseMVA, bus, gen, branch, areas, gencost)
+  if any(nargin == [6, 7, 9, 10, 14, 17])
+    if nargin == 14
+      zu    = [];
+      zl    = [];
+      z0    = [];
+    elseif nargin == 10
+      zu    = [];
+      zl    = [];
+      z0    = [];
+      Cw    = [];
+      H     = [];
+      fparm = [];
+      N     = [];
+    elseif nargin == 9
+      zu    = [];
+      zl    = [];
+      z0    = [];
+      Cw    = [];
+      H     = [];
+      fparm = [];
+      N     = [];
+      mpopt = mpoption;
+    elseif nargin == 7
+      zu    = [];
+      zl    = [];
+      z0    = [];
+      Cw    = [];
+      H     = [];
+      fparm = [];
+      N     = [];
+      mpopt = Au;
+      ubu   = [];
+      lbu   = [];
+      Au    = sparse(0,0);
+    elseif nargin == 6
+      zu    = [];
+      zl    = [];
+      z0    = [];
+      Cw    = [];
+      H     = [];
+      fparm = [];
+      N     = [];
+      mpopt = mpoption;
+      ubu   = [];
+      lbu   = [];
+      Au    = sparse(0,0);
+    end
+  else
+    error('uopf.m: Incorrect input parameter order, number or type');
+  end
+end
+if size(N, 1) > 0
+  if size(N, 1) ~= size(fparm, 1) | size(N, 1) ~= size(H, 1) | ...
+     size(N, 1) ~= size(H, 2) | size(N, 1) ~= length(Cw)
+    error('uopf.m: wrong dimensions in generalized cost parameters');
+  end
+  if size(Au, 1) > 0 & size(N, 2) ~= size(Au, 2)
+    error('uopf.m: A and N must have the same number of columns');
+  end
+end
+if isempty(mpopt)
+  mpopt = mpoption;
+end
 
 %%----- initialization -----
 count       = 0;
@@ -73,7 +253,8 @@ end
 
 %% run initial opf
 [bus, gen, branch, f, success, info, et] = opf(baseMVA, bus, gen, branch, ...
-                                   areas, gencost, mpopt);
+                areas, gencost, Au, lbu, ubu, ...
+                mpopt, N, fparm, H, Cw, z0, zl, zu);
 
 %% best case so far
 bus1 = bus;
@@ -109,7 +290,8 @@ while 1
         
         %% run opf
         [bus, gen, branch, f, success, info, et] = opf(baseMVA, bus0, gen, branch0, ...
-                                           areas, gencost, mpopt);
+                                        areas, gencost, Au, lbu, ubu, ...
+                                        mpopt, N, fparm, H, Cw, z0, zl, zu);
         
         %% something better?
         if success & f < f1
