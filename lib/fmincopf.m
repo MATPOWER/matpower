@@ -37,10 +37,9 @@ function [busout, genout, branchout, f, success, info, et, g, jac, x, pimul] = .
 %   N, fparm, H and Cw are specified.  First, a linear transformation
 %   of the optimization variables is defined by means of r = N * [x; z].
 %   Then, to each element of r a function is applied as encoded in the
-%   fparm matrix (see manual or type 'help generalcost').  If the
-%   resulting vector is now named w, then H and Cw define a quadratic
-%   cost on w:  (1/2)*w'*H*w + Cw * w . H and N should be sparse matrices
-%   and H should also be symmetric.
+%   fparm matrix (see manual).  If the resulting vector is now named w,
+%   then H and Cw define a quadratic cost on w: (1/2)*w'*H*w + Cw * w .
+%   H and N should be sparse matrices and H should also be symmetric.
 %
 %   The optional mpopt vector specifies MATPOWER options. Type 'help mpoption'
 %   for details and default values.
@@ -57,8 +56,8 @@ function [busout, genout, branchout, f, success, info, et, g, jac, x, pimul] = .
 %   than the number of "x" (OPF) variables, then there are extra linearly
 %   constrained "z" variables.
 %
-%   NOTE: The shadow prices (lambda's and mu's) produced by fmincon appear to
-%         be slightly inaccurate.
+%   NOTE: The shadow prices (lambda's and mu's) produced by some versions of
+%         fmincon appear to be slightly inaccurate.
 
 %   MATPOWER
 %   $Id$
@@ -775,7 +774,7 @@ end
 % constraints and their Jacobian also.
 if nargout > 7
   [g, geq, dg, dgeq] = consfmin(x, baseMVA, bus, gen, gencost, branch, areas,...
-                                Ybus, Yf, Yt, mpopt, parms, ccost);
+                                Ybus, Yf, Yt, mpopt, parms, ccost, N, fparm, H, Cw);
   g = [ geq; g];
   jac = [ dgeq'; dg']; % true Jacobian organization
 end
