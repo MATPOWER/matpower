@@ -636,20 +636,49 @@ if mpopt(19) == 0   % # iterations
 end
 
 % basic optimset options needed for fmincon
-% fmoptions = optimset('GradObj', 'on', 'Hessian', 'on', 'LargeScale', 'on', ...
-%                    'GradConstr', 'on');
-fmoptions = optimset('GradObj', 'on', 'LargeScale', 'off', 'GradConstr', 'on');
+fmoptions = optimset('GradObj', 'on', 'GradConstr', 'on' );
 fmoptions = optimset(fmoptions, 'MaxIter', mpopt(19), 'TolCon', mpopt(16) );
 fmoptions = optimset(fmoptions, 'TolX', mpopt(17), 'TolFun', mpopt(18) );
 fmoptions.MaxFunEvals = 4 * fmoptions.MaxIter;
 if mpopt(31) == 0,
   fmoptions.Display = 'off';
-else
+elseif mpopt(31) == 1
   fmoptions.Display = 'iter';
+else
+  fmoptions.Display = 'testing';
 end
 
-Af = full(Af);
-Afeq = full(Afeq);
+% select algorithm
+otver = ver('optim');
+if str2num(otver.Version(1)) < 4
+  fmoptions = optimset(fmoptions, 'LargeScale', 'off');
+  Af = full(Af);
+  Afeq = full(Afeq);
+  if str2num(otver.Version(1)) < 3
+     % can't handle sparse constraint gradients
+     mpopt = mpoption(mpopt, 'FMC_NON_SPARSE', 1);
+  end
+else
+  if mpopt(55) == 1           %% active-set
+    fmoptions = optimset(fmoptions, 'Algorithm', 'active-set');
+    Af = full(Af);
+    Afeq = full(Afeq);
+  elseif mpopt(55) == 2       %% interior-point, w/ default 'bfgs' Hessian approx
+    fmoptions = optimset(fmoptions, 'Algorithm', 'interior-point');
+  elseif mpopt(55) == 3       %% interior-point, w/ 'lbfgs' Hessian approx
+    fmoptions = optimset(fmoptions, 'Algorithm', 'interior-point', 'Hessian','lbfgs');
+  elseif mpopt(55) == 4       %% interior-point, w/ exact user-supplied Hessian
+    fmoptions = optimset(fmoptions, 'Algorithm', 'interior-point', ...
+        'Hessian', 'user-supplied', 'HessFcn', @hessfmin);
+  elseif mpopt(55) == 5       %% interior-point, w/ finite-diff Hessian
+    fmoptions = optimset(fmoptions, 'Algorithm', 'interior-point', 'Hessian','fin-diff-grads', 'SubProblem', 'cg');
+  else
+    error('fmincopf: unknown algorithm specified in FMC_ALG option');
+  end
+end
+% fmoptions = optimset(fmoptions, 'DerivativeCheck', 'on', 'FinDiffType', 'central', 'FunValCheck', 'on');
+% fmoptions = optimset(fmoptions, 'Diagnostics', 'on');
+
 [x, f, info, Output, Lambda, Jac] = ...
   fmincon('costfmin', x0, Af, bf, Afeq, bfeq, LB, UB, 'consfmin', fmoptions, ...
          baseMVA, bus, gen, gencost, branch, areas, Ybus, Yf, Yt, mpopt, ...
