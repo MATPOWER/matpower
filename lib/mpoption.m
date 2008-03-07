@@ -124,6 +124,16 @@ function [options, names] = mpoption(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p1
 %   other options
 %       51 - SPARSE_QP, 1           pass sparse matrices to QP and LP
 %                                   solvers if possible     [   0 or 1  ]
+%   fmincon options
+%       55 - FMC_ALG, 1             algorithm used by fmincon for OPF
+%                                   for Optimization Toolbox 4 and later
+%            [  1 - active-set                                          ]
+%            [  2 - interior-point, w/default 'bfgs' Hessian approx     ]
+%            [  3 - interior-point, w/ 'lbfgs' Hessian approx           ]
+%            [  4 - interior-point, w/exact user-supplied Hessian       ]
+%       56 - FMC_NON_SPARSE, 0      force use of non-sparse matrices for
+%             (1 for Opt Tbx < 3)   constraint gradients    [   0 or 1  ]
+%
 %   MINOPF options
 %       61 - MNS_FEASTOL, 0 (1E-3)  primal feasibility tolerance,
 %                                   set to value of OPF_VIOLATION by default
@@ -198,7 +208,7 @@ else                    %% even number of parameters
         0;      %% 10 - PF_DC
         
         %% OPF options
-        0;      %% 11 - OPF_ALG_POLY
+        0;      %% 11 - OPF_ALG
         100;    %% 12 - OPF_ALG_POLY
         200;    %% 13 - OPF_ALG_PWL
         10;     %% 14 - OPF_POLY2PWL_PTS
@@ -247,8 +257,8 @@ else                    %% even number of parameters
         0;      %% 52 - RESERVED52
         0;      %% 53 - RESERVED53
         0;      %% 54 - RESERVED54
-        0;      %% 55 - RESERVED55
-        0;      %% 56 - RESERVED56
+        1;      %% 55 - FMC_ALG
+        0;      %% 56 - FMC_NON_SPARSE
         0;      %% 57 - RESERVED57
         0;      %% 58 - RESERVED58
         0;      %% 59 - RESERVED59
@@ -359,8 +369,8 @@ names = str2mat(    names, ...
                     'RESERVED52', ...           %% 52
                     'RESERVED53', ...           %% 53
                     'RESERVED54', ...           %% 54
-                    'RESERVED55', ...           %% 55
-                    'RESERVED56', ...           %% 56
+                    'FMC_ALG', ...              %% 55
+                    'FMC_NON_SPARSE', ...       %% 56
                     'RESERVED57', ...           %% 57
                     'RESERVED58', ...           %% 58
                     'RESERVED59', ...           %% 59
