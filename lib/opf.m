@@ -41,10 +41,9 @@ function [buso, gen, branch, f, success, info, et, g, jac, xr, pimul] = ...
 %   N, fparm, H and Cw are specified.  First, a linear transformation
 %   of the optimization variables is defined by means of r = N * [x; z].
 %   Then, to each element of r a function is applied as encoded in the
-%   fparm matrix (see manual or type 'help generalcost').  If the
-%   resulting vector is now named w, then H and Cw define a quadratic
-%   cost on w:  (1/2)*w'*H*w + Cw * w . H and N should be sparse matrices
-%   and H should also be symmetric.
+%   fparm matrix (see manual).  If the resulting vector is now named w,
+%   then H and Cw define a quadratic cost on w: (1/2)*w'*H*w + Cw * w .
+%   H and N should be sparse matrices and H should also be symmetric.
 %
 %   The additional linear constraints and generalized cost are only available
 %   for solvers which use the generalized formulation, namely fmincon and
@@ -216,7 +215,7 @@ else    % passing individual data matrices
       Au    = sparse(0,0);
     end
   else
-    error('tspopf.m: Incorrect input parameter order, number or type');
+    error('opf.m: Incorrect input parameter order, number or type');
   end
 end
 if size(N, 1) > 0
