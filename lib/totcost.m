@@ -33,9 +33,8 @@ if ~isempty(gencost)
     end
   end
   for i = ipol'
-    totalcost(i,:)= polyval(gencost(i, COST:(COST+gencost(i, NCOST)-1) ), Pg(i,:) );
+    totalcost(i,:) = polyval(gencost(i, COST:(COST+gencost(i, NCOST)-1) ), Pg(i,:) );
   end
 end
 
 return;
-
