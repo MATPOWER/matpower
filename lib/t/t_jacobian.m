@@ -11,7 +11,7 @@ if nargin < 1
     quiet = 0;
 end
 
-t_begin(12, quiet);
+t_begin(28, quiet);
 
 casefile = 'case30';
 
@@ -24,7 +24,8 @@ casefile = 'case30';
 
 %% run powerflow to get solved case
 opt = mpoption('VERBOSE', 0, 'OUT_ALL', 0);
-[baseMVA, bus, gen, branch, success, et] = runpf(casefile, opt);
+mpc = loadcase(casefile);
+[baseMVA, bus, gen, branch, success, et] = runpf(mpc, opt);
 
 %% switch to internal bus numbering and build admittance matrices
 [i2e, bus, gen, branch] = ext2int(bus, gen, branch);
@@ -33,9 +34,9 @@ Ybus_full   = full(Ybus);
 Yf_full     = full(Yf);
 Yt_full     = full(Yt);
 j = sqrt(-1);
-V = bus(:, VM) .* exp(j * pi/180 * bus(:, VA));
-Vm = abs(V);
-Va = angle(V);
+Vm = bus(:, VM);
+Va = bus(:, VA) * pi/180;
+V = Vm .* exp(j * Va);
 f = branch(:, F_BUS);       %% list of "from" buses
 t = branch(:, T_BUS);       %% list of "to" buses
 nl = length(f);
@@ -53,8 +54,8 @@ dSbus_dVa_sp = full(dSbus_dVa);
 
 %% compute numerically to compare
 Vmp = (Vm*ones(1,nb) + pert*eye(nb,nb)) .* (exp(j * Va) * ones(1,nb));
-num_dSbus_dVm = full( (Vmp .* conj(Ybus * Vmp) - V*ones(1,nb) .* conj(Ybus * V*ones(1,nb))) / pert );
 Vap = (Vm*ones(1,nb)) .* (exp(j * (Va*ones(1,nb) + pert*eye(nb,nb))));
+num_dSbus_dVm = full( (Vmp .* conj(Ybus * Vmp) - V*ones(1,nb) .* conj(Ybus * V*ones(1,nb))) / pert );
 num_dSbus_dVa = full( (Vap .* conj(Ybus * Vap) - V*ones(1,nb) .* conj(Ybus * V*ones(1,nb))) / pert );
 
 t_is(dSbus_dVm_sp, num_dSbus_dVm, 5, 'dSbus_dVm (sparse)');
@@ -74,16 +75,21 @@ dSt_dVa_sp = full(dSt_dVa);
 dSt_dVm_sp = full(dSt_dVm);
 
 %% compute numerically to compare
-Vmp = (Vm*ones(1,nb) + pert*eye(nb,nb)) .* (exp(j * Va) * ones(1,nb));
-Vap = (Vm*ones(1,nb)) .* (exp(j * (Va*ones(1,nb) + pert*eye(nb,nb))));
 Vmpf = Vmp(f,:);
 Vapf = Vap(f,:);
 Vmpt = Vmp(t,:);
 Vapt = Vap(t,:);
-num_dSf_dVm = full( (Vmpf .* conj(Yf * Vmp) - V(f)*ones(1,nb) .* conj(Yf * V*ones(1,nb))) / pert );
-num_dSf_dVa = full( (Vapf .* conj(Yf * Vap) - V(f)*ones(1,nb) .* conj(Yf * V*ones(1,nb))) / pert );
-num_dSt_dVm = full( (Vmpt .* conj(Yt * Vmp) - V(t)*ones(1,nb) .* conj(Yt * V*ones(1,nb))) / pert );
-num_dSt_dVa = full( (Vapt .* conj(Yt * Vap) - V(t)*ones(1,nb) .* conj(Yt * V*ones(1,nb))) / pert );
+Sf2 = (V(f)*ones(1,nb)) .* conj(Yf * V*ones(1,nb));
+St2 = (V(t)*ones(1,nb)) .* conj(Yt * V*ones(1,nb));
+Smpf = Vmpf .* conj(Yf * Vmp);
+Sapf = Vapf .* conj(Yf * Vap);
+Smpt = Vmpt .* conj(Yt * Vmp);
+Sapt = Vapt .* conj(Yt * Vap);
+
+num_dSf_dVm = full( (Smpf - Sf2) / pert );
+num_dSf_dVa = full( (Sapf - Sf2) / pert );
+num_dSt_dVm = full( (Smpt - St2) / pert );
+num_dSt_dVa = full( (Sapt - St2) / pert );
 
 t_is(dSf_dVm_sp, num_dSf_dVm, 5, 'dSf_dVm (sparse)');
 t_is(dSf_dVa_sp, num_dSf_dVa, 5, 'dSf_dVa (sparse)');
@@ -93,6 +99,59 @@ t_is(dSf_dVm_full, num_dSf_dVm, 5, 'dSf_dVm (full)');
 t_is(dSf_dVa_full, num_dSf_dVa, 5, 'dSf_dVa (full)');
 t_is(dSt_dVm_full, num_dSt_dVm, 5, 'dSt_dVm (full)');
 t_is(dSt_dVa_full, num_dSt_dVa, 5, 'dSt_dVa (full)');
+
+%%-----  check dAbr_dV code  -----
+%% full matrices
+[dAf_dVa_full, dAf_dVm_full, dAt_dVa_full, dAt_dVm_full] = ...
+                        dAbr_dV(dSf_dVa_full, dSf_dVm_full, dSt_dVa_full, dSt_dVm_full, Sf, St);
+%% sparse matrices
+[dAf_dVa, dAf_dVm, dAt_dVa, dAt_dVm] = ...
+                        dAbr_dV(dSf_dVa, dSf_dVm, dSt_dVa, dSt_dVm, Sf, St);
+dAf_dVa_sp = full(dAf_dVa);
+dAf_dVm_sp = full(dAf_dVm);
+dAt_dVa_sp = full(dAt_dVa);
+dAt_dVm_sp = full(dAt_dVm);
+
+%% compute numerically to compare
+num_dAf_dVm = full( (abs(Smpf).^2 - abs(Sf2).^2) / pert );
+num_dAf_dVa = full( (abs(Sapf).^2 - abs(Sf2).^2) / pert );
+num_dAt_dVm = full( (abs(Smpt).^2 - abs(St2).^2) / pert );
+num_dAt_dVa = full( (abs(Sapt).^2 - abs(St2).^2) / pert );
+
+t_is(dAf_dVm_sp, num_dAf_dVm, 4, 'dAf_dVm (sparse)');
+t_is(dAf_dVa_sp, num_dAf_dVa, 4, 'dAf_dVa (sparse)');
+t_is(dAt_dVm_sp, num_dAt_dVm, 4, 'dAt_dVm (sparse)');
+t_is(dAt_dVa_sp, num_dAt_dVa, 4, 'dAt_dVa (sparse)');
+t_is(dAf_dVm_full, num_dAf_dVm, 4, 'dAf_dVm (full)');
+t_is(dAf_dVa_full, num_dAf_dVa, 4, 'dAf_dVa (full)');
+t_is(dAt_dVm_full, num_dAt_dVm, 4, 'dAt_dVm (full)');
+t_is(dAt_dVa_full, num_dAt_dVa, 4, 'dAt_dVa (full)');
+
+%%-----  check dIbr_dV code  -----
+%% full matrices
+[dIf_dVa_full, dIf_dVm_full, dIt_dVa_full, dIt_dVm_full, If, It] = dIbr_dV(branch, Yf_full, Yt_full, V);
+
+%% sparse matrices
+[dIf_dVa, dIf_dVm, dIt_dVa, dIt_dVm, If, It] = dIbr_dV(branch, Yf, Yt, V);
+dIf_dVa_sp = full(dIf_dVa);
+dIf_dVm_sp = full(dIf_dVm);
+dIt_dVa_sp = full(dIt_dVa);
+dIt_dVm_sp = full(dIt_dVm);
+
+%% compute numerically to compare
+num_dIf_dVm = full( (Yf * Vmp - Yf * V*ones(1,nb)) / pert );
+num_dIf_dVa = full( (Yf * Vap - Yf * V*ones(1,nb)) / pert );
+num_dIt_dVm = full( (Yt * Vmp - Yt * V*ones(1,nb)) / pert );
+num_dIt_dVa = full( (Yt * Vap - Yt * V*ones(1,nb)) / pert );
+
+t_is(dIf_dVm_sp, num_dIf_dVm, 5, 'dIf_dVm (sparse)');
+t_is(dIf_dVa_sp, num_dIf_dVa, 5, 'dIf_dVa (sparse)');
+t_is(dIt_dVm_sp, num_dIt_dVm, 5, 'dIt_dVm (sparse)');
+t_is(dIt_dVa_sp, num_dIt_dVa, 5, 'dIt_dVa (sparse)');
+t_is(dIf_dVm_full, num_dIf_dVm, 5, 'dIf_dVm (full)');
+t_is(dIf_dVa_full, num_dIf_dVa, 5, 'dIf_dVa (full)');
+t_is(dIt_dVm_full, num_dIt_dVm, 5, 'dIt_dVm (full)');
+t_is(dIt_dVa_full, num_dIt_dVa, 5, 'dIt_dVa (full)');
 
 t_end;
 
