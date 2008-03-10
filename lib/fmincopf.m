@@ -717,6 +717,10 @@ bus(:, MU_VMIN)  = Lambda.lower(vbas:vend);
 branch(:, MU_SF) = Lambda.ineqnonlin(1:nl) / baseMVA; 
 branch(:, MU_ST) = Lambda.ineqnonlin(nl+1:2*nl) / baseMVA;
 
+%% constraint is actually on square of limit, so we must fix multipliers
+branch(:, MU_SF) = 2 * branch(:, MU_SF) .* branch(:, RATE_A) / baseMVA; 
+branch(:, MU_ST) = 2 * branch(:, MU_ST) .* branch(:, RATE_A) / baseMVA;
+
 % extract lambdas from linear constraints
 nlt = length(ilt);
 ngt = length(igt);
