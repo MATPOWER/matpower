@@ -24,7 +24,7 @@ t_begin(n_tests, quiet);
 if ~have_fcn('smartmarket')
     t_skip(n_tests, 'smartmarket code not available');
 elseif ~have_fcn('minopf')
-    t_skip(n_tests, 't_auction requires MINOPF');
+    t_skip(n_tests, 't_runmarket requires MINOPF');
 else
 	mpc = loadcase('t_auction_case');
 	
