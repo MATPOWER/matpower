@@ -670,6 +670,10 @@ else
   elseif mpopt(55) == 4       %% interior-point, w/ exact user-supplied Hessian
     fmoptions = optimset(fmoptions, 'Algorithm', 'interior-point', ...
         'Hessian', 'user-supplied', 'HessFcn', @hessfmin);
+%% can be changed to the following when Matlab 6.x support is dropped
+%     fmc_hessian = @(x, lambda)hessfmin(x, lambda, baseMVA, bus, gen, gencost, branch, Ybus, Yf, Yt, mpopt, parms, ccost, N, fparm, H, Cw);
+%     fmoptions = optimset(fmoptions, 'Algorithm', 'interior-point', ...
+%         'Hessian', 'user-supplied', 'HessFcn', fmc_hessian);
   elseif mpopt(55) == 5       %% interior-point, w/ finite-diff Hessian
     fmoptions = optimset(fmoptions, 'Algorithm', 'interior-point', 'Hessian','fin-diff-grads', 'SubProblem', 'cg');
   else
@@ -679,10 +683,21 @@ end
 % fmoptions = optimset(fmoptions, 'DerivativeCheck', 'on', 'FinDiffType', 'central', 'FunValCheck', 'on');
 % fmoptions = optimset(fmoptions, 'Diagnostics', 'on');
 
-[x, f, info, Output, Lambda, Jac] = ...
-  fmincon('costfmin', x0, Af, bf, Afeq, bfeq, LB, UB, 'consfmin', fmoptions, ...
-         baseMVA, bus, gen, gencost, branch, areas, Ybus, Yf, Yt, mpopt, ...
-         parms, ccost, N, fparm, H, Cw);
+%% uncomment if-else clause when Matlab 6.x support is dropped
+%% to enable FMC_ALG = 5 to work
+% mlver = ver('matlab');
+% if str2num(mlver.Version(1)) < 7    %% anonymous functions not available
+  [x, f, info, Output, Lambda, Jac] = ...
+    fmincon('costfmin', x0, Af, bf, Afeq, bfeq, LB, UB, 'consfmin', fmoptions, ...
+           baseMVA, bus, gen, gencost, branch, Ybus, Yf, Yt, mpopt, ...
+           parms, ccost, N, fparm, H, Cw);
+% else
+%   fmc_cost = @(x)costfmin(x, baseMVA, bus, gen, gencost, branch, Ybus, Yf, Yt, mpopt, parms, ccost, N, fparm, H, Cw);
+%   fmc_cons = @(x)consfmin(x, baseMVA, bus, gen, gencost, branch, Ybus, Yf, Yt, mpopt, parms, ccost, N, fparm, H, Cw);
+%   [x, f, info, Output, Lambda, Jac] = ...
+%     fmincon(fmc_cost, x0, Af, bf, Afeq, bfeq, LB, UB, fmc_cons, fmoptions);
+% end
+
 success = (info > 0);
 
 % Unpack optimal x
@@ -806,7 +821,7 @@ end
 % We are done with standard opf but we may need to provide the
 % constraints and their Jacobian also.
 if nargout > 7
-  [g, geq, dg, dgeq] = consfmin(x, baseMVA, bus, gen, gencost, branch, areas,...
+  [g, geq, dg, dgeq] = consfmin(x, baseMVA, bus, gen, gencost, branch, ...
                                 Ybus, Yf, Yt, mpopt, parms, ccost, N, fparm, H, Cw);
   g = [ geq; g];
   jac = [ dgeq'; dg']; % true Jacobian organization
