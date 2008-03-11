@@ -12,6 +12,35 @@ Copyright (c) 1996-2007 by Power System Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
 
 
+Changes since 3.2
+-----------------
+
+3/7/08
+    - Updated fmincopf and mpoption to work with version 4 of
+      Optimization Toolbox. Added options for using fmincon's new
+      interior-point algorithm.
+    - Added functions to compute second derivatives of constraints
+      and cost (explicit Hessian evaluation) for use with
+      interior-point solvers, etc.
+    - INCOMPATIBLE CHANGE: dAbr_dV now gives partial derivatives
+      of the *squared* magnitudes of flows w.r.t. V, as opposed
+      to the magnitudes.
+    - Modified the implementation of all flow constraints for fmincon
+      (and constr) to use squared flow limits instead of absolute
+      value to correctly avoid div-by-zero errors in computing
+      gradients, and to prepare for implementing Hessian code.
+      Shadow prices still correspond to absolute value limits.
+    - Fixed bug in fmincon (and constr and LP) based OPF which
+      allowed an active power flow limit to be violated when using
+      OPF_FLOW_LIM = 1 (missing absolute value).
+
+3/3/08
+    - INCOMPATIBLE CHANGE: Changed input argument order for uopf
+      and added general linear constraints and generalized costs.
+
+1/10/08
+    - Significant speed improvements in makeYbus.m and makeBdc.m.
+
 Changes since 3.1b2
 -------------------
 
