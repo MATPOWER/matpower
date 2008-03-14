@@ -22,7 +22,8 @@ Changes since 3.2
 
 3/7/08
     - Updated fmincopf and mpoption to work with version 4 of
-      Optimization Toolbox. Added options for using fmincon's new
+      Optimization Toolbox. Added option FMC_ALG for select between
+      fmincon's active set method and variations of the new
       interior-point algorithm.
     - Added functions to compute second derivatives of constraints
       and cost (explicit Hessian evaluation) for use with
