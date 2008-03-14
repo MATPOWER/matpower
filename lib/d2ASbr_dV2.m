@@ -1,23 +1,23 @@
 function [Gaa, Gav, Gva, Gvv] = ...
-	d2ASbr_dV2(dSbr_dVa, dSbr_dVm, Sbr, Cbr, Ybr, V, lam)
-%D2ASBR_DV2   Computes 2nd derivatives of current magnitude^2 w.r.t. voltage.
+    d2ASbr_dV2(dSbr_dVa, dSbr_dVm, Sbr, Cbr, Ybr, V, lam)
+%D2ASBR_DV2   Computes 2nd derivatives of |complex power flow|^2 w.r.t. V.
 %   [Gaa, Gav, Gva, Gvv] = d2ASbr_dV2(dSbr_dVa, dSbr_dVm, Sbr, Ybr, V, lam)
 %   returns 4 matrices containing the partial derivatives w.r.t. voltage
-% 	angle and magnitude of the product of a vector lam with the 1st partial
-%	derivatives of the square of the magnitude of the branch power flows.
-%	Takes sparse first derivative matrices of complex flow, complex flow
-% 	vector, sparse connection matrix Cbr, sparse, branch admittance matrix
-%	Ybr, voltage vector V and nl x 1 vector lam. Output matrices are sparse.
+%   angle and magnitude of the product of a vector lam with the 1st partial
+%   derivatives of the square of the magnitude of branch complex power flows.
+%   Takes sparse first derivative matrices of complex flow, complex flow
+%   vector, sparse connection matrix Cbr, sparse, branch admittance matrix
+%   Ybr, voltage vector V and nl x 1 vector lam. Output matrices are sparse.
 %
 %   e.g f = branch(:, F_BUS);
-%       Cf =  sparse(1:nl, f, ones(nl, 1), nl, nb);
-%       [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
-%		[dSf_dVa, dSf_dVm, dSt_dVa, dSt_dVm, Sf, St] = dSbr_dV(branch, Yf, Yt, V)
-%       Cbr = Cf;
-%       Ybr = Yf;
-%		dSbr_dVa = dSf_dVa;
-%		dSbr_dVm = dSf_dVm;
-%		Sbr = Sf;
+%     Cf =  sparse(1:nl, f, ones(nl, 1), nl, nb);
+%     [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
+%     [dSf_dVa, dSf_dVm, dSt_dVa, dSt_dVm, Sf, St] = dSbr_dV(branch, Yf, Yt, V)
+%     Cbr = Cf;
+%     Ybr = Yf;
+%     dSbr_dVa = dSf_dVa;
+%     dSbr_dVm = dSf_dVm;
+%     Sbr = Sf;
 %
 %   Gaa = (d/dVa (dASbr_dVa.')) * lam
 %   Gav = (d/dVm (dASbr_dVa.')) * lam
