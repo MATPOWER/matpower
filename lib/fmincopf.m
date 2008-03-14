@@ -654,10 +654,6 @@ if str2num(otver.Version(1)) < 4
   fmoptions = optimset(fmoptions, 'LargeScale', 'off');
   Af = full(Af);
   Afeq = full(Afeq);
-  if str2num(otver.Version(1)) < 3
-     % can't handle sparse constraint gradients
-     mpopt = mpoption(mpopt, 'FMC_NON_SPARSE', 1);
-  end
 else
   if mpopt(55) == 1           %% active-set
     fmoptions = optimset(fmoptions, 'Algorithm', 'active-set');
@@ -668,12 +664,9 @@ else
   elseif mpopt(55) == 3       %% interior-point, w/ 'lbfgs' Hessian approx
     fmoptions = optimset(fmoptions, 'Algorithm', 'interior-point', 'Hessian','lbfgs');
   elseif mpopt(55) == 4       %% interior-point, w/ exact user-supplied Hessian
+    fmc_hessian = @(x, lambda)hessfmin(x, lambda, baseMVA, bus, gen, gencost, branch, Ybus, Yf, Yt, mpopt, parms, ccost, N, fparm, H, Cw);
     fmoptions = optimset(fmoptions, 'Algorithm', 'interior-point', ...
-        'Hessian', 'user-supplied', 'HessFcn', @hessfmin);
-%% can be changed to the following when Matlab 6.x support is dropped
-%     fmc_hessian = @(x, lambda)hessfmin(x, lambda, baseMVA, bus, gen, gencost, branch, Ybus, Yf, Yt, mpopt, parms, ccost, N, fparm, H, Cw);
-%     fmoptions = optimset(fmoptions, 'Algorithm', 'interior-point', ...
-%         'Hessian', 'user-supplied', 'HessFcn', fmc_hessian);
+        'Hessian', 'user-supplied', 'HessFcn', fmc_hessian);
   elseif mpopt(55) == 5       %% interior-point, w/ finite-diff Hessian
     fmoptions = optimset(fmoptions, 'Algorithm', 'interior-point', 'Hessian','fin-diff-grads', 'SubProblem', 'cg');
   else
@@ -683,20 +676,23 @@ end
 % fmoptions = optimset(fmoptions, 'DerivativeCheck', 'on', 'FinDiffType', 'central', 'FunValCheck', 'on');
 % fmoptions = optimset(fmoptions, 'Diagnostics', 'on');
 
-%% uncomment if-else clause when Matlab 6.x support is dropped
-%% to enable FMC_ALG = 5 to work
-% mlver = ver('matlab');
-% if str2num(mlver.Version(1)) < 7    %% anonymous functions not available
-  [x, f, info, Output, Lambda, Jac] = ...
-    fmincon('costfmin', x0, Af, bf, Afeq, bfeq, LB, UB, 'consfmin', fmoptions, ...
-           baseMVA, bus, gen, gencost, branch, Ybus, Yf, Yt, mpopt, ...
-           parms, ccost, N, fparm, H, Cw);
-% else
-%   fmc_cost = @(x)costfmin(x, baseMVA, bus, gen, gencost, branch, Ybus, Yf, Yt, mpopt, parms, ccost, N, fparm, H, Cw);
-%   fmc_cons = @(x)consfmin(x, baseMVA, bus, gen, gencost, branch, Ybus, Yf, Yt, mpopt, parms, ccost, N, fparm, H, Cw);
-%   [x, f, info, Output, Lambda, Jac] = ...
-%     fmincon(fmc_cost, x0, Af, bf, Afeq, bfeq, LB, UB, fmc_cons, fmoptions);
-% end
+if strcmp(optimget(fmoptions, 'Algorithm'), 'interior-point')
+  % set initial point
+  x0 = zeros(nxyz, 1);
+  x0(thbas:thend) = 0;
+  x0(vbas:vend)   = 1;
+  x0(pgbas:pgend) = (gen(:, PMIN) + gen(:, PMAX)) / 2 / baseMVA;
+  x0(qgbas:qgend) = (gen(:, QMIN) + gen(:, QMAX)) / 2 / baseMVA;
+  % no ideas to initialize y variables
+  if ~isempty(zl) & ~isempty(zu)
+    x0(zbas:zend) = (zl + zu) / 2;
+  end
+end
+
+fmc_cost = @(x)costfmin(x, baseMVA, gencost, parms, ccost, N, fparm, H, Cw);
+fmc_cons = @(x)consfmin(x, baseMVA, bus, gen, branch, Ybus, Yf, Yt, mpopt, parms);
+[x, f, info, Output, Lambda, Jac] = ...
+  fmincon(fmc_cost, x0, Af, bf, Afeq, bfeq, LB, UB, fmc_cons, fmoptions);
 
 success = (info > 0);
 
