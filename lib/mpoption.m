@@ -131,8 +131,7 @@ function [options, names] = mpoption(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p1
 %            [  2 - interior-point, w/default 'bfgs' Hessian approx     ]
 %            [  3 - interior-point, w/ 'lbfgs' Hessian approx           ]
 %            [  4 - interior-point, w/exact user-supplied Hessian       ]
-%       56 - FMC_NON_SPARSE, 0      force use of non-sparse matrices for
-%             (1 for Opt Tbx < 3)   constraint gradients    [   0 or 1  ]
+%            [  5 - interior-point, w/Hessian via finite differences    ]
 %
 %   MINOPF options
 %       61 - MNS_FEASTOL, 0 (1E-3)  primal feasibility tolerance,
@@ -258,7 +257,7 @@ else                    %% even number of parameters
         0;      %% 53 - RESERVED53
         0;      %% 54 - RESERVED54
         1;      %% 55 - FMC_ALG
-        0;      %% 56 - FMC_NON_SPARSE
+        0;      %% 56 - RESERVED56
         0;      %% 57 - RESERVED57
         0;      %% 58 - RESERVED58
         0;      %% 59 - RESERVED59
@@ -370,7 +369,7 @@ names = str2mat(    names, ...
                     'RESERVED53', ...           %% 53
                     'RESERVED54', ...           %% 54
                     'FMC_ALG', ...              %% 55
-                    'FMC_NON_SPARSE', ...       %% 56
+                    'RESERVED56', ...           %% 56
                     'RESERVED57', ...           %% 57
                     'RESERVED58', ...           %% 58
                     'RESERVED59', ...           %% 59
