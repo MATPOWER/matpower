@@ -23,8 +23,10 @@ t_begin(n_tests, quiet);
     QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
 
 mpc = loadcase('t_auction_case');
-mpc.gen(8, GEN_BUS) = 8;
+mpc.gen(8, GEN_BUS) = 2;    %% multiple d. loads per area, same bus as gen
 mpc.gen(8, [QG QMIN QMAX]) = [ 3 0 3 ];
+%% put it load before gen in matrix
+mpc.gen = [mpc.gen(8, :); mpc.gen(1:7, :); mpc.gen(9, :)];
 ld = find(isload(mpc.gen));
 for k = 1:3
     a{k} = find(mpc.bus(:, BUS_AREA) == k); %% buses in area k
