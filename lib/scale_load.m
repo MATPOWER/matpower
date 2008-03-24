@@ -205,8 +205,9 @@ end
 if opt.which(1) ~= 'F'      %% includes 'DISPATCHABLE', not 'FIXED' only
     for k = 1:length(scale)
         idx = find( load_zone == k );
-        [junk, ig, junk2] = intersect(gen(:, GEN_BUS), idx);
-        
+        [junk, i, junk2] = intersect(gen(ld, GEN_BUS), idx);
+        ig = ld(i);
+
         gen(ig, [PG PMIN]) = gen(ig, [PG PMIN]) * scale(k);
         if opt.pq == 'PQ'
             gen(ig, [QG QMIN QMAX]) = gen(ig, [QG QMIN QMAX]) * scale(k);
