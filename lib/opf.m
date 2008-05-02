@@ -1,6 +1,5 @@
 function [buso, gen, branch, f, success, info, et, g, jac, xr, pimul] = ...
-    opf(baseMVA, bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt, ...
-        N, fparm, H, Cw, z0, zl, zu)
+    opf(varargin)
 %OPF  Solves an optimal power flow.
 %
 %   For an AC OPF, if the OPF algorithm is not set explicitly in the options,
@@ -71,183 +70,9 @@ function [buso, gen, branch, f, success, info, et, g, jac, xr, pimul] = ...
 %   Copyright (c) 1996-2008 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-% Sort out input arguments
-if isstr(baseMVA) | isstruct(baseMVA)   % passing filename or struct
-  %---- opf(baseMVA,  bus, gen, branch, areas, gencost, Au,    lbu, ubu, mpopt, N,  fparm, H, Cw, z0, zl, zu)
-  % 12  opf(casefile, Au,  lbu, ubu,    mpopt, N,       fparm, H,   Cw,  z0,    zl, zu)
-  % 9   opf(casefile, Au,  lbu, ubu,    mpopt, N,       fparm, H,   Cw)
-  % 5   opf(casefile, Au,  lbu, ubu,    mpopt)
-  % 4   opf(casefile, Au,  lbu, ubu)
-  % 2   opf(casefile, mpopt)
-  % 1   opf(casefile)
-  if any(nargin == [1, 2, 4, 5, 9, 12])
-    casefile = baseMVA;
-    if nargin == 12
-      zu    = fparm;
-      zl    = N;
-      z0    = mpopt;
-      Cw    = ubu;
-      H     = lbu;
-      fparm = Au;
-      N     = gencost;
-      mpopt = areas;
-      ubu   = branch;
-      lbu   = gen;
-      Au    = bus;
-    elseif nargin == 9
-      zu    = [];
-      zl    = [];
-      z0    = [];
-      Cw    = ubu;
-      H     = lbu;
-      fparm = Au;
-      N     = gencost;
-      mpopt = areas;
-      ubu   = branch;
-      lbu   = gen;
-      Au    = bus;
-    elseif nargin == 5
-      zu    = [];
-      zl    = [];
-      z0    = [];
-      Cw    = [];
-      H     = [];
-      fparm = [];
-      N     = [];
-      mpopt = areas;
-      ubu   = branch;
-      lbu   = gen;
-      Au    = bus;
-    elseif nargin == 4
-      zu    = [];
-      zl    = [];
-      z0    = [];
-      Cw    = [];
-      H     = [];
-      fparm = [];
-      N     = [];
-      mpopt = mpoption;
-      ubu   = branch;
-      lbu   = gen;
-      Au    = bus;
-    elseif nargin == 2
-      zu    = [];
-      zl    = [];
-      z0    = [];
-      Cw    = [];
-      H     = [];
-      fparm = [];
-      N     = [];
-      mpopt = bus;
-      ubu   = [];
-      lbu   = [];
-      Au    = sparse(0,0);
-    elseif nargin == 1
-      zu    = [];
-      zl    = [];
-      z0    = [];
-      Cw    = [];
-      H     = [];
-      fparm = [];
-      N     = [];
-      mpopt = mpoption;
-      ubu   = [];
-      lbu   = [];
-      Au    = sparse(0,0);
-    end
-  else
-    error('opf.m: Incorrect input parameter order, number or type');
-  end
-  mpc = loadcase(casefile);
-  [baseMVA, bus, gen, branch, areas, gencost] = ...
-    deal(mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch, mpc.areas, mpc.gencost);
-  if isempty(Au) & isfield(mpc, 'A')
-    [Au, lbu, ubu] = deal(mpc.A, mpc.l, mpc.u);
-  end
-  if isempty(N) & isfield(mpc, 'N')
-    [N, fparm, H, Cw] = deal(mpc.N, mpc.fparm, mpc.H, mpc.Cw);
-  end
-  if isempty(z0) & isfield(mpc, 'z0')
-    z0 = mpc.z0;
-  end
-  if isempty(zl) & isfield(mpc, 'zl')
-    zl = mpc.zl;
-  end
-  if isempty(zu) & isfield(mpc, 'zu')
-    zu = mpc.zu;
-  end
-else    % passing individual data matrices
-  %---- opf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu, mpopt, N, fparm, H, Cw, z0, zl, zu)
-  % 17  opf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu, mpopt, N, fparm, H, Cw, z0, zl, zu)
-  % 14  opf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu, mpopt, N, fparm, H, Cw)
-  % 10  opf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu, mpopt)
-  % 9   opf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu)
-  % 7   opf(baseMVA, bus, gen, branch, areas, gencost, mpopt)
-  % 6   opf(baseMVA, bus, gen, branch, areas, gencost)
-  if any(nargin == [6, 7, 9, 10, 14, 17])
-    if nargin == 14
-      zu    = [];
-      zl    = [];
-      z0    = [];
-    elseif nargin == 10
-      zu    = [];
-      zl    = [];
-      z0    = [];
-      Cw    = [];
-      H     = [];
-      fparm = [];
-      N     = [];
-    elseif nargin == 9
-      zu    = [];
-      zl    = [];
-      z0    = [];
-      Cw    = [];
-      H     = [];
-      fparm = [];
-      N     = [];
-      mpopt = mpoption;
-    elseif nargin == 7
-      zu    = [];
-      zl    = [];
-      z0    = [];
-      Cw    = [];
-      H     = [];
-      fparm = [];
-      N     = [];
-      mpopt = Au;
-      ubu   = [];
-      lbu   = [];
-      Au    = sparse(0,0);
-    elseif nargin == 6
-      zu    = [];
-      zl    = [];
-      z0    = [];
-      Cw    = [];
-      H     = [];
-      fparm = [];
-      N     = [];
-      mpopt = mpoption;
-      ubu   = [];
-      lbu   = [];
-      Au    = sparse(0,0);
-    end
-  else
-    error('opf.m: Incorrect input parameter order, number or type');
-  end
-end
-nw = size(N, 1);
-if nw > 0
-  if size(fparm, 1) ~= nw | size(H, 1) ~= nw | size(H, 2) ~= nw | ...
-      length(Cw) ~= nw
-    error('opf.m: wrong dimensions in generalized cost parameters');
-  end
-  if size(Au, 1) > 0 & size(N, 2) ~= size(Au, 2)
-    error('opf.m: A and N must have the same number of columns');
-  end
-end
-if isempty(mpopt)
-  mpopt = mpoption;
-end
+% process input arguments
+[baseMVA, bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt, ...
+    N, fparm, H, Cw, z0, zl, zu] = opf_args(varargin{:});
 
 %%----- initialization -----
 %% options
@@ -307,6 +132,7 @@ if dc % DC OPF
         dcc = [dcc (qgend+1):nxz];
       end
       Au = Au(:, dcc);
+      nw = size(N, 1);
       if nw > 0
         if any(any(N(:, [vbas:vend qgbas:qgend])))
           error('opf: Attempting to solve DC OPF with user costs on V or Qg');

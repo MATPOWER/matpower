@@ -1,6 +1,5 @@
 function [busout, genout, branchout, f, success, info, et, xz, pimul] = ...
-    dcopf(baseMVA, bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt, ...
-        N, fparm, H, Cw, z0, zl, zu)
+    dcopf(varargin)
 %DCOPF  Solves a DC optimal power flow.
 %
 %   [bus, gen, branch, f, success] = dcopf(casefile, mpopt)
@@ -63,167 +62,11 @@ function [busout, genout, branchout, f, success, info, et, xz, pimul] = ...
 %   Copyright (c) 1996-2008 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-% Sort out input arguments
 t0 = clock;
-if isstr(baseMVA) | isstruct(baseMVA)   % passing filename or struct
-  %---- dcopf(baseMVA,  bus, gen, branch, areas, gencost, Au,    lbu, ubu, mpopt, N,  fparm, H, Cw, z0, zl, zu)
-  % 12  dcopf(casefile, Au,  lbu, ubu,    mpopt, N,       fparm, H,   Cw,  z0,    zl, zu)
-  % 9   dcopf(casefile, Au,  lbu, ubu,    mpopt, N,       fparm, H,   Cw)
-  % 5   dcopf(casefile, Au,  lbu, ubu,    mpopt)
-  % 4   dcopf(casefile, Au,  lbu, ubu)
-  % 2   dcopf(casefile, mpopt)
-  % 1   dcopf(casefile)
-  if any(nargin == [1, 2, 4, 5, 9, 12])
-    casefile = baseMVA;
-    if nargin == 12
-      zu    = fparm;
-      zl    = N;
-      z0    = mpopt;
-      Cw    = ubu;
-      H     = lbu;
-      fparm = Au;
-      N     = gencost;
-      mpopt = areas;
-      ubu   = branch;
-      lbu   = gen;
-      Au    = bus;
-    elseif nargin == 9
-      zu    = [];
-      zl    = [];
-      z0    = [];
-      Cw    = ubu;
-      H     = lbu;
-      fparm = Au;
-      N     = gencost;
-      mpopt = areas;
-      ubu   = branch;
-      lbu   = gen;
-      Au    = bus;
-    elseif nargin == 5
-      zu    = [];
-      zl    = [];
-      z0    = [];
-      Cw    = [];
-      H     = [];
-      fparm = [];
-      N     = [];
-      mpopt = areas;
-      ubu   = branch;
-      lbu   = gen;
-      Au    = bus;
-    elseif nargin == 4
-      zu    = [];
-      zl    = [];
-      z0    = [];
-      Cw    = [];
-      H     = [];
-      fparm = [];
-      N     = [];
-      mpopt = mpoption;
-      ubu   = branch;
-      lbu   = gen;
-      Au    = bus;
-    elseif nargin == 2
-      zu    = [];
-      zl    = [];
-      z0    = [];
-      Cw    = [];
-      H     = [];
-      fparm = [];
-      N     = [];
-      mpopt = bus;
-      ubu   = [];
-      lbu   = [];
-      Au    = sparse(0,0);
-    elseif nargin == 1
-      zu    = [];
-      zl    = [];
-      z0    = [];
-      Cw    = [];
-      H     = [];
-      fparm = [];
-      N     = [];
-      mpopt = mpoption;
-      ubu   = [];
-      lbu   = [];
-      Au    = sparse(0,0);
-    end
-  else
-    error('dcopf.m: Incorrect input parameter order, number or type');
-  end
-  [baseMVA, bus, gen, branch, areas, gencost] = loadcase(casefile);
-else    % passing individual data matrices
-  %---- dcopf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu, mpopt, N, fparm, H, Cw, z0, zl, zu)
-  % 17  dcopf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu, mpopt, N, fparm, H, Cw, z0, zl, zu)
-  % 14  dcopf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu, mpopt, N, fparm, H, Cw)
-  % 10  dcopf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu, mpopt)
-  % 9   dcopf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu)
-  % 7   dcopf(baseMVA, bus, gen, branch, areas, gencost, mpopt)
-  % 6   dcopf(baseMVA, bus, gen, branch, areas, gencost)
-  if any(nargin == [6, 7, 9, 10, 14, 17])
-    if nargin == 14
-      zu    = [];
-      zl    = [];
-      z0    = [];
-    elseif nargin == 10
-      zu    = [];
-      zl    = [];
-      z0    = [];
-      Cw    = [];
-      H     = [];
-      fparm = [];
-      N     = [];
-    elseif nargin == 9
-      zu    = [];
-      zl    = [];
-      z0    = [];
-      Cw    = [];
-      H     = [];
-      fparm = [];
-      N     = [];
-      mpopt = mpoption;
-    elseif nargin == 7
-      zu    = [];
-      zl    = [];
-      z0    = [];
-      Cw    = [];
-      H     = [];
-      fparm = [];
-      N     = [];
-      mpopt = Au;
-      ubu   = [];
-      lbu   = [];
-      Au    = sparse(0,0);
-    elseif nargin == 6
-      zu    = [];
-      zl    = [];
-      z0    = [];
-      Cw    = [];
-      H     = [];
-      fparm = [];
-      N     = [];
-      mpopt = mpoption;
-      ubu   = [];
-      lbu   = [];
-      Au    = sparse(0,0);
-    end
-  else
-    error('dcopf.m: Incorrect input parameter order, number or type');
-  end
-end
-nw = size(N, 1);
-if nw > 0
-  if size(fparm, 1) ~= nw | size(H, 1) ~= nw | size(H, 2) ~= nw | ...
-      length(Cw) ~= nw
-    error('dcopf.m: wrong dimensions in generalized cost parameters');
-  end
-  if size(Au, 1) > 0 & size(N, 2) ~= size(Au, 2)
-    error('dcopf.m: A and N must have the same number of columns');
-  end
-end
-if isempty(mpopt)
-  mpopt = mpoption;
-end
+
+% process input arguments
+[baseMVA, bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt, ...
+    N, fparm, H, Cw, z0, zl, zu] = opf_args(varargin{:});
 
 %%----- initialization -----
 verbose = mpopt(31);
@@ -307,6 +150,7 @@ ng = size(gen, 1);      %% number of dispatchable injections
 nx = nb + ng;           %% number of standard OPF control variables
 ny = size(ipwl, 1);     %% number of piece-wise linear costs
 nusr = size(Au, 1);     %% number of linear user constraints
+nw = size(N, 1);        %% number of general cost vars, w
 if isempty(Au)
   nz = 0;
   Au = sparse(0,nx);

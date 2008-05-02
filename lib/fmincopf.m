@@ -1,6 +1,5 @@
 function [busout, genout, branchout, f, success, info, et, g, jac, x, pimul] = ...
-      fmincopf(baseMVA, bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt, ...
-           N, fparm, H, Cw, z0, zl, zu)
+      fmincopf(varargin)
 %FMINCOPF  Solves an AC optimal power flow using FMINCON (Opt Tbx 2.x & later).
 %
 %   [bus, gen, branch, f, success] = fmincopf(casefile, mpopt)
@@ -65,167 +64,11 @@ function [busout, genout, branchout, f, success, info, et, g, jac, x, pimul] = .
 %   Copyright (c) 2000-2006 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-% Sort out input arguments
 t0 = clock;
-if isstr(baseMVA) | isstruct(baseMVA)   % passing filename or struct
-  %---- fmincopf(baseMVA,  bus, gen, branch, areas, gencost, Au,    lbu, ubu, mpopt, N,  fparm, H, Cw, z0, zl, zu)
-  % 12  fmincopf(casefile, Au,  lbu, ubu,    mpopt, N,       fparm, H,   Cw,  z0,    zl, zu)
-  % 9   fmincopf(casefile, Au,  lbu, ubu,    mpopt, N,       fparm, H,   Cw)
-  % 5   fmincopf(casefile, Au,  lbu, ubu,    mpopt)
-  % 4   fmincopf(casefile, Au,  lbu, ubu)
-  % 2   fmincopf(casefile, mpopt)
-  % 1   fmincopf(casefile)
-  if any(nargin == [1, 2, 4, 5, 9, 12])
-    casefile = baseMVA;
-    if nargin == 12
-      zu    = fparm;
-      zl    = N;
-      z0    = mpopt;
-      Cw    = ubu;
-      H     = lbu;
-      fparm = Au;
-      N     = gencost;
-      mpopt = areas;
-      ubu   = branch;
-      lbu   = gen;
-      Au    = bus;
-    elseif nargin == 9
-      zu    = [];
-      zl    = [];
-      z0    = [];
-      Cw    = ubu;
-      H     = lbu;
-      fparm = Au;
-      N     = gencost;
-      mpopt = areas;
-      ubu   = branch;
-      lbu   = gen;
-      Au    = bus;
-    elseif nargin == 5
-      zu    = [];
-      zl    = [];
-      z0    = [];
-      Cw    = [];
-      H     = [];
-      fparm = [];
-      N     = [];
-      mpopt = areas;
-      ubu   = branch;
-      lbu   = gen;
-      Au    = bus;
-    elseif nargin == 4
-      zu    = [];
-      zl    = [];
-      z0    = [];
-      Cw    = [];
-      H     = [];
-      fparm = [];
-      N     = [];
-      mpopt = mpoption;
-      ubu   = branch;
-      lbu   = gen;
-      Au    = bus;
-    elseif nargin == 2
-      zu    = [];
-      zl    = [];
-      z0    = [];
-      Cw    = [];
-      H     = [];
-      fparm = [];
-      N     = [];
-      mpopt = bus;
-      ubu   = [];
-      lbu   = [];
-      Au    = sparse(0,0);
-    elseif nargin == 1
-      zu    = [];
-      zl    = [];
-      z0    = [];
-      Cw    = [];
-      H     = [];
-      fparm = [];
-      N     = [];
-      mpopt = mpoption;
-      ubu   = [];
-      lbu   = [];
-      Au    = sparse(0,0);
-    end
-  else
-    error('fmincopf.m: Incorrect input parameter order, number or type');
-  end
-  [baseMVA, bus, gen, branch, areas, gencost] = loadcase(casefile);
-else    % passing individual data matrices
-  %---- fmincopf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu, mpopt, N, fparm, H, Cw, z0, zl, zu)
-  % 17  fmincopf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu, mpopt, N, fparm, H, Cw, z0, zl, zu)
-  % 14  fmincopf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu, mpopt, N, fparm, H, Cw)
-  % 10  fmincopf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu, mpopt)
-  % 9   fmincopf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu)
-  % 7   fmincopf(baseMVA, bus, gen, branch, areas, gencost, mpopt)
-  % 6   fmincopf(baseMVA, bus, gen, branch, areas, gencost)
-  if any(nargin == [6, 7, 9, 10, 14, 17])
-    if nargin == 14
-      zu    = [];
-      zl    = [];
-      z0    = [];
-    elseif nargin == 10
-      zu    = [];
-      zl    = [];
-      z0    = [];
-      Cw    = [];
-      H     = [];
-      fparm = [];
-      N     = [];
-    elseif nargin == 9
-      zu    = [];
-      zl    = [];
-      z0    = [];
-      Cw    = [];
-      H     = [];
-      fparm = [];
-      N     = [];
-      mpopt = mpoption;
-    elseif nargin == 7
-      zu    = [];
-      zl    = [];
-      z0    = [];
-      Cw    = [];
-      H     = [];
-      fparm = [];
-      N     = [];
-      mpopt = Au;
-      ubu   = [];
-      lbu   = [];
-      Au    = sparse(0,0);
-    elseif nargin == 6
-      zu    = [];
-      zl    = [];
-      z0    = [];
-      Cw    = [];
-      H     = [];
-      fparm = [];
-      N     = [];
-      mpopt = mpoption;
-      ubu   = [];
-      lbu   = [];
-      Au    = sparse(0,0);
-    end
-  else
-    error('fmincopf.m: Incorrect input parameter order, number or type');
-  end
-end
-nw = size(N, 1);
-if nw > 0
-  if size(fparm, 1) ~= nw | size(H, 1) ~= nw | size(H, 2) ~= nw | ...
-      length(Cw) ~= nw
-    error('fmincopf.m: wrong dimensions in generalized cost parameters');
-  end
-  if size(Au, 1) > 0 & size(N, 2) ~= size(Au, 2)
-    error('fmincopf.m: A and N must have the same number of columns');
-  end
-end
-if isempty(mpopt)
-  mpopt = mpoption;
-end
+
+% process input arguments
+[baseMVA, bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt, ...
+    N, fparm, H, Cw, z0, zl, zu] = opf_args(varargin{:});
 
 %%----- initialization -----
 verbose = mpopt(31);
@@ -349,6 +192,7 @@ nvl  = size(vload, 1);  %% number of dispatchable loads
 npqh = size(ipqh, 1);   %% number of general PQ capability curves (upper)
 npql = size(ipql, 1);   %% number of general PQ capability curves (lower)
 nusr = size(Au, 1);     %% number of linear user constraints
+nw = size(N, 1);        %% number of general cost vars, w
 if isempty(Au)
   nz = 0;
   Au = sparse(0,nx);
@@ -777,6 +621,7 @@ pimul = [
 muPmax = gen(:, MU_PMAX);
 muPmin = gen(:, MU_PMIN);
 if success & (npqh > 0)
+%   gen(:, [MU_PMIN MU_PMAX MU_QMIN MU_QMAX])
   k = 1;
   for i = ipqh'
     if muPmax(i) > 0
@@ -796,6 +641,7 @@ if success & (npqh > 0)
 end
 
 if success & (npql > 0)
+%   gen(:, [MU_PMIN MU_PMAX MU_QMIN MU_QMAX])
   k = 1;
   for i = ipql'
     if muPmax(i) > 0
@@ -812,6 +658,10 @@ if success & (npql > 0)
     gen(i,MU_QMIN)=gen(i,MU_QMIN)+pimul(pqlbas+k-1)*Apqldata(k,2)/baseMVA;
     k = k + 1;
   end
+%   gen(:, [MU_PMIN MU_PMAX MU_QMIN MU_QMAX])
+%   -[ pimul(pqlbas-1+[1:2]) pimul(pqhbas-1+[1:2]) ]/baseMVA
+%   -[ pimul(pqlbas-1+[1:2]).*Apqldata([1:2],1) pimul(pqhbas-1+[1:2]).*Apqhdata([1:2],1) ]/baseMVA
+%   -[ pimul(pqlbas-1+[1:2]).*Apqldata([1:2],2) pimul(pqhbas-1+[1:2]).*Apqhdata([1:2],2) ]/baseMVA
 end
 
 % angle limit constraints
