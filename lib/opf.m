@@ -5,7 +5,7 @@ function [buso, gen, branch, f, success, info, et, g, jac, xr, pimul] = ...
 %
 %   For an AC OPF, if the OPF algorithm is not set explicitly in the options,
 %   it will choose the best available solver, searching in the following order:
-%   MINOPF, fmincon, constr.
+%   minopf, pdipmopf, fmincon, constr.
 %
 %   [bus, gen, branch, f, success] = opf(casefile, mpopt)
 %
@@ -46,8 +46,8 @@ function [buso, gen, branch, f, success, info, et, g, jac, xr, pimul] = ...
 %   H and N should be sparse matrices and H should also be symmetric.
 %
 %   The additional linear constraints and generalized cost are only available
-%   for solvers which use the generalized formulation, namely fmincon and
-%   MINOPF.
+%   for solvers which use the generalized formulation, namely fmincon,
+%   MINOPF and TSPOPF.
 %
 %   The optional mpopt vector specifies MATPOWER options. Type 'help mpoption'
 %   for details and default values.
@@ -68,7 +68,7 @@ function [buso, gen, branch, f, success, info, et, g, jac, xr, pimul] = ...
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
-%   Copyright (c) 1996-2006 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2008 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 % Sort out input arguments
@@ -158,7 +158,24 @@ if isstr(baseMVA) | isstruct(baseMVA)   % passing filename or struct
   else
     error('opf.m: Incorrect input parameter order, number or type');
   end
-  [baseMVA, bus, gen, branch, areas, gencost] = loadcase(casefile);
+  mpc = loadcase(casefile);
+  [baseMVA, bus, gen, branch, areas, gencost] = ...
+    deal(mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch, mpc.areas, mpc.gencost);
+  if isempty(Au) & isfield(mpc, 'A')
+    [Au, lbu, ubu] = deal(mpc.A, mpc.l, mpc.u);
+  end
+  if isempty(N) & isfield(mpc, 'N')
+    [N, fparm, H, Cw] = deal(mpc.N, mpc.fparm, mpc.H, mpc.Cw);
+  end
+  if isempty(z0) & isfield(mpc, 'z0')
+    z0 = mpc.z0;
+  end
+  if isempty(zl) & isfield(mpc, 'zl')
+    zl = mpc.zl;
+  end
+  if isempty(zu) & isfield(mpc, 'zu')
+    zu = mpc.zu;
+  end
 else    % passing individual data matrices
   %---- opf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu, mpopt, N, fparm, H, Cw, z0, zl, zu)
   % 17  opf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu, mpopt, N, fparm, H, Cw, z0, zl, zu)
@@ -218,9 +235,10 @@ else    % passing individual data matrices
     error('opf.m: Incorrect input parameter order, number or type');
   end
 end
-if size(N, 1) > 0
-  if size(N, 1) ~= size(fparm, 1) | size(N, 1) ~= size(H, 1) | ...
-     size(N, 1) ~= size(H, 2) | size(N, 1) ~= length(Cw)
+nw = size(N, 1);
+if nw > 0
+  if size(fparm, 1) ~= nw | size(H, 1) ~= nw | size(H, 2) ~= nw | ...
+      length(Cw) ~= nw
     error('opf.m: wrong dimensions in generalized cost parameters');
   end
   if size(Au, 1) > 0 & size(N, 2) ~= size(Au, 2)

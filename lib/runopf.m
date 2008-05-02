@@ -42,11 +42,12 @@ if nargin < 4
 end
 
 %% read data
-[baseMVA, bus, gen, branch, areas, gencost] = loadcase(casename);
+mpc = loadcase(casename);
+[baseMVA, areas, gencost] = deal(mpc.baseMVA, mpc.areas, mpc.gencost);
 
 %%-----  run the optimal power flow  -----
-[bus, gen, branch, f, success, info, et] = opf(baseMVA, bus, gen, branch, ...
-                                   areas, gencost, mpopt);
+[bus, gen, branch, f, success, info, et] = opf(mpc, mpopt);
+[mpc.bus, mpc.gen, mpc.branch] = deal(bus, gen, branch);
 
 %%-----  output results  -----
 if fname
@@ -62,7 +63,7 @@ printpf(baseMVA, bus, gen, branch, f, success, et, 1, mpopt);
 
 %% save solved case
 if solvedcase
-    savecase(solvedcase, baseMVA, bus, gen, branch, areas, gencost);
+    savecase(solvedcase, mpc);
 end
 
 %% this is just to prevent it from printing baseMVA
