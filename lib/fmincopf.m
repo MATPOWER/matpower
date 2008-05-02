@@ -66,7 +66,7 @@ function [busout, genout, branchout, f, success, info, et, g, jac, x, pimul] = .
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 % Sort out input arguments
-t1 = clock;
+t0 = clock;
 if isstr(baseMVA) | isstruct(baseMVA)   % passing filename or struct
   %---- fmincopf(baseMVA,  bus, gen, branch, areas, gencost, Au,    lbu, ubu, mpopt, N,  fparm, H, Cw, z0, zl, zu)
   % 12  fmincopf(casefile, Au,  lbu, ubu,    mpopt, N,       fparm, H,   Cw,  z0,    zl, zu)
@@ -213,9 +213,10 @@ else    % passing individual data matrices
     error('fmincopf.m: Incorrect input parameter order, number or type');
   end
 end
-if size(N, 1) > 0
-  if size(N, 1) ~= size(fparm, 1) | size(N, 1) ~= size(H, 1) | ...
-     size(N, 1) ~= size(H, 2) | size(N, 1) ~= length(Cw)
+nw = size(N, 1);
+if nw > 0
+  if size(fparm, 1) ~= nw | size(H, 1) ~= nw | size(H, 2) ~= nw | ...
+      length(Cw) ~= nw
     error('fmincopf.m: wrong dimensions in generalized cost parameters');
   end
   if size(Au, 1) > 0 & size(N, 2) ~= size(Au, 2)
@@ -226,7 +227,10 @@ if isempty(mpopt)
   mpopt = mpoption;
 end
 
-% Load column indexes for case tables.
+%%----- initialization -----
+verbose = mpopt(31);
+
+%% define named indices into data matrices
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
     VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
 [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
@@ -250,7 +254,6 @@ if size(branch,2) < MU_ANGMAX
 end
 
 % Filter out inactive generators and branches; save original bus & branch
-
 comgen = find(gen(:,GEN_STATUS) > 0);
 offgen = find(gen(:,GEN_STATUS) <= 0);
 onbranch  = find(branch(:,BR_STATUS) ~= 0);
@@ -268,6 +271,8 @@ end
 
 % Renumber buses consecutively
 [i2e, bus, gen, branch, areas] = ext2int(bus, gen, branch, areas);
+
+%% get bus index lists of each type of bus
 [ref, pv, pq] = bustypes(bus, gen);
 
 % Sort generators in order of increasing bus number;
@@ -282,11 +287,12 @@ else
 end
 
 % Print a warning if there is more than one reference bus
-if size(find(bus(:, BUS_TYPE) == REF), 1) > 1
+refs = find(bus(:, BUS_TYPE) == REF);
+if length(refs) > 1
   errstr = ['\nfmincopf: Warning: more than one reference bus detected in bus table data.\n', ...
-              '      For a system with islands, a reference bus in each island\n', ...
-              '      might help convergence but in a fully connected system such\n', ...
-              '      a situation is probably not reasonable.\n\n' ];
+              '          For a system with islands, a reference bus in each island\n', ...
+              '          might help convergence but in a fully connected system such\n', ...
+              '          a situation is probably not reasonable.\n\n' ];
   fprintf(errstr);
 end
 
@@ -332,53 +338,54 @@ else
   nang = length(iang);
 end
 
-% Find out problem dimensions
-nb = size(bus, 1);                              % buses
-ng = size(gen, 1);                              % variable injections
-nl = size(branch, 1);                           % branches
-iycost = find(gencost(:, MODEL) == PW_LINEAR);  % y variables for pwl cost
-ny    = size(iycost, 1);
-neqc  = 2 * nb;                                 % nonlinear equalities
-nusr  = size(Au, 1);                            % # linear user constraints
-nx    = 2*nb + 2*ng;                            % control variables
-nvl   = size(vload, 1);                         % dispatchable loads
-npqh  = size(ipqh, 1);                          % general pq capability curves
-npql  = size(ipql, 1);
+%% problem dimensions
+ipwl = find(gencost(:, MODEL) == PW_LINEAR);  %% piece-wise linear costs
+nb = size(bus, 1);      %% number of buses
+nl = size(branch, 1);   %% number of branches
+ng = size(gen, 1);      %% number of dispatchable injections
+nx = 2*nb + 2*ng;       %% number of standard OPF control variables
+ny = size(ipwl, 1);     %% number of piece-wise linear costs
+nvl  = size(vload, 1);  %% number of dispatchable loads
+npqh = size(ipqh, 1);   %% number of general PQ capability curves (upper)
+npql = size(ipql, 1);   %% number of general PQ capability curves (lower)
+nusr = size(Au, 1);     %% number of linear user constraints
 if isempty(Au)
   nz = 0;
   Au = sparse(0,nx);
-  if ~isempty(N)        % still need to check number of columns of N
-    if size(N,2) ~= nx;
+  if ~isempty(N)        %% still need to check number of columns of N
+    if size(N, 2) ~= nx;
       error(sprintf('fmincopf.m: user supplied N matrix must have %d columns.', nx));
     end
   end
 else
-  nz = size(Au,2) - nx;                       % additional linear variables
+  nz = size(Au,2) - nx; %% additional linear variables
   if nz < 0
     error(sprintf('fmincopf.m: user supplied A matrix must have at least %d columns.', nx));
   end
 end
-nxyz = nx+ny+nz;                                % total # of vars of all types
+nxyz = nx+ny+nz;        %% total number of control vars of all types
 
-% Definition of indexes into optimization variable vector and constraint
-% vector.
-thbas = 1;                thend    = thbas+nb-1;
-vbas     = thend+1;       vend     = vbas+nb-1;
-pgbas    = vend+1;        pgend    = pgbas+ng-1;
-qgbas    = pgend+1;       qgend    = qgbas+ng-1;
-ybas     = qgend + 1;     yend     = ybas + ny - 1;
-zbas     = yend + 1;      zend     = zbas + nz - 1;
+%% define indexing of optimization variable vector
+k = 0;
+thbas   = k + 1;    k = k + nb;     thend = k;      %% voltage angles
+vbas    = k + 1;    k = k + nb;     vend  = k;      %% voltage magnitudes
+pgbas   = k + 1;    k = k + ng;     pgend = k;      %% real power injections
+qgbas   = k + 1;    k = k + ng;     qgend = k;      %% reactive power injections
+ybas    = k + 1;    k = k + ny;     yend  = k;      %% pwl costs
+zbas    = k + 1;    k = k + nz;     zend  = k;      %% user vars
 
-pmsmbas = 1;              pmsmend = pmsmbas+nb-1;
-qmsmbas = pmsmend+1;      qmsmend = qmsmbas+nb-1;
-sfbas   = qmsmend+1;      sfend   = sfbas+nl-1;
-stbas   = sfend+1;        stend   = stbas+nl-1;
-usrbas  = stend+1;        usrend  = usrbas+nusr-1; % warning: nusr could be 0
-pqhbas  = usrend+1;       pqhend  = pqhbas+npqh-1; % warning: npqh could be 0
-pqlbas  = pqhend+1;       pqlend  = pqlbas+npql-1; % warning: npql could be 0
-vlbas   = pqlend+1;       vlend   = vlbas+nvl-1;   % warning: nvl could be 0
-angbas  = vlend+1;        angend  = angbas+nang-1; % not done yet, need # of
-                                                 % Ay constraints.
+%% define indexing of constraint vector
+k = 0;
+pmsmbas = k + 1;    k = k + nb;     pmsmend = k;    %% real power balance
+qmsmbas = k + 1;    k = k + nb;     qmsmend = k;    %% reactive power balance
+sfbas   = k + 1;    k = k + nl;     sfend   = k;    %% "from" flow limit
+stbas   = k + 1;    k = k + nl;     stend   = k;    %% "to" flow limit
+usrbas  = k + 1;    k = k + nusr;   usrend  = k;    % warning: nusr could be 0
+pqhbas  = k + 1;    k = k + npqh;   pqhend  = k;    % warning: npqh could be 0
+pqlbas  = k + 1;    k = k + npql;   pqlend  = k;    % warning: npql could be 0
+vlbas   = k + 1;    k = k + nvl;    vlend   = k;    % warning: nvl could be 0
+angbas  = k + 1;    k = k + nang;   angend  = k;    %% branch angle diff lims
+%% not done yet, need number of Ay constraints.
 
 % Let makeAy deal with any y-variable for piecewise-linear convex costs.
 % note that if there are z variables then Ay doesn't have the columns
@@ -393,8 +400,7 @@ else
   by =[];
 end
 ncony = size(Ay,1);
-yconbas = angend+1;       yconend = yconbas+ncony-1; % finally done with
-                                                     % constraint indexing
+yconbas = k + 1;    k = k + ncony;  yconend = k;    %% done w/constraint idxing
 
 % Make Aang, lang, uang for branch angle difference limits
 if nang > 0
@@ -492,12 +498,12 @@ if ny > 0
   if nz > 0
     Au = [ Au(:,1:qgend) sparse(nusr, ny) Au(:, qgend+(1:nz)) ];
     if ~isempty(N)
-        N = [ N(:,1:qgend) sparse(size(N,1), ny) N(:, qgend+(1:nz)) ];
+        N = [ N(:,1:qgend) sparse(nw, ny) N(:, qgend+(1:nz)) ];
     end
   else
     Au = [ Au sparse(nusr, ny) ];
     if ~isempty(N)
-        N = [ N sparse(size(N,1), ny) ];
+        N = [ N sparse(nw, ny) ];
     end
   end
 end
@@ -602,12 +608,19 @@ Afeq = A(ieq, :);
 bfeq = u(ieq);
 
 % bounds on optimization vars; y vars unbounded
+Va   = bus(:, VA) * (pi/180);
+Pg   = gen(:, PG) / baseMVA;
+Qg   = gen(:, QG) / baseMVA;
+Pmin = gen(:, PMIN) / baseMVA;
+Pmax = gen(:, PMAX) / baseMVA;
+Qmin = gen(:, QMIN) / baseMVA;
+Qmax = gen(:, QMAX) / baseMVA;
 UB = Inf * ones(nxyz, 1);
 LB = -UB;
-LB(thbas+ref-1) = bus(ref, VA)*pi/180;  UB(thbas+ref-1) = bus(ref, VA)*pi/180;
-LB(vbas:vend)   = bus(:, VMIN);         UB(vbas:vend)   = bus(:, VMAX);
-LB(pgbas:pgend) = gen(:, PMIN)/baseMVA; UB(pgbas:pgend) = gen(:, PMAX)/baseMVA;
-LB(qgbas:qgend) = gen(:, QMIN)/baseMVA; UB(qgbas:qgend) = gen(:, QMAX)/baseMVA;
+LB(thbas-1+refs) = Va(refs);        UB(thbas-1+refs) = Va(refs);
+LB(vbas:vend)    = bus(:, VMIN);    UB(vbas:vend)   = bus(:, VMAX);
+LB(pgbas:pgend)  = Pmin;            UB(pgbas:pgend) = Pmax;
+LB(qgbas:qgend)  = Qmin;            UB(qgbas:qgend) = Qmax;
 if ~isempty(zl)
   LB(zbas:zend) = zl;
 end
@@ -615,13 +628,13 @@ if ~isempty(zu)
   UB(zbas:zend) = zu;
 end
 
-% Compute initial vector
+% initialize optimization vars
 x0 = zeros(nxyz, 1);
-x0(thbas:thend) = bus(:, VA) * pi/180;
+x0(thbas:thend) = Va;
 x0(vbas:vend)   = bus(:, VM);
-x0(vbas+gen(:,GEN_BUS)-1) = gen(:, VG);   % buses w. gens init V from gen data
-x0(pgbas:pgend) = gen(:, PG) / baseMVA;
-x0(qgbas:qgend) = gen(:, QG) / baseMVA;
+x0(vbas-1+gen(:,GEN_BUS)) = gen(:, VG);     % buses w/gens init V from gen data
+x0(pgbas:pgend) = Pg;
+x0(qgbas:qgend) = Qg;
 % no ideas to initialize y variables
 if ~isempty(z0)
   x0(zbas:zend) = z0;
@@ -640,9 +653,9 @@ fmoptions = optimset('GradObj', 'on', 'GradConstr', 'on' );
 fmoptions = optimset(fmoptions, 'MaxIter', mpopt(19), 'TolCon', mpopt(16) );
 fmoptions = optimset(fmoptions, 'TolX', mpopt(17), 'TolFun', mpopt(18) );
 fmoptions.MaxFunEvals = 4 * fmoptions.MaxIter;
-if mpopt(31) == 0,
+if verbose == 0,
   fmoptions.Display = 'off';
-elseif mpopt(31) == 1
+elseif verbose == 1
   fmoptions.Display = 'iter';
 else
   fmoptions.Display = 'testing';
@@ -676,7 +689,7 @@ end
 % fmoptions = optimset(fmoptions, 'DerivativeCheck', 'on', 'FinDiffType', 'central', 'FunValCheck', 'on');
 % fmoptions = optimset(fmoptions, 'Diagnostics', 'on');
 
-if strcmp(optimget(fmoptions, 'Algorithm'), 'interior-point')
+if str2num(otver.Version(1)) >= 4 & strcmp(optimget(fmoptions, 'Algorithm'), 'interior-point')
   % set initial point
   x0 = zeros(nxyz, 1);
   x0(thbas:thend) = 0;
@@ -689,6 +702,7 @@ if strcmp(optimget(fmoptions, 'Algorithm'), 'interior-point')
   end
 end
 
+%%-----  run opf  -----
 fmc_cost = @(x)costfmin(x, baseMVA, gencost, parms, ccost, N, fparm, H, Cw);
 fmc_cons = @(x)consfmin(x, baseMVA, bus, gen, branch, Ybus, Yf, Yt, mpopt, parms);
 [x, f, info, Output, Lambda, Jac] = ...
@@ -697,16 +711,14 @@ fmc_cons = @(x)consfmin(x, baseMVA, bus, gen, branch, Ybus, Yf, Yt, mpopt, parms
 success = (info > 0);
 
 % Unpack optimal x
-bus(:, VA) = x(thbas:thend)*180/pi;
-bus(:, VM) = x(vbas:vend);
-gen(:, PG) = baseMVA * x(pgbas:pgend);
-gen(:, QG) = baseMVA * x(qgbas:qgend);
-gen(:, VG) = bus(gen(:, GEN_BUS), VM);
-
-% reconstruct voltages
 Va = x(thbas:thend);
 Vm = x(vbas:vend);
 V = Vm .* exp(j*Va);
+bus(:, VA) = Va * 180/pi;
+bus(:, VM) = Vm;
+gen(:, PG) = baseMVA * x(pgbas:pgend);
+gen(:, QG) = baseMVA * x(qgbas:qgend);
+gen(:, VG) = Vm(gen(:, GEN_BUS));
 
 %% compute branch injections
 Sf = V(branch(:, F_BUS)) .* conj(Yf * V);  %% cplx pwr at "from" bus, p.u.
@@ -754,7 +766,7 @@ pimul = [
   Lambda.lower - Lambda.upper
 ];
 
-% If we succeeded and there were generators with general pq curve
+% If we succeeded and there were generators with general PQ curve
 % characteristics, this is the time to re-compute the multipliers,
 % splitting any nonzero multiplier on one of the linear bounds among the
 % Pmax, Pmin, Qmax or Qmin limits, producing one multiplier for a P limit and
@@ -854,8 +866,10 @@ if ~isempty(offbranch)
   branchout(offbranch, MU_ST) = tmp;
 end
 
-et = etime(clock,t1);
-if  (nargout == 0) & ( success )
+%% compute elapsed time
+et = etime(clock, t0);
+
+if (nargout == 0) & ( success )
   printpf(baseMVA, bus, genout, branchout, f, info, et, 1, mpopt);
 end
 
