@@ -232,10 +232,9 @@ else                                %% M-file
     end
     if ncols >= MU_ST               %% opf SOLVED, save with mu's
         fprintf(fd, '\tmu_Sf\tmu_St');
-%% uncomment below if we ever implement something that computes these multipliers
-%         if ~strcmp(mpc_ver, '1')
-%             fprintf(fd, '\tmu_angmin\tmu_angmax');
-%         end
+        if ~strcmp(mpc_ver, '1')
+            fprintf(fd, '\tmu_angmin\tmu_angmax');
+        end
     end
     fprintf(fd, '\n%sbranch = [\n', prefix);
     if ncols < QT                   %% power flow NOT SOLVED, save without line flows or mu's
@@ -254,9 +253,7 @@ else                                %% M-file
         if strcmp(mpc_ver, '1')
             fprintf(fd, '\t%d\t%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%d\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f;\n', branch(:, 1:MU_ST).');
         else
-            fprintf(fd, '\t%d\t%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%d\t%g\t%g\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f;\n', branch(:, 1:MU_ST).');
-%% uncomment below if we every implement something that computes these multipliers
-%             fprintf(fd, '\t%d\t%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%d\t%g\t%g\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f;\n', branch(:, 1:MU_ANGMAX).');
+            fprintf(fd, '\t%d\t%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%d\t%g\t%g\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f;\n', branch(:, 1:MU_ANGMAX).');
         end
     end
     fprintf(fd, '];\n\n');
@@ -271,7 +268,7 @@ else                                %% M-file
             fprintf(fd, '\t%d\t%d;\n', areas(:, 1:PRICE_REF_BUS).');
         end
         fprintf(fd, '];\n\n');
-            
+        
         %% generator cost data
         fprintf(fd, '%%%% generator cost data\n');
         fprintf(fd, '%%\t1\tstartup\tshutdown\tn\tx1\ty1\t...\txn\tyn\n');
@@ -292,6 +289,50 @@ else                                %% M-file
         fprintf(fd, '];\n\n');
     end
     
+    %% generalized OPF user data
+    if isfield(mpc, 'A') & ~isempty(mpc.A)
+        %% A
+        fprintf(fd, '%%%%-----  Generalized OPF User Data  -----%%%%\n');
+        fprintf(fd, '%%%% user constraints\n');
+        print_sparse(fd, sprintf('%sA', prefix), mpc.A);
+        fprintf(fd, 'lu = [\n');
+        fprintf(fd, '\t%g\t%g;\n', [mpc.l mpc.u].');
+        fprintf(fd, '];\n');
+        fprintf(fd, '%sl = lu(:, 1);\n', prefix);
+        fprintf(fd, '%su = lu(:, 2);\n\n', prefix);
+    end
+    if isfield(mpc, 'N') & ~isempty(mpc.N)
+        fprintf(fd, '%%%% user costs\n');
+        print_sparse(fd, sprintf('%sN', prefix), mpc.N);
+        print_sparse(fd, sprintf('%sH', prefix), mpc.H);
+        fprintf(fd, 'Cw_fparm = [\n');
+        fprintf(fd, '\t%g\t%d\t%d\t%d\t%d;\n', [mpc.Cw mpc.fparm].');
+        fprintf(fd, '];\n');
+        fprintf(fd, '%sCw    = Cw_fparm(:, 1);\n', prefix);
+        fprintf(fd, '%sfparm = Cw_fparm(:, 2:5);\n\n', prefix);
+    end
+    if isfield(mpc, 'z0') | isfield(mpc, 'zl') | isfield(mpc, 'zu')
+        fprintf(fd, '%%%% user vars\n');
+    end
+    if isfield(mpc, 'z0') & ~isempty(mpc.z0)
+        fprintf(fd, '%sz0 = [\n', prefix);
+        fprintf(fd, '\t%g;\n', mpc.z0);
+        fprintf(fd, '];\n');
+    end
+    if isfield(mpc, 'zl') & ~isempty(mpc.zl)
+        fprintf(fd, '%szl = [\n', prefix);
+        fprintf(fd, '\t%g;\n', mpc.zl);
+        fprintf(fd, '];\n');
+    end
+    if isfield(mpc, 'zu') & ~isempty(mpc.zu)
+        fprintf(fd, '%szu = [\n', prefix);
+        fprintf(fd, '\t%g;\n', mpc.zu);
+        fprintf(fd, '];\n');
+    end
+    if isfield(mpc, 'z0') | isfield(mpc, 'zl') | isfield(mpc, 'zu')
+        fprintf(fd, '\n');
+    end
+
     %% end
     fprintf(fd, 'return;\n');
     
@@ -303,6 +344,24 @@ end
 
 if nargout > 0
     fname_out = fname;
+end
+
+return;
+
+
+
+function print_sparse(fd, varname, A)
+
+[i, j, s] = find(A);
+[m, n] = size(A);
+
+if isempty(s)
+    fprintf(fd, '%s = sparse(%d, %d);\n', varname, m, n);
+else
+    fprintf(fd, 'ijs = [\n');
+    fprintf(fd, '\t%d\t%d\t%g;\n', [i j s].');
+    fprintf(fd, '];\n');
+    fprintf(fd, '%s = sparse(ijs(:, 1), ijs(:, 2), ijs(:, 3), %d, %d);\n', varname, m, n);
 end
 
 return;
