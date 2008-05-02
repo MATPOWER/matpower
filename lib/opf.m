@@ -285,8 +285,45 @@ t1 = clock;
 %% set algorithm
 dc = mpopt(10);
 if dc % DC OPF
-  [bus, gen, branch, f, success, info, et] = dcopf(baseMVA, bus, gen, ...
-                                            branch, areas, gencost, mpopt);
+  nb = size(bus, 1);
+  ng = size(gen, 1);
+  if size(Au, 1) > 0
+    %% reduce columns of Au and N, assuming they were for the AC problem
+    %% the AC problem unless there aren't enough columns
+    nxz = size(Au, 2);
+    if nxz >= 2*nb + 2*ng
+      %% define indexing of optimization variable vector
+      k = 0;
+      thbas   = k + 1;    k = k + nb;     thend = k;      %% voltage angles
+      vbas    = k + 1;    k = k + nb;     vend  = k;      %% voltage magnitudes
+      pgbas   = k + 1;    k = k + ng;     pgend = k;      %% real power injections
+      qgbas   = k + 1;    k = k + ng;     qgend = k;      %% reactive power injections
+      %% make sure there aren't any constraints or costs on V or Qg
+      if any(any(Au(:, [vbas:vend qgbas:qgend])))
+        error('opf: Attempting to solve DC OPF with user constraints on V or Qg');
+      end
+      dcc = [thbas:thend pgbas:pgend];
+      if nxz > qgend
+        dcc = [dcc (qgend+1):nxz];
+      end
+      Au = Au(:, dcc);
+      if nw > 0
+        if any(any(N(:, [vbas:vend qgbas:qgend])))
+          error('opf: Attempting to solve DC OPF with user costs on V or Qg');
+        end
+        N = N(:, dcc);
+      end
+    end
+  end
+  if nargout > 7
+    [bus, gen, branch, f, success, info, et, xr, pimul] = ...
+        dcopf(baseMVA, bus, gen, branch, areas, gencost, Au, lbu, ubu, ...
+            mpopt, N, fparm, H, Cw, z0, zl, zu);
+  else
+    [bus, gen, branch, f, success, info, et] = ...
+        dcopf(baseMVA, bus, gen, branch, areas, gencost, Au, lbu, ubu, ...
+            mpopt, N, fparm, H, Cw, z0, zl, zu);
+  end
 else % AC optimal power flow requested
   if any(model ~= PW_LINEAR & model ~= POLYNOMIAL)
     error('opf.m: unknown generator cost model in gencost data');
