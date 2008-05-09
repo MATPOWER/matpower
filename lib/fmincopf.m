@@ -64,14 +64,17 @@ function [busout, genout, branchout, f, success, info, et, g, jac, x, pimul] = .
 %   Copyright (c) 2000-2006 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-t0 = clock;
-
+%%----- initialization -----
+t0 = clock;         %% start timer
 % process input arguments
 [baseMVA, bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt, ...
     N, fparm, H, Cw, z0, zl, zu] = opf_args(varargin{:});
 
-%%----- initialization -----
-verbose = mpopt(31);
+%% options
+verbose = mpopt(31);    %% VERBOSE
+
+%% define constants
+j = sqrt(-1);
 
 %% define named indices into data matrices
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
@@ -114,9 +117,6 @@ end
 
 % Renumber buses consecutively
 [i2e, bus, gen, branch, areas] = ext2int(bus, gen, branch, areas);
-
-%% get bus index lists of each type of bus
-[ref, pv, pq] = bustypes(bus, gen);
 
 % Sort generators in order of increasing bus number;
 ng = size(gen,1);
@@ -393,8 +393,6 @@ end
 % Up to this point, the setup is MINOS-like.  We now adapt
 % things for fmincon.
 
-j = sqrt(-1);
-
 % Form a vector with basic info to pass on as a parameter
 parms = [ ...
     nb  ;% 1
@@ -572,6 +570,11 @@ branch(:, QF) = imag(Sf) * baseMVA;
 branch(:, PT) = real(St) * baseMVA;
 branch(:, QT) = imag(St) * baseMVA;
 
+%% line constraint is actually on square of limit
+%% so we must fix multipliers
+Lambda.ineqnonlin(1:nl)      = 2 * Lambda.ineqnonlin(1:nl)      .* branch(:, RATE_A) / baseMVA;
+Lambda.ineqnonlin(nl+1:2*nl) = 2 * Lambda.ineqnonlin(nl+1:2*nl) .* branch(:, RATE_A) / baseMVA;
+
 % Put in Lagrange multipliers
 gen(:, MU_PMAX)  = Lambda.upper(pgbas:pgend) / baseMVA;
 gen(:, MU_PMIN)  = Lambda.lower(pgbas:pgend) / baseMVA;
@@ -581,12 +584,8 @@ bus(:, LAM_P)    = Lambda.eqnonlin(1:nb) / baseMVA;
 bus(:, LAM_Q)    = Lambda.eqnonlin(nb+1:2*nb) / baseMVA;
 bus(:, MU_VMAX)  = Lambda.upper(vbas:vend);
 bus(:, MU_VMIN)  = Lambda.lower(vbas:vend);
-branch(:, MU_SF) = Lambda.ineqnonlin(1:nl) / baseMVA; 
+branch(:, MU_SF) = Lambda.ineqnonlin(1:nl) / baseMVA;
 branch(:, MU_ST) = Lambda.ineqnonlin(nl+1:2*nl) / baseMVA;
-
-%% constraint is actually on square of limit, so we must fix multipliers
-branch(:, MU_SF) = 2 * branch(:, MU_SF) .* branch(:, RATE_A) / baseMVA; 
-branch(:, MU_ST) = 2 * branch(:, MU_ST) .* branch(:, RATE_A) / baseMVA;
 
 % extract lambdas from linear constraints
 nlt = length(ilt);
@@ -679,8 +678,8 @@ end
 % We are done with standard opf but we may need to provide the
 % constraints and their Jacobian also.
 if nargout > 7
-  [g, geq, dg, dgeq] = consfmin(x, baseMVA, bus, gen, gencost, branch, ...
-                                Ybus, Yf, Yt, mpopt, parms, ccost, N, fparm, H, Cw);
+  [g, geq, dg, dgeq] = consfmin(x, baseMVA, bus, gen, branch, ...
+                                Ybus, Yf, Yt, mpopt, parms);
   g = [ geq; g];
   jac = [ dgeq'; dg']; % true Jacobian organization
 end
@@ -718,7 +717,6 @@ end
 
 %% compute elapsed time
 et = etime(clock, t0);
-
 if (nargout == 0) & ( success )
   printpf(baseMVA, bus, genout, branchout, f, info, et, 1, mpopt);
 end
