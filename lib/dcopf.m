@@ -62,14 +62,14 @@ function [busout, genout, branchout, f, success, info, et, xz, pimul] = ...
 %   Copyright (c) 1996-2008 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-t0 = clock;
-
+%%----- initialization -----
+t0 = clock;         %% start timer
 % process input arguments
 [baseMVA, bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt, ...
     N, fparm, H, Cw, z0, zl, zu] = opf_args(varargin{:});
 
-%%----- initialization -----
-verbose = mpopt(31);
+%% options
+verbose = mpopt(31);    %% VERBOSE
 mpopt(10) = 1;          %% force DC treatment
 
 %% define named indices into data matrices
@@ -116,9 +116,6 @@ end
 
 % Renumber buses consecutively
 [i2e, bus, gen, branch, areas] = ext2int(bus, gen, branch, areas);
-
-%% get bus index lists of each type of bus
-[ref, pv, pq] = bustypes(bus, gen);
 
 % Print a warning if there is more than one reference bus
 refs = find(bus(:, BUS_TYPE) == REF);
