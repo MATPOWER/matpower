@@ -440,10 +440,10 @@ end
 
 % Divide l <= A*x <= u into less than, equal to, greater than, doubly-bounded
 % sets.
-ieq = find( abs(u-l) <= eps);
-igt = find( u >= 1e10);  % unlimited ceiling
-ilt = find( l <= -1e10); % unlimited bottom
-ibx = find( (abs(u-l) > eps) & (u < 1e10) & (l > -1e10));
+ieq = find( abs(u-l) <= eps );          %% equality
+igt = find( u >=  1e10 & l > -1e10 );   %% greater than, unbounded above
+ilt = find( l <= -1e10 & u <  1e10 );   %% less than, unbounded below
+ibx = find( (abs(u-l) > eps) & (u < 1e10) & (l > -1e10) );
 Af  = [ A(ilt, :); -A(igt, :); A(ibx, :); -A(ibx, :) ];
 bf  = [ u(ilt);   -l(igt);     u(ibx);    -l(ibx)];
 Afeq = A(ieq, :);

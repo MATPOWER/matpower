@@ -1,4 +1,4 @@
-function [busout, genout, branchout, f, success, info, et, xz, pimul] = ...
+function [busout, genout, branchout, f, success, info, et, x, pimul] = ...
     dcopf(varargin)
 %DCOPF  Solves a DC optimal power flow.
 %
@@ -289,10 +289,10 @@ end
 
 %% divide l <= A*x <= u into less than, equal to, greater than,
 %% doubly-bounded sets
-ieq = find( abs(u-l) <= eps);       %% equality
-igt = find( u >= 1e10);             %% greater than, unbounded above
-ilt = find( l <= -1e10);            %% less than, unbounded below
-ibx = find( (abs(u-l) > eps) & (u < 1e10) & (l > -1e10));
+ieq = find( abs(u-l) <= eps );          %% equality
+igt = find( u >=  1e10 & l > -1e10 );   %% greater than, unbounded above
+ilt = find( l <= -1e10 & u <  1e10 );   %% less than, unbounded below
+ibx = find( (abs(u-l) > eps) & (u < 1e10) & (l > -1e10) );
 % Aeq = A(ieq, :);
 % beq = u(ieq);
 % Ai  = [ A(ilt, :); -A(igt, :); A(ibx, :); -A(ibx, :) ];
