@@ -15,6 +15,19 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 3.2
 -----------------
 
+5/2/08
+    - Move OPF input argument processing into opf_args.m, now
+      shared by opf.m, dcopf.m, fmincopf.m, mopf.m and tspopf.m.
+    - Rewrote the DC OPF to include generalized user constraints,
+      costs and extra vars (like AC formulation). Note, that if
+      A or N have enough columns for the AC formulation, opf.m
+      assumes they are for the AC OPF and strips out the extra
+      columns before passing to dcopf.m.
+    - Added the ability to read and save generalized OPF user
+      constraints, costs and var limits from case struct.
+    - Modified savecase.m to include saving of MU_ANGMIN, MU_ANGMAX
+      columns of branch matrix.
+
 3/13/08
     - Added a function makeLODF.m to compute line outage distribution
       factors.
