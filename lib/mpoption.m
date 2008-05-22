@@ -1,4 +1,4 @@
-function [options, names] = mpoption(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15)
+function [options, names] = mpoption(varargin)
 %MPOPTION  Used to set and retrieve a MATPOWER options vector.
 %
 %   opt = mpoption
@@ -40,18 +40,11 @@ function [options, names] = mpoption(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p1
 %   OPF options
 %       11 - OPF_ALG, 0             algorithm to use for OPF
 %           [    0 - choose best default solver available in the        ]
-%           [        following order, 500, 540, 520 then 100/200        ]
-%           [ Otherwise the first digit specifies the problem           ]
-%           [ formulation and the second specifies the solver,          ]
-%           [ as follows, (see the User's Manual for more details)      ]
-%           [  100 - standard formulation (old), constr                 ]
-%           [  120 - standard formulation (old), dense LP               ]
-%           [  140 - standard formulation (old), sparse LP (relaxed)    ]
-%           [  160 - standard formulation (old), sparse LP (full)       ]
-%           [  200 - CCV formulation (old), constr                      ]
-%           [  220 - CCV formulation (old), dense LP                    ]
-%           [  240 - CCV formulation (old), sparse LP (relaxed)         ]
-%           [  260 - CCV formulation (old), sparse LP (full)            ]
+%           [        following order, 500, 540, 520, 340, 300           ]
+%           [  300 - generalized formulation, constr                    ]
+%           [  320 - generalized formulation, dense LP                  ]
+%           [  340 - generalized formulation, sparse LP (relaxed)       ]
+%           [  360 - generalized formulation, sparse LP (full)          ]
 %           [  500 - generalized formulation, MINOS                     ]
 %           [  520 - generalized formulation, fmincon                   ]
 %           [  540 - generalized formulation, PDIPM                     ]
@@ -61,17 +54,6 @@ function [options, names] = mpoption(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p1
 %           [  550 - generalized formulation, TRALM                     ]
 %           [        trust region based augmented Langrangian method    ]
 %           [ See the User's Manual for details on the formulations.    ]
-%       12 - OPF_ALG_POLY, 100      default OPF algorithm for use with
-%                                   polynomial cost functions
-%                                   (used only if no solver available
-%                                   for generalized formulation)
-%       13 - OPF_ALG_PWL, 200       default OPF algorithm for use with
-%                                   piece-wise linear cost functions
-%                                   (used only if no solver available
-%                                   for generalized formulation)
-%       14 - OPF_POLY2PWL_PTS, 10   number of evaluation points to use
-%                                   when converting from polynomial to
-%                                   piece-wise linear costs
 %       16 - OPF_VIOLATION, 5e-6    constraint violation tolerance
 %       17 - CONSTR_TOL_X, 1e-4     termination tol on x for copf & fmincopf
 %       18 - CONSTR_TOL_F, 1e-4     termination tol on F for copf & fmincopf
@@ -189,7 +171,7 @@ function [options, names] = mpoption(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p1
 %%-----  set up default option values  -----
 i = 1;
 if rem(nargin, 2)       %% odd number of arguments
-    options = p1;           %% base options vector passed in
+    options = varargin{1};  %% base options vector passed in
     i = 2;                  %% start processing parameters with 2nd one
 else                    %% even number of parameters
     options = [             %% use defaults for base options vector
@@ -208,9 +190,9 @@ else                    %% even number of parameters
         
         %% OPF options
         0;      %% 11 - OPF_ALG
-        100;    %% 12 - OPF_ALG_POLY
-        200;    %% 13 - OPF_ALG_PWL
-        10;     %% 14 - OPF_POLY2PWL_PTS
+        100;    %% 12 - OPF_ALG_POLY, deprecated
+        200;    %% 13 - OPF_ALG_PWL, deprecated
+        10;     %% 14 - OPF_POLY2PWL_PTS, deprecated
         0;      %% 15 - OPF_NEQ, not a user option (number of eq constraints for
                 %%          copf, lpopf and dcopf algorithms, set by program)
         5e-6;   %% 16 - OPF_VIOLATION
@@ -418,8 +400,8 @@ names = str2mat(    names, ...
 %%-----  process parameters  -----
 while i <= nargin
     %% get parameter name and value
-    pname = eval(['p' int2str(i)]);
-    pval = eval(['p' int2str(i+1)]);
+    pname = varargin{i};
+    pval  = varargin{i+1};
     
     %% get parameter index
     namestr = names';

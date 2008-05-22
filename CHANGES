@@ -15,6 +15,16 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 3.2
 -----------------
 
+5/22/08
+    - Major refactorization of OPF implementation with shared code
+      for a generalized formulation that includes the DC opf as
+      well as the legacy solvers based on constr and LPconstr.
+    - Deprecated OPF_ALG values 100, 120, 140, 160, 200, 220, 240,
+      and 260 in favor of the new generalized formulation
+      equivalents 300, 320, 340 and 360.
+    - Removed options OPF_ALG_POLY, OPF_ALG_PWL and
+      OPF_POLY2PWL_PTS.
+
 5/2/08
     - Move OPF input argument processing into opf_args.m, now
       shared by opf.m, dcopf.m, fmincopf.m, mopf.m and tspopf.m.
