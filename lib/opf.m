@@ -4,7 +4,9 @@ function [busout, genout, branchout, f, success, info, et, g, jac, xr, pimul] = 
 %
 %   For an AC OPF, if the OPF algorithm is not set explicitly in the options,
 %   it will choose the best available solver, searching in the following order:
-%   minopf, pdipmopf, fmincon, constr.
+%   minopf, pdipmopf, fmincon, LP-base, and constr.
+%
+%   [results, success] = opf(casefile, mpopt)
 %
 %   [bus, gen, branch, f, success] = opf(casefile, mpopt)
 %
@@ -68,9 +70,10 @@ function [busout, genout, branchout, f, success, info, et, g, jac, xr, pimul] = 
 
 %%----- initialization -----
 t0 = clock;         %% start timer
-% process input arguments
+
+%% process input arguments
 [baseMVA, bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt, ...
-    N, fparm, H, Cw, z0, zl, zu] = opf_args(varargin{:});
+    N, fparm, H, Cw, z0, zl, zu, userfcn] = opf_args(varargin{:});
 
 %% options
 dc  = mpopt(10);        %% PF_DC        : 1 = DC OPF, 0 = AC OPF 
@@ -94,13 +97,13 @@ if ~dc
     end
   end
   %% update deprecated algorithm codes to new, generalized equivalents
-  if alg == 100 | alg == 200        %% CONSTR
+  if alg == 100 || alg == 200        %% CONSTR
     alg = 300;
-  elseif alg == 120 | alg == 220    %% dense LP
+  elseif alg == 120 || alg == 220    %% dense LP
     alg = 320;
-  elseif alg == 140 | alg == 240    %% sparse (relaxed) LP
+  elseif alg == 140 || alg == 240    %% sparse (relaxed) LP
     alg = 340;
-  elseif alg == 160 | alg == 260    %% sparse (full) LP
+  elseif alg == 160 || alg == 260    %% sparse (full) LP
     alg = 360;
   end
   mpopt(11) = alg;
@@ -135,52 +138,52 @@ if size(branch,2) < MU_ANGMAX
   branch = [ branch zeros(nl,MU_ANGMAX-size(branch,2)) ];
 end
 
-%% ignore reactive costs for DC
 if dc
-  [gencost, qcost] = pqcost(gencost, ng);
-end
+  %% ignore reactive costs for DC
+  gencost = pqcost(gencost, ng);
 
-%% reduce Au and/or N from AC dimensions to DC dimensions, if needed
-if dc & (nusr | nw)
-  acc = [nb+[1:nb] 2*nb+ng+[1:ng]];     %% Vm and Qg columns
-  if nusr & size(Au, 2) >= 2*nb + 2*ng
-    %% make sure there aren't any constraints on Vm or Qg
-    if any(any(Au(:, acc)))
-      error('opf: Attempting to solve DC OPF with user constraints on Vm or Qg');
+  %% reduce Au and/or N from AC dimensions to DC dimensions, if needed
+  if nusr || nw
+    acc = [nb+(1:nb) 2*nb+ng+(1:ng)];   %% Vm and Qg columns
+    if nusr && size(Au, 2) >= 2*nb + 2*ng
+      %% make sure there aren't any constraints on Vm or Qg
+      if any(any(Au(:, acc)))
+        error('opf: attempting to solve DC OPF with user constraints on Vm or Qg');
+      end
+      Au(:, acc) = [];                  %% delete Vm and Qg columns
     end
-    Au(:, acc) = [];    %% delete Vm and Qg columns
-  end
-  if nw & size(N, 2) >= 2*nb + 2*ng
-    %% make sure there aren't any costs on Vm or Qg
-    if any(any(N(:, acc)))
-      error('opf: Attempting to solve DC OPF with user constraints on Vm or Qg');
+    if nw && size(N, 2) >= 2*nb + 2*ng
+      %% make sure there aren't any costs on Vm or Qg
+      if any(any(N(:, acc)))
+        error('opf: attempting to solve DC OPF with user constraints on Vm or Qg');
+      end
+      N(:, acc) = [];                   %% delete Vm and Qg columns
     end
-    N(:, acc) = [];     %% delete Vm and Qg columns
   end
 end
 
 %% filter out inactive generators and branches; save original bus & branch
-comgen    = find(gen(:,GEN_STATUS) > 0);
-offgen    = find(gen(:,GEN_STATUS) <= 0);
-onbranch  = find(branch(:,BR_STATUS) ~= 0);
-offbranch = find(branch(:,BR_STATUS) == 0);
-gen0    = gen;                  %% save originals
-branch0 = branch;
-gen(   offgen,    :) = [];      %% delete out-of-service gens
-branch(offbranch, :) = [];      %% delete out-of-service branches
-if size(gencost,1) == ng        %% delete costs for out-of-service gens
-  gencost(offgen, :) = [];
+status.gen.on     = find(gen(:,GEN_STATUS) > 0);
+status.gen.off    = find(gen(:,GEN_STATUS) <= 0);
+status.branch.on  = find(branch(:,BR_STATUS) ~= 0);
+status.branch.off = find(branch(:,BR_STATUS) == 0);
+original.gen      = gen;            %% save originals
+original.branch   = branch;
+gen(      status.gen.off, :) = [];      %% delete out-of-service gens
+branch(status.branch.off, :) = [];      %% delete out-of-service branches
+if size(gencost,1) == ng                %% delete costs for out-of-service gens
+  gencost(status.gen.off, :) = [];
 else
-  gencost([offgen; offgen+ng], :) = [];
+  gencost([status.gen.off; status.gen.off+ng], :) = [];
 end
 if dc
-  offcols = offgen + nb;
+  offcols = status.gen.off + nb;
 else
-  offcols = [offgen; offgen+ng] + 2*nb;
+  offcols = [status.gen.off; status.gen.off+ng] + 2*nb;
 end
 if nusr
   if any(any(Au(:, offcols)))
-    error('opf: User constraint involves out-of-service gen');
+    error('opf: user constraint involves out-of-service gen');
   end
   Au(:, offcols) = [];
 end
@@ -193,18 +196,18 @@ ng = size(gen, 1);      %% number of dispatchable injections
 nl = size(branch, 1);   %% number of branches
 
 %% convert to internal consecutive bus numbering
-[i2e, bus, gen, branch, areas] = ext2int(bus, gen, branch, areas);
+[reorder.i2e, bus, gen, branch] = ext2int(bus, gen, branch);
 
 %% sort generators in order of increasing bus number
 [tmp, igen] = sort(gen(:, GEN_BUS));
-[tmp, inv_gen_ord] = sort(igen);    %% save for inverse reordering later
+[tmp, reorder.gen] = sort(igen);    %% save for inverse reordering later
 gen  = gen(igen, :);
 if ng == size(gencost,1)
   gencost = gencost(igen, :);
 else
   gencost = gencost( [igen; igen+ng], :);
 end
-one2ng = [1:ng]';
+one2ng = (1:ng)';
 if dc
   oldcols = one2ng + nb;
   newcols =   igen + nb;
@@ -222,16 +225,17 @@ end
 %% warn if there is more than one reference bus
 refs = find(bus(:, BUS_TYPE) == REF);
 if length(refs) > 1
-  errstr = ['\ngopf: Warning: more than one reference bus detected in bus table data.\n', ...
-              '      For a system with islands, a reference bus in each island\n', ...
-              '      might help convergence but in a fully connected system such\n', ...
-              '      a situation is probably not reasonable.\n\n' ];
+  errstr = ['\nopf: Warning: Multiple reference buses.\n', ...
+              '     For a system with islands, a reference bus in each island\n', ...
+              '     may help convergence, but in a fully connected system such\n', ...
+              '     a situation is probably not reasonable.\n\n' ];
   fprintf(errstr);
 end
 
+%% set up MATPOWER case data struct
 mpc = struct('baseMVA', baseMVA, 'bus', bus, 'gen', gen, ...
-    'branch', branch, 'areas', areas, 'gencost', gencost, ...
-    'N', N, 'fparm', fparm, 'H', H, 'Cw', Cw);
+    'branch', branch, 'gencost', gencost, 'original', original, ...
+    'status', status, 'reorder', reorder);
 Va   = bus(:, VA) * (pi/180);
 Vm   = bus(:, VM);
 Vm(gen(:, GEN_BUS)) = gen(:, VG);   %% buses with gens, init Vm from gen data
@@ -246,7 +250,6 @@ if dc               %% DC model
   %% more problem dimensions
   nv    = 0;            %% number of voltage magnitude vars
   nq    = 0;            %% number of Qg vars
-  nqms  = 0;            %% number of reactive power mismatch constraints
   q1    = [];           %% index of 1st Qg column in Ay
 
   %% power mismatch constraints
@@ -267,28 +270,27 @@ if dc               %% DC model
   Val = -Vau;
   Vau(refs) = Va(refs);
   Val(refs) = Va(refs);
-
-  %% dispatchable load, constant power factor constraints
-  Avl   = [];
-
-  %% generator PQ capability curve constraints
-  [Apqh, Apql] = deal( [] );
+  
+  user_vars = {'Va', 'Pg'};
+  ycon_vars = {'Pg', 'y'};
 else                %% AC model
   %% more problem dimensions
   nv    = nb;           %% number of voltage magnitude vars
   nq    = ng;           %% number of Qg vars
-  nqms  = nb;           %% number of reactive power mismatch constraints
   q1    = 1+ng;         %% index of 1st Qg column in Ay
 
   %% dispatchable load, constant power factor constraints
   [Avl, lvl, uvl]  = makeAvl(baseMVA, gen);
   
   %% generator PQ capability curve constraints
-  [Apqh, lbpqh, ubpqh, Apql, lbpql, ubpql, Apqdata] = makeApq(baseMVA, gen);
+  [Apqh, ubpqh, Apql, ubpql, Apqdata] = makeApq(baseMVA, gen);
+
+  user_vars = {'Va', 'Vm', 'Pg', 'Qg'};
+  ycon_vars = {'Pg', 'Qg', 'y'};
 end
 
 %% branch voltage angle difference limits
-[Aang, lang, uang, iang, iangl, iangh]  = makeAang(baseMVA, branch, nb, mpopt);
+[Aang, lang, uang, iang]  = makeAang(baseMVA, branch, nb, mpopt);
 
 %% basin constraints for piece-wise linear gen cost variables
 if alg == 545 || alg == 550     %% SC-PDIPM or TRALM, no CCV cost vars
@@ -300,7 +302,6 @@ else
   ny = size(ipwl, 1);   %% number of piece-wise linear cost vars
   [Ay, by] = makeAy(baseMVA, ng, gencost, 1, q1, 1+ng+nq);
 end
-ly = -Inf*ones(size(Ay,1), 1);
 
 %% more problem dimensions
 nx    = nb+nv + ng+nq;  %% number of standard OPF control variables
@@ -309,60 +310,80 @@ if isempty(Au)      %% set nz
   Au = sparse(0,nx);
   if ~isempty(N)        %% still need to check number of columns of N
     if size(N, 2) ~= nx;
-      error(sprintf('opf.m: user supplied N matrix must have %d columns.', nx));
+      error('opf: user supplied N matrix must have %d columns.', nx);
     end
   end
 else
   nz = size(Au,2) - nx; %% number of user z variables
   if nz < 0
-    error(sprintf('opf.m: user supplied A matrix must have at least %d columns.', nx));
+    error('opf: user supplied A matrix must have at least %d columns.', nx);
   end
 end
 
-%% insert y columns in N, if needed
-if ny > 0 & ~isempty(N)
-  if nz > 0
-    N = [ N(:,1:nx) sparse(nw, ny) N(:, (1:nz)+nx) ];
-  else
-    N = [ N sparse(nw, ny) ];
-  end
+%% set up user cost params
+user_cost.N = N;
+user_cost.Cw = Cw;
+if ~isempty(fparm)
+  user_cost.dd = fparm(:, 1);
+  user_cost.rh = fparm(:, 2);
+  user_cost.kk = fparm(:, 3);
+  user_cost.mm = fparm(:, 4);
 end
-mpc.N = N;      %% update N in mpc
+if ~isempty(H)
+  user_cost.H = H;
+end
 
 %% construct OPF model object
 om = opf_model(mpc);
 if dc
   om = add_vars(om, 'Va', nb, Va, Val, Vau);
   om = add_vars(om, 'Pg', ng, Pg, Pmin, Pmax);
-  om = add_vars(om, 'y', ny);
-  om = add_vars(om, 'z', nz, z0, zl, zu);
   om = add_constraints(om, 'Pmis', Amis, bmis, bmis, {'Va', 'Pg'}); %% nb
   om = add_constraints(om, 'Pf',  Bf, lpf, upf, {'Va'});            %% nl
   om = add_constraints(om, 'Pt', -Bf, lpf, upt, {'Va'});            %% nl
-  om = add_constraints(om, 'usr', Au, lbu, ubu, {'Va', 'Pg', 'z'}); %% nusr
   om = add_constraints(om, 'ang', Aang, lang, uang, {'Va'});        %% nang
-  om = add_constraints(om, 'ycon', Ay, ly, by, {'Pg', 'y'});        %% ncony
 else
   om = add_vars(om, 'Va', nb, Va);
   om = add_vars(om, 'Vm', nb, Vm, bus(:, VMIN), bus(:, VMAX));
   om = add_vars(om, 'Pg', ng, Pg, Pmin, Pmax);
   om = add_vars(om, 'Qg', ng, Qg, Qmin, Qmax);
-  om = add_vars(om, 'y', ny);
-  om = add_vars(om, 'z', nz, z0, zl, zu);
   om = add_constraints(om, 'Pmis', nb, 'non-linear');
   om = add_constraints(om, 'Qmis', nb, 'non-linear');
   om = add_constraints(om, 'Sf', nl, 'non-linear');
   om = add_constraints(om, 'St', nl, 'non-linear');
-  om = add_constraints(om, 'usr', Au, lbu, ubu, {'Va', 'Vm', 'Pg', 'Qg', 'z'}); %% nusr
-  om = add_constraints(om, 'PQh', Apqh, lbpqh, ubpqh, {'Pg', 'Qg'});            %% npqh
-  om = add_constraints(om, 'PQl', Apql, lbpql, ubpql, {'Pg', 'Qg'});            %% npql
-  om = add_constraints(om, 'vl', Avl, lvl, uvl, {'Pg', 'Qg'});                  %% nvl
-  om = add_constraints(om, 'ang', Aang, lang, uang, {'Va'});                    %% nang
-  om = add_constraints(om, 'ycon', Ay, ly, by, {'Pg', 'Qg', 'y'});              %% ncony
+  om = add_constraints(om, 'PQh', Apqh, [], ubpqh, {'Pg', 'Qg'});   %% npqh
+  om = add_constraints(om, 'PQl', Apql, [], ubpql, {'Pg', 'Qg'});   %% npql
+  om = add_constraints(om, 'vl',  Avl, lvl, uvl,   {'Pg', 'Qg'});   %% nvl
+  om = add_constraints(om, 'ang', Aang, lang, uang, {'Va'});        %% nang
 end
+
+%% y vars, constraints for piece-wise linear gen costs
+if ny > 0
+  om = add_vars(om, 'y', ny);
+  om = add_constraints(om, 'ycon', Ay, [], by, ycon_vars);          %% ncony
+end
+
+%% add user vars, constraints and costs (as specified via Au, ..., N, ...)
+if nz > 0
+  om = add_vars(om, 'z', nz, z0, zl, zu);
+  user_vars{end+1} = 'z';
+end
+if nusr
+  om = add_constraints(om, 'usr', Au, lbu, ubu, user_vars);         %% nusr
+end
+if nw
+  om = add_costs(om, 'usr', user_cost, user_vars);
+end
+
+%% add user vars, constraints, costs (as specified via userfcn)
+if ~isempty(userfcn)
+  om = feval(userfcn, om);
+end
+
+%% get indexing
 [vv, ll] = get_idx(om);
 
-%% select optional output args
+%% select optional solver output args
 if nargout > 7
   output = struct('g', [], 'dg', []);
 else
@@ -371,77 +392,69 @@ end
 
 %% call the specific solver
 if dc
-  [result, success, raw] = dcopf_solver(om, mpopt, output);
+  [results, success, raw] = dcopf_solver(om, mpopt, output);
 %   pimul = [ ...
-%       result.mu.lin.l - result.mu.lin.u;
+%       results.mu.lin.l - results.mu.lin.u;
 %       -ones(ny>0, 1);
-%       result.mu.var.l - result.mu.var.u;
+%       results.mu.var.l - results.mu.var.u;
 %   ];
-  pimul = raw.pimul;
 else
   %%-----  call specific AC OPF solver  -----
   if alg == 500                                 %% MINOPF
     if ~have_fcn('minopf')
-      error(['opf.m: OPF_ALG ', num2str(alg), ' requires ', ...
-          'MINOPF (see http://www.pserc.cornell.edu/minopf/)']);
+      error('opf: OPF_ALG %d requires MINOPF (see http://www.pserc.cornell.edu/minopf/)', alg);
     end
-    [result, success, raw] = mopf_solver(om, mpopt, output);
+    [results, success, raw] = mopf_solver(om, mpopt, output);
   elseif alg == 300                             %% CONSTR
     if ~have_fcn('constr')
-      error(['opf.m: OPF_ALG ', num2str(alg), ' requires ', ...
-          'constr (Optimization Toolbox 1.x)']);
+      error('opf: OPF_ALG %d requires CONSTR (Optimization Toolbox 1.x)', alg);
     end
-    [result, success, raw] = copf_solver(om, mpopt, output);
-  elseif alg == 320 | alg == 340 | alg == 360   %% LP
-    [result, success, raw] = lpopf_solver(om, mpopt, output);
+    [results, success, raw] = copf_solver(om, mpopt, output);
+  elseif alg == 320 || alg == 340 || alg == 360   %% LP
+    [results, success, raw] = lpopf_solver(om, mpopt, output);
   elseif alg == 520                             %% FMINCON
     if ~have_fcn('fmincon')
-      error(['opf.m: OPF_ALG ', num2str(alg), ' requires ', ...
-          'fmincon (Optimization Toolbox 2.x or later)']);
+      error('opf: OPF_ALG %d requires FMINCON (Optimization Toolbox 2.x or later)', alg);
     end
     mlver = ver('matlab');
-    if str2num(mlver.Version(1)) < 7    %% anonymous functions not available
+    if str2double(mlver.Version(1)) < 7    %% anonymous functions not available
       fmc = @fmincopf6_solver;
     else
       fmc = @fmincopf_solver;
     end
-    [result, success, raw] = feval(fmc, om, mpopt, output);
-  elseif alg == 540 | alg == 545 | alg == 550   %% PDIPM_OPF, SCPDIPM_OPF, or TRALM_OPF
+    [results, success, raw] = feval(fmc, om, mpopt, output);
+  elseif alg == 540 || alg == 545 || alg == 550   %% PDIPM_OPF, SCPDIPM_OPF, or TRALM_OPF
     if alg == 540       % PDIPM_OPF
       if ~have_fcn('pdipmopf')
-        error(['opf.m: OPF_ALG ', num2str(alg), ' requires ', ...
-            'PDIPMOPF (see http://www.pserc.cornell.edu/tspopf/)']);
+        error('opf: OPF_ALG %d requires PDIPMOPF (see http://www.pserc.cornell.edu/tspopf/)', alg);
       end
     elseif alg == 545       % SCPDIPM_OPF
       if ~have_fcn('scpdipmopf')
-        error(['opf.m: OPF_ALG ', num2str(alg), ' requires ', ...
-            'SCPDIPMOPF (see http://www.pserc.cornell.edu/tspopf/)']);
+        error('opf: OPF_ALG %d requires SCPDIPMOPF (see http://www.pserc.cornell.edu/tspopf/)', alg);
       end
     elseif alg == 550       % TRALM_OPF
       if ~have_fcn('tralmopf')
-        error(['opf.m: OPF_ALG ', num2str(alg), ' requires ', ...
-            'TRALMOPF (see http://www.pserc.cornell.edu/tspopf/)']);
+        error('opf: OPF_ALG %d requires TRALM (see http://www.pserc.cornell.edu/tspopf/)', alg);
       end
     end
-    [result, success, raw] = tspopf_solver(om, mpopt, output);
+    [results, success, raw] = tspopf_solver(om, mpopt, output);
   end
 %   pimul = [ ...
-%       result.mu.nln.l - result.mu.nln.u;
-%       result.mu.lin.l - result.mu.lin.u;
+%       results.mu.nln.l - results.mu.nln.u;
+%       results.mu.lin.l - results.mu.lin.u;
 %       -ones(ny>0, 1);
-%       result.mu.var.l - result.mu.var.u;
+%       results.mu.var.l - results.mu.var.u;
 %   ];
-  pimul = raw.pimul;
 end
-[bus, gen, branch, f, info, xr, pimul] = deal(result.bus, result.gen, ...
-                result.branch, result.f, raw.info, raw.xr, raw.pimul);
-if isfield(result, 'g')
-  g = result.g;
+[bus, gen, branch, f, info, xr, pimul] = deal(results.bus, results.gen, ...
+                results.branch, results.f, raw.info, raw.xr, raw.pimul);
+if isfield(results, 'g')
+  g = results.g;
 end
-if isfield(result, 'dg')
-  jac = result.dg;
+if isfield(results, 'dg')
+  jac = results.dg;
 end
-% xr = result.var;
+% xr = results.var;
 xr = raw.xr;
 
 % norm(xr - raw.xr(1:length(xr)))
@@ -449,45 +462,61 @@ xr = raw.xr;
 % fprintf('%g\t%g\t%g\n', [pimul raw.pimul abs(pimul - raw.pimul)]');
 
 %% gen PQ capability curve multipliers
-if ~dc & success & (ll.N.PQh > 0 | ll.N.PQl > 0)
-  mu_PQh = result.mu.lin.l(ll.i1.PQh:ll.iN.PQh) - result.mu.lin.u(ll.i1.PQh:ll.iN.PQh);
-  mu_PQl = result.mu.lin.l(ll.i1.PQl:ll.iN.PQl) - result.mu.lin.u(ll.i1.PQl:ll.iN.PQl);
+if ~dc && success && (ll.N.PQh > 0 || ll.N.PQl > 0)
+  mu_PQh = results.mu.lin.l(ll.i1.PQh:ll.iN.PQh) - results.mu.lin.u(ll.i1.PQh:ll.iN.PQh);
+  mu_PQl = results.mu.lin.l(ll.i1.PQl:ll.iN.PQl) - results.mu.lin.u(ll.i1.PQl:ll.iN.PQl);
   gen = update_mupq(baseMVA, gen, mu_PQh, mu_PQl, Apqdata);
 end
 
 %% angle limit constraint multipliers
-if success & (ll.N.ang > 0)
-  branch(iang, MU_ANGMIN) = result.mu.lin.l(ll.i1.ang:ll.iN.ang) * pi/180;
-  branch(iang, MU_ANGMAX) = result.mu.lin.u(ll.i1.ang:ll.iN.ang) * pi/180;
+if success && (ll.N.ang > 0)
+  branch(iang, MU_ANGMIN) = results.mu.lin.l(ll.i1.ang:ll.iN.ang) * pi/180;
+  branch(iang, MU_ANGMAX) = results.mu.lin.u(ll.i1.ang:ll.iN.ang) * pi/180;
 end
 
 %% revert to original gen ordering
-gen = gen(inv_gen_ord, :);
+gen = gen(reorder.gen, :);
 gen(:, VG) = bus(gen(:, GEN_BUS), VM);  %% copy bus voltages back to gen matrix
 
-% convert to original external bus ordering
-[bus, gen, branch, areas] = int2ext(i2e, bus, gen, branch, areas);
+%% convert to original external bus ordering
+[bus, gen, branch] = int2ext(reorder.i2e, bus, gen, branch);
 
 %% include out-of-service branches and gens
-genout    = gen0;
-branchout = branch0;
-genout(comgen, : ) = gen;
-branchout(onbranch, :)  = branch;
-if ~isempty(offgen)     %% zero out result fields of out-of-service gens
-  genout(offgen, [PG QG MU_PMAX MU_PMIN]) = 0;
+genout    = original.gen;
+branchout = original.branch;
+genout(status.gen.on, :) = gen;
+branchout(status.branch.on, :)  = branch;
+if ~isempty(status.gen.off)     %% zero out result fields of out-of-service gens
+  genout(status.gen.off, [PG QG MU_PMAX MU_PMIN]) = 0;
 end
-if ~isempty(offbranch)  %% zero out result fields of out-of-service branches
-  branchout(offbranch, [PF QF PT QT MU_SF MU_ST MU_ANGMIN MU_ANGMAX]) = 0;
+if ~isempty(status.branch.off)  %% zero out result fields of out-of-service branches
+  branchout(status.branch.off, [PF QF PT QT MU_SF MU_ST MU_ANGMIN MU_ANGMAX]) = 0;
 end
 
 %% compute elapsed time
 et = etime(clock, t0);
-if (nargout == 0) & ( success )
-  printpf(baseMVA, bus, genout, branchout, f, success, et, 1, mpopt);
-end
 
-if nargout
-  busout = bus;
+%% finish preparing output
+if nargout > 0
+  if nargout == 1
+    results.bus = bus;
+    results.gen = genout;
+    results.branch = branchout;
+    results.status = status;
+    results.reorder = reorder;
+    results.et = et;
+%     results.var.val.(name) =
+%     results.var.mu.l.(name) = 
+%     results.var.mu.u.(name) = 
+%     results.lin.mu.l.(name) = 
+%     results.lin.mu.u.(name) = 
+    busout = results;
+    genout = success;
+  else
+    busout = bus;
+  end
+elseif success
+  printpf(baseMVA, bus, genout, branchout, f, success, et, 1, mpopt);
 end
 
 return;
