@@ -1,4 +1,4 @@
-function [Aang, lang, uang, iang, iangl, iangh]  = makeAang(baseMVA, branch, nb, mpopt)
+function [Aang, lang, uang, iang]  = makeAang(baseMVA, branch, nb, mpopt)
 %
 
 %   MATPOWER
@@ -24,8 +24,6 @@ if ignore_ang_lim
   lang 	= [];
   uang 	= [];
   iang 	= [];
-  iangl = [];
-  iangh = [];
 else
   iang = find((branch(:, ANGMIN) & branch(:, ANGMIN) > -360) | ...
 			  (branch(:, ANGMAX) & branch(:, ANGMAX) < 360));
