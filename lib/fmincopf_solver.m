@@ -1,15 +1,25 @@
-function [result, success, raw] = fmincopf_solver(om, mpopt, output)
+function [results, success, raw] = fmincopf_solver(om, mpopt, output)
 %FMINCOPF_SOLVER  Solves an AC optimal power flow using FMINCON (Opt Tbx 2.x & later).
 %
-%   [result, success, raw] = fmincopf_solver(om, mpopt)
-%   [result, success, raw] = fmincopf_solver(om, mpopt, output)
+%   [results, success, raw] = fmincopf_solver(om, mpopt)
+%   [results, success, raw] = fmincopf_solver(om, mpopt, output)
 %
-%   result
+%   results
 %       .bus
 %       .gen
 %       .branch
 %       .f
 %       .var
+%       .mu
+%           .var
+%               .l
+%               .u
+%           .nln
+%               .l
+%               .u
+%           .lin
+%               .l
+%               .u
 %       .g      (optional)
 %       .dg     (optional)
 %       .df     (optional)
@@ -41,21 +51,21 @@ end
 [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
     TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
-[PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 
 %% options
 verbose = mpopt(31);    %% VERBOSE
 
 %% unpack data
-mpc = get(om, 'mpc');
-[baseMVA, bus, gen, branch, gencost] = ...
-    deal(mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch, mpc.gencost);
-[N, fparm, H, Cw] = deal(mpc.N, mpc.fparm, mpc.H, mpc.Cw);
+mpc = get_mpc(om);
+[baseMVA, bus, gen, branch] = ...
+    deal(mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch);
+om = build_cost_params(om);
 [vv, ll, nn] = get_idx(om);
 
 %% problem dimensions
 nb = size(bus, 1);          %% number of buses
 nl = size(branch, 1);       %% number of branches
+ny = get_var_N(om, 'y');    %% number of piece-wise linear costs
 
 %% linear constraints
 [A, l, u] = linear_constraints(om);
@@ -94,9 +104,9 @@ if mpopt(19) == 0           %% CONSTR_MAX_IT
 end
 
 %% basic optimset options needed for fmincon
-fmoptions = optimset('GradObj', 'on', 'GradConstr', 'on' );
-fmoptions = optimset(fmoptions, 'MaxIter', mpopt(19), 'TolCon', mpopt(16) );
-fmoptions = optimset(fmoptions, 'TolX', mpopt(17), 'TolFun', mpopt(18) );
+fmoptions = optimset('GradObj', 'on', 'GradConstr', 'on', ...
+            'MaxIter', mpopt(19), 'TolCon', mpopt(16), ...
+            'TolX', mpopt(17), 'TolFun', mpopt(18) );
 fmoptions.MaxFunEvals = 4 * fmoptions.MaxIter;
 if verbose == 0,
   fmoptions.Display = 'off';
@@ -108,7 +118,7 @@ end
 
 %% select algorithm
 otver = ver('optim');
-if str2num(otver.Version(1)) < 4
+if str2double(otver.Version(1)) < 4
   fmoptions = optimset(fmoptions, 'LargeScale', 'off');
   Af = full(Af);
   Afeq = full(Afeq);
@@ -135,8 +145,8 @@ end
 % fmoptions = optimset(fmoptions, 'Diagnostics', 'on');
 
 %% try to select an interior initial point for interior point solver
-if str2num(otver.Version(1)) >= 4 & strcmp(optimget(fmoptions, 'Algorithm'), 'interior-point')
-  x0 = zeros(get(om, 'var', 'N'), 1);
+if str2double(otver.Version(1)) >= 4 && strcmp(optimget(fmoptions, 'Algorithm'), 'interior-point')
+  x0 = zeros(get_var_N(om), 1);
   x0(vv.i1.Va:vv.iN.Va) = 0;
   x0(vv.i1.Vm:vv.iN.Vm)   = 1;
   x0(vv.i1.Pg:vv.iN.Pg) = (gen(:, PMIN) + gen(:, PMAX)) / 2 / baseMVA;
@@ -146,7 +156,7 @@ end
 %%-----  run opf  -----
 fmc_cost = @(x)costfmin(x, om);
 fmc_cons = @(x)consfmin(x, om, Ybus, Yf, Yt, mpopt);
-[x, f, info, Output, Lambda, Jac] = ...
+[x, f, info, Output, Lambda] = ...
   fmincon(fmc_cost, x0, Af, bf, Afeq, bfeq, LB, UB, fmc_cons, fmoptions);
 success = (info > 0);
 
@@ -155,7 +165,6 @@ Va = x(vv.i1.Va:vv.iN.Va);
 Vm = x(vv.i1.Vm:vv.iN.Vm);
 Pg = x(vv.i1.Pg:vv.iN.Pg);
 Qg = x(vv.i1.Qg:vv.iN.Qg);
-z  = x(vv.i1.z:vv.iN.z);
 V = Vm .* exp(j*Va);
 
 %%-----  calculate return values  -----
@@ -189,11 +198,11 @@ gen(:, MU_QMIN)  = Lambda.lower(vv.i1.Qg:vv.iN.Qg) / baseMVA;
 bus(:, LAM_P)    = Lambda.eqnonlin(nn.i1.Pmis:nn.iN.Pmis) / baseMVA;
 bus(:, LAM_Q)    = Lambda.eqnonlin(nn.i1.Qmis:nn.iN.Qmis) / baseMVA;
 nmis = nn.N.Pmis + nn.N.Qmis;
-branch(:, MU_SF) = Lambda.ineqnonlin([nn.i1.Sf:nn.iN.Sf] - nmis) / baseMVA;
-branch(:, MU_ST) = Lambda.ineqnonlin([nn.i1.St:nn.iN.St] - nmis) / baseMVA;
+branch(:, MU_SF) = Lambda.ineqnonlin((nn.i1.Sf:nn.iN.Sf) - nmis) / baseMVA;
+branch(:, MU_ST) = Lambda.ineqnonlin((nn.i1.St:nn.iN.St) - nmis) / baseMVA;
 
 %% package up results
-nnl = get(om, 'nln', 'N');
+nnl = get_nln_N(om);
 nlt = length(ilt);
 ngt = length(igt);
 nbx = length(ibx);
@@ -212,20 +221,20 @@ ku = find(Lambda.eqlin > 0);
 
 mu_l = zeros(size(u));
 mu_l(ieq(kl)) = -Lambda.eqlin(kl);
-mu_l(igt) = Lambda.ineqlin(nlt+[1:ngt]);
-mu_l(ibx) = Lambda.ineqlin(nlt+ngt+nbx+[1:nbx]);
+mu_l(igt) = Lambda.ineqlin(nlt+(1:ngt));
+mu_l(ibx) = Lambda.ineqlin(nlt+ngt+nbx+(1:nbx));
 
 mu_u = zeros(size(u));
 mu_u(ieq(ku)) = Lambda.eqlin(ku);
 mu_u(ilt) = Lambda.ineqlin(1:nlt);
-mu_u(ibx) = Lambda.ineqlin(nlt+ngt+[1:nbx]);
+mu_u(ibx) = Lambda.ineqlin(nlt+ngt+(1:nbx));
 
 mu = struct( ...
   'var', struct('l', Lambda.lower, 'u', Lambda.upper), ...
   'nln', struct('l', nl_mu_l, 'u', nl_mu_u), ...
   'lin', struct('l', mu_l, 'u', mu_u) );
 
-result = struct( ...
+results = struct( ...
   'bus', bus, ...
   'gen', gen, ...
   'branch', branch, ...
@@ -236,24 +245,24 @@ result = struct( ...
 %% optional fields
 if isfield(output, 'dg')
   [g, geq, dg, dgeq] = consfmin(x, om, Ybus, Yf, Yt, mpopt);
-  result.dg = [ dgeq'; dg'];    %% true Jacobian organization
-  result.g = [ geq; g];         %% include this since we computed it anyway
+  results.dg = [ dgeq'; dg'];   %% true Jacobian organization
+  results.g = [ geq; g];        %% include this since we computed it anyway
 end
-if isfield(output, 'g') & isempty(g)
+if isfield(output, 'g') && isempty(g)
   [g, geq] = consfmin(x, om, Ybus, Yf, Yt, mpopt);
-  result.g = [ geq; g];
+  results.g = [ geq; g];
 end
 if isfield(output, 'df')
-  result.df = [];
+  results.df = [];
 end
 if isfield(output, 'd2f')
-  result.d2f = [];
+  results.d2f = [];
 end
 pimul = [ ...
-  result.mu.nln.l - result.mu.nln.u;
-  result.mu.lin.l - result.mu.lin.u;
-  -ones(vv.N.y>0, 1);
-  result.mu.var.l - result.mu.var.u;
+  results.mu.nln.l - results.mu.nln.u;
+  results.mu.lin.l - results.mu.lin.u;
+  -ones(ny>0, 1);
+  results.mu.var.l - results.mu.var.u;
 ];
 raw = struct('xr', x, 'pimul', pimul, 'info', info);
 

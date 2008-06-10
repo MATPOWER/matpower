@@ -30,7 +30,7 @@ switch tag
     case 'bpmpd'
         TorF = exist(which('bp')) == 3;
     case 'constr'
-        TorF = exist(which('constr')) == 2 & exist('foptions');
+        TorF = exist(which('constr')) == 2 && exist('foptions');
     case 'fmincon'
         TorF = exist(which('fmincon')) == 2;
     case 'linprog'
@@ -73,7 +73,7 @@ switch tag
             TorF = 0;
         end
     otherwise
-        error(sprintf('have_fcn: unknown functionality %s', tag));
+        error('have_fcn: unknown functionality %s', tag);
 end
 
 return;

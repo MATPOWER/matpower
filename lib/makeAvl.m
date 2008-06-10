@@ -1,5 +1,5 @@
 function [Avl, lvl, uvl, ivl]  = makeAvl(baseMVA, gen)
-%
+%   MAKEAVL Construct linear constraints for constant power factor variable loads.
 
 %   MATPOWER
 %   $Id$
@@ -18,7 +18,6 @@ ng = size(gen, 1);      %% number of dispatchable injections
 Pg   = gen(:, PG) / baseMVA;
 Qg   = gen(:, QG) / baseMVA;
 Pmin = gen(:, PMIN) / baseMVA;
-Pmax = gen(:, PMAX) / baseMVA;
 Qmin = gen(:, QMIN) / baseMVA;
 Qmax = gen(:, QMAX) / baseMVA;
 
@@ -37,7 +36,7 @@ nvl  = size(ivl, 1);  %% number of dispatchable loads
 
 %% at least one of the Q limits must be zero (corresponding to Pmax == 0)
 if any( Qmin(ivl) ~= 0 & Qmax(ivl) ~= 0 )
-    error('makeAvl.m: Either Qmin or Qmax must be equal to zero for each dispatchable load.');
+    error('makeAvl: either Qmin or Qmax must be equal to zero for each dispatchable load.');
 end
 
 % Initial values of PG and QG must be consistent with specified power factor
@@ -47,10 +46,9 @@ end
 Qlim = (Qmin(ivl) == 0) .* Qmax(ivl) + ...
     (Qmax(ivl) == 0) .* Qmin(ivl);
 if any( abs( Qg(ivl) - Pg(ivl) .* Qlim ./ Pmin(ivl) ) > 1e-6 )
-    errstr = sprintf('%s\n', ...
+    error('makeAvl: %s\n', ...
         'For a dispatchable load, PG and QG must be consistent', ...
-        'with the power factor defined by PMIN and the Q limits.' );
-    error(errstr);
+        'with the power factor defined by PMIN and the Q limits.');
 end
 
 % make Avl, lvl, uvl, for lvl <= Avl * [Pg; Qg] <= uvl

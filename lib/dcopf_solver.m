@@ -1,15 +1,25 @@
-function [result, success, raw] = dcopf_solver(om, mpopt, output)
+function [results, success, raw] = dcopf_solver(om, mpopt, output)
 %DCOPF_SOLVER  Solves a DC optimal power flow.
 %
-%   [result, success, raw] = dcopf_solver(om, mpopt)
-%   [result, success, raw] = dcopf_solver(om, mpopt, output)
+%   [results, success, raw] = dcopf_solver(om, mpopt)
+%   [results, success, raw] = dcopf_solver(om, mpopt, output)
 %
-%   result
+%   results
 %       .bus
 %       .gen
 %       .branch
 %       .f
 %       .var
+%       .mu
+%           .var
+%               .l
+%               .u
+%           .nln
+%               .l
+%               .u
+%           .lin
+%               .l
+%               .u
 %       .g      (optional)
 %       .dg     (optional)
 %       .df     (optional)
@@ -47,21 +57,24 @@ end
 verbose = mpopt(31);    %% VERBOSE
 
 %% unpack data
-mpc = get(om, 'mpc');
+mpc = get_mpc(om);
 [baseMVA, bus, gen, branch, gencost] = ...
     deal(mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch, mpc.gencost);
-[N, fparm, H, Cw] = deal(mpc.N, mpc.fparm, mpc.H, mpc.Cw);
+om = build_cost_params(om);
+cp = get_cost_params(om);
+[N, H, Cw] = deal(cp.N, cp.H, cp.Cw);
+fparm = [cp.dd cp.rh cp.kk cp.mm];
 [Bf, Pfinj] = deal(mpc.Bf, mpc.Pfinj);
 [vv, ll] = get_idx(om);
 
 %% problem dimensions
 ipol = find(gencost(:, MODEL) == POLYNOMIAL); %% polynomial costs
 ipwl = find(gencost(:, MODEL) == PW_LINEAR);  %% piece-wise linear costs
-nb = size(bus, 1);          %% number of buses
-nl = size(branch, 1);       %% number of branches
-nw = size(N, 1);            %% number of general cost vars, w
-ny = vv.N.y;                %% number of piece-wise linear costs
-nxyz = get(om, 'var', 'N'); %% total number of control vars of all types
+nb = size(bus, 1);      	%% number of buses
+nl = size(branch, 1);   	%% number of branches
+nw = size(N, 1);        	%% number of general cost vars, w
+ny = get_var_N(om, 'y');    %% number of piece-wise linear costs
+nxyz = get_var_N(om); 		%% total number of control vars of all types
 
 %% linear constraints
 [A, l, u] = linear_constraints(om);
@@ -133,7 +146,7 @@ if verbose > 1                      %% print QP progress for verbose levels 2 & 
 else
     qpverbose = -1;
 end
-if ~have_fcn('sparse_qp') | mpopt(51) == 0 %% don't use sparse matrices
+if ~have_fcn('sparse_qp') || mpopt(51) == 0 %% don't use sparse matrices
     AA = full(AA);
     HH = full(HH);
 end
@@ -152,7 +165,6 @@ info = success;
 %% update solution data
 Va = x(vv.i1.Va:vv.iN.Va);
 Pg = x(vv.i1.Pg:vv.iN.Pg);
-z  = x(vv.i1.z:vv.iN.z);
 f = 1/2 * x' * HH * x + CC' * x + C0;
 
 %%-----  calculate return values  -----
@@ -179,17 +191,17 @@ ku = find(lambda(1:neq) > 0);
 mu_l = zeros(nA, 1);
 mu_l(ieq) = -lambda(1:neq);
 mu_l(ieq(ku)) = 0;
-mu_l(igt) = lambda(neq+nlt+[1:ngt]);
-mu_l(ibx) = lambda(neq+nlt+ngt+nbx+[1:nbx]);
+mu_l(igt) = lambda(neq+nlt+(1:ngt));
+mu_l(ibx) = lambda(neq+nlt+ngt+nbx+(1:nbx));
 
 mu_u = zeros(nA, 1);
 mu_u(ieq) = lambda(1:neq);
 mu_u(ieq(kl)) = 0;
-mu_u(ilt) = lambda(neq+[1:nlt]);
-mu_u(ibx) = lambda(neq+nlt+ngt+[1:nbx]);
+mu_u(ilt) = lambda(neq+(1:nlt));
+mu_u(ibx) = lambda(neq+nlt+ngt+(1:nbx));
 
-muLB = lambda(nA+[1:nxyz]);
-muUB = lambda(nA+nxyz+[1:nxyz]);
+muLB = lambda(nA+(1:nxyz));
+muUB = lambda(nA+nxyz+(1:nxyz));
 
 %% update Lagrange multipliers
 bus(:, [LAM_P, LAM_Q, MU_VMIN, MU_VMAX]) = zeros(nb, 4);
@@ -205,7 +217,7 @@ mu = struct( ...
   'var', struct('l', muLB, 'u', muUB), ...
   'lin', struct('l', mu_l, 'u', mu_u) );
 
-result = struct( ...
+results = struct( ...
   'bus', bus, ...
   'gen', gen, ...
   'branch', branch, ...
@@ -215,15 +227,15 @@ result = struct( ...
 
 %% optional fields
 %% 1st one is always computed anyway, just include it
-result.dg = A;
+results.dg = A;
 if isfield(output, 'g')
-  result.g = A * x;
+  results.g = A * x;
 end
 if isfield(output, 'df')
-  result.df = [];
+  results.df = [];
 end
 if isfield(output, 'd2f')
-  result.d2f = [];
+  results.d2f = [];
 end
 pimul = [
   mu_l - mu_u;
