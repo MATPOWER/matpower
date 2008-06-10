@@ -1,5 +1,14 @@
-function [Apqh, lbpqh, ubpqh, Apql, lbpql, ubpql, data] = makeApq(baseMVA, gen)
-%   MAKEAPQ
+function [Apqh, ubpqh, Apql, ubpql, data] = makeApq(baseMVA, gen)
+%   MAKEAPQ Construct linear constraints for generator capability curves.
+%
+%   [Apqh, ubpqh, Apql, ubpql, data] = makeApq(baseMVA, gen)
+%
+%   Apqh * [Pg; Qg] <= ubpqh   
+%   Apql * [Pg; Qg] <= ubpql   
+%   data.h      [QC1MAX-QC2MAX, PC2-PC1]
+%   data.l      [QC2MIN-QC1MIN, PC1-PC2]
+%   data.ipqh   indices of gens with general PQ cap curves (upper)  
+%   data.ipql   indices of gens with general PQ cap curves (lower)
 
 %   MATPOWER
 %   $Id$
@@ -16,23 +25,20 @@ function [Apqh, lbpqh, ubpqh, Apql, lbpql, ubpql, data] = makeApq(baseMVA, gen)
 %% data dimensions
 ng = size(gen, 1);      %% number of dispatchable injections
 
-% Find out which generators require additional linear constraints
-% (as opposed to simple box constraints) on (Pg,Qg) to correctly
-% model their PQ capability curves
+%% which generators require additional linear constraints
+%% (in addition to simple box constraints) on (Pg,Qg) to correctly
+%% model their PQ capability curves
 ipqh = find( hasPQcap(gen, 'U') );
 ipql = find( hasPQcap(gen, 'L') );
-
 npqh = size(ipqh, 1);   %% number of general PQ capability curves (upper)
 npql = size(ipql, 1);   %% number of general PQ capability curves (lower)
 
-
-% Make Apqh if there is a need to add general PQ capability curves;
-% use normalized coefficient rows so multipliers have right scaling
-% in $$/pu
+%% make Apqh if there is a need to add general PQ capability curves;
+%% use normalized coefficient rows so multipliers have right scaling
+%% in $$/pu
 if npqh > 0
   data.h = [gen(ipqh,QC1MAX)-gen(ipqh,QC2MAX), gen(ipqh,PC2)-gen(ipqh,PC1)];
-  ubpqh = (gen(ipqh,QC1MAX)-gen(ipqh,QC2MAX)) .* gen(ipqh,PC1) ...
-         + (gen(ipqh,PC2)-gen(ipqh,PC1)) .* gen(ipqh,QC1MAX);
+  ubpqh = data.h(:, 1) .* gen(ipqh,PC1) + data.h(:, 2) .* gen(ipqh,QC1MAX);
   for i=1:npqh,
     tmp = norm(data.h(i,:));
     data.h(i,:) = data.h(i, :) / tmp;
@@ -41,19 +47,16 @@ if npqh > 0
   Apqh = sparse([1:npqh, 1:npqh]', [ipqh; ipqh+ng], ...
                 data.h(:), npqh, 2*ng);
   ubpqh = ubpqh / baseMVA;
-  lbpqh = -1e10*ones(npqh,1);
 else
   data.h = [];
-  Apqh = [];
+  Apqh  = sparse(0, 2*ng);
   ubpqh = [];
-  lbpqh = [];
 end
 
-% similarly Apql
+%% similarly Apql
 if npql > 0
   data.l = [gen(ipql,QC2MIN)-gen(ipql,QC1MIN), gen(ipql,PC1)-gen(ipql,PC2)];
-  ubpql= (gen(ipql,QC2MIN)-gen(ipql,QC1MIN)) .* gen(ipql,PC1) ...
-         - (gen(ipql,PC2)-gen(ipql,PC1)) .* gen(ipql,QC1MIN) ;
+  ubpql= data.l(:, 1) .* gen(ipql,PC1) + data.l(:, 2) .* gen(ipql,QC1MIN) ;
   for i=1:npql,
     tmp = norm(data.l(i, : ));
     data.l(i, :) = data.l(i, :) / tmp;
@@ -62,12 +65,10 @@ if npql > 0
   Apql = sparse([1:npql, 1:npql]', [ipql; ipql+ng], ...
                 data.l(:), npql, 2*ng);
   ubpql = ubpql / baseMVA;
-  lbpql = -1e10*ones(npql,1);
 else
   data.l = [];
-  Apql = [];
+  Apql  = sparse(0, 2*ng);
   ubpql = [];
-  lbpql = [];
 end
 
 data.ipql = ipql;
