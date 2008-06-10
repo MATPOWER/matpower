@@ -25,7 +25,7 @@ nl = size(branch, 1);       %% number of lines
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 
 %% check that bus numbers are equal to indices to bus (one set of bus numbers)
-if any(bus(:, BUS_I) ~= [1:nb]')
+if any(bus(:, BUS_I) ~= (1:nb)')
     error('buses must appear in order by bus number')
 end
 
@@ -62,7 +62,7 @@ Ct = sparse(1:nl, t, ones(nl, 1), nl, nb);      %% connection matrix for line & 
 
 %% build Yf and Yt such that Yf * V is the vector of complex branch currents injected
 %% at each branch's "from" bus, and Yt is the same for the "to" bus end
-i = [[1:nl]'; [1:nl]'];                         %% double set of row indices
+i = [1:nl; 1:nl]';                              %% double set of row indices
 Yf = sparse(i, [f; t], [Yff; Yft], nl, nb);
 Yt = sparse(i, [f; t], [Ytf; Ytt], nl, nb);
 % Yf = spdiags(Yff, 0, nl, nl) * Cf + spdiags(Yft, 0, nl, nl) * Ct;
