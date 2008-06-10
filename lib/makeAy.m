@@ -30,7 +30,7 @@ iycost = find(gencost(:, MODEL) == PW_LINEAR);
 ny = size(iycost, 1);
 
 if ny == 0
-   Ay = sparse([], [], [], 0, ybas+ny-1, 0);;
+   Ay = sparse([], [], [], 0, ybas+ny-1, 0);
    by = [];
    return
 end
