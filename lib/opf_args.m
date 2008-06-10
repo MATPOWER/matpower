@@ -1,18 +1,20 @@
 function [baseMVA, bus, gen, branch, areas, gencost, Au, lbu, ubu, ...
-        mpopt, N, fparm, H, Cw, z0, zl, zu] = ...
+        mpopt, N, fparm, H, Cw, z0, zl, zu, userfcn] = ...
     opf_args(baseMVA, bus, gen, branch, areas, gencost, Au, lbu, ubu, ...
         mpopt, N, fparm, H, Cw, z0, zl, zu)
 %OPF_ARGS  Parses and initializes OPF input arguments.
 %
 %   Returns the full set of initialized OPF input arguments ...
 %
+%   [mpc, mpopt] = opf_args( ... )
 %   [baseMVA, bus, gen, branch, areas, gencost, A, l, u, mpopt, ...
-%    N, fparm, H, Cw, z0, zl, zu] = ...
+%    N, fparm, H, Cw, z0, zl, zu, userfcn] = opf_args( ... )
 %
 %   ... for all of the following calling combinations ...
 %
 %   opf_args(mpc)
 %   opf_args(mpc, mpopt)
+%   opf_args(mpc, userfcn, mpopt)
 %   opf_args(mpc, A, l, u)
 %   opf_args(mpc, A, l, u, mpopt)
 %   opf_args(mpc, A, l, u, mpopt, N, fparm, H, Cw)
@@ -20,6 +22,7 @@ function [baseMVA, bus, gen, branch, areas, gencost, Au, lbu, ubu, ...
 %
 %   opf_args(baseMVA, bus, gen, branch, areas, gencost)
 %   opf_args(baseMVA, bus, gen, branch, areas, gencost, mpopt)
+%   opf_args(baseMVA, bus, gen, branch, areas, gencost, userfcn, mpopt)
 %   opf_args(baseMVA, bus, gen, branch, areas, gencost, A, l, u)
 %   opf_args(baseMVA, bus, gen, branch, areas, gencost, A, l, u, mpopt)
 %   opf_args(baseMVA, bus, gen, branch, areas, gencost, A, l, u, ...
@@ -36,7 +39,7 @@ function [baseMVA, bus, gen, branch, areas, gencost, Au, lbu, ubu, ...
 %   
 %   The optional user parameters for user constraints (A, l, u), user costs
 %   (N, fparm, H, Cw), user variable initializer (z0), and user variable
-%   limits (z0, zl, zu) can also be specified as fields in a case struct,
+%   limits (zl, zu) can also be specified as fields in a case struct,
 %   either passed in directly or defined in a case file referenced by name.
 %   
 %   When specified, A, l, u represent additional linear constraints on the
@@ -64,16 +67,17 @@ function [baseMVA, bus, gen, branch, areas, gencost, Au, lbu, ubu, ...
 %   Copyright (c) 1996-2008 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-% Sort out input arguments
-if isstr(baseMVA) | isstruct(baseMVA)   % passing filename or struct
-  %---- opf(baseMVA,  bus, gen, branch, areas, gencost, Au,    lbu, ubu, mpopt, N,  fparm, H, Cw, z0, zl, zu)
-  % 12  opf(casefile, Au,  lbu, ubu,    mpopt, N,       fparm, H,   Cw,  z0,    zl, zu)
-  % 9   opf(casefile, Au,  lbu, ubu,    mpopt, N,       fparm, H,   Cw)
-  % 5   opf(casefile, Au,  lbu, ubu,    mpopt)
-  % 4   opf(casefile, Au,  lbu, ubu)
+userfcn = [];
+if isstr(baseMVA) || isstruct(baseMVA)   %% passing filename or struct
+  %---- opf(baseMVA,  bus,     gen, branch, areas, gencost, Au,    lbu, ubu, mpopt, N,  fparm, H, Cw, z0, zl, zu)
+  % 12  opf(casefile, Au,      lbu, ubu,    mpopt, N,       fparm, H,   Cw,  z0,    zl, zu)
+  % 9   opf(casefile, Au,      lbu, ubu,    mpopt, N,       fparm, H,   Cw)
+  % 5   opf(casefile, Au,      lbu, ubu,    mpopt)
+  % 4   opf(casefile, Au,      lbu, ubu)
+  % 3   opf(casefile, userfcn, mpopt)
   % 2   opf(casefile, mpopt)
   % 1   opf(casefile)
-  if any(nargin == [1, 2, 4, 5, 9, 12])
+  if any(nargin == [1, 2, 3, 4, 5, 9, 12])
     casefile = baseMVA;
     if nargin == 12
       zu    = fparm;
@@ -123,6 +127,19 @@ if isstr(baseMVA) | isstruct(baseMVA)   % passing filename or struct
       ubu   = branch;
       lbu   = gen;
       Au    = bus;
+    elseif nargin == 3
+      userfcn = bus;
+      zu    = [];
+      zl    = [];
+      z0    = [];
+      Cw    = [];
+      H     = [];
+      fparm = [];
+      N     = [];
+      mpopt = gen;
+      ubu   = [];
+      lbu   = [];
+      Au    = sparse(0,0);
     elseif nargin == 2
       zu    = [];
       zl    = [];
@@ -154,30 +171,40 @@ if isstr(baseMVA) | isstruct(baseMVA)   % passing filename or struct
   mpc = loadcase(casefile);
   [baseMVA, bus, gen, branch, areas, gencost] = ...
     deal(mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch, mpc.areas, mpc.gencost);
-  if isempty(Au) & isfield(mpc, 'A')
+  if isempty(Au) && isfield(mpc, 'A')
     [Au, lbu, ubu] = deal(mpc.A, mpc.l, mpc.u);
   end
-  if isempty(N) & isfield(mpc, 'N')
-    [N, fparm, H, Cw] = deal(mpc.N, mpc.fparm, mpc.H, mpc.Cw);
+  if isempty(N) && isfield(mpc, 'N')             %% these two must go together
+    [N, Cw] = deal(mpc.N, mpc.Cw);
   end
-  if isempty(z0) & isfield(mpc, 'z0')
+  if isempty(H) && isfield(mpc, 'H')             %% will default to zeros
+    H = mpc.H;
+  end
+  if isempty(fparm) && isfield(mpc, 'fparm')     %% will default to [1 0 0 1]
+    fparm = mpc.fparm;
+  end
+  if isempty(z0) && isfield(mpc, 'z0')
     z0 = mpc.z0;
   end
-  if isempty(zl) & isfield(mpc, 'zl')
+  if isempty(zl) && isfield(mpc, 'zl')
     zl = mpc.zl;
   end
-  if isempty(zu) & isfield(mpc, 'zu')
+  if isempty(zu) && isfield(mpc, 'zu')
     zu = mpc.zu;
   end
-else    % passing individual data matrices
-  %---- opf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu, mpopt, N, fparm, H, Cw, z0, zl, zu)
-  % 17  opf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu, mpopt, N, fparm, H, Cw, z0, zl, zu)
-  % 14  opf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu, mpopt, N, fparm, H, Cw)
-  % 10  opf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu, mpopt)
-  % 9   opf(baseMVA, bus, gen, branch, areas, gencost, Au,   lbu, ubu)
+  if isempty(userfcn) && isfield(mpc, 'userfcn')
+    userfcn = mpc.userfcn;
+  end
+else    %% passing individual data matrices
+  %---- opf(baseMVA, bus, gen, branch, areas, gencost, Au,      lbu, ubu, mpopt, N, fparm, H, Cw, z0, zl, zu)
+  % 17  opf(baseMVA, bus, gen, branch, areas, gencost, Au,      lbu, ubu, mpopt, N, fparm, H, Cw, z0, zl, zu)
+  % 14  opf(baseMVA, bus, gen, branch, areas, gencost, Au,      lbu, ubu, mpopt, N, fparm, H, Cw)
+  % 10  opf(baseMVA, bus, gen, branch, areas, gencost, Au,      lbu, ubu, mpopt)
+  % 9   opf(baseMVA, bus, gen, branch, areas, gencost, Au,      lbu, ubu)
+  % 8   opf(baseMVA, bus, gen, branch, areas, gencost, userfcn, mpopt)
   % 7   opf(baseMVA, bus, gen, branch, areas, gencost, mpopt)
   % 6   opf(baseMVA, bus, gen, branch, areas, gencost)
-  if any(nargin == [6, 7, 9, 10, 14, 17])
+  if any(nargin == [6, 7, 8, 9, 10, 14, 17])
     if nargin == 14
       zu    = [];
       zl    = [];
@@ -199,6 +226,19 @@ else    % passing individual data matrices
       fparm = [];
       N     = [];
       mpopt = mpoption;
+    elseif nargin == 8
+      userfcn = Au;
+      zu    = [];
+      zl    = [];
+      z0    = [];
+      Cw    = [];
+      H     = [];
+      fparm = [];
+      N     = [];
+      mpopt = lbu;
+      ubu   = [];
+      lbu   = [];
+      Au    = sparse(0,0);
     elseif nargin == 7
       zu    = [];
       zl    = [];
@@ -230,14 +270,19 @@ else    % passing individual data matrices
 end
 nw = size(N, 1);
 if nw > 0
-  if size(fparm, 1) ~= nw | size(H, 1) ~= nw | size(H, 2) ~= nw | ...
-      length(Cw) ~= nw
-    error('opf_args.m: wrong dimensions in generalized cost parameters');
+  if size(Cw, 1) ~= nw
+    error('opf_args.m: dimension mismatch between N and Cw in generalized cost parameters');
   end
-  if size(Au, 1) > 0 & size(N, 2) ~= size(Au, 2)
+  if ~isempty(fparm) && size(fparm, 1) ~= nw
+    error('opf_args.m: dimension mismatch between N and fparm in generalized cost parameters');
+  end
+  if ~isempty(H) && (size(H, 1) ~= nw || size(H, 2) ~= nw)
+    error('opf_args.m: dimension mismatch between N and H in generalized cost parameters');
+  end
+  if size(Au, 1) > 0 && size(N, 2) ~= size(Au, 2)
     error('opf_args.m: A and N must have the same number of columns');
   end
-  % make sure N and H are sparse
+  %% make sure N and H are sparse
   if ~issparse(N)
     N = sparse(N);
   end
@@ -248,3 +293,27 @@ end
 if isempty(mpopt)
   mpopt = mpoption;
 end
+if nargout == 2
+  baseMVA = struct(             ...
+        'baseMVA',  baseMVA,    ...
+        'bus',      bus,        ...
+        'gen',      gen,        ...
+        'branch',   branch,     ...
+        'areas',    areas,      ...
+        'gencost',  gencost,    ...
+        'A',        Au,         ...
+        'l',        lbu,        ...
+        'u',        ubu,        ...
+        'N',        N,          ...
+        'fparm',    fparm,      ...
+        'H',        H,          ...
+        'Cw',       Cw,         ...
+        'z0',       z0,         ...
+        'zl',       zl,         ...
+        'zu',       zu,         ...
+        'userfcn',  userfcn     ...
+    );
+  bus = mpopt;
+end
+
+return;
