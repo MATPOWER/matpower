@@ -33,6 +33,24 @@ function om = opf_model(mpc)
 %           .A
 %           .l
 %           .u
+%           .vs
+%       .order
+%   .cost
+%       .idx
+%           .i1
+%           .iN
+%           .N
+%       .N
+%       .NS
+%       .data
+%           .N
+%           .H
+%           .Cw
+%           .dd
+%           .rr
+%           .kk
+%           .mm
+%           .vs
 %       .order
 %   .mpc
 %       .baseMVA
@@ -59,41 +77,6 @@ function om = opf_model(mpc)
 es = struct('tmp', 0);
 es = rmfield(es, 'tmp');
 if nargin == 0
-%     om = struct( ...
-%         'var', struct( ...
-%                 'idx', struct( ...
-%                         'i1', es, ...
-%                         'iN', es, ...
-%                         'N', es ), ...
-%                 'N', 0, ...
-%                 'NS', 0, ...
-%                 'order', {}, ...
-%                 'data', struct( ...
-%                         'v0', es, ...
-%                         'vl', es, ...
-%                         'vu', es )  ), ...
-%         'nln', struct( ...
-%                 'idx', struct( ...
-%                         'i1', es, ...
-%                         'iN', es, ...
-%                         'N', es ), ...
-%                 'N', 0, ...
-%                 'NS', 0, ...
-%                 'order', {} ), ...
-%         'lin', struct( ...
-%                 'idx', struct( ...
-%                         'i1', es, ...
-%                         'iN', es, ...
-%                         'N', es ), ...
-%                 'N', 0, ...
-%                 'NS', 0, ...
-%                 'order', {}, ...
-%                 'data', struct( ...
-%                         'A', es, ...
-%                         'l', es, ...
-%                         'u', es )   ), ...
-%         'mpc', es   );
-    
     om.var.idx.i1 = es;
     om.var.idx.iN = es;
     om.var.idx.N = es;
@@ -122,6 +105,22 @@ if nargin == 0
     om.lin.data.u = es;
     om.lin.data.vs = es;
     
+    om.cost.idx.i1 = es;
+    om.cost.idx.iN = es;
+    om.cost.idx.N = es;
+    om.cost.N = 0;
+    om.cost.NS = 0;
+    om.cost.order = {};
+    om.cost.data.N = es;
+    om.cost.data.H = es;
+    om.cost.data.Cw = es;
+    om.cost.data.dd = es;
+    om.cost.data.rh = es;
+    om.cost.data.kk = es;
+    om.cost.data.mm = es;
+    om.cost.data.vs = es;
+    om.cost.params = es;
+    
     om.mpc = es;
 
     om = class(om, 'opf_model');
@@ -133,52 +132,3 @@ else
 end
 
 return;
-
-
-% om
-%     .nvars          total number of variables
-%     .nvarsets       number of var sets
-%     .nnlcons        total number of non-linear constraints
-%     .nnlconsets     number of non-linear constraint sets
-%     .nlncons        total number of linear constraints
-%     .nlnconsets     number of linear constraint sets
-%     .varsets        struct array of var sets
-%         .i1         starting index of var set
-%         .iN         ending index of var set
-%         .N          number of variables in var set
-%         .name       name of var set
-%         .v0         initial value vector
-%         .vl         lower bound vector
-%         .vu         upper bound vector
-%     .nlconsets      struct array of non-linear constraint sets
-%         .i1
-%         .iN
-%         .N
-%         .name
-%     .lnconsets      struct array of linear constraint sets
-%         .i1
-%         .iN
-%         .N
-%         .name
-%         .A
-%         .l
-%         .u
-%     .mpc
-%         .baseMVA
-%         .bus
-%         .branch
-%         .gen
-%         .gencost
-%         .areas
-%         .A	(if present, must have l, u)
-%         .l
-%         .u
-%         .N	(if present, must have fparm, H, Cw)
-%         .fparm
-%         .H
-%         .Cw
-%     .names
-%         .vars
-%             .(name)     
-%         .nlcons
-%         .lncons

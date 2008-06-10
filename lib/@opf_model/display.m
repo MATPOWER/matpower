@@ -24,7 +24,7 @@ if om.var.NS
 		fprintf('%15d:%12s %8d %8d %8d\n', k, name, idx.i1.(name), idx.iN.(name), idx.N.(name));
 	end
 else
-	fprintf('%16s: []\n', 'varsets');
+	fprintf('%16s: []\n', 'vars');
 end
 if om.nln.NS
 	fprintf('\n%16s: %10s %8s %8s %8s\n', 'nln cons', 'name', 'i1', 'iN', 'N');
@@ -35,7 +35,7 @@ if om.nln.NS
 		fprintf('%15d:%12s %8d %8d %8d\n', k, name, idx.i1.(name), idx.iN.(name), idx.N.(name));
 	end
 else
-	fprintf('%16s: []\n', 'nlconsets');
+	fprintf('%16s: []\n', 'nln cons');
 end
 if om.lin.NS
 	fprintf('\n%16s: %10s %8s %8s %8s\n', 'lin cons', 'name', 'i1', 'iN', 'N');
@@ -46,7 +46,18 @@ if om.lin.NS
 		fprintf('%15d:%12s %8d %8d %8d\n', k, name, idx.i1.(name), idx.iN.(name), idx.N.(name));
 	end
 else
-	fprintf('%16s: []\n', 'lnconsets');
+	fprintf('%16s: []\n', 'lin cons');
+end
+if om.cost.NS
+	fprintf('\n%16s: %10s %8s %8s %8s\n', 'cost', 'name', 'i1', 'iN', 'N');
+	fprintf('%29s %8s %8s %8s\n', '------', '-----', '-----', '------');
+	for k = 1:om.cost.NS
+		name = om.cost.order{k};
+		idx = om.cost.idx;
+		fprintf('%15d:%12s %8d %8d %8d\n', k, name, idx.i1.(name), idx.iN.(name), idx.N.(name));
+	end
+else
+	fprintf('%16s: []\n', 'cost');
 end
 
 if ~isempty(om.mpc)
