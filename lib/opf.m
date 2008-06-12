@@ -454,7 +454,7 @@ end
 if isfield(results, 'dg')
   jac = results.dg;
 end
-% xr = results.var;
+% xr = results.x;
 xr = raw.xr;
 
 % norm(xr - raw.xr(1:length(xr)))
@@ -498,18 +498,36 @@ et = etime(clock, t0);
 
 %% finish preparing output
 if nargout > 0
-  if nargout == 1
+  if nargout == 2
     results.bus = bus;
     results.gen = genout;
     results.branch = branchout;
     results.status = status;
     results.reorder = reorder;
     results.et = et;
-%     results.var.val.(name) =
-%     results.var.mu.l.(name) = 
-%     results.var.mu.u.(name) = 
-%     results.lin.mu.l.(name) = 
-%     results.lin.mu.u.(name) = 
+    
+    %% values and limit shadow prices for variables
+    om_var_order = get(om, 'var', 'order');
+    for k = 1:length(om_var_order)
+      name = om_var_order{k};
+      if get_var_N(om, name)
+        idx = vv.i1.(name):vv.iN.(name);
+        results.var.val.(name) = results.x(idx);
+        results.var.mu.l.(name) = results.mu.var.l(idx);
+        results.var.mu.u.(name) = results.mu.var.u(idx);
+      end
+    end
+
+    %% shadow prices for linear constraints
+    om_lin_order = get(om, 'lin', 'order');
+    for k = 1:length(om_lin_order)
+      name = om_lin_order{k};
+      if get_lin_N(om, name)
+        idx = ll.i1.(name):ll.iN.(name);
+        results.lin.mu.l.(name) = results.mu.lin.l(idx);
+        results.lin.mu.u.(name) = results.mu.lin.u(idx);
+      end
+    end
     busout = results;
     genout = success;
   else
