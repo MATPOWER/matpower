@@ -15,6 +15,13 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 3.2
 -----------------
 
+6/10/08
+    - Added new way to specify user vars, constraints, costs via
+      userfcn for OPF.
+    - Added option to return OPF results in a struct.
+    - Added defaults for user cost params in fparm and H, making them
+      optional even when N and Cw are given.
+
 5/22/08
     - Major refactorization of OPF implementation with shared code
       for a generalized formulation that includes the DC opf as
