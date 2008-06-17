@@ -6,27 +6,33 @@ function [busout, genout, branchout, f, success, info, et, g, jac, xr, pimul] = 
 %   it will choose the best available solver, searching in the following order:
 %   minopf, pdipmopf, fmincon, LP-base, and constr.
 %
-%   [results, success] = opf(casefile, mpopt)
+%   Returns either a results struct and success flag, or individual data
+%   matrices, the objective function value and a success flag. In the latter
+%   case, there are additional optional return values.
 %
-%   [bus, gen, branch, f, success] = opf(casefile, mpopt)
+%   [results, success] = opf(...)
+%   [bus, gen, branch, f, success] = opf(...)
+%   [bus, gen, branch, f, success, info, et, g, jac, xr, pimul] = opf(...)
 %
-%   [bus, gen, branch, f, success] = opf(casefile, A, l, u, mpopt)
+%   Input arguments options are as follows:
 %
-%   [bus, gen, branch, f, success] = opf(baseMVA, bus, gen, branch, ...
-%                                    areas, gencost, mpopt)
+%   opf(mpc)
+%   opf(mpc, mpopt)
+%   opf(mpc, userfcn, mpopt)
+%   opf(mpc, A, l, u)
+%   opf(mpc, A, l, u, mpopt)
+%   opf(mpc, A, l, u, mpopt, N, fparm, H, Cw)
+%   opf(mpc, A, l, u, mpopt, N, fparm, H, Cw, z0, zl, zu)
 %
-%   [bus, gen, branch, f, success] = opf(baseMVA, bus, gen, branch, ...
-%                                    areas, gencost, A, l, u, mpopt)
-%
-%   [bus, gen, branch, f, success] = opf(baseMVA, bus, gen, branch, ...
-%                                    areas, gencost, A, l, u, mpopt, ...
-%                                    N, fparm, H, Cw)
-%
-%   [bus, gen, branch, f, success] = opf(baseMVA, bus, gen, branch, ...
-%                                    areas, gencost, A, l, u, mpopt, ...
-%                                    N, fparm, H, Cw, z0, zl, zu)
-%
-%   [bus, gen, branch, f, success, info, et, g, jac, xr, pimul] = opf(casefile)
+%   opf(baseMVA, bus, gen, branch, areas, gencost)
+%   opf(baseMVA, bus, gen, branch, areas, gencost, mpopt)
+%   opf(baseMVA, bus, gen, branch, areas, gencost, userfcn, mpopt)
+%   opf(baseMVA, bus, gen, branch, areas, gencost, A, l, u)
+%   opf(baseMVA, bus, gen, branch, areas, gencost, A, l, u, mpopt)
+%   opf(baseMVA, bus, gen, branch, areas, gencost, A, l, u, ...
+%                               mpopt, N, fparm, H, Cw)
+%   opf(baseMVA, bus, gen, branch, areas, gencost, A, l, u, ...
+%                               mpopt, N, fparm, H, Cw, z0, zl, zu)
 %
 %   The data for the problem can be specified in one of 3 ways: (1) the name of
 %   a case file which defines the data matrices baseMVA, bus, gen, branch,
@@ -376,8 +382,12 @@ if nw
 end
 
 %% add user vars, constraints, costs (as specified via userfcn)
-if ~isempty(userfcn)
-  om = feval(userfcn, om);
+if ~isempty(userfcn) && isfield(userfcn, 'name')
+  if isfield(userfcn, 'args')
+    om = feval(userfcn.name, om, userfcn.args);
+  else
+    om = feval(userfcn.name, om);
+  end
 end
 
 %% get indexing
