@@ -41,7 +41,7 @@ function fname_out = savecase(fname, varargin)
 [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 
 %% default arguments
-if isstr(varargin{1}) | iscell(varargin{1})
+if isstr(varargin{1}) || iscell(varargin{1})
     comment = varargin{1};
     [args{1:(length(varargin)-1)}] = deal(varargin{2:end});
 else
@@ -59,7 +59,7 @@ if isstruct(args{1})        %% 1st real argument is a struct
     bus     = mpc.bus;
     gen     = mpc.gen;
     branch  = mpc.branch;
-    if isfield(mpc, 'areas') & isfield(mpc, 'gencost')
+    if isfield(mpc, 'areas') && isfield(mpc, 'gencost')
         areas   = mpc.areas;
         gencost = mpc.gencost;
     end
@@ -152,7 +152,7 @@ else                                %% M-file
     
     %% function header, etc.
     if strcmp(mpc_ver, '1')
-        if exist('gencost') == 1 & ~isempty(gencost)
+        if exist('gencost') == 1 && ~isempty(gencost)
             fprintf(fd, 'function [baseMVA, bus, gen, branch, areas, gencost] = %s\n', rootname);
         else
             fprintf(fd, 'function [baseMVA, bus, gen, branch] = %s\n', rootname);
@@ -259,7 +259,7 @@ else                                %% M-file
     fprintf(fd, '];\n\n');
     
     %% OPF data
-    if exist('gencost') == 1 & ~isempty(gencost)
+    if exist('gencost') == 1 && ~isempty(gencost)
         %% area data
         fprintf(fd, '%%%%-----  OPF Data  -----%%%%\n');
         fprintf(fd, '%%%% area data\n');
@@ -290,46 +290,93 @@ else                                %% M-file
     end
     
     %% generalized OPF user data
-    if isfield(mpc, 'A') & ~isempty(mpc.A)
-        %% A
+    if (isfield(mpc, 'A') && ~isempty(mpc.A)) || ...
+            (isfield(mpc, 'N') && ~isempty(mpc.N)) || ...
+            (isfield(mpc, 'userfcn') && ~isempty(mpc.userfcn))
         fprintf(fd, '%%%%-----  Generalized OPF User Data  -----%%%%\n');
+    end
+
+    %% user constraints
+    if isfield(mpc, 'A') && ~isempty(mpc.A)
+        %% A
         fprintf(fd, '%%%% user constraints\n');
         print_sparse(fd, sprintf('%sA', prefix), mpc.A);
-        fprintf(fd, 'lu = [\n');
-        fprintf(fd, '\t%g\t%g;\n', [mpc.l mpc.u].');
-        fprintf(fd, '];\n');
-        fprintf(fd, '%sl = lu(:, 1);\n', prefix);
-        fprintf(fd, '%su = lu(:, 2);\n\n', prefix);
+        if isfield(mpc, 'l') && ~isempty(mpc.l) && ...
+                isfield(mpc, 'u') && ~isempty(mpc.u)
+            fprintf(fd, 'lu = [\n');
+            fprintf(fd, '\t%g\t%g;\n', [mpc.l mpc.u].');
+            fprintf(fd, '];\n');
+            fprintf(fd, '%sl = lu(:, 1);\n', prefix);
+            fprintf(fd, '%su = lu(:, 2);\n\n', prefix);
+        elseif isfield(mpc, 'l') && ~isempty(mpc.l)
+            fprintf(fd, '%sl = [\n', prefix);
+            fprintf(fd, '\t%g;\n', mpc.l);
+            fprintf(fd, '];\n\n');
+        elseif isfield(mpc, 'u') && ~isempty(mpc.u)
+            fprintf(fd, '%su = [\n', prefix);
+            fprintf(fd, '\t%g;\n', mpc.u);
+            fprintf(fd, '];\n\n');
+        end
     end
-    if isfield(mpc, 'N') & ~isempty(mpc.N)
+
+    %% user costs
+    if isfield(mpc, 'N') && ~isempty(mpc.N)
         fprintf(fd, '%%%% user costs\n');
         print_sparse(fd, sprintf('%sN', prefix), mpc.N);
-        print_sparse(fd, sprintf('%sH', prefix), mpc.H);
-        fprintf(fd, 'Cw_fparm = [\n');
-        fprintf(fd, '\t%g\t%d\t%d\t%d\t%d;\n', [mpc.Cw mpc.fparm].');
-        fprintf(fd, '];\n');
-        fprintf(fd, '%sCw    = Cw_fparm(:, 1);\n', prefix);
-        fprintf(fd, '%sfparm = Cw_fparm(:, 2:5);\n\n', prefix);
+        if isfield(mpc, 'H') && ~isempty(mpc.H)
+            print_sparse(fd, sprintf('%sH', prefix), mpc.H);
+        end
+        if isfield(mpc, 'fparm') && ~isempty(mpc.fparm)
+            fprintf(fd, 'Cw_fparm = [\n');
+            fprintf(fd, '\t%g\t%d\t%g\t%g\t%g;\n', [mpc.Cw mpc.fparm].');
+            fprintf(fd, '];\n');
+            fprintf(fd, '%sCw    = Cw_fparm(:, 1);\n', prefix);
+            fprintf(fd, '%sfparm = Cw_fparm(:, 2:5);\n\n', prefix);
+        else
+            fprintf(fd, '%sCw = [\n', prefix);
+            fprintf(fd, '\t%g;\n', mpc.Cw);
+            fprintf(fd, '];\n\n');
+        end
     end
-    if isfield(mpc, 'z0') | isfield(mpc, 'zl') | isfield(mpc, 'zu')
+
+    %% user vars
+    if isfield(mpc, 'z0') || isfield(mpc, 'zl') || isfield(mpc, 'zu')
         fprintf(fd, '%%%% user vars\n');
     end
-    if isfield(mpc, 'z0') & ~isempty(mpc.z0)
+    if isfield(mpc, 'z0') && ~isempty(mpc.z0)
         fprintf(fd, '%sz0 = [\n', prefix);
         fprintf(fd, '\t%g;\n', mpc.z0);
         fprintf(fd, '];\n');
     end
-    if isfield(mpc, 'zl') & ~isempty(mpc.zl)
+    if isfield(mpc, 'zl') && ~isempty(mpc.zl)
         fprintf(fd, '%szl = [\n', prefix);
         fprintf(fd, '\t%g;\n', mpc.zl);
         fprintf(fd, '];\n');
     end
-    if isfield(mpc, 'zu') & ~isempty(mpc.zu)
+    if isfield(mpc, 'zu') && ~isempty(mpc.zu)
         fprintf(fd, '%szu = [\n', prefix);
         fprintf(fd, '\t%g;\n', mpc.zu);
         fprintf(fd, '];\n');
     end
-    if isfield(mpc, 'z0') | isfield(mpc, 'zl') | isfield(mpc, 'zu')
+    if isfield(mpc, 'z0') || isfield(mpc, 'zl') || isfield(mpc, 'zu')
+        fprintf(fd, '\n');
+    end
+    if isfield(mpc, 'z0') || isfield(mpc, 'zl') || isfield(mpc, 'zu')
+        fprintf(fd, '\n');
+    end
+
+    %% user function
+    if isfield(mpc, 'userfcn') && ~isempty(mpc.userfcn)
+        fprintf(fd, '%%%% user function\n');
+        fprintf(fd, '%suserfcn.name = ''%s'';\n', prefix, mpc.userfcn.name);
+        if isfield(mpc.userfcn, 'args') && ~isempty(mpc.userfcn.args)
+            if exist('serialize') == 2
+                fprintf(fd, '%suserfcn.args = %s\n', prefix, serialize(mpc.userfcn.args));
+            else
+                url = 'http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=12063&objectType=file';
+                error('Cannot save the ''userfcn.args'' without the ''serialize'' function, which is available as a free download from:\n\n<%s>', url);
+            end
+        end
         fprintf(fd, '\n');
     end
 
