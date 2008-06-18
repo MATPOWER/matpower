@@ -391,7 +391,7 @@ if ~isempty(userfcn) && isfield(userfcn, 'name')
 end
 
 %% get indexing
-[vv, ll] = get_idx(om);
+[vv, ll, nn] = get_idx(om);
 
 %% select optional solver output args
 if nargout > 7
@@ -538,6 +538,20 @@ if nargout > 0
         results.lin.mu.u.(name) = results.mu.lin.u(idx);
       end
     end
+
+    %% shadow prices for non-linear constraints
+    if ~dc
+      om_nln_order = get(om, 'nln', 'order');
+      for k = 1:length(om_nln_order)
+        name = om_nln_order{k};
+        if get_nln_N(om, name)
+          idx = nn.i1.(name):nn.iN.(name);
+          results.nln.mu.l.(name) = results.mu.nln.l(idx);
+          results.nln.mu.u.(name) = results.mu.nln.u(idx);
+        end
+      end
+    end
+
     busout = results;
     genout = success;
   else
