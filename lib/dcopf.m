@@ -10,7 +10,7 @@ function [varargout] = dcopf(varargin)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 [mpc, mpopt] = opf_args(varargin{:});
-mpopt = mpoption(mpopt, 'PF_DC', 10);
+mpopt = mpoption(mpopt, 'PF_DC', 1);
 [varargout{1:nargout}] = opf(mpc, mpopt);
 
 return;
