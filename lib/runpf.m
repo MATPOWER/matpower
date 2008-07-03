@@ -2,23 +2,36 @@ function [MVAbase, bus, gen, branch, success, et] = ...
                 runpf(casename, mpopt, fname, solvedcase)
 %RUNPF  Runs a power flow.
 %
-%   [baseMVA, bus, gen, branch, success, et] = ...
-%           runpf(casename, mpopt, fname, solvedcase)
+%   Output arguments options:
+%
+%   results = runpf(...)
+%   [results, success] = runpf(...)
+%   [baseMVA, bus, gen, branch, success, et] = runpf(...)
+%
+%   Input arguments options:
+%
+%   runpf(casename)
+%   runpf(casename, mpopt)
+%   runpf(casename, mpopt, fname)
+%   runpf(casename, mpopt, fname, solvedcase)
 %
 %   Runs a power flow (full AC Newton's method by default) and optionally
 %   returns the solved values in the data matrices, a flag which is true if
 %   the algorithm was successful in finding a solution, and the elapsed time
-%   in seconds. All input arguments are optional. If casename is provided it
-%   specifies the name of the input data file or struct (see also 'help
-%   caseformat' and 'help loadcase') containing the power flow data. The
-%   default value is 'case9'. If the mpopt is provided it overrides the
-%   default MATPOWER options vector and can be used to specify the solution
-%   algorithm and output options among other things (see 'help mpoption' for
-%   details). If the 3rd argument is given the pretty printed output will be
-%   appended to the file whose name is given in fname. If solvedcase is
-%   specified the solved case will be written to a case file in MATPOWER
-%   format with the specified name. If solvedcase ends with '.mat' it saves
-%   the case as a MAT-file otherwise it saves it as an M-file.
+%   in seconds. Alternatively, the solution can be returned as fields in a
+%   results struct and an optional success flag.
+%
+%   All input arguments are optional. If casename is provided it specifies
+%   the name of the input data file or struct (see also 'help caseformat' and
+%   'help loadcase') containing the power flow data. The default value is
+%   'case9'. If the mpopt is provided it overrides the default MATPOWER options
+%   vector and can be used to specify the solution algorithm and output options
+%   among other things (see 'help mpoption' for details). If the 3rd argument
+%   is given the pretty printed output will be appended to the file whose name
+%   is given in fname. If solvedcase is specified the solved case will be
+%   written to a case file in MATPOWER format with the specified name. If
+%   solvedcase ends with '.mat' it saves the case as a MAT-file otherwise it
+%   saves it as an M-file.
 %
 %   If the ENFORCE_Q_LIMS options is set to true (default is false) then if
 %   any generator reactive power limit is violated after running the AC power
@@ -247,8 +260,17 @@ if solvedcase
     savecase(solvedcase, baseMVA, bus, gen, branch);
 end
 
-%% this is just to prevent it from printing baseMVA
-%% when called with no output arguments
-if nargout, MVAbase = baseMVA; end
+if nargout == 1 || nargout == 2
+    results.bus = bus;
+    results.gen = gen;
+    results.branch = branch;
+    results.et = et;
+    results.success = success;
+    MVAbase = results;
+    bus = success;
+elseif nargout > 2
+    MVAbase = baseMVA;
+% else  %% don't define MVAbase, so it doesn't print anything
+end
 
 return;
