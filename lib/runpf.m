@@ -1,5 +1,5 @@
 function [MVAbase, bus, gen, branch, success, et] = ...
-    			runpf(casename, mpopt, fname, solvedcase)
+                runpf(casename, mpopt, fname, solvedcase)
 %RUNPF  Runs a power flow.
 %
 %   [baseMVA, bus, gen, branch, success, et] = ...
@@ -151,16 +151,30 @@ else                                %% AC formulation
             
             if ~isempty(mx) | ~isempty(mn)  %% we have some Q limit violations
                 if isempty(pv)
-                	if verbose
-                		if ~isempty(mx)	
-		                	fprintf('Gen %d (only one left) exceeds upper Q limit : INFEASIBLE PROBLEM\n', mx);
-                		else
-		                	fprintf('Gen %d (only one left) exceeds lower Q limit : INFEASIBLE PROBLEM\n', mn);
-                		end
-	                end
-                	success = 0;
-                	break;
+                    if verbose
+                        if ~isempty(mx) 
+                            fprintf('Gen %d (only one left) exceeds upper Q limit : INFEASIBLE PROBLEM\n', mx);
+                        else
+                            fprintf('Gen %d (only one left) exceeds lower Q limit : INFEASIBLE PROBLEM\n', mn);
+                        end
+                    end
+                    success = 0;
+                    break;
                 end
+
+                %% one at a time?
+                if qlim == 2    %% fix largest violation, ignore the rest
+                    [junk, k] = max([gen(mx, QG) - gen(mx, QMAX);
+                                     gen(mn, QMIN) - gen(mn, QG)]);
+                    if k > length(mx)
+                        mn = mn(k-length(mx));
+                        mx = [];
+                    else
+                        mx = mx(k);
+                        mn = [];
+                    end
+                end
+
                 if verbose & ~isempty(mx)
                     fprintf('Gen %d at upper Q limit, converting to PQ bus\n', mx);
                 end

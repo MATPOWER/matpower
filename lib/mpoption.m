@@ -31,8 +31,11 @@ function [options, names] = mpoption(varargin)
 %                                   fast decoupled method
 %       5  - PF_MAX_IT_GS, 1000     maximum number of iterations for 
 %                                   Gauss-Seidel method
-%       6  - ENFORCE_Q_LIMS, 0      enforce gen reactive power limits,
-%                                   at expense of |V|       [   0 or 1  ]
+%       6  - ENFORCE_Q_LIMS, 0      enforce gen reactive power limits
+%                                   at expense of |V|
+%           [    0 - do NOT enforce limits                              ]
+%           [    1 - enforce limits, simultaneous bus type conversion   ]
+%           [    2 - enforce limits, one-at-a-time bus type conversion  ]
 %       10 - PF_DC, 0               use DC power flow formulation, for
 %                                   power flow and OPF
 %           [    0 - use AC formulation & corresponding algorithm opts  ]
