@@ -66,6 +66,8 @@ function om = opf_model(mpc)
 %       .fparm
 %       .H
 %       .Cw
+%   .userdata
+%       .(user defined fields)
 
 %   MATPOWER
 %   $Id$
@@ -122,6 +124,7 @@ if nargin == 0
     om.cost.params = es;
     
     om.mpc = es;
+    om.userdata = es;
 
     om = class(om, 'opf_model');
 elseif isa(mpc,'opf_model') 
