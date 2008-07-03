@@ -8,12 +8,27 @@ maintained by Ray Zimmerman <rz10@cornell.edu>
 
 MATPOWER
 $Id$
-Copyright (c) 1996-2007 by Power System Engineering Research Center (PSERC)
+Copyright (c) 1996-2008 by Power System Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
 
 
 Changes since 3.2
 -----------------
+
+7/3/08
+    - Added an top level program, runopf_w_res(), to solve an OPF with
+      fixed reserve requirements. This is a good example of how to use
+      the new userfcn mechanism to add vars, costs, constraints to an
+      OPF (see also userfcn_reserves.m and case30_reserves.m).
+    - Added option to return solution as a results struct to runpf,
+      runopf, runuopf, rundcpf, rundcopf, runduopf.
+    - Updated uopf.m so input/output args match opf.m.
+    - Added option ENFORCE_Q_LIMS = 2 for runpf to allow one-at-a-time
+      conversion of buses from PV to PQ for generator reactive power
+      limit violations.
+    - Fixed a (new) bug which caused the DC OPF solver to crash on
+      problems with only polynomial costs.
+    - Added userdata to opf_model object.
 
 6/10/08
     - Added new way to specify user vars, constraints, costs via
