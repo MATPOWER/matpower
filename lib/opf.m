@@ -6,9 +6,9 @@ function [busout, genout, branchout, f, success, info, et, g, jac, xr, pimul] = 
 %   it will choose the best available solver, searching in the following order:
 %   minopf, pdipmopf, fmincon, LP-base, and constr.
 %
-%   Returns either a results struct and success flag, or individual data
-%   matrices, the objective function value and a success flag. In the latter
-%   case, there are additional optional return values.
+%   Returns either a results struct and an optional success flag, or individual
+%   data matrices, the objective function value and a success flag. In the
+%   latter case, there are additional optional return values.
 %
 %   results = opf(...)
 %   [results, success] = opf(...)
@@ -517,6 +517,7 @@ if nargout > 0
     results.status = status;
     results.reorder = reorder;
     results.et = et;
+    results.raw = raw;
     results.success = success;
     results.om = om;
     
