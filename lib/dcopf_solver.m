@@ -99,11 +99,18 @@ bb  = [ u(ieq);     u(ilt);     -l(igt);     u(ibx);     -l(ibx)    ];
 %% will be building on the (optionally present) user supplied parameters.
 
 %% piece-wise linear costs
-npwl = length(ipwl);
-Npwl = sparse(ones(npwl,1), vv.i1.y-1+ipwl, 1, 1, nxyz);       %% sum of y vars
-Hpwl = 0;
-Cpwl = 1;
-fparm_pwl = [1 0 0 1];
+any_pwl = (ny > 0);
+if any_pwl
+	Npwl = sparse(ones(ny,1), vv.i1.y-1+ipwl, 1, 1, nxyz);       %% sum of y vars
+	Hpwl = 0;
+	Cpwl = 1;
+	fparm_pwl = [1 0 0 1];
+else
+	Npwl = sparse(0, nxyz);
+	Hpwl = [];
+	Cpwl = [];
+	fparm_pwl = [];
+end
 
 %% quadratic costs
 npol = length(ipol);
@@ -123,14 +130,14 @@ fparm_pol = ones(npol,1) * [ 1 0 0 1 ];
 
 %% combine with user costs
 NN = [ Npwl; Npol; N ];
-HHw = [ Hpwl, sparse(1, npol+nw);
-        sparse(npol, 1), Hpol, sparse(npol, nw);
-        sparse(nw, 1+npol), H   ];
+HHw = [ Hpwl, sparse(any_pwl, npol+nw);
+        sparse(npol, any_pwl), Hpol, sparse(npol, nw);
+        sparse(nw, any_pwl+npol), H   ];
 CCw = [Cpwl; Cpol; Cw];
 ffparm = [ fparm_pwl; fparm_pol; fparm ];
 
 %% transform quadratic coefficients for w into coefficients for X
-nnw = 1+npol+nw;
+nnw = any_pwl+npol+nw;
 M   = spdiags(ffparm(:, 4), 0, nnw, nnw);
 MR  = M * ffparm(:, 2);
 HMR = HHw * MR;
