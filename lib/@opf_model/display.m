@@ -8,62 +8,69 @@ function str = display(om, name, N)
 %   Copyright (c) 2008 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-
-fprintf('%16s: %g\n', 'var.N', om.var.N);
-fprintf('%16s: %g\n', 'nln.N', om.nln.N);
-fprintf('%16s: %g\n', 'lin.N', om.lin.N);
-fprintf('%16s: %g\n', 'var.NS', om.var.NS);
-fprintf('%16s: %g\n', 'nln.NS', om.nln.NS);
-fprintf('%16s: %g\n', 'lin.NS', om.lin.NS);
 if om.var.NS
-	fprintf('\n%16s: %10s %8s %8s %8s\n', 'vars', 'name', 'i1', 'iN', 'N');
-	fprintf('%29s %8s %8s %8s\n', '------', '-----', '-----', '------');
-	for k = 1:om.var.NS
-		name = om.var.order{k};
-		idx = om.var.idx;
-		fprintf('%15d:%12s %8d %8d %8d\n', k, name, idx.i1.(name), idx.iN.(name), idx.N.(name));
-	end
+    fprintf('\n%-22s %5s %8s %8s %8s\n', 'VARIABLES', 'name', 'i1', 'iN', 'N');
+    fprintf('%-22s %5s %8s %8s %8s\n', '=========', '------', '-----', '-----', '------');
+    for k = 1:om.var.NS
+        name = om.var.order{k};
+        idx = om.var.idx;
+        fprintf('%15d:%12s %8d %8d %8d\n', k, name, idx.i1.(name), idx.iN.(name), idx.N.(name));
+    end
+    fprintf('%15s%31s\n', sprintf('var.NS = %d', om.var.NS), sprintf('var.N = %d', om.var.N));
+    fprintf('\n');
 else
-	fprintf('%16s: []\n', 'vars');
+    fprintf('%s  :  <none>\n', 'VARIABLES');
 end
 if om.nln.NS
-	fprintf('\n%16s: %10s %8s %8s %8s\n', 'nln cons', 'name', 'i1', 'iN', 'N');
-	fprintf('%29s %8s %8s %8s\n', '------', '-----', '-----', '------');
-	for k = 1:om.nln.NS
-		name = om.nln.order{k};
-		idx = om.nln.idx;
-		fprintf('%15d:%12s %8d %8d %8d\n', k, name, idx.i1.(name), idx.iN.(name), idx.N.(name));
-	end
+    fprintf('\n%-22s %5s %8s %8s %8s\n', 'NON-LINEAR CONSTRAINTS', 'name', 'i1', 'iN', 'N');
+    fprintf('%-22s %5s %8s %8s %8s\n', '======================', '------', '-----', '-----', '------');
+    for k = 1:om.nln.NS
+        name = om.nln.order{k};
+        idx = om.nln.idx;
+        fprintf('%15d:%12s %8d %8d %8d\n', k, name, idx.i1.(name), idx.iN.(name), idx.N.(name));
+    end
+    fprintf('%15s%31s\n', sprintf('nln.NS = %d', om.nln.NS), sprintf('nln.N = %d', om.nln.N));
+    fprintf('\n');
 else
-	fprintf('%16s: []\n', 'nln cons');
+    fprintf('%s  :  <none>\n', 'NON-LINEAR CONSTRAINTS');
 end
 if om.lin.NS
-	fprintf('\n%16s: %10s %8s %8s %8s\n', 'lin cons', 'name', 'i1', 'iN', 'N');
-	fprintf('%29s %8s %8s %8s\n', '------', '-----', '-----', '------');
-	for k = 1:om.lin.NS
-		name = om.lin.order{k};
-		idx = om.lin.idx;
-		fprintf('%15d:%12s %8d %8d %8d\n', k, name, idx.i1.(name), idx.iN.(name), idx.N.(name));
-	end
+    fprintf('\n%-22s %5s %8s %8s %8s\n', 'LINEAR CONSTRAINTS', 'name', 'i1', 'iN', 'N');
+    fprintf('%-22s %5s %8s %8s %8s\n', '==================', '------', '-----', '-----', '------');
+    for k = 1:om.lin.NS
+        name = om.lin.order{k};
+        idx = om.lin.idx;
+        fprintf('%15d:%12s %8d %8d %8d\n', k, name, idx.i1.(name), idx.iN.(name), idx.N.(name));
+    end
+    fprintf('%15s%31s\n', sprintf('lin.NS = %d', om.lin.NS), sprintf('lin.N = %d', om.lin.N));
+    fprintf('\n');
 else
-	fprintf('%16s: []\n', 'lin cons');
+    fprintf('%s  :  <none>\n', 'LINEAR CONSTRAINTS');
 end
 if om.cost.NS
-	fprintf('\n%16s: %10s %8s %8s %8s\n', 'cost', 'name', 'i1', 'iN', 'N');
-	fprintf('%29s %8s %8s %8s\n', '------', '-----', '-----', '------');
-	for k = 1:om.cost.NS
-		name = om.cost.order{k};
-		idx = om.cost.idx;
-		fprintf('%15d:%12s %8d %8d %8d\n', k, name, idx.i1.(name), idx.iN.(name), idx.N.(name));
-	end
+    fprintf('\n%-22s %5s %8s %8s %8s\n', 'COSTS', 'name', 'i1', 'iN', 'N');
+    fprintf('%-22s %5s %8s %8s %8s\n', '=====', '------', '-----', '-----', '------');
+    for k = 1:om.cost.NS
+        name = om.cost.order{k};
+        idx = om.cost.idx;
+        fprintf('%15d:%12s %8d %8d %8d\n', k, name, idx.i1.(name), idx.iN.(name), idx.N.(name));
+    end
+    fprintf('%15s%31s\n', sprintf('cost.NS = %d', om.cost.NS), sprintf('cost.N = %d', om.cost.N));
+    fprintf('\n');
 else
-	fprintf('%16s: []\n', 'cost');
+    fprintf('%s  :  <none>\n', 'COSTS');
 end
 
-if ~isempty(om.mpc)
-	mpc = om.mpc
-else
-	fprintf('%16s: []\n', 'mpc');
+fprintf('  mpc = ');
+if ~isempty(fieldnames(om.mpc))
+    fprintf('\n');
 end
+display(om.mpc);
+
+fprintf('  userdata = ');
+if ~isempty(fieldnames(om.userdata))
+    fprintf('\n');
+end
+display(om.userdata);
 
 return;
