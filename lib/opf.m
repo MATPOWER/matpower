@@ -10,6 +10,7 @@ function [busout, genout, branchout, f, success, info, et, g, jac, xr, pimul] = 
 %   matrices, the objective function value and a success flag. In the latter
 %   case, there are additional optional return values.
 %
+%   results = opf(...)
 %   [results, success] = opf(...)
 %   [bus, gen, branch, f, success] = opf(...)
 %   [bus, gen, branch, f, success, info, et, g, jac, xr, pimul] = opf(...)
@@ -206,7 +207,8 @@ nl = size(branch, 1);   %% number of branches
 
 %% sort generators in order of increasing bus number
 [tmp, igen] = sort(gen(:, GEN_BUS));
-[tmp, reorder.gen] = sort(igen);    %% save for inverse reordering later
+[tmp, reorder.invgen] = sort(igen);    %% save for inverse reordering later
+reorder.gen = igen;
 gen  = gen(igen, :);
 if ng == size(gencost,1)
   gencost = gencost(igen, :);
@@ -485,7 +487,7 @@ if success && (ll.N.ang > 0)
 end
 
 %% revert to original gen ordering
-gen = gen(reorder.gen, :);
+gen = gen(reorder.invgen, :);
 gen(:, VG) = bus(gen(:, GEN_BUS), VM);  %% copy bus voltages back to gen matrix
 
 %% convert to original external bus ordering
@@ -508,13 +510,15 @@ et = etime(clock, t0);
 
 %% finish preparing output
 if nargout > 0
-  if nargout == 2
+  if nargout <= 2
     results.bus = bus;
     results.gen = genout;
     results.branch = branchout;
     results.status = status;
     results.reorder = reorder;
     results.et = et;
+    results.success = success;
+    results.om = om;
     
     %% values and limit shadow prices for variables
     om_var_order = get(om, 'var', 'order');
