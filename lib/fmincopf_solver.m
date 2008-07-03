@@ -202,7 +202,7 @@ branch(:, MU_SF) = Lambda.ineqnonlin((nn.i1.Sf:nn.iN.Sf) - nmis) / baseMVA;
 branch(:, MU_ST) = Lambda.ineqnonlin((nn.i1.St:nn.iN.St) - nmis) / baseMVA;
 
 %% package up results
-nnl = get_nln_N(om);
+nlnN = get_nln_N(om);
 nlt = length(ilt);
 ngt = length(igt);
 nbx = length(ibx);
@@ -210,7 +210,7 @@ nbx = length(ibx);
 %% extract multipliers for non-linear constraints
 kl = find(Lambda.eqnonlin < 0);
 ku = find(Lambda.eqnonlin > 0);
-nl_mu_l = zeros(nnl, 1);
+nl_mu_l = zeros(nlnN, 1);
 nl_mu_u = [zeros(2*nb, 1); Lambda.ineqnonlin];
 nl_mu_l(kl) = -Lambda.eqnonlin(kl);
 nl_mu_u(ku) =  Lambda.eqnonlin(ku);
