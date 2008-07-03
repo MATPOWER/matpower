@@ -26,7 +26,7 @@ bus(:, BUS_I)               = i2e( bus(:, BUS_I)            );
 gen(:, GEN_BUS)             = i2e( gen(:, GEN_BUS)          );
 branch(:, F_BUS)            = i2e( branch(:, F_BUS)         );
 branch(:, T_BUS)            = i2e( branch(:, T_BUS)         );
-if nargin > 4 & nargout > 3
+if nargin > 4 && nargout > 3 && ~isempty(areas)
     areas(:, PRICE_REF_BUS) = i2e( areas(:, PRICE_REF_BUS)  );
 end
 
