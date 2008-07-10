@@ -37,10 +37,10 @@ function [bus, gen] = scale_load(load, bus, gen, load_zone, opt)
 %       bus matrix, i.e. load_zone = bus(:, BUS_AREA), and load
 %       should have dimension = max(bus(:, BUS_AREA)).
 %
-%   opt - (optional) struct with three possible fields, 'which',
-%       'pq' and 'scale' that determine the behavior as follows:
+%   opt - (optional) struct with three possible fields, 'scale',
+%       'pq' and 'which' that determine the behavior as follows:
 %
-%     opt.which (default is 'SCALE')
+%     opt.scale (default is 'SCALE')
 %       'SCALE'    : load consists of direct scale factors, where
 %                    load(k) = scale factor R(k) for zone k
 %       'QUANTITY' : load consists of target quantities, where
@@ -51,7 +51,7 @@ function [bus, gen] = scale_load(load, bus, gen, load_zone, opt)
 %       'PQ' : scale both active and reactive loads
 %       'P'  : scale only active loads
 %
-%     opt.scale (default is 'BOTH' if gen is provided, else 'FIXED')
+%     opt.which (default is 'BOTH' if gen is provided, else 'FIXED')
 %       'FIXED'        : scale only fixed loads
 %       'DISPATCHABLE' : scale only dispatchable loads
 %       'BOTH'         : scale both fixed and dispatchable loads
