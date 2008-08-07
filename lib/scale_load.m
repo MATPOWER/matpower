@@ -97,16 +97,16 @@ end
 if ~isfield(opt, 'scale')
     opt.scale = 'FACTOR';   %% 'FACTOR' or 'QUANTITY'
 end
-if opt.pq ~= 'P' & opt.pq ~= 'PQ'
+if ~strcmp(opt.pq, 'P') && ~strcmp(opt.pq, 'PQ')
     error('scale_load: opt.pq must equal ''PQ'' or ''P''');
 end
-if opt.which(1) ~= 'F' & opt.which(1) ~= 'D' & opt.which(1) ~= 'B'
+if opt.which(1) ~= 'F' && opt.which(1) ~= 'D' && opt.which(1) ~= 'B'
     error('scale_load: opt.which should be ''FIXED'', ''DISPATCHABLE'' or ''BOTH''');
 end
-if opt.scale(1) ~= 'F' & opt.scale(1) ~= 'Q'
+if opt.scale(1) ~= 'F' && opt.scale(1) ~= 'Q'
     error('scale_load: opt.scale should be ''FACTOR'' or ''QUANTITY''');
 end
-if isempty(gen) & opt.which(1) ~= 'F'
+if isempty(gen) && opt.which(1) ~= 'F'
     error('scale_load: need gen matrix to scale dispatchable loads');
 end
 
