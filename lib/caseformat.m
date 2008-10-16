@@ -89,7 +89,8 @@
 %       7   rateB, MVA rating B (short term rating)
 %       8   rateC, MVA rating C (emergency rating)
 %       9   ratio, transformer off nominal turns ratio ( = 0 for lines )
-%           (taps at 'from' bus, impedance at 'to' bus, i.e. ratio = Vf / Vt)
+%           (taps at 'from' bus, impedance at 'to' bus,
+%            i.e. if r = x = 0, then ratio = Vf / Vt)
 %       10  angle, transformer phase shift angle (degrees), positive => delay
 %   (-)     (Gf, shunt conductance at from bus p.u.)
 %   (-)     (Bf, shunt susceptance at from bus p.u.)
