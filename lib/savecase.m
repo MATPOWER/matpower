@@ -275,10 +275,12 @@ else                                %% M-file
         fprintf(fd, '%%\t2\tstartup\tshutdown\tn\tc(n-1)\t...\tc0\n');
         fprintf(fd, '%sgencost = [\n', prefix);
         if ~isempty(gencost)
-            n = gencost(1, NCOST);
-            if gencost(1, MODEL) == PW_LINEAR
-                n = 2 * n;
-            end
+            n1 = 2 * max(gencost(gencost(:, MODEL) == PW_LINEAR,  NCOST));
+            n2 =     max(gencost(gencost(:, MODEL) == POLYNOMIAL, NCOST));
+            n = max([n1; n2]);
+            if size(gencost, 2) < n + 4
+	            error('savecase: gencost data claims it has more columns than it does');
+	        end
             template = '\t%d\t%g\t%g\t%d';
             for i = 1:n
                 template = [template, '\t%g'];
@@ -374,7 +376,7 @@ else                                %% M-file
                 fprintf(fd, '%suserfcn.args = %s\n', prefix, serialize(mpc.userfcn.args));
             else
                 url = 'http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=12063&objectType=file';
-                error('Cannot save the ''userfcn.args'' without the ''serialize'' function, which is available as a free download from:\n\n<%s>', url);
+                error('savecase: Cannot save the ''userfcn.args'' without the ''serialize'' function, which is available as a free download from:\n\n<%s>', url);
             end
         end
         fprintf(fd, '\n');
