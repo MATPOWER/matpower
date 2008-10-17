@@ -120,7 +120,9 @@ end
 iqdr = find(gencost(ipol, NCOST) == 3);
 ilin = find(gencost(ipol, NCOST) == 2);
 polycf = zeros(npol, 3);                            %% quadratic coeffs for Pg
-polycf(iqdr, :)   = gencost(ipol(iqdr), COST:COST+2);
+if ~isempty(iqdr)
+  polycf(iqdr, :)   = gencost(ipol(iqdr), COST:COST+2);
+end
 polycf(ilin, 2:3) = gencost(ipol(ilin), COST:COST+1);
 polycf = polycf * diag([ baseMVA^2 baseMVA 1]);     %% convert to p.u.
 Npol = sparse(1:npol, vv.i1.Pg-1+ipol, 1, npol, nxyz);         %% Pg vars
