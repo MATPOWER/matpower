@@ -2,13 +2,15 @@ function [baseMVA, bus, gen, branch, areas, gencost] = case39
 %CASE39    Power flow data for 39 bus case.
 %   Please see 'help caseformat' for details on the case file format.
 %
-%   Based on data from:
+%   Original source of this file is unknown, but allegedly based on [1].
 %
-%       M. A. Pai, Energy Function Analysis for Power System Stability,
+%   [1] M. A. Pai, Energy Function Analysis for Power System Stability,
 %       Kluwer Academic Publishers, Boston, 1989.
 
 %   MATPOWER
 %   $Id$
+
+%% MATPOWER Case Format : Version 1
 
 %%-----  Power Flow Data  -----%%
 %% system MVA base
