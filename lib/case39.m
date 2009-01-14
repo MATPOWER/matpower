@@ -13,7 +13,7 @@ function mpc = case39
 %       - added line flow limits and area data from [4]
 %       - added voltage limits, Vmax = 1.06, Vmin = 0.94
 %       - added identical quadratic generator costs
-%       - resolved power flow
+%       - re-solved power flow
 % 
 %   Notes:
 %       - Bus 39, its generator and 2 connecting lines were added
