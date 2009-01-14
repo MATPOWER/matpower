@@ -113,76 +113,78 @@ Rmin(results.status.gen.on) = Rgmin(results.reorder.invgen);
 Rmax(results.status.gen.on) = Rgmax(results.reorder.invgen);
 
 %%-----  print results  -----
-fd = 1;
-fprintf(fd, '\n================================================================================');
-fprintf(fd, '\n|     Reserves                                                                 |');
-fprintf(fd, '\n================================================================================');
-fprintf(fd, '\n Gen   Bus   Status  Reserves   Price');
-fprintf(fd, '\n  #     #              (MW)     ($/MW)     Included in Zones ...');
-fprintf(fd, '\n----  -----  ------  --------  --------   ------------------------');
-for k = igr
-    iz = find(args.zones(:, k));
-    fprintf(fd, '\n%3d %6d     %2d ', k, results.gen(k, GEN_BUS), results.gen(k, GEN_STATUS));
-    if results.gen(k, GEN_STATUS) > 0 & abs(results.reserves.R(k)) > 1e-6
-        fprintf(fd, '%10.2f', results.reserves.R(k));
-    else
-        fprintf(fd, '       -  ');
-    end
-    fprintf(fd, '%10.2f     ', results.reserves.prc(k));
-    for i = 1:length(iz)
-        if i ~= 1
-            fprintf(fd, ', ');
+if mpopt(32) ~= 0
+    fd = 1;
+    fprintf(fd, '\n================================================================================');
+    fprintf(fd, '\n|     Reserves                                                                 |');
+    fprintf(fd, '\n================================================================================');
+    fprintf(fd, '\n Gen   Bus   Status  Reserves   Price');
+    fprintf(fd, '\n  #     #              (MW)     ($/MW)     Included in Zones ...');
+    fprintf(fd, '\n----  -----  ------  --------  --------   ------------------------');
+    for k = igr
+        iz = find(args.zones(:, k));
+        fprintf(fd, '\n%3d %6d     %2d ', k, results.gen(k, GEN_BUS), results.gen(k, GEN_STATUS));
+        if results.gen(k, GEN_STATUS) > 0 & abs(results.reserves.R(k)) > 1e-6
+            fprintf(fd, '%10.2f', results.reserves.R(k));
+        else
+            fprintf(fd, '       -  ');
         end
-        fprintf(fd, '%d', iz(i));
+        fprintf(fd, '%10.2f     ', results.reserves.prc(k));
+        for i = 1:length(iz)
+            if i ~= 1
+                fprintf(fd, ', ');
+            end
+            fprintf(fd, '%d', iz(i));
+        end
     end
+    fprintf(fd, '\n                     --------');
+    fprintf(fd, '\n            Total:%10.2f', sum(results.reserves.R(igr)));
+    fprintf(fd, '\n');
+    
+    fprintf(fd, '\nZone  Reserves   Price  ');
+    fprintf(fd, '\n  #     (MW)     ($/MW) ');
+    fprintf(fd, '\n----  --------  --------');
+    for k = 1:nr
+        iz = find(args.zones(k, :));     %% gens in zone k
+        fprintf(fd, '\n%3d%10.2f%10.2f', k, sum(results.reserves.R(iz)), results.lin.mu.l.Rreq(k));
+    end
+    fprintf(fd, '\n');
+    
+    fprintf(fd, '\n================================================================================');
+    fprintf(fd, '\n|     Reserve Limits                                                           |');
+    fprintf(fd, '\n================================================================================');
+    fprintf(fd, '\n Gen   Bus   Status  Rmin mu     Rmin    Reserves    Rmax    Rmax mu   Pmax mu ');
+    fprintf(fd, '\n  #     #             ($/MW)     (MW)      (MW)      (MW)     ($/MW)    ($/MW) ');
+    fprintf(fd, '\n----  -----  ------  --------  --------  --------  --------  --------  --------');
+    for k = igr
+        fprintf(fd, '\n%3d %6d     %2d ', k, results.gen(k, GEN_BUS), results.gen(k, GEN_STATUS));
+        if results.gen(k, GEN_STATUS) > 0 & results.reserves.mu.l(k) > 1e-6
+            fprintf(fd, '%10.2f', results.reserves.mu.l(k));
+        else
+            fprintf(fd, '       -  ');
+        end
+        fprintf(fd, '%10.2f', Rmin(k));
+        if results.gen(k, GEN_STATUS) > 0 & abs(results.reserves.R(k)) > 1e-6
+            fprintf(fd, '%10.2f', results.reserves.R(k));
+        else
+            fprintf(fd, '       -  ');
+        end
+        fprintf(fd, '%10.2f', Rmax(k));
+        if results.gen(k, GEN_STATUS) > 0 & results.reserves.mu.u(k) > 1e-6
+            fprintf(fd, '%10.2f', results.reserves.mu.u(k));
+        else
+            fprintf(fd, '       -  ');
+        end
+        if results.gen(k, GEN_STATUS) > 0 & results.reserves.mu.Pmax(k) > 1e-6
+            fprintf(fd, '%10.2f', results.reserves.mu.Pmax(k));
+        else
+            fprintf(fd, '       -  ');
+        end
+    end
+    fprintf(fd, '\n                                         --------');
+    fprintf(fd, '\n                                Total:%10.2f', sum(results.reserves.R(igr)));
+    fprintf(fd, '\n');
 end
-fprintf(fd, '\n                     --------');
-fprintf(fd, '\n            Total:%10.2f', sum(results.reserves.R(igr)));
-fprintf(fd, '\n');
-
-fprintf(fd, '\nZone  Reserves   Price  ');
-fprintf(fd, '\n  #     (MW)     ($/MW) ');
-fprintf(fd, '\n----  --------  --------');
-for k = 1:nr
-    iz = find(args.zones(k, :));     %% gens in zone k
-    fprintf(fd, '\n%3d%10.2f%10.2f', k, sum(results.reserves.R(iz)), results.lin.mu.l.Rreq(k));
-end
-fprintf(fd, '\n');
-
-fprintf(fd, '\n================================================================================');
-fprintf(fd, '\n|     Reserve Limits                                                           |');
-fprintf(fd, '\n================================================================================');
-fprintf(fd, '\n Gen   Bus   Status  Rmin mu     Rmin    Reserves    Rmax    Rmax mu   Pmax mu ');
-fprintf(fd, '\n  #     #             ($/MW)     (MW)      (MW)      (MW)     ($/MW)    ($/MW) ');
-fprintf(fd, '\n----  -----  ------  --------  --------  --------  --------  --------  --------');
-for k = igr
-    fprintf(fd, '\n%3d %6d     %2d ', k, results.gen(k, GEN_BUS), results.gen(k, GEN_STATUS));
-    if results.gen(k, GEN_STATUS) > 0 & results.reserves.mu.l(k) > 1e-6
-        fprintf(fd, '%10.2f', results.reserves.mu.l(k));
-    else
-        fprintf(fd, '       -  ');
-    end
-    fprintf(fd, '%10.2f', Rmin(k));
-    if results.gen(k, GEN_STATUS) > 0 & abs(results.reserves.R(k)) > 1e-6
-        fprintf(fd, '%10.2f', results.reserves.R(k));
-    else
-        fprintf(fd, '       -  ');
-    end
-    fprintf(fd, '%10.2f', Rmax(k));
-    if results.gen(k, GEN_STATUS) > 0 & results.reserves.mu.u(k) > 1e-6
-        fprintf(fd, '%10.2f', results.reserves.mu.u(k));
-    else
-        fprintf(fd, '       -  ');
-    end
-    if results.gen(k, GEN_STATUS) > 0 & results.reserves.mu.Pmax(k) > 1e-6
-        fprintf(fd, '%10.2f', results.reserves.mu.Pmax(k));
-    else
-        fprintf(fd, '       -  ');
-    end
-end
-fprintf(fd, '\n                                         --------');
-fprintf(fd, '\n                                Total:%10.2f', sum(results.reserves.R(igr)));
-fprintf(fd, '\n');
 
 if nargout > 0
     varargout{1} = results;
