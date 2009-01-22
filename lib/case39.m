@@ -13,6 +13,8 @@ function mpc = case39
 %       - added line flow limits and area data from [4]
 %       - added voltage limits, Vmax = 1.06, Vmin = 0.94
 %       - added identical quadratic generator costs
+%       - increased Pmax for gen at bus 34 from 308 to 508
+%         (assumed typo in [1], makes initial solved case feasible)
 %       - re-solved power flow
 % 
 %   Notes:
@@ -44,7 +46,6 @@ function mpc = case39
 %   This is a solved power flow case, but it includes the following
 %   violations:
 %       - Pmax violated at bus 31: Pg = 677.87, Pmax = 646
-%                          bus 34: Pg = 508,    Pmax = 308
 %       - Qmin violated at bus 37: Qg = -1.37,  Qmin = 0
 %
 %   References:
@@ -128,7 +129,7 @@ mpc.gen = [
 	31	677.871	221.574	300	-100	0.982	100	1	646	0	0	0	0	0	0	0	0	0	0	0	0;
 	32	650	206.965	300	150	0.9841	100	1	725	0	0	0	0	0	0	0	0	0	0	0	0;
 	33	632	108.293	250	0	0.9972	100	1	652	0	0	0	0	0	0	0	0	0	0	0	0;
-	34	508	166.688	167	0	1.0123	100	1	308	0	0	0	0	0	0	0	0	0	0	0	0;
+	34	508	166.688	167	0	1.0123	100	1	508	0	0	0	0	0	0	0	0	0	0	0	0;
 	35	650	210.661	300	-100	1.0494	100	1	687	0	0	0	0	0	0	0	0	0	0	0	0;
 	36	560	100.165	240	0	1.0636	100	1	580	0	0	0	0	0	0	0	0	0	0	0	0;
 	37	540	-1.36945	250	0	1.0275	100	1	564	0	0	0	0	0	0	0	0	0	0	0	0;
