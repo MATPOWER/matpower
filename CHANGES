@@ -15,8 +15,12 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 3.2
 -----------------
 
+1/14/09
+    - New version of case39.m with some additional versions, created
+      from documented sources.
+
 7/3/08
-    - Added an top level program, runopf_w_res(), to solve an OPF with
+    - Added a top level program, runopf_w_res(), to solve an OPF with
       fixed reserve requirements. This is a good example of how to use
       the new userfcn mechanism to add vars, costs, constraints to an
       OPF (see also userfcn_reserves.m and case30_reserves.m).
