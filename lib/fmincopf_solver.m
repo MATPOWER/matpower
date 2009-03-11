@@ -67,6 +67,15 @@ nb = size(bus, 1);          %% number of buses
 nl = size(branch, 1);       %% number of branches
 ny = get_var_N(om, 'y');    %% number of piece-wise linear costs
 
+%% bounds on optimization vars
+[x0, LB, UB] = getv(om);
+
+%% add constraint on ref bus angles
+refs = find(bus(:, BUS_TYPE) == REF);
+Varefs = bus(refs, VA) * (pi/180);
+LB(vv.i1.Va-1+refs) = Varefs;
+UB(vv.i1.Va-1+refs) = Varefs;
+
 %% linear constraints
 [A, l, u] = linear_constraints(om);
 
@@ -86,15 +95,6 @@ bf  = [ u(ilt);   -l(igt);     u(ibx);    -l(ibx)];
 Afeq = A(ieq, :);
 bfeq = u(ieq);
 
-%% bounds on optimization vars
-[x0, LB, UB] = getv(om);
-
-%% add constraint on ref bus angles
-refs = find(bus(:, BUS_TYPE) == REF);
-Varefs = bus(refs, VA) * (pi/180);
-LB(vv.i1.Va-1+refs) = Varefs;
-UB(vv.i1.Va-1+refs) = Varefs;
-
 %% build admittance matrices
 [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
 
@@ -102,6 +102,10 @@ UB(vv.i1.Va-1+refs) = Varefs;
 if mpopt(19) == 0           %% CONSTR_MAX_IT
   mpopt(19) = 150 + 2*nb;
 end
+
+%% find branches with flow limits
+il = find(branch(:, RATE_A) ~= 0 & branch(:, RATE_A) < 1e10);
+nl2 = length(il);			%% number of constrained lines
 
 %% basic optimset options needed for fmincon
 fmoptions = optimset('GradObj', 'on', 'GradConstr', 'on', ...
@@ -132,7 +136,7 @@ else
   elseif mpopt(55) == 3       %% interior-point, w/ 'lbfgs' Hessian approx
     fmoptions = optimset(fmoptions, 'Algorithm', 'interior-point', 'Hessian','lbfgs');
   elseif mpopt(55) == 4       %% interior-point, w/ exact user-supplied Hessian
-    fmc_hessian = @(x, lambda)hessfmin(x, lambda, om, Ybus, Yf, Yt, mpopt);
+    fmc_hessian = @(x, lambda)hessfmin(x, lambda, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
     fmoptions = optimset(fmoptions, 'Algorithm', 'interior-point', ...
         'Hessian', 'user-supplied', 'HessFcn', fmc_hessian);
   elseif mpopt(55) == 5       %% interior-point, w/ finite-diff Hessian
@@ -155,7 +159,7 @@ end
 
 %%-----  run opf  -----
 fmc_cost = @(x)costfmin(x, om);
-fmc_cons = @(x)consfmin(x, om, Ybus, Yf, Yt, mpopt);
+fmc_cons = @(x)consfmin(x, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
 [x, f, info, Output, Lambda] = ...
   fmincon(fmc_cost, x0, Af, bf, Afeq, bfeq, LB, UB, fmc_cons, fmoptions);
 success = (info > 0);
@@ -185,8 +189,10 @@ branch(:, QT) = imag(St) * baseMVA;
 
 %% line constraint is actually on square of limit
 %% so we must fix multipliers
-Lambda.ineqnonlin(1:nl)      = 2 * Lambda.ineqnonlin(1:nl)      .* branch(:, RATE_A) / baseMVA;
-Lambda.ineqnonlin(nl+1:2*nl) = 2 * Lambda.ineqnonlin(nl+1:2*nl) .* branch(:, RATE_A) / baseMVA;
+muSf = zeros(nl, 1);
+muSt = zeros(nl, 1);
+muSf(il) = 2 * Lambda.ineqnonlin(1:nl2)       .* branch(il, RATE_A) / baseMVA;
+muSt(il) = 2 * Lambda.ineqnonlin([1:nl2]+nl2) .* branch(il, RATE_A) / baseMVA;
 
 %% update Lagrange multipliers
 bus(:, MU_VMAX)  = Lambda.upper(vv.i1.Vm:vv.iN.Vm);
@@ -197,9 +203,8 @@ gen(:, MU_QMAX)  = Lambda.upper(vv.i1.Qg:vv.iN.Qg) / baseMVA;
 gen(:, MU_QMIN)  = Lambda.lower(vv.i1.Qg:vv.iN.Qg) / baseMVA;
 bus(:, LAM_P)    = Lambda.eqnonlin(nn.i1.Pmis:nn.iN.Pmis) / baseMVA;
 bus(:, LAM_Q)    = Lambda.eqnonlin(nn.i1.Qmis:nn.iN.Qmis) / baseMVA;
-nmis = nn.N.Pmis + nn.N.Qmis;
-branch(:, MU_SF) = Lambda.ineqnonlin((nn.i1.Sf:nn.iN.Sf) - nmis) / baseMVA;
-branch(:, MU_ST) = Lambda.ineqnonlin((nn.i1.St:nn.iN.St) - nmis) / baseMVA;
+branch(:, MU_SF) = muSf / baseMVA;
+branch(:, MU_ST) = muSt / baseMVA;
 
 %% package up results
 nlnN = get_nln_N(om);
@@ -211,7 +216,7 @@ nbx = length(ibx);
 kl = find(Lambda.eqnonlin < 0);
 ku = find(Lambda.eqnonlin > 0);
 nl_mu_l = zeros(nlnN, 1);
-nl_mu_u = [zeros(2*nb, 1); Lambda.ineqnonlin];
+nl_mu_u = [zeros(2*nb, 1); muSf; muSt];
 nl_mu_l(kl) = -Lambda.eqnonlin(kl);
 nl_mu_u(ku) =  Lambda.eqnonlin(ku);
 
