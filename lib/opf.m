@@ -385,10 +385,12 @@ end
 
 %% add user vars, constraints, costs (as specified via userfcn)
 if ~isempty(userfcn) && isfield(userfcn, 'name')
-  if isfield(userfcn, 'args')
-    om = feval(userfcn.name, om, userfcn.args);
-  else
-    om = feval(userfcn.name, om);
+  for k = 1:length(userfcn)
+	if isfield(userfcn, 'args') && ~isempty(userfcn(k).args)
+	  om = feval(userfcn(k).name, om, userfcn(k).args);
+	else
+	  om = feval(userfcn(k).name, om);
+	end
   end
 end
 
