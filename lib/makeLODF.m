@@ -17,10 +17,9 @@ function LODF = makeLODF(branch, PTDF);
 [nl, nb] = size(PTDF);
 f = branch(:, F_BUS);
 t = branch(:, T_BUS);
-Cf =  sparse(1:nl, f, ones(nl, 1), nl, nb);
-Ct =  sparse(1:nl, t, ones(nl, 1), nl, nb);
+Cft =  sparse([f; t], [1:nl 1:nl]', [ones(nl, 1); -ones(nl, 1)], nb, nl);
 
-H = PTDF * (Cf - Ct)';
+H = PTDF * Cft;
 h = diag(H, 0);
 LODF = H ./ (ones(nl, nl) - ones(nl, 1) * h');
 LODF = LODF - diag(diag(LODF)) - eye(nl, nl);
