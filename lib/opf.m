@@ -269,9 +269,11 @@ if dc               %% DC model
   bmis = -(bus(:, PD) + bus(:, GS)) / baseMVA - Pbusinj;
 
   %% branch flow constraints
-  lpf = -Inf * ones(nl, 1);
-  upf = branch(:, RATE_A) / baseMVA - Pfinj;
-  upt = branch(:, RATE_A) / baseMVA + Pfinj;
+  il = find(branch(:, RATE_A) ~= 0 & branch(:, RATE_A) < 1e10);
+  nl2 = length(il);			%% number of constrained lines
+  lpf = -Inf * ones(nl2, 1);
+  upf = branch(il, RATE_A) / baseMVA - Pfinj(il);
+  upt = branch(il, RATE_A) / baseMVA + Pfinj(il);
 
   %% voltage angel reference constraints
   Vau = Inf * ones(nb, 1);
@@ -347,8 +349,8 @@ if dc
   om = add_vars(om, 'Va', nb, Va, Val, Vau);
   om = add_vars(om, 'Pg', ng, Pg, Pmin, Pmax);
   om = add_constraints(om, 'Pmis', Amis, bmis, bmis, {'Va', 'Pg'}); %% nb
-  om = add_constraints(om, 'Pf',  Bf, lpf, upf, {'Va'});            %% nl
-  om = add_constraints(om, 'Pt', -Bf, lpf, upt, {'Va'});            %% nl
+  om = add_constraints(om, 'Pf',  Bf(il,:), lpf, upf, {'Va'});      %% nl
+  om = add_constraints(om, 'Pt', -Bf(il,:), lpf, upt, {'Va'});      %% nl
   om = add_constraints(om, 'ang', Aang, lang, uang, {'Va'});        %% nang
 else
   om = add_vars(om, 'Va', nb, Va);

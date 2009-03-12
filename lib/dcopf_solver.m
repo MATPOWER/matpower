@@ -93,6 +93,9 @@ ibx = find( (abs(u-l) > eps) & (u < 1e10) & (l > -1e10) );
 AA  = [ A(ieq, :);  A(ilt, :);  -A(igt, :);  A(ibx, :);  -A(ibx, :) ];
 bb  = [ u(ieq);     u(ilt);     -l(igt);     u(ibx);     -l(ibx)    ];
 
+il = find(branch(:, RATE_A) ~= 0 & branch(:, RATE_A) < 1e10);
+nl2 = length(il);			%% number of constrained lines
+
 %% set up objective function of the form: f = 1/2 * X'*HH*X + CC'*X
 %% where X = [x;y;z]. First set up as quadratic function of w,
 %% f = 1/2 * w'*HHw*w + CCw'*w, where w = diag(M) * (N*X - Rhat). We
@@ -217,8 +220,8 @@ bus(:, [LAM_P, LAM_Q, MU_VMIN, MU_VMAX]) = zeros(nb, 4);
 gen(:, [MU_PMIN, MU_PMAX, MU_QMIN, MU_QMAX]) = zeros(size(gen, 1), 4);
 branch(:, [MU_SF, MU_ST]) = zeros(nl, 2);
 bus(:, LAM_P)       = (mu_u(ll.i1.Pmis:ll.iN.Pmis) - mu_l(ll.i1.Pmis:ll.iN.Pmis)) / baseMVA;
-branch(:, MU_SF)    = mu_u(ll.i1.Pf:ll.iN.Pf) / baseMVA;
-branch(:, MU_ST)    = mu_u(ll.i1.Pt:ll.iN.Pt) / baseMVA;
+branch(il, MU_SF)    = mu_u(ll.i1.Pf:ll.iN.Pf) / baseMVA;
+branch(il, MU_ST)    = mu_u(ll.i1.Pt:ll.iN.Pt) / baseMVA;
 gen(:, MU_PMIN)     = muLB(vv.i1.Pg:vv.iN.Pg) / baseMVA;
 gen(:, MU_PMAX)     = muUB(vv.i1.Pg:vv.iN.Pg) / baseMVA;
 
