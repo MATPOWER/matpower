@@ -15,6 +15,19 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 3.2
 -----------------
 
+3/13/09
+    - Added a pure Matlab implementation of the PDIPM (primal-dual
+      interior point method) solver for the AC OPF. Now the default
+      solver (OPF_ALG = 560) if there are no optional MEX solvers
+      installed.
+    - Modified fmincopf, copf, lpopf and dcopf to allow branch
+      RATE_A = 0 or RATE_A > 1e10 to mean the branch is unconstrained
+      (not included at all in inequality constraints). TSPOPF solvers
+      already did this. Included in tests.
+
+3/11/09
+    - Allow userfcn to be an array, with elements processed in order.
+
 1/14/09
     - New version of case39.m with some additional versions, created
       from documented sources.

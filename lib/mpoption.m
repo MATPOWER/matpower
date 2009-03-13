@@ -43,7 +43,7 @@ function [options, names] = mpoption(varargin)
 %   OPF options
 %       11 - OPF_ALG, 0             algorithm to use for OPF
 %           [    0 - choose best default solver available in the        ]
-%           [        following order, 500, 540, 520, 340, 300           ]
+%           [        following order, 500, 540, 560                     ]
 %           [  300 - generalized formulation, constr                    ]
 %           [  320 - generalized formulation, dense LP                  ]
 %           [  340 - generalized formulation, sparse LP (relaxed)       ]
@@ -56,6 +56,8 @@ function [options, names] = mpoption(varargin)
 %           [        step-controlled primal/dual interior point method  ]
 %           [  550 - generalized formulation, TRALM                     ]
 %           [        trust region based augmented Langrangian method    ]
+%           [  560 - generalized formulation, PDIPM (pure Matlab)       ]
+%           [        primal/dual interior point method                  ]
 %           [ See the User's Manual for details on the formulations.    ]
 %       16 - OPF_VIOLATION, 5e-6    constraint violation tolerance
 %       17 - CONSTR_TOL_X, 1e-4     termination tol on x for copf & fmincopf

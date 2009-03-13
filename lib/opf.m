@@ -93,13 +93,9 @@ if ~dc
       alg = 500;                %% MINOS
     elseif have_fcn('pdipmopf')
       alg = 540;                %% PDIPM
-    elseif have_fcn('fmincon')
-      alg = 520;                %% FMINCON
-    elseif have_fcn('bpmpd')
-      alg = 340;                %% LP-based
-    elseif have_fcn('constr')
-      alg = 300;                %% CONSTR
-    else                    %% must all be polynomial
+    else
+      alg = 560;
+    else
       error('opf: no OPF solvers available');
     end
   end
@@ -454,6 +450,8 @@ else
       end
     end
     [results, success, raw] = tspopf_solver(om, mpopt, output);
+  elseif alg == 560                             %% pdipm (pure Matlab)
+    [results, success, raw] = pdipm_solver(om, mpopt, output);
   end
 %   pimul = [ ...
 %       results.mu.nln.l - results.mu.nln.u;
