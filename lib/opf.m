@@ -95,8 +95,6 @@ if ~dc
       alg = 540;                %% PDIPM
     else
       alg = 560;
-    else
-      error('opf: no OPF solvers available');
     end
   end
   %% update deprecated algorithm codes to new, generalized equivalents
