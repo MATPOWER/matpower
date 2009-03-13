@@ -1,5 +1,5 @@
-function t_opf_tralm(quiet)
-%T_OPF_TRALM  Tests for TRALM-based optimal power flow.
+function t_opf_tspopf_tralm(quiet)
+%T_OPF_TSPOPF_TRALM  Tests for TRALM-based optimal power flow.
 
 %   MATPOWER
 %   $Id$

@@ -1,5 +1,5 @@
-function t_opf_pdipm(quiet)
-%T_OPF_PDIPM  Tests for PDIPM-based optimal power flow.
+function t_opf_tspopf_pdipm(quiet)
+%T_OPF_TSPOPF_PDIPM  Tests for PDIPM-based optimal power flow.
 
 %   MATPOWER
 %   $Id$

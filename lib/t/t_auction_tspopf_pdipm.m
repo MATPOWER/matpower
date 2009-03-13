@@ -1,5 +1,5 @@
-function t_auction_pdipm(quiet)
-%T_AUCTION_PDIPM  Tests for code in auction.m, using PDIPMOPF solver.
+function t_auction_tspopf_pdipm(quiet)
+%T_AUCTION_TSPOPF_PDIPM  Tests for code in auction.m, using PDIPMOPF solver.
 
 %   MATPOWER
 %   $Id$

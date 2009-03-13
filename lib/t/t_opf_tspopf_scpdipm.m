@@ -1,5 +1,5 @@
-function t_opf_scpdipm(quiet)
-%T_OPF_SCPDIPM  Tests for SCPDIPM-based optimal power flow.
+function t_opf_tspopf_scpdipm(quiet)
+%T_OPF_TSPOPF_SCPDIPM  Tests for SCPDIPM-based optimal power flow.
 
 %   MATPOWER
 %   $Id$
