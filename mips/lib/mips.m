@@ -93,8 +93,6 @@ neq = size(h, 1);           %% number of equality constraints
 niq = size(g, 1);           %% number of inequality constraints
 neqnln = size(hn, 1);       %% number of non-linear equality constraints
 niqnln = size(gn, 1);       %% number of non-linear inequality constraints
-neqlin = neq - neqnln;      %% number of linear equality constraints
-niqlin = niq - niqnln;      %% number of linear inequality constraints
 nlt = length(ilt);          %% number of upper bounded linear inequalities
 ngt = length(igt);          %% number of lower bounded linear inequalities
 nbx = length(ibx);          %% number of doubly bounded linear inequalities
@@ -112,7 +110,7 @@ e = ones(niq, 1);
 
 %% check tolerance
 f0 = f;
-L = f + lam' * h + mu' * (g+z) - gamma * sum(log(z));
+% L = f + lam' * h + mu' * (g+z) - gamma * sum(log(z));
 Lx = df + dh * lam + dg * mu;
 feascond = max([norm(h, Inf), max(g)]) / (1 + max([ norm(x, Inf), norm(z, Inf) ]));
 gradcond = norm(Lx, Inf) / (1 + max([ norm(lam, Inf), norm(mu, Inf) ]));
@@ -139,8 +137,8 @@ while (~converged && i < opt.max_it)
     %% compute update step
     lambda = struct('eqnonlin', lam(1:neqnln), 'ineqnonlin', mu(1:niqnln));
     Lxx = ipm_hess(x, lambda);
-    zinvdiag = spdiags(1 ./ z, 0, niq, niq);
-    mudiag = spdiags(mu, 0, niq, niq);
+    zinvdiag = sparse(1:niq, 1:niq, 1 ./ z, niq, niq);
+    mudiag = sparse(1:niq, 1:niq, mu, niq, niq);
     dg_zinv = dg * zinvdiag;
     M = Lxx + dg_zinv * mudiag * dg';
     N = Lx + dg_zinv * (mudiag * g + gamma * e);
@@ -207,8 +205,7 @@ Output = struct('iterations', i, 'feascond', feascond, 'gradcond', gradcond, ...
                 'compcond', compcond, 'costcond', costcond);
 
 %% zero out multipliers on non-binding constraints
-k = find(g < -opt.feastol & mu < mu_threshold);
-mu(k) = 0;
+mu(g < -opt.feastol & mu < mu_threshold) = 0;
 
 %% un-scale cost and prices
 f   = f   / opt.cost_mult;

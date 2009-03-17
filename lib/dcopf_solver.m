@@ -143,7 +143,7 @@ ffparm = [ fparm_pwl; fparm_pol; fparm ];
 
 %% transform quadratic coefficients for w into coefficients for X
 nnw = any_pwl+npol+nw;
-M   = spdiags(ffparm(:, 4), 0, nnw, nnw);
+M   = sparse(1:nnw, 1:nnw, ffparm(:, 4), nnw, nnw);
 MR  = M * ffparm(:, 2);
 HMR = HHw * MR;
 MN  = M * NN;

@@ -20,16 +20,16 @@ function [Haa, Hav, Hva, Hvv] = d2Sbus_dV2(Ybus, V, lam)
 j = sqrt(-1);
 n = length(V);
 Ibus    = Ybus * V;
-diaglam = spdiags(lam, 0, n, n);
-diagV   = spdiags(V, 0, n, n);
+diaglam = sparse(1:n, 1:n, lam, n, n);
+diagV   = sparse(1:n, 1:n, V, n, n);
 
-A = spdiags(lam .* V, 0, n, n);
+A = sparse(1:n, 1:n, lam .* V, n, n);
 B = Ybus * diagV;
 C = A * conj(B);
 D = Ybus' * diagV;
-E = conj(diagV) * (D * diaglam - spdiags(D*lam, 0, n, n));
-F = C - A * spdiags(conj(Ibus), 0, n, n);
-G = spdiags(ones(n, 1)./abs(V), 0, n, n);
+E = conj(diagV) * (D * diaglam - sparse(1:n, 1:n, D*lam, n, n));
+F = C - A * sparse(1:n, 1:n, conj(Ibus), n, n);
+G = sparse(1:n, 1:n, ones(n, 1)./abs(V), n, n);
 
 Haa = E + F;
 Hva = j * G * (E - F);

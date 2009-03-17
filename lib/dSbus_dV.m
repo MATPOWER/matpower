@@ -41,9 +41,9 @@ n = length(V);
 Ibus = Ybus * V;
 
 if issparse(Ybus)           %% sparse version (if Ybus is sparse)
-    diagV       = spdiags(V, 0, n, n);
-    diagIbus    = spdiags(Ibus, 0, n, n);
-    diagVnorm   = spdiags(V./abs(V), 0, n, n);
+    diagV       = sparse(1:n, 1:n, V, n, n);
+    diagIbus    = sparse(1:n, 1:n, Ibus, n, n);
+    diagVnorm   = sparse(1:n, 1:n, V./abs(V), n, n);
 else                        %% dense version
     diagV       = diag(V);
     diagIbus    = diag(Ibus);

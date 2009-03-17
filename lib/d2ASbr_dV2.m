@@ -35,8 +35,8 @@ j = sqrt(-1);
 nb = length(V);
 nl = length(lam);
 
-diaglam = spdiags(lam, 0, nl, nl);
-diagSbr_conj = spdiags(conj(Sbr), 0, nl, nl);
+diaglam = sparse(1:nl, 1:nl, lam, nl, nl);
+diagSbr_conj = sparse(1:nl, 1:nl, conj(Sbr), nl, nl);
 
 [Saa, Sav, Sva, Svv] = d2Sbr_dV2(Cbr, Ybr, V, diagSbr_conj * lam);
 Gaa = 2 * real( Saa + dSbr_dVa.' * diaglam * conj(dSbr_dVa) );

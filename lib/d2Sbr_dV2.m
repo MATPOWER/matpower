@@ -29,15 +29,15 @@ j = sqrt(-1);
 nl = length(lam);
 nb = length(V);
 
-diaglam = spdiags(lam, 0, nl, nl);
-diagV   = spdiags(V, 0, nb, nb);
+diaglam = sparse(1:nl, 1:nl, lam, nl, nl);
+diagV   = sparse(1:nb, 1:nb, V, nb, nb);
 
 A = Ybr' * diaglam * Cbr;
 B = conj(diagV) * A * diagV;
-D = spdiags((A*V) .* conj(V), 0, nb, nb);
-E = spdiags((A.'*conj(V)) .* V, 0, nb, nb);
+D = sparse(1:nb, 1:nb, (A*V) .* conj(V), nb, nb);
+E = sparse(1:nb, 1:nb, (A.'*conj(V)) .* V, nb, nb);
 F = B + B.';
-G = spdiags(ones(nb, 1)./abs(V), 0, nb, nb);
+G = sparse(1:nb, 1:nb, ones(nb, 1)./abs(V), nb, nb);
 
 Gaa = F - D - E;
 Gva = j * G * (B - B.' - D + E);

@@ -38,8 +38,8 @@ nb = length(V);
 
 Vnorm = V ./ abs(V);
 if issparse(Yf)             %% sparse version (if Yf is sparse)
-    diagV       = spdiags(V, 0, nb, nb);
-    diagVnorm   = spdiags(Vnorm, 0, nb, nb);
+    diagV       = sparse(1:nb, 1:nb, V, nb, nb);
+    diagVnorm   = sparse(1:nb, 1:nb, Vnorm, nb, nb);
 else                        %% dense version
     diagV       = diag(V);
     diagVnorm   = diag(Vnorm);

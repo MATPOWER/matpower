@@ -24,10 +24,10 @@ function [Gaa, Gav, Gva, Gvv] = d2Ibr_dV2(Ybr, V, lam)
 j = sqrt(-1);
 nb = length(V);
 
-diagV     = spdiags(V, 0, nb, nb);
-diaginvVm = spdiags(ones(nb, 1)./abs(V), 0, nb, nb);
+diagV     = sparse(1:nb, 1:nb, V, nb, nb);
+diaginvVm = sparse(1:nb, 1:nb, ones(nb, 1)./abs(V), nb, nb);
 
-Gaa = spdiags(-(Ybr.' * lam) .* V, 0, nb, nb);
+Gaa = sparse(1:nb, 1:nb, -(Ybr.' * lam) .* V, nb, nb);
 Gva = -j * Gaa * diaginvVm;
 Gav = Gva;
 Gvv = sparse(nb, nb);

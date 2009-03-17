@@ -42,10 +42,10 @@ function [dAf_dVa, dAf_dVm, dAt_dVa, dAt_dVm] = ...
 nl = length(Sf);
 
 %%----- partials w.r.t. real and reactive power flows -----
-dAf_dPf = spdiags(2 * real(Sf), 0, nl, nl);
-dAf_dQf = spdiags(2 * imag(Sf), 0, nl, nl);
-dAt_dPt = spdiags(2 * real(St), 0, nl, nl);
-dAt_dQt = spdiags(2 * imag(St), 0, nl, nl);
+dAf_dPf = sparse(1:nl, 1:nl, 2 * real(Sf), nl, nl);
+dAf_dQf = sparse(1:nl, 1:nl, 2 * imag(Sf), nl, nl);
+dAt_dPt = sparse(1:nl, 1:nl, 2 * real(St), nl, nl);
+dAt_dQt = sparse(1:nl, 1:nl, 2 * imag(St), nl, nl);
 
 %% partials w.r.t. voltage magnitudes and angles
 dAf_dVm = dAf_dPf * real(dSf_dVm) + dAf_dQf * imag(dSf_dVm);

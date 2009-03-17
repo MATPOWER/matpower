@@ -60,12 +60,12 @@ It = Yt * V;
 
 Vnorm = V ./ abs(V);
 if issparse(Yf)             %% sparse version (if Yf is sparse)
-    diagVf      = spdiags(V(f), 0, nl, nl);
-    diagIf      = spdiags(If, 0, nl, nl);
-    diagVt      = spdiags(V(t), 0, nl, nl);
-    diagIt      = spdiags(It, 0, nl, nl);
-    diagV       = spdiags(V, 0, nb, nb);
-    diagVnorm   = spdiags(Vnorm, 0, nb, nb);
+    diagVf      = sparse(1:nl, 1:nl, V(f), nl, nl);
+    diagIf      = sparse(1:nl, 1:nl, If, nl, nl);
+    diagVt      = sparse(1:nl, 1:nl, V(t), nl, nl);
+    diagIt      = sparse(1:nl, 1:nl, It, nl, nl);
+    diagV       = sparse(1:nb, 1:nb, V, nb, nb);
+    diagVnorm   = sparse(1:nb, 1:nb, Vnorm, nb, nb);
     
     dSf_dVa = j * (conj(diagIf) * sparse(1:nl, f, V(f), nl, nb) - diagVf * conj(Yf * diagV));
     dSf_dVm = diagVf * conj(Yf * diagVnorm) + conj(diagIf) * sparse(1:nl, f, Vnorm(f), nl, nb);
