@@ -1,12 +1,13 @@
 function [x, f, info, Output, Lambda] = pdipm(ipm_f, ipm_gh, ipm_hess, x0, xmin, xmax, A, l, u, opt)
 %PDIPM  Primal-dual interior point method for NLP.
 %   [x, f, info, Output, Lambda] = ...
-%       pdipm(f, x0, Af, bf, Afeq, bfeq, LB, UB, gh, hess, varargin)
+%       pdipm(f, gh, hess, x0, xmin, xmax, A, l, u, opt)
 %
 %   min f(x)
 %    s.t.
 %   h(x) = 0
 %   g(x) <= 0
+%   xmin <= x <= xmax
 
 %   MATPOWER
 %   $Id$
