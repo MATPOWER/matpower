@@ -23,12 +23,10 @@ t_begin(n_tests, quiet);
 
 if ~have_fcn('smartmarket')
     t_skip(n_tests, 'smartmarket code not available');
-elseif ~have_fcn('minopf')
-    t_skip(n_tests, 't_runmarket requires MINOPF');
 else
 	mpc = loadcase('t_auction_case');
 	
-	mpopt = mpoption('OPF_ALG', 500, 'OUT_ALL_LIM', 1, 'OUT_BRANCH', 0, 'OUT_SYS_SUM', 0, 'OUT_ALL', 0, 'VERBOSE', 1);
+	mpopt = mpoption('OPF_ALG', 560, 'OUT_ALL_LIM', 1, 'OUT_BRANCH', 0, 'OUT_SYS_SUM', 0, 'OUT_ALL', 0, 'VERBOSE', 1);
 	% mpopt = mpoption('OUT_GEN', 1, 'OUT_BRANCH', 0, 'OUT_SYS_SUM', 0);
 	
 	offers.P.qty = [
@@ -86,7 +84,7 @@ else
 	Lbus = c.gen(L,GEN_BUS);
 	
 	t_is( co.P.qty, ones(6, 1) * [12 24 0], 2, [t ' : gen P quantities'] );
-	t_is( co.P.prc(1,:), 50.1578, 4, [t ' : gen 1 P prices'] );
+	t_is( co.P.prc(1,:), 50.1578, 3, [t ' : gen 1 P prices'] );
 	t_is( cb.P.qty, [10 10 10; 10 0.196 0; 10 10 0], 2, [t ' : load P quantities'] );
 	t_is( cb.P.prc(2,:), 56.9853, 4, [t ' : load 2 P price'] );
 	t_is( co.P.prc(:,1), c.bus(Gbus, LAM_P), 8, [t ' : gen P prices'] );
@@ -95,7 +93,7 @@ else
 	lao_gap   = offers.P.prc(1,2) - c.bus(Gbus(1), LAM_P);
 	fro_gap   = offers.P.prc(6,3) - c.bus(Gbus(6), LAM_P);
 	
-	t_is( lao_gap, -0.1578, 4, 'P lao_gap');
+	t_is( lao_gap, -0.1578, 3, 'P lao_gap');
 	t_is( fro_gap, 3.9802, 4, 'P fro_gap');
 	
 	t_is( co.Q.qty, [4.2722; 11.3723; 14.1472; 22.8939; 36.7886; 12.3375; 0; 0; 0], 2, [t ' : Q offer quantities'] );
