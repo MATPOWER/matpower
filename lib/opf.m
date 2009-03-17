@@ -449,7 +449,13 @@ else
     end
     [results, success, raw] = tspopf_solver(om, mpopt, output);
   elseif alg == 560                             %% pdipm (pure Matlab)
-    [results, success, raw] = pdipm_solver(om, mpopt, output);
+    mlver = ver('matlab');
+    if str2double(mlver.Version(1)) < 7    %% anonymous functions not available
+      fmc = @pdipm6_solver;
+    else
+      fmc = @pdipm_solver;
+    end
+    [results, success, raw] = feval(fmc, om, mpopt, output);
   end
 %   pimul = [ ...
 %       results.mu.nln.l - results.mu.nln.u;
