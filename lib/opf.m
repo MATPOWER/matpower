@@ -224,6 +224,20 @@ if nw
   N(:, oldcols) = N(:, newcols);
 end
 
+%% convert single-block piecewise-linear costs into linear polynomial cost
+p1 = find(gencost(:, MODEL) == PW_LINEAR & gencost(:, NCOST) == 2);
+if ~isempty(p1)
+  x0 = gencost(p1, COST);
+  y0 = gencost(p1, COST+1);
+  x1 = gencost(p1, COST+2);
+  y1 = gencost(p1, COST+3);
+  m = (y1 - y0) ./ (x1 - x0);
+  b = y0 - m .* x0;
+  gencost(p1, MODEL) = POLYNOMIAL;
+  gencost(p1, NCOST) = 2;
+  gencost(p1, COST:COST+1) = [m b];
+end
+
 %% warn if there is more than one reference bus
 refs = find(bus(:, BUS_TYPE) == REF);
 if length(refs) > 1
@@ -264,7 +278,7 @@ if dc               %% DC model
 
   %% branch flow constraints
   il = find(branch(:, RATE_A) ~= 0 & branch(:, RATE_A) < 1e10);
-  nl2 = length(il);			%% number of constrained lines
+  nl2 = length(il);         %% number of constrained lines
   lpf = -Inf * ones(nl2, 1);
   upf = branch(il, RATE_A) / baseMVA - Pfinj(il);
   upt = branch(il, RATE_A) / baseMVA + Pfinj(il);
@@ -382,11 +396,11 @@ end
 %% add user vars, constraints, costs (as specified via userfcn)
 if ~isempty(userfcn) && isfield(userfcn, 'name')
   for k = 1:length(userfcn)
-	if isfield(userfcn, 'args') && ~isempty(userfcn(k).args)
-	  om = feval(userfcn(k).name, om, userfcn(k).args);
-	else
-	  om = feval(userfcn(k).name, om);
-	end
+    if isfield(userfcn, 'args') && ~isempty(userfcn(k).args)
+      om = feval(userfcn(k).name, om, userfcn(k).args);
+    else
+      om = feval(userfcn(k).name, om);
+    end
   end
 end
 
@@ -394,7 +408,7 @@ end
 [vv, ll, nn] = get_idx(om);
 
 %% select optional solver output args
-if nargout > 7
+if nargout > 7 || nargout < 3
   output = struct('g', [], 'dg', []);
 else
  output = struct([]);
@@ -473,11 +487,22 @@ if isfield(results, 'dg')
   jac = results.dg;
 end
 % xr = results.x;
-xr = raw.xr;
 
 % norm(xr - raw.xr(1:length(xr)))
 % norm(pimul - raw.pimul(1:length(pimul)))
 % fprintf('%g\t%g\t%g\n', [pimul raw.pimul abs(pimul - raw.pimul)]');
+
+%% if single-block PWL costs were converted to POLY, insert dummy y into xr
+if ~isempty(p1)
+  y = zeros(length(p1), 1);
+  if dc
+    nx = vv.N.Pg;
+  else
+    nx = vv.N.Qg;
+  end
+  xr = [ xr(1:nx); y; xr(nx+1:end)];
+  results.x = [ results.x(1:nx); y; results.x(nx+1:end)];
+end
 
 %% gen PQ capability curve multipliers
 if ~dc && success && (ll.N.PQh > 0 || ll.N.PQl > 0)
