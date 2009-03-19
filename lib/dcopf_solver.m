@@ -55,6 +55,17 @@ end
 
 %% options
 verbose = mpopt(31);    %% VERBOSE
+alg     = mpopt(26);    %% OPF_ALG_DC
+
+if alg == 0
+    if have_fcn('bpmpd')
+        alg = 100;      %% BPMPD_MEX
+    elseif have_fcn('quadprog')
+        alg = 200;      %% Optimization Toolbox
+    else
+        alg = 300;      %% PDIPM (pure Matlab)
+    end
+end
 
 %% unpack data
 mpc = get_mpc(om);
@@ -70,11 +81,11 @@ fparm = [cp.dd cp.rh cp.kk cp.mm];
 %% problem dimensions
 ipol = find(gencost(:, MODEL) == POLYNOMIAL); %% polynomial costs
 ipwl = find(gencost(:, MODEL) == PW_LINEAR);  %% piece-wise linear costs
-nb = size(bus, 1);      	%% number of buses
-nl = size(branch, 1);   	%% number of branches
-nw = size(N, 1);        	%% number of general cost vars, w
+nb = size(bus, 1);          %% number of buses
+nl = size(branch, 1);       %% number of branches
+nw = size(N, 1);            %% number of general cost vars, w
 ny = get_var_N(om, 'y');    %% number of piece-wise linear costs
-nxyz = get_var_N(om); 		%% total number of control vars of all types
+nxyz = get_var_N(om);       %% total number of control vars of all types
 
 %% linear constraints
 [A, l, u] = linear_constraints(om);
@@ -94,7 +105,7 @@ AA  = [ A(ieq, :);  A(ilt, :);  -A(igt, :);  A(ibx, :);  -A(ibx, :) ];
 bb  = [ u(ieq);     u(ilt);     -l(igt);     u(ibx);     -l(ibx)    ];
 
 il = find(branch(:, RATE_A) ~= 0 & branch(:, RATE_A) < 1e10);
-nl2 = length(il);			%% number of constrained lines
+nl2 = length(il);           %% number of constrained lines
 
 %% set up objective function of the form: f = 1/2 * X'*HH*X + CC'*X
 %% where X = [x;y;z]. First set up as quadratic function of w,
@@ -104,15 +115,15 @@ nl2 = length(il);			%% number of constrained lines
 %% piece-wise linear costs
 any_pwl = (ny > 0);
 if any_pwl
-	Npwl = sparse(ones(ny,1), vv.i1.y-1+ipwl, 1, 1, nxyz);       %% sum of y vars
-	Hpwl = 0;
-	Cpwl = 1;
-	fparm_pwl = [1 0 0 1];
+    Npwl = sparse(ones(ny,1), vv.i1.y-1+ipwl, 1, 1, nxyz);       %% sum of y vars
+    Hpwl = 0;
+    Cpwl = 1;
+    fparm_pwl = [1 0 0 1];
 else
-	Npwl = sparse(0, nxyz);
-	Hpwl = [];
-	Cpwl = [];
-	fparm_pwl = [];
+    Npwl = sparse(0, nxyz);
+    Hpwl = [];
+    Cpwl = [];
+    fparm_pwl = [];
 end
 
 %% quadratic costs
@@ -168,9 +179,9 @@ end
 
 %%-----  run opf  -----
 if any(any(HH))
-  [x, lambda, how, success] = mp_qp(HH, CC, AA, bb, LB, UB, x0, mpopt(15), qpverbose, 0);
+  [x, lambda, how, success] = mp_qp(HH, CC, AA, bb, LB, UB, x0, mpopt(15), qpverbose, alg);
 else
-  [x, lambda, how, success] = mp_lp(CC, AA, bb, LB, UB, x0, mpopt(15), qpverbose, 0);
+  [x, lambda, how, success] = mp_lp(CC, AA, bb, LB, UB, x0, mpopt(15), qpverbose, alg);
 end
 info = success;
 

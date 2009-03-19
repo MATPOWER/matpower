@@ -41,7 +41,7 @@ function [options, names] = mpoption(varargin)
 %           [    0 - use AC formulation & corresponding algorithm opts  ]
 %           [    1 - use DC formulation, ignore AC algorithm options    ]
 %   OPF options
-%       11 - OPF_ALG, 0             algorithm to use for OPF
+%       11 - OPF_ALG, 0             solver to use for AC OPF
 %           [    0 - choose best default solver available in the        ]
 %           [        following order, 500, 540, 560                     ]
 %           [  300 - generalized formulation, constr                    ]
@@ -58,7 +58,6 @@ function [options, names] = mpoption(varargin)
 %           [        trust region based augmented Langrangian method    ]
 %           [  560 - generalized formulation, PDIPM (pure Matlab)       ]
 %           [        primal/dual interior point method                  ]
-%           [ See the User's Manual for details on the formulations.    ]
 %       16 - OPF_VIOLATION, 5e-6    constraint violation tolerance
 %       17 - CONSTR_TOL_X, 1e-4     termination tol on x for copf & fmincopf
 %       18 - CONSTR_TOL_F, 1e-4     termination tol on F for copf & fmincopf
@@ -75,6 +74,12 @@ function [options, names] = mpoption(varargin)
 %           [   2 - current magnitude (limit in MVA at 1 p.u. voltage   ]
 %       25 - OPF_IGNORE_ANG_LIM, 0  ignore angle difference limits for branches
 %                                   even if specified       [   0 or 1  ]
+%       26 - OPF_ALG_DC, 0          solver to use for DC OPF
+%           [    0 - choose default solver from available solvers in    ]
+%           [        the following order, 100, 200, 300                 ]
+%           [  100 - BPMPD_MEX                                          ]
+%           [  200 - Optimization Tbx, quadprog(), linprog()            ]
+%           [  300 - PDIPM (pure Matlab), primal/dual interior pt method]
 %   output options
 %       31 - VERBOSE, 1             amount of progress info printed
 %           [   0 - print no progress info                              ]
@@ -210,7 +215,7 @@ else                    %% even number of parameters
         5;      %% 23 - LPC_MAX_RESTART
         0;      %% 24 - OPF_FLOW_LIM
         0;      %% 25 - OPF_IGNORE_ANG_LIM
-        0;      %% 26 - RESERVED26
+        0;      %% 26 - OPF_ALG_DC
         0;      %% 27 - RESERVED27
         0;      %% 28 - RESERVED28
         0;      %% 29 - RESERVED29
@@ -320,7 +325,7 @@ names = str2mat(    names, ...
                     'LPC_MAX_RESTART', ...      %% 23
                     'OPF_FLOW_LIM', ...         %% 24
                     'OPF_IGNORE_ANG_LIM', ...   %% 25
-                    'RESERVED26', ...           %% 26
+                    'OPF_ALG_DC', ...           %% 26
                     'RESERVED27', ...           %% 27
                     'RESERVED28', ...           %% 28
                     'RESERVED29', ...           %% 29
