@@ -15,6 +15,17 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 3.2
 -----------------
 
+3/19/09
+    - Added pdipm_qp() as a new QP/LP solver based on the
+      pure Matlab PDIPM solver used for AC OPFs.
+    - Added option 'OPF_ALG_DC' and refactored some code to allow
+      the user to select the desired solver for DC OPF,
+      100 = BPMPD_MEX, 200 = Opt Tbx, 300 = PDIPM.
+
+3/17/09
+    - Numerous code optimizations based on profiling code, e.g.
+      changed all calls to spdiags() to equivalent call to sparse().
+
 3/13/09
     - Added a pure Matlab implementation of the PDIPM (primal-dual
       interior point method) solver for the AC OPF. Now the default
