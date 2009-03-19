@@ -21,6 +21,9 @@ Changes since 3.2
     - Added option 'OPF_ALG_DC' and refactored some code to allow
       the user to select the desired solver for DC OPF,
       100 = BPMPD_MEX, 200 = Opt Tbx, 300 = PDIPM.
+    - Added code to opf.m to automatically convert single-block
+      piecewise linear costs to linear polynomial costs to reduce
+      the number of variables and constraints in the problem.
 
 3/17/09
     - Numerous code optimizations based on profiling code, e.g.
