@@ -7,6 +7,7 @@ function [x, f, info, Output, Lambda] = pdipm(ipm_f, ipm_gh, ipm_hess, x0, xmin,
 %    s.t.
 %   h(x) = 0
 %   g(x) <= 0
+%   l <= A*x <= u
 %   xmin <= x <= xmax
 
 %   MATPOWER
@@ -28,26 +29,26 @@ if nargin < 10
         end
     end
 end
-if ~isfield(opt, 'feastol') && isempty(opt.feastol)
+if ~isfield(opt, 'feastol') || isempty(opt.feastol)
     opt.feastol = 1e-6;
 end
-if ~isfield(opt, 'gradtol') && isempty(opt.gradtol)
+if ~isfield(opt, 'gradtol') || isempty(opt.gradtol)
     opt.gradtol = 1e-6;
 end
-if ~isfield(opt, 'comptol') && isempty(opt.comptol)
+if ~isfield(opt, 'comptol') || isempty(opt.comptol)
     opt.comptol = 1e-6;
 end
-if ~isfield(opt, 'costtol') && isempty(opt.costtol)
+if ~isfield(opt, 'costtol') || isempty(opt.costtol)
     opt.costtol = 1e-6;
 end
-if ~isfield(opt, 'max_it') && isempty(opt.max_it)
+if ~isfield(opt, 'max_it') || isempty(opt.max_it)
     opt.max_it = 150;
 end
-if ~isfield(opt, 'cost_mult') && isempty(opt.cost_mult)
+if ~isfield(opt, 'cost_mult') || isempty(opt.cost_mult)
     opt.cost_mult = 1;
 end
-if ~isfield(opt, 'verbose') && isempty(opt.verbose)
-    opt.verbose = 1e-6;
+if ~isfield(opt, 'verbose') || isempty(opt.verbose)
+    opt.verbose = 0;
 end
 
 %% constants
