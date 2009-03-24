@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 3.2
 -----------------
 
+3/24/09
+    - Added step-controlled PDIPM variant (OPF_ALG = 565) of
+      AC OPF solver.
+
 3/19/09
     - Added pdipm_qp() as a new QP/LP solver based on the
       pure Matlab PDIPM solver used for AC OPFs.
