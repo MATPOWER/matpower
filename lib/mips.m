@@ -44,6 +44,12 @@ end
 if ~isfield(opt, 'max_it') || isempty(opt.max_it)
     opt.max_it = 150;
 end
+if ~isfield(opt, 'max_red') || isempty(opt.max_red)
+    opt.max_red = 20;
+end
+if ~isfield(opt, 'step_control') || isempty(opt.step_control)
+    opt.step_control = 0;
+end
 if ~isfield(opt, 'cost_mult') || isempty(opt.cost_mult)
     opt.cost_mult = 1;
 end
@@ -55,7 +61,10 @@ end
 xi = 0.99995;           %% OPT_IPM_PHI
 sigma = 0.1;            %% OPT_IPM_SIGMA
 z0 = 1;                 %% OPT_IPM_INIT_SLACK
-mu_threshold = 1e-5;	%% SCOPF_MULTIPLIERS_FILTER_THRESH
+alpha_min = 1e-8;       %% OPT_AP_AD_MIN
+rho_min = 0.95;         %% OPT_IPM_QUAD_LOWTHRESH
+rho_max = 1.05;         %% OPT_IPM_QUAD_HIGHTHRESH
+mu_threshold = 1e-5;    %% SCOPF_MULTIPLIERS_FILTER_THRESH
 
 %% initialize
 i = 0;                      %% iteration counter
@@ -111,16 +120,19 @@ e = ones(niq, 1);
 
 %% check tolerance
 f0 = f;
-% L = f + lam' * h + mu' * (g+z) - gamma * sum(log(z));
+if opt.step_control
+    L = f + lam' * h + mu' * (g+z) - gamma * sum(log(z));
+end
 Lx = df + dh * lam + dg * mu;
 feascond = max([norm(h, Inf), max(g)]) / (1 + max([ norm(x, Inf), norm(z, Inf) ]));
 gradcond = norm(Lx, Inf) / (1 + max([ norm(lam, Inf), norm(mu, Inf) ]));
 compcond = (z' * mu) / (1 + norm(x, Inf));
 costcond = abs(f - f0) / (1 + abs(f0));
 if opt.verbose > 1
-    fprintf('\n it    objective     feascond     gradcond     compcond     costcond  ');
-    fprintf('\n----  ------------ ------------ ------------ ------------ ------------');
-    fprintf('\n%3d  %12g %12g %12g %12g %12g', i, f, feascond, gradcond, compcond, costcond);
+    fprintf('\n it    objective   step size   feascond     gradcond     compcond     costcond  ');
+    fprintf('\n----  ------------ --------- ------------ ------------ ------------ ------------');
+    fprintf('\n%3d  %12.8g %10s %12g %12g %12g %12g', ...
+        i, f/opt.cost_mult, '', feascond, gradcond, compcond, costcond);
 end
 if feascond < opt.feastol && gradcond < opt.gradtol && ...
                 compcond < opt.comptol && costcond < opt.costtol
@@ -154,12 +166,63 @@ while (~converged && i < opt.max_it)
     dlam = dxdlam(nx+(1:neq));
     dz = -g - z - dg' * dx;
     dmu = -mu + zinvdiag *(gamma*e - mudiag * dz);
+
+    %% optional step-size control
+    sc = 0;
+    if opt.step_control
+        x1 = x + dx;
+
+        %% evaluate cost, constraints, derivatives at x1
+        [f1, df1] = ipm_f(x1);          %% cost
+        f1 = f1 * opt.cost_mult;
+        df1 = df1 * opt.cost_mult;
+        [gn1, hn1, dgn1, dhn1] = ipm_gh(x1); %% non-linear constraints
+        g1 = [gn1; Ai * x1 - bi];       %% inequality constraints
+        h1 = [hn1; Ae * x1 - be];       %% equality constraints
+        dg1 = [dgn1 Ai'];               %% 1st derivative of inequalities
+        dh1 = [dhn1 Ae'];               %% 1st derivative of equalities
+
+        %% check tolerance
+        Lx1 = df1 + dh1 * lam + dg1 * mu;
+        feascond1 = max([norm(h1, Inf), max(g1)]) / (1 + max([ norm(x1, Inf), norm(z, Inf) ]));
+        gradcond1 = norm(Lx1, Inf) / (1 + max([ norm(lam, Inf), norm(mu, Inf) ]));
+
+        if feascond1 > feascond && gradcond1 > gradcond
+            sc = 1;
+        end
+    end
+    if sc
+        alpha = 1;
+        for j = 1:opt.max_red
+            dx1 = alpha * dx;
+            x1 = x + dx1;
+            f1 = ipm_f(x1);             %% cost
+            f1 = f1 * opt.cost_mult;
+            [gn1, hn1] = ipm_gh(x1);    %% non-linear constraints
+            g1 = [gn1; Ai * x1 - bi];   %% inequality constraints
+            h1 = [hn1; Ae * x1 - be];   %% equality constraints
+            L1 = f1 + lam' * h1 + mu' * (g1+z) - gamma * sum(log(z));
+            if opt.verbose > 2
+                fprintf('\n   %3d            %10g', -j, norm(dx1));
+            end
+            rho = (L1 - L) / (Lx' * dx1 + 0.5 * dx1' * Lxx * dx1);
+            if rho > rho_min && rho < rho_max
+                break;
+            else
+                alpha = alpha / 2;
+            end
+        end
+        dx = alpha * dx;
+        dz = alpha * dz;
+        dlam = alpha * dlam;
+        dmu = alpha * dmu;
+    end
+
+    %% do the update
     k = find(dz < 0);
     alphap = min( [xi * min(z(k) ./ -dz(k)) 1] );
     k = find(dmu < 0);
     alphad = min( [xi * min(mu(k) ./ -dmu(k)) 1] );
-
-    %% do the update
     x = x + alphap * dx;
     z = z + alphap * dz;
     lam = lam + alphad * dlam;
@@ -183,7 +246,8 @@ while (~converged && i < opt.max_it)
     compcond = (z' * mu) / (1 + norm(x, Inf));
     costcond = abs(f - f0) / (1 + abs(f0));
     if opt.verbose > 1
-        fprintf('\n%3d  %12g %12g %12g %12g %12g', i, f/opt.cost_mult, feascond, gradcond, compcond, costcond);
+        fprintf('\n%3d  %12.8g %10.5g %12g %12g %12g %12g', ...
+            i, f/opt.cost_mult, norm(dx), feascond, gradcond, compcond, costcond);
     end
     if feascond < opt.feastol && gradcond < opt.gradtol && ...
                     compcond < opt.comptol && costcond < opt.costtol
@@ -191,8 +255,18 @@ while (~converged && i < opt.max_it)
         if opt.verbose > 1
             fprintf('\nConverged!\n');
         end
+    else
+        if alphap < alpha_min || alphad < alpha_min || gamma < eps || gamma > 1/eps
+            if opt.verbose > 1
+                fprintf('\nNumerically Failed\n');
+            end
+            break;
+        end
+        f0 = f;
+        if opt.step_control
+            L = f + lam' * h + mu' * (g+z) - gamma * sum(log(z));
+        end
     end
-    f0 = f;
 end
 
 if opt.verbose
