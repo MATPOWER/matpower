@@ -54,10 +54,12 @@ function [options, names] = mpoption(varargin)
 %           [        primal/dual interior point method                  ]
 %           [  545 - generalized formulation (except CCV), SCPDIPM      ]
 %           [        step-controlled primal/dual interior point method  ]
-%           [  550 - generalized formulation, TRALM                     ]
+%           [  550 - generalized formulation (except CCV), TRALM        ]
 %           [        trust region based augmented Langrangian method    ]
 %           [  560 - generalized formulation, PDIPM (pure Matlab)       ]
 %           [        primal/dual interior point method                  ]
+%           [  565 - generalized formulation, SCPDIPM (pure Matlab)     ]
+%           [        step-controlled primal/dual interior point method  ]
 %       16 - OPF_VIOLATION, 5e-6    constraint violation tolerance
 %       17 - CONSTR_TOL_X, 1e-4     termination tol on x for copf & fmincopf
 %       18 - CONSTR_TOL_F, 1e-4     termination tol on F for copf & fmincopf

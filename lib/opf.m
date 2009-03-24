@@ -226,6 +226,7 @@ end
 
 %% convert single-block piecewise-linear costs into linear polynomial cost
 p1 = find(gencost(:, MODEL) == PW_LINEAR & gencost(:, NCOST) == 2);
+% p1 = [];
 if ~isempty(p1)
   x0 = gencost(p1, COST);
   y0 = gencost(p1, COST+1);
@@ -447,7 +448,7 @@ else
       fmc = @fmincopf_solver;
     end
     [results, success, raw] = feval(fmc, om, mpopt, output);
-  elseif alg == 540 || alg == 545 || alg == 550   %% PDIPM_OPF, SCPDIPM_OPF, or TRALM_OPF
+  elseif alg == 540 || alg == 545 || alg == 550 %% PDIPM_OPF, SCPDIPM_OPF, or TRALM_OPF
     if alg == 540       % PDIPM_OPF
       if ~have_fcn('pdipmopf')
         error('opf: OPF_ALG %d requires PDIPMOPF (see http://www.pserc.cornell.edu/tspopf/)', alg);
@@ -462,7 +463,7 @@ else
       end
     end
     [results, success, raw] = tspopf_solver(om, mpopt, output);
-  elseif alg == 560                             %% pdipm (pure Matlab)
+  elseif alg == 560 || alg == 565               %% pdipm (pure Matlab)
     mlver = ver('matlab');
     if str2double(mlver.Version(1)) < 7    %% anonymous functions not available
       fmc = @pdipm6_solver;
