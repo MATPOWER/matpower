@@ -15,6 +15,11 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 3.2
 -----------------
 
+3/25/09
+    - Added add_userfcn.m as to make it easy to add a new
+      userfcn to a case struct, whether or not it already
+      has any. Modified the fixed reserve example to use this.
+
 3/24/09
     - Added step-controlled PDIPM variant (OPF_ALG = 565) of
       AC OPF solver.
@@ -23,8 +28,7 @@ Changes since 3.2
     - Added pdipm_qp() as a new QP/LP solver based on the
       pure Matlab PDIPM solver used for AC OPFs.
     - Added option 'OPF_ALG_DC' and refactored some code to allow
-      the user to select the desired solver for DC OPF,
-      100 = BPMPD_MEX, 200 = Opt Tbx, 300 = PDIPM.
+      the user to select the desired solver for DC OPF.
     - Added code to opf.m to automatically convert single-block
       piecewise linear costs to linear polynomial costs to reduce
       the number of variables and constraints in the problem.
