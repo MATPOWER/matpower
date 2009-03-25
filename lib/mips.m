@@ -137,7 +137,7 @@ end
 if feascond < opt.feastol && gradcond < opt.gradtol && ...
                 compcond < opt.comptol && costcond < opt.costtol
     converged = 1;
-    if opt.verbose > 1
+    if opt.verbose
         fprintf('\nConverged!\n');
     end
 end
@@ -252,12 +252,12 @@ while (~converged && i < opt.max_it)
     if feascond < opt.feastol && gradcond < opt.gradtol && ...
                     compcond < opt.comptol && costcond < opt.costtol
         converged = 1;
-        if opt.verbose > 1
+        if opt.verbose
             fprintf('\nConverged!\n');
         end
     else
         if alphap < alpha_min || alphad < alpha_min || gamma < eps || gamma > 1/eps
-            if opt.verbose > 1
+            if opt.verbose
                 fprintf('\nNumerically Failed\n');
             end
             break;
