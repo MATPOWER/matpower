@@ -60,10 +60,8 @@ alg     = mpopt(26);    %% OPF_ALG_DC
 if alg == 0
     if have_fcn('bpmpd')
         alg = 100;      %% BPMPD_MEX
-    elseif have_fcn('quadprog')
-        alg = 200;      %% Optimization Toolbox
     else
-        alg = 300;      %% PDIPM (pure Matlab)
+        alg = 200;      %% PDIPM (pure Matlab)
     end
 end
 
@@ -164,11 +162,6 @@ C0 = 1/2 * MR' * HMR + sum(polycf(:, 3));   %% constant term of cost
 
 %% run QP solver
 mpopt(15) = length(ieq);            %% set number of equality constraints
-if verbose > 1                      %% print QP progress for verbose levels 2 & 3
-    qpverbose = 1;
-else
-    qpverbose = -1;
-end
 if ~have_fcn('sparse_qp') || mpopt(51) == 0 %% don't use sparse matrices
     AA = full(AA);
     HH = full(HH);
@@ -179,9 +172,9 @@ end
 
 %%-----  run opf  -----
 if any(any(HH))
-  [x, lambda, how, success] = mp_qp(HH, CC, AA, bb, LB, UB, x0, mpopt(15), qpverbose, alg);
+  [x, lambda, how, success] = mp_qp(HH, CC, AA, bb, LB, UB, x0, mpopt(15), verbose, alg);
 else
-  [x, lambda, how, success] = mp_lp(CC, AA, bb, LB, UB, x0, mpopt(15), qpverbose, alg);
+  [x, lambda, how, success] = mp_lp(CC, AA, bb, LB, UB, x0, mpopt(15), verbose, alg);
 end
 info = success;
 

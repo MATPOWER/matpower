@@ -42,8 +42,8 @@ function [options, names] = mpoption(varargin)
 %           [    1 - use DC formulation, ignore AC algorithm options    ]
 %   OPF options
 %       11 - OPF_ALG, 0             solver to use for AC OPF
-%           [    0 - choose best default solver available in the        ]
-%           [        following order, 500, 540, 560                     ]
+%           [    0 - choose default solver available in the following   ]
+%           [        order, 500, 540, 560                               ]
 %           [  300 - generalized formulation, constr                    ]
 %           [  320 - generalized formulation, dense LP                  ]
 %           [  340 - generalized formulation, sparse LP (relaxed)       ]
@@ -78,10 +78,11 @@ function [options, names] = mpoption(varargin)
 %                                   even if specified       [   0 or 1  ]
 %       26 - OPF_ALG_DC, 0          solver to use for DC OPF
 %           [    0 - choose default solver from available solvers in    ]
-%           [        the following order, 100, 200, 300                 ]
+%           [        the following order, 100, 200                      ]
 %           [  100 - BPMPD_MEX                                          ]
-%           [  200 - Optimization Tbx, quadprog(), linprog()            ]
-%           [  300 - PDIPM (pure Matlab), primal/dual interior pt method]
+%           [  200 - PDIPM (pure Matlab), primal/dual interior pt method]
+%           [  250 - SCPDIPM (pure Matlab), step-controlled PDIPM       ]
+%           [  300 - Optimization Tbx, quadprog(), linprog()            ]
 %   output options
 %       31 - VERBOSE, 1             amount of progress info printed
 %           [   0 - print no progress info                              ]
