@@ -47,14 +47,7 @@ end
 
 %%-----  load and check for reserve inputs  -----
 mpc = loadcase(casename);
-if ~isfield(mpc, 'userfcn') || ~isfield(mpc.userfcn, 'name') || ...
-        ~isstr(mpc.userfcn.name) || ...
-        ~strcmp(mpc.userfcn.name, 'userfcn_reserves')
-    error('runopf_w_res: case must contain a userfcn field with userfcn.name = ''userfcn_reserves''');
-end
-if ~isfield(mpc, 'userfcn') || ~isfield(mpc.userfcn, 'args')
-    error('runopf_w_res: case must contain a userfcn field with a userfcn.args struct defining the reserve zones, requirements and costs');
-end
+mpc = enable_reserves(mpc);
 
 %%-----  run it  -----
 results = runopf(mpc, mpopt, fname, solvedcase);
