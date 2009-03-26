@@ -10,7 +10,7 @@ function printpf(baseMVA, bus, gen, branch, f, success, et, fd, mpopt)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2009 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %%----- initialization -----
@@ -21,14 +21,10 @@ if nargin < 9
         fd = 1;         %% print to stdio by default
     end
 end
-if isempty(f)
-    isOPF = 0;      %% have only simple PF data
-else
-    isOPF = 1;      %% have OPF data
-end
+isOPF = ~isempty(f);	%% FALSE -> only simple PF data, TRUE -> OPF data
 
 %% options
-dc              = mpopt(10);        %% use DC formulation?
+isDC            = mpopt(10);        %% use DC formulation?
 OUT_ALL         = mpopt(32);
 OUT_ANY         = OUT_ALL == 1;     %% set to true if any pretty output is to be generated
 OUT_SYS_SUM     = OUT_ALL == 1 | (OUT_ALL == -1 & mpopt(33));
@@ -82,7 +78,7 @@ nl = size(branch, 1);   %% number of branches
 ng = size(gen, 1);      %% number of generators
 
 %% zero out some data to make printout consistent for DC case
-if dc
+if isDC
     bus(:, [QD, BS])            = zeros(nb, 2);
     gen(:, [QG, QMAX, QMIN])    = zeros(ng, 3);
     branch(:, [BR_R, BR_B])     = zeros(nl, 2);
@@ -106,7 +102,7 @@ onld = find( gen(:, GEN_STATUS) > 0 &  isload(gen) );
 V = bus(:, VM) .* exp(sqrt(-1) * pi/180 * bus(:, VA));
 out = find(branch(:, BR_STATUS) == 0);          %% out-of-service branches
 nout = length(out);
-if dc
+if isDC
     loss = zeros(nl,1);
 else
     loss = baseMVA * abs(V(e2i(branch(:, F_BUS))) ./ tap - V(e2i(branch(:, T_BUS)))) .^ 2 ./ ...
@@ -159,7 +155,7 @@ if OUT_SYS_SUM
     [minv, mini] = min(bus(:, VA));
     [maxv, maxi] = max(bus(:, VA));
     fprintf(fd, '\nVoltage Angle   %8.2f deg   @ bus %-4d   %8.2f deg   @ bus %-4d', minv, bus(mini, BUS_I), maxv, bus(maxi, BUS_I));
-    if ~dc
+    if ~isDC
         [maxv, maxi] = max(real(loss));
         fprintf(fd, '\nP Losses (I^2*R)             -              %8.2f MW    @ line %d-%d', maxv, branch(maxi, F_BUS), branch(maxi, T_BUS));
         [maxv, maxi] = max(imag(loss));
@@ -437,15 +433,16 @@ if isOPF
     end
         
     %% generator P constraints
-    if OUT_PG_LIM == 2 | OUT_QG_LIM == 2 | ...
+    if OUT_PG_LIM == 2 | ...
             (OUT_PG_LIM == 1 & (any(gen(ong, PG) < gen(ong, PMIN) + ctol) | ...
                                 any(gen(ong, PG) > gen(ong, PMAX) - ctol) | ...
                                 any(gen(ong, MU_PMIN) > 1e-6) | ...
                                 any(gen(ong, MU_PMAX) > 1e-6))) | ...
+            (~isDC && (OUT_QG_LIM == 2 | ...
             (OUT_QG_LIM == 1 & (any(gen(ong, QG) < gen(ong, QMIN) + ctol) | ...
                                 any(gen(ong, QG) > gen(ong, QMAX) - ctol) | ...
                                 any(gen(ong, MU_QMIN) > 1e-6) | ...
-                                any(gen(ong, MU_QMAX) > 1e-6)))
+                                any(gen(ong, MU_QMAX) > 1e-6)))))
         fprintf(fd, '\n================================================================================');
         fprintf(fd, '\n|     Generation Constraints                                                   |');
         fprintf(fd, '\n================================================================================');
@@ -486,11 +483,11 @@ if isOPF
     end
         
     %% generator Q constraints
-    if OUT_QG_LIM == 2 | (OUT_QG_LIM == 1 & ...
+    if ~isDC && (OUT_QG_LIM == 2 | (OUT_QG_LIM == 1 & ...
                              (any(gen(ong, QG) < gen(ong, QMIN) + ctol) | ...
                               any(gen(ong, QG) > gen(ong, QMAX) - ctol) | ...
                               any(gen(ong, MU_QMIN) > 1e-6) | ...
-                              any(gen(ong, MU_QMAX) > 1e-6)))
+                              any(gen(ong, MU_QMAX) > 1e-6))))
         fprintf(fd, '\nGen  Bus              Reactive Power Limits');
         fprintf(fd, '\n #    #   Qmin mu    Qmin       Qg       Qmax    Qmax mu');
         fprintf(fd, '\n---  ---  -------  --------  --------  --------  -------');
@@ -571,11 +568,11 @@ if isOPF
     end
         
     %% dispatchable load Q constraints
-    if OUT_QG_LIM == 2 | (OUT_QG_LIM == 1 & ...
+    if ~isDC && (OUT_QG_LIM == 2 | (OUT_QG_LIM == 1 & ...
                              (any(gen(onld, QG) < gen(onld, QMIN) + ctol) | ...
                               any(gen(onld, QG) > gen(onld, QMAX) - ctol) | ...
                               any(gen(onld, MU_QMIN) > 1e-6) | ...
-                              any(gen(onld, MU_QMAX) > 1e-6)))
+                              any(gen(onld, MU_QMAX) > 1e-6))))
         fprintf(fd, '\nGen  Bus              Reactive Power Limits');
         fprintf(fd, '\n #    #   Qmin mu    Qmin       Qg       Qmax    Qmax mu');
         fprintf(fd, '\n---  ---  -------  --------  --------  --------  -------');
@@ -607,7 +604,7 @@ if isOPF
     end
         
     %% line flow constraints
-    if mpopt(24) == 1   %% P limit
+    if mpopt(24) == 1 || isDC  %% P limit
         Ff = branch(:, PF);
         Ft = branch(:, PT);
         str = '\n  #     Bus    Pf  mu     Pf      |Pmax|      Pt      Pt  mu   Bus';
