@@ -170,6 +170,23 @@ end
 %% bounds on optimization vars
 [x0, LB, UB] = getv(om);
 
+%% try to select an interior initial point
+if alg == 200 || alg == 250
+    refs = find(bus(:, BUS_TYPE) == REF);
+    Varefs = bus(refs, VA) * (pi/180);
+
+    lb = LB; ub = UB;
+    lb(LB == -Inf) = -1e10;   %% replace Inf with numerical proxies
+    ub(UB ==  Inf) =  1e10;
+    x0 = (lb + ub) / 2;
+    x0(vv.i1.Va:vv.iN.Va) = Varefs(1);  %% angles set to first reference angle
+    if ny > 0
+        ipwl = find(gencost(:, MODEL) == PW_LINEAR);
+        c = gencost(sub2ind(size(gencost), ipwl, NCOST+2*gencost(ipwl, NCOST)));    %% largest y-value in CCV data
+        x0(vv.i1.y:vv.iN.y) = max(c) + 0.1 * abs(max(c));
+    end
+end
+
 %%-----  run opf  -----
 if any(any(HH))
   [x, lambda, how, success] = mp_qp(HH, CC, AA, bb, LB, UB, x0, mpopt(15), verbose, alg);
