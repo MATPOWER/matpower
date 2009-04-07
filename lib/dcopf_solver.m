@@ -170,8 +170,8 @@ end
 %% bounds on optimization vars
 [x0, LB, UB] = getv(om);
 
-%% try to select an interior initial point
 if alg == 200 || alg == 250
+    %% try to select an interior initial point
     refs = find(bus(:, BUS_TYPE) == REF);
     Varefs = bus(refs, VA) * (pi/180);
 
@@ -185,13 +185,34 @@ if alg == 200 || alg == 250
         c = gencost(sub2ind(size(gencost), ipwl, NCOST+2*gencost(ipwl, NCOST)));    %% largest y-value in CCV data
         x0(vv.i1.y:vv.iN.y) = max(c) + 0.1 * abs(max(c));
     end
+
+    %% set up options
+    feastol = mpopt(81);    %% PDIPM_FEASTOL
+    gradtol = mpopt(82);    %% PDIPM_GRADTOL
+    comptol = mpopt(83);    %% PDIPM_COMPTOL
+    costtol = mpopt(84);    %% PDIPM_COSTTOL
+    max_it  = mpopt(85);    %% PDIPM_MAX_IT
+    max_red = mpopt(86);    %% SCPDIPM_RED_IT
+    if feastol == 0
+        feastol = mpopt(16);    %% = OPF_VIOLATION by default
+    end
+    opt = struct(   'feastol', feastol, ...,
+                    'gradtol', gradtol, ...,
+                    'comptol', comptol, ...,
+                    'costtol', costtol, ...,
+                    'max_it', max_it, ...,
+                    'max_red', max_red, ...,
+                    'cost_mult', 1, ...,
+                    'verbose', verbose  );
+else
+    opt = [];
 end
 
 %%-----  run opf  -----
 if any(any(HH))
-  [x, lambda, how, success] = mp_qp(HH, CC, AA, bb, LB, UB, x0, mpopt(15), verbose, alg);
+  [x, lambda, how, success] = mp_qp(HH, CC, AA, bb, LB, UB, x0, mpopt(15), verbose, alg, opt);
 else
-  [x, lambda, how, success] = mp_lp(CC, AA, bb, LB, UB, x0, mpopt(15), verbose, alg);
+  [x, lambda, how, success] = mp_lp(CC, AA, bb, LB, UB, x0, mpopt(15), verbose, alg, opt);
 end
 info = success;
 
