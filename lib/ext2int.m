@@ -31,10 +31,8 @@ bus(:, BUS_I)               = e2i( bus(:, BUS_I)            );
 gen(:, GEN_BUS)             = e2i( gen(:, GEN_BUS)          );
 branch(:, F_BUS)            = e2i( branch(:, F_BUS)         );
 branch(:, T_BUS)            = e2i( branch(:, T_BUS)         );
-if nargin > 3 & nargout > 4
-    if ~isempty(areas)
-        areas(:, PRICE_REF_BUS) = e2i( areas(:, PRICE_REF_BUS)  );
-    end
+if nargin > 3 && nargout > 4 && ~isempty(areas)
+    areas(:, PRICE_REF_BUS) = e2i( areas(:, PRICE_REF_BUS)  );
 end
 
 return;
