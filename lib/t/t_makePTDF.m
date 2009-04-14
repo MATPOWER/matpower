@@ -35,7 +35,7 @@ if have_fcn('bpmpd') | have_fcn('quadprog') | have_fcn('qp')
 	mpopt = mpoption('OUT_ALL', 0, 'VERBOSE', verbose);
 	[baseMVA, bus, gen, gencost, branch, f, success, et] = ...
 		rundcopf(casefile, mpopt);
-	[i2e, bus, gen, branch, areas] = ext2int(bus, gen, branch, []);
+	[i2e, bus, gen, branch] = ext2int(bus, gen, branch);
 	nb  = size(bus, 1);
 	nbr = size(branch, 1);
 	ng  = size(gen, 1);

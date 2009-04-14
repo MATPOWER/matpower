@@ -35,21 +35,31 @@ function [busout, genout, branchout, f, success, info, et, g, jac, xr, pimul] = 
 %   opf(baseMVA, bus, gen, branch, areas, gencost, A, l, u, ...
 %                               mpopt, N, fparm, H, Cw, z0, zl, zu)
 %
-%   The data for the problem can be specified in one of 3 ways: (1) the name of
-%   a case file which defines the data matrices baseMVA, bus, gen, branch,
-%   areas and gencost, (2) a struct containing the data matrices as fields, or
-%   (3) the data matrices themselves.
-%
+%   The data for the problem can be specified in one of three ways:
+%   (1) a string (mpc) containing the file name of a MATPOWER case
+%     which defines the data matrices baseMVA, bus, gen, branch, and
+%     gencost (areas is not used at all, it is only included for
+%     backward compatibility of the API).
+%   (2) a struct (mpc) containing the data matrices as fields.
+%   (3) the individual data matrices themselves.
+%   
+%   The optional user parameters for user constraints (A, l, u), user costs
+%   (N, fparm, H, Cw), user variable initializer (z0), and user variable
+%   limits (zl, zu) can also be specified as fields in a case struct,
+%   either passed in directly or defined in a case file referenced by name.
+%   
 %   When specified, A, l, u represent additional linear constraints on the
-%   optimization variables, l <= A*[x; z] <= u. For an explanation of the
-%   formulation used and instructions for forming the A matrix, type
-%   'help genform'.
+%   optimization variables, l <= A*[x; z] <= u. If the user specifies an A
+%   matrix that has more columns than the number of "x" (OPF) variables,
+%   then there are extra linearly constrained "z" variables. For an
+%   explanation of the formulation used and instructions for forming the A
+%   matrix, type 'help genform' or see the manual.
 %
 %   A generalized cost on all variables can be applied if input arguments
 %   N, fparm, H and Cw are specified.  First, a linear transformation
 %   of the optimization variables is defined by means of r = N * [x; z].
 %   Then, to each element of r a function is applied as encoded in the
-%   fparm matrix (see manual).  If the resulting vector is now named w,
+%   fparm matrix (see manual). If the resulting vector is named w,
 %   then H and Cw define a quadratic cost on w: (1/2)*w'*H*w + Cw * w .
 %   H and N should be sparse matrices and H should also be symmetric.
 %
@@ -63,10 +73,6 @@ function [busout, genout, branchout, f, success, info, et, g, jac, xr, pimul] = 
 %   (info), elapsed time in seconds (et), the constraint vector (g), the
 %   Jacobian matrix (jac), and the vector of variables (xr) as well 
 %   as the constraint multipliers (pimul).
-%
-%   Rules for A matrix: If the user specifies an A matrix that has more columns
-%   than the number of "x" (OPF) variables, then there are extra linearly
-%   constrained "z" variables.
 
 %   MATPOWER
 %   $Id$
@@ -79,7 +85,7 @@ function [busout, genout, branchout, f, success, info, et, g, jac, xr, pimul] = 
 t0 = clock;         %% start timer
 
 %% process input arguments
-[baseMVA, bus, gen, branch, areas, gencost, Au, lbu, ubu, mpopt, ...
+[baseMVA, bus, gen, branch, gencost, Au, lbu, ubu, mpopt, ...
     N, fparm, H, Cw, z0, zl, zu, userfcn] = opf_args(varargin{:});
 
 %% options

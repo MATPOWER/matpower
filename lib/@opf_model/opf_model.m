@@ -58,7 +58,6 @@ function om = opf_model(mpc)
 %       .branch
 %       .gen
 %       .gencost
-%       .areas
 %       .A	(if present, must have l, u)
 %       .l
 %       .u

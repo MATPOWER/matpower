@@ -2,21 +2,22 @@ function [baseMVA, bus, gen, branch, areas, gencost, info] = loadcase(casefile)
 %LOADCASE   Load .m or .mat case files or data struct in MATPOWER format
 %
 %   [baseMVA, bus, gen, branch, areas, gencost] = loadcase(casefile)
+%   [baseMVA, bus, gen, branch, gencost] = loadcase(casefile)
 %   [baseMVA, bus, gen, branch] = loadcase(casefile)
 %   mpc = loadcase(casefile)
 %
 %   Returns the individual data matrices or a struct containing them as fields.
 %
-%   Here casefile is either a struct containing the fields baseMVA, bus,
-%   gen, branch, areas, gencost, or a string containing the name of the file.
-%   If casefile contains the extension '.mat' or '.m', then the explicit file
-%   is searched. If casefile containts no extension, then LOADCASE looks for
-%   a '.mat' file first, then for a '.m' file.  If the file does not exist
-%   or doesn't define all matrices, the routine aborts with an appropriate
-%   error message.  Alternatively, it can be called with the syntax:
+%   Here casefile is either (1) a struct containing the fields baseMVA,
+%   bus, gen, branch and, optionally, areas and/or gencost, or (2) a string
+%   containing the name of the file. If casefile contains the extension
+%   '.mat' or '.m', then the explicit file is searched. If casefile contains
+%   no extension, then LOADCASE looks for a '.mat' file first, then for an
+%   '.m' file.  If the file does not exist or doesn't define all required
+%   matrices, the routine aborts with an appropriate error message.
+%   Alternatively, it can be called with the syntax:
 %
 %   [baseMVA, bus, gen, branch, areas, gencost, info] = loadcase(casefile)
-%   [baseMVA, bus, gen, branch, info] = loadcase(casefile)
 %   [mpc, info] = loadcase(casefile)
 %
 %   In this case, the function will not abort, but info will contain an exit
@@ -46,10 +47,16 @@ if nargout < 3
 else
     return_as_struct = logical(0);
 end
-if nargout > 5
-    expect_opf_data = logical(1);
+if nargout >= 5
+    expect_gencost = logical(1);
+    if nargout > 5
+        expect_areas = logical(1);
+    else 
+        expect_areas = logical(0);
+    end
 else
-    expect_opf_data = logical(0);
+    expect_gencost = logical(0);
+    expect_areas = logical(0);
 end
 
 %%-----  read data into struct  -----
@@ -99,7 +106,7 @@ if isstr(casefile)
             end
             if info == 0 & ~isstruct(s) %% if not try individual data matrices
                 clear s;
-                if expect_opf_data
+                if expect_gencost
                     try
                         [s.baseMVA, s.bus, s.gen, s.branch, ...
                             s.areas, s.gencost] = feval(rootname);
@@ -144,8 +151,8 @@ if info == 0
     %% check for required fields
     if ~( isfield(s,'baseMVA') & isfield(s,'bus') & ...
             isfield(s,'gen') & isfield(s,'branch') ) | ...
-            ( expect_opf_data & ...
-                ~( isfield(s,'areas') & isfield(s,'gencost') ) )
+            ( expect_gencost & ~isfield(s, 'gencost') ) | ...
+            ( expect_areas &   ~isfield(s,'areas') )
         info = 5;           %% missing some expected fields
         err5 = 'missing data';
     else
@@ -165,8 +172,6 @@ end
 %%-----  define output variables  -----
 if return_as_struct
     bus = info;
-elseif ~expect_opf_data
-    areas = info;
 end
 
 if info == 0    %% no errors
@@ -177,20 +182,22 @@ if info == 0    %% no errors
         bus     = mpc.bus;
         gen     = mpc.gen;
         branch  = mpc.branch;
-        if isfield(mpc, 'gencost')
-            areas   = mpc.areas;
-            gencost = mpc.gencost;
+        if expect_gencost
+            if expect_areas
+                areas   = mpc.areas;
+                gencost = mpc.gencost;
+            else
+                areas = mpc.gencost;
+            end
         end
     end
 else            %% we have a problem captain
-    if nargout == 2 | nargout == 5 | nargout == 7   %% return error code
+    if nargout == 2 | nargout == 7   %% return error code
         if return_as_struct
             baseMVA = struct([]);
         else
             baseMVA = []; bus = []; gen = []; branch = [];
-            if expect_opf_data
-                areas = []; gencost = [];
-            end
+            areas = []; gencost = [];
         end
     else                                            %% die on error
         switch info

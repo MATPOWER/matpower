@@ -1,9 +1,9 @@
 %CASEFORMAT    Defines the MATPOWER case file format.
 %   A MATPOWER case file is an M-file or MAT-file which defines the variables
-%   baseMVA, bus, gen, branch, areas, and gencost. With the exception of
-%   baseMVA, a scalar, each data variable is a matrix, where a row corresponds
-%   to a single bus, branch, gen, etc. The format of the data is similar to
-%   the PTI format described in
+%   baseMVA, bus, gen, branch, areas (optional), and gencost (optional). With
+%   the exception of baseMVA, a scalar, each data variable is a matrix, where
+%   a row corresponds to a single bus, branch, gen, etc. The format of the
+%   data is similar to the PTI format described in
 %       http://www.ee.washington.edu/research/pstca/formats/pti.txt
 %   except where noted. An item marked with (+) indicates that it is included
 %   in this data but is not part of the PTI format. An item marked with (-) is
@@ -16,7 +16,7 @@
 %   areas and gencost, were optional since they were not needed for running
 %   a simple power flow. In version 2, each of the data matrices are stored
 %   as fields in a struct. It is this struct, rather than the individual
-%   matrices that is returned by a version 2 M-casefile. Likewise a version 2
+%   matrices, that is returned by a version 2 M-casefile. Likewise a version 2
 %   MAT-casefile stores a struct named 'mpc' (for MATPOWER case). The struct
 %   also contains a 'version' field so MATPOWER knows how to interpret the
 %   data. Any case file which does not return a struct, or any struct which
@@ -100,10 +100,6 @@
 %   (2) 12  minimum angle difference, angle(Vf) - angle(Vt) (degrees)
 %   (2) 13  maximum angle difference, angle(Vf) - angle(Vt) (degrees)
 %
-% (+) Area Data Format
-%       1   i, area number
-%       2   price_ref_bus, reference bus for that area
-% 
 % (+) Generator Cost Data Format
 %       NOTE: If gen has n rows, then the first n rows of gencost contain
 %       the cost for active power produced by the corresponding generators.
@@ -122,6 +118,12 @@
 %                   x0, y0, x1, y1, x2, y2, ...
 %           where x0 < x1 < x2 < ... and the points (x0,y0), (x1,y1),
 %           (x2,y2), ... are the end- and break-points of the cost function.
+% 
+% (+) Area Data Format (deprecated)
+%     (this data is not used by MATPOWER and is no longer necessary for
+%      version 2 case files with OPF data).
+%       1   i, area number
+%       2   price_ref_bus, reference bus for that area
 
 %   MATPOWER
 %   $Id$

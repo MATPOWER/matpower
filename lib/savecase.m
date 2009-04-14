@@ -2,14 +2,17 @@ function fname_out = savecase(fname, varargin)
 %SAVECASE  Saves a MATPOWER case file, given a filename and the data matrices.
 %
 %   savecase(fname, casestruct)
-%   savecase(fname, comment, casestruct)
 %   savecase(fname, casestruct, version)
-%   savecase(fname, comment, casestruct, version)
 %   savecase(fname, baseMVA, bus, gen, branch)
-%   savecase(fname, comment, baseMVA, bus, gen, branch)
+%   savecase(fname, baseMVA, bus, gen, branch, gencost)
 %   savecase(fname, baseMVA, bus, gen, branch, areas, gencost)
+%   savecase(fname, comment, casestruct)
+%   savecase(fname, comment, casestruct, version)
+%   savecase(fname, comment, baseMVA, bus, gen, branch)
+%   savecase(fname, comment, baseMVA, bus, gen, branch, gencost)
 %   savecase(fname, comment, baseMVA, bus, gen, branch, areas, gencost)
-%   fname = savecase(fname, comment, baseMVA, bus, gen, branch, areas, gencost)
+%
+%   fname = savecase(fname, ...)
 %
 %   Writes a MATPOWER case file, given a filename and data struct or list of
 %   data matrices. The fname parameter is the name of the file to be created or
@@ -59,8 +62,10 @@ if isstruct(args{1})        %% 1st real argument is a struct
     bus     = mpc.bus;
     gen     = mpc.gen;
     branch  = mpc.branch;
-    if isfield(mpc, 'areas') && isfield(mpc, 'gencost')
+    if isfield(mpc, 'areas')
         areas   = mpc.areas;
+    end
+    if isfield(mpc, 'gencost')
         gencost = mpc.gencost;
     end
 else                        %% 1st real argument is NOT a struct
@@ -72,7 +77,11 @@ else                        %% 1st real argument is NOT a struct
     mpc.bus     = bus;
     mpc.gen     = gen;
     mpc.branch  = branch;
-    if length(args) > 5
+    if length(args) == 5
+        gencost = args{5};
+        mpc.gencost = gencost;
+    end
+    if length(args) == 6
         areas   = args{5};
         gencost = args{6};
         mpc.areas   = areas;
@@ -134,7 +143,7 @@ if strcmp(extension, '.mat')        %% MAT-file
         vflag = ' -V6';
     end
     if strcmp(mpc_ver, '1')
-        if exist('gencost') == 1
+        if exist('areas') == 1 && exist('gencost') == 1
             cmd = sprintf('save %s baseMVA bus gen branch areas gencost%s;', rootname, vflag); 
         else
             cmd = sprintf('save %s baseMVA bus gen branch%s;', rootname, vflag); 
@@ -152,7 +161,7 @@ else                                %% M-file
     
     %% function header, etc.
     if strcmp(mpc_ver, '1')
-        if exist('gencost') == 1 && ~isempty(gencost)
+        if exist('areas') == 1 && exist('gencost') == 1 && ~isempty(gencost)
             fprintf(fd, 'function [baseMVA, bus, gen, branch, areas, gencost] = %s\n', rootname);
         else
             fprintf(fd, 'function [baseMVA, bus, gen, branch] = %s\n', rootname);
@@ -259,16 +268,20 @@ else                                %% M-file
     fprintf(fd, '];\n\n');
     
     %% OPF data
-    if exist('gencost') == 1 && ~isempty(gencost)
-        %% area data
+    if (exist('areas') == 1 && ~isempty(areas)) || ...
+        (exist('gencost') == 1 && ~isempty(gencost))
         fprintf(fd, '%%%%-----  OPF Data  -----%%%%\n');
+    end
+    if exist('areas') == 1 && ~isempty(areas)
+        %% area data
         fprintf(fd, '%%%% area data\n');
         fprintf(fd, '%sareas = [\n', prefix);
         if ~isempty(areas)
             fprintf(fd, '\t%d\t%d;\n', areas(:, 1:PRICE_REF_BUS).');
         end
         fprintf(fd, '];\n\n');
-        
+    end
+    if exist('gencost') == 1 && ~isempty(gencost)
         %% generator cost data
         fprintf(fd, '%%%% generator cost data\n');
         fprintf(fd, '%%\t1\tstartup\tshutdown\tn\tx1\ty1\t...\txn\tyn\n');
@@ -279,8 +292,8 @@ else                                %% M-file
             n2 =     max(gencost(gencost(:, MODEL) == POLYNOMIAL, NCOST));
             n = max([n1; n2]);
             if size(gencost, 2) < n + 4
-	            error('savecase: gencost data claims it has more columns than it does');
-	        end
+                error('savecase: gencost data claims it has more columns than it does');
+            end
             template = '\t%d\t%g\t%g\t%d';
             for i = 1:n
                 template = [template, '\t%g'];

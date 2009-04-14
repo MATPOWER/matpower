@@ -15,6 +15,11 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 3.2
 -----------------
 
+4/14/09
+    - Deprecate use of 'areas' data matrix. Remove it everywhere
+      possible without breaking backward compatibility with version 1
+      case files, which required it.
+
 3/25/09
     - Added add_userfcn.m as to make it easy to add a new
       userfcn to a case struct, whether or not it already

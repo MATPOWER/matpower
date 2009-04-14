@@ -36,7 +36,7 @@ if have_fcn('bpmpd') | have_fcn('quadprog') | have_fcn('qp')
 	mpopt = mpoption('OUT_ALL', 0, 'VERBOSE', verbose);
 	[baseMVA, bus, gen, gencost, branch, f, success, et] = ...
 		rundcopf(mpc, mpopt);
-	[i2e, bus, gen, branch, areas] = ext2int(bus, gen, branch, []);
+	[i2e, bus, gen, branch] = ext2int(bus, gen, branch);
 	
 	%% compute injections and flows
 	F0  = branch(:, PF);
