@@ -814,9 +814,7 @@ branch = [
 
 %%-----  OPF Data  -----%%
 %% area data
-areas = [
-	1	1;
-];
+areas = [];
 
 %% generator cost data
 %	1	startup	shutdown	n	x1	y1	...	xn	yn
