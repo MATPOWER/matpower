@@ -250,8 +250,8 @@ results = struct( ...
 %% optional fields
 if isfield(output, 'dg')
   [g, geq, dg, dgeq] = consfmin(x, om, Ybus, Yf, Yt, mpopt);
-  results.dg = [ dgeq'; dg'];   %% true Jacobian organization
   results.g = [ geq; g];        %% include this since we computed it anyway
+  results.dg = [ dgeq'; dg'];   %% true Jacobian organization
 end
 if isfield(output, 'g') && isempty(g)
   [g, geq] = consfmin(x, om, Ybus, Yf, Yt, mpopt);
