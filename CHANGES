@@ -2,7 +2,7 @@
  Change history for MATPOWER
 -----------------------------
 
-Version:    3.2
+Version:    4.0-dev
 
 maintained by Ray Zimmerman <rz10@cornell.edu>
 
@@ -19,6 +19,11 @@ Changes since 3.2
     - Deprecate use of 'areas' data matrix. Remove it everywhere
       possible without breaking backward compatibility with version 1
       case files, which required it.
+    - INCOMPATIBLE CHANGE: Calling loadcase() with 5 output arguments
+      is now interpreted as ...
+          [baseMVA, bus, gen, branch, gencost] = loadcase(casefile)
+      ... instead of ...
+          [baseMVA, bus, gen, branch, info] = loadcase(casefile)
 
 3/25/09
     - Added add_userfcn.m as to make it easy to add a new
