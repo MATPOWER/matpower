@@ -4,22 +4,18 @@ function [varargout] = runopf_w_res(casename, mpopt, fname, solvedcase)
 %   results = runopf_w_res(casename, mpopt, fname, solvedcase)
 %   [results, success] = runopf_w_res(casename, mpopt, fname, solvedcase)
 %
-%   The case file or struct must define a userfcn field which is a struct
-%   with fields as follows:
-%       userfcn.name = 'userfcn_reserves'
-%       userfcn.args = struct( ... )
-%   The 'name' field defines the name of a function that will be called by
-%   opf() to construct additional vars, constraints, costs for the OPF. The
-%   value must be 'userfcn_reserves'.
-%   The 'arg' field is an argument that will be passed to the user function.
-%   See 'help userfcn_reserves' for details on the value of args expected
-%   by userfcn_reserves(). See 'case30_reserves.m' for an example case file
-%   with fixed reserves.
+%   The case file or struct must define a 'reserves' field which is a struct
+%   with the following fields:
+%       zones   nrz x ng, zone(i, j) = 1, if gen j belongs to zone i
+%                                      0, otherwise
+%       req     nrz x 1, zonal reserve requirement in MW
+%       cost    (ng or ngr) x 1, cost of reserves in $/MW
+%       qty     (ng or ngr) x 1, max quantity of reserves in MW (optional)
+%   where nrz is the number of reserve zones and ngr is the number of
+%   generators belonging to at least one reserve zone and ng is the total
+%   number of generators.
 %
-%   Note: runopf() can solve the same case correctly, the only difference
-%   is that runopf_w_res() checks to make sure the case references
-%   userfcn_reserves() and it does some post processing to package and print
-%   the reserve results more nicely.
+%   See 'case30_reserves.m' for an example case file with fixed reserves.
 
 %   MATPOWER
 %   $Id$
