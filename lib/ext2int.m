@@ -24,7 +24,7 @@ function [i2e, bus, gen, branch, areas] = ext2int(bus, gen, branch, areas)
 [AREA_I, PRICE_REF_BUS] = idx_area;
 
 i2e = bus(:, BUS_I);
-e2i = zeros(max(i2e), 1);
+e2i = sparse(max(i2e), 1);
 e2i(i2e) = [1:size(bus, 1)]';
 
 bus(:, BUS_I)               = e2i( bus(:, BUS_I)            );
