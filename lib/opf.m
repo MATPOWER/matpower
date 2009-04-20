@@ -277,8 +277,6 @@ if dc               %% DC model
 
   %% power mismatch constraints
   [B, Bf, Pbusinj, Pfinj] = makeBdc(baseMVA, bus, branch);
-  mpc.Bf = Bf;
-  mpc.Pfinj = Pfinj;
   neg_Cg = sparse(gen(:, GEN_BUS), 1:ng, -1, nb, ng);   %% Pbus w.r.t. Pg
   Amis = [B neg_Cg];
   bmis = -(bus(:, PD) + bus(:, GS)) / baseMVA - Pbusinj;
@@ -361,6 +359,8 @@ end
 %% construct OPF model object
 om = opf_model(mpc);
 if dc
+  om = userdata(om, 'Bf', Bf);
+  om = userdata(om, 'Pfinj', Pfinj);
   om = add_vars(om, 'Va', nb, Va, Val, Vau);
   om = add_vars(om, 'Pg', ng, Pg, Pmin, Pmax);
   om = add_constraints(om, 'Pmis', Amis, bmis, bmis, {'Va', 'Pg'}); %% nb
