@@ -20,7 +20,7 @@ function [x, f, info, Output, Lambda] = pdipm(ipm_f, ipm_gh, ipm_hess, x0, xmin,
 if nargin < 10
     opt = struct([]);
     if nargin < 7
-        A = []; l = []; u = [];
+        A = sparse(0,0); l = []; u = [];
         if nargin < 6
             xmax = Inf * ones(size(x0));
             if nargin < 5
