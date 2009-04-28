@@ -99,7 +99,7 @@ if have_fcn('tralmopf')
     [baseMVA, bus_soln, gen_soln, gencost, branch_soln, f_soln, success, et] = runopf(mpc, mpopt);
     branch_soln = branch_soln(:,1:MU_ST);
     
-    A = [];
+    A = sparse(0,0);
     l = [];
     u = [];
     nb = size(mpc.bus, 1);      % number of buses
