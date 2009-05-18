@@ -4,30 +4,39 @@ function [results, success, raw] = fmincopf_solver(om, mpopt, output)
 %   [results, success, raw] = fmincopf_solver(om, mpopt)
 %   [results, success, raw] = fmincopf_solver(om, mpopt, output)
 %
-%   results
-%       .bus
-%       .gen
-%       .branch
-%       .f
-%       .var
-%       .mu
+%   Inputs are an OPF model object, a MATPOWER options vector and
+%   a struct containing fields (can be empty) for each of the desired
+%   optional output fields.
+%
+%   Outputs are a results struct, success flag and raw output struct.
+%
+%   results is a MATPOWER case struct (mpc) with the usual baseMVA, bus
+%   branch, gen, gencost fields, along with the following additional
+%   fields:
+%       .order      see 'help ext2int' for details of this field
+%       .x          final value of optimization variables (internal order)
+%       .f          final objective function value
+%       .mu         shadow prices on ...
 %           .var
-%               .l
-%               .u
+%               .l  lower bounds on variables
+%               .u  upper bounds on variables
 %           .nln
-%               .l
-%               .u
+%               .l  lower bounds on non-linear constraints
+%               .u  upper bounds on non-linear constraints
 %           .lin
-%               .l
-%               .u
-%       .g      (optional)
-%       .dg     (optional)
-%       .df     (optional)
-%       .d2f    (optional)
-%   raw
-%       .xr
-%       .pimul
-%       .info
+%               .l  lower bounds on linear constraints
+%               .u  upper bounds on linear constraints
+%       .g          (optional) constraint values
+%       .dg         (optional) constraint 1st derivatives
+%       .df         (optional) obj fun 1st derivatives (not yet implemented)
+%       .d2f        (optional) obj fun 2nd derivatives (not yet implemented)
+%
+%   success     1 if solver converged successfully, 0 otherwise
+%
+%   raw         raw output in form returned by MINOS
+%       .xr     final value of optimization variables
+%       .pimul  constraint multipliers
+%       .info   solver specific termination code
 
 %   MATPOWER
 %   $Id$
@@ -239,13 +248,10 @@ mu = struct( ...
   'nln', struct('l', nl_mu_l, 'u', nl_mu_u), ...
   'lin', struct('l', mu_l, 'u', mu_u) );
 
-results = struct( ...
-  'bus', bus, ...
-  'gen', gen, ...
-  'branch', branch, ...
-  'x', x, ...
-  'mu', mu, ...
-  'f', f );
+results = mpc;
+[results.bus, results.branch, results.gen, ...
+    results.om, results.x, results.mu, results.f] = ...
+        deal(bus, branch, gen, om, x, mu, f);
 
 %% optional fields
 if isfield(output, 'dg')
