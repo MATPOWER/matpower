@@ -16,8 +16,8 @@ Changes since 3.2
 -----------------
 
 5/19/09
-    - The results struct returned by OPF is now a strict superset of
-      a MATPOWER case struct.
+    - The results struct returned by power flow or optimal power flow
+      is now a strict superset of a MATPOWER case struct.
     - Extended ext2int.m and int2ext.m to handle converting entire case
       struct in a single call, storing the re-indexing info in the
       struct, using it to reorder other data structures/fields,
