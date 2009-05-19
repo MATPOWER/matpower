@@ -66,13 +66,78 @@ function [busout, genout, branchout, f, success, info, et, g, jac, xr, pimul] = 
 %   The optional mpopt vector specifies MATPOWER options. Type 'help mpoption'
 %   for details and default values.
 %
-%   The solved case is returned in the data matrices, bus, gen and branch. Also
+%   The solved case is returned either in a single results struct (described
+%   below) or in the individual data matrices, bus, gen and branch. Also
 %   returned are the final objective function value (f) and a flag which is
 %   true if the algorithm was successful in finding a solution (success).
 %   Additional optional return values are an algorithm specific return status
 %   (info), elapsed time in seconds (et), the constraint vector (g), the
 %   Jacobian matrix (jac), and the vector of variables (xr) as well 
 %   as the constraint multipliers (pimul).
+%
+%   The single results struct is a MATPOWER case struct (mpc) with the
+%   usual baseMVA, bus, branch, gen, gencost fields, along with the
+%   following additional fields:
+%
+%       .order      see 'help ext2int' for details of this field
+%       .et         elapsed time in seconds for solving OPF
+%       .success    1 if solver converged successfully, 0 otherwise
+%       .om         OPF model object, see 'help opf_model'
+%       .x          final value of optimization variables (internal order)
+%       .f          final objective function value
+%       .mu         shadow prices on ...
+%           .var
+%               .l  lower bounds on variables
+%               .u  upper bounds on variables
+%           .nln
+%               .l  lower bounds on non-linear constraints
+%               .u  upper bounds on non-linear constraints
+%           .lin
+%               .l  lower bounds on linear constraints
+%               .u  upper bounds on linear constraints
+%       .g          (optional) constraint values
+%       .dg         (optional) constraint 1st derivatives
+%       .df         (optional) obj fun 1st derivatives (not yet implemented)
+%       .d2f        (optional) obj fun 2nd derivatives (not yet implemented)
+%       .raw        raw output in form returned by MINOS
+%           .xr     final value of optimization variables
+%           .pimul  constraint multipliers
+%           .info   solver specific termination code
+%       .var        
+%           .val    optimization variable values, by named block
+%               .Va     voltage angles
+%               .Vm     voltage magnitudes (AC only)
+%               .Pg     real power injections
+%               .Qg     reactive power injections (AC only)
+%               .y      constrained cost variable (only if have pwl costs)
+%               (other) any user defined variable blocks
+%           .mu     variable bound shadow prices, by named block
+%               .l  lower bound shadow prices
+%                   .Va, Vm, Pg, Qg, y, (other)
+%               .u  upper bound shadow prices
+%                   .Va, Vm, Pg, Qg, y, (other)
+%       .nln    (AC only)
+%           .mu     shadow prices on non-linear constraints, by named block
+%               .l  lower bounds
+%                   .Pmis   real power mismatch equations
+%                   .Qmis   reactive power mismatch equations
+%                   .Sf     flow limits at "from" end of branches
+%                   .St     flow limits at "to" end of branches
+%               .u  upper bounds
+%                   .Pmis, Qmis, Sf, St
+%       .lin
+%           .mu     shadow prices on linear constraints, by named block
+%               .l  lower bounds
+%                   .Pmis   real power mistmatch equations (DC only)
+%                   .Pf     flow limits at "from" end of branches (DC only)
+%                   .Pt     flow limits at "to" end of branches (DC only)
+%                   .PQh    upper portion of gen PQ-capability curve (AC only)
+%                   .PQl    lower portion of gen PQ-capability curve (AC only)
+%                   .vl     constant power factor constraint for loads (AC only)
+%                   .ycon   basin constraints for CCV for pwl costs
+%                   (other) any user defined constraint blocks
+%               .u  upper bounds
+%                   .Pmis, Pf, Pf, PQh, PQl, vl, ycon, (other)
 
 %   MATPOWER
 %   $Id$
@@ -85,8 +150,7 @@ function [busout, genout, branchout, f, success, info, et, g, jac, xr, pimul] = 
 t0 = clock;         %% start timer
 
 %% process input arguments
-[baseMVA, bus, gen, branch, gencost, Au, lbu, ubu, mpopt, ...
-    N, fparm, H, Cw, z0, zl, zu, userfcn] = opf_args(varargin{:});
+[mpc, mpopt] = opf_args(varargin{:});
 
 %% options
 dc  = mpopt(10);        %% PF_DC        : 1 = DC OPF, 0 = AC OPF 
@@ -128,122 +192,81 @@ end
 [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 
 %% data dimensions
-nb   = size(bus, 1);    %% number of buses
-nl   = size(branch, 1); %% number of branches
-ng   = size(gen, 1);    %% number of dispatchable injections
-nusr = size(Au, 1);     %% number of linear user constraints
-nw   = size(N, 1);      %% number of general cost vars, w
+nb   = size(mpc.bus, 1);    %% number of buses
+nl   = size(mpc.branch, 1); %% number of branches
+ng   = size(mpc.gen, 1);    %% number of dispatchable injections
+if isfield(mpc, 'A')
+  nusr = size(mpc.A, 1);    %% number of linear user constraints
+else
+  nusr = 0;
+end
+if isfield(mpc, 'N')
+  nw = size(mpc.N, 1);      %% number of general cost vars, w
+else
+  nw = 0;
+end
 
 %% add zero columns to bus, gen, branch for multipliers, etc if needed
-if size(bus,2) < MU_VMIN
-  bus = [bus zeros(nb ,MU_VMIN-size(bus,2)) ];
+if size(mpc.bus,2) < MU_VMIN
+  mpc.bus = [mpc.bus zeros(nb ,MU_VMIN-size(mpc.bus,2)) ];
 end
-if size(gen,2) < MU_QMIN
-  gen = [ gen zeros(ng,MU_QMIN-size(gen,2)) ];
+if size(mpc.gen,2) < MU_QMIN
+  mpc.gen = [ mpc.gen zeros(ng,MU_QMIN-size(mpc.gen,2)) ];
 end
-if size(branch,2) < MU_ANGMAX
-  branch = [ branch zeros(nl,MU_ANGMAX-size(branch,2)) ];
+if size(mpc.branch,2) < MU_ANGMAX
+  mpc.branch = [ mpc.branch zeros(nl,MU_ANGMAX-size(mpc.branch,2)) ];
 end
 
 if dc
   %% ignore reactive costs for DC
-  gencost = pqcost(gencost, ng);
+  mpc.gencost = pqcost(mpc.gencost, ng);
 
-  %% reduce Au and/or N from AC dimensions to DC dimensions, if needed
+  %% reduce A and/or N from AC dimensions to DC dimensions, if needed
   if nusr || nw
     acc = [nb+(1:nb) 2*nb+ng+(1:ng)];   %% Vm and Qg columns
-    if nusr && size(Au, 2) >= 2*nb + 2*ng
+    if nusr && size(mpc.A, 2) >= 2*nb + 2*ng
       %% make sure there aren't any constraints on Vm or Qg
-      if any(any(Au(:, acc)))
+      if any(any(mpc.A(:, acc)))
         error('opf: attempting to solve DC OPF with user constraints on Vm or Qg');
       end
-      Au(:, acc) = [];                  %% delete Vm and Qg columns
+      mpc.A(:, acc) = [];               %% delete Vm and Qg columns
     end
-    if nw && size(N, 2) >= 2*nb + 2*ng
+    if nw && size(mpc.N, 2) >= 2*nb + 2*ng
       %% make sure there aren't any costs on Vm or Qg
-      if any(any(N(:, acc)))
+      if any(any(mpc.N(:, acc)))
         error('opf: attempting to solve DC OPF with user constraints on Vm or Qg');
       end
-      N(:, acc) = [];                   %% delete Vm and Qg columns
+      mpc.N(:, acc) = [];               %% delete Vm and Qg columns
     end
   end
-end
-
-%% filter out inactive generators and branches; save original bus & branch
-status.gen.on     = find(gen(:,GEN_STATUS) > 0);
-status.gen.off    = find(gen(:,GEN_STATUS) <= 0);
-status.branch.on  = find(branch(:,BR_STATUS) ~= 0);
-status.branch.off = find(branch(:,BR_STATUS) == 0);
-original.gen      = gen;            %% save originals
-original.branch   = branch;
-gen(      status.gen.off, :) = [];      %% delete out-of-service gens
-branch(status.branch.off, :) = [];      %% delete out-of-service branches
-if size(gencost,1) == ng                %% delete costs for out-of-service gens
-  gencost(status.gen.off, :) = [];
-else
-  gencost([status.gen.off; status.gen.off+ng], :) = [];
-end
-if dc
-  offcols = status.gen.off + nb;
-else
-  offcols = [status.gen.off; status.gen.off+ng] + 2*nb;
-end
-if nusr
-  if any(any(Au(:, offcols)))
-    error('opf: user constraint involves out-of-service gen');
-  end
-  Au(:, offcols) = [];
-end
-if nw
-  N(:, offcols) = [];
-end
-
-%% update dimensions
-ng = size(gen, 1);      %% number of dispatchable injections
-nl = size(branch, 1);   %% number of branches
-
-%% convert to internal consecutive bus numbering
-[reorder.i2e, bus, gen, branch] = ext2int(bus, gen, branch);
-
-%% sort generators in order of increasing bus number
-[tmp, igen] = sort(gen(:, GEN_BUS));
-[tmp, reorder.invgen] = sort(igen);    %% save for inverse reordering later
-reorder.gen = igen;
-gen  = gen(igen, :);
-if ng == size(gencost,1)
-  gencost = gencost(igen, :);
-else
-  gencost = gencost( [igen; igen+ng], :);
-end
-one2ng = (1:ng)';
-if dc
-  oldcols = one2ng + nb;
-  newcols =   igen + nb;
-else
-  oldcols = [one2ng; one2ng+ng] + 2*nb;
-  newcols = [  igen;   igen+ng] + 2*nb;
-end
-if nusr
-  Au(:, oldcols) = Au(:, newcols);
-end
-if nw
-  N(:, oldcols) = N(:, newcols);
 end
 
 %% convert single-block piecewise-linear costs into linear polynomial cost
-p1 = find(gencost(:, MODEL) == PW_LINEAR & gencost(:, NCOST) == 2);
+p1 = find(mpc.gencost(:, MODEL) == PW_LINEAR & mpc.gencost(:, NCOST) == 2);
 % p1 = [];
 if ~isempty(p1)
-  x0 = gencost(p1, COST);
-  y0 = gencost(p1, COST+1);
-  x1 = gencost(p1, COST+2);
-  y1 = gencost(p1, COST+3);
+  x0 = mpc.gencost(p1, COST);
+  y0 = mpc.gencost(p1, COST+1);
+  x1 = mpc.gencost(p1, COST+2);
+  y1 = mpc.gencost(p1, COST+3);
   m = (y1 - y0) ./ (x1 - x0);
   b = y0 - m .* x0;
-  gencost(p1, MODEL) = POLYNOMIAL;
-  gencost(p1, NCOST) = 2;
-  gencost(p1, COST:COST+1) = [m b];
+  mpc.gencost(p1, MODEL) = POLYNOMIAL;
+  mpc.gencost(p1, NCOST) = 2;
+  mpc.gencost(p1, COST:COST+1) = [m b];
 end
+
+%% convert to internal numbering, remove out-of-service stuff
+mpc = ext2int(mpc);
+
+%% update dimensions
+nb   = size(mpc.bus, 1);    %% number of buses
+nl   = size(mpc.branch, 1); %% number of branches
+ng   = size(mpc.gen, 1);    %% number of dispatchable injections
+
+%% create (read-only) copies of individual fields for convenience
+[baseMVA, bus, gen, branch, gencost, Au, lbu, ubu, mpopt, ...
+    N, fparm, H, Cw, z0, zl, zu, userfcn] = opf_args(mpc, mpopt);
 
 %% warn if there is more than one reference bus
 refs = find(bus(:, BUS_TYPE) == REF);
@@ -255,10 +278,7 @@ if length(refs) > 1
   fprintf(errstr);
 end
 
-%% set up MATPOWER case data struct
-mpc = struct('baseMVA', baseMVA, 'bus', bus, 'gen', gen, ...
-    'branch', branch, 'gencost', gencost, 'original', original, ...
-    'status', status, 'reorder', reorder);
+%% set up initial variables and bounds
 Va   = bus(:, VA) * (pi/180);
 Vm   = bus(:, VM);
 Vm(gen(:, GEN_BUS)) = gen(:, VG);   %% buses with gens, init Vm from gen data
@@ -328,32 +348,18 @@ end
 
 %% more problem dimensions
 nx    = nb+nv + ng+nq;  %% number of standard OPF control variables
-if isempty(Au)      %% set nz
-  nz = 0;               %% number of user z variables
-  Au = sparse(0,nx);
-  if ~isempty(N)        %% still need to check number of columns of N
-    if size(N, 2) ~= nx;
-      error('opf: user supplied N matrix must have %d columns.', nx);
-    end
-  end
-else
-  nz = size(Au,2) - nx; %% number of user z variables
+if nusr
+  nz = size(mpc.A, 2) - nx; %% number of user z variables
   if nz < 0
     error('opf: user supplied A matrix must have at least %d columns.', nx);
   end
-end
-
-%% set up user cost params
-user_cost.N = N;
-user_cost.Cw = Cw;
-if ~isempty(fparm)
-  user_cost.dd = fparm(:, 1);
-  user_cost.rh = fparm(:, 2);
-  user_cost.kk = fparm(:, 3);
-  user_cost.mm = fparm(:, 4);
-end
-if ~isempty(H)
-  user_cost.H = H;
+else
+  nz = 0;               %% number of user z variables
+  if nw                 %% still need to check number of columns of N
+    if size(mpc.N, 2) ~= nx;
+      error('opf: user supplied N matrix must have %d columns.', nx);
+    end
+  end
 end
 
 %% construct OPF model object
@@ -388,28 +394,31 @@ if ny > 0
   om = add_constraints(om, 'ycon', Ay, [], by, ycon_vars);          %% ncony
 end
 
-%% add user vars, constraints and costs (as specified via Au, ..., N, ...)
+%% add user vars, constraints and costs (as specified via A, ..., N, ...)
 if nz > 0
   om = add_vars(om, 'z', nz, z0, zl, zu);
   user_vars{end+1} = 'z';
 end
 if nusr
-  om = add_constraints(om, 'usr', Au, lbu, ubu, user_vars);         %% nusr
+  om = add_constraints(om, 'usr', mpc.A, lbu, ubu, user_vars);      %% nusr
 end
 if nw
+  user_cost.N = mpc.N;
+  user_cost.Cw = Cw;
+  if ~isempty(fparm)
+    user_cost.dd = fparm(:, 1);
+    user_cost.rh = fparm(:, 2);
+    user_cost.kk = fparm(:, 3);
+    user_cost.mm = fparm(:, 4);
+  end
+  if ~isempty(H)
+    user_cost.H = H;
+  end
   om = add_costs(om, 'usr', user_cost, user_vars);
 end
 
-%% add user vars, constraints, costs (as specified via userfcn)
-if ~isempty(userfcn) && isfield(userfcn, 'name')
-  for k = 1:length(userfcn)
-    if isfield(userfcn, 'args') && ~isempty(userfcn(k).args)
-      om = feval(userfcn(k).name, om, userfcn(k).args);
-    else
-      om = feval(userfcn(k).name, om);
-    end
-  end
-end
+%% execute userfcn callbacks for 'formulation' stage
+om = run_userfcn(userfcn, 'formulation', om);
 
 %% get indexing
 [vv, ll, nn] = get_idx(om);
@@ -424,11 +433,6 @@ end
 %% call the specific solver
 if dc
   [results, success, raw] = dcopf_solver(om, mpopt, output);
-%   pimul = [ ...
-%       results.mu.lin.l - results.mu.lin.u;
-%       -ones(ny>0, 1);
-%       results.mu.var.l - results.mu.var.u;
-%   ];
 else
   %%-----  call specific AC OPF solver  -----
   if alg == 500                                 %% MINOPF
@@ -478,26 +482,13 @@ else
     end
     [results, success, raw] = feval(fmc, om, mpopt, output);
   end
-%   pimul = [ ...
-%       results.mu.nln.l - results.mu.nln.u;
-%       results.mu.lin.l - results.mu.lin.u;
-%       -ones(ny>0, 1);
-%       results.mu.var.l - results.mu.var.u;
-%   ];
 end
-[bus, gen, branch, f, info, xr, pimul] = deal(results.bus, results.gen, ...
-                results.branch, results.f, raw.info, raw.xr, raw.pimul);
 if isfield(results, 'g')
   g = results.g;
 end
 if isfield(results, 'dg')
   jac = results.dg;
 end
-% xr = results.x;
-
-% norm(xr - raw.xr(1:length(xr)))
-% norm(pimul - raw.pimul(1:length(pimul)))
-% fprintf('%g\t%g\t%g\n', [pimul raw.pimul abs(pimul - raw.pimul)]');
 
 %% if single-block PWL costs were converted to POLY, insert dummy y into xr
 if ~isempty(p1)
@@ -507,7 +498,7 @@ if ~isempty(p1)
   else
     nx = vv.N.Qg;
   end
-  xr = [ xr(1:nx); y; xr(nx+1:end)];
+  raw.xr = [ raw.xr(1:nx); y; raw.xr(nx+1:end)];
   results.x = [ results.x(1:nx); y; results.x(nx+1:end)];
 end
 
@@ -515,32 +506,63 @@ end
 if ~dc && success && (ll.N.PQh > 0 || ll.N.PQl > 0)
   mu_PQh = results.mu.lin.l(ll.i1.PQh:ll.iN.PQh) - results.mu.lin.u(ll.i1.PQh:ll.iN.PQh);
   mu_PQl = results.mu.lin.l(ll.i1.PQl:ll.iN.PQl) - results.mu.lin.u(ll.i1.PQl:ll.iN.PQl);
-  gen = update_mupq(baseMVA, gen, mu_PQh, mu_PQl, Apqdata);
+  results.gen = update_mupq(baseMVA, results.gen, mu_PQh, mu_PQl, Apqdata);
 end
 
 %% angle limit constraint multipliers
 if success && (ll.N.ang > 0)
-  branch(iang, MU_ANGMIN) = results.mu.lin.l(ll.i1.ang:ll.iN.ang) * pi/180;
-  branch(iang, MU_ANGMAX) = results.mu.lin.u(ll.i1.ang:ll.iN.ang) * pi/180;
+  results.branch(iang, MU_ANGMIN) = results.mu.lin.l(ll.i1.ang:ll.iN.ang) * pi/180;
+  results.branch(iang, MU_ANGMAX) = results.mu.lin.u(ll.i1.ang:ll.iN.ang) * pi/180;
 end
 
-%% revert to original gen ordering
-gen = gen(reorder.invgen, :);
-gen(:, VG) = bus(gen(:, GEN_BUS), VM);  %% copy bus voltages back to gen matrix
+%% copy bus voltages back to gen matrix
+results.gen(:, VG) = results.bus(results.gen(:, GEN_BUS), VM);
 
-%% convert to original external bus ordering
-[bus, gen, branch] = int2ext(reorder.i2e, bus, gen, branch);
-
-%% include out-of-service branches and gens
-genout    = original.gen;
-branchout = original.branch;
-genout(status.gen.on, :) = gen;
-branchout(status.branch.on, :)  = branch;
-if ~isempty(status.gen.off)     %% zero out result fields of out-of-service gens
-  genout(status.gen.off, [PG QG MU_PMAX MU_PMIN]) = 0;
+%% assign values and limit shadow prices for variables
+om_var_order = get(om, 'var', 'order');
+for k = 1:length(om_var_order)
+  name = om_var_order{k};
+  if get_var_N(om, name)
+    idx = vv.i1.(name):vv.iN.(name);
+    results.var.val.(name) = results.x(idx);
+    results.var.mu.l.(name) = results.mu.var.l(idx);
+    results.var.mu.u.(name) = results.mu.var.u(idx);
+  end
 end
-if ~isempty(status.branch.off)  %% zero out result fields of out-of-service branches
-  branchout(status.branch.off, [PF QF PT QT MU_SF MU_ST MU_ANGMIN MU_ANGMAX]) = 0;
+
+%% assign shadow prices for linear constraints
+om_lin_order = get(om, 'lin', 'order');
+for k = 1:length(om_lin_order)
+  name = om_lin_order{k};
+  if get_lin_N(om, name)
+    idx = ll.i1.(name):ll.iN.(name);
+    results.lin.mu.l.(name) = results.mu.lin.l(idx);
+    results.lin.mu.u.(name) = results.mu.lin.u(idx);
+  end
+end
+
+%% assign shadow prices for non-linear constraints
+if ~dc
+  om_nln_order = get(om, 'nln', 'order');
+  for k = 1:length(om_nln_order)
+    name = om_nln_order{k};
+    if get_nln_N(om, name)
+      idx = nn.i1.(name):nn.iN.(name);
+      results.nln.mu.l.(name) = results.mu.nln.l(idx);
+      results.nln.mu.u.(name) = results.mu.nln.u(idx);
+    end
+  end
+end
+
+%% revert to original ordering, including out-of-service stuff
+results = int2ext(results);
+
+%% zero out result fields of out-of-service gens & branches
+if ~isempty(results.order.gen.status.off)
+  results.gen(results.order.gen.status.off, [PG QG MU_PMAX MU_PMIN]) = 0;
+end
+if ~isempty(results.order.branch.status.off)
+  results.branch(results.order.branch.status.off, [PF QF PT QT MU_SF MU_ST MU_ANGMIN MU_ANGMAX]) = 0;
 end
 
 %% compute elapsed time
@@ -549,59 +571,19 @@ et = etime(clock, t0);
 %% finish preparing output
 if nargout > 0
   if nargout <= 2
-    results.bus = bus;
-    results.gen = genout;
-    results.branch = branchout;
-    results.status = status;
-    results.reorder = reorder;
     results.et = et;
-    results.raw = raw;
     results.success = success;
-    results.om = om;
-    
-    %% values and limit shadow prices for variables
-    om_var_order = get(om, 'var', 'order');
-    for k = 1:length(om_var_order)
-      name = om_var_order{k};
-      if get_var_N(om, name)
-        idx = vv.i1.(name):vv.iN.(name);
-        results.var.val.(name) = results.x(idx);
-        results.var.mu.l.(name) = results.mu.var.l(idx);
-        results.var.mu.u.(name) = results.mu.var.u(idx);
-      end
-    end
-
-    %% shadow prices for linear constraints
-    om_lin_order = get(om, 'lin', 'order');
-    for k = 1:length(om_lin_order)
-      name = om_lin_order{k};
-      if get_lin_N(om, name)
-        idx = ll.i1.(name):ll.iN.(name);
-        results.lin.mu.l.(name) = results.mu.lin.l(idx);
-        results.lin.mu.u.(name) = results.mu.lin.u(idx);
-      end
-    end
-
-    %% shadow prices for non-linear constraints
-    if ~dc
-      om_nln_order = get(om, 'nln', 'order');
-      for k = 1:length(om_nln_order)
-        name = om_nln_order{k};
-        if get_nln_N(om, name)
-          idx = nn.i1.(name):nn.iN.(name);
-          results.nln.mu.l.(name) = results.mu.nln.l(idx);
-          results.nln.mu.u.(name) = results.mu.nln.u(idx);
-        end
-      end
-    end
-
+    results.raw = raw;
     busout = results;
     genout = success;
   else
-    busout = bus;
+    [busout, genout, branchout, f, info, xr, pimul] = deal(results.bus, ...
+        results.gen, results.branch, results.f, raw.info, raw.xr, raw.pimul);
   end
 elseif success
-  printpf(baseMVA, bus, genout, branchout, f, success, et, 1, mpopt);
+  results.et = et;
+  results.success = success;
+  printpf(results, 1, mpopt);
 end
 
 return;
