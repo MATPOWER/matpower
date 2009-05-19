@@ -19,6 +19,7 @@ else
     verbose = 1;
 end
 
+%%-----  mpc = ext2int/int2ext(mpc)  -----
 t = 'mpc = ext2int(mpc) : ';
 mpce = loadcase('t_case_ext');
 mpci = loadcase('t_case_int');
@@ -145,9 +146,6 @@ tmp = [tmp1; tmp2; tmp3]';
 got = int2ext(mpc, ex, tmp, {'branch', 'gen', 'bus'}, 2);
 t_is(got, mpce.xcols, 12, t);
 
-
-
-
 %%-----  mpc = ext2int/int2ext(mpc, field, ...)  -----
 t = 'mpc = ext2int(mpc, field, ''bus'')';
 mpc = ext2int(mpce);
@@ -234,10 +232,7 @@ t = 'mpc = int2ext(mpc, {''field1'', ''field2''}, ordering, 2)';
 got = int2ext(got, {'x', 'more'}, 'gen', 2);
 t_is(got.x.more, mpce.x.more, 12, t);
 
-
-
-
-
+%%-----  more mpc = ext2int/int2ext(mpc)  -----
 t = 'mpc = ext2int(mpc) - bus/gen/branch only : ';
 mpce = loadcase('t_case_ext');
 mpci = loadcase('t_case_int');
