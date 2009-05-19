@@ -70,6 +70,11 @@ function [baseMVA, bus, gen, branch, gencost, Au, lbu, ubu, ...
 %   Copyright (c) 1996-2008 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
+if nargout == 2
+  want_mpc = 1;
+else
+  want_mpc = 0;
+end
 userfcn = [];
 if isstr(baseMVA) || isstruct(baseMVA)   %% passing filename or struct
   %---- opf(baseMVA,  bus,     gen, branch, areas, gencost, Au,    lbu, ubu, mpopt, N,  fparm, H, Cw, z0, zl, zu)
@@ -111,9 +116,9 @@ if isstr(baseMVA) || isstruct(baseMVA)   %% passing filename or struct
       zl    = [];
       z0    = [];
       Cw    = [];
-      H     = [];
+      H     = sparse(0,0);
       fparm = [];
-      N     = [];
+      N     = sparse(0,0);
       mpopt = areas;
       ubu   = branch;
       lbu   = gen;
@@ -123,9 +128,9 @@ if isstr(baseMVA) || isstruct(baseMVA)   %% passing filename or struct
       zl    = [];
       z0    = [];
       Cw    = [];
-      H     = [];
+      H     = sparse(0,0);
       fparm = [];
-      N     = [];
+      N     = sparse(0,0);
       mpopt = mpoption;
       ubu   = branch;
       lbu   = gen;
@@ -136,9 +141,9 @@ if isstr(baseMVA) || isstruct(baseMVA)   %% passing filename or struct
       zl    = [];
       z0    = [];
       Cw    = [];
-      H     = [];
+      H     = sparse(0,0);
       fparm = [];
-      N     = [];
+      N     = sparse(0,0);
       mpopt = gen;
       ubu   = [];
       lbu   = [];
@@ -148,9 +153,9 @@ if isstr(baseMVA) || isstruct(baseMVA)   %% passing filename or struct
       zl    = [];
       z0    = [];
       Cw    = [];
-      H     = [];
+      H     = sparse(0,0);
       fparm = [];
-      N     = [];
+      N     = sparse(0,0);
       mpopt = bus;
       ubu   = [];
       lbu   = [];
@@ -160,9 +165,9 @@ if isstr(baseMVA) || isstruct(baseMVA)   %% passing filename or struct
       zl    = [];
       z0    = [];
       Cw    = [];
-      H     = [];
+      H     = sparse(0,0);
       fparm = [];
-      N     = [];
+      N     = sparse(0,0);
       mpopt = mpoption;
       ubu   = [];
       lbu   = [];
@@ -222,17 +227,17 @@ else    %% passing individual data matrices
       zl    = [];
       z0    = [];
       Cw    = [];
-      H     = [];
+      H     = sparse(0,0);
       fparm = [];
-      N     = [];
+      N     = sparse(0,0);
     elseif nargin == 9
       zu    = [];
       zl    = [];
       z0    = [];
       Cw    = [];
-      H     = [];
+      H     = sparse(0,0);
       fparm = [];
-      N     = [];
+      N     = sparse(0,0);
       mpopt = mpoption;
     elseif nargin == 8
       userfcn = Au;
@@ -240,9 +245,9 @@ else    %% passing individual data matrices
       zl    = [];
       z0    = [];
       Cw    = [];
-      H     = [];
+      H     = sparse(0,0);
       fparm = [];
-      N     = [];
+      N     = sparse(0,0);
       mpopt = lbu;
       ubu   = [];
       lbu   = [];
@@ -252,9 +257,9 @@ else    %% passing individual data matrices
       zl    = [];
       z0    = [];
       Cw    = [];
-      H     = [];
+      H     = sparse(0,0);
       fparm = [];
-      N     = [];
+      N     = sparse(0,0);
       mpopt = Au;
       ubu   = [];
       lbu   = [];
@@ -264,9 +269,9 @@ else    %% passing individual data matrices
       zl    = [];
       z0    = [];
       Cw    = [];
-      H     = [];
+      H     = sparse(0,0);
       fparm = [];
-      N     = [];
+      N     = sparse(0,0);
       mpopt = mpoption;
       ubu   = [];
       lbu   = [];
@@ -275,9 +280,18 @@ else    %% passing individual data matrices
   else
     error('opf_args.m: Incorrect input parameter order, number or type');
   end
+  if want_mpc
+    mpc = struct(             ...
+            'baseMVA',  baseMVA,    ...
+            'bus',      bus,        ...
+            'gen',      gen,        ...
+            'branch',   branch,     ...
+            'gencost',  gencost    ...
+    );
+  end
 end
 nw = size(N, 1);
-if nw > 0
+if nw
   if size(Cw, 1) ~= nw
     error('opf_args.m: dimension mismatch between N and Cw in generalized cost parameters');
   end
@@ -292,37 +306,47 @@ if nw > 0
   end
   %% make sure N and H are sparse
   if ~issparse(N)
-    N = sparse(N);
+    error('opf_args.m: N must be sparse in generalized cost parameters');
   end
   if ~issparse(H)
-    H = sparse(H);
+    error('opf_args.m: H must be sparse in generalized cost parameters');
   end
+end
+if ~issparse(Au)
+  error('opf_args.m: Au must be sparse');
 end
 if isempty(mpopt)
   mpopt = mpoption;
 end
-if nargout == 2
-  baseMVA = struct(             ...
-        'baseMVA',  baseMVA,    ...
-        'bus',      bus,        ...
-        'gen',      gen,        ...
-        'branch',   branch,     ...
-        'gencost',  gencost,    ...
-        'A',        Au,         ...
-        'l',        lbu,        ...
-        'u',        ubu,        ...
-        'N',        N,          ...
-        'fparm',    fparm,      ...
-        'H',        H,          ...
-        'Cw',       Cw,         ...
-        'z0',       z0,         ...
-        'zl',       zl,         ...
-        'zu',       zu,         ...
-        'userfcn',  userfcn     ...
-    );
+if want_mpc
   if ~isempty(areas)
-    baseMVA.areas = areas;
+    mpc.areas = areas;
   end
+  if ~isempty(Au)
+    [mpc.A, mpc.l, mpc.u] = deal(Au, lbu, ubu);
+  end
+  if ~isempty(N)
+    [mpc.N, mpc.Cw ] = deal(N, Cw);
+    if ~isempty(fparm)
+      mpc.fparm = fparm;
+    end
+    if ~isempty(H)
+      mpc.H = H;
+    end
+  end
+  if ~isempty(z0)
+    mpc.z0 = z0;
+  end
+  if ~isempty(zl)
+    mpc.zl = zl;
+  end
+  if ~isempty(zu)
+    mpc.zu = zu;
+  end
+  if ~isempty(userfcn)
+    mpc.userfcn = userfcn;
+  end
+  baseMVA = mpc;
   bus = mpopt;
 end
 
