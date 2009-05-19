@@ -30,41 +30,37 @@ end
     MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
     QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
 
-if have_fcn('bpmpd') | have_fcn('quadprog') | have_fcn('qp')
-	%% load case
-	mpc = loadcase(casefile);
-	mpopt = mpoption('OUT_ALL', 0, 'VERBOSE', verbose);
-	[baseMVA, bus, gen, gencost, branch, f, success, et] = ...
-		rundcopf(mpc, mpopt);
-	[i2e, bus, gen, branch] = ext2int(bus, gen, branch);
-	
-	%% compute injections and flows
-	F0  = branch(:, PF);
-	
-	%% create some PTDF matrices
-	H  = makePTDF(baseMVA, bus, branch, 1);
+%% load case
+mpc = loadcase(casefile);
+mpopt = mpoption('OUT_ALL', 0, 'VERBOSE', verbose);
+[baseMVA, bus, gen, gencost, branch, f, success, et] = ...
+	rundcopf(mpc, mpopt);
+[i2e, bus, gen, branch] = ext2int(bus, gen, branch);
 
-	%% create some PTDF matrices
-	s = warning('query', 'MATLAB:divideByZero');
-	warning('off', 'MATLAB:divideByZero');
-	LODF = makeLODF(branch, H);
-	warning(s.state, 'MATLAB:divideByZero');
-	
-	%% take out line 3 and see what happens
-	mpc.bus = bus;
-	mpc.gen = gen;
-	branch0 = branch;
-	outages = [1:12 14:15 17:18 20 27:33 35:41];
-	for k = outages
-		mpc.branch = branch0;
-		mpc.branch(k, BR_STATUS) = 0;
-		[baseMVA, bus, gen, branch, success, et] = rundcpf(mpc, mpopt);
-		F = branch(:, PF);
-	
-		t_is(LODF(:, k), (F - F0) / F0(k), 6, sprintf('LODF(:, %d)', k));
-	end
-else
-    t_skip(ntests, 'QP solver (BPMPD_MEX or Optimization Toolbox) not available');
+%% compute injections and flows
+F0  = branch(:, PF);
+
+%% create some PTDF matrices
+H  = makePTDF(baseMVA, bus, branch, 1);
+
+%% create some PTDF matrices
+s = warning('query', 'MATLAB:divideByZero');
+warning('off', 'MATLAB:divideByZero');
+LODF = makeLODF(branch, H);
+warning(s.state, 'MATLAB:divideByZero');
+
+%% take out non-essential lines one-by-one and see what happens
+mpc.bus = bus;
+mpc.gen = gen;
+branch0 = branch;
+outages = [1:12 14:15 17:18 20 27:33 35:41];
+for k = outages
+	mpc.branch = branch0;
+	mpc.branch(k, BR_STATUS) = 0;
+	[baseMVA, bus, gen, branch, success, et] = rundcpf(mpc, mpopt);
+	F = branch(:, PF);
+
+	t_is(LODF(:, k), (F - F0) / F0(k), 6, sprintf('LODF(:, %d)', k));
 end
 
 t_end;
