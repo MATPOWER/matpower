@@ -99,12 +99,12 @@ if isstr(casefile)
                 info = 3;
             end
         elseif strcmp(extension,'.m')       %% from M file
-            try                         %% assume it returns a struct
+            try                         	%% assume it returns a struct
                 s = feval(rootname);
             catch
                 info = 4;
             end
-            if info == 0 & ~isstruct(s) %% if not try individual data matrices
+            if info == 0 && ~isstruct(s) 	%% if not try individual data matrices
                 clear s;
                 if expect_gencost
                     try
@@ -134,7 +134,7 @@ if isstr(casefile)
                     end
                 end
             end
-            if info == 4 & exist([rootname '.m']) == 2
+            if info == 4 && exist([rootname '.m']) == 2
                 info = 5;
                 err5 = lasterr;
             end
@@ -149,13 +149,18 @@ end
 %%-----  check contents of struct  -----
 if info == 0
     %% check for required fields
-    if ~( isfield(s,'baseMVA') & isfield(s,'bus') & ...
-            isfield(s,'gen') & isfield(s,'branch') ) | ...
-            ( expect_gencost & ~isfield(s, 'gencost') ) | ...
-            ( expect_areas &   ~isfield(s,'areas') )
+    if ~( isfield(s,'baseMVA') && isfield(s,'bus') && ...
+            isfield(s,'gen') && isfield(s,'branch') ) || ...
+            ( expect_gencost && ~isfield(s, 'gencost') ) || ...
+            ( expect_areas &&   ~isfield(s,'areas') )
         info = 5;           %% missing some expected fields
         err5 = 'missing data';
     else
+    	%% remove empty areas if not needed
+    	if isfield(s, 'areas') && isempty(s.areas) && ~expect_areas
+    		s = rmfield(s, 'areas');
+    	end
+
         %% all fields present, copy to mpc
         mpc = s;
         if ~isfield(mpc, 'version')
@@ -192,7 +197,7 @@ if info == 0    %% no errors
         end
     end
 else            %% we have a problem captain
-    if nargout == 2 | nargout == 7   %% return error code
+    if nargout == 2 || nargout == 7   %% return error code
         if return_as_struct
             baseMVA = struct([]);
         else
