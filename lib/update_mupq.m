@@ -1,5 +1,5 @@
 function [gen] = update_mupq(baseMVA, gen, mu_PQh, mu_PQl, data)
-%	UPDATE_MUPQ
+%   UPDATE_MUPQ
 
 %   MATPOWER
 %   $Id$
@@ -10,7 +10,7 @@ function [gen] = update_mupq(baseMVA, gen, mu_PQh, mu_PQl, data)
 
 
 [ipqh, ipql, Apqhdata, Apqldata] = ...
-	deal(data.ipqh, data.ipql, data.h, data.l);
+    deal(data.ipqh, data.ipql, data.h, data.l);
 
 %% define named indices into data matrices
 [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
