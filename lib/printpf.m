@@ -1,11 +1,25 @@
 function printpf(baseMVA, bus, gen, branch, f, success, et, fd, mpopt)
 %PRINTPF   Prints power flow results.
-%   printpf(baseMVA, bus, gen, branch, f, success, et, fd, mpopt) prints
-%   powerflow results to fd (a file descriptor which defaults to STDOUT).
-%   mpopt is a MATPOWER options vector (see 'help mpoption' for details).
-%   Uses default options if this parameter is not given. The objective
-%   function value is given in f and the elapsed time (seconds to compute
-%   opf) in et.
+%
+%   printpf(results)
+%   printpf(results, fd)
+%   printpf(results, fd, mpopt)
+%   printpf(baseMVA, bus, gen, branch, f, success, et)
+%   printpf(baseMVA, bus, gen, branch, f, success, et, fd)
+%   printpf(baseMVA, bus, gen, branch, f, success, et, fd, mpopt)
+%   
+%   Prints power flow and optimal power flow results to fd (a file
+%   descriptor which defaults to STDOUT), with the details of what
+%   gets printed controlled by the optional mpopt argument, which is a
+%   MATPOWER options vector (see 'help mpoption' for details).
+%
+%   The data can either be supplied in a single results struct, or
+%   in the individual arguments: baseMVA, bus, gen, branch, f, success
+%   and et, where f is the OPF objective function value, success is
+%   true if the solution converged and false otherwise, and et is the
+%   elapsed time for the computation in seconds. If f is given, it is
+%   assumed that the output is from an OPF run, otherwise it is assumed
+%   to be a simple power flow run.
 
 %   MATPOWER
 %   $Id$
@@ -15,10 +29,32 @@ function printpf(baseMVA, bus, gen, branch, f, success, et, fd, mpopt)
 
 %%----- initialization -----
 %% default arguments
-if nargin < 9
-    mpopt = mpoption;   %% use default options
-    if nargin < 8
+if isstruct(baseMVA)
+    have_results_struct = 1;
+    results = baseMVA;
+    if nargin < 3 || isempty(gen)
+        mpopt = mpoption;   %% use default options
+    else
+        mpopt = gen;
+    end
+    if nargin < 2 || isempty(bus)
         fd = 1;         %% print to stdio by default
+    else
+        fd = bus;
+    end
+    [baseMVA, bus, gen, branch, success, et] = ...
+        deal(results.baseMVA, results.bus, results.gen, results.branch, ...
+            results.success, results.et);
+    if isfield(results, 'f') && ~isempty(results.f)
+        f = results.f;
+    end
+else
+    have_results_struct = 0;
+    if nargin < 9
+        mpopt = mpoption;   %% use default options
+        if nargin < 8
+            fd = 1;         %% print to stdio by default
+        end
     end
 end
 isOPF = ~isempty(f);    %% FALSE -> only simple PF data, TRUE -> OPF data
@@ -653,6 +689,11 @@ if isOPF
         end
         fprintf(fd, '\n');
     end
+end
+
+%% execute userfcn callbacks for 'printpf' stage
+if have_results_struct && isfield(results, 'userfcn')
+    results = run_userfcn(results.userfcn, 'printpf', results, fd, mpopt);
 end
 
 %% print raw data for Perl database interface
