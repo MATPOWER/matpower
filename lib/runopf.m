@@ -54,11 +54,8 @@ if nargin < 4
     end
 end
 
-%% read data
-mpc = loadcase(casename);
-
 %%-----  run the optimal power flow  -----
-[r, success] = opf(mpc, mpopt);
+[r, success] = opf(casename, mpopt);
 
 %%-----  output results  -----
 if fname
@@ -66,16 +63,15 @@ if fname
     if fd == -1
         error(msg);
     else
-        printpf(mpc.baseMVA, r.bus, r.gen, r.branch, r.f, success, r.et, fd, mpopt);
+        printpf(r, fd, mpopt);
         fclose(fd);
     end
 end
-printpf(mpc.baseMVA, r.bus, r.gen, r.branch, r.f, success, r.et, 1, mpopt);
+printpf(r, 1, mpopt);
 
 %% save solved case
 if solvedcase
-    [mpc.bus, mpc.gen, mpc.branch] = deal(r.bus, r.gen, r.branch);
-    savecase(solvedcase, mpc);
+    savecase(solvedcase, r);
 end
 
 if nargout == 1 || nargout == 2
@@ -83,7 +79,7 @@ if nargout == 1 || nargout == 2
     bus = success;
 elseif nargout > 2
     [MVAbase, bus, gen, gencost, branch, f, et] = ...
-        deal(mpc.baseMVA, r.bus, r.gen, mpc.gencost, r.branch, r.f, r.et);
+        deal(r.baseMVA, r.bus, r.gen, r.gencost, r.branch, r.f, r.et);
 % else  %% don't define MVAbase, so it doesn't print anything
 end
 
