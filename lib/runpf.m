@@ -81,9 +81,17 @@ verbose = mpopt(31);
 qlim = mpopt(6);                    %% enforce Q limits on gens?
 dc = mpopt(10);                     %% use DC formulation?
 
-%% read data & convert to internal bus numbering
-[baseMVA, bus, gen, branch] = loadcase(casename);
-[i2e, bus, gen, branch] = ext2int(bus, gen, branch);
+%% read data
+mpc = loadcase(casename);
+
+%% add zero columns to branch for flows if needed
+if size(mpc.branch,2) < QT
+  mpc.branch = [ mpc.branch zeros(size(mpc.branch, 1), QT-size(mpc.branch,2)) ];
+end
+
+%% convert to internal indexing
+mpc = ext2int(mpc);
+[baseMVA, bus, gen, branch] = deal(mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch);
 
 %% get bus index lists of each type of bus
 [ref, pv, pq] = bustypes(bus, gen);
@@ -239,37 +247,44 @@ else                                %% AC formulation
         end
     end
 end
-et = etime(clock, t0);
+mpc.et = etime(clock, t0);
+mpc.success = success;
 
 %%-----  output results  -----
 %% convert back to original bus numbering & print results
-[bus, gen, branch] = int2ext(i2e, bus, gen, branch);
+[mpc.bus, mpc.gen, mpc.branch] = deal(bus, gen, branch);
+results = int2ext(mpc);
+
+%% zero out result fields of out-of-service gens & branches
+if ~isempty(results.order.gen.status.off)
+  results.gen(results.order.gen.status.off, [PG QG]) = 0;
+end
+if ~isempty(results.order.branch.status.off)
+  results.branch(results.order.branch.status.off, [PF QF PT QT]) = 0;
+end
+
 if fname
     [fd, msg] = fopen(fname, 'at');
     if fd == -1
         error(msg);
     else
-        printpf(baseMVA, bus, gen, branch, [], success, et, fd, mpopt);
+        printpf(results, fd, mpopt);
         fclose(fd);
     end
 end
-printpf(baseMVA, bus, gen, branch, [], success, et, 1, mpopt);
+printpf(results, 1, mpopt);
 
 %% save solved case
 if solvedcase
-    savecase(solvedcase, baseMVA, bus, gen, branch);
+    savecase(solvedcase, results);
 end
 
 if nargout == 1 || nargout == 2
-    results.bus = bus;
-    results.gen = gen;
-    results.branch = branch;
-    results.et = et;
-    results.success = success;
     MVAbase = results;
     bus = success;
 elseif nargout > 2
-    MVAbase = baseMVA;
+    [MVAbase, bus, gen, branch, et] = ...
+        deal(results.baseMVA, results.bus, results.gen, results.branch, results.et);
 % else  %% don't define MVAbase, so it doesn't print anything
 end
 
