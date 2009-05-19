@@ -47,6 +47,8 @@ if isstruct(baseMVA)
             results.success, results.et);
     if isfield(results, 'f') && ~isempty(results.f)
         f = results.f;
+    else
+        f = [];
     end
 else
     have_results_struct = 0;
