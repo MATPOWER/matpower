@@ -40,8 +40,8 @@ function [bus, gen] = scale_load(load, bus, gen, load_zone, opt)
 %   opt - (optional) struct with three possible fields, 'scale',
 %       'pq' and 'which' that determine the behavior as follows:
 %
-%     opt.scale (default is 'SCALE')
-%       'SCALE'    : load consists of direct scale factors, where
+%     opt.scale (default is 'FACTOR')
+%       'FACTOR'    : load consists of direct scale factors, where
 %                    load(k) = scale factor R(k) for zone k
 %       'QUANTITY' : load consists of target quantities, where
 %                    load(k) = desired total active load for zone k
@@ -56,11 +56,13 @@ function [bus, gen] = scale_load(load, bus, gen, load_zone, opt)
 %       'DISPATCHABLE' : scale only dispatchable loads
 %       'BOTH'         : scale both fixed and dispatchable loads
 %
-%   Assumes internal bus numbering.
+%   Assumes consecutive bus numbering when dealing with dispatchable loads.
 
+%   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2004-2008 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2009 by Power System Engineering Research Center (PSERC)
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% define constants
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
@@ -122,16 +124,14 @@ else
 end
 
 if isempty(load_zone)
-    if length(load) == 1
-        %% make a single zone of all load buses
+    if length(load) == 1        %% make a single zone of all load buses
         load_zone = zeros(nb, 1);   %% initialize
         k = find(bus(:, PD));
         load_zone(k) = 1;                       %% FIXED loads
         if ~isempty(gen)
             load_zone(gen(ld, GEN_BUS)) = 1;    %% DISPATCHABLE loads
         end
-    else
-        %% use areas defined in bus data as zones
+    else                        %% use areas defined in bus data as zones
         load_zone = bus(:, BUS_AREA);
     end
 end
