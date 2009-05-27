@@ -39,6 +39,7 @@ if have_fcn('scpdipmopf')
 end
 if have_fcn('tralmopf')
     tests{end+1} = 't_opf_tspopf_tralm';
+end
 if have_fcn('constr')
     tests{end+1} = 't_opf_constr';
 end
