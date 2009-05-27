@@ -384,21 +384,6 @@ else                                %% M-file
 		mpc = run_userfcn(mpc.userfcn, 'savecase', mpc, fd, prefix);
 	end
 
-%     %% user function
-%     if isfield(mpc, 'userfcn') && ~isempty(mpc.userfcn)
-%         fprintf(fd, '%%%% user function\n');
-%         fprintf(fd, '%suserfcn.name = ''%s'';\n', prefix, mpc.userfcn.name);
-%         if isfield(mpc.userfcn, 'args') && ~isempty(mpc.userfcn.args)
-%             if exist('serialize') == 2
-%                 fprintf(fd, '%suserfcn.args = %s\n', prefix, serialize(mpc.userfcn.args));
-%             else
-%                 url = 'http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=12063&objectType=file';
-%                 error('savecase: Cannot save the ''userfcn.args'' without the ''serialize'' function, which is available as a free download from:\n\n<%s>', url);
-%             end
-%         end
-%         fprintf(fd, '\n');
-%     end
-
     %% end
     fprintf(fd, 'return;\n');
     
