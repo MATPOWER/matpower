@@ -14,58 +14,69 @@ if nargin < 1
     verbose = 0;
 end
 
-matpower_test_list = {
-        't_loadcase', ...
-        't_ext2int2ext', ...
-        't_jacobian', ...
-        't_hessian', ...
-        't_hasPQcap', ...
-        't_pf', ...
-        't_opf_fmincon', ...
-        't_opf_minopf', ...
-        't_opf_pdipm', ...
-        't_opf_scpdipm', ...
-        't_opf_tspopf_pdipm', ...
-        't_opf_tspopf_scpdipm', ...
-        't_opf_tspopf_tralm', ...
-        't_opf_constr', ...
-        't_opf_lp_den', ...
-        't_opf_lp_spr', ...
-        't_opf_lp_spf', ...
-        't_opf_dc_bpmpd', ...
-        't_opf_dc_ot', ...
-        't_opf_dc_pdipm', ...
-        't_opf_dc_scpdipm', ...
-        't_runopf_w_res', ...
-        't_makePTDF', ...
-        't_makeLODF', ...
-        't_total_load', ...
-        't_scale_load', ...
-    };
-market_test_list = {
-        't_off2case', ...
-        't_auction_minopf', ...
-        't_auction_pdipm', ...
-        't_auction_tspopf_pdipm', ...
-        't_runmarket', ...
-    };
-sopf_test_list = {
-        't_apply_contingency'
-    };
+tests = {};
 
 %% MATPOWER base test
-test_list = matpower_test_list;
+tests{end+1} = 't_loadcase';
+tests{end+1} = 't_ext2int2ext';
+tests{end+1} = 't_jacobian';
+tests{end+1} = 't_hessian';
+tests{end+1} = 't_hasPQcap';
+tests{end+1} = 't_pf';
+if have_fcn('fmincon')
+    tests{end+1} = 't_opf_fmincon';
+end
+if have_fcn('minopf')
+    tests{end+1} = 't_opf_minopf';
+end
+tests{end+1} = 't_opf_pdipm';
+tests{end+1} = 't_opf_scpdipm';
+if have_fcn('pdipmopf')
+    tests{end+1} = 't_opf_tspopf_pdipm';
+end
+if have_fcn('scpdipmopf')
+    tests{end+1} = 't_opf_tspopf_scpdipm';
+end
+if have_fcn('tralmopf')
+    tests{end+1} = 't_opf_tspopf_tralm';
+if have_fcn('constr')
+    tests{end+1} = 't_opf_constr';
+end
+if have_fcn('bpmpd')
+    tests{end+1} = 't_opf_lp_den';
+    tests{end+1} = 't_opf_lp_spr';
+    tests{end+1} = 't_opf_lp_spf';
+    tests{end+1} = 't_opf_dc_bpmpd';
+end
+if have_fcn('quadprog')
+    tests{end+1} = 't_opf_dc_ot';
+end
+tests{end+1} = 't_opf_dc_pdipm';
+tests{end+1} = 't_opf_dc_scpdipm';
+tests{end+1} = 't_runopf_w_res';
+tests{end+1} = 't_makePTDF';
+tests{end+1} = 't_makeLODF';
+tests{end+1} = 't_total_load';
+tests{end+1} = 't_scale_load';
 
 %% smartmarket tests
 if exist('runmarket') == 2
-    test_list = {test_list{:}, market_test_list{:}};
+    tests{end+1} = 't_off2case';
+    if have_fcn('minopf')
+        tests{end+1} = 't_auction_minopf';
+    end
+    tests{end+1} = 't_auction_pdipm';
+    if have_fcn('pdipmopf')
+        tests{end+1} = 't_auction_tspopf_pdipm';
+    end
+    tests{end+1} = 't_runmarket';
 end
 
 %% sopf tests
 if exist('apply_contingency') == 2
-    test_list = {test_list{:}, sopf_test_list{:}};
+    tests{end+1} = 't_apply_contingency';
 end
 
-t_run_tests( test_list, verbose );
+t_run_tests( tests, verbose );
 
 return;
