@@ -15,6 +15,11 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 3.2
 -----------------
 
+5/27/09
+    - Added total_load.m to provide convenient way to retreive the total
+      load for the entire system, a specific zone or bus with options to
+      include just fixed load, just dispatchable load, or both.
+
 5/19/09
     - The results struct returned by power flow or optimal power flow
       is now a strict superset of a MATPOWER case struct.
