@@ -39,16 +39,18 @@ for k = 1:3
     area(k).disp.p = -sum(mpc.gen(lda{k}, PMIN));
     area(k).disp.qmin = -sum(mpc.gen(lda{k}, QMIN));
     area(k).disp.qmax = -sum(mpc.gen(lda{k}, QMAX));
+    area(k).disp.q = area(k).disp.qmin + area(k).disp.qmax;
     area(k).both.p = area(k).fixed.p + area(k).disp.p;
-    area(k).both.q = area(k).fixed.q + area(k).disp.qmin + area(k).disp.qmax;
+    area(k).both.q = area(k).fixed.q + area(k).disp.q;
 end
 total.fixed.p = sum(mpc.bus(:, PD));
 total.fixed.q = sum(mpc.bus(:, QD));
 total.disp.p = -sum(mpc.gen(ld, PMIN));
 total.disp.qmin = -sum(mpc.gen(ld, QMIN));
 total.disp.qmax = -sum(mpc.gen(ld, QMAX));
+total.disp.q = total.disp.qmin + total.disp.qmax;
 total.both.p = total.fixed.p + total.disp.p;
-total.both.q = total.fixed.q + total.disp.qmin + total.disp.qmax;
+total.both.q = total.fixed.q + total.disp.q;
 
 %%-----  single load zone, one scale factor  -----
 load = 2;
