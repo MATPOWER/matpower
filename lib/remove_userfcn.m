@@ -23,8 +23,5 @@ for k = n:-1:1
         break;
     end
 end
-if ~found
-    error('remove_userfcn: userfcn ''%s'' for stage ''%s'' not found', fcn, stage);
-end
 
 return;
