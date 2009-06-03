@@ -39,11 +39,7 @@ gbus = gen(on, GEN_BUS);                %% what buses are they at?
 refgen = find(gbus == ref);             %% which is(are) the reference gen(s)?
 
 %% compute total injected bus powers
-%% This is slow in Matlab 5 ...
-% Sg = V(gbus) .* conj(Ybus(gbus, :) * V);
-%% ... so we do this instead ...
-temp = Ybus.';
-Sg = V(gbus) .* conj(temp(:, gbus).' * V);
+Sg = V(gbus) .* conj(Ybus(gbus, :) * V);
 
 %% update Qg for all generators
 gen(:, QG) = zeros(size(gen, 1), 1);                %% zero out all Qg

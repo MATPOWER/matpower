@@ -68,14 +68,8 @@ if normP < tol & normQ < tol
 end
 
 %% reduce B matrices
-%% this is slow in Matlab 5 ...
-% Bp = Bp([pv; pq], [pv; pq]);
-% Bpp = Bpp(pq, pq);
-%% ... so we do this instead ...
-temp = Bp(:, [pv; pq])';
-Bp = temp(:, [pv; pq])';
-temp = Bpp(:, pq)';
-Bpp = temp(:, pq)';
+Bp = Bp([pv; pq], [pv; pq]);
+Bpp = Bpp(pq, pq);
 
 %% factor B matrices
 [Lp, Up, Pp] = lu(Bp);

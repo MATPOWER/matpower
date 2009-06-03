@@ -73,25 +73,10 @@ while (~converged & i < max_it)
     %% evaluate Jacobian
     [dSbus_dVm, dSbus_dVa] = dSbus_dV(Ybus, V);
     
-    %% selecting a subset of rows of a large sparse matrix is very slow
-    %% in Matlab 5 (but not Matlab 4 ... go figure), but selecting a
-    %% subset of the columns is fast, and so is transposing, so instead
-    %% of doing this ...
-%   j11 = real(dSbus_dVa([pv; pq], [pv; pq]));
-%   j12 = real(dSbus_dVm([pv; pq], pq));
-%   j21 = imag(dSbus_dVa(pq, [pv; pq]));
-%   j22 = imag(dSbus_dVm(pq, pq));
-
-    %% ... we do the equivalent thing using
-    %% a temporary matrix and transposing
-    temp = real(dSbus_dVa(:, [pv; pq]))';
-    j11 = temp(:, [pv; pq])';
-    temp = real(dSbus_dVm(:, pq))';
-    j12 = temp(:, [pv; pq])';
-    temp = imag(dSbus_dVa(:, [pv; pq]))';
-    j21 = temp(:, pq)';
-    temp = imag(dSbus_dVm(:, pq))';
-    j22 = temp(:, pq)';
+    j11 = real(dSbus_dVa([pv; pq], [pv; pq]));
+    j12 = real(dSbus_dVm([pv; pq], pq));
+    j21 = imag(dSbus_dVa(pq, [pv; pq]));
+    j22 = imag(dSbus_dVm(pq, pq));
     
     J = [   j11 j12;
             j21 j22;    ];

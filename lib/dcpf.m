@@ -17,15 +17,7 @@ function Va = dcpf(B, Pbus, Va0, ref, pv, pq)
 %% initialize result vector
 Va = Va0;
 
-%% Since pulling off rows of a large sparse matrix like B
-%% can be slow in Matlab 5, we do this ...
-temp = B(:, [pv; pq])';
-B_pvpq_rows = temp(:, [pv; pq])';
-temp = B(:, ref)';
-B_ref_row   = temp(:, [pv; pq])';
-Va([pv; pq]) = B_pvpq_rows \ (Pbus([pv; pq]) - B_ref_row * Va0(ref));
-
-%% ... instead of this ...
-% Va([pv; pq]) = B([pv; pq], [pv; pq]) \ (Pbus([pv; pq]) - B([pv; pq], ref) * Va0(ref));
+%% update angles for non-reference buses
+Va([pv; pq]) = B([pv; pq], [pv; pq]) \ (Pbus([pv; pq]) - B([pv; pq], ref) * Va0(ref));
 
 return;
