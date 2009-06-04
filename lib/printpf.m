@@ -109,8 +109,9 @@ OUT_RAW         = mpopt(43);
 j = sqrt(-1);
 
 %% internal bus number
-e2i = zeros(max(bus(:, BUS_I)), 1);     %% need internal bus numbering for a second
-e2i(bus(:, BUS_I)) = [1:size(bus, 1)]';
+i2e = bus(:, BUS_I);
+e2i = sparse(max(i2e), 1);
+e2i(i2e) = [1:size(bus, 1)]';
 
 %% sizes of things
 nb = size(bus, 1);      %% number of buses
