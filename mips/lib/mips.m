@@ -256,7 +256,8 @@ while (~converged && i < opt.max_it)
             fprintf('\nConverged!\n');
         end
     else
-        if alphap < alpha_min || alphad < alpha_min || gamma < eps || gamma > 1/eps
+        if any(isnan(x)) || alphap < alpha_min || alphad < alpha_min || ...
+        		gamma < eps || gamma > 1/eps
             if opt.verbose
                 fprintf('\nNumerically Failed\n');
             end
