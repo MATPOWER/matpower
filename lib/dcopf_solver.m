@@ -285,10 +285,10 @@ results = mpc;
 
 %% optional fields
 %% 1st one is always computed anyway, just include it
-results.dg = A;
 if isfield(output, 'g')
   results.g = A * x;
 end
+results.dg = A;
 if isfield(output, 'df')
   results.df = [];
 end
