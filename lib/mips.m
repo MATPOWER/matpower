@@ -295,7 +295,6 @@ kl = find(lam_lin < 0);                     %% lower bound binding
 ku = find(lam_lin > 0);                     %% upper bound binding
 
 mu_l = zeros(nx+nA, 1);
-% mu_l = zeros(length(ll)+nx-nx, 1);
 mu_l(ieq(kl)) = -lam_lin(kl);
 mu_l(igt) = mu_lin(nlt+(1:ngt));
 mu_l(ibx) = mu_lin(nlt+ngt+nbx+(1:nbx));
