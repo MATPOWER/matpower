@@ -27,7 +27,7 @@ mpc = loadcase(varargin{1});
 mpc = toggle_reserves(mpc, 'on');
 [varargout{1:nargout}] = runopf(mpc, varargin{2:nargin});
 
-if isstruct(varargout{1})
+if nargout > 0 && isstruct(varargout{1})
 	varargout{1} = toggle_reserves(varargout{1}, 'off');
 end
 
