@@ -490,18 +490,6 @@ if isfield(results, 'dg')
   jac = results.dg;
 end
 
-%% if single-block PWL costs were converted to POLY, insert dummy y into xr
-if ~isempty(p1)
-  y = zeros(length(p1), 1);
-  if dc
-    nx = vv.N.Pg;
-  else
-    nx = vv.N.Qg;
-  end
-  raw.xr = [ raw.xr(1:nx); y; raw.xr(nx+1:end)];
-  results.x = [ results.x(1:nx); y; results.x(nx+1:end)];
-end
-
 %% gen PQ capability curve multipliers
 if ~dc && success && (ll.N.PQh > 0 || ll.N.PQl > 0)
   mu_PQh = results.mu.lin.l(ll.i1.PQh:ll.iN.PQh) - results.mu.lin.u(ll.i1.PQh:ll.iN.PQh);
@@ -563,6 +551,20 @@ if ~isempty(results.order.gen.status.off)
 end
 if ~isempty(results.order.branch.status.off)
   results.branch(results.order.branch.status.off, [PF QF PT QT MU_SF MU_ST MU_ANGMIN MU_ANGMAX]) = 0;
+end
+
+%% if single-block PWL costs were converted to POLY, insert dummy y into x
+%% Note: The "y" portion of x will be messed up, but everything else
+%%       should be in the expected locations.
+if ~isempty(p1) && alg ~= 545 && alg ~= 550
+  if dc
+    nx = vv.N.Pg;
+  else
+    nx = vv.N.Qg;
+  end
+  y = zeros(length(p1), 1);
+  raw.xr = [ raw.xr(1:nx); y; raw.xr(nx+1:end)];
+  results.x = [ results.x(1:nx); y; results.x(nx+1:end)];
 end
 
 %% compute elapsed time

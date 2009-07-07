@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 3.2
 -----------------
 
+7/7/09
+    - Fixed bug introduced by automatic conversion of single-block
+      piecewise linear costs to linear polynomial costs.
+
 5/27/09
     - Added total_load.m to provide convenient way to retreive the total
       load for the entire system, a specific zone or bus with options to
