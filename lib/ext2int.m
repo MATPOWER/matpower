@@ -111,22 +111,18 @@ function [i2e, bus, gen, branch, areas] = ext2int(bus, gen, branch, areas)
 %   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-%% define names for columns to data matrices
-[PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
-    VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
-[GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
-    MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
-    QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
-[F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
-    TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
-    ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
-[AREA_I, PRICE_REF_BUS] = idx_area;
-
 if isstruct(bus)
     mpc = bus;
     if nargin == 1
         first = ~isfield(mpc, 'order');
         if first || mpc.order.state == 'e'
+            %% define names for columns to data matrices
+            [PQ, PV, REF, NONE, BUS_I, BUS_TYPE] = idx_bus;
+            [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS] = idx_gen;
+            [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
+                TAP, SHIFT, BR_STATUS] = idx_brch;
+            [AREA_I, PRICE_REF_BUS] = idx_area;
+
             %% initialize order
             if first
                 status = struct('on',   [], ...
@@ -166,7 +162,7 @@ if isstruct(bus)
             o.ext.bus    = mpc.bus;
             o.ext.branch = mpc.branch;
             o.ext.gen    = mpc.gen;
-            if isfield(mpc, 'areas');
+            if isfield(mpc, 'areas')
                 if isempty(mpc.areas)           %% if areas field is empty
                     mpc = rmfield(mpc, 'areas');    %% delete it (so it gets ignored)
                 else                            %% otherwise
@@ -190,7 +186,7 @@ if isstruct(bus)
                     bs(n2i(mpc.gen(:, GEN_BUS))) );
             o.gen.status.on     = find(  gs );      %% on and connected
             o.gen.status.off    = find( ~gs );      %% off or isolated
-            brs = ( mpc.branch(:,BR_STATUS) & ...   %% branch status
+            brs = ( mpc.branch(:, BR_STATUS) & ...  %% branch status
                     bs(n2i(mpc.branch(:, F_BUS))) & ...
                     bs(n2i(mpc.branch(:, T_BUS))) );
             o.branch.status.on  = find(  brs );     %% on and connected
@@ -227,7 +223,7 @@ if isstruct(bus)
             mpc.gen(:, GEN_BUS)     = o.bus.e2i( mpc.gen(:, GEN_BUS)    );
             mpc.branch(:, F_BUS)    = o.bus.e2i( mpc.branch(:, F_BUS)   );
             mpc.branch(:, T_BUS)    = o.bus.e2i( mpc.branch(:, T_BUS)   );
-            if isfield(mpc, 'areas');
+            if isfield(mpc, 'areas')
                 mpc.areas(:, PRICE_REF_BUS) = o.bus.e2i( mpc.areas(:, PRICE_REF_BUS)  );
             end
 
@@ -264,11 +260,10 @@ if isstruct(bus)
                 mpc = ext2int(mpc, 'N', ordering, 2);
             end
 
-        end
-
-        %% execute userfcn callbacks for 'ext2int' stage
-        if isfield(mpc, 'userfcn')
-            mpc = run_userfcn(mpc.userfcn, 'ext2int', mpc);
+            %% execute userfcn callbacks for 'ext2int' stage
+            if isfield(mpc, 'userfcn')
+                mpc = run_userfcn(mpc.userfcn, 'ext2int', mpc);
+            end
         end
 
         i2e = mpc;
@@ -279,7 +274,7 @@ if isstruct(bus)
         else
             dim = areas;                %% rename argument
         end
-        if isstr(gen) | iscell(gen)     %% field
+        if isstr(gen) || iscell(gen)    %% field
             field = gen;                %% rename argument
             if isstr(field)
                 mpc.order.ext.(field) = mpc.(field);
@@ -322,6 +317,12 @@ if isstruct(bus)
         end
     end
 else            %% old form
+    %% define names for columns to data matrices
+    [PQ, PV, REF, NONE, BUS_I] = idx_bus;
+    [GEN_BUS] = idx_gen;
+    [F_BUS, T_BUS] = idx_brch;
+    [AREA_I, PRICE_REF_BUS] = idx_area;
+
     i2e = bus(:, BUS_I);
     e2i = sparse(max(i2e), 1);
     e2i(i2e) = [1:size(bus, 1)]';
