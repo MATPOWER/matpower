@@ -170,7 +170,8 @@ if nargout > 0
     end
   end
 elseif results0.success
-  printpf(mpc.baseMVA, results0.bus, results0.gen, results0.branch, results0.f, success, et, 1, mpopt);
+  results0.et = et;
+  printpf(results0, et, 1, mpopt);
 end
 
 return;
