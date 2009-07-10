@@ -73,17 +73,6 @@ function [bus, gen, branch, areas] = int2ext(i2e, bus, gen, branch, areas)
 %   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-%% define names for columns to data matrices
-[PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
-    VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
-[GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
-    MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
-    QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
-[F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
-    TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
-    ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
-[AREA_I, PRICE_REF_BUS] = idx_area;
-
 if isstruct(i2e)
     mpc = i2e;
     if nargin == 1
@@ -93,6 +82,12 @@ if isstruct(i2e)
         o = mpc.order;
 
         if o.state == 'i'
+            %% define names for columns to data matrices
+            [PQ, PV, REF, NONE, BUS_I] = idx_bus;
+            GEN_BUS = idx_gen;
+            [F_BUS, T_BUS] = idx_brch;
+            [AREA_I, PRICE_REF_BUS] = idx_area;
+
             %% execute userfcn callbacks for 'int2ext' stage
             if isfield(mpc, 'userfcn')
                 mpc = run_userfcn(mpc.userfcn, 'int2ext', mpc);
@@ -105,19 +100,19 @@ if isstruct(i2e)
             mpc.bus     = o.ext.bus;
             mpc.branch  = o.ext.branch;
             mpc.gen     = o.ext.gen;
-            if isfield(mpc, 'gencost');
+            if isfield(mpc, 'gencost')
                 o.int.gencost = mpc.gencost;
                 mpc.gencost = o.ext.gencost;
             end
-            if isfield(mpc, 'areas');
+            if isfield(mpc, 'areas')
                 o.int.areas = mpc.areas;
                 mpc.areas = o.ext.areas;
             end
-            if isfield(mpc, 'A');
+            if isfield(mpc, 'A')
                 o.int.A = mpc.A;
                 mpc.A = o.ext.A;
             end
-            if isfield(mpc, 'N');
+            if isfield(mpc, 'N')
                 o.int.N = mpc.N;
                 mpc.N = o.ext.N;
             end
@@ -126,6 +121,9 @@ if isstruct(i2e)
             mpc.bus(o.bus.status.on, :)       = o.int.bus;
             mpc.branch(o.branch.status.on, :) = o.int.branch;
             mpc.gen(o.gen.status.on, :)       = o.int.gen(o.gen.i2e, :);
+            if isfield(mpc, 'areas')
+                mpc.areas(o.areas.status.on, :) = o.int.areas;
+            end
 
             %% revert to original bus numbers
             mpc.bus(o.bus.status.on, BUS_I) = ...
@@ -136,6 +134,10 @@ if isstruct(i2e)
                     o.bus.i2e( mpc.branch(o.branch.status.on, T_BUS) );
             mpc.gen(o.gen.status.on, GEN_BUS) = ...
                     o.bus.i2e( mpc.gen(o.gen.status.on, GEN_BUS) );
+            if isfield(mpc, 'areas')
+                mpc.areas(o.areas.status.on, PRICE_REF_BUS) = ...
+                        o.bus.i2e( mpc.areas(o.areas.status.on, PRICE_REF_BUS) );
+            end
 
             if isfield(o, 'ext')
                 o = rmfield(o, 'ext');
@@ -212,6 +214,12 @@ if isstruct(i2e)
         end
     end
 else            %% old form
+    %% define names for columns to data matrices
+    [PQ, PV, REF, NONE, BUS_I] = idx_bus;
+    [GEN_BUS] = idx_gen;
+    [F_BUS, T_BUS] = idx_brch;
+    [AREA_I, PRICE_REF_BUS] = idx_area;
+
     bus(:, BUS_I)               = i2e( bus(:, BUS_I)            );
     gen(:, GEN_BUS)             = i2e( gen(:, GEN_BUS)          );
     branch(:, F_BUS)            = i2e( branch(:, F_BUS)         );
