@@ -168,8 +168,8 @@ CC = full(MN' * (CCw - HMR));
 C0 = 1/2 * MR' * HMR + sum(polycf(:, 3));   %% constant term of cost
 
 %% run QP solver
-mpopt(15) = length(ieq);            %% set number of equality constraints
-if ~have_fcn('sparse_qp') || mpopt(51) == 0 %% don't use sparse matrices
+mpopt(15) = length(ieq);    %% set number of equality constraints
+if mpopt(51) == 0           %% don't use sparse matrices
     AA = full(AA);
     HH = full(HH);
 end
@@ -179,8 +179,7 @@ end
 
 if alg == 200 || alg == 250
     %% try to select an interior initial point
-    refs = find(bus(:, BUS_TYPE) == REF);
-    Varefs = bus(refs, VA) * (pi/180);
+    Varefs = bus(bus(:, BUS_TYPE) == REF, VA) * (pi/180);
 
     lb = LB; ub = UB;
     lb(LB == -Inf) = -1e10;   %% replace Inf with numerical proxies
