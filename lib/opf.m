@@ -4,7 +4,7 @@ function [busout, genout, branchout, f, success, info, et, g, jac, xr, pimul] = 
 %
 %   For an AC OPF, if the OPF algorithm is not set explicitly in the options,
 %   it will choose the best available solver, searching in the following order:
-%   minopf, pdipmopf, fmincon, LP-base, and constr.
+%   minopf, pdipmopf, fmincon, LP-based, and constr.
 %
 %   Returns either a results struct and an optional success flag, or individual
 %   data matrices, the objective function value and a success flag. In the
@@ -208,13 +208,13 @@ end
 
 %% add zero columns to bus, gen, branch for multipliers, etc if needed
 if size(mpc.bus,2) < MU_VMIN
-  mpc.bus = [mpc.bus zeros(nb ,MU_VMIN-size(mpc.bus,2)) ];
+  mpc.bus = [mpc.bus zeros(nb, MU_VMIN-size(mpc.bus,2)) ];
 end
 if size(mpc.gen,2) < MU_QMIN
-  mpc.gen = [ mpc.gen zeros(ng,MU_QMIN-size(mpc.gen,2)) ];
+  mpc.gen = [ mpc.gen zeros(ng, MU_QMIN-size(mpc.gen,2)) ];
 end
 if size(mpc.branch,2) < MU_ANGMAX
-  mpc.branch = [ mpc.branch zeros(nl,MU_ANGMAX-size(mpc.branch,2)) ];
+  mpc.branch = [ mpc.branch zeros(nl, MU_ANGMAX-size(mpc.branch,2)) ];
 end
 
 if dc
@@ -490,21 +490,25 @@ if isfield(results, 'dg')
   jac = results.dg;
 end
 
-%% gen PQ capability curve multipliers
-if ~dc && success && (ll.N.PQh > 0 || ll.N.PQl > 0)
-  mu_PQh = results.mu.lin.l(ll.i1.PQh:ll.iN.PQh) - results.mu.lin.u(ll.i1.PQh:ll.iN.PQh);
-  mu_PQl = results.mu.lin.l(ll.i1.PQl:ll.iN.PQl) - results.mu.lin.u(ll.i1.PQl:ll.iN.PQl);
-  results.gen = update_mupq(baseMVA, results.gen, mu_PQh, mu_PQl, Apqdata);
-end
+if success
+  if ~dc
+    %% copy bus voltages back to gen matrix
+    results.gen(:, VG) = results.bus(results.gen(:, GEN_BUS), VM);
+  
+    %% gen PQ capability curve multipliers
+    if ll.N.PQh > 0 || ll.N.PQl > 0
+      mu_PQh = results.mu.lin.l(ll.i1.PQh:ll.iN.PQh) - results.mu.lin.u(ll.i1.PQh:ll.iN.PQh);
+      mu_PQl = results.mu.lin.l(ll.i1.PQl:ll.iN.PQl) - results.mu.lin.u(ll.i1.PQl:ll.iN.PQl);
+      results.gen = update_mupq(baseMVA, results.gen, mu_PQh, mu_PQl, Apqdata);
+    end
+  end
 
-%% angle limit constraint multipliers
-if success && (ll.N.ang > 0)
-  results.branch(iang, MU_ANGMIN) = results.mu.lin.l(ll.i1.ang:ll.iN.ang) * pi/180;
-  results.branch(iang, MU_ANGMAX) = results.mu.lin.u(ll.i1.ang:ll.iN.ang) * pi/180;
+  %% angle limit constraint multipliers
+  if ll.N.ang > 0
+    results.branch(iang, MU_ANGMIN) = results.mu.lin.l(ll.i1.ang:ll.iN.ang) * pi/180;
+    results.branch(iang, MU_ANGMAX) = results.mu.lin.u(ll.i1.ang:ll.iN.ang) * pi/180;
+  end
 end
-
-%% copy bus voltages back to gen matrix
-results.gen(:, VG) = results.bus(results.gen(:, GEN_BUS), VM);
 
 %% assign values and limit shadow prices for variables
 om_var_order = get(om, 'var', 'order');
