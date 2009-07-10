@@ -8,16 +8,22 @@ maintained by Ray Zimmerman <rz10@cornell.edu>
 
 MATPOWER
 $Id$
-Copyright (c) 1996-2008 by Power System Engineering Research Center (PSERC)
+Copyright (c) 1996-2009 by Power System Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
 
 
 Changes since 3.2
 -----------------
 
+7/10/09
+    - Removed 'sparse_qp' and 'sparse_lp' from have_fcn().
+    - Major speed-up in @opf_model/linear_constraints.m for
+      large problems (esp. DC OPF) and various other optimizations
+      from profiling code.
+
 7/7/09
-    - Fixed bug introduced by automatic conversion of single-block
-      piecewise linear costs to linear polynomial costs.
+    - Fixed bug in opf.m introduced by automatic conversion of
+      single-block piecewise linear costs to linear polynomial costs.
 
 5/27/09
     - Added total_load.m to provide convenient way to retreive the total
