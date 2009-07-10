@@ -15,8 +15,6 @@ function TorF = have_fcn(tag)
 %       pdipmopf    - pdipmopf(), primal-dual interior point method OPF solver
 %       scpdipmopf  - scpdipmopf(), step-controlled PDIPM OPF solver
 %       smartmarket - runmkt() and friends, for running an auction
-%       sparse_lp   - LP solver used by mp_lp can handle sparse matrices
-%       sparse_qp   - QP solver used by mp_qp can handle sparse matrices
 %       tralmopf    - tralmopf(), trust region based augmented Langrangian
 %                     OPF solver
 
@@ -28,27 +26,23 @@ function TorF = have_fcn(tag)
 
 switch tag
     case 'bpmpd'
-        TorF = exist(which('bp')) == 3;
+        TorF = exist('bp', 'file') == 3;
     case 'constr'
-        TorF = exist(which('constr')) == 2 && exist('foptions');
+        TorF = exist('constr', 'file') == 2 && exist('foptions', 'file');
     case 'fmincon'
-        TorF = exist(which('fmincon')) == 2;
+        TorF = exist('fmincon', 'file') == 2;
     case 'linprog'
-        TorF = exist(which('linprog')) == 2;
+        TorF = exist('linprog', 'file') == 2;
     case 'lp'
-        TorF = exist(which('lp')) == 2;
+        TorF = exist('lp', 'file') == 2;
     case 'minopf'
-        TorF = exist(which('minopf')) == 3;
+        TorF = exist('minopf', 'file') == 3;
     case 'quadprog'
-        TorF = exist(which('quadprog')) == 2;
+        TorF = exist('quadprog', 'file') == 2;
     case 'qp'
-        TorF = exist(which('qp')) == 2;
+        TorF = exist('qp', 'file') == 2;
     case 'smartmarket'
-        TorF = exist(which('runmkt')) == 2;
-    case 'sparse_lp'
-        TorF = have_fcn('bpmpd') | have_fcn('linprog');
-    case 'sparse_qp'
-        TorF = have_fcn('bpmpd') | have_fcn('quadprog');
+        TorF = exist('runmkt', 'file') == 2;
     case {'pdipmopf', 'scpdipmopf', 'tralmopf'}
         v = ver('Matlab');
         %% requires >= Matlab 6.5 (R13) (released 20-Jun-2002)
@@ -57,14 +51,14 @@ switch tag
         if datenum(v.Date) >= 731387
             switch tag
                 case 'pdipmopf'
-                    TorF = exist(which('pdipmopf')) == 3;
+                    TorF = exist('pdipmopf', 'file') == 3;
                 case 'scpdipmopf'
-                    TorF = exist(which('scpdipmopf')) == 3;
+                    TorF = exist('scpdipmopf', 'file') == 3;
                 case 'tralmopf'
                     %% requires >= Matlab 7.3 (R2006b) (released 03-Aug-2006)
                     %% older versions do not include the needed form of chol()
                     if datenum(v.Date) >= 732892
-                        TorF = exist(which('tralmopf')) == 3;
+                        TorF = exist('tralmopf', 'file') == 3;
                     else
                         TorF = 0;
                     end
