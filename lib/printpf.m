@@ -37,6 +37,9 @@ if isstruct(baseMVA)
     else
         mpopt = gen;
     end
+    if mpopt(32) == 0 && mpopt(43) == 0     %% OUT_ALL or OUT_RAW
+        return;     %% nothin' to see here, bail out now
+    end
     if nargin < 2 || isempty(bus)
         fd = 1;         %% print to stdio by default
     else
@@ -57,6 +60,9 @@ else
         if nargin < 8
             fd = 1;         %% print to stdio by default
         end
+    end
+    if mpopt(32) == 0 && mpopt(43) == 0     %% OUT_ALL or OUT_RAW
+        return;     %% nothin' to see here, bail out now
     end
 end
 isOPF = ~isempty(f);    %% FALSE -> only simple PF data, TRUE -> OPF data
@@ -111,7 +117,7 @@ j = sqrt(-1);
 %% internal bus number
 i2e = bus(:, BUS_I);
 e2i = sparse(max(i2e), 1);
-e2i(i2e) = [1:size(bus, 1)]';
+e2i(i2e) = (1:size(bus, 1))';
 
 %% sizes of things
 nb = size(bus, 1);      %% number of buses
@@ -231,10 +237,10 @@ if OUT_AREA_SUM
         ibrch = find(bus(e2i(branch(:, F_BUS)), BUS_AREA) == a & bus(e2i(branch(:, T_BUS)), BUS_AREA) == a);
         in_tie = find(bus(e2i(branch(:, F_BUS)), BUS_AREA) == a & bus(e2i(branch(:, T_BUS)), BUS_AREA) ~= a);
         out_tie = find(bus(e2i(branch(:, F_BUS)), BUS_AREA) ~= a & bus(e2i(branch(:, T_BUS)), BUS_AREA) == a);
-        if length(xfmr)
-            nxfmr = length(find(bus(e2i(branch(xfmr, F_BUS)), BUS_AREA) == a & bus(e2i(branch(xfmr, T_BUS)), BUS_AREA) == a));
-        else
+        if isempty(xfmr)
             nxfmr = 0;
+        else
+            nxfmr = length(find(bus(e2i(branch(xfmr, F_BUS)), BUS_AREA) == a & bus(e2i(branch(xfmr, T_BUS)), BUS_AREA) == a));
         end
         fprintf(fd, '\n%3d  %6d   %5d  %5d   %5d  %5d  %5d   %5d   %5d  %5d  %5d', ...
             a, length(ib), length(ig), length(igon), ...
@@ -333,7 +339,7 @@ if OUT_GEN
     for k = 1:length(ong)
         i = ong(k);
         fprintf(fd, '\n%3d %6d     %2d ', i, gen(i, GEN_BUS), gen(i, GEN_STATUS));
-        if gen(i, GEN_STATUS) > 0 & (gen(i, PG) || gen(i, QG))
+        if gen(i, GEN_STATUS) > 0 && (gen(i, PG) || gen(i, QG))
             fprintf(fd, '%10.2f%10.2f', gen(i, PG), gen(i, QG));
         else
             fprintf(fd, '       -         -  ');
@@ -343,7 +349,7 @@ if OUT_GEN
     fprintf(fd, '\n                     --------  --------');
     fprintf(fd, '\n            Total: %9.2f%10.2f', sum(gen(ong, PG)), sum(gen(ong, QG)));
     fprintf(fd, '\n');
-    if length(onld) > 0
+    if ~isempty(onld)
         fprintf(fd, '\n================================================================================');
         fprintf(fd, '\n|     Dispatchable Load Data                                                   |');
         fprintf(fd, '\n================================================================================');
@@ -356,7 +362,7 @@ if OUT_GEN
         for k = 1:length(onld)
             i = onld(k);
             fprintf(fd, '\n%3d %6d     %2d ', i, gen(i, GEN_BUS), gen(i, GEN_STATUS));
-            if gen(i, GEN_STATUS) > 0 & (gen(i, PG) || gen(i, QG))
+            if gen(i, GEN_STATUS) > 0 && (gen(i, PG) || gen(i, QG))
                 fprintf(fd, '%10.2f%10.2f', -gen(i, PG), -gen(i, QG));
             else
                 fprintf(fd, '       -         -  ');
@@ -427,7 +433,7 @@ if OUT_BRANCH
     fprintf(fd, '\n  #     Bus    Bus    P (MW)   Q (MVAr)   P (MW)   Q (MVAr)   P (MW)   Q (MVAr)');
     fprintf(fd, '\n-----  -----  -----  --------  --------  --------  --------  --------  --------');
     fprintf(fd, '\n%4d%7d%7d%10.2f%10.2f%10.2f%10.2f%10.3f%10.2f', ...
-            [   [1:nl]', branch(:, [F_BUS, T_BUS]), ...
+            [   (1:nl)', branch(:, [F_BUS, T_BUS]), ...
                 branch(:, [PF, QF]), branch(:, [PT, QT]), ...
                 real(loss), imag(loss) ...
             ]');
@@ -709,22 +715,22 @@ if OUT_RAW
     
         fprintf(fd, 'branch\n');
         fprintf(fd, '%d\t%g\t%g\t%g\t%g\t%g\t%g\n', ...
-                    [[1:nl]' branch(:, [PF, QF, PT, QT, MU_SF, MU_ST])]');
+                    [(1:nl)' branch(:, [PF, QF, PT, QT, MU_SF, MU_ST])]');
     
         fprintf(fd, 'gen\n');
         fprintf(fd, '%d\t%g\t%g\t%g\t%d\t%g\t%g\t%g\t%g\n', ...
-                    [[1:ng]' gen(:, [PG, QG, VG, GEN_STATUS, MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN])]');
+                    [(1:ng)' gen(:, [PG, QG, VG, GEN_STATUS, MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN])]');
     else
         fprintf(fd, '%d\t%d\t%f\t%f\t%d\t%d\t%d\t%d\n', ...
                     [bus(:, [BUS_I, BUS_TYPE, VM, VA]) zeros(nb, 4)]');
     
         fprintf(fd, 'branch\n');
         fprintf(fd, '%d\t%f\t%f\t%f\t%f\t%d\t%d\n', ...
-                    [[1:nl]' branch(:, [PF, QF, PT, QT]) zeros(nl, 2)]');
+                    [(1:nl)' branch(:, [PF, QF, PT, QT]) zeros(nl, 2)]');
     
         fprintf(fd, 'gen\n');
         fprintf(fd, '%d\t%f\t%f\t%f\t%d\t%d\t%d\t%d\t%d\n', ...
-                    [[1:ng]' gen(:, [PG, QG, VG, GEN_STATUS]) zeros(ng, 4)]');
+                    [(1:ng)' gen(:, [PG, QG, VG, GEN_STATUS]) zeros(ng, 4)]');
     end
     fprintf(fd, 'end\n');
     fprintf(fd, '----------  raw PB::Soln data above  ----------\n');
