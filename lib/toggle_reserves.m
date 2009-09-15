@@ -27,8 +27,6 @@ if strcmp(on_off, 'on')
     mpc = add_userfcn(mpc, 'int2ext', 'userfcn_reserves_int2ext');
     mpc = add_userfcn(mpc, 'printpf', 'userfcn_reserves_printpf');
     mpc = add_userfcn(mpc, 'savecase', 'userfcn_reserves_savecase');
-    
-    % mpc = add_userfcn(mpc, 'formulation', 'userfcn_reserves', mpc.reserves);
 elseif strcmp(on_off, 'off')
     mpc = remove_userfcn(mpc, 'savecase', 'userfcn_reserves_savecase');
     mpc = remove_userfcn(mpc, 'printpf', 'userfcn_reserves_printpf');
