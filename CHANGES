@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 3.2
 -----------------
 
+10/9/09
+    - Added ability to specify interface flow limits (based on
+      DC model flows).
+
 7/10/09
     - Removed 'sparse_qp' and 'sparse_lp' from have_fcn().
     - Major speed-up in @opf_model/linear_constraints.m for
