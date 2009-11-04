@@ -21,6 +21,11 @@ Changes since 3.2
       optional, so we just let functions get terminated by the
       end-of-file or another function declaration.
 
+11/3/09
+    - Removed genform.m, runcomp.m and t/t_opf.m.
+    - Renamed compare.m to compare_case.m and updated it to work with
+      unsolved cases, solved PF	cases and solved OPF cases.
+
 10/9/09
     - Added ability to specify interface flow limits (based on
       DC model flows).
