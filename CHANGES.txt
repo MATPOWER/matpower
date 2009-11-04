@@ -15,6 +15,12 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 3.2
 -----------------
 
+11/4/09
+    - Removed unnecessary 'return' statement at end of all M-files. If
+      anything it should be an 'end' statement, but even that is
+      optional, so we just let functions get terminated by the
+      end-of-file or another function declaration.
+
 10/9/09
     - Added ability to specify interface flow limits (based on
       DC model flows).
