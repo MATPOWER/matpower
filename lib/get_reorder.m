@@ -23,5 +23,3 @@ for k = 1:ndim
     end
 end
 B = subsref(A, s);
-
-return;

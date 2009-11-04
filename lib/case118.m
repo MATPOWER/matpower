@@ -456,8 +456,6 @@ gencost = [
 	2	0	0	3	0.01	40	0;
 ];
 
-return;
-
 % Warnings from cdf2matp conversion:
 %
 % ***** area data conversion not yet implemented (creating dummy area data)

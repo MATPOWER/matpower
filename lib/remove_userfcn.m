@@ -23,5 +23,3 @@ for k = n:-1:1
         break;
     end
 end
-
-return;

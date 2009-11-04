@@ -59,5 +59,3 @@ else
     end
     fprintf('\nElapsed time %.2f seconds.\n', etime(clock, t_clock));
 end
-
-return;

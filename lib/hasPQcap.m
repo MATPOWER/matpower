@@ -64,5 +64,3 @@ if ~strcmp(hilo, 'L')       %% include upper constraint
 end
 
 TorF = L | U;
-
-return;

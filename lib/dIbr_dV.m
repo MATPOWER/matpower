@@ -54,5 +54,3 @@ if nargout > 4
 	If = Yf * V;
 	It = Yt * V;
 end
-
-return;

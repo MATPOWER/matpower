@@ -33,5 +33,3 @@ Cg = sparse(gbus, [1:ngon]', ones(ngon, 1), nb, ngon);  %% connection matrix
 Sbus =  ( Cg * (gen(on, PG) + j * gen(on, QG)) ...  %% power injected by generators
             - (bus(:, PD) + j * bus(:, QD)) ) / ... %% plus power injected by loads
         baseMVA;                                    %% converted to p.u.
-
-return;

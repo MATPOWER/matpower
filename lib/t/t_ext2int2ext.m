@@ -306,5 +306,3 @@ t_is(mpc.A, mpce.A, 12, [t 'A']);
 t_is(mpc.N, mpce.N, 12, [t 'N']);
 
 t_end;
-
-return;

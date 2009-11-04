@@ -58,5 +58,3 @@ COST        = 5;    %% beginning of cost parameters,
                     %% where the polynomial is c2*P^2 + c1*P + c0
                     %% note: polynomials can be of any degree, highest
                     %% order coefficient always goes first
-
-return;

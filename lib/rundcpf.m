@@ -54,5 +54,3 @@ end
 
 mpopt = mpoption(mpopt, 'PF_DC', 1);
 [varargout{1:nargout}] = runpf(casename, mpopt, fname, solvedcase);
-
-return;

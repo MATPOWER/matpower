@@ -300,5 +300,3 @@ pimul = [
   muLB - muUB
 ];
 raw = struct('xr', x, 'pimul', pimul, 'info', info);
-
-return;

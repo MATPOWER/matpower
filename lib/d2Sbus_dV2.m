@@ -35,5 +35,3 @@ Haa = E + F;
 Hva = j * G * (E - F);
 Hav = Hva.';
 Hvv = G * (C + C.') * G;
-
-return;

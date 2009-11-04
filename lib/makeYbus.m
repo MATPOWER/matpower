@@ -71,5 +71,3 @@ Yt = sparse(i, [f; t], [Ytf; Ytt], nl, nb);
 %% build Ybus
 Ybus = Cf' * Yf + Ct' * Yt + ...                %% branch admittances
         sparse(1:nb, 1:nb, Ysh, nb, nb);        %% shunt admittance
-
-return;

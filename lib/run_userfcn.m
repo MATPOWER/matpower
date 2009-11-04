@@ -36,5 +36,3 @@ if ~isempty(userfcn) && isfield(userfcn, stage)
         end
     end
 end
-
-return;

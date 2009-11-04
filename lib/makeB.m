@@ -41,5 +41,3 @@ if nargout == 2
     end
     Bpp = -imag( makeYbus(baseMVA, bus, temp_branch) );
 end
-
-return;

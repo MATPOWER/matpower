@@ -124,5 +124,3 @@ for k = 1:nz
         Qd(k) = sum(Qdf(idx)) + sum(Qdd(idx));
     end
 end
-
-return;

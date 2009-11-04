@@ -69,5 +69,3 @@ switch tag
     otherwise
         error('have_fcn: unknown functionality %s', tag);
 end
-
-return;

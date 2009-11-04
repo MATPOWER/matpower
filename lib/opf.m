@@ -591,5 +591,3 @@ elseif success
   results.success = success;
   printpf(results, 1, mpopt);
 end
-
-return;

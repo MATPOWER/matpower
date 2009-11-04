@@ -86,8 +86,6 @@ gencost = [
 	2	0	0	3	0.01	40	0;
 ];
 
-return;
-
 % Warnings from cdf2matp conversion:
 %
 % ***** Qmax = Qmin at generator at bus    1 (Qmax set to Qmin + 10)

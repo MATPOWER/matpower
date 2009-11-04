@@ -63,8 +63,6 @@ else
     error('toggle_reserves: 2nd argument must be either ''on'' or ''off''');
 end
 
-return;
-
 
 %%-----  ext2int  ------------------------------------------------------
 function mpc = userfcn_reserves_ext2int(mpc, args)
@@ -127,8 +125,6 @@ mpc = ext2int(mpc, {'reserves', 'rgens'}, 'gen', 2);
 mpc.order.ext.reserves.igr = igr;               %% external indexing
 mpc.reserves.igr = find(mpc.reserves.rgens);    %% internal indexing
 
-return;
-
 
 %%-----  formulation  --------------------------------------------------
 function om = userfcn_reserves_formulation(om, args)
@@ -180,8 +176,6 @@ om = add_vars(om, 'R', ngr, [], Rmin, Rmax);
 om = add_constraints(om, 'Pg_plus_R', Ar, [], ur, {'Pg', 'R'});
 om = add_constraints(om, 'Rreq', r.zones(:, igr), lreq, [], {'R'});
 om = add_costs(om, 'Rcost', struct('N', I, 'Cw', r.cost(igr)), {'R'});
-
-return;
 
 
 %%-----  int2ext  ------------------------------------------------------
@@ -267,8 +261,6 @@ if isfield(r, 'original')
     results.reserves.cost = r.original.cost;
     results.reserves = rmfield(results.reserves, 'original');
 end
-
-return;
 
 
 %%-----  printpf  ------------------------------------------------------
@@ -361,8 +353,6 @@ if OUT_ALL ~= 0
     fprintf(fd, '\n');
 end
 
-return;
-
 
 %%-----  savecase  -----------------------------------------------------
 function mpc = userfcn_reserves_savecase(mpc, fd, prefix, args)
@@ -428,5 +418,3 @@ if isfield(r, 'R')
     end
     fprintf(fd, '\n');
 end
-
-return;

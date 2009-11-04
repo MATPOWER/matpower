@@ -34,5 +34,3 @@ if ~t_quiet
     fprintf('ok %d%s\n', t_counter, msg);
 end
 t_counter = t_counter + 1;
-
-return;

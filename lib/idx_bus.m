@@ -75,5 +75,3 @@ LAM_P       = 14;   %% Lagrange multiplier on real power mismatch (u/MW)
 LAM_Q       = 15;   %% Lagrange multiplier on reactive power mismatch (u/MVAr)
 MU_VMAX     = 16;   %% Kuhn-Tucker multiplier on upper voltage limit (u/p.u.)
 MU_VMIN     = 17;   %% Kuhn-Tucker multiplier on lower voltage limit (u/p.u.)
-
-return;

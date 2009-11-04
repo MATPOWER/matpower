@@ -276,5 +276,3 @@ pimul = [ ...
   results.mu.var.l - results.mu.var.u;
 ];
 raw = struct('xr', x, 'pimul', pimul, 'info', info);
-
-return;

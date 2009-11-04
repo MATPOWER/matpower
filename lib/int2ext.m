@@ -228,5 +228,3 @@ else            %% old form
         areas(:, PRICE_REF_BUS) = i2e( areas(:, PRICE_REF_BUS)  );
     end
 end
-
-return;

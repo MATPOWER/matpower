@@ -349,5 +349,3 @@ if want_mpc
   baseMVA = mpc;
   bus = mpopt;
 end
-
-return;

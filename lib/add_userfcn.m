@@ -113,5 +113,3 @@ mpc.userfcn.(stage)(n).fcn = fcn;
 if ~isempty(args)
     mpc.userfcn.(stage)(n).args = args;
 end
-
-return;

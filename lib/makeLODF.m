@@ -23,5 +23,3 @@ H = PTDF * Cft;
 h = diag(H, 0);
 LODF = H ./ (ones(nl, nl) - ones(nl, 1) * h');
 LODF = LODF - diag(diag(LODF)) - eye(nl, nl);
-
-return;

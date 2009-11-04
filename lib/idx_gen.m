@@ -87,5 +87,3 @@ MU_QMIN     = 25;   %% Kuhn-Tucker multiplier on lower Qg limit (u/MVAr)
 %% upper Qg limit is binding, the multiplier on this constraint is split into
 %% it's P and Q components and combined with the appropriate MU_Pxxx and
 %% MU_Qxxx values. Likewise for the lower Q limits.
-
-return;

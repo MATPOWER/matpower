@@ -19,5 +19,3 @@ Va = Va0;
 
 %% update angles for non-reference buses
 Va([pv; pq]) = B([pv; pq], [pv; pq]) \ (Pbus([pv; pq]) - B([pv; pq], ref) * Va0(ref));
-
-return;

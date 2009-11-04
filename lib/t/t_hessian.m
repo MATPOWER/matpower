@@ -313,5 +313,3 @@ t_is(full(Gtva), num_Gtva, 3, ['Gtva' t]);
 t_is(full(Gtvv), num_Gtvv, 3, ['Gtvv' t]);
 
 t_end;
-
-return;

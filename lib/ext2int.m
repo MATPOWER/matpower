@@ -335,5 +335,3 @@ else            %% old form
         areas(:, PRICE_REF_BUS) = e2i( areas(:, PRICE_REF_BUS)  );
     end
 end
-
-return;

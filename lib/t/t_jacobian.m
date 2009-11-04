@@ -154,5 +154,3 @@ t_is(dIt_dVm_full, num_dIt_dVm, 5, 'dIt_dVm (full)');
 t_is(dIt_dVa_full, num_dIt_dVa, 5, 'dIt_dVa (full)');
 
 t_end;
-
-return;

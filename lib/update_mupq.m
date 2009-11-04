@@ -70,5 +70,3 @@ if ~isempty(mu_PQl)
 %   -[ mu_PQl([1:2]).*Apqldata([1:2],1) mu_PQh([1:2]).*Apqhdata([1:2],1) ]/baseMVA
 %   -[ mu_PQl([1:2]).*Apqldata([1:2],2) mu_PQh([1:2]).*Apqhdata([1:2],2) ]/baseMVA
 end
-
-return;

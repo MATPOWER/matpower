@@ -93,5 +93,3 @@ if nargout > 4
     Sf = V(f) .* conj(If);
     St = V(t) .* conj(It);
 end
-
-return;

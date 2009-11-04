@@ -132,5 +132,3 @@ else
     om = opf_model;
     om.mpc = mpc;
 end
-
-return;

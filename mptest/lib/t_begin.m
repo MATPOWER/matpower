@@ -34,5 +34,3 @@ t_clock = clock;
 if ~t_quiet
     fprintf('1..%d\n', num_of_tests);
 end
-
-return;

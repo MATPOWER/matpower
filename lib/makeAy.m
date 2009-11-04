@@ -81,5 +81,3 @@ for i=iycost'
    k = k + ns - 1;
    j = j + 1;
 end
-
-return;

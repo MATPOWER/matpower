@@ -17,5 +17,3 @@ function TorF = isload(gen)
     QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
 
 TorF = gen(:, PMIN) < 0 & gen(:, PMAX) == 0;
-
-return;

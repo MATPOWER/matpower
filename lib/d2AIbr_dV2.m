@@ -43,5 +43,3 @@ Gaa = 2 * real( Iaa + dIbr_dVa.' * diaglam * conj(dIbr_dVa) );
 Gva = 2 * real( Iva + dIbr_dVm.' * diaglam * conj(dIbr_dVa) );
 Gav = 2 * real( Iav + dIbr_dVa.' * diaglam * conj(dIbr_dVm) );
 Gvv = 2 * real( Ivv + dIbr_dVm.' * diaglam * conj(dIbr_dVm) );
-
-return;

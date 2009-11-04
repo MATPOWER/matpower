@@ -85,5 +85,3 @@ mpc.xbranch = mpc.xbus;
 mpc.xrows = [mpc.xbranch(:, 1:4); mpc.xgen; mpc.xbus(:, 1:4); -ones(2, 4)];
 mpc.xcols = mpc.xrows';
 mpc.x.more = mpc.xgen;
-
-return;

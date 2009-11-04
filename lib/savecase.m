@@ -384,9 +384,6 @@ else                                %% M-file
 		mpc = run_userfcn(mpc.userfcn, 'savecase', mpc, fd, prefix);
 	end
 
-    %% end
-    fprintf(fd, 'return;\n');
-    
     %% close file
     if fd ~= 1
         fclose(fd);
@@ -396,8 +393,6 @@ end
 if nargout > 0
     fname_out = fname;
 end
-
-return;
 
 
 
@@ -414,5 +409,3 @@ else
     fprintf(fd, '];\n');
     fprintf(fd, '%s = sparse(ijs(:, 1), ijs(:, 2), ijs(:, 3), %d, %d);\n', varname, m, n);
 end
-
-return;

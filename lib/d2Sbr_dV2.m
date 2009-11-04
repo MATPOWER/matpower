@@ -43,5 +43,3 @@ Gaa = F - D - E;
 Gva = j * G * (B - B.' - D + E);
 Gav = Gva.';
 Gvv = G * F * G;
-
-return;

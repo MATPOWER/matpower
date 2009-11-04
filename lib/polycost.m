@@ -52,5 +52,3 @@ else
         f = f + c(:, k) .* Pg .^ (k-1);
     end
 end
-
-return;

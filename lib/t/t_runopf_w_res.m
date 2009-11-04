@@ -105,5 +105,3 @@ t_is(r.reserves.mu.Pmax, [1; 0; 0; 0; 1; 0], 6, [t 'mu.Pmax']);
 t_is(r.reserves.cost, mpc.reserves.cost, 12, [t 'cost']);
 
 t_end;
-
-return;

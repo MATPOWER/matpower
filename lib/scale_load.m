@@ -214,5 +214,3 @@ if opt.which(1) ~= 'F'      %% includes 'DISPATCHABLE', not 'FIXED' only
         end
     end
 end
-
-return;

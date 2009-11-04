@@ -109,5 +109,3 @@ t_ok(~isfield(r.reserves, 'R'), [t 'no reserves']);
 % r.if.mu.u
 
 t_end;
-
-return;

@@ -64,5 +64,3 @@ if length(slack) ~= 1
         H = H * slack;
     end
 end
-
-return;

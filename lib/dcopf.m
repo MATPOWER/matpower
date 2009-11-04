@@ -12,5 +12,3 @@ function [varargout] = dcopf(varargin)
 [mpc, mpopt] = opf_args(varargin{:});
 mpopt = mpoption(mpopt, 'PF_DC', 1);
 [varargout{1:nargout}] = opf(mpc, mpopt);
-
-return;

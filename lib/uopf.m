@@ -173,5 +173,3 @@ elseif results0.success
   results0.et = et;
   printpf(results0, et, 1, mpopt);
 end
-
-return;

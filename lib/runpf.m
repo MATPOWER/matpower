@@ -287,5 +287,3 @@ elseif nargout > 2
         deal(results.baseMVA, results.bus, results.gen, results.branch, results.et);
 % else  %% don't define MVAbase, so it doesn't print anything
 end
-
-return;

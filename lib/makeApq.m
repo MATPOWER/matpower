@@ -73,5 +73,3 @@ end
 
 data.ipql = ipql;
 data.ipqh = ipqh;
-
-return;

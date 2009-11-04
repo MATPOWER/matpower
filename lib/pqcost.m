@@ -26,5 +26,3 @@ elseif size(gencost, 1) == 2 * ng
 else
     error('gencost has wrong number of rows');
 end
-
-return;

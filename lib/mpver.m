@@ -79,5 +79,3 @@ else
 
     fprintf('Architecture:          %s\n\n', computer);
 end
-
-return;

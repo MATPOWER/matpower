@@ -38,5 +38,3 @@ if isempty(ref)
     ref = pv(1);                %% use the first PV bus
     pv = pv(2:length(pv));      %% take it off PV list
 end
-
-return;

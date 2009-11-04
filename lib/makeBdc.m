@@ -64,5 +64,3 @@ Bbus = Cft' * Bf;
 Pfinj = b .* (-branch(:, SHIFT) * pi/180);      %% injected at the from bus ...
     % Ptinj = -Pfinj;                           %% ... and extracted at the to bus
 Pbusinj = Cft' * Pfinj;                         %% Pbusinj = Cf * Pfinj + Ct * Ptinj;
-
-return;

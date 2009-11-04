@@ -160,5 +160,3 @@ for j = 1:size(brcols, 1)
     end
 end
 fprintf('%s\n', nodiff);
-
-return;

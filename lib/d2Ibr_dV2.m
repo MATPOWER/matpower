@@ -31,5 +31,3 @@ Gaa = sparse(1:nb, 1:nb, -(Ybr.' * lam) .* V, nb, nb);
 Gva = -j * Gaa * diaginvVm;
 Gav = Gva;
 Gvv = sparse(nb, nb);
-
-return;

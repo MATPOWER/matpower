@@ -45,5 +45,3 @@ else
 	uang =[];
   end
 end
-
-return;

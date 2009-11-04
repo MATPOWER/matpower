@@ -209,5 +209,3 @@ t_is(Pd, [area(3).disp.p; area(1).disp.p], 12, [t 'Pd']);
 t_is(Qd, [area(3).disp.q; area(1).disp.q], 12, [t 'Qd']);
 
 t_end;
-
-return;

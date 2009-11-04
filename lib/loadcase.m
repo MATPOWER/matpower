@@ -222,8 +222,6 @@ else            %% we have a problem captain
     end
 end
 
-return;
-
 
 function [gen, branch] = mpc_1to2(gen, branch)
 
@@ -265,5 +263,3 @@ elseif size(branch, 2) >= QT
 else
     branch = [ branch(:, 1:BR_STATUS) tmp ];
 end
-
-return;

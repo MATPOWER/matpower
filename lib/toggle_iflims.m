@@ -60,8 +60,6 @@ else
     error('toggle_iflims: 2nd argument must be either ''on'' or ''off''');
 end
 
-return;
-
 
 %%-----  ext2int  ------------------------------------------------------
 function mpc = userfcn_iflims_ext2int(mpc, args)
@@ -93,8 +91,6 @@ off = find(ifmap(:, 2) == 0);
 ifmap(off, :) = [];                 %% delete branches that are out
 
 mpc.if.map = ifmap;
-
-return;
 
 
 %%-----  formulation  --------------------------------------------------
@@ -150,8 +146,6 @@ end
 %% add interface constraint
 om = add_constraints(om, 'iflims',  Aif, lif, uif, {'Va'});      %% nifs
 
-return;
-
 
 %%-----  int2ext  ------------------------------------------------------
 function results = userfcn_iflims_int2ext(results, args)
@@ -190,8 +184,6 @@ for k = 1:nifs
 end
 results.if.mu.l = results.lin.mu.l.iflims;
 results.if.mu.u = results.lin.mu.u.iflims;
-
-return;
 
 
 %%-----  printpf  ------------------------------------------------------
@@ -242,8 +234,6 @@ if OUT_ALL ~= 0
     fprintf(fd, '\n');
 end
 
-return;
-
 
 %%-----  savecase  -----------------------------------------------------
 function mpc = userfcn_iflims_savecase(mpc, fd, prefix, args)
@@ -285,5 +275,3 @@ if isfield(mpc.if, 'P')
     end
     fprintf(fd, '\n');
 end
-
-return;

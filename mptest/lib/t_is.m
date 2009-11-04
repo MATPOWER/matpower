@@ -45,5 +45,3 @@ if ~condition & ~t_quiet
 		fprintf('        expected: %d x %d\n\n', size(expected));
 	end
 end
-
-return;

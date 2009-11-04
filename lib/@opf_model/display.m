@@ -72,5 +72,3 @@ if ~isempty(fieldnames(om.userdata))
     fprintf('\n');
 end
 display(om.userdata);
-
-return;

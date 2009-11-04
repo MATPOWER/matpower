@@ -26,5 +26,3 @@ if ~t_quiet
     fprintf('skipped tests %d..%d%s\n', t_counter, t_counter+cnt-1, msg);
 end
 t_counter = t_counter + cnt;
-
-return;

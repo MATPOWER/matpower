@@ -8,5 +8,3 @@ function mpc = get_mpc(om)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 mpc = om.mpc;
-
-return;

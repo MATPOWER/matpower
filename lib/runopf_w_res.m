@@ -30,5 +30,3 @@ mpc = toggle_reserves(mpc, 'on');
 if nargout > 0 && isstruct(varargout{1})
 	varargout{1} = toggle_reserves(varargout{1}, 'off');
 end
-
-return;

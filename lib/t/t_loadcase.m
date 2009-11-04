@@ -501,5 +501,3 @@ c.gen(3,2) = c.gen(3,2) + 1;            %% increase gen 3 output by 1
 t_is(gen5(1,2), gen4(1,2) - 1, 1, t);   %% slack bus output should decrease by 1
 
 t_end;
-
-return;

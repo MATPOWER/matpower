@@ -64,5 +64,3 @@ for k = outages
 end
 
 t_end;
-
-return;

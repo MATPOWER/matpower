@@ -431,5 +431,3 @@ while i <= nargin
 
     i = i + 2;                              %% go to next parameter
 end
-
-return;

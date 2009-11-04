@@ -37,5 +37,3 @@ if ~isempty(gencost)
   	totalcost(ipol, i) = polycost(gencost(ipol, :), Pg(ipol, i));
   end
 end
-
-return;

@@ -35,5 +35,3 @@ for i = 1:m
     pwlcost(i,      COST:2:(COST + 2*(npts-1)    )) = xx;
     pwlcost(i,  (COST+1):2:(COST + 2*(npts-1) + 1)) = yy;
 end
-
-return;

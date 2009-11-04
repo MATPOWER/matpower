@@ -382,5 +382,3 @@ Pd([7 8]) = load(2) * Pd([7 8]);
 t_is( bus(:, PD), Pd, 8, t);
 
 t_end;
-
-return;

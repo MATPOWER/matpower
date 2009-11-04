@@ -52,5 +52,3 @@ end
 
 dSbus_dVm = diagV * conj(Ybus * diagVnorm) + conj(diagIbus) * diagVnorm;
 dSbus_dVa = j * diagV * conj(diagIbus - Ybus * diagV);
-
-return;

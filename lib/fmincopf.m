@@ -13,5 +13,3 @@ function [varargout] = fmincopf(varargin)
 [mpc, mpopt] = opf_args(varargin{:});
 mpopt = mpoption(mpopt, 'OPF_ALG', 520);
 [varargout{1:nargout}] = opf(mpc, mpopt);
-
-return;

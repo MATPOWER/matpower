@@ -105,5 +105,3 @@ mpc.gen(2, [QMIN QMAX]) = [50 150];
 t_is(gen(1:2, QG), [-50+8.02; 50+16.05], 2, [t '2 gens, proportional']);
 
 t_end;
-
-return;

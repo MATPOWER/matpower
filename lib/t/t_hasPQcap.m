@@ -42,5 +42,3 @@ t = 'hasPQcap(gen, ''L'')';
 t_is(hasPQcap(gen, 'L'), [0;1;0;1;1;1;1;0;0;0;0], 12, t);
 
 t_end;
-
-return;

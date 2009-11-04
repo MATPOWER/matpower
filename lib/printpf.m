@@ -736,5 +736,3 @@ if OUT_RAW
     fprintf(fd, 'end\n');
     fprintf(fd, '----------  raw PB::Soln data above  ----------\n');
 end
-
-return;

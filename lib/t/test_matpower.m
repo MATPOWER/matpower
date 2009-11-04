@@ -80,5 +80,3 @@ if exist('apply_contingency') == 2
 end
 
 t_run_tests( tests, verbose );
-
-return;
