@@ -248,24 +248,24 @@ function mpc = userfcn_iflims_savecase(mpc, fd, prefix, args)
 ifmap = mpc.if.map;
 iflims = mpc.if.lims;
 
-fprintf(fd, '%%%%-----  Interface Flow Limit Data  -----%%%%\n');
+fprintf(fd, '\n%%%%-----  Interface Flow Limit Data  -----%%%%\n');
 fprintf(fd, '%%%% interface<->branch map data\n');
 fprintf(fd, '%%\tifnum\tbranchidx (negative defines opposite direction)\n');
 fprintf(fd, '%sif.map = [\n', prefix);
 fprintf(fd, '\t%d\t%d;\n', ifmap');
-fprintf(fd, '];\n\n');
+fprintf(fd, '];\n');
 
-fprintf(fd, '%%%% interface flow limit data (based on DC model)\n');
+fprintf(fd, '\n%%%% interface flow limit data (based on DC model)\n');
 fprintf(fd, '%%%% (lower limit should be negative for opposite direction)\n');
 fprintf(fd, '%%\tifnum\tlower\tupper\n');
 fprintf(fd, '%sif.lims = [\n', prefix);
 fprintf(fd, '\t%d\t%g\t%g;\n', iflims');
-fprintf(fd, '];\n\n');
+fprintf(fd, '];\n');
 
 %% save output fields for solved case
 if isfield(mpc.if, 'P')
     if exist('serialize') == 2
-        fprintf(fd, '%%%% solved values\n');
+        fprintf(fd, '\n%%%% solved values\n');
         fprintf(fd, '%sif.P = %s\n', prefix, serialize(mpc.if.P));
         fprintf(fd, '%sif.mu.l = %s\n', prefix, serialize(mpc.if.mu.l));
         fprintf(fd, '%sif.mu.u = %s\n', prefix, serialize(mpc.if.mu.u));
@@ -273,5 +273,4 @@ if isfield(mpc.if, 'P')
         url = 'http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=12063&objectType=file';
         warning('userfcn_iflims_savecase: Cannot save the ''iflims'' output fields without the ''serialize'' function, which is available as a free download from:\n<%s>\n\n', url);
     end
-    fprintf(fd, '\n');
 end

@@ -366,7 +366,7 @@ function mpc = userfcn_reserves_savecase(mpc, fd, prefix, args)
 
 r = mpc.reserves;
 
-fprintf(fd, '%%%%-----  Reserve Data  -----%%%%\n');
+fprintf(fd, '\n%%%%-----  Reserve Data  -----%%%%\n');
 fprintf(fd, '%%%% reserve zones, element i, j is 1 if gen j is in zone i, 0 otherwise\n');
 fprintf(fd, '%sreserves.zones = [\n', prefix);
 template = '';
@@ -375,37 +375,37 @@ for i = 1:size(r.zones, 2)
 end
 template = [template, ';\n'];
 fprintf(fd, template, r.zones.');
-fprintf(fd, '];\n\n');
+fprintf(fd, '];\n');
 
-fprintf(fd, '%%%% reserve requirements for each zone in MW\n');
+fprintf(fd, '\n%%%% reserve requirements for each zone in MW\n');
 fprintf(fd, '%sreserves.req = [\t%g', prefix, r.req(1));
 if length(r.req) > 1
     fprintf(fd, ';\t%g', r.req(2:end));
 end
-fprintf(fd, '\t];\n\n');
+fprintf(fd, '\t];\n');
 
-fprintf(fd, '%%%% reserve costs in $/MW for each gen that belongs to at least 1 zone\n');
+fprintf(fd, '\n%%%% reserve costs in $/MW for each gen that belongs to at least 1 zone\n');
 fprintf(fd, '%%%% (same order as gens, but skipping any gen that does not belong to any zone)\n');
 fprintf(fd, '%sreserves.cost = [\t%g', prefix, r.cost(1));
 if length(r.cost) > 1
     fprintf(fd, ';\t%g', r.cost(2:end));
 end
-fprintf(fd, '\t];\n\n');
+fprintf(fd, '\t];\n');
 
 if isfield(r, 'qty')
-    fprintf(fd, '%%%% OPTIONAL max reserve quantities for each gen that belongs to at least 1 zone\n');
+    fprintf(fd, '\n%%%% OPTIONAL max reserve quantities for each gen that belongs to at least 1 zone\n');
     fprintf(fd, '%%%% (same order as gens, but skipping any gen that does not belong to any zone)\n');
     fprintf(fd, '%sreserves.qty = [\t%g', prefix, r.qty(1));
     if length(r.qty) > 1
         fprintf(fd, ';\t%g', r.qty(2:end));
     end
-    fprintf(fd, '\t];\n\n');
+    fprintf(fd, '\t];\n');
 end
 
 %% save output fields for solved case
 if isfield(r, 'R')
     if exist('serialize') == 2
-        fprintf(fd, '%%%% solved values\n');
+        fprintf(fd, '\n%%%% solved values\n');
         fprintf(fd, '%sreserves.R = %s\n', prefix, serialize(r.R));
         fprintf(fd, '%sreserves.Rmin = %s\n', prefix, serialize(r.Rmin));
         fprintf(fd, '%sreserves.Rmax = %s\n', prefix, serialize(r.Rmax));
@@ -416,5 +416,4 @@ if isfield(r, 'R')
         url = 'http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=12063&objectType=file';
         warning('userfcn_reserves_savecase: Cannot save the ''reserves'' output fields without the ''serialize'' function, which is available as a free download from:\n<%s>\n\n', url);
     end
-    fprintf(fd, '\n');
 end

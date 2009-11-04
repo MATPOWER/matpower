@@ -186,11 +186,11 @@ else                                %% M-file
     end
     fprintf(fd, '\n%%%%-----  Power Flow Data  -----%%%%\n');
     fprintf(fd, '%%%% system MVA base\n');
-    fprintf(fd, '%sbaseMVA = %g;\n\n', prefix, baseMVA);
+    fprintf(fd, '%sbaseMVA = %g;\n', prefix, baseMVA);
     
     %% bus data
     ncols = size(bus, 2);
-    fprintf(fd, '%%%% bus data\n');
+    fprintf(fd, '\n%%%% bus data\n');
     fprintf(fd, '%%\tbus_i\ttype\tPd\tQd\tGs\tBs\tarea\tVm\tVa\tbaseKV\tzone\tVmax\tVmin');
     if ncols >= MU_VMIN             %% opf SOLVED, save with lambda's & mu's
         fprintf(fd, '\tlam_P\tlam_Q\tmu_Vmax\tmu_Vmin');
@@ -201,11 +201,11 @@ else                                %% M-file
     else                            %% opf SOLVED, save with lambda's & mu's
         fprintf(fd, '\t%d\t%d\t%g\t%g\t%g\t%g\t%d\t%.8g\t%.8g\t%g\t%d\t%g\t%g\t%.4f\t%.4f\t%.4f\t%.4f;\n', bus(:, 1:MU_VMIN).');
     end
-    fprintf(fd, '];\n\n');
+    fprintf(fd, '];\n');
     
     %% generator data
     ncols = size(gen, 2);
-    fprintf(fd, '%%%% generator data\n');
+    fprintf(fd, '\n%%%% generator data\n');
     fprintf(fd, '%%\tbus\tPg\tQg\tQmax\tQmin\tVg\tmBase\tstatus\tPmax\tPmin');
     if ~strcmp(mpc_ver, '1')
         fprintf(fd, '\tPc1\tPc2\tQc1min\tQc1max\tQc2min\tQc2max\tramp_agc\tramp_10\tramp_30\tramp_q\tapf');
@@ -227,11 +227,11 @@ else                                %% M-file
             fprintf(fd, '\t%d\t%g\t%g\t%g\t%g\t%.8g\t%g\t%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%.4f\t%.4f\t%.4f\t%.4f;\n', gen(:, 1:MU_QMIN).');
         end
     end
-    fprintf(fd, '];\n\n');
+    fprintf(fd, '];\n');
     
     %% branch data
     ncols = size(branch, 2);
-    fprintf(fd, '%%%% branch data\n');
+    fprintf(fd, '\n%%%% branch data\n');
     fprintf(fd, '%%\tfbus\ttbus\tr\tx\tb\trateA\trateB\trateC\tratio\tangle\tstatus');
     if ~strcmp(mpc_ver, '1')
         fprintf(fd, '\tangmin\tangmax');
@@ -265,25 +265,25 @@ else                                %% M-file
             fprintf(fd, '\t%d\t%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%d\t%g\t%g\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f;\n', branch(:, 1:MU_ANGMAX).');
         end
     end
-    fprintf(fd, '];\n\n');
+    fprintf(fd, '];\n');
     
     %% OPF data
     if (exist('areas') == 1 && ~isempty(areas)) || ...
         (exist('gencost') == 1 && ~isempty(gencost))
-        fprintf(fd, '%%%%-----  OPF Data  -----%%%%\n');
+        fprintf(fd, '\n%%%%-----  OPF Data  -----%%%%');
     end
     if exist('areas') == 1 && ~isempty(areas)
         %% area data
-        fprintf(fd, '%%%% area data\n');
+        fprintf(fd, '\n%%%% area data\n');
         fprintf(fd, '%sareas = [\n', prefix);
         if ~isempty(areas)
             fprintf(fd, '\t%d\t%d;\n', areas(:, 1:PRICE_REF_BUS).');
         end
-        fprintf(fd, '];\n\n');
+        fprintf(fd, '];\n');
     end
     if exist('gencost') == 1 && ~isempty(gencost)
         %% generator cost data
-        fprintf(fd, '%%%% generator cost data\n');
+        fprintf(fd, '\n%%%% generator cost data\n');
         fprintf(fd, '%%\t1\tstartup\tshutdown\tn\tx1\ty1\t...\txn\tyn\n');
         fprintf(fd, '%%\t2\tstartup\tshutdown\tn\tc(n-1)\t...\tc0\n');
         fprintf(fd, '%sgencost = [\n', prefix);
@@ -301,19 +301,19 @@ else                                %% M-file
             template = [template, ';\n'];
             fprintf(fd, template, gencost.');
         end
-        fprintf(fd, '];\n\n');
+        fprintf(fd, '];\n');
     end
     
     %% generalized OPF user data
     if (isfield(mpc, 'A') && ~isempty(mpc.A)) || ...
             (isfield(mpc, 'N') && ~isempty(mpc.N))
-        fprintf(fd, '%%%%-----  Generalized OPF User Data  -----%%%%\n');
+        fprintf(fd, '\n%%%%-----  Generalized OPF User Data  -----%%%%');
     end
 
     %% user constraints
     if isfield(mpc, 'A') && ~isempty(mpc.A)
         %% A
-        fprintf(fd, '%%%% user constraints\n');
+        fprintf(fd, '\n%%%% user constraints\n');
         print_sparse(fd, sprintf('%sA', prefix), mpc.A);
         if isfield(mpc, 'l') && ~isempty(mpc.l) && ...
                 isfield(mpc, 'u') && ~isempty(mpc.u)
@@ -329,13 +329,13 @@ else                                %% M-file
         elseif isfield(mpc, 'u') && ~isempty(mpc.u)
             fprintf(fd, '%su = [\n', prefix);
             fprintf(fd, '\t%g;\n', mpc.u);
-            fprintf(fd, '];\n\n');
+            fprintf(fd, '];\n');
         end
     end
 
     %% user costs
     if isfield(mpc, 'N') && ~isempty(mpc.N)
-        fprintf(fd, '%%%% user costs\n');
+        fprintf(fd, '\n%%%% user costs\n');
         print_sparse(fd, sprintf('%sN', prefix), mpc.N);
         if isfield(mpc, 'H') && ~isempty(mpc.H)
             print_sparse(fd, sprintf('%sH', prefix), mpc.H);
@@ -345,17 +345,17 @@ else                                %% M-file
             fprintf(fd, '\t%g\t%d\t%g\t%g\t%g;\n', [mpc.Cw mpc.fparm].');
             fprintf(fd, '];\n');
             fprintf(fd, '%sCw    = Cw_fparm(:, 1);\n', prefix);
-            fprintf(fd, '%sfparm = Cw_fparm(:, 2:5);\n\n', prefix);
+            fprintf(fd, '%sfparm = Cw_fparm(:, 2:5);\n', prefix);
         else
             fprintf(fd, '%sCw = [\n', prefix);
             fprintf(fd, '\t%g;\n', mpc.Cw);
-            fprintf(fd, '];\n\n');
+            fprintf(fd, '];\n');
         end
     end
 
     %% user vars
     if isfield(mpc, 'z0') || isfield(mpc, 'zl') || isfield(mpc, 'zu')
-        fprintf(fd, '%%%% user vars\n');
+        fprintf(fd, '\n%%%% user vars\n');
     end
     if isfield(mpc, 'z0') && ~isempty(mpc.z0)
         fprintf(fd, '%sz0 = [\n', prefix);
@@ -371,12 +371,6 @@ else                                %% M-file
         fprintf(fd, '%szu = [\n', prefix);
         fprintf(fd, '\t%g;\n', mpc.zu);
         fprintf(fd, '];\n');
-    end
-    if isfield(mpc, 'z0') || isfield(mpc, 'zl') || isfield(mpc, 'zu')
-        fprintf(fd, '\n');
-    end
-    if isfield(mpc, 'z0') || isfield(mpc, 'zl') || isfield(mpc, 'zu')
-        fprintf(fd, '\n');
     end
 
 	%% execute userfcn callbacks for 'savecase' stage
