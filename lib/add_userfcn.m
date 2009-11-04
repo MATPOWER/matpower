@@ -101,8 +101,8 @@ if isfield(mpc, 'userfcn')
         n = length(mpc.userfcn.(stage)) + 1;
         if ~allow_multiple
             for k = 1:n-1
-                if strcmp(mpc.userfcn.(stage)(k).fcn, fcn)
-                    error('add_userfcn: the function ''%s'' has already been added', fcn);
+                if isequal(mpc.userfcn.(stage)(k).fcn, fcn)
+                    error('add_userfcn: the function ''%s'' has already been added', func2str(fcn));
                 end
             end
         end

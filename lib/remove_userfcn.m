@@ -17,7 +17,7 @@ function mpc = remove_userfcn(mpc, stage, fcn)
 found = 0;
 n = length(mpc.userfcn.(stage));
 for k = n:-1:1
-    if strcmp(mpc.userfcn.(stage)(k).fcn, fcn)
+    if isequal(mpc.userfcn.(stage)(k).fcn, fcn)
         found = 1;
         mpc.userfcn.(stage)(k) = [];
         break;
