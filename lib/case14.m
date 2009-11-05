@@ -73,6 +73,7 @@ branch = [
 
 %%-----  OPF Data  -----%%
 %% area data
+%	area	refbus
 areas = [];
 
 %% generator cost data

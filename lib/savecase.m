@@ -275,6 +275,7 @@ else                                %% M-file
     if exist('areas') == 1 && ~isempty(areas)
         %% area data
         fprintf(fd, '\n%%%% area data\n');
+        fprintf(fd, '%%\tarea\trefbus\n');
         fprintf(fd, '%sareas = [\n', prefix);
         if ~isempty(areas)
             fprintf(fd, '\t%d\t%d;\n', areas(:, 1:PRICE_REF_BUS).');

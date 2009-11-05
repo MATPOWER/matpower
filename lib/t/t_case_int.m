@@ -51,6 +51,7 @@ mpc.branch = [
 
 %%-----  OPF Data  -----%%
 %% area data
+%	area	refbus
 mpc.areas = [
 	1	5;
 ];

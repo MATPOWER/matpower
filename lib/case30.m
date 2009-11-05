@@ -116,6 +116,7 @@ branch = [
 
 %%-----  OPF Data  -----%%
 %% area data
+%	area	refbus
 areas = [
 	1	8;
 	2	23;
