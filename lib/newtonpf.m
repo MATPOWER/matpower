@@ -32,7 +32,6 @@ max_it  = mpopt(3);
 verbose = mpopt(31);
 
 %% initialize
-j = sqrt(-1);
 converged = 0;
 i = 0;
 V = V0;
@@ -92,7 +91,7 @@ while (~converged && i < max_it)
         Va(pq) = Va(pq) + dx(j3:j4);
         Vm(pq) = Vm(pq) + dx(j5:j6);
     end
-    V = Vm .* exp(j * Va);
+    V = Vm .* exp(1j * Va);
     Vm = abs(V);            %% update Vm and Va again in case
     Va = angle(V);          %% we wrapped around with a negative Vm
 

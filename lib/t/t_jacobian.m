@@ -33,10 +33,9 @@ mpc = loadcase(casefile);
 Ybus_full   = full(Ybus);
 Yf_full     = full(Yf);
 Yt_full     = full(Yt);
-j = sqrt(-1);
 Vm = bus(:, VM);
 Va = bus(:, VA) * pi/180;
-V = Vm .* exp(j * Va);
+V = Vm .* exp(1j * Va);
 f = branch(:, F_BUS);       %% list of "from" buses
 t = branch(:, T_BUS);       %% list of "to" buses
 nl = length(f);
@@ -53,8 +52,8 @@ dSbus_dVm_sp = full(dSbus_dVm);
 dSbus_dVa_sp = full(dSbus_dVa);
 
 %% compute numerically to compare
-Vmp = (Vm*ones(1,nb) + pert*eye(nb,nb)) .* (exp(j * Va) * ones(1,nb));
-Vap = (Vm*ones(1,nb)) .* (exp(j * (Va*ones(1,nb) + pert*eye(nb,nb))));
+Vmp = (Vm*ones(1,nb) + pert*eye(nb,nb)) .* (exp(1j * Va) * ones(1,nb));
+Vap = (Vm*ones(1,nb)) .* (exp(1j * (Va*ones(1,nb) + pert*eye(nb,nb))));
 num_dSbus_dVm = full( (Vmp .* conj(Ybus * Vmp) - V*ones(1,nb) .* conj(Ybus * V*ones(1,nb))) / pert );
 num_dSbus_dVa = full( (Vap .* conj(Ybus * Vap) - V*ones(1,nb) .* conj(Ybus * V*ones(1,nb))) / pert );
 

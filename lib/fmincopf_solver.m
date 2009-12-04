@@ -178,7 +178,7 @@ Va = x(vv.i1.Va:vv.iN.Va);
 Vm = x(vv.i1.Vm:vv.iN.Vm);
 Pg = x(vv.i1.Pg:vv.iN.Pg);
 Qg = x(vv.i1.Qg:vv.iN.Qg);
-V = Vm .* exp(j*Va);
+V = Vm .* exp(1j*Va);
 
 %%-----  calculate return values  -----
 %% update voltages & generator outputs

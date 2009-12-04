@@ -10,7 +10,6 @@ function [bus, gen, branch] = pfsoln(baseMVA, bus0, gen0, branch0, Ybus, Yf, Yt,
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% constants
-j = sqrt(-1);
 nl = size(branch0, 1);      %% number of lines
 
 %% define named indices into bus, gen, branch matrices

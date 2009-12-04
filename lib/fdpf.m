@@ -32,7 +32,6 @@ max_it  = mpopt(4);
 verbose = mpopt(31);
 
 %% initialize
-j = sqrt(-1);
 converged = 0;
 i = 0;
 V = V0;
@@ -85,7 +84,7 @@ while (~converged && i < max_it)
 
     %% update voltage
     Va([pv; pq]) = Va([pv; pq]) + dVa;
-    V = Vm .* exp(j * Va);
+    V = Vm .* exp(1j * Va);
 
     %% evalute mismatch
     mis = (V .* conj(Ybus * V) - Sbus) ./ Vm;
@@ -111,7 +110,7 @@ while (~converged && i < max_it)
 
     %% update voltage
     Vm(pq) = Vm(pq) + dVm;
-    V = Vm .* exp(j * Va);
+    V = Vm .* exp(1j * Va);
 
     %% evalute mismatch
     mis = (V .* conj(Ybus * V) - Sbus) ./ Vm;

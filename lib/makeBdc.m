@@ -17,7 +17,6 @@ function [Bbus, Bf, Pbusinj, Pfinj] = makeBdc(baseMVA, bus, branch)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% constants
-j = sqrt(-1);
 nb = size(bus, 1);          %% number of buses
 nl = size(branch, 1);       %% number of lines
 

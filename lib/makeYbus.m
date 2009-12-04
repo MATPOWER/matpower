@@ -13,7 +13,6 @@ function [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% constants
-j = sqrt(-1);
 nb = size(bus, 1);          %% number of buses
 nl = size(branch, 1);       %% number of lines
 
@@ -36,13 +35,13 @@ end
 %%      | It |   | Ytf  Ytt |   | Vt |
 %%
 stat = branch(:, BR_STATUS);                    %% ones at in-service branches
-Ys = stat ./ (branch(:, BR_R) + j * branch(:, BR_X));   %% series admittance
+Ys = stat ./ (branch(:, BR_R) + 1j * branch(:, BR_X));  %% series admittance
 Bc = stat .* branch(:, BR_B);                           %% line charging susceptance
 tap = ones(nl, 1);                              %% default tap ratio = 1
 i = find(branch(:, TAP));                       %% indices of non-zero tap ratios
 tap(i) = branch(i, TAP);                        %% assign non-zero tap ratios
-tap = tap .* exp(j*pi/180 * branch(:, SHIFT));  %% add phase shifters
-Ytt = Ys + j*Bc/2;
+tap = tap .* exp(1j*pi/180 * branch(:, SHIFT)); %% add phase shifters
+Ytt = Ys + 1j*Bc/2;
 Yff = Ytt ./ (tap .* conj(tap));
 Yft = - Ys ./ conj(tap);
 Ytf = - Ys ./ tap;
@@ -52,7 +51,7 @@ Ytf = - Ys ./ tap;
 %% and Qsh is the reactive power injected by the shunt at V = 1.0 p.u.
 %% then Psh - j Qsh = V * conj(Ysh * V) = conj(Ysh) = Gs - j Bs,
 %% i.e. Ysh = Psh + j Qsh, so ...
-Ysh = (bus(:, GS) + j * bus(:, BS)) / baseMVA;  %% vector of shunt admittances
+Ysh = (bus(:, GS) + 1j * bus(:, BS)) / baseMVA; %% vector of shunt admittances
 
 %% build connection matrices
 f = branch(:, F_BUS);                           %% list of "from" buses

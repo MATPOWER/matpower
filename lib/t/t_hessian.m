@@ -29,10 +29,9 @@ opt = mpoption('VERBOSE', 0, 'OUT_ALL', 0);
 %% switch to internal bus numbering and build admittance matrices
 [i2e, bus, gen, branch] = ext2int(bus, gen, branch);
 [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
-j = sqrt(-1);
 Vm = bus(:, VM);
 Va = bus(:, VA) * pi/180;
-V = Vm .* exp(j * Va);
+V = Vm .* exp(1j * Va);
 f = branch(:, F_BUS);       %% list of "from" buses
 t = branch(:, T_BUS);       %% list of "to" buses
 nl = length(f);
@@ -52,13 +51,13 @@ num_Hvv = zeros(nb, nb);
 [Haa, Hav, Hva, Hvv] = d2Sbus_dV2(Ybus, V, lam);
 for i = 1:nb
     Vap = V;
-    Vap(i) = Vm(i) * exp(j * (Va(i) + pert));
+    Vap(i) = Vm(i) * exp(1j * (Va(i) + pert));
     [dSbus_dVm_ap, dSbus_dVa_ap] = dSbus_dV(Ybus, Vap);
     num_Haa(:, i) = (dSbus_dVa_ap - dSbus_dVa).' * lam / pert;
     num_Hva(:, i) = (dSbus_dVm_ap - dSbus_dVm).' * lam / pert;
 
     Vmp = V;
-    Vmp(i) = (Vm(i) + pert) * exp(j * Va(i));
+    Vmp(i) = (Vm(i) + pert) * exp(1j * Va(i));
     [dSbus_dVm_mp, dSbus_dVa_mp] = dSbus_dV(Ybus, Vmp);
     num_Hav(:, i) = (dSbus_dVa_mp - dSbus_dVa).' * lam / pert;
     num_Hvv(:, i) = (dSbus_dVm_mp - dSbus_dVm).' * lam / pert;
@@ -86,7 +85,7 @@ num_Gtvv = zeros(nb, nb);
 [Gtaa, Gtav, Gtva, Gtvv] = d2Sbr_dV2(Ct, Yt, V, lam);
 for i = 1:nb
     Vap = V;
-    Vap(i) = Vm(i) * exp(j * (Va(i) + pert));
+    Vap(i) = Vm(i) * exp(1j * (Va(i) + pert));
     [dSf_dVa_ap, dSf_dVm_ap, dSt_dVa_ap, dSt_dVm_ap, Sf_ap, St_ap] = ...
         dSbr_dV(branch, Yf, Yt, Vap);
     num_Gfaa(:, i) = (dSf_dVa_ap - dSf_dVa).' * lam / pert;
@@ -95,7 +94,7 @@ for i = 1:nb
     num_Gtva(:, i) = (dSt_dVm_ap - dSt_dVm).' * lam / pert;
 
     Vmp = V;
-    Vmp(i) = (Vm(i) + pert) * exp(j * Va(i));
+    Vmp(i) = (Vm(i) + pert) * exp(1j * Va(i));
     [dSf_dVa_mp, dSf_dVm_mp, dSt_dVa_mp, dSt_dVm_mp, Sf_mp, St_mp] = ...
         dSbr_dV(branch, Yf, Yt, Vmp);
     num_Gfav(:, i) = (dSf_dVa_mp - dSf_dVa).' * lam / pert;
@@ -131,7 +130,7 @@ num_Gtvv = zeros(nb, nb);
 [Gtaa, Gtav, Gtva, Gtvv] = d2Ibr_dV2(Yt, V, lam);
 for i = 1:nb
     Vap = V;
-    Vap(i) = Vm(i) * exp(j * (Va(i) + pert));
+    Vap(i) = Vm(i) * exp(1j * (Va(i) + pert));
     [dIf_dVa_ap, dIf_dVm_ap, dIt_dVa_ap, dIt_dVm_ap, If_ap, It_ap] = ...
         dIbr_dV(branch, Yf, Yt, Vap);
     num_Gfaa(:, i) = (dIf_dVa_ap - dIf_dVa).' * lam / pert;
@@ -140,7 +139,7 @@ for i = 1:nb
     num_Gtva(:, i) = (dIt_dVm_ap - dIt_dVm).' * lam / pert;
 
     Vmp = V;
-    Vmp(i) = (Vm(i) + pert) * exp(j * Va(i));
+    Vmp(i) = (Vm(i) + pert) * exp(1j * Va(i));
     [dIf_dVa_mp, dIf_dVm_mp, dIt_dVa_mp, dIt_dVm_mp, If_mp, It_mp] = ...
         dIbr_dV(branch, Yf, Yt, Vmp);
     num_Gfav(:, i) = (dIf_dVa_mp - dIf_dVa).' * lam / pert;
@@ -178,7 +177,7 @@ num_Gtvv = zeros(nb, nb);
 [Gtaa, Gtav, Gtva, Gtvv] = d2ASbr_dV2(dSt_dVa, dSt_dVm, St, Ct, Yt, V, lam);
 for i = 1:nb
     Vap = V;
-    Vap(i) = Vm(i) * exp(j * (Va(i) + pert));
+    Vap(i) = Vm(i) * exp(1j * (Va(i) + pert));
     [dSf_dVa_ap, dSf_dVm_ap, dSt_dVa_ap, dSt_dVm_ap, Sf_ap, St_ap] = ...
         dSbr_dV(branch, Yf, Yt, Vap);
     [dAf_dVa_ap, dAf_dVm_ap, dAt_dVa_ap, dAt_dVm_ap] = ...
@@ -189,7 +188,7 @@ for i = 1:nb
     num_Gtva(:, i) = (dAt_dVm_ap - dAt_dVm).' * lam / pert;
 
     Vmp = V;
-    Vmp(i) = (Vm(i) + pert) * exp(j * Va(i));
+    Vmp(i) = (Vm(i) + pert) * exp(1j * Va(i));
     [dSf_dVa_mp, dSf_dVm_mp, dSt_dVa_mp, dSt_dVm_mp, Sf_mp, St_mp] = ...
         dSbr_dV(branch, Yf, Yt, Vmp);
     [dAf_dVa_mp, dAf_dVm_mp, dAt_dVa_mp, dAt_dVm_mp] = ...
@@ -229,7 +228,7 @@ num_Gtvv = zeros(nb, nb);
 [Gtaa, Gtav, Gtva, Gtvv] = d2ASbr_dV2(real(dSt_dVa), real(dSt_dVm), real(St), Ct, Yt, V, lam);
 for i = 1:nb
     Vap = V;
-    Vap(i) = Vm(i) * exp(j * (Va(i) + pert));
+    Vap(i) = Vm(i) * exp(1j * (Va(i) + pert));
     [dSf_dVa_ap, dSf_dVm_ap, dSt_dVa_ap, dSt_dVm_ap, Sf_ap, St_ap] = ...
         dSbr_dV(branch, Yf, Yt, Vap);
     [dAf_dVa_ap, dAf_dVm_ap, dAt_dVa_ap, dAt_dVm_ap] = ...
@@ -240,7 +239,7 @@ for i = 1:nb
     num_Gtva(:, i) = (dAt_dVm_ap - dAt_dVm).' * lam / pert;
 
     Vmp = V;
-    Vmp(i) = (Vm(i) + pert) * exp(j * Va(i));
+    Vmp(i) = (Vm(i) + pert) * exp(1j * Va(i));
     [dSf_dVa_mp, dSf_dVm_mp, dSt_dVa_mp, dSt_dVm_mp, Sf_mp, St_mp] = ...
         dSbr_dV(branch, Yf, Yt, Vmp);
     [dAf_dVa_mp, dAf_dVm_mp, dAt_dVa_mp, dAt_dVm_mp] = ...
@@ -280,7 +279,7 @@ num_Gtvv = zeros(nb, nb);
 [Gtaa, Gtav, Gtva, Gtvv] = d2AIbr_dV2(dIt_dVa, dIt_dVm, It, Yt, V, lam);
 for i = 1:nb
     Vap = V;
-    Vap(i) = Vm(i) * exp(j * (Va(i) + pert));
+    Vap(i) = Vm(i) * exp(1j * (Va(i) + pert));
     [dIf_dVa_ap, dIf_dVm_ap, dIt_dVa_ap, dIt_dVm_ap, If_ap, It_ap] = ...
         dIbr_dV(branch, Yf, Yt, Vap);
     [dAf_dVa_ap, dAf_dVm_ap, dAt_dVa_ap, dAt_dVm_ap] = ...
@@ -291,7 +290,7 @@ for i = 1:nb
     num_Gtva(:, i) = (dAt_dVm_ap - dAt_dVm).' * lam / pert;
 
     Vmp = V;
-    Vmp(i) = (Vm(i) + pert) * exp(j * Va(i));
+    Vmp(i) = (Vm(i) + pert) * exp(1j * Va(i));
     [dIf_dVa_mp, dIf_dVm_mp, dIt_dVa_mp, dIt_dVm_mp, If_mp, It_mp] = ...
         dIbr_dV(branch, Yf, Yt, Vmp);
     [dAf_dVa_mp, dAf_dVm_mp, dAt_dVa_mp, dAt_dVm_mp] = ...

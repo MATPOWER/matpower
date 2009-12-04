@@ -21,13 +21,12 @@ function [Gaa, Gav, Gva, Gvv] = d2Ibr_dV2(Ybr, V, lam)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% define
-j = sqrt(-1);
 nb = length(V);
 
 diagV     = sparse(1:nb, 1:nb, V, nb, nb);
 diaginvVm = sparse(1:nb, 1:nb, ones(nb, 1)./abs(V), nb, nb);
 
 Gaa = sparse(1:nb, 1:nb, -(Ybr.' * lam) .* V, nb, nb);
-Gva = -j * Gaa * diaginvVm;
+Gva = -1j * Gaa * diaginvVm;
 Gav = Gva;
 Gvv = sparse(nb, nb);

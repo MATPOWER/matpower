@@ -36,7 +36,6 @@ function [dSbus_dVm, dSbus_dVa] = dSbus_dV(Ybus, V)
 %   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-j = sqrt(-1);
 n = length(V);
 Ibus = Ybus * V;
 
@@ -51,4 +50,4 @@ else                        %% dense version
 end
 
 dSbus_dVm = diagV * conj(Ybus * diagVnorm) + conj(diagIbus) * diagVnorm;
-dSbus_dVa = j * diagV * conj(diagIbus - Ybus * diagV);
+dSbus_dVa = 1j * diagV * conj(diagIbus - Ybus * diagV);

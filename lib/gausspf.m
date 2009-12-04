@@ -33,7 +33,6 @@ max_it  = mpopt(5);
 verbose = mpopt(31);
 
 %% initialize
-j = sqrt(-1);
 converged = 0;
 i = 0;
 V = V0;
@@ -80,7 +79,7 @@ while (~converged && i < max_it)
     %% at PV buses
     if npv
         for k = pv(1:npv)'
-            Sbus(k) = real(Sbus(k)) + j * imag( V(k) .* conj(Ybus(k,:) * V));
+            Sbus(k) = real(Sbus(k)) + 1j * imag( V(k) .* conj(Ybus(k,:) * V));
             V(k) =  V(k) + (conj(Sbus(k) / V(k)) - Ybus(k,:) * V ) / Ybus(k,k);
 %           V(k) = Vm(k) * V(k) / abs(V(k));
         end

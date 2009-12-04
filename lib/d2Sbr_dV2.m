@@ -25,7 +25,6 @@ function [Gaa, Gav, Gva, Gvv] = d2Sbr_dV2(Cbr, Ybr, V, lam)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% define
-j = sqrt(-1);
 nl = length(lam);
 nb = length(V);
 
@@ -40,6 +39,6 @@ F = B + B.';
 G = sparse(1:nb, 1:nb, ones(nb, 1)./abs(V), nb, nb);
 
 Gaa = F - D - E;
-Gva = j * G * (B - B.' - D + E);
+Gva = 1j * G * (B - B.' - D + E);
 Gav = Gva.';
 Gvv = G * F * G;

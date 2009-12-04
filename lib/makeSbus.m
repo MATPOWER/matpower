@@ -10,9 +10,6 @@ function Sbus = makeSbus(baseMVA, bus, gen)
 %   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-%% constants
-j = sqrt(-1);
-
 %% define named indices into bus, gen matrices
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
     VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
@@ -30,6 +27,6 @@ ngon = size(on, 1);
 Cg = sparse(gbus, [1:ngon]', ones(ngon, 1), nb, ngon);  %% connection matrix
                                                         %% element i, j is 1 if
                                                         %% gen on(j) at bus i is ON
-Sbus =  ( Cg * (gen(on, PG) + j * gen(on, QG)) ...  %% power injected by generators
-            - (bus(:, PD) + j * bus(:, QD)) ) / ... %% plus power injected by loads
+Sbus =  ( Cg * (gen(on, PG) + 1j * gen(on, QG)) ... %% power injected by generators
+           - (bus(:, PD) + 1j * bus(:, QD)) ) / ... %% plus power injected by loads
         baseMVA;                                    %% converted to p.u.

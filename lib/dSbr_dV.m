@@ -40,9 +40,6 @@ function [dSf_dVa, dSf_dVm, dSt_dVa, dSt_dVm, Sf, St] = dSbr_dV(branch, Yf, Yt, 
 %   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-%% constant
-j = sqrt(-1);
-
 %% define named indices into bus, gen, branch matrices
 [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
     TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
@@ -67,9 +64,9 @@ if issparse(Yf)             %% sparse version (if Yf is sparse)
     diagV       = sparse(1:nb, 1:nb, V, nb, nb);
     diagVnorm   = sparse(1:nb, 1:nb, Vnorm, nb, nb);
     
-    dSf_dVa = j * (conj(diagIf) * sparse(1:nl, f, V(f), nl, nb) - diagVf * conj(Yf * diagV));
+    dSf_dVa = 1j * (conj(diagIf) * sparse(1:nl, f, V(f), nl, nb) - diagVf * conj(Yf * diagV));
     dSf_dVm = diagVf * conj(Yf * diagVnorm) + conj(diagIf) * sparse(1:nl, f, Vnorm(f), nl, nb);
-    dSt_dVa = j * (conj(diagIt) * sparse(1:nl, t, V(t), nl, nb) - diagVt * conj(Yt * diagV));
+    dSt_dVa = 1j * (conj(diagIt) * sparse(1:nl, t, V(t), nl, nb) - diagVt * conj(Yt * diagV));
     dSt_dVm = diagVt * conj(Yt * diagVnorm) + conj(diagIt) * sparse(1:nl, t, Vnorm(t), nl, nb);
 else                        %% dense version
     diagVf      = diag(V(f));
@@ -83,9 +80,9 @@ else                        %% dense version
     temp3       = zeros(nl, nb);    temp3(sub2ind([nl,nb], (1:nl)', t)) = V(t);
     temp4       = zeros(nl, nb);    temp4(sub2ind([nl,nb], (1:nl)', t)) = Vnorm(t);
     
-    dSf_dVa = j * (conj(diagIf) * temp1 - diagVf * conj(Yf * diagV));
+    dSf_dVa = 1j * (conj(diagIf) * temp1 - diagVf * conj(Yf * diagV));
     dSf_dVm = diagVf * conj(Yf * diagVnorm) + conj(diagIf) * temp2;
-    dSt_dVa = j * (conj(diagIt) * temp3 - diagVt * conj(Yt * diagV));
+    dSt_dVa = 1j * (conj(diagIt) * temp3 - diagVt * conj(Yt * diagV));
     dSt_dVm = diagVt * conj(Yt * diagVnorm) + conj(diagIt) * temp4;
 end
 

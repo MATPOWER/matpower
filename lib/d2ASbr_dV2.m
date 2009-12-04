@@ -31,7 +31,6 @@ function [Gaa, Gav, Gva, Gvv] = ...
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% define
-j = sqrt(-1);
 nb = length(V);
 nl = length(lam);
 

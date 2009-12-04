@@ -29,9 +29,6 @@ function [dIf_dVa, dIf_dVm, dIt_dVa, dIt_dVm, If, It] = dIbr_dV(branch, Yf, Yt, 
 %   Copyright (c) 1996-2007 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-%% constant
-j = sqrt(-1);
-
 %% define
 nl = size(Yf, 1);
 nb = length(V);
@@ -44,9 +41,9 @@ else                        %% dense version
     diagV       = diag(V);
     diagVnorm   = diag(Vnorm);
 end
-dIf_dVa = Yf * j * diagV;
+dIf_dVa = Yf * 1j * diagV;
 dIf_dVm = Yf * diagVnorm;
-dIt_dVa = Yt * j * diagV;
+dIt_dVa = Yt * 1j * diagV;
 dIt_dVm = Yt * diagVnorm;
 
 %% compute currents

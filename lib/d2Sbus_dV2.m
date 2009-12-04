@@ -17,7 +17,6 @@ function [Haa, Hav, Hva, Hvv] = d2Sbus_dV2(Ybus, V, lam)
 %   Copyright (c) 2008 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-j = sqrt(-1);
 n = length(V);
 Ibus    = Ybus * V;
 diaglam = sparse(1:n, 1:n, lam, n, n);
@@ -32,6 +31,6 @@ F = C - A * sparse(1:n, 1:n, conj(Ibus), n, n);
 G = sparse(1:n, 1:n, ones(n, 1)./abs(V), n, n);
 
 Haa = E + F;
-Hva = j * G * (E - F);
+Hva = 1j * G * (E - F);
 Hav = Hva.';
 Hvv = G * (C + C.') * G;

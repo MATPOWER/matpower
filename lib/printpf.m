@@ -112,9 +112,6 @@ ptol = 1e-6;        %% tolerance for displaying shadow prices
     TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 
-%% constant
-j = sqrt(-1);
-
 %% internal bus number
 i2e = bus(:, BUS_I);
 e2i = sparse(max(i2e), 1);
@@ -138,7 +135,7 @@ ties = find(bus(e2i(branch(:, F_BUS)), BUS_AREA) ~= bus(e2i(branch(:, T_BUS)), B
 tap = ones(nl, 1);                              %% default tap ratio = 1 for lines
 xfmr = find(branch(:, TAP));                    %% indices of transformers
 tap(xfmr) = branch(xfmr, TAP);                  %% include transformer tap ratios
-tap = tap .* exp(j*pi/180 * branch(:, SHIFT)); %% add phase shifters
+tap = tap .* exp(1j*pi/180 * branch(:, SHIFT)); %% add phase shifters
 nzld = find(bus(:, PD) | bus(:, QD));
 sorted_areas = sort(bus(:, BUS_AREA));
 s_areas = sorted_areas([1; find(diff(sorted_areas))+1]);    %% area numbers
@@ -154,7 +151,7 @@ if isDC
     loss = zeros(nl,1);
 else
     loss = baseMVA * abs(V(e2i(branch(:, F_BUS))) ./ tap - V(e2i(branch(:, T_BUS)))) .^ 2 ./ ...
-                (branch(:, BR_R) - j * branch(:, BR_X));
+                (branch(:, BR_R) - 1j * branch(:, BR_X));
 end
 fchg = abs(V(e2i(branch(:, F_BUS))) ./ tap) .^ 2 .* branch(:, BR_B) * baseMVA / 2;
 tchg = abs(V(e2i(branch(:, T_BUS)))       ) .^ 2 .* branch(:, BR_B) * baseMVA / 2;
@@ -657,12 +654,12 @@ if isOPF
         Ft = branch(:, PT);
         str = '\n  #     Bus    Pf  mu     Pf      |Pmax|      Pt      Pt  mu   Bus';
     elseif mpopt(24) == 2   %% |I| limit
-        Ff = abs( (branch(:, PF) + j * branch(:, QF)) ./ V(e2i(branch(:, F_BUS))) );
-        Ft = abs( (branch(:, PT) + j * branch(:, QT)) ./ V(e2i(branch(:, T_BUS))) );
+        Ff = abs( (branch(:, PF) + 1j * branch(:, QF)) ./ V(e2i(branch(:, F_BUS))) );
+        Ft = abs( (branch(:, PT) + 1j * branch(:, QT)) ./ V(e2i(branch(:, T_BUS))) );
         str = '\n  #     Bus   |If| mu    |If|     |Imax|     |It|    |It| mu   Bus';
     else                %% |S| limit
-        Ff = abs(branch(:, PF) + j * branch(:, QF));
-        Ft = abs(branch(:, PT) + j * branch(:, QT));
+        Ff = abs(branch(:, PF) + 1j * branch(:, QF));
+        Ft = abs(branch(:, PT) + 1j * branch(:, QT));
         str = '\n  #     Bus   |Sf| mu    |Sf|     |Smax|     |St|    |St| mu   Bus';
     end
     if OUT_LINE_LIM == 2 || (OUT_LINE_LIM == 1 && ...
