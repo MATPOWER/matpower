@@ -23,7 +23,7 @@ function [ref, pv, pq] = bustypes(bus, gen)
 % bus_gen_status(gen(:, GEN_BUS)) = gen(:, GEN_STATUS) > 0;
 nb = size(bus, 1);
 ng = size(gen, 1);
-Cg = sparse(gen(:, GEN_BUS), [1:ng]', gen(:, GEN_STATUS) > 0, nb, ng);  %% gen connection matrix
+Cg = sparse(gen(:, GEN_BUS), (1:ng)', gen(:, GEN_STATUS) > 0, nb, ng);  %% gen connection matrix
                                         %% element i, j is 1 if, generator j at bus i is ON
 bus_gen_status = Cg * ones(ng, 1);      %% number of generators at each bus that are ON
 

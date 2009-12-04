@@ -35,11 +35,11 @@ end
 
 nb = size(bus, 1);
 nbr = size(branch, 1);
-noref   = [2:nb]';      %% use bus 1 for voltage angle reference
-noslack = find([1:nb]' ~= slack_bus);
+noref   = (2:nb)';      %% use bus 1 for voltage angle reference
+noslack = find((1:nb)' ~= slack_bus);
 
 %% check that bus numbers are equal to indices to bus (one set of bus numbers)
-if any(bus(:, BUS_I) ~= [1:nb]')
+if any(bus(:, BUS_I) ~= (1:nb)')
     error('makePTDF: buses must be numbered consecutively in bus matrix')
 end
 

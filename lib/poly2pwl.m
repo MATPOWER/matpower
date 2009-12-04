@@ -23,13 +23,13 @@ pwlcost(:, NCOST)  = npts * ones(m, 1);                 %% change number of data
 for i = 1:m
     if Pmin(i) == 0
         step = (Pmax(i) - Pmin(i)) / (npts - 1);
-        xx = [Pmin(i):step:Pmax(i)];
+        xx = (Pmin(i):step:Pmax(i));
     elseif Pmin(i) > 0
         step = (Pmax(i) - Pmin(i)) / (npts - 2);
         xx = [0 Pmin(i):step:Pmax(i)];
     elseif Pmin(i) < 0 && Pmax(i) > 0        %% for when P really means Q
         step = (Pmax(i) - Pmin(i)) / (npts - 1);
-        xx = [Pmin(i):step:Pmax(i)];
+        xx = (Pmin(i):step:Pmax(i));
     end
     yy = totcost(polycost(i, :), xx);
     pwlcost(i,      COST:2:(COST + 2*(npts-1)    )) = xx;

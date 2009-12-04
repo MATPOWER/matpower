@@ -117,7 +117,7 @@ if ~isempty(gen)
     ng = size(gen, 1);
     is_ld = isload(gen) & gen(:, GEN_STATUS) > 0;
     ld = find(is_ld);
-    Cld = sparse(gen(:, GEN_BUS), [1:ng]', is_ld, nb, ng);
+    Cld = sparse(gen(:, GEN_BUS), (1:ng)', is_ld, nb, ng);
 else
     ng = [];
     ld = [];

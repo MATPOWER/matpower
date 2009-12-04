@@ -44,9 +44,9 @@ if have_fcn('scpdipmopf')
     ib_mu       = [MU_VMAX MU_VMIN];
     ig_data     = [GEN_BUS QMAX QMIN MBASE:APF];
     ig_disp     = [PG QG VG];
-    ig_mu       = [MU_PMAX:MU_QMIN];
-    ibr_data    = [1:ANGMAX];
-    ibr_flow    = [PF:QT];
+    ig_mu       = (MU_PMAX:MU_QMIN);
+    ibr_data    = (1:ANGMAX);
+    ibr_flow    = (PF:QT);
     ibr_mu      = [MU_SF MU_ST];
     ibr_angmu   = [MU_ANGMIN MU_ANGMAX];
 
@@ -109,7 +109,7 @@ if have_fcn('scpdipmopf')
     pgbas    = vend+1;        pgend    = pgbas+ng-1;
     qgbas    = pgend+1;       qgend    = qgbas+ng-1;
     nxyz = 2*nb + 2*ng;
-    N = sparse([1:ng]', [pgbas:pgend]', mpc.baseMVA * ones(ng,1), ng, nxyz);
+    N = sparse((1:ng)', (pgbas:pgend)', mpc.baseMVA * ones(ng,1), ng, nxyz);
     fparm = ones(ng,1) * [ 1 0 0 1 ];
     [junk, ix] = sort(mpc.gen(:, 1));
     H = 2 * spdiags(mpc.gencost(ix, 5), 0, ng, ng);

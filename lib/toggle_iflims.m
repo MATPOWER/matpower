@@ -82,7 +82,7 @@ mpc.order.ext.ifmap = ifmap;
 
 %%-----  convert stuff to internal indexing  -----
 e2i = zeros(nl0, 1);
-e2i(o.branch.status.on) = [1:nl]';  %% ext->int branch index mapping
+e2i(o.branch.status.on) = (1:nl)';  %% ext->int branch index mapping
 d = sign(ifmap(:, 2));
 br = abs(ifmap(:, 2));
 ifmap(:, 2) = d .* e2i(br);

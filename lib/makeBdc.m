@@ -28,7 +28,7 @@ nl = size(branch, 1);       %% number of lines
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 
 %% check that bus numbers are equal to indices to bus (one set of bus numbers)
-if any(bus(:, BUS_I) ~= [1:nb]')
+if any(bus(:, BUS_I) ~= (1:nb)')
     error('makeBdc: buses must be numbered consecutively in bus matrix')
 end
 
@@ -49,7 +49,7 @@ b = b ./ tap;
 %% build connection matrix Cft = Cf - Ct for line and from - to buses
 f = branch(:, F_BUS);                           %% list of "from" buses
 t = branch(:, T_BUS);                           %% list of "to" buses
-i = [[1:nl]'; [1:nl]'];                          %% double set of row indices
+i = [(1:nl)'; (1:nl)'];                         %% double set of row indices
 Cft = sparse(i, [f;t], [ones(nl, 1); -ones(nl, 1)], nl, nb);    %% connection matrix
 
 %% build Bf such that Bf * Va is the vector of real branch powers injected

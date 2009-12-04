@@ -14,7 +14,7 @@ function [pcost, qcost] = pqcost(gencost, ng, on)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 if nargin < 3
-    on = [1:ng]';
+    on = (1:ng)';
 end
 
 if size(gencost, 1) == ng

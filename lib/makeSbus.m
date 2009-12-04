@@ -24,7 +24,7 @@ gbus = gen(on, GEN_BUS);                %% what buses are they at?
 %% form net complex bus power injection vector
 nb = size(bus, 1);
 ngon = size(on, 1);
-Cg = sparse(gbus, [1:ngon]', ones(ngon, 1), nb, ngon);  %% connection matrix
+Cg = sparse(gbus, (1:ngon)', ones(ngon, 1), nb, ngon);  %% connection matrix
                                                         %% element i, j is 1 if
                                                         %% gen on(j) at bus i is ON
 Sbus =  ( Cg * (gen(on, PG) + 1j * gen(on, QG)) ... %% power injected by generators

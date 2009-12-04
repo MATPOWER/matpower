@@ -41,7 +41,7 @@ if have_fcn('bpmpd') || have_fcn('quadprog') || have_fcn('qp')
 	ng  = size(gen, 1);
 	
 	%% compute injections and flows
-	Cg = sparse(gen(:, GEN_BUS), [1:ng]', ones(ng, 1), nb, ng);
+	Cg = sparse(gen(:, GEN_BUS), (1:ng)', ones(ng, 1), nb, ng);
 	Pg = Cg * gen(:, PG);
 	Pd = bus(:, PD);
 	P  = Pg - Pd;

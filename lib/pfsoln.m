@@ -52,7 +52,7 @@ if length(on) > 1
     %% build connection matrix, element i, j is 1 if gen on(i) at bus j is ON
     nb = size(bus, 1);
     ngon = size(on, 1);
-    Cg = sparse([1:ngon]', gbus, ones(ngon, 1), ngon, nb);
+    Cg = sparse((1:ngon)', gbus, ones(ngon, 1), ngon, nb);
 
     %% divide Qg by number of generators at the bus to distribute equally
     ngb = sum(Cg)';         %% nb x 1, number of gens at this bus
@@ -61,8 +61,8 @@ if length(on) > 1
     
     
     %% divide proportionally
-    Cmin = sparse([1:ngon]', gbus, gen(on, QMIN), ngon, nb);
-    Cmax = sparse([1:ngon]', gbus, gen(on, QMAX), ngon, nb);
+    Cmin = sparse((1:ngon)', gbus, gen(on, QMIN), ngon, nb);
+    Cmax = sparse((1:ngon)', gbus, gen(on, QMAX), ngon, nb);
     Qg_tot = Cg' * gen(on, QG);     %% nb x 1 vector of total Qg at each bus
     Qg_min = sum(Cmin)';            %% nb x 1 vector of min total Qg at each bus
     Qg_max = sum(Cmax)';            %% nb x 1 vector of max total Qg at each bus

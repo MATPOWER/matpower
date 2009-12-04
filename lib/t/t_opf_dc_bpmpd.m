@@ -44,9 +44,9 @@ if have_fcn('bpmpd')
     ib_mu       = [MU_VMAX MU_VMIN];
     ig_data     = [GEN_BUS QMAX QMIN MBASE:APF];
     ig_disp     = [PG QG VG];
-    ig_mu       = [MU_PMAX:MU_QMIN];
-    ibr_data    = [1:ANGMAX];
-    ibr_flow    = [PF:QT];
+    ig_mu       = (MU_PMAX:MU_QMIN);
+    ibr_data    = (1:ANGMAX);
+    ibr_flow    = (PF:QT);
     ibr_mu      = [MU_SF MU_ST];
     ibr_angmu   = [MU_ANGMIN MU_ANGMAX];
     

@@ -66,7 +66,7 @@ if ~isempty(mu_PQl)
     k = k + 1;
   end
 %   gen(:, [MU_PMIN MU_PMAX MU_QMIN MU_QMAX])
-%   -[ mu_PQl([1:2]) mu_PQh([1:2]) ]/baseMVA
-%   -[ mu_PQl([1:2]).*Apqldata([1:2],1) mu_PQh([1:2]).*Apqhdata([1:2],1) ]/baseMVA
-%   -[ mu_PQl([1:2]).*Apqldata([1:2],2) mu_PQh([1:2]).*Apqhdata([1:2],2) ]/baseMVA
+%   -[ mu_PQl(1:2) mu_PQh(1:2) ]/baseMVA
+%   -[ mu_PQl(1:2).*Apqldata(1:2,1) mu_PQh(1:2).*Apqhdata(1:2,1) ]/baseMVA
+%   -[ mu_PQl(1:2).*Apqldata(1:2,2) mu_PQh(1:2).*Apqhdata(1:2,2) ]/baseMVA
 end
