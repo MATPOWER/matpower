@@ -160,6 +160,12 @@ while (~converged && i < opt.max_it)
 %         M  dh;
 %         dh'  sparse(neq, neq)
 %     ];
+%     rc = 1/condest(AAA);
+%     if rc < 1e-22
+%     	fprintf('my RCOND = %g\n', rc);
+%     	n = size(AAA, 1);
+%     	AAA = AAA + 1e-3 * speye(n,n);
+%     end
 %     bbb = [-N; -h];
 %     dxdlam = AAA \ bbb;
     dx = dxdlam(1:nx);
