@@ -106,6 +106,7 @@ if isstr(casefile)
             end
             if info == 0 && ~isstruct(s) 	%% if not try individual data matrices
                 clear s;
+                s.version = '1';
                 if expect_gencost
                     try
                         [s.baseMVA, s.bus, s.gen, s.branch, ...
