@@ -374,10 +374,10 @@ else                                %% M-file
         fprintf(fd, '];\n');
     end
 
-	%% execute userfcn callbacks for 'savecase' stage
-	if isfield(mpc, 'userfcn')
-		mpc = run_userfcn(mpc.userfcn, 'savecase', mpc, fd, prefix);
-	end
+    %% execute userfcn callbacks for 'savecase' stage
+    if isfield(mpc, 'userfcn')
+        mpc = run_userfcn(mpc.userfcn, 'savecase', mpc, fd, prefix);
+    end
 
     %% close file
     if fd ~= 1
@@ -400,7 +400,11 @@ if isempty(s)
     fprintf(fd, '%s = sparse(%d, %d);\n', varname, m, n);
 else
     fprintf(fd, 'ijs = [\n');
-    fprintf(fd, '\t%d\t%d\t%g;\n', [i j s].');
+    if m == 1           %% i, j, s are row vectors
+        fprintf(fd, '\t%d\t%d\t%g;\n', [i; j; s]);
+    else                %% i, j, s are column vectors
+        fprintf(fd, '\t%d\t%d\t%g;\n', [i j s].');
+    end
     fprintf(fd, '];\n');
     fprintf(fd, '%s = sparse(ijs(:, 1), ijs(:, 2), ijs(:, 3), %d, %d);\n', varname, m, n);
 end
