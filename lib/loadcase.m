@@ -216,7 +216,7 @@ else            %% we have a problem captain
             case 4,
                 error('loadcase: specified M file does not exist');
             case 5,
-                error(sprintf('loadcase: syntax error or undefined data matrix(ices) in the file\n%s', err5));
+                error('loadcase: syntax error or undefined data matrix(ices) in the file\n%s', err5);
             otherwise,
                 error('loadcase: unknown error');
         end

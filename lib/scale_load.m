@@ -167,7 +167,7 @@ if opt.scale(1) == 'Q'  %% 'QUANTITY'
             elseif load(k) == total
                 scale(k) = 1;
             else
-                error(sprintf('scale_load: impossible to make zone %d load equal %g by scaling non-existent loads', k, load(k)));
+                error('scale_load: impossible to make zone %d load equal %g by scaling non-existent loads', k, load(k));
             end
         elseif opt.which(1) == 'F'  %% 'FIXED'
             if fixed ~= 0
@@ -175,7 +175,7 @@ if opt.scale(1) == 'Q'  %% 'QUANTITY'
             elseif load(k) == dispatchable
                 scale(k) = 1;
             else
-                error(sprintf('scale_load: impossible to make zone %d load equal %g by scaling non-existent fixed load', k, load(k)));
+                error('scale_load: impossible to make zone %d load equal %g by scaling non-existent fixed load', k, load(k));
             end
         elseif opt.which(1) == 'D'  %% 'DISPATCHABLE'
             if dispatchable ~= 0
@@ -183,7 +183,7 @@ if opt.scale(1) == 'Q'  %% 'QUANTITY'
             elseif load(k) == fixed
                 scale(k) = 1;
             else
-                error(sprintf('scale_load: impossible to make zone %d load equal %g by scaling non-existent dispatchable load', k, load(k)));
+                error('scale_load: impossible to make zone %d load equal %g by scaling non-existent dispatchable load', k, load(k));
             end
         end
     end

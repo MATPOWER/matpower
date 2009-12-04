@@ -422,7 +422,7 @@ while i <= nargin
     namelen = size(names, 2);
     pidx = ceil(findstr([pname blanks(namelen-length(pname))], namestr) / namelen);
     if isempty(pidx)
-        error(sprintf('"%s" is not a valid named option', pname));
+        error('"%s" is not a valid named option', pname);
     end
     % fprintf('''%s'' (%d) = %d\n', pname, pidx, pval);
 
