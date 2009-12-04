@@ -24,14 +24,14 @@ function mpv = mpver
 v{1} = struct(  'Name',     'MATPOWER', ... 
                 'Version',  '4.0-dev', ...
                 'Release',  '', ...
-                'Date',     '27-May-2009' );
+                'Date',     '04-Dec-2009' );
 v{2} = ver('matlab');
 v{3} = ver('optim');
 if nargout > 0
     mpv = v{1}.Version;
 else
     for n = 1:3
-        if n == 3 & isempty(v{3})
+        if n == 3 && isempty(v{3})
             fprintf('\n%-22s -- not installed --', 'Optimization Toolbox');
             continue;
         end

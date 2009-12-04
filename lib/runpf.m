@@ -153,7 +153,7 @@ else                                %% AC formulation
         alg = mpopt(1);
         if alg == 1
             [V, success, iterations] = newtonpf(Ybus, Sbus, V0, ref, pv, pq, mpopt);
-        elseif alg == 2 | alg == 3
+        elseif alg == 2 || alg == 3
             [Bp, Bpp] = makeB(baseMVA, bus, branch, alg);
             [V, success, iterations] = fdpf(Ybus, Sbus, V0, Bp, Bpp, ref, pv, pq, mpopt);
         elseif alg == 4
@@ -170,7 +170,7 @@ else                                %% AC formulation
             mx = find( gen(:, GEN_STATUS) > 0 & gen(:, QG) > gen(:, QMAX) );
             mn = find( gen(:, GEN_STATUS) > 0 & gen(:, QG) < gen(:, QMIN) );
             
-            if ~isempty(mx) | ~isempty(mn)  %% we have some Q limit violations
+            if ~isempty(mx) || ~isempty(mn)  %% we have some Q limit violations
                 if isempty(pv)
                     if verbose
                         if ~isempty(mx) 
@@ -196,10 +196,10 @@ else                                %% AC formulation
                     end
                 end
 
-                if verbose & ~isempty(mx)
+                if verbose && ~isempty(mx)
                     fprintf('Gen %d at upper Q limit, converting to PQ bus\n', mx);
                 end
-                if verbose & ~isempty(mn)
+                if verbose && ~isempty(mn)
                     fprintf('Gen %d at lower Q limit, converting to PQ bus\n', mn);
                 end
                 
@@ -221,7 +221,7 @@ else                                %% AC formulation
                 %% update bus index lists of each type of bus
                 ref_temp = ref;
                 [ref, pv, pq] = bustypes(bus, gen);
-                if verbose & ref ~= ref_temp
+                if verbose && ref ~= ref_temp
                     fprintf('Bus %d is new slack bus\n', ref);
                 end
                 limited = [limited; mx];
@@ -232,7 +232,7 @@ else                                %% AC formulation
             repeat = 0;     %% don't enforce generator Q limits, once is enough
         end
     end
-    if qlim & ~isempty(limited)
+    if qlim && ~isempty(limited)
         %% restore injections from limited gens (those at Q limits)
         gen(limited, QG) = fixedQg(limited);    %% restore Qg value,
         for i = 1:length(limited)               %% (one at a time, since

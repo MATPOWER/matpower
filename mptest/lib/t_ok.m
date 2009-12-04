@@ -17,7 +17,7 @@ global t_counter;
 global t_ok_cnt;
 global t_not_ok_cnt;
 
-if nargin < 2 | strcmp(msg, '')
+if nargin < 2 || strcmp(msg, '')
     msg = '';
 else
     msg = [' - ', msg];

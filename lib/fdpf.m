@@ -60,7 +60,7 @@ if verbose > 1
     fprintf('\n---- ----  -----------  -----------');
     fprintf('\n  -  %3d   %10.3e   %10.3e', i, normP, normQ);
 end
-if normP < tol & normQ < tol
+if normP < tol && normQ < tol
     converged = 1;
     if verbose > 1
         fprintf('\nConverged!\n');
@@ -76,7 +76,7 @@ Bpp = Bpp(pq, pq);
 [Lpp, Upp, Ppp] = lu(Bpp);
 
 %% do P and Q iterations
-while (~converged & i < max_it)
+while (~converged && i < max_it)
     %% update iteration counter
     i = i + 1;
 
@@ -98,7 +98,7 @@ while (~converged & i < max_it)
     if verbose > 1
         fprintf('\n  P  %3d   %10.3e   %10.3e', i, normP, normQ);
     end
-    if normP < tol & normQ < tol
+    if normP < tol && normQ < tol
         converged = 1;
         if verbose
             fprintf('\nFast-decoupled power flow converged in %d P-iterations and %d Q-iterations.\n', i, i-1);
@@ -124,7 +124,7 @@ while (~converged & i < max_it)
     if verbose > 1
         fprintf('\n  Q  %3d   %10.3e   %10.3e', i, normP, normQ);
     end
-    if normP < tol & normQ < tol
+    if normP < tol && normQ < tol
         converged = 1;
         if verbose
             fprintf('\nFast-decoupled power flow converged in %d P-iterations and %d Q-iterations.\n', i, i);

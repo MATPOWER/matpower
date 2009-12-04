@@ -150,7 +150,7 @@ if isstruct(i2e)
 
         bus = mpc;
     else                    %% convert extra data
-        if isstr(bus) | iscell(bus)     %% field
+        if isstr(bus) || iscell(bus)     %% field
             field = bus;
             ordering = gen;
             if nargin > 3

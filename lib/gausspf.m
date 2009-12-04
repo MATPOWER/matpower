@@ -67,7 +67,7 @@ if normF < tol
 end
 
 %% do Gauss-Seidel iterations
-while (~converged & i < max_it)
+while (~converged && i < max_it)
     %% update iteration counter
     i = i + 1;
 

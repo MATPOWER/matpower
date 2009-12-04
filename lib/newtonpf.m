@@ -66,7 +66,7 @@ if normF < tol
 end
 
 %% do Newton iterations
-while (~converged & i < max_it)
+while (~converged && i < max_it)
     %% update iteration counter
     i = i + 1;
     

@@ -58,7 +58,7 @@ end
 if verbose
     fprintf('\n\n----------  Summary  ----------\n');
 end
-if counter == num_of_tests & counter == ok_cnt + skip_cnt & not_ok_cnt == 0
+if counter == num_of_tests && counter == ok_cnt + skip_cnt && not_ok_cnt == 0
     if skip_cnt
         fprintf('All tests successful (%d passed, %d skipped of %d)', ...
             ok_cnt, skip_cnt, num_of_tests);

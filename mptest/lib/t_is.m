@@ -19,11 +19,11 @@ global t_quiet;
 if nargin < 4
     msg = '';
 end
-if nargin < 3 | isempty(prec)
+if nargin < 3 || isempty(prec)
     prec = 5;
 end
 
-if all(size(got) == size(expected)) | all(size(expected) == [1 1])
+if all(size(got) == size(expected)) || all(size(expected) == [1 1])
 	got_minus_expected = got - expected;
 	max_diff = max(max(abs(got_minus_expected)));
 	condition = ( max_diff < 10^(-prec) );
@@ -33,7 +33,7 @@ else
 end
 
 t_ok(condition, msg);
-if ~condition & ~t_quiet
+if ~condition && ~t_quiet
     if max_diff ~= 0
 		got
 		expected
