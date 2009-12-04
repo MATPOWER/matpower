@@ -76,11 +76,11 @@ if isstr(casefile)
     end
 
     %% set extension if not specified explicitly
-    if exist('rootname') ~= 1
+    if ~exist('rootname', 'var')
         rootname = casefile;
-        if exist([casefile '.mat']) == 2
+        if exist([casefile '.mat'], 'file') == 2
             extension = '.mat';
-        elseif exist([casefile '.m']) == 2
+        elseif exist([casefile '.m'], 'file') == 2
             extension = '.m';
         else
             info = 2;
@@ -135,7 +135,7 @@ if isstr(casefile)
                     end
                 end
             end
-            if info == 4 && exist([rootname '.m']) == 2
+            if info == 4 && exist([rootname '.m'], 'file') == 2
                 info = 5;
                 err5 = lasterr;
             end

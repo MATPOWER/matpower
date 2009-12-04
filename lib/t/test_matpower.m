@@ -62,7 +62,7 @@ tests{end+1} = 't_total_load';
 tests{end+1} = 't_scale_load';
 
 %% smartmarket tests
-if exist('runmarket') == 2
+if exist('runmarket', 'file') == 2
     tests{end+1} = 't_off2case';
     if have_fcn('minopf')
         tests{end+1} = 't_auction_minopf';
@@ -75,7 +75,7 @@ if exist('runmarket') == 2
 end
 
 %% sopf tests
-if exist('apply_contingency') == 2
+if exist('apply_contingency', 'file') == 2
     tests{end+1} = 't_apply_contingency';
 end
 

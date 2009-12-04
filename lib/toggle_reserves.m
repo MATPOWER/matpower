@@ -404,7 +404,7 @@ end
 
 %% save output fields for solved case
 if isfield(r, 'R')
-    if exist('serialize') == 2
+    if exist('serialize', 'file') == 2
         fprintf(fd, '\n%%%% solved values\n');
         fprintf(fd, '%sreserves.R = %s\n', prefix, serialize(r.R));
         fprintf(fd, '%sreserves.Rmin = %s\n', prefix, serialize(r.Rmin));

@@ -43,7 +43,7 @@ else
     fprintf('\n');
     
     if have_fcn('bpmpd')
-        if exist('bpver')
+        if exist('bpver', 'file') == 2
             bpver
         else
             fprintf('BPMPD_MEX              Version 2.21 or earlier\n');
@@ -53,7 +53,7 @@ else
     end
     
     if have_fcn('minopf')
-        if exist('minopfver')
+        if exist('minopfver', 'file') == 2
             minopfver;
         else
             fprintf('MINOPF                 Version 3.0b2 or earlier\n');

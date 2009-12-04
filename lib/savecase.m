@@ -143,7 +143,7 @@ if strcmp(extension, '.mat')        %% MAT-file
         vflag = ' -V6';
     end
     if strcmp(mpc_ver, '1')
-        if exist('areas') == 1 && exist('gencost') == 1
+        if exist('areas', 'var') && exist('gencost', 'var')
             cmd = sprintf('save %s baseMVA bus gen branch areas gencost%s;', rootname, vflag); 
         else
             cmd = sprintf('save %s baseMVA bus gen branch%s;', rootname, vflag); 
@@ -161,7 +161,7 @@ else                                %% M-file
     
     %% function header, etc.
     if strcmp(mpc_ver, '1')
-        if exist('areas') == 1 && exist('gencost') == 1 && ~isempty(gencost)
+        if exist('areas', 'var') && exist('gencost', 'var') && ~isempty(gencost)
             fprintf(fd, 'function [baseMVA, bus, gen, branch, areas, gencost] = %s\n', rootname);
         else
             fprintf(fd, 'function [baseMVA, bus, gen, branch] = %s\n', rootname);
@@ -268,11 +268,11 @@ else                                %% M-file
     fprintf(fd, '];\n');
     
     %% OPF data
-    if (exist('areas') == 1 && ~isempty(areas)) || ...
-        (exist('gencost') == 1 && ~isempty(gencost))
+    if (exist('areas', 'var') && ~isempty(areas)) || ...
+        (exist('gencost', 'var') && ~isempty(gencost))
         fprintf(fd, '\n%%%%-----  OPF Data  -----%%%%');
     end
-    if exist('areas') == 1 && ~isempty(areas)
+    if exist('areas', 'var') && ~isempty(areas)
         %% area data
         fprintf(fd, '\n%%%% area data\n');
         fprintf(fd, '%%\tarea\trefbus\n');
@@ -282,7 +282,7 @@ else                                %% M-file
         end
         fprintf(fd, '];\n');
     end
-    if exist('gencost') == 1 && ~isempty(gencost)
+    if exist('gencost', 'var') && ~isempty(gencost)
         %% generator cost data
         fprintf(fd, '\n%%%% generator cost data\n');
         fprintf(fd, '%%\t1\tstartup\tshutdown\tn\tx1\ty1\t...\txn\tyn\n');

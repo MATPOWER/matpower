@@ -264,7 +264,7 @@ fprintf(fd, '];\n');
 
 %% save output fields for solved case
 if isfield(mpc.if, 'P')
-    if exist('serialize') == 2
+    if exist('serialize', 'file') == 2
         fprintf(fd, '\n%%%% solved values\n');
         fprintf(fd, '%sif.P = %s\n', prefix, serialize(mpc.if.P));
         fprintf(fd, '%sif.mu.l = %s\n', prefix, serialize(mpc.if.mu.l));
