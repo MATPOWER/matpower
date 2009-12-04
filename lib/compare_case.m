@@ -25,18 +25,24 @@ function compare_case(mpc1, mpc2)
 [baseMVA1, bus1, gen1, branch1] = loadcase(mpc1);
 [baseMVA2, bus2, gen2, branch2] = loadcase(mpc2);
 
-%% check for OPF results
-if size(bus1, 2) >= LAM_P && size(bus2, 2) >= LAM_P
-    solvedPF = 1;
-else
-    solvedPF = 0;
-end
+%% set sizes
+solvedPF = 0;
+solvedOPF = 0;
+Nb = VMIN;
+Ng = APF;
+Nl = ANGMAX;
 
-%% check for OPF results
-if size(bus1, 2) >= LAM_P && size(bus2, 2) >= LAM_P
-    solvedOPF = 1;
-else
-    solvedOPF = 0;
+%% check for PF results
+if size(branch1, 2) >= QT && size(branch2, 2) >= QT
+	solvedPF = 1;
+	Nl = QT;
+	%% check for OPF results
+	if size(branch1, 2) >= MU_ST && size(branch2, 2) >= MU_ST
+		solvedOPF = 1;
+		Nb = MU_VMIN;
+		Ng = MU_QMIN;
+		Nl = MU_ST;
+	end
 end
 
 %% set up index name matrices
@@ -114,7 +120,7 @@ fprintf(' matrix / col         case 1          case 2        difference     row 
 fprintf('----------------  --------------  --------------  --------------  -----\n');
 
 %% bus comparison
-[temp, i] = max(abs(bus1 - bus2));
+[temp, i] = max(abs(bus1(:, 1:Nb) - bus2(:, 1:Nb)));
 [v, gmax] = max(temp);
 i = i(gmax);
 fprintf('bus');
@@ -130,7 +136,7 @@ end
 fprintf('%s\n', nodiff);
 
 %% gen comparison
-[temp, i] = max(abs(gen1 - gen2));
+[temp, i] = max(abs(gen1(:, 1:Ng) - gen2(:, 1:Ng)));
 [v, gmax] = max(temp);
 i = i(gmax);
 fprintf('\ngen');
@@ -146,7 +152,7 @@ end
 fprintf('%s\n', nodiff);
 
 %% branch comparison
-[temp, i] = max(abs(branch1 - branch2));
+[temp, i] = max(abs(branch1(:, 1:Nl) - branch2(:, 1:Nl)));
 [v, gmax] = max(temp);
 i = i(gmax);
 fprintf('\nbranch');
