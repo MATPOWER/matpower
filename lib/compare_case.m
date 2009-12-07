@@ -129,7 +129,7 @@ for j = 1:size(buscols, 1)
     [v, i] = max(abs(bus1(:, j) - bus2(:, j)));
     if v
         nodiff = '';
-        if j == gmax, s = ' *'; else, s = ''; end
+        if j == gmax, s = ' *'; else s = ''; end
         fprintf('\n  %-12s%16g%16g%16g%7d%s', buscols(j, :), bus1(i, j), bus2(i, j), v, i, s );
     end
 end
@@ -145,7 +145,7 @@ for j = 1:size(gencols, 1)
     [v, i] = max(abs(gen1(:, j) - gen2(:, j)));
     if v
         nodiff = '';
-        if j == gmax, s = ' *'; else, s = ''; end
+        if j == gmax, s = ' *'; else s = ''; end
         fprintf('\n  %-12s%16g%16g%16g%7d%s', gencols(j, :), gen1(i, j), gen2(i, j), v, i, s );
     end
 end
@@ -161,7 +161,7 @@ for j = 1:size(brcols, 1)
     [v, i] = max(abs(branch1(:, j) - branch2(:, j)));
     if v
         nodiff = '';
-        if j == gmax, s = ' *'; else, s = ''; end
+        if j == gmax, s = ' *'; else s = ''; end
         fprintf('\n  %-12s%16g%16g%16g%7d%s', brcols(j, :), branch1(i, j), branch2(i, j), v, i, s );
     end
 end
