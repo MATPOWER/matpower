@@ -41,8 +41,6 @@ function [Pd, Qd] = total_load(bus, gen, load_zone, which_type)
 %% purposely being backward compatible with older MATPOWER
 [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, ...
     PMAX, PMIN, MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN] = idx_gen;
-[F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, ...
-    RATE_C, TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST] = idx_brch;
 
 nb = size(bus, 1);          %% number of buses
 
@@ -72,7 +70,7 @@ want_fixed  = (which_type(1) == 'B' || which_type(1) == 'F');
 want_disp   = (which_type(1) == 'B' || which_type(1) == 'D');
 
 %% initialize load_zone
-if isstr(load_zone) && strcmp(load_zone, 'all')
+if ischar(load_zone) && strcmp(load_zone, 'all')
     load_zone = ones(nb, 1);        %% make a single zone of all buses
 elseif isempty(load_zone)
     load_zone = bus(:, BUS_AREA);   %% use areas defined in bus data as zones

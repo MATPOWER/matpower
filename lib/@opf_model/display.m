@@ -1,4 +1,4 @@
-function str = display(om, name, N)
+function display(om)
 %DISPLAY  Displays the object
 %
 

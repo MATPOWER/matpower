@@ -36,15 +36,11 @@ verbose = mpopt(31);
 converged = 0;
 i = 0;
 V = V0;
-Va = angle(V);
 Vm = abs(V);
 
 %% set up indexing for updating V
 npv = length(pv);
 npq = length(pq);
-j1 = 1;         j2 = npv;           %% j1:j2 - V angle of pv buses
-j3 = j2 + 1;    j4 = j2 + npq;      %% j3:j4 - V angle of pq buses
-j5 = j4 + 1;    j6 = j4 + npq;      %% j5:j6 - V mag of pq buses
 
 %% evaluate F(x0)
 mis = V .* conj(Ybus * V) - Sbus;

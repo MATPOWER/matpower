@@ -31,7 +31,6 @@ function [Gaa, Gav, Gva, Gvv] = ...
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% define
-nb = length(V);
 nl = length(lam);
 
 diaglam = sparse(1:nl, 1:nl, lam, nl, nl);

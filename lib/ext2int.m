@@ -211,9 +211,8 @@ if isstruct(bus)
                 mpc.areas(o.areas.status.off, :) = [];
             end
 
-            %% update sizes
+            %% update size
             nb = size(mpc.bus, 1);
-            ng = size(mpc.gen, 1);
 
             %% apply consecutive bus numbering
             o.bus.i2e = mpc.bus(:, BUS_I);
@@ -274,9 +273,9 @@ if isstruct(bus)
         else
             dim = areas;                %% rename argument
         end
-        if isstr(gen) || iscell(gen)    %% field
+        if ischar(gen) || iscell(gen)   %% field
             field = gen;                %% rename argument
-            if isstr(field)
+            if ischar(field)
                 mpc.order.ext.(field) = mpc.(field);
                 mpc.(field) = ext2int(mpc, mpc.(field), ordering, dim);
             else
@@ -292,7 +291,7 @@ if isstruct(bus)
         else                            %% value
             val = gen;                  %% rename argument
             o = mpc.order;
-            if isstr(ordering)          %% single set
+            if ischar(ordering)         %% single set
                 if strcmp(ordering, 'gen')
                     idx = o.(ordering).status.on(o.(ordering).e2i);
                 else

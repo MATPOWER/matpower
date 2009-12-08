@@ -30,7 +30,6 @@ function [dIf_dVa, dIf_dVm, dIt_dVa, dIt_dVm, If, It] = dIbr_dV(branch, Yf, Yt, 
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% define
-nl = size(Yf, 1);
 nb = length(V);
 
 Vnorm = V ./ abs(V);

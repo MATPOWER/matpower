@@ -32,7 +32,6 @@ if ~isempty(gencost)
       end
     end
   end
-  tc = totalcost;
   for i = 1:size(totalcost, 2)
   	totalcost(ipol, i) = polycost(gencost(ipol, :), Pg(ipol, i));
   end

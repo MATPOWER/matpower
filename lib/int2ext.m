@@ -150,7 +150,7 @@ if isstruct(i2e)
 
         bus = mpc;
     else                    %% convert extra data
-        if isstr(bus) || iscell(bus)     %% field
+        if ischar(bus) || iscell(bus)   %% field
             field = bus;
             ordering = gen;
             if nargin > 3
@@ -158,7 +158,7 @@ if isstruct(i2e)
             else
                 dim = 1;
             end
-            if isstr(field)
+            if ischar(field)
                 mpc.order.int.(field) = mpc.(field);
                 mpc.(field) = int2ext(mpc, mpc.(field), ...
                                 mpc.order.ext.(field), ordering, dim);
@@ -185,7 +185,7 @@ if isstruct(i2e)
             else
                 dim = 1;
             end
-            if isstr(ordering)          %% single set
+            if ischar(ordering)         %% single set
                 if strcmp(ordering, 'gen')
                     v = get_reorder(val, o.(ordering).i2e, dim);
                 else

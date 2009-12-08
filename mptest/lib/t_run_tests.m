@@ -22,7 +22,6 @@ global t_skip_cnt;
 
 %% figure out padding for printing
 if ~verbose
-    maxlen = 0;
     len = zeros(length(test_names), 1);
     for k = 1:length(test_names)
         len(k) = length(test_names{k});

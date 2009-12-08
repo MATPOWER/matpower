@@ -16,9 +16,6 @@ ignore_ang_lim = mpopt(25);     %% OPF_IGNORE_ANG_LIM
     TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 
-%% data dimensions
-nl = size(branch, 1);   %% number of branches
-
 if ignore_ang_lim
   Aang 	= sparse(0, nb);
   lang 	= [];

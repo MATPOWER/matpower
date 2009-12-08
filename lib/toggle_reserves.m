@@ -77,7 +77,6 @@ function mpc = userfcn_reserves_ext2int(mpc, args)
 r = mpc.reserves;
 o = mpc.order;
 ng0 = size(o.ext.gen, 1);   %% number of original gens (+ disp loads)
-ng  = size(mpc.gen, 1);     %% number of on-line gens (+ disp loads)
 nrz = size(r.req, 1);       %% number of reserve zones
 if nrz > 1
     mpc.reserves.rgens = any(r.zones);  %% mask of gens available to provide reserves
@@ -198,11 +197,9 @@ function results = userfcn_reserves_int2ext(results, args)
 
 %% initialize some things
 r = results.reserves;
-o = results.order;
 
 %% grab some info in internal indexing order
 igr = r.igr;                %% indices of gens available to provide reserves
-ngr = length(igr);          %% number of gens available to provide reserves
 ng  = size(results.gen, 1); %% number of on-line gens (+ disp loads)
 
 %%-----  convert stuff back to external indexing  -----
@@ -220,7 +217,6 @@ o = results.order;          %% update
 
 %% grab same info in external indexing order
 igr0 = r.igr;               %% indices of gens available to provide reserves
-ngr0 = length(igr0);        %% number of gens available to provide reserves
 ng0  = size(o.ext.gen, 1);  %% number of gens (+ disp loads)
 
 %%-----  results post-processing  -----
@@ -291,7 +287,7 @@ if OUT_ALL ~= 0
     for k = r.igr
         iz = find(r.zones(:, k));
         fprintf(fd, '\n%3d %6d     %2d ', k, results.gen(k, GEN_BUS), results.gen(k, GEN_STATUS));
-        if results.gen(k, GEN_STATUS) > 0 & abs(results.reserves.R(k)) > 1e-6
+        if results.gen(k, GEN_STATUS) > 0 && abs(results.reserves.R(k)) > 1e-6
             fprintf(fd, '%10.2f', results.reserves.R(k));
         else
             fprintf(fd, '       -  ');
@@ -325,24 +321,24 @@ if OUT_ALL ~= 0
     fprintf(fd, '\n----  -----  ------  --------  --------  --------  --------  --------  --------');
     for k = r.igr
         fprintf(fd, '\n%3d %6d     %2d ', k, results.gen(k, GEN_BUS), results.gen(k, GEN_STATUS));
-        if results.gen(k, GEN_STATUS) > 0 & results.reserves.mu.l(k) > 1e-6
+        if results.gen(k, GEN_STATUS) > 0 && results.reserves.mu.l(k) > 1e-6
             fprintf(fd, '%10.2f', results.reserves.mu.l(k));
         else
             fprintf(fd, '       -  ');
         end
         fprintf(fd, '%10.2f', results.reserves.Rmin(k));
-        if results.gen(k, GEN_STATUS) > 0 & abs(results.reserves.R(k)) > 1e-6
+        if results.gen(k, GEN_STATUS) > 0 && abs(results.reserves.R(k)) > 1e-6
             fprintf(fd, '%10.2f', results.reserves.R(k));
         else
             fprintf(fd, '       -  ');
         end
         fprintf(fd, '%10.2f', results.reserves.Rmax(k));
-        if results.gen(k, GEN_STATUS) > 0 & results.reserves.mu.u(k) > 1e-6
+        if results.gen(k, GEN_STATUS) > 0 && results.reserves.mu.u(k) > 1e-6
             fprintf(fd, '%10.2f', results.reserves.mu.u(k));
         else
             fprintf(fd, '       -  ');
         end
-        if results.gen(k, GEN_STATUS) > 0 & results.reserves.mu.Pmax(k) > 1e-6
+        if results.gen(k, GEN_STATUS) > 0 && results.reserves.mu.Pmax(k) > 1e-6
             fprintf(fd, '%10.2f', results.reserves.mu.Pmax(k));
         else
             fprintf(fd, '       -  ');
@@ -414,6 +410,7 @@ if isfield(r, 'R')
         fprintf(fd, '%sreserves.prc = %s\n', prefix, serialize(r.prc));
     else
         url = 'http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=12063&objectType=file';
-        warning('userfcn_reserves_savecase: Cannot save the ''reserves'' output fields without the ''serialize'' function, which is available as a free download from:\n<%s>\n\n', url);
+        warning('MATPOWER:serialize', ...
+            'userfcn_reserves_savecase: Cannot save the ''reserves'' output fields without the ''serialize'' function, which is available as a free download from:\n<%s>\n\n', url);
     end
 end

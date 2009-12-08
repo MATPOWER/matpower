@@ -1,4 +1,4 @@
-function [bus, gen, branch] = pfsoln(baseMVA, bus0, gen0, branch0, Ybus, Yf, Yt, V, ref, pv, pq);
+function [bus, gen, branch] = pfsoln(baseMVA, bus0, gen0, branch0, Ybus, Yf, Yt, V, ref, pv, pq)
 %PFSOLN  Updates bus, gen, branch data structures to match power flow soln.
 %   [bus, gen, branch] = pfsoln(baseMVA, bus0, gen0, branch0, ...
 %                                   Ybus, Yf, Yt, V, ref, pv, pq)
@@ -8,9 +8,6 @@ function [bus, gen, branch] = pfsoln(baseMVA, bus0, gen0, branch0, Ybus, Yf, Yt,
 %   by Ray Zimmerman, PSERC Cornell
 %   Copyright (c) 1996-2005 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
-
-%% constants
-nl = size(branch0, 1);      %% number of lines
 
 %% define named indices into bus, gen, branch matrices
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
@@ -55,7 +52,6 @@ if length(on) > 1
     Cg = sparse((1:ngon)', gbus, ones(ngon, 1), ngon, nb);
 
     %% divide Qg by number of generators at the bus to distribute equally
-    ngb = sum(Cg)';         %% nb x 1, number of gens at this bus
     ngg = Cg * sum(Cg)';    %% ngon x 1, number of gens at this gen's bus
     gen(on, QG) = gen(on, QG) ./ ngg;
     

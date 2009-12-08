@@ -125,9 +125,8 @@ end
 
 if isempty(load_zone)
     if length(load) == 1        %% make a single zone of all load buses
-        load_zone = zeros(nb, 1);   %% initialize
-        k = find(bus(:, PD));
-        load_zone(k) = 1;                       %% FIXED loads
+        load_zone = zeros(nb, 1);               %% initialize
+        load_zone(bus(:, PD) ~= 0) = 1;         %% FIXED loads
         if ~isempty(gen)
             load_zone(gen(ld, GEN_BUS)) = 1;    %% DISPATCHABLE loads
         end
@@ -144,15 +143,10 @@ end
 %%-----  compute scale factors for each zone  -----
 scale = load;
 Pdd = zeros(nb, 1);     %% dispatchable P at each bus
-Qdd = zeros(nb, 1);     %% dispatchable Q at each bus
 if opt.scale(1) == 'Q'  %% 'QUANTITY'
     %% find load capacity from dispatchable loads
     if ~isempty(gen)
-        Q = zeros(ng, 1);
-        Q(ld) = (gen(ld, QMIN) == 0) .* gen(ld, QMAX) + ...
-                (gen(ld, QMAX) == 0) .* gen(ld, QMIN);
         Pdd = -Cld * gen(:, PMIN);
-        Qdd = -Cld * Q;
     end
 
     %% compute scale factors
@@ -195,7 +189,7 @@ if opt.which(1) ~= 'D'      %% includes 'FIXED', not 'DISPATCHABLE' only
     for k = 1:length(scale)
         idx = find( load_zone == k );
         bus(idx, PD) = bus(idx, PD) * scale(k);
-        if opt.pq == 'PQ'
+        if strcmp(opt.pq, 'PQ')
             bus(idx, QD) = bus(idx, QD) * scale(k);
         end
     end
@@ -209,7 +203,7 @@ if opt.which(1) ~= 'F'      %% includes 'DISPATCHABLE', not 'FIXED' only
         ig = ld(i);
 
         gen(ig, [PG PMIN]) = gen(ig, [PG PMIN]) * scale(k);
-        if opt.pq == 'PQ'
+        if strcmp(opt.pq, 'PQ')
             gen(ig, [QG QMIN QMAX]) = gen(ig, [QG QMIN QMAX]) * scale(k);
         end
     end

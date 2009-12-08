@@ -72,7 +72,6 @@ function mpc = userfcn_iflims_ext2int(mpc, args)
 
 %% initialize some things
 ifmap = mpc.if.map;
-iflims = mpc.if.lims;
 o = mpc.order;
 nl0 = size(o.ext.branch, 1);    %% original number of branches
 nl = size(mpc.branch, 1);       %% number of on-line branches
@@ -86,9 +85,7 @@ e2i(o.branch.status.on) = (1:nl)';  %% ext->int branch index mapping
 d = sign(ifmap(:, 2));
 br = abs(ifmap(:, 2));
 ifmap(:, 2) = d .* e2i(br);
-on  = find(ifmap(:, 2) ~= 0);
-off = find(ifmap(:, 2) == 0);
-ifmap(off, :) = [];                 %% delete branches that are out
+ifmap(ifmap(:, 2) == 0, :) = [];    %% delete branches that are out
 
 mpc.if.map = ifmap;
 
@@ -202,12 +199,10 @@ function results = userfcn_iflims_printpf(results, fd, mpopt, args)
 
 %%-----  print results  -----
 OUT_ALL = mpopt(32);
-ctol = mpopt(16);   %% constraint violation tolerance
+% ctol = mpopt(16);   %% constraint violation tolerance
 ptol = 1e-6;        %% tolerance for displaying shadow prices
 
 if OUT_ALL ~= 0
-    branch = results.branch;
-    ifmap = results.if.map;
     iflims = results.if.lims;
     fprintf(fd, '\n================================================================================');
     fprintf(fd, '\n|     Interface Flow Limits                                                    |');
@@ -271,6 +266,7 @@ if isfield(mpc.if, 'P')
         fprintf(fd, '%sif.mu.u = %s\n', prefix, serialize(mpc.if.mu.u));
     else
         url = 'http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=12063&objectType=file';
-        warning('userfcn_iflims_savecase: Cannot save the ''iflims'' output fields without the ''serialize'' function, which is available as a free download from:\n<%s>\n\n', url);
+        warning('MATPOWER:serialize', ...
+            'userfcn_iflims_savecase: Cannot save the ''iflims'' output fields without the ''serialize'' function, which is available as a free download from:\n<%s>\n\n', url);
     end
 end

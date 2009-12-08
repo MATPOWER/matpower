@@ -43,24 +43,24 @@ function [baseMVA, bus, gen, branch, areas, gencost, info] = loadcase(casefile)
 
 info = 0;
 if nargout < 3
-    return_as_struct = logical(1);
+    return_as_struct = true;
 else
-    return_as_struct = logical(0);
+    return_as_struct = false;
 end
 if nargout >= 5
-    expect_gencost = logical(1);
+    expect_gencost = true;
     if nargout > 5
-        expect_areas = logical(1);
+        expect_areas = true;
     else 
-        expect_areas = logical(0);
+        expect_areas = false;
     end
 else
-    expect_gencost = logical(0);
-    expect_areas = logical(0);
+    expect_gencost = false;
+    expect_areas = false;
 end
 
 %%-----  read data into struct  -----
-if isstr(casefile)
+if ischar(casefile)
     %% check for explicit extension
     l = length(casefile);
     if l > 2
@@ -255,8 +255,8 @@ tmp = num2cell([PF, QF, PT, QT, MU_SF, MU_ST] - shift);
 [PF, QF, PT, QT, MU_SF, MU_ST] = deal(tmp{:});
 
 %% add extra columns to branch
-tmp = [ ones(size(branch, 1), 1) * [-360 360] ];
-tmp2 = [ zeros(size(branch, 1), 2) ];
+tmp = ones(size(branch, 1), 1) * [-360 360];
+tmp2 = zeros(size(branch, 1), 2);
 if size(branch, 2) >= MU_ST
     branch = [ branch(:, 1:BR_STATUS) tmp branch(:, PF:MU_ST) tmp2 ];
 elseif size(branch, 2) >= QT

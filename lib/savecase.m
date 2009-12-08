@@ -44,7 +44,7 @@ function fname_out = savecase(fname, varargin)
 [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 
 %% default arguments
-if isstr(varargin{1}) || iscell(varargin{1})
+if ischar(varargin{1}) || iscell(varargin{1})
     comment = varargin{1};
     [args{1:(length(varargin)-1)}] = deal(varargin{2:end});
 else
@@ -139,7 +139,7 @@ end
 %% open and write the file
 if strcmp(extension, '.mat')        %% MAT-file
     vflag = '';
-    if str2num(version('-release')) > 13
+    if str2double(version('-release')) > 13
         vflag = ' -V6';
     end
     if strcmp(mpc_ver, '1')
@@ -171,8 +171,8 @@ else                                %% M-file
         fprintf(fd, 'function mpc = %s\n', rootname);
         prefix = 'mpc.';
     end
-    if length(comment) ~= 0
-        if isstr(comment)
+    if ~isempty(comment)
+        if ischar(comment)
             fprintf(fd, '%%%s\n', comment);
         elseif iscell(comment)
             for k = 1:length(comment)
@@ -376,7 +376,7 @@ else                                %% M-file
 
     %% execute userfcn callbacks for 'savecase' stage
     if isfield(mpc, 'userfcn')
-        mpc = run_userfcn(mpc.userfcn, 'savecase', mpc, fd, prefix);
+        run_userfcn(mpc.userfcn, 'savecase', mpc, fd, prefix);
     end
 
     %% close file

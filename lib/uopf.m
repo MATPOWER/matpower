@@ -52,8 +52,6 @@ function [bus, gen, branch, f, success, info, et, g, jac, xr, pimul] = ...
 
 %%----- initialization -----
 t0 = clock;                                 %% start timer
-count   = 0;
-i       = 0;    %% this is to work around a bug in Matlab (4 and 5)
 
 %% process input arguments
 [mpc, mpopt] = opf_args(varargin{:});
@@ -70,7 +68,6 @@ end
 [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
     MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
     QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
-[PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 
 %%-----  do combined unit commitment/optimal power flow  -----
 

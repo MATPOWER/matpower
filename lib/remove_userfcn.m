@@ -14,11 +14,9 @@ function mpc = remove_userfcn(mpc, stage, fcn)
 %   Copyright (c) 2009 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-found = 0;
 n = length(mpc.userfcn.(stage));
 for k = n:-1:1
     if isequal(mpc.userfcn.(stage)(k).fcn, fcn)
-        found = 1;
         mpc.userfcn.(stage)(k) = [];
         break;
     end

@@ -76,7 +76,7 @@ else
   want_mpc = 0;
 end
 userfcn = [];
-if isstr(baseMVA) || isstruct(baseMVA)   %% passing filename or struct
+if ischar(baseMVA) || isstruct(baseMVA)  %% passing filename or struct
   %---- opf(baseMVA,  bus,     gen, branch, areas, gencost, Au,    lbu, ubu, mpopt, N,  fparm, H, Cw, z0, zl, zu)
   % 12  opf(casefile, Au,      lbu, ubu,    mpopt, N,       fparm, H,   Cw,  z0,    zl, zu)
   % 9   opf(casefile, Au,      lbu, ubu,    mpopt, N,       fparm, H,   Cw)

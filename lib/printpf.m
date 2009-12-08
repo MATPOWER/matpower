@@ -139,7 +139,6 @@ tap = tap .* exp(1j*pi/180 * branch(:, SHIFT)); %% add phase shifters
 nzld = find(bus(:, PD) | bus(:, QD));
 sorted_areas = sort(bus(:, BUS_AREA));
 s_areas = sorted_areas([1; find(diff(sorted_areas))+1]);    %% area numbers
-na = length(s_areas);                           %% number of areas
 nzsh = find(bus(:, GS) | bus(:, BS));
 allg = find( ~isload(gen) );
 ong  = find( gen(:, GEN_STATUS) > 0 & ~isload(gen) );
@@ -700,7 +699,7 @@ end
 
 %% execute userfcn callbacks for 'printpf' stage
 if have_results_struct && isfield(results, 'userfcn')
-    results = run_userfcn(results.userfcn, 'printpf', results, fd, mpopt);
+    run_userfcn(results.userfcn, 'printpf', results, fd, mpopt);
 end
 
 %% print raw data for Perl database interface
