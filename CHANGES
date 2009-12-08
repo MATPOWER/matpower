@@ -15,6 +15,20 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 3.2
 -----------------
 
+12/8/09
+    - Misc cleanup based on mlint suggestions, including:
+        - Replaced | with || and & with && where appropriate.
+        - Removed unnecessary sprintf (and fprintf!?) calls from args
+          to error().
+        - Replaced j (=sqrt(-1)) with 1j for speed and robustness.
+        - Replaced unecessary brackets [] with parentheses.
+        - Made sure all calls to exist() have 2 args.
+        - more
+
+12/4/09
+    - Fixed bug in savecase for cases where A or N matrix is a single
+      row.
+
 11/4/09
     - Removed unnecessary 'return' statement at end of all M-files. If
       anything it should be an 'end' statement, but even that is
