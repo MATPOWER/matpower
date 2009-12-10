@@ -15,6 +15,17 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 3.2
 -----------------
 
+12/10/09
+    - Fixed a bug, where calling opf() directly with individual
+      input data matrices in version 2 format resulted in the matrices
+      being inadvertently run through a version 1 to version 2 format
+      conversion, stripping out generator capability curves, ramp
+      limits and branch angle difference limits before setting up and
+      running the OPF. The fix for this subtle bug involved changing
+      loadcase to not assume that an input struct without a 'version'
+      field is in version 1 format. It now checks the size of the gen
+      matrix to make the determination.
+
 12/8/09
     - Misc cleanup based on mlint suggestions, including:
         - Replaced | with || and & with && where appropriate.
