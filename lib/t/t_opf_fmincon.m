@@ -163,9 +163,9 @@ if have_fcn('fmincon')
 
     %%-----  test OPF with capability curves  -----
     mpc = loadcase('t_case9_opfv2');
-    mpc.gen(2:3, [PC1, PC2, QC1MIN, QC1MAX, QC2MIN, QC2MAX]) = ...
-            [   0   200 -20 20  -10 10;
-                0   200 -30 30  -15 15  ];
+    %% remove angle diff limits
+    mpc.branch(1, ANGMAX) = 360;
+    mpc.branch(9, ANGMIN) = -360;
     
     %% get solved AC power flow case from MAT-file
     load soln9_opf_PQcap;   %% defines bus_soln, gen_soln, branch_soln, f_soln
@@ -188,8 +188,8 @@ if have_fcn('fmincon')
 
     %%-----  test OPF with angle difference limits  -----
     mpc = loadcase('t_case9_opfv2');
-    mpc.branch(1, ANGMAX) = 2.48;
-    mpc.branch(9, ANGMIN) = -2;
+    %% remove capability curves
+    mpc.gen(2:3, [PC1, PC2, QC1MIN, QC1MAX, QC2MIN, QC2MAX]) = zeros(2,6);
     
     %% get solved AC power flow case from MAT-file
     load soln9_opf_ang;   %% defines bus_soln, gen_soln, branch_soln, f_soln
@@ -214,13 +214,14 @@ if have_fcn('fmincon')
     %%-----  test OPF with ignored angle difference limits  -----
     %% get solved AC power flow case from MAT-file
     load soln9_opf;   %% defines bus_soln, gen_soln, branch_soln, f_soln
-    branch_soln(1, ANGMAX) = 2.48;
-    branch_soln(9, ANGMIN) = -2;
     
     %% run OPF with ignored angle difference limits
     t = [t0 'w/ignored angle difference limits : '];
     mpopt1 = mpoption(mpopt, 'OPF_IGNORE_ANG_LIM', 1);
     [baseMVA, bus, gen, gencost, branch, f, success, et] = runopf(mpc, mpopt1);
+    %% ang limits are not in this solution data, so let's remove them
+    branch(1, ANGMAX) = 360;
+    branch(9, ANGMIN) = -360;
     t_ok(success, [t 'success']);
     t_is(f, f_soln, 3, [t 'f']);
     t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
