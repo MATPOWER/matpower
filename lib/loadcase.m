@@ -30,9 +30,11 @@ function [baseMVA, bus, gen, branch, areas, gencost, info] = loadcase(casefile)
 %       4:  specified .M file does not exist in search path
 %       5:  specified file fails to define all matrices or contains syntax err
 %
-%   If the input data is not a struct containing a 'version' field, it is
-%   assumed to be a MATPOWER case file in version 1 format, and will be
-%   converted to version 2 format.
+%   If the input data is from an M-file or MAT file defining individual
+%   data matrices, or from a struct with out a 'version' field whose
+%   gen matrix has fewer than 21 columns, then it is assumed to be a
+%   MATPOWER case file in version 1 format, and will be converted to
+%   version 2 format.
 
 %   MATPOWER
 %   $Id$
@@ -92,19 +94,21 @@ if ischar(casefile)
         if strcmp(extension,'.mat')         %% from MAT file
             try
                 s = load(rootname);
-                if isfield(s, 'mpc')
+                if isfield(s, 'mpc')        %% it's a struct
                     s = s.mpc;
+                else                        %% individual data matrices
+                    s.version = '1';
                 end
             catch
                 info = 3;
             end
         elseif strcmp(extension,'.m')       %% from M file
-            try                         	%% assume it returns a struct
+            try                             %% assume it returns a struct
                 s = feval(rootname);
             catch
                 info = 4;
             end
-            if info == 0 && ~isstruct(s) 	%% if not try individual data matrices
+            if info == 0 && ~isstruct(s)    %% if not try individual data matrices
                 clear s;
                 s.version = '1';
                 if expect_gencost
@@ -157,15 +161,19 @@ if info == 0
         info = 5;           %% missing some expected fields
         err5 = 'missing data';
     else
-    	%% remove empty areas if not needed
-    	if isfield(s, 'areas') && isempty(s.areas) && ~expect_areas
-    		s = rmfield(s, 'areas');
-    	end
+        %% remove empty areas if not needed
+        if isfield(s, 'areas') && isempty(s.areas) && ~expect_areas
+            s = rmfield(s, 'areas');
+        end
 
         %% all fields present, copy to mpc
         mpc = s;
-        if ~isfield(mpc, 'version')
-            mpc.version = '1';
+        if ~isfield(mpc, 'version') %% hmm, struct with no 'version' field
+            if size(mpc.gen, 2) < 21    %% version 2 has 21 or 25 cols
+                mpc.version = '1';
+            else
+                mpc.version = '2';
+            end
         end
         if strcmp(mpc.version, '1')
             % convert from version 1 to version 2
@@ -236,6 +244,9 @@ function [gen, branch] = mpc_1to2(gen, branch)
 
 %%-----  gen  -----
 %% use the version 1 values for column names
+if size(gen, 2) > APF
+    error('mpc_1to2: gen matrix appears to already be in version 2 format');
+end
 shift = MU_PMAX - PMIN - 1;
 tmp = num2cell([MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN] - shift);
 [MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN] = deal(tmp{:});
