@@ -155,6 +155,7 @@ t0 = clock;         %% start timer
 %% options
 dc  = mpopt(10);        %% PF_DC        : 1 = DC OPF, 0 = AC OPF 
 alg = mpopt(11);        %% OPF_ALG
+verbose = mpopt(31);    %% VERBOSE
 
 %% set AC OPF algorithm code
 if ~dc
@@ -270,7 +271,7 @@ ng   = size(mpc.gen, 1);    %% number of dispatchable injections
 
 %% warn if there is more than one reference bus
 refs = find(bus(:, BUS_TYPE) == REF);
-if length(refs) > 1
+if length(refs) > 1 && verbose > 0
   errstr = ['\nopf: Warning: Multiple reference buses.\n', ...
               '     For a system with islands, a reference bus in each island\n', ...
               '     may help convergence, but in a fully connected system such\n', ...
