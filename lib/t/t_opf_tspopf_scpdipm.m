@@ -210,7 +210,7 @@ if have_fcn('scpdipmopf')
     t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
     t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
     t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
-    t_is(branch(:,ibr_angmu ), branch_soln(:,ibr_angmu ),  2, [t 'branch mu']);
+    t_is(branch(:,ibr_angmu ), branch_soln(:,ibr_angmu ),  2, [t 'branch angle mu']);
 
     %%-----  test OPF with ignored angle difference limits  -----
     %% get solved AC power flow case from MAT-file
