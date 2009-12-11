@@ -29,6 +29,9 @@ mpopt = mpoption(mpopt, 'OUT_ALL', 0, 'VERBOSE', verbose, 'OPF_ALG', 560);
     MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
     QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
 
+s6 = warning('query', 'MATLAB:nearlySingularMatrixUMFPACK');
+warning('off', 'MATLAB:nearlySingularMatrixUMFPACK');
+
 t = 'runopf_w_res(''case30_reserves'') : ';
 r = runopf_w_res(casefile, mpopt);
 t_is(r.reserves.R, [25; 15; 0; 0; 13.8729; 6.1272], 4, [t 'R']);
@@ -103,5 +106,7 @@ t_is(r.reserves.mu.l, [0; 0; 1; 2; 0; 0], 5, [t 'mu.l']);
 t_is(r.reserves.mu.u, [0; 0; 0; 0; 0; 0], 7, [t 'mu.u']);
 t_is(r.reserves.mu.Pmax, [1; 0; 0; 0; 1; 0], 6, [t 'mu.Pmax']);
 t_is(r.reserves.cost, mpc.reserves.cost, 12, [t 'cost']);
+
+warning(s6.state, 'MATLAB:nearlySingularMatrixUMFPACK');
 
 t_end;
