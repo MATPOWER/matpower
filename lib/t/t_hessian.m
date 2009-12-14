@@ -304,11 +304,11 @@ end
 t_is(full(Gfaa), num_Gfaa, 3, ['Gfaa' t]);
 t_is(full(Gfav), num_Gfav, 3, ['Gfav' t]);
 t_is(full(Gfva), num_Gfva, 3, ['Gfva' t]);
-t_is(full(Gfvv), num_Gfvv, 3, ['Gfvv' t]);
+t_is(full(Gfvv), num_Gfvv, 2, ['Gfvv' t]);
 
 t_is(full(Gtaa), num_Gtaa, 3, ['Gtaa' t]);
 t_is(full(Gtav), num_Gtav, 3, ['Gtav' t]);
 t_is(full(Gtva), num_Gtva, 3, ['Gtva' t]);
-t_is(full(Gtvv), num_Gtvv, 3, ['Gtvv' t]);
+t_is(full(Gtvv), num_Gtvv, 2, ['Gtvv' t]);
 
 t_end;
