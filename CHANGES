@@ -2,7 +2,7 @@
  Change history for MATPOWER
 -----------------------------
 
-Version:    4.0-dev
+Version:    4.0b1
 
 maintained by Ray Zimmerman <rz10@cornell.edu>
 
@@ -14,6 +14,13 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 
 Changes since 3.2
 -----------------
+
+12/24/09
+    - Released version 4.0b1.
+
+12/18/09
+    - Make OPF_ALG default to 540 then 560 (no 500 MINOPF) and
+      OPF_ALG_DC default to 200 (no 100 BPMPD_MEX).
 
 12/10/09
     - Fixed a bug, where calling opf() directly with individual
@@ -81,7 +88,7 @@ Changes since 3.2
       five: ext2int, formulation, int2ext, printpf, savecase.
 
 4/14/09
-    - Deprecate use of 'areas' data matrix. Remove it everywhere
+    - Deprecated use of 'areas' data matrix. Removed it everywhere
       possible without breaking backward compatibility with version 1
       case files, which required it.
     - INCOMPATIBLE CHANGE: Calling loadcase() with 5 output arguments
@@ -133,7 +140,7 @@ Changes since 3.2
     - Added a top level program, runopf_w_res(), to solve an OPF with
       fixed reserve requirements. This is a good example of how to use
       the new userfcn mechanism to add vars, costs, constraints to an
-      OPF (see also userfcn_reserves.m and case30_reserves.m).
+      OPF (see also toggle_reserves.m and t_case30_userfcns.m).
     - Added option to return solution as a results struct to runpf,
       runopf, runuopf, rundcpf, rundcopf, runduopf.
     - Updated uopf.m so input/output args match opf.m.
@@ -170,7 +177,7 @@ Changes since 3.2
       assumes they are for the AC OPF and strips out the extra
       columns before passing to dcopf.m.
     - Added the ability to read and save generalized OPF user
-      constraints, costs and var limits from case struct.
+      constraints, costs and var limits in case struct.
     - Modified savecase.m to include saving of MU_ANGMIN, MU_ANGMAX
       columns of branch matrix.
 

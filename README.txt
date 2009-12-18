@@ -2,7 +2,7 @@
  MATPOWER - A Matlab Power System Simulation Package
 =====================================================
 
-Version:    3.2
+Version:    4.0b1
 
 Home Page:  http://www.pserc.cornell.edu/matpower/
 
@@ -10,7 +10,7 @@ Authors:    Ray Zimmerman               <rz10@cornell.edu>
             Carlos E. Murillo-Sanchez   <carlos_murillo@ieee.org>
             Deqiang (David) Gan         <dgan@zju.edu.cn>
 
-            Fri, Sep 21, 2007
+            Thu, Dec 24, 2009
 
 $Id$
 Copyright (c) 1997-2007 by Power System Engineering Research Center (PSERC)
@@ -54,14 +54,27 @@ MATPOWER can be downloaded from the MATPOWER home page above.
 
 System Requirements
 -------------------
-    - Matlab version 6 or later
-    - Matlab Optimization Toolbox (required only for some OPF algorithms)
+    - Matlab version 6.5 or later, available from The MathWorks
+      http://www.mathworks.com/.
 
 Installation
 ------------
-    1. Unzip the downloaded file.
-    2. Place files in a location on your Matlab path.
-    3. Start up Matlab.
+1.  Follow the download instructions on the MATPOWER home page. You
+    should end up with a file named matpowerXXX.zip, where XXX depends
+    on the version of MATPOWER.
+
+2.  Unzip the downloaded file. Move the resulting matpowerXXX directory
+    to the location of your choice. These files should not need to be
+    modified, so it is recommended that they be kept separate from your
+    own code. Let $MATPOWER denote the path to this directory.
+
+3.  Add the following directories to your Matlab path:
+      $MATPOWER   Ð core MATPOWER functions
+      $MATPOWER/t Ð test scripts for MATPOWER
+
+4.  At the Matlab prompt, type 'test matpower' (without the quotes) to
+    run the test suite and verify that MATPOWER is properly installed
+    and functioning.
 
 Running MATPOWER
 ----------------
@@ -71,73 +84,79 @@ type:
 
     >> runpf('case9')
 
-To run an optimal power flow on the 30-bus system whose data is in
-case30.m, with the default algorithm options, at the Matlab prompt,
-type:
+To load the 30-bus system data from case30.m, increase its real power
+demand at bus 2 to 30 MW, then run an AC optimal power flow with
+default options, type:
 
-    >> runopf('case30')
+    >> define_constants;
+    >> mpc = loadcase('case30');
+    >> mpc.bus(2, PD) = 30;
+    >> runopf(mpc);
 
-To run an optimal power flow on the same system, but with the option for
-MATPOWER to shut down (decommit) expensive generators, type:
+By default, the results of the simulation are pretty-printed to the
+screen, but the solution can also be optionally returned in a 'results'
+struct. The following example shows how simple it is, after running a
+DC OPF on the 118-bus system in case118.m, to access the final
+objective function value, the real power output of generator 6 and the power flow in branch 51.
 
-    >> runuopf('case30')
+, as follows (from DC OPF on 118-bus system):
 
-For info on other parameters and options, try these:
+    >> results = rundcopf('case118');
+    >> final_objective = results.f;
+    >> gen6_output     = results.gen(6, PG);
+    >> branch51_flow   = results.branch(51, PF);
+
+For additional info, see the User's Manual and the on-line help
+documentation for the various MATPOWER functions. For example:
     >> help runpf
     >> help runopf
-    >> help runuopf
     >> help mpoption
     >> help caseformat
 
-To run the test suite, place the files in the 't' subdirectory in your
-Matlab path, and type:
-    >> test_matpower
 
+-----------------------------
+ WHAT'S NEW IN VERSION 4.0b1
+-----------------------------
 
----------------------------
- WHAT'S NEW IN VERSION 3.2
----------------------------
-
-Below is a summary of the changes since version 3.0.0 of MATPOWER. See the
+Below is a summary of the changes since version 3.2 of MATPOWER. See the
 CHANGES file in the docs directory for all the gory details.
 
 * New features:
-  - AC OPF formulation enhancements
-    - new generalized cost model
-    - piece-wise linear generator PQ capability curves
-    - branch angle difference constraints
-    - simplified interface for specifying additional linear constraints
-    - option to use current magnitude for line flow limits
-      (Set OPF_FLOW_LIM to 2, fmincopf solver only)
-  - AC OPF solvers
-    - support for TSPOPF, a new optional package of three OPF solvers,
-      implemented as C MEX files, suitable for large scale systems
-    - ability to specify initial value and bounds on user variables z
-  - New (v. 2) case file format
-    - all data in a single struct
-    - generator PQ capability curves
-    - generator ramp rates
-    - branch angle difference limits
-  - New function to build DC PDTF matrix (makePTDF.m)
-  - Added 5 larger scale (> 2000 bus) cases for Polish system.
-    (Thanks to Roman Korab).
-  - Improved identification of binding constraints in printout.
+  - New high-performance default solvers for AC and DC OPF, based on a
+    pure-Matlab implementation of the primal-dual interior point
+    methods in the optional package TSPOPF. Suitable for large systems.
+  - Extensive OPF enhancements:
+    - Generalized, extensible OPF formulation applies to all solvers
+      (AC and DC).
+    - Improved method for modifying OPF formulation and output via
+      a new user-defined callback function mechanism.
+    - Option to co-optimize reserves based on fixed reserve
+      requirements, implemented using new callback function mechanism.
+    - Option to include interface flow limits (based on DC model flows),
+      implemented using new callback function mechanism.
+  - Option to return full power flow or OPF solution in a single
+    'results' struct.
+  - Ability to read and save generalized OPF user constraints, costs
+    and variable limits as well as other user data in case struct.
+  - New functions:
+    - scale_load() conveniently modifies multiple loads.
+    - makeLODF() computes line outage distribution factors.
+    - total_load() retreives total load for the entire system, a
+      specific zone or bus, with options to include fixed loads,
+      dispatchable loads or both.
+  - Use of 'areas' data matrix is now optional.
   - Many new tests in test suite.
-  
+
 * Bugs fixed:
-  - Phase shifters shifted the wrong direction, again (v.2 had it right).
-  - Fixed bug in pfsoln.m which caused incorrect value for Qg when
-    Qmin == Qmax for all generators at a bus in power flow solution.
-  
+  - Branch power flow limits could be violated when using the option
+    OPF_FLOW_LIM = 1.
+
 * INCOMPATIBLE CHANGES:
-  - User supplied A matrix for general linear constraints in OPF no
-    longer includes columns for helper variables for piecewise linear
-    gen costs, and now requires columns for all x (OPF) variables.
-  - Changed the sign convention used for phase shifters to be consistent
-    with PTI, PowerWorld, PSAT, etc. E.g. A phase shift of 10 deg now
-    means the voltage at the "to" end is delayed by 10 degrees.
-  - Name of option 24 in mpoption changed from OPF_P_LINE_LIM to
-    OPF_FLOW_LIM.
+  - Input/output arguments to uopf() are now consistent with opf().
+  - dAbr_dV() now gives now gives partial derivatives of the
+    *squared* magnitudes of flows w.r.t. V, as opposed to the
+    magnitudes.
+
 
 ---------------
  DOCUMENTATION
@@ -148,7 +167,8 @@ There are two primary sources of documentation for MATPOWER.
     - MATPOWER User's Manual
 
 The User's Manual is included in the distribution (manual.pdf in docs
-directory) or it can be downloaded separately from the link above.
+directory) or it can be downloaded separately from 
+http://www.pserc.cornell.edu/matpower/manual.pdf.
 
 Each M-file has its own documentation which can be accessed by typing at
 the Matlab prompt:
@@ -173,7 +193,7 @@ restrictive licenses than MATPOWER. Please see the individual
 Terms of Use for details.
 
  - TSPOPF      A package of three AC OPF solvers implemented as C MEX files.
-               Suitable for larger scale problems.
+               Suitable for large scale problems.
                See http://www.pserc.cornell.edu/tspopf/
 
  - MINOPF      A MINOS-based AC OPF solver implemented as a Fortran MEX file.
