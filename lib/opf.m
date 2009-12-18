@@ -2,10 +2,6 @@ function [busout, genout, branchout, f, success, info, et, g, jac, xr, pimul] = 
     opf(varargin)
 %OPF  Solves an optimal power flow.
 %
-%   For an AC OPF, if the OPF algorithm is not set explicitly in the options,
-%   it will choose the best available solver, searching in the following order:
-%   minopf, pdipmopf, fmincon, LP-based, and constr.
-%
 %   Returns either a results struct and an optional success flag, or individual
 %   data matrices, the objective function value and a success flag. In the
 %   latter case, there are additional optional return values.
@@ -63,8 +59,14 @@ function [busout, genout, branchout, f, success, info, et, g, jac, xr, pimul] = 
 %   then H and Cw define a quadratic cost on w: (1/2)*w'*H*w + Cw * w .
 %   H and N should be sparse matrices and H should also be symmetric.
 %
-%   The optional mpopt vector specifies MATPOWER options. Type 'help mpoption'
-%   for details and default values.
+%   The optional mpopt vector specifies MATPOWER options. If the OPF
+%   algorithm is not explicitly set in the options MATPOWER will use
+%   the default solver, based on a primal-dual interior point method.
+%   For the AC OPF this is OPF_ALG = 560, unless the TSPOPF optional
+%   package is installed, in which case the default is 540. For the
+%   DC OPF, the default is OPF_ALG_DC = 200. Type 'help mpoption' for
+%   more details on the available OPF solvers and other OPF options
+%   and their default values.
 %
 %   The solved case is returned either in a single results struct (described
 %   below) or in the individual data matrices, bus, gen and branch. Also
@@ -160,9 +162,7 @@ verbose = mpopt(31);    %% VERBOSE
 %% set AC OPF algorithm code
 if ~dc
   if alg == 0                   %% OPF_ALG not set, choose best option
-    if have_fcn('minopf')
-      alg = 500;                %% MINOS
-    elseif have_fcn('pdipmopf')
+    if have_fcn('pdipmopf')
       alg = 540;                %% PDIPM
     else
       alg = 560;
