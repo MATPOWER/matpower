@@ -64,11 +64,7 @@ verbose = mpopt(31);    %% VERBOSE
 alg     = mpopt(26);    %% OPF_ALG_DC
 
 if alg == 0
-    if have_fcn('bpmpd')
-        alg = 100;      %% BPMPD_MEX
-    else
-        alg = 200;      %% PDIPM (pure Matlab)
-    end
+    alg = 200;      %% PDIPM (pure Matlab)
 end
 
 %% unpack data
