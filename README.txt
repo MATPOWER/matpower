@@ -82,36 +82,35 @@ To run a simple Newton power flow on the 9-bus system specified in the
 file case9.m, with the default algorithm options, at the Matlab prompt,
 type:
 
-    >> runpf('case9')
+    runpf('case9')
 
 To load the 30-bus system data from case30.m, increase its real power
 demand at bus 2 to 30 MW, then run an AC optimal power flow with
 default options, type:
 
-    >> define_constants;
-    >> mpc = loadcase('case30');
-    >> mpc.bus(2, PD) = 30;
-    >> runopf(mpc);
+    define_constants;
+    mpc = loadcase('case30');
+    mpc.bus(2, PD) = 30;
+    runopf(mpc);
 
 By default, the results of the simulation are pretty-printed to the
 screen, but the solution can also be optionally returned in a 'results'
-struct. The following example shows how simple it is, after running a
-DC OPF on the 118-bus system in case118.m, to access the final
-objective function value, the real power output of generator 6 and the power flow in branch 51.
+struct. The following example shows how simple it is, after running a DC
+OPF on the 118-bus system in case118.m, to access the final objective
+function value, the real power output of generator 6 and the power flow
+in branch 51.
 
-, as follows (from DC OPF on 118-bus system):
-
-    >> results = rundcopf('case118');
-    >> final_objective = results.f;
-    >> gen6_output     = results.gen(6, PG);
-    >> branch51_flow   = results.branch(51, PF);
+    results = rundcopf('case118');
+    final_objective = results.f;
+    gen6_output     = results.gen(6, PG);
+    branch51_flow   = results.branch(51, PF);
 
 For additional info, see the User's Manual and the on-line help
 documentation for the various MATPOWER functions. For example:
-    >> help runpf
-    >> help runopf
-    >> help mpoption
-    >> help caseformat
+    help runpf
+    help runopf
+    help mpoption
+    help caseformat
 
 
 -----------------------------

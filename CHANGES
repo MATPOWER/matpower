@@ -213,6 +213,7 @@ Changes since 3.2
 1/10/08
     - Significant speed improvements in makeYbus.m and makeBdc.m.
 
+
 Changes since 3.1b2
 -------------------
 
