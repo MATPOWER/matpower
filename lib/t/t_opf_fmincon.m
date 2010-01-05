@@ -36,7 +36,7 @@ mpopt = mpoption('OPF_VIOLATION', 1e-6, 'CONSTR_TOL_X', 1e-6, 'CONSTR_TOL_F', 1e
 mpopt = mpoption(mpopt, 'OUT_ALL', 0, 'VERBOSE', verbose, 'OPF_ALG', 520);
 
 if have_fcn('fmincon')
-    %% set up indexes
+    %% set up indices
     ib_data     = [1:BUS_AREA BASE_KV:VMIN];
     ib_voltage  = [VM VA];
     ib_lam      = [LAM_P LAM_Q];

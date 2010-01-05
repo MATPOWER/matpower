@@ -37,7 +37,7 @@ mpopt = mpoption(mpopt, 'OPF_ALG_DC', 100);
 
 %% run DC OPF
 if have_fcn('bpmpd')
-    %% set up indexes
+    %% set up indices
     ib_data     = [1:BUS_AREA BASE_KV:VMIN];
     ib_voltage  = [VM VA];
     ib_lam      = [LAM_P LAM_Q];

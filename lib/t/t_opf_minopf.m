@@ -36,7 +36,7 @@ mpopt = mpoption('OPF_VIOLATION', 1e-6, 'MNS_XTOL', 1e-6);
 mpopt = mpoption(mpopt, 'OUT_ALL', 0, 'VERBOSE', verbose, 'OPF_ALG', 500);
 
 if have_fcn('minopf')
-    %% set up indexes
+    %% set up indices
     ib_data     = [1:BUS_AREA BASE_KV:VMIN];
     ib_voltage  = [VM VA];
     ib_lam      = [LAM_P LAM_Q];

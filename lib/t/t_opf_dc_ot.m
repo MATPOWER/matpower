@@ -39,7 +39,7 @@ warning off optim:linprog:IgnoreStartPoint;
 
 %% run DC OPF
 if have_fcn('quadprog') || have_fcn('qp')
-    %% set up indexes
+    %% set up indices
     ib_data     = [1:BUS_AREA BASE_KV:VMIN];
     ib_voltage  = [VM VA];
     ib_lam      = [LAM_P LAM_Q];
