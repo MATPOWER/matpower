@@ -1,7 +1,5 @@
 %DEFINE_CONSTANTS  Defines constants for named column indices to data matrices.
 %
-%   define_constants
-%
 %   This is simply a convenience script that defines the constants
 %   listed below, consisting primarily of named indices for the
 %   columns of the data matrices: bus, branch, gen and gencost.
@@ -25,8 +23,8 @@
 %   gencost: 
 %      PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST
 %
-%   See the help for caseformat, idx_bus, idx_brch, idx_gen and
-%   idx_cost for details on the meaning of these constants. Internally
+%   See CASEFORMAT, IDX_BUS, IDX_BRCH, IDX_GEN and IDX_COST for
+%   details on the meaning of these constants. Internally
 %   define_constants calls idx_bus, idx_brch, idx_gen and idx_cost.
 %   In performance sensitive code, such as internal MATPOWER functions
 %   that are called frequently, it is preferred to call these
