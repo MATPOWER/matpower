@@ -9,6 +9,18 @@ function [x, f, info, Output, Lambda] = pdipm(ipm_f, ipm_gh, ipm_hess, x0, xmin,
 %   g(x) <= 0
 %   l <= A*x <= u
 %   xmin <= x <= xmax
+%
+%   Ported by Ray Zimmerman from C code written by H. Wang for his
+%   PhD dissertation:
+%     "On the Computation and Application of Multi-period
+%     Security-Constrained Optimal Power Flow for Real-time
+%     Electricity Market Operations", Cornell University, May 2007.
+%
+%   See also:
+%     H. Wang, C. E. Murillo-S‡nchez, R. D. Zimmerman, R. J. Thomas,
+%     "On Computational Issues of Market-Based Optimal Power Flow",
+%     IEEE Transactions on Power Systems, Vol. 22, No. 3, Aug. 2007,
+%     pp. 1185-1193.
 
 %   MATPOWER
 %   $Id$
@@ -114,8 +126,8 @@ z   = z0 * ones(niq, 1);
 mu  = z;
 k = find(g < -z0);
 z(k) = -g(k);
-k = find(gamma ./ z > z0);
-mu(k) = gamma ./ z(k);
+k = find(gamma / z > z0);   %% (seems k is always empty if gamma = z0 = 1)
+mu(k) = gamma / z(k);
 e = ones(niq, 1);
 
 %% check tolerance
@@ -263,7 +275,7 @@ while (~converged && i < opt.max_it)
         end
     else
         if any(isnan(x)) || alphap < alpha_min || alphad < alpha_min || ...
-        		gamma < eps || gamma > 1/eps
+                gamma < eps || gamma > 1/eps
             if opt.verbose
                 fprintf('\nNumerically Failed\n');
             end
