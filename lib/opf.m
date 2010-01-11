@@ -309,12 +309,6 @@ if dc               %% DC model
   upf = branch(il, RATE_A) / baseMVA - Pfinj(il);
   upt = branch(il, RATE_A) / baseMVA + Pfinj(il);
 
-  %% voltage angel reference constraints
-  Vau = Inf * ones(nb, 1);
-  Val = -Vau;
-  Vau(refs) = Va(refs);
-  Val(refs) = Va(refs);
-  
   user_vars = {'Va', 'Pg'};
   ycon_vars = {'Pg', 'y'};
 else                %% AC model
@@ -332,6 +326,12 @@ else                %% AC model
   user_vars = {'Va', 'Vm', 'Pg', 'Qg'};
   ycon_vars = {'Pg', 'Qg', 'y'};
 end
+
+%% voltage angle reference constraints
+Vau = Inf * ones(nb, 1);
+Val = -Vau;
+Vau(refs) = Va(refs);
+Val(refs) = Va(refs);
 
 %% branch voltage angle difference limits
 [Aang, lang, uang, iang]  = makeAang(baseMVA, branch, nb, mpopt);
@@ -375,7 +375,7 @@ if dc
   om = add_constraints(om, 'Pt', -Bf(il,:), lpf, upt, {'Va'});      %% nl
   om = add_constraints(om, 'ang', Aang, lang, uang, {'Va'});        %% nang
 else
-  om = add_vars(om, 'Va', nb, Va);
+  om = add_vars(om, 'Va', nb, Va, Val, Vau);
   om = add_vars(om, 'Vm', nb, Vm, bus(:, VMIN), bus(:, VMAX));
   om = add_vars(om, 'Pg', ng, Pg, Pmin, Pmax);
   om = add_vars(om, 'Qg', ng, Qg, Qmin, Qmax);

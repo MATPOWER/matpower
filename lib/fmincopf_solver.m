@@ -79,12 +79,6 @@ ny = get_var_N(om, 'y');    %% number of piece-wise linear costs
 %% bounds on optimization vars
 [x0, LB, UB] = getv(om);
 
-%% add constraint on ref bus angles
-refs = find(bus(:, BUS_TYPE) == REF);
-Varefs = bus(refs, VA) * (pi/180);
-LB(vv.i1.Va-1+refs) = Varefs;
-UB(vv.i1.Va-1+refs) = Varefs;
-
 %% linear constraints
 [A, l, u] = linear_constraints(om);
 
