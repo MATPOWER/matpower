@@ -3,12 +3,15 @@ function [x, f, info, Output, Lambda] = pdipm(ipm_f, ipm_gh, ipm_hess, x0, xmin,
 %   [x, f, info, Output, Lambda] = ...
 %       pdipm(f, gh, hess, x0, xmin, xmax, A, l, u, opt)
 %
-%   min f(x)
-%    s.t.
-%   h(x) = 0
-%   g(x) <= 0
-%   l <= A*x <= u
-%   xmin <= x <= xmax
+%       min f(x)
+%        x
+%
+%   such that
+%
+%           h(x) = 0
+%           g(x) <= 0
+%           l <= A*x <= u
+%           xmin <= x <= xmax
 %
 %   Ported by Ray Zimmerman from C code written by H. Wang for his
 %   PhD dissertation:
@@ -68,6 +71,11 @@ end
 if ~isfield(opt, 'verbose') || isempty(opt.verbose)
     opt.verbose = 0;
 end
+
+%% initialize history
+hist(opt.max_it+1) = struct('feascond', 0, 'gradcond', 0, 'compcond', 0, ...
+    'costcond', 0, 'gamma', 0, 'stepsize', 0, 'obj', 0, ...
+    'alphap', 0, 'alphad', 0);
 
 %% constants
 xi = 0.99995;           %% OPT_IPM_PHI
@@ -140,6 +148,10 @@ feascond = max([norm(h, Inf), max(g)]) / (1 + max([ norm(x, Inf), norm(z, Inf) ]
 gradcond = norm(Lx, Inf) / (1 + max([ norm(lam, Inf), norm(mu, Inf) ]));
 compcond = (z' * mu) / (1 + norm(x, Inf));
 costcond = abs(f - f0) / (1 + abs(f0));
+%% save history
+hist(i+1) = struct('feascond', feascond, 'gradcond', gradcond, ...
+    'compcond', compcond, 'costcond', costcond, 'gamma', gamma, ...
+    'stepsize', 0, 'obj', f/opt.cost_mult, 'alphap', 0, 'alphad', 0);
 if opt.verbose > 1
     fprintf('\n it    objective   step size   feascond     gradcond     compcond     costcond  ');
     fprintf('\n----  ------------ --------- ------------ ------------ ------------ ------------');
@@ -263,6 +275,12 @@ while (~converged && i < opt.max_it)
     gradcond = norm(Lx, Inf) / (1 + max([ norm(lam, Inf), norm(mu, Inf) ]));
     compcond = (z' * mu) / (1 + norm(x, Inf));
     costcond = abs(f - f0) / (1 + abs(f0));
+    %% save history
+    hist(i+1) = struct('feascond', feascond, 'gradcond', gradcond, ...
+        'compcond', compcond, 'costcond', costcond, 'gamma', gamma, ...
+        'stepsize', norm(dx), 'obj', f/opt.cost_mult, ...
+        'alphap', alphap, 'alphad', alphad);
+
     if opt.verbose > 1
         fprintf('\n%3d  %12.8g %10.5g %12g %12g %12g %12g', ...
             i, f/opt.cost_mult, norm(dx), feascond, gradcond, compcond, costcond);
@@ -294,9 +312,9 @@ if opt.verbose
     end
 end
 
+hist = hist(1:i+1);
 info = converged;
-Output = struct('iterations', i, 'feascond', feascond, 'gradcond', gradcond, ...
-                'compcond', compcond, 'costcond', costcond);
+Output = struct('iterations', i, 'hist', hist);
 
 %% zero out multipliers on non-binding constraints
 mu(g < -opt.feastol & mu < mu_threshold) = 0;
