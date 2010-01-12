@@ -8,8 +8,17 @@ maintained by Ray Zimmerman <rz10@cornell.edu>
 
 MATPOWER
 $Id$
-Copyright (c) 1996-2009 by Power System Engineering Research Center (PSERC)
+Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
+
+
+Changes since 4.0b1
+-------------------
+
+1/12/10
+    - Added saving history of trajectory of obj, feascond, gradcond,
+      compcond, costcond, etc. for pdipm solver.
+      See results.raw.output.hist.
 
 
 Changes since 3.2
