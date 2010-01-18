@@ -93,6 +93,7 @@ function [x, f, eflag, output, lambda] = pdipm(ipm_f, x0, A, l, u, xmin, xmax, i
 %           hist - struct array with trajectories of the following:
 %                   feascond, gradcond, compcond, costcond, gamma,
 %                   stepsize, obj, alphap, alphad
+%           message - exit message
 %       lambda : struct containing the Langrange and Kuhn-Tucker
 %           multipliers on the constraints, with fields:
 %           eqnonlin - non-linear equality constraints
@@ -505,6 +506,15 @@ if eflag ~= -1
     eflag = converged;
 end
 output = struct('iterations', i, 'hist', hist);
+if eflag == 0
+    output.message = 'Did not converge';
+elseif eflag == 1
+    output.message = 'Converged';
+elseif eflag == -1
+    output.message = 'Numerically failed';
+else
+    output.message = 'Please hang up and dial again';
+end
 
 %% zero out multipliers on non-binding constraints
 mu(g < -opt.feastol & mu < mu_threshold) = 0;
