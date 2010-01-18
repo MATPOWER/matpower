@@ -15,6 +15,13 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.0b1
 -------------------
 
+1/18/10
+    - Changed order of input args to pdipm(), added option for single
+      input struct (like fmincon), more documentation, all constraints
+      are now optional, returns exitflag = -1 for 'numerically failed',
+      output includes 'message' field, lambda only includes relevant
+      fields. Added tests for pdipm as standalone solver.
+
 1/12/10
     - Added saving history of trajectory of obj, feascond, gradcond,
       compcond, costcond, etc. for pdipm solver.
