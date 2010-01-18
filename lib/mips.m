@@ -1,17 +1,112 @@
-function [x, f, info, Output, Lambda] = pdipm(ipm_f, ipm_gh, ipm_hess, x0, xmin, xmax, A, l, u, opt)
+function [x, f, eflag, output, lambda] = pdipm(ipm_f, x0, A, l, u, xmin, xmax, ipm_gh, ipm_hess, opt)
 %PDIPM  Primal-dual interior point method for NLP.
-%   [x, f, info, Output, Lambda] = ...
-%       pdipm(f, gh, hess, x0, xmin, xmax, A, l, u, opt)
+%   Minimize a function f beginning from a starting point x0, subject to
+%   optional linear and non-linear constraints and variable bounds.
 %
 %       min f(x)
 %        x
 %
 %   such that
 %
-%           h(x) = 0
-%           g(x) <= 0
-%           l <= A*x <= u
-%           xmin <= x <= xmax
+%           h(x) = 0            (non-linear equalities)
+%           g(x) <= 0           (non-linear inequalities)
+%           l <= A*x <= u       (linear constraints)
+%           xmin <= x <= xmax   (variable bounds)
+%
+%   [x, f, exitflag, output, lambda] = ...
+%       pdipm(f, x0, A, l, u, xmin, xmax, gh, hess, opt)
+%   x = pdipm(f, x0)
+%   x = pdipm(f, x0, A, l)
+%   x = pdipm(f, x0, A, l, u)
+%   x = pdipm(f, x0, A, l, u, xmin)
+%   x = pdipm(f, x0, A, l, u, xmin, xmax)
+%   x = pdipm(f, x0, A, l, u, xmin, xmax, gh)
+%   x = pdipm(f, x0, A, l, u, xmin, xmax, gh, hess)
+%   x = pdipm(f, x0, A, l, u, xmin, xmax, gh, hess, opt)
+%   x = pdipm(problem), where problem is a struct with fields:
+%                       f, x0, A, l, u, xmin, xmax, gh, hess, opt
+%                       all fields except 'f' and 'x0' are optional
+%   x = pdipm(...)
+%   [x, fval] = pdipm(...)
+%   [x, fval, exitflag] = pdipm(...)
+%   [x, fval, exitflag, output] = pdipm(...)
+%   [x, fval, exitflag, output, lambda] = pdipm(...)
+%
+%   Inputs:
+%       f : handle to function that evaluates the objective function,
+%           it's gradients and Hessian for a given value of x. If there
+%           are non-linear constraints the Hessian information is
+%           provided by the 'hess' function passed in the 9th argument
+%           and is not required here. Calling syntax for this function:
+%               [f, df, d2f] = f(x)
+%       x0 : starting value of optimization vector x
+%       A, l, u : define the optional linear constraints. Default
+%           values for the elements of l and u are -Inf and Inf,
+%           respectively.
+%       xmin, xmax : optional lower and upper bounds on the
+%           x variables, defaults are -Inf and Inf, respectively.
+%       gh : handle to function that evaluates the optional
+%           non-linear constraints and their gradients for a given
+%           value of x. Calling syntax for this function is:
+%               [g, h, dg, dh] = gh(x)
+%       hess : handle to function that computes the Hessian of the
+%           Lagrangian for given values of x, lambda and mu, where
+%           lambda and mu are the multipliers on the equality and
+%           inequality constraints, h and g, respectively. The calling
+%           syntax for this function is:
+%               Lxx = hess(x, lam)
+%           where lambda = lam.eqnonlin and mu = lam.ineqnonlin.
+%       opt : optional options structure with the following fields,
+%           all of which are also optional (default values in shown in
+%           parentheses)
+%           verbose (0) - controls level of progress output displayed
+%           feastol (1e-6) - termination tolerance for feasibility
+%               condition
+%           gradtol (1e-6) - termination tolerance for gradient
+%               condition
+%           comptol (1e-6) - termination tolerance for complementarity
+%               condition
+%           costtol (1e-6) - termination tolerance for cost condition
+%           max_it (150) - maximum number of iterations
+%           step_control (0) - set to 1 to turn on step-size control
+%           max_red (20) - maximum number of step-size reductions if
+%               step-control is on
+%           cost_mult (1) - cost multiplier used to scale the objective
+%               function for improved conditioning. Note: The same
+%               value must also be passed to the Hessian evaluation
+%               function so that it can appropriately scale the
+%               objective function term in the Hessian of the
+%               Lagrangian.
+%       problem : The inputs can alternatively be supplied in a single
+%           struct with fields corresponding to the input arguments
+%           described above: f, x0, A, l, u, xmin, xmax, gh, hess, opt
+%
+%   Outputs:
+%       x : solution vector
+%       fval : final objective function value
+%       exitflag : exit flag,
+%           1 = first order optimality conditions satisfied
+%           0 = maximum number of iterations reached
+%           -1 = numerically failed
+%       output : structure with fields:
+%           iterations - number of iterations performed
+%           hist - struct array with trajectories of the following:
+%                   feascond, gradcond, compcond, costcond, gamma,
+%                   stepsize, obj, alphap, alphad
+%       lambda : struct containing the Langrange and Kuhn-Tucker
+%           multipliers on the constraints, with fields:
+%           eqnonlin - non-linear equality constraints
+%           ineqnonlin - non-linear inequality constraints
+%           mu_l - lower bound on linear constraints
+%           mu_u - upper bound on linear constraints
+%           lower - lower bound on optimization variables
+%           upper - upper bound on optimization variables
+%
+%   Note the calling syntax is almost identical to that of 'fmincon'
+%   from MathWorks' Optimization Toolbox. The main difference is that
+%   the linear constraints are specified with A, l, u instead of
+%   A, b, Aeq, beq. The functions for evaluating the objective
+%   function, constraints and Hessian are identical.
 %
 %   Ported by Ray Zimmerman from C code written by H. Wang for his
 %   PhD dissertation:
@@ -28,21 +123,77 @@ function [x, f, info, Output, Lambda] = pdipm(ipm_f, ipm_gh, ipm_hess, x0, xmin,
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2009 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-%% options
-if nargin < 10
-    opt = struct([]);
-    if nargin < 7
-        A = sparse(0,0); l = []; u = [];
-        if nargin < 6
-            xmax = Inf * ones(size(x0));
-            if nargin < 5
-                xmin = -Inf * ones(size(x0));
+%%----- input argument handling  -----
+%% gather inputs
+if nargin == 1 && isstruct(ipm_f)       %% problem struct
+    p = ipm_f;
+    ipm_f = p.f;
+    x0 = p.x0;
+    nx = size(x0, 1);       %% number of optimization variables
+    if isfield(p, 'opt'),   opt = p.opt;        else,   opt = [];       end
+    if isfield(p, 'hess'),  ipm_hess = p.hess;  else,   ipm_hess = '';  end
+    if isfield(p, 'gh'),    ipm_gh = p.gh;      else,   ipm_gh = '';    end
+    if isfield(p, 'xmax'),  xmax = p.xmax;      else,   xmax = [];      end
+    if isfield(p, 'xmin'),  xmin = p.xmin;      else,   xmin = [];      end
+    if isfield(p, 'u'),     u = p.u;            else,   u = [];         end
+    if isfield(p, 'l'),     l = p.l;            else,   l = [];         end
+    if isfield(p, 'A'),     A = p.A;            else,   A=sparse(0,nx); end
+else                                    %% individual args
+    nx = size(x0, 1);       %% number of optimization variables
+    if nargin < 10
+        opt = [];
+        if nargin < 9
+            ipm_hess = '';
+            if nargin < 8
+                ipm_gh = '';
+                if nargin < 7
+                    xmax = [];
+                    if nargin < 6
+                        xmin = [];
+                        if nargin < 5
+                            u = [];
+                            if nargin < 4
+                                l = [];
+                                A = sparse(0,nx);
+                            end
+                        end
+                    end
+                end
             end
         end
     end
+end
+%% set default argument values if missing
+if  ~isempty(A) && (isempty(l) || all(l == -Inf)) && ...
+                   (isempty(u) || all(u == Inf))
+    A = sparse(0,nx);           %% no limits => no linear constraints
+end
+nA = size(A, 1);                %% number of original linear constraints
+if isempty(u)                   %% By default, linear inequalities are ...
+    u = Inf * ones(nA, 1);      %% ... unbounded above and ...
+end
+if isempty(l)
+    l = -Inf * ones(nA, 1);     %% ... unbounded below.
+end
+if isempty(xmin)                %% By default, optimization variables are ...
+    xmin = -Inf * ones(nx, 1);  %% ... unbounded below and ...
+end
+if isempty(xmax)
+    xmax = Inf * ones(nx, 1);   %% ... unbounded above.
+end
+if isempty(ipm_gh)
+    nonlinear = false;          %% no non-linear constraints present
+    gn = []; hn = [];
+else
+    nonlinear = true;           %% we have some non-linear constraints
+end
+
+%% default options
+if isempty(opt)
+    opt = struct('verbose', 0);
 end
 if ~isfield(opt, 'feastol') || isempty(opt.feastol)
     opt.feastol = 1e-6;
@@ -77,6 +228,7 @@ hist(opt.max_it+1) = struct('feascond', 0, 'gradcond', 0, 'compcond', 0, ...
     'costcond', 0, 'gamma', 0, 'stepsize', 0, 'obj', 0, ...
     'alphap', 0, 'alphad', 0);
 
+%%-----  set up problem  -----
 %% constants
 xi = 0.99995;           %% OPT_IPM_PHI
 sigma = 0.1;            %% OPT_IPM_SIGMA
@@ -89,8 +241,7 @@ mu_threshold = 1e-5;    %% SCOPF_MULTIPLIERS_FILTER_THRESH
 %% initialize
 i = 0;                      %% iteration counter
 converged = 0;              %% flag
-nx = size(x0, 1);           %% number of variables
-nA = size(A, 1);            %% number of original linear constraints
+eflag = 0;                  %% exit flag
 
 %% add var limits to linear constraints
 AA = [speye(nx); A];
@@ -112,11 +263,18 @@ x = x0;
 [f, df] = ipm_f(x);             %% cost
 f = f * opt.cost_mult;
 df = df * opt.cost_mult;
-[gn, hn, dgn, dhn] = ipm_gh(x); %% non-linear constraints
-g = [gn; Ai * x - bi];          %% inequality constraints
-h = [hn; Ae * x - be];          %% equality constraints
-dg = [dgn Ai'];                 %% 1st derivative of inequalities
-dh = [dhn Ae'];                 %% 1st derivative of equalities
+if nonlinear
+    [gn, hn, dgn, dhn] = ipm_gh(x); %% non-linear constraints
+    g = [gn; Ai * x - bi];          %% inequality constraints
+    h = [hn; Ae * x - be];          %% equality constraints
+    dg = [dgn Ai'];                 %% 1st derivative of inequalities
+    dh = [dhn Ae'];                 %% 1st derivative of equalities
+else
+    g = Ai * x - bi;                %% inequality constraints
+    h = Ae * x - be;                %% equality constraints
+    dg = Ai';                       %% 1st derivative of inequalities
+    dh = Ae';                       %% 1st derivative of equalities
+end
 
 %% grab some dimensions
 neq = size(h, 1);           %% number of equality constraints
@@ -135,7 +293,9 @@ mu  = z;
 k = find(g < -z0);
 z(k) = -g(k);
 k = find(gamma / z > z0);   %% (seems k is always empty if gamma = z0 = 1)
-mu(k) = gamma / z(k);
+if ~isempty(k)
+    mu(k) = gamma / z(k);
+end
 e = ones(niq, 1);
 
 %% check tolerance
@@ -166,14 +326,22 @@ if feascond < opt.feastol && gradcond < opt.gradtol && ...
     end
 end
 
-%% do Newton iterations
+%%-----  do Newton iterations  -----
 while (~converged && i < opt.max_it)
     %% update iteration counter
     i = i + 1;
 
     %% compute update step
     lambda = struct('eqnonlin', lam(1:neqnln), 'ineqnonlin', mu(1:niqnln));
-    Lxx = ipm_hess(x, lambda);
+    if nonlinear
+        if isempty(ipm_hess)
+            fprintf('pdipm: Hessian evaluation via finite differences not yet implemented.\n       Please provide your own hessian evaluation function.');
+        end
+        Lxx = ipm_hess(x, lambda);
+    else
+        [f_, df_, d2f] = ipm_f(x);      %% cost
+        Lxx = d2f * opt.cost_mult;
+    end
     zinvdiag = sparse(1:niq, 1:niq, 1 ./ z, niq, niq);
     mudiag = sparse(1:niq, 1:niq, mu, niq, niq);
     dg_zinv = dg * zinvdiag;
@@ -186,9 +354,9 @@ while (~converged && i < opt.max_it)
 %     ];
 %     rc = 1/condest(AAA);
 %     if rc < 1e-22
-%     	fprintf('my RCOND = %g\n', rc);
-%     	n = size(AAA, 1);
-%     	AAA = AAA + 1e-3 * speye(n,n);
+%         fprintf('my RCOND = %g\n', rc);
+%         n = size(AAA, 1);
+%         AAA = AAA + 1e-3 * speye(n,n);
 %     end
 %     bbb = [-N; -h];
 %     dxdlam = AAA \ bbb;
@@ -206,11 +374,18 @@ while (~converged && i < opt.max_it)
         [f1, df1] = ipm_f(x1);          %% cost
         f1 = f1 * opt.cost_mult;
         df1 = df1 * opt.cost_mult;
-        [gn1, hn1, dgn1, dhn1] = ipm_gh(x1); %% non-linear constraints
-        g1 = [gn1; Ai * x1 - bi];       %% inequality constraints
-        h1 = [hn1; Ae * x1 - be];       %% equality constraints
-        dg1 = [dgn1 Ai'];               %% 1st derivative of inequalities
-        dh1 = [dhn1 Ae'];               %% 1st derivative of equalities
+        if nonlinear
+            [gn1, hn1, dgn1, dhn1] = ipm_gh(x1); %% non-linear constraints
+            g1 = [gn1; Ai * x1 - bi];       %% inequality constraints
+            h1 = [hn1; Ae * x1 - be];       %% equality constraints
+            dg1 = [dgn1 Ai'];               %% 1st derivative of inequalities
+            dh1 = [dhn1 Ae'];               %% 1st derivative of equalities
+        else
+            g1 = Ai * x1 - bi;              %% inequality constraints
+            h1 = Ae * x1 - be;              %% equality constraints
+            dg1 = dg;                       %% 1st derivative of inequalities
+            dh1 = dh;                       %% 1st derivative of equalities
+        end
 
         %% check tolerance
         Lx1 = df1 + dh1 * lam + dg1 * mu;
@@ -228,9 +403,14 @@ while (~converged && i < opt.max_it)
             x1 = x + dx1;
             f1 = ipm_f(x1);             %% cost
             f1 = f1 * opt.cost_mult;
-            [gn1, hn1] = ipm_gh(x1);    %% non-linear constraints
-            g1 = [gn1; Ai * x1 - bi];   %% inequality constraints
-            h1 = [hn1; Ae * x1 - be];   %% equality constraints
+            if nonlinear
+                [gn1, hn1] = ipm_gh(x1);    %% non-linear constraints
+                g1 = [gn1; Ai * x1 - bi];   %% inequality constraints
+                h1 = [hn1; Ae * x1 - be];   %% equality constraints
+            else
+                g1 = Ai * x1 - bi;          %% inequality constraints
+                h1 = Ae * x1 - be;          %% equality constraints
+            end
             L1 = f1 + lam' * h1 + mu' * (g1+z) - gamma * sum(log(z));
             if opt.verbose > 2
                 fprintf('\n   %3d            %10g', -j, norm(dx1));
@@ -263,11 +443,17 @@ while (~converged && i < opt.max_it)
     [f, df] = ipm_f(x);             %% cost
     f = f * opt.cost_mult;
     df = df * opt.cost_mult;
-    [gn, hn, dgn, dhn] = ipm_gh(x); %% non-linear constraints
-    g = [gn; Ai * x - bi];          %% inequality constraints
-    h = [hn; Ae * x - be];          %% equality constraints
-    dg = [dgn Ai'];                 %% 1st derivative of inequalities
-    dh = [dhn Ae'];                 %% 1st derivative of equalities
+    if nonlinear
+        [gn, hn, dgn, dhn] = ipm_gh(x); %% non-linear constraints
+        g = [gn; Ai * x - bi];          %% inequality constraints
+        h = [hn; Ae * x - be];          %% equality constraints
+        dg = [dgn Ai'];                 %% 1st derivative of inequalities
+        dh = [dhn Ae'];                 %% 1st derivative of equalities
+    else
+        g = Ai * x - bi;                %% inequality constraints
+        h = Ae * x - be;                %% equality constraints
+        %% 1st derivatives are constant, still dg = Ai', dh = Ae'
+    end
 
     %% check tolerance
     Lx = df + dh * lam + dg * mu;
@@ -297,6 +483,7 @@ while (~converged && i < opt.max_it)
             if opt.verbose
                 fprintf('\nNumerically Failed\n');
             end
+            eflag = -1;
             break;
         end
         f0 = f;
@@ -312,9 +499,12 @@ if opt.verbose
     end
 end
 
+%%-----  package up results  -----
 hist = hist(1:i+1);
-info = converged;
-Output = struct('iterations', i, 'hist', hist);
+if eflag ~= -1
+    eflag = converged;
+end
+output = struct('iterations', i, 'hist', hist);
 
 %% zero out multipliers on non-binding constraints
 mu(g < -opt.feastol & mu < mu_threshold) = 0;
@@ -340,10 +530,29 @@ mu_u(ieq(ku)) = lam_lin(ku);
 mu_u(ilt) = mu_lin(1:nlt);
 mu_u(ibx) = mu_lin(nlt+ngt+(1:nbx));
 
-Lambda = struct( ...
-    'eqnonlin', lam(1:neqnln), ...
-    'ineqnonlin', mu(1:niqnln), ...
-    'mu_l', mu_l((nx+1):end), ...
-    'mu_u', mu_u((nx+1):end), ...
-    'lower', mu_l(1:nx), ...
-    'upper', mu_u(1:nx) );
+fields = {};
+if neqnln > 0
+    fields = {fields{:}, 'eqnonlin', lam(1:neqnln)};
+end
+if niqnln > 0
+    fields = {fields{:}, 'ineqnonlin', mu(1:niqnln)};
+end
+if neq > neqnln || niq > niqnln
+    fields = {fields{:}, 'mu_l', mu_l((nx+1):end), 'mu_u', mu_u((nx+1):end)};
+end
+if any(xmin ~= -Inf)
+    fields = {fields{:}, 'lower', mu_l(1:nx)};
+end
+if any(xmax ~= Inf)
+    fields = {fields{:}, 'upper', mu_u(1:nx)};
+end
+
+lambda = struct(fields{:});
+
+% lambda = struct( ...
+%     'eqnonlin', lam(1:neqnln), ...
+%     'ineqnonlin', mu(1:niqnln), ...
+%     'mu_l', mu_l((nx+1):end), ...
+%     'mu_u', mu_u((nx+1):end), ...
+%     'lower', mu_l(1:nx), ...
+%     'upper', mu_u(1:nx) );
