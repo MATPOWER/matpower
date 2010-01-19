@@ -39,7 +39,7 @@ function [results, success, raw] = dcopf_solver(om, mpopt, output)
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
-%   Copyright (c) 2000-2008 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2000-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %%----- initialization -----
@@ -64,7 +64,7 @@ verbose = mpopt(31);    %% VERBOSE
 alg     = mpopt(26);    %% OPF_ALG_DC
 
 if alg == 0
-    alg = 200;      %% PDIPM (pure Matlab)
+    alg = 200;          %% MIPS
 end
 
 %% unpack data

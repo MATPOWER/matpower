@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.0b1
 -------------------
 
+1/19/10
+    - Renamed the pure-Matlab interior point solver from PDIPM to
+      MIPS (Matlab Interior Point Solver).
+
 1/18/10
     - Changed order of input args to pdipm(), added option for single
       input struct (like fmincon), more documentation, all constraints

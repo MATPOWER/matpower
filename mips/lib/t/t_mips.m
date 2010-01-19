@@ -1,5 +1,5 @@
-function t_pdipm(quiet)
-%T_pdipm  Tests of pdipm NLP solver
+function t_mips(quiet)
+%T_MIPS  Tests of MIPS NLP solver
 
 %   MATPOWER
 %   $Id$
@@ -25,8 +25,8 @@ function [f, df, d2f] = ff2(x)
                 -x(1)                       1/2       ];
 end
 x0 = [-1.9; 2];
-[x, f, s, out, lam] = pdipm(ff, x0);
-% [x, f, s, out, lam] = pdipm(ff, x0, [], [], [], [], [], [], [], struct('verbose', 2));
+[x, f, s, out, lam] = mips(ff, x0);
+% [x, f, s, out, lam] = mips(ff, x0, [], [], [], [], [], [], [], struct('verbose', 2));
 t_ok(s, [t 'success']);
 t_is(x, [1; 1], 13, [t 'x']);
 t_is(f, 0, 13, [t 'f']);
@@ -44,8 +44,8 @@ function [f, df, d2f] = ff3(x)
     d2f = H;
 end
 x0 = [0; 0; 0];
-% [x, f, s, out, lam] = pdipm(ff, x0, [], [], [], [], [], [], [], struct('verbose', 2));
-[x, f, s, out, lam] = pdipm(ff, x0);
+% [x, f, s, out, lam] = mips(ff, x0, [], [], [], [], [], [], [], struct('verbose', 2));
+[x, f, s, out, lam] = mips(ff, x0);
 t_ok(s, [t 'success']);
 t_is(x, [3; 5; 7], 13, [t 'x']);
 t_is(f, -244, 13, [t 'f']);
@@ -71,8 +71,8 @@ A = [   1       1       1       1;
 l = [1; 0.10];
 u = [1; Inf];
 xmin = zeros(4,1);
-% [x, f, s, out, lam] = pdipm(ff, x0, A, l, u, xmin, [], [], [], struct('verbose', 2));
-[x, f, s, out, lam] = pdipm(ff, x0, A, l, u, xmin);
+% [x, f, s, out, lam] = mips(ff, x0, A, l, u, xmin, [], [], [], struct('verbose', 2));
+[x, f, s, out, lam] = mips(ff, x0, A, l, u, xmin);
 t_ok(s, [t 'success']);
 t_is(x, [0; 2.8; 0.2; 0]/3, 6, [t 'x']);
 t_is(f, 3.29/3, 6, [t 'f']);
@@ -120,8 +120,8 @@ end
 x0 = [1.1; 0];
 xmin = -10 * ones(2, 1);
 % xmax = 3 * ones(2, 1);
-% [x, f, s, out, lam] = pdipm(ff, x0, [], [], [], xmin, [], gh, hess, struct('verbose', 2));
-[x, f, s, out, lam] = pdipm(ff, x0, [], [], [], xmin, [], gh, hess);
+% [x, f, s, out, lam] = mips(ff, x0, [], [], [], xmin, [], gh, hess, struct('verbose', 2));
+[x, f, s, out, lam] = mips(ff, x0, [], [], [], xmin, [], gh, hess);
 t_ok(s, [t 'success']);
 t_is(x, [1; 1], 6, [t 'x']);
 t_is(f, -2, 6, [t 'f']);
@@ -156,8 +156,8 @@ function Lxx = hess6(x, lam)
     Lxx = [2*[1 1]*mu -1 0; 0 2*[-1 1]*mu -1; 0 -1 2*[1 1]*mu];
 end
 x0 = [1; 1; 0];
-% [x, f, s, out, lam] = pdipm(ff, x0, [], [], [], [], [], gh, hess, struct('verbose', 2, 'comptol', 1e-9));
-[x, f, s, out, lam] = pdipm(ff, x0, [], [], [], [], [], gh, hess);
+% [x, f, s, out, lam] = mips(ff, x0, [], [], [], [], [], gh, hess, struct('verbose', 2, 'comptol', 1e-9));
+[x, f, s, out, lam] = mips(ff, x0, [], [], [], [], [], gh, hess);
 t_ok(s, [t 'success']);
 t_is(x, [1.58113883; 2.23606798; 1.58113883], 6, [t 'x']);
 t_is(f, -5*sqrt(2), 6, [t 'f']);
@@ -174,7 +174,7 @@ t_is(lam.ineqnonlin, [0;sqrt(2)/2], 7, [t 'lam.ineqnonlin']);
 
 t = 'constrained 3-d non-linear (struct) : ';
 p = struct('f', ff, 'x0', x0, 'gh', gh, 'hess', hess);
-[x, f, s, out, lam] = pdipm(p);
+[x, f, s, out, lam] = mips(p);
 t_ok(s, [t 'success']);
 t_is(x, [1.58113883; 2.23606798; 1.58113883], 6, [t 'x']);
 t_is(f, -5*sqrt(2), 6, [t 'f']);
@@ -184,7 +184,7 @@ t_is(lam.ineqnonlin, [0;sqrt(2)/2], 7, [t 'lam.ineqnonlin']);
 t_end;
 
 
-% %%-----  eg99 : linearly constrained fmincon example, pdipm can't solve  -----
+% %%-----  eg99 : linearly constrained fmincon example, mips can't solve  -----
 % function [f, df, d2f] = eg99(x)
 % f = -x(1)*x(2)*x(3);
 % df = -[ x(2)*x(3);

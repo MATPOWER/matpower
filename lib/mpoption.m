@@ -16,13 +16,13 @@ function [options, names] = mpoption(varargin)
 %   The currently defined options are as follows:
 %
 %      idx - NAME, default          description [options]
-%      ---   -------------          -------------------------------------
+%      ---   -------------          -----------------------------------------
 %   power flow options
 %       1  - PF_ALG, 1              power flow algorithm
-%           [   1 - Newton's method                                     ]
-%           [   2 - Fast-Decoupled (XB version)                         ]
-%           [   3 - Fast-Decoupled (BX version)                         ]
-%           [   4 - Gauss Seidel                                        ]
+%           [   1 - Newton's method                                         ]
+%           [   2 - Fast-Decoupled (XB version)                             ]
+%           [   3 - Fast-Decoupled (BX version)                             ]
+%           [   4 - Gauss Seidel                                            ]
 %       2  - PF_TOL, 1e-8           termination tolerance on per unit
 %                                   P & Q mismatch
 %       3  - PF_MAX_IT, 10          maximum number of iterations for
@@ -33,100 +33,104 @@ function [options, names] = mpoption(varargin)
 %                                   Gauss-Seidel method
 %       6  - ENFORCE_Q_LIMS, 0      enforce gen reactive power limits
 %                                   at expense of |V|
-%           [    0 - do NOT enforce limits                              ]
-%           [    1 - enforce limits, simultaneous bus type conversion   ]
-%           [    2 - enforce limits, one-at-a-time bus type conversion  ]
+%           [    0 - do NOT enforce limits                                  ]
+%           [    1 - enforce limits, simultaneous bus type conversion       ]
+%           [    2 - enforce limits, one-at-a-time bus type conversion      ]
 %       10 - PF_DC, 0               use DC power flow formulation, for
 %                                   power flow and OPF
-%           [    0 - use AC formulation & corresponding algorithm opts  ]
-%           [    1 - use DC formulation, ignore AC algorithm options    ]
+%           [    0 - use AC formulation & corresponding algorithm opts      ]
+%           [    1 - use DC formulation, ignore AC algorithm options        ]
 %   OPF options
 %       11 - OPF_ALG, 0             solver to use for AC OPF
-%           [    0 - choose default solver available in the following   ]
-%           [        order, 500, 540, 560                               ]
-%           [  300 - generalized formulation, constr                    ]
-%           [  320 - generalized formulation, dense LP                  ]
-%           [  340 - generalized formulation, sparse LP (relaxed)       ]
-%           [  360 - generalized formulation, sparse LP (full)          ]
-%           [  500 - generalized formulation, MINOS                     ]
-%           [  520 - generalized formulation, fmincon                   ]
-%           [  540 - generalized formulation, PDIPM                     ]
-%           [        primal/dual interior point method                  ]
-%           [  545 - generalized formulation (except CCV), SCPDIPM      ]
-%           [        step-controlled primal/dual interior point method  ]
-%           [  550 - generalized formulation (except CCV), TRALM        ]
-%           [        trust region based augmented Langrangian method    ]
-%           [  560 - generalized formulation, PDIPM (pure Matlab)       ]
-%           [        primal/dual interior point method                  ]
-%           [  565 - generalized formulation, SCPDIPM (pure Matlab)     ]
-%           [        step-controlled primal/dual interior point method  ]
+%           [    0 - choose default solver available in the following       ]
+%           [        order, 540, 560                                        ]
+%           [  300 - constr (from Optimization Toolbox 1.x)                 ]
+%           [  320 - dense successive LP                                    ]
+%           [  340 - sparse successive LP (relaxed)                         ]
+%           [  360 - sparse successive LP (full)                            ]
+%           [  500 - MINOPF, MINOS-based solver, requires optional          ]
+%           [        MEX-based MINOPF package, available from:              ]
+%           [        http://www.pserc.cornell.edu/minopf/                   ]
+%           [  520 - fmincon - Optimization Toolbox >= 2.x                  ]
+%           [  540 - PDIPM, primal/dual interior point method, requires     ]
+%           [        optional MEX-based TSPOPF package, available from:     ]
+%           [        http://www.pserc.cornell.edu/tspopf/                   ]
+%           [  545 - SC-PDIPM, step-controlled variant of PDIPM, requires   ]
+%           [        TSPOPF (see 540)                                       ]
+%           [  550 - TRALM, trust region based augmented Langrangian        ]
+%           [        method, requires TSPOPF (see 540)                      ]
+%           [  560 - MIPS, Matlab Interior Point Solver                     ]
+%           [        primal/dual interior point method (pure Matlab)        ]
+%           [  565 - MIPS-sc, step-controlled variant of MIPS               ]
 %       16 - OPF_VIOLATION, 5e-6    constraint violation tolerance
 %       17 - CONSTR_TOL_X, 1e-4     termination tol on x for copf & fmincopf
 %       18 - CONSTR_TOL_F, 1e-4     termination tol on F for copf & fmincopf
 %       19 - CONSTR_MAX_IT, 0       max number of iterations for copf & fmincopf
-%                                   [       0 => 2*nb + 150             ]
+%                                   [       0 => 2*nb + 150                 ]
 %       20 - LPC_TOL_GRAD, 3e-3     termination tolerance on gradient for lpopf
 %       21 - LPC_TOL_X, 1e-4        termination tolerance on x (min step size)
 %                                   for lpopf
 %       22 - LPC_MAX_IT, 400        maximum number of iterations for lpopf
 %       23 - LPC_MAX_RESTART, 5     maximum number of restarts for lpopf
 %       24 - OPF_FLOW_LIM, 0        qty to limit for branch flow constraints
-%           [   0 - apparent power flow (limit in MVA)                  ]
-%           [   1 - active power flow (limit in MW)                     ]
-%           [   2 - current magnitude (limit in MVA at 1 p.u. voltage   ]
+%           [   0 - apparent power flow (limit in MVA)                      ]
+%           [   1 - active power flow (limit in MW)                         ]
+%           [   2 - current magnitude (limit in MVA at 1 p.u. voltage       ]
 %       25 - OPF_IGNORE_ANG_LIM, 0  ignore angle difference limits for branches
-%                                   even if specified       [   0 or 1  ]
+%                                   even if specified           [   0 or 1  ]
 %       26 - OPF_ALG_DC, 0          solver to use for DC OPF
-%           [    0 - choose default solver from available solvers in    ]
-%           [        the following order, 100, 200                      ]
-%           [  100 - BPMPD_MEX                                          ]
-%           [  200 - PDIPM (pure Matlab), primal/dual interior pt method]
-%           [  250 - SCPDIPM (pure Matlab), step-controlled PDIPM       ]
-%           [  300 - Optimization Tbx, quadprog(), linprog()            ]
+%           [    0 - choose default solver from available solvers in        ]
+%           [        the following order, 100, 200                          ]
+%           [  100 - BPMPD, requires optional MEX-based package, BPMPD_MEX  ]
+%           [        available from: http://www.pserc.cornell.edu/bpmpd/    ]
+%           [  200 - MIPS, Matlab Interior Point Solver                     ]
+%           [        primal/dual interior point method (pure Matlab)        ]
+%           [  250 - MIPS-sc, step-controlled variant of MIPS               ]
+%           [  300 - Optimization Toolbox, quadprog(), linprog()            ]
 %   output options
 %       31 - VERBOSE, 1             amount of progress info printed
-%           [   0 - print no progress info                              ]
-%           [   1 - print a little progress info                        ]
-%           [   2 - print a lot of progress info                        ]
-%           [   3 - print all progress info                             ]
+%           [   0 - print no progress info                                  ]
+%           [   1 - print a little progress info                            ]
+%           [   2 - print a lot of progress info                            ]
+%           [   3 - print all progress info                                 ]
 %       32 - OUT_ALL, -1            controls printing of results
-%           [  -1 - individual flags control what prints                ]
-%           [   0 - don't print anything                                ]
-%           [       (overrides individual flags, except OUT_RAW)        ]
-%           [   1 - print everything                                    ]
-%           [       (overrides individual flags, except OUT_RAW)        ]
-%       33 - OUT_SYS_SUM, 1         print system summary    [   0 or 1  ]
-%       34 - OUT_AREA_SUM, 0        print area summaries    [   0 or 1  ]
-%       35 - OUT_BUS, 1             print bus detail        [   0 or 1  ]
-%       36 - OUT_BRANCH, 1          print branch detail     [   0 or 1  ]
-%       37 - OUT_GEN, 0             print generator detail  [   0 or 1  ]
+%           [  -1 - individual flags control what prints                    ]
+%           [   0 - don't print anything                                    ]
+%           [       (overrides individual flags, except OUT_RAW)            ]
+%           [   1 - print everything                                        ]
+%           [       (overrides individual flags, except OUT_RAW)            ]
+%       33 - OUT_SYS_SUM, 1         print system summary        [   0 or 1  ]
+%       34 - OUT_AREA_SUM, 0        print area summaries        [   0 or 1  ]
+%       35 - OUT_BUS, 1             print bus detail            [   0 or 1  ]
+%       36 - OUT_BRANCH, 1          print branch detail         [   0 or 1  ]
+%       37 - OUT_GEN, 0             print generator detail      [   0 or 1  ]
 %                                   (OUT_BUS also includes gen info)
 %       38 - OUT_ALL_LIM, -1        control constraint info output
-%           [  -1 - individual flags control what constraint info prints]
-%           [   0 - no constraint info (overrides individual flags)     ]
-%           [   1 - binding constraint info (overrides individual flags)]
-%           [   2 - all constraint info (overrides individual flags)    ]
+%           [  -1 - individual flags control what constraint info prints    ]
+%           [   0 - no constraint info (overrides individual flags)         ]
+%           [   1 - binding constraint info (overrides individual flags)    ]
+%           [   2 - all constraint info (overrides individual flags)        ]
 %       39 - OUT_V_LIM, 1           control output of voltage limit info
-%           [   0 - don't print                                         ]
-%           [   1 - print binding constraints only                      ]
-%           [   2 - print all constraints                               ]
-%           [   (same options for OUT_LINE_LIM, OUT_PG_LIM, OUT_QG_LIM) ]
+%           [   0 - don't print                                             ]
+%           [   1 - print binding constraints only                          ]
+%           [   2 - print all constraints                                   ]
+%           [   (same options for OUT_LINE_LIM, OUT_PG_LIM, OUT_QG_LIM)     ]
 %       40 - OUT_LINE_LIM, 1        control output of line limit info
 %       41 - OUT_PG_LIM, 1          control output of gen P limit info
 %       42 - OUT_QG_LIM, 1          control output of gen Q limit info
 %       43 - OUT_RAW, 0             print raw data for Perl database
-%                                   interface code          [   0 or 1  ]
+%                                   interface code              [   0 or 1  ]
 %   other options
 %       51 - SPARSE_QP, 1           pass sparse matrices to QP and LP
-%                                   solvers if possible     [   0 or 1  ]
+%                                   solvers if possible         [   0 or 1  ]
 %   fmincon options
 %       55 - FMC_ALG, 1             algorithm used by fmincon for OPF
 %                                   for Optimization Toolbox 4 and later
-%            [  1 - active-set                                          ]
-%            [  2 - interior-point, w/default 'bfgs' Hessian approx     ]
-%            [  3 - interior-point, w/ 'lbfgs' Hessian approx           ]
-%            [  4 - interior-point, w/exact user-supplied Hessian       ]
-%            [  5 - interior-point, w/Hessian via finite differences    ]
+%            [  1 - active-set                                              ]
+%            [  2 - interior-point, w/default 'bfgs' Hessian approx         ]
+%            [  3 - interior-point, w/ 'lbfgs' Hessian approx               ]
+%            [  4 - interior-point, w/exact user-supplied Hessian           ]
+%            [  5 - interior-point, w/Hessian via finite differences        ]
 %
 %   MINOPF options
 %       61 - MNS_FEASTOL, 0 (1E-3)  primal feasibility tolerance,
@@ -142,29 +146,29 @@ function [options, names] = mpoption(varargin)
 %       68 - MNS_MINOR_IT, 0 (2500) minor iterations
 %       69 - MNS_MAX_IT, 0 (2500)   iterations limit
 %       70 - MNS_VERBOSITY, -1
-%           [  -1 - controlled by VERBOSE flag                          ]
-%           [   0 - print nothing                                       ]
-%           [   1 - print only termination status message               ]
-%           [   2 - print termination status and screen progress        ]
-%           [   3 - print screen progress, report file (usually fort.9) ]
+%           [  -1 - controlled by VERBOSE flag                              ]
+%           [   0 - print nothing                                           ]
+%           [   1 - print only termination status message                   ]
+%           [   2 - print termination status and screen progress            ]
+%           [   3 - print screen progress, report file (usually fort.9)     ]
 %       71 - MNS_CORE, 1200 * nb + 2 * (nb + ng)^2 
 %       72 - MNS_SUPBASIC_LIM, 0 (2*nb + 2*ng) superbasics limit
 %       73 - MNS_MULT_PRICE, 0 (30) multiple price
 %
-%   PDIPM, SC-PDIPM, and TRALM options
-%       81 - PDIPM_FEASTOL, 0       feasibility (equality) tolerance for 
-%                                   PDIPM and SC-PDIPM
-%                                   set to value of OPF_VIOLATION by default
-%       82 - PDIPM_GRADTOL, 1e-6    gradient tolerance for PDIPM 
+%   MIPS (including MIPS-sc), PDIPM, SC-PDIPM, and TRALM options
+%       81 - PDIPM_FEASTOL, 0       feasibility (equality) tolerance
+%                                   for MIPS, PDIPM and SC-PDIPM set
+%                                   to value of OPF_VIOLATION by default
+%       82 - PDIPM_GRADTOL, 1e-6    gradient tolerance for MIPS, PDIPM
 %                                   and SC-PDIPM
-%       83 - PDIPM_COMPTOL, 1e-6    complementary condition (inequality) 
-%                                   tolerance for PDIPM and SC-PDIPM
-%       84 - PDIPM_COSTTOL, 1e-6    optimality tolerance for PDIPM and 
-%                                   SC-PDIPM
-%       85 - PDIPM_MAX_IT,  150     maximum number of iterations for 
+%       83 - PDIPM_COMPTOL, 1e-6    complementary condition (inequality)
+%                                   tolerance for MIPS, PDIPM and SC-PDIPM
+%       84 - PDIPM_COSTTOL, 1e-6    optimality tolerance for MIPS, PDIPM
+%                                   and SC-PDIPM
+%       85 - PDIPM_MAX_IT,  150     maximum number of iterations for MIPS,
 %                                   PDIPM and SC-PDIPM
-%       86 - SCPDIPM_RED_IT, 20     maximum number of SC-PDIPM reductions 
-%                                   per iteration
+%       86 - SCPDIPM_RED_IT, 20     maximum number of MIPS-sc or SC-PDIPM
+%                                   reductions per iteration
 %       87 - TRALM_FEASTOL, 0       feasibility tolerance for TRALM
 %                                   set to value of OPF_VIOLATION by default
 %       88 - TRALM_PRIMETOL, 5e-4   prime variable tolerance for TRALM
@@ -178,7 +182,7 @@ function [options, names] = mpoption(varargin)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %%-----  set up default option values  -----
@@ -280,7 +284,7 @@ else                    %% even number of parameters
         0;      %% 79 - RESERVED79
         0;      %% 80 - FORCE_PC_EQ_P0, for c3sopf
         
-        %% PDIPM options
+        %% MIPS, PDIPM, SC-PDIPM, and TRALM options
         0;      %% 81 - PDIPM_FEASTOL
         1e-6;   %% 82 - PDIPM_GRADTOL
         1e-6;   %% 83 - PDIPM_COMPTOL
@@ -394,7 +398,7 @@ names = str2mat(    names, ...
                     'RESERVED79', ...           %% 79
                     'FORCE_PC_EQ_P0'    );      %% 80
 
-%% PDIPM, SC-PDIPM, and TRALM options                
+%% MIPS, PDIPM, SC-PDIPM, and TRALM options
 names = str2mat(    names, ...
                     'PDIPM_FEASTOL', ...        %% 81
                     'PDIPM_GRADTOL', ...        %% 82

@@ -145,7 +145,7 @@ function [busout, genout, branchout, f, success, info, et, g, jac, xr, pimul] = 
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
-%   Copyright (c) 1996-2008 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %%----- initialization -----
@@ -165,7 +165,7 @@ if ~dc
     if have_fcn('pdipmopf')
       alg = 540;                %% PDIPM
     else
-      alg = 560;
+      alg = 560;                %% MIPS
     end
   end
   %% update deprecated algorithm codes to new, generalized equivalents
@@ -454,11 +454,11 @@ else
     end
     mlver = ver('matlab');
     if str2double(mlver.Version(1)) < 7    %% anonymous functions not available
-      fmc = @fmincopf6_solver;
+      solver = @fmincopf6_solver;
     else
-      fmc = @fmincopf_solver;
+      solver = @fmincopf_solver;
     end
-    [results, success, raw] = feval(fmc, om, mpopt, output);
+    [results, success, raw] = feval(solver, om, mpopt, output);
   elseif alg == 540 || alg == 545 || alg == 550 %% PDIPM_OPF, SCPDIPM_OPF, or TRALM_OPF
     if alg == 540       % PDIPM_OPF
       if ~have_fcn('pdipmopf')
@@ -474,14 +474,14 @@ else
       end
     end
     [results, success, raw] = tspopf_solver(om, mpopt, output);
-  elseif alg == 560 || alg == 565               %% pdipm (pure Matlab)
+  elseif alg == 560 || alg == 565               %% MIPS
     mlver = ver('matlab');
     if str2double(mlver.Version(1)) < 7    %% anonymous functions not available
-      fmc = @pdipm6_solver;
+      solver = @mips6opf_solver;
     else
-      fmc = @pdipm_solver;
+      solver = @mipsopf_solver;
     end
-    [results, success, raw] = feval(fmc, om, mpopt, output);
+    [results, success, raw] = feval(solver, om, mpopt, output);
   end
 end
 if isfield(results, 'g')

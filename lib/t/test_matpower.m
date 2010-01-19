@@ -21,8 +21,13 @@ tests{end+1} = 't_loadcase';
 tests{end+1} = 't_ext2int2ext';
 tests{end+1} = 't_jacobian';
 tests{end+1} = 't_hessian';
-tests{end+1} = 't_pdipm';
 tests{end+1} = 't_hasPQcap';
+mlver = ver('matlab');
+if str2double(mlver.Version(1)) < 7    %% anonymous functions not available
+	tests{end+1} = 't_mips6';
+else
+	tests{end+1} = 't_mips';
+end
 tests{end+1} = 't_pf';
 if have_fcn('fmincon')
     tests{end+1} = 't_opf_fmincon';
@@ -30,8 +35,8 @@ end
 if have_fcn('minopf')
     tests{end+1} = 't_opf_minopf';
 end
-tests{end+1} = 't_opf_pdipm';
-tests{end+1} = 't_opf_scpdipm';
+tests{end+1} = 't_opf_mips';
+tests{end+1} = 't_opf_mips_sc';
 if have_fcn('pdipmopf')
     tests{end+1} = 't_opf_tspopf_pdipm';
 end
@@ -53,8 +58,8 @@ end
 if have_fcn('quadprog')
     tests{end+1} = 't_opf_dc_ot';
 end
-tests{end+1} = 't_opf_dc_pdipm';
-tests{end+1} = 't_opf_dc_scpdipm';
+tests{end+1} = 't_opf_dc_mips';
+tests{end+1} = 't_opf_dc_mips_sc';
 tests{end+1} = 't_opf_userfcns';
 tests{end+1} = 't_runopf_w_res';
 tests{end+1} = 't_makePTDF';
@@ -68,7 +73,7 @@ if exist('runmarket', 'file') == 2
     if have_fcn('minopf')
         tests{end+1} = 't_auction_minopf';
     end
-    tests{end+1} = 't_auction_pdipm';
+    tests{end+1} = 't_auction_mips';
     if have_fcn('pdipmopf')
         tests{end+1} = 't_auction_tspopf_pdipm';
     end
