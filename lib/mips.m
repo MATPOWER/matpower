@@ -13,8 +13,9 @@ function [x, f, eflag, output, lambda] = pdipm(ipm_f, x0, A, l, u, xmin, xmax, i
 %           l <= A*x <= u       (linear constraints)
 %           xmin <= x <= xmax   (variable bounds)
 %
-%   [x, f, exitflag, output, lambda] = ...
+%   [x, fval, exitflag, output, lambda] = ...
 %       pdipm(f, x0, A, l, u, xmin, xmax, gh, hess, opt)
+%
 %   x = pdipm(f, x0)
 %   x = pdipm(f, x0, A, l)
 %   x = pdipm(f, x0, A, l, u)
@@ -438,7 +439,9 @@ while (~converged && i < opt.max_it)
     z = z + alphap * dz;
     lam = lam + alphad * dlam;
     mu  = mu  + alphad * dmu;
-    gamma = sigma * (z' * mu) / niq;
+    if niq > 0
+        gamma = sigma * (z' * mu) / niq;
+    end
 
     %% evaluate cost, constraints, derivatives
     [f, df] = ipm_f(x);             %% cost
@@ -505,7 +508,7 @@ hist = hist(1:i+1);
 if eflag ~= -1
     eflag = converged;
 end
-output = struct('iterations', i, 'hist', hist);
+output = struct('iterations', i, 'hist', hist, 'message', '');
 if eflag == 0
     output.message = 'Did not converge';
 elseif eflag == 1
