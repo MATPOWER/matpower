@@ -259,7 +259,7 @@ ibx = find( (abs(uu-ll) > eps) & (uu < 1e10) & (ll > -1e10) );
 Ae = AA(ieq, :);
 be = uu(ieq);
 Ai  = [ AA(ilt, :); -AA(igt, :); AA(ibx, :); -AA(ibx, :) ];
-bi  = [ uu(ilt);   -ll(igt);     uu(ibx);    -ll(ibx)];
+bi  = [ uu(ilt);    -ll(igt);    uu(ibx);    -ll(ibx)];
 
 %% evaluate cost f(x0) and constraints g(x0), h(x0)
 x = x0;
