@@ -1,5 +1,5 @@
 function [results, success, raw] = fmincopf_solver(om, mpopt, output)
-%FMINCOPF_SOLVER  Solves an AC optimal power flow using FMINCON (Opt Tbx 2.x & later).
+%FMINCOPF_SOLVER  Solves an AC optimal power flow using FMINCON
 %
 %   [results, success, raw] = fmincopf_solver(om, mpopt)
 %   [results, success, raw] = fmincopf_solver(om, mpopt, output)
