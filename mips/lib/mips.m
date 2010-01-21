@@ -1,18 +1,18 @@
 function [x, f, eflag, output, lambda] = mips(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt)
 %MIPS  Matlab Interior Point Solver
-%	Primal-dual interior point method for NLP (non-linear programming).
+%   Primal-dual interior point method for NLP (non-linear programming).
 %   Minimize a function f(x) beginning from a starting point x0, subject to
 %   optional linear and non-linear constraints and variable bounds.
 %
 %       min f(x)
 %        x
 %
-%   such that
+%   subject to
 %
-%           h(x) = 0            (non-linear equalities)
-%           g(x) <= 0           (non-linear inequalities)
-%           l <= A*x <= u       (linear constraints)
-%           xmin <= x <= xmax   (variable bounds)
+%       h(x) = 0            (non-linear equalities)
+%       g(x) <= 0           (non-linear inequalities)
+%       l <= A*x <= u       (linear constraints)
+%       xmin <= x <= xmax   (variable bounds)
 %
 %   [x, fval, exitflag, output, lambda] = ...
 %       mips(f, x0, A, l, u, xmin, xmax, gh, hess, opt)
@@ -59,7 +59,7 @@ function [x, f, eflag, output, lambda] = mips(f_fcn, x0, A, l, u, xmin, xmax, gh
 %               Lxx = hess(x, lam)
 %           where lambda = lam.eqnonlin and mu = lam.ineqnonlin.
 %       opt : optional options structure with the following fields,
-%           all of which are also optional (default values in shown in
+%           all of which are also optional (default values shown in
 %           parentheses)
 %           verbose (0) - controls level of progress output displayed
 %           feastol (1e-6) - termination tolerance for feasibility
@@ -70,7 +70,7 @@ function [x, f, eflag, output, lambda] = mips(f_fcn, x0, A, l, u, xmin, xmax, gh
 %               condition
 %           costtol (1e-6) - termination tolerance for cost condition
 %           max_it (150) - maximum number of iterations
-%           step_control (0) - set to 1 to turn on step-size control
+%           step_control (0) - set to 1 to enable step-size control
 %           max_red (20) - maximum number of step-size reductions if
 %               step-control is on
 %           cost_mult (1) - cost multiplier used to scale the objective
@@ -544,21 +544,24 @@ mu_u(ieq(ku)) = lam_lin(ku);
 mu_u(ilt) = mu_lin(1:nlt);
 mu_u(ibx) = mu_lin(nlt+ngt+(1:nbx));
 
-fields = {};
-if neqnln > 0
-    fields = {fields{:}, 'eqnonlin', lam(1:neqnln)};
-end
+fields = { ...
+    'mu_l', mu_l((nx+1):end), ...
+    'mu_u', mu_u((nx+1):end), ...
+    'lower', mu_l(1:nx), ...
+    'upper', mu_u(1:nx) ...
+};
+
 if niqnln > 0
-    fields = {fields{:}, 'ineqnonlin', mu(1:niqnln)};
+    fields = { ...
+        'ineqnonlin', mu(1:niqnln), ...
+        fields{:} ...
+    };
 end
-if neq > neqnln || niq > niqnln
-    fields = {fields{:}, 'mu_l', mu_l((nx+1):end), 'mu_u', mu_u((nx+1):end)};
-end
-if any(xmin ~= -Inf)
-    fields = {fields{:}, 'lower', mu_l(1:nx)};
-end
-if any(xmax ~= Inf)
-    fields = {fields{:}, 'upper', mu_u(1:nx)};
+if neqnln > 0
+    fields = { ...
+        'eqnonlin', lam(1:neqnln), ...
+        fields{:} ...
+    };
 end
 
 lambda = struct(fields{:});
