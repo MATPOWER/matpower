@@ -11,7 +11,7 @@ if nargin < 1
     quiet = 0;
 end
 
-t_begin(33, quiet);
+t_begin(51, quiet);
 
 t = 'unconstrained banana function : ';
 %% from Matlab Optimization Toolbox's bandem.m
@@ -31,7 +31,10 @@ t_ok(s, [t 'success']);
 t_is(x, [1; 1], 13, [t 'x']);
 t_is(f, 0, 13, [t 'f']);
 t_is(out.hist(end).compcond, 0, 6, [t 'compcond']);
-t_ok(isempty(fieldnames(lam)), [t 'lam']);
+t_ok(isempty(lam.mu_l), [t 'lam.mu_l']);
+t_ok(isempty(lam.mu_u), [t 'lam.mu_u']);
+t_is(lam.lower, zeros(size(x)), 13, [t 'lam.lower']);
+t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 
 t = 'unconstrained 3-d quadratic : ';
 %% from http://www.akiti.ca/QuadProgEx0Constr.html
@@ -50,7 +53,10 @@ t_ok(s, [t 'success']);
 t_is(x, [3; 5; 7], 13, [t 'x']);
 t_is(f, -244, 13, [t 'f']);
 t_is(out.hist(end).compcond, 0, 6, [t 'compcond']);
-t_ok(isempty(fieldnames(lam)), [t 'lam']);
+t_ok(isempty(lam.mu_l), [t 'lam.mu_l']);
+t_ok(isempty(lam.mu_u), [t 'lam.mu_u']);
+t_is(lam.lower, zeros(size(x)), 13, [t 'lam.lower']);
+t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 
 t = 'constrained 4-d QP : ';
 %% from http://www.uc.edu/sashtml/iml/chap8/sect12.htm
@@ -77,10 +83,10 @@ t_ok(s, [t 'success']);
 t_is(x, [0; 2.8; 0.2; 0]/3, 6, [t 'x']);
 t_is(f, 3.29/3, 6, [t 'f']);
 t_is(out.hist(end).compcond, 0, 6, [t 'compcond']);
-t_is(length(fieldnames(lam)), 3, eps, [t 'lam']);
 t_is(lam.mu_l, [6.58;0]/3, 6, [t 'lam.mu_l']);
 t_is(lam.mu_u, [0;0], 13, [t 'lam.mu_u']);
 t_is(lam.lower, [2.24;0;0;1.7667], 4, [t 'lam.lower']);
+t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 
 H = [   1003.1  4.3     6.3     5.9;
         4.3     2.2     2.1     3.9;
@@ -127,6 +133,10 @@ t_is(x, [1; 1], 6, [t 'x']);
 t_is(f, -2, 6, [t 'f']);
 t_is(out.hist(end).compcond, 0, 6, [t 'compcond']);
 t_is(lam.ineqnonlin, [0;0.5], 6, [t 'lam.ineqnonlin']);
+t_ok(isempty(lam.mu_l), [t 'lam.mu_l']);
+t_ok(isempty(lam.mu_u), [t 'lam.mu_u']);
+t_is(lam.lower, zeros(size(x)), 13, [t 'lam.lower']);
+t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 % %% check with fmincon (for dev testing only)
 % % fmoptions = optimset('Algorithm', 'interior-point');
 % % [x, f, s, out, lam] = fmincon(ff, x0, [], [], [], [], xmin, [], gh, fmoptions);
@@ -163,6 +173,10 @@ t_is(x, [1.58113883; 2.23606798; 1.58113883], 6, [t 'x']);
 t_is(f, -5*sqrt(2), 6, [t 'f']);
 t_is(out.hist(end).compcond, 0, 6, [t 'compcond']);
 t_is(lam.ineqnonlin, [0;sqrt(2)/2], 7, [t 'lam.ineqnonlin']);
+t_ok(isempty(lam.mu_l), [t 'lam.mu_l']);
+t_ok(isempty(lam.mu_u), [t 'lam.mu_u']);
+t_is(lam.lower, zeros(size(x)), 13, [t 'lam.lower']);
+t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 % %% check with fmincon (for dev testing only)
 % % fmoptions = optimset('Algorithm', 'interior-point');
 % % [x, f, s, out, lam] = fmincon(ff, x0, [], [], [], [], xmin, [], gh, fmoptions);
@@ -180,6 +194,10 @@ t_is(x, [1.58113883; 2.23606798; 1.58113883], 6, [t 'x']);
 t_is(f, -5*sqrt(2), 6, [t 'f']);
 t_is(out.hist(end).compcond, 0, 6, [t 'compcond']);
 t_is(lam.ineqnonlin, [0;sqrt(2)/2], 7, [t 'lam.ineqnonlin']);
+t_ok(isempty(lam.mu_l), [t 'lam.mu_l']);
+t_ok(isempty(lam.mu_u), [t 'lam.mu_u']);
+t_is(lam.lower, zeros(size(x)), 13, [t 'lam.lower']);
+t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 
 t_end;
 
