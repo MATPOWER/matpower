@@ -28,6 +28,7 @@ if str2double(mlver.Version(1)) < 7    %% anonymous functions not available
 else
 	tests{end+1} = 't_mips';
 end
+tests{end+1} = 't_qps_matpower';
 tests{end+1} = 't_pf';
 if have_fcn('fmincon')
     tests{end+1} = 't_opf_fmincon';
