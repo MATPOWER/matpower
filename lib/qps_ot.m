@@ -183,7 +183,7 @@ nbx = length(ibx);      %% number of doubly bounded linear inequalities
 if ~isempty(opt) && isfield(opt, 'ot_opt') && ~isempty(opt.ot_opt)
     ot_opt = opt.ot_opt;
 else
-    if isempty(H)
+    if isempty(H) || ~any(any(H))
         ot_opt = optimset('linprog');
     else
         ot_opt = optimset('quadprog');
@@ -201,7 +201,7 @@ else
 end
 
 %% call the solver
-if isempty(H)
+if isempty(H) || ~any(any(H))
     [x, f, eflag, output, lam] = ...
         linprog(c, Ai, bi, Ae, be, xmin, xmax, x0, ot_opt);
 else
