@@ -16,6 +16,22 @@ Changes since 4.0b1
 -------------------
 
 1/25/10
+    - Switched to using qps_matpower() instead of mp_qp()/mp_lp()
+      for solving the DC OPF.
+    - Added new top-level wrapper function for MATPOWER's QP solver,
+      called qps_matpower(), with calling syntax similar to
+      quadprog() from the Optimization Toolbox, to replace mp_qp() and
+      mp_lp(). The main difference from the quadprog() API is that the
+      constraints are specified as l <= A*x <= u, instead of
+      A*x <= b and Aeq*x == beq. This new function allows for
+      algorithm specific input options, return of the final objective
+      function value and more detailed output reporting, such as the
+      history for the trajectory returned by MIPS. The old functions,
+      mp_qp() and mp_lp() are now simply wrappers around qps_matpower()
+      and have been deprecated.
+    - Added qps_bpmpd(), qps_mips() and qps_ot(), with interface that
+      matches qps_matpower() to handle implementation for BPMPD_MEX,
+      MIPS and Optimization Toolbox solvers, respectively.
     - Fixed a bug that could result in incorrect multipliers on
       variable bounds from the DC OPF with user-supplied linear
       constraints.

@@ -88,25 +88,9 @@ nw = size(N, 1);            %% number of general cost vars, w
 ny = get_var_N(om, 'y');    %% number of piece-wise linear costs
 nxyz = get_var_N(om);       %% total number of control vars of all types
 
-%% linear constraints
+%% linear constraints & variable bounds
 [A, l, u] = linear_constraints(om);
-
-%% so, can we do anything good about lambda initialization?
-if all(bus(:, LAM_P) == 0)
-  bus(:, LAM_P) = (10)*ones(nb, 1);
-end
-
-%% split l <= A*x <= u into less than, equal to, greater than, and
-%% doubly-bounded sets
-ieq = find( abs(u-l) <= eps );          %% equality
-igt = find( u >=  1e10 & l > -1e10 );   %% greater than, unbounded above
-ilt = find( l <= -1e10 & u <  1e10 );   %% less than, unbounded below
-ibx = find( (abs(u-l) > eps) & (u < 1e10) & (l > -1e10) );
-AA  = [ A(ieq, :);  A(ilt, :);  -A(igt, :);  A(ibx, :);  -A(ibx, :) ];
-bb  = [ u(ieq);     u(ilt);     -l(igt);     u(ibx);     -l(ibx)    ];
-
-il = find(branch(:, RATE_A) ~= 0 & branch(:, RATE_A) < 1e10);
-nl2 = length(il);           %% number of constrained lines
+[x0, xmin, xmax] = getv(om);
 
 %% set up objective function of the form: f = 1/2 * X'*HH*X + CC'*X
 %% where X = [x;y;z]. First set up as quadratic function of w,
@@ -163,23 +147,19 @@ HH = MN' * HHw * MN;
 CC = full(MN' * (CCw - HMR));
 C0 = 1/2 * MR' * HMR + sum(polycf(:, 3));   %% constant term of cost
 
-%% run QP solver
-mpopt(15) = length(ieq);    %% set number of equality constraints
+%% set up input for QP solver
 if mpopt(51) == 0           %% don't use sparse matrices
     AA = full(AA);
     HH = full(HH);
 end
-
-%% bounds on optimization vars
-[x0, LB, UB] = getv(om);
-
+opt = struct('alg', alg, 'verbose', verbose);
 if alg == 200 || alg == 250
     %% try to select an interior initial point
     Varefs = bus(bus(:, BUS_TYPE) == REF, VA) * (pi/180);
 
-    lb = LB; ub = UB;
-    lb(LB == -Inf) = -1e10;   %% replace Inf with numerical proxies
-    ub(UB ==  Inf) =  1e10;
+    lb = xmin; ub = xmax;
+    lb(xmin == -Inf) = -1e10;   %% replace Inf with numerical proxies
+    ub(xmax ==  Inf) =  1e10;
     x0 = (lb + ub) / 2;
     x0(vv.i1.Va:vv.iN.Va) = Varefs(1);  %% angles set to first reference angle
     if ny > 0
@@ -198,30 +178,23 @@ if alg == 200 || alg == 250
     if feastol == 0
         feastol = mpopt(16);    %% = OPF_VIOLATION by default
     end
-    opt = struct(   'feastol', feastol, ...,
-                    'gradtol', gradtol, ...,
-                    'comptol', comptol, ...,
-                    'costtol', costtol, ...,
-                    'max_it', max_it, ...,
-                    'max_red', max_red, ...,
-                    'cost_mult', 1, ...,
-                    'verbose', verbose  );
-else
-    opt = [];
+    opt.mips_opt = struct(  'feastol', feastol, ...,
+							'gradtol', gradtol, ...,
+							'comptol', comptol, ...,
+							'costtol', costtol, ...,
+							'max_it', max_it, ...,
+							'max_red', max_red, ...,
+							'cost_mult', 1  );
 end
 
 %%-----  run opf  -----
-if any(any(HH))
-  [x, lambda, how, success] = mp_qp(HH, CC, AA, bb, LB, UB, x0, mpopt(15), verbose, alg, opt);
-else
-  [x, lambda, how, success] = mp_lp(CC, AA, bb, LB, UB, x0, mpopt(15), verbose, alg, opt);
-end
-info = success;
+[x, f, info, output, lambda] = qps_matpower(HH, CC, A, l, u, xmin, xmax, x0, opt);
+success = (info == 1);
 
 %% update solution data
 Va = x(vv.i1.Va:vv.iN.Va);
 Pg = x(vv.i1.Pg:vv.iN.Pg);
-f = 1/2 * x' * HH * x + CC' * x + C0;
+f = f + C0;
 
 %%-----  calculate return values  -----
 %% update voltages & generator outputs
@@ -234,39 +207,19 @@ branch(:, PF) = (Bf * Va + Pfinj) * baseMVA;
 branch(:, PT) = -branch(:, PF);
 
 %% package up results
-nA = length(u);
-neq = length(ieq);
-nlt = length(ilt);
-ngt = length(igt);
-nbx = length(ibx);
-
-%% extract multipliers
-kl = find(lambda(1:neq) < 0);
-ku = find(lambda(1:neq) > 0);
-
-mu_l = zeros(nA, 1);
-mu_l(ieq) = -lambda(1:neq);
-mu_l(ieq(ku)) = 0;
-mu_l(igt) = lambda(neq+nlt+(1:ngt));
-mu_l(ibx) = lambda(neq+nlt+ngt+nbx+(1:nbx));
-
-mu_u = zeros(nA, 1);
-mu_u(ieq) = lambda(1:neq);
-mu_u(ieq(kl)) = 0;
-mu_u(ilt) = lambda(neq+(1:nlt));
-mu_u(ibx) = lambda(neq+nlt+ngt+(1:nbx));
-
-nAA = length(bb);
-muLB = lambda(nAA+(1:nxyz));
-muUB = lambda(nAA+nxyz+(1:nxyz));
+mu_l = lambda.mu_l;
+mu_u = lambda.mu_u;
+muLB = lambda.lower;
+muUB = lambda.upper;
 
 %% update Lagrange multipliers
+il = find(branch(:, RATE_A) ~= 0 & branch(:, RATE_A) < 1e10);
 bus(:, [LAM_P, LAM_Q, MU_VMIN, MU_VMAX]) = zeros(nb, 4);
 gen(:, [MU_PMIN, MU_PMAX, MU_QMIN, MU_QMAX]) = zeros(size(gen, 1), 4);
 branch(:, [MU_SF, MU_ST]) = zeros(nl, 2);
 bus(:, LAM_P)       = (mu_u(ll.i1.Pmis:ll.iN.Pmis) - mu_l(ll.i1.Pmis:ll.iN.Pmis)) / baseMVA;
-branch(il, MU_SF)    = mu_u(ll.i1.Pf:ll.iN.Pf) / baseMVA;
-branch(il, MU_ST)    = mu_u(ll.i1.Pt:ll.iN.Pt) / baseMVA;
+branch(il, MU_SF)   = mu_u(ll.i1.Pf:ll.iN.Pf) / baseMVA;
+branch(il, MU_ST)   = mu_u(ll.i1.Pt:ll.iN.Pt) / baseMVA;
 gen(:, MU_PMIN)     = muLB(vv.i1.Pg:vv.iN.Pg) / baseMVA;
 gen(:, MU_PMAX)     = muUB(vv.i1.Pg:vv.iN.Pg) / baseMVA;
 
@@ -296,4 +249,4 @@ pimul = [
  -ones(ny>0, 1);    %% dummy entry corresponding to linear cost row in A (in MINOS)
   muLB - muUB
 ];
-raw = struct('xr', x, 'pimul', pimul, 'info', info);
+raw = struct('xr', x, 'pimul', pimul, 'info', info, 'output', output);
