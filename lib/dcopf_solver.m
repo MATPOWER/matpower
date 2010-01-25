@@ -256,8 +256,9 @@ mu_u(ieq(kl)) = 0;
 mu_u(ilt) = lambda(neq+(1:nlt));
 mu_u(ibx) = lambda(neq+nlt+ngt+(1:nbx));
 
-muLB = lambda(nA+(1:nxyz));
-muUB = lambda(nA+nxyz+(1:nxyz));
+nAA = length(bb);
+muLB = lambda(nAA+(1:nxyz));
+muUB = lambda(nAA+nxyz+(1:nxyz));
 
 %% update Lagrange multipliers
 bus(:, [LAM_P, LAM_Q, MU_VMIN, MU_VMAX]) = zeros(nb, 4);

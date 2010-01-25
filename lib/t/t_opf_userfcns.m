@@ -74,8 +74,8 @@ t_is(r.if.mu.u, [0; 13.7573], 4, [t 'if.mu.u']);
 t_is(r.reserves.R, [25; 15; 0; 0; 12; 8], 4, [t 'reserves.R']);
 t_is(r.reserves.prc, [2; 2; 2; 2; 4; 4], 4, [t 'reserves.prc']);
 t_is(r.reserves.mu.Pmax, [0; 0; 0; 0; 1; 0], 4, [t 'reserves.mu.Pmax']);
-t_is(r.reserves.mu.l, [0; 0; 0; 1; 0; 0], 4, [t 'reserves.mu.l']);
-t_is(r.reserves.mu.u, [0; 0; 0; 0; 0; 1], 4, [t 'reserves.mu.u']);
+t_is(r.reserves.mu.l, [0; 0; 1; 2; 0; 0], 4, [t 'reserves.mu.l']);
+t_is(r.reserves.mu.u, [1; 0; 0; 0; 0; 0], 4, [t 'reserves.mu.u']);
 
 t = 'interface flow lims (AC) : ';
 mpc = toggle_reserves(mpc, 'off');
