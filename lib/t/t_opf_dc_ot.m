@@ -38,7 +38,7 @@ mpopt = mpoption(mpopt, 'OPF_ALG_DC', 300);
 warning off optim:linprog:IgnoreStartPoint;
 
 %% run DC OPF
-if have_fcn('quadprog') || have_fcn('qp')
+if have_fcn('quadprog')
     %% set up indices
     ib_data     = [1:BUS_AREA BASE_KV:VMIN];
     ib_voltage  = [VM VA];
