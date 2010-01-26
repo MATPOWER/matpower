@@ -105,6 +105,8 @@ function [busout, genout, branchout, f, success, info, et, g, jac, xr, pimul] = 
 %           .xr     final value of optimization variables
 %           .pimul  constraint multipliers
 %           .info   solver specific termination code
+%           .output solver specific output information
+%              .alg algorithm code of solver used
 %       .var        
 %           .val    optimization variable values, by named block
 %               .Va     voltage angles
@@ -483,6 +485,9 @@ else
     end
     [results, success, raw] = feval(solver, om, mpopt, output);
   end
+end
+if ~isfield(raw, 'output') || ~isfield(raw.output, 'alg') || isempty(raw.output.alg)
+    raw.output.alg = alg;
 end
 if isfield(results, 'g')
   g = results.g;
