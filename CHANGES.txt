@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.0b1
 -------------------
 
+1/26/10
+    - Added OPF algorithm code to output of OPF in
+      results.raw.output.alg.
+
 1/25/10
     - Switched to using qps_matpower() instead of mp_qp()/mp_lp()
       for solving the DC OPF.
