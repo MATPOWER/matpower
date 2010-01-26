@@ -143,9 +143,13 @@ if alg == 100                       %% use BPMPD_MEX
         if verbose
             fprintf('         Retrying with QPS_MIPS solver ...\n\n');
         end
+        %% save (incorrect) solution from BPMPD
+        bpmpd = struct('x', x, 'f', f, 'eflag', eflag, ...
+                        'output', output, 'lambda', lambda);
         opt.alg = 200;
         [x, f, eflag, output, lambda] = ...
             qps_matpower(H, c, A, l, u, xmin, xmax, x0, opt);
+        output.bpmpd = bpmpd;
     end
 elseif alg == 200 || alg == 250     %% use MIPS or sc-MIPS
     %% set up options
