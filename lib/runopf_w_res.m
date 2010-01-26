@@ -1,8 +1,8 @@
 function [varargout] = runopf_w_res(varargin)
 %RUNOPF_W_RES  Runs an optimal power flow with fixed zonal reserves.
 %
-%   results = runopf_w_res(casename, mpopt, fname, solvedcase)
-%   [results, success] = runopf_w_res(casename, mpopt, fname, solvedcase)
+%   results = runopf_w_res(casedata, mpopt, fname, solvedcase)
+%   [results, success] = runopf_w_res(casedata, mpopt, fname, solvedcase)
 %
 %   The case file or struct must define a 'reserves' field which is a struct
 %   with the following fields:

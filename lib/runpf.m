@@ -1,37 +1,44 @@
 function [MVAbase, bus, gen, branch, success, et] = ...
-                runpf(casename, mpopt, fname, solvedcase)
-%RUNPF  Runs a power flow.
+                runpf(casedata, mpopt, fname, solvedcase)
+%RUNPF  Runs a power flow
 %
-%   Output arguments options:
+%   Runs a power flow (full AC Newton's method by default) optionally
+%   returning a results struct and success flag.
 %
-%   results = runpf(...)
-%   [results, success] = runpf(...)
-%   [baseMVA, bus, gen, branch, success, et] = runpf(...)
+%   results = runpf
+%   results = runpf(casedata)
+%   results = runpf(casedata, mpopt)
+%   results = runpf(casedata, mpopt, fname)
+%   results = runpf(casedata, mpopt, fname, solvedcase)
+%   [results, success] = runpf(casedata, mpopt, fname, solvedcase)
 %
-%   Input arguments options:
+%   Inputs (all are optional):
+%       casedata : either a MATPOWER case struct or a string containing
+%           the name of the file with the case data (default is 'case9')
+%           (see also 'help caseformat' and 'help loadcase')
+%       mpopt : MATPOWER options vector to override default options
+%           can be used to specify the solution algorithm, output options
+%           termination tolerances, and more.
+%           (see also 'help mpoption')
+%       fname : name of a file to which the pretty-printed output will
+%           be appended
+%       solvedcase : name of file to which the solved case will be saved
+%           in MATPOWER case format (M-file will be assumed unless the
+%           specified name ends with '.mat')
 %
-%   runpf(casename)
-%   runpf(casename, mpopt)
-%   runpf(casename, mpopt, fname)
-%   runpf(casename, mpopt, fname, solvedcase)
+%   Outputs (all are optional):
+%       results : results struct, with the following fields:
+%           (all fields from the input MATPOWER case, i.e. bus, branch,
+%               gen, etc., but with solved voltages, power flows, etc.)
+%           order - info used in external <-> internal data conversion
+%           et - elapsed time in seconds
+%           success - success flag, 1 = success, 0 = failure
+%       success : the success flag can additionally be returned as
+%           a second output argument
 %
-%   Runs a power flow (full AC Newton's method by default) and optionally
-%   returns the solved values in the data matrices, a flag which is true if
-%   the algorithm was successful in finding a solution, and the elapsed time
-%   in seconds. Alternatively, the solution can be returned as fields in a
-%   results struct and an optional success flag.
-%
-%   All input arguments are optional. If casename is provided it specifies
-%   the name of the input data file or struct (see also 'help caseformat' and
-%   'help loadcase') containing the power flow data. The default value is
-%   'case9'. If the mpopt is provided it overrides the default MATPOWER options
-%   vector and can be used to specify the solution algorithm and output options
-%   among other things (see 'help mpoption' for details). If the 3rd argument
-%   is given the pretty printed output will be appended to the file whose name
-%   is given in fname. If solvedcase is specified the solved case will be
-%   written to a case file in MATPOWER format with the specified name. If
-%   solvedcase ends with '.mat' it saves the case as a MAT-file otherwise it
-%   saves it as an M-file.
+%   Alternatively, for compatibility with previous versions of MATPOWER,
+%   some of the results can be returned as individual output arguments:
+%       [baseMVA, bus, gen, branch, success, et] = runpf(...)
 %
 %   If the ENFORCE_Q_LIMS options is set to true (default is false) then if
 %   any generator reactive power limit is violated after running the AC power
@@ -48,7 +55,7 @@ function [MVAbase, bus, gen, branch, success, et] = ...
 %   by Ray Zimmerman, PSERC Cornell
 %   Enforcing of generator Q limits inspired by contributions
 %   from Mu Lin, Lincoln University, New Zealand (1/14/05).
-%   Copyright (c) 1996-2005 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %%-----  initialize  -----
@@ -70,7 +77,7 @@ if nargin < 4
         if nargin < 2
             mpopt = mpoption;       %% use default options
             if nargin < 1
-                casename = 'case9'; %% default data file is 'case9.m'
+                casedata = 'case9'; %% default data file is 'case9.m'
             end
         end
     end
@@ -82,7 +89,7 @@ qlim = mpopt(6);                    %% enforce Q limits on gens?
 dc = mpopt(10);                     %% use DC formulation?
 
 %% read data
-mpc = loadcase(casename);
+mpc = loadcase(casedata);
 
 %% add zero columns to branch for flows if needed
 if size(mpc.branch,2) < QT
