@@ -66,7 +66,9 @@ function [x, f, eflag, output, lambda] = qps_matpower(H, c, A, l, u, xmin, xmax,
 %       exitflag : exit flag
 %           1 = converged
 %           0 or negative values = algorithm specific failure codes
-%       output : algorithm specific output information
+%       output : output struct with following fields
+%           alg - algorithm code of solver used
+%           (others) - algorithm specific fields
 %       lambda : struct containing the Langrange and Kuhn-Tucker
 %           multipliers on the constraints, with fields:
 %           mu_l - lower bound on linear constraints
@@ -177,4 +179,7 @@ elseif alg == 300                   %% use quadprog() or linprog() from Opt Tbx 
         qps_ot(H, c, A, l, u, xmin, xmax, x0, opt);
 else
     error('qps_matpower: %d is not a valid algorithm code', alg);
+end
+if ~isfield(output, 'alg') || isempty(output.alg)
+    output.alg = alg;
 end
