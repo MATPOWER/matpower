@@ -15,11 +15,11 @@ algs = [100 200 250 300];
 names = {'BPMPD_MEX', 'MIPS', 'sc-MIPS', 'quadprog'};
 check = {'bpmpd', [], [], 'quadprog'};
 
-n = 28;
+n = 35;
 t_begin(n*length(algs), quiet);
 
 opt.verbose = 0;
-opt.mips_opt.comptol = 1e-7;
+opt.mips_opt.comptol = 1e-8;
 
 for k = 1:length(algs)
 	if ~isempty(check{k}) && ~have_fcn(check{k})
@@ -30,6 +30,25 @@ for k = 1:length(algs)
 			opt.ot_opt = optimset('LargeScale', 'off');
 		end
 		
+		t = sprintf('%s - 3-d LP : ', names{k});
+		%% example from 'doc linprog'
+		c = [-5; -4; -6];
+		A = [1 -1  1;
+      		 3  2  4;
+      		 3  2  0];
+		l = [];
+		u = [20; 42; 30];
+		xmin = [0; 0; 0];
+		x0 = [];
+		[x, f, s, out, lam] = qps_matpower([], c, A, l, u, xmin, [], [], opt);
+		t_ok(s, [t 'success']);
+		t_is(x, [0; 15; 3], 7, [t 'x']);
+		t_is(f, -78, 7, [t 'f']);
+		t_is(lam.mu_l, [0;0;0], 13, [t 'lam.mu_l']);
+		t_is(lam.mu_u, [0;1.5;0.5], 9, [t 'lam.mu_u']);
+		t_is(lam.lower, [1;0;0], 9, [t 'lam.lower']);
+		t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
+
 		t = sprintf('%s - unconstrained 3-d quadratic : ', names{k});
 		%% from http://www.akiti.ca/QuadProgEx0Constr.html
 		H = [5 -2 -1; -2 4 3; -1 3 5];
