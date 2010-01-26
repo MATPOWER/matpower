@@ -411,6 +411,6 @@ if eflag > 0
 				'to use a different QP solver for this problem.');
 		end
 		eflag = -99;
-		output.message = 'BPMPD bug: returned infeasible solution';
+		output.message = [output.message '\nBPMPD bug: returned infeasible solution'];
 	end
 end
