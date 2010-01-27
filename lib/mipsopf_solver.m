@@ -160,8 +160,10 @@ branch(:, QT) = imag(St) * baseMVA;
 %% so we must fix multipliers
 muSf = zeros(nl, 1);
 muSt = zeros(nl, 1);
-muSf(il) = 2 * Lambda.ineqnonlin(1:nl2)       .* branch(il, RATE_A) / baseMVA;
-muSt(il) = 2 * Lambda.ineqnonlin((1:nl2)+nl2) .* branch(il, RATE_A) / baseMVA;
+if ~isempty(il)
+    muSf(il) = 2 * Lambda.ineqnonlin(1:nl2)       .* branch(il, RATE_A) / baseMVA;
+    muSt(il) = 2 * Lambda.ineqnonlin((1:nl2)+nl2) .* branch(il, RATE_A) / baseMVA;
+end
 
 %% update Lagrange multipliers
 bus(:, MU_VMAX)  = Lambda.upper(vv.i1.Vm:vv.iN.Vm);
