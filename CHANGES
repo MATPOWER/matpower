@@ -15,6 +15,13 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.0b1
 -------------------
 
+1/27/10
+    - Renamed functions used to compute AC OPF cost, constraints and
+      hessian, since they are used by more than fmincon:
+        costfmin --> opf_costfcn
+        consfmin --> opf_consfcn
+        hessfmin --> opf_hessfcn
+
 1/26/10
     - Added OPF algorithm code to output of OPF in
       results.raw.output.alg.

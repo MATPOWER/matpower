@@ -127,9 +127,9 @@ il = find(branch(:, RATE_A) ~= 0 & branch(:, RATE_A) < 1e10);
 nl2 = length(il);           %% number of constrained lines
 
 %%-----  run opf  -----
-f_fcn = @(x)costfmin(x, om);
-gh_fcn = @(x)consfmin(x, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
-hess_fcn = @(x, lambda)hessfmin(x, lambda, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il, opt.cost_mult);
+f_fcn = @(x)opf_costfcn(x, om);
+gh_fcn = @(x)opf_consfcn(x, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
+hess_fcn = @(x, lambda)opf_hessfcn(x, lambda, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il, opt.cost_mult);
 [x, f, info, Output, Lambda] = ...
   mips(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt);
 success = (info > 0);
@@ -201,12 +201,12 @@ results = mpc;
 
 %% optional fields
 if isfield(out_opt, 'dg')
-  [g, geq, dg, dgeq] = consfmin(x, om, Ybus, Yf, Yt, mpopt);
+  [g, geq, dg, dgeq] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt);
   results.g = [ geq; g];        %% include this since we computed it anyway
   results.dg = [ dgeq'; dg'];   %% true Jacobian organization
 end
 if isfield(out_opt, 'g') && isempty(g)
-  [g, geq] = consfmin(x, om, Ybus, Yf, Yt, mpopt);
+  [g, geq] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt);
   results.g = [ geq; g];
 end
 if isfield(out_opt, 'df')

@@ -140,7 +140,7 @@ else
   elseif mpopt(55) == 3       %% interior-point, w/ 'lbfgs' Hessian approx
     fmoptions = optimset(fmoptions, 'Algorithm', 'interior-point', 'Hessian','lbfgs');
   elseif mpopt(55) == 4       %% interior-point, w/ exact user-supplied Hessian
-    fmc_hessian = @(x, lambda)hessfmin(x, lambda, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
+    fmc_hessian = @(x, lambda)opf_hessfcn(x, lambda, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
     fmoptions = optimset(fmoptions, 'Algorithm', 'interior-point', ...
         'Hessian', 'user-supplied', 'HessFcn', fmc_hessian);
   elseif mpopt(55) == 5       %% interior-point, w/ finite-diff Hessian
@@ -162,8 +162,8 @@ if str2double(otver.Version(1)) >= 4 && strcmp(optimget(fmoptions, 'Algorithm'),
 end
 
 %%-----  run opf  -----
-f_fcn = @(x)costfmin(x, om);
-gh_fcn = @(x)consfmin(x, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
+f_fcn = @(x)opf_costfcn(x, om);
+gh_fcn = @(x)opf_consfcn(x, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
 [x, f, info, Output, Lambda] = ...
   fmincon(f_fcn, x0, Af, bf, Afeq, bfeq, LB, UB, gh_fcn, fmoptions);
 success = (info > 0);
@@ -252,12 +252,12 @@ results = mpc;
 
 %% optional fields
 if isfield(out_opt, 'dg')
-  [g, geq, dg, dgeq] = consfmin(x, om, Ybus, Yf, Yt, mpopt);
+  [g, geq, dg, dgeq] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt);
   results.g = [ geq; g];        %% include this since we computed it anyway
   results.dg = [ dgeq'; dg'];   %% true Jacobian organization
 end
 if isfield(out_opt, 'g') && isempty(g)
-  [g, geq] = consfmin(x, om, Ybus, Yf, Yt, mpopt);
+  [g, geq] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt);
   results.g = [ geq; g];
 end
 if isfield(out_opt, 'df')
