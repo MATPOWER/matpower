@@ -1,8 +1,8 @@
-function [results, success, raw] = fmincopf_solver(om, mpopt, output)
+function [results, success, raw] = fmincopf_solver(om, mpopt, out_opt)
 %FMINCOPF_SOLVER  Solves an AC optimal power flow using FMINCON
 %
 %   [results, success, raw] = fmincopf_solver(om, mpopt)
-%   [results, success, raw] = fmincopf_solver(om, mpopt, output)
+%   [results, success, raw] = fmincopf_solver(om, mpopt, out_opt)
 %
 %   Inputs are an OPF model object, a MATPOWER options vector and
 %   a struct containing fields (can be empty) for each of the desired
@@ -37,18 +37,19 @@ function [results, success, raw] = fmincopf_solver(om, mpopt, output)
 %       .xr     final value of optimization variables
 %       .pimul  constraint multipliers
 %       .info   solver specific termination code
+%       .output solver specific output information
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
-%   Copyright (c) 2000-2008 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2000-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %%----- initialization -----
 %% optional output
 if nargin < 3
-    output = struct([]);
+    out_opt = struct([]);
 end
 
 %% define named indices into data matrices
@@ -161,10 +162,10 @@ if str2double(otver.Version(1)) >= 4 && strcmp(optimget(fmoptions, 'Algorithm'),
 end
 
 %%-----  run opf  -----
-fmc_cost = @(x)costfmin(x, om);
-fmc_cons = @(x)consfmin(x, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
+f_fcn = @(x)costfmin(x, om);
+gh_fcn = @(x)consfmin(x, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
 [x, f, info, Output, Lambda] = ...
-  fmincon(fmc_cost, x0, Af, bf, Afeq, bfeq, LB, UB, fmc_cons, fmoptions);
+  fmincon(f_fcn, x0, Af, bf, Afeq, bfeq, LB, UB, gh_fcn, fmoptions);
 success = (info > 0);
 
 %% update solution data
@@ -250,19 +251,19 @@ results = mpc;
         deal(bus, branch, gen, om, x, mu, f);
 
 %% optional fields
-if isfield(output, 'dg')
+if isfield(out_opt, 'dg')
   [g, geq, dg, dgeq] = consfmin(x, om, Ybus, Yf, Yt, mpopt);
   results.g = [ geq; g];        %% include this since we computed it anyway
   results.dg = [ dgeq'; dg'];   %% true Jacobian organization
 end
-if isfield(output, 'g') && isempty(g)
+if isfield(out_opt, 'g') && isempty(g)
   [g, geq] = consfmin(x, om, Ybus, Yf, Yt, mpopt);
   results.g = [ geq; g];
 end
-if isfield(output, 'df')
+if isfield(out_opt, 'df')
   results.df = [];
 end
-if isfield(output, 'd2f')
+if isfield(out_opt, 'd2f')
   results.d2f = [];
 end
 pimul = [ ...
@@ -271,4 +272,4 @@ pimul = [ ...
   -ones(ny>0, 1);
   results.mu.var.l - results.mu.var.u;
 ];
-raw = struct('xr', x, 'pimul', pimul, 'info', info);
+raw = struct('xr', x, 'pimul', pimul, 'info', info, 'output', Output);

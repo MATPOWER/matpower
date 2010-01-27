@@ -1,8 +1,8 @@
-function [results, success, raw] = dcopf_solver(om, mpopt, output)
+function [results, success, raw] = dcopf_solver(om, mpopt, out_opt)
 %DCOPF_SOLVER  Solves a DC optimal power flow.
 %
 %   [results, success, raw] = dcopf_solver(om, mpopt)
-%   [results, success, raw] = dcopf_solver(om, mpopt, output)
+%   [results, success, raw] = dcopf_solver(om, mpopt, out_opt)
 %
 %   Inputs are an OPF model object, a MATPOWER options vector and
 %   a struct containing fields (can be empty) for each of the desired
@@ -34,6 +34,7 @@ function [results, success, raw] = dcopf_solver(om, mpopt, output)
 %       .xr     final value of optimization variables
 %       .pimul  constraint multipliers
 %       .info   solver specific termination code
+%       .output solver specific output information
 
 %   MATPOWER
 %   $Id$
@@ -45,7 +46,7 @@ function [results, success, raw] = dcopf_solver(om, mpopt, output)
 %%----- initialization -----
 %% optional output
 if nargin < 3
-    output = struct([]);
+    out_opt = struct([]);
 end
 
 %% define named indices into data matrices
@@ -234,14 +235,14 @@ results = mpc;
 
 %% optional fields
 %% 1st one is always computed anyway, just include it
-if isfield(output, 'g')
+if isfield(out_opt, 'g')
   results.g = A * x;
 end
 results.dg = A;
-if isfield(output, 'df')
+if isfield(out_opt, 'df')
   results.df = [];
 end
-if isfield(output, 'd2f')
+if isfield(out_opt, 'd2f')
   results.d2f = [];
 end
 pimul = [
