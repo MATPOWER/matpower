@@ -32,7 +32,7 @@ function varargout = runduopf(casedata, mpopt, fname, solvedcase)
 %               gen, etc., but with solved voltages, power flows, etc.)
 %           order - info used in external <-> internal data conversion
 %           et - elapsed time in seconds
-%           success - success flag, 1 = success, 0 = failure
+%           success - success flag, 1 = succeeded, 0 = failed
 %           (additional OPF fields, see 'help opf' for details)
 %       success : the success flag can additionally be returned as
 %           a second output argument

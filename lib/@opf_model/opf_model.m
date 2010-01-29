@@ -1,77 +1,85 @@
 function om = opf_model(mpc)
 %OPF_MODEL  Constructor for OPF model class
 %
-% om
-%   .var
-%       .idx
-%           .i1
-%           .iN
+%   This class implements the OPF model object used to encapsulate
+%   a given OPF problem formulation. It allows for access to optimization
+%   variables, constraints and costs in named blocks, keeping track of the
+%   ordering and indexing of the blocks as variables, constraints and costs
+%   are added to the problem.
+%
+%   The following is the structure of the data in the OPF model object
+%
+%   om
+%       .var
+%           .idx
+%               .i1
+%               .iN
+%               .N
 %           .N
-%       .N
-%       .NS
-%       .data
-%           .v0
-%           .vl
-%           .vu
-%       .order
-%   .nln
-%       .idx
-%           .i1
-%           .iN
+%           .NS
+%           .data
+%               .v0
+%               .vl
+%               .vu
+%           .order
+%       .nln
+%           .idx
+%               .i1
+%               .iN
+%               .N
 %           .N
-%       .N
-%       .NS
-%       .order
-%   .lin
-%       .idx
-%           .i1
-%           .iN
+%           .NS
+%           .order
+%       .lin
+%           .idx
+%               .i1
+%               .iN
+%               .N
 %           .N
-%       .N
-%       .NS
-%       .data
-%           .A
+%           .NS
+%           .data
+%               .A
+%               .l
+%               .u
+%               .vs
+%           .order
+%       .cost
+%           .idx
+%               .i1
+%               .iN
+%               .N
+%           .N
+%           .NS
+%           .data
+%               .N
+%               .H
+%               .Cw
+%               .dd
+%               .rr
+%               .kk
+%               .mm
+%               .vs
+%           .order
+%       .mpc
+%           .baseMVA
+%           .bus
+%           .branch
+%           .gen
+%           .gencost
+%           .A  (if present, must have l, u)
 %           .l
 %           .u
-%           .vs
-%       .order
-%   .cost
-%       .idx
-%           .i1
-%           .iN
-%           .N
-%       .N
-%       .NS
-%       .data
-%           .N
+%           .N  (if present, must have fparm, H, Cw)
+%           .fparm
 %           .H
 %           .Cw
-%           .dd
-%           .rr
-%           .kk
-%           .mm
-%           .vs
-%       .order
-%   .mpc
-%       .baseMVA
-%       .bus
-%       .branch
-%       .gen
-%       .gencost
-%       .A	(if present, must have l, u)
-%       .l
-%       .u
-%       .N	(if present, must have fparm, H, Cw)
-%       .fparm
-%       .H
-%       .Cw
-%   .userdata
-%       .(user defined fields)
+%       .userdata
+%           .(user defined fields)
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2008 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 % es = struct();    %% doesn't work in Matlab 6

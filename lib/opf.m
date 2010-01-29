@@ -101,7 +101,7 @@ function [busout, genout, branchout, f, success, info, et, g, jac, xr, pimul] = 
 %       .dg         (optional) constraint 1st derivatives
 %       .df         (optional) obj fun 1st derivatives (not yet implemented)
 %       .d2f        (optional) obj fun 2nd derivatives (not yet implemented)
-%       .raw        raw output in form returned by MINOS
+%       .raw        raw solver output in form returned by MINOS, and more
 %           .xr     final value of optimization variables
 %           .pimul  constraint multipliers
 %           .info   solver specific termination code

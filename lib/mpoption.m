@@ -18,7 +18,7 @@ function [options, names] = mpoption(varargin)
 %      idx - NAME, default          description [options]
 %      ---   -------------          -----------------------------------------
 %   power flow options
-%       1  - PF_ALG, 1              power flow algorithm
+%       1  - PF_ALG, 1              AC power flow algorithm
 %           [   1 - Newton's method                                         ]
 %           [   2 - Fast-Decoupled (XB version)                             ]
 %           [   3 - Fast-Decoupled (BX version)                             ]
@@ -36,22 +36,21 @@ function [options, names] = mpoption(varargin)
 %           [    0 - do NOT enforce limits                                  ]
 %           [    1 - enforce limits, simultaneous bus type conversion       ]
 %           [    2 - enforce limits, one-at-a-time bus type conversion      ]
-%       10 - PF_DC, 0               use DC power flow formulation, for
-%                                   power flow and OPF
-%           [    0 - use AC formulation & corresponding algorithm opts      ]
+%       10 - PF_DC, 0               DC modeling for power flow & OPF
+%           [    0 - use AC formulation & corresponding algorithm options   ]
 %           [    1 - use DC formulation, ignore AC algorithm options        ]
 %   OPF options
 %       11 - OPF_ALG, 0             solver to use for AC OPF
-%           [    0 - choose default solver available in the following       ]
-%           [        order, 540, 560                                        ]
-%           [  300 - constr (from Optimization Toolbox 1.x)                 ]
+%           [    0 - choose default solver based on availability in the     ]
+%           [        following order, 540, 560                              ]
+%           [  300 - constr, Matlab Optimization Toolbox 1.x and 2.x        ]
 %           [  320 - dense successive LP                                    ]
 %           [  340 - sparse successive LP (relaxed)                         ]
 %           [  360 - sparse successive LP (full)                            ]
 %           [  500 - MINOPF, MINOS-based solver, requires optional          ]
 %           [        MEX-based MINOPF package, available from:              ]
 %           [        http://www.pserc.cornell.edu/minopf/                   ]
-%           [  520 - fmincon - Optimization Toolbox >= 2.x                  ]
+%           [  520 - fmincon, Matlab Optimization Toolbox >= 2.x            ]
 %           [  540 - PDIPM, primal/dual interior point method, requires     ]
 %           [        optional MEX-based TSPOPF package, available from:     ]
 %           [        http://www.pserc.cornell.edu/tspopf/                   ]
@@ -75,27 +74,27 @@ function [options, names] = mpoption(varargin)
 %       24 - OPF_FLOW_LIM, 0        qty to limit for branch flow constraints
 %           [   0 - apparent power flow (limit in MVA)                      ]
 %           [   1 - active power flow (limit in MW)                         ]
-%           [   2 - current magnitude (limit in MVA at 1 p.u. voltage       ]
+%           [   2 - current magnitude (limit in MVA at 1 p.u. voltage)      ]
 %       25 - OPF_IGNORE_ANG_LIM, 0  ignore angle difference limits for branches
 %                                   even if specified           [   0 or 1  ]
 %       26 - OPF_ALG_DC, 0          solver to use for DC OPF
-%           [    0 - choose default solver from available solvers in        ]
-%           [        the following order, 100, 200                          ]
-%           [  100 - BPMPD, requires optional MEX-based package, BPMPD_MEX  ]
+%           [    0 - choose default solver based on availability in the     ]
+%           [        following order, 100, 200                              ]
+%           [  100 - BPMPD, requires optional MEX-based BPMPD_MEX package   ]
 %           [        available from: http://www.pserc.cornell.edu/bpmpd/    ]
 %           [  200 - MIPS, Matlab Interior Point Solver                     ]
 %           [        primal/dual interior point method (pure Matlab)        ]
 %           [  250 - MIPS-sc, step-controlled variant of MIPS               ]
-%           [  300 - Optimization Toolbox, quadprog(), linprog()            ]
+%           [  300 - Matlab Optimization Toolbox, quadprog(), linprog()     ]
 %   output options
 %       31 - VERBOSE, 1             amount of progress info printed
 %           [   0 - print no progress info                                  ]
 %           [   1 - print a little progress info                            ]
 %           [   2 - print a lot of progress info                            ]
 %           [   3 - print all progress info                                 ]
-%       32 - OUT_ALL, -1            controls printing of results
+%       32 - OUT_ALL, -1            controls pretty-printing of results
 %           [  -1 - individual flags control what prints                    ]
-%           [   0 - don't print anything                                    ]
+%           [   0 - do not print anything                                   ]
 %           [       (overrides individual flags, except OUT_RAW)            ]
 %           [   1 - print everything                                        ]
 %           [       (overrides individual flags, except OUT_RAW)            ]
@@ -105,17 +104,17 @@ function [options, names] = mpoption(varargin)
 %       36 - OUT_BRANCH, 1          print branch detail         [   0 or 1  ]
 %       37 - OUT_GEN, 0             print generator detail      [   0 or 1  ]
 %                                   (OUT_BUS also includes gen info)
-%       38 - OUT_ALL_LIM, -1        control constraint info output
+%       38 - OUT_ALL_LIM, -1        controls what constraint info is printed
 %           [  -1 - individual flags control what constraint info prints    ]
 %           [   0 - no constraint info (overrides individual flags)         ]
 %           [   1 - binding constraint info (overrides individual flags)    ]
 %           [   2 - all constraint info (overrides individual flags)        ]
 %       39 - OUT_V_LIM, 1           control output of voltage limit info
-%           [   0 - don't print                                             ]
+%           [   0 - do not print                                            ]
 %           [   1 - print binding constraints only                          ]
 %           [   2 - print all constraints                                   ]
 %           [   (same options for OUT_LINE_LIM, OUT_PG_LIM, OUT_QG_LIM)     ]
-%       40 - OUT_LINE_LIM, 1        control output of line limit info
+%       40 - OUT_LINE_LIM, 1        control output of line flow limit info
 %       41 - OUT_PG_LIM, 1          control output of gen P limit info
 %       42 - OUT_QG_LIM, 1          control output of gen Q limit info
 %       43 - OUT_RAW, 0             print raw data for Perl database
