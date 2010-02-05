@@ -62,15 +62,16 @@ function [options, names] = mpoption(varargin)
 %           [        primal/dual interior point method (pure Matlab)        ]
 %           [  565 - MIPS-sc, step-controlled variant of MIPS               ]
 %       16 - OPF_VIOLATION, 5e-6    constraint violation tolerance
-%       17 - CONSTR_TOL_X, 1e-4     termination tol on x for copf & fmincopf
-%       18 - CONSTR_TOL_F, 1e-4     termination tol on F for copf & fmincopf
-%       19 - CONSTR_MAX_IT, 0       max number of iterations for copf & fmincopf
+%       17 - CONSTR_TOL_X, 1e-4     termination tol on x for constr/fmincon
+%       18 - CONSTR_TOL_F, 1e-4     termination tol on f for constr/fmincon
+%       19 - CONSTR_MAX_IT, 0       max number of iterations for constr/fmincon
 %                                   [       0 => 2*nb + 150                 ]
-%       20 - LPC_TOL_GRAD, 3e-3     termination tolerance on gradient for lpopf
-%       21 - LPC_TOL_X, 1e-4        termination tolerance on x (min step size)
-%                                   for lpopf
-%       22 - LPC_MAX_IT, 400        maximum number of iterations for lpopf
-%       23 - LPC_MAX_RESTART, 5     maximum number of restarts for lpopf
+%       20 - LPC_TOL_GRAD, 3e-3     termination tolerance on gradient, LP-based
+%                                   solver
+%       21 - LPC_TOL_X, 1e-4        termination tolerance on x (min step size),
+%                                   LP-based solver
+%       22 - LPC_MAX_IT, 400        maximum number of iterations, LP-based slvr
+%       23 - LPC_MAX_RESTART, 5     maximum number of restarts, LP-based solver
 %       24 - OPF_FLOW_LIM, 0        qty to limit for branch flow constraints
 %           [   0 - apparent power flow (limit in MVA)                      ]
 %           [   1 - active power flow (limit in MW)                         ]
@@ -117,11 +118,6 @@ function [options, names] = mpoption(varargin)
 %       40 - OUT_LINE_LIM, 1        control output of line flow limit info
 %       41 - OUT_PG_LIM, 1          control output of gen P limit info
 %       42 - OUT_QG_LIM, 1          control output of gen Q limit info
-%       43 - OUT_RAW, 0             print raw data for Perl database
-%                                   interface code              [   0 or 1  ]
-%   other options
-%       51 - SPARSE_QP, 1           pass sparse matrices to QP and LP
-%                                   solvers if possible         [   0 or 1  ]
 %   fmincon options
 %       55 - FMC_ALG, 1             algorithm used by fmincon for OPF
 %                                   for Optimization Toolbox 4 and later
@@ -132,11 +128,11 @@ function [options, names] = mpoption(varargin)
 %            [  5 - interior-point, w/Hessian via finite differences        ]
 %
 %   MINOPF options
-%       61 - MNS_FEASTOL, 0 (1E-3)  primal feasibility tolerance,
+%       61 - MNS_FEASTOL, 0 (1e-3)  primal feasibility tolerance,
 %                                   set to value of OPF_VIOLATION by default
-%       62 - MNS_ROWTOL, 0  (1E-3)  row tolerance
+%       62 - MNS_ROWTOL, 0  (1e-3)  row tolerance
 %                                   set to value of OPF_VIOLATION by default
-%       63 - MNS_XTOL, 0     (1E-3) x tolerance
+%       63 - MNS_XTOL, 0    (1e-3)  x tolerance
 %                                   set to value of CONSTR_TOL_X by default
 %       64 - MNS_MAJDAMP, 0 (0.5)   major damping parameter
 %       65 - MNS_MINDAMP, 0 (2.0)   minor damping parameter
@@ -145,18 +141,18 @@ function [options, names] = mpoption(varargin)
 %       68 - MNS_MINOR_IT, 0 (2500) minor iterations
 %       69 - MNS_MAX_IT, 0 (2500)   iterations limit
 %       70 - MNS_VERBOSITY, -1
-%           [  -1 - controlled by VERBOSE flag                              ]
+%           [  -1 - controlled by VERBOSE option                            ]
 %           [   0 - print nothing                                           ]
 %           [   1 - print only termination status message                   ]
 %           [   2 - print termination status and screen progress            ]
 %           [   3 - print screen progress, report file (usually fort.9)     ]
-%       71 - MNS_CORE, 1200 * nb + 2 * (nb + ng)^2 
+%       71 - MNS_CORE, 0 (1200 * nb + 2 * (nb + ng)^2) memory allocation
 %       72 - MNS_SUPBASIC_LIM, 0 (2*nb + 2*ng) superbasics limit
 %       73 - MNS_MULT_PRICE, 0 (30) multiple price
 %
 %   MIPS (including MIPS-sc), PDIPM, SC-PDIPM, and TRALM options
 %       81 - PDIPM_FEASTOL, 0       feasibility (equality) tolerance
-%                                   for MIPS, PDIPM and SC-PDIPM set
+%                                   for MIPS, PDIPM and SC-PDIPM, set
 %                                   to value of OPF_VIOLATION by default
 %       82 - PDIPM_GRADTOL, 1e-6    gradient tolerance for MIPS, PDIPM
 %                                   and SC-PDIPM
@@ -170,13 +166,19 @@ function [options, names] = mpoption(varargin)
 %                                   reductions per iteration
 %       87 - TRALM_FEASTOL, 0       feasibility tolerance for TRALM
 %                                   set to value of OPF_VIOLATION by default
-%       88 - TRALM_PRIMETOL, 5e-4   prime variable tolerance for TRALM
+%       88 - TRALM_PRIMETOL, 5e-4   primal variable tolerance for TRALM
 %       89 - TRALM_DUALTOL, 5e-4    dual variable tolerance for TRALM
 %       90 - TRALM_COSTTOL, 1e-5    optimality tolerance for TRALM
 %       91 - TRALM_MAJOR_IT, 40     maximum number of major iterations
 %       92 - TRALM_MINOR_IT, 100    maximum number of minor iterations
 %       93 - SMOOTHING_RATIO, 0.04  piecewise linear curve smoothing ratio
 %                                   used in SC-PDIPM and TRALM
+
+%   deprecated options
+%       43 - OUT_RAW, 0             print raw data for Perl database
+%                                   interface code              [   0 or 1  ]
+%       51 - SPARSE_QP, 1           pass sparse matrices to QP and LP
+%                                   solvers if possible         [   0 or 1  ]
 
 %   MATPOWER
 %   $Id$
@@ -209,8 +211,8 @@ else                    %% even number of parameters
         100;    %% 12 - OPF_ALG_POLY, deprecated
         200;    %% 13 - OPF_ALG_PWL, deprecated
         10;     %% 14 - OPF_POLY2PWL_PTS, deprecated
-        0;      %% 15 - OPF_NEQ, not a user option (number of eq constraints for
-                %%          copf, lpopf and dcopf algorithms, set by program)
+        0;      %% 15 - OPF_NEQ, not a user option (number of eq constraints
+                %%          for copf_solver, lpopf_solver, set by program)
         5e-6;   %% 16 - OPF_VIOLATION
         1e-4;   %% 17 - CONSTR_TOL_X
         1e-4;   %% 18 - CONSTR_TOL_F
@@ -261,7 +263,7 @@ else                    %% even number of parameters
         0;      %% 59 - RESERVED59
         0;      %% 60 - RESERVED60
         
-        %% other options
+        %% MINOPF options
         0;      %% 61 - MNS_FEASTOL
         0;      %% 62 - MNS_ROWTOL
         0;      %% 63 - MNS_XTOL
