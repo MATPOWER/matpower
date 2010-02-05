@@ -14,17 +14,17 @@ function [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
 %   below:
 %
 %   columns 1-13 must be included in input matrix (in case file)
-%    1  BUS_I       bus number (1 to 29997)
+%    1  BUS_I       bus number (positive integer)
 %    2  BUS_TYPE    bus type (1 = PQ, 2 = PV, 3 = ref, 4 = isolated)
 %    3  PD          Pd, real power demand (MW)
 %    4  QD          Qd, reactive power demand (MVAr)
-%    5  GS          Gs, shunt conductance (MW at V = 1.0 p.u.)
-%    6  BS          Bs, shunt susceptance (MVAr at V = 1.0 p.u.)
-%    7  BUS_AREA    area number, 1-100
+%    5  GS          Gs, shunt conductance (MW demanded at V = 1.0 p.u.)
+%    6  BS          Bs, shunt susceptance (MVAr injected at V = 1.0 p.u.)
+%    7  BUS_AREA    area number, (positive integer)
 %    8  VM          Vm, voltage magnitude (p.u.)
 %    9  VA          Va, voltage angle (degrees)
 %    10 BASE_KV     baseKV, base voltage (kV)
-%    11 ZONE        zone, loss zone (1-999)
+%    11 ZONE        zone, loss zone (positive integer)
 %    12 VMAX        maxVm, maximum voltage magnitude (p.u.)
 %    13 VMIN        minVm, minimum voltage magnitude (p.u.)
 %   
@@ -45,7 +45,7 @@ function [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% define bus types

@@ -24,7 +24,7 @@ function [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
 %    5  QMIN        Qmin, minimum reactive power output (MVAr)
 %    6  VG          Vg, voltage magnitude setpoint (p.u.)
 %    7  MBASE       mBase, total MVA base of machine, defaults to baseMVA
-%    8  GEN_STATUS  status, 1 - in service, 0 - out of service
+%    8  GEN_STATUS  status, > 0 - in service, <= 0 - out of service
 %    9  PMAX        Pmax, maximum real power output (MW)
 %    10 PMIN        Pmin, minimum real power output (MW)
 %    11 PC1         Pc1, lower real power output of PQ capability curve (MW)
@@ -50,7 +50,7 @@ function [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2005 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% define the indices

@@ -1,6 +1,7 @@
 %CASEFORMAT    Defines the MATPOWER case file format.
-%   A MATPOWER case file is an M-file or MAT-file which defines the variables
-%   baseMVA, bus, gen, branch, areas (optional), and gencost (optional). With
+%   A MATPOWER case file is an M-file or MAT-file that defines or returns
+%   a struct named mpc, referred to as a "MATPOWER case struct". The fields
+%   of this struct are baseMVA, bus, gen, branch, and (optional) gencost. With
 %   the exception of baseMVA, a scalar, each data variable is a matrix, where
 %   a row corresponds to a single bus, branch, gen, etc. The format of the
 %   data is similar to the PTI format described in
@@ -12,23 +13,25 @@
 %   each data matrix are given below.
 %
 %   MATPOWER Case Version Information:
-%   A version 1 case file defined the data matrices directly. The last two,
-%   areas and gencost, were optional since they were not needed for running
-%   a simple power flow. In version 2, each of the data matrices are stored
-%   as fields in a struct. It is this struct, rather than the individual
-%   matrices, that is returned by a version 2 M-casefile. Likewise a version 2
-%   MAT-casefile stores a struct named 'mpc' (for MATPOWER case). The struct
-%   also contains a 'version' field so MATPOWER knows how to interpret the
-%   data. Any case file which does not return a struct, or any struct which
-%   does not have a 'version' field is considered to be in version 1 format.
+%   There are two versions of the MATPOWER case file format. The current
+%   version of MATPOWER uses version 2 of the MATPOWER case format
+%   internally, and includes a 'version' field with a value of '2' to make
+%   the version explicit. Earlier versions of MATPOWER used the version 1
+%   case format, which defined the data matrices as individual variables,
+%   as opposed to fields of a struct. Case files in version 1 format with
+%   OPF data also included an (unused) 'areas' variable. While the version 1
+%   format has now been deprecated, it is still be handled automatically by
+%   LOADCASE and SAVECASE which are able to load and save case files in both
+%   version 1 and version 2 formats.
 %
 %   See also IDX_BUS, IDX_BRCH, IDX_GEN, IDX_AREA and IDX_COST regarding
 %   constants which can be used as named column indices for the data matrices.
-%   Also described in the first three are additional columns that are added
-%   to the bus, branch and gen matrices by the power flow and OPF solvers.
+%   Also described in the first three are additional results columns that
+%   are added to the bus, branch and gen matrices by the power flow and OPF
+%   solvers.
 %
 %   Bus Data Format
-%       1   bus number (1 to 29997)
+%       1   bus number (positive integer)
 %       2   bus type
 %               PQ bus          = 1
 %               PV bus          = 2
@@ -36,14 +39,14 @@
 %               isolated bus    = 4
 %       3   Pd, real power demand (MW)
 %       4   Qd, reactive power demand (MVAr)
-%       5   Gs, shunt conductance (MW (demanded) at V = 1.0 p.u.)
-%       6   Bs, shunt susceptance (MVAr (injected) at V = 1.0 p.u.)
-%       7   area number, 1-100
+%       5   Gs, shunt conductance (MW demanded at V = 1.0 p.u.)
+%       6   Bs, shunt susceptance (MVAr injected at V = 1.0 p.u.)
+%       7   area number, (positive integer)
 %       8   Vm, voltage magnitude (p.u.)
 %       9   Va, voltage angle (degrees)
 %   (-)     (bus name)
 %       10  baseKV, base voltage (kV)
-%       11  zone, loss zone (1-999)
+%       11  zone, loss zone (positive integer)
 %   (+) 12  maxVm, maximum voltage magnitude (p.u.)
 %   (+) 13  minVm, minimum voltage magnitude (p.u.)
 %
@@ -108,16 +111,17 @@
 %       1   model, 1 - piecewise linear, 2 - polynomial
 %       2   startup, startup cost in US dollars
 %       3   shutdown, shutdown cost in US dollars
-%       4   n, number of cost coefficients to follow for polynomial
+%       4   N, number of cost coefficients to follow for polynomial
 %           cost function, or number of data points for piecewise linear
-%       5 and following, cost data defining total cost function
-%           For polynomial cost:
-%                   c2, c1, c0
-%           where the polynomial is c0 + c1*P + c2*P^2
-%           For piecewise linear cost:
-%                   x0, y0, x1, y1, x2, y2, ...
-%           where x0 < x1 < x2 < ... and the points (x0,y0), (x1,y1),
-%           (x2,y2), ... are the end- and break-points of the cost function.
+%       5 and following, parameters defining total cost function
+%           (MODEL = 1) : p0, f0, p1, f1, ..., pn, fn
+%               where p0 < p1 < ... < pn and the cost f(p) is defined by
+%               the coordinates (p0,f0), (p1,f1), ..., (pn,fn) of the
+%               end/break-points of the piecewise linear cost function
+%           (MODEL = 2) : cn, ..., c1, c0
+%               n+1 coefficients of an n-th order polynomial cost function,
+%               starting with highest order, where cost is
+%               f(p) = cn*p^2 + ... + c1*p + c0
 % 
 % (+) Area Data Format (deprecated)
 %     (this data is not used by MATPOWER and is no longer necessary for
@@ -128,5 +132,5 @@
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2005 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.

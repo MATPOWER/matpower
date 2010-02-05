@@ -1,11 +1,16 @@
 function [Aang, lang, uang, iang]  = makeAang(baseMVA, branch, nb, mpopt)
+%MAKEAANG  Construct constraints for branch angle difference limits.
 %
+%   [Aang, lang, uang, iang]  = makeAang(baseMVA, branch, nb, mpopt)
+%
+%   lang <= Aang * Va <= uang
+%   iang   indices of branches with angle difference limits
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
-%   Copyright (c) 1996-2008 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% options

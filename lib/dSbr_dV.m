@@ -22,14 +22,20 @@ function [dSf_dVa, dSf_dVm, dSt_dVa, dSt_dVm, Sf, St] = dSbr_dV(branch, Yf, Yt, 
 %       dIf/dVm = Yf * dV/dVm = Yf * diag(V./abs(V))
 %
 %   Partials of Sf w.r.t. voltage angles
-%       dSf/dVa = diag(Vf) * conj(dIf/dVa)              + diag(conj(If)) * dVf/dVa
-%               = diag(Vf) * conj(Yf * j * diag(V))     + conj(diag(If)) * j * sparse(1:nl, f, V(f))
-%               = -j * diag(Vf) * conj(Yf * diag(V))    + j * conj(diag(If)) * sparse(1:nl, f, V(f))
-%               = j * (conj(diag(If)) * sparse(1:nl, f, V(f)) - diag(Vf) * conj(Yf * diag(V)))
+%       dSf/dVa = diag(Vf) * conj(dIf/dVa)
+%                       + diag(conj(If)) * dVf/dVa
+%               = diag(Vf) * conj(Yf * j * diag(V))
+%                       + conj(diag(If)) * j * sparse(1:nl, f, V(f))
+%               = -j * diag(Vf) * conj(Yf * diag(V))
+%                       + j * conj(diag(If)) * sparse(1:nl, f, V(f))
+%               = j * (conj(diag(If)) * sparse(1:nl, f, V(f))
+%                       - diag(Vf) * conj(Yf * diag(V)))
 %
 %   Partials of Sf w.r.t. voltage magnitudes
-%       dSf/dVm = diag(Vf) * conj(dIf/dVm)              + diag(conj(If)) * dVf/dVm
-%               = diag(Vf) * conj(Yf * diag(V./abs(V))) + conj(diag(If)) * sparse(1:nl, f, V(f)./abs(V(f)))
+%       dSf/dVm = diag(Vf) * conj(dIf/dVm)
+%                       + diag(conj(If)) * dVf/dVm
+%               = diag(Vf) * conj(Yf * diag(V./abs(V)))
+%                       + conj(diag(If)) * sparse(1:nl, f, V(f)./abs(V(f)))
 %
 %   Derivations for "to" bus are similar.
 %
@@ -37,7 +43,7 @@ function [dSf_dVa, dSf_dVm, dSt_dVa, dSt_dVm, Sf, St] = dSbr_dV(branch, Yf, Yt, 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% define named indices into bus, gen, branch matrices

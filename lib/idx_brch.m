@@ -37,22 +37,18 @@ function [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, ...
 %    16 PT          real power injected at "to" bus end (MW)
 %    17 QT          reactive power injected at "to" bus end (MVAr)
 %
-%   columns 18-19 are added to matrix after OPF solution
+%   columns 18-21 are added to matrix after OPF solution
 %   they are typically not present in the input matrix
 %                   (assume OPF objective function has units, u)
 %    18 MU_SF       Kuhn-Tucker multiplier on MVA limit at "from" bus (u/MVA)
 %    19 MU_ST       Kuhn-Tucker multiplier on MVA limit at "to" bus (u/MVA)
-%
-%   columns 20-21 are added to matrix after SCOPF solution
-%   they are typically not present in the input matrix
-%                   (assume OPF objective function has units, u)
 %    20 MU_ANGMIN   Kuhn-Tucker multiplier lower angle difference limit (u/degree)
 %    21 MU_ANGMAX   Kuhn-Tucker multiplier upper angle difference limit (u/degree)
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2005 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% define the indices

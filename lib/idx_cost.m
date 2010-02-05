@@ -14,21 +14,20 @@ function [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_co
 %   below:
 % 
 %   columns 1-5
-%    1  MODEL       cost model, 1 - piecewise linear, 2 - polynomial
+%    1  MODEL       cost model, 1 = piecewise linear, 2 = polynomial
 %    2  STARTUP     startup cost in US dollars
 %    3  SHUTDOWN    shutdown cost in US dollars
 %    4  NCOST       number of cost coefficients to follow for polynomial cost
 %                   function, or number of data points for piecewise linear
-%    5  COST        1st column of cost parameters
-%                   cost data defining total cost function
-%                   For polynomial cost (highest order coeff first):
-%                           e.g. c2, c1, c0
-%                   where the polynomial is c0 + c1*P + c2*P^2
-%                   For piecewise linear cost:
-%                           x0, y0, x1, y1, x2, y2, ...
-%                   where x0 < x1 < x2 < ... and the points (x0,y0), (x1,y1),
-%                   (x2,y2), ... are the end- and break-points of the total
-%                   cost function.
+%    5  COST        parameters defining total cost function begin in this col
+%                  (MODEL = 1) : p0, f0, p1, f1, ..., pn, fn
+%                       where p0 < p1 < ... < pn and the cost f(p) is defined
+%                       by the coordinates (p0,f0), (p1,f1), ..., (pn,fn) of
+%                       the end/break-points of the piecewise linear cost
+%                  (MODEL = 2) : cn, ..., c1, c0
+%                       n+1 coefficients of an n-th order polynomial cost fcn,
+%                       starting with highest order, where cost is
+%                       f(p) = cn*p^2 + ... + c1*p + c0
 % 
 %   additional constants, used to assign/compare values in the MODEL column
 %    1  PW_LINEAR   piecewise linear generator cost model
@@ -37,7 +36,7 @@ function [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_co
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2006 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% define cost models
@@ -45,16 +44,17 @@ PW_LINEAR   = 1;
 POLYNOMIAL  = 2;
 
 %% define the indices
-MODEL       = 1;    %% cost model, 1 - piecewise linear, 2 - polynomial 
+MODEL       = 1;    %% cost model, 1 = piecewise linear, 2 = polynomial 
 STARTUP     = 2;    %% startup cost in US dollars
 SHUTDOWN    = 3;    %% shutdown cost in US dollars
 NCOST       = 4;    %% number breakpoints in piecewise linear cost function,
                     %% or number of coefficients in polynomial cost function
-COST        = 5;    %% beginning of cost parameters,
-                    %% piecewise linear data as:
-                    %%      x0, y0, x1, y1, x2, y2, ...
-                    %% and polynomial data as:
-                    %%      c2, c1, c0
-                    %% where the polynomial is c2*P^2 + c1*P + c0
-                    %% note: polynomials can be of any degree, highest
-                    %% order coefficient always goes first
+COST        = 5;    %% parameters defining total cost function begin in this col
+                    %% (MODEL = 1) : p0, f0, p1, f1, ..., pn, fn
+                    %%      where p0 < p1 < ... < pn and the cost f(p) is defined
+                    %%      by the coordinates (p0,f0), (p1,f1), ..., (pn,fn) of
+                    %%      the end/break-points of the piecewise linear cost
+                    %% (MODEL = 2) : cn, ..., c1, c0
+                    %%      n+1 coefficients of an n-th order polynomial cost fcn,
+                    %%      starting with highest order, where cost is
+                    %%      f(p) = cn*p^2 + ... + c1*p + c0
