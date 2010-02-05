@@ -149,10 +149,6 @@ CC = full(MN' * (CCw - HMR));
 C0 = 1/2 * MR' * HMR + sum(polycf(:, 3));   %% constant term of cost
 
 %% set up input for QP solver
-if mpopt(51) == 0           %% don't use sparse matrices
-    AA = full(AA);
-    HH = full(HH);
-end
 opt = struct('alg', alg, 'verbose', verbose);
 if alg == 200 || alg == 250
     %% try to select an interior initial point
