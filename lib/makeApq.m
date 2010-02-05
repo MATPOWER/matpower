@@ -3,11 +3,11 @@ function [Apqh, ubpqh, Apql, ubpql, data] = makeApq(baseMVA, gen)
 %
 %   [Apqh, ubpqh, Apql, ubpql, data] = makeApq(baseMVA, gen)
 %
-%   Apqh * [Pg; Qg] <= ubpqh   
-%   Apql * [Pg; Qg] <= ubpql   
+%   Apqh * [Pg; Qg] <= ubpqh
+%   Apql * [Pg; Qg] <= ubpql
 %   data.h      [QC1MAX-QC2MAX, PC2-PC1]
 %   data.l      [QC2MIN-QC1MIN, PC1-PC2]
-%   data.ipqh   indices of gens with general PQ cap curves (upper)  
+%   data.ipqh   indices of gens with general PQ cap curves (upper)
 %   data.ipql   indices of gens with general PQ cap curves (lower)
 
 %   MATPOWER
