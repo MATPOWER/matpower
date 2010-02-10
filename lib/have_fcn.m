@@ -14,14 +14,14 @@ function TorF = have_fcn(tag)
 %       qp          - qp(), QP solver from Optimization Toolbox 1.x/2.x
 %       pdipmopf    - pdipmopf(), primal-dual interior point method OPF solver
 %       scpdipmopf  - scpdipmopf(), step-controlled PDIPM OPF solver
-%       smartmarket - runmkt() and friends, for running an auction
+%       smartmarket - runmarket() and friends, for running an auction
 %       tralmopf    - tralmopf(), trust region based augmented Langrangian
 %                     OPF solver
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2004 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 switch tag
