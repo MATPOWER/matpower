@@ -4,14 +4,14 @@ function t_auction_tspopf_pdipm(quiet)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2004-2007 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 if nargin < 1
     quiet = 0;
 end
 
-n_tests = 181;
+n_tests = 183;
 
 t_begin(n_tests, quiet);
 
@@ -54,7 +54,7 @@ else
         100 50 20;
         100 60 50;
     ];
-    
+
     t = 'one marginal offer @ $50, auction_type = 5';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p, 1150, 100, [], [], mpopt);
@@ -66,92 +66,91 @@ else
     Lbus = gen(L,GEN_BUS);
     Qfudge =  zeros(size(p));
     Qfudge(L,:) = diag(gen(L,QG) ./ gen(L,PG) .* bus(Lbus, LAM_Q)) * ones(size(p(L,:)));
-    
-    t_is( cq(G(1),2:3), [23.32 0], 1, t );
-    t_is( cp(G(1),:), 50, 2, t );
-    t_is( cq(L(2),1:2), [10 0], 1, t );
-    t_is( cp(L(2),:), 54.0312, 2, t );
-    t_is( cp(G,1), bus(Gbus, LAM_P), 2, [t ' : gen prices'] );
-    t_is( cp(L,1), bus(Lbus, LAM_P) + Qfudge(L,1), 3, [t ' : load prices'] );
-    
-    lao_gap   = p(G(1),2) - bus(Gbus(1), LAM_P);
-    fro_gap   = p(G(6),3) - bus(Gbus(6), LAM_P);
-    lab_p_gap = p(L(3),2) - (bus(Lbus(3), LAM_P) + Qfudge(L(3),1));
-    frb_p_gap = p(L(2),2) - (bus(Lbus(2), LAM_P) + Qfudge(L(2),1));
-    
-    t_is( lao_gap, 0, 2, 'lao_gap');
-    t_is( fro_gap, 7.0168, 2, 'fro_gap');
-    t_is( lab_p_gap, 4.3792, 2, 'lab_p_gap');
-    t_is( frb_p_gap, -4.0312, 2, 'frb_p_gap');
-    
+
+    t_is( cq(G(1),2:3), [23.32 0], 2, t );
+    t_is( cp(G(1),:), 50, 4, t );
+    t_is( cq(L(2),1:2), [10 0], 2, t );
+    t_is( cp(L(2),:), 54.0312, 4, t );
+    t_is( cp(G,1), bus(Gbus, LAM_P), 8, [t ' : gen prices'] );
+    t_is( cp(L,1), bus(Lbus, LAM_P) + Qfudge(L,1), 8, [t ' : load prices'] );
+
+    lao_X = p(G(1),2)/bus(Gbus(1), LAM_P);
+    fro_X = p(G(6),3)/bus(Gbus(6), LAM_P);
+    lab_X = p(L(3),2)/(bus(Lbus(3), LAM_P) + Qfudge(L(3),1));
+    frb_X = p(L(2),2)/(bus(Lbus(2), LAM_P) + Qfudge(L(2),1));
+
+    t_is( lao_X, 1, 4, 'lao_X');
+    t_is( fro_X, 1.1324, 4, 'fro_X');
+    t_is( lab_X, 1.0787, 4, 'lab_X');
+    t_is( frb_X, 0.9254, 4, 'frb_X');
+
     t = 'one marginal offer @ $50, auction_type = 1';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p, 1110, 100, [], [], mpopt);
     cp1 = cp;
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp, cp5, 3, [t ' : prices'] );
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp, cp5, 6, [t ' : prices'] );
+
     t = 'one marginal offer @ $50, auction_type = 2';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p, 1120, 100, [], [], mpopt);
     cp2 = cp;
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp(G,:), cp5(G,:)+fro_gap, 3, [t ' : gen prices'] );
-    t_is( cp(L(1:2),:), cp5(L(1:2),:)+fro_gap, 3, [t ' : load 1,2 prices'] );
-    t_is( cp(L(3),:), 60, 3, [t ' : load 3 price'] );
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp(G,:), cp5(G,:)*fro_X, 8, [t ' : gen prices'] );
+    t_is( cp(L(1:2),:), cp5(L(1:2),:)*fro_X, 8, [t ' : load 1,2 prices'] );
+    t_is( cp(L(3),:), 60, 5, [t ' : load 3 price'] );   %% clipped by accepted bid
+
     t = 'one marginal offer @ $50, auction_type = 3';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p, 1130, 100, [], [], mpopt);
     cp3 = cp;
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp, cp5+lab_p_gap, 3, [t ' : prices'] );
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp, cp5*lab_X, 8, [t ' : prices'] );
+
     t = 'one marginal offer @ $50, auction_type = 4';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p, 1140, 100, [], [], mpopt);
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp(G(1),:), p(G(1),2), 4, [t ' : gen 1 price'] );
-    t_is( cp(G(2:6),:), cp5(G(2:6),:)+frb_p_gap, 3, [t ' : gen 2-6 prices'] );
-    t_is( cp(L,:), cp5(L,:)+frb_p_gap, 3, [t ' : load prices'] );
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp(G(1),:), p(G(1),2), 8, [t ' : gen 1 price'] );
+    t_is( cp(G(2:6),:), cp5(G(2:6),:)*frb_X, 8, [t ' : gen 2-6 prices'] );
+    t_is( cp(L,:), cp5(L,:)*frb_X, 8, [t ' : load prices'] );
+
     t = 'one marginal offer @ $50, auction_type = 6';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p, 1160, 100, [], [], mpopt);
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp, cp3, 3, [t ' : prices'] );
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp, cp3, 8, [t ' : prices'] );
     p2 = p;
     p2(L,:) = [ 100 100 100;
                 100   0   0;
                 100 100   0 ];
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p2, 1160, 100, [], [], mpopt);
-    t_is( cq, cq5, 3, [t ' : quantities'] );
-    t_is( cp(G), cp2(G), 2, [t ' : gen prices'] );
-    t_is( cp(L(1:2),:), cp2(L(1:2),:), 2, [t ' : load 1,2 prices'] );
-    t_is( cp(L(3),:), 62.6376, 2, [t ' : load 3 price'] );  %% not clipped as in FRO
-    
+    t_is( cq, cq5, 5, [t ' : quantities'] );
+    t_is( cp(G,:), cp5(G,:)*fro_X, 4, [t ' : gen prices'] );
+    t_is( cp(L,:), cp5(L,:)*fro_X, 4, [t ' : load prices'] ); %% load 3 not clipped as in FRO
+
     t = 'one marginal offer @ $50, auction_type = 7';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p, 1170, 100, [], [], mpopt);
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp, cp5 + lab_p_gap/2, 3, [t ' : prices'] );
-    t_is( cp, (cp1 + cp3) / 2, 3, [t ' : prices'] );
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp, cp5 * (lao_X+lab_X)/2, 8, [t ' : prices'] );
+    t_is( cp, (cp1 + cp3) / 2, 8, [t ' : prices'] );
+
     t = 'one marginal offer @ $50, auction_type = 8';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p, 1180, 100, [], [], mpopt);
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp(G,:), cp1(G,:), 3, [t ' : gen prices'] );
-    t_is( cp(L,:), cp3(L,:), 3, [t ' : load prices'] );
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp(G,:), cp1(G,:), 8, [t ' : gen prices'] );
+    t_is( cp(L,:), cp3(L,:), 8, [t ' : load prices'] );
+
     t = 'one marginal offer @ $50, auction_type = 0';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p, 1100, 100, [], [], mpopt);
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp, p, 3, [t ' : prices'] );
-    
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp, p, 8, [t ' : prices'] );
+
+
     %%-----  one bid block marginal @ $55  -----
     p(L(2),2) = 55;
     t = 'one marginal bid @ $55, auction_type = 5';
@@ -161,63 +160,63 @@ else
     cp5 = cp;
     Qfudge =  zeros(size(p));
     Qfudge(L,:) = diag(gen(L,QG) ./ gen(L,PG) .* bus(Lbus, LAM_Q)) * ones(size(p(L,:)));
-    
-    t_is( cq(G(1),2:3), [24 0], 1, t );
-    t_is( cp(G(1),:), 50.016, 2, t );
-    t_is( cq(L(2),1:2), [10 0.63], 1, t );
-    t_is( cp(L(2),:), 55, 2, t );
-    t_is( cp(G,1), bus(Gbus, LAM_P), 3, [t ' : gen prices'] );
-    t_is( cp(L,1), bus(Lbus, LAM_P) + Qfudge(L,1), 3, [t ' : load prices'] );
-    
-    lao_gap   = p(G(1),2) - bus(Gbus(1), LAM_P);
-    fro_gap   = p(G(6),3) - bus(Gbus(6), LAM_P);
-    lab_p_gap = p(L(2),2) - (bus(Lbus(2), LAM_P) + Qfudge(L(2),1));
-    frb_p_gap = p(L(3),3) - (bus(Lbus(3), LAM_P) + Qfudge(L(3),1));
-    
-    t_is( lao_gap, -0.0156, 2, 'lao_gap');
-    t_is( fro_gap, 5.9998, 2, 'fro_gap');
-    t_is( lab_p_gap, 0, 2, 'lab_p_gap');
-    t_is( frb_p_gap, -5.8052, 2, 'frb_p_gap');
-    
+
+    t_is( cq(G(1),2:3), [24 0], 2, t );
+    t_is( cp(G(1),:), 50.016, 3, t );
+    t_is( cq(L(2),1:2), [10 0.63], 2, t );
+    t_is( cp(L(2),:), 55, 4, t );
+    t_is( cp(G,1), bus(Gbus, LAM_P), 8, [t ' : gen prices'] );
+    t_is( cp(L,1), bus(Lbus, LAM_P) + Qfudge(L,1), 8, [t ' : load prices'] );
+
+    lao_X = p(G(1),2)/bus(Gbus(1), LAM_P);
+    fro_X = p(G(6),3)/bus(Gbus(6), LAM_P);
+    lab_X = p(L(2),2)/(bus(Lbus(2), LAM_P) + Qfudge(L(2),1));
+    frb_X = p(L(3),3)/(bus(Lbus(3), LAM_P) + Qfudge(L(3),1));
+
+    t_is( lao_X, 0.9997, 4, 'lao_X');
+    t_is( fro_X, 1.1111, 4, 'fro_X');
+    t_is( lab_X, 1, 4, 'lab_X');
+    t_is( frb_X, 0.8960, 4, 'frb_X');
+
     t = 'one marginal bid @ $55, auction_type = 1';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p, 1110, 100, [], [], mpopt);
     cp1 = cp;
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp, cp5+lao_gap, 3, [t ' : prices'] );
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp, cp5*lao_X, 8, [t ' : prices'] );
+
     t = 'one marginal bid @ $55, auction_type = 2';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p, 1120, 100, [], [], mpopt);
     cp2 = cp;
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp(G,:), cp5(G,:)+fro_gap, 3, [t ' : gen prices'] );
-    t_is( cp(L(1),:), cp5(L(1),:)+fro_gap, 3, [t ' : load 1 price'] );
-    t_is( cp(L(2),:), 55, 3, [t ' : load 2 price'] );
-    t_is( cp(L(3),:), 60, 3, [t ' : load 3 price'] );
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp(G,:), cp5(G,:)*fro_X, 8, [t ' : gen prices'] );
+    t_is( cp(L(1),:), cp5(L(1),:)*fro_X, 8, [t ' : load 1 price'] );
+    t_is( cp(L(2),:), 55, 5, [t ' : load 2 price'] );
+    t_is( cp(L(3),:), 60, 5, [t ' : load 3 price'] );
+
     t = 'one marginal bid @ $55, auction_type = 3';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p, 1130, 100, [], [], mpopt);
     cp3 = cp;
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp, cp5, 2, [t ' : prices'] );
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp, cp5, 7, [t ' : prices'] );
+
     t = 'one marginal bid @ $55, auction_type = 4';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p, 1140, 100, [], [], mpopt);
     cp4 = cp;
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp(G(1),:), 50, 3, [t ' : gen 1 price'] );
-    t_is( cp(G(2:6),:), cp5(G(2:6),:)+frb_p_gap, 3, [t ' : gen 2-6 prices'] );
-    t_is( cp(L,:), cp5(L,:)+frb_p_gap, 3, [t ' : load prices'] );
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp(G(1),:), 50, 5, [t ' : gen 1 price'] );
+    t_is( cp(G(2:6),:), cp5(G(2:6),:)*frb_X, 8, [t ' : gen 2-6 prices'] );
+    t_is( cp(L,:), cp5(L,:)*frb_X, 8, [t ' : load prices'] );
+
     t = 'one marginal bid @ $55, auction_type = 6';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p, 1160, 100, [], [], mpopt);
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp, cp1, 1, [t ' : prices'] );
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp, cp1, 8, [t ' : prices'] );
+
     p2 = p;
     p2(G,:) = [ 0 0 100;
                 0 0 100;
@@ -228,31 +227,30 @@ else
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p2, 1160, 100, [], [], mpopt);
     t_is( cq, cq5, 3, [t ' : quantities'] );
-    t_is( cp(G(1),:), 44.2104, 2, [t ' : gen 1 prices'] );  %% not clipped this time
-    t_is( cp(G(2:6),:), cp4(G(2:6),:), 2, [t ' : gen 2-6 prices'] );
-    t_is( cp(L,:), cp4(L,:), 2, [t ' : load prices'] );
-    
+    t_is( cp(G,:), cp5(G,:)*frb_X, 3, [t ' : gen prices'] );  %% gen 1, not clipped this time
+    t_is( cp(L,:), cp4(L,:), 3, [t ' : load prices'] );
+
     t = 'one marginal bid @ $55, auction_type = 7';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p, 1170, 100, [], [], mpopt);
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp, cp5 + lao_gap/2, 2, [t ' : prices'] );
-    t_is( cp, (cp1 + cp3) / 2, 3, [t ' : prices'] );
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp, cp5 * (lao_X+lab_X)/2, 8, [t ' : prices'] );
+    t_is( cp, (cp1 + cp3) / 2, 8, [t ' : prices'] );
+
     t = 'one marginal bid @ $55, auction_type = 8';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p, 1180, 100, [], [], mpopt);
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp(G,:), cp1(G,:), 3, [t ' : gen prices'] );
-    t_is( cp(L,:), cp3(L,:), 3, [t ' : load prices'] );
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp(G,:), cp1(G,:), 8, [t ' : gen prices'] );
+    t_is( cp(L,:), cp3(L,:), 8, [t ' : load prices'] );
+
     t = 'one marginal bid @ $55, auction_type = 0';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p, 1100, 100, [], [], mpopt);
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp, p, 3, [t ' : prices'] );
-    
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp, p, 8, [t ' : prices'] );
+
+
     %%-----  one bid block marginal @ $54.50 and one offer block marginal @ $50  -----
     p(L(2),2) = 54.5;
     t = 'marginal offer @ $50, bid @ $54.50, auction_type = 5';
@@ -262,83 +260,83 @@ else
     cp5 = cp;
     Qfudge =  zeros(size(p));
     Qfudge(L,:) = diag(gen(L,QG) ./ gen(L,PG) .* bus(Lbus, LAM_Q)) * ones(size(p(L,:)));
-    
-    t_is( cq(G(1),2:3), [23.74 0], 1, t );
-    t_is( cp(G(1),:), 50, 2, t );
-    t_is( cq(L(2),1:2), [10 0.39], 1, t );
-    t_is( cp(L(2),:), 54.5, 2, t );
-    t_is( cp(G,1), bus(Gbus, LAM_P), 4, [t ' : gen prices'] );
-    t_is( cp(L,1), bus(Lbus, LAM_P) + Qfudge(L,1), 3, [t ' : load prices'] );
-    
-    lao_gap   = p(G(1),2) - bus(Gbus(1), LAM_P);
-    fro_gap   = p(G(6),3) - bus(Gbus(6), LAM_P);
-    lab_p_gap = p(L(2),2) - (bus(Lbus(2), LAM_P) + Qfudge(L(2),1));
-    frb_p_gap = p(L(3),3) - (bus(Lbus(3), LAM_P) + Qfudge(L(3),1));
-    
-    t_is( lao_gap, 0, 2, 'lao_gap');
-    t_is( fro_gap, 6.5306, 2, 'fro_gap');
-    t_is( lab_p_gap, 0, 2, 'lab_p_gap');
-    t_is( frb_p_gap, -5.7040, 2, 'frb_p_gap');
-    
+
+    t_is( cq(G(1),2:3), [23.74 0], 2, t );
+    t_is( cp(G(1),:), 50, 4, t );
+    t_is( cq(L(2),1:2), [10 0.39], 2, t );
+    t_is( cp(L(2),:), 54.5, 4, t );
+    t_is( cp(G,1), bus(Gbus, LAM_P), 8, [t ' : gen prices'] );
+    t_is( cp(L,1), bus(Lbus, LAM_P) + Qfudge(L,1), 8, [t ' : load prices'] );
+
+    lao_X = p(G(1),2)/bus(Gbus(1), LAM_P);
+    fro_X = p(G(6),3)/bus(Gbus(6), LAM_P);
+    lab_X = p(L(2),2)/(bus(Lbus(2), LAM_P) + Qfudge(L(2),1));
+    frb_X = p(L(3),3)/(bus(Lbus(3), LAM_P) + Qfudge(L(3),1));
+
+    t_is( lao_X, 1, 4, 'lao_X');
+    t_is( fro_X, 1.1221, 4, 'fro_X');
+    t_is( lab_X, 1, 4, 'lab_X');
+    t_is( frb_X, 0.8976, 4, 'frb_X');
+
     t = 'marginal offer @ $50, bid @ $54.50, auction_type = 1';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p, 1110, 100, [], [], mpopt);
     cp1 = cp;
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp, cp5, 3, [t ' : prices'] );
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp, cp5, 4, [t ' : prices'] );
+
     t = 'marginal offer @ $50, bid @ $54.50, auction_type = 2';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p, 1120, 100, [], [], mpopt);
     cp2 = cp;
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp(G,:), cp5(G,:)+fro_gap, 3, [t ' : gen prices'] );
-    t_is( cp(L(1),:), cp5(L(1),:)+fro_gap, 3, [t ' : load 1 price'] );
-    t_is( cp(L(2),:), 54.5, 3, [t ' : load 2 price'] );
-    t_is( cp(L(3),:), 60, 3, [t ' : load 3 price'] );
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp(G,:), cp5(G,:)*fro_X, 5, [t ' : gen prices'] );
+    t_is( cp(L(1),:), cp5(L(1),:)*fro_X, 5, [t ' : load 1 price'] );
+    t_is( cp(L(2),:), 54.5, 5, [t ' : load 2 price'] );
+    t_is( cp(L(3),:), 60, 5, [t ' : load 3 price'] );
+
     t = 'marginal offer @ $50, bid @ $54.50, auction_type = 3';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p, 1130, 100, [], [], mpopt);
     cp3 = cp;
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp, cp5, 3, [t ' : prices'] );
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp, cp5, 6, [t ' : prices'] );
+
     t = 'marginal offer @ $50, bid @ $54.50, auction_type = 4';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p, 1140, 100, [], [], mpopt);
     cp4 = cp;
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp(G(1),:), 50, 3, [t ' : gen 1 price'] );
-    t_is( cp(G(2:5),:), cp5(G(2:5),:)+frb_p_gap, 3, [t ' : gen 2-5 prices'] );
-    t_is( cp(G(6),:), 48, 3, [t ' : gen 6 price'] );
-    t_is( cp(L,:), cp5(L,:)+frb_p_gap, 3, [t ' : load prices'] );
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp(G(1),:), 50, 5, [t ' : gen 1 price'] );
+    t_is( cp(G(2:5),:), cp5(G(2:5),:)*frb_X, 8, [t ' : gen 2-5 prices'] );
+    t_is( cp(G(6),:), 48, 5, [t ' : gen 6 price'] );
+    t_is( cp(L,:), cp5(L,:)*frb_X, 8, [t ' : load prices'] );
+
     t = 'marginal offer @ $50, bid @ $54.50, auction_type = 6';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p, 1160, 100, [], [], mpopt);
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp, cp5, 3, [t ' : prices'] );
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp, cp5, 4, [t ' : prices'] );
+
     t = 'marginal offer @ $50, bid @ $54.50, auction_type = 7';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p, 1170, 100, [], [], mpopt);
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp, cp5, 3, [t ' : prices'] );
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp, cp5, 4, [t ' : prices'] );
+
     t = 'marginal offer @ $50, bid @ $54.50, auction_type = 8';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p, 1180, 100, [], [], mpopt);
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp, cp5, 3, [t ' : prices'] );
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp, cp5, 4, [t ' : prices'] );
+
     t = 'marginal offer @ $50, bid @ $54.50, auction_type = 0';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p, 1100, 100, [], [], mpopt);
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp, p, 3, [t ' : prices'] );
-    
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp, p, 8, [t ' : prices'] );
+
+
     %%-----  gen 1 at Pmin, load 3 block 2 marginal @ $60  -----
     t = 'gen 1 @ Pmin, marginal bid @ $60, auction_type = 5';
     p(L(2),2) = 50;     %% undo previous change
@@ -348,88 +346,89 @@ else
         runmkt('t_auction_case', q, p2, 1150, 100, [], [], mpopt);
     Qfudge =  zeros(size(p));
     Qfudge(L,:) = diag(gen(L,QG) ./ gen(L,PG) .* bus(Lbus, LAM_Q)) * ones(size(p(L,:)));
-    lao_gap   = p2(G(6),2) - bus(Gbus(6), LAM_P);
-    fro_gap   = p2(G(6),3) - bus(Gbus(6), LAM_P);
-    lab_p_gap = p2(L(3),2) - (bus(Lbus(3), LAM_P) + Qfudge(L(3),2));
-    frb_p_gap = p2(L(2),2) - (bus(Lbus(2), LAM_P) + Qfudge(L(2),2));
-    
-    t_is( lao_gap, -9.2145, 2, 'lao_gap');
-    t_is( fro_gap, 2.7855, 2, 'fro_gap');
-    t_is( lab_p_gap, 0, 2, 'lab_p_gap');
-    t_is( frb_p_gap, -8.3496, 2, 'frb_p_gap');
-    
-    t_is( cp(G(1),:), 65, 2, [t ' : gen 1 price'] );
-    t_is( cp(G(2),:), 54.2976, 2, [t ' : gen 2 price'] );
+
+    t_is( cp(G(1),:), 65, 4, [t ' : gen 1 price'] );
+    t_is( cp(G(2),:), 54.2974, 4, [t ' : gen 2 price'] );
     cq5 = cq;
     cp5 = cp;
     cp_lam = cp5;
     cp_lam(1,:) = bus(Gbus(1), LAM_P);  %% unclipped
-    
+
+    lao_X = p2(G(6),2)/bus(Gbus(6), LAM_P);
+    fro_X = p2(G(6),3)/bus(Gbus(6), LAM_P);
+    lab_X = p2(L(3),2)/(bus(Lbus(3), LAM_P) + Qfudge(L(3),1));
+    frb_X = p2(L(2),2)/(bus(Lbus(2), LAM_P) + Qfudge(L(2),1));
+
+    t_is( lao_X, 0.8389, 4, 'lao_X');
+    t_is( fro_X, 1.0487, 4, 'fro_X');
+    t_is( lab_X, 1, 4, 'lab_X');
+    t_is( frb_X, 0.8569, 4, 'frb_X');
+
     t = 'gen 1 @ Pmin, marginal bid @ $60, auction_type = 1';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p2, 1110, 100, [], [], mpopt);
     cp1 = cp;
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp(G(1),:), 65, 3, [t ' : gen 1 price'] );
-    t_is( cp(G(2:6),:), cp_lam(G(2:6),:)+lao_gap, 3, [t ' : gen 2-6 prices'] );
-    t_is( cp(L,:), cp_lam(L,:)+lao_gap, 3, [t ' : load prices'] );
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp(G(1),:), 65, 8, [t ' : gen 1 price'] );
+    t_is( cp(G(2:6),:), cp_lam(G(2:6),:)*lao_X, 8, [t ' : gen 2-6 prices'] );
+    t_is( cp(L,:), cp_lam(L,:)*lao_X, 8, [t ' : load prices'] );
+
     t = 'gen 1 @ Pmin, marginal bid @ $60, auction_type = 2';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p2, 1120, 100, [], [], mpopt);
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp(G(1),:), 65, 3, [t ' : gen 1 price'] );
-    t_is( cp(G(2:6),:), cp_lam(G(2:6),:)+fro_gap, 3, [t ' : gen 2-6 prices'] );
-    t_is( cp(L(1:2),:), cp_lam(L(1:2),:)+fro_gap, 3, [t ' : load 1-2 prices'] );
-    t_is( cp(L(3),:), 60, 3, [t ' : load 3 price'] );
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp(G(1),:), 65, 8, [t ' : gen 1 price'] );
+    t_is( cp(G(2:6),:), cp_lam(G(2:6),:)*fro_X, 8, [t ' : gen 2-6 prices'] );
+    t_is( cp(L(1:2),:), cp_lam(L(1:2),:)*fro_X, 8, [t ' : load 1-2 prices'] );
+    t_is( cp(L(3),:), 60, 8, [t ' : load 3 price'] );
+
     t = 'gen 1 @ Pmin, marginal bid @ $60, auction_type = 3';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p2, 1130, 100, [], [], mpopt);
     cp3 = cp;
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp(G(1),:), 65, 3, [t ' : gen 1 price'] );
-    t_is( cp(G(2:6),:), cp_lam(G(2:6),:), 3, [t ' : gen 2-6 prices'] );
-    t_is( cp(L,:), cp_lam(L,:), 3, [t ' : load prices'] );
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp(G(1),:), 65, 8, [t ' : gen 1 price'] );
+    t_is( cp(G(2:6),:), cp_lam(G(2:6),:), 6, [t ' : gen 2-6 prices'] );
+    t_is( cp(L,:), cp_lam(L,:), 6, [t ' : load prices'] );
+
     t = 'gen 1 @ Pmin, marginal bid @ $60, auction_type = 4';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p2, 1140, 100, [], [], mpopt);
     cp4 = cp;
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp(G(1),:), 65, 3, [t ' : gen 1 price'] );
-    t_is( cp(G(2:6),:), cp5(G(2:6),:)+frb_p_gap, 3, [t ' : gen 2-6 prices'] );
-    t_is( cp(L,:), cp5(L,:)+frb_p_gap, 3, [t ' : load prices'] );
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp(G(1),:), 65, 5, [t ' : gen 1 price'] );
+    t_is( cp(G(2:6),:), cp5(G(2:6),:)*frb_X, 8, [t ' : gen 2-6 prices'] );
+    t_is( cp(L,:), cp5(L,:)*frb_X, 8, [t ' : load prices'] );
+
     t = 'gen 1 @ Pmin, marginal bid @ $60, auction_type = 6';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p2, 1160, 100, [], [], mpopt);
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp, cp4, 3, [t ' : prices'] );
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp, cp4, 8, [t ' : prices'] );
+
     t = 'gen 1 @ Pmin, marginal bid @ $60, auction_type = 7';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p2, 1170, 100, [], [], mpopt);
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp(G(1),:), 65, 2, [t ' : gen 1 price'] );
-    t_is( cp(G(2:6),:), cp_lam(G(2:6),:) + lao_gap/2, 3, [t ' : gen 2-6 prices'] );
-    t_is( cp(L,:), cp_lam(L,:) + lao_gap/2, 3, [t ' : load prices'] );
-    t_is( cp, (cp1 + cp3) / 2, 3, [t ' : prices'] );
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp(G(1),:), 65, 4, [t ' : gen 1 price'] );
+    t_is( cp(G(2:6),:), cp_lam(G(2:6),:) * (lao_X+lab_X)/2, 8, [t ' : gen 2-6 prices'] );
+    t_is( cp(L,:), cp_lam(L,:) * (lao_X+lab_X)/2, 8, [t ' : load prices'] );
+    t_is( cp, (cp1 + cp3) / 2, 8, [t ' : prices'] );
+
     t = 'gen 1 @ Pmin, marginal bid @ $60, auction_type = 8';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p2, 1180, 100, [], [], mpopt);
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp(G,:), cp1(G,:), 3, [t ' : prices'] );
-    t_is( cp(L,:), cp3(L,:), 3, [t ' : prices'] );
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp(G,:), cp1(G,:), 8, [t ' : prices'] );
+    t_is( cp(L,:), cp3(L,:), 8, [t ' : prices'] );
+
     t = 'gen 1 @ Pmin, marginal bid @ $60, auction_type = 0';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p2, 1100, 100, [], [], mpopt);
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp, p2, 3, [t ' : prices'] );
-    
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp, p2, 8, [t ' : prices'] );
+
+
     %%-----  gen 1 at Pmin, gen 6 block 3 marginal @ $60  -----
     t = 'gen 1 @ Pmin, marginal offer @ $60, auction_type = 5';
     p2(L,:) = [ 100 100 100;
@@ -439,120 +438,145 @@ else
         runmkt('t_auction_case', q, p2, 1150, 100, [], [], mpopt);
     Qfudge =  zeros(size(p));
     Qfudge(L,:) = diag(gen(L,QG) ./ gen(L,PG) .* bus(Lbus, LAM_Q)) * ones(size(p(L,:)));
-    lao_gap   = p2(G(6),3) - bus(Gbus(6), LAM_P);
-    fro_gap   = p2(G(1),3) - bus(Gbus(1), LAM_P);
-    lab_p_gap = p2(L(3),2) - (bus(Lbus(3), LAM_P) + Qfudge(L(3),2));
-    frb_p_gap = p2(L(2),2) - (bus(Lbus(2), LAM_P) + Qfudge(L(2),2));
-    
-    t_is( lao_gap, 0, 2, 'lao_gap');
-    t_is( fro_gap, 8.1075, 2, 'fro_gap');
-    t_is( lab_p_gap, 36.7616, 2, 'lab_p_gap');
-    t_is( frb_p_gap, -61.2157, 2, 'frb_p_gap');
-    
-    t_is( cp(G(1),:), 65, 2, [t ' : gen 1 price'] );
-    t_is( cp(G(2),:), 57.1616, 2, [t ' : gen 2 price'] );
+
+    t_is( cp(G(1),:), 65, 4, [t ' : gen 1 price'] );
+    t_is( cp(G(2),:), 57.1612, 4, [t ' : gen 2 price'] );
     cq5 = cq;
     cp5 = cp;
     cp_lam = cp5;
     cp_lam(1,:) = bus(Gbus(1), LAM_P);  %% unclipped
-    
+
+    lao_X = p2(G(6),3)/bus(Gbus(6), LAM_P);
+    fro_X = p2(G(1),3)/bus(Gbus(1), LAM_P);
+    lab_X = p2(L(3),2)/(bus(Lbus(3), LAM_P) + Qfudge(L(3),1));
+    frb_X = p2(L(2),2)/(bus(Lbus(2), LAM_P) + Qfudge(L(2),1));
+
+    t_is( lao_X, 1, 4, 'lao_X');
+    t_is( fro_X, 1.1425, 4, 'fro_X');
+    t_is( lab_X, 1.5813, 4, 'lab_X');
+    t_is( frb_X, 0, 4, 'frb_X');
+
     t = 'gen 1 @ Pmin, marginal offer @ $60, auction_type = 1';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p2, 1110, 100, [], [], mpopt);
     cp1 = cp;
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp, cp5, 3, [t ' : prices'] );
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp, cp5, 6, [t ' : prices'] );
+
     t = 'gen 1 @ Pmin, marginal offer @ $60, auction_type = 2';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p2, 1120, 100, [], [], mpopt);
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp, cp_lam+fro_gap, 3, [t ' : prices'] );
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp, cp_lam*fro_X, 8, [t ' : prices'] );
+
     t = 'gen 1 @ Pmin, marginal offer @ $60, auction_type = 3';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p2, 1130, 100, [], [], mpopt);
     cp3 = cp;
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp, cp_lam+lab_p_gap, 3, [t ' : prices'] );
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp, cp_lam*lab_X, 8, [t ' : prices'] );
+
     t = 'gen 1 @ Pmin, marginal offer @ $60, auction_type = 4';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p2, 1140, 100, [], [], mpopt);
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp(G,1), [65;40;42;44;46;60], 2, [t ' : gen prices'] );
-    t_is( cp(L,:), cp_lam(L,:) + frb_p_gap, 3, [t ' : prices'] );
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp(G,1), [65;40;42;44;46;60], 4, [t ' : gen prices'] );
+    t_is( cp(L,:), cp_lam(L,:)*frb_X, 8, [t ' : prices'] );
+
     t = 'gen 1 @ Pmin, marginal offer @ $60, auction_type = 6';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p2, 1160, 100, [], [], mpopt);
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp, cp_lam+fro_gap, 3, [t ' : prices'] );
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp, cp_lam*fro_X, 8, [t ' : prices'] );
+
     t = 'gen 1 @ Pmin, marginal offer @ $60, auction_type = 7';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p2, 1170, 100, [], [], mpopt);
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp, cp_lam + lab_p_gap/2, 3, [t ' : prices'] );
-    t_is( cp, (cp_lam + cp3) / 2, 3, [t ' : prices'] );
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp, cp_lam * (lao_X+lab_X)/2, 8, [t ' : prices'] );
+    t_is( cp, (cp_lam + cp3) / 2, 7, [t ' : prices'] );
+
     t = 'gen 1 @ Pmin, marginal offer @ $60, auction_type = 8';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p2, 1180, 100, [], [], mpopt);
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp(G,:), cp5(G,:), 3, [t ' : prices'] );
-    t_is( cp(L,:), cp3(L,:), 3, [t ' : prices'] );
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp(G,:), cp5(G,:), 7, [t ' : prices'] );
+    t_is( cp(L,:), cp3(L,:), 8, [t ' : prices'] );
+
     t = 'gen 1 @ Pmin, marginal offer @ $60, auction_type = 0';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p2, 1100, 100, [], [], mpopt);
-    t_is( cq, cq5, 4, [t ' : quantities'] );
-    t_is( cp, p2, 3, [t ' : prices'] );
-    
-    
+    t_is( cq, cq5, 8, [t ' : quantities'] );
+    t_is( cp, p2, 8, [t ' : prices'] );
+
+
     %%-----  gen 2 decommitted, one offer block marginal @ $60  -----
     p(G(2),:) = p(G(2),:) + 100;
-    
+
     t = 'price of decommited gen, auction_type = 5';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p, 1150, 200, [], [], mpopt);
-    t_is(sum(cq(2,:)), 0, 4, t);
-    t_is(cp(2,1), 59.194, 2, t);
-    
+    cp5 = cp;
+    Qfudge =  zeros(size(p));
+    Qfudge(L,:) = diag(gen(L,QG) ./ gen(L,PG) .* bus(Lbus, LAM_Q)) * ones(size(p(L,:)));
+    t_is(sum(cq(2,:)), 0, 8, t);
+    t_is(cp(2,1), 59.194, 3, t);
+
+%     Xo = p(1:6, :) ./ (diag(bus(Gbus, LAM_P)) * ones(size(p(G,:))));
+%     ao = (cq(1:6, :) ~= 0);
+%     ro = (cq(1:6, :) == 0);
+%     Xb = p(7:9, :) ./ (diag(bus(Lbus, LAM_P) + gen(L,QG) ./ gen(L,PG) .* bus(Lbus, LAM_Q)) * ones(size(p(L,:))));
+%     ab = (cq(7:9, :) ~= 0);
+%     rb = (cq(7:9, :) == 0);
+%     aXo = ao .* Xo
+%     rXo = ro .* Xo
+%     aXb = ab .* Xb
+%     rXb = rb .* Xb
+
+    lao_X = p(G(6),3)/bus(Gbus(6), LAM_P);
+    fro_X = p(G(1),3)/bus(Gbus(1), LAM_P);
+    lab_X = p(L(1),2)/(bus(Lbus(1), LAM_P) + Qfudge(L(1),1));
+    frb_X = p(L(1),3)/(bus(Lbus(1), LAM_P) + Qfudge(L(1),1));
+
+    t_is( lao_X, 1, 4, 'lao_X');
+    t_is( fro_X, 1.0212, 4, 'fro_X');
+    t_is( lab_X, 1.1649, 4, 'lab_X');
+    t_is( frb_X, 0.9985, 4, 'frb_X');
+
     t = 'price of decommited gen, auction_type = 1';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p, 1110, 200, [], [], mpopt);
-    t_is(cp(2,1), 59.194, 2, t);
-    
+    t_is(cp(2,1), 59.194, 3, t);
+
     t = 'price of decommited gen, auction_type = 2';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p, 1120, 200, [], [], mpopt);
-    t_is(cp(2,1), 60.440, 2, t);
-    
+    t_is(cp(2,1), cp5(2,1)*fro_X, 3, t);
+
     t = 'price of decommited gen, auction_type = 3';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p, 1130, 200, [], [], mpopt);
-    t_is(cp(2,1), 69.106, 2, t);
-    
+    t_is(cp(2,1), cp5(2,1)*lab_X, 3, t);
+
     t = 'price of decommited gen, auction_type = 4';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p, 1140, 200, [], [], mpopt);
-    t_is(cp(2,1), 59.106, 2, t);
-    
+    t_is(cp(2,1), cp5(2,1)*frb_X, 3, t);
+
     t = 'price of decommited gen, auction_type = 6';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p, 1160, 200, [], [], mpopt);
-    t_is(cp(2,1), 60.440, 2, t);
-    
+    t_is(cp(2,1), cp5(2,1)*fro_X, 3, t);
+
     t = 'price of decommited gen, auction_type = 7';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p, 1170, 200, [], [], mpopt);
-    t_is(cp(2,1), 64.150, 2, t);
-    
+    t_is(cp(2,1), cp5(2,1)*(lao_X+lab_X)/2, 3, t);
+
     t = 'price of decommited gen, auction_type = 0';
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p, 1100, 200, [], [], mpopt);
-    t_is(cp(2,1), 120, 2, t);
+    t_is(cp(2,1), 120, 3, t);
 
     t = 'single block, marginal offer @ $50, auction_type = 5';
     q = [
@@ -566,7 +590,7 @@ else
         10;
         20;
     ];
-    
+
     p = [
         50;
         40;
@@ -578,7 +602,7 @@ else
         100;
         100;
     ];
-    
+
     [MVAbase, cq, cp, bus, gen, gencost, branch, f, dispatch, success, et] = ...
         runmkt('t_auction_case', q, p, 1150, 100, [], [], mpopt);
     t_is( cq(G(1)), 35.32, 2, t );
