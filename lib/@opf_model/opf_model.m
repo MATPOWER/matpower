@@ -7,60 +7,117 @@ function om = opf_model(mpc)
 %   ordering and indexing of the blocks as variables, constraints and costs
 %   are added to the problem.
 %
-%   The following is the structure of the data in the OPF model object
+%   Below are the list of available methods for use with the OPF Model class.
+%   Please see the help on each individual method for more details:
+%
+%   Retrieve the MATPOWER case struct used to build the object:
+%       get_mpc
+%
+%   Modify the OPF formulation by adding named blocks of constraints, costs
+%   or variables:
+%       add_constraints
+%       add_costs
+%       add_vars
+%
+%   Return the number of linear constraints, non-linear constraints or
+%   variables, optionally for a single named block:
+%       get_lin_N
+%       get_nln_N
+%       get_var_N
+%
+%   Return the intial values and bounds for optimization variables:
+%       get_v
+%
+%   Build and return full set of linear constraints:
+%       linear_constraints
+%
+%   Return index structure for variables, linear and non-linear constraints
+%   and costs:
+%       get_idx
+%
+%   Build and return full set of cost parameters:
+%       build_cost_params
+%       get_cost_params
+%
+%   Save/retreive user data in the model object:
+%       userdata
+%
+%   Display the object (called automatically when you omit the semicolon
+%   at the command-line):
+%       display
+%
+%   Return the value of an individual field:
+%       get
+%
+%   The following is the structure of the data in the OPF model object.
+%   Each field of .idx or .data is a struct whose field names are the names
+%   of the corresponding blocks of vars, constraints or costs (found in
+%   order in the corresponding .order field). The description next to these
+%   fields gives the meaning of the value for each named sub-field.
+%   E.g. om.var.data.v0.Pg contains a vector of initial values for the 'Pg'
+%   block of variables.
 %
 %   om
-%       .var
+%       .var        - data for optimization variable sets that make up
+%                     the full optimization variable x
 %           .idx
-%               .i1
-%               .iN
-%               .N
-%           .N
-%           .NS
-%           .data
-%               .v0
-%               .vl
-%               .vu
-%           .order
-%       .nln
+%               .i1 - starting index within x
+%               .iN - ending index within x
+%               .N  - number of elements in this variable set
+%           .N      - total number of elements in x
+%           .NS     - number of variable sets or named blocks
+%           .data   - bounds and initial value data
+%               .v0 - vector of initial values
+%               .vl - vector of lower bounds
+%               .vu - vector of upper bounds
+%           .order  - cell array of names for variable blocks in the order
+%                     they appear in x
+%       .nln        - data for non-linear constraints that make up the
+%                     full set of non-linear constraints ghn(x)
 %           .idx
-%               .i1
-%               .iN
-%               .N
-%           .N
-%           .NS
-%           .order
-%       .lin
+%               .i1 - starting index within ghn(x)
+%               .iN - ending index within ghn(x)
+%               .N  - number of elements in this constraint set
+%           .N      - total number of elements in ghn(x)
+%           .NS     - number of non-linear constraint sets or named blocks
+%           .order  - cell array of names for non-linear constraint blocks
+%                     in the order they appear in ghn(x)
+%       .lin        - data for linear constraints that make up the
+%                     full set of linear constraints ghl(x)
 %           .idx
-%               .i1
-%               .iN
-%               .N
-%           .N
-%           .NS
-%           .data
-%               .A
-%               .l
-%               .u
-%               .vs
-%           .order
-%       .cost
+%               .i1 - starting index within ghl(x)
+%               .iN - ending index within ghl(x)
+%               .N  - number of elements in this constraint set
+%           .N      - total number of elements in ghl(x)
+%           .NS     - number of linear constraint sets or named blocks
+%           .data   - data for l <= A*xx <= u linear constraints
+%               .A  - sparse linear constraint matrix
+%               .l  - left hand side vector, bounding A*x below
+%               .u  - right hand side vector, bounding A*x above
+%               .vs - cell array of variable sets that define the xx for
+%                     this constraint block
+%           .order  - cell array of names for linear constraint blocks
+%                     in the order they appear in ghl(x)
+%       .cost       - data for user-defined costs
 %           .idx
-%               .i1
-%               .iN
-%               .N
-%           .N
-%           .NS
-%           .data
-%               .N
-%               .H
-%               .Cw
-%               .dd
-%               .rr
-%               .kk
-%               .mm
-%               .vs
-%           .order
-%       .mpc
+%               .i1 - starting row index within full N matrix
+%               .iN - ending row index within full N matrix
+%               .N  - number of rows in this cost block in full N matrix
+%           .N      - total number of rows in full N matrix
+%           .NS     - number of cost blocks
+%           .data   - data for each user-defined cost block
+%               .N  - see help for add_cost() for details
+%               .H  -               "
+%               .Cw -               "
+%               .dd -               "
+%               .rr -               "
+%               .kk -               "
+%               .mm -               "
+%               .vs - cell array of variable sets that define xx for this
+%                     cost block, where the N for this block multiplies xx
+%           .order  - cell array of names for cost blocks in the order they
+%                     appear in the rows of the full N matrix
+%       .mpc        - MATPOWER case struct used to create this model object
 %           .baseMVA
 %           .bus
 %           .branch
@@ -73,7 +130,7 @@ function om = opf_model(mpc)
 %           .fparm
 %           .H
 %           .Cw
-%       .userdata
+%       .userdata   - any user defined data added via userdata()
 %           .(user defined fields)
 
 %   MATPOWER

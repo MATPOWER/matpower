@@ -154,7 +154,7 @@ if strcmp(extension, '.mat')        %% MAT-file
     eval(cmd);
 else                                %% M-file
     %% open file
-    [fd, msg] = fopen(fname, 'wt');     %% print it to an m-file
+    [fd, msg] = fopen(fname, 'wt');     %% print it to an M-file
     if fd == -1
         error(['savecase: ', msg]);
     end

@@ -13,7 +13,7 @@ end
 
 t_begin(240, quiet);
 
-%% compare result of loading from m-file file to result of using data matrices
+%% compare result of loading from M-file file to result of using data matrices
 casefile = 't_case9_opf';
 matfile  = 't_mat9_opf';
 pfcasefile = 't_case9_pf';

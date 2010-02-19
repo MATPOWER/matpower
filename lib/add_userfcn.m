@@ -20,8 +20,8 @@ function mpc = add_userfcn(mpc, stage, fcn, args, allow_multiple)
 %   Currently there are 5 different callback stages defined. Each stage has
 %   a name, and by convention, the name of a user-defined callback function
 %   ends with the name of the stage. The following is a description of each
-%   stage, when it is called and the input and output arguments (which vary
-%   depending on the stage). The reserves example (see 'help runopf_w_res')
+%   stage, when it is called and the input and output arguments which vary
+%   depending on the stage. The reserves example (see 'help runopf_w_res')
 %   is used to illustrate how these callback userfcn's might be used.
 %
 %   1. ext2int
@@ -67,7 +67,7 @@ function mpc = add_userfcn(mpc, stage, fcn, args, allow_multiple)
 %
 %   5. savecase
 %
-%   Called from savecase() when saving a case struct to an m-file after
+%   Called from savecase() when saving a case struct to an M-file after
 %   printing all of the other data to the file. Inputs are the case struct,
 %   the file descriptor to write to, the variable prefix (typically 'mpc.')
 %   and any (optional) args supplied via add_userfcn. Output is the case
@@ -79,7 +79,7 @@ function mpc = add_userfcn(mpc, stage, fcn, args, allow_multiple)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2009 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 if nargin < 5

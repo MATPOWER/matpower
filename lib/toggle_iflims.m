@@ -235,7 +235,7 @@ function mpc = userfcn_iflims_savecase(mpc, fd, prefix, args)
 %
 %   mpc = userfcn_iflims_savecase(mpc, fd, mpopt, args)
 %
-%   This is the 'savecase' stage userfcn callback that prints the m-file
+%   This is the 'savecase' stage userfcn callback that prints the M-file
 %   code to save the 'if' field in the case file. It expects a
 %   MATPOWER case struct (mpc), a file descriptor and variable prefix
 %   (usually 'mpc.'). The optional args are not currently used.

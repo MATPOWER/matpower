@@ -1,6 +1,6 @@
 function display(om)
 %DISPLAY  Displays the object
-%
+%   Called when semicolon is omitted at the command-line.
 
 %   MATPOWER
 %   $Id$
