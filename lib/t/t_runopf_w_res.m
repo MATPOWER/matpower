@@ -11,7 +11,7 @@ if nargin < 1
     quiet = 0;
 end
 
-t_begin(34, quiet);
+t_begin(40, quiet);
 
 if quiet
     verbose = 0;
@@ -104,7 +104,19 @@ t_is(r.reserves.R, [38.6199; 1.3801; 0; 0; 13.8471; 6.1529], 4, [t 'R']);
 t_is(r.reserves.prc, [2; 2; 2; 2; 4; 4], 5, [t 'prc']);
 t_is(r.reserves.mu.l, [0; 0; 1; 2; 0; 0], 5, [t 'mu.l']);
 t_is(r.reserves.mu.u, [0; 0; 0; 0; 0; 0], 7, [t 'mu.u']);
-t_is(r.reserves.mu.Pmax, [1; 0; 0; 0; 1; 0], 6, [t 'mu.Pmax']);
+t_is(r.reserves.mu.Pmax, [1; 0; 0; 0; 1; 0], 5, [t 'mu.Pmax']);
+t_is(r.reserves.cost, mpc.reserves.cost, 12, [t 'cost']);
+
+t = 'RAMP_10, no qty (Rmax) : ';
+mpc = loadcase(casefile);
+mpc.reserves = rmfield(mpc.reserves, 'qty');
+mpc.gen(1, RAMP_10) = 25;
+r = runopf_w_res(mpc, mpopt);
+t_is(r.reserves.R, [25; 15; 0; 0; 13.8729; 6.1272], 4, [t 'R']);
+t_is(r.reserves.prc, [2; 2; 2; 2; 4; 4], 6, [t 'prc']);
+t_is(r.reserves.mu.l, [0; 0; 1; 2; 0; 0], 7, [t 'mu.l']);
+t_is(r.reserves.mu.u, [1; 0; 0; 0; 0; 0], 7, [t 'mu.u']);
+t_is(r.reserves.mu.Pmax, [0; 0; 0; 0; 1; 0], 7, [t 'mu.Pmax']);
 t_is(r.reserves.cost, mpc.reserves.cost, 12, [t 'cost']);
 
 warning(s6.state, 'MATLAB:nearlySingularMatrixUMFPACK');
