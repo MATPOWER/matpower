@@ -8,7 +8,7 @@ function mpc = toggle_reserves(mpc, on_off)
 %   co-optimization of reserves with fixed zonal reserve requirements.
 %
 %   These callbacks expect to find a 'reserves' field in the input mpc,
-%  where mpc.reserves is a struct with the following fields:
+%   where mpc.reserves is a struct with the following fields:
 %       zones   nrz x ng, zone(i, j) = 1, if gen j belongs to zone i
 %                                      0, otherwise
 %       req     nrz x 1, zonal reserve requirement in MW
@@ -33,7 +33,7 @@ function mpc = toggle_reserves(mpc, on_off)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2009 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 if strcmp(on_off, 'on')
@@ -156,13 +156,14 @@ ng  = size(mpc.gen, 1);     %% number of on-line gens (+ disp loads)
 
 %% variable bounds
 Rmin = zeros(ngr, 1);               %% bound below by 0
-Rmax = Inf * ones(ngr, 1);
+Rmax = Inf * ones(ngr, 1);          %% bound above by ...
 k = find(mpc.gen(igr, RAMP_10));
-Rmax(k) = mpc.gen(igr(k), RAMP_10); %% bound above by ramp rate ...
+Rmax(k) = mpc.gen(igr(k), RAMP_10); %% ... ramp rate and ...
 if isfield(r, 'qty')
     k = find(r.qty(igr) < Rmax);
-    Rmax(k) = r.qty(igr(k)) / mpc.baseMVA;  %% ... and stated max reserve qty
+    Rmax(k) = r.qty(igr(k));        %% ... stated max reserve qty
 end
+Rmax = Rmax / mpc.baseMVA;
 
 %% constraints
 I = speye(ngr);                     %% identity matrix
@@ -189,11 +190,6 @@ function results = userfcn_reserves_int2ext(results, args)
 %   expects the results to contain a variable 'R' and linear constraints
 %   'Pg_plus_R' and 'Rreq' which are used to populate output fields in
 %   results.reserves. The optional args are not currently used.
-
-%% define named indices into data matrices
-[GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
-    MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
-    QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
 
 %% initialize some things
 r = results.reserves;
@@ -222,24 +218,24 @@ ng0  = size(o.ext.gen, 1);  %% number of gens (+ disp loads)
 %%-----  results post-processing  -----
 %% get the results (per gen reserves, multipliers) with internal gen indexing
 [R0, Rl, Ru] = getv(results.om, 'R');
-Rg      = zeros(ng, 1);
-Rgmin   = zeros(ng, 1);
-Rgmax   = zeros(ng, 1);
+R       = zeros(ng, 1);
+Rmin    = zeros(ng, 1);
+Rmax    = zeros(ng, 1);
 mu_l    = zeros(ng, 1);
 mu_u    = zeros(ng, 1);
 mu_Pmax = zeros(ng, 1);
-Rg(igr)      = results.var.val.R * results.baseMVA;
-Rgmin(igr)   = Rl * results.baseMVA;
-Rgmax(igr)   = Ru * results.baseMVA;
+R(igr)       = results.var.val.R * results.baseMVA;
+Rmin(igr)    = Rl * results.baseMVA;
+Rmax(igr)    = Ru * results.baseMVA;
 mu_l(igr)    = results.var.mu.l.R;
 mu_u(igr)    = results.var.mu.u.R;
 mu_Pmax(igr) = results.lin.mu.u.Pg_plus_R;
 
 %% store in results in results struct
 z = zeros(ng0, 1);
-results.reserves.R       = int2ext(results, Rg, z, 'gen');
-results.reserves.Rmin    = int2ext(results, Rgmin, z, 'gen');
-results.reserves.Rmax    = int2ext(results, Rgmax, z, 'gen');
+results.reserves.R       = int2ext(results, R, z, 'gen');
+results.reserves.Rmin    = int2ext(results, Rmin, z, 'gen');
+results.reserves.Rmax    = int2ext(results, Rmax, z, 'gen');
 results.reserves.mu.l    = int2ext(results, mu_l, z, 'gen');
 results.reserves.mu.u    = int2ext(results, mu_u, z, 'gen');
 results.reserves.mu.Pmax = int2ext(results, mu_Pmax, z, 'gen');
@@ -355,7 +351,7 @@ function mpc = userfcn_reserves_savecase(mpc, fd, prefix, args)
 %
 %   mpc = userfcn_reserves_savecase(mpc, fd, mpopt, args)
 %
-%   This is the 'savecase' stage userfcn callback that prints the m-file
+%   This is the 'savecase' stage userfcn callback that prints the M-file
 %   code to save the 'reserves' field in the case file. It expects a
 %   MATPOWER case struct (mpc), a file descriptor and variable prefix
 %   (usually 'mpc.'). The optional args are not currently used.
