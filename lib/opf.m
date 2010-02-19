@@ -237,7 +237,7 @@ if dc
     if nw && size(mpc.N, 2) >= 2*nb + 2*ng
       %% make sure there aren't any costs on Vm or Qg
       if any(any(mpc.N(:, acc)))
-        error('opf: attempting to solve DC OPF with user constraints on Vm or Qg');
+        error('opf: attempting to solve DC OPF with user costs on Vm or Qg');
       end
       mpc.N(:, acc) = [];               %% delete Vm and Qg columns
     end
