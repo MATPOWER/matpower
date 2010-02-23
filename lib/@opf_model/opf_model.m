@@ -33,9 +33,10 @@ function om = opf_model(mpc)
 %   and costs:
 %       get_idx
 %
-%   Build and return full set of cost parameters:
+%   Build and return cost parameters and evaluate user-defined costs:
 %       build_cost_params
 %       get_cost_params
+%		compute_cost
 %
 %   Save/retreive user data in the model object:
 %       userdata
