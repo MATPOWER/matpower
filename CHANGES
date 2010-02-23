@@ -17,7 +17,12 @@ Changes since 4.0b1
 
 2/23/10
     - For @opf_model, removed get_var_N(), get_lin_N() and get_nln_N()
-      methods, replaced with single getN() method.
+      methods, replaced with single getN() method. Added compute_cost().
+    - Fixed per unit bug with reserve costs and prices in toggle_reserves().
+    - Added cost field to OPF results struct with final values of user-defined
+      costs, by named set.
+    - Added totalcost field to results.reserves for OPF with reserves case,
+      see toggle_reserves() and runopf_w_res().
 
 2/2/10
     - Deprecated unused options SPARSE_QP and OUT_RAW.
