@@ -11,7 +11,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 18;
+num_tests = 22;
 
 t_begin(num_tests, quiet);
 
@@ -85,13 +85,15 @@ mpc.zl = [0; 0];
 mpc.N = sparse([1;2], [13;14], [1;1], 2, 14);   %% new z variables only
 mpc.fparm = ones(2,1) * [1 0 0 1];              %% w = r = z
 mpc.H = sparse(2,2);                            %% no quadratic term
-mpc.Cw = [1000;0];
+mpc.Cw = [1000;1];
 
 t = [t0 'w/extra constraints & costs 1 : '];
-[baseMVA, bus, gen, gencost, branch, f, success, et] = rundcopf(mpc, mpopt);
+[r, success] = rundcopf(mpc, mpopt);
 t_ok(success, [t 'success']);
-t_is(gen(1, PG), 116.15974, 4, [t 'Pg1 = 116.15974']);
-t_is(gen(2, PG), 116.15974, 4, [t 'Pg2 = 116.15974']);
+t_is(r.gen(1, PG), 116.15974, 4, [t 'Pg1 = 116.15974']);
+t_is(r.gen(2, PG), 116.15974, 4, [t 'Pg2 = 116.15974']);
+t_is(r.var.val.z, [0; 0.3348], 4, [t 'user vars']);
+t_is(r.cost.usr, 0.3348, 3, [t 'user costs']);
 
 %% with A and N sized for AC opf
 mpc = loadcase(casefile);
@@ -103,13 +105,15 @@ mpc.zl = [0; 0];
 mpc.N = sparse([1;2], [25;26], [1;1], 2, 26);   %% new z variables only
 mpc.fparm = ones(2,1) * [1 0 0 1];              %% w = r = z
 mpc.H = sparse(2,2);                            %% no quadratic term
-mpc.Cw = [1000;0];
+mpc.Cw = [1000;1];
 
 t = [t0 'w/extra constraints & costs 2 : '];
-[baseMVA, bus, gen, gencost, branch, f, success, et] = rundcopf(mpc, mpopt);
+[r, success] = rundcopf(mpc, mpopt);
 t_ok(success, [t 'success']);
-t_is(gen(1, PG), 116.15974, 4, [t 'Pg1 = 116.15974']);
-t_is(gen(2, PG), 116.15974, 4, [t 'Pg2 = 116.15974']);
+t_is(r.gen(1, PG), 116.15974, 4, [t 'Pg1 = 116.15974']);
+t_is(r.gen(2, PG), 116.15974, 4, [t 'Pg2 = 116.15974']);
+t_is(r.var.val.z, [0; 0.3348], 4, [t 'user vars']);
+t_is(r.cost.usr, 0.3348, 3, [t 'user costs']);
 
 warning(s6.state, 'MATLAB:nearlySingularMatrixUMFPACK');
 

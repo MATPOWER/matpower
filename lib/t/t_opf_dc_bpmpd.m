@@ -4,14 +4,14 @@ function t_opf_dc_bpmpd(quiet)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2004-2009 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 if nargin < 1
     quiet = 0;
 end
 
-num_tests = 18;
+num_tests = 22;
 
 t_begin(num_tests, quiet);
 
@@ -83,31 +83,35 @@ if have_fcn('bpmpd')
     mpc.N = sparse([1;2], [13;14], [1;1], 2, 14);   %% new z variables only
     mpc.fparm = ones(2,1) * [1 0 0 1];              %% w = r = z
     mpc.H = sparse(2,2);                            %% no quadratic term
-    mpc.Cw = [1000;0];
+    mpc.Cw = [1000;1];
 
     t = [t0 'w/extra constraints & costs 1 : '];
-    [baseMVA, bus, gen, gencost, branch, f, success, et] = rundcopf(mpc, mpopt);
+    [r, success] = rundcopf(mpc, mpopt);
     t_ok(success, [t 'success']);
-    t_is(gen(1, PG), 116.15974, 5, [t 'Pg1 = 116.15974']);
-    t_is(gen(2, PG), 116.15974, 5, [t 'Pg2 = 116.15974']);
-    
+    t_is(r.gen(1, PG), 116.15974, 5, [t 'Pg1 = 116.15974']);
+    t_is(r.gen(2, PG), 116.15974, 5, [t 'Pg2 = 116.15974']);
+    t_is(r.var.val.z, [0; 0.3348], 4, [t 'user vars']);
+    t_is(r.cost.usr, 0.3348, 4, [t 'user costs']);
+
     %% with A and N sized for AC opf
     mpc = loadcase(casefile);
     mpc.A = sparse([1;1;1;2;2;2],[19;20;25;20;21;26],[-1;1;-1;1;-1;-1],2,26);
     mpc.u = [0; 0];
     mpc.l = [-Inf; -Inf];
     mpc.zl = [0; 0];
-    
+
     mpc.N = sparse([1;2], [25;26], [1;1], 2, 26);   %% new z variables only
     mpc.fparm = ones(2,1) * [1 0 0 1];              %% w = r = z
     mpc.H = sparse(2,2);                            %% no quadratic term
-    mpc.Cw = [1000;0];
+    mpc.Cw = [1000;1];
 
     t = [t0 'w/extra constraints & costs 2 : '];
-    [baseMVA, bus, gen, gencost, branch, f, success, et] = rundcopf(mpc, mpopt);
+    [r, success] = rundcopf(mpc, mpopt);
     t_ok(success, [t 'success']);
-    t_is(gen(1, PG), 116.15974, 5, [t 'Pg1 = 116.15974']);
-    t_is(gen(2, PG), 116.15974, 5, [t 'Pg2 = 116.15974']);
+    t_is(r.gen(1, PG), 116.15974, 5, [t 'Pg1 = 116.15974']);
+    t_is(r.gen(2, PG), 116.15974, 5, [t 'Pg2 = 116.15974']);
+    t_is(r.var.val.z, [0; 0.3348], 4, [t 'user vars']);
+    t_is(r.cost.usr, 0.3348, 4, [t 'user costs']);
 else
     t_skip(num_tests, 'BPMPD_MEX not available');
 end

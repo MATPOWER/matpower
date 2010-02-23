@@ -11,7 +11,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 73;
+num_tests = 76;
 
 t_begin(num_tests, quiet);
 
@@ -118,8 +118,8 @@ if have_fcn('scpdipmopf')
 
     %% run OPF with quadratic gen costs moved to generalized costs
     t = [t0 'w/quadratic generalized gen cost : '];
-    [bus, gen, branch, f, success, info, et] = ...
-        opf(mpc, A, l, u, mpopt, N, fparm, H, Cw);
+    [r, success] = opf(mpc, A, l, u, mpopt, N, fparm, H, Cw);
+    [f, bus, gen, branch] = deal(r.f, r.bus, r.gen, r.branch);
     t_ok(success, [t 'success']);
     t_is(f, f_soln, 3, [t 'f']);
     t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
@@ -132,6 +132,7 @@ if have_fcn('scpdipmopf')
     t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
     t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
     t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
+    t_is(r.cost.usr, f, 12, [t 'user cost']);
 
     %%-----  run OPF with extra linear user constraints & costs  -----
     %% single new z variable constrained to be greater than or equal to
@@ -148,7 +149,8 @@ if have_fcn('scpdipmopf')
     Cw = 100;
 
     t = [t0 'w/extra constraints & costs 1 : '];
-    [bus, gen, branch, f, success] = opf(casefile, A, l, u, mpopt, N, fparm, H, Cw);
+    [r, success] = opf(casefile, A, l, u, mpopt, N, fparm, H, Cw);
+    [f, bus, gen, branch] = deal(r.f, r.bus, r.gen, r.branch);
     t_ok(success, [t 'success']);
     t_is(f, f_soln, 3, [t 'f']);
     t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
@@ -161,6 +163,8 @@ if have_fcn('scpdipmopf')
     t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
     t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
     t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
+    t_is(r.var.val.z, 0.025419, 6, [t 'user variable']);
+    t_is(r.cost.usr, 2.5419, 4, [t 'user cost']);
 
     %%-----  test OPF with capability curves  -----
     mpc = loadcase('t_case9_opfv2');

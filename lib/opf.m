@@ -555,6 +555,15 @@ if ~dc
   end
 end
 
+%% assign values for components of user cost
+om_cost_order = get(om, 'cost', 'order');
+for k = 1:length(om_cost_order)
+  name = om_cost_order{k};
+  if getN(om, 'cost', name)
+    results.cost.(name) = compute_cost(om, results.x, name);
+  end
+end
+
 %% revert to original ordering, including out-of-service stuff
 results = int2ext(results);
 
