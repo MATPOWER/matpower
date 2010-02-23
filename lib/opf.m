@@ -142,6 +142,7 @@ function [busout, genout, branchout, f, success, info, et, g, jac, xr, pimul] = 
 %                   (other) any user defined constraint blocks
 %               .u  upper bounds
 %                   .Pmis, Pf, Pf, PQh, PQl, vl, ycon, (other)
+%       .cost       user defined cost values, by named block
 
 %   MATPOWER
 %   $Id$
