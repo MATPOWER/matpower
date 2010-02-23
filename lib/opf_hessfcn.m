@@ -55,8 +55,8 @@ mpc = get_mpc(om);
 [baseMVA, bus, gen, branch, gencost] = ...
     deal(mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch, mpc.gencost);
 cp = get_cost_params(om);
-[N, H, Cw] = deal(cp.N, cp.H, cp.Cw);
-fparm = [cp.dd cp.rh cp.kk cp.mm];
+[N, Cw, H, dd, rh, kk, mm] = deal(cp.N, cp.Cw, cp.H, cp.dd, ...
+                                    cp.rh, cp.kk, cp.mm);
 vv = get_idx(om);
 
 %% unpack needed parameters
@@ -107,21 +107,20 @@ d2f = sparse(i, i, [d2f_dPg2; d2f_dQg2], nxyz, nxyz);
 %% generalized cost
 if ~isempty(N)
     nw = size(N, 1);
-    r = N * x - fparm(:, 2);        %% Nx - rhat
-    k = fparm(:, 3);
-    iLT = find(r < -k);             %% below dead zone
-    iEQ = find(r == 0 & k == 0);    %% dead zone doesn't exist
-    iGT = find(r > k);              %% above dead zone
+    r = N * x - rh;                 %% Nx - rhat
+    iLT = find(r < -kk);            %% below dead zone
+    iEQ = find(r == 0 & kk == 0);   %% dead zone doesn't exist
+    iGT = find(r > kk);             %% above dead zone
     iND = [iLT; iEQ; iGT];          %% rows that are Not in the Dead region
-    iL = find(fparm(:, 1) == 1);    %% rows using linear function
-    iQ = find(fparm(:, 1) == 2);    %% rows using quadratic function
+    iL = find(dd == 1);             %% rows using linear function
+    iQ = find(dd == 2);             %% rows using quadratic function
     LL = sparse(iL, iL, 1, nw, nw);
     QQ = sparse(iQ, iQ, 1, nw, nw);
     kbar = sparse(iND, iND, [   ones(length(iLT), 1);
                                 zeros(length(iEQ), 1);
-                                -ones(length(iGT), 1)], nw, nw) * k;
+                                -ones(length(iGT), 1)], nw, nw) * kk;
     rr = r + kbar;                  %% apply non-dead zone shift
-    M = sparse(iND, iND, fparm(iND, 4), nw, nw);    %% dead zone or scale
+    M = sparse(iND, iND, mm(iND), nw, nw);  %% dead zone or scale
     diagrr = sparse(1:nw, 1:nw, rr, nw, nw);
     
     %% linear rows multiplied by rr(i), quadratic rows by rr(i)^2
