@@ -69,7 +69,6 @@ verbose = mpopt(31);    %% VERBOSE
 mpc = get_mpc(om);
 [baseMVA, bus, gen, branch] = ...
     deal(mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch);
-om = build_cost_params(om);
 [vv, ll, nn] = get_idx(om);
 
 %% problem dimensions

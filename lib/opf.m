@@ -423,6 +423,9 @@ end
 %% execute userfcn callbacks for 'formulation' stage
 om = run_userfcn(userfcn, 'formulation', om);
 
+%% build user-defined costs
+om = build_cost_params(om);
+
 %% get indexing
 [vv, ll, nn] = get_idx(om);
 

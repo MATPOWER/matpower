@@ -89,7 +89,6 @@ opt = struct(   'feastol', feastol, ...,
 mpc = get_mpc(om);
 [baseMVA, bus, gen, branch, gencost] = ...
     deal(mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch, mpc.gencost);
-om = build_cost_params(om);
 [vv, ll, nn] = get_idx(om);
 
 %% problem dimensions

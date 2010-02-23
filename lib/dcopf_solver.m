@@ -72,7 +72,6 @@ end
 mpc = get_mpc(om);
 [baseMVA, bus, gen, branch, gencost] = ...
     deal(mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch, mpc.gencost);
-om = build_cost_params(om);
 cp = get_cost_params(om);
 [N, H, Cw] = deal(cp.N, cp.H, cp.Cw);
 fparm = [cp.dd cp.rh cp.kk cp.mm];
