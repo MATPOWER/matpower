@@ -19,11 +19,9 @@ function om = opf_model(mpc)
 %       add_costs
 %       add_vars
 %
-%   Return the number of linear constraints, non-linear constraints or
-%   variables, optionally for a single named block:
-%       get_lin_N
-%       get_nln_N
-%       get_var_N
+%   Return the number of linear constraints, non-linear constraints,
+%   variables or cost rows, optionally for a single named block:
+%       getN
 %
 %   Return the intial values and bounds for optimization variables:
 %       get_v
