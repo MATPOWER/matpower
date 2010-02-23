@@ -44,7 +44,7 @@ vv = get_idx(om);
 
 %% problem dimensions
 ng = size(gen, 1);          %% number of dispatchable injections
-ny = get_var_N(om, 'y');    %% number of piece-wise linear costs
+ny = getN(om, 'var', 'y');  %% number of piece-wise linear costs
 nxyz = length(x);           %% total number of control vars of all types
 
 %% grab Pg & Qg

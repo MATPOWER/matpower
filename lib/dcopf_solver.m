@@ -86,8 +86,8 @@ ipwl = find(gencost(:, MODEL) == PW_LINEAR);  %% piece-wise linear costs
 nb = size(bus, 1);          %% number of buses
 nl = size(branch, 1);       %% number of branches
 nw = size(N, 1);            %% number of general cost vars, w
-ny = get_var_N(om, 'y');    %% number of piece-wise linear costs
-nxyz = get_var_N(om);       %% total number of control vars of all types
+ny = getN(om, 'var', 'y');  %% number of piece-wise linear costs
+nxyz = getN(om, 'var');     %% total number of control vars of all types
 
 %% linear constraints & variable bounds
 [A, l, u] = linear_constraints(om);

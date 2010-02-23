@@ -75,7 +75,7 @@ om = build_cost_params(om);
 %% problem dimensions
 nb = size(bus, 1);          %% number of buses
 nl = size(branch, 1);       %% number of branches
-ny = get_var_N(om, 'y');    %% number of piece-wise linear costs
+ny = getN(om, 'var', 'y');  %% number of piece-wise linear costs
 
 %% bounds on optimization vars
 [x0, LB, UB] = getv(om);
@@ -154,7 +154,7 @@ end
 
 %% try to select an interior initial point for interior point solver
 if str2double(otver.Version(1)) >= 4 && strcmp(optimget(fmoptions, 'Algorithm'), 'interior-point')
-  x0 = zeros(get_var_N(om), 1);
+  x0 = zeros(getN(om, 'var'), 1);
   x0(vv.i1.Va:vv.iN.Va) = 0;
   x0(vv.i1.Vm:vv.iN.Vm)   = 1;
   x0(vv.i1.Pg:vv.iN.Pg) = (gen(:, PMIN) + gen(:, PMAX)) / 2 / baseMVA;
@@ -213,7 +213,7 @@ branch(:, MU_SF) = muSf / baseMVA;
 branch(:, MU_ST) = muSt / baseMVA;
 
 %% package up results
-nlnN = get_nln_N(om);
+nlnN = getN(om, 'nln');
 nlt = length(ilt);
 ngt = length(igt);
 nbx = length(ibx);

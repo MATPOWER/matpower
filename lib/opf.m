@@ -520,7 +520,7 @@ end
 om_var_order = get(om, 'var', 'order');
 for k = 1:length(om_var_order)
   name = om_var_order{k};
-  if get_var_N(om, name)
+  if getN(om, 'var', name)
     idx = vv.i1.(name):vv.iN.(name);
     results.var.val.(name) = results.x(idx);
     results.var.mu.l.(name) = results.mu.var.l(idx);
@@ -532,7 +532,7 @@ end
 om_lin_order = get(om, 'lin', 'order');
 for k = 1:length(om_lin_order)
   name = om_lin_order{k};
-  if get_lin_N(om, name)
+  if getN(om, 'lin', name)
     idx = ll.i1.(name):ll.iN.(name);
     results.lin.mu.l.(name) = results.mu.lin.l(idx);
     results.lin.mu.u.(name) = results.mu.lin.u(idx);
@@ -544,7 +544,7 @@ if ~dc
   om_nln_order = get(om, 'nln', 'order');
   for k = 1:length(om_nln_order)
     name = om_nln_order{k};
-    if get_nln_N(om, name)
+    if getN(om, 'nln', name)
       idx = nn.i1.(name):nn.iN.(name);
       results.nln.mu.l.(name) = results.mu.nln.l(idx);
       results.nln.mu.u.(name) = results.mu.nln.u(idx);

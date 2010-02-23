@@ -95,7 +95,7 @@ om = build_cost_params(om);
 %% problem dimensions
 nb = size(bus, 1);          %% number of buses
 nl = size(branch, 1);       %% number of branches
-ny = get_var_N(om, 'y');    %% number of piece-wise linear costs
+ny = getN(om, 'var', 'y');  %% number of piece-wise linear costs
 
 %% linear constraints
 [A, l, u] = linear_constraints(om);
@@ -179,7 +179,7 @@ branch(:, MU_SF) = muSf / baseMVA;
 branch(:, MU_ST) = muSt / baseMVA;
 
 %% package up results
-nlnN = get_nln_N(om);
+nlnN = getN(om, 'nln');
 
 %% extract multipliers for non-linear constraints
 kl = find(Lambda.eqnonlin < 0);
