@@ -133,7 +133,7 @@ mpc.reserves.req   = [60; 20];
 
 %% reserve costs in $/MW for each gen that belongs to at least 1 zone
 %% (same order as gens, but skipping any gen that does not belong to any zone)
-mpc.reserves.cost  = [	1;	2;	3;	4;	5;	6	];
+mpc.reserves.cost  = [	1.9;	2;	3;	4;	5;	5.5	];
 %mpc.reserves.cost  = [	6;	5;	4;	3;	2;	1	];
 
 %% OPTIONAL max reserve quantities for each gen that belongs to at least 1 zone

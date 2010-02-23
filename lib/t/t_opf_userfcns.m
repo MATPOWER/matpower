@@ -20,8 +20,10 @@ if quiet
 else
     verbose = 0;
 end
-mpopt = mpoption('OPF_ALG', 560, 'OPF_ALG_DC', 200, 'PDIPM_GRADTOL', 1e-7);
-mpopt = mpoption(mpopt, 'VERBOSE', verbose, 'OUT_ALL', 0);
+mpopt = mpoption('OPF_VIOLATION', 1e-6, 'PDIPM_GRADTOL', 1e-8, ...
+        'PDIPM_COMPTOL', 1e-8, 'PDIPM_COSTTOL', 1e-9);
+mpopt = mpoption(mpopt, 'OUT_ALL', 0, 'VERBOSE', verbose);
+mpopt = mpoption(mpopt, 'OPF_ALG', 560, 'OPF_ALG_DC', 200);
 % mpopt = mpoption(mpopt, 'VERBOSE', 2, 'OUT_ALL', -1, 'OUT_GEN', 1);
 
 [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
@@ -37,11 +39,11 @@ mpc = loadcase(casefile);
 mpc = toggle_reserves(mpc, 'on');
 r = runopf(mpc, mpopt);
 t_ok(r.success, [t 'success']);
-t_is(r.reserves.R, [25; 15; 0; 0; 13.8729; 6.1271], 3, [t 'reserves.R']);
-t_is(r.reserves.prc, [2; 2; 2; 2; 4; 4], 4, [t 'reserves.prc']);
-t_is(r.reserves.mu.Pmax, [0; 0; 0; 0; 1; 0], 4, [t 'reserves.mu.Pmax']);
+t_is(r.reserves.R, [25; 15; 0; 0; 19.3906; 0.6094], 4, [t 'reserves.R']);
+t_is(r.reserves.prc, [2; 2; 2; 2; 3.5; 3.5], 4, [t 'reserves.prc']);
+t_is(r.reserves.mu.Pmax, [0; 0; 0; 0; 0.5; 0], 4, [t 'reserves.mu.Pmax']);
 t_is(r.reserves.mu.l, [0; 0; 1; 2; 0; 0], 4, [t 'reserves.mu.l']);
-t_is(r.reserves.mu.u, [1; 0; 0; 0; 0; 0], 4, [t 'reserves.mu.u']);
+t_is(r.reserves.mu.u, [0.1; 0; 0; 0; 0; 0], 4, [t 'reserves.mu.u']);
 t_ok(~isfield(r.if, 'P'), [t 'no iflims']);
 
 t = 'toggle_reserves(mpc, ''off'') : ';
@@ -70,12 +72,12 @@ r = rundcopf(mpc, mpopt);
 t_ok(r.success, [t 'success']);
 t_is(r.if.P, [-15; 20], 4, [t 'if.P']);
 t_is(r.if.mu.l, [4.8427; 0], 4, [t 'if.mu.l']);
-t_is(r.if.mu.u, [0; 13.7573], 4, [t 'if.mu.u']);
-t_is(r.reserves.R, [25; 15; 0; 0; 12; 8], 4, [t 'reserves.R']);
-t_is(r.reserves.prc, [2; 2; 2; 2; 4; 4], 4, [t 'reserves.prc']);
-t_is(r.reserves.mu.Pmax, [0; 0; 0; 0; 1; 0], 4, [t 'reserves.mu.Pmax']);
+t_is(r.if.mu.u, [0; 38.2573], 4, [t 'if.mu.u']);
+t_is(r.reserves.R, [25; 15; 0; 0; 16.9; 3.1], 4, [t 'reserves.R']);
+t_is(r.reserves.prc, [2; 2; 2; 2; 3.5; 3.5], 4, [t 'reserves.prc']);
+t_is(r.reserves.mu.Pmax, [0; 0; 0; 0; 0.5; 0], 4, [t 'reserves.mu.Pmax']);
 t_is(r.reserves.mu.l, [0; 0; 1; 2; 0; 0], 4, [t 'reserves.mu.l']);
-t_is(r.reserves.mu.u, [1; 0; 0; 0; 0; 0], 4, [t 'reserves.mu.u']);
+t_is(r.reserves.mu.u, [0.1; 0; 0; 0; 0; 0], 4, [t 'reserves.mu.u']);
 
 t = 'interface flow lims (AC) : ';
 mpc = toggle_reserves(mpc, 'off');

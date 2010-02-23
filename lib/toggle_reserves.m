@@ -171,11 +171,14 @@ Ar = [sparse(1:ngr, igr, 1, ngr, ng) I];
 ur = mpc.gen(igr, PMAX) / mpc.baseMVA;
 lreq = r.req / mpc.baseMVA;
 
+%% cost
+Cw = r.cost(igr) * mpc.baseMVA;     %% per unit cost coefficients
+
 %% add them to the model
 om = add_vars(om, 'R', ngr, [], Rmin, Rmax);
 om = add_constraints(om, 'Pg_plus_R', Ar, [], ur, {'Pg', 'R'});
 om = add_constraints(om, 'Rreq', r.zones(:, igr), lreq, [], {'R'});
-om = add_costs(om, 'Rcost', struct('N', I, 'Cw', r.cost(igr)), {'R'});
+om = add_costs(om, 'Rcost', struct('N', I, 'Cw', Cw), {'R'});
 
 
 %%-----  int2ext  ------------------------------------------------------
@@ -217,6 +220,7 @@ ng0  = size(o.ext.gen, 1);  %% number of gens (+ disp loads)
 
 %%-----  results post-processing  -----
 %% get the results (per gen reserves, multipliers) with internal gen indexing
+%% and convert from p.u. to per MW units
 [R0, Rl, Ru] = getv(results.om, 'R');
 R       = zeros(ng, 1);
 Rmin    = zeros(ng, 1);
@@ -227,9 +231,9 @@ mu_Pmax = zeros(ng, 1);
 R(igr)       = results.var.val.R * results.baseMVA;
 Rmin(igr)    = Rl * results.baseMVA;
 Rmax(igr)    = Ru * results.baseMVA;
-mu_l(igr)    = results.var.mu.l.R;
-mu_u(igr)    = results.var.mu.u.R;
-mu_Pmax(igr) = results.lin.mu.u.Pg_plus_R;
+mu_l(igr)    = results.var.mu.l.R / results.baseMVA;
+mu_u(igr)    = results.var.mu.u.R / results.baseMVA;
+mu_Pmax(igr) = results.lin.mu.u.Pg_plus_R / results.baseMVA;
 
 %% store in results in results struct
 z = zeros(ng0, 1);
@@ -242,7 +246,7 @@ results.reserves.mu.Pmax = int2ext(results, mu_Pmax, z, 'gen');
 results.reserves.prc     = z;
 for k = igr0
     iz = find(r.zones(:, k));
-    results.reserves.prc(k) = max(results.lin.mu.l.Rreq(iz));
+    results.reserves.prc(k) = max(results.lin.mu.l.Rreq(iz)) / results.baseMVA;
 end
 
 %% replace ng x 1 cost, qty with ngr x 1 originals
@@ -305,7 +309,8 @@ if OUT_ALL ~= 0
     fprintf(fd, '\n----  --------  --------');
     for k = 1:nrz
         iz = find(r.zones(k, :));     %% gens in zone k
-        fprintf(fd, '\n%3d%10.2f%10.2f', k, sum(results.reserves.R(iz)), results.lin.mu.l.Rreq(k));
+        fprintf(fd, '\n%3d%10.2f%10.2f', k, sum(results.reserves.R(iz)), ...
+                    results.lin.mu.l.Rreq(k) / results.baseMVA);
     end
     fprintf(fd, '\n');
     
