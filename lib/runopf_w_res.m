@@ -27,7 +27,7 @@ function [varargout] = runopf_w_res(varargin)
 %                         shadow prices on the zonal requirement constraint
 %                         for each zone the generator belongs to
 %
-%   See 'case30_reserves.m' for an example case file with fixed reserves,
+%   See 't_case30_userfcns.m' for an example case file with fixed reserves,
 %   and 'toggle_reserves.m' for the implementation.
 
 %   MATPOWER
