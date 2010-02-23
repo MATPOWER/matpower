@@ -411,6 +411,7 @@ if isfield(r, 'R')
         fprintf(fd, '%sreserves.mu.l = %s\n', prefix, serialize(r.mu.l));
         fprintf(fd, '%sreserves.mu.u = %s\n', prefix, serialize(r.mu.u));
         fprintf(fd, '%sreserves.prc = %s\n', prefix, serialize(r.prc));
+        fprintf(fd, '%sreserves.totalcost = %s\n', prefix, serialize(r.totalcost));
     else
         url = 'http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=12063&objectType=file';
         warning('MATPOWER:serialize', ...
