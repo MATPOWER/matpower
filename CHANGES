@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.0b1
 -------------------
 
+2/23/10
+    - For @opf_model, removed get_var_N(), get_lin_N() and get_nln_N()
+      methods, replaced with single getN() method.
+
 2/2/10
     - Deprecated unused options SPARSE_QP and OUT_RAW.
 
