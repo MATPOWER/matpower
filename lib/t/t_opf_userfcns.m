@@ -12,7 +12,7 @@ if nargin < 1
     quiet = 0;
 end
 
-t_begin(36, quiet);
+t_begin(38, quiet);
 
 casefile = 't_case30_userfcns';
 if quiet
@@ -45,6 +45,7 @@ t_is(r.reserves.mu.Pmax, [0; 0; 0; 0; 0.5; 0], 4, [t 'reserves.mu.Pmax']);
 t_is(r.reserves.mu.l, [0; 0; 1; 2; 0; 0], 4, [t 'reserves.mu.l']);
 t_is(r.reserves.mu.u, [0.1; 0; 0; 0; 0; 0], 4, [t 'reserves.mu.u']);
 t_ok(~isfield(r.if, 'P'), [t 'no iflims']);
+t_is(r.reserves.totalcost, 177.8047, 4, [t 'totalcost']);
 
 t = 'toggle_reserves(mpc, ''off'') : ';
 mpc = toggle_reserves(mpc, 'off');
@@ -78,6 +79,7 @@ t_is(r.reserves.prc, [2; 2; 2; 2; 3.5; 3.5], 4, [t 'reserves.prc']);
 t_is(r.reserves.mu.Pmax, [0; 0; 0; 0; 0.5; 0], 4, [t 'reserves.mu.Pmax']);
 t_is(r.reserves.mu.l, [0; 0; 1; 2; 0; 0], 4, [t 'reserves.mu.l']);
 t_is(r.reserves.mu.u, [0.1; 0; 0; 0; 0; 0], 4, [t 'reserves.mu.u']);
+t_is(r.reserves.totalcost, 179.05, 4, [t 'totalcost']);
 
 t = 'interface flow lims (AC) : ';
 mpc = toggle_reserves(mpc, 'off');

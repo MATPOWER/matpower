@@ -11,7 +11,7 @@ if nargin < 1
     quiet = 0;
 end
 
-t_begin(40, quiet);
+t_begin(46, quiet);
 
 if quiet
     verbose = 0;
@@ -42,6 +42,7 @@ t_is(r.reserves.mu.Pmax, [0; 0; 0; 0; 0.5; 0], 7, [t 'mu.Pmax']);
 mpc = loadcase(casefile);
 t_is(r.reserves.cost, mpc.reserves.cost, 12, [t 'cost']);
 t_is(r.reserves.qty, mpc.reserves.qty, 12, [t 'qty']);
+t_is(r.reserves.totalcost, 177.8047, 4, [t 'totalcost']);
 
 t = 'gen 5 no reserves : ';
 mpc = loadcase(casefile);
@@ -56,6 +57,7 @@ t_is(r.reserves.mu.u, [0.1; 0; 0; 0; 0; 0], 6, [t 'mu.u']);
 t_is(r.reserves.mu.Pmax, [0; 0; 0; 0; 0; 0], 7, [t 'mu.Pmax']);
 t_is(r.reserves.cost, mpc.reserves.cost, 12, [t 'cost']);
 t_is(r.reserves.qty, mpc.reserves.qty, 12, [t 'qty']);
+t_is(r.reserves.totalcost, 187.5, 4, [t 'totalcost']);
 
 t = 'extra offline gen : ';
 mpc = loadcase(casefile);
@@ -74,6 +76,7 @@ t_is(r.reserves.mu.u, [0.1; 0; 0; 0; 0; 0; 0], 7, [t 'mu.u']);
 t_is(r.reserves.mu.Pmax, [0; 0; 0; 0; 0; 0.5; 0], 7, [t 'mu.Pmax']);
 t_is(r.reserves.cost, mpc.reserves.cost, 12, [t 'cost']);
 t_is(r.reserves.qty, mpc.reserves.qty, 12, [t 'qty']);
+t_is(r.reserves.totalcost, 177.8047, 4, [t 'totalcost']);
 
 t = 'both extra & gen 6 no res : ';
 mpc = loadcase(casefile);
@@ -95,6 +98,7 @@ t_is(r.reserves.mu.u, [0.1; 0; 0; 0; 0; 0; 0], 6, [t 'mu.u']);
 t_is(r.reserves.mu.Pmax, [0; 0; 0; 0; 0; 0; 0], 7, [t 'mu.Pmax']);
 t_is(r.reserves.cost, mpc.reserves.cost, 12, [t 'cost']);
 t_is(r.reserves.qty, mpc.reserves.qty, 12, [t 'qty']);
+t_is(r.reserves.totalcost, 187.5, 4, [t 'totalcost']);
 
 t = 'no qty (Rmax) : ';
 mpc = loadcase(casefile);
@@ -106,6 +110,7 @@ t_is(r.reserves.mu.l, [0; 0; 1; 2; 0; 0], 5, [t 'mu.l']);
 t_is(r.reserves.mu.u, [0; 0; 0; 0; 0; 0], 7, [t 'mu.u']);
 t_is(r.reserves.mu.Pmax, [0.1; 0; 0; 0; 0.5; 0], 5, [t 'mu.Pmax']);
 t_is(r.reserves.cost, mpc.reserves.cost, 12, [t 'cost']);
+t_is(r.reserves.totalcost, 176.3708, 4, [t 'totalcost']);
 
 t = 'RAMP_10, no qty (Rmax) : ';
 mpc = loadcase(casefile);
@@ -118,6 +123,7 @@ t_is(r.reserves.mu.l, [0; 0; 1; 2; 0; 0], 7, [t 'mu.l']);
 t_is(r.reserves.mu.u, [0.1; 0; 0; 0; 0; 0], 7, [t 'mu.u']);
 t_is(r.reserves.mu.Pmax, [0; 0; 0; 0; 0.5; 0], 7, [t 'mu.Pmax']);
 t_is(r.reserves.cost, mpc.reserves.cost, 12, [t 'cost']);
+t_is(r.reserves.totalcost, 177.8047, 4, [t 'totalcost']);
 
 warning(s6.state, 'MATLAB:nearlySingularMatrixUMFPACK');
 

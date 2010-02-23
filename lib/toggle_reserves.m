@@ -248,6 +248,7 @@ for k = igr0
     iz = find(r.zones(:, k));
     results.reserves.prc(k) = max(results.lin.mu.l.Rreq(iz)) / results.baseMVA;
 end
+results.reserves.totalcost = results.cost.Rcost;
 
 %% replace ng x 1 cost, qty with ngr x 1 originals
 if isfield(r, 'original')
@@ -301,7 +302,8 @@ if OUT_ALL ~= 0
         end
     end
     fprintf(fd, '\n                     --------');
-    fprintf(fd, '\n            Total:%10.2f', sum(results.reserves.R(r.igr)));
+    fprintf(fd, '\n            Total:%10.2f              Total Cost: $%.2f', ...
+        sum(results.reserves.R(r.igr)), results.reserves.totalcost);
     fprintf(fd, '\n');
     
     fprintf(fd, '\nZone  Reserves   Price  ');
