@@ -135,10 +135,10 @@ d2f = d2f * cost_mult;
 nlam = length(lambda.eqnonlin) / 2;
 lamP = lambda.eqnonlin(1:nlam);
 lamQ = lambda.eqnonlin((1:nlam)+nlam);
-[Hpaa, Hpav, Hpva, Hpvv] = d2Sbus_dV2(Ybus, V, lamP);
-[Hqaa, Hqav, Hqva, Hqvv] = d2Sbus_dV2(Ybus, V, lamQ);
-d2H = [
-    real([Hpaa Hpav; Hpva Hpvv]) + imag([Hqaa Hqav; Hqva Hqvv]) sparse(2*nb, nxtra);
+[Gpaa, Gpav, Gpva, Gpvv] = d2Sbus_dV2(Ybus, V, lamP);
+[Gqaa, Gqav, Gqva, Gqvv] = d2Sbus_dV2(Ybus, V, lamQ);
+d2G = [
+    real([Gpaa Gpav; Gpva Gpvv]) + imag([Gqaa Gqav; Gqva Gqvv]) sparse(2*nb, nxtra);
     sparse(nxtra, 2*nb + nxtra)
 ];
 
@@ -148,8 +148,8 @@ muF = lambda.ineqnonlin(1:nmu);
 muT = lambda.ineqnonlin((1:nmu)+nmu);
 if mpopt(24) == 2       %% current
     [dIf_dVa, dIf_dVm, dIt_dVa, dIt_dVm, If, It] = dIbr_dV(branch(il,:), Yf, Yt, V);
-    [Gfaa, Gfav, Gfva, Gfvv] = d2AIbr_dV2(dIf_dVa, dIf_dVm, If, Yf, V, muF);
-    [Gtaa, Gtav, Gtva, Gtvv] = d2AIbr_dV2(dIt_dVa, dIt_dVm, It, Yt, V, muT);
+    [Hfaa, Hfav, Hfva, Hfvv] = d2AIbr_dV2(dIf_dVa, dIf_dVm, If, Yf, V, muF);
+    [Htaa, Htav, Htva, Htvv] = d2AIbr_dV2(dIt_dVa, dIt_dVm, It, Yt, V, muT);
 else
   f = branch(il, F_BUS);    %% list of "from" buses
   t = branch(il, T_BUS);    %% list of "to" buses
@@ -157,15 +157,15 @@ else
   Ct = sparse(1:nl2, t, ones(nl2, 1), nl2, nb);     %% connection matrix for line & to buses
   [dSf_dVa, dSf_dVm, dSt_dVa, dSt_dVm, Sf, St] = dSbr_dV(branch(il,:), Yf, Yt, V);
   if mpopt(24) == 1     %% real power
-    [Gfaa, Gfav, Gfva, Gfvv] = d2ASbr_dV2(real(dSf_dVa), real(dSf_dVm), real(Sf), Cf, Yf, V, muF);
-    [Gtaa, Gtav, Gtva, Gtvv] = d2ASbr_dV2(real(dSt_dVa), real(dSt_dVm), real(St), Ct, Yt, V, muT);
+    [Hfaa, Hfav, Hfva, Hfvv] = d2ASbr_dV2(real(dSf_dVa), real(dSf_dVm), real(Sf), Cf, Yf, V, muF);
+    [Htaa, Htav, Htva, Htvv] = d2ASbr_dV2(real(dSt_dVa), real(dSt_dVm), real(St), Ct, Yt, V, muT);
   else                  %% apparent power
-    [Gfaa, Gfav, Gfva, Gfvv] = d2ASbr_dV2(dSf_dVa, dSf_dVm, Sf, Cf, Yf, V, muF);
-    [Gtaa, Gtav, Gtva, Gtvv] = d2ASbr_dV2(dSt_dVa, dSt_dVm, St, Ct, Yt, V, muT);
+    [Hfaa, Hfav, Hfva, Hfvv] = d2ASbr_dV2(dSf_dVa, dSf_dVm, Sf, Cf, Yf, V, muF);
+    [Htaa, Htav, Htva, Htvv] = d2ASbr_dV2(dSt_dVa, dSt_dVm, St, Ct, Yt, V, muT);
   end
 end
-d2G = [
-    [Gfaa Gfav; Gfva Gfvv] + [Gtaa Gtav; Gtva Gtvv] sparse(2*nb, nxtra);
+d2H = [
+    [Hfaa Hfav; Hfva Hfvv] + [Htaa Htav; Htva Htvv] sparse(2*nb, nxtra);
     sparse(nxtra, 2*nb + nxtra)
 ];
 
@@ -174,8 +174,8 @@ if 0
     nx = length(x);
     step = 1e-5;
     num_d2f = sparse(nx, nx);
-    num_d2H = sparse(nx, nx);
     num_d2G = sparse(nx, nx);
+    num_d2H = sparse(nx, nx);
     for i = 1:nx
         xp = x;
         xm = x;
@@ -185,24 +185,24 @@ if 0
         [fp, dfp] = opf_costfcn(xp, om);
         [fm, dfm] = opf_costfcn(xm, om);
         % evaluate constraints & gradients
-        [Gp, Hp, dGp, dHp] = opf_consfcn(xp, om, Ybus, Yf, Yt, mpopt, il);
-        [Gm, Hm, dGm, dHm] = opf_consfcn(xm, om, Ybus, Yf, Yt, mpopt, il);
+        [Hp, Gp, dHp, dGp] = opf_consfcn(xp, om, Ybus, Yf, Yt, mpopt, il);
+        [Hm, Gm, dHm, dGm] = opf_consfcn(xm, om, Ybus, Yf, Yt, mpopt, il);
         num_d2f(:, i) = cost_mult * (dfp - dfm) / step;
-        num_d2H(:, i) = (dHp - dHm) * lambda.eqnonlin   / step;
-        num_d2G(:, i) = (dGp - dGm) * lambda.ineqnonlin / step;
+        num_d2G(:, i) = (dGp - dGm) * lambda.eqnonlin   / step;
+        num_d2H(:, i) = (dHp - dHm) * lambda.ineqnonlin / step;
     end
     d2f_err = full(max(max(abs(d2f - num_d2f))));
-    d2H_err = full(max(max(abs(d2H - num_d2H))));
     d2G_err = full(max(max(abs(d2G - num_d2G))));
+    d2H_err = full(max(max(abs(d2H - num_d2H))));
     if d2f_err > 1e-6
         fprintf('Max difference in d2f: %g\n', d2f_err);
     end
-    if d2H_err > 1e-5
-        fprintf('Max difference in d2H: %g\n', d2H_err);
-    end
-    if d2G_err > 1e-6
+    if d2G_err > 1e-5
         fprintf('Max difference in d2G: %g\n', d2G_err);
+    end
+    if d2H_err > 1e-6
+        fprintf('Max difference in d2H: %g\n', d2H_err);
     end
 end
 
-Lxx = d2f + d2H + d2G;
+Lxx = d2f + d2G + d2H;

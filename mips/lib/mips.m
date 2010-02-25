@@ -9,8 +9,8 @@ function [x, f, eflag, output, lambda] = mips(f_fcn, x0, A, l, u, xmin, xmax, gh
 %
 %   subject to
 %
-%       h(x) = 0            (non-linear equalities)
-%       g(x) <= 0           (non-linear inequalities)
+%       g(x) = 0            (non-linear equalities)
+%       h(x) <= 0           (non-linear inequalities)
 %       l <= A*x <= u       (linear constraints)
 %       xmin <= x <= xmax   (variable bounds)
 %
@@ -50,11 +50,11 @@ function [x, f, eflag, output, lambda] = mips(f_fcn, x0, A, l, u, xmin, xmax, gh
 %       gh : handle to function that evaluates the optional
 %           non-linear constraints and their gradients for a given
 %           value of x. Calling syntax for this function is:
-%               [g, h, dg, dh] = gh(x)
+%               [h, g, dh, dg] = gh(x)
 %       hess : handle to function that computes the Hessian of the
 %           Lagrangian for given values of x, lambda and mu, where
 %           lambda and mu are the multipliers on the equality and
-%           inequality constraints, h and g, respectively. The calling
+%           inequality constraints, g and h, respectively. The calling
 %           syntax for this function is:
 %               Lxx = hess(x, lam)
 %           where lambda = lam.eqnonlin and mu = lam.ineqnonlin.
@@ -267,23 +267,23 @@ x = x0;
 f = f * opt.cost_mult;
 df = df * opt.cost_mult;
 if nonlinear
-    [gn, hn, dgn, dhn] = gh_fcn(x); %% non-linear constraints
-    g = [gn; Ai * x - bi];          %% inequality constraints
-    h = [hn; Ae * x - be];          %% equality constraints
-    dg = [dgn Ai'];                 %% 1st derivative of inequalities
-    dh = [dhn Ae'];                 %% 1st derivative of equalities
+    [hn, gn, dhn, dgn] = gh_fcn(x); %% non-linear constraints
+    h = [hn; Ai * x - bi];          %% inequality constraints
+    g = [gn; Ae * x - be];          %% equality constraints
+    dh = [dhn Ai'];                 %% 1st derivative of inequalities
+    dg = [dgn Ae'];                 %% 1st derivative of equalities
 else
-    g = Ai * x - bi;                %% inequality constraints
-    h = Ae * x - be;                %% equality constraints
-    dg = Ai';                       %% 1st derivative of inequalities
-    dh = Ae';                       %% 1st derivative of equalities
+    h = Ai * x - bi;                %% inequality constraints
+    g = Ae * x - be;                %% equality constraints
+    dh = Ai';                       %% 1st derivative of inequalities
+    dg = Ae';                       %% 1st derivative of equalities
 end
 
 %% grab some dimensions
-neq = size(h, 1);           %% number of equality constraints
-niq = size(g, 1);           %% number of inequality constraints
-neqnln = size(hn, 1);       %% number of non-linear equality constraints
-niqnln = size(gn, 1);       %% number of non-linear inequality constraints
+neq = size(g, 1);           %% number of equality constraints
+niq = size(h, 1);           %% number of inequality constraints
+neqnln = size(gn, 1);       %% number of non-linear equality constraints
+niqnln = size(hn, 1);       %% number of non-linear inequality constraints
 nlt = length(ilt);          %% number of upper bounded linear inequalities
 ngt = length(igt);          %% number of lower bounded linear inequalities
 nbx = length(ibx);          %% number of doubly bounded linear inequalities
@@ -293,8 +293,8 @@ gamma = 1;                  %% barrier coefficient, r in Harry's code
 lam = zeros(neq, 1);
 z   = z0 * ones(niq, 1);
 mu  = z;
-k = find(g < -z0);
-z(k) = -g(k);
+k = find(h < -z0);
+z(k) = -h(k);
 k = find(gamma / z > z0);   %% (seems k is always empty if gamma = z0 = 1)
 if ~isempty(k)
     mu(k) = gamma / z(k);
@@ -304,10 +304,10 @@ e = ones(niq, 1);
 %% check tolerance
 f0 = f;
 if opt.step_control
-    L = f + lam' * h + mu' * (g+z) - gamma * sum(log(z));
+    L = f + lam' * g + mu' * (h+z) - gamma * sum(log(z));
 end
-Lx = df + dh * lam + dg * mu;
-feascond = max([norm(h, Inf), max(g)]) / (1 + max([ norm(x, Inf), norm(z, Inf) ]));
+Lx = df + dg * lam + dh * mu;
+feascond = max([norm(g, Inf), max(h)]) / (1 + max([ norm(x, Inf), norm(z, Inf) ]));
 gradcond = norm(Lx, Inf) / (1 + max([ norm(lam, Inf), norm(mu, Inf) ]));
 compcond = (z' * mu) / (1 + norm(x, Inf));
 costcond = abs(f - f0) / (1 + abs(f0));
@@ -347,13 +347,13 @@ while (~converged && i < opt.max_it)
     end
     zinvdiag = sparse(1:niq, 1:niq, 1 ./ z, niq, niq);
     mudiag = sparse(1:niq, 1:niq, mu, niq, niq);
-    dg_zinv = dg * zinvdiag;
-    M = Lxx + dg_zinv * mudiag * dg';
-    N = Lx + dg_zinv * (mudiag * g + gamma * e);
-    dxdlam = [M dh; dh' sparse(neq, neq)] \ [-N; -h];
+    dh_zinv = dh * zinvdiag;
+    M = Lxx + dh_zinv * mudiag * dh';
+    N = Lx + dh_zinv * (mudiag * h + gamma * e);
+    dxdlam = [M dg; dg' sparse(neq, neq)] \ [-N; -g];
 %     AAA = [
-%         M  dh;
-%         dh'  sparse(neq, neq)
+%         M  dg;
+%         dg'  sparse(neq, neq)
 %     ];
 %     rc = 1/condest(AAA);
 %     if rc < 1e-22
@@ -361,11 +361,11 @@ while (~converged && i < opt.max_it)
 %         n = size(AAA, 1);
 %         AAA = AAA + 1e-3 * speye(n,n);
 %     end
-%     bbb = [-N; -h];
+%     bbb = [-N; -g];
 %     dxdlam = AAA \ bbb;
     dx = dxdlam(1:nx);
     dlam = dxdlam(nx+(1:neq));
-    dz = -g - z - dg' * dx;
+    dz = -h - z - dh' * dx;
     dmu = -mu + zinvdiag *(gamma*e - mudiag * dz);
 
     %% optional step-size control
@@ -378,21 +378,21 @@ while (~converged && i < opt.max_it)
         f1 = f1 * opt.cost_mult;
         df1 = df1 * opt.cost_mult;
         if nonlinear
-            [gn1, hn1, dgn1, dhn1] = gh_fcn(x1); %% non-linear constraints
-            g1 = [gn1; Ai * x1 - bi];       %% inequality constraints
-            h1 = [hn1; Ae * x1 - be];       %% equality constraints
-            dg1 = [dgn1 Ai'];               %% 1st derivative of inequalities
-            dh1 = [dhn1 Ae'];               %% 1st derivative of equalities
+            [hn1, gn1, dhn1, dgn1] = gh_fcn(x1); %% non-linear constraints
+            h1 = [hn1; Ai * x1 - bi];       %% inequality constraints
+            g1 = [gn1; Ae * x1 - be];       %% equality constraints
+            dh1 = [dhn1 Ai'];               %% 1st derivative of inequalities
+            dg1 = [dgn1 Ae'];               %% 1st derivative of equalities
         else
-            g1 = Ai * x1 - bi;              %% inequality constraints
-            h1 = Ae * x1 - be;              %% equality constraints
-            dg1 = dg;                       %% 1st derivative of inequalities
-            dh1 = dh;                       %% 1st derivative of equalities
+            h1 = Ai * x1 - bi;              %% inequality constraints
+            g1 = Ae * x1 - be;              %% equality constraints
+            dh1 = dh;                       %% 1st derivative of inequalities
+            dg1 = dg;                       %% 1st derivative of equalities
         end
 
         %% check tolerance
-        Lx1 = df1 + dh1 * lam + dg1 * mu;
-        feascond1 = max([norm(h1, Inf), max(g1)]) / (1 + max([ norm(x1, Inf), norm(z, Inf) ]));
+        Lx1 = df1 + dg1 * lam + dh1 * mu;
+        feascond1 = max([norm(g1, Inf), max(h1)]) / (1 + max([ norm(x1, Inf), norm(z, Inf) ]));
         gradcond1 = norm(Lx1, Inf) / (1 + max([ norm(lam, Inf), norm(mu, Inf) ]));
 
         if feascond1 > feascond && gradcond1 > gradcond
@@ -407,14 +407,14 @@ while (~converged && i < opt.max_it)
             f1 = f_fcn(x1);             %% cost
             f1 = f1 * opt.cost_mult;
             if nonlinear
-                [gn1, hn1] = gh_fcn(x1);    %% non-linear constraints
-                g1 = [gn1; Ai * x1 - bi];   %% inequality constraints
-                h1 = [hn1; Ae * x1 - be];   %% equality constraints
+                [hn1, gn1] = gh_fcn(x1);    %% non-linear constraints
+                h1 = [hn1; Ai * x1 - bi];   %% inequality constraints
+                g1 = [gn1; Ae * x1 - be];   %% equality constraints
             else
-                g1 = Ai * x1 - bi;          %% inequality constraints
-                h1 = Ae * x1 - be;          %% equality constraints
+                h1 = Ai * x1 - bi;          %% inequality constraints
+                g1 = Ae * x1 - be;          %% equality constraints
             end
-            L1 = f1 + lam' * h1 + mu' * (g1+z) - gamma * sum(log(z));
+            L1 = f1 + lam' * g1 + mu' * (h1+z) - gamma * sum(log(z));
             if opt.verbose > 2
                 fprintf('\n   %3d            %10g', -j, norm(dx1));
             end
@@ -449,20 +449,20 @@ while (~converged && i < opt.max_it)
     f = f * opt.cost_mult;
     df = df * opt.cost_mult;
     if nonlinear
-        [gn, hn, dgn, dhn] = gh_fcn(x); %% non-linear constraints
-        g = [gn; Ai * x - bi];          %% inequality constraints
-        h = [hn; Ae * x - be];          %% equality constraints
-        dg = [dgn Ai'];                 %% 1st derivative of inequalities
-        dh = [dhn Ae'];                 %% 1st derivative of equalities
+        [hn, gn, dhn, dgn] = gh_fcn(x); %% non-linear constraints
+        h = [hn; Ai * x - bi];          %% inequality constraints
+        g = [gn; Ae * x - be];          %% equality constraints
+        dh = [dhn Ai'];                 %% 1st derivative of inequalities
+        dg = [dgn Ae'];                 %% 1st derivative of equalities
     else
-        g = Ai * x - bi;                %% inequality constraints
-        h = Ae * x - be;                %% equality constraints
-        %% 1st derivatives are constant, still dg = Ai', dh = Ae'
+        h = Ai * x - bi;                %% inequality constraints
+        g = Ae * x - be;                %% equality constraints
+        %% 1st derivatives are constant, still dh = Ai', dg = Ae'
     end
 
     %% check tolerance
-    Lx = df + dh * lam + dg * mu;
-    feascond = max([norm(h, Inf), max(g)]) / (1 + max([ norm(x, Inf), norm(z, Inf) ]));
+    Lx = df + dg * lam + dh * mu;
+    feascond = max([norm(g, Inf), max(h)]) / (1 + max([ norm(x, Inf), norm(z, Inf) ]));
     gradcond = norm(Lx, Inf) / (1 + max([ norm(lam, Inf), norm(mu, Inf) ]));
     compcond = (z' * mu) / (1 + norm(x, Inf));
     costcond = abs(f - f0) / (1 + abs(f0));
@@ -493,7 +493,7 @@ while (~converged && i < opt.max_it)
         end
         f0 = f;
         if opt.step_control
-            L = f + lam' * h + mu' * (g+z) - gamma * sum(log(z));
+            L = f + lam' * g + mu' * (h+z) - gamma * sum(log(z));
         end
     end
 end
@@ -521,7 +521,7 @@ else
 end
 
 %% zero out multipliers on non-binding constraints
-mu(g < -opt.feastol & mu < mu_threshold) = 0;
+mu(h < -opt.feastol & mu < mu_threshold) = 0;
 
 %% un-scale cost and prices
 f   = f   / opt.cost_mult;

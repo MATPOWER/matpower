@@ -1,8 +1,8 @@
-function [g, h, dg, dh] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt, il, varargin)
+function [h, g, dh, dg] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt, il, varargin)
 %OPF_CONSFCN  Evaluates nonlinear constraints and their Jacobian for OPF.
-%   [g, h] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt)
-%   [g, h, dg, dh] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt)
-%   [g, h, dg, dh] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt, il)
+%   [h, g] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt)
+%   [h, g, dh, dg] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt)
+%   [h, g, dh, dg] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt, il)
 %
 %   Constraint evaluation function for AC optimal power flow, suitable
 %   for use with fmincon. Computes constrain vectors and their
@@ -21,14 +21,14 @@ function [g, h, dg, dh] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt, il, varargin)
 %          Yf and Yt contain only the rows corresponding to il.
 %
 %   Outputs:
-%     g  : vector of inequality constraint values (flow limits)
+%     h  : vector of inequality constraint values (flow limits)
 %          limit^2 - flow^2, where the flow can be apparent power
 %          real power or current, depending on value of
 %          OPF_FLOW_LIM in mpopt (only for constrained lines)
-%     h  : vector of equality constraint values (power balances)
-%     dg : (optional) inequality constraint gradients, column j is
-%          gradient of g(j)
-%     dh : (optional) equality constraint gradients
+%     g  : vector of equality constraint values (power balances)
+%     dh : (optional) inequality constraint gradients, column j is
+%          gradient of h(j)
+%     dg : (optional) equality constraint gradients
 
 %   MATPOWER
 %   $Id$
@@ -85,7 +85,7 @@ mis = V .* conj(Ybus * V) - Sbus;
 
 %%----- evaluate constraint function values -----
 %% first, the equality constraints (power flow)
-h = [ real(mis);            %% active power mismatch for all buses
+g = [ real(mis);            %% active power mismatch for all buses
       imag(mis) ];          %% reactive power mismatch for all buses
 
 %% then, the inequality constraints (branch flow limits)
@@ -95,22 +95,22 @@ if nl2 > 0
   if mpopt(24) == 2       %% current magnitude limit, |I|
     If = Yf * V;
     It = Yt * V;
-    g = [ If .* conj(If) - flow_max;      %% branch current limits (from bus)
+    h = [ If .* conj(If) - flow_max;      %% branch current limits (from bus)
           It .* conj(It) - flow_max ];    %% branch current limits (to bus)
   else
     %% compute branch power flows
     Sf = V(branch(il, F_BUS)) .* conj(Yf * V);  %% complex power injected at "from" bus (p.u.)
     St = V(branch(il, T_BUS)) .* conj(Yt * V);  %% complex power injected at "to" bus (p.u.)
     if mpopt(24) == 1   %% active power limit, P (Pan Wei)
-      g = [ real(Sf).^2 - flow_max;         %% branch real power limits (from bus)
+      h = [ real(Sf).^2 - flow_max;         %% branch real power limits (from bus)
             real(St).^2 - flow_max ];       %% branch real power limits (to bus)
     else                %% apparent power limit, |S|
-      g = [ Sf .* conj(Sf) - flow_max;      %% branch apparent power limits (from bus)
+      h = [ Sf .* conj(Sf) - flow_max;      %% branch apparent power limits (from bus)
             St .* conj(St) - flow_max ];    %% branch apparent power limits (to bus)
     end
   end
 else
-  g = zeros(0,1);
+  h = zeros(0,1);
 end
 
 %%----- evaluate partials of constraints -----
@@ -127,8 +127,8 @@ if nargout > 2
                                                         %% Qbus w.r.t. Qg
   
   %% construct Jacobian of equality constraints (power flow) and transpose it
-  dh = sparse(nxyz, 2*nb);
-  dh([iVa iVm iPg iQg], :) = [
+  dg = sparse(nxyz, 2*nb);
+  dg([iVa iVm iPg iQg], :) = [
     real([dSbus_dVa dSbus_dVm]) neg_Cg sparse(nb, ng);  %% P mismatch w.r.t Va, Vm, Pg, Qg
     imag([dSbus_dVa dSbus_dVm]) sparse(nb, ng) neg_Cg;  %% Q mismatch w.r.t Va, Vm, Pg, Qg
    ]';
@@ -155,18 +155,18 @@ if nargout > 2
   
     %% construct Jacobian of inequality constraints (branch limits)
     %% and transpose it so fmincon likes it
-    dg = sparse(nxyz, 2*nl2);
-    dg([iVa iVm], :) = [
+    dh = sparse(nxyz, 2*nl2);
+    dh([iVa iVm], :) = [
       df_dVa, df_dVm;                     %% "from" flow limit
       dt_dVa, dt_dVm;                     %% "to" flow limit
     ]';
   else
-    dg = sparse(nxyz, 0);
+    dh = sparse(nxyz, 0);
   end
 
   %% use non-sparse matrices
   if mpopt(51) == 0     %% hijacked SPARSE_QP to indicate Matlab 6 => full matrices
-    dh = full(dh);
     dg = full(dg);
+    dh = full(dh);
   end
 end
