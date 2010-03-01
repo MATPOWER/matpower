@@ -114,10 +114,10 @@ function [f, df, d2f] = ff5(x)
     df = c;
     d2f = zeros(2,2);
 end
-function [g, h, dg, dh] = gh5(x)
-    g = [ -1 -1; 1 1] * x.^2 + [1; -2];
-    dg = 2 * [-x(1) x(1); -x(2) x(2)];
-    h = []; dh = [];
+function [h, g, dh, dg] = gh5(x)
+    h = [ -1 -1; 1 1] * x.^2 + [1; -2];
+    dh = 2 * [-x(1) x(1); -x(2) x(2)];
+    g = []; dg = [];
 end
 function Lxx = hess5(x, lam)
     mu = lam.ineqnonlin;
@@ -156,10 +156,10 @@ function [f, df, d2f] = ff6(x)
     df = -[x(2); x(1)+x(3); x(2)];
     d2f = -[0 1 0; 1 0 1; 0 1 0];
 end
-function [g, h, dg, dh] = gh6(x)
-    g = [ 1 -1 1; 1 1 1] * x.^2 + [-2; -10];
-    dg = 2 * [x(1) x(1); -x(2) x(2); x(3) x(3)];
-    h = []; dh = [];
+function [h, g, dh, dg] = gh6(x)
+    h = [ 1 -1 1; 1 1 1] * x.^2 + [-2; -10];
+    dh = 2 * [x(1) x(1); -x(2) x(2); x(3) x(3)];
+    g = []; dg = [];
 end
 function Lxx = hess6(x, lam)
     mu = lam.ineqnonlin;
