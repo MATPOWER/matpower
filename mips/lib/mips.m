@@ -36,8 +36,8 @@ function [x, f, eflag, output, lambda] = mips(f_fcn, x0, A, l, u, xmin, xmax, gh
 %
 %   Inputs:
 %       f : handle to function that evaluates the objective function,
-%           it's gradients and Hessian for a given value of x. If there
-%           are non-linear constraints the Hessian information is
+%           its gradients and Hessian for a given value of x. If there
+%           are non-linear constraints, the Hessian information is
 %           provided by the 'hess' function passed in the 9th argument
 %           and is not required here. Calling syntax for this function:
 %               [f, df, d2f] = f(x)
@@ -90,7 +90,7 @@ function [x, f, eflag, output, lambda] = mips(f_fcn, x0, A, l, u, xmin, xmax, gh
 %           1 = first order optimality conditions satisfied
 %           0 = maximum number of iterations reached
 %           -1 = numerically failed
-%       output : structure with fields:
+%       output : struct with fields:
 %           iterations - number of iterations performed
 %           hist - struct array with trajectories of the following:
 %                   feascond, gradcond, compcond, costcond, gamma,
@@ -100,8 +100,8 @@ function [x, f, eflag, output, lambda] = mips(f_fcn, x0, A, l, u, xmin, xmax, gh
 %           multipliers on the constraints, with fields:
 %           eqnonlin - non-linear equality constraints
 %           ineqnonlin - non-linear inequality constraints
-%           mu_l - lower bound on linear constraints
-%           mu_u - upper bound on linear constraints
+%           mu_l - lower (left-hand) limit on linear constraints
+%           mu_u - upper (right-hand) limit on linear constraints
 %           lower - lower bound on optimization variables
 %           upper - upper bound on optimization variables
 %
@@ -128,6 +128,8 @@ function [x, f, eflag, output, lambda] = mips(f_fcn, x0, A, l, u, xmin, xmax, gh
 %   by Ray Zimmerman, PSERC Cornell
 %   Copyright (c) 2009-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
+
+mips_version = '1.0';
 
 %%----- input argument handling  -----
 %% gather inputs
@@ -315,11 +317,15 @@ costcond = abs(f - f0) / (1 + abs(f0));
 hist(i+1) = struct('feascond', feascond, 'gradcond', gradcond, ...
     'compcond', compcond, 'costcond', costcond, 'gamma', gamma, ...
     'stepsize', 0, 'obj', f/opt.cost_mult, 'alphap', 0, 'alphad', 0);
-if opt.verbose > 1
-    fprintf('\n it    objective   step size   feascond     gradcond     compcond     costcond  ');
-    fprintf('\n----  ------------ --------- ------------ ------------ ------------ ------------');
-    fprintf('\n%3d  %12.8g %10s %12g %12g %12g %12g', ...
-        i, f/opt.cost_mult, '', feascond, gradcond, compcond, costcond);
+if opt.verbose
+    if opt.step_control, s = ' (step-controlled)'; else, s = ''; end
+    fprintf('\nMIPS Version %s --  Matlab Interior Point Solver%s', mips_version, s);
+    if opt.verbose > 1
+        fprintf('\n it    objective   step size   feascond     gradcond     compcond     costcond  ');
+        fprintf('\n----  ------------ --------- ------------ ------------ ------------ ------------');
+        fprintf('\n%3d  %12.8g %10s %12g %12g %12g %12g', ...
+            i, f/opt.cost_mult, '', feascond, gradcond, compcond, costcond);
+    end
 end
 if feascond < opt.feastol && gradcond < opt.gradtol && ...
                 compcond < opt.comptol && costcond < opt.costtol
