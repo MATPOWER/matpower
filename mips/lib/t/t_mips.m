@@ -15,8 +15,8 @@ t_begin(51, quiet);
 
 t = 'unconstrained banana function : ';
 %% from Matlab Optimization Toolbox's bandem.m
-ff = @(x)ff2(x);
-function [f, df, d2f] = ff2(x)
+f_fcn = @(x)f2(x);
+function [f, df, d2f] = f2(x)
     a = 100;
     f = a*(x(2)-x(1)^2)^2+(1-x(1))^2;
     df = [  4*a*(x(1)^3 - x(1)*x(2)) + 2*x(1)-2;
@@ -25,8 +25,8 @@ function [f, df, d2f] = ff2(x)
                 -x(1)                       1/2       ];
 end
 x0 = [-1.9; 2];
-[x, f, s, out, lam] = mips(ff, x0);
-% [x, f, s, out, lam] = mips(ff, x0, [], [], [], [], [], [], [], struct('verbose', 2));
+[x, f, s, out, lam] = mips(f_fcn, x0);
+% [x, f, s, out, lam] = mips(f_fcn, x0, [], [], [], [], [], [], [], struct('verbose', 2));
 t_ok(s, [t 'success']);
 t_is(x, [1; 1], 13, [t 'x']);
 t_is(f, 0, 13, [t 'f']);
@@ -38,8 +38,8 @@ t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 
 t = 'unconstrained 3-d quadratic : ';
 %% from http://www.akiti.ca/QuadProgEx0Constr.html
-ff = @(x)ff3(x);
-function [f, df, d2f] = ff3(x)
+f_fcn = @(x)f3(x);
+function [f, df, d2f] = f3(x)
     H = [5 -2 -1; -2 4 3; -1 3 5];
     c = [2; -35; -47];
     f = 1/2 * x'*H*x + c'*x + 5;
@@ -47,8 +47,8 @@ function [f, df, d2f] = ff3(x)
     d2f = H;
 end
 x0 = [0; 0; 0];
-% [x, f, s, out, lam] = mips(ff, x0, [], [], [], [], [], [], [], struct('verbose', 2));
-[x, f, s, out, lam] = mips(ff, x0);
+% [x, f, s, out, lam] = mips(f_fcn, x0, [], [], [], [], [], [], [], struct('verbose', 2));
+[x, f, s, out, lam] = mips(f_fcn, x0);
 t_ok(s, [t 'success']);
 t_is(x, [3; 5; 7], 13, [t 'x']);
 t_is(f, -244, 13, [t 'f']);
@@ -60,8 +60,8 @@ t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 
 t = 'constrained 4-d QP : ';
 %% from http://www.uc.edu/sashtml/iml/chap8/sect12.htm
-ff = @(x)ff4(x);
-function [f, df, d2f] = ff4(x)
+f_fcn = @(x)f4(x);
+function [f, df, d2f] = f4(x)
     H = [   1003.1  4.3     6.3     5.9;
             4.3     2.2     2.1     3.9;
             6.3     2.1     3.5     4.8;
@@ -77,8 +77,8 @@ A = [   1       1       1       1;
 l = [1; 0.10];
 u = [1; Inf];
 xmin = zeros(4,1);
-% [x, f, s, out, lam] = mips(ff, x0, A, l, u, xmin, [], [], [], struct('verbose', 2));
-[x, f, s, out, lam] = mips(ff, x0, A, l, u, xmin);
+% [x, f, s, out, lam] = mips(f_fcn, x0, A, l, u, xmin, [], [], [], struct('verbose', 2));
+[x, f, s, out, lam] = mips(f_fcn, x0, A, l, u, xmin);
 t_ok(s, [t 'success']);
 t_is(x, [0; 2.8; 0.2; 0]/3, 6, [t 'x']);
 t_is(f, 3.29/3, 6, [t 'f']);
@@ -105,10 +105,10 @@ c = zeros(4,1);
 
 t = 'constrained 2-d non-linear : ';
 %% from http://en.wikipedia.org/wiki/Nonlinear_programming#2-dimensional_example
-ff = @(x)ff5(x);
-gh = @(x)gh5(x);
-hess = @(x, lam)hess5(x, lam);
-function [f, df, d2f] = ff5(x)
+f_fcn = @(x)f5(x);
+gh_fcn = @(x)gh5(x);
+hess_fcn = @(x, lam)hess5(x, lam);
+function [f, df, d2f] = f5(x)
     c = -[1; 1];
     f = c'*x;
     df = c;
@@ -126,8 +126,8 @@ end
 x0 = [1.1; 0];
 xmin = -10 * ones(2, 1);
 % xmax = 3 * ones(2, 1);
-% [x, f, s, out, lam] = mips(ff, x0, [], [], [], xmin, [], gh, hess, struct('verbose', 2));
-[x, f, s, out, lam] = mips(ff, x0, [], [], [], xmin, [], gh, hess);
+% [x, f, s, out, lam] = mips(f_fcn, x0, [], [], [], xmin, [], gh_fcn, hess_fcn, struct('verbose', 2));
+[x, f, s, out, lam] = mips(f_fcn, x0, [], [], [], xmin, [], gh_fcn, hess_fcn);
 t_ok(s, [t 'success']);
 t_is(x, [1; 1], 6, [t 'x']);
 t_is(f, -2, 6, [t 'f']);
@@ -139,8 +139,8 @@ t_is(lam.lower, zeros(size(x)), 13, [t 'lam.lower']);
 t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 % %% check with fmincon (for dev testing only)
 % % fmoptions = optimset('Algorithm', 'interior-point');
-% % [x, f, s, out, lam] = fmincon(ff, x0, [], [], [], [], xmin, [], gh, fmoptions);
-% [x, f, s, out, lam] = fmincon(ff, x0, [], [], [], [], [], [], gh);
+% % [x, f, s, out, lam] = fmincon(f_fcn, x0, [], [], [], [], xmin, [], gh_fcn, fmoptions);
+% [x, f, s, out, lam] = fmincon(f_fcn, x0, [], [], [], [], [], [], gh_fcn);
 % t_ok(s, [t 'success']);
 % t_is(x, [1; 1], 4, [t 'x']);
 % t_is(f, -2, 6, [t 'f']);
@@ -148,10 +148,10 @@ t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 
 t = 'constrained 3-d non-linear : ';
 %% from http://en.wikipedia.org/wiki/Nonlinear_programming#3-dimensional_example
-ff = @(x)ff6(x);
-gh = @(x)gh6(x);
-hess = @(x, lam)hess6(x, lam);
-function [f, df, d2f] = ff6(x)
+f_fcn = @(x)f6(x);
+gh_fcn = @(x)gh6(x);
+hess_fcn = @(x, lam)hess6(x, lam);
+function [f, df, d2f] = f6(x)
     f = -x(1)*x(2) - x(2)*x(3);
     df = -[x(2); x(1)+x(3); x(2)];
     d2f = -[0 1 0; 1 0 1; 0 1 0];
@@ -166,8 +166,8 @@ function Lxx = hess6(x, lam)
     Lxx = [2*[1 1]*mu -1 0; 0 2*[-1 1]*mu -1; 0 -1 2*[1 1]*mu];
 end
 x0 = [1; 1; 0];
-% [x, f, s, out, lam] = mips(ff, x0, [], [], [], [], [], gh, hess, struct('verbose', 2, 'comptol', 1e-9));
-[x, f, s, out, lam] = mips(ff, x0, [], [], [], [], [], gh, hess);
+% [x, f, s, out, lam] = mips(f_fcn, x0, [], [], [], [], [], gh_fcn, hess_fcn, struct('verbose', 2, 'comptol', 1e-9));
+[x, f, s, out, lam] = mips(f_fcn, x0, [], [], [], [], [], gh_fcn, hess_fcn);
 t_ok(s, [t 'success']);
 t_is(x, [1.58113883; 2.23606798; 1.58113883], 6, [t 'x']);
 t_is(f, -5*sqrt(2), 6, [t 'f']);
@@ -179,15 +179,15 @@ t_is(lam.lower, zeros(size(x)), 13, [t 'lam.lower']);
 t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 % %% check with fmincon (for dev testing only)
 % % fmoptions = optimset('Algorithm', 'interior-point');
-% % [x, f, s, out, lam] = fmincon(ff, x0, [], [], [], [], xmin, [], gh, fmoptions);
-% [x, f, s, out, lam] = fmincon(ff, x0, [], [], [], [], [], [], gh);
+% % [x, f, s, out, lam] = fmincon(f_fcn, x0, [], [], [], [], xmin, [], gh_fcn, fmoptions);
+% [x, f, s, out, lam] = fmincon(f_fcn, x0, [], [], [], [], [], [], gh_fcn);
 % t_ok(s, [t 'success']);
 % t_is(x, [1.58113883; 2.23606798; 1.58113883], 4, [t 'x']);
 % t_is(f, -5*sqrt(2), 8, [t 'f']);
 % t_is(lam.ineqnonlin, [0;sqrt(2)/2], 8, [t 'lam.ineqnonlin']);
 
 t = 'constrained 3-d non-linear (struct) : ';
-p = struct('f', ff, 'x0', x0, 'gh', gh, 'hess', hess);
+p = struct('f_fcn', f_fcn, 'x0', x0, 'gh_fcn', gh_fcn, 'hess_fcn', hess_fcn);
 [x, f, s, out, lam] = mips(p);
 t_ok(s, [t 'success']);
 t_is(x, [1.58113883; 2.23606798; 1.58113883], 6, [t 'x']);
@@ -219,7 +219,7 @@ t_end;
 % u = 72;
 % fmoptions = optimset('Display', 'testing');
 % fmoptions = optimset(fmoptions, 'Algorithm', 'interior-point');
-% [x, f, s, out, lam] = fmincon(ff, x0, [-A; A], [-l; u], [], [], [], [], [], fmoptions);
+% [x, f, s, out, lam] = fmincon(f_fcn, x0, [-A; A], [-l; u], [], [], [], [], [], fmoptions);
 % t_is(x, [24; 12; 12], 13, t);
 % t_is(f, -3456, 13, t);
 

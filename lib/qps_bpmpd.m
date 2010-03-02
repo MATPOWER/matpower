@@ -12,7 +12,7 @@ function [x, f, eflag, output, lambda] = qps_bpmpd(H, c, A, l, u, xmin, xmax, x0
 %       l <= A*x <= u       (linear constraints)
 %       xmin <= x <= xmax   (variable bounds)
 %
-%   [x, fval, exitflag, output, lambda] = ...
+%   [x, f, exitflag, output, lambda] = ...
 %       qps_bpmpd(H, c, A, l, u, xmin, xmax, x0, opt)
 %
 %   x = qps_bpmpd(H, c, A, l, u)
@@ -21,12 +21,12 @@ function [x, f, eflag, output, lambda] = qps_bpmpd(H, c, A, l, u, xmin, xmax, x0
 %   x = qps_bpmpd(H, c, A, l, u, xmin, xmax, x0, opt)
 %   x = qps_bpmpd(problem), where problem is a struct with fields:
 %                       H, c, A, l, u, xmin, xmax, x0, opt
-%                       all fields except 'f' and 'x0' are optional
+%                       all fields except 'H', 'c', 'A' and 'l' are optional
 %   x = qps_bpmpd(...)
-%   [x, fval] = qps_bpmpd(...)
-%   [x, fval, exitflag] = qps_bpmpd(...)
-%   [x, fval, exitflag, output] = qps_bpmpd(...)
-%   [x, fval, exitflag, output, lambda] = qps_bpmpd(...)
+%   [x, f] = qps_bpmpd(...)
+%   [x, f, exitflag] = qps_bpmpd(...)
+%   [x, f, exitflag, output] = qps_bpmpd(...)
+%   [x, f, exitflag, output, lambda] = qps_bpmpd(...)
 %
 %   Inputs:
 %       H : matrix (possibly sparse) of quadratic cost coefficients
@@ -54,7 +54,7 @@ function [x, f, eflag, output, lambda] = qps_bpmpd(H, c, A, l, u, xmin, xmax, x0
 %
 %   Outputs:
 %       x : solution vector
-%       fval : final objective function value
+%       f : final objective function value
 %       exitflag : exit flag,
 %             1 = optimal solution
 %            -1 = suboptimal solution

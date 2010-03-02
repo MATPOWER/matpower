@@ -12,7 +12,7 @@ function [x, f, eflag, output, lambda] = qps_ot(H, c, A, l, u, xmin, xmax, x0, o
 %       l <= A*x <= u       (linear constraints)
 %       xmin <= x <= xmax   (variable bounds)
 %
-%   [x, fval, exitflag, output, lambda] = ...
+%   [x, f, exitflag, output, lambda] = ...
 %       qps_ot(H, c, A, l, u, xmin, xmax, x0, opt)
 %
 %   x = qps_ot(H, c, A, l, u)
@@ -21,12 +21,12 @@ function [x, f, eflag, output, lambda] = qps_ot(H, c, A, l, u, xmin, xmax, x0, o
 %   x = qps_ot(H, c, A, l, u, xmin, xmax, x0, opt)
 %   x = qps_ot(problem), where problem is a struct with fields:
 %                       H, c, A, l, u, xmin, xmax, x0, opt
-%                       all fields except 'f' and 'x0' are optional
+%                       all fields except 'H', 'c', 'A' and 'l' are optional
 %   x = qps_ot(...)
-%   [x, fval] = qps_ot(...)
-%   [x, fval, exitflag] = qps_ot(...)
-%   [x, fval, exitflag, output] = qps_ot(...)
-%   [x, fval, exitflag, output, lambda] = qps_ot(...)
+%   [x, f] = qps_ot(...)
+%   [x, f, exitflag] = qps_ot(...)
+%   [x, f, exitflag, output] = qps_ot(...)
+%   [x, f, exitflag, output, lambda] = qps_ot(...)
 %
 %   Inputs:
 %       H : matrix (possibly sparse) of quadratic cost coefficients
@@ -54,7 +54,7 @@ function [x, f, eflag, output, lambda] = qps_ot(H, c, A, l, u, xmin, xmax, x0, o
 %
 %   Outputs:
 %       x : solution vector
-%       fval : final objective function value
+%       f : final objective function value
 %       exitflag : quadprog()/linprog() exit flag
 %           (see quadprog and linprog documentation for details)
 %       output : quadprog()/linprog() output structure

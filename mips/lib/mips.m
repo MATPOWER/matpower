@@ -14,49 +14,49 @@ function [x, f, eflag, output, lambda] = mips(f_fcn, x0, A, l, u, xmin, xmax, gh
 %       l <= A*x <= u       (linear constraints)
 %       xmin <= x <= xmax   (variable bounds)
 %
-%   [x, fval, exitflag, output, lambda] = ...
-%       mips(f, x0, A, l, u, xmin, xmax, gh, hess, opt)
+%   [x, f, exitflag, output, lambda] = ...
+%       mips(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt)
 %
-%   x = mips(f, x0)
-%   x = mips(f, x0, A, l)
-%   x = mips(f, x0, A, l, u)
-%   x = mips(f, x0, A, l, u, xmin)
-%   x = mips(f, x0, A, l, u, xmin, xmax)
-%   x = mips(f, x0, A, l, u, xmin, xmax, gh)
-%   x = mips(f, x0, A, l, u, xmin, xmax, gh, hess)
-%   x = mips(f, x0, A, l, u, xmin, xmax, gh, hess, opt)
+%   x = mips(f_fcn, x0)
+%   x = mips(f_fcn, x0, A, l)
+%   x = mips(f_fcn, x0, A, l, u)
+%   x = mips(f_fcn, x0, A, l, u, xmin)
+%   x = mips(f_fcn, x0, A, l, u, xmin, xmax)
+%   x = mips(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn)
+%   x = mips(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn)
+%   x = mips(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt)
 %   x = mips(problem), where problem is a struct with fields:
-%                       f, x0, A, l, u, xmin, xmax, gh, hess, opt
-%                       all fields except 'f' and 'x0' are optional
+%                   f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt
+%                   all fields except 'f_fcn' and 'x0' are optional
 %   x = mips(...)
-%   [x, fval] = mips(...)
-%   [x, fval, exitflag] = mips(...)
-%   [x, fval, exitflag, output] = mips(...)
-%   [x, fval, exitflag, output, lambda] = mips(...)
+%   [x, f] = mips(...)
+%   [x, f, exitflag] = mips(...)
+%   [x, f, exitflag, output] = mips(...)
+%   [x, f, exitflag, output, lambda] = mips(...)
 %
 %   Inputs:
-%       f : handle to function that evaluates the objective function,
+%       f_fcn : handle to function that evaluates the objective function,
 %           its gradients and Hessian for a given value of x. If there
 %           are non-linear constraints, the Hessian information is
-%           provided by the 'hess' function passed in the 9th argument
+%           provided by the 'hess_fcn' function passed in the 9th argument
 %           and is not required here. Calling syntax for this function:
-%               [f, df, d2f] = f(x)
+%               [f, df, d2f] = f_fcn(x)
 %       x0 : starting value of optimization vector x
 %       A, l, u : define the optional linear constraints. Default
 %           values for the elements of l and u are -Inf and Inf,
 %           respectively.
 %       xmin, xmax : optional lower and upper bounds on the
 %           x variables, defaults are -Inf and Inf, respectively.
-%       gh : handle to function that evaluates the optional
+%       gh_fcn : handle to function that evaluates the optional
 %           non-linear constraints and their gradients for a given
 %           value of x. Calling syntax for this function is:
-%               [h, g, dh, dg] = gh(x)
-%       hess : handle to function that computes the Hessian of the
+%               [h, g, dh, dg] = gh_fcn(x)
+%       hess_fcn : handle to function that computes the Hessian of the
 %           Lagrangian for given values of x, lambda and mu, where
 %           lambda and mu are the multipliers on the equality and
 %           inequality constraints, g and h, respectively. The calling
 %           syntax for this function is:
-%               Lxx = hess(x, lam)
+%               Lxx = hess_fcn(x, lam)
 %           where lambda = lam.eqnonlin and mu = lam.ineqnonlin.
 %       opt : optional options structure with the following fields,
 %           all of which are also optional (default values shown in
@@ -81,11 +81,12 @@ function [x, f, eflag, output, lambda] = mips(f_fcn, x0, A, l, u, xmin, xmax, gh
 %               Lagrangian.
 %       problem : The inputs can alternatively be supplied in a single
 %           struct with fields corresponding to the input arguments
-%           described above: f, x0, A, l, u, xmin, xmax, gh, hess, opt
+%           described above: f_fcn, x0, A, l, u, xmin, xmax,
+%                            gh_fcn, hess_fcn, opt
 %
 %   Outputs:
 %       x : solution vector
-%       fval : final objective function value
+%       f : final objective function value
 %       exitflag : exit flag,
 %           1 = first order optimality conditions satisfied
 %           0 = maximum number of iterations reached
@@ -135,17 +136,17 @@ mips_version = '1.0';
 %% gather inputs
 if nargin == 1 && isstruct(f_fcn)       %% problem struct
     p = f_fcn;
-    f_fcn = p.f;
+    f_fcn = p.f_fcn;
     x0 = p.x0;
     nx = size(x0, 1);       %% number of optimization variables
-    if isfield(p, 'opt'),   opt = p.opt;        else,   opt = [];       end
-    if isfield(p, 'hess'),  hess_fcn = p.hess;  else,   hess_fcn = '';  end
-    if isfield(p, 'gh'),    gh_fcn = p.gh;      else,   gh_fcn = '';    end
-    if isfield(p, 'xmax'),  xmax = p.xmax;      else,   xmax = [];      end
-    if isfield(p, 'xmin'),  xmin = p.xmin;      else,   xmin = [];      end
-    if isfield(p, 'u'),     u = p.u;            else,   u = [];         end
-    if isfield(p, 'l'),     l = p.l;            else,   l = [];         end
-    if isfield(p, 'A'),     A = p.A;            else,   A=sparse(0,nx); end
+    if isfield(p, 'opt'),       opt = p.opt;            else,   opt = [];       end
+    if isfield(p, 'hess_fcn'),  hess_fcn = p.hess_fcn;  else,   hess_fcn = '';  end
+    if isfield(p, 'gh_fcn'),    gh_fcn = p.gh_fcn;      else,   gh_fcn = '';    end
+    if isfield(p, 'xmax'),      xmax = p.xmax;          else,   xmax = [];      end
+    if isfield(p, 'xmin'),      xmin = p.xmin;          else,   xmin = [];      end
+    if isfield(p, 'u'),         u = p.u;                else,   u = [];         end
+    if isfield(p, 'l'),         l = p.l;                else,   l = [];         end
+    if isfield(p, 'A'),         A = p.A;                else,   A=sparse(0,nx); end
 else                                    %% individual args
     nx = size(x0, 1);       %% number of optimization variables
     if nargin < 10
@@ -410,7 +411,7 @@ while (~converged && i < opt.max_it)
         for j = 1:opt.max_red
             dx1 = alpha * dx;
             x1 = x + dx1;
-            f1 = f_fcn(x1);             %% cost
+            f1 = f_fcn(x1);                 %% cost
             f1 = f1 * opt.cost_mult;
             if nonlinear
                 [hn1, gn1] = gh_fcn(x1);    %% non-linear constraints
@@ -451,7 +452,7 @@ while (~converged && i < opt.max_it)
     end
 
     %% evaluate cost, constraints, derivatives
-    [f, df] = f_fcn(x);             %% cost
+    [f, df] = f_fcn(x);                 %% cost
     f = f * opt.cost_mult;
     df = df * opt.cost_mult;
     if nonlinear
