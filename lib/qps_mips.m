@@ -11,7 +11,7 @@ function [x, f, eflag, output, lambda] = qps_mips(H, c, A, l, u, xmin, xmax, x0,
 %       l <= A*x <= u       (linear constraints)
 %       xmin <= x <= xmax   (variable bounds)
 %
-%   [x, fval, exitflag, output, lambda] = ...
+%   [x, f, exitflag, output, lambda] = ...
 %       qps_mips(H, c, A, l, u, xmin, xmax, x0, opt)
 %
 %   x = qps_mips(H, c, A, l, u)
@@ -20,12 +20,12 @@ function [x, f, eflag, output, lambda] = qps_mips(H, c, A, l, u, xmin, xmax, x0,
 %   x = qps_mips(H, c, A, l, u, xmin, xmax, x0, opt)
 %   x = qps_mips(problem), where problem is a struct with fields:
 %                       H, c, A, l, u, xmin, xmax, x0, opt
-%                       all fields except 'f' and 'x0' are optional
+%                       all fields except 'H', 'c', 'A' and 'l' are optional
 %   x = qps_mips(...)
-%   [x, fval] = qps_mips(...)
-%   [x, fval, exitflag] = qps_mips(...)
-%   [x, fval, exitflag, output] = qps_mips(...)
-%   [x, fval, exitflag, output, lambda] = qps_mips(...)
+%   [x, f] = qps_mips(...)
+%   [x, f, exitflag] = qps_mips(...)
+%   [x, f, exitflag, output] = qps_mips(...)
+%   [x, f, exitflag, output, lambda] = qps_mips(...)
 %
 %   Inputs:
 %       H : matrix (possibly sparse) of quadratic cost coefficients
@@ -66,7 +66,7 @@ function [x, f, eflag, output, lambda] = qps_mips(H, c, A, l, u, xmin, xmax, x0,
 %
 %   Outputs:
 %       x : solution vector
-%       fval : final objective function value
+%       f : final objective function value
 %       exitflag : exit flag,
 %           1 = first order optimality conditions satisfied
 %           0 = maximum number of iterations reached
@@ -144,7 +144,7 @@ if ~isfield(p, 'x0') || isempty(p.x0)
 end
 
 %%-----  run optimization  -----
-p.f = @(x)qp_f(x, p.H, p.c);
+p.f_fcn = @(x)qp_f(x, p.H, p.c);
 [x, f, eflag, output, lambda] = mips(p);
 
 %%-----  objective function  -----
