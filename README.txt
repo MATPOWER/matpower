@@ -228,10 +228,11 @@ making it available on the MATPOWER web site.
 Joining the list
 ----------------
 To join the MATPOWER mailing list, send an e-mail to
-<lyris@cornell.edu> with the following line in the body of the
-message, where "John Doe" is replaced by your real name.
-
-    join MATPOWER-L "John Doe"
+<MATPOWER-L-request@cornell.edu> with a single line with the word "join"
+in the body of the message. You must send the request from the e-mail
+address where you want to receive the list's messages. And be sure it is
+a plain text e-mail, that is, with no formatting, font styles or HTML
+code.
 
 Sending mail to the list
 ------------------------
@@ -242,7 +243,5 @@ subscribers are permitted to send e-mail to the list.
 Leaving the list
 ----------------
 You can unsubscribe from the list at any time by sending an e-mail to
-<lyris@cornell.edu> with the following line in the body of the
-message.
-
-    leave MATPOWER-L
+<MATPOWER-L-request@cornell.edu> with a single line with the word
+"leave" in the body of the message
