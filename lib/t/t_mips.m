@@ -163,7 +163,7 @@ function [h, g, dh, dg] = gh6(x)
 end
 function Lxx = hess6(x, lam)
     mu = lam.ineqnonlin;
-    Lxx = [2*[1 1]*mu -1 0; 0 2*[-1 1]*mu -1; 0 -1 2*[1 1]*mu];
+    Lxx = [2*[1 1]*mu -1 0; -1 2*[-1 1]*mu -1; 0 -1 2*[1 1]*mu];
 end
 x0 = [1; 1; 0];
 % [x, f, s, out, lam] = mips(f_fcn, x0, [], [], [], [], [], gh_fcn, hess_fcn, struct('verbose', 2, 'comptol', 1e-9));
