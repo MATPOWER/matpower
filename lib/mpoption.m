@@ -26,7 +26,7 @@ function [options, names] = mpoption(varargin)
 %           [   1 - Newton's method                                         ]
 %           [   2 - Fast-Decoupled (XB version)                             ]
 %           [   3 - Fast-Decoupled (BX version)                             ]
-%           [   4 - Gauss Seidel                                            ]
+%           [   4 - Gauss-Seidel                                            ]
 %       2  - PF_TOL, 1e-8           termination tolerance on per unit
 %                                   P & Q mismatch
 %       3  - PF_MAX_IT, 10          maximum number of iterations for
