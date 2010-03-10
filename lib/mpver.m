@@ -1,9 +1,12 @@
-function mpv = mpver
-%MPVER  Prints or returns MATPOWER version information.
-%   V = MPVER returns the current MATPOWER version number. Calling MPVER
-%   without assigning the return value prints the version and release date of
-%   the current installation of MATPOWER, MATLAB, the Optimization Toolbox,
-%   MIPS and any optional MATPOWER packages such as BPMPD_MEX and MINOPF.
+function rv = mpver(varargin)
+%MPVER  Prints or returns MATPOWER version info for current installation.
+%   V = MPVER returns the current MATPOWER version number.
+%   V = MPVER('all') returns a struct with the fields Name, Version,
+%   Release and Date (all strings). Calling MPVER without assigning the
+%   return value prints the version and release date of the current
+%   installation of MATPOWER, MATLAB, the Optimization Toolbox, MIPS
+%   and any optional MATPOWER packages such as BPMPD_MEX, MINOPF,
+%   PDIPMOPF, SCPDIPMOPF and TRAMLOPF.
 
 %   MATPOWER
 %   $Id$
@@ -25,11 +28,15 @@ v{1} = struct(  'Name',     'MATPOWER', ...
                 'Version',  '4.0-dev', ...
                 'Release',  '', ...
                 'Date',     '03-Mar-2010' );
-v{2} = ver('matlab');
-v{3} = ver('optim');
 if nargout > 0
-    mpv = v{1}.Version;
+    if nargin > 0
+        rv = v{1};
+    else
+        rv = v{1}.Version;
+    end
 else
+    v{2} = ver('matlab');
+    v{3} = ver('optim');
     for n = 1:3
         if n == 3 && isempty(v{3})
             fprintf('\n%-22s -- not installed --', 'Optimization Toolbox');
@@ -41,7 +48,7 @@ else
         end
     end
     fprintf('\n');
-
+    mipsver;
     if have_fcn('bpmpd')
         if exist('bpver', 'file') == 2
             bpver;
