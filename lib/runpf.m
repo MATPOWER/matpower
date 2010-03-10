@@ -117,7 +117,14 @@ gbus = gen(on, GEN_BUS);                %% what buses are they at?
 
 %%-----  run the power flow  -----
 t0 = clock;
+if verbose > 0
+    v = mpver('all');
+    fprintf('\nMATPOWER Version %s, %s', v.Version, v.Date);
+end
 if dc                               %% DC formulation
+    if verbose > 0
+      fprintf(' -- DC Power Flow\n');
+    end
     %% initial state
     Va0 = bus(:, VA) * (pi/180);
     
@@ -145,6 +152,9 @@ if dc                               %% DC formulation
     
     success = 1;
 else                                %% AC formulation
+    if verbose > 0
+      fprintf(' -- AC Power Flow ');    %% solver name and \n added later
+    end
     %% initial state
     % V0    = ones(size(bus, 1), 1);            %% flat start
     V0  = bus(:, VM) .* exp(sqrt(-1) * pi/180 * bus(:, VA));

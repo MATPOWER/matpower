@@ -54,6 +54,9 @@ F = [   real(mis([pv; pq]));
 
 %% check tolerance
 normF = norm(F, inf);
+if verbose > 0
+    fprintf('(Newton)\n');
+end
 if verbose > 1
     fprintf('\n it    max P & Q mismatch (p.u.)');
     fprintf('\n----  ---------------------------');

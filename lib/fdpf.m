@@ -52,6 +52,11 @@ Q = imag(mis(pq));
 %% check tolerance
 normP = norm(P, inf);
 normQ = norm(Q, inf);
+if verbose > 0
+    alg = mpopt(1);
+    if mpopt(1) == 2, s = 'XB'; else, s = 'BX'; end
+    fprintf('(fast-decoupled, %s)\n', s);
+end
 if verbose > 1
     fprintf('\niteration     max mismatch (p.u.)  ');
     fprintf('\ntype   #        P            Q     ');

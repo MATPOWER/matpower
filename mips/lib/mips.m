@@ -162,8 +162,6 @@ function [x, f, eflag, output, lambda] = mips(f_fcn, x0, A, l, u, xmin, xmax, gh
 %   Copyright (c) 2009-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-mips_version = '1.0';
-
 %%----- input argument handling  -----
 %% gather inputs
 if nargin == 1 && isstruct(f_fcn)       %% problem struct
@@ -351,8 +349,10 @@ hist(i+1) = struct('feascond', feascond, 'gradcond', gradcond, ...
     'compcond', compcond, 'costcond', costcond, 'gamma', gamma, ...
     'stepsize', 0, 'obj', f/opt.cost_mult, 'alphap', 0, 'alphad', 0);
 if opt.verbose
-    if opt.step_control, s = ' (step-controlled)'; else, s = ''; end
-    fprintf('\nMIPS Version %s --  Matlab Interior Point Solver%s', mips_version, s);
+    if opt.step_control, s = '-sc'; else, s = ''; end
+    v = mipsver('all');
+    fprintf('MIPS%s --  Matlab Interior Point Solver, Version %s, %s', ...
+    	s, v.Version, v.Date);
     if opt.verbose > 1
         fprintf('\n it    objective   step size   feascond     gradcond     compcond     costcond  ');
         fprintf('\n----  ------------ --------- ------------ ------------ ------------ ------------');

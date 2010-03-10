@@ -445,10 +445,20 @@ else
 end
 
 %% call the specific solver
+if verbose > 0
+    v = mpver('all');
+    fprintf('\nMATPOWER Version %s, %s', v.Version, v.Date);
+end
 if dc
+  if verbose > 0
+    fprintf(' -- DC Optimal Power Flow\n');
+  end
   [results, success, raw] = dcopf_solver(om, mpopt, output);
 else
   %%-----  call specific AC OPF solver  -----
+  if verbose > 0
+    fprintf(' -- AC Optimal Power Flow\n');
+  end
   if alg == 500                                 %% MINOPF
     if ~have_fcn('minopf')
       error('opf: OPF_ALG %d requires MINOPF (see http://www.pserc.cornell.edu/minopf/)', alg);
