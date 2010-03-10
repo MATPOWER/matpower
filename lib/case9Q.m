@@ -1,6 +1,6 @@
 function mpc = case9Q
 %CASE9Q    Case 9 with costs for reactive generation.
-%   Please see 'help caseformat' for details on the case file format.
+%   Please see CASEFORMAT for details on the case file format.
 %
 %   Identical to case9.m, with the addition of non-zero costs for
 %   reactive power.

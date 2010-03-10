@@ -1,15 +1,16 @@
 function gen = update_mupq(baseMVA, gen, mu_PQh, mu_PQl, data)
-%   UPDATE_MUPQ Updates values of generator limit shadow prices.
+%UPDATE_MUPQ  Updates values of generator limit shadow prices.
+%   GEN = UPDATE_MUPQ(BASEMVA, GEN, MU_PQH, MU_PQL, DATA)
 %
 %   Updates the values of MU_PMIN, MU_PMAX, MU_QMIN, MU_QMAX based
 %   on any shadow prices on the sloped portions of the generator
 %   capability curve constraints.
 %
-%   gen = update_mupq(baseMVA, gen, mu_PQh, mu_PQl, data)
+%   MU_PQH - shadow prices on upper sloped portion of capability curves
+%   MU_PQL - shadow prices on lower sloped portion of capability curves
+%   DATA   - "data" struct returned by MAKEAPQ
 %
-%   mu_PQh - shadow prices on upper sloped portion of capability curves
-%   mu_PQl - shadow prices on lower sloped portion of capability curves
-%   data   - "data" struct returned by makeApq
+%   See also MAKEAPQ.
 
 %   MATPOWER
 %   $Id$

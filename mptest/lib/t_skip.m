@@ -1,14 +1,25 @@
 function t_skip(cnt, msg)
 %T_SKIP  Skips a number of tests.
-%   t_skip(cnt, msg) increments the global test count and skipped tests
-%   count. Prints 'skipped tests x..y : ' followed by the msg, unless the
+%   T_SKIP(CNT, MSG) increments the global test count and skipped tests
+%   count. Prints 'skipped tests x..y : ' followed by the MSG, unless the
 %   global variable t_quiet is true. Intended to be called between calls to
-%   t_begin and t_end.
+%   T_BEGIN and T_END.
+%
+%   Example:
+%       quiet = 0;
+%       t_begin(5, quiet);
+%       t_ok(pi > 3, 'size of pi');
+%       t_skip(3, 'not yet written');
+%       t_is(2+2, 4, 12, '2+2 still equals 4');
+%       t_end;
+%
+%   See also T_OK, T_IS, T_BEGIN, T_END, T_RUN_TESTS.
+
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2004 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 global t_quiet;

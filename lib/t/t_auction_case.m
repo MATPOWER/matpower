@@ -1,6 +1,6 @@
 function [baseMVA, bus, gen, branch, areas, gencost] = t_auction_case
 %T_AUCTION_CASE    Power flow data for testing auction code.
-%   Please see 'help caseformat' for details on the case file format.
+%   Please see CASEFORMAT for details on the case file format.
 
 %   MATPOWER
 %   $Id$

@@ -1,14 +1,14 @@
 function [dAf_dVa, dAf_dVm, dAt_dVa, dAt_dVm] = ...
                         dAbr_dV(dSf_dVa, dSf_dVm, dSt_dVa, dSt_dVm, Sf, St)
 %DABR_DV   Partial derivatives of squared flow magnitudes w.r.t voltage.
-%   [dAf_dVa, dAf_dVm, dAt_dVa, dAt_dVm] = ...
-%               dAbr_dV(dSf_dVa, dSf_dVm, dSt_dVa, dSt_dVm, Sf, St)
+%   [DAF_DVA, DAF_DVM, DAT_DVA, DAT_DVM] = ...
+%               DABR_DV(DFF_DVA, DFF_DVM, DFT_DVA, DFT_DVM, FF, FT)
 %   returns four matrices containing partial derivatives of the square of
 %   the branch flow magnitudes at "from" & "to" ends of each branch w.r.t
 %   voltage magnitude and voltage angle respectively (for all buses), given
 %   the flows and flow sensitivities. Flows could be complex current or
-%   complex or real power. Notation is based on complex power. The following
-%   explains the expressions used to form the matrices:
+%   complex or real power. Notation below is based on complex power. The
+%   following explains the expressions used to form the matrices:
 %
 %   Let Af refer to the square of the apparent power at the "from" end of
 %   each branch,
@@ -31,11 +31,35 @@ function [dAf_dVa, dAf_dVm, dAt_dVa, dAt_dVm] = ...
 %
 %   Derivations for "to" bus are similar.
 %
+%   Examples:
+%       %% squared current magnitude
+%       [dFf_dVa, dFf_dVm, dFt_dVa, dFt_dVm, Ff, Ft] = ...
+%               dIbr_dV(branch(il,:), Yf, Yt, V);
+%       [dAf_dVa, dAf_dVm, dAt_dVa, dAt_dVm] = ...
+%               dAbr_dV(dFf_dVa, dFf_dVm, dFt_dVa, dFt_dVm, Ff, Ft);
+%
+%       %% squared apparent power flow
+%       [dFf_dVa, dFf_dVm, dFt_dVa, dFt_dVm, Ff, Ft] = ...
+%               dSbr_dV(branch(il,:), Yf, Yt, V);
+%       [dAf_dVa, dAf_dVm, dAt_dVa, dAt_dVm] = ...
+%               dAbr_dV(dFf_dVa, dFf_dVm, dFt_dVa, dFt_dVm, Ff, Ft);
+%
+%       %% squared real power flow
+%       [dFf_dVa, dFf_dVm, dFt_dVa, dFt_dVm, Ff, Ft] = ...
+%               dSbr_dV(branch(il,:), Yf, Yt, V);
+%       dFf_dVa = real(dFf_dVa);
+%       dFf_dVm = real(dFf_dVm);
+%       dFt_dVa = real(dFt_dVa);
+%       dFt_dVm = real(dFt_dVm);
+%       [dAf_dVa, dAf_dVm, dAt_dVa, dAt_dVm] = ...
+%               dAbr_dV(dFf_dVa, dFf_dVm, dFt_dVa, dFt_dVm, Ff, Ft);
+%
+%   See also DIBR_DV, DSBR_DV.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% dimensions

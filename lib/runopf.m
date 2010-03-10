@@ -1,45 +1,52 @@
 function [MVAbase, bus, gen, gencost, branch, f, success, et] = ...
                 runopf(casedata, mpopt, fname, solvedcase)
 %RUNOPF  Runs an optimal power flow.
+%   [RESULTS, SUCCESS] = RUNOPF(CASEDATA, MPOPT, FNAME, SOLVEDCASE)
 %
-%   Runs an optimal power flow (AC OPF by default) optionally returning
-%   a results struct and success flag.
-%
-%   results = runopf
-%   results = runopf(casedata)
-%   results = runopf(casedata, mpopt)
-%   results = runopf(casedata, mpopt, fname)
-%   results = runopf(casedata, mpopt, fname, solvedcase)
-%   [results, success] = runopf(casedata, mpopt, fname, solvedcase)
+%   Runs an optimal power flow (AC OPF by default), optionally returning
+%   a RESULTS struct and SUCCESS flag.
 %
 %   Inputs (all are optional):
-%       casedata : either a MATPOWER case struct or a string containing
+%       CASEDATA : either a MATPOWER case struct or a string containing
 %           the name of the file with the case data (default is 'case9')
-%           (see also 'help caseformat' and 'help loadcase')
-%       mpopt : MATPOWER options vector to override default options
+%           (see also CASEFORMAT and LOADCASE)
+%       MPOPT : MATPOWER options vector to override default options
 %           can be used to specify the solution algorithm, output options
-%           termination tolerances, and more.
-%           (see also 'help mpoption')
-%       fname : name of a file to which the pretty-printed output will
+%           termination tolerances, and more (see also MPOPTION).
+%       FNAME : name of a file to which the pretty-printed output will
 %           be appended
-%       solvedcase : name of file to which the solved case will be saved
+%       SOLVEDCASE : name of file to which the solved case will be saved
 %           in MATPOWER case format (M-file will be assumed unless the
 %           specified name ends with '.mat')
 %
 %   Outputs (all are optional):
-%       results : results struct, with the following fields:
+%       RESULTS : results struct, with the following fields:
 %           (all fields from the input MATPOWER case, i.e. bus, branch,
 %               gen, etc., but with solved voltages, power flows, etc.)
 %           order - info used in external <-> internal data conversion
 %           et - elapsed time in seconds
 %           success - success flag, 1 = succeeded, 0 = failed
-%           (additional OPF fields, see 'help opf' for details)
-%       success : the success flag can additionally be returned as
+%           (additional OPF fields, see OPF for details)
+%       SUCCESS : the success flag can additionally be returned as
 %           a second output argument
 %
-%   Alternatively, for compatibility with previous versions of MATPOWER,
-%   some of the results can be returned as individual output arguments:
-%       [baseMVA, bus, gen, gencost, branch, f, success, et] = runopf(...)
+%   Calling syntax options:
+%       results = runopf;
+%       results = runopf(casedata);
+%       results = runopf(casedata, mpopt);
+%       results = runopf(casedata, mpopt, fname);
+%       results = runopf(casedata, mpopt, fname, solvedcase);
+%       [results, success] = runopf(...);
+%
+%       Alternatively, for compatibility with previous versions of MATPOWER,
+%       some of the results can be returned as individual output arguments:
+%
+%       [baseMVA, bus, gen, gencost, branch, f, success, et] = runopf(...);
+%
+%   Example:
+%       results = runopf('case30');
+%
+%   See also RUNDCOPF, RUNUOPF.
 
 %   MATPOWER
 %   $Id$

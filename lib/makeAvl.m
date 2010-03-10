@@ -1,11 +1,22 @@
 function [Avl, lvl, uvl, ivl]  = makeAvl(baseMVA, gen)
-%   MAKEAVL Construct linear constraints for constant power factor variable loads.
+%MAKEAVL Construct linear constraints for constant power factor var loads.
+%   [AVL, LVL, UVL, IVL]  = MAKEAVL(BASEMVA, GEN)
+%
+%   Constructs parameters for the following linear constraint enforcing a
+%   constant power factor constraint for dispatchable loads.
+%
+%        LVL <= AVL * [Pg; Qg] <= UVL
+%
+%   IVL is the vector of indices of generators representing variable loads.
+%
+%   Example:
+%       [Avl, lvl, uvl, ivl]  = makeAvl(baseMVA, gen);
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
-%   Copyright (c) 1996-2008 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% define named indices into data matrices

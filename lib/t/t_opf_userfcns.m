@@ -96,7 +96,7 @@ t_ok(~isfield(r.reserves, 'R'), [t 'no reserves']);
 t = 'interface flow lims (line out) : ';
 mpc = loadcase(casefile);
 mpc = toggle_iflims(mpc, 'on');
-mpc.branch(12, BR_STATUS) = 0;		%% take out line 6-10
+mpc.branch(12, BR_STATUS) = 0;      %% take out line 6-10
 r = rundcopf(mpc, mpopt);
 t_ok(r.success, [t 'success']);
 t_is(r.if.P, [-15; 20], 4, [t 'if.P']);

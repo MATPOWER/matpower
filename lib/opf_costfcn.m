@@ -1,21 +1,26 @@
 function [f, df, d2f] = opf_costfcn(x, om, varargin)
 %OPF_COSTFCN  Evaluates objective function, gradient and Hessian for OPF.
-%   f = opf_costfcn(x, om)
-%   [f, df] = opf_costfcn(x, om)
-%   [f, df, d2f] = opf_costfcn(x, om)
+%   [F, DF, D2F] = OPF_COSTFCN(X, OM)
 %
 %   Objective function evaluation routine for AC optimal power flow,
-%   suitable for use with fmincon. Computes objective function value,
+%   suitable for use with MIPS or FMINCON. Computes objective function value,
 %   gradient and Hessian.
 %
 %   Inputs:
-%     x : optimization vector
-%     om : OPF model object
+%     X : optimization vector
+%     OM : OPF model object
 %
 %   Outputs:
-%     f   : value of objective function
-%     df  : (optional) gradient of objective function (column vector)
-%     d2f : (optional) Hessian of objective function (sparse matrix)
+%     F   : value of objective function
+%     DF  : (optional) gradient of objective function (column vector)
+%     D2F : (optional) Hessian of objective function (sparse matrix)
+%
+%   Examples:
+%       f = opf_costfcn(x, om);
+%       [f, df] = opf_costfcn(x, om);
+%       [f, df, d2f] = opf_costfcn(x, om);
+%
+%   See also OPF_CONSFCN, OPF_HESSFCN.
 
 %   MATPOWER
 %   $Id$

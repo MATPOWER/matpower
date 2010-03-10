@@ -1,62 +1,77 @@
 function [bus, gen] = scale_load(load, bus, gen, load_zone, opt)
 %SCALE_LOAD Scales fixed and/or dispatchable loads.
-%
-%   bus = scale_load(load, bus)
-%   [bus, gen] = scale_load(load, bus, gen)
-%   [bus, gen] = scale_load(load, bus, gen, load_zone)
-%   [bus, gen] = scale_load(load, bus, gen, load_zone, opt)
+%   BUS = SCALE_LOAD(LOAD, BUS);
+%   [BUS, GEN] = SCALE_LOAD(LOAD, BUS, GEN, LOAD_ZONE, OPT)
 %
 %   Scales active (and optionally reactive) loads in each zone by a
 %   zone-specific ratio, i.e. R(k) for zone k. Inputs are ...
 %
-%   load - Each element specifies the amount of scaling for the
+%   LOAD - Each element specifies the amount of scaling for the
 %       corresponding load zone, either as a direct scale factor
 %       or as a target quantity. If there are nz load zones this
 %       vector has nz elements.
 %
-%   bus - standard bus matrix with nb rows, where the fixed active
+%   BUS - standard BUS matrix with nb rows, where the fixed active
 %       and reactive loads available for scaling are specified in
 %       columns PD and QD
 %
-%   gen - (optional) standard gen matrix with ng rows, where the
+%   GEN - (optional) standard GEN matrix with ng rows, where the
 %       dispatchable loads available for scaling are specified by
 %       columns PG, QG, PMIN, QMIN and QMAX (in rows for which
-%       isload(gen) returns true). If gen is empty, it assumes
+%       ISLOAD(GEN) returns true). If GEN is empty, it assumes
 %       there are no dispatchable loads.
 %
-%   load_zone - (optional) nb element vector where the value of
+%   LOAD_ZONE - (optional) nb element vector where the value of
 %       each element is either zero or the index of the load zone
-%       to which the corresponding bus belongs. If load_zone(b) = k
+%       to which the corresponding bus belongs. If LOAD_ZONE(b) = k
 %       then the loads at bus b will be scaled according to the
-%       value of load(k). If load_zone(b) = 0, the loads at bus b
-%       will not be modified. If load_zone is empty, the default is
-%       determined by the dimensions of the load vector. If load is
+%       value of LOAD(k). If LOAD_ZONE(b) = 0, the loads at bus b
+%       will not be modified. If LOAD_ZONE is empty, the default is
+%       determined by the dimensions of the LOAD vector. If LOAD is
 %       a scalar, a single system-wide zone including all buses is
-%       used, i.e. loadzone = ones(nb, 1). If load is a vector, the
-%       default load_zone is defined as the areas specified in the
-%       bus matrix, i.e. load_zone = bus(:, BUS_AREA), and load
-%       should have dimension = max(bus(:, BUS_AREA)).
+%       used, i.e. LOAD_ZONE = ONES(nb, 1). If LOAD is a vector, the
+%       default LOAD_ZONE is defined as the areas specified in the
+%       BUS matrix, i.e. LOAD_ZONE = BUS(:, BUS_AREA), and LOAD
+%       should have dimension = MAX(BUS(:, BUS_AREA)).
 %
-%   opt - (optional) struct with three possible fields, 'scale',
+%   OPT - (optional) struct with three possible fields, 'scale',
 %       'pq' and 'which' that determine the behavior as follows:
 %
-%     opt.scale (default is 'FACTOR')
-%       'FACTOR'    : load consists of direct scale factors, where
-%                    load(k) = scale factor R(k) for zone k
-%       'QUANTITY' : load consists of target quantities, where
-%                    load(k) = desired total active load for zone k
-%                    after scaling by an appropriate R(k)
+%     OPT.scale (default is 'FACTOR')
+%       'FACTOR'   : LOAD consists of direct scale factors, where
+%                    LOAD(k) = scale factor R(k) for zone k
+%       'QUANTITY' : LOAD consists of target quantities, where
+%                    LOAD(k) = desired total active load in MW for
+%                    zone k after scaling by an appropriate R(k)
 %
-%     opt.pq    (default is 'PQ')
+%     OPT.pq    (default is 'PQ')
 %       'PQ' : scale both active and reactive loads
 %       'P'  : scale only active loads
 %
-%     opt.which (default is 'BOTH' if gen is provided, else 'FIXED')
+%     OPT.which (default is 'BOTH' if GEN is provided, else 'FIXED')
 %       'FIXED'        : scale only fixed loads
 %       'DISPATCHABLE' : scale only dispatchable loads
 %       'BOTH'         : scale both fixed and dispatchable loads
 %
 %   Assumes consecutive bus numbering when dealing with dispatchable loads.
+%
+%   Examples:
+%       Scale all real and reactive fixed loads up by 10%.
+%
+%       bus = scale_load(1.1, bus);
+%
+%       Scale all active loads (fixed and dispatchable) at the first 10
+%       buses so their total equals 100 MW, and at next 10 buses so their
+%       total equals 50 MW.
+%
+%       load_zone = zeros(nb, 1);
+%       load_zone(1:10) = 1;
+%       load_zone(11:20) = 2;
+%       opt = struct('pq', 'P', 'scale', 'QUANTITY');
+%       load = [100; 50];
+%       [bus, gen] = scale_load(load, bus, gen, load_zone, opt);
+%
+%   See also TOTAL_LOAD.
 
 %   MATPOWER
 %   $Id$

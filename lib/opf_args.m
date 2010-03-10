@@ -3,34 +3,41 @@ function [baseMVA, bus, gen, branch, gencost, Au, lbu, ubu, ...
     opf_args(baseMVA, bus, gen, branch, areas, gencost, Au, lbu, ubu, ...
         mpopt, N, fparm, H, Cw, z0, zl, zu)
 %OPF_ARGS  Parses and initializes OPF input arguments.
+%   [MPC, MPOPT] = OPF_ARGS( ... )
+%   [BASEMVA, BUS, GEN, BRANCH, GENCOST, A, L, U, MPOPT, ...
+%       N, FPARM, H, CW, Z0, ZL, ZU, USERFCN] = OPF_ARGS( ... )
+%   Returns the full set of initialized OPF input arguments, filling in
+%   default values for missing arguments. See Examples below for the
+%   possible calling syntax options.
 %
-%   Returns the full set of initialized OPF input arguments ...
+%   Examples:
+%       Output argument options:
 %
-%   [mpc, mpopt] = opf_args( ... )
-%   [baseMVA, bus, gen, branch, gencost, A, l, u, mpopt, ...
-%    N, fparm, H, Cw, z0, zl, zu, userfcn] = opf_args( ... )
-%   [baseMVA, bus, gen, branch, gencost, A, l, u, mpopt, ...
-%    N, fparm, H, Cw, z0, zl, zu, userfcn, areas] = opf_args( ... )
+%       [mpc, mpopt] = opf_args( ... )
+%       [baseMVA, bus, gen, branch, gencost, A, l, u, mpopt, ...
+%           N, fparm, H, Cw, z0, zl, zu, userfcn] = opf_args( ... )
+%       [baseMVA, bus, gen, branch, gencost, A, l, u, mpopt, ...
+%           N, fparm, H, Cw, z0, zl, zu, userfcn, areas] = opf_args( ... )
 %
-%   ... for all of the following calling combinations ...
+%       Input arguments options:
 %
-%   opf_args(mpc)
-%   opf_args(mpc, mpopt)
-%   opf_args(mpc, userfcn, mpopt)
-%   opf_args(mpc, A, l, u)
-%   opf_args(mpc, A, l, u, mpopt)
-%   opf_args(mpc, A, l, u, mpopt, N, fparm, H, Cw)
-%   opf_args(mpc, A, l, u, mpopt, N, fparm, H, Cw, z0, zl, zu)
+%       opf_args(mpc)
+%       opf_args(mpc, mpopt)
+%       opf_args(mpc, userfcn, mpopt)
+%       opf_args(mpc, A, l, u)
+%       opf_args(mpc, A, l, u, mpopt)
+%       opf_args(mpc, A, l, u, mpopt, N, fparm, H, Cw)
+%       opf_args(mpc, A, l, u, mpopt, N, fparm, H, Cw, z0, zl, zu)
 %
-%   opf_args(baseMVA, bus, gen, branch, areas, gencost)
-%   opf_args(baseMVA, bus, gen, branch, areas, gencost, mpopt)
-%   opf_args(baseMVA, bus, gen, branch, areas, gencost, userfcn, mpopt)
-%   opf_args(baseMVA, bus, gen, branch, areas, gencost, A, l, u)
-%   opf_args(baseMVA, bus, gen, branch, areas, gencost, A, l, u, mpopt)
-%   opf_args(baseMVA, bus, gen, branch, areas, gencost, A, l, u, ...
-%                               mpopt, N, fparm, H, Cw)
-%   opf_args(baseMVA, bus, gen, branch, areas, gencost, A, l, u, ...
-%                               mpopt, N, fparm, H, Cw, z0, zl, zu)
+%       opf_args(baseMVA, bus, gen, branch, areas, gencost)
+%       opf_args(baseMVA, bus, gen, branch, areas, gencost, mpopt)
+%       opf_args(baseMVA, bus, gen, branch, areas, gencost, userfcn, mpopt)
+%       opf_args(baseMVA, bus, gen, branch, areas, gencost, A, l, u)
+%       opf_args(baseMVA, bus, gen, branch, areas, gencost, A, l, u, mpopt)
+%       opf_args(baseMVA, bus, gen, branch, areas, gencost, A, l, u, ...
+%                                   mpopt, N, fparm, H, Cw)
+%       opf_args(baseMVA, bus, gen, branch, areas, gencost, A, l, u, ...
+%                                   mpopt, N, fparm, H, Cw, z0, zl, zu)
 %
 %   The data for the problem can be specified in one of three ways:
 %   (1) a string (mpc) containing the file name of a MATPOWER case
@@ -49,8 +56,8 @@ function [baseMVA, bus, gen, branch, gencost, Au, lbu, ubu, ...
 %   optimization variables, l <= A*[x; z] <= u. If the user specifies an A
 %   matrix that has more columns than the number of "x" (OPF) variables,
 %   then there are extra linearly constrained "z" variables. For an
-%   explanation of the formulation used and instructions for forming the A
-%   matrix, type 'help genform' or see the manual.
+%   explanation of the formulation used and instructions for forming the
+%   A matrix, see the manual.
 %
 %   A generalized cost on all variables can be applied if input arguments
 %   N, fparm, H and Cw are specified.  First, a linear transformation
@@ -60,14 +67,14 @@ function [baseMVA, bus, gen, branch, gencost, Au, lbu, ubu, ...
 %   then H and Cw define a quadratic cost on w: (1/2)*w'*H*w + Cw * w .
 %   H and N should be sparse matrices and H should also be symmetric.
 %
-%   The optional mpopt vector specifies MATPOWER options. Type 'help mpoption'
+%   The optional mpopt vector specifies MATPOWER options. See MPOPTION
 %   for details and default values.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
-%   Copyright (c) 1996-2008 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 if nargout == 2

@@ -1,5 +1,5 @@
 function t_opf_fmincon(quiet)
-%T_OPF_FMINCON  Tests for fmincon-based optimal power flow.
+%T_OPF_FMINCON  Tests for FMINCON-based optimal power flow.
 
 %   MATPOWER
 %   $Id$

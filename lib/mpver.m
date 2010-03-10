@@ -1,14 +1,14 @@
 function mpv = mpver
-%MPVER  Prints or returns MATPOWER version information
-%   v = mpver returns the current MATPOWER version number. Calling mpver
+%MPVER  Prints or returns MATPOWER version information.
+%   V = MPVER returns the current MATPOWER version number. Calling MPVER
 %   without assigning the return value prints the version and release date of
 %   the current installation of MATPOWER, MATLAB, the Optimization Toolbox,
-%   and any optional MATPOWER packages such as BPMPD_MEX and MINOPF.
+%   MIPS and any optional MATPOWER packages such as BPMPD_MEX and MINOPF.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2005 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2005-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% the following only works if MATPOWER is explicitly in the path,
@@ -41,10 +41,10 @@ else
         end
     end
     fprintf('\n');
-    
+
     if have_fcn('bpmpd')
         if exist('bpver', 'file') == 2
-            bpver
+            bpver;
         else
             fprintf('BPMPD_MEX              Version 2.21 or earlier\n');
         end

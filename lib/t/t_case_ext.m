@@ -1,9 +1,10 @@
 function mpc = t_case_ext
+%T_CASE_EXT  Case data in external format used to test EXT2INT and INT2EXT.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2009 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% MATPOWER Case Format : Version 2

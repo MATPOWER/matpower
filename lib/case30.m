@@ -1,6 +1,6 @@
 function mpc = case30
 %CASE30    Power flow data for 30 bus, 6 generator case.
-%   Please see 'help caseformat' for details on the case file format.
+%   Please see CASEFORMAT for details on the case file format.
 %
 %   Based on data from ...
 %     Alsac, O. & Stott, B., "Optimal Load Flow with Steady State Security",

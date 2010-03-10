@@ -1,13 +1,19 @@
 function LODF = makeLODF(branch, PTDF);
 %MAKELODF   Builds the line outage distribution factor matrix.
-%   LODF = makeLODF(branch, PTDF) returns the DC line outage
+%   LODF = MAKELODF(BRANCH, PTDF) returns the DC line outage
 %   distribution factor matrix for a given PTDF. The matrix is nbr x nbr,
 %   where nbr is the number of branches.
+%
+%   Example:
+%       H = makePTDF(baseMVA, bus, branch);
+%       LODF = makeLODF(branch, H);
+%
+%   See also MAKEPTDF.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2008 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...

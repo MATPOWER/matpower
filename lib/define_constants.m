@@ -25,10 +25,10 @@
 %
 %   See CASEFORMAT, IDX_BUS, IDX_BRCH, IDX_GEN and IDX_COST for
 %   details on the meaning of these constants. Internally
-%   define_constants calls idx_bus, idx_brch, idx_gen and idx_cost.
+%   DEFINE_CONSTANTS calls IDX_BUS, IDX_BRCH, IDX_GEN and IDX_COST.
 %   In performance sensitive code, such as internal MATPOWER functions
 %   that are called frequently, it is preferred to call these
-%   functions directly rather than using the define_constants script,
+%   functions directly rather than using the DEFINE_CONSTANTS script,
 %   which is less efficient.
 %
 %   This script is included for convenience for interactive use or

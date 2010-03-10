@@ -1,7 +1,8 @@
 function [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost
 %IDX_COST   Defines constants for named column indices to gencost matrix.
+%   Example:
 %
-%   [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost
+%   [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 %
 %   Some examples of usage, after defining the constants using the line above,
 %   are:
@@ -32,6 +33,8 @@ function [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_co
 %   additional constants, used to assign/compare values in the MODEL column
 %    1  PW_LINEAR   piecewise linear generator cost model
 %    2  POLYNOMIAL  polynomial generator cost model
+%
+%   See also DEFINE_CONSTANTS.
 
 %   MATPOWER
 %   $Id$

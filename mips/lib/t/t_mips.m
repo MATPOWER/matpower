@@ -1,5 +1,5 @@
 function t_mips(quiet)
-%T_MIPS  Tests of MIPS NLP solver
+%T_MIPS  Tests of MIPS NLP solver.
 
 %   MATPOWER
 %   $Id$

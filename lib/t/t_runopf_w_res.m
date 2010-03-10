@@ -1,10 +1,10 @@
 function t_runopf_w_res(quiet)
-%T_RUNOPF_W_RES  Tests runopf_w_res and the associated callbacks.
+%T_RUNOPF_W_RES  Tests RUNOPF_W_RES and the associated callbacks.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2009 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 if nargin < 1

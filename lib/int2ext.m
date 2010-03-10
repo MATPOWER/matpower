@@ -4,73 +4,94 @@ function [bus, gen, branch, areas] = int2ext(i2e, bus, gen, branch, areas)
 %   This function performs several different tasks, depending on the
 %   arguments passed.
 %
-%   [bus, gen, branch, areas] = int2ext(i2e, bus, gen, branch, areas)
-%   [bus, gen, branch] = int2ext(i2e, bus, gen, branch)
+%   1.  [BUS, GEN, BRANCH, AREAS] = INT2EXT(I2E, BUS, GEN, BRANCH, AREAS)
+%       [BUS, GEN, BRANCH] = INT2EXT(I2E, BUS, GEN, BRANCH)
 %
 %   Converts from the consecutive internal bus numbers back to the originals
-%   using the mapping provided by the i2e vector returned from ext2int(),
-%   where external_bus_number = i2e(internal_bus_number).
+%   using the mapping provided by the I2E vector returned from EXT2INT,
+%   where EXTERNAL_BUS_NUMBER = I2E(INTERNAL_BUS_NUMBER).
 %
-%   mpc = int2ext(mpc)
+%   Examples:
+%       [bus, gen, branch, areas] = int2ext(i2e, bus, gen, branch, areas);
+%       [bus, gen, branch] = int2ext(i2e, bus, gen, branch);
+%
+%   2.  MPC = INT2EXT(MPC)
 %
 %   If the input is a single MATPOWER case struct, then it restores all
 %   buses, generators and branches that were removed because of being
 %   isolated or off-line, and reverts to the original generator ordering
 %   and original bus numbering. This requires that the 'order' field
-%   created by ext2int() be in place.
+%   created by EXT2INT be in place.
 %
-%   val = int2ext(mpc, val, oldval, ordering)
-%   val = int2ext(mpc, val, oldval, ordering, dim)
-%   mpc = int2ext(mpc, field, ordering)
-%   mpc = int2ext(mpc, field, ordering, dim)
+%   Example:
+%       mpc = int2ext(mpc);
+%
+%   3.  VAL = INT2EXT(MPC, VAL, OLDVAL, ORDERING)
+%       VAL = INT2EXT(MPC, VAL, OLDVAL, ORDERING, DIM)
+%       MPC = INT2EXT(MPC, FIELD, ORDERING)
+%       MPC = INT2EXT(MPC, FIELD, ORDERING, DIM)
 %
 %   For a case struct using internal indexing, this function can be
 %   used to convert other data structures as well by passing in 2 to 4
 %   extra parameters in addition to the case struct. If the values passed
-%   in the 2nd argument (val) is a column vector, it will be converted
-%   according to the ordering specified by the 4th argument (ordering,
-%   described below). If val is an n-dimensional matrix, then the
-%   optional 5th argument (dim, default = 1) can be used to specify
-%   which dimension to reorder. The 3rd argument (oldval) is used to
-%   initialize the return value before converting val to external
+%   in the 2nd argument (VAL) is a column vector, it will be converted
+%   according to the ordering specified by the 4th argument (ORDERING,
+%   described below). If VAL is an n-dimensional matrix, then the
+%   optional 5th argument (DIM, default = 1) can be used to specify
+%   which dimension to reorder. The 3rd argument (OLDVAL) is used to
+%   initialize the return value before converting VAL to external
 %   indexing. In particular, any data corresponding to off-line gens
 %   or branches or isolated buses or any connected gens or branches
-%   will be taken from oldval, with val supplying the rest of the
+%   will be taken from OLDVAL, with VAL supplying the rest of the
 %   returned data.
 %
 %   If the 2nd argument is a string or cell array of strings, it
 %   specifies a field in the case struct whose value should be
 %   converted as described above. In this case, the corresponding
-%   oldval is taken from where it was stored by ext2int() in
-%   mpc.order.ext and the updated case struct is returned.
-%   If field is a cell array of strings, they specify nested fields.
-%   E.g. field = {'reserves', 'cost'} refers to mpc.reserves.cost.
+%   OLDVAL is taken from where it was stored by EXT2INT in
+%   MPC.ORDER.EXT and the updated case struct is returned.
+%   If FIELD is a cell array of strings, they specify nested fields.
 %
-%   The ordering argument is used to indicate whether the data
+%   The ORDERING argument is used to indicate whether the data
 %   corresponds to bus-, gen- or branch-ordered data. It can be one
 %   of the following three strings: 'bus', 'gen' or 'branch'. For
 %   data structures with multiple blocks of data, ordered by bus,
 %   gen or branch, they can be converted with a single call by
-%   specifying ordering as a cell array of strings. For example,
-%   the A matrix for user supplied constraints in the generalized
-%   OPF formulation has columns for bus voltage angles, then voltage
-%   magnitudes, then generator real power injections and finally
-%   generator reactive power injections. Such a matrix can be
-%   converted to internal ordering with the following call:
-%   A_ext = int2ext(mpc, A_int, A_orig, {'bus', 'bus', 'gen', 'gen'}, 2)
-%   Similarly, converting a gencost matrix that has both real
-%   and reactive power costs (in rows 1--ng and ng+1--2*ng,
-%   respectively) can be done with
-%   gencost_ext = int2ext(mpc, gencost_int, gencost_orig, {'gen', 'gen'}, 1)
-%   Any extra elements, rows, columns, etc. beyond those indicated
-%   in ordering, are not disturbed.
+%   specifying ORDERING as a cell array of strings.
 %
-%   See also ext2int.
+%   Any extra elements, rows, columns, etc. beyond those indicated
+%   in ORDERING, are not disturbed.
+%
+%   Examples:
+%       A_ext = int2ext(mpc, A_int, A_orig, {'bus','bus','gen','gen'}, 2);
+%
+%       Converts an A matrix for user-supplied OPF constraints from
+%       internal to external ordering, where the columns of the A
+%       matrix correspond to bus voltage angles, then voltage
+%       magnitudes, then generator real power injections and finally
+%       generator reactive power injections.
+%
+%       gencost_ext = int2ext(mpc, gencost_int, gencost_orig, {'gen','gen'}, 1);
+%
+%       Converts a GENCOST matrix that has both real and reactive power
+%       costs (in rows 1--ng and ng+1--2*ng, respectively).
+%
+%       mpc = int2ext(mpc, {'reserves', 'cost'}, 'gen');
+%
+%       Reorders rows of mpc.reserves.cost to match external generator
+%       ordering.
+%
+%       mpc = int2ext(mpc, {'reserves', 'zones'}, 'gen', 2);
+%
+%       Reorders columns of mpc.reserves.zones to match external
+%       generator ordering.
+%
+%   See also EXT2INT.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 if isstruct(i2e)

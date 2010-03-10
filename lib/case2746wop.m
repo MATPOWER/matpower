@@ -1,6 +1,6 @@
 function mpc = case2746wop
 %CASE2746WOP    Power flow data for Polish system - winter 2003-04 off-peak.
-%   Please see 'help caseformat' for details on the case file format.
+%   Please see CASEFORMAT for details on the case file format.
 %
 %   This case represents the Polish 400, 220 and 110 kV networks during
 %   winter 2003-04 off-peak conditions. Multiple centrally dispatchable

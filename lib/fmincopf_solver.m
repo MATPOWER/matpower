@@ -1,16 +1,16 @@
 function [results, success, raw] = fmincopf_solver(om, mpopt, out_opt)
-%FMINCOPF_SOLVER  Solves an AC optimal power flow using FMINCON
+%FMINCOPF_SOLVER  Solves AC optimal power flow using FMINCON.
 %
-%   [results, success, raw] = fmincopf_solver(om, mpopt)
-%   [results, success, raw] = fmincopf_solver(om, mpopt, out_opt)
+%   [RESULTS, SUCCESS, RAW] = FMINCOPF_SOLVER(OM, MPOPT)
+%   [RESULTS, SUCCESS, RAW] = FMINCOPF_SOLVER(OM, MPOPT, OUT_OPT)
 %
 %   Inputs are an OPF model object, a MATPOWER options vector and
 %   a struct containing fields (can be empty) for each of the desired
 %   optional output fields.
 %
-%   Outputs are a results struct, success flag and raw output struct.
+%   Outputs are a RESULTS struct, SUCCESS flag and RAW output struct.
 %
-%   results is a MATPOWER case struct (mpc) with the usual baseMVA, bus
+%   RESULTS is a MATPOWER case struct (mpc) with the usual baseMVA, bus
 %   branch, gen, gencost fields, along with the following additional
 %   fields:
 %       .order      see 'help ext2int' for details of this field
@@ -31,13 +31,15 @@ function [results, success, raw] = fmincopf_solver(om, mpopt, out_opt)
 %       .df         (optional) obj fun 1st derivatives (not yet implemented)
 %       .d2f        (optional) obj fun 2nd derivatives (not yet implemented)
 %
-%   success     1 if solver converged successfully, 0 otherwise
+%   SUCCESS     1 if solver converged successfully, 0 otherwise
 %
-%   raw         raw output in form returned by MINOS
+%   RAW         raw output in form returned by MINOS
 %       .xr     final value of optimization variables
 %       .pimul  constraint multipliers
 %       .info   solver specific termination code
 %       .output solver specific output information
+%
+%   See also OPF, FMINCON.
 
 %   MATPOWER
 %   $Id$
@@ -108,7 +110,7 @@ end
 
 %% find branches with flow limits
 il = find(branch(:, RATE_A) ~= 0 & branch(:, RATE_A) < 1e10);
-nl2 = length(il);			%% number of constrained lines
+nl2 = length(il);           %% number of constrained lines
 
 %% basic optimset options needed for fmincon
 fmoptions = optimset('GradObj', 'on', 'GradConstr', 'on', ...

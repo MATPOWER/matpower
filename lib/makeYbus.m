@@ -1,15 +1,17 @@
 function [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch)
 %MAKEYBUS   Builds the bus admittance matrix and branch admittance matrices.
-%   [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch) returns the full
-%   bus admittance matrix (i.e. for all buses) and the matrices Yf and Yt
+%   [YBUS, YF, YT] = MAKEYBUS(BASEMVA, BUS, BRANCH) returns the full
+%   bus admittance matrix (i.e. for all buses) and the matrices YF and YT
 %   which, when multiplied by a complex voltage vector, yield the vector
 %   currents injected into each line from the "from" and "to" buses
 %   respectively of each line. Does appropriate conversions to p.u.
+%
+%   See also MAKESBUS.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2005 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% constants

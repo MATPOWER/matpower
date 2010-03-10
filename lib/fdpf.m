@@ -1,6 +1,6 @@
 function [V, converged, i] = fdpf(Ybus, Sbus, V0, Bp, Bpp, ref, pv, pq, mpopt)
 %FDPF  Solves the power flow using a fast decoupled method.
-%   [V, converged, i] = fdpf(Ybus, Sbus, V0, Bp, Bpp, ref, pv, pq, mpopt)
+%   [V, CONVERGED, I] = FDPF(YBUS, SBUS, V0, BP, BPP, REF, PV, PQ, MPOPT)
 %   solves for bus voltages given the full system admittance matrix (for
 %   all buses), the complex bus power injection vector (for all buses),
 %   the initial vector of complex bus voltages, the FDPF matrices B prime
@@ -8,17 +8,19 @@ function [V, converged, i] = fdpf(Ybus, Sbus, V0, Bp, Bpp, ref, pv, pq, mpopt)
 %   for the swing bus, PV buses, and PQ buses, respectively. The bus voltage
 %   vector contains the set point for generator (including ref bus)
 %   buses, and the reference angle of the swing bus, as well as an initial
-%   guess for remaining magnitudes and angles. mpopt is a MATPOWER options
+%   guess for remaining magnitudes and angles. MPOPT is a MATPOWER options
 %   vector which can be used to set the termination tolerance, maximum
-%   number of iterations, and  output options (see 'help mpoption'
-%   for details). Uses default options if this parameter is not given.
-%   Returns the final complex voltages, a flag which indicates whether it
-%   converged or not, and the number of iterations performed.
+%   number of iterations, and output options (see MPOPTION for details).
+%   Uses default options if this parameter is not given. Returns the
+%   final complex voltages, a flag which indicates whether it converged
+%   or not, and the number of iterations performed.
+%
+%   See also RUNPF.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% default arguments

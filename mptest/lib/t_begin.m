@@ -1,14 +1,24 @@
 function t_begin(num_of_tests, quiet)
 %T_BEGIN  Begin running tests.
-%   t_begin(num_of_tests, quiet) initializes the global test counters,
-%   setting everything up to execute num_of_tests tests using t_ok()
-%   and t_is(). If quiet is true, it will not print anything for the
-%   individual tests, only a summary when t_end() is called.
+%   T_BEGIN(NUM_OF_TESTS, QUIET) initializes the global test counters,
+%   setting everything up to execute NUM_OF_TESTS tests using T_OK
+%   and T_IS. If QUIET is true, it will not print anything for the
+%   individual tests, only a summary when T_END is called.
+%
+%   Example:
+%       quiet = 0;
+%       t_begin(5, quiet);
+%       t_ok(pi > 3, 'size of pi');
+%       t_skip(3, 'not yet written');
+%       t_is(2+2, 4, 12, '2+2 still equals 4');
+%       t_end;
+%
+%   See also T_END, T_OK, T_IS, T_SKIP, T_RUN_TESTS.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2004 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 global t_quiet;

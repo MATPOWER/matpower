@@ -1,22 +1,27 @@
 function TorF = have_fcn(tag)
 %HAVE_FCN  Test for optional functionality.
-%   TorF = have_fcn(tag) returns 1 if the optional functionality is
+%   TORF = HAVE_FCN(TAG) returns 1 if the optional functionality is
 %   available, 0 otherwise.
 %
-%   Possible values for input tag and their meanings:
-%       bpmpd       - bp(), BPMPD interior point solver
-%       constr      - constr(), solver from Optimization Toolbox 1.x/2.x
-%       fmincon     - fmincon(), solver from Optimization Toolbox 2.x +
-%       linprog     - linprog(), LP solver from Optimization Toolbox 2.x +
-%       lp          - lp(), LP solver from Optimization Toolbox 1.x/2.x
-%       minopf      - minopf(), MINOPF, MINOS-based OPF solver
-%       quadprog    - quadprog(), QP solver from Optimization Toolbox 2.x +
-%       qp          - qp(), QP solver from Optimization Toolbox 1.x/2.x
-%       pdipmopf    - pdipmopf(), primal-dual interior point method OPF solver
-%       scpdipmopf  - scpdipmopf(), step-controlled PDIPM OPF solver
-%       smartmarket - runmarket() and friends, for running an auction
-%       tralmopf    - tralmopf(), trust region based augmented Langrangian
+%   Possible values for input TAG and their meanings:
+%       bpmpd       - BP, BPMPD interior point solver
+%       constr      - CONSTR, solver from Optimization Toolbox 1.x/2.x
+%       fmincon     - FMINCON, solver from Optimization Toolbox 2.x +
+%       linprog     - LINPROG, LP solver from Optimization Toolbox 2.x +
+%       lp          - LP, LP solver from Optimization Toolbox 1.x/2.x
+%       minopf      - MINOPF, MINOPF, MINOS-based OPF solver
+%       quadprog    - QUADPROG, QP solver from Optimization Toolbox 2.x +
+%       qp          - QP, QP solver from Optimization Toolbox 1.x/2.x
+%       pdipmopf    - PDIPMOPF, primal-dual interior point method OPF solver
+%       scpdipmopf  - SCPDIPMOPF, step-controlled PDIPM OPF solver
+%       smartmarket - RUNMARKET and friends, for running an auction
+%       tralmopf    - TRALMOPF, trust region based augmented Langrangian
 %                     OPF solver
+%
+%   Examples:
+%       if have_fcn('minopf')
+%           results = runopf(mpc, mpoption('OPF_ALG', 500));
+%       end
 
 %   MATPOWER
 %   $Id$

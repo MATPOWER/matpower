@@ -1,6 +1,6 @@
 function [baseMVA, bus, gen, branch] = t_case9_pf
 %T_CASE9_PF    Power flow data for 9 bus, 3 generator case, no OPF data.
-%   Please see 'help caseformat' for details on the case file format.
+%   Please see CASEFORMAT for details on the case file format.
 
 %   MATPOWER
 %   $Id$

@@ -1,16 +1,16 @@
 function totalcost = totcost(gencost, Pg)
 %TOTCOST    Computes total cost for generators at given output level.
-%   totalcost = totcost(gencost, Pg) computes total cost for generators given
+%   TOTALCOST = TOTCOST(GENCOST, PG) computes total cost for generators given
 %   a matrix in gencost format and a column vector or matrix of generation
-%   levels. The return value has the same dimensions as Pg. Each row
-%   of gencost is used to evaluate the cost at the points specified in the
-%   corresponding row of Pg.
+%   levels. The return value has the same dimensions as PG. Each row
+%   of GENCOST is used to evaluate the cost at the points specified in the
+%   corresponding row of PG.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
 %   & Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
-%   Copyright (c) 1996-2006 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
@@ -33,6 +33,6 @@ if ~isempty(gencost)
     end
   end
   for i = 1:size(totalcost, 2)
-  	totalcost(ipol, i) = polycost(gencost(ipol, :), Pg(ipol, i));
+    totalcost(ipol, i) = polycost(gencost(ipol, :), Pg(ipol, i));
   end
 end

@@ -1,20 +1,28 @@
 function H = makePTDF(baseMVA, bus, branch, slack)
 %MAKEPTDF   Builds the DC PTDF matrix for a given choice of slack.
-%   H = makePTDF(baseMVA, bus, branch, slack) returns the DC PTDF
+%   H = MAKEPTDF(BASEMVA, BUS, BRANCH, SLACK) returns the DC PTDF
 %   matrix for a given choice of slack. The matrix is nbr x nb, where
-%   nbr is the number of branches and nb is the number of buses. The slack
+%   nbr is the number of branches and nb is the number of buses. The SLACK
 %   can be a scalar (single slack bus) or an nb x 1 column vector of
 %   weights specifying the proportion of the slack taken up at each bus.
-%   If the slack is not specified the reference bus is used by default.
+%   If the SLACK is not specified the reference bus is used by default.
+%
+%   Examples:
+%       H = makePTDF(baseMVA, bus, branch);
+%       H = makePTDF(baseMVA, bus, branch, 1);
+%       slack = rand(size(bus, 1), 1);
+%       H = makePTDF(baseMVA, bus, branch, slack);
+%
+%   See also MAKELODF.
 
-%   For convenience, slack can also be an nb x nb matrix, where each
+%   For convenience, SLACK can also be an nb x nb matrix, where each
 %   column specifies how the slack should be handled for injections
 %   at that bus.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2006 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2006-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
@@ -22,8 +30,8 @@ function H = makePTDF(baseMVA, bus, branch, slack)
 
 %% use reference bus for slack by default
 if nargin < 4
-	slack = find(bus(:, BUS_TYPE) == REF);
-	slack = slack(1);
+    slack = find(bus(:, BUS_TYPE) == REF);
+    slack = slack(1);
 end
 
 %% set the slack bus to be used to compute initial PTDF

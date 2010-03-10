@@ -1,12 +1,22 @@
 function t_end
 %T_END  Finish running tests and print statistics.
-%   t_end checks the global counters that were updated by calls to
-%   t_ok() and t_is() and prints out a summary of the test results.
+%   T_END checks the global counters that were updated by calls to
+%   T_OK and T_IS and prints out a summary of the test results.
+%
+%   Example:
+%       quiet = 0;
+%       t_begin(5, quiet);
+%       t_ok(pi > 3, 'size of pi');
+%       t_skip(3, 'not yet written');
+%       t_is(2+2, 4, 12, '2+2 still equals 4');
+%       t_end;
+%
+%   See also T_BEGIN, T_OK, T_IS, T_SKIP, T_RUN_TESTS.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2004 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 global t_quiet;

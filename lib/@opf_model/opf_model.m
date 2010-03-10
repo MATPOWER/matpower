@@ -1,5 +1,6 @@
 function om = opf_model(mpc)
-%OPF_MODEL  Constructor for OPF model class
+%OPF_MODEL  Constructor for OPF model class.
+%   OM = OPF_MODEL(MPC)
 %
 %   This class implements the OPF model object used to encapsulate
 %   a given OPF problem formulation. It allows for access to optimization
@@ -36,7 +37,7 @@ function om = opf_model(mpc)
 %   Build and return cost parameters and evaluate user-defined costs:
 %       build_cost_params
 %       get_cost_params
-%		compute_cost
+%       compute_cost
 %
 %   Save/retreive user data in the model object:
 %       userdata

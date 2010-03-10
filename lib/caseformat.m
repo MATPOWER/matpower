@@ -128,6 +128,8 @@
 %      version 2 case files with OPF data).
 %       1   i, area number
 %       2   price_ref_bus, reference bus for that area
+%
+%   See also IDX_BUS, IDX_BRCH, IDX_GEN, IDX_AREA and IDX_COST.
 
 %   MATPOWER
 %   $Id$

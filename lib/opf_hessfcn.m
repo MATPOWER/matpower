@@ -1,32 +1,36 @@
 function Lxx = opf_hessfcn(x, lambda, om, Ybus, Yf, Yt, mpopt, il, cost_mult)
 %OPF_HESSFCN  Evaluates Hessian of Lagrangian for AC OPF.
-%   Lxx = opf_hessfcn(x, lambda, om, Ybus, Yf, Yt, mpopt)
-%   Lxx = opf_hessfcn(x, lambda, om, Ybus, Yf, Yt, mpopt, il)
-%   Lxx = opf_hessfcn(x, lambda, om, Ybus, Yf, Yt, mpopt, il, cost_mult)
+%   LXX = OPF_HESSFCN(X, LAMBDA, OM, YBUS, YF, YT, MPOPT, IL, COST_MULT)
 %
 %   Hessian evaluation function for AC optimal power flow, suitable
-%   for use with fmincon's interior-point algorithm.
+%   for use with MIPS or FMINCON's interior-point algorithm.
 %
 %   Inputs:
-%     x : optimization vector
-%     lambda (struct)
+%     X : optimization vector
+%     LAMBDA (struct)
 %       .eqnonlin : Lagrange multipliers on power balance equations
-%       .ineqnonlin : Kuhn-Tucker multipliers on constrained branch
-%                     flows
-%     om : OPF model object
-%     Ybus : bus admittance matrix
-%     Yf : admittance matrix for "from" end of constrained branches
-%     Yt : admittance matrix for "to" end of constrained branches
-%     mpopt : MATPOWER options vector
-%     il : (optional) vector of branch indices corresponding to
+%       .ineqnonlin : Kuhn-Tucker multipliers on constrained branch flows
+%     OM : OPF model object
+%     YBUS : bus admittance matrix
+%     YF : admittance matrix for "from" end of constrained branches
+%     YT : admittance matrix for "to" end of constrained branches
+%     MPOPT : MATPOWER options vector
+%     IL : (optional) vector of branch indices corresponding to
 %          branches with flow limits (all others are assumed to be
 %          unconstrained). The default is [1:nl] (all branches).
-%          Yf and Yt contain only the rows corresponding to il.
-%     cost_mult : (optional) Scale factor to be applied to the cost
+%          YF and YT contain only the rows corresponding to IL.
+%     COST_MULT : (optional) Scale factor to be applied to the cost
 %          (default = 1).
 %
 %   Outputs:
-%     Lxx : Hessian of the Lagrangian.
+%     LXX : Hessian of the Lagrangian.
+%
+%   Examples:
+%       Lxx = opf_hessfcn(x, lambda, om, Ybus, Yf, Yt, mpopt);
+%       Lxx = opf_hessfcn(x, lambda, om, Ybus, Yf, Yt, mpopt, il);
+%       Lxx = opf_hessfcn(x, lambda, om, Ybus, Yf, Yt, mpopt, il, cost_mult);
+%
+%   See also OPF_COSTFCN, OPF_CONSFCN.
 
 %   MATPOWER
 %   $Id$

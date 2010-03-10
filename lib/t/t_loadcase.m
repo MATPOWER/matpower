@@ -1,10 +1,10 @@
 function t_loadcase(quiet)
-%T_LOADCASE  Test that loadcase() works with a struct as well as case file.
+%T_LOADCASE  Test that LOADCASE works with a struct as well as case file.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2004 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 if nargin < 1
@@ -147,7 +147,7 @@ t_is(areas2,    areas,      12, [t 'areas']);
 t_is(gencost2,  gencost,    12, [t 'gencost']);
 
 t = 'loadcase(opf_struct_v1) (version=''1''): ';
-c.version	= '1';
+c.version   = '1';
 [baseMVA2, bus2, gen2, branch2, areas2, gencost2] = loadcase(c);
 t_is(baseMVA2,  baseMVA,    12, [t 'baseMVA']);
 t_is(bus2,      bus,        12, [t 'bus']);
@@ -183,7 +183,7 @@ c.gen       = gen;
 c.branch    = branch;
 c.areas     = areas;
 c.gencost   = gencost;
-c.version	= '2';
+c.version   = '2';
 [baseMVA2, bus2, gen2, branch2, areas2, gencost2] = loadcase(c);
 t_is(baseMVA2,  baseMVA,    12, [t 'baseMVA']);
 t_is(bus2,      bus,        12, [t 'bus']);
@@ -292,7 +292,7 @@ t_is(mpc2.areas,    areas,      12, [t 'areas']);
 t_is(mpc2.gencost,  gencost,    12, [t 'gencost']);
 
 t = 'mpc = loadcase(opf_struct_v1) (version=''1''): ';
-c.version	= '1';
+c.version   = '1';
 mpc2 = loadcase(c);
 t_is(mpc2.baseMVA,  baseMVA,    12, [t 'baseMVA']);
 t_is(mpc2.bus,      bus,        12, [t 'bus']);
@@ -329,7 +329,7 @@ c.gen       = gen;
 c.branch    = branch;
 c.areas     = areas;
 c.gencost   = gencost;
-c.version	= '2';
+c.version   = '2';
 mpc2 = loadcase(c);
 t_is(mpc2.baseMVA,  baseMVA,    12, [t 'baseMVA']);
 t_is(mpc2.bus,      bus,        12, [t 'bus']);
@@ -421,7 +421,7 @@ t_is(gen2,      gen,        12, [t 'gen']);
 t_is(branch2,   branch,     12, [t 'branch']);
 
 t = 'loadcase(pf_struct_v1) (version=''1''): ';
-c.version	= '1';
+c.version   = '1';
 [baseMVA2, bus2, gen2, branch2] = loadcase(c);
 t_is(baseMVA2,  baseMVA,    12, [t 'baseMVA']);
 t_is(bus2,      bus,        12, [t 'bus']);
@@ -434,7 +434,7 @@ c.baseMVA   = baseMVA;
 c.bus       = bus;
 c.gen       = gen;
 c.branch    = branch;
-c.version	= '2';
+c.version   = '2';
 [baseMVA2, bus2, gen2, branch2] = loadcase(c);
 t_is(baseMVA2,  baseMVA,    12, [t 'baseMVA']);
 t_is(bus2,      bus,        12, [t 'bus']);
@@ -523,7 +523,7 @@ t_is(mpc2.gen,      gen,        12, [t 'gen']);
 t_is(mpc2.branch,   branch,     12, [t 'branch']);
 
 t = 'mpc = loadcase(pf_struct_v1) (version=''1''): ';
-c.version	= '1';
+c.version   = '1';
 mpc2 = loadcase(c);
 t_is(mpc2.baseMVA,  baseMVA,    12, [t 'baseMVA']);
 t_is(mpc2.bus,      bus,        12, [t 'bus']);
@@ -536,7 +536,7 @@ c.baseMVA   = baseMVA;
 c.bus       = bus;
 c.gen       = gen;
 c.branch    = branch;
-c.version	= '2';
+c.version   = '2';
 mpc2 = loadcase(c);
 t_is(mpc2.baseMVA,  baseMVA,    12, [t 'baseMVA']);
 t_is(mpc2.bus,      bus,        12, [t 'bus']);

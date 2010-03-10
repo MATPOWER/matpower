@@ -1,6 +1,6 @@
 function mpc = case24_ieee_rts
-%CASE24_IEEE_RTS  Power flow data for the IEEE RELIABILITY TEST SYSTEM
-%   Please see 'help caseformat' for details on the case file format.
+%CASE24_IEEE_RTS  Power flow data for the IEEE RELIABILITY TEST SYSTEM.
+%   Please see CASEFORMAT for details on the case file format.
 %
 %   This system data is from the IEEE RELIABILITY TEST SYSTEM, see
 %

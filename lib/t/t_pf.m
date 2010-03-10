@@ -1,10 +1,10 @@
 function t_pf(quiet)
-%T_PF  Tests for power flow.
+%T_PF  Tests for power flow solvers.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2004 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 if nargin < 1

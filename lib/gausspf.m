@@ -1,6 +1,6 @@
 function [V, converged, i] = gausspf(Ybus, Sbus, V0, ref, pv, pq, mpopt)
 %GAUSSPF  Solves the power flow using a Gauss-Seidel method.
-%   [V, converged, i] = gausspf(Ybus, Sbus, V0, ref, pv, pq, mpopt)
+%   [V, CONVERGED, I] = GAUSSPF(YBUS, SBUS, V0, REF, PV, PQ, MPOPT)
 %   solves for bus voltages given the full system admittance matrix (for
 %   all buses), the complex bus power injection vector (for all buses),
 %   the initial vector of complex bus voltages, and column vectors with
@@ -8,18 +8,20 @@ function [V, converged, i] = gausspf(Ybus, Sbus, V0, ref, pv, pq, mpopt)
 %   respectively. The bus voltage vector contains the set point for
 %   generator (including ref bus) buses, and the reference angle of the
 %   swing bus, as well as an initial guess for remaining magnitudes and
-%   angles. mpopt is a MATPOWER options vector which can be used to 
+%   angles. MPOPT is a MATPOWER options vector which can be used to 
 %   set the termination tolerance, maximum number of iterations, and 
-%   output options (see 'help mpoption' for details). Uses default
-%   options if this parameter is not given. Returns the final complex
-%   voltages, a flag which indicates whether it converged or not, and
-%   the number of iterations performed.
+%   output options (see MPOPTION for details). Uses default options
+%   if this parameter is not given. Returns the final complex voltages,
+%   a flag which indicates whether it converged or not, and the number
+%   of iterations performed.
+%
+%   See also RUNPF.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
 %   and Alberto Borghetti, University of Bologna, Italy
-%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% default arguments

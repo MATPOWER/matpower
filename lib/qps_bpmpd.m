@@ -1,43 +1,29 @@
 function [x, f, eflag, output, lambda] = qps_bpmpd(H, c, A, l, u, xmin, xmax, x0, opt)
-%QPS_BPMPD  Quadratic Program Solver based on BPMPD_MEX
+%QPS_BPMPD  Quadratic Program Solver based on BPMPD_MEX.
+%   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
+%       QPS_BPMPD(H, C, A, L, U, XMIN, XMAX, X0, OPT)
 %   A wrapper function providing a MATPOWER standardized interface for using
 %   BPMPD_MEX (http://www.pserc.cornell.edu/bpmpd/) to solve the
 %   following QP (quadratic programming) problem:
 %
-%       min 1/2 x'*H*x + c'*x
-%        x
+%       min 1/2 X'*H*X + C'*X
+%        X
 %
 %   subject to
 %
-%       l <= A*x <= u       (linear constraints)
-%       xmin <= x <= xmax   (variable bounds)
+%       L <= A*X <= U       (linear constraints)
+%       XMIN <= X <= XMAX   (variable bounds)
 %
-%   [x, f, exitflag, output, lambda] = ...
-%       qps_bpmpd(H, c, A, l, u, xmin, xmax, x0, opt)
-%
-%   x = qps_bpmpd(H, c, A, l, u)
-%   x = qps_bpmpd(H, c, A, l, u, xmin, xmax)
-%   x = qps_bpmpd(H, c, A, l, u, xmin, xmax, x0)
-%   x = qps_bpmpd(H, c, A, l, u, xmin, xmax, x0, opt)
-%   x = qps_bpmpd(problem), where problem is a struct with fields:
-%                       H, c, A, l, u, xmin, xmax, x0, opt
-%                       all fields except 'H', 'c', 'A' and 'l' are optional
-%   x = qps_bpmpd(...)
-%   [x, f] = qps_bpmpd(...)
-%   [x, f, exitflag] = qps_bpmpd(...)
-%   [x, f, exitflag, output] = qps_bpmpd(...)
-%   [x, f, exitflag, output, lambda] = qps_bpmpd(...)
-%
-%   Inputs:
+%   Inputs (all optional except H, C, A and L):
 %       H : matrix (possibly sparse) of quadratic cost coefficients
-%       c : vector of linear cost coefficients
-%       A, l, u : define the optional linear constraints. Default
-%           values for the elements of l and u are -Inf and Inf,
+%       C : vector of linear cost coefficients
+%       A, L, U : define the optional linear constraints. Default
+%           values for the elements of L and U are -Inf and Inf,
 %           respectively.
-%       xmin, xmax : optional lower and upper bounds on the
-%           x variables, defaults are -Inf and Inf, respectively.
-%       x0 : optional starting value of optimization vector x
-%       opt : optional options structure with the following fields,
+%       XMIN, XMAX : optional lower and upper bounds on the
+%           X variables, defaults are -Inf and Inf, respectively.
+%       X0 : optional starting value of optimization vector X
+%       OPT : optional options structure with the following fields,
 %           all of which are also optional (default values shown in
 %           parentheses)
 %           verbose (0) - controls level of progress output displayed
@@ -46,37 +32,69 @@ function [x, f, eflag, output, lambda] = qps_bpmpd(H, c, A, l, u, xmin, xmax, x0
 %               2 = verbose progress output
 %           max_it (0) - maximum number of iterations allowed
 %               0 = use algorithm default
-%           bp_opt - options vector for bp(), values in verbose and
-%				max_it override these options
-%       problem : The inputs can alternatively be supplied in a single
-%           struct with fields corresponding to the input arguments
+%           bp_opt - options vector for BP, values in verbose and
+%               max_it override these options
+%       PROBLEM : The inputs can alternatively be supplied in a single
+%           PROBLEM struct with fields corresponding to the input arguments
 %           described above: H, c, A, l, u, xmin, xmax, x0, opt
 %
 %   Outputs:
-%       x : solution vector
-%       f : final objective function value
-%       exitflag : exit flag,
+%       X : solution vector
+%       F : final objective function value
+%       EXITFLAG : exit flag,
 %             1 = optimal solution
 %            -1 = suboptimal solution
 %            -2 = infeasible primal
 %            -3 = infeasible dual
 %           -10 = not enough memory
 %           -99 = BPMPD bug: returned infeasible solution
-%       output : structure with fields:
+%       OUTPUT : output struct with the following fields:
 %           message - exit message
-%       lambda : struct containing the Langrange and Kuhn-Tucker
+%       LAMBDA : struct containing the Langrange and Kuhn-Tucker
 %           multipliers on the constraints, with fields:
-%           mu_l - lower bound on linear constraints
-%           mu_u - upper bound on linear constraints
+%           mu_l - lower (left-hand) limit on linear constraints
+%           mu_u - upper (right-hand) limit on linear constraints
 %           lower - lower bound on optimization variables
 %           upper - upper bound on optimization variables
 %
-%   Note the calling syntax is almost identical to that of 'quadprog'
+%   Note the calling syntax is almost identical to that of QUADPROG
 %   from MathWorks' Optimization Toolbox. The main difference is that
-%   the linear constraints are specified with A, l, u instead of
-%   A, b, Aeq, beq.
+%   the linear constraints are specified with A, L, U instead of
+%   A, B, Aeq, Beq.
 %
-%   See also BPMPD_MEX, http://www.pserc.cornell.edu/bpmpd/
+%   Calling syntax options:
+%       [x, f, exitflag, output, lambda] = ...
+%           qps_bpmpd(H, c, A, l, u, xmin, xmax, x0, opt)
+%
+%       x = qps_bpmpd(H, c, A, l, u)
+%       x = qps_bpmpd(H, c, A, l, u, xmin, xmax)
+%       x = qps_bpmpd(H, c, A, l, u, xmin, xmax, x0)
+%       x = qps_bpmpd(H, c, A, l, u, xmin, xmax, x0, opt)
+%       x = qps_bpmpd(problem), where problem is a struct with fields:
+%                       H, c, A, l, u, xmin, xmax, x0, opt
+%                       all fields except 'H', 'c', 'A' and 'l' are optional
+%       x = qps_bpmpd(...)
+%       [x, f] = qps_bpmpd(...)
+%       [x, f, exitflag] = qps_bpmpd(...)
+%       [x, f, exitflag, output] = qps_bpmpd(...)
+%       [x, f, exitflag, output, lambda] = qps_bpmpd(...)
+%
+%   Example: (problem from from http://www.uc.edu/sashtml/iml/chap8/sect12.htm)
+%       H = [   1003.1  4.3     6.3     5.9;
+%               4.3     2.2     2.1     3.9;
+%               6.3     2.1     3.5     4.8;
+%               5.9     3.9     4.8     10  ];
+%       c = zeros(4,1);
+%       A = [   1       1       1       1;
+%               0.17    0.11    0.10    0.18    ];
+%       l = [1; 0.10];
+%       u = [1; Inf];
+%       xmin = zeros(4,1);
+%       x0 = [1; 0; 0; 1];
+%       opt = struct('verbose', 2);
+%       [x, f, s, out, lam] = qps_matpower(H, c, A, l, u, xmin, [], x0, opt);
+%
+%   See also BPMPD_MEX, http://www.pserc.cornell.edu/bpmpd/.
 
 %   MATPOWER
 %   $Id$
@@ -171,15 +189,15 @@ end
 
 %% make sure args are sparse/full as expected by BPMPD
 if ~isempty(H)
-	if ~issparse(H)
-		H = sparse(H);
-	end
+    if ~issparse(H)
+        H = sparse(H);
+    end
 end
 if ~issparse(A)
-	A = sparse(A);
+    A = sparse(A);
 end
 if issparse(c)
-	c = full(c);                %% avoid a crash
+    c = full(c);                %% avoid a crash
 end
 
 %% split up linear constraints
@@ -201,96 +219,96 @@ nbx = length(ibx);      %% number of doubly bounded linear inequalities
 
 %% set up linear constraints
 if neq || niq
-	AA = [Ae; Ai];
-	bb = [be; bi];
-	ee = [zeros(neq, 1); -ones(niq, 1)];
+    AA = [Ae; Ai];
+    bb = [be; bi];
+    ee = [zeros(neq, 1); -ones(niq, 1)];
 else
-	AA = []; bb = []; ee = [];
+    AA = []; bb = []; ee = [];
 end
 
 %% set up variable bounds and initial value
 if ~isempty(xmin)
-	llist = find(xmin > -1e15);  % interpret limits <= -1e15 as unbounded
-	if isempty(llist)
-		llist = [];
-		lval  = [];
-	else
-		lval = xmin(llist);
-	end
+    llist = find(xmin > -1e15);  % interpret limits <= -1e15 as unbounded
+    if isempty(llist)
+        llist = [];
+        lval  = [];
+    else
+        lval = xmin(llist);
+    end
 else
-	llist = [];
-	lval = [];
+    llist = [];
+    lval = [];
 end
 if ~isempty(xmax)
-	ulist = find(xmax < 1e15);   % interpret limits >= 1e15 as unbounded
-	if isempty(ulist)
-		ulist = [];
-		uval  = [];
-	else
-		uval = xmax(ulist);
-	end
+    ulist = find(xmax < 1e15);   % interpret limits >= 1e15 as unbounded
+    if isempty(ulist)
+        ulist = [];
+        uval  = [];
+    else
+        uval = xmax(ulist);
+    end
 else
-	ulist = [];
-	uval = [];
+    ulist = [];
+    uval = [];
 end
 
 %% set up options
 if ~isempty(opt) && isfield(opt, 'bp_opt') && ~isempty(opt.bp_opt)
-	bp_opt = opt.bp_opt;
+    bp_opt = opt.bp_opt;
 else
-	bp_opt = bpopt;         %% use default options
-	% bp_opt(14)= 1e-3;   % TPIV1  first relative pivot tolerance (desired)
-	% bp_opt(20)= 1e-8;   % TOPT1  stop if feasible and rel. dual gap less than this
-	% bp_opt(22)= 1e-7;   % TFEAS1 relative primal feasibility tolerance
-	% bp_opt(23)= 1e-7;   % TFEAS2 relative dual feasibility tolerance
-	% bp_opt(29)= 1e-9;   % TRESX  acceptable primal residual
-	% bp_opt(30)= 1e-9;   % TRESY  acceptable dual residual
-	% bp_opt(38)= 2;      % SMETHOD1 prescaling method
+    bp_opt = bpopt;         %% use default options
+    % bp_opt(14)= 1e-3;   % TPIV1  first relative pivot tolerance (desired)
+    % bp_opt(20)= 1e-8;   % TOPT1  stop if feasible and rel. dual gap less than this
+    % bp_opt(22)= 1e-7;   % TFEAS1 relative primal feasibility tolerance
+    % bp_opt(23)= 1e-7;   % TFEAS2 relative dual feasibility tolerance
+    % bp_opt(29)= 1e-9;   % TRESX  acceptable primal residual
+    % bp_opt(30)= 1e-9;   % TRESY  acceptable dual residual
+    % bp_opt(38)= 2;      % SMETHOD1 prescaling method
 end
 if max_it
-	bp_opt(26) = max_it;    %% MAXITER
+    bp_opt(26) = max_it;    %% MAXITER
 end
 if verbose > 1
-	prnlev = 1;
+    prnlev = 1;
 else
-	prnlev = 0;
+    prnlev = 0;
 end
 if strcmp(computer, 'PCWIN')
-	if prnlev
-		fprintf('Windows version of BPMPD_MEX cannot print to screen.\n');
-	end
-	prnlev = 0;   % The Windows incarnation of bp was born mute and deaf,
+    if prnlev
+        fprintf('Windows version of BPMPD_MEX cannot print to screen.\n');
+    end
+    prnlev = 0;   % The Windows incarnation of bp was born mute and deaf,
 end               % probably because of acute shock after realizing its fate.
-				  % Can't be allowed to try to speak or its universe crumbles.
+                  % Can't be allowed to try to speak or its universe crumbles.
 
 %% call the solver
 [x, y, s, w, output.message] = bp(H, AA, bb, c, ee, llist, lval, ...
-									ulist, uval, bp_opt, prnlev);
+                                    ulist, uval, bp_opt, prnlev);
 
 %% compute final objective
 if nargout > 1
-	f = 0;
-	if ~isempty(c)
-		f = f + c' * x;
-	end
-	if ~isempty(H)
-		f = f + 0.5 * x' * H * x;
-	end
+    f = 0;
+    if ~isempty(c)
+        f = f + c' * x;
+    end
+    if ~isempty(H)
+        f = f + 0.5 * x' * H * x;
+    end
 end
 
 %% set exit flag
 if strcmp(output.message, 'optimal solution')
-	eflag = 1;
+    eflag = 1;
 elseif strcmp(output.message, 'suboptimal solution')
-	eflag = -1;
+    eflag = -1;
 elseif strcmp(output.message, 'infeasible primal')
-	eflag = -2;
+    eflag = -2;
 elseif strcmp(output.message, 'infeasible dual')
-	eflag = -3;
+    eflag = -3;
 elseif strcmp(output.message, 'not enough memory')
-	eflag = -10;
+    eflag = -10;
 else
-	eflag = 0;
+    eflag = 0;
 end
 
 %% zero out lambdas smaller than a certain tolerance
@@ -298,9 +316,9 @@ y(abs(y) < 1e-9) = 0;
 w(abs(w) < 1e-9) = 0;
 
 %% necessary for proper operation of constr.m
-if eflag == -2				%% infeasible primal
-	y = zeros(size(y));
-	w = zeros(size(w));
+if eflag == -2              %% infeasible primal
+    y = zeros(size(y));
+    w = zeros(size(w));
 end
 
 %% repackage lambdas
@@ -327,90 +345,90 @@ lam.lower(kl) = w(kl);
 lam.upper(ku) = -w(ku);
 
 lambda = struct( ...
-	'mu_l', mu_l, ...
-	'mu_u', mu_u, ...
-	'lower', lam.lower, ...
-	'upper', lam.upper ...
+    'mu_l', mu_l, ...
+    'mu_u', mu_u, ...
+    'lower', lam.lower, ...
+    'upper', lam.upper ...
 );
 
 %% Note: BPMPD_MEX has a bug which causes it to return an incorrect
 %%       (infeasible) solution for some problems.
 %% So we need to double-check for feasibility
 if eflag > 0
-	bpmpd_bug_fatal = 0;
-	err_tol = 5e-4;
-	if ~isempty(xmin)
-		lb_violation = xmin - x;
-		if verbose > 1
-			fprintf('max variable lower bound violatation: %g\n', max(lb_violation));
-		end
-	else
-		lb_violation = zeros(nx, 1);
-	end
-	if ~isempty(xmax)
-		ub_violation = x - xmax;
-		if verbose > 1
-			fprintf('max variable upper bound violation: %g\n', max(ub_violation));
-		end
-	else
-		ub_violation = zeros(nx, 1);
-	end
-	if neq > 0
-		eq_violation = abs( Ae * x - be );
-		if verbose > 1
-			fprintf('max equality constraint violation: %g\n', max(eq_violation));
-		end
-	else
-		eq_violation = zeros(neq, 1);
-	end
-	if niq
-		ineq_violation = Ai * x - bi;
-		if verbose > 1
-			fprintf('max inequality constraint violation: %g\n', max(ineq_violation));
-		end
-	else
-		ineq_violation = zeros(niq, 1);
-	end
-	if any( [ lb_violation;
-			  ub_violation;
-			  eq_violation;
-			  ineq_violation ] > err_tol)
-		err_cnt = 0;
-		if any( lb_violation > err_tol )
-			err_cnt = err_cnt + 1;
-			errs{err_cnt} = ...
-				sprintf('variable lower bound violated by %g', ...
-					max(lb_violation));
-		end
-		if any( ub_violation > err_tol )
-			err_cnt = err_cnt + 1;
-			errs{err_cnt} = ... 
-				sprintf('variable upper bound violated by %g', ...
-					max(ub_violation));
-		end
-		if any( eq_violation > err_tol )
-			err_cnt = err_cnt + 1;
-			errs{err_cnt} = ... 
-				sprintf('equality constraint violated by %g', ...
-					max(eq_violation));
-		end
-		if any( ineq_violation > err_tol )
-			err_cnt = err_cnt + 1;
-			errs{err_cnt} = ... 
-				sprintf('inequality constraint violated by %g', ...
-					max(ineq_violation));
-		end
-		fprintf('\nWARNING: This version of BPMPD_MEX has a bug which caused it to return\n');
-		fprintf(  '         an incorrect (infeasible) solution for this particular problem.\n');
-		for err_idx = 1:err_cnt
-			fprintf('         %s\n', errs{err_idx});
-		end
-		if bpmpd_bug_fatal
-			error('%s\n%s', ...
-				'To avoid this bug in BPMPD_MEX you will need', ...
-				'to use a different QP solver for this problem.');
-		end
-		eflag = -99;
-		output.message = [output.message '\nBPMPD bug: returned infeasible solution'];
-	end
+    bpmpd_bug_fatal = 0;
+    err_tol = 5e-4;
+    if ~isempty(xmin)
+        lb_violation = xmin - x;
+        if verbose > 1
+            fprintf('max variable lower bound violatation: %g\n', max(lb_violation));
+        end
+    else
+        lb_violation = zeros(nx, 1);
+    end
+    if ~isempty(xmax)
+        ub_violation = x - xmax;
+        if verbose > 1
+            fprintf('max variable upper bound violation: %g\n', max(ub_violation));
+        end
+    else
+        ub_violation = zeros(nx, 1);
+    end
+    if neq > 0
+        eq_violation = abs( Ae * x - be );
+        if verbose > 1
+            fprintf('max equality constraint violation: %g\n', max(eq_violation));
+        end
+    else
+        eq_violation = zeros(neq, 1);
+    end
+    if niq
+        ineq_violation = Ai * x - bi;
+        if verbose > 1
+            fprintf('max inequality constraint violation: %g\n', max(ineq_violation));
+        end
+    else
+        ineq_violation = zeros(niq, 1);
+    end
+    if any( [ lb_violation;
+              ub_violation;
+              eq_violation;
+              ineq_violation ] > err_tol)
+        err_cnt = 0;
+        if any( lb_violation > err_tol )
+            err_cnt = err_cnt + 1;
+            errs{err_cnt} = ...
+                sprintf('variable lower bound violated by %g', ...
+                    max(lb_violation));
+        end
+        if any( ub_violation > err_tol )
+            err_cnt = err_cnt + 1;
+            errs{err_cnt} = ... 
+                sprintf('variable upper bound violated by %g', ...
+                    max(ub_violation));
+        end
+        if any( eq_violation > err_tol )
+            err_cnt = err_cnt + 1;
+            errs{err_cnt} = ... 
+                sprintf('equality constraint violated by %g', ...
+                    max(eq_violation));
+        end
+        if any( ineq_violation > err_tol )
+            err_cnt = err_cnt + 1;
+            errs{err_cnt} = ... 
+                sprintf('inequality constraint violated by %g', ...
+                    max(ineq_violation));
+        end
+        fprintf('\nWARNING: This version of BPMPD_MEX has a bug which caused it to return\n');
+        fprintf(  '         an incorrect (infeasible) solution for this particular problem.\n');
+        for err_idx = 1:err_cnt
+            fprintf('         %s\n', errs{err_idx});
+        end
+        if bpmpd_bug_fatal
+            error('%s\n%s', ...
+                'To avoid this bug in BPMPD_MEX you will need', ...
+                'to use a different QP solver for this problem.');
+        end
+        eflag = -99;
+        output.message = [output.message '\nBPMPD bug: returned infeasible solution'];
+    end
 end

@@ -1,6 +1,6 @@
 function mpc = case9
 %CASE9    Power flow data for 9 bus, 3 generator case.
-%   Please see 'help caseformat' for details on the case file format.
+%   Please see CASEFORMAT for details on the case file format.
 %
 %   Based on data from Joe H. Chow's book, p. 70.
 

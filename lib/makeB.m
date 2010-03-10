@@ -1,13 +1,19 @@
 function [Bp, Bpp] = makeB(baseMVA, bus, branch, alg)
 %MAKEB   Builds the FDPF matrices, B prime and B double prime.
-%   [Bp, Bpp] = makeB(baseMVA, bus, branch, alg) returns the two
+%   [BP, BPP] = MAKEB(BASEMVA, BUS, BRANCH, ALG) returns the two
 %   matrices B prime and B double prime used in the fast decoupled power
-%   flow. Does appropriate conversions to p.u.
+%   flow. Does appropriate conversions to p.u. ALG is the value of the
+%   PF_ALG option specifying the power flow algorithm.
+%
+%   Example:
+%       [Bp, Bpp] = makeB(baseMVA, bus, branch, alg);
+%
+%   See also FDPF.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% constants

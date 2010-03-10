@@ -1,9 +1,9 @@
 function [dSf_dVa, dSf_dVm, dSt_dVa, dSt_dVm, Sf, St] = dSbr_dV(branch, Yf, Yt, V)
 %DSBR_DV   Computes partial derivatives of power flows w.r.t. voltage.
-%   [dSf_dVa, dSf_dVm, dSt_dVa, dSt_dVm, Sf, St] = dSbr_dV(branch, Yf, Yt, V)
+%   [DSF_DVA, DSF_DVM, DST_DVA, DST_DVM, SF, ST] = DSBR_DV(BRANCH, YF, YT, V)
 %   returns four matrices containing partial derivatives of the complex
 %   branch power flows at "from" and "to" ends of each branch w.r.t voltage
-%   magnitude and voltage angle respectively (for all buses). If Yf is a
+%   magnitude and voltage angle respectively (for all buses). If YF is a
 %   sparse matrix, the partial derivative matrices will be as well. Optionally
 %   returns vectors containing the power flows themselves. The following
 %   explains the expressions used to form the matrices:
@@ -39,6 +39,10 @@ function [dSf_dVa, dSf_dVm, dSt_dVa, dSt_dVm, Sf, St] = dSbr_dV(branch, Yf, Yt, 
 %
 %   Derivations for "to" bus are similar.
 %
+%   Example:
+%       [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
+%       [dSf_dVa, dSf_dVm, dSt_dVa, dSt_dVm, Sf, St] = ...
+%           dSbr_dV(branch, Yf, Yt, V);
 
 %   MATPOWER
 %   $Id$

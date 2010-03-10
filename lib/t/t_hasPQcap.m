@@ -1,10 +1,10 @@
 function t_hasPQcap(quiet)
-%T_HASPQCAP  Tests for hasPQcap.
+%T_HASPQCAP  Tests for HASPQCAP.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2005 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2005-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 if nargin < 1

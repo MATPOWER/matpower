@@ -1,8 +1,10 @@
 function Sbus = makeSbus(baseMVA, bus, gen)
 %MAKESBUS   Builds the vector of complex bus power injections.
-%   Sbus = makeSbus(baseMVA, bus, gen) returns the vector of complex bus
+%   SBUS = MAKESBUS(BASEMVA, BUS, GEN) returns the vector of complex bus
 %   power injections, that is, generation minus load. Power is expressed
 %   in per unit.
+%
+%   See also MAKEYBUS.
 
 %   MATPOWER
 %   $Id$

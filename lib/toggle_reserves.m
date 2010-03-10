@@ -1,14 +1,13 @@
 function mpc = toggle_reserves(mpc, on_off)
 %TOGGLE_RESERVES Enable or disable fixed reserve requirements.
-%
-%   mpc = toggle_reserves(mpc, 'on')
-%   mpc = toggle_reserves(mpc, 'off')
+%   MPC = TOGGLE_RESERVES(MPC, 'on')
+%   MPC = TOGGLE_RESERVES(MPC, 'off')
 %
 %   Enables or disables a set of OPF userfcn callbacks to implement
 %   co-optimization of reserves with fixed zonal reserve requirements.
 %
-%   These callbacks expect to find a 'reserves' field in the input mpc,
-%   where mpc.reserves is a struct with the following fields:
+%   These callbacks expect to find a 'reserves' field in the input MPC,
+%   where MPC.reserves is a struct with the following fields:
 %       zones   nrz x ng, zone(i, j) = 1, if gen j belongs to zone i
 %                                      0, otherwise
 %       req     nrz x 1, zonal reserve requirement in MW
@@ -29,6 +28,9 @@ function mpc = toggle_reserves(mpc, on_off)
 %       prc     - ng x 1, reserve price for each gen equal to maximum of the
 %                         shadow prices on the zonal requirement constraint
 %                         for each zone the generator belongs to
+%
+%   See also RUNOPF_W_RES, ADD_USERFCN, REMOVE_USERFCN, RUN_USERFCN,
+%   T_CASE30_USERFCNS.
 
 %   MATPOWER
 %   $Id$

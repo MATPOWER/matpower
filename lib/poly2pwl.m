@@ -1,15 +1,15 @@
 function pwlcost = poly2pwl(polycost, Pmin, Pmax, npts)
 %POLY2PWL  Converts polynomial cost variable to piecewise linear.
-%   pwlcost = poly2pwl(polycost, Pmin, Pmax, npts) converts the polynomial
-%   cost variable polycost into a piece-wise linear cost by evaluating at
-%   zero and then at npts evenly spaced points between Pmin and Pmax. If
-%   Pmin <= 0 (such as for reactive power, where P really means Q) it just
-%   uses npts evenly spaced points between Pmin and Pmax.
+%   PWLCOST = POLY2PWL(POLYCOST, PMIN, PMAX, NPTS) converts the polynomial
+%   cost variable POLYCOST into a piece-wise linear cost by evaluating at
+%   zero and then at NPTS evenly spaced points between PMIN and PMAX. If
+%   PMIN <= 0 (such as for reactive power, where P really means Q) it just
+%   uses NPTS evenly spaced points between PMIN and PMAX.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2006 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;

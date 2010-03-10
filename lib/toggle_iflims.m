@@ -1,14 +1,13 @@
 function mpc = toggle_iflims(mpc, on_off)
 %TOGGLE_IFLIMS Enable or disable set of interface flow constraints.
-%
-%   mpc = toggle_iflims(mpc, 'on')
-%   mpc = toggle_iflims(mpc, 'off')
+%   MPC = TOGGLE_IFLIMS(MPC, 'on')
+%   MPC = TOGGLE_IFLIMS(MPC, 'off')
 %
 %   Enables or disables a set of OPF userfcn callbacks to implement
 %   interface flow limits based on a DC flow model.
 %
-%   These callbacks expect to find an 'if' field in the input mpc, where
-%   mpc.if is a struct with the following fields:
+%   These callbacks expect to find an 'if' field in the input MPC, where
+%   MPC.if is a struct with the following fields:
 %       map     n x 2, defines each interface in terms of a set of 
 %               branch indices and directions. Interface I is defined
 %               by the set of rows whose 1st col is equal to I. The
@@ -27,11 +26,13 @@ function mpc = toggle_iflims(mpc, on_off)
 %       P       - nif x 1, actual flow across each interface in MW
 %       mu.l    - nif x 1, shadow price on lower flow limit, ($/MW)
 %       mu.u    - nif x 1, shadow price on upper flow limit, ($/MW)
+%
+%   See also ADD_USERFCN, REMOVE_USERFCN, RUN_USERFCN, T_CASE30_USERFCNS.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2009 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 if strcmp(on_off, 'on')

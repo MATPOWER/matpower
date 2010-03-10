@@ -1,6 +1,6 @@
 function compare_case(mpc1, mpc2)
 %COMPARE_CASE  Compares the bus, gen, branch matrices of 2 MATPOWER cases.
-%   compare_case(mpc1, mpc2)
+%   COMPARE_CASE(MPC1, MPC2)
 %   Compares the bus, branch and gen matrices of two MATPOWER cases and
 %   prints a summary of the differences. For each column of the matrix it
 %   prints the maximum of any non-zero differences.
@@ -8,7 +8,7 @@ function compare_case(mpc1, mpc2)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2009 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% define named indices into bus, gen, branch matrices
@@ -34,15 +34,15 @@ Nl = ANGMAX;
 
 %% check for PF results
 if size(branch1, 2) >= QT && size(branch2, 2) >= QT
-	solvedPF = 1;
-	Nl = QT;
-	%% check for OPF results
-	if size(branch1, 2) >= MU_ST && size(branch2, 2) >= MU_ST
-		solvedOPF = 1;
-		Nb = MU_VMIN;
-		Ng = MU_QMIN;
-		Nl = MU_ST;
-	end
+    solvedPF = 1;
+    Nl = QT;
+    %% check for OPF results
+    if size(branch1, 2) >= MU_ST && size(branch2, 2) >= MU_ST
+        solvedOPF = 1;
+        Nb = MU_VMIN;
+        Ng = MU_QMIN;
+        Nl = MU_ST;
+    end
 end
 
 %% set up index name matrices

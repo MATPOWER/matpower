@@ -1,20 +1,26 @@
-function [Haa, Hav, Hva, Hvv] = d2Sbus_dV2(Ybus, V, lam)
+function [Gaa, Gav, Gva, Gvv] = d2Sbus_dV2(Ybus, V, lam)
 %D2SBUS_DV2   Computes 2nd derivatives of power injection w.r.t. voltage.
-%   [Haa, Hav, Hva, Hvv] = d2Sbus_dV2(Ybus, V, lam) returns 4 matrices
+%   [GAA, GAV, GVA, GVV] = D2SBUS_DV2(YBUS, V, LAM) returns 4 matrices
 %   containing the partial derivatives w.r.t. voltage angle and magnitude
-%   of the product of a vector lam with the 1st partial derivatives of the
-%   complex bus power injections. Takes sparse bus admittance matrix Ybr,
-%   voltage vector V and nb x 1 vector lam. Output matrices are sparse.
+%   of the product of a vector LAM with the 1st partial derivatives of the
+%   complex bus power injections. Takes sparse bus admittance matrix YBUS,
+%   voltage vector V and nb x 1 vector of multipliers LAM. Output matrices
+%   are sparse.
 %
-%   Haa = (d/dVa (dSbus_dVa.')) * lam
-%   Hav = (d/dVm (dSbus_dVa.')) * lam
-%   Hva = (d/dVa (dSbus_dVm.')) * lam
-%   Hvv = (d/dVm (dSbus_dVm.')) * lam
+%   Example:
+%       [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
+%       [Gaa, Gav, Gva, Gvv] = d2Sbus_dV2(Ybus, V, lam);
+%
+%   Here the output matrices correspond to:
+%       Gaa = (d/dVa (dSbus_dVa.')) * lam
+%       Gav = (d/dVm (dSbus_dVa.')) * lam
+%       Gva = (d/dVa (dSbus_dVm.')) * lam
+%       Gvv = (d/dVm (dSbus_dVm.')) * lam
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2008 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 n = length(V);
@@ -30,7 +36,7 @@ E = conj(diagV) * (D * diaglam - sparse(1:n, 1:n, D*lam, n, n));
 F = C - A * sparse(1:n, 1:n, conj(Ibus), n, n);
 G = sparse(1:n, 1:n, ones(n, 1)./abs(V), n, n);
 
-Haa = E + F;
-Hva = 1j * G * (E - F);
-Hav = Hva.';
-Hvv = G * (C + C.') * G;
+Gaa = E + F;
+Gva = 1j * G * (E - F);
+Gav = Gva.';
+Gvv = G * (C + C.') * G;

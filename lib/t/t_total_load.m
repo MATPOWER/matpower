@@ -1,10 +1,10 @@
 function t_total_load(quiet)
-%T_TOTAL_LOAD  Tests for code in total_load.m.
+%T_TOTAL_LOAD  Tests for code in TOTAL_LOAD.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2008, 2009 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 if nargin < 1

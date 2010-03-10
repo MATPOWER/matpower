@@ -1,5 +1,5 @@
 function t_makeLODF(quiet)
-%T_MAKELODF  Tests for makeLODF().
+%T_MAKELODF  Tests for MAKELODF.
 
 %   MATPOWER
 %   $Id$
@@ -34,7 +34,7 @@ end
 mpc = loadcase(casefile);
 mpopt = mpoption('OUT_ALL', 0, 'VERBOSE', verbose);
 [baseMVA, bus, gen, gencost, branch, f, success, et] = ...
-	rundcopf(mpc, mpopt);
+    rundcopf(mpc, mpopt);
 [i2e, bus, gen, branch] = ext2int(bus, gen, branch);
 
 %% compute injections and flows
@@ -55,12 +55,12 @@ mpc.gen = gen;
 branch0 = branch;
 outages = [1:12 14:15 17:18 20 27:33 35:41];
 for k = outages
-	mpc.branch = branch0;
-	mpc.branch(k, BR_STATUS) = 0;
-	[baseMVA, bus, gen, branch, success, et] = rundcpf(mpc, mpopt);
-	F = branch(:, PF);
+    mpc.branch = branch0;
+    mpc.branch(k, BR_STATUS) = 0;
+    [baseMVA, bus, gen, branch, success, et] = rundcpf(mpc, mpopt);
+    F = branch(:, PF);
 
-	t_is(LODF(:, k), (F - F0) / F0(k), 6, sprintf('LODF(:, %d)', k));
+    t_is(LODF(:, k), (F - F0) / F0(k), 6, sprintf('LODF(:, %d)', k));
 end
 
 t_end;

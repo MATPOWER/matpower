@@ -1,17 +1,27 @@
 function t_is(got, expected, prec, msg)
 %T_IS  Tests if two matrices are identical to some tolerance.
-%   t_is(got, expected, prec, msg) increments the global test count
+%   T_IS(GOT, EXPECTED, PREC, MSG) increments the global test count
 %   and if the maximum difference between corresponding elements of
-%   got and expected is less than 10^(-prec) then it increments the
+%   GOT and EXPECTED is less than 10^(-PREC) then it increments the
 %   passed tests count, otherwise increments the failed tests count.
-%   Prints 'ok' or 'not ok' followed by the msg, unless the global
+%   Prints 'ok' or 'not ok' followed by the MSG, unless the global
 %   variable t_quiet is true. Intended to be called between calls to
-%   t_begin and t_end.
+%   T_BEGIN and T_END.
+%
+%   Example:
+%       quiet = 0;
+%       t_begin(5, quiet);
+%       t_ok(pi > 3, 'size of pi');
+%       t_skip(3, 'not yet written');
+%       t_is(2+2, 4, 12, '2+2 still equals 4');
+%       t_end;
+%
+%   See also T_OK, T_SKIP, T_BEGIN, T_END, T_RUN_TESTS.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2004 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 global t_quiet;

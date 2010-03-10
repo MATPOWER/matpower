@@ -1,9 +1,9 @@
 function [dIf_dVa, dIf_dVm, dIt_dVa, dIt_dVm, If, It] = dIbr_dV(branch, Yf, Yt, V)
 %DIBR_DV   Computes partial derivatives of branch currents w.r.t. voltage.
-%   [dIf_dVa, dIf_dVm, dIt_dVa, dIt_dVm, If, It] = dIbr_dV(branch, Yf, Yt, V)
+%   [DIF_DVA, DIF_DVM, DIT_DVA, DIT_DVM, IF, IT] = DIBR_DV(BRANCH, YF, YT, V)
 %   returns four matrices containing partial derivatives of the complex
 %   branch currents at "from" and "to" ends of each branch w.r.t voltage
-%   magnitude and voltage angle respectively (for all buses). If Yf is a
+%   magnitude and voltage angle respectively (for all buses). If YF is a
 %   sparse matrix, the partial derivative matrices will be as well. Optionally
 %   returns vectors containing the currents themselves. The following
 %   explains the expressions used to form the matrices:
@@ -22,11 +22,15 @@ function [dIf_dVa, dIf_dVm, dIt_dVa, dIt_dVm, If, It] = dIbr_dV(branch, Yf, Yt, 
 %
 %   Derivations for "to" bus are similar.
 %
+%   Example:
+%       [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
+%       [dIf_dVa, dIf_dVm, dIt_dVa, dIt_dVm, If, It] = ...
+%           dIbr_dV(branch, Yf, Yt, V);
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2007 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% define
@@ -47,6 +51,6 @@ dIt_dVm = Yt * diagVnorm;
 
 %% compute currents
 if nargout > 4
-	If = Yf * V;
-	It = Yt * V;
+    If = Yf * V;
+    It = Yt * V;
 end

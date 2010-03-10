@@ -1,64 +1,46 @@
 function [x, f, eflag, output, lambda] = mips(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt)
-%MIPS  Matlab Interior Point Solver
+%MIPS  Matlab Interior Point Solver.
+%   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
+%       MIPS(F_FCN, X0, A, L, U, XMIN, XMAX, GH_FCN, HESS_FCN, OPT)
 %   Primal-dual interior point method for NLP (non-linear programming).
-%   Minimize a function f(x) beginning from a starting point x0, subject to
+%   Minimize a function F(X) beginning from a starting point X0, subject to
 %   optional linear and non-linear constraints and variable bounds.
 %
-%       min f(x)
-%        x
+%       min F(X)
+%        X
 %
 %   subject to
 %
-%       g(x) = 0            (non-linear equalities)
-%       h(x) <= 0           (non-linear inequalities)
-%       l <= A*x <= u       (linear constraints)
-%       xmin <= x <= xmax   (variable bounds)
+%       G(X) = 0            (non-linear equalities)
+%       H(X) <= 0           (non-linear inequalities)
+%       L <= A*X <= U       (linear constraints)
+%       XMIN <= X <= XMAX   (variable bounds)
 %
-%   [x, f, exitflag, output, lambda] = ...
-%       mips(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt)
-%
-%   x = mips(f_fcn, x0)
-%   x = mips(f_fcn, x0, A, l)
-%   x = mips(f_fcn, x0, A, l, u)
-%   x = mips(f_fcn, x0, A, l, u, xmin)
-%   x = mips(f_fcn, x0, A, l, u, xmin, xmax)
-%   x = mips(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn)
-%   x = mips(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn)
-%   x = mips(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt)
-%   x = mips(problem), where problem is a struct with fields:
-%                   f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt
-%                   all fields except 'f_fcn' and 'x0' are optional
-%   x = mips(...)
-%   [x, f] = mips(...)
-%   [x, f, exitflag] = mips(...)
-%   [x, f, exitflag, output] = mips(...)
-%   [x, f, exitflag, output, lambda] = mips(...)
-%
-%   Inputs:
-%       f_fcn : handle to function that evaluates the objective function,
-%           its gradients and Hessian for a given value of x. If there
+%   Inputs (all optional except F_FCN and X0):
+%       F_FCN : handle to function that evaluates the objective function,
+%           its gradients and Hessian for a given value of X. If there
 %           are non-linear constraints, the Hessian information is
-%           provided by the 'hess_fcn' function passed in the 9th argument
+%           provided by the HESS_FCN function passed in the 9th argument
 %           and is not required here. Calling syntax for this function:
-%               [f, df, d2f] = f_fcn(x)
-%       x0 : starting value of optimization vector x
-%       A, l, u : define the optional linear constraints. Default
-%           values for the elements of l and u are -Inf and Inf,
+%               [F, DF, D2F] = F_FCN(X)
+%       X0 : starting value of optimization vector X
+%       A, L, U : define the optional linear constraints. Default
+%           values for the elements of L and U are -Inf and Inf,
 %           respectively.
-%       xmin, xmax : optional lower and upper bounds on the
-%           x variables, defaults are -Inf and Inf, respectively.
-%       gh_fcn : handle to function that evaluates the optional
+%       XMIN, XMAX : optional lower and upper bounds on the
+%           X variables, defaults are -Inf and Inf, respectively.
+%       GH_FCN : handle to function that evaluates the optional
 %           non-linear constraints and their gradients for a given
-%           value of x. Calling syntax for this function is:
-%               [h, g, dh, dg] = gh_fcn(x)
-%       hess_fcn : handle to function that computes the Hessian of the
-%           Lagrangian for given values of x, lambda and mu, where
+%           value of X. Calling syntax for this function is:
+%               [H, G, DH, DG] = GH_FCN(X)
+%       HESS_FCN : handle to function that computes the Hessian of the
+%           Lagrangian for given values of X, lambda and mu, where
 %           lambda and mu are the multipliers on the equality and
 %           inequality constraints, g and h, respectively. The calling
 %           syntax for this function is:
-%               Lxx = hess_fcn(x, lam)
-%           where lambda = lam.eqnonlin and mu = lam.ineqnonlin.
-%       opt : optional options structure with the following fields,
+%               LXX = HESS_FCN(X, LAM)
+%           where lambda = LAM.eqnonlin and mu = LAM.ineqnonlin.
+%       OPT : optional options structure with the following fields,
 %           all of which are also optional (default values shown in
 %           parentheses)
 %           verbose (0) - controls level of progress output displayed
@@ -79,25 +61,25 @@ function [x, f, eflag, output, lambda] = mips(f_fcn, x0, A, l, u, xmin, xmax, gh
 %               function so that it can appropriately scale the
 %               objective function term in the Hessian of the
 %               Lagrangian.
-%       problem : The inputs can alternatively be supplied in a single
-%           struct with fields corresponding to the input arguments
+%       PROBLEM : The inputs can alternatively be supplied in a single
+%           PROBLEM struct with fields corresponding to the input arguments
 %           described above: f_fcn, x0, A, l, u, xmin, xmax,
 %                            gh_fcn, hess_fcn, opt
 %
 %   Outputs:
-%       x : solution vector
-%       f : final objective function value
-%       exitflag : exit flag,
+%       X : solution vector
+%       F : final objective function value
+%       EXITFLAG : exit flag
 %           1 = first order optimality conditions satisfied
 %           0 = maximum number of iterations reached
 %           -1 = numerically failed
-%       output : struct with fields:
+%       OUTPUT : output struct with fields:
 %           iterations - number of iterations performed
 %           hist - struct array with trajectories of the following:
 %                   feascond, gradcond, compcond, costcond, gamma,
 %                   stepsize, obj, alphap, alphad
 %           message - exit message
-%       lambda : struct containing the Langrange and Kuhn-Tucker
+%       LAMBDA : struct containing the Langrange and Kuhn-Tucker
 %           multipliers on the constraints, with fields:
 %           eqnonlin - non-linear equality constraints
 %           ineqnonlin - non-linear inequality constraints
@@ -106,11 +88,61 @@ function [x, f, eflag, output, lambda] = mips(f_fcn, x0, A, l, u, xmin, xmax, gh
 %           lower - lower bound on optimization variables
 %           upper - upper bound on optimization variables
 %
-%   Note the calling syntax is almost identical to that of 'fmincon'
+%   Note the calling syntax is almost identical to that of FMINCON
 %   from MathWorks' Optimization Toolbox. The main difference is that
-%   the linear constraints are specified with A, l, u instead of
-%   A, b, Aeq, beq. The functions for evaluating the objective
+%   the linear constraints are specified with A, L, U instead of
+%   A, B, Aeq, Beq. The functions for evaluating the objective
 %   function, constraints and Hessian are identical.
+%
+%   Calling syntax options:
+%       [x, f, exitflag, output, lambda] = ...
+%           mips(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt);
+%
+%       x = mips(f_fcn, x0);
+%       x = mips(f_fcn, x0, A, l);
+%       x = mips(f_fcn, x0, A, l, u);
+%       x = mips(f_fcn, x0, A, l, u, xmin);
+%       x = mips(f_fcn, x0, A, l, u, xmin, xmax);
+%       x = mips(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn);
+%       x = mips(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn);
+%       x = mips(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt);
+%       x = mips(problem);
+%               where problem is a struct with fields:
+%                   f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt
+%                   all fields except 'f_fcn' and 'x0' are optional
+%       x = mips(...);
+%       [x, f] = mips(...);
+%       [x, f, exitflag] = mips(...);
+%       [x, f, exitflag, output] = mips(...);
+%       [x, f, exitflag, output, lambda] = mips(...);
+%
+%   Example: (problem from http://en.wikipedia.org/wiki/Nonlinear_programming)
+%       function [f, df, d2f] = f2(x)
+%       f = -x(1)*x(2) - x(2)*x(3);
+%       if nargout > 1           %% gradient is required
+%           df = -[x(2); x(1)+x(3); x(2)];
+%           if nargout > 2       %% Hessian is required
+%               d2f = -[0 1 0; 1 0 1; 0 1 0];   %% actually not used since
+%           end                                 %% 'hess_fcn' is provided
+%       end
+%       
+%       function [h, g, dh, dg] = gh2(x)
+%       h = [ 1 -1 1; 1 1 1] * x.^2 + [-2; -10];
+%       dh = 2 * [x(1) x(1); -x(2) x(2); x(3) x(3)];
+%       g = []; dg = [];
+%       
+%       function Lxx = hess2(x, lam)
+%       mu = lam.ineqnonlin;
+%       Lxx = [2*[1 1]*mu -1 0; -1 2*[-1 1]*mu -1; 0 -1 2*[1 1]*mu];
+%       
+%       problem = struct( ...
+%           'f_fcn',    @(x)f2(x), ...
+%           'gh_fcn',   @(x)gh2(x), ...
+%           'hess_fcn', @(x, lam)hess2(x, lam), ...
+%           'x0',       [1; 1; 0], ...
+%           'opt',      struct('verbose', 2) ...
+%       );
+%       [x, f, exitflag, output, lambda] = mips(problem);
 %
 %   Ported by Ray Zimmerman from C code written by H. Wang for his
 %   PhD dissertation:
@@ -124,7 +156,7 @@ function [x, f, eflag, output, lambda] = mips(f_fcn, x0, A, l, u, xmin, xmax, gh
 %     IEEE Transactions on Power Systems, Vol. 22, No. 3, Aug. 2007,
 %     pp. 1185-1193.
 
-%   MATPOWER
+%   MIPS
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
 %   Copyright (c) 2009-2010 by Power System Engineering Research Center (PSERC)

@@ -1,6 +1,6 @@
 function mpc = case2736sp
 %CASE2736SP  Power flow data for Polish system - summer 2004 peak.
-%   Please see 'help caseformat' for details on the case file format.
+%   Please see CASEFORMAT for details on the case file format.
 %
 %   This case represents the Polish 400, 220 and 110 kV networks during
 %   summer 2004 peak conditions. Multiple centrally dispatchable

@@ -1,11 +1,24 @@
 function f = polycost(gencost, Pg, der)
-%POLYCOST  Evaluates polynomial generator cost & derivatives
-%   f = polycost(gencost, Pg)
-%   df = polycost(gencost, Pg, 1)
-%   d2f = polycost(gencost, Pg, 2)
+%POLYCOST  Evaluates polynomial generator cost & derivatives.
+%   F = POLYCOST(GENCOST, PG) returns the vector of costs evaluated at PG
 %
-%   gencost must contain only polynomial costs
-%   Pg is in MW, not p.u. (works for Qg too)
+%   DF = POLYCOST(GENCOST, PG, 1) returns the vector of first derivatives
+%   of costs evaluated at PG
+%
+%   D2F = POLYCOST(GENCOST, PG, 2) returns the vector of second derivatives
+%   of costs evaluated at PG
+%
+%   GENCOST must contain only polynomial costs
+%   PG is in MW, not p.u. (works for QG too)
+%
+%   This is a more effecient implementation that what can be done with
+%   MATLAB's built-in POLYVAL and POLYDER functions.
+
+%   MATPOWER
+%   $Id$
+%   by Ray Zimmerman, PSERC Cornell
+%   Copyright (c) 2009-2010 by Power System Engineering Research Center (PSERC)
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %%----- initialize -----
 %% define named indices into data matrices

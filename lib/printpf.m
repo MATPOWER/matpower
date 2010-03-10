@@ -1,30 +1,37 @@
 function printpf(baseMVA, bus, gen, branch, f, success, et, fd, mpopt)
 %PRINTPF   Prints power flow results.
+%   PRINTPF(RESULTS, FD, MPOPT)
+%   PRINTPF(BASEMVA, BUS, GEN, BRANCH, F, SUCCESS, ET, FD, MPOPT)
 %
-%   printpf(results)
-%   printpf(results, fd)
-%   printpf(results, fd, mpopt)
-%   printpf(baseMVA, bus, gen, branch, f, success, et)
-%   printpf(baseMVA, bus, gen, branch, f, success, et, fd)
-%   printpf(baseMVA, bus, gen, branch, f, success, et, fd, mpopt)
-%   
-%   Prints power flow and optimal power flow results to fd (a file
+%   Prints power flow and optimal power flow results to FD (a file
 %   descriptor which defaults to STDOUT), with the details of what
-%   gets printed controlled by the optional mpopt argument, which is a
-%   MATPOWER options vector (see 'help mpoption' for details).
+%   gets printed controlled by the optional MPOPT argument, which is a
+%   MATPOWER options vector (see MPOPTION for details).
 %
-%   The data can either be supplied in a single results struct, or
-%   in the individual arguments: baseMVA, bus, gen, branch, f, success
-%   and et, where f is the OPF objective function value, success is
-%   true if the solution converged and false otherwise, and et is the
-%   elapsed time for the computation in seconds. If f is given, it is
+%   The data can either be supplied in a single RESULTS struct, or
+%   in the individual arguments: BASEMVA, BUS, GEN, BRANCH, F, SUCCESS
+%   and ET, where F is the OPF objective function value, SUCCESS is
+%   true if the solution converged and false otherwise, and ET is the
+%   elapsed time for the computation in seconds. If F is given, it is
 %   assumed that the output is from an OPF run, otherwise it is assumed
 %   to be a simple power flow run.
+%
+%   Examples:
+%       mpopt = mpoptions('OUT_GEN', 1, 'OUT_BUS', 0, 'OUT_BRANCH', 0);
+%       [fd, msg] = fopen(fname, 'at');
+%       results = runopf(mpc);
+%       printpf(results);
+%       printpf(results, fd);
+%       printpf(results, fd, mpopt);
+%       printpf(baseMVA, bus, gen, branch, f, success, et);
+%       printpf(baseMVA, bus, gen, branch, f, success, et, fd);
+%       printpf(baseMVA, bus, gen, branch, f, success, et, fd, mpopt);
+%       fclose(fd);
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2009 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %%----- initialization -----

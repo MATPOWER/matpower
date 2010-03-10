@@ -1,10 +1,12 @@
 function A = set_reorder(A, B, idx, dim)
 %SET_REORDER Assigns B to A with one of the dimensions of A indexed.
 %
-%   A = set_reorder(A, B, idx, dim)
+%   A = SET_REORDER(A, B, IDX, DIM)
 %
-%   Returns A after doing A(:, ..., :, idx, :, ..., :) = B
-%   where dim determines in which dimension to place the idx.
+%   Returns A after doing A(:, ..., :, IDX, :, ..., :) = B
+%   where DIM determines in which dimension to place the IDX.
+%
+%   See also GET_REORDER.
 
 %   MATPOWER
 %   $Id$

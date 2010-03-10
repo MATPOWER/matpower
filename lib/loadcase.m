@@ -1,38 +1,38 @@
 function [baseMVA, bus, gen, branch, areas, gencost, info] = loadcase(casefile)
-%LOADCASE   Load .m or .mat case files or data struct in MATPOWER format
+%LOADCASE   Load .m or .mat case files or data struct in MATPOWER format.
 %
-%   [baseMVA, bus, gen, branch, areas, gencost] = loadcase(casefile)
-%   [baseMVA, bus, gen, branch, gencost] = loadcase(casefile)
-%   [baseMVA, bus, gen, branch] = loadcase(casefile)
-%   mpc = loadcase(casefile)
+%   [BASEMVA, BUS, GEN, BRANCH, AREAS, GENCOST] = LOADCASE(CASEFILE)
+%   [BASEMVA, BUS, GEN, BRANCH, GENCOST] = LOADCASE(CASEFILE)
+%   [BASEMVA, BUS, GEN, BRANCH] = LOADCASE(CASEFILE)
+%   MPC = LOADCASE(CASEFILE)
 %
 %   Returns the individual data matrices or a struct containing them as fields.
 %
-%   Here casefile is either (1) a struct containing the fields baseMVA,
+%   Here CASEFILE is either (1) a struct containing the fields baseMVA,
 %   bus, gen, branch and, optionally, areas and/or gencost, or (2) a string
-%   containing the name of the file. If casefile contains the extension
-%   '.mat' or '.m', then the explicit file is searched. If casefile contains
-%   no extension, then LOADCASE looks for a '.mat' file first, then for an
-%   '.m' file.  If the file does not exist or doesn't define all required
+%   containing the name of the file. If CASEFILE contains the extension
+%   '.mat' or '.m', then the explicit file is searched. If CASEFILE contains
+%   no extension, then LOADCASE looks for a MAT-file first, then for an
+%   M-file.  If the file does not exist or doesn't define all required
 %   matrices, the routine aborts with an appropriate error message.
 %   Alternatively, it can be called with the syntax:
 %
-%   [baseMVA, bus, gen, branch, areas, gencost, info] = loadcase(casefile)
-%   [mpc, info] = loadcase(casefile)
+%   [BASEMVA, BUS, GEN, BRANCH, AREAS, GENCOST, INFO] = LOADCASE(CASEFILE)
+%   [MPC, INFO] = LOADCASE(CASEFILE)
 %
-%   In this case, the function will not abort, but info will contain an exit
+%   In this case, the function will not abort, but INFO will contain an exit
 %   code as follows:
 %
 %       0:  all variables successfully defined
 %       1:  input argument is not a string or struct
 %       2:  specified extension-less file name does not exist in search path
-%       3:  specified .MAT file does not exist in search path
-%       4:  specified .M file does not exist in search path
+%       3:  specified MAT-file does not exist in search path
+%       4:  specified M-file does not exist in search path
 %       5:  specified file fails to define all matrices or contains syntax err
 %
-%   If the input data is from an M-file or MAT file defining individual
+%   If the input data is from an M-file or MAT-file defining individual
 %   data matrices, or from a struct with out a 'version' field whose
-%   gen matrix has fewer than 21 columns, then it is assumed to be a
+%   GEN matrix has fewer than 21 columns, then it is assumed to be a
 %   MATPOWER case file in version 1 format, and will be converted to
 %   version 2 format.
 
@@ -40,7 +40,7 @@ function [baseMVA, bus, gen, branch, areas, gencost, info] = loadcase(casefile)
 %   $Id$
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
 %   and Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2005 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 info = 0;

@@ -1,15 +1,17 @@
 function B = get_reorder(A, idx, dim)
 %GET_REORDER    Returns A with one of its dimensions indexed.
 %
-%   B = get_reorder(A, idx, dim)
+%   B = GET_REORDER(A, IDX, DIM)
 %
-%   Returns A(:, ..., :, idx, :, ..., :), where dim determines
-%   in which dimension to place the idx.
+%   Returns A(:, ..., :, IDX, :, ..., :), where DIM determines
+%   in which dimension to place the IDX.
+%
+%   See also SET_REORDER.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2009 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 ndim = ndims(A);

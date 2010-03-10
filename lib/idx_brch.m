@@ -2,9 +2,11 @@ function [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, ...
     RATE_C, TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch
 %IDX_BRCH   Defines constants for named column indices to branch matrix.
+%   Example:
+%
 %   [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
 %   TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
-%   ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch
+%   ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 %
 %   Some examples of usage, after defining the constants using the line above,
 %   are:
@@ -44,6 +46,8 @@ function [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, ...
 %    19 MU_ST       Kuhn-Tucker multiplier on MVA limit at "to" bus (u/MVA)
 %    20 MU_ANGMIN   Kuhn-Tucker multiplier lower angle difference limit (u/degree)
 %    21 MU_ANGMAX   Kuhn-Tucker multiplier upper angle difference limit (u/degree)
+%
+%   See also DEFINE_CONSTANTS.
 
 %   MATPOWER
 %   $Id$

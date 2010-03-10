@@ -1,24 +1,30 @@
 function [Ay, by]  = makeAy(baseMVA, ng, gencost, pgbas, qgbas, ybas)
-% makeAy:  Make the A matrix and RHS for the CCV formulation.
+%MAKEAY  Make the A matrix and RHS for the CCV formulation.
+%   [AY, BY]  = MAKEAY(BASEMVA, NG, GENCOST, PGBAS, QGBAS, YBAS)
 %
-% [Ay, by]  = makeAy(baseMVA, ng, gencost, pgbas, qgbas, ybas) constructs
-% a matrix Ay and vector by such that the "basin constraints" on Pg,
-% Qg and Y that the CCV cost formulation uses are expressed as
-%  Ay * x <= by
-% where x are the optimization variables.  The starting index within the x
-% vector for the active, reactive sources and the y variables should be 
-% provided in arguments pgbas, qgbas, ybas. The number of generators is ng.
+%   Constructs the parameters for linear "basin constraints" on Pg, Qg
+%   and Y used by the CCV cost formulation, expressed as
 %
-% Assumptions: all generators are committed.  Filter any generators
-% that are offline from the gencost() matrix before calling makeAy.
-% Efficiency depends on Qg variables being after Pg variables,
-% and the Y variables must be the last variables within the vector x for
-% the dimensions of the resulting Ay to be conformable with x .
+%       AY * X <= BY
+%
+%   where X is the vector of optimization variables. The starting index
+%   within the X vector for the active, reactive sources and the Y
+%   variables should be provided in arguments PGBAS, QGBAS, YBAS. The
+%   number of generators is NG.
+%
+%   Assumptions: All generators are in-service.  Filter any generators
+%   that are offline from the GENCOST matrix before calling MAKEAY.
+%   Efficiency depends on Qg variables being after Pg variables, and
+%   the Y variables must be the last variables within the vector X for
+%   the dimensions of the resulting AY to be conformable with X.
+%
+%   Example:
+%       [Ay, by]  = makeAy(baseMVA, ng, gencost, pgbas, qgbas, ybas);
 
 %   MATPOWER
 %   $Id$
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
-%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;

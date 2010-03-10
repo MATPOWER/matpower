@@ -1,10 +1,17 @@
 function [Aang, lang, uang, iang]  = makeAang(baseMVA, branch, nb, mpopt)
 %MAKEAANG  Construct constraints for branch angle difference limits.
+%   [AANG, LANG, UANG, IANG]  = MAKEAANG(BASEMVA, BRANCH, NB, MPOPT)
 %
-%   [Aang, lang, uang, iang]  = makeAang(baseMVA, branch, nb, mpopt)
+%   Constructs the parameters for the following linear constraint limiting
+%   the voltage angle differences across branches, where Va is the vector
+%   of bus voltage angles. NB is the number of buses.
 %
-%   lang <= Aang * Va <= uang
-%   iang   indices of branches with angle difference limits
+%       LANG <= AANG * Va <= UANG
+%
+%   IANG is the vector of indices of branches with angle difference limits.
+%
+%   Example:
+%       [Aang, lang, uang, iang]  = makeAang(baseMVA, branch, nb, mpopt);
 
 %   MATPOWER
 %   $Id$
@@ -22,28 +29,28 @@ ignore_ang_lim = mpopt(25);     %% OPF_IGNORE_ANG_LIM
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 
 if ignore_ang_lim
-  Aang 	= sparse(0, nb);
-  lang 	= [];
-  uang 	= [];
-  iang 	= [];
+  Aang  = sparse(0, nb);
+  lang  = [];
+  uang  = [];
+  iang  = [];
 else
   iang = find((branch(:, ANGMIN) & branch(:, ANGMIN) > -360) | ...
-			  (branch(:, ANGMAX) & branch(:, ANGMAX) < 360));
+              (branch(:, ANGMAX) & branch(:, ANGMAX) < 360));
   iangl = find(branch(iang, ANGMIN));
   iangh = find(branch(iang, ANGMAX));
   nang = length(iang);
 
   if nang > 0
-	ii = [(1:nang)'; (1:nang)'];
-	jj = [branch(iang, F_BUS); branch(iang, T_BUS)];
-	Aang = sparse(ii, jj, [ones(nang, 1); -ones(nang, 1)], nang, nb);
-	uang = Inf * ones(nang,1);
-	lang = -uang;
-	lang(iangl) = branch(iang(iangl), ANGMIN) * pi/180;
-	uang(iangh) = branch(iang(iangh), ANGMAX) * pi/180;
+    ii = [(1:nang)'; (1:nang)'];
+    jj = [branch(iang, F_BUS); branch(iang, T_BUS)];
+    Aang = sparse(ii, jj, [ones(nang, 1); -ones(nang, 1)], nang, nb);
+    uang = Inf * ones(nang,1);
+    lang = -uang;
+    lang(iangl) = branch(iang(iangl), ANGMIN) * pi/180;
+    uang(iangh) = branch(iang(iangh), ANGMAX) * pi/180;
   else
-	Aang = sparse(0, nb);
-	lang =[];
-	uang =[];
+    Aang = sparse(0, nb);
+    lang =[];
+    uang =[];
   end
 end

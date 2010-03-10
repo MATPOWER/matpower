@@ -1,18 +1,22 @@
 function rv = run_userfcn(userfcn, stage, varargin)
 %RUN_USERFCN   Runs the userfcn callbacks for a given stage.
+%   RV = RUN_USERFCN(USERFCN, STAGE, VARARGIN)
 %
-%   rv = run_userfcn(userfcn, stage, varargin)
-%
-%   userfcn : the 'userfcn' field of mpc, populated by add_userfcn()
-%   stage   : the name of the callback stage begin executed
+%   USERFCN : the 'userfcn' field of mpc, populated by ADD_USERFCN
+%   STAGE   : the name of the callback stage begin executed
 %   (additional arguments) some stages require additional arguments.
 %
-%   See 'help add_userfcn' for more details.
+%   Example:
+%       mpc = get_mpc(om);
+%       om = run_userfcn(mpc.userfcn, 'formulation', om);
+%
+%   See also ADD_USERFCN, REMOVE_USERFCN, TOGGLE_RESERVES, TOGGLE_IFLIMS,
+%   RUNOPF_W_RES.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2009 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 rv = varargin{1};

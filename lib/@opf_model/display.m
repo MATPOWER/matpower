@@ -1,11 +1,14 @@
 function display(om)
-%DISPLAY  Displays the object
-%   Called when semicolon is omitted at the command-line.
+%DISPLAY  Displays the object.
+%   Called when semicolon is omitted at the command-line. Displays the details
+%   of the variables, constraints, costs included in the model.
+%
+%   See also OPF_MODEL.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2008 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 if om.var.NS

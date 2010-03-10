@@ -1,6 +1,6 @@
 function mpc = case39
 %CASE39 Power flow data for 39 bus New England system.
-%   Please see 'help caseformat' for details on the case file format.
+%   Please see CASEFORMAT for details on the case file format.
 %
 %   Data taken from [1] with the following modifications/additions:
 %

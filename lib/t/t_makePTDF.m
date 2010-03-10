@@ -1,5 +1,5 @@
 function t_makePTDF(quiet)
-%T_MAKEPTDF  Tests for makePTDF().
+%T_MAKEPTDF  Tests for MAKEPTDF.
 
 %   MATPOWER
 %   $Id$
@@ -33,7 +33,7 @@ end
 %% load case
 mpopt = mpoption('OUT_ALL', 0, 'VERBOSE', verbose);
 [baseMVA, bus, gen, gencost, branch, f, success, et] = ...
-	rundcopf(casefile, mpopt);
+    rundcopf(casefile, mpopt);
 [i2e, bus, gen, branch] = ext2int(bus, gen, branch);
 nb  = size(bus, 1);
 nbr = size(branch, 1);

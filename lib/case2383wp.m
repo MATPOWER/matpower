@@ -1,6 +1,6 @@
 function mpc = case2383wp
 %CASE2383WP  Power flow data for Polish system - winter 1999-2000 peak.
-%   Please see 'help caseformat' for details on the case file format.
+%   Please see CASEFORMAT for details on the case file format.
 %
 %   This case represents the Polish 400, 220 and 110 kV networks during
 %   winter 1999-2000 peak conditions. It is part of the 7500+ bus

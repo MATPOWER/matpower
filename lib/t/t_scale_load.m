@@ -1,10 +1,10 @@
 function t_scale_load(quiet)
-%T_SCALE_LOAD  Tests for code in scale_load.m.
+%T_SCALE_LOAD  Tests for code in SCALE_LOAD.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2008 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 if nargin < 1

@@ -1,37 +1,42 @@
 function [bus, gen, branch, f, success, info, et, g, jac, xr, pimul] = ...
     uopf(varargin)
 %UOPF  Solves combined unit decommitment / optimal power flow.
+%   [RESULTS, SUCCESS] = UOPF(MPC, MPOPT)
 %
-%   Returns either a results struct and optinally a success flag, or individual
-%   data matrices, the objective function value and a success flag. In the
-%   latter case, there are additional optional return values.
+%   Returns either a RESULTS struct and an optional SUCCESS flag, or individual
+%   data matrices, the objective function value and a SUCCESS flag. In the
+%   latter case, there are additional optional return values. See Examples
+%   below for the possible calling syntax options.
 %
-%   results = uopf(...)
-%   [results, success] = uopf(...)
-%   [bus, gen, branch, f, success] = uopf(...)
-%   [bus, gen, branch, f, success, info, et, g, jac, xr, pimul] = uopf(...)
+%   Examples:
+%       Output argument options:
 %
-%   Input arguments options are as follows:
+%       results = uopf(...)
+%       [results, success] = uopf(...)
+%       [bus, gen, branch, f, success] = uopf(...)
+%       [bus, gen, branch, f, success, info, et, g, jac, xr, pimul] = uopf(...)
 %
-%   uopf(mpc)
-%   uopf(mpc, mpopt)
-%   uopf(mpc, userfcn, mpopt)
-%   uopf(mpc, A, l, u)
-%   uopf(mpc, A, l, u, mpopt)
-%   uopf(mpc, A, l, u, mpopt, N, fparm, H, Cw)
-%   uopf(mpc, A, l, u, mpopt, N, fparm, H, Cw, z0, zl, zu)
+%       Input arguments options:
 %
-%   uopf(baseMVA, bus, gen, branch, areas, gencost)
-%   uopf(baseMVA, bus, gen, branch, areas, gencost, mpopt)
-%   uopf(baseMVA, bus, gen, branch, areas, gencost, userfcn, mpopt)
-%   uopf(baseMVA, bus, gen, branch, areas, gencost, A, l, u)
-%   uopf(baseMVA, bus, gen, branch, areas, gencost, A, l, u, mpopt)
-%   uopf(baseMVA, bus, gen, branch, areas, gencost, A, l, u, ...
-%                               mpopt, N, fparm, H, Cw)
-%   uopf(baseMVA, bus, gen, branch, areas, gencost, A, l, u, ...
-%                               mpopt, N, fparm, H, Cw, z0, zl, zu)
+%       uopf(mpc)
+%       uopf(mpc, mpopt)
+%       uopf(mpc, userfcn, mpopt)
+%       uopf(mpc, A, l, u)
+%       uopf(mpc, A, l, u, mpopt)
+%       uopf(mpc, A, l, u, mpopt, N, fparm, H, Cw)
+%       uopf(mpc, A, l, u, mpopt, N, fparm, H, Cw, z0, zl, zu)
 %
-%   See 'help opf' for more information on input and output arguments.
+%       uopf(baseMVA, bus, gen, branch, areas, gencost)
+%       uopf(baseMVA, bus, gen, branch, areas, gencost, mpopt)
+%       uopf(baseMVA, bus, gen, branch, areas, gencost, userfcn, mpopt)
+%       uopf(baseMVA, bus, gen, branch, areas, gencost, A, l, u)
+%       uopf(baseMVA, bus, gen, branch, areas, gencost, A, l, u, mpopt)
+%       uopf(baseMVA, bus, gen, branch, areas, gencost, A, l, u, ...
+%                                   mpopt, N, fparm, H, Cw)
+%       uopf(baseMVA, bus, gen, branch, areas, gencost, A, l, u, ...
+%                                   mpopt, N, fparm, H, Cw, z0, zl, zu)
+%
+%   See OPF for more information on input and output arguments.
 %
 %   Solves a combined unit decommitment and optimal power flow for a single
 %   time period. Uses an algorithm similar to dynamic programming. It proceeds
@@ -41,13 +46,15 @@ function [bus, gen, branch, f, success, info, et, g, jac, xr, pimul] = ...
 %   It selects the least cost case as the starting point for the next stage,
 %   continuing until there are no more candidates to be shut down or no
 %   more improvement can be gained by shutting something down.
-%   If VERBOSE in mpopt (see 'help mpoption') is true, it prints progress
+%   If VERBOSE in mpopt (see MPOPTION) is true, it prints progress
 %   info, if it is > 1 it prints the output of each individual opf.
+%
+%   See also OPF, RUNUOPF.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2008 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %%----- initialization -----

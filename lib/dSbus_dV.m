@@ -1,8 +1,8 @@
 function [dSbus_dVm, dSbus_dVa] = dSbus_dV(Ybus, V)
 %DSBUS_DV   Computes partial derivatives of power injection w.r.t. voltage.
-%   [dSbus_dVm, dSbus_dVa] = dSbus_dV(Ybus, V) returns two matrices containing
+%   [DSBUS_DVM, DSBUS_DVA] = DSBUS_DV(YBUS, V) returns two matrices containing
 %   partial derivatives of the complex bus power injections w.r.t voltage
-%   magnitude and voltage angle respectively (for all buses). If Ybus is a
+%   magnitude and voltage angle respectively (for all buses). If YBUS is a
 %   sparse matrix, the return values will be also. The following explains
 %   the expressions used to form the matrices:
 %
@@ -29,11 +29,14 @@ function [dSbus_dVm, dSbus_dVa] = dSbus_dV(Ybus, V)
 %                                       + conj(diag(Ibus)) * j * diag(V)
 %              = j * diag(V) * conj(diag(Ibus) - Ybus * diag(V))
 %
+%   Example:
+%       [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
+%       [dSbus_dVm, dSbus_dVa] = dSbus_dV(Ybus, V);
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2004 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 n = length(V);

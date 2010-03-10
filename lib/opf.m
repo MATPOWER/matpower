@@ -1,35 +1,40 @@
 function [busout, genout, branchout, f, success, info, et, g, jac, xr, pimul] = ...
     opf(varargin)
 %OPF  Solves an optimal power flow.
+%   [RESULTS, SUCCESS] = OPF(MPC, MPOPT)
 %
-%   Returns either a results struct and an optional success flag, or individual
-%   data matrices, the objective function value and a success flag. In the
-%   latter case, there are additional optional return values.
+%   Returns either a RESULTS struct and an optional SUCCESS flag, or individual
+%   data matrices, the objective function value and a SUCCESS flag. In the
+%   latter case, there are additional optional return values. See Examples
+%   below for the possible calling syntax options.
 %
-%   results = opf(...)
-%   [results, success] = opf(...)
-%   [bus, gen, branch, f, success] = opf(...)
-%   [bus, gen, branch, f, success, info, et, g, jac, xr, pimul] = opf(...)
+%   Examples:
+%       Output argument options:
 %
-%   Input arguments options are as follows:
+%       results = opf(...)
+%       [results, success] = opf(...)
+%       [bus, gen, branch, f, success] = opf(...)
+%       [bus, gen, branch, f, success, info, et, g, jac, xr, pimul] = opf(...)
 %
-%   opf(mpc)
-%   opf(mpc, mpopt)
-%   opf(mpc, userfcn, mpopt)
-%   opf(mpc, A, l, u)
-%   opf(mpc, A, l, u, mpopt)
-%   opf(mpc, A, l, u, mpopt, N, fparm, H, Cw)
-%   opf(mpc, A, l, u, mpopt, N, fparm, H, Cw, z0, zl, zu)
+%       Input arguments options:
 %
-%   opf(baseMVA, bus, gen, branch, areas, gencost)
-%   opf(baseMVA, bus, gen, branch, areas, gencost, mpopt)
-%   opf(baseMVA, bus, gen, branch, areas, gencost, userfcn, mpopt)
-%   opf(baseMVA, bus, gen, branch, areas, gencost, A, l, u)
-%   opf(baseMVA, bus, gen, branch, areas, gencost, A, l, u, mpopt)
-%   opf(baseMVA, bus, gen, branch, areas, gencost, A, l, u, ...
-%                               mpopt, N, fparm, H, Cw)
-%   opf(baseMVA, bus, gen, branch, areas, gencost, A, l, u, ...
-%                               mpopt, N, fparm, H, Cw, z0, zl, zu)
+%       opf(mpc)
+%       opf(mpc, mpopt)
+%       opf(mpc, userfcn, mpopt)
+%       opf(mpc, A, l, u)
+%       opf(mpc, A, l, u, mpopt)
+%       opf(mpc, A, l, u, mpopt, N, fparm, H, Cw)
+%       opf(mpc, A, l, u, mpopt, N, fparm, H, Cw, z0, zl, zu)
+%
+%       opf(baseMVA, bus, gen, branch, areas, gencost)
+%       opf(baseMVA, bus, gen, branch, areas, gencost, mpopt)
+%       opf(baseMVA, bus, gen, branch, areas, gencost, userfcn, mpopt)
+%       opf(baseMVA, bus, gen, branch, areas, gencost, A, l, u)
+%       opf(baseMVA, bus, gen, branch, areas, gencost, A, l, u, mpopt)
+%       opf(baseMVA, bus, gen, branch, areas, gencost, A, l, u, ...
+%                                   mpopt, N, fparm, H, Cw)
+%       opf(baseMVA, bus, gen, branch, areas, gencost, A, l, u, ...
+%                                   mpopt, N, fparm, H, Cw, z0, zl, zu)
 %
 %   The data for the problem can be specified in one of three ways:
 %   (1) a string (mpc) containing the file name of a MATPOWER case
@@ -48,8 +53,8 @@ function [busout, genout, branchout, f, success, info, et, g, jac, xr, pimul] = 
 %   optimization variables, l <= A*[x; z] <= u. If the user specifies an A
 %   matrix that has more columns than the number of "x" (OPF) variables,
 %   then there are extra linearly constrained "z" variables. For an
-%   explanation of the formulation used and instructions for forming the A
-%   matrix, type 'help genform' or see the manual.
+%   explanation of the formulation used and instructions for forming the
+%   A matrix, see the manual.
 %
 %   A generalized cost on all variables can be applied if input arguments
 %   N, fparm, H and Cw are specified.  First, a linear transformation
@@ -64,7 +69,7 @@ function [busout, genout, branchout, f, success, info, et, g, jac, xr, pimul] = 
 %   the default solver, based on a primal-dual interior point method.
 %   For the AC OPF this is OPF_ALG = 560, unless the TSPOPF optional
 %   package is installed, in which case the default is 540. For the
-%   DC OPF, the default is OPF_ALG_DC = 200. Type 'help mpoption' for
+%   DC OPF, the default is OPF_ALG_DC = 200. See MPOPTION for
 %   more details on the available OPF solvers and other OPF options
 %   and their default values.
 %
@@ -143,6 +148,8 @@ function [busout, genout, branchout, f, success, info, et, g, jac, xr, pimul] = 
 %               .u  upper bounds
 %                   .Pmis, Pf, Pf, PQh, PQl, vl, ycon, (other)
 %       .cost       user defined cost values, by named block
+%
+%   See also RUNOPF, DCOPF, UOPF, CASEFORMAT.
 
 %   MATPOWER
 %   $Id$

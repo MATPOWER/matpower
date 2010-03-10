@@ -1,6 +1,6 @@
 function mpc = case14
 %CASE14    Power flow data for IEEE 14 bus test case.
-%   Please see 'help caseformat' for details on the case file format.
+%   Please see CASEFORMAT for details on the case file format.
 %   This data was converted from IEEE Common Data Format
 %   (ieee14cdf.txt) on 20-Sep-2004 by cdf2matp, rev. 1.11
 %   See end of file for warnings generated during conversion.

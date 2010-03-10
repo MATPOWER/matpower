@@ -1,20 +1,29 @@
 function [Apqh, ubpqh, Apql, ubpql, data] = makeApq(baseMVA, gen)
-%   MAKEAPQ Construct linear constraints for generator capability curves.
+%MAKEAPQ Construct linear constraints for generator capability curves.
+%   [APQH, UBPQH, APQL, UBPQL, DATA] = MAKEAPQ(BASEMVA, GEN)
 %
-%   [Apqh, ubpqh, Apql, ubpql, data] = makeApq(baseMVA, gen)
+%   Constructs the parameters for the following linear constraints
+%   implementing trapezoidal generator capability curves, where
+%   Pg and Qg are the real and reactive generator injections.
 %
-%   Apqh * [Pg; Qg] <= ubpqh
-%   Apql * [Pg; Qg] <= ubpql
-%   data.h      [QC1MAX-QC2MAX, PC2-PC1]
-%   data.l      [QC2MIN-QC1MIN, PC1-PC2]
-%   data.ipqh   indices of gens with general PQ cap curves (upper)
-%   data.ipql   indices of gens with general PQ cap curves (lower)
+%   APQH * [Pg; Qg] <= UBPQH
+%   APQL * [Pg; Qg] <= UBPQL
+%
+%   DATA constains additional information as shown below.
+%
+%   Example:
+%       [Apqh, ubpqh, Apql, ubpql, data] = makeApq(baseMVA, gen);
+%
+%       data.h      [QC1MAX-QC2MAX, PC2-PC1]
+%       data.l      [QC2MIN-QC1MIN, PC1-PC2]
+%       data.ipqh   indices of gens with general PQ cap curves (upper)
+%       data.ipql   indices of gens with general PQ cap curves (lower)
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
-%   Copyright (c) 1996-2008 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% define named indices into data matrices

@@ -1,17 +1,21 @@
 function [options, names] = mpoption(varargin)
 %MPOPTION  Used to set and retrieve a MATPOWER options vector.
 %
-%   opt = mpoption
+%   OPT = MPOPTION
 %       returns the default options vector
 %
-%   opt = mpoption(name1, value1, name2, value2, ...)
+%   OPT = MPOPTION(NAME1, VALUE1, NAME2, VALUE2, ...)
 %       returns the default options vector with new values for up to 7
-%       options, name# is the name of an option, and value# is the new
-%       value. Example: options = mpoption('PF_ALG', 2, 'PF_TOL', 1e-4)
+%       options, NAME# is the name of an option, and VALUE# is the new
+%       value.
 %
-%   opt = mpoption(opt, name1, value1, name2, value2, ...)
-%       same as above except it uses the options vector opt as a base
+%   OPT = MPOPTION(OPT, NAME1, VALUE1, NAME2, VALUE2, ...)
+%       same as above except it uses the options vector OPT as a base
 %       instead of the default options vector.
+%
+%   Examples:
+%       opt = mpoption('PF_ALG', 2, 'PF_TOL', 1e-4);
+%       opt = mpoption(opt, 'OPF_ALG', 565, 'VERBOSE', 2);
 %
 %   The currently defined options are as follows:
 %

@@ -1,13 +1,21 @@
 function t_run_tests(test_names, verbose)
 %T_RUN_TESTS  Run a series of tests.
-%   t_run_tests(test_names, verbose) runs a set of tests whose names
-%   are given in the cell array test_names. If the optional parameter
-%   verbose is true, it prints the details of the individual tests.
+%   T_RUN_TESTS(TEST_NAMES, VERBOSE) runs a set of tests whose names
+%   are given in the cell array TEST_NAMES. If the optional parameter
+%   VERBOSE is true, it prints the details of the individual tests.
+%
+%   Example:
+%       tests{end+1} = 't_loadcase';
+%       tests{end+1} = 't_jacobian';
+%       tests{end+1} = 't_hessian';
+%       t_run_tests( tests, verbose );
+%
+%   See also T_BEGIN, T_END.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2004 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 if nargin < 2

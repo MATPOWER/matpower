@@ -1,46 +1,48 @@
 function [MVAbase, bus, gen, branch, success, et] = ...
                 runpf(casedata, mpopt, fname, solvedcase)
-%RUNPF  Runs a power flow
+%RUNPF  Runs a power flow.
+%   [RESULTS, SUCCESS] = RUNPF(CASEDATA, MPOPT, FNAME, SOLVEDCASE)
 %
-%   Runs a power flow (full AC Newton's method by default) optionally
-%   returning a results struct and success flag.
-%
-%   results = runpf
-%   results = runpf(casedata)
-%   results = runpf(casedata, mpopt)
-%   results = runpf(casedata, mpopt, fname)
-%   results = runpf(casedata, mpopt, fname, solvedcase)
-%   [results, success] = runpf(casedata, mpopt, fname, solvedcase)
+%   Runs a power flow (full AC Newton's method by default), optionally
+%   returning a RESULTS struct and SUCCESS flag.
 %
 %   Inputs (all are optional):
-%       casedata : either a MATPOWER case struct or a string containing
+%       CASEDATA : either a MATPOWER case struct or a string containing
 %           the name of the file with the case data (default is 'case9')
-%           (see also 'help caseformat' and 'help loadcase')
-%       mpopt : MATPOWER options vector to override default options
+%           (see also CASEFORMAT and LOADCASE)
+%       MPOPT : MATPOWER options vector to override default options
 %           can be used to specify the solution algorithm, output options
-%           termination tolerances, and more.
-%           (see also 'help mpoption')
-%       fname : name of a file to which the pretty-printed output will
+%           termination tolerances, and more (see also MPOPTION).
+%       FNAME : name of a file to which the pretty-printed output will
 %           be appended
-%       solvedcase : name of file to which the solved case will be saved
+%       SOLVEDCASE : name of file to which the solved case will be saved
 %           in MATPOWER case format (M-file will be assumed unless the
 %           specified name ends with '.mat')
 %
 %   Outputs (all are optional):
-%       results : results struct, with the following fields:
+%       RESULTS : results struct, with the following fields:
 %           (all fields from the input MATPOWER case, i.e. bus, branch,
 %               gen, etc., but with solved voltages, power flows, etc.)
 %           order - info used in external <-> internal data conversion
 %           et - elapsed time in seconds
 %           success - success flag, 1 = succeeded, 0 = failed
-%       success : the success flag can additionally be returned as
+%       SUCCESS : the success flag can additionally be returned as
 %           a second output argument
 %
-%   Alternatively, for compatibility with previous versions of MATPOWER,
-%   some of the results can be returned as individual output arguments:
-%       [baseMVA, bus, gen, branch, success, et] = runpf(...)
+%   Calling syntax options:
+%       results = runpf;
+%       results = runpf(casedata);
+%       results = runpf(casedata, mpopt);
+%       results = runpf(casedata, mpopt, fname);
+%       results = runpf(casedata, mpopt, fname, solvedcase);
+%       [results, success] = runpf(...);
 %
-%   If the ENFORCE_Q_LIMS options is set to true (default is false) then if
+%       Alternatively, for compatibility with previous versions of MATPOWER,
+%       some of the results can be returned as individual output arguments:
+%
+%       [baseMVA, bus, gen, branch, success, et] = runpf(...);
+%
+%   If the ENFORCE_Q_LIMS option is set to true (default is false) then, if
 %   any generator reactive power limit is violated after running the AC power
 %   flow, the corresponding bus is converted to a PQ bus, with Qg at the
 %   limit, and the case is re-run. The voltage magnitude at the bus will
@@ -49,6 +51,12 @@ function [MVAbase, bus, gen, branch, success, et] = ...
 %   bus will be used as the slack bus for the next iteration. This may
 %   result in the real power output at this generator being slightly off
 %   from the specified values.
+%
+%   Examples:
+%       results = runpf('case30');
+%       results = runpf('case30', mpoption('ENFORCE_Q_LIMS', 1));
+%
+%   See also RUNDCPF.
 
 %   MATPOWER
 %   $Id$

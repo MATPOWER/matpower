@@ -1,33 +1,52 @@
 function [Pd, Qd] = total_load(bus, gen, load_zone, which_type)
 %TOTAL_LOAD Returns vector of total load in each load zone.
+%   PD = TOTAL_LOAD(BUS) returns active power demand for each zone.
+%   PD = TOTAL_LOAD(BUS, GEN, LOAD_ZONE, WHICH_TYPE)
+%   [PD, QD] = TOTAL_LOAD(...) returns both active and reative power
+%   demand for each zone.
 %
-%   Pd = total_load(bus)
-%   Pd = total_load(bus, gen)
-%   Pd = total_load(bus, gen, load_zone)
-%   Pd = total_load(bus, gen, load_zone, which_type)
+%   BUS - standard BUS matrix with nb rows, where the fixed active
+%       and reactive loads are specified in columns PD and QD
 %
-%   [Pd, Qd] = total_load(bus)
-%   [Pd, Qd] = total_load(bus, gen)
-%   [Pd, Qd] = total_load(bus, gen, load_zone)
-%   [Pd, Qd] = total_load(bus, gen, load_zone, which_type)
+%   GEN - (optional) standard GEN matrix with ng rows, where the
+%       dispatchable loads are specified by columns PG, QG, PMIN,
+%       QMIN and QMAX (in rows for which ISLOAD(GEN) returns true).
+%       If GEN is empty, it assumes there are no dispatchable loads.
 %
-%
-%   load_zone - (optional) nb element vector where the value of
+%   LOAD_ZONE - (optional) nb element vector where the value of
 %       each element is either zero or the index of the load zone
-%       to which the corresponding bus belongs. If load_zone(b) = k
-%       then the loads at bus b will added to the value of load(k).
-%       If load_zone is empty, the default is defined as the areas
-%       specified in the bus matrix, i.e. load_zone = bus(:, BUS_AREA)
-%       and load will have dimension = max(bus(:, BUS_AREA)). If
-%       load_zone = 'all', the result is a scalar with the total system
+%       to which the corresponding bus belongs. If LOAD_ZONE(b) = k
+%       then the loads at bus b will added to the values of PD(k) and
+%       QD(k). If LOAD_ZONE is empty, the default is defined as the areas
+%       specified in the BUS matrix, i.e. LOAD_ZONE = BUS(:, BUS_AREA)
+%       and load will have dimension = MAX(BUS(:, BUS_AREA)). If
+%       LOAD_ZONE = 'all', the result is a scalar with the total system
 %       load.
 %
-%   which_type - (optional) (default is 'BOTH' if gen is provided, else 'FIXED')
+%   WHICH_TYPE - (optional) (default is 'BOTH' if GEN is provided, else 'FIXED')
 %       'FIXED'        : sum only fixed loads
 %       'DISPATCHABLE' : sum only dispatchable loads
 %       'BOTH'         : sum both fixed and dispatchable loads
 %
 %   Assumes consecutive bus numbering when dealing with dispatchable loads.
+%
+%   Examples:
+%       Return the total active load for each area as defined in BUS_AREA.
+%
+%       Pd = total_load(bus);
+%
+%       Return total active and reactive load, fixed and dispatchable, for
+%       entire system.
+%
+%       [Pd, Qd] = total_load(bus, gen, 'all');
+%
+%       Return the total of the dispatchable loads at buses 10-20.
+%
+%       load_zone = zeros(nb, 1);
+%       load_zone(10:20) = 1;
+%       Pd = total_load(bus, gen, load_zone, 'DISPATCHABLE')
+%
+%   See also SCALE_LOAD.
 
 %   MATPOWER
 %   $Id$

@@ -1,13 +1,15 @@
 function test_matpower(verbose)
 %TEST_MATPOWER  Run all MATPOWER tests.
-%   test_matpower runs all of the MATPOWER tests.
-%   test_matpower(verbose) prints the details of the individual tests
-%   if verbose is true.
+%   TEST_MATPOWER runs all of the MATPOWER tests.
+%   TEST_MATPOWER(VERBOSE) prints the details of the individual tests
+%   if VERBOSE is true.
+%
+%   See also T_RUN_TESTS.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2004 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 if nargin < 1
@@ -24,9 +26,9 @@ tests{end+1} = 't_hessian';
 tests{end+1} = 't_hasPQcap';
 mlver = ver('matlab');
 if str2double(mlver.Version(1)) < 7    %% anonymous functions not available
-	tests{end+1} = 't_mips6';
+    tests{end+1} = 't_mips6';
 else
-	tests{end+1} = 't_mips';
+    tests{end+1} = 't_mips';
 end
 tests{end+1} = 't_qps_matpower';
 tests{end+1} = 't_pf';

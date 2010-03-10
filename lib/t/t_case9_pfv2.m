@@ -1,6 +1,6 @@
 function mpc = t_case9_pfv2
 %T_CASE9_PFV2   Power flow data for 9 bus, 3 generator case, no OPF data.
-%   Please see 'help caseformat' for details on the case file format.
+%   Please see CASEFORMAT for details on the case file format.
 
 %   MATPOWER
 %   $Id$

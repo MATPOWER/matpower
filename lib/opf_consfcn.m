@@ -1,34 +1,39 @@
 function [h, g, dh, dg] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt, il, varargin)
 %OPF_CONSFCN  Evaluates nonlinear constraints and their Jacobian for OPF.
-%   [h, g] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt)
-%   [h, g, dh, dg] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt)
-%   [h, g, dh, dg] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt, il)
+%   [H, G, DH, DG] = OPF_CONSFCN(X, OM, YBUS, YF, YT, MPOPT, IL)
 %
 %   Constraint evaluation function for AC optimal power flow, suitable
-%   for use with fmincon. Computes constrain vectors and their
+%   for use with MIPS or FMINCON. Computes constraint vectors and their
 %   gradients.
 %
 %   Inputs:
-%     x : optimization vector
-%     om : OPF model object
-%     Ybus : bus admittance matrix
-%     Yf : admittance matrix for "from" end of constrained branches
-%     Yt : admittance matrix for "to" end of constrained branches
-%     mpopt : MATPOWER options vector
-%     il : (optional) vector of branch indices corresponding to
+%     X : optimization vector
+%     OM : OPF model object
+%     YBUS : bus admittance matrix
+%     YF : admittance matrix for "from" end of constrained branches
+%     YT : admittance matrix for "to" end of constrained branches
+%     MPOPT : MATPOWER options vector
+%     IL : (optional) vector of branch indices corresponding to
 %          branches with flow limits (all others are assumed to be
 %          unconstrained). The default is [1:nl] (all branches).
-%          Yf and Yt contain only the rows corresponding to il.
+%          YF and YT contain only the rows corresponding to IL.
 %
 %   Outputs:
-%     h  : vector of inequality constraint values (flow limits)
+%     H  : vector of inequality constraint values (flow limits)
 %          limit^2 - flow^2, where the flow can be apparent power
 %          real power or current, depending on value of
-%          OPF_FLOW_LIM in mpopt (only for constrained lines)
-%     g  : vector of equality constraint values (power balances)
-%     dh : (optional) inequality constraint gradients, column j is
-%          gradient of h(j)
-%     dg : (optional) equality constraint gradients
+%          OPF_FLOW_LIM in MPOPT (only for constrained lines)
+%     H  : vector of equality constraint values (power balances)
+%     DH : (optional) inequality constraint gradients, column j is
+%          gradient of H(j)
+%     DG : (optional) equality constraint gradients
+%
+%   Examples:
+%       [h, g] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt);
+%       [h, g, dh, dg] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt);
+%       [h, g, dh, dg] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt, il);
+%
+%   See also OPF_COSTFCN, OPF_HESSFCN.
 
 %   MATPOWER
 %   $Id$

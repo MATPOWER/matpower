@@ -1,6 +1,6 @@
 function mpc = case6ww
 %CASE6WW  Power flow data for 6 bus, 3 gen case from Wood & Wollenberg.
-%   Please see 'help caseformat' for details on the case file format.
+%   Please see CASEFORMAT for details on the case file format.
 %
 %   This is the 6 bus example from pp. 104, 112, 119, 123-124, 549 of
 %   "Power Generation, Operation, and Control, 2nd Edition",

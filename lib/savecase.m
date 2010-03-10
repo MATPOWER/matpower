@@ -1,34 +1,33 @@
 function fname_out = savecase(fname, varargin)
 %SAVECASE  Saves a MATPOWER case file, given a filename and the data.
+%   SAVECASE(FNAME, CASESTRUCT)
+%   SAVECASE(FNAME, CASESTRUCT, VERSION)
+%   SAVECASE(FNAME, BASEMVA, BUS, GEN, BRANCH)
+%   SAVECASE(FNAME, BASEMVA, BUS, GEN, BRANCH, GENCOST)
+%   SAVECASE(FNAME, BASEMVA, BUS, GEN, BRANCH, AREAS, GENCOST)
+%   SAVECASE(FNAME, COMMENT, CASESTRUCT)
+%   SAVECASE(FNAME, COMMENT, CASESTRUCT, VERSION)
+%   SAVECASE(FNAME, COMMENT, BASEMVA, BUS, GEN, BRANCH)
+%   SAVECASE(FNAME, COMMENT, BASEMVA, BUS, GEN, BRANCH, GENCOST)
+%   SAVECASE(FNAME, COMMENT, BASEMVA, BUS, GEN, BRANCH, AREAS, GENCOST)
 %
-%   savecase(fname, casestruct)
-%   savecase(fname, casestruct, version)
-%   savecase(fname, baseMVA, bus, gen, branch)
-%   savecase(fname, baseMVA, bus, gen, branch, gencost)
-%   savecase(fname, baseMVA, bus, gen, branch, areas, gencost)
-%   savecase(fname, comment, casestruct)
-%   savecase(fname, comment, casestruct, version)
-%   savecase(fname, comment, baseMVA, bus, gen, branch)
-%   savecase(fname, comment, baseMVA, bus, gen, branch, gencost)
-%   savecase(fname, comment, baseMVA, bus, gen, branch, areas, gencost)
-%
-%   fname = savecase(fname, ...)
+%   FNAME = SAVECASE(FNAME, ...)
 %
 %   Writes a MATPOWER case file, given a filename and data struct or list of
-%   data matrices. The fname parameter is the name of the file to be created or
-%   overwritten. If fname ends with '.mat' it saves the case as a MAT-file
+%   data matrices. The FNAME parameter is the name of the file to be created or
+%   overwritten. If FNAME ends with '.mat' it saves the case as a MAT-file
 %   otherwise it saves it as an M-file. Optionally returns the filename,
-%   with extension added if necessary. The optional 'comment' argument is
+%   with extension added if necessary. The optional COMMENT argument is
 %   either string (single line comment) or a cell array of strings which
 %   are inserted as comments. When using a MATPOWER case struct, if the
-%   optional 'version' argument is '1' it will modify the data matrices to
+%   optional VERSION argument is '1' it will modify the data matrices to
 %   version 1 format before saving.
 
 %   MATPOWER
 %   $Id$
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
 %   and Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2006 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% define named indices into bus, gen, branch matrices

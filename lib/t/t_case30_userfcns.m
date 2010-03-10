@@ -1,6 +1,6 @@
 function mpc = t_case30_userfcns
 %T_CASE30_USERFCNS  Power flow data for 30 bus, 6 gen case w/reserves & iflims
-%   Please see 'help caseformat' for details on the case file format.
+%   Please see CASEFORMAT for details on the case file format.
 %
 %   Same as case30.m, but with fixed reserve and interface flow limit data.
 %   The reserve data is defined in the fields of mpc.reserves and the
