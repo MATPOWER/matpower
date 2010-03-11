@@ -1,5 +1,5 @@
 function mpc = case_ieee30
-% CASE_IEEE30    Power flow data for IEEE 30 bus test case.
+%CASE_IEEE30  Power flow data for IEEE 30 bus test case.
 %   Please see CASEFORMAT for details on the case file format.
 %   This data was converted from IEEE Common Data Format
 %   (ieee30cdf.txt) on 20-Sep-2004 by cdf2matp, rev. 1.11
