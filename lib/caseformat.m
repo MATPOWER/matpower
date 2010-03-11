@@ -30,6 +30,14 @@
 %   are added to the bus, branch and gen matrices by the power flow and OPF
 %   solvers.
 %
+%   The case struct also also allows for additional fields to be included.
+%   The OPF is designed to recognize fields named A, l, u, H, Cw, N,
+%   fparm, z0, zl and zu as parameters used to directly extend the OPF
+%   formulation (see OPF for details). Other user-defined fields may also
+%   be included and will be automatically loaded by the LOADCASE function
+%   and, given an appropriate 'savecase' callback function (see
+%   ADD_USERFCN), saved by the SAVECASE function.
+%
 %   Bus Data Format
 %       1   bus number (positive integer)
 %       2   bus type
@@ -129,7 +137,8 @@
 %       1   i, area number
 %       2   price_ref_bus, reference bus for that area
 %
-%   See also IDX_BUS, IDX_BRCH, IDX_GEN, IDX_AREA and IDX_COST.
+%   See also LOADCASE, SAVECASE, IDX_BUS, IDX_BRCH, IDX_GEN, IDX_AREA
+%   and IDX_COST.
 
 %   MATPOWER
 %   $Id$
