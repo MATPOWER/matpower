@@ -106,7 +106,7 @@ function om = opf_model(mpc)
 %           .N      - total number of rows in full N matrix
 %           .NS     - number of cost blocks
 %           .data   - data for each user-defined cost block
-%               .N  - see help for add_cost() for details
+%               .N  - see help for ADD_COSTS for details
 %               .H  -               "
 %               .Cw -               "
 %               .dd -               "
@@ -130,7 +130,7 @@ function om = opf_model(mpc)
 %           .fparm
 %           .H
 %           .Cw
-%       .userdata   - any user defined data added via userdata()
+%       .userdata   - any user defined data added via USERDATA
 %           .(user defined fields)
 
 %   MATPOWER

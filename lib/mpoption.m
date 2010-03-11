@@ -90,7 +90,7 @@ function [options, names] = mpoption(varargin)
 %           [  200 - MIPS, Matlab Interior Point Solver                     ]
 %           [        primal/dual interior point method (pure Matlab)        ]
 %           [  250 - MIPS-sc, step-controlled variant of MIPS               ]
-%           [  300 - Matlab Optimization Toolbox, quadprog(), linprog()     ]
+%           [  300 - Matlab Optimization Toolbox, QUADPROG, LINPROG         ]
 %   output options
 %       31 - VERBOSE, 1             amount of progress info printed
 %           [   0 - print no progress info                                  ]

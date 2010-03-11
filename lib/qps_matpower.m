@@ -196,7 +196,7 @@ elseif alg == 200 || alg == 250     %% use MIPS or sc-MIPS
     %% call solver
     [x, f, eflag, output, lambda] = ...
         feval(solver, H, c, A, l, u, xmin, xmax, x0, mips_opt);
-elseif alg == 300                   %% use quadprog() or linprog() from Opt Tbx ver 2.x+
+elseif alg == 300                   %% use QUADPROG or LINPROG from Opt Tbx ver 2.x+
     [x, f, eflag, output, lambda] = ...
         qps_ot(H, c, A, l, u, xmin, xmax, x0, opt);
 else
