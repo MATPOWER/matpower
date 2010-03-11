@@ -11,5 +11,5 @@ function [varargout] = fmincopf(varargin)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 [mpc, mpopt] = opf_args(varargin{:});
-mpopt = mpoption(mpopt, 'OPF_ALG', 520);
+mpopt = mpoption(mpopt, 'PF_DC', 0, 'OPF_ALG', 520);
 [varargout{1:nargout}] = opf(mpc, mpopt);
