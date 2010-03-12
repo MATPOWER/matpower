@@ -40,13 +40,17 @@ MATPOWER can be downloaded from the MATPOWER home page above.
   guarantees regarding the correctness MATPOWER's code or its fitness for any
   particular purpose.
 - Any publications derived from the use of MATPOWER must acknowledge MATPOWER
-  <http://www.pserc.cornell.edu/matpower/>.
+  and cite [1].
 - Anyone may modify MATPOWER for their own use as long as the original
   copyright notices remain in place.
 - MATPOWER may not be redistributed without written permission.
 - Modified versions of MATPOWER, or works derived from MATPOWER, may not be
   distributed without written permission.
 
+[1]  R. D. Zimmerman, C. E. Murillo-S‡nchez, and R. J. Thomas,
+     "MATPOWER's Extensible Optimal Power Flow Architecture," Power
+     and Energy Society General Meeting, 2009 IEEE, pp. 1Ð7,
+     July 26Ð30 2009.
 
 -----------------
  GETTING STARTED
@@ -165,8 +169,8 @@ There are two primary sources of documentation for MATPOWER.
     - Matlab's 'help' command
     - MATPOWER User's Manual
 
-The User's Manual is included in the distribution (manual.pdf in docs
-directory) or it can be downloaded separately from 
+The User's Manual is included in the distribution (docs/manual.pdf) or
+it can be downloaded separately from
 http://www.pserc.cornell.edu/matpower/manual.pdf.
 
 Each M-file has its own documentation which can be accessed by typing at
@@ -179,7 +183,37 @@ Documentation for the case data file format can be found by typing:
     help caseformat
 
 If something is still unclear after checking the manual and the help,
-the source code *is* the documentation ;-)
+the source code *is* the documentation. ;-)
+
+TECH NOTES
+
+There are also two MATPOWER Technical Notes that may be of interest:
+
+[TN1]  R. D. Zimmerman, "Uniform Price Auctions and Optimal Power Flow,
+       MATPOWER Technical Note 1, February 2010.
+          http://www.pserc.cornell.edu/matpower/TN1-OPF-Auctions.pdf
+
+[TN2]  R. D. Zimmerman, "AC Power Flows, Generalized OPF Costs and
+       their Derivatives using Complex Matrix Notation", MATPOWER
+       Technical Note 2, February 2010.
+          http://www.pserc.cornell.edu/matpower/TN2-OPF-Derivatives.pdf
+
+PUBLICATIONS & PRESENTATIONS
+
+[1]  R. D. Zimmerman, C. E. Murillo-S‡nchez, and R. J. Thomas,
+     "MATPOWER's Extensible Optimal Power Flow Architecture," Power
+     and Energy Society General Meeting, 2009 IEEE, pp. 1Ð7,
+     July 26Ð30 2009.
+        http://www.pserc.cornell.edu/matpower/MATPOWER-OPF.pdf
+        http://dx.doi.org/10.1109/PES.2009.5275967
+     slides of presentation:
+       http://www.pserc.cornell.edu/matpower/MATPOWER-OPF-slides.pdf
+
+[2]  R. D. Zimmerman, C. E. Murillo-S‡nchez, and R. J. Thomas,
+     "MATPOWER: Steady-State Operations, Planning and Analysis Tools
+     for Power Systems Research and Education," submitted to IEEE
+     Transactions on Power Systems.
+        http://www.pserc.cornell.edu/matpower/MATPOWER-paper.pdf
 
 
 -------------------
