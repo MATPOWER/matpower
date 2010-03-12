@@ -15,8 +15,19 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.0b1
 -------------------
 
+3/12/10
+    - Incorporated significant updates to User's Manual (docs/manual.pdf).
+
+3/10/10
+    - Added optional input arg to mpver() and other *ver() functions to
+      trigger return of entire version struct with Name, Version,
+      Release and Date (similar to Matlab's ver() function).
+    - Massive help text update to more closely match MathWorks conventions;
+      function names in ALL CAPS, See also ..., Examples, etc.
+    - Added printing of MATPOWER and MIPS version lines to verbose output.
+
 2/23/10
-    - For @opf_model, removed get_var_N(), get_lin_N() and get_nln_N()
+    - For @opf_model, deprecated get_var_N(), get_lin_N() and get_nln_N()
       methods, replaced with single getN() method. Added compute_cost().
     - Fixed per unit bug with reserve costs and prices in toggle_reserves().
     - Added cost field to OPF results struct with final values of user-defined
