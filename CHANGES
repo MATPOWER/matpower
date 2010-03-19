@@ -2,7 +2,7 @@
  Change history for MATPOWER
 -----------------------------
 
-Version:    4.0b1
+Version:    4.0b2
 
 maintained by Ray Zimmerman <rz10@cornell.edu>
 
@@ -14,6 +14,9 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 
 Changes since 4.0b1
 -------------------
+
+3/19/10
+    - Released version 4.0b2.
 
 3/12/10
     - Incorporated significant updates to User's Manual (docs/manual.pdf).

@@ -2,7 +2,7 @@
  MATPOWER - A Matlab Power System Simulation Package
 =====================================================
 
-Version:    4.0b1
+Version:    4.0b2
 
 Home Page:  http://www.pserc.cornell.edu/matpower/
 
@@ -10,7 +10,7 @@ Authors:    Ray Zimmerman               <rz10@cornell.edu>
             Carlos E. Murillo-Sanchez   <carlos_murillo@ieee.org>
             Deqiang (David) Gan         <dgan@zju.edu.cn>
 
-            Thu, Dec 24, 2009
+            Fri, Mar 19, 2010
 
 $Id$
 Copyright (c) 1997-2007 by Power System Engineering Research Center (PSERC)
@@ -115,6 +115,54 @@ documentation for the various MATPOWER functions. For example:
     help runopf
     help mpoption
     help caseformat
+
+
+-----------------------------
+ WHAT'S NEW IN VERSION 4.0b2
+-----------------------------
+
+Below is a summary of the changes since version 4.0b1 of MATPOWER. See the
+CHANGES file in the docs directory for all the gory details.
+
+* New features:
+  - Renamed the pure-Matlab interior point solver from PDIPM to MIPS
+    (Matlab Interior Point Solver), changed order of input args,
+    included option for single struct input (like fmincon). Added
+    tests for MIPS as a standalone solver.
+  - Added new top-level wrapper function for MATPOWER's QP solver,
+    called qps_matpower(), with calling syntax similar to quadprog()
+    from the Optimization Toolbox, to replace mp_qp() and mp_lp().
+  - Added qps_bpmpd(), qps_mips() and qps_ot(), with interface that
+    matches qps_matpower() to handle implementation for BPMPD_MEX,
+    MIPS and Optimization Toolbox solvers, respectively.
+  - Added OPF algorithm code to output of OPF in results.raw.output.alg.
+  - Added saving history of trajectory of obj, feascond, gradcond,
+    compcond, costcond, etc. for MIPS solver. See results.raw.output.hist.
+  - For @opf_model, added compute_cost() method, deprecated get_var_N(),
+    get_lin_N() and get_nln_N() methods, replaced with single getN() method.
+  - Added cost field to OPF results struct with final values of user-defined
+    costs, by named set.
+  - Incorporated significant updates to User's Manual (docs/manual.pdf).
+  - Massive help text updates to more closely match MathWorks conventions.
+    i.e. function names in ALL CAPS.
+  - Added two new Tech Notes, available from MATPOWER home page.
+
+* Bugs fixed:
+  - Per unit bug with reserve costs and prices in toggle_reserves() in 4.0b1.
+  - In 4.0b1 the DC OPF with user-supplied linear constraints could yield
+    incorrect multipliers on variable bounds.
+  - Auction code in extras/smartmarket in all previous versions contained a
+    design error which has been fixed. Prices are now scaled instead of
+    shifted when modified according to specified pricing rule (e.g. LAO, FRO,
+    LAB, FRB, split-the-difference, etc.). Auctions with both real and reactive
+    offers/bids must be type 0 or 5, type 1 = LAO is no longer allowed.
+
+* INCOMPATIBLE CHANGES:
+  - Renamed functions used to compute AC OPF cost, constraints and
+    hessian, since they are used by more than fmincon:
+        costfmin --> opf_costfcn
+        consfmin --> opf_consfcn
+        hessfmin --> opf_hessfcn
 
 
 -----------------------------
