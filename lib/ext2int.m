@@ -344,10 +344,12 @@ else            %% old form
     [F_BUS, T_BUS] = idx_brch;
     [AREA_I, PRICE_REF_BUS] = idx_area;
 
+    %% create map of external bus numbers to bus indices
     i2e = bus(:, BUS_I);
     e2i = sparse(max(i2e), 1);
     e2i(i2e) = (1:size(bus, 1))';
 
+    %% renumber buses consecutively
     bus(:, BUS_I)               = e2i( bus(:, BUS_I)            );
     gen(:, GEN_BUS)             = e2i( gen(:, GEN_BUS)          );
     branch(:, F_BUS)            = e2i( branch(:, F_BUS)         );

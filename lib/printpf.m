@@ -119,7 +119,7 @@ ptol = 1e-6;        %% tolerance for displaying shadow prices
     TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 
-%% internal bus number
+%% create map of external bus numbers to bus indices
 i2e = bus(:, BUS_I);
 e2i = sparse(max(i2e), 1);
 e2i(i2e) = (1:size(bus, 1))';
