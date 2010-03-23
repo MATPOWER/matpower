@@ -28,8 +28,6 @@ function [Pd, Qd] = total_load(bus, gen, load_zone, which_type)
 %       'DISPATCHABLE' : sum only dispatchable loads
 %       'BOTH'         : sum both fixed and dispatchable loads
 %
-%   Assumes consecutive bus numbering when dealing with dispatchable loads.
-%
 %   Examples:
 %       Return the total active load for each area as defined in BUS_AREA.
 %
@@ -114,7 +112,13 @@ if want_disp            %% need dispatchable
     ng = size(gen, 1);
     is_ld = isload(gen) & gen(:, GEN_STATUS) > 0;
     ld = find(is_ld);
-    Cld = sparse(gen(:, GEN_BUS), (1:ng)', is_ld, nb, ng);
+
+    %% create map of external bus numbers to bus indices
+    i2e = bus(:, BUS_I);
+    e2i = sparse(max(i2e), 1);
+    e2i(i2e) = (1:nb)';
+
+    Cld = sparse(e2i(gen(:, GEN_BUS)), (1:ng)', is_ld, nb, ng);
     Pdd = -Cld * gen(:, PMIN);      %% real power
     if want_Q
         Q = zeros(ng, 1);

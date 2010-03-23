@@ -53,8 +53,6 @@ function [bus, gen] = scale_load(load, bus, gen, load_zone, opt)
 %       'DISPATCHABLE' : scale only dispatchable loads
 %       'BOTH'         : scale both fixed and dispatchable loads
 %
-%   Assumes consecutive bus numbering when dealing with dispatchable loads.
-%
 %   Examples:
 %       Scale all real and reactive fixed loads up by 10%.
 %
@@ -85,8 +83,6 @@ function [bus, gen] = scale_load(load, bus, gen, load_zone, opt)
 %% purposely being backward compatible with older MATPOWER
 [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, ...
     PMAX, PMIN, MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN] = idx_gen;
-[F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, ...
-    RATE_C, TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST] = idx_brch;
 
 nb = size(bus, 1);          %% number of buses
 
@@ -132,7 +128,13 @@ if ~isempty(gen)
     ng = size(gen, 1);
     is_ld = isload(gen) & gen(:, GEN_STATUS) > 0;
     ld = find(is_ld);
-    Cld = sparse(gen(:, GEN_BUS), (1:ng)', is_ld, nb, ng);
+
+    %% create map of external bus numbers to bus indices
+    i2e = bus(:, BUS_I);
+    e2i = sparse(max(i2e), 1);
+    e2i(i2e) = (1:nb)';
+
+    Cld = sparse(e2i(gen(:, GEN_BUS)), (1:ng)', is_ld, nb, ng);
 else
     ng = [];
     ld = [];
@@ -140,10 +142,10 @@ end
 
 if isempty(load_zone)
     if length(load) == 1        %% make a single zone of all load buses
-        load_zone = zeros(nb, 1);               %% initialize
-        load_zone(bus(:, PD) ~= 0) = 1;         %% FIXED loads
+        load_zone = zeros(nb, 1);                   %% initialize
+        load_zone(bus(:, PD) ~= 0) = 1;             %% FIXED loads
         if ~isempty(gen)
-            load_zone(gen(ld, GEN_BUS)) = 1;    %% DISPATCHABLE loads
+            load_zone(e2i(gen(ld, GEN_BUS))) = 1;   %% DISPATCHABLE loads
         end
     else                        %% use areas defined in bus data as zones
         load_zone = bus(:, BUS_AREA);
@@ -214,7 +216,7 @@ end
 if opt.which(1) ~= 'F'      %% includes 'DISPATCHABLE', not 'FIXED' only
     for k = 1:length(scale)
         idx = find( load_zone == k );
-        [junk, i, junk2] = intersect(gen(ld, GEN_BUS), idx);
+        [junk, i, junk2] = intersect(e2i(gen(ld, GEN_BUS)), idx);
         ig = ld(i);
 
         gen(ig, [PG PMIN]) = gen(ig, [PG PMIN]) * scale(k);
