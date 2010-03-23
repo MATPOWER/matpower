@@ -12,6 +12,16 @@ Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
 
 
+Changes since 4.0b2
+-------------------
+
+3/23/09
+    - Fixed bug in smart market code that caused it to die for cases with
+      non-consecutive bus numbers.
+    - Removed consecutive-bus number requirement for scale_load() and
+      total_load() functions.
+
+
 Changes since 4.0b1
 -------------------
 
