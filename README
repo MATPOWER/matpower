@@ -76,7 +76,7 @@ Installation
       $MATPOWER   Ð core MATPOWER functions
       $MATPOWER/t Ð test scripts for MATPOWER
 
-4.  At the Matlab prompt, type 'test matpower' (without the quotes) to
+4.  At the Matlab prompt, type 'test_matpower' (without the quotes) to
     run the test suite and verify that MATPOWER is properly installed
     and functioning.
 
