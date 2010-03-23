@@ -57,10 +57,13 @@ else
         runmkt('t_auction_case', q, p, 1150, 100, [], [], mpopt);
     cq5 = cq;
     cp5 = cp;
+    i2e = bus(:, BUS_I);
+    e2i = sparse(max(i2e), 1);
+    e2i(i2e) = (1:size(bus, 1))';
     G = find( ~isload(gen) );   %% real generators
     L = find(  isload(gen) );   %% dispatchable loads
-    Gbus = gen(G,GEN_BUS);
-    Lbus = gen(L,GEN_BUS);
+    Gbus = e2i(gen(G,GEN_BUS));
+    Lbus = e2i(gen(L,GEN_BUS));
     Qfudge =  zeros(size(p));
     Qfudge(L,:) = diag(gen(L,QG) ./ gen(L,PG) .* bus(Lbus, LAM_Q)) * ones(size(p(L,:)));
 

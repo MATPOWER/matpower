@@ -78,10 +78,13 @@ else
 %     [ co.Q.qty co.Q.prc ]
 %     [ cb.Q.qty cb.Q.prc ]
     
+    i2e = r.bus(:, BUS_I);
+    e2i = sparse(max(i2e), 1);
+    e2i(i2e) = (1:size(r.bus, 1))';
     G = find( ~isload(r.gen) );   %% real generators
     L = find(  isload(r.gen) );   %% dispatchable loads
-    Gbus = r.gen(G,GEN_BUS);
-    Lbus = r.gen(L,GEN_BUS);
+    Gbus = e2i(r.gen(G,GEN_BUS));
+    Lbus = e2i(r.gen(L,GEN_BUS));
     
     t_is( co.P.qty, ones(6, 1) * [12 24 0], 2, [t ' : gen P quantities'] );
     t_is( co.P.prc(1,:), 50.1578, 3, [t ' : gen 1 P prices'] );
