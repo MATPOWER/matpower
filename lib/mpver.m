@@ -35,16 +35,23 @@ if nargout > 0
         rv = v{1}.Version;
     end
 else
-    v{2} = ver('matlab');
+    if have_fcn('octave')
+        v{2} = ver('octave');
+    else
+        v{2} = ver('matlab');
+    end
     v{3} = ver('optim');
     for n = 1:3
         if n == 3 && isempty(v{3})
             fprintf('\n%-22s -- not installed --', 'Optimization Toolbox');
             continue;
         end
-        fprintf('\n%-22s Version %-9s  %11s', v{n}.Name, v{n}.Version, v{n}.Date);
-        if ~isempty(v{n}.Release)
-            fprintf('   Release: %-10s', v{n}.Release);
+        fprintf('\n%-22s Version %-9s', v{n}.Name, v{n}.Version);
+        if ~isempty(v{n}.Date)
+	        fprintf('  %11s', v{n}.Date);
+			if ~isempty(v{n}.Release)
+				fprintf('   Release: %-10s', v{n}.Release);
+			end
         end
     end
     fprintf('\n');

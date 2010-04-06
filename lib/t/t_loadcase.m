@@ -33,12 +33,12 @@ pfmatfilev2  = 't_mat9_pfv2';
 %% read version 1 OPF data matrices
 [baseMVA, bus, gen, branch, areas, gencost] = feval(casefile);
 %% save as .mat file
-eval(['save ' matfile ' baseMVA bus gen branch areas gencost']);
+eval(['save ' matfile '.mat baseMVA bus gen branch areas gencost']);
 
 %% read version 2 OPF data matrices
 mpc = feval(casefilev2);
 %% save as .mat file
-eval(['save ' matfilev2 ' mpc']);
+eval(['save ' matfilev2 '.mat mpc']);
 
 %% prepare expected matrices for v1 load
 %% (missing gen cap curve & branch ang diff lims)
@@ -341,14 +341,14 @@ t_is(mpc2.gencost,  gencost,    12, [t 'gencost']);
 
 %% read version 1 PF data matrices
 [baseMVA, bus, gen, branch] = feval(pfcasefile);
-eval(['save ' pfmatfile ' baseMVA bus gen branch']);
+eval(['save ' pfmatfile '.mat baseMVA bus gen branch']);
 
 %% read version 2 PF data matrices
 mpc = feval(pfcasefilev2);
 tmp = {mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch};
 [baseMVA, bus, gen, branch] = deal(tmp{:});
 %% save as .mat file
-eval(['save ' pfmatfilev2 ' mpc']);
+eval(['save ' pfmatfilev2 '.mat mpc']);
 
 %%-----  load PF data into individual matrices  -----
 t = 'loadcase(pf_M_file_v1) without .m extension : ';

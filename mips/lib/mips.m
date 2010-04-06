@@ -340,7 +340,12 @@ if opt.step_control
     L = f + lam' * g + mu' * (h+z) - gamma * sum(log(z));
 end
 Lx = df + dg * lam + dh * mu;
-feascond = max([norm(g, Inf), max(h)]) / (1 + max([ norm(x, Inf), norm(z, Inf) ]));
+if isempty(h)
+    maxh = zeros(1,0);
+else
+    maxh = max(h);
+end
+feascond = max([norm(g, Inf), maxh]) / (1 + max([ norm(x, Inf), norm(z, Inf) ]));
 gradcond = norm(Lx, Inf) / (1 + max([ norm(lam, Inf), norm(mu, Inf) ]));
 compcond = (z' * mu) / (1 + norm(x, Inf));
 costcond = abs(f - f0) / (1 + abs(f0));
@@ -352,7 +357,7 @@ if opt.verbose
     if opt.step_control, s = '-sc'; else, s = ''; end
     v = mipsver('all');
     fprintf('Matlab Interior Point Solver -- MIPS%s, Version %s, %s', ...
-    	s, v.Version, v.Date);
+        s, v.Version, v.Date);
     if opt.verbose > 1
         fprintf('\n it    objective   step size   feascond     gradcond     compcond     costcond  ');
         fprintf('\n----  ------------ --------- ------------ ------------ ------------ ------------');
@@ -431,7 +436,12 @@ while (~converged && i < opt.max_it)
 
         %% check tolerance
         Lx1 = df1 + dg1 * lam + dh1 * mu;
-        feascond1 = max([norm(g1, Inf), max(h1)]) / (1 + max([ norm(x1, Inf), norm(z, Inf) ]));
+        if isempty(h1)
+            maxh1 = zeros(1,0);
+        else
+            maxh1 = max(h1);
+        end
+        feascond1 = max([norm(g1, Inf), maxh1]) / (1 + max([ norm(x1, Inf), norm(z, Inf) ]));
         gradcond1 = norm(Lx1, Inf) / (1 + max([ norm(lam, Inf), norm(mu, Inf) ]));
 
         if feascond1 > feascond && gradcond1 > gradcond
@@ -472,9 +482,17 @@ while (~converged && i < opt.max_it)
 
     %% do the update
     k = find(dz < 0);
-    alphap = min( [xi * min(z(k) ./ -dz(k)) 1] );
+    if isempty(k)
+        alphap = 1;
+    else
+        alphap = min( [xi * min(z(k) ./ -dz(k)) 1] );
+    end
     k = find(dmu < 0);
-    alphad = min( [xi * min(mu(k) ./ -dmu(k)) 1] );
+    if isempty(k)
+        alphad = 1;
+    else
+        alphad = min( [xi * min(mu(k) ./ -dmu(k)) 1] );
+    end
     x = x + alphap * dx;
     z = z + alphap * dz;
     lam = lam + alphad * dlam;
@@ -501,7 +519,12 @@ while (~converged && i < opt.max_it)
 
     %% check tolerance
     Lx = df + dg * lam + dh * mu;
-    feascond = max([norm(g, Inf), max(h)]) / (1 + max([ norm(x, Inf), norm(z, Inf) ]));
+    if isempty(h)
+        maxh = zeros(1,0);
+    else
+        maxh = max(h);
+    end
+    feascond = max([norm(g, Inf), maxh]) / (1 + max([ norm(x, Inf), norm(z, Inf) ]));
     gradcond = norm(Lx, Inf) / (1 + max([ norm(lam, Inf), norm(mu, Inf) ]));
     compcond = (z' * mu) / (1 + norm(x, Inf));
     costcond = abs(f - f0) / (1 + abs(f0));

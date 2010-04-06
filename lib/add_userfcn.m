@@ -103,9 +103,19 @@ if isfield(mpc, 'userfcn')
     if isfield(mpc.userfcn, stage)
         n = length(mpc.userfcn.(stage)) + 1;
         if ~allow_multiple
-            for k = 1:n-1
-                if isequal(mpc.userfcn.(stage)(k).fcn, fcn)
-                    error('add_userfcn: the function ''%s'' has already been added', func2str(fcn));
+            if have_fcn('octave')
+                fcn_info = functions(fcn);
+                for k = 1:n-1
+                    cb_info = functions(mpc.userfcn.(stage)(k).fcn);
+                    if strcmp(cb_info.function, fcn_info.function)
+                        error('add_userfcn: the function ''%s'' has already been added', func2str(fcn));
+                    end
+                end
+            else
+                for k = 1:n-1
+                    if isequal(mpc.userfcn.(stage)(k).fcn, fcn)
+                        error('add_userfcn: the function ''%s'' has already been added', func2str(fcn));
+                    end
                 end
             end
         end

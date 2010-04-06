@@ -19,6 +19,10 @@ if quiet
 else
     verbose = 1;
 end
+if have_fcn('octave')
+	s1 = warning('query', 'Octave:load-file-in-path');
+    warning('off', 'Octave:load-file-in-path');
+end
 mpopt = mpoption('OUT_ALL', 0, 'VERBOSE', verbose);
 
 [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
@@ -103,5 +107,9 @@ mpc.gen(1, [QMIN QMAX]) = [-50 0];
 mpc.gen(2, [QMIN QMAX]) = [50 150];
 [baseMVA, bus, gen, branch, success, et] = runpf(mpc, mpopt);
 t_is(gen(1:2, QG), [-50+8.02; 50+16.05], 2, [t '2 gens, proportional']);
+
+if have_fcn('octave')
+    warning(s1.state, 'Octave:load-file-in-path');
+end
 
 t_end;

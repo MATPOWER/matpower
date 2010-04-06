@@ -17,9 +17,21 @@ function mpc = remove_userfcn(mpc, stage, fcn)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 n = length(mpc.userfcn.(stage));
-for k = n:-1:1
-    if isequal(mpc.userfcn.(stage)(k).fcn, fcn)
-        mpc.userfcn.(stage)(k) = [];
-        break;
+
+if have_fcn('octave')
+    fcn_info = functions(fcn);
+    for k = n:-1:1
+        cb_info = functions(mpc.userfcn.(stage)(k).fcn);
+        if strcmp(cb_info.function, fcn_info.function)
+            mpc.userfcn.(stage)(k) = [];
+            break;
+        end
+    end
+else
+    for k = n:-1:1
+        if isequal(mpc.userfcn.(stage)(k).fcn, fcn)
+            mpc.userfcn.(stage)(k) = [];
+            break;
+        end
     end
 end

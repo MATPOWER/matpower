@@ -16,14 +16,6 @@ t_begin(51, quiet);
 t = 'unconstrained banana function : ';
 %% from Matlab Optimization Toolbox's bandem.m
 f_fcn = @(x)f2(x);
-function [f, df, d2f] = f2(x)
-    a = 100;
-    f = a*(x(2)-x(1)^2)^2+(1-x(1))^2;
-    df = [  4*a*(x(1)^3 - x(1)*x(2)) + 2*x(1)-2;
-            2*a*(x(2) - x(1)^2)                     ];
-    d2f = 4*a*[ 3*x(1)^2 - x(2) + 1/(2*a),  -x(1);
-                -x(1)                       1/2       ];
-end
 x0 = [-1.9; 2];
 [x, f, s, out, lam] = mips(f_fcn, x0);
 % [x, f, s, out, lam] = mips(f_fcn, x0, [], [], [], [], [], [], [], struct('verbose', 2));
@@ -39,13 +31,6 @@ t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 t = 'unconstrained 3-d quadratic : ';
 %% from http://www.akiti.ca/QuadProgEx0Constr.html
 f_fcn = @(x)f3(x);
-function [f, df, d2f] = f3(x)
-    H = [5 -2 -1; -2 4 3; -1 3 5];
-    c = [2; -35; -47];
-    f = 1/2 * x'*H*x + c'*x + 5;
-    df = H*x + c;
-    d2f = H;
-end
 x0 = [0; 0; 0];
 % [x, f, s, out, lam] = mips(f_fcn, x0, [], [], [], [], [], [], [], struct('verbose', 2));
 [x, f, s, out, lam] = mips(f_fcn, x0);
@@ -61,16 +46,6 @@ t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 t = 'constrained 4-d QP : ';
 %% from http://www.uc.edu/sashtml/iml/chap8/sect12.htm
 f_fcn = @(x)f4(x);
-function [f, df, d2f] = f4(x)
-    H = [   1003.1  4.3     6.3     5.9;
-            4.3     2.2     2.1     3.9;
-            6.3     2.1     3.5     4.8;
-            5.9     3.9     4.8     10  ];
-    c = zeros(4,1);
-    f = 1/2 * x'*H*x + c'*x;
-    df = H*x + c;
-    d2f = H;
-end
 x0 = [1; 0; 0; 1];
 A = [   1       1       1       1;
         0.17    0.11    0.10    0.18    ];
@@ -108,21 +83,6 @@ t = 'constrained 2-d non-linear : ';
 f_fcn = @(x)f5(x);
 gh_fcn = @(x)gh5(x);
 hess_fcn = @(x, lam)hess5(x, lam);
-function [f, df, d2f] = f5(x)
-    c = -[1; 1];
-    f = c'*x;
-    df = c;
-    d2f = zeros(2,2);
-end
-function [h, g, dh, dg] = gh5(x)
-    h = [ -1 -1; 1 1] * x.^2 + [1; -2];
-    dh = 2 * [-x(1) x(1); -x(2) x(2)];
-    g = []; dg = [];
-end
-function Lxx = hess5(x, lam)
-    mu = lam.ineqnonlin;
-    Lxx = 2*[-1 1]*mu*eye(2);
-end
 x0 = [1.1; 0];
 xmin = -10 * ones(2, 1);
 % xmax = 3 * ones(2, 1);
@@ -151,20 +111,6 @@ t = 'constrained 3-d non-linear : ';
 f_fcn = @(x)f6(x);
 gh_fcn = @(x)gh6(x);
 hess_fcn = @(x, lam)hess6(x, lam);
-function [f, df, d2f] = f6(x)
-    f = -x(1)*x(2) - x(2)*x(3);
-    df = -[x(2); x(1)+x(3); x(2)];
-    d2f = -[0 1 0; 1 0 1; 0 1 0];
-end
-function [h, g, dh, dg] = gh6(x)
-    h = [ 1 -1 1; 1 1 1] * x.^2 + [-2; -10];
-    dh = 2 * [x(1) x(1); -x(2) x(2); x(3) x(3)];
-    g = []; dg = [];
-end
-function Lxx = hess6(x, lam)
-    mu = lam.ineqnonlin;
-    Lxx = [2*[1 1]*mu -1 0; -1 2*[-1 1]*mu -1; 0 -1 2*[1 1]*mu];
-end
 x0 = [1; 1; 0];
 % [x, f, s, out, lam] = mips(f_fcn, x0, [], [], [], [], [], gh_fcn, hess_fcn, struct('verbose', 2, 'comptol', 1e-9));
 [x, f, s, out, lam] = mips(f_fcn, x0, [], [], [], [], [], gh_fcn, hess_fcn);
@@ -224,4 +170,60 @@ t_end;
 % t_is(f, -3456, 13, t);
 
 
-end
+function [f, df, d2f] = f2(x)
+    a = 100;
+    f = a*(x(2)-x(1)^2)^2+(1-x(1))^2;
+    df = [  4*a*(x(1)^3 - x(1)*x(2)) + 2*x(1)-2;
+            2*a*(x(2) - x(1)^2)                     ];
+    d2f = 4*a*[ 3*x(1)^2 - x(2) + 1/(2*a),  -x(1);
+                -x(1)                       1/2       ];
+
+
+function [f, df, d2f] = f3(x)
+    H = [5 -2 -1; -2 4 3; -1 3 5];
+    c = [2; -35; -47];
+    f = 1/2 * x'*H*x + c'*x + 5;
+    df = H*x + c;
+    d2f = H;
+
+
+function [f, df, d2f] = f4(x)
+    H = [   1003.1  4.3     6.3     5.9;
+            4.3     2.2     2.1     3.9;
+            6.3     2.1     3.5     4.8;
+            5.9     3.9     4.8     10  ];
+    c = zeros(4,1);
+    f = 1/2 * x'*H*x + c'*x;
+    df = H*x + c;
+    d2f = H;
+
+
+function [f, df, d2f] = f5(x)
+    c = -[1; 1];
+    f = c'*x;
+    df = c;
+    d2f = zeros(2,2);
+
+function [h, g, dh, dg] = gh5(x)
+    h = [ -1 -1; 1 1] * x.^2 + [1; -2];
+    dh = 2 * [-x(1) x(1); -x(2) x(2)];
+    g = []; dg = [];
+
+function Lxx = hess5(x, lam)
+    mu = lam.ineqnonlin;
+    Lxx = 2*[-1 1]*mu*eye(2);
+
+
+function [f, df, d2f] = f6(x)
+    f = -x(1)*x(2) - x(2)*x(3);
+    df = -[x(2); x(1)+x(3); x(2)];
+    d2f = -[0 1 0; 1 0 1; 0 1 0];
+
+function [h, g, dh, dg] = gh6(x)
+    h = [ 1 -1 1; 1 1 1] * x.^2 + [-2; -10];
+    dh = 2 * [x(1) x(1); -x(2) x(2); x(3) x(3)];
+    g = []; dg = [];
+
+function Lxx = hess6(x, lam)
+    mu = lam.ineqnonlin;
+    Lxx = [2*[1 1]*mu -1 0; -1 2*[-1 1]*mu -1; 0 -1 2*[1 1]*mu];

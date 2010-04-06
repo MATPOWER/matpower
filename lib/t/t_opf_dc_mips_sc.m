@@ -30,6 +30,10 @@ if quiet
 else
     verbose = 0;
 end
+if have_fcn('octave')
+	s1 = warning('query', 'Octave:load-file-in-path');
+    warning('off', 'Octave:load-file-in-path');
+end
 
 t0 = 'DC OPF (MIPS-sc): ';
 mpopt = mpoption('OUT_ALL', 0, 'VERBOSE', verbose);
@@ -115,6 +119,9 @@ t_is(r.gen(2, PG), 116.15974, 4, [t 'Pg2 = 116.15974']);
 t_is(r.var.val.z, [0; 0.3348], 4, [t 'user vars']);
 t_is(r.cost.usr, 0.3348, 3, [t 'user costs']);
 
+if have_fcn('octave')
+    warning(s1.state, 'Octave:load-file-in-path');
+end
 warning(s6.state, 'MATLAB:nearlySingularMatrixUMFPACK');
 
 t_end;
