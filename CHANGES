@@ -15,6 +15,13 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.0b2
 -------------------
 
+4/6/10
+    - Added 'anon_fcns' to have_fcn() to check for anonymous function
+      capability to avoid direct Matlab version checks in code.
+    - GNU Octave compatibility!  (tested with Octave 3.2.3)
+      Added 'octave' to have_fcn() to check when code is running under
+      Octave instead of Matlab.
+
 3/23/09
     - Fixed bug in smart market code that caused it to die for cases with
       non-consecutive bus numbers.
