@@ -186,11 +186,10 @@ elseif alg == 200 || alg == 250     %% use MIPS or sc-MIPS
     end
     mips_opt.verbose = verbose;
     
-    mlver = ver('matlab');
-    if str2double(mlver.Version(1)) < 7    %% anonymous functions not available
-        solver = 'qps_mips6';
-    else
+    if have_fcn('anon_fcns')
         solver = 'qps_mips';
+    else
+        solver = 'qps_mips6';
     end
 
     %% call solver

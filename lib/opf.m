@@ -475,11 +475,10 @@ else
     if ~have_fcn('fmincon')
       error('opf: OPF_ALG %d requires FMINCON (Optimization Toolbox 2.x or later)', alg);
     end
-    mlver = ver('matlab');
-    if str2double(mlver.Version(1)) < 7    %% anonymous functions not available
-      solver = @fmincopf6_solver;
-    else
+    if have_fcn('anon_fcns')
       solver = @fmincopf_solver;
+    else
+      solver = @fmincopf6_solver;
     end
     [results, success, raw] = feval(solver, om, mpopt, output);
   elseif alg == 540 || alg == 545 || alg == 550 %% PDIPM_OPF, SCPDIPM_OPF, or TRALM_OPF
@@ -498,11 +497,10 @@ else
     end
     [results, success, raw] = tspopf_solver(om, mpopt, output);
   elseif alg == 560 || alg == 565               %% MIPS
-    mlver = ver('matlab');
-    if str2double(mlver.Version(1)) < 7    %% anonymous functions not available
-      solver = @mips6opf_solver;
-    else
+    if have_fcn('anon_fcns')
       solver = @mipsopf_solver;
+    else
+      solver = @mips6opf_solver;
     end
     [results, success, raw] = feval(solver, om, mpopt, output);
   end

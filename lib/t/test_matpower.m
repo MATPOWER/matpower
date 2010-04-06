@@ -24,11 +24,10 @@ tests{end+1} = 't_ext2int2ext';
 tests{end+1} = 't_jacobian';
 tests{end+1} = 't_hessian';
 tests{end+1} = 't_hasPQcap';
-mlver = ver('matlab');
-if str2double(mlver.Version(1)) < 7    %% anonymous functions not available
-    tests{end+1} = 't_mips6';
-else
+if have_fcn('anon_fcns')
     tests{end+1} = 't_mips';
+else
+    tests{end+1} = 't_mips6';
 end
 tests{end+1} = 't_qps_matpower';
 tests{end+1} = 't_pf';

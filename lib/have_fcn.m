@@ -17,6 +17,7 @@ function TorF = have_fcn(tag)
 %       smartmarket - RUNMARKET and friends, for running an auction
 %       tralmopf    - TRALMOPF, trust region based augmented Langrangian
 %                     OPF solver
+%       anon_fcns   - anonymous functions, Matlab version >= 7
 %
 %   Examples:
 %       if have_fcn('minopf')
@@ -47,7 +48,14 @@ switch tag
     case 'qp'
         TorF = exist('qp', 'file') == 2;
     case 'smartmarket'
-        TorF = exist('runmkt', 'file') == 2;
+        TorF = exist('runmarket', 'file') == 2;
+    case 'anon_fcns'
+        v = ver('Matlab');
+        if str2double(v.Version(1)) < 7    %% anonymous functions not available
+            TorF = 0;
+        else
+            TorF = 1;
+        end
     case {'pdipmopf', 'scpdipmopf', 'tralmopf'}
         v = ver('Matlab');
         %% requires >= Matlab 6.5 (R13) (released 20-Jun-2002)
