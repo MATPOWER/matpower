@@ -2,7 +2,7 @@
  Change history for MATPOWER
 -----------------------------
 
-Version:    4.0b2
+Version:    4.0b3
 
 maintained by Ray Zimmerman <rz10@cornell.edu>
 
@@ -16,6 +16,7 @@ Changes since 4.0b2
 -------------------
 
 4/19/10
+    - Released version 4.0b3.
     - Changed licensing to GNU General Public license. See LICENSE and
       COPYING files for details.
     - Added in extras sub-directory psse2matpower Perl script for

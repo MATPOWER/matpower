@@ -2,7 +2,7 @@
  MATPOWER - A Matlab Power System Simulation Package
 =====================================================
 
-Version:    4.0b2
+Version:    4.0b3
 
 Home Page:  http://www.pserc.cornell.edu/matpower/
 
@@ -10,7 +10,7 @@ Authors:    Ray Zimmerman               <rz10@cornell.edu>
             Carlos E. Murillo-Sanchez   <carlos_murillo@ieee.org>
             Deqiang (David) Gan         <dgan@zju.edu.cn>
 
-            Fri, Mar 19, 2010
+            Mon, Apr 19, 2010
 
 $Id$
 Copyright (c) 1997-2010 by Power System Engineering Research Center (PSERC)
@@ -129,6 +129,24 @@ documentation for the various MATPOWER functions. For example:
     help runopf
     help mpoption
     help caseformat
+
+
+-----------------------------
+ WHAT'S NEW IN VERSION 4.0b3
+-----------------------------
+
+Below is a summary of the changes since version 4.0b2 of MATPOWER. See the
+CHANGES file in the docs directory for all the gory details.
+
+* New features:
+  - Licensed under the GNU General Public License (GPL).
+  - GNU Octave compatibility!
+  - Included psse2matpower Perl script for converting PSS/E data files
+    to MATPOWER case format.
+  - Removed consecutive-bus number requirement for scale_load() and
+    total_load() functions.
+* Bugs fixed:
+  - Smart market code would die for cases with non-consecutive bus numbers.
 
 
 -----------------------------
