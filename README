@@ -13,9 +13,13 @@ Authors:    Ray Zimmerman               <rz10@cornell.edu>
             Fri, Mar 19, 2010
 
 $Id$
-Copyright (c) 1997-2007 by Power System Engineering Research Center (PSERC)
+Copyright (c) 1997-2010 by Power System Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
 
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved. This file is offered as-is,
+without any warranty.
 
 --------------
  INTRODUCTION
@@ -35,22 +39,28 @@ MATPOWER can be downloaded from the MATPOWER home page above.
  TERMS OF USE
 --------------
 
-- MATPOWER is free of charge. Anyone may use it.
-- We make no warranties, express or implied. Specifically, we make no
-  guarantees regarding the correctness MATPOWER's code or its fitness for any
-  particular purpose.
-- Any publications derived from the use of MATPOWER must acknowledge MATPOWER
-  and cite [1].
-- Anyone may modify MATPOWER for their own use as long as the original
-  copyright notices remain in place.
-- MATPOWER may not be redistributed without written permission.
-- Modified versions of MATPOWER, or works derived from MATPOWER, may not be
-  distributed without written permission.
+Please see the LICENSE file for the details. But here is the summary:
+
+- Beginning with version 4, the code in MATPOWER is distributed under
+  the GNU General Public License (GPL) with an exception added to
+  clarify our intention to allow MATPOWER to interface with Matlab
+  itself as well as any other M-files or MEX-files a user may have
+  installed, regardless of their licensing terms.
+
+- MATPOWER is distributed in the hope that it will be useful, but
+  WITHOUT ANY WARRANTY.
+
+- While not required by the terms of the license, we do request that
+  publications derived from the use of MATPOWER explicitly acknowledge
+  that fact by citing [1].
 
 [1]  R. D. Zimmerman, C. E. Murillo-S‡nchez, and R. J. Thomas,
      "MATPOWER's Extensible Optimal Power Flow Architecture," Power
      and Energy Society General Meeting, 2009 IEEE, pp. 1Ð7,
      July 26Ð30 2009.
+
+Note:  Versions prior to MATPOWER 4 use a different license.
+
 
 -----------------
  GETTING STARTED
@@ -58,8 +68,10 @@ MATPOWER can be downloaded from the MATPOWER home page above.
 
 System Requirements
 -------------------
-    - Matlab version 6.5 or later, available from The MathWorks
-      http://www.mathworks.com/.
+    - Matlab version 6.5 or later (available from The MathWorks
+      http://www.mathworks.com/), or
+    - GNU Octave version 3.2 or later (free software available from
+      http://www.gnu.org/software/octave/).
 
 Installation
 ------------
@@ -75,6 +87,8 @@ Installation
 3.  Add the following directories to your Matlab path:
       $MATPOWER   Ð core MATPOWER functions
       $MATPOWER/t Ð test scripts for MATPOWER
+      (optional) subdirectories of $MATPOWER/extras -
+            additional functionality and contributed code
 
 4.  At the Matlab prompt, type 'test_matpower' (without the quotes) to
     run the test suite and verify that MATPOWER is properly installed

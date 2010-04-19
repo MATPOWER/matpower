@@ -1,0 +1,46 @@
+The code in MATPOWER is distributed under the GNU General Public
+License with an exception added to clarify our intention to allow
+MATPOWER to interface with Matlab itself as well as any other M-files
+or MEX-files a user may have installed, regardless of their licensing
+terms. The full text of the GPL can be found in the COPYING file
+at the top level of the MATPOWER distribution.
+
+The MATPOWER case files distributed with MATPOWER are not covered
+by the GPL. In most cases, the data has either been included with
+permission or has been converted from data available from a public
+source.
+
+While not required by the terms of the license, we do request that
+publications derived from the use of MATPOWER explicitly acknowledge
+that fact by citing [1].
+
+    [1] R. D. Zimmerman, C. E. Murillo-S ́anchez, and R. J. Thomas,
+        "MATPOWER's Extensible Optimal Power Flow Architecture,"
+        Power and Energy Society General Meeting, 2009 IEEE, pp. 1–7,
+        July 26–30 2009.
+
+The following is the official license notice which should appear in
+each source file.
+
+    MATPOWER is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published
+    by the Free Software Foundation, either version 3 of the License,
+    or (at your option) any later version.
+ 
+    MATPOWER is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+ 
+    You should have received a copy of the GNU General Public License
+    along with MATPOWER. If not, see <http://www.gnu.org/licenses/>.
+ 
+    Additional permission under GNU GPL version 3 section 7
+ 
+    If you modify MATPOWER, or any covered work, to interface with
+    other modules (such as M-files and MEX-files) available in a
+    Matlab (or compatible) environment containing parts covered
+    under other licensing terms, the licensors of MATPOWER grant
+    you additional permission to convey the resulting work.
+
+$Id: LICENSE,v 1.1 2010-04-19 14:40:11 ray Exp $
