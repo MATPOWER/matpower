@@ -14,10 +14,10 @@ While not required by the terms of the license, we do request that
 publications derived from the use of MATPOWER explicitly acknowledge
 that fact by citing [1].
 
-    [1] R. D. Zimmerman, C. E. Murillo-S ́anchez, and R. J. Thomas,
+    [1] R. D. Zimmerman, C. E. Murillo-Sanchez, and R. J. Thomas,
         "MATPOWER's Extensible Optimal Power Flow Architecture,"
-        Power and Energy Society General Meeting, 2009 IEEE, pp. 1–7,
-        July 26–30 2009.
+        Power and Energy Society General Meeting, 2009 IEEE, pp. 1-7,
+        July 26-30 2009.
 
 The following is the official license notice which should appear in
 each source file.
@@ -43,4 +43,4 @@ each source file.
     under other licensing terms, the licensors of MATPOWER grant
     you additional permission to convey the resulting work.
 
-$Id: LICENSE,v 1.1 2010-04-19 14:40:11 ray Exp $
+$Id: LICENSE,v 1.2 2010-04-26 19:03:01 ray Exp $

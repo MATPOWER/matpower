@@ -54,10 +54,10 @@ Please see the LICENSE file for the details. But here is the summary:
   publications derived from the use of MATPOWER explicitly acknowledge
   that fact by citing [1].
 
-[1]  R. D. Zimmerman, C. E. Murillo-S‡nchez, and R. J. Thomas,
+[1]  R. D. Zimmerman, C. E. Murillo-Sanchez, and R. J. Thomas,
      "MATPOWER's Extensible Optimal Power Flow Architecture," Power
-     and Energy Society General Meeting, 2009 IEEE, pp. 1Ð7,
-     July 26Ð30 2009.
+     and Energy Society General Meeting, 2009 IEEE, pp. 1-7,
+     July 26-30 2009.
 
 Note:  Versions prior to MATPOWER 4 use a different license.
 
@@ -85,8 +85,8 @@ Installation
     own code. Let $MATPOWER denote the path to this directory.
 
 3.  Add the following directories to your Matlab path:
-      $MATPOWER   Ð core MATPOWER functions
-      $MATPOWER/t Ð test scripts for MATPOWER
+      $MATPOWER   - core MATPOWER functions
+      $MATPOWER/t - test scripts for MATPOWER
       (optional) subdirectories of $MATPOWER/extras -
             additional functionality and contributed code
 
@@ -280,16 +280,16 @@ There are also two MATPOWER Technical Notes that may be of interest:
 
 PUBLICATIONS & PRESENTATIONS
 
-[1]  R. D. Zimmerman, C. E. Murillo-S‡nchez, and R. J. Thomas,
+[1]  R. D. Zimmerman, C. E. Murillo-Sanchez, and R. J. Thomas,
      "MATPOWER's Extensible Optimal Power Flow Architecture," Power
-     and Energy Society General Meeting, 2009 IEEE, pp. 1Ð7,
-     July 26Ð30 2009.
+     and Energy Society General Meeting, 2009 IEEE, pp. 1-7,
+     July 26-30 2009.
         http://www.pserc.cornell.edu/matpower/MATPOWER-OPF.pdf
         http://dx.doi.org/10.1109/PES.2009.5275967
      slides of presentation:
        http://www.pserc.cornell.edu/matpower/MATPOWER-OPF-slides.pdf
 
-[2]  R. D. Zimmerman, C. E. Murillo-S‡nchez, and R. J. Thomas,
+[2]  R. D. Zimmerman, C. E. Murillo-Sanchez, and R. J. Thomas,
      "MATPOWER: Steady-State Operations, Planning and Analysis Tools
      for Power Systems Research and Education," submitted to IEEE
      Transactions on Power Systems.
