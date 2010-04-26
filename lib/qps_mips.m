@@ -133,8 +133,8 @@ function [x, f, eflag, output, lambda] = qps_mips(H, c, A, l, u, xmin, xmax, x0,
 %   Additional permission under GNU GPL version 3 section 7
 %
 %   If you modify MIPS, or any covered work, to interface with
-%   other modules (such as M-files and MEX-files) available in a
-%   Matlab (or compatible) environment containing parts covered
+%   other modules (such as MATLAB code and MEX-files) available in a
+%   MATLAB(R) or comparable environment containing parts covered
 %   under other licensing terms, the licensors of MIPS grant
 %   you additional permission to convey the resulting work.
 
