@@ -58,8 +58,7 @@ switch tag
     case 'bpmpd'
         TorF = exist('bp', 'file') == 3;
     case 'constr'
-        TorF = exist('constr', 'file') == 2 && exist('foptions', 'file') ...
-            && ~have_fcn('octave');
+        TorF = exist('constr', 'file') == 2 && exist('foptions', 'file');
     case 'fmincon'
         TorF = exist('fmincon', 'file') == 2;
     case 'linprog'
