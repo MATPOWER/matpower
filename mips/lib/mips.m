@@ -430,6 +430,13 @@ while (~converged && i < opt.max_it)
 %     end
 %     bbb = [-N; -g];
 %     dxdlam = AAA \ bbb;
+    if any(isnan(dxdlam))
+        if opt.verbose
+            fprintf('\nNumerically Failed\n');
+        end
+        eflag = -1;
+        break;
+    end
     dx = dxdlam(1:nx);
     dlam = dxdlam(nx+(1:neq));
     dz = -h - z - dh' * dx;
