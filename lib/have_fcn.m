@@ -17,8 +17,8 @@ function TorF = have_fcn(tag)
 %       smartmarket - RUNMARKET and friends, for running an auction
 %       tralmopf    - TRALMOPF, trust region based augmented Langrangian
 %                     OPF solver
-%       anon_fcns   - anonymous functions, Matlab version >= 7
-%       octave      - code is running under Octave, not Matlab
+%       anon_fcns   - anonymous functions, MATLAB version >= 7
+%       octave      - code is running under Octave, not MATLAB
 %
 %   Examples:
 %       if have_fcn('minopf')
@@ -92,7 +92,7 @@ switch tag
             TorF = 0;
         else
             v = ver('Matlab');
-            %% requires >= Matlab 6.5 (R13) (released 20-Jun-2002)
+            %% requires >= MATLAB 6.5 (R13) (released 20-Jun-2002)
             %% older versions do not have mxCreateDoubleScalar() function
             %% (they have mxCreateScalarDouble() instead)
             if datenum(v.Date) >= 731387
@@ -102,7 +102,7 @@ switch tag
                     case 'scpdipmopf'
                         TorF = exist('scpdipmopf', 'file') == 3;
                     case 'tralmopf'
-                        %% requires >= Matlab 7.3 (R2006b) (released 03-Aug-2006)
+                        %% requires >= MATLAB 7.3 (R2006b) (released 03-Aug-2006)
                         %% older versions do not include the needed form of chol()
                         if datenum(v.Date) >= 732892
                             TorF = exist('tralmopf', 'file') == 3;

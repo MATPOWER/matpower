@@ -162,7 +162,7 @@ function om = opf_model(mpc)
 %   under other licensing terms, the licensors of MATPOWER grant
 %   you additional permission to convey the resulting work.
 
-% es = struct();    %% doesn't work in Matlab 6
+% es = struct();    %% doesn't work in MATLAB 6
 es = struct('tmp', 0);
 es = rmfield(es, 'tmp');
 if nargin == 0

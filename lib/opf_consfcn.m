@@ -193,7 +193,7 @@ if nargout > 2
   end
 
   %% use non-sparse matrices
-  if mpopt(51) == 0     %% hijacked SPARSE_QP to indicate Matlab 6 => full matrices
+  if mpopt(51) == 0     %% hijacked SPARSE_QP to indicate MATLAB 6 => full matrices
     dg = full(dg);
     dh = full(dh);
   end

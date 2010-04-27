@@ -47,14 +47,14 @@ function [options, names] = mpoption(varargin)
 %       11 - OPF_ALG, 0             solver to use for AC OPF
 %           [    0 - choose default solver based on availability in the     ]
 %           [        following order, 540, 560                              ]
-%           [  300 - constr, Matlab Optimization Toolbox 1.x and 2.x        ]
+%           [  300 - constr, MATLAB Optimization Toolbox 1.x and 2.x        ]
 %           [  320 - dense successive LP                                    ]
 %           [  340 - sparse successive LP (relaxed)                         ]
 %           [  360 - sparse successive LP (full)                            ]
 %           [  500 - MINOPF, MINOS-based solver, requires optional          ]
 %           [        MEX-based MINOPF package, available from:              ]
 %           [        http://www.pserc.cornell.edu/minopf/                   ]
-%           [  520 - fmincon, Matlab Optimization Toolbox >= 2.x            ]
+%           [  520 - fmincon, MATLAB Optimization Toolbox >= 2.x            ]
 %           [  540 - PDIPM, primal/dual interior point method, requires     ]
 %           [        optional MEX-based TSPOPF package, available from:     ]
 %           [        http://www.pserc.cornell.edu/tspopf/                   ]
@@ -62,8 +62,8 @@ function [options, names] = mpoption(varargin)
 %           [        TSPOPF (see 540)                                       ]
 %           [  550 - TRALM, trust region based augmented Langrangian        ]
 %           [        method, requires TSPOPF (see 540)                      ]
-%           [  560 - MIPS, Matlab Interior Point Solver                     ]
-%           [        primal/dual interior point method (pure Matlab)        ]
+%           [  560 - MIPS, MATLAB Interior Point Solver                     ]
+%           [        primal/dual interior point method (pure MATLAB)        ]
 %           [  565 - MIPS-sc, step-controlled variant of MIPS               ]
 %       16 - OPF_VIOLATION, 5e-6    constraint violation tolerance
 %       17 - CONSTR_TOL_X, 1e-4     termination tol on x for constr/fmincon
@@ -87,10 +87,10 @@ function [options, names] = mpoption(varargin)
 %           [        following order, 100, 200                              ]
 %           [  100 - BPMPD, requires optional MEX-based BPMPD_MEX package   ]
 %           [        available from: http://www.pserc.cornell.edu/bpmpd/    ]
-%           [  200 - MIPS, Matlab Interior Point Solver                     ]
-%           [        primal/dual interior point method (pure Matlab)        ]
+%           [  200 - MIPS, MATLAB Interior Point Solver                     ]
+%           [        primal/dual interior point method (pure MATLAB)        ]
 %           [  250 - MIPS-sc, step-controlled variant of MIPS               ]
-%           [  300 - Matlab Optimization Toolbox, QUADPROG, LINPROG         ]
+%           [  300 - MATLAB Optimization Toolbox, QUADPROG, LINPROG         ]
 %   output options
 %       31 - VERBOSE, 1             amount of progress info printed
 %           [   0 - print no progress info                                  ]

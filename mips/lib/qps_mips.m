@@ -2,7 +2,7 @@ function [x, f, eflag, output, lambda] = qps_mips(H, c, A, l, u, xmin, xmax, x0,
 %QPS_MIPS  Quadratic Program Solver based on MIPS.
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
 %       QPS_MIPS(H, C, A, L, U, XMIN, XMAX, X0, OPT)
-%   Uses the Matlab Interior Point Solver (MIPS) to solve the following
+%   Uses the MATLAB Interior Point Solver (MIPS) to solve the following
 %   QP (quadratic programming) problem:
 %
 %       min 1/2 X'*H*X + C'*X

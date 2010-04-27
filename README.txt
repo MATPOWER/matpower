@@ -1,6 +1,6 @@
-=====================================================
- MATPOWER - A Matlab Power System Simulation Package
-=====================================================
+========================================================
+ MATPOWER - A MATLAB(R) Power System Simulation Package
+========================================================
 
 Version:    4.0b3
 
@@ -25,7 +25,7 @@ without any warranty.
  INTRODUCTION
 --------------
 
-MATPOWER is a package of Matlab M-files for solving power flow and
+MATPOWER is a package of MATLAB(R) M-files for solving power flow and
 optimal power flow problems. It is intended as a simulation tool for
 researchers and educators that is easy to use and modify. MATPOWER
 is designed to give the best performance possible while keeping the code
@@ -43,8 +43,8 @@ Please see the LICENSE file for the details. But here is the summary:
 
 - Beginning with version 4, the code in MATPOWER is distributed under
   the GNU General Public License (GPL) with an exception added to
-  clarify our intention to allow MATPOWER to interface with Matlab
-  itself as well as any other M-files or MEX-files a user may have
+  clarify our intention to allow MATPOWER to interface with MATLAB
+  as well as any other MATLAB code or MEX-files a user may have
   installed, regardless of their licensing terms.
 
 - MATPOWER is distributed in the hope that it will be useful, but
@@ -68,7 +68,7 @@ Note:  Versions prior to MATPOWER 4 use a different license.
 
 System Requirements
 -------------------
-    - Matlab version 6.5 or later (available from The MathWorks
+    - MATLAB(R) version 6.5 or later (available from The MathWorks, Inc.
       http://www.mathworks.com/), or
     - GNU Octave version 3.2 or later (free software available from
       http://www.gnu.org/software/octave/).
@@ -84,20 +84,20 @@ Installation
     modified, so it is recommended that they be kept separate from your
     own code. Let $MATPOWER denote the path to this directory.
 
-3.  Add the following directories to your Matlab path:
+3.  Add the following directories to your MATLAB path:
       $MATPOWER   - core MATPOWER functions
       $MATPOWER/t - test scripts for MATPOWER
       (optional) subdirectories of $MATPOWER/extras -
             additional functionality and contributed code
 
-4.  At the Matlab prompt, type 'test_matpower' (without the quotes) to
+4.  At the MATLAB prompt, type 'test_matpower' (without the quotes) to
     run the test suite and verify that MATPOWER is properly installed
     and functioning.
 
 Running MATPOWER
 ----------------
 To run a simple Newton power flow on the 9-bus system specified in the
-file case9.m, with the default algorithm options, at the Matlab prompt,
+file case9.m, with the default algorithm options, at the MATLAB prompt,
 type:
 
     runpf('case9')
@@ -157,8 +157,8 @@ Below is a summary of the changes since version 4.0b1 of MATPOWER. See the
 CHANGES file in the docs directory for all the gory details.
 
 * New features:
-  - Renamed the pure-Matlab interior point solver from PDIPM to MIPS
-    (Matlab Interior Point Solver), changed order of input args,
+  - Renamed the pure-MATLAB interior point solver from PDIPM to MIPS
+    (MATLAB Interior Point Solver), changed order of input args,
     included option for single struct input (like fmincon). Added
     tests for MIPS as a standalone solver.
   - Added new top-level wrapper function for MATPOWER's QP solver,
@@ -206,7 +206,7 @@ CHANGES file in the docs directory for all the gory details.
 
 * New features:
   - New high-performance default solvers for AC and DC OPF, based on a
-    pure-Matlab implementation of the primal-dual interior point
+    pure-MATLAB implementation of the primal-dual interior point
     methods in the optional package TSPOPF. Suitable for large systems.
   - Extensive OPF enhancements:
     - Generalized, extensible OPF formulation applies to all solvers
@@ -246,7 +246,7 @@ CHANGES file in the docs directory for all the gory details.
 ---------------
 
 There are two primary sources of documentation for MATPOWER.
-    - Matlab's 'help' command
+    - MATLAB's 'help' command
     - MATPOWER User's Manual
 
 The User's Manual is included in the distribution (docs/manual.pdf) or
@@ -254,7 +254,7 @@ it can be downloaded separately from
 http://www.pserc.cornell.edu/matpower/manual.pdf.
 
 Each M-file has its own documentation which can be accessed by typing at
-the Matlab prompt:
+the MATLAB prompt:
 
     help <name of M-file>
 
@@ -335,7 +335,7 @@ ask questions about MATPOWER, or to provide feedback to the developers
 of MATPOWER, such as bug reports, patches or ideas for improvements
 (though we make no guarantees about if/when they might be included).
 
-Also, if you have any of your own Matlab power systems code that you
+Also, if you have any of your own MATLAB power systems code that you
 would like to contribute, feel free to contact us via this list about
 making it available on the MATPOWER web site.
 

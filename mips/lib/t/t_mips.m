@@ -37,7 +37,7 @@ end
 t_begin(51, quiet);
 
 t = 'unconstrained banana function : ';
-%% from Matlab Optimization Toolbox's bandem.m
+%% from MATLAB Optimization Toolbox's bandem.m
 f_fcn = @(x)f2(x);
 x0 = [-1.9; 2];
 [x, f, s, out, lam] = mips(f_fcn, x0);

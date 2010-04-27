@@ -24,10 +24,10 @@ Changes since 4.0b2
 
 4/6/10
     - Added 'anon_fcns' to have_fcn() to check for anonymous function
-      capability to avoid direct Matlab version checks in code.
+      capability to avoid direct MATLAB version checks in code.
     - GNU Octave compatibility!  (tested with Octave 3.2.3)
       Added 'octave' to have_fcn() to check when code is running under
-      Octave instead of Matlab.
+      Octave instead of MATLAB.
 
 3/23/09
     - Fixed bug in smart market code that caused it to die for cases with
@@ -48,7 +48,7 @@ Changes since 4.0b1
 3/10/10
     - Added optional input arg to mpver() and other *ver() functions to
       trigger return of entire version struct with Name, Version,
-      Release and Date (similar to Matlab's ver() function).
+      Release and Date (similar to MATLAB's ver() function).
     - Massive help text update to more closely match MathWorks conventions;
       function names in ALL CAPS, See also ..., Examples, etc.
     - Added printing of MATPOWER and MIPS version lines to verbose output.
@@ -98,8 +98,8 @@ Changes since 4.0b1
       constraints.
 
 1/19/10
-    - Renamed the pure-Matlab interior point solver from PDIPM to
-      MIPS (Matlab Interior Point Solver).
+    - Renamed the pure-MATLAB interior point solver from PDIPM to
+      MIPS (MATLAB Interior Point Solver).
 
 1/18/10
     - Changed order of input args to pdipm(), added option for single
@@ -210,7 +210,7 @@ Changes since 3.2
 
 3/19/09
     - Added pdipm_qp() as a new QP/LP solver based on the
-      pure Matlab PDIPM solver used for AC OPFs.
+      pure MATLAB PDIPM solver used for AC OPFs.
     - Added option 'OPF_ALG_DC' and refactored some code to allow
       the user to select the desired solver for DC OPF.
     - Added code to opf.m to automatically convert single-block
@@ -222,7 +222,7 @@ Changes since 3.2
       changed all calls to spdiags() to equivalent call to sparse().
 
 3/13/09
-    - Added a pure Matlab implementation of the PDIPM (primal-dual
+    - Added a pure MATLAB implementation of the PDIPM (primal-dual
       interior point method) solver for the AC OPF. Now the default
       solver (OPF_ALG = 560) if there are no optional MEX solvers
       installed.
@@ -356,7 +356,7 @@ Changes since 3.1b2
 
 6/8/07
     - Updated have_fcn.m to check for appropriate minimum versions of
-      Matlab, for TSPOPF.
+      MATLAB, for TSPOPF.
 
 6/7/07
     - Modified printpf.m to correctly detect binding line limits when
@@ -414,7 +414,7 @@ Changes since 3.0.0
       (helper vars for piecewise linear gen costs), and now requires columns
       for all x (OPF) variables. Added generalized cost model and generator PQ
       capability curves.
-    - Modified savecase.m to always save MAT files with -V6 under newer Matlab
+    - Modified savecase.m to always save MAT files with -V6 under newer MATLAB
       versions.
     - Added a number of tests to t_opf.m for MINOPF and fmincopf for generalized
       costs and additional linear constraints. Added test for fmincopf for
@@ -457,7 +457,7 @@ Changes since 3.0b4
 
 2/3/05
     - In mp_lp.m and mp_qp.m, on Windows it now makes sure BPMPD_MEX is not
-      called in verbose mode which causes a Matlab crash.
+      called in verbose mode which causes a MATLAB crash.
 
 
 Changes since 3.0b3
@@ -769,7 +769,7 @@ version 2.5b2
 
 4/28/99
     - Modified newtonpf.m to handle cases with no PQ buses or no
-      PV buses under newer versions of Matlab.
+      PV buses under newer versions of MATLAB.
 
 2/25/99
     - Fixed a bug in uopf.m which occurs when two (or more)
@@ -785,7 +785,7 @@ version 2.5b2
       (breaking ties randomly) until this infeasibility is gone.
 
 2/16/99
-    - Fixed bug in pfsoln.m which caused crashes in Matlab 5
+    - Fixed bug in pfsoln.m which caused crashes in MATLAB 5
       for systems with no capacitors.
     - Added print2mp.m, which can print out a MATPOWER case file
       from the data matrices.
@@ -905,7 +905,7 @@ Changes since 1.0.1
 
 12/17/97
     - Optimized formation of Jacobian matrix in newtonpf.m (significant
-      improvement for large systems under Matlab 5).
+      improvement for large systems under MATLAB 5).
     
 12/16/97
     - Fixed another bug in calculation of losses. Previous versions
@@ -972,7 +972,7 @@ Changes since 1.0.1
 9/23/97
     - Fixed a bug in 1.1b1 in OTCCVgra.m (renamed to grad_ccv.m in 2.0)
       which caused printing of warning message "Concatenation involves
-      an incommensurate empty array" under Matlab 5.
+      an incommensurate empty array" under MATLAB 5.
 
 9/22/97
     - Fixed a bug in 1.1b1 which prevented runuopf.m from running at all.

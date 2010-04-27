@@ -28,8 +28,8 @@ function [x, f, eflag, output, lambda] = qps_matpower(H, c, A, l, u, xmin, xmax,
 %           alg (0) - determines which solver to use
 %                 0 = use first available solver
 %               100 = BPMPD_MEX
-%               200 = MIPS, Matlab Interior Point Solver
-%                     pure Matlab implementation of a primal-dual
+%               200 = MIPS, MATLAB Interior Point Solver
+%                     pure MATLAB implementation of a primal-dual
 %                     interior point method
 %               250 = MIPS-sc, a step controlled variant of MIPS
 %               300 = Optimization Toolbox, QUADPROG or LINPROG
