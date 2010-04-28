@@ -43,7 +43,7 @@ else
     verbose = 1;
 end
 if have_fcn('octave')
-	s1 = warning('query', 'Octave:load-file-in-path');
+    s1 = warning('query', 'Octave:load-file-in-path');
     warning('off', 'Octave:load-file-in-path');
 end
 mpopt = mpoption('OUT_ALL', 0, 'VERBOSE', verbose);
