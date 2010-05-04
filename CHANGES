@@ -12,6 +12,13 @@ Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
 
 
+Changes since 4.0b3
+-------------------
+
+5/4/10
+    - Refactored portions of opf() into opf_setup() and opf_execute().
+
+
 Changes since 4.0b2
 -------------------
 
