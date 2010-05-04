@@ -254,10 +254,10 @@ results = mpc;
         deal(bus, branch, gen, om, x, mu, f);
 
 %% optional fields
-%% 1st one is always computed anyway, just include it
 if isfield(out_opt, 'g')
   results.g = A * x;
 end
+%% 2nd one is always computed anyway, just include it
 results.dg = A;
 if isfield(out_opt, 'df')
   results.df = [];
