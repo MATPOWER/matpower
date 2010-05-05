@@ -48,9 +48,9 @@ function rv = mpver(varargin)
 % v{1} = ver(p);
 
 v{1} = struct(  'Name',     'MATPOWER', ... 
-                'Version',  '4.0b3', ...
+                'Version',  '4.0b3+', ...
                 'Release',  '', ...
-                'Date',     '19-Apr-2010' );
+                'Date',     '05-May-2010' );
 if nargout > 0
     if nargin > 0
         rv = v{1};
@@ -86,7 +86,7 @@ else
             fprintf('BPMPD_MEX              Version 2.21 or earlier\n');
         end
     else
-        fprintf('BPMPD_MEX              not installed\n');
+        fprintf('BPMPD_MEX              -- not installed --\n');
     end
     
     if have_fcn('minopf')
@@ -96,22 +96,22 @@ else
             fprintf('MINOPF                 Version 3.0b2 or earlier\n');
         end
     else
-        fprintf('MINOPF                 not installed\n');
+        fprintf('MINOPF                 -- not installed --\n');
     end
     if have_fcn('pdipmopf')
         pdipmopfver;
     else
-        fprintf('PDIPMOPF               not installed\n');
+        fprintf('PDIPMOPF               -- not installed --\n');
     end
     if have_fcn('scpdipmopf')
         scpdipmopfver;
     else
-        fprintf('SCPDIPMOPF             not installed\n');
+        fprintf('SCPDIPMOPF             -- not installed --\n');
     end
     if have_fcn('tralmopf')
         tralmopfver;
     else
-        fprintf('TRALMOPF               not installed\n');
+        fprintf('TRALMOPF               -- not installed --\n');
     end
 
     fprintf('Architecture:          %s\n\n', computer);
