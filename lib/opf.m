@@ -102,17 +102,17 @@ function [busout, genout, branchout, f, success, info, et, g, jac, xr, pimul] = 
 %           .lin
 %               .l  lower bounds on linear constraints
 %               .u  upper bounds on linear constraints
-%       .g          (optional) constraint values
-%       .dg         (optional) constraint 1st derivatives
-%       .df         (optional) obj fun 1st derivatives (not yet implemented)
-%       .d2f        (optional) obj fun 2nd derivatives (not yet implemented)
 %       .raw        raw solver output in form returned by MINOS, and more
 %           .xr     final value of optimization variables
 %           .pimul  constraint multipliers
 %           .info   solver specific termination code
 %           .output solver specific output information
 %              .alg algorithm code of solver used
-%       .var        
+%           .g      (optional) constraint values
+%           .dg     (optional) constraint 1st derivatives
+%           .df     (optional) obj fun 1st derivatives (not yet implemented)
+%           .d2f    (optional) obj fun 2nd derivatives (not yet implemented)
+%       .var
 %           .val    optimization variable values, by named block
 %               .Va     voltage angles
 %               .Vm     voltage magnitudes (AC only)
@@ -219,13 +219,10 @@ mpc = ext2int(mpc);
 om = opf_setup(mpc, mpopt);
 
 %%-----  execute the OPF  -----
-%% select optional solver output args
-if nargout > 7 || nargout < 3
-  out_opt = struct('g', [], 'dg', []);
-else
-  out_opt = struct([]);
+if nargout > 7
+    mpopt(52) = 1;      %% RETURN_RAW_DER
 end
-[results, success, raw] = opf_execute(om, mpopt, out_opt);
+[results, success, raw] = opf_execute(om, mpopt);
 
 %%-----  revert to original ordering, including out-of-service stuff  -----
 results = int2ext(results);

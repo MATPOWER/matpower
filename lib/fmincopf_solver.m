@@ -1,12 +1,9 @@
-function [results, success, raw] = fmincopf_solver(om, mpopt, out_opt)
+function [results, success, raw] = fmincopf_solver(om, mpopt)
 %FMINCOPF_SOLVER  Solves AC optimal power flow using FMINCON.
 %
 %   [RESULTS, SUCCESS, RAW] = FMINCOPF_SOLVER(OM, MPOPT)
-%   [RESULTS, SUCCESS, RAW] = FMINCOPF_SOLVER(OM, MPOPT, OUT_OPT)
 %
-%   Inputs are an OPF model object, a MATPOWER options vector and
-%   a struct containing fields (can be empty) for each of the desired
-%   optional output fields.
+%   Inputs are an OPF model object and a MATPOWER options vector.
 %
 %   Outputs are a RESULTS struct, SUCCESS flag and RAW output struct.
 %
@@ -26,10 +23,6 @@ function [results, success, raw] = fmincopf_solver(om, mpopt, out_opt)
 %           .lin
 %               .l  lower bounds on linear constraints
 %               .u  upper bounds on linear constraints
-%       .g          (optional) constraint values
-%       .dg         (optional) constraint 1st derivatives
-%       .df         (optional) obj fun 1st derivatives (not yet implemented)
-%       .d2f        (optional) obj fun 2nd derivatives (not yet implemented)
 %
 %   SUCCESS     1 if solver converged successfully, 0 otherwise
 %
@@ -72,11 +65,6 @@ function [results, success, raw] = fmincopf_solver(om, mpopt, out_opt)
 %   you additional permission to convey the resulting work.
 
 %%----- initialization -----
-%% optional output
-if nargin < 3
-    out_opt = struct([]);
-end
-
 %% define named indices into data matrices
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
     VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
@@ -274,22 +262,6 @@ results = mpc;
     results.om, results.x, results.mu, results.f] = ...
         deal(bus, branch, gen, om, x, mu, f);
 
-%% optional fields
-if isfield(out_opt, 'dg')
-  [g, geq, dg, dgeq] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt);
-  results.g = [ geq; g];        %% include this since we computed it anyway
-  results.dg = [ dgeq'; dg'];   %% true Jacobian organization
-end
-if isfield(out_opt, 'g') && isempty(g)
-  [g, geq] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt);
-  results.g = [ geq; g];
-end
-if isfield(out_opt, 'df')
-  results.df = [];
-end
-if isfield(out_opt, 'd2f')
-  results.d2f = [];
-end
 pimul = [ ...
   results.mu.nln.l - results.mu.nln.u;
   results.mu.lin.l - results.mu.lin.u;

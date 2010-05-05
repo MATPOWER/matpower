@@ -1,6 +1,6 @@
-function [results, success, raw] = opf_execute(om, mpopt, out_opt)
+function [results, success, raw] = opf_execute(om, mpopt)
 %OPF_EXECUTE  Executes the OPF specified by an OPF model object.
-%   [RESULTS, SUCCESS, RAW] = OPF_EXECUTE(OM, MPOPT, OUT_OPT)
+%   [RESULTS, SUCCESS, RAW] = OPF_EXECUTE(OM, MPOPT)
 %
 %   RESULTS are returned with internal indexing, all equipment
 %   in-service, etc.
@@ -68,7 +68,7 @@ if dc
   if verbose > 0
     fprintf(' -- DC Optimal Power Flow\n');
   end
-  [results, success, raw] = dcopf_solver(om, mpopt, out_opt);
+  [results, success, raw] = dcopf_solver(om, mpopt);
 else
   %%-----  run AC OPF solver  -----
   if verbose > 0
@@ -102,7 +102,7 @@ else
     else
       solver = @mips6opf_solver;
     end
-    [results, success, raw] = feval(solver, om, mpopt, out_opt);
+    [results, success, raw] = feval(solver, om, mpopt);
   elseif alg == 540 || alg == 545 || alg == 550 %% PDIPM_OPF, SCPDIPM_OPF, or TRALM_OPF
     if alg == 540                               %% PDIPM_OPF
       if ~have_fcn('pdipmopf')
@@ -117,12 +117,12 @@ else
         error('opf_execute: OPF_ALG %d requires TRALM (see http://www.pserc.cornell.edu/tspopf/)', alg);
       end
     end
-    [results, success, raw] = tspopf_solver(om, mpopt, out_opt);
+    [results, success, raw] = tspopf_solver(om, mpopt);
   elseif alg == 500                             %% MINOPF
     if ~have_fcn('minopf')
       error('opf_execute: OPF_ALG %d requires MINOPF (see http://www.pserc.cornell.edu/minopf/)', alg);
     end
-    [results, success, raw] = mopf_solver(om, mpopt, out_opt);
+    [results, success, raw] = mopf_solver(om, mpopt);
   elseif alg == 520                             %% FMINCON
     if ~have_fcn('fmincon')
       error('opf_execute: OPF_ALG %d requires FMINCON (Optimization Toolbox 2.x or later)', alg);
@@ -132,14 +132,14 @@ else
     else
       solver = @fmincopf6_solver;
     end
-    [results, success, raw] = feval(solver, om, mpopt, out_opt);
+    [results, success, raw] = feval(solver, om, mpopt);
   elseif alg == 300                             %% CONSTR
     if ~have_fcn('constr')
       error('opf_execute: OPF_ALG %d requires CONSTR (Optimization Toolbox 1.x)', alg);
     end
-    [results, success, raw] = copf_solver(om, mpopt, out_opt);
+    [results, success, raw] = copf_solver(om, mpopt);
   elseif alg == 320 || alg == 340 || alg == 360 %% LP
-    [results, success, raw] = lpopf_solver(om, mpopt, out_opt);
+    [results, success, raw] = lpopf_solver(om, mpopt);
   else
     error('opf_execute: OPF_ALG %d is not a valid algorithm code', alg);
   end
@@ -149,7 +149,7 @@ if ~isfield(raw, 'output') || ~isfield(raw.output, 'alg') || isempty(raw.output.
 end
 
 if success
-  if ~dc
+  if ~dc 
     %% copy bus voltages back to gen matrix
     results.gen(:, VG) = results.bus(results.gen(:, GEN_BUS), VM);
 
@@ -160,6 +160,33 @@ if success
       Apqdata = userdata(om, 'Apqdata');
       results.gen = update_mupq(results.baseMVA, results.gen, mu_PQh, mu_PQl, Apqdata);
     end
+
+    %% compute g, dg, f, df, d2f if requested by RETURN_RAW_DER = 1
+    if mpopt(52)
+      %% move from results to raw if using v4.0 of MINOPF or TSPOPF
+      if isfield(results, 'dg')
+        raw.dg = results.dg;
+        raw.g = results.g;
+      end
+      %% compute g, dg, unless already done by post-v4.0 MINOPF or TSPOPF
+      if ~isfield(raw, 'dg')
+        mpc = get_mpc(om);
+        [Ybus, Yf, Yt] = makeYbus(mpc.baseMVA, mpc.bus, mpc.branch);
+        [g, geq, dg, dgeq] = opf_consfcn(results.x, om, Ybus, Yf, Yt, mpopt);
+        raw.g = [ geq; g];
+        raw.dg = [ dgeq'; dg'];   %% true Jacobian organization
+      end
+      %% compute df, d2f
+      [f, df, d2f] = opf_costfcn(results.x, om);
+      raw.df = df;
+      raw.d2f = d2f;
+    end
+  end
+
+  %% delete g and dg fieldsfrom results if using v4.0 of MINOPF or TSPOPF
+  if isfield(results, 'dg')
+    rmfield(results, 'dg');
+    rmfield(results, 'g');
   end
 
   %% angle limit constraint multipliers

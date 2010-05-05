@@ -122,7 +122,9 @@ function [options, names] = mpoption(varargin)
 %       40 - OUT_LINE_LIM, 1        control output of line flow limit info
 %       41 - OUT_PG_LIM, 1          control output of gen P limit info
 %       42 - OUT_QG_LIM, 1          control output of gen Q limit info
-%   fmincon options
+%       52 - RETURN_RAW_DER, 0      return constraint and derivative info
+%                                   in results.raw (in fields g, dg, df, d2f)
+%   FMINCON options
 %       55 - FMC_ALG, 1             algorithm used by fmincon for OPF
 %                                   for Optimization Toolbox 4 and later
 %            [  1 - active-set                                              ]
@@ -280,7 +282,7 @@ else                    %% even number of parameters
         
         %% other options
         1;      %% 51 - SPARSE_QP
-        0;      %% 52 - RESERVED52
+        0;      %% 52 - RETURN_RAW_DER
         0;      %% 53 - RESERVED53
         0;      %% 54 - RESERVED54
         1;      %% 55 - FMC_ALG
@@ -332,115 +334,115 @@ end
 %%-----  set up option names  -----
 %% power flow options
 names = char(   'PF_ALG', ...               %% 1
-				'PF_TOL', ...               %% 2
-				'PF_MAX_IT', ...            %% 3
-				'PF_MAX_IT_FD', ...         %% 4
-				'PF_MAX_IT_GS', ...         %% 5
-				'ENFORCE_Q_LIMS', ...       %% 6
-				'RESERVED7', ...            %% 7
-				'RESERVED8', ...            %% 8
-				'RESERVED9', ...            %% 9
-				'PF_DC' );                  %% 10
+                'PF_TOL', ...               %% 2
+                'PF_MAX_IT', ...            %% 3
+                'PF_MAX_IT_FD', ...         %% 4
+                'PF_MAX_IT_GS', ...         %% 5
+                'ENFORCE_Q_LIMS', ...       %% 6
+                'RESERVED7', ...            %% 7
+                'RESERVED8', ...            %% 8
+                'RESERVED9', ...            %% 9
+                'PF_DC' );                  %% 10
 
 %% OPF options
 names = char(   names, ...
-				'OPF_ALG', ...              %% 11
-				'OPF_ALG_POLY', ...         %% 12
-				'OPF_ALG_PWL', ...          %% 13
-				'OPF_POLY2PWL_PTS', ...     %% 14
-				'OPF_NEQ', ...              %% 15
-				'OPF_VIOLATION', ...        %% 16
-				'CONSTR_TOL_X', ...         %% 17
-				'CONSTR_TOL_F', ...         %% 18
-				'CONSTR_MAX_IT', ...        %% 19
-				'LPC_TOL_GRAD'  );          %% 20
+                'OPF_ALG', ...              %% 11
+                'OPF_ALG_POLY', ...         %% 12
+                'OPF_ALG_PWL', ...          %% 13
+                'OPF_POLY2PWL_PTS', ...     %% 14
+                'OPF_NEQ', ...              %% 15
+                'OPF_VIOLATION', ...        %% 16
+                'CONSTR_TOL_X', ...         %% 17
+                'CONSTR_TOL_F', ...         %% 18
+                'CONSTR_MAX_IT', ...        %% 19
+                'LPC_TOL_GRAD'  );          %% 20
 names = char(   names, ...
-				'LPC_TOL_X', ...            %% 21
-				'LPC_MAX_IT', ...           %% 22
-				'LPC_MAX_RESTART', ...      %% 23
-				'OPF_FLOW_LIM', ...         %% 24
-				'OPF_IGNORE_ANG_LIM', ...   %% 25
-				'OPF_ALG_DC', ...           %% 26
-				'RESERVED27', ...           %% 27
-				'RESERVED28', ...           %% 28
-				'RESERVED29', ...           %% 29
-				'RESERVED30'    );          %% 30
+                'LPC_TOL_X', ...            %% 21
+                'LPC_MAX_IT', ...           %% 22
+                'LPC_MAX_RESTART', ...      %% 23
+                'OPF_FLOW_LIM', ...         %% 24
+                'OPF_IGNORE_ANG_LIM', ...   %% 25
+                'OPF_ALG_DC', ...           %% 26
+                'RESERVED27', ...           %% 27
+                'RESERVED28', ...           %% 28
+                'RESERVED29', ...           %% 29
+                'RESERVED30'    );          %% 30
 
 %% output options
 names = char(   names, ...
-				'VERBOSE', ...              %% 31
-				'OUT_ALL', ...              %% 32
-				'OUT_SYS_SUM', ...          %% 33
-				'OUT_AREA_SUM', ...         %% 34
-				'OUT_BUS', ...              %% 35
-				'OUT_BRANCH', ...           %% 36
-				'OUT_GEN', ...              %% 37
-				'OUT_ALL_LIM', ...          %% 38
-				'OUT_V_LIM', ...            %% 39
-				'OUT_LINE_LIM'  );          %% 40
+                'VERBOSE', ...              %% 31
+                'OUT_ALL', ...              %% 32
+                'OUT_SYS_SUM', ...          %% 33
+                'OUT_AREA_SUM', ...         %% 34
+                'OUT_BUS', ...              %% 35
+                'OUT_BRANCH', ...           %% 36
+                'OUT_GEN', ...              %% 37
+                'OUT_ALL_LIM', ...          %% 38
+                'OUT_V_LIM', ...            %% 39
+                'OUT_LINE_LIM'  );          %% 40
 names = char(   names, ...
-				'OUT_PG_LIM', ...           %% 41
-				'OUT_QG_LIM', ...           %% 42
-				'OUT_RAW', ...              %% 43
-				'RESERVED44', ...           %% 44
-				'RESERVED45', ...           %% 45
-				'RESERVED46', ...           %% 46
-				'RESERVED47', ...           %% 47
-				'RESERVED48', ...           %% 48
-				'RESERVED49', ...           %% 49
-				'RESERVED50'    );          %% 50
+                'OUT_PG_LIM', ...           %% 41
+                'OUT_QG_LIM', ...           %% 42
+                'OUT_RAW', ...              %% 43
+                'RESERVED44', ...           %% 44
+                'RESERVED45', ...           %% 45
+                'RESERVED46', ...           %% 46
+                'RESERVED47', ...           %% 47
+                'RESERVED48', ...           %% 48
+                'RESERVED49', ...           %% 49
+                'RESERVED50'    );          %% 50
 %% other options
 names = char(   names, ...
-				'SPARSE_QP', ...            %% 51
-				'RESERVED52', ...           %% 52
-				'RESERVED53', ...           %% 53
-				'RESERVED54', ...           %% 54
-				'FMC_ALG', ...              %% 55
-				'RESERVED56', ...           %% 56
-				'RESERVED57', ...           %% 57
-				'RESERVED58', ...           %% 58
-				'RESERVED59', ...           %% 59
-				'RESERVED60'    );          %% 60
+                'SPARSE_QP', ...            %% 51
+                'RETURN_RAW_DER', ...       %% 52
+                'RESERVED53', ...           %% 53
+                'RESERVED54', ...           %% 54
+                'FMC_ALG', ...              %% 55
+                'RESERVED56', ...           %% 56
+                'RESERVED57', ...           %% 57
+                'RESERVED58', ...           %% 58
+                'RESERVED59', ...           %% 59
+                'RESERVED60'    );          %% 60
 %% MINOS options
 names = char(   names, ...
-				'MNS_FEASTOL', ...          %% 61
-				'MNS_ROWTOL', ...           %% 62
-				'MNS_XTOL', ...             %% 63
-				'MNS_MAJDAMP', ...          %% 64
-				'MNS_MINDAMP', ...          %% 65
-				'MNS_PENALTY_PARM', ...     %% 66
-				'MNS_MAJOR_IT', ...         %% 67
-				'MNS_MINOR_IT', ...         %% 68
-				'MNS_MAX_IT', ...           %% 69
-				'MNS_VERBOSITY' );          %% 70
+                'MNS_FEASTOL', ...          %% 61
+                'MNS_ROWTOL', ...           %% 62
+                'MNS_XTOL', ...             %% 63
+                'MNS_MAJDAMP', ...          %% 64
+                'MNS_MINDAMP', ...          %% 65
+                'MNS_PENALTY_PARM', ...     %% 66
+                'MNS_MAJOR_IT', ...         %% 67
+                'MNS_MINOR_IT', ...         %% 68
+                'MNS_MAX_IT', ...           %% 69
+                'MNS_VERBOSITY' );          %% 70
 %% other flags
 names = char(   names, ...
-				'MNS_CORE', ...             %% 71
-				'MNS_SUPBASIC_LIM', ...     %% 72
-				'MNS_MULT_PRICE', ...       %% 73
-				'RESERVED74', ...           %% 74
-				'RESERVED75', ...           %% 75
-				'RESERVED76', ...           %% 76
-				'RESERVED77', ...           %% 77
-				'RESERVED78', ...           %% 78
-				'RESERVED79', ...           %% 79
-				'FORCE_PC_EQ_P0'    );      %% 80
+                'MNS_CORE', ...             %% 71
+                'MNS_SUPBASIC_LIM', ...     %% 72
+                'MNS_MULT_PRICE', ...       %% 73
+                'RESERVED74', ...           %% 74
+                'RESERVED75', ...           %% 75
+                'RESERVED76', ...           %% 76
+                'RESERVED77', ...           %% 77
+                'RESERVED78', ...           %% 78
+                'RESERVED79', ...           %% 79
+                'FORCE_PC_EQ_P0'    );      %% 80
 
 %% MIPS, PDIPM, SC-PDIPM, and TRALM options
 names = char(   names, ...
-				'PDIPM_FEASTOL', ...        %% 81
-				'PDIPM_GRADTOL', ...        %% 82
-				'PDIPM_COMPTOL', ...        %% 83
-				'PDIPM_COSTTOL', ...        %% 84
-				'PDIPM_MAX_IT', ...         %% 85
-				'SCPDIPM_RED_IT', ...       %% 86
-				'TRALM_FEASTOL', ...        %% 87
-				'TRALM_PRIMETOL', ...       %% 88
-				'TRALM_DUALTOL', ...        %% 89
-				'TRALM_COSTTOL', ...        %% 90
-				'TRALM_MAJOR_IT', ...       %% 91
-				'TRALM_MINOR_IT', ...       %% 92
-				'SMOOTHING_RATIO'    );     %% 93
+                'PDIPM_FEASTOL', ...        %% 81
+                'PDIPM_GRADTOL', ...        %% 82
+                'PDIPM_COMPTOL', ...        %% 83
+                'PDIPM_COSTTOL', ...        %% 84
+                'PDIPM_MAX_IT', ...         %% 85
+                'SCPDIPM_RED_IT', ...       %% 86
+                'TRALM_FEASTOL', ...        %% 87
+                'TRALM_PRIMETOL', ...       %% 88
+                'TRALM_DUALTOL', ...        %% 89
+                'TRALM_COSTTOL', ...        %% 90
+                'TRALM_MAJOR_IT', ...       %% 91
+                'TRALM_MINOR_IT', ...       %% 92
+                'SMOOTHING_RATIO'    );     %% 93
                 
 %%-----  process parameters  -----
 while i <= nargin
