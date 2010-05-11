@@ -94,6 +94,7 @@ else
   elseif alg == 160 || alg == 260    %% sparse (full) LP
     alg = 360;
   end
+  mpopt(11) = alg;
 
   %% run specific AC OPF solver
   if alg == 560 || alg == 565                   %% MIPS
