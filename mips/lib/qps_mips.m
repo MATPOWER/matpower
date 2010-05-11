@@ -41,11 +41,7 @@ function [x, f, eflag, output, lambda] = qps_mips(H, c, A, l, u, xmin, xmax, x0,
 %           max_red (20) - maximum number of step-size reductions if
 %               step-control is on
 %           cost_mult (1) - cost multiplier used to scale the objective
-%               function for improved conditioning. Note: The same
-%               value must also be passed to the Hessian evaluation
-%               function so that it can appropriately scale the
-%               objective function term in the Hessian of the
-%               Lagrangian.
+%               function for improved conditioning.
 %       PROBLEM : The inputs can alternatively be supplied in a single
 %           PROBLEM struct with fields corresponding to the input arguments
 %           described above: H, c, A, l, u, xmin, xmax, x0, opt
