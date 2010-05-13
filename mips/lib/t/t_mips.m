@@ -34,14 +34,14 @@ if nargin < 1
     quiet = 0;
 end
 
-t_begin(51, quiet);
+t_begin(60, quiet);
 
 t = 'unconstrained banana function : ';
 %% from MATLAB Optimization Toolbox's bandem.m
 f_fcn = @(x)f2(x);
 x0 = [-1.9; 2];
-[x, f, s, out, lam] = mips(f_fcn, x0);
 % [x, f, s, out, lam] = mips(f_fcn, x0, [], [], [], [], [], [], [], struct('verbose', 2));
+[x, f, s, out, lam] = mips(f_fcn, x0);
 t_is(s, 1, 13, [t 'success']);
 t_is(x, [1; 1], 13, [t 'x']);
 t_is(f, 0, 13, [t 'f']);
@@ -105,9 +105,9 @@ t = 'constrained 2-d non-linear : ';
 %% from http://en.wikipedia.org/wiki/Nonlinear_programming#2-dimensional_example
 f_fcn = @(x)f5(x);
 gh_fcn = @(x)gh5(x);
-hess_fcn = @(x, lam)hess5(x, lam);
+hess_fcn = @(x, lam, cost_mult)hess5(x, lam, cost_mult);
 x0 = [1.1; 0];
-xmin = -10 * ones(2, 1);
+xmin = zeros(2, 1);
 % xmax = 3 * ones(2, 1);
 % [x, f, s, out, lam] = mips(f_fcn, x0, [], [], [], xmin, [], gh_fcn, hess_fcn, struct('verbose', 2));
 [x, f, s, out, lam] = mips(f_fcn, x0, [], [], [], xmin, [], gh_fcn, hess_fcn);
@@ -133,7 +133,7 @@ t = 'constrained 3-d non-linear : ';
 %% from http://en.wikipedia.org/wiki/Nonlinear_programming#3-dimensional_example
 f_fcn = @(x)f6(x);
 gh_fcn = @(x)gh6(x);
-hess_fcn = @(x, lam)hess6(x, lam);
+hess_fcn = @(x, lam, cost_mult)hess6(x, lam, cost_mult);
 x0 = [1; 1; 0];
 % [x, f, s, out, lam] = mips(f_fcn, x0, [], [], [], [], [], gh_fcn, hess_fcn, struct('verbose', 2, 'comptol', 1e-9));
 [x, f, s, out, lam] = mips(f_fcn, x0, [], [], [], [], [], gh_fcn, hess_fcn);
@@ -168,6 +168,26 @@ t_ok(isempty(lam.mu_u), [t 'lam.mu_u']);
 t_is(lam.lower, zeros(size(x)), 13, [t 'lam.lower']);
 t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 
+t = 'constrained 4-d non-linear : ';
+%% Hock & Schittkowski test problem #71
+f_fcn = @(x)f7(x);
+gh_fcn = @(x)gh7(x);
+hess_fcn = @(x, lam, sigma)hess7(x, lam, sigma);
+x0 = [1; 5; 5; 1];
+xmin = ones(4, 1);
+xmax = 5 * xmin;
+% [x, f, s, out, lam] = mips(f_fcn, x0, [], [], [], xmin, xmax, gh_fcn, hess_fcn, struct('verbose', 2, 'comptol', 1e-9));
+[x, f, s, out, lam] = mips(f_fcn, x0, [], [], [], xmin, xmax, gh_fcn, hess_fcn);
+t_is(s, 1, 13, [t 'success']);
+t_is(x, [1; 4.7429994; 3.8211503; 1.3794082], 6, [t 'x']);
+t_is(f, 17.0140173, 6, [t 'f']);
+t_is(lam.eqnonlin, 0.1614686, 5, [t 'lam.eqnonlin']);
+t_is(lam.ineqnonlin, 0.55229366, 5, [t 'lam.ineqnonlin']);
+t_ok(isempty(lam.mu_l), [t 'lam.mu_l']);
+t_ok(isempty(lam.mu_u), [t 'lam.mu_u']);
+t_is(lam.lower, [1.08787121024; 0; 0; 0], 5, [t 'lam.lower']);
+t_is(lam.upper, zeros(size(x)), 7, [t 'lam.upper']);
+
 t_end;
 
 
@@ -193,6 +213,8 @@ t_end;
 % t_is(f, -3456, 13, t);
 
 
+%% unconstrained banana function
+%% from MATLAB Optimization Toolbox's bandem.m
 function [f, df, d2f] = f2(x)
     a = 100;
     f = a*(x(2)-x(1)^2)^2+(1-x(1))^2;
@@ -202,6 +224,8 @@ function [f, df, d2f] = f2(x)
                 -x(1)                       1/2       ];
 
 
+%% unconstrained 3-d quadratic
+%% from http://www.akiti.ca/QuadProgEx0Constr.html
 function [f, df, d2f] = f3(x)
     H = [5 -2 -1; -2 4 3; -1 3 5];
     c = [2; -35; -47];
@@ -210,6 +234,8 @@ function [f, df, d2f] = f3(x)
     d2f = H;
 
 
+%% constrained 4-d QP
+%% from http://www.uc.edu/sashtml/iml/chap8/sect12.htm
 function [f, df, d2f] = f4(x)
     H = [   1003.1  4.3     6.3     5.9;
             4.3     2.2     2.1     3.9;
@@ -221,6 +247,8 @@ function [f, df, d2f] = f4(x)
     d2f = H;
 
 
+%% constrained 2-d non-linear
+%% from http://en.wikipedia.org/wiki/Nonlinear_programming#2-dimensional_example
 function [f, df, d2f] = f5(x)
     c = -[1; 1];
     f = c'*x;
@@ -232,11 +260,13 @@ function [h, g, dh, dg] = gh5(x)
     dh = 2 * [-x(1) x(1); -x(2) x(2)];
     g = []; dg = [];
 
-function Lxx = hess5(x, lam)
+function Lxx = hess5(x, lam, cost_mult)
     mu = lam.ineqnonlin;
     Lxx = 2*[-1 1]*mu*eye(2);
 
 
+%% constrained 3-d non-linear
+%% from http://en.wikipedia.org/wiki/Nonlinear_programming#3-dimensional_example
 function [f, df, d2f] = f6(x)
     f = -x(1)*x(2) - x(2)*x(3);
     df = -[x(2); x(1)+x(3); x(2)];
@@ -247,6 +277,40 @@ function [h, g, dh, dg] = gh6(x)
     dh = 2 * [x(1) x(1); -x(2) x(2); x(3) x(3)];
     g = []; dg = [];
 
-function Lxx = hess6(x, lam)
+function Lxx = hess6(x, lam, cost_mult)
+    if nargin < 3, cost_mult = 1; end
     mu = lam.ineqnonlin;
-    Lxx = [2*[1 1]*mu -1 0; -1 2*[-1 1]*mu -1; 0 -1 2*[1 1]*mu];
+    Lxx = cost_mult * [0 -1 0; -1 0 -1; 0 -1 0] + ...
+            [2*[1 1]*mu 0 0; 0 2*[-1 1]*mu 0; 0 0 2*[1 1]*mu];
+
+
+%% constrained 4-d non-linear
+%% Hock & Schittkowski test problem #71
+function [f, df, d2f] = f7(x)
+    f = x(1)*x(4)*sum(x(1:3)) + x(3);
+    df = [ x(1)*x(4) + x(4)*sum(x(1:3));
+		   x(1)*x(4);
+		   x(1)*x(4) + 1;
+		   x(1)*sum(x(1:3)) ];
+    d2f = sparse([ 2*x(4)        x(4)   x(4)  2*x(1)+x(2)+x(3);
+              x(4)               0      0     x(1);
+              x(4)               0      0     x(1);
+              2*x(1)+x(2)+x(3)  x(1)  x(1)    0
+    	]);
+
+function [h, g, dh, dg] = gh7(x)
+    g = sum(x.^2) - 40;
+    h = -prod(x) + 25;
+	dg = 2*x;
+	dh = -prod(x)./x;
+
+function Lxx = hess7(x, lam, sigma)
+	if nargin < 3, sigma = 1; end
+    lambda = lam.eqnonlin;
+    mu     = lam.ineqnonlin;
+    [f, df, d2f] = f7(x);
+    Lxx = sigma * d2f + lambda*2*speye(4) - ...
+       mu*sparse([      0     x(3)*x(4) x(2)*x(4) x(2)*x(3);
+                    x(3)*x(4)     0     x(1)*x(4) x(1)*x(3);
+                    x(2)*x(4) x(1)*x(4)     0     x(1)*x(2);
+                    x(2)*x(3) x(1)*x(3) x(1)*x(2)     0  ]);
