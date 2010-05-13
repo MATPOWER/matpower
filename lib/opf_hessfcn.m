@@ -1,6 +1,6 @@
-function Lxx = opf_hessfcn(x, lambda, om, Ybus, Yf, Yt, mpopt, il, cost_mult)
+function Lxx = opf_hessfcn(x, lambda, cost_mult, om, Ybus, Yf, Yt, mpopt, il)
 %OPF_HESSFCN  Evaluates Hessian of Lagrangian for AC OPF.
-%   LXX = OPF_HESSFCN(X, LAMBDA, OM, YBUS, YF, YT, MPOPT, IL, COST_MULT)
+%   LXX = OPF_HESSFCN(X, LAMBDA, COST_MULT, OM, YBUS, YF, YT, MPOPT, IL)
 %
 %   Hessian evaluation function for AC optimal power flow, suitable
 %   for use with MIPS or FMINCON's interior-point algorithm.
@@ -10,6 +10,8 @@ function Lxx = opf_hessfcn(x, lambda, om, Ybus, Yf, Yt, mpopt, il, cost_mult)
 %     LAMBDA (struct)
 %       .eqnonlin : Lagrange multipliers on power balance equations
 %       .ineqnonlin : Kuhn-Tucker multipliers on constrained branch flows
+%     COST_MULT : (optional) Scale factor to be applied to the cost
+%          (default = 1).
 %     OM : OPF model object
 %     YBUS : bus admittance matrix
 %     YF : admittance matrix for "from" end of constrained branches
@@ -19,16 +21,13 @@ function Lxx = opf_hessfcn(x, lambda, om, Ybus, Yf, Yt, mpopt, il, cost_mult)
 %          branches with flow limits (all others are assumed to be
 %          unconstrained). The default is [1:nl] (all branches).
 %          YF and YT contain only the rows corresponding to IL.
-%     COST_MULT : (optional) Scale factor to be applied to the cost
-%          (default = 1).
 %
 %   Outputs:
 %     LXX : Hessian of the Lagrangian.
 %
 %   Examples:
-%       Lxx = opf_hessfcn(x, lambda, om, Ybus, Yf, Yt, mpopt);
-%       Lxx = opf_hessfcn(x, lambda, om, Ybus, Yf, Yt, mpopt, il);
-%       Lxx = opf_hessfcn(x, lambda, om, Ybus, Yf, Yt, mpopt, il, cost_mult);
+%       Lxx = opf_hessfcn(x, lambda, cost_mult, om, Ybus, Yf, Yt, mpopt);
+%       Lxx = opf_hessfcn(x, lambda, cost_mult, om, Ybus, Yf, Yt, mpopt, il);
 %
 %   See also OPF_COSTFCN, OPF_CONSFCN.
 
@@ -73,7 +72,7 @@ function Lxx = opf_hessfcn(x, lambda, om, Ybus, Yf, Yt, mpopt, il, cost_mult)
 [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 
 %% default args
-if nargin < 9
+if isempty(cost_mult)
     cost_mult = 1;
 end
 

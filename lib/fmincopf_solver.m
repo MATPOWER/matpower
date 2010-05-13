@@ -152,7 +152,7 @@ else
   elseif mpopt(55) == 3       %% interior-point, w/ 'lbfgs' Hessian approx
     fmoptions = optimset(fmoptions, 'Algorithm', 'interior-point', 'Hessian','lbfgs');
   elseif mpopt(55) == 4       %% interior-point, w/ exact user-supplied Hessian
-    fmc_hessian = @(x, lambda)opf_hessfcn(x, lambda, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
+    fmc_hessian = @(x, lambda)opf_hessfcn(x, lambda, 1, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
     fmoptions = optimset(fmoptions, 'Algorithm', 'interior-point', ...
         'Hessian', 'user-supplied', 'HessFcn', fmc_hessian);
   elseif mpopt(55) == 5       %% interior-point, w/ finite-diff Hessian

@@ -141,7 +141,7 @@ nl2 = length(il);           %% number of constrained lines
 %%-----  run opf  -----
 f_fcn = @(x)opf_costfcn(x, om);
 gh_fcn = @(x)opf_consfcn(x, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
-hess_fcn = @(x, lambda)opf_hessfcn(x, lambda, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il, opt.cost_mult);
+hess_fcn = @(x, lambda, cost_mult)opf_hessfcn(x, lambda, cost_mult, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
 [x, f, info, Output, Lambda] = ...
   mips(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt);
 success = (info > 0);
