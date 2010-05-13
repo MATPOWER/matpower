@@ -18,6 +18,7 @@ Changes since 4.0b3
 5/13/10
     - Modified input args for Hessian evaluation function for MIPS.
       Requires cost_mult as 3rd argument.
+    - Added check for invalid gencost MODEL in opf_setup().
 
 5/5/10
     - Added RETURN_RAW_DER option to control when OPF solver returns

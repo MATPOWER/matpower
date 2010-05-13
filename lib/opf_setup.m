@@ -188,6 +188,10 @@ else
   ny = size(ipwl, 1);   %% number of piece-wise linear cost vars
   [Ay, by] = makeAy(baseMVA, ng, gencost, 1, q1, 1+ng+nq);
 end
+if any(gencost(:, MODEL) ~= POLYNOMIAL & gencost(:, MODEL) ~= PW_LINEAR)
+    error('opf_setup: some generator cost rows have invalid MODEL value');
+end
+
 
 %% more problem dimensions
 nx    = nb+nv + ng+nq;  %% number of standard OPF control variables
