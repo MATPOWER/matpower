@@ -56,8 +56,8 @@ function [x, f, eflag, output, lambda] = mips(f_fcn, x0, A, l, u, xmin, xmax, gh
 %           max_red (20) - maximum number of step-size reductions if
 %               step-control is on
 %           cost_mult (1) - cost multiplier used to scale the objective
-%               function for improved conditioning. Note: The same
-%               value must also be passed to the Hessian evaluation
+%               function for improved conditioning. Note: This value is
+%               also passed as the 3rd argument to the Hessian evaluation
 %               function so that it can appropriately scale the
 %               objective function term in the Hessian of the
 %               Lagrangian.
@@ -131,14 +131,16 @@ function [x, f, eflag, output, lambda] = mips(f_fcn, x0, A, l, u, xmin, xmax, gh
 %       dh = 2 * [x(1) x(1); -x(2) x(2); x(3) x(3)];
 %       g = []; dg = [];
 %       
-%       function Lxx = hess2(x, lam)
+%       function Lxx = hess2(x, lam, cost_mult)
+%       if nargin < 3, cost_mult = 1; end
 %       mu = lam.ineqnonlin;
-%       Lxx = [2*[1 1]*mu -1 0; -1 2*[-1 1]*mu -1; 0 -1 2*[1 1]*mu];
+%       Lxx = cost_mult * [0 -1 0; -1 0 -1; 0 -1 0] + ...
+%               [2*[1 1]*mu 0 0; 0 2*[-1 1]*mu 0; 0 0 2*[1 1]*mu];
 %       
 %       problem = struct( ...
 %           'f_fcn',    @(x)f2(x), ...
 %           'gh_fcn',   @(x)gh2(x), ...
-%           'hess_fcn', @(x, lam)hess2(x, lam), ...
+%           'hess_fcn', @(x, lam, cost_mult)hess2(x, lam, cost_mult), ...
 %           'x0',       [1; 1; 0], ...
 %           'opt',      struct('verbose', 2) ...
 %       );
@@ -407,7 +409,7 @@ while (~converged && i < opt.max_it)
         if isempty(hess_fcn)
             fprintf('mips: Hessian evaluation via finite differences not yet implemented.\n       Please provide your own hessian evaluation function.');
         end
-        Lxx = hess_fcn(x, lambda);
+        Lxx = hess_fcn(x, lambda, opt.cost_mult);
     else
         [f_, df_, d2f] = f_fcn(x);      %% cost
         Lxx = d2f * opt.cost_mult;
