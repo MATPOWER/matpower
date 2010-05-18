@@ -178,6 +178,7 @@ end
 
 
 %--------------------------  Options Documentation  --------------------------
+% (as printed by IPOPT 3.8)
 % ### Output ###
 % 
 % print_level                            0 <= (          5) <= 12        
