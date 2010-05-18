@@ -7,6 +7,7 @@ function TorF = have_fcn(tag)
 %       bpmpd       - BP, BPMPD interior point solver
 %       constr      - CONSTR, solver from Optimization Toolbox 1.x/2.x
 %       fmincon     - FMINCON, solver from Optimization Toolbox 2.x +
+%       ipopt       - IPOPT, NLP solver (https://projects.coin-or.org/Ipopt/)
 %       linprog     - LINPROG, LP solver from Optimization Toolbox 2.x +
 %       lp          - LP, LP solver from Optimization Toolbox 1.x/2.x
 %       minopf      - MINOPF, MINOPF, MINOS-based OPF solver
@@ -61,6 +62,8 @@ switch tag
         TorF = exist('constr', 'file') == 2 && exist('foptions', 'file');
     case 'fmincon'
         TorF = exist('fmincon', 'file') == 2;
+    case 'ipopt'
+        TorF = exist('ipopt', 'file') == 3;
     case 'linprog'
         TorF = exist('linprog', 'file') == 2;
     case 'lp'

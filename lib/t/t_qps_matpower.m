@@ -34,9 +34,9 @@ if nargin < 1
     quiet = 0;
 end
 
-algs = [100 200 250 300];
-names = {'BPMPD_MEX', 'MIPS', 'sc-MIPS', 'quadprog'};
-check = {'bpmpd', [], [], 'quadprog'};
+algs = [100 200 250 300 400];
+names = {'BPMPD_MEX', 'MIPS', 'sc-MIPS', 'quadprog', 'ipopt'};
+check = {'bpmpd', [], [], 'quadprog', 'ipopt'};
 
 n = 35;
 t_begin(n*length(algs), quiet);
@@ -65,8 +65,8 @@ for k = 1:length(algs)
         x0 = [];
         [x, f, s, out, lam] = qps_matpower([], c, A, l, u, xmin, [], [], opt);
         t_ok(s, [t 'success']);
-        t_is(x, [0; 15; 3], 7, [t 'x']);
-        t_is(f, -78, 7, [t 'f']);
+        t_is(x, [0; 15; 3], 6, [t 'x']);
+        t_is(f, -78, 6, [t 'f']);
         t_is(lam.mu_l, [0;0;0], 13, [t 'lam.mu_l']);
         t_is(lam.mu_u, [0;1.5;0.5], 9, [t 'lam.mu_u']);
         t_is(lam.lower, [1;0;0], 9, [t 'lam.lower']);
@@ -122,7 +122,7 @@ for k = 1:length(algs)
         x0 = [1; 0; 0; 1];
         [x, f, s, out, lam] = qps_matpower(H, c, A, l, u, xmin, [], x0, opt);
         t_ok(s, [t 'success']);
-        t_is(x, [0; 2.8; 0.2; 0]/3, 6, [t 'x']);
+        t_is(x, [0; 2.8; 0.2; 0]/3, 5, [t 'x']);
         t_is(f, 3.29/3, 6, [t 'f']);
         t_is(lam.mu_l, [6.58;0]/3, 6, [t 'lam.mu_l']);
         t_is(lam.mu_u, [0;0], 13, [t 'lam.mu_u']);
@@ -133,7 +133,7 @@ for k = 1:length(algs)
         p = struct('H', H, 'A', A, 'l', l, 'u', u, 'xmin', xmin, 'x0', x0, 'opt', opt);
         [x, f, s, out, lam] = qps_matpower(p);
         t_ok(s, [t 'success']);
-        t_is(x, [0; 2.8; 0.2; 0]/3, 6, [t 'x']);
+        t_is(x, [0; 2.8; 0.2; 0]/3, 5, [t 'x']);
         t_is(f, 3.29/3, 6, [t 'f']);
         t_is(lam.mu_l, [6.58;0]/3, 6, [t 'lam.mu_l']);
         t_is(lam.mu_u, [0;0], 13, [t 'lam.mu_u']);

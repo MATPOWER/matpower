@@ -194,6 +194,8 @@ if alg == 200 || alg == 250
                             'max_it', max_it, ...
                             'max_red', max_red, ...
                             'cost_mult', 1  );
+elseif alg == 400
+	opt.ipopt_opt = ipopt_options([], mpopt);
 end
 
 %%-----  run opf  -----

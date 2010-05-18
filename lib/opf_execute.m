@@ -104,6 +104,11 @@ else
       solver = @mips6opf_solver;
     end
     [results, success, raw] = feval(solver, om, mpopt);
+  elseif alg == 580                             %% IPOPT
+    if ~have_fcn('ipopt')
+      error('opf_execute: OPF_ALG %d requires IPOPT (see https://projects.coin-or.org/Ipopt/)', alg);
+    end
+    [results, success, raw] = ipoptopf_solver(om, mpopt);
   elseif alg == 540 || alg == 545 || alg == 550 %% PDIPM_OPF, SCPDIPM_OPF, or TRALM_OPF
     if alg == 540                               %% PDIPM_OPF
       if ~have_fcn('pdipmopf')

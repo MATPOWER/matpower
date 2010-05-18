@@ -65,6 +65,9 @@ function [options, names] = mpoption(varargin)
 %           [  560 - MIPS, MATLAB Interior Point Solver                     ]
 %           [        primal/dual interior point method (pure MATLAB)        ]
 %           [  565 - MIPS-sc, step-controlled variant of MIPS               ]
+%           [        primal/dual interior point method (pure MATLAB)        ]
+%           [  580 - IPOPT, requires MEX interface to IPOPT solver          ]
+%           [        available from: https://projects.coin-or.org/Ipopt/    ]
 %       16 - OPF_VIOLATION, 5e-6    constraint violation tolerance
 %       17 - CONSTR_TOL_X, 1e-4     termination tol on x for constr/fmincon
 %       18 - CONSTR_TOL_F, 1e-4     termination tol on f for constr/fmincon
@@ -91,6 +94,8 @@ function [options, names] = mpoption(varargin)
 %           [        primal/dual interior point method (pure MATLAB)        ]
 %           [  250 - MIPS-sc, step-controlled variant of MIPS               ]
 %           [  300 - MATLAB Optimization Toolbox, QUADPROG, LINPROG         ]
+%           [  400 - IPOPT, requires MEX interface to IPOPT solver          ]
+%                    available from: https://projects.coin-or.org/Ipopt/    ]
 %   output options
 %       31 - VERBOSE, 1             amount of progress info printed
 %           [   0 - print no progress info                                  ]
@@ -132,6 +137,9 @@ function [options, names] = mpoption(varargin)
 %            [  3 - interior-point, w/ 'lbfgs' Hessian approx               ]
 %            [  4 - interior-point, w/exact user-supplied Hessian           ]
 %            [  5 - interior-point, w/Hessian via finite differences        ]
+%
+%   IPOPT options
+%       60 - IPOPT_OPT, 0           See IPOPT_OPTIONS for details.
 %
 %   MINOPF options
 %       61 - MNS_FEASTOL, 0 (1e-3)  primal feasibility tolerance,
@@ -290,7 +298,7 @@ else                    %% even number of parameters
         0;      %% 57 - RESERVED57
         0;      %% 58 - RESERVED58
         0;      %% 59 - RESERVED59
-        0;      %% 60 - RESERVED60
+        0;      %% 60 - IPOPT_OPT
         
         %% MINOPF options
         0;      %% 61 - MNS_FEASTOL
@@ -402,7 +410,7 @@ names = char(   names, ...
                 'RESERVED57', ...           %% 57
                 'RESERVED58', ...           %% 58
                 'RESERVED59', ...           %% 59
-                'RESERVED60'    );          %% 60
+                'IPOPT_OPT'     );          %% 60
 %% MINOS options
 names = char(   names, ...
                 'MNS_FEASTOL', ...          %% 61
@@ -442,8 +450,8 @@ names = char(   names, ...
                 'TRALM_COSTTOL', ...        %% 90
                 'TRALM_MAJOR_IT', ...       %% 91
                 'TRALM_MINOR_IT', ...       %% 92
-                'SMOOTHING_RATIO'    );     %% 93
-                
+                'SMOOTHING_RATIO'   );      %% 93
+
 %%-----  process parameters  -----
 while i <= nargin
     %% get parameter name and value

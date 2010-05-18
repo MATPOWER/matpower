@@ -15,6 +15,13 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.0b3
 -------------------
 
+5/18/10
+    - Added support for the IPOPT interior point optimizer for
+      large scale non-linear optimization. Use OPF_ALG = 580
+      and OPF_ALG_DC = 400 for AC and DC OPF, respectively. Requires
+      the Matlab MEX interface for IPOPT, available from
+      https://projects.coin-or.org/Ipopt/.
+    
 5/13/10
     - Modified input args for Hessian evaluation function for MIPS.
       Requires cost_mult as 3rd argument.

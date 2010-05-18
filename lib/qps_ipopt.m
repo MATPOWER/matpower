@@ -1,9 +1,8 @@
-function [x, f, eflag, output, lambda] = qps_matpower(H, c, A, l, u, xmin, xmax, x0, opt)
-%QPS_MATPOWER  Quadratic Program Solver for MATPOWER.
+function [x, f, eflag, output, lambda] = qps_ipopt(H, c, A, l, u, xmin, xmax, x0, opt)
+%QPS_IPOPT  Quadratic Program Solver based on IPOPT.
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
-%       QPS_MATPOWER(H, C, A, L, U, XMIN, XMAX, X0, OPT)
-%   A common wrapper function for various QP solvers. 
-%   Solves the following QP (quadratic programming) problem:
+%       QPS_IPOPT(H, C, A, L, U, XMIN, XMAX, X0, OPT)
+%   Uses IPOPT to solve the following QP (quadratic programming) problem:
 %
 %       min 1/2 X'*H*X + C'*X
 %        X
@@ -25,25 +24,14 @@ function [x, f, eflag, output, lambda] = qps_matpower(H, c, A, l, u, xmin, xmax,
 %       OPT : optional options structure with the following fields,
 %           all of which are also optional (default values shown in
 %           parentheses)
-%           alg (0) - determines which solver to use
-%                 0 = use first available solver
-%               100 = BPMPD_MEX
-%               200 = MIPS, MATLAB Interior Point Solver
-%                     pure MATLAB implementation of a primal-dual
-%                     interior point method
-%               250 = MIPS-sc, a step controlled variant of MIPS
-%               300 = Optimization Toolbox, QUADPROG or LINPROG
-%               400 = IPOPT
 %           verbose (0) - controls level of progress output displayed
 %               0 = no progress output
 %               1 = some progress output
 %               2 = verbose progress output
 %           max_it (0) - maximum number of iterations allowed
 %               0 = use algorithm default
-%           bp_opt - options vector for BP
-%           ipopt_opt - options struct for IPOPT
-%           mips_opt - options struct for QPS_MIPS
-%           ot_opt - options struct for QUADPROG/LINPROG
+%           ipopt_opt - options struct for IPOPT, values in
+%               verbose and max_it override these options
 %       PROBLEM : The inputs can alternatively be supplied in a single
 %           PROBLEM struct with fields corresponding to the input arguments
 %           described above: H, c, A, l, u, xmin, xmax, x0, opt
@@ -52,11 +40,15 @@ function [x, f, eflag, output, lambda] = qps_matpower(H, c, A, l, u, xmin, xmax,
 %       X : solution vector
 %       F : final objective function value
 %       EXITFLAG : exit flag
-%           1 = converged
-%           0 or negative values = algorithm specific failure codes
+%           1 = first order optimality conditions satisfied
+%           0 = maximum number of iterations reached
+%           -1 = numerically failed
 %       OUTPUT : output struct with the following fields:
-%           alg - algorithm code of solver used
-%           (others) - algorithm specific fields
+%           iterations - number of iterations performed
+%           hist - struct array with trajectories of the following:
+%                   feascond, gradcond, compcond, costcond, gamma,
+%                   stepsize, obj, alphap, alphad
+%           message - exit message
 %       LAMBDA : struct containing the Langrange and Kuhn-Tucker
 %           multipliers on the constraints, with fields:
 %           mu_l - lower (left-hand) limit on linear constraints
@@ -71,20 +63,20 @@ function [x, f, eflag, output, lambda] = qps_matpower(H, c, A, l, u, xmin, xmax,
 %
 %   Calling syntax options:
 %       [x, f, exitflag, output, lambda] = ...
-%           qps_matpower(H, c, A, l, u, xmin, xmax, x0, opt)
+%           qps_ipopt(H, c, A, l, u, xmin, xmax, x0, opt)
 %
-%       x = qps_matpower(H, c, A, l, u)
-%       x = qps_matpower(H, c, A, l, u, xmin, xmax)
-%       x = qps_matpower(H, c, A, l, u, xmin, xmax, x0)
-%       x = qps_matpower(H, c, A, l, u, xmin, xmax, x0, opt)
-%       x = qps_matpower(problem), where problem is a struct with fields:
+%       x = qps_ipopt(H, c, A, l, u)
+%       x = qps_ipopt(H, c, A, l, u, xmin, xmax)
+%       x = qps_ipopt(H, c, A, l, u, xmin, xmax, x0)
+%       x = qps_ipopt(H, c, A, l, u, xmin, xmax, x0, opt)
+%       x = qps_ipopt(problem), where problem is a struct with fields:
 %                       H, c, A, l, u, xmin, xmax, x0, opt
 %                       all fields except 'H', 'c', 'A' and 'l' are optional
-%       x = qps_matpower(...)
-%       [x, f] = qps_matpower(...)
-%       [x, f, exitflag] = qps_matpower(...)
-%       [x, f, exitflag, output] = qps_matpower(...)
-%       [x, f, exitflag, output, lambda] = qps_matpower(...)
+%       x = qps_ipopt(...)
+%       [x, f] = qps_ipopt(...)
+%       [x, f, exitflag] = qps_ipopt(...)
+%       [x, f, exitflag, output] = qps_ipopt(...)
+%       [x, f, exitflag, output, lambda] = qps_ipopt(...)
 %
 %   Example: (problem from from http://www.uc.edu/sashtml/iml/chap8/sect12.htm)
 %       H = [   1003.1  4.3     6.3     5.9;
@@ -99,36 +91,43 @@ function [x, f, eflag, output, lambda] = qps_matpower(H, c, A, l, u, xmin, xmax,
 %       xmin = zeros(4,1);
 %       x0 = [1; 0; 0; 1];
 %       opt = struct('verbose', 2);
-%       [x, f, s, out, lam] = qps_matpower(H, c, A, l, u, xmin, [], x0, opt);
+%       [x, f, s, out, lam] = qps_ipopt(H, c, A, l, u, xmin, [], x0, opt);
+%
+%   See also IPOPT, https://projects.coin-or.org/Ipopt/.
 
-%   MATPOWER
+%   MIPS
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
 %   Copyright (c) 2010 by Power System Engineering Research Center (PSERC)
 %
-%   This file is part of MATPOWER.
+%   This file is part of MIPS.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 %
-%   MATPOWER is free software: you can redistribute it and/or modify
+%   MIPS is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published
 %   by the Free Software Foundation, either version 3 of the License,
 %   or (at your option) any later version.
 %
-%   MATPOWER is distributed in the hope that it will be useful,
+%   MIPS is distributed in the hope that it will be useful,
 %   but WITHOUT ANY WARRANTY; without even the implied warranty of
 %   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 %   GNU General Public License for more details.
 %
 %   You should have received a copy of the GNU General Public License
-%   along with MATPOWER. If not, see <http://www.gnu.org/licenses/>.
+%   along with MIPS. If not, see <http://www.gnu.org/licenses/>.
 %
 %   Additional permission under GNU GPL version 3 section 7
 %
-%   If you modify MATPOWER, or any covered work, to interface with
+%   If you modify MIPS, or any covered work, to interface with
 %   other modules (such as MATLAB code and MEX-files) available in a
 %   MATLAB(R) or comparable environment containing parts covered
-%   under other licensing terms, the licensors of MATPOWER grant
+%   under other licensing terms, the licensors of MIPS grant
 %   you additional permission to convey the resulting work.
+
+%% check for IPOPT
+% if ~have_fcn('ipopt')
+%     error('qps_ipopt: requires IPOPT (https://projects.coin-or.org/Ipopt/)');
+% end
 
 %%----- input argument handling  -----
 %% gather inputs
@@ -158,77 +157,128 @@ else                                %% individual args
     end
 end
 
-%% default options
-if ~isempty(opt) && isfield(opt, 'alg') && ~isempty(opt.alg)
-    alg = opt.alg;
+%% define nx, set default values for missing optional inputs
+if isempty(H) || ~any(any(H))
+    if isempty(A) && isempty(xmin) && isempty(xmax)
+        error('qps_ipopt: LP problem must include constraints or variable bounds');
+    else
+        if ~isempty(A)
+            nx = size(A, 2);
+        elseif ~isempty(xmin)
+            nx = length(xmin);
+        else    % if ~isempty(xmax)
+            nx = length(xmax);
+        end
+    end
+    H = sparse(nx,nx);
 else
-    alg = 0;
+    nx = size(H, 1);
 end
+if isempty(c)
+    c = zeros(nx, 1);
+end
+if  ~isempty(A) && (isempty(l) || all(l == -Inf)) && ...
+                   (isempty(u) || all(u == Inf))
+    A = sparse(0,nx);           %% no limits => no linear constraints
+end
+nA = size(A, 1);                %% number of original linear constraints
+if nA
+    if isempty(u)               %% By default, linear inequalities are ...
+        u = Inf * ones(nA, 1);      %% ... unbounded above and ...
+    end
+    if isempty(l)
+        l = -Inf * ones(nA, 1);     %% ... unbounded below.
+    end
+end
+if isempty(x0)
+    x0 = zeros(nx, 1);
+end
+
+%% default options
 if ~isempty(opt) && isfield(opt, 'verbose') && ~isempty(opt.verbose)
     verbose = opt.verbose;
 else
     verbose = 0;
 end
-if alg == 0
-    if have_fcn('bpmpd')    %% use BPMPD_MEX by default if available
-        alg = 100;          %% BPMPD_MEX
-    else
-        alg = 200;          %% MIPS
-    end
-end
-
-%%----- call the appropriate solver  -----
-if alg == 100                       %% use BPMPD_MEX
-    [x, f, eflag, output, lambda] = ...
-        qps_bpmpd(H, c, A, l, u, xmin, xmax, x0, opt);
-
-    if eflag == -99
-        if verbose
-            fprintf('         Retrying with QPS_MIPS solver ...\n\n');
-        end
-        %% save (incorrect) solution from BPMPD
-        bpmpd = struct('x', x, 'f', f, 'eflag', eflag, ...
-                        'output', output, 'lambda', lambda);
-        opt.alg = 200;
-        [x, f, eflag, output, lambda] = ...
-            qps_matpower(H, c, A, l, u, xmin, xmax, x0, opt);
-        output.bpmpd = bpmpd;
-    end
-elseif alg == 200 || alg == 250     %% use MIPS or sc-MIPS
-    %% set up options
-    if ~isempty(opt) && isfield(opt, 'mips_opt') && ~isempty(opt.mips_opt)
-        mips_opt = opt.mips_opt;
-    else
-        mips_opt = [];
-    end
-    if ~isempty(opt) && isfield(opt, 'max_it') && ~isempty(opt.max_it)
-        mips_opt.max_it = opt.max_it;
-    end
-    if alg == 200
-        mips_opt.step_control = 0;
-    else
-        mips_opt.step_control = 1;
-    end
-    mips_opt.verbose = verbose;
-    
-    if have_fcn('anon_fcns')
-        solver = 'qps_mips';
-    else
-        solver = 'qps_mips6';
-    end
-
-    %% call solver
-    [x, f, eflag, output, lambda] = ...
-        feval(solver, H, c, A, l, u, xmin, xmax, x0, mips_opt);
-elseif alg == 300                   %% use QUADPROG or LINPROG from Opt Tbx ver 2.x+
-    [x, f, eflag, output, lambda] = ...
-        qps_ot(H, c, A, l, u, xmin, xmax, x0, opt);
-elseif alg == 400                   %% use IPOPT
-    [x, f, eflag, output, lambda] = ...
-        qps_ipopt(H, c, A, l, u, xmin, xmax, x0, opt);
+if ~isempty(opt) && isfield(opt, 'max_it') && ~isempty(opt.max_it)
+    max_it = opt.max_it;
 else
-    error('qps_matpower: %d is not a valid algorithm code', alg);
+    max_it = 0;
 end
-if ~isfield(output, 'alg') || isempty(output.alg)
-    output.alg = alg;
+
+%% make sure args are sparse/full as expected by IPOPT
+if ~isempty(H)
+    if ~issparse(H)
+        H = sparse(H);
+    end
 end
+if ~issparse(A)
+    A = sparse(A);
+end
+
+
+%%-----  run optimization  -----
+%% set options struct for ipopt
+if ~isempty(opt) && isfield(opt, 'ipopt_opt') && ~isempty(opt.ipopt_opt)
+    options.ipopt = ipopt_options(opt.ipopt_opt);
+else
+    options.ipopt = ipopt_options;
+end
+options.ipopt.jac_c_constant    = 'yes';
+options.ipopt.jac_d_constant    = 'yes';
+options.ipopt.hessian_constant  = 'yes';
+if verbose
+    options.ipopt.print_level = min(12, verbose*2+1);
+else
+    options.ipopt.print_level = 0;
+end
+if max_it
+    options.ipopt.max_iter = max_it;
+end
+
+%% define variable and constraint bounds, if given
+if nA
+    options.cu = u;
+    options.cl = l;
+end
+if ~isempty(xmin)
+    options.lb = xmin;
+end
+if ~isempty(xmax)
+    options.ub = xmax;
+end
+
+%% assign function handles
+funcs.objective         = @(x) 0.5 * x' * H * x + c' * x;
+funcs.gradient          = @(x) H * x + c;
+funcs.constraints       = @(x) A * x;
+funcs.jacobian          = @(x) A;
+funcs.jacobianstructure = @() A;
+funcs.hessian           = @(x, sigma, lambda) tril(H);
+funcs.hessianstructure  = @() tril(H);
+
+%% run the optimization
+[x, info] = ipopt(x0,funcs,options);
+
+if info.status == 0 || info.status == 1
+    eflag = 1;
+else
+    eflag = 0;
+end
+output.iterations = info.iter;
+output.info       = info.status;
+f = funcs.objective(x);
+
+%% repackage lambdas
+kl = find(info.lambda < 0);                     %% lower bound binding
+ku = find(info.lambda > 0);                     %% upper bound binding
+mu_l = zeros(nA, 1);
+mu_l(kl) = -info.lambda(kl);
+mu_u = zeros(nA, 1);
+mu_u(ku) = info.lambda(ku);
+
+lambda = struct( ...
+    'mu_l', mu_l, ...
+    'mu_u', mu_u, ...
+    'lower', info.zl, ...
+    'upper', info.zu    );

@@ -71,6 +71,9 @@ end
 if have_fcn('tralmopf')
     tests{end+1} = 't_opf_tspopf_tralm';
 end
+if have_fcn('ipopt')
+    tests{end+1} = 't_opf_ipopt';
+end
 if have_fcn('constr')
     tests{end+1} = 't_opf_constr';
 end
@@ -85,6 +88,9 @@ if have_fcn('quadprog')
 end
 tests{end+1} = 't_opf_dc_mips';
 tests{end+1} = 't_opf_dc_mips_sc';
+if have_fcn('ipopt')
+    tests{end+1} = 't_opf_dc_ipopt';
+end
 tests{end+1} = 't_opf_userfcns';
 tests{end+1} = 't_runopf_w_res';
 tests{end+1} = 't_makePTDF';
