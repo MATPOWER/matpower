@@ -167,7 +167,7 @@ Hs = tril(d2f + [
     sparse(nxtra,nx);
 ]);
 
-%% set options struct for ipopt
+%% set options struct for IPOPT
 options.ipopt = ipopt_options([], mpopt);
 
 %% extra data to pass to functions
