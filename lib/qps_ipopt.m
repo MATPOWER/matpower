@@ -218,7 +218,7 @@ end
 
 
 %%-----  run optimization  -----
-%% set options struct for ipopt
+%% set options struct for IPOPT
 if ~isempty(opt) && isfield(opt, 'ipopt_opt') && ~isempty(opt.ipopt_opt)
     options.ipopt = ipopt_options(opt.ipopt_opt);
 else
@@ -227,6 +227,9 @@ end
 options.ipopt.jac_c_constant    = 'yes';
 options.ipopt.jac_d_constant    = 'yes';
 options.ipopt.hessian_constant  = 'yes';
+options.ipopt.least_square_init_primal  = 'yes';
+options.ipopt.least_square_init_duals   = 'yes';
+% options.ipopt.mehrotra_algorithm        = 'yes';        %% default 'no'
 if verbose
     options.ipopt.print_level = min(12, verbose*2+1);
 else
