@@ -2,7 +2,7 @@
  MATPOWER - A MATLAB(R) Power System Simulation Package
 ========================================================
 
-Version:    4.0b3
+Version:    4.0b4
 
 Home Page:  http://www.pserc.cornell.edu/matpower/
 
@@ -10,7 +10,7 @@ Authors:    Ray Zimmerman               <rz10@cornell.edu>
             Carlos E. Murillo-Sanchez   <carlos_murillo@ieee.org>
             Deqiang (David) Gan         <dgan@zju.edu.cn>
 
-            Mon, Apr 19, 2010
+            Fri, May 21, 2010
 
 $Id$
 Copyright (c) 1997-2010 by Power System Engineering Research Center (PSERC)
@@ -129,6 +129,26 @@ documentation for the various MATPOWER functions. For example:
     help runopf
     help mpoption
     help caseformat
+
+
+-----------------------------
+ WHAT'S NEW IN VERSION 4.0b4
+-----------------------------
+
+Below is a summary of the changes since version 4.0b3 of MATPOWER. See the
+CHANGES file in the docs directory for all the gory details.
+
+* New features:
+  - Added support for the IPOPT interior point optimizer for large scale
+    non-linear optimization. Use OPF_ALG = 580 and OPF_ALG_DC = 400 for
+    AC and DC OPF, respectively. Requires the Matlab MEX interface for
+    IPOPT, available from https://projects.coin-or.org/Ipopt/.
+  - Added RETURN_RAW_DER option to control when OPF solver returns
+	constraint, Jacobian and objective function gradient and Hessian
+	information.
+  - Refactored portions of opf() into opf_setup() and opf_execute().
+* Bugs fixed:
+  - Added check for invalid gencost model value in opf_setup().
 
 
 -----------------------------
@@ -291,7 +311,7 @@ PUBLICATIONS & PRESENTATIONS
 
 [2]  R. D. Zimmerman, C. E. Murillo-Sanchez, and R. J. Thomas,
      "MATPOWER: Steady-State Operations, Planning and Analysis Tools
-     for Power Systems Research and Education," submitted to IEEE
+     for Power Systems Research and Education," accepted to IEEE
      Transactions on Power Systems.
         http://www.pserc.cornell.edu/matpower/MATPOWER-paper.pdf
 

@@ -2,7 +2,7 @@
  Change history for MATPOWER
 -----------------------------
 
-Version:    4.0b3
+Version:    4.0b4
 
 maintained by Ray Zimmerman <rz10@cornell.edu>
 
@@ -14,6 +14,9 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 
 Changes since 4.0b3
 -------------------
+
+5/21/10
+    - Released version 4.0b4.
 
 5/18/10
     - Added support for the IPOPT interior point optimizer for
