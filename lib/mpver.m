@@ -5,7 +5,7 @@ function rv = mpver(varargin)
 %   Release and Date (all strings). Calling MPVER without assigning the
 %   return value prints the version and release date of the current
 %   installation of MATPOWER, MATLAB, the Optimization Toolbox, MIPS
-%   and any optional MATPOWER packages such as BPMPD_MEX, MINOPF,
+%   and any optional MATPOWER packages such as BPMPD_MEX, IPOPT, MINOPF,
 %   PDIPMOPF, SCPDIPMOPF and TRAMLOPF.
 
 %   MATPOWER
@@ -88,7 +88,11 @@ else
     else
         fprintf('BPMPD_MEX              -- not installed --\n');
     end
-    
+    if have_fcn('ipopt')
+        fprintf('IPOPT                  Version <unknown>\n');
+    else
+        fprintf('IPOPT                  -- not installed --\n');
+    end
     if have_fcn('minopf')
         if exist('minopfver', 'file') == 2
             minopfver;
