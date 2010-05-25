@@ -112,16 +112,17 @@
 %   (2) 13  maximum angle difference, angle(Vf) - angle(Vt) (degrees)
 %
 % (+) Generator Cost Data Format
-%       NOTE: If gen has n rows, then the first n rows of gencost contain
+%       NOTE: If gen has ng rows, then the first ng rows of gencost contain
 %       the cost for active power produced by the corresponding generators.
-%       If gencost has 2*n rows then rows n+1 to 2*n contain the reactive
+%       If gencost has 2*ng rows then rows ng+1 to 2*ng contain the reactive
 %       power costs in the same format.
 %       1   model, 1 - piecewise linear, 2 - polynomial
 %       2   startup, startup cost in US dollars
 %       3   shutdown, shutdown cost in US dollars
 %       4   N, number of cost coefficients to follow for polynomial
 %           cost function, or number of data points for piecewise linear
-%       5 and following, parameters defining total cost function
+%       5 and following, parameters defining total cost function f(p),
+%           units of f and p are $/hr and MW (or MVAr), respectively.
 %           (MODEL = 1) : p0, f0, p1, f1, ..., pn, fn
 %               where p0 < p1 < ... < pn and the cost f(p) is defined by
 %               the coordinates (p0,f0), (p1,f1), ..., (pn,fn) of the
