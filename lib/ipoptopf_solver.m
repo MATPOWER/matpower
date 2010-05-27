@@ -229,7 +229,11 @@ if info.status == 0 || info.status == 1
 else
     success = 0;
 end
-output.iterations = info.iter;
+if isfield(info, 'iter')
+    output.iterations = info.iter;
+else
+    output.iterations = [];
+end
 f = opf_costfcn(x, om);
 
 %% update solution data

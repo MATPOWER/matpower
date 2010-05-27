@@ -268,7 +268,9 @@ if info.status == 0 || info.status == 1
 else
     eflag = 0;
 end
-output.iterations = info.iter;
+if isfield(info, 'iter')
+    output.iterations = info.iter;
+end
 output.info       = info.status;
 f = funcs.objective(x);
 
