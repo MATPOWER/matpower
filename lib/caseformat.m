@@ -130,7 +130,7 @@
 %           (MODEL = 2) : cn, ..., c1, c0
 %               n+1 coefficients of an n-th order polynomial cost function,
 %               starting with highest order, where cost is
-%               f(p) = cn*p^2 + ... + c1*p + c0
+%               f(p) = cn*p^n + ... + c1*p + c0
 % 
 % (+) Area Data Format (deprecated)
 %     (this data is not used by MATPOWER and is no longer necessary for

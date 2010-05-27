@@ -28,7 +28,7 @@ function [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_co
 %                  (MODEL = 2) : cn, ..., c1, c0
 %                       n+1 coefficients of an n-th order polynomial cost fcn,
 %                       starting with highest order, where cost is
-%                       f(p) = cn*p^2 + ... + c1*p + c0
+%                       f(p) = cn*p^n + ... + c1*p + c0
 % 
 %   additional constants, used to assign/compare values in the MODEL column
 %    1  PW_LINEAR   piecewise linear generator cost model
@@ -83,4 +83,4 @@ COST        = 5;    %% parameters defining total cost function begin in this col
                     %% (MODEL = 2) : cn, ..., c1, c0
                     %%      n+1 coefficients of an n-th order polynomial cost fcn,
                     %%      starting with highest order, where cost is
-                    %%      f(p) = cn*p^2 + ... + c1*p + c0
+                    %%      f(p) = cn*p^n + ... + c1*p + c0
