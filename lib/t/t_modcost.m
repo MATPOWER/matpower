@@ -1,5 +1,5 @@
-function t_totcost(quiet)
-%T_TOTCOST  Tests for code in TOTCOST.
+function t_modcost(quiet)
+%T_MODCOST  Tests for code in MODCOST.
 
 %   MATPOWER
 %   $Id$
