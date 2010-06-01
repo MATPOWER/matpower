@@ -12,6 +12,13 @@ Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
 
 
+Changes since 4.0b4
+-------------------
+
+6/1/10
+    - Added modcost() and tests for modcost() and totcost().
+
+
 Changes since 4.0b3
 -------------------
 

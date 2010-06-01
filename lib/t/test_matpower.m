@@ -46,11 +46,16 @@ tests{end+1} = 't_loadcase';
 tests{end+1} = 't_ext2int2ext';
 tests{end+1} = 't_jacobian';
 tests{end+1} = 't_hessian';
+tests{end+1} = 't_totcost';
+tests{end+1} = 't_modcost';
 tests{end+1} = 't_hasPQcap';
 if have_fcn('anon_fcns')
     tests{end+1} = 't_mips';
 else
     tests{end+1} = 't_mips6';
+end
+if have_fcn('ipopt')
+    tests{end+1} = 't_mips_ipopt';
 end
 tests{end+1} = 't_qps_matpower';
 tests{end+1} = 't_pf';
@@ -72,6 +77,7 @@ if have_fcn('tralmopf')
     tests{end+1} = 't_opf_tspopf_tralm';
 end
 if have_fcn('ipopt')
+    tests{end+1} = 't_opf_mips_ipopt';
     tests{end+1} = 't_opf_ipopt';
 end
 if have_fcn('constr')
@@ -89,6 +95,7 @@ end
 tests{end+1} = 't_opf_dc_mips';
 tests{end+1} = 't_opf_dc_mips_sc';
 if have_fcn('ipopt')
+    tests{end+1} = 't_opf_dc_mips_ipopt';
     tests{end+1} = 't_opf_dc_ipopt';
 end
 tests{end+1} = 't_opf_userfcns';
