@@ -230,10 +230,10 @@ else
   om = add_vars(om, 'Vm', nb, Vm, bus(:, VMIN), bus(:, VMAX));
   om = add_vars(om, 'Pg', ng, Pg, Pmin, Pmax);
   om = add_vars(om, 'Qg', ng, Qg, Qmin, Qmax);
-  om = add_constraints(om, 'Pmis', nb, 'non-linear');
-  om = add_constraints(om, 'Qmis', nb, 'non-linear');
-  om = add_constraints(om, 'Sf', nl, 'non-linear');
-  om = add_constraints(om, 'St', nl, 'non-linear');
+  om = add_constraints(om, 'Pmis', nb, 'nonlinear');
+  om = add_constraints(om, 'Qmis', nb, 'nonlinear');
+  om = add_constraints(om, 'Sf', nl, 'nonlinear');
+  om = add_constraints(om, 'St', nl, 'nonlinear');
   om = add_constraints(om, 'PQh', Apqh, [], ubpqh, {'Pg', 'Qg'});   %% npqh
   om = add_constraints(om, 'PQl', Apql, [], ubpql, {'Pg', 'Qg'});   %% npql
   om = add_constraints(om, 'vl',  Avl, lvl, uvl,   {'Pg', 'Qg'});   %% nvl

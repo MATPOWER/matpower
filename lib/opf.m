@@ -97,8 +97,8 @@ function [busout, genout, branchout, f, success, info, et, g, jac, xr, pimul] = 
 %               .l  lower bounds on variables
 %               .u  upper bounds on variables
 %           .nln
-%               .l  lower bounds on non-linear constraints
-%               .u  upper bounds on non-linear constraints
+%               .l  lower bounds on nonlinear constraints
+%               .u  upper bounds on nonlinear constraints
 %           .lin
 %               .l  lower bounds on linear constraints
 %               .u  upper bounds on linear constraints
@@ -126,7 +126,7 @@ function [busout, genout, branchout, f, success, info, et, g, jac, xr, pimul] = 
 %               .u  upper bound shadow prices
 %                   .Va, Vm, Pg, Qg, y, (other)
 %       .nln    (AC only)
-%           .mu     shadow prices on non-linear constraints, by named block
+%           .mu     shadow prices on nonlinear constraints, by named block
 %               .l  lower bounds
 %                   .Pmis   real power mismatch equations
 %                   .Qmis   reactive power mismatch equations

@@ -18,8 +18,8 @@ function [results, success, raw] = mipsopf_solver(om, mpopt)
 %               .l  lower bounds on variables
 %               .u  upper bounds on variables
 %           .nln
-%               .l  lower bounds on non-linear constraints
-%               .u  upper bounds on non-linear constraints
+%               .l  lower bounds on nonlinear constraints
+%               .u  upper bounds on nonlinear constraints
 %           .lin
 %               .l  lower bounds on linear constraints
 %               .u  upper bounds on linear constraints
@@ -193,7 +193,7 @@ branch(:, MU_ST) = muSt / baseMVA;
 %% package up results
 nlnN = getN(om, 'nln');
 
-%% extract multipliers for non-linear constraints
+%% extract multipliers for nonlinear constraints
 kl = find(Lambda.eqnonlin < 0);
 ku = find(Lambda.eqnonlin > 0);
 nl_mu_l = zeros(nlnN, 1);

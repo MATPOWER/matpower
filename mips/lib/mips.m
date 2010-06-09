@@ -2,24 +2,24 @@ function [x, f, eflag, output, lambda] = mips(f_fcn, x0, A, l, u, xmin, xmax, gh
 %MIPS  MATLAB Interior Point Solver.
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
 %       MIPS(F_FCN, X0, A, L, U, XMIN, XMAX, GH_FCN, HESS_FCN, OPT)
-%   Primal-dual interior point method for NLP (non-linear programming).
+%   Primal-dual interior point method for NLP (nonlinear programming).
 %   Minimize a function F(X) beginning from a starting point X0, subject to
-%   optional linear and non-linear constraints and variable bounds.
+%   optional linear and nonlinear constraints and variable bounds.
 %
 %       min F(X)
 %        X
 %
 %   subject to
 %
-%       G(X) = 0            (non-linear equalities)
-%       H(X) <= 0           (non-linear inequalities)
+%       G(X) = 0            (nonlinear equalities)
+%       H(X) <= 0           (nonlinear inequalities)
 %       L <= A*X <= U       (linear constraints)
 %       XMIN <= X <= XMAX   (variable bounds)
 %
 %   Inputs (all optional except F_FCN and X0):
 %       F_FCN : handle to function that evaluates the objective function,
 %           its gradients and Hessian for a given value of X. If there
-%           are non-linear constraints, the Hessian information is
+%           are nonlinear constraints, the Hessian information is
 %           provided by the HESS_FCN function passed in the 9th argument
 %           and is not required here. Calling syntax for this function:
 %               [F, DF, D2F] = F_FCN(X)
@@ -30,7 +30,7 @@ function [x, f, eflag, output, lambda] = mips(f_fcn, x0, A, l, u, xmin, xmax, gh
 %       XMIN, XMAX : optional lower and upper bounds on the
 %           X variables, defaults are -Inf and Inf, respectively.
 %       GH_FCN : handle to function that evaluates the optional
-%           non-linear constraints and their gradients for a given
+%           nonlinear constraints and their gradients for a given
 %           value of X. Calling syntax for this function is:
 %               [H, G, DH, DG] = GH_FCN(X)
 %       HESS_FCN : handle to function that computes the Hessian of the
@@ -81,8 +81,8 @@ function [x, f, eflag, output, lambda] = mips(f_fcn, x0, A, l, u, xmin, xmax, gh
 %           message - exit message
 %       LAMBDA : struct containing the Langrange and Kuhn-Tucker
 %           multipliers on the constraints, with fields:
-%           eqnonlin - non-linear equality constraints
-%           ineqnonlin - non-linear inequality constraints
+%           eqnonlin - nonlinear equality constraints
+%           ineqnonlin - nonlinear inequality constraints
 %           mu_l - lower (left-hand) limit on linear constraints
 %           mu_u - upper (right-hand) limit on linear constraints
 %           lower - lower bound on optimization variables
@@ -246,10 +246,10 @@ if isempty(xmax)
     xmax = Inf * ones(nx, 1);   %% ... unbounded above.
 end
 if isempty(gh_fcn)
-    nonlinear = false;          %% no non-linear constraints present
+    nonlinear = false;          %% no nonlinear constraints present
     gn = []; hn = [];
 else
-    nonlinear = true;           %% we have some non-linear constraints
+    nonlinear = true;           %% we have some nonlinear constraints
 end
 
 %% default options
@@ -325,7 +325,7 @@ x = x0;
 f = f * opt.cost_mult;
 df = df * opt.cost_mult;
 if nonlinear
-    [hn, gn, dhn, dgn] = gh_fcn(x); %% non-linear constraints
+    [hn, gn, dhn, dgn] = gh_fcn(x); %% nonlinear constraints
     h = [hn; Ai * x - bi];          %% inequality constraints
     g = [gn; Ae * x - be];          %% equality constraints
     dh = [dhn Ai'];                 %% 1st derivative of inequalities
@@ -340,8 +340,8 @@ end
 %% grab some dimensions
 neq = size(g, 1);           %% number of equality constraints
 niq = size(h, 1);           %% number of inequality constraints
-neqnln = size(gn, 1);       %% number of non-linear equality constraints
-niqnln = size(hn, 1);       %% number of non-linear inequality constraints
+neqnln = size(gn, 1);       %% number of nonlinear equality constraints
+niqnln = size(hn, 1);       %% number of nonlinear inequality constraints
 nlt = length(ilt);          %% number of upper bounded linear inequalities
 ngt = length(igt);          %% number of lower bounded linear inequalities
 nbx = length(ibx);          %% number of doubly bounded linear inequalities
@@ -454,7 +454,7 @@ while (~converged && i < opt.max_it)
         f1 = f1 * opt.cost_mult;
         df1 = df1 * opt.cost_mult;
         if nonlinear
-            [hn1, gn1, dhn1, dgn1] = gh_fcn(x1); %% non-linear constraints
+            [hn1, gn1, dhn1, dgn1] = gh_fcn(x1); %% nonlinear constraints
             h1 = [hn1; Ai * x1 - bi];       %% inequality constraints
             g1 = [gn1; Ae * x1 - be];       %% equality constraints
             dh1 = [dhn1 Ai'];               %% 1st derivative of inequalities
@@ -488,7 +488,7 @@ while (~converged && i < opt.max_it)
             f1 = f_fcn(x1);                 %% cost
             f1 = f1 * opt.cost_mult;
             if nonlinear
-                [hn1, gn1] = gh_fcn(x1);    %% non-linear constraints
+                [hn1, gn1] = gh_fcn(x1);    %% nonlinear constraints
                 h1 = [hn1; Ai * x1 - bi];   %% inequality constraints
                 g1 = [gn1; Ae * x1 - be];   %% equality constraints
             else
@@ -538,7 +538,7 @@ while (~converged && i < opt.max_it)
     f = f * opt.cost_mult;
     df = df * opt.cost_mult;
     if nonlinear
-        [hn, gn, dhn, dgn] = gh_fcn(x); %% non-linear constraints
+        [hn, gn, dhn, dgn] = gh_fcn(x); %% nonlinear constraints
         h = [hn; Ai * x - bi];          %% inequality constraints
         g = [gn; Ae * x - be];          %% equality constraints
         dh = [dhn Ai'];                 %% 1st derivative of inequalities

@@ -20,7 +20,7 @@ function om = opf_model(mpc)
 %       add_costs
 %       add_vars
 %
-%   Return the number of linear constraints, non-linear constraints,
+%   Return the number of linear constraints, nonlinear constraints,
 %   variables or cost rows, optionally for a single named block:
 %       getN
 %
@@ -30,7 +30,7 @@ function om = opf_model(mpc)
 %   Build and return full set of linear constraints:
 %       linear_constraints
 %
-%   Return index structure for variables, linear and non-linear constraints
+%   Return index structure for variables, linear and nonlinear constraints
 %   and costs:
 %       get_idx
 %
@@ -72,15 +72,15 @@ function om = opf_model(mpc)
 %               .vu - vector of upper bounds
 %           .order  - cell array of names for variable blocks in the order
 %                     they appear in x
-%       .nln        - data for non-linear constraints that make up the
-%                     full set of non-linear constraints ghn(x)
+%       .nln        - data for nonlinear constraints that make up the
+%                     full set of nonlinear constraints ghn(x)
 %           .idx
 %               .i1 - starting index within ghn(x)
 %               .iN - ending index within ghn(x)
 %               .N  - number of elements in this constraint set
 %           .N      - total number of elements in ghn(x)
-%           .NS     - number of non-linear constraint sets or named blocks
-%           .order  - cell array of names for non-linear constraint blocks
+%           .NS     - number of nonlinear constraint sets or named blocks
+%           .order  - cell array of names for nonlinear constraint blocks
 %                     in the order they appear in ghn(x)
 %       .lin        - data for linear constraints that make up the
 %                     full set of linear constraints ghl(x)
