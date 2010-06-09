@@ -101,7 +101,7 @@ c = zeros(4,1);
 % t_is(lam.lower, [2.24;0;0;1.7667], 4, [t 'lam.lower']);
 % t_is(lam.upper, [0;0;0;0], 13, [t 'lam.upper']);
 
-t = 'constrained 2-d non-linear : ';
+t = 'constrained 2-d nonlinear : ';
 %% from http://en.wikipedia.org/wiki/Nonlinear_programming#2-dimensional_example
 f_fcn = @(x)f5(x);
 gh_fcn = @(x)gh5(x);
@@ -129,7 +129,7 @@ t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 % t_is(f, -2, 6, [t 'f']);
 % t_is(lam.ineqnonlin, [0;0.5], 6, [t 'lam.ineqnonlin']);
 
-t = 'constrained 3-d non-linear : ';
+t = 'constrained 3-d nonlinear : ';
 %% from http://en.wikipedia.org/wiki/Nonlinear_programming#3-dimensional_example
 f_fcn = @(x)f6(x);
 gh_fcn = @(x)gh6(x);
@@ -155,7 +155,7 @@ t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 % t_is(f, -5*sqrt(2), 8, [t 'f']);
 % t_is(lam.ineqnonlin, [0;sqrt(2)/2], 8, [t 'lam.ineqnonlin']);
 
-t = 'constrained 3-d non-linear (struct) : ';
+t = 'constrained 3-d nonlinear (struct) : ';
 p = struct('f_fcn', f_fcn, 'x0', x0, 'gh_fcn', gh_fcn, 'hess_fcn', hess_fcn);
 [x, f, s, out, lam] = mips(p);
 t_is(s, 1, 13, [t 'success']);
@@ -168,7 +168,7 @@ t_ok(isempty(lam.mu_u), [t 'lam.mu_u']);
 t_is(lam.lower, zeros(size(x)), 13, [t 'lam.lower']);
 t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 
-t = 'constrained 4-d non-linear : ';
+t = 'constrained 4-d nonlinear : ';
 %% Hock & Schittkowski test problem #71
 f_fcn = @(x)f7(x);
 gh_fcn = @(x)gh7(x);
@@ -247,7 +247,7 @@ function [f, df, d2f] = f4(x)
     d2f = H;
 
 
-%% constrained 2-d non-linear
+%% constrained 2-d nonlinear
 %% from http://en.wikipedia.org/wiki/Nonlinear_programming#2-dimensional_example
 function [f, df, d2f] = f5(x)
     c = -[1; 1];
@@ -265,7 +265,7 @@ function Lxx = hess5(x, lam, cost_mult)
     Lxx = 2*[-1 1]*mu*eye(2);
 
 
-%% constrained 3-d non-linear
+%% constrained 3-d nonlinear
 %% from http://en.wikipedia.org/wiki/Nonlinear_programming#3-dimensional_example
 function [f, df, d2f] = f6(x)
     f = -x(1)*x(2) - x(2)*x(3);
@@ -284,7 +284,7 @@ function Lxx = hess6(x, lam, cost_mult)
             [2*[1 1]*mu 0 0; 0 2*[-1 1]*mu 0; 0 0 2*[1 1]*mu];
 
 
-%% constrained 4-d non-linear
+%% constrained 4-d nonlinear
 %% Hock & Schittkowski test problem #71
 function [f, df, d2f] = f7(x)
     f = x(1)*x(4)*sum(x(1:3)) + x(3);
