@@ -16,8 +16,9 @@ Changes since 4.0b4
 -------------------
 
 6/25/10
-    - Added makeJac().
+    - Added makeJac(), a utility function to form the power flow Jacobian.
     - Modified makeYbus() to allow for single MATPOWER case struct as input.
+    - Added load2disp() to convert fixed loads to dispatchable loads.
 
 6/1/10
     - Added modcost() and tests for modcost() and totcost().
