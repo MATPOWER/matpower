@@ -1,12 +1,17 @@
 function [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch)
 %MAKEYBUS   Builds the bus admittance matrix and branch admittance matrices.
-%   [YBUS, YF, YT] = MAKEYBUS(BASEMVA, BUS, BRANCH) returns the full
-%   bus admittance matrix (i.e. for all buses) and the matrices YF and YT
-%   which, when multiplied by a complex voltage vector, yield the vector
-%   currents injected into each line from the "from" and "to" buses
-%   respectively of each line. Does appropriate conversions to p.u.
+%   [YBUS, YF, YT] = MAKEYBUS(MPC)
+%   [YBUS, YF, YT] = MAKEYBUS(BASEMVA, BUS, BRANCH)
+%   
+%   Returns the full bus admittance matrix (i.e. for all buses) and the
+%   matrices YF and YT which, when multiplied by a complex voltage vector,
+%   yield the vector currents injected into each line from the "from" and
+%   "to" buses respectively of each line. Does appropriate conversions to p.u.
+%   Inputs can be a MATPOWER case struct or individual BASEMVA, BUS and
+%   BRANCH values. Bus numbers must be consecutive beginning at 1 (internal
+%   ordering).
 %
-%   See also MAKESBUS.
+%   See also MAKEJAC, MAKESBUS, EXT2INT.
 
 %   MATPOWER
 %   $Id$
@@ -36,6 +41,13 @@ function [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch)
 %   MATLAB(R) or comparable environment containing parts covered
 %   under other licensing terms, the licensors of MATPOWER grant
 %   you additional permission to convey the resulting work.
+
+if nargin < 3
+    mpc     = baseMVA;
+    baseMVA = mpc.baseMVA;
+    bus     = mpc.bus;
+    branch  = mpc.branch;
+end
 
 %% constants
 nb = size(bus, 1);          %% number of buses
