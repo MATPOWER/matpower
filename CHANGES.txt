@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.0b4
 -------------------
 
+6/25/10
+    - Added makeJac().
+    - Modified makeYbus() to allow for single MATPOWER case struct as input.
+
 6/1/10
     - Added modcost() and tests for modcost() and totcost().
 
