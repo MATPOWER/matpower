@@ -54,9 +54,6 @@ if have_fcn('anon_fcns')
 else
     tests{end+1} = 't_mips6';
 end
-if have_fcn('ipopt')
-    tests{end+1} = 't_mips_ipopt';
-end
 tests{end+1} = 't_qps_matpower';
 tests{end+1} = 't_pf';
 if have_fcn('fmincon')
@@ -77,7 +74,6 @@ if have_fcn('tralmopf')
     tests{end+1} = 't_opf_tspopf_tralm';
 end
 if have_fcn('ipopt')
-    tests{end+1} = 't_opf_mips_ipopt';
     tests{end+1} = 't_opf_ipopt';
 end
 if have_fcn('constr')
@@ -95,7 +91,6 @@ end
 tests{end+1} = 't_opf_dc_mips';
 tests{end+1} = 't_opf_dc_mips_sc';
 if have_fcn('ipopt')
-    tests{end+1} = 't_opf_dc_mips_ipopt';
     tests{end+1} = 't_opf_dc_ipopt';
 end
 tests{end+1} = 't_opf_userfcns';
