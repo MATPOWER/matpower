@@ -198,5 +198,5 @@ if nargout > 0
   end
 elseif results0.success
   results0.et = et;
-  printpf(results0, et, 1, mpopt);
+  printpf(results0, 1, mpopt);
 end

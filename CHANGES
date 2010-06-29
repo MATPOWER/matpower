@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.0b4
 -------------------
 
+6/29/10
+    - Fixed bug in uopf. Was not calling printpf when called with no
+      output arguments. Thanks to V. Ravikumar Pandi.
+
 6/25/10
     - Added makeJac(), a utility function to form the power flow Jacobian.
     - Modified makeYbus() to allow for single MATPOWER case struct as input.
