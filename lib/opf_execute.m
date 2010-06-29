@@ -155,7 +155,7 @@ if ~isfield(raw, 'output') || ~isfield(raw.output, 'alg') || isempty(raw.output.
 end
 
 if success
-  if ~dc 
+  if ~dc
     %% copy bus voltages back to gen matrix
     results.gen(:, VG) = results.bus(results.gen(:, GEN_BUS), VM);
 
@@ -201,6 +201,14 @@ if success
     results.branch(iang, MU_ANGMIN) = results.mu.lin.l(ll.i1.ang:ll.iN.ang) * pi/180;
     results.branch(iang, MU_ANGMAX) = results.mu.lin.u(ll.i1.ang:ll.iN.ang) * pi/180;
   end
+else
+  %% assign empty g, dg, f, df, d2f if requested by RETURN_RAW_DER = 1
+  if ~dc && mpopt(52)
+    raw.dg = [];
+    raw.g = [];
+    raw.df = [];
+    raw.d2f = [];
+  end
 end
 
 %% assign values and limit shadow prices for variables
@@ -226,7 +234,7 @@ for k = 1:length(om_lin_order)
   end
 end
 
-%% assign shadow prices for non-linear constraints
+%% assign shadow prices for nonlinear constraints
 if ~dc
   om_nln_order = get(om, 'nln', 'order');
   for k = 1:length(om_nln_order)
