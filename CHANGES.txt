@@ -15,6 +15,14 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.0b4
 -------------------
 
+7/20/10
+    - Made some updates to extras/psse2matpower. Added/fixed some comments,
+      text output, switched to Parse::Text::parse_line for bus data to fix
+      problem caused by certain characters (e.g. / ,) in bus names. Fixed
+      error in switched shunt data (using data from wrong column). Modified
+      to no longer comment out isolated buses, since it doesn't remove
+      corresponding gens/branches.
+
 6/29/10
     - Fixed bug in uopf. Was not calling printpf when called with no
       output arguments. Thanks to V. Ravikumar Pandi.
