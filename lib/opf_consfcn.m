@@ -154,12 +154,13 @@ if nargout > 2
   neg_Cg = sparse(gen(:, GEN_BUS), 1:ng, -1, nb, ng);   %% Pbus w.r.t. Pg
                                                         %% Qbus w.r.t. Qg
   
-  %% construct Jacobian of equality constraints (power flow) and transpose it
-  dg = sparse(nxyz, 2*nb);
-  dg([iVa iVm iPg iQg], :) = [
+  %% construct Jacobian of equality (power flow) constraints and transpose it
+  dg = sparse(2*nb, nxyz);
+  dg(:, [iVa iVm iPg iQg]) = [
     real([dSbus_dVa dSbus_dVm]) neg_Cg sparse(nb, ng);  %% P mismatch w.r.t Va, Vm, Pg, Qg
     imag([dSbus_dVa dSbus_dVm]) sparse(nb, ng) neg_Cg;  %% Q mismatch w.r.t Va, Vm, Pg, Qg
-   ]';
+  ];
+  dg = dg';
 
   if nl2 > 0
     %% compute partials of Flows w.r.t. V
@@ -181,13 +182,13 @@ if nargout > 2
     [df_dVa, df_dVm, dt_dVa, dt_dVm] = ...
             dAbr_dV(dFf_dVa, dFf_dVm, dFt_dVa, dFt_dVm, Ff, Ft);
   
-    %% construct Jacobian of inequality constraints (branch limits)
-    %% and transpose it so fmincon likes it
-    dh = sparse(nxyz, 2*nl2);
-    dh([iVa iVm], :) = [
+    %% construct Jacobian of inequality (branch flow) constraints & transpose
+    dh = sparse(2*nl2, nxyz);
+    dh(:, [iVa iVm]) = [
       df_dVa, df_dVm;                     %% "from" flow limit
       dt_dVa, dt_dVm;                     %% "to" flow limit
-    ]';
+    ];
+    dh = dh';
   else
     dh = sparse(nxyz, 0);
   end
