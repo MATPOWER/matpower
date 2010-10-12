@@ -15,6 +15,11 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.0b4
 -------------------
 
+10/12/10
+    - Performance optimization in opf_consfcn.m. Assign sparse cols
+      then transpose instead of assigning sparse rows. Results in >2x
+      speed up for this function on case2935, ~10x on case42k.
+
 7/20/10
     - Made some updates to extras/psse2matpower. Added/fixed some comments,
       text output, switched to Parse::Text::parse_line for bus data to fix
