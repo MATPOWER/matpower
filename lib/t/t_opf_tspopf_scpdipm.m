@@ -56,7 +56,7 @@ end
 
 t0 = 'SCPDIPMOPF : ';
 mpopt = mpoption('OPF_VIOLATION', 1e-6, 'PDIPM_MAX_IT', 100, 'PDIPM_GRADTOL', 1e-7, ...
-        'PDIPM_COMPTOL', 1e-7, 'PDIPM_COSTTOL', 1e-8, 'SMOOTHING_RATIO', 0.03);
+        'PDIPM_COMPTOL', 5e-8, 'PDIPM_COSTTOL', 1e-8, 'SMOOTHING_RATIO', 0.03);
 mpopt = mpoption(mpopt, 'OUT_ALL', 0, 'VERBOSE', verbose, 'OPF_ALG', 545);
         
 if have_fcn('scpdipmopf')

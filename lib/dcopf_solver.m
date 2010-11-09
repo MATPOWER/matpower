@@ -113,7 +113,7 @@ nxyz = getN(om, 'var');     %% total number of control vars of all types
 %% piece-wise linear costs
 any_pwl = (ny > 0);
 if any_pwl
-    Npwl = sparse(ones(ny,1), vv.i1.y-1+ipwl, 1, 1, nxyz);       %% sum of y vars
+    Npwl = sparse(ones(ny,1), vv.i1.y:vv.iN.y, 1, 1, nxyz);     %% sum of y vars
     Hpwl = 0;
     Cpwl = 1;
     fparm_pwl = [1 0 0 1];

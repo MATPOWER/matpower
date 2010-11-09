@@ -15,6 +15,11 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.0b4
 -------------------
 
+11/9/10
+    - Fixed an indexing bug in dcopf_solver.m affecting cases with a mix
+      of piecewise linear and polynomial costs (unless the polynial costs
+      came after all of the pwl costs).
+
 10/12/10
     - Performance optimization in opf_consfcn.m. Assign sparse cols
       then transpose instead of assigning sparse rows. Results in >2x
