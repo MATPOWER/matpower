@@ -78,7 +78,7 @@ function [x, f, eflag, output, lambda] = qps_ipopt(H, c, A, l, u, xmin, xmax, x0
 %       [x, f, exitflag, output] = qps_ipopt(...)
 %       [x, f, exitflag, output, lambda] = qps_ipopt(...)
 %
-%   Example: (problem from from http://www.uc.edu/sashtml/iml/chap8/sect12.htm)
+%   Example: (problem from from http://www.jmu.edu/docs/sasdoc/sashtml/iml/chap8/sect12.htm)
 %       H = [   1003.1  4.3     6.3     5.9;
 %               4.3     2.2     2.1     3.9;
 %               6.3     2.1     3.5     4.8;
@@ -93,35 +93,36 @@ function [x, f, eflag, output, lambda] = qps_ipopt(H, c, A, l, u, xmin, xmax, x0
 %       opt = struct('verbose', 2);
 %       [x, f, s, out, lam] = qps_ipopt(H, c, A, l, u, xmin, [], x0, opt);
 %
-%   See also IPOPT, https://projects.coin-or.org/Ipopt/.
+%   See also IPOPT, IPOPT_OPTIONS.
+%   https://projects.coin-or.org/Ipopt/.
 
-%   MIPS
+%   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
 %   Copyright (c) 2010 by Power System Engineering Research Center (PSERC)
 %
-%   This file is part of MIPS.
+%   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 %
-%   MIPS is free software: you can redistribute it and/or modify
+%   MATPOWER is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published
 %   by the Free Software Foundation, either version 3 of the License,
 %   or (at your option) any later version.
 %
-%   MIPS is distributed in the hope that it will be useful,
+%   MATPOWER is distributed in the hope that it will be useful,
 %   but WITHOUT ANY WARRANTY; without even the implied warranty of
 %   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 %   GNU General Public License for more details.
 %
 %   You should have received a copy of the GNU General Public License
-%   along with MIPS. If not, see <http://www.gnu.org/licenses/>.
+%   along with MATPOWER. If not, see <http://www.gnu.org/licenses/>.
 %
 %   Additional permission under GNU GPL version 3 section 7
 %
-%   If you modify MIPS, or any covered work, to interface with
+%   If you modify MATPOWER, or any covered work, to interface with
 %   other modules (such as MATLAB code and MEX-files) available in a
 %   MATLAB(R) or comparable environment containing parts covered
-%   under other licensing terms, the licensors of MIPS grant
+%   under other licensing terms, the licensors of MATPOWER grant
 %   you additional permission to convey the resulting work.
 
 %% check for IPOPT

@@ -67,7 +67,7 @@ t_is(lam.lower, zeros(size(x)), 13, [t 'lam.lower']);
 t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 
 t = 'constrained 4-d QP : ';
-%% from http://www.uc.edu/sashtml/iml/chap8/sect12.htm
+%% from http://www.jmu.edu/docs/sasdoc/sashtml/iml/chap8/sect12.htm
 f_fcn = @(x)f4(x);
 x0 = [1; 0; 0; 1];
 A = [   1       1       1       1;
@@ -235,7 +235,7 @@ function [f, df, d2f] = f3(x)
 
 
 %% constrained 4-d QP
-%% from http://www.uc.edu/sashtml/iml/chap8/sect12.htm
+%% from http://www.jmu.edu/docs/sasdoc/sashtml/iml/chap8/sect12.htm
 function [f, df, d2f] = f4(x)
     H = [   1003.1  4.3     6.3     5.9;
             4.3     2.2     2.1     3.9;
