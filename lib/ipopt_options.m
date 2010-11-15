@@ -1,13 +1,13 @@
 function opt = ipopt_options(overrides, mpopt)
-%IPOPT_OPTIONS  Sets default options for IPOPT.
+%IPOPT_OPTIONS  Sets options for IPOPT.
 %
 %   OPT = IPOPT_OPTIONS
 %   OPT = IPOPT_OPTIONS(OVERRIDES)
 %   OPT = IPOPT_OPTIONS(OVERRIDES, FNAME)
 %   OPT = IPOPT_OPTIONS(OVERRIDES, MPOPT)
 %
-%   Sets the default values for the options.ipopt struct normally
-%   passed to IPOPT.
+%   Sets the values for the options.ipopt struct normally passed to
+%   IPOPT.
 %
 %   Inputs are all optional, second argument must be either a string
 %   (FNAME) or a vector (MPOPT):
