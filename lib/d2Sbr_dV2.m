@@ -20,6 +20,14 @@ function [Haa, Hav, Hva, Hvv] = d2Sbr_dV2(Cbr, Ybr, V, lam)
 %       Hav = (d/dVm (dSbr_dVa.')) * lam
 %       Hva = (d/dVa (dSbr_dVm.')) * lam
 %       Hvv = (d/dVm (dSbr_dVm.')) * lam
+%
+%   For more details on the derivations behind the derivative code used
+%   in MATPOWER information, see:
+%
+%   [TN2]  R. D. Zimmerman, "AC Power Flows, Generalized OPF Costs and
+%          their Derivatives using Complex Matrix Notation", MATPOWER
+%          Technical Note 2, February 2010.
+%             http://www.pserc.cornell.edu/matpower/TN2-OPF-Derivatives.pdf
 
 %   MATPOWER
 %   $Id$

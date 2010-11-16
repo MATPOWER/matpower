@@ -26,6 +26,14 @@ function [dIf_dVa, dIf_dVm, dIt_dVa, dIt_dVm, If, It] = dIbr_dV(branch, Yf, Yt, 
 %       [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
 %       [dIf_dVa, dIf_dVm, dIt_dVa, dIt_dVm, If, It] = ...
 %           dIbr_dV(branch, Yf, Yt, V);
+%
+%   For more details on the derivations behind the derivative code used
+%   in MATPOWER information, see:
+%
+%   [TN2]  R. D. Zimmerman, "AC Power Flows, Generalized OPF Costs and
+%          their Derivatives using Complex Matrix Notation", MATPOWER
+%          Technical Note 2, February 2010.
+%             http://www.pserc.cornell.edu/matpower/TN2-OPF-Derivatives.pdf
 
 %   MATPOWER
 %   $Id$
