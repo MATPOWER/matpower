@@ -34,25 +34,31 @@ if nargin < 1
     quiet = 0;
 end
 
-algs = [100 200 250 300 400];
-names = {'BPMPD_MEX', 'MIPS', 'sc-MIPS', 'quadprog', 'ipopt'};
-check = {'bpmpd', [], [], 'quadprog', 'ipopt'};
+algs = [100 200 250 400 300 500];
+names = {'BPMPD_MEX', 'MIPS', 'sc-MIPS', 'IPOPT', 'quadprog', 'CPLEX'};
+check = {'bpmpd', [], [], 'ipopt', 'quadprog', 'cplex'};
 
 n = 35;
 t_begin(n*length(algs), quiet);
-
-opt.verbose = 0;
-opt.mips_opt.comptol = 1e-8;
 
 for k = 1:length(algs)
     if ~isempty(check{k}) && ~have_fcn(check{k})
         t_skip(n, sprintf('%s not installed', names{k}));
     else
-        opt.alg = algs(k);
+        opt = struct('verbose', 0, 'alg', algs(k));
+        if strcmp(names{k}, 'MIPS') || strcmp(names{k}, 'sc-MIPS')
+            opt.mips_opt.comptol = 1e-8;
+        end
         if strcmp(names{k}, 'quadprog')
             opt.ot_opt = optimset('LargeScale', 'off');
         end
-        
+        if strcmp(names{k}, 'CPLEX')
+%           alg = 0;        %% default uses barrier method with NaN bug in lower lim multipliers
+            alg = 2;        %% use dual simplex
+            mpopt = mpoption('CPLEX_LPMETHOD', alg, 'CPLEX_QPMETHOD', min([4 alg]));
+            opt.cplex_opt = cplex_options([], mpopt);
+        end
+
         t = sprintf('%s - 3-d LP : ', names{k});
         %% example from 'doc linprog'
         c = [-5; -4; -6];
@@ -108,7 +114,7 @@ for k = 1:length(algs)
         t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 
         t = sprintf('%s - constrained 4-d QP : ', names{k});
-        %% from http://www.uc.edu/sashtml/iml/chap8/sect12.htm
+        %% from http://www.jmu.edu/docs/sasdoc/sashtml/iml/chap8/sect12.htm
         H = [   1003.1  4.3     6.3     5.9;
                 4.3     2.2     2.1     3.9;
                 6.3     2.1     3.5     4.8;

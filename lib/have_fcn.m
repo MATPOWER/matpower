@@ -6,6 +6,7 @@ function TorF = have_fcn(tag)
 %   Possible values for input TAG and their meanings:
 %       bpmpd       - BP, BPMPD interior point solver
 %       constr      - CONSTR, solver from Optimization Toolbox 1.x/2.x
+%       cplex       - CPLEX, IBM ILOG CPLEX Optimizer
 %       fmincon     - FMINCON, solver from Optimization Toolbox 2.x +
 %       ipopt       - IPOPT, NLP solver (https://projects.coin-or.org/Ipopt/)
 %       linprog     - LINPROG, LP solver from Optimization Toolbox 2.x +
@@ -60,6 +61,20 @@ switch tag
         TorF = exist('bp', 'file') == 3;
     case 'constr'
         TorF = exist('constr', 'file') == 2 && exist('foptions', 'file');
+    case 'cplex'
+        TorF = 0;
+        if exist('cplexqp', 'file')
+            %% it's installed, but we need to check for MEX for this arch
+            p = which('cplexqp');   %% get the path
+            len = length(p) - length('cplexqp.p');
+            w = what(p(1:len));             %% look for mex files on the path
+            for k = 1:length(w.mex)
+                if regexp(w.mex{k}, 'cplexlink[^\.]*');
+                    TorF = 1;
+                    break;
+                end
+            end
+        end
     case 'fmincon'
         TorF = exist('fmincon', 'file') == 2;
     case 'ipopt'

@@ -85,6 +85,9 @@ if have_fcn('bpmpd')
     tests{end+1} = 't_opf_lp_spf';
     tests{end+1} = 't_opf_dc_bpmpd';
 end
+if have_fcn('cplex')
+    tests{end+1} = 't_opf_dc_cplex';
+end
 if have_fcn('quadprog')
     tests{end+1} = 't_opf_dc_ot';
 end

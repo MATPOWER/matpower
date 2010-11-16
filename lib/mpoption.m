@@ -87,7 +87,7 @@ function [options, names] = mpoption(varargin)
 %                                   even if specified           [   0 or 1  ]
 %       26 - OPF_ALG_DC, 0          solver to use for DC OPF
 %           [    0 - choose default solver based on availability in the     ]
-%           [        following order, 100, 200                              ]
+%           [        following order, 100, 500, 200                              ]
 %           [  100 - BPMPD, requires optional MEX-based BPMPD_MEX package   ]
 %           [        available from: http://www.pserc.cornell.edu/bpmpd/    ]
 %           [  200 - MIPS, MATLAB Interior Point Solver                     ]
@@ -96,6 +96,7 @@ function [options, names] = mpoption(varargin)
 %           [  300 - MATLAB Optimization Toolbox, QUADPROG, LINPROG         ]
 %           [  400 - IPOPT, requires MEX interface to IPOPT solver          ]
 %                    available from: https://projects.coin-or.org/Ipopt/    ]
+%           [  500 - CPLEX, requires MEX interface to CPLEX solver          ]
 %   output options
 %       31 - VERBOSE, 1             amount of progress info printed
 %           [   0 - print no progress info                                  ]
@@ -187,6 +188,23 @@ function [options, names] = mpoption(varargin)
 %       92 - TRALM_MINOR_IT, 100    maximum number of minor iterations
 %       93 - SMOOTHING_RATIO, 0.04  piecewise linear curve smoothing ratio
 %                                   used in SC-PDIPM and TRALM
+%
+%   CPLEX options
+%       95 - CPLEX_LPMETHOD, 0      solution algorithm for continuous LPs
+%           [   0 - automatic: let CPLEX choose                             ]
+%           [   1 - primal simplex                                          ]
+%           [   2 - dual simplex                                            ]
+%           [   3 - network simplex                                         ]
+%           [   4 - barrier                                                 ]
+%           [   5 - sifting                                                 ]
+%           [   6 - concurrent (dual, barrier, and primal)                  ]
+%       96 - CPLEX_QPMETHOD, 0      solution algorithm for continuous QPs
+%           [   0 - automatic: let CPLEX choose                             ]
+%           [   1 - primal simplex optimizer                                ]
+%           [   2 - dual simplex optimizer                                  ]
+%           [   3 - network optimizer                                       ]
+%           [   4 - barrier optimizer                                       ]
+%       97 - CPLEX_OPT, 0           See CPLEX_OPTIONS for details
 
 %   deprecated options
 %       43 - OUT_RAW, 0             print raw data for Perl database
@@ -335,7 +353,13 @@ else                    %% even number of parameters
         1e-5;   %% 90 - TRALM_COSTTOL
         40;     %% 91 - TRALM_MAJOR_IT
         100;    %% 92 - TRALM_MINOR_IT
-        0.04;   %% 93 - SMOOTHING_RATIO        
+        0.04;   %% 93 - SMOOTHING_RATIO
+        0;      %% 94 - RESERVED94
+        
+        %% CPLEX options
+        0;      %% 95 - CPLEX_LPMETHOD
+        0;      %% 96 - CPLEX_QPMETHOD
+        0;      %% 97 - CPLEX_OPT
     ];
 end
 
@@ -451,6 +475,13 @@ names = char(   names, ...
                 'TRALM_MAJOR_IT', ...       %% 91
                 'TRALM_MINOR_IT', ...       %% 92
                 'SMOOTHING_RATIO'   );      %% 93
+
+%% CPLEX options
+names = char(   names, ...
+                'RESERVED94', ...           %% 94
+                'CPLEX_LPMETHOD', ...       %% 95
+                'CPLEX_QPMETHOD', ...       %% 96
+                'CPLEX_OPT'   );            %% 97
 
 %%-----  process parameters  -----
 while i <= nargin

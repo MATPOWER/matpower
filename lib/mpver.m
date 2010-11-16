@@ -50,7 +50,7 @@ function rv = mpver(varargin)
 v{1} = struct(  'Name',     'MATPOWER', ... 
                 'Version',  '4.0b4+', ...
                 'Release',  '', ...
-                'Date',     '28-Jul-2010' );
+                'Date',     '16-Nov-2010' );
 if nargout > 0
     if nargin > 0
         rv = v{1};
@@ -87,6 +87,12 @@ else
         end
     else
         fprintf('BPMPD_MEX              -- not installed --\n');
+    end
+    if have_fcn('cplex')
+    	cplex = Cplex('null');
+    	fprintf('%-22s Version %-9s  %11s   %s\n', 'CPLEX', cplex.getVersion, '', computer);
+    else
+        fprintf('CPLEX                  -- not installed --\n');
     end
     if have_fcn('ipopt')
         fprintf('IPOPT                  Version <unknown>\n');

@@ -196,6 +196,8 @@ if alg == 200 || alg == 250
                             'cost_mult', 1  );
 elseif alg == 400
 	opt.ipopt_opt = ipopt_options([], mpopt);
+elseif alg == 500
+	opt.cplex_opt = cplex_options([], mpopt);
 end
 
 %%-----  run opf  -----

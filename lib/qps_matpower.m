@@ -26,7 +26,7 @@ function [x, f, eflag, output, lambda] = qps_matpower(H, c, A, l, u, xmin, xmax,
 %           all of which are also optional (default values shown in
 %           parentheses)
 %           alg (0) - determines which solver to use
-%                 0 = use first available solver
+%                 0 = automatic, first available of BPMPD_MEX, CPLEX, MIPS
 %               100 = BPMPD_MEX
 %               200 = MIPS, MATLAB Interior Point Solver
 %                     pure MATLAB implementation of a primal-dual
@@ -34,6 +34,7 @@ function [x, f, eflag, output, lambda] = qps_matpower(H, c, A, l, u, xmin, xmax,
 %               250 = MIPS-sc, a step controlled variant of MIPS
 %               300 = Optimization Toolbox, QUADPROG or LINPROG
 %               400 = IPOPT
+%               500 = CPLEX
 %           verbose (0) - controls level of progress output displayed
 %               0 = no progress output
 %               1 = some progress output
@@ -41,6 +42,7 @@ function [x, f, eflag, output, lambda] = qps_matpower(H, c, A, l, u, xmin, xmax,
 %           max_it (0) - maximum number of iterations allowed
 %               0 = use algorithm default
 %           bp_opt - options vector for BP
+%           cplex_opt - options struct for CPLEX
 %           ipopt_opt - options struct for IPOPT
 %           mips_opt - options struct for QPS_MIPS
 %           ot_opt - options struct for QUADPROG/LINPROG
@@ -86,7 +88,7 @@ function [x, f, eflag, output, lambda] = qps_matpower(H, c, A, l, u, xmin, xmax,
 %       [x, f, exitflag, output] = qps_matpower(...)
 %       [x, f, exitflag, output, lambda] = qps_matpower(...)
 %
-%   Example: (problem from from http://www.uc.edu/sashtml/iml/chap8/sect12.htm)
+%   Example: (problem from from http://www.jmu.edu/docs/sasdoc/sashtml/iml/chap8/sect12.htm)
 %       H = [   1003.1  4.3     6.3     5.9;
 %               4.3     2.2     2.1     3.9;
 %               6.3     2.1     3.5     4.8;
@@ -170,10 +172,12 @@ else
     verbose = 0;
 end
 if alg == 0
-    if have_fcn('bpmpd')    %% use BPMPD_MEX by default if available
-        alg = 100;          %% BPMPD_MEX
-    else
-        alg = 200;          %% MIPS
+    if have_fcn('bpmpd')        %% use BPMPD_MEX by default if available
+        alg = 100;
+    elseif have_fcn('cplex')    %% if not, then CPLEX if available
+        alg = 500;
+    else                        %% otherwise MIPS
+        alg = 200;
     end
 end
 
@@ -226,6 +230,9 @@ elseif alg == 300                   %% use QUADPROG or LINPROG from Opt Tbx ver 
 elseif alg == 400                   %% use IPOPT
     [x, f, eflag, output, lambda] = ...
         qps_ipopt(H, c, A, l, u, xmin, xmax, x0, opt);
+elseif alg == 500                   %% use CPLEX
+    [x, f, eflag, output, lambda] = ...
+        qps_cplex(H, c, A, l, u, xmin, xmax, x0, opt);
 else
     error('qps_matpower: %d is not a valid algorithm code', alg);
 end
