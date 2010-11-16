@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.0b4
 -------------------
 
+11/16/10
+    - Fixed bug in opf_setup() where indexing data for branch angle
+      difference limits was not being saved in the case of DC OPF.
+    
 11/9/10
     - Fixed an indexing bug in dcopf_solver.m affecting cases with a mix
       of piecewise linear and polynomial costs (unless the polynial costs

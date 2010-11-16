@@ -217,6 +217,7 @@ end
 if dc
   om = userdata(om, 'Bf', Bf);
   om = userdata(om, 'Pfinj', Pfinj);
+  om = userdata(om, 'iang', iang);
   om = add_vars(om, 'Va', nb, Va, Val, Vau);
   om = add_vars(om, 'Pg', ng, Pg, Pmin, Pmax);
   om = add_constraints(om, 'Pmis', Amis, bmis, bmis, {'Va', 'Pg'}); %% nb
