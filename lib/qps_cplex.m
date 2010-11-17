@@ -198,11 +198,11 @@ if ~isempty(opt) && isfield(opt, 'verbose') && ~isempty(opt.verbose)
 else
     verbose = 0;
 end
-if ~isempty(opt) && isfield(opt, 'max_it') && ~isempty(opt.max_it)
-    max_it = opt.max_it;
-else
-    max_it = 0;
-end
+% if ~isempty(opt) && isfield(opt, 'max_it') && ~isempty(opt.max_it)
+%     max_it = opt.max_it;
+% else
+%     max_it = 0;
+% end
 
 %% split up linear constraints
 ieq = find( abs(u-l) <= eps );          %% equality
@@ -233,9 +233,9 @@ cplex_opt.mip.display       = vrb;
 cplex_opt.sifting.display   = vrb;
 cplex_opt.simplex.display   = vrb;
 cplex_opt.tune.display      = vrb;
-if max_it
+% if max_it
 %     cplex_opt.    %% not sure what to set here
-end
+% end
 
 if isempty(Ai) && isempty(Ae)
     unconstrained = 1;
