@@ -87,7 +87,7 @@ function [options, names] = mpoption(varargin)
 %                                   even if specified           [   0 or 1  ]
 %       26 - OPF_ALG_DC, 0          solver to use for DC OPF
 %           [    0 - choose default solver based on availability in the     ]
-%           [        following order, 100, 500, 200                              ]
+%           [        following order, 100, 500, 200                         ]
 %           [  100 - BPMPD, requires optional MEX-based BPMPD_MEX package   ]
 %           [        available from: http://www.pserc.cornell.edu/bpmpd/    ]
 %           [  200 - MIPS, MATLAB Interior Point Solver                     ]
