@@ -1,5 +1,5 @@
-function t_opf_dc_ot(quiet)
-%T_OPF_DC_OT  Tests for DC optimal power flow using Opt Tbx solvers.
+function t_opf_dc_cplex(quiet)
+%T_OPF_DC_CPLEX  Tests for DC optimal power flow using CPLEX solver.
 
 %   MATPOWER
 %   $Id$
@@ -54,7 +54,6 @@ else
     verbose = 0;
 end
 
-alg = 4;			%% use the barrier method
 mpopt = mpoption('OUT_ALL', 0, 'VERBOSE', verbose);
 mpopt = mpoption(mpopt, 'OPF_ALG_DC', 500);
 
