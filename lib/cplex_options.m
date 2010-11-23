@@ -17,8 +17,8 @@ function opt = cplex_options(overrides, mpopt)
 %           options are set to modify them. Calling syntax is:
 %               MODIFIED_OPT = FNAME(DEFAULT_OPT);
 %       MPOPT - MATPOWER options vector, used to set:
-%           feasibility tol  - based on MPOPT)16) (OPF_VIOLATION)
-%           print_level      - based on MPOPT(31) (VERBOSE)
+%           feasibility tol  - based on MPOPT(16) (OPF_VIOLATION)
+%           output verbosity - based on MPOPT(31) (VERBOSE)
 %           LP solver alg    - based on MPOPT(95) (CPLEX_LPMETHOD)
 %           QP solver alg    - based on MPOPT(96) (CPLEX_QPMETHOD)
 %           user option file - based on MPOPT(97) (CPLEX_OPT)
@@ -94,7 +94,8 @@ if nargin > 1 && ~isempty(mpopt)
         have_mpopt = 0;
     else                    %% 2nd arg is MPOPT (MATPOWER options vector)
         have_mpopt = 1;
-        feastol = mpopt(16);    %% OPF_VIOLATION
+        %% (make default OPF_VIOLATION correspond to default CPLEX feastol)
+        feastol = mpopt(16)/5;  %% OPF_VIOLATION
         verbose = mpopt(31);    %% VERBOSE
         lpmethod = mpopt(95);   %% CPLEX_LPMETHOD
         qpmethod = mpopt(96);   %% CPLEX_QPMETHOD
