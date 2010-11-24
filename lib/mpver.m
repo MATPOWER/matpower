@@ -83,48 +83,70 @@ else
         if exist('bpver', 'file') == 2
             bpver;
         else
-            fprintf('BPMPD_MEX              Version 2.21 or earlier\n');
+            fprintf('%-22s Version 2.21 or earlier\n', 'BPMPD_MEX');
         end
     else
-        fprintf('BPMPD_MEX              -- not installed --\n');
+        fprintf('%-22s BPMPD_MEX              -- not installed --\n');
     end
     if have_fcn('cplex')
     	cplex = Cplex('null');
-    	fprintf('%-22s Version %-9s  %11s   %s\n', 'CPLEX', cplex.getVersion, '', computer);
+    	fprintf('%-22s Version %-10s %-11s   %s\n', 'CPLEX', cplex.getVersion, '', computer);
     else
-        fprintf('CPLEX                  -- not installed --\n');
+        fprintf('%-22s -- not installed --\n', 'CPLEX');
     end
     if have_fcn('ipopt')
-        fprintf('IPOPT                  Version <unknown>\n');
+    	str = evalc('qps_ipopt([],1,1,1,1,1,1,1,struct(''verbose'', 2))');
+    	pat = 'Ipopt version ([^\s,]+)';
+    	[s,e,tE,m,t] = regexp(str, pat);
+    	if isempty(t)
+    		vn = '<unknown>';
+    	else
+    		vn = t{1}{1};
+    	end
+        fprintf('%-22s Version %-10s %-11s   %s\n', 'IPOPT', vn, '', computer);
     else
-        fprintf('IPOPT                  -- not installed --\n');
+        fprintf('%-22s -- not installed --\n', 'IPOPT');
     end
     if have_fcn('minopf')
         if exist('minopfver', 'file') == 2
             minopfver;
         else
-            fprintf('MINOPF                 Version 3.0b2 or earlier\n');
+            fprintf('%-22s Version 3.0b2 or earlier\n', 'MINOPF');
         end
     else
-        fprintf('MINOPF                 -- not installed --\n');
+        fprintf('%-22s -- not installed --\n', 'MINOPF');
+    end
+    if have_fcn('mosek')
+    	pat = 'Version (\.*\d)+.*Build date: (\d\d\d\d-\d\d-\d\d)';
+    	[s,e,tE,m,t] = regexp(evalc('mosekopt'), pat);
+      	if isempty(t)
+    		vn = '<unknown>';
+    		d  = '';
+    	else
+    		vn = t{1}{1};
+    		d  = datestr(t{1}{2}, 'dd-mmm-yyyy');
+    	end
+ 	    fprintf('%-22s Version %-10s %-11s   %s\n', 'MOSEK', vn, d, computer);
+    else
+        fprintf('%-22s -- not installed --\n', 'MOSEK');
     end
     if have_fcn('pdipmopf')
         pdipmopfver;
     else
-        fprintf('PDIPMOPF               -- not installed --\n');
+        fprintf('%-22s -- not installed --\n', 'PDIPMOPF');
     end
     if have_fcn('scpdipmopf')
         scpdipmopfver;
     else
-        fprintf('SCPDIPMOPF             -- not installed --\n');
+        fprintf('%-22s -- not installed --\n', 'SCPDIPMOPF');
     end
     if have_fcn('tralmopf')
         tralmopfver;
     else
-        fprintf('TRALMOPF               -- not installed --\n');
+        fprintf('%-22s -- not installed --\n', 'TRALMOPF');
     end
 
-    fprintf('Architecture:          %s\n\n', computer);
+    fprintf('%-22s %s\n\n', 'Architecture:', computer);
     
     fprintf('  MATPOWER %s is distributed under the GNU General Public License.\n', v{1}.Version);
     fprintf('  Please see the LICENSE and COPYING files for details.\n\n');

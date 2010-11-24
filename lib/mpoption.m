@@ -87,7 +87,7 @@ function [options, names] = mpoption(varargin)
 %                                   even if specified           [   0 or 1  ]
 %       26 - OPF_ALG_DC, 0          solver to use for DC OPF
 %           [    0 - choose default solver based on availability in the     ]
-%           [        following order, 100, 500, 200                         ]
+%           [        following order, 600, 100, 500, 200                    ]
 %           [  100 - BPMPD, requires optional MEX-based BPMPD_MEX package   ]
 %           [        available from: http://www.pserc.cornell.edu/bpmpd/    ]
 %           [  200 - MIPS, MATLAB Interior Point Solver                     ]
@@ -96,7 +96,9 @@ function [options, names] = mpoption(varargin)
 %           [  300 - MATLAB Optimization Toolbox, QUADPROG, LINPROG         ]
 %           [  400 - IPOPT, requires MEX interface to IPOPT solver          ]
 %                    available from: https://projects.coin-or.org/Ipopt/    ]
-%           [  500 - CPLEX, requires MEX interface to CPLEX solver          ]
+%           [  500 - CPLEX, requires Matlab interface to CPLEX solver       ]
+%           [  600 - MOSEK, requires Matlab interface to MOSEK solver       ]
+%                    available from: http://www.mosek.com/                  ]
 %   output options
 %       31 - VERBOSE, 1             amount of progress info printed
 %           [   0 - print no progress info                                  ]
@@ -205,7 +207,27 @@ function [options, names] = mpoption(varargin)
 %           [   3 - network optimizer                                       ]
 %           [   4 - barrier optimizer                                       ]
 %       97 - CPLEX_OPT, 0           See CPLEX_OPTIONS for details
-
+%
+%   MOSEK options
+%       111 - MOSEK_LP_ALG, 0       solution algorithm for continuous LPs
+%                                       (MSK_IPAR_OPTIMIZER)
+%           [   0 - automatic: let MOSEK choose                             ]
+%           [   1 - interior point                                          ]
+%           [   4 - primal simplex                                          ]
+%           [   5 - dual simplex                                            ]
+%           [   6 - primal dual simplex                                     ]
+%           [   7 - automatic simplex (MOSEK chooses which simplex method)  ]
+%           [   10 - concurrent                                             ]
+%       112 - MOSEK_MAX_IT, 0 (400)     interior point max iterations
+%                                           (MSK_IPAR_INTPNT_MAX_ITERATIONS)
+%       113 - MOSEK_GAP_TOL, 0 (1e-8)   interior point relative gap tolerance
+%                                           (MSK_DPAR_INTPNT_TOL_REL_GAP)
+%       114 - MOSEK_MAX_TIME, 0 (-1)    maximum time allowed for solver
+%                                           (MSK_DPAR_OPTIMIZER_MAX_TIME)
+%       115 - MOSEK_NUM_THREADS, 0 (1)  maximum number of threads to use
+%                                           (MSK_IPAR_INTPNT_NUM_THREADS)
+%       116 - MOSEK_OPT, 0              See MOSEK_OPTIONS for details
+%
 %   deprecated options
 %       43 - OUT_RAW, 0             print raw data for Perl database
 %                                   interface code              [   0 or 1  ]
@@ -360,6 +382,27 @@ else                    %% even number of parameters
         0;      %% 95 - CPLEX_LPMETHOD
         0;      %% 96 - CPLEX_QPMETHOD
         0;      %% 97 - CPLEX_OPT
+        0;      %% 98 - RESERVED98
+        0;      %% 99 - RESERVED99
+        0;      %% 100 - RESERVED100
+        0;      %% 101 - RESERVED101
+        0;      %% 102 - RESERVED102
+        0;      %% 103 - RESERVED103
+        0;      %% 104 - RESERVED104
+        0;      %% 105 - RESERVED105
+        0;      %% 106 - RESERVED106
+        0;      %% 107 - RESERVED107
+        0;      %% 108 - RESERVED108
+        0;      %% 109 - RESERVED109
+        0;      %% 110 - RESERVED110
+
+        %% MOSEK options
+        0;      %% 111 - MOSEK_LP_ALG
+        0;      %% 112 - MOSEK_MAX_IT
+        0;      %% 113 - MOSEK_GAP_TOL
+        0;      %% 114 - MOSEK_MAX_TIME
+        0;      %% 115 - MOSEK_NUM_THREADS
+        0;      %% 116 - MOSEK_OPT
     ];
 end
 
@@ -481,7 +524,29 @@ names = char(   names, ...
                 'RESERVED94', ...           %% 94
                 'CPLEX_LPMETHOD', ...       %% 95
                 'CPLEX_QPMETHOD', ...       %% 96
-                'CPLEX_OPT'   );            %% 97
+                'CPLEX_OPT', ...            %% 97
+                'RESERVED98', ...           %% 98
+                'RESERVED99', ...           %% 99
+                'RESERVED100', ...          %% 100
+                'RESERVED101', ...          %% 101
+                'RESERVED102', ...          %% 102
+                'RESERVED103', ...          %% 103
+                'RESERVED104', ...          %% 104
+                'RESERVED105', ...          %% 105
+                'RESERVED106', ...          %% 106
+                'RESERVED107', ...          %% 107
+                'RESERVED108', ...          %% 108
+                'RESERVED109', ...          %% 109
+                'RESERVED110'   );          %% 110
+
+%% MOSEK options
+names = char(   names, ...
+                'MOSEK_LP_ALG', ...         %% 111
+                'MOSEK_MAX_IT', ...         %% 112
+                'MOSEK_GAP_TOL', ...        %% 113
+                'MOSEK_MAX_TIME', ...       %% 114
+                'MOSEK_NUM_THREADS', ...    %% 115
+                'MOSEK_OPT' );              %% 116
 
 %%-----  process parameters  -----
 while i <= nargin

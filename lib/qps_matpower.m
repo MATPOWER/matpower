@@ -35,6 +35,7 @@ function [x, f, eflag, output, lambda] = qps_matpower(H, c, A, l, u, xmin, xmax,
 %               300 = Optimization Toolbox, QUADPROG or LINPROG
 %               400 = IPOPT
 %               500 = CPLEX
+%               600 = MOSEK
 %           verbose (0) - controls level of progress output displayed
 %               0 = no progress output
 %               1 = some progress output
@@ -45,6 +46,7 @@ function [x, f, eflag, output, lambda] = qps_matpower(H, c, A, l, u, xmin, xmax,
 %           cplex_opt - options struct for CPLEX
 %           ipopt_opt - options struct for IPOPT
 %           mips_opt - options struct for QPS_MIPS
+%           mosek_opt - options struct for MOSEK
 %           ot_opt - options struct for QUADPROG/LINPROG
 %       PROBLEM : The inputs can alternatively be supplied in a single
 %           PROBLEM struct with fields corresponding to the input arguments
@@ -172,7 +174,9 @@ else
     verbose = 0;
 end
 if alg == 0
-    if have_fcn('bpmpd')        %% use BPMPD_MEX by default if available
+    if have_fcn('mosek')        %% use MOSEK by default if available
+        alg = 600;
+    elseif have_fcn('bpmpd')    %% if not, then BPMPD_MEX if available
         alg = 100;
     elseif have_fcn('cplex')    %% if not, then CPLEX if available
         alg = 500;
@@ -182,59 +186,63 @@ if alg == 0
 end
 
 %%----- call the appropriate solver  -----
-if alg == 100                       %% use BPMPD_MEX
-    [x, f, eflag, output, lambda] = ...
-        qps_bpmpd(H, c, A, l, u, xmin, xmax, x0, opt);
-
-    if eflag == -99
-        if verbose
-            fprintf('         Retrying with QPS_MIPS solver ...\n\n');
-        end
-        %% save (incorrect) solution from BPMPD
-        bpmpd = struct('x', x, 'f', f, 'eflag', eflag, ...
-                        'output', output, 'lambda', lambda);
-        opt.alg = 200;
+switch alg
+    case 100                    %% use BPMPD_MEX
         [x, f, eflag, output, lambda] = ...
-            qps_matpower(H, c, A, l, u, xmin, xmax, x0, opt);
-        output.bpmpd = bpmpd;
-    end
-elseif alg == 200 || alg == 250     %% use MIPS or sc-MIPS
-    %% set up options
-    if ~isempty(opt) && isfield(opt, 'mips_opt') && ~isempty(opt.mips_opt)
-        mips_opt = opt.mips_opt;
-    else
-        mips_opt = [];
-    end
-    if ~isempty(opt) && isfield(opt, 'max_it') && ~isempty(opt.max_it)
-        mips_opt.max_it = opt.max_it;
-    end
-    if alg == 200
-        mips_opt.step_control = 0;
-    else
-        mips_opt.step_control = 1;
-    end
-    mips_opt.verbose = verbose;
+            qps_bpmpd(H, c, A, l, u, xmin, xmax, x0, opt);
     
-    if have_fcn('anon_fcns')
-        solver = 'qps_mips';
-    else
-        solver = 'qps_mips6';
-    end
-
-    %% call solver
-    [x, f, eflag, output, lambda] = ...
-        feval(solver, H, c, A, l, u, xmin, xmax, x0, mips_opt);
-elseif alg == 300                   %% use QUADPROG or LINPROG from Opt Tbx ver 2.x+
-    [x, f, eflag, output, lambda] = ...
-        qps_ot(H, c, A, l, u, xmin, xmax, x0, opt);
-elseif alg == 400                   %% use IPOPT
-    [x, f, eflag, output, lambda] = ...
-        qps_ipopt(H, c, A, l, u, xmin, xmax, x0, opt);
-elseif alg == 500                   %% use CPLEX
-    [x, f, eflag, output, lambda] = ...
-        qps_cplex(H, c, A, l, u, xmin, xmax, x0, opt);
-else
-    error('qps_matpower: %d is not a valid algorithm code', alg);
+        if eflag == -99
+            if verbose
+                fprintf('         Retrying with QPS_MIPS solver ...\n\n');
+            end
+            %% save (incorrect) solution from BPMPD
+            bpmpd = struct('x', x, 'f', f, 'eflag', eflag, ...
+                            'output', output, 'lambda', lambda);
+            opt.alg = 200;
+            [x, f, eflag, output, lambda] = ...
+                qps_matpower(H, c, A, l, u, xmin, xmax, x0, opt);
+            output.bpmpd = bpmpd;
+        end
+    case {200, 250}             %% use MIPS or sc-MIPS
+        %% set up options
+        if ~isempty(opt) && isfield(opt, 'mips_opt') && ~isempty(opt.mips_opt)
+            mips_opt = opt.mips_opt;
+        else
+            mips_opt = [];
+        end
+        if ~isempty(opt) && isfield(opt, 'max_it') && ~isempty(opt.max_it)
+            mips_opt.max_it = opt.max_it;
+        end
+        if alg == 200
+            mips_opt.step_control = 0;
+        else
+            mips_opt.step_control = 1;
+        end
+        mips_opt.verbose = verbose;
+        
+        if have_fcn('anon_fcns')
+            solver = 'qps_mips';
+        else
+            solver = 'qps_mips6';
+        end
+    
+        %% call solver
+        [x, f, eflag, output, lambda] = ...
+            feval(solver, H, c, A, l, u, xmin, xmax, x0, mips_opt);
+    case 300                    %% use QUADPROG or LINPROG from Opt Tbx ver 2.x+
+        [x, f, eflag, output, lambda] = ...
+            qps_ot(H, c, A, l, u, xmin, xmax, x0, opt);
+    case 400                    %% use IPOPT
+        [x, f, eflag, output, lambda] = ...
+            qps_ipopt(H, c, A, l, u, xmin, xmax, x0, opt);
+    case 500                    %% use CPLEX
+        [x, f, eflag, output, lambda] = ...
+            qps_cplex(H, c, A, l, u, xmin, xmax, x0, opt);
+    case 600                    %% use MOSEK
+        [x, f, eflag, output, lambda] = ...
+            qps_mosek(H, c, A, l, u, xmin, xmax, x0, opt);
+    otherwise
+        error('qps_matpower: %d is not a valid algorithm code', alg);
 end
 if ~isfield(output, 'alg') || isempty(output.alg)
     output.alg = alg;

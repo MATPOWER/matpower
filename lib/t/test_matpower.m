@@ -88,13 +88,16 @@ end
 if have_fcn('cplex')
     tests{end+1} = 't_opf_dc_cplex';
 end
-if have_fcn('quadprog')
-    tests{end+1} = 't_opf_dc_ot';
+if have_fcn('ipopt')
+    tests{end+1} = 't_opf_dc_ipopt';
 end
 tests{end+1} = 't_opf_dc_mips';
 tests{end+1} = 't_opf_dc_mips_sc';
-if have_fcn('ipopt')
-    tests{end+1} = 't_opf_dc_ipopt';
+if have_fcn('mosek')
+    tests{end+1} = 't_opf_dc_mosek';
+end
+if have_fcn('quadprog')
+    tests{end+1} = 't_opf_dc_ot';
 end
 tests{end+1} = 't_opf_userfcns';
 tests{end+1} = 't_runopf_w_res';

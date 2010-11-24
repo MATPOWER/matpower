@@ -34,9 +34,9 @@ if nargin < 1
     quiet = 0;
 end
 
-algs = [100 200 250 400 300 500];
-names = {'BPMPD_MEX', 'MIPS', 'sc-MIPS', 'IPOPT', 'quadprog', 'CPLEX'};
-check = {'bpmpd', [], [], 'ipopt', 'quadprog', 'cplex'};
+algs = [100 200 250 400 300 500 600];
+names = {'BPMPD_MEX', 'MIPS', 'sc-MIPS', 'IPOPT', 'quadprog', 'CPLEX', 'MOSEK'};
+check = {'bpmpd', [], [], 'ipopt', 'quadprog', 'cplex', 'mosek'};
 
 n = 35;
 t_begin(n*length(algs), quiet);
@@ -57,6 +57,13 @@ for k = 1:length(algs)
             alg = 2;        %% use dual simplex
             mpopt = mpoption('CPLEX_LPMETHOD', alg, 'CPLEX_QPMETHOD', min([4 alg]));
             opt.cplex_opt = cplex_options([], mpopt);
+        end
+        if strcmp(names{k}, 'MOSEK')
+%             alg = 5;        %% use dual simplex
+            mpopt = mpoption;
+%             mpopt = mpoption(mpopt, 'MOSEK_LP_ALG', alg );
+            mpopt = mpoption(mpopt, 'MOSEK_GAP_TOL', 1e-9);
+            opt.mosek_opt = mosek_options([], mpopt);
         end
 
         t = sprintf('%s - 3-d LP : ', names{k});

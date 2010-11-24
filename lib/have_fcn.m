@@ -12,6 +12,7 @@ function TorF = have_fcn(tag)
 %       linprog     - LINPROG, LP solver from Optimization Toolbox 2.x +
 %       lp          - LP, LP solver from Optimization Toolbox 1.x/2.x
 %       minopf      - MINOPF, MINOPF, MINOS-based OPF solver
+%       mosek       - MOSEK, LP/QP solver (http://www.mosek.com/)
 %       quadprog    - QUADPROG, QP solver from Optimization Toolbox 2.x +
 %       qp          - QP, QP solver from Optimization Toolbox 1.x/2.x
 %       pdipmopf    - PDIPMOPF, primal-dual interior point method OPF solver
@@ -85,6 +86,8 @@ switch tag
         TorF = exist('lp', 'file') == 2;
     case 'minopf'
         TorF = exist('minopf', 'file') == 3;
+    case 'mosek'
+        TorF = exist('mosekopt', 'file') == 3;
     case 'quadprog'
         TorF = exist('quadprog', 'file') == 2;
     case 'qp'

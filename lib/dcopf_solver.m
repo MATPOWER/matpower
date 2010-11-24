@@ -162,42 +162,45 @@ C0 = 1/2 * MR' * HMR + sum(polycf(:, 3));   %% constant term of cost
 
 %% set up input for QP solver
 opt = struct('alg', alg, 'verbose', verbose);
-if alg == 200 || alg == 250
-    %% try to select an interior initial point
-    Varefs = bus(bus(:, BUS_TYPE) == REF, VA) * (pi/180);
+switch alg
+    case {200, 250}
+        %% try to select an interior initial point
+        Varefs = bus(bus(:, BUS_TYPE) == REF, VA) * (pi/180);
 
-    lb = xmin; ub = xmax;
-    lb(xmin == -Inf) = -1e10;   %% replace Inf with numerical proxies
-    ub(xmax ==  Inf) =  1e10;
-    x0 = (lb + ub) / 2;
-    x0(vv.i1.Va:vv.iN.Va) = Varefs(1);  %% angles set to first reference angle
-    if ny > 0
-        ipwl = find(gencost(:, MODEL) == PW_LINEAR);
-        c = gencost(sub2ind(size(gencost), ipwl, NCOST+2*gencost(ipwl, NCOST)));    %% largest y-value in CCV data
-        x0(vv.i1.y:vv.iN.y) = max(c) + 0.1 * abs(max(c));
-    end
+        lb = xmin; ub = xmax;
+        lb(xmin == -Inf) = -1e10;   %% replace Inf with numerical proxies
+        ub(xmax ==  Inf) =  1e10;
+        x0 = (lb + ub) / 2;
+        x0(vv.i1.Va:vv.iN.Va) = Varefs(1);  %% angles set to first reference angle
+        if ny > 0
+            ipwl = find(gencost(:, MODEL) == PW_LINEAR);
+            c = gencost(sub2ind(size(gencost), ipwl, NCOST+2*gencost(ipwl, NCOST)));    %% largest y-value in CCV data
+            x0(vv.i1.y:vv.iN.y) = max(c) + 0.1 * abs(max(c));
+        end
 
-    %% set up options
-    feastol = mpopt(81);    %% PDIPM_FEASTOL
-    gradtol = mpopt(82);    %% PDIPM_GRADTOL
-    comptol = mpopt(83);    %% PDIPM_COMPTOL
-    costtol = mpopt(84);    %% PDIPM_COSTTOL
-    max_it  = mpopt(85);    %% PDIPM_MAX_IT
-    max_red = mpopt(86);    %% SCPDIPM_RED_IT
-    if feastol == 0
-        feastol = mpopt(16);    %% = OPF_VIOLATION by default
-    end
-    opt.mips_opt = struct(  'feastol', feastol, ...
-                            'gradtol', gradtol, ...
-                            'comptol', comptol, ...
-                            'costtol', costtol, ...
-                            'max_it', max_it, ...
-                            'max_red', max_red, ...
-                            'cost_mult', 1  );
-elseif alg == 400
-	opt.ipopt_opt = ipopt_options([], mpopt);
-elseif alg == 500
-	opt.cplex_opt = cplex_options([], mpopt);
+        %% set up options
+        feastol = mpopt(81);    %% PDIPM_FEASTOL
+        gradtol = mpopt(82);    %% PDIPM_GRADTOL
+        comptol = mpopt(83);    %% PDIPM_COMPTOL
+        costtol = mpopt(84);    %% PDIPM_COSTTOL
+        max_it  = mpopt(85);    %% PDIPM_MAX_IT
+        max_red = mpopt(86);    %% SCPDIPM_RED_IT
+        if feastol == 0
+            feastol = mpopt(16);    %% = OPF_VIOLATION by default
+        end
+        opt.mips_opt = struct(  'feastol', feastol, ...
+                                'gradtol', gradtol, ...
+                                'comptol', comptol, ...
+                                'costtol', costtol, ...
+                                'max_it', max_it, ...
+                                'max_red', max_red, ...
+                                'cost_mult', 1  );
+    case 400
+        opt.ipopt_opt = ipopt_options([], mpopt);
+    case 500
+        opt.cplex_opt = cplex_options([], mpopt);
+    case 600
+        opt.mosek_opt = mosek_options([], mpopt);
 end
 
 %%-----  run opf  -----
