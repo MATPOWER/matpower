@@ -15,18 +15,19 @@ function opt = cplex_options(overrides, mpopt)
 %       OVERRIDES - struct containing values to override the defaults
 %       FNAME - name of user-supplied function called after default
 %           options are set to modify them. Calling syntax is:
-%               MODIFIED_OPT = FNAME(DEFAULT_OPT);
-%       MPOPT - MATPOWER options vector, used to set:
-%           feasibility tol  - based on MPOPT(16) (OPF_VIOLATION)
-%           output verbosity - based on MPOPT(31) (VERBOSE)
-%           LP solver alg    - based on MPOPT(95) (CPLEX_LPMETHOD)
-%           QP solver alg    - based on MPOPT(96) (CPLEX_QPMETHOD)
-%           user option file - based on MPOPT(97) (CPLEX_OPT)
-%               If MPOPT(97) (CPLEX_OPT) is non-zero it is appended to
-%               'cplex_user_options_' to form the name of a
-%               user-supplied function used as FNAME described above,
-%               except with calling syntax:
-%               MODIFIED_OPT = FNAME(DEFAULT_OPT, MPOPT);
+%                   MODIFIED_OPT = FNAME(DEFAULT_OPT);
+%       MPOPT - MATPOWER options vector, uses the following entries:
+%           OPF_VIOLATION (16)  - used to set opt.simplex.tolerances.feasibility
+%           VERBOSE (31)        - used to set opt.barrier.display,
+%               opt.conflict.display, opt.mip.display, opt.sifting.display,
+%               opt.simplex.display, opt.tune.display
+%           CPLEX_LPMETHOD (95) - used to set opt.lpmethod
+%           CPLEX_QPMETHOD (96) - used to set opt.qpmethod
+%           CPLEX_OPT (97)      - user option file, if MPOPT(97) is non-zero
+%               non-zero it is appended to 'cplex_user_options_' to form
+%               the name of a user-supplied function used as FNAME
+%               described above, except with calling syntax:
+%                   MODIFIED_OPT = FNAME(DEFAULT_OPT, MPOPT);
 %
 %   Output is an options struct to pass to CPLEXOPTIMSET.
 %
@@ -113,12 +114,12 @@ opt.simplex.tolerances.feasibility = feastol;
 
 %% printing
 vrb = max([0 verbose-1]);
-cplex_opt.barrier.display   = vrb;
-cplex_opt.conflict.display  = vrb;
-cplex_opt.mip.display       = vrb;
-cplex_opt.sifting.display   = vrb;
-cplex_opt.simplex.display   = vrb;
-cplex_opt.tune.display      = vrb;
+opt.barrier.display   = vrb;
+opt.conflict.display  = vrb;
+opt.mip.display       = vrb;
+opt.sifting.display   = vrb;
+opt.simplex.display   = vrb;
+opt.tune.display      = vrb;
 
 %% solution algorithm
 if have_mpopt
