@@ -15,13 +15,16 @@ function opt = ipopt_options(overrides, mpopt)
 %       OVERRIDES - struct containing values to override the defaults
 %       FNAME - name of user-supplied function called after default
 %           options are set to modify them. Calling syntax is:
-%               MODIFIED_OPT = FNAME(DEFAULT_OPT);
+%                   MODIFIED_OPT = FNAME(DEFAULT_OPT);
 %       MPOPT - MATPOWER options vector, used to set print_level
-%           based on MPOPT(31) (VERBOSE). If MPOPT(60) (IPOPT_OPT)
-%           is non-zero it is appended to 'ipopt_user_options_' to
-%           form the name of a user-supplied function used as FNAME
-%           described above, except with calling syntax:
-%               MODIFIED_OPT = FNAME(DEFAULT_OPT, MPOPT);
+%       MPOPT - MATPOWER options vector, uses the following entries:
+%           OPF_VIOLATION (16)  - used to set opt.constr_viol_tol
+%           VERBOSE (31)        - used to opt.print_level
+%           IPOPT_OPT (60)      - user option file, if MPOPT(60) is
+%               non-zero it is appended to 'ipopt_user_options_' to form
+%               the name of a user-supplied function used as FNAME
+%               described above, except with calling syntax:
+%                   MODIFIED_OPT = FNAME(DEFAULT_OPT, MPOPT);
 %
 %   Output is an options.ipopt struct to pass to IPOPT.
 %
