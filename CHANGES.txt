@@ -15,6 +15,12 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.0b4
 -------------------
 
+11/30/10
+    - Fixed bug in opf_execute.m related to automatic conversion of
+      single-block piecewise linear costs to linear polynomial costs.
+      Affected indexing of the Va, Vm, Pg and Qg portions of
+      results.x and raw.xr.
+
 11/24/10
     - Added support for the MOSEK optimizer for large-scale linear and
       quadratic programming. To use MOSEK for the DC OPF, set

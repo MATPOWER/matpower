@@ -264,9 +264,9 @@ if ~isempty(pwl1) && alg ~= 545 && alg ~= 550
   %% get indexing
   vv = get_idx(om);
   if dc
-    nx = vv.N.Pg;
+    nx = vv.iN.Pg;
   else
-    nx = vv.N.Qg;
+    nx = vv.iN.Qg;
   end
   y = zeros(length(pwl1), 1);
   raw.xr = [ raw.xr(1:nx); y; raw.xr(nx+1:end)];

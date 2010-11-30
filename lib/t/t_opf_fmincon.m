@@ -34,7 +34,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 88;
+num_tests = 101;
 
 t_begin(num_tests, quiet);
 
@@ -46,6 +46,7 @@ t_begin(num_tests, quiet);
 [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
     TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
+[PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 
 casefile = 't_case9_opf';
 if quiet
@@ -90,6 +91,26 @@ if have_fcn('fmincon')
     t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
     t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
     t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
+
+    %% run with automatic conversion of single-block pwl to linear costs
+    t = [t0 '(single-block PWL) : '];
+    mpc = loadcase(casefile);
+    mpc.gencost(3, NCOST) = 2;
+    r = runopf(mpc, mpopt);
+    t_ok(success, [t 'success']);
+    t_is(f, f_soln, 3, [t 'f']);
+    t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
+    t_is(   bus(:,ib_voltage),    bus_soln(:,ib_voltage),  3, [t 'bus voltage']);
+    t_is(   bus(:,ib_lam    ),    bus_soln(:,ib_lam    ),  3, [t 'bus lambda']);
+    t_is(   bus(:,ib_mu     ),    bus_soln(:,ib_mu     ),  2, [t 'bus mu']);
+    t_is(   gen(:,ig_data   ),    gen_soln(:,ig_data   ), 10, [t 'gen data']);
+    t_is(   gen(:,ig_disp   ),    gen_soln(:,ig_disp   ),  3, [t 'gen dispatch']);
+    t_is(   gen(:,ig_mu     ),    gen_soln(:,ig_mu     ),  3, [t 'gen mu']);
+    t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
+    t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
+    t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
+    xr = [r.var.val.Va;r.var.val.Vm;r.var.val.Pg;r.var.val.Qg;0;r.var.val.y];
+    t_is(r.x, xr, 8, [t 'check on raw x returned from OPF']);
 
     %% get solved AC power flow case from MAT-file
     load soln9_opf_Plim;       %% defines bus_soln, gen_soln, branch_soln, f_soln
