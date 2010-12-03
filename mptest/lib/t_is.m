@@ -55,8 +55,8 @@ end
 if nargin < 3 || isempty(prec)
     prec = 5;
 end
-
-if all(size(got) == size(expected)) || all(size(expected) == [1 1])
+[m, n] = size(expected);
+if all(size(got) == [m, n]) || all([m, n] == [1 1])
     got_minus_expected = got - expected;
     max_diff = max(max(abs(got_minus_expected)));
     condition = ( max_diff < 10^(-prec) );
@@ -68,9 +68,14 @@ end
 t_ok(condition, msg);
 if ~condition && ~t_quiet
     if max_diff ~= 0
-        got
-        expected
-        got_minus_expected
+        [i, j] = find(abs(got_minus_expected) >= 10^(-prec));
+        k = i+(j-1)*m;
+        fprintf('  row    col       got        expected      |diff|\n');
+        fprintf('------- ------ ------------ ------------ ------------\n');
+        fprintf('%6d %6d %12g %12g %12g\n', [i j got(k) expected(k) abs(got_minus_expected(k))]');
+%         got
+%         expected
+%         got_minus_expected
         fprintf('max diff = %g (allowed tol = %g)\n\n', max_diff, 10^(-prec));
     else
         fprintf('    dimension mismatch:\n');

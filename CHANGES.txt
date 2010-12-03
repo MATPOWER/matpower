@@ -18,6 +18,8 @@ Changes since 4.0b4
 12/2/10
     - Added to opf_setup() a better check on when specified generalized
       cost parameters are compatible with DC OPF.
+    - Improved output of t_is(). Includes only elements violating
+      tolerance.
 
 11/30/10
     - Fixed bug in opf_execute() related to automatic conversion of
