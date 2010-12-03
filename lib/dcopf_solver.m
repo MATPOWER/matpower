@@ -77,8 +77,17 @@ function [results, success, raw] = dcopf_solver(om, mpopt)
 verbose = mpopt(31);    %% VERBOSE
 alg     = mpopt(26);    %% OPF_ALG_DC
 
+%% default solver
 if alg == 0
-    alg = 200;          %% MIPS
+    if have_fcn('mosek')        %% use MOSEK by default if available
+        alg = 600;
+    elseif have_fcn('bpmpd')    %% if not, then BPMPD_MEX if available
+        alg = 100;
+    elseif have_fcn('cplex')    %% if not, then CPLEX if available
+        alg = 500;
+    else                        %% otherwise MIPS
+        alg = 200;
+    end
 end
 
 %% unpack data
