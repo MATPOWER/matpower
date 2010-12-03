@@ -85,7 +85,12 @@ if dc
     if nw && size(mpc.N, 2) >= 2*nb + 2*ng
       %% make sure there aren't any costs on Vm or Qg
       if any(any(mpc.N(:, acc)))
-        error('opf_setup: attempting to solve DC OPF with user costs on Vm or Qg');
+        [ii, jj] = find(mpc.N(:, acc));
+        ii = unique(ii);    %% indices of w with potential non-zero cost terms from Vm or Qg
+        if any(mpc.Cw(ii)) || (isfield(mpc, 'H') && ~isempty(mpc.H) && ...
+                any(any(mpc.H(:, ii))))
+          error('opf_setup: attempting to solve DC OPF with user costs on Vm or Qg');
+        end
       end
       mpc.N(:, acc) = [];               %% delete Vm and Qg columns
     end

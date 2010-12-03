@@ -15,8 +15,12 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.0b4
 -------------------
 
+12/2/10
+    - Added to opf_setup() a better check on when specified generalized
+      cost parameters are compatible with DC OPF.
+
 11/30/10
-    - Fixed bug in opf_execute.m related to automatic conversion of
+    - Fixed bug in opf_execute() related to automatic conversion of
       single-block piecewise linear costs to linear polynomial costs.
       Affected indexing of the Va, Vm, Pg and Qg portions of
       results.x and raw.xr.
@@ -45,12 +49,12 @@ Changes since 4.0b4
       qps_matpower() function also includes the option to use CPLEX.
     
 11/9/10
-    - Fixed an indexing bug in dcopf_solver.m affecting cases with a mix
+    - Fixed an indexing bug in dcopf_solver() affecting cases with a mix
       of piecewise linear and polynomial costs (unless the polynial costs
       came after all of the pwl costs).
 
 10/12/10
-    - Performance optimization in opf_consfcn.m. Assign sparse cols
+    - Performance optimization in opf_consfcn(). Assign sparse cols
       then transpose instead of assigning sparse rows. Results in >2x
       speed up for this function on case2935, ~10x on case42k.
 
@@ -63,7 +67,7 @@ Changes since 4.0b4
       corresponding gens/branches.
 
 6/29/10
-    - Fixed bug in uopf. Was not calling printpf when called with no
+    - Fixed bug in uopf(). Was not calling printpf() when called with no
       output arguments. Thanks to V. Ravikumar Pandi.
 
 6/25/10
