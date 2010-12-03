@@ -68,15 +68,18 @@ end
 t_ok(condition, msg);
 if ~condition && ~t_quiet
     if max_diff ~= 0
-        [i, j] = find(abs(got_minus_expected) >= 10^(-prec));
+        [i, j, v] = find(abs(got_minus_expected) >= 10^(-prec));
         k = i+(j-1)*m;
         fprintf('  row    col       got        expected      |diff|\n');
         fprintf('------- ------ ------------ ------------ ------------\n');
-        fprintf('%6d %6d %12g %12g %12g\n', [i j got(k) expected(k) abs(got_minus_expected(k))]');
+        fprintf('%6d %6d %12g %12g %12g\n', ...
+            [i j got(k) expected(k) abs(got_minus_expected(k))]');
 %         got
 %         expected
 %         got_minus_expected
-        fprintf('max diff = %g (allowed tol = %g)\n\n', max_diff, 10^(-prec));
+        [vv, kk] = max(abs(got_minus_expected(k)));
+        fprintf('max diff @ (%d,%d) = %g > allowed tol of %g\n\n', ...
+            i(kk), j(kk), max_diff, 10^(-prec));
     else
         fprintf('    dimension mismatch:\n');
         fprintf('             got: %d x %d\n', size(got));
