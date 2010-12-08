@@ -86,7 +86,7 @@ else
             fprintf('%-22s Version 2.21 or earlier\n', 'BPMPD_MEX');
         end
     else
-        fprintf('%-22s BPMPD_MEX              -- not installed --\n');
+        fprintf('%-22s -- not installed --\n', 'BPMPD_MEX');
     end
     if have_fcn('cplex')
     	cplex = Cplex('null');
