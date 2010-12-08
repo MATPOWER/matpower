@@ -70,15 +70,17 @@ if ~condition && ~t_quiet
     if max_diff ~= 0
         [i, j, v] = find(abs(got_minus_expected) >= 10^(-prec));
         k = i+(j-1)*m;
-        fprintf('  row    col       got        expected      |diff|\n');
-        fprintf('------- ------ ------------ ------------ ------------\n');
-        fprintf('%6d %6d %12g %12g %12g\n', ...
-            [i j got(k) expected(k) abs(got_minus_expected(k))]');
-%         got
-%         expected
-%         got_minus_expected
         [vv, kk] = max(abs(got_minus_expected(k)));
-        fprintf('max diff @ (%d,%d) = %g > allowed tol of %g\n\n', ...
+        fprintf('  row     col          got             expected          got - exp\n');
+        fprintf('-------  ------  ----------------  ----------------  ----------------');
+        for u = 1:length(i)
+            fprintf('\n%6d  %6d  %16g  %16g  %16g', ...
+                [i(u) j(u) got(k(u)) expected(k(u)) got_minus_expected(k(u))]');
+            if u == kk
+                fprintf('  *');
+            end
+        end
+        fprintf('\nmax diff @ (%d,%d) = %g > allowed tol of %g\n\n', ...
             i(kk), j(kk), max_diff, 10^(-prec));
     else
         fprintf('    dimension mismatch:\n');
