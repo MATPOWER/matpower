@@ -2,7 +2,7 @@
  Change history for MATPOWER
 -----------------------------
 
-Version:    4.0b4
+Version:    4.0b5
 
 maintained by Ray Zimmerman <rz10@cornell.edu>
 
@@ -14,6 +14,9 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 
 Changes since 4.0b4
 -------------------
+
+12/13/10
+    - Released version 4.0b5.
 
 12/2/10
     - Added to opf_setup() a better check on when specified generalized
@@ -35,7 +38,7 @@ Changes since 4.0b4
       available from http://www.mosek.com/.
     - Added function qps_mosek() for solving QP and LP problems using
       the common QP solver interface used in MATPOWER. The qps_matpower()
-      function also includes the option to use CPLEX.
+      function also includes the option to use MOSEK.
 
 11/16/10
     - Fixed bug in opf_setup() where indexing data for branch angle
@@ -52,8 +55,8 @@ Changes since 4.0b4
     
 11/9/10
     - Fixed an indexing bug in dcopf_solver() affecting cases with a mix
-      of piecewise linear and polynomial costs (unless the polynial costs
-      came after all of the pwl costs).
+      of piecewise linear and polynomial costs (unless the polynomial
+      costs came after all of the pwl costs).
 
 10/12/10
     - Performance optimization in opf_consfcn(). Assign sparse cols

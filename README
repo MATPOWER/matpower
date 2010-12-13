@@ -2,7 +2,7 @@
  MATPOWER - A MATLAB(R) Power System Simulation Package
 ========================================================
 
-Version:    4.0b4
+Version:    4.0b5
 
 Home Page:  http://www.pserc.cornell.edu/matpower/
 
@@ -10,7 +10,7 @@ Authors:    Ray Zimmerman               <rz10@cornell.edu>
             Carlos E. Murillo-Sanchez   <carlos_murillo@ieee.org>
             Deqiang (David) Gan         <dgan@zju.edu.cn>
 
-            Fri, May 21, 2010
+            Mon, Dec 13, 2010
 
 $Id$
 Copyright (c) 1997-2010 by Power System Engineering Research Center (PSERC)
@@ -132,6 +132,35 @@ documentation for the various MATPOWER functions. For example:
 
 
 -----------------------------
+ WHAT'S NEW IN VERSION 4.0b5
+-----------------------------
+
+Below is a summary of the changes since version 4.0b4 of MATPOWER. See the
+CHANGES file in the docs directory for all the gory details.
+
+* New features:
+  - Added support for MOSEK to solve LP and QP problems. Set option
+    OPF_ALG_DC = 600 to use MOSEK to solve the DC OPF. Requires the
+    Matlab interface to MOSEK, available from http://www.mosek.com/.
+    See 'help mpoption' for more MOSEK options.
+  - Added support for CPLEX to solve LP and QP problems. Set option
+    OPF_ALG_DC = 500 to use CPLEX to solve the DC OPF. Requires the
+    Matlab interface to CPLEX, available from
+    http://www.ibm.com/software/integration/optimization/cplex-optimizer/.
+    See 'help mpoption' for more CPLEX options.
+  - Added modcost() for shifting and scaling generator cost functions.
+  - Added load2disp() for converting from fixed to dispatchable loads.
+  - Added makeJac() to form the power flow Jacobian. Optionally returns
+    the system admittance matrices too.
+  - Performance optimizations in opf_consfcn() for large systems.
+* Bugs fixed:
+  - When called without output arguments, uopf() was not printing any
+    output.
+  - Indexing bug in dcopf_solver() affecting certain cases with a mix
+    of polynomial and piecewise linear costs.
+
+
+-----------------------------
  WHAT'S NEW IN VERSION 4.0b4
 -----------------------------
 
@@ -144,8 +173,8 @@ CHANGES file in the docs directory for all the gory details.
     AC and DC OPF, respectively. Requires the Matlab MEX interface for
     IPOPT, available from https://projects.coin-or.org/Ipopt/.
   - Added RETURN_RAW_DER option to control when OPF solver returns
-	constraint, Jacobian and objective function gradient and Hessian
-	information.
+    constraint, Jacobian and objective function gradient and Hessian
+    information.
   - Refactored portions of opf() into opf_setup() and opf_execute().
 * Bugs fixed:
   - Added check for invalid gencost model value in opf_setup().
