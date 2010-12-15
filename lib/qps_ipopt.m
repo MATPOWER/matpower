@@ -71,7 +71,7 @@ function [x, f, eflag, output, lambda] = qps_ipopt(H, c, A, l, u, xmin, xmax, x0
 %       x = qps_ipopt(H, c, A, l, u, xmin, xmax, x0, opt)
 %       x = qps_ipopt(problem), where problem is a struct with fields:
 %                       H, c, A, l, u, xmin, xmax, x0, opt
-%                       all fields except 'H', 'c', 'A' and 'l' are optional
+%                       all fields except 'c', 'A' and 'l' or 'u' are optional
 %       x = qps_ipopt(...)
 %       [x, f] = qps_ipopt(...)
 %       [x, f, exitflag] = qps_ipopt(...)

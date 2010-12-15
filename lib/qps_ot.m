@@ -67,7 +67,7 @@ function [x, f, eflag, output, lambda] = qps_ot(H, c, A, l, u, xmin, xmax, x0, o
 %       x = qps_ot(H, c, A, l, u, xmin, xmax, x0, opt)
 %       x = qps_ot(problem), where problem is a struct with fields:
 %                       H, c, A, l, u, xmin, xmax, x0, opt
-%                       all fields except 'H', 'c', 'A' and 'l' are optional
+%                       all fields except 'c', 'A' and 'l' or 'u' are optional
 %       x = qps_ot(...)
 %       [x, f] = qps_ot(...)
 %       [x, f, exitflag] = qps_ot(...)

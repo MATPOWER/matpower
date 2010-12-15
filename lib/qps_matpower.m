@@ -83,7 +83,7 @@ function [x, f, eflag, output, lambda] = qps_matpower(H, c, A, l, u, xmin, xmax,
 %       x = qps_matpower(H, c, A, l, u, xmin, xmax, x0, opt)
 %       x = qps_matpower(problem), where problem is a struct with fields:
 %                       H, c, A, l, u, xmin, xmax, x0, opt
-%                       all fields except 'H', 'c', 'A' and 'l' are optional
+%                       all fields except 'c', 'A' and 'l' or 'u' are optional
 %       x = qps_matpower(...)
 %       [x, f] = qps_matpower(...)
 %       [x, f, exitflag] = qps_matpower(...)
