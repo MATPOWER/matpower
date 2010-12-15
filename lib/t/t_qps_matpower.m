@@ -38,7 +38,7 @@ algs = [100 200 250 400 300 500 600];
 names = {'BPMPD_MEX', 'MIPS', 'sc-MIPS', 'IPOPT', 'quadprog', 'CPLEX', 'MOSEK'};
 check = {'bpmpd', [], [], 'ipopt', 'quadprog', 'cplex', 'mosek'};
 
-n = 35;
+n = 36;
 t_begin(n*length(algs), quiet);
 
 for k = 1:length(algs)
@@ -77,7 +77,7 @@ for k = 1:length(algs)
         xmin = [0; 0; 0];
         x0 = [];
         [x, f, s, out, lam] = qps_matpower([], c, A, l, u, xmin, [], [], opt);
-        t_ok(s, [t 'success']);
+        t_is(s, 1, 12, [t 'success']);
         t_is(x, [0; 15; 3], 6, [t 'x']);
         t_is(f, -78, 6, [t 'f']);
         t_is(lam.mu_l, [0;0;0], 13, [t 'lam.mu_l']);
@@ -91,7 +91,7 @@ for k = 1:length(algs)
         c = [2; -35; -47];
         x0 = [0; 0; 0];
         [x, f, s, out, lam] = qps_matpower(H, c, [], [], [], [], [], [], opt);
-        t_ok(s, [t 'success']);
+        t_is(s, 1, 12, [t 'success']);
         t_is(x, [3; 5; 7], 8, [t 'x']);
         t_is(f, -249, 13, [t 'f']);
         t_ok(isempty(lam.mu_l), [t 'lam.mu_l']);
@@ -112,7 +112,7 @@ for k = 1:length(algs)
         xmin = [0; 0];
         x0 = [];
         [x, f, s, out, lam] = qps_matpower(H, c, A, l, u, xmin, [], x0, opt);
-        t_ok(s, [t 'success']);
+        t_is(s, 1, 12, [t 'success']);
         t_is(x, [2; 4]/3, 7, [t 'x']);
         t_is(f, -74/9, 6, [t 'f']);
         t_is(lam.mu_l, [0;0;0], 13, [t 'lam.mu_l']);
@@ -134,7 +134,7 @@ for k = 1:length(algs)
         xmin = zeros(4,1);
         x0 = [1; 0; 0; 1];
         [x, f, s, out, lam] = qps_matpower(H, c, A, l, u, xmin, [], x0, opt);
-        t_ok(s, [t 'success']);
+        t_is(s, 1, 12, [t 'success']);
         t_is(x, [0; 2.8; 0.2; 0]/3, 5, [t 'x']);
         t_is(f, 3.29/3, 6, [t 'f']);
         t_is(lam.mu_l, [6.58;0]/3, 6, [t 'lam.mu_l']);
@@ -145,13 +145,18 @@ for k = 1:length(algs)
         t = sprintf('%s - (struct) constrained 4-d QP : ', names{k});
         p = struct('H', H, 'A', A, 'l', l, 'u', u, 'xmin', xmin, 'x0', x0, 'opt', opt);
         [x, f, s, out, lam] = qps_matpower(p);
-        t_ok(s, [t 'success']);
+        t_is(s, 1, 12, [t 'success']);
         t_is(x, [0; 2.8; 0.2; 0]/3, 5, [t 'x']);
         t_is(f, 3.29/3, 6, [t 'f']);
         t_is(lam.mu_l, [6.58;0]/3, 6, [t 'lam.mu_l']);
         t_is(lam.mu_u, [0;0], 13, [t 'lam.mu_u']);
         t_is(lam.lower, [2.24;0;0;1.7667], 4, [t 'lam.lower']);
         t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
+
+        t = sprintf('%s - infeasible LP : ', names{k});
+        p = struct('A', sparse([1 1]), 'c', [1;1], 'u', -1, 'xmin', [0;0], 'opt', opt);
+        [x, f, s, out, lam] = qps_matpower(p);
+        t_ok(s <= 0, [t 'no success']);
     end
 end
 
