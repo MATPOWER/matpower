@@ -65,7 +65,7 @@ function [x, f, eflag, output, lambda] = qps_cplex(H, c, A, l, u, xmin, xmax, x0
 %       x = qps_cplex(H, c, A, l, u, xmin, xmax, x0, opt)
 %       x = qps_cplex(problem), where problem is a struct with fields:
 %                       H, c, A, l, u, xmin, xmax, x0, opt
-%                       all fields except 'H', 'c', 'A' and 'l' are optional
+%                       all fields except 'c', 'A' and 'l' or 'u' are optional
 %       x = qps_cplex(...)
 %       [x, f] = qps_cplex(...)
 %       [x, f, exitflag] = qps_cplex(...)
@@ -274,27 +274,31 @@ else
         cplexqp(H, c, Ai, bi, Ae, be, xmin, xmax, x0, cplex_opt);
 end
 
-if unconstrained
-    lam.eqlin = [];
+if eflag == 1
+    if unconstrained
+        lam.eqlin = [];
+    end
+    
+    %% repackage lambdas
+    kl = find(lam.eqlin > 0);   %% lower bound binding
+    ku = find(lam.eqlin < 0);   %% upper bound binding
+    
+    mu_l = zeros(nA, 1);
+    mu_l(ieq(kl)) = lam.eqlin(kl);
+    mu_l(igt) = -lam.ineqlin(nlt+(1:ngt));
+    mu_l(ibx) = -lam.ineqlin(nlt+ngt+nbx+(1:nbx));
+    
+    mu_u = zeros(nA, 1);
+    mu_u(ieq(ku)) = -lam.eqlin(ku);
+    mu_u(ilt) = -lam.ineqlin(1:nlt);
+    mu_u(ibx) = -lam.ineqlin(nlt+ngt+(1:nbx));
+
+    lambda = struct( ...
+        'mu_l', mu_l, ...
+        'mu_u', mu_u, ...
+        'lower', lam.lower, ...
+        'upper', lam.upper ...
+    );
+else
+    lambda = [];
 end
-
-%% repackage lambdas
-kl = find(lam.eqlin > 0);   %% lower bound binding
-ku = find(lam.eqlin < 0);   %% upper bound binding
-
-mu_l = zeros(nA, 1);
-mu_l(ieq(kl)) = lam.eqlin(kl);
-mu_l(igt) = -lam.ineqlin(nlt+(1:ngt));
-mu_l(ibx) = -lam.ineqlin(nlt+ngt+nbx+(1:nbx));
-
-mu_u = zeros(nA, 1);
-mu_u(ieq(ku)) = -lam.eqlin(ku);
-mu_u(ilt) = -lam.ineqlin(1:nlt);
-mu_u(ibx) = -lam.ineqlin(nlt+ngt+(1:nbx));
-
-lambda = struct( ...
-    'mu_l', mu_l, ...
-    'mu_u', mu_u, ...
-    'lower', lam.lower, ...
-    'upper', lam.upper ...
-);
