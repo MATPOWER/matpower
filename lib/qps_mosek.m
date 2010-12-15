@@ -41,7 +41,9 @@ function [x, f, eflag, output, lambda] = qps_mosek(H, c, A, l, u, xmin, xmax, x0
 %       X : solution vector
 %       F : final objective function value
 %       EXITFLAG : exit flag
-%           1 = success
+%             1 = success
+%             0 = terminated at maximum number of iterations
+%            -1 = primal or dual infeasible
 %           < 0 = the negative of the MOSEK return code
 %       OUTPUT : output struct with the following fields:
 %           r - MOSEK return code
@@ -68,7 +70,7 @@ function [x, f, eflag, output, lambda] = qps_mosek(H, c, A, l, u, xmin, xmax, x0
 %       x = qps_mosek(H, c, A, l, u, xmin, xmax, x0, opt)
 %       x = qps_mosek(problem), where problem is a struct with fields:
 %                       H, c, A, l, u, xmin, xmax, x0, opt
-%                       all fields except 'H', 'c', 'A' and 'l' are optional
+%                       all fields except 'c', 'A' and 'l' or 'u' are optional
 %       x = qps_mosek(...)
 %       [x, f] = qps_mosek(...)
 %       [x, f, exitflag] = qps_mosek(...)
@@ -175,6 +177,9 @@ if ~isfield(p, 'x0') || isempty(p.x0)
 end
 
 %% default options
+if ~isfield(p, 'opt')
+    p.opt = [];
+end
 if ~isempty(p.opt) && isfield(p.opt, 'verbose') && ~isempty(p.opt.verbose)
     verbose = p.opt.verbose;
 else
@@ -235,48 +240,85 @@ cmd = sprintf('minimize echo(%d)', verbose);
 %%-----  repackage results  -----
 if isfield(res, 'sol')
     if isfield(res.sol, 'bas')
-        x = res.sol.bas.xx;
+        sol = res.sol.bas;
     else
-        x = res.sol.itr.xx;
+        sol = res.sol.itr;
     end
+    x = sol.xx;
 else
+    sol = [];
     x = [];
 end
 
-if nargout > 1
-    f = p.c' * x;
-    if ~isempty(p.H)
-        f = 0.5 * x' * p.H * x + f;
-    end
-    if nargout > 2
-        if r == 0
-            eflag = 1;
-        else
-            eflag = -r;
-        end
-        if nargout > 3
-            output.r = r;
-            output.res = res;
-            if nargout > 4
-                if isfield(res, 'sol')
-                    if isfield(res.sol, 'bas')
-                        lambda.lower = res.sol.bas.slx;
-                        lambda.upper = res.sol.bas.sux;
-                        lambda.mu_l  = res.sol.bas.slc;
-                        lambda.mu_u  = res.sol.bas.suc;
-                    else
-                        lambda.lower = res.sol.itr.slx;
-                        lambda.upper = res.sol.itr.sux;
-                        lambda.mu_l  = res.sol.itr.slc;
-                        lambda.mu_u  = res.sol.itr.suc;
-                    end
-                    if unconstrained
-                        lambda.mu_l  = [];
-                        lambda.mu_u  = [];
-                    end
+%%-----  process return codes  -----
+if isfield(res, 'symbcon')
+    sc = res.symbcon;
+else    
+    [r2, res2] = mosekopt('symbcon echo(0)');
+    sc = res2.symbcon;
+end
+eflag = -r;
+msg = '';
+switch (r)
+    case sc.MSK_RES_OK
+        if ~isempty(sol)
+%            if sol.solsta == sc.MSK_SOL_STA_OPTIMAL
+            if strcmp(sol.solsta, 'OPTIMAL')
+                msg = 'The solution is optimal.';
+                eflag = 1;
+            else
+                eflag = -1;
+%                 if sol.prosta == sc.MSK_PRO_STA_PRIM_INFEAS
+                if strcmp(sol.prosta, 'PRIMAL_INFEASIBLE')
+                    msg = 'The problem is primal infeasible.';
+%                 elseif sol.prosta == sc.MSK_PRO_STA_DUAL_INFEAS
+                elseif strcmp(sol.prosta, 'DUAL_INFEASIBLE')
+                    msg = 'The problem is dual infeasible.';
                 else
-                    lambda = [];
+                    msg = sol.solsta;
                 end
+            end
+        end
+    case sc.MSK_RES_TRM_MAX_ITERATIONS
+        eflag = 0;
+        msg = 'The optimizer terminated at the maximum number of iterations.';
+    otherwise
+        if isfield(res, 'rmsg') && isfield(res, 'rcodestr')
+            msg = sprintf('%s : %s', res.rcodestr, res.rmsg);
+        else
+            msg = sprintf('MOSEK return code = %d', r);
+        end
+end
+
+if verbose && ~isempty(msg)
+    fprintf('%s\n', msg);
+end
+
+%%-----  repackage results  -----
+if nargout > 1
+    if r == 0
+        f = p.c' * x;
+        if ~isempty(p.H)
+            f = 0.5 * x' * p.H * x + f;
+        end
+    else
+        f = [];
+    end
+    if nargout > 3
+        output.r = r;
+        output.res = res;
+        if nargout > 4
+            if isfield(res, 'sol')
+                lambda.lower = sol.slx;
+                lambda.upper = sol.sux;
+                lambda.mu_l  = sol.slc;
+                lambda.mu_u  = sol.suc;
+                if unconstrained
+                    lambda.mu_l  = [];
+                    lambda.mu_u  = [];
+                end
+            else
+                lambda = [];
             end
         end
     end
