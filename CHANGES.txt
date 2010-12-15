@@ -20,6 +20,8 @@ Changes since 4.0b5
       in a fatal error.
     - Fixed bug in qps_mosek() where exit flag was indicating success
       for infeasible solutions.
+    - Fixed bug in dcopf_solver() where an infeasible problem found
+      by CPLEX would result in a fatal error.
 
 
 Changes since 4.0b4
