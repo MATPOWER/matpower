@@ -34,7 +34,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 22 * 7;
+num_tests = 23 * 7;
 
 t_begin(num_tests, quiet);
 
@@ -148,6 +148,15 @@ if have_fcn('mosek')
     t_is(r.gen(2, PG), 116.15974, 5, [t 'Pg2 = 116.15974']);
     t_is(r.var.val.z, [0; 0.3348], 4, [t 'user vars']);
     t_is(r.cost.usr, 0.3348, 4, [t 'user costs']);
+
+    t = [t0 'infeasible : '];
+    %% with A and N sized for DC opf
+    mpc = loadcase(casefile);
+    mpc.A = sparse([1;1], [10;11], [1;1], 1, 14); 	%% Pg1 + Pg2
+    mpc.u = Inf;
+    mpc.l = 600;
+    [r, success] = rundcopf(mpc, mpopt);
+    t_ok(~success, [t 'no success']);
 
 	end
 else

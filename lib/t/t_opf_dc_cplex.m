@@ -34,7 +34,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 22 * 6;
+num_tests = 23 * 6;
 
 t_begin(num_tests, quiet);
 
@@ -147,6 +147,14 @@ if have_fcn('cplex')
     t_is(r.var.val.z, [0; 0.3348], 4, [t 'user vars']);
     t_is(r.cost.usr, 0.3348, 4, [t 'user costs']);
 
+    t = [t0 'infeasible : '];
+    %% with A and N sized for DC opf
+    mpc = loadcase(casefile);
+    mpc.A = sparse([1;1], [10;11], [1;1], 1, 14); 	%% Pg1 + Pg2
+    mpc.u = Inf;
+    mpc.l = 600;
+    [r, success] = rundcopf(mpc, mpopt);
+    t_ok(~success, [t 'no success']);
 	end
 else
     t_skip(num_tests, 'CPLEX not available');

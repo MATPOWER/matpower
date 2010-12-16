@@ -34,7 +34,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 22;
+num_tests = 23;
 
 t_begin(num_tests, quiet);
 
@@ -135,6 +135,15 @@ if have_fcn('bpmpd')
     t_is(r.gen(2, PG), 116.15974, 5, [t 'Pg2 = 116.15974']);
     t_is(r.var.val.z, [0; 0.3348], 4, [t 'user vars']);
     t_is(r.cost.usr, 0.3348, 4, [t 'user costs']);
+
+    t = [t0 'infeasible : '];
+    %% with A and N sized for DC opf
+    mpc = loadcase(casefile);
+    mpc.A = sparse(1, 10, 1, 1, 14); 	%% Pg1
+    mpc.u = Inf;
+    mpc.l = 500;
+    [r, success] = rundcopf(mpc, mpopt);
+    t_ok(~success, [t 'no success']);
 else
     t_skip(num_tests, 'BPMPD_MEX not available');
 end
