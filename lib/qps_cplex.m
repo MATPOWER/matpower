@@ -274,31 +274,43 @@ else
         cplexqp(H, c, Ai, bi, Ae, be, xmin, xmax, x0, cplex_opt);
 end
 
-if eflag == 1
-    if unconstrained
-        lam.eqlin = [];
-    end
-    
-    %% repackage lambdas
-    kl = find(lam.eqlin > 0);   %% lower bound binding
-    ku = find(lam.eqlin < 0);   %% upper bound binding
-    
-    mu_l = zeros(nA, 1);
-    mu_l(ieq(kl)) = lam.eqlin(kl);
-    mu_l(igt) = -lam.ineqlin(nlt+(1:ngt));
-    mu_l(ibx) = -lam.ineqlin(nlt+ngt+nbx+(1:nbx));
-    
-    mu_u = zeros(nA, 1);
-    mu_u(ieq(ku)) = -lam.eqlin(ku);
-    mu_u(ilt) = -lam.ineqlin(1:nlt);
-    mu_u(ibx) = -lam.ineqlin(nlt+ngt+(1:nbx));
-
-    lambda = struct( ...
-        'mu_l', mu_l, ...
-        'mu_u', mu_u, ...
-        'lower', lam.lower, ...
-        'upper', lam.upper ...
-    );
-else
-    lambda = [];
+%% check for empty results (in case optimization failed)
+if isempty(x)
+    x = NaN(nx, 1);
 end
+if isempty(f)
+    f = NaN;
+end
+if isempty(lam)
+    lam.ineqlin = NaN(length(bi), 1);
+    lam.eqlin   = NaN(length(be), 1);
+    lam.lower   = NaN(nx, 1);
+    lam.upper   = NaN(nx, 1);
+    mu_l        = NaN(nA, 1);
+    mu_u        = NaN(nA, 1);
+else
+    mu_l        = zeros(nA, 1);
+    mu_u        = zeros(nA, 1);
+end
+if unconstrained
+    lam.eqlin = [];
+end
+
+%% repackage lambdas
+kl = find(lam.eqlin > 0);   %% lower bound binding
+ku = find(lam.eqlin < 0);   %% upper bound binding
+
+mu_l(ieq(kl)) = lam.eqlin(kl);
+mu_l(igt) = -lam.ineqlin(nlt+(1:ngt));
+mu_l(ibx) = -lam.ineqlin(nlt+ngt+nbx+(1:nbx));
+
+mu_u(ieq(ku)) = -lam.eqlin(ku);
+mu_u(ilt) = -lam.ineqlin(1:nlt);
+mu_u(ibx) = -lam.ineqlin(nlt+ngt+(1:nbx));
+
+lambda = struct( ...
+    'mu_l', mu_l, ...
+    'mu_u', mu_u, ...
+    'lower', lam.lower, ...
+    'upper', lam.upper ...
+);

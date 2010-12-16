@@ -217,7 +217,7 @@ end
 success = (info == 1);
 
 %%-----  calculate return values  -----
-if success || ~isempty(x)
+if ~any(isnan(x))
     %% update solution data
     Va = x(vv.i1.Va:vv.iN.Va);
     Pg = x(vv.i1.Pg:vv.iN.Pg);
@@ -233,35 +233,27 @@ if success || ~isempty(x)
     branch(:, PT) = -branch(:, PF);
 end
 
-if success || ~isempty(lambda)
-    %% package up results
-    mu_l = lambda.mu_l;
-    mu_u = lambda.mu_u;
-    muLB = lambda.lower;
-    muUB = lambda.upper;
+%% package up results
+mu_l = lambda.mu_l;
+mu_u = lambda.mu_u;
+muLB = lambda.lower;
+muUB = lambda.upper;
 
-    %% update Lagrange multipliers
-    il = find(branch(:, RATE_A) ~= 0 & branch(:, RATE_A) < 1e10);
-    bus(:, [LAM_P, LAM_Q, MU_VMIN, MU_VMAX]) = zeros(nb, 4);
-    gen(:, [MU_PMIN, MU_PMAX, MU_QMIN, MU_QMAX]) = zeros(size(gen, 1), 4);
-    branch(:, [MU_SF, MU_ST]) = zeros(nl, 2);
-    bus(:, LAM_P)       = (mu_u(ll.i1.Pmis:ll.iN.Pmis) - mu_l(ll.i1.Pmis:ll.iN.Pmis)) / baseMVA;
-    branch(il, MU_SF)   = mu_u(ll.i1.Pf:ll.iN.Pf) / baseMVA;
-    branch(il, MU_ST)   = mu_u(ll.i1.Pt:ll.iN.Pt) / baseMVA;
-    gen(:, MU_PMIN)     = muLB(vv.i1.Pg:vv.iN.Pg) / baseMVA;
-    gen(:, MU_PMAX)     = muUB(vv.i1.Pg:vv.iN.Pg) / baseMVA;
-    pimul = [
-      mu_l - mu_u;
-     -ones(ny>0, 1);    %% dummy entry corresponding to linear cost row in A (in MINOS)
-      muLB - muUB
-    ];
-else
-    mu_l = [];
-    mu_u = [];
-    muLB = [];
-    muUB = [];
-    pimul = [];
-end
+%% update Lagrange multipliers
+il = find(branch(:, RATE_A) ~= 0 & branch(:, RATE_A) < 1e10);
+bus(:, [LAM_P, LAM_Q, MU_VMIN, MU_VMAX]) = zeros(nb, 4);
+gen(:, [MU_PMIN, MU_PMAX, MU_QMIN, MU_QMAX]) = zeros(size(gen, 1), 4);
+branch(:, [MU_SF, MU_ST]) = zeros(nl, 2);
+bus(:, LAM_P)       = (mu_u(ll.i1.Pmis:ll.iN.Pmis) - mu_l(ll.i1.Pmis:ll.iN.Pmis)) / baseMVA;
+branch(il, MU_SF)   = mu_u(ll.i1.Pf:ll.iN.Pf) / baseMVA;
+branch(il, MU_ST)   = mu_u(ll.i1.Pt:ll.iN.Pt) / baseMVA;
+gen(:, MU_PMIN)     = muLB(vv.i1.Pg:vv.iN.Pg) / baseMVA;
+gen(:, MU_PMAX)     = muUB(vv.i1.Pg:vv.iN.Pg) / baseMVA;
+pimul = [
+  mu_l - mu_u;
+ -ones(ny>0, 1);    %% dummy entry corresponding to linear cost row in A (in MINOS)
+  muLB - muUB
+];
 
 mu = struct( ...
   'var', struct('l', muLB, 'u', muUB), ...
