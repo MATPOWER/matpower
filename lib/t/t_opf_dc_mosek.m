@@ -152,7 +152,7 @@ if have_fcn('mosek')
     t = [t0 'infeasible : '];
     %% with A and N sized for DC opf
     mpc = loadcase(casefile);
-    mpc.A = sparse([1;1], [10;11], [1;1], 1, 14); 	%% Pg1 + Pg2
+    mpc.A = sparse([1;1], [10;11], [1;1], 1, 14);   %% Pg1 + Pg2
     mpc.u = Inf;
     mpc.l = 600;
     [r, success] = rundcopf(mpc, mpopt);
