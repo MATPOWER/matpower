@@ -15,7 +15,7 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.0b5
 -------------------
 
-12/15/10
+12/16/10
     - Fixed bug in qps_cplex() where an infeasible problem resulted
       in a fatal error.
     - Fixed bug in qps_mosek() where exit flag was indicating success
