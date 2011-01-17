@@ -55,9 +55,9 @@ Please see the LICENSE file for the details. But here is the summary:
   that fact by citing [1].
 
 [1]  R. D. Zimmerman, C. E. Murillo-Sanchez, and R. J. Thomas,
-     "MATPOWER's Extensible Optimal Power Flow Architecture," Power
-     and Energy Society General Meeting, 2009 IEEE, pp. 1-7,
-     July 26-30 2009.
+     "MATPOWER: Steady-State Operations, Planning and Analysis Tools
+     for Power Systems Research and Education," Power Systems, IEEE
+     Transactions on, vol. 26, no. 1, pp. 12–19, Feb. 2011.
 
 Note:  Versions prior to MATPOWER 4 use a different license.
 
