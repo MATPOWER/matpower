@@ -33,7 +33,7 @@ function TorF = have_fcn(tag)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2004-2010 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2011 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
