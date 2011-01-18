@@ -8,12 +8,18 @@ maintained by Ray Zimmerman <rz10@cornell.edu>
 
 MATPOWER
 $Id$
-Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
+Copyright (c) 1996-2011 by Power System Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
 
 
 Changes since 4.0b5
 -------------------
+
+1/18/11
+    - Added 'quadprog_ls' option to have_fcn() to check for availability
+      of version of quadprog() with large scale solver.
+    - Modified qps_ot() to set default options based on capabilities
+      of version of Optimization Toolbox.
 
 12/16/10
     - Fixed bug in qps_cplex() where an infeasible problem resulted
