@@ -49,9 +49,8 @@ for k = 1:length(algs)
         if strcmp(names{k}, 'MIPS') || strcmp(names{k}, 'sc-MIPS')
             opt.mips_opt.comptol = 1e-8;
         end
-        if strcmp(names{k}, 'quadprog')
-            opt.ot_opt = optimset('LargeScale', 'off');
-        end
+%         if strcmp(names{k}, 'quadprog')
+%         end
         if strcmp(names{k}, 'CPLEX')
 %           alg = 0;        %% default uses barrier method with NaN bug in lower lim multipliers
             alg = 2;        %% use dual simplex
