@@ -229,6 +229,11 @@ else
         ot_opt = optimset('linprog');
     else
         ot_opt = optimset('quadprog');
+        if have_fcn('quadprog_ls')
+            ot_opt = optimset(ot_opt, 'Algorithm', 'interior-point-convex');
+        else
+            ot_opt = optimset(ot_opt, 'LargeScale', 'off');
+        end
     end
 end
 if max_it
