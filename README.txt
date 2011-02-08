@@ -204,6 +204,7 @@ CHANGES file in the docs directory for all the gory details.
     MATPOWER case format.
   - Deprecated 'areas' data matrix (was not being used).
   - Many new tests in test suite.
+
 * Bugs fixed:
   - Auction code in extras/smartmarket in all previous versions contained a
     design error which has been fixed. Prices are now scaled instead of
