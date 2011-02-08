@@ -182,16 +182,16 @@ CHANGES file in the docs directory for all the gory details.
     - Two new Tech Notes, available from MATPOWER home page.
     - Help text updates to more closely match MathWorks conventions.
   - New functions:
+    - load2disp() converts from fixed to dispatchable loads.
+    - makeJac() forms the power flow Jacobian. Optionally returns the
+      system admittance matrices too.
+    - makeLODF() computes line outage distribution factors.
+    - modcost() shifts/scales generator cost functions.
     - qps_matpower() provides a consistent, unified interface to all of
       MATPOWER's available QP/LP solvers, serving as a single wrapper
       around qps_bpmpd(), qps_cplex(), qps_ipopt(), qps_mips(), and
       qps_ot() (Opt Tbx, i.e. quadprog(), linprog()).
-    - modcost() shifts/scales generator cost functions.
-    - load2disp() converts from fixed to dispatchable loads.
-    - makeJac() forms the power flow Jacobian. Optionally returns the
-      system admittance matrices too.
     - scale_load() conveniently modifies multiple loads.
-    - makeLODF() computes line outage distribution factors.
     - total_load() retreives total load for the entire system, a
       specific zone or bus, with options to include fixed loads,
       dispatchable loads or both.
