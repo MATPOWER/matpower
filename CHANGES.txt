@@ -12,6 +12,14 @@ Copyright (c) 1996-2011 by Power System Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
 
 
+Changes since 4.0
+-----------------
+
+3/18/11
+    - Fixed bug in toggle_reserves.m that computed the prices in
+      results.reserves.prc incorrectly.
+
+
 Changes since 4.0b5
 -------------------
 
