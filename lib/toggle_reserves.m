@@ -271,7 +271,7 @@ results.reserves.mu.Pmax = int2ext(results, mu_Pmax, z, 'gen');
 results.reserves.prc     = z;
 for k = igr0
     iz = find(r.zones(:, k));
-    results.reserves.prc(k) = max(results.lin.mu.l.Rreq(iz)) / results.baseMVA;
+    results.reserves.prc(k) = sum(results.lin.mu.l.Rreq(iz)) / results.baseMVA;
 end
 results.reserves.totalcost = results.cost.Rcost;
 
