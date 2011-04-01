@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.0
 -----------------
 
+3/31/11
+    - Default value for ramp rates for dispatchable loads now
+      set to Inf in load2disp.m.
+
 3/18/11
     - Fixed bug in toggle_reserves.m that computed the prices in
       results.reserves.prc incorrectly.
