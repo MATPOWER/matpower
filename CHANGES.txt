@@ -15,7 +15,14 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.0
 -----------------
 
-4/16/11
+5/17/11
+    - Updated runpf() and pfsoln() to properly handle slack for
+      power flow cases with islands and multiple reference buses.
+      (Note: This does not include the case where ENFORCE_Q_LIMS
+      results in temporarily converting a reference bus to a
+      PQ bus and automatically finding a new suitable slack bus.)
+
+5/16/11
     - Pretty printed output from printpf() now includes a '*' after
       the voltage angle in the bus section for reference buses.
 

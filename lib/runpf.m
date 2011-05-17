@@ -167,11 +167,16 @@ if dc                               %% DC formulation
     branch(:, PT) = -branch(:, PF);
     bus(:, VM) = ones(size(bus, 1), 1);
     bus(:, VA) = Va * (180/pi);
-    %% update Pg for swing generator (note: other gens at ref bus are accounted for in Pbus)
+    %% update Pg for slack generator (1st gen at ref bus)
+    %% (note: other gens at ref bus are accounted for in Pbus)
     %%      Pg = Pinj + Pload + Gs
     %%      newPg = oldPg + newPinj - oldPinj
-    refgen = find(gbus == ref);             %% which is(are) the reference gen(s)?
-    gen(on(refgen(1)), PG) = gen(on(refgen(1)), PG) + (B(ref, :) * Va - Pbus(ref)) * baseMVA;
+    refgen = zeros(size(ref));
+    for k = 1:length(ref)
+        temp = find(gbus == ref(k));
+        refgen(k) = on(temp(1));
+    end
+    gen(refgen, PG) = gen(refgen, PG) + (B(ref, :) * Va - Pbus(ref)) * baseMVA;
     
     success = 1;
 else                                %% AC formulation
@@ -185,7 +190,7 @@ else                                %% AC formulation
     
     if qlim
         ref0 = ref;                         %% save index and angle of
-        Varef0 = bus(ref0, VA);             %%   original reference bus
+        Varef0 = bus(ref0, VA);             %%   original reference bus(es)
         limited = [];                       %% list of indices of gens @ Q lims
         fixedQg = zeros(size(gen, 1), 1);   %% Qg of gens at Q limits
     end
@@ -263,6 +268,9 @@ else                                %% AC formulation
                     bi = gen(mx(i), GEN_BUS);   %%  they may be at same bus)
                     bus(bi, [PD,QD]) = ...      %% adjust load accordingly,
                         bus(bi, [PD,QD]) - gen(mx(i), [PG,QG]);
+                end
+                if bus(gen(mx, GEN_BUS), BUS_TYPE) == REF && length(ref) > 1
+                    error('Sorry, MATPOWER cannot enforce Q limits for slack buses in systems with multiple slacks.');
                 end
                 bus(gen(mx, GEN_BUS), BUS_TYPE) = PQ;   %% & set bus type to PQ
                 
