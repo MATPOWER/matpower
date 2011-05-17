@@ -48,9 +48,9 @@ function rv = mpver(varargin)
 % v{1} = ver(p);
 
 v{1} = struct(  'Name',     'MATPOWER', ... 
-                'Version',  '4.0', ...
+                'Version',  '4.0+', ...
                 'Release',  '', ...
-                'Date',     '07-Feb-2011' );
+                'Date',     '17-May-2011' );
 if nargout > 0
     if nargin > 0
         rv = v{1};
@@ -71,10 +71,10 @@ else
         end
         fprintf('\n%-22s Version %-9s', v{n}.Name, v{n}.Version);
         if ~isempty(v{n}.Date)
-	        fprintf('  %11s', v{n}.Date);
-			if ~isempty(v{n}.Release)
-				fprintf('   Release: %-10s', v{n}.Release);
-			end
+            fprintf('  %11s', v{n}.Date);
+            if ~isempty(v{n}.Release)
+                fprintf('   Release: %-10s', v{n}.Release);
+            end
         end
     end
     fprintf('\n');
@@ -89,20 +89,20 @@ else
         fprintf('%-22s -- not installed --\n', 'BPMPD_MEX');
     end
     if have_fcn('cplex')
-    	cplex = Cplex('null');
-    	fprintf('%-22s Version %-10s %-11s   %s\n', 'CPLEX', cplex.getVersion, '', computer);
+        cplex = Cplex('null');
+        fprintf('%-22s Version %-10s %-11s   %s\n', 'CPLEX', cplex.getVersion, '', computer);
     else
         fprintf('%-22s -- not installed --\n', 'CPLEX');
     end
     if have_fcn('ipopt')
-    	str = evalc('qps_ipopt([],1,1,1,1,1,1,1,struct(''verbose'', 2))');
-    	pat = 'Ipopt version ([^\s,]+)';
-    	[s,e,tE,m,t] = regexp(str, pat);
-    	if isempty(t)
-    		vn = '<unknown>';
-    	else
-    		vn = t{1}{1};
-    	end
+        str = evalc('qps_ipopt([],1,1,1,1,1,1,1,struct(''verbose'', 2))');
+        pat = 'Ipopt version ([^\s,]+)';
+        [s,e,tE,m,t] = regexp(str, pat);
+        if isempty(t)
+            vn = '<unknown>';
+        else
+            vn = t{1}{1};
+        end
         fprintf('%-22s Version %-10s %-11s   %s\n', 'IPOPT', vn, '', computer);
     else
         fprintf('%-22s -- not installed --\n', 'IPOPT');
@@ -117,16 +117,19 @@ else
         fprintf('%-22s -- not installed --\n', 'MINOPF');
     end
     if have_fcn('mosek')
-    	pat = 'Version (\.*\d)+.*Build date: (\d\d\d\d-\d\d-\d\d)';
-    	[s,e,tE,m,t] = regexp(evalc('mosekopt'), pat);
-      	if isempty(t)
-    		vn = '<unknown>';
-    		d  = '';
-    	else
-    		vn = t{1}{1};
-    		d  = datestr(t{1}{2}, 'dd-mmm-yyyy');
-    	end
- 	    fprintf('%-22s Version %-10s %-11s   %s\n', 'MOSEK', vn, d, computer);
+        % MOSEK Version 6.0.0.93 (Build date: 2010-10-26 13:03:27)
+        % MOSEK Version 6.0.0.106 (Build date: 2011-3-17 10:46:54)
+%        pat = 'Version (\.*\d)+.*Build date: (\d\d\d\d-\d\d-\d\d)';
+        pat = 'Version (\.*\d)+.*Build date: (\d+-\d+-\d+)';
+        [s,e,tE,m,t] = regexp(evalc('mosekopt'), pat);
+        if isempty(t)
+            vn = '<unknown>';
+            d  = '';
+        else
+            vn = t{1}{1};
+            d  = datestr(t{1}{2}, 'dd-mmm-yyyy');
+        end
+        fprintf('%-22s Version %-10s %-11s   %s\n', 'MOSEK', vn, d, computer);
     else
         fprintf('%-22s -- not installed --\n', 'MOSEK');
     end
