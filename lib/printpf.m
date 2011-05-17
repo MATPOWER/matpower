@@ -415,14 +415,19 @@ if OUT_BUS
     if isOPF, fprintf(fd, '  -------  -------'); end
     for i = 1:nb
         fprintf(fd, '\n%5d%7.3f%9.3f', bus(i, [BUS_I, VM, VA]));
+        if bus(i, BUS_TYPE) == REF
+            fprintf(fd, '*');
+        else
+            fprintf(fd, ' ');
+        end
         g  = find(gen(:, GEN_STATUS) > 0 & gen(:, GEN_BUS) == bus(i, BUS_I) & ...
                     ~isload(gen));
         ld = find(gen(:, GEN_STATUS) > 0 & gen(:, GEN_BUS) == bus(i, BUS_I) & ...
                     isload(gen));
         if ~isempty(g)
-            fprintf(fd, '%10.2f%10.2f', sum(gen(g, PG)), sum(gen(g, QG)));
+            fprintf(fd, '%9.2f%10.2f', sum(gen(g, PG)), sum(gen(g, QG)));
         else
-            fprintf(fd, '       -         -  ');
+            fprintf(fd, '      -         -  ');
         end
         if bus(i, PD) || bus(i, QD) || ~isempty(ld)
             if ~isempty(ld)

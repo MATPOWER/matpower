@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.0
 -----------------
 
+4/16/11
+    - Pretty printed output from printpf() now includes a '*' after
+      the voltage angle in the bus section for reference buses.
+
 3/31/11
     - Default value for ramp rates for dispatchable loads now
       set to Inf in load2disp.m.
