@@ -290,7 +290,7 @@ switch (r)
         end
 end
 
-if verbose && ~isempty(msg)
+if (verbose || r == 1001) && ~isempty(msg)  %% always alert user if license is expired
     fprintf('%s\n', msg);
 end
 
