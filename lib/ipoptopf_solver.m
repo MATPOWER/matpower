@@ -106,7 +106,7 @@ mpc = get_mpc(om);
 
 %% problem dimensions
 nb = size(bus, 1);          %% number of buses
-ng = size(gen, 1);          %% number of buses
+ng = size(gen, 1);          %% number of gens
 nl = size(branch, 1);       %% number of branches
 ny = getN(om, 'var', 'y');  %% number of piece-wise linear costs
 
