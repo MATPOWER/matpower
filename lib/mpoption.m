@@ -72,7 +72,7 @@ function [options, names] = mpoption(varargin)
 %       17 - CONSTR_TOL_X, 1e-4     termination tol on x for constr/fmincon
 %       18 - CONSTR_TOL_F, 1e-4     termination tol on f for constr/fmincon
 %       19 - CONSTR_MAX_IT, 0       max number of iterations for constr/fmincon
-%                                   [       0 => 2*nb + 150                 ]
+%                                   [       0 => default                    ]
 %       20 - LPC_TOL_GRAD, 3e-3     termination tolerance on gradient, LP-based
 %                                   solver
 %       21 - LPC_TOL_X, 1e-4        termination tolerance on x (min step size),

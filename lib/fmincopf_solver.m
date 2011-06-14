@@ -114,20 +114,18 @@ bfeq = u(ieq);
 %% build admittance matrices
 [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
 
-%% tolerances
-if mpopt(19) == 0           %% CONSTR_MAX_IT
-  mpopt(19) = 150 + 2*nb;
-end
-
 %% find branches with flow limits
 il = find(branch(:, RATE_A) ~= 0 & branch(:, RATE_A) < 1e10);
 nl2 = length(il);           %% number of constrained lines
 
 %% basic optimset options needed for fmincon
 fmoptions = optimset('GradObj', 'on', 'GradConstr', 'on', ...
-            'MaxIter', mpopt(19), 'TolCon', mpopt(16), ...
-            'TolX', mpopt(17), 'TolFun', mpopt(18) );
-fmoptions.MaxFunEvals = 4 * fmoptions.MaxIter;
+            'TolCon', mpopt(16), 'TolX', mpopt(17), 'TolFun', mpopt(18) );
+if mpopt(19) ~= 0
+	fmoptions = optimset(fmoptions, 'MaxIter', mpopt(19), ...
+				'MaxFunEvals', 4 * mpopt(19));
+end
+
 if verbose == 0,
   fmoptions.Display = 'off';
 elseif verbose == 1
