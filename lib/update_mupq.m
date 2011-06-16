@@ -16,7 +16,7 @@ function gen = update_mupq(baseMVA, gen, mu_PQh, mu_PQl, data)
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
-%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2011 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
@@ -42,7 +42,7 @@ function gen = update_mupq(baseMVA, gen, mu_PQh, mu_PQl, data)
 %   under other licensing terms, the licensors of MATPOWER grant
 %   you additional permission to convey the resulting work.
 
-
+%% extract the constraint parameters
 [ipqh, ipql, Apqhdata, Apqldata] = ...
     deal(data.ipqh, data.ipql, data.h, data.l);
 
@@ -51,56 +51,20 @@ function gen = update_mupq(baseMVA, gen, mu_PQh, mu_PQl, data)
     MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
     QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
 
-% If we succeeded and there were generators with general PQ curve
-% characteristics, this is the time to re-compute the multipliers,
-% splitting any nonzero multiplier on one of the linear bounds among the
-% Pmax, Pmin, Qmax or Qmin limits, producing one multiplier for a P limit and
-% another for a Q limit. For upper Q limit, if we are neither at Pmin nor at 
-% Pmax, the limit is taken as Pmin if the Qmax line's normal has a negative P
-% component, Pmax if it has a positive P component. Messy but there really
-% are many cases.
-muPmax = gen(:, MU_PMAX);
-muPmin = gen(:, MU_PMIN);
-if ~isempty(mu_PQh)
-%   gen(:, [MU_PMIN MU_PMAX MU_QMIN MU_QMAX])
-  k = 1;
-  for i = ipqh'
-    if muPmax(i) > 0
-      gen(i,MU_PMAX)=gen(i,MU_PMAX)-mu_PQh(k)*Apqhdata(k,1)/baseMVA;
-    elseif muPmin(i) > 0
-      gen(i,MU_PMIN)=gen(i,MU_PMIN)+mu_PQh(k)*Apqhdata(k,1)/baseMVA;
-    else
-      if Apqhdata(k, 1) >= 0
-         gen(i,MU_PMAX)=gen(i,MU_PMAX)-mu_PQh(k)*Apqhdata(k,1)/baseMVA;
-      else
-         gen(i,MU_PMIN)=gen(i,MU_PMIN)+mu_PQh(k)*Apqhdata(k,1)/baseMVA;
-      end
-    end
-    gen(i,MU_QMAX)=gen(i,MU_QMAX)-mu_PQh(k)*Apqhdata(k,2)/baseMVA;
-    k = k + 1;
-  end
-end
+%% combine original limit multipliers into single value
+muP = gen(:, MU_PMAX) - gen(:, MU_PMIN);
+muQ = gen(:, MU_QMAX) - gen(:, MU_QMIN);
 
-if ~isempty(mu_PQl)
-%   gen(:, [MU_PMIN MU_PMAX MU_QMIN MU_QMAX])
-  k = 1;
-  for i = ipql'
-    if muPmax(i) > 0
-      gen(i,MU_PMAX)=gen(i,MU_PMAX)-mu_PQl(k)*Apqldata(k,1)/baseMVA;
-    elseif muPmin(i) > 0
-      gen(i,MU_PMIN)=gen(i,MU_PMIN)+mu_PQl(k)*Apqldata(k,1)/baseMVA;
-    else
-      if Apqldata(k,1) >= 0
-        gen(i,MU_PMAX)=gen(i,MU_PMAX)-mu_PQl(k)*Apqldata(k,1)/baseMVA;
-      else
-        gen(i,MU_PMIN)=gen(i,MU_PMIN)+mu_PQl(k)*Apqldata(k,1)/baseMVA;
-      end
-    end
-    gen(i,MU_QMIN)=gen(i,MU_QMIN)+mu_PQl(k)*Apqldata(k,2)/baseMVA;
-    k = k + 1;
-  end
-%   gen(:, [MU_PMIN MU_PMAX MU_QMIN MU_QMAX])
-%   -[ mu_PQl(1:2) mu_PQh(1:2) ]/baseMVA
-%   -[ mu_PQl(1:2).*Apqldata(1:2,1) mu_PQh(1:2).*Apqhdata(1:2,1) ]/baseMVA
-%   -[ mu_PQl(1:2).*Apqldata(1:2,2) mu_PQh(1:2).*Apqhdata(1:2,2) ]/baseMVA
-end
+%% add P and Q components of multipliers on upper sloped constraint
+muP(ipqh) = muP(ipqh) - mu_PQh .* Apqhdata(:,1)/baseMVA;
+muQ(ipqh) = muQ(ipqh) - mu_PQh .* Apqhdata(:,2)/baseMVA;
+
+%% add P and Q components of multipliers on lower sloped constraint
+muP(ipql) = muP(ipql) - mu_PQl .* Apqldata(:,1)/baseMVA;
+muQ(ipql) = muQ(ipql) - mu_PQl .* Apqldata(:,2)/baseMVA;
+
+%% split back into upper and lower multipliers based on sign
+gen(:, MU_PMAX) = (muP > 0) .*  muP;
+gen(:, MU_PMIN) = (muP < 0) .* -muP;
+gen(:, MU_QMAX) = (muQ > 0) .*  muQ;
+gen(:, MU_QMIN) = (muQ < 0) .* -muQ;
