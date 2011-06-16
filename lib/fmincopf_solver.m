@@ -95,11 +95,6 @@ ny = getN(om, 'var', 'y');  %% number of piece-wise linear costs
 %% linear constraints
 [A, l, u] = linear_constraints(om);
 
-%% so, can we do anything good about lambda initialization?
-if all(bus(:, LAM_P) == 0)
-  bus(:, LAM_P) = (10)*ones(nb, 1);
-end
-
 %% split l <= A*x <= u into less than, equal to, greater than, and
 %% doubly-bounded sets
 ieq = find( abs(u-l) <= eps );          %% equality
