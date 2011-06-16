@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.0
 -----------------
 
+6/16/11
+    Complete rewrite of update_mupq.m. Should fix problems caused
+    by non-zero multipliers on non-binding generator limits.
+
 5/17/11
     - Updated runpf() and pfsoln() to properly handle slack for
       power flow cases with islands and multiple reference buses.
