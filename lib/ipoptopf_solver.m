@@ -32,13 +32,13 @@ function [results, success, raw] = ipoptopf_solver(om, mpopt)
 %       .info   solver specific termination code
 %       .output solver specific output information
 %
-%   See also OPF, MIPS.
+%   See also OPF, IPOPT.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
-%   Copyright (c) 2000-2010 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2000-2011 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
@@ -75,28 +75,6 @@ function [results, success, raw] = ipoptopf_solver(om, mpopt)
     TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
-
-%% options
-verbose = mpopt(31);    %% VERBOSE
-feastol = mpopt(81);    %% PDIPM_FEASTOL
-gradtol = mpopt(82);    %% PDIPM_GRADTOL
-comptol = mpopt(83);    %% PDIPM_COMPTOL
-costtol = mpopt(84);    %% PDIPM_COSTTOL
-max_it  = mpopt(85);    %% PDIPM_MAX_IT
-max_red = mpopt(86);    %% SCPDIPM_RED_IT
-step_control = (mpopt(11) == 565);  %% OPF_ALG == 565, MIPS-sc
-if feastol == 0
-    feastol = mpopt(16);    %% = OPF_VIOLATION by default
-end
-opt = struct(   'feastol', feastol, ...
-                'gradtol', gradtol, ...
-                'comptol', comptol, ...
-                'costtol', costtol, ...
-                'max_it', max_it, ...
-                'max_red', max_red, ...
-                'step_control', step_control, ...
-                'cost_mult', 1e-4, ...
-                'verbose', verbose  );
 
 %% unpack data
 mpc = get_mpc(om);
