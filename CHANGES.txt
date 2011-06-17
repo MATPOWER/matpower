@@ -19,6 +19,10 @@ Changes since 4.0
     - Changed FMC_ALG option default to 4, fmincon defaults to
       using an interior-point method with user-supplied Hessians
       instead of an active set method.
+    - Added support for the KNITRO optimization solver for large
+      scale non-linear problems. Use OPF_ALG = 600 for AC OPF.
+      Requires the Optimization Toolbox from The MathWorks and
+      the KNITRO libraries, available from http://www.ziena.com/.
 
 6/16/11
     - Complete rewrite of update_mupq.m. Should fix problems
