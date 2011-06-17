@@ -11,6 +11,7 @@ function TorF = have_fcn(tag)
 %       ipopt       - IPOPT, NLP solver (https://projects.coin-or.org/Ipopt/)
 %       linprog     - LINPROG, LP solver from Optimization Toolbox 2.x +
 %       lp          - LP, LP solver from Optimization Toolbox 1.x/2.x
+%       knitro      - KNITRO, NLP solver (http://www.ziena.com/)
 %       minopf      - MINOPF, MINOPF, MINOS-based OPF solver
 %       mosek       - MOSEK, LP/QP solver (http://www.mosek.com/)
 %       quadprog    - QUADPROG, QP solver from Optimization Toolbox 2.x +
@@ -86,6 +87,14 @@ switch tag
         TorF = exist('linprog', 'file') == 2;
     case 'lp'
         TorF = exist('lp', 'file') == 2;
+    case 'knitro'
+        TorF = exist('ktrlink', 'file') == 2;
+        if TorF
+            try
+                str = evalc('[x fval] = ktrlink(@(x)1,1);');
+            end
+            TorF = exist('fval', 'var') && fval == 1;
+        end
     case 'minopf'
         TorF = exist('minopf', 'file') == 3;
     case 'mosek'

@@ -76,6 +76,9 @@ end
 if have_fcn('ipopt')
     tests{end+1} = 't_opf_ipopt';
 end
+if have_fcn('knitro')
+    tests{end+1} = 't_opf_knitro';
+end
 if have_fcn('constr')
     tests{end+1} = 't_opf_constr';
 end

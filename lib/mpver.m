@@ -50,7 +50,7 @@ function rv = mpver(varargin)
 v{1} = struct(  'Name',     'MATPOWER', ... 
                 'Version',  '4.0+', ...
                 'Release',  '', ...
-                'Date',     '26-May-2011' );
+                'Date',     '17-Jun-2011' );
 if nargout > 0
     if nargin > 0
         rv = v{1};
@@ -106,6 +106,19 @@ else
         fprintf('%-22s Version %-10s %-11s   %s\n', 'IPOPT', vn, '', computer);
     else
         fprintf('%-22s -- not installed --\n', 'IPOPT');
+    end
+    if have_fcn('knitro')
+        str = evalc('[x fval] = ktrlink(@(x)1,1);');
+        pat = 'KNITRO ([^\s]+)\n';
+        [s,e,tE,m,t] = regexp(str, pat);
+        if isempty(t)
+            vn = '<unknown>';
+        else
+            vn = t{1}{1};
+        end
+        fprintf('%-22s Version %-10s %-11s   %s\n', 'KNITRO', vn, '', computer);
+    else
+        fprintf('%-22s -- not installed --\n', 'KNITRO');
     end
     if have_fcn('minopf')
         if exist('minopfver', 'file') == 2

@@ -139,6 +139,11 @@ else
       solver = @fmincopf6_solver;
     end
     [results, success, raw] = feval(solver, om, mpopt);
+  elseif alg == 600                             %% KNITRO
+    if ~have_fcn('knitro')
+      error('opf_execute: OPF_ALG %d requires KNITRO (see http://www.ziena.com/)', alg);
+    end
+    [results, success, raw] = ktropf_solver(om, mpopt);
   elseif alg == 300                             %% CONSTR
     if ~have_fcn('constr')
       error('opf_execute: OPF_ALG %d requires CONSTR (Optimization Toolbox 1.x)', alg);

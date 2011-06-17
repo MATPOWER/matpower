@@ -68,6 +68,8 @@ function [options, names] = mpoption(varargin)
 %           [        primal/dual interior point method (pure MATLAB)        ]
 %           [  580 - IPOPT, requires MEX interface to IPOPT solver          ]
 %           [        available from: https://projects.coin-or.org/Ipopt/    ]
+%           [  600 - KNITRO, requires MATLAB Optimization Toolbox and       ]
+%                    KNITRO libraries available from: http://www.ziena.com/ ]
 %       16 - OPF_VIOLATION, 5e-6    constraint violation tolerance
 %       17 - CONSTR_TOL_X, 1e-4     termination tol on x for constr/fmincon
 %       18 - CONSTR_TOL_F, 1e-4     termination tol on f for constr/fmincon
@@ -140,6 +142,12 @@ function [options, names] = mpoption(varargin)
 %            [  3 - interior-point, w/ 'lbfgs' Hessian approx               ]
 %            [  4 - interior-point, w/exact user-supplied Hessian           ]
 %            [  5 - interior-point, w/Hessian via finite differences        ]
+%
+%   KNITRO options
+%       58 - KNITRO_OPT, 0          a non-zero integer N indicates that all
+%                                   KNITRO options should be handled by a
+%                                   KNITRO options file named
+%                                   'knitro_user_options_N.txt'
 %
 %   IPOPT options
 %       60 - IPOPT_OPT, 0           See IPOPT_OPTIONS for details.
@@ -336,7 +344,7 @@ else                    %% even number of parameters
         4;      %% 55 - FMC_ALG
         0;      %% 56 - RESERVED56
         0;      %% 57 - RESERVED57
-        0;      %% 58 - RESERVED58
+        0;      %% 58 - KNITRO_OPT
         0;      %% 59 - RESERVED59
         0;      %% 60 - IPOPT_OPT
         
@@ -475,7 +483,7 @@ names = char(   names, ...
                 'FMC_ALG', ...              %% 55
                 'RESERVED56', ...           %% 56
                 'RESERVED57', ...           %% 57
-                'RESERVED58', ...           %% 58
+                'KNITRO_OPT', ...           %% 58
                 'RESERVED59', ...           %% 59
                 'IPOPT_OPT'     );          %% 60
 %% MINOS options
