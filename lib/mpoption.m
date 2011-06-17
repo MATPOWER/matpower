@@ -133,7 +133,7 @@ function [options, names] = mpoption(varargin)
 %       52 - RETURN_RAW_DER, 0      return constraint and derivative info
 %                                   in results.raw (in fields g, dg, df, d2f)
 %   FMINCON options
-%       55 - FMC_ALG, 1             algorithm used by fmincon for OPF
+%       55 - FMC_ALG, 4             algorithm used by fmincon for OPF
 %                                   for Optimization Toolbox 4 and later
 %            [  1 - active-set                                              ]
 %            [  2 - interior-point, w/default 'bfgs' Hessian approx         ]
@@ -333,7 +333,7 @@ else                    %% even number of parameters
         0;      %% 52 - RETURN_RAW_DER
         0;      %% 53 - RESERVED53
         0;      %% 54 - RESERVED54
-        1;      %% 55 - FMC_ALG
+        4;      %% 55 - FMC_ALG
         0;      %% 56 - RESERVED56
         0;      %% 57 - RESERVED57
         0;      %% 58 - RESERVED58

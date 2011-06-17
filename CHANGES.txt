@@ -15,9 +15,15 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.0
 -----------------
 
+6/17/11
+    - Changed FMC_ALG option default to 4, fmincon defaults to
+      using an interior-point method with user-supplied Hessians
+      instead of an active set method.
+
 6/16/11
-    Complete rewrite of update_mupq.m. Should fix problems caused
-    by non-zero multipliers on non-binding generator limits.
+    - Complete rewrite of update_mupq.m. Should fix problems
+      caused by non-zero multipliers on non-binding generator
+      limits.
 
 5/17/11
     - Updated runpf() and pfsoln() to properly handle slack for
