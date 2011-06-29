@@ -68,7 +68,7 @@ end
 t_ok(condition, msg);
 if ~condition && ~t_quiet
     if max_diff ~= 0
-        [i, j, v] = find(abs(got_minus_expected) >= 10^(-prec));
+        [i, j, v] = find(~(abs(got_minus_expected) < 10^(-prec)));
         k = i+(j-1)*m;
         [vv, kk] = max(abs(got_minus_expected(k)));
         fprintf('  row     col          got             expected          got - exp\n');
