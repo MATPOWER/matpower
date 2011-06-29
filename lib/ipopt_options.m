@@ -109,7 +109,7 @@ else
 end
 
 %% convergence
-opt.tol             = 1e-12;                %% default 1e-8
+opt.tol             = 1e-8;                %% default 1e-8
 opt.max_iter        = 250;                  %% default 3000
 opt.dual_inf_tol    = 0.1;                  %% default 1
 if have_mpopt
