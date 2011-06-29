@@ -234,6 +234,39 @@ else
 end
 
 %%-----  run optimization  -----
+if verbose
+    methods = {
+        'default',
+        'interior point',
+        '<default>',
+        '<default>',
+        'primal simplex',
+        'dual simplex',
+        'primal dual simplex',
+        'automatic simplex',
+        '<default>',
+        '<default>',
+        'concurrent'
+    };
+    if isempty(H) || ~any(any(H))
+        lpqp = 'LP';
+    else
+        lpqp = 'QP';
+    end
+    % (this code is also in mpver.m)
+    % MOSEK Version 6.0.0.93 (Build date: 2010-10-26 13:03:27)
+    % MOSEK Version 6.0.0.106 (Build date: 2011-3-17 10:46:54)
+%    pat = 'Version (\.*\d)+.*Build date: (\d\d\d\d-\d\d-\d\d)';
+    pat = 'Version (\.*\d)+.*Build date: (\d+-\d+-\d+)';
+    [s,e,tE,m,t] = regexp(evalc('mosekopt'), pat);
+    if isempty(t)
+        vn = '<unknown>';
+    else
+        vn = t{1}{1};
+    end
+    fprintf('MOSEK Version %s -- %s %s solver\n', ...
+            vn, methods{mosek_opt.MSK_IPAR_OPTIMIZER+1}, lpqp);
+end
 cmd = sprintf('minimize echo(%d)', verbose);
 [r, res] = mosekopt(cmd, prob, mosek_opt);
 
