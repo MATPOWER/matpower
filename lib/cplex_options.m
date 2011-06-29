@@ -24,9 +24,9 @@ function opt = cplex_options(overrides, mpopt)
 %           CPLEX_LPMETHOD (95) - used to set opt.lpmethod
 %           CPLEX_QPMETHOD (96) - used to set opt.qpmethod
 %           CPLEX_OPT (97)      - user option file, if MPOPT(97) is non-zero
-%               non-zero it is appended to 'cplex_user_options_' to form
-%               the name of a user-supplied function used as FNAME
-%               described above, except with calling syntax:
+%               it is appended to 'cplex_user_options_' to form the name of a
+%               user-supplied function used as FNAME described above, except
+%               with calling syntax:
 %                   MODIFIED_OPT = FNAME(DEFAULT_OPT, MPOPT);
 %
 %   Output is an options struct to pass to CPLEXOPTIMSET.

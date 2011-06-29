@@ -18,14 +18,15 @@ function opt = mosek_options(overrides, mpopt)
 %       MPOPT - MATPOWER options vector, uses the following entries:
 %           OPF_VIOLATION (16)  - used to set opt.MSK_DPAR_INTPNT_TOL_PFEAS
 %           VERBOSE (31)        - not currently used here
+%           MOSEK_LP_ALG (111)  - used to set opt.MSK_IPAR_OPTIMIZER
 %           MOSEK_MAX_IT (112)  - used to set opt.MSK_IPAR_INTPNT_MAX_ITERATIONS
 %           MOSEK_GAP_TOL (113) - used to set opt.MSK_DPAR_INTPNT_TOL_REL_GAP
 %           MOSEK_MAX_TIME (114) - used to set opt.MSK_DPAR_OPTIMIZER_MAX_TIME
 %           MOSEK_NUM_THREADS (115) - used to set opt.MSK_IPAR_INTPNT_NUM_THREADS
 %           MOSEK_OPT (116)     - user option file, if MPOPT(116) is non-zero
-%               non-zero it is appended to 'mosek_user_options_' to form
-%               the name of a user-supplied function used as FNAME
-%               described above, except with calling syntax:
+%               it is appended to 'mosek_user_options_' to form the name of a
+%               user-supplied function used as FNAME described above, except
+%               with calling syntax:
 %                   MODIFIED_OPT = FNAME(DEFAULT_OPT, MPOPT);
 %
 %   Output is a param struct to pass to MOSEKOPT.
@@ -98,7 +99,6 @@ if nargin > 1 && ~isempty(mpopt)
         have_mpopt = 0;
     else                    %% 2nd arg is MPOPT (MATPOWER options vector)
         have_mpopt = 1;
-        %% (make default OPF_VIOLATION correspond to default MOSEK intpnt_tol_pfeas)
         verbose = mpopt(31);    %% VERBOSE
         if mpopt(116)           %% MOSEK_OPT
             fname = sprintf('mosek_user_options_%d', mpopt(116));
