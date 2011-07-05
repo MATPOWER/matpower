@@ -91,6 +91,9 @@ end
 if have_fcn('cplex')
     tests{end+1} = 't_opf_dc_cplex';
 end
+if have_fcn('gurobi')
+    tests{end+1} = 't_opf_dc_gurobi';
+end
 if have_fcn('ipopt')
     tests{end+1} = 't_opf_dc_ipopt';
 end

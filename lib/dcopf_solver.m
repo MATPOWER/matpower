@@ -79,12 +79,14 @@ alg     = mpopt(26);    %% OPF_ALG_DC
 
 %% default solver
 if alg == 0
-    if have_fcn('mosek')        %% use MOSEK by default if available
+    if have_fcn('gurobi')       %% use Gurobi by default, if available
+        alg = 700;
+    elseif have_fcn('mosek')    %% if not, then MOSEK, if available
         alg = 600;
-    elseif have_fcn('bpmpd')    %% if not, then BPMPD_MEX if available
-        alg = 100;
-    elseif have_fcn('cplex')    %% if not, then CPLEX if available
+    elseif have_fcn('cplex')    %% if not, then CPLEX, if available
         alg = 500;
+    elseif have_fcn('bpmpd')    %% if not, then BPMPD_MEX, if available
+        alg = 100;
     else                        %% otherwise MIPS
         alg = 200;
     end
@@ -210,6 +212,8 @@ switch alg
         opt.cplex_opt = cplex_options([], mpopt);
     case 600
         opt.mosek_opt = mosek_options([], mpopt);
+    case 700
+        opt.grb_opt = gurobi_options([], mpopt);
 end
 
 %%-----  run opf  -----

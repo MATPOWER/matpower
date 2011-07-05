@@ -50,7 +50,7 @@ function rv = mpver(varargin)
 v{1} = struct(  'Name',     'MATPOWER', ... 
                 'Version',  '4.0+', ...
                 'Release',  '', ...
-                'Date',     '17-Jun-2011' );
+                'Date',     '05-Jul-2011' );
 if nargout > 0
     if nargin > 0
         rv = v{1};
@@ -107,6 +107,19 @@ else
     else
         fprintf('%-22s -- not installed --\n', 'IPOPT');
     end
+    if have_fcn('gurobi')
+        str = 'Gurobi version <unknown>';
+        pat = 'Gurobi version ([^\s,]+)';
+        [s,e,tE,m,t] = regexp(str, pat);
+        if isempty(t)
+            vn = '<unknown>';
+        else
+            vn = t{1}{1};
+        end
+        fprintf('%-22s Version %-10s %-11s   %s\n', 'Gurobi', vn, '', computer);
+    else
+        fprintf('%-22s -- not installed --\n', 'Gurobi');
+    end
     if have_fcn('knitro')
         str = evalc('[x fval] = ktrlink(@(x)1,1);');
         pat = 'KNITRO ([^\s]+)\n';
@@ -130,6 +143,7 @@ else
         fprintf('%-22s -- not installed --\n', 'MINOPF');
     end
     if have_fcn('mosek')
+        % (this code is also in qps_mosek.m)
         % MOSEK Version 6.0.0.93 (Build date: 2010-10-26 13:03:27)
         % MOSEK Version 6.0.0.106 (Build date: 2011-3-17 10:46:54)
 %        pat = 'Version (\.*\d)+.*Build date: (\d\d\d\d-\d\d-\d\d)';

@@ -34,9 +34,9 @@ if nargin < 1
     quiet = 0;
 end
 
-algs = [100 200 250 400 300 500 600];
-names = {'BPMPD_MEX', 'MIPS', 'sc-MIPS', 'IPOPT', 'quadprog', 'CPLEX', 'MOSEK'};
-check = {'bpmpd', [], [], 'ipopt', 'quadprog', 'cplex', 'mosek'};
+algs = [100 200 250 400 300 500 600 700];
+names = {'BPMPD_MEX', 'MIPS', 'sc-MIPS', 'IPOPT', 'quadprog', 'CPLEX', 'MOSEK', 'Gurobi'};
+check = {'bpmpd', [], [], 'ipopt', 'quadprog', 'cplex', 'mosek', 'gurobi'};
 
 n = 36;
 t_begin(n*length(algs), quiet);

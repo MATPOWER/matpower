@@ -81,6 +81,8 @@ switch tag
         end
     case 'fmincon'
         TorF = exist('fmincon', 'file') == 2;
+    case 'gurobi'
+        TorF = exist('gurobi_mex', 'file') == 3;
     case 'ipopt'
         TorF = exist('ipopt', 'file') == 3;
     case 'linprog'

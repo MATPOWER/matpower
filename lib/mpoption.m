@@ -89,7 +89,7 @@ function [options, names] = mpoption(varargin)
 %                                   even if specified           [   0 or 1  ]
 %       26 - OPF_ALG_DC, 0          solver to use for DC OPF
 %           [    0 - choose default solver based on availability in the     ]
-%           [        following order, 600, 100, 500, 200                    ]
+%           [        following order: 700, 600, 500, 100, 200               ]
 %           [  100 - BPMPD, requires optional MEX-based BPMPD_MEX package   ]
 %           [        available from: http://www.pserc.cornell.edu/bpmpd/    ]
 %           [  200 - MIPS, MATLAB Interior Point Solver                     ]
@@ -101,6 +101,8 @@ function [options, names] = mpoption(varargin)
 %           [  500 - CPLEX, requires Matlab interface to CPLEX solver       ]
 %           [  600 - MOSEK, requires Matlab interface to MOSEK solver       ]
 %                    available from: http://www.mosek.com/                  ]
+%           [  700 - GUROBI, requires Matlab interface to Gurobi optimizer  ]
+%                    available from: http://www.gurobi.com/                 ]
 %   output options
 %       31 - VERBOSE, 1             amount of progress info printed
 %           [   0 - print no progress info                                  ]
@@ -235,6 +237,17 @@ function [options, names] = mpoption(varargin)
 %       115 - MOSEK_NUM_THREADS, 0 (1)  maximum number of threads to use
 %                                           (MSK_IPAR_INTPNT_NUM_THREADS)
 %       116 - MOSEK_OPT, 0              See MOSEK_OPTIONS for details
+%
+%   Gurobi options
+%       121 - GRB_METHOD, 1         solution algorithm (Method)
+%           [   0 - primal simplex                                          ]
+%           [   1 - dual simplex                                            ]
+%           [   2 - barrier                                                 ]
+%           [   3 - concurrent (LP only)                                    ]
+%           [   4 - deterministic concurrent (LP only)                      ]
+%       122 - GRB_TIMELIMIT, Inf    maximum time allowed for solver (TimeLimit)
+%       123 - GRB_THREADS, 0 (auto) maximum number of threads to use (Threads)
+%       124 - GRB_OPT, 0            See GUROBI_OPTIONS for details
 %
 %   deprecated options
 %       43 - OUT_RAW, 0             print raw data for Perl database
@@ -411,6 +424,16 @@ else                    %% even number of parameters
         0;      %% 114 - MOSEK_MAX_TIME
         0;      %% 115 - MOSEK_NUM_THREADS
         0;      %% 116 - MOSEK_OPT
+        0;      %% 117 - RESERVED117
+        0;      %% 118 - RESERVED118
+        0;      %% 119 - RESERVED119
+        0;      %% 120 - RESERVED120
+
+        %% Gurobi options
+        1;      %% 121 - GRB_METHOD
+        Inf;    %% 122 - GRB_TIMELIMIT
+        0;      %% 123 - GRB_THREADS
+        0;      %% 124 - GRB_OPT
     ];
 end
 
@@ -554,7 +577,18 @@ names = char(   names, ...
                 'MOSEK_GAP_TOL', ...        %% 113
                 'MOSEK_MAX_TIME', ...       %% 114
                 'MOSEK_NUM_THREADS', ...    %% 115
-                'MOSEK_OPT' );              %% 116
+                'MOSEK_OPT', ...            %% 116
+                'RESERVED117', ...          %% 117
+                'RESERVED118', ...          %% 118
+                'RESERVED119', ...          %% 119
+                'RESERVED120'   );          %% 120
+
+%% Gurobi options
+names = char(   names, ...
+                'GRB_METHOD', ...           %% 121
+                'GRB_TIMELIMIT', ...        %% 122
+                'GRB_THREADS', ...          %% 123
+                'GRB_OPT'   );              %% 124
 
 %%-----  process parameters  -----
 while i <= nargin

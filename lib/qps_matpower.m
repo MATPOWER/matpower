@@ -36,18 +36,20 @@ function [x, f, eflag, output, lambda] = qps_matpower(H, c, A, l, u, xmin, xmax,
 %               400 = IPOPT
 %               500 = CPLEX
 %               600 = MOSEK
+%               700 = Gurobi
 %           verbose (0) - controls level of progress output displayed
 %               0 = no progress output
 %               1 = some progress output
 %               2 = verbose progress output
 %           max_it (0) - maximum number of iterations allowed
 %               0 = use algorithm default
-%           bp_opt - options vector for BP
+%           bp_opt    - options vector for BP
 %           cplex_opt - options struct for CPLEX
+%			grb_opt   - options struct for GBUROBI_MEX
 %           ipopt_opt - options struct for IPOPT
-%           mips_opt - options struct for QPS_MIPS
+%           mips_opt  - options struct for QPS_MIPS
 %           mosek_opt - options struct for MOSEK
-%           ot_opt - options struct for QUADPROG/LINPROG
+%           ot_opt    - options struct for QUADPROG/LINPROG
 %       PROBLEM : The inputs can alternatively be supplied in a single
 %           PROBLEM struct with fields corresponding to the input arguments
 %           described above: H, c, A, l, u, xmin, xmax, x0, opt
@@ -174,12 +176,14 @@ else
     verbose = 0;
 end
 if alg == 0
-    if have_fcn('mosek')        %% use MOSEK by default if available
+    if have_fcn('gurobi')       %% use Gurobi by default, if available
+        alg = 700;
+    elseif have_fcn('mosek')    %% if not, then MOSEK, if available
         alg = 600;
-    elseif have_fcn('bpmpd')    %% if not, then BPMPD_MEX if available
-        alg = 100;
-    elseif have_fcn('cplex')    %% if not, then CPLEX if available
+    elseif have_fcn('cplex')    %% if not, then CPLEX, if available
         alg = 500;
+    elseif have_fcn('bpmpd')    %% if not, then BPMPD_MEX, if available
+        alg = 100;
     else                        %% otherwise MIPS
         alg = 200;
     end
@@ -241,6 +245,9 @@ switch alg
     case 600                    %% use MOSEK
         [x, f, eflag, output, lambda] = ...
             qps_mosek(H, c, A, l, u, xmin, xmax, x0, opt);
+    case 700                    %% use Gurobi
+        [x, f, eflag, output, lambda] = ...
+            qps_gurobi(H, c, A, l, u, xmin, xmax, x0, opt);
     otherwise
         error('qps_matpower: %d is not a valid algorithm code', alg);
 end
