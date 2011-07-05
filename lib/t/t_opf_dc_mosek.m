@@ -34,7 +34,8 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 23 * 7;
+algs = [0; 1; 4; 5; 6; 7; 10];
+num_tests = 23 * length(algs);
 
 t_begin(num_tests, quiet);
 
@@ -56,7 +57,6 @@ end
 
 mpopt = mpoption('OUT_ALL', 0, 'VERBOSE', verbose);
 mpopt = mpoption(mpopt, 'OPF_ALG_DC', 600);
-algs = [0; 1; 4; 5; 6; 7; 10];
 
 %% run DC OPF
 if have_fcn('mosek')

@@ -34,7 +34,8 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 23 * 6;
+algs = [1; 2; 3; 4; 5; 6];
+num_tests = 23 * length(algs);
 
 t_begin(num_tests, quiet);
 
@@ -59,8 +60,8 @@ mpopt = mpoption(mpopt, 'OPF_ALG_DC', 500);
 
 %% run DC OPF
 if have_fcn('cplex')
-	for alg = 1:6
-		mpopt = mpoption(mpopt, 'CPLEX_LPMETHOD', alg, 'CPLEX_QPMETHOD', alg);
+	for k = 1:length(algs)
+		mpopt = mpoption(mpopt, 'CPLEX_LPMETHOD', algs(k), 'CPLEX_QPMETHOD', algs(k));
 		methods = {
 			'primal simplex',
 			'dual simplex',
@@ -69,7 +70,7 @@ if have_fcn('cplex')
 			'sifting',
 			'concurrent'
 		};
-	t0 = sprintf('DC OPF (CPLEX %s): ', methods{alg});
+	t0 = sprintf('DC OPF (CPLEX %s): ', methods{k});
 
     %% set up indices
     ib_data     = [1:BUS_AREA BASE_KV:VMIN];
@@ -155,6 +156,7 @@ if have_fcn('cplex')
     mpc.l = 600;
     [r, success] = rundcopf(mpc, mpopt);
     t_ok(~success, [t 'no success']);
+
 	end
 else
     t_skip(num_tests, 'CPLEX not available');
