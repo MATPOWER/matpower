@@ -15,6 +15,20 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.0
 -----------------
 
+7/5/11
+    - Added support for the Gurobi optimizer for large-scale linear
+      and quadratic programming. To use Gurobi for the DC OPF, set
+      OPF_ALG_DC = 700. Gurobi's various solvers can be selected via
+      MATPOWER's GRB_METHOD option. Requires the Gurobi libraries
+      available from http://www.gurobi.com/ and the Gurobi MEX
+      interface available from http://www.convexoptimization.com/
+      wikimization/index.php/Gurobi_mex.
+    - Added function qps_gurobi() for solving QP and LP problems using
+      the common QP solver interface used in MATPOWER. The qps_matpower()
+      function also includes the option to use Gurobi.
+    - Changed order of precendence of installed DC OPF solvers
+      (i.e. LP/QP solvers) to Gurobi, MOSEK, CPLEX, BPMPD, then MIPS.
+
 6/17/11
     - Changed FMC_ALG option default to 4, fmincon defaults to
       using an interior-point method with user-supplied Hessians
