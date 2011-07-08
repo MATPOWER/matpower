@@ -165,8 +165,8 @@ end
 
 if isempty(load_zone)
     if length(load) == 1        %% make a single zone of all load buses
-        load_zone = zeros(nb, 1);                   %% initialize
-        load_zone(bus(:, PD) ~= 0) = 1;             %% FIXED loads
+        load_zone = zeros(nb, 1);                           %% initialize
+        load_zone(bus(:, PD) ~= 0 | bus(:, QD) ~= 0) = 1;   %% FIXED loads
         if ~isempty(gen)
             load_zone(e2i(gen(ld, GEN_BUS))) = 1;   %% DISPATCHABLE loads
         end
