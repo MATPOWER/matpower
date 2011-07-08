@@ -114,12 +114,12 @@ opt.max_iter        = 250;                  %% default 3000
 opt.dual_inf_tol    = 0.1;                  %% default 1
 if have_mpopt
     opt.constr_viol_tol = mpopt(16);        %% default 1e-4
+    opt.acceptable_constr_viol_tol = mpopt(16)*100;     %% default 1e-2
 end
 opt.compl_inf_tol   = 1e-5;                 %% default 1e-4
 opt.acceptable_tol  = 1e-8;                 %% default 1e-6
 % opt.acceptable_iter = 15;                   %% default 15
 % opt.acceptable_dual_inf_tol     = 1e+10;    %% default 1e+10
-opt.acceptable_constr_viol_tol  = 1e-4;     %% default 1e-2
 opt.acceptable_compl_inf_tol    = 1e-3;     %% default 1e-2
 % opt.acceptable_obj_change_tol   = 1e+20;    %% default 1e+20
 % opt.diverging_iterates_tol      = 1e+20;    %% default 1e+20
