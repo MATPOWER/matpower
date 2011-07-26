@@ -45,7 +45,7 @@ function [x, f, eflag, output, lambda] = qps_matpower(H, c, A, l, u, xmin, xmax,
 %               0 = use algorithm default
 %           bp_opt    - options vector for BP
 %           cplex_opt - options struct for CPLEX
-%			grb_opt   - options struct for GBUROBI_MEX
+%           grb_opt   - options struct for GBUROBI_MEX
 %           ipopt_opt - options struct for IPOPT
 %           mips_opt  - options struct for QPS_MIPS
 %           mosek_opt - options struct for MOSEK
@@ -229,7 +229,7 @@ switch alg
         else
             solver = 'qps_mips6';
         end
-    
+
         %% call solver
         [x, f, eflag, output, lambda] = ...
             feval(solver, H, c, A, l, u, xmin, xmax, x0, mips_opt);
