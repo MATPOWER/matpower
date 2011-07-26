@@ -17,6 +17,10 @@ Changes since 4.0
 
 (need to check total_load() for scale_load() bug fixed below)
 
+7/26/11
+    - Fix in qps_cplex() for changed sign on multipliers with
+      CPLEX 12.3 vs CPLEX 12.2.
+
 7/25/11
     - Fixed bug in compare_case() that would cause some column
       names for the branch matrix to be incorrectly reported.
@@ -38,6 +42,9 @@ Changes since 4.0
       function also includes the option to use Gurobi.
     - Changed order of precendence of installed DC OPF solvers
       (i.e. LP/QP solvers) to Gurobi, MOSEK, CPLEX, BPMPD, then MIPS.
+
+6/29/11
+    - Updated t_is() to properly print when result includes NaNs.
 
 6/17/11
     - Changed FMC_ALG option default to 4, fmincon defaults to
