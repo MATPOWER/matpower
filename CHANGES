@@ -15,6 +15,16 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.0
 -----------------
 
+(need to check total_load() for scale_load() bug fixed below)
+
+7/25/11
+    - Fixed bug in compare_case() that would cause some column
+      names for the branch matrix to be incorrectly reported.
+
+7/7/11
+    - In scale_load(), when no load_zone is specified, it no longer
+      incorrectly misses Q-only load buses.
+
 7/5/11
     - Added support for the Gurobi optimizer for large-scale linear
       and quadratic programming. To use Gurobi for the DC OPF, set
