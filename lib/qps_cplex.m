@@ -246,8 +246,8 @@ else
 end
 
 %% call the solver
+cplex = Cplex('null');
 if verbose
-    cplex = Cplex('null');
     methods = {
         'default',
         'primal simplex',
@@ -296,17 +296,24 @@ if unconstrained
     lam.eqlin = [];
 end
 
+%% negate prices depending on version
+[s,e,tE,m,t] = regexp(cplex.getVersion, '(\d+)\.(\d+)\.(\d+)\.(\d+)');
+if str2num(t{1}{1}) == 12 && str2num(t{1}{2}) < 3
+    lam.eqlin   = -lam.eqlin;
+    lam.ineqlin = -lam.ineqlin;
+end
+
 %% repackage lambdas
-kl = find(lam.eqlin > 0);   %% lower bound binding
-ku = find(lam.eqlin < 0);   %% upper bound binding
+kl = find(lam.eqlin < 0);   %% lower bound binding
+ku = find(lam.eqlin > 0);   %% upper bound binding
 
-mu_l(ieq(kl)) = lam.eqlin(kl);
-mu_l(igt) = -lam.ineqlin(nlt+(1:ngt));
-mu_l(ibx) = -lam.ineqlin(nlt+ngt+nbx+(1:nbx));
+mu_l(ieq(kl)) = -lam.eqlin(kl);
+mu_l(igt) = lam.ineqlin(nlt+(1:ngt));
+mu_l(ibx) = lam.ineqlin(nlt+ngt+nbx+(1:nbx));
 
-mu_u(ieq(ku)) = -lam.eqlin(ku);
-mu_u(ilt) = -lam.ineqlin(1:nlt);
-mu_u(ibx) = -lam.ineqlin(nlt+ngt+(1:nbx));
+mu_u(ieq(ku)) = lam.eqlin(ku);
+mu_u(ilt) = lam.ineqlin(1:nlt);
+mu_u(ibx) = lam.ineqlin(nlt+ngt+(1:nbx));
 
 lambda = struct( ...
     'mu_l', mu_l, ...
