@@ -88,7 +88,7 @@ function [x, f, eflag, output, lambda] = qps_gurobi(H, c, A, l, u, xmin, xmax, x
 %       xmin = zeros(4,1);
 %       x0 = [1; 0; 0; 1];
 %       opt = struct('verbose', 2);
-%       [x, f, s, out, lam] = qps_gurobi(H, c, A, l, u, xmin, [], x0, opt);
+%       [x, f, s, out, lambda] = qps_gurobi(H, c, A, l, u, xmin, [], x0, opt);
 %
 %   See also GUROBI_MEX.
 

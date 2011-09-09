@@ -86,7 +86,7 @@ function [x, f, eflag, output, lambda] = qps_cplex(H, c, A, l, u, xmin, xmax, x0
 %       xmin = zeros(4,1);
 %       x0 = [1; 0; 0; 1];
 %       opt = struct('verbose', 2);
-%       [x, f, s, out, lam] = qps_cplex(H, c, A, l, u, xmin, [], x0, opt);
+%       [x, f, s, out, lambda] = qps_cplex(H, c, A, l, u, xmin, [], x0, opt);
 %
 %   See also CPLEXQP, CPLEXLP, CPLEX_OPTIONS.
 
