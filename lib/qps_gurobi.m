@@ -256,8 +256,10 @@ if verbose
     fprintf('Gurobi Version %s -- %s %s solver\n', ...
         '<unknown>', methods{g_opt.Method+1}, lpqp);
 end
-[x, f, eflag, output, lambda, rc] = ...
+[x, f, eflag, output, lambda] = ...
     gurobi_mex(c', 1, AA, bb, contypes, xmin, xmax, 'C', g_opt);
+pi  = lambda.Pi;
+rc  = lambda.RC;
 output.flag = eflag;
 if eflag == 2
     eflag = 1;          %% optimal solution found
@@ -277,16 +279,16 @@ end
 if isempty(f)
     f = NaN;
 end
-if isempty(lambda)
-    lambda      = NaN(length(bb), 1);
+if isempty(pi)
+    pi  = NaN(length(bb), 1);
 end
 
 kl = find(rc > 0);   %% lower bound binding
 ku = find(rc < 0);   %% upper bound binding
 lam.lower(kl)   =  rc(kl);
 lam.upper(ku)   = -rc(ku);
-lam.eqlin   = lambda(1:neq);
-lam.ineqlin = lambda(neq+(1:niq));
+lam.eqlin   = pi(1:neq);
+lam.ineqlin = pi(neq+(1:niq));
 mu_l        = zeros(nA, 1);
 mu_u        = zeros(nA, 1);
 
