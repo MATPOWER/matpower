@@ -226,6 +226,10 @@ else
     cplex_opt = cplex_options;
 end
 
+cplex = Cplex('null');
+vstr = cplex.getVersion;
+[s,e,tE,m,t] = regexp(vstr, '(\d+\.\d+)\.');
+vnum = str2num(t{1}{1});
 vrb = max([0 verbose-1]);
 cplex_opt.barrier.display   = vrb;
 cplex_opt.conflict.display  = vrb;
@@ -233,6 +237,9 @@ cplex_opt.mip.display       = vrb;
 cplex_opt.sifting.display   = vrb;
 cplex_opt.simplex.display   = vrb;
 cplex_opt.tune.display      = vrb;
+if vrb && vnum > 12.2
+    cplex_opt.diagnostics   = 'on';
+end
 % if max_it
 %     cplex_opt.    %% not sure what to set here
 % end
@@ -246,7 +253,6 @@ else
 end
 
 %% call the solver
-cplex = Cplex('null');
 if verbose
     methods = {
         'default',
@@ -261,14 +267,14 @@ end
 if isempty(H) || ~any(any(H))
     if verbose
         fprintf('CPLEX Version %s -- %s LP solver\n', ...
-            cplex.getVersion, methods{cplex_opt.lpmethod+1});
+            vstr, methods{cplex_opt.lpmethod+1});
     end
     [x, f, eflag, output, lam] = ...
         cplexlp(c, Ai, bi, Ae, be, xmin, xmax, x0, cplex_opt);
 else
     if verbose
         fprintf('CPLEX Version %s --  %s QP solver\n', ...
-            cplex.getVersion, methods{cplex_opt.qpmethod+1});
+            vstr, methods{cplex_opt.qpmethod+1});
     end
     [x, f, eflag, output, lam] = ...
         cplexqp(H, c, Ai, bi, Ae, be, xmin, xmax, x0, cplex_opt);
@@ -297,8 +303,7 @@ if unconstrained
 end
 
 %% negate prices depending on version
-[s,e,tE,m,t] = regexp(cplex.getVersion, '(\d+)\.(\d+)\.(\d+)\.(\d+)');
-if str2num(t{1}{1}) == 12 && str2num(t{1}{2}) < 3
+if vnum < 12.3
     lam.eqlin   = -lam.eqlin;
     lam.ineqlin = -lam.ineqlin;
 end
