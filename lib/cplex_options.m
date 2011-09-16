@@ -177,7 +177,7 @@ end
 %           limits:         [1x1 struct]
 %               corrections:    -1
 %               growth:         1.0000e+12
-%               iteration:      2.1000e+09
+%               iteration:      9.2234e+18
 %               objrange:       1.0000e+20
 %           ordering:       0
 %           qcpconvergetol: 1.0000e-07
@@ -185,10 +185,12 @@ end
 %       clocktype:      2
 %       conflict:       [1x1 struct]
 %           display:        1
+%       diagnostics:    'off'
 %       emphasis:       [1x1 struct]
 %           memory:         0
 %           mip:            0
 %           numerical:      0
+%       exportmodel:    ''
 %       feasopt:        [1x1 struct]
 %           mode:           0
 %           tolerance:      1.0000e-06
@@ -216,12 +218,12 @@ end
 %               eachcutlimit:   2.1000e+09
 %               gomorycand:     200
 %               gomorypass:     0
-%               nodes:          2.1000e+09
+%               nodes:          9.2234e+18
 %               polishtime:     0
 %               populate:       20
 %               probetime:      1.0000e+75
 %               repairtries:    0
-%               solutions:      2.1000e+09
+%               solutions:      9.2234e+18
 %               strongcand:     10
 %               strongit:       0
 %               submipnodelim:  500
@@ -230,8 +232,8 @@ end
 %           polishafter:    [1x1 struct]
 %               absmipgap:      0
 %               mipgap:         0
-%               nodes:          2.1000e+09
-%               solutions:      2.1000e+09
+%               nodes:          9.2234e+18
+%               solutions:      9.2234e+18
 %               time:           1.0000e+75
 %           pool:           [1x1 struct]
 %               absgap:         1.0000e+75
@@ -267,11 +269,16 @@ end
 %               objdifference:  0
 %               relobjdifference: 0
 %               uppercutoff:    1.0000e+75
+%       output:         [1x1 struct]
+%           clonelog:       1
+%           intsolfileprefix: ''
+%           mpslong:        1
+%           writelevel:     0
 %       parallel:       0
 %       preprocessing:  [1x1 struct]
 %           aggregator:     -1
 %           boundstrength:  -1
-%           coeffreduce:    2
+%           coeffreduce:    -1
 %           dependency:     -1
 %           dual:           0
 %           fill:           10
@@ -285,8 +292,10 @@ end
 %           symmetry:       -1
 %       qpmethod:       0
 %       read:           [1x1 struct]
+%           apiencoding:    ''
 %           constraints:    30000
 %           datacheck:      0
+%           fileencoding:   'ISO-8859-1'
 %           nonzeros:       250000
 %           qpnonzeros:     5000
 %           scale:          0
@@ -294,13 +303,13 @@ end
 %       sifting:        [1x1 struct]
 %           algorithm:      0
 %           display:        1
-%           iterations:     2.1000e+09
+%           iterations:     9.2234e+18
 %       simplex:        [1x1 struct]
 %           crash:          1
 %           dgradient:      0
 %           display:        1
 %           limits:         [1x1 struct]
-%               iterations:     2.1000e+09
+%               iterations:     9.2234e+18
 %               lowerobj:       -1.0000e+75
 %               perturbation:   0
 %               singularity:    10
@@ -315,6 +324,7 @@ end
 %               feasibility:    1.0000e-06
 %               markowitz:      0.0100
 %               optimality:     1.0000e-06
+%       solutiontarget: 0
 %       threads:        0
 %       timelimit:      1.0000e+75
 %       tune:           [1x1 struct]
