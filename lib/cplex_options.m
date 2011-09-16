@@ -123,8 +123,8 @@ opt.tune.display      = vrb;
 
 %% solution algorithm
 if have_mpopt
-    opt.lpmethod = mpopt(95);   %% CPLEX_LPMETHOD
-    opt.qpmethod = mpopt(96);   %% CPLEX_QPMETHOD
+    opt.lpmethod = lpmethod;    %% CPLEX_LPMETHOD
+    opt.qpmethod = qpmethod;    %% CPLEX_QPMETHOD
 % else
 %     opt.lpmethod = 2;
 %     opt.qpmethod = 2;
