@@ -17,6 +17,10 @@ Changes since 4.0
 
 (need to check total_load() for scale_load() bug fixed below)
 
+9/16/11
+    - Fixed that qps_cplex() would not print progress even with
+      VERBOSE > 0 with CPLEX 12.3.
+
 7/26/11
     - Fix in qps_cplex() for changed sign on multipliers with
       CPLEX 12.3 vs CPLEX 12.2.
