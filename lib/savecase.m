@@ -208,7 +208,7 @@ else                                %% M-file
     end
     fprintf(fd, '\n%%%%-----  Power Flow Data  -----%%%%\n');
     fprintf(fd, '%%%% system MVA base\n');
-    fprintf(fd, '%sbaseMVA = %g;\n', prefix, baseMVA);
+    fprintf(fd, '%sbaseMVA = %.9g;\n', prefix, baseMVA);
     
     %% bus data
     ncols = size(bus, 2);
@@ -219,9 +219,9 @@ else                                %% M-file
     end
     fprintf(fd, '\n%sbus = [\n', prefix);
     if ncols < MU_VMIN              %% opf NOT SOLVED, save without lambda's & mu's
-        fprintf(fd, '\t%d\t%d\t%g\t%g\t%g\t%g\t%d\t%.8g\t%.8g\t%g\t%d\t%g\t%g;\n', bus(:, 1:VMIN).');
+        fprintf(fd, '\t%d\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%d\t%.9g\t%.9g\t%.9g\t%d\t%.9g\t%.9g;\n', bus(:, 1:VMIN).');
     else                            %% opf SOLVED, save with lambda's & mu's
-        fprintf(fd, '\t%d\t%d\t%g\t%g\t%g\t%g\t%d\t%.8g\t%.8g\t%g\t%d\t%g\t%g\t%.4f\t%.4f\t%.4f\t%.4f;\n', bus(:, 1:MU_VMIN).');
+        fprintf(fd, '\t%d\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%d\t%.9g\t%.9g\t%.9g\t%d\t%.9g\t%.9g\t%.4f\t%.4f\t%.4f\t%.4f;\n', bus(:, 1:MU_VMIN).');
     end
     fprintf(fd, '];\n');
     
@@ -238,15 +238,15 @@ else                                %% M-file
     fprintf(fd, '\n%sgen = [\n', prefix);
     if ncols < MU_QMIN              %% opf NOT SOLVED, save without mu's
         if strcmp(mpc_ver, '1')
-            fprintf(fd, '\t%d\t%g\t%g\t%g\t%g\t%.8g\t%g\t%d\t%g\t%g;\n', gen(:, 1:PMIN).');
+            fprintf(fd, '\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%d\t%.9g\t%.9g;\n', gen(:, 1:PMIN).');
         else
-            fprintf(fd, '\t%d\t%g\t%g\t%g\t%g\t%.8g\t%g\t%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g;\n', gen(:, 1:APF).');
+            fprintf(fd, '\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g;\n', gen(:, 1:APF).');
         end
     else
         if strcmp(mpc_ver, '1')
-            fprintf(fd, '\t%d\t%g\t%g\t%g\t%g\t%.8g\t%g\t%d\t%g\t%g\t%.4f\t%.4f\t%.4f\t%.4f;\n', gen(:, 1:MU_QMIN).');
+            fprintf(fd, '\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%d\t%.9g\t%.9g\t%.4f\t%.4f\t%.4f\t%.4f;\n', gen(:, 1:MU_QMIN).');
         else
-            fprintf(fd, '\t%d\t%g\t%g\t%g\t%g\t%.8g\t%g\t%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%.4f\t%.4f\t%.4f\t%.4f;\n', gen(:, 1:MU_QMIN).');
+            fprintf(fd, '\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.4f\t%.4f\t%.4f\t%.4f;\n', gen(:, 1:MU_QMIN).');
         end
     end
     fprintf(fd, '];\n');
@@ -270,21 +270,21 @@ else                                %% M-file
     fprintf(fd, '\n%sbranch = [\n', prefix);
     if ncols < QT                   %% power flow NOT SOLVED, save without line flows or mu's
         if strcmp(mpc_ver, '1')
-            fprintf(fd, '\t%d\t%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%d;\n', branch(:, 1:BR_STATUS).');
+            fprintf(fd, '\t%d\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%d;\n', branch(:, 1:BR_STATUS).');
         else
-            fprintf(fd, '\t%d\t%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%d\t%g\t%g;\n', branch(:, 1:ANGMAX).');
+            fprintf(fd, '\t%d\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%d\t%.9g\t%.9g;\n', branch(:, 1:ANGMAX).');
         end
     elseif ncols < MU_ST            %% power flow SOLVED, save with line flows but without mu's
         if strcmp(mpc_ver, '1')
-            fprintf(fd, '\t%d\t%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%d\t%.4f\t%.4f\t%.4f\t%.4f;\n', branch(:, 1:QT).');
+            fprintf(fd, '\t%d\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%d\t%.4f\t%.4f\t%.4f\t%.4f;\n', branch(:, 1:QT).');
         else
-            fprintf(fd, '\t%d\t%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%d\t%g\t%g\t%.4f\t%.4f\t%.4f\t%.4f;\n', branch(:, 1:QT).');
+            fprintf(fd, '\t%d\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%d\t%.9g\t%.9g\t%.4f\t%.4f\t%.4f\t%.4f;\n', branch(:, 1:QT).');
        end
     else                            %% opf SOLVED, save with lineflows & mu's
         if strcmp(mpc_ver, '1')
-            fprintf(fd, '\t%d\t%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%d\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f;\n', branch(:, 1:MU_ST).');
+            fprintf(fd, '\t%d\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%d\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f;\n', branch(:, 1:MU_ST).');
         else
-            fprintf(fd, '\t%d\t%d\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%d\t%g\t%g\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f;\n', branch(:, 1:MU_ANGMAX).');
+            fprintf(fd, '\t%d\t%d\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%.9g\t%d\t%.9g\t%.9g\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f;\n', branch(:, 1:MU_ANGMAX).');
         end
     end
     fprintf(fd, '];\n');
@@ -317,9 +317,9 @@ else                                %% M-file
             if size(gencost, 2) < n + 4
                 error('savecase: gencost data claims it has more columns than it does');
             end
-            template = '\t%d\t%g\t%g\t%d';
+            template = '\t%d\t%.9g\t%.9g\t%d';
             for i = 1:n
-                template = [template, '\t%g'];
+                template = [template, '\t%.9g'];
             end
             template = [template, ';\n'];
             fprintf(fd, template, gencost.');
@@ -341,17 +341,17 @@ else                                %% M-file
         if isfield(mpc, 'l') && ~isempty(mpc.l) && ...
                 isfield(mpc, 'u') && ~isempty(mpc.u)
             fprintf(fd, 'lu = [\n');
-            fprintf(fd, '\t%g\t%g;\n', [mpc.l mpc.u].');
+            fprintf(fd, '\t%.9g\t%.9g;\n', [mpc.l mpc.u].');
             fprintf(fd, '];\n');
             fprintf(fd, '%sl = lu(:, 1);\n', prefix);
             fprintf(fd, '%su = lu(:, 2);\n\n', prefix);
         elseif isfield(mpc, 'l') && ~isempty(mpc.l)
             fprintf(fd, '%sl = [\n', prefix);
-            fprintf(fd, '\t%g;\n', mpc.l);
+            fprintf(fd, '\t%.9g;\n', mpc.l);
             fprintf(fd, '];\n\n');
         elseif isfield(mpc, 'u') && ~isempty(mpc.u)
             fprintf(fd, '%su = [\n', prefix);
-            fprintf(fd, '\t%g;\n', mpc.u);
+            fprintf(fd, '\t%.9g;\n', mpc.u);
             fprintf(fd, '];\n');
         end
     end
@@ -365,13 +365,13 @@ else                                %% M-file
         end
         if isfield(mpc, 'fparm') && ~isempty(mpc.fparm)
             fprintf(fd, 'Cw_fparm = [\n');
-            fprintf(fd, '\t%g\t%d\t%g\t%g\t%g;\n', [mpc.Cw mpc.fparm].');
+            fprintf(fd, '\t%.9g\t%d\t%.9g\t%.9g\t%.9g;\n', [mpc.Cw mpc.fparm].');
             fprintf(fd, '];\n');
             fprintf(fd, '%sCw    = Cw_fparm(:, 1);\n', prefix);
             fprintf(fd, '%sfparm = Cw_fparm(:, 2:5);\n', prefix);
         else
             fprintf(fd, '%sCw = [\n', prefix);
-            fprintf(fd, '\t%g;\n', mpc.Cw);
+            fprintf(fd, '\t%.9g;\n', mpc.Cw);
             fprintf(fd, '];\n');
         end
     end
@@ -382,17 +382,17 @@ else                                %% M-file
     end
     if isfield(mpc, 'z0') && ~isempty(mpc.z0)
         fprintf(fd, '%sz0 = [\n', prefix);
-        fprintf(fd, '\t%g;\n', mpc.z0);
+        fprintf(fd, '\t%.9g;\n', mpc.z0);
         fprintf(fd, '];\n');
     end
     if isfield(mpc, 'zl') && ~isempty(mpc.zl)
         fprintf(fd, '%szl = [\n', prefix);
-        fprintf(fd, '\t%g;\n', mpc.zl);
+        fprintf(fd, '\t%.9g;\n', mpc.zl);
         fprintf(fd, '];\n');
     end
     if isfield(mpc, 'zu') && ~isempty(mpc.zu)
         fprintf(fd, '%szu = [\n', prefix);
-        fprintf(fd, '\t%g;\n', mpc.zu);
+        fprintf(fd, '\t%.9g;\n', mpc.zu);
         fprintf(fd, '];\n');
     end
 
@@ -423,9 +423,9 @@ if isempty(s)
 else
     fprintf(fd, 'ijs = [\n');
     if m == 1           %% i, j, s are row vectors
-        fprintf(fd, '\t%d\t%d\t%g;\n', [i; j; s]);
+        fprintf(fd, '\t%d\t%d\t%.9g;\n', [i; j; s]);
     else                %% i, j, s are column vectors
-        fprintf(fd, '\t%d\t%d\t%g;\n', [i j s].');
+        fprintf(fd, '\t%d\t%d\t%.9g;\n', [i j s].');
     end
     fprintf(fd, '];\n');
     fprintf(fd, '%s = sparse(ijs(:, 1), ijs(:, 2), ijs(:, 3), %d, %d);\n', varname, m, n);
