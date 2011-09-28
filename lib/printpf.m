@@ -130,7 +130,7 @@ else
 end
 OUT_ANY         = OUT_ANY || (OUT_ALL_LIM == -1 && (OUT_V_LIM || OUT_LINE_LIM || OUT_PG_LIM || OUT_QG_LIM));
 OUT_RAW         = mpopt(43);
-ptol = 1e-6;        %% tolerance for displaying shadow prices
+ptol = 1e-4;        %% tolerance for displaying shadow prices
 
 %% define named indices into bus, gen, branch matrices
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
