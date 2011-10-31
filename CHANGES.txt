@@ -15,7 +15,15 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.0
 -----------------
 
-(need to check total_load() for scale_load() bug fixed below)
+10/31/11
+    - Added three case files, all more recent variations of the
+      Polish system: case3012wp.m, case3120sp.m and case3375wp.m.
+
+9/28/11
+    - Increased threshold value used to filter constraint shadow
+      prices in printpf().
+    - In savecase() increased precision of values saved in M-file
+      case files
 
 9/16/11
     - Fixed that qps_cplex() would not print progress even with
