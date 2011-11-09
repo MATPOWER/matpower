@@ -1,8 +1,9 @@
 function [i2e, bus, gen, branch, areas] = ext2int(bus, gen, branch, areas)
 %EXT2INT   Converts external to internal indexing.
 %
-%   This function performs several different tasks, depending on the
-%   arguments passed.
+%   This function has two forms, (1) the old form that operates on
+%   and returns individual matrices and (2) the new form that operates
+%   on and returns an entire MATPOWER case struct.
 %
 %   1.  [I2E, BUS, GEN, BRANCH, AREAS] = EXT2INT(BUS, GEN, BRANCH, AREAS)
 %       [I2E, BUS, GEN, BRANCH] = EXT2INT(BUS, GEN, BRANCH)
@@ -24,71 +25,15 @@ function [i2e, bus, gen, branch, areas] = ext2int(bus, gen, branch, areas)
 %   buses, off-line generators and branches are removed along with any
 %   generators, branches or areas connected to isolated buses. Then the
 %   buses are renumbered consecutively, beginning at 1, and the
-%   generators are sorted by increasing bus number. All of the related
-%   indexing information and the original data matrices are stored in
-%   an 'order' field in the struct to be used by INT2EXT to perform
-%   the reverse conversions. If the case is already using internal
-%   numbering it is returned unchanged.
+%   generators are sorted by increasing bus number. Any 'ext2int'
+%   callback routines registered in the case are also invoked
+%   automatically. All of the related indexing information and the
+%   original data matrices are stored in an 'order' field in the struct
+%   to be used by INT2EXT to perform the reverse conversions. If the
+%   case is already using internal numbering it is returned unchanged.
 %
 %   Example:
 %       mpc = ext2int(mpc);
-%
-%   3.  VAL = EXT2INT(MPC, VAL, ORDERING)
-%       VAL = EXT2INT(MPC, VAL, ORDERING, DIM)
-%       MPC = EXT2INT(MPC, FIELD, ORDERING)
-%       MPC = EXT2INT(MPC, FIELD, ORDERING, DIM)
-%
-%   When given a case struct that has already been converted to
-%   internal indexing, this function can be used to convert other data
-%   structures as well by passing in 2 or 3 extra parameters in
-%   addition to the case struct. If the value passed in the 2nd
-%   argument is a column vector, it will be converted according to the
-%   ORDERING specified by the 3rd argument (described below). If VAL
-%   is an n-dimensional matrix, then the optional 4th argument (DIM,
-%   default = 1) can be used to specify which dimension to reorder.
-%   The return value in this case is the value passed in, converted
-%   to internal indexing.
-%
-%   If the 2nd argument is a string or cell array of strings, it
-%   specifies a field in the case struct whose value should be
-%   converted as described above. In this case, the converted value
-%   is stored back in the specified field, the original value is
-%   saved for later use and the updated case struct is returned.
-%   If FIELD is a cell array of strings, they specify nested fields.
-%
-%   The 3rd argument, ORDERING, is used to indicate whether the data
-%   corresponds to bus-, gen- or branch-ordered data. It can be one
-%   of the following three strings: 'bus', 'gen' or 'branch'. For
-%   data structures with multiple blocks of data, ordered by bus,
-%   gen or branch, they can be converted with a single call by
-%   specifying ORDERING as a cell array of strings.
-%
-%   Any extra elements, rows, columns, etc. beyond those indicated
-%   in ORDERING, are not disturbed.
-%
-%   Examples:
-%       A_int = ext2int(mpc, A_ext, {'bus','bus','gen','gen'}, 2);
-%
-%       Converts an A matrix for user-supplied OPF constraints from
-%       external to internal ordering, where the columns of the A
-%       matrix correspond to bus voltage angles, then voltage
-%       magnitudes, then generator real power injections and finally
-%       generator reactive power injections.
-%
-%       gencost_int = ext2int(mpc, gencost_ext, {'gen','gen'}, 1);
-%
-%       Converts a GENCOST matrix that has both real and reactive power
-%       costs (in rows 1--ng and ng+1--2*ng, respectively).
-%
-%       mpc = ext2int(mpc, {'reserves', 'cost'}, 'gen');
-%
-%       Reorders rows of mpc.reserves.cost to match internal generator
-%       ordering.
-%
-%       mpc = ext2int(mpc, {'reserves', 'zones'}, 'gen', 2);
-%
-%       Reorders columns of mpc.reserves.zones to match internal
-%       generator ordering.
 %
 %   The 'order' field of MPC used to store the indexing information
 %   needed for subsequent internal to external conversion is structured
@@ -125,12 +70,12 @@ function [i2e, bus, gen, branch, areas] = ext2int(bus, gen, branch, areas)
 %                   on
 %                   off
 %
-%   See also INT2EXT.
+%   See also INT2EXT, E2I_FIELD, E2I_DATA.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2011 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
@@ -288,7 +233,7 @@ if isstruct(bus)
                 if size(mpc.gencost, 1) == 2*ng0
                     ordering{2} = 'gen';    %% include Qg cost
                 end
-                mpc = ext2int(mpc, 'gencost', ordering);
+                mpc = e2i_field(mpc, 'gencost', ordering);
             end
             if isfield(mpc, 'A') || isfield(mpc, 'N')
                 if dc
@@ -298,10 +243,10 @@ if isstruct(bus)
                 end
             end
             if isfield(mpc, 'A')
-                mpc = ext2int(mpc, 'A', ordering, 2);
+                mpc = e2i_field(mpc, 'A', ordering, 2);
             end
             if isfield(mpc, 'N')
-                mpc = ext2int(mpc, 'N', ordering, 2);
+                mpc = e2i_field(mpc, 'N', ordering, 2);
             end
 
             %% execute userfcn callbacks for 'ext2int' stage
@@ -319,45 +264,11 @@ if isstruct(bus)
             dim = areas;                %% rename argument
         end
         if ischar(gen) || iscell(gen)   %% field
-            field = gen;                %% rename argument
-            if ischar(field)
-                mpc.order.ext.(field) = mpc.(field);
-                mpc.(field) = ext2int(mpc, mpc.(field), ordering, dim);
-            else
-                for k = 1:length(field)
-                    s(k).type = '.';
-                    s(k).subs = field{k};
-                end
-                mpc.order.ext = subsasgn(mpc.order.ext, s, subsref(mpc, s));
-                mpc = subsasgn(mpc, s, ...
-                    ext2int(mpc, subsref(mpc, s), ordering, dim));
-            end
-            i2e = mpc;
+            warning('Calls of the form MPC = EXT2INT(MPC, ''FIELD_NAME'', ...) have been deprecated. Please replace EXT2INT with E2I_FIELD.');
+            i2e = e2i_field(mpc, gen, branch, dim);
         else                            %% value
-            val = gen;                  %% rename argument
-            o = mpc.order;
-            if ischar(ordering)         %% single set
-                if strcmp(ordering, 'gen')
-                    idx = o.(ordering).status.on(o.(ordering).e2i);
-                else
-                    idx = o.(ordering).status.on;
-                end
-                i2e = get_reorder(val, idx, dim);
-            else                            %% multiple sets
-                b = 0;  %% base
-                for k = 1:length(ordering)
-                    n = size(o.ext.(ordering{k}), 1);
-                    v = get_reorder(val, b+(1:n), dim);
-                    new_v{k} = ext2int(mpc, v, ordering{k}, dim);
-                    b = b + n;
-                end
-                n = size(val, dim);
-                if n > b                %% the rest
-                    v = get_reorder(val, b+1:n, dim);
-                    new_v{length(new_v)+1} = v;
-                end
-                i2e = cat(dim, new_v{:});
-            end
+            warning('Calls of the form VAL = EXT2INT(MPC, VAL, ...) have been deprecated. Please replace EXT2INT with E2I_DATA.');
+            i2e = e2i_data(mpc, gen, branch, dim);
         end
     end
 else            %% old form

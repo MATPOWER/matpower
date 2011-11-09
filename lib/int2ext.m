@@ -1,8 +1,9 @@
 function [bus, gen, branch, areas] = int2ext(i2e, bus, gen, branch, areas)
 %INT2EXT   Converts internal to external bus numbering.
 %
-%   This function performs several different tasks, depending on the
-%   arguments passed.
+%   This function has two forms, (1) the old form that operates on
+%   and returns individual matrices and (2) the new form that operates
+%   on and returns an entire MATPOWER case struct.
 %
 %   1.  [BUS, GEN, BRANCH, AREAS] = INT2EXT(I2E, BUS, GEN, BRANCH, AREAS)
 %       [BUS, GEN, BRANCH] = INT2EXT(I2E, BUS, GEN, BRANCH)
@@ -26,67 +27,7 @@ function [bus, gen, branch, areas] = int2ext(i2e, bus, gen, branch, areas)
 %   Example:
 %       mpc = int2ext(mpc);
 %
-%   3.  VAL = INT2EXT(MPC, VAL, OLDVAL, ORDERING)
-%       VAL = INT2EXT(MPC, VAL, OLDVAL, ORDERING, DIM)
-%       MPC = INT2EXT(MPC, FIELD, ORDERING)
-%       MPC = INT2EXT(MPC, FIELD, ORDERING, DIM)
-%
-%   For a case struct using internal indexing, this function can be
-%   used to convert other data structures as well by passing in 2 to 4
-%   extra parameters in addition to the case struct. If the values passed
-%   in the 2nd argument (VAL) is a column vector, it will be converted
-%   according to the ordering specified by the 4th argument (ORDERING,
-%   described below). If VAL is an n-dimensional matrix, then the
-%   optional 5th argument (DIM, default = 1) can be used to specify
-%   which dimension to reorder. The 3rd argument (OLDVAL) is used to
-%   initialize the return value before converting VAL to external
-%   indexing. In particular, any data corresponding to off-line gens
-%   or branches or isolated buses or any connected gens or branches
-%   will be taken from OLDVAL, with VAL supplying the rest of the
-%   returned data.
-%
-%   If the 2nd argument is a string or cell array of strings, it
-%   specifies a field in the case struct whose value should be
-%   converted as described above. In this case, the corresponding
-%   OLDVAL is taken from where it was stored by EXT2INT in
-%   MPC.ORDER.EXT and the updated case struct is returned.
-%   If FIELD is a cell array of strings, they specify nested fields.
-%
-%   The ORDERING argument is used to indicate whether the data
-%   corresponds to bus-, gen- or branch-ordered data. It can be one
-%   of the following three strings: 'bus', 'gen' or 'branch'. For
-%   data structures with multiple blocks of data, ordered by bus,
-%   gen or branch, they can be converted with a single call by
-%   specifying ORDERING as a cell array of strings.
-%
-%   Any extra elements, rows, columns, etc. beyond those indicated
-%   in ORDERING, are not disturbed.
-%
-%   Examples:
-%       A_ext = int2ext(mpc, A_int, A_orig, {'bus','bus','gen','gen'}, 2);
-%
-%       Converts an A matrix for user-supplied OPF constraints from
-%       internal to external ordering, where the columns of the A
-%       matrix correspond to bus voltage angles, then voltage
-%       magnitudes, then generator real power injections and finally
-%       generator reactive power injections.
-%
-%       gencost_ext = int2ext(mpc, gencost_int, gencost_orig, {'gen','gen'}, 1);
-%
-%       Converts a GENCOST matrix that has both real and reactive power
-%       costs (in rows 1--ng and ng+1--2*ng, respectively).
-%
-%       mpc = int2ext(mpc, {'reserves', 'cost'}, 'gen');
-%
-%       Reorders rows of mpc.reserves.cost to match external generator
-%       ordering.
-%
-%       mpc = int2ext(mpc, {'reserves', 'zones'}, 'gen', 2);
-%
-%       Reorders columns of mpc.reserves.zones to match external
-%       generator ordering.
-%
-%   See also EXT2INT.
+%   See also EXT2INT, I2E_FIELD, I2E_DATA.
 
 %   MATPOWER
 %   $Id$
@@ -121,7 +62,7 @@ if isstruct(i2e)
     mpc = i2e;
     if nargin == 1
         if ~isfield(mpc, 'order')
-            error('int2ext: mpc does not have the ''order'' field require for conversion back to external numbering.');
+            error('int2ext: mpc does not have the ''order'' field required for conversion back to external numbering.');
         end
         o = mpc.order;
 
@@ -195,66 +136,21 @@ if isstruct(i2e)
         bus = mpc;
     else                    %% convert extra data
         if ischar(bus) || iscell(bus)   %% field
-            field = bus;
-            ordering = gen;
+            warning('Calls of the form MPC = INT2EXT(MPC, ''FIELD_NAME'', ...) have been deprecated. Please replace INT2EXT with I2E_FIELD.');
             if nargin > 3
                 dim = branch;
             else
                 dim = 1;
             end
-            if ischar(field)
-                mpc.order.int.(field) = mpc.(field);
-                mpc.(field) = int2ext(mpc, mpc.(field), ...
-                                mpc.order.ext.(field), ordering, dim);
-            else
-                for k = 1:length(field)
-                    s(k).type = '.';
-                    s(k).subs = field{k};
-                end
-                if ~isfield(mpc.order, 'int')
-                    mpc.order.int = [];
-                end
-                mpc.order.int = subsasgn(mpc.order.int, s, subsref(mpc, s));
-                mpc = subsasgn(mpc, s, int2ext(mpc, subsref(mpc, s), ...
-                    subsref(mpc.order.ext, s), ordering, dim));
-            end
-            bus = mpc;
+            bus = i2e_field(mpc, bus, gen, dim);
         else                            %% value
-            val = bus;
-            oldval = gen;
-            ordering = branch;
-            o = mpc.order;
+            warning('Calls of the form VAL = INT2EXT(MPC, VAL, ...) have been deprecated. Please replace INT2EXT with I2E_DATA.');
             if nargin > 4
                 dim = areas;
             else
                 dim = 1;
             end
-            if ischar(ordering)         %% single set
-                if strcmp(ordering, 'gen')
-                    v = get_reorder(val, o.(ordering).i2e, dim);
-                else
-                    v = val;
-                end
-                bus = set_reorder(oldval, v, o.(ordering).status.on, dim);
-            else                            %% multiple sets
-                be = 0;  %% base, external indexing
-                bi = 0;  %% base, internal indexing
-                for k = 1:length(ordering)
-                    ne = size(o.ext.(ordering{k}), 1);
-                    ni = size(mpc.(ordering{k}), 1);
-                    v = get_reorder(val, bi+(1:ni), dim);
-                    oldv = get_reorder(oldval, be+(1:ne), dim);
-                    new_v{k} = int2ext(mpc, v, oldv, ordering{k}, dim);
-                    be = be + ne;
-                    bi = bi + ni;
-                end
-                ni = size(val, dim);
-                if ni > bi              %% the rest
-                    v = get_reorder(val, bi+1:ni, dim);
-                    new_v{length(new_v)+1} = v;
-                end
-                bus = cat(dim, new_v{:});
-            end
+            bus = i2e_data(mpc, bus, gen, branch, dim);
         end
     end
 else            %% old form

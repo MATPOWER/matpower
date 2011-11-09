@@ -15,6 +15,12 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.0
 -----------------
 
+11/09/11
+    - Refactored ext2int() and int2ext() into additional functions
+      e2i_field(), e2i_data(), i2e_field() and i2e_data() to
+      clean things up and prepare for the ability to automatically
+      re-order data in cell arrays.
+
 10/31/11
     - Added three case files, all more recent variations of the
       Polish system: case3012wp.m, case3120sp.m and case3375wp.m.

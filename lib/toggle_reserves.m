@@ -139,11 +139,11 @@ end
 %%-----  convert stuff to internal indexing  -----
 %% convert all reserve parameters (zones, costs, qty, rgens)
 if isfield(r, 'qty')
-    mpc = ext2int(mpc, {'reserves', 'qty'}, 'gen');
+    mpc = e2i_field(mpc, {'reserves', 'qty'}, 'gen');
 end
-mpc = ext2int(mpc, {'reserves', 'cost'}, 'gen');
-mpc = ext2int(mpc, {'reserves', 'zones'}, 'gen', 2);
-mpc = ext2int(mpc, {'reserves', 'rgens'}, 'gen', 2);
+mpc = e2i_field(mpc, {'reserves', 'cost'}, 'gen');
+mpc = e2i_field(mpc, {'reserves', 'zones'}, 'gen', 2);
+mpc = e2i_field(mpc, {'reserves', 'rgens'}, 'gen', 2);
 
 %% save indices of gens available to provide reserves
 mpc.order.ext.reserves.igr = igr;               %% external indexing
@@ -229,11 +229,11 @@ ng  = size(results.gen, 1); %% number of on-line gens (+ disp loads)
 %%-----  convert stuff back to external indexing  -----
 %% convert all reserve parameters (zones, costs, qty, rgens)
 if isfield(r, 'qty')
-    results = int2ext(results, {'reserves', 'qty'}, 'gen');
+    results = i2e_field(results, {'reserves', 'qty'}, 'gen');
 end
-results = int2ext(results, {'reserves', 'cost'}, 'gen');
-results = int2ext(results, {'reserves', 'zones'}, 'gen', 2);
-results = int2ext(results, {'reserves', 'rgens'}, 'gen', 2);
+results = i2e_field(results, {'reserves', 'cost'}, 'gen');
+results = i2e_field(results, {'reserves', 'zones'}, 'gen', 2);
+results = i2e_field(results, {'reserves', 'rgens'}, 'gen', 2);
 results.order.int.reserves.igr = results.reserves.igr;  %% save internal version
 results.reserves.igr = results.order.ext.reserves.igr;  %% use external version
 r = results.reserves;       %% update
@@ -262,12 +262,12 @@ mu_Pmax(igr) = results.lin.mu.u.Pg_plus_R / results.baseMVA;
 
 %% store in results in results struct
 z = zeros(ng0, 1);
-results.reserves.R       = int2ext(results, R, z, 'gen');
-results.reserves.Rmin    = int2ext(results, Rmin, z, 'gen');
-results.reserves.Rmax    = int2ext(results, Rmax, z, 'gen');
-results.reserves.mu.l    = int2ext(results, mu_l, z, 'gen');
-results.reserves.mu.u    = int2ext(results, mu_u, z, 'gen');
-results.reserves.mu.Pmax = int2ext(results, mu_Pmax, z, 'gen');
+results.reserves.R       = i2e_data(results, R, z, 'gen');
+results.reserves.Rmin    = i2e_data(results, Rmin, z, 'gen');
+results.reserves.Rmax    = i2e_data(results, Rmax, z, 'gen');
+results.reserves.mu.l    = i2e_data(results, mu_l, z, 'gen');
+results.reserves.mu.u    = i2e_data(results, mu_u, z, 'gen');
+results.reserves.mu.Pmax = i2e_data(results, mu_Pmax, z, 'gen');
 results.reserves.prc     = z;
 for k = igr0
     iz = find(r.zones(:, k));
