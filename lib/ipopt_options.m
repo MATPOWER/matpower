@@ -161,6 +161,9 @@ opt.mu_strategy                 = 'adaptive';   %% default 'monotone'
 %% hessian approximation
 % opt.hessian_approximation   = 'limited-memory'; %% default 'exact'
 
+% ma57 options
+%opt.ma57_pre_alloc = 3;
+%opt.ma57_pivot_order = 4;
 
 %%-----  call user function to modify defaults  -----
 if ~isempty(fname)
