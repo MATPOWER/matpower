@@ -50,7 +50,7 @@ function rv = mpver(varargin)
 v{1} = struct(  'Name',     'MATPOWER', ... 
                 'Version',  '4.0+', ...
                 'Release',  '', ...
-                'Date',     '05-Jul-2011' );
+                'Date',     '10-Nov-2011' );
 if nargout > 0
     if nargin > 0
         rv = v{1};
@@ -108,13 +108,13 @@ else
         fprintf('%-22s -- not installed --\n', 'IPOPT');
     end
     if have_fcn('gurobi')
-        str = 'Gurobi version <unknown>';
-        pat = 'Gurobi version ([^\s,]+)';
-        [s,e,tE,m,t] = regexp(str, pat);
-        if isempty(t)
-            vn = '<unknown>';
+        [x, f, e, o] = gurobi_mex(1, 1, [], [], [], 1, 1, 'C', ...
+            struct('Display', 0, 'DisplayInterval', Inf));
+        if isfield(o, 'VerLibMajor')
+            vn = sprintf('%d.%d.%d/%.2f', o.VerLibMajor, ...
+                o.VerLibMinor, o.VerLibTech, o.VerGurobiMex);
         else
-            vn = t{1}{1};
+            vn = '<unknown>';
         end
         fprintf('%-22s Version %-10s %-11s   %s\n', 'Gurobi', vn, '', computer);
     else
