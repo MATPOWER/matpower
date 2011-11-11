@@ -79,14 +79,16 @@ alg     = mpopt(26);    %% OPF_ALG_DC
 
 %% default solver
 if alg == 0
-    if have_fcn('gurobi')       %% use Gurobi by default, if available
-        alg = 700;
+    if have_fcn('cplex')        %% use CPLEX by default, if available
+        alg = 500;
     elseif have_fcn('mosek')    %% if not, then MOSEK, if available
         alg = 600;
-    elseif have_fcn('cplex')    %% if not, then CPLEX, if available
-        alg = 500;
+    elseif have_fcn('gurobi')   %% if not, then Gurobi, if available
+        alg = 700;
     elseif have_fcn('bpmpd')    %% if not, then BPMPD_MEX, if available
         alg = 100;
+    elseif have_fcn('quadprog') %% if not, then Optimization Tbx, if available
+        alg = 300;
     else                        %% otherwise MIPS
         alg = 200;
     end

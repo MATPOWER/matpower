@@ -26,7 +26,8 @@ function [x, f, eflag, output, lambda] = qps_matpower(H, c, A, l, u, xmin, xmax,
 %           all of which are also optional (default values shown in
 %           parentheses)
 %           alg (0) - determines which solver to use
-%                 0 = automatic, first available of BPMPD_MEX, CPLEX, MIPS
+%                 0 = automatic, first available of CPLEX, MOSEK,
+%                       Gurobi, BPMPD, Opt Tbx, MIPS
 %               100 = BPMPD_MEX
 %               200 = MIPS, MATLAB Interior Point Solver
 %                     pure MATLAB implementation of a primal-dual
@@ -176,14 +177,16 @@ else
     verbose = 0;
 end
 if alg == 0
-    if have_fcn('gurobi')       %% use Gurobi by default, if available
-        alg = 700;
+    if have_fcn('cplex')        %% use CPLEX by default, if available
+        alg = 500;
     elseif have_fcn('mosek')    %% if not, then MOSEK, if available
         alg = 600;
-    elseif have_fcn('cplex')    %% if not, then CPLEX, if available
-        alg = 500;
+    elseif have_fcn('gurobi')   %% if not, then Gurobi, if available
+        alg = 700;
     elseif have_fcn('bpmpd')    %% if not, then BPMPD_MEX, if available
         alg = 100;
+    elseif have_fcn('quadprog') %% if not, then Optimization Tbx, if available
+        alg = 300;
     else                        %% otherwise MIPS
         alg = 200;
     end
