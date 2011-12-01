@@ -97,7 +97,8 @@ if have_fcn('scpdipmopf')
     t = [t0 '(single-block PWL) : '];
     mpc = loadcase(casefile);
     mpc.gencost(3, NCOST) = 2;
-    r = runopf(mpc, mpopt);
+    [r, success] = runopf(mpc, mpopt);
+    [f, bus, gen, branch] = deal(r.f, r.bus, r.gen, r.branch);
     t_ok(success, [t 'success']);
     t_is(f, f_soln, 3, [t 'f']);
     t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
