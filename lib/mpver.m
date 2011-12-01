@@ -50,7 +50,7 @@ function rv = mpver(varargin)
 v{1} = struct(  'Name',     'MATPOWER', ... 
                 'Version',  '4.0+', ...
                 'Release',  '', ...
-                'Date',     '10-Nov-2011' );
+                'Date',     '01-Dec-2011' );
 if nargout > 0
     if nargin > 0
         rv = v{1};
@@ -110,9 +110,12 @@ else
     if have_fcn('gurobi')
         [x, f, e, o] = gurobi_mex(1, 1, [], [], [], 1, 1, 'C', ...
             struct('Display', 0, 'DisplayInterval', Inf));
-        if isfield(o, 'VerLibMajor')
-            vn = sprintf('%d.%d.%d/%.2f', o.VerLibMajor, ...
-                o.VerLibMinor, o.VerLibTech, o.VerGurobiMex);
+        if isfield(o, 'Versions')
+            vn = sprintf('%d.%d.%d/%.2f', o.Versions.LibMajor, ...
+                o.Versions.LibMinor, o.Versions.LibTechi, o.Versions.GurobiMex);
+        elseif isfield(o, 'Lib.Ver.Major')
+            vn = sprintf('%d.%d.%d/%.2f', o.('Lib.Ver.Major'), ...
+                o.('Lib.Ver.Minor'), o.('Lib.Ver.Techi'), o.('GurobiMex.Ver'));
         else
             vn = '<unknown>';
         end
