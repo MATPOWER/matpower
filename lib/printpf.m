@@ -67,8 +67,8 @@ if isstruct(baseMVA)
     else
         mpopt = gen;
     end
-    if mpopt(32) == 0 && mpopt(43) == 0     %% OUT_ALL or OUT_RAW
-        return;     %% nothin' to see here, bail out now
+    if mpopt(32) == 0   %% OUT_ALL
+        return;     	%% nothin' to see here, bail out now
     end
     if nargin < 2 || isempty(bus)
         fd = 1;         %% print to stdio by default
@@ -91,8 +91,8 @@ else
             fd = 1;         %% print to stdio by default
         end
     end
-    if mpopt(32) == 0 && mpopt(43) == 0     %% OUT_ALL or OUT_RAW
-        return;     %% nothin' to see here, bail out now
+    if mpopt(32) == 0   %% OUT_ALL
+        return;     	%% nothin' to see here, bail out now
     end
 end
 isOPF = ~isempty(f);    %% FALSE -> only simple PF data, TRUE -> OPF data
@@ -129,7 +129,6 @@ else
     OUT_QG_LIM      = OUT_ALL_LIM;
 end
 OUT_ANY         = OUT_ANY || (OUT_ALL_LIM == -1 && (OUT_V_LIM || OUT_LINE_LIM || OUT_PG_LIM || OUT_QG_LIM));
-OUT_RAW         = mpopt(43);
 ptol = 1e-4;        %% tolerance for displaying shadow prices
 
 %% define named indices into bus, gen, branch matrices
@@ -735,35 +734,4 @@ end
 %% execute userfcn callbacks for 'printpf' stage
 if have_results_struct && isfield(results, 'userfcn')
     run_userfcn(results.userfcn, 'printpf', results, fd, mpopt);
-end
-
-%% print raw data for Perl database interface
-if OUT_RAW
-    fprintf(fd, '----------  raw PB::Soln data below  ----------\n');
-    fprintf(fd, 'bus\n');
-    if isOPF
-        fprintf(fd, '%d\t%d\t%g\t%g\t%g\t%g\t%g\t%g\n', ...
-                    bus(:, [BUS_I, BUS_TYPE, VM, VA, LAM_P, LAM_Q, MU_VMAX, MU_VMIN])');
-    
-        fprintf(fd, 'branch\n');
-        fprintf(fd, '%d\t%g\t%g\t%g\t%g\t%g\t%g\n', ...
-                    [(1:nl)' branch(:, [PF, QF, PT, QT, MU_SF, MU_ST])]');
-    
-        fprintf(fd, 'gen\n');
-        fprintf(fd, '%d\t%g\t%g\t%g\t%d\t%g\t%g\t%g\t%g\n', ...
-                    [(1:ng)' gen(:, [PG, QG, VG, GEN_STATUS, MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN])]');
-    else
-        fprintf(fd, '%d\t%d\t%f\t%f\t%d\t%d\t%d\t%d\n', ...
-                    [bus(:, [BUS_I, BUS_TYPE, VM, VA]) zeros(nb, 4)]');
-    
-        fprintf(fd, 'branch\n');
-        fprintf(fd, '%d\t%f\t%f\t%f\t%f\t%d\t%d\n', ...
-                    [(1:nl)' branch(:, [PF, QF, PT, QT]) zeros(nl, 2)]');
-    
-        fprintf(fd, 'gen\n');
-        fprintf(fd, '%d\t%f\t%f\t%f\t%d\t%d\t%d\t%d\t%d\n', ...
-                    [(1:ng)' gen(:, [PG, QG, VG, GEN_STATUS]) zeros(ng, 4)]');
-    end
-    fprintf(fd, 'end\n');
-    fprintf(fd, '----------  raw PB::Soln data above  ----------\n');
 end

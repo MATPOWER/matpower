@@ -112,9 +112,9 @@ function [options, names] = mpoption(varargin)
 %       32 - OUT_ALL, -1            controls pretty-printing of results
 %           [  -1 - individual flags control what prints                    ]
 %           [   0 - do not print anything                                   ]
-%           [       (overrides individual flags, except OUT_RAW)            ]
+%           [       (overrides individual flags)                            ]
 %           [   1 - print everything                                        ]
-%           [       (overrides individual flags, except OUT_RAW)            ]
+%           [       (overrides individual flags)                            ]
 %       33 - OUT_SYS_SUM, 1         print system summary        [   0 or 1  ]
 %       34 - OUT_AREA_SUM, 0        print area summaries        [   0 or 1  ]
 %       35 - OUT_BUS, 1             print bus detail            [   0 or 1  ]
@@ -250,15 +250,13 @@ function [options, names] = mpoption(varargin)
 %       124 - GRB_OPT, 0            See GUROBI_OPTIONS for details
 %
 %   deprecated options
-%       43 - OUT_RAW, 0             print raw data for Perl database
-%                                   interface code              [   0 or 1  ]
 %       51 - SPARSE_QP, 1           pass sparse matrices to QP and LP
 %                                   solvers if possible         [   0 or 1  ]
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2011 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
@@ -340,7 +338,7 @@ else                    %% even number of parameters
         1;      %% 40 - OUT_LINE_LIM
         1;      %% 41 - OUT_PG_LIM
         1;      %% 42 - OUT_QG_LIM
-        0;      %% 43 - OUT_RAW
+        0;      %% 43 - RESERVED43 (was OUT_RAW)
         0;      %% 44 - RESERVED44
         0;      %% 45 - RESERVED45
         0;      %% 46 - RESERVED46
@@ -489,7 +487,7 @@ names = char(   names, ...
 names = char(   names, ...
                 'OUT_PG_LIM', ...           %% 41
                 'OUT_QG_LIM', ...           %% 42
-                'OUT_RAW', ...              %% 43
+                'RESERVED43', ...           %% 43 (was OUT_RAW)
                 'RESERVED44', ...           %% 44
                 'RESERVED45', ...           %% 45
                 'RESERVED46', ...           %% 46
