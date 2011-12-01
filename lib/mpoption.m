@@ -304,9 +304,9 @@ else                    %% even number of parameters
         
         %% OPF options
         0;      %% 11 - OPF_ALG
-        100;    %% 12 - OPF_ALG_POLY, deprecated
-        200;    %% 13 - OPF_ALG_PWL, deprecated
-        10;     %% 14 - OPF_POLY2PWL_PTS, deprecated
+        0;      %% 12 - RESERVED12 (was OPF_ALG_POLY = 100)
+        0;      %% 13 - RESERVED13 (was OPF_ALG_PWL = 200)
+        0;      %% 14 - RESERVED14 (was OPF_POLY2PWL_PTS = 10)
         0;      %% 15 - OPF_NEQ, not a user option (number of eq constraints
                 %%          for copf_solver, lpopf_solver, set by program)
         5e-6;   %% 16 - OPF_VIOLATION
@@ -451,9 +451,9 @@ names = char(   'PF_ALG', ...               %% 1
 %% OPF options
 names = char(   names, ...
                 'OPF_ALG', ...              %% 11
-                'OPF_ALG_POLY', ...         %% 12
-                'OPF_ALG_PWL', ...          %% 13
-                'OPF_POLY2PWL_PTS', ...     %% 14
+                'RESERVED12', ...           %% 12   (was OPF_ALG_POLY)
+                'RESERVED13', ...           %% 13   (was OPF_ALG_PWL)
+                'RESERVED14', ...           %% 14   (was OPF_POLY2PWL_PTS)
                 'OPF_NEQ', ...              %% 15
                 'OPF_VIOLATION', ...        %% 16
                 'CONSTR_TOL_X', ...         %% 17
