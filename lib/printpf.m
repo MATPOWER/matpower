@@ -733,5 +733,8 @@ end
 
 %% execute userfcn callbacks for 'printpf' stage
 if have_results_struct && isfield(results, 'userfcn')
+	if ~isOPF	%% turn off option for all constraints if it isn't an OPF
+		mpopt = mpoption(mpopt, 'OUT_ALL_LIM', 0);
+	end
     run_userfcn(results.userfcn, 'printpf', results, fd, mpopt);
 end
