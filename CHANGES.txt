@@ -15,6 +15,26 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.0
 -----------------
 
+12/8/11
+    - Added basic DC line modeling capability. See help for
+      toggle_dcline() for details.
+      
+12/1/11
+    - Removed deprecated functions in @opf_model, gen_lin_N(),
+      get_nln_N(), get_var_N(), use getN() instead.
+    - Removed all references to deprecated option OUT_RAW.
+
+11/15/11
+    - Fixed a crashing bug in computation of quadratic user-defined
+      costs. Thanks to Stefanos Delikaraoglou.
+
+11/11/11
+    - Changed default DC OPF/LP/QP solver precedence in 
+      dcopf_solver() and qps_matpower() to the following:
+      CPLEX, MOSEK, Gurobi, BPMPD, Opt Tbx, MIPS.
+    - Minor enhancements to cdf2matp(), including saving of bus
+      names. Thanks to Alvaro Jaramillo Duque.
+
 11/09/11
     - Refactored ext2int() and int2ext() into additional functions
       e2i_field(), e2i_data(), i2e_field() and i2e_data() to
