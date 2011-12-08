@@ -107,6 +107,7 @@ if have_fcn('quadprog')
 end
 tests{end+1} = 't_opf_userfcns';
 tests{end+1} = 't_runopf_w_res';
+tests{end+1} = 't_dcline';
 tests{end+1} = 't_makePTDF';
 tests{end+1} = 't_makeLODF';
 tests{end+1} = 't_total_load';
