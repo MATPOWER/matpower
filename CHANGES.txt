@@ -2,7 +2,7 @@
  Change history for MATPOWER
 -----------------------------
 
-Version:    4.0
+Version:    4.1
 
 maintained by Ray Zimmerman <rz10@cornell.edu>
 
@@ -14,6 +14,13 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 
 Changes since 4.0
 -----------------
+
+12/12/11
+    - Released version 4.1.
+
+12/9/11
+    - Fixed problem with qps_cplex() when H matrix is not
+      perfectly numerically symmetric.
 
 12/8/11
     - Added basic DC line modeling capability. See help for

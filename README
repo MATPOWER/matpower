@@ -2,7 +2,7 @@
  MATPOWER - A MATLAB(R) Power System Simulation Package
 ========================================================
 
-Version:    4.0
+Version:    4.1
 
 Home Page:  http://www.pserc.cornell.edu/matpower/
 
@@ -10,7 +10,7 @@ Authors:    Ray Zimmerman               <rz10@cornell.edu>
             Carlos E. Murillo-Sanchez   <carlos_murillo@ieee.org>
             Deqiang (David) Gan         <dgan@zju.edu.cn>
 
-            Mon, Feb 7, 2011
+            Mon, Dec 12, 2011
 
 $Id$
 Copyright (c) 1997-2011 by Power System Engineering Research Center (PSERC)
@@ -132,98 +132,40 @@ documentation for the various MATPOWER functions. For example:
 
 
 ---------------------------
- WHAT'S NEW IN VERSION 4.0
+ WHAT'S NEW IN VERSION 4.1
 ---------------------------
 
-Below is a summary of the changes since version 3.2 of MATPOWER. See the
+Below is a summary of the changes since version 4.0 of MATPOWER. See the
 CHANGES file in the docs directory for all the gory details.
 
 * New features:
-  - Licensed under the GNU General Public License (GPL).
-  - Added compatibility with GNU Octave, a free, open-source MATLAB
-    clone.
-  - Extensive OPF enhancements:
-    - Generalized, extensible OPF formulation applies to all solvers
-      (AC and DC).
-    - Improved method for modifying OPF formulation and output via a
-      new user-defined callback function mechanism.
-    - Option to co-optimize reserves based on fixed zonal reserve
-      requirements, implemented using new callback function mechanism.
-    - Option to include interface flow limits (based on DC model
-      flows), implemented using new callback function mechanism.
-  - New high performance OPF solvers:
-    - MIPS (MATLAB Interior Point Solver), a new a pure-MATLAB
-      implementation of the primal-dual interior point methods from the
-      optional package TSPOPF. MIPS is suitable for large systems and
-      is used as MATPOWER's default solver for AC and DC OPF problems
-      if no other optional solvers are installed. To select MIPS
-      explicitly, use OPF_ALG = 560/565 and OPF_ALG_DC = 200/250 for
-      AC and DC OPF, respectively. MIPS can also be used independently
-      of MATPOWER as a solver for general non-linear constrained
-      optimization problems.
-    - Support for the IPOPT interior point optimizer for large scale
-      non-linear optimization. Use OPF_ALG = 580 and OPF_ALG_DC = 400
-      for AC and DC OPF, respectively. Requires the Matlab MEX
-      interface for IPOPT, available from
-      https://projects.coin-or.org/Ipopt/.
-    - Support for CPLEX to solve LP and QP problems. Set option
-      OPF_ALG_DC = 500 to use CPLEX to solve the DC OPF. Requires the
-      Matlab interface to CPLEX, available from
-      http://www.ibm.com/software/integration/optimization/cplex-optimizer/.
-      See 'help mpoption' for more CPLEX options.
-    - Support for MOSEK to solve LP and QP problems. Set option
-      OPF_ALG_DC = 600 to use MOSEK to solve the DC OPF. Requires the
-      Matlab interface to MOSEK, available from http://www.mosek.com/.
-      See 'help mpoption' for more MOSEK options.
-    - Updated support for MathWorks' Optimization Toolbox solvers,
-      fmincon(), linprog() and quadprog().
-  - Improved documentation:
-    - New, rewritten User's Manual (docs/manual.pdf).
-    - Two new Tech Notes, available from MATPOWER home page.
-    - Help text updates to more closely match MathWorks conventions.
-  - New functions:
-    - load2disp() converts from fixed to dispatchable loads.
-    - makeJac() forms the power flow Jacobian. Optionally returns the
-      system admittance matrices too.
-    - makeLODF() computes line outage distribution factors.
-    - modcost() shifts/scales generator cost functions.
-    - qps_matpower() provides a consistent, unified interface to all of
-      MATPOWER's available QP/LP solvers, serving as a single wrapper
-      around qps_bpmpd(), qps_cplex(), qps_ipopt(), qps_mips(), and
-      qps_ot() (Opt Tbx, i.e. quadprog(), linprog()).
-    - scale_load() conveniently modifies multiple loads.
-    - total_load() retreives total load for the entire system, a
-      specific zone or bus, with options to include fixed loads,
-      dispatchable loads or both.
-  - Option to return full power flow or OPF solution in a single
-    'results' struct, which is a superset of the input case struct.
-  - Ability to read and save generalized OPF user constraints, costs
-    and variable limits as well as other user data in case struct.
-  - Numerous performance optimizations for large scale systems.
-  - Perl script 'psse2matpower' for converting PSS/E data files to
-    MATPOWER case format.
-  - Deprecated 'areas' data matrix (was not being used).
-  - Many new tests in test suite.
+  - More new high performance OPF solvers:
+    - Support for the Knitro interior point optimizer for large scale
+      non-linear optimization. Use OPF_ALG = 600 for to select Knitro
+      to solve the AC OPF. Requires the Matlab Optimization Toolbox
+      and a license for Knitro, available from http://www.ziena.com/.
+      See 'help mpoption' for more Knitro options.
+    - Support for Gurobi to solve LP and QP problems. Set option
+      OPF_ALG_DC = 700 to use Gurobi to solve the DC OPF. Requires
+      Gurobi (http://www.gurobi.com/) and the Gurobi MEX interface
+      (http://www.convexoptimization.com/wikimization/index.php
+      /Gurobi_Mex:_A_MATLAB_interface_for_Gurobi).
+      See 'help mpoption' for more Gurobi options.
+    - Updated for compatibility with CPLEX 12.3.
+    - Changed options so that FMINCON uses its interior-point
+      solver by default. Much faster on larger systems.
+  - Support for basic modeling of DC transmission lines.
+  - New case files with more recent versions of Polish system.
+  - Power flow can handle networks with islands.
 
 * Bugs fixed:
-  - Auction code in extras/smartmarket in all previous versions contained a
-    design error which has been fixed. Prices are now scaled instead of
-    shifted when modified according to specified pricing rule (e.g. LAO, FRO,
-    LAB, FRB, split-the-difference, etc.). Auctions with both real and reactive
-    offers/bids must be type 0 or 5, type 1 = LAO is no longer allowed.
-  - Branch power flow limits could be violated when using the option
-    OPF_FLOW_LIM = 1.
+  - Computation of quadratic user-defined costs had a potentially
+    fatal error. Thanks to Stefanos Delikaraoglou for find this.
+  - Calculation of reserve prices in toggle_reserves() had an error.
 
 * INCOMPATIBLE CHANGES:
-  - Renamed functions used to compute AC OPF cost, constraints and
-    hessian, since they are used by more than fmincon:
-        costfmin --> opf_costfcn
-        consfmin --> opf_consfcn
-        hessfmin --> opf_hessfcn
-  - Input/output arguments to uopf() are now consistent with opf().
-  - dAbr_dV() now gives now gives partial derivatives of the
-    *squared* magnitudes of flows w.r.t. V, as opposed to the
-    magnitudes.
+  - Optional packages TSPOPF and MINOPF must be updated to latest
+    versions.
 
 
 ---------------
