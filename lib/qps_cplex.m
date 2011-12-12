@@ -93,7 +93,7 @@ function [x, f, eflag, output, lambda] = qps_cplex(H, c, A, l, u, xmin, xmax, x0
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2010 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2010, 2011 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
@@ -275,6 +275,10 @@ else
     if verbose
         fprintf('CPLEX Version %s --  %s QP solver\n', ...
             vstr, methods{cplex_opt.qpmethod+1});
+    end
+    %% ensure H is numerically symmetric
+    if ~isequal(H, H')
+        H = (H + H')/2;
     end
     [x, f, eflag, output, lam] = ...
         cplexqp(H, c, Ai, bi, Ae, be, xmin, xmax, x0, cplex_opt);
