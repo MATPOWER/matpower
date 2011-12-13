@@ -154,6 +154,8 @@ dc(:, c.PT) = dc(:, c.PF) - (dc(:, c.LOSS0) + dc(:, c.LOSS1) .* dc(:, c.PF));
 fg = zeros(ndc, size(mpc.gen, 2));
 fg(:, MBASE)        = 100;
 fg(:, GEN_STATUS)   =  dc(:, c.BR_STATUS);  %% status (should be all 1's)
+fg(:, PMIN)         = -Inf;
+fg(:, PMAX)         =  Inf;
 tg = fg;
 fg(:, GEN_BUS)      =  dc(:, c.F_BUS);      %% from bus
 tg(:, GEN_BUS)      =  dc(:, c.T_BUS);      %% to bus
@@ -163,10 +165,22 @@ fg(:, QG)           =  dc(:, c.QF);         %% VAr injection at "from"
 tg(:, QG)           =  dc(:, c.QT);         %% VAr injection at "to"
 fg(:, VG)           =  dc(:, c.VF);         %% voltage set-point at "from"
 tg(:, VG)           =  dc(:, c.VT);         %% voltage set-point at "to"
-fg(:, PMAX)         = -dc(:, c.PMIN);       %% "from" extraction lower lim (min from->to flow)
-fg(:, PMIN)         = -dc(:, c.PMAX);       %% "from" extraction upper lim (max from->to flow)
-tg(:, PMIN)         = -Inf;
-tg(:, PMAX)         =  Inf;
+k = find(dc(:, c.PMIN) >= 0);           %% min positive direction flow
+if ~isempty(k)                              %% contrain at "from" end
+    fg(k, PMAX)     = -dc(k, c.PMIN);       %% "from" extraction lower lim
+end
+k = find(dc(:, c.PMAX) >= 0);           %% max positive direction flow
+if ~isempty(k)                              %% contrain at "from" end
+    fg(k, PMIN)     = -dc(k, c.PMAX);       %% "from" extraction upper lim
+end
+k = find(dc(:, c.PMIN) < 0);            %% max negative direction flow
+if ~isempty(k)                              %% contrain at "to" end
+    tg(k, PMIN)     =  dc(k, c.PMIN);       %% "to" injection lower lim
+end
+k = find(dc(:, c.PMAX) < 0);            %% min negative direction flow
+if ~isempty(k)                              %% contrain at "to" end
+    tg(k, PMAX)     =  dc(k, c.PMAX);       %% "to" injection upper lim
+end
 fg(:, QMIN)         =  dc(:, c.QMINF);      %% "from" VAr injection lower lim
 fg(:, QMAX)         =  dc(:, c.QMAXF);      %% "from" VAr injection upper lim
 tg(:, QMIN)         =  dc(:, c.QMINT);      %%  "to"  VAr injection lower lim
@@ -319,8 +333,8 @@ results.dcline(:, c.QT) =  tg(:, QG);
 results.dcline(:, c.VF) =  fg(:, VG);
 results.dcline(:, c.VT) =  tg(:, VG);
 if size(fg, 2) >= MU_QMIN
-    results.dcline(:, c.MU_PMIN ) = fg(:, MU_PMAX);
-    results.dcline(:, c.MU_PMAX ) = fg(:, MU_PMIN);
+    results.dcline(:, c.MU_PMIN ) = fg(:, MU_PMAX) + tg(:, MU_PMIN);
+    results.dcline(:, c.MU_PMAX ) = fg(:, MU_PMIN) + tg(:, MU_PMAX);
     results.dcline(:, c.MU_QMINF) = fg(:, MU_QMIN);
     results.dcline(:, c.MU_QMAXF) = fg(:, MU_QMAX);
     results.dcline(:, c.MU_QMINT) = tg(:, MU_QMIN);
