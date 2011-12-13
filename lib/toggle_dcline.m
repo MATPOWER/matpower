@@ -15,6 +15,10 @@ function mpc = toggle_dcline(mpc, on_off)
 %   The 'int2ext' callback also packages up flow results and stores them
 %   in appropriate columns of MPC.dcline.
 %
+%   NOTE: Because of the way this extension modifies the number of
+%   rows in the gen and gencost matrices, caution must be taken
+%   when using it with other extensions that deal with generators.
+%
 %   Examples:
 %       mpc = loadcase('t_case9_dcline');
 %       mpc = toggle_dcline(mpc, 'on');
@@ -64,11 +68,11 @@ if strcmp(on_off, 'on')
         error('toggle_dcline: number of rows in ''dcline'' field (%d) and ''dclinecost'' field (%d) do not match.', ...
             size(mpc.dcline, 1), size(mpc.dclinecost, 1));
     end
-    k = find(mpc.dcline(:, c.LOSS1) < 0);
-    if ~isempty(k)
-        error('toggle_dcline: linear loss term cannot be negative for DC line from bus %d to %d\n', ...
-            [mpc.dcline(k, c.F_BUS:c.T_BUS)]');
-    end
+%     k = find(mpc.dcline(:, c.LOSS1) < 0);
+%     if ~isempty(k)
+%         warning('toggle_dcline: linear loss term is negative for DC line from bus %d to %d\n', ...
+%             [mpc.dcline(k, c.F_BUS:c.T_BUS)]');
+%     end
 
     %% add callback functions
     %% note: assumes all necessary data included in 1st arg (mpc, om, results)
@@ -129,9 +133,6 @@ mpc.order.dcline.status.off = find(mpc.dcline(:, c.BR_STATUS) <= 0);
 
 %% remove out-of-service DC lines
 dc = mpc.dcline(mpc.order.dcline.status.on, :); %% only in-service DC lines
-%% fudge PMIN a bit if equal to 0 to avoid triggering
-%% dispatchable load code for dummy gen at "from" end
-dc(dc(:, c.PMIN) == 0, c.PMIN) = 1e-6;
 if havecost
     dcc = mpc.dclinecost(mpc.order.dcline.status.on, :);    %% only in-service DC lines
     mpc.dclinecost = dcc;
@@ -170,6 +171,11 @@ fg(:, QMIN)         =  dc(:, c.QMINF);      %% "from" VAr injection lower lim
 fg(:, QMAX)         =  dc(:, c.QMAXF);      %% "from" VAr injection upper lim
 tg(:, QMIN)         =  dc(:, c.QMINT);      %%  "to"  VAr injection lower lim
 tg(:, QMAX)         =  dc(:, c.QMAXT);      %%  "to"  VAr injection upper lim
+
+%% fudge PMAX a bit if necessary to avoid triggering
+%% dispatchable load constant power factor constraints
+fg(isload(fg), PMAX) = -1e-6;
+tg(isload(tg), PMAX) = -1e-6;
 
 %% set all terminal buses to PV (except ref bus)
 refbus = find(mpc.bus(:, BUS_TYPE) == REF);
