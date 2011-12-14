@@ -20,7 +20,7 @@ function [V, converged, i] = fdpf(Ybus, Sbus, V0, Bp, Bpp, ref, pv, pq, mpopt)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2011 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
@@ -75,11 +75,6 @@ Q = imag(mis(pq));
 %% check tolerance
 normP = norm(P, inf);
 normQ = norm(Q, inf);
-if verbose > 0
-    alg = mpopt(1);
-    if mpopt(1) == 2, s = 'XB'; else, s = 'BX'; end
-    fprintf('(fast-decoupled, %s)\n', s);
-end
 if verbose > 1
     fprintf('\niteration     max mismatch (p.u.)  ');
     fprintf('\ntype   #        P            Q     ');

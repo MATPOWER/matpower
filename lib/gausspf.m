@@ -21,7 +21,7 @@ function [V, converged, i] = gausspf(Ybus, Sbus, V0, ref, pv, pq, mpopt)
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
 %   and Alberto Borghetti, University of Bologna, Italy
-%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2011 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
@@ -74,9 +74,6 @@ F = [   real(mis([pv; pq]));
 
 %% check tolerance
 normF = norm(F, inf);
-if verbose > 0
-    fprintf('(Gauss-Seidel)\n');
-end
 if verbose > 1
     fprintf('\n it    max P & Q mismatch (p.u.)');
     fprintf('\n----  ---------------------------');

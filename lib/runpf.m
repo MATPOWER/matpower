@@ -180,8 +180,20 @@ if dc                               %% DC formulation
     
     success = 1;
 else                                %% AC formulation
+    alg = mpopt(1);
     if verbose > 0
-      fprintf(' -- AC Power Flow ');    %% solver name and \n added later
+        if alg == 1
+            solver = 'Newton';
+        elseif alg == 2
+            solver = 'fast-decoupled, XB';
+        elseif alg == 3
+            solver = 'fast-decoupled, BX';
+        elseif alg == 4
+            solver = 'Gauss-Seidel';
+        else
+            solver = 'unknown';
+        end
+        fprintf(' -- AC Power Flow (%s)\n', solver);
     end
     %% initial state
     % V0    = ones(size(bus, 1), 1);            %% flat start
@@ -269,7 +281,7 @@ else                                %% AC formulation
                     bus(bi, [PD,QD]) = ...      %% adjust load accordingly,
                         bus(bi, [PD,QD]) - gen(mx(i), [PG,QG]);
                 end
-                if bus(gen(mx, GEN_BUS), BUS_TYPE) == REF && length(ref) > 1
+                if length(ref) > 1 && any(bus(gen(mx, GEN_BUS), BUS_TYPE) == REF)
                     error('Sorry, MATPOWER cannot enforce Q limits for slack buses in systems with multiple slacks.');
                 end
                 bus(gen(mx, GEN_BUS), BUS_TYPE) = PQ;   %% & set bus type to PQ
