@@ -15,8 +15,12 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.0
 -----------------
 
-12/13/11
+12/14/11
     - Released version 4.1.
+    - Fixed bug in check for ENFORCE_Q_LIMS with multiple slacks
+      in runpf().
+    - Moved printing of power flow solver name into runpf() so it
+      doesn't get repeated when ENFORCE_Q_LIMS is on.
 
 12/9/11
     - Fixed problem with qps_cplex() when H matrix is not

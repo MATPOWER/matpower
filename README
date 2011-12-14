@@ -10,7 +10,7 @@ Authors:    Ray Zimmerman               <rz10@cornell.edu>
             Carlos E. Murillo-Sanchez   <carlos_murillo@ieee.org>
             Deqiang (David) Gan         <dgan@zju.edu.cn>
 
-            Tue, Dec 13, 2011
+            Wed, Dec 14, 2011
 
 $Id$
 Copyright (c) 1997-2011 by Power System Engineering Research Center (PSERC)
