@@ -148,8 +148,7 @@ CHANGES file in the docs directory for all the gory details.
     - Support for Gurobi to solve LP and QP problems. Set option
       OPF_ALG_DC = 700 to use Gurobi to solve the DC OPF. Requires
       Gurobi (http://www.gurobi.com/) and the Gurobi MEX interface
-      (http://www.convexoptimization.com/wikimization/index.php
-      /Gurobi_Mex:_A_MATLAB_interface_for_Gurobi).
+      (http://www.convexoptimization.com/wikimization/index.php/Gurobi_mex).
       See 'help mpoption' for more Gurobi options.
     - Updated for compatibility with CPLEX 12.3.
     - Changed options so that FMINCON uses its interior-point
@@ -242,11 +241,22 @@ Terms of Use for details.
                Matlab interface to CPLEX, available from
                http://www.ibm.com/software/integration/optimization/cplex-optimizer/.
 
+ - GUROBI      Includes high-performance, large-scale LP and QP solvers
+               that MATPOWER can use for the DC OPF. Requires the
+               Gurobi MEX Matlab interface, available from
+               http://www.convexoptimization.com/wikimization/index.php/Gurobi_mex.
+
  - IPOPT       An interior point optimizer for large scale non-linear
                optimization that MATPOWER can use for both AC and DC
                OPF problems. Requires the Matlab MEX interface for
                IPOPT, available from
                https://projects.coin-or.org/Ipopt/.
+
+ - KNITRO      A general purpose optimization solver specializing in
+               nonlinear problems that MATPOWER can use for AC OPFs.
+               Requires the Knitro libraries, available from
+               http://www.ziena.com/ and the Optimization Toolbox from
+               The MathWorks.
 
  - MINOPF      A MINOS-based AC OPF solver implemented as a Fortran MEX file.
                See http://www.pserc.cornell.edu/minopf/
