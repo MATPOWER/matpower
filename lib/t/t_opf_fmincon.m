@@ -58,7 +58,11 @@ end
 t0 = 'fmincon OPF : ';
 mpopt = mpoption('OPF_VIOLATION', 1e-6, 'CONSTR_TOL_X', 1e-6, 'CONSTR_TOL_F', 1e-9);
 mpopt = mpoption(mpopt, 'OUT_ALL', 0, 'VERBOSE', verbose, 'OPF_ALG', 520);
-% mpopt = mpoption(mpopt, 'FMC_ALG', 4);
+v = ver('Matlab');
+if strcmp(v.Version, '7.6') || strcmp(v.Version, '7.7') || ...
+		strcmp(v.Version, '7.8') || strcmp(v.Version, '7.9')
+	mpopt = mpoption(mpopt, 'FMC_ALG', 1);	%% use active-set method for these
+end
 
 if have_fcn('fmincon')
     %% set up indices
