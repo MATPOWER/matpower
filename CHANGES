@@ -8,8 +8,16 @@ maintained by Ray Zimmerman <rz10@cornell.edu>
 
 MATPOWER
 $Id$
-Copyright (c) 1996-2011 by Power System Engineering Research Center (PSERC)
+Copyright (c) 1996-2012 by Power System Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
+
+
+Changes since 4.1
+-----------------
+
+1/4/12
+    - Running a power flow for a case with DC lines but no gencost
+      no longer causes an error.
 
 
 Changes since 4.0

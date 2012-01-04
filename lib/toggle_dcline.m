@@ -323,7 +323,9 @@ tg = results.gen(ng+ndc+(1:ndc), :);
 
 %% remove dummy gens
 results.gen     = results.gen(1:ng, :);
-results.gencost = results.gencost(1:ng, :);
+if isfield(results, 'gencost') && ~isempty(results.gencost)
+    results.gencost = results.gencost(1:ng, :);
+end
 
 %% get the solved flows
 results.dcline(:, c.PF) = -fg(:, PG);
