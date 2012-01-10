@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.1
 -----------------
 
+1/10/12
+    - Moved the building of Ybus outside the reactive limit
+      enforcement loop in runpf(). Suggested by Shiyang Li.
+
 1/4/12
     - Running a power flow for a case with DC lines but no gencost
       no longer causes an error.

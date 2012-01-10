@@ -206,11 +206,12 @@ else                                %% AC formulation
         limited = [];                       %% list of indices of gens @ Q lims
         fixedQg = zeros(size(gen, 1), 1);   %% Qg of gens at Q limits
     end
+
+    %% build admittance matrices
+    [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
+    
     repeat = 1;
     while (repeat)
-        %% build admittance matrices
-        [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
-        
         %% compute complex bus power injections (generation - load)
         Sbus = makeSbus(baseMVA, bus, gen);
         
