@@ -253,8 +253,9 @@ if verbose
         'concurrent',
         'deterministic concurrent'
     };
+    vn = gurobiver;
     fprintf('Gurobi Version %s -- %s %s solver\n', ...
-        '<unknown>', methods{g_opt.Method+1}, lpqp);
+        vn, methods{g_opt.Method+1}, lpqp);
 end
 [x, f, eflag, output, lambda] = ...
     gurobi_mex(c', 1, AA, bb, contypes, xmin, xmax, 'C', g_opt);

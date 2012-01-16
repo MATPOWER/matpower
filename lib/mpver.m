@@ -108,18 +108,7 @@ else
         fprintf('%-22s -- not installed --\n', 'IPOPT');
     end
     if have_fcn('gurobi')
-        [x, f, e, o] = gurobi_mex(1, 1, [], [], [], 1, 1, 'C', ...
-            struct('Display', 0, 'DisplayInterval', Inf));
-        if isfield(o, 'Versions')
-            vn = sprintf('%d.%d.%d/%.2f', o.Versions.LibMajor, ...
-                o.Versions.LibMinor, o.Versions.LibTechi, o.Versions.GurobiMex);
-        elseif isfield(o, 'Lib.Ver.Major')
-            vn = sprintf('%d.%d.%d/%.2f', o.('Lib.Ver.Major'), ...
-                o.('Lib.Ver.Minor'), o.('Lib.Ver.Techi'), o.('GurobiMex.Ver'));
-        else
-            vn = '<unknown>';
-        end
-        fprintf('%-22s Version %-10s %-11s   %s\n', 'Gurobi', vn, '', computer);
+        gurobiver;
     else
         fprintf('%-22s -- not installed --\n', 'Gurobi');
     end
