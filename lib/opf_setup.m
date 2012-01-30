@@ -226,8 +226,8 @@ if dc
   om = add_vars(om, 'Va', nb, Va, Val, Vau);
   om = add_vars(om, 'Pg', ng, Pg, Pmin, Pmax);
   om = add_constraints(om, 'Pmis', Amis, bmis, bmis, {'Va', 'Pg'}); %% nb
-  om = add_constraints(om, 'Pf',  Bf(il,:), lpf, upf, {'Va'});      %% nl
-  om = add_constraints(om, 'Pt', -Bf(il,:), lpf, upt, {'Va'});      %% nl
+  om = add_constraints(om, 'Pf',  Bf(il,:), lpf, upf, {'Va'});      %% nl2
+  om = add_constraints(om, 'Pt', -Bf(il,:), lpf, upt, {'Va'});      %% nl2
   om = add_constraints(om, 'ang', Aang, lang, uang, {'Va'});        %% nang
 else
   om = userdata(om, 'Apqdata', Apqdata);
