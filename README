@@ -159,7 +159,7 @@ CHANGES file in the docs directory for all the gory details.
 
 * Bugs fixed:
   - Computation of quadratic user-defined costs had a potentially
-    fatal error. Thanks to Stefanos Delikaraoglou for find this.
+    fatal error. Thanks to Stefanos Delikaraoglou for finding this.
   - Calculation of reserve prices in toggle_reserves() had an error.
 
 * INCOMPATIBLE CHANGES:
