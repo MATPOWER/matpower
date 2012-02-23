@@ -64,7 +64,7 @@ while ~isempty(queue)
 %   cn = queue(1);    queue(1)   = [];  %% use LIFO stack for depth-first
 
     %% find all nodes connected to current node
-    [~, jj] = find(C(C(:, cn) ~= 0, :));    %% non-zeros in rows connected to cn
+    [ii, jj] = find(C(C(:, cn) ~= 0, :));   %% non-zeros in rows connected to cn
     cnn = jj(visited(jj) == 0); %% indices of non-visited cols (may contain dups)
 
     %% mark them as visited and queue them
