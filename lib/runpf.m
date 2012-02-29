@@ -233,8 +233,9 @@ else                                %% AC formulation
         
         if qlim             %% enforce generator Q limits
             %% find gens with violated Q constraints
-            mx = find( gen(:, GEN_STATUS) > 0 & gen(:, QG) > gen(:, QMAX) );
-            mn = find( gen(:, GEN_STATUS) > 0 & gen(:, QG) < gen(:, QMIN) );
+            tol = mpopt(16);    %% OPF_VIOLATION
+            mx = find( gen(:, GEN_STATUS) > 0 & gen(:, QG) > gen(:, QMAX) + tol );
+            mn = find( gen(:, GEN_STATUS) > 0 & gen(:, QG) < gen(:, QMIN) - tol );
             
             if ~isempty(mx) || ~isempty(mn)  %% we have some Q limit violations
                 if isempty(pv)

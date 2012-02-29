@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.1
 -----------------
 
+2/29/12
+    - Added a tolerance for detecting violated Q limits in runpf()
+      when ENFORCE_Q_LIMS is true. Suggested by Hongxing Ye.
+
 1/31/12
     - Added utilities to help in working with networks with islands,
       find_islands(), extract_islands() and connected_components()
