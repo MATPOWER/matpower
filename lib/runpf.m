@@ -198,7 +198,10 @@ else                                %% AC formulation
     %% initial state
     % V0    = ones(size(bus, 1), 1);            %% flat start
     V0  = bus(:, VM) .* exp(sqrt(-1) * pi/180 * bus(:, VA));
-    V0(gbus) = gen(on, VG) ./ abs(V0(gbus)).* V0(gbus);
+    vcb = ones(size(V0));           %% create mask of voltage-controlled buses
+    vcb(pq) = 0;                    %% exclude PQ buses
+    k = find(vcb(gbus));            %% in-service gens at v-c buses
+    V0(gbus(k)) = gen(on(k), VG) ./ abs(V0(gbus(k))).* V0(gbus(k));
     
     if qlim
         ref0 = ref;                         %% save index and angle of
