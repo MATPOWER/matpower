@@ -17,6 +17,8 @@ function mpck = extract_islands(mpc, groups, k)
 %
 %   See also FIND_ISLANDS, CONNECTED_COMPONENTS.
 
+%   TODO: add handling of DC lines
+
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
@@ -66,57 +68,61 @@ C = sparse(1:nl, e2i(mpc.branch(:, F_BUS)), -mpc.branch(:, BR_STATUS), nl, nb) +
     sparse(1:nl, e2i(mpc.branch(:, T_BUS)),  mpc.branch(:, BR_STATUS), nl, nb);
 Cg = sparse(1:ng, e2i(mpc.gen(:, GEN_BUS)), mpc.gen(:, GEN_STATUS), ng, nb);
 
-if nargin == 2
-    if iscell(groups)
-        k = [];
-    else
-        k = groups;
-        groups = {};
-    end
-elseif nargin == 1
-    groups = {};
-    k = [];
-end
-
-%% find islands, if not provided
-if isempty(groups)
-    groups = connected_components(C);
-end
-
-%% check inputs
-if isempty(k)
-    g1 = 1;
-    gn = length(groups);
+if ~isempty(C)
+    mpck = [];
 else
-    if k > length(groups)
-        error('extract_islands: cannot extract island %d, network has only %d islands', ...
-                k, length(groups));
-    end
-    g1 = k;
-    gn = k;
-end
-
-%% extract islands
-for i = g1:gn
-    kk  = i-g1+1;
-    ib  = groups{i};                    %% buses in group i
-    ibr = find(sum(abs(C(:, ib)), 2));  %% branches in group i
-    ig  = find(sum(Cg(:, ib), 2));      %% gens in group i
-
-    mpck{kk}        = mpc;
-    mpck{kk}.bus    = mpc.bus(ib, :);
-    mpck{kk}.branch = mpc.branch(ibr, :);
-    mpck{kk}.gen    = mpc.gen(ig, :);
-    if isfield(mpck{kk}, 'gencost')
-        if size(mpck{kk}.gencost, 1) == 2*ng
-            mpck{kk}.gencost = mpc.gencost([ig; ng+ig], :);
+    if nargin == 2
+        if iscell(groups)
+            k = [];
         else
-            mpck{kk}.gencost = mpc.gencost(ig, :);
+            k = groups;
+            groups = {};
+        end
+    elseif nargin == 1
+        groups = {};
+        k = [];
+    end
+    
+    %% find islands, if not provided
+    if isempty(groups)
+        groups = connected_components(C);
+    end
+    
+    %% check inputs
+    if isempty(k)
+        g1 = 1;
+        gn = length(groups);
+    else
+        if k > length(groups)
+            error('extract_islands: cannot extract island %d, network has only %d islands', ...
+                    k, length(groups));
+        end
+        g1 = k;
+        gn = k;
+    end
+    
+    %% extract islands
+    for i = g1:gn
+        kk  = i-g1+1;
+        ib  = groups{i};                    %% buses in group i
+        ibr = find(sum(abs(C(:, ib)), 2));  %% branches in group i
+        ig  = find(sum(Cg(:, ib), 2));      %% gens in group i
+    
+        mpck{kk}        = mpc;
+        mpck{kk}.bus    = mpc.bus(ib, :);
+        mpck{kk}.branch = mpc.branch(ibr, :);
+        mpck{kk}.gen    = mpc.gen(ig, :);
+        if isfield(mpck{kk}, 'gencost')
+            if size(mpck{kk}.gencost, 1) == 2*ng
+                mpck{kk}.gencost = mpc.gencost([ig; ng+ig], :);
+            else
+                mpck{kk}.gencost = mpc.gencost(ig, :);
+            end
         end
     end
-end
-
-%% convert from cell array to single MATPOWER case struct as appropriate
-if ~isempty(k)
-    mpck = mpck{1};
+    
+    %% convert from cell array to single MATPOWER case struct as appropriate
+    if ~isempty(k)
+        mpck = mpck{1};
+    end
 end

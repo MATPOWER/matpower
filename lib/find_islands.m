@@ -10,6 +10,8 @@ function [groups, isolated] = find_islands(mpc)
 %
 %   See also EXTRACT_ISLANDS, CONNECTED_COMPONENTS.
 
+%   TODO: add handling of DC lines
+
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
@@ -54,4 +56,9 @@ e2i = sparse(mpc.bus(:, BUS_I), ones(nb, 1), 1:nb, max(mpc.bus(:, BUS_I)), 1);
 C = sparse(1:nl, e2i(mpc.branch(:, F_BUS)), -mpc.branch(:, BR_STATUS), nl, nb) + ...
     sparse(1:nl, e2i(mpc.branch(:, T_BUS)),  mpc.branch(:, BR_STATUS), nl, nb);
 
-[groups, isolated] = connected_components(C);
+if isempty(C)
+    groups = [];
+    isolated = 1:nb;
+else
+    [groups, isolated] = connected_components(C);
+end
