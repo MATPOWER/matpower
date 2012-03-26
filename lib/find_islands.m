@@ -56,9 +56,9 @@ e2i = sparse(mpc.bus(:, BUS_I), ones(nb, 1), 1:nb, max(mpc.bus(:, BUS_I)), 1);
 C = sparse(1:nl, e2i(mpc.branch(:, F_BUS)), -mpc.branch(:, BR_STATUS), nl, nb) + ...
     sparse(1:nl, e2i(mpc.branch(:, T_BUS)),  mpc.branch(:, BR_STATUS), nl, nb);
 
-if isempty(C)
+if nnz(C)
+    [groups, isolated] = connected_components(C);
+else
     groups = [];
     isolated = 1:nb;
-else
-    [groups, isolated] = connected_components(C);
 end

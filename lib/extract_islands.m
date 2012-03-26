@@ -68,9 +68,7 @@ C = sparse(1:nl, e2i(mpc.branch(:, F_BUS)), -mpc.branch(:, BR_STATUS), nl, nb) +
     sparse(1:nl, e2i(mpc.branch(:, T_BUS)),  mpc.branch(:, BR_STATUS), nl, nb);
 Cg = sparse(1:ng, e2i(mpc.gen(:, GEN_BUS)), mpc.gen(:, GEN_STATUS), ng, nb);
 
-if ~isempty(C)
-    mpck = [];
-else
+if nnz(C)
     if nargin == 2
         if iscell(groups)
             k = [];
@@ -125,4 +123,6 @@ else
     if ~isempty(k)
         mpck = mpck{1};
     end
+else
+    mpck = [];
 end
