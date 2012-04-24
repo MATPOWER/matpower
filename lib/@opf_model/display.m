@@ -91,10 +91,18 @@ fprintf('  mpc = ');
 if ~isempty(fieldnames(om.mpc))
     fprintf('\n');
 end
-display(om.mpc);
+if have_fcn('octave')
+    fprintf('    <scalar struct>\n');
+else
+    display(om.mpc);
+end
 
 fprintf('  userdata = ');
 if ~isempty(fieldnames(om.userdata))
     fprintf('\n');
 end
-display(om.userdata);
+if have_fcn('octave')
+    fprintf('    <scalar struct>\n');
+else
+    display(om.userdata);
+end
