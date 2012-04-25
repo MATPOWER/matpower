@@ -69,7 +69,7 @@ function [options, names] = mpoption(varargin)
 %           [  580 - IPOPT, requires MEX interface to IPOPT solver          ]
 %           [        available from: https://projects.coin-or.org/Ipopt/    ]
 %           [  600 - KNITRO, requires MATLAB Optimization Toolbox and       ]
-%                    KNITRO libraries available from: http://www.ziena.com/ ]
+%           [        KNITRO libraries available from: http://www.ziena.com/ ]
 %       16 - OPF_VIOLATION, 5e-6    constraint violation tolerance
 %       17 - CONSTR_TOL_X, 1e-4     termination tol on x for constr/fmincon
 %       18 - CONSTR_TOL_F, 1e-4     termination tol on f for constr/fmincon
@@ -97,12 +97,12 @@ function [options, names] = mpoption(varargin)
 %           [  250 - MIPS-sc, step-controlled variant of MIPS               ]
 %           [  300 - MATLAB Optimization Toolbox, QUADPROG, LINPROG         ]
 %           [  400 - IPOPT, requires MEX interface to IPOPT solver          ]
-%                    available from: https://projects.coin-or.org/Ipopt/    ]
+%           [        available from: https://projects.coin-or.org/Ipopt/    ]
 %           [  500 - CPLEX, requires Matlab interface to CPLEX solver       ]
 %           [  600 - MOSEK, requires Matlab interface to MOSEK solver       ]
-%                    available from: http://www.mosek.com/                  ]
+%           [        available from: http://www.mosek.com/                  ]
 %           [  700 - GUROBI, requires Matlab interface to Gurobi optimizer  ]
-%                    available from: http://www.gurobi.com/                 ]
+%           [        available from: http://www.gurobi.com/                 ]
 %   output options
 %       31 - VERBOSE, 1             amount of progress info printed
 %           [   0 - print no progress info                                  ]
