@@ -14,10 +14,10 @@ function TorF = have_fcn(tag)
 %       knitro      - KNITRO, NLP solver (http://www.ziena.com/)
 %       minopf      - MINOPF, MINOPF, MINOS-based OPF solver
 %       mosek       - MOSEK, LP/QP solver (http://www.mosek.com/)
+%       qp          - QP, QP solver from Optimization Toolbox 1.x/2.x
 %       quadprog    - QUADPROG, QP solver from Optimization Toolbox 2.x +
 %       quadprog_ls - QUADPROG with large-scale interior point convex solver
 %                       from Optimization Toolbox 6.x +
-%       qp          - QP, QP solver from Optimization Toolbox 1.x/2.x
 %       pdipmopf    - PDIPMOPF, primal-dual interior point method OPF solver
 %       scpdipmopf  - SCPDIPMOPF, step-controlled PDIPM OPF solver
 %       smartmarket - RUNMARKET and friends, for running an auction
@@ -101,6 +101,8 @@ switch tag
         TorF = exist('minopf', 'file') == 3;
     case 'mosek'
         TorF = exist('mosekopt', 'file') == 3;
+    case 'qp'
+        TorF = exist('qp', 'file') == 2;
     case 'quadprog'
         TorF = exist('quadprog', 'file') == 2;
     case 'quadprog_ls'
@@ -110,8 +112,6 @@ switch tag
         else
             TorF = 0;
         end
-    case 'qp'
-        TorF = exist('qp', 'file') == 2;
     case 'smartmarket'
         TorF = exist('runmarket', 'file') == 2;
     case 'octave'
