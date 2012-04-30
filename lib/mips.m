@@ -315,9 +315,9 @@ igt = find( uu >=  1e10 & ll > -1e10 );     %% greater than, unbounded above
 ilt = find( ll <= -1e10 & uu <  1e10 );     %% less than, unbounded below
 ibx = find( (abs(uu-ll) > eps) & (uu < 1e10) & (ll > -1e10) );
 Ae = AA(ieq, :);
-be = uu(ieq);
+be = uu(ieq, 1);
 Ai  = [ AA(ilt, :); -AA(igt, :); AA(ibx, :); -AA(ibx, :) ];
-bi  = [ uu(ilt);    -ll(igt);    uu(ibx);    -ll(ibx)];
+bi  = [ uu(ilt, 1); -ll(igt, 1); uu(ibx, 1); -ll(ibx, 1) ];
 
 %% evaluate cost f(x0) and constraints g(x0), h(x0)
 x = x0;
@@ -440,7 +440,7 @@ while (~converged && i < opt.max_it)
         break;
     end
     dx = dxdlam(1:nx);
-    dlam = dxdlam(nx+(1:neq));
+    dlam = dxdlam(nx+(1:neq), 1);
     dz = -h - z - dh' * dx;
     dmu = -mu + zinvdiag *(gamma*e - mudiag * dz);
 
