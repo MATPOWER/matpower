@@ -102,6 +102,20 @@ if isstruct(i2e)
                 mpc.N = o.ext.N;
             end
 
+            %% zero pad data matrices on right if necessary
+            [nr, nc] = size(o.int.bus);
+            if size(mpc.bus, 2) < nc
+                mpc.bus = [mpc.bus zeros(nr, nc-size(mpc.bus,2))];
+            end
+            [nr, nc] = size(o.int.branch);
+            if size(mpc.branch, 2) < nc
+                mpc.branch = [mpc.branch zeros(nr, nc-size(mpc.branch,2))];
+            end
+            [nr, nc] = size(o.int.gen);
+            if size(mpc.gen, 2) < nc
+                mpc.gen = [mpc.gen zeros(nr, nc-size(mpc.gen,2))];
+            end
+
             %% update data (in bus, branch and gen only)
             mpc.bus(o.bus.status.on, :)       = o.int.bus;
             mpc.branch(o.branch.status.on, :) = o.int.branch;

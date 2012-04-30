@@ -15,6 +15,12 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.1
 -----------------
 
+4/30/12
+    - Fixed a bug in int2ext() where converting a case to internal
+      ordering before calling runpf() or runopf() could result in
+      a fatal error due to mismatched number of columns in internal
+      and external versions of data matrices.
+
 3/14/12
     - Fixed a bug in runpf() where it was using the wrong initial
       voltage magnitude for generator buses marked as PQ buses. Power
