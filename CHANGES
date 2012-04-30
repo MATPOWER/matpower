@@ -19,7 +19,8 @@ Changes since 4.1
     - Fixed a bug in int2ext() where converting a case to internal
       ordering before calling runpf() or runopf() could result in
       a fatal error due to mismatched number of columns in internal
-      and external versions of data matrices.
+      and external versions of data matrices. Thanks to Nasiruzzaman
+      and Shiyang Li for reporting and detailing the issue.
 
 3/14/12
     - Fixed a bug in runpf() where it was using the wrong initial
