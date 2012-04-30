@@ -21,6 +21,8 @@ Changes since 4.1
       a fatal error due to mismatched number of columns in internal
       and external versions of data matrices. Thanks to Nasiruzzaman
       and Shiyang Li for reporting and detailing the issue.
+    - Fixed fatal bug in MIPS for unconstrained, scalar problems.
+      Thanks to Han Na Gwon. Bumped MIPS version to 1.0.1.
 
 3/14/12
     - Fixed a bug in runpf() where it was using the wrong initial
