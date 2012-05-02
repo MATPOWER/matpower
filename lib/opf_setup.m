@@ -129,7 +129,7 @@ end
 %% set up initial variables and bounds
 Va   = bus(:, VA) * (pi/180);
 Vm   = bus(:, VM);
-Vm(gen(:, GEN_BUS)) = gen(:, VG);   %% buses with gens, init Vm from gen data
+%Vm(gen(:, GEN_BUS)) = gen(:, VG);   %% buses with gens, init Vm from gen data
 Pg   = gen(:, PG) / baseMVA;
 Qg   = gen(:, QG) / baseMVA;
 Pmin = gen(:, PMIN) / baseMVA;
@@ -152,7 +152,6 @@ if dc               %% DC model
   %% branch flow constraints
   il = find(branch(:, RATE_A) ~= 0 & branch(:, RATE_A) < 1e10);
   nl2 = length(il);         %% number of constrained lines
-  lpf = -Inf * ones(nl2, 1);
   upf = branch(il, RATE_A) / baseMVA - Pfinj(il);
   upt = branch(il, RATE_A) / baseMVA + Pfinj(il);
 
@@ -226,8 +225,8 @@ if dc
   om = add_vars(om, 'Va', nb, Va, Val, Vau);
   om = add_vars(om, 'Pg', ng, Pg, Pmin, Pmax);
   om = add_constraints(om, 'Pmis', Amis, bmis, bmis, {'Va', 'Pg'}); %% nb
-  om = add_constraints(om, 'Pf',  Bf(il,:), lpf, upf, {'Va'});      %% nl2
-  om = add_constraints(om, 'Pt', -Bf(il,:), lpf, upt, {'Va'});      %% nl2
+  om = add_constraints(om, 'Pf',  Bf(il,:), [], upf, {'Va'});       %% nl2
+  om = add_constraints(om, 'Pt', -Bf(il,:), [], upt, {'Va'});       %% nl2
   om = add_constraints(om, 'ang', Aang, lang, uang, {'Va'});        %% nang
 else
   om = userdata(om, 'Apqdata', Apqdata);
