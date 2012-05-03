@@ -15,6 +15,11 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.1
 -----------------
 
+5/3/12
+    - Reimplementated @opf_model class as sub-class of the new
+      @opt_model class, which supports indexed named sets of
+      variables, constraints and costs.
+
 5/2/12
     - In opf_setup(), take magnitude of initial voltages at generator
       buses from bus matrix (VM), not gen matrix (VG).

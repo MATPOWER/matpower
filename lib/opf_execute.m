@@ -219,7 +219,7 @@ end
 %% assign values and limit shadow prices for variables
 om_var_order = get(om, 'var', 'order');
 for k = 1:length(om_var_order)
-  name = om_var_order{k};
+  name = om_var_order(k).name;
   if getN(om, 'var', name)
     idx = vv.i1.(name):vv.iN.(name);
     results.var.val.(name) = results.x(idx);
@@ -231,7 +231,7 @@ end
 %% assign shadow prices for linear constraints
 om_lin_order = get(om, 'lin', 'order');
 for k = 1:length(om_lin_order)
-  name = om_lin_order{k};
+  name = om_lin_order(k).name;
   if getN(om, 'lin', name)
     idx = ll.i1.(name):ll.iN.(name);
     results.lin.mu.l.(name) = results.mu.lin.l(idx);
@@ -243,7 +243,7 @@ end
 if ~dc
   om_nln_order = get(om, 'nln', 'order');
   for k = 1:length(om_nln_order)
-    name = om_nln_order{k};
+    name = om_nln_order(k).name;
     if getN(om, 'nln', name)
       idx = nn.i1.(name):nn.iN.(name);
       results.nln.mu.l.(name) = results.mu.nln.l(idx);
@@ -255,7 +255,7 @@ end
 %% assign values for components of user cost
 om_cost_order = get(om, 'cost', 'order');
 for k = 1:length(om_cost_order)
-  name = om_cost_order{k};
+  name = om_cost_order(k).name;
   if getN(om, 'cost', name)
     results.cost.(name) = compute_cost(om, results.x, name);
   end

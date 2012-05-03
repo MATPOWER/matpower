@@ -1,14 +1,16 @@
-function display(om)
-%DISPLAY  Displays the object.
-%   Called when semicolon is omitted at the command-line. Displays the details
-%   of the variables, constraints, costs included in the model.
+function val = get(om, varargin)
+%GET  Returns the value of a field.
+%   VAL = GET(OM, FIELD1, FIELD2, ...)
+%
+%   Example:
+%       var_order = get(om, 'var', 'order');
 %
 %   See also OPT_MODEL.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2008-2010 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2012 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
@@ -34,14 +36,11 @@ function display(om)
 %   under other licensing terms, the licensors of MATPOWER grant
 %   you additional permission to convey the resulting work.
 
-display(om.opt_model)
-
-fprintf('  mpc = ');
-if ~isempty(fieldnames(om.mpc))
-    fprintf('\n');
-end
-if have_fcn('octave')
-    fprintf('    <scalar struct>\n');
-else
-    display(om.mpc);
+val = om;
+for k = 1:length(varargin)
+    if ischar(varargin{k})
+        val = val.(varargin{k});
+    else
+        val = val(varargin{k});
+    end
 end
