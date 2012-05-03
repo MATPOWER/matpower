@@ -197,7 +197,7 @@ switch alg
     case 100                    %% use BPMPD_MEX
         [x, f, eflag, output, lambda] = ...
             qps_bpmpd(H, c, A, l, u, xmin, xmax, x0, opt);
-    
+
         if eflag == -99
             if verbose
                 fprintf('         Retrying with QPS_MIPS solver ...\n\n');
