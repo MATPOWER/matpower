@@ -1,10 +1,10 @@
-function t_opf_dc_cplex(quiet)
-%T_OPF_DC_CPLEX  Tests for DC optimal power flow using CPLEX solver.
+function t_opf_dc_gurobi(quiet)
+%T_OPF_DC_GUROBI  Tests for DC optimal power flow using Gurobi solver.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2004-2010 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2012 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
@@ -159,7 +159,7 @@ if have_fcn('gurobi')
 
 	end
 else
-    t_skip(num_tests, 'CPLEX not available');
+    t_skip(num_tests, 'Gurobi not available');
 end
 
 t_end;
