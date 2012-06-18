@@ -4,9 +4,9 @@ function rv = mpver(varargin)
 %   V = MPVER('all') returns a struct with the fields Name, Version,
 %   Release and Date (all strings). Calling MPVER without assigning the
 %   return value prints the version and release date of the current
-%   installation of MATPOWER, MATLAB, the Optimization Toolbox, MIPS
-%   and any optional MATPOWER packages such as BPMPD_MEX, IPOPT, MINOPF,
-%   PDIPMOPF, SCPDIPMOPF and TRAMLOPF.
+%   installation of MATPOWER, MATLAB (or Octave), the Optimization Toolbox,
+%   MIPS and any optional MATPOWER packages such as BPMPD_MEX, CPLEX,
+%   Gurobi, Ipopt, Knitro, MINOPF, Mosek, PDIPMOPF, SCPDIPMOPF and TRAMLOPF.
 
 %   MATPOWER
 %   $Id$
@@ -50,7 +50,7 @@ function rv = mpver(varargin)
 v{1} = struct(  'Name',     'MATPOWER', ... 
                 'Version',  '4.1+', ...
                 'Release',  '', ...
-                'Date',     '3-May-2012' );
+                'Date',     '18-Jun-2012' );
 if nargout > 0
     if nargin > 0
         rv = v{1};
@@ -94,6 +94,11 @@ else
     else
         fprintf('%-22s -- not installed --\n', 'CPLEX');
     end
+    if have_fcn('gurobi')
+        gurobiver;
+    else
+        fprintf('%-22s -- not installed --\n', 'Gurobi');
+    end
     if have_fcn('ipopt')
         str = evalc('qps_ipopt([],1,1,1,1,1,1,1,struct(''verbose'', 2))');
         pat = 'Ipopt version ([^\s,]+)';
@@ -106,11 +111,6 @@ else
         fprintf('%-22s Version %-10s %-11s   %s\n', 'IPOPT', vn, '', computer);
     else
         fprintf('%-22s -- not installed --\n', 'IPOPT');
-    end
-    if have_fcn('gurobi')
-        gurobiver;
-    else
-        fprintf('%-22s -- not installed --\n', 'Gurobi');
     end
     if have_fcn('knitro')
         str = evalc('[x fval] = ktrlink(@(x)1,1);');
