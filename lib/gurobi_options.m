@@ -1,5 +1,5 @@
 function opt = gurobi_options(overrides, mpopt)
-%GUROBI_OPTIONS  Sets options for GUROBI.
+%GUROBI_OPTIONS  Sets options for GUROBI (version 5.x and greater).
 %
 %   OPT = GUROBI_OPTIONS
 %   OPT = GUROBI_OPTIONS(OVERRIDES)
@@ -17,7 +17,8 @@ function opt = gurobi_options(overrides, mpopt)
 %               MODIFIED_OPT = FNAME(DEFAULT_OPT);
 %       MPOPT - MATPOWER options vector, uses the following entries:
 %           OPF_VIOLATION (16)  - used to set opt.FeasibilityTol
-%           VERBOSE (31)        - used to set opt.DisplayInterval, opt.Display
+%           VERBOSE (31)        - used to set opt.DisplayInterval,
+%                                 opt.OutputFlag, opt.LogToConsole
 %           GRB_METHOD (121)    - used to set opt.Method
 %           GRB_TIMELIMIT (122) - used to set opt.TimeLimit (seconds)
 %           GRB_THREADS (123)   - used to set opt.Threads
@@ -27,7 +28,7 @@ function opt = gurobi_options(overrides, mpopt)
 %               with calling syntax:
 %                   MODIFIED_OPT = FNAME(DEFAULT_OPT, MPOPT);
 %
-%   Output is an options struct to pass to GUROBI_MEX.
+%   Output is a parameter struct to pass to GUROBI.
 %
 %   Example:
 %
@@ -49,14 +50,14 @@ function opt = gurobi_options(overrides, mpopt)
 %   For details on the available options, see the "Parameters" section
 %   of the "Gurobi Optimizer Reference Manual" at:
 %
-%       http://www.gurobi.com/doc/45/refman/
+%       http://www.gurobi.com/documentation/5.0/reference-manual/node653#sec:Parameters
 %
 %   See also GUROBI_MEX, MPOPTION.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2010-2011 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2012 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
@@ -103,7 +104,7 @@ else
     have_mpopt = 0;
 end
 
-%%-----  set default options for CPLEX  -----
+%%-----  set default options for Gurobi  -----
 % opt.OptimalityTol = 1e-6;
 % opt.Presolve = -1;              %% -1 - auto, 0 - no, 1 - conserv, 2 - aggressive=
 % opt.LogFile = 'qps_gurobi.log';
@@ -114,13 +115,19 @@ if have_mpopt
     opt.TimeLimit       = mpopt(122);   %% GRB_TIMELIMIT
     opt.Threads         = mpopt(123);   %% GRB_THREADS
 else
-    opt.Method          = 1;            %% dual simplex
+    opt.Method          = -1;           %% automatic
 end
-opt.Display = min(verbose, 3);
-if verbose
-    opt.DisplayInterval = 1;
+if verbose > 1
+    opt.LogToConsole = 1;
+    opt.OutputFlag = 1;
+    if verbose > 2
+        opt.DisplayInterval = 1;
+    else
+        opt.DisplayInterval = 100;
+    end
 else
-    opt.DisplayInterval = Inf;
+    opt.LogToConsole = 0;
+    opt.OutputFlag = 0;
 end
 
 %%-----  call user function to modify defaults  -----

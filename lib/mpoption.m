@@ -239,7 +239,8 @@ function [options, names] = mpoption(varargin)
 %       116 - MOSEK_OPT, 0              See MOSEK_OPTIONS for details
 %
 %   Gurobi options
-%       121 - GRB_METHOD, 1         solution algorithm (Method)
+%       121 - GRB_METHOD, -1         solution algorithm (Method)
+%           [  -1 - automatic, let Gurobi decide                            ]
 %           [   0 - primal simplex                                          ]
 %           [   1 - dual simplex                                            ]
 %           [   2 - barrier                                                 ]
@@ -428,7 +429,7 @@ else                    %% even number of parameters
         0;      %% 120 - RESERVED120
 
         %% Gurobi options
-        1;      %% 121 - GRB_METHOD
+        -1;     %% 121 - GRB_METHOD
         Inf;    %% 122 - GRB_TIMELIMIT
         0;      %% 123 - GRB_THREADS
         0;      %% 124 - GRB_OPT

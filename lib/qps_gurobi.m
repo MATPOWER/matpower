@@ -168,8 +168,8 @@ end
 if isempty(c)
     c = zeros(nx, 1);
 end
-if  ~isempty(A) && (isempty(l) || all(l == -Inf)) && ...
-                   (isempty(u) || all(u == Inf))
+if isempty(A) || ~isempty(A) && (isempty(l) || all(l == -Inf)) && ...
+                                (isempty(u) || all(u == Inf))
     A = sparse(0,nx);           %% no limits => no linear constraints
 end
 nA = size(A, 1);                %% number of original linear constraints
@@ -207,11 +207,17 @@ if ~isempty(opt) && isfield(opt, 'grb_opt') && ~isempty(opt.grb_opt)
 else
     g_opt = gurobi_options;
 end
-g_opt.Display = min(verbose, 3);
-if verbose
-    g_opt.DisplayInterval = 1;
+if verbose > 1
+    opt.LogToConsole = 1;
+    opt.OutputFlag = 1;
+    if verbose > 2
+        opt.DisplayInterval = 1;
+    else
+        opt.DisplayInterval = 100;
+    end
 else
-    g_opt.DisplayInterval = Inf;
+    opt.LogToConsole = 0;
+    opt.OutputFlag = 0;
 end
 
 if ~issparse(A)
@@ -231,22 +237,27 @@ nbx = length(ibx);      %% number of doubly bounded linear inequalities
 neq = length(ieq);      %% number of equalities
 niq = nlt+ngt+2*nbx;    %% number of inequalities
 
-AA  = [ A(ieq, :); A(ilt, :); -A(igt, :); A(ibx, :); -A(ibx, :) ];
-bb  = [ u(ieq);    u(ilt);    -l(igt);    u(ibx);    -l(ibx)    ];
-contypes = char([ double('=')*ones(1,neq) double('<')*ones(1,niq) ]);
+%% set up model
+m.A     = [ A(ieq, :); A(ilt, :); -A(igt, :); A(ibx, :); -A(ibx, :) ];
+m.rhs   = [ u(ieq);    u(ilt);    -l(igt);    u(ibx);    -l(ibx)    ];
+m.sense = char([ double('=')*ones(1,neq) double('<')*ones(1,niq) ]);
+m.lb = xmin;
+m.ub = xmax;
+m.obj = c';
 
 %% call the solver
 if isempty(H) || ~any(any(H))
     lpqp = 'LP';
 else
     lpqp = 'QP';
-    [rr, cc, vv] = find(H);
-    g_opt.QP.qrow = int32(rr' - 1);
-    g_opt.QP.qcol = int32(cc' - 1);
-    g_opt.QP.qval = 0.5 * vv';
+    if ~issparse(H)
+        H = sparse(H);
+    end
+    m.Q = 0.5 * H;
 end
 if verbose
     methods = {
+        'automatic',
         'primal simplex',
         'dual simplex',
         'interior point',
@@ -255,33 +266,65 @@ if verbose
     };
     vn = gurobiver;
     fprintf('Gurobi Version %s -- %s %s solver\n', ...
-        vn, methods{g_opt.Method+1}, lpqp);
+        vn, methods{g_opt.Method+2}, lpqp);
 end
-[x, f, eflag, output, lambda] = ...
-    gurobi_mex(c', 1, AA, bb, contypes, xmin, xmax, 'C', g_opt);
-pi  = lambda.Pi;
-rc  = lambda.RC;
-output.flag = eflag;
-if eflag == 2
-    eflag = 1;          %% optimal solution found
-else
-    eflag = -eflag;     %% failed somehow
+results = gurobi(m, g_opt);
+switch results.status
+    case 'LOADED',          %% 1
+        eflag = -1;
+    case 'OPTIMAL',         %% 2, optimal solution found
+        eflag = 1;
+    case 'INFEASIBLE',      %% 3
+        eflag = -3;
+    case 'INF_OR_UNBD',     %% 4
+        eflag = -4;
+    case 'UNBOUNDED',       %% 5
+        eflag = -5;
+    case 'CUTOFF',          %% 6
+        eflag = -6;
+    case 'ITERATION_LIMIT', %% 7
+        eflag = -7;
+    case 'NODE_LIMIT',      %% 8
+        eflag = -8;
+    case 'TIME_LIMIT',      %% 9
+        eflag = -9;
+    case 'SOLUTION_LIMIT',  %% 10
+        eflag = -10;
+    case 'INTERRUPTED',     %% 11
+        eflag = -11;
+    case 'SUBOPTIMAL',      %% 12
+        eflag = -12;
+    case 'NUMERIC',         %% 13
+        eflag = -13;
+    otherwise,
+        eflag = 0;
 end
+output = results;
 
 %% check for empty results (in case optimization failed)
-if isempty(x)
+if ~isfield(results, 'x') || isempty(results.x)
     x = NaN(nx, 1);
     lam.lower   = NaN(nx, 1);
     lam.upper   = NaN(nx, 1);
 else
+    x = results.x;
     lam.lower   = zeros(nx, 1);
     lam.upper   = zeros(nx, 1);
 end
-if isempty(f)
+if ~isfield(results, 'objval') || isempty(results.objval)
     f = NaN;
+else
+    f = results.objval;
 end
-if isempty(pi)
-    pi  = NaN(length(bb), 1);
+if ~isfield(results, 'pi') || isempty(results.pi)
+    pi  = NaN(length(m.rhs), 1);
+else
+    pi  = results.pi;
+end
+if ~isfield(results, 'rc') || isempty(results.rc)
+    rc  = NaN(nx, 1);
+else
+    rc  = results.rc;
 end
 
 kl = find(rc > 0);   %% lower bound binding

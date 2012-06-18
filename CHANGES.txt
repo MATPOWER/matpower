@@ -15,6 +15,12 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.1
 -----------------
 
+6/18/12
+    - Updated Gurobi interface for compatibility with native Matlab
+      support introduced in Gurobi 5.
+      INCOMPATIBLE CHANGE: No longer works with older Gurobi 4.x/
+      gurobi_mex() interface.
+    
 5/3/12
     - Reimplementated @opf_model class as sub-class of the new
       @opt_model class, which supports indexed named sets of

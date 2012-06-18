@@ -8,6 +8,7 @@ function TorF = have_fcn(tag)
 %       constr      - CONSTR, solver from Optimization Toolbox 1.x/2.x
 %       cplex       - CPLEX, IBM ILOG CPLEX Optimizer
 %       fmincon     - FMINCON, solver from Optimization Toolbox 2.x +
+%       gurobi      - GUROBI, Gurobi solver (http://www.gurobi.com/), 5.x +
 %       ipopt       - IPOPT, NLP solver (https://projects.coin-or.org/Ipopt/)
 %       linprog     - LINPROG, LP solver from Optimization Toolbox 2.x +
 %       lp          - LP, LP solver from Optimization Toolbox 1.x/2.x
@@ -82,7 +83,7 @@ switch tag
     case 'fmincon'
         TorF = exist('fmincon', 'file') == 2;
     case 'gurobi'
-        TorF = exist('gurobi_mex', 'file') == 3;
+        TorF = exist('gurobi', 'file') == 3;
     case 'ipopt'
         TorF = exist('ipopt', 'file') == 3;
     case 'linprog'
