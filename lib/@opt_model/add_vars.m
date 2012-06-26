@@ -79,7 +79,7 @@ if iscell(idx)
             error('@opt_model/add_vars: variable set named ''%s'' already exists', name);
         end
 
-        N = 0;
+        N = -1;
         args = {};
     end
 else
@@ -94,7 +94,7 @@ else
 end
 nargs = length(args);
 
-if N            %% not just setting dimensions for indexed set
+if N ~= -1      %% not just setting dimensions for indexed set
     v0 = []; vl = []; vu = [];
     if nargs >= 1
         v0 = args{1};
@@ -132,7 +132,7 @@ if isempty(idx)     %% simple named set
     %% add to ordered list of var sets
     om.var.order(om.var.NS).name = name;
     om.var.order(om.var.NS).idx  = {};
-elseif N == 0       %% just setting dimensions for indexed set
+elseif N == -1      %% just setting dimensions for indexed set
     %% add info about this var set
     om.var.idx.i1.(name)  = zeros(idx{:});  %% starting index
     om.var.idx.iN.(name)  = zeros(idx{:});  %% ending index

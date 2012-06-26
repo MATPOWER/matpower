@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.1
 -----------------
 
+6/26/12
+    - Fixed a bug in the new @opt_model/add_vars when adding a var
+      set of dimension zero.
+
 6/18/12
     - Updated Gurobi interface for compatibility with native Matlab
       support introduced in Gurobi 5.
