@@ -4,10 +4,10 @@ function om = opt_model(s)
 %   OM = OPT_MODEL(S)
 %
 %   This class implements the optimization model object used to encapsulate
-%   a given optimization problem formulation. It allows for access to optimization
-%   variables, constraints and costs in named blocks, keeping track of the
-%   ordering and indexing of the blocks as variables, constraints and costs
-%   are added to the problem.
+%   a given optimization problem formulation. It allows for access to
+%   optimization variables, constraints and costs in named blocks, keeping
+%   track of the ordering and indexing of the blocks as variables,
+%   constraints and costs are added to the problem.
 %
 %   Below are the list of available methods for use with the Opt Model class.
 %   Please see the help on each individual method for more details:
