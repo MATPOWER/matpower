@@ -75,6 +75,12 @@ Changes since 4.1
     - Running a power flow for a case with DC lines but no gencost
       no longer causes an error.
 
+12/14/11
+    - Modified t/t_opf_fmincon.m to use active-set method for testing
+      fmincopf for Matlab versions 7.6-7.9, since fmincon's interior
+      point solver (now default) was not accurate enough in these
+      versions.
+
 
 Changes since 4.0
 -----------------
