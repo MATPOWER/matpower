@@ -248,10 +248,10 @@ if verbose
         '<default>',
         'concurrent'
     };
-    if isempty(H) || ~any(any(H))
-        lpqp = 'LP';
-    else
+    if qp
         lpqp = 'QP';
+    else
+        lpqp = 'LP';
     end
     % (this code is also in mpver.m)
     % MOSEK Version 6.0.0.93 (Build date: 2010-10-26 13:03:27)
