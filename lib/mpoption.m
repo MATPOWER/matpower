@@ -101,7 +101,7 @@ function [options, names] = mpoption(varargin)
 %           [  500 - CPLEX, requires Matlab interface to CPLEX solver       ]
 %           [  600 - MOSEK, requires Matlab interface to MOSEK solver       ]
 %           [        available from: http://www.mosek.com/                  ]
-%           [  700 - GUROBI, requires Matlab interface to Gurobi optimizer  ]
+%           [  700 - GUROBI, requires Gurobi optimizer (v. 5+)              ]
 %           [        available from: http://www.gurobi.com/                 ]
 %   output options
 %       31 - VERBOSE, 1             amount of progress info printed
