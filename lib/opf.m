@@ -146,7 +146,7 @@ function [busout, genout, branchout, f, success, info, et, g, jac, xr, pimul] = 
 %                   .ycon   basin constraints for CCV for pwl costs
 %                   (other) any user defined constraint blocks
 %               .u  upper bounds
-%                   .Pmis, Pf, Pf, PQh, PQl, vl, ycon, (other)
+%                   .Pmis, Pf, Pt, PQh, PQl, vl, ycon, (other)
 %       .cost       user defined cost values, by named block
 %
 %   See also RUNOPF, DCOPF, UOPF, CASEFORMAT.
