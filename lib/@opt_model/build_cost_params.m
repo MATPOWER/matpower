@@ -1,4 +1,4 @@
-function om = build_cost_params(om)
+function om = build_cost_params(om, force)
 %BUILD_COST_PARAMS  Builds and saves the full generalized cost parameters.
 %   OM = BUILD_COST_PARAMS(OM)
 %   OM = BUILD_COST_PARAMS(OM, 'force')
