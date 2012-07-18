@@ -29,7 +29,7 @@ function om = add_costs(om, name, idx, varargin)
 %   Let x refer to the vector formed by combining the specified VARSETS,
 %   and f_u(x, CP) be the cost at x corresponding to the cost parameters
 %   contained in CP, where CP is a struct with the following fields:
-%       N      - nw x nx sparse matrix
+%       N      - nw x nx sparse matrix (optional, identity matrix by default)
 %       Cw     - nw x 1 vector
 %       H      - nw x nw sparse matrix (optional, all zeros by default)
 %       dd, mm - nw x 1 vectors (optional, all ones by default)
@@ -147,7 +147,13 @@ else
         [empty_cells{:}] = deal({});    %% empty cell arrays
         varsets = struct('name', varsets, 'idx', empty_cells);
     end
-    [nw, nx] = size(cp.N);
+    if isfield(cp, 'N')
+        [nw, nx] = size(cp.N);
+    else
+        nw = length(cp.Cw);
+        nx = nw;
+        cp.N = speye(nw, nx);
+    end
     
     %% check sizes
     nv = 0;

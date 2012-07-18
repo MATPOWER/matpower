@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.1
 -----------------
 
+7/18/12
+    - Made N optional field (default is identity matrix) in
+      @opt_model/add_costs().
+
 6/26/12
     - Fixed a bug in the new @opt_model/add_vars when adding a var
       set of dimension zero.
