@@ -84,7 +84,7 @@ if om.nln.NS
         name = om.nln.order(k).name;
         fprintf('%15d:%12s %8d %8d %8d\n', k, name, idx.i1.(name), idx.iN.(name), idx.N.(name));
     end
-    fprintf('%10d = var.NS%29d = var.N\n', om.nln.NS, om.nln.N);
+    fprintf('%10d = nln.NS%29d = nln.N\n', om.nln.NS, om.nln.N);
     fprintf('\n');
 else
     fprintf('%s  :  <none>\n', 'NON-LINEAR CONSTRAINTS');
@@ -106,7 +106,7 @@ if om.lin.NS
                     subsref(idx.i1, s), subsref(idx.iN, s), subsref(idx.N, s));
         end
     end
-    fprintf('%10d = var.NS%29d = var.N\n', om.lin.NS, om.lin.N);
+    fprintf('%10d = lin.NS%29d = lin.N\n', om.lin.NS, om.lin.N);
     fprintf('\n');
 else
     fprintf('%s  :  <none>\n', 'LINEAR CONSTRAINTS');
@@ -128,7 +128,7 @@ if om.cost.NS
                     subsref(idx.i1, s), subsref(idx.iN, s), subsref(idx.N, s));
         end
     end
-    fprintf('%10d = var.NS%29d = var.N\n', om.cost.NS, om.cost.N);
+    fprintf('%10d = cost.NS%28d = cost.N\n', om.cost.NS, om.cost.N);
     fprintf('\n');
 else
     fprintf('%s  :  <none>\n', 'COSTS');
