@@ -46,6 +46,7 @@ tests{end+1} = 't_loadcase';
 tests{end+1} = 't_ext2int2ext';
 tests{end+1} = 't_jacobian';
 tests{end+1} = 't_hessian';
+tests{end+1} = 't_margcost';
 tests{end+1} = 't_totcost';
 tests{end+1} = 't_modcost';
 tests{end+1} = 't_hasPQcap';
