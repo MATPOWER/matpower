@@ -223,6 +223,9 @@ end
 if ~issparse(A)
     A = sparse(A);
 end
+if issparse(c);
+    c = full(c);
+end
 
 %% split up linear constraints
 ieq = find( abs(u-l) <= eps );          %% equality
