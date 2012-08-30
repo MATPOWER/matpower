@@ -53,7 +53,7 @@ try
     vn = sprintf('%d.%d.%d', result.versioninfo.major, result.versioninfo.minor, result.versioninfo.technical);
 catch gurobiError
     fprintf('Gurobi Error!\n');
-    disp(gurobiError);
+    disp(gurobiError.message);
     vn = '<unknown>';
 end
 
