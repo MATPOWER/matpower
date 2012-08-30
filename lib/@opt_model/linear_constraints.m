@@ -53,7 +53,7 @@ for k = 1:om.lin.NS
         nnzA = nnzA + nnz(subsref(om.lin.data.A, s));
     end
 end
-A = sparse([], [], [], om.lin.N, om.var.N, nnzA);
+At = sparse([], [], [], om.var.N, om.lin.N, nnzA);	%% use A transpose for speed
 u = Inf * ones(om.lin.N, 1);
 l = -u;
 
@@ -91,7 +91,7 @@ for k = 1:om.lin.NS
             Ai(:, j1:jN) = Ak(:, k1:kN);
         end
 
-        A(i1:iN, :) = Ai;
+        At(:, i1:iN) = Ai';		%% assign as columns in transpose for speed
         if isempty(idx)
             l(i1:iN) = om.lin.data.l.(name);
             u(i1:iN) = om.lin.data.u.(name);
@@ -101,3 +101,4 @@ for k = 1:om.lin.NS
         end
     end
 end
+A = At';
