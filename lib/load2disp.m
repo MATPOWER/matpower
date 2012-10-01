@@ -14,7 +14,7 @@ function mpc1 = load2disp(mpc0, fname, idx, voll)
 %   FNAME (optional) - Name to use to save resulting MATPOWER case. If empty,
 %       the case will not be saved to a file.
 %
-%   IDX (optional) - Vector of bus indexes of loads to be converted. If empty
+%   IDX (optional) - Vector of bus indices of loads to be converted. If empty
 %       or not supplied, it will convert all loads with positive real
 %       power demand.
 %

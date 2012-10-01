@@ -1,5 +1,5 @@
 function label = describe_idx(om, idx_type, idxs)
-%DESCRIBE_IDX  Identifies variable, constraint and cost row indexes.
+%DESCRIBE_IDX  Identifies variable, constraint and cost row indices.
 %   LABEL = DESCRIBE_IDX(OM, IDX_TYPE, IDXS)
 %
 %	Returns strings describing (name and index) the variable, constraint
