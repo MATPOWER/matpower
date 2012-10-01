@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.1
 -----------------
 
+10/1/12
+    - Updates to have_fcn() and mpver() to better handle case where
+      Optimization Toolbox is installed, but with a valid license.
+
 8/30/12
     - Major speed-up in @opt_model/linear_constraints() by building
       transpose of A (assigning to full columns) then transposing

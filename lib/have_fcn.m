@@ -81,13 +81,13 @@ switch tag
             end
         end
     case 'fmincon'
-        TorF = exist('fmincon', 'file') == 2;
+        TorF = license('test', 'optimization_toolbox') && exist('fmincon', 'file') == 2;
     case 'gurobi'
         TorF = exist('gurobi', 'file') == 3;
     case 'ipopt'
         TorF = exist('ipopt', 'file') == 3;
     case 'linprog'
-        TorF = exist('linprog', 'file') == 2;
+        TorF = license('test', 'optimization_toolbox') && exist('linprog', 'file') == 2;
     case 'lp'
         TorF = exist('lp', 'file') == 2;
     case 'knitro'
@@ -105,10 +105,10 @@ switch tag
     case 'qp'
         TorF = exist('qp', 'file') == 2;
     case 'quadprog'
-        TorF = exist('quadprog', 'file') == 2;
+        TorF = license('test', 'optimization_toolbox') && exist('quadprog', 'file') == 2;
     case 'quadprog_ls'
         v = ver('optim');
-        if str2num(v.Version) >= 6
+        if license('test', 'optimization_toolbox') && (str2num(strtok(v.Version, '.')) >= 6)
             TorF = 1;
         else
             TorF = 0;

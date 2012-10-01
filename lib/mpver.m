@@ -68,6 +68,9 @@ else
         if n == 3 && isempty(v{3})
             fprintf('\n%-22s -- not installed --', 'Optimization Toolbox');
             continue;
+        elseif n == 3 && ~license('test', 'optimization_toolbox')
+            fprintf('\n%-22s -- no license --', 'Optimization Toolbox');
+            continue;
         end
         fprintf('\n%-22s Version %-9s', v{n}.Name, v{n}.Version);
         if ~isempty(v{n}.Date)
