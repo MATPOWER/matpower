@@ -275,16 +275,33 @@ end
 output.info       = info.status;
 f = funcs.objective(x);
 
+%% check for empty results (in case optimization failed)
+if isempty(info.lambda)
+	lam = NaN(nA, 1);
+else
+	lam = info.lambda;
+end
+if isempty(info.zl) && ~isempty(xmin)
+	zl = NaN(nx, 1);
+else
+	zl = info.zl;
+end
+if isempty(info.zu) && ~isempty(xmax)
+	zu = NaN(nx, 1);
+else
+	zu = info.zu;
+end
+
 %% repackage lambdas
-kl = find(info.lambda < 0);                     %% lower bound binding
-ku = find(info.lambda > 0);                     %% upper bound binding
+kl = find(lam < 0);                     %% lower bound binding
+ku = find(lam > 0);                     %% upper bound binding
 mu_l = zeros(nA, 1);
-mu_l(kl) = -info.lambda(kl);
+mu_l(kl) = -lam(kl);
 mu_u = zeros(nA, 1);
-mu_u(ku) = info.lambda(ku);
+mu_u(ku) = lam(ku);
 
 lambda = struct( ...
     'mu_l', mu_l, ...
     'mu_u', mu_u, ...
-    'lower', info.zl, ...
-    'upper', info.zu    );
+    'lower', zl, ...
+    'upper', zu    );

@@ -209,6 +209,9 @@ if qp
 end
 if isfield(p, 'A') && ~isempty(p.A)
     prob.a = sparse(p.A);
+    nA = size(p.A, 1);
+else
+    nA = 0;
 end
 if isfield(p, 'l') && ~isempty(p.A)
     prob.blc = p.l;
@@ -280,7 +283,7 @@ if isfield(res, 'sol')
     x = sol.xx;
 else
     sol = [];
-    x = [];
+    x = NaN(nx, 1);
 end
 
 %%-----  process return codes  -----
@@ -341,17 +344,28 @@ if nargout > 1
         output.r = r;
         output.res = res;
         if nargout > 4
-            if isfield(res, 'sol')
+            if ~isempty(sol)
                 lambda.lower = sol.slx;
                 lambda.upper = sol.sux;
                 lambda.mu_l  = sol.slc;
                 lambda.mu_u  = sol.suc;
-                if unconstrained
-                    lambda.mu_l  = [];
-                    lambda.mu_u  = [];
-                end
             else
-                lambda = [];
+                if isfield(p, 'xmin') && ~isempty(p.xmin)
+                    lambda.lower = NaN(nx, 1);
+                else
+                    lambda.lower = [];
+                end
+                if isfield(p, 'xmax') && ~isempty(p.xmax)
+                    lambda.upper = NaN(nx, 1);
+                else
+                    lambda.upper = [];
+                end
+                lambda.mu_l = NaN(nA, 1);
+                lambda.mu_u = NaN(nA, 1);
+            end
+            if unconstrained
+                lambda.mu_l  = [];
+                lambda.mu_u  = [];
             end
         end
     end
