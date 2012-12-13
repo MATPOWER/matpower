@@ -110,9 +110,9 @@ else
     Lbus = e2i(r.gen(L,GEN_BUS));
     
     t_is( co.P.qty, ones(6, 1) * [12 24 0], 2, [t ' : gen P quantities'] );
-    t_is( co.P.prc(1,:), 50.1578, 3, [t ' : gen 1 P prices'] );
+    t_is( co.P.prc(1,:), 50.1578*ones(1,3), 3, [t ' : gen 1 P prices'] );
     t_is( cb.P.qty, [10 10 10; 10 0.196 0; 10 10 0], 2, [t ' : load P quantities'] );
-    t_is( cb.P.prc(2,:), 56.9853, 4, [t ' : load 2 P price'] );
+    t_is( cb.P.prc(2,:), 56.9853*ones(1,3), 4, [t ' : load 2 P price'] );
     t_is( co.P.prc(:,1), r.bus(Gbus, LAM_P), 8, [t ' : gen P prices'] );
     t_is( cb.P.prc(:,1), r.bus(Lbus, LAM_P), 8, [t ' : load P prices'] );
     
