@@ -157,15 +157,6 @@ end
 % fmoptions = optimset(fmoptions, 'DerivativeCheck', 'on', 'FinDiffType', 'central', 'FunValCheck', 'on');
 % fmoptions = optimset(fmoptions, 'Diagnostics', 'on');
 
-%% try to select an interior initial point for interior point solver
-if str2double(otver.Version(1)) >= 4 && strcmp(optimget(fmoptions, 'Algorithm'), 'interior-point')
-  x0 = zeros(getN(om, 'var'), 1);
-  x0(vv.i1.Va:vv.iN.Va) = 0;
-  x0(vv.i1.Vm:vv.iN.Vm)   = 1;
-  x0(vv.i1.Pg:vv.iN.Pg) = (gen(:, PMIN) + gen(:, PMAX)) / 2 / baseMVA;
-  x0(vv.i1.Qg:vv.iN.Qg) = (gen(:, QMIN) + gen(:, QMAX)) / 2 / baseMVA;
-end
-
 %%-----  run opf  -----
 f_fcn = @(x)opf_costfcn(x, om);
 gh_fcn = @(x)opf_consfcn(x, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
