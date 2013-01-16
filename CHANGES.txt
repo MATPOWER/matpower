@@ -16,10 +16,10 @@ Changes since 4.1
 -----------------
 
 12/14/12
-	- Removed code in fmincopf() that attempts to find an interior
-	  starting point when using the interior point solver. It did
-	  not seem to help and caused errors for certain cases with
-	  DC lines (and probably other extensions).
+    - Removed code in fmincopf() that attempts to find an interior
+      starting point when using the interior point solver. It did
+      not seem to help and caused errors for certain cases with
+      DC lines (and probably other extensions).
 
 10/1/12
     - Updates to have_fcn() and mpver() to better handle case where
