@@ -42,6 +42,7 @@ function opt = gurobi_options(overrides, mpopt)
 %
 %       function opt = gurobi_user_options_3(opt, mpopt)
 %       opt.OptimalityTol   = 1e-9;
+%       opt.BarConvTol      = 1e-9;
 %       opt.IterationLimit  = 3000;
 %       opt.BarIterLimit    = 200;
 %       opt.Crossover       = 0;
@@ -57,7 +58,7 @@ function opt = gurobi_options(overrides, mpopt)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2010-2012 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2013 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
