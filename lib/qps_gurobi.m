@@ -30,6 +30,7 @@ function [x, f, eflag, output, lambda] = qps_gurobi(H, c, A, l, u, xmin, xmax, x
 %               0 = no progress output
 %               1 = some progress output
 %               2 = verbose progress output
+%               3 = even more verbose progress output
 %           grb_opt - options struct for GUROBI, value in
 %               verbose overrides these options
 %       PROBLEM : The inputs can alternatively be supplied in a single
@@ -208,16 +209,16 @@ else
     g_opt = gurobi_options;
 end
 if verbose > 1
-    opt.LogToConsole = 1;
-    opt.OutputFlag = 1;
+    g_opt.LogToConsole = 1;
+    g_opt.OutputFlag = 1;
     if verbose > 2
-        opt.DisplayInterval = 1;
+        g_opt.DisplayInterval = 1;
     else
-        opt.DisplayInterval = 100;
+        g_opt.DisplayInterval = 100;
     end
 else
-    opt.LogToConsole = 0;
-    opt.OutputFlag = 0;
+    g_opt.LogToConsole = 0;
+    g_opt.OutputFlag = 0;
 end
 
 if ~issparse(A)
