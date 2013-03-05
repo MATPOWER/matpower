@@ -11,10 +11,10 @@ function gencost = modcost(gencost, alpha, modtype)
 %
 %   MODTYPE takes one of the 4 possible values (let F_alpha(X) denote the
 %   the modified function):
-%       SCALE_F (default) : F_alpha(X)         == F(X) * ALPHA
-%       SCALE_X           : F_alpha(X * ALPHA) == F(X)
-%       SHIFT_F           : F_alpha(X)         == F(X) + ALPHA
-%       SHIFT_X           : F_alpha(X + ALPHA) == F(X)
+%       'SCALE_F' (default) : F_alpha(X)         == F(X) * ALPHA
+%       'SCALE_X'           : F_alpha(X * ALPHA) == F(X)
+%       'SHIFT_F'           : F_alpha(X)         == F(X) + ALPHA
+%       'SHIFT_X'           : F_alpha(X + ALPHA) == F(X)
 
 %   MATPOWER
 %   $Id$

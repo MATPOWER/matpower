@@ -23,7 +23,7 @@ function [h, g, dh, dg] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt, il, varargin)
 %          limit^2 - flow^2, where the flow can be apparent power
 %          real power or current, depending on value of
 %          OPF_FLOW_LIM in MPOPT (only for constrained lines)
-%     H  : vector of equality constraint values (power balances)
+%     G  : vector of equality constraint values (power balances)
 %     DH : (optional) inequality constraint gradients, column j is
 %          gradient of H(j)
 %     DG : (optional) equality constraint gradients
