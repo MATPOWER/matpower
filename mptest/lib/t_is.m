@@ -57,9 +57,13 @@ if nargin < 3 || isempty(prec)
 end
 [m, n] = size(expected);
 if all(size(got) == [m, n]) || all([m, n] == [1 1])
-    got_minus_expected = got - expected;
-    max_diff = max(max(abs(got_minus_expected)));
-    condition = ( max_diff < 10^(-prec) );
+    if m == 0 || n == 0
+        condition = true;
+    else
+        got_minus_expected = got - expected;
+        max_diff = max(max(abs(got_minus_expected)));
+        condition = ( max_diff < 10^(-prec) );
+    end
 else
     condition = false;
     max_diff = 0;
