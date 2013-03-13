@@ -16,6 +16,10 @@ Changes since 4.1
 -----------------
 
 3/13/13
+    - Added to scale_cost() the option to scale the gencost
+      (specifically the quantity axis of the marginal cost function)
+      corresponding to any modified dispatchable load. Simply add
+      gencost as additional input and output args.
     - Empty 'got' and 'expected' arguments to t_is() now
       count as a passing test instead of an error, as long as
       the dimensions match.

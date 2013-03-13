@@ -34,7 +34,7 @@ if nargin < 1
     quiet = 0;
 end
 
-n_tests = 275;
+n_tests = 407;
 
 t_begin(n_tests, quiet);
 
@@ -44,13 +44,19 @@ t_begin(n_tests, quiet);
 [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
     MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
     QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
+[PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 
 mpc = loadcase('t_auction_case');
 mpc.gen(8, GEN_BUS) = 2;    %% multiple d. loads per area, same bus as gen
 mpc.gen(8, [QG QMIN QMAX]) = [ 3 0 3 ];
-%% put it load before gen in matrix
+mpc.gencost(7, COST:end) = [-30 -600 -20 -300 -10 -100 0 0];    % 10, 20, 30
+mpc.gencost(8, COST:end) = [-30  -60 -20  -30 -10  -10 0 0];    % 1, 2, 3
+mpc.gencost(9, COST:end) = [-30 -850 -10 -250  -5  -50 0 0];    % 10, 20, 30
+%% put a load before gen in matrix
 mpc.gen = [mpc.gen(8, :); mpc.gen(1:7, :); mpc.gen(9, :)];
-ld = find(isload(mpc.gen));
+mpc.gencost = [mpc.gencost(8, :); mpc.gencost(1:7, :); mpc.gencost(9, :)];
+gg = find(~isload(mpc.gen));
+ld = find( isload(mpc.gen));
 for k = 1:3
     a{k} = find(mpc.bus(:, BUS_AREA) == k); %% buses in area k
     [junk, tmp, junk2] = intersect(mpc.gen(ld, GEN_BUS), a{k});
@@ -74,6 +80,7 @@ total.disp.qmax = -sum(mpc.gen(ld, QMAX));
 total.disp.q = total.disp.qmin + total.disp.qmax;
 total.both.p = total.fixed.p + total.disp.p;
 total.both.q = total.fixed.q + total.disp.q;
+orig_gc = mpc.gencost;
 
 %%-----  single load zone, one scale factor  -----
 load = 2;
@@ -110,6 +117,16 @@ t_is(-sum(gen(ld, PMIN)), load*total.disp.p, 8, [t 'total disp P']);
 t_is(-sum(gen(ld, QMIN)), load*total.disp.qmin, 8, [t 'total disp Qmin']);
 t_is(-sum(gen(ld, QMAX)), load*total.disp.qmax, 8, [t 'total disp Qmax']);
 
+t = 'all loads/costs (PQ) * 2 : ';
+[bus, gen, gencost] = scale_load(load, mpc.bus, mpc.gen, [], [], mpc.gencost);
+t_is(sum(bus(:, PD)), load*total.fixed.p, 8, [t 'total fixed P']);
+t_is(sum(bus(:, QD)), load*total.fixed.q, 8, [t 'total fixed Q']);
+t_is(-sum(gen(ld, PMIN)), load*total.disp.p, 8, [t 'total disp P']);
+t_is(-sum(gen(ld, QMIN)), load*total.disp.qmin, 8, [t 'total disp Qmin']);
+t_is(-sum(gen(ld, QMAX)), load*total.disp.qmax, 8, [t 'total disp Qmax']);
+t_is(gencost(gg, COST:end),   orig_gc(gg, COST:end), 8, [t 'gencost gens']);
+t_is(gencost(ld, COST:end), 2*orig_gc(ld, COST:end), 8, [t 'gencost loads']);
+
 t = 'all loads (P) * 2 : ';
 opt = struct('pq', 'P');
 [bus, gen] = scale_load(load, mpc.bus, mpc.gen, [], opt);
@@ -118,6 +135,17 @@ t_is(sum(bus(:, QD)), total.fixed.q, 8, [t 'total fixed Q']);
 t_is(-sum(gen(ld, PMIN)), load*total.disp.p, 8, [t 'total disp P']);
 t_is(-sum(gen(ld, QMIN)), total.disp.qmin, 8, [t 'total disp Qmin']);
 t_is(-sum(gen(ld, QMAX)), total.disp.qmax, 8, [t 'total disp Qmax']);
+
+t = 'all loads/costs (P) * 2 : ';
+opt = struct('pq', 'P');
+[bus, gen, gencost] = scale_load(load, mpc.bus, mpc.gen, [], opt, mpc.gencost);
+t_is(sum(bus(:, PD)), load*total.fixed.p, 8, [t 'total fixed P']);
+t_is(sum(bus(:, QD)), total.fixed.q, 8, [t 'total fixed Q']);
+t_is(-sum(gen(ld, PMIN)), load*total.disp.p, 8, [t 'total disp P']);
+t_is(-sum(gen(ld, QMIN)), total.disp.qmin, 8, [t 'total disp Qmin']);
+t_is(-sum(gen(ld, QMAX)), total.disp.qmax, 8, [t 'total disp Qmax']);
+t_is(gencost(gg, COST:end),   orig_gc(gg, COST:end), 8, [t 'gencost gens']);
+t_is(gencost(ld, COST:end), 2*orig_gc(ld, COST:end), 8, [t 'gencost loads']);
 
 t = 'all disp loads (PQ) * 2 : ';
 opt = struct('which', 'DISPATCHABLE');
@@ -128,6 +156,17 @@ t_is(-sum(gen(ld, PMIN)), load*total.disp.p, 8, [t 'total disp P']);
 t_is(-sum(gen(ld, QMIN)), load*total.disp.qmin, 8, [t 'total disp Qmin']);
 t_is(-sum(gen(ld, QMAX)), load*total.disp.qmax, 8, [t 'total disp Qmax']);
 
+t = 'all disp loads/costs (PQ) * 2 : ';
+opt = struct('which', 'DISPATCHABLE');
+[bus, gen, gencost] = scale_load(load, mpc.bus, mpc.gen, [], opt, mpc.gencost);
+t_is(sum(bus(:, PD)), total.fixed.p, 8, [t 'total fixed P']);
+t_is(sum(bus(:, QD)), total.fixed.q, 8, [t 'total fixed Q']);
+t_is(-sum(gen(ld, PMIN)), load*total.disp.p, 8, [t 'total disp P']);
+t_is(-sum(gen(ld, QMIN)), load*total.disp.qmin, 8, [t 'total disp Qmin']);
+t_is(-sum(gen(ld, QMAX)), load*total.disp.qmax, 8, [t 'total disp Qmax']);
+t_is(gencost(gg, COST:end),   orig_gc(gg, COST:end), 8, [t 'gencost gens']);
+t_is(gencost(ld, COST:end), 2*orig_gc(ld, COST:end), 8, [t 'gencost loads']);
+
 t = 'all disp loads (P) * 2 : ';
 opt = struct('pq', 'P', 'which', 'DISPATCHABLE');
 [bus, gen] = scale_load(load, mpc.bus, mpc.gen, [], opt);
@@ -136,6 +175,17 @@ t_is(sum(bus(:, QD)), total.fixed.q, 8, [t 'total fixed Q']);
 t_is(-sum(gen(ld, PMIN)), load*total.disp.p, 8, [t 'total disp P']);
 t_is(-sum(gen(ld, QMIN)), total.disp.qmin, 8, [t 'total disp Qmin']);
 t_is(-sum(gen(ld, QMAX)), total.disp.qmax, 8, [t 'total disp Qmax']);
+
+t = 'all disp loads/costs (P) * 2 : ';
+opt = struct('pq', 'P', 'which', 'DISPATCHABLE');
+[bus, gen, gencost] = scale_load(load, mpc.bus, mpc.gen, [], opt, mpc.gencost);
+t_is(sum(bus(:, PD)), total.fixed.p, 8, [t 'total fixed P']);
+t_is(sum(bus(:, QD)), total.fixed.q, 8, [t 'total fixed Q']);
+t_is(-sum(gen(ld, PMIN)), load*total.disp.p, 8, [t 'total disp P']);
+t_is(-sum(gen(ld, QMIN)), total.disp.qmin, 8, [t 'total disp Qmin']);
+t_is(-sum(gen(ld, QMAX)), total.disp.qmax, 8, [t 'total disp Qmax']);
+t_is(gencost(gg, COST:end),   orig_gc(gg, COST:end), 8, [t 'gencost gens']);
+t_is(gencost(ld, COST:end), 2*orig_gc(ld, COST:end), 8, [t 'gencost loads']);
 
 %%-----  single load zone, one scale quantity  -----
 load = 200;
@@ -174,6 +224,17 @@ t_is(-sum(gen(ld, PMIN)), load/total.both.p*total.disp.p, 8, [t 'total disp P'])
 t_is(-sum(gen(ld, QMIN)), load/total.both.p*total.disp.qmin, 8, [t 'total disp Qmin']);
 t_is(-sum(gen(ld, QMAX)), load/total.both.p*total.disp.qmax, 8, [t 'total disp Qmax']);
 
+t = 'all loads/costs (PQ) => total = 200 : ';
+opt = struct('scale', 'QUANTITY');
+[bus, gen, gencost] = scale_load(load, mpc.bus, mpc.gen, [], opt, mpc.gencost);
+t_is(sum(bus(:, PD)), load/total.both.p*total.fixed.p, 8, [t 'total fixed P']);
+t_is(sum(bus(:, QD)), load/total.both.p*total.fixed.q, 8, [t 'total fixed Q']);
+t_is(-sum(gen(ld, PMIN)), load/total.both.p*total.disp.p, 8, [t 'total disp P']);
+t_is(-sum(gen(ld, QMIN)), load/total.both.p*total.disp.qmin, 8, [t 'total disp Qmin']);
+t_is(-sum(gen(ld, QMAX)), load/total.both.p*total.disp.qmax, 8, [t 'total disp Qmax']);
+t_is(gencost(gg, COST:end),   orig_gc(gg, COST:end), 8, [t 'gencost gens']);
+t_is(gencost(ld, COST:end), load/total.both.p*orig_gc(ld, COST:end), 8, [t 'gencost loads']);
+
 t = 'all loads (P) => total = 200 : ';
 opt = struct('scale', 'QUANTITY', 'pq', 'P');
 [bus, gen] = scale_load(load, mpc.bus, mpc.gen, [], opt);
@@ -182,6 +243,17 @@ t_is(sum(bus(:, QD)), total.fixed.q, 8, [t 'total fixed Q']);
 t_is(-sum(gen(ld, PMIN)), load/total.both.p*total.disp.p, 8, [t 'total disp P']);
 t_is(-sum(gen(ld, QMIN)), total.disp.qmin, 8, [t 'total disp Qmin']);
 t_is(-sum(gen(ld, QMAX)), total.disp.qmax, 8, [t 'total disp Qmax']);
+
+t = 'all loads/costs (P) => total = 200 : ';
+opt = struct('scale', 'QUANTITY', 'pq', 'P');
+[bus, gen, gencost] = scale_load(load, mpc.bus, mpc.gen, [], opt, mpc.gencost);
+t_is(sum(bus(:, PD)), load/total.both.p*total.fixed.p, 8, [t 'total fixed P']);
+t_is(sum(bus(:, QD)), total.fixed.q, 8, [t 'total fixed Q']);
+t_is(-sum(gen(ld, PMIN)), load/total.both.p*total.disp.p, 8, [t 'total disp P']);
+t_is(-sum(gen(ld, QMIN)), total.disp.qmin, 8, [t 'total disp Qmin']);
+t_is(-sum(gen(ld, QMAX)), total.disp.qmax, 8, [t 'total disp Qmax']);
+t_is(gencost(gg, COST:end),   orig_gc(gg, COST:end), 8, [t 'gencost gens']);
+t_is(gencost(ld, COST:end), load/total.both.p*orig_gc(ld, COST:end), 8, [t 'gencost loads']);
 
 t = 'all disp loads (PQ) => total = 200 : ';
 opt = struct('scale', 'QUANTITY', 'which', 'DISPATCHABLE');
@@ -192,6 +264,17 @@ t_is(-sum(gen(ld, PMIN)), load-total.fixed.p, 8, [t 'total disp P']);
 t_is(-sum(gen(ld, QMIN)), (load-total.fixed.p)/total.disp.p*total.disp.qmin, 8, [t 'total disp Qmin']);
 t_is(-sum(gen(ld, QMAX)), (load-total.fixed.p)/total.disp.p*total.disp.qmax, 8, [t 'total disp Qmax']);
 
+t = 'all disp loads/costs (PQ) => total = 200 : ';
+opt = struct('scale', 'QUANTITY', 'which', 'DISPATCHABLE');
+[bus, gen, gencost] = scale_load(load, mpc.bus, mpc.gen, [], opt, mpc.gencost);
+t_is(sum(bus(:, PD)), total.fixed.p, 8, [t 'total fixed P']);
+t_is(sum(bus(:, QD)), total.fixed.q, 8, [t 'total fixed Q']);
+t_is(-sum(gen(ld, PMIN)), load-total.fixed.p, 8, [t 'total disp P']);
+t_is(-sum(gen(ld, QMIN)), (load-total.fixed.p)/total.disp.p*total.disp.qmin, 8, [t 'total disp Qmin']);
+t_is(-sum(gen(ld, QMAX)), (load-total.fixed.p)/total.disp.p*total.disp.qmax, 8, [t 'total disp Qmax']);
+t_is(gencost(gg, COST:end),   orig_gc(gg, COST:end), 8, [t 'gencost gens']);
+t_is(gencost(ld, COST:end), (load-total.fixed.p)/total.disp.p*orig_gc(ld, COST:end), 8, [t 'gencost loads']);
+
 t = 'all disp loads (P) => total = 200 : ';
 opt = struct('scale', 'QUANTITY', 'pq', 'P', 'which', 'DISPATCHABLE');
 [bus, gen] = scale_load(load, mpc.bus, mpc.gen, [], opt);
@@ -200,6 +283,17 @@ t_is(sum(bus(:, QD)), total.fixed.q, 8, [t 'total fixed Q']);
 t_is(-sum(gen(ld, PMIN)), load-total.fixed.p, 8, [t 'total disp P']);
 t_is(-sum(gen(ld, QMIN)), total.disp.qmin, 8, [t 'total disp Qmin']);
 t_is(-sum(gen(ld, QMAX)), total.disp.qmax, 8, [t 'total disp Qmax']);
+
+t = 'all disp loads/costs (P) => total = 200 : ';
+opt = struct('scale', 'QUANTITY', 'pq', 'P', 'which', 'DISPATCHABLE');
+[bus, gen, gencost] = scale_load(load, mpc.bus, mpc.gen, [], opt, mpc.gencost);
+t_is(sum(bus(:, PD)), total.fixed.p, 8, [t 'total fixed P']);
+t_is(sum(bus(:, QD)), total.fixed.q, 8, [t 'total fixed Q']);
+t_is(-sum(gen(ld, PMIN)), load-total.fixed.p, 8, [t 'total disp P']);
+t_is(-sum(gen(ld, QMIN)), total.disp.qmin, 8, [t 'total disp Qmin']);
+t_is(-sum(gen(ld, QMAX)), total.disp.qmax, 8, [t 'total disp Qmax']);
+t_is(gencost(gg, COST:end),   orig_gc(gg, COST:end), 8, [t 'gencost gens']);
+t_is(gencost(ld, COST:end), (load-total.fixed.p)/total.disp.p*orig_gc(ld, COST:end), 8, [t 'gencost loads']);
 
 %%-----  3 zones, area scale factors  -----
 t = 'area fixed loads (PQ) * [3 2 1] : ';
@@ -247,6 +341,18 @@ for k = 1:length(load)
     t_is(-sum(gen(lda{k}, QMAX)), load(k)*area(k).disp.qmax, 8, sprintf('%s area %d disp Qmax', t, k));
 end
 
+t = 'all area loads/costs (PQ) * [3 2 1] : ';
+[bus, gen, gencost] = scale_load(load, mpc.bus, mpc.gen, [], [], mpc.gencost);
+for k = 1:length(load)
+    t_is(sum(bus(a{k}, PD)), load(k)*area(k).fixed.p, 8, sprintf('%s area %d fixed P', t, k));
+    t_is(sum(bus(a{k}, QD)), load(k)*area(k).fixed.q, 8, sprintf('%s area %d fixed Q', t, k));
+    t_is(-sum(gen(lda{k}, PMIN)), load(k)*area(k).disp.p, 8, sprintf('%s area %d disp P', t, k));
+    t_is(-sum(gen(lda{k}, QMIN)), load(k)*area(k).disp.qmin, 8, sprintf('%s area %d disp Qmin', t, k));
+    t_is(-sum(gen(lda{k}, QMAX)), load(k)*area(k).disp.qmax, 8, sprintf('%s area %d disp Qmax', t, k));
+    t_is(gencost(lda{k}, COST:end), load(k)*orig_gc(lda{k}, COST:end), 8, sprintf('%s area %d gencost loads', t, k));
+end
+t_is(gencost(gg, COST:end), orig_gc(gg, COST:end), 8, sprintf('%s gencost gens', t));
+
 t = 'all area loads (P) * [3 2 1] : ';
 opt = struct('pq', 'P');
 [bus, gen] = scale_load(load, mpc.bus, mpc.gen, [], opt);
@@ -257,6 +363,19 @@ for k = 1:length(load)
     t_is(-sum(gen(lda{k}, QMIN)), area(k).disp.qmin, 8, sprintf('%s area %d disp Qmin', t, k));
     t_is(-sum(gen(lda{k}, QMAX)), area(k).disp.qmax, 8, sprintf('%s area %d disp Qmax', t, k));
 end
+
+t = 'all area loads/costs (P) * [3 2 1] : ';
+opt = struct('pq', 'P');
+[bus, gen, gencost] = scale_load(load, mpc.bus, mpc.gen, [], opt, mpc.gencost);
+for k = 1:length(load)
+    t_is(sum(bus(a{k}, PD)), load(k)*area(k).fixed.p, 8, sprintf('%s area %d fixed P', t, k));
+    t_is(sum(bus(a{k}, QD)), area(k).fixed.q, 8, sprintf('%s area %d fixed Q', t, k));
+    t_is(-sum(gen(lda{k}, PMIN)), load(k)*area(k).disp.p, 8, sprintf('%s area %d disp P', t, k));
+    t_is(-sum(gen(lda{k}, QMIN)), area(k).disp.qmin, 8, sprintf('%s area %d disp Qmin', t, k));
+    t_is(-sum(gen(lda{k}, QMAX)), area(k).disp.qmax, 8, sprintf('%s area %d disp Qmax', t, k));
+    t_is(gencost(lda{k}, COST:end), load(k)*orig_gc(lda{k}, COST:end), 8, sprintf('%s area %d gencost loads', t, k));
+end
+t_is(gencost(gg, COST:end), orig_gc(gg, COST:end), 8, sprintf('%s gencost gens', t));
 
 t = 'area disp loads (PQ) * [3 2 1] : ';
 opt = struct('which', 'DISPATCHABLE');
@@ -269,6 +388,19 @@ for k = 1:length(load)
     t_is(-sum(gen(lda{k}, QMAX)), load(k)*area(k).disp.qmax, 8, sprintf('%s area %d disp Qmax', t, k));
 end
 
+t = 'area disp loads/costs (PQ) * [3 2 1] : ';
+opt = struct('which', 'DISPATCHABLE');
+[bus, gen, gencost] = scale_load(load, mpc.bus, mpc.gen, [], opt, mpc.gencost);
+for k = 1:length(load)
+    t_is(sum(bus(a{k}, PD)), area(k).fixed.p, 8, sprintf('%s area %d fixed P', t, k));
+    t_is(sum(bus(a{k}, QD)), area(k).fixed.q, 8, sprintf('%s area %d fixed Q', t, k));
+    t_is(-sum(gen(lda{k}, PMIN)), load(k)*area(k).disp.p, 8, sprintf('%s area %d disp P', t, k));
+    t_is(-sum(gen(lda{k}, QMIN)), load(k)*area(k).disp.qmin, 8, sprintf('%s area %d disp Qmin', t, k));
+    t_is(-sum(gen(lda{k}, QMAX)), load(k)*area(k).disp.qmax, 8, sprintf('%s area %d disp Qmax', t, k));
+    t_is(gencost(lda{k}, COST:end), load(k)*orig_gc(lda{k}, COST:end), 8, sprintf('%s area %d gencost loads', t, k));
+end
+t_is(gencost(gg, COST:end), orig_gc(gg, COST:end), 8, sprintf('%s gencost gens', t));
+
 t = 'area disp loads (P) * [3 2 1] : ';
 opt = struct('pq', 'P', 'which', 'DISPATCHABLE');
 [bus, gen] = scale_load(load, mpc.bus, mpc.gen, [], opt);
@@ -279,6 +411,19 @@ for k = 1:length(load)
     t_is(-sum(gen(lda{k}, QMIN)), area(k).disp.qmin, 8, sprintf('%s area %d disp Qmin', t, k));
     t_is(-sum(gen(lda{k}, QMAX)), area(k).disp.qmax, 8, sprintf('%s area %d disp Qmax', t, k));
 end
+
+t = 'area disp loads/costs (P) * [3 2 1] : ';
+opt = struct('pq', 'P', 'which', 'DISPATCHABLE');
+[bus, gen, gencost] = scale_load(load, mpc.bus, mpc.gen, [], opt, mpc.gencost);
+for k = 1:length(load)
+    t_is(sum(bus(a{k}, PD)), area(k).fixed.p, 8, sprintf('%s area %d fixed P', t, k));
+    t_is(sum(bus(a{k}, QD)), area(k).fixed.q, 8, sprintf('%s area %d fixed Q', t, k));
+    t_is(-sum(gen(lda{k}, PMIN)), load(k)*area(k).disp.p, 8, sprintf('%s area %d disp P', t, k));
+    t_is(-sum(gen(lda{k}, QMIN)), area(k).disp.qmin, 8, sprintf('%s area %d disp Qmin', t, k));
+    t_is(-sum(gen(lda{k}, QMAX)), area(k).disp.qmax, 8, sprintf('%s area %d disp Qmax', t, k));
+    t_is(gencost(lda{k}, COST:end), load(k)*orig_gc(lda{k}, COST:end), 8, sprintf('%s area %d gencost loads', t, k));
+end
+t_is(gencost(gg, COST:end), orig_gc(gg, COST:end), 8, sprintf('%s gencost gens', t));
 
 %%-----  3 zones, area scale quantities  -----
 t = 'area fixed loads (PQ) => total = [100 80 60] : ';

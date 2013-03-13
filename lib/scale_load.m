@@ -1,7 +1,9 @@
-function [bus, gen] = scale_load(load, bus, gen, load_zone, opt)
+function [bus, gen, gencost] = scale_load(load, bus, gen, load_zone, opt, gencost)
 %SCALE_LOAD Scales fixed and/or dispatchable loads.
 %   BUS = SCALE_LOAD(LOAD, BUS);
 %   [BUS, GEN] = SCALE_LOAD(LOAD, BUS, GEN, LOAD_ZONE, OPT)
+%   [BUS, GEN, GENCOST] = ...
+%       SCALE_LOAD(LOAD, BUS, GEN, LOAD_ZONE, OPT, GENCOST)
 %
 %   Scales active (and optionally reactive) loads in each zone by a
 %   zone-specific ratio, i.e. R(k) for zone k. Inputs are ...
@@ -52,6 +54,13 @@ function [bus, gen] = scale_load(load, bus, gen, load_zone, opt)
 %       'FIXED'        : scale only fixed loads
 %       'DISPATCHABLE' : scale only dispatchable loads
 %       'BOTH'         : scale both fixed and dispatchable loads
+%
+%   GENCOST - (optional) standard GENCOST matrix with ng (or 2*ng)
+%       rows, where the dispatchable load rows are determined by
+%       the GEN matrix. If included, the quantity axis of the marginal
+%       "cost" or benefit function of any dispatchable loads will be
+%       scaled with the size of the load itself (using MODCOST twice,
+%       once with MODTYPE equal to SCALE_F and once with SCALE_X).
 %
 %   Examples:
 %       Scale all real and reactive fixed loads up by 10%.
@@ -110,12 +119,15 @@ function [bus, gen] = scale_load(load, bus, gen, load_zone, opt)
 nb = size(bus, 1);          %% number of buses
 
 %%-----  process inputs  -----
-if nargin < 5
-    opt = struct;
-    if nargin < 4
-        load_zone = [];
-        if nargin < 3
-            gen = [];
+if nargin < 6
+    gencost = [];
+    if nargin < 5
+        opt = struct;
+        if nargin < 4
+            load_zone = [];
+            if nargin < 3
+                gen = [];
+            end
         end
     end
 end
@@ -144,6 +156,12 @@ if opt.scale(1) ~= 'F' && opt.scale(1) ~= 'Q'
 end
 if isempty(gen) && opt.which(1) ~= 'F'
     error('scale_load: need gen matrix to scale dispatchable loads');
+end
+if nargout < 3 && ~isempty(gencost)
+    error('scale_load: missing gencost as output argument');
+end
+if nargout > 2 && isempty(gencost)
+    error('scale_load: missing gencost as input argument');
 end
 
 %% create dispatchable load connection matrix
@@ -243,8 +261,20 @@ if opt.which(1) ~= 'F'      %% includes 'DISPATCHABLE', not 'FIXED' only
         ig = ld(i);
 
         gen(ig, [PG PMIN]) = gen(ig, [PG PMIN]) * scale(k);
+        if ~isempty(gencost)
+            gencost(ig, :) = modcost(gencost(ig, :), scale(k), 'SCALE_F');
+            gencost(ig, :) = modcost(gencost(ig, :), scale(k), 'SCALE_X');
+        end
         if strcmp(opt.pq, 'PQ')
             gen(ig, [QG QMIN QMAX]) = gen(ig, [QG QMIN QMAX]) * scale(k);
+            if ~isempty(gencost)
+                [pcost, qcost] = pqcost(gencost, ng);
+                if ~isempty(qcost)
+                    qcost(ig, :) = modcost(qcost(ig, :), scale(k), 'SCALE_F');
+                    qcost(ig, :) = modcost(qcost(ig, :), scale(k), 'SCALE_X');
+                    gencost = [pcost; qcost];
+                end
+            end
         end
     end
 end
