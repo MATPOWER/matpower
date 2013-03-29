@@ -47,6 +47,9 @@ function om = opt_model(s)
 %   Return the value of an individual field:
 %       get
 %
+%   Indentify variable, constraint or cost row indices:
+%       describe_idx
+%
 %   The following is the structure of the data in the OPF model object.
 %   Each field of .idx or .data is a struct whose field names are the names
 %   of the corresponding blocks of vars, constraints or costs (found in
