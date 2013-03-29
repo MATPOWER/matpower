@@ -53,7 +53,7 @@ for k = 1:om.lin.NS
         nnzA = nnzA + nnz(subsref(om.lin.data.A, s));
     end
 end
-At = sparse([], [], [], om.var.N, om.lin.N, nnzA);	%% use A transpose for speed
+At = sparse([], [], [], om.var.N, om.lin.N, nnzA);  %% use A transpose for speed
 u = Inf * ones(om.lin.N, 1);
 l = -u;
 
@@ -80,18 +80,27 @@ for k = 1:om.lin.NS
             iN = subsref(om.lin.idx.iN, s1);    %% ending row index
             vsl = subsref(om.lin.data.vs, s2);  %% var set list
         end
-        kN = 0;                             %% initialize last col of Ak used
-        Ai = sparse(N, om.var.N);
-        for v = 1:length(vsl)
-            s = substruct('.', vsl(v).name, '()', vsl(v).idx);
-            j1 = subsref(om.var.idx.i1, s); %% starting column in A
-            jN = subsref(om.var.idx.iN, s); %% ending column in A
-            k1 = kN + 1;                    %% starting column in Ak
-            kN = kN + subsref(om.var.idx.N, s);%% ending column in Ak
-            Ai(:, j1:jN) = Ak(:, k1:kN);
+        if isempty(vsl)         %% full rows
+            if size(Ak,2) == om.var.N
+                At(:, i1:iN) = Ak';     %% assign as columns in transpose for speed
+            else                %% must have added vars since adding
+                                %% this constraint set
+                At(1:size(Ak,2), i1:iN) = Ak';  %% assign as columns in transpose for speed
+            end
+        else                    %% selected columns
+            kN = 0;                             %% initialize last col of Ak used
+            Ai = sparse(N, om.var.N);
+            for v = 1:length(vsl)
+                s = substruct('.', vsl(v).name, '()', vsl(v).idx);
+                j1 = subsref(om.var.idx.i1, s); %% starting column in A
+                jN = subsref(om.var.idx.iN, s); %% ending column in A
+                k1 = kN + 1;                    %% starting column in Ak
+                kN = kN + subsref(om.var.idx.N, s);%% ending column in Ak
+                Ai(:, j1:jN) = Ak(:, k1:kN);
+            end
+            At(:, i1:iN) = Ai';     %% assign as columns in transpose for speed
         end
 
-        At(:, i1:iN) = Ai';		%% assign as columns in transpose for speed
         if isempty(idx)
             l(i1:iN) = om.lin.data.l.(name);
             u(i1:iN) = om.lin.data.u.(name);

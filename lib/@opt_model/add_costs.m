@@ -140,9 +140,7 @@ else
     else
         varsets = args{1};
     end
-    if isempty(varsets)
-        varsets = om.var.order;
-    elseif iscell(varsets)
+    if ~isempty(varsets) && iscell(varsets)
         empty_cells = cell(1, length(varsets));
         [empty_cells{:}] = deal({});    %% empty cell arrays
         varsets = struct('name', varsets, 'idx', empty_cells);
@@ -156,10 +154,14 @@ else
     end
     
     %% check sizes
-    nv = 0;
-    for k = 1:length(varsets)
-        s = substruct('.', varsets(k).name, '()', varsets(k).idx);
-        nv = nv + subsref(om.var.idx.N, s);
+    if isempty(varsets)
+        nv = om.var.N;
+    else
+        nv = 0;
+        for k = 1:length(varsets)
+            s = substruct('.', varsets(k).name, '()', varsets(k).idx);
+            nv = nv + subsref(om.var.idx.N, s);
+        end
     end
     if nx ~= nv
         if nw == 0

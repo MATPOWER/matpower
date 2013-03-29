@@ -156,9 +156,7 @@ else                %% linear
     if isempty(u)                   %% default u is Inf
         u = Inf * ones(N, 1);
     end
-    if isempty(varsets)
-        varsets = om.var.order;
-    elseif iscell(varsets)
+    if ~isempty(varsets) && iscell(varsets)
         empty_cells = cell(1, length(varsets));
         [empty_cells{:}] = deal({});    %% empty cell arrays
         varsets = struct('name', varsets, 'idx', empty_cells);
@@ -168,10 +166,14 @@ else                %% linear
     if size(l, 1) ~= N || size(u, 1) ~= N
         error('@opt_model/add_constraints: sizes of A, l and u must match');
     end
-    nv = 0;
-    for k = 1:length(varsets)
-        s = substruct('.', varsets(k).name, '()', varsets(k).idx);
-        nv = nv + subsref(om.var.idx.N, s);
+    if isempty(varsets)
+        nv = om.var.N;
+    else
+        nv = 0;
+        for k = 1:length(varsets)
+            s = substruct('.', varsets(k).name, '()', varsets(k).idx);
+            nv = nv + subsref(om.var.idx.N, s);
+        end
     end
     if M ~= nv
         error('@opt_model/add_constraints: number of columns of A does not match\nnumber of variables, A is %d x %d, nv = %d\n', N, M, nv);

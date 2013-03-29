@@ -62,7 +62,7 @@ if nargin > 1 || ~isfield(om.cost.params, 'N')
             end
         end
     end
-    NN = sparse([], [], [], nw, om.var.N, nnzN);
+    NNt = sparse([], [], [], om.var.N, nw, nnzN);   %% use NN transpose for speed
     Cw = zeros(nw, 1);
     H = sparse([], [], [], nw, nw, nnzH);   %% default => no quadratic term
     dd = ones(nw, 1);                       %% default => linear
@@ -93,15 +93,27 @@ if nargin > 1 || ~isfield(om.cost.params, 'N')
                 iN = subsref(om.cost.idx.iN, s1);   %% ending row index
                 vsl = subsref(om.cost.data.vs, s2); %% var set list
             end
-            kN = 0;                             %% initialize last col of Nk used
-            for v = 1:length(vsl)
-                s = substruct('.', vsl(v).name, '()', vsl(v).idx);
-                j1 = subsref(om.var.idx.i1, s); %% starting column in N
-                jN = subsref(om.var.idx.iN, s); %% ending column in N
-                k1 = kN + 1;                    %% starting column in Nk
-                kN = kN + subsref(om.var.idx.N, s);%% ending column in Nk
-                NN(i1:iN, j1:jN) = Nk(:, k1:kN);
+            if isempty(vsl)         %% full rows
+                if size(Nk,2) == om.var.N
+                    NNt(:, i1:iN) = Nk';     %% assign as columns in transpose for speed
+                else                %% must have added vars since adding
+                                    %% this cost set
+                    NNt(1:size(Nk,2), i1:iN) = Nk';  %% assign as columns in transpose for speed
+                end
+            else                    %% selected columns
+                kN = 0;                             %% initialize last col of Nk used
+                Ni = sparse(N, om.var.N);
+                for v = 1:length(vsl)
+                    s = substruct('.', vsl(v).name, '()', vsl(v).idx);
+                    j1 = subsref(om.var.idx.i1, s); %% starting column in N
+                    jN = subsref(om.var.idx.iN, s); %% ending column in N
+                    k1 = kN + 1;                    %% starting column in Nk
+                    kN = kN + subsref(om.var.idx.N, s);%% ending column in Nk
+                    Ni(:, j1:jN) = Nk(:, k1:kN);
+                end
+                NNt(:, i1:iN) = Ni';    %% assign as columns in transpose for speed
             end
+
             if isempty(idx)
                 Cw(i1:iN) = om.cost.data.Cw.(name);
                 if isfield(om.cost.data.H, name)
@@ -142,5 +154,5 @@ if nargin > 1 || ~isfield(om.cost.params, 'N')
 
     %% save in object   
     om.cost.params = struct( ...
-        'N', NN, 'Cw', Cw, 'H', H, 'dd', dd, 'rh', rh, 'kk', kk, 'mm', mm );
+        'N', NNt', 'Cw', Cw, 'H', H, 'dd', dd, 'rh', rh, 'kk', kk, 'mm', mm );
 end
