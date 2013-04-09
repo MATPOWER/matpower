@@ -79,10 +79,10 @@ for k = 1:length(algs)
         t_is(s, 1, 12, [t 'success']);
         t_is(x, [0; 15; 3], 6, [t 'x']);
         t_is(f, -78, 6, [t 'f']);
-        t_is(lam.mu_l, [0;0;0], 13, [t 'lam.mu_l']);
+        t_is(lam.mu_l, [0;0;0], 9, [t 'lam.mu_l']);
         t_is(lam.mu_u, [0;1.5;0.5], 9, [t 'lam.mu_u']);
         t_is(lam.lower, [1;0;0], 9, [t 'lam.lower']);
-        t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
+        t_is(lam.upper, zeros(size(x)), 9, [t 'lam.upper']);
 
         t = sprintf('%s - unconstrained 3-d quadratic : ', names{k});
         %% from http://www.akiti.ca/QuadProgEx0Constr.html
