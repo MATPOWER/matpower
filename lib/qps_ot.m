@@ -257,22 +257,34 @@ else
 end
 
 %% repackage lambdas
-kl = find(lam.eqlin < 0);   %% lower bound binding
-ku = find(lam.eqlin > 0);   %% upper bound binding
+if isempty(x)
+    x = NaN(nx, 1);
+end
+if isempty(lam)
+    lambda = struct( ...
+        'mu_l', NaN(nA, 1), ...
+        'mu_u', NaN(nA, 1), ...
+        'lower', NaN(nx, 1), ...
+        'upper', NaN(nx, 1) ...
+    );
+else
+    kl = find(lam.eqlin < 0);   %% lower bound binding
+    ku = find(lam.eqlin > 0);   %% upper bound binding
 
-mu_l = zeros(nA, 1);
-mu_l(ieq(kl)) = -lam.eqlin(kl);
-mu_l(igt) = lam.ineqlin(nlt+(1:ngt));
-mu_l(ibx) = lam.ineqlin(nlt+ngt+nbx+(1:nbx));
+    mu_l = zeros(nA, 1);
+    mu_l(ieq(kl)) = -lam.eqlin(kl);
+    mu_l(igt) = lam.ineqlin(nlt+(1:ngt));
+    mu_l(ibx) = lam.ineqlin(nlt+ngt+nbx+(1:nbx));
 
-mu_u = zeros(nA, 1);
-mu_u(ieq(ku)) = lam.eqlin(ku);
-mu_u(ilt) = lam.ineqlin(1:nlt);
-mu_u(ibx) = lam.ineqlin(nlt+ngt+(1:nbx));
+    mu_u = zeros(nA, 1);
+    mu_u(ieq(ku)) = lam.eqlin(ku);
+    mu_u(ilt) = lam.ineqlin(1:nlt);
+    mu_u(ibx) = lam.ineqlin(nlt+ngt+(1:nbx));
 
-lambda = struct( ...
-    'mu_l', mu_l, ...
-    'mu_u', mu_u, ...
-    'lower', lam.lower(1:nx), ...
-    'upper', lam.upper(1:nx) ...
-);
+    lambda = struct( ...
+        'mu_l', mu_l, ...
+        'mu_u', mu_u, ...
+        'lower', lam.lower(1:nx), ...
+        'upper', lam.upper(1:nx) ...
+    );
+end
