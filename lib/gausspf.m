@@ -128,6 +128,6 @@ end
 
 if verbose
     if ~converged
-        fprintf('\nGauss-Seidel power did not converge in %d iterations.\n', i);
+        fprintf('\nGauss-Seidel power flow did not converge in %d iterations.\n', i);
     end
 end

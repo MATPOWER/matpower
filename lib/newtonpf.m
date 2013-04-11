@@ -141,6 +141,6 @@ end
 
 if verbose
     if ~converged
-        fprintf('\nNewton''s method power did not converge in %d iterations.\n', i);
+        fprintf('\nNewton''s method power flow did not converge in %d iterations.\n', i);
     end
 end
