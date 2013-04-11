@@ -152,8 +152,13 @@ if dc               %% DC model
   %% branch flow constraints
   il = find(branch(:, RATE_A) ~= 0 & branch(:, RATE_A) < 1e10);
   nl2 = length(il);         %% number of constrained lines
-  upf = branch(il, RATE_A) / baseMVA - Pfinj(il);
-  upt = branch(il, RATE_A) / baseMVA + Pfinj(il);
+  if nl2
+    upf = branch(il, RATE_A) / baseMVA - Pfinj(il);
+    upt = branch(il, RATE_A) / baseMVA + Pfinj(il);
+  else
+    upf = [];
+    upt = [];
+  end
 
   user_vars = {'Va', 'Pg'};
   ycon_vars = {'Pg', 'y'};
