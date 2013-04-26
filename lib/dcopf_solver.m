@@ -230,6 +230,7 @@ if ~any(isnan(x))
     f = f + C0;
 
     %% update voltages & generator outputs
+    bus(:, VM) = ones(nb, 1);
     bus(:, VA) = Va * 180/pi;
     gen(:, PG) = Pg * baseMVA;
 
