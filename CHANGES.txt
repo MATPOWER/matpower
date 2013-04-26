@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.1
 -----------------
 
+4/26/13
+    - DC OPF now correctly sets voltage magnitudes to 1 p.u.
+      in results.
+
 3/29/13
     - Performance optimizations in @opt_model for cases with
       large numbers of variable sets and linear constraints
