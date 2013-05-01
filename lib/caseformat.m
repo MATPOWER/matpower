@@ -110,6 +110,9 @@
 %       11  initial branch status, 1 - in service, 0 - out of service
 %   (2) 12  minimum angle difference, angle(Vf) - angle(Vt) (degrees)
 %   (2) 13  maximum angle difference, angle(Vf) - angle(Vt) (degrees)
+%           (The voltage angle difference is taken to be unbounded below
+%            if ANGMIN < -360 and unbounded above if ANGMAX > 360.
+%            If both parameters are zero, it is unconstrained.)
 %
 % (+) Generator Cost Data Format
 %       NOTE: If gen has ng rows, then the first ng rows of gencost contain

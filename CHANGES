@@ -15,6 +15,11 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.1
 -----------------
 
+5/1/13
+    - Changed behavior of branch angle difference limits so that
+      0 is interpreted as unbounded only if both ANGMIN and ANGMAX
+      are zero. Added note about this to docs in various places.
+
 4/26/13
     - DC OPF now correctly sets voltage magnitudes to 1 p.u.
       in results.

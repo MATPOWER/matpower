@@ -31,6 +31,9 @@ function [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, ...
 %    11 BR_STATUS   initial branch status, 1 - in service, 0 - out of service
 %    12 ANGMIN      minimum angle difference, angle(Vf) - angle(Vt) (degrees)
 %    13 ANGMAX      maximum angle difference, angle(Vf) - angle(Vt) (degrees)
+%                   (The voltage angle difference is taken to be unbounded below
+%                    if ANGMIN < -360 and unbounded above if ANGMAX > 360.
+%                    If both parameters are zero, it is unconstrained.)
 %
 %   columns 14-17 are added to matrix after power flow or OPF solution
 %   they are typically not present in the input matrix

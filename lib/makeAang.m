@@ -9,9 +9,14 @@ function [Aang, lang, uang, iang]  = makeAang(baseMVA, branch, nb, mpopt)
 %       LANG <= AANG * Va <= UANG
 %
 %   IANG is the vector of indices of branches with angle difference limits.
+%   The limits are given in the ANGMIN and ANGMAX columns of the branch
+%   matrix. Voltage angle differences are taken to be unbounded below if
+%   ANGMIN < -360 and unbounded above if ANGMAX > 360. If both ANGMIN and
+%   ANGMAX are zero, the angle difference is assumed to be unconstrained.
 %
 %   Example:
 %       [Aang, lang, uang, iang]  = makeAang(baseMVA, branch, nb, mpopt);
+
 
 %   MATPOWER
 %   $Id$
@@ -59,18 +64,14 @@ if ignore_ang_lim
 else
   iang = find((branch(:, ANGMIN) & branch(:, ANGMIN) > -360) | ...
               (branch(:, ANGMAX) & branch(:, ANGMAX) < 360));
-  iangl = find(branch(iang, ANGMIN));
-  iangh = find(branch(iang, ANGMAX));
   nang = length(iang);
 
   if nang > 0
     ii = [(1:nang)'; (1:nang)'];
     jj = [branch(iang, F_BUS); branch(iang, T_BUS)];
     Aang = sparse(ii, jj, [ones(nang, 1); -ones(nang, 1)], nang, nb);
-    uang = Inf * ones(nang,1);
-    lang = -uang;
-    lang(iangl) = branch(iang(iangl), ANGMIN) * pi/180;
-    uang(iangh) = branch(iang(iangh), ANGMAX) * pi/180;
+    lang = branch(iang, ANGMIN) * pi/180;
+    uang = branch(iang, ANGMAX) * pi/180;
   else
     Aang = sparse(0, nb);
     lang =[];
