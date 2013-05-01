@@ -17,7 +17,6 @@ function [Aang, lang, uang, iang]  = makeAang(baseMVA, branch, nb, mpopt)
 %   Example:
 %       [Aang, lang, uang, iang]  = makeAang(baseMVA, branch, nb, mpopt);
 
-
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
