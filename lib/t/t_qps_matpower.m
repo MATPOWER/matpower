@@ -61,7 +61,7 @@ for k = 1:length(algs)
 %             alg = 5;        %% use dual simplex
             mpopt = mpoption;
 %             mpopt = mpoption(mpopt, 'MOSEK_LP_ALG', alg );
-            mpopt = mpoption(mpopt, 'MOSEK_GAP_TOL', 1e-9);
+            mpopt = mpoption(mpopt, 'MOSEK_GAP_TOL', 1e-10);
             opt.mosek_opt = mosek_options([], mpopt);
         end
 
