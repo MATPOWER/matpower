@@ -15,6 +15,12 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.1
 -----------------
 
+6/7/13
+    - Made non-convergent results more obvious by not printing
+      the standard output tables (can be overridden with new
+      OUT_FORCE option) and making the "did not converge"
+      more prominent.
+
 5/1/13
     - Changed behavior of branch angle difference limits so that
       0 is interpreted as unbounded only if both ANGMIN and ANGMAX

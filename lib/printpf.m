@@ -100,6 +100,7 @@ isOPF = ~isempty(f);    %% FALSE -> only simple PF data, TRUE -> OPF data
 %% options
 isDC            = mpopt(10);        %% use DC formulation?
 OUT_ALL         = mpopt(32);
+OUT_FORCE		= mpopt(44);
 OUT_ANY         = OUT_ALL == 1;     %% set to true if any pretty output is to be generated
 OUT_SYS_SUM     = OUT_ALL == 1 || (OUT_ALL == -1 && mpopt(33));
 OUT_AREA_SUM    = OUT_ALL == 1 || (OUT_ALL == -1 && mpopt(34));
@@ -193,15 +194,15 @@ if OUT_ANY
     if success
         fprintf(fd, '\nConverged in %.2f seconds', et);
     else
-        fprintf(fd, '\nDid not converge (%.2f seconds)\n', et);
+        fprintf(fd, '\n>>>>>  Did NOT converge (%.2f seconds)  <<<<<\n', et);
     end
     
     %% objective function value
-    if isOPF
+    if isOPF && (success || OUT_FORCE)
         fprintf(fd, '\nObjective Function Value = %.2f $/hr', f);
     end
 end
-if OUT_SYS_SUM
+if OUT_SYS_SUM && (success || OUT_FORCE)
     fprintf(fd, '\n================================================================================');
     fprintf(fd, '\n|     System Summary                                                           |');
     fprintf(fd, '\n================================================================================');
@@ -245,7 +246,7 @@ if OUT_SYS_SUM
     fprintf(fd, '\n');
 end
 
-if OUT_AREA_SUM
+if OUT_AREA_SUM && (success || OUT_FORCE)
     fprintf(fd, '\n================================================================================');
     fprintf(fd, '\n|     Area Summary                                                             |');
     fprintf(fd, '\n================================================================================');
@@ -348,7 +349,7 @@ if OUT_AREA_SUM
 end
 
 %% generator data
-if OUT_GEN
+if OUT_GEN && (success || OUT_FORCE)
     if isOPF
         genlamP = bus(e2i(gen(:, GEN_BUS)), LAM_P);
         genlamQ = bus(e2i(gen(:, GEN_BUS)), LAM_Q);
@@ -402,7 +403,7 @@ if OUT_GEN
 end
         
 %% bus data
-if OUT_BUS
+if OUT_BUS && (success || OUT_FORCE)
     fprintf(fd, '\n================================================================================');
     fprintf(fd, '\n|     Bus Data                                                                 |');
     fprintf(fd, '\n================================================================================');
@@ -456,7 +457,7 @@ if OUT_BUS
 end
 
 %% branch data
-if OUT_BRANCH
+if OUT_BRANCH && (success || OUT_FORCE)
     fprintf(fd, '\n================================================================================');
     fprintf(fd, '\n|     Branch Data                                                              |');
     fprintf(fd, '\n================================================================================');
@@ -475,7 +476,7 @@ if OUT_BRANCH
 end
     
 %%-----  constraint data  -----
-if isOPF
+if isOPF && (success || OUT_FORCE)
     ctol = mpopt(16);   %% constraint violation tolerance
     %% voltage constraints
     if ~isDC && (OUT_V_LIM == 2 || (OUT_V_LIM == 1 && ...
@@ -732,9 +733,15 @@ if isOPF
 end
 
 %% execute userfcn callbacks for 'printpf' stage
-if have_results_struct && isfield(results, 'userfcn')
+if have_results_struct && isfield(results, 'userfcn') && (success || OUT_FORCE)
 	if ~isOPF	%% turn off option for all constraints if it isn't an OPF
 		mpopt = mpoption(mpopt, 'OUT_ALL_LIM', 0);
 	end
     run_userfcn(results.userfcn, 'printpf', results, fd, mpopt);
+end
+if OUT_ANY && ~success
+	if OUT_FORCE
+    	fprintf(fd, '\n>>>>>  Did NOT converge (%.2f seconds)  <<<<<\n', et);
+    end
+	fprintf('\n');
 end

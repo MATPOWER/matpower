@@ -134,6 +134,8 @@ function [options, names] = mpoption(varargin)
 %       40 - OUT_LINE_LIM, 1        control output of line flow limit info
 %       41 - OUT_PG_LIM, 1          control output of gen P limit info
 %       42 - OUT_QG_LIM, 1          control output of gen Q limit info
+%       44 - OUT_FORCE, 0           print results even if success = 0
+%                                                               [   0 or 1  ]
 %       52 - RETURN_RAW_DER, 0      return constraint and derivative info
 %                                   in results.raw (in fields g, dg, df, d2f)
 %   FMINCON options
@@ -340,7 +342,7 @@ else                    %% even number of parameters
         1;      %% 41 - OUT_PG_LIM
         1;      %% 42 - OUT_QG_LIM
         0;      %% 43 - RESERVED43 (was OUT_RAW)
-        0;      %% 44 - RESERVED44
+        0;      %% 44 - OUT_FORCE
         0;      %% 45 - RESERVED45
         0;      %% 46 - RESERVED46
         0;      %% 47 - RESERVED47
@@ -489,7 +491,7 @@ names = char(   names, ...
                 'OUT_PG_LIM', ...           %% 41
                 'OUT_QG_LIM', ...           %% 42
                 'RESERVED43', ...           %% 43 (was OUT_RAW)
-                'RESERVED44', ...           %% 44
+                'OUT_FORCE', ...            %% 44
                 'RESERVED45', ...           %% 45
                 'RESERVED46', ...           %% 46
                 'RESERVED47', ...           %% 47
