@@ -34,7 +34,7 @@ if nargin < 1
     quiet = 0;
 end
 
-n_tests = 80;
+n_tests = 160;
 
 t_begin(n_tests, quiet);
 
@@ -54,6 +54,7 @@ gencost0 = [
 	1	0	0	4	-30	-2400	-20	-1800	-10	-1000	0	0;
 ];
 
+%%-----  scalar values for alpha  -----
 gencost = modcost(gencost0, 5, 'SCALE_F');
 
 t = 'modcost SCALE_F - quadratic';
@@ -176,5 +177,130 @@ t_is(totcost(gencost, [0;0;0;-20]-4), [1;2;0;-1800], 8, t);
 t_is(totcost(gencost, [0;0;0;-25]-4), [1;2;0;-2100], 8, t);
 t_is(totcost(gencost, [0;0;0;-30]-4), [1;2;0;-2400], 8, t);
 t_is(totcost(gencost, [0;0;0;-35]-4), [1;2;0;-2700], 8, t);
+
+%%-----  vector values for alpha  -----
+alpha = [10; 9; 8; 7];
+gencost = modcost(gencost0, alpha, 'SCALE_F');
+
+t = 'modcost vector SCALE_F - quadratic';
+t_is(totcost(gencost, [0;0;0;0])./alpha, [1;2;0;0], 8, t);
+t_is(totcost(gencost, [1;0;0;0])./alpha, [1.11;2;0;0], 8, t);
+t_is(totcost(gencost, [2;0;0;0])./alpha, [1.24;2;0;0], 8, t);
+
+t = 'modcost vector SCALE_F - 4th order polynomial';
+t_is(totcost(gencost, [0;0;0;0])./alpha, [1;2;     0;0], 8, t);
+t_is(totcost(gencost, [0;1;0;0])./alpha, [1;2.3456;0;0], 8, t);
+t_is(totcost(gencost, [0;2;0;0])./alpha, [1;2.8096;0;0], 8, t);
+
+t = 'modcost vector SCALE_F - pwl (gen)';
+t_is(totcost(gencost, [0;0;5;0 ])./alpha, [1;2;100;0], 8, t);
+t_is(totcost(gencost, [0;0;10;0])./alpha, [1;2;200;0], 8, t);
+t_is(totcost(gencost, [0;0;15;0])./alpha, [1;2;400;0], 8, t);
+t_is(totcost(gencost, [0;0;20;0])./alpha, [1;2;600;0], 8, t);
+t_is(totcost(gencost, [0;0;25;0])./alpha, [1;2;900;0], 8, t);
+t_is(totcost(gencost, [0;0;30;0])./alpha, [1;2;1200;0], 8, t);
+t_is(totcost(gencost, [0;0;35;0])./alpha, [1;2;1500;0], 8, t);
+
+t = 'modcost vector SCALE_F - pwl (load)';
+t_is(totcost(gencost, [0;0;0;-5 ])./alpha, [1;2;0;-500], 8, t);
+t_is(totcost(gencost, [0;0;0;-10])./alpha, [1;2;0;-1000], 8, t);
+t_is(totcost(gencost, [0;0;0;-15])./alpha, [1;2;0;-1400], 8, t);
+t_is(totcost(gencost, [0;0;0;-20])./alpha, [1;2;0;-1800], 8, t);
+t_is(totcost(gencost, [0;0;0;-25])./alpha, [1;2;0;-2100], 8, t);
+t_is(totcost(gencost, [0;0;0;-30])./alpha, [1;2;0;-2400], 8, t);
+t_is(totcost(gencost, [0;0;0;-35])./alpha, [1;2;0;-2700], 8, t);
+
+
+gencost = modcost(gencost0, alpha, 'SCALE_X');
+
+t = 'modcost vector SCALE_X - quadratic';
+t_is(totcost(gencost, [0;0;0;0].*alpha), [1;2;0;0], 8, t);
+t_is(totcost(gencost, [1;0;0;0].*alpha), [1.11;2;0;0], 8, t);
+t_is(totcost(gencost, [2;0;0;0].*alpha), [1.24;2;0;0], 8, t);
+
+t = 'modcost vector SCALE_X - 4th order polynomial';
+t_is(totcost(gencost, [0;0;0;0].*alpha), [1;2;     0;0], 8, t);
+t_is(totcost(gencost, [0;1;0;0].*alpha), [1;2.3456;0;0], 8, t);
+t_is(totcost(gencost, [0;2;0;0].*alpha), [1;2.8096;0;0], 8, t);
+
+t = 'modcost vector SCALE_X - pwl (gen)';
+t_is(totcost(gencost, [0;0;5;0 ].*alpha), [1;2;100;0], 8, t);
+t_is(totcost(gencost, [0;0;10;0].*alpha), [1;2;200;0], 8, t);
+t_is(totcost(gencost, [0;0;15;0].*alpha), [1;2;400;0], 8, t);
+t_is(totcost(gencost, [0;0;20;0].*alpha), [1;2;600;0], 8, t);
+t_is(totcost(gencost, [0;0;25;0].*alpha), [1;2;900;0], 8, t);
+t_is(totcost(gencost, [0;0;30;0].*alpha), [1;2;1200;0], 8, t);
+t_is(totcost(gencost, [0;0;35;0].*alpha), [1;2;1500;0], 8, t);
+
+t = 'modcost vector SCALE_X - pwl (load)';
+t_is(totcost(gencost, [0;0;0;-5 ].*alpha), [1;2;0;-500], 8, t);
+t_is(totcost(gencost, [0;0;0;-10].*alpha), [1;2;0;-1000], 8, t);
+t_is(totcost(gencost, [0;0;0;-15].*alpha), [1;2;0;-1400], 8, t);
+t_is(totcost(gencost, [0;0;0;-20].*alpha), [1;2;0;-1800], 8, t);
+t_is(totcost(gencost, [0;0;0;-25].*alpha), [1;2;0;-2100], 8, t);
+t_is(totcost(gencost, [0;0;0;-30].*alpha), [1;2;0;-2400], 8, t);
+t_is(totcost(gencost, [0;0;0;-35].*alpha), [1;2;0;-2700], 8, t);
+
+
+gencost = modcost(gencost0, alpha, 'SHIFT_F');
+
+t = 'modcost vector SHIFT_F - quadratic';
+t_is(totcost(gencost, [0;0;0;0])-alpha, [1;2;0;0], 8, t);
+t_is(totcost(gencost, [1;0;0;0])-alpha, [1.11;2;0;0], 8, t);
+t_is(totcost(gencost, [2;0;0;0])-alpha, [1.24;2;0;0], 8, t);
+
+t = 'modcost vector SHIFT_F - 4th order polynomial';
+t_is(totcost(gencost, [0;0;0;0])-alpha, [1;2;     0;0], 8, t);
+t_is(totcost(gencost, [0;1;0;0])-alpha, [1;2.3456;0;0], 8, t);
+t_is(totcost(gencost, [0;2;0;0])-alpha, [1;2.8096;0;0], 8, t);
+
+t = 'modcost vector SHIFT_F - pwl (gen)';
+t_is(totcost(gencost, [0;0;5;0 ])-alpha, [1;2;100;0], 8, t);
+t_is(totcost(gencost, [0;0;10;0])-alpha, [1;2;200;0], 8, t);
+t_is(totcost(gencost, [0;0;15;0])-alpha, [1;2;400;0], 8, t);
+t_is(totcost(gencost, [0;0;20;0])-alpha, [1;2;600;0], 8, t);
+t_is(totcost(gencost, [0;0;25;0])-alpha, [1;2;900;0], 8, t);
+t_is(totcost(gencost, [0;0;30;0])-alpha, [1;2;1200;0], 8, t);
+t_is(totcost(gencost, [0;0;35;0])-alpha, [1;2;1500;0], 8, t);
+
+t = 'modcost vector SHIFT_F - pwl (load)';
+t_is(totcost(gencost, [0;0;0;-5 ])-alpha, [1;2;0;-500], 8, t);
+t_is(totcost(gencost, [0;0;0;-10])-alpha, [1;2;0;-1000], 8, t);
+t_is(totcost(gencost, [0;0;0;-15])-alpha, [1;2;0;-1400], 8, t);
+t_is(totcost(gencost, [0;0;0;-20])-alpha, [1;2;0;-1800], 8, t);
+t_is(totcost(gencost, [0;0;0;-25])-alpha, [1;2;0;-2100], 8, t);
+t_is(totcost(gencost, [0;0;0;-30])-alpha, [1;2;0;-2400], 8, t);
+t_is(totcost(gencost, [0;0;0;-35])-alpha, [1;2;0;-2700], 8, t);
+
+
+gencost = modcost(gencost0, -alpha, 'SHIFT_X');
+
+t = 'modcost vector SHIFT_X - quadratic';
+t_is(totcost(gencost, [0;0;0;0]-alpha), [1;2;0;0], 8, t);
+t_is(totcost(gencost, [1;0;0;0]-alpha), [1.11;2;0;0], 8, t);
+t_is(totcost(gencost, [2;0;0;0]-alpha), [1.24;2;0;0], 8, t);
+
+t = 'modcost vector SHIFT_X - 4th order polynomial';
+t_is(totcost(gencost, [0;0;0;0]-alpha), [1;2;     0;0], 8, t);
+t_is(totcost(gencost, [0;1;0;0]-alpha), [1;2.3456;0;0], 8, t);
+t_is(totcost(gencost, [0;2;0;0]-alpha), [1;2.8096;0;0], 8, t);
+
+t = 'modcost vector SHIFT_X - pwl (gen)';
+t_is(totcost(gencost, [0;0;5;0 ]-alpha), [1;2;100;0], 8, t);
+t_is(totcost(gencost, [0;0;10;0]-alpha), [1;2;200;0], 8, t);
+t_is(totcost(gencost, [0;0;15;0]-alpha), [1;2;400;0], 8, t);
+t_is(totcost(gencost, [0;0;20;0]-alpha), [1;2;600;0], 8, t);
+t_is(totcost(gencost, [0;0;25;0]-alpha), [1;2;900;0], 8, t);
+t_is(totcost(gencost, [0;0;30;0]-alpha), [1;2;1200;0], 8, t);
+t_is(totcost(gencost, [0;0;35;0]-alpha), [1;2;1500;0], 8, t);
+
+t = 'modcost vector SHIFT_X - pwl (load)';
+t_is(totcost(gencost, [0;0;0;-5 ]-alpha), [1;2;0;-500], 8, t);
+t_is(totcost(gencost, [0;0;0;-10]-alpha), [1;2;0;-1000], 8, t);
+t_is(totcost(gencost, [0;0;0;-15]-alpha), [1;2;0;-1400], 8, t);
+t_is(totcost(gencost, [0;0;0;-20]-alpha), [1;2;0;-1800], 8, t);
+t_is(totcost(gencost, [0;0;0;-25]-alpha), [1;2;0;-2100], 8, t);
+t_is(totcost(gencost, [0;0;0;-30]-alpha), [1;2;0;-2400], 8, t);
+t_is(totcost(gencost, [0;0;0;-35]-alpha), [1;2;0;-2700], 8, t);
 
 t_end;

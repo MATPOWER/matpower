@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.1
 -----------------
 
+7/30/13
+    - Extended modcost() to optionally accept a vector of shift/scale
+      factors, instead of just a scalar.
+
 6/7/13
     - Made non-convergent results more obvious by not printing
       the standard output tables (can be overridden with new

@@ -7,7 +7,9 @@ function gencost = modcost(gencost, alpha, modtype)
 %   GENCOST, this function modifies the cost by scaling or shifting
 %   the function by ALPHA, depending on the value of MODTYPE, and
 %   and returns the modified GENCOST. Rows of GENCOST can be a mix
-%   of polynomial or piecewise linear costs.
+%   of polynomial or piecewise linear costs. ALPHA can be a scalar,
+%   applied to each row of GENCOST, or an NG x 1 vector, where each
+%   element is applied to the corresponding row of GENCOST.
 %
 %   MODTYPE takes one of the 4 possible values (let F_alpha(X) denote the
 %   the modified function):
@@ -53,6 +55,16 @@ if nargin < 3
 end
 
 [ng, m] = size(gencost);
+if length(alpha) ~= ng
+    if length(alpha) == 1 && ng > 1     %% scalar, make it a col vector
+        alpha = alpha * ones(ng, 1);
+    else
+        error('modcost: ALPHA must be a scalar or col vector with NG rows');
+    end
+elseif size(alpha, 2) ~= 1
+    alpha = alpha';                     %% convert row vector to col vector
+end
+
 if ng ~= 0
     ipwl = find(gencost(:, MODEL) == PW_LINEAR);
     ipol = find(gencost(:, MODEL) == POLYNOMIAL);
@@ -60,28 +72,32 @@ if ng ~= 0
 
     switch modtype
         case 'SCALE_F',
-            gencost(ipol, COST:m)       = alpha * c;
-            gencost(ipwl, COST+1:2:m)   = alpha * gencost(ipwl, COST+1:2:m);
+            gencost(ipol, COST:m)       = diag(alpha(ipol)) * c;
+            gencost(ipwl, COST+1:2:m)   = diag(alpha(ipwl)) * gencost(ipwl, COST+1:2:m);
         case 'SCALE_X',
             for k = 1:length(ipol)
                 n = gencost(ipol(k), NCOST);
                 for i = 1:n
-                    gencost(ipol(k), COST+i-1) = c(k, i) / alpha^(n-i);
+                    gencost(ipol(k), COST+i-1) = c(k, i) / alpha(ipol(k))^(n-i);
                 end
             end
-            gencost(ipwl, COST:2:m-1)   = alpha * gencost(ipwl, COST:2:m-1);
+            gencost(ipwl, COST:2:m-1)   = diag(alpha(ipwl)) * gencost(ipwl, COST:2:m-1);
         case 'SHIFT_F',
             for k = 1:length(ipol)
                 n = gencost(ipol(k), NCOST);
-                gencost(ipol(k), COST+n-1) = alpha + c(k, n);
+                gencost(ipol(k), COST+n-1) = alpha(ipol(k)) + c(k, n);
             end
-            gencost(ipwl, COST+1:2:m)   = alpha + gencost(ipwl, COST+1:2:m);
+            gencost(ipwl, COST+1:2:m)   = ...
+                diag(alpha(ipwl)) * ones(length(ipwl), (m+1-COST)/2) + ...
+                    gencost(ipwl, COST+1:2:m);
         case 'SHIFT_X',
             for k = 1:length(ipol)
                 n = gencost(ipol(k), NCOST);
-                gencost(ipol(k), COST:COST+n-1) = polyshift(c(k, 1:n)', alpha)';
+                gencost(ipol(k), COST:COST+n-1) = polyshift(c(k, 1:n)', alpha(ipol(k)))';
             end
-            gencost(ipwl, COST:2:m-1)   = alpha + gencost(ipwl, COST:2:m-1);
+            gencost(ipwl, COST:2:m-1)   = ...
+                diag(alpha(ipwl)) * ones(length(ipwl), (m+1-COST)/2) + ...
+                    gencost(ipwl, COST:2:m-1);
         otherwise
             error('modcost: ''%s'' is not a valid modtype\n', modtype);
     end
