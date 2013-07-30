@@ -55,17 +55,18 @@ if nargin < 3
 end
 
 [ng, m] = size(gencost);
-if length(alpha) ~= ng
-    if length(alpha) == 1 && ng > 1     %% scalar, make it a col vector
-        alpha = alpha * ones(ng, 1);
-    else
-        error('modcost: ALPHA must be a scalar or col vector with NG rows');
-    end
-elseif size(alpha, 2) ~= 1
-    alpha = alpha';                     %% convert row vector to col vector
-end
 
 if ng ~= 0
+    if length(alpha) ~= ng
+        if length(alpha) == 1 && ng > 1     %% scalar, make it a col vector
+            alpha = alpha * ones(ng, 1);
+        else
+            error('modcost: ALPHA must be a scalar or col vector with NG rows');
+        end
+    elseif size(alpha, 2) ~= 1
+        alpha = alpha';                     %% convert row vector to col vector
+    end
+
     ipwl = find(gencost(:, MODEL) == PW_LINEAR);
     ipol = find(gencost(:, MODEL) == POLYNOMIAL);
     c = gencost(ipol, COST:m);
