@@ -34,7 +34,7 @@ if nargin < 1
     quiet = 0;
 end
 
-n_tests = 160;
+n_tests = 162;
 
 t_begin(n_tests, quiet);
 
@@ -178,6 +178,10 @@ t_is(totcost(gencost, [0;0;0;-25]-4), [1;2;0;-2100], 8, t);
 t_is(totcost(gencost, [0;0;0;-30]-4), [1;2;0;-2400], 8, t);
 t_is(totcost(gencost, [0;0;0;-35]-4), [1;2;0;-2700], 8, t);
 
+t = 'modcost empty gencost';
+gencost = modcost([], 7);
+t_ok(isempty(gencost), t);
+
 %%-----  vector values for alpha  -----
 alpha = [10; 9; 8; 7];
 gencost = modcost(gencost0, alpha, 'SCALE_F');
@@ -302,5 +306,9 @@ t_is(totcost(gencost, [0;0;0;-20]-alpha), [1;2;0;-1800], 8, t);
 t_is(totcost(gencost, [0;0;0;-25]-alpha), [1;2;0;-2100], 8, t);
 t_is(totcost(gencost, [0;0;0;-30]-alpha), [1;2;0;-2400], 8, t);
 t_is(totcost(gencost, [0;0;0;-35]-alpha), [1;2;0;-2700], 8, t);
+
+t = 'modcost vector empty gencost';
+gencost = modcost([], alpha);
+t_ok(isempty(gencost), t);
 
 t_end;
