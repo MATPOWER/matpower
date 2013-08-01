@@ -61,7 +61,7 @@ Changes since 4.1
 
 10/1/12
     - Updates to have_fcn() and mpver() to better handle case where
-      Optimization Toolbox is installed, but with a valid license.
+      Optimization Toolbox is installed, but with no valid license.
 
 8/30/12
     - Major speed-up in @opt_model/linear_constraints() by building
