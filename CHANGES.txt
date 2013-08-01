@@ -41,7 +41,7 @@ Changes since 4.1
       opposed to specific var sets).
       
 3/13/13
-    - Added to scale_cost() the option to scale the gencost
+    - Added to scale_load() the option to scale the gencost
       (specifically the quantity axis of the marginal cost function)
       corresponding to any modified dispatchable load. Simply add
       gencost as additional input and output args.
