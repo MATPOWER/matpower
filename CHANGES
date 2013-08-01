@@ -73,7 +73,7 @@ Changes since 4.1
       generation.
 
 7/20/12
-    - Added utility function @opt_model/describe_idx() to indentify
+    - Added utility function @opt_model/describe_idx() to identify
       variable, constraint or cost row indices to aid in debugging.
 
 7/18/12
