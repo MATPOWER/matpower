@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.1
 -----------------
 
+9/3/13
+    - Fixed bug (typo) in auction() that could affect cases with
+      a lower limit on the cleared bid price.
+
 7/30/13
     - Extended modcost() to optionally accept a vector of shift/scale
       factors, instead of just a scalar.
