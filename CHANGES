@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.1
 -----------------
 
+9/5/13
+    - Fix in smartmkt() to avoid crash following non-convergent
+      uopf when mkt.lim.P.max_offer is not defined.
+
 9/3/13
     - Fixed bug (typo) in auction() that could affect cases with
       a lower limit on the cleared bid price.
