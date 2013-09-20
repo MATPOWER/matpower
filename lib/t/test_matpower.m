@@ -57,6 +57,7 @@ else
 end
 tests{end+1} = 't_qps_matpower';
 tests{end+1} = 't_pf';
+tests{end+1} = 't_cpf';
 tests{end+1} = 't_islands';
 tests{end+1} = 't_opf_model';
 if have_fcn('fmincon')

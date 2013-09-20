@@ -252,6 +252,21 @@ function [options, names] = mpoption(varargin)
 %       123 - GRB_THREADS, 0 (auto) maximum number of threads to use (Threads)
 %       124 - GRB_OPT, 0            See GUROBI_OPTIONS for details
 %
+%   continuation power flow options
+%       125 - CPF_STEP, 0.05        continuation step size
+%       126 - CPF_ADAPT_STEP, 0     enable step adaptivity      [   0 or 1  ]
+%       127 - CPF_ERROR_TOL, 1e-3   error tolerance for adaptive step
+%                                   controller
+%       128 - CPF_STEP_MIN, 1e-4    minimum allowable step size
+%       129 - CPF_STEP_MAX, 0.2     maximum allowable step size
+%       130 - CPF_TRACE_NOSE, 1     terminate CPF when nose point detected
+%                                                               [   0 or 1  ]
+%       131 - CPF_TRACE_LAMBDA, 0   terminate CPF at a given lambda value
+%                                     (or at nose point if detected first)
+%       132 - CPF_TRACE_FULL, 0     terminate CPF after tracing full curve
+%                                                               [   0 or 1  ]
+%       133 - CPF_USER_CALLBACK, 0  See RUNCPF for details
+%
 %   deprecated options
 %       51 - SPARSE_QP, 1           pass sparse matrices to QP and LP
 %                                   solvers if possible         [   0 or 1  ]
@@ -259,7 +274,7 @@ function [options, names] = mpoption(varargin)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2011 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2013 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
@@ -435,6 +450,17 @@ else                    %% even number of parameters
         Inf;    %% 122 - GRB_TIMELIMIT
         0;      %% 123 - GRB_THREADS
         0;      %% 124 - GRB_OPT
+        
+        %% Continuation power flow options
+        0.05;   %% 125 - CPF_STEP
+        0;      %% 126 - CPF_ADAPT_STEP
+        1e-3;   %% 127 - CPF_ERROR_TOL
+        1e-4;   %% 128 - CPF_STEP_MIN
+        0.2;    %% 129 - CPF_STEP_MAX
+        1;      %% 130 - CPF_TRACE_NOSE
+        0;      %% 131 - CPF_TRACE_LAMBDA
+        0;      %% 132 - CPF_TRACE_FULL
+        0;      %% 133 - CPF_USER_CALLBACK
     ];
 end
 
@@ -591,6 +617,17 @@ names = char(   names, ...
                 'GRB_THREADS', ...          %% 123
                 'GRB_OPT'   );              %% 124
 
+%% continuation power flow options
+names = char(    names, ...
+                 'CPF_STEP', ...            %% 125
+                 'CPF_ADAPT_STEP', ...      %% 126
+                 'CPF_ERROR_TOL' , ...      %% 127
+                 'CPF_STEP_MIN' ,  ...      %% 128
+                 'CPF_STEP_MAX' , ...       %% 129
+                 'CPF_TRACE_NOSE' , ...     %% 130
+                 'CPF_TRACE_LAMBDA', ...    %% 131
+                 'CPF_TRACE_FULL', ...      %% 132
+                 'CPF_USER_CALLBACK' );     %% 133
 %%-----  process parameters  -----
 while i <= nargin
     %% get parameter name and value
