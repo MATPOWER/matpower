@@ -22,9 +22,9 @@ function [cb_state, results] = ...
 %           Ybus - bus admittance matrix
 %           Yf - branch admittance matrix, "from" end of branches
 %           Yt - branch admittance matrix, "to" end of branches
-%           pv - list of indices of PV buses
-%           pq - list of indices of PQ buses
-%           ref - list of indices of REF buses
+%           pv - vector of indices of PV buses
+%           pq - vector of indices of PQ buses
+%           ref - vector of indices of REF buses
 %           mpopt - MATPOWER options vector
 %       CB_STATE - user-defined struct containing any
 %           information the callback function would like to

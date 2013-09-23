@@ -1,4 +1,4 @@
-function [MVAbase, bus, gen, branch, success, et] = ...
+function [res, suc] = ...
     runcpf(basecasedata, targetcasedata, mpopt, fname, solvedcase)
 %RUNCPF  Runs a full AC continuation power flow
 %   [RESULTS, SUCCESS] = RUNCPF(BASECASEDATA, TARGETCASEDATA, ...
@@ -11,11 +11,11 @@ function [MVAbase, bus, gen, branch, success, et] = ...
 %
 %   Inputs (all are optional):
 %       BASECASEDATA : either a MATPOWER case struct or a string containing
-%           the name of the file with the case data having the base loading 
+%           the name of the file with the case data defining the base loading 
 %           and generation (default is 'case9')
 %           (see also CASEFORMAT and LOADCASE)
 %       TARGETCASEDATA : either a MATPOWER case struct or a string 
-%           containing the name of the file with the case data having the 
+%           containing the name of the file with the case data defining the 
 %           target loading and generation (default is 'case9target') 
 %       MPOPT : MATPOWER options vector to override default options
 %           can be used to specify the solution algorithm, output options
@@ -50,7 +50,7 @@ function [MVAbase, bus, gen, branch, success, et] = ...
 %
 %   Calling syntax options:
 %       results = runcpf;
-%       results = runcpf(basecasedata,targetcasedata);
+%       results = runcpf(basecasedata, targetcasedata);
 %       results = runcpf(basecasedata, targetcasedata, mpopt);
 %       results = runcpf(basecasedata, targetcasedata, mpopt, fname);
 %       results = runcpf(basecasedata, targetcasedata, mpopt, fname, solvedcase)
@@ -210,7 +210,7 @@ Sbusb = makeSbus(baseMVAb, busb, genb);
 %% compute target case complex bus power injections (generation - load)
 Sbust = makeSbus(baseMVAt, bust, gent);
 
-%% Scheduled transfer
+%% scheduled transfer
 Sxfr = Sbust - Sbusb;
     
 %% Run the base case power flow solution
@@ -370,11 +370,10 @@ if solvedcase
     savecase(solvedcase, results);
 end
 
-if nargout == 1 || nargout == 2
-    MVAbase = results;
-    bus = success;
-elseif nargout > 2
-    [MVAbase, bus, gen, branch, et] = ...
-        deal(results.baseMVA, results.bus, results.gen, results.branch, results.et);
-% else  %% don't define MVAbase, so it doesn't print anything
+if nargout
+    res = results;
+    if nargout > 1
+        suc = success;
+    end
+% else  %% don't define res, so it doesn't print anything
 end
