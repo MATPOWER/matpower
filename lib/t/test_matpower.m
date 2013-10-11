@@ -50,11 +50,7 @@ tests{end+1} = 't_margcost';
 tests{end+1} = 't_totcost';
 tests{end+1} = 't_modcost';
 tests{end+1} = 't_hasPQcap';
-if have_fcn('anon_fcns')
-    tests{end+1} = 't_mips';
-else
-    tests{end+1} = 't_mips6';
-end
+tests{end+1} = 't_mips';
 tests{end+1} = 't_qps_matpower';
 tests{end+1} = 't_pf';
 tests{end+1} = 't_cpf';
@@ -83,13 +79,7 @@ end
 if have_fcn('knitro')
     tests{end+1} = 't_opf_knitro';
 end
-if have_fcn('constr')
-    tests{end+1} = 't_opf_constr';
-end
 if have_fcn('bpmpd')
-    tests{end+1} = 't_opf_lp_den';
-    tests{end+1} = 't_opf_lp_spr';
-    tests{end+1} = 't_opf_lp_spf';
     tests{end+1} = 't_opf_dc_bpmpd';
 end
 if have_fcn('cplex')

@@ -84,26 +84,9 @@ else
     end
   end
 
-  %% update deprecated algorithm codes to new, generalized formulation equivalents
-  if alg == 100 || alg == 200        %% CONSTR
-    alg = 300;
-  elseif alg == 120 || alg == 220    %% dense LP
-    alg = 320;
-  elseif alg == 140 || alg == 240    %% sparse (relaxed) LP
-    alg = 340;
-  elseif alg == 160 || alg == 260    %% sparse (full) LP
-    alg = 360;
-  end
-  mpopt(11) = alg;
-
   %% run specific AC OPF solver
   if alg == 560 || alg == 565                   %% MIPS
-    if have_fcn('anon_fcns')
-      solver = @mipsopf_solver;
-    else
-      solver = @mips6opf_solver;
-    end
-    [results, success, raw] = feval(solver, om, mpopt);
+    [results, success, raw] = mipsopf_solver(om, mpopt);
   elseif alg == 580                             %% IPOPT
     if ~have_fcn('ipopt')
       error('opf_execute: OPF_ALG %d requires IPOPT (see https://projects.coin-or.org/Ipopt/)', alg);
@@ -133,24 +116,12 @@ else
     if ~have_fcn('fmincon')
       error('opf_execute: OPF_ALG %d requires FMINCON (Optimization Toolbox 2.x or later)', alg);
     end
-    if have_fcn('anon_fcns')
-      solver = @fmincopf_solver;
-    else
-      solver = @fmincopf6_solver;
-    end
-    [results, success, raw] = feval(solver, om, mpopt);
+    [results, success, raw] = fmincopf_solver(om, mpopt);
   elseif alg == 600                             %% KNITRO
     if ~have_fcn('knitro')
       error('opf_execute: OPF_ALG %d requires KNITRO (see http://www.ziena.com/)', alg);
     end
     [results, success, raw] = ktropf_solver(om, mpopt);
-  elseif alg == 300                             %% CONSTR
-    if ~have_fcn('constr')
-      error('opf_execute: OPF_ALG %d requires CONSTR (Optimization Toolbox 1.x)', alg);
-    end
-    [results, success, raw] = copf_solver(om, mpopt);
-  elseif alg == 320 || alg == 340 || alg == 360 %% LP
-    [results, success, raw] = lpopf_solver(om, mpopt);
   else
     error('opf_execute: OPF_ALG %d is not a valid algorithm code', alg);
   end

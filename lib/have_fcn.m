@@ -5,17 +5,14 @@ function TorF = have_fcn(tag)
 %
 %   Possible values for input TAG and their meanings:
 %       bpmpd       - BP, BPMPD interior point solver
-%       constr      - CONSTR, solver from Optimization Toolbox 1.x/2.x
 %       cplex       - CPLEX, IBM ILOG CPLEX Optimizer
 %       fmincon     - FMINCON, solver from Optimization Toolbox 2.x +
 %       gurobi      - GUROBI, Gurobi solver (http://www.gurobi.com/), 5.x +
 %       ipopt       - IPOPT, NLP solver (https://projects.coin-or.org/Ipopt/)
 %       linprog     - LINPROG, LP solver from Optimization Toolbox 2.x +
-%       lp          - LP, LP solver from Optimization Toolbox 1.x/2.x
 %       knitro      - KNITRO, NLP solver (http://www.ziena.com/)
 %       minopf      - MINOPF, MINOPF, MINOS-based OPF solver
 %       mosek       - MOSEK, LP/QP solver (http://www.mosek.com/)
-%       qp          - QP, QP solver from Optimization Toolbox 1.x/2.x
 %       quadprog    - QUADPROG, QP solver from Optimization Toolbox 2.x +
 %       quadprog_ls - QUADPROG with large-scale interior point convex solver
 %                       from Optimization Toolbox 6.x +
@@ -24,7 +21,6 @@ function TorF = have_fcn(tag)
 %       smartmarket - RUNMARKET and friends, for running an auction
 %       tralmopf    - TRALMOPF, trust region based augmented Langrangian
 %                     OPF solver
-%       anon_fcns   - anonymous functions, MATLAB version >= 7
 %       octave      - code is running under Octave, not MATLAB
 %
 %   Examples:
@@ -64,8 +60,6 @@ function TorF = have_fcn(tag)
 switch tag
     case 'bpmpd'
         TorF = exist('bp', 'file') == 3;
-    case 'constr'
-        TorF = exist('constr', 'file') == 2 && exist('foptions', 'file');
     case 'cplex'
         TorF = 0;
         if exist('cplexqp', 'file')
@@ -88,8 +82,6 @@ switch tag
         TorF = exist('ipopt', 'file') == 3;
     case 'linprog'
         TorF = license('test', 'optimization_toolbox') && exist('linprog', 'file') == 2;
-    case 'lp'
-        TorF = exist('lp', 'file') == 2;
     case 'knitro'
         TorF = exist('ktrlink', 'file') == 2;
         if TorF
@@ -102,8 +94,6 @@ switch tag
         TorF = exist('minopf', 'file') == 3;
     case 'mosek'
         TorF = exist('mosekopt', 'file') == 3;
-    case 'qp'
-        TorF = exist('qp', 'file') == 2;
     case 'quadprog'
         TorF = license('test', 'optimization_toolbox') && exist('quadprog', 'file') == 2;
     case 'quadprog_ls'
@@ -117,17 +107,6 @@ switch tag
         TorF = exist('runmarket', 'file') == 2;
     case 'octave'
         TorF = exist('OCTAVE_VERSION', 'builtin') == 5;
-    case 'anon_fcns'
-        if have_fcn('octave')
-            TorF = 1;
-        else
-            v = ver('Matlab');
-            if str2double(v.Version(1)) < 7    %% anonymous functions not available
-                TorF = 0;
-            else
-                TorF = 1;
-            end
-        end
     case {'pdipmopf', 'scpdipmopf', 'tralmopf'}
         if have_fcn('octave')
             TorF = 0;

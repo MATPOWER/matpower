@@ -158,9 +158,7 @@ function om = opt_model(s)
 %   under other licensing terms, the licensors of MATPOWER grant
 %   you additional permission to convey the resulting work.
 
-% es = struct();    %% doesn't work in MATLAB 6
-es = struct('tmp', 0);
-es = rmfield(es, 'tmp');
+es = struct();
 if nargin == 0
     om.var.idx.i1 = es;
     om.var.idx.iN = es;

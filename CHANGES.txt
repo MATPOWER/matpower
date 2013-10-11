@@ -15,6 +15,31 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.1
 -----------------
 
+10/11/13
+    - Removed support for Matlab 6.x. Removed 'anon_fcns' option from
+      have_fcn(). Files removed:
+        fmincopf6_solver.m
+        mips6.m
+        mips6opf_solver.m
+        qps_mips6.m
+        t_mips6.m
+    - Removed support for constr and successive LP-based OPF solvers.
+      Removed 'constr', 'lp', 'qp' options from have_fcn(). Files removed:
+        copf_solver.m
+        fun_copf.m
+        grad_copf.m
+        LPconstr.m
+        LPeqslvr.m
+        lpopf_solver.m
+        LPrelax.m
+        LPsetup.m
+        mp_lp.m
+        mp_qp.m
+        t/t_opf_constr.m
+        t/t_opf_lp_den.m
+        t/t_opf_lp_spf.m
+        t/t_opf_lp_spr.m
+
 9/20/13
     - Added continuation power flow, runcpf(), with tangent
       predictor and Newton method corrector, based on code

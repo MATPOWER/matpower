@@ -227,15 +227,9 @@ switch alg
         end
         mips_opt.verbose = verbose;
         
-        if have_fcn('anon_fcns')
-            solver = 'qps_mips';
-        else
-            solver = 'qps_mips6';
-        end
-
         %% call solver
         [x, f, eflag, output, lambda] = ...
-            feval(solver, H, c, A, l, u, xmin, xmax, x0, mips_opt);
+            qps_mips(H, c, A, l, u, xmin, xmax, x0, mips_opt);
     case 300                    %% use QUADPROG or LINPROG from Opt Tbx ver 2.x+
         [x, f, eflag, output, lambda] = ...
             qps_ot(H, c, A, l, u, xmin, xmax, x0, opt);

@@ -47,10 +47,6 @@ function [options, names] = mpoption(varargin)
 %       11 - OPF_ALG, 0             solver to use for AC OPF
 %           [    0 - choose default solver based on availability in the     ]
 %           [        following order, 540, 560                              ]
-%           [  300 - constr, MATLAB Optimization Toolbox 1.x and 2.x        ]
-%           [  320 - dense successive LP                                    ]
-%           [  340 - sparse successive LP (relaxed)                         ]
-%           [  360 - sparse successive LP (full)                            ]
 %           [  500 - MINOPF, MINOS-based solver, requires optional          ]
 %           [        MEX-based MINOPF package, available from:              ]
 %           [        http://www.pserc.cornell.edu/minopf/                   ]
@@ -71,16 +67,10 @@ function [options, names] = mpoption(varargin)
 %           [  600 - KNITRO, requires MATLAB Optimization Toolbox and       ]
 %           [        KNITRO libraries available from: http://www.ziena.com/ ]
 %       16 - OPF_VIOLATION, 5e-6    constraint violation tolerance
-%       17 - CONSTR_TOL_X, 1e-4     termination tol on x for constr/fmincon
-%       18 - CONSTR_TOL_F, 1e-4     termination tol on f for constr/fmincon
-%       19 - CONSTR_MAX_IT, 0       max number of iterations for constr/fmincon
+%       17 - CONSTR_TOL_X, 1e-4     termination tol on x for fmincon/Knitro
+%       18 - CONSTR_TOL_F, 1e-4     termination tol on f for fmincon/Knitro
+%       19 - CONSTR_MAX_IT, 0       max number of iterations for fmincon
 %                                   [       0 => default                    ]
-%       20 - LPC_TOL_GRAD, 3e-3     termination tolerance on gradient, LP-based
-%                                   solver
-%       21 - LPC_TOL_X, 1e-4        termination tolerance on x (min step size),
-%                                   LP-based solver
-%       22 - LPC_MAX_IT, 400        maximum number of iterations, LP-based slvr
-%       23 - LPC_MAX_RESTART, 5     maximum number of restarts, LP-based solver
 %       24 - OPF_FLOW_LIM, 0        qty to limit for branch flow constraints
 %           [   0 - apparent power flow (limit in MVA)                      ]
 %           [   1 - active power flow (limit in MW)                         ]
@@ -266,10 +256,6 @@ function [options, names] = mpoption(varargin)
 %       132 - CPF_TRACE_FULL, 0     terminate CPF after tracing full curve
 %                                                               [   0 or 1  ]
 %       133 - CPF_USER_CALLBACK, 0  See RUNCPF for details
-%
-%   deprecated options
-%       51 - SPARSE_QP, 1           pass sparse matrices to QP and LP
-%                                   solvers if possible         [   0 or 1  ]
 
 %   MATPOWER
 %   $Id$
@@ -325,16 +311,15 @@ else                    %% even number of parameters
         0;      %% 12 - RESERVED12 (was OPF_ALG_POLY = 100)
         0;      %% 13 - RESERVED13 (was OPF_ALG_PWL = 200)
         0;      %% 14 - RESERVED14 (was OPF_POLY2PWL_PTS = 10)
-        0;      %% 15 - OPF_NEQ, not a user option (number of eq constraints
-                %%          for copf_solver, lpopf_solver, set by program)
+        0;      %% 15 - OPF_NEQ (removed)
         5e-6;   %% 16 - OPF_VIOLATION
         1e-4;   %% 17 - CONSTR_TOL_X
         1e-4;   %% 18 - CONSTR_TOL_F
         0;      %% 19 - CONSTR_MAX_IT
-        3e-3;   %% 20 - LPC_TOL_GRAD
-        1e-4;   %% 21 - LPC_TOL_X
-        400;    %% 22 - LPC_MAX_IT
-        5;      %% 23 - LPC_MAX_RESTART
+        3e-3;   %% 20 - LPC_TOL_GRAD (removed)
+        1e-4;   %% 21 - LPC_TOL_X (removed)
+        400;    %% 22 - LPC_MAX_IT (removed)
+        5;      %% 23 - LPC_MAX_RESTART (removed)
         0;      %% 24 - OPF_FLOW_LIM
         0;      %% 25 - OPF_IGNORE_ANG_LIM
         0;      %% 26 - OPF_ALG_DC
@@ -366,7 +351,7 @@ else                    %% even number of parameters
         0;      %% 50 - RESERVED50
         
         %% other options
-        1;      %% 51 - SPARSE_QP
+        1;      %% 51 - SPARSE_QP (removed)
         0;      %% 52 - RETURN_RAW_DER
         0;      %% 53 - RESERVED53
         0;      %% 54 - RESERVED54
@@ -483,16 +468,16 @@ names = char(   names, ...
                 'RESERVED12', ...           %% 12   (was OPF_ALG_POLY)
                 'RESERVED13', ...           %% 13   (was OPF_ALG_PWL)
                 'RESERVED14', ...           %% 14   (was OPF_POLY2PWL_PTS)
-                'OPF_NEQ', ...              %% 15
+                'OPF_NEQ', ...              %% 15   (removed)
                 'OPF_VIOLATION', ...        %% 16
                 'CONSTR_TOL_X', ...         %% 17
                 'CONSTR_TOL_F', ...         %% 18
                 'CONSTR_MAX_IT', ...        %% 19
-                'LPC_TOL_GRAD'  );          %% 20
+                'LPC_TOL_GRAD'  );          %% 20   (removed)
 names = char(   names, ...
-                'LPC_TOL_X', ...            %% 21
-                'LPC_MAX_IT', ...           %% 22
-                'LPC_MAX_RESTART', ...      %% 23
+                'LPC_TOL_X', ...            %% 21   (removed)
+                'LPC_MAX_IT', ...           %% 22   (removed)
+                'LPC_MAX_RESTART', ...      %% 23   (removed)
                 'OPF_FLOW_LIM', ...         %% 24
                 'OPF_IGNORE_ANG_LIM', ...   %% 25
                 'OPF_ALG_DC', ...           %% 26
