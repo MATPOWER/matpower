@@ -68,7 +68,7 @@ function om = opf_model(mpc)
 %   you additional permission to convey the resulting work.
 
 if nargin == 0
-	es = struct();
+    es = struct();
     s = struct('mpc', es);
     om = opt_model;
     om = class(s, 'opf_model', om);
