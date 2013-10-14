@@ -127,7 +127,7 @@ else                            %% simple named set
 end
 
 if isempty(cp)                  %% just setting dimensions for indexed set
-    %% add info about this linear constraint set
+    %% add info about this cost set
     om.cost.idx.i1.(name)  = zeros(idx{:}); %% starting index
     om.cost.idx.iN.(name)  = zeros(idx{:}); %% ending index
     om.cost.idx.N.(name)   = zeros(idx{:}); %% number of costs (nw)
@@ -245,11 +245,11 @@ else
             om.cost.data.mm = subsasgn(om.cost.data.mm, s2, cp.mm);
         end
         
-        %% update number of linear constraints and constraint sets
+        %% update number of costs and cost sets
         om.cost.N  = subsref(om.cost.idx.iN, s1);
         om.cost.NS = om.cost.NS + 1;
         
-        %% add to ordered list of linear constraint sets
+        %% add to ordered list of cost sets
         om.cost.order(om.cost.NS).name = name;
         om.cost.order(om.cost.NS).idx  = idx;
     end
