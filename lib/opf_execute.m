@@ -83,6 +83,7 @@ else
       alg = 560;                %% MIPS
     end
   end
+  mpopt(11) = alg;
 
   %% run specific AC OPF solver
   if alg == 560 || alg == 565                   %% MIPS
