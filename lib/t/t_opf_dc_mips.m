@@ -62,10 +62,7 @@ t0 = 'DC OPF (MIPS): ';
 mpopt = mpoption('OUT_ALL', 0, 'VERBOSE', verbose);
 mpopt = mpoption(mpopt, 'OPF_ALG_DC', 200);
 
-%% run DC OPF
-s6 = warning('query', 'MATLAB:nearlySingularMatrixUMFPACK');
 s2 = warning('query', 'MATLAB:singularMatrix');
-warning('off', 'MATLAB:nearlySingularMatrixUMFPACK');
 
 %% set up indices
 ib_data     = [1:BUS_AREA BASE_KV:VMIN];
@@ -156,7 +153,6 @@ t_ok(~success, [t 'no success']);
 if have_fcn('octave')
     warning(s1.state, 'Octave:load-file-in-path');
 end
-warning(s6.state, 'MATLAB:nearlySingularMatrixUMFPACK');
 warning(s2.state, 'MATLAB:singularMatrix');
 
 t_end;

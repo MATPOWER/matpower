@@ -62,10 +62,6 @@ t0 = 'DC OPF (IPOPT): ';
 mpopt = mpoption('OUT_ALL', 0, 'VERBOSE', verbose);
 mpopt = mpoption(mpopt, 'OPF_ALG_DC', 400);
 
-%% run DC OPF
-s6 = warning('query', 'MATLAB:nearlySingularMatrixUMFPACK');
-warning('off', 'MATLAB:nearlySingularMatrixUMFPACK');
-
 %% set up indices
 ib_data     = [1:BUS_AREA BASE_KV:VMIN];
 ib_voltage  = [VM VA];
@@ -154,6 +150,5 @@ t_ok(~success, [t 'no success']);
 if have_fcn('octave')
     warning(s1.state, 'Octave:load-file-in-path');
 end
-warning(s6.state, 'MATLAB:nearlySingularMatrixUMFPACK');
 
 t_end;

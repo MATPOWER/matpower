@@ -56,9 +56,6 @@ mpopt = mpoption(mpopt, 'OPF_ALG', 560, 'OPF_ALG_DC', 200);
     MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
     QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
 
-s6 = warning('query', 'MATLAB:nearlySingularMatrixUMFPACK');
-warning('off', 'MATLAB:nearlySingularMatrixUMFPACK');
-
 %% run the OPF with fixed reserves
 t = 'fixed reserves : ';
 mpc = loadcase(casefile);
@@ -138,7 +135,5 @@ t_ok(~isfield(r.reserves, 'R'), [t 'no reserves']);
 % r.if.P
 % r.if.mu.l
 % r.if.mu.u
-
-warning(s6.state, 'MATLAB:nearlySingularMatrixUMFPACK');
 
 t_end;
