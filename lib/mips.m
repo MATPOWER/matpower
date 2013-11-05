@@ -298,6 +298,7 @@ alpha_min = 1e-8;       %% OPT_AP_AD_MIN
 rho_min = 0.95;         %% OPT_IPM_QUAD_LOWTHRESH
 rho_max = 1.05;         %% OPT_IPM_QUAD_HIGHTHRESH
 mu_threshold = 1e-5;    %% SCOPF_MULTIPLIERS_FILTER_THRESH
+max_stepsize = 1e10;
 
 %% initialize
 i = 0;                      %% iteration counter
@@ -432,14 +433,14 @@ while (~converged && i < opt.max_it)
 %     end
 %     bbb = [-N; -g];
 %     dxdlam = AAA \ bbb;
-    if any(isnan(dxdlam))
+    if any(isnan(dxdlam)) || norm(dxdlam) > max_stepsize
         if opt.verbose
             fprintf('\nNumerically Failed\n');
         end
         eflag = -1;
         break;
     end
-    dx = dxdlam(1:nx);
+    dx = dxdlam(1:nx, 1);
     dlam = dxdlam(nx+(1:neq), 1);
     dz = -h - z - dh' * dx;
     dmu = -mu + zinvdiag *(gamma*e - mudiag * dz);
