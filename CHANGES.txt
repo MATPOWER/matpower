@@ -19,6 +19,9 @@ Changes since 4.1
     - Fixed a bug in MIPS where a near-singular matrix could produce
       an extremely large Newton step, resulting in incorrectly satisfying
       the relative feasibility criterion for successful termination.
+    - Improved the starting point created for Ipopt, Knitro and MIPS by
+      dcopf_solver(), ipoptopf_solver(), ktropf_solver and mipsopf_solver()
+      for variables that are only bounded on one side.
 
 10/11/13
     - Removed support for Matlab 6.x. Removed 'anon_fcns' option from

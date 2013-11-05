@@ -38,7 +38,7 @@ function [results, success, raw] = ipoptopf_solver(om, mpopt)
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
-%   Copyright (c) 2000-2011 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2000-2013 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
@@ -101,7 +101,11 @@ ny = getN(om, 'var', 'y');  %% number of piece-wise linear costs
 ll = xmin; uu = xmax;
 ll(xmin == -Inf) = -1e10;   %% replace Inf with numerical proxies
 uu(xmax ==  Inf) =  1e10;
-x0 = (ll + uu) / 2;
+x0 = (ll + uu) / 2;         %% set x0 mid-way between bounds
+k = find(xmin == -Inf & xmax < Inf);    %% if only bounded above
+x0(k) = xmax(k) - 1;                    %% set just below upper bound
+k = find(xmin > -Inf & xmax == Inf);    %% if only bounded below
+x0(k) = xmin(k) + 1;                    %% set just above lower bound
 Varefs = bus(bus(:, BUS_TYPE) == REF, VA) * (pi/180);
 x0(vv.i1.Va:vv.iN.Va) = Varefs(1);  %% angles set to first reference angle
 if ny > 0
