@@ -8,12 +8,17 @@ maintained by Ray Zimmerman <rz10@cornell.edu>
 
 MATPOWER
 $Id$
-Copyright (c) 1996-2012 by Power System Engineering Research Center (PSERC)
+Copyright (c) 1996-2013 by Power System Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
 
 
 Changes since 4.1
 -----------------
+
+11/5/13
+    - Fixed a bug in MIPS where a near-singular matrix could produce
+      an extremely large Newton step, resulting in incorrectly satisfying
+      the relative feasibility criterion for successful termination.
 
 10/11/13
     - Removed support for Matlab 6.x. Removed 'anon_fcns' option from
