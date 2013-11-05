@@ -161,7 +161,7 @@ function [x, f, eflag, output, lambda] = mips(f_fcn, x0, A, l, u, xmin, xmax, gh
 %   MIPS
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2009-2010 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2013 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MIPS.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
