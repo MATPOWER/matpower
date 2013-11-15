@@ -15,6 +15,11 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.1
 -----------------
 
+11/15/13
+    - Added case_info().
+    - Modified connected_components() to sort returned groups by
+      decreasing cardinality.
+
 11/5/13
     - Fixed a bug in MIPS where a near-singular matrix could produce
       an extremely large Newton step, resulting in incorrectly satisfying
