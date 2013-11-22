@@ -55,7 +55,7 @@ else
 end
 
 %% load cases
-casenames = {'case118', 'case14', 'case9', 'case30'};
+casenames = {'case118', 'case30', 'case14', 'case9'};
 n = length(casenames);
 for k = 1:n
     mpc{k} = loadcase(casenames{k});
