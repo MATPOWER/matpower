@@ -11,13 +11,13 @@ function [res, suc] = ...
 %
 %   Inputs (all are optional):
 %       BASECASEDATA : either a MATPOWER case struct or a string containing
-%           the name of the file with the case data defining the base loading 
+%           the name of the file with the case data defining the base loading
 %           and generation (default is 'case9')
 %           (see also CASEFORMAT and LOADCASE)
-%       TARGETCASEDATA : either a MATPOWER case struct or a string 
-%           containing the name of the file with the case data defining the 
-%           target loading and generation (default is 'case9target') 
-%       MPOPT : MATPOWER options vector to override default options
+%       TARGETCASEDATA : either a MATPOWER case struct or a string
+%           containing the name of the file with the case data defining the
+%           target loading and generation (default is 'case9target')
+%       MPOPT : MATPOWER options struct to override default options
 %           can be used to specify the solution algorithm, output options
 %           termination tolerances, and more (see also MPOPTION).
 %       FNAME : name of a file to which the pretty-printed output will
@@ -25,7 +25,7 @@ function [res, suc] = ...
 %       SOLVEDCASE : name of file to which the solved case will be saved
 %           in MATPOWER case format (M-file will be assumed unless the
 %           specified name ends with '.mat')
-%       
+%
 %   Outputs (all are optional):
 %       RESULTS : results struct, with the following fields:
 %           (all fields from the input MATPOWER case, i.e. bus, branch,
@@ -66,7 +66,7 @@ function [res, suc] = ...
 %   Examples:
 %       results = runcpf('case9', 'case9target');
 %       results = runcpf('case9', 'case9target', ...
-%                           mpoption('CPF_ADAPT_STEP',1));
+%                           mpoption('cpf.adapt_step', 1));
 %
 %   See also MPOPTION, RUNPF.
 
@@ -131,22 +131,21 @@ if nargin < 5
 end
 
 %% options
-verbose = mpopt(31);
-step            = mpopt(125);   %% continuation step length
-adapt_step      = mpopt(126);   %% step adaptivity enabled?
-cpf_tol         = mpopt(127);   %% Error tolerance for adaptive step controller
-step_size_min   = mpopt(128);   %% Min. allowed step
-step_size_max   = mpopt(129);   %% Max. allowed step
-cpf_terminate_nose   = mpopt(130);  %% terminate at nose point
-cpf_terminate_lambda = mpopt(131);  %% terminate at given lambda value
-cpf_terminate_full   = mpopt(132);  %% trace the full continuation curve
-cpf_cb          = mpopt(133);   %% user callback
-if cpf_terminate_lambda || cpf_terminate_full
-    cpf_terminate_nose = 0;
+step             = mpopt.cpf.step;              %% continuation step length
+parameterization = mpopt.cpf.parameterization;  %% parameterization
+adapt_step       = mpopt.cpf.adapt_step;        %% use adaptive step size?
+cb_args          = mpopt.cpf.user_callback_args;
+
+%% set up callbacks
+callback_names = {'cpf_default_callback'};
+if ~isempty(mpopt.cpf.user_callback)
+    if iscell(mpopt.cpf.user_callback)
+        callback_names = {callback_names{:}, mpopt.cpf.user_callback{:}};
+    else
+        callback_names = {callback_names{:}, mpopt.cpf.user_callback};
+    end
 end
-if cpf_cb
-    cpf_cb_fn = str2func(sprintf('cpf_user_callback_%d', cpf_cb));
-end
+callbacks = cellfun(@str2func, callback_names, 'UniformOutput', false);
 
 %% read base case data
 mpcbase = loadcase(basecasedata);
@@ -184,18 +183,18 @@ mpctarget = ext2int(mpctarget);
 %[ref, pv, pq] = bustypes(bust, gent);
 
 %% generator info
-ont = find(gent(:, GEN_STATUS) > 0);      %% which generators are on?
-gbust = gent(ont, GEN_BUS);                %% what buses are they at?
+ont = find(gent(:, GEN_STATUS) > 0);    %% which generators are on?
+gbust = gent(ont, GEN_BUS);             %% what buses are they at?
 
 %%-----  run the power flow  -----
 t0 = clock;
-if verbose > 0
+if mpopt.verbose > 0
     v = mpver('all');
     fprintf('\nMATPOWER Version %s, %s', v.Version, v.Date);
     fprintf(' -- AC Continuation Power Flow\n');
 end
 %% initial state
-%V0    = ones(size(bus, 1), 1);            %% flat start
+%V0    = ones(size(bus, 1), 1);         %% flat start
 V0  = busb(:, VM) .* exp(sqrt(-1) * pi/180 * busb(:, VA));
 vcb = ones(size(V0));           %% create mask of voltage-controlled buses
 vcb(pq) = 0;                    %% exclude PQ buses
@@ -212,28 +211,31 @@ Sbust = makeSbus(baseMVAt, bust, gent);
 
 %% scheduled transfer
 Sxfr = Sbust - Sbusb;
-    
+
 %% Run the base case power flow solution
-if verbose > 2
-    mpopt_pf = mpoption(mpopt, 'VERBOSE', max(0, verbose-1));
+if mpopt.verbose > 2
+    mpopt_pf = mpoption(mpopt, 'verbose', max(0, mpopt.verbose-1));
 else
-    mpopt_pf = mpoption(mpopt, 'VERBOSE', max(0, verbose-2));
+    mpopt_pf = mpoption(mpopt, 'verbose', max(0, mpopt.verbose-2));
 end
+lam = 0;
 [V, success, iterations] = newtonpf(Ybus, Sbusb, V0, ref, pv, pq, mpopt_pf);
-if verbose > 2
+if mpopt.verbose > 2
     fprintf('step %3d : lambda = %6.3f\n', 0, 0);
-elseif verbose > 1
+elseif mpopt.verbose > 1
     fprintf('step %3d : lambda = %6.3f, %2d Newton steps\n', 0, 0, iterations);
 end
 
-lamprv = 0;     %% lam at previous step
-Vprv = V;       %% V at previous step
+lamprv = lam;   %% lam at previous step
+Vprv   = V;     %% V at previous step
 continuation = 1;
 cont_steps = 0;
 
+%% input args for callbacks
 cb_data = struct( ...
     'mpc_base', mpcbase, ...
     'mpc_target', mpctarget, ...
+    'Sxfr', Sxfr, ...
     'Ybus', Ybus, ...
     'Yf', Yf, ...
     'Yt', Yt, ...
@@ -241,9 +243,12 @@ cb_data = struct( ...
     'pv', pv, ...
     'pq', pq, ...
     'mpopt', mpopt );
-cb_state = cpf_default_callback(cont_steps, V, 0, V, 0, cb_data);
-if cpf_cb
-    cb_state = cpf_cb_fn(cont_steps, V, 0, V, 0, cb_data, cb_state);
+cb_state = struct();
+
+%% invoke callbacks
+for k = 1:length(callbacks)
+    cb_state = callbacks{k}(cont_steps, V, lam, V, lam, ...
+                            cb_data, cb_state, cb_args);
 end
 
 %% tangent predictor z = [dx;dlam]
@@ -252,80 +257,105 @@ z(end,1) = 1.0;
 while(continuation)
     cont_steps = cont_steps + 1;
     %% prediction for next step
-    [V0, lam0, z] = cpf_predictor(Vprv, lamprv, Ybus, Sxfr, pv, pq, step, z);
-    
+    [V0, lam0, z] = cpf_predictor(V, lam, Ybus, Sxfr, pv, pq, step, z, ...
+        Vprv, lamprv, parameterization);
+
+    %% save previous voltage, lambda before updating
+    Vprv = V;
+    lamprv = lam;
+
     %% correction
     [V, success, i, lam] = cpf_corrector(Ybus, Sbusb, V0, ref, pv, pq, ...
-                                    lam0, Sxfr, Vprv, lamprv, z, step, mpopt_pf);
-    if verbose > 2
+                lam0, Sxfr, Vprv, lamprv, z, step, parameterization, mpopt_pf);
+    if ~success
+        continuation = 0;
+        if mpopt.verbose
+            fprintf('step %3d : lambda = %6.3f, corrector did not converge in %d iterations\n', cont_steps, lam, i);
+        end
+        break;
+    end
+    if mpopt.verbose > 2
         fprintf('step %3d : lambda = %6.3f\n', cont_steps, lam);
-    elseif verbose > 1
+    elseif mpopt.verbose > 1
         fprintf('step %3d : lambda = %6.3f, %2d corrector Newton steps\n', cont_steps, lam, i);
     end
-    cb_state = cpf_default_callback(cont_steps, V, lam, V0, lam0, cb_data, cb_state);
-    if cpf_cb
-        cb_state = cpf_cb_fn(cont_steps, V, lam, V0, lam0, cb_data, cb_state);
+
+    %% invoke callbacks
+    for k = 1:length(callbacks)
+        cb_state = callbacks{k}(cont_steps, V, lam, V0, lam0, ...
+                                cb_data, cb_state, cb_args);
     end
     
-    if cpf_terminate_lambda
-        if cpf_terminate_lambda < lam   %% reached desired lambda
-            if verbose
-                fprintf('\nReached desired lambda %3.2f in %d continuation steps\n',cpf_terminate_lambda,cont_steps);
+    if ischar(mpopt.cpf.stop_at)
+        if strcmp(upper(mpopt.cpf.stop_at), 'FULL')
+            if abs(lam) < 1e-8                      %% traced the full continuation curve
+                if mpopt.verbose
+                    fprintf('\nTraced full continuation curve in %d continuation steps\n',cont_steps);
+                end
+                continuation = 0;
+            elseif lam < lamprv && lam - step < 0   %% next step will overshoot
+                step = lam;             %% modify step-size
+                parameterization = 1;   %% change to natural parameterization
+                adapt_step = 0;         %% disable step-adaptivity
             end
-            continuation = 0;
+        else    %% == 'NOSE'
+            if lam < lamprv                         %% reached the nose point
+                if mpopt.verbose
+                    fprintf('\nReached steady state loading limit in %d continuation steps\n',cont_steps);
+                end
+                continuation = 0;
+            end
         end
-        if lam < lamprv                 %% reached the nose point
-            if verbose
-                fprintf('\nReached steady state loading limit in %d continuation steps\n',cont_steps);
+    else
+        if lam < lamprv                             %% reached the nose point
+            if mpopt.verbose
+                fprintf('\nReached steady state loading limit in %d continuation steps\n', cont_steps);
             end
             continuation = 0;
-        end
-    end
-    
-    if cpf_terminate_nose
-        if lam < lamprv                 %% reached the nose point
-            if verbose
-                fprintf('\nReached steady state loading limit in %d continuation steps\n',cont_steps);
+        elseif abs(mpopt.cpf.stop_at - lam) < 1e-8  %% reached desired lambda
+            if mpopt.verbose
+                fprintf('\nReached desired lambda %3.2f in %d continuation steps\n', ...
+                    mpopt.cpf.stop_at, cont_steps);
             end
             continuation = 0;
-        end
-    end
-    
-    if cpf_terminate_full
-        if lam < 0                      %% traced the full continuation curve
-            if verbose
-                fprintf('\nTraced full continuation curve in %d continuation steps\n',cont_steps);
-            end
-            continuation = 0;
+        elseif lam + step > mpopt.cpf.stop_at   %% will reach desired lambda in next step
+            step = mpopt.cpf.stop_at - lam; %% modify step-size
+            parameterization = 1;           %% change to natural parameterization
+            adapt_step = 0;                 %% disable step-adaptivity
         end
     end
     
     if adapt_step && continuation
         %% Adapt stepsize
-        cpf_error = norm([angle(V(pq));abs(V([pv;pq]));lam] - [angle(V0(pq));abs(V0([pv;pq]));lam0],inf); 
-        if cpf_error < cpf_tol
+        cpf_error = norm([angle(V(pq));abs(V([pv;pq]));lam] - [angle(V0(pq));abs(V0([pv;pq]));lam0],inf);
+        if cpf_error < mpopt.cpf.error_tol
             %% Increase stepsize
-            step = step*cpf_tol/cpf_error;
-            if step > step_size_max
-                step = step_size_max;
+            step = step*mpopt.cpf.error_tol/cpf_error;
+            if step > mpopt.cpf.step_max
+                step = mpopt.cpf.step_max;
             end
         else
             %% decrese stepsize
-            step = step*cpf_tol/cpf_error;
-            if step < step_size_min
-                step = step_size_min;
+            step = step*mpopt.cpf.error_tol/cpf_error;
+            if step < mpopt.cpf.step_min
+                step = mpopt.cpf.step_min;
             end
         end
     end
-    Vprv = V;
-    lamprv = lam;
-end
-[cb_state, cpf_results] = cpf_default_callback(cont_steps, V, lam, V0, lam0, cb_data, cb_state);
-if cpf_cb
-    [cb_state, cpf_results] = cpf_cb_fn(cont_steps, V, lam, V0, lam0, cb_data, cb_state, cpf_results);
 end
 
-%% update bus and gen matrices to reflect the loading and generation 
+%% invoke callbacks
+if success
+    cpf_results = struct();
+    for k = 1:length(callbacks)
+        [cb_state, cpf_results] = callbacks{k}(cont_steps, V, lam, V0, lam0, ...
+                                    cb_data, cb_state, cb_args, cpf_results);
+    end
+else
+    cpf_results.iterations = i;
+end
+
+%% update bus and gen matrices to reflect the loading and generation
 %% at the noise point
 bust(:,PD) = busb(:,PD) + lam*(bust(:,PD) - busb(:,PD));
 bust(:,QD) = busb(:,QD) + lam*(bust(:,QD) - busb(:,QD));
@@ -340,9 +370,11 @@ mpctarget.success = success;
 %%-----  output results  -----
 %% convert back to original bus numbering & print results
 [mpctarget.bus, mpctarget.gen, mpctarget.branch] = deal(bust, gent, brancht);
-n = cpf_results.iterations + 1;
-cpf_results.V_p = i2e_data(mpctarget, cpf_results.V_p, NaN(nb,n), 'bus', 1);
-cpf_results.V_c = i2e_data(mpctarget, cpf_results.V_c, NaN(nb,n), 'bus', 1);
+if success
+    n = cpf_results.iterations + 1;
+    cpf_results.V_p = i2e_data(mpctarget, cpf_results.V_p, NaN(nb,n), 'bus', 1);
+    cpf_results.V_c = i2e_data(mpctarget, cpf_results.V_c, NaN(nb,n), 'bus', 1);
+end
 results = int2ext(mpctarget);
 results.cpf = cpf_results;
 

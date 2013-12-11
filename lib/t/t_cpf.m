@@ -1,5 +1,5 @@
 function res = t_cpf(quiet)
-%T_PF  Tests for continuation power flow.
+%T_CPF  Tests for continuation power flow.
 
 %   MATPOWER
 %   $Id$
@@ -34,28 +34,22 @@ if nargin < 1
     quiet = 0;
 end
 
-t_begin(21, quiet);
+t_begin(81, quiet);
 plot_nose_curve = 0;
+verbose = 0;
 
 casefile = 't_case9_pfv2';
-if quiet
-    verbose = 0;
-else
-    verbose = 1;
-end
 if have_fcn('octave')
     s1 = warning('query', 'Octave:load-file-in-path');
     warning('off', 'Octave:load-file-in-path');
 end
-mpopt = mpoption('OUT_ALL', 0, 'VERBOSE', 0);
-%mpopt = mpoption(mpopt, 'CPF_TRACE_FULL', 0);
-mpopt = mpoption(mpopt, 'CPF_STEP', 0.02);
-%mpopt = mpoption(mpopt, 'CPF_ADAPT_STEP', 1);
-%mpopt = mpoption(mpopt, 'CPF_ERROR_TOL', 2e-5);
-if plot_nose_curve
-	mpopt = mpoption(mpopt, 'CPF_USER_CALLBACK', 1);
-	mpopt = mpoption(mpopt, 'VERBOSE', 2);
-end	
+mpopt = mpoption('out.all', 0, 'verbose', verbose);
+%mpopt = mpoption(mpopt, 'cpf.stop_at', 'FULL', );
+mpopt = mpoption(mpopt, 'cpf.step', 0.02);
+%mpopt = mpoption(mpopt, 'cpf.adapt_step', 1);
+%mpopt = mpoption(mpopt, 'cpf.error_tol', 2e-5);
+mpopt = mpoption(mpopt, 'cpf.plot.level', plot_nose_curve);
+%mpopt = mpoption(mpopt, 'cpf.plot.bus', 9);
 
 %% define named indices into bus, gen, branch matrices
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
@@ -74,31 +68,52 @@ mpcb.bus = [mpcb.bus(1:3, :); mpcb.bus(3, :); mpcb.bus(4:end, :)];
 mpcb.bus(4, BUS_I) = 50;
 mpcb.bus(4, BUS_TYPE) = NONE;
 % r = runpf(mpcb, mpopt);
-% mpcb.gen(1, [PG QG]) = r.gen(1, [PG QG]);	%% solved values for slack gen
+% mpcb.gen(1, [PG QG]) = r.gen(1, [PG QG]); %% solved values for slack gen
 mpct = mpcb;
 factor = 2.5;
 mpct.gen(:, [PG QG]) = mpct.gen(:, [PG QG]) * factor;
 mpct.bus(:, [PD QD]) = mpct.bus(:, [PD QD]) * factor;
 
 %% run CPF
-t = 'Continuation PF to lambda = 0.7 : ';
-mpopt = mpoption(mpopt, 'CPF_TRACE_LAMBDA', 0.7);
-mpopt = mpoption(mpopt, 'CPF_TRACE_NOSE', 0);
+t = 'Continuation PF to lambda = 0.7 (natural) : ';
+mpopt = mpoption(mpopt, 'cpf.stop_at', 0.7, 'cpf.parameterization', 1);
 r = runcpf(mpcb, mpct, mpopt);
-iterations = 41;
+iterations = 35;
 t_ok(r.success, [t 'success']);
 t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
-t_is(r.cpf.max_lam, 0.707703, 4, [t 'max_lam']);
+t_is(r.cpf.max_lam, 0.7, 12, [t 'max_lam']);
 t_is(size(r.cpf.V_p), [10 iterations+1], 12, [t 'size(V_p)']);
 t_is(size(r.cpf.V_c), [10 iterations+1], 12, [t 'size(V_c)']);
 t_is(size(r.cpf.lam_p), [1 iterations+1], 12, [t 'size(lam_p)']);
 t_is(size(r.cpf.lam_c), [1 iterations+1], 12, [t 'size(lam_c)']);
 
-t = 'Continuation PF to nose point : ';
-mpopt = mpoption(mpopt, 'CPF_TRACE_FULL', 0);
-mpopt = mpoption(mpopt, 'CPF_TRACE_NOSE', 1);
-mpopt = mpoption(mpopt, 'CPF_TRACE_LAMBDA', 0);
-mpopt = mpoption(mpopt, 'CPF_ADAPT_STEP', 1);
+t = 'Continuation PF to lambda = 0.7 (arc length) : ';
+mpopt = mpoption(mpopt, 'cpf.stop_at', 0.7, 'cpf.parameterization', 2);
+r = runcpf(mpcb, mpct, mpopt);
+iterations = 41;
+t_ok(r.success, [t 'success']);
+t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
+t_is(r.cpf.max_lam, 0.7, 12, [t 'max_lam']);
+t_is(size(r.cpf.V_p), [10 iterations+1], 12, [t 'size(V_p)']);
+t_is(size(r.cpf.V_c), [10 iterations+1], 12, [t 'size(V_c)']);
+t_is(size(r.cpf.lam_p), [1 iterations+1], 12, [t 'size(lam_p)']);
+t_is(size(r.cpf.lam_c), [1 iterations+1], 12, [t 'size(lam_c)']);
+
+t = 'Continuation PF to lambda = 0.7 (pseudo arc length) : ';
+mpopt = mpoption(mpopt, 'cpf.stop_at', 0.7, 'cpf.parameterization', 3);
+r = runcpf(mpcb, mpct, mpopt);
+iterations = 41;
+t_ok(r.success, [t 'success']);
+t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
+t_is(r.cpf.max_lam, 0.7, 12, [t 'max_lam']);
+t_is(size(r.cpf.V_p), [10 iterations+1], 12, [t 'size(V_p)']);
+t_is(size(r.cpf.V_c), [10 iterations+1], 12, [t 'size(V_c)']);
+t_is(size(r.cpf.lam_p), [1 iterations+1], 12, [t 'size(lam_p)']);
+t_is(size(r.cpf.lam_c), [1 iterations+1], 12, [t 'size(lam_c)']);
+
+t = 'Continuation PF to nose point (arc length) : ';
+mpopt = mpoption(mpopt, 'cpf.stop_at', 'NOSE', 'cpf.parameterization', 2);
+mpopt = mpoption(mpopt, 'cpf.adapt_step', 1);
 r = runcpf(mpcb, mpct, mpopt);
 iterations = 22;
 t_ok(r.success, [t 'success']);
@@ -109,9 +124,21 @@ t_is(size(r.cpf.V_c), [10 iterations+1], 12, [t 'size(V_c)']);
 t_is(size(r.cpf.lam_p), [1 iterations+1], 12, [t 'size(lam_p)']);
 t_is(size(r.cpf.lam_c), [1 iterations+1], 12, [t 'size(lam_c)']);
 
-t = 'Continuation PF (full trace) : ';
-mpopt = mpoption(mpopt, 'CPF_TRACE_FULL', 1);
-mpopt = mpoption(mpopt, 'CPF_TRACE_NOSE', 0);
+t = 'Continuation PF to nose point (pseudo arc length) : ';
+mpopt = mpoption(mpopt, 'cpf.stop_at', 'NOSE', 'cpf.parameterization', 3);
+mpopt = mpoption(mpopt, 'cpf.adapt_step', 1);
+r = runcpf(mpcb, mpct, mpopt);
+iterations = 22;
+t_ok(r.success, [t 'success']);
+t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
+t_is(r.cpf.max_lam, 0.99025, 3, [t 'max_lam']);
+t_is(size(r.cpf.V_p), [10 iterations+1], 12, [t 'size(V_p)']);
+t_is(size(r.cpf.V_c), [10 iterations+1], 12, [t 'size(V_c)']);
+t_is(size(r.cpf.lam_p), [1 iterations+1], 12, [t 'size(lam_p)']);
+t_is(size(r.cpf.lam_c), [1 iterations+1], 12, [t 'size(lam_c)']);
+
+t = 'Continuation PF (full trace) (arc length) : ';
+mpopt = mpoption(mpopt, 'cpf.stop_at', 'FULL', 'cpf.parameterization', 2);
 r = runcpf(mpcb, mpct, mpopt);
 iterations = 45;
 t_ok(r.success, [t 'success']);
@@ -122,6 +149,64 @@ t_is(size(r.cpf.V_c), [10 iterations+1], 12, [t 'size(V_c)']);
 t_is(size(r.cpf.lam_p), [1 iterations+1], 12, [t 'size(lam_p)']);
 t_is(size(r.cpf.lam_c), [1 iterations+1], 12, [t 'size(lam_c)']);
 
+t = 'Continuation PF (full trace) (pseudo arc length) : ';
+mpopt = mpoption(mpopt, 'cpf.stop_at', 'FULL', 'cpf.parameterization', 3);
+r = runcpf(mpcb, mpct, mpopt);
+iterations = 45;
+t_ok(r.success, [t 'success']);
+t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
+t_is(r.cpf.max_lam, 0.99025, 3, [t 'max_lam']);
+t_is(size(r.cpf.V_p), [10 iterations+1], 12, [t 'size(V_p)']);
+t_is(size(r.cpf.V_c), [10 iterations+1], 12, [t 'size(V_c)']);
+t_is(size(r.cpf.lam_p), [1 iterations+1], 12, [t 'size(lam_p)']);
+t_is(size(r.cpf.lam_c), [1 iterations+1], 12, [t 'size(lam_c)']);
+
+t = '1 user callback : ';
+mpopt = mpoption(mpopt, 'cpf.stop_at', 0.7, 'cpf.parameterization', 3);
+mpopt = mpoption(mpopt, 'cpf.adapt_step', 1);
+mpopt = mpoption(mpopt, 'cpf.user_callback', 't_cpf_cb1');
+r = runcpf(mpcb, mpct, mpopt);
+iterations = 7;
+t_ok(r.success, [t 'success']);
+t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
+t_is(r.cpf.max_lam, 0.7, 12, [t 'max_lam']);
+t_is(size(r.cpf.lam_c), [1 iterations+1], 12, [t 'size(lam_c)']);
+t_ok(isfield(r.cpf, 'cb1'), [t 'isfield cpf.cb1']);
+t_ok(isstruct(r.cpf.cb1), [t 'isstruct cpf.cb1']);
+t_ok(isfield(r.cpf.cb1, 'initial'), [t 'isfield cpf.cb1.initial']);
+t_ok(isfield(r.cpf.cb1, 'iteration'), [t 'isfield cpf.cb1.iteration']);
+t_ok(isfield(r.cpf.cb1, 'final'), [t 'isfield cpf.cb1.final']);
+t_is(r.cpf.cb1.initial, 1, 12, [t 'r.cpf.cb1.initial']);
+t_is(r.cpf.cb1.iteration, iterations, 12, [t 'r.cpf.cb1.iterations']);
+t_is(r.cpf.cb1.final, 1, 12, [t 'r.cpf.cb1.final']);
+
+t = '2 user callbacks (with args) : ';
+mpopt = mpoption(mpopt, 'cpf.user_callback', {'t_cpf_cb1', 't_cpf_cb2'});
+cb_args = struct('cb2', struct('initial', 20, 'iteration', 2, 'final', 200));
+mpopt = mpoption(mpopt, 'cpf.user_callback_args', cb_args);
+r = runcpf(mpcb, mpct, mpopt);
+iterations = 7;
+t_ok(r.success, [t 'success']);
+t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
+t_is(r.cpf.max_lam, 0.7, 12, [t 'max_lam']);
+t_is(size(r.cpf.lam_c), [1 iterations+1], 12, [t 'size(lam_c)']);
+t_ok(isfield(r.cpf, 'cb1'), [t 'isfield cpf.cb1']);
+t_ok(isstruct(r.cpf.cb1), [t 'isstruct cpf.cb1']);
+t_ok(isfield(r.cpf.cb1, 'initial'), [t 'isfield cpf.cb1.initial']);
+t_ok(isfield(r.cpf.cb1, 'iteration'), [t 'isfield cpf.cb1.iteration']);
+t_ok(isfield(r.cpf.cb1, 'final'), [t 'isfield cpf.cb1.final']);
+t_is(r.cpf.cb1.initial, 1, 12, [t 'r.cpf.cb1.initial']);
+t_is(r.cpf.cb1.iteration, iterations, 12, [t 'r.cpf.cb1.iterations']);
+t_is(r.cpf.cb1.final, 1, 12, [t 'r.cpf.cb1.final']);
+t_ok(isfield(r.cpf, 'cb2'), [t 'isfield cpf.cb2']);
+t_ok(isstruct(r.cpf.cb2), [t 'isstruct cpf.cb2']);
+t_ok(isfield(r.cpf.cb2, 'initial'), [t 'isfield cpf.cb2.initial']);
+t_ok(isfield(r.cpf.cb2, 'iteration'), [t 'isfield cpf.cb2.iteration']);
+t_ok(isfield(r.cpf.cb2, 'final'), [t 'isfield cpf.cb2.final']);
+t_is(r.cpf.cb2.initial, 20, 12, [t 'r.cpf.cb2.initial']);
+t_is(r.cpf.cb2.iteration, 2*iterations, 12, [t 'r.cpf.cb2.iterations']);
+t_is(r.cpf.cb2.final, 200, 12, [t 'r.cpf.cb2.final']);
+
 if have_fcn('octave')
     warning(s1.state, 'Octave:load-file-in-path');
 end
@@ -129,5 +214,5 @@ end
 t_end;
 
 if nargout
-	res = r;
+    res = r;
 end

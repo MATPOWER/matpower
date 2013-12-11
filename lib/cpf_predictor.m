@@ -1,4 +1,5 @@
-function [V0, lam0, z] = cpf_predictor(Vprv, lamprv, Ybus, Sxfr, pv, pq, step, z)
+function [V0, lam0, z] = cpf_predictor(V, lam, Ybus, Sxfr, pv, pq, ...
+                            step, z, Vprv, lamprv, parameterization)
 %CPF_PREDICTOR  Performs the predictor step for the continuation power flow
 %   [V0, LAM0, Z] = CPF_PREDICTOR(VPRV, LAMPRV, YBUS, SXFR, PV, PQ, STEP, Z)
 %
@@ -6,8 +7,8 @@ function [V0, lam0, z] = cpf_predictor(Vprv, lamprv, Ybus, Sxfr, pv, pq, step, z
 %   continuation power flow using a normalized tangent predictor.
 %
 %   Inputs:
-%       VPRV : complex bus voltage vector at current solution
-%       LAMPRV : scalar lambda value at current solution
+%       V : complex bus voltage vector at current solution
+%       LAM : scalar lambda value at current solution
 %       YBUS : complex bus admittance matrix
 %       SXFR : complex vector of scheduled transfers (difference between
 %              bus injections in base and target cases)
@@ -15,6 +16,9 @@ function [V0, lam0, z] = cpf_predictor(Vprv, lamprv, Ybus, Sxfr, pv, pq, step, z
 %       PQ : vector of indices of PQ buses
 %       STEP : continuation step length
 %       Z : normalized tangent prediction vector from previous step
+%       VPRV : complex bus voltage vector at previous solution
+%       LAMPRV : scalar lambda value at previous solution
+%       PARAMETERIZATION : Value of cpf.parameterization option.
 %
 %   Outputs:
 %       V0 : predicted complex bus voltage vector
@@ -52,12 +56,12 @@ function [V0, lam0, z] = cpf_predictor(Vprv, lamprv, Ybus, Sxfr, pv, pq, step, z
 %   you additional permission to convey the resulting work.
 
 %% sizes
-nb = length(Vprv);
+nb = length(V);
 npv = length(pv);
 npq = length(pq);
 
 %% compute Jacobian for the power flow equations
-[dSbus_dVm, dSbus_dVa] = dSbus_dV(Ybus, Vprv);
+[dSbus_dVm, dSbus_dVa] = dSbus_dV(Ybus, V);
     
 j11 = real(dSbus_dVa([pv; pq], [pv; pq]));
 j12 = real(dSbus_dVm([pv; pq], pq));
@@ -67,12 +71,18 @@ j22 = imag(dSbus_dVm(pq, pq));
 J = [   j11 j12;
         j21 j22;    ];
 
-%% linear operator for computing the tangent predictor
-J = [ J, -[real(Sxfr([pv; pq])); imag(Sxfr(pq))]; 
-      z([pv; pq; nb+pq; 2*nb+1])'];
+dF_dlam = -[real(Sxfr([pv; pq])); imag(Sxfr(pq))];
+[dP_dV, dP_dlam] = cpf_p_jac(parameterization, z, V, lam, Vprv, lamprv, pv, pq);
 
-Vaprv = angle(Vprv);
-Vmprv = abs(Vprv);
+%% linear operator for computing the tangent predictor
+J = [   J   dF_dlam; 
+      dP_dV dP_dlam ];
+
+% J = [ J, dF_dlam; 
+%       z([pv; pq; nb+pq; 2*nb+1])'];
+
+Vaprv = angle(V);
+Vmprv = abs(V);
 
 %% compute normalized tangent predictor
 s = zeros(npv+2*npq+1, 1);
@@ -82,10 +92,10 @@ z = z/norm(z);                      %% normalize tangent predictor
 
 Va0 = Vaprv;
 Vm0 = Vmprv;
-lam0 = lamprv;
+lam0 = lam;
 
 %% prediction for next step
 Va0([pv; pq]) = Vaprv([pv; pq]) + step * z([pv; pq]);
 Vm0([pq]) = Vmprv([pq]) + step * z([nb+pq]);
-lam0 = lamprv + step * z(2*nb+1);
+lam0 = lam + step * z(2*nb+1);
 V0 = Vm0 .* exp(1j * Va0);

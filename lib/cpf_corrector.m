@@ -1,9 +1,9 @@
 function [V, converged, i, lam] = cpf_corrector(Ybus, Sbus, V0, ref, pv, pq, ...
-                                  lam0, Sxfr, Vprv, lamprv, z, step, mpopt)
+                lam0, Sxfr, Vprv, lamprv, z, step, parameterization, mpopt)
 %CPF_CORRECTOR  Solves the corrector step of a continuation power flow using a
 %   full Newton method with pseudo-arclength parameterization.
 %   [V, CONVERGED, I, LAM] = CPF_CORRECTOR(YBUS, SBUS, V0, REF, PV, PQ, ...
-%                            LAM0, SXFR, VPRV, LPRV, Z, STEP, MPOPT)
+%                 LAM0, SXFR, VPRV, LPRV, Z, STEP, PARAMETERIZATION, MPOPT)
 %   solves for bus voltages and lambda given the full system admittance
 %   matrix (for all buses), the complex bus power injection vector (for
 %   all buses), the initial vector of complex bus voltages, and column
@@ -11,7 +11,7 @@ function [V, converged, i, lam] = cpf_corrector(Ybus, Sbus, V0, ref, pv, pq, ...
 %   PQ buses, respectively. The bus voltage vector contains the set point
 %   for generator (including ref bus) buses, and the reference angle of the
 %   swing bus, as well as an initial guess for remaining magnitudes and
-%   angles. MPOPT is a MATPOWER options vector which can be used to
+%   angles. MPOPT is a MATPOWER options struct which can be used to
 %   set the termination tolerance, maximum number of iterations, and
 %   output options (see MPOPTION for details). Uses default options if
 %   this parameter is not given. Returns the final complex voltages, a
@@ -65,14 +65,13 @@ function [V, converged, i, lam] = cpf_corrector(Ybus, Sbus, V0, ref, pv, pq, ...
 %   you additional permission to convey the resulting work.
 
 %% default arguments
-if nargin < 13
+if nargin < 14
     mpopt = mpoption;
 end
 
 %% options
-tol     = mpopt(2);
-max_it  = mpopt(3);
-verbose = mpopt(31);
+tol     = mpopt.pf.tol;
+max_it  = mpopt.pf.nr.max_it;
 
 %% initialize
 converged = 0;
@@ -81,8 +80,6 @@ V = V0;
 Va = angle(V);
 Vm = abs(V);
 lam = lam0;             %% set lam to initial lam0
-Vprva = angle(Vprv);    %% previous step's voltage angles
-Vprvm = abs(Vprv);      %% previous step's voltage magnitudes
 
 %% set up indexing for updating V
 npv = length(pv);
@@ -99,9 +96,7 @@ F = [   real(mis([pv; pq]));
         imag(mis(pq))   ];
 
 %% evaluate P(x0, lambda0)
-P = z([pv; pq; nb+pq; 2*nb+1])' * ...
-    ( [Va([pv; pq]); Vm(pq); lam] - [Vprva([pv; pq]); Vprvm(pq); lamprv] )...
-    - step;
+P = cpf_p(parameterization, step, z, V, lam, Vprv, lamprv, pv, pq);
 
 %% augment F(x,lambda) with P(x,lambda)
 F = [ F; 
@@ -109,14 +104,14 @@ F = [ F;
 
 %% check tolerance
 normF = norm(F, inf);
-if verbose > 1
+if mpopt.verbose > 1
     fprintf('\n it    max P & Q mismatch (p.u.)');
     fprintf('\n----  ---------------------------');
     fprintf('\n%3d        %10.3e', i, normF);
 end
 if normF < tol
     converged = 1;
-    if verbose > 1
+    if mpopt.verbose > 1
         fprintf('\nConverged!\n');
     end
 end
@@ -137,9 +132,12 @@ while (~converged && i < max_it)
     J = [   j11 j12;
             j21 j22;    ];
 
+    dF_dlam = -[real(Sxfr([pv; pq])); imag(Sxfr(pq))];
+    [dP_dV, dP_dlam] = cpf_p_jac(parameterization, z, V, lam, Vprv, lamprv, pv, pq);
+
     %% augment J with real/imag -Sxfr and z^T
-    J = [ J, -[real(Sxfr([pv; pq])); imag(Sxfr(pq))]; 
-                  z([pv; pq; nb+pq; 2*nb+1])'        ];
+    J = [   J   dF_dlam; 
+          dP_dV dP_dlam ];
 
     %% compute update step
     dx = -(J \ F);
@@ -166,9 +164,7 @@ while (~converged && i < max_it)
             imag(mis(pq))   ];
 
     %% evaluate P(x, lambda)
-    P = z([pv; pq; nb+pq; 2*nb+1])' * ...
-        ([Va([pv; pq]); Vm(pq); lam] - [Vprva([pv; pq]); Vprvm(pq); lamprv]) ...
-        - step;
+    P = cpf_p(parameterization, step, z, V, lam, Vprv, lamprv, pv, pq);
 
     %% augment F(x,lambda) with P(x,lambda)
     F = [ F; 
@@ -176,18 +172,18 @@ while (~converged && i < max_it)
 
     %% check for convergence
     normF = norm(F, inf);
-    if verbose > 1
+    if mpopt.verbose > 1
         fprintf('\n%3d        %10.3e', i, normF);
     end
     if normF < tol
         converged = 1;
-        if verbose
+        if mpopt.verbose
             fprintf('\nNewton''s method corrector converged in %d iterations.\n', i);
         end
     end
 end
 
-if verbose
+if mpopt.verbose
     if ~converged
         fprintf('\nNewton''s method corrector did not converge in %d iterations.\n', i);
     end
