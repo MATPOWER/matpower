@@ -1309,7 +1309,10 @@ if DEBUG, fprintf('mpoption_optional_fields()\n'); end
 opt_fields = {'sopf'};
 opt = struct;
 for k = 1:length(opt_fields)
-    opt = nested_struct_copy(opt, feval([opt_fields{k} '_valid_options']));
+    fname = [opt_fields{k} '_valid_options'];
+    if exist(fname, 'file')
+        opt = nested_struct_copy(opt, feval(fname));
+    end
 end
 
 %% globals
