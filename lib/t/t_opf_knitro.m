@@ -56,9 +56,8 @@ else
 end
 
 t0 = 'knitro OPF : ';
-mpopt = mpoption('OPF_VIOLATION', 1e-6, 'CONSTR_TOL_X', 1e-8, 'CONSTR_TOL_F', 1e-8);
-mpopt = mpoption(mpopt, 'OUT_ALL', 0, 'VERBOSE', verbose, 'OPF_ALG', 600);
-mpopt = mpoption(mpopt, 'FMC_ALG', 4);
+mpopt = mpoption('opf.violation', 1e-6, 'knitro.tol_x', 1e-8, 'knitro.tol_f', 1e-8);
+mpopt = mpoption(mpopt, 'out.all', 0, 'verbose', verbose, 'opf.ac.solver', 'KNITRO');
 
 if have_fcn('knitro')
     %% set up indices
@@ -119,7 +118,7 @@ if have_fcn('knitro')
     
     %% run OPF with active power line limits
     t = [t0 '(P line lim) : '];
-    mpopt1 = mpoption(mpopt, 'OPF_FLOW_LIM', 1);
+    mpopt1 = mpoption(mpopt, 'opf.flow_lim', 'P');
     [baseMVA, bus, gen, gencost, branch, f, success, et] = runopf(casefile, mpopt1);
     t_ok(success, [t 'success']);
     t_is(f, f_soln, 3, [t 'f']);
@@ -267,7 +266,7 @@ if have_fcn('knitro')
     
     %% run OPF with ignored angle difference limits
     t = [t0 'w/ignored angle difference limits : '];
-    mpopt1 = mpoption(mpopt, 'OPF_IGNORE_ANG_LIM', 1);
+    mpopt1 = mpoption(mpopt, 'opf.ignore_angle_lim', 1);
     [baseMVA, bus, gen, gencost, branch, f, success, et] = runopf(mpc, mpopt1);
     %% ang limits are not in this solution data, so let's remove them
     branch(1, ANGMAX) = 360;

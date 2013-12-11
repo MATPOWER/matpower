@@ -4,7 +4,7 @@ function t_qps_matpower(quiet)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2010-2011 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2013 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
@@ -34,7 +34,7 @@ if nargin < 1
     quiet = 0;
 end
 
-algs = [100 200 250 400 300 500 600 700];
+algs = {'BPMPD', 'MIPS', 250, 'IPOPT', 'OT', 'CPLEX', 'MOSEK', 'GUROBI'};
 names = {'BPMPD_MEX', 'MIPS', 'sc-MIPS', 'IPOPT', 'linprog/quadprog', 'CPLEX', 'MOSEK', 'Gurobi'};
 check = {'bpmpd', [], [], 'ipopt', 'quadprog', 'cplex', 'mosek', 'gurobi'};
 
@@ -45,7 +45,7 @@ for k = 1:length(algs)
     if ~isempty(check{k}) && ~have_fcn(check{k})
         t_skip(n, sprintf('%s not installed', names{k}));
     else
-        opt = struct('verbose', 0, 'alg', algs(k));
+        opt = struct('verbose', 0, 'alg', algs{k});
         if strcmp(names{k}, 'MIPS') || strcmp(names{k}, 'sc-MIPS')
             opt.mips_opt.comptol = 1e-8;
         end
@@ -54,14 +54,14 @@ for k = 1:length(algs)
         if strcmp(names{k}, 'CPLEX')
 %           alg = 0;        %% default uses barrier method with NaN bug in lower lim multipliers
             alg = 2;        %% use dual simplex
-            mpopt = mpoption('CPLEX_LPMETHOD', alg, 'CPLEX_QPMETHOD', min([4 alg]));
+            mpopt = mpoption('cplex.lpmethod', alg, 'cplex.qpmethod', min([4 alg]));
             opt.cplex_opt = cplex_options([], mpopt);
         end
         if strcmp(names{k}, 'MOSEK')
 %             alg = 5;        %% use dual simplex
             mpopt = mpoption;
-%             mpopt = mpoption(mpopt, 'MOSEK_LP_ALG', alg );
-            mpopt = mpoption(mpopt, 'MOSEK_GAP_TOL', 1e-10);
+%             mpopt = mpoption(mpopt, 'mosek.lp_alg', alg );
+            mpopt = mpoption(mpopt, 'mosek.gap_tol', 1e-10);
             opt.mosek_opt = mosek_options([], mpopt);
         end
 

@@ -38,9 +38,8 @@ function om = opf_setup(mpc, mpopt)
 %   you additional permission to convey the resulting work.
 
 %% options
-dc  = mpopt(10);        %% PF_DC        : 1 = DC OPF, 0 = AC OPF 
-alg = mpopt(11);        %% OPF_ALG
-verbose = mpopt(31);    %% VERBOSE
+dc  = strcmp(upper(mpopt.model), 'DC');
+alg = upper(mpopt.opf.ac.solver);
 
 %% define named indices into data matrices
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
@@ -118,7 +117,7 @@ end
 
 %% warn if there is more than one reference bus
 refs = find(bus(:, BUS_TYPE) == REF);
-if length(refs) > 1 && verbose > 0
+if length(refs) > 1 && mpopt.verbose > 0
   errstr = ['\nopf_setup: Warning: Multiple reference buses.\n', ...
               '           For a system with islands, a reference bus in each island\n', ...
               '           may help convergence, but in a fully connected system such\n', ...
@@ -188,7 +187,8 @@ Val(refs) = Va(refs);
 [Aang, lang, uang, iang]  = makeAang(baseMVA, branch, nb, mpopt);
 
 %% basin constraints for piece-wise linear gen cost variables
-if alg == 545 || alg == 550     %% SC-PDIPM or TRALM, no CCV cost vars
+if (strcmp(alg, 'PDIPM') && mpopt.pdipm.step_control) || strcmp(alg, 'TRALM')
+  %% SC-PDIPM or TRALM, no CCV cost vars
   ny = 0;
   Ay = sparse(0, ng+nq);
   by =[];
@@ -232,6 +232,11 @@ if dc
   om = add_constraints(om, 'Pmis', Amis, bmis, bmis, {'Va', 'Pg'}); %% nb
   om = add_constraints(om, 'Pf',  Bf(il,:), [], upf, {'Va'});       %% nl2
   om = add_constraints(om, 'Pt', -Bf(il,:), [], upt, {'Va'});       %% nl2
+
+%% could replace above two lines by ...
+% om = add_constraints(om, 'Pf',  Bf(il,:), -upt, upf, {'Va'});     %% nl2
+%% ... would need to update extraction of MU_SF & MU_ST
+  
   om = add_constraints(om, 'ang', Aang, lang, uang, {'Va'});        %% nang
 else
   om = userdata(om, 'Apqdata', Apqdata);

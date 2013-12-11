@@ -3,7 +3,7 @@ function [results, success, raw] = ipoptopf_solver(om, mpopt)
 %
 %   [RESULTS, SUCCESS, RAW] = IPOPTOPF_SOLVER(OM, MPOPT)
 %
-%   Inputs are an OPF model object and a MATPOWER options vector.
+%   Inputs are an OPF model object and a MATPOWER options struct.
 %
 %   Outputs are a RESULTS struct, SUCCESS flag and RAW output struct.
 %

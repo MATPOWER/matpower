@@ -46,7 +46,7 @@ if have_fcn('octave')
     s1 = warning('query', 'Octave:load-file-in-path');
     warning('off', 'Octave:load-file-in-path');
 end
-mpopt = mpoption('OUT_ALL', 0, 'VERBOSE', verbose);
+mpopt = mpoption('out.all', 0, 'verbose', verbose);
 
 %% define named indices into bus, gen, branch matrices
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
@@ -63,7 +63,7 @@ load soln9_pf;      %% defines bus_soln, gen_soln, branch_soln
 
 %% run Newton PF
 t = 'Newton PF : ';
-mpopt = mpoption(mpopt, 'PF_ALG', 1);
+mpopt = mpoption(mpopt, 'pf.alg', 'NR');
 [baseMVA, bus, gen, branch, success, et] = runpf(casefile, mpopt);
 t_ok(success, [t 'success']);
 t_is(bus, bus_soln, 6, [t 'bus']);
@@ -72,7 +72,7 @@ t_is(branch, branch_soln, 6, [t 'branch']);
 
 %% run fast-decoupled PF (XB version)
 t = 'Fast Decoupled (XB) PF : ';
-mpopt = mpoption(mpopt, 'PF_ALG', 2);
+mpopt = mpoption(mpopt, 'pf.alg', 'FDXB');
 [baseMVA, bus, gen, branch, success, et] = runpf(casefile, mpopt);
 t_ok(success, [t 'success']);
 t_is(bus, bus_soln, 6, [t 'bus']);
@@ -81,7 +81,7 @@ t_is(branch, branch_soln, 6, [t 'branch']);
 
 %% run fast-decoupled PF (BX version)
 t = 'Fast Decoupled (BX) PF : ';
-mpopt = mpoption(mpopt, 'PF_ALG', 3);
+mpopt = mpoption(mpopt, 'pf.alg', 'FDBX');
 [baseMVA, bus, gen, branch, success, et] = runpf(casefile, mpopt);
 t_ok(success, [t 'success']);
 t_is(bus, bus_soln, 6, [t 'bus']);
@@ -90,7 +90,7 @@ t_is(branch, branch_soln, 6, [t 'branch']);
 
 %% run Gauss-Seidel PF
 t = 'Gauss-Seidel PF : ';
-mpopt = mpoption(mpopt, 'PF_ALG', 4);
+mpopt = mpoption(mpopt, 'pf.alg', 'GS');
 [baseMVA, bus, gen, branch, success, et] = runpf(casefile, mpopt);
 t_ok(success, [t 'success']);
 t_is(bus, bus_soln, 5, [t 'bus']);
@@ -110,7 +110,7 @@ t_is(branch, branch_soln, 6, [t 'branch']);
 
 %% check Qg distribution, when Qmin = Qmax
 t = 'check Qg : ';
-mpopt = mpoption(mpopt, 'PF_ALG', 1, 'VERBOSE', 0);
+mpopt = mpoption(mpopt, 'pf.alg', 'NR', 'verbose', 0);
 mpc = loadcase(casefile);
 mpc.gen(1, [QMIN QMAX]) = [20 20];
 [baseMVA, bus, gen, branch, success, et] = runpf(mpc, mpopt);
@@ -153,8 +153,8 @@ mpc1.gen(:, GEN_BUS)	= mpc1.gen(:, GEN_BUS) + nb;
 mpc.bus			= [mpc.bus; mpc1.bus];
 mpc.branch		= [mpc.branch; mpc1.branch];
 mpc.gen			= [mpc.gen; mpc1.gen];
-%mpopt = mpoption(mpopt, 'OUT_BUS', 1, 'OUT_GEN', 1, 'OUT_ALL', -1, 'VERBOSE', 2);
-mpopt = mpoption(mpopt, 'VERBOSE', verbose);
+%mpopt = mpoption(mpopt, 'out.bus', 1, 'out.gen', 1, 'out.all', -1, 'verbose', 2);
+mpopt = mpoption(mpopt, 'verbose', verbose);
 r = rundcpf(mpc, mpopt);
 t_is(r.bus( 1:9,  VA), bus_soln(:, VA), 8, [t 'voltage angles 1']);
 t_is(r.bus(10:18, VA), bus_soln(:, VA), 8, [t 'voltage angles 2']);

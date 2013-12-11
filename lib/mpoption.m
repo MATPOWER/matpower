@@ -1,200 +1,202 @@
-function [options, names] = mpoption(varargin)
-%MPOPTION  Used to set and retrieve a MATPOWER options vector.
+function opt = mpoption(varargin)
+%MPOPTION  Used to set and retrieve a MATPOWER options struct.
 %
 %   OPT = MPOPTION
-%       returns the default options vector
+%       Returns the default options struct.
+%
+%   OPT = MPOPTION(OVERRIDES)
+%       Returns the default options struct, with some fields overridden
+%       by values from OVERRIDES, which can be a struct or the name of
+%       a function that returns a struct.
 %
 %   OPT = MPOPTION(NAME1, VALUE1, NAME2, VALUE2, ...)
-%       returns the default options vector with new values for up to 7
-%       options, NAME# is the name of an option, and VALUE# is the new
-%       value.
+%       Same as previous, except override options are specified by NAME,
+%       VALUE pairs. This can be used to set any part of the options
+%       struct. The names can be individual fields or multi-level fields
+%       names with embedded periods. The values can be scalars or structs.
 %
-%   OPT = MPOPTION(OPT, NAME1, VALUE1, NAME2, VALUE2, ...)
-%       same as above except it uses the options vector OPT as a base
-%       instead of the default options vector.
+%       For backward compatibility, the NAMES and VALUES may correspond
+%       to old-style MATPOWER option names (elements in the old-style
+%       options vector) as well.
+%
+%   OPT = MPOPTION(OPT0)
+%       Converts an old-style options vector OPT0 into the corresponding
+%       options struct. If OPT0 is an options struct it does nothing.
+%
+%   OPT = MPOPTION(OPT0, OVERRIDES)
+%       Applies overrides to an existing set of options, OPT0, which
+%       can be an old-style options vector or an options struct.
+%
+%   OPT = MPOPTION(OPT0, NAME1, VALUE1, NAME2, VALUE2, ...)
+%       Same as above except it uses the old-style options vector OPT0
+%       as a base instead of the old default options vector.
+%
+%   OPT_VECTOR = MPOPTION(OPT, [])
+%       Creates and returns an old-style options vector from an
+%       options struct OPT.
+%
+%   Note: The use of old-style MATPOWER options vectors and their
+%         names and values has been deprecated and will be removed
+%         in a future version of MATPOWER. Until then, all uppercase
+%         option names are not permitted for new top-level options.
 %
 %   Examples:
-%       opt = mpoption('PF_ALG', 2, 'PF_TOL', 1e-4);
-%       opt = mpoption(opt, 'OPF_ALG', 565, 'VERBOSE', 2);
+%       mpopt = mpoption('pf.alg', 'FDXB', 'pf.tol', 1e-4);
+%       mpopt = mpoption(mpopt, 'opf.dc.solver', 'CPLEX', 'verbose', 2);
 %
-%   The currently defined options are as follows:
+%The currently defined options are as follows:
 %
-%      idx - NAME, default          description [options]
-%      ---   -------------          -----------------------------------------
-%   power flow options
-%       1  - PF_ALG, 1              AC power flow algorithm
-%           [   1 - Newton's method                                         ]
-%           [   2 - Fast-Decoupled (XB version)                             ]
-%           [   3 - Fast-Decoupled (BX version)                             ]
-%           [   4 - Gauss-Seidel                                            ]
-%       2  - PF_TOL, 1e-8           termination tolerance on per unit
-%                                   P & Q mismatch
-%       3  - PF_MAX_IT, 10          maximum number of iterations for
-%                                   Newton's method
-%       4  - PF_MAX_IT_FD, 30       maximum number of iterations for 
-%                                   fast decoupled method
-%       5  - PF_MAX_IT_GS, 1000     maximum number of iterations for 
-%                                   Gauss-Seidel method
-%       6  - ENFORCE_Q_LIMS, 0      enforce gen reactive power limits
-%                                   at expense of |V|
-%           [    0 - do NOT enforce limits                                  ]
-%           [    1 - enforce limits, simultaneous bus type conversion       ]
-%           [    2 - enforce limits, one-at-a-time bus type conversion      ]
-%       10 - PF_DC, 0               DC modeling for power flow & OPF
-%           [    0 - use AC formulation & corresponding algorithm options   ]
-%           [    1 - use DC formulation, ignore AC algorithm options        ]
-%   OPF options
-%       11 - OPF_ALG, 0             solver to use for AC OPF
-%           [    0 - choose default solver based on availability in the     ]
-%           [        following order, 540, 560                              ]
-%           [  500 - MINOPF, MINOS-based solver, requires optional          ]
-%           [        MEX-based MINOPF package, available from:              ]
-%           [        http://www.pserc.cornell.edu/minopf/                   ]
-%           [  520 - fmincon, MATLAB Optimization Toolbox >= 2.x            ]
-%           [  540 - PDIPM, primal/dual interior point method, requires     ]
-%           [        optional MEX-based TSPOPF package, available from:     ]
-%           [        http://www.pserc.cornell.edu/tspopf/                   ]
-%           [  545 - SC-PDIPM, step-controlled variant of PDIPM, requires   ]
-%           [        TSPOPF (see 540)                                       ]
-%           [  550 - TRALM, trust region based augmented Langrangian        ]
-%           [        method, requires TSPOPF (see 540)                      ]
-%           [  560 - MIPS, MATLAB Interior Point Solver                     ]
-%           [        primal/dual interior point method (pure MATLAB)        ]
-%           [  565 - MIPS-sc, step-controlled variant of MIPS               ]
-%           [        primal/dual interior point method (pure MATLAB)        ]
-%           [  580 - IPOPT, requires MEX interface to IPOPT solver          ]
-%           [        available from: https://projects.coin-or.org/Ipopt/    ]
-%           [  600 - KNITRO, requires MATLAB Optimization Toolbox and       ]
-%           [        KNITRO libraries available from: http://www.ziena.com/ ]
-%       16 - OPF_VIOLATION, 5e-6    constraint violation tolerance
-%       17 - CONSTR_TOL_X, 1e-4     termination tol on x for fmincon/Knitro
-%       18 - CONSTR_TOL_F, 1e-4     termination tol on f for fmincon/Knitro
-%       19 - CONSTR_MAX_IT, 0       max number of iterations for fmincon
-%                                   [       0 => default                    ]
-%       24 - OPF_FLOW_LIM, 0        qty to limit for branch flow constraints
-%           [   0 - apparent power flow (limit in MVA)                      ]
-%           [   1 - active power flow (limit in MW)                         ]
-%           [   2 - current magnitude (limit in MVA at 1 p.u. voltage)      ]
-%       25 - OPF_IGNORE_ANG_LIM, 0  ignore angle difference limits for branches
-%                                   even if specified           [   0 or 1  ]
-%       26 - OPF_ALG_DC, 0          solver to use for DC OPF
-%           [    0 - choose default solver based on availability in the     ]
-%           [        following order: 500, 600, 700, 100, 300, 200          ]
-%           [  100 - BPMPD, requires optional MEX-based BPMPD_MEX package   ]
-%           [        available from: http://www.pserc.cornell.edu/bpmpd/    ]
-%           [  200 - MIPS, MATLAB Interior Point Solver                     ]
-%           [        primal/dual interior point method (pure MATLAB)        ]
-%           [  250 - MIPS-sc, step-controlled variant of MIPS               ]
-%           [  300 - MATLAB Optimization Toolbox, QUADPROG, LINPROG         ]
-%           [  400 - IPOPT, requires MEX interface to IPOPT solver          ]
-%           [        available from: https://projects.coin-or.org/Ipopt/    ]
-%           [  500 - CPLEX, requires Matlab interface to CPLEX solver       ]
-%           [  600 - MOSEK, requires Matlab interface to MOSEK solver       ]
-%           [        available from: http://www.mosek.com/                  ]
-%           [  700 - GUROBI, requires Gurobi optimizer (v. 5+)              ]
-%           [        available from: http://www.gurobi.com/                 ]
-%   output options
-%       31 - VERBOSE, 1             amount of progress info printed
-%           [   0 - print no progress info                                  ]
-%           [   1 - print a little progress info                            ]
-%           [   2 - print a lot of progress info                            ]
-%           [   3 - print all progress info                                 ]
-%       32 - OUT_ALL, -1            controls pretty-printing of results
-%           [  -1 - individual flags control what prints                    ]
-%           [   0 - do not print anything                                   ]
-%           [       (overrides individual flags)                            ]
-%           [   1 - print everything                                        ]
-%           [       (overrides individual flags)                            ]
-%       33 - OUT_SYS_SUM, 1         print system summary        [   0 or 1  ]
-%       34 - OUT_AREA_SUM, 0        print area summaries        [   0 or 1  ]
-%       35 - OUT_BUS, 1             print bus detail            [   0 or 1  ]
-%       36 - OUT_BRANCH, 1          print branch detail         [   0 or 1  ]
-%       37 - OUT_GEN, 0             print generator detail      [   0 or 1  ]
-%                                   (OUT_BUS also includes gen info)
-%       38 - OUT_ALL_LIM, -1        controls what constraint info is printed
-%           [  -1 - individual flags control what constraint info prints    ]
-%           [   0 - no constraint info (overrides individual flags)         ]
-%           [   1 - binding constraint info (overrides individual flags)    ]
-%           [   2 - all constraint info (overrides individual flags)        ]
-%       39 - OUT_V_LIM, 1           control output of voltage limit info
-%           [   0 - do not print                                            ]
-%           [   1 - print binding constraints only                          ]
-%           [   2 - print all constraints                                   ]
-%           [   (same options for OUT_LINE_LIM, OUT_PG_LIM, OUT_QG_LIM)     ]
-%       40 - OUT_LINE_LIM, 1        control output of line flow limit info
-%       41 - OUT_PG_LIM, 1          control output of gen P limit info
-%       42 - OUT_QG_LIM, 1          control output of gen Q limit info
-%       44 - OUT_FORCE, 0           print results even if success = 0
-%                                                               [   0 or 1  ]
-%       52 - RETURN_RAW_DER, 0      return constraint and derivative info
-%                                   in results.raw (in fields g, dg, df, d2f)
-%   FMINCON options
-%       55 - FMC_ALG, 4             algorithm used by fmincon for OPF
-%                                   for Optimization Toolbox 4 and later
-%            [  1 - active-set                                              ]
-%            [  2 - interior-point, w/default 'bfgs' Hessian approx         ]
-%            [  3 - interior-point, w/ 'lbfgs' Hessian approx               ]
-%            [  4 - interior-point, w/exact user-supplied Hessian           ]
-%            [  5 - interior-point, w/Hessian via finite differences        ]
+%   name                    default     description [options]
+%----------------------    ---------   ----------------------------------
+%Model options:
+%   model                   'AC'        AC vs. DC power flow model
+%       [ 'AC' - use nonlinear AC model & corresponding algorithms/options  ]
+%       [ 'DC' - use linear DC model & corresponding algorithms/options     ]
 %
-%   KNITRO options
-%       58 - KNITRO_OPT, 0          a non-zero integer N indicates that all
-%                                   KNITRO options should be handled by a
-%                                   KNITRO options file named
-%                                   'knitro_user_options_N.txt'
+%Power Flow options:
+%   pf.alg                  'NR'        AC power flow algorithm
+%       [ 'NR'   - Newton's method                                          ]
+%       [ 'FDXB' - Fast-Decoupled (XB version)                              ]
+%       [ 'FDBX' - Fast-Decoupled (BX version)                              ]
+%       [ 'GS'   - Gauss-Seidel                                             ]
+%   pf.tol                  1e-8        termination tolerance on per unit
+%                                       P & Q mismatch
+%   pf.nr.max_it            10          maximum number of iterations for
+%                                       Newton's method
+%   pf.fd.max_it            30          maximum number of iterations for
+%                                       fast decoupled method
+%   pf.gs.max_it            1000        maximum number of iterations for
+%                                       Gauss-Seidel method
+%   pf.enforce_q_lims       0           enforce gen reactive power limits at
+%                                       expense of |V|
+%       [  0 - do NOT enforce limits                                        ]
+%       [  1 - enforce limits, simultaneous bus type conversion             ]
+%       [  2 - enforce limits, one-at-a-time bus type conversion            ]
 %
-%   IPOPT options
-%       60 - IPOPT_OPT, 0           See IPOPT_OPTIONS for details.
+%Continuation Power Flow options:
+%   cpf.parameterization    3           choice of parameterization
+%       [  1 - natural                                                      ]
+%       [  2 - arc length                                                   ]
+%       [  3 - pseudo arc length                                            ]
+%   cpf.stop_at             'NOSE'      determins stopping criterion
+%       [ 'NOSE'     - stop when nose point is reached                      ]
+%       [ 'FULL'     - trace full nose curve                                ]
+%       [ <lam_stop> - stop upon reaching specified target lambda value     ]
+%   cpf.step                0.05        continuation power flow step size
+%   cpf.adapt_step          0           toggle adaptive step size feature
+%       [  0 - adaptive step size disabled                                  ]
+%       [  1 - adaptive step size enabled                                   ]
+%   cpf.error_tol           1e-3        tolerance for adaptive step control
+%   cpf.step_min            1e-4        minimum allowed step size
+%   cpf.step_max            0.2         maximum allowed step size
+%   cpf.plot.level          0           control plotting of noze curve
+%       [  0 - do not plot nose curve                                       ]
+%       [  1 - plot when completed                                          ]
+%       [  2 - plot incrementally at each iteration                         ]
+%       [  3 - same as 2, with 'pause' at each iteration                    ]
+%   cpf.plot.bus            <empty>     index of bus whose voltage is to be
+%                                       plotted
+%   cpf.user_callback       <empty>     string or cell array of strings
+%                                       with names of user callback functions
+%                                       see 'help cpf_default_callback'
+%   cpf.user_callback_args  <empty>     struct passed to user-defined
+%                                       callback functions
 %
-%   MINOPF options
-%       61 - MNS_FEASTOL, 0 (1e-3)  primal feasibility tolerance,
-%                                   set to value of OPF_VIOLATION by default
-%       62 - MNS_ROWTOL, 0  (1e-3)  row tolerance
-%                                   set to value of OPF_VIOLATION by default
-%       63 - MNS_XTOL, 0    (1e-3)  x tolerance
-%                                   set to value of CONSTR_TOL_X by default
-%       64 - MNS_MAJDAMP, 0 (0.5)   major damping parameter
-%       65 - MNS_MINDAMP, 0 (2.0)   minor damping parameter
-%       66 - MNS_PENALTY_PARM, 0 (1.0)  penalty parameter
-%       67 - MNS_MAJOR_IT, 0 (200)  major iterations
-%       68 - MNS_MINOR_IT, 0 (2500) minor iterations
-%       69 - MNS_MAX_IT, 0 (2500)   iterations limit
-%       70 - MNS_VERBOSITY, -1
-%           [  -1 - controlled by VERBOSE option                            ]
-%           [   0 - print nothing                                           ]
-%           [   1 - print only termination status message                   ]
-%           [   2 - print termination status and screen progress            ]
-%           [   3 - print screen progress, report file (usually fort.9)     ]
-%       71 - MNS_CORE, 0 (1200 * nb + 2 * (nb + ng)^2) memory allocation
-%       72 - MNS_SUPBASIC_LIM, 0 (2*nb + 2*ng) superbasics limit
-%       73 - MNS_MULT_PRICE, 0 (30) multiple price
+%Optimal Power Flow options:
+%   opf.ac.solver           'DEFAULT'   AC optimal power flow solver
+%       [ 'DEFAULT' - choose solver based on availability in the following  ]
+%       [             order: 'PDIPM', 'MIPS'                                ]
+%       [ 'MIPS'    - MIPS, Matlab Interior Point Solver, primal/dual       ]
+%       [             interior point method (pure Matlab)                   ]
+%       [ 'FMINCON' - MATLAB Optimization Toolbox, FMINCON                  ]
+%       [ 'IPOPT'   - IPOPT, requires MEX interface to IPOPT solver         ]
+%       [             available from: https://projects.coin-or.org/Ipopt/   ]
+%       [ 'KNITRO'  - KNITRO, requires MATLAB Optimization Toolbox and      ]
+%       [             KNITRO libraries available from: http://www.ziena.com/]
+%       [ 'MINOPF'  - MINOPF, MINOS-based solver, requires optional         ]
+%       [             MEX-based MINOPF package, available from:             ]
+%       [                   http://www.pserc.cornell.edu/minopf/            ]
+%       [ 'PDIPM'   - PDIPM, primal/dual interior point method, requires    ]
+%       [             optional MEX-based TSPOPF package, available from:    ]
+%       [                   http://www.pserc.cornell.edu/tspopf/            ]
+%       [ 'TRALM'   - TRALM, trust region based augmented Langrangian       ]
+%       [             method, requires TSPOPF (see 'PDIPM')                 ]
+%   opf.dc.solver           'DEFAULT'   DC optimal power flow solver
+%       [ 'DEFAULT' - choose solver based on availability in the following  ]
+%       [             order: 'CLPEX', 'GUROBI', 'MOSEK','BPMPD','OT','MIPS' ]
+%       [ 'MIPS'    - MIPS, Matlab Interior Point Solver, primal/dual       ]
+%       [             interior point method (pure Matlab)                   ]
+%       [ 'BPMPD'   - BPMPD, requires optional MEX-based BPMPD_MEX package  ]
+%       [             available from: http://www.pserc.cornell.edu/bpmpd/   ]
+%       [ 'CPLEX'   - CPLEX, requires Matlab interface to CPLEX solver      ]
+%       [ 'GUROBI'  - GUROBI, requires Gurobi optimizer (v. 5+)             ]
+%       [             available from: http://www.gurobi.com/                ]
+%       [ 'IPOPT'   - IPOPT, requires MEX interface to IPOPT solver         ]
+%       [             available from: https://projects.coin-or.org/Ipopt/   ]
+%       [ 'MOSEK'   - MOSEK, requires Matlab interface to MOSEK solver      ]
+%       [             available from: http://www.mosek.com/                 ]
+%       [ 'OT'      - MATLAB Optimization Toolbox, QUADPROG, LINPROG        ]
+%   opf.violation           5e-6        constraint violation tolerance
+%   opf.flow_lim            'S'         quantity limited by branch flow
+%                                       constraints
+%       [ 'S' - apparent power flow (limit in MVA)                          ]
+%       [ 'P' - active power flow (limit in MW)                             ]
+%       [ 'I' - current magnitude (limit in MVA at 1 p.u. voltage)          ]
+%   opf.ignore_angle_lim    0           angle diff limits for branches
+%       [ 0 - include angle difference limits, if specified                 ]
+%       [ 1 - ignore angle difference limits even if specified              ]
+%   opf.return_raw_der      0           for AC OPF, return constraint and
+%                                       derivative info in results.raw
+%                                       (in fields g, dg, df, d2f) [ 0 or 1 ]
 %
-%   MIPS (including MIPS-sc), PDIPM, SC-PDIPM, and TRALM options
-%       81 - PDIPM_FEASTOL, 0       feasibility (equality) tolerance
-%                                   for MIPS, PDIPM and SC-PDIPM, set
-%                                   to value of OPF_VIOLATION by default
-%       82 - PDIPM_GRADTOL, 1e-6    gradient tolerance for MIPS, PDIPM
-%                                   and SC-PDIPM
-%       83 - PDIPM_COMPTOL, 1e-6    complementary condition (inequality)
-%                                   tolerance for MIPS, PDIPM and SC-PDIPM
-%       84 - PDIPM_COSTTOL, 1e-6    optimality tolerance for MIPS, PDIPM
-%                                   and SC-PDIPM
-%       85 - PDIPM_MAX_IT,  150     maximum number of iterations for MIPS,
-%                                   PDIPM and SC-PDIPM
-%       86 - SCPDIPM_RED_IT, 20     maximum number of MIPS-sc or SC-PDIPM
-%                                   reductions per iteration
-%       87 - TRALM_FEASTOL, 0       feasibility tolerance for TRALM
-%                                   set to value of OPF_VIOLATION by default
-%       88 - TRALM_PRIMETOL, 5e-4   primal variable tolerance for TRALM
-%       89 - TRALM_DUALTOL, 5e-4    dual variable tolerance for TRALM
-%       90 - TRALM_COSTTOL, 1e-5    optimality tolerance for TRALM
-%       91 - TRALM_MAJOR_IT, 40     maximum number of major iterations
-%       92 - TRALM_MINOR_IT, 100    maximum number of minor iterations
-%       93 - SMOOTHING_RATIO, 0.04  piecewise linear curve smoothing ratio
-%                                   used in SC-PDIPM and TRALM
+%Output options:
+%   verbose                 1           amount of progress info printed
+%       [   0 - print no progress info                                      ]
+%       [   1 - print a little progress info                                ]
+%       [   2 - print a lot of progress info                                ]
+%       [   3 - print all progress info                                     ]
+%   out.all                 -1          controls pretty-printing of results
+%       [  -1 - individual flags control what prints                        ]
+%       [   0 - do not print anything (overrides individual flags)          ]
+%       [   1 - print everything (overrides individual flags)               ]
+%   out.sys_sum             1           print system summary       [ 0 or 1 ]
+%   out.area_sum            0           print area summaries       [ 0 or 1 ]
+%   out.bus                 1           print bus detail           [ 0 or 1 ]
+%   out.branch              1           print branch detail        [ 0 or 1 ]
+%   out.gen                 0           print generator detail     [ 0 or 1 ]
+%   out.lim.all             -1          controls constraint info output
+%       [  -1 - individual flags control what constraint info prints        ]
+%       [   0 - no constraint info (overrides individual flags)             ]
+%       [   1 - binding constraint info (overrides individual flags)        ]
+%       [   2 - all constraint info (overrides individual flags)            ]
+%   out.lim.v               1           control voltage limit info
+%       [   0 - do not print                                                ]
+%       [   1 - print binding constraints only                              ]
+%       [   2 - print all constraints                                       ]
+%       [   (same options for OUT_LINE_LIM, OUT_PG_LIM, OUT_QG_LIM)         ]
+%   out.lim.line            1           control line flow limit info
+%   out.lim.pg              1           control gen active power limit info
+%   out.lim.qg              1           control gen reactive pwr limit info
+%   out.force               0           print results even if success
+%                                       flag = 0                   [ 0 or 1 ]
 %
-%   CPLEX options
-%       95 - CPLEX_LPMETHOD, 0      solution algorithm for continuous LPs
+%Solver specific options:
+%       name                    default     description [options]
+%   -----------------------    ---------   ----------------------------------
+%   MIPS:
+%       mips.feastol            0           feasibility (equality) tolerance
+%                                           (set to opf.violation by default)
+%       mips.gradtol            1e-6        gradient tolerance
+%       mips.comptol            1e-6        complementary condition
+%                                           (inequality) tolerance
+%       mips.costtol            1e-6        optimality tolerance
+%       mips.max_it             150         maximum number of iterations
+%       mips.step_control       0           enable step-size cntrl [ 0 or 1 ]
+%       mips.sc.red_it          20          maximum number of reductions per
+%                                           iteration with step control
+%
+%   CPLEX:
+%       cplex.lpmethod          0           solution algorithm for LP problems
 %           [   0 - automatic: let CPLEX choose                             ]
 %           [   1 - primal simplex                                          ]
 %           [   2 - dual simplex                                            ]
@@ -202,65 +204,124 @@ function [options, names] = mpoption(varargin)
 %           [   4 - barrier                                                 ]
 %           [   5 - sifting                                                 ]
 %           [   6 - concurrent (dual, barrier, and primal)                  ]
-%       96 - CPLEX_QPMETHOD, 0      solution algorithm for continuous QPs
+%       cplex.qpmethod          0           solution algorithm for QP problems
 %           [   0 - automatic: let CPLEX choose                             ]
 %           [   1 - primal simplex optimizer                                ]
 %           [   2 - dual simplex optimizer                                  ]
 %           [   3 - network optimizer                                       ]
 %           [   4 - barrier optimizer                                       ]
-%       97 - CPLEX_OPT, 0           See CPLEX_OPTIONS for details
+%       cplex.opts              <empty>     see CPLEX_OPTIONS for details
+%       cplex.opt_fname         <empty>     see CPLEX_OPTIONS for details
+%       cplex.opt               0           see CPLEX_OPTIONS for details
 %
-%   MOSEK options
-%       111 - MOSEK_LP_ALG, 0       solution algorithm for continuous LPs
-%                                       (MSK_IPAR_OPTIMIZER)
-%           [   0 - automatic: let MOSEK choose                             ]
-%           [   1 - interior point                                          ]
-%           [   4 - primal simplex                                          ]
-%           [   5 - dual simplex                                            ]
-%           [   6 - primal dual simplex                                     ]
-%           [   7 - automatic simplex (MOSEK chooses which simplex method)  ]
-%           [   10 - concurrent                                             ]
-%       112 - MOSEK_MAX_IT, 0 (400)     interior point max iterations
-%                                           (MSK_IPAR_INTPNT_MAX_ITERATIONS)
-%       113 - MOSEK_GAP_TOL, 0 (1e-8)   interior point relative gap tolerance
-%                                           (MSK_DPAR_INTPNT_TOL_REL_GAP)
-%       114 - MOSEK_MAX_TIME, 0 (-1)    maximum time allowed for solver
-%                                           (MSK_DPAR_OPTIMIZER_MAX_TIME)
-%       115 - MOSEK_NUM_THREADS, 0 (1)  maximum number of threads to use
-%                                           (MSK_IPAR_INTPNT_NUM_THREADS)
-%       116 - MOSEK_OPT, 0              See MOSEK_OPTIONS for details
+%   FMINCON:
+%       fmincon.alg             4           algorithm used by fmincon for OPF
+%                                           for Opt Toolbox 4 and later
+%            [  1 - active-set                                              ]
+%            [  2 - interior-point, w/default 'bfgs' Hessian approx         ]
+%            [  3 - interior-point, w/ 'lbfgs' Hessian approx               ]
+%            [  4 - interior-point, w/exact user-supplied Hessian           ]
+%            [  5 - interior-point, w/Hessian via finite differences        ]
+%       fmincon.tol_x           1e-4        termination tol on x
+%       fmincon.tol_f           1e-4        termination tol on f
+%       fmincon.max_it          0           maximum number of iterations
+%                                                           [  0 => default ]
 %
-%   Gurobi options
-%       121 - GRB_METHOD, -1         solution algorithm (Method)
+%   GUROBI:
+%       gurobi.method           0           solution algorithm (Method)
 %           [  -1 - automatic, let Gurobi decide                            ]
 %           [   0 - primal simplex                                          ]
 %           [   1 - dual simplex                                            ]
 %           [   2 - barrier                                                 ]
 %           [   3 - concurrent (LP only)                                    ]
 %           [   4 - deterministic concurrent (LP only)                      ]
-%       122 - GRB_TIMELIMIT, Inf    maximum time allowed for solver (TimeLimit)
-%       123 - GRB_THREADS, 0 (auto) maximum number of threads to use (Threads)
-%       124 - GRB_OPT, 0            See GUROBI_OPTIONS for details
+%       gurobi.timelimit        Inf         maximum time allowed (TimeLimit)
+%       gurobi.threads          0           max number of threads (Threads)
+%       gurobi.opts             <empty>     see GUROBI_OPTIONS for details
+%       gurobi.opt_fname        <empty>     see GUROBI_OPTIONS for details
+%       gurobi.opt              0           see GUROBI_OPTIONS for details
 %
-%   continuation power flow options
-%       125 - CPF_STEP, 0.05        continuation step size
-%       126 - CPF_ADAPT_STEP, 0     enable step adaptivity      [   0 or 1  ]
-%       127 - CPF_ERROR_TOL, 1e-3   error tolerance for adaptive step
-%                                   controller
-%       128 - CPF_STEP_MIN, 1e-4    minimum allowable step size
-%       129 - CPF_STEP_MAX, 0.2     maximum allowable step size
-%       130 - CPF_TRACE_NOSE, 1     terminate CPF when nose point detected
-%                                                               [   0 or 1  ]
-%       131 - CPF_TRACE_LAMBDA, 0   terminate CPF at a given lambda value
-%                                     (or at nose point if detected first)
-%       132 - CPF_TRACE_FULL, 0     terminate CPF after tracing full curve
-%                                                               [   0 or 1  ]
-%       133 - CPF_USER_CALLBACK, 0  See RUNCPF for details
+%   IPOPT:
+%       ipopt.opts              <empty>     see IPOPT_OPTIONS for details
+%       ipopt.opt_fname         <empty>     see IPOPT_OPTIONS for details
+%       ipopt.opt               0           see IPOPT_OPTIONS for details
+%
+%   KNITRO:
+%       knitro.tol_x            1e-4        termination tol on x
+%       knitro.tol_f            1e-4        termination tol on f
+%       knitro.opt_fname        <empty>     name of user-supplied native
+%                                           KNITRO options file that overrides
+%                                           all other options
+%       knitro.opt              0           if knitro.opt_fname is empty and
+%                                           knitro.opt is a non-zero integer N
+%                                           then knitro.opt_fname is auto-
+%                                           generated as:
+%                                           'knitro_user_options_N.txt'
+%
+%   MINOPF:
+%       minopf.feastol          0 (1e-3)    primal feasibility tolerance
+%                                           (set to opf.violation by default)
+%       minopf.rowtol           0 (1e-3)    row tolerance
+%       minopf.xtol             0 (1e-4)    x tolerance
+%       minopf.majdamp          0 (0.5)     major damping parameter
+%       minopf.mindamp          0 (2.0)     minor damping parameter
+%       minopf.penalty          0 (1.0)     penalty parameter
+%       minopf.major_it         0 (200)     major iterations
+%       minopf.minor_it         0 (2500)    minor iterations
+%       minopf.max_it           0 (2500)    iterations limit
+%       minopf.verbosity        -1          amount of progress info printed
+%           [  -1 - controlled by 'verbose' option                          ]
+%           [   0 - print nothing                                           ]
+%           [   1 - print only termination status message                   ]
+%           [   2 - print termination status and screen progress            ]
+%           [   3 - print screen progress, report file (usually fort.9)     ]
+%       minopf.core             0 (1200*nb + 2*(nb+ng)^2) memory allocation
+%       minopf.supbasic_lim     0 (2*nb + 2*ng) superbasics limit
+%       minopf.mult_price       0 (30)      multiple price
+%
+%   MOSEK:
+%       mosek.lp_alg            0           solution algorithm for LP problems
+%                                               (MSK_IPAR_OPTIMIZER)
+%       mosek.max_it            0 (400)     interior point max iterations
+%                                               (MSK_IPAR_INTPNT_MAX_ITERATIONS)
+%       mosek.gap_tol           0 (1e-8)    interior point relative gap tol
+%                                               (MSK_DPAR_INTPNT_TOL_REL_GAP)
+%       mosek.max_time          0 (-1)      maximum time allowed
+%                                               (MSK_DPAR_OPTIMIZER_MAX_TIME)
+%       mosek.num_threads       0 (1)       max number of threads
+%                                               (MSK_IPAR_INTPNT_NUM_THREADS)
+%       mosek.opts              <empty>     see MOSEK_OPTIONS for details
+%       mosek.opt_fname         <empty>     see MOSEK_OPTIONS for details
+%       mosek.opt               0           see MOSEK_OPTIONS for details
+%
+%   TSPOPF:
+%       pdipm.feastol           0           feasibility (equality) tolerance
+%                                           (set to opf.violation by default)
+%       pdipm.gradtol           1e-6        gradient tolerance
+%       pdipm.comptol           1e-6        complementary condition
+%                                           (inequality) tolerance
+%       pdipm.costtol           1e-6        optimality tolerance
+%       pdipm.max_it            150         maximum number of iterations
+%       pdipm.step_control      0           enable step-size cntrl [ 0 or 1 ]
+%       pdipm.sc.red_it         20          maximum number of reductions per
+%                                           iteration with step control
+%       pdipm.sc.smooth_ratio   0.04        piecewise linear curve smoothing
+%                                           ratio
+%
+%       tralm.feastol           0           feasibility tolerance
+%                                           (set to opf.violation by default)
+%       tralm.primaltol         5e-4        primal variable tolerance
+%       tralm.dualtol           5e-4        dual variable tolerance
+%       tralm.costtol           1e-5        optimality tolerance
+%       tralm.major_it          40          maximum number of major iterations
+%       tralm.minor_it          40          maximum number of minor iterations
+%       tralm.smooth_ratio      0.04        piecewise linear curve smoothing
+%                                           ratio
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2013 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2013 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
@@ -286,351 +347,977 @@ function [options, names] = mpoption(varargin)
 %   under other licensing terms, the licensors of MATPOWER grant
 %   you additional permission to convey the resulting work.
 
-%%-----  set up default option values  -----
-i = 1;
-if rem(nargin, 2)       %% odd number of arguments
-    options = varargin{1};  %% base options vector passed in
-    i = 2;                  %% start processing parameters with 2nd one
-else                    %% even number of parameters
-    options = [             %% use defaults for base options vector
-    
+%% some constants
+N = 124;                %% number of options in old-style vector
+v = mpoption_version;   %% version number of MATPOWER options struct
+
+%% initialize flags and arg counter
+have_opt0 = 0;          %% existing options struct or vector provided?
+have_old_style_ov = 0;  %% override options using old-style names?
+return_old_style = 0;   %% return value as old-style vector?
+k = 1;
+if nargin > 0
+    opt0 = varargin{k};
+    if (isstruct(opt0) && isfield(opt0, 'v')) || ...
+        (isnumeric(opt0) && size(opt0, 1) == N && size(opt0, 2) == 1)
+        have_opt0 = 1;
+        k = k + 1;
+    end
+end
+
+%% create base options vector to which overrides are made
+if have_opt0
+    if isstruct(opt0)               %% it's already a valid options struct
+        if DEBUG, fprintf('OPT0 is a valid options struct\n'); end
+        if opt0.v < v
+            %% convert older version to current version
+%             switch v
+%                 case 1
+%                     %% convert version 1 to current
+%             end
+        end
+        opt = opt0;
+    else                            %% convert from old-style options vector
+        if DEBUG, fprintf('OPT0 is a old-style options vector\n'); end
+        opt = mpoption_v2s(opt0);
+    end
+else                                %% use default options struct as base
+    if DEBUG, fprintf('no OPT0, starting with default options struct\n'); end
+    opt = mpoption_default();
+end
+
+
+%% do we have OVERRIDES or NAME/VALUE pairs
+ov = [];
+if nargin - k == 0          %% looking at last arg, must be OVERRIDES
+    if isstruct(varargin{k})        %% OVERRIDES provided as struct
+        if DEBUG, fprintf('OVERRIDES struct\n'); end
+        ov = varargin{k};
+    elseif ischar(varargin{k})      %% OVERRIDES provided as file/function name
+        if DEBUG, fprintf('OVERRIDES file/function name\n'); end
+        try
+            ov = feval(varargin{k});
+        catch me
+            error('mpoption: Unable to load MATPOWER options from ''%s''', varargin{k});
+        end
+        if ~isstruct(ov)
+            error('mpoption: calling ''%s'' did not return a struct', varargin{k});
+        end
+    elseif isempty(varargin{k})
+        return_old_style = 1;
+    else
+        error('mpoption: OVERRIDES must be a struct or the name of a function that returns a struct');
+    end
+elseif nargin - k > 0 && mod(nargin-k, 2)   %% even number of remaining args
+    if DEBUG, fprintf('NAME/VALUE pairs override defaults\n'); end
+    %% process NAME/VALUE pairs
+    if (have_opt0 && isnumeric(opt0)) ...   %% modifying an old-style options vector
+            || strcmp(varargin{k}, upper(varargin{k}))
+            %% this code implies that top-level option fields
+            %% cannot be all uppercase
+        if have_opt0
+            have_old_style_ov = 1;
+            %% convert pairs to struct
+            while k < nargin
+                name = varargin{k};
+                val  = varargin{k+1};
+                k = k + 2;
+                ov.(name) = val;
+            end
+        else
+            opt_v = mpoption_old(varargin{:});  %% create modified vector ...
+            opt = mpoption_v2s(opt_v);          %% ... then convert
+        end
+    else                                    %% modifying options struct
+        %% convert pairs to struct
+        while k < nargin
+            name = varargin{k};
+            val  = varargin{k+1};
+            k = k + 2;
+            if have_fcn('octave')
+                c = strsplit(name, '.');
+            else
+                [c, matches] = regexp(name, '\.', 'split', 'match');
+            end
+            s = struct();
+            for i = 1:length(c)
+                s(i).type = '.';
+                s(i).subs = c{i};
+            end
+            ov = subsasgn(ov, s, val);
+        end
+    end
+elseif nargin == 0 || nargin == 1
+    if DEBUG, fprintf('no OVERRIDES, return default options struct or converted OPT0 vector\n'); end
+else
+    error('mpoption: invalid calling syntax, see ''help mpoption'' to double-check the valid options');
+end
+
+%% apply overrides
+if ~isempty(ov)
+    if have_old_style_ov
+        opt = apply_old_mpoption_overrides(opt, ov);
+    else
+        vf = nested_struct_copy(mpoption_default(), mpoption_optional_fields());
+        ex = struct(...
+            'name', {   'cpf.user_callback_args', ...
+                        'cplex.opts', ...
+                        'fmincon.opts', ...
+                        'gurobi.opts', ...
+                        'ipopt.opts', ...
+                        'knitro.opts', ...
+                        'mosek.opts'    }, ...
+            'copy_mode',  { '=', ...
+                            'cplex_options', ...
+                            '=', ...
+                            'gurobi_options', ...
+                            'ipopt_options', ...
+                            '=', ...
+                            'mosek_options' } );
+        nsc_opt = struct('check', 1, 'valid_fields', vf, 'exceptions', ex);
+        try
+            opt = nested_struct_copy(opt, ov, nsc_opt);
+        catch me
+            str = strrep(me.message, 'field', 'option');
+            str = strrep(str, 'nested_struct_copy', 'mpoption');
+            error(str);
+        end
+    end
+end
+if return_old_style
+    opt = mpoption_s2v(opt);
+end
+
+
+%%-------------------------------------------------------------------
+function opt = apply_old_mpoption_overrides(opt0, ov)
+%
+%   OPT0 is assumed to already have all of the fields and sub-fields found
+%   in the default options struct.
+
+%% initialize output
+opt = opt0;
+
+errstr = 'mpoption: %g is not a valid value for the old-style ''%s'' option';
+fields = fieldnames(ov);
+for f = 1:length(fields)
+    ff = fields{f};
+    switch ff
+        case 'PF_ALG'
+            switch ov.(ff)
+                case 1
+                    opt.pf.alg = 'NR';      %% Newton's method
+                case 2
+                    opt.pf.alg = 'FDXB';    %% fast-decoupled (XB version)
+                case 3
+                    opt.pf.alg = 'FDBX';    %% fast-decoupled (BX version)
+                case 4
+                    opt.pf.alg = 'GS';      %% Gauss-Seidel
+                otherwise
+                    error(errstr, ov.(ff), ff);
+            end
+        case 'PF_TOL'
+            opt.pf.tol = ov.(ff);
+        case 'PF_MAX_IT'
+            opt.pf.nr.max_it = ov.(ff);
+        case 'PF_MAX_IT_FD'
+            opt.pf.fd.max_it = ov.(ff);
+        case 'PF_MAX_IT_GS'
+            opt.pf.gs.max_it = ov.(ff);
+        case 'ENFORCE_Q_LIMS'
+            opt.pf.enforce_q_lims = ov.(ff);
+        case 'PF_DC'
+            switch ov.(ff)
+                case 0
+                    opt.model = 'AC';
+                case 1
+                    opt.model = 'DC';
+                otherwise
+                    error(errstr, ov.(ff), ff);
+            end
+        case 'OPF_ALG'
+            switch ov.(ff)
+                case 0
+                    opt.opf.ac.solver = 'DEFAULT';
+                case 500
+                    opt.opf.ac.solver = 'MINOPF';
+                case 520
+                    opt.opf.ac.solver = 'FMINCON';
+                case {540, 545}
+                    opt.opf.ac.solver = 'PDIPM';
+                    if ov.(ff) == 545
+                        opt.pdipm.step_control = 1;
+                    else
+                        opt.pdipm.step_control = 0;
+                    end
+                case 550
+                    opt.opf.ac.solver = 'TRALM';
+                case {560, 565}
+                    opt.opf.ac.solver = 'MIPS';
+                    if ov.(ff) == 565
+                        opt.mips.step_control = 1;
+                    else
+                        opt.mips.step_control = 0;
+                    end
+                case 580
+                    opt.opf.ac.solver = 'IPOPT';
+                case 600
+                    opt.opf.ac.solver = 'KNITRO';
+                otherwise
+                    error(errstr, ov.(ff), ff);
+            end
+        case 'OPF_VIOLATION'
+            opt.opf.violation = ov.(ff);
+        case 'CONSTR_TOL_X'
+            opt.fmincon.tol_x = ov.(ff);
+            opt.knitro.tol_x = ov.(ff);
+        case 'CONSTR_TOL_F'
+            opt.fmincon.tol_f = ov.(ff);
+            opt.knitro.tol_f = ov.(ff);
+        case 'CONSTR_MAX_IT'
+            opt.fmincon.max_it = ov.(ff);
+        case 'OPF_FLOW_LIM'
+            switch ov.(ff)
+                case 0
+                    opt.opf.flow_lim = 'S';   %% apparent power (MVA)
+                case 1
+                    opt.opf.flow_lim = 'P';   %% real power (MW)
+                case 2
+                    opt.opf.flow_lim = 'I';   %% current magnitude (MVA @ 1 p.u. voltage)
+                otherwise
+                    error(errstr, ov.(ff), ff);
+            end
+        case 'OPF_IGNORE_ANG_LIM'
+            opt.opf.ignore_angle_lim = ov.(ff);
+        case 'OPF_ALG_DC'
+            switch ov.(ff)
+                case 0
+                    opt.opf.dc.solver = 'DEFAULT';
+                case 100
+                    opt.opf.dc.solver = 'BPMPD';
+                case {200, 250}
+                    opt.opf.dc.solver = 'MIPS';
+                    if ov.(ff) == 250
+                        opt.mips.step_control = 1;
+                    else
+                        opt.mips.step_control = 0;
+                    end
+                case 300
+                    opt.opf.dc.solver = 'OT';     %% QUADPROG, LINPROG
+                case 400
+                    opt.opf.dc.solver = 'IPOPT';
+                case 500
+                    opt.opf.dc.solver = 'CPLEX';
+                case 600
+                    opt.opf.dc.solver = 'MOSEK';
+                case 700
+                    opt.opf.dc.solver = 'GUROBI';
+                otherwise
+                    error(errstr, ov.(ff), ff);
+            end
+        case 'VERBOSE'
+            opt.verbose = ov.(ff);
+        case 'OUT_ALL'
+            opt.out.all = ov.(ff);
+        case 'OUT_SYS_SUM'
+            opt.out.sys_sum = ov.(ff);
+        case 'OUT_AREA_SUM'
+            opt.out.area_sum = ov.(ff);
+        case 'OUT_BUS'
+            opt.out.bus = ov.(ff);
+        case 'OUT_BRANCH'
+            opt.out.branch = ov.(ff);
+        case 'OUT_GEN'
+            opt.out.gen = ov.(ff);
+        case 'OUT_ALL_LIM'
+            opt.out.lim.all = ov.(ff);
+        case 'OUT_V_LIM'
+            opt.out.lim.v = ov.(ff);
+        case 'OUT_LINE_LIM'
+            opt.out.lim.line = ov.(ff);
+        case 'OUT_PG_LIM'
+            opt.out.lim.pg = ov.(ff);
+        case 'OUT_QG_LIM'
+            opt.out.lim.qg = ov.(ff);
+        case 'OUT_FORCE'
+            opt.out.force = ov.(ff);
+        case 'RETURN_RAW_DER'
+            opt.opf.return_raw_der = ov.(ff);
+        case 'FMC_ALG'
+            opt.fmincon.alg = ov.(ff);
+        case 'KNITRO_OPT'
+            opt.knitro.opt = ov.(ff);
+        case 'IPOPT_OPT'
+            opt.ipopt.opt = ov.(ff);
+        case 'MNS_FEASTOL'
+            opt.minopf.feastol = ov.(ff);
+        case 'MNS_ROWTOL'
+            opt.minopf.rowtol = ov.(ff);
+        case 'MNS_XTOL'
+            opt.minopf.xtol = ov.(ff);
+        case 'MNS_MAJDAMP'
+            opt.minopf.majdamp = ov.(ff);
+        case 'MNS_MINDAMP'
+            opt.minopf.mindamp = ov.(ff);
+        case 'MNS_PENALTY_PARM'
+            opt.minopf.penalty = ov.(ff);
+        case 'MNS_MAJOR_IT'
+            opt.minopf.major_it = ov.(ff);
+        case 'MNS_MINOR_IT'
+            opt.minopf.minor_it = ov.(ff);
+        case 'MNS_MAX_IT'
+            opt.minopf.max_it = ov.(ff);
+        case 'MNS_VERBOSITY'
+            opt.minopf.verbosity = ov.(ff);
+        case 'MNS_CORE'
+            opt.minopf.core = ov.(ff);
+        case 'MNS_SUPBASIC_LIM'
+            opt.minopf.supbasic_lim = ov.(ff);
+        case 'MNS_MULT_PRICE'
+            opt.minopf.mult_price = ov.(ff);
+        case 'FORCE_PC_EQ_P0'
+            opt.sopf.force_Pc_eq_P0 = ov.(ff);
+        case 'PDIPM_FEASTOL'
+            opt.mips.feastol = ov.(ff);
+            opt.pdipm.feastol = ov.(ff);
+        case 'PDIPM_GRADTOL'
+            opt.mips.gradtol = ov.(ff);
+            opt.pdipm.gradtol = ov.(ff);
+        case 'PDIPM_COMPTOL'
+            opt.mips.comptol = ov.(ff);
+            opt.pdipm.comptol = ov.(ff);
+        case 'PDIPM_COSTTOL'
+            opt.mips.costtol = ov.(ff);
+            opt.pdipm.costtol = ov.(ff);
+        case 'PDIPM_MAX_IT'
+            opt.mips.max_it = ov.(ff);
+            opt.pdipm.max_it = ov.(ff);
+        case 'SCPDIPM_RED_IT'
+            opt.mips.sc.red_it = ov.(ff);
+            opt.pdipm.sc.red_it = ov.(ff);
+        case 'TRALM_FEASTOL'
+            opt.tralm.feastol = ov.(ff);
+        case 'TRALM_PRIMETOL'
+            opt.tralm.primaltol = ov.(ff);
+        case 'TRALM_DUALTOL'
+            opt.tralm.dualtol = ov.(ff);
+        case 'TRALM_COSTTOL'
+            opt.tralm.costtol = ov.(ff);
+        case 'TRALM_MAJOR_IT'
+            opt.tralm.major_it = ov.(ff);
+        case 'TRALM_MINOR_IT'
+            opt.tralm.minor_it = ov.(ff);
+        case 'SMOOTHING_RATIO'
+            opt.pdipm.sc.smooth_ratio = ov.(ff);
+            opt.tralm.smooth_ratio = ov.(ff);
+        case 'CPLEX_LPMETHOD'
+            opt.cplex.lpmethod = ov.(ff);
+        case 'CPLEX_QPMETHOD'
+            opt.cplex.qpmethod = ov.(ff);
+        case 'CPLEX_OPT'
+            opt.cplex.opt = ov.(ff);
+        case 'MOSEK_LP_ALG'
+            opt.mosek.lp_alg = ov.(ff);
+        case 'MOSEK_MAX_IT'
+            opt.mosek.max_it = ov.(ff);
+        case 'MOSEK_GAP_TOL'
+            opt.mosek.gap_tol = ov.(ff);
+        case 'MOSEK_MAX_TIME'
+            opt.mosek.max_time = ov.(ff);
+        case 'MOSEK_NUM_THREADS'
+            opt.mosek.num_threads = ov.(ff);
+        case 'MOSEK_OPT'
+            opt.mosek.opt = ov.(ff);
+        case 'GRB_METHOD'
+            opt.gurobi.method = ov.(ff);
+        case 'GRB_TIMELIMIT'
+            opt.gurobi.timelimit = ov.(ff);
+        case 'GRB_THREADS'
+            opt.gurobi.threads = ov.(ff);
+        case 'GRB_OPT'
+            opt.gurobi.opt = ov.(ff);
+        otherwise
+            error('mpoption: ''%s'' is not a valid old-style option name', ff);
+    end
+end
+% ov
+
+
+%%-------------------------------------------------------------------
+function opt_s = mpoption_v2s(opt_v)
+if DEBUG, fprintf('mpoption_v2s()\n'); end
+opt_s = mpoption_default();
+errstr = 'mpoption: %g is not a valid value for the old-style ''%s'' option';
+switch opt_v(1)                                 %% PF_ALG
+    case 1
+        opt_s.pf.alg = 'NR';        %% Newton's method
+    case 2
+        opt_s.pf.alg = 'FDXB';      %% fast-decoupled (XB version)
+    case 3
+        opt_s.pf.alg = 'FDBX';      %% fast-decoupled (BX version)
+    case 4
+        opt_s.pf.alg = 'GS';        %% Gauss-Seidel
+    otherwise
+        error(errstr, opt_v(1), 'PF_ALG');
+end
+opt_s.pf.tol                = opt_v(2);         %% PF_TOL
+opt_s.pf.nr.max_it          = opt_v(3);         %% PF_MAX_IT
+opt_s.pf.fd.max_it          = opt_v(4);         %% PF_MAX_IT_FD
+opt_s.pf.gs.max_it          = opt_v(5);         %% PF_MAX_IT_GS
+opt_s.pf.enforce_q_lims     = opt_v(6);         %% ENFORCE_Q_LIMS
+switch opt_v(10)                                %% PF_DC
+    case 0
+        opt_s.model = 'AC';
+    case 1
+        opt_s.model = 'DC';
+    otherwise
+        error(errstr, opt_v(10), 'PF_DC');
+end
+switch opt_v(11)                                %% OPF_ALG
+    case 0
+        opt_s.opf.ac.solver = 'DEFAULT';
+    case 500
+        opt_s.opf.ac.solver = 'MINOPF';
+    case 520
+        opt_s.opf.ac.solver = 'FMINCON';
+    case {540, 545}
+        opt_s.opf.ac.solver = 'PDIPM';
+    case 550
+        opt_s.opf.ac.solver = 'TRALM';
+    case {560, 565}
+        opt_s.opf.ac.solver = 'MIPS';
+    case 580
+        opt_s.opf.ac.solver = 'IPOPT';
+    case 600
+        opt_s.opf.ac.solver = 'KNITRO';
+    otherwise
+        error(errstr, opt_v(11), 'OPF_ALG');
+end
+opt_s.opf.violation         = opt_v(16);        %% OPF_VIOLATION
+
+opt_s.fmincon.tol_x         = opt_v(17);        %% CONSTR_TOL_X
+opt_s.fmincon.tol_f         = opt_v(18);        %% CONSTR_TOL_F
+opt_s.fmincon.max_it        = opt_v(19);        %% CONSTR_MAX_IT
+
+opt_s.knitro.tol_x          = opt_v(17);        %% CONSTR_TOL_X
+opt_s.knitro.tol_f          = opt_v(18);        %% CONSTR_TOL_F
+
+switch opt_v(24)                                %% OPF_FLOW_LIM
+    case 0
+        opt_s.opf.flow_lim = 'S';   %% apparent power (MVA)
+    case 1
+        opt_s.opf.flow_lim = 'P';   %% real power (MW)
+    case 2
+        opt_s.opf.flow_lim = 'I';   %% current magnitude (MVA @ 1 p.u. voltage)
+    otherwise
+        error(errstr, opt_v(10), 'PF_DC');
+end
+
+opt_s.opf.ignore_angle_lim  = opt_v(25);        %% OPF_IGNORE_ANG_LIM
+
+switch opt_v(26)                                %% OPF_ALG_DC
+    case 0
+        opt_s.opf.dc.solver = 'DEFAULT';
+    case 100
+        opt_s.opf.dc.solver = 'BPMPD';
+    case {200, 250}
+        opt_s.opf.dc.solver = 'MIPS';
+    case 300
+        opt_s.opf.dc.solver = 'OT';     %% QUADPROG, LINPROG
+    case 400
+        opt_s.opf.dc.solver = 'IPOPT';
+    case 500
+        opt_s.opf.dc.solver = 'CPLEX';
+    case 600
+        opt_s.opf.dc.solver = 'MOSEK';
+    case 700
+        opt_s.opf.dc.solver = 'GUROBI';
+    otherwise
+        error(errstr, opt_v(26), 'OPF_ALG_DC');
+end
+
+opt_s.verbose               = opt_v(31);        %% VERBOSE
+opt_s.out.all               = opt_v(32);        %% OUT_ALL
+opt_s.out.sys_sum           = opt_v(33);        %% OUT_SYS_SUM
+opt_s.out.area_sum          = opt_v(34);        %% OUT_AREA_SUM
+opt_s.out.bus               = opt_v(35);        %% OUT_BUS
+opt_s.out.branch            = opt_v(36);        %% OUT_BRANCH
+opt_s.out.gen               = opt_v(37);        %% OUT_GEN
+opt_s.out.lim.all           = opt_v(38);        %% OUT_ALL_LIM
+opt_s.out.lim.v             = opt_v(39);        %% OUT_V_LIM
+opt_s.out.lim.line          = opt_v(40);        %% OUT_LINE_LIM
+opt_s.out.lim.pg            = opt_v(41);        %% OUT_PG_LIM
+opt_s.out.lim.qg            = opt_v(42);        %% OUT_QG_LIM
+opt_s.out.force             = opt_v(44);        %% OUT_FORCE
+
+opt_s.opf.return_raw_der    = opt_v(52);        %% RETURN_RAW_DER
+
+opt_s.fmincon.alg           = opt_v(55);        %% FMC_ALG
+opt_s.knitro.opt            = opt_v(58);        %% KNITRO_OPT
+opt_s.ipopt.opt             = opt_v(60);        %% IPOPT_OPT
+
+opt_s.minopf.feastol        = opt_v(61);        %% MNS_FEASTOL
+opt_s.minopf.rowtol         = opt_v(62);        %% MNS_ROWTOL
+opt_s.minopf.xtol           = opt_v(63);        %% MNS_XTOL
+opt_s.minopf.majdamp        = opt_v(64);        %% MNS_MAJDAMP
+opt_s.minopf.mindamp        = opt_v(65);        %% MNS_MINDAMP
+opt_s.minopf.penalty        = opt_v(66);        %% MNS_PENALTY_PARM
+opt_s.minopf.major_it       = opt_v(67);        %% MNS_MAJOR_IT
+opt_s.minopf.minor_it       = opt_v(68);        %% MNS_MINOR_IT
+opt_s.minopf.max_it         = opt_v(69);        %% MNS_MAX_IT
+opt_s.minopf.verbosity      = opt_v(70);        %% MNS_VERBOSITY
+opt_s.minopf.core           = opt_v(71);        %% MNS_CORE
+opt_s.minopf.supbasic_lim   = opt_v(72);        %% MNS_SUPBASIC_LIM
+opt_s.minopf.mult_price     = opt_v(73);        %% MNS_MULT_PRICE
+
+opt_s.sopf.force_Pc_eq_P0   = opt_v(80);        %% FORCE_PC_EQ_P0, for c3sopf
+
+if (opt_v(11) == 565 && opt_v(10) == 0) || (opt_v(26) == 250 && opt_v(10) == 1)
+    opt_s.mips.step_control = 1;
+end
+opt_s.mips.feastol          = opt_v(81);        %% PDIPM_FEASTOL
+opt_s.mips.gradtol          = opt_v(82);        %% PDIPM_GRADTOL
+opt_s.mips.comptol          = opt_v(83);        %% PDIPM_COMPTOL
+opt_s.mips.costtol          = opt_v(84);        %% PDIPM_COSTTOL
+opt_s.mips.max_it           = opt_v(85);        %% PDIPM_MAX_IT
+opt_s.mips.sc.red_it        = opt_v(86);        %% SCPDIPM_RED_IT
+
+opt_s.pdipm.feastol         = opt_v(81);        %% PDIPM_FEASTOL
+opt_s.pdipm.gradtol         = opt_v(82);        %% PDIPM_GRADTOL
+opt_s.pdipm.comptol         = opt_v(83);        %% PDIPM_COMPTOL
+opt_s.pdipm.costtol         = opt_v(84);        %% PDIPM_COSTTOL
+opt_s.pdipm.max_it          = opt_v(85);        %% PDIPM_MAX_IT
+opt_s.pdipm.sc.red_it       = opt_v(86);        %% SCPDIPM_RED_IT
+opt_s.pdipm.sc.smooth_ratio = opt_v(93);        %% SMOOTHING_RATIO
+if opt_v(11) == 545 && opt_v(10) == 0
+    opt_s.pdipm.step_control = 1;
+end
+
+opt_s.tralm.feastol         = opt_v(87);        %% TRALM_FEASTOL
+opt_s.tralm.primaltol       = opt_v(88);        %% TRALM_PRIMETOL
+opt_s.tralm.dualtol         = opt_v(89);        %% TRALM_DUALTOL
+opt_s.tralm.costtol         = opt_v(90);        %% TRALM_COSTTOL
+opt_s.tralm.major_it        = opt_v(91);        %% TRALM_MAJOR_IT
+opt_s.tralm.minor_it        = opt_v(92);        %% TRALM_MINOR_IT
+opt_s.tralm.smooth_ratio    = opt_v(93);        %% SMOOTHING_RATIO
+
+opt_s.cplex.lpmethod        = opt_v(95);        %% CPLEX_LPMETHOD
+opt_s.cplex.qpmethod        = opt_v(96);        %% CPLEX_QPMETHOD
+opt_s.cplex.opt             = opt_v(97);        %% CPLEX_OPT
+
+opt_s.mosek.lp_alg          = opt_v(111);       %% MOSEK_LP_ALG
+opt_s.mosek.max_it          = opt_v(112);       %% MOSEK_MAX_IT
+opt_s.mosek.gap_tol         = opt_v(113);       %% MOSEK_GAP_TOL
+opt_s.mosek.max_time        = opt_v(114);       %% MOSEK_MAX_TIME
+opt_s.mosek.num_threads     = opt_v(115);       %% MOSEK_NUM_THREADS
+opt_s.mosek.opt             = opt_v(116);       %% MOSEK_OPT
+
+opt_s.gurobi.method         = opt_v(121);       %% GRB_METHOD
+opt_s.gurobi.timelimit      = opt_v(122);       %% GRB_TIMELIMIT
+opt_s.gurobi.threads        = opt_v(123);       %% GRB_THREADS
+opt_s.gurobi.opt            = opt_v(124);       %% GRB_OPT
+
+
+%%-------------------------------------------------------------------
+function opt_v = mpoption_s2v(opt_s)
+if DEBUG, fprintf('mpoption_s2v()\n'); end
+%% PF_ALG
+switch upper(opt_s.pf.alg)
+    case 'NR'
+        PF_ALG = 1;
+    case 'FDXB'
+        PF_ALG = 2;
+    case 'FDBX'
+        PF_ALG = 3;
+    case 'GS'
+        PF_ALG = 4;
+end
+
+%% PF_DC
+if strcmp(upper(opt_s.model), 'DC')
+    PF_DC = 1;
+else
+    PF_DC = 0;
+end
+
+%% OPF_ALG
+switch upper(opt_s.opf.ac.solver)
+    case 'DEFAULT'
+        OPF_ALG = 0;
+    case 'MINOPF'
+        OPF_ALG = 500;
+    case 'FMINCON'
+        OPF_ALG = 520;
+    case 'PDIPM'
+        if opt_s.pdipm.step_control
+            OPF_ALG = 545;
+        else
+            OPF_ALG = 540;
+        end
+    case 'TRALM'
+        OPF_ALG = 550;
+    case 'MIPS'
+        if opt_s.mips.step_control
+            OPF_ALG = 565;
+        else
+            OPF_ALG = 560;
+        end
+    case 'IPOPT'
+        OPF_ALG = 580;
+    case 'KNITRO'
+        OPF_ALG = 600;
+end
+
+%% FMINCON, Knitro tol_x, tol_f, max_it
+if strcmp(upper(opt_s.opf.ac.solver), 'FMINCON')
+    CONSTR_TOL_X = opt_s.fmincon.tol_x;
+    CONSTR_TOL_F = opt_s.fmincon.tol_f;
+else
+    CONSTR_TOL_X = opt_s.knitro.tol_x;
+    CONSTR_TOL_F = opt_s.knitro.tol_f;
+end    
+
+%% OPF_FLOW_LIM
+switch upper(opt_s.opf.flow_lim)
+    case 'S'
+        OPF_FLOW_LIM = 0;
+    case 'P'
+        OPF_FLOW_LIM = 1;
+    case 'I'
+        OPF_FLOW_LIM = 2;
+end
+
+%% OPF_ALG_DC
+switch upper(opt_s.opf.dc.solver)
+    case 'DEFAULT'
+        OPF_ALG_DC = 0;
+    case 'BPMPD'
+        OPF_ALG_DC = 100;
+    case 'MIPS'
+        if opt_s.mips.step_control
+            OPF_ALG_DC = 250;
+        else
+            OPF_ALG_DC = 200;
+        end
+    case 'OT'
+        OPF_ALG_DC = 300;
+    case 'IPOPT'
+        OPF_ALG_DC = 400;
+    case 'CPLEX'
+        OPF_ALG_DC = 500;
+    case 'MOSEK'
+        OPF_ALG_DC = 600;
+    case 'GUROBI'
+        OPF_ALG_DC = 700;
+end
+
+%% FORCE_PC_EQ_P0
+if isfield(opt_s, 'sopf') && isfield(opt_s.sopf, 'force_Pc_eq_P0')
+    FORCE_PC_EQ_P0 = opt_s.sopf.force_Pc_eq_P0;
+else
+    FORCE_PC_EQ_P0 = 0;
+end
+
+%% SMOOTHING_RATIO
+if strcmp(upper(opt_s.opf.ac.solver), 'TRALM')
+    SMOOTHING_RATIO = opt_s.tralm.smooth_ratio;
+else
+    SMOOTHING_RATIO = opt_s.pdipm.sc.smooth_ratio;
+end
+
+opt_v = [
         %% power flow options
-        1;      %% 1  - PF_ALG
-        1e-8;   %% 2  - PF_TOL
-        10;     %% 3  - PF_MAX_IT
-        30;     %% 4  - PF_MAX_IT_FD
-        1000;   %% 5  - PF_MAX_IT_GS
-        0;      %% 6  - ENFORCE_Q_LIMS
-        0;      %% 7  - RESERVED7
-        0;      %% 8  - RESERVED8
-        0;      %% 9  - RESERVED9
-        0;      %% 10 - PF_DC
+        PF_ALG;                 %% 1  - PF_ALG
+        opt_s.pf.tol;           %% 2  - PF_TOL
+        opt_s.pf.nr.max_it;     %% 3  - PF_MAX_IT
+        opt_s.pf.fd.max_it;     %% 4  - PF_MAX_IT_FD
+        opt_s.pf.gs.max_it;     %% 5  - PF_MAX_IT_GS
+        opt_s.pf.enforce_q_lims;%% 6  - ENFORCE_Q_LIMS
+        0;                      %% 7  - RESERVED7
+        0;                      %% 8  - RESERVED8
+        0;                      %% 9  - RESERVED9
+        PF_DC;                  %% 10 - PF_DC
         
         %% OPF options
-        0;      %% 11 - OPF_ALG
-        0;      %% 12 - RESERVED12 (was OPF_ALG_POLY = 100)
-        0;      %% 13 - RESERVED13 (was OPF_ALG_PWL = 200)
-        0;      %% 14 - RESERVED14 (was OPF_POLY2PWL_PTS = 10)
-        0;      %% 15 - OPF_NEQ (removed)
-        5e-6;   %% 16 - OPF_VIOLATION
-        1e-4;   %% 17 - CONSTR_TOL_X
-        1e-4;   %% 18 - CONSTR_TOL_F
-        0;      %% 19 - CONSTR_MAX_IT
-        3e-3;   %% 20 - LPC_TOL_GRAD (removed)
-        1e-4;   %% 21 - LPC_TOL_X (removed)
-        400;    %% 22 - LPC_MAX_IT (removed)
-        5;      %% 23 - LPC_MAX_RESTART (removed)
-        0;      %% 24 - OPF_FLOW_LIM
-        0;      %% 25 - OPF_IGNORE_ANG_LIM
-        0;      %% 26 - OPF_ALG_DC
-        0;      %% 27 - RESERVED27
-        0;      %% 28 - RESERVED28
-        0;      %% 29 - RESERVED29
-        0;      %% 30 - RESERVED30
+        OPF_ALG;                %% 11 - OPF_ALG
+        0;                      %% 12 - RESERVED12 (was OPF_ALG_POLY = 100)
+        0;                      %% 13 - RESERVED13 (was OPF_ALG_PWL = 200)
+        0;                      %% 14 - RESERVED14 (was OPF_POLY2PWL_PTS = 10)
+        0;                      %% 15 - OPF_NEQ (removed)
+        opt_s.opf.violation;    %% 16 - OPF_VIOLATION
+        CONSTR_TOL_X;           %% 17 - CONSTR_TOL_X
+        CONSTR_TOL_F;           %% 18 - CONSTR_TOL_F
+        opt_s.fmincon.max_it;   %% 19 - CONSTR_MAX_IT
+        3e-3;                   %% 20 - LPC_TOL_GRAD (removed)
+        1e-4;                   %% 21 - LPC_TOL_X (removed)
+        400;                    %% 22 - LPC_MAX_IT (removed)
+        5;                      %% 23 - LPC_MAX_RESTART (removed)
+        OPF_FLOW_LIM;           %% 24 - OPF_FLOW_LIM
+        opt_s.opf.ignore_angle_lim; %% 25 - OPF_IGNORE_ANG_LIM
+        OPF_ALG_DC;             %% 26 - OPF_ALG_DC
+        0;                      %% 27 - RESERVED27
+        0;                      %% 28 - RESERVED28
+        0;                      %% 29 - RESERVED29
+        0;                      %% 30 - RESERVED30
         
         %% output options
-        1;      %% 31 - VERBOSE
-        -1;     %% 32 - OUT_ALL
-        1;      %% 33 - OUT_SYS_SUM
-        0;      %% 34 - OUT_AREA_SUM
-        1;      %% 35 - OUT_BUS
-        1;      %% 36 - OUT_BRANCH
-        0;      %% 37 - OUT_GEN
-        -1;     %% 38 - OUT_ALL_LIM
-        1;      %% 39 - OUT_V_LIM
-        1;      %% 40 - OUT_LINE_LIM
-        1;      %% 41 - OUT_PG_LIM
-        1;      %% 42 - OUT_QG_LIM
-        0;      %% 43 - RESERVED43 (was OUT_RAW)
-        0;      %% 44 - OUT_FORCE
-        0;      %% 45 - RESERVED45
-        0;      %% 46 - RESERVED46
-        0;      %% 47 - RESERVED47
-        0;      %% 48 - RESERVED48
-        0;      %% 49 - RESERVED49
-        0;      %% 50 - RESERVED50
+        opt_s.verbose;          %% 31 - VERBOSE
+        opt_s.out.all;          %% 32 - OUT_ALL
+        opt_s.out.sys_sum;      %% 33 - OUT_SYS_SUM
+        opt_s.out.area_sum;     %% 34 - OUT_AREA_SUM
+        opt_s.out.bus;          %% 35 - OUT_BUS
+        opt_s.out.branch;       %% 36 - OUT_BRANCH
+        opt_s.out.gen;          %% 37 - OUT_GEN
+        opt_s.out.lim.all;      %% 38 - OUT_ALL_LIM
+        opt_s.out.lim.v;        %% 39 - OUT_V_LIM
+        opt_s.out.lim.line;     %% 40 - OUT_LINE_LIM
+        opt_s.out.lim.pg;       %% 41 - OUT_PG_LIM
+        opt_s.out.lim.qg;       %% 42 - OUT_QG_LIM
+        0;                      %% 43 - RESERVED43 (was OUT_RAW)
+        opt_s.out.force;        %% 44 - OUT_FORCE
+        0;                      %% 45 - RESERVED45
+        0;                      %% 46 - RESERVED46
+        0;                      %% 47 - RESERVED47
+        0;                      %% 48 - RESERVED48
+        0;                      %% 49 - RESERVED49
+        0;                      %% 50 - RESERVED50
         
         %% other options
-        1;      %% 51 - SPARSE_QP (removed)
-        0;      %% 52 - RETURN_RAW_DER
-        0;      %% 53 - RESERVED53
-        0;      %% 54 - RESERVED54
-        4;      %% 55 - FMC_ALG
-        0;      %% 56 - RESERVED56
-        0;      %% 57 - RESERVED57
-        0;      %% 58 - KNITRO_OPT
-        0;      %% 59 - RESERVED59
-        0;      %% 60 - IPOPT_OPT
+        1;                      %% 51 - SPARSE_QP (removed)
+        opt_s.opf.return_raw_der;   %% 52 - RETURN_RAW_DER
+        0;                      %% 53 - RESERVED53
+        0;                      %% 54 - RESERVED54
+        opt_s.fmincon.alg;      %% 55 - FMC_ALG
+        0;                      %% 56 - RESERVED56
+        0;                      %% 57 - RESERVED57
+        opt_s.knitro.opt;       %% 58 - KNITRO_OPT
+        0;                      %% 59 - RESERVED59
+        opt_s.ipopt.opt;        %% 60 - IPOPT_OPT
         
         %% MINOPF options
-        0;      %% 61 - MNS_FEASTOL
-        0;      %% 62 - MNS_ROWTOL
-        0;      %% 63 - MNS_XTOL
-        0;      %% 64 - MNS_MAJDAMP
-        0;      %% 65 - MNS_MINDAMP
-        0;      %% 66 - MNS_PENALTY_PARM
-        0;      %% 67 - MNS_MAJOR_IT
-        0;      %% 68 - MNS_MINOR_IT
-        0;      %% 69 - MNS_MAX_IT
-        -1;     %% 70 - MNS_VERBOSITY
-        0;      %% 71 - MNS_CORE
-        0;      %% 72 - MNS_SUPBASIC_LIM
-        0;      %% 73 - MNS_MULT_PRICE
-        0;      %% 74 - RESERVED74
-        0;      %% 75 - RESERVED75
-        0;      %% 76 - RESERVED76
-        0;      %% 77 - RESERVED77
-        0;      %% 78 - RESERVED78
-        0;      %% 79 - RESERVED79
-        0;      %% 80 - FORCE_PC_EQ_P0, for c3sopf
+        opt_s.minopf.feastol;   %% 61 - MNS_FEASTOL
+        opt_s.minopf.rowtol;    %% 62 - MNS_ROWTOL
+        opt_s.minopf.xtol;      %% 63 - MNS_XTOL
+        opt_s.minopf.majdamp;   %% 64 - MNS_MAJDAMP
+        opt_s.minopf.mindamp;   %% 65 - MNS_MINDAMP
+        opt_s.minopf.penalty;   %% 66 - MNS_PENALTY_PARM
+        opt_s.minopf.major_it;  %% 67 - MNS_MAJOR_IT
+        opt_s.minopf.minor_it;  %% 68 - MNS_MINOR_IT
+        opt_s.minopf.max_it;    %% 69 - MNS_MAX_IT
+        opt_s.minopf.verbosity; %% 70 - MNS_VERBOSITY
+        opt_s.minopf.core;      %% 71 - MNS_CORE
+        opt_s.minopf.supbasic_lim;  %% 72 - MNS_SUPBASIC_LIM
+        opt_s.minopf.mult_price;%% 73 - MNS_MULT_PRICE
+        0;                      %% 74 - RESERVED74
+        0;                      %% 75 - RESERVED75
+        0;                      %% 76 - RESERVED76
+        0;                      %% 77 - RESERVED77
+        0;                      %% 78 - RESERVED78
+        0;                      %% 79 - RESERVED79
+        FORCE_PC_EQ_P0;         %% 80 - FORCE_PC_EQ_P0, for c3sopf
         
         %% MIPS, PDIPM, SC-PDIPM, and TRALM options
-        0;      %% 81 - PDIPM_FEASTOL
-        1e-6;   %% 82 - PDIPM_GRADTOL
-        1e-6;   %% 83 - PDIPM_COMPTOL
-        1e-6;   %% 84 - PDIPM_COSTTOL
-        150;    %% 85 - PDIPM_MAX_IT
-        20;     %% 86 - SCPDIPM_RED_IT
-        0;      %% 87 - TRALM_FEASTOL
-        5e-4;   %% 88 - TRALM_PRIMETOL
-        5e-4;   %% 89 - TRALM_DUALTOL
-        1e-5;   %% 90 - TRALM_COSTTOL
-        40;     %% 91 - TRALM_MAJOR_IT
-        100;    %% 92 - TRALM_MINOR_IT
-        0.04;   %% 93 - SMOOTHING_RATIO
-        0;      %% 94 - RESERVED94
+        opt_s.pdipm.feastol;    %% 81 - PDIPM_FEASTOL
+        opt_s.pdipm.gradtol;    %% 82 - PDIPM_GRADTOL
+        opt_s.pdipm.comptol;    %% 83 - PDIPM_COMPTOL
+        opt_s.pdipm.costtol;    %% 84 - PDIPM_COSTTOL
+        opt_s.pdipm.max_it;     %% 85 - PDIPM_MAX_IT
+        opt_s.pdipm.sc.red_it;  %% 86 - SCPDIPM_RED_IT
+        opt_s.tralm.feastol;    %% 87 - TRALM_FEASTOL
+        opt_s.tralm.primaltol;  %% 88 - TRALM_PRIMETOL
+        opt_s.tralm.dualtol;    %% 89 - TRALM_DUALTOL
+        opt_s.tralm.costtol;    %% 90 - TRALM_COSTTOL
+        opt_s.tralm.major_it;   %% 91 - TRALM_MAJOR_IT
+        opt_s.tralm.minor_it;   %% 92 - TRALM_MINOR_IT
+        SMOOTHING_RATIO;        %% 93 - SMOOTHING_RATIO
+        0;                      %% 94 - RESERVED94
         
         %% CPLEX options
-        0;      %% 95 - CPLEX_LPMETHOD
-        0;      %% 96 - CPLEX_QPMETHOD
-        0;      %% 97 - CPLEX_OPT
-        0;      %% 98 - RESERVED98
-        0;      %% 99 - RESERVED99
-        0;      %% 100 - RESERVED100
-        0;      %% 101 - RESERVED101
-        0;      %% 102 - RESERVED102
-        0;      %% 103 - RESERVED103
-        0;      %% 104 - RESERVED104
-        0;      %% 105 - RESERVED105
-        0;      %% 106 - RESERVED106
-        0;      %% 107 - RESERVED107
-        0;      %% 108 - RESERVED108
-        0;      %% 109 - RESERVED109
-        0;      %% 110 - RESERVED110
+        opt_s.cplex.lpmethod;   %% 95 - CPLEX_LPMETHOD
+        opt_s.cplex.qpmethod;   %% 96 - CPLEX_QPMETHOD
+        opt_s.cplex.opt;        %% 97 - CPLEX_OPT
+        0;                      %% 98 - RESERVED98
+        0;                      %% 99 - RESERVED99
+        0;                      %% 100 - RESERVED100
+        0;                      %% 101 - RESERVED101
+        0;                      %% 102 - RESERVED102
+        0;                      %% 103 - RESERVED103
+        0;                      %% 104 - RESERVED104
+        0;                      %% 105 - RESERVED105
+        0;                      %% 106 - RESERVED106
+        0;                      %% 107 - RESERVED107
+        0;                      %% 108 - RESERVED108
+        0;                      %% 109 - RESERVED109
+        0;                      %% 110 - RESERVED110
 
         %% MOSEK options
-        0;      %% 111 - MOSEK_LP_ALG
-        0;      %% 112 - MOSEK_MAX_IT
-        0;      %% 113 - MOSEK_GAP_TOL
-        0;      %% 114 - MOSEK_MAX_TIME
-        0;      %% 115 - MOSEK_NUM_THREADS
-        0;      %% 116 - MOSEK_OPT
-        0;      %% 117 - RESERVED117
-        0;      %% 118 - RESERVED118
-        0;      %% 119 - RESERVED119
-        0;      %% 120 - RESERVED120
+        opt_s.mosek.lp_alg;     %% 111 - MOSEK_LP_ALG
+        opt_s.mosek.max_it;     %% 112 - MOSEK_MAX_IT
+        opt_s.mosek.gap_tol;    %% 113 - MOSEK_GAP_TOL
+        opt_s.mosek.max_time;   %% 114 - MOSEK_MAX_TIME
+        opt_s.mosek.num_threads;%% 115 - MOSEK_NUM_THREADS
+        opt_s.mosek.opt;        %% 116 - MOSEK_OPT
+        0;                      %% 117 - RESERVED117
+        0;                      %% 118 - RESERVED118
+        0;                      %% 119 - RESERVED119
+        0;                      %% 120 - RESERVED120
 
         %% Gurobi options
-        -1;     %% 121 - GRB_METHOD
-        Inf;    %% 122 - GRB_TIMELIMIT
-        0;      %% 123 - GRB_THREADS
-        0;      %% 124 - GRB_OPT
-        
-        %% Continuation power flow options
-        0.05;   %% 125 - CPF_STEP
-        0;      %% 126 - CPF_ADAPT_STEP
-        1e-3;   %% 127 - CPF_ERROR_TOL
-        1e-4;   %% 128 - CPF_STEP_MIN
-        0.2;    %% 129 - CPF_STEP_MAX
-        1;      %% 130 - CPF_TRACE_NOSE
-        0;      %% 131 - CPF_TRACE_LAMBDA
-        0;      %% 132 - CPF_TRACE_FULL
-        0;      %% 133 - CPF_USER_CALLBACK
+        opt_s.gurobi.method;    %% 121 - GRB_METHOD
+        opt_s.gurobi.timelimit; %% 122 - GRB_TIMELIMIT
+        opt_s.gurobi.threads;   %% 123 - GRB_THREADS
+        opt_s.gurobi.opt;       %% 124 - GRB_OPT
     ];
+
+
+%%-------------------------------------------------------------------
+function opt = mpoption_default()
+if DEBUG, fprintf('mpoption_default()\n'); end
+opt = struct(...
+    'v',                    mpoption_version, ...   %% version
+    'model',                'AC', ...
+    'pf',                   struct(...
+        'alg',                  'NR', ...
+        'tol',                  1e-8, ...
+        'nr',                   struct(...
+            'max_it',               10  ), ...
+        'fd',                   struct(...
+            'max_it',               30  ), ...
+        'gs',                   struct(...
+            'max_it',               1000  ), ...
+        'enforce_q_lims',       0   ), ...
+    'cpf',                  struct(...
+        'parameterization',     3, ...
+        'stop_at',              'NOSE', ...     %% 'NOSE', <lam val>, 'FULL'
+        'step',                 0.05, ...
+        'adapt_step',           0, ...
+        'error_tol',            1e-3, ...
+        'step_min',             1e-4, ...
+        'step_max',             0.2, ...
+        'plot',                 struct(...
+            'level',                0, ...
+            'bus',                  []  ), ...
+        'user_callback',        '', ...
+        'user_callback_args',   struct()    ), ...
+    'opf',                  struct(...
+        'ac',                   struct(...
+            'solver',               'DEFAULT'   ), ...
+        'dc',                   struct(...
+            'solver',               'DEFAULT'   ), ...
+        'violation',            5e-6, ...
+        'flow_lim',             'S', ...
+        'ignore_angle_lim',     0, ...
+        'return_raw_der',       0   ), ...
+    'verbose',              1, ...
+    'out',                  struct(...
+        'all',                  -1, ...
+        'sys_sum',              1, ...
+        'area_sum',             0, ...
+        'bus',                  1, ...
+        'branch',               1, ...
+        'gen',                  0, ...
+        'lim',                  struct(...
+            'all',                  -1, ...
+            'v',                    1, ...
+            'line',                 1, ...
+            'pg',                   1, ...
+            'qg',                   1   ), ...
+        'force',                0   ), ...
+    'cplex',                struct(...
+        'lpmethod',             0, ...
+        'qpmethod',             0, ...
+        'opts',                 [], ...
+        'opt_fname',            '', ...
+        'opt',                  0  ), ...
+    'fmincon',              struct(...
+        'alg',                  4, ...
+        'tol_x',                1e-4, ...
+        'tol_f',                1e-4, ...
+        'max_it',               0   ), ...  %         'opt_fname', '', 'opts', []
+    'gurobi',               struct(...
+        'method',               -1, ...
+        'timelimit',            Inf, ...
+        'threads',              0, ...
+        'opts',                 [], ...
+        'opt_fname',            '', ...
+        'opt',                  0  ), ...
+    'ipopt',                struct(...
+        'opts',                 [], ...
+        'opt_fname',            '', ...
+        'opt',                  0  ), ...
+    'knitro',               struct(...
+        'tol_x',                1e-4, ...
+        'tol_f',                1e-4, ...
+        'opts',                 [], ...
+        'opt_fname',            '', ...
+        'opt',                  0  ), ...
+    'minopf',               struct(...
+        'feastol',              0, ...
+        'rowtol',               0, ...
+        'xtol',                 0, ...
+        'majdamp',              0, ...
+        'mindamp',              0, ...
+        'penalty',              0, ...
+        'major_it',             0, ...
+        'minor_it',             0, ...
+        'max_it',               0, ...
+        'verbosity',            -1, ...
+        'core',                 0, ...
+        'supbasic_lim',         0, ...
+        'mult_price',           0   ), ...
+    'mips',                 struct(...
+        'step_control',         0, ...
+        'feastol',              0, ...
+        'gradtol',              1e-6, ...
+        'comptol',              1e-6, ...
+        'costtol',              1e-6, ...
+        'max_it',               150, ...
+        'sc',                   struct(...
+            'red_it',               20  )), ...
+    'mosek',                struct(...
+        'lp_alg',               0, ...
+        'max_it',               0, ...
+        'gap_tol',              0, ...
+        'max_time',             0, ...
+        'num_threads',          0, ...
+        'opts',                 [], ...
+        'opt_fname',            '', ...
+        'opt',                  0  ), ...
+    'pdipm',                struct(...
+        'step_control',         0, ...
+        'feastol',              0, ...
+        'gradtol',              1e-6, ...
+        'comptol',              1e-6, ...
+        'costtol',              1e-6, ...
+        'max_it',               150, ...
+        'sc',                   struct(...
+            'red_it',               20, ...
+            'smooth_ratio',         0.04    )), ...
+    'tralm',                struct(...
+        'feastol',              0, ...
+        'primaltol',            5e-4, ...
+        'dualtol',              5e-4, ...
+        'costtol',              1e-5, ...
+        'major_it',             40, ...
+        'minor_it',             100, ...
+        'smooth_ratio',         0.04 ) ...
+);
+
+%%-------------------------------------------------------------------
+function opt = mpoption_optional_fields()
+if DEBUG, fprintf('mpoption_optional_fields()\n'); end
+opt_fields = {'sopf'};
+opt = struct;
+for k = 1:length(opt_fields)
+    opt = nested_struct_copy(opt, feval([opt_fields{k} '_valid_options']));
 end
 
-%%-----  set up option names  -----
-%% power flow options
-names = char(   'PF_ALG', ...               %% 1
-                'PF_TOL', ...               %% 2
-                'PF_MAX_IT', ...            %% 3
-                'PF_MAX_IT_FD', ...         %% 4
-                'PF_MAX_IT_GS', ...         %% 5
-                'ENFORCE_Q_LIMS', ...       %% 6
-                'RESERVED7', ...            %% 7
-                'RESERVED8', ...            %% 8
-                'RESERVED9', ...            %% 9
-                'PF_DC' );                  %% 10
+%% globals
+%%-------------------------------------------------------------------
+function v = mpoption_version
+v = 1;      %% version number of MATPOWER options struct
+            %% (must be incremented every time structure is updated)
 
-%% OPF options
-names = char(   names, ...
-                'OPF_ALG', ...              %% 11
-                'RESERVED12', ...           %% 12   (was OPF_ALG_POLY)
-                'RESERVED13', ...           %% 13   (was OPF_ALG_PWL)
-                'RESERVED14', ...           %% 14   (was OPF_POLY2PWL_PTS)
-                'OPF_NEQ', ...              %% 15   (removed)
-                'OPF_VIOLATION', ...        %% 16
-                'CONSTR_TOL_X', ...         %% 17
-                'CONSTR_TOL_F', ...         %% 18
-                'CONSTR_MAX_IT', ...        %% 19
-                'LPC_TOL_GRAD'  );          %% 20   (removed)
-names = char(   names, ...
-                'LPC_TOL_X', ...            %% 21   (removed)
-                'LPC_MAX_IT', ...           %% 22   (removed)
-                'LPC_MAX_RESTART', ...      %% 23   (removed)
-                'OPF_FLOW_LIM', ...         %% 24
-                'OPF_IGNORE_ANG_LIM', ...   %% 25
-                'OPF_ALG_DC', ...           %% 26
-                'RESERVED27', ...           %% 27
-                'RESERVED28', ...           %% 28
-                'RESERVED29', ...           %% 29
-                'RESERVED30'    );          %% 30
-
-%% output options
-names = char(   names, ...
-                'VERBOSE', ...              %% 31
-                'OUT_ALL', ...              %% 32
-                'OUT_SYS_SUM', ...          %% 33
-                'OUT_AREA_SUM', ...         %% 34
-                'OUT_BUS', ...              %% 35
-                'OUT_BRANCH', ...           %% 36
-                'OUT_GEN', ...              %% 37
-                'OUT_ALL_LIM', ...          %% 38
-                'OUT_V_LIM', ...            %% 39
-                'OUT_LINE_LIM'  );          %% 40
-names = char(   names, ...
-                'OUT_PG_LIM', ...           %% 41
-                'OUT_QG_LIM', ...           %% 42
-                'RESERVED43', ...           %% 43 (was OUT_RAW)
-                'OUT_FORCE', ...            %% 44
-                'RESERVED45', ...           %% 45
-                'RESERVED46', ...           %% 46
-                'RESERVED47', ...           %% 47
-                'RESERVED48', ...           %% 48
-                'RESERVED49', ...           %% 49
-                'RESERVED50'    );          %% 50
-%% other options
-names = char(   names, ...
-                'SPARSE_QP', ...            %% 51
-                'RETURN_RAW_DER', ...       %% 52
-                'RESERVED53', ...           %% 53
-                'RESERVED54', ...           %% 54
-                'FMC_ALG', ...              %% 55
-                'RESERVED56', ...           %% 56
-                'RESERVED57', ...           %% 57
-                'KNITRO_OPT', ...           %% 58
-                'RESERVED59', ...           %% 59
-                'IPOPT_OPT'     );          %% 60
-%% MINOS options
-names = char(   names, ...
-                'MNS_FEASTOL', ...          %% 61
-                'MNS_ROWTOL', ...           %% 62
-                'MNS_XTOL', ...             %% 63
-                'MNS_MAJDAMP', ...          %% 64
-                'MNS_MINDAMP', ...          %% 65
-                'MNS_PENALTY_PARM', ...     %% 66
-                'MNS_MAJOR_IT', ...         %% 67
-                'MNS_MINOR_IT', ...         %% 68
-                'MNS_MAX_IT', ...           %% 69
-                'MNS_VERBOSITY' );          %% 70
-%% other flags
-names = char(   names, ...
-                'MNS_CORE', ...             %% 71
-                'MNS_SUPBASIC_LIM', ...     %% 72
-                'MNS_MULT_PRICE', ...       %% 73
-                'RESERVED74', ...           %% 74
-                'RESERVED75', ...           %% 75
-                'RESERVED76', ...           %% 76
-                'RESERVED77', ...           %% 77
-                'RESERVED78', ...           %% 78
-                'RESERVED79', ...           %% 79
-                'FORCE_PC_EQ_P0'    );      %% 80
-
-%% MIPS, PDIPM, SC-PDIPM, and TRALM options
-names = char(   names, ...
-                'PDIPM_FEASTOL', ...        %% 81
-                'PDIPM_GRADTOL', ...        %% 82
-                'PDIPM_COMPTOL', ...        %% 83
-                'PDIPM_COSTTOL', ...        %% 84
-                'PDIPM_MAX_IT', ...         %% 85
-                'SCPDIPM_RED_IT', ...       %% 86
-                'TRALM_FEASTOL', ...        %% 87
-                'TRALM_PRIMETOL', ...       %% 88
-                'TRALM_DUALTOL', ...        %% 89
-                'TRALM_COSTTOL', ...        %% 90
-                'TRALM_MAJOR_IT', ...       %% 91
-                'TRALM_MINOR_IT', ...       %% 92
-                'SMOOTHING_RATIO'   );      %% 93
-
-%% CPLEX options
-names = char(   names, ...
-                'RESERVED94', ...           %% 94
-                'CPLEX_LPMETHOD', ...       %% 95
-                'CPLEX_QPMETHOD', ...       %% 96
-                'CPLEX_OPT', ...            %% 97
-                'RESERVED98', ...           %% 98
-                'RESERVED99', ...           %% 99
-                'RESERVED100', ...          %% 100
-                'RESERVED101', ...          %% 101
-                'RESERVED102', ...          %% 102
-                'RESERVED103', ...          %% 103
-                'RESERVED104', ...          %% 104
-                'RESERVED105', ...          %% 105
-                'RESERVED106', ...          %% 106
-                'RESERVED107', ...          %% 107
-                'RESERVED108', ...          %% 108
-                'RESERVED109', ...          %% 109
-                'RESERVED110'   );          %% 110
-
-%% MOSEK options
-names = char(   names, ...
-                'MOSEK_LP_ALG', ...         %% 111
-                'MOSEK_MAX_IT', ...         %% 112
-                'MOSEK_GAP_TOL', ...        %% 113
-                'MOSEK_MAX_TIME', ...       %% 114
-                'MOSEK_NUM_THREADS', ...    %% 115
-                'MOSEK_OPT', ...            %% 116
-                'RESERVED117', ...          %% 117
-                'RESERVED118', ...          %% 118
-                'RESERVED119', ...          %% 119
-                'RESERVED120'   );          %% 120
-
-%% Gurobi options
-names = char(   names, ...
-                'GRB_METHOD', ...           %% 121
-                'GRB_TIMELIMIT', ...        %% 122
-                'GRB_THREADS', ...          %% 123
-                'GRB_OPT'   );              %% 124
-
-%% continuation power flow options
-names = char(    names, ...
-                 'CPF_STEP', ...            %% 125
-                 'CPF_ADAPT_STEP', ...      %% 126
-                 'CPF_ERROR_TOL' , ...      %% 127
-                 'CPF_STEP_MIN' ,  ...      %% 128
-                 'CPF_STEP_MAX' , ...       %% 129
-                 'CPF_TRACE_NOSE' , ...     %% 130
-                 'CPF_TRACE_LAMBDA', ...    %% 131
-                 'CPF_TRACE_FULL', ...      %% 132
-                 'CPF_USER_CALLBACK' );     %% 133
-%%-----  process parameters  -----
-while i <= nargin
-    %% get parameter name and value
-    pname = varargin{i};
-    pval  = varargin{i+1};
-    
-    %% get parameter index
-    namestr = names';
-    namestr = namestr(:)';
-    namelen = size(names, 2);
-    pidx = ceil(findstr([pname blanks(namelen-length(pname))], namestr) / namelen);
-    if isempty(pidx)
-        error('"%s" is not a valid named option', pname);
-    end
-    % fprintf('''%s'' (%d) = %d\n', pname, pidx, pval);
-
-    %% update option
-    options(pidx) = pval;
-
-    i = i + 2;                              %% go to next parameter
-end
+%%-------------------------------------------------------------------
+function db_level = DEBUG
+db_level = 0;

@@ -1,13 +1,10 @@
-function [varargout] = fmincopf(varargin)
-%FMINCOPF  Solves an AC optimal power flow using FMINCON (Opt Tbx 2.x & later).
-%
-%   Uses algorithm 520. Please see OPF for the details of input and
-%   output arguments.
+function ov = t_mpoption_ov()
+%T_MPOPTION_OV  Example of option overrides from file.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2000-2010 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2013 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
@@ -33,6 +30,4 @@ function [varargout] = fmincopf(varargin)
 %   under other licensing terms, the licensors of MATPOWER grant
 %   you additional permission to convey the resulting work.
 
-[mpc, mpopt] = opf_args(varargin{:});
-mpopt = mpoption(mpopt, 'model', 'AC', 'opf.ac.solver', 'FMINCON');
-[varargout{1:nargout}] = opf(mpc, mpopt);
+ov = struct('verbose', 2, 'model', 'DC', 'opf', struct('dc', struct('solver', 'CPLEX')));

@@ -46,9 +46,9 @@ casefile = 'case30';
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 
 %% run powerflow to get solved case
-opt = mpoption('VERBOSE', 0, 'OUT_ALL', 0);
+mpopt = mpoption('verbose', 0, 'out.all', 0);
 mpc = loadcase(casefile);
-[baseMVA, bus, gen, branch, success, et] = runpf(mpc, opt);
+[baseMVA, bus, gen, branch, success, et] = runpf(mpc, mpopt);
 
 %% switch to internal bus numbering and build admittance matrices
 [i2e, bus, gen, branch] = ext2int(bus, gen, branch);

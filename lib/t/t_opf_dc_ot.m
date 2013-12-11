@@ -55,8 +55,8 @@ else
 end
 
 t0 = 'DC OPF (OT): ';
-mpopt = mpoption('OUT_ALL', 0, 'VERBOSE', verbose);
-mpopt = mpoption(mpopt, 'OPF_ALG_DC', 300);
+mpopt = mpoption('out.all', 0, 'verbose', verbose);
+mpopt = mpoption(mpopt, 'opf.dc.solver', 'OT');
 
 warning off optim:linprog:IgnoreStartPoint;
 

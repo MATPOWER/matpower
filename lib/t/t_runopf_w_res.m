@@ -43,9 +43,9 @@ else
 end
 
 casefile = 't_case30_userfcns';
-mpopt = mpoption('OPF_VIOLATION', 1e-6, 'PDIPM_GRADTOL', 1e-8, ...
-        'PDIPM_COMPTOL', 1e-8, 'PDIPM_COSTTOL', 1e-9);
-mpopt = mpoption(mpopt, 'OUT_ALL', 0, 'VERBOSE', verbose, 'OPF_ALG', 560);
+mpopt = mpoption('opf.violation', 1e-6, 'mips.gradtol', 1e-8, ...
+        'mips.comptol', 1e-8, 'mips.costtol', 1e-9);
+mpopt = mpoption(mpopt, 'out.all', 0, 'verbose', verbose, 'opf.ac.solver', 'MIPS');
 
 %% define named indices into data matrices
 [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...

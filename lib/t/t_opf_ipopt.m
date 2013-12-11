@@ -60,9 +60,8 @@ if have_fcn('octave')
 end
 
 t0 = 'IPOPT : ';
-mpopt = mpoption('OPF_VIOLATION', 1e-6, 'PDIPM_GRADTOL', 1e-8, ...
-        'PDIPM_COMPTOL', 1e-8, 'PDIPM_COSTTOL', 1e-9);
-mpopt = mpoption(mpopt, 'OUT_ALL', 0, 'VERBOSE', verbose, 'OPF_ALG', 580);
+mpopt = mpoption('opf.violation', 1e-6);
+mpopt = mpoption(mpopt, 'out.all', 0, 'verbose', verbose, 'opf.ac.solver', 'IPOPT');
 
 %% set up indices
 ib_data     = [1:BUS_AREA BASE_KV:VMIN];
@@ -122,7 +121,7 @@ load soln9_opf_Plim;       %% defines bus_soln, gen_soln, branch_soln, f_soln
 
 %% run OPF with active power line limits
 t = [t0 '(P line lim) : '];
-mpopt1 = mpoption(mpopt, 'OPF_FLOW_LIM', 1);
+mpopt1 = mpoption(mpopt, 'opf.flow_lim', 'P');
 [baseMVA, bus, gen, gencost, branch, f, success, et] = runopf(casefile, mpopt1);
 t_ok(success, [t 'success']);
 t_is(f, f_soln, 3, [t 'f']);
@@ -270,7 +269,7 @@ load soln9_opf;   %% defines bus_soln, gen_soln, branch_soln, f_soln
 
 %% run OPF with ignored angle difference limits
 t = [t0 'w/ignored angle difference limits : '];
-mpopt1 = mpoption(mpopt, 'OPF_IGNORE_ANG_LIM', 1);
+mpopt1 = mpoption(mpopt, 'opf.ignore_angle_lim', 1);
 [baseMVA, bus, gen, gencost, branch, f, success, et] = runopf(mpc, mpopt1);
 %% ang limits are not in this solution data, so let's remove them
 branch(1, ANGMAX) = 360;

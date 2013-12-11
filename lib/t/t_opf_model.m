@@ -48,12 +48,6 @@ t_begin(num_tests, quiet);
     TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 
-if quiet
-    verbose = 0;
-else
-    verbose = 0;
-end
-
 %%-----  opt_model  -----
 t = 'constructor';
 om = opf_model;

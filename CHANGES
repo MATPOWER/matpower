@@ -15,6 +15,20 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.1
 -----------------
 
+12/10/13
+    - New MATPOWER options implementation based on options struct
+      instead of options vector.
+      INCOMPATIBLE CHANGE: In results struct returned by an OPF, the
+      value of results.raw.output.alg is now a string, not an old-style
+      numeric alg code.
+    - Gurobi now takes precendence over MOSEK when default solver
+      is selected for DC OPFs or qps_matpower().
+
+12/4/13
+    - Corrected error in Figure 6-5 "Total Cost Function for Negative
+      Injection" in Dispatchable Loads section of User's Manual
+      (slopes were labeled incorrectly).
+
 11/15/13
     - Added case_info().
     - Modified connected_components() to sort returned groups by

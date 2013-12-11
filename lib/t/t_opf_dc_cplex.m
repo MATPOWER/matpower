@@ -55,13 +55,13 @@ else
     verbose = 0;
 end
 
-mpopt = mpoption('OUT_ALL', 0, 'VERBOSE', verbose);
-mpopt = mpoption(mpopt, 'OPF_ALG_DC', 500);
+mpopt = mpoption('out.all', 0, 'verbose', verbose);
+mpopt = mpoption(mpopt, 'opf.dc.solver', 'CPLEX');
 
 %% run DC OPF
 if have_fcn('cplex')
 	for k = 1:length(algs)
-		mpopt = mpoption(mpopt, 'CPLEX_LPMETHOD', algs(k), 'CPLEX_QPMETHOD', algs(k));
+		mpopt = mpoption(mpopt, 'cplex.lpmethod', algs(k), 'cplex.qpmethod', algs(k));
 		methods = {
 			'primal simplex',
 			'dual simplex',

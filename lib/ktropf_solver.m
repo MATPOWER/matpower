@@ -3,7 +3,7 @@ function [results, success, raw] = ktropf_solver(om, mpopt)
 %
 %   [RESULTS, SUCCESS, RAW] = KTROPF_SOLVER(OM, MPOPT)
 %
-%   Inputs are an OPF model object and a MATPOWER options vector.
+%   Inputs are an OPF model object and a MATPOWER options struct.
 %
 %   Outputs are a RESULTS struct, SUCCESS flag and RAW output struct.
 %
@@ -77,8 +77,8 @@ function [results, success, raw] = ktropf_solver(om, mpopt)
 [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 
 %% options
-use_ktropts_file = 1;   %% generate a KNITRO options file on the fly
-verbose = mpopt(31);    %% VERBOSE
+use_ktropts_file = 1;       %% use a KNITRO options file to pass options
+create_ktropts_file = 0;    %% generate a KNITRO options file on the fly
 
 %% unpack data
 mpc = get_mpc(om);
@@ -168,31 +168,35 @@ fmoptions = optimset('GradObj', 'on', 'GradConstr', 'on', ...
                 'Hessian', 'user-supplied', 'HessFcn', hess_fcn, ...
                 'JacobPattern', Js, 'HessPattern', Hs );
 if use_ktropts_file
-    if mpopt(58)
-        opt_fname = sprintf('knitro_user_options_%d.txt', mpopt(58));
+    if ~isempty(mpopt.knitro.opt_fname)
+        opt_fname = mpopt.knitro.opt_fname;
+    elseif mpopt.knitro.opt
+        opt_fname = sprintf('knitro_user_options_%d.txt', mpopt.knitro.opt);
     else
         %% create ktropts file
         ktropts.algorithm           = 1;
-        ktropts.outlev              = verbose;
-        ktropts.feastol             = mpopt(16);
-        ktropts.xtol                = mpopt(17);
-        ktropts.opttol              = mpopt(18);
-        if mpopt(19) ~= 0
-            ktropts.maxit           = mpopt(19);
+        ktropts.outlev              = mpopt.verbose;
+        ktropts.feastol             = mpopt.opf.violation;
+        ktropts.xtol                = mpopt.knitro.tol_x;
+        ktropts.opttol              = mpopt.knitro.tol_f;
+        if mpopt.fmincon.max_it ~= 0
+            ktropts.maxit           = mpopt.fmincon.max_it;
         end
         ktropts.bar_directinterval  = 0;
         opt_fname = write_ktropts(ktropts);
+        create_ktropts_file = 1;    %% make a note that I created it
     end
 else
     fmoptions = optimset(fmoptions, 'Algorithm', 'interior-point', ...
-        'TolCon', mpopt(16), 'TolX', mpopt(17), 'TolFun', mpopt(18) );
-    if mpopt(19) ~= 0
-        fmoptions = optimset(fmoptions, 'MaxIter', mpopt(19), ...
-                    'MaxFunEvals', 4 * mpopt(19));
+        'TolCon', mpopt.opf.violation, 'TolX', mpopt.knitro.tol_x, ...
+        'TolFun', mpopt.knitro.tol_f );
+    if mpopt.fmincon.max_it ~= 0
+        fmoptions = optimset(fmoptions, 'MaxIter', mpopt.fmincon.max_it, ...
+                    'MaxFunEvals', 4 * mpopt.fmincon.max_it);
     end
-    if verbose == 0,
+    if mpopt.verbose == 0,
       fmoptions.Display = 'off';
-    elseif verbose == 1
+    elseif mpopt.verbose == 1
       fmoptions.Display = 'iter';
     else
       fmoptions.Display = 'testing';
@@ -208,7 +212,7 @@ gh_fcn = @(x)opf_consfcn(x, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
 success = (info == 0);
 
 %% delete ktropts file
-if use_ktropts_file && ~mpopt(58)   %% ... but only if I created it
+if create_ktropts_file  %% ... but only if I created it
     delete(opt_fname);
 end
 

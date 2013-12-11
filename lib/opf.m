@@ -67,9 +67,9 @@ function [busout, genout, branchout, f, success, info, et, g, jac, xr, pimul] = 
 %   The optional mpopt vector specifies MATPOWER options. If the OPF
 %   algorithm is not explicitly set in the options MATPOWER will use
 %   the default solver, based on a primal-dual interior point method.
-%   For the AC OPF this is OPF_ALG = 560, unless the TSPOPF optional
-%   package is installed, in which case the default is 540. For the
-%   DC OPF, the default is OPF_ALG_DC = 200. See MPOPTION for
+%   For the AC OPF this is opf.ac.solver = 'MIPS', unless the TSPOPF optional
+%   package is installed, in which case the default is 'PDIPM'. For the
+%   DC OPF, the default is opf.dc.solver = 'MIPS'. See MPOPTION for
 %   more details on the available OPF solvers and other OPF options
 %   and their default values.
 %
@@ -220,7 +220,7 @@ om = opf_setup(mpc, mpopt);
 
 %%-----  execute the OPF  -----
 if nargout > 7
-    mpopt(52) = 1;      %% RETURN_RAW_DER
+    mpopt.opf.return_raw_der = 1;
 end
 [results, success, raw] = opf_execute(om, mpopt);
 

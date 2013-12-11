@@ -12,7 +12,7 @@ function [h, g, dh, dg] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt, il, varargin)
 %     YBUS : bus admittance matrix
 %     YF : admittance matrix for "from" end of constrained branches
 %     YT : admittance matrix for "to" end of constrained branches
-%     MPOPT : MATPOWER options vector
+%     MPOPT : MATPOWER options struct
 %     IL : (optional) vector of branch indices corresponding to
 %          branches with flow limits (all others are assumed to be
 %          unconstrained). The default is [1:nl] (all branches).
@@ -22,7 +22,7 @@ function [h, g, dh, dg] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt, il, varargin)
 %     H  : vector of inequality constraint values (flow limits)
 %          limit^2 - flow^2, where the flow can be apparent power
 %          real power or current, depending on value of
-%          OPF_FLOW_LIM in MPOPT (only for constrained lines)
+%          opf.flow_lim in MPOPT (only for constrained lines)
 %     G  : vector of equality constraint values (power balances)
 %     DH : (optional) inequality constraint gradients, column j is
 %          gradient of H(j)
@@ -120,19 +120,19 @@ g = [ real(mis);            %% active power mismatch for all buses
 if nl2 > 0
   flow_max = (branch(il, RATE_A)/baseMVA).^2;
   flow_max(flow_max == 0) = Inf;
-  if mpopt(24) == 2       %% current magnitude limit, |I|
+  if upper(mpopt.opf.flow_lim) == 'I'   %% current magnitude limit, |I|
     If = Yf * V;
     It = Yt * V;
-    h = [ If .* conj(If) - flow_max;      %% branch current limits (from bus)
-          It .* conj(It) - flow_max ];    %% branch current limits (to bus)
+    h = [ If .* conj(If) - flow_max;    %% branch current limits (from bus)
+          It .* conj(It) - flow_max ];  %% branch current limits (to bus)
   else
     %% compute branch power flows
     Sf = V(branch(il, F_BUS)) .* conj(Yf * V);  %% complex power injected at "from" bus (p.u.)
     St = V(branch(il, T_BUS)) .* conj(Yt * V);  %% complex power injected at "to" bus (p.u.)
-    if mpopt(24) == 1   %% active power limit, P (Pan Wei)
+    if upper(mpopt.opf.flow_lim) == 'P' %% active power limit, P (Pan Wei)
       h = [ real(Sf).^2 - flow_max;         %% branch real power limits (from bus)
             real(St).^2 - flow_max ];       %% branch real power limits (to bus)
-    else                %% apparent power limit, |S|
+    else                                %% apparent power limit, |S|
       h = [ Sf .* conj(Sf) - flow_max;      %% branch apparent power limits (from bus)
             St .* conj(St) - flow_max ];    %% branch apparent power limits (to bus)
     end
@@ -164,12 +164,12 @@ if nargout > 2
 
   if nl2 > 0
     %% compute partials of Flows w.r.t. V
-    if mpopt(24) == 2     %% current
+    if upper(mpopt.opf.flow_lim) == 'I'     %% current
       [dFf_dVa, dFf_dVm, dFt_dVa, dFt_dVm, Ff, Ft] = dIbr_dV(branch(il,:), Yf, Yt, V);
-    else                  %% power
+    else                            %% power
       [dFf_dVa, dFf_dVm, dFt_dVa, dFt_dVm, Ff, Ft] = dSbr_dV(branch(il,:), Yf, Yt, V);
     end
-    if mpopt(24) == 1     %% real part of flow (active power)
+    if upper(mpopt.opf.flow_lim) == 'P'     %% real part of flow (active power)
       dFf_dVa = real(dFf_dVa);
       dFf_dVm = real(dFf_dVm);
       dFt_dVa = real(dFt_dVa);

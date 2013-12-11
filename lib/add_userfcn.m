@@ -59,7 +59,7 @@ function mpc = add_userfcn(mpc, stage, fcn, args, allow_multiple)
 %
 %   Called from PRINTPF after the pretty-printing of the standard OPF
 %   output. Inputs are the RESULTS struct, the file descriptor to write to,
-%   a MATPOWER options vector, and any (optional) ARGS supplied via
+%   a MATPOWER options struct, and any (optional) ARGS supplied via
 %   ADD_USERFCN. Output is the RESULTS struct. This is typically used for
 %   any additional pretty-printing of results.
 %

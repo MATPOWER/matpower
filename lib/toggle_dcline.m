@@ -360,28 +360,28 @@ function results = userfcn_dcline_printpf(results, fd, mpopt, args)
 %
 %   This is the 'printpf' stage userfcn callback that pretty-prints the
 %   results. It expects a results struct, a file descriptor and a MATPOWER
-%   options vector. The optional args are not currently used.
+%   options struct. The optional args are not currently used.
 
 %% define named indices into data matrices
 c = idx_dcline;
 
 %% options
-OUT_ALL = mpopt(32);
-OUT_BRANCH      = OUT_ALL == 1 || (OUT_ALL == -1 && mpopt(36));
+OUT_ALL = mpopt.out.all;
+OUT_BRANCH      = OUT_ALL == 1 || (OUT_ALL == -1 && mpopt.out.branch);
 if OUT_ALL == -1
-    OUT_ALL_LIM = mpopt(38);
+    OUT_ALL_LIM = mpopt.out.lim.all;
 elseif OUT_ALL == 1
     OUT_ALL_LIM = 2;
 else
     OUT_ALL_LIM = 0;
 end
 if OUT_ALL_LIM == -1
-    OUT_LINE_LIM    = mpopt(40);
+    OUT_LINE_LIM    = mpopt.lim.line;
 else
     OUT_LINE_LIM    = OUT_ALL_LIM;
 end
-ctol = mpopt(16);   %% constraint violation tolerance
-ptol = 1e-4;        %% tolerance for displaying shadow prices
+ctol = mpopt.opf.violation; %% constraint violation tolerance
+ptol = 1e-4;                %% tolerance for displaying shadow prices
 
 %%-----  print results  -----
 dc = results.dcline;
@@ -478,3 +478,6 @@ template = [template, ';\n'];
 fprintf(fd, '%sdcline = [\n', prefix);
 fprintf(fd, template, mpc.dcline.');
 fprintf(fd, '];\n');
+
+%% to do, make it save mpc.dclinecost too (somehow I forgot this)
+%% have a look at the saving of gencost in savecase for template

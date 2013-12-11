@@ -6,7 +6,7 @@ function printpf(baseMVA, bus, gen, branch, f, success, et, fd, mpopt)
 %   Prints power flow and optimal power flow results to FD (a file
 %   descriptor which defaults to STDOUT), with the details of what
 %   gets printed controlled by the optional MPOPT argument, which is a
-%   MATPOWER options vector (see MPOPTION for details).
+%   MATPOWER options struct (see MPOPTION for details).
 %
 %   The data can either be supplied in a single RESULTS struct, or
 %   in the individual arguments: BASEMVA, BUS, GEN, BRANCH, F, SUCCESS
@@ -17,7 +17,7 @@ function printpf(baseMVA, bus, gen, branch, f, success, et, fd, mpopt)
 %   to be a simple power flow run.
 %
 %   Examples:
-%       mpopt = mpoptions('OUT_GEN', 1, 'OUT_BUS', 0, 'OUT_BRANCH', 0);
+%       mpopt = mpoptions('out.gen', 1, 'out.bus', 0, 'out.branch', 0);
 %       [fd, msg] = fopen(fname, 'at');
 %       results = runopf(mpc);
 %       printpf(results);
@@ -67,7 +67,7 @@ if isstruct(baseMVA)
     else
         mpopt = gen;
     end
-    if mpopt(32) == 0   %% OUT_ALL
+    if mpopt.out.all == 0
         return;     	%% nothin' to see here, bail out now
     end
     if nargin < 2 || isempty(bus)
@@ -91,27 +91,27 @@ else
             fd = 1;         %% print to stdio by default
         end
     end
-    if mpopt(32) == 0   %% OUT_ALL
+    if mpopt.out.all == 0
         return;     	%% nothin' to see here, bail out now
     end
 end
 isOPF = ~isempty(f);    %% FALSE -> only simple PF data, TRUE -> OPF data
 
 %% options
-isDC            = mpopt(10);        %% use DC formulation?
-OUT_ALL         = mpopt(32);
-OUT_FORCE		= mpopt(44);
+isDC            = strcmp(upper(mpopt.model), 'DC');
+OUT_ALL         = mpopt.out.all;
+OUT_FORCE		= mpopt.out.force;
 OUT_ANY         = OUT_ALL == 1;     %% set to true if any pretty output is to be generated
-OUT_SYS_SUM     = OUT_ALL == 1 || (OUT_ALL == -1 && mpopt(33));
-OUT_AREA_SUM    = OUT_ALL == 1 || (OUT_ALL == -1 && mpopt(34));
-OUT_BUS         = OUT_ALL == 1 || (OUT_ALL == -1 && mpopt(35));
-OUT_BRANCH      = OUT_ALL == 1 || (OUT_ALL == -1 && mpopt(36));
-OUT_GEN         = OUT_ALL == 1 || (OUT_ALL == -1 && mpopt(37));
+OUT_SYS_SUM     = OUT_ALL == 1 || (OUT_ALL == -1 && mpopt.out.sys_sum);
+OUT_AREA_SUM    = OUT_ALL == 1 || (OUT_ALL == -1 && mpopt.out.area_sum);
+OUT_BUS         = OUT_ALL == 1 || (OUT_ALL == -1 && mpopt.out.bus);
+OUT_BRANCH      = OUT_ALL == 1 || (OUT_ALL == -1 && mpopt.out.branch);
+OUT_GEN         = OUT_ALL == 1 || (OUT_ALL == -1 && mpopt.out.gen);
 OUT_ANY         = OUT_ANY || (OUT_ALL == -1 && ...
                     (OUT_SYS_SUM || OUT_AREA_SUM || OUT_BUS || ...
                     OUT_BRANCH || OUT_GEN));
 if OUT_ALL == -1
-    OUT_ALL_LIM = mpopt(38);
+    OUT_ALL_LIM = mpopt.out.lim.all;
 elseif OUT_ALL == 1
     OUT_ALL_LIM = 2;
 else
@@ -119,10 +119,10 @@ else
 end
 OUT_ANY         = OUT_ANY || OUT_ALL_LIM >= 1;
 if OUT_ALL_LIM == -1
-    OUT_V_LIM       = mpopt(39);
-    OUT_LINE_LIM    = mpopt(40);
-    OUT_PG_LIM      = mpopt(41);
-    OUT_QG_LIM      = mpopt(42);
+    OUT_V_LIM       = mpopt.out.lim.v;
+    OUT_LINE_LIM    = mpopt.out.lim.line;
+    OUT_PG_LIM      = mpopt.out.lim.pg;
+    OUT_QG_LIM      = mpopt.out.lim.qg;
 else
     OUT_V_LIM       = OUT_ALL_LIM;
     OUT_LINE_LIM    = OUT_ALL_LIM;
@@ -477,7 +477,7 @@ end
     
 %%-----  constraint data  -----
 if isOPF && (success || OUT_FORCE)
-    ctol = mpopt(16);   %% constraint violation tolerance
+    ctol = mpopt.opf.violation; %% constraint violation tolerance
     %% voltage constraints
     if ~isDC && (OUT_V_LIM == 2 || (OUT_V_LIM == 1 && ...
                          (any(bus(:, VM) < bus(:, VMIN) + ctol) || ...
@@ -683,15 +683,15 @@ if isOPF && (success || OUT_FORCE)
     end
         
     %% line flow constraints
-    if mpopt(24) == 1 || isDC  %% P limit
+    if upper(mpopt.opf.flow_lim) == 'P' || isDC  	%% |P| limit
         Ff = branch(:, PF);
         Ft = branch(:, PT);
         str = '\n  #     Bus    Pf  mu     Pf      |Pmax|      Pt      Pt  mu   Bus';
-    elseif mpopt(24) == 2   %% |I| limit
+    elseif upper(mpopt.opf.flow_lim) == 'I'   		%% |I| limit
         Ff = abs( (branch(:, PF) + 1j * branch(:, QF)) ./ V(e2i(branch(:, F_BUS))) );
         Ft = abs( (branch(:, PT) + 1j * branch(:, QT)) ./ V(e2i(branch(:, T_BUS))) );
         str = '\n  #     Bus   |If| mu    |If|     |Imax|     |It|    |It| mu   Bus';
-    else                %% |S| limit
+    else                					%% |S| limit
         Ff = abs(branch(:, PF) + 1j * branch(:, QF));
         Ft = abs(branch(:, PT) + 1j * branch(:, QT));
         str = '\n  #     Bus   |Sf| mu    |Sf|     |Smax|     |St|    |St| mu   Bus';
@@ -735,7 +735,7 @@ end
 %% execute userfcn callbacks for 'printpf' stage
 if have_results_struct && isfield(results, 'userfcn') && (success || OUT_FORCE)
 	if ~isOPF	%% turn off option for all constraints if it isn't an OPF
-		mpopt = mpoption(mpopt, 'OUT_ALL_LIM', 0);
+		mpopt = mpoption(mpopt, 'out.lim.all', 0);
 	end
     run_userfcn(results.userfcn, 'printpf', results, fd, mpopt);
 end

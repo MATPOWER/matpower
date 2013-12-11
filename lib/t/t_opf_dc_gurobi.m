@@ -55,13 +55,13 @@ else
     verbose = 0;
 end
 
-mpopt = mpoption('OUT_ALL', 0, 'VERBOSE', verbose);
-mpopt = mpoption(mpopt, 'OPF_ALG_DC', 700);
+mpopt = mpoption('out.all', 0, 'verbose', verbose);
+mpopt = mpoption(mpopt, 'opf.dc.solver', 'GUROBI');
 
 %% run DC OPF
 if have_fcn('gurobi')
 	for k = 1:length(algs)
-		mpopt = mpoption(mpopt, 'GRB_METHOD', algs(k));
+		mpopt = mpoption(mpopt, 'gurobi.method', algs(k));
 		methods = {
 			'automatic',
 			'primal simplex',

@@ -8,7 +8,7 @@ function [V, converged, i] = gausspf(Ybus, Sbus, V0, ref, pv, pq, mpopt)
 %   respectively. The bus voltage vector contains the set point for
 %   generator (including ref bus) buses, and the reference angle of the
 %   swing bus, as well as an initial guess for remaining magnitudes and
-%   angles. MPOPT is a MATPOWER options vector which can be used to 
+%   angles. MPOPT is a MATPOWER options struct which can be used to 
 %   set the termination tolerance, maximum number of iterations, and 
 %   output options (see MPOPTION for details). Uses default options
 %   if this parameter is not given. Returns the final complex voltages,
@@ -53,9 +53,8 @@ if nargin < 7
 end
 
 %% options
-tol     = mpopt(2);
-max_it  = mpopt(5);
-verbose = mpopt(31);
+tol     = mpopt.pf.tol;
+max_it  = mpopt.pf.gs.max_it;
 
 %% initialize
 converged = 0;
@@ -74,14 +73,14 @@ F = [   real(mis([pv; pq]));
 
 %% check tolerance
 normF = norm(F, inf);
-if verbose > 1
+if mpopt.verbose > 1
     fprintf('\n it    max P & Q mismatch (p.u.)');
     fprintf('\n----  ---------------------------');
     fprintf('\n%3d        %10.3e', i, normF);
 end
 if normF < tol
     converged = 1;
-    if verbose > 1
+    if mpopt.verbose > 1
         fprintf('\nConverged!\n');
     end
 end
@@ -115,18 +114,18 @@ while (~converged && i < max_it)
 
     %% check for convergence
     normF = norm(F, inf);
-    if verbose > 1
+    if mpopt.verbose > 1
         fprintf('\n%3d        %10.3e', i, normF);
     end
     if normF < tol
         converged = 1;
-        if verbose
+        if mpopt.verbose
             fprintf('\nGauss-Seidel power flow converged in %d iterations.\n', i);
         end
     end
 end
 
-if verbose
+if mpopt.verbose
     if ~converged
         fprintf('\nGauss-Seidel power flow did not converge in %d iterations.\n', i);
     end

@@ -54,7 +54,7 @@ end
     QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
 
 %% load case
-mpopt = mpoption('OUT_ALL', 0, 'VERBOSE', verbose);
+mpopt = mpoption('out.all', 0, 'verbose', verbose);
 [baseMVA, bus, gen, gencost, branch, f, success, et] = ...
     rundcopf(casefile, mpopt);
 [i2e, bus, gen, branch] = ext2int(bus, gen, branch);

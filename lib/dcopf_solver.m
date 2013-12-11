@@ -3,7 +3,7 @@ function [results, success, raw] = dcopf_solver(om, mpopt)
 %
 %   [RESULTS, SUCCESS, RAW] = DCOPF_SOLVER(OM, MPOPT)
 %
-%   Inputs are an OPF model object and a MATPOWER options vector.
+%   Inputs are an OPF model object and a MATPOWER options struct.
 %
 %   Outputs are a RESULTS struct, SUCCESS flag and RAW output struct.
 %
@@ -74,23 +74,22 @@ function [results, success, raw] = dcopf_solver(om, mpopt)
 [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 
 %% options
-verbose = mpopt(31);    %% VERBOSE
-alg     = mpopt(26);    %% OPF_ALG_DC
+alg = upper(mpopt.opf.dc.solver);
 
 %% default solver
-if alg == 0
+if strcmp(alg, 'DEFAULT')
     if have_fcn('cplex')        %% use CPLEX by default, if available
-        alg = 500;
-    elseif have_fcn('mosek')    %% if not, then MOSEK, if available
-        alg = 600;
+        alg = 'CPLEX';
     elseif have_fcn('gurobi')   %% if not, then Gurobi, if available
-        alg = 700;
+        alg = 'GUROBI';
+    elseif have_fcn('mosek')    %% if not, then MOSEK, if available
+        alg = 'MOSEK';
     elseif have_fcn('bpmpd')    %% if not, then BPMPD_MEX, if available
-        alg = 100;
+        alg = 'BPMPD';
     elseif have_fcn('quadprog') %% if not, then Optimization Tbx, if available
-        alg = 300;
+        alg = 'OT';
     else                        %% otherwise MIPS
-        alg = 200;
+        alg = 'MIPS';
     end
 end
 
@@ -174,9 +173,9 @@ CC = full(MN' * (CCw - HMR));
 C0 = 1/2 * MR' * HMR + sum(polycf(:, 3));   %% constant term of cost
 
 %% set up input for QP solver
-opt = struct('alg', alg, 'verbose', verbose);
+opt = struct('alg', alg, 'verbose', mpopt.verbose);
 switch alg
-    case {200, 250}
+    case 'MIPS'
         %% try to select an interior initial point
         Varefs = bus(bus(:, BUS_TYPE) == REF, VA) * (pi/180);
 
@@ -196,29 +195,25 @@ switch alg
         end
 
         %% set up options
-        feastol = mpopt(81);    %% PDIPM_FEASTOL
-        gradtol = mpopt(82);    %% PDIPM_GRADTOL
-        comptol = mpopt(83);    %% PDIPM_COMPTOL
-        costtol = mpopt(84);    %% PDIPM_COSTTOL
-        max_it  = mpopt(85);    %% PDIPM_MAX_IT
-        max_red = mpopt(86);    %% SCPDIPM_RED_IT
+        feastol = mpopt.mips.feastol;
         if feastol == 0
-            feastol = mpopt(16);    %% = OPF_VIOLATION by default
+            feastol = mpopt.opf.violation;  %% = MPOPT.opf.violation by default
         end
         opt.mips_opt = struct(  'feastol', feastol, ...
-                                'gradtol', gradtol, ...
-                                'comptol', comptol, ...
-                                'costtol', costtol, ...
-                                'max_it', max_it, ...
-                                'max_red', max_red, ...
+                                'gradtol', mpopt.mips.gradtol, ...
+                                'comptol', mpopt.mips.comptol, ...
+                                'costtol', mpopt.mips.costtol, ...
+                                'max_it', mpopt.mips.max_it, ...
+                                'step_control', mpopt.mips.step_control, ...
+                                'max_red', mpopt.mips.sc.red_it, ...
                                 'cost_mult', 1  );
-    case 400
+    case 'IPOPT'
         opt.ipopt_opt = ipopt_options([], mpopt);
-    case 500
+    case 'CPLEX'
         opt.cplex_opt = cplex_options([], mpopt);
-    case 600
+    case 'MOSEK'
         opt.mosek_opt = mosek_options([], mpopt);
-    case 700
+    case 'GUROBI'
         opt.grb_opt = gurobi_options([], mpopt);
 end
 

@@ -56,9 +56,9 @@ else
 end
 
 t0 = 'SCPDIPMOPF : ';
-mpopt = mpoption('OPF_VIOLATION', 1e-6, 'PDIPM_MAX_IT', 100, 'PDIPM_GRADTOL', 1e-7, ...
-        'PDIPM_COMPTOL', 5e-8, 'PDIPM_COSTTOL', 1e-8, 'SMOOTHING_RATIO', 0.03);
-mpopt = mpoption(mpopt, 'OUT_ALL', 0, 'VERBOSE', verbose, 'OPF_ALG', 545);
+mpopt = mpoption('opf.violation', 1e-6, 'pdipm.max_it', 100, 'pdipm.gradtol', 1e-7, ...
+        'pdipm.comptol', 5e-8, 'pdipm.costtol', 1e-8, 'pdipm.sc.smooth_ratio', 0.03);
+mpopt = mpoption(mpopt, 'out.all', 0, 'verbose', verbose, 'opf.ac.solver', 'PDIPM', 'pdipm.step_control', 1);
         
 if have_fcn('scpdipmopf')
     %% set up indices
@@ -119,7 +119,7 @@ if have_fcn('scpdipmopf')
 %     
 %     %% run OPF with active power line limits
 %     t = [t0 '(P line lim) : '];
-%     mpopt1 = mpoption(mpopt, 'OPF_FLOW_LIM', 1);
+%     mpopt1 = mpoption(mpopt, 'opf.flow_lim', 'P');
 %     [baseMVA, bus, gen, gencost, branch, f, success, et] = runopf(casefile, mpopt1);
 %     t_ok(success, [t 'success']);
 %     t_is(f, f_soln, 3, [t 'f']);
@@ -267,7 +267,7 @@ if have_fcn('scpdipmopf')
     
     %% run OPF with ignored angle difference limits
     t = [t0 'w/ignored angle difference limits : '];
-    mpopt1 = mpoption(mpopt, 'OPF_IGNORE_ANG_LIM', 1);
+    mpopt1 = mpoption(mpopt, 'opf.ignore_angle_lim', 1);
     [baseMVA, bus, gen, gencost, branch, f, success, et] = runopf(mpc, mpopt1);
     %% ang limits are not in this solution data, so let's remove them
     branch(1, ANGMAX) = 360;

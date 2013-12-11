@@ -1,7 +1,7 @@
 function [varargout] = dcopf(varargin)
 %DCOPF  Solves a DC optimal power flow.
-%   This is a simple wrapper function around OPF that sets the PF_DC
-%   option to 1 before calling OPF.
+%   This is a simple wrapper function around OPF that sets the 'model'
+%   option to 'DC' before calling OPF.
 %   See OPF for the details of input and output arguments.
 %
 %   See also RUNDCOPF.
@@ -36,5 +36,5 @@ function [varargout] = dcopf(varargin)
 %   you additional permission to convey the resulting work.
 
 [mpc, mpopt] = opf_args(varargin{:});
-mpopt = mpoption(mpopt, 'PF_DC', 1);
+mpopt = mpoption(mpopt, 'model', 'DC');
 [varargout{1:nargout}] = opf(mpc, mpopt);

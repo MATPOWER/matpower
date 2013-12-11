@@ -47,10 +47,10 @@ t_begin(n_tests, quiet);
 if ~have_fcn('smartmarket')
     t_skip(n_tests, 'smartmarket code not available');
 else
-    mpopt = mpoption('OPF_VIOLATION', 1e-7, 'PDIPM_GRADTOL', 1e-6, ...
-        'PDIPM_COMPTOL', 1e-7, 'PDIPM_COSTTOL', 5e-9);
-    mpopt = mpoption(mpopt, 'OPF_ALG', 560, 'OUT_ALL_LIM', 1, ...
-        'OUT_BRANCH', 0, 'OUT_SYS_SUM', 0, 'OUT_ALL', 0, 'VERBOSE', 0);
+	mpopt = mpoption('opf.violation', 1e-7, 'mips.gradtol', 1e-6, ...
+        'mips.comptol', 1e-7, 'mips.costtol', 5e-9);
+    mpopt = mpoption(mpopt, 'opf.ac.solver', 'MIPS', 'out.lim.all', 1, ...
+        'out.branch', 0, 'out.sys_sum', 0, 'out.all', 0, 'verbose', 0);
     q = [
         12 24 24; 
         12 24 24; 

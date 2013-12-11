@@ -9,7 +9,7 @@ function varargout = rundcopf(casedata, mpopt, fname, solvedcase)
 %       CASEDATA : either a MATPOWER case struct or a string containing
 %           the name of the file with the case data (default is 'case9')
 %           (see also CASEFORMAT and LOADCASE)
-%       MPOPT : MATPOWER options vector to override default options
+%       MPOPT : MATPOWER options struct to override default options
 %           can be used to specify the solution algorithm, output options
 %           termination tolerances, and more (see also MPOPTION).
 %       FNAME : name of a file to which the pretty-printed output will
@@ -90,5 +90,5 @@ if nargin < 4
     end
 end
 
-mpopt = mpoption(mpopt, 'PF_DC', 1);
+mpopt = mpoption(mpopt, 'model', 'DC');
 [varargout{1:nargout}] = runopf(casedata, mpopt, fname, solvedcase);

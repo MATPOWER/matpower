@@ -43,11 +43,11 @@ if quiet
 else
     verbose = 0;
 end
-mpopt = mpoption('OPF_VIOLATION', 1e-6, 'PDIPM_GRADTOL', 1e-8, ...
-        'PDIPM_COMPTOL', 1e-8, 'PDIPM_COSTTOL', 1e-9);
-mpopt = mpoption(mpopt, 'OUT_ALL', 0, 'VERBOSE', verbose);
-mpopt = mpoption(mpopt, 'OPF_ALG', 560, 'OPF_ALG_DC', 200);
-% mpopt = mpoption(mpopt, 'VERBOSE', 2, 'OUT_ALL', -1, 'OUT_GEN', 1);
+mpopt = mpoption('opf.violation', 1e-6, 'mips.gradtol', 1e-8, ...
+        'mips.comptol', 1e-8, 'mips.costtol', 1e-9);
+mpopt = mpoption(mpopt, 'out.all', 0, 'verbose', verbose);
+mpopt = mpoption(mpopt, 'opf.ac.solver', 'MIPS', 'opf.dc.solver', 'MIPS');
+% mpopt = mpoption(mpopt, 'verbose', 2, 'out.all', -1, 'out.gen', 1);
 
 [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
     TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...

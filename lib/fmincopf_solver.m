@@ -3,7 +3,7 @@ function [results, success, raw] = fmincopf_solver(om, mpopt)
 %
 %   [RESULTS, SUCCESS, RAW] = FMINCOPF_SOLVER(OM, MPOPT)
 %
-%   Inputs are an OPF model object and a MATPOWER options vector.
+%   Inputs are an OPF model object and a MATPOWER options struct.
 %
 %   Outputs are a RESULTS struct, SUCCESS flag and RAW output struct.
 %
@@ -75,9 +75,6 @@ function [results, success, raw] = fmincopf_solver(om, mpopt)
     TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 
-%% options
-verbose = mpopt(31);    %% VERBOSE
-
 %% unpack data
 mpc = get_mpc(om);
 [baseMVA, bus, gen, branch] = ...
@@ -115,15 +112,16 @@ nl2 = length(il);           %% number of constrained lines
 
 %% basic optimset options needed for fmincon
 fmoptions = optimset('GradObj', 'on', 'GradConstr', 'on', ...
-            'TolCon', mpopt(16), 'TolX', mpopt(17), 'TolFun', mpopt(18) );
-if mpopt(19) ~= 0
-	fmoptions = optimset(fmoptions, 'MaxIter', mpopt(19), ...
-				'MaxFunEvals', 4 * mpopt(19));
+            'TolCon', mpopt.opf.violation, 'TolX', mpopt.fmincon.tol_x, ...
+            'TolFun', mpopt.fmincon.tol_f );
+if mpopt.fmincon.max_it ~= 0
+    fmoptions = optimset(fmoptions, 'MaxIter', mpopt.fmincon.max_it, ...
+            'MaxFunEvals', 4 * mpopt.fmincon.max_it);
 end
 
-if verbose == 0,
+if mpopt.verbose == 0,
   fmoptions.Display = 'off';
-elseif verbose == 1
+elseif mpopt.verbose == 1
   fmoptions.Display = 'iter';
 else
   fmoptions.Display = 'testing';
@@ -136,22 +134,23 @@ if str2double(otver.Version(1)) < 4
   Af = full(Af);
   Afeq = full(Afeq);
 else
-  if mpopt(55) == 1           %% active-set
-    fmoptions = optimset(fmoptions, 'Algorithm', 'active-set');
-    Af = full(Af);
-    Afeq = full(Afeq);
-  elseif mpopt(55) == 2       %% interior-point, w/ default 'bfgs' Hessian approx
-    fmoptions = optimset(fmoptions, 'Algorithm', 'interior-point');
-  elseif mpopt(55) == 3       %% interior-point, w/ 'lbfgs' Hessian approx
-    fmoptions = optimset(fmoptions, 'Algorithm', 'interior-point', 'Hessian','lbfgs');
-  elseif mpopt(55) == 4       %% interior-point, w/ exact user-supplied Hessian
-    fmc_hessian = @(x, lambda)opf_hessfcn(x, lambda, 1, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
-    fmoptions = optimset(fmoptions, 'Algorithm', 'interior-point', ...
-        'Hessian', 'user-supplied', 'HessFcn', fmc_hessian);
-  elseif mpopt(55) == 5       %% interior-point, w/ finite-diff Hessian
-    fmoptions = optimset(fmoptions, 'Algorithm', 'interior-point', 'Hessian','fin-diff-grads', 'SubProblem', 'cg');
-  else
-    error('fmincopf_solver: unknown algorithm specified in FMC_ALG option');
+  switch mpopt.fmincon.alg
+    case 1              %% active-set
+      fmoptions = optimset(fmoptions, 'Algorithm', 'active-set');
+      Af = full(Af);
+      Afeq = full(Afeq);
+    case 2              %% interior-point, w/ default 'bfgs' Hessian approx
+      fmoptions = optimset(fmoptions, 'Algorithm', 'interior-point');
+    case 3              %% interior-point, w/ 'lbfgs' Hessian approx
+      fmoptions = optimset(fmoptions, 'Algorithm', 'interior-point', 'Hessian','lbfgs');
+    case 4              %% interior-point, w/ exact user-supplied Hessian
+      fmc_hessian = @(x, lambda)opf_hessfcn(x, lambda, 1, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
+      fmoptions = optimset(fmoptions, 'Algorithm', 'interior-point', ...
+          'Hessian', 'user-supplied', 'HessFcn', fmc_hessian);
+    case 5              %% interior-point, w/ finite-diff Hessian
+      fmoptions = optimset(fmoptions, 'Algorithm', 'interior-point', 'Hessian','fin-diff-grads', 'SubProblem', 'cg');
+    otherwise
+      error('fmincopf_solver: unknown algorithm specified in ''fmincon.alg'' option');
   end
 end
 % fmoptions = optimset(fmoptions, 'DerivativeCheck', 'on', 'FinDiffType', 'central', 'FunValCheck', 'on');

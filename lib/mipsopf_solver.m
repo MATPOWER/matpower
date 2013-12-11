@@ -3,7 +3,7 @@ function [results, success, raw] = mipsopf_solver(om, mpopt)
 %
 %   [RESULTS, SUCCESS, RAW] = MIPSOPF_SOLVER(OM, MPOPT)
 %
-%   Inputs are an OPF model object and a MATPOWER options vector.
+%   Inputs are an OPF model object and a MATPOWER options struct.
 %
 %   Outputs are a RESULTS struct, SUCCESS flag and RAW output struct.
 %
@@ -77,16 +77,14 @@ function [results, success, raw] = mipsopf_solver(om, mpopt)
 [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 
 %% options
-verbose = mpopt(31);    %% VERBOSE
-feastol = mpopt(81);    %% PDIPM_FEASTOL
-gradtol = mpopt(82);    %% PDIPM_GRADTOL
-comptol = mpopt(83);    %% PDIPM_COMPTOL
-costtol = mpopt(84);    %% PDIPM_COSTTOL
-max_it  = mpopt(85);    %% PDIPM_MAX_IT
-max_red = mpopt(86);    %% SCPDIPM_RED_IT
-step_control = (mpopt(11) == 565);  %% OPF_ALG == 565, MIPS-sc
+feastol = mpopt.mips.feastol;
+gradtol = mpopt.mips.gradtol;
+comptol = mpopt.mips.comptol;
+costtol = mpopt.mips.costtol;
+max_it  = mpopt.mips.max_it;
+max_red = mpopt.mips.sc.red_it;
 if feastol == 0
-    feastol = mpopt(16);    %% = OPF_VIOLATION by default
+    feastol = mpopt.opf.violation;  %% = MPOPT.opf.violation by default
 end
 opt = struct(   'feastol', feastol, ...
                 'gradtol', gradtol, ...
@@ -94,9 +92,9 @@ opt = struct(   'feastol', feastol, ...
                 'costtol', costtol, ...
                 'max_it', max_it, ...
                 'max_red', max_red, ...
-                'step_control', step_control, ...
+                'step_control', mpopt.mips.step_control, ...
                 'cost_mult', 1e-4, ...
-                'verbose', verbose  );
+                'verbose', mpopt.verbose  );
 
 %% unpack data
 mpc = get_mpc(om);

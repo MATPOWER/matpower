@@ -36,12 +36,6 @@ end
 
 t_begin(85, quiet);
 
-if quiet
-    verbose = 0;
-else
-    verbose = 1;
-end
-
 %%-----  mpc = ext2int/int2ext(mpc)  -----
 t = 'mpc = ext2int(mpc) : ';
 mpce = loadcase('t_case_ext');

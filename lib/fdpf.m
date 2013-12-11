@@ -52,9 +52,8 @@ if nargin < 7
 end
 
 %% options
-tol     = mpopt(2);
-max_it  = mpopt(4);
-verbose = mpopt(31);
+tol     = mpopt.pf.tol;
+max_it  = mpopt.pf.fd.max_it;
 
 %% initialize
 converged = 0;
@@ -75,7 +74,7 @@ Q = imag(mis(pq));
 %% check tolerance
 normP = norm(P, inf);
 normQ = norm(Q, inf);
-if verbose > 1
+if mpopt.verbose > 1
     fprintf('\niteration     max mismatch (p.u.)  ');
     fprintf('\ntype   #        P            Q     ');
     fprintf('\n---- ----  -----------  -----------');
@@ -83,7 +82,7 @@ if verbose > 1
 end
 if normP < tol && normQ < tol
     converged = 1;
-    if verbose > 1
+    if mpopt.verbose > 1
         fprintf('\nConverged!\n');
     end
 end
@@ -116,12 +115,12 @@ while (~converged && i < max_it)
     %% check tolerance
     normP = norm(P, inf);
     normQ = norm(Q, inf);
-    if verbose > 1
+    if mpopt.verbose > 1
         fprintf('\n  P  %3d   %10.3e   %10.3e', i, normP, normQ);
     end
     if normP < tol && normQ < tol
         converged = 1;
-        if verbose
+        if mpopt.verbose
             fprintf('\nFast-decoupled power flow converged in %d P-iterations and %d Q-iterations.\n', i, i-1);
         end
         break;
@@ -142,19 +141,19 @@ while (~converged && i < max_it)
     %% check tolerance
     normP = norm(P, inf);
     normQ = norm(Q, inf);
-    if verbose > 1
+    if mpopt.verbose > 1
         fprintf('\n  Q  %3d   %10.3e   %10.3e', i, normP, normQ);
     end
     if normP < tol && normQ < tol
         converged = 1;
-        if verbose
+        if mpopt.verbose
             fprintf('\nFast-decoupled power flow converged in %d P-iterations and %d Q-iterations.\n', i, i);
         end
         break;
     end
 end
 
-if verbose
+if mpopt.verbose
     if ~converged
         fprintf('\nFast-decoupled power flow did not converge in %d iterations.\n', i);
     end

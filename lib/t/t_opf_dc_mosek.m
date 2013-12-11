@@ -55,13 +55,13 @@ else
     verbose = 0;
 end
 
-mpopt = mpoption('OUT_ALL', 0, 'VERBOSE', verbose);
-mpopt = mpoption(mpopt, 'OPF_ALG_DC', 600);
+mpopt = mpoption('out.all', 0, 'verbose', verbose);
+mpopt = mpoption(mpopt, 'opf.dc.solver', 'MOSEK');
 
 %% run DC OPF
 if have_fcn('mosek')
 	for k = 1:length(algs)
-		mpopt = mpoption(mpopt, 'MOSEK_LP_ALG', algs(k));
+		mpopt = mpoption(mpopt, 'mosek.lp_alg', algs(k));
 		methods = {
 			'free',
 			'interior point',

@@ -55,7 +55,7 @@ end
 
 %% load case
 mpc = loadcase(casefile);
-mpopt = mpoption('OUT_ALL', 0, 'VERBOSE', verbose);
+mpopt = mpoption('out.all', 0, 'verbose', verbose);
 [baseMVA, bus, gen, gencost, branch, f, success, et] = ...
     rundcopf(mpc, mpopt);
 [i2e, bus, gen, branch] = ext2int(bus, gen, branch);

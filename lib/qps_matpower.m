@@ -25,19 +25,21 @@ function [x, f, eflag, output, lambda] = qps_matpower(H, c, A, l, u, xmin, xmax,
 %       OPT : optional options structure with the following fields,
 %           all of which are also optional (default values shown in
 %           parentheses)
-%           alg (0) - determines which solver to use
-%                 0 = automatic, first available of CPLEX, MOSEK,
-%                       Gurobi, BPMPD, Opt Tbx, MIPS
-%               100 = BPMPD_MEX
-%               200 = MIPS, MATLAB Interior Point Solver
-%                     pure MATLAB implementation of a primal-dual
-%                     interior point method
-%               250 = MIPS-sc, a step controlled variant of MIPS
-%               300 = Optimization Toolbox, QUADPROG or LINPROG
-%               400 = IPOPT
-%               500 = CPLEX
-%               600 = MOSEK
-%               700 = Gurobi
+%           alg ('DEFAULT') : determines which solver to use, can be either
+%                   a (new-style) string or an (old-style) numerical alg code
+%               'DEFAULT' : (or 0) automatic, first available of CPLEX,
+%                       Gurobi, MOSEK, BPMPD, Opt Tbx, MIPS
+%               'BPMPD'   : (or 100) BPMPD_MEX
+%               'MIPS'    : (or 200) MIPS, MATLAB Interior Point Solver
+%                        pure MATLAB implementation of a primal-dual
+%                        interior point method, if mips_opt.step_control = 1
+%                        (or alg=250) it uses MIPS-sc, a step controlled
+%                        variant of MIPS
+%               'OT'      : (or 300) Optimization Toolbox, QUADPROG or LINPROG
+%               'IPOPT'   : (or 400) IPOPT
+%               'CPLEX'   : (or 500) CPLEX
+%               'MOSEK'   : (or 600) MOSEK
+%               'GUROBI'  : (or 700) Gurobi
 %           verbose (0) - controls level of progress output displayed
 %               0 = no progress output
 %               1 = some progress output
@@ -111,7 +113,7 @@ function [x, f, eflag, output, lambda] = qps_matpower(H, c, A, l, u, xmin, xmax,
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2010 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2013 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
@@ -168,33 +170,60 @@ end
 %% default options
 if ~isempty(opt) && isfield(opt, 'alg') && ~isempty(opt.alg)
     alg = opt.alg;
+    %% convert integer codes to string values
+    if ~ischar(alg)
+        switch alg
+            case 0
+                alg = 'DEFAULT';
+            case 100
+                alg = 'BPMPD';
+            case 200
+                alg = 'MIPS';
+                opt.mips_opt.step_control = 0;
+            case 250
+                alg = 'MIPS';
+                opt.mips_opt.step_control = 1;
+            case 300
+                alg = 'OT';
+            case 400
+                alg = 'IPOPT';
+            case 500
+                alg = 'CPLEX';
+            case 600
+                alg = 'MOSEK';
+            case 700
+                alg = 'GUROBI';
+            otherwise
+                error('qps_matpower: %d is not a valid algorithm code', alg);
+        end
+    end
 else
-    alg = 0;
+    alg = 'DEFAULT';
 end
 if ~isempty(opt) && isfield(opt, 'verbose') && ~isempty(opt.verbose)
     verbose = opt.verbose;
 else
     verbose = 0;
 end
-if alg == 0
+if strcmp(alg, 'DEFAULT')
     if have_fcn('cplex')        %% use CPLEX by default, if available
-        alg = 500;
-    elseif have_fcn('mosek')    %% if not, then MOSEK, if available
-        alg = 600;
+        alg = 'CPLEX';
     elseif have_fcn('gurobi')   %% if not, then Gurobi, if available
-        alg = 700;
+        alg = 'GUROBI';
+    elseif have_fcn('mosek')    %% if not, then MOSEK, if available
+        alg = 'MOSEK';
     elseif have_fcn('bpmpd')    %% if not, then BPMPD_MEX, if available
-        alg = 100;
+        alg = 'BPMPD';
     elseif have_fcn('quadprog') %% if not, then Optimization Tbx, if available
-        alg = 300;
+        alg = 'OT';
     else                        %% otherwise MIPS
-        alg = 200;
+        alg = 'MIPS';
     end
 end
 
 %%----- call the appropriate solver  -----
 switch alg
-    case 100                    %% use BPMPD_MEX
+    case 'BPMPD'                    %% use BPMPD_MEX
         [x, f, eflag, output, lambda] = ...
             qps_bpmpd(H, c, A, l, u, xmin, xmax, x0, opt);
 
@@ -205,12 +234,12 @@ switch alg
             %% save (incorrect) solution from BPMPD
             bpmpd = struct('x', x, 'f', f, 'eflag', eflag, ...
                             'output', output, 'lambda', lambda);
-            opt.alg = 200;
+            opt.alg = 'MIPS';
             [x, f, eflag, output, lambda] = ...
                 qps_matpower(H, c, A, l, u, xmin, xmax, x0, opt);
             output.bpmpd = bpmpd;
         end
-    case {200, 250}             %% use MIPS or sc-MIPS
+    case 'MIPS'
         %% set up options
         if ~isempty(opt) && isfield(opt, 'mips_opt') && ~isempty(opt.mips_opt)
             mips_opt = opt.mips_opt;
@@ -220,29 +249,24 @@ switch alg
         if ~isempty(opt) && isfield(opt, 'max_it') && ~isempty(opt.max_it)
             mips_opt.max_it = opt.max_it;
         end
-        if alg == 200
-            mips_opt.step_control = 0;
-        else
-            mips_opt.step_control = 1;
-        end
         mips_opt.verbose = verbose;
         
         %% call solver
         [x, f, eflag, output, lambda] = ...
             qps_mips(H, c, A, l, u, xmin, xmax, x0, mips_opt);
-    case 300                    %% use QUADPROG or LINPROG from Opt Tbx ver 2.x+
+    case 'OT'                    %% use QUADPROG or LINPROG from Opt Tbx ver 2.x+
         [x, f, eflag, output, lambda] = ...
             qps_ot(H, c, A, l, u, xmin, xmax, x0, opt);
-    case 400                    %% use IPOPT
+    case 'IPOPT'
         [x, f, eflag, output, lambda] = ...
             qps_ipopt(H, c, A, l, u, xmin, xmax, x0, opt);
-    case 500                    %% use CPLEX
+    case 'CPLEX'
         [x, f, eflag, output, lambda] = ...
             qps_cplex(H, c, A, l, u, xmin, xmax, x0, opt);
-    case 600                    %% use MOSEK
+    case 'MOSEK'
         [x, f, eflag, output, lambda] = ...
             qps_mosek(H, c, A, l, u, xmin, xmax, x0, opt);
-    case 700                    %% use Gurobi
+    case 'GUROBI'
         [x, f, eflag, output, lambda] = ...
             qps_gurobi(H, c, A, l, u, xmin, xmax, x0, opt);
     otherwise

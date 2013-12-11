@@ -62,7 +62,7 @@ for k = 1:n
 end
 
 % verbose = 2;
-mpopt = mpoption('OUT_ALL', 0, 'VERBOSE', verbose);
+mpopt = mpoption('out.all', 0, 'verbose', verbose);
 
 %% run individual AC PFs
 t = 'individual PFs : success ';

@@ -59,8 +59,8 @@ if have_fcn('octave')
 end
 
 t0 = 'DC OPF (MIPS): ';
-mpopt = mpoption('OUT_ALL', 0, 'VERBOSE', verbose);
-mpopt = mpoption(mpopt, 'OPF_ALG_DC', 200);
+mpopt = mpoption('out.all', 0, 'verbose', verbose);
+mpopt = mpoption(mpopt, 'opf.dc.solver', 'MIPS');
 
 s2 = warning('query', 'MATLAB:singularMatrix');
 

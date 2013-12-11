@@ -10,7 +10,7 @@ function [MVAbase, bus, gen, branch, success, et] = ...
 %       CASEDATA : either a MATPOWER case struct or a string containing
 %           the name of the file with the case data (default is 'case9')
 %           (see also CASEFORMAT and LOADCASE)
-%       MPOPT : MATPOWER options vector to override default options
+%       MPOPT : MATPOWER options struct to override default options
 %           can be used to specify the solution algorithm, output options
 %           termination tolerances, and more (see also MPOPTION).
 %       FNAME : name of a file to which the pretty-printed output will
@@ -42,7 +42,7 @@ function [MVAbase, bus, gen, branch, success, et] = ...
 %
 %       [baseMVA, bus, gen, branch, success, et] = runpf(...);
 %
-%   If the ENFORCE_Q_LIMS option is set to true (default is false) then, if
+%   If the pf.enforce_q_lims option is set to true (default is false) then, if
 %   any generator reactive power limit is violated after running the AC power
 %   flow, the corresponding bus is converted to a PQ bus, with Qg at the
 %   limit, and the case is re-run. The voltage magnitude at the bus will
@@ -54,7 +54,7 @@ function [MVAbase, bus, gen, branch, success, et] = ...
 %
 %   Examples:
 %       results = runpf('case30');
-%       results = runpf('case30', mpoption('ENFORCE_Q_LIMS', 1));
+%       results = runpf('case30', mpoption('pf.enforce_q_lims', 1));
 %
 %   See also RUNDCPF.
 
@@ -115,9 +115,8 @@ if nargin < 4
 end
 
 %% options
-verbose = mpopt(31);
-qlim = mpopt(6);                    %% enforce Q limits on gens?
-dc = mpopt(10);                     %% use DC formulation?
+qlim = mpopt.pf.enforce_q_lims;         %% enforce Q limits on gens?
+dc = strcmp(upper(mpopt.model), 'DC');  %% use DC formulation?
 
 %% read data
 mpc = loadcase(casedata);
@@ -140,12 +139,12 @@ gbus = gen(on, GEN_BUS);                %% what buses are they at?
 
 %%-----  run the power flow  -----
 t0 = clock;
-if verbose > 0
+if mpopt.verbose > 0
     v = mpver('all');
     fprintf('\nMATPOWER Version %s, %s', v.Version, v.Date);
 end
 if dc                               %% DC formulation
-    if verbose > 0
+    if mpopt.verbose > 0
       fprintf(' -- DC Power Flow\n');
     end
     %% initial state
@@ -180,18 +179,19 @@ if dc                               %% DC formulation
     
     success = 1;
 else                                %% AC formulation
-    alg = mpopt(1);
-    if verbose > 0
-        if alg == 1
-            solver = 'Newton';
-        elseif alg == 2
-            solver = 'fast-decoupled, XB';
-        elseif alg == 3
-            solver = 'fast-decoupled, BX';
-        elseif alg == 4
-            solver = 'Gauss-Seidel';
-        else
-            solver = 'unknown';
+    alg = upper(mpopt.pf.alg);
+    if mpopt.verbose > 0
+		switch alg
+			case 'NR'
+				solver = 'Newton';
+			case 'FDXB'
+				solver = 'fast-decoupled, XB';
+			case 'FDBX'
+				solver = 'fast-decoupled, BX';
+			case 'GS'
+				solver = 'Gauss-Seidel';
+			otherwise
+				solver = 'unknown';
         end
         fprintf(' -- AC Power Flow (%s)\n', solver);
     end
@@ -219,16 +219,16 @@ else                                %% AC formulation
         Sbus = makeSbus(baseMVA, bus, gen);
         
         %% run the power flow
-        alg = mpopt(1);
-        if alg == 1
-            [V, success, iterations] = newtonpf(Ybus, Sbus, V0, ref, pv, pq, mpopt);
-        elseif alg == 2 || alg == 3
-            [Bp, Bpp] = makeB(baseMVA, bus, branch, alg);
-            [V, success, iterations] = fdpf(Ybus, Sbus, V0, Bp, Bpp, ref, pv, pq, mpopt);
-        elseif alg == 4
-            [V, success, iterations] = gausspf(Ybus, Sbus, V0, ref, pv, pq, mpopt);
-        else
-            error('Only Newton''s method, fast-decoupled, and Gauss-Seidel power flow algorithms currently implemented.');
+		switch alg
+			case 'NR'
+				[V, success, iterations] = newtonpf(Ybus, Sbus, V0, ref, pv, pq, mpopt);
+			case {'FDXB', 'FDBX'}
+				[Bp, Bpp] = makeB(baseMVA, bus, branch, alg);
+				[V, success, iterations] = fdpf(Ybus, Sbus, V0, Bp, Bpp, ref, pv, pq, mpopt);
+			case 'GS'
+				[V, success, iterations] = gausspf(Ybus, Sbus, V0, ref, pv, pq, mpopt);
+			otherwise
+				error('Only Newton''s method, fast-decoupled, and Gauss-Seidel power flow algorithms currently implemented.');
         end
         
         %% update data matrices with solution
@@ -236,13 +236,14 @@ else                                %% AC formulation
         
         if qlim             %% enforce generator Q limits
             %% find gens with violated Q constraints
-            tol = mpopt(16);    %% OPF_VIOLATION
-            mx = find( gen(:, GEN_STATUS) > 0 & gen(:, QG) > gen(:, QMAX) + tol );
-            mn = find( gen(:, GEN_STATUS) > 0 & gen(:, QG) < gen(:, QMIN) - tol );
+            mx = find( gen(:, GEN_STATUS) > 0 ...
+            		& gen(:, QG) > gen(:, QMAX) + mpopt.opf.violation );
+            mn = find( gen(:, GEN_STATUS) > 0 ...
+            		& gen(:, QG) < gen(:, QMIN) - mpopt.opf.violation );
             
             if ~isempty(mx) || ~isempty(mn)  %% we have some Q limit violations
                 if isempty(pv)
-                    if verbose
+                    if mpopt.verbose
                         if ~isempty(mx) 
                             fprintf('Gen %d (only one left) exceeds upper Q limit : INFEASIBLE PROBLEM\n', mx);
                         else
@@ -266,10 +267,10 @@ else                                %% AC formulation
                     end
                 end
 
-                if verbose && ~isempty(mx)
+                if mpopt.verbose && ~isempty(mx)
                     fprintf('Gen %d at upper Q limit, converting to PQ bus\n', mx);
                 end
-                if verbose && ~isempty(mn)
+                if mpopt.verbose && ~isempty(mn)
                     fprintf('Gen %d at lower Q limit, converting to PQ bus\n', mn);
                 end
                 
@@ -294,7 +295,7 @@ else                                %% AC formulation
                 %% update bus index lists of each type of bus
                 ref_temp = ref;
                 [ref, pv, pq] = bustypes(bus, gen);
-                if verbose && ref ~= ref_temp
+                if mpopt.verbose && ref ~= ref_temp
                     fprintf('Bus %d is new slack bus\n', ref);
                 end
                 limited = [limited; mx];

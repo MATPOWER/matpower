@@ -214,7 +214,7 @@ function results = userfcn_iflims_printpf(results, fd, mpopt, args)
 %
 %   This is the 'printpf' stage userfcn callback that pretty-prints the
 %   results. It expects a results struct, a file descriptor and a MATPOWER
-%   options vector. The optional args are not currently used.
+%   options struct. The optional args are not currently used.
 
 %% define named indices into data matrices
 [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
@@ -222,11 +222,9 @@ function results = userfcn_iflims_printpf(results, fd, mpopt, args)
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 
 %%-----  print results  -----
-OUT_ALL = mpopt(32);
-% ctol = mpopt(16);   %% constraint violation tolerance
 ptol = 1e-6;        %% tolerance for displaying shadow prices
 
-if OUT_ALL ~= 0
+if mpopt.out.all ~= 0
     iflims = results.if.lims;
     fprintf(fd, '\n================================================================================');
     fprintf(fd, '\n|     Interface Flow Limits                                                    |');

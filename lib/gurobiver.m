@@ -1,6 +1,6 @@
 function rv = gurobiver(varargin)
-%GUROBIVER  Prints or returns GUROBI/GUROBI_MEX version info.
-%   V = GUROBIVER returns the current GUROBI/GUROBI_MEX version numbers.
+%GUROBIVER  Prints or returns GUROBI version info.
+%   V = GUROBIVER returns the current GUROBI version numbers.
 %   V = GUROBIVER('all') returns a struct with the fields Name, Version,
 %   Release and Date (all strings). Calling GUROBIVER without assigning the
 %   return value prints the version and release date of the current

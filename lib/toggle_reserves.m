@@ -292,7 +292,7 @@ function results = userfcn_reserves_printpf(results, fd, mpopt, args)
 %
 %   This is the 'printpf' stage userfcn callback that pretty-prints the
 %   results. It expects a results struct, a file descriptor and a MATPOWER
-%   options vector. The optional args are not currently used.
+%   options struct. The optional args are not currently used.
 
 %% define named indices into data matrices
 [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
@@ -302,8 +302,7 @@ function results = userfcn_reserves_printpf(results, fd, mpopt, args)
 %%-----  print results  -----
 r = results.reserves;
 nrz = size(r.req, 1);
-OUT_ALL = mpopt(32);
-if OUT_ALL ~= 0
+if mpopt.out.all ~= 0
     fprintf(fd, '\n================================================================================');
     fprintf(fd, '\n|     Reserves                                                                 |');
     fprintf(fd, '\n================================================================================');

@@ -573,12 +573,12 @@ delete([ matfilev2 '.mat' ]);
 delete([ pfmatfilev2 '.mat' ]);
 
 t = 'runpf(my_M_file)';
-opt = mpoption('VERBOSE', 0, 'OUT_ALL', 0);
-[baseMVA3, bus3, gen3, branch3, success, et] = runpf(pfcasefile, opt);
+mpopt = mpoption('verbose', 0, 'out.all', 0);
+[baseMVA3, bus3, gen3, branch3, success, et] = runpf(pfcasefile, mpopt);
 t_ok( success, t );
 
 t = 'runpf(my_struct)';
-[baseMVA4, bus4, gen4, branch4, success, et] = runpf(c, opt);
+[baseMVA4, bus4, gen4, branch4, success, et] = runpf(c, mpopt);
 t_ok( success, t );
 
 t = 'runpf result comparison : ';
@@ -589,7 +589,7 @@ t_is(branch3,   branch4,    12, [t 'branch']);
 
 t = 'runpf(modified_struct)';
 c.gen(3,2) = c.gen(3,2) + 1;            %% increase gen 3 output by 1
-[baseMVA5, bus5, gen5, branch5, success, et] = runpf(c, opt);
+[baseMVA5, bus5, gen5, branch5, success, et] = runpf(c, mpopt);
 t_is(gen5(1,2), gen4(1,2) - 1, 1, t);   %% slack bus output should decrease by 1
 
 t_end;

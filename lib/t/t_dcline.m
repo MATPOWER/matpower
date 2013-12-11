@@ -62,10 +62,10 @@ if have_fcn('octave')
 end
 
 t0 = '';
-mpopt = mpoption('OPF_VIOLATION', 1e-6, 'PDIPM_GRADTOL', 1e-8, ...
-        'PDIPM_COMPTOL', 1e-8, 'PDIPM_COSTTOL', 1e-9);
-mpopt = mpoption(mpopt, 'OPF_ALG', 560, 'OPF_ALG_DC', 200);
-mpopt = mpoption(mpopt, 'OUT_ALL', 0, 'VERBOSE', verbose);
+mpopt = mpoption('opf.violation', 1e-6, 'mips.gradtol', 1e-8, ...
+        'mips.comptol', 1e-8, 'mips.costtol', 1e-9);
+mpopt = mpoption(mpopt, 'opf.ac.solver', 'MIPS', 'opf.dc.solver', 'MIPS');
+mpopt = mpoption(mpopt, 'out.all', 0, 'verbose', verbose);
 
 %% set up indices
 ib_data     = [1:BUS_AREA BASE_KV:VMIN];

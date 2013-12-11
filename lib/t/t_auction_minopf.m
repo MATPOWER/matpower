@@ -49,7 +49,7 @@ if ~have_fcn('smartmarket')
 elseif ~have_fcn('minopf')
     t_skip(n_tests, 't_auction_minopf requires MINOPF');
 else
-    mpopt = mpoption('OPF_ALG', 500, 'OUT_ALL_LIM', 1, 'OUT_BRANCH', 0, 'OUT_SYS_SUM', 0, 'OUT_ALL', 0, 'VERBOSE', 0);
+    mpopt = mpoption('opf.ac.solver', 'MINOPF', 'out.lim.all', 1, 'out.branch', 0, 'out.sys_sum', 0, 'out.all', 0, 'verbose', 0);
     q = [
         12 24 24; 
         12 24 24; 

@@ -46,7 +46,7 @@ function [bus, gen, branch, f, success, info, et, g, jac, xr, pimul] = ...
 %   It selects the least cost case as the starting point for the next stage,
 %   continuing until there are no more candidates to be shut down or no
 %   more improvement can be gained by shutting something down.
-%   If VERBOSE in mpopt (see MPOPTION) is true, it prints progress
+%   If MPOPT.verbose (see MPOPTION) is true, it prints progress
 %   info, if it is > 1 it prints the output of each individual opf.
 %
 %   See also OPF, RUNUOPF.
@@ -54,7 +54,7 @@ function [bus, gen, branch, f, success, info, et, g, jac, xr, pimul] = ...
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2013 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
@@ -87,9 +87,8 @@ t0 = clock;                                 %% start timer
 [mpc, mpopt] = opf_args(varargin{:});
 
 %% options
-verbose = mpopt(31);    %% VERBOSE
-if verbose      %% turn down verbosity one level for calls to opf
-    mpopt = mpoption(mpopt, 'VERBOSE', verbose-1);
+if mpopt.verbose    %% turn down verbosity one level for calls to opf
+    mpopt = mpoption(mpopt, 'verbose', mpopt.verbose-1);
 end
 
 %% define named indices into bus, gen, branch matrices
@@ -112,7 +111,7 @@ while sum(Pmin) > load_capacity
     [junk, i] = fairmax(avgPmincost);   %% pick one with max avg cost at Pmin
     i = on(i);                          %% convert to generator index
 
-    if verbose
+    if mpopt.verbose
         fprintf('Shutting down generator %d so all Pmin limits can be satisfied.\n', i);
     end
 
@@ -166,7 +165,7 @@ while 1
         break;
     else
         %% shutting something else down helps, so let's keep going
-        if verbose
+        if mpopt.verbose
             fprintf('Shutting down generator %d.\n', k1);
         end
         

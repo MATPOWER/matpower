@@ -25,13 +25,13 @@ function TorF = have_fcn(tag)
 %
 %   Examples:
 %       if have_fcn('minopf')
-%           results = runopf(mpc, mpoption('OPF_ALG', 500));
+%           results = runopf(mpc, mpoption('opf.ac.solver', 'MINOPF'));
 %       end
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2004-2011 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2013 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.

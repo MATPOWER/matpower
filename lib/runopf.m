@@ -10,7 +10,7 @@ function [MVAbase, bus, gen, gencost, branch, f, success, et] = ...
 %       CASEDATA : either a MATPOWER case struct or a string containing
 %           the name of the file with the case data (default is 'case9')
 %           (see also CASEFORMAT and LOADCASE)
-%       MPOPT : MATPOWER options vector to override default options
+%       MPOPT : MATPOWER options struct to override default options
 %           can be used to specify the solution algorithm, output options
 %           termination tolerances, and more (see also MPOPTION).
 %       FNAME : name of a file to which the pretty-printed output will

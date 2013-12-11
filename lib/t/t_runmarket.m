@@ -49,8 +49,8 @@ if ~have_fcn('smartmarket')
 else
     mpc = loadcase('t_auction_case');
     
-    mpopt = mpoption('OPF_ALG', 560, 'OUT_ALL_LIM', 1, 'OUT_BRANCH', 0, 'OUT_SYS_SUM', 0, 'OUT_ALL', 0, 'VERBOSE', 1);
-    % mpopt = mpoption('OUT_GEN', 1, 'OUT_BRANCH', 0, 'OUT_SYS_SUM', 0);
+    mpopt = mpoption('opf.ac.solver', 'MIPS', 'out.lim.all', 1, 'out.branch', 0, 'out.sys_sum', 0, 'out.all', 0, 'verbose', 1);
+    % mpopt = mpoption('out.gen', 1, 'out.branch', 0, 'out.sys_sum', 0);
     
     offers.P.qty = [
         12 24 24; 

@@ -48,9 +48,8 @@ function [results, success, raw] = opf_execute(om, mpopt)
 
 %%-----  setup  -----
 %% options
-dc  = mpopt(10);        %% PF_DC        : 1 = DC OPF, 0 = AC OPF 
-alg = mpopt(11);        %% OPF_ALG
-verbose = mpopt(31);    %% VERBOSE
+dc  = strcmp(upper(mpopt.model), 'DC');
+alg = upper(mpopt.opf.ac.solver);
 
 %% build user-defined costs
 om = build_cost_params(om);
@@ -58,73 +57,75 @@ om = build_cost_params(om);
 %% get indexing
 [vv, ll, nn] = get_idx(om);
 
-if verbose > 0
+if mpopt.verbose > 0
     v = mpver('all');
     fprintf('\nMATPOWER Version %s, %s', v.Version, v.Date);
 end
 
 %%-----  run DC OPF solver  -----
 if dc
-  if verbose > 0
+  if mpopt.verbose > 0
     fprintf(' -- DC Optimal Power Flow\n');
   end
   [results, success, raw] = dcopf_solver(om, mpopt);
 else
   %%-----  run AC OPF solver  -----
-  if verbose > 0
+  if mpopt.verbose > 0
     fprintf(' -- AC Optimal Power Flow\n');
   end
 
-  %% if OPF_ALG not set, choose best available option
-  if alg == 0
+  %% if opf.ac.solver not set, choose best available option
+  if strcmp(alg, 'DEFAULT')
     if have_fcn('pdipmopf')
-      alg = 540;                %% PDIPM
+      alg = 'PDIPM';            %% PDIPM
     else
-      alg = 560;                %% MIPS
+      alg = 'MIPS';             %% MIPS
     end
-    mpopt = mpoption(mpopt, 'OPF_ALG', alg);
+    mpopt = mpoption(mpopt, 'opf.ac.solver', alg);
   end
 
   %% run specific AC OPF solver
-  if alg == 560 || alg == 565                   %% MIPS
-    [results, success, raw] = mipsopf_solver(om, mpopt);
-  elseif alg == 580                             %% IPOPT
-    if ~have_fcn('ipopt')
-      error('opf_execute: OPF_ALG %d requires IPOPT (see https://projects.coin-or.org/Ipopt/)', alg);
-    end
-    [results, success, raw] = ipoptopf_solver(om, mpopt);
-  elseif alg == 540 || alg == 545 || alg == 550 %% PDIPM_OPF, SCPDIPM_OPF, or TRALM_OPF
-    if alg == 540                               %% PDIPM_OPF
-      if ~have_fcn('pdipmopf')
-        error('opf_execute: OPF_ALG %d requires PDIPMOPF (see http://www.pserc.cornell.edu/tspopf/)', alg);
+  switch alg
+    case 'MIPS'
+      [results, success, raw] = mipsopf_solver(om, mpopt);
+    case 'IPOPT'
+      if ~have_fcn('ipopt')
+        error('opf_execute: MPOPT.opf.ac.solver = ''%s'' requires IPOPT (see https://projects.coin-or.org/Ipopt/)', alg);
       end
-    elseif alg == 545                           %% SCPDIPM_OPF
-      if ~have_fcn('scpdipmopf')
-        error('opf_execute: OPF_ALG %d requires SCPDIPMOPF (see http://www.pserc.cornell.edu/tspopf/)', alg);
+      [results, success, raw] = ipoptopf_solver(om, mpopt);
+    case 'PDIPM'
+      if mpopt.pdipm.step_control
+        if ~have_fcn('scpdipmopf')
+          error('opf_execute: MPOPT.opf.ac.solver = ''%s'' requires SCPDIPMOPF (see http://www.pserc.cornell.edu/tspopf/)', alg);
+        end
+      else
+        if ~have_fcn('pdipmopf')
+          error('opf_execute: MPOPT.opf.ac.solver = ''%s'' requires PDIPMOPF (see http://www.pserc.cornell.edu/tspopf/)', alg);
+        end
       end
-    elseif alg == 550                           %% TRALM_OPF
+      [results, success, raw] = tspopf_solver(om, mpopt);
+    case 'TRALM'
       if ~have_fcn('tralmopf')
-        error('opf_execute: OPF_ALG %d requires TRALM (see http://www.pserc.cornell.edu/tspopf/)', alg);
+        error('opf_execute: MPOPT.opf.ac.solver = ''%s'' requires TRALM (see http://www.pserc.cornell.edu/tspopf/)', alg);
       end
-    end
-    [results, success, raw] = tspopf_solver(om, mpopt);
-  elseif alg == 500                             %% MINOPF
-    if ~have_fcn('minopf')
-      error('opf_execute: OPF_ALG %d requires MINOPF (see http://www.pserc.cornell.edu/minopf/)', alg);
-    end
-    [results, success, raw] = mopf_solver(om, mpopt);
-  elseif alg == 520                             %% FMINCON
-    if ~have_fcn('fmincon')
-      error('opf_execute: OPF_ALG %d requires FMINCON (Optimization Toolbox 2.x or later)', alg);
-    end
-    [results, success, raw] = fmincopf_solver(om, mpopt);
-  elseif alg == 600                             %% KNITRO
-    if ~have_fcn('knitro')
-      error('opf_execute: OPF_ALG %d requires KNITRO (see http://www.ziena.com/)', alg);
-    end
-    [results, success, raw] = ktropf_solver(om, mpopt);
-  else
-    error('opf_execute: OPF_ALG %d is not a valid algorithm code', alg);
+      [results, success, raw] = tspopf_solver(om, mpopt);
+    case 'MINOPF'
+      if ~have_fcn('minopf')
+        error('opf_execute: MPOPT.opf.ac.solver = ''%s'' requires MINOPF (see http://www.pserc.cornell.edu/minopf/)', alg);
+      end
+      [results, success, raw] = mopf_solver(om, mpopt);
+    case 'FMINCON'
+      if ~have_fcn('fmincon')
+        error('opf_execute: MPOPT.opf.ac.solver = ''%s'' requires FMINCON (Optimization Toolbox 2.x or later)', alg);
+      end
+      [results, success, raw] = fmincopf_solver(om, mpopt);
+    case 'KNITRO'
+      if ~have_fcn('knitro')
+        error('opf_execute: MPOPT.opf.ac.solver = ''%s'' requires KNITRO (see http://www.ziena.com/)', alg);
+      end
+      [results, success, raw] = ktropf_solver(om, mpopt);
+    otherwise
+      error('opf_execute: MPOPT.opf.ac.solver = ''%s'' is not a valid AC OPF solver selection', alg);
   end
 end
 if ~isfield(raw, 'output') || ~isfield(raw.output, 'alg') || isempty(raw.output.alg)
@@ -144,8 +145,8 @@ if success
       results.gen = update_mupq(results.baseMVA, results.gen, mu_PQh, mu_PQl, Apqdata);
     end
 
-    %% compute g, dg, f, df, d2f if requested by RETURN_RAW_DER = 1
-    if mpopt(52)
+    %% compute g, dg, f, df, d2f if requested by opf.return_raw_der = 1
+    if mpopt.opf.return_raw_der
       %% move from results to raw if using v4.0 of MINOPF or TSPOPF
       if isfield(results, 'dg')
         raw.dg = results.dg;
@@ -179,8 +180,8 @@ if success
     results.branch(iang, MU_ANGMAX) = results.mu.lin.u(ll.i1.ang:ll.iN.ang) * pi/180;
   end
 else
-  %% assign empty g, dg, f, df, d2f if requested by RETURN_RAW_DER = 1
-  if ~dc && mpopt(52)
+  %% assign empty g, dg, f, df, d2f if requested by opf.return_raw_der = 1
+  if ~dc && mpopt.opf.return_raw_der
     raw.dg = [];
     raw.g = [];
     raw.df = [];
@@ -237,7 +238,7 @@ end
 %% Note: The "y" portion of x will be nonsense, but everything should at
 %%       least be in the expected locations.
 pwl1 = userdata(om, 'pwl1');
-if ~isempty(pwl1) && alg ~= 545 && alg ~= 550
+if ~isempty(pwl1) && ~strcmp(alg, 'TRALM') && ~(strcmp(alg, 'PDIPM') && mpopt.pdipm.step_control)
   %% get indexing
   vv = get_idx(om);
   if dc
@@ -249,4 +250,3 @@ if ~isempty(pwl1) && alg ~= 545 && alg ~= 550
   raw.xr = [ raw.xr(1:nx); y; raw.xr(nx+1:end)];
   results.x = [ results.x(1:nx); y; results.x(nx+1:end)];
 end
-
