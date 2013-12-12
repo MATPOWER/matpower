@@ -1,7 +1,7 @@
 function [V, converged, i, lam] = cpf_corrector(Ybus, Sbus, V0, ref, pv, pq, ...
                 lam0, Sxfr, Vprv, lamprv, z, step, parameterization, mpopt)
 %CPF_CORRECTOR  Solves the corrector step of a continuation power flow using a
-%   full Newton method with pseudo-arclength parameterization.
+%   full Newton method with selected parameterization scheme.
 %   [V, CONVERGED, I, LAM] = CPF_CORRECTOR(YBUS, SBUS, V0, REF, PV, PQ, ...
 %                 LAM0, SXFR, VPRV, LPRV, Z, STEP, PARAMETERIZATION, MPOPT)
 %   solves for bus voltages and lambda given the full system admittance

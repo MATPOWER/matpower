@@ -5,7 +5,7 @@ function [res, suc] = ...
 %                                   MPOPT, FNAME, SOLVEDCASE)
 %
 %   Runs a full AC continuation power flow using a normalized tangent
-%   predictor and pseudo arclength parameterization, optionally
+%   predictor and selected parameterization scheme, optionally
 %   returning a RESULTS struct and SUCCESS flag. Step size can be
 %   fixed or adaptive.
 %
