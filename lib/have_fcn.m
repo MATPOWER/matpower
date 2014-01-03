@@ -57,83 +57,90 @@ function TorF = have_fcn(tag)
 %   under other licensing terms, the licensors of MATPOWER grant
 %   you additional permission to convey the resulting work.
 
-switch tag
-    case 'bpmpd'
-        TorF = exist('bp', 'file') == 3;
-    case 'cplex'
-        TorF = 0;
-        if exist('cplexqp', 'file')
-            %% it's installed, but we need to check for MEX for this arch
-            p = which('cplexqp');   %% get the path
-            len = length(p) - length('cplexqp.p');
-            w = what(p(1:len));             %% look for mex files on the path
-            for k = 1:length(w.mex)
-                if regexp(w.mex{k}, 'cplexlink[^\.]*');
-                    TorF = 1;
-                    break;
+persistent fcns;
+
+if isfield(fcns, tag) && ~isempty(fcns.(tag))
+    TorF = fcns.(tag);
+else
+    switch tag
+        case 'bpmpd'
+            TorF = exist('bp', 'file') == 3;
+        case 'cplex'
+            TorF = 0;
+            if exist('cplexqp', 'file')
+                %% it's installed, but we need to check for MEX for this arch
+                p = which('cplexqp');   %% get the path
+                len = length(p) - length('cplexqp.p');
+                w = what(p(1:len));             %% look for mex files on the path
+                for k = 1:length(w.mex)
+                    if regexp(w.mex{k}, 'cplexlink[^\.]*');
+                        TorF = 1;
+                        break;
+                    end
                 end
             end
-        end
-    case 'fmincon'
-        TorF = license('test', 'optimization_toolbox') && exist('fmincon', 'file') == 2;
-    case 'gurobi'
-        TorF = exist('gurobi', 'file') == 3;
-    case 'ipopt'
-        TorF = exist('ipopt', 'file') == 3;
-    case 'linprog'
-        TorF = license('test', 'optimization_toolbox') && exist('linprog', 'file') == 2;
-    case 'knitro'
-        TorF = exist('ktrlink', 'file') == 2;
-        if TorF
-            try
-                str = evalc('[x fval] = ktrlink(@(x)1,1);');
-            end
-            TorF = exist('fval', 'var') && fval == 1;
-        end
-    case 'minopf'
-        TorF = exist('minopf', 'file') == 3;
-    case 'mosek'
-        TorF = exist('mosekopt', 'file') == 3;
-    case 'quadprog'
-        TorF = license('test', 'optimization_toolbox') && exist('quadprog', 'file') == 2;
-    case 'quadprog_ls'
-        v = ver('optim');
-        if license('test', 'optimization_toolbox') && (str2num(strtok(v.Version, '.')) >= 6)
-            TorF = 1;
-        else
-            TorF = 0;
-        end
-    case 'smartmarket'
-        TorF = exist('runmarket', 'file') == 2;
-    case 'octave'
-        TorF = exist('OCTAVE_VERSION', 'builtin') == 5;
-    case {'pdipmopf', 'scpdipmopf', 'tralmopf'}
-        if have_fcn('octave')
-            TorF = 0;
-        else
-            v = ver('Matlab');
-            %% requires >= MATLAB 6.5 (R13) (released 20-Jun-2002)
-            %% older versions do not have mxCreateDoubleScalar() function
-            %% (they have mxCreateScalarDouble() instead)
-            if datenum(v.Date) >= 731387
-                switch tag
-                    case 'pdipmopf'
-                        TorF = exist('pdipmopf', 'file') == 3;
-                    case 'scpdipmopf'
-                        TorF = exist('scpdipmopf', 'file') == 3;
-                    case 'tralmopf'
-                        %% requires >= MATLAB 7.3 (R2006b) (released 03-Aug-2006)
-                        %% older versions do not include the needed form of chol()
-                        if datenum(v.Date) >= 732892
-                            TorF = exist('tralmopf', 'file') == 3;
-                        else
-                            TorF = 0;
-                        end
+        case 'fmincon'
+            TorF = license('test', 'optimization_toolbox') && exist('fmincon', 'file') == 2;
+        case 'gurobi'
+            TorF = exist('gurobi', 'file') == 3;
+        case 'ipopt'
+            TorF = exist('ipopt', 'file') == 3;
+        case 'linprog'
+            TorF = license('test', 'optimization_toolbox') && exist('linprog', 'file') == 2;
+        case 'knitro'
+            TorF = exist('ktrlink', 'file') == 2;
+            if TorF
+                try
+                    str = evalc('[x fval] = ktrlink(@(x)1,1);');
                 end
+                TorF = exist('fval', 'var') && fval == 1;
+            end
+        case 'minopf'
+            TorF = exist('minopf', 'file') == 3;
+        case 'mosek'
+            TorF = exist('mosekopt', 'file') == 3;
+        case 'quadprog'
+            TorF = license('test', 'optimization_toolbox') && exist('quadprog', 'file') == 2;
+        case 'quadprog_ls'
+            v = ver('optim');
+            if license('test', 'optimization_toolbox') && (str2num(strtok(v.Version, '.')) >= 6)
+                TorF = 1;
             else
                 TorF = 0;
             end
-        end
-    otherwise
-        error('have_fcn: unknown functionality %s', tag);
+        case 'smartmarket'
+            TorF = exist('runmarket', 'file') == 2;
+        case 'octave'
+            TorF = exist('OCTAVE_VERSION', 'builtin') == 5;
+        case {'pdipmopf', 'scpdipmopf', 'tralmopf'}
+            if have_fcn('octave')
+                TorF = 0;
+            else
+                v = ver('Matlab');
+                %% requires >= MATLAB 6.5 (R13) (released 20-Jun-2002)
+                %% older versions do not have mxCreateDoubleScalar() function
+                %% (they have mxCreateScalarDouble() instead)
+                if datenum(v.Date) >= 731387
+                    switch tag
+                        case 'pdipmopf'
+                            TorF = exist('pdipmopf', 'file') == 3;
+                        case 'scpdipmopf'
+                            TorF = exist('scpdipmopf', 'file') == 3;
+                        case 'tralmopf'
+                            %% requires >= MATLAB 7.3 (R2006b) (released 03-Aug-2006)
+                            %% older versions do not include the needed form of chol()
+                            if datenum(v.Date) >= 732892
+                                TorF = exist('tralmopf', 'file') == 3;
+                            else
+                                TorF = 0;
+                            end
+                    end
+                else
+                    TorF = 0;
+                end
+            end
+        otherwise
+            error('have_fcn: unknown functionality %s', tag);
+    end
+    fcns.(tag) = TorF;
 end
