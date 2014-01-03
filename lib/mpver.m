@@ -116,7 +116,11 @@ else
         fprintf('%-22s -- not installed --\n', 'IPOPT');
     end
     if have_fcn('knitro')
-        str = evalc('[x fval] = ktrlink(@(x)1,1);');
+        if have_fcn('knitromatlab')
+            str = evalc('[x fval] = knitromatlab(@(x)1,1);');
+        elseif have_fcn('ktrlink')
+            str = evalc('[x fval] = ktrlink(@(x)1,1);');
+        end
         pat = 'KNITRO ([^\s]+)\n';
         [s,e,tE,m,t] = regexp(str, pat);
         if isempty(t)

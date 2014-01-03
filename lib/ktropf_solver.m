@@ -207,8 +207,13 @@ end
 %%-----  run opf  -----
 f_fcn = @(x)opf_costfcn(x, om);
 gh_fcn = @(x)opf_consfcn(x, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
-[x, f, info, Output, Lambda] = ktrlink(f_fcn, x0, Af, bf, Afeq, bfeq, ...
+if have_fcn('knitromatlab')
+    [x, f, info, Output, Lambda] = knitromatlab(f_fcn, x0, Af, bf, Afeq, bfeq, ...
+                                    xmin, xmax, gh_fcn, [], fmoptions, opt_fname);
+else
+    [x, f, info, Output, Lambda] = ktrlink(f_fcn, x0, Af, bf, Afeq, bfeq, ...
                                     xmin, xmax, gh_fcn, fmoptions, opt_fname);
+end
 success = (info == 0);
 
 %% delete ktropts file

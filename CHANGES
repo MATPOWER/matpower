@@ -17,6 +17,9 @@ Changes since 4.1
 
 1/3/14
     - Added persistent variable to improve performance of have_fcn().
+    - Added support for Knitro v9.0.0, including new 'knitromatlab'
+      and 'ktrlink' options to have_fcn(), to determine which Knitro
+      interfaces are available.
 
 12/10/13
     - New MATPOWER options implementation based on options struct

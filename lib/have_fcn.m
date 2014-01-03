@@ -11,6 +11,8 @@ function TorF = have_fcn(tag)
 %       ipopt       - IPOPT, NLP solver (https://projects.coin-or.org/Ipopt/)
 %       linprog     - LINPROG, LP solver from Optimization Toolbox 2.x +
 %       knitro      - KNITRO, NLP solver (http://www.ziena.com/)
+%         knitromatlab - KNITRO, version 9.0.0+
+%         ktrlink      - KNITRO, version < 9.0.0 (requires Opt Tbx)
 %       minopf      - MINOPF, MINOPF, MINOS-based OPF solver
 %       mosek       - MOSEK, LP/QP solver (http://www.mosek.com/)
 %       quadprog    - QUADPROG, QP solver from Optimization Toolbox 2.x +
@@ -87,7 +89,17 @@ else
             TorF = exist('ipopt', 'file') == 3;
         case 'linprog'
             TorF = license('test', 'optimization_toolbox') && exist('linprog', 'file') == 2;
-        case 'knitro'
+        case 'knitro'       %% any Knitro
+            TorF = have_fcn('knitromatlab') || have_fcn('ktrlink');
+        case 'knitromatlab'     %% Knitro 9.0 or greater
+            TorF = exist('knitromatlab', 'file') == 2;
+            if TorF
+                try
+                    str = evalc('[x fval] = knitromatlab(@(x)1,1);');
+                end
+                TorF = exist('fval', 'var') && fval == 1;
+            end
+        case 'ktrlink'      %% pre 9.0 Knitro interface, requires Opt Tbx
             TorF = exist('ktrlink', 'file') == 2;
             if TorF
                 try
