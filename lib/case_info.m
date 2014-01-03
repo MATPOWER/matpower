@@ -7,7 +7,8 @@ function [groupss, isolated] = case_info(mpc, level)
 %   Prints out detailed information about a MATPOWER case.
 %
 %   TO DO: Add checking of bus types (isolated bus not marked as such).
-%          Check for infeasible limits PMAX < PMIN, QMAX < QMIN, VMAX < VMIN, etc.
+%          Check for infeasible limits PMAX < PMIN, QMAX < QMIN, VMAX < VMIN,
+%               etc.
 %          Warn about islands without reference buses.
 %          Warn about PV and ref buses without generators.
 %          Separate branch charging injections from series losses.
