@@ -38,10 +38,10 @@ function opt = cplex_options(overrides, mpopt)
 %   There are multiple ways of providing values to override the default
 %   options. Their precedence and order of application are as follows:
 %
-%   With inputs OVERRIDE and FNAME
+%   With inputs OVERRIDES and FNAME
 %       1. FNAME is called
 %       2. OVERRIDES are applied
-%   With inputs OVERRIDE and MPOPT
+%   With inputs OVERRIDES and MPOPT
 %       1. FNAME (from cplex.opt_fname or cplex.opt) is called
 %       2. cplex.opts (if not empty) are applied
 %       3. OVERRIDES are applied
@@ -64,7 +64,7 @@ function opt = cplex_options(overrides, mpopt)
 %   For details on the available options, see the "Parameters of CPLEX"
 %   section of the CPLEX documentation at:
 %
-%       http://pic.dhe.ibm.com/infocenter/cosinfoc/v12r5/
+%       http://pic.dhe.ibm.com/infocenter/cosinfoc/v12r6/
 %
 %   See also CPLEXLP, CPLEXQP, MPOPTION.
 

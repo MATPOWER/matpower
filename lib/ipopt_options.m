@@ -34,10 +34,10 @@ function opt = ipopt_options(overrides, mpopt)
 %   There are multiple ways of providing values to override the default
 %   options. Their precedence and order of application are as follows:
 %
-%   With inputs OVERRIDE and FNAME
+%   With inputs OVERRIDES and FNAME
 %       1. FNAME is called
 %       2. OVERRIDES are applied
-%   With inputs OVERRIDE and MPOPT
+%   With inputs OVERRIDES and MPOPT
 %       1. FNAME (from ipopt.opt_fname or ipopt.opt) is called
 %       2. ipopt.opts (if not empty) are applied
 %       3. OVERRIDES are applied
