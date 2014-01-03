@@ -3,7 +3,7 @@ function [x, f, eflag, output, lambda] = qps_gurobi(H, c, A, l, u, xmin, xmax, x
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
 %       QPS_GUROBI(H, C, A, L, U, XMIN, XMAX, X0, OPT)
 %   A wrapper function providing a MATPOWER standardized interface for using
-%   GUROBI_MEX to solve the following QP (quadratic programming)
+%   GUROBI to solve the following QP (quadratic programming)
 %   problem:
 %
 %       min 1/2 X'*H*X + C'*X
@@ -40,12 +40,12 @@ function [x, f, eflag, output, lambda] = qps_gurobi(H, c, A, l, u, xmin, xmax, x
 %   Outputs:
 %       X : solution vector
 %       F : final objective function value
-%       EXITFLAG : GUROBI_MEX exit flag
+%       EXITFLAG : GUROBI exit flag
 %           1 = converged
-%           0 or negative values = negative of GUROBI_MEX exit flag
-%           (see GUROBI_MEX documentation for details)
-%       OUTPUT : GUROBI_MEX output struct
-%           (see GUROBI_MEX documentation for details)
+%           0 or negative values = negative of GUROBI exit flag
+%           (see GUROBI documentation for details)
+%       OUTPUT : GUROBI output struct
+%           (see GUROBI documentation for details)
 %       LAMBDA : struct containing the Langrange and Kuhn-Tucker
 %           multipliers on the constraints, with fields:
 %           mu_l - lower (left-hand) limit on linear constraints
@@ -91,12 +91,12 @@ function [x, f, eflag, output, lambda] = qps_gurobi(H, c, A, l, u, xmin, xmax, x
 %       opt = struct('verbose', 2);
 %       [x, f, s, out, lambda] = qps_gurobi(H, c, A, l, u, xmin, [], x0, opt);
 %
-%   See also GUROBI_MEX.
+%   See also GUROBI.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2010-2011 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2013 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
@@ -196,11 +196,6 @@ if ~isempty(opt) && isfield(opt, 'verbose') && ~isempty(opt.verbose)
 else
     verbose = 0;
 end
-% if ~isempty(opt) && isfield(opt, 'max_it') && ~isempty(opt.max_it)
-%     max_it = opt.max_it;
-% else
-%     max_it = 0;
-% end
 
 %% set up options struct for Gurobi
 if ~isempty(opt) && isfield(opt, 'grb_opt') && ~isempty(opt.grb_opt)
