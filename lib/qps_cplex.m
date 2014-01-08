@@ -240,6 +240,13 @@ cplex_opt.tune.display      = vrb;
 if vrb && vnum > 12.2
     cplex_opt.diagnostics   = 'on';
 end
+if verbose > 2
+    cplex_opt.Display = 'iter';
+elseif verbose > 1
+    cplex_opt.Display = 'on';
+elseif verbose > 0
+    cplex_opt.Display = 'off';
+end
 % if max_it
 %     cplex_opt.    %% not sure what to set here
 % end

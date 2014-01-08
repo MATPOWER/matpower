@@ -135,6 +135,13 @@ opt.mip.display       = vrb;
 opt.sifting.display   = vrb;
 opt.simplex.display   = vrb;
 opt.tune.display      = vrb;
+if verbose > 2
+    opt.Display = 'iter';
+elseif verbose > 1
+    opt.Display = 'on';
+elseif verbose > 0
+    opt.Display = 'off';
+end
 
 %% solution algorithm
 if have_mpopt
