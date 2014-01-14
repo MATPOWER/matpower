@@ -376,7 +376,7 @@ else
     OUT_ALL_LIM = 0;
 end
 if OUT_ALL_LIM == -1
-    OUT_LINE_LIM    = mpopt.lim.line;
+    OUT_LINE_LIM    = mpopt.out.lim.line;
 else
     OUT_LINE_LIM    = OUT_ALL_LIM;
 end
