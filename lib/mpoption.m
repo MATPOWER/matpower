@@ -460,20 +460,45 @@ if ~isempty(ov)
     else
         vf = nested_struct_copy(mpoption_default(), mpoption_optional_fields());
         ex = struct(...
-            'name', {   'cpf.user_callback_args', ...
-                        'cplex.opts', ...
-                        'fmincon.opts', ...
-                        'gurobi.opts', ...
-                        'ipopt.opts', ...
-                        'knitro.opts', ...
-                        'mosek.opts'    }, ...
-            'copy_mode',  { '=', ...
-                            'cplex_options', ...
-                            '=', ...
-                            'gurobi_options', ...
-                            'ipopt_options', ...
-                            '=', ...
-                            'mosek_options' } );
+            'name', {...
+                'cpf.user_callback_args' ...
+            }, ...
+            'check', {...
+                0 ...
+            }, ...
+            'copy_mode', {...
+                '' ...
+            } ...
+        );
+        %% add exceptions for optional packages
+        opt_pkgs = mpoption_optional_pkgs();
+        n = length(ex);
+        for k = 1:length(opt_pkgs)
+            fname = ['mpoption_info_' opt_pkgs{k}];
+            if exist(fname, 'file') == 2
+                opt_ex = feval(fname, 'E');
+                if ~isempty(opt_ex)
+                    for j = 1:length(opt_ex)
+                        ex(n+j).name = opt_ex(j).name;
+                    end
+                    if isfield(opt_ex, 'check')
+                        for j = 1:length(opt_ex)
+                            ex(n+j).check = opt_ex(j).check;
+                        end
+                    end
+                    if isfield(opt_ex, 'copy_mode')
+                        for j = 1:length(opt_ex)
+                            ex(n+j).copy_mode = opt_ex(j).copy_mode;
+                        end
+                    end
+                    if isfield(opt_ex, 'valid_fields')
+                        for j = 1:length(opt_ex)
+                            ex(n+j).valid_fields = opt_ex(j).valid_fields;
+                        end
+                    end
+                end
+            end
+        end
         nsc_opt = struct('check', 1, 'valid_fields', vf, 'exceptions', ex);
         try
             opt = nested_struct_copy(opt, ov, nsc_opt);
@@ -922,6 +947,7 @@ opt_s.gurobi.opt            = opt_v(124);       %% GRB_OPT
 function opt_v = mpoption_s2v(opt_s)
 if DEBUG, fprintf('mpoption_s2v()\n'); end
 %% PF_ALG
+old = mpoption_old;
 switch upper(opt_s.pf.alg)
     case 'NR'
         PF_ALG = 1;
@@ -949,7 +975,7 @@ switch upper(opt_s.opf.ac.solver)
     case 'FMINCON'
         OPF_ALG = 520;
     case 'PDIPM'
-        if opt_s.pdipm.step_control
+        if isfield(opt_s, 'pdipm') && opt_s.pdipm.step_control
             OPF_ALG = 545;
         else
             OPF_ALG = 540;
@@ -969,13 +995,23 @@ switch upper(opt_s.opf.ac.solver)
 end
 
 %% FMINCON, Knitro tol_x, tol_f, max_it
-if strcmp(upper(opt_s.opf.ac.solver), 'FMINCON')
-    CONSTR_TOL_X = opt_s.fmincon.tol_x;
-    CONSTR_TOL_F = opt_s.fmincon.tol_f;
-else
+if strcmp(upper(opt_s.opf.ac.solver), 'KNITRO') && isfield(opt_s, 'knitro')
     CONSTR_TOL_X = opt_s.knitro.tol_x;
     CONSTR_TOL_F = opt_s.knitro.tol_f;
-end    
+elseif isfield(opt_s, 'fmincon')
+    CONSTR_TOL_X  = opt_s.fmincon.tol_x;
+    CONSTR_TOL_F  = opt_s.fmincon.tol_f;
+else
+    CONSTR_TOL_X = old(17);;
+    CONSTR_TOL_F = old(18);
+end
+if isfield(opt_s, 'fmincon')
+    CONSTR_MAX_IT   = opt_s.fmincon.max_it;
+    FMC_ALG         = opt_s.fmincon.alg;
+else
+    CONSTR_MAX_IT   = old(19);
+    FMC_ALG         = old(55);
+end
 
 %% OPF_FLOW_LIM
 switch upper(opt_s.opf.flow_lim)
@@ -1011,6 +1047,41 @@ switch upper(opt_s.opf.dc.solver)
         OPF_ALG_DC = 700;
 end
 
+%% KNITRO_OPT
+if isfield(opt_s, 'knitro')
+    KNITRO_OPT  = opt_s.knitro.opt;
+else
+    KNITRO_OPT  = old(58);
+end
+
+%% IPOPT_OPT
+if isfield(opt_s, 'ipopt')
+    IPOPT_OPT  = opt_s.ipopt.opt;
+else
+    IPOPT_OPT  = old(58);
+end
+
+%% MINOPF options
+if isfield(opt_s, 'minopf')
+    MINOPF_OPTS = [
+        opt_s.minopf.feastol;   %% 61 - MNS_FEASTOL
+        opt_s.minopf.rowtol;    %% 62 - MNS_ROWTOL
+        opt_s.minopf.xtol;      %% 63 - MNS_XTOL
+        opt_s.minopf.majdamp;   %% 64 - MNS_MAJDAMP
+        opt_s.minopf.mindamp;   %% 65 - MNS_MINDAMP
+        opt_s.minopf.penalty;   %% 66 - MNS_PENALTY_PARM
+        opt_s.minopf.major_it;  %% 67 - MNS_MAJOR_IT
+        opt_s.minopf.minor_it;  %% 68 - MNS_MINOR_IT
+        opt_s.minopf.max_it;    %% 69 - MNS_MAX_IT
+        opt_s.minopf.verbosity; %% 70 - MNS_VERBOSITY
+        opt_s.minopf.core;      %% 71 - MNS_CORE
+        opt_s.minopf.supbasic_lim;  %% 72 - MNS_SUPBASIC_LIM
+        opt_s.minopf.mult_price;%% 73 - MNS_MULT_PRICE
+    ];
+else
+    MINOPF_OPTS = old(61:73);
+end
+
 %% FORCE_PC_EQ_P0
 if isfield(opt_s, 'sopf') && isfield(opt_s.sopf, 'force_Pc_eq_P0')
     FORCE_PC_EQ_P0 = opt_s.sopf.force_Pc_eq_P0;
@@ -1018,11 +1089,78 @@ else
     FORCE_PC_EQ_P0 = 0;
 end
 
-%% SMOOTHING_RATIO
-if strcmp(upper(opt_s.opf.ac.solver), 'TRALM')
-    SMOOTHING_RATIO = opt_s.tralm.smooth_ratio;
+%% PDIPM options
+if isfield(opt_s, 'pdipm')
+    PDIPM_OPTS = [
+        opt_s.pdipm.feastol;    %% 81 - PDIPM_FEASTOL
+        opt_s.pdipm.gradtol;    %% 82 - PDIPM_GRADTOL
+        opt_s.pdipm.comptol;    %% 83 - PDIPM_COMPTOL
+        opt_s.pdipm.costtol;    %% 84 - PDIPM_COSTTOL
+        opt_s.pdipm.max_it;     %% 85 - PDIPM_MAX_IT
+        opt_s.pdipm.sc.red_it;  %% 86 - SCPDIPM_RED_IT
+    ];
 else
+    PDIPM_OPTS = old(81:86);
+end
+
+%% TRALM options
+if isfield(opt_s, 'tralm')
+    TRALM_OPTS = [
+        opt_s.tralm.feastol;    %% 87 - TRALM_FEASTOL
+        opt_s.tralm.primaltol;  %% 88 - TRALM_PRIMETOL
+        opt_s.tralm.dualtol;    %% 89 - TRALM_DUALTOL
+        opt_s.tralm.costtol;    %% 90 - TRALM_COSTTOL
+        opt_s.tralm.major_it;   %% 91 - TRALM_MAJOR_IT
+        opt_s.tralm.minor_it;   %% 92 - TRALM_MINOR_IT
+    ];
+else
+    TRALM_OPTS = old(87:92);
+end
+
+%% SMOOTHING_RATIO
+if strcmp(upper(opt_s.opf.ac.solver), 'TRALM') && isfield(opt_s, 'tralm')
+    SMOOTHING_RATIO = opt_s.tralm.smooth_ratio;
+elseif isfield(opt_s, 'pdipm')
     SMOOTHING_RATIO = opt_s.pdipm.sc.smooth_ratio;
+else
+    SMOOTHING_RATIO = old(93);
+end
+
+%% CPLEX options
+if isfield(opt_s, 'cplex')
+    CPLEX_OPTS = [
+        opt_s.cplex.lpmethod;   %% 95 - CPLEX_LPMETHOD
+        opt_s.cplex.qpmethod;   %% 96 - CPLEX_QPMETHOD
+        opt_s.cplex.opt;        %% 97 - CPLEX_OPT
+    ];
+else
+    CPLEX_OPTS = old(95:97);
+end
+
+%% MOSEK options
+if isfield(opt_s, 'mosek')
+    MOSEK_OPTS = [
+        opt_s.mosek.lp_alg;     %% 111 - MOSEK_LP_ALG
+        opt_s.mosek.max_it;     %% 112 - MOSEK_MAX_IT
+        opt_s.mosek.gap_tol;    %% 113 - MOSEK_GAP_TOL
+        opt_s.mosek.max_time;   %% 114 - MOSEK_MAX_TIME
+        opt_s.mosek.num_threads;%% 115 - MOSEK_NUM_THREADS
+        opt_s.mosek.opt;        %% 116 - MOSEK_OPT
+    ];
+else
+    MOSEK_OPTS = old(111:116);
+end
+
+%% Gurobi options
+if isfield(opt_s, 'gurobi')
+    GUROBI_OPTS = [
+        opt_s.gurobi.method;    %% 121 - GRB_METHOD
+        opt_s.gurobi.timelimit; %% 122 - GRB_TIMELIMIT
+        opt_s.gurobi.threads;   %% 123 - GRB_THREADS
+        opt_s.gurobi.opt;       %% 124 - GRB_OPT
+    ];
+else
+    GUROBI_OPTS = old(121:124);
 end
 
 opt_v = [
@@ -1047,11 +1185,11 @@ opt_v = [
         opt_s.opf.violation;    %% 16 - OPF_VIOLATION
         CONSTR_TOL_X;           %% 17 - CONSTR_TOL_X
         CONSTR_TOL_F;           %% 18 - CONSTR_TOL_F
-        opt_s.fmincon.max_it;   %% 19 - CONSTR_MAX_IT
-        3e-3;                   %% 20 - LPC_TOL_GRAD (removed)
-        1e-4;                   %% 21 - LPC_TOL_X (removed)
-        400;                    %% 22 - LPC_MAX_IT (removed)
-        5;                      %% 23 - LPC_MAX_RESTART (removed)
+        CONSTR_MAX_IT;          %% 19 - CONSTR_MAX_IT
+        old(20);                %% 20 - LPC_TOL_GRAD (removed)
+        old(21);                %% 21 - LPC_TOL_X (removed)
+        old(22);                %% 22 - LPC_MAX_IT (removed)
+        old(23);                %% 23 - LPC_MAX_RESTART (removed)
         OPF_FLOW_LIM;           %% 24 - OPF_FLOW_LIM
         opt_s.opf.ignore_angle_lim; %% 25 - OPF_IGNORE_ANG_LIM
         OPF_ALG_DC;             %% 26 - OPF_ALG_DC
@@ -1083,31 +1221,19 @@ opt_v = [
         0;                      %% 50 - RESERVED50
         
         %% other options
-        1;                      %% 51 - SPARSE_QP (removed)
+        old(51);                %% 51 - SPARSE_QP (removed)
         opt_s.opf.return_raw_der;   %% 52 - RETURN_RAW_DER
         0;                      %% 53 - RESERVED53
         0;                      %% 54 - RESERVED54
-        opt_s.fmincon.alg;      %% 55 - FMC_ALG
+        FMC_ALG;                %% 55 - FMC_ALG
         0;                      %% 56 - RESERVED56
         0;                      %% 57 - RESERVED57
-        opt_s.knitro.opt;       %% 58 - KNITRO_OPT
+        KNITRO_OPT;             %% 58 - KNITRO_OPT
         0;                      %% 59 - RESERVED59
-        opt_s.ipopt.opt;        %% 60 - IPOPT_OPT
+        IPOPT_OPT;              %% 60 - IPOPT_OPT
         
         %% MINOPF options
-        opt_s.minopf.feastol;   %% 61 - MNS_FEASTOL
-        opt_s.minopf.rowtol;    %% 62 - MNS_ROWTOL
-        opt_s.minopf.xtol;      %% 63 - MNS_XTOL
-        opt_s.minopf.majdamp;   %% 64 - MNS_MAJDAMP
-        opt_s.minopf.mindamp;   %% 65 - MNS_MINDAMP
-        opt_s.minopf.penalty;   %% 66 - MNS_PENALTY_PARM
-        opt_s.minopf.major_it;  %% 67 - MNS_MAJOR_IT
-        opt_s.minopf.minor_it;  %% 68 - MNS_MINOR_IT
-        opt_s.minopf.max_it;    %% 69 - MNS_MAX_IT
-        opt_s.minopf.verbosity; %% 70 - MNS_VERBOSITY
-        opt_s.minopf.core;      %% 71 - MNS_CORE
-        opt_s.minopf.supbasic_lim;  %% 72 - MNS_SUPBASIC_LIM
-        opt_s.minopf.mult_price;%% 73 - MNS_MULT_PRICE
+        MINOPF_OPTS;            %% 61-73 - MNS_FEASTOL-MNS_MULT_PRICE
         0;                      %% 74 - RESERVED74
         0;                      %% 75 - RESERVED75
         0;                      %% 76 - RESERVED76
@@ -1117,25 +1243,13 @@ opt_v = [
         FORCE_PC_EQ_P0;         %% 80 - FORCE_PC_EQ_P0, for c3sopf
         
         %% MIPS, PDIPM, SC-PDIPM, and TRALM options
-        opt_s.pdipm.feastol;    %% 81 - PDIPM_FEASTOL
-        opt_s.pdipm.gradtol;    %% 82 - PDIPM_GRADTOL
-        opt_s.pdipm.comptol;    %% 83 - PDIPM_COMPTOL
-        opt_s.pdipm.costtol;    %% 84 - PDIPM_COSTTOL
-        opt_s.pdipm.max_it;     %% 85 - PDIPM_MAX_IT
-        opt_s.pdipm.sc.red_it;  %% 86 - SCPDIPM_RED_IT
-        opt_s.tralm.feastol;    %% 87 - TRALM_FEASTOL
-        opt_s.tralm.primaltol;  %% 88 - TRALM_PRIMETOL
-        opt_s.tralm.dualtol;    %% 89 - TRALM_DUALTOL
-        opt_s.tralm.costtol;    %% 90 - TRALM_COSTTOL
-        opt_s.tralm.major_it;   %% 91 - TRALM_MAJOR_IT
-        opt_s.tralm.minor_it;   %% 92 - TRALM_MINOR_IT
+        PDIPM_OPTS;             %% 81-86 - PDIPM_FEASTOL-SCPDIPM_RED_IT
+        TRALM_OPTS;             %% 87-92 - TRALM_FEASTOL-TRALM_MINOR_IT
         SMOOTHING_RATIO;        %% 93 - SMOOTHING_RATIO
         0;                      %% 94 - RESERVED94
         
         %% CPLEX options
-        opt_s.cplex.lpmethod;   %% 95 - CPLEX_LPMETHOD
-        opt_s.cplex.qpmethod;   %% 96 - CPLEX_QPMETHOD
-        opt_s.cplex.opt;        %% 97 - CPLEX_OPT
+        CPLEX_OPTS;             %% 95-97 - CPLEX_LPMETHOD-CPLEX_OPT
         0;                      %% 98 - RESERVED98
         0;                      %% 99 - RESERVED99
         0;                      %% 100 - RESERVED100
@@ -1151,22 +1265,14 @@ opt_v = [
         0;                      %% 110 - RESERVED110
 
         %% MOSEK options
-        opt_s.mosek.lp_alg;     %% 111 - MOSEK_LP_ALG
-        opt_s.mosek.max_it;     %% 112 - MOSEK_MAX_IT
-        opt_s.mosek.gap_tol;    %% 113 - MOSEK_GAP_TOL
-        opt_s.mosek.max_time;   %% 114 - MOSEK_MAX_TIME
-        opt_s.mosek.num_threads;%% 115 - MOSEK_NUM_THREADS
-        opt_s.mosek.opt;        %% 116 - MOSEK_OPT
+        MOSEK_OPTS;             %% 111-116 - MOSEK_LP_ALG-MOSEK_OPT
         0;                      %% 117 - RESERVED117
         0;                      %% 118 - RESERVED118
         0;                      %% 119 - RESERVED119
         0;                      %% 120 - RESERVED120
 
         %% Gurobi options
-        opt_s.gurobi.method;    %% 121 - GRB_METHOD
-        opt_s.gurobi.timelimit; %% 122 - GRB_TIMELIMIT
-        opt_s.gurobi.threads;   %% 123 - GRB_THREADS
-        opt_s.gurobi.opt;       %% 124 - GRB_OPT
+        GUROBI_OPTS;            %% 121-124 - GRB_METHOD-GRB_OPT
     ];
 
 
@@ -1223,48 +1329,6 @@ opt = struct(...
             'pg',                   1, ...
             'qg',                   1   ), ...
         'force',                0   ), ...
-    'cplex',                struct(...
-        'lpmethod',             0, ...
-        'qpmethod',             0, ...
-        'opts',                 [], ...
-        'opt_fname',            '', ...
-        'opt',                  0  ), ...
-    'fmincon',              struct(...
-        'alg',                  4, ...
-        'tol_x',                1e-4, ...
-        'tol_f',                1e-4, ...
-        'max_it',               0   ), ...  %         'opt_fname', '', 'opts', []
-    'gurobi',               struct(...
-        'method',               -1, ...
-        'timelimit',            Inf, ...
-        'threads',              0, ...
-        'opts',                 [], ...
-        'opt_fname',            '', ...
-        'opt',                  0  ), ...
-    'ipopt',                struct(...
-        'opts',                 [], ...
-        'opt_fname',            '', ...
-        'opt',                  0  ), ...
-    'knitro',               struct(...
-        'tol_x',                1e-4, ...
-        'tol_f',                1e-4, ...
-        'opts',                 [], ...
-        'opt_fname',            '', ...
-        'opt',                  0  ), ...
-    'minopf',               struct(...
-        'feastol',              0, ...
-        'rowtol',               0, ...
-        'xtol',                 0, ...
-        'majdamp',              0, ...
-        'mindamp',              0, ...
-        'penalty',              0, ...
-        'major_it',             0, ...
-        'minor_it',             0, ...
-        'max_it',               0, ...
-        'verbosity',            -1, ...
-        'core',                 0, ...
-        'supbasic_lim',         0, ...
-        'mult_price',           0   ), ...
     'mips',                 struct(...
         'step_control',         0, ...
         'feastol',              0, ...
@@ -1273,45 +1337,25 @@ opt = struct(...
         'costtol',              1e-6, ...
         'max_it',               150, ...
         'sc',                   struct(...
-            'red_it',               20  )), ...
-    'mosek',                struct(...
-        'lp_alg',               0, ...
-        'max_it',               0, ...
-        'gap_tol',              0, ...
-        'max_time',             0, ...
-        'num_threads',          0, ...
-        'opts',                 [], ...
-        'opt_fname',            '', ...
-        'opt',                  0  ), ...
-    'pdipm',                struct(...
-        'step_control',         0, ...
-        'feastol',              0, ...
-        'gradtol',              1e-6, ...
-        'comptol',              1e-6, ...
-        'costtol',              1e-6, ...
-        'max_it',               150, ...
-        'sc',                   struct(...
-            'red_it',               20, ...
-            'smooth_ratio',         0.04    )), ...
-    'tralm',                struct(...
-        'feastol',              0, ...
-        'primaltol',            5e-4, ...
-        'dualtol',              5e-4, ...
-        'costtol',              1e-5, ...
-        'major_it',             40, ...
-        'minor_it',             100, ...
-        'smooth_ratio',         0.04 ) ...
+            'red_it',               20  )) ...
 );
+opt_pkgs = mpoption_optional_pkgs();
+for k = 1:length(opt_pkgs)
+    fname = ['mpoption_info_' opt_pkgs{k}];
+    if exist(fname, 'file') == 2
+        opt = nested_struct_copy(opt, feval(fname, 'D'));
+    end
+end
 
 %%-------------------------------------------------------------------
 function opt = mpoption_optional_fields()
 if DEBUG, fprintf('mpoption_optional_fields()\n'); end
-opt_fields = {'sopf'};
+opt_pkgs = mpoption_optional_pkgs();
 opt = struct;
-for k = 1:length(opt_fields)
-    fname = [opt_fields{k} '_valid_options'];
-    if exist(fname, 'file')
-        opt = nested_struct_copy(opt, feval(fname));
+for k = 1:length(opt_pkgs)
+    fname = ['mpoption_info_' opt_pkgs{k}];
+    if exist(fname, 'file') == 2
+        opt = nested_struct_copy(opt, feval(fname, 'V'));
     end
 end
 
@@ -1324,3 +1368,10 @@ v = 1;      %% version number of MATPOWER options struct
 %%-------------------------------------------------------------------
 function db_level = DEBUG
 db_level = 0;
+
+%%-------------------------------------------------------------------
+function pkgs = mpoption_optional_pkgs()
+pkgs = {...
+    'cplex', 'fmincon', 'gurobi', 'ipopt', 'knitro', 'minopf', ...
+    'mosek', 'sdp_pf', 'sopf', 'tspopf', 'yalmip' ...
+};

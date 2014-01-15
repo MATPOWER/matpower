@@ -167,12 +167,12 @@ mpopt.verbose = 1;
 mpopt.model = 'AC';
 mpopt.opf.dc.solver = 'DEFAULT';
 mpopt.mips.step_control = 0;
-mpopt = rmfield(mpopt, 'sopf');
+mpopt = delete_missing_optional_fields(mpopt, mpopt0);
 t_ok(isequal(mpopt, mpopt0), [t 'everything else']);
 
 t = 'mpoption(default_mpopt_v) : ';
 mpopt = mpoption(mpopt_v);
-mpopt = rmfield(mpopt, 'sopf');
+mpopt = delete_missing_optional_fields(mpopt, mpopt0);
 t_ok(isequal(mpopt, mpopt0), t);
 
 t = 'mpoption(mpopt_v) : ';
@@ -186,7 +186,7 @@ mpopt.verbose = 1;
 mpopt.model = 'AC';
 mpopt.opf.dc.solver = 'DEFAULT';
 mpopt.mips.step_control = 0;
-mpopt = rmfield(mpopt, 'sopf');
+mpopt = delete_missing_optional_fields(mpopt, mpopt0);
 t_ok(isequal(mpopt, mpopt0), [t 'everything else']);
 
 t = 'mpoption(mpopt_v, ov) : ';
@@ -201,7 +201,7 @@ mpopt.verbose = 1;
 mpopt.opf.dc.solver = 'DEFAULT';
 mpopt.mips.step_control = 0;
 mpopt.opf.ac.solver = 'DEFAULT';
-mpopt = rmfield(mpopt, 'sopf');
+mpopt = delete_missing_optional_fields(mpopt, mpopt0);
 t_ok(isequal(mpopt, mpopt0), [t 'everything else']);
 
 t = 'mpoption(mpopt_v, ''t_mpoption_ov'') : ';
@@ -214,7 +214,7 @@ mpopt.verbose = 1;
 mpopt.model = 'AC';
 mpopt.opf.dc.solver = 'DEFAULT';
 mpopt.mips.step_control = 0;
-mpopt = rmfield(mpopt, 'sopf');
+mpopt = delete_missing_optional_fields(mpopt, mpopt0);
 t_ok(isequal(mpopt, mpopt0), [t 'everything else']);
 
 %%-----  this doesn't work, and isn't intended to  -----
@@ -229,7 +229,7 @@ t_ok(isequal(mpopt, mpopt0), [t 'everything else']);
 % mpopt.opf.dc.solver = 'DEFAULT';
 % mpopt.mips.step_control = 0;
 % mpopt.opf.ac.solver = 'DEFAULT';
-% mpopt = rmfield(mpopt, 'sopf');
+% mpopt = delete_missing_optional_fields(mpopt, mpopt0);
 % t_ok(isequal(mpopt, mpopt0), [t 'everything else']);
 
 t = 'mpoption(mpopt_v, <old-style pairs>) : ';
@@ -243,7 +243,7 @@ mpopt.verbose = 1;
 mpopt.opf.dc.solver = 'DEFAULT';
 mpopt.mips.step_control = 0;
 mpopt.opf.ac.solver = 'DEFAULT';
-mpopt = rmfield(mpopt, 'sopf');
+mpopt = delete_missing_optional_fields(mpopt, mpopt0);
 t_ok(isequal(mpopt, mpopt0), [t 'everything else']);
 
 t = 'mpoption(mpopt) : ';
@@ -304,3 +304,21 @@ mpopt.opf.ac.solver = 'DEFAULT';
 t_ok(isequal(mpopt, mpopt0), [t 'everything else']);
 
 t_end;
+
+
+function opt = delete_missing_optional_fields(opt, unless)
+%% deletes the fields from opt, unless they are found in unless
+%% (which is empty by default)
+%pkgs = {'cplex', 'sdp_pf', 'sopf', 'yalmip'};
+pkgs = {...
+    'cplex', 'fmincon', 'gurobi', 'ipopt', 'knitro', 'minopf', ...
+    'mosek', 'sopf', 'pdipm', 'tralm', ...
+};
+if nargin < 2
+	unless = struct;
+end
+for k = 1:length(pkgs)
+	if ~isfield(unless, pkgs{k}) && isfield(opt, pkgs{k})
+		opt = rmfield(opt, pkgs{k});
+	end
+end

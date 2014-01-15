@@ -15,6 +15,15 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.1
 -----------------
 
+1/15/14
+    - Modified handling of options for optional packages, added:
+        mpoption_info_cplex()
+        mpoption_info_fmincon()
+        mpoption_info_gurobi()
+        mpoption_info_ipopt()
+        mpoption_info_knitro()
+        mpoption_info_mosek()
+
 1/8/14
     - Updates to qps_cplex() and cplex_options() to fix verbose
       display issues with CPLEX 12.6.
