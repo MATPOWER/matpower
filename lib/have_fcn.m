@@ -24,6 +24,11 @@ function TorF = have_fcn(tag)
 %       tralmopf    - TRALMOPF, trust region based augmented Langrangian
 %                     OPF solver
 %       octave      - code is running under Octave, not MATLAB
+%       sdp_pf      - SDP_PF applications of semi-definite programming
+%                     relaxation of power flow equations
+%       yalmip      - YALMIP SDP modeling platform
+%       sedumi      - SeDuMi SDP solver
+%       sdpt3       - SDPT3 SDP solver
 %
 %   Examples:
 %       if have_fcn('minopf')
@@ -151,6 +156,15 @@ else
                     TorF = 0;
                 end
             end
+        case 'sdp_pf'
+            TorF = have_fcn('yalmip') && exist('sdp_pf_valid_options', 'file') == 2;
+        case 'yalmip'
+            TorF = ~have_fcn('octave') && exist('yalmip','file') == 2;
+            %% YALMIP does not yet work with Octave, rdz 1/6/14
+        case 'sedumi'
+            TorF = exist('sedumi','file') == 2;
+        case 'sdpt3'
+            TorF = exist('sdpt3','file') == 2;
         otherwise
             error('have_fcn: unknown functionality %s', tag);
     end

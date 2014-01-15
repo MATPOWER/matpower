@@ -11,7 +11,7 @@ function rv = mpver(varargin)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2005-2013 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2005-2014 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
@@ -50,7 +50,7 @@ function rv = mpver(varargin)
 v{1} = struct(  'Name',     'MATPOWER', ... 
                 'Version',  '4.1+', ...
                 'Release',  '', ...
-                'Date',     '10-Dec-2013' );
+                'Date',     '15-Jan-2014' );
 if nargout > 0
     if nargin > 0
         rv = v{1};
@@ -82,6 +82,24 @@ else
     end
     fprintf('\n');
     mipsver;
+    if have_fcn('sdp_pf')
+        sdp_pf_ver;
+    else
+        fprintf('%-22s -- not installed --\n', 'SDP_PF');
+    end
+    if have_fcn('yalmip')
+        str = evalc('yalmip;');
+        pat = 'Version\s+([^\s]+)\n';
+        [s,e,tE,m,t] = regexp(str, pat);
+        if isempty(t)
+            vn = '<unknown>';
+        else
+            vn = t{1}{1};
+        end
+        fprintf('%-22s Version %-10s %-11s\n', 'YALMIP', '', vn);
+    else
+        fprintf('%-22s -- not installed --\n', 'YALMIP');
+    end
     if have_fcn('bpmpd')
         if exist('bpver', 'file') == 2
             bpver;
@@ -168,6 +186,34 @@ else
         scpdipmopfver;
     else
         fprintf('%-22s -- not installed --\n', 'SCPDIPMOPF');
+    end
+    if have_fcn('sdpt3')
+        str = evalc('help sdpt3');
+        pat = 'version\s+([^\s]+).*Last Modified: ([^\n]+)\n';
+        [s,e,tE,m,t] = regexp(str, pat);
+        if isempty(t)
+            vn = '<unknown>';
+            d  = '';
+        else
+            vn = t{1}{1};
+            d  = datestr(t{1}{2}, 'dd-mmm-yyyy');
+        end
+        fprintf('%-22s Version %-10s %-11s   %s\n', 'SDPT3', vn, d, computer);
+    else
+        fprintf('%-22s -- not installed --\n', 'SDPT3');
+    end
+    if have_fcn('sedumi')
+        str = evalc('x = sedumi([1 1], 1, [1;2])');
+        pat = 'SeDuMi\s+([^\s]+)';
+        [s,e,tE,m,t] = regexp(str, pat);
+        if isempty(t)
+            vn = '<unknown>';
+        else
+            vn = t{1}{1};
+        end
+        fprintf('%-22s Version %-10s %-11s   %s\n', 'SeDuMi', vn, '', computer);
+    else
+        fprintf('%-22s -- not installed --\n', 'SeDuMi');
     end
     if have_fcn('tralmopf')
         tralmopfver;
