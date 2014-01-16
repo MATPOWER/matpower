@@ -21,6 +21,7 @@ Changes since 4.1
       check the enabled/ disabled status of these sets of callback
       functions.
     - Removed extras/cpf since CPF is now part of the core.
+    - Added support for Dan Molzahn's SDP_PF package (coming soon).
 
 1/15/14
     - Modified handling of options for optional packages, added:

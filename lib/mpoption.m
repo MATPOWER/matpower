@@ -119,6 +119,13 @@ function opt = mpoption(varargin)
 %       [ 'PDIPM'   - PDIPM, primal/dual interior point method, requires    ]
 %       [             optional MEX-based TSPOPF package, available from:    ]
 %       [                   http://www.pserc.cornell.edu/tspopf/            ]
+%       [ 'SDPOPF'  - SDPOPF, solver based on semidefinite relaxation of    ]
+%       [             OPF problem, requires optional packages:              ]
+%       [               SDP_PF, available in extras/sdp_pf                  ]
+%       [               YALMIP, available from:                             ]
+%       [                   http://users.isy.liu.se/johanl/yalmip/          ]
+%       [               SDP solver such as SeDuMi, available from:          ]
+%       [                   http://sedumi.ie.lehigh.edu/                    ]
 %       [ 'TRALM'   - TRALM, trust region based augmented Langrangian       ]
 %       [             method, requires TSPOPF (see 'PDIPM')                 ]
 %   opf.dc.solver           'DEFAULT'   DC optimal power flow solver

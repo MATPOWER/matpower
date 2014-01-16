@@ -50,6 +50,7 @@ function [results, success, raw] = opf_execute(om, mpopt)
 %% options
 dc  = strcmp(upper(mpopt.model), 'DC');
 alg = upper(mpopt.opf.ac.solver);
+sdp = strcmp(alg, 'SDPOPF');
 
 %% build user-defined costs
 om = build_cost_params(om);
@@ -124,6 +125,11 @@ else
         error('opf_execute: MPOPT.opf.ac.solver = ''%s'' requires KNITRO (see http://www.ziena.com/)', alg);
       end
       [results, success, raw] = ktropf_solver(om, mpopt);
+    case 'SDPOPF'
+      if ~have_fcn('yalmip')
+        error('opf_execute: MPOPT.opf.ac.solver = ''%s'' requires YALMIP (see http://users.isy.liu.se/johanl/yalmip/)', alg);
+      end
+      [results, success, raw] = sdpopf_solver(om, mpopt);
     otherwise
       error('opf_execute: MPOPT.opf.ac.solver = ''%s'' is not a valid AC OPF solver selection', alg);
   end
@@ -133,7 +139,7 @@ if ~isfield(raw, 'output') || ~isfield(raw.output, 'alg') || isempty(raw.output.
 end
 
 if success
-  if ~dc
+  if ~dc && ~sdp
     %% copy bus voltages back to gen matrix
     results.gen(:, VG) = results.bus(results.gen(:, GEN_BUS), VM);
 
@@ -189,64 +195,66 @@ else
   end
 end
 
-%% assign values and limit shadow prices for variables
-om_var_order = get(om, 'var', 'order');
-for k = 1:length(om_var_order)
-  name = om_var_order(k).name;
-  if getN(om, 'var', name)
-    idx = vv.i1.(name):vv.iN.(name);
-    results.var.val.(name) = results.x(idx);
-    results.var.mu.l.(name) = results.mu.var.l(idx);
-    results.var.mu.u.(name) = results.mu.var.u(idx);
-  end
-end
-
-%% assign shadow prices for linear constraints
-om_lin_order = get(om, 'lin', 'order');
-for k = 1:length(om_lin_order)
-  name = om_lin_order(k).name;
-  if getN(om, 'lin', name)
-    idx = ll.i1.(name):ll.iN.(name);
-    results.lin.mu.l.(name) = results.mu.lin.l(idx);
-    results.lin.mu.u.(name) = results.mu.lin.u(idx);
-  end
-end
-
-%% assign shadow prices for nonlinear constraints
-if ~dc
-  om_nln_order = get(om, 'nln', 'order');
-  for k = 1:length(om_nln_order)
-    name = om_nln_order(k).name;
-    if getN(om, 'nln', name)
-      idx = nn.i1.(name):nn.iN.(name);
-      results.nln.mu.l.(name) = results.mu.nln.l(idx);
-      results.nln.mu.u.(name) = results.mu.nln.u(idx);
+if ~sdp
+  %% assign values and limit shadow prices for variables
+  om_var_order = get(om, 'var', 'order');
+  for k = 1:length(om_var_order)
+    name = om_var_order(k).name;
+    if getN(om, 'var', name)
+      idx = vv.i1.(name):vv.iN.(name);
+      results.var.val.(name) = results.x(idx);
+      results.var.mu.l.(name) = results.mu.var.l(idx);
+      results.var.mu.u.(name) = results.mu.var.u(idx);
     end
   end
-end
 
-%% assign values for components of user cost
-om_cost_order = get(om, 'cost', 'order');
-for k = 1:length(om_cost_order)
-  name = om_cost_order(k).name;
-  if getN(om, 'cost', name)
-    results.cost.(name) = compute_cost(om, results.x, name);
+  %% assign shadow prices for linear constraints
+  om_lin_order = get(om, 'lin', 'order');
+  for k = 1:length(om_lin_order)
+    name = om_lin_order(k).name;
+    if getN(om, 'lin', name)
+      idx = ll.i1.(name):ll.iN.(name);
+      results.lin.mu.l.(name) = results.mu.lin.l(idx);
+      results.lin.mu.u.(name) = results.mu.lin.u(idx);
+    end
   end
-end
 
-%% if single-block PWL costs were converted to POLY, insert dummy y into x
-%% Note: The "y" portion of x will be nonsense, but everything should at
-%%       least be in the expected locations.
-pwl1 = userdata(om, 'pwl1');
-if ~isempty(pwl1) && ~strcmp(alg, 'TRALM') && ~(strcmp(alg, 'PDIPM') && mpopt.pdipm.step_control)
-  %% get indexing
-  vv = get_idx(om);
-  if dc
-    nx = vv.iN.Pg;
-  else
-    nx = vv.iN.Qg;
+  %% assign shadow prices for nonlinear constraints
+  if ~dc
+    om_nln_order = get(om, 'nln', 'order');
+    for k = 1:length(om_nln_order)
+      name = om_nln_order(k).name;
+      if getN(om, 'nln', name)
+        idx = nn.i1.(name):nn.iN.(name);
+        results.nln.mu.l.(name) = results.mu.nln.l(idx);
+        results.nln.mu.u.(name) = results.mu.nln.u(idx);
+      end
+    end
   end
-  y = zeros(length(pwl1), 1);
-  raw.xr = [ raw.xr(1:nx); y; raw.xr(nx+1:end)];
-  results.x = [ results.x(1:nx); y; results.x(nx+1:end)];
+
+  %% assign values for components of user cost
+  om_cost_order = get(om, 'cost', 'order');
+  for k = 1:length(om_cost_order)
+    name = om_cost_order(k).name;
+    if getN(om, 'cost', name)
+      results.cost.(name) = compute_cost(om, results.x, name);
+    end
+  end
+
+  %% if single-block PWL costs were converted to POLY, insert dummy y into x
+  %% Note: The "y" portion of x will be nonsense, but everything should at
+  %%       least be in the expected locations.
+  pwl1 = userdata(om, 'pwl1');
+  if ~isempty(pwl1) && ~strcmp(alg, 'TRALM') && ~(strcmp(alg, 'PDIPM') && mpopt.pdipm.step_control)
+    %% get indexing
+    vv = get_idx(om);
+    if dc
+      nx = vv.iN.Pg;
+    else
+      nx = vv.iN.Qg;
+    end
+    y = zeros(length(pwl1), 1);
+    raw.xr = [ raw.xr(1:nx); y; raw.xr(nx+1:end)];
+    results.x = [ results.x(1:nx); y; results.x(nx+1:end)];
+  end
 end

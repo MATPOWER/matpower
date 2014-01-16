@@ -131,6 +131,22 @@ else
 end
 OUT_ANY         = OUT_ANY || (OUT_ALL_LIM == -1 && (OUT_V_LIM || OUT_LINE_LIM || OUT_PG_LIM || OUT_QG_LIM));
 ptol = 1e-4;        %% tolerance for displaying shadow prices
+if isOPF && ~isDC && strcmp(upper(mpopt.opf.ac.solver), 'SDPOPF')
+    isSDP = 1;
+    ptol = 0.1;     %% tolerance for displaying shadow prices
+    if have_results_struct && isfield(results, 'mineigratio') && ~isempty(results.mineigratio)
+        mineigratio = results.mineigratio;
+    else
+        mineigratio = [];
+    end
+    if have_results_struct && isfield(results, 'zero_eval') && ~isempty(results.zero_eval)
+        zero_eval = results.zero_eval;
+    else
+        zero_eval = [];
+    end
+else
+    isSDP = 0;
+end
 
 %% define named indices into bus, gen, branch matrices
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
@@ -192,9 +208,17 @@ tchg(out) = zeros(nout, 1);
 if OUT_ANY
     %% convergence & elapsed time
     if success
-        fprintf(fd, '\nConverged in %.2f seconds', et);
+        if isSDP
+            fprintf(fd, '\nSolution satisfies rank and consistency conditions, %.2f seconds.\nmineigratio = %0.5g, zero_eval = %0.5g', et, mineigratio, zero_eval);
+        else
+            fprintf(fd, '\nConverged in %.2f seconds', et);
+        end
     else
-        fprintf(fd, '\n>>>>>  Did NOT converge (%.2f seconds)  <<<<<\n', et);
+        if isSDP
+            fprintf(fd, '\n>>>>>  Solution does NOT satisfy rank and/or consistency conditions (%.2f seconds).  <<<<<\nmineigratio = %0.5g, zero_eval = %0.5g\n', et, mineigratio, zero_eval);
+        else
+            fprintf(fd, '\n>>>>>  Did NOT converge (%.2f seconds)  <<<<<\n', et);
+        end
     end
     
     %% objective function value
@@ -741,7 +765,11 @@ if have_results_struct && isfield(results, 'userfcn') && (success || OUT_FORCE)
 end
 if OUT_ANY && ~success
     if OUT_FORCE
-        fprintf(fd, '\n>>>>>  Did NOT converge (%.2f seconds)  <<<<<\n', et);
+        if isSDP
+            fprintf(fd, '\n>>>>>  Solution does NOT satisfy rank and/or consistency conditions (%.2f seconds).  <<<<<\nmineigratio = %0.5g, zero_eval = %0.5g\n', et, mineigratio, zero_eval);
+        else
+            fprintf(fd, '\n>>>>>  Did NOT converge (%.2f seconds)  <<<<<\n', et);
+        end
     end
     fprintf('\n');
 end
