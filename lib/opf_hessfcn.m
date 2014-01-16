@@ -172,7 +172,7 @@ d2G = [
 nmu = length(lambda.ineqnonlin) / 2;
 muF = lambda.ineqnonlin(1:nmu);
 muT = lambda.ineqnonlin((1:nmu)+nmu);
-if upper(mpopt.opf.flow_lim) == 'I'     %% current
+if upper(mpopt.opf.flow_lim(1)) == 'I'      %% current
     [dIf_dVa, dIf_dVm, dIt_dVa, dIt_dVm, If, It] = dIbr_dV(branch(il,:), Yf, Yt, V);
     [Hfaa, Hfav, Hfva, Hfvv] = d2AIbr_dV2(dIf_dVa, dIf_dVm, If, Yf, V, muF);
     [Htaa, Htav, Htva, Htvv] = d2AIbr_dV2(dIt_dVa, dIt_dVm, It, Yt, V, muT);
@@ -182,10 +182,10 @@ else
   Cf = sparse(1:nl2, f, ones(nl2, 1), nl2, nb);     %% connection matrix for line & from buses
   Ct = sparse(1:nl2, t, ones(nl2, 1), nl2, nb);     %% connection matrix for line & to buses
   [dSf_dVa, dSf_dVm, dSt_dVa, dSt_dVm, Sf, St] = dSbr_dV(branch(il,:), Yf, Yt, V);
-  if upper(mpopt.opf.flow_lim) == 'P'   %% real power
+  if upper(mpopt.opf.flow_lim(1)) == 'P'    %% real power
     [Hfaa, Hfav, Hfva, Hfvv] = d2ASbr_dV2(real(dSf_dVa), real(dSf_dVm), real(Sf), Cf, Yf, V, muF);
     [Htaa, Htav, Htva, Htvv] = d2ASbr_dV2(real(dSt_dVa), real(dSt_dVm), real(St), Ct, Yt, V, muT);
-  else                          %% apparent power
+  else                                      %% apparent power
     [Hfaa, Hfav, Hfva, Hfvv] = d2ASbr_dV2(dSf_dVa, dSf_dVm, Sf, Cf, Yf, V, muF);
     [Htaa, Htav, Htva, Htvv] = d2ASbr_dV2(dSt_dVa, dSt_dVm, St, Ct, Yt, V, muT);
   end

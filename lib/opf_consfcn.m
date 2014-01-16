@@ -120,7 +120,7 @@ g = [ real(mis);            %% active power mismatch for all buses
 if nl2 > 0
   flow_max = (branch(il, RATE_A)/baseMVA).^2;
   flow_max(flow_max == 0) = Inf;
-  if upper(mpopt.opf.flow_lim) == 'I'   %% current magnitude limit, |I|
+  if upper(mpopt.opf.flow_lim(1)) == 'I'    %% current magnitude limit, |I|
     If = Yf * V;
     It = Yt * V;
     h = [ If .* conj(If) - flow_max;    %% branch current limits (from bus)
@@ -129,10 +129,10 @@ if nl2 > 0
     %% compute branch power flows
     Sf = V(branch(il, F_BUS)) .* conj(Yf * V);  %% complex power injected at "from" bus (p.u.)
     St = V(branch(il, T_BUS)) .* conj(Yt * V);  %% complex power injected at "to" bus (p.u.)
-    if upper(mpopt.opf.flow_lim) == 'P' %% active power limit, P (Pan Wei)
+    if upper(mpopt.opf.flow_lim(1)) == 'P'  %% active power limit, P (Pan Wei)
       h = [ real(Sf).^2 - flow_max;         %% branch real power limits (from bus)
             real(St).^2 - flow_max ];       %% branch real power limits (to bus)
-    else                                %% apparent power limit, |S|
+    else                                    %% apparent power limit, |S|
       h = [ Sf .* conj(Sf) - flow_max;      %% branch apparent power limits (from bus)
             St .* conj(St) - flow_max ];    %% branch apparent power limits (to bus)
     end
@@ -164,12 +164,12 @@ if nargout > 2
 
   if nl2 > 0
     %% compute partials of Flows w.r.t. V
-    if upper(mpopt.opf.flow_lim) == 'I'     %% current
+    if upper(mpopt.opf.flow_lim(1)) == 'I'  %% current
       [dFf_dVa, dFf_dVm, dFt_dVa, dFt_dVm, Ff, Ft] = dIbr_dV(branch(il,:), Yf, Yt, V);
     else                            %% power
       [dFf_dVa, dFf_dVm, dFt_dVa, dFt_dVm, Ff, Ft] = dSbr_dV(branch(il,:), Yf, Yt, V);
     end
-    if upper(mpopt.opf.flow_lim) == 'P'     %% real part of flow (active power)
+    if upper(mpopt.opf.flow_lim(1)) == 'P'  %% real part of flow (active power)
       dFf_dVa = real(dFf_dVa);
       dFf_dVm = real(dFf_dVm);
       dFt_dVa = real(dFt_dVa);

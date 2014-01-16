@@ -68,7 +68,7 @@ if isstruct(baseMVA)
         mpopt = gen;
     end
     if mpopt.out.all == 0
-        return;     	%% nothin' to see here, bail out now
+        return;         %% nothin' to see here, bail out now
     end
     if nargin < 2 || isempty(bus)
         fd = 1;         %% print to stdio by default
@@ -92,7 +92,7 @@ else
         end
     end
     if mpopt.out.all == 0
-        return;     	%% nothin' to see here, bail out now
+        return;         %% nothin' to see here, bail out now
     end
 end
 isOPF = ~isempty(f);    %% FALSE -> only simple PF data, TRUE -> OPF data
@@ -100,7 +100,7 @@ isOPF = ~isempty(f);    %% FALSE -> only simple PF data, TRUE -> OPF data
 %% options
 isDC            = strcmp(upper(mpopt.model), 'DC');
 OUT_ALL         = mpopt.out.all;
-OUT_FORCE		= mpopt.out.force;
+OUT_FORCE       = mpopt.out.force;
 OUT_ANY         = OUT_ALL == 1;     %% set to true if any pretty output is to be generated
 OUT_SYS_SUM     = OUT_ALL == 1 || (OUT_ALL == -1 && mpopt.out.sys_sum);
 OUT_AREA_SUM    = OUT_ALL == 1 || (OUT_ALL == -1 && mpopt.out.area_sum);
@@ -683,15 +683,15 @@ if isOPF && (success || OUT_FORCE)
     end
         
     %% line flow constraints
-    if upper(mpopt.opf.flow_lim) == 'P' || isDC  	%% |P| limit
+    if upper(mpopt.opf.flow_lim(1)) == 'P' || isDC  %% |P| limit
         Ff = branch(:, PF);
         Ft = branch(:, PT);
         str = '\n  #     Bus    Pf  mu     Pf      |Pmax|      Pt      Pt  mu   Bus';
-    elseif upper(mpopt.opf.flow_lim) == 'I'   		%% |I| limit
+    elseif upper(mpopt.opf.flow_lim(1)) == 'I'      %% |I| limit
         Ff = abs( (branch(:, PF) + 1j * branch(:, QF)) ./ V(e2i(branch(:, F_BUS))) );
         Ft = abs( (branch(:, PT) + 1j * branch(:, QT)) ./ V(e2i(branch(:, T_BUS))) );
         str = '\n  #     Bus   |If| mu    |If|     |Imax|     |It|    |It| mu   Bus';
-    else                					%% |S| limit
+    else                                            %% |S| limit
         Ff = abs(branch(:, PF) + 1j * branch(:, QF));
         Ft = abs(branch(:, PT) + 1j * branch(:, QT));
         str = '\n  #     Bus   |Sf| mu    |Sf|     |Smax|     |St|    |St| mu   Bus';
@@ -734,14 +734,14 @@ end
 
 %% execute userfcn callbacks for 'printpf' stage
 if have_results_struct && isfield(results, 'userfcn') && (success || OUT_FORCE)
-	if ~isOPF	%% turn off option for all constraints if it isn't an OPF
-		mpopt = mpoption(mpopt, 'out.lim.all', 0);
-	end
+    if ~isOPF   %% turn off option for all constraints if it isn't an OPF
+        mpopt = mpoption(mpopt, 'out.lim.all', 0);
+    end
     run_userfcn(results.userfcn, 'printpf', results, fd, mpopt);
 end
 if OUT_ANY && ~success
-	if OUT_FORCE
-    	fprintf(fd, '\n>>>>>  Did NOT converge (%.2f seconds)  <<<<<\n', et);
+    if OUT_FORCE
+        fprintf(fd, '\n>>>>>  Did NOT converge (%.2f seconds)  <<<<<\n', et);
     end
-	fprintf('\n');
+    fprintf('\n');
 end
