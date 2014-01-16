@@ -15,6 +15,12 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.1
 -----------------
 
+1/16/14
+    - Added 'status' option for 2nd argument to toggle_reserves()
+      toggle_dcline() and toggle_iflims() as a convenient way to
+      check the enabled/ disabled status of these sets of callback
+      functions.
+
 1/15/14
     - Modified handling of options for optional packages, added:
         mpoption_info_cplex()

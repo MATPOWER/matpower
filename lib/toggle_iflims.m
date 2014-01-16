@@ -1,10 +1,11 @@
 function mpc = toggle_iflims(mpc, on_off)
-%TOGGLE_IFLIMS Enable or disable set of interface flow constraints.
+%TOGGLE_IFLIMS Enable, disable or check status of set of interface flow limits.
 %   MPC = TOGGLE_IFLIMS(MPC, 'on')
 %   MPC = TOGGLE_IFLIMS(MPC, 'off')
+%   T_F = TOGGLE_IFLIMS(MPC, 'status')
 %
-%   Enables or disables a set of OPF userfcn callbacks to implement
-%   interface flow limits based on a DC flow model.
+%   Enables, disables or checks the status of a set of OPF userfcn
+%   callbacks to implement interface flow limits based on a DC flow model.
 %
 %   These callbacks expect to find an 'if' field in the input MPC, where
 %   MPC.if is a struct with the following fields:
@@ -58,7 +59,7 @@ function mpc = toggle_iflims(mpc, on_off)
 %   under other licensing terms, the licensors of MATPOWER grant
 %   you additional permission to convey the resulting work.
 
-if strcmp(on_off, 'on')
+if strcmp(upper(on_off), 'ON')
     %% check for proper reserve inputs
     if ~isfield(mpc, 'if') || ~isstruct(mpc.if) || ...
             ~isfield(mpc.if, 'map') || ...
@@ -74,14 +75,23 @@ if strcmp(on_off, 'on')
     mpc = add_userfcn(mpc, 'int2ext', @userfcn_iflims_int2ext);
     mpc = add_userfcn(mpc, 'printpf', @userfcn_iflims_printpf);
     mpc = add_userfcn(mpc, 'savecase', @userfcn_iflims_savecase);
-elseif strcmp(on_off, 'off')
+    mpc.userfcn.status.iflims = 1;
+elseif strcmp(upper(on_off), 'OFF')
     mpc = remove_userfcn(mpc, 'savecase', @userfcn_iflims_savecase);
     mpc = remove_userfcn(mpc, 'printpf', @userfcn_iflims_printpf);
     mpc = remove_userfcn(mpc, 'int2ext', @userfcn_iflims_int2ext);
     mpc = remove_userfcn(mpc, 'formulation', @userfcn_iflims_formulation);
     mpc = remove_userfcn(mpc, 'ext2int', @userfcn_iflims_ext2int);
+    mpc.userfcn.status.iflims = 0;
+elseif strcmp(upper(on_off), 'STATUS')
+    if isfield(mpc, 'userfcn') && isfield(mpc.userfcn, 'status') && ...
+            isfield(mpc.userfcn.status, 'iflims')
+        mpc = mpc.userfcn.status.iflims;
+    else
+        mpc = 0;
+    end
 else
-    error('toggle_iflims: 2nd argument must be either ''on'' or ''off''');
+    error('toggle_iflims: 2nd argument must be ''on'', ''off'' or ''status''');
 end
 
 

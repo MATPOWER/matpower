@@ -1,12 +1,13 @@
 function mpc = toggle_dcline(mpc, on_off)
-%TOGGLE_DCLINE Enable or disable DC line modeling.
+%TOGGLE_DCLINE Enable, disable or check status of DC line modeling.
 %   MPC = TOGGLE_DCLINE(MPC, 'on')
 %   MPC = TOGGLE_DCLINE(MPC, 'off')
+%   T_F = TOGGLE_DCLINE(MPC, 'status')
 %
-%   Enables or disables a set of OPF userfcn callbacks to implement
-%   DC lines as a pair of linked generators. While it uses the OPF
-%   extension mechanism, this implementation works for simple power
-%   flow as well as OPF problems.
+%   Enables, disables or checks the status of a set of OPF userfcn
+%   callbacks to implement DC lines as a pair of linked generators.
+%   While it uses the OPF extension mechanism, this implementation
+%   works for simple power flow as well as OPF problems.
 %
 %   These callbacks expect to find a 'dcline' field in the input MPC,
 %   where MPC.dcline is an ndc x 17 matrix with columns as defined
@@ -56,7 +57,7 @@ function mpc = toggle_dcline(mpc, on_off)
 %   under other licensing terms, the licensors of MATPOWER grant
 %   you additional permission to convey the resulting work.
 
-if strcmp(on_off, 'on')
+if strcmp(upper(on_off), 'ON')
     %% define named indices into data matrices
     c = idx_dcline;
 
@@ -82,14 +83,23 @@ if strcmp(on_off, 'on')
     mpc = add_userfcn(mpc, 'int2ext', @userfcn_dcline_int2ext);
     mpc = add_userfcn(mpc, 'printpf', @userfcn_dcline_printpf);
     mpc = add_userfcn(mpc, 'savecase', @userfcn_dcline_savecase);
-elseif strcmp(on_off, 'off')
+    mpc.userfcn.status.dcline = 1;
+elseif strcmp(upper(on_off), 'OFF')
     mpc = remove_userfcn(mpc, 'savecase', @userfcn_dcline_savecase);
     mpc = remove_userfcn(mpc, 'printpf', @userfcn_dcline_printpf);
     mpc = remove_userfcn(mpc, 'int2ext', @userfcn_dcline_int2ext);
     mpc = remove_userfcn(mpc, 'formulation', @userfcn_dcline_formulation);
     mpc = remove_userfcn(mpc, 'ext2int', @userfcn_dcline_ext2int);
+    mpc.userfcn.status.dcline = 0;
+elseif strcmp(upper(on_off), 'STATUS')
+    if isfield(mpc, 'userfcn') && isfield(mpc.userfcn, 'status') && ...
+            isfield(mpc.userfcn.status, 'dcline')
+        mpc = mpc.userfcn.status.dcline;
+    else
+        mpc = 0;
+    end
 else
-    error('toggle_dcline: 2nd argument must be either ''on'' or ''off''');
+    error('toggle_dcline: 2nd argument must be ''on'', ''off'' or ''status''');
 end
 
 

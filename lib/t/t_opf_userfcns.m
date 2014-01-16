@@ -35,7 +35,7 @@ if nargin < 1
     quiet = 0;
 end
 
-t_begin(38, quiet);
+t_begin(51, quiet);
 
 casefile = 't_case30_userfcns';
 if quiet
@@ -59,7 +59,9 @@ mpopt = mpoption(mpopt, 'opf.ac.solver', 'MIPS', 'opf.dc.solver', 'MIPS');
 %% run the OPF with fixed reserves
 t = 'fixed reserves : ';
 mpc = loadcase(casefile);
+t_ok(~toggle_reserves(mpc, 'status'), 'toggle_reserves(mpc, ''status'') == 0');
 mpc = toggle_reserves(mpc, 'on');
+t_ok(toggle_reserves(mpc, 'status'), 'toggle_reserves(mpc, ''status'') == 1');
 r = runopf(mpc, mpopt);
 t_ok(r.success, [t 'success']);
 t_is(r.reserves.R, [25; 15; 0; 0; 19.3906; 0.6094], 4, [t 'reserves.R']);
@@ -72,6 +74,7 @@ t_is(r.reserves.totalcost, 177.8047, 4, [t 'totalcost']);
 
 t = 'toggle_reserves(mpc, ''off'') : ';
 mpc = toggle_reserves(mpc, 'off');
+t_ok(~toggle_reserves(mpc, 'status'), 'toggle_reserves(mpc, ''status'') == 0');
 r = runopf(mpc, mpopt);
 t_ok(r.success, [t 'success']);
 t_ok(~isfield(r.reserves, 'R'), [t 'no reserves']);
@@ -79,7 +82,9 @@ t_ok(~isfield(r.if, 'P'), [t 'no iflims']);
 
 t = 'interface flow lims (DC) : ';
 mpc = loadcase(casefile);
+t_ok(~toggle_iflims(mpc, 'status'), 'toggle_iflims(  mpc, ''status'') == 0');
 mpc = toggle_iflims(mpc, 'on');
+t_ok(toggle_iflims(mpc, 'status'), 'toggle_iflims(  mpc, ''status'') == 1');
 r = rundcopf(mpc, mpopt);
 t_ok(r.success, [t 'success']);
 t_is(r.if.P, [-15; 20], 4, [t 'if.P']);
@@ -90,8 +95,14 @@ t_ok(~isfield(r.reserves, 'R'), [t 'no reserves']);
 
 t = 'reserves + interface flow lims (DC) : ';
 mpc = loadcase(casefile);
+t_ok(~toggle_reserves(mpc, 'status'), 'toggle_reserves(mpc, ''status'') == 0');
+t_ok(~toggle_iflims(mpc, 'status'), 'toggle_iflims(  mpc, ''status'') == 0');
 mpc = toggle_reserves(mpc, 'on');
+t_ok(toggle_reserves(mpc, 'status'), 'toggle_reserves(mpc, ''status'') == 1');
+t_ok(~toggle_iflims(mpc, 'status'), 'toggle_iflims(  mpc, ''status'') == 0');
 mpc = toggle_iflims(mpc, 'on');
+t_ok(toggle_reserves(mpc, 'status'), 'toggle_reserves(mpc, ''status'') == 1');
+t_ok(toggle_iflims(mpc, 'status'), 'toggle_iflims(  mpc, ''status'') == 1');
 r = rundcopf(mpc, mpopt);
 t_ok(r.success, [t 'success']);
 t_is(r.if.P, [-15; 20], 4, [t 'if.P']);
@@ -106,6 +117,8 @@ t_is(r.reserves.totalcost, 179.05, 4, [t 'totalcost']);
 
 t = 'interface flow lims (AC) : ';
 mpc = toggle_reserves(mpc, 'off');
+t_ok(~toggle_reserves(mpc, 'status'), 'toggle_reserves(mpc, ''status'') == 0');
+t_ok(toggle_iflims(mpc, 'status'), 'toggle_iflims(  mpc, ''status'') == 1');
 r = runopf(mpc, mpopt);
 t_ok(r.success, [t 'success']);
 t_is(r.if.P, [-9.101; 21.432], 3, [t 'if.P']);

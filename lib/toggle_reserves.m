@@ -1,10 +1,12 @@
 function mpc = toggle_reserves(mpc, on_off)
-%TOGGLE_RESERVES Enable or disable fixed reserve requirements.
+%TOGGLE_RESERVES Enable, disable or check status of fixed reserve requirements.
 %   MPC = TOGGLE_RESERVES(MPC, 'on')
 %   MPC = TOGGLE_RESERVES(MPC, 'off')
+%   T_F = TOGGLE_RESERVES(MPC, 'status')
 %
-%   Enables or disables a set of OPF userfcn callbacks to implement
-%   co-optimization of reserves with fixed zonal reserve requirements.
+%   Enables, disables or checks the status of a set of OPF userfcn
+%   callbacks to implement co-optimization of reserves with fixed zonal
+%   reserve requirements.
 %
 %   These callbacks expect to find a 'reserves' field in the input MPC,
 %   where MPC.reserves is a struct with the following fields:
@@ -61,7 +63,7 @@ function mpc = toggle_reserves(mpc, on_off)
 %   under other licensing terms, the licensors of MATPOWER grant
 %   you additional permission to convey the resulting work.
 
-if strcmp(on_off, 'on')
+if strcmp(upper(on_off), 'ON')
     %% check for proper reserve inputs
     if ~isfield(mpc, 'reserves') || ~isstruct(mpc.reserves) || ...
             ~isfield(mpc.reserves, 'zones') || ...
@@ -78,14 +80,23 @@ if strcmp(on_off, 'on')
     mpc = add_userfcn(mpc, 'int2ext', @userfcn_reserves_int2ext);
     mpc = add_userfcn(mpc, 'printpf', @userfcn_reserves_printpf);
     mpc = add_userfcn(mpc, 'savecase', @userfcn_reserves_savecase);
-elseif strcmp(on_off, 'off')
+    mpc.userfcn.status.reserves = 1;
+elseif strcmp(upper(on_off), 'OFF')
     mpc = remove_userfcn(mpc, 'savecase', @userfcn_reserves_savecase);
     mpc = remove_userfcn(mpc, 'printpf', @userfcn_reserves_printpf);
     mpc = remove_userfcn(mpc, 'int2ext', @userfcn_reserves_int2ext);
     mpc = remove_userfcn(mpc, 'formulation', @userfcn_reserves_formulation);
     mpc = remove_userfcn(mpc, 'ext2int', @userfcn_reserves_ext2int);
+    mpc.userfcn.status.reserves = 0;
+elseif strcmp(upper(on_off), 'STATUS')
+    if isfield(mpc, 'userfcn') && isfield(mpc.userfcn, 'status') && ...
+            isfield(mpc.userfcn.status, 'reserves')
+        mpc = mpc.userfcn.status.reserves;
+    else
+        mpc = 0;
+    end
 else
-    error('toggle_reserves: 2nd argument must be either ''on'' or ''off''');
+    error('toggle_reserves: 2nd argument must be ''on'', ''off'' or ''status''');
 end
 
 
