@@ -157,7 +157,7 @@ else
                 end
             end
         case 'sdp_pf'
-            TorF = have_fcn('yalmip') && exist('sdp_pf_valid_options', 'file') == 2;
+            TorF = have_fcn('yalmip') && exist('mpoption_info_sdp_pf', 'file') == 2;
         case 'yalmip'
             TorF = ~have_fcn('octave') && exist('yalmip','file') == 2;
             %% YALMIP does not yet work with Octave, rdz 1/6/14
