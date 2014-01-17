@@ -15,6 +15,11 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.1
 -----------------
 
+1/17/14
+    - Added Dan Molzahn's SDP_PF package, a set of applications of
+      a semidefinite programming relaxation of the power flow
+      equations, to the directory 'extras/sdp_pf'.
+
 1/16/14
     - Added 'status' option for 2nd argument to toggle_reserves()
       toggle_dcline() and toggle_iflims() as a convenient way to
