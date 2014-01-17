@@ -116,7 +116,7 @@ for k = 1:length(algs)
         t_is(f, -74/9, 6, [t 'f']);
         t_is(lam.mu_l, [0;0;0], 13, [t 'lam.mu_l']);
         t_is(lam.mu_u, [28;4;0]/9, 7, [t 'lam.mu_u']);
-        t_is(lam.lower, zeros(size(x)), 8, [t 'lam.lower']);
+        t_is(lam.lower, zeros(size(x)), 7, [t 'lam.lower']);
         t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 
         t = sprintf('%s - constrained 4-d QP : ', names{k});
