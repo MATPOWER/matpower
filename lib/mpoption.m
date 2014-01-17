@@ -484,25 +484,27 @@ if ~isempty(ov)
             fname = ['mpoption_info_' opt_pkgs{k}];
             if exist(fname, 'file') == 2
                 opt_ex = feval(fname, 'E');
+                nex = length(opt_ex);
                 if ~isempty(opt_ex)
-                    for j = 1:length(opt_ex)
+                    for j = 1:nex
                         ex(n+j).name = opt_ex(j).name;
                     end
                     if isfield(opt_ex, 'check')
-                        for j = 1:length(opt_ex)
+                        for j = 1:nex
                             ex(n+j).check = opt_ex(j).check;
                         end
                     end
                     if isfield(opt_ex, 'copy_mode')
-                        for j = 1:length(opt_ex)
+                        for j = 1:nex
                             ex(n+j).copy_mode = opt_ex(j).copy_mode;
                         end
                     end
                     if isfield(opt_ex, 'valid_fields')
-                        for j = 1:length(opt_ex)
+                        for j = 1:nex
                             ex(n+j).valid_fields = opt_ex(j).valid_fields;
                         end
                     end
+                    n = n + nex;
                 end
             end
         end
