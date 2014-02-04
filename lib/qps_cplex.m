@@ -291,6 +291,15 @@ else
         cplexqp(H, c, Ai, bi, Ae, be, xmin, xmax, x0, cplex_opt);
 end
 
+%% workaround for eflag == 5 (which we have seen return infeasible results)
+%%          cplexstatus: 6
+%%    cplexstatusstring: 'non-optimal'
+%%              message: 'Solution with numerical issues'
+if eflag > 1
+    warning('qps_cplex: Undocumented ''exitflag'' value (%d)\n          cplexstatus: %d\n    cplexstatusstring: ''%s''\n              message: ''%s''', eflag, output.cplexstatus, output.cplexstatusstring, output.message);
+    eflag = -100 - eflag;
+end
+
 %% check for empty results (in case optimization failed)
 if isempty(x)
     x = NaN(nx, 1);

@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.1
 -----------------
 
+2/4/14
+    - Added check in qps_cplex() for undocumented 'exitstatus'
+      values returned by cplexlp() or cplexqp().
+
 1/17/14
     - Added Dan Molzahn's SDP_PF package, a set of applications of
       a semidefinite programming relaxation of the power flow
