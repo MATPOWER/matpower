@@ -73,8 +73,6 @@ while ~isempty(queue)
     cnn = jj(visited(jj) == 0); %% indices of non-visited cols (may contain dups)
 
     %% mark them as visited and queue them
-%   visited(cnn) = 1;           %% mark as visited
-%   queue = [cnn; queue];       %% enqueue them
     for k = 1:length(cnn)
         if visited(cnn(k)) == 0         %% if not yet visited
             visited(cnn(k)) = 1;        %% mark as visited
@@ -86,13 +84,6 @@ end
 %% add visited nodes to group
 group = find(visited);
 groups{end+1} = group;
-% ng = length(group);
-% [m, n] = size(groups);
-% if ng > n       %% expand groups before appending new group
-%     groups = [ groups zeros(m, ng-n); group ];
-% else
-%     groups = [ groups; group zeros(1, n-ng) ];
-% end
 
 %% update unvisited
 v = ones(nn, 1);
@@ -103,8 +94,8 @@ unvisited    = find(v == 0);
 %% recurse to traverse remaining components
 if isempty(unvisited)       %% sort groups by cardinality
     l = cellfun('length', groups);
-    [j, i] = sort(l, 2, 'descend');
-    groups = {groups{i}};
+    [~, i] = sort(l, 2, 'descend');
+    groups = groups(i);
 else                        %% recurse
     [groups, unvisited] = connected_components(C, groups, unvisited);
 end
