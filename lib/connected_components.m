@@ -45,7 +45,8 @@ function [groups, unvisited] = connected_components(C, groups, unvisited)
 %   you additional permission to convey the resulting work.
 
 %% initialize groups and unvisited list
-nn = size(C, 2);        %% number of branchs and nodes
+nn = size(C, 2);        %% number of nodes
+Ct = C';
 visited = zeros(1, nn); %% start with nothing visited
 if nargin < 2
     groups = {};
@@ -64,7 +65,11 @@ while ~isempty(queue)
 %   cn = queue(1);    queue(1)   = [];  %% use LIFO stack for depth-first
 
     %% find all nodes connected to current node
-    [ii, jj] = find(C(C(:, cn) ~= 0, :));   %% non-zeros in rows connected to cn
+	%% (finding rows of column-indexed Ct, rather than cols of row-indexed C,
+	%%  because row-indexing a sparse matrix is sloooowww, results in ~30x
+	%%  speed up on ~60k bus network)
+	[jj, ~] = find(Ct(:, C(:, cn) ~= 0));   %% non-zeros in rows connected to cn
+%    [~, jj] = find(C(C(:, cn) ~= 0, :));    %% non-zeros in rows connected to cn
     cnn = jj(visited(jj) == 0); %% indices of non-visited cols (may contain dups)
 
     %% mark them as visited and queue them

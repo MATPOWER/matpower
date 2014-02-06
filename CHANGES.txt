@@ -15,6 +15,12 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.1
 -----------------
 
+2/6/14
+    - Small tweak in connected_components() results in ~30x
+      speedup for 62k bus network. (Reminder: Never access
+      indexed rows of a large sparse matrix, always transpose
+      and index the columns).
+
 2/4/14
     - Added check in qps_cplex() for undocumented 'exitstatus'
       values returned by cplexlp() or cplexqp().
