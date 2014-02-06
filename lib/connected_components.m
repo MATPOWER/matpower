@@ -58,17 +58,26 @@ end
 %% traverse graph, starting with first unvisited node
 cn = unvisited(1);      %% set current node to first unvisited node
 visited(cn) = 1;        %% mark current node as visited
-queue = cn;             %% enqueue current node
-while ~isempty(queue)
-    %% dequeue next node
-    cn = queue(end);  queue(end) = [];  %% use FIFO queue for breadth-first
-%   cn = queue(1);    queue(1)   = [];  %% use LIFO stack for depth-first
+%% use FIFO queue for breadth-first, LIFO stack for depth-first
+qs = zeros(1, nn);      %% initialize queue/stack
+f = 1; N = 0;           %% queue starts at position f, has N elements
+% t = 0;                  %% top of stack at position t
+
+%% push current node to queue/stack
+qs(mod(f+N-1, nn)+1) = cn; N = N + 1;       %% FIFO / BFS
+% t = t + 1; qs(t) = cn;                      %% LIFO / DFS
+
+while N                 %% FIFO / BFS
+% while t                 %% LIFO / DFS
+    %% pop next node
+    cn = qs(f); N = N - 1; f = mod(f, nn) + 1;  %% FIFO / BFS
+%     cn = qs(t); t = t - 1;                      %% LIFO / DFS
 
     %% find all nodes connected to current node
-	%% (finding rows of column-indexed Ct, rather than cols of row-indexed C,
-	%%  because row-indexing a sparse matrix is sloooowww, results in ~30x
-	%%  speed up on ~60k bus network)
-	[jj, ~] = find(Ct(:, C(:, cn) ~= 0));   %% non-zeros in rows connected to cn
+    %% (finding rows of column-indexed Ct, rather than cols of row-indexed C,
+    %%  because row-indexing a sparse matrix is sloooowww, results in ~30x
+    %%  speed up on ~60k bus network)
+    [jj, ~] = find(Ct(:, C(:, cn) ~= 0));   %% non-zeros in rows connected to cn
 %    [~, jj] = find(C(C(:, cn) ~= 0, :));    %% non-zeros in rows connected to cn
     cnn = jj(visited(jj) == 0); %% indices of non-visited cols (may contain dups)
 
@@ -76,7 +85,9 @@ while ~isempty(queue)
     for k = 1:length(cnn)
         if visited(cnn(k)) == 0         %% if not yet visited
             visited(cnn(k)) = 1;        %% mark as visited
-            queue = [cnn(k); queue];    %% enqueue it
+            %% push it to queue/stack
+            N = N + 1; qs(mod(f+N-2, nn)+1) = cnn(k);   %% FIFO / BFS
+%             t = t + 1; qs(t) = cnn(k);                  %% LIFO / DFS
         end
     end
 end
