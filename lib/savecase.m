@@ -139,41 +139,27 @@ if strcmp(mpc_ver, '1')
 end
 
 %% verify valid filename
-l = length(fname);
-rootname = [];
-if l > 2
-    if strcmp(fname(l-1:l), '.m')
-        rootname = fname(1:l-2);
-        extension = '.m';
-    elseif l > 4
-        if strcmp(fname(l-3:l), '.mat')
-            rootname = fname(1:l-4);
-            extension = '.mat';
-        end
-    end
-end
-if isempty(rootname)
-    rootname = fname;
+[pathstr, fcn_name, extension] = fileparts(fname);
+if isempty(extension)
     extension = '.m';
-    fname = [rootname, extension];
 end
+fname = fullfile(pathstr, [fcn_name extension]);
 
 %% open and write the file
-if strcmp(extension, '.mat')        %% MAT-file
+if strcmp(upper(extension), '.MAT')     %% MAT-file
     vflag = '';
     if str2double(version('-release')) > 13
-        vflag = ' -V6';
+        vflag = '-v6';
     end
     if strcmp(mpc_ver, '1')
         if exist('areas', 'var') && exist('gencost', 'var')
-            cmd = sprintf('save %s baseMVA bus gen branch areas gencost%s;', rootname, vflag); 
+            save(fname, 'baseMVA', 'bus', 'gen', 'branch', 'areas', 'gencost', vflag);
         else
-            cmd = sprintf('save %s baseMVA bus gen branch%s;', rootname, vflag); 
+            save(fname, 'baseMVA', 'bus', 'gen', 'branch', vflag);
         end
     else
-        cmd = sprintf('save %s mpc%s;', rootname, vflag); 
+        save(fname, 'baseMVA', 'mpc', vflag);
     end
-    eval(cmd);
 else                                %% M-file
     %% open file
     [fd, msg] = fopen(fname, 'wt');     %% print it to an M-file
@@ -184,13 +170,13 @@ else                                %% M-file
     %% function header, etc.
     if strcmp(mpc_ver, '1')
         if exist('areas', 'var') && exist('gencost', 'var') && ~isempty(gencost)
-            fprintf(fd, 'function [baseMVA, bus, gen, branch, areas, gencost] = %s\n', rootname);
+            fprintf(fd, 'function [baseMVA, bus, gen, branch, areas, gencost] = %s\n', fcn_name);
         else
-            fprintf(fd, 'function [baseMVA, bus, gen, branch] = %s\n', rootname);
+            fprintf(fd, 'function [baseMVA, bus, gen, branch] = %s\n', fcn_name);
         end
         prefix = '';
     else
-        fprintf(fd, 'function mpc = %s\n', rootname);
+        fprintf(fd, 'function mpc = %s\n', fcn_name);
         prefix = 'mpc.';
     end
     if ~isempty(comment)
@@ -327,78 +313,80 @@ else                                %% M-file
         fprintf(fd, '];\n');
     end
     
-    %% generalized OPF user data
-    if (isfield(mpc, 'A') && ~isempty(mpc.A)) || ...
-            (isfield(mpc, 'N') && ~isempty(mpc.N))
-        fprintf(fd, '\n%%%%-----  Generalized OPF User Data  -----%%%%');
-    end
+    if ~strcmp(mpc_ver, '1')
+        %% generalized OPF user data
+        if (isfield(mpc, 'A') && ~isempty(mpc.A)) || ...
+                (isfield(mpc, 'N') && ~isempty(mpc.N))
+            fprintf(fd, '\n%%%%-----  Generalized OPF User Data  -----%%%%');
+        end
 
-    %% user constraints
-    if isfield(mpc, 'A') && ~isempty(mpc.A)
-        %% A
-        fprintf(fd, '\n%%%% user constraints\n');
-        print_sparse(fd, sprintf('%sA', prefix), mpc.A);
-        if isfield(mpc, 'l') && ~isempty(mpc.l) && ...
-                isfield(mpc, 'u') && ~isempty(mpc.u)
-            fprintf(fd, 'lu = [\n');
-            fprintf(fd, '\t%.9g\t%.9g;\n', [mpc.l mpc.u].');
-            fprintf(fd, '];\n');
-            fprintf(fd, '%sl = lu(:, 1);\n', prefix);
-            fprintf(fd, '%su = lu(:, 2);\n\n', prefix);
-        elseif isfield(mpc, 'l') && ~isempty(mpc.l)
-            fprintf(fd, '%sl = [\n', prefix);
-            fprintf(fd, '\t%.9g;\n', mpc.l);
-            fprintf(fd, '];\n\n');
-        elseif isfield(mpc, 'u') && ~isempty(mpc.u)
-            fprintf(fd, '%su = [\n', prefix);
-            fprintf(fd, '\t%.9g;\n', mpc.u);
+        %% user constraints
+        if isfield(mpc, 'A') && ~isempty(mpc.A)
+            %% A
+            fprintf(fd, '\n%%%% user constraints\n');
+            print_sparse(fd, sprintf('%sA', prefix), mpc.A);
+            if isfield(mpc, 'l') && ~isempty(mpc.l) && ...
+                    isfield(mpc, 'u') && ~isempty(mpc.u)
+                fprintf(fd, 'lu = [\n');
+                fprintf(fd, '\t%.9g\t%.9g;\n', [mpc.l mpc.u].');
+                fprintf(fd, '];\n');
+                fprintf(fd, '%sl = lu(:, 1);\n', prefix);
+                fprintf(fd, '%su = lu(:, 2);\n\n', prefix);
+            elseif isfield(mpc, 'l') && ~isempty(mpc.l)
+                fprintf(fd, '%sl = [\n', prefix);
+                fprintf(fd, '\t%.9g;\n', mpc.l);
+                fprintf(fd, '];\n\n');
+            elseif isfield(mpc, 'u') && ~isempty(mpc.u)
+                fprintf(fd, '%su = [\n', prefix);
+                fprintf(fd, '\t%.9g;\n', mpc.u);
+                fprintf(fd, '];\n');
+            end
+        end
+
+        %% user costs
+        if isfield(mpc, 'N') && ~isempty(mpc.N)
+            fprintf(fd, '\n%%%% user costs\n');
+            print_sparse(fd, sprintf('%sN', prefix), mpc.N);
+            if isfield(mpc, 'H') && ~isempty(mpc.H)
+                print_sparse(fd, sprintf('%sH', prefix), mpc.H);
+            end
+            if isfield(mpc, 'fparm') && ~isempty(mpc.fparm)
+                fprintf(fd, 'Cw_fparm = [\n');
+                fprintf(fd, '\t%.9g\t%d\t%.9g\t%.9g\t%.9g;\n', [mpc.Cw mpc.fparm].');
+                fprintf(fd, '];\n');
+                fprintf(fd, '%sCw    = Cw_fparm(:, 1);\n', prefix);
+                fprintf(fd, '%sfparm = Cw_fparm(:, 2:5);\n', prefix);
+            else
+                fprintf(fd, '%sCw = [\n', prefix);
+                fprintf(fd, '\t%.9g;\n', mpc.Cw);
+                fprintf(fd, '];\n');
+            end
+        end
+
+        %% user vars
+        if isfield(mpc, 'z0') || isfield(mpc, 'zl') || isfield(mpc, 'zu')
+            fprintf(fd, '\n%%%% user vars\n');
+        end
+        if isfield(mpc, 'z0') && ~isempty(mpc.z0)
+            fprintf(fd, '%sz0 = [\n', prefix);
+            fprintf(fd, '\t%.9g;\n', mpc.z0);
             fprintf(fd, '];\n');
         end
-    end
-
-    %% user costs
-    if isfield(mpc, 'N') && ~isempty(mpc.N)
-        fprintf(fd, '\n%%%% user costs\n');
-        print_sparse(fd, sprintf('%sN', prefix), mpc.N);
-        if isfield(mpc, 'H') && ~isempty(mpc.H)
-            print_sparse(fd, sprintf('%sH', prefix), mpc.H);
-        end
-        if isfield(mpc, 'fparm') && ~isempty(mpc.fparm)
-            fprintf(fd, 'Cw_fparm = [\n');
-            fprintf(fd, '\t%.9g\t%d\t%.9g\t%.9g\t%.9g;\n', [mpc.Cw mpc.fparm].');
-            fprintf(fd, '];\n');
-            fprintf(fd, '%sCw    = Cw_fparm(:, 1);\n', prefix);
-            fprintf(fd, '%sfparm = Cw_fparm(:, 2:5);\n', prefix);
-        else
-            fprintf(fd, '%sCw = [\n', prefix);
-            fprintf(fd, '\t%.9g;\n', mpc.Cw);
+        if isfield(mpc, 'zl') && ~isempty(mpc.zl)
+            fprintf(fd, '%szl = [\n', prefix);
+            fprintf(fd, '\t%.9g;\n', mpc.zl);
             fprintf(fd, '];\n');
         end
-    end
+        if isfield(mpc, 'zu') && ~isempty(mpc.zu)
+            fprintf(fd, '%szu = [\n', prefix);
+            fprintf(fd, '\t%.9g;\n', mpc.zu);
+            fprintf(fd, '];\n');
+        end
 
-    %% user vars
-    if isfield(mpc, 'z0') || isfield(mpc, 'zl') || isfield(mpc, 'zu')
-        fprintf(fd, '\n%%%% user vars\n');
-    end
-    if isfield(mpc, 'z0') && ~isempty(mpc.z0)
-        fprintf(fd, '%sz0 = [\n', prefix);
-        fprintf(fd, '\t%.9g;\n', mpc.z0);
-        fprintf(fd, '];\n');
-    end
-    if isfield(mpc, 'zl') && ~isempty(mpc.zl)
-        fprintf(fd, '%szl = [\n', prefix);
-        fprintf(fd, '\t%.9g;\n', mpc.zl);
-        fprintf(fd, '];\n');
-    end
-    if isfield(mpc, 'zu') && ~isempty(mpc.zu)
-        fprintf(fd, '%szu = [\n', prefix);
-        fprintf(fd, '\t%.9g;\n', mpc.zu);
-        fprintf(fd, '];\n');
-    end
-
-    %% execute userfcn callbacks for 'savecase' stage
-    if isfield(mpc, 'userfcn')
-        run_userfcn(mpc.userfcn, 'savecase', mpc, fd, prefix);
+        %% execute userfcn callbacks for 'savecase' stage
+        if isfield(mpc, 'userfcn')
+            run_userfcn(mpc.userfcn, 'savecase', mpc, fd, prefix);
+        end
     end
 
     %% close file
