@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.1
 -----------------
 
+2/28/14
+    - Updated toggle_dcline.m to work correctly for OPF cases with
+      user supplied constraints and costs.
+
 2/27/14
     - Fixed bug in savecase() where the function name mistakenly
       included the path when the FNAME input included a path.

@@ -113,7 +113,8 @@ function mpc = userfcn_dcline_ext2int(mpc, args)
 %   in mpc as described above. The optional args are not currently used.
 %   It adds two dummy generators for each in-service DC line, with the
 %   appropriate upper and lower generation bounds and corresponding
-%   zero-cost entries in gencost.
+%   entries in gencost. It also expands any A and N matrices accordingly,
+%   if present.
 
 %% define named indices into data matrices
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
@@ -206,6 +207,32 @@ refbus = find(mpc.bus(:, BUS_TYPE) == REF);
 mpc.bus(dc(:, c.F_BUS), BUS_TYPE) = PV;
 mpc.bus(dc(:, c.T_BUS), BUS_TYPE) = PV;
 mpc.bus(refbus, BUS_TYPE) = REF;
+
+%% expand A and N, if present
+nb = size(mpc.bus, 1);
+ng = size(mpc.gen, 1);
+if isfield(mpc, 'A') && ~isempty(mpc.A)
+    [mA, nA] = size(mpc.A);
+    if nA >= 2*nb + 2*ng    %% assume AC dimensions
+        mpc.A = [   mpc.A(:, 1:2*nb+ng)      sparse(mA, 2*ndc) ...
+                    mpc.A(:, 2*nb+ng+(1:ng)) sparse(mA, 2*ndc) ...
+                    mpc.A(:, (2*nb+2*ng+1:nA)) ];
+    else                    %% assume DC dimensions
+        mpc.A = [   mpc.A(:, 1:nb+ng)   sparse(mA, 2*ndc) ...
+                    mpc.A(:, (nb+ng+1:nA)) ];
+    end
+end
+if isfield(mpc, 'N') && ~isempty(mpc.N)
+    [mN, nN] = size(mpc.N);
+    if nN >= 2*nb + 2*ng    %% assume AC dimensions
+        mpc.N = [   mpc.N(:, 1:2*nb+ng)      sparse(mN, 2*ndc) ...
+                    mpc.N(:, 2*nb+ng+(1:ng)) sparse(mN, 2*ndc) ...
+                    mpc.N(:, (2*nb+2*ng+1:nN)) ];
+    else                    %% assume DC dimensions
+        mpc.N = [   mpc.N(:, 1:nb+ng)   sparse(mN, 2*ndc) ...
+                    mpc.N(:, (nb+ng+1:nN)) ];
+    end
+end
 
 %% append dummy gens
 mpc.gen = [mpc.gen; fg; tg];
@@ -312,7 +339,8 @@ function results = userfcn_dcline_int2ext(results, args)
 %   gencost matrices correspond to the in-service DC lines (where ndc is
 %   the number of rows in MPC.dcline. These extra rows are removed from
 %   gen and gencost and the flow is taken from the PG of these gens and
-%   placed in the flow column of the appropiate dcline row. The
+%   placed in the flow column of the appropiate dcline row. Corresponding
+%   columns are also removed from any A and N matrices, if present. The
 %   optional args are not currently used.
 
 %% define named indices into data matrices
@@ -326,6 +354,7 @@ o = results.order;
 k = find(o.ext.dcline(:, c.BR_STATUS));
 ndc = length(k);                    %% number of in-service DC lines
 ng  = size(results.gen, 1) - 2*ndc; %% number of original gens/disp loads
+nb  = size(results.bus, 1);
 
 %% extract dummy gens
 fg = results.gen(ng    +(1:ndc), :);
@@ -335,6 +364,24 @@ tg = results.gen(ng+ndc+(1:ndc), :);
 results.gen     = results.gen(1:ng, :);
 if isfield(results, 'gencost') && ~isempty(results.gencost)
     results.gencost = results.gencost(1:ng, :);
+end
+
+%% delete corresponding rows from A and N, if present
+if isfield(results, 'A') && ~isempty(results.A)
+    [mA, nA] = size(results.A);
+    if nA >= 2*nb + 2*ng + 4*ndc    %% assume AC dimensions
+        results.A = results.A(:, [1:2*nb+ng 2*nb+ng+2*ndc+(1:ng) 2*nb+2*ng+4*ndc+1:nA]);
+    else                            %% assume DC dimensions
+        results.A = results.A(:, [1:nb+ng nb+ng+2*ndc+1:nA]);
+    end
+end
+if isfield(results, 'N') && ~isempty(results.N)
+    [mN, nN] = size(results.N);
+    if nN >= 2*nb + 2*ng + 4*ndc    %% assume AC dimensions
+        results.N = results.N(:, [1:2*nb+ng 2*nb+ng+2*ndc+(1:ng) 2*nb+2*ng+4*ndc+1:nN]);
+    else                            %% assume DC dimensions
+        results.N = results.N(:, [1:nb+ng nb+ng+2*ndc+1:nN]);
+    end
 end
 
 %% get the solved flows
