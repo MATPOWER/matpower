@@ -363,20 +363,20 @@ for k = 1:ngr+have_isolated
     d(k).nld_on  = d(k).nfld + d(k).ndld_on;    %% # of in-service fixed + disp loads
     d(k).nld_off = d(k).ndld_off;       %% # of out-of-service fixed + disp loads
 
-    d(k).Pmax       = sum(mpc.gen(ig,     PMAX));
     d(k).Pmax_on    = sum(mpc.gen(ig_on,  PMAX));
     d(k).Pmax_off   = sum(mpc.gen(ig_off, PMAX));
-    d(k).Pmin       = sum(mpc.gen(ig,     PMIN));
+    d(k).Pmax       = d(k).Pmax_on + d(k).Pmax_off;
     d(k).Pmin_on    = sum(mpc.gen(ig_on,  PMIN));
     d(k).Pmin_off   = sum(mpc.gen(ig_off, PMIN));
+    d(k).Pmin       = d(k).Pmin_on + d(k).Pmin_off;
     d(k).Pg         = sum(mpc.gen(ig_on,  PG));
 
-    d(k).Qmax       = sum(mpc.gen(ig,     QMAX));
     d(k).Qmax_on    = sum(mpc.gen(ig_on,  QMAX));
     d(k).Qmax_off   = sum(mpc.gen(ig_off, QMAX));
-    d(k).Qmin       = sum(mpc.gen(ig,     QMIN));
+    d(k).Qmax       = d(k).Qmax_on + d(k).Qmax_off;
     d(k).Qmin_on    = sum(mpc.gen(ig_on,  QMIN));
     d(k).Qmin_off   = sum(mpc.gen(ig_off, QMIN));
+    d(k).Qmin       = d(k).Qmin_on + d(k).Qmin_off;
     d(k).Qg         = sum(mpc.gen(ig_on,  QG));
 
     d(k).Ps         = sum(-mpc.bus(b, VM) .^ 2 .* mpc.bus(b, GS));
