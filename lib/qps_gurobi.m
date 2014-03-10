@@ -291,10 +291,12 @@ switch results.status
         eflag = -10;
     case 'INTERRUPTED',     %% 11
         eflag = -11;
-    case 'SUBOPTIMAL',      %% 12
+    case 'NUMERIC',         %% 12
         eflag = -12;
-    case 'NUMERIC',         %% 13
+    case 'SUBOPTIMAL',      %% 13
         eflag = -13;
+    case 'INPROGRESS',      %% 14
+        eflag = -14;
     otherwise,
         eflag = 0;
 end
