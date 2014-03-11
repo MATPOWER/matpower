@@ -181,17 +181,17 @@ if dc                               %% DC formulation
 else                                %% AC formulation
     alg = upper(mpopt.pf.alg);
     if mpopt.verbose > 0
-		switch alg
-			case 'NR'
-				solver = 'Newton';
-			case 'FDXB'
-				solver = 'fast-decoupled, XB';
-			case 'FDBX'
-				solver = 'fast-decoupled, BX';
-			case 'GS'
-				solver = 'Gauss-Seidel';
-			otherwise
-				solver = 'unknown';
+        switch alg
+            case 'NR'
+                solver = 'Newton';
+            case 'FDXB'
+                solver = 'fast-decoupled, XB';
+            case 'FDBX'
+                solver = 'fast-decoupled, BX';
+            case 'GS'
+                solver = 'Gauss-Seidel';
+            otherwise
+                solver = 'unknown';
         end
         fprintf(' -- AC Power Flow (%s)\n', solver);
     end
@@ -219,16 +219,16 @@ else                                %% AC formulation
         Sbus = makeSbus(baseMVA, bus, gen);
         
         %% run the power flow
-		switch alg
-			case 'NR'
-				[V, success, iterations] = newtonpf(Ybus, Sbus, V0, ref, pv, pq, mpopt);
-			case {'FDXB', 'FDBX'}
-				[Bp, Bpp] = makeB(baseMVA, bus, branch, alg);
-				[V, success, iterations] = fdpf(Ybus, Sbus, V0, Bp, Bpp, ref, pv, pq, mpopt);
-			case 'GS'
-				[V, success, iterations] = gausspf(Ybus, Sbus, V0, ref, pv, pq, mpopt);
-			otherwise
-				error('Only Newton''s method, fast-decoupled, and Gauss-Seidel power flow algorithms currently implemented.');
+        switch alg
+            case 'NR'
+                [V, success, iterations] = newtonpf(Ybus, Sbus, V0, ref, pv, pq, mpopt);
+            case {'FDXB', 'FDBX'}
+                [Bp, Bpp] = makeB(baseMVA, bus, branch, alg);
+                [V, success, iterations] = fdpf(Ybus, Sbus, V0, Bp, Bpp, ref, pv, pq, mpopt);
+            case 'GS'
+                [V, success, iterations] = gausspf(Ybus, Sbus, V0, ref, pv, pq, mpopt);
+            otherwise
+                error('Only Newton''s method, fast-decoupled, and Gauss-Seidel power flow algorithms currently implemented.');
         end
         
         %% update data matrices with solution
@@ -237,18 +237,19 @@ else                                %% AC formulation
         if qlim             %% enforce generator Q limits
             %% find gens with violated Q constraints
             mx = find( gen(:, GEN_STATUS) > 0 ...
-            		& gen(:, QG) > gen(:, QMAX) + mpopt.opf.violation );
+                    & gen(:, QG) > gen(:, QMAX) + mpopt.opf.violation );
             mn = find( gen(:, GEN_STATUS) > 0 ...
-            		& gen(:, QG) < gen(:, QMIN) - mpopt.opf.violation );
+                    & gen(:, QG) < gen(:, QMIN) - mpopt.opf.violation );
             
             if ~isempty(mx) || ~isempty(mn)  %% we have some Q limit violations
-                if isempty(pv)
+                %% first check for INFEASIBILITY (all remaining gens violating)
+                infeas = union(mx, mn);
+                remaining = find( gen(:, GEN_STATUS) > 0 & ...
+                                ( bus(gen(:, GEN_BUS), BUS_TYPE) == PV | ...
+                                  bus(gen(:, GEN_BUS), BUS_TYPE) == REF ));
+                if length(infeas) == length(remaining) && all(infeas == remaining)
                     if mpopt.verbose
-                        if ~isempty(mx) 
-                            fprintf('Gen %d (only one left) exceeds upper Q limit : INFEASIBLE PROBLEM\n', mx);
-                        else
-                            fprintf('Gen %d (only one left) exceeds lower Q limit : INFEASIBLE PROBLEM\n', mn);
-                        end
+                        fprintf('All %d remaining gens exceed their Q limits : INFEASIBLE PROBLEM\n', length(infeas));
                     end
                     success = 0;
                     break;
@@ -295,8 +296,15 @@ else                                %% AC formulation
                 %% update bus index lists of each type of bus
                 ref_temp = ref;
                 [ref, pv, pq] = bustypes(bus, gen);
-                if mpopt.verbose && ref ~= ref_temp
-                    fprintf('Bus %d is new slack bus\n', ref);
+                %% previous line can modify lists to select new REF bus
+                %% if there was none, so we should update bus with these
+                %% just to keep them consistent
+                if ref ~= ref_temp
+                    bus(ref, BUS_TYPE) = REF;
+                    bus( pv, BUS_TYPE) = PV;
+                    if mpopt.verbose
+                        fprintf('Bus %d is new slack bus\n', ref);
+                    end
                 end
                 limited = [limited; mx];
             else
