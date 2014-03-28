@@ -182,13 +182,13 @@ nis = length(isolated); %% number of isolated buses
 have_isolated = nis > 0;
 if ngr == 1
     if have_isolated
-        if nis > 1, s = 'es'; else, s = ''; end
+        if nis == 1, s = ''; else, s = 'es'; end
         fprintf('single connected network, plus %d isolated bus%s\n', nis, s);
     else
         fprintf('single fully connected network\n');
     end
 else
-    if nis > 1, s = 'es'; else, s = ''; end
+    if nis == 1, s = ''; else, s = 'es'; end
     fprintf('%d connected groups, %d isolated bus%s\n', ngr, nis, s);
 end
 
