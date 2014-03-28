@@ -4,7 +4,7 @@ function t_islands(quiet)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2012 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2012, 2014 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
@@ -34,7 +34,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 67;
+num_tests = 229;
 
 t_begin(num_tests, quiet);
 
@@ -59,7 +59,29 @@ casenames = {'case118', 'case30', 'case14', 'case9'};
 n = length(casenames);
 for k = 1:n
     mpc{k} = loadcase(casenames{k});
+    
+    %% add busnames
+    nb = size(mpc{k}.bus, 1);
+    mpc{k}.busname = cell(nb, 1);
+    for b = 1:nb
+        mpc{k}.busname{b} = sprintf('bus %d', mpc{k}.bus(b, BUS_I));
+    end
+    
+    %% add gen emission.rate, genid
+    ng = size(mpc{k}.gen, 1);
+    mpc{k}.emission.rate = zeros(ng, 3);
+    mpc{k}.genid1 = zeros(ng, 2);
+    mpc{k}.genid2 = zeros(2, ng);
+    for g = 1:ng
+        mpc{k}.emission.rate(g,:) = g * [1 2 3];
+        mpc{k}.genid1(g, :) = [g  mpc{k}.gen(g, PMAX)];
+        mpc{k}.genid2(:, g) = [g; mpc{k}.gen(g, PMAX)];
+    end
 end
+custom.bus{1} = { 'busname' };
+custom.gen{1} = { {'emission', 'rate'}, 'genid1' };
+custom.gen{2} = { 'genid2' };
+custom.branch{2} = { 'nonexistent' };
 
 % verbose = 2;
 mpopt = mpoption('out.all', 0, 'verbose', verbose);
@@ -86,6 +108,11 @@ for k = 2:n
     mpc0.gen        = [mpc0.gen;    mpc{k}.gen];
     mpc0.branch     = [mpc0.branch; mpc{k}.branch];
     mpc0.gencost    = [mpc0.gencost; mpc{k}.gencost];
+    
+    mpc0.busname        = [mpc0.busname;        mpc{k}.busname];
+    mpc0.emission.rate  = [mpc0.emission.rate;  mpc{k}.emission.rate];
+    mpc0.genid1         = [mpc0.genid1;         mpc{k}.genid1];
+    mpc0.genid2         = [mpc0.genid2          mpc{k}.genid2];
 end
 
 %% run AC OPF
@@ -103,15 +130,36 @@ for k = 1:n
 end
 
 %% extract the islands
-t = 'mpc_list = extract_islands(mpc) : ';
+t = 'mpcs = extract_islands(mpc) : ';
 mpc1 = extract_islands(mpc0);
-t_ok(iscell(mpc1), [t 'iscell(mpc_list)']);
-t_is(length(mpc1), n, 10, [t 'length(mpc_list) == n']);
+t_ok(iscell(mpc1), [t 'iscell(mpcs)']);
+t_is(length(mpc1), n, 10, [t 'length(mpcs) == n']);
 for k = 1:n
-    t_is(mpc1{k}.bus,     mpc{k}.bus,     10, sprintf('%smpc_list{%d}.bus', t, k));
-    t_is(mpc1{k}.gen,     mpc{k}.gen,     10, sprintf('%smpc_list{%d}.gen', t, k));
-    t_is(mpc1{k}.branch,  mpc{k}.branch,  10, sprintf('%smpc_list{%d}.branch', t, k));
-    t_is(mpc1{k}.gencost, mpc{k}.gencost, 10, sprintf('%smpc_list{%d}.gencost', t, k));
+    t_is(mpc1{k}.bus,     mpc{k}.bus,     10, sprintf('%smpcs{%d}.bus', t, k));
+    t_is(mpc1{k}.gen,     mpc{k}.gen,     10, sprintf('%smpcs{%d}.gen', t, k));
+    t_is(mpc1{k}.branch,  mpc{k}.branch,  10, sprintf('%smpcs{%d}.branch', t, k));
+    t_is(mpc1{k}.gencost, mpc{k}.gencost, 10, sprintf('%smpcs{%d}.gencost', t, k));
+    t_is(length(mpc1{k}.busname), length(mpc0.busname), 10, sprintf('%smpcs{%d}.busnames dim', t, k));
+    t_is(mpc1{k}.emission.rate, mpc0.emission.rate,     10, sprintf('%smpcs{%d}.emission.rate', t, k));
+    t_is(mpc1{k}.genid1,        mpc0.genid1,            10, sprintf('%smpcs{%d}.genid1', t, k));
+    t_is(mpc1{k}.genid2,        mpc0.genid2,            10, sprintf('%smpcs{%d}.genid2', t, k));
+end
+
+%% extract the islands, with custom fields
+t = 'mpcs = extract_islands(mpc, [], custom) : ';
+mpc1 = extract_islands(mpc0, [], custom);
+%mpc1 = extract_islands(mpc0, {}, [], custom);  %% this should work too
+t_ok(iscell(mpc1), [t 'iscell(mpcs)']);
+t_is(length(mpc1), n, 10, [t 'length(mpcs) == n']);
+for k = 1:n
+    t_is(mpc1{k}.bus,     mpc{k}.bus,     10, sprintf('%smpcs{%d}.bus', t, k));
+    t_is(mpc1{k}.gen,     mpc{k}.gen,     10, sprintf('%smpcs{%d}.gen', t, k));
+    t_is(mpc1{k}.branch,  mpc{k}.branch,  10, sprintf('%smpcs{%d}.branch', t, k));
+    t_is(mpc1{k}.gencost, mpc{k}.gencost, 10, sprintf('%smpcs{%d}.gencost', t, k));
+    t_is(length(mpc1{k}.busname), length(mpc{k}.busname), 10, sprintf('%smpcs{%d}.busnames dim', t, k));
+    t_is(mpc1{k}.emission.rate, mpc{k}.emission.rate,     10, sprintf('%smpcs{%d}.emission.rate', t, k));
+    t_is(mpc1{k}.genid1,        mpc{k}.genid1,            10, sprintf('%smpcs{%d}.genid1', t, k));
+    t_is(mpc1{k}.genid2,        mpc{k}.genid2,            10, sprintf('%smpcs{%d}.genid2', t, k));
 end
 
 %% extract single island
@@ -123,6 +171,24 @@ t_is(mpc3.bus,     mpc{k}.bus,     10, sprintf('%smpc%d.bus', t, k));
 t_is(mpc3.gen,     mpc{k}.gen,     10, sprintf('%smpc%d.gen', t, k));
 t_is(mpc3.branch,  mpc{k}.branch,  10, sprintf('%smpc%d.branch', t, k));
 t_is(mpc3.gencost, mpc{k}.gencost, 10, sprintf('%smpc%d.gencost', t, k));
+t_is(length(mpc3.busname), length(mpc0.busname), 10, sprintf('%smpc%d.busnames dim', t, k));
+t_is(mpc3.emission.rate, mpc0.emission.rate,     10, sprintf('%smpc%d.emission.rate', t, k));
+t_is(mpc3.genid1,        mpc0.genid1,            10, sprintf('%smpc%d.genid1', t, k));
+t_is(mpc3.genid2,        mpc0.genid2,            10, sprintf('%smpc%d.genid2', t, k));
+
+%% extract single island, with custom fields
+t = 'mpc3 = extract_islands(mpc, 3, custom) : ';
+mpc3 = extract_islands(mpc0, 3, custom);
+t_ok(isstruct(mpc3), [t 'isstruct(mpc3)']);
+k = 3;
+t_is(mpc3.bus,     mpc{k}.bus,     10, sprintf('%smpc%d.bus', t, k));
+t_is(mpc3.gen,     mpc{k}.gen,     10, sprintf('%smpc%d.gen', t, k));
+t_is(mpc3.branch,  mpc{k}.branch,  10, sprintf('%smpc%d.branch', t, k));
+t_is(mpc3.gencost, mpc{k}.gencost, 10, sprintf('%smpc%d.gencost', t, k));
+t_is(length(mpc3.busname), length(mpc{k}.busname), 10, sprintf('%smpc%d.busnames dim', t, k));
+t_is(mpc3.emission.rate, mpc{k}.emission.rate,     10, sprintf('%smpc%d.emission.rate', t, k));
+t_is(mpc3.genid1,        mpc{k}.genid1,            10, sprintf('%smpc%d.genid1', t, k));
+t_is(mpc3.genid2,        mpc{k}.genid2,            10, sprintf('%smpc%d.genid2', t, k));
 
 %% find the islands
 t = 'groups = find_islands(mpc) : ';
@@ -136,15 +202,36 @@ for k = 1:n
     base = base + nbk;
 end
 
-t = 'mpc_list = extract_islands(mpc, groups) : ';
+%% extract the islands
+t = 'mpcs = extract_islands(mpc, groups) : ';
 mpc2 = extract_islands(mpc0, groups);
-t_ok(iscell(mpc2), [t 'iscell(mpc_list)']);
-t_is(length(mpc2), n, 10, [t 'length(mpc_list) == n']);
+t_ok(iscell(mpc2), [t 'iscell(mpcs)']);
+t_is(length(mpc2), n, 10, [t 'length(mpcs) == n']);
 for k = 1:n
-    t_is(mpc2{k}.bus,     mpc{k}.bus,     10, sprintf('%smpc_list{%d}.bus', t, k));
-    t_is(mpc2{k}.gen,     mpc{k}.gen,     10, sprintf('%smpc_list{%d}.gen', t, k));
-    t_is(mpc2{k}.branch,  mpc{k}.branch,  10, sprintf('%smpc_list{%d}.branch', t, k));
-    t_is(mpc2{k}.gencost, mpc{k}.gencost, 10, sprintf('%smpc_list{%d}.gencost', t, k));
+    t_is(mpc2{k}.bus,     mpc{k}.bus,     10, sprintf('%smpcs{%d}.bus', t, k));
+    t_is(mpc2{k}.gen,     mpc{k}.gen,     10, sprintf('%smpcs{%d}.gen', t, k));
+    t_is(mpc2{k}.branch,  mpc{k}.branch,  10, sprintf('%smpcs{%d}.branch', t, k));
+    t_is(mpc2{k}.gencost, mpc{k}.gencost, 10, sprintf('%smpcs{%d}.gencost', t, k));
+    t_is(length(mpc2{k}.busname), length(mpc0.busname), 10, sprintf('%smpcs{%d}.busnames dim', t, k));
+    t_is(mpc2{k}.emission.rate, mpc0.emission.rate,     10, sprintf('%smpcs{%d}.emission.rate', t, k));
+    t_is(mpc2{k}.genid1,        mpc0.genid1,            10, sprintf('%smpcs{%d}.genid1', t, k));
+    t_is(mpc2{k}.genid2,        mpc0.genid2,            10, sprintf('%smpcs{%d}.genid2', t, k));
+end
+
+%% extract the islands, with custom fields
+t = 'mpcs = extract_islands(mpc, groups, [], custom) : ';
+mpc2 = extract_islands(mpc0, groups, [], custom);
+t_ok(iscell(mpc2), [t 'iscell(mpcs)']);
+t_is(length(mpc2), n, 10, [t 'length(mpcs) == n']);
+for k = 1:n
+    t_is(mpc2{k}.bus,     mpc{k}.bus,     10, sprintf('%smpcs{%d}.bus', t, k));
+    t_is(mpc2{k}.gen,     mpc{k}.gen,     10, sprintf('%smpcs{%d}.gen', t, k));
+    t_is(mpc2{k}.branch,  mpc{k}.branch,  10, sprintf('%smpcs{%d}.branch', t, k));
+    t_is(mpc2{k}.gencost, mpc{k}.gencost, 10, sprintf('%smpcs{%d}.gencost', t, k));
+    t_is(length(mpc2{k}.busname), length(mpc{k}.busname), 10, sprintf('%smpcs{%d}.busnames dim', t, k));
+    t_is(mpc2{k}.emission.rate, mpc{k}.emission.rate,     10, sprintf('%smpcs{%d}.emission.rate', t, k));
+    t_is(mpc2{k}.genid1,        mpc{k}.genid1,            10, sprintf('%smpcs{%d}.genid1', t, k));
+    t_is(mpc2{k}.genid2,        mpc{k}.genid2,            10, sprintf('%smpcs{%d}.genid2', t, k));
 end
 
 %% extract single island
@@ -156,6 +243,72 @@ t_is(mpc4.bus,     mpc{k}.bus,     10, sprintf('%smpc%d.bus', t, k));
 t_is(mpc4.gen,     mpc{k}.gen,     10, sprintf('%smpc%d.gen', t, k));
 t_is(mpc4.branch,  mpc{k}.branch,  10, sprintf('%smpc%d.branch', t, k));
 t_is(mpc4.gencost, mpc{k}.gencost, 10, sprintf('%smpc%d.gencost', t, k));
+t_is(length(mpc4.busname), length(mpc0.busname), 10, sprintf('%smpc%d.busnames dim', t, k));
+t_is(mpc4.emission.rate, mpc0.emission.rate,     10, sprintf('%smpc%d.emission.rate', t, k));
+t_is(mpc4.genid1,        mpc0.genid1,            10, sprintf('%smpc%d.genid1', t, k));
+t_is(mpc4.genid2,        mpc0.genid2,            10, sprintf('%smpc%d.genid2', t, k));
+
+%% extract single island, with custom fields
+t = 'mpc4 = extract_islands(mpc, groups, 4, custom) : ';
+mpc4 = extract_islands(mpc0, groups, 4, custom);
+t_ok(isstruct(mpc4), [t 'isstruct(mpc4)']);
+k = 4;
+t_is(mpc4.bus,     mpc{k}.bus,     10, sprintf('%smpc%d.bus', t, k));
+t_is(mpc4.gen,     mpc{k}.gen,     10, sprintf('%smpc%d.gen', t, k));
+t_is(mpc4.branch,  mpc{k}.branch,  10, sprintf('%smpc%d.branch', t, k));
+t_is(mpc4.gencost, mpc{k}.gencost, 10, sprintf('%smpc%d.gencost', t, k));
+t_is(length(mpc4.busname), length(mpc{k}.busname), 10, sprintf('%smpc%d.busnames dim', t, k));
+t_is(mpc4.emission.rate, mpc{k}.emission.rate,     10, sprintf('%smpc%d.emission.rate', t, k));
+t_is(mpc4.genid1,        mpc{k}.genid1,            10, sprintf('%smpc%d.genid1', t, k));
+t_is(mpc4.genid2,        mpc{k}.genid2,            10, sprintf('%smpc%d.genid2', t, k));
+
+%% extract 2 islands as single case
+t = 'mpc13 = extract_islands(mpc, [1;3]) : ';
+mpc13 = extract_islands(mpc0, [1;3]);
+mpc1 = extract_islands(mpc13, 1);
+mpc3 = extract_islands(mpc13, 2);
+k = 1;
+t_is(mpc1.bus,     mpc{k}.bus,     10, sprintf('%smpc%d.bus', t, k));
+t_is(mpc1.gen,     mpc{k}.gen,     10, sprintf('%smpc%d.gen', t, k));
+t_is(mpc1.branch,  mpc{k}.branch,  10, sprintf('%smpc%d.branch', t, k));
+t_is(mpc1.gencost, mpc{k}.gencost, 10, sprintf('%smpc%d.gencost', t, k));
+t_is(length(mpc1.busname), length(mpc0.busname), 10, sprintf('%smpc%d.busnames dim', t, k));
+t_is(mpc1.emission.rate, mpc0.emission.rate,     10, sprintf('%smpc%d.emission.rate', t, k));
+t_is(mpc1.genid1,        mpc0.genid1,            10, sprintf('%smpc%d.genid1', t, k));
+t_is(mpc1.genid2,        mpc0.genid2,            10, sprintf('%smpc%d.genid2', t, k));
+k = 3;
+t_is(mpc3.bus,     mpc{k}.bus,     10, sprintf('%smpc%d.bus', t, k));
+t_is(mpc3.gen,     mpc{k}.gen,     10, sprintf('%smpc%d.gen', t, k));
+t_is(mpc3.branch,  mpc{k}.branch,  10, sprintf('%smpc%d.branch', t, k));
+t_is(mpc3.gencost, mpc{k}.gencost, 10, sprintf('%smpc%d.gencost', t, k));
+t_is(length(mpc3.busname), length(mpc0.busname), 10, sprintf('%smpc%d.busnames dim', t, k));
+t_is(mpc3.emission.rate, mpc0.emission.rate,     10, sprintf('%smpc%d.emission.rate', t, k));
+t_is(mpc3.genid1,        mpc0.genid1,            10, sprintf('%smpc%d.genid1', t, k));
+t_is(mpc3.genid2,        mpc0.genid2,            10, sprintf('%smpc%d.genid2', t, k));
+
+%% extract 2 islands as single case, with custom fields
+t = 'mpc13 = extract_islands(mpc, [1;3], custom) : ';
+mpc13 = extract_islands(mpc0, [1;3], custom);
+mpc1 = extract_islands(mpc13, 1, custom);
+mpc3 = extract_islands(mpc13, 2, custom);
+k = 1;
+t_is(mpc1.bus,     mpc{k}.bus,     10, sprintf('%smpc%d.bus', t, k));
+t_is(mpc1.gen,     mpc{k}.gen,     10, sprintf('%smpc%d.gen', t, k));
+t_is(mpc1.branch,  mpc{k}.branch,  10, sprintf('%smpc%d.branch', t, k));
+t_is(mpc1.gencost, mpc{k}.gencost, 10, sprintf('%smpc%d.gencost', t, k));
+t_is(length(mpc1.busname), length(mpc{k}.busname), 10, sprintf('%smpc%d.busnames dim', t, k));
+t_is(mpc1.emission.rate, mpc{k}.emission.rate,     10, sprintf('%smpc%d.emission.rate', t, k));
+t_is(mpc1.genid1,        mpc{k}.genid1,            10, sprintf('%smpc%d.genid1', t, k));
+t_is(mpc1.genid2,        mpc{k}.genid2,            10, sprintf('%smpc%d.genid2', t, k));
+k = 3;
+t_is(mpc3.bus,     mpc{k}.bus,     10, sprintf('%smpc%d.bus', t, k));
+t_is(mpc3.gen,     mpc{k}.gen,     10, sprintf('%smpc%d.gen', t, k));
+t_is(mpc3.branch,  mpc{k}.branch,  10, sprintf('%smpc%d.branch', t, k));
+t_is(mpc3.gencost, mpc{k}.gencost, 10, sprintf('%smpc%d.gencost', t, k));
+t_is(length(mpc3.busname), length(mpc{k}.busname), 10, sprintf('%smpc%d.busnames dim', t, k));
+t_is(mpc3.emission.rate, mpc{k}.emission.rate,     10, sprintf('%smpc%d.emission.rate', t, k));
+t_is(mpc3.genid1,        mpc{k}.genid1,            10, sprintf('%smpc%d.genid1', t, k));
+t_is(mpc3.genid2,        mpc{k}.genid2,            10, sprintf('%smpc%d.genid2', t, k));
 
 t = '[groups, isolated] = find_islands(mpc) : ';
 mpc = loadcase('case30');
@@ -176,5 +329,21 @@ t_is(isolated, [11 17 20], 10, [t 'isolated']);
 t_is(sort([11     groups{1}]), find(mpc.bus(:, BUS_AREA) == 1)', 10, [t 'groups{1}']);
 t_is(             groups{2},   find(mpc.bus(:, BUS_AREA) == 3)', 10, [t 'groups{2}']);
 t_is(sort([17 20  groups{3}]), find(mpc.bus(:, BUS_AREA) == 2)', 10, [t 'groups{3}']);
+
+%% extract 2 islands as single case
+t = 'mpc1 = extract_islands(mpc, ''all'') : ';
+mpc1 = extract_islands(mpc, 'all');
+ibr = find( ~ismember(mpc.branch(:, F_BUS), isolated) & ...
+            ~ismember(mpc.branch(:, T_BUS), isolated) );
+ig = find( ~ismember(mpc.gen(:, GEN_BUS), isolated) );
+mpc2 = mpc;
+mpc2.bus(isolated, :) = [];
+mpc2.branch = mpc.branch(ibr, :);
+mpc2.gen    = mpc.gen(ig, :);
+mpc2.gencost = mpc.gencost(ig, :);
+t_is(mpc1.bus,     mpc2.bus,     10, sprintf('%smpc.bus', t));
+t_is(mpc1.gen,     mpc2.gen,     10, sprintf('%smpc.gen', t));
+t_is(mpc1.branch,  mpc2.branch,  10, sprintf('%smpc.branch', t));
+t_is(mpc1.gencost, mpc2.gencost, 10, sprintf('%smpc.gencost', t));
 
 t_end;
