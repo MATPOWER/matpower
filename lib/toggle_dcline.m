@@ -113,8 +113,8 @@ function mpc = userfcn_dcline_ext2int(mpc, args)
 %   in mpc as described above. The optional args are not currently used.
 %   It adds two dummy generators for each in-service DC line, with the
 %   appropriate upper and lower generation bounds and corresponding
-%   entries in gencost. It also expands any A and N matrices accordingly,
-%   if present.
+%   entries in gencost. It also expands columns of any A and N matrices
+%   accordingly, if present.
 
 %% define named indices into data matrices
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
@@ -366,7 +366,7 @@ if isfield(results, 'gencost') && ~isempty(results.gencost)
     results.gencost = results.gencost(1:ng, :);
 end
 
-%% delete corresponding rows from A and N, if present
+%% delete corresponding columns from A and N, if present
 if isfield(results, 'A') && ~isempty(results.A)
     [mA, nA] = size(results.A);
     if nA >= 2*nb + 2*ng + 4*ndc    %% assume AC dimensions
