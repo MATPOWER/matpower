@@ -15,6 +15,18 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.1
 -----------------
 
+4/7/14
+    - Added experimental feature, via function psse2mpc(), to
+      import PSS/E RAW data (version 33) into a MATPOWER case file.
+      Supporting functions include:
+            psse_convert_33()
+            psse_convert_hvdc_33()
+            psse_convert_xfmr_33()
+            psse_count_lines()
+            psse_extract_data()
+            psse_read_33()
+            psse_read_section()
+
 3/28/14
     - Enhanced extract_islands() to handle DC lines, custom fields
       and extraction of multiple islands into a single case struct.
