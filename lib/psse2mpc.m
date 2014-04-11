@@ -48,8 +48,8 @@ function mpc = psse2mpc(rawfile_name)
 %   under other licensing terms, the licensors of MATPOWER grant
 %   you additional permission to convey the resulting work.
 
-%% read data from version 33 PSS/E RAW file
-data = psse_read_33(rawfile_name);
+%% read data from PSS/E RAW file
+data = psse_read(rawfile_name);
 
 %% convert to MATPOWER case file
-mpc = psse_convert_33(data);
+mpc = psse_convert(data);
