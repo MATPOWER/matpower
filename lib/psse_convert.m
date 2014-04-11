@@ -1,17 +1,17 @@
-function mpc = psse_convert_33(data)
-%PSSE_CONVERT_33  Converts data read from v.33 PSS/E RAW to MATPOWER case.
-%   MPC = PSSE_CONVERT_33(DATA)
+function mpc = psse_convert(data)
+%PSSE_CONVERT  Converts data read from PSS/E RAW file to MATPOWER case.
+%   MPC = PSSE_CONVERT(DATA)
 %
-%   Converts data read from a version 33 PSS/E RAW data file into a
+%   Converts data read from a version RAW data file into a
 %   MATPOWER case struct.
 %
 %   Input:
-%       DATA : struct read by PSSE_READ_33 (see PSSE_READ_33 for details).
+%       DATA : struct read by PSSE_READ (see PSSE_READ for details).
 %
 %   Output:
 %       MPC : a MATPOWER case struct created from the PSS/E data
 %
-%   See also PSSE_READ_33.
+%   See also PSSE_READ.
 
 %   MATPOWER
 %   $Id$
@@ -174,12 +174,12 @@ gen(:, [GEN_BUS PG QG QMAX QMIN VG MBASE GEN_STATUS PMAX PMIN]) = ...
     data.gen.num(:, [1 3 4 5 6 7 9 15 17 18]);
 
 %% PSS/E transformer data
-[transformer, bus, bus_name] = psse_convert_xfmr_33(data.trans2.num, data.trans3.num, baseMVA, bus, bus_name);
+[transformer, bus, bus_name] = psse_convert_xfmr(data.trans2.num, data.trans3.num, baseMVA, bus, bus_name);
 branch = [branch; transformer];
 
 %% PSS/E two terminal HVDC line data
 % basekV = bus(:,[BUS_I,BASE_KV]); % The bus base value to be input into transformer conversion
-dcline = psse_convert_hvdc_33(data.twodc.num, bus);
+dcline = psse_convert_hvdc(data.twodc.num, bus);
 
 %% assemble MPC
 mpc = struct( ...
