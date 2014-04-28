@@ -392,7 +392,6 @@ end
 %%  I, MODSW, VSWHI, VSWLO, SWREM, RMIDNT, BINIT, N1, B1, N2, B2, ... N8, B8
 %% v30:
 %%  I, MODSW, VSWHI, VSWLO, SWREM, RMPCT, 'RMIDNT', BINIT, N1, B1, N2, B2, ... N8, B8
-%%  I, MODSW, VSWHI, VSWLO, SWREM,        'RMIDNT', BINIT, N1, B1, N2, B2, ... N8, B8
 %% v31-33:
 %%  switched shunt section follows FACTS device data
 if rev < 31
