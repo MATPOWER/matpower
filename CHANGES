@@ -15,6 +15,19 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.1
 -----------------
 
+4/28/14
+    - Major revision of PSS/E import code to further improve
+      robustness and include Octave support. Updated psse2mpc() to
+      include direct saving of result to MATPOWER case file.
+      Added functions:
+            psse_parse()
+            psse_parse_line()
+            psse_parse_section()
+      Removed functions:
+            psse_count_lines()
+            psse_extract_data()
+            psse_read_section()
+
 4/11/14
     - Significant updates to PSS/E import code to improve robustness
       and (mostly) handle versions 29 to 33. Renamed the 4 functions

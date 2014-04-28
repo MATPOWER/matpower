@@ -82,11 +82,16 @@ rev = data.id.REV;
 numbus = data.bus.num;
 [nb, ncols] = size(numbus); %% number of buses, number of cols
 bus = zeros(nb, VMIN);      %% initialize bus matrix
+if rev == 1
+    bus_name_col = 10;
+else
+    bus_name_col = 2;
+end
 if sort_buses
     [numbus, i] = sortrows(numbus, 1);
-    bus_name = data.bus.txt(i, 2);
+    bus_name = data.bus.txt(i, bus_name_col);
 else
-    bus_name = data.bus.txt(:, 2);
+    bus_name = data.bus.txt(:, bus_name_col);
 end
 if rev == 1
     bus(:, [BUS_I BUS_TYPE PD QD GS BS BUS_AREA VM VA BASE_KV ZONE]) = ...
@@ -163,7 +168,7 @@ swshuntbus = e2i(data.swshunt.num(:,1));
 Cswsh = sparse(1:nswsh, swshuntbus, 1, nswsh, nb);
 if rev == 1
     bus(:, BS) = bus(:, BS) + Cswsh' * data.swshunt.num(:, 6);
-elseif rev < 30
+elseif rev <= 29
     bus(:, BS) = bus(:, BS) + Cswsh' * data.swshunt.num(:, 7);
 elseif rev < 32
     bus(:, BS) = bus(:, BS) + Cswsh' * data.swshunt.num(:, 8);
