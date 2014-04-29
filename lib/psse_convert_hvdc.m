@@ -56,9 +56,10 @@ c = idx_dcline;
 
 nb = size(bus, 1);
 ndc = size(dc, 1);
+e2i = sparse(bus(:, BUS_I), ones(nb, 1), 1:nb, max(bus(:, BUS_I)), 1);
 if ~ndc
-	dcline = [];
-	return;
+    dcline = [];
+    return;
 end
 
 %% v1: (http://www.ee.washington.edu/research/pstca/formats/pti.txt)
@@ -90,11 +91,9 @@ dcline = zeros(ndc, c.LOSS1); % initiate the hvdc data format
 indr = dc(:,13); % rectifier end bus number
 indi = dc(:,30); % inverter end bus number
 dcind = [indr indi]; 
-nindr = interp1q(bus(:, BUS_I),(1:nb)',indr);
-nindi = interp1q(bus(:, BUS_I),(1:nb)',indi);
 % bus nominal voltage
-Vr = bus(nindr, VM);
-Vi = bus(nindi, VM);
+Vr = bus(e2i(indr), VM);
+Vi = bus(e2i(indi), VM);
 %% Calculate the real power input at the from end
 PMW = zeros(ndc, 1);
 for i = 1:ndc

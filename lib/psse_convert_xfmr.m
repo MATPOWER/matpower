@@ -65,37 +65,28 @@ function [xfmr, bus, bus_name] = psse_convert_xfmr(trans2, trans3, baseMVA, bus,
     TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 
-%% create fictitious buses for star point of 3 winding transformers
+%% sizes
 nb = size(bus, 1);
-nt3 = size(trans3, 1);
-starbus = zeros(nt3, VMIN);     %% initialize output matrix
-if nt3 > 0
-	mb =  max(bus(:, BUS_I));       %% find maximum bus number
-	%% for area and zone data, use the data for winding 1
-	wind1bus = trans3(:,1);         %% winding1 bus number
-	ib = interp1q(bus(:,1), (1:nb)', wind1bus); %% corresponding bus index
-	starbus(:, BUS_I) = (mb+1:mb+nt3)'; %% bus numbers follow originals
-	starbus(:, BUS_TYPE) = PQ;
-	starbus(trans3(:,12)==0, BUS_TYPE) = NONE;  %% isolated if transformer is off-line
-	starbus(:, VA) = trans3(:,31);  %% VA = star point phase angle
-	starbus(:, VM) = trans3(:,30);  %% VM = star point voltage magnitude (PU)
-	starbus(:, [BUS_AREA, ZONE]) = bus(ib, [7,11]); %% wind1 bus area, zone
-	starbus(:, BASE_KV) = 1;        %% baseKV = 1 kV
-	starbus(:, VMAX) = 1.1;
-	starbus(:, VMIN) = 0.9;
-end
-
-%% eliminate out-of-service transformers (but, why?)
-status2 = trans2(:,12); % find the status of the 2 winding transformers
-status3 = trans3(:,12); % find the status of the 3 winding transformers
-idx2 = find(status2 > 0);
-idx3 = find(status3 > 0); %find the transformers in service
-trans2 = trans2(idx2,:);
-trans3 = trans3(idx3,:);
-starbus = starbus(idx3,:);
-
 nt2 = size(trans2, 1);
 nt3 = size(trans3, 1);
+
+%%-----  create fictitious buses for star point of 3 winding transformers  -----
+starbus = zeros(nt3, VMIN);     %% initialize additional bus matrix
+if nt3 > 0
+    mb =  max(bus(:, BUS_I));       %% find maximum bus number
+    b = 10^ceil(log10(mb+1));       %% start new numbers at next order of magnitude
+    wind1bus = trans3(:,1);         %% winding1 bus number
+    e2i = sparse(bus(:, BUS_I), ones(nb, 1), 1:nb, max(bus(:, BUS_I)), 1);
+    starbus(:, BUS_I) = (b+1:b+nt3)';   %% bus numbers follow originals
+    starbus(:, BUS_TYPE) = PQ;
+    starbus(trans3(:,12)==0, BUS_TYPE) = NONE;  %% isolated if transformer is off-line
+    starbus(:, VA) = trans3(:,31);  %% VA = star point voltage angle
+    starbus(:, VM) = trans3(:,30);  %% VM = star point voltage magnitude (PU)
+    starbus(:, [BUS_AREA, ZONE]) = bus(e2i(wind1bus), [7,11]); %% wind1 bus area, zone
+    starbus(:, BASE_KV) = 1;        %% baseKV = 1 kV (RayZ: why?)
+    starbus(:, VMAX) = 1.1;
+    starbus(:, VMIN) = 0.9;
+end
 
 %% PSS/E two winding transformer data
 %% I,J,K,CKT,CW,CZ,CM,MAG1,MAG2,NMETR,'NAME',STAT,O1,F1,...,O4,F4,VECGRP (cols 1-20) (ignore VECGRP)
@@ -107,11 +98,11 @@ nt3 = size(trans3, 1);
 %% check for bad bus numbers
 k = find(fbus == 0 | tbus == 0);
 if ~isempty(k)
-	fprintf('WARNING: %d two-winding transformers have bad bus numbers', length(k));
-	fbus(k) = [];
-	tbus(k) = [];
-	trans2(k, :) = [];
-	nt2 = nt2 - length(k);
+    fprintf('WARNING: Ignoring %d two-winding transformers with bad bus numbers', length(k));
+    fbus(k) = [];
+    tbus(k) = [];
+    trans2(k, :) = [];
+    nt2 = nt2 - length(k);
 end
 Zbs = bus(:, BASE_KV).^2 / baseMVA;     %% system impedance base
 if ~isempty(trans2)
@@ -122,7 +113,7 @@ if ~isempty(trans2)
     cz3 = find(trans2(:,6) == 3);   %% CZ = 3
     cz23 = [cz2;cz3];               %% CZ = 2 or 3
 
-    R = trans2(:,21);               %% 
+    R = trans2(:,21);
     X = trans2(:,22);
     Zb = ones(nt2, 1);
     Zb(cz23) = trans2(cz23,25).^2 ./ trans2(cz23,23);
@@ -147,28 +138,19 @@ end
 %% check for bad bus numbers
 k = find(ind1 == 0 | ind2 == 0 | ind3 == 0);
 if ~isempty(k)
-	fprintf('WARNING: %d three-winding transformers have bad bus numbers', length(k));
-	ind1(k) = [];
-	ind2(k) = [];
-	ind3(k) = [];
-	trans3(k, :) = [];
-	starbus(k, :) = [];
-	nt3 = nt3 - length(k);
+    fprintf('WARNING: Ignoring %d three-winding transformers with bad bus numbers', length(k));
+    ind1(k) = [];
+    ind2(k) = [];
+    ind3(k) = [];
+    trans3(k, :) = [];
+    starbus(k, :) = [];
+    nt3 = nt3 - length(k);
 end
-% finish adding the star point bus
-bus = [bus; starbus];
-if nargin > 4 && nargout > 2
-    starbus_name = cell(nt3, 1);
-    for k = 1:nt3
-        starbus_name{k} = sprintf('STAR_POINT_XFMR_%d', k);
-    end
-    bus_name = [bus_name; starbus_name];
-end
-% Each three winding transformer will be converted into 3 branches:
-% The branches will be in the order of
-% # winding1 -> # winding2
-% # winding2 -> # winding3
-% # winding3 -> # winding1
+%% Each three winding transformer will be converted into 3 branches:
+%% The branches will be in the order of
+%% # winding1 -> # winding2
+%% # winding2 -> # winding3
+%% # winding3 -> # winding1
 if ~isempty(trans3)
     cw2 = find(trans3(:,5) == 2);   %% CW = 2
     cw3 = find(trans3(:,5) == 3);   %% CW = 3
@@ -222,56 +204,66 @@ if ~isempty(trans3)
     X3 = (X31+X23-X12) ./ 2;
 end
 
-%% Put the the transformer data together based on MATPOWER data format
-
+%%-----  assemble transformer data into MATPOWER branch format  -----
 %%% two winding transformers %%%
-xfmr2 = zeros(nt2, ANGMAX); % Initialize the info matrix of two winding transformer
+xfmr2 = zeros(nt2, ANGMAX);
 xfmr2(:, [F_BUS T_BUS]) = trans2(:,[1,2]);
-xfmr2(:, [BR_R BR_X]) = [R,X];
+xfmr2(:, [BR_R BR_X TAP SHIFT]) = [R X tap shift];
 xfmr2(:, [RATE_A RATE_B RATE_C]) = trans2(:,[27,28,29]);
-xfmr2(:, [TAP SHIFT]) = [tap,shift];
 xfmr2(:, BR_STATUS) = trans2(:,12);
 xfmr2(:, ANGMIN) = -360;
 xfmr2(:, ANGMAX) = 360;
 
 %%% three winding transformers %%%
 xfmr3 = zeros(3*nt3, ANGMAX);
-del_idx3 = [];
-status3 = trans3(:, 12);
-for i = 1:nt3
-    % check the status vector in RAW data and find the windings that out of
-    % services. Branches connecting the out of service winding will be
-    % eliminated
-    % to determine the branches that will be eliminated
-    status = status3(i);
-    if status == 2
-        del_idx3 = [del_idx3;(i-1)*3+2]; % record the index of winding 2
-    elseif status == 3
-        del_idx3 = [del_idx3;(i-1)*3+3]; % record the index of winding 3
-    elseif status == 4
-        del_idx3 = [del_idx3;(i-1)*3+1]; % record the index of winding 1
-    end
-    % begin to assign values
-    % numbering the winding buses
-    xfmr3(((i-1)*3+1),[F_BUS T_BUS]) = [trans3(i,1),starbus(i,1)]; % 
-    xfmr3(((i-1)*3+2),[F_BUS T_BUS]) = [trans3(i,2),starbus(i,1)];
-    xfmr3(((i-1)*3+3),[F_BUS T_BUS]) = [trans3(i,3),starbus(i,1)];
-    % impedances
-    xfmr3(((i-1)*3+1),[BR_R BR_X]) = [R1(i),X1(i)];
-    xfmr3(((i-1)*3+2),[BR_R BR_X]) = [R2(i),X2(i)];
-    xfmr3(((i-1)*3+3),[BR_R BR_X]) = [R3(i),X3(i)];
-    % ratings
-    xfmr3(((i-1)*3+1),[RATE_A RATE_B RATE_C]) = trans3(i,[35,36,37]);
-    xfmr3(((i-1)*3+2),[RATE_A RATE_B RATE_C]) = trans3(i,[51,52,53]);
-    xfmr3(((i-1)*3+3),[RATE_A RATE_B RATE_C]) = trans3(i,[67,68,69]);
-    % tap ratio & phase shifts
-    xfmr3(((i-1)*3+1),[TAP SHIFT]) = [tap1(i),shift1(i)];
-    xfmr3(((i-1)*3+2),[TAP SHIFT]) = [tap2(i),shift2(i)];
-    xfmr3(((i-1)*3+3),[TAP SHIFT]) = [tap3(i),shift3(i)];
+idx1 = (1:3:3*nt3)';        %% indices of winding 1
+idx2 = idx1+1;              %% indices of winding 2
+idx3 = idx1+2;              %% indices of winding 3
+%% bus numbers
+xfmr3(idx1, [F_BUS T_BUS]) = [trans3(:,1), starbus(:,1)];
+xfmr3(idx2, [F_BUS T_BUS]) = [trans3(:,2), starbus(:,1)];
+xfmr3(idx3, [F_BUS T_BUS]) = [trans3(:,3), starbus(:,1)];
+%% impedances, tap ratios & phase shifts
+xfmr3(idx1, [BR_R BR_X TAP SHIFT]) = [R1 X1 tap1 shift1];
+xfmr3(idx2, [BR_R BR_X TAP SHIFT]) = [R2 X2 tap2 shift2];
+xfmr3(idx3, [BR_R BR_X TAP SHIFT]) = [R3 X3 tap3 shift3];
+%% ratings
+xfmr3(idx1, [RATE_A RATE_B RATE_C]) = trans3(:,[35,36,37]);
+xfmr3(idx2, [RATE_A RATE_B RATE_C]) = trans3(:,[51,52,53]);
+xfmr3(idx3, [RATE_A RATE_B RATE_C]) = trans3(:,[67,68,69]);
+xfmr3(:, ANGMIN) = -360;        %% angle limits
+xfmr3(:, ANGMAX) =  360;
+%% winding status
+xfmr3(:, BR_STATUS) = 1;        %% initialize to all in-service
+status = trans3(:, 12);
+k1 = find(status == 0 | status == 4);   %% winding 1 out-of-service
+k2 = find(status == 0 | status == 2);   %% winding 2 out-of-service
+k3 = find(status == 0 | status == 3);   %% winding 3 out-of-service
+if ~isempty(k1)
+    xfmr3(idx1(k1), BR_STATUS) = 0;
 end
-xfmr3(del_idx3,:) = []; % delete the off line windings
-xfmr3(:, ANGMIN) = -360*ones(size(xfmr3,1),1); % Angle limits
-xfmr3(:, ANGMAX) = 360*ones(size(xfmr3,1),1); % Adding the angle limit on the transformer data
-xfmr3(:, BR_STATUS) = ones(size(xfmr3,1),1); % only in-service windings will be retained
-%% integrate all transformer data
+if ~isempty(k2)
+    xfmr3(idx2(k2), BR_STATUS) = 0;
+end
+if ~isempty(k3)
+    xfmr3(idx3(k3), BR_STATUS) = 0;
+end
+
+%% combine 2-winding and 3-winding transformer data
 xfmr = [xfmr2; xfmr3];
+
+% %% delete out-of-service windings
+% k = find(xfmr(:, BR_STATUS) == 0);
+% xfmr(k, :) = [];
+% k = find(trans3(:,12) <= 0);
+% starbus(k, :) = [];
+
+%% finish adding the star point bus
+bus = [bus; starbus];
+if nargin > 4 && nargout > 2
+    starbus_name = cell(nt3, 1);
+    for k = 1:nt3
+        starbus_name{k} = sprintf('STAR_POINT_XFMR_%d', k);
+    end
+    bus_name = [bus_name; starbus_name];
+end
