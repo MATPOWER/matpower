@@ -113,7 +113,7 @@ nt = length(template);
 if have_sections
     nr = sections(s).last - sections(s).first + 1;
     recs = records(sections(s).first:sections(s).last);
-    if ~isempty(sections(s).name) && ~strcmp(upper(label), sections(s).name)
+    if ~isempty(sections(s).name) && ~strcmpi(label, sections(s).name)
         fprintf('-----  WARNING:  Expected section labeled: ''%s''\n', upper(label));
         fprintf('-----            Found section labeled:    ''%s''\n', sections(s).name);
     end

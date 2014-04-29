@@ -60,8 +60,8 @@ if nargin < 2
 end
 
 %% define some functions needed for use with CELLFUN
-end_of_section  = @(s)~isempty(regexp(s, '^(Q|\s*0)[\s]*(/.*)?$'));
-q_record        = @(s)~isempty(regexp(s, '^Q'));
+end_of_section  = @(s)~isempty(regexp(s, '^(Q|\s*0)[\s]*(/.*)?$', 'once'));
+q_record        = @(s)~isempty(regexp(s, '^Q', 'once'));
 section_name    = @(s)regexp(s, '/\s*END OF (.*)\s', 'tokens');
 
 %% read in the file, split on newlines

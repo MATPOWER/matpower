@@ -213,18 +213,14 @@ if rev == 1
     data.branch = psse_parse_section(records, sections, s, verbose, ...
         'branch', 'dd.ffffffffffffd');
 %       'branch', 'dddffffffffffffd');
-elseif 1    %% skip everything after ST for speed
-    data.branch = psse_parse_section(records, sections, s, verbose, ...
-        'branch', 'dd.ffffffffffd');
-%       'branch', 'ddsffffffffffd');
-else    %% read all available data
+else
     if rev < 31
         data.branch = psse_parse_section(records, sections, s, verbose, ...
-            'branch', 'dd.ffffffffffd.........');
+            'branch', 'dd.ffffffffffd');
 %           'branch', 'ddsffffffffffdfdfdfdfdf');
     else
         data.branch = psse_parse_section(records, sections, s, verbose, ...
-            'branch', 'dd.ffffffffffd..........');
+            'branch', 'dd.ffffffffffd');
 %           'branch', 'ddsffffffffffddfdfdfdfdf');
     end
 end
@@ -245,7 +241,7 @@ if rev > 1
     %% section in RAW file. We read in 2 passes, first pass determines the type of
     %% each, second pass reads the data.
     label = 'transformer';
-    if ~isempty(sections(s).name) && ~strcmp(upper(label), sections(s).name)
+    if ~isempty(sections(s).name) && ~strcmpi(label, sections(s).name)
         fprintf('-----  WARNING:  Expected section labeled: ''%s''\n', upper(label));
         fprintf('-----            Found section labeled:    ''%s''\n', sections(s).name);
     end
@@ -273,7 +269,7 @@ if rev > 1
         pat = '[^''",\s/]+\s*(,|\s)\s*[^''",\s/]+\s*(,|\s)\s*([^''",\s/]+)';
         m = regexp(records{i}, pat, 'tokens', 'once');
         if length(m) ~= 3
-            m
+            disp(m);
             error('m should be length 3');
         end
         if length(m{3}) == 1 && m{3}(1) == '0'  %% two-winding
@@ -410,7 +406,7 @@ s = s + 1;
 %%  IPR,NBR,ANMXR,ANMNR,RCR,XCR,EBASR,TRR,TAPR,TMXR,TMNR,STPR,ICR,IFR,ITR,IDR,XCAPR (13-29)
 %%  IPI,NBI,ANMXI,ANMNI,RCI,XCI,EBASI,TRI,TAPI,TMXI,TMNI,STPI,ICI,IFI,ITI,IDI,XCAPI (30-46)
 label = 'two-terminal DC';
-if ~isempty(sections(s).name) && ~strcmp(upper(label), sections(s).name)
+if ~isempty(sections(s).name) && ~strcmpi(label, sections(s).name)
     fprintf('-----  WARNING:  Expected section labeled: ''%s''\n', upper(label));
     fprintf('-----            Found section labeled:    ''%s''\n', sections(s).name);
 end
