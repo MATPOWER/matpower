@@ -105,7 +105,7 @@ if ~isempty(k)
     nt2 = nt2 - length(k);
 end
 Zbs = bus(:, BASE_KV).^2 / baseMVA;     %% system impedance base
-if ~isempty(trans2)
+if nt2 > 0
     cw2 = find(trans2(:,5) == 2);   %% CW = 2
     cw3 = find(trans2(:,5) == 3);   %% CW = 3
     cw23 = [cw2;cw3];               %% CW = 2 or 3
@@ -151,7 +151,7 @@ end
 %% # winding1 -> # winding2
 %% # winding2 -> # winding3
 %% # winding3 -> # winding1
-if ~isempty(trans3)
+if nt3 > 0
     cw2 = find(trans3(:,5) == 2);   %% CW = 2
     cw3 = find(trans3(:,5) == 3);   %% CW = 3
     cw23 = [cw2;cw3];               %% CW = 2 or 3
@@ -207,46 +207,50 @@ end
 %%-----  assemble transformer data into MATPOWER branch format  -----
 %%% two winding transformers %%%
 xfmr2 = zeros(nt2, ANGMAX);
-xfmr2(:, [F_BUS T_BUS]) = trans2(:,[1,2]);
-xfmr2(:, [BR_R BR_X TAP SHIFT]) = [R X tap shift];
-xfmr2(:, [RATE_A RATE_B RATE_C]) = trans2(:,[27,28,29]);
-xfmr2(:, BR_STATUS) = trans2(:,12);
-xfmr2(:, ANGMIN) = -360;
-xfmr2(:, ANGMAX) = 360;
+if nt2 > 0
+    xfmr2(:, [F_BUS T_BUS]) = trans2(:,[1,2]);
+    xfmr2(:, [BR_R BR_X TAP SHIFT]) = [R X tap shift];
+    xfmr2(:, [RATE_A RATE_B RATE_C]) = trans2(:,[27,28,29]);
+    xfmr2(:, BR_STATUS) = trans2(:,12);
+    xfmr2(:, ANGMIN) = -360;
+    xfmr2(:, ANGMAX) = 360;
+end
 
 %%% three winding transformers %%%
 xfmr3 = zeros(3*nt3, ANGMAX);
-idx1 = (1:3:3*nt3)';        %% indices of winding 1
-idx2 = idx1+1;              %% indices of winding 2
-idx3 = idx1+2;              %% indices of winding 3
-%% bus numbers
-xfmr3(idx1, [F_BUS T_BUS]) = [trans3(:,1), starbus(:,1)];
-xfmr3(idx2, [F_BUS T_BUS]) = [trans3(:,2), starbus(:,1)];
-xfmr3(idx3, [F_BUS T_BUS]) = [trans3(:,3), starbus(:,1)];
-%% impedances, tap ratios & phase shifts
-xfmr3(idx1, [BR_R BR_X TAP SHIFT]) = [R1 X1 tap1 shift1];
-xfmr3(idx2, [BR_R BR_X TAP SHIFT]) = [R2 X2 tap2 shift2];
-xfmr3(idx3, [BR_R BR_X TAP SHIFT]) = [R3 X3 tap3 shift3];
-%% ratings
-xfmr3(idx1, [RATE_A RATE_B RATE_C]) = trans3(:,[35,36,37]);
-xfmr3(idx2, [RATE_A RATE_B RATE_C]) = trans3(:,[51,52,53]);
-xfmr3(idx3, [RATE_A RATE_B RATE_C]) = trans3(:,[67,68,69]);
-xfmr3(:, ANGMIN) = -360;        %% angle limits
-xfmr3(:, ANGMAX) =  360;
-%% winding status
-xfmr3(:, BR_STATUS) = 1;        %% initialize to all in-service
-status = trans3(:, 12);
-k1 = find(status == 0 | status == 4);   %% winding 1 out-of-service
-k2 = find(status == 0 | status == 2);   %% winding 2 out-of-service
-k3 = find(status == 0 | status == 3);   %% winding 3 out-of-service
-if ~isempty(k1)
-    xfmr3(idx1(k1), BR_STATUS) = 0;
-end
-if ~isempty(k2)
-    xfmr3(idx2(k2), BR_STATUS) = 0;
-end
-if ~isempty(k3)
-    xfmr3(idx3(k3), BR_STATUS) = 0;
+if nt3 > 0
+    idx1 = (1:3:3*nt3)';        %% indices of winding 1
+    idx2 = idx1+1;              %% indices of winding 2
+    idx3 = idx1+2;              %% indices of winding 3
+    %% bus numbers
+    xfmr3(idx1, [F_BUS T_BUS]) = [trans3(:,1), starbus(:,1)];
+    xfmr3(idx2, [F_BUS T_BUS]) = [trans3(:,2), starbus(:,1)];
+    xfmr3(idx3, [F_BUS T_BUS]) = [trans3(:,3), starbus(:,1)];
+    %% impedances, tap ratios & phase shifts
+    xfmr3(idx1, [BR_R BR_X TAP SHIFT]) = [R1 X1 tap1 shift1];
+    xfmr3(idx2, [BR_R BR_X TAP SHIFT]) = [R2 X2 tap2 shift2];
+    xfmr3(idx3, [BR_R BR_X TAP SHIFT]) = [R3 X3 tap3 shift3];
+    %% ratings
+    xfmr3(idx1, [RATE_A RATE_B RATE_C]) = trans3(:,[35,36,37]);
+    xfmr3(idx2, [RATE_A RATE_B RATE_C]) = trans3(:,[51,52,53]);
+    xfmr3(idx3, [RATE_A RATE_B RATE_C]) = trans3(:,[67,68,69]);
+    xfmr3(:, ANGMIN) = -360;        %% angle limits
+    xfmr3(:, ANGMAX) =  360;
+    %% winding status
+    xfmr3(:, BR_STATUS) = 1;        %% initialize to all in-service
+    status = trans3(:, 12);
+    k1 = find(status == 0 | status == 4);   %% winding 1 out-of-service
+    k2 = find(status == 0 | status == 2);   %% winding 2 out-of-service
+    k3 = find(status == 0 | status == 3);   %% winding 3 out-of-service
+    if ~isempty(k1)
+        xfmr3(idx1(k1), BR_STATUS) = 0;
+    end
+    if ~isempty(k2)
+        xfmr3(idx2(k2), BR_STATUS) = 0;
+    end
+    if ~isempty(k3)
+        xfmr3(idx3(k3), BR_STATUS) = 0;
+    end
 end
 
 %% combine 2-winding and 3-winding transformer data
