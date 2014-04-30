@@ -98,7 +98,11 @@ end
 [d, c] = psse_parse_line(records{1}, 'dfdfff');
 nn = length(d);
 data.id.IC = d{1};
-data.id.SBASE = d{2};
+if isempty(d{2}) || d{2} <= 0
+    error('ERROR: Probable corrupt file, unable to read a valid SBASE value from the first line.');
+else
+    data.id.SBASE = d{2};
+end
 data.id.REV = 0;
 data.id.XFRRAT = 0;
 data.id.NSFRAT = 0;
@@ -133,7 +137,7 @@ end
 if ~rev
     rev = data.id.REV;
 end
-if data.id.IC ~= 0
+if isempty(data.id.IC) || data.id.IC ~= 0
     fprintf('WARNING: IC = %d indicates that this may be a change case, rather than base case\n         PSSE2MPC is NOT designed to handle change cases.\n', data.id.IC);
 end
 if data.id.XFRRAT > 0
