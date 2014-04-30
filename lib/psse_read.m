@@ -73,9 +73,7 @@ str = fileread(rawfile_name);
 if verbose
     fprintf(' done.\nSplitting into individual lines ...');
 end
-records = strsplit(str, '\n|\r\n|\r', ...
-    'CollapseDelimiters', false, ...
-    'DelimiterType', 'RegularExpression');
+records = regexp(str, '\n|\r\n|\r', 'split');
 if verbose
     str = sprintf('%d lines read', length(records));
     spacers = repmat('.', 1, 32-length(str));
@@ -106,7 +104,7 @@ iN = [3 eos-1];
 names = cell(1, ns);
 names{1} = 'ID';
 for k = 2:ns
-    tmp = strsplit(records{eos(k-1)}, 'DATA');
+    tmp = regexp(records{eos(k-1)}, 'DATA', 'split');
     tmp2 = section_name(tmp{1});
     if isempty(tmp2)
         names{k} = '';
