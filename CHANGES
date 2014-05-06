@@ -15,6 +15,11 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.1
 -----------------
 
+5/6/14
+    - Modified savecase() to automatically add a comment line
+      with the function name, and make sure the name is converted
+      to a legal function name before saving.
+
 4/28/14
     - Major revision of PSS/E import code to further improve
       robustness and include Octave support. Updated psse2mpc() to

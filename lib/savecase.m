@@ -67,10 +67,14 @@ function fname_out = savecase(fname, varargin)
 
 %% default arguments
 if ischar(varargin{1}) || iscell(varargin{1})
-    comment = varargin{1};
+    if ischar(varargin{1})
+        comment = {varargin{1}};    %% convert char to single element cell array
+    else
+        comment = varargin{1};
+    end
     [args{1:(length(varargin)-1)}] = deal(varargin{2:end});
 else
-    comment = '';
+    comment = {''};
     args = varargin;
 end
 mpc_ver = '2';              %% default MATPOWER case file version
@@ -143,6 +147,11 @@ end
 if isempty(extension)
     extension = '.m';
 end
+if regexp(fcn_name, '\W')
+    old_fcn_name = fcn_name;
+    fcn_name = regexprep(fcn_name, '\W', '_');
+    fprintf('WARNING: ''%s'' is not a valid function name, changed to ''%s''\n', old_fcn_name, fcn_name);
+end
 fname = fullfile(pathstr, [fcn_name extension]);
 
 %% open and write the file
@@ -179,14 +188,13 @@ else                                %% M-file
         fprintf(fd, 'function mpc = %s\n', fcn_name);
         prefix = 'mpc.';
     end
-    if ~isempty(comment)
-        if ischar(comment)
-            fprintf(fd, '%%%s\n', comment);
-        elseif iscell(comment)
-            for k = 1:length(comment)
-                fprintf(fd, '%%%s\n', comment{k});
-            end
-        end
+    if isempty(comment{1})
+        comment{1} = sprintf('%s', upper(fcn_name));
+    else
+        comment{1} = sprintf('%s  %s', upper(fcn_name), comment{1});
+    end
+    for k = 1:length(comment)
+        fprintf(fd, '%%%s\n', comment{k});
     end
     fprintf(fd, '\n%%%% MATPOWER Case Format : Version %s\n', mpc_ver);    
     if ~strcmp(mpc_ver, '1')
