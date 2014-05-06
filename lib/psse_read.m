@@ -88,7 +88,7 @@ qi = find(cellfun(q_record, records(eos)));
 if ~isempty(qi)         %% remove everything beyond Q record ...
     if qi(1) > 1 && eos(qi(1)) - eos(qi(1)-1) > 1
         %% ... leaving Q record itself, if it is a section terminator
-        records(eos(qi(1)+1):end) = [];
+        records(eos(qi(1))+1:end) = [];
         eos(qi(1)+1:end) = [];
     else
         %% ... removing Q record too

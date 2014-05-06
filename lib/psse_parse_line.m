@@ -1,4 +1,4 @@
-function [data, comment] = psse_parse_line(str, template)
+function [data, comment] = psse_parse_line(str, t)
 %PSSE_PARSE_LINE  Reads and parses a single line from a PSS/E RAW data file
 %   [DATA, COMMENT] = PSSE_PARSE_LINE(FID)
 %   [DATA, COMMENT] = PSSE_PARSE_LINE(FID, TEMPLATE)
@@ -23,17 +23,14 @@ function [data, comment] = psse_parse_line(str, template)
 %                   or double quotes, which are stripped from the string
 %           Note:   Data columns in STR that have no valid corresponding
 %                   entry in TEMPLATE (beyond end of TEMPLATE, or a character
-%                   other than those listed, e.g. '.') are returned in DATA.txt
-%                   with  no conversion. TEMPLATE entries for which there is
-%                   no corresponding column are returned as NaN and
-%                   empty, respectively, in DATA.num and DATA.txt.
+%                   other than those listed, e.g. '.') are returned as a
+%                   string with no conversion. TEMPLATE entries for which
+%                   there is no corresponding column are returned as NaN or
+%                   empty string, depending on the type.
 %   Outputs:
-%       DATA :      a struct with two fields:
-%           num :   row vector containing the numeric data for the line, for
-%                   columns with no numeric data, num contain NaNs.
-%           txt :   a cell array containing the non-numeric (char/string)
-%                   data for the line, for columns with numeric data,
-%                   txt entries are empty
+%       DATA :      a cell array whose elements contain the contents of
+%                   the corresponding column in the data, converted
+%                   according to the TEMPLATE.
 %       COMMENT :   (optional) possible comment at the end of the line
 
 %   MATPOWER
@@ -74,13 +71,14 @@ end
 
 if ischar(ln)
     %% parse the line
-%     delim = '\s*(,|\s)\s*';
-%     non_quote_field = '[^''",\s/]+';
-%     single_quote_field = '''([^'']|'''')*''';
-%     double_quote_field = '"([^"]|"")*"';
-%     any_field = sprintf('(?<col>%s|%s|%s)', non_quote_field, single_quote_field, double_quote_field);
-%     pat = sprintf('%s%s|%s|(?<comment>/.*)?', any_field, delim, any_field)
-    pat = '(?<col>[^''",\s/]+|''([^'']|'''')*''|"([^"]|"")*")\s*(,|\s)\s*|(?<col>[^''",\s/]+|''([^'']|'''')*''|"([^"]|"")*")|(?<comment>/.*)?';
+    delim = '\s*(,|\s)\s*';     %% general delimiter
+    repeatdelim = '\s*,\s*|\t'; %% delimiter that allows repeated delimiters
+    non_quote_field = '[^''",\s/]+';
+    single_quote_field = '''([^'']|'''')*''';
+    double_quote_field = '"([^"]|"")*"';
+    any_field = sprintf('(?<col>%s|%s|%s)', non_quote_field, single_quote_field, double_quote_field);
+    pat = sprintf('%s%s|%s|%s|(?<comment>/.*)?', any_field, delim, repeatdelim, any_field);
+    % pat = '(?<col>[^''",\s/]+|''([^'']|'''')*''|"([^"]|"")*")\s*(,|\s)\s*|\s*,\s*|\t|(?<col>[^''",\s/]+|''([^'']|'''')*''|"([^"]|"")*")|(?<comment>/.*)?';
     n = regexp(ln, pat, 'names');
 
     %% extract data
@@ -88,7 +86,11 @@ if ischar(ln)
         nc = length(n.col);
         if nc && isempty(n.col{nc})
             data = n.col(1:nc-1);
-            comment = deblank(n.comment{nc});
+            if ~isempty(n.comment{nc})
+                comment = strtrim(n.comment{nc}(2:end));
+            else
+                comment = '';
+            end
             nc = nc - 1;
         else
             data = n.col;
@@ -98,7 +100,11 @@ if ischar(ln)
         nc = length(n);
         if nc && isempty(n(nc).col)
             [data{1:nc-1}] = deal(n(1:nc-1).col);
-            comment = deblank(n(nc).comment);
+            if ~isempty(n(nc).comment)
+                comment = strtrim(n(nc).comment(2:end));
+            else
+                comment = '';
+            end
             nc = nc - 1;
         else
             [data{1:nc}] = deal(n.col);
@@ -120,20 +126,24 @@ else
 end
 
 %% clean/convert data (convert numeric, strip quotes from strings)
-if nargin > 1 && ~isempty(data) && ...
+if nargin > 1 && ~isempty(t) && ~isempty(data) && ...
         (length(data) ~= 1 || ~isnumeric(data{1}) || data{1} ~= 0)
-    t = template;
-    nc = min(nc, length(t));
-    for k = 1:nc
+    nt = length(t);
+    for k = 1:min(nc, nt)
         switch t(k)
-            case {'d', 'f', 'g'}
-                data{k} = sscanf(data{k}, ['%' t(k)]);
-            case {'s', 'c'}
+            case {'D', 'F', 'G', 's', 'c'}
                 if ~isempty(data{k}) && (data{k}(1) == '''' || data{k}(1) == '"')
                     data{k} = data{k}(2:end-1);
                 end
-            otherwise
-                error('psee_read_line: ''%s'' is not a recognized template value', t{k});
+            % otherwise             %% do nothing
         end
+        switch upper(t(k))
+            case {'D', 'F', 'G'}
+                data{k} = sscanf(data{k}, ['%' lower(t(k))]);
+            % otherwise             %% do nothing
+        end
+    end
+    if nc < nt
+        data(nc+1:nt) = cell(1,nt-nc);
     end
 end

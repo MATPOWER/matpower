@@ -116,6 +116,7 @@ tests{end+1} = 't_makePTDF';
 tests{end+1} = 't_makeLODF';
 tests{end+1} = 't_total_load';
 tests{end+1} = 't_scale_load';
+tests{end+1} = 't_psse';
 
 %% smartmarket tests
 if exist('runmarket', 'file') == 2

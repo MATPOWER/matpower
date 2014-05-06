@@ -1,15 +1,21 @@
-function mpc = psse_convert(data)
+function [mpc, warns] = psse_convert(warns, data, verbose)
 %PSSE_CONVERT  Converts data read from PSS/E RAW file to MATPOWER case.
-%   MPC = PSSE_CONVERT(DATA)
+%   [MPC, WARNINGS] = PSSE_CONVERT(WARNINGS, DATA)
+%   [MPC, WARNINGS] = PSSE_CONVERT(WARNINGS, DATA, VERBOSE)
 %
 %   Converts data read from a version RAW data file into a
 %   MATPOWER case struct.
 %
 %   Input:
+%       WARNINGS :  cell array of strings containing accumulated
+%                   warning messages
 %       DATA : struct read by PSSE_READ (see PSSE_READ for details).
+%       VERBOSE :   1 to display progress info, 0 (default) otherwise
 %
 %   Output:
 %       MPC : a MATPOWER case struct created from the PSS/E data
+%       WARNINGS :  cell array of strings containing updated accumulated
+%                   warning messages
 %
 %   See also PSSE_READ.
 
@@ -58,6 +64,9 @@ function mpc = psse_convert(data)
 sort_buses = 1;
 
 %% defaults
+if nargin < 3
+    verbose = 0;
+end
 haveVlims = 0;
 Vmin = 0.9;
 Vmax = 1.1;
@@ -108,7 +117,10 @@ else
     end
 end
 if ~haveVlims  %% add default voltage magnitude limits if not provided
-    fprintf('WARNING: No bus voltage magnitude limits provided.\n         Using defaults: VMIN = %g p.u., VMAX = %g p.u.\n', Vmin, Vmax);
+    warns{end+1} = sprintf('Using default voltage magnitude limits: VMIN = %g p.u., VMAX = %g p.u.', Vmin, Vmax);
+    if verbose
+        fprintf('WARNING: No bus voltage magnitude limits provided.\n         Using defaults: VMIN = %g p.u., VMAX = %g p.u.\n', Vmin, Vmax);
+    end
     bus(:, VMIN) = Vmin;
     bus(:, VMAX) = Vmax;
 end
@@ -206,10 +218,16 @@ tbus = e2i(branch(:, T_BUS));
 nzf = find(fbus);               %% ignore branches with bad bus numbers
 nzt = find(tbus);
 if length(nzf) < nbr
-    fprintf('WARNING: %d branches have bad ''from'' bus numbers\n', nbr-length(nzf));
+    warns{end+1} = sprintf('%d branches have bad ''from'' bus numbers', nbr-length(nzf));
+    if verbose
+        fprintf('WARNING: %d branches have bad ''from'' bus numbers\n', nbr-length(nzf));
+    end
 end
 if length(nzt) < nbr
-    fprintf('WARNING: %d branches have bad ''to'' bus numbers\n', nbr-length(nzt));
+    warns{end+1} = sprintf('%d branches have bad ''to'' bus numbers', nbr-length(nzt));
+    if verbose
+        fprintf('WARNING: %d branches have bad ''to'' bus numbers\n', nbr-length(nzt));
+    end
 end
 Cf = sparse(ibr(nzf), fbus(nzf), branch(nzf, BR_STATUS), nbr, nb);  %% only in-service branches
 Ct = sparse(ibr(nzt), tbus(nzt), branch(nzt, BR_STATUS), nbr, nb);  %% only in-service branches
@@ -239,7 +257,7 @@ gen(:, [GEN_BUS PG QG QMAX QMIN VG MBASE GEN_STATUS PMAX PMIN]) = ...
 
 %% PSS/E transformer data
 if rev > 1
-    [transformer, bus, bus_name] = psse_convert_xfmr(data.trans2.num, data.trans3.num, baseMVA, bus, bus_name);
+    [transformer, bus, warns, bus_name] = psse_convert_xfmr(warns, data.trans2.num, data.trans3.num, verbose, baseMVA, bus, bus_name);
     branch = [branch; transformer];
 end
 

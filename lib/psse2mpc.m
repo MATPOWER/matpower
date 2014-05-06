@@ -85,10 +85,10 @@ end
 [records, sections] = psse_read(rawfile_name, verbose);
 
 %% parse data
-data = psse_parse(records, sections, verbose, rev);
+[data, warnings] = psse_parse(records, sections, verbose, rev);
 
 %% convert to MATPOWER case file
-mpc = psse_convert(data);
+[mpc, warnings] = psse_convert(warnings, data, verbose);
 
 %% (optionally) save MATPOWER case file
 if ~isempty(mpc_name)
@@ -99,7 +99,7 @@ if ~isempty(mpc_name)
             rev = 29;
         end
     end
-    comments = { upper(mpc_name) };
+    comments = {''};
     for k = 0:2
         str = data.id.(sprintf('comment%d', k));
         if ~isempty(str)
@@ -109,6 +109,13 @@ if ~isempty(mpc_name)
     comments{end+1} = '';
     comments{end+1} = sprintf('   Converted by MATPOWER %s using PSSE2MPC on %s', mpver, date);
     comments{end+1} = sprintf('   from ''%s'' using PSS/E rev %d format.', rawfile_name, rev);
+
+    %% warnings
+    comments{end+1} = '';
+    comments{end+1} = '   WARNINGS:';
+    for k = 1:length(warnings)
+        comments{end+1} = sprintf('       %s', warnings{k});
+    end
 
     if verbose
         spacers = repmat('.', 1, 45-length(mpc_name));

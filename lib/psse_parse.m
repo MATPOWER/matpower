@@ -1,11 +1,14 @@
-function data = psse_parse(records, sections, verbose, rev)
+function [data, warns] = psse_parse(records, sections, verbose, rev)
 %PSSE_PARSE  Parses the data from a PSS/E RAW data file.
+%   DATA = PSSE_PARSE(RECORDS, SECTIONS)
 %   DATA = PSSE_PARSE(RECORDS, SECTIONS, VERBOSE)
+%   DATA = PSSE_PARSE(RECORDS, SECTIONS, VERBOSE, REV)
+%   [DATA, WARNINGS] = PSSE_PARSE(RECORDS, SECTIONS, ...)
 %
 %   Parses the data from a PSS/E RAW data file (as read by PSSE_READ)
 %   into a struct.
 %
-%   Input:
+%   Inputs:
 %       RECORDS : cell array of strings, corresponding to the lines
 %                 in the RAW file
 %       SECTIONS : struct array with indexes marking the beginning
@@ -20,7 +23,7 @@ function data = psse_parse(records, sections, verbose, rev)
 %                       PSS/E revision number, attempts to determine
 %                       REV from the file by default
 %
-%   Output:
+%   Output(s):
 %       DATA :  a struct with the following fields, each with two
 %               sub-fields, 'num' and 'txt' containing the numeric and
 %               text data read from the file for the corresponding section
@@ -35,6 +38,8 @@ function data = psse_parse(records, sections, verbose, rev)
 %           area
 %           twodc
 %           swshunt
+%       WARNINGS :  cell array of strings containing accumulated
+%                   warning messages
 %
 %   See also PSSE2MPC, PSSE_READ, PSSE_PARSE_SECTION, PSSE_PARSE_LINE
 
@@ -78,6 +83,7 @@ end
 
 %% inititialize section counter
 s = 1;
+warns = {};
 
 %%-----  parse case identification data  -----
 %% v29-30:
@@ -95,6 +101,9 @@ if verbose
     end
     fprintf('Parsing case identification data ...');
 end
+if rev
+    warns{end+1} = sprintf('Conversion explicitly using PSS/E revision %d', rev);
+end
 [d, c] = psse_parse_line(records{1}, 'dfdfff');
 nn = length(d);
 data.id.IC = d{1};
@@ -103,26 +112,30 @@ if isempty(d{2}) || d{2} <= 0
 else
     data.id.SBASE = d{2};
 end
-data.id.REV = 0;
-data.id.XFRRAT = 0;
-data.id.NSFRAT = 0;
-data.id.BASFRQ = 0;
-if nn > 2
+if ~isempty(d{3})
     data.id.REV = d{3};
-    if nn > 3
-        data.id.XFRRAT = str2double(d{4});
-        if nn > 4
-            data.id.NXFRAT = str2double(d{5});
-            if nn > 5
-                data.id.BASFRQ = str2double(d{6});
-            end
-        end
-    end
 else    %% attempt to extract revision from comment
     tmp = regexp(c, 'PSS(/|\(tm\))E-(?<rev>\d+)', 'tokens');
     if ~isempty(tmp) && size(tmp{1}, 2) == 2
         data.id.REV = str2num(tmp{1}{2});
+    else
+        data.id.REV = 0;
     end
+end
+if ~isempty(d{4})
+    data.id.XFRRAT = d{4};
+else
+    data.id.XFRRAT = 0;
+end
+if ~isempty(d{5})
+    data.id.NXFRAT = d{5};
+else
+    data.id.NXFRAT = 0;
+end
+if ~isempty(d{6})
+    data.id.BASFRQ = d{6};
+else
+    data.id.BASFRQ = 0;
 end
 data.id.comment0 = c;
 data.id.comment1 = records{2};
@@ -135,16 +148,27 @@ if verbose
     end
 end
 if ~rev
-    rev = data.id.REV;
+    rev = data.id.REV;      %% use detected value
+else
+    data.id.REV = rev;      %% use override value
 end
 if isempty(data.id.IC) || data.id.IC ~= 0
-    fprintf('WARNING: IC = %d indicates that this may be a change case, rather than base case\n         PSSE2MPC is NOT designed to handle change cases.\n', data.id.IC);
+    warns{end+1} = sprintf('IC = %d indicates that this may be a change case, rather than base case\n         PSSE2MPC is NOT designed to handle change cases.', data.id.IC);
+    if verbose
+        fprintf('WARNING : %s\n', warns{end});
+    end
 end
 if data.id.XFRRAT > 0
-    fprintf('WARNING: PSSE2MPC does not correctly handle XFRRAT > 0 [%d].\n', data.id.XFRRAT);
+    warns{end+1} = sprintf('PSSE2MPC does not correctly handle XFRRAT (= %d) > 0.', data.id.XFRRAT);
+    if verbose
+        fprintf('WARNING : %s\n', warns{end});
+    end
 end
-if data.id.NSFRAT > 0
-    fprintf('WARNING: PSSE2MPC does not correctly handle NSFRAT > 0 [%d].\n', data.id.NSFRAT);
+if data.id.NXFRAT > 0
+    warns{end+1} = sprintf('PSSE2MPC does not correctly handle NXFRAT (= %d) > 0.', data.id.NXFRAT);
+    if verbose
+        fprintf('WARNING : %s\n', warns{end});
+    end
 end
 s = s + 1;
 
@@ -159,13 +183,13 @@ s = s + 1;
 %%  I, 'NAME', BASKV, IDE, AREA, ZONE, OWNER, VM, VA, NVHI, NVLO, EVHI, EVLO
 %% Note: Some v33 files seem to follow v31 format
 if rev == 1
-    data.bus = psse_parse_section(records, sections, s, verbose, ...
+    [data.bus, warns] = psse_parse_section(warns, records, sections, s, verbose, ...
         'bus', 'ddffffdffsfd');
 elseif rev < 31
-    data.bus = psse_parse_section(records, sections, s, verbose, ...
+    [data.bus, warns] = psse_parse_section(warns, records, sections, s, verbose, ...
         'bus', 'dsfdffddffd');
 else
-    data.bus = psse_parse_section(records, sections, s, verbose, ...
+    [data.bus, warns] = psse_parse_section(warns, records, sections, s, verbose, ...
         'bus', 'dsfddddffff..');
 %       'bus', 'dsfddddffffff');
 end
@@ -178,7 +202,7 @@ s = s + 1;
 %%  I, ID, STATUS, AREA, ZONE, PL, QL, IP, IQ, YP, YQ, OWNER, SCALE, INTRPT
 %% Note: Some v33 files seem to end with SCALE
 if rev > 1
-    data.load = psse_parse_section(records, sections, s, verbose, ...
+    [data.load, warns] = psse_parse_section(warns, records, sections, s, verbose, ...
         'load', 'd.d..ffffff...');
 %       'load', 'dsdddffffffddd');
     s = s + 1;
@@ -188,7 +212,7 @@ end
 %% v31-33:
 %%  I, ID, STATUS, GL, BL
 if rev > 30     %% fixed shunt data is included in bus data for rev <= 30
-    data.shunt = psse_parse_section(records, sections, s, verbose, ...
+    [data.shunt, warns] = psse_parse_section(warns, records, sections, s, verbose, ...
         'fixed shunt', 'd.dff');
 %       'fixed shunt', 'dsdff');
     s = s + 1;
@@ -201,7 +225,7 @@ end
 %%  I,ID,PG,QG,QT,QB,VS,IREG,MBASE,ZR,ZX,RT,XT,GTAP,STAT,RMPCT,PT,PB,O1,F1,...,O4,F4
 %% v31-33:
 %%  I,ID,PG,QG,QT,QB,VS,IREG,MBASE,ZR,ZX,RT,XT,GTAP,STAT,RMPCT,PT,PB,O1,F1,...,O4,F4,WMOD,WPF
-data.gen = psse_parse_section(records, sections, s, verbose, ...
+[data.gen, warns] = psse_parse_section(warns, records, sections, s, verbose, ...
     'generator', 'd.fffff.f.....d.ff...........');
 %   'generator', 'dsfffffdffffffdfffdfdfdfdfsdf');
 s = s + 1;
@@ -214,16 +238,16 @@ s = s + 1;
 %% v31-33:
 %%  I,J,CKT,R,X,B,RATEA,RATEB,RATEC,GI,BI,GJ,BJ,ST,MET,LEN,O1,F1,...,O4,F4
 if rev == 1
-    data.branch = psse_parse_section(records, sections, s, verbose, ...
+    [data.branch, warns] = psse_parse_section(warns, records, sections, s, verbose, ...
         'branch', 'dd.ffffffffffffd');
 %       'branch', 'dddffffffffffffd');
 else
     if rev < 31
-        data.branch = psse_parse_section(records, sections, s, verbose, ...
+        [data.branch, warns] = psse_parse_section(warns, records, sections, s, verbose, ...
             'branch', 'dd.ffffffffffd');
 %           'branch', 'ddsffffffffffdfdfdfdfdf');
     else
-        data.branch = psse_parse_section(records, sections, s, verbose, ...
+        [data.branch, warns] = psse_parse_section(warns, records, sections, s, verbose, ...
             'branch', 'dd.ffffffffffd');
 %           'branch', 'ddsffffffffffddfdfdfdfdf');
     end
@@ -236,7 +260,7 @@ s = s + 1;
 %% v29-33:
 %%  (precedes multi-terminal DC section)
 if rev == 1
-    s = psse_skip_section(sections, s, verbose, 'impedance correction');
+    [s, warns] = psse_skip_section(warns, sections, s, verbose, 'impedance correction');
 end
 
 %%-----  parse transformer data  -----
@@ -246,8 +270,10 @@ if rev > 1
     %% each, second pass reads the data.
     label = 'transformer';
     if ~isempty(sections(s).name) && ~strcmpi(label, sections(s).name)
-        fprintf('-----  WARNING:  Expected section labeled: ''%s''\n', upper(label));
-        fprintf('-----            Found section labeled:    ''%s''\n', sections(s).name);
+        if verbose > 1
+            fprintf('-----  WARNING:  Expected section labeled: ''%s''\n', upper(label));
+            fprintf('-----            Found section labeled:    ''%s''\n', sections(s).name);
+        end
     end
 
     %% Step 1 : Count and collect transformer types
@@ -305,10 +331,10 @@ if rev > 1
     %%  I,J,K,CKT,CW,CZ,CM,MAG1,MAG2,NMETR,'NAME',STAT,O1,F1,...,O4,F4
     %% v33:
     %%  I,J,K,CKT,CW,CZ,CM,MAG1,MAG2,NMETR,'NAME',STAT,O1,F1,...,O4,F4,VECGRP
-    t2_1 = psse_parse_section(records(idx2), verbose, ...
+    [t2_1, warns] = psse_parse_section(warns, records(idx2), verbose, ...
         '2-winding transformers (1)', 'dd..ddd....d........');
 %       '2-winding transformers (1)', 'dddsdddffdsddfdfdfdf');
-    t3_1 = psse_parse_section(records(idx3), verbose, ...
+    [t3_1, warns] = psse_parse_section(warns, records(idx3), verbose, ...
         '3-winding transformers (1)', 'ddd.ddd....d........');
 %       '3-winding transformers (1)', 'dddsdddffdsddfdfdfdf');
 
@@ -316,7 +342,7 @@ if rev > 1
     %% parse record 2 (cols 21-23)
     %% v29-33:
     %%  R1-2,X1-2,SBASE1-2
-    t2_2 = psse_parse_section(records(idx2+1), verbose, ...
+    [t2_2, warns] = psse_parse_section(warns, records(idx2+1), verbose, ...
         '2-winding transformers (2)', 'fff');
 
     %% parse record 3 (cols 24-39)
@@ -326,21 +352,21 @@ if rev > 1
     %%  WINDV1,NOMV1,ANG1,RATA1,RATB1,RATC1,COD1,CONT1,RMA1,RMI1,VMA1,VMI1,NTP1,TAB1,CR1,CX1,CNXA1
     %% parse up to CX1
     %% warn if CNXA1 is present and non-zero
-    t2_3 = psse_parse_section(records(idx2+2), verbose, ...
+    [t2_3, warns] = psse_parse_section(warns, records(idx2+2), verbose, ...
         '2-winding transformers (3)', 'ffffff..........');
 %       '2-winding transformers (3)', 'ffffffddffffddff');
 
     %% parse record 4 (cols 40-41)
     %% v29-33:
     %%  WINDV2,NOMV2
-    t2_4 = psse_parse_section(records(idx2+3), verbose, ...
+    [t2_4, warns] = psse_parse_section(warns, records(idx2+3), verbose, ...
         '2-winding transformers (4)', 'ff');
 
     %% three-winding
     %% parse record 2 (cols 21-31)
     %% v29-33:
     %%  R1-2,X1-2,SBASE1-2,R2-3,X2-3,SBASE2-3,R3-1,X3-1,SBASE3-1,VMSTAR,ANSTAR
-    t3_2 = psse_parse_section(records(idx3+1), verbose, ...
+    [t3_2, warns] = psse_parse_section(warns, records(idx3+1), verbose, ...
         '3-winding transformers (2)', 'fffffffffff');
 %       '3-winding transformers (2)', 'fffffffffff');
 
@@ -351,7 +377,7 @@ if rev > 1
     %%  WINDV1,NOMV1,ANG1,RATA1,RATB1,RATC1,COD1,CONT1,RMA1,RMI1,VMA1,VMI1,NTP1,TAB1,CR1,CX1,CNXA1
     %% parse up to CX1
     %% warn if CNXA1 is present and non-zero
-    t3_3 = psse_parse_section(records(idx3+2), verbose, ...
+    [t3_3, warns] = psse_parse_section(warns, records(idx3+2), verbose, ...
         '3-winding transformers (3)', 'ffffff..........');
 %       '3-winding transformers (3)', 'ffffffddffffddff');
 
@@ -361,7 +387,7 @@ if rev > 1
     %% v33:
     %%  WINDV2,NOMV2,ANG2,RATA2,RATB2,RATC2,COD2,CONT2,RMA2,RMI2,VMA2,VMI2,NTP2,TAB2,CR2,CX2,CNXA2
     %% parse up to CX2
-    t3_4 = psse_parse_section(records(idx3+3), verbose, ...
+    [t3_4, warns] = psse_parse_section(warns, records(idx3+3), verbose, ...
         '3-winding transformers (4)', 'ffffff..........');
 %       '3-winding transformers (4)', 'ffffffddffffddff');
 
@@ -371,17 +397,27 @@ if rev > 1
     %% v33:
     %%  WINDV3,NOMV3,ANG3,RATA3,RATB3,RATC3,COD3,CONT3,RMA3,RMI3,VMA3,VMI3,NTP3,TAB3,CR3,CX3,CNXA3
     %% parse up to CX3
-    t3_5 = psse_parse_section(records(idx3+4), verbose, ...
+    [t3_5, warns] = psse_parse_section(warns, records(idx3+4), verbose, ...
         '3-winding transformers (5)', 'ffffff..........');
 %       '3-winding transformers (5)', 'ffffffddffffddff');
 
     %% assemble two-winding transformer records
-    data.trans2.num = [t2_1.num t2_2.num t2_3.num(:, 1:16) t2_4.num];
-    data.trans2.txt = [t2_1.txt t2_2.txt t2_3.txt(:, 1:16) t2_4.txt];
+%     if isempty(t2_1.num)
+%         data.trans2.num = [];
+%         data.trans2.txt = {};
+%     else
+        data.trans2.num = [t2_1.num t2_2.num t2_3.num(:, 1:16) t2_4.num];
+        data.trans2.txt = [t2_1.txt t2_2.txt t2_3.txt(:, 1:16) t2_4.txt];
+%     end
 
     %% assemble three-winding transformer records
-    data.trans3.num = [t3_1.num t3_2.num t3_3.num(:, 1:16) t3_4.num(:, 1:16) t3_5.num(:, 1:16)];
-    data.trans3.txt = [t3_1.txt t3_2.txt t3_3.txt(:, 1:16) t3_4.txt(:, 1:16) t3_5.txt(:, 1:16)];
+%     if isempty(t3_1.num)
+%         data.trans3.num = [];
+%         data.trans3.txt = {};
+%     else
+        data.trans3.num = [t3_1.num t3_2.num t3_3.num(:, 1:16) t3_4.num(:, 1:16) t3_5.num(:, 1:16)];
+        data.trans3.txt = [t3_1.txt t3_2.txt t3_3.txt(:, 1:16) t3_4.txt(:, 1:16) t3_5.txt(:, 1:16)];
+%     end
 
     % if verbose
     %     fprintf('%s\n', upper(label));
@@ -393,7 +429,7 @@ end
 %%-----  parse area interchange data  -----
 %% v1, 29-33:
 %%  I, ISW, PDES, PTOL, 'ARNAME'
-data.area = psse_parse_section(records, sections, s, verbose, 'area', 'ddffs');
+[data.area, warns] = psse_parse_section(warns, records, sections, s, verbose, 'area', 'ddffs');
 s = s + 1;
 
 %%-----  parse two-terminal DC transmission line data  -----
@@ -411,28 +447,30 @@ s = s + 1;
 %%  IPI,NBI,ANMXI,ANMNI,RCI,XCI,EBASI,TRI,TAPI,TMXI,TMNI,STPI,ICI,IFI,ITI,IDI,XCAPI (30-46)
 label = 'two-terminal DC';
 if ~isempty(sections(s).name) && ~strcmpi(label, sections(s).name)
-    fprintf('-----  WARNING:  Expected section labeled: ''%s''\n', upper(label));
-    fprintf('-----            Found section labeled:    ''%s''\n', sections(s).name);
+    if verbose > 1
+        fprintf('-----  WARNING:  Expected section labeled: ''%s''\n', upper(label));
+        fprintf('-----            Found section labeled:    ''%s''\n', sections(s).name);
+    end
 end
 idx = sections(s).first:3:sections(s).last;
 if rev < 31
-    dc1 = psse_parse_section(records(idx), verbose, ...
+    [dc1, warns] = psse_parse_section(warns, records(idx), verbose, ...
         'two-terminal DC (1)', '.d.ff.......');
 %       'two-terminal DC (1)', 'ddffffffsfdf');
-    dc2 = psse_parse_section(records(idx+1), verbose, ...
+    [dc2, warns] = psse_parse_section(warns, records(idx+1), verbose, ...
         'two-terminal DC (2)', 'd.ff.............');
 %       'two-terminal DC (2)', 'ddffffffffffdddsf');
-    dc3 = psse_parse_section(records(idx+2), verbose, ...
+    [dc3, warns] = psse_parse_section(warns, records(idx+2), verbose, ...
         'two-terminal DC (3)', 'd.ff.............');
 %       'two-terminal DC (3)', 'ddffffffffffdddsf');
 else
-    dc1 = psse_parse_section(records(idx), verbose, ...
+    [dc1, warns] = psse_parse_section(warns, records(idx), verbose, ...
         'two-terminal DC (1)', '.d.ff.......');
 %       'two-terminal DC (1)', 'sdffffffsfdf');
-    dc2 = psse_parse_section(records(idx+1), verbose, ...
+    [dc2, warns] = psse_parse_section(warns, records(idx+1), verbose, ...
         'two-terminal DC (2)', 'd.ff.............');
 %       'two-terminal DC (2)', 'ddffffffffffdddDf');
-    dc3 = psse_parse_section(records(idx+2), verbose, ...
+    [dc3, warns] = psse_parse_section(warns, records(idx+2), verbose, ...
         'two-terminal DC (3)', 'd.ff.............');
 %       'two-terminal DC (3)', 'ddffffffffffdddDf');
 end
@@ -450,7 +488,7 @@ s = s + 1;
 %% v29-33:
 %%  'NAME', MDC, RDC, O1, F1, ... O4, F4<\n>IBUS,TYPE,MODE,DCSET,ACSET,ALOSS,BLOSS,MINLOSS,SMAX,IMAX,PWF,MAXQ,MINQ,REMOT,RMPCT<\n>IBUS,TYPE,MODE,DCSET,ACSET,ALOSS,BLOSS,MINLOSS,SMAX,IMAX,PWF,MAXQ,MINQ,REMOT,RMPCT
 if rev > 1
-    s = psse_skip_section(sections, s, verbose, 'voltage source converter');
+    [s, warns] = psse_skip_section(warns, sections, s, verbose, 'voltage source converter');
 end
 
 %%-----  parse switched shunt data  -----
@@ -465,15 +503,15 @@ end
 if rev < 31
     %% parse up to B1
     if rev == 1
-        data.swshunt = psse_parse_section(records, sections, s, verbose, ...
+        [data.swshunt, warns] = psse_parse_section(warns, records, sections, s, verbose, ...
             'switched shunt', 'd....f');
 %           'switched shunt', 'ddffdfdfdfdfdfdfdfdfdf');
     elseif rev <= 29
-        data.swshunt = psse_parse_section(records, sections, s, verbose, ...
+        [data.swshunt, warns] = psse_parse_section(warns, records, sections, s, verbose, ...
             'switched shunt', 'd.....f');
 %           'switched shunt', 'ddffdsfdfdfdfdfdfdfdfdf');
     else    %%  rev == 30
-        data.swshunt = psse_parse_section(records, sections, s, verbose, ...
+        [data.swshunt, warns] = psse_parse_section(warns, records, sections, s, verbose, ...
             'switched shunt', 'd......f');
 %           'switched shunt', 'ddffdfsfdfdfdfdfdfdfdfdf');
     end
@@ -486,7 +524,7 @@ end
 %% v29-33:
 %%  I, T1, F1, T2, F2, T3, F3, ... T11, F11
 if rev > 1
-    s = psse_skip_section(sections, s, verbose, 'impedance correction');
+    [s, warns] = psse_skip_section(warns, sections, s, verbose, 'impedance correction');
 end
 
 %%-----  skip multi-terminal DC data  -----
@@ -495,7 +533,7 @@ end
 %% v31-33:
 %%  'NAME', NCONV, NDCBS, NDCLN, MDC, VCONV, VCMOD, VCONVN<\n>IB,N,ANGMX,ANGMN,RC,XC,EBAS,TR,TAP,TPMX,TPMN,TSTP,SETVL,DCPF,MARG,CNVCOD<\n>IDC, IB, AREA, ZONE, 'DCNAME', IDC2, RGRND, OWNER<\n>IDC, JDC, DCCKT, MET, RDC, LDC
 if rev > 1
-    s = psse_skip_section(sections, s, verbose, 'multi-terminal DC');
+    [s, warns] = psse_skip_section(warns, sections, s, verbose, 'multi-terminal DC');
 end
 
 %%-----  skip multi-section line data  -----
@@ -504,28 +542,28 @@ end
 %% v31-33:
 %%  I, J, ID, MET, DUM1, DUM2, ... DUM9
 if rev > 1
-    s = psse_skip_section(sections, s, verbose, 'multi-section line');
+    [s, warns] = psse_skip_section(warns, sections, s, verbose, 'multi-section line');
 end
 
 %%-----  skip zone data  -----
 %% v29-33:
 %%  I, 'ZONAME'
 if rev > 1
-    s = psse_skip_section(sections, s, verbose, 'zone');
+    [s, warns] = psse_skip_section(warns, sections, s, verbose, 'zone');
 end
 
 %%-----  skip inter-area transfer data  -----
 %% v29-33:
 %%  ARFROM, ARTO, TRID, PTRAN
 if rev > 1
-    s = psse_skip_section(sections, s, verbose, 'inter-area transfer');
+    [s, warns] = psse_skip_section(warns, sections, s, verbose, 'inter-area transfer');
 end
 
 %%-----  skip owner data  -----
 %% v29-33:
 %%  I, 'OWNAME'
 if rev > 1
-    s = psse_skip_section(sections, s, verbose, 'owner');
+    [s, warns] = psse_skip_section(warns, sections, s, verbose, 'owner');
 end
 
 %%-----  skip FACTS control device data  -----
@@ -536,7 +574,7 @@ end
 %% v31-33:
 %%  'NAME',I,J,MODE,PDES,QDES,VSET,SHMX,TRMX,VTMN,VTMX,VSMX,IMX,LINX,RMPCT,OWNER,SET1,SET2,VSREF,REMOT,'MNAME'
 if rev > 1
-    s = psse_skip_section(sections, s, verbose, 'FACTS control device');
+    [s, warns] = psse_skip_section(warns, sections, s, verbose, 'FACTS control device');
 end
 
 %%-----  parse switched shunt data  -----
@@ -551,11 +589,11 @@ end
 if rev > 30
     %% parse up to B1
     if rev < 32     %% assume 32 is same as 33
-        data.swshunt = psse_parse_section(records, sections, s, verbose, ...
+        [data.swshunt, warns] = psse_parse_section(warns, records, sections, s, verbose, ...
             'switched shunt', 'd......f');
 %           'switched shunt', 'ddffdfsfdfdfdfdfdfdfdfdf');
     else
-        data.swshunt = psse_parse_section(records, sections, s, verbose, ...
+        [data.swshunt, warns] = psse_parse_section(warns, records, sections, s, verbose, ...
             'switched shunt', 'd........f');
 %           'switched shunt', 'ddddffdfsfdfdfdfdfdfdfdfdf');
     end
@@ -570,19 +608,22 @@ end
 %%    INTG1, ..., INTGmin(10,NINTG)
 %%    CHAR1, ..., CHARmin(10,NCHAR)
 if rev > 31
-    s = psse_skip_section(sections, s, verbose, 'GNE device');
+    [s, warns] = psse_skip_section(warns, sections, s, verbose, 'GNE device');
 end
 
 %%-----  skip induction machine data  -----
 %% v33:
 %%  I,ID,STAT,SCODE,DCODE,AREA,ZONE,OWNER,TCODE,BCODE,MBASE,RATEKV, PCODE,PSET,H,A,B,D,E,RA,XA,XM,R1,X1,R2,X2,X3,E1,SE1,E2,SE2,IA1,IA2, XAMULT
 if rev > 32
-    s = psse_skip_section(sections, s, verbose, 'induction machine');
+    [s, warns] = psse_skip_section(warns, sections, s, verbose, 'induction machine');
 end
 
 %%-----  check for extra sections  -----
 if s <= length(sections)
-    fprintf('-----  WARNING:  Found %d additional section(s):\n', length(sections)-s+1);
+    warns{end+1} = sprintf('Found %d additional section(s)', length(sections)-s+1);
+    if verbose > 1
+        fprintf('-----  WARNING:   Found %d additional section(s):\n', length(sections)-s+1);
+    end
 end
 while s <= length(sections)
     n = sections(s).last - sections(s).first + 1;
@@ -592,9 +633,15 @@ while s <= length(sections)
         str = sprintf('(empty)');
     end
     if isempty(sections(s).name)
-        fprintf('-----            unlabeled section %s\n', str);
+        warns{end+1} = sprintf('  unlabeled section %s', str);
+        if verbose > 1
+            fprintf('-----            unlabeled section %s\n', str);
+        end
     else
-        fprintf('-----            ''%s DATA'' %s\n', sections(s).name, str);
+        warns{end+1} = sprintf('  ''%s DATA'' %s', sections(s).name, str);
+        if verbose > 1
+            fprintf('-----            ''%s DATA'' %s\n', sections(s).name, str);
+        end
     end
     s = s + 1;
 end
@@ -602,23 +649,36 @@ end
 
 
 %%---------------------------------------------------------------------
-function s = psse_skip_section(sections, s, verbose, label)
+function [s, warns] = psse_skip_section(warns, sections, s, verbose, label)
+%PSSE_SKIP_SECTION  Skips over a section without extracting any data.
+%   [SIDX, WARNINGS] = PSSE_SKIP_SECTION(WARNINGS, SECTIONS, SIDX, VERBOSE, LABEL)
+
 if s > length(sections)
     if verbose
         spacers = repmat('.', 1, 58-length(label));
         fprintf('No %s data read %s done.\n', label, spacers);
     end
 else
-    if ~isempty(sections(s).name) && ~strcmp(upper(label), sections(s).name)
-        fprintf('-----  WARNING:  Expected section labeled: ''%s''\n', upper(label));
-        fprintf('-----            Found section labeled:    ''%s''\n', sections(s).name);
+    nr = sections(s).last - sections(s).first + 1;
+    if nr > 1
+        ss = 'lines';
+    else
+        ss = 'line';
     end
-    if verbose
-        spacers = repmat('.', 1, 42-length(label));
-        nr = sections(s).last - sections(s).first + 1;
-        fprintf('Skipping%6d lines of %s data %s done.\n', nr, label, spacers);
-    %     fprintf('%s\n', upper(label));
-    %     fprintf('%s\n', sections(s).name);
+    if nr
+        warns{end+1} = sprintf('Skipped %d %s of %s data.', nr, ss, label);
+    end
+    if ~isempty(sections(s).name) && ~strcmp(upper(label), sections(s).name)
+        warns{end+1} = sprintf('Section label mismatch, found ''%s'', expected ''%s''', ...
+            sections(s).name, upper(label));
+        if verbose
+            fprintf('-----  WARNING:  Found section labeled:    ''%s''\n', sections(s).name);
+            fprintf('-----            Expected section labeled: ''%s''\n', upper(label));
+        end
+    end
+    if verbose && nr
+        spacers = repmat('.', 1, 47-length(ss)-length(label));
+        fprintf('Skipping%6d %s of %s data %s done.\n', nr, ss, label, spacers);
     end
     s = s + 1;
 end

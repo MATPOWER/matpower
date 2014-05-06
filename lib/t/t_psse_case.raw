@@ -1,0 +1,14 @@
+Header 1
+Header 2
+Header 3
+    1 'Line 1   '  1.1000 -.1   1.1e-2   '1'   '1.1'    A,,   'A'   /, "comment 1"
+2,'Line, "2"', 2.2000 , -0.2	, 0.022,	'2 '   ,' 2.2',B , , 'B' / comment, '2'
+3	"Line, '3'"	3.3000	-0.3	33E-3	' 3 '	'	3.3'	C	,	,	'C'		/	'comment	3'
+   4	'Line	4'	44e-1	-0.4	0.44E-1	'4'	'4.4'	D	,	,	'D' ///comment,4
+ 0   / END OF TEST1 DATA, BEGIN TEST2 DATA
+    1 'Line 1   '  1.1000 -.1   1.1e-2   '1'   '1.1'    A,,   'A'   /, "comment 1"
+2,'Line, "2"', 2.2000 , -0.2	, 0.022,	'2 '   ,' 2.2',B , , 'B' / comment, '2'
+Q
+3	"Line, '3'"	3.3000	-0.3	33E-3	' 3 '	'	3.3'	C	,	,	'C'		/	'comment	3'
+   4	'Line	4'	44e-1	-0.4	0.44E-1	'4'	'4.4'	D	,	,	'D' ///comment,4
+ 0   / END OF TEST2 DATA

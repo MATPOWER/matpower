@@ -1,8 +1,9 @@
-function [xfmr, bus, bus_name] = psse_convert_xfmr(trans2, trans3, baseMVA, bus, bus_name)
+function [xfmr, bus, warns, bus_name] = psse_convert_xfmr(warns, trans2, trans3, verbose, baseMVA, bus, bus_name)
 %PSSE_CONVERT_XFMR Convert transformer data from PSS/E RAW to MATPOWER
-%   [XFMR, BUS] = PSSE_CONVERT_XFMR(TRANS2, TRANS3, BASEMVA, BUS)
-%   [XFMR, BUS, BUS_NAME] = PSSE_CONVERT_XFMR(TRANS2, TRANS3, BASEMVA, ...
-%                                                       BUS, BUS_NAME)
+%   [XFMR, BUS, WARNINGS] = PSSE_CONVERT_XFMR(WARNINGS, TRANS2, TRANS3, ...
+%                                   VERBOSE, BASEMVA, BUS)
+%   [XFMR, BUS, WARNINGS, BUS_NAME] = PSSE_CONVERT_XFMR(WARNINGS, TRANS2, ...
+%                                   TRANS3, VERBOSE, BASEMVA, BUS, BUS_NAME)
 %
 %   Convert all transformer data read from a PSS/E RAW data file
 %   into MATPOWER format. Returns a branch matrix corresponding to
@@ -10,10 +11,13 @@ function [xfmr, bus, bus_name] = psse_convert_xfmr(trans2, trans3, baseMVA, bus,
 %   added for the star points of three winding transformers.
 %
 %   Inputs:
+%       WARNINGS :  cell array of strings containing accumulated
+%                   warning messages
 %       TRANS2  : matrix of raw two winding transformer data returned
 %                 by PSSE_READ in data.trans2.num
 %       TRANS3  : matrix of raw three winding transformer data returned
 %                 by PSSE_READ in data.trans3.num
+%       VERBOSE :   1 to display progress info, 0 (default) otherwise
 %       BASEMVA : system MVA base
 %       BUS     : MATPOWER bus matrix
 %       BUS_NAME: (optional) cell array of bus names
@@ -22,6 +26,8 @@ function [xfmr, bus, bus_name] = psse_convert_xfmr(trans2, trans3, baseMVA, bus,
 %       XFMR    : MATPOWER branch matrix of transformer data
 %       BUS     : updated MATPOWER bus matrix, with additional buses
 %                 added for star points of three winding transformers
+%       WARNINGS :  cell array of strings containing updated accumulated
+%                   warning messages
 %       BUS_NAME: (optional) updated cell array of bus names
 %
 %   See also PSSE_CONVERT.
@@ -98,7 +104,10 @@ end
 %% check for bad bus numbers
 k = find(fbus == 0 | tbus == 0);
 if ~isempty(k)
-    fprintf('WARNING: Ignoring %d two-winding transformers with bad bus numbers', length(k));
+    warns{end+1} = sprintf('Ignoring %d two-winding transformers with bad bus numbers', length(k));
+    if verbose
+        fprintf('WARNING: Ignoring %d two-winding transformers with bad bus numbers', length(k));
+    end
     fbus(k) = [];
     tbus(k) = [];
     trans2(k, :) = [];
@@ -138,7 +147,10 @@ end
 %% check for bad bus numbers
 k = find(ind1 == 0 | ind2 == 0 | ind3 == 0);
 if ~isempty(k)
-    fprintf('WARNING: Ignoring %d three-winding transformers with bad bus numbers', length(k));
+    warns{end+1} = sprintf('Ignoring %d three-winding transformers with bad bus numbers', length(k));
+    if verbose
+        fprintf('WARNING: Ignoring %d three-winding transformers with bad bus numbers', length(k));
+    end
     ind1(k) = [];
     ind2(k) = [];
     ind3(k) = [];
@@ -264,7 +276,15 @@ xfmr = [xfmr2; xfmr3];
 
 %% finish adding the star point bus
 bus = [bus; starbus];
-if nargin > 4 && nargout > 2
+if nt3 > 0
+    warns{end+1} = sprintf('Added buses %d-%d as star-points for 3-winding transformers.', ...
+        starbus(1, BUS_I), starbus(end, BUS_I));
+    if verbose
+        fprintf('Added buses %d-%d as star-points for 3-winding transformers.\n', ...
+            starbus(1, BUS_I), starbus(end, BUS_I));
+    end
+end
+if nargin > 6 && nargout > 3
     starbus_name = cell(nt3, 1);
     for k = 1:nt3
         starbus_name{k} = sprintf('STAR_POINT_XFMR_%d', k);
