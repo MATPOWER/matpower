@@ -406,8 +406,8 @@ if rev > 1
 %         data.trans2.num = [];
 %         data.trans2.txt = {};
 %     else
-        data.trans2.num = [t2_1.num t2_2.num t2_3.num(:, 1:16) t2_4.num];
-        data.trans2.txt = [t2_1.txt t2_2.txt t2_3.txt(:, 1:16) t2_4.txt];
+        data.trans2.num = [t2_1.num(:, 1:20) t2_2.num(:, 1:3) t2_3.num(:, 1:16) t2_4.num(:, 1:2)];
+        data.trans2.txt = [t2_1.txt(:, 1:20) t2_2.txt(:, 1:3) t2_3.txt(:, 1:16) t2_4.txt(:, 1:2)];
 %     end
 
     %% assemble three-winding transformer records
@@ -415,8 +415,8 @@ if rev > 1
 %         data.trans3.num = [];
 %         data.trans3.txt = {};
 %     else
-        data.trans3.num = [t3_1.num t3_2.num t3_3.num(:, 1:16) t3_4.num(:, 1:16) t3_5.num(:, 1:16)];
-        data.trans3.txt = [t3_1.txt t3_2.txt t3_3.txt(:, 1:16) t3_4.txt(:, 1:16) t3_5.txt(:, 1:16)];
+        data.trans3.num = [t3_1.num(:, 1:20) t3_2.num(:, 1:11) t3_3.num(:, 1:16) t3_4.num(:, 1:16) t3_5.num(:, 1:16)];
+        data.trans3.txt = [t3_1.txt(:, 1:20) t3_2.txt(:, 1:11) t3_3.txt(:, 1:16) t3_4.txt(:, 1:16) t3_5.txt(:, 1:16)];
 %     end
 
     % if verbose

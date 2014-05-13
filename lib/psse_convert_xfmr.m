@@ -184,6 +184,10 @@ if nt3 > 0
     shift2 = trans3(:, 50);
     shift3 = trans3(:, 66);
 
+    trans3(cz3, 33) = bus(ind1(cz3), BASE_KV);
+    trans3(cz3, 49) = bus(ind1(cz3), BASE_KV);
+    trans3(cz3, 65) = bus(ind1(cz3), BASE_KV);
+
     R12 = trans3(:, 21);
     X12 = trans3(:, 22);
     R23 = trans3(:, 24);
@@ -201,11 +205,11 @@ if nt3 > 0
     R31(cz2) = R31(cz2) .* Zb3(cz2) ./ Zbs(ind3(cz2));
     X31(cz2) = X31(cz2) .* Zb3(cz2) ./ Zbs(ind3(cz2));
 
-    R12(cz3) = trans3(cz3,33) .^ 2 ./ trans3(cz3,21) ./ Zbs(ind1(cz3));
+    R12(cz3) = (trans3(cz3,33)*1000) .^ 2 ./ trans3(cz3,21) ./ Zbs(ind1(cz3));
     X12(cz3) = trans3(cz3,22) .* Zb1(cz3) ./ Zbs(ind3(cz3));
-    R23(cz3) = trans3(cz3,49) .^ 2 ./ trans3(cz3,24) ./ Zbs(ind2(cz3));
+    R23(cz3) = (trans3(cz3,49)*1000) .^ 2 ./ trans3(cz3,24) ./ Zbs(ind2(cz3));
     X23(cz3) = trans3(cz3,25) .* Zb2(cz3) ./ Zbs(ind3(cz3));
-    R31(cz3) = trans3(cz3,65) .^ 2 ./ trans3(cz3,27) ./ Zbs(ind3(cz3));
+    R31(cz3) = (trans3(cz3,65)*1000) .^ 2 ./ trans3(cz3,27) ./ Zbs(ind3(cz3));
     X31(cz3) = trans3(cz3,28) .* Zb3(cz3) ./ Zbs(ind3(cz3));
 
     R1 = (R12+R31-R23) ./ 2;
