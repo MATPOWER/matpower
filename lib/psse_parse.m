@@ -158,18 +158,6 @@ if isempty(data.id.IC) || data.id.IC ~= 0
         fprintf('WARNING : %s\n', warns{end});
     end
 end
-if data.id.XFRRAT > 0
-    warns{end+1} = sprintf('PSSE2MPC does not correctly handle XFRRAT (= %d) > 0.', data.id.XFRRAT);
-    if verbose
-        fprintf('WARNING : %s\n', warns{end});
-    end
-end
-if data.id.NXFRAT > 0
-    warns{end+1} = sprintf('PSSE2MPC does not correctly handle NXFRAT (= %d) > 0.', data.id.NXFRAT);
-    if verbose
-        fprintf('WARNING : %s\n', warns{end});
-    end
-end
 s = s + 1;
 
 %%-----  parse bus data  -----
