@@ -92,8 +92,10 @@ Bp = Bp([pv; pq], [pv; pq]);
 Bpp = Bpp(pq, pq);
 
 %% factor B matrices
-[Lp, Up, Pp] = lu(Bp);
-[Lpp, Upp, Ppp] = lu(Bpp);
+[Lp,  Up,  pp,  qp ] = lu(Bp,  'vector');
+[Lpp, Upp, ppp, qpp] = lu(Bpp, 'vector');
+[~, iqp ] = sort(qp);
+[~, iqpp] = sort(qpp);
 
 %% do P and Q iterations
 while (~converged && i < max_it)
@@ -101,7 +103,8 @@ while (~converged && i < max_it)
     i = i + 1;
 
     %%-----  do P iteration, update Va  -----
-    dVa = -( Up \  (Lp \ (Pp * P)));
+    dVa = -( Up \  (Lp \ P(pp)) );
+    dVa = dVa(iqp);
 
     %% update voltage
     Va([pv; pq]) = Va([pv; pq]) + dVa;
@@ -127,7 +130,8 @@ while (~converged && i < max_it)
     end
 
     %%-----  do Q iteration, update Vm  -----
-    dVm = -( Upp \ (Lpp \ (Ppp * Q)) );
+    dVm = -( Upp \ (Lpp \ Q(ppp)) );
+    dVm = dVm(iqpp);
 
     %% update voltage
     Vm(pq) = Vm(pq) + dVm;

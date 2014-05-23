@@ -23,6 +23,9 @@ Changes since 4.1
       to never print line constraints for unconstrained lines.
     - Fixed crash when using Knitro to solve cases with all
       lines unconstrained.
+    - Switched to [L,U,p,q] = lu(B,'vector') form for factorization
+      in fast-decoupled power flow in fdpf(), resulting in ~5x
+      speedup on some large systems. Thanks to Carlos Murillo-Sanchez.
 
 5/6/14
     - Modified savecase() to automatically add a comment line
