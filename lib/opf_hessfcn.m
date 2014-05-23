@@ -170,8 +170,13 @@ d2G = [
 
 %%----- evaluate Hessian of flow constraints -----
 nmu = length(lambda.ineqnonlin) / 2;
-muF = lambda.ineqnonlin(1:nmu);
-muT = lambda.ineqnonlin((1:nmu)+nmu);
+if nmu
+    muF = lambda.ineqnonlin(1:nmu);
+    muT = lambda.ineqnonlin((1:nmu)+nmu);
+else    %% keep dimensions of empty matrices/vectors compatible
+    muF = zeros(0,1);   %% (required to avoid problems when using Knitro
+    muT = zeros(0,1);   %%  on cases with all lines unconstrained)
+end
 if upper(mpopt.opf.flow_lim(1)) == 'I'      %% current
     [dIf_dVa, dIf_dVm, dIt_dVa, dIt_dVm, If, It] = dIbr_dV(branch(il,:), Yf, Yt, V);
     [Hfaa, Hfav, Hfva, Hfvv] = d2AIbr_dV2(dIf_dVa, dIf_dVm, If, Yf, V, muF);
