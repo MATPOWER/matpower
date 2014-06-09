@@ -15,6 +15,11 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 4.1
 -----------------
 
+6/9/14
+    - Fixed memory issue resulting from nested om fields when
+      repeatedly running an OPF using the results of a previous
+      OPF as input. Thanks to Carlos Murillo-Sanchez.
+
 5/23/14
     - Added case5.m, a 5-bus, 5-generator example case from Rui Bo.
     - Removed extras/psse2matpower.

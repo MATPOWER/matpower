@@ -76,7 +76,11 @@ else
     if isa(mpc,'opf_model') 
         om = mpc;
     else
-        s = struct('mpc', mpc);
+    	if isfield(mpc, 'om')	%% avoid nesting
+	        s = struct('mpc', rmfield(mpc, 'om'));
+	    else
+	        s = struct('mpc', mpc);
+	    end
         om = opt_model;
         om = class(s, 'opf_model', om);
     end
