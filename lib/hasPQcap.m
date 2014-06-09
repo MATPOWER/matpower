@@ -24,7 +24,7 @@ function TorF = hasPQcap(gen, hilo)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2005-2010 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2005-2014 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
@@ -61,13 +61,10 @@ end
 
 %% check for errors capability curve data
 if any( gen(:, PC1) > gen(:, PC2) )
-    error('hasPQcap: Pc1 > Pc2');
+    error('hasPQcap: must have Pc1 < Pc2');
 end
-if any( gen(:, QC2MAX) > gen(:, QC1MAX) )
-    error('hasPQcap: Qc2max > Qc1max');
-end
-if any( gen(:, QC2MIN) < gen(:, QC1MIN) )
-    error('hasPQcap: Qc2min < Qc1min');
+if any( gen(:, QC2MAX) < gen(:, QC2MIN) & gen(:, QC1MAX) < gen(:, QC1MIN) )
+    error('hasPQcap: capability curve defines and empty set');
 end
 
 L = zeros(size(gen, 1), 1);
