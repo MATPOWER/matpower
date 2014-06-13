@@ -86,27 +86,12 @@ end
 
 %%-----  read data into struct  -----
 if ischar(casefile)
-    %% check for explicit extension
-    l = length(casefile);
-    if l > 2
-        if strcmp(casefile(l-1:l), '.m')
-            rootname = casefile(1:l-2);
-            extension = '.m';
-        elseif l > 4
-            if strcmp(casefile(l-3:l), '.mat')
-                rootname = casefile(1:l-4);
-                extension = '.mat';
-            end
-        end
-    end
-
-    %% set extension if not specified explicitly
-    if ~exist('rootname', 'var')
-        rootname = casefile;
-        if exist([casefile '.mat'], 'file') == 2
-            extension = '.mat';
-        elseif exist([casefile '.m'], 'file') == 2
-            extension = '.m';
+    [pathstr, fname, ext] = fileparts(casefile);
+    if isempty(ext)
+        if exist(fullfile(pathstr, [fname '.mat']), 'file') == 2
+            ext = '.mat';
+        elseif exist(fullfile(pathstr, [fname '.m']), 'file') == 2
+            ext = '.m';
         else
             info = 2;
         end
@@ -114,20 +99,24 @@ if ischar(casefile)
     
     %% attempt to read file
     if info == 0
-        if strcmp(extension,'.mat')         %% from MAT file
+        if strcmp(ext,'.mat')       %% from MAT file
             try
-                s = load(rootname);
-                if isfield(s, 'mpc')        %% it's a struct
+                s = load(fullfile(pathstr, fname));
+                if isfield(s, 'mpc')    %% it's a struct
                     s = s.mpc;
-                else                        %% individual data matrices
+                else                    %% individual data matrices
                     s.version = '1';
                 end
             catch
                 info = 3;
             end
-        elseif strcmp(extension,'.m')       %% from M file
+        elseif strcmp(ext,'.m')     %% from M file
+            if ~isempty(pathstr)
+                cwd = cd;           %% save working directory to string
+                cd(pathstr);        %% cd to specified directory
+            end
             try                             %% assume it returns a struct
-                s = feval(rootname);
+                s = feval(fname);
             catch
                 info = 4;
             end
@@ -137,7 +126,7 @@ if ischar(casefile)
                 if expect_gencost
                     try
                         [s.baseMVA, s.bus, s.gen, s.branch, ...
-                            s.areas, s.gencost] = feval(rootname);
+                            s.areas, s.gencost] = feval(fname);
                     catch
                         info = 4;
                     end
@@ -145,26 +134,29 @@ if ischar(casefile)
                     if return_as_struct
                         try
                             [s.baseMVA, s.bus, s.gen, s.branch, ...
-                                s.areas, s.gencost] = feval(rootname);
+                                s.areas, s.gencost] = feval(fname);
                         catch
                             try
-                                [s.baseMVA, s.bus, s.gen, s.branch] = feval(rootname);
+                                [s.baseMVA, s.bus, s.gen, s.branch] = feval(fname);
                             catch
                                 info = 4;
                             end
                         end
                     else
                         try
-                            [s.baseMVA, s.bus, s.gen, s.branch] = feval(rootname);
+                            [s.baseMVA, s.bus, s.gen, s.branch] = feval(fname);
                         catch
                             info = 4;
                         end
                     end
                 end
             end
-            if info == 4 && exist([rootname '.m'], 'file') == 2
+            if info == 4 && exist(fullfile(pathstr, [fname '.m']), 'file') == 2
                 info = 5;
                 err5 = lasterr;
+            end
+            if ~isempty(pathstr)    %% change working directory back to original
+                cd(cwd);
             end
         end
     end
