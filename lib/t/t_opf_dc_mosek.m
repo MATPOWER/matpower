@@ -60,18 +60,18 @@ mpopt = mpoption(mpopt, 'opf.dc.solver', 'MOSEK');
 
 %% run DC OPF
 if have_fcn('mosek')
-	for k = 1:length(algs)
-		mpopt = mpoption(mpopt, 'mosek.lp_alg', algs(k));
-		methods = {
-			'free',
-			'interior point',
-			'primal simplex',
-			'dual simplex',
-			'primal dual simplex',
-			'free simplex',
-			'concurrent'
-		};
-	t0 = sprintf('DC OPF (MOSEK %s): ', methods{k});
+    for k = 1:length(algs)
+        mpopt = mpoption(mpopt, 'mosek.lp_alg', algs(k));
+        methods = {
+            'free',
+            'interior point',
+            'primal simplex',
+            'dual simplex',
+            'primal dual simplex',
+            'free simplex',
+            'concurrent'
+        };
+    t0 = sprintf('DC OPF (MOSEK %s): ', methods{k});
 
     %% set up indices
     ib_data     = [1:BUS_AREA BASE_KV:VMIN];
@@ -158,7 +158,7 @@ if have_fcn('mosek')
     [r, success] = rundcopf(mpc, mpopt);
     t_ok(~success, [t 'no success']);
 
-	end
+    end
 else
     t_skip(num_tests, 'MOSEK not available');
 end

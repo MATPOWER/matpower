@@ -60,17 +60,17 @@ mpopt = mpoption(mpopt, 'opf.dc.solver', 'GUROBI');
 
 %% run DC OPF
 if have_fcn('gurobi')
-	for k = 1:length(algs)
-		mpopt = mpoption(mpopt, 'gurobi.method', algs(k));
-		methods = {
-			'automatic',
-			'primal simplex',
-			'dual simplex',
-			'barrier',
-			'concurrent',
-			'deterministic concurrent',
-		};
-	t0 = sprintf('DC OPF (Gurobi %s): ', methods{k});
+    for k = 1:length(algs)
+        mpopt = mpoption(mpopt, 'gurobi.method', algs(k));
+        methods = {
+            'automatic',
+            'primal simplex',
+            'dual simplex',
+            'barrier',
+            'concurrent',
+            'deterministic concurrent',
+        };
+    t0 = sprintf('DC OPF (Gurobi %s): ', methods{k});
 
     %% set up indices
     ib_data     = [1:BUS_AREA BASE_KV:VMIN];
@@ -157,7 +157,7 @@ if have_fcn('gurobi')
     [r, success] = rundcopf(mpc, mpopt);
     t_ok(~success, [t 'no success']);
 
-	end
+    end
 else
     t_skip(num_tests, 'Gurobi not available');
 end

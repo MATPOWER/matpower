@@ -4,7 +4,7 @@ function t_opf_dc_cplex(quiet)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2004-2010 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2014 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
@@ -60,17 +60,17 @@ mpopt = mpoption(mpopt, 'opf.dc.solver', 'CPLEX');
 
 %% run DC OPF
 if have_fcn('cplex')
-	for k = 1:length(algs)
-		mpopt = mpoption(mpopt, 'cplex.lpmethod', algs(k), 'cplex.qpmethod', algs(k));
-		methods = {
-			'primal simplex',
-			'dual simplex',
-			'network simplex',
-			'barrier',
-			'sifting',
-			'concurrent'
-		};
-	t0 = sprintf('DC OPF (CPLEX %s): ', methods{k});
+    for k = 1:length(algs)
+        mpopt = mpoption(mpopt, 'cplex.lpmethod', algs(k), 'cplex.qpmethod', algs(k));
+        methods = {
+            'primal simplex',
+            'dual simplex',
+            'network simplex',
+            'barrier',
+            'sifting',
+            'concurrent'
+        };
+    t0 = sprintf('DC OPF (CPLEX %s): ', methods{k});
 
     %% set up indices
     ib_data     = [1:BUS_AREA BASE_KV:VMIN];
@@ -84,10 +84,10 @@ if have_fcn('cplex')
     ibr_flow    = (PF:QT);
     ibr_mu      = [MU_SF MU_ST];
     ibr_angmu   = [MU_ANGMIN MU_ANGMAX];
-    
+
     %% get solved DC power flow case from MAT-file
     load soln9_dcopf;       %% defines bus_soln, gen_soln, branch_soln, f_soln
-    
+
     %% run OPF
     t = t0;
     [baseMVA, bus, gen, gencost, branch, f, success, et] = rundcopf(casefile, mpopt);
@@ -114,7 +114,7 @@ if have_fcn('cplex')
     mpc.u = [0; 0];
     mpc.l = [-Inf; -Inf];
     mpc.zl = [0; 0];
-    
+
     mpc.N = sparse([1;2], [13;14], [1;1], 2, 14);   %% new z variables only
     mpc.fparm = ones(2,1) * [1 0 0 1];              %% w = r = z
     mpc.H = sparse(2,2);                            %% no quadratic term
@@ -157,7 +157,7 @@ if have_fcn('cplex')
     [r, success] = rundcopf(mpc, mpopt);
     t_ok(~success, [t 'no success']);
 
-	end
+    end
 else
     t_skip(num_tests, 'CPLEX not available');
 end
