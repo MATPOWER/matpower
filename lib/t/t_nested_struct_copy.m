@@ -55,8 +55,8 @@ S = struct( ...
         'g', 'chau', ...
         'h', 'oops'), ...
     'u', struct( ...
-    	'v', -1, ...
-    	'w', -2) );
+        'v', -1, ...
+        'w', -2) );
 
 %% default
 t = 'DS = nested_struct_copy(D, S)';
@@ -73,8 +73,8 @@ E = struct( ...
         'g', 'chau', ...
         'h', 'oops'), ...
     'u', struct( ...
-    	'v', -1, ...
-    	'w', -2 ) );
+        'v', -1, ...
+        'w', -2 ) );
 t_ok(isequal(DS, E), t);
 
 t = 'check = 0';
@@ -97,15 +97,30 @@ t_ok(isequal(DS, E), t);
 
 t = 'check = 1 ==> error';
 opt = struct('check', 1);
-try
-	DS = nested_struct_copy(D, S, opt);
-	t_ok(0, t);
-catch me
-	TorF = strcmp(me.message, 'nested_struct_copy: ''b.x'' is not a valid field name');
-	t_ok(TorF, t);
-	if ~TorF
-		me
-	end
+if have_fcn('octave')
+    %% Octave 3.4 and earlier do not support 'catch me'
+    try
+        DS = nested_struct_copy(D, S, opt);
+        t_ok(0, t);
+    catch
+        me = lasterr;
+        TorF = strcmp(me, 'nested_struct_copy: ''b.x'' is not a valid field name');
+        t_ok(TorF, t);
+        if ~TorF
+            me
+        end
+    end
+else
+    try
+        DS = nested_struct_copy(D, S, opt);
+        t_ok(0, t);
+    catch me
+        TorF = strcmp(me.message, 'nested_struct_copy: ''b.x'' is not a valid field name');
+        t_ok(TorF, t);
+        if ~TorF
+            me
+        end
+    end
 end
 
 t = 'check = 1, copy_mode = ''=''';
