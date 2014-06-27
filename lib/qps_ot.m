@@ -30,10 +30,8 @@ function [x, f, eflag, output, lambda] = qps_ot(H, c, A, l, u, xmin, xmax, x0, o
 %               0 = no progress output
 %               1 = some progress output
 %               2 = verbose progress output
-%           max_it (0) - maximum number of iterations allowed
-%               0 = use algorithm default
-%           ot_opt - options struct for QUADPROG/LINPROG, values in
-%               verbose and max_it override these options
+%           ot_opt - options struct for QUADPROG/LINPROG, value in
+%               verbose overrides these options
 %       PROBLEM : The inputs can alternatively be supplied in a single
 %           PROBLEM struct with fields corresponding to the input arguments
 %           described above: H, c, A, l, u, xmin, xmax, x0, opt
@@ -200,11 +198,6 @@ if ~isempty(opt) && isfield(opt, 'verbose') && ~isempty(opt.verbose)
 else
     verbose = 0;
 end
-if ~isempty(opt) && isfield(opt, 'max_it') && ~isempty(opt.max_it)
-    max_it = opt.max_it;
-else
-    max_it = 0;
-end
 
 %% split up linear constraints
 ieq = find( abs(u-l) <= eps );          %% equality
@@ -235,9 +228,6 @@ else
             ot_opt = optimset(ot_opt, 'LargeScale', 'off');
         end
     end
-end
-if max_it
-    ot_opt = optimset(ot_opt, 'MaxIter', max_it);
 end
 if verbose > 1
     ot_opt = optimset(ot_opt, 'Display', 'iter');   %% seems to be same as 'final'

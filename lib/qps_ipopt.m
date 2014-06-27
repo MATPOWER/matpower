@@ -28,10 +28,8 @@ function [x, f, eflag, output, lambda] = qps_ipopt(H, c, A, l, u, xmin, xmax, x0
 %               0 = no progress output
 %               1 = some progress output
 %               2 = verbose progress output
-%           max_it (0) - maximum number of iterations allowed
-%               0 = use algorithm default
-%           ipopt_opt - options struct for IPOPT, values in
-%               verbose and max_it override these options
+%           ipopt_opt - options struct for IPOPT, value in verbose
+%               overrides these options
 %       PROBLEM : The inputs can alternatively be supplied in a single
 %           PROBLEM struct with fields corresponding to the input arguments
 %           described above: H, c, A, l, u, xmin, xmax, x0, opt
@@ -201,11 +199,6 @@ if ~isempty(opt) && isfield(opt, 'verbose') && ~isempty(opt.verbose)
 else
     verbose = 0;
 end
-if ~isempty(opt) && isfield(opt, 'max_it') && ~isempty(opt.max_it)
-    max_it = opt.max_it;
-else
-    max_it = 0;
-end
 
 %% make sure args are sparse/full as expected by IPOPT
 if ~isempty(H)
@@ -235,9 +228,6 @@ if verbose
     options.ipopt.print_level = min(12, verbose*2+1);
 else
     options.ipopt.print_level = 0;
-end
-if max_it
-    options.ipopt.max_iter = max_it;
 end
 
 %% define variable and constraint bounds, if given

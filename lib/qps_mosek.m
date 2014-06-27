@@ -29,10 +29,8 @@ function [x, f, eflag, output, lambda] = qps_mosek(H, c, A, l, u, xmin, xmax, x0
 %               0 = no progress output
 %               1 = some progress output
 %               2 = verbose progress output
-%           max_it (0) - maximum number of iterations allowed
-%               0 = use algorithm default
-%           mosek_opt - options struct for MOSEK, values in
-%               verbose and max_it override these options
+%           mosek_opt - options struct for MOSEK, value in verbose
+%               overrides these options
 %       PROBLEM : The inputs can alternatively be supplied in a single
 %           PROBLEM struct with fields corresponding to the input arguments
 %           described above: H, c, A, l, u, xmin, xmax, x0, opt
@@ -185,18 +183,10 @@ if ~isempty(p.opt) && isfield(p.opt, 'verbose') && ~isempty(p.opt.verbose)
 else
     verbose = 0;
 end
-if ~isempty(p.opt) && isfield(p.opt, 'max_it') && ~isempty(p.opt.max_it)
-    max_it = p.opt.max_it;
-else
-    max_it = 0;
-end
 if ~isempty(p.opt) && isfield(p.opt, 'mosek_opt') && ~isempty(p.opt.mosek_opt)
     mosek_opt = mosek_options(p.opt.mosek_opt);
 else
     mosek_opt = mosek_options;
-end
-if max_it
-    mosek_opt.MSK_IPAR_INTPNT_MAX_ITERATIONS = max_it;
 end
 if qp
     mosek_opt.MSK_IPAR_OPTIMIZER = 0;   %% default solver only for QP

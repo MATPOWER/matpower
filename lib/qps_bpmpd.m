@@ -30,10 +30,8 @@ function [x, f, eflag, output, lambda] = qps_bpmpd(H, c, A, l, u, xmin, xmax, x0
 %               0 = no progress output
 %               1 = some progress output
 %               2 = verbose progress output
-%           max_it (0) - maximum number of iterations allowed
-%               0 = use algorithm default
-%           bp_opt - options vector for BP, values in verbose and
-%               max_it override these options
+%           bp_opt - options vector for BP, value in verbose
+%               overrides these options
 %       PROBLEM : The inputs can alternatively be supplied in a single
 %           PROBLEM struct with fields corresponding to the input arguments
 %           described above: H, c, A, l, u, xmin, xmax, x0, opt
@@ -204,11 +202,6 @@ if ~isempty(opt) && isfield(opt, 'verbose') && ~isempty(opt.verbose)
 else
     verbose = 0;
 end
-if ~isempty(opt) && isfield(opt, 'max_it') && ~isempty(opt.max_it)
-    max_it = opt.max_it;
-else
-    max_it = 0;
-end
 
 %% make sure args are sparse/full as expected by BPMPD
 if ~isempty(H)
@@ -287,9 +280,6 @@ else
     % bp_opt(29)= 1e-9;   % TRESX  acceptable primal residual
     % bp_opt(30)= 1e-9;   % TRESY  acceptable dual residual
     % bp_opt(38)= 2;      % SMETHOD1 prescaling method
-end
-if max_it
-    bp_opt(26) = max_it;    %% MAXITER
 end
 if verbose > 1
     prnlev = 1;

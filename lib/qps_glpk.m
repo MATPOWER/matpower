@@ -30,10 +30,8 @@ function [x, f, eflag, output, lambda] = qps_glpk(H, c, A, l, u, xmin, xmax, x0,
 %               0 = no progress output
 %               1 = some progress output
 %               2 = verbose progress output
-%           max_it (0) - maximum number of iterations allowed
-%               0 = use algorithm default
-%           glpk_opt - options struct for QUADPROG/LINPROG, values in
-%               verbose and max_it override these options
+%           glpk_opt - options struct for QUADPROG/LINPROG, value in
+%               verbose overrides these options
 %       PROBLEM : The inputs can alternatively be supplied in a single
 %           PROBLEM struct with fields corresponding to the input arguments
 %           described above: H, c, A, l, u, xmin, xmax, x0, opt
@@ -198,11 +196,6 @@ if ~isempty(opt) && isfield(opt, 'verbose') && ~isempty(opt.verbose)
 else
     verbose = 0;
 end
-if ~isempty(opt) && isfield(opt, 'max_it') && ~isempty(opt.max_it)
-    max_it = opt.max_it;
-else
-    max_it = 0;
-end
 
 %% split up linear constraints
 ieq = find( abs(u-l) <= eps );          %% equality
@@ -227,9 +220,6 @@ if ~isempty(opt) && isfield(opt, 'glpk_opt') && ~isempty(opt.glpk_opt)
     glpk_opt = glpk_options(opt.glpk_opt);
 else
     glpk_opt = glpk_options;
-end
-if max_it
-    glpk_opt.itlim = max_it;
 end
 glpk_opt.msglev = verbose;
 

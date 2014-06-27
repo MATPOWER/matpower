@@ -45,8 +45,6 @@ function [x, f, eflag, output, lambda] = qps_matpower(H, c, A, l, u, xmin, xmax,
 %               0 = no progress output
 %               1 = some progress output
 %               2 = verbose progress output
-%           max_it (0) - maximum number of iterations allowed
-%               0 = use algorithm default
 %           bp_opt    - options vector for BP
 %           cplex_opt - options struct for CPLEX
 %           glpk_opt  - options struct for GLPK
@@ -249,9 +247,6 @@ switch alg
             mips_opt = opt.mips_opt;
         else
             mips_opt = [];
-        end
-        if ~isempty(opt) && isfield(opt, 'max_it') && ~isempty(opt.max_it)
-            mips_opt.max_it = opt.max_it;
         end
         mips_opt.verbose = verbose;
         

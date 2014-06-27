@@ -30,8 +30,8 @@ function [x, f, eflag, output, lambda] = qps_cplex(H, c, A, l, u, xmin, xmax, x0
 %               0 = no progress output
 %               1 = some progress output
 %               2 = verbose progress output
-%           cplex_opt - options struct for CPLEX, value in
-%               verbose overrides these options
+%           cplex_opt - options struct for CPLEX, value in verbose
+%               overrides these options
 %       PROBLEM : The inputs can alternatively be supplied in a single
 %           PROBLEM struct with fields corresponding to the input arguments
 %           described above: H, c, A, l, u, xmin, xmax, x0, opt
@@ -198,11 +198,6 @@ if ~isempty(opt) && isfield(opt, 'verbose') && ~isempty(opt.verbose)
 else
     verbose = 0;
 end
-% if ~isempty(opt) && isfield(opt, 'max_it') && ~isempty(opt.max_it)
-%     max_it = opt.max_it;
-% else
-%     max_it = 0;
-% end
 
 %% split up linear constraints
 ieq = find( abs(u-l) <= eps );          %% equality
@@ -247,9 +242,6 @@ elseif verbose > 1
 elseif verbose > 0
     cplex_opt.Display = 'off';
 end
-% if max_it
-%     cplex_opt.    %% not sure what to set here
-% end
 
 if isempty(Ai) && isempty(Ae)
     unconstrained = 1;
