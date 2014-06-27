@@ -50,7 +50,7 @@ function rv = mpver(varargin)
 v{1} = struct(  'Name',     'MATPOWER', ... 
                 'Version',  '4.1+', ...
                 'Release',  '', ...
-                'Date',     '23-May-2014' );
+                'Date',     '27-Jun-2014' );
 if nargout > 0
     if nargin > 0
         rv = v{1};
@@ -119,6 +119,12 @@ else
         gurobiver;
     else
         fprintf('%-22s -- not installed --\n', 'Gurobi');
+    end
+    if have_fcn('glpk')
+        vn = '<unknown>';
+        fprintf('%-22s Version %-10s %-11s   %s\n', 'GLPK', vn, '', computer);
+    else
+        fprintf('%-22s -- not installed --\n', 'GLPK');
     end
     if have_fcn('ipopt')
         str = evalc('qps_ipopt([],1,1,1,1,1,1,1,struct(''verbose'', 2))');

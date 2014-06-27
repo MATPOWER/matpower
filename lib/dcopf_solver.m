@@ -76,23 +76,6 @@ function [results, success, raw] = dcopf_solver(om, mpopt)
 %% options
 alg = upper(mpopt.opf.dc.solver);
 
-%% default solver
-if strcmp(alg, 'DEFAULT')
-    if have_fcn('cplex')        %% use CPLEX by default, if available
-        alg = 'CPLEX';
-    elseif have_fcn('gurobi')   %% if not, then Gurobi, if available
-        alg = 'GUROBI';
-    elseif have_fcn('mosek')    %% if not, then MOSEK, if available
-        alg = 'MOSEK';
-    elseif have_fcn('bpmpd')    %% if not, then BPMPD_MEX, if available
-        alg = 'BPMPD';
-    elseif have_fcn('quadprog') %% if not, then Optimization Tbx, if available
-        alg = 'OT';
-    else                        %% otherwise MIPS
-        alg = 'MIPS';
-    end
-end
-
 %% unpack data
 mpc = get_mpc(om);
 [baseMVA, bus, gen, branch, gencost] = ...
@@ -172,6 +155,25 @@ HH = MN' * HHw * MN;
 CC = full(MN' * (CCw - HMR));
 C0 = 1/2 * MR' * HMR + sum(polycf(:, 3));   %% constant term of cost
 
+%% default solver
+if strcmp(alg, 'DEFAULT')
+    if have_fcn('cplex')        %% use CPLEX by default, if available
+        alg = 'CPLEX';
+    elseif have_fcn('gurobi')   %% if not, then Gurobi, if available
+        alg = 'GUROBI';
+    elseif have_fcn('mosek')    %% if not, then MOSEK, if available
+        alg = 'MOSEK';
+    elseif have_fcn('bpmpd')    %% if not, then BPMPD_MEX, if available
+        alg = 'BPMPD';
+    elseif have_fcn('quadprog') %% if not, then Optimization Tbx, if available
+        alg = 'OT';
+    elseif (isempty(HH) || ~any(any(HH))) && have_fcn('glpk') %% if not, and
+        alg = 'GLPK';           %% prob is LP (not QP), then GLPK, if available
+    else                        %% otherwise MIPS
+        alg = 'MIPS';
+    end
+end
+
 %% set up input for QP solver
 opt = struct('alg', alg, 'verbose', mpopt.verbose);
 switch alg
@@ -215,6 +217,8 @@ switch alg
         opt.mosek_opt = mosek_options([], mpopt);
     case 'GUROBI'
         opt.grb_opt = gurobi_options([], mpopt);
+    case 'GLPK'
+        opt.glpk_opt = glpk_options([], mpopt);
 end
 
 %%-----  run opf  -----

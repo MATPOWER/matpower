@@ -28,18 +28,19 @@ function [x, f, eflag, output, lambda] = qps_matpower(H, c, A, l, u, xmin, xmax,
 %           alg ('DEFAULT') : determines which solver to use, can be either
 %                   a (new-style) string or an (old-style) numerical alg code
 %               'DEFAULT' : (or 0) automatic, first available of CPLEX,
-%                       Gurobi, MOSEK, BPMPD, Opt Tbx, MIPS
-%               'BPMPD'   : (or 100) BPMPD_MEX
+%                       Gurobi, MOSEK, BPMPD, Opt Tbx, GLPK (LPs only), MIPS
 %               'MIPS'    : (or 200) MIPS, MATLAB Interior Point Solver
 %                        pure MATLAB implementation of a primal-dual
 %                        interior point method, if mips_opt.step_control = 1
 %                        (or alg=250) it uses MIPS-sc, a step controlled
 %                        variant of MIPS
-%               'OT'      : (or 300) Optimization Toolbox, QUADPROG or LINPROG
-%               'IPOPT'   : (or 400) IPOPT
+%               'BPMPD'   : (or 100) BPMPD_MEX
 %               'CPLEX'   : (or 500) CPLEX
-%               'MOSEK'   : (or 600) MOSEK
+%               'GLPK'    : GLPK, (LP problems only, i.e. empty H matrix)
 %               'GUROBI'  : (or 700) Gurobi
+%               'IPOPT'   : (or 400) IPOPT
+%               'MOSEK'   : (or 600) MOSEK
+%               'OT'      : (or 300) Optimization Toolbox, QUADPROG or LINPROG
 %           verbose (0) - controls level of progress output displayed
 %               0 = no progress output
 %               1 = some progress output
@@ -48,6 +49,7 @@ function [x, f, eflag, output, lambda] = qps_matpower(H, c, A, l, u, xmin, xmax,
 %               0 = use algorithm default
 %           bp_opt    - options vector for BP
 %           cplex_opt - options struct for CPLEX
+%           glpk_opt  - options struct for GLPK
 %           grb_opt   - options struct for GBUROBI_MEX
 %           ipopt_opt - options struct for IPOPT
 %           mips_opt  - options struct for QPS_MIPS
@@ -113,7 +115,7 @@ function [x, f, eflag, output, lambda] = qps_matpower(H, c, A, l, u, xmin, xmax,
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2010-2013 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2014 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
@@ -216,6 +218,8 @@ if strcmp(alg, 'DEFAULT')
         alg = 'BPMPD';
     elseif have_fcn('quadprog') %% if not, then Optimization Tbx, if available
         alg = 'OT';
+    elseif (isempty(H) || ~any(any(H))) && have_fcn('glpk') %% if not, and
+        alg = 'GLPK';           %% prob is LP (not QP), then GLPK, if available
     else                        %% otherwise MIPS
         alg = 'MIPS';
     end
@@ -269,6 +273,9 @@ switch alg
     case 'GUROBI'
         [x, f, eflag, output, lambda] = ...
             qps_gurobi(H, c, A, l, u, xmin, xmax, x0, opt);
+    case 'GLPK'
+        [x, f, eflag, output, lambda] = ...
+            qps_glpk(H, c, A, l, u, xmin, xmax, x0, opt);
     otherwise
         error('qps_matpower: %d is not a valid algorithm code', alg);
 end

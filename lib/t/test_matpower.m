@@ -101,6 +101,9 @@ end
 if have_fcn('quadprog')
     tests{end+1} = 't_opf_dc_ot';
 end
+if have_fcn('glpk')
+    tests{end+1} = 't_opf_dc_glpk';
+end
 if have_fcn('sdp_pf')
     tests{end+1} = 't_opf_sdpopf';
     tests{end+1} = 't_testglobalopt';

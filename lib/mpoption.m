@@ -130,12 +130,16 @@ function opt = mpoption(varargin)
 %       [             method, requires TSPOPF (see 'PDIPM')                 ]
 %   opf.dc.solver           'DEFAULT'   DC optimal power flow solver
 %       [ 'DEFAULT' - choose solver based on availability in the following  ]
-%       [             order: 'CLPEX', 'GUROBI', 'MOSEK','BPMPD','OT','MIPS' ]
+%       [             order: 'CLPEX', 'GUROBI', 'MOSEK','BPMPD','OT',       ]
+%       [             'GLPK' (linear costs only), 'MIPS'                    ]
 %       [ 'MIPS'    - MIPS, Matlab Interior Point Solver, primal/dual       ]
 %       [             interior point method (pure Matlab)                   ]
 %       [ 'BPMPD'   - BPMPD, requires optional MEX-based BPMPD_MEX package  ]
 %       [             available from: http://www.pserc.cornell.edu/bpmpd/   ]
 %       [ 'CPLEX'   - CPLEX, requires Matlab interface to CPLEX solver      ]
+%       [ 'GLPK'    - GLPK, requires interface to GLPK solver               ]
+%       [             available from: http://www.gnu.org/software/glpk/     ]
+%       [             (GLPK does not work with quadratic cost functions)    ]
 %       [ 'GUROBI'  - GUROBI, requires Gurobi optimizer (v. 5+)             ]
 %       [             available from: http://www.gurobi.com/                ]
 %       [ 'IPOPT'   - IPOPT, requires MEX interface to IPOPT solver         ]
@@ -1388,6 +1392,6 @@ db_level = 0;
 %%-------------------------------------------------------------------
 function pkgs = mpoption_optional_pkgs()
 pkgs = {...
-    'cplex', 'fmincon', 'gurobi', 'ipopt', 'knitro', 'minopf', ...
+    'cplex', 'fmincon', 'gurobi', 'glpk', 'ipopt', 'knitro', 'minopf', ...
     'mosek', 'sdp_pf', 'sopf', 'tspopf', 'yalmip' ...
 };

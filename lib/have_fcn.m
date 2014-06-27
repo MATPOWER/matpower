@@ -7,6 +7,7 @@ function TorF = have_fcn(tag)
 %       bpmpd       - BP, BPMPD interior point solver
 %       cplex       - CPLEX, IBM ILOG CPLEX Optimizer
 %       fmincon     - FMINCON, solver from Optimization Toolbox 2.x +
+%       glpk        - GLPK, GNU Linear Programming Kit
 %       gurobi      - GUROBI, Gurobi solver (http://www.gurobi.com/), 5.x +
 %       ipopt       - IPOPT, NLP solver (https://projects.coin-or.org/Ipopt/)
 %       linprog     - LINPROG, LP solver from Optimization Toolbox 2.x +
@@ -38,7 +39,7 @@ function TorF = have_fcn(tag)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2004-2013 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2014 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
@@ -88,6 +89,9 @@ else
             end
         case 'fmincon'
             TorF = license('test', 'optimization_toolbox') && exist('fmincon', 'file') == 2;
+        case 'glpk'
+            TorF = exist('glpk','file') == 2 && ...
+                (exist('__glpk__','file') == 3 || exist('glpkcc','file') == 3);
         case 'gurobi'
             TorF = exist('gurobi', 'file') == 3;
         case 'ipopt'
