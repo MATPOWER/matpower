@@ -113,12 +113,6 @@ end
 %% printing
 opt.msglev = verbose;
 
-%% convergence
-if have_mpopt
-    opt.constr_viol_tol = mpopt.opf.violation;                  %% default 1e-4
-    opt.acceptable_constr_viol_tol = mpopt.opf.violation*100;   %% default 1e-2
-end
-
 %%-----  call user function to modify defaults  -----
 if ~isempty(fname)
     if have_mpopt
