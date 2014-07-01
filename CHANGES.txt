@@ -2,27 +2,30 @@
  Change history for MATPOWER
 -----------------------------
 
-Version:    4.1
+Version:    5.0b1
 
 maintained by Ray Zimmerman <rz10@cornell.edu>
 
 MATPOWER
 $Id$
-Copyright (c) 1996-2013 by Power System Engineering Research Center (PSERC)
+Copyright (c) 1996-2014 by Power System Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
 
 
 Changes since 4.1
 -----------------
 
-6/27/13
+7/1/14
+    - Released version 5.0b1.
+
+6/27/14
     - Added support for LP solver GLPK which is built-in to
       Octave. Use 'opf.dc.solver' option 'GLPK'.
     - INCOMPATIBLE CHANGE: Removed optional 'max_it' field from
       opt argument to qps_matpower() and qps_*() family of
       functions (except qps_mips()).
 
-6/13/13
+6/13/14
     - Added ability for loadcase() to load MATPOWER case M-files
       that are not in the Matlab path by specifying an explicit
       path in the input filename.

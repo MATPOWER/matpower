@@ -2,7 +2,7 @@
  MATPOWER - A MATLAB(R) Power System Simulation Package
 ========================================================
 
-Version:    4.1
+Version:    5.0b1
 
 Home Page:  http://www.pserc.cornell.edu/matpower/
 
@@ -10,10 +10,10 @@ Authors:    Ray Zimmerman               <rz10@cornell.edu>
             Carlos E. Murillo-Sanchez   <carlos_murillo@ieee.org>
             Deqiang (David) Gan         <dgan@zju.edu.cn>
 
-            Wed, Dec 14, 2011
+            Tue, Jul 1, 2014
 
 $Id$
-Copyright (c) 1997-2011 by Power System Engineering Research Center (PSERC)
+Copyright (c) 1997-2014 by Power System Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
 
 Copying and distribution of this file, with or without modification,
@@ -68,9 +68,9 @@ Note:  Versions prior to MATPOWER 4 use a different license.
 
 System Requirements
 -------------------
-    - MATLAB(R) version 6.5 or later (available from The MathWorks, Inc.
+    - MATLAB(R) version 7 or later (available from The MathWorks, Inc.
       http://www.mathworks.com/), or
-    - GNU Octave version 3.2 or later (free software available from
+    - GNU Octave version 3.4 or later (free software available from
       http://www.gnu.org/software/octave/).
 
 Installation
@@ -131,40 +131,107 @@ documentation for the various MATPOWER functions. For example:
     help caseformat
 
 
----------------------------
- WHAT'S NEW IN VERSION 4.1
----------------------------
+-----------------------------
+ WHAT'S NEW IN VERSION 5.0b1
+-----------------------------
 
-Below is a summary of the changes since version 4.0 of MATPOWER. See the
+Below is a summary of the changes since version 4.1 of MATPOWER. See the
 CHANGES file in the docs directory for all the gory details.
 
 * New features:
-  - More new high performance OPF solvers:
-    - Support for the Knitro interior point optimizer for large scale
-      non-linear optimization. Use OPF_ALG = 600 for to select Knitro
-      to solve the AC OPF. Requires the Matlab Optimization Toolbox
-      and a license for Knitro, available from http://www.ziena.com/.
-      See 'help mpoption' for more Knitro options.
-    - Support for Gurobi to solve LP and QP problems. Set option
-      OPF_ALG_DC = 700 to use Gurobi to solve the DC OPF. Requires
-      Gurobi (http://www.gurobi.com/) and the Gurobi MEX interface
-      (http://www.convexoptimization.com/wikimization/index.php/Gurobi_mex).
-      See 'help mpoption' for more Gurobi options.
-    - Updated for compatibility with CPLEX 12.3.
-    - Changed options so that FMINCON uses its interior-point
-      solver by default. Much faster on larger systems.
-  - Support for basic modeling of DC transmission lines.
-  - New case files with more recent versions of Polish system.
-  - Power flow can handle networks with islands.
+  - Continuation power flow with tangent predictor and Newton
+    method corrector, based on code contributed by Shrirang Abhyankar
+    and Alex Flueck.
+  - SDP_PF, a set of applications of a semidefinite programming
+    relaxation of the power flow equations, contributed by
+    Dan Molzahn (see 'extras/sdp_pf'):
+    - Globally optimal AC OPF solver (under certain conditions).
+    - Functions to check sufficient conditions for:
+      - global optimality of OPF solution
+      - insolvability of power flow equations
+  - PSS/E RAW data conversion to MATPOWER case format (experimental)
+    based on code contributed by Yujia Zhu.
+  - Brand new extensible MATPOWER options architecture based on options
+    struct instead of options vector.
+  - Utility routines to check network connectivity and handle islands
+    and isolated buses.
+  - New and updated support for 3rd party solvers:
+    - CPLEX 12.6
+    - GLPK
+    - Gurobi 5.x
+    - Knitro 9.x.x
+  - Numerous performance enhancements.
+  - New functions:
+    - runcpf() for continuation power flow.
+    - case_info() for summarizing system information, including network
+      connectivity.
+    - extract_islands() to extract a network island into a separate
+      MATPOWER case.
+    - find_islands() to detect network islands.
+    - @opt_model/describe_idx() to identify variable, constraint or
+      cost row indices to aid in debugging.
+    - margcost() for computing the marginal cost of generation.
+    - psse2mpc() to convert PSS/E RAW date into MATPOWER case format.
+  - Added case5.m, a 5-bus, 5-generator example case from Rui Bo.
+  - New options:
+    - scale_load() can scale corresponding gencost for dispatchable loads.
+    - makeJac() can return full Jacobian instead of reduced version
+      used in Newton power flow updates.
+    - modcost() can accept a vector of shift/scale factors.
+  - Reimplementated @opf_model class as sub-class of the new
+    @opt_model class, which supports indexed named sets of
+    variables, constraints and costs.
+  - Many new tests in test suite.
 
 * Bugs fixed:
-  - Computation of quadratic user-defined costs had a potentially
-    fatal error. Thanks to Stefanos Delikaraoglou for finding this.
-  - Calculation of reserve prices in toggle_reserves() had an error.
+  - Running a power flow for a case with DC lines but no gencost
+    no longer causes an error.
+  - Fixed a bug in runpf() where it was using the wrong initial
+    voltage magnitude for generator buses marked as PQ buses. Power
+    flow of solved case was not converging in zero iterations as
+    expected.
+  - Fixed fatal bug in MIPS for unconstrained, scalar problems.
+    Thanks to Han Na Gwon.
+  - Fixed a bug in int2ext() where converting a case to internal
+    ordering before calling runpf() or runopf() could result in
+    a fatal error due to mismatched number of columns in internal
+    and external versions of data matrices. Thanks to Nasiruzzaman
+    and Shiyang Li for reporting and detailing the issue.
+  - DC OPF now correctly sets voltage magnitudes to 1 p.u.
+    in results.
+  - Fixed a bug in MIPS where a near-singular matrix could produce
+    an extremely large Newton step, resulting in incorrectly satisfying
+    the relative feasibility criterion for successful termination.
+  - Improved the starting point created for Ipopt, Knitro and MIPS
+    for variables that are only bounded on one side.
+  - Fixed bug in savecase() where the function name mistakenly
+    included the path when the FNAME input included a path.
+  - Fixed bugs in runpf() related to enforcing generator reactive
+    power limits when all generators violate limits or when
+    the slack bus is converted to PQ.
+  - Fixed crash when using Knitro to solve cases with all
+    lines unconstrained.
+  - Fixed memory issue resulting from nested om fields when
+    repeatedly running an OPF using the results of a previous
+    OPF as input. Thanks to Carlos Murillo-Sanchez.
 
 * INCOMPATIBLE CHANGES:
   - Optional packages TSPOPF and MINOPF must be updated to latest
     versions.
+  - Removed 'max_it' option from qps_matpower() (and friends) args.
+    Use algorithm specific options to control iteration limits.
+  - Changed behavior of branch angle difference limits so that
+    0 is interpreted as unbounded only if both ANGMIN and ANGMAX
+    are zero.
+  - In results struct returned by an OPF, the value of
+    results.raw.output.alg is now a string, not an old-style numeric
+    alg code.
+  - Removed:
+    - Support for Matlab 6.x.
+    - Support for constr() and successive LP-based OPF solvers.
+    - Support for Gurobi 4.x/gurobi_mex() interface.
+    - extras/cpf, replaced by runcpf().
+    - extras/psse2matpower, replaced by psse2mpc().
 
 
 ---------------
@@ -240,6 +307,10 @@ Terms of Use for details.
                that MATPOWER can use for the DC OPF. Requires the
                Matlab interface to CPLEX, available from
                http://www.ibm.com/software/integration/optimization/cplex-optimizer/.
+
+ - GLPK        GNU Linear Programming Kit includes large-scale LP solvers
+               that MATPOWER can use for the DC OPF. Available from
+               http://www.gnu.org/software/glpk/ and included with Octave.
 
  - GUROBI      Includes high-performance, large-scale LP and QP solvers
                that MATPOWER can use for the DC OPF. Requires the
