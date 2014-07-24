@@ -19,6 +19,8 @@ Changes since 5.0b1
     - Added line to cplex_options() to prevent default creation
       of clone1.log files when using parallel CPLEX routines
       (only effective for CPLEX 12.6.0.1 or later).
+    - Fixed fatal error when uopf() shuts down all gens
+      attempting to satisfy Pmin limits.
 
 7/23/14
     - Fixed error in User's Manual description of LODF and

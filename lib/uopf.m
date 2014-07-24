@@ -122,56 +122,70 @@ while sum(Pmin) > load_capacity
     on  = find( mpc.gen(:, GEN_STATUS) > 0 & ~isload(mpc.gen) );   %% gens in service
     Pmin = mpc.gen(on, PMIN);
 end
-
-%% run initial opf
-[results, success] = opf(mpc, mpopt);
-
-%% best case so far
-results1 = results;
-
-%% best case for this stage (ie. with n gens shut down, n=0,1,2 ...)
-results0 = results1;
-mpc.bus = results0.bus;     %% use these V as starting point for OPF
-
-while 1
-    %% get candidates for shutdown
-    candidates = find(results0.gen(:, MU_PMIN) > 0 & results0.gen(:, PMIN) > 0);
-    if isempty(candidates)
-        break;
+if ~any(mpc.gen(:, GEN_STATUS) > 0)     %% don't bother to run anything if
+    success = 0;                        %% everything has been shut down
+    results0 = mpc;
+    results0.success = success;
+    results0.f = NaN;
+    results0.et = 0;
+    if mpopt.verbose
+        fprintf('Infeasible problem, Pmin limits cannot be satisfied without shutting down all generators.\n');
     end
-    done = 1;   %% do not check for further decommitment unless we
-                %%  see something better during this stage
-    for i = 1:length(candidates)
-        k = candidates(i);
-        %% start with best for this stage
-        mpc.gen = results0.gen;
-        
-        %% shut down gen k
-        mpc.gen(k, [ PG QG GEN_STATUS ]) = 0;
-        
-        %% run opf
-        [results, success] = opf(mpc, mpopt);
-        
-        %% something better?
-        if success && results.f < results1.f
-            results1 = results;
-            k1 = k;
-            done = 0;   %% make sure we check for further decommitment
-        end
-    end
+else
+    %% run initial opf
+    [results, success] = opf(mpc, mpopt);
 
-    if done
-        %% decommits at this stage did not help, so let's quit
-        break;
-    else
-        %% shutting something else down helps, so let's keep going
-        if mpopt.verbose
-            fprintf('Shutting down generator %d.\n', k1);
+    %% best case so far
+    results1 = results;
+
+    %% best case for this stage (ie. with n gens shut down, n=0,1,2 ...)
+    results0 = results1;
+    mpc.bus = results0.bus;     %% use these V as starting point for OPF
+
+    while 1
+        %% get candidates for shutdown
+        candidates = find(results0.gen(:, MU_PMIN) > 0 & results0.gen(:, PMIN) > 0);
+        if isempty(candidates)
+            break;
         end
+        done = 1;   %% do not check for further decommitment unless we
+                    %%  see something better during this stage
+        for i = 1:length(candidates)
+            k = candidates(i);
+            %% start with best for this stage
+            mpc.gen = results0.gen;
         
-        results0 = results1;
-        mpc.bus = results0.bus;     %% use these V as starting point for OPF
-    end 
+            %% shut down gen k
+            mpc.gen(k, [ PG QG GEN_STATUS ]) = 0;
+        
+            %% run opf
+            if any(mpc.gen(:, GEN_STATUS) > 0)
+                [results, success] = opf(mpc, mpopt);
+            else
+                success = 0;
+            end
+        
+            %% something better?
+            if success && results.f < results1.f
+                results1 = results;
+                k1 = k;
+                done = 0;   %% make sure we check for further decommitment
+            end
+        end
+
+        if done
+            %% decommits at this stage did not help, so let's quit
+            break;
+        else
+            %% shutting something else down helps, so let's keep going
+            if mpopt.verbose
+                fprintf('Shutting down generator %d.\n', k1);
+            end
+        
+            results0 = results1;
+            mpc.bus = results0.bus;     %% use these V as starting point for OPF
+        end 
+    end
 end
 
 %% compute elapsed time
