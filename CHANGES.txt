@@ -15,6 +15,11 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.0b1
 -------------------
 
+7/24/14
+    - Added line to cplex_options() to prevent default creation
+      of clone1.log files when using parallel CPLEX routines
+      (only effective for CPLEX 12.6.0.1 or later).
+
 7/23/14
     - Fixed error in User's Manual description of LODF and
       further clarified text.

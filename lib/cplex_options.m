@@ -126,6 +126,7 @@ end
 %%-----  set default options for CPLEX  -----
 opt = cplexoptimset('cplex');
 opt.simplex.tolerances.feasibility = feastol;
+opt.output.clonelog = -1;
 
 %% printing
 vrb = max([0 verbose-1]);
