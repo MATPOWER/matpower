@@ -72,6 +72,8 @@ elseif ischar(mpc_name)     %% save the file
         if nargin < 3
             verbose = 1;
         end
+    elseif isempty(rev)
+        rev = 0;
     end
 else                        %% don't save the file
     if nargin < 3
@@ -95,11 +97,7 @@ end
 %% (optionally) save MATPOWER case file
 if ~isempty(mpc_name)
     if ~rev
-        if data.id.REV
-            rev = data.id.REV;
-        else
-            rev = 29;
-        end
+        rev = data.id.REV;
     end
     comments = {''};
     for k = 0:2

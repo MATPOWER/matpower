@@ -18,6 +18,9 @@ Changes since 5.0b1
 7/30/14
     - Fixed a bug in psse_convert() that resulted in incorrect
       bus voltage angles when importing from v29 or v30 files.
+    - Enhanced PSS/E import code to handle additional versions
+      prior to v29, improve reporting of version being used
+      for parsing. Default version when not explicit is now v23.
 
 7/24/14
     - Added line to cplex_options() to prevent default creation

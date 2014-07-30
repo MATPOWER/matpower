@@ -81,6 +81,19 @@ if nargin < 4
     end
 end
 
+%% version guesses
+defaultrev = 23;
+v2x = 24;
+v2y = 28;
+%% all we really know is 23 < v2x < v2y < 29, and ...
+%%  23  v2x v2y 29
+%%   -   +   +   +  loads in Bus (-) vs separate Load (+) section
+%%   -   -   +   +  single (-) vs. multiple (+) sections after Zone data
+%%   -   -   +   +  includes (+) Owner data, or not (-)
+%%   -   -   -   +  transformers in Branch (-) vs. separate Transformer (+) section
+%%   -   -   -   +  includes (+) RMIDNT in switched shunt data, or not (-)
+%%   -   -   -   +  includes (+) Voltage Source Converter Data, or not (-)
+
 %% inititialize section counter
 s = 1;
 warns = {};
@@ -141,16 +154,30 @@ data.id.comment0 = c;
 data.id.comment1 = records{2};
 data.id.comment2 = records{3};
 if verbose
-    if data.id.REV
-        fprintf('......... rev %2d format detected ... done.\n', data.id.REV);
+    if rev
+        if data.id.REV
+            fprintf('.. override detected rev %2d w/%2d ... done.\n', data.id.REV, rev);
+        else
+            fprintf('...... unknown rev, using rev %2d ... done.\n', rev);
+        end
     else
-        fprintf('.............. rev not specified ... done.\n');
+        if data.id.REV
+            fprintf('......... rev %2d format detected ... done.\n', data.id.REV);
+        else
+            fprintf('...... unknown rev, using rev %2d ... done.\n', defaultrev);
+        end
     end
 end
 if ~rev
-    rev = data.id.REV;      %% use detected value
+    if data.id.REV
+        rev = data.id.REV;      %% use detected value
+    else
+        rev = defaultrev;       %% none detected, use default value
+        data.id.REV = defaultrev;
+        warns{end+1} = sprintf('Unknown REV, using REV %2d format.', defaultrev);
+    end
 else
-    data.id.REV = rev;      %% use override value
+    data.id.REV = rev;          %% use override value
 end
 if isempty(data.id.IC) || data.id.IC ~= 0
     warns{end+1} = sprintf('IC = %d indicates that this may be a change case, rather than base case\n         PSSE2MPC is NOT designed to handle change cases.', data.id.IC);
@@ -170,13 +197,13 @@ s = s + 1;
 %% v33:
 %%  I, 'NAME', BASKV, IDE, AREA, ZONE, OWNER, VM, VA, NVHI, NVLO, EVHI, EVLO
 %% Note: Some v33 files seem to follow v31 format
-if rev == 1
+if rev < v2x        %% includes load data 
     [data.bus, warns] = psse_parse_section(warns, records, sections, s, verbose, ...
         'bus', 'ddffffdffsfd');
-elseif rev < 31
+elseif rev < 31     %% includes fixed shunt data, load separate
     [data.bus, warns] = psse_parse_section(warns, records, sections, s, verbose, ...
         'bus', 'dsfdffddffd');
-else
+else                %% fixed shunt and load data separate
     [data.bus, warns] = psse_parse_section(warns, records, sections, s, verbose, ...
         'bus', 'dsfddddffff..');
 %       'bus', 'dsfddddffffff');
@@ -189,7 +216,7 @@ s = s + 1;
 %% v33:
 %%  I, ID, STATUS, AREA, ZONE, PL, QL, IP, IQ, YP, YQ, OWNER, SCALE, INTRPT
 %% Note: Some v33 files seem to end with SCALE
-if rev > 1
+if rev >= v2x
     [data.load, warns] = psse_parse_section(warns, records, sections, s, verbose, ...
         'load', 'd.d..ffffff...');
 %       'load', 'dsdddffffffddd');
@@ -218,41 +245,41 @@ end
 %   'generator', 'dsfffffdffffffdfffdfdfdfdfsdf');
 s = s + 1;
 
-%%-----  parse non-transformer branch data  -----
+%%-----  parse branch data  -----
 %% v1: (http://www.ee.washington.edu/research/pstca/formats/pti.txt)
 %%  I,J,CKT,R,X,B,RATEA,RATEB,RATEC,RATIO,ANGLE,GI,BI,GJ,BJ,ST
+%% v?-?:
+%%  I,J,CKT,R,X,B,RATEA,RATEB,RATEC,RATIO,ANGLE,GI,BI,GJ,BJ,ST,?,?,?
 %% v29-30:
 %%  I,J,CKT,R,X,B,RATEA,RATEB,RATEC,GI,BI,GJ,BJ,ST,LEN,O1,F1,...,O4,F4
 %% v31-33:
 %%  I,J,CKT,R,X,B,RATEA,RATEB,RATEC,GI,BI,GJ,BJ,ST,MET,LEN,O1,F1,...,O4,F4
-if rev == 1
+if rev <= v2y   %% includes transformer ratio, angle
     [data.branch, warns] = psse_parse_section(warns, records, sections, s, verbose, ...
         'branch', 'dd.ffffffffffffd');
 %       'branch', 'dddffffffffffffd');
+elseif rev < 31
+    [data.branch, warns] = psse_parse_section(warns, records, sections, s, verbose, ...
+        'branch', 'dd.ffffffffffd');
+%       'branch', 'ddsffffffffffdfdfdfdfdf');
 else
-    if rev < 31
-        [data.branch, warns] = psse_parse_section(warns, records, sections, s, verbose, ...
-            'branch', 'dd.ffffffffffd');
-%           'branch', 'ddsffffffffffdfdfdfdfdf');
-    else
-        [data.branch, warns] = psse_parse_section(warns, records, sections, s, verbose, ...
-            'branch', 'dd.ffffffffffd');
-%           'branch', 'ddsffffffffffddfdfdfdfdf');
-    end
+    [data.branch, warns] = psse_parse_section(warns, records, sections, s, verbose, ...
+        'branch', 'dd.ffffffffffd');
+%       'branch', 'ddsffffffffffddfdfdfdfdf');
 end
 s = s + 1;
 
-%%-----  skip impedance correction data  -----
+%%-----  skip transformer adjustment data  -----
 %% v1: (http://www.ee.washington.edu/research/pstca/formats/pti.txt)
 %%  I,J,CKT,ICONT,RMA,RMI,VMA,VMI,STEP,TABLE
 %% v29-33:
-%%  (precedes multi-terminal DC section)
-if rev == 1
-    [s, warns] = psse_skip_section(warns, sections, s, verbose, 'impedance correction');
+%%  (in transformer data)
+if rev <= v2y
+    [s, warns] = psse_skip_section(warns, sections, s, verbose, 'transformer adjustment');
 end
 
 %%-----  parse transformer data  -----
-if rev > 1
+if rev > v2y
     %% PSS/E stores two winding and three winding transformer data in the same
     %% section in RAW file. We read in 2 passes, first pass determines the type of
     %% each, second pass reads the data.
@@ -475,7 +502,7 @@ s = s + 1;
 %%-----  skip voltage source converter data  -----
 %% v29-33:
 %%  'NAME', MDC, RDC, O1, F1, ... O4, F4<\n>IBUS,TYPE,MODE,DCSET,ACSET,ALOSS,BLOSS,MINLOSS,SMAX,IMAX,PWF,MAXQ,MINQ,REMOT,RMPCT<\n>IBUS,TYPE,MODE,DCSET,ACSET,ALOSS,BLOSS,MINLOSS,SMAX,IMAX,PWF,MAXQ,MINQ,REMOT,RMPCT
-if rev > 1
+if rev > v2y
     [s, warns] = psse_skip_section(warns, sections, s, verbose, 'voltage source converter');
 end
 
@@ -490,7 +517,7 @@ end
 %%  (switched shunt section follows FACTS device data)
 if rev < 31
     %% parse up to B1
-    if rev == 1
+    if rev <= v2y
         [data.swshunt, warns] = psse_parse_section(warns, records, sections, s, verbose, ...
             'switched shunt', 'd....f');
 %           'switched shunt', 'ddffdfdfdfdfdfdfdfdfdf');
@@ -511,46 +538,43 @@ end
 %%  (follows branch data)
 %% v29-33:
 %%  I, T1, F1, T2, F2, T3, F3, ... T11, F11
-if rev > 1
-    [s, warns] = psse_skip_section(warns, sections, s, verbose, 'impedance correction');
-end
+[s, warns] = psse_skip_section(warns, sections, s, verbose, 'impedance correction');
 
 %%-----  skip multi-terminal DC data  -----
 %% v29-30:
 %%       I, NCONV, NDCBS, NDCLN, MDC, VCONV, VCMOD, VCONVN<\n>IB,N,ANGMX,ANGMN,RC,XC,EBAS,TR,TAP,TPMX,TPMN,TSTP,SETVL,DCPF,MARG,CNVCOD<\n>IDC, IB, IA,   ZONE, 'NAME',   IDC2, RGRND, OWNER<\n>IDC, JDC, DCCKT, RDC, LDC
 %% v31-33:
 %%  'NAME', NCONV, NDCBS, NDCLN, MDC, VCONV, VCMOD, VCONVN<\n>IB,N,ANGMX,ANGMN,RC,XC,EBAS,TR,TAP,TPMX,TPMN,TSTP,SETVL,DCPF,MARG,CNVCOD<\n>IDC, IB, AREA, ZONE, 'DCNAME', IDC2, RGRND, OWNER<\n>IDC, JDC, DCCKT, MET, RDC, LDC
-if rev > 1
-    [s, warns] = psse_skip_section(warns, sections, s, verbose, 'multi-terminal DC');
-end
+[s, warns] = psse_skip_section(warns, sections, s, verbose, 'multi-terminal DC');
 
 %%-----  skip multi-section line data  -----
 %% v29-30:
 %%  I, J, ID, DUM1, DUM2, ... DUM9
 %% v31-33:
 %%  I, J, ID, MET, DUM1, DUM2, ... DUM9
-if rev > 1
-    [s, warns] = psse_skip_section(warns, sections, s, verbose, 'multi-section line');
-end
+[s, warns] = psse_skip_section(warns, sections, s, verbose, 'multi-section line');
 
 %%-----  skip zone data  -----
 %% v29-33:
 %%  I, 'ZONAME'
-if rev > 1
-    [s, warns] = psse_skip_section(warns, sections, s, verbose, 'zone');
+[s, warns] = psse_skip_section(warns, sections, s, verbose, 'zone');
+
+%%-----  skip unknown data section  -----
+if rev <= v2x
+    [s, warns] = psse_skip_section(warns, sections, s, verbose, 'unknown');
 end
 
 %%-----  skip inter-area transfer data  -----
 %% v29-33:
 %%  ARFROM, ARTO, TRID, PTRAN
-if rev > 1
+if rev > v2x
     [s, warns] = psse_skip_section(warns, sections, s, verbose, 'inter-area transfer');
 end
 
 %%-----  skip owner data  -----
 %% v29-33:
 %%  I, 'OWNAME'
-if rev > 1
+if rev > v2x
     [s, warns] = psse_skip_section(warns, sections, s, verbose, 'owner');
 end
 
@@ -561,7 +585,7 @@ end
 %%  N,I,J,MODE,PDES,QDES,VSET,SHMX,TRMX,VTMN,VTMX,VSMX,IMX,LINX,RMPCT,OWNER,SET1,SET2,VSREF
 %% v31-33:
 %%  'NAME',I,J,MODE,PDES,QDES,VSET,SHMX,TRMX,VTMN,VTMX,VSMX,IMX,LINX,RMPCT,OWNER,SET1,SET2,VSREF,REMOT,'MNAME'
-if rev > 1
+if rev > v2x
     [s, warns] = psse_skip_section(warns, sections, s, verbose, 'FACTS control device');
 end
 
