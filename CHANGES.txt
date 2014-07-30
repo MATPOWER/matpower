@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.0b1
 -------------------
 
+7/30/14
+    - Fixed a bug in psse_convert() that resulted in incorrect
+      bus voltage angles when importing from v29 or v30 files.
+
 7/24/14
     - Added line to cplex_options() to prevent default creation
       of clone1.log files when using parallel CPLEX routines

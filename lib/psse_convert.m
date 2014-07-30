@@ -107,10 +107,10 @@ if rev == 1
         numbus(:, [1:9 11:12]);
 elseif rev < 31     %% includes GL, BL
     bus(:, [BUS_I BASE_KV BUS_TYPE GS BS BUS_AREA ZONE VM VA]) = ...
-        numbus(:, [1 3 4 5 6 7 8 9 6]);
+        numbus(:, [1 3 4 5 6 7 8 9 10]);
 else
-    bus(:, [BUS_I BUS_TYPE BUS_AREA VM VA BASE_KV ZONE]) = ...
-        numbus(:, [1 4 5 8 9 3 6]);
+    bus(:, [BUS_I BASE_KV BUS_TYPE BUS_AREA ZONE VM VA]) = ...
+        numbus(:, [1 3 4 5 6 8 9]);
     if ncols >= 11 && all(all(~isnan(numbus(:, [10 11]))))
         haveVlims = 1;
         bus(:, [VMAX VMIN]) = numbus(:, [10 11]);
@@ -188,7 +188,7 @@ else
     bus(:, BS) = bus(:, BS) + Cswsh' * data.swshunt.num(:, 10);
 end
 
-%% PSS/E non-transformer branch data
+%% PSS/E branch data
 %% v1: (http://www.ee.washington.edu/research/pstca/formats/pti.txt)
 %%  I,J,CKT,R,X,B,RATEA,RATEB,RATEC,RATIO,ANGLE,GI,BI,GJ,BJ,ST
 %% v29-30:
