@@ -83,23 +83,11 @@ haveVlims = 0;
 Vmin = 0.9;
 Vmax = 1.1;
 
-%% PSS/E id record
-%% IC, SBASE, REV, XFRRAT, NXFRAT, BASFRQ
+%%-----  case identification data  -----
 baseMVA = data.id.SBASE;
 rev = data.id.REV;
 
-%% PSS/E bus data
-%% v1: (http://www.ee.washington.edu/research/pstca/formats/pti.txt)
-%%  I, IDE, PL, QL, GL, BL, IA, VM, VA, 'NAME', BASKL, ZONE
-%% v29-30:
-%%  I, 'NAME', BASKV, IDE, GL, BL, AREA, ZONE, VM, VA, OWNER
-%% v31:
-%%  I, 'NAME', BASKV, IDE, AREA, ZONE, OWNER, VM, VA
-%% v33:
-%%  I, 'NAME', BASKV, IDE, AREA, ZONE, OWNER, VM, VA, NVHI, NVLO, EVHI, EVLO
-%% Note: Some v33 files seem to follow v31 format
-%% NVHI/NVLO: Normal voltage high/low limits
-%% EVHI/EVLO: Emergency voltage high/low limits
+%%-----  bus data  -----
 numbus = data.bus.num;
 [nb, ncols] = size(numbus); %% number of buses, number of cols
 bus = zeros(nb, VMIN);      %% initialize bus matrix
@@ -141,12 +129,7 @@ end
 i2e = bus(:, BUS_I);
 e2i = sparse(i2e, ones(nb, 1), 1:nb, max(i2e), 1);
 
-%% PSS/E load data
-%% v29-31:
-%%  I, ID, STATUS, AREA, ZONE, PL, QL, IP, IQ, YP, YQ, OWNER
-%% v33:
-%%  I, ID, STATUS, AREA, ZONE, PL, QL, IP, IQ, YP, YQ, OWNER, SCALE, INTRPT
-%% Note: Some v33 files seem to end with SCALE
+%%-----  load data  -----
 if rev >= v2x
     nld = size(data.load.num, 1);
     loadbus = e2i(data.load.num(:,1));
@@ -164,9 +147,7 @@ if rev >= v2x
     bus(:, [PD QD]) = Cld' * [Pd Qd];
 end
 
-%% PSS/E fixed shunt data
-%% v31-33:
-%%  I, ID, STATUS, GL, BL
+%%-----  fixed shunt data  -----
 if isfield(data, 'shunt')   %% rev > 30
     nsh = size(data.shunt.num, 1);
     shuntbus = e2i(data.shunt.num(:,1));
@@ -174,19 +155,7 @@ if isfield(data, 'shunt')   %% rev > 30
     bus(:, [GS BS]) = Csh' * data.shunt.num(:, 4:5);
 end
 
-%% PSS/E switched shunt data
-%% v1: (http://www.ee.washington.edu/research/pstca/formats/pti.txt)
-%%  I, MODSW, VSWHI, VSWLO, SWREM, BINIT, N1, B1, N2, B2, ... N8, B8
-%% v29:
-%%  I, MODSW, VSWHI, VSWLO, SWREM, RMIDNT, BINIT, N1, B1, N2, B2, ... N8, B8
-%% v30:
-%%  I, MODSW, VSWHI, VSWLO, SWREM, RMPCT, 'RMIDNT', BINIT, N1, B1, N2, B2, ... N8, B8
-%% v31:
-%%  I, MODSW, VSWHI, VSWLO, SWREM, RMPCT, 'RMIDNT', BINIT, N1, B1, N2, B2, ... N8, B8
-%% v32:
-%%  ? (we will assume v32 is the same as v33, until we find out otherwise)
-%% v33:
-%%  I, MODSW, ADJM, STAT, VSWHI, VSWLO, SWREM, RMPCT, 'RMIDNT', BINIT, N1, B1, N2, B2, ... N8, B8
+%%-----  switched shunt data  -----
 nswsh = size(data.swshunt.num, 1);
 swshuntbus = e2i(data.swshunt.num(:,1));
 Cswsh = sparse(1:nswsh, swshuntbus, 1, nswsh, nb);
@@ -200,13 +169,7 @@ else
     bus(:, BS) = bus(:, BS) + Cswsh' * data.swshunt.num(:, 10);
 end
 
-%% PSS/E branch data
-%% v1: (http://www.ee.washington.edu/research/pstca/formats/pti.txt)
-%%  I,J,CKT,R,X,B,RATEA,RATEB,RATEC,RATIO,ANGLE,GI,BI,GJ,BJ,ST
-%% v29-30:
-%%  I,J,CKT,R,X,B,RATEA,RATEB,RATEC,GI,BI,GJ,BJ,ST,LEN,O1,F1,...,O4,F4
-%% v31-33:
-%%  I,J,CKT,R,X,B,RATEA,RATEB,RATEC,GI,BI,GJ,BJ,ST,MET,LEN,O1,F1,...,O4,F4
+%%-----  branch data  -----
 nbr = size(data.branch.num, 1);
 branch = zeros(nbr, ANGMAX);
 branch(:, ANGMIN) = -360;
@@ -253,13 +216,7 @@ else
         Ct' * data.branch.num(:, 12:13)*baseMVA;
 end
 
-%% PSS/E generator data
-%% v1: (http://www.ee.washington.edu/research/pstca/formats/pti.txt)
-%%  I,ID,PG,QG,QT,QB,VS,IREG,MBASE,ZR,ZX,RT,XT,GTAP,STAT,RMPCT,PT,PB
-%% v29-30:
-%%  I,ID,PG,QG,QT,QB,VS,IREG,MBASE,ZR,ZX,RT,XT,GTAP,STAT,RMPCT,PT,PB,O1,F1,...,O4,F4
-%% v31-33:
-%%  I,ID,PG,QG,QT,QB,VS,IREG,MBASE,ZR,ZX,RT,XT,GTAP,STAT,RMPCT,PT,PB,O1,F1,...,O4,F4,WMOD,WPF
+%%-----  generator data  -----
 ng = size(data.gen.num, 1);
 genbus = e2i(data.gen.num(:,1));
 gen = zeros(ng, APF);
@@ -267,13 +224,13 @@ gen = zeros(ng, MU_QMIN);
 gen(:, [GEN_BUS PG QG QMAX QMIN VG MBASE GEN_STATUS PMAX PMIN]) = ...
     data.gen.num(:, [1 3 4 5 6 7 9 15 17 18]);
 
-%% PSS/E transformer data
+%%-----  transformer data  -----
 if rev > v2y
     [transformer, bus, warns, bus_name] = psse_convert_xfmr(warns, data.trans2.num, data.trans3.num, verbose, baseMVA, bus, bus_name);
     branch = [branch; transformer];
 end
 
-%% PSS/E two terminal HVDC line data
+%%-----  two-terminal DC transmission line data  -----
 dcline = psse_convert_hvdc(data.twodc.num, bus);
 
 %% assemble MPC

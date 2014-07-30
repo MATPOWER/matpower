@@ -62,19 +62,7 @@ if ~ndc
     return;
 end
 
-%% v1: (http://www.ee.washington.edu/research/pstca/formats/pti.txt)
-%%  I,MDC,RDC,SETVL,VSCHD,VCMOD,RCOMP,DELTI,METER (1-9)
-%%  IPR,NBR,ALFMAX,ALFMN,RCR,XCR,EBASR,TRR,TAPR,TPMXR,TPMNR,TSTPR (13-24)
-%%  IPI,NBI,GAMMX,GAMMN,RCI,XCI,EBASI,TRI,TAPI,TPMXI,TPMNI,TSTPI (30-41)
-%% v29-30:
-%%  I,MDC,RDC,SETVL,VSCHD,VCMOD,RCOMP,DELTI,METER,DCVMIN,CCCITMX,CCCACC (1-12)
-%%  IPR,NBR,ALFMX,ALFMN,RCR,XCR,EBASR,TRR,TAPR,TMXR,TMNR,STPR,ICR,IFR,ITR,IDR,XCAPR (13-29)
-%%  IPI,NBI,GAMMX,GAMMN,RCI,XCI,EBASI,TRI,TAPI,TMXI,TMNI,STPI,ICI,IFI,ITI,IDI,XCAPI (30-46)
-%% v31-33:
-%%  'NAME',MDC,RDC,SETVL,VSCHD,VCMOD,RCOMP,DELTI,METER,DCVMIN,CCCITMX,CCCACC (1-12)
-%%  IPR,NBR,ANMXR,ANMNR,RCR,XCR,EBASR,TRR,TAPR,TMXR,TMNR,STPR,ICR,IFR,ITR,IDR,XCAPR (13-29)
-%%  IPI,NBI,ANMXI,ANMNI,RCI,XCI,EBASI,TRI,TAPI,TMXI,TMNI,STPI,ICI,IFI,ITI,IDI,XCAPI (30-46)
-
+%% extract data
 MDC = dc(:,2); % Control mode
 SETVL = dc(:,4); % depend on control mode: current or power demand
 VSCHD = dc(:,5); % scheduled compounded dc voltage
@@ -110,7 +98,7 @@ end
 %% calculate the loss coefficient (Only consider the l1)
 % l1 = P'.*RDC;
 
-%% Conclude all info
+%% conclude all info
 status = ones(ndc, 1);
 status(MDC==0) = 0;     %% set status of blocked HVDC lines to zero
 % dcline(:,[1 2 3 4 5 8 9 10 11 12 13 14 15]) = [indr,indi,status,PMW, PMW, Vr, Vi,0.85*PMW, 1.15*PMW, Qrmin, Qrmax, Qimin, Qimax];

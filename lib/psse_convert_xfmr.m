@@ -94,11 +94,7 @@ if nt3 > 0
     starbus(:, VMIN) = 0.9;
 end
 
-%% PSS/E two winding transformer data
-%% I,J,K,CKT,CW,CZ,CM,MAG1,MAG2,NMETR,'NAME',STAT,O1,F1,...,O4,F4,VECGRP (cols 1-20) (ignore VECGRP)
-%% R1-2,X1-2,SBASE1-2 (cols 21-23)
-%% WINDV1,NOMV1,ANG1,RATA1,RATB1,RATC1,COD1,CONT1,RMA1,RMI1,VMA1,VMI1,NTP1,TAB1,CR1,CX1,CNXA1 (cols 24-39)
-%% WINDV2,NOMV2 (cols 40-41)
+%% two winding transformer data
 [tf,fbus] = ismember(trans2(:,1), bus(:, BUS_I));      %% I
 [tf,tbus] = ismember(trans2(:,2), bus(:, BUS_I));      %% J
 %% check for bad bus numbers
@@ -135,12 +131,7 @@ if nt2 > 0
     shift = trans2(:, 26);
 end
 
-%% PSS/E three winding transformer data
-%% I,J,K,CKT,CW,CZ,CM,MAG1,MAG2,NMETR,'NAME',STAT,O1,F1,...,O4,F4,VECGRP
-%% R1-2,X1-2,SBASE1-2,R2-3,X2-3,SBASE2-3,R3-1,X3-1,SBASE3-1,VMSTAR,ANSTAR
-%% WINDV1,NOMV1,ANG1,RATA1,RATB1,RATC1,COD1,CONT1,RMA1,RMI1,VMA1,VMI1,NTP1,TAB1,CR1,CX1,CNXA1
-%% WINDV2,NOMV2,ANG2,RATA2,RATB2,RATC2,COD2,CONT2,RMA2,RMI2,VMA2,VMI2,NTP2,TAB2,CR2,CX2,CNXA2
-%% WINDV3,NOMV3,ANG3,RATA3,RATB3,RATC3,COD3,CONT3,RMA3,RMI3,VMA3,VMI3,NTP3,TAB3,CR3,CX3,CNXA3
+%% three winding transformer data
 [tf,ind1] = ismember(trans3(:,1), bus(:, BUS_I));
 [tf,ind2] = ismember(trans3(:,2), bus(:, BUS_I));
 [tf,ind3] = ismember(trans3(:,3), bus(:, BUS_I));
