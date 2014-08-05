@@ -60,18 +60,6 @@ function [mpc, warns] = psse_convert(warns, data, verbose)
     MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
     QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
 
-%% version guesses
-v2x = 24;
-v2y = 28;
-%% all we really know is 23 < v2x < v2y < 29, and ...
-%%  23  v2x v2y 29
-%%   -   +   +   +  loads in Bus (-) vs separate Load (+) section
-%%   -   -   +   +  single (-) vs. multiple (+) sections after Zone data
-%%   -   -   +   +  includes (+) Owner data, or not (-)
-%%   -   -   -   +  transformers in Branch (-) vs. separate Transformer (+) section
-%%   -   -   -   +  includes (+) RMIDNT in switched shunt data, or not (-)
-%%   -   -   -   +  includes (+) Voltage Source Converter Data, or not (-)
-
 %% options
 sort_buses = 1;
 
@@ -91,7 +79,7 @@ rev = data.id.REV;
 numbus = data.bus.num;
 [nb, ncols] = size(numbus); %% number of buses, number of cols
 bus = zeros(nb, VMIN);      %% initialize bus matrix
-if rev < v2x
+if rev < 24
     bus_name_col = 10;
 else
     bus_name_col = 2;
@@ -102,13 +90,13 @@ if sort_buses
 else
     bus_name = data.bus.txt(:, bus_name_col);
 end
-if rev < v2x		%% includes loads
+if rev < 24     %% includes loads
     bus(:, [BUS_I BUS_TYPE PD QD GS BS BUS_AREA VM VA BASE_KV ZONE]) = ...
         numbus(:, [1:9 11:12]);
 elseif rev < 31     %% includes GL, BL
     bus(:, [BUS_I BASE_KV BUS_TYPE GS BS BUS_AREA ZONE VM VA]) = ...
         numbus(:, [1 3 4 5 6 7 8 9 10]);
-else				%% fixed shunts and loads are in their own tables
+else                %% fixed shunts and loads are in their own tables
     bus(:, [BUS_I BASE_KV BUS_TYPE BUS_AREA ZONE VM VA]) = ...
         numbus(:, [1 3 4 5 6 8 9]);
     if ncols >= 11 && all(all(~isnan(numbus(:, [10 11]))))
@@ -130,7 +118,7 @@ i2e = bus(:, BUS_I);
 e2i = sparse(i2e, ones(nb, 1), 1:nb, max(i2e), 1);
 
 %%-----  load data  -----
-if rev >= v2x
+if rev >= 24
     nld = size(data.load.num, 1);
     loadbus = e2i(data.load.num(:,1));
     %% PSS/E loads are divided into:
@@ -159,7 +147,7 @@ end
 nswsh = size(data.swshunt.num, 1);
 swshuntbus = e2i(data.swshunt.num(:,1));
 Cswsh = sparse(1:nswsh, swshuntbus, 1, nswsh, nb);
-if rev <= v2y
+if rev <= 27
     bus(:, BS) = bus(:, BS) + Cswsh' * data.swshunt.num(:, 6);
 elseif rev <= 29
     bus(:, BS) = bus(:, BS) + Cswsh' * data.swshunt.num(:, 7);
@@ -177,7 +165,7 @@ branch(:, ANGMAX) = 360;
 branch(:, [F_BUS BR_R BR_X BR_B RATE_A RATE_B RATE_C]) = ...
     data.branch.num(:, [1 4 5 6 7 8 9]);
 branch(:, T_BUS) = abs(data.branch.num(:, 2));  %% can be negative to indicate metered end
-if rev <= v2y		%% includes transformer ratio, angle
+if rev <= 27        %% includes transformer ratio, angle
     branch(:, BR_STATUS) = data.branch.num(:, 16);
     branch(~isnan(data.branch.num(:, 10)), TAP) = ...
         data.branch.num(~isnan(data.branch.num(:, 10)), 10);
@@ -206,7 +194,7 @@ if length(nzt) < nbr
 end
 Cf = sparse(ibr(nzf), fbus(nzf), branch(nzf, BR_STATUS), nbr, nb);  %% only in-service branches
 Ct = sparse(ibr(nzt), tbus(nzt), branch(nzt, BR_STATUS), nbr, nb);  %% only in-service branches
-if rev <= v2y
+if rev <= 27
     bus(:, [GS BS]) = bus(:, [GS BS]) + ...
         Cf' * data.branch.num(:, 12:13)*baseMVA + ...
         Ct' * data.branch.num(:, 14:15)*baseMVA;
@@ -225,7 +213,7 @@ gen(:, [GEN_BUS PG QG QMAX QMIN VG MBASE GEN_STATUS PMAX PMIN]) = ...
     data.gen.num(:, [1 3 4 5 6 7 9 15 17 18]);
 
 %%-----  transformer data  -----
-if rev > v2y
+if rev > 27
     [transformer, bus, warns, bus_name] = psse_convert_xfmr(warns, data.trans2.num, data.trans3.num, verbose, baseMVA, bus, bus_name);
     branch = [branch; transformer];
 end

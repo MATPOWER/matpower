@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.0b1
 -------------------
 
+8/4/14
+    - Additional improvements to correctly handling PSS/E RAW
+      files for revisions 24-28.
+
 7/30/14
     - Fixed a bug in psse_convert() that resulted in incorrect
       bus voltage angles when importing from v29 or v30 files.

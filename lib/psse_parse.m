@@ -80,19 +80,7 @@ if nargin < 4
         verbose = 0;
     end
 end
-
-%% version guesses
 defaultrev = 23;
-v2x = 24;
-v2y = 28;
-%% all we really know is 23 < v2x < v2y < 29, and ...
-%%  23  v2x v2y 29
-%%   -   +   +   +  loads in Bus (-) vs separate Load (+) section
-%%   -   -   +   +  single (-) vs. multiple (+) sections after Zone data
-%%   -   -   +   +  includes (+) Owner data, or not (-)
-%%   -   -   -   +  transformers in Branch (-) vs. separate Transformer (+) section
-%%   -   -   -   +  includes (+) RMIDNT in switched shunt data, or not (-)
-%%   -   -   -   +  includes (+) Voltage Source Converter Data, or not (-)
 
 %% inititialize section counter
 s = 1;
@@ -184,7 +172,7 @@ end
 s = s + 1;
 
 %%-----  bus data  -----
-if rev < v2x        %% includes load data 
+if rev < 24         %% includes load data 
     [data.bus, warns] = psse_parse_section(warns, records, sections, s, verbose, ...
         'bus', 'ddffffdffsfd');
 elseif rev < 31     %% includes fixed shunt data, load separate
@@ -198,7 +186,7 @@ end
 s = s + 1;
 
 %%-----  load data  -----
-if rev >= v2x
+if rev >= 24
     [data.load, warns] = psse_parse_section(warns, records, sections, s, verbose, ...
         'load', 'd.d..ffffff...');
 %       'load', 'dsdddffffffddd');
@@ -220,7 +208,7 @@ end
 s = s + 1;
 
 %%-----  branch data  -----
-if rev <= v2y   %% includes transformer ratio, angle
+if rev <= 27   %% includes transformer ratio, angle
     [data.branch, warns] = psse_parse_section(warns, records, sections, s, verbose, ...
         'branch', 'dd.ffffffffffffd');
 %       'branch', 'dddffffffffffffd');
@@ -236,12 +224,12 @@ end
 s = s + 1;
 
 %%-----  skip transformer adjustment data  -----
-if rev <= v2y
+if rev <= 27
     [s, warns] = psse_skip_section(warns, sections, s, verbose, 'transformer adjustment');
 end
 
 %%-----  transformer data  -----
-if rev > v2y
+if rev > 27
     %% PSS/E stores two winding and three winding transformer data in the same
     %% section in RAW file. We read in 2 passes, first pass determines the type of
     %% each, second pass reads the data.
@@ -409,14 +397,14 @@ data.twodc.txt = [dc1.txt dc2.txt dc3.txt];
 s = s + 1;
 
 %%-----  skip voltage source converter data  -----
-if rev > v2y
+if rev > 28
     [s, warns] = psse_skip_section(warns, sections, s, verbose, 'voltage source converter');
 end
 
 %%-----  switched shunt data  -----
 if rev < 31
     %% parse up to B1
-    if rev <= v2y
+    if rev <= 27
         [data.swshunt, warns] = psse_parse_section(warns, records, sections, s, verbose, ...
             'switched shunt', 'd....f');
 %           'switched shunt', 'ddffdfdfdfdfdfdfdfdfdf');
@@ -444,30 +432,23 @@ end
 %%-----  skip zone data  -----
 [s, warns] = psse_skip_section(warns, sections, s, verbose, 'zone');
 
-%%-----  skip unknown data section  -----
-if rev <= v2x
-    [s, warns] = psse_skip_section(warns, sections, s, verbose, 'unknown');
-end
-
 %%-----  skip inter-area transfer data  -----
-if rev > v2x
-    [s, warns] = psse_skip_section(warns, sections, s, verbose, 'inter-area transfer');
-end
+[s, warns] = psse_skip_section(warns, sections, s, verbose, 'inter-area transfer');
 
 %%-----  skip owner data  -----
-if rev > v2x
+if rev > 24
     [s, warns] = psse_skip_section(warns, sections, s, verbose, 'owner');
 end
 
 %%-----  skip FACTS control device data  -----
-if rev > v2x
+if rev > 25
     [s, warns] = psse_skip_section(warns, sections, s, verbose, 'FACTS control device');
 end
 
 %%-----  switched shunt data  -----
 if rev > 30
     %% parse up to B1
-    if rev < 32     %% assume 32 is same as 33
+    if rev < 32
         [data.swshunt, warns] = psse_parse_section(warns, records, sections, s, verbose, ...
             'switched shunt', 'd......f');
 %           'switched shunt', 'ddffdfsfdfdfdfdfdfdfdfdf');
