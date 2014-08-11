@@ -4,7 +4,7 @@ function mpc = t_psse_case2
 %   Nine Bus System-Documentation
 %   PowerFactory 14.1.7  Date: 12/2/2013, Time: 11:54:12 AM
 %
-%   Converted by MATPOWER 5.0 using PSSE2MPC on 01-May-2014
+%   Converted by MATPOWER 5.0 using PSSE2MPC on 11-Aug-2014
 %   from 't_psse_case2.raw' using PSS/E rev 29 format.
 %
 %   WARNINGS:
@@ -55,3 +55,17 @@ mpc.branch = [
 	7	2	0	0.0625	0	200	200	200	1.04	150	1	-360	360;
 	9	3	0	0.0586	0	150	150	150	1.04	150	1	-360	360;
 ];
+
+%% bus names
+mpc.bus_name = {
+	'Bus 1   ';
+	'Bus 2   ';
+	'Bus 3   ';
+	'Bus 4   ';
+	'Bus 5   ';
+	'Bus 6   ';
+	'Bus 7   ';
+	'Bus 8   ';
+	'Bus 9   ';
+	'Fault   ';
+};

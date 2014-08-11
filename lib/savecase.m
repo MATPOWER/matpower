@@ -391,6 +391,36 @@ else                                %% M-file
             fprintf(fd, '];\n');
         end
 
+        %% (optional) generator fuel types
+        if isfield(mpc, 'genfuel') && iscell(mpc.genfuel)
+            ng = length(mpc.genfuel);;
+            if size(mpc.gen, 1) ~= ng
+                warn('savecase: genfuel field does not have the expected dimensions (length = %d, expected %d)', ng, size(mpc.gen, 1));
+            end
+            
+            fprintf(fd, '\n%%%% generator fuel type\n');
+            fprintf(fd, '%sgenfuel = {\n', prefix);
+            for k = 1:ng
+                fprintf(fd, '\t''%s'';\n', mpc.genfuel{k});
+            end
+            fprintf(fd, '};\n');
+        end
+
+        %% (optional) bus names
+        if isfield(mpc, 'bus_name') && iscell(mpc.bus_name)
+            nb = length(mpc.bus_name);;
+            if size(mpc.bus, 1) ~= nb
+                warn('savecase: bus_name field does not have the expected dimensions (length = %d, expected %d)', nb, size(mpc.bus, 1));
+            end
+            
+            fprintf(fd, '\n%%%% bus names\n');
+            fprintf(fd, '%sbus_name = {\n', prefix);
+            for k = 1:nb
+                fprintf(fd, '\t''%s'';\n', mpc.bus_name{k});
+            end
+            fprintf(fd, '};\n');
+        end
+
         %% execute userfcn callbacks for 'savecase' stage
         if isfield(mpc, 'userfcn')
             run_userfcn(mpc.userfcn, 'savecase', mpc, fd, prefix);

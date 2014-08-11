@@ -15,6 +15,12 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.0b1
 -------------------
 
+8/11/14
+    - Modified savecase() to save fields bus_name and genfuel
+      (both cell arrays of strings) if present. This is an
+      experimental feature and the design may change in future
+      versions.
+
 8/4/14
     - Additional improvements to correctly handling PSS/E RAW
       files for revisions 24-28.

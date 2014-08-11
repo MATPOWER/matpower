@@ -111,7 +111,7 @@ for i = 1:size(d.num, 1)
 end
 
 t = 'psse2mpc(rawfile, casefile)';
-txt = 'MATPOWER 5.0 using PSSE2MPC on 01-May-2014';
+txt = 'MATPOWER 5.0 using PSSE2MPC on 11-Aug-2014';
 for k = 2:3
     fname = sprintf(case_n, k);
     rawname = sprintf('%s.raw', fname);

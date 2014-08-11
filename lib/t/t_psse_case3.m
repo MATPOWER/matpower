@@ -4,7 +4,7 @@ function mpc = t_psse_case3
 %   PSS(TM)E SAMPLE CASE
 %   ALL DATA CATEGORIES WITH SEQUENCE DATA
 %
-%   Converted by MATPOWER 5.0 using PSSE2MPC on 01-May-2014
+%   Converted by MATPOWER 5.0 using PSSE2MPC on 11-Aug-2014
 %   from 't_psse_case3.raw' using PSS/E rev 30 format.
 %
 %   WARNINGS:
@@ -157,6 +157,56 @@ mpc.branch = [
 	3009	100004	0.0053	0.441665	0	15	13	9	1	0	0	-360	360;
 	3010	100004	0.0039	0.358335	0	25	19	16	1	30	1	-360	360;
 ];
+
+%% bus names
+mpc.bus_name = {
+	'NUC-A       ';
+	'NUC-B       ';
+	'NUCPLNT     ';
+	'MID500      ';
+	'MID230      ';
+	'DOWNTN      ';
+	'FACTS TE    ';
+	'HYDRO       ';
+	'EAST500     ';
+	'EAST230     ';
+	'SUB500      ';
+	'SUB230      ';
+	'URBGEN      ';
+	'DUPONT      ';
+	'HYDRO_G     ';
+	'INVERT1     ';
+	'INVERT2     ';
+	'LOADER      ';
+	'URBANEAST1  ';
+	'URBANEAST1  ';
+	'URBANEAST1  ';
+	'URBANEAST1  ';
+	'NORTH       ';
+	'COGEN-1     ';
+	'COGEN-2     ';
+	'MINE        ';
+	'E. MINE     ';
+	'S. MINE     ';
+	'WEST        ';
+	'WEST        ';
+	'UPTOWN      ';
+	'RURAL       ';
+	'CATDOG      ';
+	'URBANWEST1  ';
+	'URBANWEST2  ';
+	'MINE_G      ';
+	'CATDOG_G    ';
+	'WDUM        ';
+	'EDUM        ';
+	'WINDBUS1    ';
+	'WINDBUS2    ';
+	'WINDBUS3    ';
+	'STAR_POINT_XFMR_1';
+	'STAR_POINT_XFMR_2';
+	'STAR_POINT_XFMR_3';
+	'STAR_POINT_XFMR_4';
+};
 
 %%-----  DC Line Data  -----%%
 %	fbus	tbus	status	Pf	Pt	Qf	Qt	Vf	Vt	Pmin	Pmax	QminF	QmaxF	QminT	QmaxT	loss0	loss1
