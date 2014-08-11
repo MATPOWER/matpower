@@ -20,6 +20,7 @@ Changes since 5.0b1
       (both cell arrays of strings) if present. This is an
       experimental feature and the design may change in future
       versions.
+    - Optionally return success flag from t_ok() and t_is().
 
 8/4/14
     - Additional improvements to correctly handling PSS/E RAW

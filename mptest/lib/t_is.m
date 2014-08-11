@@ -1,4 +1,4 @@
-function t_is(got, expected, prec, msg)
+function ok = t_is(got, expected, prec, msg)
 %T_IS  Tests if two matrices are identical to some tolerance.
 %   T_IS(GOT, EXPECTED, PREC, MSG) increments the global test count
 %   and if the maximum difference between corresponding elements of
@@ -7,6 +7,9 @@ function t_is(got, expected, prec, msg)
 %   Prints 'ok' or 'not ok' followed by the MSG, unless the global
 %   variable t_quiet is true. Intended to be called between calls to
 %   T_BEGIN and T_END.
+%
+%   Optionally returns a true or false value indicating whether or
+%   not the test succeeded.
 %
 %   Example:
 %       quiet = 0;
@@ -91,4 +94,7 @@ if ~condition && ~t_quiet
         fprintf('             got: %d x %d\n', size(got));
         fprintf('        expected: %d x %d\n\n', size(expected));
     end
+end
+if nargout
+    ok = condition;
 end
