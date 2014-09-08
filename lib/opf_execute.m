@@ -180,7 +180,7 @@ if success
   end
 
   %% angle limit constraint multipliers
-  if ll.N.ang > 0
+  if ~sdp && ll.N.ang > 0
     iang = userdata(om, 'iang');
     results.branch(iang, MU_ANGMIN) = results.mu.lin.l(ll.i1.ang:ll.iN.ang) * pi/180;
     results.branch(iang, MU_ANGMAX) = results.mu.lin.u(ll.i1.ang:ll.iN.ang) * pi/180;
