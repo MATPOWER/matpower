@@ -122,6 +122,7 @@ for k = 2:3
     str = fileread(casename);
     str2 = fileread(tmpcasename);
     str2 = strrep(str2, char([13 10]), char(10));	%% Win to Unix EOL chars
+    str2 = strrep(str2, 'e-005', 'e-05');			%% needed on Windoze, who knows why?
     str2 = strrep(str2, tmpfname, fname);
     str2 = strrep(str2, upper(tmpfname), upper(fname));
     str2 = regexprep(str2, 'MATPOWER (.*) using PSSE2MPC on \d\d-...-\d\d\d\d', txt);
