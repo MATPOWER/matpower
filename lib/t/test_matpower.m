@@ -113,6 +113,7 @@ if have_fcn('sdp_pf')
     tests{end+1} = 't_insolvablepfsos_limitQ';
 end
 tests{end+1} = 't_opf_userfcns';
+tests{end+1} = 't_opf_softlims';
 tests{end+1} = 't_runopf_w_res';
 tests{end+1} = 't_dcline';
 tests{end+1} = 't_makePTDF';

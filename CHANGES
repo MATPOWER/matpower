@@ -15,6 +15,12 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.0b1
 -------------------
 
+10/7/14
+    - Added toggle_softlims(), an extension to implement DC OPF
+      branch flow soft limits. This should be useful in identifying
+      the cause of infeasibility in some infeasible DC OPF problems.
+      See 'help toggle_softlims' for details.
+
 9/24/14
     - Fixed issue with failed tests in t_psse() on Windoze.
 
