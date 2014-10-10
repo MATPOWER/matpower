@@ -228,11 +228,12 @@ function opt = mpoption(varargin)
 %   FMINCON:
 %       fmincon.alg             4           algorithm used by fmincon for OPF
 %                                           for Opt Toolbox 4 and later
-%            [  1 - active-set                                              ]
+%            [  1 - active-set (not suitable for large problems)            ]
 %            [  2 - interior-point, w/default 'bfgs' Hessian approx         ]
 %            [  3 - interior-point, w/ 'lbfgs' Hessian approx               ]
 %            [  4 - interior-point, w/exact user-supplied Hessian           ]
 %            [  5 - interior-point, w/Hessian via finite differences        ]
+%            [  6 - sqp (not suitable for large problems)                   ]
 %       fmincon.tol_x           1e-4        termination tol on x
 %       fmincon.tol_f           1e-4        termination tol on f
 %       fmincon.max_it          0           maximum number of iterations

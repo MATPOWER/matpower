@@ -135,7 +135,7 @@ if str2double(otver.Version(1)) < 4
   Afeq = full(Afeq);
 else
   switch mpopt.fmincon.alg
-    case 1              %% active-set
+    case 1              %% active-set (does not use sparse matrices, not suitable for large problems)
       fmoptions = optimset(fmoptions, 'Algorithm', 'active-set');
       Af = full(Af);
       Afeq = full(Afeq);
@@ -149,6 +149,10 @@ else
           'Hessian', 'user-supplied', 'HessFcn', fmc_hessian);
     case 5              %% interior-point, w/ finite-diff Hessian
       fmoptions = optimset(fmoptions, 'Algorithm', 'interior-point', 'Hessian','fin-diff-grads', 'SubProblem', 'cg');
+    case 6              %% sqp (does not use sparse matrices, not suitable for large problems)
+      fmoptions = optimset(fmoptions, 'Algorithm', 'sqp');
+      Af = full(Af);
+      Afeq = full(Afeq);
     otherwise
       error('fmincopf_solver: unknown algorithm specified in ''fmincon.alg'' option');
   end
