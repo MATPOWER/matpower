@@ -7,15 +7,19 @@ function TorF = have_fcn(tag)
 %       bpmpd       - BP, BPMPD interior point solver
 %       cplex       - CPLEX, IBM ILOG CPLEX Optimizer
 %       fmincon     - FMINCON, solver from Optimization Toolbox 2.x +
+%       fmincon_ipm - FMINCON with Interior Point solver, from Opt Tbx 4.x +
 %       glpk        - GLPK, GNU Linear Programming Kit
 %       gurobi      - GUROBI, Gurobi solver (http://www.gurobi.com/), 5.x +
 %       ipopt       - IPOPT, NLP solver (https://projects.coin-or.org/Ipopt/)
 %       linprog     - LINPROG, LP solver from Optimization Toolbox 2.x +
+%       linprog_ds  - LINPROG with dual-simplex solver
+%                       from Optimization Toolbox 7.1 +
 %       knitro      - KNITRO, NLP solver (http://www.ziena.com/)
 %         knitromatlab - KNITRO, version 9.0.0+
 %         ktrlink      - KNITRO, version < 9.0.0 (requires Opt Tbx)
 %       minopf      - MINOPF, MINOPF, MINOS-based OPF solver
 %       mosek       - MOSEK, LP/QP solver (http://www.mosek.com/)
+%       optimoptions - OPTIMOPTIONS, option setting funciton for Optim Tbx 6.3+
 %       quadprog    - QUADPROG, QP solver from Optimization Toolbox 2.x +
 %       quadprog_ls - QUADPROG with large-scale interior point convex solver
 %                       from Optimization Toolbox 6.x +
@@ -87,8 +91,51 @@ else
                     end
                 end
             end
-        case 'fmincon'
-            TorF = license('test', 'optimization_toolbox') && exist('fmincon', 'file') == 2;
+        case {'fmincon', 'fmincon_ipm', 'linprog', 'linprog_ds', ...
+                    'optimoptions', 'quadprog', 'quadprog_ls'}
+            if license('test', 'optimization_toolbox')
+                switch tag
+                    case 'fmincon'
+                        TorF = exist('fmincon', 'file') == 2;
+                    case 'linprog'
+                        TorF = exist('linprog', 'file') == 2;
+                    case 'quadprog'
+                        TorF = exist('quadprog', 'file') == 2;
+                    otherwise
+                        v = ver('optim');
+                        [t1, remaining] = strtok(v.Version, '.');
+                        t2 = strtok(remaining, '.');
+                        otver = str2num([t1 '.' t2]);   %% major.minor version
+                        switch tag
+                            case 'fmincon_ipm'
+                                if otver >= 4
+                                    TorF = 1;
+                                else
+                                    TorF = 0;
+                                end
+                            case 'linprog_ds'
+                                if otver >= 7.1
+                                    TorF = 1;
+                                else
+                                    TorF = 0;
+                                end
+                            case 'optimoptions'
+                                if otver >= 6.3
+                                    TorF = 1;
+                                else
+                                    TorF = 0;
+                                end
+                            case 'quadprog_ls'
+                                if otver >= 6
+                                    TorF = 1;
+                                else
+                                    TorF = 0;
+                                end
+                        end
+                end
+            else
+                TorF = 0;
+            end
         case 'glpk'
             TorF = exist('glpk','file') == 2 && ...
                 (exist('__glpk__','file') == 3 || exist('glpkcc','file') == 3);
@@ -96,8 +143,6 @@ else
             TorF = exist('gurobi', 'file') == 3;
         case 'ipopt'
             TorF = exist('ipopt', 'file') == 3;
-        case 'linprog'
-            TorF = license('test', 'optimization_toolbox') && exist('linprog', 'file') == 2;
         case 'knitro'       %% any Knitro
             TorF = have_fcn('knitromatlab') || have_fcn('ktrlink');
         case 'knitromatlab'     %% Knitro 9.0 or greater
@@ -120,15 +165,6 @@ else
             TorF = exist('minopf', 'file') == 3;
         case 'mosek'
             TorF = exist('mosekopt', 'file') == 3;
-        case 'quadprog'
-            TorF = license('test', 'optimization_toolbox') && exist('quadprog', 'file') == 2;
-        case 'quadprog_ls'
-            v = ver('optim');
-            if license('test', 'optimization_toolbox') && (str2num(strtok(v.Version, '.')) >= 6)
-                TorF = 1;
-            else
-                TorF = 0;
-            end
         case 'smartmarket'
             TorF = exist('runmarket', 'file') == 2;
         case 'octave'

@@ -15,6 +15,14 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.0b1
 -------------------
 
+10/11/14
+    - Added 'fmincon_ip', 'linprog_ds' and 'optimoptions' to
+      have_fcn() to test for availability of fmincon's interior
+      point method (Optimization Toolbox 4.x +), linprog's
+      dual simplex method (Optimization Toolbox 7.1 +), and
+      optimoptions function for setting Optimization Toolbox
+      options (Optimization Toolbox 6.3 +), respectively.
+
 10/10/14
     - Added 'sqp' algorithm option for fmincon.alg, not suitable
       for large problems.

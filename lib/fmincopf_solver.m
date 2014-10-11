@@ -128,12 +128,7 @@ else
 end
 
 %% select algorithm
-otver = ver('optim');
-if str2double(otver.Version(1)) < 4
-  fmoptions = optimset(fmoptions, 'LargeScale', 'off');
-  Af = full(Af);
-  Afeq = full(Afeq);
-else
+if have_fcn('fmincon_ipm')
   switch mpopt.fmincon.alg
     case 1              %% active-set (does not use sparse matrices, not suitable for large problems)
       fmoptions = optimset(fmoptions, 'Algorithm', 'active-set');
@@ -156,6 +151,10 @@ else
     otherwise
       error('fmincopf_solver: unknown algorithm specified in ''fmincon.alg'' option');
   end
+else
+  fmoptions = optimset(fmoptions, 'LargeScale', 'off');
+  Af = full(Af);
+  Afeq = full(Afeq);
 end
 % fmoptions = optimset(fmoptions, 'DerivativeCheck', 'on', 'FinDiffType', 'central', 'FunValCheck', 'on');
 % fmoptions = optimset(fmoptions, 'Diagnostics', 'on');
