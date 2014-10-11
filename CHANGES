@@ -26,6 +26,10 @@ Changes since 5.0b1
     - INCOMPATIBLE CHANGE: Removed use of 'ot_opts' field and
       replaced with 'linprog_opts' and 'quadprog_opts' fields
       in the OPT argument to qps_matpower() and qps_ot().
+    - Added optional 'linprog' and 'quadprog' fields to MATPOWER
+      options struct, to allow setting of their options directly
+      from mpoption(). Incremented MATPOWER options struct version
+      to 2.
 
 10/10/14
     - Added 'sqp' algorithm option for fmincon.alg, not suitable

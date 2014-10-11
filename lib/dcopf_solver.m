@@ -209,16 +209,23 @@ switch alg
                                 'step_control', mpopt.mips.step_control, ...
                                 'max_red', mpopt.mips.sc.red_it, ...
                                 'cost_mult', 1  );
-    case 'IPOPT'
-        opt.ipopt_opt = ipopt_options([], mpopt);
     case 'CPLEX'
         opt.cplex_opt = cplex_options([], mpopt);
-    case 'MOSEK'
-        opt.mosek_opt = mosek_options([], mpopt);
-    case 'GUROBI'
-        opt.grb_opt = gurobi_options([], mpopt);
     case 'GLPK'
         opt.glpk_opt = glpk_options([], mpopt);
+    case 'GUROBI'
+        opt.grb_opt = gurobi_options([], mpopt);
+    case 'IPOPT'
+        opt.ipopt_opt = ipopt_options([], mpopt);
+    case 'MOSEK'
+        opt.mosek_opt = mosek_options([], mpopt);
+    case 'OT'
+        if isfield(mpopt, 'linprog') && ~isempty(mpopt.linprog)
+            opt.linprog_opt = mpopt.linprog;
+        end
+        if isfield(mpopt, 'quadprog') && ~isempty(mpopt.quadprog)
+            opt.quadprog_opt = mpopt.quadprog;
+        end
 end
 
 %%-----  run opf  -----

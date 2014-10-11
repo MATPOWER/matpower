@@ -226,7 +226,7 @@ function opt = mpoption(varargin)
 %       cplex.opt               0           see CPLEX_OPTIONS for details
 %
 %   FMINCON:
-%       fmincon.alg             4           algorithm used by fmincon for OPF
+%       fmincon.alg             4           algorithm used by fmincon() for OPF
 %                                           for Opt Toolbox 4 and later
 %            [  1 - active-set (not suitable for large problems)            ]
 %            [  2 - interior-point, w/default 'bfgs' Hessian approx         ]
@@ -270,6 +270,12 @@ function opt = mpoption(varargin)
 %                                           generated as:
 %                                           'knitro_user_options_N.txt'
 %
+%   LINPROG:
+%       linprog                 <empty>     LINPROG options passed to
+%                                           OPTIMOPTIONS or OPTIMSET.
+%                                           see LINPROG in the Optimization
+%                                           Toolbox for details
+%
 %   MINOPF:
 %       minopf.feastol          0 (1e-3)    primal feasibility tolerance
 %                                           (set to opf.violation by default)
@@ -312,6 +318,12 @@ function opt = mpoption(varargin)
 %       mosek.opts              <empty>     see MOSEK_OPTIONS for details
 %       mosek.opt_fname         <empty>     see MOSEK_OPTIONS for details
 %       mosek.opt               0           see MOSEK_OPTIONS for details
+%
+%   QUADPROG:
+%       quadprog                <empty>     QUADPROG options passed to
+%                                           OPTIMOPTIONS or OPTIMSET.
+%                                           see QUADPROG in the Optimization
+%                                           Toolbox for details
 %
 %   TSPOPF:
 %       pdipm.feastol           0           feasibility (equality) tolerance
@@ -1383,7 +1395,7 @@ end
 %% globals
 %%-------------------------------------------------------------------
 function v = mpoption_version
-v = 1;      %% version number of MATPOWER options struct
+v = 2;      %% version number of MATPOWER options struct
             %% (must be incremented every time structure is updated)
 
 %%-------------------------------------------------------------------
@@ -1393,6 +1405,6 @@ db_level = 0;
 %%-------------------------------------------------------------------
 function pkgs = mpoption_optional_pkgs()
 pkgs = {...
-    'cplex', 'fmincon', 'gurobi', 'glpk', 'ipopt', 'knitro', 'minopf', ...
-    'mosek', 'sdp_pf', 'sopf', 'tspopf', 'yalmip' ...
+    'cplex', 'fmincon', 'gurobi', 'glpk', 'ipopt', 'knitro', 'linprog', ...
+    'minopf', 'mosek', 'quadprog', 'sdp_pf', 'sopf', 'tspopf', 'yalmip' ...
 };

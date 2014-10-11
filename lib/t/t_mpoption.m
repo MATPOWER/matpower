@@ -4,7 +4,7 @@ function t_mpoption(quiet)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2013 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2013-2014 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
@@ -34,7 +34,7 @@ if nargin < 1
     quiet = 0;
 end
 
-v = 1;
+v = 2;
 
 t_begin(138, quiet);
 
@@ -43,7 +43,7 @@ t = 'mpoption() : ';
 mpopt = mpoption();
 t_ok(isstruct(mpopt), [t 'isstruct mpopt']);
 t_ok(isfield(mpopt, 'v'), [t ' isfield mpopt.v']);
-t_is(mpopt.v, 1, 12, [t '         mpopt.v == ' sprintf('%d', v)]);
+t_is(mpopt.v, v, 12, [t '         mpopt.v == ' sprintf('%d', v)]);
 
 t_ok(isfield(mpopt, 'model'), [t ' isfield mpopt.model']);
 t_ok(strcmp(mpopt.model, 'AC'), [t '         mpopt.model = ''AC''']);
