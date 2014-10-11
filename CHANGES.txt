@@ -22,6 +22,7 @@ Changes since 5.0b1
       dual simplex method (Optimization Toolbox 7.1 +), and
       optimoptions function for setting Optimization Toolbox
       options (Optimization Toolbox 6.3 +), respectively.
+    - Added handling of NaN values to t_is().
 
 10/10/14
     - Added 'sqp' algorithm option for fmincon.alg, not suitable
