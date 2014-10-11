@@ -4,7 +4,7 @@ function t_opf_dc_ot(quiet)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2004-2010 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2014 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
@@ -34,7 +34,21 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 23;
+if have_fcn('quadprog_ls')
+    if have_fcn('optimoptions')
+        if have_fcn('linprog_ds')
+            algs  = {'interior-point', 'active-set', 'simplex', 'dual-simplex'};
+        else
+            algs  = {'interior-point', 'active-set', 'simplex'};
+        end
+    else
+        algs  = {'interior-point', 'active-set'};
+    end
+else
+    algs  = {''};
+end
+
+num_tests = 23 * length(algs);
 
 t_begin(num_tests, quiet);
 
@@ -54,7 +68,6 @@ else
     verbose = 0;
 end
 
-t0 = 'DC OPF (OT): ';
 mpopt = mpoption('out.all', 0, 'verbose', verbose);
 mpopt = mpoption(mpopt, 'opf.dc.solver', 'OT');
 
@@ -62,6 +75,14 @@ warning off optim:linprog:IgnoreStartPoint;
 
 %% run DC OPF
 if have_fcn('quadprog')
+    for k = 1:length(algs)
+        if ~isempty(algs)
+            mpopt = mpoption(mpopt, 'linprog.Algorithm', algs{k});
+        else
+            mpopt = mpoption(mpopt, 'linprog', []);
+        end
+    t0 = sprintf('DC OPF (OT %s): ', algs{k});
+
     %% set up indices
     ib_data     = [1:BUS_AREA BASE_KV:VMIN];
     ib_voltage  = [VM VA];
@@ -151,6 +172,7 @@ if have_fcn('quadprog')
         success = 0;
     end
     t_ok(~success, [t 'no success']);
+    end
 else
     t_skip(num_tests, 'Optimization Toolbox not available');
 end
