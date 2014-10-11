@@ -23,6 +23,9 @@ Changes since 5.0b1
       optimoptions function for setting Optimization Toolbox
       options (Optimization Toolbox 6.3 +), respectively.
     - Added handling of NaN values to t_is().
+    - INCOMPATIBLE CHANGE: Removed use of 'ot_opts' field and
+      replaced with 'linprog_opts' and 'quadprog_opts' fields
+      in the OPT argument to qps_matpower() and qps_ot().
 
 10/10/14
     - Added 'sqp' algorithm option for fmincon.alg, not suitable

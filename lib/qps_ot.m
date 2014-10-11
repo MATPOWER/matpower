@@ -30,7 +30,9 @@ function [x, f, eflag, output, lambda] = qps_ot(H, c, A, l, u, xmin, xmax, x0, o
 %               0 = no progress output
 %               1 = some progress output
 %               2 = verbose progress output
-%           ot_opt - options struct for QUADPROG/LINPROG, value in
+%           linprog_opt - options struct for LINPROG, value in
+%               verbose overrides these options
+%           quadprog_opt - options struct for QUADPROG, value in
 %               verbose overrides these options
 %       PROBLEM : The inputs can alternatively be supplied in a single
 %           PROBLEM struct with fields corresponding to the input arguments
@@ -191,6 +193,11 @@ end
 if isempty(x0)
     x0 = zeros(nx, 1);
 end
+if isempty(H) || ~any(any(H))
+    isLP = 1;   %% it's an LP
+else
+    isLP = 0;   %% nope, it's a QP
+end
 
 %% default options
 if ~isempty(opt) && isfield(opt, 'verbose') && ~isempty(opt.verbose)
@@ -215,11 +222,40 @@ ngt = length(igt);      %% number of lower bounded linear inequalities
 nbx = length(ibx);      %% number of doubly bounded linear inequalities
 
 %% set up options
-if ~isempty(opt) && isfield(opt, 'ot_opt') && ~isempty(opt.ot_opt)
-    ot_opt = opt.ot_opt;
+if verbose > 1
+    vrb = 'iter';       %% seems to be same as 'final'
+elseif verbose == 1
+    vrb = 'final';
 else
-    if isempty(H) || ~any(any(H))
+    vrb = 'off';
+end
+if have_fcn('optimoptions')     %% Optimization Tbx 6.3 + (R2013a +)
+    %% could use optimset for everything, except some options are not
+    %% recognized by optimset, only optimoptions, such as
+    %% ot_opt.Algorithm = 'dual-simplex'
+    if isLP
+        ot_opt = optimoptions('linprog');
+        if ~isempty(opt) && isfield(opt, 'linprog_opt') && ~isempty(opt.linprog_opt)
+            ot_opt = nested_struct_copy(ot_opt, opt.linprog_opt);
+        end
+    else
+        ot_opt = optimoptions('quadprog');
+        if have_fcn('quadprog_ls')
+            ot_opt.Algorithm = 'interior-point-convex';
+        else
+            ot_opt.LargeScale = 'off';
+        end
+        if ~isempty(opt) && isfield(opt, 'quadprog_opt') && ~isempty(opt.quadprog_opt)
+            ot_opt = nested_struct_copy(ot_opt, opt.quadprog_opt);
+        end
+    end
+    ot_opt = optimoptions(ot_opt, 'Display', vrb);
+else                            %% need to use optimset()
+    if isLP
         ot_opt = optimset('linprog');
+        if ~isempty(opt) && isfield(opt, 'linprog_opt') && ~isempty(opt.linprog_opt)
+            ot_opt = nested_struct_copy(ot_opt, opt.linprog_opt);
+        end
     else
         ot_opt = optimset('quadprog');
         if have_fcn('quadprog_ls')
@@ -227,18 +263,15 @@ else
         else
             ot_opt = optimset(ot_opt, 'LargeScale', 'off');
         end
+        if ~isempty(opt) && isfield(opt, 'quadprog_opt') && ~isempty(opt.quadprog_opt)
+            ot_opt = nested_struct_copy(ot_opt, opt.quadprog_opt);
+        end
     end
-end
-if verbose > 1
-    ot_opt = optimset(ot_opt, 'Display', 'iter');   %% seems to be same as 'final'
-elseif verbose == 1
-    ot_opt = optimset(ot_opt, 'Display', 'final');
-else
-    ot_opt = optimset(ot_opt, 'Display', 'off');
+    ot_opt = optimset(ot_opt, 'Display', vrb);
 end
 
 %% call the solver
-if isempty(H) || ~any(any(H))
+if isLP
     [x, f, eflag, output, lam] = ...
         linprog(c, Ai, bi, Ae, be, xmin, xmax, x0, ot_opt);
 else
@@ -250,7 +283,8 @@ end
 if isempty(x)
     x = NaN(nx, 1);
 end
-if isempty(lam)
+if isempty(lam) || (isempty(lam.eqlin) && isempty(lam.ineqlin) && ...
+                    isempty(lam.lower) && isempty(lam.upper))
     lambda = struct( ...
         'mu_l', NaN(nA, 1), ...
         'mu_u', NaN(nA, 1), ...

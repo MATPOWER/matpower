@@ -45,14 +45,15 @@ function [x, f, eflag, output, lambda] = qps_matpower(H, c, A, l, u, xmin, xmax,
 %               0 = no progress output
 %               1 = some progress output
 %               2 = verbose progress output
-%           bp_opt    - options vector for BP
-%           cplex_opt - options struct for CPLEX
-%           glpk_opt  - options struct for GLPK
-%           grb_opt   - options struct for GBUROBI_MEX
-%           ipopt_opt - options struct for IPOPT
-%           mips_opt  - options struct for QPS_MIPS
-%           mosek_opt - options struct for MOSEK
-%           ot_opt    - options struct for QUADPROG/LINPROG
+%           bp_opt      - options vector for BP
+%           cplex_opt   - options struct for CPLEX
+%           glpk_opt    - options struct for GLPK
+%           grb_opt     - options struct for GBUROBI_MEX
+%           ipopt_opt   - options struct for IPOPT
+%           linprog_opt - options struct for LINPROG
+%           mips_opt    - options struct for QPS_MIPS
+%           mosek_opt   - options struct for MOSEK
+%           quadprog_opt - options struct for QUADPROG
 %       PROBLEM : The inputs can alternatively be supplied in a single
 %           PROBLEM struct with fields corresponding to the input arguments
 %           described above: H, c, A, l, u, xmin, xmax, x0, opt
@@ -268,6 +269,9 @@ switch alg
     case 'GUROBI'
         [x, f, eflag, output, lambda] = ...
             qps_gurobi(H, c, A, l, u, xmin, xmax, x0, opt);
+    case 'CLP'
+        [x, f, eflag, output, lambda] = ...
+            qps_clp(H, c, A, l, u, xmin, xmax, x0, opt);
     case 'GLPK'
         [x, f, eflag, output, lambda] = ...
             qps_glpk(H, c, A, l, u, xmin, xmax, x0, opt);
