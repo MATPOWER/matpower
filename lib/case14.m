@@ -2,7 +2,7 @@ function mpc = case14
 %CASE14    Power flow data for IEEE 14 bus test case.
 %   Please see CASEFORMAT for details on the case file format.
 %   This data was converted from IEEE Common Data Format
-%   (ieee14cdf.txt) on 20-Sep-2004 by cdf2matp, rev. 1.11
+%   (ieee14cdf.txt) on 15-Oct-2014 by cdf2matp, rev. 2393
 %   See end of file for warnings generated during conversion.
 %
 %   Converted from IEEE CDF file from:
@@ -52,26 +52,26 @@ mpc.gen = [
 %% branch data
 %	fbus	tbus	r	x	b	rateA	rateB	rateC	ratio	angle	status	angmin	angmax
 mpc.branch = [
-	1	2	0.01938	0.05917	0.0528	9900	0	0	0	0	1	-360	360;
-	1	5	0.05403	0.22304	0.0492	9900	0	0	0	0	1	-360	360;
-	2	3	0.04699	0.19797	0.0438	9900	0	0	0	0	1	-360	360;
-	2	4	0.05811	0.17632	0.034	9900	0	0	0	0	1	-360	360;
-	2	5	0.05695	0.17388	0.0346	9900	0	0	0	0	1	-360	360;
-	3	4	0.06701	0.17103	0.0128	9900	0	0	0	0	1	-360	360;
-	4	5	0.01335	0.04211	0	9900	0	0	0	0	1	-360	360;
-	4	7	0	0.20912	0	9900	0	0	0.978	0	1	-360	360;
-	4	9	0	0.55618	0	9900	0	0	0.969	0	1	-360	360;
-	5	6	0	0.25202	0	9900	0	0	0.932	0	1	-360	360;
-	6	11	0.09498	0.1989	0	9900	0	0	0	0	1	-360	360;
-	6	12	0.12291	0.25581	0	9900	0	0	0	0	1	-360	360;
-	6	13	0.06615	0.13027	0	9900	0	0	0	0	1	-360	360;
-	7	8	0	0.17615	0	9900	0	0	0	0	1	-360	360;
-	7	9	0	0.11001	0	9900	0	0	0	0	1	-360	360;
-	9	10	0.03181	0.0845	0	9900	0	0	0	0	1	-360	360;
-	9	14	0.12711	0.27038	0	9900	0	0	0	0	1	-360	360;
-	10	11	0.08205	0.19207	0	9900	0	0	0	0	1	-360	360;
-	12	13	0.22092	0.19988	0	9900	0	0	0	0	1	-360	360;
-	13	14	0.17093	0.34802	0	9900	0	0	0	0	1	-360	360;
+	1	2	0.01938	0.05917	0.0528	0	0	0	0	0	1	-360	360;
+	1	5	0.05403	0.22304	0.0492	0	0	0	0	0	1	-360	360;
+	2	3	0.04699	0.19797	0.0438	0	0	0	0	0	1	-360	360;
+	2	4	0.05811	0.17632	0.034	0	0	0	0	0	1	-360	360;
+	2	5	0.05695	0.17388	0.0346	0	0	0	0	0	1	-360	360;
+	3	4	0.06701	0.17103	0.0128	0	0	0	0	0	1	-360	360;
+	4	5	0.01335	0.04211	0	0	0	0	0	0	1	-360	360;
+	4	7	0	0.20912	0	0	0	0	0.978	0	1	-360	360;
+	4	9	0	0.55618	0	0	0	0	0.969	0	1	-360	360;
+	5	6	0	0.25202	0	0	0	0	0.932	0	1	-360	360;
+	6	11	0.09498	0.1989	0	0	0	0	0	0	1	-360	360;
+	6	12	0.12291	0.25581	0	0	0	0	0	0	1	-360	360;
+	6	13	0.06615	0.13027	0	0	0	0	0	0	1	-360	360;
+	7	8	0	0.17615	0	0	0	0	0	0	1	-360	360;
+	7	9	0	0.11001	0	0	0	0	0	0	1	-360	360;
+	9	10	0.03181	0.0845	0	0	0	0	0	0	1	-360	360;
+	9	14	0.12711	0.27038	0	0	0	0	0	0	1	-360	360;
+	10	11	0.08205	0.19207	0	0	0	0	0	0	1	-360	360;
+	12	13	0.22092	0.19988	0	0	0	0	0	0	1	-360	360;
+	13	14	0.17093	0.34802	0	0	0	0	0	0	1	-360	360;
 ];
 
 %%-----  OPF Data  -----%%
@@ -79,34 +79,52 @@ mpc.branch = [
 %	1	startup	shutdown	n	x1	y1	...	xn	yn
 %	2	startup	shutdown	n	c(n-1)	...	c0
 mpc.gencost = [
-	2	0	0	3	0.0430293	20	0;
+	2	0	0	3	0.0430292599	20	0;
 	2	0	0	3	0.25	20	0;
 	2	0	0	3	0.01	40	0;
 	2	0	0	3	0.01	40	0;
 	2	0	0	3	0.01	40	0;
 ];
 
+%% bus names
+mpc.bus_name = {
+	'Bus 1     HV';
+	'Bus 2     HV';
+	'Bus 3     HV';
+	'Bus 4     HV';
+	'Bus 5     HV';
+	'Bus 6     LV';
+	'Bus 7     ZV';
+	'Bus 8     TV';
+	'Bus 9     LV';
+	'Bus 10    LV';
+	'Bus 11    LV';
+	'Bus 12    LV';
+	'Bus 13    LV';
+	'Bus 14    LV';
+};
+
 % Warnings from cdf2matp conversion:
 %
+% ***** check the title format in the first line of the cdf file.
 % ***** Qmax = Qmin at generator at bus    1 (Qmax set to Qmin + 10)
-% ***** area data conversion not yet implemented (creating dummy area data)
-% ***** MVA limit of branch 1 - 2 not given, set to 9900
-% ***** MVA limit of branch 1 - 5 not given, set to 9900
-% ***** MVA limit of branch 2 - 3 not given, set to 9900
-% ***** MVA limit of branch 2 - 4 not given, set to 9900
-% ***** MVA limit of branch 2 - 5 not given, set to 9900
-% ***** MVA limit of branch 3 - 4 not given, set to 9900
-% ***** MVA limit of branch 4 - 5 not given, set to 9900
-% ***** MVA limit of branch 4 - 7 not given, set to 9900
-% ***** MVA limit of branch 4 - 9 not given, set to 9900
-% ***** MVA limit of branch 5 - 6 not given, set to 9900
-% ***** MVA limit of branch 6 - 11 not given, set to 9900
-% ***** MVA limit of branch 6 - 12 not given, set to 9900
-% ***** MVA limit of branch 6 - 13 not given, set to 9900
-% ***** MVA limit of branch 7 - 8 not given, set to 9900
-% ***** MVA limit of branch 7 - 9 not given, set to 9900
-% ***** MVA limit of branch 9 - 10 not given, set to 9900
-% ***** MVA limit of branch 9 - 14 not given, set to 9900
-% ***** MVA limit of branch 10 - 11 not given, set to 9900
-% ***** MVA limit of branch 12 - 13 not given, set to 9900
-% ***** MVA limit of branch 13 - 14 not given, set to 9900
+% ***** MVA limit of branch 1 - 2 not given, set to 0
+% ***** MVA limit of branch 1 - 5 not given, set to 0
+% ***** MVA limit of branch 2 - 3 not given, set to 0
+% ***** MVA limit of branch 2 - 4 not given, set to 0
+% ***** MVA limit of branch 2 - 5 not given, set to 0
+% ***** MVA limit of branch 3 - 4 not given, set to 0
+% ***** MVA limit of branch 4 - 5 not given, set to 0
+% ***** MVA limit of branch 4 - 7 not given, set to 0
+% ***** MVA limit of branch 4 - 9 not given, set to 0
+% ***** MVA limit of branch 5 - 6 not given, set to 0
+% ***** MVA limit of branch 6 - 11 not given, set to 0
+% ***** MVA limit of branch 6 - 12 not given, set to 0
+% ***** MVA limit of branch 6 - 13 not given, set to 0
+% ***** MVA limit of branch 7 - 8 not given, set to 0
+% ***** MVA limit of branch 7 - 9 not given, set to 0
+% ***** MVA limit of branch 9 - 10 not given, set to 0
+% ***** MVA limit of branch 9 - 14 not given, set to 0
+% ***** MVA limit of branch 10 - 11 not given, set to 0
+% ***** MVA limit of branch 12 - 13 not given, set to 0
+% ***** MVA limit of branch 13 - 14 not given, set to 0

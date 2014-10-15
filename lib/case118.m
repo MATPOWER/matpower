@@ -2,7 +2,7 @@ function mpc = case118
 %CASE118    Power flow data for IEEE 118 bus test case.
 %   Please see CASEFORMAT for details on the case file format.
 %   This data was converted from IEEE Common Data Format
-%   (ieee118cdf.txt) on 20-Sep-2004 by cdf2matp, rev. 1.11
+%   (ieee118cdf.txt) on 15-Oct-2014 by cdf2matp, rev. 2393
 %   See end of file for warnings generated during conversion.
 %
 %   Converted from IEEE CDF file from:
@@ -10,7 +10,7 @@ function mpc = case118
 %   With baseKV data take from the PSAP format file from the same site,
 %   added manually on 10-Mar-2006.
 % 
-%  08/25/93 UW ARCHIVE           100.0  1961 W IEEE 118 Bus Test Case
+%   08/25/93 UW ARCHIVE           100.0  1961 W IEEE 118 Bus Test Case
 
 %   MATPOWER
 %   $Id$
@@ -207,192 +207,192 @@ mpc.gen = [
 %% branch data
 %	fbus	tbus	r	x	b	rateA	rateB	rateC	ratio	angle	status	angmin	angmax
 mpc.branch = [
-	1	2	0.0303	0.0999	0.0254	9900	0	0	0	0	1	-360	360;
-	1	3	0.0129	0.0424	0.01082	9900	0	0	0	0	1	-360	360;
-	4	5	0.00176	0.00798	0.0021	9900	0	0	0	0	1	-360	360;
-	3	5	0.0241	0.108	0.0284	9900	0	0	0	0	1	-360	360;
-	5	6	0.0119	0.054	0.01426	9900	0	0	0	0	1	-360	360;
-	6	7	0.00459	0.0208	0.0055	9900	0	0	0	0	1	-360	360;
-	8	9	0.00244	0.0305	1.162	9900	0	0	0	0	1	-360	360;
-	8	5	0	0.0267	0	9900	0	0	0.985	0	1	-360	360;
-	9	10	0.00258	0.0322	1.23	9900	0	0	0	0	1	-360	360;
-	4	11	0.0209	0.0688	0.01748	9900	0	0	0	0	1	-360	360;
-	5	11	0.0203	0.0682	0.01738	9900	0	0	0	0	1	-360	360;
-	11	12	0.00595	0.0196	0.00502	9900	0	0	0	0	1	-360	360;
-	2	12	0.0187	0.0616	0.01572	9900	0	0	0	0	1	-360	360;
-	3	12	0.0484	0.16	0.0406	9900	0	0	0	0	1	-360	360;
-	7	12	0.00862	0.034	0.00874	9900	0	0	0	0	1	-360	360;
-	11	13	0.02225	0.0731	0.01876	9900	0	0	0	0	1	-360	360;
-	12	14	0.0215	0.0707	0.01816	9900	0	0	0	0	1	-360	360;
-	13	15	0.0744	0.2444	0.06268	9900	0	0	0	0	1	-360	360;
-	14	15	0.0595	0.195	0.0502	9900	0	0	0	0	1	-360	360;
-	12	16	0.0212	0.0834	0.0214	9900	0	0	0	0	1	-360	360;
-	15	17	0.0132	0.0437	0.0444	9900	0	0	0	0	1	-360	360;
-	16	17	0.0454	0.1801	0.0466	9900	0	0	0	0	1	-360	360;
-	17	18	0.0123	0.0505	0.01298	9900	0	0	0	0	1	-360	360;
-	18	19	0.01119	0.0493	0.01142	9900	0	0	0	0	1	-360	360;
-	19	20	0.0252	0.117	0.0298	9900	0	0	0	0	1	-360	360;
-	15	19	0.012	0.0394	0.0101	9900	0	0	0	0	1	-360	360;
-	20	21	0.0183	0.0849	0.0216	9900	0	0	0	0	1	-360	360;
-	21	22	0.0209	0.097	0.0246	9900	0	0	0	0	1	-360	360;
-	22	23	0.0342	0.159	0.0404	9900	0	0	0	0	1	-360	360;
-	23	24	0.0135	0.0492	0.0498	9900	0	0	0	0	1	-360	360;
-	23	25	0.0156	0.08	0.0864	9900	0	0	0	0	1	-360	360;
-	26	25	0	0.0382	0	9900	0	0	0.96	0	1	-360	360;
-	25	27	0.0318	0.163	0.1764	9900	0	0	0	0	1	-360	360;
-	27	28	0.01913	0.0855	0.0216	9900	0	0	0	0	1	-360	360;
-	28	29	0.0237	0.0943	0.0238	9900	0	0	0	0	1	-360	360;
-	30	17	0	0.0388	0	9900	0	0	0.96	0	1	-360	360;
-	8	30	0.00431	0.0504	0.514	9900	0	0	0	0	1	-360	360;
-	26	30	0.00799	0.086	0.908	9900	0	0	0	0	1	-360	360;
-	17	31	0.0474	0.1563	0.0399	9900	0	0	0	0	1	-360	360;
-	29	31	0.0108	0.0331	0.0083	9900	0	0	0	0	1	-360	360;
-	23	32	0.0317	0.1153	0.1173	9900	0	0	0	0	1	-360	360;
-	31	32	0.0298	0.0985	0.0251	9900	0	0	0	0	1	-360	360;
-	27	32	0.0229	0.0755	0.01926	9900	0	0	0	0	1	-360	360;
-	15	33	0.038	0.1244	0.03194	9900	0	0	0	0	1	-360	360;
-	19	34	0.0752	0.247	0.0632	9900	0	0	0	0	1	-360	360;
-	35	36	0.00224	0.0102	0.00268	9900	0	0	0	0	1	-360	360;
-	35	37	0.011	0.0497	0.01318	9900	0	0	0	0	1	-360	360;
-	33	37	0.0415	0.142	0.0366	9900	0	0	0	0	1	-360	360;
-	34	36	0.00871	0.0268	0.00568	9900	0	0	0	0	1	-360	360;
-	34	37	0.00256	0.0094	0.00984	9900	0	0	0	0	1	-360	360;
-	38	37	0	0.0375	0	9900	0	0	0.935	0	1	-360	360;
-	37	39	0.0321	0.106	0.027	9900	0	0	0	0	1	-360	360;
-	37	40	0.0593	0.168	0.042	9900	0	0	0	0	1	-360	360;
-	30	38	0.00464	0.054	0.422	9900	0	0	0	0	1	-360	360;
-	39	40	0.0184	0.0605	0.01552	9900	0	0	0	0	1	-360	360;
-	40	41	0.0145	0.0487	0.01222	9900	0	0	0	0	1	-360	360;
-	40	42	0.0555	0.183	0.0466	9900	0	0	0	0	1	-360	360;
-	41	42	0.041	0.135	0.0344	9900	0	0	0	0	1	-360	360;
-	43	44	0.0608	0.2454	0.06068	9900	0	0	0	0	1	-360	360;
-	34	43	0.0413	0.1681	0.04226	9900	0	0	0	0	1	-360	360;
-	44	45	0.0224	0.0901	0.0224	9900	0	0	0	0	1	-360	360;
-	45	46	0.04	0.1356	0.0332	9900	0	0	0	0	1	-360	360;
-	46	47	0.038	0.127	0.0316	9900	0	0	0	0	1	-360	360;
-	46	48	0.0601	0.189	0.0472	9900	0	0	0	0	1	-360	360;
-	47	49	0.0191	0.0625	0.01604	9900	0	0	0	0	1	-360	360;
-	42	49	0.0715	0.323	0.086	9900	0	0	0	0	1	-360	360;
-	42	49	0.0715	0.323	0.086	9900	0	0	0	0	1	-360	360;
-	45	49	0.0684	0.186	0.0444	9900	0	0	0	0	1	-360	360;
-	48	49	0.0179	0.0505	0.01258	9900	0	0	0	0	1	-360	360;
-	49	50	0.0267	0.0752	0.01874	9900	0	0	0	0	1	-360	360;
-	49	51	0.0486	0.137	0.0342	9900	0	0	0	0	1	-360	360;
-	51	52	0.0203	0.0588	0.01396	9900	0	0	0	0	1	-360	360;
-	52	53	0.0405	0.1635	0.04058	9900	0	0	0	0	1	-360	360;
-	53	54	0.0263	0.122	0.031	9900	0	0	0	0	1	-360	360;
-	49	54	0.073	0.289	0.0738	9900	0	0	0	0	1	-360	360;
-	49	54	0.0869	0.291	0.073	9900	0	0	0	0	1	-360	360;
-	54	55	0.0169	0.0707	0.0202	9900	0	0	0	0	1	-360	360;
-	54	56	0.00275	0.00955	0.00732	9900	0	0	0	0	1	-360	360;
-	55	56	0.00488	0.0151	0.00374	9900	0	0	0	0	1	-360	360;
-	56	57	0.0343	0.0966	0.0242	9900	0	0	0	0	1	-360	360;
-	50	57	0.0474	0.134	0.0332	9900	0	0	0	0	1	-360	360;
-	56	58	0.0343	0.0966	0.0242	9900	0	0	0	0	1	-360	360;
-	51	58	0.0255	0.0719	0.01788	9900	0	0	0	0	1	-360	360;
-	54	59	0.0503	0.2293	0.0598	9900	0	0	0	0	1	-360	360;
-	56	59	0.0825	0.251	0.0569	9900	0	0	0	0	1	-360	360;
-	56	59	0.0803	0.239	0.0536	9900	0	0	0	0	1	-360	360;
-	55	59	0.04739	0.2158	0.05646	9900	0	0	0	0	1	-360	360;
-	59	60	0.0317	0.145	0.0376	9900	0	0	0	0	1	-360	360;
-	59	61	0.0328	0.15	0.0388	9900	0	0	0	0	1	-360	360;
-	60	61	0.00264	0.0135	0.01456	9900	0	0	0	0	1	-360	360;
-	60	62	0.0123	0.0561	0.01468	9900	0	0	0	0	1	-360	360;
-	61	62	0.00824	0.0376	0.0098	9900	0	0	0	0	1	-360	360;
-	63	59	0	0.0386	0	9900	0	0	0.96	0	1	-360	360;
-	63	64	0.00172	0.02	0.216	9900	0	0	0	0	1	-360	360;
-	64	61	0	0.0268	0	9900	0	0	0.985	0	1	-360	360;
-	38	65	0.00901	0.0986	1.046	9900	0	0	0	0	1	-360	360;
-	64	65	0.00269	0.0302	0.38	9900	0	0	0	0	1	-360	360;
-	49	66	0.018	0.0919	0.0248	9900	0	0	0	0	1	-360	360;
-	49	66	0.018	0.0919	0.0248	9900	0	0	0	0	1	-360	360;
-	62	66	0.0482	0.218	0.0578	9900	0	0	0	0	1	-360	360;
-	62	67	0.0258	0.117	0.031	9900	0	0	0	0	1	-360	360;
-	65	66	0	0.037	0	9900	0	0	0.935	0	1	-360	360;
-	66	67	0.0224	0.1015	0.02682	9900	0	0	0	0	1	-360	360;
-	65	68	0.00138	0.016	0.638	9900	0	0	0	0	1	-360	360;
-	47	69	0.0844	0.2778	0.07092	9900	0	0	0	0	1	-360	360;
-	49	69	0.0985	0.324	0.0828	9900	0	0	0	0	1	-360	360;
-	68	69	0	0.037	0	9900	0	0	0.935	0	1	-360	360;
-	69	70	0.03	0.127	0.122	9900	0	0	0	0	1	-360	360;
-	24	70	0.00221	0.4115	0.10198	9900	0	0	0	0	1	-360	360;
-	70	71	0.00882	0.0355	0.00878	9900	0	0	0	0	1	-360	360;
-	24	72	0.0488	0.196	0.0488	9900	0	0	0	0	1	-360	360;
-	71	72	0.0446	0.18	0.04444	9900	0	0	0	0	1	-360	360;
-	71	73	0.00866	0.0454	0.01178	9900	0	0	0	0	1	-360	360;
-	70	74	0.0401	0.1323	0.03368	9900	0	0	0	0	1	-360	360;
-	70	75	0.0428	0.141	0.036	9900	0	0	0	0	1	-360	360;
-	69	75	0.0405	0.122	0.124	9900	0	0	0	0	1	-360	360;
-	74	75	0.0123	0.0406	0.01034	9900	0	0	0	0	1	-360	360;
-	76	77	0.0444	0.148	0.0368	9900	0	0	0	0	1	-360	360;
-	69	77	0.0309	0.101	0.1038	9900	0	0	0	0	1	-360	360;
-	75	77	0.0601	0.1999	0.04978	9900	0	0	0	0	1	-360	360;
-	77	78	0.00376	0.0124	0.01264	9900	0	0	0	0	1	-360	360;
-	78	79	0.00546	0.0244	0.00648	9900	0	0	0	0	1	-360	360;
-	77	80	0.017	0.0485	0.0472	9900	0	0	0	0	1	-360	360;
-	77	80	0.0294	0.105	0.0228	9900	0	0	0	0	1	-360	360;
-	79	80	0.0156	0.0704	0.0187	9900	0	0	0	0	1	-360	360;
-	68	81	0.00175	0.0202	0.808	9900	0	0	0	0	1	-360	360;
-	81	80	0	0.037	0	9900	0	0	0.935	0	1	-360	360;
-	77	82	0.0298	0.0853	0.08174	9900	0	0	0	0	1	-360	360;
-	82	83	0.0112	0.03665	0.03796	9900	0	0	0	0	1	-360	360;
-	83	84	0.0625	0.132	0.0258	9900	0	0	0	0	1	-360	360;
-	83	85	0.043	0.148	0.0348	9900	0	0	0	0	1	-360	360;
-	84	85	0.0302	0.0641	0.01234	9900	0	0	0	0	1	-360	360;
-	85	86	0.035	0.123	0.0276	9900	0	0	0	0	1	-360	360;
-	86	87	0.02828	0.2074	0.0445	9900	0	0	0	0	1	-360	360;
-	85	88	0.02	0.102	0.0276	9900	0	0	0	0	1	-360	360;
-	85	89	0.0239	0.173	0.047	9900	0	0	0	0	1	-360	360;
-	88	89	0.0139	0.0712	0.01934	9900	0	0	0	0	1	-360	360;
-	89	90	0.0518	0.188	0.0528	9900	0	0	0	0	1	-360	360;
-	89	90	0.0238	0.0997	0.106	9900	0	0	0	0	1	-360	360;
-	90	91	0.0254	0.0836	0.0214	9900	0	0	0	0	1	-360	360;
-	89	92	0.0099	0.0505	0.0548	9900	0	0	0	0	1	-360	360;
-	89	92	0.0393	0.1581	0.0414	9900	0	0	0	0	1	-360	360;
-	91	92	0.0387	0.1272	0.03268	9900	0	0	0	0	1	-360	360;
-	92	93	0.0258	0.0848	0.0218	9900	0	0	0	0	1	-360	360;
-	92	94	0.0481	0.158	0.0406	9900	0	0	0	0	1	-360	360;
-	93	94	0.0223	0.0732	0.01876	9900	0	0	0	0	1	-360	360;
-	94	95	0.0132	0.0434	0.0111	9900	0	0	0	0	1	-360	360;
-	80	96	0.0356	0.182	0.0494	9900	0	0	0	0	1	-360	360;
-	82	96	0.0162	0.053	0.0544	9900	0	0	0	0	1	-360	360;
-	94	96	0.0269	0.0869	0.023	9900	0	0	0	0	1	-360	360;
-	80	97	0.0183	0.0934	0.0254	9900	0	0	0	0	1	-360	360;
-	80	98	0.0238	0.108	0.0286	9900	0	0	0	0	1	-360	360;
-	80	99	0.0454	0.206	0.0546	9900	0	0	0	0	1	-360	360;
-	92	100	0.0648	0.295	0.0472	9900	0	0	0	0	1	-360	360;
-	94	100	0.0178	0.058	0.0604	9900	0	0	0	0	1	-360	360;
-	95	96	0.0171	0.0547	0.01474	9900	0	0	0	0	1	-360	360;
-	96	97	0.0173	0.0885	0.024	9900	0	0	0	0	1	-360	360;
-	98	100	0.0397	0.179	0.0476	9900	0	0	0	0	1	-360	360;
-	99	100	0.018	0.0813	0.0216	9900	0	0	0	0	1	-360	360;
-	100	101	0.0277	0.1262	0.0328	9900	0	0	0	0	1	-360	360;
-	92	102	0.0123	0.0559	0.01464	9900	0	0	0	0	1	-360	360;
-	101	102	0.0246	0.112	0.0294	9900	0	0	0	0	1	-360	360;
-	100	103	0.016	0.0525	0.0536	9900	0	0	0	0	1	-360	360;
-	100	104	0.0451	0.204	0.0541	9900	0	0	0	0	1	-360	360;
-	103	104	0.0466	0.1584	0.0407	9900	0	0	0	0	1	-360	360;
-	103	105	0.0535	0.1625	0.0408	9900	0	0	0	0	1	-360	360;
-	100	106	0.0605	0.229	0.062	9900	0	0	0	0	1	-360	360;
-	104	105	0.00994	0.0378	0.00986	9900	0	0	0	0	1	-360	360;
-	105	106	0.014	0.0547	0.01434	9900	0	0	0	0	1	-360	360;
-	105	107	0.053	0.183	0.0472	9900	0	0	0	0	1	-360	360;
-	105	108	0.0261	0.0703	0.01844	9900	0	0	0	0	1	-360	360;
-	106	107	0.053	0.183	0.0472	9900	0	0	0	0	1	-360	360;
-	108	109	0.0105	0.0288	0.0076	9900	0	0	0	0	1	-360	360;
-	103	110	0.03906	0.1813	0.0461	9900	0	0	0	0	1	-360	360;
-	109	110	0.0278	0.0762	0.0202	9900	0	0	0	0	1	-360	360;
-	110	111	0.022	0.0755	0.02	9900	0	0	0	0	1	-360	360;
-	110	112	0.0247	0.064	0.062	9900	0	0	0	0	1	-360	360;
-	17	113	0.00913	0.0301	0.00768	9900	0	0	0	0	1	-360	360;
-	32	113	0.0615	0.203	0.0518	9900	0	0	0	0	1	-360	360;
-	32	114	0.0135	0.0612	0.01628	9900	0	0	0	0	1	-360	360;
-	27	115	0.0164	0.0741	0.01972	9900	0	0	0	0	1	-360	360;
-	114	115	0.0023	0.0104	0.00276	9900	0	0	0	0	1	-360	360;
-	68	116	0.00034	0.00405	0.164	9900	0	0	0	0	1	-360	360;
-	12	117	0.0329	0.14	0.0358	9900	0	0	0	0	1	-360	360;
-	75	118	0.0145	0.0481	0.01198	9900	0	0	0	0	1	-360	360;
-	76	118	0.0164	0.0544	0.01356	9900	0	0	0	0	1	-360	360;
+	1	2	0.0303	0.0999	0.0254	0	0	0	0	0	1	-360	360;
+	1	3	0.0129	0.0424	0.01082	0	0	0	0	0	1	-360	360;
+	4	5	0.00176	0.00798	0.0021	0	0	0	0	0	1	-360	360;
+	3	5	0.0241	0.108	0.0284	0	0	0	0	0	1	-360	360;
+	5	6	0.0119	0.054	0.01426	0	0	0	0	0	1	-360	360;
+	6	7	0.00459	0.0208	0.0055	0	0	0	0	0	1	-360	360;
+	8	9	0.00244	0.0305	1.162	0	0	0	0	0	1	-360	360;
+	8	5	0	0.0267	0	0	0	0	0.985	0	1	-360	360;
+	9	10	0.00258	0.0322	1.23	0	0	0	0	0	1	-360	360;
+	4	11	0.0209	0.0688	0.01748	0	0	0	0	0	1	-360	360;
+	5	11	0.0203	0.0682	0.01738	0	0	0	0	0	1	-360	360;
+	11	12	0.00595	0.0196	0.00502	0	0	0	0	0	1	-360	360;
+	2	12	0.0187	0.0616	0.01572	0	0	0	0	0	1	-360	360;
+	3	12	0.0484	0.16	0.0406	0	0	0	0	0	1	-360	360;
+	7	12	0.00862	0.034	0.00874	0	0	0	0	0	1	-360	360;
+	11	13	0.02225	0.0731	0.01876	0	0	0	0	0	1	-360	360;
+	12	14	0.0215	0.0707	0.01816	0	0	0	0	0	1	-360	360;
+	13	15	0.0744	0.2444	0.06268	0	0	0	0	0	1	-360	360;
+	14	15	0.0595	0.195	0.0502	0	0	0	0	0	1	-360	360;
+	12	16	0.0212	0.0834	0.0214	0	0	0	0	0	1	-360	360;
+	15	17	0.0132	0.0437	0.0444	0	0	0	0	0	1	-360	360;
+	16	17	0.0454	0.1801	0.0466	0	0	0	0	0	1	-360	360;
+	17	18	0.0123	0.0505	0.01298	0	0	0	0	0	1	-360	360;
+	18	19	0.01119	0.0493	0.01142	0	0	0	0	0	1	-360	360;
+	19	20	0.0252	0.117	0.0298	0	0	0	0	0	1	-360	360;
+	15	19	0.012	0.0394	0.0101	0	0	0	0	0	1	-360	360;
+	20	21	0.0183	0.0849	0.0216	0	0	0	0	0	1	-360	360;
+	21	22	0.0209	0.097	0.0246	0	0	0	0	0	1	-360	360;
+	22	23	0.0342	0.159	0.0404	0	0	0	0	0	1	-360	360;
+	23	24	0.0135	0.0492	0.0498	0	0	0	0	0	1	-360	360;
+	23	25	0.0156	0.08	0.0864	0	0	0	0	0	1	-360	360;
+	26	25	0	0.0382	0	0	0	0	0.96	0	1	-360	360;
+	25	27	0.0318	0.163	0.1764	0	0	0	0	0	1	-360	360;
+	27	28	0.01913	0.0855	0.0216	0	0	0	0	0	1	-360	360;
+	28	29	0.0237	0.0943	0.0238	0	0	0	0	0	1	-360	360;
+	30	17	0	0.0388	0	0	0	0	0.96	0	1	-360	360;
+	8	30	0.00431	0.0504	0.514	0	0	0	0	0	1	-360	360;
+	26	30	0.00799	0.086	0.908	0	0	0	0	0	1	-360	360;
+	17	31	0.0474	0.1563	0.0399	0	0	0	0	0	1	-360	360;
+	29	31	0.0108	0.0331	0.0083	0	0	0	0	0	1	-360	360;
+	23	32	0.0317	0.1153	0.1173	0	0	0	0	0	1	-360	360;
+	31	32	0.0298	0.0985	0.0251	0	0	0	0	0	1	-360	360;
+	27	32	0.0229	0.0755	0.01926	0	0	0	0	0	1	-360	360;
+	15	33	0.038	0.1244	0.03194	0	0	0	0	0	1	-360	360;
+	19	34	0.0752	0.247	0.0632	0	0	0	0	0	1	-360	360;
+	35	36	0.00224	0.0102	0.00268	0	0	0	0	0	1	-360	360;
+	35	37	0.011	0.0497	0.01318	0	0	0	0	0	1	-360	360;
+	33	37	0.0415	0.142	0.0366	0	0	0	0	0	1	-360	360;
+	34	36	0.00871	0.0268	0.00568	0	0	0	0	0	1	-360	360;
+	34	37	0.00256	0.0094	0.00984	0	0	0	0	0	1	-360	360;
+	38	37	0	0.0375	0	0	0	0	0.935	0	1	-360	360;
+	37	39	0.0321	0.106	0.027	0	0	0	0	0	1	-360	360;
+	37	40	0.0593	0.168	0.042	0	0	0	0	0	1	-360	360;
+	30	38	0.00464	0.054	0.422	0	0	0	0	0	1	-360	360;
+	39	40	0.0184	0.0605	0.01552	0	0	0	0	0	1	-360	360;
+	40	41	0.0145	0.0487	0.01222	0	0	0	0	0	1	-360	360;
+	40	42	0.0555	0.183	0.0466	0	0	0	0	0	1	-360	360;
+	41	42	0.041	0.135	0.0344	0	0	0	0	0	1	-360	360;
+	43	44	0.0608	0.2454	0.06068	0	0	0	0	0	1	-360	360;
+	34	43	0.0413	0.1681	0.04226	0	0	0	0	0	1	-360	360;
+	44	45	0.0224	0.0901	0.0224	0	0	0	0	0	1	-360	360;
+	45	46	0.04	0.1356	0.0332	0	0	0	0	0	1	-360	360;
+	46	47	0.038	0.127	0.0316	0	0	0	0	0	1	-360	360;
+	46	48	0.0601	0.189	0.0472	0	0	0	0	0	1	-360	360;
+	47	49	0.0191	0.0625	0.01604	0	0	0	0	0	1	-360	360;
+	42	49	0.0715	0.323	0.086	0	0	0	0	0	1	-360	360;
+	42	49	0.0715	0.323	0.086	0	0	0	0	0	1	-360	360;
+	45	49	0.0684	0.186	0.0444	0	0	0	0	0	1	-360	360;
+	48	49	0.0179	0.0505	0.01258	0	0	0	0	0	1	-360	360;
+	49	50	0.0267	0.0752	0.01874	0	0	0	0	0	1	-360	360;
+	49	51	0.0486	0.137	0.0342	0	0	0	0	0	1	-360	360;
+	51	52	0.0203	0.0588	0.01396	0	0	0	0	0	1	-360	360;
+	52	53	0.0405	0.1635	0.04058	0	0	0	0	0	1	-360	360;
+	53	54	0.0263	0.122	0.031	0	0	0	0	0	1	-360	360;
+	49	54	0.073	0.289	0.0738	0	0	0	0	0	1	-360	360;
+	49	54	0.0869	0.291	0.073	0	0	0	0	0	1	-360	360;
+	54	55	0.0169	0.0707	0.0202	0	0	0	0	0	1	-360	360;
+	54	56	0.00275	0.00955	0.00732	0	0	0	0	0	1	-360	360;
+	55	56	0.00488	0.0151	0.00374	0	0	0	0	0	1	-360	360;
+	56	57	0.0343	0.0966	0.0242	0	0	0	0	0	1	-360	360;
+	50	57	0.0474	0.134	0.0332	0	0	0	0	0	1	-360	360;
+	56	58	0.0343	0.0966	0.0242	0	0	0	0	0	1	-360	360;
+	51	58	0.0255	0.0719	0.01788	0	0	0	0	0	1	-360	360;
+	54	59	0.0503	0.2293	0.0598	0	0	0	0	0	1	-360	360;
+	56	59	0.0825	0.251	0.0569	0	0	0	0	0	1	-360	360;
+	56	59	0.0803	0.239	0.0536	0	0	0	0	0	1	-360	360;
+	55	59	0.04739	0.2158	0.05646	0	0	0	0	0	1	-360	360;
+	59	60	0.0317	0.145	0.0376	0	0	0	0	0	1	-360	360;
+	59	61	0.0328	0.15	0.0388	0	0	0	0	0	1	-360	360;
+	60	61	0.00264	0.0135	0.01456	0	0	0	0	0	1	-360	360;
+	60	62	0.0123	0.0561	0.01468	0	0	0	0	0	1	-360	360;
+	61	62	0.00824	0.0376	0.0098	0	0	0	0	0	1	-360	360;
+	63	59	0	0.0386	0	0	0	0	0.96	0	1	-360	360;
+	63	64	0.00172	0.02	0.216	0	0	0	0	0	1	-360	360;
+	64	61	0	0.0268	0	0	0	0	0.985	0	1	-360	360;
+	38	65	0.00901	0.0986	1.046	0	0	0	0	0	1	-360	360;
+	64	65	0.00269	0.0302	0.38	0	0	0	0	0	1	-360	360;
+	49	66	0.018	0.0919	0.0248	0	0	0	0	0	1	-360	360;
+	49	66	0.018	0.0919	0.0248	0	0	0	0	0	1	-360	360;
+	62	66	0.0482	0.218	0.0578	0	0	0	0	0	1	-360	360;
+	62	67	0.0258	0.117	0.031	0	0	0	0	0	1	-360	360;
+	65	66	0	0.037	0	0	0	0	0.935	0	1	-360	360;
+	66	67	0.0224	0.1015	0.02682	0	0	0	0	0	1	-360	360;
+	65	68	0.00138	0.016	0.638	0	0	0	0	0	1	-360	360;
+	47	69	0.0844	0.2778	0.07092	0	0	0	0	0	1	-360	360;
+	49	69	0.0985	0.324	0.0828	0	0	0	0	0	1	-360	360;
+	68	69	0	0.037	0	0	0	0	0.935	0	1	-360	360;
+	69	70	0.03	0.127	0.122	0	0	0	0	0	1	-360	360;
+	24	70	0.00221	0.4115	0.10198	0	0	0	0	0	1	-360	360;
+	70	71	0.00882	0.0355	0.00878	0	0	0	0	0	1	-360	360;
+	24	72	0.0488	0.196	0.0488	0	0	0	0	0	1	-360	360;
+	71	72	0.0446	0.18	0.04444	0	0	0	0	0	1	-360	360;
+	71	73	0.00866	0.0454	0.01178	0	0	0	0	0	1	-360	360;
+	70	74	0.0401	0.1323	0.03368	0	0	0	0	0	1	-360	360;
+	70	75	0.0428	0.141	0.036	0	0	0	0	0	1	-360	360;
+	69	75	0.0405	0.122	0.124	0	0	0	0	0	1	-360	360;
+	74	75	0.0123	0.0406	0.01034	0	0	0	0	0	1	-360	360;
+	76	77	0.0444	0.148	0.0368	0	0	0	0	0	1	-360	360;
+	69	77	0.0309	0.101	0.1038	0	0	0	0	0	1	-360	360;
+	75	77	0.0601	0.1999	0.04978	0	0	0	0	0	1	-360	360;
+	77	78	0.00376	0.0124	0.01264	0	0	0	0	0	1	-360	360;
+	78	79	0.00546	0.0244	0.00648	0	0	0	0	0	1	-360	360;
+	77	80	0.017	0.0485	0.0472	0	0	0	0	0	1	-360	360;
+	77	80	0.0294	0.105	0.0228	0	0	0	0	0	1	-360	360;
+	79	80	0.0156	0.0704	0.0187	0	0	0	0	0	1	-360	360;
+	68	81	0.00175	0.0202	0.808	0	0	0	0	0	1	-360	360;
+	81	80	0	0.037	0	0	0	0	0.935	0	1	-360	360;
+	77	82	0.0298	0.0853	0.08174	0	0	0	0	0	1	-360	360;
+	82	83	0.0112	0.03665	0.03796	0	0	0	0	0	1	-360	360;
+	83	84	0.0625	0.132	0.0258	0	0	0	0	0	1	-360	360;
+	83	85	0.043	0.148	0.0348	0	0	0	0	0	1	-360	360;
+	84	85	0.0302	0.0641	0.01234	0	0	0	0	0	1	-360	360;
+	85	86	0.035	0.123	0.0276	0	0	0	0	0	1	-360	360;
+	86	87	0.02828	0.2074	0.0445	0	0	0	0	0	1	-360	360;
+	85	88	0.02	0.102	0.0276	0	0	0	0	0	1	-360	360;
+	85	89	0.0239	0.173	0.047	0	0	0	0	0	1	-360	360;
+	88	89	0.0139	0.0712	0.01934	0	0	0	0	0	1	-360	360;
+	89	90	0.0518	0.188	0.0528	0	0	0	0	0	1	-360	360;
+	89	90	0.0238	0.0997	0.106	0	0	0	0	0	1	-360	360;
+	90	91	0.0254	0.0836	0.0214	0	0	0	0	0	1	-360	360;
+	89	92	0.0099	0.0505	0.0548	0	0	0	0	0	1	-360	360;
+	89	92	0.0393	0.1581	0.0414	0	0	0	0	0	1	-360	360;
+	91	92	0.0387	0.1272	0.03268	0	0	0	0	0	1	-360	360;
+	92	93	0.0258	0.0848	0.0218	0	0	0	0	0	1	-360	360;
+	92	94	0.0481	0.158	0.0406	0	0	0	0	0	1	-360	360;
+	93	94	0.0223	0.0732	0.01876	0	0	0	0	0	1	-360	360;
+	94	95	0.0132	0.0434	0.0111	0	0	0	0	0	1	-360	360;
+	80	96	0.0356	0.182	0.0494	0	0	0	0	0	1	-360	360;
+	82	96	0.0162	0.053	0.0544	0	0	0	0	0	1	-360	360;
+	94	96	0.0269	0.0869	0.023	0	0	0	0	0	1	-360	360;
+	80	97	0.0183	0.0934	0.0254	0	0	0	0	0	1	-360	360;
+	80	98	0.0238	0.108	0.0286	0	0	0	0	0	1	-360	360;
+	80	99	0.0454	0.206	0.0546	0	0	0	0	0	1	-360	360;
+	92	100	0.0648	0.295	0.0472	0	0	0	0	0	1	-360	360;
+	94	100	0.0178	0.058	0.0604	0	0	0	0	0	1	-360	360;
+	95	96	0.0171	0.0547	0.01474	0	0	0	0	0	1	-360	360;
+	96	97	0.0173	0.0885	0.024	0	0	0	0	0	1	-360	360;
+	98	100	0.0397	0.179	0.0476	0	0	0	0	0	1	-360	360;
+	99	100	0.018	0.0813	0.0216	0	0	0	0	0	1	-360	360;
+	100	101	0.0277	0.1262	0.0328	0	0	0	0	0	1	-360	360;
+	92	102	0.0123	0.0559	0.01464	0	0	0	0	0	1	-360	360;
+	101	102	0.0246	0.112	0.0294	0	0	0	0	0	1	-360	360;
+	100	103	0.016	0.0525	0.0536	0	0	0	0	0	1	-360	360;
+	100	104	0.0451	0.204	0.0541	0	0	0	0	0	1	-360	360;
+	103	104	0.0466	0.1584	0.0407	0	0	0	0	0	1	-360	360;
+	103	105	0.0535	0.1625	0.0408	0	0	0	0	0	1	-360	360;
+	100	106	0.0605	0.229	0.062	0	0	0	0	0	1	-360	360;
+	104	105	0.00994	0.0378	0.00986	0	0	0	0	0	1	-360	360;
+	105	106	0.014	0.0547	0.01434	0	0	0	0	0	1	-360	360;
+	105	107	0.053	0.183	0.0472	0	0	0	0	0	1	-360	360;
+	105	108	0.0261	0.0703	0.01844	0	0	0	0	0	1	-360	360;
+	106	107	0.053	0.183	0.0472	0	0	0	0	0	1	-360	360;
+	108	109	0.0105	0.0288	0.0076	0	0	0	0	0	1	-360	360;
+	103	110	0.03906	0.1813	0.0461	0	0	0	0	0	1	-360	360;
+	109	110	0.0278	0.0762	0.0202	0	0	0	0	0	1	-360	360;
+	110	111	0.022	0.0755	0.02	0	0	0	0	0	1	-360	360;
+	110	112	0.0247	0.064	0.062	0	0	0	0	0	1	-360	360;
+	17	113	0.00913	0.0301	0.00768	0	0	0	0	0	1	-360	360;
+	32	113	0.0615	0.203	0.0518	0	0	0	0	0	1	-360	360;
+	32	114	0.0135	0.0612	0.01628	0	0	0	0	0	1	-360	360;
+	27	115	0.0164	0.0741	0.01972	0	0	0	0	0	1	-360	360;
+	114	115	0.0023	0.0104	0.00276	0	0	0	0	0	1	-360	360;
+	68	116	0.00034	0.00405	0.164	0	0	0	0	0	1	-360	360;
+	12	117	0.0329	0.14	0.0358	0	0	0	0	0	1	-360	360;
+	75	118	0.0145	0.0481	0.01198	0	0	0	0	0	1	-360	360;
+	76	118	0.0164	0.0544	0.01356	0	0	0	0	0	1	-360	360;
 ];
 
 %%-----  OPF Data  -----%%
@@ -404,61 +404,183 @@ mpc.gencost = [
 	2	0	0	3	0.01	40	0;
 	2	0	0	3	0.01	40	0;
 	2	0	0	3	0.01	40	0;
-	2	0	0	3	0.0222222	20	0;
-	2	0	0	3	0.117647	20	0;
+	2	0	0	3	0.0222222222	20	0;
+	2	0	0	3	0.117647059	20	0;
 	2	0	0	3	0.01	40	0;
 	2	0	0	3	0.01	40	0;
 	2	0	0	3	0.01	40	0;
 	2	0	0	3	0.01	40	0;
-	2	0	0	3	0.0454545	20	0;
-	2	0	0	3	0.0318471	20	0;
+	2	0	0	3	0.0454545455	20	0;
+	2	0	0	3	0.0318471338	20	0;
 	2	0	0	3	0.01	40	0;
-	2	0	0	3	1.42857	20	0;
-	2	0	0	3	0.01	40	0;
-	2	0	0	3	0.01	40	0;
+	2	0	0	3	1.42857143	20	0;
 	2	0	0	3	0.01	40	0;
 	2	0	0	3	0.01	40	0;
 	2	0	0	3	0.01	40	0;
-	2	0	0	3	0.526316	20	0;
-	2	0	0	3	0.0490196	20	0;
-	2	0	0	3	0.208333	20	0;
 	2	0	0	3	0.01	40	0;
 	2	0	0	3	0.01	40	0;
-	2	0	0	3	0.0645161	20	0;
+	2	0	0	3	0.526315789	20	0;
+	2	0	0	3	0.0490196078	20	0;
+	2	0	0	3	0.208333333	20	0;
+	2	0	0	3	0.01	40	0;
+	2	0	0	3	0.01	40	0;
+	2	0	0	3	0.064516129	20	0;
 	2	0	0	3	0.0625	20	0;
 	2	0	0	3	0.01	40	0;
-	2	0	0	3	0.0255754	20	0;
-	2	0	0	3	0.0255102	20	0;
-	2	0	0	3	0.0193648	20	0;
+	2	0	0	3	0.0255754476	20	0;
+	2	0	0	3	0.0255102041	20	0;
+	2	0	0	3	0.0193648335	20	0;
 	2	0	0	3	0.01	40	0;
 	2	0	0	3	0.01	40	0;
 	2	0	0	3	0.01	40	0;
 	2	0	0	3	0.01	40	0;
 	2	0	0	3	0.01	40	0;
 	2	0	0	3	0.01	40	0;
-	2	0	0	3	0.0209644	20	0;
+	2	0	0	3	0.0209643606	20	0;
 	2	0	0	3	0.01	40	0;
 	2	0	0	3	2.5	20	0;
-	2	0	0	3	0.0164745	20	0;
+	2	0	0	3	0.0164744646	20	0;
 	2	0	0	3	0.01	40	0;
 	2	0	0	3	0.01	40	0;
 	2	0	0	3	0.01	40	0;
 	2	0	0	3	0.01	40	0;
-	2	0	0	3	0.0396825	20	0;
+	2	0	0	3	0.0396825397	20	0;
 	2	0	0	3	0.25	20	0;
 	2	0	0	3	0.01	40	0;
 	2	0	0	3	0.01	40	0;
 	2	0	0	3	0.01	40	0;
 	2	0	0	3	0.01	40	0;
-	2	0	0	3	0.277778	20	0;
+	2	0	0	3	0.277777778	20	0;
 	2	0	0	3	0.01	40	0;
 	2	0	0	3	0.01	40	0;
 	2	0	0	3	0.01	40	0;
 ];
 
+%% bus names
+mpc.bus_name = {
+	'Riversde  V2';
+	'Pokagon   V2';
+	'HickryCk  V2';
+	'NwCarlsl  V2';
+	'Olive     V2';
+	'Kankakee  V2';
+	'JacksnRd  V2';
+	'Olive     V1';
+	'Bequine   V1';
+	'Breed     V1';
+	'SouthBnd  V2';
+	'TwinBrch  V2';
+	'Concord   V2';
+	'GoshenJt  V2';
+	'FtWayne   V2';
+	'N. E.     V2';
+	'Sorenson  V2';
+	'McKinley  V2';
+	'Lincoln   V2';
+	'Adams     V2';
+	'Jay       V2';
+	'Randolph  V2';
+	'CollCrnr  V2';
+	'Trenton   V2';
+	'TannrsCk  V2';
+	'TannrsCk  V1';
+	'Madison   V2';
+	'Mullin    V2';
+	'Grant     V2';
+	'Sorenson  V1';
+	'DeerCrk   V2';
+	'Delaware  V2';
+	'Haviland  V2';
+	'Rockhill  V2';
+	'WestLima  V2';
+	'Sterling  V2';
+	'EastLima  V2';
+	'EastLima  V1';
+	'NwLibrty  V2';
+	'West End  V2';
+	'S.Tiffin  V2';
+	'Howard    V2';
+	'S.Kenton  V2';
+	'WMVernon  V2';
+	'N.Newark  V2';
+	'W.Lancst  V2';
+	'Crooksvl  V2';
+	'Zanesvll  V2';
+	'Philo     V2';
+	'WCambrdg  V2';
+	'Newcmrst  V2';
+	'SCoshoct  V2';
+	'Wooster   V2';
+	'Torrey    V2';
+	'Wagenhls  V2';
+	'Sunnysde  V2';
+	'WNwPhil1  V2';
+	'WNwPhil2  V2';
+	'Tidd      V2';
+	'SWKammer  V2';
+	'W.Kammer  V2';
+	'Natrium   V2';
+	'Tidd      V1';
+	'Kammer    V1';
+	'Muskngum  V1';
+	'Muskngum  V2';
+	'Summerfl  V2';
+	'Sporn     V1';
+	'Sporn     V2';
+	'Portsmth  V2';
+	'NPortsmt  V2';
+	'Hillsbro  V2';
+	'Sargents  V2';
+	'Bellefnt  V2';
+	'SthPoint  V2';
+	'Darrah    V2';
+	'Turner    V2';
+	'Chemical  V2';
+	'CapitlHl  V2';
+	'CabinCrk  V2';
+	'Kanawha   V1';
+	'Logan     V2';
+	'Sprigg    V2';
+	'BetsyLne  V2';
+	'BeaverCk  V2';
+	'Hazard    V2';
+	'Pinevlle  V3';
+	'Fremont   V2';
+	'ClinchRv  V2';
+	'Holston   V2';
+	'HolstonT  V2';
+	'Saltvlle  V2';
+	'Tazewell  V2';
+	'Switchbk  V2';
+	'Caldwell  V2';
+	'Baileysv  V2';
+	'Sundial   V2';
+	'Bradley   V2';
+	'Hinton    V2';
+	'Glen Lyn  V2';
+	'Wythe     V2';
+	'Smythe    V2';
+	'Claytor   V2';
+	'Hancock   V2';
+	'Roanoke   V2';
+	'Cloverdl  V2';
+	'Reusens   V2';
+	'Blaine    V2';
+	'Franklin  V2';
+	'Fieldale  V2';
+	'DanRiver  V2';
+	'Danville  V2';
+	'Deer Crk  V2';
+	'WMedford  V2';
+	'Medford   V2';
+	'KygerCrk  V2';
+	'Corey     V2';
+	'WHuntngd  V2';
+};
+
 % Warnings from cdf2matp conversion:
 %
-% ***** area data conversion not yet implemented (creating dummy area data)
+% ***** check the title format in the first line of the cdf file.
 % ***** negative Pg at bus 4 treated as Pd
 % ***** negative Pg at bus 8 treated as Pd
 % ***** negative Pg at bus 24 treated as Pd
@@ -475,189 +597,189 @@ mpc.gencost = [
 % ***** negative Pg at bus 113 treated as Pd
 % ***** negative Pg at bus 116 treated as Pd
 % ***** Insufficient generation, setting Pmax at slack bus (bus 69) to 805.2
-% ***** MVA limit of branch 1 - 2 not given, set to 9900
-% ***** MVA limit of branch 1 - 3 not given, set to 9900
-% ***** MVA limit of branch 4 - 5 not given, set to 9900
-% ***** MVA limit of branch 3 - 5 not given, set to 9900
-% ***** MVA limit of branch 5 - 6 not given, set to 9900
-% ***** MVA limit of branch 6 - 7 not given, set to 9900
-% ***** MVA limit of branch 8 - 9 not given, set to 9900
-% ***** MVA limit of branch 8 - 5 not given, set to 9900
-% ***** MVA limit of branch 9 - 10 not given, set to 9900
-% ***** MVA limit of branch 4 - 11 not given, set to 9900
-% ***** MVA limit of branch 5 - 11 not given, set to 9900
-% ***** MVA limit of branch 11 - 12 not given, set to 9900
-% ***** MVA limit of branch 2 - 12 not given, set to 9900
-% ***** MVA limit of branch 3 - 12 not given, set to 9900
-% ***** MVA limit of branch 7 - 12 not given, set to 9900
-% ***** MVA limit of branch 11 - 13 not given, set to 9900
-% ***** MVA limit of branch 12 - 14 not given, set to 9900
-% ***** MVA limit of branch 13 - 15 not given, set to 9900
-% ***** MVA limit of branch 14 - 15 not given, set to 9900
-% ***** MVA limit of branch 12 - 16 not given, set to 9900
-% ***** MVA limit of branch 15 - 17 not given, set to 9900
-% ***** MVA limit of branch 16 - 17 not given, set to 9900
-% ***** MVA limit of branch 17 - 18 not given, set to 9900
-% ***** MVA limit of branch 18 - 19 not given, set to 9900
-% ***** MVA limit of branch 19 - 20 not given, set to 9900
-% ***** MVA limit of branch 15 - 19 not given, set to 9900
-% ***** MVA limit of branch 20 - 21 not given, set to 9900
-% ***** MVA limit of branch 21 - 22 not given, set to 9900
-% ***** MVA limit of branch 22 - 23 not given, set to 9900
-% ***** MVA limit of branch 23 - 24 not given, set to 9900
-% ***** MVA limit of branch 23 - 25 not given, set to 9900
-% ***** MVA limit of branch 26 - 25 not given, set to 9900
-% ***** MVA limit of branch 25 - 27 not given, set to 9900
-% ***** MVA limit of branch 27 - 28 not given, set to 9900
-% ***** MVA limit of branch 28 - 29 not given, set to 9900
-% ***** MVA limit of branch 30 - 17 not given, set to 9900
-% ***** MVA limit of branch 8 - 30 not given, set to 9900
-% ***** MVA limit of branch 26 - 30 not given, set to 9900
-% ***** MVA limit of branch 17 - 31 not given, set to 9900
-% ***** MVA limit of branch 29 - 31 not given, set to 9900
-% ***** MVA limit of branch 23 - 32 not given, set to 9900
-% ***** MVA limit of branch 31 - 32 not given, set to 9900
-% ***** MVA limit of branch 27 - 32 not given, set to 9900
-% ***** MVA limit of branch 15 - 33 not given, set to 9900
-% ***** MVA limit of branch 19 - 34 not given, set to 9900
-% ***** MVA limit of branch 35 - 36 not given, set to 9900
-% ***** MVA limit of branch 35 - 37 not given, set to 9900
-% ***** MVA limit of branch 33 - 37 not given, set to 9900
-% ***** MVA limit of branch 34 - 36 not given, set to 9900
-% ***** MVA limit of branch 34 - 37 not given, set to 9900
-% ***** MVA limit of branch 38 - 37 not given, set to 9900
-% ***** MVA limit of branch 37 - 39 not given, set to 9900
-% ***** MVA limit of branch 37 - 40 not given, set to 9900
-% ***** MVA limit of branch 30 - 38 not given, set to 9900
-% ***** MVA limit of branch 39 - 40 not given, set to 9900
-% ***** MVA limit of branch 40 - 41 not given, set to 9900
-% ***** MVA limit of branch 40 - 42 not given, set to 9900
-% ***** MVA limit of branch 41 - 42 not given, set to 9900
-% ***** MVA limit of branch 43 - 44 not given, set to 9900
-% ***** MVA limit of branch 34 - 43 not given, set to 9900
-% ***** MVA limit of branch 44 - 45 not given, set to 9900
-% ***** MVA limit of branch 45 - 46 not given, set to 9900
-% ***** MVA limit of branch 46 - 47 not given, set to 9900
-% ***** MVA limit of branch 46 - 48 not given, set to 9900
-% ***** MVA limit of branch 47 - 49 not given, set to 9900
-% ***** MVA limit of branch 42 - 49 not given, set to 9900
-% ***** MVA limit of branch 42 - 49 not given, set to 9900
-% ***** MVA limit of branch 45 - 49 not given, set to 9900
-% ***** MVA limit of branch 48 - 49 not given, set to 9900
-% ***** MVA limit of branch 49 - 50 not given, set to 9900
-% ***** MVA limit of branch 49 - 51 not given, set to 9900
-% ***** MVA limit of branch 51 - 52 not given, set to 9900
-% ***** MVA limit of branch 52 - 53 not given, set to 9900
-% ***** MVA limit of branch 53 - 54 not given, set to 9900
-% ***** MVA limit of branch 49 - 54 not given, set to 9900
-% ***** MVA limit of branch 49 - 54 not given, set to 9900
-% ***** MVA limit of branch 54 - 55 not given, set to 9900
-% ***** MVA limit of branch 54 - 56 not given, set to 9900
-% ***** MVA limit of branch 55 - 56 not given, set to 9900
-% ***** MVA limit of branch 56 - 57 not given, set to 9900
-% ***** MVA limit of branch 50 - 57 not given, set to 9900
-% ***** MVA limit of branch 56 - 58 not given, set to 9900
-% ***** MVA limit of branch 51 - 58 not given, set to 9900
-% ***** MVA limit of branch 54 - 59 not given, set to 9900
-% ***** MVA limit of branch 56 - 59 not given, set to 9900
-% ***** MVA limit of branch 56 - 59 not given, set to 9900
-% ***** MVA limit of branch 55 - 59 not given, set to 9900
-% ***** MVA limit of branch 59 - 60 not given, set to 9900
-% ***** MVA limit of branch 59 - 61 not given, set to 9900
-% ***** MVA limit of branch 60 - 61 not given, set to 9900
-% ***** MVA limit of branch 60 - 62 not given, set to 9900
-% ***** MVA limit of branch 61 - 62 not given, set to 9900
-% ***** MVA limit of branch 63 - 59 not given, set to 9900
-% ***** MVA limit of branch 63 - 64 not given, set to 9900
-% ***** MVA limit of branch 64 - 61 not given, set to 9900
-% ***** MVA limit of branch 38 - 65 not given, set to 9900
-% ***** MVA limit of branch 64 - 65 not given, set to 9900
-% ***** MVA limit of branch 49 - 66 not given, set to 9900
-% ***** MVA limit of branch 49 - 66 not given, set to 9900
-% ***** MVA limit of branch 62 - 66 not given, set to 9900
-% ***** MVA limit of branch 62 - 67 not given, set to 9900
-% ***** MVA limit of branch 65 - 66 not given, set to 9900
-% ***** MVA limit of branch 66 - 67 not given, set to 9900
-% ***** MVA limit of branch 65 - 68 not given, set to 9900
-% ***** MVA limit of branch 47 - 69 not given, set to 9900
-% ***** MVA limit of branch 49 - 69 not given, set to 9900
-% ***** MVA limit of branch 68 - 69 not given, set to 9900
-% ***** MVA limit of branch 69 - 70 not given, set to 9900
-% ***** MVA limit of branch 24 - 70 not given, set to 9900
-% ***** MVA limit of branch 70 - 71 not given, set to 9900
-% ***** MVA limit of branch 24 - 72 not given, set to 9900
-% ***** MVA limit of branch 71 - 72 not given, set to 9900
-% ***** MVA limit of branch 71 - 73 not given, set to 9900
-% ***** MVA limit of branch 70 - 74 not given, set to 9900
-% ***** MVA limit of branch 70 - 75 not given, set to 9900
-% ***** MVA limit of branch 69 - 75 not given, set to 9900
-% ***** MVA limit of branch 74 - 75 not given, set to 9900
-% ***** MVA limit of branch 76 - 77 not given, set to 9900
-% ***** MVA limit of branch 69 - 77 not given, set to 9900
-% ***** MVA limit of branch 75 - 77 not given, set to 9900
-% ***** MVA limit of branch 77 - 78 not given, set to 9900
-% ***** MVA limit of branch 78 - 79 not given, set to 9900
-% ***** MVA limit of branch 77 - 80 not given, set to 9900
-% ***** MVA limit of branch 77 - 80 not given, set to 9900
-% ***** MVA limit of branch 79 - 80 not given, set to 9900
-% ***** MVA limit of branch 68 - 81 not given, set to 9900
-% ***** MVA limit of branch 81 - 80 not given, set to 9900
-% ***** MVA limit of branch 77 - 82 not given, set to 9900
-% ***** MVA limit of branch 82 - 83 not given, set to 9900
-% ***** MVA limit of branch 83 - 84 not given, set to 9900
-% ***** MVA limit of branch 83 - 85 not given, set to 9900
-% ***** MVA limit of branch 84 - 85 not given, set to 9900
-% ***** MVA limit of branch 85 - 86 not given, set to 9900
-% ***** MVA limit of branch 86 - 87 not given, set to 9900
-% ***** MVA limit of branch 85 - 88 not given, set to 9900
-% ***** MVA limit of branch 85 - 89 not given, set to 9900
-% ***** MVA limit of branch 88 - 89 not given, set to 9900
-% ***** MVA limit of branch 89 - 90 not given, set to 9900
-% ***** MVA limit of branch 89 - 90 not given, set to 9900
-% ***** MVA limit of branch 90 - 91 not given, set to 9900
-% ***** MVA limit of branch 89 - 92 not given, set to 9900
-% ***** MVA limit of branch 89 - 92 not given, set to 9900
-% ***** MVA limit of branch 91 - 92 not given, set to 9900
-% ***** MVA limit of branch 92 - 93 not given, set to 9900
-% ***** MVA limit of branch 92 - 94 not given, set to 9900
-% ***** MVA limit of branch 93 - 94 not given, set to 9900
-% ***** MVA limit of branch 94 - 95 not given, set to 9900
-% ***** MVA limit of branch 80 - 96 not given, set to 9900
-% ***** MVA limit of branch 82 - 96 not given, set to 9900
-% ***** MVA limit of branch 94 - 96 not given, set to 9900
-% ***** MVA limit of branch 80 - 97 not given, set to 9900
-% ***** MVA limit of branch 80 - 98 not given, set to 9900
-% ***** MVA limit of branch 80 - 99 not given, set to 9900
-% ***** MVA limit of branch 92 - 100 not given, set to 9900
-% ***** MVA limit of branch 94 - 100 not given, set to 9900
-% ***** MVA limit of branch 95 - 96 not given, set to 9900
-% ***** MVA limit of branch 96 - 97 not given, set to 9900
-% ***** MVA limit of branch 98 - 100 not given, set to 9900
-% ***** MVA limit of branch 99 - 100 not given, set to 9900
-% ***** MVA limit of branch 100 - 101 not given, set to 9900
-% ***** MVA limit of branch 92 - 102 not given, set to 9900
-% ***** MVA limit of branch 101 - 102 not given, set to 9900
-% ***** MVA limit of branch 100 - 103 not given, set to 9900
-% ***** MVA limit of branch 100 - 104 not given, set to 9900
-% ***** MVA limit of branch 103 - 104 not given, set to 9900
-% ***** MVA limit of branch 103 - 105 not given, set to 9900
-% ***** MVA limit of branch 100 - 106 not given, set to 9900
-% ***** MVA limit of branch 104 - 105 not given, set to 9900
-% ***** MVA limit of branch 105 - 106 not given, set to 9900
-% ***** MVA limit of branch 105 - 107 not given, set to 9900
-% ***** MVA limit of branch 105 - 108 not given, set to 9900
-% ***** MVA limit of branch 106 - 107 not given, set to 9900
-% ***** MVA limit of branch 108 - 109 not given, set to 9900
-% ***** MVA limit of branch 103 - 110 not given, set to 9900
-% ***** MVA limit of branch 109 - 110 not given, set to 9900
-% ***** MVA limit of branch 110 - 111 not given, set to 9900
-% ***** MVA limit of branch 110 - 112 not given, set to 9900
-% ***** MVA limit of branch 17 - 113 not given, set to 9900
-% ***** MVA limit of branch 32 - 113 not given, set to 9900
-% ***** MVA limit of branch 32 - 114 not given, set to 9900
-% ***** MVA limit of branch 27 - 115 not given, set to 9900
-% ***** MVA limit of branch 114 - 115 not given, set to 9900
-% ***** MVA limit of branch 68 - 116 not given, set to 9900
-% ***** MVA limit of branch 12 - 117 not given, set to 9900
-% ***** MVA limit of branch 75 - 118 not given, set to 9900
-% ***** MVA limit of branch 76 - 118 not given, set to 9900
+% ***** MVA limit of branch 1 - 2 not given, set to 0
+% ***** MVA limit of branch 1 - 3 not given, set to 0
+% ***** MVA limit of branch 4 - 5 not given, set to 0
+% ***** MVA limit of branch 3 - 5 not given, set to 0
+% ***** MVA limit of branch 5 - 6 not given, set to 0
+% ***** MVA limit of branch 6 - 7 not given, set to 0
+% ***** MVA limit of branch 8 - 9 not given, set to 0
+% ***** MVA limit of branch 8 - 5 not given, set to 0
+% ***** MVA limit of branch 9 - 10 not given, set to 0
+% ***** MVA limit of branch 4 - 11 not given, set to 0
+% ***** MVA limit of branch 5 - 11 not given, set to 0
+% ***** MVA limit of branch 11 - 12 not given, set to 0
+% ***** MVA limit of branch 2 - 12 not given, set to 0
+% ***** MVA limit of branch 3 - 12 not given, set to 0
+% ***** MVA limit of branch 7 - 12 not given, set to 0
+% ***** MVA limit of branch 11 - 13 not given, set to 0
+% ***** MVA limit of branch 12 - 14 not given, set to 0
+% ***** MVA limit of branch 13 - 15 not given, set to 0
+% ***** MVA limit of branch 14 - 15 not given, set to 0
+% ***** MVA limit of branch 12 - 16 not given, set to 0
+% ***** MVA limit of branch 15 - 17 not given, set to 0
+% ***** MVA limit of branch 16 - 17 not given, set to 0
+% ***** MVA limit of branch 17 - 18 not given, set to 0
+% ***** MVA limit of branch 18 - 19 not given, set to 0
+% ***** MVA limit of branch 19 - 20 not given, set to 0
+% ***** MVA limit of branch 15 - 19 not given, set to 0
+% ***** MVA limit of branch 20 - 21 not given, set to 0
+% ***** MVA limit of branch 21 - 22 not given, set to 0
+% ***** MVA limit of branch 22 - 23 not given, set to 0
+% ***** MVA limit of branch 23 - 24 not given, set to 0
+% ***** MVA limit of branch 23 - 25 not given, set to 0
+% ***** MVA limit of branch 26 - 25 not given, set to 0
+% ***** MVA limit of branch 25 - 27 not given, set to 0
+% ***** MVA limit of branch 27 - 28 not given, set to 0
+% ***** MVA limit of branch 28 - 29 not given, set to 0
+% ***** MVA limit of branch 30 - 17 not given, set to 0
+% ***** MVA limit of branch 8 - 30 not given, set to 0
+% ***** MVA limit of branch 26 - 30 not given, set to 0
+% ***** MVA limit of branch 17 - 31 not given, set to 0
+% ***** MVA limit of branch 29 - 31 not given, set to 0
+% ***** MVA limit of branch 23 - 32 not given, set to 0
+% ***** MVA limit of branch 31 - 32 not given, set to 0
+% ***** MVA limit of branch 27 - 32 not given, set to 0
+% ***** MVA limit of branch 15 - 33 not given, set to 0
+% ***** MVA limit of branch 19 - 34 not given, set to 0
+% ***** MVA limit of branch 35 - 36 not given, set to 0
+% ***** MVA limit of branch 35 - 37 not given, set to 0
+% ***** MVA limit of branch 33 - 37 not given, set to 0
+% ***** MVA limit of branch 34 - 36 not given, set to 0
+% ***** MVA limit of branch 34 - 37 not given, set to 0
+% ***** MVA limit of branch 38 - 37 not given, set to 0
+% ***** MVA limit of branch 37 - 39 not given, set to 0
+% ***** MVA limit of branch 37 - 40 not given, set to 0
+% ***** MVA limit of branch 30 - 38 not given, set to 0
+% ***** MVA limit of branch 39 - 40 not given, set to 0
+% ***** MVA limit of branch 40 - 41 not given, set to 0
+% ***** MVA limit of branch 40 - 42 not given, set to 0
+% ***** MVA limit of branch 41 - 42 not given, set to 0
+% ***** MVA limit of branch 43 - 44 not given, set to 0
+% ***** MVA limit of branch 34 - 43 not given, set to 0
+% ***** MVA limit of branch 44 - 45 not given, set to 0
+% ***** MVA limit of branch 45 - 46 not given, set to 0
+% ***** MVA limit of branch 46 - 47 not given, set to 0
+% ***** MVA limit of branch 46 - 48 not given, set to 0
+% ***** MVA limit of branch 47 - 49 not given, set to 0
+% ***** MVA limit of branch 42 - 49 not given, set to 0
+% ***** MVA limit of branch 42 - 49 not given, set to 0
+% ***** MVA limit of branch 45 - 49 not given, set to 0
+% ***** MVA limit of branch 48 - 49 not given, set to 0
+% ***** MVA limit of branch 49 - 50 not given, set to 0
+% ***** MVA limit of branch 49 - 51 not given, set to 0
+% ***** MVA limit of branch 51 - 52 not given, set to 0
+% ***** MVA limit of branch 52 - 53 not given, set to 0
+% ***** MVA limit of branch 53 - 54 not given, set to 0
+% ***** MVA limit of branch 49 - 54 not given, set to 0
+% ***** MVA limit of branch 49 - 54 not given, set to 0
+% ***** MVA limit of branch 54 - 55 not given, set to 0
+% ***** MVA limit of branch 54 - 56 not given, set to 0
+% ***** MVA limit of branch 55 - 56 not given, set to 0
+% ***** MVA limit of branch 56 - 57 not given, set to 0
+% ***** MVA limit of branch 50 - 57 not given, set to 0
+% ***** MVA limit of branch 56 - 58 not given, set to 0
+% ***** MVA limit of branch 51 - 58 not given, set to 0
+% ***** MVA limit of branch 54 - 59 not given, set to 0
+% ***** MVA limit of branch 56 - 59 not given, set to 0
+% ***** MVA limit of branch 56 - 59 not given, set to 0
+% ***** MVA limit of branch 55 - 59 not given, set to 0
+% ***** MVA limit of branch 59 - 60 not given, set to 0
+% ***** MVA limit of branch 59 - 61 not given, set to 0
+% ***** MVA limit of branch 60 - 61 not given, set to 0
+% ***** MVA limit of branch 60 - 62 not given, set to 0
+% ***** MVA limit of branch 61 - 62 not given, set to 0
+% ***** MVA limit of branch 63 - 59 not given, set to 0
+% ***** MVA limit of branch 63 - 64 not given, set to 0
+% ***** MVA limit of branch 64 - 61 not given, set to 0
+% ***** MVA limit of branch 38 - 65 not given, set to 0
+% ***** MVA limit of branch 64 - 65 not given, set to 0
+% ***** MVA limit of branch 49 - 66 not given, set to 0
+% ***** MVA limit of branch 49 - 66 not given, set to 0
+% ***** MVA limit of branch 62 - 66 not given, set to 0
+% ***** MVA limit of branch 62 - 67 not given, set to 0
+% ***** MVA limit of branch 65 - 66 not given, set to 0
+% ***** MVA limit of branch 66 - 67 not given, set to 0
+% ***** MVA limit of branch 65 - 68 not given, set to 0
+% ***** MVA limit of branch 47 - 69 not given, set to 0
+% ***** MVA limit of branch 49 - 69 not given, set to 0
+% ***** MVA limit of branch 68 - 69 not given, set to 0
+% ***** MVA limit of branch 69 - 70 not given, set to 0
+% ***** MVA limit of branch 24 - 70 not given, set to 0
+% ***** MVA limit of branch 70 - 71 not given, set to 0
+% ***** MVA limit of branch 24 - 72 not given, set to 0
+% ***** MVA limit of branch 71 - 72 not given, set to 0
+% ***** MVA limit of branch 71 - 73 not given, set to 0
+% ***** MVA limit of branch 70 - 74 not given, set to 0
+% ***** MVA limit of branch 70 - 75 not given, set to 0
+% ***** MVA limit of branch 69 - 75 not given, set to 0
+% ***** MVA limit of branch 74 - 75 not given, set to 0
+% ***** MVA limit of branch 76 - 77 not given, set to 0
+% ***** MVA limit of branch 69 - 77 not given, set to 0
+% ***** MVA limit of branch 75 - 77 not given, set to 0
+% ***** MVA limit of branch 77 - 78 not given, set to 0
+% ***** MVA limit of branch 78 - 79 not given, set to 0
+% ***** MVA limit of branch 77 - 80 not given, set to 0
+% ***** MVA limit of branch 77 - 80 not given, set to 0
+% ***** MVA limit of branch 79 - 80 not given, set to 0
+% ***** MVA limit of branch 68 - 81 not given, set to 0
+% ***** MVA limit of branch 81 - 80 not given, set to 0
+% ***** MVA limit of branch 77 - 82 not given, set to 0
+% ***** MVA limit of branch 82 - 83 not given, set to 0
+% ***** MVA limit of branch 83 - 84 not given, set to 0
+% ***** MVA limit of branch 83 - 85 not given, set to 0
+% ***** MVA limit of branch 84 - 85 not given, set to 0
+% ***** MVA limit of branch 85 - 86 not given, set to 0
+% ***** MVA limit of branch 86 - 87 not given, set to 0
+% ***** MVA limit of branch 85 - 88 not given, set to 0
+% ***** MVA limit of branch 85 - 89 not given, set to 0
+% ***** MVA limit of branch 88 - 89 not given, set to 0
+% ***** MVA limit of branch 89 - 90 not given, set to 0
+% ***** MVA limit of branch 89 - 90 not given, set to 0
+% ***** MVA limit of branch 90 - 91 not given, set to 0
+% ***** MVA limit of branch 89 - 92 not given, set to 0
+% ***** MVA limit of branch 89 - 92 not given, set to 0
+% ***** MVA limit of branch 91 - 92 not given, set to 0
+% ***** MVA limit of branch 92 - 93 not given, set to 0
+% ***** MVA limit of branch 92 - 94 not given, set to 0
+% ***** MVA limit of branch 93 - 94 not given, set to 0
+% ***** MVA limit of branch 94 - 95 not given, set to 0
+% ***** MVA limit of branch 80 - 96 not given, set to 0
+% ***** MVA limit of branch 82 - 96 not given, set to 0
+% ***** MVA limit of branch 94 - 96 not given, set to 0
+% ***** MVA limit of branch 80 - 97 not given, set to 0
+% ***** MVA limit of branch 80 - 98 not given, set to 0
+% ***** MVA limit of branch 80 - 99 not given, set to 0
+% ***** MVA limit of branch 92 - 100 not given, set to 0
+% ***** MVA limit of branch 94 - 100 not given, set to 0
+% ***** MVA limit of branch 95 - 96 not given, set to 0
+% ***** MVA limit of branch 96 - 97 not given, set to 0
+% ***** MVA limit of branch 98 - 100 not given, set to 0
+% ***** MVA limit of branch 99 - 100 not given, set to 0
+% ***** MVA limit of branch 100 - 101 not given, set to 0
+% ***** MVA limit of branch 92 - 102 not given, set to 0
+% ***** MVA limit of branch 101 - 102 not given, set to 0
+% ***** MVA limit of branch 100 - 103 not given, set to 0
+% ***** MVA limit of branch 100 - 104 not given, set to 0
+% ***** MVA limit of branch 103 - 104 not given, set to 0
+% ***** MVA limit of branch 103 - 105 not given, set to 0
+% ***** MVA limit of branch 100 - 106 not given, set to 0
+% ***** MVA limit of branch 104 - 105 not given, set to 0
+% ***** MVA limit of branch 105 - 106 not given, set to 0
+% ***** MVA limit of branch 105 - 107 not given, set to 0
+% ***** MVA limit of branch 105 - 108 not given, set to 0
+% ***** MVA limit of branch 106 - 107 not given, set to 0
+% ***** MVA limit of branch 108 - 109 not given, set to 0
+% ***** MVA limit of branch 103 - 110 not given, set to 0
+% ***** MVA limit of branch 109 - 110 not given, set to 0
+% ***** MVA limit of branch 110 - 111 not given, set to 0
+% ***** MVA limit of branch 110 - 112 not given, set to 0
+% ***** MVA limit of branch 17 - 113 not given, set to 0
+% ***** MVA limit of branch 32 - 113 not given, set to 0
+% ***** MVA limit of branch 32 - 114 not given, set to 0
+% ***** MVA limit of branch 27 - 115 not given, set to 0
+% ***** MVA limit of branch 114 - 115 not given, set to 0
+% ***** MVA limit of branch 68 - 116 not given, set to 0
+% ***** MVA limit of branch 12 - 117 not given, set to 0
+% ***** MVA limit of branch 75 - 118 not given, set to 0
+% ***** MVA limit of branch 76 - 118 not given, set to 0
