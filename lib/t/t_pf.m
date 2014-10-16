@@ -34,7 +34,7 @@ if nargin < 1
     quiet = 0;
 end
 
-t_begin(33, quiet);
+t_begin(35, quiet);
 
 casefile = 't_case9_pf';
 if quiet
@@ -137,6 +137,26 @@ mpc.gen(2, [QMIN QMAX]) = [50 150];
 [baseMVA, bus, gen, branch, success, et] = runpf(mpc, mpopt);
 t_is(gen(1:2, QG), [-50+8.02; 50+16.05], 2, [t '2 gens, proportional']);
 
+t = 'reactive generation allocation : ';
+mpc = loadcase(casefile);
+%% generator data
+%	bus	Pg	Qg	Qmax	Qmin	Vg	mBase	status	Pmax	Pmin	Pc1	Pc2	Qc1min	Qc1max	Qc2min	Qc2max	ramp_agc	ramp_10	ramp_30	ramp_q	apf
+mpc.gen = [
+	1	0	0	300	-300	1	100	1	250	10	0	0	0	0	0	0	0	0	0	0	0;
+	2	54	0	0	-5	1	100	1	300	10	0	0	0	0	0	0	0	0	0	0	0;
+	2	54	0	5	-5	1	100	1	300	10	0	0	0	0	0	0	0	0	0	0	0;
+	2	55	0	25	 10	1	100	1	300	10	0	0	0	0	0	0	0	0	0	0	0;
+	30	25	1	300	-300	1	100	1	270	10	0	0	0	0	0	0	0	0	0	0	0;
+	30	30	2	300	-300	1	100	1	270	10	0	0	0	0	0	0	0	0	0	0	0;
+	30	30	-3	300	-300	1	100	1	270	10	0	0	0	0	0	0	0	0	0	0	0;
+];
+mpc.bus(3, BUS_TYPE) = PQ;
+r = runpf(mpc, mpopt);
+t_is(r.gen(2:4, QG), [-5; -5; 10] + [1; 2; 3]*1.989129794, 8, [t 'PV bus']);
+t_is(r.gen(5:7, QG), [1; 2; -3], 8, [t 'PQ bus']);
+
+return;
+
 %% network with islands
 t = 'network w/islands : DC PF : ';
 mpc0 = loadcase(casefile);
@@ -172,8 +192,8 @@ Pg = [gen_soln(1, PG)-30; 30; gen_soln(2:3, PG)];
 t_is(r.gen(1:4, PG), Pg, 8, [t 'active power generation 1']);
 t_is(r.gen(5:8, PG), Pg, 8, [t 'active power generation 1']);
 
+t_end;
+
 if have_fcn('octave')
     warning(s1.state, 'Octave:load-file-in-path');
 end
-
-t_end;

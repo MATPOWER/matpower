@@ -51,16 +51,19 @@ branch  = branch0;
 bus(:, VM) = abs(V);
 bus(:, VA) = angle(V) * 180 / pi;
 
-%%----- update Qg for all gens and Pg for slack bus(es) -----
+%%----- update Qg for gens at PV/slack buses and Pg for slack bus(es) -----
 %% generator info
-on = find(gen(:, GEN_STATUS) > 0);      %% which generators are on?
+on = find(gen(:, GEN_STATUS) > 0 & ...  %% which generators are on?
+        bus(gen(:, GEN_BUS), BUS_TYPE) ~= PQ);  %% ... and not at PQ buses
+off = find(gen(:, GEN_STATUS) <= 0);    %% which generators are off?
 gbus = gen(on, GEN_BUS);                %% what buses are they at?
 
 %% compute total injected bus powers
 Sbus = V(gbus) .* conj(Ybus(gbus, :) * V);
 
-%% update Qg for all generators
-gen(:, QG) = zeros(size(gen, 1), 1);                %% zero out all Qg
+%% update Qg for generators at PV/slack buses
+gen(off, QG) = zeros(length(off), 1);   %% zero out off-line Qg
+%% don't touch the ones at PQ buses
 gen(on, QG) = imag(Sbus) * baseMVA + bus(gbus, QD); %% inj Q + local Qd
 %% ... at this point any buses with more than one generator will have
 %% the total Q dispatch for the bus assigned to each generator. This
