@@ -81,6 +81,11 @@ if have_fcn('quadprog')
         else
             mpopt = mpoption(mpopt, 'linprog', []);
         end
+        if strcmp(algs{k}, 'dual-simplex')
+            have_prices = 0;
+        else
+            have_prices = 1;
+        end
     t0 = sprintf('DC OPF (OT %s): ', algs{k});
 
     %% set up indices
@@ -106,14 +111,30 @@ if have_fcn('quadprog')
     t_is(f, f_soln, 3, [t 'f']);
     t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
     t_is(   bus(:,ib_voltage),    bus_soln(:,ib_voltage),  3, [t 'bus voltage']);
-    t_is(   bus(:,ib_lam    ),    bus_soln(:,ib_lam    ),  3, [t 'bus lambda']);
-    t_is(   bus(:,ib_mu     ),    bus_soln(:,ib_mu     ),  2, [t 'bus mu']);
+    if have_prices
+        t_is(   bus(:,ib_lam    ),    bus_soln(:,ib_lam    ),  3, [t 'bus lambda']);
+    else
+        t_skip(1, [t 'bus lam: lambdas not computed']);
+    end
+    if have_prices
+        t_is(   bus(:,ib_mu     ),    bus_soln(:,ib_mu     ),  2, [t 'bus mu']);
+    else
+        t_skip(1, [t 'bus mu: lambdas not computed']);
+    end
     t_is(   gen(:,ig_data   ),    gen_soln(:,ig_data   ), 10, [t 'gen data']);
     t_is(   gen(:,ig_disp   ),    gen_soln(:,ig_disp   ),  3, [t 'gen dispatch']);
-    t_is(   gen(:,ig_mu     ),    gen_soln(:,ig_mu     ),  3, [t 'gen mu']);
+    if have_prices
+        t_is(   gen(:,ig_mu     ),    gen_soln(:,ig_mu     ),  3, [t 'gen mu']);
+    else
+        t_skip(1, [t 'gen mu: lambdas not computed']);
+    end
     t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
     t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
-    t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
+    if have_prices
+        t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
+    else
+        t_skip(1, [t 'branch mu: lambdas not computed']);
+    end
 
     %%-----  run OPF with extra linear user constraints & costs  -----
     %% two new z variables
