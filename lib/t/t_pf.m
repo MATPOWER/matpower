@@ -155,8 +155,6 @@ r = runpf(mpc, mpopt);
 t_is(r.gen(2:4, QG), [-5; -5; 10] + [1; 2; 3]*1.989129794, 8, [t 'PV bus']);
 t_is(r.gen(5:7, QG), [1; 2; -3], 8, [t 'PQ bus']);
 
-return;
-
 %% network with islands
 t = 'network w/islands : DC PF : ';
 mpc0 = loadcase(casefile);
