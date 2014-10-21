@@ -33,14 +33,11 @@ function [Pd, Qd] = total_load(bus, gen, load_zone, opt)
 %                        0 : (default) use actual realized load for
 %                             dispatchable loads
 %
-%       For backward compatibility with MATPOWER 4.x, WHICH_TYPE can also
-%       take the form of a string, with the following options:
-%           'FIXED'        : sum only fixed loads
-%           'DISPATCHABLE' : sum only dispatchable loads
-%           'BOTH'         : sum both fixed and dispatchable loads
+%       For backward compatibility with MATPOWER 4.x, OPT can also
+%       take the form of a string, with the same options as OPT.type above.
 %       In this case, again for backward compatibility, it is the "nominal"
 %       load that is computed for dispatchable loads, not the actual
-%       realized load. Using a string for WHICH_TYPE is deprecated and
+%       realized load. Using a string for OPT is deprecated and
 %       will be removed in a future version.
 %
 %   Examples:
@@ -57,15 +54,15 @@ function [Pd, Qd] = total_load(bus, gen, load_zone, opt)
 %
 %       load_zone = zeros(nb, 1);
 %       load_zone(10:20) = 1;
-%       which_type = struct('type', 'DISPATCHABLE', 'nominal', 1);
-%       Pd = total_load(bus, gen, load_zone, which_type)
+%       opt = struct('type', 'DISPATCHABLE', 'nominal', 1);
+%       Pd = total_load(bus, gen, load_zone, opt)
 %
 %   See also SCALE_LOAD.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2004-2010 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2014 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
@@ -112,7 +109,7 @@ if nargin < 4
 end
 
 %% default options
-if ischar(opt)      %% convert WHICH_TYPE string option to struct
+if ischar(opt)      %% convert old WHICH_TYPE string option to struct
     opt = struct('type', opt, 'nominal', 1);
 else
     if ~isfield(opt, 'type')
