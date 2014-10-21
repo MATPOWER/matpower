@@ -316,7 +316,7 @@ else                                %% M-file
                 template = [template, '\t%.9g'];
             end
             template = [template, ';\n'];
-            fprintf(fd, template, gencost.');
+            fprintf(fd, template, gencost(:, 1:n+4).');
         end
         fprintf(fd, '];\n');
     end
