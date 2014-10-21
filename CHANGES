@@ -18,6 +18,10 @@ Changes since 5.0b1
 10/21/14
     - Fixed a bug in savecase() where a gencost matrix with extra
       columns of zeros resulted in a corrupted MATPOWER case file.
+    - Modified total_load() to return actual rather than nominal
+      value for dispatchable loads by default, unless using the
+      old-style string input for the 4th input arg. See
+      'help total_load' for details.
 
 10/16/14
     - Reactive power output of multiple generators at a PQ bus

@@ -1,7 +1,7 @@
-function [Pd, Qd] = total_load(bus, gen, load_zone, which_type)
+function [Pd, Qd] = total_load(bus, gen, load_zone, opt)
 %TOTAL_LOAD Returns vector of total load in each load zone.
 %   PD = TOTAL_LOAD(BUS) returns active power demand for each zone.
-%   PD = TOTAL_LOAD(BUS, GEN, LOAD_ZONE, WHICH_TYPE)
+%   PD = TOTAL_LOAD(BUS, GEN, LOAD_ZONE, OPT)
 %   [PD, QD] = TOTAL_LOAD(...) returns both active and reative power
 %   demand for each zone.
 %
@@ -23,10 +23,25 @@ function [Pd, Qd] = total_load(bus, gen, load_zone, which_type)
 %       LOAD_ZONE = 'all', the result is a scalar with the total system
 %       load.
 %
-%   WHICH_TYPE - (optional) (default is 'BOTH' if GEN is provided, else 'FIXED')
-%       'FIXED'        : sum only fixed loads
-%       'DISPATCHABLE' : sum only dispatchable loads
-%       'BOTH'         : sum both fixed and dispatchable loads
+%   OPT - (optional) option struct, with the following fields:
+%           'type'  -  string specifying types of loads to include, default
+%                      is 'BOTH' if GEN is provided, otherwise 'FIXED'
+%               'FIXED'        : sum only fixed loads
+%               'DISPATCHABLE' : sum only dispatchable loads
+%               'BOTH'         : sum both fixed and dispatchable loads
+%           'nominal' -  1 : use nominal load for dispatchable loads
+%                        0 : (default) use actual realized load for
+%                             dispatchable loads
+%
+%       For backward compatibility with MATPOWER 4.x, WHICH_TYPE can also
+%       take the form of a string, with the following options:
+%           'FIXED'        : sum only fixed loads
+%           'DISPATCHABLE' : sum only dispatchable loads
+%           'BOTH'         : sum both fixed and dispatchable loads
+%       In this case, again for backward compatibility, it is the "nominal"
+%       load that is computed for dispatchable loads, not the actual
+%       realized load. Using a string for WHICH_TYPE is deprecated and
+%       will be removed in a future version.
 %
 %   Examples:
 %       Return the total active load for each area as defined in BUS_AREA.
@@ -38,11 +53,12 @@ function [Pd, Qd] = total_load(bus, gen, load_zone, which_type)
 %
 %       [Pd, Qd] = total_load(bus, gen, 'all');
 %
-%       Return the total of the dispatchable loads at buses 10-20.
+%       Return the total of the nominal dispatchable loads at buses 10-20.
 %
 %       load_zone = zeros(nb, 1);
 %       load_zone(10:20) = 1;
-%       Pd = total_load(bus, gen, load_zone, 'DISPATCHABLE')
+%       which_type = struct('type', 'DISPATCHABLE', 'nominal', 1);
+%       Pd = total_load(bus, gen, load_zone, which_type)
 %
 %   See also SCALE_LOAD.
 
@@ -86,7 +102,7 @@ nb = size(bus, 1);          %% number of buses
 
 %%-----  process inputs  -----
 if nargin < 4
-    which_type = [];
+    opt = [];
     if nargin < 3
         load_zone = [];
         if nargin < 2
@@ -95,19 +111,30 @@ if nargin < 4
     end
 end
 
-%% fill out and check which_type
-if isempty(gen)
-    which_type = 'FIXED';
+%% default options
+if ischar(opt)      %% convert WHICH_TYPE string option to struct
+    opt = struct('type', opt, 'nominal', 1);
+else
+    if ~isfield(opt, 'type')
+        if isempty(gen)
+            opt.type = 'FIXED';
+        else
+            opt.type = 'BOTH';
+        end
+    end
+    if ~isfield(opt, 'nominal')
+        opt.nominal = 0;
+    end
 end
-if isempty(which_type) && ~isempty(gen)
-    which_type = 'BOTH';     %% 'FIXED', 'DISPATCHABLE' or 'BOTH'
-end
-if which_type(1) ~= 'F' && which_type(1) ~= 'D' && which_type(1) ~= 'B'
-    error('total_load: which_type should be ''FIXED'', ''DISPATCHABLE'' or ''BOTH''');
+switch upper(opt.type(1))
+    case {'F', 'D', 'B'}
+        %% OK
+    otherwise
+        error('total_load: OPT.type should be ''FIXED'', ''DISPATCHABLE'' or ''BOTH''');
 end
 want_Q      = (nargout > 1);
-want_fixed  = (which_type(1) == 'B' || which_type(1) == 'F');
-want_disp   = (which_type(1) == 'B' || which_type(1) == 'D');
+want_fixed  = (opt.type(1) == 'B' || opt.type(1) == 'F');
+want_disp   = (opt.type(1) == 'B' || opt.type(1) == 'D');
 
 %% initialize load_zone
 if ischar(load_zone) && strcmp(load_zone, 'all')
@@ -142,12 +169,19 @@ if want_disp            %% need dispatchable
     e2i(i2e) = (1:nb)';
 
     Cld = sparse(e2i(gen(:, GEN_BUS)), (1:ng)', is_ld, nb, ng);
-    Pdd = -Cld * gen(:, PMIN);      %% real power
-    if want_Q
-        Q = zeros(ng, 1);
-        Q(ld) = (gen(ld, QMIN) == 0) .* gen(ld, QMAX) + ...
-                (gen(ld, QMAX) == 0) .* gen(ld, QMIN);
-        Qdd = -Cld * Q;             %% reactive power
+    if opt.nominal      %% use nominal power
+        Pdd = -Cld * gen(:, PMIN);      %% real power
+        if want_Q
+            Q = zeros(ng, 1);
+            Q(ld) = (gen(ld, QMIN) == 0) .* gen(ld, QMAX) + ...
+                    (gen(ld, QMAX) == 0) .* gen(ld, QMIN);
+            Qdd = -Cld * Q;             %% reactive power
+        end
+    else                %% use realized actual power dispatch
+        Pdd = -Cld * gen(:, PG);        %% real power
+        if want_Q
+            Qdd = -Cld * gen(:, QG);    %% reactive power
+        end
     end
 else
     Pdd = zeros(nb, 1);
