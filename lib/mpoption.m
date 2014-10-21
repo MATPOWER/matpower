@@ -1035,7 +1035,7 @@ elseif isfield(opt_s, 'fmincon')
     CONSTR_TOL_X  = opt_s.fmincon.tol_x;
     CONSTR_TOL_F  = opt_s.fmincon.tol_f;
 else
-    CONSTR_TOL_X = old(17);;
+    CONSTR_TOL_X = old(17);
     CONSTR_TOL_F = old(18);
 end
 if isfield(opt_s, 'fmincon')
