@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.0b1
 -------------------
 
+10/21/14
+    - Fixed a bug in savecase() where a gencost matrix with extra
+      columns of zeros resulted in a corrupted MATPOWER case file.
+
 10/16/14
     - Reactive power output of multiple generators at a PQ bus
       no longer get re-allocated when running a power flow.
