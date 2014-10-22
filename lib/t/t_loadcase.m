@@ -34,7 +34,7 @@ if nargin < 1
     quiet = 0;
 end
 
-t_begin(240, quiet);
+t_begin(234, quiet);
 
 %% compare result of loading from M-file file to result of using data matrices
 casefile = 't_case9_opf';
@@ -65,8 +65,8 @@ eval(['save ' matfilev2 '.mat mpc']);
 
 %% prepare expected matrices for v1 load
 %% (missing gen cap curve & branch ang diff lims)
-tmp1 = {mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch, mpc.areas, mpc.gencost};
-tmp2 = {mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch, mpc.areas, mpc.gencost};
+tmp1 = {mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch, [1 5], mpc.gencost};
+tmp2 = {mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch, [1 5], mpc.gencost};
 %% remove capability curves, angle difference limits
 tmp1{3}(2:3, [PC1, PC2, QC1MIN, QC1MAX, QC2MIN, QC2MAX]) = zeros(2,6);
 tmp1{4}(1, ANGMAX) = 360;
@@ -112,6 +112,7 @@ t_is(gencost1,  gencost,    12, [t 'gencost']);
 
 %% prepare expected matrices for v2 load
 [baseMVA, bus, gen, branch, areas, gencost] = deal(tmp2{:});
+areas = [];
 
 t = 'loadcase(opf_M_file_v2) without .m extension : ';
 [baseMVA1, bus1, gen1, branch1, areas1, gencost1] = loadcase(casefilev2);
@@ -264,7 +265,6 @@ t_is(mpc1.baseMVA,  baseMVA,    12, [t 'baseMVA']);
 t_is(mpc1.bus,      bus,        12, [t 'bus']);
 t_is(mpc1.gen,      gen,        12, [t 'gen']);
 t_is(mpc1.branch,   branch,     12, [t 'branch']);
-t_is(mpc1.areas,    areas,      12, [t 'areas']);
 t_is(mpc1.gencost,  gencost,    12, [t 'gencost']);
 
 t = 'mpc = loadcase(opf_M_file_v2) with .m extension : ';
@@ -273,7 +273,6 @@ t_is(mpc1.baseMVA,  baseMVA,    12, [t 'baseMVA']);
 t_is(mpc1.bus,      bus,        12, [t 'bus']);
 t_is(mpc1.gen,      gen,        12, [t 'gen']);
 t_is(mpc1.branch,   branch,     12, [t 'branch']);
-t_is(mpc1.areas,    areas,      12, [t 'areas']);
 t_is(mpc1.gencost,  gencost,    12, [t 'gencost']);
 
 t = 'mpc = loadcase(opf_MAT_file_v2) without .mat extension : ';
@@ -282,7 +281,6 @@ t_is(mpc1.baseMVA,  baseMVA,    12, [t 'baseMVA']);
 t_is(mpc1.bus,      bus,        12, [t 'bus']);
 t_is(mpc1.gen,      gen,        12, [t 'gen']);
 t_is(mpc1.branch,   branch,     12, [t 'branch']);
-t_is(mpc1.areas,    areas,      12, [t 'areas']);
 t_is(mpc1.gencost,  gencost,    12, [t 'gencost']);
 
 t = 'mpc = loadcase(opf_MAT_file_v2) with .mat extension : ';
@@ -291,7 +289,6 @@ t_is(mpc1.baseMVA,  baseMVA,    12, [t 'baseMVA']);
 t_is(mpc1.bus,      bus,        12, [t 'bus']);
 t_is(mpc1.gen,      gen,        12, [t 'gen']);
 t_is(mpc1.branch,   branch,     12, [t 'branch']);
-t_is(mpc1.areas,    areas,      12, [t 'areas']);
 t_is(mpc1.gencost,  gencost,    12, [t 'gencost']);
 
 %% prepare expected matrices for v1 load
@@ -333,14 +330,12 @@ c.baseMVA   = baseMVA;
 c.bus       = bus;
 c.gen       = gen;
 c.branch    = branch;
-c.areas     = areas;
 c.gencost   = gencost;
 mpc2 = loadcase(c);
 t_is(mpc2.baseMVA,  baseMVA,    12, [t 'baseMVA']);
 t_is(mpc2.bus,      bus,        12, [t 'bus']);
 t_is(mpc2.gen,      gen,        12, [t 'gen']);
 t_is(mpc2.branch,   branch,     12, [t 'branch']);
-t_is(mpc2.areas,    areas,      12, [t 'areas']);
 t_is(mpc2.gencost,  gencost,    12, [t 'gencost']);
 t_ok(strcmp(mpc2.version, '2'), [t 'version']);  
 
@@ -350,7 +345,6 @@ c.baseMVA   = baseMVA;
 c.bus       = bus;
 c.gen       = gen;
 c.branch    = branch;
-c.areas     = areas;
 c.gencost   = gencost;
 c.version   = '2';
 mpc2 = loadcase(c);
@@ -358,7 +352,6 @@ t_is(mpc2.baseMVA,  baseMVA,    12, [t 'baseMVA']);
 t_is(mpc2.bus,      bus,        12, [t 'bus']);
 t_is(mpc2.gen,      gen,        12, [t 'gen']);
 t_is(mpc2.branch,   branch,     12, [t 'branch']);
-t_is(mpc2.areas,    areas,      12, [t 'areas']);
 t_is(mpc2.gencost,  gencost,    12, [t 'gencost']);
 
 
@@ -463,16 +456,6 @@ t_is(baseMVA2,  baseMVA,    12, [t 'baseMVA']);
 t_is(bus2,      bus,        12, [t 'bus']);
 t_is(gen2,      gen,        12, [t 'gen']);
 t_is(branch2,   branch,     12, [t 'branch']);
-
-
-
-
-
-
-
-
-
-
 
 
 %%-----  load PF data into struct  -----

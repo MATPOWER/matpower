@@ -15,6 +15,13 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.0b1
 -------------------
 
+10/22/14
+    - Removed idx_area() and all code references to 'areas' field
+      in MATPOWER cases except those needed to support reading
+      v1 case files and those required for backward compatibility of
+      APIs. Removed unused (and formerly deprecated) 'areas' field from
+      version 2 case files that still included it.
+
 10/21/14
     - Fixed a bug in savecase() where a gencost matrix with extra
       columns of zeros resulted in a corrupted MATPOWER case file.

@@ -169,10 +169,12 @@ end
 %%-----  check contents of struct  -----
 if info == 0
     %% check for required fields
+    if expect_areas && ~isfield(s,'areas')
+        s.areas = [];   %% add empty missing areas if needed for output
+    end
     if ~( isfield(s,'baseMVA') && isfield(s,'bus') && ...
             isfield(s,'gen') && isfield(s,'branch') ) || ...
-            ( expect_gencost && ~isfield(s, 'gencost') ) || ...
-            ( expect_areas &&   ~isfield(s,'areas') )
+            ( expect_gencost && ~isfield(s, 'gencost') )
         info = 5;           %% missing some expected fields
         err5 = 'missing data';
     else

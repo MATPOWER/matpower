@@ -10,10 +10,12 @@ function [i2e, bus, gen, branch, areas] = ext2int(bus, gen, branch, areas)
 %
 %   If the first argument is a matrix, it simply converts from (possibly
 %   non-consecutive) external bus numbers to consecutive internal bus
-%   numbers which start at 1. Changes are made to BUS, GEN, BRANCH and
-%   optionally AREAS matrices, which are returned along with a vector of
-%   indices I2E that can be passed to INT2EXT to perform the reverse
-%   conversion, where EXTERNAL_BUS_NUMBER = I2E(INTERNAL_BUS_NUMBER)
+%   numbers which start at 1. Changes are made to BUS, GEN and BRANCH,
+%   which are returned along with a vector of indices I2E that can be
+%   passed to INT2EXT to perform the reverse conversion, where
+%   EXTERNAL_BUS_NUMBER = I2E(INTERNAL_BUS_NUMBER).
+%   AREAS is completely ignored and is only included here for backward
+%   compatibility of the API.
 %
 %   Examples:
 %       [i2e, bus, gen, branch, areas] = ext2int(bus, gen, branch, areas);
@@ -23,7 +25,7 @@ function [i2e, bus, gen, branch, areas] = ext2int(bus, gen, branch, areas)
 %
 %   If the input is a single MATPOWER case struct, then all isolated
 %   buses, off-line generators and branches are removed along with any
-%   generators, branches or areas connected to isolated buses. Then the
+%   generators or branches connected to isolated buses. Then the
 %   buses are renumbered consecutively, beginning at 1, and the
 %   generators are sorted by increasing bus number. Any 'ext2int'
 %   callback routines registered in the case are also invoked
@@ -42,7 +44,6 @@ function [i2e, bus, gen, branch, areas] = ext2int(bus, gen, branch, areas)
 %       order
 %           state       'i' | 'e'
 %           ext | int
-%               areas
 %               bus
 %               branch
 %               gen
@@ -62,10 +63,6 @@ function [i2e, bus, gen, branch, areas] = ext2int(bus, gen, branch, areas)
 %                   on
 %                   off
 %           branch
-%               status
-%                   on
-%                   off
-%           areas
 %               status
 %                   on
 %                   off
@@ -111,7 +108,6 @@ if isstruct(bus)
             [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS] = idx_gen;
             [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
                 TAP, SHIFT, BR_STATUS] = idx_brch;
-            [AREA_I, PRICE_REF_BUS] = idx_area;
 
             %% initialize order
             if first
@@ -152,13 +148,6 @@ if isstruct(bus)
             o.ext.bus    = mpc.bus;
             o.ext.branch = mpc.branch;
             o.ext.gen    = mpc.gen;
-            if isfield(mpc, 'areas')
-                if isempty(mpc.areas)           %% if areas field is empty
-                    mpc = rmfield(mpc, 'areas');    %% delete it (so it gets ignored)
-                else                            %% otherwise
-                    o.ext.areas = mpc.areas;        %% save it
-                end
-            end
 
             %% check that all buses have a valid BUS_TYPE
             bt = mpc.bus(:, BUS_TYPE);
@@ -181,11 +170,6 @@ if isstruct(bus)
                     bs(n2i(mpc.branch(:, T_BUS))) );
             o.branch.status.on  = find(  brs );     %% on and connected
             o.branch.status.off = find( ~brs );
-            if isfield(mpc, 'areas')
-                as = bs(n2i(mpc.areas(:, PRICE_REF_BUS)));
-                o.areas.status.on   = find(  as );
-                o.areas.status.off  = find( ~as );
-            end
 
             %% delete stuff that is "out"
             if ~isempty(o.bus.status.off)
@@ -196,9 +180,6 @@ if isstruct(bus)
             end
             if ~isempty(o.gen.status.off)
                 mpc.gen(o.gen.status.off, :) = [];
-            end
-            if isfield(mpc, 'areas') && ~isempty(o.areas.status.off)
-                mpc.areas(o.areas.status.off, :) = [];
             end
 
             %% update size
@@ -212,9 +193,6 @@ if isstruct(bus)
             mpc.gen(:, GEN_BUS)     = o.bus.e2i( mpc.gen(:, GEN_BUS)    );
             mpc.branch(:, F_BUS)    = o.bus.e2i( mpc.branch(:, F_BUS)   );
             mpc.branch(:, T_BUS)    = o.bus.e2i( mpc.branch(:, T_BUS)   );
-            if isfield(mpc, 'areas')
-                mpc.areas(:, PRICE_REF_BUS) = o.bus.e2i( mpc.areas(:, PRICE_REF_BUS)  );
-            end
 
             %% reorder gens in order of increasing bus number
             [tmp, o.gen.e2i] = sort(mpc.gen(:, GEN_BUS));
@@ -276,7 +254,6 @@ else            %% old form
     [PQ, PV, REF, NONE, BUS_I] = idx_bus;
     [GEN_BUS] = idx_gen;
     [F_BUS, T_BUS] = idx_brch;
-    [AREA_I, PRICE_REF_BUS] = idx_area;
 
     %% create map of external bus numbers to bus indices
     i2e = bus(:, BUS_I);
@@ -288,7 +265,4 @@ else            %% old form
     gen(:, GEN_BUS)             = e2i( gen(:, GEN_BUS)          );
     branch(:, F_BUS)            = e2i( branch(:, F_BUS)         );
     branch(:, T_BUS)            = e2i( branch(:, T_BUS)         );
-    if nargin > 3 && nargout > 4 && ~isempty(areas)
-        areas(:, PRICE_REF_BUS) = e2i( areas(:, PRICE_REF_BUS)  );
-    end
 end

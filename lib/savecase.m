@@ -62,7 +62,6 @@ function fname_out = savecase(fname, varargin)
 [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
     TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
-[AREA_I, PRICE_REF_BUS] = idx_area;
 [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 
 %% default arguments
@@ -294,7 +293,7 @@ else                                %% M-file
         fprintf(fd, '%%\tarea\trefbus\n');
         fprintf(fd, '%sareas = [\n', prefix);
         if ~isempty(areas)
-            fprintf(fd, '\t%d\t%d;\n', areas(:, 1:PRICE_REF_BUS).');
+            fprintf(fd, '\t%d\t%d;\n', areas(:, 1:2).');
         end
         fprintf(fd, '];\n');
     end

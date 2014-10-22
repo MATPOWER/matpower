@@ -11,6 +11,8 @@ function [bus, gen, branch, areas] = int2ext(i2e, bus, gen, branch, areas)
 %   Converts from the consecutive internal bus numbers back to the originals
 %   using the mapping provided by the I2E vector returned from EXT2INT,
 %   where EXTERNAL_BUS_NUMBER = I2E(INTERNAL_BUS_NUMBER).
+%   AREAS is completely ignored and is only included here for backward
+%   compatibility of the API.
 %
 %   Examples:
 %       [bus, gen, branch, areas] = int2ext(i2e, bus, gen, branch, areas);
@@ -71,7 +73,6 @@ if isstruct(i2e)
             [PQ, PV, REF, NONE, BUS_I] = idx_bus;
             GEN_BUS = idx_gen;
             [F_BUS, T_BUS] = idx_brch;
-            [AREA_I, PRICE_REF_BUS] = idx_area;
 
             %% execute userfcn callbacks for 'int2ext' stage
             if isfield(mpc, 'userfcn')
@@ -88,10 +89,6 @@ if isstruct(i2e)
             if isfield(mpc, 'gencost')
                 o.int.gencost = mpc.gencost;
                 mpc.gencost = o.ext.gencost;
-            end
-            if isfield(mpc, 'areas')
-                o.int.areas = mpc.areas;
-                mpc.areas = o.ext.areas;
             end
             if isfield(mpc, 'A')
                 o.int.A = mpc.A;
@@ -120,9 +117,6 @@ if isstruct(i2e)
             mpc.bus(o.bus.status.on, :)       = o.int.bus;
             mpc.branch(o.branch.status.on, :) = o.int.branch;
             mpc.gen(o.gen.status.on, :)       = o.int.gen(o.gen.i2e, :);
-            if isfield(mpc, 'areas')
-                mpc.areas(o.areas.status.on, :) = o.int.areas;
-            end
 
             %% revert to original bus numbers
             mpc.bus(o.bus.status.on, BUS_I) = ...
@@ -133,10 +127,6 @@ if isstruct(i2e)
                     o.bus.i2e( mpc.branch(o.branch.status.on, T_BUS) );
             mpc.gen(o.gen.status.on, GEN_BUS) = ...
                     o.bus.i2e( mpc.gen(o.gen.status.on, GEN_BUS) );
-            if isfield(mpc, 'areas')
-                mpc.areas(o.areas.status.on, PRICE_REF_BUS) = ...
-                        o.bus.i2e( mpc.areas(o.areas.status.on, PRICE_REF_BUS) );
-            end
 
             if isfield(o, 'ext')
                 o = rmfield(o, 'ext');
@@ -172,13 +162,9 @@ else            %% old form
     [PQ, PV, REF, NONE, BUS_I] = idx_bus;
     [GEN_BUS] = idx_gen;
     [F_BUS, T_BUS] = idx_brch;
-    [AREA_I, PRICE_REF_BUS] = idx_area;
 
     bus(:, BUS_I)               = i2e( bus(:, BUS_I)            );
     gen(:, GEN_BUS)             = i2e( gen(:, GEN_BUS)          );
     branch(:, F_BUS)            = i2e( branch(:, F_BUS)         );
     branch(:, T_BUS)            = i2e( branch(:, T_BUS)         );
-    if nargin > 4 && nargout > 3 && ~isempty(areas)
-        areas(:, PRICE_REF_BUS) = i2e( areas(:, PRICE_REF_BUS)  );
-    end
 end

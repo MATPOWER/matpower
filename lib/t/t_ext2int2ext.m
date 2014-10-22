@@ -34,7 +34,7 @@ if nargin < 1
     quiet = 0;
 end
 
-t_begin(85, quiet);
+t_begin(74, quiet);
 
 %%-----  mpc = ext2int/int2ext(mpc)  -----
 t = 'mpc = ext2int(mpc) : ';
@@ -45,7 +45,6 @@ t_is(mpc.bus, mpci.bus, 12, [t 'bus']);
 t_is(mpc.branch, mpci.branch, 12, [t 'branch']);
 t_is(mpc.gen, mpci.gen, 12, [t 'gen']);
 t_is(mpc.gencost, mpci.gencost, 12, [t 'gencost']);
-t_is(mpc.areas, mpci.areas, 12, [t 'areas']);
 t_is(mpc.A, mpci.A, 12, [t 'A']);
 t_is(mpc.N, mpci.N, 12, [t 'N']);
 t = 'mpc = ext2int(mpc) - repeat : ';
@@ -54,7 +53,6 @@ t_is(mpc.bus, mpci.bus, 12, [t 'bus']);
 t_is(mpc.branch, mpci.branch, 12, [t 'branch']);
 t_is(mpc.gen, mpci.gen, 12, [t 'gen']);
 t_is(mpc.gencost, mpci.gencost, 12, [t 'gencost']);
-t_is(mpc.areas, mpci.areas, 12, [t 'areas']);
 t_is(mpc.A, mpci.A, 12, [t 'A']);
 t_is(mpc.N, mpci.N, 12, [t 'N']);
 t = 'mpc = int2ext(mpc) : ';
@@ -63,7 +61,6 @@ t_is(mpc.bus, mpce.bus, 12, [t 'bus']);
 t_is(mpc.branch, mpce.branch, 12, [t 'branch']);
 t_is(mpc.gen, mpce.gen, 12, [t 'gen']);
 t_is(mpc.gencost, mpce.gencost, 12, [t 'gencost']);
-t_is(mpc.areas, mpce.areas, 12, [t 'areas']);
 t_is(mpc.A, mpce.A, 12, [t 'A']);
 t_is(mpc.N, mpce.N, 12, [t 'N']);
 
@@ -254,31 +251,15 @@ t = 'mpc = ext2int(mpc) - bus/gen/branch only : ';
 mpce = loadcase('t_case_ext');
 mpci = loadcase('t_case_int');
 mpce = rmfield(mpce, 'gencost');
-mpce = rmfield(mpce, 'areas');
 mpce = rmfield(mpce, 'A');
 mpce = rmfield(mpce, 'N');
 mpci = rmfield(mpci, 'gencost');
-mpci = rmfield(mpci, 'areas');
 mpci = rmfield(mpci, 'A');
 mpci = rmfield(mpci, 'N');
 mpc = ext2int(mpce);
 t_is(mpc.bus, mpci.bus, 12, [t 'bus']);
 t_is(mpc.branch, mpci.branch, 12, [t 'branch']);
 t_is(mpc.gen, mpci.gen, 12, [t 'gen']);
-
-t = 'mpc = ext2int(mpc) - no areas/A : ';
-mpce = loadcase('t_case_ext');
-mpci = loadcase('t_case_int');
-mpce = rmfield(mpce, 'areas');
-mpce = rmfield(mpce, 'A');
-mpci = rmfield(mpci, 'areas');
-mpci = rmfield(mpci, 'A');
-mpc = ext2int(mpce);
-t_is(mpc.bus, mpci.bus, 12, [t 'bus']);
-t_is(mpc.branch, mpci.branch, 12, [t 'branch']);
-t_is(mpc.gen, mpci.gen, 12, [t 'gen']);
-t_is(mpc.gencost, mpci.gencost, 12, [t 'gencost']);
-t_is(mpc.N, mpci.N, 12, [t 'N']);
 
 t = 'mpc = ext2int(mpc) - Qg cost, no N : ';
 mpce = loadcase('t_case_ext');
@@ -292,7 +273,6 @@ t_is(mpc.bus, mpci.bus, 12, [t 'bus']);
 t_is(mpc.branch, mpci.branch, 12, [t 'branch']);
 t_is(mpc.gen, mpci.gen, 12, [t 'gen']);
 t_is(mpc.gencost, mpci.gencost, 12, [t 'gencost']);
-t_is(mpc.areas, mpci.areas, 12, [t 'areas']);
 t_is(mpc.A, mpci.A, 12, [t 'A']);
 
 t = 'mpc = ext2int(mpc) - A, N are DC sized : ';
@@ -309,16 +289,15 @@ t_is(mpc.bus, mpci.bus, 12, [t 'bus']);
 t_is(mpc.branch, mpci.branch, 12, [t 'branch']);
 t_is(mpc.gen, mpci.gen, 12, [t 'gen']);
 t_is(mpc.gencost, mpci.gencost, 12, [t 'gencost']);
-t_is(mpc.areas, mpci.areas, 12, [t 'areas']);
 t_is(mpc.A, mpci.A, 12, [t 'A']);
 t_is(mpc.N, mpci.N, 12, [t 'N']);
+
 t = 'mpc = int2ext(mpc) - A, N are DC sized : ';
 mpc = int2ext(mpc);
 t_is(mpc.bus, mpce.bus, 12, [t 'bus']);
 t_is(mpc.branch, mpce.branch, 12, [t 'branch']);
 t_is(mpc.gen, mpce.gen, 12, [t 'gen']);
 t_is(mpc.gencost, mpce.gencost, 12, [t 'gencost']);
-t_is(mpc.areas, mpce.areas, 12, [t 'areas']);
 t_is(mpc.A, mpce.A, 12, [t 'A']);
 t_is(mpc.N, mpce.N, 12, [t 'N']);
 
