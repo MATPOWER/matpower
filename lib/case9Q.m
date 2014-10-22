@@ -52,12 +52,6 @@ mpc.branch = [
 ];
 
 %%-----  OPF Data  -----%%
-%% area data
-%	area	refbus
-mpc.areas = [
-	1	5;
-];
-
 %% generator cost data
 %	1	startup	shutdown	n	x1	y1	...	xn	yn
 %	2	startup	shutdown	n	c(n-1)	...	c0
