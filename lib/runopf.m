@@ -101,7 +101,11 @@ if fname
     if fd == -1
         error(msg);
     else
-        printpf(r, fd, mpopt);
+        if mpopt.out.all == 0
+            printpf(r, fd, mpoption(mpopt, 'out.all', -1));
+        else
+            printpf(r, fd, mpopt);
+        end
         fclose(fd);
     end
 end

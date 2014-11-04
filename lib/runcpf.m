@@ -391,7 +391,11 @@ if fname
     if fd == -1
         error(msg);
     else
-        printpf(results, fd, mpopt);
+        if mpopt.out.all == 0
+            printpf(results, fd, mpoption(mpopt, 'out.all', -1));
+        else
+            printpf(results, fd, mpopt);
+        end
         fclose(fd);
     end
 end

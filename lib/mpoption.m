@@ -168,7 +168,8 @@ function opt = mpoption(varargin)
 %       [   3 - print all progress info                                     ]
 %   out.all                 -1          controls pretty-printing of results
 %       [  -1 - individual flags control what prints                        ]
-%       [   0 - do not print anything (overrides individual flags)          ]
+%       [   0 - do not print anything (overrides individual flags, ignored  ]
+%       [       for files specified as FNAME arg to runpf(), runopf(), etc.)]
 %       [   1 - print everything (overrides individual flags)               ]
 %   out.sys_sum             1           print system summary       [ 0 or 1 ]
 %   out.area_sum            0           print area summaries       [ 0 or 1 ]

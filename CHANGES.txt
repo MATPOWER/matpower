@@ -15,6 +15,11 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.0b1
 -------------------
 
+11/4/14
+    - Modified behavior so setting out.all option to 0 is now ignored
+      for pretty-printed output to files specified as FNAME argument
+      to runpf(), runopf(), etc.
+
 10/22/14
     - Removed idx_area() and all code references to 'areas' field
       in MATPOWER cases except those needed to support reading
