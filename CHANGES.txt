@@ -15,6 +15,12 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.0b1
 -------------------
 
+11/11/14
+    - Added get_losses() function to compute losses, line charging
+      reactive injections and their derivatives, as functions of
+      bus voltages. Corresponding tests included in t_get_losses(),
+      including example of loss sensitivity factors.
+
 11/4/14
     - Modified behavior so setting out.all option to 0 is now ignored
       for pretty-printed output to files specified as FNAME argument
