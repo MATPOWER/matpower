@@ -20,6 +20,9 @@ Changes since 5.0b1
       reactive injections and their derivatives, as functions of
       bus voltages. Corresponding tests included in t_get_losses(),
       including example of loss sensitivity factors.
+    - Fixed bug in runpf.m that caused a crash for cases with
+      pf.enforce_q_lims turned on and exactly two Q limit violations,
+      one Qmax and one Qmin. Thanks to Jose Luis Marin.
 
 11/4/14
     - Modified behavior so setting out.all option to 0 is now ignored

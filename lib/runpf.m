@@ -243,7 +243,8 @@ else                                %% AC formulation
             
             if ~isempty(mx) || ~isempty(mn)  %% we have some Q limit violations
                 %% first check for INFEASIBILITY (all remaining gens violating)
-                infeas = union(mx, mn);
+                infeas = union(mx', mn')';  %% transposes handle fact that
+                    %% union of scalars is a row vector
                 remaining = find( gen(:, GEN_STATUS) > 0 & ...
                                 ( bus(gen(:, GEN_BUS), BUS_TYPE) == PV | ...
                                   bus(gen(:, GEN_BUS), BUS_TYPE) == REF ));
