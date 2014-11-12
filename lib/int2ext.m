@@ -100,23 +100,41 @@ if isstruct(i2e)
             end
 
             %% zero pad data matrices on right if necessary
-            [nr, nc] = size(o.int.bus);
-            if size(mpc.bus, 2) < nc
-                mpc.bus = [mpc.bus zeros(nr, nc-size(mpc.bus,2))];
+            nci = size(o.int.bus, 2);
+            [nr, nc] = size(mpc.bus);
+            if nc < nci
+                mpc.bus = [mpc.bus zeros(nr, nci-nc)];
             end
-            [nr, nc] = size(o.int.branch);
-            if size(mpc.branch, 2) < nc
-                mpc.branch = [mpc.branch zeros(nr, nc-size(mpc.branch,2))];
+            nci = size(o.int.branch, 2);
+            [nr, nc] = size(mpc.branch);
+            if nc < nci
+                mpc.branch = [mpc.branch zeros(nr, nci-nc)];
             end
-            [nr, nc] = size(o.int.gen);
-            if size(mpc.gen, 2) < nc
-                mpc.gen = [mpc.gen zeros(nr, nc-size(mpc.gen,2))];
+            nci = size(o.int.gen, 2);
+            [nr, nc] = size(mpc.gen);
+            if nc < nci
+                mpc.gen = [mpc.gen zeros(nr, nci-nc)];
+            end
+            if isfield(mpc, 'gencost')
+                nci = size(o.int.gencost, 2);
+                [nr, nc] = size(mpc.gencost);
+                if nc < nci
+                    mpc.gencost = [mpc.gencost zeros(nr, nci-nc)];
+                end
             end
 
-            %% update data (in bus, branch and gen only)
+            %% update data (in bus, branch, gen and gencost only)
             mpc.bus(o.bus.status.on, :)       = o.int.bus;
             mpc.branch(o.branch.status.on, :) = o.int.branch;
             mpc.gen(o.gen.status.on, :)       = o.int.gen(o.gen.i2e, :);
+            if isfield(mpc, 'gencost')
+                mpc.gencost(o.gen.status.on, :)   = o.int.gencost(o.gen.i2e, :);
+                nge = size(mpc.gen, 1);
+                if size(mpc.gencost, 1) == 2*nge    %% have Qg cost
+                    ngi = size(o.int.gen, 1);
+                    mpc.gencost(nge+o.gen.status.on, :)   = o.int.gencost(ngi+o.gen.i2e, :);
+                end
+            end
 
             %% revert to original bus numbers
             mpc.bus(o.bus.status.on, BUS_I) = ...
