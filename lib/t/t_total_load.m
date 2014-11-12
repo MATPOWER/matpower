@@ -50,9 +50,17 @@ mpc.gen(8, GEN_BUS) = 2;    %% multiple d. loads per area, same bus as gen
 mpc.gen(8, [PG QG QMIN QMAX]) = [-20 2 0 3 ];
 %% put load before gen in matrix
 mpc.gen = [mpc.gen(8, :); mpc.gen(1:7, :); mpc.gen(9, :)];
-ld = find(isload(mpc.gen));
+%% add an isolated bus (with both kinds of load)
+k = 12;
+mpc.bus = [mpc.bus(1:k, :); mpc.bus(k, :); mpc.bus(k+1:end, :)];
+mpc.bus(k, BUS_I) = mpc.bus(k, BUS_I)*10;
+mpc.bus(k, BUS_TYPE) = NONE;
+mpc.gen = [mpc.gen; mpc.gen(end, :)];
+mpc.gen(end, GEN_BUS) = mpc.bus(k, BUS_I);
+
+ld = find(isload(mpc.gen(1:end-1, :)));
 for k = 1:3
-    a{k} = find(mpc.bus(:, BUS_AREA) == k); %% buses in area k
+    a{k} = find(mpc.bus(:, BUS_AREA) == k & mpc.bus(:, BUS_TYPE) ~= NONE); %% buses in area k
     [junk, tmp, junk2] = intersect(mpc.gen(ld, GEN_BUS), a{k});
     lda{k} = ld(tmp);                       %% disp loads in area k
 end
@@ -70,8 +78,9 @@ for k = 1:3
     area(k).both.p = area(k).fixed.p + area(k).disp.p;
     area(k).both.q = area(k).fixed.q + area(k).disp.q;
 end
-total.fixed.p = sum(mpc.bus(:, PD));
-total.fixed.q = sum(mpc.bus(:, QD));
+k = find(mpc.bus(:, BUS_TYPE) ~= NONE);
+total.fixed.p = sum(mpc.bus(k, PD));
+total.fixed.q = sum(mpc.bus(k, QD));
 total.disp.p = -sum(mpc.gen(ld, PG));
 total.disp.pnom = -sum(mpc.gen(ld, PMIN));
 total.disp.qmin = -sum(mpc.gen(ld, QMIN));

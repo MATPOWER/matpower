@@ -193,7 +193,7 @@ if want_Q
     Qd = zeros(nz, 1);
 end
 for k = 1:nz
-    idx = find( load_zone == k );
+    idx = find( load_zone == k & bus(:, BUS_TYPE) ~= NONE);
     Pd(k) = sum(Pdf(idx)) + sum(Pdd(idx));
     if want_Q
         Qd(k) = sum(Qdf(idx)) + sum(Qdd(idx));

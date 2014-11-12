@@ -15,6 +15,9 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.0b1
 -------------------
 
+11/12/14
+    - Isolated buses are no longer included in results from total_load().
+
 11/11/14
     - Added get_losses() function to compute losses, line charging
       reactive injections and their derivatives, as functions of
