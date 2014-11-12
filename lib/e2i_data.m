@@ -8,12 +8,12 @@ function newval = e2i_data(mpc, val, ordering, dim)
 %   internal indexing, this function can be used to convert other data
 %   structures as well by passing in 2 or 3 extra parameters in
 %   addition to the case struct. If the value passed in the 2nd
-%   argument is a column vector, it will be converted according to the
-%   ORDERING specified by the 3rd argument (described below). If VAL
-%   is an n-dimensional matrix, then the optional 4th argument (DIM,
-%   default = 1) can be used to specify which dimension to reorder.
-%   The return value in this case is the value passed in, converted
-%   to internal indexing.
+%   argument is a column vector or cell array, it will be converted
+%   according to the ORDERING specified by the 3rd argument (described
+%   below). If VAL is an n-dimensional matrix or cell array, then the
+%   optional 4th argument (DIM, default = 1) can be used to specify
+%   which dimension to reorder. The return value in this case is the
+%   value passed in, converted to internal indexing.
 %
 %   The 3rd argument, ORDERING, is used to indicate whether the data
 %   corresponds to bus-, gen- or branch-ordered data. It can be one
@@ -44,7 +44,7 @@ function newval = e2i_data(mpc, val, ordering, dim)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2009-2011 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2014 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.

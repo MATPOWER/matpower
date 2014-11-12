@@ -14,10 +14,11 @@ function mpc = e2i_field(mpc, field, ordering, dim)
 %
 %   The 2nd argument is a string or cell array of strings, specifying
 %   a field in the case struct whose value should be converted by
-%   a corresponding call to E2I_DATA. In this case, the converted value
-%   is stored back in the specified field, the original value is
-%   saved for later use and the updated case struct is returned.
-%   If FIELD is a cell array of strings, they specify nested fields.
+%   a corresponding call to E2I_DATA. The field can contain either a
+%   numeric or a cell array. The converted value is stored back in the
+%   specified field, the original value is saved for later use and the
+%   updated case struct is returned. If FIELD is a cell array of strings,
+%   they specify nested fields.
 %
 %   The 3rd and optional 4th arguments are simply passed along to
 %   the call to E2I_DATA.

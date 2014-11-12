@@ -34,7 +34,7 @@ if nargin < 1
     quiet = 0;
 end
 
-t_begin(74, quiet);
+t_begin(106, quiet);
 
 %%-----  mpc = ext2int/int2ext(mpc)  -----
 t = 'mpc = ext2int(mpc) : ';
@@ -160,6 +160,102 @@ tmp = [tmp1; tmp2; tmp3]';
 got = i2e_data(mpc, ex, tmp, {'branch', 'gen', 'bus'}, 2);
 t_is(got, mpce.xcols, 12, t);
 
+%%-----  val = e2i_data/i2e_data(mpc, cell, ...)  -----
+t = 'val = e2i_data(mpc, cell, ''bus'')';
+mpc = ext2int(mpce);
+got = e2i_data(mpc, mpce.strbus, 'bus');
+ex = mpce.strbus;
+ex(6, :) = [];
+t_is(cellfun(@str2num, got), cellfun(@str2num, ex), 12, t);
+t = 'val = i2e_data(mpc, cell, oldval, ''bus'')';
+tmp = cell(size(mpce.strbus));
+tmp(6, :) = mpce.strbus(6, :);
+got = i2e_data(mpc, ex, tmp, 'bus');
+t_is(cellfun(@str2num, got), cellfun(@str2num, mpce.strbus), 12, t);
+
+t = 'val = e2i_data(mpc, cell, ''bus'', 2)';
+got = e2i_data(mpc, mpce.strbus, 'bus', 2);
+ex = mpce.strbus;
+ex(:, 6) = [];
+t_is(cellfun(@str2num, got), cellfun(@str2num, ex), 12, t);
+t = 'val = i2e_data(mpc, cell, oldval, ''bus'', 2)';
+tmp = cell(size(mpce.strbus));
+tmp(:, 6) = mpce.strbus(:, 6);
+got = i2e_data(mpc, ex, tmp, 'bus', 2);
+t_is(cellfun(@str2num, got), cellfun(@str2num, mpce.strbus), 12, t);
+
+t = 'val = e2i_data(mpc, cell, ''gen'')';
+got = e2i_data(mpc, mpce.strgen, 'gen');
+ex = mpce.strgen([4 2 1], :);
+t_is(cellfun(@str2num, got), cellfun(@str2num, ex), 12, t);
+t = 'val = i2e_data(mpc, cell, oldval, ''gen'')';
+tmp = cell(size(mpce.strgen));
+tmp(3, :) = mpce.strgen(3, :);
+got = i2e_data(mpc, ex, tmp, 'gen');
+t_is(cellfun(@str2num, got), cellfun(@str2num, mpce.strgen), 12, t);
+
+t = 'val = e2i_data(mpc, cell, ''gen'', 2)';
+got = e2i_data(mpc, mpce.strgen, 'gen', 2);
+ex = mpce.strgen(:, [4 2 1]);
+t_is(cellfun(@str2num, got), cellfun(@str2num, ex), 12, t);
+t = 'val = i2e_data(mpc, cell, oldval, ''gen'', 2)';
+tmp = cell(size(mpce.strgen));
+tmp(:, 3) = mpce.strgen(:, 3);
+got = i2e_data(mpc, ex, tmp, 'gen', 2);
+t_is(cellfun(@str2num, got), cellfun(@str2num, mpce.strgen), 12, t);
+
+t = 'val = e2i_data(mpc, cell, ''branch'')';
+got = e2i_data(mpc, mpce.strbranch, 'branch');
+ex = mpce.strbranch;
+ex(7, :) = [];
+t_is(cellfun(@str2num, got), cellfun(@str2num, ex), 12, t);
+t = 'val = i2e_data(mpc, cell, oldval, ''branch'')';
+tmp = cell(size(mpce.strbranch));
+tmp(7, :) = mpce.strbranch(7, :);
+got = i2e_data(mpc, ex, tmp, 'branch');
+t_is(cellfun(@str2num, got), cellfun(@str2num, mpce.strbranch), 12, t);
+
+t = 'val = e2i_data(mpc, cell, ''branch'', 2)';
+got = e2i_data(mpc, mpce.strbranch, 'branch', 2);
+ex = mpce.strbranch;
+ex(:, 7) = [];
+t_is(cellfun(@str2num, got), cellfun(@str2num, ex), 12, t);
+t = 'val = i2e_data(mpc, cell, oldval, ''branch'', 2)';
+tmp = cell(size(mpce.strbranch));
+tmp(:, 7) = mpce.strbranch(:, 7);
+got = i2e_data(mpc, ex, tmp, 'branch', 2);
+t_is(cellfun(@str2num, got), cellfun(@str2num, mpce.strbranch), 12, t);
+
+t = 'val = e2i_data(mpc, cell, {''branch'', ''gen'', ''bus''})';
+got = e2i_data(mpc, mpce.strrows, {'branch', 'gen', 'bus'});
+ex = [mpce.strbranch([1:6, 8:10], 1:4); mpce.strgen([4 2 1], :); mpce.strbus([1:5, 7:10], 1:4); cellfun(@num2str, num2cell(-ones(2, 4)), 'UniformOutput', 0)];
+t_is(cellfun(@str2num, got), cellfun(@str2num, ex), 12, t);
+t = 'val = i2e_data(mpc, cell, oldval, {''branch'', ''gen'', ''bus''})';
+tmp1 = cell(size(mpce.strbranch(:, 1:4)));
+tmp1(7, 1:4) = mpce.strbranch(7, 1:4);
+tmp2 = cell(size(mpce.strgen));
+tmp2(3, :) = mpce.strgen(3, :);
+tmp3 = cell(size(mpce.strbus(:, 1:4)));
+tmp3(6, 1:4) = mpce.strbus(6, 1:4);
+tmp = [tmp1; tmp2; tmp3];
+got = i2e_data(mpc, ex, tmp, {'branch', 'gen', 'bus'});
+t_is(cellfun(@str2num, got), cellfun(@str2num, mpce.strrows), 12, t);
+
+t = 'val = e2i_data(mpc, cell, {''branch'', ''gen'', ''bus''}, 2)';
+got = e2i_data(mpc, mpce.strcols, {'branch', 'gen', 'bus'}, 2);
+ex = [mpce.strbranch([1:6, 8:10], 1:4); mpce.strgen([4 2 1], :); mpce.strbus([1:5, 7:10], 1:4); cellfun(@num2str, num2cell(-ones(2, 4)), 'UniformOutput', 0)]';
+t_is(cellfun(@str2num, got), cellfun(@str2num, ex), 12, t);
+t = 'val = i2e_data(mpc, cell, oldval, {''branch'', ''gen'', ''bus''}, 2)';
+tmp1 = cell(size(mpce.strbranch(:, 1:4)));
+tmp1(7, 1:4) = mpce.strbranch(7, 1:4);
+tmp2 = cell(size(mpce.strgen));
+tmp2(3, :) = mpce.strgen(3, :);
+tmp3 = cell(size(mpce.strbus(:, 1:4)));
+tmp3(6, 1:4) = mpce.strbus(6, 1:4);
+tmp = [tmp1; tmp2; tmp3]';
+got = i2e_data(mpc, ex, tmp, {'branch', 'gen', 'bus'}, 2);
+t_is(cellfun(@str2num, got), cellfun(@str2num, mpce.strcols), 12, t);
+
 %%-----  mpc = e2i_field/i2e_field(mpc, field, ...)  -----
 t = 'mpc = e2i_field(mpc, field, ''bus'')';
 mpc = ext2int(mpce);
@@ -245,6 +341,76 @@ t_is(got.x.more, ex, 12, t);
 t = 'mpc = i2e_field(mpc, {''field1'', ''field2''}, ordering, 2)';
 got = i2e_field(got, {'x', 'more'}, 'gen', 2);
 t_is(got.x.more, mpce.x.more, 12, t);
+
+%%-----  mpc = e2i_field/i2e_field(mpc, cellfield, ...)  -----
+t = 'mpc = e2i_field(mpc, cellfield, ''bus'')';
+mpc = ext2int(mpce);
+ex = mpce.strbus;
+ex(6, :) = [];
+got = e2i_field(mpc, 'strbus', 'bus');
+t_is(cellfun(@str2num, got.strbus), cellfun(@str2num, ex), 12, t);
+t = 'mpc = i2e_field(mpc, cellfield, ''bus'')';
+got = i2e_field(got, 'strbus', 'bus');
+t_is(cellfun(@str2num, got.strbus), cellfun(@str2num, mpce.strbus), 12, t);
+
+t = 'mpc = e2i_field(mpc, cellfield, ''bus'', 2)';
+ex = mpce.strbus;
+ex(:, 6) = [];
+got = e2i_field(mpc, 'strbus', 'bus', 2);
+t_is(cellfun(@str2num, got.strbus), cellfun(@str2num, ex), 12, t);
+t = 'mpc = i2e_field(mpc, cellfield, ''bus'', 2)';
+got = i2e_field(got, 'strbus', 'bus', 2);
+t_is(cellfun(@str2num, got.strbus), cellfun(@str2num, mpce.strbus), 12, t);
+
+t = 'mpc = e2i_field(mpc, cellfield, ''gen'')';
+ex = mpce.strgen([4 2 1], :);
+got = e2i_field(mpc, 'strgen', 'gen');
+t_is(cellfun(@str2num, got.strgen), cellfun(@str2num, ex), 12, t);
+t = 'mpc = i2e_field(mpc, cellfield, ''gen'')';
+got = i2e_field(got, 'strgen', 'gen');
+t_is(cellfun(@str2num, got.strgen), cellfun(@str2num, mpce.strgen), 12, t);
+
+t = 'mpc = e2i_field(mpc, cellfield, ''gen'', 2)';
+ex = mpce.strgen(:, [4 2 1]);
+got = e2i_field(mpc, 'strgen', 'gen', 2);
+t_is(cellfun(@str2num, got.strgen), cellfun(@str2num, ex), 12, t);
+t = 'mpc = i2e_field(mpc, cellfield, ''gen'', 2)';
+got = i2e_field(got, 'strgen', 'gen', 2);
+t_is(cellfun(@str2num, got.strgen), cellfun(@str2num, mpce.strgen), 12, t);
+
+t = 'mpc = e2i_field(mpc, cellfield, ''branch'')';
+ex = mpce.strbranch;
+ex(7, :) = [];
+got = e2i_field(mpc, 'strbranch', 'branch');
+t_is(cellfun(@str2num, got.strbranch), cellfun(@str2num, ex), 12, t);
+t = 'mpc = i2e_field(mpc, cellfield, ''branch'')';
+got = i2e_field(got, 'strbranch', 'branch');
+t_is(cellfun(@str2num, got.strbranch), cellfun(@str2num, mpce.strbranch), 12, t);
+
+t = 'mpc = e2i_field(mpc, cellfield, ''branch'', 2)';
+ex = mpce.strbranch;
+ex(:, 7) = [];
+got = e2i_field(mpc, 'strbranch', 'branch', 2);
+t_is(cellfun(@str2num, got.strbranch), cellfun(@str2num, ex), 12, t);
+t = 'mpc = i2e_field(mpc, cellfield, ''branch'', 2)';
+got = i2e_field(got, 'strbranch', 'branch', 2);
+t_is(cellfun(@str2num, got.strbranch), cellfun(@str2num, mpce.strbranch), 12, t);
+
+t = 'mpc = e2i_field(mpc, cellfield, {''branch'', ''gen'', ''bus''})';
+ex = [mpce.strbranch([1:6, 8:10], 1:4); mpce.strgen([4 2 1], :); mpce.strbus([1:5, 7:10], 1:4); cellfun(@num2str, num2cell(-ones(2, 4)), 'UniformOutput', 0)];
+got = e2i_field(mpc, 'strrows', {'branch', 'gen', 'bus'});
+t_is(cellfun(@str2num, got.strrows), cellfun(@str2num, ex), 12, t);
+t = 'mpc = i2e_field(mpc, cellfield, {''branch'', ''gen'', ''bus''})';
+got = i2e_field(got, 'strrows', {'branch', 'gen', 'bus'});
+t_is(cellfun(@str2num, got.strrows), cellfun(@str2num, mpce.strrows), 12, t);
+
+t = 'mpc = e2i_field(mpc, cellfield, {''branch'', ''gen'', ''bus''}, 2)';
+ex = [mpce.strbranch([1:6, 8:10], 1:4); mpce.strgen([4 2 1], :); mpce.strbus([1:5, 7:10], 1:4); cellfun(@num2str, num2cell(-ones(2, 4)), 'UniformOutput', 0)]';
+got = e2i_field(mpc, 'strcols', {'branch', 'gen', 'bus'}, 2);
+t_is(cellfun(@str2num, got.strcols), cellfun(@str2num, ex), 12, t);
+t = 'mpc = i2e_field(mpc, cellfield, {''branch'', ''gen'', ''bus''})';
+got = i2e_field(got, 'strcols', {'branch', 'gen', 'bus'}, 2);
+t_is(cellfun(@str2num, got.strcols), cellfun(@str2num, mpce.strcols), 12, t);
 
 %%-----  more mpc = ext2int/int2ext(mpc)  -----
 t = 'mpc = ext2int(mpc) - bus/gen/branch only : ';

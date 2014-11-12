@@ -71,9 +71,17 @@ mpc.N = [
 	60	58	56	54	52	50	48	46	44	42	40	38	36	34	32	30	28	26	24	22	20	18	16	14	12	10	8	6	4	2;
 ];
 
-mpc.xbus = zeros(10, 10);  	mpc.xbus(:) = 1:100;
-mpc.xgen = zeros(4, 4);    	mpc.xgen(:) = 1:16;
-mpc.xbranch = mpc.xbus;
-mpc.xrows = [mpc.xbranch(:, 1:4); mpc.xgen; mpc.xbus(:, 1:4); -ones(2, 4)];
+nb = size(mpc.bus, 1);
+ng = size(mpc.gen, 1);
+nl = size(mpc.branch, 1);
+mpc.xbus = zeros(nb, nb);       mpc.xbus(:) = 1:nb^2;
+mpc.xgen = zeros(ng, ng);       mpc.xgen(:) = 1:ng^2;
+mpc.xbranch = zeros(nl, nl);    mpc.xbranch(:) = 1:nl^2;
+mpc.xrows = [mpc.xbranch(:, 1:ng); mpc.xgen; mpc.xbus(:, 1:ng); -ones(2, ng)];
 mpc.xcols = mpc.xrows';
 mpc.x.more = mpc.xgen;
+mpc.strbus = cellfun(@num2str, num2cell(mpc.xbus), 'UniformOutput', 0);
+mpc.strgen = cellfun(@num2str, num2cell(mpc.xgen), 'UniformOutput', 0);
+mpc.strbranch = cellfun(@num2str, num2cell(mpc.xbranch), 'UniformOutput', 0);
+mpc.strrows = cellfun(@num2str, num2cell(mpc.xrows), 'UniformOutput', 0);
+mpc.strcols = cellfun(@num2str, num2cell(mpc.xcols), 'UniformOutput', 0);

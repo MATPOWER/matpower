@@ -7,14 +7,14 @@ function newval = i2e_data(mpc, val, oldval, ordering, dim)
 %   For a case struct using internal indexing, this function can be
 %   used to convert other data structures as well by passing in 3 or 4
 %   extra parameters in addition to the case struct. If the value passed
-%   in the 2nd argument (VAL) is a column vector, it will be converted
-%   according to the ordering specified by the 4th argument (ORDERING,
-%   described below). If VAL is an n-dimensional matrix, then the
-%   optional 5th argument (DIM, default = 1) can be used to specify
-%   which dimension to reorder. The 3rd argument (OLDVAL) is used to
-%   initialize the return value before converting VAL to external
-%   indexing. In particular, any data corresponding to off-line gens
-%   or branches or isolated buses or any connected gens or branches
+%   in the 2nd argument (VAL) is a column vector or cell array, it will
+%   be converted according to the ordering specified by the 4th argument
+%   (ORDERING, described below). If VAL is an n-dimensional matrix or
+%   cell array, then the optional 5th argument (DIM, default = 1) can be
+%   used to specify which dimension to reorder. The 3rd argument (OLDVAL)
+%   is used to initialize the return value before converting VAL to
+%   external indexing. In particular, any data corresponding to off-line
+%   gens or branches or isolated buses or any connected gens or branches
 %   will be taken from OLDVAL, with VAL supplying the rest of the
 %   returned data.
 %
@@ -47,7 +47,7 @@ function newval = i2e_data(mpc, val, oldval, ordering, dim)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2009-2011 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2014 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.

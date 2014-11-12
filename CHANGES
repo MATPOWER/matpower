@@ -25,6 +25,9 @@ Changes since 5.0b1
     - Changes to the internally indexed version of gencost now
       get properly copied back to externally indexed version by
       int2ext().
+    - Added tests in t_ext2int2ext() to confirm that e2i_data/field()
+      and i2e_data/field() work for cell array as well as numerical
+      array fields.
 
 11/11/14
     - Added get_losses() function to compute losses, line charging

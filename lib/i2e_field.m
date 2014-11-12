@@ -8,12 +8,13 @@ function mpc = i2e_field(mpc, field, ordering, dim)
 %   used to convert other data structures as well by passing in 2 or 3
 %   extra parameters in addition to the case struct.
 %
-%   If the 2nd argument is a string or cell array of strings, it
-%   specifies a field in the case struct whose value should be
-%   converted by I2E_DATA. In this case, the corresponding
-%   OLDVAL is taken from where it was stored by EXT2INT in
-%   MPC.ORDER.EXT and the updated case struct is returned.
-%   If FIELD is a cell array of strings, they specify nested fields.
+%   The 2nd argument is a string or cell array of strings, specifying
+%   a field in the case struct whose value should be converted by
+%   a corresponding call to I2E_DATA. The field can contain either a
+%   numeric or a cell array. The corresponding OLDVAL is taken from
+%   where it was stored by EXT2INT in MPC.ORDER.EXT and the updated
+%   case struct is returned. If FIELD is a cell array of strings,
+%   they specify nested fields.
 %
 %   The 3rd and optional 4th arguments are simply passed along to
 %   the call to I2E_DATA.
