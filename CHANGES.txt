@@ -16,7 +16,12 @@ Changes since 5.0b1
 -------------------
 
 11/12/14
-    - Isolated buses are no longer included in results from total_load().
+    - Loads at isolated buses are no longer included in results from
+      total_load().
+    - Fixed loads and shunts at isolated buses are no longer included
+      in system and area summaries in printpf(). Line charging
+      injections set to zero for DC power flow results.
+    - Added tests for printpf() in t_printpf.m.
 
 11/11/14
     - Added get_losses() function to compute losses, line charging

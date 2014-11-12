@@ -58,6 +58,16 @@ function printpf(baseMVA, bus, gen, branch, f, success, et, fd, mpopt)
 %   you additional permission to convey the resulting work.
 
 %%----- initialization -----
+%% define named indices into bus, gen, branch matrices
+[PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
+    VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
+[GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
+    MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
+    QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
+[F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
+    TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
+    ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
+
 %% default arguments
 if isstruct(baseMVA)
     have_results_struct = 1;
@@ -130,82 +140,64 @@ else
     OUT_QG_LIM      = OUT_ALL_LIM;
 end
 OUT_ANY         = OUT_ANY || (OUT_ALL_LIM == -1 && (OUT_V_LIM || OUT_LINE_LIM || OUT_PG_LIM || OUT_QG_LIM));
-ptol = 1e-4;        %% tolerance for displaying shadow prices
-if isOPF && ~isDC && strcmp(upper(mpopt.opf.ac.solver), 'SDPOPF')
-    isSDP = 1;
-    ptol = 0.1;     %% tolerance for displaying shadow prices
-    if have_results_struct && isfield(results, 'mineigratio') && ~isempty(results.mineigratio)
-        mineigratio = results.mineigratio;
-    else
-        mineigratio = [];
-    end
-    if have_results_struct && isfield(results, 'zero_eval') && ~isempty(results.zero_eval)
-        zero_eval = results.zero_eval;
-    else
-        zero_eval = [];
-    end
-else
-    isSDP = 0;
-end
-
-%% define named indices into bus, gen, branch matrices
-[PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
-    VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
-[GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
-    MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
-    QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
-[F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
-    TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
-    ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
-
-%% create map of external bus numbers to bus indices
-i2e = bus(:, BUS_I);
-e2i = sparse(max(i2e), 1);
-e2i(i2e) = (1:size(bus, 1))';
-
-%% sizes of things
-nb = size(bus, 1);      %% number of buses
-nl = size(branch, 1);   %% number of branches
-ng = size(gen, 1);      %% number of generators
-
-%% zero out some data to make printout consistent for DC case
-if isDC
-    bus(:, [QD, BS])            = zeros(nb, 2);
-    gen(:, [QG, QMAX, QMIN])    = zeros(ng, 3);
-    branch(:, [BR_R, BR_B])     = zeros(nl, 2);
-end
-
-%% parameters
-ties = find(bus(e2i(branch(:, F_BUS)), BUS_AREA) ~= bus(e2i(branch(:, T_BUS)), BUS_AREA));
-                        %% area inter-ties
-tap = ones(nl, 1);                              %% default tap ratio = 1 for lines
-xfmr = find(branch(:, TAP));                    %% indices of transformers
-tap(xfmr) = branch(xfmr, TAP);                  %% include transformer tap ratios
-tap = tap .* exp(1j*pi/180 * branch(:, SHIFT)); %% add phase shifters
-nzld = find(bus(:, PD) | bus(:, QD));
-sorted_areas = sort(bus(:, BUS_AREA));
-s_areas = sorted_areas([1; find(diff(sorted_areas))+1]);    %% area numbers
-nzsh = find(bus(:, GS) | bus(:, BS));
-allg = find( ~isload(gen) );
-ong  = find( gen(:, GEN_STATUS) > 0 & ~isload(gen) );
-onld = find( gen(:, GEN_STATUS) > 0 &  isload(gen) );
-V = bus(:, VM) .* exp(sqrt(-1) * pi/180 * bus(:, VA));
-out = find(branch(:, BR_STATUS) == 0);          %% out-of-service branches
-nout = length(out);
-if isDC
-    loss = zeros(nl,1);
-else
-    loss = baseMVA * abs(V(e2i(branch(:, F_BUS))) ./ tap - V(e2i(branch(:, T_BUS)))) .^ 2 ./ ...
-                (branch(:, BR_R) - 1j * branch(:, BR_X));
-end
-fchg = abs(V(e2i(branch(:, F_BUS))) ./ tap) .^ 2 .* branch(:, BR_B) * baseMVA / 2;
-tchg = abs(V(e2i(branch(:, T_BUS)))       ) .^ 2 .* branch(:, BR_B) * baseMVA / 2;
-loss(out) = zeros(nout, 1);
-fchg(out) = zeros(nout, 1);
-tchg(out) = zeros(nout, 1);
 
 %%----- print the stuff -----
 if OUT_ANY
+    ptol = 1e-4;        %% tolerance for displaying shadow prices
+    if isOPF && ~isDC && strcmp(upper(mpopt.opf.ac.solver), 'SDPOPF')
+        isSDP = 1;
+        ptol = 0.1;     %% tolerance for displaying shadow prices
+        if have_results_struct && isfield(results, 'mineigratio') && ~isempty(results.mineigratio)
+            mineigratio = results.mineigratio;
+        else
+            mineigratio = [];
+        end
+        if have_results_struct && isfield(results, 'zero_eval') && ~isempty(results.zero_eval)
+            zero_eval = results.zero_eval;
+        else
+            zero_eval = [];
+        end
+    else
+        isSDP = 0;
+    end
+
+    %% create map of external bus numbers to bus indices
+    i2e = bus(:, BUS_I);
+    e2i = sparse(max(i2e), 1);
+    e2i(i2e) = (1:size(bus, 1))';
+
+    %% sizes of things
+    nb = size(bus, 1);      %% number of buses
+    nl = size(branch, 1);   %% number of branches
+    ng = size(gen, 1);      %% number of generators
+
+    %% zero out some data to make printout consistent for DC case
+    if isDC
+        bus(:, [QD, BS])            = zeros(nb, 2);
+        gen(:, [QG, QMAX, QMIN])    = zeros(ng, 3);
+        branch(:, [BR_R, BR_B])     = zeros(nl, 2);
+    end
+
+    %% parameters
+    ties = find(bus(e2i(branch(:, F_BUS)), BUS_AREA) ~= bus(e2i(branch(:, T_BUS)), BUS_AREA));
+                            %% area inter-ties
+    xfmr = find(branch(:, TAP));                    %% indices of transformers
+    nzld = find(bus(:, PD) | bus(:, QD) & bus(:, BUS_TYPE) ~= NONE);
+    sorted_areas = sort(bus(:, BUS_AREA));
+    s_areas = sorted_areas([1; find(diff(sorted_areas))+1]);    %% area numbers
+    nzsh = find(bus(:, GS) | bus(:, BS) & bus(:, BUS_TYPE) ~= NONE);
+    allg = find( ~isload(gen) );
+    ong  = find( gen(:, GEN_STATUS) > 0 & ~isload(gen) );
+    onld = find( gen(:, GEN_STATUS) > 0 &  isload(gen) );
+    V = bus(:, VM) .* exp(sqrt(-1) * pi/180 * bus(:, VA));
+    if isDC
+        loss = zeros(nl, 1);
+        fchg = loss;
+        tchg = loss;
+    else
+        [loss, fchg, tchg] = get_losses(baseMVA, bus, branch);
+    end
+
     %% convergence & elapsed time
     if success
         if isSDP
@@ -283,8 +275,8 @@ if OUT_AREA_SUM && (success || OUT_FORCE)
         ig = find(bus(e2i(gen(:, GEN_BUS)), BUS_AREA) == a & ~isload(gen));
         igon = find(bus(e2i(gen(:, GEN_BUS)), BUS_AREA) == a & gen(:, GEN_STATUS) > 0 & ~isload(gen));
         ildon = find(bus(e2i(gen(:, GEN_BUS)), BUS_AREA) == a & gen(:, GEN_STATUS) > 0 & isload(gen));
-        inzld = find(bus(:, BUS_AREA) == a & (bus(:, PD) | bus(:, QD)));
-        inzsh = find(bus(:, BUS_AREA) == a & (bus(:, GS) | bus(:, BS)));
+        inzld = find(bus(:, BUS_AREA) == a & (bus(:, PD) | bus(:, QD)) & bus(:, BUS_TYPE) ~= NONE);
+        inzsh = find(bus(:, BUS_AREA) == a & (bus(:, GS) | bus(:, BS)) & bus(:, BUS_TYPE) ~= NONE);
         ibrch = find(bus(e2i(branch(:, F_BUS)), BUS_AREA) == a & bus(e2i(branch(:, T_BUS)), BUS_AREA) == a);
         in_tie = find(bus(e2i(branch(:, F_BUS)), BUS_AREA) == a & bus(e2i(branch(:, T_BUS)), BUS_AREA) ~= a);
         out_tie = find(bus(e2i(branch(:, F_BUS)), BUS_AREA) ~= a & bus(e2i(branch(:, T_BUS)), BUS_AREA) == a);
@@ -441,6 +433,8 @@ if OUT_BUS && (success || OUT_FORCE)
         fprintf(fd, '\n%5d%7.3f%9.3f', bus(i, [BUS_I, VM, VA]));
         if bus(i, BUS_TYPE) == REF
             fprintf(fd, '*');
+        elseif bus(i, BUS_TYPE) == NONE
+            fprintf(fd, 'x');
         else
             fprintf(fd, ' ');
         end
