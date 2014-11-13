@@ -1,10 +1,12 @@
 function t_ext2int2ext(quiet)
-%T_EXT2INT2EXT  Tests EXT2INT and INT2EXT.
+%T_EXT2INT2EXT  Tests EXT2INT, INT2EXT, and related functions.
+%   Includes tests for GET_REORDER, SET_REORDER, E2I_DATA, I2E_DATA
+%   E2I_FIELD, I2E_FIELD, EXT2INT and INT2EXT.
 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2009-2010 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2014 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
@@ -34,12 +36,149 @@ if nargin < 1
     quiet = 0;
 end
 
-t_begin(106, quiet);
+t_begin(122, quiet);
+
+mpce = loadcase('t_case_ext');
+mpci = loadcase('t_case_int');
+
+An = mpce.xbus;
+As = mpce.strbus;
+
+%%-----  get_reorder  -----
+k = [3; 7; 4; 1];
+t = 'get_reorder(A, k, 1) : numeric';
+t_is(get_reorder(An, k, 1), An(k, :), 12, t);
+
+t = 'get_reorder(A, k, 2) : numeric';
+t_is(get_reorder(An, k, 2), An(:, k), 12, t);
+
+%%-----  set_reorder  -----
+k = (2:2:10)';
+t = 'set_reorder(A, B, k, 1) : numeric';
+B = An(k, :) * -1;
+got = set_reorder(An, B, k, 1);
+ex = An;
+ex(k, :) = -ex(k, :);
+t_is(got, ex, 12, t);
+
+t = 'set_reorder(A, B, k, 2) : numeric';
+B = An(:, k) * -1;
+got = set_reorder(An, B, k, 2);
+ex = An;
+ex(:, k) = -ex(:, k);
+t_is(got, ex, 12, t);
+
+t = 'set_reorder(A, Bshort, k, 1) : numeric';
+k = (2:2:8)';
+B = An(k, 1:8) * -1;
+got = set_reorder(An, B, k, 1);
+ex = An;
+ex(k, 1:8) = -ex(k, 1:8);
+t_is(got, ex, 12, t);
+
+t = 'set_reorder(A, Bshort, k, 2) : numeric';
+B = An(1:8, k) * -1;
+got = set_reorder(An, B, k, 2);
+ex = An;
+ex(1:8, k) = -ex(1:8, k);
+t_is(got, ex, 12, t);
+
+t = 'set_reorder(A, Blong, k, 1) : numeric';
+k = (2:2:10)';
+B = An(k, :) * -1;
+B = [B B];
+got = set_reorder(An, B, k, 1);
+ex = [An zeros(size(An))];
+ex(k, :) = [-An(k, :) -An(k, :)];
+t_is(got, ex, 12, t);
+
+t = 'set_reorder(A, Blong, k, 2) : numeric';
+B = An(:, k) * -1;
+B = [B; B];
+got = set_reorder(An, B, k, 2);
+ex = [An; zeros(size(An))];
+ex(:, k) = [-An(:, k); -An(:, k)];
+t_is(got, ex, 12, t);
+
+
+%%-----  get_reorder (cell)  -----
+k = [3; 7; 4; 1];
+t = 'get_reorder(A, k, 1) : cell';
+t_is(cellfun(@str2num, get_reorder(As, k, 1)), cellfun(@str2num, As(k, :)), 12, t);
+
+t = 'get_reorder(A, k, 2) : cell';
+t_is(cellfun(@str2num, get_reorder(As, k, 2)), cellfun(@str2num, As(:, k)), 12, t);
+
+%%-----  set_reorder (cell)  -----
+k = (2:2:10)';
+t = 'set_reorder(A, B, k, 1) : cell';
+B = cellfun(@num2str, num2cell(An(k, :) * -1), 'UniformOutput', 0);
+got = set_reorder(As, B, k, 1);
+ex = As;
+ex(k, :) = cellfun(@num2str, num2cell(-cellfun(@str2num, ex(k, :))), 'UniformOutput', 0);
+t_is(cellfun(@str2num, got), cellfun(@str2num, ex), 12, t);
+
+t = 'set_reorder(A, B, k, 2) : cell';
+B = cellfun(@num2str, num2cell(An(:, k) * -1), 'UniformOutput', 0);
+got = set_reorder(As, B, k, 2);
+ex = As;
+ex(:, k) = cellfun(@num2str, num2cell(-cellfun(@str2num, ex(:, k))), 'UniformOutput', 0);
+t_is(cellfun(@str2num, got), cellfun(@str2num, ex), 12, t);
+
+t = 'set_reorder(A, Bshort, k, 1) : cell';
+k = (2:2:8)';
+B = cellfun(@num2str, num2cell(An(k, 1:8) * -1), 'UniformOutput', 0);
+got = set_reorder(As, B, k, 1);
+ex = As;
+ex(k, 1:8) = cellfun(@num2str, num2cell(-cellfun(@str2num, ex(k, 1:8))), 'UniformOutput', 0);
+t_is(cellfun(@str2num, got), cellfun(@str2num, ex), 12, t);
+
+t = 'set_reorder(A, Bshort, k, 2) : cell';
+B = cellfun(@num2str, num2cell(An(1:8, k) * -1), 'UniformOutput', 0);
+got = set_reorder(As, B, k, 2);
+ex = As;
+ex(1:8, k) = cellfun(@num2str, num2cell(-cellfun(@str2num, ex(1:8, k))), 'UniformOutput', 0);
+t_is(cellfun(@str2num, got), cellfun(@str2num, ex), 12, t);
+
+t = 'set_reorder(A, Blong, k, 1) : cell';
+k = (2:2:10)';
+B = cellfun(@num2str, num2cell(An(k, :) * -1), 'UniformOutput', 0);
+B = [B B];
+got = set_reorder(As, B, k, 1);
+ex = [As cell(size(As))];
+ex(k, :) = cellfun(@num2str, num2cell([-An(k, :) -An(k, :)]), 'UniformOutput', 0);
+for i = 1:size(got, 1)      %% replace [] with '-999' to make str2num happy
+    for j = 1:size(got, 2)
+        if isempty(got{i, j})
+            got{i, j} = '-999';
+        end
+        if isempty(ex{i, j})
+            ex{i, j} = '-999';
+        end
+    end
+end
+t_is(cellfun(@str2num, got), cellfun(@str2num, ex), 12, t);
+
+t = 'set_reorder(A, Blong, k, 2) : cell';
+B = cellfun(@num2str, num2cell(An(:, k) * -1), 'UniformOutput', 0);
+B = [B; B];
+got = set_reorder(As, B, k, 2);
+ex = [As; cell(size(As))];
+ex(:, k) = cellfun(@num2str, num2cell([-An(:, k); -An(:, k)]), 'UniformOutput', 0);
+for i = 1:size(got, 1)      %% replace [] with '-999' to make str2num happy
+    for j = 1:size(got, 2)
+        if isempty(got{i, j})
+            got{i, j} = '-999';
+        end
+        if isempty(ex{i, j})
+            ex{i, j} = '-999';
+        end
+    end
+end
+t_is(cellfun(@str2num, got), cellfun(@str2num, ex), 12, t);
 
 %%-----  mpc = ext2int/int2ext(mpc)  -----
 t = 'mpc = ext2int(mpc) : ';
-mpce = loadcase('t_case_ext');
-mpci = loadcase('t_case_int');
 mpc = ext2int(mpce);
 t_is(mpc.bus, mpci.bus, 12, [t 'bus']);
 t_is(mpc.branch, mpci.branch, 12, [t 'branch']);

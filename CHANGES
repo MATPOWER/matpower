@@ -15,6 +15,11 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.0b1
 -------------------
 
+11/13/14
+    - Added capability for set_reorder() to automatically pad matrix
+      or cell array before assignment of matrix or cell array with
+      larger size in some dimensions. Added tests to t_ext2int2ext().
+
 11/12/14
     - Loads at isolated buses are no longer included in results from
       total_load().
