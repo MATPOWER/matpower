@@ -78,18 +78,18 @@ if isstruct(i2e)
             if isfield(mpc, 'userfcn')
                 mpc = run_userfcn(mpc.userfcn, 'int2ext', mpc);
             end
-
-            %% save data matrices with internal ordering & restore originals
-            o.int.bus    = mpc.bus;
-            o.int.branch = mpc.branch;
-            o.int.gen    = mpc.gen;
-            mpc.bus     = o.ext.bus;
-            mpc.branch  = o.ext.branch;
-            mpc.gen     = o.ext.gen;
+            
+            %% convert back "extra" fields
             if isfield(mpc, 'gencost')
-                o.int.gencost = mpc.gencost;
-                mpc.gencost = o.ext.gencost;
+                ordering = {'gen'};         %% Pg cost only
+                if size(mpc.gencost, 1) == 2*size(mpc.gen, 1)
+                    ordering{2} = 'gen';    %% include Qg cost
+                end
+                mpc = i2e_field(mpc, 'gencost', ordering);
             end
+            %% assume A and N are "read-only"
+            %% (otherwise need to convert back, using i2e_field() which
+            %% requires knowing if they are sized for AC or DC)
             if isfield(mpc, 'A')
                 o.int.A = mpc.A;
                 mpc.A = o.ext.A;
@@ -98,6 +98,14 @@ if isstruct(i2e)
                 o.int.N = mpc.N;
                 mpc.N = o.ext.N;
             end
+
+            %% save data matrices with internal ordering & restore originals
+            o.int.bus    = mpc.bus;
+            o.int.branch = mpc.branch;
+            o.int.gen    = mpc.gen;
+            mpc.bus     = o.ext.bus;
+            mpc.branch  = o.ext.branch;
+            mpc.gen     = o.ext.gen;
 
             %% zero pad data matrices on right if necessary
             nci = size(o.int.bus, 2);
@@ -115,26 +123,11 @@ if isstruct(i2e)
             if nc < nci
                 mpc.gen = [mpc.gen zeros(nr, nci-nc)];
             end
-            if isfield(mpc, 'gencost')
-                nci = size(o.int.gencost, 2);
-                [nr, nc] = size(mpc.gencost);
-                if nc < nci
-                    mpc.gencost = [mpc.gencost zeros(nr, nci-nc)];
-                end
-            end
 
-            %% update data (in bus, branch, gen and gencost only)
+            %% update data (in bus, branch, and gen only)
             mpc.bus(o.bus.status.on, :)       = o.int.bus;
             mpc.branch(o.branch.status.on, :) = o.int.branch;
             mpc.gen(o.gen.status.on, :)       = o.int.gen(o.gen.i2e, :);
-            if isfield(mpc, 'gencost')
-                mpc.gencost(o.gen.status.on, :)   = o.int.gencost(o.gen.i2e, :);
-                nge = size(mpc.gen, 1);
-                if size(mpc.gencost, 1) == 2*nge    %% have Qg cost
-                    ngi = size(o.int.gen, 1);
-                    mpc.gencost(nge+o.gen.status.on, :)   = o.int.gencost(ngi+o.gen.i2e, :);
-                end
-            end
 
             %% revert to original bus numbers
             mpc.bus(o.bus.status.on, BUS_I) = ...
