@@ -15,7 +15,9 @@ function [baseMVA, bus, gen, branch, areas, gencost, info] = loadcase(casefile)
 %   no extension, then LOADCASE looks for a MAT-file first, then for an
 %   M-file.  If the file does not exist or doesn't define all required
 %   matrices, the routine aborts with an appropriate error message.
-%   Alternatively, it can be called with the syntax:
+%
+%   Alternatively, it can be called with the following syntax, though this
+%   option is now deprecated and will be removed in a future version:
 %
 %   [BASEMVA, BUS, GEN, BRANCH, AREAS, GENCOST, INFO] = LOADCASE(CASEFILE)
 %   [MPC, INFO] = LOADCASE(CASEFILE)
