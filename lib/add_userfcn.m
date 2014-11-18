@@ -77,7 +77,7 @@ function mpc = add_userfcn(mpc, stage, fcn, args, allow_multiple)
 %   E.g. mpc = userfcn_reserves_printpf(mpc, fd, prefix, args)
 %
 %   See also RUN_USERFCN, REMOVE_USERFCN, TOGGLE_RESERVES, TOGGLE_IFLIMS,
-%   RUNOPF_W_RES.
+%   TOGGLE_DCLINE, TOGGLE_SOFTLIMS, and RUNOPF_W_RES.
 
 %   MATPOWER
 %   $Id$
