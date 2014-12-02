@@ -264,9 +264,17 @@ function results = userfcn_softlims_printpf(results, fd, mpopt, args)
 %%-----  print results  -----
 ptol = 1e-6;        %% tolerance for displaying shadow prices
 isOPF           = isfield(results, 'f') && ~isempty(results.f);
+SUPPRESS        = mpopt.out.suppress_detail;
+if SUPPRESS == -1
+    if size(results.bus, 1) > 500
+        SUPPRESS = 1;
+    else
+        SUPPRESS = 0;
+    end
+end
 OUT_ALL         = mpopt.out.all;
 OUT_FORCE       = mpopt.out.force;
-OUT_BRANCH      = OUT_ALL == 1 || (OUT_ALL == -1 && mpopt.out.branch);
+OUT_BRANCH      = OUT_ALL == 1 || (OUT_ALL == -1 && ~SUPPRESS && mpopt.out.branch);
 
 if isOPF && OUT_BRANCH && (results.success || OUT_FORCE)
     s = softlims_defaults(results.softlims, results.branch);   %% get defaults

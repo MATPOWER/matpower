@@ -15,6 +15,12 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.0b1
 -------------------
 
+12/2/14
+    - Added new option 'out.suppress_detail' to quickly suppress all
+      pretty-printed output except the system summary. By default,
+      detailed output is automatically suppressed for systems larger
+      than 500 buses.
+
 11/18/14
     - Updated case300.m with new conversion from original CDF file.
       No longer uses 9900 MVA as proxy for unlimited line capacity.

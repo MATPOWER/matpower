@@ -313,7 +313,20 @@ function results = userfcn_reserves_printpf(results, fd, mpopt, args)
 %%-----  print results  -----
 r = results.reserves;
 nrz = size(r.req, 1);
-if mpopt.out.all ~= 0
+isOPF           = isfield(results, 'f') && ~isempty(results.f);
+SUPPRESS        = mpopt.out.suppress_detail;
+if SUPPRESS == -1
+    if size(results.bus, 1) > 500
+        SUPPRESS = 1;
+    else
+        SUPPRESS = 0;
+    end
+end
+OUT_ALL         = mpopt.out.all;
+OUT_FORCE       = mpopt.out.force;
+OUT_RES         = OUT_ALL == 1 || (OUT_ALL == -1 && ~SUPPRESS && (mpopt.out.bus || mpopt.out.gen));
+
+if isOPF && OUT_RES && (results.success || OUT_FORCE)
     fprintf(fd, '\n================================================================================');
     fprintf(fd, '\n|     Reserves                                                                 |');
     fprintf(fd, '\n================================================================================');

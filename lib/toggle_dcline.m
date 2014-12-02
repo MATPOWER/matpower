@@ -423,17 +423,25 @@ function results = userfcn_dcline_printpf(results, fd, mpopt, args)
 c = idx_dcline;
 
 %% options
+SUPPRESS        = mpopt.out.suppress_detail;
+if SUPPRESS == -1
+    if size(bus, 1) > 500
+        SUPPRESS = 1;
+    else
+        SUPPRESS = 0;
+    end
+end
 OUT_ALL = mpopt.out.all;
-OUT_BRANCH      = OUT_ALL == 1 || (OUT_ALL == -1 && mpopt.out.branch);
+OUT_BRANCH      = OUT_ALL == 1 || (OUT_ALL == -1 && ~SUPPRESS && mpopt.out.branch);
 if OUT_ALL == -1
-    OUT_ALL_LIM = mpopt.out.lim.all;
+    OUT_ALL_LIM = ~SUPPRESS * mpopt.out.lim.all;
 elseif OUT_ALL == 1
     OUT_ALL_LIM = 2;
 else
     OUT_ALL_LIM = 0;
 end
 if OUT_ALL_LIM == -1
-    OUT_LINE_LIM    = mpopt.out.lim.line;
+    OUT_LINE_LIM    = ~SUPPRESS * mpopt.out.lim.line;
 else
     OUT_LINE_LIM    = OUT_ALL_LIM;
 end

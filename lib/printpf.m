@@ -109,19 +109,28 @@ isOPF = ~isempty(f);    %% FALSE -> only simple PF data, TRUE -> OPF data
 
 %% options
 isDC            = strcmp(upper(mpopt.model), 'DC');
+
+SUPPRESS        = mpopt.out.suppress_detail;
+if SUPPRESS == -1
+    if size(bus, 1) > 500
+        SUPPRESS = 1;
+    else
+        SUPPRESS = 0;
+    end
+end
 OUT_ALL         = mpopt.out.all;
 OUT_FORCE       = mpopt.out.force;
 OUT_ANY         = OUT_ALL == 1;     %% set to true if any pretty output is to be generated
 OUT_SYS_SUM     = OUT_ALL == 1 || (OUT_ALL == -1 && mpopt.out.sys_sum);
-OUT_AREA_SUM    = OUT_ALL == 1 || (OUT_ALL == -1 && mpopt.out.area_sum);
-OUT_BUS         = OUT_ALL == 1 || (OUT_ALL == -1 && mpopt.out.bus);
-OUT_BRANCH      = OUT_ALL == 1 || (OUT_ALL == -1 && mpopt.out.branch);
-OUT_GEN         = OUT_ALL == 1 || (OUT_ALL == -1 && mpopt.out.gen);
+OUT_AREA_SUM    = OUT_ALL == 1 || (OUT_ALL == -1 && ~SUPPRESS && mpopt.out.area_sum);
+OUT_BUS         = OUT_ALL == 1 || (OUT_ALL == -1 && ~SUPPRESS && mpopt.out.bus);
+OUT_BRANCH      = OUT_ALL == 1 || (OUT_ALL == -1 && ~SUPPRESS && mpopt.out.branch);
+OUT_GEN         = OUT_ALL == 1 || (OUT_ALL == -1 && ~SUPPRESS && mpopt.out.gen);
 OUT_ANY         = OUT_ANY || (OUT_ALL == -1 && ...
                     (OUT_SYS_SUM || OUT_AREA_SUM || OUT_BUS || ...
                     OUT_BRANCH || OUT_GEN));
 if OUT_ALL == -1
-    OUT_ALL_LIM = mpopt.out.lim.all;
+    OUT_ALL_LIM = ~SUPPRESS * mpopt.out.lim.all;
 elseif OUT_ALL == 1
     OUT_ALL_LIM = 2;
 else
@@ -129,10 +138,10 @@ else
 end
 OUT_ANY         = OUT_ANY || OUT_ALL_LIM >= 1;
 if OUT_ALL_LIM == -1
-    OUT_V_LIM       = mpopt.out.lim.v;
-    OUT_LINE_LIM    = mpopt.out.lim.line;
-    OUT_PG_LIM      = mpopt.out.lim.pg;
-    OUT_QG_LIM      = mpopt.out.lim.qg;
+    OUT_V_LIM       = ~SUPPRESS * mpopt.out.lim.v;
+    OUT_LINE_LIM    = ~SUPPRESS * mpopt.out.lim.line;
+    OUT_PG_LIM      = ~SUPPRESS * mpopt.out.lim.pg;
+    OUT_QG_LIM      = ~SUPPRESS * mpopt.out.lim.qg;
 else
     OUT_V_LIM       = OUT_ALL_LIM;
     OUT_LINE_LIM    = OUT_ALL_LIM;
