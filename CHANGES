@@ -20,6 +20,9 @@ Changes since 5.0b1
       pretty-printed output except the system summary. By default,
       detailed output is automatically suppressed for systems larger
       than 500 buses.
+    - DC OPF formulation in opf_setup() now uses a single set of
+      doubly-bounded constraints for flow limits, instead of two
+      sets of upper bounded constraints.
 
 11/18/14
     - Updated case300.m with new conversion from original CDF file.

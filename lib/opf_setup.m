@@ -230,13 +230,7 @@ if dc
   om = add_vars(om, 'Va', nb, Va, Val, Vau);
   om = add_vars(om, 'Pg', ng, Pg, Pmin, Pmax);
   om = add_constraints(om, 'Pmis', Amis, bmis, bmis, {'Va', 'Pg'}); %% nb
-  om = add_constraints(om, 'Pf',  Bf(il,:), [], upf, {'Va'});       %% nl2
-  om = add_constraints(om, 'Pt', -Bf(il,:), [], upt, {'Va'});       %% nl2
-
-%% could replace above two lines by ...
-% om = add_constraints(om, 'Pf',  Bf(il,:), -upt, upf, {'Va'});     %% nl2
-%% ... would need to update extraction of MU_SF & MU_ST
-  
+  om = add_constraints(om, 'Pf',  Bf(il,:), -upt, upf, {'Va'});     %% nl2
   om = add_constraints(om, 'ang', Aang, lang, uang, {'Va'});        %% nang
 else
   om = userdata(om, 'Apqdata', Apqdata);
