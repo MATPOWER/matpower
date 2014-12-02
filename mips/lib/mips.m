@@ -53,7 +53,7 @@ function [x, f, eflag, output, lambda] = mips(f_fcn, x0, A, l, u, xmin, xmax, gh
 %           costtol (1e-6) - termination tolerance for cost condition
 %           max_it (150) - maximum number of iterations
 %           step_control (0) - set to 1 to enable step-size control
-%           max_red (20) - maximum number of step-size reductions if
+%           sc.red_it (20) - maximum number of step-size reductions if
 %               step-control is on
 %           cost_mult (1) - cost multiplier used to scale the objective
 %               function for improved conditioning. Note: This value is
@@ -271,8 +271,8 @@ end
 if ~isfield(opt, 'max_it') || isempty(opt.max_it)
     opt.max_it = 150;
 end
-if ~isfield(opt, 'max_red') || isempty(opt.max_red)
-    opt.max_red = 20;
+if ~isfield(opt, 'sc') || ~isfield(opt.sc, 'red_it') || isempty(opt.sc.red_it)
+    opt.sc.red_it = 20;
 end
 if ~isfield(opt, 'step_control') || isempty(opt.step_control)
     opt.step_control = 0;
@@ -283,6 +283,31 @@ end
 if ~isfield(opt, 'verbose') || isempty(opt.verbose)
     opt.verbose = 0;
 end
+%% algorithm constants
+if ~isfield(opt, 'xi') || isempty(opt.xi)
+    opt.xi = 0.99995;           %% OPT_IPM_PHI
+end
+if ~isfield(opt, 'sigma') || isempty(opt.sigma)
+    opt.sigma = 0.1;            %% OPT_IPM_SIGMA
+end
+if ~isfield(opt, 'z0') || isempty(opt.z0)
+    opt.z0 = 1;                 %% OPT_IPM_INIT_SLACK
+end
+if ~isfield(opt, 'alpha_min') || isempty(opt.alpha_min)
+    opt.alpha_min = 1e-8;       %% OPT_AP_AD_MIN
+end
+if ~isfield(opt, 'rho_min') || isempty(opt.rho_min)
+    opt.rho_min = 0.95;         %% OPT_IPM_QUAD_LOWTHRESH
+end
+if ~isfield(opt, 'rho_max') || isempty(opt.rho_max)
+    opt.rho_max = 1.05;         %% OPT_IPM_QUAD_HIGHTHRESH
+end
+if ~isfield(opt, 'mu_threshold') || isempty(opt.mu_threshold)
+    opt.mu_threshold = 1e-5;    %% SCOPF_MULTIPLIERS_FILTER_THRESH
+end
+if ~isfield(opt, 'max_stepsize') || isempty(opt.max_stepsize)
+    opt.max_stepsize = 1e10;
+end
 
 %% initialize history
 hist(opt.max_it+1) = struct('feascond', 0, 'gradcond', 0, 'compcond', 0, ...
@@ -291,14 +316,15 @@ hist(opt.max_it+1) = struct('feascond', 0, 'gradcond', 0, 'compcond', 0, ...
 
 %%-----  set up problem  -----
 %% constants
-xi = 0.99995;           %% OPT_IPM_PHI
-sigma = 0.1;            %% OPT_IPM_SIGMA
-z0 = 1;                 %% OPT_IPM_INIT_SLACK
-alpha_min = 1e-8;       %% OPT_AP_AD_MIN
-rho_min = 0.95;         %% OPT_IPM_QUAD_LOWTHRESH
-rho_max = 1.05;         %% OPT_IPM_QUAD_HIGHTHRESH
-mu_threshold = 1e-5;    %% SCOPF_MULTIPLIERS_FILTER_THRESH
-max_stepsize = 1e10;
+[xi, sigma, z0, alpha_min, rho_min, rho_max, mu_threshold, max_stepsize] = ...
+    deal(opt.xi, opt.sigma, opt.z0, opt.alpha_min, ...
+        opt.rho_min, opt.rho_max, opt.mu_threshold, opt.max_stepsize);
+if xi >= 1 || xi < 0.5
+    error('mips: opt.xi (%g) must be a number slightly less than 1', opt.xi);
+end
+if sigma > 1 || sigma <= 0
+    error('mips: opt.sigma (%g) must be a number between 0 and 1', opt.sigma);
+end
 
 %% initialize
 i = 0;                      %% iteration counter
@@ -483,7 +509,7 @@ while (~converged && i < opt.max_it)
     end
     if sc
         alpha = 1;
-        for j = 1:opt.max_red
+        for j = 1:opt.sc.red_it
             dx1 = alpha * dx;
             x1 = x + dx1;
             f1 = f_fcn(x1);                 %% cost

@@ -38,7 +38,7 @@ function [x, f, eflag, output, lambda] = qps_mips(H, c, A, l, u, xmin, xmax, x0,
 %           costtol (1e-6) - termination tolerance for cost condition
 %           max_it (150) - maximum number of iterations
 %           step_control (0) - set to 1 to enable step-size control
-%           max_red (20) - maximum number of step-size reductions if
+%           sc.red_it (20) - maximum number of step-size reductions if
 %               step-control is on
 %           cost_mult (1) - cost multiplier used to scale the objective
 %               function for improved conditioning.

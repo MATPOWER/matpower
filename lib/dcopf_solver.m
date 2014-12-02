@@ -197,18 +197,14 @@ switch alg
         end
 
         %% set up options
-        feastol = mpopt.mips.feastol;
-        if feastol == 0
-            feastol = mpopt.opf.violation;  %% = MPOPT.opf.violation by default
+        opt.mips_opt = mpopt.mips;
+        opt.mips_opt.verbose = mpopt.verbose;
+        if opt.mips_opt.feastol == 0
+            opt.mips_opt.feastol = mpopt.opf.violation;  %% = MPOPT.opf.violation by default
         end
-        opt.mips_opt = struct(  'feastol', feastol, ...
-                                'gradtol', mpopt.mips.gradtol, ...
-                                'comptol', mpopt.mips.comptol, ...
-                                'costtol', mpopt.mips.costtol, ...
-                                'max_it', mpopt.mips.max_it, ...
-                                'step_control', mpopt.mips.step_control, ...
-                                'max_red', mpopt.mips.sc.red_it, ...
-                                'cost_mult', 1  );
+        if ~isfield(opt.mips_opt, 'cost_mult') || isempty(opt.mips_opt.cost_mult)
+            opt.mips_opt.cost_mult = 1;
+        end
     case 'CPLEX'
         opt.cplex_opt = cplex_options([], mpopt);
     case 'GLPK'

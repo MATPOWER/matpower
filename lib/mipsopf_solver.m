@@ -77,24 +77,14 @@ function [results, success, raw] = mipsopf_solver(om, mpopt)
 [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 
 %% options
-feastol = mpopt.mips.feastol;
-gradtol = mpopt.mips.gradtol;
-comptol = mpopt.mips.comptol;
-costtol = mpopt.mips.costtol;
-max_it  = mpopt.mips.max_it;
-max_red = mpopt.mips.sc.red_it;
-if feastol == 0
-    feastol = mpopt.opf.violation;  %% = MPOPT.opf.violation by default
+opt = mpopt.mips;
+opt.verbose = mpopt.verbose;
+if opt.feastol == 0
+    opt.feastol = mpopt.opf.violation;  %% = MPOPT.opf.violation by default
 end
-opt = struct(   'feastol', feastol, ...
-                'gradtol', gradtol, ...
-                'comptol', comptol, ...
-                'costtol', costtol, ...
-                'max_it', max_it, ...
-                'max_red', max_red, ...
-                'step_control', mpopt.mips.step_control, ...
-                'cost_mult', 1e-4, ...
-                'verbose', mpopt.verbose  );
+if ~isfield(opt, 'cost_mult') || isempty(opt.cost_mult)
+    opt.cost_mult = 1e-4;
+end
 
 %% unpack data
 mpc = get_mpc(om);

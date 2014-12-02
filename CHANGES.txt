@@ -23,6 +23,13 @@ Changes since 5.0b1
     - DC OPF formulation in opf_setup() now uses a single set of
       doubly-bounded constraints for flow limits, instead of two
       sets of upper bounded constraints.
+    - Updated to MIPS 1.1, which includes additional user-settable
+      options: xi, sigma, z0, alpha_min, rho_min, rho_max, mu_threshold
+      and max_stepsize.
+    - INCOMPATIBLE CHANGE: The name of the option to mips() to specify
+      the maximum number of step-size reductions when step_control is on
+      was changed from 'max_red' to 'sc.red_it' for consistency with
+      other MATPOWER options.
 
 11/18/14
     - Updated case300.m with new conversion from original CDF file.
