@@ -128,7 +128,6 @@ end
 %% set up initial variables and bounds
 Va   = bus(:, VA) * (pi/180);
 Vm   = bus(:, VM);
-%Vm(gen(:, GEN_BUS)) = gen(:, VG);   %% buses with gens, init Vm from gen data
 Pg   = gen(:, PG) / baseMVA;
 Qg   = gen(:, QG) / baseMVA;
 Pmin = gen(:, PMIN) / baseMVA;
