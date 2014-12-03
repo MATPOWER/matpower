@@ -18,7 +18,7 @@ function opt = mpoption_info_quadprog(selector)
 %   See also MPOPTION.
 
 %   MATPOWER
-%   $Id: mpoption_info_quadprog.m 2276 2014-01-17 18:41:58Z ray $
+%   $Id$
 %   by Ray Zimmerman, PSERC Cornell
 %   Copyright (c) 2014 by Power System Engineering Research Center (PSERC)
 %
