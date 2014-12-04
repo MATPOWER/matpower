@@ -211,6 +211,21 @@ function opt = mpoption(varargin)
 %       mips.step_control       0           enable step-size cntrl [ 0 or 1 ]
 %       mips.sc.red_it          20          maximum number of reductions per
 %                                           iteration with step control
+%       mips.xi                 0.99995     constant used in alpha updates*
+%       mips.sigma              0.1         centering parameter*
+%       mips.z0                 1           used to initialize slack variables*
+%       mips.alpha_min          1e-8        returns "Numerically Failed" if
+%                                           either alpha parameter becomes
+%                                           smaller than this value*
+%       mips.rho_min            0.95        lower bound on rho_t*
+%       mips.rho_max            1.05        upper bound on rho_t*
+%       mips.mu_threshold       1e-5        KT multipliers smaller than this
+%                                           value for non-binding constraints
+%                                           are forced to zero
+%       mips.max_stepsize       1e10        returns "Numerically Failed" if the
+%                                           2-norm of the reduced Newton step
+%                                           exceeds this value*
+%           * See the corresponding Appendix in the manual for details.
 %
 %   CPLEX:
 %       cplex.lpmethod          0           solution algorithm for LP problems

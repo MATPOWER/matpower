@@ -61,6 +61,18 @@ function [x, f, eflag, output, lambda] = mips(f_fcn, x0, A, l, u, xmin, xmax, gh
 %               function so that it can appropriately scale the
 %               objective function term in the Hessian of the
 %               Lagrangian.
+%           xi (0.99995) - constant used in alpha updates*
+%           sigma (0.1) - centering parameter*
+%           z0 (1) - used to initialize slack variables*
+%           alpha_min (1e-8) - returns EXITFLAG = -1 if either alpha
+%               parameter becomes smaller than this value*
+%           rho_min (0.95) - lower bound on rho_t*
+%           rho_max (1.05) - upper bound on rho_t*
+%           mu_threshold (1e-5) - KT multipliers smaller than this value
+%               for non-binding constraints are forced to zero
+%           max_stepsize (1e10) - returns EXITFLAG = -1 if the 2-norm of
+%               the reduced Newton step exceeds this value*
+%               * see the corresponding Appendix in the manual for details
 %       PROBLEM : The inputs can alternatively be supplied in a single
 %           PROBLEM struct with fields corresponding to the input arguments
 %           described above: f_fcn, x0, A, l, u, xmin, xmax,
@@ -288,7 +300,7 @@ if ~isfield(opt, 'xi') || isempty(opt.xi)
     opt.xi = 0.99995;           %% OPT_IPM_PHI
 end
 if ~isfield(opt, 'sigma') || isempty(opt.sigma)
-    opt.sigma = 0.1;            %% OPT_IPM_SIGMA
+    opt.sigma = 0.1;            %% OPT_IPM_SIGMA, centering parameter
 end
 if ~isfield(opt, 'z0') || isempty(opt.z0)
     opt.z0 = 1;                 %% OPT_IPM_INIT_SLACK
