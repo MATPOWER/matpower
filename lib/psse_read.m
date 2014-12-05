@@ -64,6 +64,11 @@ end_of_section  = @(s)~isempty(regexp(s, '^(Q|\s*0)[\s]*(/.*)?$', 'once'));
 q_record        = @(s)~isempty(regexp(s, '^Q', 'once'));
 section_name    = @(s)regexp(s, '/\s*END OF (.*)\s', 'tokens');
 
+%% check for regexp split support
+if ~have_fcn('regexp_split')
+    error('psse_read: Sorry, but PSSE2MPC requires support for the ''split'' argument to regexp(), so it does not work on versions of Octave prior to 3.8.');
+end
+
 %% read in the file, split on newlines
 if verbose
     spacers = repmat('.', 1, 56-length(rawfile_name));
@@ -73,16 +78,7 @@ str = fileread(rawfile_name);
 if verbose
     fprintf(' done.\nSplitting into individual lines ...');
 end
-try
-    records = regexp(str, '\n|\r\n|\r', 'split');
-catch
-    me = lasterr;
-    if have_fcn('octave') && strcmp(me, 'regexp: unrecognized option')
-        error('psse_read: Sorry, but PSSE2MPC does not work on versions of Octave prior to 3.8.');
-    else
-        rethrow(me);
-    end
-end
+records = regexp(str, '\n|\r\n|\r', 'split');
 if verbose
     str = sprintf('%d lines read', length(records));
     spacers = repmat('.', 1, 32-length(str));

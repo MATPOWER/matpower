@@ -26,6 +26,8 @@ Changes since 5.0b1
     - Added 'catchme' tag to have_fcn() to detect older versions
       of Matlab and Octave that do not support the 'catch me'
       syntax in try/catch constructs.
+    - Added 'regexp_split' tag to have_fcn() to detect older versions
+      of Octave that do not support the 'split' argument to regexp().
 
 12/2/14
     - Added new option 'out.suppress_detail' to quickly suppress all

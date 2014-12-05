@@ -25,6 +25,7 @@ function TorF = have_fcn(tag)
 %       quadprog_ls - QUADPROG with large-scale interior point convex solver
 %                       from Optimization Toolbox 6.x +
 %       pdipmopf    - PDIPMOPF, primal-dual interior point method OPF solver
+%       regexp_split- support for 'split' argument to regexp()
 %       scpdipmopf  - SCPDIPMOPF, step-controlled PDIPM OPF solver
 %       smartmarket - RUNMARKET and friends, for running an auction
 %       tralmopf    - TRALMOPF, trust region based augmented Langrangian
@@ -155,8 +156,8 @@ else
             else
                 TorF = 0;
             end
-        case 'glpk'
-            TorF = exist('glpk','file') == 2 && ...
+        case 'glpk'     %% must later than Octave 3.4, so check for 'catchme'
+            TorF = have_fcn('catchme') && exist('glpk','file') == 2 && ...
                 (exist('__glpk__','file') == 3 || exist('glpkcc','file') == 3);
         case 'gurobi'
             TorF = exist('gurobi', 'file') == 3;
@@ -212,6 +213,15 @@ else
                             end
                     end
                 else
+                    TorF = 0;
+                end
+            end
+        case 'regexp_split'
+            TorF = 1;
+            if have_fcn('octave')   %% only missing for Octave < 3.8
+                v = ver('Octave');
+                s = regexp(v.Version, '(\d+\.\d+)', 'match');
+                if str2num(s{1}) < 3.8
                     TorF = 0;
                 end
             end
