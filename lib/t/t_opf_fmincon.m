@@ -60,8 +60,8 @@ mpopt = mpoption('opf.violation', 1e-6, 'fmincon.tol_x', 1e-6, 'fmincon.tol_f', 
 mpopt = mpoption(mpopt, 'out.all', 0, 'verbose', verbose, 'opf.ac.solver', 'FMINCON');
 v = ver('Matlab');
 if strcmp(v.Version, '7.6') || strcmp(v.Version, '7.7') || ...
-		strcmp(v.Version, '7.8') || strcmp(v.Version, '7.9')
-	mpopt = mpoption(mpopt, 'fmincon.alg', 1);	%% use active-set method for these
+        strcmp(v.Version, '7.8') || strcmp(v.Version, '7.9')
+    mpopt = mpoption(mpopt, 'fmincon.alg', 1);  %% use active-set method for these
 end
 
 if have_fcn('fmincon')
