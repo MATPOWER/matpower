@@ -124,8 +124,8 @@ loss = baseMVA * Ysc .* Vdrop .* conj(Vdrop);
 if nargout > 1
     Vf = Cf * V;
     Vt = Ct * V;
-    fchg = baseMVA / 2 * branch(:, BR_B) .* Vf .* conj(Vf) ./ (tap .* conj(tap));
-    tchg = baseMVA / 2 * branch(:, BR_B) .* Vt .* conj(Vt);
+    fchg = real(baseMVA / 2 * branch(:, BR_B) .* Vf .* conj(Vf) ./ (tap .* conj(tap)));
+    tchg = real(baseMVA / 2 * branch(:, BR_B) .* Vt .* conj(Vt));
 %     fchg = abs(V(e2i(branch(:, F_BUS))) ./ tap) .^ 2 .* branch(:, BR_B) * baseMVA / 2;
 %     tchg = abs(V(e2i(branch(:, T_BUS)))       ) .^ 2 .* branch(:, BR_B) * baseMVA / 2;
     fchg(out) = 0;
