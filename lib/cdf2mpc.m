@@ -39,7 +39,7 @@ function [mpc, warnings] = cdf2mpc(cdf_file_name, mpc_name, verbose)
 %           with lambdas near $40/MWh. See 'help caseformat'
 %           for details on the cost curve format.
 %
-%   CDF2MATP may modify some of the data which are "infeasible" for
+%   CDF2MPC may modify some of the data which are "infeasible" for
 %   running optimal power flow. If so, warning information will be
 %   printed out on screen.
 %
