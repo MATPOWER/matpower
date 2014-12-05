@@ -10,6 +10,8 @@ function mpc = t_psse_case2
 %   WARNINGS:
 %       Skipped 1 line of zone data.
 %       Using default voltage magnitude limits: VMIN = 0.9 p.u., VMAX = 1.1 p.u.
+%
+%   See CASEFORMAT for details on the MATPOWER case file format.
 
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';

@@ -116,6 +116,8 @@ if ~isempty(mpc_name)
     for k = 1:length(warnings)
         comments{end+1} = sprintf('       %s', warnings{k});
     end
+    comments{end+1} = '';
+    comments{end+1} = sprintf('   See CASEFORMAT for details on the MATPOWER case file format.');
 
     if verbose
         spacers = repmat('.', 1, 45-length(mpc_name));

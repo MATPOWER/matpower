@@ -18,6 +18,8 @@ function mpc = t_psse_case3
 %       Skipped 2 lines of FACTS control device data.
 %       Using default voltage magnitude limits: VMIN = 0.9 p.u., VMAX = 1.1 p.u.
 %       Added buses 100001-100004 as star-points for 3-winding transformers.
+%
+%   See CASEFORMAT for details on the MATPOWER case file format.
 
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';
