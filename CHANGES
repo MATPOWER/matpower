@@ -21,7 +21,9 @@ Changes since 5.0b1
       initialize the optimization variables for the OPF, instead
       of creating its own starting point. Currently only implemented
       for Ipopt, Knitro and MIPS.
-    
+    - INCOMPATIBLE CHANGE: Renamed cdf2matp() to cdf2mpc() and modified
+      the interface to be consistent with psse2mpc().
+
 12/2/14
     - Added new option 'out.suppress_detail' to quickly suppress all
       pretty-printed output except the system summary. By default,
