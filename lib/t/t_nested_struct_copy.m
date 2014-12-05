@@ -97,14 +97,12 @@ t_ok(isequal(DS, E), t);
 
 t = 'check = 1 ==> error';
 opt = struct('check', 1);
-if have_fcn('octave')
-    %% Octave 3.4 and earlier do not support 'catch me'
+if have_fcn('catchme')
     try
         DS = nested_struct_copy(D, S, opt);
         t_ok(0, t);
-    catch
-        me = lasterr;
-        TorF = strcmp(me, 'nested_struct_copy: ''b.x'' is not a valid field name');
+    catch me
+        TorF = strcmp(me.message, 'nested_struct_copy: ''b.x'' is not a valid field name');
         t_ok(TorF, t);
         if ~TorF
             me
@@ -114,8 +112,9 @@ else
     try
         DS = nested_struct_copy(D, S, opt);
         t_ok(0, t);
-    catch me
-        TorF = strcmp(me.message, 'nested_struct_copy: ''b.x'' is not a valid field name');
+    catch
+        me = lasterr;
+        TorF = strcmp(me, 'nested_struct_copy: ''b.x'' is not a valid field name');
         t_ok(TorF, t);
         if ~TorF
             me

@@ -5,6 +5,7 @@ function TorF = have_fcn(tag)
 %
 %   Possible values for input TAG and their meanings:
 %       bpmpd       - BP, BPMPD interior point solver
+%       catchme     - support for 'catch me' syntax in try/catch constructs
 %       cplex       - CPLEX, IBM ILOG CPLEX Optimizer
 %       fmincon     - FMINCON, solver from Optimization Toolbox 2.x +
 %       fmincon_ipm - FMINCON with Interior Point solver, from Opt Tbx 4.x +
@@ -77,6 +78,24 @@ else
     switch tag
         case 'bpmpd'
             TorF = exist('bp', 'file') == 3;
+        case 'catchme'  %% not supported by Matlab <= 7.4, Octave <= 3.4
+            if have_fcn('octave')
+                v = ver('Octave');
+                s = regexp(v.Version, '(\d+\.\d+)', 'match');
+                if str2num(s{1}) <= 3.4
+                    TorF = 0;
+                else
+                    TorF = 1;
+                end
+            else
+                v = ver('Matlab');
+                s = regexp(v.Version, '(\d+\.\d+)', 'match');
+                if str2num(s{1}) <= 7.4
+                    TorF = 0;
+                else
+                    TorF = 1;
+                end
+            end
         case 'cplex'
             TorF = 0;
             if exist('cplexqp', 'file')

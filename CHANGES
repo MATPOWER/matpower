@@ -23,6 +23,9 @@ Changes since 5.0b1
       for Ipopt, Knitro and MIPS.
     - INCOMPATIBLE CHANGE: Renamed cdf2matp() to cdf2mpc() and modified
       the interface to be consistent with psse2mpc().
+    - Added 'catchme' tag to have_fcn() to detect older versions
+      of Matlab and Octave that do not support the 'catch me'
+      syntax in try/catch constructs.
 
 12/2/14
     - Added new option 'out.suppress_detail' to quickly suppress all
