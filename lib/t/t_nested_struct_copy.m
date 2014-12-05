@@ -114,7 +114,7 @@ else
         t_ok(0, t);
     catch
         me = lasterr;
-        TorF = strcmp(me, 'nested_struct_copy: ''b.x'' is not a valid field name');
+        TorF = strfind(me, 'nested_struct_copy: ''b.x'' is not a valid field name');
         t_ok(TorF, t);
         if ~TorF
             me
