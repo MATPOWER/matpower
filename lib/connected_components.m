@@ -106,7 +106,8 @@ unvisited    = find(v == 0);
 %% recurse to traverse remaining components
 if isempty(unvisited)       %% sort groups by cardinality
     l = cellfun('length', groups);
-    [~, i] = sort(l, 2, 'descend');
+    [junk, i] = sort(l, 2, 'descend');
+%     [~, i] = sort(l, 2, 'descend');
     groups = groups(i);
 else                        %% recurse
     [groups, unvisited] = connected_components(C, groups, unvisited);
