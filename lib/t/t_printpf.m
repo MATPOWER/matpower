@@ -85,15 +85,24 @@ tmpfnamedc = sprintf('%s_dcopf_%d.txt', fname, rn);
 
 r = runopf(mpc, mpopt, tmpfnameac);
 got = fileread(tmpfnameac);
+if size(got, 1) ~= 1    %% transpose if needed for Octave 3.4
+    got = got';
+end
 got = regexprep(got, 'Converged in (.*) seconds', 'Converged in 0.00 seconds');
 got = strrep(got, ' -0.00 ', '  0.00 ');
 got = strrep(got, ' -0.000 ', '  0.000 ');
-exp = fileread(fnameac);
-t_ok(strcmp(got, exp), [t 'standard AC OPF']);
+expected = fileread(fnameac);
+if size(expected, 1) ~= 1   %% transpose if needed for Octave 3.4
+    expected = expected';
+end
+t_ok(strcmp(got, expected), [t 'standard AC OPF']);
 delete(tmpfnameac);
 
 r = rundcopf(mpc, mpopt, tmpfnamedc);
 got = fileread(tmpfnamedc);
+if size(got, 1) ~= 1    %% transpose if needed for Octave 3.4
+    got = got';
+end
 got = regexprep(got, 'Converged in (.*) seconds', 'Converged in 0.00 seconds');
 got = strrep(got, ' -0.00 ', '  0.00 ');
 got = strrep(got, ' -0.000 ', '  0.000 ');
@@ -103,8 +112,11 @@ got = strrep(got, '51.66 $/MWh @ bus 17', '51.66 $/MWh @ bus 13');
 got = strrep(got, '53.05 $/MWh @ bus 18', '53.05 $/MWh @ bus 15');
 got = strrep(got, '53.05 $/MWh @ bus 19', '53.05 $/MWh @ bus 15');
 got = strrep(got, '53.05 $/MWh @ bus 20', '53.05 $/MWh @ bus 15');
-exp = fileread(fnamedc);
-t_ok(strcmp(got, exp), [t 'standard DC OPF']);
+expected = fileread(fnamedc);
+if size(expected, 1) ~= 1   %% transpose if needed for Octave 3.4
+    expected = expected';
+end
+t_ok(strcmp(got, expected), [t 'standard DC OPF']);
 delete(tmpfnamedc);
 
 if have_fcn('octave')
