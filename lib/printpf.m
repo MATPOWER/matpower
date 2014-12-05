@@ -191,10 +191,10 @@ if OUT_ANY
     ties = find(bus(e2i(branch(:, F_BUS)), BUS_AREA) ~= bus(e2i(branch(:, T_BUS)), BUS_AREA));
                             %% area inter-ties
     xfmr = find(branch(:, TAP));                    %% indices of transformers
-    nzld = find(bus(:, PD) | bus(:, QD) & bus(:, BUS_TYPE) ~= NONE);
+    nzld = find((bus(:, PD) | bus(:, QD)) & bus(:, BUS_TYPE) ~= NONE);
     sorted_areas = sort(bus(:, BUS_AREA));
     s_areas = sorted_areas([1; find(diff(sorted_areas))+1]);    %% area numbers
-    nzsh = find(bus(:, GS) | bus(:, BS) & bus(:, BUS_TYPE) ~= NONE);
+    nzsh = find((bus(:, GS) | bus(:, BS)) & bus(:, BUS_TYPE) ~= NONE);
     allg = find( ~isload(gen) );
     ong  = find( gen(:, GEN_STATUS) > 0 & ~isload(gen) );
     onld = find( gen(:, GEN_STATUS) > 0 &  isload(gen) );
