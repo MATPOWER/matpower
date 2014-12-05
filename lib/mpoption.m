@@ -497,6 +497,9 @@ elseif nargin - k > 0 && mod(nargin-k, 2)   %% even number of remaining args
                 c = strsplit(name, '.');
             else
                 [c, matches] = regexp(name, '\.', 'split', 'match');
+                if isempty(c) && ~isempty(name) %% workaround for bug in Matlab 7.3
+                    c{1} = name;
+                end
             end
             s = struct();
             for i = 1:length(c)
