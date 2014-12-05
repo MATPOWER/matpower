@@ -91,7 +91,9 @@ end
 got = regexprep(got, 'Converged in (.*) seconds', 'Converged in 0.00 seconds');
 got = strrep(got, ' -0.00 ', '  0.00 ');
 got = strrep(got, ' -0.000 ', '  0.000 ');
+got = strrep(got, char([13 10]), char(10));             %% Win to Unix EOL chars
 expected = fileread(fnameac);
+expected = strrep(expected, char([13 10]), char(10));   %% Win to Unix EOL chars
 if size(expected, 1) ~= 1   %% transpose if needed for Octave 3.4
     expected = expected';
 end
@@ -112,7 +114,9 @@ got = strrep(got, '51.66 $/MWh @ bus 17', '51.66 $/MWh @ bus 13');
 got = strrep(got, '53.05 $/MWh @ bus 18', '53.05 $/MWh @ bus 15');
 got = strrep(got, '53.05 $/MWh @ bus 19', '53.05 $/MWh @ bus 15');
 got = strrep(got, '53.05 $/MWh @ bus 20', '53.05 $/MWh @ bus 15');
+got = strrep(got, char([13 10]), char(10));             %% Win to Unix EOL chars
 expected = fileread(fnamedc);
+expected = strrep(expected, char([13 10]), char(10));   %% Win to Unix EOL chars
 if size(expected, 1) ~= 1   %% transpose if needed for Octave 3.4
     expected = expected';
 end
