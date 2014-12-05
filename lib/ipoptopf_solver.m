@@ -98,23 +98,25 @@ ny = getN(om, 'var', 'y');  %% number of piece-wise linear costs
 [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
 
 %% try to select an interior initial point
-ll = xmin; uu = xmax;
-ll(xmin == -Inf) = -1e10;   %% replace Inf with numerical proxies
-uu(xmax ==  Inf) =  1e10;
-x0 = (ll + uu) / 2;         %% set x0 mid-way between bounds
-k = find(xmin == -Inf & xmax < Inf);    %% if only bounded above
-x0(k) = xmax(k) - 1;                    %% set just below upper bound
-k = find(xmin > -Inf & xmax == Inf);    %% if only bounded below
-x0(k) = xmin(k) + 1;                    %% set just above lower bound
-Varefs = bus(bus(:, BUS_TYPE) == REF, VA) * (pi/180);
-x0(vv.i1.Va:vv.iN.Va) = Varefs(1);  %% angles set to first reference angle
-if ny > 0
-    ipwl = find(gencost(:, MODEL) == PW_LINEAR);
-%     PQ = [gen(:, PMAX); gen(:, QMAX)];
-%     c = totcost(gencost(ipwl, :), PQ(ipwl));
-    c = gencost(sub2ind(size(gencost), ipwl, NCOST+2*gencost(ipwl, NCOST)));    %% largest y-value in CCV data
-    x0(vv.i1.y:vv.iN.y) = max(c) + 0.1 * abs(max(c));
-%     x0(vv.i1.y:vv.iN.y) = c + 0.1 * abs(c);
+if mpopt.opf.init_from_mpc ~= 1
+    ll = xmin; uu = xmax;
+    ll(xmin == -Inf) = -1e10;   %% replace Inf with numerical proxies
+    uu(xmax ==  Inf) =  1e10;
+    x0 = (ll + uu) / 2;         %% set x0 mid-way between bounds
+    k = find(xmin == -Inf & xmax < Inf);    %% if only bounded above
+    x0(k) = xmax(k) - 1;                    %% set just below upper bound
+    k = find(xmin > -Inf & xmax == Inf);    %% if only bounded below
+    x0(k) = xmin(k) + 1;                    %% set just above lower bound
+    Varefs = bus(bus(:, BUS_TYPE) == REF, VA) * (pi/180);
+    x0(vv.i1.Va:vv.iN.Va) = Varefs(1);  %% angles set to first reference angle
+    if ny > 0
+        ipwl = find(gencost(:, MODEL) == PW_LINEAR);
+    %     PQ = [gen(:, PMAX); gen(:, QMAX)];
+    %     c = totcost(gencost(ipwl, :), PQ(ipwl));
+        c = gencost(sub2ind(size(gencost), ipwl, NCOST+2*gencost(ipwl, NCOST)));    %% largest y-value in CCV data
+        x0(vv.i1.y:vv.iN.y) = max(c) + 0.1 * abs(max(c));
+    %     x0(vv.i1.y:vv.iN.y) = c + 0.1 * abs(c);
+    end
 end
 
 %% find branches with flow limits

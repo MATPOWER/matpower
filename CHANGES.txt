@@ -15,6 +15,13 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.0b1
 -------------------
 
+12/4/14
+    - Added new option 'opf.init_from_mpc' to force some solvers to
+      use the starting point supplied in the MATPOWER case to
+      initialize the optimization variables for the OPF, instead
+      of creating its own starting point. Currently only implemented
+      for Ipopt, Knitro and MIPS.
+    
 12/2/14
     - Added new option 'out.suppress_detail' to quickly suppress all
       pretty-printed output except the system summary. By default,
