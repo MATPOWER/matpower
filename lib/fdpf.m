@@ -94,8 +94,10 @@ Bpp = Bpp(pq, pq);
 %% factor B matrices
 [Lp,  Up,  pp,  qp ] = lu(Bp,  'vector');
 [Lpp, Upp, ppp, qpp] = lu(Bpp, 'vector');
-[~, iqp ] = sort(qp);
-[~, iqpp] = sort(qpp);
+[junk, iqp ] = sort(qp);
+[junk, iqpp] = sort(qpp);
+% [~, iqp ] = sort(qp);
+% [~, iqpp] = sort(qpp);
 
 %% do P and Q iterations
 while (~converged && i < max_it)

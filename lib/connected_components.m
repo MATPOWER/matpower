@@ -77,7 +77,8 @@ while N                 %% FIFO / BFS
     %% (finding rows of column-indexed Ct, rather than cols of row-indexed C,
     %%  because row-indexing a sparse matrix is sloooowww, results in ~30x
     %%  speed up on ~60k bus network)
-    [jj, ~] = find(Ct(:, C(:, cn) ~= 0));   %% non-zeros in rows connected to cn
+    [jj, junk] = find(Ct(:, C(:, cn) ~= 0));    %% non-zeros in rows connected to cn
+%    [jj, ~] = find(Ct(:, C(:, cn) ~= 0));   %% non-zeros in rows connected to cn
 %    [~, jj] = find(C(C(:, cn) ~= 0, :));    %% non-zeros in rows connected to cn
     cnn = jj(visited(jj) == 0); %% indices of non-visited cols (may contain dups)
 
