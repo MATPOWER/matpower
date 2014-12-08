@@ -89,7 +89,10 @@ if size(got, 1) ~= 1    %% transpose if needed for Octave 3.4
     got = got';
 end
 got = regexprep(got, 'Converged in (.*) seconds', 'Converged in 0.00 seconds');
+got = strrep(got, ' -0.0 ', '  0.0 ');
+got = strrep(got, sprintf(' -0.0\n'), sprintf('  0.0\n'));
 got = strrep(got, ' -0.00 ', '  0.00 ');
+got = strrep(got, sprintf(' -0.00\n'), sprintf('  0.00\n'));
 got = strrep(got, ' -0.000 ', '  0.000 ');
 got = strrep(got, char([13 10]), char(10));             %% Win to Unix EOL chars
 expected = fileread(fnameac);
@@ -106,7 +109,10 @@ if size(got, 1) ~= 1    %% transpose if needed for Octave 3.4
     got = got';
 end
 got = regexprep(got, 'Converged in (.*) seconds', 'Converged in 0.00 seconds');
+got = strrep(got, ' -0.0 ', '  0.0 ');
+got = strrep(got, sprintf(' -0.0\n'), sprintf('  0.0\n'));
 got = strrep(got, ' -0.00 ', '  0.00 ');
+got = strrep(got, sprintf(' -0.00\n'), sprintf('  0.00\n'));
 got = strrep(got, ' -0.000 ', '  0.000 ');
 got = strrep(got, '51.66 $/MWh @ bus 12', '51.66 $/MWh @ bus 13');
 got = strrep(got, '51.66 $/MWh @ bus 16', '51.66 $/MWh @ bus 13');
