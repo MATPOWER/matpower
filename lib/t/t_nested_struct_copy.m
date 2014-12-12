@@ -97,18 +97,18 @@ t_ok(isequal(DS, E), t);
 
 t = 'check = 1 ==> error';
 opt = struct('check', 1);
-if have_fcn('catchme')
-    try
-        DS = nested_struct_copy(D, S, opt);
-        t_ok(0, t);
-    catch me
-        TorF = strcmp(me.message, 'nested_struct_copy: ''b.x'' is not a valid field name');
-        t_ok(TorF, t);
-        if ~TorF
-            me
-        end
-    end
-else
+% if have_fcn('catchme')
+%     try
+%         DS = nested_struct_copy(D, S, opt);
+%         t_ok(0, t);
+%     catch me
+%         TorF = strcmp(me.message, 'nested_struct_copy: ''b.x'' is not a valid field name');
+%         t_ok(TorF, t);
+%         if ~TorF
+%             me
+%         end
+%     end
+% else
     try
         DS = nested_struct_copy(D, S, opt);
         t_ok(0, t);
@@ -120,7 +120,7 @@ else
             me
         end
     end
-end
+% end
 
 t = 'check = 1, copy_mode = ''=''';
 S2 = rmfield(S, 'u');

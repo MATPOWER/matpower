@@ -565,15 +565,15 @@ if ~isempty(ov)
             end
         end
         nsc_opt = struct('check', 1, 'valid_fields', vf, 'exceptions', ex);
-        if have_fcn('catchme')
-            try
-                opt = nested_struct_copy(opt, ov, nsc_opt);
-            catch me
-                str = strrep(me.message, 'field', 'option');
-                str = strrep(str, 'nested_struct_copy', 'mpoption');
-                error(str);
-            end
-        else
+%         if have_fcn('catchme')
+%             try
+%                 opt = nested_struct_copy(opt, ov, nsc_opt);
+%             catch me
+%                 str = strrep(me.message, 'field', 'option');
+%                 str = strrep(str, 'nested_struct_copy', 'mpoption');
+%                 error(str);
+%             end
+%         else
             try
                 opt = nested_struct_copy(opt, ov, nsc_opt);
             catch
@@ -582,7 +582,7 @@ if ~isempty(ov)
                 str = strrep(str, 'nested_struct_copy', 'mpoption');
                 error(str);
             end
-        end
+%         end
     end
 end
 if return_old_style
