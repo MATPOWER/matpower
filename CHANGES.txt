@@ -15,6 +15,9 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.0b1
 -------------------
 
+12/12/14
+    - Added code in psse_read() to work around a bug in Matlab 7.3.
+
 12/4/14
     - Added new option 'opf.init_from_mpc' to force some solvers to
       use the starting point supplied in the MATPOWER case to
