@@ -42,7 +42,6 @@ function TorF = have_fcn(tag)
 
 %   Private tags for internal use only:
 %       catchme         - support for 'catch me' syntax in try/catch constructs
-%       ipopt_auxdata   - support for ipopt_auxdata(), required by 3.11 and later
 %       regexp_split    - support for 'split' argument to regexp()
 
 %   MATPOWER
@@ -230,25 +229,6 @@ else
                 else
                     TorF = 1;
                 end
-            end
-        case 'ipopt_auxdata'
-            if have_fcn('ipopt')
-                str = evalc('qps_ipopt([],1,1,1,1,1,1,1,struct(''verbose'', 2))');
-                pat = 'Ipopt version ([^\s,]+)';
-                [s,e,tE,m,t] = regexp(str, pat);
-                if isempty(t)
-                    TorF = 0;       %% assume version is less than 3.11
-                else
-                    vn = t{1}{1};
-                    s = regexp(vn, '(\d+\.\d+)', 'match');
-                    if str2num(s{1}) >= 3.11
-                        TorF = 1;
-                    else
-                        TorF = 0;
-                    end
-                end
-            else
-                TorF = 0;
             end
         case 'regexp_split'
             TorF = 1;
