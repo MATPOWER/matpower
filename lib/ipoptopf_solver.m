@@ -206,7 +206,11 @@ funcs.hessianstructure  = @(d) Hs;
 %funcs.hessianstructure  = @hessianstructure;
 
 %% run the optimization
-[x, info] = ipopt(x0,funcs,options);
+if have_fcn('ipopt_auxdata')
+    [x, info] = ipopt_auxdata(x0,funcs,options);
+else
+    [x, info] = ipopt(x0,funcs,options);
+end
 
 if info.status == 0 || info.status == 1
     success = 1;

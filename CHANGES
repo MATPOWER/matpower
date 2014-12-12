@@ -23,6 +23,10 @@ Changes since 5.0b1
     - Added private 'regexp_split' tag (for internal use only) to
       have_fcn() to detect older versions of Octave that do not support
       the 'split' argument to regexp().
+    - Updated to support Ipopt 3.11.x and later, which removed support
+      for options.auxdata from the MEX file. Added private
+      'ipopt_auxdata' tag (for internal use only) to have_fcn() to
+      detect version 3.11.x or later.
 
 12/4/14
     - Added new option 'opf.init_from_mpc' to force some solvers to
