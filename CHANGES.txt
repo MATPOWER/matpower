@@ -17,6 +17,12 @@ Changes since 5.0b1
 
 12/12/14
     - Added code in psse_read() to work around a bug in Matlab 7.3.
+    - Added private 'catchme' tag (for internal use only) to have_fcn()
+      to detect older versions of Matlab and Octave that do not support
+      the 'catch me' syntax in try/catch constructs.
+    - Added private 'regexp_split' tag (for internal use only) to
+      have_fcn() to detect older versions of Octave that do not support
+      the 'split' argument to regexp().
 
 12/4/14
     - Added new option 'opf.init_from_mpc' to force some solvers to
@@ -26,11 +32,6 @@ Changes since 5.0b1
       for Ipopt, Knitro and MIPS.
     - INCOMPATIBLE CHANGE: Renamed cdf2matp() to cdf2mpc() and modified
       the interface to be consistent with psse2mpc().
-    - Added 'catchme' tag to have_fcn() to detect older versions
-      of Matlab and Octave that do not support the 'catch me'
-      syntax in try/catch constructs.
-    - Added 'regexp_split' tag to have_fcn() to detect older versions
-      of Octave that do not support the 'split' argument to regexp().
 
 12/2/14
     - Added new option 'out.suppress_detail' to quickly suppress all

@@ -5,7 +5,6 @@ function TorF = have_fcn(tag)
 %
 %   Possible values for input TAG and their meanings:
 %       bpmpd       - BP, BPMPD interior point solver
-%       catchme     - support for 'catch me' syntax in try/catch constructs
 %       cplex       - CPLEX, IBM ILOG CPLEX Optimizer
 %       fmincon     - FMINCON, solver from Optimization Toolbox 2.x +
 %       fmincon_ipm - FMINCON with Interior Point solver, from Opt Tbx 4.x +
@@ -25,7 +24,6 @@ function TorF = have_fcn(tag)
 %       quadprog_ls - QUADPROG with large-scale interior point convex solver
 %                       from Optimization Toolbox 6.x +
 %       pdipmopf    - PDIPMOPF, primal-dual interior point method OPF solver
-%       regexp_split- support for 'split' argument to regexp()
 %       scpdipmopf  - SCPDIPMOPF, step-controlled PDIPM OPF solver
 %       smartmarket - RUNMARKET and friends, for running an auction
 %       tralmopf    - TRALMOPF, trust region based augmented Langrangian
@@ -41,6 +39,11 @@ function TorF = have_fcn(tag)
 %       if have_fcn('minopf')
 %           results = runopf(mpc, mpoption('opf.ac.solver', 'MINOPF'));
 %       end
+
+%   Private tags for internal use only:
+%       catchme         - support for 'catch me' syntax in try/catch constructs
+%       ipopt_auxdata   - support for ipopt_auxdata(), required by 3.11 and later
+%       regexp_split    - support for 'split' argument to regexp()
 
 %   MATPOWER
 %   $Id$
@@ -77,26 +80,9 @@ if isfield(fcns, tag) && ~isempty(fcns.(tag))
     TorF = fcns.(tag);
 else
     switch tag
+    %%-----  public tags  -----
         case 'bpmpd'
             TorF = exist('bp', 'file') == 3;
-        case 'catchme'  %% not supported by Matlab <= 7.4, Octave <= 3.4
-            if have_fcn('octave')
-                v = ver('Octave');
-                s = regexp(v.Version, '(\d+\.\d+)', 'match');
-                if str2num(s{1}) <= 3.4
-                    TorF = 0;
-                else
-                    TorF = 1;
-                end
-            else
-                v = ver('Matlab');
-                s = regexp(v.Version, '(\d+\.\d+)', 'match');
-                if str2num(s{1}) <= 7.4
-                    TorF = 0;
-                else
-                    TorF = 1;
-                end
-            end
         case 'cplex'
             TorF = 0;
             if exist('cplexqp', 'file')
@@ -216,15 +202,6 @@ else
                     TorF = 0;
                 end
             end
-        case 'regexp_split'
-            TorF = 1;
-            if have_fcn('octave')   %% only missing for Octave < 3.8
-                v = ver('Octave');
-                s = regexp(v.Version, '(\d+\.\d+)', 'match');
-                if str2num(s{1}) < 3.8
-                    TorF = 0;
-                end
-            end
         case 'sdp_pf'
             TorF = have_fcn('yalmip') && exist('mpoption_info_sdp_pf', 'file') == 2;
         case 'yalmip'
@@ -234,6 +211,56 @@ else
             TorF = exist('sedumi','file') == 2;
         case 'sdpt3'
             TorF = exist('sdpt3','file') == 2;
+
+    %%-----  private tags  -----
+        case 'catchme'  %% not supported by Matlab <= 7.4, Octave <= 3.6
+            if have_fcn('octave')
+                v = ver('Octave');
+                s = regexp(v.Version, '(\d+\.\d+)', 'match');
+                if str2num(s{1}) <= 3.6
+                    TorF = 0;
+                else
+                    TorF = 1;
+                end
+            else
+                v = ver('Matlab');
+                s = regexp(v.Version, '(\d+\.\d+)', 'match');
+                if str2num(s{1}) <= 7.4
+                    TorF = 0;
+                else
+                    TorF = 1;
+                end
+            end
+        case 'ipopt_auxdata'
+            if have_fcn('ipopt')
+                str = evalc('qps_ipopt([],1,1,1,1,1,1,1,struct(''verbose'', 2))');
+                pat = 'Ipopt version ([^\s,]+)';
+                [s,e,tE,m,t] = regexp(str, pat);
+                if isempty(t)
+                    TorF = 0;       %% assume version is less than 3.11
+                else
+                    vn = t{1}{1};
+                    s = regexp(vn, '(\d+\.\d+)', 'match');
+                    if str2num(s{1}) >= 3.11
+                        TorF = 1;
+                    else
+                        TorF = 0;
+                    end
+                end
+            else
+                TorF = 0;
+            end
+        case 'regexp_split'
+            TorF = 1;
+            if have_fcn('octave')   %% only missing for Octave < 3.8
+                v = ver('Octave');
+                s = regexp(v.Version, '(\d+\.\d+)', 'match');
+                if str2num(s{1}) < 3.8
+                    TorF = 0;
+                end
+            end
+
+    %%-----  unknown tag  -----
         otherwise
             error('have_fcn: unknown functionality %s', tag);
     end
