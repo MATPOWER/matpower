@@ -48,9 +48,9 @@ function rv = mpver(varargin)
 % v{1} = ver(p);
 
 v{1} = struct(  'Name',     'MATPOWER', ... 
-                'Version',  '5.0b1', ...
+                'Version',  '5.0b1+', ...
                 'Release',  '', ...
-                'Date',     '01-Jul-2014' );
+                'Date',     '12-Dec-2014' );
 if nargout > 0
     if nargin > 0
         rv = v{1};
@@ -121,6 +121,15 @@ else
         fprintf('%-22s -- not installed --\n', 'Gurobi');
     end
     if have_fcn('glpk')
+%% bummer, evalc not yet implemented in Octave (as of 3.8)
+%         str = evalc('glpk(1, 1, 1, 1, 1, ''U'', ''C'', -1, struct(''msglev'', 3))');
+%         pat = 'GLPK Simplex Optimizer, v([^\s,]+)';
+%         [s,e,tE,m,t] = regexp(str, pat);
+%         if isempty(t)
+%             vn = '<unknown>';
+%         else
+%             vn = t{1}{1};
+%         end
         vn = '<unknown>';
         fprintf('%-22s Version %-10s %-11s   %s\n', 'GLPK', vn, '', computer);
     else
