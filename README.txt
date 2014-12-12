@@ -68,8 +68,8 @@ Note:  Versions prior to MATPOWER 4 use a different license.
 
 System Requirements
 -------------------
-    - MATLAB(R) version 7 or later (available from The MathWorks, Inc.
-      http://www.mathworks.com/), or
+    - MATLAB(R) version 7 (R14) or later
+      (available from The MathWorks, Inc. http://www.mathworks.com/), or
     - GNU Octave version 3.4 or later (free software available from
       http://www.gnu.org/software/octave/).
 

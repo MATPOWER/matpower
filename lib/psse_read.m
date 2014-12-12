@@ -110,7 +110,7 @@ names = cell(1, ns);
 names{1} = 'ID';
 for k = 2:ns
     tmp = regexp(records{eos(k-1)}, 'DATA', 'split');
-    if isempty(tmp)     %% workaround a bug in Matlab 7.3 (and possibly earlier)
+    if isempty(tmp)     %% workaround a bug in Matlab 7.3 (R2006b) (and possibly earlier)
         names{k} = '';
     else
         tmp2 = section_name(tmp{1});

@@ -13,7 +13,7 @@ function TorF = have_fcn(tag)
 %       ipopt       - IPOPT, NLP solver (https://projects.coin-or.org/Ipopt/)
 %       linprog     - LINPROG, LP solver from Optimization Toolbox 2.x +
 %       linprog_ds  - LINPROG with dual-simplex solver
-%                       from Optimization Toolbox 7.1 +
+%                       from Optimization Toolbox 7.1 (R2014b) +
 %       knitro      - KNITRO, NLP solver (http://www.ziena.com/)
 %         knitromatlab - KNITRO, version 9.0.0+
 %         ktrlink      - KNITRO, version < 9.0.0 (requires Opt Tbx)
@@ -213,7 +213,7 @@ else
             TorF = exist('sdpt3','file') == 2;
 
     %%-----  private tags  -----
-        case 'catchme'  %% not supported by Matlab <= 7.4, Octave <= 3.6
+        case 'catchme'  %% not supported by Matlab <= 7.4 (R2007a), Octave <= 3.6
             if have_fcn('octave')
                 v = ver('Octave');
                 s = regexp(v.Version, '(\d+\.\d+)', 'match');
