@@ -102,7 +102,8 @@ else
             if license('test', 'optimization_toolbox')
                 switch tag
                     case 'fmincon'
-                        TorF = exist('fmincon', 'file') == 2;
+                        TorF = exist('fmincon', 'file') == 2 || ...
+                            exist('fmincon', 'file') == 6;
                     case 'linprog'
                         TorF = exist('linprog', 'file') == 2;
                     case 'quadprog'
