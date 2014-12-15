@@ -1,5 +1,5 @@
 function t_islands(quiet)
-%T_ISLANDS  Tests for FIND_ISLANDS, EXTRACT_ISLANDS and CONNECTED_COMPONENTS.
+%T_ISLANDS  Tests for FIND_ISLANDS, EXTRACT_ISLANDS, CONNECTED_COMPONENTS and CASE_INFO.
 
 %   MATPOWER
 %   $Id$
@@ -34,7 +34,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 229;
+num_tests = 236;
 
 t_begin(num_tests, quiet);
 
@@ -309,6 +309,39 @@ t_is(length(mpc3.bus_name), length(mpc{k}.bus_name), 10, sprintf('%smpc%d.bus_na
 t_is(mpc3.emission.rate, mpc{k}.emission.rate,     10, sprintf('%smpc%d.emission.rate', t, k));
 t_is(mpc3.genid1,        mpc{k}.genid1,            10, sprintf('%smpc%d.genid1', t, k));
 t_is(mpc3.genid2,        mpc{k}.genid2,            10, sprintf('%smpc%d.genid2', t, k));
+
+%% case_info
+got_fname = sprintf('%s_%d.txt', 't_case_info_eg', fix(1e9*rand));
+exp_fname = sprintf('t_case_info_eg.txt');
+t = '[groups, isolated] = case_info(mpc) : ';
+[fd, msg] = fopen(got_fname, 'at');
+if fd == -1
+    error(msg);
+else
+    [groups, isolated] = case_info(mpc0, fd);
+    fclose(fd);
+end
+t_ok(iscell(groups), [t 'iscell(groups)']);
+t_is(length(groups), n, 10, [t 'length(groups) == n']);
+base = 0;
+for k = 1:n
+    nbk = size(mpc{k}.bus, 1);
+    t_is(groups{k}, base+(1:nbk), 10, [t num2str(k)]);
+    base = base + nbk;
+end
+got = fileread(got_fname);
+expected = fileread(exp_fname);
+if size(got, 1) ~= 1    %% transpose if needed for Octave 3.4
+    got = got';
+end
+if size(expected, 1) ~= 1   %% transpose if needed for Octave 3.4
+    expected = expected';
+end
+delete(got_fname);
+got = strrep(got, char([13 10]), char(10));             %% Win to Unix EOL chars
+got = regexprep(got, 'Elapsed time is (.*) seconds', 'Elapsed time is 0.00 seconds');
+expected = strrep(expected, char([13 10]), char(10));   %% Win to Unix EOL chars
+t_ok(strcmp(got, expected), [t 'text output']);
 
 t = '[groups, isolated] = find_islands(mpc) : ';
 mpc = loadcase('case30');

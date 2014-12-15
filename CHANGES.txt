@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.0b1
 -------------------
 
+12/15/14
+    - Added option for case_info() to print to a file. Added case_info()
+      tests to t_island().
+
 12/12/14
     - Added code in psse_read() to work around a bug in Matlab 7.3.
     - Added private 'catchme' tag (for internal use only) to have_fcn()

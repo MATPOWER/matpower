@@ -1,0 +1,89 @@
+Checking connectivity ... 4 connected groups, 0 isolated buses
+Elapsed time is 0.00 seconds.
+================================================================================
+                        Full       Island      Island      Island      Island   
+                       System         1           2           3           4     
+Number of:           ----------  ----------  ----------  ----------  ---------- 
+  buses                   171         118          30          14           9   
+  loads                   133          99          20          11           3   
+    on                    133          99          20          11           3   
+    off                     -           -           -           -           -   
+    fixed                 133          99          20          11           3   
+    dispatchable            -           -           -           -           -   
+      on                    -           -           -           -           -   
+      off                   -           -           -           -           -   
+  generators               68          54           6           5           3   
+    on                     68          54           6           5           3   
+    off                     -           -           -           -           -   
+  shunt elements           17          14           2           1           -   
+  branches                256         186          41          20           9   
+    on                    256         186          41          20           9   
+    off                     -           -           -           -           -   
+    ties (off)              -           -           -           -           -   
+
+Load                
+  active (MW)       
+    dispatched           5005.2      4242.0       189.2       259.0       315.0 
+      fixed              5005.2      4242.0       189.2       259.0       315.0 
+      dispatchable          -           -           -           -           -   
+    nominal              5005.2      4242.0       189.2       259.0       315.0 
+      on                 5005.2      4242.0       189.2       259.0       315.0 
+      off                   -           -           -           -           -   
+      fixed              5005.2      4242.0       189.2       259.0       315.0 
+      dispatchable          -           -           -           -           -   
+        on                  -           -           -           -           -   
+        off                 -           -           -           -           -   
+  reactive (MVAr)   
+    dispatched           1733.7      1438.0       107.2        73.5       115.0 
+      fixed              1733.7      1438.0       107.2        73.5       115.0 
+      dispatchable          -           -           -           -           -   
+    nominal              1733.7      1438.0       107.2        73.5       115.0 
+      on                 1733.7      1438.0       107.2        73.5       115.0 
+      off                   -           -           -           -           -   
+      fixed              1733.7      1438.0       107.2        73.5       115.0 
+      dispatchable          -           -           -           -           -   
+        on                  -           -           -           -           -   
+        off                 -           -           -           -           -   
+
+Generation          
+  active (MW)       
+    dispatched           5087.0      4377.4       189.2       272.4       248.0 
+    max capacity        11893.6      9966.2       335.0       772.4       820.0 
+      on                11893.6      9966.2       335.0       772.4       820.0 
+      off                   -           -           -           -           -   
+    min capacity           30.0         -           -           -          30.0 
+      on                   30.0         -           -           -          30.0 
+      off                   -           -           -           -           -   
+  reactive (MVAr)   
+    dispatched             78.5         -           -          78.5         -   
+    max capacity        13230.9     11777.0       405.9       148.0       900.0 
+      on                13230.9     11777.0       405.9       148.0       900.0 
+      off                   -           -           -           -           -   
+    min capacity        -8392.0     -7345.0       -95.0       -52.0      -900.0 
+      on                -8392.0     -7345.0       -95.0       -52.0      -900.0 
+      off                   -           -           -           -           -   
+
+Shunt Injections    
+    active (MW)             -           -           -           -           -   
+    reactive (MVAr)       105.8        84.4         0.2        21.2         -   
+
+Branch Losses       
+    active (MW)             -           -           -           -           -   
+    reactive (MVAr)         -           -           -           -           -   
+
+DC line             
+  export (MW)       
+    dispatch                -           -           -           -           -   
+    max capacity            -           -           -           -           -   
+      on                    -           -           -           -           -   
+      off                   -           -           -           -           -   
+    min capacity            -           -           -           -           -   
+      on                    -           -           -           -           -   
+      off                   -           -           -           -           -   
+
+Reference Buses     
+  num of ref buses          4           1           1           1           1   
+  ref bus numbers        1069        1069        2001        3001        4001   
+                         2001                                                   
+                         3001                                                   
+                         4001                                                   

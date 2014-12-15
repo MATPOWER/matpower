@@ -1,11 +1,11 @@
-function [groupss, isolated] = case_info(mpc, level)
+function [groupss, isolated] = case_info(mpc, fd)
 %CASE_INFO Prints information about islands in a network.
 %   CASE_INFO(MPC)
 %   GROUPS = CASE_INFO(MPC)
 %   [GROUPS, ISOLATED] = CASE_INFO(MPC)
 %
 %   Prints out detailed information about a MATPOWER case.
-%
+
 %   TO DO: Add checking of bus types (isolated bus not marked as such).
 %          Check for infeasible limits PMAX < PMIN, QMAX < QMIN, VMAX < VMIN,
 %               etc.
@@ -55,7 +55,7 @@ function [groupss, isolated] = case_info(mpc, level)
 c = idx_dcline;
 
 if nargin < 2
-    level = 1;
+    fd = 1;     %% print to stdio by default
 end
 
 t0 = tic;
@@ -99,17 +99,17 @@ if ndc
 end
 
 if length(nonpos_bus)
-    fprintf('Bad bus numbers:              %d\n', length(nonpos_bus));
+    fprintf(fd, 'Bad bus numbers:              %d\n', length(nonpos_bus));
     for k = 1:length(nonpos_bus)
         s = sprintf('bus(%d, BUS_I)', nonpos_bus(k));
-        fprintf('%24s = %d\n', s, mpc.bus(nonpos_bus(k), BUS_I));
+        fprintf(fd, '%24s = %d\n', s, mpc.bus(nonpos_bus(k), BUS_I));
     end
 end
 if ~isempty(unknown_gbus)
-    fprintf('Unknown generator buses:      %d\n', length(unknown_gbus));
+    fprintf(fd, 'Unknown generator buses:      %d\n', length(unknown_gbus));
     for k = 1:length(unknown_gbus)
         s = sprintf('gen(%d, GEN_BUS)', unknown_gbus(k));
-        fprintf('%24s = %d\n', s, mpc.gen(unknown_gbus(k), GEN_BUS));
+        fprintf(fd, '%24s = %d\n', s, mpc.gen(unknown_gbus(k), GEN_BUS));
     end
 
     %% remove them
@@ -117,17 +117,17 @@ if ~isempty(unknown_gbus)
     ng  = size(mpc.gen, 1);     %% number of dispatchable injections
 end
 if ~isempty(unknown_fbus)
-    fprintf('Unknown branch "from" buses:  %d\n', length(unknown_fbus));
+    fprintf(fd, 'Unknown branch "from" buses:  %d\n', length(unknown_fbus));
     for k = 1:length(unknown_fbus)
         s = sprintf('branch(%d, F_BUS)', unknown_fbus(k));
-        fprintf('%24s = %d\n', s, mpc.branch(unknown_fbus(k), F_BUS));
+        fprintf(fd, '%24s = %d\n', s, mpc.branch(unknown_fbus(k), F_BUS));
     end
 end
 if ~isempty(unknown_tbus)
-    fprintf('Unknown branch "to" buses:    %d\n', length(unknown_tbus));
+    fprintf(fd, 'Unknown branch "to" buses:    %d\n', length(unknown_tbus));
     for k = 1:length(unknown_tbus)
         s = sprintf('branch(%d, T_BUS)', unknown_tbus(k));
-        fprintf('%24s = %d\n', s, mpc.branch(unknown_tbus(k), T_BUS));
+        fprintf(fd, '%24s = %d\n', s, mpc.branch(unknown_tbus(k), T_BUS));
     end
 end
 %% remove branches connected to unknown buses
@@ -138,17 +138,17 @@ if ~isempty(unknown_fbus) || ~isempty(unknown_tbus)
 end
 if ndc
     if ~isempty(unknown_fbusdc)
-        fprintf('Unknown DC line "from" buses: %d\n', length(unknown_fbusdc));
+        fprintf(fd, 'Unknown DC line "from" buses: %d\n', length(unknown_fbusdc));
         for k = 1:length(unknown_fbusdc)
             s = sprintf('dcline(%d, c.F_BUS)', unknown_fbusdc(k));
-            fprintf('%24s = %d\n', s, mpc.dcline(unknown_fbusdc(k), c.F_BUS));
+            fprintf(fd, '%24s = %d\n', s, mpc.dcline(unknown_fbusdc(k), c.F_BUS));
         end
     end
     if ~isempty(unknown_tbusdc)
-        fprintf('Unknown DC line "to" buses:   %d\n', length(unknown_tbusdc));
+        fprintf(fd, 'Unknown DC line "to" buses:   %d\n', length(unknown_tbusdc));
         for k = 1:length(unknown_tbusdc)
             s = sprintf('dcline(%d, c.T_BUS)', unknown_tbusdc(k));
-            fprintf('%24s = %d\n', s, mpc.dcline(unknown_tbusdc(k), c.T_BUS));
+            fprintf(fd, '%24s = %d\n', s, mpc.dcline(unknown_tbusdc(k), c.T_BUS));
         end
     end
     %% remove branches connected to unknown buses
@@ -174,7 +174,7 @@ Cg_on = sparse(1:ng, e2i(mpc.gen(:, GEN_BUS)), mpc.gen(:, GEN_STATUS), ng, nb);
 Cg = sparse(1:ng, e2i(mpc.gen(:, GEN_BUS)), 1, ng, nb);
 
 %% check for islands
-fprintf('Checking connectivity ... ');
+fprintf(fd, 'Checking connectivity ... ');
 [groups, isolated] = connected_components(C_on);
 
 ngr = length(groups);   %% number of islands
@@ -183,13 +183,13 @@ have_isolated = nis > 0;
 if ngr == 1
     if have_isolated
         if nis == 1, s = ''; else, s = 'es'; end
-        fprintf('single connected network, plus %d isolated bus%s\n', nis, s);
+        fprintf(fd, 'single connected network, plus %d isolated bus%s\n', nis, s);
     else
-        fprintf('single fully connected network\n');
+        fprintf(fd, 'single fully connected network\n');
     end
 else
     if nis == 1, s = ''; else, s = 'es'; end
-    fprintf('%d connected groups, %d isolated bus%s\n', ngr, nis, s);
+    fprintf(fd, '%d connected groups, %d isolated bus%s\n', ngr, nis, s);
 end
 
 %% collect info on groups
@@ -449,8 +449,9 @@ if ndc
 end
 
 %% print summary
-toc(t0);
-fprintf('================================================================================\n');
+et = toc(t0);
+fprintf(fd, 'Elapsed time is %f seconds.\n', et);
+fprintf(fd, '================================================================================\n');
 pages = ceil((ngr + have_isolated + 1) / 5);
 for page = 1:pages
     if page == 1
@@ -460,169 +461,169 @@ for page = 1:pages
             islands = 1:min(4, ngr+have_isolated);
         end
     else
-        fprintf('--------------------------------------------------------------------------------\n');
+        fprintf(fd, '--------------------------------------------------------------------------------\n');
         islands = (5*(page-1)):min(5*page-1, ngr+have_isolated);
     end
 
     %% header row 1
-    fprintf('%-20s', '');
+    fprintf(fd, '%-20s', '');
     if page == 1
-        fprintf('    Full    ');
+        fprintf(fd, '    Full    ');
     end
     for k = islands
         if k > ngr
-            fprintf('  Isolated  ');
+            fprintf(fd, '  Isolated  ');
         else
-            fprintf('   Island   ');
+            fprintf(fd, '   Island   ');
         end
     end
-    fprintf('\n');
+    fprintf(fd, '\n');
 
     %% header row 2
-    fprintf('%-20s', '');
+    fprintf(fd, '%-20s', '');
     if page == 1
-        fprintf('   System   ');
+        fprintf(fd, '   System   ');
     end
     for k = islands
         if k > ngr
-            fprintf('    Buses   ');
+            fprintf(fd, '    Buses   ');
         else
-            fprintf('  %5d     ', k);
+            fprintf(fd, '  %5d     ', k);
         end
     end
-    fprintf('\n');
+    fprintf(fd, '\n');
 
     %% header row 3
-    fprintf('%-20s', 'Number of:');
+    fprintf(fd, '%-20s', 'Number of:');
     if page == 1
-        fprintf(' ---------- ');
+        fprintf(fd, ' ---------- ');
     end
     for k = islands
-        fprintf(' ---------- ');
+        fprintf(fd, ' ---------- ');
     end
-    fprintf('\n');
+    fprintf(fd, '\n');
 
     p = struct('page', page, 'islands', islands, 'total', total, 'd', d);
 
-    print_row(p, ' %8d   ', '  buses',          'nb');
-    print_row(p, ' %8d   ', '  loads',          'nld');
-    print_row(p, ' %8d   ', '    on',           'nld_on');
-    print_row(p, ' %8d   ', '    off',          'nld_off');
-    print_row(p, ' %8d   ', '    fixed',        'nfld');
-    print_row(p, ' %8d   ', '    dispatchable', 'ndld');
-    print_row(p, ' %8d   ', '      on',         'ndld_on');
-    print_row(p, ' %8d   ', '      off',        'ndld_off');
-    print_row(p, ' %8d   ', '  generators',     'ng');
-    print_row(p, ' %8d   ', '    on',           'ng_on');
-    print_row(p, ' %8d   ', '    off',          'ng_off');
-    print_row(p, ' %8d   ', '  shunt elements', 'nsh');
-    print_row(p, ' %8d   ', '  branches',       'nl');
-    print_row(p, ' %8d   ', '    on',           'nl_on');
-    print_row(p, ' %8d   ', '    off',          'nl_off');
-%     print_row(p, ' %8d   ', '    ties',         'nlt');     %% (always same as nlt_off)
-    print_row(p, ' %8d   ', '    ties (off)',   'nlt_off');
+    print_row(fd, p, ' %8d   ', '  buses',          'nb');
+    print_row(fd, p, ' %8d   ', '  loads',          'nld');
+    print_row(fd, p, ' %8d   ', '    on',           'nld_on');
+    print_row(fd, p, ' %8d   ', '    off',          'nld_off');
+    print_row(fd, p, ' %8d   ', '    fixed',        'nfld');
+    print_row(fd, p, ' %8d   ', '    dispatchable', 'ndld');
+    print_row(fd, p, ' %8d   ', '      on',         'ndld_on');
+    print_row(fd, p, ' %8d   ', '      off',        'ndld_off');
+    print_row(fd, p, ' %8d   ', '  generators',     'ng');
+    print_row(fd, p, ' %8d   ', '    on',           'ng_on');
+    print_row(fd, p, ' %8d   ', '    off',          'ng_off');
+    print_row(fd, p, ' %8d   ', '  shunt elements', 'nsh');
+    print_row(fd, p, ' %8d   ', '  branches',       'nl');
+    print_row(fd, p, ' %8d   ', '    on',           'nl_on');
+    print_row(fd, p, ' %8d   ', '    off',          'nl_off');
+%     print_row(fd, p, ' %8d   ', '    ties',         'nlt');     %% (always same as nlt_off)
+    print_row(fd, p, ' %8d   ', '    ties (off)',   'nlt_off');
     if ndc
-        print_row(p, ' %8d   ', '  DC lines',     'ndc_all');
-        print_row(p, ' %8d   ', '    within',     'ndc');
-        print_row(p, ' %8d   ', '      on',       'ndc_on');
-        print_row(p, ' %8d   ', '      off',      'ndc_off');
-        print_row(p, ' %8d   ', '    ties',       'ndct');
-        print_row(p, ' %8d   ', '      on',       'ndct_on');
-        print_row(p, ' %8d   ', '      off',      'ndct_off');
+        print_row(fd, p, ' %8d   ', '  DC lines',     'ndc_all');
+        print_row(fd, p, ' %8d   ', '    within',     'ndc');
+        print_row(fd, p, ' %8d   ', '      on',       'ndc_on');
+        print_row(fd, p, ' %8d   ', '      off',      'ndc_off');
+        print_row(fd, p, ' %8d   ', '    ties',       'ndct');
+        print_row(fd, p, ' %8d   ', '      on',       'ndct_on');
+        print_row(fd, p, ' %8d   ', '      off',      'ndct_off');
     end
 
-    fprintf('\n%-20s\n', 'Load');
-    fprintf(  '%-20s\n', '  active (MW)');
-    print_row(p, '%11.1f ', '    dispatched',       'Pd');
-    print_row(p, '%11.1f ', '      fixed',          'Pd_fixed');
-    print_row(p, '%11.1f ', '      dispatchable',   'Pd_disp');
-    print_row(p, '%11.1f ', '    nominal',          'Pd_cap');
-    print_row(p, '%11.1f ', '      on',             'Pd_cap_on');
-    print_row(p, '%11.1f ', '      off',            'Pd_cap_off');
-    print_row(p, '%11.1f ', '      fixed',          'Pd_fixed');
-    print_row(p, '%11.1f ', '      dispatchable',   'Pd_disp_cap');
-    print_row(p, '%11.1f ', '        on',           'Pd_disp_cap_on');
-    print_row(p, '%11.1f ', '        off',          'Pd_disp_cap_off');
-    fprintf(  '%-20s\n', '  reactive (MVAr)');
-    print_row(p, '%11.1f ', '    dispatched',       'Qd');
-    print_row(p, '%11.1f ', '      fixed',          'Qd_fixed');
-    print_row(p, '%11.1f ', '      dispatchable',   'Qd_disp');
-    print_row(p, '%11.1f ', '    nominal',          'Qd_cap');
-    print_row(p, '%11.1f ', '      on',             'Qd_cap_on');
-    print_row(p, '%11.1f ', '      off',            'Qd_cap_off');
-    print_row(p, '%11.1f ', '      fixed',          'Qd_fixed');
-    print_row(p, '%11.1f ', '      dispatchable',   'Qd_disp_cap');
-    print_row(p, '%11.1f ', '        on',           'Qd_disp_cap_on');
-    print_row(p, '%11.1f ', '        off',          'Qd_disp_cap_off');
+    fprintf(fd, '\n%-20s\n', 'Load');
+    fprintf(fd,   '%-20s\n', '  active (MW)');
+    print_row(fd, p, '%11.1f ', '    dispatched',       'Pd');
+    print_row(fd, p, '%11.1f ', '      fixed',          'Pd_fixed');
+    print_row(fd, p, '%11.1f ', '      dispatchable',   'Pd_disp');
+    print_row(fd, p, '%11.1f ', '    nominal',          'Pd_cap');
+    print_row(fd, p, '%11.1f ', '      on',             'Pd_cap_on');
+    print_row(fd, p, '%11.1f ', '      off',            'Pd_cap_off');
+    print_row(fd, p, '%11.1f ', '      fixed',          'Pd_fixed');
+    print_row(fd, p, '%11.1f ', '      dispatchable',   'Pd_disp_cap');
+    print_row(fd, p, '%11.1f ', '        on',           'Pd_disp_cap_on');
+    print_row(fd, p, '%11.1f ', '        off',          'Pd_disp_cap_off');
+    fprintf(fd,   '%-20s\n', '  reactive (MVAr)');
+    print_row(fd, p, '%11.1f ', '    dispatched',       'Qd');
+    print_row(fd, p, '%11.1f ', '      fixed',          'Qd_fixed');
+    print_row(fd, p, '%11.1f ', '      dispatchable',   'Qd_disp');
+    print_row(fd, p, '%11.1f ', '    nominal',          'Qd_cap');
+    print_row(fd, p, '%11.1f ', '      on',             'Qd_cap_on');
+    print_row(fd, p, '%11.1f ', '      off',            'Qd_cap_off');
+    print_row(fd, p, '%11.1f ', '      fixed',          'Qd_fixed');
+    print_row(fd, p, '%11.1f ', '      dispatchable',   'Qd_disp_cap');
+    print_row(fd, p, '%11.1f ', '        on',           'Qd_disp_cap_on');
+    print_row(fd, p, '%11.1f ', '        off',          'Qd_disp_cap_off');
 
-    fprintf('\n%-20s\n', 'Generation');
-    fprintf(  '%-20s\n', '  active (MW)');
-    print_row(p, '%11.1f ', '    dispatched',       'Pg');
-    print_row(p, '%11.1f ', '    max capacity',     'Pmax');
-    print_row(p, '%11.1f ', '      on',             'Pmax_on');
-    print_row(p, '%11.1f ', '      off',            'Pmax_off');
-    print_row(p, '%11.1f ', '    min capacity',     'Pmin');
-    print_row(p, '%11.1f ', '      on',             'Pmin_on');
-    print_row(p, '%11.1f ', '      off',            'Pmin_off');
-    fprintf(  '%-20s\n', '  reactive (MVAr)');
-    print_row(p, '%11.1f ', '    dispatched',       'Qg');
-    print_row(p, '%11.1f ', '    max capacity',     'Qmax');
-    print_row(p, '%11.1f ', '      on',             'Qmax_on');
-    print_row(p, '%11.1f ', '      off',            'Qmax_off');
-    print_row(p, '%11.1f ', '    min capacity',     'Qmin');
-    print_row(p, '%11.1f ', '      on',             'Qmin_on');
-    print_row(p, '%11.1f ', '      off',            'Qmin_off');
+    fprintf(fd, '\n%-20s\n', 'Generation');
+    fprintf(fd,   '%-20s\n', '  active (MW)');
+    print_row(fd, p, '%11.1f ', '    dispatched',       'Pg');
+    print_row(fd, p, '%11.1f ', '    max capacity',     'Pmax');
+    print_row(fd, p, '%11.1f ', '      on',             'Pmax_on');
+    print_row(fd, p, '%11.1f ', '      off',            'Pmax_off');
+    print_row(fd, p, '%11.1f ', '    min capacity',     'Pmin');
+    print_row(fd, p, '%11.1f ', '      on',             'Pmin_on');
+    print_row(fd, p, '%11.1f ', '      off',            'Pmin_off');
+    fprintf(fd,   '%-20s\n', '  reactive (MVAr)');
+    print_row(fd, p, '%11.1f ', '    dispatched',       'Qg');
+    print_row(fd, p, '%11.1f ', '    max capacity',     'Qmax');
+    print_row(fd, p, '%11.1f ', '      on',             'Qmax_on');
+    print_row(fd, p, '%11.1f ', '      off',            'Qmax_off');
+    print_row(fd, p, '%11.1f ', '    min capacity',     'Qmin');
+    print_row(fd, p, '%11.1f ', '      on',             'Qmin_on');
+    print_row(fd, p, '%11.1f ', '      off',            'Qmin_off');
 
-    fprintf('\n%-20s\n', 'Shunt Injections');
-    print_row(p, '%11.1f ', '    active (MW)',      'Ps');
-    print_row(p, '%11.1f ', '    reactive (MVAr)',  'Qs');
+    fprintf(fd, '\n%-20s\n', 'Shunt Injections');
+    print_row(fd, p, '%11.1f ', '    active (MW)',      'Ps');
+    print_row(fd, p, '%11.1f ', '    reactive (MVAr)',  'Qs');
 
-    fprintf('\n%-20s\n', 'Branch Losses');
-    print_row(p, '%11.1f ', '    active (MW)',      'Ploss');
-    print_row(p, '%11.1f ', '    reactive (MVAr)',  'Qloss');
+    fprintf(fd, '\n%-20s\n', 'Branch Losses');
+    print_row(fd, p, '%11.1f ', '    active (MW)',      'Ploss');
+    print_row(fd, p, '%11.1f ', '    reactive (MVAr)',  'Qloss');
 
-    fprintf('\n%-20s\n', 'DC line');
-    fprintf(  '%-20s\n', '  export (MW)');
-    print_row(p, '%11.1f ', '    dispatch',      'Pdc');
-    print_row(p, '%11.1f ', '    max capacity',  'Pmaxdc');
-    print_row(p, '%11.1f ', '      on',          'Pmaxdc_on');
-    print_row(p, '%11.1f ', '      off',         'Pmaxdc_off');
-    print_row(p, '%11.1f ', '    min capacity',  'Pmindc');
-    print_row(p, '%11.1f ', '      on',          'Pmindc_on');
-    print_row(p, '%11.1f ', '      off',         'Pmindc_off');
+    fprintf(fd, '\n%-20s\n', 'DC line');
+    fprintf(fd,   '%-20s\n', '  export (MW)');
+    print_row(fd, p, '%11.1f ', '    dispatch',      'Pdc');
+    print_row(fd, p, '%11.1f ', '    max capacity',  'Pmaxdc');
+    print_row(fd, p, '%11.1f ', '      on',          'Pmaxdc_on');
+    print_row(fd, p, '%11.1f ', '      off',         'Pmaxdc_off');
+    print_row(fd, p, '%11.1f ', '    min capacity',  'Pmindc');
+    print_row(fd, p, '%11.1f ', '      on',          'Pmindc_on');
+    print_row(fd, p, '%11.1f ', '      off',         'Pmindc_off');
 
-    fprintf('\n%-20s\n', 'Reference Buses');
+    fprintf(fd, '\n%-20s\n', 'Reference Buses');
 
-    fprintf('%-20s', '  num of ref buses');
+    fprintf(fd, '%-20s', '  num of ref buses');
     if page == 1
-        fprintf(' %8d   ', nrefs);
+        fprintf(fd, ' %8d   ', nrefs);
     end
     for k = islands
-        fprintf(' %8d   ', length(refs{k}));
+        fprintf(fd, ' %8d   ', length(refs{k}));
     end
-    fprintf('\n');
+    fprintf(fd, '\n');
 
     for j = 1:nrefs
         if j == 1
-            fprintf('%-20s', '  ref bus numbers');
+            fprintf(fd, '%-20s', '  ref bus numbers');
         else
-            fprintf('%-20s', '');
+            fprintf(fd, '%-20s', '');
         end
         if page == 1
-            fprintf(' %8d   ', mpc.bus(allrefs(j), BUS_I));
+            fprintf(fd, ' %8d   ', mpc.bus(allrefs(j), BUS_I));
         end
         for k = islands
             if j <= length(refs{k})
-                fprintf(' %8d   ', mpc.bus(refs{k}(j), BUS_I));
+                fprintf(fd, ' %8d   ', mpc.bus(refs{k}(j), BUS_I));
             else
-                fprintf(' %8s   ', '');
+                fprintf(fd, ' %8s   ', '');
             end
         end
-        fprintf('\n');
+        fprintf(fd, '\n');
     end
 
     if page ~= pages
-        fprintf('\n\n');
+        fprintf(fd, '\n\n');
     end
 end
 
@@ -632,24 +633,24 @@ if nargout > 0
 end
 
 
-function print_row(p, template, name, field)
+function print_row(fd, p, template, name, field)
 templatez = sprintf('%%%ds', length(sprintf(template, 0)));
-fprintf('%-20s', name);
+fprintf(fd, '%-20s', name);
 if p.page == 1
     if p.total.(field) == 0
-        fprintf(templatez, '-   ');
+        fprintf(fd, templatez, '-   ');
     else
-        fprintf(template, p.total.(field));
+        fprintf(fd, template, p.total.(field));
     end
 end
 for k = p.islands
     if p.d(k).(field) == 0
-        fprintf(templatez, '-   ');
+        fprintf(fd, templatez, '-   ');
     else
-        fprintf(template, p.d(k).(field));
+        fprintf(fd, template, p.d(k).(field));
     end
 end
-fprintf('\n');
+fprintf(fd, '\n');
 
 
 function unknown = unknown_buses(e2i, nbase, bus_list)
