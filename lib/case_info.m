@@ -58,7 +58,7 @@ if nargin < 2
     fd = 1;     %% print to stdio by default
 end
 
-t0 = tic;
+tic;
 
 %% load case if necessary
 mpc = loadcase(mpc);
@@ -449,7 +449,7 @@ if ndc
 end
 
 %% print summary
-et = toc(t0);
+et = toc;
 fprintf(fd, 'Elapsed time is %f seconds.\n', et);
 fprintf(fd, '================================================================================\n');
 pages = ceil((ngr + have_isolated + 1) / 5);
