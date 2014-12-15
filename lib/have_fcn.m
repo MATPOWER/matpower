@@ -110,9 +110,7 @@ else
                         TorF = exist('quadprog', 'file') == 2;
                     otherwise
                         v = ver('optim');
-                        [t1, remaining] = strtok(v.Version, '.');
-                        t2 = strtok(remaining, '.');
-                        otver = str2num([t1 '.' t2]);   %% major.minor version
+                        otver = vstr2num(v.Version);
                         switch tag
                             case 'fmincon_ipm'
                                 if otver >= 4
@@ -121,13 +119,13 @@ else
                                     TorF = 0;
                                 end
                             case 'linprog_ds'
-                                if otver >= 7.1
+                                if otver >= 7.001
                                     TorF = 1;
                                 else
                                     TorF = 0;
                                 end
                             case 'optimoptions'
-                                if otver >= 6.3
+                                if otver >= 6.003
                                     TorF = 1;
                                 else
                                     TorF = 0;
@@ -143,7 +141,7 @@ else
             else
                 TorF = 0;
             end
-        case 'glpk'     %% must later than Octave 3.4, so check for 'catchme'
+        case 'glpk'     %% Octave version must be later than 3.4, so check for 'catchme'
             TorF = have_fcn('catchme') && exist('glpk','file') == 2 && ...
                 (exist('__glpk__','file') == 3 || exist('glpkcc','file') == 3);
         case 'gurobi'
@@ -184,7 +182,7 @@ else
                 %% requires >= MATLAB 6.5 (R13) (released 20-Jun-2002)
                 %% older versions do not have mxCreateDoubleScalar() function
                 %% (they have mxCreateScalarDouble() instead)
-                if datenum(v.Date) >= 731387
+                if vstr2num(v.Version) >= 6.005
                     switch tag
                         case 'pdipmopf'
                             TorF = exist('pdipmopf', 'file') == 3;
@@ -193,7 +191,7 @@ else
                         case 'tralmopf'
                             %% requires >= MATLAB 7.3 (R2006b) (released 03-Aug-2006)
                             %% older versions do not include the needed form of chol()
-                            if datenum(v.Date) >= 732892
+                            if vstr2num(v.Version) >= 7.003
                                 TorF = exist('tralmopf', 'file') == 3;
                             else
                                 TorF = 0;
@@ -217,16 +215,14 @@ else
         case 'catchme'  %% not supported by Matlab <= 7.4 (R2007a), Octave <= 3.6
             if have_fcn('octave')
                 v = ver('Octave');
-                s = regexp(v.Version, '(\d+\.\d+)', 'match');
-                if str2num(s{1}) <= 3.6
+                if vstr2num(v.Version) <= 3.006
                     TorF = 0;
                 else
                     TorF = 1;
                 end
             else
                 v = ver('Matlab');
-                s = regexp(v.Version, '(\d+\.\d+)', 'match');
-                if str2num(s{1}) <= 7.4
+                if vstr2num(v.Version) <= 7.004
                     TorF = 0;
                 else
                     TorF = 1;
@@ -241,8 +237,7 @@ else
                     TorF = 0;       %% assume version is less than 3.11
                 else
                     vn = t{1}{1};
-                    s = regexp(vn, '(\d+\.\d+)', 'match');
-                    if str2num(s{1}) >= 3.11
+                    if vstr2num(vn) >= 3.011
                         TorF = 1;
                     else
                         TorF = 0;
@@ -255,8 +250,7 @@ else
             TorF = 1;
             if have_fcn('octave')   %% only missing for Octave < 3.8
                 v = ver('Octave');
-                s = regexp(v.Version, '(\d+\.\d+)', 'match');
-                if str2num(s{1}) < 3.8
+                if vstr2num(v.Version) < 3.008
                     TorF = 0;
                 end
             end
@@ -266,4 +260,17 @@ else
             error('have_fcn: unknown functionality %s', tag);
     end
     fcns.(tag) = TorF;
+end
+
+
+function num = vstr2num(vstr)
+% Converts version string to numerical value suitable for < or > comparisons
+% E.g. '3.11.4' -->  3.011004
+pat = '\.?(\d+)';
+[s,e,tE,m,t] = regexp(vstr, pat);
+b = 1;
+num = 0;
+for k = 1:length(t)
+    num = num + b * str2num(t{k}{1});
+    b = b / 1000;
 end
