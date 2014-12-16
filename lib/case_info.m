@@ -1,10 +1,13 @@
 function [groupss, isolated] = case_info(mpc, fd)
 %CASE_INFO Prints information about islands in a network.
 %   CASE_INFO(MPC)
-%   GROUPS = CASE_INFO(MPC)
-%   [GROUPS, ISOLATED] = CASE_INFO(MPC)
+%   CASE_INFO(MPC, FD)
+%   [GROUPS, ISOLATED] = CASE_INFO(...)
 %
-%   Prints out detailed information about a MATPOWER case.
+%   Prints out detailed information about a MATPOWER case. Optionally prints
+%   to an open file, whose file identifier, as returned by FOPEN, is
+%   specified in the optional second parameter FD. Optional return arguments
+%   include GROUPS and ISOLATED buses, as returned by FIND_ISLANDS.
 
 %   TO DO: Add checking of bus types (isolated bus not marked as such).
 %          Check for infeasible limits PMAX < PMIN, QMAX < QMIN, VMAX < VMIN,
