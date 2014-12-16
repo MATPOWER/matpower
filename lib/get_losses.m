@@ -13,9 +13,9 @@ function [loss, fchg, tchg, dloss_dV, dchg_dVm] = get_losses(baseMVA, bus, branc
 %   line charging, as functions of bus voltages and branch parameters, using the
 %   following formulae:
 %
-%       Loss = abs( Vf / tau - Vt ) ^ 2 / (Rs - j Xs)
-%       Fchg = abs( Vf / tau ) ^ 2 * Bs / 2;
-%       Tchg = abs( Vt ) ^ 2 * b / 2;
+%       loss = abs( Vf / tau - Vt ) ^ 2 / (Rs - j Xs)
+%       fchg = abs( Vf / tau ) ^ 2 * Bc / 2
+%       tchg = abs( Vt ) ^ 2 * Bc / 2
 %
 %   Optionally, computes the partial derivatives of the line losses with
 %   respect to voltage angles and magnitudes.
