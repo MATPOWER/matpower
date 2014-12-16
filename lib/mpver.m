@@ -5,8 +5,7 @@ function rv = mpver(varargin)
 %   Release and Date (all strings). Calling MPVER without assigning the
 %   return value prints the version and release date of the current
 %   installation of MATPOWER, MATLAB (or Octave), the Optimization Toolbox,
-%   MIPS and any optional MATPOWER packages such as BPMPD_MEX, CPLEX,
-%   Gurobi, Ipopt, Knitro, MINOPF, Mosek, PDIPMOPF, SCPDIPMOPF and TRAMLOPF.
+%   MIPS and any optional MATPOWER packages.
 
 %   MATPOWER
 %   $Id$
