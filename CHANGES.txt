@@ -18,6 +18,7 @@ Changes since 5.0b1
 12/16/14
     - Added unsupported functions check_feasibility.m, checklimits.m,
       loss2bus.m,  make_opf_feasible.m, and makeBloss.m to extras/misc.
+    - Added section 9 "Miscellaneous MATPOWER Functions" to User's Manual.
 
 12/15/14
     - Added option for case_info() to print to a file. Added case_info()
