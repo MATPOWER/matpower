@@ -125,7 +125,7 @@ tests{end+1} = 't_scale_load';
 tests{end+1} = 't_psse';
 
 %% smartmarket tests
-if exist('runmarket', 'file') == 2
+if have_fcn('smartmarket')
     tests{end+1} = 't_off2case';
     if have_fcn('minopf')
         tests{end+1} = 't_auction_minopf';
