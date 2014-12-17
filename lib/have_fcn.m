@@ -141,8 +141,8 @@ else
             else
                 TorF = 0;
             end
-        case 'glpk'     %% Octave version must be later than 3.4, so check for 'catchme'
-            TorF = have_fcn('catchme') && exist('glpk','file') == 2 && ...
+        case 'glpk'
+            TorF = exist('glpk','file') == 2 && ...
                 (exist('__glpk__','file') == 3 || exist('glpkcc','file') == 3);
         case 'gurobi'
             TorF = exist('gurobi', 'file') == 3;
