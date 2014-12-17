@@ -36,7 +36,12 @@ end
 
 algs  = [1; 1; 2];
 if have_fcn('octave')
-    dual = [1; 2; 1];
+    v = ver('Octave');
+    if vstr2num(v.Version) < 3.007
+        dual = [0; 1; 1];
+    else
+        dual = [1; 2; 1];
+    end
 else
     dual = [0; 2; 1];
 end
@@ -177,3 +182,16 @@ end
 warning(s2.state, 'MATLAB:singularMatrix');
 
 t_end;
+
+%% borrowed from have_fcn()
+function num = vstr2num(vstr)
+% Converts version string to numerical value suitable for < or > comparisons
+% E.g. '3.11.4' -->  3.011004
+pat = '\.?(\d+)';
+[s,e,tE,m,t] = regexp(vstr, pat);
+b = 1;
+num = 0;
+for k = 1:length(t)
+    num = num + b * str2num(t{k}{1});
+    b = b / 1000;
+end
