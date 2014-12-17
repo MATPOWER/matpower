@@ -30,7 +30,7 @@ function [x, f, eflag, output, lambda] = qps_glpk(H, c, A, l, u, xmin, xmax, x0,
 %               0 = no progress output
 %               1 = some progress output
 %               2 = verbose progress output
-%           glpk_opt - options struct for QUADPROG/LINPROG, value in
+%           glpk_opt - options struct for GLPK, value in
 %               verbose overrides these options
 %       PROBLEM : The inputs can alternatively be supplied in a single
 %           PROBLEM struct with fields corresponding to the input arguments
