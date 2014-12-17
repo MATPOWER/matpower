@@ -155,11 +155,15 @@ CHANGES file in the docs directory for all the gory details.
     struct instead of options vector.
   - Utility routines to check network connectivity and handle islands
     and isolated buses.
+  - New extension implementing DC OPF branch flow soft limits.
+    See 'help toggle_softlims' for details.
   - New and updated support for 3rd party solvers:
     - CPLEX 12.6
     - GLPK
     - Gurobi 5.x
+    - Ipopt 3.11.x
     - Knitro 9.x.x
+    - Optimization Toolbox 7.1
   - Numerous performance enhancements.
   - New functions:
     - runcpf() for continuation power flow.
@@ -172,12 +176,26 @@ CHANGES file in the docs directory for all the gory details.
       cost row indices to aid in debugging.
     - margcost() for computing the marginal cost of generation.
     - psse2mpc() to convert PSS/E RAW date into MATPOWER case format.
+    - get_losses() to compute branch series losses and reactive charging
+      injections and derivatives as functions of bus voltages.
+    - New experimental functions in 'extras/misc' for computing loss factors,
+      checking feasibility of solutions, converting losses to negative bus
+      injections and modifying an OPF problem to make it feasible.
   - Added case5.m, a 5-bus, 5-generator example case from Rui Bo.
   - New options:
     - scale_load() can scale corresponding gencost for dispatchable loads.
     - makeJac() can return full Jacobian instead of reduced version
       used in Newton power flow updates.
     - modcost() can accept a vector of shift/scale factors.
+    - total_load() can return actual or nominal values for dispatchable
+      loads.
+    - runpf(), runopf(), etc. can send pretty-printed output to file
+      without also sending it to the screen.
+    - 'out.suppress_detail' option suppresses all output except system
+      summary (on by default for large cases).
+    - 'opf.init_from_mpc' option forces some solvers to use user-supplied
+      starting point.
+    - MIPS 1.1 includes many new user-settable options.
   - Reimplementated @opf_model class as sub-class of the new
     @opt_model class, which supports indexed named sets of
     variables, constraints and costs.
@@ -214,10 +232,27 @@ CHANGES file in the docs directory for all the gory details.
   - Fixed memory issue resulting from nested om fields when
     repeatedly running an OPF using the results of a previous
     OPF as input. Thanks to Carlos Murillo-Sanchez.
+  - Fixed fatal error when uopf() shuts down all gens
+    attempting to satisfy Pmin limits.
+  - Reactive power output of multiple generators at a PQ bus
+    no longer get re-allocated when running a power flow.
+  - Fixed a bug in savecase() where a gencost matrix with extra
+    columns of zeros resulted in a corrupted MATPOWER case file.
+  - Fixed bug in runpf() that caused a crash for cases with
+    'pf.enforce_q_lims' turned on and exactly two Q limit violations,
+    one Qmax and one Qmin. Thanks to Jose Luis Marin.
 
 * INCOMPATIBLE CHANGES:
   - Optional packages TSPOPF and MINOPF must be updated to latest
     versions.
+  - Renamed cdf2matp() to cdf2mpc() and updated the interface to be
+    consistent with psse2mpc().
+  - Removed 'ot_opts' field, replaced with 'linprog_opts' and
+    'quadprog_opts' fields in the OPT argument to qps_matpower()
+    and qps_ot().
+  - The name of the mips() option used to specify the maximum number
+    of step-size reductions with step_control on was changed from
+    'max_red' to 'sc.red_it' for consistency with other MATPOWER options.
   - Removed 'max_it' option from qps_matpower() (and friends) args.
     Use algorithm specific options to control iteration limits.
   - Changed behavior of branch angle difference limits so that
