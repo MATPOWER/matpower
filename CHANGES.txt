@@ -2,7 +2,7 @@
  Change history for MATPOWER
 -----------------------------
 
-Version:    5.0b1
+Version:    5.0
 
 maintained by Ray Zimmerman <rz10@cornell.edu>
 
@@ -14,6 +14,9 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 
 Changes since 5.0b1
 -------------------
+
+12/17/14
+    - Released version 5.0.
 
 12/16/14
     - Added unsupported functions check_feasibility.m, checklimits.m,
