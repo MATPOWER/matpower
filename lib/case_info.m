@@ -333,10 +333,17 @@ for k = 1:ngr+have_isolated
         idc_tie_all_off = unique([ idc_tie_all_off; idc_tie_off ]);
     end
     ig      = find(sum(abs(Cg(:, b)), 2));
-    ig_on   = ig(find(gon(ig)  & ~isload(mpc.gen(ig, :))));
-    ig_off  = ig(find(goff(ig) & ~isload(mpc.gen(ig, :))));
-    idld_on = ig(find(gon(ig)  &  isload(mpc.gen(ig, :))));
-    idld_off= ig(find(goff(ig) &  isload(mpc.gen(ig, :))));
+    if isempty(ig)
+        ig_on   = [];
+        ig_off  = [];
+        idld_on = [];
+        idld_off= [];
+    else
+        ig_on   = ig(find(gon(ig)  & ~isload(mpc.gen(ig, :))));
+        ig_off  = ig(find(goff(ig) & ~isload(mpc.gen(ig, :))));
+        idld_on = ig(find(gon(ig)  &  isload(mpc.gen(ig, :))));
+        idld_off= ig(find(goff(ig) &  isload(mpc.gen(ig, :))));
+    end
 
     d(k).nb = length(b);        %% # of buses
     d(k).nl = length(ibr);      %% # of branches

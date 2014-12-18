@@ -12,6 +12,13 @@ Copyright (c) 1996-2014 by Power System Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
 
 
+Changes since 5.0
+-----------------
+
+12/18/14
+    - Fixed fatal bug in case_info() for islands with no generation.
+
+
 Changes since 5.0b1
 -------------------
 
