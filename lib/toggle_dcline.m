@@ -425,7 +425,7 @@ c = idx_dcline;
 %% options
 SUPPRESS        = mpopt.out.suppress_detail;
 if SUPPRESS == -1
-    if size(bus, 1) > 500
+    if size(results.bus, 1) > 500
         SUPPRESS = 1;
     else
         SUPPRESS = 0;

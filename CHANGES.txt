@@ -15,6 +15,9 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.0
 -----------------
 
+12/22/14
+    - Fixed fatal bug in toggle_dcline() when pretty-printing results.
+
 12/18/14
     - Fixed fatal bug in case_info() for islands with no generation.
 
