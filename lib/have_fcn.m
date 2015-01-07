@@ -142,8 +142,10 @@ else
                 TorF = 0;
             end
         case 'glpk'
-            TorF = exist('glpk','file') == 2 && ...
-                (exist('__glpk__','file') == 3 || exist('glpkcc','file') == 3);
+            TorF = exist('glpk','file') == 3 || ... %% Windows OPTI install (no glpk.m)
+                (exist('glpk','file') == 2 && ...   %% others have glpk.m and ...
+                    (exist('__glpk__','file') == 3 || ...   %% octave __glpk__ MEX
+                     exist('glpkcc','file') == 3));         %% Matlab glpkcc MEX
         case 'gurobi'
             TorF = exist('gurobi', 'file') == 3;
         case 'ipopt'

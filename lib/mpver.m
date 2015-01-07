@@ -120,16 +120,31 @@ else
         fprintf('%-22s -- not installed --\n', 'Gurobi');
     end
     if have_fcn('glpk')
-%% bummer, evalc not yet implemented in Octave (as of 3.8)
-%         str = evalc('glpk(1, 1, 1, 1, 1, ''U'', ''C'', -1, struct(''msglev'', 3))');
-%         pat = 'GLPK Simplex Optimizer, v([^\s,]+)';
-%         [s,e,tE,m,t] = regexp(str, pat);
-%         if isempty(t)
-%             vn = '<unknown>';
-%         else
-%             vn = t{1}{1};
-%         end
-        vn = '<unknown>';
+        if have_fcn('octave')
+            %% bummer, evalc not yet implemented in Octave (as of 3.8)
+%             str = evalc('glpk(1, 1, 1, 1, 1, ''U'', ''C'', -1, struct(''msglev'', 3))');
+%             pat = 'GLPK Simplex Optimizer, v([^\s,]+)';
+%             [s,e,tE,m,t] = regexp(str, pat);
+%             if isempty(t)
+%                 vn = '<unknown>';
+%             else
+%                 vn = t{1}{1};
+%             end
+            vn = '<unknown>';
+        else
+            str = evalc('glpk');
+            pat = 'GLPK Matlab interface\. Version: ([^\s,]+)';     %% glpkccm, Giorgetti/Klitgord
+            [s,e,tE,m,t] = regexp(str, pat);
+            if isempty(t)
+                pat = 'GLPK: GNU Linear Programming Kit \[v([^\s,]+)';  %% OPTI, Giorgetti/Currie
+                [s,e,tE,m,t] = regexp(str, pat);
+            end
+            if isempty(t)
+                vn = '<unknown>';
+            else
+                vn = t{1}{1};
+            end
+        end
         fprintf('%-22s Version %-10s %-11s   %s\n', 'GLPK', vn, '', computer);
     else
         fprintf('%-22s -- not installed --\n', 'GLPK');
