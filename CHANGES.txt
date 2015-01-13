@@ -21,6 +21,9 @@ Changes since 5.0
       Matlab except R2014b, the first version that included the
       dual-simplex algorthm. For some reason, in this version it did
       not return any Langrange multipliers!?!.
+    - Increment MATPOWER options version number to 5 (forgot to do it
+      previously for 3, 4, and 5) and included code to update older
+      options structs to current version.
 
 1/7/15
     - Improved detection of GLPK version in mpver() and GLPK

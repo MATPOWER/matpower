@@ -430,10 +430,25 @@ if have_opt0
         if DEBUG, fprintf('OPT0 is a valid options struct\n'); end
         if opt0.v < v
             %% convert older version to current version
-%             switch v
-%                 case 1
-%                     %% convert version 1 to current
-%             end
+            opt_d = mpoption_default();
+            if opt0.v == 1          %% convert version 1 to 2
+                if isfield(opt_d, 'linprog')
+                    opt0.lingprog = opt_d.linprog;
+                end
+                if isfield(opt_d, 'quadprog')
+                    opt0.quadprog = opt_d.quadprog;
+                end
+            end
+            if opt0.v <= 2          %% convert version 2 to 3
+                opt0.out.suppress_detail = opt_d.out.suppress_detail;
+            end
+            %if opt0.v <= 3          %% convert version 3 to 4
+                %% new mips options were all optional, no conversion needed
+            %end
+            if opt0.v <= 4          %% convert version 4 to 5
+                opt0.opf.init_from_mpc = opt_d.opf.init_from_mpc;
+            end
+            opt0.v = v;
         end
         opt = opt0;
     else                            %% convert from old-style options vector
@@ -1440,8 +1455,17 @@ end
 %% globals
 %%-------------------------------------------------------------------
 function v = mpoption_version
-v = 2;      %% version number of MATPOWER options struct
+v = 5;      %% version number of MATPOWER options struct
             %% (must be incremented every time structure is updated)
+            %% v1   - first version based on struct (MATPOWER 5.0b1)
+            %% v2   - added 'linprog' and 'quadprog' fields
+            %% v3   - (forgot to increment v) added 'out.suppress_detail'
+            %%        field
+            %% v4   - (forgot to increment v) MIPS 1.1, added optional
+            %%        fields to 'mips' options: xi, sigma, z0, alpha_min,
+            %%        rho_min, rho_max, mu_threshold and max_stepsize
+            %% v5   - (forgot to increment v) added 'opf.init_from_mpc'
+            %%        field (MATPOWER 5.0)
 
 %%-------------------------------------------------------------------
 function db_level = DEBUG
