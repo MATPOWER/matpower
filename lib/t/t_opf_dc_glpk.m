@@ -35,6 +35,11 @@ if nargin < 1
 end
 
 algs  = [1; 1; 2];
+alg_names = {
+    'primal simplex',
+    'dual simplex',
+    'interior',
+};
 if have_fcn('octave')
     v = ver('Octave');
     if vstr2num(v.Version) < 3.007
@@ -78,12 +83,7 @@ mpopt = mpoption(mpopt, 'opf.dc.solver', 'GLPK');
 if have_fcn('glpk')
     for k = 1:length(algs)
         mpopt = mpoption(mpopt, 'glpk.opts.lpsolver', algs(k), 'glpk.opts.dual', dual(k));
-        methods = {
-            'primal simplex',
-            'dual simplex',
-            'interior',
-        };
-    t0 = sprintf('DC OPF (GLPK %s): ', methods{k});
+    t0 = sprintf('DC OPF (GLPK %s): ', alg_names{k});
 
     %% set up indices
     ib_data     = [1:BUS_AREA BASE_KV:VMIN];

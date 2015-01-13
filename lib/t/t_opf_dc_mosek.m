@@ -35,6 +35,15 @@ if nargin < 1
 end
 
 algs = [0; 1; 4; 5; 6; 7; 10];
+alg_names = {
+    'free',
+    'interior point',
+    'primal simplex',
+    'dual simplex',
+    'primal dual simplex',
+    'free simplex',
+    'concurrent'
+};
 num_tests = 23 * length(algs);
 
 t_begin(num_tests, quiet);
@@ -62,16 +71,7 @@ mpopt = mpoption(mpopt, 'opf.dc.solver', 'MOSEK');
 if have_fcn('mosek')
     for k = 1:length(algs)
         mpopt = mpoption(mpopt, 'mosek.lp_alg', algs(k));
-        methods = {
-            'free',
-            'interior point',
-            'primal simplex',
-            'dual simplex',
-            'primal dual simplex',
-            'free simplex',
-            'concurrent'
-        };
-    t0 = sprintf('DC OPF (MOSEK %s): ', methods{k});
+    t0 = sprintf('DC OPF (MOSEK %s): ', alg_names{k});
 
     %% set up indices
     ib_data     = [1:BUS_AREA BASE_KV:VMIN];

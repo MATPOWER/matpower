@@ -35,6 +35,14 @@ if nargin < 1
 end
 
 algs = [0; 1; 2; 3; 4];
+alg_names = {
+    'automatic',
+    'primal simplex',
+    'dual simplex',
+    'barrier',
+    'concurrent',
+    'deterministic concurrent',
+};
 num_tests = 23 * length(algs);
 
 t_begin(num_tests, quiet);
@@ -62,15 +70,7 @@ mpopt = mpoption(mpopt, 'opf.dc.solver', 'GUROBI');
 if have_fcn('gurobi')
     for k = 1:length(algs)
         mpopt = mpoption(mpopt, 'gurobi.method', algs(k));
-        methods = {
-            'automatic',
-            'primal simplex',
-            'dual simplex',
-            'barrier',
-            'concurrent',
-            'deterministic concurrent',
-        };
-    t0 = sprintf('DC OPF (Gurobi %s): ', methods{k});
+    t0 = sprintf('DC OPF (Gurobi %s): ', alg_names{k});
 
     %% set up indices
     ib_data     = [1:BUS_AREA BASE_KV:VMIN];

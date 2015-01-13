@@ -35,6 +35,14 @@ if nargin < 1
 end
 
 algs = [1; 2; 3; 4; 5; 6];
+alg_names = {
+    'primal simplex',
+    'dual simplex',
+    'network simplex',
+    'barrier',
+    'sifting',
+    'concurrent'
+};
 num_tests = 23 * length(algs);
 
 t_begin(num_tests, quiet);
@@ -62,15 +70,7 @@ mpopt = mpoption(mpopt, 'opf.dc.solver', 'CPLEX');
 if have_fcn('cplex')
     for k = 1:length(algs)
         mpopt = mpoption(mpopt, 'cplex.lpmethod', algs(k), 'cplex.qpmethod', algs(k));
-        methods = {
-            'primal simplex',
-            'dual simplex',
-            'network simplex',
-            'barrier',
-            'sifting',
-            'concurrent'
-        };
-    t0 = sprintf('DC OPF (CPLEX %s): ', methods{k});
+    t0 = sprintf('DC OPF (CPLEX %s): ', alg_names{k});
 
     %% set up indices
     ib_data     = [1:BUS_AREA BASE_KV:VMIN];
