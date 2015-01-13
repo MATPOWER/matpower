@@ -53,6 +53,10 @@ if quiet
 else
     verbose = 0;
 end
+if have_fcn('octave')
+    s1 = warning('query', 'Octave:fopen-file-in-path');
+    warning('off', 'Octave:fopen-file-in-path');
+end
 
 %% load cases
 casenames = {'case118', 'case30', 'case14', 'case9'};
@@ -378,5 +382,9 @@ t_is(mpc1.bus,     mpc2.bus,     10, sprintf('%smpc.bus', t));
 t_is(mpc1.gen,     mpc2.gen,     10, sprintf('%smpc.gen', t));
 t_is(mpc1.branch,  mpc2.branch,  10, sprintf('%smpc.branch', t));
 t_is(mpc1.gencost, mpc2.gencost, 10, sprintf('%smpc.gencost', t));
+
+if have_fcn('octave')
+    warning(s1.state, 'Octave:fopen-file-in-path');
+end
 
 t_end;

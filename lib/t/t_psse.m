@@ -46,8 +46,8 @@ else
     verbose = 0;
 end
 if have_fcn('octave')
-    s1 = warning('query', 'Octave:load-file-in-path');
-    warning('off', 'Octave:load-file-in-path');
+    s1 = warning('query', 'Octave:fopen-file-in-path');
+    warning('off', 'Octave:fopen-file-in-path');
 end
 
 if ~have_fcn('regexp_split')
@@ -135,7 +135,7 @@ else
 end
 
 if have_fcn('octave')
-    warning(s1.state, 'Octave:load-file-in-path');
+    warning(s1.state, 'Octave:fopen-file-in-path');
 end
 
 t_end;

@@ -49,8 +49,8 @@ else
     verbose = 0;
 end
 if have_fcn('octave')
-    s1 = warning('query', 'Octave:load-file-in-path');
-    warning('off', 'Octave:load-file-in-path');
+    s1 = warning('query', 'Octave:fopen-file-in-path');
+    warning('off', 'Octave:fopen-file-in-path');
 end
 s2 = warning('query', 'MATLAB:singularMatrix');
 warning('off', 'MATLAB:singularMatrix');
@@ -132,7 +132,7 @@ t_ok(strcmp(got, expected), [t 'standard DC OPF']);
 delete(tmpfnamedc);
 
 if have_fcn('octave')
-    warning(s1.state, 'Octave:load-file-in-path');
+    warning(s1.state, 'Octave:fopen-file-in-path');
 end
 warning(s2.state, 'MATLAB:singularMatrix');
 
