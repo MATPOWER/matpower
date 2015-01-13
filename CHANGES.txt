@@ -15,7 +15,14 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.0
 -----------------
 
-1/7/14
+1/13/15
+    - Updated t_opf_dc_ot() to remove the skipping of the checking of
+      price results for the dual-simplex algorithm for all versions of
+      Matlab except R2014b, the first version that included the
+      dual-simplex algorthm. For some reason, in this version it did
+      not return any Langrange multipliers!?!.
+
+1/7/15
     - Improved detection of GLPK version in mpver() and GLPK
       availability in have_fcn(), now compatible with GLPK installed
       by OPTI Toolbox (http://www.i2c2.aut.ac.nz/Wiki/OPTI/).
