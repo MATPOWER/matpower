@@ -6,8 +6,7 @@ function opt = glpk_options(overrides, mpopt)
 %   OPT = GLPK_OPTIONS(OVERRIDES, FNAME)
 %   OPT = GLPK_OPTIONS(OVERRIDES, MPOPT)
 %
-%   Sets the values for the options struct normally passed to
-%   GLPK.
+%   Sets the values for the options struct normally passed to GLPK.
 %
 %   Inputs are all optional, second argument must be either a string
 %   (FNAME) or a struct (MPOPT):
