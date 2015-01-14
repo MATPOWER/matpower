@@ -5,7 +5,7 @@ function TorF = have_fcn(tag)
 %
 %   Possible values for input TAG and their meanings:
 %       bpmpd       - BP, BPMPD interior point solver
-%       clp         - CLP, LP/QP solver (https://projects.coin-or.org/Clp)
+%       clp         - CLP, LP/QP solver(http://www.coin-or.org/projects/Clp.xml)
 %        opti_clp   -   version of CLP distributed with OPTI Toolbox
 %                       (http://www.i2c2.aut.ac.nz/Wiki/OPTI/)
 %       cplex       - CPLEX, IBM ILOG CPLEX Optimizer
@@ -13,7 +13,8 @@ function TorF = have_fcn(tag)
 %       fmincon_ipm - FMINCON with Interior Point solver, from Opt Tbx 4.x +
 %       glpk        - GLPK, GNU Linear Programming Kit
 %       gurobi      - GUROBI, Gurobi solver (http://www.gurobi.com/), 5.x +
-%       ipopt       - IPOPT, NLP solver (https://projects.coin-or.org/Ipopt)
+%       ipopt       - IPOPT, NLP solver
+%                       (http://www.coin-or.org/projects/Ipopt.xml)
 %       linprog     - LINPROG, LP solver from Optimization Toolbox 2.x +
 %       linprog_ds  - LINPROG with dual-simplex solver
 %                       from Optimization Toolbox 7.1 (R2014b) +

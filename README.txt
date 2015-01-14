@@ -341,7 +341,7 @@ Terms of Use for details.
  - CLP         COIN-OR Linear Programming solver implements high performance
                simplex and barrier LP and QP solvers that MATPOWER can use
                for the DC OPF. Available from:
-               https://projects.coin-or.org/Clp.
+               http://www.coin-or.org/projects/Clp.xml.
 
  - CPLEX       Includes high-performance, large-scale LP and QP solvers
                that MATPOWER can use for the DC OPF. Requires the
@@ -361,7 +361,7 @@ Terms of Use for details.
                optimization that MATPOWER can use for both AC and DC
                OPF problems. Requires the Matlab MEX interface for
                IPOPT, available from
-               https://projects.coin-or.org/Ipopt/.
+               http://www.coin-or.org/projects/Ipopt.xml.
 
  - KNITRO      A general purpose optimization solver specializing in
                nonlinear problems that MATPOWER can use for AC OPFs.
