@@ -47,9 +47,9 @@ function rv = mpver(varargin)
 % v{1} = ver(p);
 
 v{1} = struct(  'Name',     'MATPOWER', ... 
-                'Version',  '5.0', ...
+                'Version',  '5.1b1', ...
                 'Release',  '', ...
-                'Date',     '17-Dec-2014' );
+                'Date',     '14-Jan-2015' );
 if nargout > 0
     if nargin > 0
         rv = v{1};
@@ -107,6 +107,19 @@ else
         end
     else
         fprintf('%-22s -- not installed --\n', 'BPMPD_MEX');
+    end
+    if have_fcn('clp')
+        str = evalc('clp');
+        pat = 'CLP: COIN-OR Linear Programming \[v([^\s,]+)';  %% OPTI, Giorgetti/Currie
+        [s,e,tE,m,t] = regexp(str, pat);
+        if isempty(t)
+            vn = '<unknown>';
+        else
+            vn = t{1}{1};
+        end
+        fprintf('%-22s Version %-10s %-11s   %s\n', 'CLP', vn, '', computer);
+    else
+        fprintf('%-22s -- not installed --\n', 'CLP');
     end
     if have_fcn('cplex')
         cplex = Cplex('null');
