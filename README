@@ -383,7 +383,7 @@ Terms of Use for details.
 These packages are distributed separately since each has it's own
 license agreement and terms of use.
 
-Note: For Windows users, of the best ways to get access to some high
+Note: For Windows users, one of the best ways to get access to some high
 performance solvers, without dealing with the pain of building the MEX
 interfaces yourself, is to install the OPTI Toolbox by Jonathan Currie,
 available at: http://www.i2c2.aut.ac.nz/Wiki/OPTI/. The installation is
