@@ -18,6 +18,9 @@ Changes since 5.0
 1/14/15
     - Added support for LP/QP solver CLP (COIN_OR Linear Programming).
       Use 'opf.dc.solver' option 'CLP' or qps_clp().
+    - Added note to README and home page about OPTI Toolbox by
+      Jonathan Currie being an easy way to install some good solvers
+      for Windows users.
 
 1/13/15
     - Updated t_opf_dc_ot() to remove the skipping of the checking of
@@ -777,7 +780,7 @@ Changes since 4.0b3
       and OPF_ALG_DC = 400 for AC and DC OPF, respectively. Requires
       the Matlab MEX interface for IPOPT, available from
       http://www.coin-or.org/projects/Ipopt.xml.
-    
+
 5/13/10
     - Modified input args for Hessian evaluation function for MIPS.
       Requires cost_mult as 3rd argument.
