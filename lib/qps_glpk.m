@@ -1,5 +1,5 @@
 function [x, f, eflag, output, lambda] = qps_glpk(H, c, A, l, u, xmin, xmax, x0, opt)
-%QPS_GLPK  Quadratic Program Solver based on QUADPROG/LINPROG.
+%QPS_GLPK  Linear Program Solver based on GLPK - GNU Linear Programming Kit.
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
 %       QPS_GLPK(H, C, A, L, U, XMIN, XMAX, X0, OPT)
 %   A wrapper function providing a MATPOWER standardized interface for using
