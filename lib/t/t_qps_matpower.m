@@ -34,10 +34,10 @@ if nargin < 1
     quiet = 0;
 end
 
-algs = {'BPMPD', 'MIPS', 250, 'IPOPT', 'OT', 'CPLEX', 'MOSEK', 'GUROBI', 'GLPK'};
-names = {'BPMPD_MEX', 'MIPS', 'sc-MIPS', 'IPOPT', 'linprog/quadprog', 'CPLEX', 'MOSEK', 'Gurobi', 'glpk'};
-check = {'bpmpd', [], [], 'ipopt', 'quadprog', 'cplex', 'mosek', 'gurobi', 'glpk'};
-does_qp = [1 1 1 1 1 1 1 1 0];
+algs = {'BPMPD', 'MIPS', 250, 'IPOPT', 'OT', 'CPLEX', 'MOSEK', 'GUROBI', 'CLP', 'GLPK'};
+names = {'BPMPD_MEX', 'MIPS', 'sc-MIPS', 'IPOPT', 'linprog/quadprog', 'CPLEX', 'MOSEK', 'Gurobi', 'CLP', 'glpk'};
+check = {'bpmpd', [], [], 'ipopt', 'quadprog', 'cplex', 'mosek', 'gurobi', 'clp', 'glpk'};
+does_qp = [1 1 1 1 1 1 1 1 1 0];
 
 n = 36;
 nqp = 28;
@@ -51,7 +51,12 @@ for k = 1:length(algs)
         if strcmp(names{k}, 'MIPS') || strcmp(names{k}, 'sc-MIPS')
             opt.mips_opt.comptol = 1e-8;
         end
-%         if strcmp(names{k}, 'quadprog')
+%         if strcmp(names{k}, 'linprog/quadprog')
+%             opt.verbose = 2;
+%             opt.linprog_opt.Algorithm = 'interior-point';
+%             opt.linprog_opt.Algorithm = 'active-set';
+%             opt.linprog_opt.Algorithm = 'simplex';
+%             opt.linprog_opt.Algorithm = 'dual-simplex';
 %         end
         if strcmp(names{k}, 'CPLEX')
 %           alg = 0;        %% default uses barrier method with NaN bug in lower lim multipliers
@@ -83,8 +88,12 @@ for k = 1:length(algs)
         t_is(f, -78, 6, [t 'f']);
         t_is(lam.mu_l, [0;0;0], 9, [t 'lam.mu_l']);
         t_is(lam.mu_u, [0;1.5;0.5], 9, [t 'lam.mu_u']);
-        t_is(lam.lower, [1;0;0], 9, [t 'lam.lower']);
-        t_is(lam.upper, zeros(size(x)), 9, [t 'lam.upper']);
+        if strcmp(algs{k}, 'CLP') && ~have_fcn('opti_clp')
+            t_skip(2, [t 'lam.lower/upper : MEXCLP does not return multipliers on var bounds']);
+        else
+            t_is(lam.lower, [1;0;0], 9, [t 'lam.lower']);
+            t_is(lam.upper, zeros(size(x)), 9, [t 'lam.upper']);
+        end
 
         if does_qp(k)
             t = sprintf('%s - unconstrained 3-d quadratic : ', names{k});
@@ -119,8 +128,12 @@ for k = 1:length(algs)
             t_is(f, -74/9, 6, [t 'f']);
             t_is(lam.mu_l, [0;0;0], 13, [t 'lam.mu_l']);
             t_is(lam.mu_u, [28;4;0]/9, 7, [t 'lam.mu_u']);
-            t_is(lam.lower, zeros(size(x)), 7, [t 'lam.lower']);
-            t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
+            if strcmp(algs{k}, 'CLP') && ~have_fcn('opti_clp')
+                t_skip(2, [t 'lam.lower/upper : MEXCLP does not return multipliers on var bounds']);
+            else
+                t_is(lam.lower, zeros(size(x)), 7, [t 'lam.lower']);
+                t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
+            end
 
             t = sprintf('%s - constrained 4-d QP : ', names{k});
             %% from http://www.jmu.edu/docs/sasdoc/sashtml/iml/chap8/sect12.htm
@@ -141,8 +154,12 @@ for k = 1:length(algs)
             t_is(f, 3.29/3, 6, [t 'f']);
             t_is(lam.mu_l, [6.58;0]/3, 6, [t 'lam.mu_l']);
             t_is(lam.mu_u, [0;0], 13, [t 'lam.mu_u']);
-            t_is(lam.lower, [2.24;0;0;1.7667], 4, [t 'lam.lower']);
-            t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
+            if strcmp(algs{k}, 'CLP') && ~have_fcn('opti_clp')
+                t_skip(2, [t 'lam.lower/upper : MEXCLP does not return multipliers on var bounds']);
+            else
+                t_is(lam.lower, [2.24;0;0;1.7667], 4, [t 'lam.lower']);
+                t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
+            end
 
             t = sprintf('%s - (struct) constrained 4-d QP : ', names{k});
             p = struct('H', H, 'A', A, 'l', l, 'u', u, 'xmin', xmin, 'x0', x0, 'opt', opt);
@@ -152,8 +169,12 @@ for k = 1:length(algs)
             t_is(f, 3.29/3, 6, [t 'f']);
             t_is(lam.mu_l, [6.58;0]/3, 6, [t 'lam.mu_l']);
             t_is(lam.mu_u, [0;0], 13, [t 'lam.mu_u']);
-            t_is(lam.lower, [2.24;0;0;1.7667], 4, [t 'lam.lower']);
-            t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
+            if strcmp(algs{k}, 'CLP') && ~have_fcn('opti_clp')
+                t_skip(2, [t 'lam.lower/upper : MEXCLP does not return multipliers on var bounds']);
+            else
+                t_is(lam.lower, [2.24;0;0;1.7667], 4, [t 'lam.lower']);
+                t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
+            end
         else
             t_skip(nqp, sprintf('%s does not handle QP problems', names{k}));
         end

@@ -110,7 +110,7 @@ function opt = mpoption(varargin)
 %       [             interior point method (pure Matlab)                   ]
 %       [ 'FMINCON' - MATLAB Optimization Toolbox, FMINCON                  ]
 %       [ 'IPOPT'   - IPOPT, requires MEX interface to IPOPT solver         ]
-%       [             available from: https://projects.coin-or.org/Ipopt/   ]
+%       [             available from: https://projects.coin-or.org/Ipopt    ]
 %       [ 'KNITRO'  - KNITRO, requires MATLAB Optimization Toolbox and      ]
 %       [             KNITRO libraries available from: http://www.ziena.com/]
 %       [ 'MINOPF'  - MINOPF, MINOS-based solver, requires optional         ]
@@ -136,14 +136,18 @@ function opt = mpoption(varargin)
 %       [             interior point method (pure Matlab)                   ]
 %       [ 'BPMPD'   - BPMPD, requires optional MEX-based BPMPD_MEX package  ]
 %       [             available from: http://www.pserc.cornell.edu/bpmpd/   ]
-%       [ 'CPLEX'   - CPLEX, requires Matlab interface to CPLEX solver      ]
+%       [ 'CLP'     - CLP, requires interface to COIN-OP LP solver          ]
+%       [             available from: https://projects.coin-or.org/Clp      ]
+%       [ 'CPLEX'   - CPLEX, requires CPLEX solver available from:          ]
+%       [             http://www.ibm.com/software/integration/ ...          ]
+%       [                                 ... optimization/cplex-optimizer/ ]
 %       [ 'GLPK'    - GLPK, requires interface to GLPK solver               ]
 %       [             available from: http://www.gnu.org/software/glpk/     ]
 %       [             (GLPK does not work with quadratic cost functions)    ]
 %       [ 'GUROBI'  - GUROBI, requires Gurobi optimizer (v. 5+)             ]
 %       [             available from: http://www.gurobi.com/                ]
 %       [ 'IPOPT'   - IPOPT, requires MEX interface to IPOPT solver         ]
-%       [             available from: https://projects.coin-or.org/Ipopt/   ]
+%       [             available from: https://projects.coin-or.org/Ipopt    ]
 %       [ 'MOSEK'   - MOSEK, requires Matlab interface to MOSEK solver      ]
 %       [             available from: http://www.mosek.com/                 ]
 %       [ 'OT'      - MATLAB Optimization Toolbox, QUADPROG, LINPROG        ]
@@ -447,6 +451,11 @@ if have_opt0
             %end
             if opt0.v <= 4          %% convert version 4 to 5
                 opt0.opf.init_from_mpc = opt_d.opf.init_from_mpc;
+            end
+            if opt0.v <= 5          %% convert version 5 to 6
+                if isfield(opt_d, 'clp')
+                    opt0.clp = opt_d.clp;
+                end
             end
             opt0.v = v;
         end
@@ -1455,7 +1464,7 @@ end
 %% globals
 %%-------------------------------------------------------------------
 function v = mpoption_version
-v = 5;      %% version number of MATPOWER options struct
+v = 6;      %% version number of MATPOWER options struct
             %% (must be incremented every time structure is updated)
             %% v1   - first version based on struct (MATPOWER 5.0b1)
             %% v2   - added 'linprog' and 'quadprog' fields
@@ -1466,6 +1475,7 @@ v = 5;      %% version number of MATPOWER options struct
             %%        rho_min, rho_max, mu_threshold and max_stepsize
             %% v5   - (forgot to increment v) added 'opf.init_from_mpc'
             %%        field (MATPOWER 5.0)
+            %% v6   - added 'clp' field
 
 %%-------------------------------------------------------------------
 function db_level = DEBUG
@@ -1474,6 +1484,6 @@ db_level = 0;
 %%-------------------------------------------------------------------
 function pkgs = mpoption_optional_pkgs()
 pkgs = {...
-    'cplex', 'fmincon', 'gurobi', 'glpk', 'ipopt', 'knitro', 'linprog', ...
+    'clp', 'cplex', 'fmincon', 'gurobi', 'glpk', 'ipopt', 'knitro', 'linprog', ...
     'minopf', 'mosek', 'quadprog', 'sdp_pf', 'sopf', 'tspopf', 'yalmip' ...
 };

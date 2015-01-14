@@ -84,8 +84,14 @@ end
 if have_fcn('bpmpd')
     tests{end+1} = 't_opf_dc_bpmpd';
 end
+if have_fcn('clp')
+    tests{end+1} = 't_opf_dc_clp';
+end
 if have_fcn('cplex')
     tests{end+1} = 't_opf_dc_cplex';
+end
+if have_fcn('glpk')
+    tests{end+1} = 't_opf_dc_glpk';
 end
 if have_fcn('gurobi')
     tests{end+1} = 't_opf_dc_gurobi';
@@ -100,9 +106,6 @@ if have_fcn('mosek')
 end
 if have_fcn('quadprog')
     tests{end+1} = 't_opf_dc_ot';
-end
-if have_fcn('glpk')
-    tests{end+1} = 't_opf_dc_glpk';
 end
 if have_fcn('sdp_pf')
     tests{end+1} = 't_opf_sdpopf';

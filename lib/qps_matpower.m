@@ -35,6 +35,7 @@ function [x, f, eflag, output, lambda] = qps_matpower(H, c, A, l, u, xmin, xmax,
 %                        (or alg=250) it uses MIPS-sc, a step controlled
 %                        variant of MIPS
 %               'BPMPD'   : (or 100) BPMPD_MEX
+%               'CLP'     : CLP
 %               'CPLEX'   : (or 500) CPLEX
 %               'GLPK'    : GLPK, (LP problems only, i.e. empty H matrix)
 %               'GUROBI'  : (or 700) Gurobi

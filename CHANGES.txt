@@ -15,12 +15,16 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.0
 -----------------
 
+1/14/15
+    - Added support for LP/QP solver CLP (COIN_OR Linear Programming).
+      Use 'opf.dc.solver' option 'CLP' or qps_clp().
+
 1/13/15
     - Updated t_opf_dc_ot() to remove the skipping of the checking of
       price results for the dual-simplex algorithm for all versions of
       Matlab except R2014b, the first version that included the
       dual-simplex algorthm. For some reason, in this version it did
-      not return any Langrange multipliers!?!.
+      not return any Lagrange multipliers!?!.
     - Increment MATPOWER options version number to 5 (forgot to do it
       previously for 3, 4, and 5) and included code to update older
       options structs to current version.
@@ -214,7 +218,7 @@ Changes since 4.1
 
 6/27/14
     - Added support for LP solver GLPK which is built-in to
-      Octave. Use 'opf.dc.solver' option 'GLPK'.
+      Octave. Use 'opf.dc.solver' option 'GLPK' or qps_glpk().
     - INCOMPATIBLE CHANGE: Removed optional 'max_it' field from
       opt argument to qps_matpower() and qps_*() family of
       functions (except qps_mips()).

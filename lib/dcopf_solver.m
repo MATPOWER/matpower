@@ -211,6 +211,8 @@ switch alg
             case 'IPOPT'
                 opt.ipopt_opt = ipopt_options([], mpopt);
         end
+    case 'CLP'
+        opt.clp_opt = clp_options([], mpopt);
     case 'CPLEX'
         opt.cplex_opt = cplex_options([], mpopt);
     case 'GLPK'
