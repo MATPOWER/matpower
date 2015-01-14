@@ -338,6 +338,11 @@ Terms of Use for details.
                solvers, and improves robustness of MINOPF.
                See http://www.pserc.cornell.edu/bpmpd/
 
+ - CLP         COIN-OR Linear Programming solver implements high performance
+               simplex and barrier LP and QP solvers that MATPOWER can use
+               for the DC OPF. Available from:
+               https://projects.coin-or.org/Clp.
+
  - CPLEX       Includes high-performance, large-scale LP and QP solvers
                that MATPOWER can use for the DC OPF. Requires the
                Matlab interface to CPLEX, available from
