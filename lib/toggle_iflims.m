@@ -16,7 +16,8 @@ function mpc = toggle_iflims(mpc, on_off)
 %               respectively for lines whose orientation is the same
 %               as or opposite to that of the interface.
 %       lims    nif x 3, defines the DC model flow limits in MW
-%               for specified interfaces. The 2nd and 3rd columns specify
+%               for specified interfaces. The first column is the index
+%               of the interface, the 2nd and 3rd columns specify
 %               the lower and upper limits on the (DC model) flow
 %               across the interface, respectively. Normally, the lower
 %               limit is negative, indicating a flow in the opposite
@@ -213,8 +214,8 @@ for k = 1:nifs
     br = abs(br);
     results.if.P(k) = sum( d .* results.branch(br, PF) );
 end
-results.if.mu.l = results.lin.mu.l.iflims;
-results.if.mu.u = results.lin.mu.u.iflims;
+results.if.mu.l = results.lin.mu.l.iflims / results.baseMVA;
+results.if.mu.u = results.lin.mu.u.iflims / results.baseMVA;
 
 
 %%-----  printpf  ------------------------------------------------------

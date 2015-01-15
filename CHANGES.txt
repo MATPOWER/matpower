@@ -15,6 +15,11 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.0
 -----------------
 
+1/15/15
+    - Fixed bug in handling of interface flow limits, where multipliers
+      on binding interface flow limits were off by a factor of the p.u.
+      MVA base.
+
 1/14/15
     - Added support for LP/QP solver CLP (COIN_OR Linear Programming).
       Use 'opf.dc.solver' option 'CLP' or qps_clp().

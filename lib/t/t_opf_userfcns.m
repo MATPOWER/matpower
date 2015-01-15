@@ -88,8 +88,8 @@ t_ok(toggle_iflims(mpc, 'status'), 'toggle_iflims(  mpc, ''status'') == 1');
 r = rundcopf(mpc, mpopt);
 t_ok(r.success, [t 'success']);
 t_is(r.if.P, [-15; 20], 4, [t 'if.P']);
-t_is(r.if.mu.l, [4.8427; 0], 4, [t 'if.mu.l']);
-t_is(r.if.mu.u, [0; 13.2573], 4, [t 'if.mu.u']);
+t_is(r.if.mu.l, [0.048427; 0], 6, [t 'if.mu.l']);
+t_is(r.if.mu.u, [0; 0.132573], 6, [t 'if.mu.u']);
 t_is(r.branch(14, PF), 8.244, 3, [t 'flow in branch 14']);
 t_ok(~isfield(r.reserves, 'R'), [t 'no reserves']);
 
@@ -106,8 +106,8 @@ t_ok(toggle_iflims(mpc, 'status'), 'toggle_iflims(  mpc, ''status'') == 1');
 r = rundcopf(mpc, mpopt);
 t_ok(r.success, [t 'success']);
 t_is(r.if.P, [-15; 20], 4, [t 'if.P']);
-t_is(r.if.mu.l, [4.8427; 0], 4, [t 'if.mu.l']);
-t_is(r.if.mu.u, [0; 38.2573], 4, [t 'if.mu.u']);
+t_is(r.if.mu.l, [0.048427; 0], 6, [t 'if.mu.l']);
+t_is(r.if.mu.u, [0; 0.382573], 6, [t 'if.mu.u']);
 t_is(r.reserves.R, [25; 15; 0; 0; 16.9; 3.1], 4, [t 'reserves.R']);
 t_is(r.reserves.prc, [2; 2; 2; 2; 5.5; 5.5], 4, [t 'reserves.prc']);
 t_is(r.reserves.mu.Pmax, [0; 0; 0; 0; 0.5; 0], 4, [t 'reserves.mu.Pmax']);
@@ -122,8 +122,8 @@ t_ok(toggle_iflims(mpc, 'status'), 'toggle_iflims(  mpc, ''status'') == 1');
 r = runopf(mpc, mpopt);
 t_ok(r.success, [t 'success']);
 t_is(r.if.P, [-9.101; 21.432], 3, [t 'if.P']);
-t_is(r.if.mu.l, [0; 0], 4, [t 'if.mu.l']);
-t_is(r.if.mu.u, [0; 10.198], 3, [t 'if.mu.u']);
+t_is(r.if.mu.l, [0; 0], 6, [t 'if.mu.l']);
+t_is(r.if.mu.u, [0; 0.10198], 5, [t 'if.mu.u']);
 t_ok(~isfield(r.reserves, 'R'), [t 'no reserves']);
 
 t = 'interface flow lims (line out) : ';
@@ -133,8 +133,8 @@ mpc.branch(12, BR_STATUS) = 0;      %% take out line 6-10
 r = rundcopf(mpc, mpopt);
 t_ok(r.success, [t 'success']);
 t_is(r.if.P, [-15; 20], 4, [t 'if.P']);
-t_is(r.if.mu.l, [4.8427; 0], 4, [t 'if.mu.l']);
-t_is(r.if.mu.u, [0; 13.2573], 4, [t 'if.mu.u']);
+t_is(r.if.mu.l, [0.048427; 0], 6, [t 'if.mu.l']);
+t_is(r.if.mu.u, [0; 0.132573], 6, [t 'if.mu.u']);
 t_is(r.branch(14, PF), 10.814, 3, [t 'flow in branch 14']);
 t_ok(~isfield(r.reserves, 'R'), [t 'no reserves']);
 
