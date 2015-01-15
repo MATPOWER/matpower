@@ -19,6 +19,9 @@ Changes since 5.0
     - Fixed bug in handling of interface flow limits, where multipliers
       on binding interface flow limits were off by a factor of the p.u.
       MVA base.
+    - Fixed sign error on multipliers on lower bound on constraints
+      in qps_clp() and qps_glpk(). Modified a test in t_qps_matpower()
+      to check for this.
 
 1/14/15
     - Added support for LP/QP solver CLP (COIN_OR Linear Programming).

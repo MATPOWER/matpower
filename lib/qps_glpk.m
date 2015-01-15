@@ -273,8 +273,8 @@ else
 
     mu_l = zeros(nA, 1);
     mu_l(ieq(kl)) = lam.eqlin(kl);
-    mu_l(igt) = lam.ineqlin(nlt+(1:ngt));
-    mu_l(ibx) = lam.ineqlin(nlt+ngt+nbx+(1:nbx));
+    mu_l(igt) = -lam.ineqlin(nlt+(1:ngt));
+    mu_l(ibx) = -lam.ineqlin(nlt+ngt+nbx+(1:nbx));
 
     mu_u = zeros(nA, 1);
     mu_u(ieq(ku)) = -lam.eqlin(ku);

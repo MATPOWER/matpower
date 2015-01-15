@@ -73,21 +73,21 @@ for k = 1:length(algs)
         end
 
         t = sprintf('%s - 3-d LP : ', names{k});
-        %% example from 'doc linprog'
+        %% based on example from 'doc linprog'
         c = [-5; -4; -6];
         A = [1 -1  1;
-             3  2  4;
+             -3  -2  -4;
              3  2  0];
-        l = [];
-        u = [20; 42; 30];
+        l = [-Inf; -42; -Inf];
+        u = [20; Inf; 30];
         xmin = [0; 0; 0];
         x0 = [];
         [x, f, s, out, lam] = qps_matpower([], c, A, l, u, xmin, [], [], opt);
         t_is(s, 1, 12, [t 'success']);
         t_is(x, [0; 15; 3], 6, [t 'x']);
         t_is(f, -78, 6, [t 'f']);
-        t_is(lam.mu_l, [0;0;0], 9, [t 'lam.mu_l']);
-        t_is(lam.mu_u, [0;1.5;0.5], 9, [t 'lam.mu_u']);
+        t_is(lam.mu_l, [0;1.5;0], 9, [t 'lam.mu_l']);
+        t_is(lam.mu_u, [0;0;0.5], 9, [t 'lam.mu_u']);
         if strcmp(algs{k}, 'CLP') && ~have_fcn('opti_clp')
             t_skip(2, [t 'lam.lower/upper : MEXCLP does not return multipliers on var bounds']);
         else
