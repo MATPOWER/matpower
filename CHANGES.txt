@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.0
 -----------------
 
+1/16/15
+    - Cleaned up and improved consistency of output in printpf() for
+      generation and dispatchable load constraints.
+
 1/15/15
     - Fixed bug in handling of interface flow limits, where multipliers
       on binding interface flow limits were off by a factor of the p.u.
