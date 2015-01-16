@@ -19,7 +19,7 @@ function [cb_state, results] = ...
 %           with the following fields (all based on internal indexing):
 %           mpc_base - MATPOWER case struct of base state
 %           mpc_target - MATPOWER case struct of target state
-%			Sxfr - nb x 1 vector of scheduled transfers in p.u.
+%           Sxfr - nb x 1 vector of scheduled transfers in p.u.
 %           Ybus - bus admittance matrix
 %           Yf - branch admittance matrix, "from" end of branches
 %           Yt - branch admittance matrix, "to" end of branches
@@ -30,9 +30,9 @@ function [cb_state, results] = ...
 %       CB_STATE - struct to which the user may add fields containing
 %           any information the callback function would like to
 %           pass from one invokation to the next (avoiding the
-%			following 5 field names which are already used by
-%			the default callback: V_p, lam_p, V_c, lam_c, iterations)
-%		CB_ARGS - struct specified in MPOPT.cpf.user_callback_args
+%           following 5 field names which are already used by
+%           the default callback: V_p, lam_p, V_c, lam_c, iterations)
+%       CB_ARGS - struct specified in MPOPT.cpf.user_callback_args
 %       RESULTS - initial value of output struct to be assigned to
 %           CPF field of results struct returned by RUNCPF
 %
@@ -82,54 +82,35 @@ function [cb_state, results] = ...
 %   you additional permission to convey the resulting work.
 
 %% initialize plotting options
-plot_level 	= cb_data.mpopt.cpf.plot.level;
-plot_bus 	= cb_data.mpopt.cpf.plot.bus;
+plot_level  = cb_data.mpopt.cpf.plot.level;
+plot_bus    = cb_data.mpopt.cpf.plot.bus;
 if plot_level
-	if isempty(plot_bus)	%% no bus specified
-		%% pick PQ bus with largest transfer
-		[junk, idx] = max(cb_data.Sxfr(cb_data.pq));
-		if isempty(idx)	%% or bus 1 if there are none
-			idx = 1;
-		else
-			idx = cb_data.pq(idx(1));
-		end
-		idx_e = cb_data.mpc_target.order.bus.i2e(idx);
-	else
-		idx_e = plot_bus;	%% external bus number
-		idx = full(cb_data.mpc_target.order.bus.e2i(idx_e));
-		if idx == 0
-			error('cpf_default_callback: %d is not a valid bus number for MPOPT.cpf.plot.bus', idx_e);
-		end
-	end
+    if isempty(plot_bus)    %% no bus specified
+        %% pick PQ bus with largest transfer
+        [junk, idx] = max(cb_data.Sxfr(cb_data.pq));
+        if isempty(idx) %% or bus 1 if there are none
+            idx = 1;
+        else
+            idx = cb_data.pq(idx(1));
+        end
+        idx_e = cb_data.mpc_target.order.bus.i2e(idx);
+    else
+        idx_e = plot_bus;   %% external bus number
+        idx = full(cb_data.mpc_target.order.bus.e2i(idx_e));
+        if idx == 0
+            error('cpf_default_callback: %d is not a valid bus number for MPOPT.cpf.plot.bus', idx_e);
+        end
+    end
 end
 
-%%-----  INITIAL call  -----
-if k == 0
-	%% initialize state
-    cb_state = struct(  'V_p', V_p, ...
-                        'lam_p', lam_p, ...
-                        'V_c', V_c, ...
-                        'lam_c', lam_c, ...
-                        'iterations', 0);
-	
-	%% initialize lambda-V nose curve plot
-    if plot_level
-        plot(cb_state.lam_p(1), abs(cb_state.V_p(idx,1)), '-');
-        title(sprintf('Voltage at Bus %d', idx_e));
-        xlabel('\lambda');
-        ylabel('Voltage Magnitude');
-        axis([0 max([1;max(cb_state.lam_p);max(cb_state.lam_c)])*1.05 ...
-            0 max([1;max(abs(cb_state.V_p(idx)));max(abs(cb_state.V_c(idx)))*1.05])]);
-        hold on;
-    end
 %%-----  FINAL call  -----
-elseif nargout == 2
-	%% assemble results struct
-    results = cb_state; 	%% initialize results with final state
+if nargout == 2
+    %% assemble results struct
+    results = cb_state;     %% initialize results with final state
     results.max_lam = max(cb_state.lam_c);
     results.iterations = k;
 
-	%% finish final lambda-V nose curve plot
+    %% finish final lambda-V nose curve plot
     if plot_level
         %% plot the final nose curve
         plot(cb_state.lam_c', ...
@@ -139,16 +120,35 @@ elseif nargout == 2
             0 max([1;max(abs(cb_state.V_p(idx)));max(abs(cb_state.V_c(idx)))*1.05])]);
         hold off;
     end
+%%-----  INITIAL call  -----
+elseif k == 0
+    %% initialize state
+    cb_state = struct(  'V_p', V_p, ...
+                        'lam_p', lam_p, ...
+                        'V_c', V_c, ...
+                        'lam_c', lam_c, ...
+                        'iterations', 0);
+    
+    %% initialize lambda-V nose curve plot
+    if plot_level
+        plot(cb_state.lam_p(1), abs(cb_state.V_p(idx,1)), '-');
+        title(sprintf('Voltage at Bus %d', idx_e));
+        xlabel('\lambda');
+        ylabel('Voltage Magnitude');
+        axis([0 max([1;max(cb_state.lam_p);max(cb_state.lam_c)])*1.05 ...
+            0 max([1;max(abs(cb_state.V_p(idx)));max(abs(cb_state.V_c(idx)))*1.05])]);
+        hold on;
+    end
 %%-----  ITERATION call  -----
 else
-	%% update state
+    %% update state
     cb_state.V_p   = [cb_state.V_p V_p];
     cb_state.lam_p = [cb_state.lam_p lam_p];
     cb_state.V_c   = [cb_state.V_c V_c];
     cb_state.lam_c = [cb_state.lam_c lam_c];
     cb_state.iterations    = k;
 
-	%% plot single step of the lambda-V nose curve
+    %% plot single step of the lambda-V nose curve
     if plot_level > 1
         plot([cb_state.lam_c(k); cb_state.lam_p(k+1)], ...
             [abs(cb_state.V_c(idx,k)); abs(cb_state.V_p(idx,k+1))], ...

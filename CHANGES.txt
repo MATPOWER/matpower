@@ -18,6 +18,9 @@ Changes since 5.0
 1/16/15
     - Cleaned up and improved consistency of output in printpf() for
       generation and dispatchable load constraints.
+    - Modified runcpf() to gracefully handle the case when the base
+      and target cases are identical (as opposed to getting lost in
+      an infinite loop).
 
 1/15/15
     - Fixed bug in handling of interface flow limits, where multipliers

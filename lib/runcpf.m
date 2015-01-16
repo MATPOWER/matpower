@@ -251,6 +251,14 @@ for k = 1:length(callbacks)
                             cb_data, cb_state, cb_args);
 end
 
+if norm(Sxfr) == 0
+    if mpopt.verbose
+        fprintf('base case and target case have identical load and generation\n');
+    end
+    continuation = 0;
+    V0 = V; lam0 = lam;
+end
+
 %% tangent predictor z = [dx;dlam]
 z = zeros(2*length(V)+1,1);
 z(end,1) = 1.0;
