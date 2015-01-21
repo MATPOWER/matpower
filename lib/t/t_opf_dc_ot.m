@@ -72,6 +72,7 @@ mpopt = mpoption('out.all', 0, 'verbose', verbose);
 mpopt = mpoption(mpopt, 'opf.dc.solver', 'OT');
 
 warning off optim:linprog:IgnoreStartPoint;
+warning off optim:linprog:AlgOptsWillError;
 
 %% run DC OPF
 if have_fcn('quadprog')
