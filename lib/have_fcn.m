@@ -248,9 +248,9 @@ if ~isfield(fcns, tag)
                     );
                     result = gurobi(model, params);
                     vstr = sprintf('%d.%d.%d', result.versioninfo.major, result.versioninfo.minor, result.versioninfo.technical);
-                catch gurobiError
+                catch % gurobiError
                     fprintf('Gurobi Error!\n');
-                    disp(gurobiError.message);
+%                     disp(gurobiError.message);
                 end
             end
         case 'ipopt'
