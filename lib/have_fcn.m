@@ -15,8 +15,9 @@ function rv = have_fcn(tag, rtype)
 %       'vstr'      version number as a string (e.g. '3.11.4')
 %       'vnum'      version number as numeric value (e.g. 3.011004)
 %       'date'      release date as a string (e.g. '20-Jan-2015')
-%       'all'       struct with fields 'vstr', 'vnum', 'date' and 'av' (for
-%                   'availability')
+%       'all'       struct with fields named 'av' (for 'availability'), 'vstr',
+%                   'vnum' and 'date', and values corresponding to the above,
+%                   respectively.
 %
 %   For functionality that is not available, all calls with a second argument
 %   will return an empty value.
