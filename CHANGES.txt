@@ -15,6 +15,9 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.0
 -----------------
 
+1/21/15
+    - Fixed minor bug with poly2pwl(), affecting units with Pmax <= 0.
+
 1/16/15
     - Cleaned up and improved consistency of output in printpf() for
       generation and dispatchable load constraints.
