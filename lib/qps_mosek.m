@@ -228,34 +228,45 @@ end
 
 %%-----  run optimization  -----
 if verbose
-    methods = {
-        'default',
-        'interior point',
-        '<default>',
-        '<default>',
-        'primal simplex',
-        'dual simplex',
-        'primal dual simplex',
-        'automatic simplex',
-        '<default>',
-        '<default>',
-        'concurrent'
-    };
+    s = have_fcn('mosek', 'all');
+    if s.vnum < 7
+        methods = {
+            'default',              %%  0 : MSK_OPTIMIZER_FREE
+            'interior point',       %%  1 : MSK_OPTIMIZER_INTPNT
+            '<conic>',              %%  2 : MSK_OPTIMIZER_CONIC
+            '<qcone>',              %%  3 : MSK_OPTIMIZER_QCONE
+            'primal simplex',       %%  4 : MSK_OPTIMIZER_PRIMAL_SIMPLEX
+            'dual simplex',         %%  5 : MSK_OPTIMIZER_DUAL_SIMPLEX
+            'primal dual simplex',  %%  6 : MSK_OPTIMIZER_PRIMAL_DUAL_SIMPLEX
+            'automatic simplex',    %%  7 : MSK_OPTIMIZER_FREE_SIMPLEX
+            '<mixed int>',          %%  8 : MSK_OPTIMIZER_MIXED_INT
+            '<nonconvex>',          %%  9 : MSK_OPTIMIZER_NONCONVEX
+            'concurrent'            %% 10 : MSK_OPTIMIZER_CONCURRENT
+        };
+    else
+        methods = {
+            'default',              %%  0 : MSK_OPTIMIZER_FREE
+            'interior point',       %%  1 : MSK_OPTIMIZER_INTPNT
+            '<conic>',              %%  2 : MSK_OPTIMIZER_CONIC
+            'primal simplex',       %%  3 : MSK_OPTIMIZER_PRIMAL_SIMPLEX
+            'dual simplex',         %%  4 : MSK_OPTIMIZER_DUAL_SIMPLEX
+            'primal dual simplex',  %%  5 : MSK_OPTIMIZER_PRIMAL_DUAL_SIMPLEX
+            'automatic simplex',    %%  6 : MSK_OPTIMIZER_FREE_SIMPLEX
+            'network simplex',      %%  7 : MSK_OPTIMIZER_NETWORK_PRIMAL_SIMPLEX
+            '<mixed int conic>',    %%  8 : MSK_OPTIMIZER_MIXED_INT_CONIC
+            '<mixed int>',          %%  9 : MSK_OPTIMIZER_MIXED_INT
+            'concurrent',           %% 10 : MSK_OPTIMIZER_CONCURRENT
+            '<nonconvex>'           %% 11 : MSK_OPTIMIZER_NONCONVEX
+        };
+    end
     if qp
         lpqp = 'QP';
     else
         lpqp = 'LP';
     end
-    % (this code is also in mpver.m)
-    % MOSEK Version 6.0.0.93 (Build date: 2010-10-26 13:03:27)
-    % MOSEK Version 6.0.0.106 (Build date: 2011-3-17 10:46:54)
-%    pat = 'Version (\.*\d)+.*Build date: (\d\d\d\d-\d\d-\d\d)';
-    pat = 'Version (\.*\d)+.*Build date: (\d+-\d+-\d+)';
-    [s,e,tE,m,t] = regexp(evalc('mosekopt'), pat);
-    if isempty(t)
+    vn = have_fcn('mosek', 'vstr');
+    if isempty(vn)
         vn = '<unknown>';
-    else
-        vn = t{1}{1};
     end
     fprintf('MOSEK Version %s -- %s %s solver\n', ...
             vn, methods{mosek_opt.MSK_IPAR_OPTIMIZER+1}, lpqp);
