@@ -20,6 +20,8 @@ Changes since 5.0
     - Major update to have_fcn(), which now determines and caches
       version numbers and release dates for optional packages, used
       by mpver() and others.
+    - Fixed error in qps_mosek() in printout of selected optimizer
+      when using MOSEK 7.
 
 1/16/15
     - Cleaned up and improved consistency of output in printpf() for
