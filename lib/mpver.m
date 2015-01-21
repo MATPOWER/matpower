@@ -49,7 +49,7 @@ function rv = mpver(varargin)
 v{1} = struct(  'Name',     'MATPOWER', ... 
                 'Version',  '5.1-dev', ...
                 'Release',  '', ...
-                'Date',     '14-Jan-2015' );
+                'Date',     '21-Jan-2015' );
 if nargout > 0
     if nargin > 0
         rv = v{1};
@@ -87,15 +87,8 @@ else
         fprintf('%-22s -- not installed --\n', 'SDP_PF');
     end
     if have_fcn('yalmip')
-        str = evalc('yalmip;');
-        pat = 'Version\s+([^\s]+)\n';
-        [s,e,tE,m,t] = regexp(str, pat);
-        if isempty(t)
-            vn = '<unknown>';
-        else
-            vn = t{1}{1};
-        end
-        fprintf('%-22s Version %-10s %-11s\n', 'YALMIP', '', vn);
+        s = have_fcn('yalmip', 'all');
+        fprintf('%-22s Version %-10s %-11s\n', 'YALMIP', s.vstr, s.date);
     else
         fprintf('%-22s -- not installed --\n', 'YALMIP');
     end
@@ -109,86 +102,57 @@ else
         fprintf('%-22s -- not installed --\n', 'BPMPD_MEX');
     end
     if have_fcn('clp')
-        str = evalc('clp');
-        pat = 'CLP: COIN-OR Linear Programming \[v([^\s,]+)';  %% OPTI, Giorgetti/Currie
-        [s,e,tE,m,t] = regexp(str, pat);
-        if isempty(t)
+        s = have_fcn('clp', 'all');
+        if isempty(s.vstr)
             vn = '<unknown>';
         else
-            vn = t{1}{1};
+            vn = s.vstr;
         end
-        fprintf('%-22s Version %-10s %-11s   %s\n', 'CLP', vn, '', computer);
+        fprintf('%-22s Version %-10s %-11s\n', 'CLP', vn, s.date);
     else
         fprintf('%-22s -- not installed --\n', 'CLP');
     end
     if have_fcn('cplex')
-        cplex = Cplex('null');
-        fprintf('%-22s Version %-10s %-11s   %s\n', 'CPLEX', cplex.getVersion, '', computer);
+        s = have_fcn('cplex', 'all');
+        fprintf('%-22s Version %-10s %-11s\n', 'CPLEX', s.vstr, s.date);
     else
         fprintf('%-22s -- not installed --\n', 'CPLEX');
+    end
+    if have_fcn('glpk')
+        s = have_fcn('glpk', 'all');
+        if isempty(s.vstr)
+            vn = '<unknown>';
+        else
+            vn = s.vstr;
+        end
+        fprintf('%-22s Version %-10s %-11s\n', 'GLPK', vn, s.date);
+    else
+        fprintf('%-22s -- not installed --\n', 'GLPK');
     end
     if have_fcn('gurobi')
         gurobiver;
     else
         fprintf('%-22s -- not installed --\n', 'Gurobi');
     end
-    if have_fcn('glpk')
-        if have_fcn('octave')
-            %% bummer, evalc not yet implemented in Octave (as of 3.8)
-%             str = evalc('glpk(1, 1, 1, 1, 1, ''U'', ''C'', -1, struct(''msglev'', 3))');
-%             pat = 'GLPK Simplex Optimizer, v([^\s,]+)';
-%             [s,e,tE,m,t] = regexp(str, pat);
-%             if isempty(t)
-%                 vn = '<unknown>';
-%             else
-%                 vn = t{1}{1};
-%             end
-            vn = '<unknown>';
-        else
-            str = evalc('glpk');
-            pat = 'GLPK Matlab interface\. Version: ([^\s,]+)';     %% glpkccm, Giorgetti/Klitgord
-            [s,e,tE,m,t] = regexp(str, pat);
-            if isempty(t)
-                pat = 'GLPK: GNU Linear Programming Kit \[v([^\s,]+)';  %% OPTI, Giorgetti/Currie
-                [s,e,tE,m,t] = regexp(str, pat);
-            end
-            if isempty(t)
-                vn = '<unknown>';
-            else
-                vn = t{1}{1};
-            end
-        end
-        fprintf('%-22s Version %-10s %-11s   %s\n', 'GLPK', vn, '', computer);
-    else
-        fprintf('%-22s -- not installed --\n', 'GLPK');
-    end
     if have_fcn('ipopt')
-        str = evalc('qps_ipopt([],1,1,1,1,1,1,1,struct(''verbose'', 2))');
-        pat = 'Ipopt version ([^\s,]+)';
-        [s,e,tE,m,t] = regexp(str, pat);
-        if isempty(t)
+        s = have_fcn('ipopt', 'all');
+        if isempty(s.vstr)
             vn = '<unknown>';
         else
-            vn = t{1}{1};
+            vn = s.vstr;
         end
-        fprintf('%-22s Version %-10s %-11s   %s\n', 'IPOPT', vn, '', computer);
+        fprintf('%-22s Version %-10s %-11s\n', 'IPOPT', vn, s.date);
     else
         fprintf('%-22s -- not installed --\n', 'IPOPT');
     end
     if have_fcn('knitro')
-        if have_fcn('knitromatlab')
-            str = evalc('[x fval] = knitromatlab(@(x)1,1);');
-        elseif have_fcn('ktrlink')
-            str = evalc('[x fval] = ktrlink(@(x)1,1);');
-        end
-        pat = 'KNITRO ([^\s]+)\n';
-        [s,e,tE,m,t] = regexp(str, pat);
-        if isempty(t)
+        s = have_fcn('knitro', 'all');
+        if isempty(s.vstr)
             vn = '<unknown>';
         else
-            vn = t{1}{1};
+            vn = s.vstr;
         end
-        fprintf('%-22s Version %-10s %-11s   %s\n', 'KNITRO', vn, '', computer);
+        fprintf('%-22s Version %-10s %-11s\n', 'IPOPT', vn, s.date);
     else
         fprintf('%-22s -- not installed --\n', 'KNITRO');
     end
@@ -202,20 +166,13 @@ else
         fprintf('%-22s -- not installed --\n', 'MINOPF');
     end
     if have_fcn('mosek')
-        % (this code is also in qps_mosek.m)
-        % MOSEK Version 6.0.0.93 (Build date: 2010-10-26 13:03:27)
-        % MOSEK Version 6.0.0.106 (Build date: 2011-3-17 10:46:54)
-%        pat = 'Version (\.*\d)+.*Build date: (\d\d\d\d-\d\d-\d\d)';
-        pat = 'Version (\.*\d)+.*Build date: (\d+-\d+-\d+)';
-        [s,e,tE,m,t] = regexp(evalc('mosekopt'), pat);
-        if isempty(t)
+        s = have_fcn('mosek', 'all');
+        if isempty(s.vstr)
             vn = '<unknown>';
-            d  = '';
         else
-            vn = t{1}{1};
-            d  = datestr(t{1}{2}, 'dd-mmm-yyyy');
+            vn = s.vstr;
         end
-        fprintf('%-22s Version %-10s %-11s   %s\n', 'MOSEK', vn, d, computer);
+        fprintf('%-22s Version %-10s %-11s\n', 'MOSEK', vn, s.date);
     else
         fprintf('%-22s -- not installed --\n', 'MOSEK');
     end
@@ -230,30 +187,24 @@ else
         fprintf('%-22s -- not installed --\n', 'SCPDIPMOPF');
     end
     if have_fcn('sdpt3')
-        str = evalc('help sdpt3');
-        pat = 'version\s+([^\s]+).*Last Modified: ([^\n]+)\n';
-        [s,e,tE,m,t] = regexp(str, pat);
-        if isempty(t)
+        s = have_fcn('sdpt3', 'all');
+        if isempty(s.vstr)
             vn = '<unknown>';
-            d  = '';
         else
-            vn = t{1}{1};
-            d  = datestr(t{1}{2}, 'dd-mmm-yyyy');
+            vn = s.vstr;
         end
-        fprintf('%-22s Version %-10s %-11s   %s\n', 'SDPT3', vn, d, computer);
+        fprintf('%-22s Version %-10s %-11s\n', 'SDPT3', vn, s.date);
     else
         fprintf('%-22s -- not installed --\n', 'SDPT3');
     end
     if have_fcn('sedumi')
-        str = evalc('x = sedumi([1 1], 1, [1;2])');
-        pat = 'SeDuMi\s+([^\s]+)';
-        [s,e,tE,m,t] = regexp(str, pat);
-        if isempty(t)
+        s = have_fcn('sedumi', 'all');
+        if isempty(s.vstr)
             vn = '<unknown>';
         else
-            vn = t{1}{1};
+            vn = s.vstr;
         end
-        fprintf('%-22s Version %-10s %-11s   %s\n', 'SeDuMi', vn, '', computer);
+        fprintf('%-22s Version %-10s %-11s\n', 'SeDuMi', vn, s.date);
     else
         fprintf('%-22s -- not installed --\n', 'SeDuMi');
     end

@@ -152,7 +152,11 @@ if have_mpopt
         opt.MSK_DPAR_OPTIMIZER_MAX_TIME = mpopt.mosek.max_time;
     end
     if mpopt.mosek.num_threads
-        opt.MSK_IPAR_INTPNT_NUM_THREADS = mpopt.mosek.num_threads;
+        if have_fcn('mosek', 'vnum') < 7
+            opt.MSK_IPAR_INTPNT_NUM_THREADS = mpopt.mosek.num_threads;
+        else
+            opt.MSK_IPAR_NUM_THREADS = mpopt.mosek.num_threads;
+        end
     end
 else
     opt.MSK_IPAR_OPTIMIZER = sc.MSK_OPTIMIZER_FREE;

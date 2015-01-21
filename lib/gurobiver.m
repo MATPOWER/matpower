@@ -68,5 +68,5 @@ if nargout > 0
         rv = v.Version;
     end
 else
-    fprintf('%-22s Version %-10s %-11s   %s\n', v.Name, v.Version, v.Date, computer);
+    fprintf('%-22s Version %-10s %-11s\n', v.Name, v.Version, v.Date);
 end
