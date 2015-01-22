@@ -1,6 +1,7 @@
 function rv = have_fcn(tag, rtype)
 %HAVE_FCN  Test for optional functionality / version info.
 %   TORF = HAVE_FCN(TAG)
+%   TORF = HAVE_FCN(TAG, TOGGLE)
 %   VER_STR = HAVE_FCN(TAG, 'vstr')
 %   VER_NUM = HAVE_FCN(TAG, 'vnum')
 %   DATE    = HAVE_FCN(TAG, 'date')
@@ -19,8 +20,15 @@ function rv = have_fcn(tag, rtype)
 %                   'vnum' and 'date', and values corresponding to the above,
 %                   respectively.
 %
-%   For functionality that is not available, all calls with a second argument
-%   will return an empty value.
+%   For functionality that is not available, all calls with a string-valued
+%   second argument will return an empty value.
+%
+%   Alternatively, the optional functionality specified by TAG can be toggled
+%   OFF or ON by calling HAVE_FCN with a numeric second argument TOGGLE with
+%   one of the following values:
+%       0 - turn OFF the optional functionality
+%       1 - turn ON the optional functionality (if available)
+%      -1 - toggle the ON/OFF state of the optional functionality
 %
 %   Possible values for input TAG and their meanings:
 %       bpmpd       - BP, BPMPD interior point solver
@@ -63,6 +71,11 @@ function rv = have_fcn(tag, rtype)
 %       if have_fcn('minopf')
 %           results = runopf(mpc, mpoption('opf.ac.solver', 'MINOPF'));
 %       end
+%
+%   Optional functionality can also be toggled OFF and ON by calling HAVE_FCN
+%   with the following syntax,
+%       TORF = HAVE_FCN(TAG, TOGGLE)
+%   where TOGGLE takes a numeric value as follows:
 
 %   Private tags for internal use only:
 %       catchme         - support for 'catch me' syntax in try/catch constructs
@@ -72,7 +85,7 @@ function rv = have_fcn(tag, rtype)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2004-2014 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2015 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
@@ -98,360 +111,380 @@ function rv = have_fcn(tag, rtype)
 %   under other licensing terms, the licensors of MATPOWER grant
 %   you additional permission to convey the resulting work.
 
+if nargin > 1 && isnumeric(rtype)
+    toggle = 1;
+    on_off = rtype;
+    if on_off < 0
+        TorF = have_fcn(tag);
+        on_off = ~TorF;
+    end
+else
+    toggle = 0;
+end
+
 persistent fcns;
 
-%% info not yet cached?
-if ~isfield(fcns, tag)
-    %%-----  determine installation status, version number, etc.  -----
-    %% initialize default values
-    TorF = 0;
-    vstr = '';
-    rdate = '';
+if toggle   %% change availability
+    if on_off       %% turn on if available
+        fcns = rmfield(fcns, tag);  %% delete field to force re-check
+    else            %% turn off
+        fcns.(tag).av = 0;
+    end
+    TorF = have_fcn(tag);
+else        %% detect availability
+    %% info not yet cached?
+    if ~isfield(fcns, tag)
+        %%-----  determine installation status, version number, etc.  -----
+        %% initialize default values
+        TorF = 0;
+        vstr = '';
+        rdate = '';
 
-    switch tag
-        %%-----  public tags  -----
-        case 'bpmpd'
-            TorF = exist('bp', 'file') == 3;
-            if TorF
-                v = bpver('all');
-                vstr = v.Version;
-                rdate = v.Date;
-            end
-        case 'clp'
-            tmp = have_fcn('opti_clp', 'all');
-            if tmp.av   %% have opti_clp
-                TorF = tmp.av;
-                vstr = tmp.vstr;
-                rdate = tmp.date;
-            elseif exist('clp','file') == 2 && exist('mexclp','file') == 3
-                TorF = 1;
-                vstr = '';
-            end
-        case 'opti_clp'
-            TorF = exist('opti_clp', 'file') == 2 && exist('clp', 'file') == 3;
-            if TorF
-                str = evalc('clp');
-                pat = 'CLP: COIN-OR Linear Programming \[v([^\s,]+), Built ([^\]])+\]';  %% OPTI, Giorgetti/Currie
-                [s,e,tE,m,t] = regexp(str, pat);
-                if ~isempty(t)
-                    vstr = t{1}{1};
-                    rdate = datestr(t{1}{2}, 'dd-mmm-yyyy');
+        switch tag
+            %%-----  public tags  -----
+            case 'bpmpd'
+                TorF = exist('bp', 'file') == 3;
+                if TorF
+                    v = bpver('all');
+                    vstr = v.Version;
+                    rdate = v.Date;
                 end
-            end
-        case 'cplex'
-            if exist('cplexqp', 'file')
-                %% it's installed, but we need to check for MEX for this arch
-                p = which('cplexqp');   %% get the path
-                len = length(p) - length('cplexqp.p');
-                w = what(p(1:len));             %% look for mex files on the path
-                for k = 1:length(w.mex)
-                    if regexp(w.mex{k}, 'cplexlink[^\.]*');
-                        TorF = 1;
-                        break;
-                    end
-                end
-            end
-            if TorF
-                cplex = Cplex('null');
-                vstr = cplex.getVersion;
-            end
-        case {'fmincon', 'fmincon_ipm', 'linprog', 'linprog_ds', ...
-                    'optimoptions', 'quadprog', 'quadprog_ls'}
-            if license('test', 'optimization_toolbox')
-                v = ver('optim');
-                vstr = v.Version;
-                rdate = v.Date;
-                switch tag
-                    case 'fmincon'
-                        TorF = exist('fmincon', 'file') == 2 || ...
-                            exist('fmincon', 'file') == 6;
-                    case 'linprog'
-                        TorF = exist('linprog', 'file') == 2;
-                    case 'quadprog'
-                        TorF = exist('quadprog', 'file') == 2;
-                    otherwise
-                        otver = vstr2num(vstr);
-                        switch tag
-                            case 'fmincon_ipm'
-                                if otver >= 4       %% Opt Tbx 4.0+ (R?)
-                                    TorF = 1;
-                                else
-                                    TorF = 0;
-                                end
-                            case 'linprog_ds'
-                                if otver >= 7.001   %% Opt Tbx 7.1+ (R2014b+)
-                                    TorF = 1;
-                                else
-                                    TorF = 0;
-                                end
-                            case 'optimoptions'
-                                if otver >= 6.003   %% Opt Tbx 6.3+ (R2013a+)
-                                    TorF = 1;
-                                else
-                                    TorF = 0;
-                                end
-                            case 'quadprog_ls'
-                                if otver >= 6       %% Opt Tbx 6.0+ (R2011a?+)
-                                    TorF = 1;
-                                else
-                                    TorF = 0;
-                                end
-                        end
-                end
-            else
-                TorF = 0;
-            end
-        case 'glpk'
-            if exist('glpk','file') == 3    %% Windows OPTI install (no glpk.m)
-                TorF = 1;
-                str = evalc('glpk');
-                pat = 'GLPK: GNU Linear Programming Kit \[v([^\s,]+), Built ([^\]])+\]';  %% OPTI, Giorgetti/Currie
-                [s,e,tE,m,t] = regexp(str, pat);
-                if ~isempty(t)
-                    vstr = t{1}{1};
-                    rdate = datestr(t{1}{2}, 'dd-mmm-yyyy');
-                end
-            elseif exist('glpk','file') == 2    %% others have glpk.m and ...
-                if exist('__glpk__','file') == 3    %% octave __glpk__ MEX
-                    TorF = 1;
-                    %% bummer, evalc not yet implemented in Octave (as of 3.8)
-%                     str = evalc('glpk(1, 1, 1, 1, 1, ''U'', ''C'', -1, struct(''msglev'', 3))');
-%                     pat = 'GLPK Simplex Optimizer, v([^\s,]+)';
-%                     [s,e,tE,m,t] = regexp(str, pat);
-%                     if ~isempty(t)
-%                         vstr = t{1}{1};
-%                     end
-                elseif exist('glpkcc','file') == 3  %% Matlab glpkcc MEX
-                    TorF = 1;
-                    str = evalc('glpk');
-                    pat = 'GLPK Matlab interface\. Version: ([^\s,]+)';     %% glpkccm, Giorgetti/Klitgord
-                    [s,e,tE,m,t] = regexp(str, pat);
-                    if ~isempty(t)
-                        vstr = t{1}{1};
-                    end
-                end
-            end
-        case 'gurobi'
-            TorF = exist('gurobi', 'file') == 3;
-            if TorF
-                try
-                    model = struct( ...
-                        'A', sparse(1), ...
-                        'rhs', 1, ...
-                        'sense', '=', ...
-                        'vtype', 'C', ...
-                        'obj', 1, ...
-                        'modelsense', 'min' ...
-                    );
-                    params = struct( ...
-                        'outputflag', 0 ...
-                    );
-                    result = gurobi(model, params);
-                    vstr = sprintf('%d.%d.%d', result.versioninfo.major, result.versioninfo.minor, result.versioninfo.technical);
-                catch % gurobiError
-                    fprintf('Gurobi Error!\n');
-%                     disp(gurobiError.message);
-                end
-            end
-        case 'ipopt'
-            TorF = exist('ipopt', 'file') == 3;
-            if TorF
-                str = evalc('qps_ipopt([],1,1,1,1,1,1,1,struct(''verbose'', 2))');
-                pat = 'Ipopt version ([^\s,]+)';
-                [s,e,tE,m,t] = regexp(str, pat);
-                if ~isempty(t)
-                    vstr = t{1}{1};
-                end
-            end
-        case 'knitro'       %% any Knitro
-            tmp = have_fcn('knitromatlab', 'all');
-            if tmp.av
-                TorF = tmp.av;
-                vstr = tmp.vstr;
-                rdate = tmp.date;
-            else
-                tmp = have_fcn('ktrlink', 'all');
-                if tmp.av
+            case 'clp'
+                tmp = have_fcn('opti_clp', 'all');
+                if tmp.av   %% have opti_clp
                     TorF = tmp.av;
                     vstr = tmp.vstr;
                     rdate = tmp.date;
+                elseif exist('clp','file') == 2 && exist('mexclp','file') == 3
+                    TorF = 1;
+                    vstr = '';
                 end
-            end
-        case {'knitromatlab', 'ktrlink'}
-            %% knitromatlab for Knitro 9.0 or greater
-            %% ktrlink for pre-Knitro 9.0, requires Optim Toolbox
-            TorF = exist(tag, 'file') == 2;
-            if TorF
-                try
-                    str = evalc(['[x fval] = ' tag '(@(x)1,1);']);
-                end
-                TorF = exist('fval', 'var') && fval == 1;
+            case 'opti_clp'
+                TorF = exist('opti_clp', 'file') == 2 && exist('clp', 'file') == 3;
                 if TorF
-                    pat = 'KNITRO ([^\s]+)\n';
+                    str = evalc('clp');
+                    pat = 'CLP: COIN-OR Linear Programming \[v([^\s,]+), Built ([^\]])+\]';  %% OPTI, Giorgetti/Currie
                     [s,e,tE,m,t] = regexp(str, pat);
                     if ~isempty(t)
                         vstr = t{1}{1};
+                        rdate = datestr(t{1}{2}, 'dd-mmm-yyyy');
                     end
                 end
-            end
-        case 'matlab'
-            v = ver('matlab');
-            if ~isempty(v)
-                TorF = 1;
-                vstr = v.Version;
-                rdate = v.Date;
-            end
-        case 'minopf'
-            TorF = exist('minopf', 'file') == 3;
-            if TorF
-                v = minopfver('all');
-                vstr = v.Version;
-                rdate = v.Date;
-            end
-        case 'mosek'
-            TorF = exist('mosekopt', 'file') == 3;
-            if TorF
-                % MOSEK Version 6.0.0.93 (Build date: 2010-10-26 13:03:27)
-                % MOSEK Version 6.0.0.106 (Build date: 2011-3-17 10:46:54)
-                % MOSEK Version 7.0.0.134 (Build date: 2014-10-2 11:10:02)
-                pat = 'Version (\.*\d)+.*Build date: (\d+-\d+-\d+)';
-                [s,e,tE,m,t] = regexp(evalc('mosekopt'), pat);
-                if ~isempty(t)
-                    vstr = t{1}{1};
-                    rdate = datestr(t{1}{2}, 'dd-mmm-yyyy');
+            case 'cplex'
+                if exist('cplexqp', 'file')
+                    %% it's installed, but we need to check for MEX for this arch
+                    p = which('cplexqp');   %% get the path
+                    len = length(p) - length('cplexqp.p');
+                    w = what(p(1:len));             %% look for mex files on the path
+                    for k = 1:length(w.mex)
+                        if regexp(w.mex{k}, 'cplexlink[^\.]*');
+                            TorF = 1;
+                            break;
+                        end
+                    end
                 end
-            end
-        case 'smartmarket'
-            TorF = exist('runmarket', 'file') == 2;
-            if TorF
-                v = mpver('all');
-                vstr = v.Version;
-                rdate = v.Date;
-            end
-        case 'octave'
-            TorF = exist('OCTAVE_VERSION', 'builtin') == 5;
-            if TorF
-                v = ver('octave');
-                vstr = v.Version;
-                rdate = v.Date;
-            end
-        case {'pdipmopf', 'scpdipmopf', 'tralmopf'}
-            if have_fcn('matlab')
-                v = ver('Matlab');
-                vn = vstr2num(v.Version);
-                %% requires >= MATLAB 6.5 (R13) (released 20-Jun-2002)
-                %% older versions do not have mxCreateDoubleScalar() function
-                %% (they have mxCreateScalarDouble() instead)
-                if vn >= 6.005
+                if TorF
+                    cplex = Cplex('null');
+                    vstr = cplex.getVersion;
+                end
+            case {'fmincon', 'fmincon_ipm', 'linprog', 'linprog_ds', ...
+                        'optimoptions', 'quadprog', 'quadprog_ls'}
+                if license('test', 'optimization_toolbox')
+                    v = ver('optim');
+                    vstr = v.Version;
+                    rdate = v.Date;
                     switch tag
-                        case 'pdipmopf'
-                            TorF = exist('pdipmopf', 'file') == 3;
-                        case 'scpdipmopf'
-                            TorF = exist('scpdipmopf', 'file') == 3;
-                        case 'tralmopf'
-                            %% requires >= MATLAB 7.3 (R2006b) (released 03-Aug-2006)
-                            %% older versions do not include the needed form of chol()
-                            if vn >= 7.003
-                                TorF = exist('tralmopf', 'file') == 3;
-                            else
-                                TorF = 0;
+                        case 'fmincon'
+                            TorF = exist('fmincon', 'file') == 2 || ...
+                                exist('fmincon', 'file') == 6;
+                        case 'linprog'
+                            TorF = exist('linprog', 'file') == 2;
+                        case 'quadprog'
+                            TorF = exist('quadprog', 'file') == 2;
+                        otherwise
+                            otver = vstr2num(vstr);
+                            switch tag
+                                case 'fmincon_ipm'
+                                    if otver >= 4       %% Opt Tbx 4.0+ (R208a+, Matlab 7.6+)
+                                        TorF = 1;
+                                    else
+                                        TorF = 0;
+                                    end
+                                case 'linprog_ds'
+                                    if otver >= 7.001   %% Opt Tbx 7.1+ (R2014b+, Matlab 8.4+)
+                                        TorF = 1;
+                                    else
+                                        TorF = 0;
+                                    end
+                                case 'optimoptions'
+                                    if otver >= 6.003   %% Opt Tbx 6.3+ (R2013a+, Matlab 8.1+)
+                                        TorF = 1;
+                                    else
+                                        TorF = 0;
+                                    end
+                                case 'quadprog_ls'
+                                    if otver >= 6       %% Opt Tbx 6.0+ (R2011a+, Matlab 7.12+)
+                                        TorF = 1;
+                                    else
+                                        TorF = 0;
+                                    end
                             end
                     end
                 else
                     TorF = 0;
                 end
+            case 'glpk'
+                if exist('glpk','file') == 3    %% Windows OPTI install (no glpk.m)
+                    TorF = 1;
+                    str = evalc('glpk');
+                    pat = 'GLPK: GNU Linear Programming Kit \[v([^\s,]+), Built ([^\]])+\]';  %% OPTI, Giorgetti/Currie
+                    [s,e,tE,m,t] = regexp(str, pat);
+                    if ~isempty(t)
+                        vstr = t{1}{1};
+                        rdate = datestr(t{1}{2}, 'dd-mmm-yyyy');
+                    end
+                elseif exist('glpk','file') == 2    %% others have glpk.m and ...
+                    if exist('__glpk__','file') == 3    %% octave __glpk__ MEX
+                        TorF = 1;
+                        %% bummer, evalc not yet implemented in Octave (as of 3.8)
+%                         str = evalc('glpk(1, 1, 1, 1, 1, ''U'', ''C'', -1, struct(''msglev'', 3))');
+%                         pat = 'GLPK Simplex Optimizer, v([^\s,]+)';
+%                         [s,e,tE,m,t] = regexp(str, pat);
+%                         if ~isempty(t)
+%                             vstr = t{1}{1};
+%                         end
+                    elseif exist('glpkcc','file') == 3  %% Matlab glpkcc MEX
+                        TorF = 1;
+                        str = evalc('glpk');
+                        pat = 'GLPK Matlab interface\. Version: ([^\s,]+)';     %% glpkccm, Giorgetti/Klitgord
+                        [s,e,tE,m,t] = regexp(str, pat);
+                        if ~isempty(t)
+                            vstr = t{1}{1};
+                        end
+                    end
+                end
+            case 'gurobi'
+                TorF = exist('gurobi', 'file') == 3;
                 if TorF
-                    v = feval([tag 'ver'], 'all');
+                    try
+                        model = struct( ...
+                            'A', sparse(1), ...
+                            'rhs', 1, ...
+                            'sense', '=', ...
+                            'vtype', 'C', ...
+                            'obj', 1, ...
+                            'modelsense', 'min' ...
+                        );
+                        params = struct( ...
+                            'outputflag', 0 ...
+                        );
+                        result = gurobi(model, params);
+                        vstr = sprintf('%d.%d.%d', result.versioninfo.major, result.versioninfo.minor, result.versioninfo.technical);
+                    catch % gurobiError
+                        fprintf('Gurobi Error!\n');
+%                         disp(gurobiError.message);
+                    end
+                end
+            case 'ipopt'
+                TorF = exist('ipopt', 'file') == 3;
+                if TorF
+                    str = evalc('qps_ipopt([],1,1,1,1,1,1,1,struct(''verbose'', 2))');
+                    pat = 'Ipopt version ([^\s,]+)';
+                    [s,e,tE,m,t] = regexp(str, pat);
+                    if ~isempty(t)
+                        vstr = t{1}{1};
+                    end
+                end
+            case 'knitro'       %% any Knitro
+                tmp = have_fcn('knitromatlab', 'all');
+                if tmp.av
+                    TorF = tmp.av;
+                    vstr = tmp.vstr;
+                    rdate = tmp.date;
+                else
+                    tmp = have_fcn('ktrlink', 'all');
+                    if tmp.av
+                        TorF = tmp.av;
+                        vstr = tmp.vstr;
+                        rdate = tmp.date;
+                    end
+                end
+            case {'knitromatlab', 'ktrlink'}
+                %% knitromatlab for Knitro 9.0 or greater
+                %% ktrlink for pre-Knitro 9.0, requires Optim Toolbox
+                TorF = exist(tag, 'file') == 2;
+                if TorF
+                    try
+                        str = evalc(['[x fval] = ' tag '(@(x)1,1);']);
+                    end
+                    TorF = exist('fval', 'var') && fval == 1;
+                    if TorF
+                        pat = 'KNITRO ([^\s]+)\n';
+                        [s,e,tE,m,t] = regexp(str, pat);
+                        if ~isempty(t)
+                            vstr = t{1}{1};
+                        end
+                    end
+                end
+            case 'matlab'
+                v = ver('matlab');
+                if ~isempty(v)
+                    TorF = 1;
                     vstr = v.Version;
                     rdate = v.Date;
                 end
-            end
-        case 'sdp_pf'
-            TorF = have_fcn('yalmip') && exist('mpoption_info_sdp_pf', 'file') == 2;
-            if TorF
-                v = sdp_pf_ver('all');
-                vstr = v.Version;
-                rdate = v.Date;
-            end
-        case 'yalmip'
-            TorF = ~have_fcn('octave') && exist('yalmip','file') == 2;
-            %% YALMIP does not yet work with Octave, rdz 1/6/14
-            if TorF
-                str = evalc('yalmip;');
-                pat = 'Version\s+([^\s]+)\n';
-                [s,e,tE,m,t] = regexp(str, pat);
-                if ~isempty(t)
-                    rdate = t{1}{1};
-                    vstr = datestr(rdate, 'yy.mm.dd');
+            case 'minopf'
+                TorF = exist('minopf', 'file') == 3;
+                if TorF
+                    v = minopfver('all');
+                    vstr = v.Version;
+                    rdate = v.Date;
                 end
-            end
-        case 'sdpt3'
-            TorF = exist('sdpt3','file') == 2;
-            if TorF
-                str = evalc('help sdpt3');
-                pat = 'version\s+([^\s]+).*Last Modified: ([^\n]+)\n';
-                [s,e,tE,m,t] = regexp(str, pat);
-                if ~isempty(t)
-                    vstr = t{1}{1};
-                    rdate = datestr(t{1}{2}, 'dd-mmm-yyyy');
+            case 'mosek'
+                TorF = exist('mosekopt', 'file') == 3;
+                if TorF
+                    % MOSEK Version 6.0.0.93 (Build date: 2010-10-26 13:03:27)
+                    % MOSEK Version 6.0.0.106 (Build date: 2011-3-17 10:46:54)
+                    % MOSEK Version 7.0.0.134 (Build date: 2014-10-2 11:10:02)
+                    pat = 'Version (\.*\d)+.*Build date: (\d+-\d+-\d+)';
+                    [s,e,tE,m,t] = regexp(evalc('mosekopt'), pat);
+                    if ~isempty(t)
+                        vstr = t{1}{1};
+                        rdate = datestr(t{1}{2}, 'dd-mmm-yyyy');
+                    end
                 end
-            end
-        case 'sedumi'
-            TorF = exist('sedumi','file') == 2;
-            if TorF
-                str = evalc('x = sedumi([1 1], 1, [1;2])');
-                pat = 'SeDuMi\s+([^\s]+)';
-                [s,e,tE,m,t] = regexp(str, pat);
-                if ~isempty(t)
-                    vstr = t{1}{1};
+            case 'smartmarket'
+                TorF = exist('runmarket', 'file') == 2;
+                if TorF
+                    v = mpver('all');
+                    vstr = v.Version;
+                    rdate = v.Date;
                 end
-            end
+            case 'octave'
+                TorF = exist('OCTAVE_VERSION', 'builtin') == 5;
+                if TorF
+                    v = ver('octave');
+                    vstr = v.Version;
+                    rdate = v.Date;
+                end
+            case {'pdipmopf', 'scpdipmopf', 'tralmopf'}
+                if have_fcn('matlab')
+                    v = ver('Matlab');
+                    vn = vstr2num(v.Version);
+                    %% requires >= MATLAB 6.5 (R13) (released 20-Jun-2002)
+                    %% older versions do not have mxCreateDoubleScalar() function
+                    %% (they have mxCreateScalarDouble() instead)
+                    if vn >= 6.005
+                        switch tag
+                            case 'pdipmopf'
+                                TorF = exist('pdipmopf', 'file') == 3;
+                            case 'scpdipmopf'
+                                TorF = exist('scpdipmopf', 'file') == 3;
+                            case 'tralmopf'
+                                %% requires >= MATLAB 7.3 (R2006b) (released 03-Aug-2006)
+                                %% older versions do not include the needed form of chol()
+                                if vn >= 7.003
+                                    TorF = exist('tralmopf', 'file') == 3;
+                                else
+                                    TorF = 0;
+                                end
+                        end
+                    else
+                        TorF = 0;
+                    end
+                    if TorF
+                        v = feval([tag 'ver'], 'all');
+                        vstr = v.Version;
+                        rdate = v.Date;
+                    end
+                end
+            case 'sdp_pf'
+                TorF = have_fcn('yalmip') && exist('mpoption_info_sdp_pf', 'file') == 2;
+                if TorF
+                    v = sdp_pf_ver('all');
+                    vstr = v.Version;
+                    rdate = v.Date;
+                end
+            case 'yalmip'
+                TorF = ~have_fcn('octave') && exist('yalmip','file') == 2;
+                %% YALMIP does not yet work with Octave, rdz 1/6/14
+                if TorF
+                    str = evalc('yalmip;');
+                    pat = 'Version\s+([^\s]+)\n';
+                    [s,e,tE,m,t] = regexp(str, pat);
+                    if ~isempty(t)
+                        rdate = t{1}{1};
+                        vstr = datestr(rdate, 'yy.mm.dd');
+                    end
+                end
+            case 'sdpt3'
+                TorF = exist('sdpt3','file') == 2;
+                if TorF
+                    str = evalc('help sdpt3');
+                    pat = 'version\s+([^\s]+).*Last Modified: ([^\n]+)\n';
+                    [s,e,tE,m,t] = regexp(str, pat);
+                    if ~isempty(t)
+                        vstr = t{1}{1};
+                        rdate = datestr(t{1}{2}, 'dd-mmm-yyyy');
+                    end
+                end
+            case 'sedumi'
+                TorF = exist('sedumi','file') == 2;
+                if TorF
+                    str = evalc('x = sedumi([1 1], 1, [1;2])');
+                    pat = 'SeDuMi\s+([^\s]+)';
+                    [s,e,tE,m,t] = regexp(str, pat);
+                    if ~isempty(t)
+                        vstr = t{1}{1};
+                    end
+                end
 
-        %%-----  private tags  -----
-        case 'catchme'  %% not supported by Matlab <= 7.4 (R2007a), Octave <= 3.6
-            if have_fcn('octave')
-                if have_fcn('octave', 'vnum') <= 3.006
-                    TorF = 0;
+            %%-----  private tags  -----
+            case 'catchme'  %% not supported by Matlab <= 7.4 (R2007a), Octave <= 3.6
+                if have_fcn('octave')
+                    if have_fcn('octave', 'vnum') <= 3.006
+                        TorF = 0;
+                    else
+                        TorF = 1;
+                    end
                 else
+                    if have_fcn('matlab', 'vnum') <= 7.004
+                        TorF = 0;
+                    else
+                        TorF = 1;
+                    end
+                end
+            case 'ipopt_auxdata'
+                if have_fcn('ipopt')
+                    vn = have_fcn('ipopt', 'vnum');
+                    if ~isempty(vn) && vn >= 3.011
+                        TorF = 1;
+                    end
+                end
+            case 'regexp_split'         %% only missing for Octave < 3.8
+                if have_fcn('matlab') || have_fcn('octave', 'vnum') >= 3.008
                     TorF = 1;
                 end
-            else
-                if have_fcn('matlab', 'vnum') <= 7.004
-                    TorF = 0;
-                else
-                    TorF = 1;
-                end
-            end
-        case 'ipopt_auxdata'
-            if have_fcn('ipopt')
-                vn = have_fcn('ipopt', 'vnum');
-                if ~isempty(vn) && vn >= 3.011
-                    TorF = 1;
-                end
-            end
-        case 'regexp_split'         %% only missing for Octave < 3.8
-            if have_fcn('matlab') || have_fcn('octave', 'vnum') >= 3.008
-                TorF = 1;
-            end
 
-    %%-----  unknown tag  -----
-        otherwise
-            error('have_fcn: unknown functionality %s', tag);
-    end
+        %%-----  unknown tag  -----
+            otherwise
+                error('have_fcn: unknown functionality %s', tag);
+        end
 
-    %% assign values to cache
-    fcns.(tag).av   = TorF;
-    fcns.(tag).vstr = vstr;
-    if isempty(vstr)
-        fcns.(tag).vnum = [];
-    else
-        fcns.(tag).vnum = vstr2num(vstr);
+        %% assign values to cache
+        fcns.(tag).av   = TorF;
+        fcns.(tag).vstr = vstr;
+        if isempty(vstr)
+            fcns.(tag).vnum = [];
+        else
+            fcns.(tag).vnum = vstr2num(vstr);
+        end
+        fcns.(tag).date = rdate;
     end
-    fcns.(tag).date = rdate;
 end
 
 %% extract desired values from cache
-if nargin < 2
+if nargin < 2 || toggle
     rv = fcns.(tag).av;
 else
     switch lower(rtype)
