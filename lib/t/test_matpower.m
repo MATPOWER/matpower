@@ -140,10 +140,4 @@ if have_fcn('smartmarket')
     tests{end+1} = 't_runmarket';
 end
 
-%% sopf tests
-if exist('apply_contingency', 'file') == 2
-    tests{end+1} = 't_apply_contingency';
-    tests{end+1} = 't_c3sopf_sopf2';
-end
-
 t_run_tests( tests, verbose );
