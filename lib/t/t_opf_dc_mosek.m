@@ -34,7 +34,17 @@ if nargin < 1
     quiet = 0;
 end
 
-algs = [0; 1; 4; 5; 6; 7; 10];
+sc = mosek_symbcon;
+algs = [
+    sc.MSK_OPTIMIZER_FREE;
+    sc.MSK_OPTIMIZER_INTPNT;
+    sc.MSK_OPTIMIZER_PRIMAL_SIMPLEX;
+    sc.MSK_OPTIMIZER_DUAL_SIMPLEX;
+    sc.MSK_OPTIMIZER_PRIMAL_DUAL_SIMPLEX;
+    sc.MSK_OPTIMIZER_FREE_SIMPLEX;
+%     sc.MSK_OPTIMIZER_NETWORK_PRIMAL_SIMPLEX;
+    sc.MSK_OPTIMIZER_CONCURRENT;
+];
 alg_names = {
     'free',
     'interior point',
@@ -42,6 +52,7 @@ alg_names = {
     'dual simplex',
     'primal dual simplex',
     'free simplex',
+%    'network primal simplex',
     'concurrent'
 };
 num_tests = 23 * length(algs);

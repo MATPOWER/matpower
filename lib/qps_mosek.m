@@ -291,8 +291,7 @@ end
 if isfield(res, 'symbcon')
     sc = res.symbcon;
 else    
-    [r2, res2] = mosekopt('symbcon echo(0)');
-    sc = res2.symbcon;
+    sc = mosek_symbcon;
 end
 eflag = -r;
 msg = '';

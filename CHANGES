@@ -15,6 +15,11 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.0
 -----------------
 
+1/23/15
+    - Added mosek_symbcon() to define symbolic constants for setting
+      MOSEK options. Updated MOSEK solver option values in help text
+      for mpoption() to correspond to MOSEK v7.
+
 1/22/15
     - Added ability to toggle the availability of optional functionality
       using have_fcn().

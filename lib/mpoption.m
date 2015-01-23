@@ -334,12 +334,14 @@ function opt = mpoption(varargin)
 %   MOSEK:
 %       mosek.lp_alg            0           solution algorithm for LP problems
 %                                               (MSK_IPAR_OPTIMIZER)
+%           for MOSEK 7.x ...        (see MOSEK_SYMBCON for a "better way")
 %           [   0 - automatic: let MOSEK choose                             ]
 %           [   1 - interior point                                          ]
-%           [   4 - primal simplex                                          ]
-%           [   5 - dual simplex                                            ]
-%           [   6 - primal dual simplex                                     ]
-%           [   7 - automatic simplex (MOSEK chooses which simplex method)  ]
+%           [   3 - primal simplex                                          ]
+%           [   4 - dual simplex                                            ]
+%           [   5 - primal dual simplex                                     ]
+%           [   6 - automatic simplex (MOSEK chooses which simplex method)  ]
+%           [   7 - network primal simplex                                  ]
 %           [   10 - concurrent                                             ]
 %       mosek.max_it            0 (400)     interior point max iterations
 %                                               (MSK_IPAR_INTPNT_MAX_ITERATIONS)

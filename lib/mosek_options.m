@@ -61,11 +61,12 @@ function opt = mosek_options(overrides, mpopt)
 %       opt.MSK_IPAR_SIM_MAX_ITERATIONS = 5000000;
 %
 %   See the Parameters reference in "The MOSEK optimization toolbox
-%   for MATLAB manaul" for details on the available options.
+%   for MATLAB manaul" for details on the available options. You may also
+%   want to use the symbolic constants defined by MOSEK_SYMBCON.
 %
-%       http://docs.mosek.com/7.0/toolbox/Parameters.html
+%       http://docs.mosek.com/7.1/toolbox/Parameters.html
 %
-%   See also MOSEKOPT, MPOPTION.
+%   See also MOSEK_SYMBCON, MOSEKOPT, MPOPTION.
 
 %   MATPOWER
 %   $Id$
@@ -103,8 +104,7 @@ gaptol  = 0;
 fname   = '';
 
 %% get symbolic constant names
-[r, res] = mosekopt('symbcon echo(0)');
-sc = res.symbcon;
+sc = mosek_symbcon;
 
 %% second argument
 if nargin > 1 && ~isempty(mpopt)
@@ -128,14 +128,15 @@ end
 %% solution algorithm
 if have_mpopt
     alg = mpopt.mosek.lp_alg;
-    switch alg
-        case {  sc.MSK_OPTIMIZER_FREE,                  %% 0
-                sc.MSK_OPTIMIZER_INTPNT,                %% 1
-                sc.MSK_OPTIMIZER_PRIMAL_SIMPLEX,        %% 4
-                sc.MSK_OPTIMIZER_DUAL_SIMPLEX,          %% 5
-                sc.MSK_OPTIMIZER_PRIMAL_DUAL_SIMPLEX,   %% 6
-                sc.MSK_OPTIMIZER_FREE_SIMPLEX,          %% 7
-                sc.MSK_OPTIMIZER_CONCURRENT }           %% 10
+    switch alg                                          %% v6.x v7.x
+        case {  sc.MSK_OPTIMIZER_FREE,                  %%  0    0
+                sc.MSK_OPTIMIZER_INTPNT,                %%  1    1
+                sc.MSK_OPTIMIZER_PRIMAL_SIMPLEX,        %%  4    3
+                sc.MSK_OPTIMIZER_DUAL_SIMPLEX,          %%  5    4
+                sc.MSK_OPTIMIZER_PRIMAL_DUAL_SIMPLEX,   %%  6    5
+                sc.MSK_OPTIMIZER_FREE_SIMPLEX,          %%  7    6
+                sc.MSK_OPTIMIZER_NETWORK_PRIMAL_SIMPLEX,%%  -    7
+                sc.MSK_OPTIMIZER_CONCURRENT }           %% 10   10
             opt.MSK_IPAR_OPTIMIZER = alg;
         otherwise
             opt.MSK_IPAR_OPTIMIZER = sc.MSK_OPTIMIZER_FREE;
