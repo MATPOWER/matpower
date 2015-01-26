@@ -24,7 +24,7 @@ function TorF = hasPQcap(gen, hilo)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2005-2014 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2005-2015 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
@@ -59,28 +59,44 @@ if nargin < 2
     hilo = 'B';     %% look at both top and bottom by default
 end
 
-%% check for errors capability curve data
-if any( gen(:, PC1) > gen(:, PC2) )
-    error('hasPQcap: must have Pc1 < Pc2');
-end
-if any( gen(:, QC2MAX) < gen(:, QC2MIN) & gen(:, QC1MAX) < gen(:, QC1MIN) )
-    error('hasPQcap: capability curve defines and empty set');
-end
+%% for which gens is it specified
+k = find( gen(:, PC1) | gen(:, PC2) );
+ng = size(gen, 1);
 
-L = zeros(size(gen, 1), 1);
-U = zeros(size(gen, 1), 1);
-k = find( gen(:, PC1) ~= gen(:, PC2) );
+if isempty(k)
+    TorF = zeros(ng, 1);
+else
+    %% check for errors in capability curve data
+    if any( gen(k, PC1) >= gen(k, PC2) )
+        error('hasPQcap: must have Pc1 < Pc2');
+    end
+    if any( gen(k, QC2MAX) <= gen(k, QC2MIN) & gen(k, QC1MAX) <= gen(k, QC1MIN) )
+        error('hasPQcap: capability curve defines an empty set');
+    end
 
-if ~strcmp(hilo, 'U')       %% include lower constraint
-    Qmin_at_Pmax = gen(k, QC1MIN) + (gen(k, PMAX) - gen(k, PC1)) .* ...
-        (gen(k, QC2MIN) - gen(k, QC1MIN)) ./ (gen(k, PC2) - gen(k, PC1));
-    L(k) = Qmin_at_Pmax > gen(k, QMIN);
+    %% for which gens is it specified
+    k = find( gen(:, PC1) ~= gen(:, PC2) );
+    L = zeros(ng, 1);
+    U = zeros(ng, 1);
+    dPc = gen(k, PC2) - gen(k, PC1);
+
+    if ~strcmp(hilo, 'U')       %% include lower constraint
+        dQc = gen(k, QC2MIN) - gen(k, QC1MIN);
+        Qmin_at_Pmin = gen(k, QC1MIN) + (gen(k, PMIN) - gen(k, PC1)) .* ...
+            dQc ./ dPc;
+        Qmin_at_Pmax = gen(k, QC1MIN) + (gen(k, PMAX) - gen(k, PC1)) .* ...
+            dQc ./ dPc;
+        L(k) = Qmin_at_Pmin > gen(k, QMIN) | Qmin_at_Pmax > gen(k, QMIN);
+    end
+
+    if ~strcmp(hilo, 'L')       %% include upper constraint
+        dQc = gen(k, QC2MAX) - gen(k, QC1MAX);
+        Qmax_at_Pmin = gen(k, QC1MAX) + (gen(k, PMIN) - gen(k, PC1)) .* ...
+            dQc ./ dPc;
+        Qmax_at_Pmax = gen(k, QC1MAX) + (gen(k, PMAX) - gen(k, PC1)) .* ...
+            dQc ./ dPc;
+        U(k) = Qmax_at_Pmin < gen(k, QMAX) | Qmax_at_Pmax < gen(k, QMAX);
+    end
+
+    TorF = L | U;
 end
-
-if ~strcmp(hilo, 'L')       %% include upper constraint
-    Qmax_at_Pmax = gen(k, QC1MAX) + (gen(k, PMAX) - gen(k, PC1)) .* ...
-        (gen(k, QC2MAX) - gen(k, QC1MAX)) ./ (gen(k, PC2) - gen(k, PC1));
-    U(k) = Qmax_at_Pmax < gen(k, QMAX);
-end
-
-TorF = L | U;

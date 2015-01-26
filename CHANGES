@@ -15,6 +15,13 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.0
 -----------------
 
+1/26/15
+    - Fixed bug in hasPQcap() that resulted in ignoring generator
+      capability curves if Q1MAX < Q2MAX or Q1MIN > Q2MIN (i.e. when
+      the sloped portions cut off the left corners of the box
+      constraints, rather than the right corners).
+      Thanks to Irina Boiarchuk.
+
 1/23/15
     - Added mosek_symbcon() to define symbolic constants for setting
       MOSEK options. Updated MOSEK solver option values in help text
