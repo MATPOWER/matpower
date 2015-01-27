@@ -65,8 +65,9 @@ for k = 1:length(algs)
             opt.cplex_opt = cplex_options([], mpopt);
         end
         if strcmp(names{k}, 'MOSEK')
-%             alg = 5;        %% use dual simplex
             mpopt = mpoption;
+%             sc = mosek_symbcon;
+%             alg = sc.MSK_OPTIMIZER_DUAL_SIMPLEX;    %% use dual simplex
 %             mpopt = mpoption(mpopt, 'mosek.lp_alg', alg );
             mpopt = mpoption(mpopt, 'mosek.gap_tol', 1e-10);
             opt.mosek_opt = mosek_options([], mpopt);

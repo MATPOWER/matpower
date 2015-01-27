@@ -135,12 +135,18 @@ if have_mpopt
                 sc.MSK_OPTIMIZER_DUAL_SIMPLEX,          %%  5    4
                 sc.MSK_OPTIMIZER_PRIMAL_DUAL_SIMPLEX,   %%  6    5
                 sc.MSK_OPTIMIZER_FREE_SIMPLEX,          %%  7    6
-                sc.MSK_OPTIMIZER_NETWORK_PRIMAL_SIMPLEX,%%  -    7
+%                 sc.MSK_OPTIMIZER_NETWORK_PRIMAL_SIMPLEX,%%  -    7 (non-existent for MOSEK v6)
                 sc.MSK_OPTIMIZER_CONCURRENT }           %% 10   10
             opt.MSK_IPAR_OPTIMIZER = alg;
         otherwise
-            opt.MSK_IPAR_OPTIMIZER = sc.MSK_OPTIMIZER_FREE;
+            if have_fcn('mosek', 'vnum') >= 7 && ...
+                    alg == sc.MSK_OPTIMIZER_NETWORK_PRIMAL_SIMPLEX
+                opt.MSK_IPAR_OPTIMIZER = alg;
+            else
+                opt.MSK_IPAR_OPTIMIZER = sc.MSK_OPTIMIZER_FREE;
+            end
     end
+
     %% (make default opf.violation correspond to default MSK_DPAR_INTPNT_TOL_PFEAS)
     opt.MSK_DPAR_INTPNT_TOL_PFEAS = mpopt.opf.violation/500;
     if mpopt.mosek.max_it
