@@ -42,7 +42,7 @@ algs = [
     sc.MSK_OPTIMIZER_DUAL_SIMPLEX;
     sc.MSK_OPTIMIZER_PRIMAL_DUAL_SIMPLEX;
     sc.MSK_OPTIMIZER_FREE_SIMPLEX;
-%     sc.MSK_OPTIMIZER_NETWORK_PRIMAL_SIMPLEX;
+%     sc.MSK_OPTIMIZER_NETWORK_PRIMAL_SIMPLEX;  %% not a network problem (according to MOSEK)
     sc.MSK_OPTIMIZER_CONCURRENT;
 ];
 alg_names = {
@@ -52,7 +52,7 @@ alg_names = {
     'dual simplex',
     'primal dual simplex',
     'free simplex',
-%    'network primal simplex',
+%     'network primal simplex',  %% not a network problem (according to MOSEK)
     'concurrent'
 };
 num_tests = 23 * length(algs);
