@@ -128,9 +128,12 @@ if toggle   %% change availability
     if on_off       %% turn on if available
         fcns = rmfield(fcns, tag);  %% delete field to force re-check
     else            %% turn off
-        fcns.(tag).av = 0;
+        if ~isfield(fcns, tag)      %% not yet been checked
+            TorF = have_fcn(tag);   %% cache result first
+        end
+        fcns.(tag).av = 0;          %% then turn off
     end
-    TorF = have_fcn(tag);
+    TorF = have_fcn(tag);           %% return cached value
 else        %% detect availability
     %% info not yet cached?
     if ~isfield(fcns, tag)
