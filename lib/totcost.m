@@ -49,6 +49,9 @@ if ~isempty(gencost)
     y = gencost(:, (COST+1):2:m);
     for i = ipwl'
       if gencost(i, NCOST) > 0
+%         totalcost(i,:) = interp1(x(i, 1:gencost(i, NCOST)), ...
+%                                  y(i, 1:gencost(i, NCOST)), ...
+%                                  Pg(i,:), 'linear', 'extrap');
         j1 = 1:(gencost(i, NCOST) - 1);    j2 = 2:gencost(i, NCOST);
         pp = mkpp(x(i, 1:gencost(i, NCOST))', [(y(i,j2) - y(i,j1)) ./ (x(i,j2) - x(i,j1));  y(i,j1)]');
         totalcost(i,:) = ppval(pp, Pg(i,:));
