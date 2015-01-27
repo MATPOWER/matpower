@@ -132,141 +132,57 @@ documentation for the various MATPOWER functions. For example:
 
 
 ---------------------------
- WHAT'S NEW IN VERSION 5.0
+ WHAT'S NEW IN VERSION 5.1
 ---------------------------
 
-Below is a summary of the changes since version 4.1 of MATPOWER. See the
+Below is a summary of the changes since version 5.0 of MATPOWER. See the
 CHANGES file in the docs directory for all the gory details.
 
 * New features:
-  - Continuation power flow with tangent predictor and Newton
-    method corrector, based on code contributed by Shrirang Abhyankar
-    and Alex Flueck.
-  - SDP_PF, a set of applications of a semidefinite programming
-    relaxation of the power flow equations, contributed by
-    Dan Molzahn (see 'extras/sdp_pf'):
-    - Globally optimal AC OPF solver (under certain conditions).
-    - Functions to check sufficient conditions for:
-      - global optimality of OPF solution
-      - insolvability of power flow equations
-  - PSS/E RAW data conversion to MATPOWER case format (experimental)
-    based on code contributed by Yujia Zhu.
-  - Brand new extensible MATPOWER options architecture based on options
-    struct instead of options vector.
-  - Utility routines to check network connectivity and handle islands
-    and isolated buses.
-  - New extension implementing DC OPF branch flow soft limits.
-    See 'help toggle_softlims' for details.
+  - Added support for LP/QP solver CLP (COIN_OR Linear Programming,
+    http://www.coin-or.org/projects/Clp.xml). Use 'opf.dc.solver'
+    option 'CLP' or qps_clp().
+  - Added support for OPTI Toolbox (http://www.i2c2.aut.ac.nz/Wiki/OPTI/)
+    versions of CLP, GLPK and IPOPT solvers, providing a very simple
+    installation path for some free high-performance solvers on Windows
+    platforms.
+  - Major update to have_fcn(), which now determines and caches
+    version numbers and release dates for optional packages, and includes
+    ability to toggle the availability of optional functionality.
   - New and updated support for 3rd party solvers:
-    - CPLEX 12.6
-    - GLPK
-    - Gurobi 5.x
-    - Ipopt 3.11.x
-    - Knitro 9.x.x
-    - Optimization Toolbox 7.1
-  - Numerous performance enhancements.
+    - OPTI Toolbox versions of CLP, GLPK, IPOPT
+    - CLP
+    - Gurobi 6.x
+    - Knitro 9.1
+    - MOSEK 7.1
+    - Optimization Toolbox 7.2 (esp. linprog() dual-simplex)
   - New functions:
-    - runcpf() for continuation power flow.
-    - case_info() for summarizing system information, including network
-      connectivity.
-    - extract_islands() to extract a network island into a separate
-      MATPOWER case.
-    - find_islands() to detect network islands.
-    - @opt_model/describe_idx() to identify variable, constraint or
-      cost row indices to aid in debugging.
-    - margcost() for computing the marginal cost of generation.
-    - psse2mpc() to convert PSS/E RAW date into MATPOWER case format.
-    - get_losses() to compute branch series losses and reactive charging
-      injections and derivatives as functions of bus voltages.
-    - New experimental functions in 'extras/misc' for computing loss factors,
-      checking feasibility of solutions, converting losses to negative bus
-      injections and modifying an OPF problem to make it feasible.
-  - Added case5.m, a 5-bus, 5-generator example case from Rui Bo.
-  - New options:
-    - scale_load() can scale corresponding gencost for dispatchable loads.
-    - makeJac() can return full Jacobian instead of reduced version
-      used in Newton power flow updates.
-    - modcost() can accept a vector of shift/scale factors.
-    - total_load() can return actual or nominal values for dispatchable
-      loads.
-    - runpf(), runopf(), etc. can send pretty-printed output to file
-      without also sending it to the screen.
-    - 'out.suppress_detail' option suppresses all output except system
-      summary (on by default for large cases).
-    - 'opf.init_from_mpc' option forces some solvers to use user-supplied
-      starting point.
-    - MIPS 1.1 includes many new user-settable options.
-  - Reimplementated @opf_model class as sub-class of the new
-    @opt_model class, which supports indexed named sets of
-    variables, constraints and costs.
-  - Many new tests in test suite.
+    - mosek_symbcon() defines symbolic constants for setting
+      MOSEK options.
+
+* Other improvements:
+  - Cleaned up and improved consistency of output in printpf() for
+    generation and dispatchable load constraints.
+  - Modified runcpf() to gracefully handle the case when the base
+    and target cases are identical (as opposed to getting lost in
+    an infinite loop).
 
 * Bugs fixed:
-  - Running a power flow for a case with DC lines but no gencost
-    no longer causes an error.
-  - Fixed a bug in runpf() where it was using the wrong initial
-    voltage magnitude for generator buses marked as PQ buses. Power
-    flow of solved case was not converging in zero iterations as
-    expected.
-  - Fixed fatal bug in MIPS for unconstrained, scalar problems.
-    Thanks to Han Na Gwon.
-  - Fixed a bug in int2ext() where converting a case to internal
-    ordering before calling runpf() or runopf() could result in
-    a fatal error due to mismatched number of columns in internal
-    and external versions of data matrices. Thanks to Nasiruzzaman
-    and Shiyang Li for reporting and detailing the issue.
-  - DC OPF now correctly sets voltage magnitudes to 1 p.u.
-    in results.
-  - Fixed a bug in MIPS where a near-singular matrix could produce
-    an extremely large Newton step, resulting in incorrectly satisfying
-    the relative feasibility criterion for successful termination.
-  - Improved the starting point created for Ipopt, Knitro and MIPS
-    for variables that are only bounded on one side.
-  - Fixed bug in savecase() where the function name mistakenly
-    included the path when the FNAME input included a path.
-  - Fixed bugs in runpf() related to enforcing generator reactive
-    power limits when all generators violate limits or when
-    the slack bus is converted to PQ.
-  - Fixed crash when using Knitro to solve cases with all
-    lines unconstrained.
-  - Fixed memory issue resulting from nested om fields when
-    repeatedly running an OPF using the results of a previous
-    OPF as input. Thanks to Carlos Murillo-Sanchez.
-  - Fixed fatal error when uopf() shuts down all gens
-    attempting to satisfy Pmin limits.
-  - Reactive power output of multiple generators at a PQ bus
-    no longer get re-allocated when running a power flow.
-  - Fixed a bug in savecase() where a gencost matrix with extra
-    columns of zeros resulted in a corrupted MATPOWER case file.
-  - Fixed bug in runpf() that caused a crash for cases with
-    'pf.enforce_q_lims' turned on and exactly two Q limit violations,
-    one Qmax and one Qmin. Thanks to Jose Luis Marin.
-
-* INCOMPATIBLE CHANGES:
-  - Optional packages TSPOPF and MINOPF must be updated to latest
-    versions.
-  - Renamed cdf2matp() to cdf2mpc() and updated the interface to be
-    consistent with psse2mpc().
-  - Removed 'ot_opts' field, replaced with 'linprog_opts' and
-    'quadprog_opts' fields in the OPT argument to qps_matpower()
-    and qps_ot().
-  - The name of the mips() option used to specify the maximum number
-    of step-size reductions with step_control on was changed from
-    'max_red' to 'sc.red_it' for consistency with other MATPOWER options.
-  - Removed 'max_it' option from qps_matpower() (and friends) args.
-    Use algorithm specific options to control iteration limits.
-  - Changed behavior of branch angle difference limits so that
-    0 is interpreted as unbounded only if both ANGMIN and ANGMAX
-    are zero.
-  - In results struct returned by an OPF, the value of
-    results.raw.output.alg is now a string, not an old-style numeric
-    alg code.
-  - Removed:
-    - Support for Matlab 6.x.
-    - Support for constr() and successive LP-based OPF solvers.
-    - Support for Gurobi 4.x/gurobi_mex() interface.
-    - extras/cpf, replaced by runcpf().
-    - extras/psse2matpower, replaced by psse2mpc().
+  - Fixed fatal bug in case_info() for islands with no generation.
+  - Fixed fatal bug in toggle_dcline() when pretty-printing results.
+    Thanks to Deep Kiran for reporting.
+  - Fixed sign error on multipliers on lower bound on constraints
+    in qps_clp() and qps_glpk().
+  - Fixed bug in handling of interface flow limits, where multipliers
+    on binding interface flow limits were off by a factor of the p.u.
+    MVA base.
+  - Fixed minor bug with poly2pwl(), affecting units with PMAX <= 0.
+  - Fixed error in qps_mosek() in printout of selected optimizer
+    when using MOSEK 7.
+  - Fixed bug in hasPQcap() that resulted in ignoring generator
+    capability curves for units whose reactive range increases
+    as real power output increases. Thanks to Irina Boiarchuk for
+    reporting.
 
 
 ---------------
