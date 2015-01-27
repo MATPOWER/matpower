@@ -187,8 +187,12 @@ else        %% detect availability
                     end
                 end
                 if TorF
-                    cplex = Cplex('null');
-                    vstr = cplex.getVersion;
+                    try
+                        cplex = Cplex('null');
+                        vstr = cplex.getVersion;
+                    catch
+                        TorF = 0;
+                    end
                 end
             case {'fmincon', 'fmincon_ipm', 'linprog', 'linprog_ds', ...
                         'optimoptions', 'quadprog', 'quadprog_ls'}
