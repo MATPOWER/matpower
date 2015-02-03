@@ -15,6 +15,11 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.0
 -----------------
 
+2/3/15
+    - Added check to have_fcn() for installation of ipopt_auxdata.m
+      when Ipopt >= 3.11.x is detected, to warn about incomplete
+      installation and avoid a fatal error.
+
 1/26/15
     - Fixed bug in hasPQcap() that resulted in ignoring generator
       capability curves if Q1MAX < Q2MAX or Q1MIN > Q2MIN (i.e. when
