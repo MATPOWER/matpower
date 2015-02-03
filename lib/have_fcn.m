@@ -300,6 +300,11 @@ else        %% detect availability
                     [s,e,tE,m,t] = regexp(str, pat);
                     if ~isempty(t)
                         vstr = t{1}{1};
+                        if vstr2num(vstr) >= 3.011 && ...
+                                ~exist('ipopt_auxdata', 'file')
+                            TorF = 0;
+                            warning('Improper installation of IPOPT. Version %s detected, but IPOPT_AUXDATA.M is missing.', vstr);
+                        end
                     end
                 end
             case 'knitro'       %% any Knitro
