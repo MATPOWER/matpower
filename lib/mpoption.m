@@ -521,18 +521,11 @@ elseif nargin - k > 0 && mod(nargin-k, 2)   %% even number of remaining args
             name = varargin{k};
             val  = varargin{k+1};
             k = k + 2;
-            if have_fcn('octave')
-                c = strsplit(name, '.');
-            else
-                [c, matches] = regexp(name, '\.', 'split', 'match');
-                if isempty(c) && ~isempty(name) %% workaround for bug in Matlab 7.3 (R2006b)
-                    c{1} = name;
-                end
-            end
+            c = regexp(name, '([^\.]*)', 'tokens');
             s = struct();
             for i = 1:length(c)
                 s(i).type = '.';
-                s(i).subs = c{i};
+                s(i).subs = c{i}{1};
             end
             ov = subsasgn(ov, s, val);
         end
