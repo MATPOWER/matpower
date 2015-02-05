@@ -54,6 +54,11 @@ end
 %% options
 tol     = mpopt.pf.tol;
 max_it  = mpopt.pf.fd.max_it;
+if have_fcn('matlab') && have_fcn('matlab', 'vnum') < 7.3
+    lu_vec = 0;     %% lu(..., 'vector') syntax not supported
+else
+    lu_vec = 1;
+end
 
 %% initialize
 converged = 0;
@@ -92,12 +97,17 @@ Bp = Bp([pv; pq], [pv; pq]);
 Bpp = Bpp(pq, pq);
 
 %% factor B matrices
-[Lp,  Up,  pp,  qp ] = lu(Bp,  'vector');
-[Lpp, Upp, ppp, qpp] = lu(Bpp, 'vector');
-[junk, iqp ] = sort(qp);
-[junk, iqpp] = sort(qpp);
-% [~, iqp ] = sort(qp);
-% [~, iqpp] = sort(qpp);
+if lu_vec
+    [Lp,  Up,  pp,  qp ] = lu(Bp,  'vector');
+    [Lpp, Upp, ppp, qpp] = lu(Bpp, 'vector');
+    [junk, iqp ] = sort(qp);
+    [junk, iqpp] = sort(qpp);
+    % [~, iqp ] = sort(qp);
+    % [~, iqpp] = sort(qpp);
+else
+    [Lp, Up, Pp] = lu(Bp);
+    [Lpp, Upp, Ppp] = lu(Bpp);
+end
 
 %% do P and Q iterations
 while (~converged && i < max_it)
@@ -105,8 +115,12 @@ while (~converged && i < max_it)
     i = i + 1;
 
     %%-----  do P iteration, update Va  -----
-    dVa = -( Up \  (Lp \ P(pp)) );
-    dVa = dVa(iqp);
+    if lu_vec
+        dVa = -( Up \  (Lp \ P(pp)) );
+        dVa = dVa(iqp);
+    else
+        dVa = -( Up \  (Lp \ (Pp * P)));
+    end
 
     %% update voltage
     Va([pv; pq]) = Va([pv; pq]) + dVa;
@@ -132,8 +146,12 @@ while (~converged && i < max_it)
     end
 
     %%-----  do Q iteration, update Vm  -----
-    dVm = -( Upp \ (Lpp \ Q(ppp)) );
-    dVm = dVm(iqpp);
+    if lu_vec
+        dVm = -( Upp \ (Lpp \ Q(ppp)) );
+        dVm = dVm(iqpp);
+    else
+        dVm = -( Upp \ (Lpp \ (Ppp * Q)) );
+    end
 
     %% update voltage
     Vm(pq) = Vm(pq) + dVm;

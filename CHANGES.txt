@@ -19,6 +19,9 @@ Changes since 5.0
     - Replaced regexp(... 'split') construct in mpoption() with
       regexp(... 'tokens') since it was causing fatal errors on
       Matlab versions < 7.3, which did not have that feature.
+    - Fixed fatal error in when using fast-decoupled power flow
+      on Matlab versions < 7.3, caused by use of newer
+      lu(... 'vector') construct.
 
 2/3/15
     - Added check to have_fcn() for installation of ipopt_auxdata.m
