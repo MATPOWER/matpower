@@ -473,8 +473,10 @@ else        %% detect availability
                         TorF = 1;
                     end
                 end
-            case 'regexp_split'         %% only missing for Octave < 3.8
-                if have_fcn('matlab') || have_fcn('octave', 'vnum') >= 3.008
+            case 'regexp_split'     %% missing for Matlab < 7.3 & Octave < 3.8
+                if have_fcn('matlab') && have_fcn('matlab', 'vnum') >= 7.003
+                    TorF = 1;
+                elseif have_fcn('octave', 'vnum') >= 3.008
                     TorF = 1;
                 end
 

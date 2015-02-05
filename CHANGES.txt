@@ -15,6 +15,11 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.0
 -----------------
 
+2/5/15
+    - Replaced regexp(... 'split') construct in mpoption() with
+      regexp(... 'tokens') since it was causing fatal errors on
+      Matlab versions < 7.3, which did not have that feature.
+
 2/3/15
     - Added check to have_fcn() for installation of ipopt_auxdata.m
       when Ipopt >= 3.11.x is detected, to warn about incomplete

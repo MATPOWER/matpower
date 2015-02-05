@@ -51,7 +51,7 @@ if have_fcn('octave')
 end
 
 if ~have_fcn('regexp_split')
-    t_skip(num_tests, 'PSSE2MPC requires newer Octave with regexp split support');
+    t_skip(num_tests, 'PSSE2MPC requires newer Matlab/Octave with regexp split support');
 else
     t = '[records, sections] = psse_read() : length(records)';
     [records, sections] = psse_read(raw, verbose);
