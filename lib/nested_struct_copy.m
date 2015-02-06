@@ -149,8 +149,7 @@ for f = 1:length(fields)
     if isempty(exceptions)
         k = [];
     else
-        k = find(cellfun(@strcmp, {exceptions.name}', ...
-                         cellstr(char(ones(length(exceptions),1) * str)) ));
+        k = strmatch(str, {exceptions.name}', 'exact');
         if ~isempty(k)
             if isfield(exceptions, 'copy_mode') && ...
                     ( ischar(exceptions(k).copy_mode) || ...

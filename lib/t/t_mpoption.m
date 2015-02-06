@@ -135,6 +135,10 @@ t_ok(strcmp(mpopt.opf.dc.solver, 'MIPS'), [t 'mpopt.opf.dc.solver']);
 mpopt.verbose = 1;
 mpopt.model = 'AC';
 mpopt.opf.dc.solver = 'DEFAULT';
+%% The following line appears to work around a bizarre bug in Matlab 7.0.4 (Mac)
+%% that caused the next test, and subsequent 'everything else' tests, to fail
+%% mysteriously (but not if a debugger breakpoint was set).
+isequal(mpopt, mpopt0);
 t_ok(isequal(mpopt, mpopt0), [t 'everything else']);
 
 t = 'mpoption(''t_mpoption_ov'') : ';

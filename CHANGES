@@ -15,6 +15,13 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.0
 -----------------
 
+2/6/15
+    - Modified nested_struct_copy() to eliminate cellfun() call that
+      was not supported in Matlab 7.0.x. Noted that runcpf() also
+      requires Matlab 7.1 or later due to a call to cellfun().
+      Included code to skip certain tests that require that cellfun()
+      functionality when running under Matlab 7.0.x.
+
 2/5/15
     - Replaced regexp(... 'split') construct in mpoption() with
       regexp(... 'tokens') since it was causing fatal errors on
