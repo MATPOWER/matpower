@@ -36,10 +36,11 @@ if nargin < 1
     quiet = 0;
 end
 
-t_begin(122, quiet);
+num_tests = 122;
+t_begin(num_tests, quiet);
 
 if have_fcn('matlab', 'vnum') < 7.001
-    t_skip(122, 'test requires cellfun() construct not available before Matlab 7.1');
+    t_skip(num_tests, 'test requires cellfun() construct not available before Matlab 7.1');
 else
     mpce = loadcase('t_case_ext');
     mpci = loadcase('t_case_int');
