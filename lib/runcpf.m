@@ -164,8 +164,8 @@ mpcbase = ext2int(mpcbase);
 [ref, pv, pq] = bustypes(busb, genb);
 
 %% generator info
-onb = find(genb(:, GEN_STATUS) > 0);      %% which generators are on?
-gbusb = genb(onb, GEN_BUS);                %% what buses are they at?
+onb = find(genb(:, GEN_STATUS) > 0);    %% which generators are on?
+gbusb = genb(onb, GEN_BUS);             %% what buses are they at?
 
 %% read target case data
 mpctarget = loadcase(targetcasedata);
