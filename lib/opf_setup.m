@@ -177,7 +177,7 @@ else                %% AC model
 end
 
 %% voltage angle reference constraints
-Vau = Inf * ones(nb, 1);
+Vau = Inf(nb, 1);
 Val = -Vau;
 Vau(refs) = Va(refs);
 Val(refs) = Va(refs);

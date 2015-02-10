@@ -191,8 +191,8 @@ options.auxdata = struct( ...
 %% define variable and constraint bounds
 options.lb = xmin;
 options.ub = xmax;
-options.cl = [zeros(2*nb, 1); -Inf*ones(2*nl2, 1); l];
-options.cu = [zeros(2*nb, 1);     zeros(2*nl2, 1); u];
+options.cl = [zeros(2*nb, 1);  -Inf(2*nl2, 1); l];
+options.cu = [zeros(2*nb, 1); zeros(2*nl2, 1); u];
 
 %% assign function handles
 funcs.objective         = @objective;

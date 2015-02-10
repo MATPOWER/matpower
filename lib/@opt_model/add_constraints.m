@@ -151,10 +151,10 @@ else                %% linear
     
     [N, M] = size(A);
     if isempty(l)                   %% default l is -Inf
-        l = -Inf * ones(N, 1);
+        l = -Inf(N, 1);
     end
     if isempty(u)                   %% default u is Inf
-        u = Inf * ones(N, 1);
+        u = Inf(N, 1);
     end
     if ~isempty(varsets) && iscell(varsets)
         empty_cells = cell(1, length(varsets));

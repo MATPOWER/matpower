@@ -106,13 +106,13 @@ if N ~= -1      %% not just setting dimensions for indexed set
         end
     end
     if isempty(v0)
-        v0 = zeros(N, 1);           %% init to zero by default
+        v0 = zeros(N, 1);   %% init to zero by default
     end
     if isempty(vl)
-        vl = -Inf * ones(N, 1);     %% unbounded below by default
+        vl = -Inf(N, 1);    %% unbounded below by default
     end
     if isempty(vu)
-        vu = Inf * ones(N, 1);      %% unbounded above by default
+        vu = Inf(N, 1);     %% unbounded above by default
     end
 end
 

@@ -183,10 +183,10 @@ end
 nA = size(A, 1);                %% number of original linear constraints
 if nA
     if isempty(u)               %% By default, linear inequalities are ...
-        u = Inf * ones(nA, 1);      %% ... unbounded above and ...
+        u = Inf(nA, 1);             %% ... unbounded above and ...
     end
     if isempty(l)
-        l = -Inf * ones(nA, 1);     %% ... unbounded below.
+        l = -Inf(nA, 1);            %% ... unbounded below.
     end
 end
 if isempty(x0)

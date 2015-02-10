@@ -54,7 +54,7 @@ for k = 1:om.lin.NS
     end
 end
 At = sparse([], [], [], om.var.N, om.lin.N, nnzA);  %% use A transpose for speed
-u = Inf * ones(om.lin.N, 1);
+u = Inf(om.lin.N, 1);
 l = -u;
 
 %% fill in each piece

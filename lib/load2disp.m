@@ -88,7 +88,7 @@ gen = [
     max(0, -mpc.bus(idx, PD)), ...  %% PMAX
     min(0, -mpc.bus(idx, PD)), ...  %% PMIN
     zeros(nld, 6), ...              %% capability curve
-    Inf * ones(nld, 4), ...         %% ramp rates
+    Inf(nld, 4), ...                %% ramp rates
     zeros(nld, 1), ...              %% participation factor
 ];
 mpc.gen =  [mpc.gen; gen];  %% add dispatchable loads
