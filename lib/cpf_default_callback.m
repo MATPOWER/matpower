@@ -115,7 +115,7 @@ if nargout == 2
         %% plot the final nose curve
         plot(cb_state.lam_c', ...
             abs(cb_state.V_c(idx,:))', ...
-            '-');
+            '-', 'Color', [0.25 0.25 1]);
         axis([0 max([1;max(cb_state.lam_p);max(cb_state.lam_c)])*1.05 ...
             0 max([1;max(abs(cb_state.V_p(idx)));max(abs(cb_state.V_c(idx)))*1.05])]);
         hold off;
@@ -131,7 +131,7 @@ elseif k == 0
     
     %% initialize lambda-V nose curve plot
     if plot_level
-        plot(cb_state.lam_p(1), abs(cb_state.V_p(idx,1)), '-');
+        plot(cb_state.lam_p(1), abs(cb_state.V_p(idx,1)), '-', 'Color', [0.25 0.25 1]);
         title(sprintf('Voltage at Bus %d', idx_e));
         xlabel('\lambda');
         ylabel('Voltage Magnitude');
@@ -160,7 +160,7 @@ else
             'Color', 0.85*[1 0.75 0.75]);
         plot(cb_state.lam_c(k+1)', ...
             abs(cb_state.V_c(idx,k+1))', ...
-            '-o');
+            '-o', 'Color', [0.25 0.25 1]);
         axis([0 max([1;max(cb_state.lam_p);max(cb_state.lam_c)])*1.05 ...
             0 max([1;max(abs(cb_state.V_p(idx)));max(abs(cb_state.V_c(idx)))*1.05])]);
         drawnow;
