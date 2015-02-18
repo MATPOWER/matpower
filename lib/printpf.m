@@ -196,6 +196,7 @@ if OUT_ANY
     s_areas = sorted_areas([1; find(diff(sorted_areas))+1]);    %% area numbers
     nzsh = find((bus(:, GS) | bus(:, BS)) & bus(:, BUS_TYPE) ~= NONE);
     allg = find( ~isload(gen) );
+    alld = find(  isload(gen) );
     ong  = find( gen(:, GEN_STATUS) > 0 & ~isload(gen) );
     onld = find( gen(:, GEN_STATUS) > 0 &  isload(gen) );
     V = bus(:, VM) .* exp(sqrt(-1) * pi/180 * bus(:, VA));
@@ -388,8 +389,8 @@ if OUT_GEN && (success || OUT_FORCE)
     if isOPF, fprintf(fd, '     P         Q    '); end
     fprintf(fd, '\n----  -----  ------  --------  --------');
     if isOPF, fprintf(fd, '  --------  --------'); end
-    for k = 1:length(ong)
-        i = ong(k);
+    for k = 1:length(allg)
+        i = allg(k);
         fprintf(fd, '\n%3d %6d     %2d ', i, gen(i, GEN_BUS), gen(i, GEN_STATUS));
         if gen(i, GEN_STATUS) > 0 && (gen(i, PG) || gen(i, QG))
             fprintf(fd, '%10.2f%10.2f', gen(i, PG), gen(i, QG));
@@ -401,7 +402,7 @@ if OUT_GEN && (success || OUT_FORCE)
     fprintf(fd, '\n                     --------  --------');
     fprintf(fd, '\n            Total: %9.2f%10.2f', sum(gen(ong, PG)), sum(gen(ong, QG)));
     fprintf(fd, '\n');
-    if ~isempty(onld)
+    if ~isempty(alld)
         fprintf(fd, '\n================================================================================');
         fprintf(fd, '\n|     Dispatchable Load Data                                                   |');
         fprintf(fd, '\n================================================================================');
@@ -411,8 +412,8 @@ if OUT_GEN && (success || OUT_FORCE)
         if isOPF, fprintf(fd, '     P         Q    '); end
         fprintf(fd, '\n----  -----  ------  --------  --------');
         if isOPF, fprintf(fd, '  --------  --------'); end
-        for k = 1:length(onld)
-            i = onld(k);
+        for k = 1:length(alld)
+            i = alld(k);
             fprintf(fd, '\n%3d %6d     %2d ', i, gen(i, GEN_BUS), gen(i, GEN_STATUS));
             if gen(i, GEN_STATUS) > 0 && (gen(i, PG) || gen(i, QG))
                 fprintf(fd, '%10.2f%10.2f', -gen(i, PG), -gen(i, QG));

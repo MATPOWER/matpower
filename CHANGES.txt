@@ -15,6 +15,11 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.0
 -----------------
 
+2/18/15
+    - Changed generator and dispatchable load sections in printpf()
+      output to include off-line units, after all, it already has a
+      Status column.
+
 2/6/15
     - Modified nested_struct_copy() to eliminate cellfun() call that
       was not supported in Matlab 7.0.x. Noted that runcpf() also
