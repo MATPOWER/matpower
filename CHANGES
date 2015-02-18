@@ -20,6 +20,10 @@ Changes since 5.0
       output to include off-line units, after all, it already has a
       Status column.
 
+2/13/15
+    - Added explicit colors to plots in cpf_default_callback() so things
+      look right in newer Matlab versions (R2014b and later).
+
 2/6/15
     - Modified nested_struct_copy() to eliminate cellfun() call that
       was not supported in Matlab 7.0.x. Noted that runcpf() also
