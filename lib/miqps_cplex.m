@@ -97,7 +97,7 @@ function [x, f, eflag, output, lambda] = miqps_cplex(H, c, A, l, u, xmin, xmax, 
 %       opt = struct('verbose', 2);
 %       [x, f, s, out, lambda] = miqps_cplex(H, c, A, l, u, xmin, [], x0, vtype, opt);
 %
-%   See also CPLEXQP, CPLEXLP, CPLEX_OPTIONS.
+%   See also CPLEXMIQP, CPLEXMILP, CPLEXQP, CPLEXLP, CPLEX_OPTIONS.
 
 %   MATPOWER
 %   $Id$
