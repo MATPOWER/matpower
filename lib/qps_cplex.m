@@ -221,10 +221,8 @@ else
     cplex_opt = cplex_options;
 end
 
-cplex = Cplex('null');
-vstr = cplex.getVersion;
-[s,e,tE,m,t] = regexp(vstr, '(\d+\.\d+)\.');
-vnum = str2num(t{1}{1});
+vstr = have_fcn('cplex', 'vstr');
+vnum = have_fcn('cplex', 'vnum');
 vrb = max([0 verbose-1]);
 cplex_opt.barrier.display   = vrb;
 cplex_opt.conflict.display  = vrb;
@@ -232,7 +230,7 @@ cplex_opt.mip.display       = vrb;
 cplex_opt.sifting.display   = vrb;
 cplex_opt.simplex.display   = vrb;
 cplex_opt.tune.display      = vrb;
-if vrb && vnum > 12.2
+if vrb && vnum > 12.002
     cplex_opt.diagnostics   = 'on';
 end
 if verbose > 2
@@ -315,7 +313,7 @@ if unconstrained
 end
 
 %% negate prices depending on version
-if vnum < 12.3
+if vnum < 12.003
     lam.eqlin   = -lam.eqlin;
     lam.ineqlin = -lam.ineqlin;
 end
