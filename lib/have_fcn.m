@@ -40,6 +40,8 @@ function rv = have_fcn(tag, rtype)
 %       fmincon_ipm - FMINCON with Interior Point solver, from Opt Tbx 4.x +
 %       glpk        - GLPK, GNU Linear Programming Kit
 %       gurobi      - GUROBI, Gurobi solver (http://www.gurobi.com/), 5.x +
+%       intlinprog  - INTLINPROG, MILP solver from Optimization
+%                     Toolbox 7.0 (R2014a)+
 %       ipopt       - IPOPT, NLP solver
 %                       (http://www.coin-or.org/projects/Ipopt.xml)
 %       linprog     - LINPROG, LP solver from Optimization Toolbox 2.x +
@@ -194,8 +196,8 @@ else        %% detect availability
                         TorF = 0;
                     end
                 end
-            case {'fmincon', 'fmincon_ipm', 'linprog', 'linprog_ds', ...
-                        'optimoptions', 'quadprog', 'quadprog_ls'}
+            case {'fmincon', 'fmincon_ipm', 'intlinprog', 'linprog', ...
+                        'linprog_ds', 'optimoptions', 'quadprog', 'quadprog_ls'}
                 if license('test', 'optimization_toolbox')
                     v = ver('optim');
                     vstr = v.Version;
@@ -204,6 +206,8 @@ else        %% detect availability
                         case 'fmincon'
                             TorF = exist('fmincon', 'file') == 2 || ...
                                 exist('fmincon', 'file') == 6;
+                        case 'intlinprog'
+                            TorF = exist('intlinprog', 'file') == 2;
                         case 'linprog'
                             TorF = exist('linprog', 'file') == 2;
                         case 'quadprog'
