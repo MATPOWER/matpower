@@ -99,7 +99,7 @@ function [x, f, eflag, output, lambda] = miqps_ot(H, c, A, l, u, xmin, xmax, x0,
 %       opt = struct('verbose', 2);
 %       [x, f, s, out, lambda] = miqps_ot(H, c, A, l, u, xmin, [], x0, vtype, opt);
 %
-%   See also QUADPROG, LINPROG.
+%   See also INTLINPROG, QUADPROG, LINPROG.
 
 %   MATPOWER
 %   $Id$
