@@ -18,6 +18,11 @@ Changes since 5.0
 2/24/15
     - Added function mpoption_info_intlinprog(), tag 'intlinprog' to
       have_fcn() and optional 'intlinprog' field to MATPOWER options.
+    - Added miqps_matpower(), a wrapper function for various solvers
+      of mixed-integer linear and quadratic programs. Functionality
+      implemented by miqps_cplex(), miqps_glpk(), miqps_gurobi(),
+      miqps_mosek() and miqps_ot(). Added corresponding
+      t/t_miqps_matpower() to test suite.
 
 2/18/15
     - Changed generator and dispatchable load sections in printpf()
