@@ -326,7 +326,15 @@ switch (r)
         end
 end
 
-if (verbose || r == 1001) && ~isempty(msg)  %% always alert user if license is expired
+if (verbose || r == sc.MSK_RES_ERR_LICENSE || ...
+        r == sc.MSK_RES_ERR_LICENSE_EXPIRED || ...
+        r == sc.MSK_RES_ERR_LICENSE_VERSION || ...
+        r == sc.MSK_RES_ERR_LICENSE_NO_SERVER_SUPPORT || ...
+        r == sc.MSK_RES_ERR_LICENSE_FEATURE || ...
+        r == sc.MSK_RES_ERR_LICENSE_INVALID_HOSTID || ...
+        r == sc.MSK_RES_ERR_LICENSE_SERVER_VERSION || ...
+        r == sc.MSK_RES_ERR_MISSING_LICENSE_FILE) ...
+        && ~isempty(msg)  %% always alert user of license problems
     fprintf('%s\n', msg);
 end
 
@@ -345,10 +353,26 @@ if nargout > 1
         output.res = res;
         if nargout > 4
             if ~isempty(sol)
-                lambda.lower = sol.slx;
-                lambda.upper = sol.sux;
-                lambda.mu_l  = sol.slc;
-                lambda.mu_u  = sol.suc;
+                if isfield(sol, 'slx')
+                    lambda.lower = sol.slx;
+                else
+                    lambda.lower = [];
+                end
+                if isfield(sol, 'sux')
+                    lambda.upper = sol.sux;
+                else
+                    lambda.upper = [];
+                end
+                if isfield(sol, 'slc')
+                    lambda.mu_l  = sol.slc;
+                else
+                    lambda.mu_l  = [];
+                end
+                if isfield(sol, 'suc')
+                    lambda.mu_u  = sol.suc;
+                else
+                    lambda.mu_u  = [];
+                end
             else
                 if isfield(p, 'xmin') && ~isempty(p.xmin)
                     lambda.lower = NaN(nx, 1);
