@@ -228,18 +228,18 @@ glpk_opt.msglev = verbose;
     glpk(c, AA, bb, xmin, xmax, ctype, vtype, 1, glpk_opt);
 
 %% set exit flag
-if isfield(extra, 'status')
+if isfield(extra, 'status')             %% status found in extra.status
     output.errnum = errnum;
     output.status = extra.status;
     eflag = -errnum;
     if eflag == 0 && extra.status == 5
         eflag = 1;
     end
-else
+else                                    %% status found in errnum
     output.errnum = [];
     output.status = errnum;
     if have_fcn('octave')
-        if errnum == 180 || errnum == 151
+        if errnum == 180 || errnum == 151 || errnum == 171
             eflag = 1;
         else
             eflag = 0;
