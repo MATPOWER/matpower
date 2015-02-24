@@ -4,7 +4,7 @@ function t_opf_dc_cplex(quiet)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2004-2014 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2015 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.

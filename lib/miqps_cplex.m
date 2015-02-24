@@ -102,7 +102,7 @@ function [x, f, eflag, output, lambda] = miqps_cplex(H, c, A, l, u, xmin, xmax, 
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2010-2013 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2015 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.

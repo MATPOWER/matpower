@@ -95,7 +95,7 @@ function [x, f, eflag, output, lambda] = qps_mosek(H, c, A, l, u, xmin, xmax, x0
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2010 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2015 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.

@@ -105,7 +105,7 @@ function [x, f, eflag, output, lambda] = miqps_gurobi(H, c, A, l, u, xmin, xmax,
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2010-2014 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2015 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.

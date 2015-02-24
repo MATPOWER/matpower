@@ -63,7 +63,7 @@ function [MVAbase, bus, gen, branch, success, et] = ...
 %   by Ray Zimmerman, PSERC Cornell
 %   Enforcing of generator Q limits inspired by contributions
 %   from Mu Lin, Lincoln University, New Zealand (1/14/05).
-%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2015 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
