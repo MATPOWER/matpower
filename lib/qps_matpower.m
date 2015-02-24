@@ -243,6 +243,21 @@ switch alg
                 qps_matpower(H, c, A, l, u, xmin, xmax, x0, opt);
             output.bpmpd = bpmpd;
         end
+    case 'CLP'
+        [x, f, eflag, output, lambda] = ...
+            qps_clp(H, c, A, l, u, xmin, xmax, x0, opt);
+    case 'CPLEX'
+        [x, f, eflag, output, lambda] = ...
+            qps_cplex(H, c, A, l, u, xmin, xmax, x0, opt);
+    case 'GLPK'
+        [x, f, eflag, output, lambda] = ...
+            qps_glpk(H, c, A, l, u, xmin, xmax, x0, opt);
+    case 'GUROBI'
+        [x, f, eflag, output, lambda] = ...
+            qps_gurobi(H, c, A, l, u, xmin, xmax, x0, opt);
+    case 'IPOPT'
+        [x, f, eflag, output, lambda] = ...
+            qps_ipopt(H, c, A, l, u, xmin, xmax, x0, opt);
     case 'MIPS'
         %% set up options
         if ~isempty(opt) && isfield(opt, 'mips_opt') && ~isempty(opt.mips_opt)
@@ -255,27 +270,12 @@ switch alg
         %% call solver
         [x, f, eflag, output, lambda] = ...
             qps_mips(H, c, A, l, u, xmin, xmax, x0, mips_opt);
-    case 'OT'                    %% use QUADPROG or LINPROG from Opt Tbx ver 2.x+
-        [x, f, eflag, output, lambda] = ...
-            qps_ot(H, c, A, l, u, xmin, xmax, x0, opt);
-    case 'IPOPT'
-        [x, f, eflag, output, lambda] = ...
-            qps_ipopt(H, c, A, l, u, xmin, xmax, x0, opt);
-    case 'CPLEX'
-        [x, f, eflag, output, lambda] = ...
-            qps_cplex(H, c, A, l, u, xmin, xmax, x0, opt);
     case 'MOSEK'
         [x, f, eflag, output, lambda] = ...
             qps_mosek(H, c, A, l, u, xmin, xmax, x0, opt);
-    case 'GUROBI'
+    case 'OT'                    %% use QUADPROG or LINPROG from Opt Tbx ver 2.x+
         [x, f, eflag, output, lambda] = ...
-            qps_gurobi(H, c, A, l, u, xmin, xmax, x0, opt);
-    case 'CLP'
-        [x, f, eflag, output, lambda] = ...
-            qps_clp(H, c, A, l, u, xmin, xmax, x0, opt);
-    case 'GLPK'
-        [x, f, eflag, output, lambda] = ...
-            qps_glpk(H, c, A, l, u, xmin, xmax, x0, opt);
+            qps_ot(H, c, A, l, u, xmin, xmax, x0, opt);
     otherwise
         error('qps_matpower: %d is not a valid algorithm code', alg);
 end
