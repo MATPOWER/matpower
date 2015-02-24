@@ -388,7 +388,7 @@ function opt = mpoption(varargin)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2013 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2013-2015 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
@@ -459,6 +459,11 @@ if have_opt0
             if opt0.v <= 5          %% convert version 5 to 6
                 if isfield(opt_d, 'clp')
                     opt0.clp = opt_d.clp;
+                end
+            end
+            if opt0.v <= 6          %% convert version 6 to 7
+                if isfield(opt_d, 'intlinprog')
+                    opt0.intlinprog = opt_d.intlinprog;
                 end
             end
             opt0.v = v;
