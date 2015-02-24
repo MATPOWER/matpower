@@ -16,7 +16,8 @@ Changes since 5.0
 -----------------
 
 2/24/15
-    - Added 'intlinprog' tag to have_fcn().
+    - Added function mpoption_info_intlinprog(), tag 'intlinprog' to
+      have_fcn() and optional 'intlinprog' field to MATPOWER options.
 
 2/18/15
     - Changed generator and dispatchable load sections in printpf()

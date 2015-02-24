@@ -1461,7 +1461,7 @@ end
 %% globals
 %%-------------------------------------------------------------------
 function v = mpoption_version
-v = 6;      %% version number of MATPOWER options struct
+v = 7;      %% version number of MATPOWER options struct
             %% (must be incremented every time structure is updated)
             %% v1   - first version based on struct (MATPOWER 5.0b1)
             %% v2   - added 'linprog' and 'quadprog' fields
@@ -1473,6 +1473,7 @@ v = 6;      %% version number of MATPOWER options struct
             %% v5   - (forgot to increment v) added 'opf.init_from_mpc'
             %%        field (MATPOWER 5.0)
             %% v6   - added 'clp' field
+            %% v7   - added 'intlinprog' field
 
 %%-------------------------------------------------------------------
 function db_level = DEBUG
@@ -1481,6 +1482,7 @@ db_level = 0;
 %%-------------------------------------------------------------------
 function pkgs = mpoption_optional_pkgs()
 pkgs = {...
-    'clp', 'cplex', 'fmincon', 'gurobi', 'glpk', 'ipopt', 'knitro', 'linprog', ...
-    'minopf', 'mosek', 'quadprog', 'sdp_pf', 'sopf', 'tspopf', 'yalmip' ...
+    'clp', 'cplex', 'fmincon', 'gurobi', 'glpk', 'intlinprog', 'ipopt', ...
+    'knitro', 'linprog', 'minopf', 'mosek', 'quadprog', 'sdp_pf', 'sopf', ...
+    'tspopf', 'yalmip' ...
 };
