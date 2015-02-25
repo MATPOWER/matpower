@@ -253,7 +253,7 @@ switch alg
     case 'MOSEK'
         [x, f, eflag, output, lambda] = ...
             qps_mosek(H, c, A, l, u, xmin, xmax, x0, opt);
-    case 'OT'                    %% use QUADPROG or LINPROG from Opt Tbx ver 2.x+
+    case 'OT'                   %% use QUADPROG or LINPROG from Opt Tbx ver 2.x+
         [x, f, eflag, output, lambda] = ...
             qps_ot(H, c, A, l, u, xmin, xmax, x0, opt);
     otherwise
