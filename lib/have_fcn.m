@@ -81,6 +81,7 @@ function rv = have_fcn(tag, rtype)
 
 %   Private tags for internal use only:
 %       catchme         - support for 'catch me' syntax in try/catch constructs
+%       evalc           - support for evalc() function
 %       ipopt_auxdata   - support for ipopt_auxdata(), required by 3.11 and later
 %       regexp_split    - support for 'split' argument to regexp()
 
@@ -237,13 +238,14 @@ else        %% detect availability
                 elseif exist('glpk','file') == 2    %% others have glpk.m and ...
                     if exist('__glpk__','file') == 3    %% octave __glpk__ MEX
                         TorF = 1;
-                        %% bummer, evalc not yet implemented in Octave (as of 3.8)
-%                         str = evalc('glpk(1, 1, 1, 1, 1, ''U'', ''C'', -1, struct(''msglev'', 3))');
-%                         pat = 'GLPK Simplex Optimizer, v([^\s,]+)';
-%                         [s,e,tE,m,t] = regexp(str, pat);
-%                         if ~isempty(t)
-%                             vstr = t{1}{1};
-%                         end
+                        if have_fcn('evalc')
+                            str = evalc('glpk(1, 1, 1, 1, 1, ''U'', ''C'', -1, struct(''msglev'', 3))');
+                            pat = 'GLPK Simplex Optimizer, v([^\s,]+)';
+                            [s,e,tE,m,t] = regexp(str, pat);
+                            if ~isempty(t)
+                                vstr = t{1}{1};
+                            end
+                        end
                     elseif exist('glpkcc','file') == 3  %% Matlab glpkcc MEX
                         TorF = 1;
                         str = evalc('glpk');
@@ -449,6 +451,12 @@ else        %% detect availability
                     else
                         TorF = 1;
                     end
+                end
+            case 'evalc'
+                if have_fcn('octave')
+                    TorF = 0;
+                else
+                    TorF = 1;
                 end
             case 'ipopt_auxdata'
                 if have_fcn('ipopt')
