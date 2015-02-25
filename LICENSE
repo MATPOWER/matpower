@@ -1,47 +1,53 @@
-The code in MATPOWER is distributed under the GNU General Public
-License with an exception added to clarify our intention to allow
-MATPOWER to interface with MATLAB(R) as well as any other MATLAB code
-or MEX-files a user may have installed, regardless of their licensing
-terms. The full text of the GPL can be found in the COPYING file
-at the top level of the MATPOWER distribution.
-
-The MATPOWER case files distributed with MATPOWER are not covered
-by the GPL. In most cases, the data has either been included with
-permission or has been converted from data available from a public
-source.
+The code in MATPOWER is distributed under the 3-clause BSD license
+below. The MATPOWER case files distributed with MATPOWER are not covered
+by the BSD license. In most cases, the data has either been included
+with permission or has been converted from data available from a
+public source.
 
 While not required by the terms of the license, we do request that
 publications derived from the use of MATPOWER explicitly acknowledge
-that fact by citing [1].
+that fact by citing:
 
-    [1] R. D. Zimmerman, C. E. Murillo-Sanchez, and R. J. Thomas,
-        "MATPOWER: Steady-State Operations, Planning and Analysis
-        Tools for Power Systems Research and Education," Power
-        Systems, IEEE Transactions on, vol. 26, no. 1, pp. 12–19,
-        Feb. 2011.
+  R. D. Zimmerman, C. E. Murillo-Sanchez, and R. J. Thomas, "MATPOWER:
+  Steady-State Operations, Planning and Analysis Tools for Power Systems
+  Research and Education," Power Systems, IEEE Transactions on, vol. 26,
+  no. 1, pp. 12–19, Feb. 2011.
 
-The following is the official license notice which should appear in
-each source file.
+The following is the official license notice:
 
-    MATPOWER is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published
-    by the Free Software Foundation, either version 3 of the License,
-    or (at your option) any later version.
+-------------------------------------------------------------------------
 
-    MATPOWER is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-    GNU General Public License for more details.
+Copyright (c) 1996-2015, Power System Engineering Research Center (PSERC)
+and individual contributors (see AUTHORS file for details).
+All rights reserved.
 
-    You should have received a copy of the GNU General Public License
-    along with MATPOWER. If not, see <http://www.gnu.org/licenses/>.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
 
-    Additional permission under GNU GPL version 3 section 7
+1. Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
 
-    If you modify MATPOWER, or any covered work, to interface with
-    other modules (such as MATLAB code and MEX-files) available in a
-    MATLAB(R) or comparable environment containing parts covered
-    under other licensing terms, the licensors of MATPOWER grant
-    you additional permission to convey the resulting work.
+2. Redistributions in binary form must reproduce the above copyright
+notice, this list of conditions and the following disclaimer in the
+documentation and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+-------------------------------------------------------------------------
 
 $Id: LICENSE,v 1.3 2010-04-26 19:45:25 ray Exp $

@@ -41,11 +41,8 @@ MATPOWER can be downloaded from the MATPOWER home page above.
 
 Please see the LICENSE file for the details. But here is the summary:
 
-- Beginning with version 4, the code in MATPOWER is distributed under
-  the GNU General Public License (GPL) with an exception added to
-  clarify our intention to allow MATPOWER to interface with MATLAB
-  as well as any other MATLAB code or MEX-files a user may have
-  installed, regardless of their licensing terms.
+- Beginning with version 5.1, the code in MATPOWER is distributed under
+  the 3-clause BSD license.
 
 - MATPOWER is distributed in the hope that it will be useful, but
   WITHOUT ANY WARRANTY.
@@ -59,7 +56,8 @@ Please see the LICENSE file for the details. But here is the summary:
      for Power Systems Research and Education," Power Systems, IEEE
      Transactions on, vol. 26, no. 1, pp. 12–19, Feb. 2011.
 
-Note:  Versions prior to MATPOWER 4 use a different license.
+Note:  Versions 4.0 through 5.0 were licensed under the GPL and versions
+       prior to MATPOWER 4 use a different license.
 
 
 -----------------

@@ -13,28 +13,8 @@ function rv = mpver(varargin)
 %   Copyright (c) 2005-2014 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
-%   See http://www.pserc.cornell.edu/matpower/ for more info.
-%
-%   MATPOWER is free software: you can redistribute it and/or modify
-%   it under the terms of the GNU General Public License as published
-%   by the Free Software Foundation, either version 3 of the License,
-%   or (at your option) any later version.
-%
-%   MATPOWER is distributed in the hope that it will be useful,
-%   but WITHOUT ANY WARRANTY; without even the implied warranty of
-%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-%   GNU General Public License for more details.
-%
-%   You should have received a copy of the GNU General Public License
-%   along with MATPOWER. If not, see <http://www.gnu.org/licenses/>.
-%
-%   Additional permission under GNU GPL version 3 section 7
-%
-%   If you modify MATPOWER, or any covered work, to interface with
-%   other modules (such as MATLAB code and MEX-files) available in a
-%   MATLAB(R) or comparable environment containing parts covered
-%   under other licensing terms, the licensors of MATPOWER grant
-%   you additional permission to convey the resulting work.
+%   Covered by the 3-clause BSD License (see LICENSE file for details).
+%   See http://matpower.org/ for more info.
 
 %% the following only works if MATPOWER is explicitly in the path,
 %% but not if it is only in the current working directory
@@ -49,7 +29,7 @@ function rv = mpver(varargin)
 v{1} = struct(  'Name',     'MATPOWER', ... 
                 'Version',  '5.1-dev', ...
                 'Release',  '', ...
-                'Date',     '06-Feb-2015' );
+                'Date',     '25-Feb-2015' );
 if nargout > 0
     if nargin > 0
         rv = v{1};
@@ -216,6 +196,6 @@ else
 
     fprintf('%-22s %s\n\n', 'Architecture:', computer);
     
-    fprintf('  MATPOWER %s is distributed under the GNU General Public License.\n', v{1}.Version);
-    fprintf('  Please see the LICENSE and COPYING files for details.\n\n');
+    fprintf('  MATPOWER %s is distributed under the 3-clause BSD License.\n', v{1}.Version);
+    fprintf('  Please see the LICENSE file for details.\n\n');
 end
