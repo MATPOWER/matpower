@@ -10,7 +10,7 @@ function rv = mpver(varargin)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2005-2014 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2005-2015 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -132,7 +132,7 @@ else
         else
             vn = s.vstr;
         end
-        fprintf('%-22s Version %-10s %-11s\n', 'IPOPT', vn, s.date);
+        fprintf('%-22s Version %-10s %-11s\n', 'KNITRO', vn, s.date);
     else
         fprintf('%-22s -- not installed --\n', 'KNITRO');
     end
