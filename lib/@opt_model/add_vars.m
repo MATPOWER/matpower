@@ -40,9 +40,14 @@ function om = add_vars(om, name, idx, varargin)
 
 %% set up default args
 if iscell(idx)
-    if length(varargin)
-        s1 = substruct('.', name, '()', idx);
-        s2 = substruct('.', name, '{}', idx);
+    if ~isempty(varargin)
+        % (calls to substruct() are relatively expensive ...
+        % s1 = substruct('.', name, '()', idx);
+        % s2 = substruct('.', name, '{}', idx);
+        % ... so replace them with these more efficient lines)
+        s1 = struct('type', {'.', '()'}, 'subs', {name, idx});
+        s2 = s1;
+        s2(2).type = '{}';
 
         %% prevent duplicate named var sets
         if subsref(om.var.idx.i1, s1) ~= 0
@@ -52,7 +57,7 @@ if iscell(idx)
         end
 
         N = varargin{1};
-        args = { varargin{2:end} };
+        args = varargin(2:end);
     else        %% just setting dimensions for indexed set
         %% prevent duplicate named var sets
         if isfield(om.var.idx.N, name)

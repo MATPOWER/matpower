@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.0
 -----------------
 
+2/26/15
+    - Minor speed improvements in @opt_model from by-passing calls to
+      substruct().
+
 2/25/15
     - Switch to more permissive 3-clause BSD license from GPL 3.0.
 

@@ -23,13 +23,18 @@ function [A, l, u] = linear_constraints(om)
 
 %% initialize A, l and u
 nnzA = 0;
+s = struct('type', {'.', '{}'}, 'subs', {'', 1});
 for k = 1:om.lin.NS
     name = om.lin.order(k).name;
     idx  = om.lin.order(k).idx;
     if isempty(idx)
         nnzA = nnzA + nnz(om.lin.data.A.(name));
     else
-        s = substruct('.', name, '{}', idx);
+        % (calls to substruct() are relatively expensive ...
+        % s = substruct('.', name, '{}', idx);
+        % ... so replace it with these more efficient lines)
+        s(1).subs = name;
+        s(2).subs = idx;
         nnzA = nnzA + nnz(subsref(om.lin.data.A, s));
     end
 end
@@ -38,14 +43,23 @@ u = Inf(om.lin.N, 1);
 l = -u;
 
 %% fill in each piece
+s2 = s;
+s(2).type = '()';
+s1 = s;
 for k = 1:om.lin.NS
     name = om.lin.order(k).name;
     idx  = om.lin.order(k).idx;
     if isempty(idx)
         N = om.lin.idx.N.(name);
     else
-        s1 = substruct('.', name, '()', idx);
-        s2 = substruct('.', name, '{}', idx);
+        % (calls to substruct() are relatively expensive ...
+        % s1 = substruct('.', name, '()', idx);
+        % s2 = substruct('.', name, '{}', idx);
+        % ... so replace them with these more efficient lines)
+        s1(1).subs = name;
+        s1(2).subs = idx;
+        s2(1).subs = name;
+        s2(2).subs = idx;
         N = subsref(om.lin.idx.N, s1);
     end
     if N                                %% non-zero number of rows to add
@@ -71,7 +85,11 @@ for k = 1:om.lin.NS
             kN = 0;                             %% initialize last col of Ak used
             Ai = sparse(N, om.var.N);
             for v = 1:length(vsl)
-                s = substruct('.', vsl(v).name, '()', vsl(v).idx);
+                % (calls to substruct() are relatively expensive ...
+                % s = substruct('.', vsl(v).name, '()', vsl(v).idx);
+                % ... so replace it with these more efficient lines)
+                s(1).subs = vsl(v).name;
+                s(2).subs = vsl(v).idx;
                 j1 = subsref(om.var.idx.i1, s); %% starting column in A
                 jN = subsref(om.var.idx.iN, s); %% ending column in A
                 k1 = kN + 1;                    %% starting column in Ak

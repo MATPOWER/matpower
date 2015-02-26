@@ -26,6 +26,7 @@ if nargin > 1 || ~isfield(om.cost.params, 'N')
     nw = om.cost.N;
     nnzN = 0;
     nnzH = 0;
+    s = struct('type', {'.', '{}'}, 'subs', {'', 1});
     for k = 1:om.cost.NS
         name = om.cost.order(k).name;
         idx  = om.cost.order(k).idx;
@@ -35,7 +36,11 @@ if nargin > 1 || ~isfield(om.cost.params, 'N')
                 nnzH = nnzH + nnz(om.cost.data.H.(name));
             end
         else
-            s = substruct('.', name, '{}', idx);
+            % (calls to substruct() are relatively expensive ...
+            % s = substruct('.', name, '{}', idx);
+            % ... so replace it with these more efficient lines)
+            s(1).subs = name;
+            s(2).subs = idx;
             nnzN = nnzN + nnz(subsref(om.cost.data.N, s));
             if isfield(om.cost.data.H, name)
                 nnzH = nnzH + nnz(subsref(om.cost.data.H, s));
@@ -51,14 +56,23 @@ if nargin > 1 || ~isfield(om.cost.params, 'N')
     mm = dd;                                %% default => no scaling
     
     %% fill in each piece
+    s2 = s;
+    s(2).type = '()';
+    s1 = s;
     for k = 1:om.cost.NS
         name = om.cost.order(k).name;
         idx  = om.cost.order(k).idx;
         if isempty(idx)
             N = om.cost.idx.N.(name);       %% number of rows to add
         else
-            s1 = substruct('.', name, '()', idx);
-            s2 = substruct('.', name, '{}', idx);
+            % (calls to substruct() are relatively expensive ...
+            % s1 = substruct('.', name, '()', idx);
+            % s2 = substruct('.', name, '{}', idx);
+            % ... so replace them with these more efficient lines)
+            s1(1).subs = name;
+            s1(2).subs = idx;
+            s2(1).subs = name;
+            s2(2).subs = idx;
             N = subsref(om.cost.idx.N, s1); %% number of rows to add
         end
         if N                                %% non-zero number of rows to add
@@ -84,7 +98,11 @@ if nargin > 1 || ~isfield(om.cost.params, 'N')
                 kN = 0;                             %% initialize last col of Nk used
                 Ni = sparse(N, om.var.N);
                 for v = 1:length(vsl)
-                    s = substruct('.', vsl(v).name, '()', vsl(v).idx);
+                    % (calls to substruct() are relatively expensive ...
+                    % s = substruct('.', vsl(v).name, '()', vsl(v).idx);
+                    % ... so replace it with these more efficient lines)
+                    s(1).subs = vsl(v).name;
+                    s(2).subs = vsl(v).idx;
                     j1 = subsref(om.var.idx.i1, s); %% starting column in N
                     jN = subsref(om.var.idx.iN, s); %% ending column in N
                     k1 = kN + 1;                    %% starting column in Nk

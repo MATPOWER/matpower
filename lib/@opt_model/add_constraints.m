@@ -45,9 +45,14 @@ function om = add_constraints(om, name, idx, varargin)
 
 nonlin = 0;
 if iscell(idx)
-    if length(varargin)         %% linear: indexed named set
-        s1 = substruct('.', name, '()', idx);
-        s2 = substruct('.', name, '{}', idx);
+    if ~isempty(varargin)       %% linear: indexed named set
+        % (calls to substruct() are relatively expensive ...
+        % s1 = substruct('.', name, '()', idx);
+        % s2 = substruct('.', name, '{}', idx);
+        % ... so replace them with these more efficient lines)
+        s1 = struct('type', {'.', '()'}, 'subs', {name, idx});
+        s2 = s1;
+        s2(2).type = '{}';
         
         %% prevent duplicate named constraint sets
         if subsref(om.lin.idx.i1, s1) ~= 0
@@ -57,7 +62,7 @@ if iscell(idx)
         end
         
         A = varargin{1};
-        args = { varargin{2:end} };
+        args = varargin(2:end);
     else                        %% linear: just setting dimensions for indexed set
         %% prevent duplicate named constraint sets
         if isfield(om.lin.idx.N, name)
@@ -150,8 +155,13 @@ else                %% linear
         nv = om.var.N;
     else
         nv = 0;
+        s = struct('type', {'.', '()'}, 'subs', {'', 1});
         for k = 1:length(varsets)
-            s = substruct('.', varsets(k).name, '()', varsets(k).idx);
+            % (calls to substruct() are relatively expensive ...
+            % s = substruct('.', varsets(k).name, '()', varsets(k).idx);
+            % ... so replace it with these more efficient lines)
+            s(1).subs = varsets(k).name;
+            s(2).subs = varsets(k).idx;
             nv = nv + subsref(om.var.idx.N, s);
         end
     end

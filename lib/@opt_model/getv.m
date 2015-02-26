@@ -23,8 +23,10 @@ function [v0, vl, vu] = getv(om, name, idx)
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://matpower.org/ for more info.
 
+
 if nargin < 2
     v0 = []; vl = []; vu = [];
+    s = struct('type', {'.', '{}'}, 'subs', {'', 1});
     for k = 1:om.var.NS
         name = om.var.order(k).name;
         idx = om.var.order(k).idx;
@@ -33,7 +35,11 @@ if nargin < 2
             vl = [ vl; om.var.data.vl.(name) ];
             vu = [ vu; om.var.data.vu.(name) ];
         else
-            s = substruct('.', name, '{}', idx);
+            % (calls to substruct() are relatively expensive ...
+            % s = substruct('.', name, '{}', idx);
+            % ... so replace it with these more efficient lines)
+            s(1).subs = name;
+            s(2).subs = idx;
             v0 = [ v0; subsref(om.var.data.v0, s) ];
             vl = [ vl; subsref(om.var.data.vl, s) ];
             vu = [ vu; subsref(om.var.data.vu, s) ];
@@ -46,7 +52,10 @@ else
             vl = om.var.data.vl.(name);
             vu = om.var.data.vu.(name);
         else
-            s1 = substruct('.', name, '{}', idx);
+            % (calls to substruct() are relatively expensive ...
+            % s1 = substruct('.', name, '{}', idx);
+            % ... so replace it with these more efficient lines)
+            s1 = struct('type', {'.', '{}'}, 'subs', {name, idx});
             v0 = subsref(om.var.data.v0, s1);
             vl = subsref(om.var.data.vl, s1);
             vu = subsref(om.var.data.vu, s1);
