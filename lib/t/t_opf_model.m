@@ -85,16 +85,16 @@ t_ok(get(om, 'var', 'NS') == vNS, sprintf('%s : var.NS = %d', t, vNS));
 t = 'add_vars(om, ''y'', {2,3,4})';
 om = add_vars(om, 'y', {2,3,4});
 for i = 1:2
-	for j = 1:3
-		for k = 1:4
-			n = i+j+k;
-			t = sprintf('add_vars(om, ''y'', {%d,%d,%d}, y0, ymin, ymax)', i,j,k);
-			om = add_vars(om, 'y', {i,j,k}, n, 10*(n:-1:1)', -1*(n:-1:1)', 100+(n:-1:1)');
-			vNS = vNS + 1; vN = vN + n;
-			t_ok(getN(om, 'var') == vN, sprintf('%s : var.N  = %d', t, vN));
-			t_ok(get(om, 'var', 'NS') == vNS, sprintf('%s : var.NS = %d', t, vNS));
-		end
-	end
+    for j = 1:3
+        for k = 1:4
+            n = i+j+k;
+            t = sprintf('add_vars(om, ''y'', {%d,%d,%d}, y0, ymin, ymax)', i,j,k);
+            om = add_vars(om, 'y', {i,j,k}, n, 10*(n:-1:1)', -1*(n:-1:1)', 100+(n:-1:1)');
+            vNS = vNS + 1; vN = vN + n;
+            t_ok(getN(om, 'var') == vN, sprintf('%s : var.N  = %d', t, vN));
+            t_ok(get(om, 'var', 'NS') == vNS, sprintf('%s : var.NS = %d', t, vNS));
+        end
+    end
 end
 
 %%-----  getN  -----
@@ -147,16 +147,16 @@ t_is(vl{2,2}, [0;-1], 1e-14, [t ' : vl{2,2}']);
 t_is(vu{2,2}, [2;1], 1e-14, [t ' : vu{2,2}']);
 
 for i = 1:2
-	for j = 1:3
-		for k = 1:4
-			n = i+j+k;
-			t = sprintf('getv(om, ''y'', {%d,%d,%d})', i, j, k);
-			[v0, vl, vu] = getv(om, 'y', {i,j,k});
-			t_is(v0, 10*(n:-1:1)', 1e-14, [t ' : v0']);
-			t_is(vl, -1*(n:-1:1)', 1e-14, [t ' : vl']);
-			t_is(vu, 100+(n:-1:1)', 1e-14, [t ' : vu']);
-		end
-	end
+    for j = 1:3
+        for k = 1:4
+            n = i+j+k;
+            t = sprintf('getv(om, ''y'', {%d,%d,%d})', i, j, k);
+            [v0, vl, vu] = getv(om, 'y', {i,j,k});
+            t_is(v0, 10*(n:-1:1)', 1e-14, [t ' : v0']);
+            t_is(vl, -1*(n:-1:1)', 1e-14, [t ' : vl']);
+            t_is(vu, 100+(n:-1:1)', 1e-14, [t ' : vu']);
+        end
+    end
 end
 
 t = 'getv(om)';
@@ -200,17 +200,17 @@ t_ok(getN(om, 'lin') == lN, sprintf('%s : lin.N  = %d', t, lN));
 t_ok(get(om, 'lin', 'NS') == lNS, sprintf('%s : lin.NS = %d', t, lNS));
 
 for i = 1:2
-	for j = 1:2
-		t = sprintf('add_constraints(om, ''mylin'', {%d,%d}, A, l, u, vs)', i,j);
-		A = sparse([1:(i+j) 1:(i+j)]', [1:(i+j) 5*ones(1,i+j)]', ...
-			[ones(i+j,1);-ones(i+j,1)], i+j, 3+2+(i==2 && j==1));
-		l = -ones(i+j, 1); u = [];
-		vs = struct('name', {'Pg', 'x'}, 'idx', {{}, {i,j}});
-		om = add_constraints(om, 'mylin', {i, j}, A, l, u, vs);
-		lNS = lNS + 1; lN = lN + i+j;
-		t_ok(getN(om, 'lin') == lN, sprintf('%s : lin.N  = %d', t, lN));
-		t_ok(get(om, 'lin', 'NS') == lNS, sprintf('%s : lin.NS = %d', t, lNS));
-	end
+    for j = 1:2
+        t = sprintf('add_constraints(om, ''mylin'', {%d,%d}, A, l, u, vs)', i,j);
+        A = sparse([1:(i+j) 1:(i+j)]', [1:(i+j) 5*ones(1,i+j)]', ...
+            [ones(i+j,1);-ones(i+j,1)], i+j, 3+2+(i==2 && j==1));
+        l = -ones(i+j, 1); u = [];
+        vs = struct('name', {'Pg', 'x'}, 'idx', {{}, {i,j}});
+        om = add_constraints(om, 'mylin', {i, j}, A, l, u, vs);
+        lNS = lNS + 1; lN = lN + i+j;
+        t_ok(getN(om, 'lin') == lN, sprintf('%s : lin.N  = %d', t, lN));
+        t_ok(get(om, 'lin', 'NS') == lNS, sprintf('%s : lin.NS = %d', t, lNS));
+    end
 end
 
 %%-----  get_idx  -----
@@ -241,7 +241,7 @@ t_ok(get(om, 'cost', 'NS') == cNS, sprintf('%s : cost.NS = %d', t, cNS));
 
 t = 'add_costs(om, ''ucost'', cp, {''Va'', ''Pg''})';
 cp = struct('N', sparse([1:2 1:2 1:2]', [1:4 5 7]', [1 1 -1 -1 2 2]', 2,7), ...
-			'Cw', [2;3]);
+            'Cw', [2;3]);
 om = add_costs(om, 'ucost', cp, {'Va', 'Pg'});
 cNS = cNS + 1; cN = cN + 2;
 t_ok(getN(om, 'cost') == cN, sprintf('%s : cost.N  = %d', t, cN));
@@ -249,7 +249,7 @@ t_ok(get(om, 'cost', 'NS') == cNS, sprintf('%s : cost.NS = %d', t, cNS));
 
 t = 'add_costs(om, ''vcost'', cp)';
 cp = struct('N', sparse([1:2 1:2 1:2]', [1:4 5 7]', [1 1 -1 -1 2 2]', 2, vN), ...
-			'Cw', [2;3]);
+            'Cw', [2;3]);
 om = add_costs(om, 'vcost', cp);
 cNS = cNS + 1; cN = cN + 2;
 t_ok(getN(om, 'cost') == cN, sprintf('%s : cost.N  = %d', t, cN));
@@ -261,29 +261,29 @@ t_ok(getN(om, 'cost') == cN, sprintf('%s : cost.N  = %d', t, cN));
 t_ok(get(om, 'cost', 'NS') == cNS, sprintf('%s : cost.NS = %d', t, cNS));
 
 for i = 1:2
-	for j = 1:2
-		t = 'add_costs(om, ''wc'', {i, j}, cp, vs)';
-		cp.N = sparse([1:(i+j) 1:(i+j)]', [1:(i+j) 5*ones(1,i+j)]', ...
-			[ones(i+j,1);-ones(i+j,1)], i+j, 3+2+(i==2 && j==1));
-		cp.Cw = (i+j:-1:1)';
-		if i == 2
-			cp.H = sparse((1:i+j)', (1:i+j)', (1:i+j)', i+j, i+j);
-		end
-		vs = struct('name', {'Pg', 'x'}, 'idx', {{}, {i,j}});
-		om = add_costs(om, 'wc', {i, j}, cp, vs);
-		cNS = cNS + 1; cN = cN + i+j;
-		t_ok(getN(om, 'cost') == cN, sprintf('%s : cost.N  = %d', t, cN));
-		t_ok(get(om, 'cost', 'NS') == cNS, sprintf('%s : cost.NS = %d', t, cNS));
-	end
+    for j = 1:2
+        t = 'add_costs(om, ''wc'', {i, j}, cp, vs)';
+        cp.N = sparse([1:(i+j) 1:(i+j)]', [1:(i+j) 5*ones(1,i+j)]', ...
+            [ones(i+j,1);-ones(i+j,1)], i+j, 3+2+(i==2 && j==1));
+        cp.Cw = (i+j:-1:1)';
+        if i == 2
+            cp.H = sparse((1:i+j)', (1:i+j)', (1:i+j)', i+j, i+j);
+        end
+        vs = struct('name', {'Pg', 'x'}, 'idx', {{}, {i,j}});
+        om = add_costs(om, 'wc', {i, j}, cp, vs);
+        cNS = cNS + 1; cN = cN + i+j;
+        t_ok(getN(om, 'cost') == cN, sprintf('%s : cost.N  = %d', t, cN));
+        t_ok(get(om, 'cost', 'NS') == cNS, sprintf('%s : cost.NS = %d', t, cNS));
+    end
 end
 
 %%-----  get_cost_params/build_cost_params  -----
 t = 'get_cost_params : error';
 try
-	cp = get_cost_params(om);
-	t_ok(0, t);
+    cp = get_cost_params(om);
+    t_ok(0, t);
 catch
-	t_ok(strfind(lasterr, '@opt_model/get_cost_params: must call build_cost_params first'), t);
+    t_ok(strfind(lasterr, '@opt_model/get_cost_params: must call build_cost_params first'), t);
 end
 
 t = 'build_cost_params';
@@ -323,10 +323,10 @@ t_is(cp.mm, ones(2,1),  1e-14, [t, ' : mm']);
 
 t = 'get_cost_params(om, ''wc'') : error';
 try
-	cp = get_cost_params(om, 'wc')
-	t_ok(0, t);
+    cp = get_cost_params(om, 'wc')
+    t_ok(0, t);
 catch
-	t_ok(strfind(lasterr, '@opt_model/get_cost_params: cost set ''wc'' requires an idx arg'), t);
+    t_ok(strfind(lasterr, '@opt_model/get_cost_params: cost set ''wc'' requires an idx arg'), t);
 end
 
 t = 'get_cost_params(om, ''wc'', {1,2})';
