@@ -22,8 +22,8 @@ function om = opt_model(s)
 %   variables or cost rows, optionally for a single named block:
 %       getN
 %
-%   Return the intial values and bounds for optimization variables:
-%       get_v
+%   Return the intial values, bounds and type for optimization variables:
+%       getv
 %
 %   Build and return full set of linear constraints:
 %       linear_constraints
@@ -71,6 +71,10 @@ function om = opt_model(s)
 %               .v0 - vector of initial values
 %               .vl - vector of lower bounds
 %               .vu - vector of upper bounds
+%               .vt - scalar or vector of variable types
+%                       'C' = continuous
+%                       'I' = integer
+%                       'B' = binary
 %           .order  - struct array of names/indices for variable
 %                     blocks in the order they appear in x
 %               .name   - name of the block, e.g. Pg
@@ -132,7 +136,7 @@ function om = opt_model(s)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2008-2012 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2015 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -149,6 +153,7 @@ if nargin == 0
     om.var.data.v0 = es;
     om.var.data.vl = es;
     om.var.data.vu = es;
+    om.var.data.vt = es;
 
     om.nln.idx.i1 = es;
     om.nln.idx.iN = es;

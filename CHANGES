@@ -15,6 +15,13 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.0
 -----------------
 
+3/4/15
+    - Added variable type as an attribute to @opt_model, so you can
+      now specify variables as 'C', 'I', or 'B' (continuous, integer,
+      or binary) when adding variables with add_vars() and getv() can
+      optionally return a variable-type string suitable for passing
+      to miqps_matpower() and friends.
+
 2/26/15
     - Minor speed improvements in various @opt_model functions from
       bypassing calls to substruct().

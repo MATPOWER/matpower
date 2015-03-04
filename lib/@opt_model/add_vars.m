@@ -1,10 +1,12 @@
 function om = add_vars(om, name, idx, varargin)
 %ADD_VARS  Adds a set of variables to the model.
+%   OM = ADD_VARS(OM, NAME, N, V0, VL, VU, VT)
 %   OM = ADD_VARS(OM, NAME, N, V0, VL, VU)
 %   OM = ADD_VARS(OM, NAME, N, V0, VL)
 %   OM = ADD_VARS(OM, NAME, N, V0)
 %   OM = ADD_VARS(OM, NAME, N)
 %   OM = ADD_VARS(OM, NAME, DIM_LIST)
+%   OM = ADD_VARS(OM, NAME, IDX_LIST, N, V0, VL, VU, VT)
 %   OM = ADD_VARS(OM, NAME, IDX_LIST, N, V0, VL, VU)
 %   OM = ADD_VARS(OM, NAME, IDX_LIST, N, V0, VL)
 %   OM = ADD_VARS(OM, NAME, IDX_LIST, N, V0)
@@ -12,13 +14,18 @@ function om = add_vars(om, name, idx, varargin)
 %   
 %   Adds a set of variables to the model, where N is the number of
 %   variables in the set, V0 is the initial value of those variables,
-%   and VL and VU are the lower and upper bounds on the variables.
-%   The defaults for the last three arguments, which are optional,
-%   are for all values to be initialized to zero (V0 = 0) and unbounded
-%   (VL = -Inf, VU = Inf).
+%   VL and VU are the lower and upper bounds on the variables and VT
+%   is the variable type. The accepted values for elements of VT are:
+%       'C' - continuous
+%       'I' - integer
+%       'B' - binary
+%   V0, VL and VU are N x 1 column vectors, VT is a scalar or a 1 x N row
+%   vector. The defaults for the last four arguments, which are all optional,
+%   are for all values to be initialized to zero (V0 = 0), unbounded
+%   (VL = -Inf, VU = Inf), and continuous (VT = 'C').
 %
 %   Examples:
-%       om = add_vars(om, 'V', nb, V0, Vmin, Vmax);
+%       om = add_vars(om, 'V', nb, V0, Vmin, Vmax, 'C');
 %
 %       om = add_vars(om, 'x', {2, 3});
 %       for i = 1:2
@@ -32,7 +39,7 @@ function om = add_vars(om, name, idx, varargin)
 %   MATPOWER
 %   $Id$
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2008-2012 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2015 by Power System Engineering Research Center (PSERC)
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -80,13 +87,16 @@ end
 nargs = length(args);
 
 if N ~= -1      %% not just setting dimensions for indexed set
-    v0 = []; vl = []; vu = [];
+    v0 = []; vl = []; vu = []; vt = [];
     if nargs >= 1
         v0 = args{1};
         if nargs >= 2
             vl = args{2};
             if nargs >= 3
                 vu = args{3};
+                if nargs >= 4
+                    vt = args{4};
+                end
             end
         end
     end
@@ -99,6 +109,9 @@ if N ~= -1      %% not just setting dimensions for indexed set
     if isempty(vu)
         vu = Inf(N, 1);     %% unbounded above by default
     end
+    if isempty(vt) && N > 0
+        vt = 'C';           %% all continuous by default
+    end
 end
 
 if isempty(idx)     %% simple named set
@@ -109,6 +122,7 @@ if isempty(idx)     %% simple named set
     om.var.data.v0.(name) = v0;             %% initial value
     om.var.data.vl.(name) = vl;             %% lower bound
     om.var.data.vu.(name) = vu;             %% upper bound
+    om.var.data.vt.(name) = vt;             %% variable type
     
     %% update number of vars and var sets
     om.var.N  = om.var.idx.iN.(name);
@@ -125,6 +139,7 @@ elseif N == -1      %% just setting dimensions for indexed set
     om.var.data.v0.(name) = cell(idx{:});   %% initial value
     om.var.data.vl.(name) = cell(idx{:});   %% lower bound
     om.var.data.vu.(name) = cell(idx{:});   %% upper bound
+    om.var.data.vt.(name) = cell(idx{:});   %% variable type
 else                %% indexed named set
     %% add info about this var set
     om.var.idx.i1  = subsasgn(om.var.idx.i1, s1, om.var.N + 1); %% starting index
@@ -133,6 +148,7 @@ else                %% indexed named set
     om.var.data.v0 = subsasgn(om.var.data.v0, s2, v0);          %% initial value
     om.var.data.vl = subsasgn(om.var.data.vl, s2, vl);          %% lower bound
     om.var.data.vu = subsasgn(om.var.data.vu, s2, vu);          %% upper bound
+    om.var.data.vt = subsasgn(om.var.data.vt, s2, vt);          %% variable type
     
     %% update number of vars and var sets
     om.var.N  = subsref(om.var.idx.iN, s1);

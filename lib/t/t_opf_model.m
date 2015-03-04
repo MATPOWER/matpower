@@ -14,7 +14,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 271;
+num_tests = 305;
 
 t_begin(num_tests, quiet);
 
@@ -53,6 +53,23 @@ vNS = vNS + 1; vN = vN + 3;
 t_ok(getN(om, 'var') == vN, sprintf('%s : var.N  = %d', t, vN));
 t_ok(get(om, 'var', 'NS') == vNS, sprintf('%s : var.NS = %d', t, vNS));
 
+t = 'add_vars(om, ''Vm1'', 5, V0, Vmin, Vmax, ''I'')';
+V0 = [1;1;1;1;1];
+Vmin = zeros(5, 1);
+Vmax = 1 + 0.01*(1:5)';
+vt = 'I';
+om = add_vars(om, 'Vm1', 5, V0, Vmin, Vmax, vt);
+vNS = vNS + 1; vN = vN + 5;
+t_ok(getN(om, 'var') == vN, sprintf('%s : var.N  = %d', t, vN));
+t_ok(get(om, 'var', 'NS') == vNS, sprintf('%s : var.NS = %d', t, vNS));
+
+t = 'add_vars(om, ''Vm2'', 5, V0, Vmin, Vmax, ''CIBIC'')';
+vt = 'CIBIC';
+om = add_vars(om, 'Vm2', 5, V0, Vmin, Vmax, vt);
+vNS = vNS + 1; vN = vN + 5;
+t_ok(getN(om, 'var') == vN, sprintf('%s : var.N  = %d', t, vN));
+t_ok(get(om, 'var', 'NS') == vNS, sprintf('%s : var.NS = %d', t, vNS));
+
 t = 'add_vars(om, ''x'', dims)';
 om = add_vars(om, 'x', {2,2});
 t_ok(getN(om, 'var') == vN, sprintf('%s : var.N  = %d', t, vN));
@@ -84,12 +101,20 @@ t_ok(get(om, 'var', 'NS') == vNS, sprintf('%s : var.NS = %d', t, vNS));
 
 t = 'add_vars(om, ''y'', {2,3,4})';
 om = add_vars(om, 'y', {2,3,4});
+vt0 = {'C', 'I', 'B'};
 for i = 1:2
     for j = 1:3
         for k = 1:4
             n = i+j+k;
-            t = sprintf('add_vars(om, ''y'', {%d,%d,%d}, y0, ymin, ymax)', i,j,k);
-            om = add_vars(om, 'y', {i,j,k}, n, 10*(n:-1:1)', -1*(n:-1:1)', 100+(n:-1:1)');
+            if i == 1
+                vt = vt0{j};
+            else
+                vt = char(vt0{j} * ones(1, n));
+                vt(j+1) = vt0{1+rem(j,3)};
+            end
+%             fprintf('%d %d %d : %s\n', i, j, k, vt);
+            t = sprintf('add_vars(om, ''y'', {%d,%d,%d}, y0, ymin, ymax, vt)', i,j,k);
+            om = add_vars(om, 'y', {i,j,k}, n, 10*(n:-1:1)', -1*(n:-1:1)', 100+(n:-1:1)', vt);
             vNS = vNS + 1; vN = vN + n;
             t_ok(getN(om, 'var') == vN, sprintf('%s : var.N  = %d', t, vN));
             t_ok(get(om, 'var', 'NS') == vNS, sprintf('%s : var.NS = %d', t, vNS));
@@ -122,9 +147,9 @@ t = 'get_idx : var';
 vv = get_idx(om);
 t_is([vv.i1.Pg vv.iN.Pg vv.N.Pg], [5 7 3], 1e-14, [t ' : Pg']);
 t_is(size(vv.i1.x), [2, 2], 1e-14, [t ' : size(vv.i1.x)']);
-t_is([vv.i1.x(2,1) vv.iN.x(2,1) vv.N.x(2,1)], [12 14 3], 1e-14, [t ' : x(2,1)']);
+t_is([vv.i1.x(2,1) vv.iN.x(2,1) vv.N.x(2,1)], [22 24 3], 1e-14, [t ' : x(2,1)']);
 t_is(size(vv.i1.y), [2, 3, 4], 1e-14, [t ' : size(vv.i1.y)']);
-t_is([vv.i1.y(2,2,4) vv.iN.y(2,2,4) vv.N.y(2,2,4)], [123 130 8], 1e-14, [t ' : y(2,2,4)']);
+t_is([vv.i1.y(2,2,4) vv.iN.y(2,2,4) vv.N.y(2,2,4)], [133 140 8], 1e-14, [t ' : y(2,2,4)']);
 
 %%-----  getv  -----
 t = 'getv(om, ''Va'')';
@@ -139,38 +164,58 @@ t_is(v0, [2;4;6], 1e-14, [t ' : v0']);
 t_is(vl, [1;2;3], 1e-14, [t ' : vl']);
 t_is(vu, [10;20;30], 1e-14, [t ' : vu']);
 
+t = 'getv(om, ''Vm1'')';
+[v0, vl, vu, vt] = getv(om, 'Vm1');
+t_is(double(vt), double('I'), 1e-14, [t ' : vt']);
+
+t = 'getv(om, ''Vm2'')';
+[v0, vl, vu, vt] = getv(om, 'Vm2');
+t_is(double(vt), double('CIBIC'), 1e-14, [t ' : vt']);
+
 t = 'getv(om, ''x'')';
-[v0, vl, vu] = getv(om, 'x');
+[v0, vl, vu, vt] = getv(om, 'x');
 t_is(size(v0), [2,2], 1e-14, [t ' : size(v0)']);
 t_is(v0{2,2}, [1;0], 1e-14, [t ' : v0{2,2}']);
 t_is(vl{2,2}, [0;-1], 1e-14, [t ' : vl{2,2}']);
 t_is(vu{2,2}, [2;1], 1e-14, [t ' : vu{2,2}']);
+t_is(double(vt{2,2}), double('C'), 1e-14, [t ' : vt{2,2}']);
 
 for i = 1:2
     for j = 1:3
         for k = 1:4
             n = i+j+k;
+            if i == 1
+                vt = vt0{j};
+            else
+                vt = char(vt0{j} * ones(1, n));
+                vt(j+1) = vt0{1+rem(j,3)};
+            end
             t = sprintf('getv(om, ''y'', {%d,%d,%d})', i, j, k);
-            [v0, vl, vu] = getv(om, 'y', {i,j,k});
+            [v0, vl, vu, gvt] = getv(om, 'y', {i,j,k});
             t_is(v0, 10*(n:-1:1)', 1e-14, [t ' : v0']);
             t_is(vl, -1*(n:-1:1)', 1e-14, [t ' : vl']);
             t_is(vu, 100+(n:-1:1)', 1e-14, [t ' : vu']);
+            t_is(gvt, vt, 1e-14, [t ' : vt']);
         end
     end
 end
 
 t = 'getv(om)';
-[v0, vl, vu] = getv(om);
+[v0, vl, vu, vt] = getv(om);
 t_ok(length(v0) == getN(om, 'var'), [t ' : length(v0)']);
 t_ok(length(vl) == getN(om, 'var'), [t ' : length(vl)']);
 t_ok(length(vu) == getN(om, 'var'), [t ' : length(vu)']);
 t_is(v0(vv.i1.x(2,2):vv.iN.x(2,2)), [1;0], 1e-14, [t ' : v0(vv.i1.x(2,2):vv.iN.x(2,2))']);
 t_is(vl(vv.i1.x(2,2):vv.iN.x(2,2)), [0;-1], 1e-14, [t ' : vl(vv.i1.x(2,2):vv.iN.x(2,2))']);
 t_is(vu(vv.i1.x(2,2):vv.iN.x(2,2)), [2;1], 1e-14, [t ' : vu(vv.i1.x(2,2):vv.iN.x(2,2))']);
+t_is(vt(vv.i1.x(2,2):vv.iN.x(2,2)), 'C', 1e-14, [t ' : vt(vv.i1.x(2,2):vv.iN.x(2,2))']);
 n = 8;
 t_is(v0(vv.i1.y(2,2,4):vv.iN.y(2,2,4)), 10*(n:-1:1)', 1e-14, [t ' : v0(vv.i1.y(2,2,4):vv.iN.y(2,2,4))']);
 t_is(vl(vv.i1.y(2,2,4):vv.iN.y(2,2,4)), -1*(n:-1:1)', 1e-14, [t ' : vl(vv.i1.y(2,2,4):vv.iN.y(2,2,4))']);
 t_is(vu(vv.i1.y(2,2,4):vv.iN.y(2,2,4)), 100+(n:-1:1)', 1e-14, [t ' : vu(vv.i1.y(2,2,4):vv.iN.y(2,2,4))']);
+t_is(vt(vv.i1.y(2,2,4):vv.iN.y(2,2,4)), 'IIBIIIII', 1e-14, [t ' : vt(vv.i1.y(2,2,4):vv.iN.y(2,2,4))']);
+vt0 = 'CCCCCCCIIIIICIBICCCCCCCCCCCCCCCCCCCCCCCCCCCCIIIIIIIIIIIIIIIIIIIIIIBBBBBBBBBBBBBBBBBBBBBBBBBBCICCCICCCCICCCCCICCCCCIIBIIIIBIIIIIBIIIIIIBIIIIIBBBCBBBBBCBBBBBBCBBBBBBBCBBBBB';
+t_is(vt, vt0, 1e-14, [t ' : vt']);
 
 %%-----  add_constraints  -----
 t = 'add_constraints';
@@ -396,7 +441,7 @@ t_is(cp.mm, ones(cN,1),  1e-14, [t, ' : mm']);
 %%-----  compute_cost  -----
 % f = compute_cost(om, x, name, idx)
 t = 'compute_cost(om, x)';
-x = (1:vN)';
+x = [1:7 rand(1,10) 8:(vN-10)]';
 f = compute_cost(om, x);
 t_is(f, 343, 1e-14, t);
 
