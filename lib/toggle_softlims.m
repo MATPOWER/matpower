@@ -41,9 +41,10 @@ function mpc = toggle_softlims(mpc, on_off)
 %       base_flow   n x 1, arbitrary baseline (other than RATE_A)
 
 %   MATPOWER
-%   $Id$
+%   Copyright (c) 2009-2015 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2009-2014 by Power System Engineering Research Center (PSERC)
+%
+%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).

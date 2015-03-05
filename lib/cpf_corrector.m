@@ -28,17 +28,18 @@ function [V, converged, i, lam] = cpf_corrector(Ybus, Sbus, V0, ref, pv, pq, ...
 %   See also RUNCPF.
 
 %   MATPOWER
-%   $Id$
+%   Copyright (c) 1996-2015 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell,
 %   Shrirang Abhyankar, Argonne National Laboratory,
 %   and Alexander Flueck, IIT
-%   Copyright (c) 1996-2013 by Power System Engineering Research Center (PSERC)
 %
 %   Modified by Alexander J. Flueck, Illinois Institute of Technology
 %   2001.02.22 - corrector.m (ver 1.0) based on newtonpf.m (MATPOWER 2.0)
 %
 %   Modified by Shrirang Abhyankar, Argonne National Laboratory
-%   Updated to be compatible with MATPOWER version 4.1)
+%   (Updated to be compatible with MATPOWER version 4.1)
+%
+%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).

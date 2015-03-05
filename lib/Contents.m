@@ -10,10 +10,16 @@
 %
 %   MATPOWER can be downloaded from the MATPOWER home page:
 %
-%       http://www.pserc.cornell.edu/matpower/
+%       http://matpower.org/
+%
+%   MATPOWER is covered by the 3-clause BSD License (see LICENSE for details).
+
+%   MATPOWER
+%   Copyright (c) 2004-2015 by Power System Engineering Research Center (PSERC)
+%   by Ray Zimmerman, PSERC Cornell
+%
+%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://matpower.org/ for more info.
-%
-%   $Id$

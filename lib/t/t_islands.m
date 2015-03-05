@@ -2,9 +2,10 @@ function t_islands(quiet)
 %T_ISLANDS  Tests for FIND_ISLANDS, EXTRACT_ISLANDS, CONNECTED_COMPONENTS and CASE_INFO.
 
 %   MATPOWER
-%   $Id$
+%   Copyright (c) 2012-2015 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2012, 2014 by Power System Engineering Research Center (PSERC)
+%
+%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).

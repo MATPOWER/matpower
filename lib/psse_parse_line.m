@@ -34,9 +34,10 @@ function [data, comment] = psse_parse_line(str, t)
 %       COMMENT :   (optional) possible comment at the end of the line
 
 %   MATPOWER
-%   $Id$
+%   Copyright (c) 2014-2015 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2014 by Power System Engineering Research Center (PSERC)
+%
+%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).

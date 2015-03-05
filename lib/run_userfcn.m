@@ -14,9 +14,10 @@ function rv = run_userfcn(userfcn, stage, varargin)
 %   RUNOPF_W_RES.
 
 %   MATPOWER
-%   $Id$
+%   Copyright (c) 2009-2015 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2009-2010 by Power System Engineering Research Center (PSERC)
+%
+%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).

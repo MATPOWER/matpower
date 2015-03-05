@@ -44,10 +44,11 @@ function [data, warns] = psse_parse(records, sections, verbose, rev)
 %   See also PSSE2MPC, PSSE_READ, PSSE_PARSE_SECTION, PSSE_PARSE_LINE
 
 %   MATPOWER
-%   $Id$
+%   Copyright (c) 2014-2015 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   Based on mpreadraw.m, written by: Yujia Zhu, Jan 2014, yzhu54@asu.edu.
-%   Copyright (c) 2014 by Power System Engineering Research Center (PSERC)
+%
+%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).

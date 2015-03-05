@@ -3,9 +3,10 @@ function [cb_state, results] = t_cpf_cb1(k, V_c, lam_c, V_p, lam_p, ...
 %T_CPF_CB1  User callback function 1 for continuation power flow testing.
 
 %   MATPOWER
-%   $Id$
+%   Copyright (c) 2013-2015 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2013 by Power System Engineering Research Center (PSERC)
+%
+%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).

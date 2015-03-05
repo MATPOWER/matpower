@@ -32,9 +32,10 @@ function [bus, gen, branch, areas] = int2ext(i2e, bus, gen, branch, areas)
 %   See also EXT2INT, I2E_FIELD, I2E_DATA.
 
 %   MATPOWER
-%   $Id$
+%   Copyright (c) 1996-2015 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 1996-2010 by Power System Engineering Research Center (PSERC)
+%
+%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).

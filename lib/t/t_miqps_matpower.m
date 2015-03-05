@@ -2,9 +2,10 @@ function t_miqps_matpower(quiet)
 %T_MIQPS_MATPOWER  Tests of MIQPS_MATPOWER MIQP solvers.
 
 %   MATPOWER
-%   $Id$
-%   by Ray Zimmerman, PSERC Cornell
 %   Copyright (c) 2010-2015 by Power System Engineering Research Center (PSERC)
+%   by Ray Zimmerman, PSERC Cornell
+%
+%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).

@@ -2,9 +2,10 @@ function t_opf_tspopf_tralm(quiet)
 %T_OPF_TSPOPF_TRALM  Tests for TRALM-based optimal power flow.
 
 %   MATPOWER
-%   $Id$
+%   Copyright (c) 2004-2015 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2004-2010 by Power System Engineering Research Center (PSERC)
+%
+%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).

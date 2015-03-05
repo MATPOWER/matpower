@@ -42,9 +42,10 @@ function newval = e2i_data(mpc, val, ordering, dim)
 %   See also I2E_DATA, E2I_FIELD, EXT2INT.
 
 %   MATPOWER
-%   $Id$
+%   Copyright (c) 2009-2015 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2009-2014 by Power System Engineering Research Center (PSERC)
+%
+%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).

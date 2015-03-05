@@ -9,9 +9,10 @@ function rv = gurobiver(varargin)
 %   See also MPVER.
 
 %   MATPOWER
-%   $Id$
+%   Copyright (c) 2010-2015 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2010, 2012 by Power System Engineering Research Center (PSERC)
+%
+%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).

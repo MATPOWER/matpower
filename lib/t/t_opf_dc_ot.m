@@ -2,9 +2,10 @@ function t_opf_dc_ot(quiet)
 %T_OPF_DC_OT  Tests for DC optimal power flow using Opt Tbx solvers.
 
 %   MATPOWER
-%   $Id$
+%   Copyright (c) 2004-2015 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2004-2014 by Power System Engineering Research Center (PSERC)
+%
+%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
