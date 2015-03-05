@@ -136,6 +136,10 @@ documentation for the various MATPOWER functions. For example:
 Below is a summary of the changes since version 5.0 of MATPOWER. See the
 CHANGES file in the docs directory for all the gory details.
 
+* New license:
+  - Switched to the more permissive 3-clause BSD license from the
+    previously used GNU General Public License (GPL) v3.0.
+
 * New features:
   - Added support for LP/QP solver CLP (COIN_OR Linear Programming,
     http://www.coin-or.org/projects/Clp.xml). Use 'opf.dc.solver'
@@ -144,6 +148,8 @@ CHANGES file in the docs directory for all the gory details.
     versions of CLP, GLPK and IPOPT solvers, providing a very simple
     installation path for some free high-performance solvers on Windows
     platforms.
+  - Added unified interface to various solvers for mixed-integer linear
+    and quadratic programming (MILP/MIQP) problems.
   - Major update to have_fcn(), which now determines and caches
     version numbers and release dates for optional packages, and includes
     ability to toggle the availability of optional functionality.
@@ -153,8 +159,17 @@ CHANGES file in the docs directory for all the gory details.
     - Gurobi 6.x
     - Knitro 9.1
     - MOSEK 7.1
-    - Optimization Toolbox 7.2 (esp. linprog() dual-simplex)
+    - Optimization Toolbox 7.2
+        - dual-simplex algorithm for linprog()
+        - intlinprog() for MILP
   - New functions:
+    - miqps_matpower() provides unified interface to multiple MILP/MIQP
+      solvers.
+    - miqps_clex() provides a unified MILP/MIQP interface to CPLEX.
+    - miqps_glpk() provides a unified MILP interface to GLPK.
+    - miqps_gurobi() provides a unified MILP/MIQP interface to Gurobi.
+    - miqps_mosek() provides a unified MILP/MIQP interface to MOSEK.
+    - miqps_ot() provides a unified MILP interface to intlingprog().
     - mosek_symbcon() defines symbolic constants for setting
       MOSEK options.
 
@@ -164,6 +179,8 @@ CHANGES file in the docs directory for all the gory details.
   - Modified runcpf() to gracefully handle the case when the base
     and target cases are identical (as opposed to getting lost in
     an infinite loop).
+  - Optional generator and dispatchable load sections in pretty-printed
+    output now include off-line units.
 
 * Bugs fixed:
   - Fixed fatal bug in case_info() for islands with no generation.
@@ -181,6 +198,7 @@ CHANGES file in the docs directory for all the gory details.
     capability curves for units whose reactive range increases
     as real power output increases. Thanks to Irina Boiarchuk for
     reporting.
+  - Fixed several incompatibilities with Matlab versions < 7.3.
 
 
 ---------------
