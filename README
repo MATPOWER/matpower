@@ -154,6 +154,10 @@ CHANGES file in the docs directory for all the gory details.
     version numbers and release dates for optional packages, and includes
     ability to toggle the availability of optional functionality.
   - New and updated support for 3rd party solvers:
+    - High-performance IPOPT-PARDISO solver builds from the PARDISO Project
+      http://www.pardiso-project.org/index.php?p=manual (at time of release
+      this is MATPOWER's highest performing solver for very large scale
+      AC OPF problems)
     - OPTI Toolbox versions of CLP, GLPK, IPOPT
     - CLP
     - Gurobi 6.x
@@ -297,12 +301,16 @@ Terms of Use for details.
                OPF problems. Requires the Matlab MEX interface for
                IPOPT, available from
                http://www.coin-or.org/projects/Ipopt.xml.
+               Pre-built MEX binaries for Windows available with
+               OPTI Toolbox from http://www.i2c2.aut.ac.nz/Wiki/OPTI/,
+               and high-performance IPOPT-PARDISO pre-built MEX binaries
+               for Mac and Linux from the PARDISO Project at
+               http://www.pardiso-project.org/index.php?p=manual.
 
  - KNITRO      A general purpose optimization solver specializing in
                nonlinear problems that MATPOWER can use for AC OPFs.
                Requires the Knitro libraries, available from
-               http://www.ziena.com/ and the Optimization Toolbox from
-               The MathWorks.
+               http://www.ziena.com/.
 
  - MINOPF      A MINOS-based AC OPF solver implemented as a Fortran MEX file.
                See http://www.pserc.cornell.edu/minopf/
