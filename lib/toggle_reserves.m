@@ -42,7 +42,7 @@ function mpc = toggle_reserves(mpc, on_off)
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See http://matpower.org/ for more info.
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 if strcmp(upper(on_off), 'ON')
     %% check for proper reserve inputs

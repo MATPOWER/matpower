@@ -109,7 +109,7 @@ function [x, f, eflag, output, lambda] = miqps_ot(H, c, A, l, u, xmin, xmax, x0,
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See http://matpower.org/ for more info.
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% check for Optimization Toolbox
 % if ~have_fcn('quadprog')

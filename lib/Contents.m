@@ -10,7 +10,7 @@
 %
 %   MATPOWER can be downloaded from the MATPOWER home page:
 %
-%       http://matpower.org/
+%       http://www.pserc.cornell.edu/matpower/
 %
 %   MATPOWER is covered by the 3-clause BSD License (see LICENSE for details).
 
@@ -22,4 +22,4 @@
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See http://matpower.org/ for more info.
+%   See http://www.pserc.cornell.edu/matpower/ for more info.

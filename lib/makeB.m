@@ -23,7 +23,7 @@ function [Bp, Bpp] = makeB(baseMVA, bus, branch, alg)
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See http://matpower.org/ for more info.
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% constants
 nb = size(bus, 1);          %% number of buses

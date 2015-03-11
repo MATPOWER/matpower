@@ -52,7 +52,7 @@ function newval = i2e_data(mpc, val, oldval, ordering, dim)
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See http://matpower.org/ for more info.
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 if ~isfield(mpc, 'order')
     error('i2e_data: mpc does not have the ''order'' field required for conversion back to external numbering.');

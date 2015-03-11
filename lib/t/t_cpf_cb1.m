@@ -10,7 +10,7 @@ function [cb_state, results] = t_cpf_cb1(k, V_c, lam_c, V_p, lam_p, ...
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See http://matpower.org/ for more info.
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 
 %%-----  INITIAL call  -----

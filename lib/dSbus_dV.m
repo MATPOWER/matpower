@@ -49,7 +49,7 @@ function [dSbus_dVm, dSbus_dVa] = dSbus_dV(Ybus, V)
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See http://matpower.org/ for more info.
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 n = length(V);
 Ibus = Ybus * V;
