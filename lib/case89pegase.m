@@ -11,7 +11,14 @@ function mpc = case89pegase
 %
 %   The data stems from the Pan European Grid Advanced Simulation and State
 %   Estimation (PEGASE) project, part of the 7th Framework Program of the
-%   European Union (http://www.fp7-pegase.com/).
+%   European Union (http://www.fp7-pegase.com/). When publishing results
+%   based on this data, please cite:
+%
+%     S. Fliscounakis, P. Panciatici, F. Capitanescu, and L. Wehenkel,
+%     "Contingency ranking with respect to overloads in very large power
+%     systems taking into account uncertainty, preventive and corrective
+%     actions", Power Systems, IEEE Trans. on, (28)4:4909-4917, 2013.
+%     http://dx.doi.org/10.1109/TPWRS.2013.2251015
 %
 %   Remarks:
 %
@@ -28,6 +35,10 @@ function mpc = case89pegase
 %
 %   3. Identical linear costs are used for all generators to form a loss
 %   minimizing OPF objective function.
+%
+%   4. Since some parts of the network are aggregated, some generators
+%   (e.g. with negative PMIN) represent aggregations of multiple loads
+%   and generators.
 %
 %   Cédric Josz, Stéphane Fliscounakis, Jean Maeght, Patrick Panciatici
 %   firstname.lastname@rte-france.com
