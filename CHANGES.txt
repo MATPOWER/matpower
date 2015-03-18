@@ -15,6 +15,13 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.0
 -----------------
 
+3/18/15
+    - Added four new case files, ranging from 89 up to 9421 buses,
+      representing parts of the European high voltage transmission
+      network, stemming from the Pan European Grid Advanced Simulation
+      and State Estimation (PEGASE) project. Thanks to Cedric Josz and
+      colleagues from the French Transmission System Operator.
+
 3/4/15
     - Added variable type as an attribute to @opt_model, so you can
       now specify variables as 'C', 'I', or 'B' (continuous, integer,

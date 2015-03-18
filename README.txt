@@ -21,6 +21,7 @@ are permitted in any medium without royalty provided the copyright
 notice and this notice are preserved. This file is offered as-is,
 without any warranty.
 
+
 --------------
  INTRODUCTION
 --------------
@@ -139,6 +140,13 @@ CHANGES file in the docs directory for all the gory details.
 * New license:
   - Switched to the more permissive 3-clause BSD license from the
     previously used GNU General Public License (GPL) v3.0.
+
+* New case files:
+  - Added four new case files, ranging from 89 up to 9421 buses,
+    representing parts of the European high voltage transmission network,
+    stemming from the Pan European Grid Advanced Simulation and State
+    Estimation (PEGASE) project. Thanks to Cedric Josz and colleagues from
+    the French Transmission System Operator.
 
 * New features:
   - Added support for LP/QP solver CLP (COIN_OR Linear Programming,
@@ -332,7 +340,6 @@ interfaces yourself, is to install the OPTI Toolbox by Jonathan Currie,
 available at: http://www.i2c2.aut.ac.nz/Wiki/OPTI/. The installation is
 simple and it includes pre-built MEX files for several of the above
 solvers, including CLP, GLPK and IPOPT.
-
 
 
 --------------
