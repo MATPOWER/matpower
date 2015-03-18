@@ -21,6 +21,9 @@ Changes since 5.0
       network, stemming from the Pan European Grid Advanced Simulation
       and State Estimation (PEGASE) project. Thanks to Cedric Josz and
       colleagues from the French Transmission System Operator.
+    - Added network reduction toolbox to extras/reduction directory
+      for creating smaller approximate network equivalents from a larger
+      original case file. Thanks to Yujia Zhu and Daniel Tylavsky.
 
 3/4/15
     - Added variable type as an attribute to @opt_model, so you can

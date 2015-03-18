@@ -156,6 +156,9 @@ CHANGES file in the docs directory for all the gory details.
     versions of CLP, GLPK and IPOPT solvers, providing a very simple
     installation path for some free high-performance solvers on Windows
     platforms.
+  - Network reduction toolbox for creating smaller approximate network
+    equivalents from a larger original case file, contributed by
+    Yujia Zhu and Daniel Tylavsky.
   - Added unified interface to various solvers for mixed-integer linear
     and quadratic programming (MILP/MIQP) problems.
   - Major update to have_fcn(), which now determines and caches
