@@ -329,7 +329,7 @@ else        %% detect availability
                 end
             case 'matlab'
                 v = ver('matlab');
-                if ~isempty(v)
+                if ~isempty(v) && isfield(v, 'Version') && ~isempty(v.Version)
                     TorF = 1;
                     vstr = v.Version;
                     rdate = v.Date;

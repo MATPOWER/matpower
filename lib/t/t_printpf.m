@@ -30,11 +30,14 @@ else
     verbose = 0;
 end
 if have_fcn('octave')
-    s1 = warning('query', 'Octave:fopen-file-in-path');
-    warning('off', 'Octave:fopen-file-in-path');
+    if have_fcn('octave', 'vnum') >= 4
+        file_in_path_warn_id = 'Octave:data-file-in-path';
+    else
+        file_in_path_warn_id = 'Octave:fopen-file-in-path';
+    end
+    s1 = warning('query', file_in_path_warn_id);
+    warning('off', file_in_path_warn_id);
 end
-s2 = warning('query', 'MATLAB:singularMatrix');
-warning('off', 'MATLAB:singularMatrix');
 
 t = 'printpf : ';
 mpopt = mpoption('opf.violation', 1e-6, 'mips.gradtol', 1e-8, ...
@@ -113,8 +116,7 @@ t_ok(strcmp(got, expected), [t 'standard DC OPF']);
 delete(tmpfnamedc);
 
 if have_fcn('octave')
-    warning(s1.state, 'Octave:fopen-file-in-path');
+    warning(s1.state, file_in_path_warn_id);
 end
-warning(s2.state, 'MATLAB:singularMatrix');
 
 t_end;

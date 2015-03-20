@@ -24,8 +24,13 @@ else
     verbose = 1;
 end
 if have_fcn('octave')
-    s1 = warning('query', 'Octave:load-file-in-path');
-    warning('off', 'Octave:load-file-in-path');
+    if have_fcn('octave', 'vnum') >= 4
+        file_in_path_warn_id = 'Octave:data-file-in-path';
+    else
+        file_in_path_warn_id = 'Octave:load-file-in-path';
+    end
+    s1 = warning('query', file_in_path_warn_id);
+    warning('off', file_in_path_warn_id);
 end
 mpopt = mpoption('out.all', 0, 'verbose', verbose);
 
@@ -174,5 +179,5 @@ t_is(r.gen(5:8, PG), Pg, 8, [t 'active power generation 1']);
 t_end;
 
 if have_fcn('octave')
-    warning(s1.state, 'Octave:load-file-in-path');
+    warning(s1.state, file_in_path_warn_id);
 end

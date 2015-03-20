@@ -27,8 +27,13 @@ else
     verbose = 0;
 end
 if have_fcn('octave')
-    s1 = warning('query', 'Octave:fopen-file-in-path');
-    warning('off', 'Octave:fopen-file-in-path');
+    if have_fcn('octave', 'vnum') >= 4
+        file_in_path_warn_id = 'Octave:data-file-in-path';
+    else
+        file_in_path_warn_id = 'Octave:fopen-file-in-path';
+    end
+    s1 = warning('query', file_in_path_warn_id);
+    warning('off', file_in_path_warn_id);
 end
 
 if ~have_fcn('regexp_split')
@@ -116,7 +121,7 @@ else
 end
 
 if have_fcn('octave')
-    warning(s1.state, 'Octave:fopen-file-in-path');
+    warning(s1.state, file_in_path_warn_id);
 end
 
 t_end;

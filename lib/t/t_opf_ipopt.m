@@ -36,8 +36,13 @@ else
     verbose = 0;
 end
 if have_fcn('octave')
-    s1 = warning('query', 'Octave:load-file-in-path');
-    warning('off', 'Octave:load-file-in-path');
+    if have_fcn('octave', 'vnum') >= 4
+        file_in_path_warn_id = 'Octave:data-file-in-path';
+    else
+        file_in_path_warn_id = 'Octave:load-file-in-path';
+    end
+    s1 = warning('query', file_in_path_warn_id);
+    warning('off', file_in_path_warn_id);
 end
 
 t0 = 'IPOPT : ';
@@ -269,7 +274,7 @@ t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
 t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
 
 if have_fcn('octave')
-    warning(s1.state, 'Octave:load-file-in-path');
+    warning(s1.state, file_in_path_warn_id);
 end
 
 t_end;

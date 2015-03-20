@@ -38,8 +38,13 @@ else
     verbose = 0;
 end
 if have_fcn('octave')
-    s1 = warning('query', 'Octave:load-file-in-path');
-    warning('off', 'Octave:load-file-in-path');
+    if have_fcn('octave', 'vnum') >= 4
+        file_in_path_warn_id = 'Octave:data-file-in-path';
+    else
+        file_in_path_warn_id = 'Octave:load-file-in-path';
+    end
+    s1 = warning('query', file_in_path_warn_id);
+    warning('off', file_in_path_warn_id);
 end
 
 t0 = '';
@@ -259,7 +264,7 @@ t_is(r.dcline(:, c.PF:c.VT), expected1, 4, [t 'P Q V']);
 t_is(r.dcline(:, c.MU_PMIN:c.MU_QMAXT), expected2, 3, [t 'mu']);
 
 if have_fcn('octave')
-    warning(s1.state, 'Octave:load-file-in-path');
+    warning(s1.state, file_in_path_warn_id);
 end
 
 t_end;

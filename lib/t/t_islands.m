@@ -35,8 +35,13 @@ else
     verbose = 0;
 end
 if have_fcn('octave')
-    s1 = warning('query', 'Octave:fopen-file-in-path');
-    warning('off', 'Octave:fopen-file-in-path');
+    if have_fcn('octave', 'vnum') >= 4
+        file_in_path_warn_id = 'Octave:data-file-in-path';
+    else
+        file_in_path_warn_id = 'Octave:fopen-file-in-path';
+    end
+    s1 = warning('query', file_in_path_warn_id);
+    warning('off', file_in_path_warn_id);
 end
 
 %% load cases
@@ -183,7 +188,7 @@ t_is(length(groups), n, 10, [t 'length(groups) == n']);
 base = 0;
 for k = 1:n
     nbk = size(mpc{k}.bus, 1);
-    t_is(groups{k}, base+(1:nbk), 10, [t k]);
+    t_is(groups{k}, base+(1:nbk), 10, sprintf('%s%d', t, k));
     base = base + nbk;
 end
 
@@ -365,7 +370,7 @@ t_is(mpc1.branch,  mpc2.branch,  10, sprintf('%smpc.branch', t));
 t_is(mpc1.gencost, mpc2.gencost, 10, sprintf('%smpc.gencost', t));
 
 if have_fcn('octave')
-    warning(s1.state, 'Octave:fopen-file-in-path');
+    warning(s1.state, file_in_path_warn_id);
 end
 
 t_end;

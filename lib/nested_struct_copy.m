@@ -96,9 +96,11 @@ end
 %% form parent string
 if DEBUG, fprintf('nested_struct_copy() : parent = %s\n', strjoin(parent, '.')); end
 if nargin > 3 && ~isempty(parent)
-    tmp = cell(2, length(parent));
+    pl = length(parent);
+    tmp = cell(2, pl);
     tmp(1,:) = parent;
-    tmp(2,1:length(parent)-1) = {'.'};
+    tmp(2,1:pl-1) = {'.'};
+    tmp(2,pl) = {''};
     parentstr = [tmp{:}];
 else
     parentstr = '';
@@ -130,7 +132,7 @@ for f = 1:length(fields)
     if isempty(exceptions)
         k = [];
     else
-        k = strmatch(str, {exceptions.name}', 'exact');
+        k = find(strcmp(str, {exceptions.name}'), 1);
         if ~isempty(k)
             if isfield(exceptions, 'copy_mode') && ...
                     ( ischar(exceptions(k).copy_mode) || ...

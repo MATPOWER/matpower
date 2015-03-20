@@ -50,11 +50,14 @@ else
     verbose = 0;
 end
 if have_fcn('octave')
-    s1 = warning('query', 'Octave:load-file-in-path');
-    warning('off', 'Octave:load-file-in-path');
+    if have_fcn('octave', 'vnum') >= 4
+        file_in_path_warn_id = 'Octave:data-file-in-path';
+    else
+        file_in_path_warn_id = 'Octave:load-file-in-path';
+    end
+    s1 = warning('query', file_in_path_warn_id);
+    warning('off', file_in_path_warn_id);
 end
-
-s2 = warning('query', 'MATLAB:singularMatrix');
 
 mpopt = mpoption('out.all', 0, 'verbose', verbose);
 mpopt = mpoption(mpopt, 'opf.dc.solver', 'GLPK');
@@ -142,7 +145,6 @@ if have_fcn('glpk')
     t_is(r.cost.usr, 0.3348, 4, [t 'user costs']);
 
     t = [t0 'infeasible : '];
-    warning('off', 'MATLAB:singularMatrix');
     %% with A and N sized for DC opf
     mpc = loadcase(casefile);
     mpc.A = sparse([1;1], [10;11], [1;1], 1, 14);   %% Pg1 + Pg2
@@ -157,8 +159,7 @@ else
 end
 
 if have_fcn('octave')
-    warning(s1.state, 'Octave:load-file-in-path');
+    warning(s1.state, file_in_path_warn_id);
 end
-warning(s2.state, 'MATLAB:singularMatrix');
 
 t_end;

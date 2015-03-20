@@ -35,15 +35,25 @@ else
     verbose = 0;
 end
 if have_fcn('octave')
-    s1 = warning('query', 'Octave:load-file-in-path');
-    warning('off', 'Octave:load-file-in-path');
+    if have_fcn('octave', 'vnum') >= 4
+        file_in_path_warn_id = 'Octave:data-file-in-path';
+    else
+        file_in_path_warn_id = 'Octave:load-file-in-path';
+    end
+    s1 = warning('query', file_in_path_warn_id);
+    warning('off', file_in_path_warn_id);
 end
 
 t0 = 'DC OPF (MIPS): ';
 mpopt = mpoption('out.all', 0, 'verbose', verbose);
 mpopt = mpoption(mpopt, 'opf.dc.solver', 'MIPS');
 
-s2 = warning('query', 'MATLAB:singularMatrix');
+if have_fcn('octave')
+    sing_matrix_warn_id = 'Octave:singular-matrix';
+else
+    sing_matrix_warn_id = 'MATLAB:singularMatrix';
+end
+s2 = warning('query', sing_matrix_warn_id);
 
 %% set up indices
 ib_data     = [1:BUS_AREA BASE_KV:VMIN];
@@ -122,7 +132,7 @@ t_is(r.var.val.z, [0; 0.3348], 4, [t 'user vars']);
 t_is(r.cost.usr, 0.3348, 3, [t 'user costs']);
 
 t = [t0 'infeasible : '];
-warning('off', 'MATLAB:singularMatrix');
+warning('off', sing_matrix_warn_id);
 %% with A and N sized for DC opf
 mpc = loadcase(casefile);
 mpc.A = sparse([1;1], [10;11], [1;1], 1, 14);   %% Pg1 + Pg2
@@ -132,8 +142,8 @@ mpc.l = 600;
 t_ok(~success, [t 'no success']);
 
 if have_fcn('octave')
-    warning(s1.state, 'Octave:load-file-in-path');
+    warning(s1.state, file_in_path_warn_id);
 end
-warning(s2.state, 'MATLAB:singularMatrix');
+warning(s2.state, sing_matrix_warn_id);
 
 t_end;
