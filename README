@@ -149,6 +149,10 @@ CHANGES file in the docs directory for all the gory details.
     the French Transmission System Operator.
 
 * New features:
+  - Added support for using PARDISO (http://www.pardiso-project.org/)
+    as linear solver for computing interior-point update steps in MIPS,
+    resulting in dramatic improvements in computation time and memory use
+    for very large-scale problems.
   - Added support for LP/QP solver CLP (COIN_OR Linear Programming,
     http://www.coin-or.org/projects/Clp.xml). Use 'opf.dc.solver'
     option 'CLP' or qps_clp().
@@ -178,6 +182,8 @@ CHANGES file in the docs directory for all the gory details.
         - dual-simplex algorithm for linprog()
         - intlinprog() for MILP
   - New functions:
+    - mplinsolve() provides unified interface for linear system solvers,
+      including PARDISO and built-in backslash operator
     - miqps_matpower() provides unified interface to multiple MILP/MIQP
       solvers.
     - miqps_clex() provides a unified MILP/MIQP interface to CPLEX.

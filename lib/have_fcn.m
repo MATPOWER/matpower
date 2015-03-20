@@ -54,6 +54,8 @@ function rv = have_fcn(tag, rtype)
 %       minopf      - MINOPF, MINOPF, MINOS-based OPF solver
 %       mosek       - MOSEK, LP/QP solver (http://www.mosek.com/)
 %       optimoptions - OPTIMOPTIONS, option setting funciton for Optim Tbx 6.3+
+%       pardiso     - PARDISO, Parallel Sparse Direct and Linear Solver
+%                       (http://www.pardiso-project.org)
 %       quadprog    - QUADPROG, QP solver from Optimization Toolbox 2.x +
 %       quadprog_ls - QUADPROG with large-scale interior point convex solver
 %                       from Optimization Toolbox 6.x +
@@ -365,6 +367,34 @@ else        %% detect availability
                     v = ver('octave');
                     vstr = v.Version;
                     rdate = v.Date;
+                end
+            case 'pardiso'
+                TorF = exist('pardisoinit', 'file') == 3 && ...
+                        exist('pardisoreorder', 'file') == 3 && ...
+                        exist('pardisofactor', 'file') == 3 && ...
+                        exist('pardisosolve', 'file') == 3 && ...
+                        exist('pardisofree', 'file') == 3;
+                if TorF
+                    try
+                        A = sparse([1 2; 3 4]);
+                        b = [1;1];
+                        % Summary PARDISO 5.1.0: ( reorder to reorder )
+                        pat = 'Summary PARDISO (\.*\d)+:';
+                        info = pardisoinit(11, 0);
+                        info = pardisoreorder(A, info, false);
+%                         [s,e,tE,m,t] = regexp(evalc('info = pardisoreorder(A, info, true);'), pat);
+%                         if ~isempty(t)
+%                             vstr = t{1}{1};
+%                         end
+                        info = pardisofactor(A, info, false);
+                        [x, info] = pardisosolve(A, b, info, false);
+                        pardisofree(info);
+                        if any(x ~= [-1; 1])
+                            TorF = 0;
+                        end
+                    catch
+                        TorF = 0;
+                    end
                 end
             case {'pdipmopf', 'scpdipmopf', 'tralmopf'}
                 if have_fcn('matlab')

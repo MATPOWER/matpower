@@ -214,6 +214,9 @@ function opt = mpoption(varargin)
 %       name                    default     description [options]
 %   -----------------------    ---------   ----------------------------------
 %   MIPS:
+%       mips.linsolver          ''          linear system solver
+%           [   '' or '\'   build-in backslash \ operator (e.g. x = A \ b)  ]
+%           [   'PARDISO'   PARDISO solver (if available)                   ]
 %       mips.feastol            0           feasibility (equality) tolerance
 %                                           (set to opf.violation by default)
 %       mips.gradtol            1e-6        gradient tolerance
@@ -446,6 +449,9 @@ if have_opt0
                 if isfield(opt_d, 'intlinprog')
                     opt0.intlinprog = opt_d.intlinprog;
                 end
+            end
+            if opt0.v <= 7          %% convert version 7 to 8
+                opt0.mips.linsolver = opt_d.mips.linsolver;
             end
             opt0.v = v;
         end
@@ -1416,6 +1422,7 @@ opt = struct(...
         'suppress_detail',      -1  ), ...
     'mips',                 struct(...  %% see mpoption_info_mips() for optional fields
         'step_control',         0, ...
+        'linsolver',            '', ...
         'feastol',              0, ...
         'gradtol',              1e-6, ...
         'comptol',              1e-6, ...
@@ -1447,7 +1454,7 @@ end
 %% globals
 %%-------------------------------------------------------------------
 function v = mpoption_version
-v = 7;      %% version number of MATPOWER options struct
+v = 8;      %% version number of MATPOWER options struct
             %% (must be incremented every time structure is updated)
             %% v1   - first version based on struct (MATPOWER 5.0b1)
             %% v2   - added 'linprog' and 'quadprog' fields
@@ -1460,6 +1467,8 @@ v = 7;      %% version number of MATPOWER options struct
             %%        field (MATPOWER 5.0)
             %% v6   - added 'clp' field
             %% v7   - added 'intlinprog' field
+            %% v8   - MIPS 1.2, added 'linsolver' field to
+            %%        'mips' options
 
 %%-------------------------------------------------------------------
 function db_level = DEBUG

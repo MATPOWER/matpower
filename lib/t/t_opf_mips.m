@@ -15,9 +15,14 @@ if nargin < 1
     quiet = 0;
 end
 
+linsolvers = {'\'};
+if have_fcn('pardiso')
+    linsolvers{end+1} = 'PARDISO';
+end
+
 num_tests = 101;
 
-t_begin(num_tests, quiet);
+t_begin(2*num_tests, quiet);
 
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
     VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
@@ -40,234 +45,242 @@ if have_fcn('octave')
     warning('off', 'Octave:load-file-in-path');
 end
 
-t0 = 'MIPS : ';
 mpopt = mpoption('opf.violation', 1e-6, 'mips.gradtol', 1e-8, ...
         'mips.comptol', 1e-8, 'mips.costtol', 1e-9);
 mpopt = mpoption(mpopt, 'out.all', 0, 'verbose', verbose, 'opf.ac.solver', 'MIPS');
 
-%% set up indices
-ib_data     = [1:BUS_AREA BASE_KV:VMIN];
-ib_voltage  = [VM VA];
-ib_lam      = [LAM_P LAM_Q];
-ib_mu       = [MU_VMAX MU_VMIN];
-ig_data     = [GEN_BUS QMAX QMIN MBASE:APF];
-ig_disp     = [PG QG VG];
-ig_mu       = (MU_PMAX:MU_QMIN);
-ibr_data    = (1:ANGMAX);
-ibr_flow    = (PF:QT);
-ibr_mu      = [MU_SF MU_ST];
-ibr_angmu   = [MU_ANGMIN MU_ANGMAX];
+for k = 1:length(linsolvers)
+    mpopt = mpoption(mpopt, 'mips.linsolver', linsolvers{k});
+    t0 = sprintf('MIPS (%s): ', linsolvers{k});
 
-%% get solved AC power flow case from MAT-file
-load soln9_opf;     %% defines bus_soln, gen_soln, branch_soln, f_soln
+    %% set up indices
+    ib_data     = [1:BUS_AREA BASE_KV:VMIN];
+    ib_voltage  = [VM VA];
+    ib_lam      = [LAM_P LAM_Q];
+    ib_mu       = [MU_VMAX MU_VMIN];
+    ig_data     = [GEN_BUS QMAX QMIN MBASE:APF];
+    ig_disp     = [PG QG VG];
+    ig_mu       = (MU_PMAX:MU_QMIN);
+    ibr_data    = (1:ANGMAX);
+    ibr_flow    = (PF:QT);
+    ibr_mu      = [MU_SF MU_ST];
+    ibr_angmu   = [MU_ANGMIN MU_ANGMAX];
 
-%% run OPF
-t = t0;
-[baseMVA, bus, gen, gencost, branch, f, success, et] = runopf(casefile, mpopt);
-t_ok(success, [t 'success']);
-t_is(f, f_soln, 3, [t 'f']);
-t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
-t_is(   bus(:,ib_voltage),    bus_soln(:,ib_voltage),  3, [t 'bus voltage']);
-t_is(   bus(:,ib_lam    ),    bus_soln(:,ib_lam    ),  3, [t 'bus lambda']);
-t_is(   bus(:,ib_mu     ),    bus_soln(:,ib_mu     ),  2, [t 'bus mu']);
-t_is(   gen(:,ig_data   ),    gen_soln(:,ig_data   ), 10, [t 'gen data']);
-t_is(   gen(:,ig_disp   ),    gen_soln(:,ig_disp   ),  3, [t 'gen dispatch']);
-t_is(   gen(:,ig_mu     ),    gen_soln(:,ig_mu     ),  3, [t 'gen mu']);
-t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
-t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
-t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
+    %% get solved AC power flow case from MAT-file
+    load soln9_opf;     %% defines bus_soln, gen_soln, branch_soln, f_soln
 
-%% run with automatic conversion of single-block pwl to linear costs
-t = [t0 '(single-block PWL) : '];
-mpc = loadcase(casefile);
-mpc.gencost(3, NCOST) = 2;
-[r, success] = runopf(mpc, mpopt);
-[f, bus, gen, branch] = deal(r.f, r.bus, r.gen, r.branch);
-t_ok(success, [t 'success']);
-t_is(f, f_soln, 3, [t 'f']);
-t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
-t_is(   bus(:,ib_voltage),    bus_soln(:,ib_voltage),  3, [t 'bus voltage']);
-t_is(   bus(:,ib_lam    ),    bus_soln(:,ib_lam    ),  3, [t 'bus lambda']);
-t_is(   bus(:,ib_mu     ),    bus_soln(:,ib_mu     ),  2, [t 'bus mu']);
-t_is(   gen(:,ig_data   ),    gen_soln(:,ig_data   ), 10, [t 'gen data']);
-t_is(   gen(:,ig_disp   ),    gen_soln(:,ig_disp   ),  3, [t 'gen dispatch']);
-t_is(   gen(:,ig_mu     ),    gen_soln(:,ig_mu     ),  3, [t 'gen mu']);
-t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
-t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
-t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
-xr = [r.var.val.Va;r.var.val.Vm;r.var.val.Pg;r.var.val.Qg;0;r.var.val.y];
-t_is(r.x, xr, 8, [t 'check on raw x returned from OPF']);
+    %% run OPF
+    t = t0;
+    [baseMVA, bus, gen, gencost, branch, f, success, et] = runopf(casefile, mpopt);
+    t_ok(success, [t 'success']);
+    t_is(f, f_soln, 3, [t 'f']);
+    t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
+    t_is(   bus(:,ib_voltage),    bus_soln(:,ib_voltage),  3, [t 'bus voltage']);
+    t_is(   bus(:,ib_lam    ),    bus_soln(:,ib_lam    ),  3, [t 'bus lambda']);
+    t_is(   bus(:,ib_mu     ),    bus_soln(:,ib_mu     ),  2, [t 'bus mu']);
+    t_is(   gen(:,ig_data   ),    gen_soln(:,ig_data   ), 10, [t 'gen data']);
+    t_is(   gen(:,ig_disp   ),    gen_soln(:,ig_disp   ),  3, [t 'gen dispatch']);
+    t_is(   gen(:,ig_mu     ),    gen_soln(:,ig_mu     ),  3, [t 'gen mu']);
+    t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
+    t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
+    t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
 
-%% get solved AC power flow case from MAT-file
-load soln9_opf_Plim;       %% defines bus_soln, gen_soln, branch_soln, f_soln
+    %% run with automatic conversion of single-block pwl to linear costs
+    t = [t0 '(single-block PWL) : '];
+    mpc = loadcase(casefile);
+    mpc.gencost(3, NCOST) = 2;
+    [r, success] = runopf(mpc, mpopt);
+    [f, bus, gen, branch] = deal(r.f, r.bus, r.gen, r.branch);
+    t_ok(success, [t 'success']);
+    t_is(f, f_soln, 3, [t 'f']);
+    t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
+    t_is(   bus(:,ib_voltage),    bus_soln(:,ib_voltage),  3, [t 'bus voltage']);
+    t_is(   bus(:,ib_lam    ),    bus_soln(:,ib_lam    ),  3, [t 'bus lambda']);
+    t_is(   bus(:,ib_mu     ),    bus_soln(:,ib_mu     ),  2, [t 'bus mu']);
+    t_is(   gen(:,ig_data   ),    gen_soln(:,ig_data   ), 10, [t 'gen data']);
+    t_is(   gen(:,ig_disp   ),    gen_soln(:,ig_disp   ),  3, [t 'gen dispatch']);
+    t_is(   gen(:,ig_mu     ),    gen_soln(:,ig_mu     ),  3, [t 'gen mu']);
+    t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
+    t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
+    t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
+    xr = [r.var.val.Va;r.var.val.Vm;r.var.val.Pg;r.var.val.Qg;0;r.var.val.y];
+    t_is(r.x, xr, 8, [t 'check on raw x returned from OPF']);
 
-%% run OPF with active power line limits
-t = [t0 '(P line lim) : '];
-mpopt1 = mpoption(mpopt, 'opf.flow_lim', 'P');
-[baseMVA, bus, gen, gencost, branch, f, success, et] = runopf(casefile, mpopt1);
-t_ok(success, [t 'success']);
-t_is(f, f_soln, 3, [t 'f']);
-t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
-t_is(   bus(:,ib_voltage),    bus_soln(:,ib_voltage),  3, [t 'bus voltage']);
-t_is(   bus(:,ib_lam    ),    bus_soln(:,ib_lam    ),  3, [t 'bus lambda']);
-t_is(   bus(:,ib_mu     ),    bus_soln(:,ib_mu     ),  2, [t 'bus mu']);
-t_is(   gen(:,ig_data   ),    gen_soln(:,ig_data   ), 10, [t 'gen data']);
-t_is(   gen(:,ig_disp   ),    gen_soln(:,ig_disp   ),  3, [t 'gen dispatch']);
-t_is(   gen(:,ig_mu     ),    gen_soln(:,ig_mu     ),  3, [t 'gen mu']);
-t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
-t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
-t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
+    %% get solved AC power flow case from MAT-file
+    load soln9_opf_Plim;       %% defines bus_soln, gen_soln, branch_soln, f_soln
 
-%%-----  test OPF with quadratic gen costs moved to generalized costs  -----
-mpc = loadcase(casefile);
-mpc.gencost = [
-	2   1500    0   3   0.11    5   0;
-	2   2000    0   3   0.085   1.2 0;
-	2   3000    0   3   0.1225  1   0;
-];
-[baseMVA, bus_soln, gen_soln, gencost, branch_soln, f_soln, success, et] = runopf(mpc, mpopt);
-branch_soln = branch_soln(:,1:MU_ST);
+    %% run OPF with active power line limits
+    t = [t0 '(P line lim) : '];
+    mpopt1 = mpoption(mpopt, 'opf.flow_lim', 'P');
+    [baseMVA, bus, gen, gencost, branch, f, success, et] = runopf(casefile, mpopt1);
+    t_ok(success, [t 'success']);
+    t_is(f, f_soln, 3, [t 'f']);
+    t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
+    t_is(   bus(:,ib_voltage),    bus_soln(:,ib_voltage),  3, [t 'bus voltage']);
+    t_is(   bus(:,ib_lam    ),    bus_soln(:,ib_lam    ),  3, [t 'bus lambda']);
+    t_is(   bus(:,ib_mu     ),    bus_soln(:,ib_mu     ),  2, [t 'bus mu']);
+    t_is(   gen(:,ig_data   ),    gen_soln(:,ig_data   ), 10, [t 'gen data']);
+    t_is(   gen(:,ig_disp   ),    gen_soln(:,ig_disp   ),  3, [t 'gen dispatch']);
+    t_is(   gen(:,ig_mu     ),    gen_soln(:,ig_mu     ),  3, [t 'gen mu']);
+    t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
+    t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
+    t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
 
-A = sparse(0,0);
-l = [];
-u = [];
-nb = size(mpc.bus, 1);      % number of buses
-ng = size(mpc.gen, 1);      % number of gens
-thbas = 1;                thend    = thbas+nb-1;
-vbas     = thend+1;       vend     = vbas+nb-1;
-pgbas    = vend+1;        pgend    = pgbas+ng-1;
-qgbas    = pgend+1;       qgend    = qgbas+ng-1;
-nxyz = 2*nb + 2*ng;
-N = sparse((1:ng)', (pgbas:pgend)', mpc.baseMVA * ones(ng,1), ng, nxyz);
-fparm = ones(ng,1) * [ 1 0 0 1 ];
-[junk, ix] = sort(mpc.gen(:, 1));
-H = 2 * spdiags(mpc.gencost(ix, 5), 0, ng, ng);
-Cw = mpc.gencost(ix, 6);
-mpc.gencost(:, 5:7) = 0;
+    %%-----  test OPF with quadratic gen costs moved to generalized costs  -----
+    mpc = loadcase(casefile);
+    mpc.gencost = [
+        2   1500    0   3   0.11    5   0;
+        2   2000    0   3   0.085   1.2 0;
+        2   3000    0   3   0.1225  1   0;
+    ];
+    [baseMVA, bus_soln, gen_soln, gencost, branch_soln, f_soln, success, et] = runopf(mpc, mpopt);
+    branch_soln = branch_soln(:,1:MU_ST);
 
-%% run OPF with quadratic gen costs moved to generalized costs
-t = [t0 'w/quadratic generalized gen cost : '];
-[r, success] = opf(mpc, A, l, u, mpopt, N, fparm, H, Cw);
-[f, bus, gen, branch] = deal(r.f, r.bus, r.gen, r.branch);
-t_ok(success, [t 'success']);
-t_is(f, f_soln, 3, [t 'f']);
-t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
-t_is(   bus(:,ib_voltage),    bus_soln(:,ib_voltage),  3, [t 'bus voltage']);
-t_is(   bus(:,ib_lam    ),    bus_soln(:,ib_lam    ),  3, [t 'bus lambda']);
-t_is(   bus(:,ib_mu     ),    bus_soln(:,ib_mu     ),  2, [t 'bus mu']);
-t_is(   gen(:,ig_data   ),    gen_soln(:,ig_data   ), 10, [t 'gen data']);
-t_is(   gen(:,ig_disp   ),    gen_soln(:,ig_disp   ),  3, [t 'gen dispatch']);
-t_is(   gen(:,ig_mu     ),    gen_soln(:,ig_mu     ),  3, [t 'gen mu']);
-t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
-t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
-t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
-t_is(r.cost.usr, f, 12, [t 'user cost']);
+    A = sparse(0,0);
+    l = [];
+    u = [];
+    nb = size(mpc.bus, 1);      % number of buses
+    ng = size(mpc.gen, 1);      % number of gens
+    thbas = 1;                thend    = thbas+nb-1;
+    vbas     = thend+1;       vend     = vbas+nb-1;
+    pgbas    = vend+1;        pgend    = pgbas+ng-1;
+    qgbas    = pgend+1;       qgend    = qgbas+ng-1;
+    nxyz = 2*nb + 2*ng;
+    N = sparse((1:ng)', (pgbas:pgend)', mpc.baseMVA * ones(ng,1), ng, nxyz);
+    fparm = ones(ng,1) * [ 1 0 0 1 ];
+    [junk, ix] = sort(mpc.gen(:, 1));
+    H = 2 * spdiags(mpc.gencost(ix, 5), 0, ng, ng);
+    Cw = mpc.gencost(ix, 6);
+    mpc.gencost(:, 5:7) = 0;
 
-%%-----  run OPF with extra linear user constraints & costs  -----
-%% single new z variable constrained to be greater than or equal to
-%% deviation from 1 pu voltage at bus 1, linear cost on this z
-%% get solved AC power flow case from MAT-file
-load soln9_opf_extras1;   %% defines bus_soln, gen_soln, branch_soln, f_soln
-A = sparse([1;1;2;2],[10;25;10;25],[-1;1;1;1],2,25);
-u = [Inf; Inf];
-l = [-1; 1];
+    %% run OPF with quadratic gen costs moved to generalized costs
+    t = [t0 'w/quadratic generalized gen cost : '];
+    [r, success] = opf(mpc, A, l, u, mpopt, N, fparm, H, Cw);
+    [f, bus, gen, branch] = deal(r.f, r.bus, r.gen, r.branch);
+    t_ok(success, [t 'success']);
+    t_is(f, f_soln, 3, [t 'f']);
+    t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
+    t_is(   bus(:,ib_voltage),    bus_soln(:,ib_voltage),  3, [t 'bus voltage']);
+    t_is(   bus(:,ib_lam    ),    bus_soln(:,ib_lam    ),  3, [t 'bus lambda']);
+    t_is(   bus(:,ib_mu     ),    bus_soln(:,ib_mu     ),  2, [t 'bus mu']);
+    t_is(   gen(:,ig_data   ),    gen_soln(:,ig_data   ), 10, [t 'gen data']);
+    t_is(   gen(:,ig_disp   ),    gen_soln(:,ig_disp   ),  3, [t 'gen dispatch']);
+    t_is(   gen(:,ig_mu     ),    gen_soln(:,ig_mu     ),  3, [t 'gen mu']);
+    t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
+    t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
+    t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
+    t_is(r.cost.usr, f, 12, [t 'user cost']);
 
-N = sparse(1, 25, 1, 1, 25);    %% new z variable only
-fparm = [1 0 0 1];              %% w = r = z
-H = sparse(1,1);                %% no quadratic term
-Cw = 100;
+    %%-----  run OPF with extra linear user constraints & costs  -----
+    %% single new z variable constrained to be greater than or equal to
+    %% deviation from 1 pu voltage at bus 1, linear cost on this z
+    %% get solved AC power flow case from MAT-file
+    load soln9_opf_extras1;   %% defines bus_soln, gen_soln, branch_soln, f_soln
+    A = sparse([1;1;2;2],[10;25;10;25],[-1;1;1;1],2,25);
+    u = [Inf; Inf];
+    l = [-1; 1];
 
-t = [t0 'w/extra constraints & costs 1 : '];
-[r, success] = opf(casefile, A, l, u, mpopt, N, fparm, H, Cw);
-[f, bus, gen, branch] = deal(r.f, r.bus, r.gen, r.branch);
-t_ok(success, [t 'success']);
-t_is(f, f_soln, 3, [t 'f']);
-t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
-t_is(   bus(:,ib_voltage),    bus_soln(:,ib_voltage),  3, [t 'bus voltage']);
-t_is(   bus(:,ib_lam    ),    bus_soln(:,ib_lam    ),  3, [t 'bus lambda']);
-t_is(   bus(:,ib_mu     ),    bus_soln(:,ib_mu     ),  2, [t 'bus mu']);
-t_is(   gen(:,ig_data   ),    gen_soln(:,ig_data   ), 10, [t 'gen data']);
-t_is(   gen(:,ig_disp   ),    gen_soln(:,ig_disp   ),  3, [t 'gen dispatch']);
-t_is(   gen(:,ig_mu     ),    gen_soln(:,ig_mu     ),  3, [t 'gen mu']);
-t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
-t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
-t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
-t_is(r.var.val.z, 0.025419, 6, [t 'user variable']);
-t_is(r.cost.usr, 2.5419, 4, [t 'user cost']);
+    N = sparse(1, 25, 1, 1, 25);    %% new z variable only
+    fparm = [1 0 0 1];              %% w = r = z
+    H = sparse(1,1);                %% no quadratic term
+    Cw = 100;
 
-%%-----  test OPF with capability curves  -----
-mpc = loadcase('t_case9_opfv2');
-%% remove angle diff limits
-mpc.branch(1, ANGMAX) = 360;
-mpc.branch(9, ANGMIN) = -360;
+    t = [t0 'w/extra constraints & costs 1 : '];
+    [r, success] = opf(casefile, A, l, u, mpopt, N, fparm, H, Cw);
+    [f, bus, gen, branch] = deal(r.f, r.bus, r.gen, r.branch);
+    t_ok(success, [t 'success']);
+    t_is(f, f_soln, 3, [t 'f']);
+    t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
+    t_is(   bus(:,ib_voltage),    bus_soln(:,ib_voltage),  3, [t 'bus voltage']);
+    t_is(   bus(:,ib_lam    ),    bus_soln(:,ib_lam    ),  3, [t 'bus lambda']);
+    t_is(   bus(:,ib_mu     ),    bus_soln(:,ib_mu     ),  2, [t 'bus mu']);
+    t_is(   gen(:,ig_data   ),    gen_soln(:,ig_data   ), 10, [t 'gen data']);
+    t_is(   gen(:,ig_disp   ),    gen_soln(:,ig_disp   ),  3, [t 'gen dispatch']);
+    t_is(   gen(:,ig_mu     ),    gen_soln(:,ig_mu     ),  3, [t 'gen mu']);
+    t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
+    t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
+    t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
+    t_is(r.var.val.z, 0.025419, 6, [t 'user variable']);
+    t_is(r.cost.usr, 2.5419, 4, [t 'user cost']);
 
-%% get solved AC power flow case from MAT-file
-load soln9_opf_PQcap;   %% defines bus_soln, gen_soln, branch_soln, f_soln
-	
-%% run OPF with capability curves
-t = [t0 'w/capability curves : '];
-[baseMVA, bus, gen, gencost, branch, f, success, et] = runopf(mpc, mpopt);
-t_ok(success, [t 'success']);
-t_is(f, f_soln, 3, [t 'f']);
-t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
-t_is(   bus(:,ib_voltage),    bus_soln(:,ib_voltage),  3, [t 'bus voltage']);
-t_is(   bus(:,ib_lam    ),    bus_soln(:,ib_lam    ),  3, [t 'bus lambda']);
-t_is(   bus(:,ib_mu     ),    bus_soln(:,ib_mu     ),  2, [t 'bus mu']);
-t_is(   gen(:,ig_data   ),    gen_soln(:,ig_data   ), 10, [t 'gen data']);
-t_is(   gen(:,ig_disp   ),    gen_soln(:,ig_disp   ),  3, [t 'gen dispatch']);
-t_is(   gen(:,ig_mu     ),    gen_soln(:,ig_mu     ),  3, [t 'gen mu']);
-t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
-t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
-t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
+    %%-----  test OPF with capability curves  -----
+    mpc = loadcase('t_case9_opfv2');
+    %% remove angle diff limits
+    mpc.branch(1, ANGMAX) = 360;
+    mpc.branch(9, ANGMIN) = -360;
 
-%%-----  test OPF with angle difference limits  -----
-mpc = loadcase('t_case9_opfv2');
-%% remove capability curves
-mpc.gen(2:3, [PC1, PC2, QC1MIN, QC1MAX, QC2MIN, QC2MAX]) = zeros(2,6);
+    %% get solved AC power flow case from MAT-file
+    load soln9_opf_PQcap;   %% defines bus_soln, gen_soln, branch_soln, f_soln
+    
+    %% run OPF with capability curves
+    t = [t0 'w/capability curves : '];
+    [baseMVA, bus, gen, gencost, branch, f, success, et] = runopf(mpc, mpopt);
+    t_ok(success, [t 'success']);
+    t_is(f, f_soln, 3, [t 'f']);
+    t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
+    t_is(   bus(:,ib_voltage),    bus_soln(:,ib_voltage),  3, [t 'bus voltage']);
+    t_is(   bus(:,ib_lam    ),    bus_soln(:,ib_lam    ),  3, [t 'bus lambda']);
+    t_is(   bus(:,ib_mu     ),    bus_soln(:,ib_mu     ),  2, [t 'bus mu']);
+    t_is(   gen(:,ig_data   ),    gen_soln(:,ig_data   ), 10, [t 'gen data']);
+    t_is(   gen(:,ig_disp   ),    gen_soln(:,ig_disp   ),  3, [t 'gen dispatch']);
+    t_is(   gen(:,ig_mu     ),    gen_soln(:,ig_mu     ),  3, [t 'gen mu']);
+    t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
+    t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
+    t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
 
-%% get solved AC power flow case from MAT-file
-load soln9_opf_ang;   %% defines bus_soln, gen_soln, branch_soln, f_soln
-	
-%% run OPF with angle difference limits
-t = [t0 'w/angle difference limits : '];
-[baseMVA, bus, gen, gencost, branch, f, success, et] = runopf(mpc, mpopt);
-t_ok(success, [t 'success']);
-t_is(f, f_soln, 3, [t 'f']);
-t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
-t_is(   bus(:,ib_voltage),    bus_soln(:,ib_voltage),  3, [t 'bus voltage']);
-t_is(   bus(:,ib_lam    ),    bus_soln(:,ib_lam    ),  3, [t 'bus lambda']);
-t_is(   bus(:,ib_mu     ),    bus_soln(:,ib_mu     ),  1, [t 'bus mu']);
-t_is(   gen(:,ig_data   ),    gen_soln(:,ig_data   ), 10, [t 'gen data']);
-t_is(   gen(:,ig_disp   ),    gen_soln(:,ig_disp   ),  3, [t 'gen dispatch']);
-t_is(   gen(:,ig_mu     ),    gen_soln(:,ig_mu     ),  3, [t 'gen mu']);
-t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
-t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
-t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
-t_is(branch(:,ibr_angmu ), branch_soln(:,ibr_angmu ),  2, [t 'branch angle mu']);
+    %%-----  test OPF with angle difference limits  -----
+    mpc = loadcase('t_case9_opfv2');
+    %% remove capability curves
+    mpc.gen(2:3, [PC1, PC2, QC1MIN, QC1MAX, QC2MIN, QC2MAX]) = zeros(2,6);
 
-%%-----  test OPF with ignored angle difference limits  -----
-%% get solved AC power flow case from MAT-file
-load soln9_opf;   %% defines bus_soln, gen_soln, branch_soln, f_soln
+    %% get solved AC power flow case from MAT-file
+    load soln9_opf_ang;   %% defines bus_soln, gen_soln, branch_soln, f_soln
+    
+    %% run OPF with angle difference limits
+    t = [t0 'w/angle difference limits : '];
+    [baseMVA, bus, gen, gencost, branch, f, success, et] = runopf(mpc, mpopt);
+    t_ok(success, [t 'success']);
+    t_is(f, f_soln, 3, [t 'f']);
+    t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
+    t_is(   bus(:,ib_voltage),    bus_soln(:,ib_voltage),  3, [t 'bus voltage']);
+    t_is(   bus(:,ib_lam    ),    bus_soln(:,ib_lam    ),  3, [t 'bus lambda']);
+    t_is(   bus(:,ib_mu     ),    bus_soln(:,ib_mu     ),  1, [t 'bus mu']);
+    t_is(   gen(:,ig_data   ),    gen_soln(:,ig_data   ), 10, [t 'gen data']);
+    t_is(   gen(:,ig_disp   ),    gen_soln(:,ig_disp   ),  3, [t 'gen dispatch']);
+    t_is(   gen(:,ig_mu     ),    gen_soln(:,ig_mu     ),  3, [t 'gen mu']);
+    t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
+    t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
+    t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
+    t_is(branch(:,ibr_angmu ), branch_soln(:,ibr_angmu ),  2, [t 'branch angle mu']);
 
-%% run OPF with ignored angle difference limits
-t = [t0 'w/ignored angle difference limits : '];
-mpopt1 = mpoption(mpopt, 'opf.ignore_angle_lim', 1);
-[baseMVA, bus, gen, gencost, branch, f, success, et] = runopf(mpc, mpopt1);
-%% ang limits are not in this solution data, so let's remove them
-branch(1, ANGMAX) = 360;
-branch(9, ANGMIN) = -360;
-t_ok(success, [t 'success']);
-t_is(f, f_soln, 3, [t 'f']);
-t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
-t_is(   bus(:,ib_voltage),    bus_soln(:,ib_voltage),  3, [t 'bus voltage']);
-t_is(   bus(:,ib_lam    ),    bus_soln(:,ib_lam    ),  3, [t 'bus lambda']);
-t_is(   bus(:,ib_mu     ),    bus_soln(:,ib_mu     ),  2, [t 'bus mu']);
-t_is(   gen(:,ig_data   ),    gen_soln(:,ig_data   ), 10, [t 'gen data']);
-t_is(   gen(:,ig_disp   ),    gen_soln(:,ig_disp   ),  3, [t 'gen dispatch']);
-t_is(   gen(:,ig_mu     ),    gen_soln(:,ig_mu     ),  3, [t 'gen mu']);
-t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
-t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
-t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
+    %%-----  test OPF with ignored angle difference limits  -----
+    %% get solved AC power flow case from MAT-file
+    load soln9_opf;   %% defines bus_soln, gen_soln, branch_soln, f_soln
+
+    %% run OPF with ignored angle difference limits
+    t = [t0 'w/ignored angle difference limits : '];
+    mpopt1 = mpoption(mpopt, 'opf.ignore_angle_lim', 1);
+    [baseMVA, bus, gen, gencost, branch, f, success, et] = runopf(mpc, mpopt1);
+    %% ang limits are not in this solution data, so let's remove them
+    branch(1, ANGMAX) = 360;
+    branch(9, ANGMIN) = -360;
+    t_ok(success, [t 'success']);
+    t_is(f, f_soln, 3, [t 'f']);
+    t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
+    t_is(   bus(:,ib_voltage),    bus_soln(:,ib_voltage),  3, [t 'bus voltage']);
+    t_is(   bus(:,ib_lam    ),    bus_soln(:,ib_lam    ),  3, [t 'bus lambda']);
+    t_is(   bus(:,ib_mu     ),    bus_soln(:,ib_mu     ),  2, [t 'bus mu']);
+    t_is(   gen(:,ig_data   ),    gen_soln(:,ig_data   ), 10, [t 'gen data']);
+    t_is(   gen(:,ig_disp   ),    gen_soln(:,ig_disp   ),  3, [t 'gen dispatch']);
+    t_is(   gen(:,ig_mu     ),    gen_soln(:,ig_mu     ),  3, [t 'gen mu']);
+    t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
+    t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
+    t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
+end
+
+if ~have_fcn('pardiso')
+    t_skip(num_tests, 'PARDISO linear solver not available');
+end
 
 if have_fcn('octave')
     warning(s1.state, 'Octave:load-file-in-path');

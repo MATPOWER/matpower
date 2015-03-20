@@ -15,6 +15,11 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.0
 -----------------
 
+3/19/15
+    - Added support for using PARDISO as linear solver for computing
+      interior-point update steps in MIPS (v1.2), via new mplinsolver()
+      function and 'mips.linsolver' option.
+
 3/18/15
     - Added four new case files, ranging from 89 up to 9421 buses,
       representing parts of the European high voltage transmission

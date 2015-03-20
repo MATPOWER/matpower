@@ -29,6 +29,10 @@ function [x, f, eflag, output, lambda] = qps_mips(H, c, A, l, u, xmin, xmax, x0,
 %               0 = no progress output
 %               1 = some progress output
 %               2 = verbose progress output
+%           linsolver ('') - linear system solver for solving update steps
+%               ''          = default solver (currently same as '\')
+%               '\'         = built-in \ operator
+%               'PARDISO'   = PARDISO solver (if available)
 %           feastol (1e-6) - termination tolerance for feasibility
 %               condition
 %           gradtol (1e-6) - termination tolerance for gradient
@@ -42,6 +46,18 @@ function [x, f, eflag, output, lambda] = qps_mips(H, c, A, l, u, xmin, xmax, x0,
 %               step-control is on
 %           cost_mult (1) - cost multiplier used to scale the objective
 %               function for improved conditioning.
+%           xi (0.99995) - constant used in alpha updates*
+%           sigma (0.1) - centering parameter*
+%           z0 (1) - used to initialize slack variables*
+%           alpha_min (1e-8) - returns EXITFLAG = -1 if either alpha
+%               parameter becomes smaller than this value*
+%           rho_min (0.95) - lower bound on rho_t*
+%           rho_max (1.05) - upper bound on rho_t*
+%           mu_threshold (1e-5) - KT multipliers smaller than this value
+%               for non-binding constraints are forced to zero
+%           max_stepsize (1e10) - returns EXITFLAG = -1 if the 2-norm of
+%               the reduced Newton step exceeds this value*
+%               * see the corresponding Appendix in the manual for details
 %       PROBLEM : The inputs can alternatively be supplied in a single
 %           PROBLEM struct with fields corresponding to the input arguments
 %           described above: H, c, A, l, u, xmin, xmax, x0, opt

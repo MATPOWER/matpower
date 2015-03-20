@@ -30,7 +30,7 @@ function rv = mpver(varargin)
 v{1} = struct(  'Name',     'MATPOWER', ... 
                 'Version',  '5.1-dev', ...
                 'Release',  '', ...
-                'Date',     '05-Mar-2015' );
+                'Date',     '19-Mar-2015' );
 if nargout > 0
     if nargin > 0
         rv = v{1};
@@ -156,6 +156,17 @@ else
         fprintf('%-22s Version %-10s %-11s\n', 'MOSEK', vn, s.date);
     else
         fprintf('%-22s -- not installed --\n', 'MOSEK');
+    end
+    if have_fcn('pardiso')
+        s = have_fcn('pardiso', 'all');
+        if isempty(s.vstr)
+            vn = '<unknown>';
+        else
+            vn = s.vstr;
+        end
+        fprintf('%-22s Version %-10s %-11s\n', 'PARDISO', vn, s.date);
+    else
+        fprintf('%-22s -- not installed --\n', 'PARDISO');
     end
     if have_fcn('pdipmopf')
         pdipmopfver;

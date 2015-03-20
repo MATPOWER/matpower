@@ -44,6 +44,10 @@ function [x, f, eflag, output, lambda] = mips(f_fcn, x0, A, l, u, xmin, xmax, gh
 %           all of which are also optional (default values shown in
 %           parentheses)
 %           verbose (0) - controls level of progress output displayed
+%           linsolver ('') - linear system solver for solving update steps
+%               ''          = default solver (currently same as '\')
+%               '\'         = built-in \ operator
+%               'PARDISO'   = PARDISO solver (if available)
 %           feastol (1e-6) - termination tolerance for feasibility
 %               condition
 %           gradtol (1e-6) - termination tolerance for gradient
@@ -249,6 +253,9 @@ end
 if isempty(opt)
     opt = struct('verbose', 0);
 end
+if ~isfield(opt, 'linsolver') || isempty(opt.linsolver)
+    opt.linsolver = '';
+end
 if ~isfield(opt, 'feastol') || isempty(opt.feastol)
     opt.feastol = 1e-6;
 end
@@ -398,11 +405,21 @@ costcond = abs(f - f0) / (1 + abs(f0));
 hist(i+1) = struct('feascond', feascond, 'gradcond', gradcond, ...
     'compcond', compcond, 'costcond', costcond, 'gamma', gamma, ...
     'stepsize', 0, 'obj', f/opt.cost_mult, 'alphap', 0, 'alphad', 0);
+if strcmp(upper(opt.linsolver), 'PARDISO')
+    ls = 'PARDISO';
+    if ~have_fcn('pardiso')
+        warning('mips: PARDISO linear solver not available, using default');
+        opt.linsolver = '';
+        ls = 'built-in';
+    end
+else
+    ls = 'built-in';
+end
 if opt.verbose
     if opt.step_control, s = '-sc'; else, s = ''; end
     v = mipsver('all');
-    fprintf('MATLAB Interior Point Solver -- MIPS%s, Version %s, %s', ...
-        s, v.Version, v.Date);
+    fprintf('MATLAB Interior Point Solver -- MIPS%s, Version %s, %s\n (using %s linear solver)', ...
+        s, v.Version, v.Date, ls);
     if opt.verbose > 1
         fprintf('\n it    objective   step size   feascond     gradcond     compcond     costcond  ');
         fprintf('\n----  ------------ --------- ------------ ------------ ------------ ------------');
@@ -439,7 +456,7 @@ while (~converged && i < opt.max_it)
     dh_zinv = dh * zinvdiag;
     M = Lxx + dh_zinv * mudiag * dh';
     N = Lx + dh_zinv * (mudiag * h + gamma * e);
-    dxdlam = [M dg; dg' sparse(neq, neq)] \ [-N; -g];
+    dxdlam = mplinsolve([M dg; dg' sparse(neq, neq)], [-N; -g], opt.linsolver, []);
 %     AAA = [
 %         M  dg;
 %         dg'  sparse(neq, neq)
