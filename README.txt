@@ -2,15 +2,15 @@
  MATPOWER - A MATLAB(R) Power System Simulation Package
 ========================================================
 
-Version:    5.0
+Version:    5.1
 
 Home Page:  http://www.pserc.cornell.edu/matpower/
 
 Authors:    Ray Zimmerman               <rz10@cornell.edu>
             Carlos E. Murillo-Sanchez   <carlos_murillo@ieee.org>
-            Deqiang (David) Gan         <dgan@zju.edu.cn>
+            and others, see AUTHORS file
 
-            Wed, Dec 17, 2014
+            Fri, Mar 20, 2015
 
 $Id$
 Copyright (c) 1997-2015 by Power System Engineering Research Center (PSERC)
