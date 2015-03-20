@@ -157,8 +157,8 @@ end
 if isempty(c)
     c = zeros(nx, 1);
 end
-if isempty(A) || ~isempty(A) && (isempty(l) || all(l == -Inf)) && ...
-                                (isempty(u) || all(u == Inf))
+if isempty(A) || (~isempty(A) && (isempty(l) || all(l == -Inf)) && ...
+                                 (isempty(u) || all(u == Inf)))
     A = sparse(0,nx);           %% no limits => no linear constraints
 end
 nA = size(A, 1);                %% number of original linear constraints
