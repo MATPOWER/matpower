@@ -85,6 +85,10 @@ Changes since 5.0
       when Ipopt >= 3.11.x is detected, to warn about incomplete
       installation and avoid a fatal error.
 
+1/27/15
+    - Added online function reference, produced by m2html. Thanks to
+      Shrirang Abhyankar.
+
 1/26/15
     - Fixed bug in hasPQcap() that resulted in ignoring generator
       capability curves if Q1MAX < Q2MAX or Q1MIN > Q2MIN (i.e. when

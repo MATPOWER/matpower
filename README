@@ -148,6 +148,10 @@ CHANGES file in the docs directory for all the gory details.
     Estimation (PEGASE) project. Thanks to Cedric Josz and colleagues from
     the French Transmission System Operator.
 
+* New documentation:
+  - Added an online function reference to the web site at
+    http://www.pserc.cornell.edu//matpower/docs/ref/.
+
 * New features:
   - Added support for using PARDISO (http://www.pardiso-project.org/)
     as linear solver for computing interior-point update steps in MIPS,
