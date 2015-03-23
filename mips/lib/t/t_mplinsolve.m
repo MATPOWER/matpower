@@ -403,11 +403,11 @@ ex = [
 
 t = '''''';
 x = mplinsolve(A, b, '', []);
-t_is(x, ex, 13, t);
+t_is(x, ex, 12, t);
 
 t = '\';
 x = mplinsolve(A, b, '\', []);
-t_is(x, ex, 13, t);
+t_is(x, ex, 12, t);
 
 t = 'PARDISO';
 if have_fcn('pardiso')
