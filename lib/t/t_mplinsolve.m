@@ -412,7 +412,7 @@ t_is(x, ex, 13, t);
 t = 'PARDISO';
 if have_fcn('pardiso')
     x = mplinsolve(A, b, 'PARDISO', struct('solver', 0));
-    t_is(x, ex, 13, [t ' : direct']);
+    t_is(x, ex, 12, [t ' : direct']);
 
     [x, info] = mplinsolve(A, b, 'PARDISO', struct('solver', 1));
     t_is(x, ex, 1, [t ' : iterative']);
