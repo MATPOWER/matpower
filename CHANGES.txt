@@ -12,6 +12,14 @@ Copyright (c) 1996-2015 by Power System Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
 
 
+Changes since 5.1
+-----------------
+
+3/24/15
+    - Fixed problem in have_fcn() where sedumi was turning off and
+      leaving off all warnings.
+
+
 Changes since 5.0
 -----------------
 

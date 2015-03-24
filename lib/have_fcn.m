@@ -460,7 +460,9 @@ else        %% detect availability
             case 'sedumi'
                 TorF = exist('sedumi','file') == 2;
                 if TorF
+                    warn_state = warning;  %% sedumi turns (and leaves!) off all warnings
                     str = evalc('x = sedumi([1 1], 1, [1;2])');
+                    warning(warn_state);
                     pat = 'SeDuMi\s+([^\s]+)';
                     [s,e,tE,m,t] = regexp(str, pat);
                     if ~isempty(t)
