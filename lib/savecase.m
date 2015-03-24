@@ -315,11 +315,11 @@ else                                %% M-file
             print_sparse(fd, sprintf('%sA', prefix), mpc.A);
             if isfield(mpc, 'l') && ~isempty(mpc.l) && ...
                     isfield(mpc, 'u') && ~isempty(mpc.u)
-                fprintf(fd, 'lu = [\n');
+                fprintf(fd, 'lbub = [\n');
                 fprintf(fd, '\t%.9g\t%.9g;\n', [mpc.l mpc.u].');
                 fprintf(fd, '];\n');
-                fprintf(fd, '%sl = lu(:, 1);\n', prefix);
-                fprintf(fd, '%su = lu(:, 2);\n\n', prefix);
+                fprintf(fd, '%sl = lbub(:, 1);\n', prefix);
+                fprintf(fd, '%su = lbub(:, 2);\n\n', prefix);
             elseif isfield(mpc, 'l') && ~isempty(mpc.l)
                 fprintf(fd, '%sl = [\n', prefix);
                 fprintf(fd, '\t%.9g;\n', mpc.l);
