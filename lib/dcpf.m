@@ -1,4 +1,4 @@
-function Va = dcpf(B, Pbus, Va0, ref, pv, pq)
+function [Va, success] = dcpf(B, Pbus, Va0, ref, pv, pq)
 %DCPF  Solves a DC power flow.
 %   [VA, SUCCESS] = DCPF(B, PBUS, VA0, REF, PV, PQ) solves for the bus
 %   voltage angles at all but the reference bus, given the full system
@@ -22,6 +22,20 @@ function Va = dcpf(B, Pbus, Va0, ref, pv, pq)
 
 %% initialize result vector
 Va = Va0;
+success = 1;    %% successful by default
+
+%% set up to trap non-singular matrix warnings
+[lastmsg, lastid] = lastwarn;
+lastwarn('');
 
 %% update angles for non-reference buses
-Va([pv; pq]) = B([pv; pq], [pv; pq]) \ (Pbus([pv; pq]) - B([pv; pq], ref) * Va0(ref));
+Va([pv; pq]) = B([pv; pq], [pv; pq]) \ ...
+                (Pbus([pv; pq]) - B([pv; pq], ref) * Va0(ref));
+
+[msg, id] = lastwarn;
+if ~isempty(msg) || max(abs(Va)) > 1e5
+    success = 0;
+end
+
+%% restore warning state
+lastwarn(lastmsg, lastid);

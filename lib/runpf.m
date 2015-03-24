@@ -139,7 +139,7 @@ if dc                               %% DC formulation
     Pbus = real(makeSbus(baseMVA, bus, gen)) - Pbusinj - bus(:, GS) / baseMVA;
     
     %% "run" the power flow
-    Va = dcpf(B, Pbus, Va0, ref, pv, pq);
+    [Va, success] = dcpf(B, Pbus, Va0, ref, pv, pq);
     
     %% update data matrices with solution
     branch(:, [QF, QT]) = zeros(size(branch, 1), 2);
@@ -157,8 +157,6 @@ if dc                               %% DC formulation
         refgen(k) = on(temp(1));
     end
     gen(refgen, PG) = gen(refgen, PG) + (B(ref, :) * Va - Pbus(ref)) * baseMVA;
-    
-    success = 1;
 else                                %% AC formulation
     alg = upper(mpopt.pf.alg);
     if mpopt.verbose > 0
