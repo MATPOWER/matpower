@@ -188,7 +188,10 @@ t_is(r.gen(5:8, PG), Pg, 8, [t 'active power generation 1']);
 t = 'network w/islands w/o slack : DC PF : ';
 k = find(mpc.bus(:, BUS_TYPE) == REF);
 mpc.bus(k(2), BUS_TYPE) = PV;
+warn_state = warning;
+warning('off', 'all');  %% turn of (near-)singular matrix warnings
 r = rundcpf(mpc, mpopt);
+warning(warn_state);
 t_ok(~r.success, [t 'success']);
 
 t_end;
