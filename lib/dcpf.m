@@ -20,6 +20,9 @@ function [Va, success] = dcpf(B, Pbus, Va0, ref, pv, pq)
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
+%% constant
+Va_threshold = 1e5;     %% arbitrary threshold on |Va| for declaring failure
+
 %% initialize result vector
 Va = Va0;
 success = 1;    %% successful by default
@@ -33,7 +36,9 @@ Va([pv; pq]) = B([pv; pq], [pv; pq]) \ ...
                 (Pbus([pv; pq]) - B([pv; pq], ref) * Va0(ref));
 
 [msg, id] = lastwarn;
-if ~isempty(msg) || max(abs(Va)) > 1e5
+%% Octave is not consistent in assigning proper warning id, so we'll just
+%% check for presence of *any* warning
+if ~isempty(msg) || max(abs(Va)) > Va_threshold
     success = 0;
 end
 
