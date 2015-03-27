@@ -256,16 +256,16 @@ end
 if ~isfield(opt, 'linsolver') || isempty(opt.linsolver)
     opt.linsolver = '';
 end
-if ~isfield(opt, 'feastol') || isempty(opt.feastol)
+if ~isfield(opt, 'feastol') || isempty(opt.feastol) || opt.feastol == 0
     opt.feastol = 1e-6;
 end
-if ~isfield(opt, 'gradtol') || isempty(opt.gradtol)
+if ~isfield(opt, 'gradtol') || isempty(opt.gradtol) || opt.gradtol == 0
     opt.gradtol = 1e-6;
 end
-if ~isfield(opt, 'comptol') || isempty(opt.comptol)
+if ~isfield(opt, 'comptol') || isempty(opt.comptol) || opt.comptol == 0
     opt.comptol = 1e-6;
 end
-if ~isfield(opt, 'costtol') || isempty(opt.costtol)
+if ~isfield(opt, 'costtol') || isempty(opt.costtol) || opt.costtol == 0
     opt.costtol = 1e-6;
 end
 if ~isfield(opt, 'max_it') || isempty(opt.max_it)

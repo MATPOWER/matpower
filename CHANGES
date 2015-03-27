@@ -15,6 +15,14 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.1
 -----------------
 
+3/27/15
+    - Fixed issue where default value of 'feastol' option was not being
+      set correctly in mips() when called directly (or via qps_mips())
+      with 'feastol' = 0. By default, MATPOWER option 'mips.feastol' is
+      set to zero but is normally replaced in mipsopf_solver() or
+      dcopf_solver() with value of 'opf.violation' option before
+      calling mips(), thereby masking the problem.
+
 3/24/15
     - Added code to DC OPF to return success = 0 for cases where the
       matrix is singular (e.g. islanded system without slack).
