@@ -71,7 +71,9 @@ if nargin < 2
                 if isscalar(vt0) && N > 1 
                     vt = [ vt char(vt0 * ones(1, N)) ];
                 else
-                    vt = [ vt vt0 ];
+                    if ~isempty(vt0)
+                        vt = [ vt vt0 ];
+                    end
                 end
             end
         end
