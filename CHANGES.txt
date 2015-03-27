@@ -22,6 +22,9 @@ Changes since 5.1
       set to zero but is normally replaced in mipsopf_solver() or
       dcopf_solver() with value of 'opf.violation' option before
       calling mips(), thereby masking the problem.
+    - In miqps_glpk() variables of type 'B' (binary) are converted to
+      'I' (integer) with appropriate bounds, since some versions of
+      GLPK do not natively handle type 'B'.
 
 3/24/15
     - Added code to DC OPF to return success = 0 for cases where the

@@ -220,6 +220,15 @@ else
         vtype = vtype';
     end
 end
+%% convert 'B' variables to 'I' and clip bounds to [0, 1]
+k = find(vtype == 'B');
+if ~isempty(k)
+    kk = find(xmax(k) > 1);
+    xmax(k(kk)) = 1;
+    kk = find(xmin(k) < 0);
+    xmin(k(kk)) = 0;
+    vtype(k) = 'I';
+end
 
 %% set options struct for GLPK
 if ~isempty(opt) && isfield(opt, 'glpk_opt') && ~isempty(opt.glpk_opt)
