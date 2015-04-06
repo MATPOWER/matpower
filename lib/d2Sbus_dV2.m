@@ -18,7 +18,7 @@ function [Gaa, Gav, Gva, Gvv] = d2Sbus_dV2(Ybus, V, lam)
 %       Gvv = (d/dVm (dSbus_dVm.')) * lam
 %
 %   For more details on the derivations behind the derivative code used
-%   in MATPOWER information, see:
+%   in MATPOWER, see:
 %
 %   [TN2]  R. D. Zimmerman, "AC Power Flows, Generalized OPF Costs and
 %          their Derivatives using Complex Matrix Notation", MATPOWER
