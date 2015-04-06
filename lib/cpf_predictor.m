@@ -1,7 +1,8 @@
 function [V0, lam0, z] = cpf_predictor(V, lam, Ybus, Sxfr, pv, pq, ...
                             step, z, Vprv, lamprv, parameterization)
 %CPF_PREDICTOR  Performs the predictor step for the continuation power flow
-%   [V0, LAM0, Z] = CPF_PREDICTOR(VPRV, LAMPRV, YBUS, SXFR, PV, PQ, STEP, Z)
+%   [V0, LAM0, Z] = CPF_PREDICTOR(V, LAM, YBUS, SXFR, PV, PQ, STEP, Z, ...
+%                                 VPRV, LAMPRV, PARAMETERIZATION)
 %
 %   Computes a prediction (approximation) to the next solution of the
 %   continuation power flow using a normalized tangent predictor.
