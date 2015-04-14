@@ -51,7 +51,7 @@ j3 = j2 + 1;    j4 = j2 + npq;      %% j3:j4 - V angle of pq buses
 j5 = j4 + 1;    j6 = j4 + npq;      %% j5:j6 - V mag of pq buses
 
 %% evaluate F(x0)
-mis = V .* conj(Ybus * V) - Sbus;
+mis = V .* conj(Ybus * V) - Sbus(Vm);
 F = [   real(mis([pv; pq]));
         imag(mis(pq))   ];
 
@@ -76,6 +76,8 @@ while (~converged && i < max_it)
     
     %% evaluate Jacobian
     [dSbus_dVm, dSbus_dVa] = dSbus_dV(Ybus, V);
+    [dummy, neg_dSd_dVm] = Sbus(Vm);
+    dSbus_dVm = dSbus_dVm - neg_dSd_dVm;
     
     j11 = real(dSbus_dVa([pv; pq], [pv; pq]));
     j12 = real(dSbus_dVm([pv; pq], pq));
@@ -101,7 +103,7 @@ while (~converged && i < max_it)
     Va = angle(V);          %% we wrapped around with a negative Vm
 
     %% evalute F(x)
-    mis = V .* conj(Ybus * V) - Sbus;
+    mis = V .* conj(Ybus * V) - Sbus(Vm);
     F = [   real(mis(pv));
             real(mis(pq));
             imag(mis(pq))   ];

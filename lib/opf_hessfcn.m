@@ -144,6 +144,11 @@ lamP = lambda.eqnonlin(1:nlam);
 lamQ = lambda.eqnonlin((1:nlam)+nlam);
 [Gpaa, Gpav, Gpva, Gpvv] = d2Sbus_dV2(Ybus, V, lamP);
 [Gqaa, Gqav, Gqva, Gqvv] = d2Sbus_dV2(Ybus, V, lamQ);
+%% constant impedance part of ZIP loads
+diaglam = sparse(1:nb, 1:nb, lamP, nb, nb);
+Sd = makeSdzip(baseMVA, bus, mpopt);
+diagSdz = sparse(1:nb, 1:nb, Sd.z, nb, nb);
+Gpvv = Gpvv + 2 * diaglam * diagSdz;
 d2G = [
     real([Gpaa Gpav; Gpva Gpvv]) + imag([Gqaa Gqav; Gqva Gqvv]) sparse(2*nb, nxtra);
     sparse(nxtra, 2*nb + nxtra)

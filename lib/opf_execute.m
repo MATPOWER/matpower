@@ -66,6 +66,19 @@ else
     mpopt = mpoption(mpopt, 'opf.ac.solver', alg);
   end
 
+  %% ZIP loads?
+  if (~isempty(mpopt.exp.sys_wide_zip_loads.pw) && ...
+          any(mpopt.exp.sys_wide_zip_loads.pw(2:3))) || ...
+          (~isempty(mpopt.exp.sys_wide_zip_loads.qw) && ...
+          any(mpopt.exp.sys_wide_zip_loads.qw(2:3)))
+    switch alg
+    case {'PDIPM', 'TRALM', 'MINOPF', 'SDPOPF'}
+      warning('opf_execute: ''%s'' solver does not support ZIP load model. Converting to constant power loads.', alg)
+      mpopt = mpoption(mpopt, 'exp.sys_wide_zip_loads', ...
+                        struct('pw', [], 'qw', []));
+    end
+  end
+
   %% run specific AC OPF solver
   switch alg
     case 'MIPS'

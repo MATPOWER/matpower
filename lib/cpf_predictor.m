@@ -1,4 +1,4 @@
-function [V0, lam0, z] = cpf_predictor(V, lam, Ybus, Sxfr, pv, pq, ...
+function [V0, lam0, z] = cpf_predictor(V, lam, Ybus, Sxfr, Sbust, pv, pq, ...
                             step, z, Vprv, lamprv, parameterization)
 %CPF_PREDICTOR  Performs the predictor step for the continuation power flow
 %   [V0, LAM0, Z] = CPF_PREDICTOR(V, LAM, YBUS, SXFR, PV, PQ, STEP, Z, ...
@@ -11,8 +11,11 @@ function [V0, lam0, z] = cpf_predictor(V, lam, Ybus, Sxfr, pv, pq, ...
 %       V : complex bus voltage vector at current solution
 %       LAM : scalar lambda value at current solution
 %       YBUS : complex bus admittance matrix
-%       SXFR : complex vector of scheduled transfers (difference between
-%              bus injections in base and target cases)
+%       SXFR : handle of function returning complex vector of scheduled
+%              transfers (difference between bus injections in base and
+%              target cases)
+%       SBUST : handle of function returning bus injections for target case
+%               and derivatives w.r.t. voltage magnitudes
 %       PV : vector of indices of PV buses
 %       PQ : vector of indices of PQ buses
 %       STEP : continuation step length
@@ -42,9 +45,13 @@ nb = length(V);
 npv = length(pv);
 npq = length(pq);
 
+Vm = abs(V);
+
 %% compute Jacobian for the power flow equations
 [dSbus_dVm, dSbus_dVa] = dSbus_dV(Ybus, V);
-    
+[dummy, neg_dSd_dVm] = Sbust(Vm);
+dSbus_dVm = dSbus_dVm - lam * neg_dSd_dVm;
+
 j11 = real(dSbus_dVa([pv; pq], [pv; pq]));
 j12 = real(dSbus_dVm([pv; pq], pq));
 j21 = imag(dSbus_dVa(pq, [pv; pq]));
@@ -53,7 +60,8 @@ j22 = imag(dSbus_dVm(pq, pq));
 J = [   j11 j12;
         j21 j22;    ];
 
-dF_dlam = -[real(Sxfr([pv; pq])); imag(Sxfr(pq))];
+Sxf = Sxfr(Vm);     %% update target based on current voltages
+dF_dlam = -[real(Sxf([pv; pq])); imag(Sxf(pq))];
 [dP_dV, dP_dlam] = cpf_p_jac(parameterization, z, V, lam, Vprv, lamprv, pv, pq);
 
 %% linear operator for computing the tangent predictor

@@ -387,6 +387,16 @@ function opt = mpoption(varargin)
 %       tralm.minor_it          40          maximum number of minor iterations
 %       tralm.smooth_ratio      0.04        piecewise linear curve smoothing
 %                                           ratio
+%
+%Experimental Options:
+%   exp.sys_wide_zip_loads.pw   <empty>     1 x 3 vector of active load fraction
+%                                           to be modeled as constant power,
+%                                           constant current and constant
+%                                           impedance, respectively, where
+%                                           <empty> means use [1 0 0]
+%   exp.sys_wide_zip_loads.qw   <empty>     same for reactive power, where
+%                                           <empty> means use same value as
+%                                           for 'pw'
 
 %   MATPOWER
 %   Copyright (c) 2013-2015 by Power System Engineering Research Center (PSERC)
@@ -452,6 +462,9 @@ if have_opt0
             end
             if opt0.v <= 7          %% convert version 7 to 8
                 opt0.mips.linsolver = opt_d.mips.linsolver;
+            end
+            if opt0.v <= 8          %% convert version 8 to 9
+                opt0.exp.sys_wide_zip_loads = opt_d.exp.sys_wide_zip_loads;
             end
             opt0.v = v;
         end
@@ -1429,7 +1442,11 @@ opt = struct(...
         'costtol',              1e-6, ...
         'max_it',               150, ...
         'sc',                   struct(...
-            'red_it',               20  )) ...
+            'red_it',               20  )), ...
+    'exp',                  struct(... %% experimental options
+        'sys_wide_zip_loads',   struct(...
+            'pw',                   [], ...
+            'qw',                   []  )) ...
 );
 opt_pkgs = mpoption_optional_pkgs();
 for k = 1:length(opt_pkgs)
@@ -1454,7 +1471,7 @@ end
 %% globals
 %%-------------------------------------------------------------------
 function v = mpoption_version
-v = 8;      %% version number of MATPOWER options struct
+v = 9;      %% version number of MATPOWER options struct
             %% (must be incremented every time structure is updated)
             %% v1   - first version based on struct (MATPOWER 5.0b1)
             %% v2   - added 'linprog' and 'quadprog' fields
@@ -1469,6 +1486,8 @@ v = 8;      %% version number of MATPOWER options struct
             %% v7   - added 'intlinprog' field
             %% v8   - MIPS 1.2, added 'linsolver' field to
             %%        'mips' options
+            %% v9   - added 'exp' for experimental fields, specifically
+            %%        'sys_wide_zip_loads.pw', 'sys_wide_zip_loads.qw'
 
 %%-------------------------------------------------------------------
 function db_level = DEBUG

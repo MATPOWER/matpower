@@ -194,8 +194,9 @@ else                                %% AC formulation
     
     repeat = 1;
     while (repeat)
-        %% compute complex bus power injections (generation - load)
-        Sbus = makeSbus(baseMVA, bus, gen);
+        %% function for computing V dependent complex bus power injections
+        %% (generation - load)
+        Sbus = @(Vm)makeSbus(baseMVA, bus, gen, mpopt, Vm);
         
         %% run the power flow
         switch alg
@@ -205,7 +206,15 @@ else                                %% AC formulation
                 [Bp, Bpp] = makeB(baseMVA, bus, branch, alg);
                 [V, success, iterations] = fdpf(Ybus, Sbus, V0, Bp, Bpp, ref, pv, pq, mpopt);
             case 'GS'
-                [V, success, iterations] = gausspf(Ybus, Sbus, V0, ref, pv, pq, mpopt);
+                if (~isempty(mpopt.exp.sys_wide_zip_loads.pw) && ...
+                        any(mpopt.exp.sys_wide_zip_loads.pw(2:3))) || ...
+                        (~isempty(mpopt.exp.sys_wide_zip_loads.qw) && ...
+                        any(mpopt.exp.sys_wide_zip_loads.qw(2:3)))
+                    warning('runpf: Gauss-Seidel algorithm does not support ZIP load model. Converting to constant power loads.')
+                    mpopt = mpoption(mpopt, 'exp.sys_wide_zip_loads', ...
+                                    struct('pw', [], 'qw', []));
+                end
+                [V, success, iterations] = gausspf(Ybus, Sbus([]), V0, ref, pv, pq, mpopt);
             otherwise
                 error('Only Newton''s method, fast-decoupled, and Gauss-Seidel power flow algorithms currently implemented.');
         end

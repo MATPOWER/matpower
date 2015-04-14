@@ -38,7 +38,7 @@ function [h, g, dh, dg] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt, il, varargin)
 %   MATPOWER
 %   Copyright (c) 1996-2015 by Power System Engineering Research Center (PSERC)
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
-%   and Ray Zimmerman, PSERC Cornell
+%   Ray Zimmerman, PSERC Cornell and Shrirang Abhyankar
 %
 %   $Id$
 %
@@ -80,14 +80,14 @@ Qg = x(vv.i1.Qg:vv.iN.Qg);  %% reactive generation in p.u.
 gen(:, PG) = Pg * baseMVA;  %% active generation in MW
 gen(:, QG) = Qg * baseMVA;  %% reactive generation in MVAr
  
-%% rebuild Sbus
-Sbus = makeSbus(baseMVA, bus, gen); %% net injected power in p.u.
-
 %% ----- evaluate constraints -----
 %% reconstruct V
 Va = x(vv.i1.Va:vv.iN.Va);
 Vm = x(vv.i1.Vm:vv.iN.Vm);
 V = Vm .* exp(1j * Va);
+
+%% rebuild Sbus
+Sbus = makeSbus(baseMVA, bus, gen, mpopt, Vm);  %% net injected power in p.u.
 
 %% evaluate power flow equations
 mis = V .* conj(Ybus * V) - Sbus;
@@ -132,6 +132,8 @@ if nargout > 2
 
   %% compute partials of injected bus powers
   [dSbus_dVm, dSbus_dVa] = dSbus_dV(Ybus, V);           %% w.r.t. V
+  [dummy, neg_dSd_dVm] = makeSbus(baseMVA, bus, gen, mpopt, Vm);
+  dSbus_dVm = dSbus_dVm - neg_dSd_dVm;
   neg_Cg = sparse(gen(:, GEN_BUS), 1:ng, -1, nb, ng);   %% Pbus w.r.t. Pg
                                                         %% Qbus w.r.t. Qg
   

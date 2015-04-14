@@ -1,7 +1,7 @@
-function [Pd, Qd] = total_load(bus, gen, load_zone, opt)
+function [Pd, Qd] = total_load(bus, gen, load_zone, opt, mpopt)
 %TOTAL_LOAD Returns vector of total load in each load zone.
 %   PD = TOTAL_LOAD(BUS) returns active power demand for each zone.
-%   PD = TOTAL_LOAD(BUS, GEN, LOAD_ZONE, OPT)
+%   PD = TOTAL_LOAD(BUS, GEN, LOAD_ZONE, OPT, MPOPT)
 %   [PD, QD] = TOTAL_LOAD(...) returns both active and reative power
 %   demand for each zone.
 %
@@ -19,9 +19,13 @@ function [Pd, Qd] = total_load(bus, gen, load_zone, opt)
 %       then the loads at bus b will added to the values of PD(k) and
 %       QD(k). If LOAD_ZONE is empty, the default is defined as the areas
 %       specified in the BUS matrix, i.e. LOAD_ZONE = BUS(:, BUS_AREA)
-%       and load will have dimension = MAX(BUS(:, BUS_AREA)). If
-%       LOAD_ZONE = 'all', the result is a scalar with the total system
-%       load.
+%       and load will have dimension = MAX(BUS(:, BUS_AREA)). LOAD_ZONE
+%       can also take the following string values:
+%           'all'  - use a single zone for the entire system (return scalar)
+%           'area' - use LOAD_ZONE = BUS(:, BUS_AREA), same as default
+%           'bus'  - use a different zone for each bus (i.e. to compute
+%               final values of bus-wise loads, including voltage dependent
+%               fixed loads and or dispatchable loads)
 %
 %   OPT - (optional) option struct, with the following fields:
 %           'type'  -  string specifying types of loads to include, default
@@ -39,6 +43,9 @@ function [Pd, Qd] = total_load(bus, gen, load_zone, opt)
 %       load that is computed for dispatchable loads, not the actual
 %       realized load. Using a string for OPT is deprecated and
 %       will be removed in a future version.
+%
+%   MPOPT - (optional) MATPOWER options struct, which may specify
+%       a voltage dependent (ZIP) load model for fixed loads
 %
 %   Examples:
 %       Return the total active load for each area as defined in BUS_AREA.
@@ -79,12 +86,15 @@ function [Pd, Qd] = total_load(bus, gen, load_zone, opt)
 nb = size(bus, 1);          %% number of buses
 
 %%-----  process inputs  -----
-if nargin < 4
-    opt = [];
-    if nargin < 3
-        load_zone = [];
-        if nargin < 2
-            gen = [];
+if nargin < 5
+    mpopt = [];
+    if nargin < 4
+        opt = [];
+        if nargin < 3
+            load_zone = [];
+            if nargin < 2
+                gen = [];
+            end
         end
     end
 end
@@ -115,8 +125,14 @@ want_fixed  = (opt.type(1) == 'B' || opt.type(1) == 'F');
 want_disp   = (opt.type(1) == 'B' || opt.type(1) == 'D');
 
 %% initialize load_zone
-if ischar(load_zone) && strcmp(load_zone, 'all')
-    load_zone = ones(nb, 1);        %% make a single zone of all buses
+if ischar(load_zone)
+    if strcmp(lower(load_zone), 'bus')
+        load_zone = (1:nb)';            %% each bus is its own zone
+    elseif strcmp(lower(load_zone), 'all')
+        load_zone = ones(nb, 1);        %% make a single zone of all buses
+    elseif strcmp(lower(load_zone), 'area')
+        load_zone = bus(:, BUS_AREA);   %% use areas defined in bus data as zones
+    end
 elseif isempty(load_zone)
     load_zone = bus(:, BUS_AREA);   %% use areas defined in bus data as zones
 end
@@ -124,9 +140,12 @@ nz = max(load_zone);    %% number of load zones
 
 %% fixed load at each bus, & initialize dispatchable
 if want_fixed
-    Pdf = bus(:, PD);       %% real power
+    Sd = makeSdzip(1, bus, mpopt);
+    Vm = bus(:, VM);
+    Sbusd = Sd.p + Sd.i .* Vm + Sd.z .* Vm.^2;
+    Pdf = real(Sbusd);      %% real power
     if want_Q
-        Qdf = bus(:, QD);   %% reactive power
+        Qdf = imag(Sbusd);  %% reactive power
     end
 else
     Pdf = zeros(nb, 1);     %% real power
@@ -169,14 +188,21 @@ else
 end
 
 %% compute load sums
-Pd = zeros(nz, 1);
-if want_Q
-    Qd = zeros(nz, 1);
-end
-for k = 1:nz
-    idx = find( load_zone == k & bus(:, BUS_TYPE) ~= NONE);
-    Pd(k) = sum(Pdf(idx)) + sum(Pdd(idx));
+if nz == nb && all(load_zone == (1:nb)');   %% individual buses
+    Pd = (Pdf + Pdd) .* (bus(:, BUS_TYPE) ~= NONE);
     if want_Q
-        Qd(k) = sum(Qdf(idx)) + sum(Qdd(idx));
+        Qd = (Qdf + Qdd) .* (bus(:, BUS_TYPE) ~= NONE);
+    end
+else
+    Pd = zeros(nz, 1);
+    if want_Q
+        Qd = zeros(nz, 1);
+    end
+    for k = 1:nz
+        idx = find( load_zone == k & bus(:, BUS_TYPE) ~= NONE);
+        Pd(k) = sum(Pdf(idx)) + sum(Pdd(idx));
+        if want_Q
+            Qd(k) = sum(Qdf(idx)) + sum(Qdd(idx));
+        end
     end
 end

@@ -15,9 +15,9 @@ if nargin < 1
     quiet = 0;
 end
 
-v = 8;
+v = 9;
 
-t_begin(138, quiet);
+t_begin(146, quiet);
 
 %% default options struct
 t = 'mpoption() : ';
@@ -100,6 +100,15 @@ t_is(mpopt.out.force, 0, 12, [t '         mpopt.out.force == 0']);
 
 t_ok(isfield(mpopt, 'verbose'), [t ' isfield mpopt.verbose']);
 t_is(mpopt.verbose, 1, 12, [t '         mpopt.verbose == 1']);
+
+t_ok(isfield(mpopt, 'exp'), [t ' isfield mpopt.exp']);
+t_ok(isstruct(mpopt.exp), [t '         isstruct(mpopt.exp)']);
+t_ok(isfield(mpopt.exp, 'sys_wide_zip_loads'), [t ' isfield mpopt.exp.sys_wide_zip_loads']);
+t_ok(isstruct(mpopt.exp.sys_wide_zip_loads), [t '         isstruct(mpopt.exp.sys_wide_zip_loads)']);
+t_ok(isfield(mpopt.exp.sys_wide_zip_loads, 'pw'), [t ' isfield mpopt.exp.sys_wide_zip_loads.pw']);
+t_ok(isempty(mpopt.exp.sys_wide_zip_loads.pw), [t '         isempty(mpopt.exp.sys_wide_zip_loads.pw)']);
+t_ok(isfield(mpopt.exp.sys_wide_zip_loads, 'qw'), [t ' isfield mpopt.exp.sys_wide_zip_loads.qw']);
+t_ok(isempty(mpopt.exp.sys_wide_zip_loads.pw), [t '         isempty(mpopt.exp.sys_wide_zip_loads.pw)']);
 
 mpopt0 = mpopt;
 

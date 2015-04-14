@@ -15,6 +15,18 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.1
 -----------------
 
+4/14/15
+    - Added experimental code to lay foundation for handling ZIP load
+      model in power flow (Newton, fast-decoupled only), continuation
+      power flow, and optimal power flow (MIPS, fmincon, Knitro, IPOPT
+      solvers only). Currently, ZIP loads can only be specified on a
+      system-wide basis using the experimental options
+      'exp.sys_wide_zip_loads.pw' and 'exp.sys_wide_zip_loads.qw'.
+      Tests in t/t_vdep_load().
+    - Added 'bus' and 'area' as possible values for 'load_zone' argument
+      to total_load(), which is now used to compute voltage dependent
+      load values.
+
 3/27/15
     - Fixed issue where default value of 'feastol' option was not being
       set correctly in mips() when called directly (or via qps_mips())

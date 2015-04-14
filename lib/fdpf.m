@@ -53,7 +53,7 @@ npv = length(pv);
 npq = length(pq);
 
 %% evaluate initial mismatch
-mis = (V .* conj(Ybus * V) - Sbus) ./ Vm;
+mis = (V .* conj(Ybus * V) - Sbus(Vm)) ./ Vm;
 P = real(mis([pv; pq]));
 Q = imag(mis(pq));
 
@@ -108,7 +108,7 @@ while (~converged && i < max_it)
     V = Vm .* exp(1j * Va);
 
     %% evalute mismatch
-    mis = (V .* conj(Ybus * V) - Sbus) ./ Vm;
+    mis = (V .* conj(Ybus * V) - Sbus(Vm)) ./ Vm;
     P = real(mis([pv; pq]));
     Q = imag(mis(pq));
     
@@ -139,7 +139,7 @@ while (~converged && i < max_it)
     V = Vm .* exp(1j * Va);
 
     %% evalute mismatch
-    mis = (V .* conj(Ybus * V) - Sbus) ./ Vm;
+    mis = (V .* conj(Ybus * V) - Sbus(Vm)) ./ Vm;
     P = real(mis([pv; pq]));
     Q = imag(mis(pq));
     
