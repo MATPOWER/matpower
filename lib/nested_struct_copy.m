@@ -110,7 +110,6 @@ end
 fields = fieldnames(s);
 for f = 1:length(fields)
     ff = fields{f};
-    [ck, cm, vf] = deal(check, copy_mode, valid_fields);
     
     %% form full field name
     if isempty(parentstr)
@@ -121,12 +120,16 @@ for f = 1:length(fields)
     
     %% field doesn't exist in valid_fields
     if ~isfield(valid_fields, ff)
-        if ck > 0        %% throw an error
+        if check > 0        %% throw an error
             error('nested_struct_copy: ''%s'' is not a valid field name', str);
-        elseif ck < 0    %% skip to next field
+        elseif check < 0    %% skip to next field
             continue;
         end
     end
+    
+    ck = check;
+    cm = copy_mode;
+    vf = valid_fields;
     
     %% look for an exception that matches this field
     if isempty(exceptions)
