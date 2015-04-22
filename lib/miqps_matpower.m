@@ -218,7 +218,7 @@ switch alg
         [x, f, eflag, output, lambda] = ...
             miqps_ot(H, c, A, l, u, xmin, xmax, x0, vtype, opt);
     otherwise
-        error('miqps_matpower: %d is not a valid algorithm code', alg);
+        error('miqps_matpower: ''%s'' is not a valid algorithm code', alg);
 end
 if ~isfield(output, 'alg') || isempty(output.alg)
     output.alg = alg;

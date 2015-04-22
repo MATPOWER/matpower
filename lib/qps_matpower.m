@@ -258,7 +258,7 @@ switch alg
         [x, f, eflag, output, lambda] = ...
             qps_ot(H, c, A, l, u, xmin, xmax, x0, opt);
     otherwise
-        error('qps_matpower: %d is not a valid algorithm code', alg);
+        error('qps_matpower: ''%s'' is not a valid algorithm code', alg);
 end
 if ~isfield(output, 'alg') || isempty(output.alg)
     output.alg = alg;
