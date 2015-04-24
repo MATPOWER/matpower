@@ -15,6 +15,9 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.1
 -----------------
 
+4/24/15
+    - Commented out isolated bus 10287 in case3375wp.m.
+
 4/16/15
     - Added some caching to mpoption() and made minor changes to
       nested_struct_copy() to greatly decrease the overhead added by

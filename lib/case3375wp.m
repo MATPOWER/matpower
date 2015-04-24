@@ -8,6 +8,9 @@ function mpc = case3375wp
 %
 %   This data was graciously provided by, and is distributed with the
 %   permission of, Roman Korab <roman.korab@polsl.pl>.
+%
+%   Note: Bus 10287 is isolated, resulting in a singular power flow
+%         Jacobian, and has been commented out. (RDZ 4/24/2015)
 
 %   MATPOWER
 %   $Id$
@@ -306,7 +309,7 @@ mpc.bus = [
 	10283	1	0	0	0	0	0	1.01468	-23.76967	13	0	1.12	0.95;
 	10284	2	1122.7	280.7	0	0	0	1.12	-20.1553	110	0	1.12	0.95;
 	10285	2	155.7	32.1	0	0	0	1.0574	-14.40001	110	0	1.12	0.95;
-	10287	1	0	0	0	0	0	1	0	110	0	1.12	0.95;
+%	10287	1	0	0	0	0	0	1	0	110	0	1.12	0.95;	% this bus is isolated (rdz)
 	10288	2	197.5	44.6	0	0	0	1.03369	-17.16989	110	0	1.12	0.95;
 	10289	2	124.6	23.4	0	0	0	1.05256	-17.86813	110	0	1.12	0.95;
 	10290	2	148.9	31.1	0	0	0	1.06119	-22.81444	110	0	1.12	0.95;
