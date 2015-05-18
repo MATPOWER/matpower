@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.1
 -----------------
 
+5/18/15
+    - Fixed a crash in have_fcn() caused by changes in OPTI Toolbox
+      v2.15 (or possibly v2.12).
+
 4/24/15
     - Commented out isolated bus 10287 in case3375wp.m.
 

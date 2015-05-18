@@ -152,7 +152,7 @@ else        %% detect availability
                 TorF = exist('opti_clp', 'file') == 2 && exist('clp', 'file') == 3;
                 if TorF
                     str = evalc('clp');
-                    pat = 'CLP: COIN-OR Linear Programming \[v([^\s,]+), Built ([^\]])+\]';  %% OPTI, Giorgetti/Currie
+                    pat = 'CLP: COIN-OR Linear Programming \[v([^\s,]+), Built ([^\],])+(,[^\]]*)*\]';  %% OPTI, Giorgetti/Currie
                     [s,e,tE,m,t] = regexp(str, pat);
                     if ~isempty(t)
                         vstr = t{1}{1};
@@ -232,7 +232,7 @@ else        %% detect availability
                 if exist('glpk','file') == 3    %% Windows OPTI install (no glpk.m)
                     TorF = 1;
                     str = evalc('glpk');
-                    pat = 'GLPK: GNU Linear Programming Kit \[v([^\s,]+), Built ([^\]])+\]';  %% OPTI, Giorgetti/Currie
+                    pat = 'GLPK: GNU Linear Programming Kit \[v([^\s,]+), Built ([^\],])+(,[^\]]*)*\]';  %% OPTI, Giorgetti/Currie
                     [s,e,tE,m,t] = regexp(str, pat);
                     if ~isempty(t)
                         vstr = t{1}{1};
