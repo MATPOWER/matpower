@@ -66,7 +66,7 @@ function opt = gurobi_options(overrides, mpopt)
 %   For details on the available options, see the "Parameters" section
 %   of the "Gurobi Optimizer Reference Manual" at:
 %
-%       http://www.gurobi.com/documentation/5.6/reference-manual/parameters
+%       http://www.gurobi.com/documentation/6.0/refman/parameters.html
 %
 %   See also GUROBI, MPOPTION.
 
