@@ -270,23 +270,23 @@ function Lxx = hess6(x, lam, cost_mult)
 function [f, df, d2f] = f7(x)
     f = x(1)*x(4)*sum(x(1:3)) + x(3);
     df = [ x(1)*x(4) + x(4)*sum(x(1:3));
-		   x(1)*x(4);
-		   x(1)*x(4) + 1;
-		   x(1)*sum(x(1:3)) ];
+           x(1)*x(4);
+           x(1)*x(4) + 1;
+           x(1)*sum(x(1:3)) ];
     d2f = sparse([ 2*x(4)        x(4)   x(4)  2*x(1)+x(2)+x(3);
               x(4)               0      0     x(1);
               x(4)               0      0     x(1);
               2*x(1)+x(2)+x(3)  x(1)  x(1)    0
-    	]);
+        ]);
 
 function [h, g, dh, dg] = gh7(x)
     g = sum(x.^2) - 40;
     h = -prod(x) + 25;
-	dg = 2*x;
-	dh = -prod(x)./x;
+    dg = 2*x;
+    dh = -prod(x)./x;
 
 function Lxx = hess7(x, lam, sigma)
-	if nargin < 3, sigma = 1; end
+    if nargin < 3, sigma = 1; end
     lambda = lam.eqnonlin;
     mu     = lam.ineqnonlin;
     [f, df, d2f] = f7(x);
