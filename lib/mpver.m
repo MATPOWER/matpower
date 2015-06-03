@@ -11,8 +11,6 @@ function rv = mpver(varargin)
 %   Copyright (c) 2005-2015 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
-%   $Id$
-%
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
@@ -30,7 +28,7 @@ function rv = mpver(varargin)
 v{1} = struct(  'Name',     'MATPOWER', ... 
                 'Version',  '5.1+', ...
                 'Release',  '', ...
-                'Date',     '14-Apr-2015' );
+                'Date',     '3-Jun-2015' );
 if nargout > 0
     if nargin > 0
         rv = v{1};
