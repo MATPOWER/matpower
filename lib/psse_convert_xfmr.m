@@ -105,10 +105,10 @@ if nt2 > 0
     Zb(cz23) = trans2(cz23,25).^2 ./ trans2(cz23,23);
     R(cz2)  = R(cz2)  .* Zb(cz2)  ./ Zbs(fbus(cz2));
     X(cz23) = X(cz23) .* Zb(cz23) ./ Zbs(fbus(cz23));
-    R(cz3)  = trans2(cz3,25).^2 ./ trans2(cz3,21) ./ Zbs(fbus(cz3));
+    R(cz3)  = trans2(cz3,25).^2 ./ trans2(cz3,21) ./ Zbs(fbus(cz3), 1);
     tap = trans2(:,24) ./ trans2(:,40);
-    tap(cw23) = tap(cw23) .* bus(tbus(cw23), BASE_KV)./bus(fbus(cw23), BASE_KV);
-    tap(cw3) = tap(cw3) .* trans2(cw3,25)./trans2(cw3,41);
+    tap(cw23) = tap(cw23, 1) .* bus(tbus(cw23), BASE_KV)./bus(fbus(cw23), BASE_KV);
+    tap(cw3)  = tap(cw3, 1)  .* trans2(cw3,25)./trans2(cw3,41);
     shift = trans2(:, 26);
 end
 
@@ -146,12 +146,12 @@ if nt3 > 0
     tap1 = trans3(:, 32);   %% off nominal tap ratio of branch 1
     tap2 = trans3(:, 48);   %% off nominal tap ratio of branch 2
     tap3 = trans3(:, 64);   %% off nominal tap ratio of branch 3
-    tap1(cw23) = tap1(cw23) ./ bus(ind1(cw23), BASE_KV);
-    tap2(cw23) = tap2(cw23) ./ bus(ind2(cw23), BASE_KV);
-    tap3(cw23) = tap3(cw23) ./ bus(ind3(cw23), BASE_KV);
-    tap1(cw3)  = tap1(cw3)  .* trans3(cw3, 33);
-    tap2(cw3)  = tap2(cw3)  .* trans3(cw3, 49);
-    tap3(cw3)  = tap3(cw3)  .* trans3(cw3, 65);
+    tap1(cw23) = tap1(cw23, 1) ./ bus(ind1(cw23), BASE_KV);
+    tap2(cw23) = tap2(cw23, 1) ./ bus(ind2(cw23), BASE_KV);
+    tap3(cw23) = tap3(cw23, 1) ./ bus(ind3(cw23), BASE_KV);
+    tap1(cw3)  = tap1(cw3, 1)  .* trans3(cw3, 33);
+    tap2(cw3)  = tap2(cw3, 1)  .* trans3(cw3, 49);
+    tap3(cw3)  = tap3(cw3, 1)  .* trans3(cw3, 65);
     shift1 = trans3(:, 34);
     shift2 = trans3(:, 50);
     shift3 = trans3(:, 66);
@@ -177,12 +177,12 @@ if nt3 > 0
     R31(cz2) = R31(cz2) .* Zb3(cz2) ./ Zbs(ind3(cz2));
     X31(cz2) = X31(cz2) .* Zb3(cz2) ./ Zbs(ind3(cz2));
 
-    R12(cz3) = (trans3(cz3,33)*1000) .^ 2 ./ trans3(cz3,21) ./ Zbs(ind1(cz3));
-    X12(cz3) = trans3(cz3,22) .* Zb1(cz3) ./ Zbs(ind3(cz3));
-    R23(cz3) = (trans3(cz3,49)*1000) .^ 2 ./ trans3(cz3,24) ./ Zbs(ind2(cz3));
-    X23(cz3) = trans3(cz3,25) .* Zb2(cz3) ./ Zbs(ind3(cz3));
-    R31(cz3) = (trans3(cz3,65)*1000) .^ 2 ./ trans3(cz3,27) ./ Zbs(ind3(cz3));
-    X31(cz3) = trans3(cz3,28) .* Zb3(cz3) ./ Zbs(ind3(cz3));
+    R12(cz3) = (trans3(cz3,33)*1000) .^ 2 ./ trans3(cz3,21) ./ Zbs(ind1(cz3), 1);
+    X12(cz3) = trans3(cz3,22) .* Zb1(cz3, 1) ./ Zbs(ind3(cz3), 1);
+    R23(cz3) = (trans3(cz3,49)*1000) .^ 2 ./ trans3(cz3,24) ./ Zbs(ind2(cz3), 1);
+    X23(cz3) = trans3(cz3,25) .* Zb2(cz3, 1) ./ Zbs(ind3(cz3), 1);
+    R31(cz3) = (trans3(cz3,65)*1000) .^ 2 ./ trans3(cz3,27) ./ Zbs(ind3(cz3), 1);
+    X31(cz3) = trans3(cz3,28) .* Zb3(cz3, 1) ./ Zbs(ind3(cz3), 1);
 
     R1 = (R12+R31-R23) ./ 2;
     R2 = (R12+R23-R31) ./ 2;
