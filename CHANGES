@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.1
 -----------------
 
+7/9/15
+    - Modified have_fcn() to return 0 and warn for unrecognized
+      functionality, instead of producing fatal error.
+
 6/19/15
     - Fixed a fatal bug in psse_convert_xfmr() affecting transformers
       with CW and/or CZ equal to 1. Thanks to Matthias Resch.
