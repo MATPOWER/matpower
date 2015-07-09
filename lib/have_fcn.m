@@ -515,7 +515,9 @@ else        %% detect availability
 
         %%-----  unknown tag  -----
             otherwise
-                error('have_fcn: unknown functionality %s', tag);
+                warning('have_fcn: unknown functionality ''%s''', tag);
+                TorF = 0;
+                vstr = 'unknown';
         end
 
         %% assign values to cache
