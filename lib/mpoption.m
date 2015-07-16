@@ -131,8 +131,8 @@ function opt = mpoption(varargin)
 %       [             method, requires TSPOPF (see 'PDIPM')                 ]
 %   opf.dc.solver           'DEFAULT'   DC optimal power flow solver
 %       [ 'DEFAULT' - choose solver based on availability in the following  ]
-%       [             order: 'CPLEX', 'GUROBI', 'MOSEK','BPMPD','OT',       ]
-%       [             'GLPK' (linear costs only), 'MIPS'                    ]
+%       [             order: 'GUROBI', 'CPLEX', 'MOSEK', 'OT',              ]
+%       [             'GLPK' (linear costs only), 'BPMPD', 'MIPS'           ]
 %       [ 'MIPS'    - MIPS, Matlab Interior Point Solver, primal/dual       ]
 %       [             interior point method (pure Matlab)                   ]
 %       [ 'BPMPD'   - BPMPD, requires optional MEX-based BPMPD_MEX package  ]

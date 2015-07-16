@@ -189,18 +189,18 @@ else
     verbose = 0;
 end
 if strcmp(alg, 'DEFAULT')
-    if have_fcn('cplex')        %% use CPLEX by default, if available
-        alg = 'CPLEX';
-    elseif have_fcn('gurobi')   %% if not, then Gurobi, if available
+    if have_fcn('gurobi')       %% use Gurobi by default, if available
         alg = 'GUROBI';
+    elseif have_fcn('cplex')    %% if not, then CPLEX, if available
+        alg = 'CPLEX';
     elseif have_fcn('mosek')    %% if not, then MOSEK, if available
         alg = 'MOSEK';
-    elseif have_fcn('bpmpd')    %% if not, then BPMPD_MEX, if available
-        alg = 'BPMPD';
     elseif have_fcn('quadprog') %% if not, then Optimization Tbx, if available
         alg = 'OT';
     elseif (isempty(H) || ~any(any(H))) && have_fcn('glpk') %% if not, and
         alg = 'GLPK';           %% prob is LP (not QP), then GLPK, if available
+    elseif have_fcn('bpmpd')    %% if not, then BPMPD_MEX, if available
+        alg = 'BPMPD';
     else                        %% otherwise MIPS
         alg = 'MIPS';
     end
