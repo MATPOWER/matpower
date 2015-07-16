@@ -1482,7 +1482,7 @@ optt = opt;
 %% globals
 %%-------------------------------------------------------------------
 function v = mpoption_version
-v = 9;      %% version number of MATPOWER options struct
+v = 10;     %% version number of MATPOWER options struct
             %% (must be incremented every time structure is updated)
             %% v1   - first version based on struct (MATPOWER 5.0b1)
             %% v2   - added 'linprog' and 'quadprog' fields
@@ -1499,6 +1499,7 @@ v = 9;      %% version number of MATPOWER options struct
             %%        'mips' options
             %% v9   - added 'exp' for experimental fields, specifically
             %%        'sys_wide_zip_loads.pw', 'sys_wide_zip_loads.qw'
+            %% v10  - added 'mops' field
 
 %%-------------------------------------------------------------------
 function db_level = DEBUG
