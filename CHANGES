@@ -15,6 +15,13 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.1
 -----------------
 
+7/16/15
+    - Added mpopt2qpopt() to provide common interface for creating
+      options struct for mi/qps_matpower() from a MATPOWER options
+      struct.
+    - Changed default solver order for LP, QP, MILP, MIQP problems
+      to move Gurobi before CPLEX and BPMPD after OT and GLPK.
+
 7/9/15
     - Modified have_fcn() to return 0 and warn for unrecognized
       functionality, instead of producing fatal error.

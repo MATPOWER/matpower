@@ -183,10 +183,10 @@ else
     verbose = 0;
 end
 if strcmp(alg, 'DEFAULT')
-    if have_fcn('cplex')        %% use CPLEX by default, if available
-        alg = 'CPLEX';
-    elseif have_fcn('gurobi')   %% if not, then Gurobi, if available
+    if have_fcn('gurobi')       %% use Gurobi by default, if available
         alg = 'GUROBI';
+    elseif have_fcn('cplex')    %% if not, then CPLEX, if available
+        alg = 'CPLEX';
     elseif have_fcn('mosek')    %% if not, then MOSEK, if available
         alg = 'MOSEK';
     elseif isempty(H) || ~any(any(H))   %% if not, and linear objective

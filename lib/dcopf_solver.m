@@ -54,9 +54,6 @@ function [results, success, raw] = dcopf_solver(om, mpopt)
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 
-%% options
-alg = upper(mpopt.opf.dc.solver);
-
 %% unpack data
 mpc = get_mpc(om);
 [baseMVA, bus, gen, branch, gencost] = ...
@@ -136,79 +133,33 @@ HH = MN' * HHw * MN;
 CC = full(MN' * (CCw - HMR));
 C0 = 1/2 * MR' * HMR + sum(polycf(:, 3));   %% constant term of cost
 
-%% default solver
-if strcmp(alg, 'DEFAULT')
-    if have_fcn('cplex')        %% use CPLEX by default, if available
-        alg = 'CPLEX';
-    elseif have_fcn('gurobi')   %% if not, then Gurobi, if available
-        alg = 'GUROBI';
-    elseif have_fcn('mosek')    %% if not, then MOSEK, if available
-        alg = 'MOSEK';
-    elseif have_fcn('bpmpd')    %% if not, then BPMPD_MEX, if available
-        alg = 'BPMPD';
-    elseif have_fcn('quadprog') %% if not, then Optimization Tbx, if available
-        alg = 'OT';
-    elseif (isempty(HH) || ~any(any(HH))) && have_fcn('glpk') %% if not, and
-        alg = 'GLPK';           %% prob is LP (not QP), then GLPK, if available
-    else                        %% otherwise MIPS
-        alg = 'MIPS';
-    end
+%% options
+if isempty(HH) || ~any(any(HH))
+    model = 'LP';
+else
+    model = 'QP';
 end
+opt = mpopt2qpopt(mpopt, model);
 
-%% set up input for QP solver
-opt = struct('alg', alg, 'verbose', mpopt.verbose);
-switch alg
-    case {'MIPS', 'IPOPT'}
-        %% try to select an interior initial point
-        if mpopt.opf.init_from_mpc ~= 1
-            Varefs = bus(bus(:, BUS_TYPE) == REF, VA) * (pi/180);
+%% try to select an interior initial point, unless requested not to
+if mpopt.opf.init_from_mpc ~= 1 && ...
+        (strcmp(opt.alg, 'MIPS') || strcmp(opt.alg, 'IPOPT'))
+    Varefs = bus(bus(:, BUS_TYPE) == REF, VA) * (pi/180);
 
-            lb = xmin; ub = xmax;
-            lb(xmin == -Inf) = -1e10;   %% replace Inf with numerical proxies
-            ub(xmax ==  Inf) =  1e10;
-            x0 = (lb + ub) / 2;         %% set x0 mid-way between bounds
-            k = find(xmin == -Inf & xmax < Inf);    %% if only bounded above
-            x0(k) = xmax(k) - 1;                    %% set just below upper bound
-            k = find(xmin > -Inf & xmax == Inf);    %% if only bounded below
-            x0(k) = xmin(k) + 1;                    %% set just above lower bound
-            x0(vv.i1.Va:vv.iN.Va) = Varefs(1);  %% angles set to first reference angle
-            if ny > 0
-                ipwl = find(gencost(:, MODEL) == PW_LINEAR);
-                c = gencost(sub2ind(size(gencost), ipwl, NCOST+2*gencost(ipwl, NCOST)));    %% largest y-value in CCV data
-                x0(vv.i1.y:vv.iN.y) = max(c) + 0.1 * abs(max(c));
-            end
-        end
-        switch alg
-            case 'MIPS'
-                %% set up options
-                opt.mips_opt = mpopt.mips;
-                opt.mips_opt.verbose = mpopt.verbose;
-                if opt.mips_opt.feastol == 0
-                    opt.mips_opt.feastol = mpopt.opf.violation;  %% = MPOPT.opf.violation by default
-                end
-                if ~isfield(opt.mips_opt, 'cost_mult') || isempty(opt.mips_opt.cost_mult)
-                    opt.mips_opt.cost_mult = 1;
-                end
-            case 'IPOPT'
-                opt.ipopt_opt = ipopt_options([], mpopt);
-        end
-    case 'CLP'
-        opt.clp_opt = clp_options([], mpopt);
-    case 'CPLEX'
-        opt.cplex_opt = cplex_options([], mpopt);
-    case 'GLPK'
-        opt.glpk_opt = glpk_options([], mpopt);
-    case 'GUROBI'
-        opt.grb_opt = gurobi_options([], mpopt);
-    case 'MOSEK'
-        opt.mosek_opt = mosek_options([], mpopt);
-    case 'OT'
-        if isfield(mpopt, 'linprog') && ~isempty(mpopt.linprog)
-            opt.linprog_opt = mpopt.linprog;
-        end
-        if isfield(mpopt, 'quadprog') && ~isempty(mpopt.quadprog)
-            opt.quadprog_opt = mpopt.quadprog;
-        end
+    lb = xmin; ub = xmax;
+    lb(xmin == -Inf) = -1e10;   %% replace Inf with numerical proxies
+    ub(xmax ==  Inf) =  1e10;
+    x0 = (lb + ub) / 2;         %% set x0 mid-way between bounds
+    k = find(xmin == -Inf & xmax < Inf);    %% if only bounded above
+    x0(k) = xmax(k) - 1;                    %% set just below upper bound
+    k = find(xmin > -Inf & xmax == Inf);    %% if only bounded below
+    x0(k) = xmin(k) + 1;                    %% set just above lower bound
+    x0(vv.i1.Va:vv.iN.Va) = Varefs(1);  %% angles set to first reference angle
+    if ny > 0
+        ipwl = find(gencost(:, MODEL) == PW_LINEAR);
+        c = gencost(sub2ind(size(gencost), ipwl, NCOST+2*gencost(ipwl, NCOST)));    %% largest y-value in CCV data
+        x0(vv.i1.y:vv.iN.y) = max(c) + 0.1 * abs(max(c));
+    end
 end
 
 %%-----  run opf  -----
