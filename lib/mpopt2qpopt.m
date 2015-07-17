@@ -20,10 +20,10 @@ function qpopt = mpopt2qpopt(mpopt, model, alg)
 %                   (GUROBI, CPLEX, MOSEK, OT, GLPK)
 %           'MIQP' - (default) QP with mixed integer/continuous variables
 %                   (GUROBI, CPLEX, MOSEK)
-%       ALG ('opf.dc') : (optional) 'opf.dc' or any valid value of
-%               OPT.alg for QPS_MATPOWER or MIQPS_MATPOWER. The first
-%               option indicates that it should be taken from
-%               MPOPT.opf.dc.solver.
+%       ALG ('opf.dc') : (optional) 'opf.dc', 'mops', or any valid value of
+%               OPT.alg for QPS_MATPOWER or MIQPS_MATPOWER. The first two
+%               options indicate that it should be taken from
+%               MPOPT.opf.dc.solver or MPOPT.mops.solver, respectively.
 %
 %   Output:
 %       QPOPT : an options struct for use by QPS_MATPOWER or MIQPS_MATPOWER
@@ -51,11 +51,15 @@ if isempty(model)
 else
     model = upper(model);
 end
+skip_prices = 0;
 
 %% get ALG from mpopt, if necessary
 switch alg
     case {'opf.dc', ''}
         alg = upper(mpopt.opf.dc.solver);
+    case 'mops'
+        alg = upper(mpopt.mops.solver);
+        skip_prices = mpopt.mops.skip_prices;
     otherwise
         alg = upper(alg);
 end
@@ -119,4 +123,7 @@ switch alg
         if isfield(mpopt, 'intlinprog') && ~isempty(mpopt.intlinprog)
             qpopt.intlinprog_opt = mpopt.intlinprog;
         end
+end
+if model(1) == 'M'
+    qpopt.skip_prices = skip_prices;
 end
