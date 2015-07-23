@@ -150,7 +150,7 @@ CHANGES file in the docs directory for all the gory details.
 
 * New documentation:
   - Added an online function reference to the web site at
-    http://www.pserc.cornell.edu//matpower/docs/ref/.
+    http://www.pserc.cornell.edu/matpower/docs/ref/.
 
 * New features:
   - Added support for using PARDISO (http://www.pardiso-project.org/)
