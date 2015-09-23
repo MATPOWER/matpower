@@ -105,7 +105,14 @@ else
 end
 
 %%-----  set default options for CPLEX  -----
-opt = cplexoptimset('cplex');
+if have_fcn('matlab', 'vnum') >= 8.006 && have_fcn('cplex', 'vnum') <= 12.006002
+    s = warning('QUERY', 'MATLAB:lang:badlyScopedReturnValue');
+    warning('OFF', 'MATLAB:lang:badlyScopedReturnValue');
+    opt = cplexoptimset('cplex');
+    warning(s.state, 'MATLAB:lang:badlyScopedReturnValue');
+else
+    opt = cplexoptimset('cplex');
+end
 opt.simplex.tolerances.feasibility = feastol;
 opt.output.clonelog = -1;
 

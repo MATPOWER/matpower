@@ -15,6 +15,12 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.1
 -----------------
 
+9/23/15
+    - Added code in cplex_options(), insolvablepfsos(),
+      insolvablepfsos_limitQ() and yalmip_options() to turn off
+      'MATLAB:lang:badlyScopedReturnValue' warning triggered by
+      CPLEX when using Matlab R2015b (8.6) and later.
+
 7/16/15
     - Added mpopt2qpopt() to provide common interface for creating
       options struct for mi/qps_matpower() from a MATPOWER options
