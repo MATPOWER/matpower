@@ -15,7 +15,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 50;
+num_tests = 60;
 
 t_begin(num_tests, quiet);
 
@@ -32,6 +32,7 @@ t_begin(num_tests, quiet);
 c = idx_dcline;
 
 casefile = 't_case9_dcline';
+casefile2 = 'case9';
 if quiet
     verbose = 0;
 else
@@ -47,7 +48,6 @@ if have_fcn('octave')
     warning('off', file_in_path_warn_id);
 end
 
-t0 = '';
 mpopt = mpoption('opf.violation', 1e-6, 'mips.gradtol', 1e-8, ...
         'mips.comptol', 1e-8, 'mips.costtol', 1e-9);
 mpopt = mpoption(mpopt, 'opf.ac.solver', 'MIPS', 'opf.dc.solver', 'MIPS');
@@ -75,7 +75,7 @@ mpc = toggle_dcline(mpc, 'off');
 ndc = size(mpc.dcline, 1);
 
 %% run AC OPF w/o DC lines
-t = [t0 'AC OPF (no DC lines) : '];
+t = 'AC OPF (no DC lines) : ';
 [r0, success] = runopf(mpc0, mpopt);
 t_ok(success, [t 'success']);
 [r,  success] = runopf(mpc, mpopt);
@@ -92,7 +92,7 @@ t_is(r.branch(:,ibr_data  ), r0.branch(:,ibr_data  ), 10, [t 'branch data']);
 t_is(r.branch(:,ibr_flow  ), r0.branch(:,ibr_flow  ),  3, [t 'branch flow']);
 t_is(r.branch(:,ibr_mu    ), r0.branch(:,ibr_mu    ),  2, [t 'branch mu']);
 
-t = [t0 'AC PF (no DC lines) : '];
+t = 'AC PF (no DC lines) : ';
 mpc1 = struct('baseMVA', [], 'bus', [], 'branch', [], 'gencost', [], 'dcline', []);
 [mpc1.baseMVA, mpc1.bus, mpc1.gen, mpc1.branch, mpc1.gencost, mpc1.dcline] = ...
     deal(r.baseMVA, r.bus(:, 1:VMIN), r.gen(:, 1:APF), ...
@@ -106,7 +106,7 @@ t_is(   rp.gen(:,ig_disp   ),    r.gen(:,ig_disp   ),  3, [t 'gen dispatch']);
 t_is(rp.branch(:,ibr_flow  ), r.branch(:,ibr_flow  ),  3, [t 'branch flow']);
 
 %% run with DC lines
-t = [t0 'AC OPF (with DC lines) : '];
+t = 'AC OPF (with DC lines) : ';
 mpc = toggle_dcline(mpc, 'on');
 [r, success] = runopf(mpc, mpopt);
 t_ok(success, [t 'success']);
@@ -125,7 +125,7 @@ expected = [
 ];
 t_is(r.dcline(:, c.MU_PMIN:c.MU_QMAXT), expected, 3, [t 'mu']);
 
-t = [t0 'AC PF (with DC lines) : '];
+t = 'AC PF (with DC lines) : ';
 mpc1 = struct('baseMVA', [], 'bus', [], 'branch', [], 'gencost', [], 'dcline', []);
 [mpc1.baseMVA, mpc1.bus, mpc1.gen, mpc1.branch, mpc1.gencost, mpc1.dcline] = ...
     deal(r.baseMVA, r.bus(:, 1:VMIN), r.gen(:, 1:APF), ...
@@ -143,7 +143,7 @@ t_is(   rp.gen(3,QG)+rp.dcline(1,c.QF), r.gen(3,QG)+r.dcline(1,c.QF), 3, [t 'gen
 t_is(rp.branch(:,ibr_flow  ), r.branch(:,ibr_flow  ), 3, [t 'branch flow']);
 
 %% add appropriate P and Q injections and check angles and generation when running PF
-t = [t0 'AC PF (with equivalent injections) : '];
+t = 'AC PF (with equivalent injections) : ';
 mpc1 = struct('baseMVA', [], 'bus', [], 'branch', [], 'gencost', [], 'dcline', []);
 [mpc1.baseMVA, mpc1.bus, mpc1.gen, mpc1.branch, mpc1.gencost, mpc1.dcline] = ...
     deal(r.baseMVA, r.bus(:, 1:VMIN), r.gen(:, 1:APF), ...
@@ -171,7 +171,7 @@ t_is(   rp.gen(:,ig_disp   ),    r.gen(:,ig_disp   ),  3, [t 'gen dispatch']);
 t_is(rp.branch(:,ibr_flow  ), r.branch(:,ibr_flow  ),  3, [t 'branch flow']);
 
 %% test DC OPF
-t = [t0 'DC OPF (with DC lines) : '];
+t = 'DC OPF (with DC lines) : ';
 mpc = mpc0;
 mpc.gen(1, PMIN) = 10;
 mpc.branch(5, RATE_A) = 100;
@@ -193,7 +193,7 @@ expected = [
 ];
 t_is(r.dcline(:, c.MU_PMIN:c.MU_QMAXT), expected, 3, [t 'mu']);
 
-t = [t0 'DC PF (with DC lines) : '];
+t = 'DC PF (with DC lines) : ';
 mpc1 = struct('baseMVA', [], 'bus', [], 'branch', [], 'gencost', [], 'dcline', []);
 [mpc1.baseMVA, mpc1.bus, mpc1.gen, mpc1.branch, mpc1.gencost, mpc1.dcline] = ...
     deal(r.baseMVA, r.bus(:, 1:VMIN), r.gen(:, 1:APF), ...
@@ -207,7 +207,7 @@ t_is(   rp.gen(:,ig_disp   ),    r.gen(:,ig_disp   ), 3, [t 'gen dispatch']);
 t_is(rp.branch(:,ibr_flow  ), r.branch(:,ibr_flow  ), 3, [t 'branch flow']);
 
 %% add appropriate P injections and check angles and generation when running PF
-t = [t0 'DC PF (with equivalent injections) : '];
+t = 'DC PF (with equivalent injections) : ';
 mpc1 = struct('baseMVA', [], 'bus', [], 'branch', [], 'gencost', [], 'dcline', []);
 [mpc1.baseMVA, mpc1.bus, mpc1.gen, mpc1.branch, mpc1.gencost, mpc1.dcline] = ...
     deal(r.baseMVA, r.bus(:, 1:VMIN), r.gen(:, 1:APF), ...
@@ -230,7 +230,7 @@ t_is(   rp.gen(:,ig_disp   ),    r.gen(:,ig_disp   ),  3, [t 'gen dispatch']);
 t_is(rp.branch(:,ibr_flow  ), r.branch(:,ibr_flow  ),  3, [t 'branch flow']);
 
 %% run with DC lines
-t = [t0 'AC OPF (with DC lines + poly cost) : '];
+t = 'AC OPF (with DC lines + poly cost) : ';
 mpc = loadcase(casefile);
 mpc = toggle_dcline(mpc, 'on');
 [r, success] = runopf(mpc, mpopt);
@@ -256,12 +256,47 @@ t_ok(success, [t 'success']);
 t_is(r.dcline(:, c.PF:c.VT), expected1, 4, [t 'P Q V']);
 t_is(r.dcline(:, c.MU_PMIN:c.MU_QMAXT), expected2, 3, [t 'mu']);
 
-t = [t0 'AC OPF (with DC lines + pwl cost) : '];
+t = 'AC OPF (with DC lines + pwl cost) : ';
 mpc.dclinecost(4, 1:8) = [1 0 0 2 0 0 10 73];
 [r, success] = runopf(mpc, mpopt);
 t_ok(success, [t 'success']);
 t_is(r.dcline(:, c.PF:c.VT), expected1, 4, [t 'P Q V']);
 t_is(r.dcline(:, c.MU_PMIN:c.MU_QMAXT), expected2, 3, [t 'mu']);
+
+t = 'AC OPF (isolated gen bus w/DC connection) : ';
+mpc = loadcase(casefile2);
+% use case9 with bus 2 connected by DC line instead of AC line
+% requires making bus 2 a REF bus as well
+%%-----  DC Line Data  -----
+%	fbus	tbus	status	Pf	Pt	Qf	Qt	Vf	Vt	Pmin	Pmax	QminF	QmaxF	QminT	QmaxT	loss0	loss1
+mpc.dcline = [
+	8	2	1	-163	163	0	0	1	1	-200	200	0	0	0	0	0	0;
+];
+mpc.branch(7, BR_STATUS) = 0;
+mpc.bus(2, BUS_TYPE) = REF;
+mpc = toggle_dcline(mpc, 'on');
+
+[r, success] = runopf(mpc, mpopt);
+t_ok(success, [t 'success']);
+t_is(r.dcline(:, c.PF:c.VT), [-134.3323 -134.3323 0 0 1.1 1], 4, [t 'P Q V']);
+t_is(r.dcline(:, c.MU_PMIN:c.MU_QMAXT), [0 0 0.1311 0 0 0], 4, [t 'mu']);
+
+t = 'AC PF (isolated gen bus w/DC connection) : ';
+[r, success] = runpf(mpc, mpopt);
+t_ok(success, [t 'success']);
+t_is(r.dcline(:, c.PF:c.VT), [-163 -163 0.2146 0 1 1], 4, [t 'P Q V']);
+
+t = 'DC OPF (isolated gen bus w/DC connection) : ';
+[r, success] = rundcopf(mpc, mpopt);
+t_ok(success, [t 'success']);
+t_is(r.dcline(:, c.PF:c.VT), [-134.3776 -134.3776 0 0 1 1], 4, [t 'P Q V']);
+t_is(r.dcline(:, c.MU_PMIN:c.MU_QMAXT), [0 0 0 0 0 0], 3, [t 'mu']);
+
+t = 'DC PF (isolated gen bus w/DC connection) : ';
+[r, success] = rundcpf(mpc, mpopt);
+t_ok(success, [t 'success']);
+t_is(r.dcline(:, c.PF:c.VT), [-163 -163 0 0 1 1], 4, [t 'P Q V']);
+
 
 if have_fcn('octave')
     warning(s1.state, file_in_path_warn_id);

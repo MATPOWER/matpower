@@ -15,6 +15,16 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.1
 -----------------
 
+10/15/15
+    - Modified t_is() to handle matrix inputs of dimension greater
+      than two.
+    - Added t_test_fcns() to test t_ok() and t_is() and manually
+      check output of failed tests.
+    - Added tests to t_dcline() for an isolated generator bus connected
+      to the rest of the system via a DC line. This works for AC and DC
+      power flow and OPF, though you must set the isolated bus to
+      be of type REF.
+
 9/23/15
     - Added code in cplex_options(), insolvablepfsos(),
       insolvablepfsos_limitQ() and yalmip_options() to turn off
