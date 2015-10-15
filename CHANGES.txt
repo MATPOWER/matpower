@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.1
 -----------------
 
+10/15/15
+    - Modified t_is() to handle matrix inputs of dimension greater
+      than two.
+
 9/23/15
     - Added code in cplex_options(), insolvablepfsos(),
       insolvablepfsos_limitQ() and yalmip_options() to turn off

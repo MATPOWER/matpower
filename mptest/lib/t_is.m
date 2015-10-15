@@ -5,7 +5,10 @@ function ok = t_is(got, expected, prec, msg)
 %   GOT and EXPECTED is less than 10^(-PREC) then it increments the
 %   passed tests count, otherwise increments the failed tests count.
 %   Prints 'ok' or 'not ok' followed by the MSG, unless the global
-%   variable t_quiet is true. Intended to be called between calls to
+%   variable t_quiet is true. The input values can be real or complex,
+%   and they can be scalar, vector, or 2-d or higher matrices. If GOT
+%   is a vector or matrix and EXPECTED is a scalar or NaN, all elements
+%   must match the scalar. Intended to be called between calls to
 %   T_BEGIN and T_END.
 %
 %   Optionally returns a true or false value indicating whether or
@@ -40,9 +43,11 @@ end
 if nargin < 3 || isempty(prec)
     prec = 5;
 end
-[m, n] = size(expected);
-if all(size(got) == [m, n]) || all([m, n] == [1 1])
-    if m == 0 || n == 0
+edims = size(expected);
+gdims = size(got);
+if (length(edims) == length(gdims) && all(edims == gdims)) || ...
+        all(edims == 1) && ~any(gdims == 0)
+    if all(edims == 0)
         condition = true;
     else
         %% check for NaNs!
@@ -51,15 +56,15 @@ if all(size(got) == [m, n]) || all([m, n] == [1 1])
         if (~isscalar(expected) && ...
                 (length(gNaN) ~= length(eNaN) || sum(gNaN-eNaN) ~= 0)) || ...
             (isscalar(expected) && ...
-                    (( isnan(expected) && ~all(isnan(got))) || ...
-                     (~isnan(expected) && any(isnan(got)))) )
+                    (( isnan(expected) && ~all(isnan(got(:)))) || ...
+                     (~isnan(expected) && any(isnan(got(:))))) )
             condition = false;
             max_diff = -1;
-        elseif all(all(isnan(got))) && all(all(isnan(got)))
+        elseif all(isnan(expected(:))) && all(isnan(got(:)))
             condition = true;
         else
             got_minus_expected = got - expected;
-            max_diff = max(max(abs(got_minus_expected)));
+            max_diff = max(abs(got_minus_expected(:)));
             condition = ( max_diff < 10^(-prec) );
         end
     end
@@ -71,31 +76,43 @@ end
 t_ok(condition, msg);
 if ~condition && ~t_quiet
     if max_diff > 0
-        [i, j, v] = find(~(abs(got_minus_expected) < 10^(-prec)));
-        k = i+(j-1)*m;
+        k = find(~(abs(got_minus_expected(:)) < 10^(-prec)));
         [vv, kk] = max(abs(got_minus_expected(k)));
-        fprintf('  row     col          got             expected          got - exp\n');
-        fprintf('-------  ------  ----------------  ----------------  ----------------');
-        for u = 1:length(i)
+        fprintf('    index              got             expected          got - exp\n');
+        fprintf('---------------  ----------------  ----------------  ----------------');
+        for u = 1:length(k)
             if isscalar(expected)
                 ex = expected;
             else
                 ex = expected(k(u));
             end
-            fprintf('\n%6d  %6d  %16g  %16g  %16g', ...
-                [i(u) j(u) got(k(u)) ex got_minus_expected(k(u))]');
+            if isscalar(got)
+                idxstr = '(1)';
+            else
+                idx = cell(1, length(gdims));
+                [idx{:}] = ind2sub(gdims, k(u));
+                idxstr = sprintf('%d,', idx{1:end-1});
+                idxstr = sprintf('(%s%d)', idxstr, idx{end});
+            end
+            fprintf('\n%14s  %16g  %16g  %16g', ...
+                idxstr, got(k(u)), ex, got_minus_expected(k(u)));
             if u == kk
                 fprintf('  *');
+                idxstrkk = idxstr;
             end
         end
-        fprintf('\nmax diff @ (%d,%d) = %g > allowed tol of %g\n\n', ...
-            i(kk), j(kk), max_diff, 10^(-prec));
+        fprintf('\nmax diff @ %s = %g > allowed tol of %g\n\n', ...
+            idxstrkk, max_diff, 10^(-prec));
     elseif max_diff == -1
         fprintf('    mismatch in locations of NaNs\n');
     else
+        gidxstr = sprintf('%d x ', gdims(1:end-1));
+        gidxstr = sprintf('%s%d', gidxstr, gdims(end));
+        eidxstr = sprintf('%d x ', edims(1:end-1));
+        eidxstr = sprintf('%s%d', eidxstr, edims(end));
         fprintf('    dimension mismatch:\n');
-        fprintf('             got: %d x %d\n', size(got));
-        fprintf('        expected: %d x %d\n\n', size(expected));
+        fprintf('             got: %s\n', gidxstr);
+        fprintf('        expected: %s\n\n', eidxstr);
     end
 end
 if nargout
