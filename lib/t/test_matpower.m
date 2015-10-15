@@ -23,6 +23,7 @@ end
 tests = {};
 
 %% MATPOWER base test
+tests{end+1} = 't_test_fcns';
 tests{end+1} = 't_nested_struct_copy';
 tests{end+1} = 't_mpoption';
 tests{end+1} = 't_loadcase';

@@ -18,6 +18,8 @@ Changes since 5.1
 10/15/15
     - Modified t_is() to handle matrix inputs of dimension greater
       than two.
+    - Added t_test_fcns() to test t_ok() and t_is() and manually
+      check output of failed tests.
 
 9/23/15
     - Added code in cplex_options(), insolvablepfsos(),
