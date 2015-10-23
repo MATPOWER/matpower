@@ -7,15 +7,15 @@ function c = idx_dcline
 %   Some examples of usage, after defining the constants using the line above,
 %   are:
 %
-%    mpc.dcline(4, c.BR_STATUS) = 0;        % take branch 4 out of service
+%    mpc.dcline(4, c.BR_STATUS) = 0;        % take dcline 4 out of service
 % 
-%   The index, name and meaning of each column of the branch matrix is given
+%   The index, name and meaning of each column of the dcline matrix is given
 %   below:
 %
 %   columns 1-17 must be included in input matrix (in case file)
 %    1  F_BUS     f, "from" bus number
 %    2  T_BUS     t,  "to"  bus number
-%    3  BR_STATUS initial branch status, 1 - in service, 0 - out of service
+%    3  BR_STATUS initial dcline status, 1 - in service, 0 - out of service
 %    4  PF        MW flow at "from" bus ("from" -> "to")
 %    5  PT        MW flow at  "to"  bus ("from" -> "to")
 %    6  QF        MVAr injection at "from" bus ("from" -> "to")
@@ -58,7 +58,7 @@ function c = idx_dcline
 c = struct( ...
     'F_BUS',     1, ... %% f, "from" bus number
     'T_BUS',     2, ... %% t,  "to"  bus number
-    'BR_STATUS', 3, ... %% initial branch status, 1 - in service, 0 - out of service
+    'BR_STATUS', 3, ... %% initial dcline status, 1 - in service, 0 - out of service
     'PF',        4, ... %% MW flow at "from" bus ("from" -> "to")
     'PT',        5, ... %% MW flow at  "to"  bus ("from" -> "to")
     'QF',        6, ... %% MVAr injection at "from" bus ("from" -> "to")
