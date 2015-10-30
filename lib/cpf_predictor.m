@@ -12,8 +12,8 @@ function [V0, lam0, z] = cpf_predictor(V, lam, Ybus, Sxfr, Sbust, pv, pq, ...
 %       LAM : scalar lambda value at current solution
 %       YBUS : complex bus admittance matrix
 %       SXFR : handle of function returning complex vector of scheduled
-%              transfers (difference between bus injections in base and
-%              target cases)
+%              transfers in p.u. (difference between bus injections in base
+%              and target cases)
 %       SBUST : handle of function returning bus injections for target case
 %               and derivatives w.r.t. voltage magnitudes
 %       PV : vector of indices of PV buses

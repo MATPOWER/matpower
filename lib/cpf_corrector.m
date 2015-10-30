@@ -20,7 +20,8 @@ function [V, converged, i, lam] = cpf_corrector(Ybus, Sbus, V0, ref, pv, pq, ...
 %   of iterations performed, and the final lambda.
 %
 %   The extra continuation inputs are LAM0 (initial predicted lambda),
-%   SXFR ([delP+j*delQ] transfer/loading vector for all buses), VPRV
+%   SXFR (handle of function returning complex vector of scheduled transfers,
+%   difference between bus injections in base and target cases), VPRV
 %   (final complex V corrector solution from previous continuation step),
 %   LAMPRV (final lambda corrector solution from previous continuation step),
 %   Z (normalized predictor for all buses), and STEP (continuation step size).
