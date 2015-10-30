@@ -86,6 +86,13 @@ function opt = mpoption(varargin)
 %   cpf.adapt_step          0           toggle adaptive step size feature
 %       [  0 - adaptive step size disabled                                  ]
 %       [  1 - adaptive step size enabled                                   ]
+%   cpf.enforce_p_lims       0          enforce gen active power limits
+%       [  0 - do NOT enforce limits                                        ]
+%       [  1 - enforce limits, simultaneous bus type conversion             ]
+%   cpf.enforce_q_lims       0          enforce gen reactive power limits at
+%                                       expense of |V|
+%       [  0 - do NOT enforce limits                                        ]
+%       [  1 - enforce limits, simultaneous bus type conversion             ]
 %   cpf.error_tol           1e-3        tolerance for adaptive step control
 %   cpf.step_min            1e-4        minimum allowed step size
 %   cpf.step_max            0.2         maximum allowed step size
@@ -101,13 +108,6 @@ function opt = mpoption(varargin)
 %                                       see 'help cpf_default_callback'
 %   cpf.user_callback_args  <empty>     struct passed to user-defined
 %                                       callback functions
-%   cpf.enforce_q_lims       0          enforce gen reactive power limits at
-%                                       expense of |V|
-%       [  0 - do NOT enforce limits                                        ]
-%       [  1 - enforce limits, simultaneous bus type conversion             ]
-%   cpf.enforce_p_lims       0          enforce gen active power limits
-%       [  0 - do NOT enforce limits                                        ]
-%       [  1 - enforce limits, simultaneous bus type conversion             ]
 %
 %Optimal Power Flow options:
 %   opf.ac.solver           'DEFAULT'   AC optimal power flow solver
@@ -408,9 +408,6 @@ function opt = mpoption(varargin)
 %   MATPOWER
 %   Copyright (c) 2013-2015 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%
-%   Modified by Shrirang Abhyankar, Argonne National Laboratory
-%   2015.10.25 (Added cpf option for enforcing Q limits)
 %
 %   $Id$
 %
@@ -1414,6 +1411,8 @@ if ~isstruct(opt)
             'stop_at',              'NOSE', ...     %% 'NOSE', <lam val>, 'FULL'
             'step',                 0.05, ...
             'adapt_step',           0, ...
+            'enforce_p_lims',       0, ...
+            'enforce_q_lims',       0, ...
             'error_tol',            1e-3, ...
             'step_min',             1e-4, ...
             'step_max',             0.2, ...
@@ -1421,9 +1420,7 @@ if ~isstruct(opt)
                 'level',                0, ...
                 'bus',                  []  ), ...
             'user_callback',        '', ...
-            'user_callback_args',   struct()    , ...
-	    'enforce_q_lims',         0   , ...		
-        'enforce_p_lims',         0 ), ...
+            'user_callback_args',   struct()    ), ...
         'opf',                  struct(...
             'ac',                   struct(...
                 'solver',               'DEFAULT'   ), ...
@@ -1494,7 +1491,7 @@ optt = opt;
 %% globals
 %%-------------------------------------------------------------------
 function v = mpoption_version
-v = 9;      %% version number of MATPOWER options struct
+v = 10;     %% version number of MATPOWER options struct
             %% (must be incremented every time structure is updated)
             %% v1   - first version based on struct (MATPOWER 5.0b1)
             %% v2   - added 'linprog' and 'quadprog' fields
@@ -1511,6 +1508,8 @@ v = 9;      %% version number of MATPOWER options struct
             %%        'mips' options
             %% v9   - added 'exp' for experimental fields, specifically
             %%        'sys_wide_zip_loads.pw', 'sys_wide_zip_loads.qw'
+            %% v10  - added 'cpf.enforce_p_lims' and 'cpf.enforce_q_lims'
+            %%        fields
 
 %%-------------------------------------------------------------------
 function db_level = DEBUG
@@ -1520,6 +1519,6 @@ db_level = 0;
 function pkgs = mpoption_optional_pkgs()
 pkgs = {...
     'clp', 'cplex', 'fmincon', 'gurobi', 'glpk', 'intlinprog', 'ipopt', ...
-    'knitro', 'linprog', 'minopf', 'mosek', 'quadprog', 'sdp_pf', 'sopf', ...
-    'tspopf', 'yalmip' ...
+    'knitro', 'linprog', 'minopf', 'mosek', 'quadprog', 'sdp_pf', ...
+    'sopf', 'tspopf', 'yalmip' ...
 };
