@@ -101,6 +101,13 @@ function opt = mpoption(varargin)
 %                                       see 'help cpf_default_callback'
 %   cpf.user_callback_args  <empty>     struct passed to user-defined
 %                                       callback functions
+%   cpf.enforce_q_lims       0          enforce gen reactive power limits at
+%                                       expense of |V|
+%       [  0 - do NOT enforce limits                                        ]
+%       [  1 - enforce limits, simultaneous bus type conversion             ]
+%   cpf.enforce_p_lims       0          enforce gen active power limits
+%       [  0 - do NOT enforce limits                                        ]
+%       [  1 - enforce limits, simultaneous bus type conversion             ]
 %
 %Optimal Power Flow options:
 %   opf.ac.solver           'DEFAULT'   AC optimal power flow solver
@@ -401,6 +408,9 @@ function opt = mpoption(varargin)
 %   MATPOWER
 %   Copyright (c) 2013-2015 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
+%
+%   Modified by Shrirang Abhyankar, Argonne National Laboratory
+%   2015.10.25 (Added cpf option for enforcing Q limits)
 %
 %   $Id$
 %
@@ -1411,7 +1421,9 @@ if ~isstruct(opt)
                 'level',                0, ...
                 'bus',                  []  ), ...
             'user_callback',        '', ...
-            'user_callback_args',   struct()    ), ...
+            'user_callback_args',   struct()    , ...
+	    'enforce_q_lims',         0   , ...		
+        'enforce_p_lims',         0 ), ...
         'opf',                  struct(...
             'ac',                   struct(...
                 'solver',               'DEFAULT'   ), ...

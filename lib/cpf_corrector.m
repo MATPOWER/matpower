@@ -1,31 +1,40 @@
-function [V, converged, i, lam] = cpf_corrector(Ybus, Sbus, V0, ref, pv, pq, ...
+function [V, converged, i, lam] = cpf_corrector(Ybus, Sbusb, V0, ref, pv, pq, ...
                 lam0, Sxfr, Sbust, Vprv, lamprv, z, step, parameterization, mpopt)
 %CPF_CORRECTOR  Solves the corrector step of a continuation power flow using a
 %   full Newton method with selected parameterization scheme.
-%   [V, CONVERGED, I, LAM] = CPF_CORRECTOR(YBUS, SBUS, V0, REF, PV, PQ, ...
+%   [V, CONVERGED, I, LAM] = CPF_CORRECTOR(YBUS, SBUSB, V0, REF, PV, PQ, ...
 %                                       LAM0, SXFR, SBUST, VPRV, LPRV, Z, ...
 %                                       STEP, PARAMETERIZATION, MPOPT)
-%   solves for bus voltages and lambda given the full system admittance
-%   matrix (for all buses), the complex bus power injection vector (for
-%   all buses), the initial vector of complex bus voltages, and column
-%   vectors with the lists of bus indices for the swing bus, PV buses, and
-%   PQ buses, respectively. The bus voltage vector contains the set point
-%   for generator (including ref bus) buses, and the reference angle of the
-%   swing bus, as well as an initial guess for remaining magnitudes and
-%   angles. MPOPT is a MATPOWER options struct which can be used to
-%   set the termination tolerance, maximum number of iterations, and
-%   output options (see MPOPTION for details). Uses default options if
-%   this parameter is not given. Returns the final complex voltages, a
-%   flag which indicates whether it converged or not, the number
-%   of iterations performed, and the final lambda.
 %
-%   The extra continuation inputs are LAM0 (initial predicted lambda),
-%   SXFR (handle of function returning complex vector of scheduled transfers,
-%   difference between bus injections in base and target cases), VPRV
-%   (final complex V corrector solution from previous continuation step),
-%   LAMPRV (final lambda corrector solution from previous continuation step),
-%   Z (normalized predictor for all buses), and STEP (continuation step size).
-%   The extra continuation output is LAM (final corrector lambda).
+%   Computes the solution for the current continuation step.
+%
+%   Inputs:
+%       YBUS : complex bus admittance matrix
+%       SBUSB : handle of function returning bus injections for base case
+%               and derivatives w.r.t. voltage magnitudes
+%       V0 :  predicted complex bus voltage vector
+%       REF : vector of indices for REF buses
+%       PV : vector of indices of PV buses
+%       PQ : vector of indices of PQ buses
+%       LAM0 : predicted scalar lambda
+%       SXFR : handle of function returning complex vector of scheduled
+%              transfers (difference between bus injections in base and
+%              target cases)
+%       SBUST : handle of function returning bus injections for target case
+%               and derivatives w.r.t. voltage magnitudes
+%       VPRV : complex bus voltage vector at previous solution
+%       LAMPRV : scalar lambda value at previous solution
+%       STEP : continuation step length
+%       Z : normalized tangent prediction vector
+%       STEP : continuation step size
+%       PARAMETERIZATION : Value of cpf.parameterization option.
+%       MPOPT : Options struct
+%
+%   Outputs:
+%       V : complex bus voltage solution vector
+%       CONVERGED : Newton iteration count
+%       I : Newton iteration count
+%       LAM : lambda continuation parameter
 %
 %   See also RUNCPF.
 
@@ -40,6 +49,9 @@ function [V, converged, i, lam] = cpf_corrector(Ybus, Sbus, V0, ref, pv, pq, ...
 %
 %   Modified by Shrirang Abhyankar, Argonne National Laboratory
 %   (Updated to be compatible with MATPOWER version 4.1)
+%
+%   Modified by Shrirang Abhyankar, Argonne National Laboratory
+%   2015.10.25 (Updated to support voltage dependent loads)
 %
 %   $Id$
 %
@@ -74,8 +86,9 @@ j5 = j4 + 1;    j6 = j4 + npq;      %% j5:j6 - V mag of pq buses
 j7 = j6 + 1;    j8 = j6 + 1;        %% j7:j8 - lambda
 
 %% evaluate F(x0, lam0), including Sxfr transfer/loading
+Sbusb0 = Sbusb(Vm);
 Sxf = Sxfr(Vm);
-mis = V .* conj(Ybus * V) - Sbus - lam*Sxf;
+mis = V .* conj(Ybus * V) - Sbusb0 - lam*Sxf;
 F = [   real(mis([pv; pq]));
         imag(mis(pq))   ];
 
@@ -107,8 +120,9 @@ while (~converged && i < max_it)
     
     %% evaluate Jacobian
     [dSbus_dVm, dSbus_dVa] = dSbus_dV(Ybus, V);
-    [dummy, neg_dSd_dVm] = Sbust(Vm);
-    dSbus_dVm = dSbus_dVm - lam * neg_dSd_dVm;
+    [dummy, neg_dSdb_dVm] = Sbusb(Vm);
+    [dummy, neg_dSdt_dVm] = Sbust(Vm);
+    dSbus_dVm = dSbus_dVm - neg_dSdb_dVm - lam * (neg_dSdt_dVm - neg_dSdb_dVm);
     
     j11 = real(dSbus_dVa([pv; pq], [pv; pq]));
     j12 = real(dSbus_dVm([pv; pq], pq));
@@ -144,8 +158,9 @@ while (~converged && i < max_it)
     lam = lam + dx(j7:j8);
 
     %% evalute F(x, lam)
+    Sbusb0 = Sbusb(Vm);
     Sxf = Sxfr(Vm);
-    mis = V .* conj(Ybus * V) - Sbus - lam*Sxf;
+    mis = V .* conj(Ybus * V) - Sbusb0 - lam*Sxf;
     F = [   real(mis(pv));
             real(mis(pq));
             imag(mis(pq))   ];
