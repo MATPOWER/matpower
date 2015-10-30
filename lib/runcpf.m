@@ -119,7 +119,7 @@ function [res, suc] = ...
     QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
 
 %% Event status flags
-[cpf_es] = cpfeventstatus;
+[cpf_es] = cpf_event_status_codes;
 
 %% default arguments
 if nargin < 5
