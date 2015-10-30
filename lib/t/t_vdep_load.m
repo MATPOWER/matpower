@@ -6,7 +6,7 @@ function t_vdep_load(quiet)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   2015.10.27 Modified by Shrirang Abhyankar, ANL
-%   Added tests for CPF reactive power limits
+%   Added tests for CPF with reactive power limits
 %
 %   $Id$
 %

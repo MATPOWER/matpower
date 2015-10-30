@@ -61,33 +61,35 @@ function [res, suc] = ...
 %
 %       [baseMVA, bus, gen, branch, success, et] = runcpf(...);
 %
-%   If the cpf.enforce_q_lims option is set to true (default is false) then, 
-%      -- if any generator reactive power limit is violated during the AC continuation 
-%         power flow, the corresponding bus is converted to a PQ bus, with Qg 
-%         at the limit. 
-%      -- The voltage magnitude at the bus will deviate from the specified value 
-%         in order to satisfy the reactive power limit. 
-%      -- If the reference bus is converted to PQ, the first remaining PV bus 
-%         will be used as the slack bus. This may result in the transfer at this 
-%         generator and the generator at the new reference bus being slightly off
-%         from the specified values. 
-%      -- If all reference and PV buses are converted, then runcpf raises infeasibility 
-%         flag and terminates.
+%   RDZ: Need description of what happens when 'cpf.enforce_p_lims' is true.
+%
+%   If the 'cpf.enforce_q_lims' option is set to true (default is false) then,
+%       - if any generator reactive power limit is violated during the AC
+%         continuation power flow, the corresponding bus is converted to a PQ
+%         bus, with Qg at the limit.
+%       - the voltage magnitude at the bus will deviate from the specified
+%         value in order to satisfy the reactive power limit.
+%       - if the reference bus is converted to PQ, the first remaining PV bus
+%         will be used as the slack bus. This may result in the transfer at
+%         this generator and the generator at the new reference bus being
+%         slightly off from the specified values.
+%       - if all reference and PV buses are converted, then runcpf raises
+%         infeasibility flag and terminates.
 %
 %   CPF termination modes:
-%   Reached nose point 
-%   Traced full curve
-%   No ref and pv buses remaining
-%   Limit induced bifurcation detected
+%       Reached nose point 
+%       Traced full curve
+%       No ref and pv buses remaining
+%       Limit induced bifurcation detected
 %   
 %   Examples:
 %       results = runcpf('case9', 'case9target');
 %       results = runcpf('case9', 'case9target', ...
 %                           mpoption('cpf.adapt_step', 1));
-%       results =
-%       runcpf('case9','case9target',mpoption('cpf.enforce_q_lims',1));
-%       results =
-%       runcpf('case9','case9target',mpoption('cpf.stop_at','FULL'));
+%       results = runcpf('case9', 'case9target', ...
+%                           mpoption('cpf.enforce_q_lims', 1));
+%       results = runcpf('case9', 'case9target', ...
+%                           mpoption('cpf.stop_at', 'FULL'));
 %
 %   See also MPOPTION, RUNPF.
 
@@ -118,8 +120,8 @@ function [res, suc] = ...
     MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
     QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
 
-%% Event status flags
-[cpf_es] = cpf_event_status_codes;
+%% define event status codes
+cpf_es = cpf_event_status_codes;
 
 %% default arguments
 if nargin < 5
@@ -143,8 +145,8 @@ step             = mpopt.cpf.step;              %% continuation step length
 parameterization = mpopt.cpf.parameterization;  %% parameterization
 adapt_step       = mpopt.cpf.adapt_step;        %% use adaptive step size?
 cb_args          = mpopt.cpf.user_callback_args;
-qlim             = mpopt.cpf.enforce_q_lims;        %% Enforce Q lims
-plim             = mpopt.cpf.enforce_p_lims;    %% Enforce P lims
+plim             = mpopt.cpf.enforce_p_lims;    %% enforce active limits
+qlim             = mpopt.cpf.enforce_q_lims;    %% enforce reactive limits
 
 %% set up callbacks
 callback_names = {'cpf_default_callback'};
@@ -161,31 +163,32 @@ callbacks = cellfun(@str2func, callback_names, 'UniformOutput', false);
 event_fcn_names = {'cpf_stopat_event'};
 event_postfcn_names = {'cpf_stopat_postevent'};
 if qlim
-    event_fcn_names = {event_fcn_names{:},'cpf_q_lims_event'};
-    event_postfcn_names = {event_postfcn_names{:},'cpf_q_lims_postevent'};
+    event_fcn_names = {event_fcn_names{:}, 'cpf_q_lims_event'};
+    event_postfcn_names = {event_postfcn_names{:}, 'cpf_q_lims_postevent'};
 end
 if plim
-    event_fcn_names = {event_fcn_names{:},'cpf_p_lims_event'};
-    event_postfcn_names = {event_postfcn_names{:},'cpf_p_lims_postevent'};
+    event_fcn_names = {event_fcn_names{:}, 'cpf_p_lims_event'};
+    event_postfcn_names = {event_postfcn_names{:}, 'cpf_p_lims_postevent'};
 end
-event.fcns = cellfun(@str2func,event_fcn_names,'UniformOutput', false);
-event.postfcns = cellfun(@str2func,event_postfcn_names,'UniformOutput', false);
-event.status = cpf_es.NO_EVENT;
+%% RDZ: order of the above shouldn't matter, but it does
+%%      (linked to tolerances in cpfeventhandler())
+event = struct( 'fcns', [], 'postfcns', [], 'status', cpf_es.NO_EVENT);
+event.fcns = cellfun(@str2func, event_fcn_names, 'UniformOutput', false);
+event.postfcns = cellfun(@str2func, event_postfcn_names, 'UniformOutput', false);
 
 %% run base case power flow
-mpopt_pf = mpopt;
+if mpopt.verbose > 2
+    mpopt_pf = mpoption(mpopt, 'verbose', max(0, mpopt.verbose-1));
+else
+    mpopt_pf = mpoption(mpopt, 'verbose', max(0, mpopt.verbose-2));
+end
 mpopt_pf.pf.enforce_q_lims = mpopt.cpf.enforce_q_lims;
-mpopt_pf.verbose = mpopt.verbose;
-[mpcbase,suc] = runpf(basecasedata,mpopt_pf);
+[mpcbase, suc] = runpf(basecasedata, mpopt_pf);
 if ~suc
-    error('Base case power flow did not converge\n');
+    %% RDZ: this should not be a fatal error
+    error('runcpf: Base case power flow did not converge.');
 end
 nb = size(mpcbase.bus, 1);
-
-%% add zero columns to branch for flows if needed
-if size(mpcbase.branch,2) < QT
-  mpcbase.branch = [ mpcbase.branch zeros(size(mpcbase.branch, 1), QT-size(mpcbase.branch,2)) ];
-end
 
 %% convert to internal indexing
 mpcbase = ext2int(mpcbase);
@@ -194,11 +197,10 @@ mpcbase = ext2int(mpcbase);
 %% get bus index lists of each type of bus
 [ref, pv, pq] = bustypes(busb, genb);
 
-%% generator info
-%% generator info
-onb = find(genb(:, GEN_STATUS) > 0 ...   %% which generators are on?
-          & busb(genb(:, GEN_BUS), BUS_TYPE) ~= PQ);  %% ... and not at PQ buses
-gbusb = genb(onb, GEN_BUS);             %% what buses are they at?
+%% generator info (must be the same for base and target)
+on = find(genb(:, GEN_STATUS) > 0 ...   %% which generators are on?
+        & busb(genb(:, GEN_BUS), BUS_TYPE) ~= PQ);  %% ... and not at PQ buses
+gbus = genb(on, GEN_BUS);               %% what buses are they at?
 
 %% read target case data
 mpctarget = loadcase(targetcasedata);
@@ -211,22 +213,26 @@ end
 %% convert to internal indexing
 mpctarget = ext2int(mpctarget);
 [baseMVAt, bust, gent, brancht] = deal(mpctarget.baseMVA, mpctarget.bus, mpctarget.gen, mpctarget.branch);
-bust(:,BUS_TYPE) = busb(:,BUS_TYPE); %% busb(:,BUS_TYPE) may change if reactive power limits are enforced.
+
+%% update target bus types in case they've changed due to reactive power limits
+bust(:, BUS_TYPE) = busb(:, BUS_TYPE);
 
 %% generator info
 ont = find(gent(:, GEN_STATUS) > 0 ...   %% which generators are on?
-          & bust(gent(:, GEN_BUS), BUS_TYPE) ~= PQ);  %% ... and not at PQ buses
-gbust = gent(ont, GEN_BUS);             %% what buses are they at?
-
-
-%% Need to ensure the following is same for basecase and targetcase
-gent(ont,QG) = genb(onb,QG);
-for k = 1:length(ref)
-    refgen = find(gbust == ref(k));
-    gent(ont(refgen), PG) = genb(onb(refgen), PG);
+        & bust(gent(:, GEN_BUS), BUS_TYPE) ~= PQ);  %% ... and not at PQ buses
+if length(on) ~= length(ont) || any(on ~= ont)
+    error('runcpf: base and target cases must have identical generator status'' and bus types.');
 end
 
-%%-----  run the power flow  -----
+%% RDZ: figure out purpose of this block of code
+%% need to ensure the following is same for basecase and targetcase
+gent(on, QG) = genb(on, QG);
+for k = 1:length(ref)
+    refgen = find(gbus == ref(k));
+    gent(on(refgen), PG) = genb(on(refgen), PG);
+end
+
+%%-----  run the continuation power flow  -----
 t0 = clock;
 if mpopt.verbose > 0
     v = mpver('all');
@@ -238,8 +244,8 @@ end
 V0  = busb(:, VM) .* exp(sqrt(-1) * pi/180 * busb(:, VA));
 vcb = ones(size(V0));           %% create mask of voltage-controlled buses
 vcb(pq) = 0;                    %% exclude PQ buses
-k = find(vcb(gbusb));           %% in-service gens at v-c buses
-V0(gbusb(k)) = genb(onb(k), VG) ./ abs(V0(gbusb(k))).* V0(gbusb(k));
+k = find(vcb(gbus));            %% in-service gens at v-c buses
+V0(gbus(k)) = genb(on(k), VG) ./ abs(V0(gbus(k))).* V0(gbus(k));
 
 %% build admittance matrices
 [Ybus, Yf, Yt] = makeYbus(baseMVAb, busb, branchb);
@@ -251,21 +257,15 @@ Sbusb = @(Vm)makeSbus(baseMVAb, busb, genb, mpopt, Vm);
 %% (generation - load)
 Sbust = @(Vm)makeSbus(baseMVAt, bust, gent, mpopt, Vm);
 
-%% Run the base case power flow solution
-if mpopt.verbose > 2
-    mpopt_pf = mpoption(mpopt, 'verbose', max(0, mpopt.verbose-1));
-else
-    mpopt_pf = mpoption(mpopt, 'verbose', max(0, mpopt.verbose-2));
-end
+%% base case power flow solution
 lam = 0;
-
+iterations = 0; %% RDZ: modify runpf() so we can get actual from solved power flow
+V = V0;
 if mpopt.verbose > 2
     fprintf('step %3d : lambda = %6.3f\n', 0, 0);
 elseif mpopt.verbose > 1
-    fprintf('step %3d : lambda = %6.3f, %2d Newton steps\n', 0, 0, 0);
+    fprintf('step %3d : lambda = %6.3f, %2d Newton steps\n', 0, 0, iterations);
 end
-
-V = V0;
 
 Sxfr = @(Vm)Sbust(Vm) - Sbusb(Vm);
 lamprv = lam;   %% lam at previous step
@@ -275,7 +275,7 @@ cont_steps = 0;
 
 %% input args for callbacks
 Sxf = Sxfr(abs(V));
-cpf_data = struct( ...
+cb_data = struct( ...
     'mpc_base', mpcbase, ...
     'mpc_target', mpctarget, ...
     'Sbusb', Sbusb, ...
@@ -288,17 +288,19 @@ cpf_data = struct( ...
     'pv', pv, ...
     'pq', pq, ...
     'mpopt', mpopt );
-cpf_state = struct();
+cb_state = struct();
 
 %% invoke callbacks
 for k = 1:length(callbacks)
-    cpf_state = callbacks{k}(cont_steps, V, lam, V, lam, ...
-                            cpf_data, cpf_state, cb_args);
+    cb_state = callbacks{k}(cont_steps, V, lam, V, lam, ...
+                            cb_data, cb_state, cb_args);
 end
 
-%% event function
+%% invoke event functions
+%% RDZ: why?
 for k = 1:length(event.fcns)
-    [event.fprv{k},event.terminate{k},cpf_state] = event.fcns{k}(cont_steps,V,lam,cpf_data,cpf_state);
+    [event.fprv{k}, event.terminate{k}, cb_state] = ...
+        event.fcns{k}(cont_steps, V, lam, cb_data, cb_state);
 end
 
 if norm(Sxf) == 0
@@ -313,19 +315,18 @@ end
 z = zeros(2*length(V)+1,1);
 z(end,1) = 1.0;
 zprv = z;
-while(continuation && event.status ~= cpf_es.TERMINATE)
+while continuation && event.status ~= cpf_es.TERMINATE
     cont_steps = cont_steps + 1;
     Vprv2 = Vprv;
     lamprv2 = lamprv;
     
     %% prediction for next step
-    [V0, lam0, z] = cpf_predictor(V, lam, Ybus, Sxfr, Sbust, Sbusb, pv, pq, step, zprv, ...
-        Vprv, lamprv, parameterization);
+    [V0, lam0, z] = cpf_predictor(V, lam, Ybus, Sxfr, Sbust, Sbusb, pv, pq, ...
+        step, zprv, Vprv, lamprv, parameterization);
 
     %% save previous voltage, lambda before updating
     Vprv = V;
     lamprv = lam;
-    
 
     %% correction
     [V, success, i, lam] = cpf_corrector(Ybus, Sbusb, V0, ref, pv, pq, ...
@@ -344,37 +345,44 @@ while(continuation && event.status ~= cpf_es.TERMINATE)
     end
 
     %% invoke event handler
-    [cont_steps, V, lam, step, cpf_data, cpf_state, event] = cpfeventhandler(cont_steps,V,lam,Vprv,lamprv,step,cpf_data,cpf_state,event);
+    [cont_steps, V, lam, step, cb_data, cb_state, event] = ...
+        cpfeventhandler(cont_steps, V, lam, Vprv, lamprv, step, ...
+            cb_data, cb_state, event);
+    
+    if mpopt.verbose
+%         fprintf('           event status = %d\n', event.status);
+%         event
+    end
     
     if event.status == cpf_es.ZERO_LOC 
-        %% Post function may have updated cpf_data fields.
+        %% Post function may have updated cb_data fields.
         
-        ref  = cpf_data.ref;
-        pv   = cpf_data.pv;
-        pq   = cpf_data.pq;
+        ref  = cb_data.ref;
+        pv   = cb_data.pv;
+        pq   = cb_data.pq;
         
-        busb = cpf_data.mpc_base.bus;
-        genb = cpf_data.mpc_base.gen;
-        branchb = cpf_data.mpc_base.branch;
+        busb = cb_data.mpc_base.bus;
+        genb = cb_data.mpc_base.gen;
+        branchb = cb_data.mpc_base.branch;
         
-        bust = cpf_data.mpc_target.bus;
-        gent = cpf_data.mpc_target.gen;
-        brancht = cpf_data.mpc_target.branch;
+        bust = cb_data.mpc_target.bus;
+        gent = cb_data.mpc_target.gen;
+        brancht = cb_data.mpc_target.branch;
         
         Sbusb = @(Vm)makeSbus(baseMVAb, busb, genb, mpopt, Vm);
         Sbust = @(Vm)makeSbus(baseMVAt, bust, gent, mpopt, Vm);
         Sxfr  = @(Vm)Sbust(Vm) - Sbusb(Vm);
         
-        cpf_data.Sbusb = @(Vm)makeSbus(baseMVAb, busb, genb, mpopt, Vm);
-        cpf_data.Sbust = @(Vm)makeSbus(baseMVAt, bust, gent, mpopt, Vm);
-        cpf_data.Sxfr  = @(Vm)Sbust(Vm) - Sbusb(Vm);
+        cb_data.Sbusb = Sbusb;
+        cb_data.Sbust = Sbust;
+        cb_data.Sxfr  = Sxfr;
     end
     
     if ~event.rollback
         %% invoke callbacks
         for k = 1:length(callbacks)
-            cpf_state = callbacks{k}(cont_steps, V, lam, V0, lam0, ...
-                                cpf_data, cpf_state, cb_args);
+            cb_state = callbacks{k}(cont_steps, V, lam, V0, lam0, ...
+                                cb_data, cb_state, cb_args);
         end
         
         %% Update zprv
@@ -413,12 +421,14 @@ end
 if success
     cpf_results = struct();
     for k = 1:length(callbacks)
-        [cpf_state, cpf_results] = callbacks{k}(cont_steps, V, lam, V0, lam0, ...
-                                    cpf_data, cpf_state, cb_args, cpf_results);                        
+        [cb_state, cpf_results] = callbacks{k}(cont_steps, V, lam, V0, lam0, ...
+                                    cb_data, cb_state, cb_args, cpf_results);
     end
-    %% Remove fields added from Qlims and stopat events 
-    fieldsrm = {'lam_stopat','lprv','qlim','terminate'};
-    cpf_results = rmfield(cpf_results,fieldsrm); 
+
+    %% RDZ: the need for the following seems to stem from a design flaw
+    %% remove fields added from Qlims and stopat events
+    fieldsrm = {'lam_stopat', 'lprv', 'qlim', 'terminate'};
+    cpf_results = rmfield(cpf_results, fieldsrm); 
 else
     cpf_results.iterations = i;
 end
@@ -468,9 +478,11 @@ if fname
 end
 printpf(results, 1, mpopt);
 
-%% Infeasibility 
-if(event.status == cpf_es.INFEASIBLE)
-    fprintf('CPF ABRUPT TERMINATION!! No ref or PV buses remaining in the system\n');
+%% RDZ: shouldn't print things unless verbose is true, but this status should
+%%      be available in the results
+%% infeasibility 
+if event.status == cpf_es.INFEASIBLE
+    fprintf('CPF ABRUPT TERMINATION!! No REF or PV buses remaining in the system.\n');
 end
 
 %% save solved case

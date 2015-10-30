@@ -1,8 +1,8 @@
 function [V0, lam0, z] = cpf_predictor(V, lam, Ybus, Sxfr, Sbust, Sbusb, pv, pq, ...
                             step, z, Vprv, lamprv, parameterization)
 %CPF_PREDICTOR  Performs the predictor step for the continuation power flow
-%   [V0, LAM0, Z] = CPF_PREDICTOR(V, LAM, YBUS, SXFR, PV, PQ, STEP, Z, ...
-%                                 VPRV, LAMPRV, PARAMETERIZATION)
+%   [V0, LAM0, Z] = CPF_PREDICTOR(V, LAM, YBUS, SXFR, SBUST, SBUSB, PV, PQ, ...
+%                                 STEP, Z, VPRV, LAMPRV, PARAMETERIZATION)
 %
 %   Computes a prediction (approximation) to the next solution of the
 %   continuation power flow using a normalized tangent predictor.
@@ -11,13 +11,13 @@ function [V0, lam0, z] = cpf_predictor(V, lam, Ybus, Sxfr, Sbust, Sbusb, pv, pq,
 %       V : complex bus voltage vector at current solution
 %       LAM : scalar lambda value at current solution
 %       YBUS : complex bus admittance matrix
-%       SXFR : handle of function returning complex vector of scheduled
-%              transfers (difference between bus injections in base and
-%              target cases)
-%       SBUST : handle of function returning bus injections for target case
-%               and derivatives w.r.t. voltage magnitudes
-%       SBUSB : handle of function returning bus injections for target case
-%               and derivatives w.r.t. voltage magnitudes
+%       SXFR  : handle of function returning complex vector of scheduled
+%               transfers in p.u. (difference between bus injections in base
+%               and target cases)
+%       SBUST : handle of function returning nb x 1 vector of complex
+%               target case injections in p.u. and derivatives w.r.t. |V|
+%       SBUSB : handle of function returning nb x 1 vector of complex
+%               base case injections in p.u. and derivatives w.r.t. |V|
 %       PV : vector of indices of PV buses
 %       PQ : vector of indices of PQ buses
 %       STEP : continuation step length

@@ -44,6 +44,7 @@ else
     %mpopt = mpoption(mpopt, 'cpf.error_tol', 2e-5);
     mpopt = mpoption(mpopt, 'cpf.plot.level', plot_nose_curve);
     %mpopt = mpoption(mpopt, 'cpf.plot.bus', 9);
+    %mpopt = mpoption(mpopt, 'pf.tol', 1e-10);
 
     %% define named indices into bus, gen, branch matrices
     [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
@@ -87,7 +88,7 @@ else
     iterations = 41;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
-    t_is(r.cpf.max_lam, 0.7, 5, [t 'max_lam']);
+    t_is(r.cpf.max_lam, 0.7, 12, [t 'max_lam']);
     t_is(size(r.cpf.V_p), [10 iterations+1], 12, [t 'size(V_p)']);
     t_is(size(r.cpf.V_c), [10 iterations+1], 12, [t 'size(V_c)']);
     t_is(size(r.cpf.lam_p), [1 iterations+1], 12, [t 'size(lam_p)']);
@@ -99,7 +100,7 @@ else
     iterations = 41;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
-    t_is(r.cpf.max_lam, 0.7, 5, [t 'max_lam']);
+    t_is(r.cpf.max_lam, 0.7, 12, [t 'max_lam']);
     t_is(size(r.cpf.V_p), [10 iterations+1], 12, [t 'size(V_p)']);
     t_is(size(r.cpf.V_c), [10 iterations+1], 12, [t 'size(V_c)']);
     t_is(size(r.cpf.lam_p), [1 iterations+1], 12, [t 'size(lam_p)']);
@@ -112,7 +113,7 @@ else
     iterations = 22;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
-    t_is(r.cpf.max_lam, 0.99015, 3, [t 'max_lam']);
+    t_is(r.cpf.max_lam, 0.99025, 3, [t 'max_lam']);
     t_is(size(r.cpf.V_p), [10 iterations+1], 12, [t 'size(V_p)']);
     t_is(size(r.cpf.V_c), [10 iterations+1], 12, [t 'size(V_c)']);
     t_is(size(r.cpf.lam_p), [1 iterations+1], 12, [t 'size(lam_p)']);
@@ -125,12 +126,12 @@ else
     iterations = 22;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
-    t_is(r.cpf.max_lam, 0.99015, 3, [t 'max_lam']);
+    t_is(r.cpf.max_lam, 0.99025, 3, [t 'max_lam']);
     t_is(size(r.cpf.V_p), [10 iterations+1], 12, [t 'size(V_p)']);
     t_is(size(r.cpf.V_c), [10 iterations+1], 12, [t 'size(V_c)']);
     t_is(size(r.cpf.lam_p), [1 iterations+1], 12, [t 'size(lam_p)']);
     t_is(size(r.cpf.lam_c), [1 iterations+1], 12, [t 'size(lam_c)']);
-    
+
     t = 'Continuation PF to nose point (pseudo arc length) with Q limits: ';
     mpopt_qlim = mpoption(mpopt, 'cpf.stop_at', 'NOSE', 'cpf.parameterization', 3,'cpf.enforce_q_lims',1);
     mpopt_qlim = mpoption(mpopt_qlim, 'cpf.adapt_step', 1);
@@ -138,7 +139,7 @@ else
     iterations = 18;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
-    t_is(r.cpf.max_lam, 0.95365, 3, [t 'max_lam']);
+    t_is(r.cpf.max_lam, 0.95365, 6, [t 'max_lam']);
     t_is(size(r.cpf.V_p), [10 iterations+1], 12, [t 'size(V_p)']);
     t_is(size(r.cpf.V_c), [10 iterations+1], 12, [t 'size(V_c)']);
     t_is(size(r.cpf.lam_p), [1 iterations+1], 12, [t 'size(lam_p)']);
@@ -150,7 +151,7 @@ else
     iterations = 45;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
-    t_is(r.cpf.max_lam, 0.99015, 3, [t 'max_lam']);
+    t_is(r.cpf.max_lam, 0.99025, 3, [t 'max_lam']);
     t_is(size(r.cpf.V_p), [10 iterations+1], 12, [t 'size(V_p)']);
     t_is(size(r.cpf.V_c), [10 iterations+1], 12, [t 'size(V_c)']);
     t_is(size(r.cpf.lam_p), [1 iterations+1], 12, [t 'size(lam_p)']);
@@ -162,12 +163,12 @@ else
     iterations = 45;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
-    t_is(r.cpf.max_lam, 0.99015, 3, [t 'max_lam']);
+    t_is(r.cpf.max_lam, 0.99025, 3, [t 'max_lam']);
     t_is(size(r.cpf.V_p), [10 iterations+1], 12, [t 'size(V_p)']);
     t_is(size(r.cpf.V_c), [10 iterations+1], 12, [t 'size(V_c)']);
     t_is(size(r.cpf.lam_p), [1 iterations+1], 12, [t 'size(lam_p)']);
     t_is(size(r.cpf.lam_c), [1 iterations+1], 12, [t 'size(lam_c)']);
-    
+
     t = 'Continuation PF (full trace) (pseudo arc length) with Q limits: ';
     mpopt_qlim = mpoption(mpopt, 'cpf.stop_at', 'FULL', 'cpf.parameterization', 3,'cpf.enforce_q_lims',1);
     mpopt_qlim = mpoption(mpopt_qlim, 'cpf.adapt_step', 1);
@@ -175,7 +176,7 @@ else
     iterations = 39;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
-    t_is(r.cpf.max_lam, 0.95364, 3, [t 'max_lam']);
+    t_is(r.cpf.max_lam, 0.95364, 6, [t 'max_lam']);
     t_is(size(r.cpf.V_p), [10 iterations+1], 12, [t 'size(V_p)']);
     t_is(size(r.cpf.V_c), [10 iterations+1], 12, [t 'size(V_c)']);
     t_is(size(r.cpf.lam_p), [1 iterations+1], 12, [t 'size(lam_p)']);
@@ -189,7 +190,7 @@ else
     iterations = 8;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
-    t_is(r.cpf.max_lam, 0.7, 5, [t 'max_lam']);
+    t_is(r.cpf.max_lam, 0.7, 12, [t 'max_lam']);
     t_is(size(r.cpf.lam_c), [1 iterations+1], 12, [t 'size(lam_c)']);
     t_ok(isfield(r.cpf, 'cb1'), [t 'isfield cpf.cb1']);
     t_ok(isstruct(r.cpf.cb1), [t 'isstruct cpf.cb1']);
@@ -208,7 +209,7 @@ else
     iterations = 8;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
-    t_is(r.cpf.max_lam, 0.7, 5, [t 'max_lam']);
+    t_is(r.cpf.max_lam, 0.7, 12, [t 'max_lam']);
     t_is(size(r.cpf.lam_c), [1 iterations+1], 12, [t 'size(lam_c)']);
     t_ok(isfield(r.cpf, 'cb1'), [t 'isfield cpf.cb1']);
     t_ok(isstruct(r.cpf.cb1), [t 'isstruct cpf.cb1']);
