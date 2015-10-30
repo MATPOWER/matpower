@@ -19,7 +19,9 @@ function [cb_state, results] = ...
 %           with the following fields (all based on internal indexing):
 %           mpc_base - MATPOWER case struct of base state
 %           mpc_target - MATPOWER case struct of target state
-%           Sxfr - nb x 1 vector of scheduled transfers in p.u.
+%           Sxfr - handle of function returning complex vector of scheduled
+%              transfers in p.u. (difference between bus injections in base
+%              and target cases)
 %           Ybus - bus admittance matrix
 %           Yf - branch admittance matrix, "from" end of branches
 %           Yt - branch admittance matrix, "to" end of branches
@@ -68,7 +70,8 @@ plot_bus    = cb_data.mpopt.cpf.plot.bus;
 if plot_level
     if isempty(plot_bus)    %% no bus specified
         %% pick PQ bus with largest transfer
-        [junk, idx] = max(cb_data.Sxfr(cb_data.pq));
+        Sxfr = cb_data.Sxfr(abs(V_c));
+        [junk, idx] = max(Sxfr(cb_data.pq));
         if isempty(idx) %% or bus 1 if there are none
             idx = 1;
         else
