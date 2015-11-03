@@ -101,12 +101,11 @@ if nt2 > 0
 
     R = trans2(:,21);
     X = trans2(:,22);
-    Zb = ones(nt2, 1);
-    Zb(cz23) = trans2(cz23,25).^2 ./ trans2(cz23,23);
-    R(cz2)  = R(cz2)  .* Zb(cz2)  ./ Zbs(fbus(cz2));
-    X(cz23) = X(cz23) .* Zb(cz23) ./ Zbs(fbus(cz23));
-    R(cz3)  = trans2(cz3,25).^2 ./ trans2(cz3,21) ./ Zbs(fbus(cz3), 1);
-    tap = trans2(:,24) ./ trans2(:,40);
+    R(cz3) = 1e-6 * R(cz3, 1) ./ trans2(cz3,23);
+    X(cz3) = sqrt(X(cz3).^2 - R(cz3).^2);   %% R and X for cz3 are pu on winding bases
+    R(cz23) = baseMVA * R(cz23, 1) ./ trans2(cz23,23);  %% if Winding base V
+    X(cz23) = baseMVA * X(cz23, 1) ./ trans2(cz23,23);  %% same as bus base V
+    tap = trans2(:,24) ./ trans2(:,40);                 %% WINDV1/WINDV2 YZ
     tap(cw23) = tap(cw23, 1) .* bus(tbus(cw23), BASE_KV)./bus(fbus(cw23), BASE_KV);
     tap(cw3)  = tap(cw3, 1)  .* trans2(cw3,25)./trans2(cw3,41);
     shift = trans2(:, 26);
@@ -177,12 +176,18 @@ if nt3 > 0
     R31(cz2) = R31(cz2) .* Zb3(cz2) ./ Zbs(ind3(cz2));
     X31(cz2) = X31(cz2) .* Zb3(cz2) ./ Zbs(ind3(cz2));
 
-    R12(cz3) = (trans3(cz3,33)*1000) .^ 2 ./ trans3(cz3,21) ./ Zbs(ind1(cz3), 1);
-    X12(cz3) = trans3(cz3,22) .* Zb1(cz3, 1) ./ Zbs(ind3(cz3), 1);
-    R23(cz3) = (trans3(cz3,49)*1000) .^ 2 ./ trans3(cz3,24) ./ Zbs(ind2(cz3), 1);
-    X23(cz3) = trans3(cz3,25) .* Zb2(cz3, 1) ./ Zbs(ind3(cz3), 1);
-    R31(cz3) = (trans3(cz3,65)*1000) .^ 2 ./ trans3(cz3,27) ./ Zbs(ind3(cz3), 1);
-    X31(cz3) = trans3(cz3,28) .* Zb3(cz3, 1) ./ Zbs(ind3(cz3), 1);
+    R12(cz3) = 1e-6 * R12(cz3, 1) ./ trans3(cz3,23);
+    X12(cz3) = sqrt(X12(cz3).^2-R12(cz3).^2);
+    R12(cz3) = baseMVA * R12(cz3, 1) ./ trans3(cz3,23);
+    X12(cz3) = baseMVA * X12(cz3, 1) ./ trans3(cz3,23);
+    R23(cz3) = 1e-6 * R23(cz3, 1) ./ trans3(cz3,26);
+    X23(cz3) = sqrt(X23(cz3).^2-R23(cz3).^2);
+    R23(cz3) = baseMVA * R23(cz3, 1) ./ trans3(cz3,26);
+    X23(cz3) = baseMVA * X23(cz3, 1) ./ trans3(cz3,26);
+    R31(cz3) = 1e-6 * R31(cz3, 1) ./ trans3(cz3,29);
+    X31(cz3) = sqrt(X31(cz3).^2-R31(cz3).^2);
+    R31(cz3) = baseMVA * R31(cz3, 1) ./ trans3(cz3,29);
+    X31(cz3) = baseMVA * X31(cz3, 1) ./ trans3(cz3,29);
 
     R1 = (R12+R31-R23) ./ 2;
     R2 = (R12+R23-R31) ./ 2;
