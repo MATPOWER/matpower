@@ -39,7 +39,7 @@ function [xfmr, bus, warns, bus_name] = psse_convert_xfmr(warns, trans2, trans3,
 %   Based on mptransin.m and mptransficbus.m, written by:
 %       Yujia Zhu, Jan 2014, yzhu54@asu.edu.
 %
-%   $Id$
+%   $Id: psse_convert_xfmr.m 2644 2015-03-11 19:34:22Z ray $
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -51,6 +51,12 @@ function [xfmr, bus, warns, bus_name] = psse_convert_xfmr(warns, trans2, trans3,
 [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
     TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
+
+%% compatibility
+use_winding_baseV = 0;  %% If true, will use winding base V for any conversions
+                        %% instead of bus base V if they are different.
+                        %% Turned off by default for compatibility with PSS/E
+                        %% conversion from RAW to IEEE format (as checked by YZ)
 
 %% sizes
 nb = size(bus, 1);
@@ -90,7 +96,9 @@ if ~isempty(k)
     trans2(k, :) = [];
     nt2 = nt2 - length(k);
 end
-Zbs = bus(:, BASE_KV).^2 / baseMVA;     %% system impedance base
+if use_winding_baseV
+    Zbs = bus(:, BASE_KV).^2 / baseMVA;     %% system impedance base
+end
 if nt2 > 0
     cw2 = find(trans2(:,5) == 2);   %% CW = 2
     cw3 = find(trans2(:,5) == 3);   %% CW = 3
@@ -101,11 +109,20 @@ if nt2 > 0
 
     R = trans2(:,21);
     X = trans2(:,22);
+    if use_winding_baseV
+        Zb = ones(nt2, 1);
+        Zb(cz23) = trans2(cz23,25).^2 ./ trans2(cz23,23);
+    end
     R(cz3) = 1e-6 * R(cz3, 1) ./ trans2(cz3,23);
-    X(cz3) = sqrt(X(cz3).^2 - R(cz3).^2);   %% R and X for cz3 are pu on winding bases
-    R(cz23) = baseMVA * R(cz23, 1) ./ trans2(cz23,23);  %% if Winding base V
-    X(cz23) = baseMVA * X(cz23, 1) ./ trans2(cz23,23);  %% same as bus base V
-    tap = trans2(:,24) ./ trans2(:,40);                 %% WINDV1/WINDV2 YZ
+    X(cz3) = sqrt(X(cz3).^2 - R(cz3).^2);   %% R, X for cz3, pu on winding bases
+    if use_winding_baseV
+        R(cz23) = R(cz23) .* Zb(cz23) ./ Zbs(fbus(cz23));
+        X(cz23) = X(cz23) .* Zb(cz23) ./ Zbs(fbus(cz23));
+    else    %% use bus base V (even if winding base V is different)
+        R(cz23) = baseMVA * R(cz23, 1) ./ trans2(cz23,23);
+        X(cz23) = baseMVA * X(cz23, 1) ./ trans2(cz23,23);
+    end
+    tap = trans2(:,24) ./ trans2(:,40);                 %% WINDV1/WINDV2
     tap(cw23) = tap(cw23, 1) .* bus(tbus(cw23), BASE_KV)./bus(fbus(cw23), BASE_KV);
     tap(cw3)  = tap(cw3, 1)  .* trans2(cw3,25)./trans2(cw3,41);
     shift = trans2(:, 26);
@@ -155,9 +172,11 @@ if nt3 > 0
     shift2 = trans3(:, 50);
     shift3 = trans3(:, 66);
 
-    trans3(cz3, 33) = bus(ind1(cz3), BASE_KV);
-    trans3(cz3, 49) = bus(ind1(cz3), BASE_KV);
-    trans3(cz3, 65) = bus(ind1(cz3), BASE_KV);
+    %% replace winding base voltage with bus base voltage
+    % commented out: Yujia thinks this is wrong
+    % trans3(cz3, 33) = bus(ind1(cz3), BASE_KV);
+    % trans3(cz3, 49) = bus(ind1(cz3), BASE_KV);
+    % trans3(cz3, 65) = bus(ind1(cz3), BASE_KV);
 
     R12 = trans3(:, 21);
     X12 = trans3(:, 22);
@@ -169,25 +188,28 @@ if nt3 > 0
     Zb2 = trans3(:, 49).^2 ./ trans3(:, 26);
     Zb3 = trans3(:, 65).^2 ./ trans3(:, 29);
 
-    R12(cz2) = R12(cz2) .* Zb1(cz2) ./ Zbs(ind1(cz2));
-    X12(cz2) = X12(cz2) .* Zb1(cz2) ./ Zbs(ind1(cz2));
-    R23(cz2) = R23(cz2) .* Zb2(cz2) ./ Zbs(ind2(cz2));
-    X23(cz2) = X23(cz2) .* Zb2(cz2) ./ Zbs(ind2(cz2));
-    R31(cz2) = R31(cz2) .* Zb3(cz2) ./ Zbs(ind3(cz2));
-    X31(cz2) = X31(cz2) .* Zb3(cz2) ./ Zbs(ind3(cz2));
-
     R12(cz3) = 1e-6 * R12(cz3, 1) ./ trans3(cz3,23);
-    X12(cz3) = sqrt(X12(cz3).^2-R12(cz3).^2);
-    R12(cz3) = baseMVA * R12(cz3, 1) ./ trans3(cz3,23);
-    X12(cz3) = baseMVA * X12(cz3, 1) ./ trans3(cz3,23);
+    X12(cz3) = sqrt(X12(cz3).^2 - R12(cz3).^2);
     R23(cz3) = 1e-6 * R23(cz3, 1) ./ trans3(cz3,26);
-    X23(cz3) = sqrt(X23(cz3).^2-R23(cz3).^2);
-    R23(cz3) = baseMVA * R23(cz3, 1) ./ trans3(cz3,26);
-    X23(cz3) = baseMVA * X23(cz3, 1) ./ trans3(cz3,26);
+    X23(cz3) = sqrt(X23(cz3).^2 - R23(cz3).^2);
     R31(cz3) = 1e-6 * R31(cz3, 1) ./ trans3(cz3,29);
-    X31(cz3) = sqrt(X31(cz3).^2-R31(cz3).^2);
-    R31(cz3) = baseMVA * R31(cz3, 1) ./ trans3(cz3,29);
-    X31(cz3) = baseMVA * X31(cz3, 1) ./ trans3(cz3,29);
+    X31(cz3) = sqrt(X31(cz3).^2 - R31(cz3).^2);
+
+    if use_winding_baseV
+        R12(cz23) = R12(cz23) .* Zb1(cz23) ./ Zbs(ind1(cz23));
+        X12(cz23) = X12(cz23) .* Zb1(cz23) ./ Zbs(ind1(cz23));
+        R23(cz23) = R23(cz23) .* Zb2(cz23) ./ Zbs(ind2(cz23));
+        X23(cz23) = X23(cz23) .* Zb2(cz23) ./ Zbs(ind2(cz23));
+        R31(cz23) = R31(cz23) .* Zb3(cz23) ./ Zbs(ind3(cz23));
+        X31(cz23) = X31(cz23) .* Zb3(cz23) ./ Zbs(ind3(cz23));
+    else    %% use bus base V (even if winding base V is different)
+        R12(cz23) = baseMVA * R12(cz23, 1) ./ trans3(cz23,23);
+        X12(cz23) = baseMVA * X12(cz23, 1) ./ trans3(cz23,23);
+        R23(cz23) = baseMVA * R23(cz23, 1) ./ trans3(cz23,26);
+        X23(cz23) = baseMVA * X23(cz23, 1) ./ trans3(cz23,26);
+        R31(cz23) = baseMVA * R31(cz23, 1) ./ trans3(cz23,29);
+        X31(cz23) = baseMVA * X31(cz23, 1) ./ trans3(cz23,29);
+    end
 
     R1 = (R12+R31-R23) ./ 2;
     R2 = (R12+R23-R31) ./ 2;

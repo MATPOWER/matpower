@@ -15,7 +15,7 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.1
 -----------------
 
-11/3/15
+11/4/15
     - Fixed a bug in psse_convert_xfmr() where conversion of data for
       transformers with CZ=3 was done incorrectly. Thanks to Jose Marin
       and Yujia Zhu.
