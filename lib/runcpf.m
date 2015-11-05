@@ -353,7 +353,7 @@ bust(:,QD) = busb(:,QD) + lam*(bust(:,QD) - busb(:,QD));
 gent(:,PG) = genb(:,PG) + lam*(gent(:,PG) - genb(:,PG));
 
 %% update data matrices with solution
-[bust, gent, brancht] = pfsoln(baseMVAt, bust, gent, brancht, Ybus, Yf, Yt, V, ref, pv, pq);
+[bust, gent, brancht] = pfsoln(baseMVAt, bust, gent, brancht, Ybus, Yf, Yt, V, ref, pv, pq, mpopt);
 
 mpctarget.et = etime(clock, t0);
 mpctarget.success = success;
