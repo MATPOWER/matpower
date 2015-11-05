@@ -347,7 +347,7 @@ else
 end
 
 %% update bus and gen matrices to reflect the loading and generation
-%% at the noise point
+%% at final lambda
 bust(:,PD) = busb(:,PD) + lam*(bust(:,PD) - busb(:,PD));
 bust(:,QD) = busb(:,QD) + lam*(bust(:,QD) - busb(:,QD));
 gent(:,PG) = genb(:,PG) + lam*(gent(:,PG) - genb(:,PG));
