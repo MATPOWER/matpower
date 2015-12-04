@@ -320,7 +320,7 @@ else        %% detect availability
                     end
                     TorF = exist('fval', 'var') && fval == 1;
                     if TorF
-                        pat = 'KNITRO ([^\s]+)\n';
+                        pat = 'KNITRO ([^\s]+)\n|Knitro ([^\s]+)\n';
                         [s,e,tE,m,t] = regexp(str, pat);
                         if ~isempty(t)
                             vstr = t{1}{1};
