@@ -1,6 +1,6 @@
 function mpc = apply_changes(label, mpc, chgtab)
 %APPLY_CHANGES  Applies a set of changes to a MATPOWER case
-%   mpc = apply_changes(label, mpc, chgtab)
+%   mpc_modified = apply_changes(label, mpc_original, chgtab)
 %
 %   Applies the set of changes identified by LABEL to the case in MPC, where
 %   the change sets are specified in CHGTAB.
