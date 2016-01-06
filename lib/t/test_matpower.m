@@ -110,6 +110,7 @@ tests{end+1} = 't_printpf';
 tests{end+1} = 't_vdep_load';
 tests{end+1} = 't_total_load';
 tests{end+1} = 't_scale_load';
+tests{end+1} = 't_apply_changes';
 tests{end+1} = 't_psse';
 
 %% smartmarket tests
