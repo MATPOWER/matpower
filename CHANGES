@@ -15,7 +15,7 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.1
 -----------------
 
-12/15/15
+1/6/16
     - Add apply_changes() and idx_ct() to implement general method for
       applying modifications to an existing MATPOWER case.
 
