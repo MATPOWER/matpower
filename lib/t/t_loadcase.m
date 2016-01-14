@@ -558,11 +558,16 @@ c.gen(3,2) = c.gen(3,2) + 1;            %% increase gen 3 output by 1
 [baseMVA5, bus5, gen5, branch5, success, et] = runpf(c, mpopt);
 t_is(gen5(1,2), gen4(1,2) - 1, 1, t);   %% slack bus output should decrease by 1
 
+%% $MATPOWER/t/t_loadcase should not be in path
+if exist('case_for_off_path_test') == 2
+    warning('You have $MATPOWER/t/t_loadcase in your path. In general your path should not include sub-directories of $MATPOWER/t. While harmless, it does prevent this test from verifying the ability to load m-file cases that are outside your path.');
+end
+
 t = 'mpc = loadcase(<file not in path>) : ';
 % find path to t_mfile2fh.m
 cwd = pwd;
-[p, n, e] = fileparts(which('t_mfile2fh'));
-offpathcase = [p filesep 't_mfile2fh' filesep 'case_for_off_path_test'];
+[p, n, e] = fileparts(which('t_loadcase'));
+offpathcase = [p filesep 't_loadcase' filesep 'case_for_off_path_test'];
 mpc = loadcase(offpathcase);
 t_ok(strcmp(mpc.version, '2'), [t 'version']);
 t_is(mpc.baseMVA, 100, 15, [t 'baseMVA']);
