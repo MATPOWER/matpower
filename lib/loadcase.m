@@ -95,7 +95,7 @@ if ischar(casefile)
             end
         elseif strcmp(ext,'.m')     %% from M file
             if ~isempty(pathstr)
-                cwd = cd;           %% save working directory to string
+                cwd = pwd;          %% save working directory to string
                 cd(pathstr);        %% cd to specified directory
             end
             try                             %% assume it returns a struct
