@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.1
 -----------------
 
+1/15/16
+    - Added feval_w_path() function for evaluating functions located at
+      a specified path, outside of the Matlab path.
+
 1/14/16
     - Added tests for loadcase() for m-file cases outside the Matlab path.
 
