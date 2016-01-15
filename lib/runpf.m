@@ -216,7 +216,7 @@ else                                %% AC formulation
                 end
                 [V, success, iterations] = gausspf(Ybus, Sbus([]), V0, ref, pv, pq, mpopt);
             otherwise
-                error('Only Newton''s method, fast-decoupled, and Gauss-Seidel power flow algorithms currently implemented.');
+                error('runpf: Only Newton''s method, fast-decoupled, and Gauss-Seidel power flow algorithms currently implemented.');
         end
         
         %% update data matrices with solution
@@ -278,7 +278,7 @@ else                                %% AC formulation
                         bus(bi, [PD,QD]) - gen(mx(i), [PG,QG]);
                 end
                 if length(ref) > 1 && any(bus(gen(mx, GEN_BUS), BUS_TYPE) == REF)
-                    error('Sorry, MATPOWER cannot enforce Q limits for slack buses in systems with multiple slacks.');
+                    error('runpf: Sorry, MATPOWER cannot enforce Q limits for slack buses in systems with multiple slacks.');
                 end
                 bus(gen(mx, GEN_BUS), BUS_TYPE) = PQ;   %% & set bus type to PQ
                 

@@ -15,8 +15,11 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.1
 -----------------
 
+1/14/16
+    - Added tests for loadcase() for m-file cases outside the Matlab path.
+
 1/6/16
-    - Add apply_changes() and idx_ct() to implement general method for
+    - Added apply_changes() and idx_ct() to implement general method for
       applying modifications to an existing MATPOWER case.
 
 11/5/15
