@@ -27,10 +27,6 @@ Changes since 5.1
       to define continuation power flow transfer. Should fix issue with
       calculation of final loads.
 
-10/30/15
-    - Fixed a bug in cpf_default_callback() introduced with the
-      experimental updates regarding ZIP loads on 4/14/15.
-
 10/15/15
     - Modified t_is() to handle matrix inputs of dimension greater
       than two.
