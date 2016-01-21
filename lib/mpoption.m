@@ -103,6 +103,8 @@ function opt = mpoption(varargin)
 %                                       callback functions
 %
 %Optimal Power Flow options:
+%   name                    default     description [options]
+%----------------------    ---------   ----------------------------------
 %   opf.ac.solver           'DEFAULT'   AC optimal power flow solver
 %       [ 'DEFAULT' - choose solver based on availability in the following  ]
 %       [             order: 'PDIPM', 'MIPS'                                ]
@@ -174,6 +176,8 @@ function opt = mpoption(varargin)
 %                                       (in fields g, dg, df, d2f) [ 0 or 1 ]
 %
 %Output options:
+%   name                    default     description [options]
+%----------------------    ---------   ----------------------------------
 %   verbose                 1           amount of progress info printed
 %       [   0 - print no progress info                                      ]
 %       [   1 - print a little progress info                                ]

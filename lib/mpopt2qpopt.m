@@ -30,7 +30,7 @@ function qpopt = mpopt2qpopt(mpopt, model, alg)
 %               and friends
 
 %   MATPOWER
-%   Copyright (c) 2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2015, 2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   $Id$
@@ -52,6 +52,7 @@ else
     model = upper(model);
 end
 skip_prices = 0;
+price_stage_warn_tol = [];
 
 %% get ALG from mpopt, if necessary
 switch alg
@@ -59,7 +60,8 @@ switch alg
         alg = upper(mpopt.opf.dc.solver);
     case 'mops'
         alg = upper(mpopt.mops.solver);
-        skip_prices = mpopt.mops.skip_prices;
+        skip_prices             = mpopt.mops.skip_prices;
+        price_stage_warn_tol    = mpopt.mops.price_stage_warn_tol;
     otherwise
         alg = upper(alg);
 end
@@ -125,5 +127,6 @@ switch alg
         end
 end
 if model(1) == 'M'
-    qpopt.skip_prices = skip_prices;
+    qpopt.skip_prices           = skip_prices;
+    qpopt.price_stage_warn_tol  = price_stage_warn_tol;
 end

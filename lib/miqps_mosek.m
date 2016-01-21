@@ -37,6 +37,9 @@ function [x, f, eflag, output, lambda] = miqps_mosek(H, c, A, l, u, xmin, xmax, 
 %               skip the price computation stage, in which the problem
 %               is re-solved for only the continuous variables, with all
 %               others being constrained to their solved values
+%           price_stage_warn_tol (1e-7) - tolerance on the objective fcn
+%               value and primal variable relative match required to avoid
+%               mis-match warning message
 %           mosek_opt - options struct for MOSEK, value in verbose
 %               overrides these options
 %       PROBLEM : The inputs can alternatively be supplied in a single
@@ -430,7 +433,11 @@ if mi && eflag == 1 && (~isfield(p.opt, 'skip_prices') || ~p.opt.skip_prices)
     if verbose
         fprintf('--- Integer stage complete, starting price computation stage ---\n');
     end
-    tol = 1e-7;
+    if isfield(p.opt, 'price_stage_warn_tol') && ~isempty(p.opt.price_stage_warn_tol)
+        tol = p.opt.price_stage_warn_tol;
+    else
+        tol = 1e-7;
+    end
     qp = p;
     x(prob.ints.sub) = round(x(prob.ints.sub));
     qp.xmin(prob.ints.sub) = x(prob.ints.sub);
