@@ -1,5 +1,5 @@
-function t_mops_30b_3_1_17(quiet)
-%T_MOPS_30B_3_1_17  Tests for MOPS.
+function t_most_30b_3_1_17(quiet)
+%T_MOST_30B_3_1_17  Tests for MOST.
 
 %   MPSOPF for MATPOWER
 %   $Id$
@@ -36,7 +36,7 @@ if have_fcn('mosek')
 end
 mpoptac = mpoption(mpopt, 'model', 'AC');
 mpoptdc = mpoption(mpopt, 'model', 'DC');
-mpopt = mpoption(mpopt, 'mops.solver', algs.dc{1});
+mpopt = mpoption(mpopt, 'most.solver', algs.dc{1});
 
 %% turn off warnings
 s7 = warning('query', 'MATLAB:nearlySingularMatrix');
@@ -140,14 +140,14 @@ rdc = c3sopf_retry(algs.dc, mpc, xgd_table.data, contab, mpoptdc);
 s.rdc = rdc;
 % s.rac = rac;
 
-%%-----  set up data for DC run (mops)  -----
+%%-----  set up data for DC run (most)  -----
 ng = size(mpc.gen, 1);      %% number of gens
 nt = 3;
 xgd = loadxgendata(xgd_table, mpc);
 md = loadmd(mpc, nt, xgd, [], contab);
 
-%%-----  do DC run (mops)  -----
-r = mops(md, mpopt);
+%%-----  do DC run (most)  -----
+r = most(md, mpopt);
 
 %%-----  test the results  -----
 t = 'success1';
@@ -244,7 +244,7 @@ end
 %     end
 % end
 
-%%-----  do AC run (mops)  -----
+%%-----  do AC run (most)  -----
 %mpsopf;
 
 

@@ -1,7 +1,7 @@
-function test_mops(verbose)
-%TEST_MOPS  Run all MOPS tests.
-%   TEST_MOPS runs all of the MOPS tests.
-%   TEST_MOPS(VERBOSE) prints the details of the individual tests
+function test_most(verbose)
+%TEST_MOST  Run all MOST tests.
+%   TEST_MOST runs all of the MOST tests.
+%   TEST_MOST(VERBOSE) prints the details of the individual tests
 %   if VERBOSE is true.
 %
 %   See also T_RUN_TESTS.
@@ -24,20 +24,20 @@ tests = {};
 
 %% MATPOWER base test
 tests{end+1} = 't_apply_changes';
-tests{end+1} = 't_mops_3b_1_1_0';
-tests{end+1} = 't_mops_3b_3_1_0';
-tests{end+1} = 't_mops_3b_1_1_2';
-tests{end+1} = 't_mops_3b_3_1_2';
-tests{end+1} = 't_mops_30b_1_1_0';
-tests{end+1} = 't_mops_30b_3_1_0';
-tests{end+1} = 't_mops_30b_1_1_17';
-tests{end+1} = 't_mops_30b_3_1_17';
-tests{end+1} = 't_mops_fixed_res';
-tests{end+1} = 't_mops_w_ds';
-tests{end+1} = 't_mops_30b_1_1_0_uc';
-tests{end+1} = 't_mops_sp';
-tests{end+1} = 't_mops_spuc';
-tests{end+1} = 't_mops_uc';
-tests{end+1} = 't_mops_suc';
+tests{end+1} = 't_most_3b_1_1_0';
+tests{end+1} = 't_most_3b_3_1_0';
+tests{end+1} = 't_most_3b_1_1_2';
+tests{end+1} = 't_most_3b_3_1_2';
+tests{end+1} = 't_most_30b_1_1_0';
+tests{end+1} = 't_most_30b_3_1_0';
+tests{end+1} = 't_most_30b_1_1_17';
+tests{end+1} = 't_most_30b_3_1_17';
+tests{end+1} = 't_most_fixed_res';
+tests{end+1} = 't_most_w_ds';
+tests{end+1} = 't_most_30b_1_1_0_uc';
+tests{end+1} = 't_most_sp';
+tests{end+1} = 't_most_spuc';
+tests{end+1} = 't_most_uc';
+tests{end+1} = 't_most_suc';
 
 t_run_tests( tests, verbose );

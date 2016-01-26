@@ -1,5 +1,5 @@
 function md = loadmd(mpci, transmati, xgdi, storagei, contabi, profilesi, trajdatai)
-%LOADMD   Loads all required data and constructs MD for MOPS.
+%LOADMD   Loads all required data and constructs MD for MOST.
 %
 %   MD = LOADMD(MPC)
 %   MD = LOADMD(MPC, TRANSMAT)
@@ -263,7 +263,7 @@ end
 
 
 % (C.2) Store basic dimensions not imposed implicitly by inputs
-    %     themselves in mops(.)
+    %     themselves in most(.)
 md.idx.nt = nt;
 
 
@@ -295,7 +295,7 @@ else
     if isempty(storage)
         error('loadmd: storage struct cannot be empty when MPC contains storage units');
     end
-    % let mops() assign defaults
+    % let most() assign defaults
     if ~isfield(storage,'OutEff')
         storage.OutEff = [];
     end
@@ -470,7 +470,7 @@ if second
     end
 end
 
-% (C.7) Put all necessary info into md struct in order to run mops()
+% (C.7) Put all necessary info into md struct in order to run most()
 %       Here, all the profiles are "expanded" and applied to data before
 %       the latter is actually assigned to md.
 %       Moreover, all info required to run mpsopfl2 is loaded into md if
@@ -490,7 +490,7 @@ md.mpc = mpc;
 optab = cell(nt,nj_max);
 for p = 1:nprof
     if strcmp(profiles(p).type, 'mpcData')
-%       Profiles of type mpcData need to be passed along to mops()
+%       Profiles of type mpcData need to be passed along to most()
 %       as contingency-like tables describing the operation
 %       conditions for each time period and each scenario. Those
 %       contabs are stored in the OpCondSched struct array.

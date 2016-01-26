@@ -1,7 +1,7 @@
-function Ostr = mops(Istr, mpopt)
-%MOPS MATPOWER generalized Optimal Power Scheduler
-%   MD_OUT = MOPS(MD_IN)
-%   MD_OUT = MOPS(MD_IN, MPOPT)
+function Ostr = most(Istr, mpopt)
+%MOST MATPOWER Optimal Scheduling Tool
+%   MD_OUT = MOST(MD_IN)
+%   MD_OUT = MOST(MD_IN, MPOPT)
 %
 %   Solves multi-period, stochastic, contingency constrained, optimal
 %   power flow problem with linear constraints and unit commitment.
@@ -9,44 +9,44 @@ function Ostr = mops(Istr, mpopt)
 %   a simple total power balance condition.
 %
 %   Inputs:
-%       MD_IN   MOPS data structure, input
+%       MD_IN   MOST data structure, input
 %           (see docs elsewhere for details)
 %       MPOPT   MATPOWER options struct, relevant fields are (default
 %               value in parens):
 %           verbose - see 'help mpoption'
 %           <solver specific options> - e.g. cplex, gurobi, etc,
 %                     see 'help mpoption'
-%           mops.build_model (1) - build the MIQP, both constraints and
+%           most.build_model (1) - build the MIQP, both constraints and
 %                   standard costs (not coordination cost) and store in
 %                   QP field of MD_OUT
-%           mops.solve_model (1) - solve the MIQP; if coordination
-%                   cost exists, update it; requires either 'mops.build_model'
+%           most.solve_model (1) - solve the MIQP; if coordination
+%                   cost exists, update it; requires either 'most.build_model'
 %                   set to 1 or MD_IN.QP must contain previously built model
-%           mops.resolve_new_cost (0) - use when MIQP is already built and
+%           most.resolve_new_cost (0) - use when MIQP is already built and
 %                   unchanged except for new coordination cost
-%           mops.dc_model (1) - use DC flow network model as opposed to simple
+%           most.dc_model (1) - use DC flow network model as opposed to simple
 %                   generation = demand constraint
-%           mops.q_coordination (0) - create Qg variables for reactive power
+%           most.q_coordination (0) - create Qg variables for reactive power
 %                   coordination
-%           mops.security_constraints (-1) - include contingency contstraints,
+%           most.security_constraints (-1) - include contingency contstraints,
 %                   if present, 1 = always include, 0 = never include
-%           mops.storage.terminal_target (-1) - constrain the expected terminal
+%           most.storage.terminal_target (-1) - constrain the expected terminal
 %                   storage to target value, if present (1 = always, 0 = never)
-%           mops.storage.cyclic (0) - if 1, then initial storage is a variable
+%           most.storage.cyclic (0) - if 1, then initial storage is a variable
 %                   constrained to = final expected storage; can't be
-%                   simultaneously true with mops.storage.terminal_target
-%           mops.uc.run (-1) - flag to indicate whether to perform unit
+%                   simultaneously true with most.storage.terminal_target
+%           most.uc.run (-1) - flag to indicate whether to perform unit
 %                   commitment; 0 = do NOT perform UC, 1 = DO perform UC,
 %                   -1 = perform UC if MD_IN.UC.CommitKey is present/non-empty
-%           mops.uc.cyclic (0) - commitment restrictions (e.g. min up/down
+%           most.uc.cyclic (0) - commitment restrictions (e.g. min up/down
 %                   times) roll over from end of horizon back to beginning
-%           mops.alpha (0) - 0 = contingencies happen at beginning of period,
+%           most.alpha (0) - 0 = contingencies happen at beginning of period,
 %                   1 = at end of period
-%           mops.solver ('DEFAULT') - see ALG argument to MIQPS_MATPOWER or
+%           most.solver ('DEFAULT') - see ALG argument to MIQPS_MATPOWER or
 %                   QPS_MATPOWER for details
-%           mops.skip_prices (0) - skip price computation stage for mixed
+%           most.skip_prices (0) - skip price computation stage for mixed
 %                   integer problems, see 'help miqps_matpower' for details
-%           mops.price_stage_warn_tol (1e-7) - tolerance on the objective fcn
+%           most.price_stage_warn_tol (1e-7) - tolerance on the objective fcn
 %               value and primal variable relative match required to avoid
 %               mis-match warning message, see 'help miqps_matpower' for details
 
@@ -106,7 +106,7 @@ function Ostr = mops(Istr, mpopt)
 %         .Storage.InEff
 
 % Istr
-% To summarize, for (mops.build_model, mops.solve_model, mops.resolve_new_cost) ...
+% To summarize, for (most.build_model, most.solve_model, most.resolve_new_cost) ...
 %   (1,0,?) -> set up the problem, but don't solve it
 %   (1,1,?) -> set up the problem, then solve it
 %   (0,1,1) -> assume it's already set up, solve it with new costs
@@ -150,7 +150,7 @@ verbose = mpopt.verbose;
 
 if verbose
     fprintf('\n============================================================================\n');
-    fprintf('  MOPS:  MATPOWER generalized Optimal Power Scheduler\n');
+    fprintf('  MOST:  MATPOWER Optimal Scheduling Tool\n');
     fprintf('         (a multi-period stochastic secure OPF with unit commitment).\n');
     fprintf('  Carlos E. Murillo-Sanchez, Universidad Nacional de Colombia--Manizales,\n');
     fprintf('  and Ray D. Zimmerman, Cornell University. Built on MATPOWER(c).\n');
@@ -159,11 +159,11 @@ if verbose
 end
 
 %% if you want to do a normal solve, you have to create the QP
-if mpopt.mops.solve_model && ~mpopt.mops.resolve_new_cost
-  mpopt = mpoption(mpopt, 'mops.build_model', 1);
+if mpopt.most.solve_model && ~mpopt.most.resolve_new_cost
+  mpopt = mpoption(mpopt, 'most.build_model', 1);
 end
-if ~mpopt.mops.build_model && ~mpopt.mops.solve_model
-  error('mops: Ah ... are you sure you want to do nothing? (either ''mops.build_model'' or ''mops.solve_model'' must be true)');
+if ~mpopt.most.build_model && ~mpopt.most.solve_model
+  error('most: Ah ... are you sure you want to do nothing? (either ''most.build_model'' or ''most.solve_model'' must be true)');
 end
 if ~isfield(Istr, 'IncludeFixedReserves')
   Istr.IncludeFixedReserves = false;
@@ -182,15 +182,15 @@ end
 if ~isfield(Istr, 'UC') || ~isfield(Istr.UC, 'CommitSched') || ...
         isempty(Istr.UC.CommitSched)
   if isfield(Istr, 'CommitSched') && ~isempty(Istr.CommitSched)
-    warning('-----  mops: MD_IN.CommitSched has moved to MD_IN.UC.CommitSched, please update your code.  -----');
+    warning('-----  most: MD_IN.CommitSched has moved to MD_IN.UC.CommitSched, please update your code.  -----');
     Istr.UC.CommitSched = Istr.CommitSched;
   else
-    error('mops: commitment schedule must be provided in MSPD_IN.UC.CommitSched');
+    error('most: commitment schedule must be provided in MSPD_IN.UC.CommitSched');
   end
 end
 
 % set up model options
-UC = mpopt.mops.uc.run;
+UC = mpopt.most.uc.run;
 if UC == -1
   if isempty(Istr.UC.CommitKey)
     UC = 0;
@@ -199,12 +199,12 @@ if UC == -1
   end
 end
 mo = struct(...
-    'DCMODEL',                      mpopt.mops.dc_model, ...
-    'SecurityConstrained',          mpopt.mops.security_constraints, ...
-    'QCoordination',                mpopt.mops.q_coordination, ...
-    'ForceCyclicStorage',           mpopt.mops.storage.cyclic, ...
-    'ForceExpectedTerminalStorage', mpopt.mops.storage.terminal_target, ...
-    'alpha',                        mpopt.mops.alpha ...
+    'DCMODEL',                      mpopt.most.dc_model, ...
+    'SecurityConstrained',          mpopt.most.security_constraints, ...
+    'QCoordination',                mpopt.most.q_coordination, ...
+    'ForceCyclicStorage',           mpopt.most.storage.cyclic, ...
+    'ForceExpectedTerminalStorage', mpopt.most.storage.terminal_target, ...
+    'alpha',                        mpopt.most.alpha ...
 );
 if mo.SecurityConstrained == -1
   if isfield(Istr, 'cont') && isfield(Istr.cont(1,1), 'contab') && ...
@@ -225,16 +225,16 @@ if mo.ForceExpectedTerminalStorage == -1
 end
 if mo.SecurityConstrained && ~(isfield(Istr, 'cont') && ...
       isfield(Istr.cont(1,1), 'contab') && ~isempty(Istr.cont(1,1).contab))
-  error('mops: MD_IN.cont(t,j).contab cannot be empty when MPOPT.mops.security_constraints = 1');
+  error('most: MD_IN.cont(t,j).contab cannot be empty when MPOPT.most.security_constraints = 1');
 end
 if mo.ForceExpectedTerminalStorage == 1;
   if mo.ForceCyclicStorage
-    error('mops: storage model cannot be both cyclic and include a terminal target value; must change MPOPT.mops.storage.cyclic or MPOPT.mops.storage.terminal_target');
+    error('most: storage model cannot be both cyclic and include a terminal target value; must change MPOPT.most.storage.cyclic or MPOPT.most.storage.terminal_target');
   end
   if ns && isempty(Istr.Storage.ExpectedTerminalStorageAim) && ...
            isempty(Istr.Storage.ExpectedTerminalStorageMin) && ...
            isempty(Istr.Storage.ExpectedTerminalStorageMax)
-    error('mops: MD_IN.Storage.ExpectedTerminalStorageAim|Min|Max cannot all be empty when MPOPT.mops.storage.terminal_target = 1');
+    error('most: MD_IN.Storage.ExpectedTerminalStorageAim|Min|Max cannot all be empty when MPOPT.most.storage.terminal_target = 1');
   end
   if ~isempty(Istr.Storage.ExpectedTerminalStorageAim)
     Istr.Storage.ExpectedTerminalStorageMin = Istr.Storage.ExpectedTerminalStorageAim;
@@ -242,12 +242,12 @@ if mo.ForceExpectedTerminalStorage == 1;
   end
 end
 if UC && (~isfield(Istr.UC, 'CommitKey') || isempty(Istr.UC.CommitKey))
-  error('mops: cannot run unit commitment without specifying MD.UC.CommitKey');
+  error('most: cannot run unit commitment without specifying MD.UC.CommitKey');
 end
 
 if ns
   if isempty(Istr.Storage.InitialStorage)
-    error('mops: Storage.InitialStorage must be specified');
+    error('most: Storage.InitialStorage must be specified');
   end
   if isempty(Istr.Storage.TerminalChargingPrice0)
     Istr.Storage.TerminalChargingPrice0 = Istr.Storage.TerminalStoragePrice;
@@ -262,7 +262,7 @@ if ns
     Istr.Storage.TerminalDischargingPriceK = Istr.Storage.TerminalStoragePrice;
   end
   if isempty(Istr.Storage.MinStorageLevel)
-    error('mops: Storage.MinStorageLevel must be specified');
+    error('most: Storage.MinStorageLevel must be specified');
   else
     MinStorageLevel = Istr.Storage.MinStorageLevel;
   end
@@ -273,7 +273,7 @@ if ns
     MinStorageLevel = MinStorageLevel * ones(1, nt);
   end
   if isempty(Istr.Storage.MaxStorageLevel)
-    error('mops: Storage.MaxStorageLevel must be specified');
+    error('most: Storage.MaxStorageLevel must be specified');
   else
     MaxStorageLevel = Istr.Storage.MaxStorageLevel;
   end
@@ -400,7 +400,7 @@ Istr.mpc.f = 0;
 Istr.mpc.et = 0;
 Istr.mpc.success = 1;
 
-if mpopt.mops.build_model
+if mpopt.most.build_model
   if verbose
     fprintf('- Building indexing structures.\n');
   end
@@ -417,7 +417,7 @@ if mpopt.mops.build_model
   if UC
     % Make sure MinUp and MinDown are all >= 1
     if any(Istr.UC.MinUp < 1) && any(Istr.UC.MinUp < 1)
-        error('mops: UC.MinUp and UC.MinDown must all be >= 1');
+        error('most: UC.MinUp and UC.MinDown must all be >= 1');
     end
     % Unless something is forced off in Istr.CommitKey, or as a result of
     % not fulfilling its Istr.UC.MinDown in early periods, it should be available
@@ -1461,7 +1461,7 @@ if mpopt.mops.build_model
   % Now, if required, constrain the expected terminal storage quantity; two
   % different ways:
   if Istr.Storage.ForceExpectedTerminalStorage && Istr.Storage.ForceCyclicStorage
-    error('mops: ForceExpectedTerminalStorage and ForceCyclicStorage cannot be simultaneously true.');
+    error('most: ForceExpectedTerminalStorage and ForceCyclicStorage cannot be simultaneously true.');
   end
   if ns
     % The following code assumes that no more variables will be added
@@ -1799,7 +1799,7 @@ if mpopt.mops.build_model
           if all(gc(ipol, NCOST) == ncost)    %% uniform order of polynomials
             %% use vectorized code
             if ncost > 3
-              error('mops: polynomial generator costs of order higher than quadratic not supported');
+              error('most: polynomial generator costs of order higher than quadratic not supported');
             elseif ncost == 3
               H = sparse(ipol, ipol, 2 * w * baseMVA^2*gc(ipol, COST), ng, ng);
             else
@@ -1817,7 +1817,7 @@ if mpopt.mops.build_model
             for i = ipol'
               ncost = gc(i, NCOST);
               if ncost > 3
-                error('mops: polynomial generator costs of order higher than quadratic not supported');
+                error('most: polynomial generator costs of order higher than quadratic not supported');
               elseif ncost == 3
                 H(i,i) = 2 * w * baseMVA^2*gc(i, COST);
               end
@@ -1997,7 +1997,7 @@ if mpopt.mops.build_model
   Istr.QP.H1 = cp.N' * cp.H * cp.N;
   Istr.QP.C1 = cp.N' * cp.Cw;
   Istr.QP.c1 = c1;
-end     % if mpopt.mops.build_model
+end     % if mpopt.most.build_model
 
 % With all pieces of the cost in place, can proceed to build the total
 % cost now.
@@ -2084,25 +2084,25 @@ tmptime(2,:) = clock;
 
 % Call solver!
 Ostr = Istr;
-if mpopt.mops.solve_model
+if mpopt.most.solve_model
   %% check consistency of model options (in case Istr was built in previous call)
   if Istr.DCMODEL ~= mo.DCMODEL
-    error('MD.DCMODEL inconsistent with MPOPT.mops.dc_model');
+    error('MD.DCMODEL inconsistent with MPOPT.most.dc_model');
   end
   if Istr.SecurityConstrained ~= mo.SecurityConstrained
-    error('MD.SecurityConstrained inconsistent with MPOPT.mops.security_constraints (and possible presence of MD.cont(t,j).contab)');
+    error('MD.SecurityConstrained inconsistent with MPOPT.most.security_constraints (and possible presence of MD.cont(t,j).contab)');
   end
   if Istr.QCoordination ~= mo.QCoordination
-    error('MD.QCoordination inconsistent with MPOPT.mops.q_coordination');
+    error('MD.QCoordination inconsistent with MPOPT.most.q_coordination');
   end
   if Istr.Storage.ForceCyclicStorage ~= mo.ForceCyclicStorage
-    error('MD.Storage.ForceCyclicStorage inconsistent with MPOPT.mops.storage.cyclic');
+    error('MD.Storage.ForceCyclicStorage inconsistent with MPOPT.most.storage.cyclic');
   end
   if Istr.Storage.ForceExpectedTerminalStorage ~= mo.ForceExpectedTerminalStorage
-    error('MD.Storage.ForceExpectedTerminalStorage inconsistent with MPOPT.mops.storage.terminal_target (and possible presence of MD.Storage.ExpectedTerminalStorageAim|Min|Max)');
+    error('MD.Storage.ForceExpectedTerminalStorage inconsistent with MPOPT.most.storage.terminal_target (and possible presence of MD.Storage.ExpectedTerminalStorageAim|Min|Max)');
   end
   if Istr.UC.run ~= UC
-    error('MD.UC.run inconsistent with MPOPT.mops.uc.run (and possible presence of MD.UC.CommitKey)');
+    error('MD.UC.run inconsistent with MPOPT.most.uc.run (and possible presence of MD.UC.CommitKey)');
   end
   %% set options
   if any(any(Istr.QP.H))
@@ -2113,7 +2113,7 @@ if mpopt.mops.solve_model
   if UC
     model = ['MI' model];
   end
-  Ostr.QP.opt = mpopt2qpopt(mpopt, model, 'mops');
+  Ostr.QP.opt = mpopt2qpopt(mpopt, model, 'most');
   if verbose
     fprintf('- Calling %s solver.\n\n', model);
     fprintf('============================================================================\n\n');
@@ -2132,11 +2132,11 @@ if mpopt.mops.solve_model
   if Ostr.QP.exitflag > 0
     if verbose
       fprintf('\n============================================================================\n');
-      fprintf('- MOPS: %s solved successfully.\n', model);
+      fprintf('- MOST: %s solved successfully.\n', model);
     end
   else
     fprintf('\n============================================================================\n');
-    fprintf('- MOPS: %s solver ''%s'' failed with exit flag = %d\n', model, Ostr.QP.opt.alg, Ostr.QP.exitflag);
+    fprintf('- MOST: %s solver ''%s'' failed with exit flag = %d\n', model, Ostr.QP.opt.alg, Ostr.QP.exitflag);
     fprintf('  You can query the workspace to debug.\n')
     fprintf('  When finished, type the word "return" to continue.\n\n');
     keyboard;
@@ -2388,7 +2388,7 @@ if mpopt.mops.solve_model
     end
   end
   Ostr.results.f = Ostr.QP.f;
-end % if mpopt.mops.solve_model
+end % if mpopt.most.solve_model
 
 tmptime(3,:) = clock;
 
@@ -2398,7 +2398,7 @@ Ostr.results.SolveTime = etime(tmptime(3,:), tmptime(2,:));
 % Ostr = oldidx(Ostr);
 
 if verbose
-  fprintf('- MOPS: Done.\n\n');
+  fprintf('- MOST: Done.\n\n');
 end
 
 return;

@@ -1,5 +1,5 @@
-function t_mops_suc(quiet)
-%T_MOPS_SUC  Tests of stochastic unit commitment optimizations.
+function t_most_suc(quiet)
+%T_MOST_SUC  Tests of stochastic unit commitment optimizations.
 
 %   MATPOWER
 %   Copyright (c) 2015 by Power System Engineering Research Center (PSERC)
@@ -22,7 +22,7 @@ fcn = {'cplex', 'glpk', 'gurobi', 'mosek', 'intlinprog'};
 % solvers = {'GUROBI'};
 % fcn = {'gurobi'};
 % solvers = {'DEFAULT'};
-% fcn = {'mops'};
+% fcn = {'most'};
 ntests = 37;
 t_begin(ntests*length(solvers), quiet);
 
@@ -44,7 +44,7 @@ if have_fcn('octave')
 end
 
 casefile = 'eg_case3';
-solnfile =  't_mops_suc_soln';
+solnfile =  't_most_suc_soln';
 soln = load(solnfile);
 mpopt = mpoption;
 mpopt = mpoption(mpopt, 'out.gen', 1);
@@ -52,7 +52,7 @@ mpopt = mpoption(mpopt, 'verbose', verbose);
 % mpopt = mpoption(mpopt, 'opf.violation', 1e-6, 'mips.gradtol', 1e-8, ...
 %         'mips.comptol', 1e-8, 'mips.costtol', 1e-8);
 mpopt = mpoption(mpopt, 'model', 'DC');
-mpopt = mpoption(mpopt, 'mops.price_stage_warn_tol', 10);
+mpopt = mpoption(mpopt, 'most.price_stage_warn_tol', 10);
 
 %% solver options
 if have_fcn('cplex')
@@ -154,16 +154,16 @@ for s = 1:length(solvers)
         t_skip(ntests, sprintf('%s not installed', solvers{s}));
     else
         mpopt = mpoption(mpopt, 'opf.dc.solver', solvers{s});
-        mpopt = mpoption(mpopt, 'mops.solver', mpopt.opf.dc.solver);
-        mpopt = mpoption(mpopt, 'mops.storage.cyclic', 1);
+        mpopt = mpoption(mpopt, 'most.solver', mpopt.opf.dc.solver);
+        mpopt = mpoption(mpopt, 'most.storage.cyclic', 1);
 
         mpc = mpc0;
         xgd = xgd0;
 
         t = sprintf('%s : deterministic : ', solvers{s});
         mdin = loadmd(mpc, nt, xgd, [], [], profiles);
-        mdout = mops(mdin, mpopt);
-        ms = mops_summary(mdout);
+        mdout = most(mdin, mpopt);
+        ms = most_summary(mdout);
         t_ok(mdout.QP.exitflag > 0, [t 'success']);
         ex = soln.determ;
         t_is(ms.f, ex.f, 8, [t 'f']);
@@ -174,7 +174,7 @@ for s = 1:length(solvers)
         t_is(ms.u, ex.u, 8, [t 'u']);
         t_is(ms.lamP, ex.lamP, 8, [t 'lamP']);
         t_is(ms.muF, ex.muF, 8, [t 'muF']);
-        % determ = mops_summary(mdout);
+        % determ = most_summary(mdout);
         % keyboard;
 
         t = sprintf('%s : individual trajectories : ', solvers{s});
@@ -184,8 +184,8 @@ for s = 1:length(solvers)
         transmat_s{1} = [0.2; 0.6; 0.2];
         mdin = loadmd(mpc, transmat_s, xgd, [], [], profiles_s);
         mdin = filter_ramp_transitions(mdin, 0.1);
-        mdout = mops(mdin, mpopt);
-        ms = mops_summary(mdout);
+        mdout = most(mdin, mpopt);
+        ms = most_summary(mdout);
         t_ok(mdout.QP.exitflag > 0, [t 'success']);
         ex = soln.transprob1;
         t_is(ms.f, ex.f, 5, [t 'f']);
@@ -196,7 +196,7 @@ for s = 1:length(solvers)
         t_is(ms.u, ex.u, 8, [t 'u']);
         % t_is(ms.lamP, ex.lamP, 5, [t 'lamP']);
         % t_is(ms.muF, ex.muF, 5, [t 'muF']);
-        % transprob1 = mops_summary(mdout);
+        % transprob1 = most_summary(mdout);
         % keyboard;
 
         t = sprintf('%s : full transition probabilities : ', solvers{s});
@@ -208,8 +208,8 @@ for s = 1:length(solvers)
 %         transmat_sf{1} = T;
         mdin = loadmd(mpc, transmat_sf, xgd, [], [], profiles_s);
 %        mdin = filter_ramp_transitions(mdin, 0.9);
-        mdout = mops(mdin, mpopt);
-        ms = mops_summary(mdout);
+        mdout = most(mdin, mpopt);
+        ms = most_summary(mdout);
         t_ok(mdout.QP.exitflag > 0, [t 'success']);
         ex = soln.transprobfull;
         t_is(ms.f, ex.f, 3, [t 'f']);
@@ -220,14 +220,14 @@ for s = 1:length(solvers)
         t_is(ms.u, ex.u, 8, [t 'u']);
         % t_is(ms.lamP, ex.lamP, 5, [t 'lamP']);
         % t_is(ms.muF, ex.muF, 5, [t 'muF']);
-        % transprobfull = mops_summary(mdout);
+        % transprobfull = most_summary(mdout);
         % keyboard;
 
         t = sprintf('%s : full transition probabilities + cont : ', solvers{s});
         mdin = loadmd(mpc, transmat_sf, xgd, [], 'eg_contab', profiles_s);
 %        mdin = filter_ramp_transitions(mdin, 0.9);
-        mdout = mops(mdin, mpopt);
-        ms = mops_summary(mdout);
+        mdout = most(mdin, mpopt);
+        ms = most_summary(mdout);
         t_ok(mdout.QP.exitflag > 0, [t 'success']);
         ex = soln.transprobcont;
         t_is(ms.f, ex.f, 4, [t 'f']);
@@ -238,7 +238,7 @@ for s = 1:length(solvers)
         t_is(ms.u, ex.u, 8, [t 'u']);
         % t_is(ms.lamP, ex.lamP, 5, [t 'lamP']);
         % t_is(ms.muF, ex.muF, 5, [t 'muF']);
-        % transprobcont = mops_summary(mdout);
+        % transprobcont = most_summary(mdout);
         % keyboard;
 
         t = sprintf('%s : + storage : ', solvers{s});
@@ -247,8 +247,8 @@ for s = 1:length(solvers)
         end
         [iess, mpc, xgd, sd] = addstorage('eg_storage', mpc, xgd);
         mdin = loadmd(mpc, transmat_sf, xgd, sd, 'eg_contab', profiles_s);
-        mdout = mops(mdin, mpopt);
-        ms = mops_summary(mdout);
+        mdout = most(mdin, mpopt);
+        ms = most_summary(mdout);
         t_ok(mdout.QP.exitflag > 0, [t 'success']);
         ex = soln.wstorage;
         t_is(ms.f, ex.f, 3, [t 'f']);
@@ -259,7 +259,7 @@ for s = 1:length(solvers)
         t_is(ms.u, ex.u, 8, [t 'u']);
         % t_is(ms.lamP, ex.lamP, 5, [t 'lamP']);
         % t_is(ms.muF, ex.muF, 5, [t 'muF']);
-        % wstorage = mops_summary(mdout);
+        % wstorage = most_summary(mdout);
         % keyboard;
     end
 end
@@ -270,11 +270,11 @@ end
 
 t_end;
 
-% save t_mops_suc_soln determ transprob1 transprobfull transprobcont wstorage
+% save t_most_suc_soln determ transprob1 transprobfull transprobcont wstorage
 
 
 %%---------------------------------------------------------
-function ms = mops_summary(mdout)
+function ms = most_summary(mdout)
 
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
     VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
@@ -365,17 +365,17 @@ if verbose
     end
     fprintf('\n');
 
-    print_mops_summary_section('PG', 'Gen', nt, nj_max, nc_max, Pg);
-    print_mops_summary_section('RAMP UP', 'Gen', nt, 1, 0, Rup);
-    print_mops_summary_section('RAMP DOWN', 'Gen', nt, 1, 0, Rdn);
-    print_mops_summary_section('LAM_P', 'Bus', nt, nj_max, nc_max, lamP);
-    print_mops_summary_section('PF',   'Brch', nt, nj_max, nc_max, Pf);
-    print_mops_summary_section('MU_F', 'Brch', nt, nj_max, nc_max, muF);
+    print_most_summary_section('PG', 'Gen', nt, nj_max, nc_max, Pg);
+    print_most_summary_section('RAMP UP', 'Gen', nt, 1, 0, Rup);
+    print_most_summary_section('RAMP DOWN', 'Gen', nt, 1, 0, Rdn);
+    print_most_summary_section('LAM_P', 'Bus', nt, nj_max, nc_max, lamP);
+    print_most_summary_section('PF',   'Brch', nt, nj_max, nc_max, Pf);
+    print_most_summary_section('MU_F', 'Brch', nt, nj_max, nc_max, muF);
 end
 
 
 %%---------------------------------------------------------
-function print_mops_summary_section(label, section_type, nt, nj_max, nc_max, data, tol)
+function print_most_summary_section(label, section_type, nt, nj_max, nc_max, data, tol)
 if nargin < 7
     tol = 1e-4;
 end

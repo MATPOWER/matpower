@@ -1,5 +1,5 @@
-function t_mops_spuc(quiet)
-%T_MOPS_SPUC  Tests of single-period unit commitment optimizations
+function t_most_spuc(quiet)
+%T_MOST_SPUC  Tests of single-period unit commitment optimizations
 
 %   MATPOWER
 %   Copyright (c) 2015 by Power System Engineering Research Center (PSERC)
@@ -34,7 +34,7 @@ end
 % verbose = 2;
 
 casefile = 'eg_case3';
-%solnfile =  't_mops_spuc_soln';
+%solnfile =  't_most_spuc_soln';
 %soln = load(solnfile);
 mpopt = mpoption;
 mpopt = mpoption(mpopt, 'out.gen', 1);
@@ -43,7 +43,7 @@ mpopt = mpoption(mpopt, 'verbose', verbose);
 %         'mips.comptol', 1e-8, 'mips.costtol', 1e-8);
 mpopt = mpoption(mpopt, 'model', 'DC');
 mpopt = mpoption(mpopt, 'sopf.force_Pc_eq_P0', 0);
-mpopt = mpoption(mpopt, 'mops.price_stage_warn_tol', 10);
+mpopt = mpoption(mpopt, 'most.price_stage_warn_tol', 10);
 
 %% solver options
 if have_fcn('cplex')
@@ -142,7 +142,7 @@ for s = 1:length(solvers)
         t_skip(ntests, sprintf('%s not installed', solvers{s}));
     else
         mpopt = mpoption(mpopt, 'opf.dc.solver', solvers{s});
-        mpopt = mpoption(mpopt, 'mops.solver', mpopt.opf.dc.solver);
+        mpopt = mpoption(mpopt, 'most.solver', mpopt.opf.dc.solver);
 
 %%-----  economic dispatch (no network)  -----
 if verbose
@@ -161,15 +161,15 @@ t_is(r.gen(:, PG), [200; 199; 0; -499; 100], 7, [t 'Pg']);
 t_is(r.gen(:, GEN_STATUS), [1; 1; 0; 1; 1], 7, [t 'u']);
 t_is(r.bus(:, LAM_P), [30; 30; 30], 7, [t 'lam P']);
 
-%% mops
-t = sprintf('%s : economic dispatch (no network) : mops   ', solvers{s});
+%% most
+t = sprintf('%s : economic dispatch (no network) : most   ', solvers{s});
 mpc = mpc0;
 mpc.gen(1, GEN_STATUS) = 0;
 mpc.gen(2, GEN_STATUS) = 0;
 % xgd = xg
-mpopt = mpoption(mpopt, 'mops.dc_model', 0);
+mpopt = mpoption(mpopt, 'most.dc_model', 0);
 mdin = loadmd(mpc, [], xgd);
-mdout = mops(mdin, mpopt);
+mdout = most(mdin, mpopt);
 rr = mdout.flow(1,1,1).mpc;
 t_ok(mdout.QP.exitflag > 0, [t 'success']);
 t_is(mdout.QP.f, -488030, 7, [t 'f']);
@@ -196,13 +196,13 @@ t_is(r.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 t_is(r.bus(:, LAM_P), [40; 40; 40], 7, [t 'lam P']);
 t_is(r.branch(:, MU_SF) + r.branch(:, MU_ST), [0; 0; 0], 7, [t 'mu flow']);
 
-%% mops
-t = sprintf('%s : DC OPF : mops   ', solvers{s});
+%% most
+t = sprintf('%s : DC OPF : most   ', solvers{s});
 mpc = mpc0;
 % mpc.gen(4, PMIN) = -500;
-mpopt = mpoption(mpopt, 'mops.dc_model', 1);
+mpopt = mpoption(mpopt, 'most.dc_model', 1);
 mdin = loadmd(mpc, [], xgd);
-mdout = mops(mdin, mpopt);
+mdout = most(mdin, mpopt);
 rr = mdout.flow(1,1,1).mpc;
 if verbose
     printpf(rr, [], mpopt);
@@ -236,15 +236,15 @@ t_is(r.reserves.R, [0; 61; 89; 0; 0], 7, [t 'R']);
 t_is(r.reserves.prc, [5; 5; 5; 0; 0], 7, [t 'reserve prc']);
 t_is(r.reserves.mu.Pmax + r.gen(:, MU_PMAX), [7; 2; 0; 0; 32], 7, [t 'reserve muPmax']);
 
-%% mops
-t = sprintf('%s : economic dispatch (w/reserves) : mops   ', solvers{s});
+%% most
+t = sprintf('%s : economic dispatch (w/reserves) : most   ', solvers{s});
 mpc = mpc0;
 % mpc.gen(4, PMIN) = -350.8;
-mpopt = mpoption(mpopt, 'mops.dc_model', 0);
+mpopt = mpoption(mpopt, 'most.dc_model', 0);
 mdin = loadmd(mpc, [], xgd);
 mdin.IncludeFixedReserves = 1;
 mdin.FixedReserves = mpc.reserves;
-mdout = mops(mdin, mpopt);
+mdout = most(mdin, mpopt);
 rr = mdout.flow(1,1,1).mpc;
 if verbose
     printpf(rr, [], mpopt);
@@ -280,15 +280,15 @@ t_is(r.reserves.R, [44; 100; 6; 0; 0], 7, [t 'R']);
 t_is(r.reserves.prc, [5; 5; 5; 0; 0], 7, [t 'reserve prc']);
 t_is(r.reserves.mu.Pmax + r.gen(:, MU_PMAX), [4; 0; 0; 0; 40], 7, [t 'reserve muPmax']);
 
-%% mops
-t = sprintf('%s : DC OPF (w/reserves) : mops   ', solvers{s});
+%% most
+t = sprintf('%s : DC OPF (w/reserves) : most   ', solvers{s});
 mpc = mpc0;
 % mpc.gen(4, PMIN) = -350.8;
-mpopt = mpoption(mpopt, 'mops.dc_model', 1);
+mpopt = mpoption(mpopt, 'most.dc_model', 1);
 mdin = loadmd(mpc, [], xgd);
 mdin.IncludeFixedReserves = 1;
 mdin.FixedReserves = mpc.reserves;
-mdout = mops(mdin, mpopt);
+mdout = most(mdin, mpopt);
 rr = mdout.flow(1,1,1).mpc;
 t_ok(mdout.QP.exitflag > 0, [t 'success']);
 t_is(mdout.QP.f, -485656, 5, [t 'f']);
@@ -358,9 +358,9 @@ t_is(rr.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 t_is(rr.bus(:, LAM_P), [0; 0; 50], 7, [t 'lam P 2']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 50], 7, [t 'mu flow 2']);
 
-t = sprintf('%s : Secure DC OPF (w/cont,res,ramp) : mops ', solvers{s});
+t = sprintf('%s : Secure DC OPF (w/cont,res,ramp) : most ', solvers{s});
 mdin = loadmd(mpc, [], xgd, [], contab);
-mdout = mops(mdin, mpopt);
+mdout = most(mdin, mpopt);
 % mdout
 % mdout.QP
 % mdout.QP.f
@@ -435,9 +435,9 @@ t_is(rr.gen(:, PG), [200; 65; 0; -350; 85], 5, [t 'Pg 3']);
 t_is(rr.bus(:, LAM_P), [0; 0; 0], 6, [t 'lam P 3']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 7, [t 'mu flow 3']);
 
-t = sprintf('%s : Stochastic DC OPF (w/wind,res) : mops ', solvers{s});
+t = sprintf('%s : Stochastic DC OPF (w/wind,res) : most ', solvers{s});
 mdin = loadmd(mpc, transmat, xgd, [], [], profiles);
-mdout = mops(mdin, mpopt);
+mdout = most(mdin, mpopt);
 % mdout
 % mdout.QP
 % mdout.QP.f
@@ -472,9 +472,9 @@ t_is(rr.bus(:, LAM_P), [0; 0; 0], 6, [t 'lam P 3']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 7, [t 'mu flow 3']);
 % keyboard;
 
-t = sprintf('%s : Secure Stochastic DC OPF (w/wind,cont,res,ramp) : mops ', solvers{s});
+t = sprintf('%s : Secure Stochastic DC OPF (w/wind,cont,res,ramp) : most ', solvers{s});
 mdin = loadmd(mpc, transmat, xgd, [], contab, profiles);
-mdout = mops(mdin, mpopt);
+mdout = most(mdin, mpopt);
 % mdout
 % mdout.QP
 % mdout.QP.f

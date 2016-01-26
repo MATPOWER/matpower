@@ -52,7 +52,7 @@ function rv = have_fcn(tag, rtype)
 %         ktrlink      - KNITRO, version < 9.0.0 (requires Opt Tbx)
 %       matlab      - code is running under Matlab, as opposed to Octave
 %       minopf      - MINOPF, MINOPF, MINOS-based OPF solver
-%       mops        - MOPS, MATPOWER Optimal Power Scheduler
+%       most        - MOST, MATPOWER Optimal Scheduling Tool
 %       mosek       - MOSEK, LP/QP solver (http://www.mosek.com/)
 %       optimoptions - OPTIMOPTIONS, option setting funciton for Optim Tbx 6.3+
 %       pardiso     - PARDISO, Parallel Sparse Direct and Linear Solver
@@ -350,8 +350,8 @@ else        %% detect availability
                     vstr = v.Version;
                     rdate = v.Date;
                 end
-            case 'mops'
-                TorF = exist('mops', 'file') == 2;
+            case 'most'
+                TorF = exist('most', 'file') == 2;
                 if TorF
                     v = mpver('all');
                     vstr = v.Version;

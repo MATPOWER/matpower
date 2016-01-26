@@ -1,5 +1,5 @@
-function t_mops_w_ds(quiet)
-%T_MOPS_W_DS  Test for MOPS with dynamical system constraints.
+function t_most_w_ds(quiet)
+%T_MOST_W_DS  Test for MOST with dynamical system constraints.
 
 if nargin < 1
     quiet = 0;
@@ -10,7 +10,7 @@ n_tests = 1;
 t_begin(n_tests, quiet);
 
 casefile = 'c118swf';
-solnfile = 't_mops_w_ds_z';
+solnfile = 't_most_w_ds_z';
 
 %% define named indices into data matrices
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
@@ -36,25 +36,25 @@ if have_fcn('cplex') || have_fcn('gurobi') || have_fcn('mosek') || ...
     mpopt = mpoption('verbose', 0);
 
     if have_fcn('cplex')
-        mpopt = mpoption(mpopt, 'mops.solver', 'CPLEX');
+        mpopt = mpoption(mpopt, 'most.solver', 'CPLEX');
         mpopt = mpoption(mpopt, 'cplex.opts.threads', 2);   % set this manually here
     elseif have_fcn('gurobi')
-        mpopt = mpoption(mpopt, 'mops.solver', 'GUROBI');
+        mpopt = mpoption(mpopt, 'most.solver', 'GUROBI');
         mpopt = mpoption(mpopt, 'gurobi.method', 2);        %% barrier
         mpopt = mpoption(mpopt, 'gurobi.threads', 2);
         mpopt = mpoption(mpopt, 'gurobi.opts.BarConvTol', 1e-7);        %% 1e-8
         mpopt = mpoption(mpopt, 'gurobi.opts.FeasibilityTol', 1e-5);    %% 1e-6
         mpopt = mpoption(mpopt, 'gurobi.opts.OptimalityTol', 1e-5);     %% 1e-6
     elseif have_fcn('quadprog')
-        mpopt = mpoption(mpopt, 'mops.solver', 'OT');
+        mpopt = mpoption(mpopt, 'most.solver', 'OT');
         mpopt = mpoption(mpopt, 'quadprog.TolFun', 1e-13);
     elseif have_fcn('mosek')
-        mpopt = mpoption(mpopt, 'mops.solver', 'MOSEK');
+        mpopt = mpoption(mpopt, 'most.solver', 'MOSEK');
         mpopt = mpoption(mpopt, 'mosek.num_threads', 2);
     end
-    % mpopt = mpoption(mpopt, 'mops.solver', 'CLP');
-    % mpopt = mpoption(mpopt, 'mops.solver', 'IPOPT');
-    % mpopt = mpoption(mpopt, 'mops.solver', 'MIPS');
+    % mpopt = mpoption(mpopt, 'most.solver', 'CLP');
+    % mpopt = mpoption(mpopt, 'most.solver', 'IPOPT');
+    % mpopt = mpoption(mpopt, 'most.solver', 'MIPS');
     % mpopt = mpoption(mpopt, 'mips.linsolver', 'PARDISO');
 
     Istr.mpc = loadcase(casefile);
@@ -100,11 +100,11 @@ if have_fcn('cplex') || have_fcn('gurobi') || have_fcn('mosek') || ...
     Istr.Storage.TerminalDischargingPrice0  = 35 * ones(ns, 1); % applied to psd_tijk (contingency terminal states)
     Istr.Storage.TerminalChargingPriceK     = 10 * ones(ns, 1); % applied to psc_tij0 (end-of-horizon terminal states)
     Istr.Storage.TerminalDischargingPriceK  = 40 * ones(ns, 1); % applied to psd_tij0 (end-of-horizon terminal states)
-    mpopt = mpoption(mpopt, 'mops.storage.terminal_target', 0);
-    Istr.Storage.ExpectedTerminalStorageAim = Istr.Storage.InitialStorage;  % expected terminal storage if mpopt.mops.storage.terminal_target is true
+    mpopt = mpoption(mpopt, 'most.storage.terminal_target', 0);
+    Istr.Storage.ExpectedTerminalStorageAim = Istr.Storage.InitialStorage;  % expected terminal storage if mpopt.most.storage.terminal_target is true
     Istr.Storage.LossFactor         = zeros(ns,1);  % fraction of storage lost in each period
     Istr.Storage.IncludeValueOfTerminalStorage = 1;
-    mpopt = mpoption(mpopt, 'mops.storage.cyclic', 1);
+    mpopt = mpoption(mpopt, 'most.storage.cyclic', 1);
 
     for t = 1:nt
       Istr.offer(t).gencost = Istr.mpc.gencost;
@@ -121,7 +121,7 @@ if have_fcn('cplex') || have_fcn('gurobi') || have_fcn('mosek') || ...
       Istr.Storage.MinStorageLevel(:,t) = Minstor;
       Istr.Storage.MaxStorageLevel(:,t) = Maxstor;
     end
-    Istr.Storage.MinStorageLevel(:,nt+1) = Minstor;  % Needed if mpopt.mops.storage.cyclic
+    Istr.Storage.MinStorageLevel(:,nt+1) = Minstor;  % Needed if mpopt.most.storage.cyclic
     Istr.Storage.MaxStorageLevel(:,nt+1) = Maxstor;
 
     %Istr.Storage.MinStorageLevel(:,4) = [10 ; 10];  % is this enough to create infeasibility?
@@ -208,7 +208,7 @@ if have_fcn('cplex') || have_fcn('gurobi') || have_fcn('mosek') || ...
     end
     Istr.z1 = zeros(m1*m2, 1);
 
-    Ostr = mops(Istr, mpopt);
+    Ostr = most(Istr, mpopt);
 
     s = load(solnfile);
 

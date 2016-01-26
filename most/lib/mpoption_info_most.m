@@ -1,11 +1,11 @@
-function opt = mpoption_info_mops(selector)
-%MPOPTION_INFO_MOPS  Returns MATPOWER option info for MOPS.
+function opt = mpoption_info_most(selector)
+%MPOPTION_INFO_MOST  Returns MATPOWER option info for MOST.
 %
-%   DEFAULT_OPTS = MPOPTION_INFO_MOPS('D')
-%   VALID_OPTS   = MPOPTION_INFO_MOPS('V')
-%   EXCEPTIONS   = MPOPTION_INFO_MOPS('E')
+%   DEFAULT_OPTS = MPOPTION_INFO_MOST('D')
+%   VALID_OPTS   = MPOPTION_INFO_MOST('V')
+%   EXCEPTIONS   = MPOPTION_INFO_MOST('E')
 %
-%   Returns a structure for MOPS options for MATPOWER containing ...
+%   Returns a structure for MOST options for MATPOWER containing ...
 %   (1) default options,
 %   (2) valid options, or
 %   (3) NESTED_STRUCT_COPY exceptions for setting options
@@ -18,7 +18,7 @@ function opt = mpoption_info_mops(selector)
 %   See also MPOPTION.
 
 %   MATPOWER
-%   Copyright (c) 2014-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2014-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   $Id$
@@ -30,11 +30,11 @@ function opt = mpoption_info_mops(selector)
 if nargin < 1
     selector = 'D';
 end
-if have_fcn('mops')
+if have_fcn('most')
     switch upper(selector)
         case {'D', 'V'}     %% default and valid options
             opt = struct(...
-                'mops',   struct(...
+                'most',   struct(...
                     'build_model',                  1, ...          %% was md.CreateQP
                     'solve_model',                  1, ...          %% was md.Solve
                     'resolve_new_cost',             0, ...          %% was md.ReSolveNewCoordCost
@@ -56,8 +56,8 @@ if have_fcn('mops')
         case 'E'            %% exceptions used by nested_struct_copy() for applying
             opt = struct([]);   %% no exceptions
         otherwise
-            error('mpoption_info_mops: ''%s'' is not a valid input argument', selector);
+            error('mpoption_info_most: ''%s'' is not a valid input argument', selector);
     end
 else
-    opt = struct([]);       %% MOPS is not available
+    opt = struct([]);       %% MOST is not available
 end

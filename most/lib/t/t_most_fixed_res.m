@@ -1,5 +1,5 @@
-function t_mops_fixed_res(quiet)
-%T_MOPS_FIXED_RES  Tests MOPS with fixed reserve requirements.
+function t_most_fixed_res(quiet)
+%T_MOST_FIXED_RES  Tests MOST with fixed reserve requirements.
 
 %   SuperOPF
 %   $Id$
@@ -24,7 +24,7 @@ mpopt = mpoption('opf.violation', 1e-6, 'mips.gradtol', 1e-8, ...
         'mips.comptol', 1e-8, 'mips.costtol', 1e-9);
 mpopt = mpoption(mpopt, 'out.all', 0, 'verbose', verbose, 'opf.ac.solver', 'MIPS');
 mpopt = mpoption(mpopt, 'model', 'DC');
-mpopt = mpoption(mpopt, 'mops.solver', algs.dc{1});
+mpopt = mpoption(mpopt, 'most.solver', algs.dc{1});
 if have_fcn('gurobi')
     mpopt = mpoption(mpopt, 'gurobi.method', 1);    %% dual-simplex
 end
@@ -55,7 +55,7 @@ t_is(r1.reserves.cost, mpc.reserves.cost, 12, [t 'cost']);
 t_is(r1.reserves.qty, mpc.reserves.qty, 12, [t 'qty']);
 t_is(r1.reserves.totalcost, 177.5, 4, [t 'totalcost']);
 
-%%-----  set up data for DC run (mops)  -----
+%%-----  set up data for DC run (most)  -----
 mpc.gen(:, RAMP_10) = Inf;
 mpc.gen(:, RAMP_30) = Inf;
 
@@ -83,9 +83,9 @@ md = loadmd(mpc, [], xgd);
 md.IncludeFixedReserves = 1;
 md.FixedReserves = mpc.reserves;
 
-%%-----  run mops_fixed_res  -----
+%%-----  run most_fixed_res  -----
 %r1 = rundcopf(mpc);
-r2 = mops(md, mpopt);
+r2 = most(md, mpopt);
 
 %%-----  test it  -----
 t = 'success1';
@@ -135,7 +135,7 @@ for t = 1:nt
     md.FixedReserves(t,1,1) = mpc.reserves;
 end
 
-%%-----  run mops  -----
+%%-----  run most  -----
 f = 0;
 for tt = 1:nt
     mpc1 = mpc;
@@ -144,7 +144,7 @@ for tt = 1:nt
     f = f + r(tt).f;
 end
 
-r2 = mops(md, mpopt);
+r2 = most(md, mpopt);
 
 %%-----  test it  -----
 t = 'success2';

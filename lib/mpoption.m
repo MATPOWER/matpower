@@ -1503,7 +1503,7 @@ v = 10;     %% version number of MATPOWER options struct
             %%        'mips' options
             %% v9   - added 'exp' for experimental fields, specifically
             %%        'sys_wide_zip_loads.pw', 'sys_wide_zip_loads.qw'
-            %% v10  - added 'mops' field
+            %% v10  - added 'most' field
 
 %%-------------------------------------------------------------------
 function db_level = DEBUG
@@ -1513,6 +1513,6 @@ db_level = 0;
 function pkgs = mpoption_optional_pkgs()
 pkgs = {...
     'clp', 'cplex', 'fmincon', 'gurobi', 'glpk', 'intlinprog', 'ipopt', ...
-    'knitro', 'linprog', 'minopf', 'mops', 'mosek', 'quadprog', 'sdp_pf', ...
+    'knitro', 'linprog', 'minopf', 'most', 'mosek', 'quadprog', 'sdp_pf', ...
     'sopf', 'tspopf', 'yalmip' ...
 };

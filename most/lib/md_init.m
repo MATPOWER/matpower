@@ -1,9 +1,9 @@
 function md = md_init
-%MD_INIT  MOPS Data structure Initialization
+%MD_INIT  MOST Data structure Initialization
 %   MD = MD_INIT
 %
-%   Creates an empty MOPS Data struct (MD) with all fields required for
-%   MOPS, both input and output fields.
+%   Creates an empty MOST Data struct (MD) with all fields required for
+%   MOST, both input and output fields.
 
 %   SuperOPF
 %   $Id$
@@ -17,7 +17,7 @@ md.QCoordination  = 0;    % Create Qg variables for coordination if 1.
 md.TerminalPg     = [];   % dispatch to ramp to from the final period
 md.InitialPg      = [];   % dispatch to ramp from in the initial period
 
-% used only when mops.storage.terminal_target option is 1
+% used only when most.storage.terminal_target option is 1
 md.Storage.ExpectedTerminalStorageAim     = [];   % expected terminal storage targe
 md.Storage.ExpectedTerminalStorageMin     = [];   % expected terminal storage LB
 md.Storage.ExpectedTerminalStorageMax     = [];   % expected terminal storage UB
@@ -242,9 +242,9 @@ md.idx.ntramp     = [];       % number of periods of load following reserves
 md.flow(1,1,1).mpc = md.mpc;
 md.DCMODEL              = [];   % DC flow used to model the network as opposed
                                 % to simple generation = demand constraint
-                                % (set via mpopt.mops.dc_line)
+                                % (set via mpopt.most.dc_line)
 md.SecurityConstrained  = [];   % contingencies cases considered
-                                % (set via mpopt.mops.security_constraints and
+                                % (set via mpopt.most.security_constraints and
                                 %  presence (or not) of contingency data)
 md.Storage.ForceExpectedTerminalStorage   = [];     % flag, 0 or 1, terminal storage target included
 md.Storage.ForceCyclicStorage             = [];     % 1 = includes cyclic constraint (initial storage

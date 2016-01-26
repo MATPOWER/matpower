@@ -1,5 +1,5 @@
-function t_mops_30b_1_1_0_uc(quiet)
-%T_MOPS_30B_1_1_0_UC  Tests for MOPS.
+function t_most_30b_1_1_0_uc(quiet)
+%T_MOST_30B_1_1_0_UC  Tests for MOST.
 
 %   MPSOPF for MATPOWER
 %   $Id$
@@ -27,7 +27,7 @@ mpopt = mpoption(mpopt, 'opf.violation', 5e-7, 'mips.comptol', 5e-8);
 mpopt = mpoption(mpopt, 'sopf.force_Pc_eq_P0', 0);  %% don't constrain contracted == base case dispatch
 mpoptac = mpoption(mpopt, 'model', 'AC');
 mpoptdc = mpoption(mpopt, 'model', 'DC');
-mpopt = mpoption(mpopt, 'mops.solver', algs.dc{1});
+mpopt = mpoption(mpopt, 'most.solver', algs.dc{1});
 
 %% turn off warnings
 s7 = warning('query', 'MATLAB:nearlySingularMatrix');
@@ -142,7 +142,7 @@ rdc = runduopf(mpc, mpoptdc);
 s.rdc = rdc;
 % s.rac = rac;
 
-%%-----  set up data for DC run (mops)  -----
+%%-----  set up data for DC run (most)  -----
 ng = size(mpc.gen, 1);      %% number of gens
 xgd = loadxgendata(xgd_table, mpc);
 md = loadmd(mpc, [], xgd);
@@ -160,15 +160,15 @@ if have_fcn('linprog')
 %     mpopt = mpoption(mpopt, 'linprog.Algorithm', 'active-set');
 end
 
-% mpopt = mpoption(mpopt, 'mops.solver', 'CPLEX');
-% mpopt = mpoption(mpopt, 'mops.solver', 'GLPK');
-% mpopt = mpoption(mpopt, 'mops.solver', 'GUROBI');
-% mpopt = mpoption(mpopt, 'mops.solver', 'MOSEK');
-% mpopt = mpoption(mpopt, 'mops.solver', 'OT');
+% mpopt = mpoption(mpopt, 'most.solver', 'CPLEX');
+% mpopt = mpoption(mpopt, 'most.solver', 'GLPK');
+% mpopt = mpoption(mpopt, 'most.solver', 'GUROBI');
+% mpopt = mpoption(mpopt, 'most.solver', 'MOSEK');
+% mpopt = mpoption(mpopt, 'most.solver', 'OT');
 % mpopt = mpoption(mpopt, 'verbose', 3);
 
-%%-----  do DC run (mops)  -----
-r = mops(md, mpopt);
+%%-----  do DC run (most)  -----
+r = most(md, mpopt);
 
 %%-----  test the results  -----
 t = 'success1';
@@ -238,7 +238,7 @@ t_is(Rpmax_neg, zeros(ng, 1), 6, t);
 %     end
 % end
 
-%%-----  do AC run (mops)  -----
+%%-----  do AC run (most)  -----
 % Istr = md;
 % mpsopf;
 

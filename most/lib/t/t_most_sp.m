@@ -1,5 +1,5 @@
-function t_mops_sp(quiet)
-%T_MOPS_SP  Tests of single-period continuous optimizations
+function t_most_sp(quiet)
+%T_MOST_SP  Tests of single-period continuous optimizations
 
 %   MATPOWER
 %   Copyright (c) 2015 by Power System Engineering Research Center (PSERC)
@@ -33,7 +33,7 @@ mpopt = mpoption(mpopt, 'verbose', verbose);
 mpopt = mpoption(mpopt, 'model', 'DC');
 mpopt = mpoption(mpopt, 'sopf.force_Pc_eq_P0', 0);
 mpopt = mpoption(mpopt, 'opf.dc.solver', 'MIPS');
-mpopt = mpoption(mpopt, 'mops.solver', mpopt.opf.dc.solver);
+mpopt = mpoption(mpopt, 'most.solver', mpopt.opf.dc.solver);
 if ~verbose
     mpopt = mpoption(mpopt, 'out.all', 0);
 end
@@ -130,13 +130,13 @@ t_is(r.f, -443250, 5, [t 'f']);
 t_is(r.gen(:, PG), [150; 150; 150; -450], 7, [t 'Pg']);
 t_is(r.bus(:, LAM_P), [30; 30; 30], 7, [t 'lam P']);
 
-%% mops
-t = 'economic dispatch (no network) : mops   ';
+%% most
+t = 'economic dispatch (no network) : most   ';
 mpc = mpc0;
 xgd = xgd0;
-mpopt = mpoption(mpopt, 'mops.dc_model', 0);
+mpopt = mpoption(mpopt, 'most.dc_model', 0);
 mdin = loadmd(mpc, [], xgd);
-mdout = mops(mdin, mpopt);
+mdout = most(mdin, mpopt);
 rr = mdout.flow(1,1,1).mpc;
 t_ok(mdout.QP.exitflag > 0, [t 'success']);
 t_is(mdout.QP.f, -443250, 5, [t 'f']);
@@ -159,12 +159,12 @@ t_is(r.gen(:, PG), [135; 135; 180; -450], 7, [t 'Pg']);
 t_is(r.bus(:, LAM_P), [27; 36; 45], 7, [t 'lam P']);
 t_is(r.branch(:, MU_SF) + r.branch(:, MU_ST), [0; 27; 0], 7, [t 'mu flow']);
 
-%% mops
-t = 'DC OPF : mops   ';
+%% most
+t = 'DC OPF : most   ';
 mpc = mpc0;
-mpopt = mpoption(mpopt, 'mops.dc_model', 1);
+mpopt = mpoption(mpopt, 'most.dc_model', 1);
 mdin = loadmd(mpc, [], xgd);
-mdout = mops(mdin, mpopt);
+mdout = most(mdin, mpopt);
 rr = mdout.flow(1,1,1).mpc;
 t_ok(mdout.QP.exitflag > 0, [t 'success']);
 t_is(mdout.QP.f, -443115, 5, [t 'f']);
@@ -192,14 +192,14 @@ t_is(r.reserves.R, [60; 50; 40; 0], 7, [t 'R']);
 t_is(r.reserves.prc, [5; 5; 5; 0], 7, [t 'reserve prc']);
 t_is(r.reserves.mu.Pmax + r.gen(:, MU_PMAX), [4; 2; 0; 0], 7, [t 'reserve muPmax']);
 
-%% mops
-t = 'economic dispatch (w/reserves) : mops   ';
+%% most
+t = 'economic dispatch (w/reserves) : most   ';
 mpc = mpc0;
-mpopt = mpoption(mpopt, 'mops.dc_model', 0);
+mpopt = mpoption(mpopt, 'most.dc_model', 0);
 mdin = loadmd(mpc, [], xgd);
 mdin.IncludeFixedReserves = 1;
 mdin.FixedReserves = mpc.reserves;
-mdout = mops(mdin, mpopt);
+mdout = most(mdin, mpopt);
 rr = mdout.flow(1,1,1).mpc;
 t_ok(mdout.QP.exitflag > 0, [t 'success']);
 t_is(mdout.QP.f, -442820, 5, [t 'f']);
@@ -229,14 +229,14 @@ t_is(r.reserves.R, [70; 60; 20; 0], 7, [t 'R']);
 t_is(r.reserves.prc, [5; 5; 5; 0], 7, [t 'reserve prc']);
 t_is(r.reserves.mu.Pmax + r.gen(:, MU_PMAX), [4; 2; 0; 0], 7, [t 'reserve muPmax']);
 
-%% mops
-t = 'DC OPF (w/reserves) : mops   ';
+%% most
+t = 'DC OPF (w/reserves) : most   ';
 mpc = mpc0;
-mpopt = mpoption(mpopt, 'mops.dc_model', 1);
+mpopt = mpoption(mpopt, 'most.dc_model', 1);
 mdin = loadmd(mpc, [], xgd);
 mdin.IncludeFixedReserves = 1;
 mdin.FixedReserves = mpc.reserves;
-mdout = mops(mdin, mpopt);
+mdout = most(mdin, mpopt);
 rr = mdout.flow(1,1,1).mpc;
 t_ok(mdout.QP.exitflag > 0, [t 'success']);
 t_is(mdout.QP.f, -442760, 5, [t 'f']);
@@ -303,9 +303,9 @@ t_is(rr.gen(:, PG), [100; 100; 100; -300], 6, [t 'Pg 2']);
 t_is(rr.bus(:, LAM_P), [20; 20; 1000]*pp(3), 7, [t 'lam P 2']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 980]*pp(3), 7, [t 'mu flow 2']);
 
-t = 'DC OPF (w/contingencies) : mops ';
+t = 'DC OPF (w/contingencies) : most ';
 mdin = loadmd(mpc, [], xgd, [], contab);
-mdout = mops(mdin, mpopt);
+mdout = most(mdin, mpopt);
 % mdout
 % mdout.QP
 % mdout.QP.f
@@ -370,9 +370,9 @@ t_is(rr.gen(:, PG), [147.5; 22.5; 130; -300], 5, [t 'Pg 2']);
 t_is(rr.bus(:, LAM_P), [-0.2; -0.2; 50], 7, [t 'lam P 2']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 50.2], 7, [t 'mu flow 2']);
 
-t = 'Secure DC OPF (w/cont,res,ramp) : mops ';
+t = 'Secure DC OPF (w/cont,res,ramp) : most ';
 mdin = loadmd(mpc, [], xgd, [], contab);
-mdout = mops(mdin, mpopt);
+mdout = most(mdin, mpopt);
 % mdout
 % mdout.QP
 % mdout.QP.f
@@ -430,9 +430,9 @@ t_is(rr.gen(:, PG), [128.7823267; 86.9726845; 134.2449888; -450; 100], 5, [t 'Pg
 t_is(rr.bus(:, LAM_P), [2.7597346; 2.7597346; 2.7597346], 6, [t 'lam P 3']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 7, [t 'mu flow 3']);
 
-t = 'Stochastic DC OPF (w/wind,res) : mops ';
+t = 'Stochastic DC OPF (w/wind,res) : most ';
 mdin = loadmd(mpc, transmat, xgd, [], [], profiles);
-mdout = mops(mdin, mpopt);
+mdout = most(mdin, mpopt);
 % mdout
 % mdout.QP
 % mdout.QP.f
@@ -461,9 +461,9 @@ t_is(rr.bus(:, LAM_P), [2.7597346; 2.7597346; 2.7597346], 6, [t 'lam P 3']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 7, [t 'mu flow 3']);
 % keyboard;
 
-t = 'Secure Stochastic DC OPF (w/wind,cont,res,ramp) : mops ';
+t = 'Secure Stochastic DC OPF (w/wind,cont,res,ramp) : most ';
 mdin = loadmd(mpc, transmat, xgd, [], contab, profiles);
-mdout = mops(mdin, mpopt);
+mdout = most(mdin, mpopt);
 % mdout
 % mdout.QP
 % mdout.QP.f

@@ -20,10 +20,10 @@ function qpopt = mpopt2qpopt(mpopt, model, alg)
 %                   (GUROBI, CPLEX, MOSEK, OT, GLPK)
 %           'MIQP' - (default) QP with mixed integer/continuous variables
 %                   (GUROBI, CPLEX, MOSEK)
-%       ALG ('opf.dc') : (optional) 'opf.dc', 'mops', or any valid value of
+%       ALG ('opf.dc') : (optional) 'opf.dc', 'most', or any valid value of
 %               OPT.alg for QPS_MATPOWER or MIQPS_MATPOWER. The first two
 %               options indicate that it should be taken from
-%               MPOPT.opf.dc.solver or MPOPT.mops.solver, respectively.
+%               MPOPT.opf.dc.solver or MPOPT.most.solver, respectively.
 %
 %   Output:
 %       QPOPT : an options struct for use by QPS_MATPOWER or MIQPS_MATPOWER
@@ -58,10 +58,10 @@ price_stage_warn_tol = [];
 switch alg
     case {'opf.dc', ''}
         alg = upper(mpopt.opf.dc.solver);
-    case 'mops'
-        alg = upper(mpopt.mops.solver);
-        skip_prices             = mpopt.mops.skip_prices;
-        price_stage_warn_tol    = mpopt.mops.price_stage_warn_tol;
+    case 'most'
+        alg = upper(mpopt.most.solver);
+        skip_prices             = mpopt.most.skip_prices;
+        price_stage_warn_tol    = mpopt.most.price_stage_warn_tol;
     otherwise
         alg = upper(alg);
 end
