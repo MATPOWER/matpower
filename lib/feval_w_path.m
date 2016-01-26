@@ -1,26 +1,31 @@
 function varargout = feval_w_path(fpath, fname, varargin)
 %FEVAL_W_PATH  Calls a function located by the specified path.
-%   VARARGOUT = FEVAL_W_PATH(FPATH, FNAME, VARARGIN)
+%   FEVAL_W_PATH(FPATH, F, x1, ..., xn)
+%   [y1, ..., yn] = FEVAL_W_PATH(FPATH, F, x1, ..., xn)
 %
-%   Calls a function whose path is given, even if the function is outside
-%   of the Matlab path. Assumes that the current working directory is always
-%   first in the Matlab path.
+%   Identical to Matlab's own FEVAL, except that the function F need not be
+%   in the Matlab path if it is defined in a file in the path specified by
+%   FPATH. Assumes that the current working directory is always first in
+%   the Matlab path.
 %
 %   Inputs:
 %       FPATH - string containing the path to the function to be called,
 %               can be absolute or relative to current working directory
-%       FNAME - string containing the name of the function to be called
-%       VARARGIN - variable number of arguments to be passed to the function
+%       F - string containing the name of the function to be called
+%       x1, ..., xn - variable number of input arguments to be passed to F
 %
 %   Output:
-%       VARARGOUT - variable number of return arguments (depends on the caller)
+%       y1, ..., yn - variable number arguments returned by F (depending on
+%                     the caller)
 %
 %   Note that any sub-functions located in the directory specified by FPATH
-%   will also be available to be called by the FNAME function.
+%   will also be available to be called by the F function.
 %
 %   Examples:
-%       % Assume '/opt/testfunctions' is NOT in the Matlab path.
-%       rv = feval_w_path('/opt/testfunctions', 'mytestfcn', arg1, arg2);
+%       % Assume '/opt/testfunctions' is NOT in the Matlab path, but
+%       % /opt/testfunctions/mytestfcn.m defines the function mytestfcn()
+%       % which takes 2 input arguments and outputs 1 return argument.
+%       y = feval_w_path('/opt/testfunctions', 'mytestfcn', x1, x2);
 
 %   MATPOWER
 %   Copyright (c) 2016 by Power System Engineering Research Center (PSERC)
