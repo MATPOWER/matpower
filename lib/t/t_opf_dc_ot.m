@@ -57,14 +57,13 @@ warning off optim:linprog:AlgOptsWillError;
 
 %% run DC OPF
 if have_fcn('quadprog')
-    v = ver('optim');
     for k = 1:length(algs)
         if ~isempty(algs)
             mpopt = mpoption(mpopt, 'linprog.Algorithm', algs{k});
         else
             mpopt = mpoption(mpopt, 'linprog', []);
         end
-        if strcmp(algs{k}, 'dual-simplex') && strcmp(v.Version, '7.1')
+        if strcmp(algs{k}, 'dual-simplex') && strcmp(have_fcn('fmincon', 'vstr'), '7.1')
             have_prices = 0;    %% dual-simplex did not return prices in Matlab R2014b!?!
         else
             have_prices = 1;
