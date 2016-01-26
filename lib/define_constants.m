@@ -1,10 +1,11 @@
-%DEFINE_CONSTANTS  Defines constants for named column indices to data matrices.
+%DEFINE_CONSTANTS  Defines useful constants for indexing data, etc.
 %
 %   This is simply a convenience script that defines the constants
 %   listed below, consisting primarily of named indices for the
 %   columns of the data matrices: bus, branch, gen and gencost.
 %   This includes input columns defined in caseformat as well as
-%   columns that are added in the power flow and OPF output.
+%   columns that are added in the power flow and OPF output. It also
+%   defines constants for the change tables used by apply_changes().
 %
 %   bus:
 %      PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM,
