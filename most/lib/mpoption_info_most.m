@@ -1,0 +1,63 @@
+function opt = mpoption_info_mops(selector)
+%MPOPTION_INFO_MOPS  Returns MATPOWER option info for MOPS.
+%
+%   DEFAULT_OPTS = MPOPTION_INFO_MOPS('D')
+%   VALID_OPTS   = MPOPTION_INFO_MOPS('V')
+%   EXCEPTIONS   = MPOPTION_INFO_MOPS('E')
+%
+%   Returns a structure for MOPS options for MATPOWER containing ...
+%   (1) default options,
+%   (2) valid options, or
+%   (3) NESTED_STRUCT_COPY exceptions for setting options
+%   ... depending on the value of the input argument.
+%
+%   This function is used by MPOPTION to set default options, check validity
+%   of option names or modify option setting/copying behavior for this
+%   subset of optional MATPOWER options.
+%
+%   See also MPOPTION.
+
+%   MATPOWER
+%   Copyright (c) 2014-2015 by Power System Engineering Research Center (PSERC)
+%   by Ray Zimmerman, PSERC Cornell
+%
+%   $Id$
+%
+%   This file is part of MATPOWER.
+%   Covered by the 3-clause BSD License (see LICENSE file for details).
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
+
+if nargin < 1
+    selector = 'D';
+end
+if have_fcn('mops')
+    switch upper(selector)
+        case {'D', 'V'}     %% default and valid options
+            opt = struct(...
+                'mops',   struct(...
+                    'build_model',                  1, ...          %% was md.CreateQP
+                    'solve_model',                  1, ...          %% was md.Solve
+                    'resolve_new_cost',             0, ...          %% was md.ReSolveNewCoordCost
+                    'dc_model',                     1, ...          %% was md.DCMODEL = []
+                    'q_coordination',               0, ...          %% was md.QCoordination
+                    'security_constraints',         -1, ...         %% was md.SecurityConstrained = []
+                    'storage',                      struct(...
+                        'terminal_target',              -1, ...     %% was md.Storage.ForceExpectedTerminalStorage
+                        'cyclic',                       0), ...     %% was md.Storage.ForceCyclicStorage
+                    'uc',                           struct(...
+                        'run',                          -1, ...     %% was missing
+                        'cyclic',                       0), ...     %% was md.UC.CyclicCommitment
+                    'alpha',                        0, ...          %% was md.alpha
+                    'solver',                       'DEFAULT', ...  %% was md.QP.opt.alg
+                    'skip_prices',                  0, ...          %% was md.QP.opt.skip_prices
+                    'price_stage_warn_tol',         1e-7 ...
+                ) ...
+            );
+        case 'E'            %% exceptions used by nested_struct_copy() for applying
+            opt = struct([]);   %% no exceptions
+        otherwise
+            error('mpoption_info_mops: ''%s'' is not a valid input argument', selector);
+    end
+else
+    opt = struct([]);       %% MOPS is not available
+end
