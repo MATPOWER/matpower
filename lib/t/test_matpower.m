@@ -7,7 +7,7 @@ function test_matpower(verbose)
 %   See also T_RUN_TESTS.
 
 %   MATPOWER
-%   Copyright (c) 2004-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   $Id$
@@ -25,6 +25,7 @@ tests = {};
 %% MATPOWER base test
 tests{end+1} = 't_test_fcns';
 tests{end+1} = 't_nested_struct_copy';
+tests{end+1} = 't_feval_w_path';
 tests{end+1} = 't_mpoption';
 tests{end+1} = 't_loadcase';
 tests{end+1} = 't_ext2int2ext';
