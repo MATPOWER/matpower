@@ -40,8 +40,16 @@ else
         v{2} = ver('octave');
     else
         v{2} = ver('matlab');
+        if length(v{2}) > 1
+            warning('The built-in VER command is behaving strangely, probably as a result of installing a 3rd party toolbox in a directory named ''matlab'' on your path. Check each element of the output of ver(''matlab'') to find the offending toolbox, then move the toolbox to a more appropriately named directory.');
+            v{2} = v{2}(1);
+        end
     end
     v{3} = ver('optim');
+    if length(v{3}) > 1
+        warning('The built-in VER command is behaving strangely, probably as a result of installing a 3rd party toolbox in a directory named ''optim'' on your path. Check each element of the output of ver(''optim'') to find the offending toolbox, then move the toolbox to a more appropriately named directory.');
+        v{3} = v{3}(1);
+    end
     for n = 1:3
         if n == 3 && isempty(v{3})
             fprintf('\n%-22s -- not installed --', 'Optimization Toolbox');

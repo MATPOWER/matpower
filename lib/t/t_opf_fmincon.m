@@ -41,9 +41,9 @@ mpopt = mpoption('opf.violation', 1e-6, 'fmincon.tol_x', 1e-6, 'fmincon.tol_f', 
 mpopt = mpoption(mpopt, 'out.all', 0, 'verbose', verbose, 'opf.ac.solver', 'FMINCON');
 
 %% use active-set method for Matlab 7.6-7.9 (R2008a-R2009b)
-v = ver('Matlab');
-if strcmp(v.Version, '7.6') || strcmp(v.Version, '7.7') || ...
-        strcmp(v.Version, '7.8') || strcmp(v.Version, '7.9')
+vstr = have_fcn('matlab', 'vstr');
+if strcmp(vstr, '7.6') || strcmp(vstr, '7.7') || ...
+        strcmp(vstr, '7.8') || strcmp(vstr, '7.9')
     mpopt = mpoption(mpopt, 'fmincon.alg', 1);
 end
 

@@ -15,6 +15,12 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.1
 -----------------
 
+1/26/16
+    - Introduced work-around and warning for crashes caused by strange
+      behavior from Matlab's ver() function when MATPOWER (or any other
+      3rd party toolbox with a Contents.m) is installed in a directory on
+      the Matlab path named 'matlab' or 'optim' (both case insensitive).
+
 1/15/16
     - Added feval_w_path() function for evaluating functions located at
       a specified path, outside of the Matlab path.

@@ -185,6 +185,10 @@ else        %% detect availability
                         'linprog_ds', 'optimoptions', 'quadprog', 'quadprog_ls'}
                 if license('test', 'optimization_toolbox')
                     v = ver('optim');
+                    if length(v) > 1
+                        warning('The built-in VER command is behaving strangely, probably as a result of installing a 3rd party toolbox in a directory named ''optim'' on your path. Check each element of the output of ver(''optim'') to find the offending toolbox, then move the toolbox to a more appropriately named directory.');
+                        v = v(1);
+                    end
                     vstr = v.Version;
                     rdate = v.Date;
                     switch tag
@@ -330,6 +334,10 @@ else        %% detect availability
                 end
             case 'matlab'
                 v = ver('matlab');
+                if length(v) > 1
+                    warning('The built-in VER command is behaving strangely, probably as a result of installing a 3rd party toolbox in a directory named ''matlab'' on your path. Check each element of the output of ver(''matlab'') to find the offending toolbox, then move the toolbox to a more appropriately named directory.');
+                    v = v(1);
+                end
                 if ~isempty(v) && isfield(v, 'Version') && ~isempty(v.Version)
                     TorF = 1;
                     vstr = v.Version;
@@ -406,8 +414,7 @@ else        %% detect availability
                 end
             case {'pdipmopf', 'scpdipmopf', 'tralmopf'}
                 if have_fcn('matlab')
-                    v = ver('Matlab');
-                    vn = vstr2num(v.Version);
+                    vn = have_fcn('matlab', 'vnum');
                     %% requires >= MATLAB 6.5 (R13) (released 20-Jun-2002)
                     %% older versions do not have mxCreateDoubleScalar() function
                     %% (they have mxCreateScalarDouble() instead)
