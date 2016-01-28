@@ -149,13 +149,14 @@ end
 verbose = mpopt.verbose;
 
 if verbose
-    fprintf('\n============================================================================\n');
-    fprintf('  MOST:  MATPOWER Optimal Scheduling Tool\n');
-    fprintf('         (a multi-period stochastic secure OPF with unit commitment).\n');
-    fprintf('  Carlos E. Murillo-Sanchez, Universidad Nacional de Colombia--Manizales,\n');
-    fprintf('  and Ray D. Zimmerman, Cornell University. Built on MATPOWER(c).\n');
-    fprintf('  Version 1.0b, (c) 2012-2016 Cornell University and PSERC.\n');
-    fprintf('============================================================================\n\n');
+    fprintf('\n=============================================================================\n');
+    fprintf(  '          MATPOWER Optimal Scheduling Tool  --  MOST Version %s\n', mostver());
+    fprintf(  '          A multi-period stochastic secure OPF with unit commitment\n');
+    fprintf(  '                       -----  Built on MATPOWER  -----\n');
+    fprintf(  '  by Carlos E. Murillo-Sanchez, Universidad Nacional de Colombia--Manizales\n');
+    fprintf(  '                  and Ray D. Zimmerman, Cornell University\n');
+    fprintf(  '                 (c) 2012-2016 Cornell University and PSERC\n');
+    fprintf(  '=============================================================================\n');
 end
 
 %% if you want to do a normal solve, you have to create the QP

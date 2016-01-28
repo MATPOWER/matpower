@@ -26,9 +26,9 @@ function rv = mpver(varargin)
 % v{1} = ver(p);
 
 v{1} = struct(  'Name',     'MATPOWER', ... 
-                'Version',  '5.1+', ...
+                'Version',  '6.0-dev', ...
                 'Release',  '', ...
-                'Date',     '06-Jan-2016' );
+                'Date',     '28-Jan-2016' );
 if nargout > 0
     if nargin > 0
         rv = v{1};
@@ -68,6 +68,7 @@ else
     end
     fprintf('\n');
     mipsver;
+    mostver;
     if have_fcn('sdp_pf')
         sdp_pf_ver;
     else
