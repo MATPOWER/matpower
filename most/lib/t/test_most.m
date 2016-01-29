@@ -23,7 +23,6 @@ end
 tests = {};
 
 %% MATPOWER base test
-tests{end+1} = 't_apply_changes';
 tests{end+1} = 't_most_3b_1_1_0';
 tests{end+1} = 't_most_3b_3_1_0';
 tests{end+1} = 't_most_3b_1_1_2';
