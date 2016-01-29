@@ -15,6 +15,11 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.1
 -----------------
 
+1/29/16
+    - Added option to call makePTDF(), makeB(), and makeBdc() with
+      mpc struct instead of individual baseMVA, bus, branch args.
+      Suggested by Alberto Lamadrid.
+
 1/26/16
     - Introduced work-around and warning for crashes caused by strange
       behavior from Matlab's ver() function when MATPOWER (or any other
