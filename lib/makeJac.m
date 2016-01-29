@@ -9,8 +9,8 @@ function [J, Ybus, Yf, Yt] = makeJac(baseMVA, bus, branch, gen, fullJac)
 %   Returns the power flow Jacobian and, optionally, the system admittance
 %   matrices. Inputs can be a MATPOWER case struct or individual BASEMVA,
 %   BUS, BRANCH and GEN values. Bus numbers must be consecutive beginning
-%   at 1 (internal ordering). If the FULLJAC argument is present and true,
-%   it returns the full Jacobian (sensitivities of all bus injections
+%   at 1 (i.e. internal ordering). If the FULLJAC argument is present and
+%   true, it returns the full Jacobian (sensitivities of all bus injections
 %   w.r.t all voltage angles/magnitudes) as opposed to the reduced version
 %   used in the Newton power flow updates.
 %
