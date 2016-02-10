@@ -18,9 +18,9 @@ function var = loadgenericdata(varfile, vartype, fields, varname, args)
 %                 get the data. The function M-file should return a
 %                 single argument containing the data. A MAT-file should
 %                 either contain a single variable with the desired data
-%                 or a provide the variable name in VARNAME.
+%                 or provide the variable name in VARNAME.
 %       VARTYPE : String or cell array of strings with, in order of
-%                 priority, of the data structure type to be returned.
+%                 priority, the data structure type to be returned.
 %                 Valid values are 'struct', 'cell' and 'array'.
 %       FIELDS :  (optional) String or cell array of strings containing
 %                 a list of required fields in case the VARTYPE is struct.

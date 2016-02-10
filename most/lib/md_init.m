@@ -85,7 +85,7 @@ md.Storage.rho                        = [];   % (i,t), varies bounding of storag
                                                 % based on worst case (rho=1) vs. expected (rho=0) stored energy
                                                 % at beginning of period
 % Note: MinStorageLevel, MaxStorageLevel, InEff, OutEff, LossFactor and rho
-%       are optionally expanded automatically in mpsopfl() from scalar,
+%       are optionally expanded automatically in most() from scalar,
 %       ns x 1, or 1 x nt to ns x nt matrix.
 
 md.idx.nt                             = [];

@@ -658,13 +658,13 @@ if mpopt.most.build_model
           ngr = length(r.igr);          %% number of gens available to provide reserves
           %% check data for consistent dimensions
           if size(r.zones, 1) ~= nrz
-              error('mpsopfl: the number of rows in FixedReserves(%d,%d,%d).req (%d) and FixedReserves(%d,%d,%d).zones (%d) must match', t, j, k, nrz, t, j, k, size(r.zones, 1));
+              error('most: the number of rows in FixedReserves(%d,%d,%d).req (%d) and FixedReserves(%d,%d,%d).zones (%d) must match', t, j, k, nrz, t, j, k, size(r.zones, 1));
           end
           if size(r.cost, 1) ~= ng && size(r.cost, 1) ~= ngr
-              error('mpsopfl: the number of rows in FixedReserves(%d,%d,%d).cost (%d) must equal the total number of generators (%d) or the number of generators able to provide reserves (%d)', t, j, k, size(r.cost, 1), ng, ngr);
+              error('most: the number of rows in FixedReserves(%d,%d,%d).cost (%d) must equal the total number of generators (%d) or the number of generators able to provide reserves (%d)', t, j, k, size(r.cost, 1), ng, ngr);
           end
           if isfield(r, 'qty') && size(r.qty, 1) ~= size(r.cost, 1)
-              error('mpsopfl: FixedReserves(%d,%d,%d).cost (%d x 1) and FixedReserves(%d,%d,%d).qty (%d x 1) must be the same dimension', t, j, k, size(r.cost, 1), t, j, k, size(r.qty, 1));
+              error('most: FixedReserves(%d,%d,%d).cost (%d x 1) and FixedReserves(%d,%d,%d).qty (%d x 1) must be the same dimension', t, j, k, size(r.cost, 1), t, j, k, size(r.qty, 1));
           end
           %% convert both cost and qty from ngr x 1 to full ng x 1 vectors if necessary
           if size(r.cost, 1) < ng

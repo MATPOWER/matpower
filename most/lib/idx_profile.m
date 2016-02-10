@@ -6,7 +6,7 @@ function [PR_REP, PR_REL, PR_ADD, PR_TCONT, PR_TYPES, PR_TMPCD,...
 %   PR_TXGD, PR_TCTD, PR_TSTGD, PR_CHGTYPES] = idx_profile;
 %
 %   Indicates and defines numeric and string id's for the types of profiles
-%   that can be created to modify a MATPOWER case across time and
+%   that can be created to modify input data for MOST across time and
 %   scenarios. Some types may require that a table is further specified,
 %   i.e., a specific table of data whose content is to be modified by the
 %   profile. Rows (rows) and columns (col) fields of each profile further

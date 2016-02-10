@@ -6,7 +6,7 @@ function md = filter_ramp_transitions(md0, threshold)
 %   with probabilities greater than or equal to a given THRESHOLD value,
 %   where the probability of the transition from j1 to j2 is taken to be the
 %   conditional probability in TransMat multiplied by the conditional
-%   of being in state j1, given that you've made it to period t.
+%   probability of being in state j1, given that you've made it to period t.
 
 %   SuperOPF
 %   $Id$
