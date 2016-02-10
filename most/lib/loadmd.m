@@ -506,7 +506,7 @@ for t = 1:nt
 end
     
 % (C.7.2.3) store profiles into md perhaps for results
-md.profiles = profiles;   % For ploting purposes only (need wind profile in mpsopf_plots1)
+% md.profiles = profiles;   % For ploting purposes only (need wind profile in mpsopf_plots1)
 
 % (C.7.3) storage: superimpose given storage struct into initialized
 %                  storage struct
