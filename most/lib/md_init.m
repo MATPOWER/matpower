@@ -111,7 +111,6 @@ md.dstep(1).A = sparse(0,0);
 md.dstep(1).B = sparse(0,0);
 md.dstep(1).C = sparse(0,0);
 md.dstep(1).D = sparse(0,0);
-md.dstep(1).z = [];
 md.dstep(1).zmax = [];
 md.dstep(1).zmin = [];
 md.dstep(1).ymax = [];
