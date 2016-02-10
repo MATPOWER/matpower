@@ -330,16 +330,16 @@ if ns
     rho = rho * ones(1, nt);
   end
   if isempty(Istr.Storage.InitialStorageLowerBound)
-    if Istr.Storage.ForceCyclicStorage  %% lower bound for var s0, take from t=1
+    if mo.ForceCyclicStorage        %% lower bound for var s0, take from t=1
       Istr.Storage.InitialStorageLowerBound = MinStorageLevel(:, 1);
-    else                                %% Sm(0), default = fixed param s0
+    else                            %% Sm(0), default = fixed param s0
       Istr.Storage.InitialStorageLowerBound = Istr.Storage.InitialStorage;
     end
   end
   if isempty(Istr.Storage.InitialStorageUpperBound)
-    if Istr.Storage.ForceCyclicStorage  %% upper bound for var s0, take from t=1
+    if mo.ForceCyclicStorage        %% upper bound for var s0, take from t=1
       Istr.Storage.InitialStorageUpperBound = MaxStorageLevel(:, 1);
-    else                                %% Sp(0), default = fixed param s0
+    else                            %% Sp(0), default = fixed param s0
       Istr.Storage.InitialStorageUpperBound = Istr.Storage.InitialStorage;
     end
   end
