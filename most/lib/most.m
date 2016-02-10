@@ -363,7 +363,7 @@ if ns
   diagBeta4EtaIn1      = spdiags(beta4EtaIn(:,1),      0, ns, ns);
   diagBeta4overEtaOut1 = spdiags(beta4overEtaOut(:,1), 0, ns, ns);
 end
-if isempty(Istr.idx.nyt) || ~Istr.idx.nyt
+if ~isfield(Istr.idx, 'nyt') || isempty(Istr.idx.nyt) || ~Istr.idx.nyt
   nyt = 0;
   nzd = 0;
   nyo = 0;
@@ -548,8 +548,8 @@ if mpopt.most.build_model
   % is not ousted, so must be careful later when probability-weighting the
   % corresponding u(i,t)!
   if UC
-    if isempty(Istr.UC.c00)  % if not empty it should contain correct info!
-      Istr.UC.c00 = zeros(ng, nt);
+    if ~isfield(Istr.UC, 'c00') || isempty(Istr.UC.c00) % if not empty assume
+      Istr.UC.c00 = zeros(ng, nt);                      % contains correct info!
       for t = 1:nt
         for j = 1:Istr.idx.nj(t)
           for k = 1:Istr.idx.nc(t,j)+1
@@ -2008,7 +2008,8 @@ end     % if mpopt.most.build_model
 Istr.QP.H = Istr.QP.H1;
 Istr.QP.C = Istr.QP.C1;
 Istr.QP.c = Istr.QP.c1;
-if ~isempty(Istr.CoordCost.Cuser) || ~isempty(Istr.CoordCost.Huser)
+if isfield(Istr, 'CoordCost') && ...
+        (~isempty(Istr.CoordCost.Cuser) || ~isempty(Istr.CoordCost.Huser))
   if verbose
     fprintf('- Adding coordination cost to standard cost.\n');
   end
