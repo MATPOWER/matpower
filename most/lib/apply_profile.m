@@ -1,9 +1,9 @@
 function argout = apply_profile(profile, argin, dim)
 %APPLY_PROFILE  Applies changes defined in a profile to a data structure.
 %
-%   CONTABS = APPLY_PROFILE( PROFILE, CONTABSI )
+%   CHGTABS = APPLY_PROFILE( PROFILE, CHGTABSI )
 %   XGD     = APPLY_PROFILE( PROFILE, XGDI, DIM )
-%   STORAGE = APPLY_PROFILE( PROFILE, STORAGEI, DIM )
+%   SD      = APPLY_PROFILE( PROFILE, SDI, DIM )
 %   CTSETS  = APPLY_PROFILE( PROFILE, CTSETS, DIM ) (not yet implemented)
 %   
 %   Applies a single profile of the given type to the given ARGIN. There are
@@ -22,7 +22,7 @@ function argout = apply_profile(profile, argin, dim)
 %                         [ (1 or nt) by (1 or nj_max) or (1 or length(rows)) ]
 %           See IDX_PROFILE for details on the Profile struct.
 %
-%       CONTABI:    cell array of contingency-like tables to be modified
+%       CHGTABI:    cell array of change tables to be modified
 %       XGDI:       xGenData struct to be modified
 %       STORAGEI:   StorageData struct to be modified
 %       CTSETSI:    array with ContingencyData (not yet implemented)
@@ -31,7 +31,7 @@ function argout = apply_profile(profile, argin, dim)
 %               table or field being modified. Elements here refers to the
 %               3rd dimension, not time nor scenarios, but rather elements
 %               such as generators, number of different contingencies in
-%               master contab matrix (different labels), and storage units.
+%               master chgtab matrix (different labels), and storage units.
 %               DIM required to be able to expand, to a full DIM dimension,
 %               the data to be modified when it is summarized by a
 %               singleton dimension representing all the elements in that
@@ -39,7 +39,7 @@ function argout = apply_profile(profile, argin, dim)
 %               mandatory for all other types.
 %
 %   Outputs:
-%       CONTABS : cell array of modified contingency-like tables (nr x 7)
+%       CHGTABS : cell array of modified change tables (nr x 7)
 %       XGD:      modified xGenData struct
 %       STORAGE:  modified StorageData struct
 %       CTSETS:   (not yet implemented)
@@ -62,9 +62,9 @@ function argout = apply_profile(profile, argin, dim)
 %       elements 'rows' on table 'table'. 'values' is a numeric array
 %       with up to 3 dimensions organized necessarily as in [nt nj_max
 %       n]. The third dimension indicates the subset of elements to
-%       which the profile is to be applied. Output CONTABS is a (nt by
-%       nj) cell array of contab matrices (7 cols) with unspecified
-%       labels nor probabilities. CONTABI must always be provided, even
+%       which the profile is to be applied. Output CHGTABS is a (nt by
+%       nj) cell array of chgtab matrices (7 cols) with unspecified
+%       labels nor probabilities. CHGTABI must always be provided, even
 %       if it's a cell array with (nt x nj_max) empty entries. These
 %       dimensions are required in order to be able to expand changes
 %       correctly across time periods and scenarios. Dimensions of
@@ -130,31 +130,31 @@ end
 switch typ
 % (B) Type mpcData profile
     case 'mpcData'
-        contabs = argin;
+        chgtabs = argin;
 
-        nt = size(contabs, 1);
-        nj_max = size(contabs, 2);
+        nt = size(chgtabs, 1);
+        nj_max = size(chgtabs, 2);
 
 % (B.1) Check dimensions and fields of PROFILE
         if length(profile) > 1
             error('apply_profile: multiple profiles should be added separately')
         end
 
-        % (B) Check consistency of IDX, VALUES and CONTABI
+        % (B) Check consistency of IDX, VALUES and CHGTABI
         if size(val,3) ~= length(rows)
             error('apply_profile: third dimension of profile.values should match length of profile.rows')
         end
 
-        if isempty(contabs)
-            error('apply_profile: contabs cell array should have dimensions nt by nj_max')
+        if isempty(chgtabs)
+            error('apply_profile: chgtabs cell array should have dimensions nt by nj_max')
         end
 
 
-        % (C) Generate contingency-like rows to add to CONTABI
+        % (C) Generate contingency-like rows to add to CHGTABI
         
 %       At this point, val can only have dimensions (1 or nt) by
-%       (1 or nj_max) by (1 or length(rows)), so before trnaforming into a
-%       contab, val needs to be expanded to full dimensions [nt nj_max length(rows)]
+%       (1 or nj_max) by (1 or length(rows)), so before transforming into a
+%       chgtab, val needs to be expanded to full dimensions [nt nj_max length(rows)]
         
         if size(val,1) == 1 && nt > 1
             val = repmat(val, [nt 1 1]);
@@ -173,14 +173,14 @@ switch typ
                     for i = 1:length(rows)
                             new_rows = [ new_rows ; 0 0 tbl rows(i) col chgtyp val(t,j,i) ];
                     end
-                    contabs{t,j} = [ contabs{t,j} ; new_rows ];
+                    chgtabs{t,j} = [ chgtabs{t,j} ; new_rows ];
                 end
             end
         else
             error('apply_profile: indicated profile.table not supported for profile changes')
         end
 
-        argout = contabs;
+        argout = chgtabs;
     
     case 'xGenData'
 % (C) Type xGenData profile
