@@ -16,7 +16,7 @@ function md = loadmd(mpci, transmati, xgdi, storagei, contabi, profilesi, trajda
 %
 %   Inputs:
 %       MPC:       a standard MATPOWER case struct, optionally with
-%                  additional fields such as 'genfuel' and 'i<fuel>'
+%                  additional fields such as 'genfuel' and 'i<type>'
 %       TRANSMAT:  (optional) NT dimensional cell array of matrices, where
 %                  TRANSMAT{t} is an NJ(t) x NJ(t-1) matrix containing the
 %                  transition probabilities from period t-1 to period t. The
