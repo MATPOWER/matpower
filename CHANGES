@@ -15,6 +15,9 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.1
 -----------------
 
+2/12/16
+    - Added Release History section to Appendix of manual.
+
 1/29/16
     - Added option to call makePTDF(), makeB(), and makeBdc() with
       mpc struct instead of individual baseMVA, bus, branch args.
