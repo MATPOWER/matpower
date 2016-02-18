@@ -15,6 +15,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5.1
 -----------------
 
+2/18/65
+    - Updated code from 9/23/16 to turn off pesky CPLEX warnings to
+      included CPLEX 12.6.3.
+
 2/12/16
     - Added Release History section to Appendix of manual.
 
