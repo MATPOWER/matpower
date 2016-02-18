@@ -23,19 +23,26 @@ end
 tests = {};
 
 %% MATPOWER base test
+have_c3sopf = exist('c3sopf', 'file') == 2;
 tests{end+1} = 't_most_3b_1_1_0';
 tests{end+1} = 't_most_3b_3_1_0';
-tests{end+1} = 't_most_3b_1_1_2';
-tests{end+1} = 't_most_3b_3_1_2';
+if have_c3sopf
+    tests{end+1} = 't_most_3b_1_1_2';
+    tests{end+1} = 't_most_3b_3_1_2';
+end
 tests{end+1} = 't_most_30b_1_1_0';
 tests{end+1} = 't_most_30b_3_1_0';
-tests{end+1} = 't_most_30b_1_1_17';
-tests{end+1} = 't_most_30b_3_1_17';
+if have_c3sopf
+    tests{end+1} = 't_most_30b_1_1_17';
+    tests{end+1} = 't_most_30b_3_1_17';
+end
 tests{end+1} = 't_most_fixed_res';
 tests{end+1} = 't_most_w_ds';
 tests{end+1} = 't_most_30b_1_1_0_uc';
-tests{end+1} = 't_most_sp';
-tests{end+1} = 't_most_spuc';
+if have_c3sopf
+    tests{end+1} = 't_most_sp';
+    tests{end+1} = 't_most_spuc';
+end
 tests{end+1} = 't_most_uc';
 tests{end+1} = 't_most_suc';
 

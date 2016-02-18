@@ -15,7 +15,7 @@ n_tests = 34;
 
 t_begin(n_tests, quiet);
 
-casename = 't_case30';
+casename = 't_case30_most';
 fudging = struct( ...       %% paramters for fudging reserve contract for sopf2
     'fudge',    0.05, ...   %% initial value (MW)
     'step',     0.01, ...   %% if necessary, increase by this amount and retry (MW)

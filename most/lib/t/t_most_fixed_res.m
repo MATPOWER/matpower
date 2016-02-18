@@ -19,12 +19,11 @@ else
 end
 
 casefile = 't_case30_userfcns';
-algs.dc     = {'DEFAULT'};  %% opf.dc.solver sequence to try for c3sopf (DC run)
 mpopt = mpoption('opf.violation', 1e-6, 'mips.gradtol', 1e-8, ...
         'mips.comptol', 1e-8, 'mips.costtol', 1e-9);
 mpopt = mpoption(mpopt, 'out.all', 0, 'verbose', verbose, 'opf.ac.solver', 'MIPS');
 mpopt = mpoption(mpopt, 'model', 'DC');
-mpopt = mpoption(mpopt, 'most.solver', algs.dc{1});
+mpopt = mpoption(mpopt, 'most.solver', 'DEFAULT');
 if have_fcn('gurobi')
     mpopt = mpoption(mpopt, 'gurobi.method', 1);    %% dual-simplex
 end

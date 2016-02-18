@@ -15,19 +15,16 @@ n_tests = 17;
 
 t_begin(n_tests, quiet);
 
-casename = 't_case30';
+casename = 't_case30_most';
 
 %% options
-algs.dc     = {'DEFAULT'};  %% opf.dc.solver sequence to try for c3sopf (DC run)
-algs.ac     = {'DEFAULT'};  %% opf.ac.solver sequence to try for c3sopf (AC run)
 mpopt = mpoption('verbose', 0, 'out.all', 0);
 % mpopt = mpoption('verbose', 2, 'out.all', -1);
 mpopt = mpoption(mpopt, 'out.bus', 0, 'out.branch', 0, 'out.gen', 2);
 mpopt = mpoption(mpopt, 'opf.violation', 5e-7, 'mips.comptol', 5e-8);
-mpopt = mpoption(mpopt, 'sopf.force_Pc_eq_P0', 0);  %% don't constrain contracted == base case dispatch
 mpoptac = mpoption(mpopt, 'model', 'AC');
 mpoptdc = mpoption(mpopt, 'model', 'DC');
-mpopt = mpoption(mpopt, 'most.solver', algs.dc{1});
+mpopt = mpoption(mpopt, 'most.solver', 'DEFAULT');
 
 %% turn off warnings
 s7 = warning('query', 'MATLAB:nearlySingularMatrix');
@@ -134,7 +131,7 @@ gbus = mpc.gen(:, GEN_BUS);
 ig = find(~isload(mpc.gen));
 mpc.gen(ig, PMIN) = 0.2 * mpc.gen(ig, PMAX);
 
-%%-----  get c3sopf results  -----
+%%-----  get OPF results  -----
 rdc = runduopf(mpc, mpoptdc);
 % rac = runopf(mpc, mpoptac);
 % save t_mpsopf4_soln rdc rac -v6

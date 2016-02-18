@@ -15,7 +15,7 @@ n_tests = 39;
 
 t_begin(n_tests, quiet);
 
-casename = 'case_eg3';
+casename = 't_case3_most';
 fudging = struct( ...       %% paramters for fudging reserve contract for sopf2
     'fudge',    0.05, ...   %% initial value (MW)
     'step',     0.01, ...   %% if necessary, increase by this amount and retry (MW)
@@ -23,14 +23,11 @@ fudging = struct( ...       %% paramters for fudging reserve contract for sopf2
                             %% with fudge equal to this limit
 
 %% options
-algs.dc     = {'DEFAULT'};  %% opf.dc.solver sequence to try for c3sopf (DC run)
-algs.ac     = {'DEFAULT'};  %% opf.ac.solver sequence to try for c3sopf (AC run)
 mpopt = mpoption('verbose', 0, 'out.all', 0);
 mpopt = mpoption(mpopt, 'opf.violation', 5e-7, 'mips.comptol', 5e-8);
-mpopt = mpoption(mpopt, 'sopf.force_Pc_eq_P0', 0);  %% don't constrain contracted == base case dispatch
 mpoptac = mpoption(mpopt, 'model', 'AC');
 mpoptdc = mpoption(mpopt, 'model', 'DC');
-mpopt = mpoption(mpopt, 'most.solver', algs.dc{1});
+mpopt = mpoption(mpopt, 'most.solver', 'DEFAULT');
     
 %% turn off warnings
 s7 = warning('query', 'MATLAB:nearlySingularMatrix');
@@ -83,7 +80,7 @@ nc = length(clist);
 mpc = loadcase(casename);
 gbus = mpc.gen(:, GEN_BUS);
 
-%%-----  get c3sopf results  -----
+%%-----  get OPF results  -----
 rdc = rundcopf(mpc, mpoptdc);
 % rac = runopf(mpc, mpoptac);
 % save t_mpsopf5_soln rdc rac -v6
