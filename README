@@ -84,8 +84,10 @@ Installation
     own code. Let $MATPOWER denote the path to this directory.
 
 3.  Add the following directories to your MATLAB path:
-      $MATPOWER   - core MATPOWER functions
-      $MATPOWER/t - test scripts for MATPOWER
+      $MATPOWER        - core MATPOWER functions
+      $MATPOWER/t      - test scripts for MATPOWER
+      $MATPOWER/most   - core MOST functions
+      $MATPOWER/most/t - test scripts for MOST
       (optional) subdirectories of $MATPOWER/extras -
             additional functionality and contributed code
 
