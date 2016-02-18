@@ -326,7 +326,7 @@ Terms of Use for details.
                OPTI Toolbox from http://www.i2c2.aut.ac.nz/Wiki/OPTI/,
                and high-performance IPOPT-PARDISO pre-built MEX binaries
                for Mac and Linux from the PARDISO Project at
-               http://www.pardiso-project.org/index.php?p=manual.
+               http://www.pardiso-project.org/.
 
  - KNITRO      A general purpose optimization solver specializing in
                nonlinear problems that MATPOWER can use for AC OPFs.
