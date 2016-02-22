@@ -1,4 +1,4 @@
-function hh = plot_uc(mpsd, varargin)
+function hh = plot_uc(md, varargin)
 %PLOT_UC   Plot generator commitment summary
 %
 %   PLOT_UC(MPSD)
@@ -52,18 +52,18 @@ function hh = plot_uc(mpsd, varargin)
     QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
 
 %% gather data
-nt = mpsd.idx.nt;
-ng = size(mpsd.mpc.gen, 1);
-nj_max = max(mpsd.idx.nj);
-nc_max = max(max(mpsd.idx.nc));
+nt = md.idx.nt;
+ng = size(md.mpc.gen, 1);
+nj_max = max(md.idx.nj);
+nc_max = max(max(md.idx.nc));
 
 %% default optional args
 idx = [];
-mpsd2 = [];
+md2 = [];
 k = 1;
 if nargin > 1                   %% 2nd arg is ...
-    if isstruct(varargin{k})    %% ... mpsd2
-        mpsd2 = varargin{k};
+    if isstruct(varargin{k})    %% ... md2
+        md2 = varargin{k};
     else                        %% ... idx
         idx = varargin{k};
     end
@@ -78,13 +78,13 @@ end
 
 %% default idx
 if isempty(idx)
-    idx = find(any(mpsd.UC.CommitKey == 0, 2) | any(mpsd.UC.CommitKey == 1, 2));
+    idx = find(any(md.UC.CommitKey == 0, 2) | any(md.UC.CommitKey == 1, 2));
 end
 nidx = length(idx);
 if nidx > 1 && size(idx, 1) == 1
     idx = idx';     %% convert row vector to column vector
 end
-b = mpsd.mpc.gen(idx, GEN_BUS);
+b = md.mpc.gen(idx, GEN_BUS);
 
 %% default options
 opt = struct( ...
@@ -126,13 +126,13 @@ for f = 1:length(fields)
 end
 
 %% check CommitKey match
-uc1 = mpsd.UC.CommitSched(idx, :);
-if ~isempty(mpsd2)
-    uck2 = mpsd2.UC.CommitKey(idx, :);
-    if any(any( uck2 ~= mpsd.UC.CommitKey(idx, :) & (uck2 == 2 | uck2 == 0) ))
+uc1 = md.UC.CommitSched(idx, :);
+if ~isempty(md2)
+    uck2 = md2.UC.CommitKey(idx, :);
+    if any(any( uck2 ~= md.UC.CommitKey(idx, :) & (uck2 == 2 | uck2 == 0) ))
         error('plot_uc: CommitKey fields in MPSD and MPSD2 do not match');
     end
-    uc2 = mpsd2.UC.CommitSched(idx, :);
+    uc2 = md2.UC.CommitSched(idx, :);
 else
     uc2 = [];
 end
@@ -140,9 +140,9 @@ end
 %% generator labels
 m = size(uc1, 1);
 opt.rowlabels = cell(m, 1);
-if isfield(mpsd.mpc, 'genfuel')
+if isfield(md.mpc, 'genfuel')
     for i = 1:m
-        opt.rowlabels{i} = sprintf('Gen %d @ Bus %d, %s', idx(i), b(i), mpsd.mpc.genfuel{idx(i)});
+        opt.rowlabels{i} = sprintf('Gen %d @ Bus %d, %s', idx(i), b(i), md.mpc.genfuel{idx(i)});
     end
 else
     for i = 1:m
