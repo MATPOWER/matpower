@@ -2400,8 +2400,6 @@ tmptime(3,:) = clock;
 Ostr.results.SetupTime = etime(tmptime(2,:), tmptime(1,:));
 Ostr.results.SolveTime = etime(tmptime(3,:), tmptime(2,:));
 
-% Ostr = oldidx(Ostr);
-
 if verbose
   fprintf('- MOST: Done.\n\n');
 end
