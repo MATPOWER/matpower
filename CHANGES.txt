@@ -16,6 +16,10 @@ For change history for MOST, see most/docs/CHANGES.
 Changes since 5.1
 -----------------
 
+2/22/16
+    - Add major new feature: MATPOWER Optimal Scheduling Tool (MOST).
+      See docs/MOST-manual.pdf for details.
+
 2/18/16
     - Updated code from 9/23/16 to turn off pesky CPLEX warnings to
       included CPLEX 12.6.3.
