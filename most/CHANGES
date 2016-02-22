@@ -9,8 +9,8 @@ Copyright (c) 2015-2016 by Power System Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
 
 
-Changes since fork from mpsopf
-------------------------------
+Changes since 5/21/15
+---------------------
 
 1/26/16
     - Renamed mops to most, and re-wrote history below accordingly.
