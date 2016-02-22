@@ -11,11 +11,12 @@ $Id$
 Copyright (c) 1996-2016 by Power System Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
 
+For change history for MOST, see most/docs/CHANGES.
 
 Changes since 5.1
 -----------------
 
-2/18/65
+2/18/16
     - Updated code from 9/23/16 to turn off pesky CPLEX warnings to
       included CPLEX 12.6.3.
 
