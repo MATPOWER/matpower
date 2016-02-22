@@ -12,6 +12,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5/21/15
 ---------------------
 
+2/22/16
+    - (Tentatively) modify md_init() to initialize only what is needed to
+      run loadmd() and most().
+
 1/26/16
     - Renamed mops to most, and re-wrote history below accordingly.
 
