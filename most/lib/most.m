@@ -10,7 +10,7 @@ function Ostr = most(Istr, mpopt)
 %
 %   Inputs:
 %       MD_IN   MOST data structure, input
-%           (see docs elsewhere for details)
+%           (see MOST User's Manual for details)
 %       MPOPT   MATPOWER options struct, relevant fields are (default
 %               value in parens):
 %           verbose - see 'help mpoption'
@@ -55,89 +55,6 @@ function Ostr = most(Istr, mpopt)
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %   and Ray Zimmerman, PSERC Cornell
 %   Copyright (c) 2010-2015 by Power System Engineering Research Center (PSERC)
-
-%   mpc is a MATPOWER case file or case struct with the fields baseMVA, bus,
-%   gen, branch. It may also include a 'contingencies'
-%   field (in place of contab argument) and the fields 'reserve' and
-%   'energy_delta_cost' (in place of the offer argument). In this case, the
-%   'reserve' and 'energy_delta_cost' fields look like the following, where
-%   offerp refers to the first ng rows of offer and offerq to an optional
-%   2nd set of ng rows:
-%       .reserve
-%           .cost
-%               .Rp_pos     [ offerp(:, 1) ]
-%               .Rp_neg     [ offerp(:, 3) ]
-%               .Rq_pos     [ offerq(:, 1) ]    (optional)
-%               .Rq_neg     [ offerq(:, 3) ]    (optional)
-%           .cap
-%               .Rp_pos     [ offerp(:, 2) ]
-%               .Rp_neg     [ offerp(:, 4) ]
-%               .Rq_pos     [ offerq(:, 2) ]    (optional)
-%               .Rq_neg     [ offerq(:, 4) ]    (optional)
-%       .energy_delta_cost
-%           .dP_pos         [ offerp(:, 5) ]
-%           .dP_neg         [ offerp(:, 6) ]
-%           .dQ_pos         [ offerq(:, 5) ]    (optional)
-%           .dQ_neg         [ offerq(:, 6) ]    (optional)
-%
-%   offer can also be a struct that contains the following fields:
-%       offer.PositiveActiveReservePrice
-%       offer.PositiveActiveReserveQuantity
-%       offer.NegativeActiveReservePrice
-%       offer.NegativeActiveReserveQuantity
-%       offer.PositiveActiveDeltaPrice
-%       offer.NegativeActiveDeltaPrice
-
-% Schedule
-%         .contingencies
-%         .offer
-%         .UC.CommitSched           ng x nt
-%         .OpCondSched().tab
-%         .Delta_T
-%         .Initial.Pg0
-%         .Initial.PgoPg1_Enforce
-%         .Terminal_Pg
-%         .Initial_Pg
-%         .Storage.Type
-%         .Storage.MinStorageLevel
-%         .Storage.MaxStorageLevel
-%         .Storage.InitialStorage
-%         .Storage.OutEff
-%         .Storage.InEff
-
-% Istr
-% To summarize, for (most.build_model, most.solve_model, most.resolve_new_cost) ...
-%   (1,0,?) -> set up the problem, but don't solve it
-%   (1,1,?) -> set up the problem, then solve it
-%   (0,1,1) -> assume it's already set up, solve it with new costs
-%   (0,1,0) -> replace with (1,1,0) internally
-%   (0,0,?) -> error
-% Istr.mpc                  initial system data baseMVA, bus, gen, branch
-% Istr.UC.CommitSched       ng x nt
-% Istr.Delta_T              length of time step in hours
-% Istr.Augmented Lagrangian
-% Istr.Storage.UnitIdx     Which gens are Storage Units
-% Istr.Storage.Type        1) Pumped 2) Battery 3) Compressed air
-% Istr.Storage.MinStorageLevel(t)   in MWH
-% Istr.Storage.MaxStorageLevel(t)
-% Istr.Storage.InitialStorage
-% Istr.Storage.OutEff
-% Istr.Storage.InEff
-% Istr.idx.nt
-% Istr.cont(t,j).contab
-% Istr.tstep(t)            input data for each period
-% Istr.tstep(t).offer
-% Istr.tstep(t).OpCondSched(j).tab  Mods from Istr.mpc for each base scenario,
-%                        except for generator commitment status which comes in Istr.UC.CommitSched
-% Istr.tstep(t).TransMat(j2,j1)  Transition probabilities from j1(t-1) to j2(t)
-% Istr.tstep(t).TransMask(j2,j1)  Ramp reserve mask for transition from j1(t-1) to j2(t)
-
-% Istr.idx.nj(t)
-% Istr.idx.nc(t,j)
-% Istr.idx.nb_total
-% Istr.idx.nb(t,j,k)
-% Istr.idx.nf_total
-% Istr.flow(t,j,k).mpc (with bus gen, branch, gencost)
 
 tmptime(1,:) = clock;
 
