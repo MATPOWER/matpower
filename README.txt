@@ -81,14 +81,14 @@ Installation
 2.  Unzip the downloaded file. Move the resulting matpowerXXX directory
     to the location of your choice. These files should not need to be
     modified, so it is recommended that they be kept separate from your
-    own code. Let $MATPOWER denote the path to this directory.
+    own code. Let <MATPOWER> denote the path to this directory.
 
 3.  Add the following directories to your MATLAB path:
-      $MATPOWER        - core MATPOWER functions
-      $MATPOWER/t      - test scripts for MATPOWER
-      $MATPOWER/most   - core MOST functions
-      $MATPOWER/most/t - test scripts for MOST
-      (optional) subdirectories of $MATPOWER/extras -
+      <MATPOWER>        - core MATPOWER functions
+      <MATPOWER>/t      - test scripts for MATPOWER
+      <MATPOWER>/most   - core MOST functions
+      <MATPOWER>/most/t - test scripts for MOST
+      (optional) subdirectories of <MATPOWER>/extras -
             additional functionality and contributed code
 
 4.  At the MATLAB prompt, type 'test_matpower' (without the quotes) to
