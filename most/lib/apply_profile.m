@@ -98,10 +98,15 @@ function argout = apply_profile(profile, argin, dim)
 
 % Created by Daniel Munoz-Alvarez (4/18/2013)
 
-%   MPSOPF
-%   $Id$
+%   MOST
+%   Copyright (c) 2013-2016 by Power System Engineering Research Center (PSERC)
 %   by Daniel Munoz-Alvarez, PSERC Cornell
-%   Copyright (c) 2013 by Power System Engineering Research Center (PSERC)
+%
+%   $Id$
+%
+%   This file is part of MOST.
+%   Covered by the 3-clause BSD License (see LICENSE file for details).
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 if nargin < 2
     error('apply_profile: insufficient arguments')

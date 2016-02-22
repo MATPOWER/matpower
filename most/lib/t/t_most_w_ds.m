@@ -1,6 +1,17 @@
 function t_most_w_ds(quiet)
 %T_MOST_W_DS  Test for MOST with dynamical system constraints.
 
+%   MOST
+%   Copyright (c) 2015-2016 by Power System Engineering Research Center (PSERC)
+%   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
+%   and Ray Zimmerman, PSERC Cornell
+%
+%   $Id$
+%
+%   This file is part of MOST.
+%   Covered by the 3-clause BSD License (see LICENSE file for details).
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
+
 if nargin < 1
     quiet = 0;
 end

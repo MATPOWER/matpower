@@ -1,10 +1,15 @@
 function t_most_fixed_res(quiet)
 %T_MOST_FIXED_RES  Tests MOST with fixed reserve requirements.
 
-%   SuperOPF
-%   $Id$
+%   MOST
+%   Copyright (c) 2012-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2012 by Power System Engineering Research Center (PSERC)
+%
+%   $Id$
+%
+%   This file is part of MOST.
+%   Covered by the 3-clause BSD License (see LICENSE file for details).
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 if nargin < 1
     quiet = 0;

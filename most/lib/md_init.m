@@ -5,11 +5,17 @@ function md = md_init
 %   Creates an empty MOST Data struct (MD) with all fields required for
 %   MOST, both input and output fields.
 
-%   SuperOPF
-%   $Id$
+%   MOST
+%   Copyright (c) 2010-2016 by Power System Engineering Research Center (PSERC)
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %   and Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2010-2015 by Power System Engineering Research Center (PSERC)
+%
+%   $Id$
+%
+%   This file is part of MOST.
+%   Covered by the 3-clause BSD License (see LICENSE file for details).
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
+
 
 %%-----  start over  -----
 md = struct('Delta_T', 1);

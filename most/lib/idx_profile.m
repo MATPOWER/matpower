@@ -102,10 +102,15 @@ function [PR_REP, PR_REL, PR_ADD, PR_TCONT, PR_TYPES, PR_TMPCD,...
 %           to all" whenever the parameter being modified allows such an
 %           expansion. These "expansions" occur within loadmd().
 
-%   MPSOPF
-%   $Id$
+%   MOST
+%   Copyright (c) 2013-2016 by Power System Engineering Research Center (PSERC)
 %   by Daniel Munoz-Alvarez and Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2013 by Power System Engineering Research Center (PSERC)
+%
+%   $Id$
+%
+%   This file is part of MOST.
+%   Covered by the 3-clause BSD License (see LICENSE file for details).
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %%
 [CT_LABEL, CT_PROB, CT_TABLE, CT_TBUS, CT_TGEN, CT_TBRCH, ...

@@ -62,10 +62,15 @@ function sd = loadstoragedata(sd_table, mpc)
 %           .LossFactor                         (ns x 1) or (1 x 1)
 %           .rho                                (ns x 1) or (1 x 1)
 
-%   MPSOPF
-%   $Id$
+%   MOST
+%   Copyright (c) 2013-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2013 by Power System Engineering Research Center (PSERC)
+%
+%   $Id$
+%
+%   This file is part of MOST.
+%   Covered by the 3-clause BSD License (see LICENSE file for details).
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% define named indices into data matrices
 [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...

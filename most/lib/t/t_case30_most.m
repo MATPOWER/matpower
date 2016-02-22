@@ -8,7 +8,7 @@ function mpc = t_case30_most
 %      in order to test the automatic convert to polynomial
 %      done by OPF.
 
-%   SOPF for MATPOWER
+%   MOST
 %   $Id$
 
 %% MATPOWER Case Format : Version 2

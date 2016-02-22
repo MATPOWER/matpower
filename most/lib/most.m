@@ -50,11 +50,16 @@ function Ostr = most(Istr, mpopt)
 %               value and primal variable relative match required to avoid
 %               mis-match warning message, see 'help miqps_matpower' for details
 
-%   SuperOPF
-%   $Id$
+%   MOST
+%   Copyright (c) 2010-2016 by Power System Engineering Research Center (PSERC)
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %   and Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2010-2015 by Power System Engineering Research Center (PSERC)
+%
+%   $Id$
+%
+%   This file is part of MOST.
+%   Covered by the 3-clause BSD License (see LICENSE file for details).
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 tmptime(1,:) = clock;
 

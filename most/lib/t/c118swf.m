@@ -78,7 +78,7 @@ function mpc = c118swf
 %         factor for the AC case was defined to be 1.5 whereas for the DC
 %         case it was defined to be 1.6.
 
-%   MATPOWER
+%   MOST
 %   $Id$
 
 %% MATPOWER Case Format : Version 2

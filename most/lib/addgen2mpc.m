@@ -26,10 +26,15 @@ function [mpco, NewGenIdx] = addgen2mpc(mpci, gen, gencost, fuel)
 %                              specified fuel type
 %       IDX : generator indices of the newly added generators
 
-%   MPSOPF
-%   $Id$
+%   MOST
+%   Copyright (c) 2013-2016 by Power System Engineering Research Center (PSERC)
 %   by Daniel Munoz-Alvarez and Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2013 by Power System Engineering Research Center (PSERC)
+%
+%   $Id$
+%
+%   This file is part of MOST.
+%   Covered by the 3-clause BSD License (see LICENSE file for details).
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 [ng, ncg]     = size(mpci.gen);
 [nr, nc]      = size(gen);

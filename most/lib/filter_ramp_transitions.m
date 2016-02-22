@@ -8,10 +8,15 @@ function md = filter_ramp_transitions(md0, threshold)
 %   conditional probability in TransMat multiplied by the conditional
 %   probability of being in state j1, given that you've made it to period t.
 
-%   SuperOPF
-%   $Id$
+%   MOST
+%   Copyright (c) 2012-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2012-2015 by Power System Engineering Research Center (PSERC)
+%
+%   $Id$
+%
+%   This file is part of MOST.
+%   Covered by the 3-clause BSD License (see LICENSE file for details).
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% dimensions
 md = md0;

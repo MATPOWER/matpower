@@ -47,10 +47,15 @@ function md = loadmd(mpci, transmati, xgdi, storagei, contabi, profilesi, trajda
 
 % Created by Daniel Munoz-Alvarez (2/28/2013)
 
-%   MPSOPF
-%   $Id$
+%   MOST
+%   Copyright (c) 2013-2016 by Power System Engineering Research Center (PSERC)
 %   by Daniel Munoz-Alvarez and Ray Zimmerman, PSERC Cornell
-%   Copyright (c) 2013-2015 by Power System Engineering Research Center (PSERC)
+%
+%   $Id$
+%
+%   This file is part of MOST.
+%   Covered by the 3-clause BSD License (see LICENSE file for details).
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 if nargin < 7
     trajdatai = [];
