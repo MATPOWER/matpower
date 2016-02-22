@@ -224,3 +224,66 @@ end
 % end
 
 t_end
+
+function A = mkdif(m1, m2, alpha, r, w)
+% A = mkdif(m1, m2, r, w)
+%
+% computes an A matrix for the difussion equations in an m1 x m2 grid,
+% using a difussion speed factor alpha <= 1, a dissipation factor r < 1 and 
+% a "wind" vector w = [wx wy] that roughly tells where the pollutants go.
+
+% Carlos Murillo.  As naive as can be.
+
+if norm(w) > 1
+  w = w / norm(w);
+end
+
+n = m1 * m2;
+A = sparse(n, n);
+north = alpha / 4;
+east = north;
+south = north;
+west = north;
+self = (1-alpha);
+if w(1) > 0
+  west = west + w(1)*self;
+  self = (1-w(1)) * self;
+elseif w(2) < 0
+  east = east + (-w(1))*self;
+  self = (1+w(1)) * self;
+end
+if w(2) > 0
+  south = south + w(2)*self;
+  self = (1-w(2)) * self;
+elseif w(2) < 0
+  north = north + (-w(2))*self;
+  self = (1+w(2)) * self;
+end
+tot = self + north + south + east + west;
+self = (r/tot) * self;
+north = (r/tot) * north;
+south = (r/tot) * south;
+east = (r/tot) * east;
+west = (r/tot) * west;
+
+for i = 1:m1
+  for j = 1:m2
+    A((j-1)*m1+i, (j-1)*m1+i) = self;
+    % North
+    if i > 1
+      A((j-1)*m1+i, (j-1)*m1+i-1) = north;
+    end
+    % South
+    if i < m1
+      A((j-1)*m1+i, (j-1)*m1+i+1) = south;
+    end
+    % West
+    if j > 1
+      A((j-1)*m1+i, (j-2)*m1+i) = west;
+    end
+    % East
+    if j < m2
+      A((j-1)*m1+i, j*m1+i) = east;
+    end
+  end
+end
