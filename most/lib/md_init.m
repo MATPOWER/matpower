@@ -137,7 +137,7 @@ md.Storage.TerminalDischargingPriceK  = [];   % applied to psd_tijk (contingency
 % md.dstep(1).zmin = [];
 % md.dstep(1).ymax = [];
 % md.dstep(1).ymin = [];
-% md.idx.nyt = [];  % Number of periods in the dynamical system horizon
+% md.idx.ntds = []; % Number of periods in the dynamical system horizon
 % md.z1 = [];       % Initial state (t=1)
 % 
 % %%-----  internally created data:  -----
@@ -150,8 +150,8 @@ md.Storage.TerminalDischargingPriceK  = [];   % applied to psd_tijk (contingency
 % md.idx.nf_total   = [];
 % md.idx.ns         = [];
 % md.idx.ns_total   = [];
-% md.idx.nzd        = [];       % size of state vector for dynamical system
-% md.idx.nyo        = [];
+% md.idx.nzds       = [];       % size of state vector for dynamical system
+% md.idx.nyds       = [];
 % md.idx.ntramp     = [];       % number of periods of load following reserves
 % % md.idx.thbas      = [];
 % % md.idx.thend      = [];

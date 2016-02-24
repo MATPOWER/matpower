@@ -190,8 +190,8 @@ if have_fcn('cplex') || have_fcn('gurobi') || have_fcn('mosek') || ...
     end
 
 
-    nyt = 24;
-    mdi.idx.nyt = nyt;
+    ntds = 24;
+    mdi.idx.ntds = ntds;
     m1 = 8;
     m2 = 12;
     B = sparse(m1*m2, ng);
@@ -207,7 +207,7 @@ if have_fcn('cplex') || have_fcn('gurobi') || have_fcn('mosek') || ...
     zmax = 100*ones(m1*m2, 1);
     ymin = 0;
     ymax = 100;
-    for t = 1:nyt
+    for t = 1:ntds
      mdi.dstep(t).A = A;
      mdi.dstep(t).B = B;
      mdi.dstep(t).C = C;

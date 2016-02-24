@@ -285,18 +285,18 @@ if ns
   diagBeta4EtaIn1      = spdiags(beta4EtaIn(:,1),      0, ns, ns);
   diagBeta4overEtaOut1 = spdiags(beta4overEtaOut(:,1), 0, ns, ns);
 end
-if ~isfield(mdi.idx, 'nyt') || isempty(mdi.idx.nyt) || ~mdi.idx.nyt
-  nyt = 0;
-  nzd = 0;
-  nyo = 0;
+if ~isfield(mdi.idx, 'ntds') || isempty(mdi.idx.ntds) || ~mdi.idx.ntds
+  ntds = 0;
+  nzds = 0;
+  nyds = 0;
 else
-  nyt = mdi.idx.nyt;
-  nzd = size(mdi.dstep(1).A, 1);
-  nyo = size(mdi.dstep(1).D, 1);   % # of outputs of dynamical system
+  ntds = mdi.idx.ntds;
+  nzds = size(mdi.dstep(1).A, 1);
+  nyds = size(mdi.dstep(1).D, 1);   % # of outputs of dynamical system
 end
-mdi.idx.nyt = nyt;
-mdi.idx.nzd = nzd;
-mdi.idx.nyo = nyo;
+mdi.idx.ntds = ntds;
+mdi.idx.nzds = nzds;
+mdi.idx.nyds = nyds;
 
 %% define named indices into data matrices
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
@@ -727,9 +727,9 @@ if mpopt.most.build_model
   end
   % If there is a dynamical system with non-null state vector,
   % add those states here
-  if nzd
-    om = add_vars(om, 'Z', {nyt});
-    for t = 1:nyt
+  if nzds
+    om = add_vars(om, 'Z', {ntds});
+    for t = 1:ntds
       if t == 1
         zmin = mdi.z1;
         zmax = mdi.z1;
@@ -738,7 +738,7 @@ if mpopt.most.build_model
         zmax = mdi.dstep(t).zmax;
       end
       z0 = (zmax - zmin) / 2;
-      om = add_vars(om, 'Z', {t}, nzd, z0, zmin, zmax);
+      om = add_vars(om, 'Z', {t}, nzds, z0, zmin, zmax);
     end
   end
   % Now the integer variables; u variables mean on/off status
@@ -1430,7 +1430,7 @@ if mpopt.most.build_model
   end
 
   % Dynamical system contraints
-  if nzd || nyo
+  if nzds || nyds
     if verbose
       fprintf('  - Building dynamic system constraints.\n');
     end
@@ -1450,10 +1450,10 @@ if mpopt.most.build_model
 
   % Form the dynamical system state equations and bound constraints on the
   % state vector
-  if nzd
-    om = add_constraints(om, 'DSz', {nyt-1});
-    b = zeros(nzd, 1);
-    for t = 1:nyt-1
+  if nzds
+    om = add_constraints(om, 'DSz', {ntds-1});
+    b = zeros(nzds, 1);
+    for t = 1:ntds-1
       if t <= nt  % We have p(t) available to drive the dynamical system up to t=nt
         % Form the constraint matrix, so B*E*x + A*z(t) - I*z(t+1) = 0
         A = mdi.dstep(t).B * mdi.tstep(t).E;
@@ -1462,24 +1462,24 @@ if mpopt.most.build_model
         % horizon and we don't know what p(t) is, but continue to drive the
         % dynamical system as if p(t) = 0 and perhaps take that into account
         % when setting Ymax, Ymin in this time window.  That is, A*z(t) - I*z(t+1) = 0
-        A = sparse(nzd, nvars);
+        A = sparse(nzds, nvars);
       end
       A(:, vv.i1.Z(t):vv.iN.Z(t)) = mdi.dstep(t).A;
-      A(:, vv.i1.Z(t+1):vv.iN.Z(t+1)) = -speye(nzd);
+      A(:, vv.i1.Z(t+1):vv.iN.Z(t+1)) = -speye(nzds);
       om = add_constraints(om, 'DSz', {t}, A, b, b);
     end
   end
   
   % Form the output equations and their restrictions
-  if nyo
-    om = add_constraints(om, 'DSy', {nyt});
-    for t = 1:nyt
+  if nyds
+    om = add_constraints(om, 'DSy', {ntds});
+    for t = 1:ntds
       if t <= nt
         A = mdi.dstep(t).D * mdi.tstep(t).E;
       else
-        A = sparse(nyo, nvars);
+        A = sparse(nyds, nvars);
       end
-      if nzd
+      if nzds
         A(:, vv.i1.Z(t):vv.iN.Z(t)) = mdi.dstep(t).C;
       end
       l = mdi.dstep(t).ymin;
@@ -2299,16 +2299,16 @@ if mpopt.most.solve_model
   end
   % If there is a dynamical system, extract the state vectors and outputs
   % from the solution
-  if nyt
-    if nzd
-      mdo.results.Z = zeros(nzd, nyt);
-      for t = 1:nyt
+  if ntds
+    if nzds
+      mdo.results.Z = zeros(nzds, ntds);
+      for t = 1:ntds
         mdo.results.Z(:,t) = mdo.QP.x(vv.i1.Z(t):vv.iN.Z(t));
       end
     end
-    mdo.results.Y = zeros(nyo, nyt);
-    if nyo
-      for t = 1:nyt
+    mdo.results.Y = zeros(nyds, ntds);
+    if nyds
+      for t = 1:ntds
         mdo.results.Y(:, t) = ...
                 mdo.QP.A(ll.i1.DSy(t):ll.iN.DSy(t), :) * mdo.QP.x;
       end
