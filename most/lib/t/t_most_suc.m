@@ -161,10 +161,10 @@ for s = 1:length(solvers)
         xgd = xgd0;
 
         t = sprintf('%s : deterministic : ', solvers{s});
-        mdin = loadmd(mpc, nt, xgd, [], [], profiles);
-        mdout = most(mdin, mpopt);
-        ms = most_summary(mdout);
-        t_ok(mdout.QP.exitflag > 0, [t 'success']);
+        mdi = loadmd(mpc, nt, xgd, [], [], profiles);
+        mdo = most(mdi, mpopt);
+        ms = most_summary(mdo);
+        t_ok(mdo.QP.exitflag > 0, [t 'success']);
         ex = soln.determ;
         t_is(ms.f, ex.f, 8, [t 'f']);
         t_is(ms.Pg, ex.Pg, 8, [t 'Pg']);
@@ -174,7 +174,7 @@ for s = 1:length(solvers)
         t_is(ms.u, ex.u, 8, [t 'u']);
         t_is(ms.lamP, ex.lamP, 8, [t 'lamP']);
         t_is(ms.muF, ex.muF, 8, [t 'muF']);
-        % determ = most_summary(mdout);
+        % determ = most_summary(mdo);
         % keyboard;
 
         t = sprintf('%s : individual trajectories : ', solvers{s});
@@ -182,11 +182,11 @@ for s = 1:length(solvers)
         I = speye(3);
         [transmat_s{:}] = deal(I);
         transmat_s{1} = [0.2; 0.6; 0.2];
-        mdin = loadmd(mpc, transmat_s, xgd, [], [], profiles_s);
-        mdin = filter_ramp_transitions(mdin, 0.1);
-        mdout = most(mdin, mpopt);
-        ms = most_summary(mdout);
-        t_ok(mdout.QP.exitflag > 0, [t 'success']);
+        mdi = loadmd(mpc, transmat_s, xgd, [], [], profiles_s);
+        mdi = filter_ramp_transitions(mdi, 0.1);
+        mdo = most(mdi, mpopt);
+        ms = most_summary(mdo);
+        t_ok(mdo.QP.exitflag > 0, [t 'success']);
         ex = soln.transprob1;
         t_is(ms.f, ex.f, 5, [t 'f']);
         t_is(ms.Pg, ex.Pg, 6, [t 'Pg']);
@@ -196,7 +196,7 @@ for s = 1:length(solvers)
         t_is(ms.u, ex.u, 8, [t 'u']);
         % t_is(ms.lamP, ex.lamP, 5, [t 'lamP']);
         % t_is(ms.muF, ex.muF, 5, [t 'muF']);
-        % transprob1 = most_summary(mdout);
+        % transprob1 = most_summary(mdo);
         % keyboard;
 
         t = sprintf('%s : full transition probabilities : ', solvers{s});
@@ -206,11 +206,11 @@ for s = 1:length(solvers)
 %         T = [ 0.158655253931457; 0.682689492137086; 0.158655253931457 ];
 %         [transmat_sf{:}] = deal(T * ones(1,3));
 %         transmat_sf{1} = T;
-        mdin = loadmd(mpc, transmat_sf, xgd, [], [], profiles_s);
-%        mdin = filter_ramp_transitions(mdin, 0.9);
-        mdout = most(mdin, mpopt);
-        ms = most_summary(mdout);
-        t_ok(mdout.QP.exitflag > 0, [t 'success']);
+        mdi = loadmd(mpc, transmat_sf, xgd, [], [], profiles_s);
+%        mdi = filter_ramp_transitions(mdi, 0.9);
+        mdo = most(mdi, mpopt);
+        ms = most_summary(mdo);
+        t_ok(mdo.QP.exitflag > 0, [t 'success']);
         ex = soln.transprobfull;
         t_is(ms.f, ex.f, 3, [t 'f']);
         t_is(ms.Pg, ex.Pg, 3, [t 'Pg']);
@@ -220,15 +220,15 @@ for s = 1:length(solvers)
         t_is(ms.u, ex.u, 8, [t 'u']);
         % t_is(ms.lamP, ex.lamP, 5, [t 'lamP']);
         % t_is(ms.muF, ex.muF, 5, [t 'muF']);
-        % transprobfull = most_summary(mdout);
+        % transprobfull = most_summary(mdo);
         % keyboard;
 
         t = sprintf('%s : full transition probabilities + cont : ', solvers{s});
-        mdin = loadmd(mpc, transmat_sf, xgd, [], 'eg_contab', profiles_s);
-%        mdin = filter_ramp_transitions(mdin, 0.9);
-        mdout = most(mdin, mpopt);
-        ms = most_summary(mdout);
-        t_ok(mdout.QP.exitflag > 0, [t 'success']);
+        mdi = loadmd(mpc, transmat_sf, xgd, [], 'eg_contab', profiles_s);
+%        mdi = filter_ramp_transitions(mdi, 0.9);
+        mdo = most(mdi, mpopt);
+        ms = most_summary(mdo);
+        t_ok(mdo.QP.exitflag > 0, [t 'success']);
         ex = soln.transprobcont;
         t_is(ms.f, ex.f, 4, [t 'f']);
         t_is(ms.Pg, ex.Pg, 6, [t 'Pg']);
@@ -238,7 +238,7 @@ for s = 1:length(solvers)
         t_is(ms.u, ex.u, 8, [t 'u']);
         % t_is(ms.lamP, ex.lamP, 5, [t 'lamP']);
         % t_is(ms.muF, ex.muF, 5, [t 'muF']);
-        % transprobcont = most_summary(mdout);
+        % transprobcont = most_summary(mdo);
         % keyboard;
 
         t = sprintf('%s : + storage : ', solvers{s});
@@ -246,10 +246,10 @@ for s = 1:length(solvers)
             fprintf('Add storage\n');
         end
         [iess, mpc, xgd, sd] = addstorage('eg_storage', mpc, xgd);
-        mdin = loadmd(mpc, transmat_sf, xgd, sd, 'eg_contab', profiles_s);
-        mdout = most(mdin, mpopt);
-        ms = most_summary(mdout);
-        t_ok(mdout.QP.exitflag > 0, [t 'success']);
+        mdi = loadmd(mpc, transmat_sf, xgd, sd, 'eg_contab', profiles_s);
+        mdo = most(mdi, mpopt);
+        ms = most_summary(mdo);
+        t_ok(mdo.QP.exitflag > 0, [t 'success']);
         ex = soln.wstorage;
         t_is(ms.f, ex.f, 3, [t 'f']);
         t_is(ms.Pg, ex.Pg, 3, [t 'Pg']);
@@ -259,7 +259,7 @@ for s = 1:length(solvers)
         t_is(ms.u, ex.u, 8, [t 'u']);
         % t_is(ms.lamP, ex.lamP, 5, [t 'lamP']);
         % t_is(ms.muF, ex.muF, 5, [t 'muF']);
-        % wstorage = most_summary(mdout);
+        % wstorage = most_summary(mdo);
         % keyboard;
     end
 end

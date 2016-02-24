@@ -223,29 +223,6 @@ t = 'Rpmax_neg';
 Rpmax_neg = (r.QP.lambda.upper(vv.i1.Rpm(1):vv.iN.Rpm(1)) - r.QP.lambda.lower(vv.i1.Rpm(1):vv.iN.Rpm(1))) / mpc.baseMVA;
 t_is(Rpmax_neg, zeros(ng, 1), 6, t);
 
-
-
-% g1 = s.rdc.base.gen(:, PG);
-% g2 = r.flow(1,1,1).mpc.gen(:, PG);
-% for k = 1:nc
-%     g1 = [ g1 s.rdc.cont(k).gen(:, PG) ];
-%     g2 = [ g2 r.flow(1,1,k+1).mpc.gen(:, PG) ];
-% end
-% [m,n] = size(g1);
-% for j = 1:n
-%     fprintf('\n');
-%     for i = 1:m
-%         fprintf('%9.2f  %9.2f\n', g1(i,j), g2(i,j));
-%     end
-% end
-
-%%-----  do AC run (most)  -----
-% Istr = md;
-% mpsopf;
-
-
-
-
 %% turn warnings back on
 warning(s7.state, 'MATLAB:nearlySingularMatrix');
 warning(s6.state, 'MATLAB:nearlySingularMatrixUMFPACK');

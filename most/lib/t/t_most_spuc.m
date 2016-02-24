@@ -168,11 +168,11 @@ mpc.gen(1, GEN_STATUS) = 0;
 mpc.gen(2, GEN_STATUS) = 0;
 % xgd = xg
 mpopt = mpoption(mpopt, 'most.dc_model', 0);
-mdin = loadmd(mpc, [], xgd);
-mdout = most(mdin, mpopt);
-rr = mdout.flow(1,1,1).mpc;
-t_ok(mdout.QP.exitflag > 0, [t 'success']);
-t_is(mdout.QP.f, -488030, 7, [t 'f']);
+mdi = loadmd(mpc, [], xgd);
+mdo = most(mdi, mpopt);
+rr = mdo.flow(1,1,1).mpc;
+t_ok(mdo.QP.exitflag > 0, [t 'success']);
+t_is(mdo.QP.f, -488030, 7, [t 'f']);
 t_is(rr.gen(:, PG), [200; 199; 0; -499; 100], 7, [t 'Pg']);
 t_is(rr.gen(:, GEN_STATUS), [1; 1; 0; 1; 1], 7, [t 'u']);
 % rr.gen(:, GEN_STATUS)
@@ -201,14 +201,14 @@ t = sprintf('%s : DC OPF : most   ', solvers{s});
 mpc = mpc0;
 % mpc.gen(4, PMIN) = -500;
 mpopt = mpoption(mpopt, 'most.dc_model', 1);
-mdin = loadmd(mpc, [], xgd);
-mdout = most(mdin, mpopt);
-rr = mdout.flow(1,1,1).mpc;
+mdi = loadmd(mpc, [], xgd);
+mdo = most(mdi, mpopt);
+rr = mdo.flow(1,1,1).mpc;
 if verbose
     printpf(rr, [], mpopt);
 end
-t_ok(mdout.QP.exitflag > 0, [t 'success']);
-t_is(mdout.QP.f, -486040, 7, [t 'f']);
+t_ok(mdo.QP.exitflag > 0, [t 'success']);
+t_is(mdo.QP.f, -486040, 7, [t 'f']);
 t_is(rr.gen(:, PG), [200; 0; 199; -499; 100], 6, [t 'Pg']);
 t_is(rr.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 % rr.gen(:, GEN_STATUS)
@@ -241,23 +241,23 @@ t = sprintf('%s : economic dispatch (w/reserves) : most   ', solvers{s});
 mpc = mpc0;
 % mpc.gen(4, PMIN) = -350.8;
 mpopt = mpoption(mpopt, 'most.dc_model', 0);
-mdin = loadmd(mpc, [], xgd);
-mdin.IncludeFixedReserves = 1;
-mdin.FixedReserves = mpc.reserves;
-mdout = most(mdin, mpopt);
-rr = mdout.flow(1,1,1).mpc;
+mdi = loadmd(mpc, [], xgd);
+mdi.IncludeFixedReserves = 1;
+mdi.FixedReserves = mpc.reserves;
+mdo = most(mdi, mpopt);
+rr = mdo.flow(1,1,1).mpc;
 if verbose
     printpf(rr, [], mpopt);
 end
-t_ok(mdout.QP.exitflag > 0, [t 'success']);
-t_is(mdout.QP.f, -486802, 5, [t 'f']);
+t_ok(mdo.QP.exitflag > 0, [t 'success']);
+t_is(mdo.QP.f, -486802, 5, [t 'f']);
 t_is(rr.gen(:, PG), [200; 139; 60; -499; 100], 7, [t 'Pg']);
 t_is(rr.gen(:, GEN_STATUS), [1; 1; 1; 1; 1], 7, [t 'u']);
 % rr.gen(:, GEN_STATUS)
 t_is(rr.bus(:, LAM_P), [32; 32; 32], 7, [t 'lam P']);
-t_is(mdout.FixedReserves.R, [0; 61; 89; 0; 0], 7, [t 'R']);
-t_is(mdout.FixedReserves.prc, [5; 5; 5; 0; 0], 7, [t 'reserve prc']);
-t_is(mdout.FixedReserves.mu.Pmax + rr.gen(:, MU_PMAX), [7; 2; 0; 0; 32], 7, [t 'reserve muPmax']);
+t_is(mdo.FixedReserves.R, [0; 61; 89; 0; 0], 7, [t 'R']);
+t_is(mdo.FixedReserves.prc, [5; 5; 5; 0; 0], 7, [t 'reserve prc']);
+t_is(mdo.FixedReserves.mu.Pmax + rr.gen(:, MU_PMAX), [7; 2; 0; 0; 32], 7, [t 'reserve muPmax']);
 
 
 %%-----  DC OPF  -----
@@ -285,21 +285,21 @@ t = sprintf('%s : DC OPF (w/reserves) : most   ', solvers{s});
 mpc = mpc0;
 % mpc.gen(4, PMIN) = -350.8;
 mpopt = mpoption(mpopt, 'most.dc_model', 1);
-mdin = loadmd(mpc, [], xgd);
-mdin.IncludeFixedReserves = 1;
-mdin.FixedReserves = mpc.reserves;
-mdout = most(mdin, mpopt);
-rr = mdout.flow(1,1,1).mpc;
-t_ok(mdout.QP.exitflag > 0, [t 'success']);
-t_is(mdout.QP.f, -485656, 5, [t 'f']);
+mdi = loadmd(mpc, [], xgd);
+mdi.IncludeFixedReserves = 1;
+mdi.FixedReserves = mpc.reserves;
+mdo = most(mdi, mpopt);
+rr = mdo.flow(1,1,1).mpc;
+t_ok(mdo.QP.exitflag > 0, [t 'success']);
+t_is(mdo.QP.f, -485656, 5, [t 'f']);
 t_is(rr.gen(:, PG), [156; 65; 178; -499; 100], 6, [t 'Pg']);
 t_is(rr.gen(:, GEN_STATUS), [1; 1; 1; 1; 1], 7, [t 'u']);
 % rr.gen(:, GEN_STATUS)
 t_is(rr.bus(:, LAM_P), [29; 40; 51], 6, [t 'lam P']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 33; 0], 7, [t 'mu flow']);
-t_is(mdout.FixedReserves.R, [44; 100; 6; 0; 0], 6, [t 'R']);
-t_is(mdout.FixedReserves.prc, [5; 5; 5; 0; 0], 7, [t 'reserve prc']);
-t_is(mdout.FixedReserves.mu.Pmax + rr.gen(:, MU_PMAX), [4; 0; 0; 0; 40], 7, [t 'reserve muPmax']);
+t_is(mdo.FixedReserves.R, [44; 100; 6; 0; 0], 6, [t 'R']);
+t_is(mdo.FixedReserves.prc, [5; 5; 5; 0; 0], 7, [t 'reserve prc']);
+t_is(mdo.FixedReserves.mu.Pmax + rr.gen(:, MU_PMAX), [4; 0; 0; 0; 40], 7, [t 'reserve muPmax']);
 
 t = sprintf('%s : Secure DC OPF (w/cont,res,ramp) : c3sopf ', solvers{s});
 mpc = mpc0;
@@ -359,14 +359,14 @@ t_is(rr.bus(:, LAM_P), [0; 0; 50], 7, [t 'lam P 2']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 50], 7, [t 'mu flow 2']);
 
 t = sprintf('%s : Secure DC OPF (w/cont,res,ramp) : most ', solvers{s});
-mdin = loadmd(mpc, [], xgd, [], contab);
-mdout = most(mdin, mpopt);
-% mdout
-% mdout.QP
-% mdout.QP.f
-t_ok(mdout.QP.exitflag > 0, [t 'success']);
-t_is(mdout.QP.f, -340350, 5, [t 'f']);
-rr = mdout.flow(1,1,1).mpc;
+mdi = loadmd(mpc, [], xgd, [], contab);
+mdo = most(mdi, mpopt);
+% mdo
+% mdo.QP
+% mdo.QP.f
+t_ok(mdo.QP.exitflag > 0, [t 'success']);
+t_is(mdo.QP.f, -340350, 5, [t 'f']);
+rr = mdo.flow(1,1,1).mpc;
 % fprintf('[%.7f; %.7f; %.7f; %.7f; %.7f]\n', rr.gen(:, PG));
 % fprintf('[%d; %d; %d; %d; %d]\n', rr.gen(:, GEN_STATUS));
 % fprintf('[%.7f; %.7f; %.7f]\n', rr.bus(:, LAM_P));
@@ -376,7 +376,7 @@ t_is(rr.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 % t_is(rr.bus(:, LAM_P), [20; 20; 20], 7, [t 'lam P base']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 6, [t 'mu flow base']);
 rr1 = rr;
-rr = mdout.flow(1,1,2).mpc;
+rr = mdo.flow(1,1,2).mpc;
 % fprintf('[%.7f; %.7f; %.7f; %.7f; %.7f]\n', rr.gen(:, PG));
 % fprintf('[%d; %d; %d; %d; %d]\n', rr.gen(:, GEN_STATUS));
 % fprintf('[%.7f; %.7f; %.7f]\n', rr.bus(:, LAM_P));
@@ -385,7 +385,7 @@ t_is(rr.gen(:, PG), [190; 0; 60; -350; 100], 5, [t 'Pg 1']);
 t_is(rr.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 t_is(rr1.bus(:, LAM_P) + rr.bus(:, LAM_P), [25; 25; 25], 7, [t 'lam P base + lam P 1']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 7, [t 'mu flow 1']);
-rr = mdout.flow(1,1,3).mpc;
+rr = mdo.flow(1,1,3).mpc;
 % fprintf('[%.7f; %.7f; %.7f; %.7f; %.7f]\n', rr.gen(:, PG));
 % fprintf('[%d; %d; %d; %d; %d]\n', rr.gen(:, GEN_STATUS));
 % fprintf('[%.7f; %.7f; %.7f]\n', rr.bus(:, LAM_P));
@@ -436,14 +436,14 @@ t_is(rr.bus(:, LAM_P), [0; 0; 0], 6, [t 'lam P 3']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 7, [t 'mu flow 3']);
 
 t = sprintf('%s : Stochastic DC OPF (w/wind,res) : most ', solvers{s});
-mdin = loadmd(mpc, transmat, xgd, [], [], profiles);
-mdout = most(mdin, mpopt);
-% mdout
-% mdout.QP
-% mdout.QP.f
-t_ok(mdout.QP.exitflag > 0, [t 'success']);
-t_is(mdout.QP.f, -341928.605134, 6, [t 'f']);
-rr = mdout.flow(1,1,1).mpc;
+mdi = loadmd(mpc, transmat, xgd, [], [], profiles);
+mdo = most(mdi, mpopt);
+% mdo
+% mdo.QP
+% mdo.QP.f
+t_ok(mdo.QP.exitflag > 0, [t 'success']);
+t_is(mdo.QP.f, -341928.605134, 6, [t 'f']);
+rr = mdo.flow(1,1,1).mpc;
 % fprintf('[%.7f; %.7f; %.7f; %.7f; %.7f]\n', rr.gen(:, PG));
 % fprintf('[%d; %d; %d; %d; %d]\n', rr.gen(:, GEN_STATUS));
 % fprintf('[%.7f; %.7f; %.7f]\n', rr.bus(:, LAM_P));
@@ -452,7 +452,7 @@ t_is(rr.gen(:, PG), [200; 150; 0; -350; 0], 7, [t 'Pg 1']);
 t_is(rr.gen(:, GEN_STATUS), [1; 1; 0; 1; 1], 7, [t 'u']);
 t_is(rr.bus(:, LAM_P), [4.7596576; 4.7596576; 4.7596576], 7, [t 'lam P 1']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 7, [t 'mu flow 1']);
-rr = mdout.flow(1,2,1).mpc;
+rr = mdo.flow(1,2,1).mpc;
 % fprintf('[%.7f; %.7f; %.7f; %.7f; %.7f]\n', rr.gen(:, PG));
 % fprintf('[%d; %d; %d; %d; %d]\n', rr.gen(:, GEN_STATUS));
 % fprintf('[%.7f; %.7f; %.7f]\n', rr.bus(:, LAM_P));
@@ -461,7 +461,7 @@ t_is(rr.gen(:, PG), [200; 100; 0; -350; 50], 7, [t 'Pg 2']);
 t_is(rr.gen(:, GEN_STATUS), [1; 1; 0; 1; 1], 7, [t 'u']);
 t_is(rr.bus(:, LAM_P), [20.4806848; 20.4806848; 20.4806848], 6, [t 'lam P 2']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 6, [t 'mu flow 2']);
-rr = mdout.flow(1,3,1).mpc;
+rr = mdo.flow(1,3,1).mpc;
 % fprintf('[%.7f; %.7f; %.7f; %.7f; %.7f]\n', rr.gen(:, PG));
 % fprintf('[%d; %d; %d; %d; %d]\n', rr.gen(:, GEN_STATUS));
 % fprintf('[%.7f; %.7f; %.7f]\n', rr.bus(:, LAM_P));
@@ -473,15 +473,15 @@ t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 7, [t 'mu flow 3']);
 % keyboard;
 
 t = sprintf('%s : Secure Stochastic DC OPF (w/wind,cont,res,ramp) : most ', solvers{s});
-mdin = loadmd(mpc, transmat, xgd, [], contab, profiles);
-mdout = most(mdin, mpopt);
-% mdout
-% mdout.QP
-% mdout.QP.f
-t_ok(mdout.QP.exitflag > 0, [t 'success']);
-t_is(mdout.QP.f, -338372.01858, 4, [t 'f']);
+mdi = loadmd(mpc, transmat, xgd, [], contab, profiles);
+mdo = most(mdi, mpopt);
+% mdo
+% mdo.QP
+% mdo.QP.f
+t_ok(mdo.QP.exitflag > 0, [t 'success']);
+t_is(mdo.QP.f, -338372.01858, 4, [t 'f']);
 
-rr = mdout.flow(1,1,1).mpc;
+rr = mdo.flow(1,1,1).mpc;
 % fprintf('[%.7f; %.7f; %.7f; %.7f; %.7f]\n', rr.gen(:, PG));
 % fprintf('[%d; %d; %d; %d; %d]\n', rr.gen(:, GEN_STATUS));
 % fprintf('[%.7f; %.7f; %.7f]\n', rr.bus(:, LAM_P));
@@ -492,7 +492,7 @@ t_is(rr.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 2, [t 'mu flow 1 base']);
 
 rr1 = rr;
-rr = mdout.flow(1,1,2).mpc;
+rr = mdo.flow(1,1,2).mpc;
 % fprintf('[%.7f; %.7f; %.7f; %.7f; %.7f]\n', rr.gen(:, PG));
 % fprintf('[%d; %d; %d; %d; %d]\n', rr.gen(:, GEN_STATUS));
 % fprintf('[%.7f; %.7f; %.7f]\n', rr.bus(:, LAM_P));
@@ -503,7 +503,7 @@ t_is(rr.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 t_is(rr1.bus(:, LAM_P) + rr.bus(:, LAM_P), [7.5288996; 7.5288996; 7.5288996], 7, [t 'lam P 1 1']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 6, [t 'mu flow 1 1']);
 
-rr = mdout.flow(1,1,3).mpc;
+rr = mdo.flow(1,1,3).mpc;
 % fprintf('[%.7f; %.7f; %.7f; %.7f; %.7f]\n', rr.gen(:, PG));
 % fprintf('[%d; %d; %d; %d; %d]\n', rr.gen(:, GEN_STATUS));
 % fprintf('[%.7f; %.7f; %.7f]\n', rr.bus(:, LAM_P));
@@ -513,7 +513,7 @@ t_is(rr.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 t_is(rr.bus(:, LAM_P), [0.3173105; 0.3173105; 7.9327627], 6, [t 'lam P 1 2']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 7.6154522], 6, [t 'mu flow 1 2']);
 
-rr = mdout.flow(1,2,1).mpc;
+rr = mdo.flow(1,2,1).mpc;
 % fprintf('[%.7f; %.7f; %.7f; %.7f; %.7f]\n', rr.gen(:, PG));
 % fprintf('[%d; %d; %d; %d; %d]\n', rr.gen(:, GEN_STATUS));
 % fprintf('[%.7f; %.7f; %.7f]\n', rr.bus(:, LAM_P));
@@ -523,7 +523,7 @@ t_is(rr.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 t_is(rr.bus(:, LAM_P), [20.4806848; 20.4806848; 20.4806848], 6, [t 'lam P 2 base']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 6, [t 'mu flow 2 base']);
 
-rr = mdout.flow(1,2,2).mpc;
+rr = mdo.flow(1,2,2).mpc;
 % fprintf('[%.7f; %.7f; %.7f; %.7f; %.7f]\n', rr.gen(:, PG));
 % fprintf('[%d; %d; %d; %d; %d]\n', rr.gen(:, GEN_STATUS));
 % fprintf('[%.7f; %.7f; %.7f]\n', rr.bus(:, LAM_P));
@@ -533,7 +533,7 @@ t_is(rr.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 t_is(rr.bus(:, LAM_P), [5.4615159; 5.4615159; 5.4615159], 6, [t 'lam P 2 1']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 6, [t 'mu flow 2 1']);
 
-rr = mdout.flow(1,2,3).mpc;
+rr = mdo.flow(1,2,3).mpc;
 % fprintf('[%.7f; %.7f; %.7f; %.7f; %.7f]\n', rr.gen(:, PG));
 % fprintf('[%d; %d; %d; %d; %d]\n', rr.gen(:, GEN_STATUS));
 % fprintf('[%.7f; %.7f; %.7f]\n', rr.bus(:, LAM_P));
@@ -543,7 +543,7 @@ t_is(rr.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 t_is(rr.bus(:, LAM_P), [0; 0; 34.1344746], 5, [t 'lam P 2 2']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 34.1344746], 6, [t 'mu flow 2 2']);
 
-rr = mdout.flow(1,3,1).mpc;
+rr = mdo.flow(1,3,1).mpc;
 % fprintf('[%.7f; %.7f; %.7f; %.7f; %.7f]\n', rr.gen(:, PG));
 % fprintf('[%d; %d; %d; %d; %d]\n', rr.gen(:, GEN_STATUS));
 % fprintf('[%.7f; %.7f; %.7f]\n', rr.bus(:, LAM_P));
@@ -553,7 +553,7 @@ t_is(rr.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 t_is(rr.bus(:, LAM_P), [0; 0; 0], 6, [t 'lam P 3 base']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 5, [t 'mu flow 3 base']);
 
-rr = mdout.flow(1,3,2).mpc;
+rr = mdo.flow(1,3,2).mpc;
 % fprintf('[%.7f; %.7f; %.7f; %.7f; %.7f]\n', rr.gen(:, PG));
 % fprintf('[%d; %d; %d; %d; %d]\n', rr.gen(:, GEN_STATUS));
 % fprintf('[%.7f; %.7f; %.7f]\n', rr.bus(:, LAM_P));
@@ -563,7 +563,7 @@ t_is(rr.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 t_is(rr.bus(:, LAM_P), [0; 0; 0], 6, [t 'lam P 3 1']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 6, [t 'mu flow 3 1']);
 
-rr = mdout.flow(1,3,3).mpc;
+rr = mdo.flow(1,3,3).mpc;
 % fprintf('[%.7f; %.7f; %.7f; %.7f; %.7f]\n', rr.gen(:, PG));
 % fprintf('[%d; %d; %d; %d; %d]\n', rr.gen(:, GEN_STATUS));
 % fprintf('[%.7f; %.7f; %.7f]\n', rr.bus(:, LAM_P));

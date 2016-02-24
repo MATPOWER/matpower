@@ -167,10 +167,10 @@ for s = 1:length(solvers)
         mpc = mpc0;
         xgd = xgd0;
         mpopt = mpoption(mpopt, 'most.dc_model', 0);
-        mdin = loadmd(mpc, nt, xgd, [], [], profiles);
-        mdout = most(mdin, mpopt);
-        ms = most_summary(mdout);
-        t_ok(mdout.QP.exitflag > 0, [t 'success']);
+        mdi = loadmd(mpc, nt, xgd, [], [], profiles);
+        mdo = most(mdi, mpopt);
+        ms = most_summary(mdo);
+        t_ok(mdo.QP.exitflag > 0, [t 'success']);
         ex = soln.ed;
         t_is(ms.f, ex.f, 8, [t 'f']);
         t_is(ms.Pg, ex.Pg, 8, [t 'Pg']);
@@ -180,17 +180,17 @@ for s = 1:length(solvers)
         t_is(ms.u, ex.u, 8, [t 'u']);
         t_is(ms.lamP, ex.lamP, 5, [t 'lamP']);
         t_is(ms.muF, ex.muF, 8, [t 'muF']);
-        % ed = most_summary(mdout);
+        % ed = most_summary(mdo);
         % keyboard;
 
         t = sprintf('%s : + DC OPF constraints : ', solvers{s});
         mpc = mpc0;
         % mpc.gen(iwind, PMAX) = 50;
         mpopt = mpoption(mpopt, 'most.dc_model', 1);
-        mdin = loadmd(mpc, nt, xgd, [], [], profiles);
-        mdout = most(mdin, mpopt);
-        ms = most_summary(mdout);
-        t_ok(mdout.QP.exitflag > 0, [t 'success']);
+        mdi = loadmd(mpc, nt, xgd, [], [], profiles);
+        mdo = most(mdi, mpopt);
+        ms = most_summary(mdo);
+        t_ok(mdo.QP.exitflag > 0, [t 'success']);
         ex = soln.dcopf;
         t_is(ms.f, ex.f, 8, [t 'f']);
         t_is(ms.Pg, ex.Pg, 8, [t 'Pg']);
@@ -200,7 +200,7 @@ for s = 1:length(solvers)
         t_is(ms.u, ex.u, 8, [t 'u']);
         t_is(ms.lamP, ex.lamP, 8, [t 'lamP']);
         t_is(ms.muF, ex.muF, 8, [t 'muF']);
-        % dcopf = most_summary(mdout);
+        % dcopf = most_summary(mdo);
         % keyboard;
 
         t = sprintf('%s : + startup/shutdown costs : ', solvers{s});
@@ -214,10 +214,10 @@ for s = 1:length(solvers)
         % mpc.gencost(3, SHUTDOWN) = 3524.9949978;
         % mpc.gencost(3, STARTUP)  = 3524.9949988;    %% MOSEK
         % mpc.gencost(3, SHUTDOWN)  = 3524.9949986;    %% MOSEK
-        mdin = loadmd(mpc, nt, xgd, [], [], profiles);
-        mdout = most(mdin, mpopt);
-        ms = most_summary(mdout);
-        t_ok(mdout.QP.exitflag > 0, [t 'success']);
+        mdi = loadmd(mpc, nt, xgd, [], [], profiles);
+        mdo = most(mdi, mpopt);
+        ms = most_summary(mdo);
+        t_ok(mdo.QP.exitflag > 0, [t 'success']);
         ex = soln.wstart;
         t_is(ms.f, ex.f, 8, [t 'f']);
         t_is(ms.Pg, ex.Pg, 8, [t 'Pg']);
@@ -227,7 +227,7 @@ for s = 1:length(solvers)
         t_is(ms.u, ex.u, 8, [t 'u']);
         t_is(ms.lamP, ex.lamP, 8, [t 'lamP']);
         t_is(ms.muF, ex.muF, 8, [t 'muF']);
-        % wstart = most_summary(mdout);
+        % wstart = most_summary(mdo);
         % keyboard;
 
         t = sprintf('%s : + min up/down time constraints : ', solvers{s});
@@ -235,10 +235,10 @@ for s = 1:length(solvers)
             fprintf('Add MinUp time\n');
         end
         xgd.MinUp(2) = 3;
-        mdin = loadmd(mpc, nt, xgd, [], [], profiles);
-        mdout = most(mdin, mpopt);
-        ms = most_summary(mdout);
-        t_ok(mdout.QP.exitflag > 0, [t 'success']);
+        mdi = loadmd(mpc, nt, xgd, [], [], profiles);
+        mdo = most(mdi, mpopt);
+        ms = most_summary(mdo);
+        t_ok(mdo.QP.exitflag > 0, [t 'success']);
         ex = soln.wminup;
         t_is(ms.f, ex.f, 8, [t 'f']);
         t_is(ms.Pg, ex.Pg, 8, [t 'Pg']);
@@ -248,7 +248,7 @@ for s = 1:length(solvers)
         t_is(ms.u, ex.u, 8, [t 'u']);
         t_is(ms.lamP, ex.lamP, 8, [t 'lamP']);
         t_is(ms.muF, ex.muF, 8, [t 'muF']);
-        % wminup = most_summary(mdout);
+        % wminup = most_summary(mdo);
         % keyboard;
 
         t = sprintf('%s : + ramp constraint/ramp res cost : ', solvers{s});
@@ -256,10 +256,10 @@ for s = 1:length(solvers)
             fprintf('Restrict ramping and add ramp reserve costs\n');
         end
         xgd = xgd00;
-        mdin = loadmd(mpc, nt, xgd, [], [], profiles);
-        mdout = most(mdin, mpopt);
-        ms = most_summary(mdout);
-        t_ok(mdout.QP.exitflag > 0, [t 'success']);
+        mdi = loadmd(mpc, nt, xgd, [], [], profiles);
+        mdo = most(mdi, mpopt);
+        ms = most_summary(mdo);
+        t_ok(mdo.QP.exitflag > 0, [t 'success']);
         ex = soln.wramp;
         t_is(ms.f, ex.f, 8, [t 'f']);
         t_is(ms.Pg, ex.Pg, 8, [t 'Pg']);
@@ -269,7 +269,7 @@ for s = 1:length(solvers)
         t_is(ms.u, ex.u, 8, [t 'u']);
         t_is(ms.lamP, ex.lamP, 8, [t 'lamP']);
         t_is(ms.muF, ex.muF, 8, [t 'muF']);
-        % wramp = most_summary(mdout);
+        % wramp = most_summary(mdo);
         % keyboard;
 
         t = sprintf('%s : + storage : ', solvers{s});
@@ -277,10 +277,10 @@ for s = 1:length(solvers)
             fprintf('Add storage\n');
         end
         [iess, mpc, xgd, sd] = addstorage('eg_storage', mpc, xgd);
-        mdin = loadmd(mpc, nt, xgd, sd, [], profiles);
-        mdout = most(mdin, mpopt);
-        ms = most_summary(mdout);
-        t_ok(mdout.QP.exitflag > 0, [t 'success']);
+        mdi = loadmd(mpc, nt, xgd, sd, [], profiles);
+        mdo = most(mdi, mpopt);
+        ms = most_summary(mdo);
+        t_ok(mdo.QP.exitflag > 0, [t 'success']);
         ex = soln.wstorage;
         t_is(ms.f, ex.f, 8, [t 'f']);
         t_is(ms.Pg, ex.Pg, 8, [t 'Pg']);
@@ -290,7 +290,7 @@ for s = 1:length(solvers)
         t_is(ms.u, ex.u, 8, [t 'u']);
         % t_is(ms.lamP, ex.lamP, 5, [t 'lamP']);
         % t_is(ms.muF, ex.muF, 5, [t 'muF']);
-        % wstorage = most_summary(mdout);
+        % wstorage = most_summary(mdo);
         % keyboard;
     end
 end

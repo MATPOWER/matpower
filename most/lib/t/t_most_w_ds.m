@@ -42,7 +42,7 @@ solnfile = 't_most_w_ds_z';
 
 if have_fcn('cplex') || have_fcn('gurobi') || have_fcn('mosek') || ...
         have_fcn('quadprog')
-    Istr = md_init;
+    mdi = md_init;
 
     mpopt = mpoption('verbose', 0);
 
@@ -68,104 +68,104 @@ if have_fcn('cplex') || have_fcn('gurobi') || have_fcn('mosek') || ...
     % mpopt = mpoption(mpopt, 'most.solver', 'MIPS');
     % mpopt = mpoption(mpopt, 'mips.linsolver', 'PARDISO');
 
-    Istr.mpc = loadcase(casefile);
-    Istr.InitialPg = Istr.mpc.gen(:,PG);
+    mdi.mpc = loadcase(casefile);
+    mdi.InitialPg = mdi.mpc.gen(:,PG);
     nt = 24;
-    ng = size(Istr.mpc.gen, 1);
-    Istr.idx.nt = nt;
+    ng = size(mdi.mpc.gen, 1);
+    mdi.idx.nt = nt;
     PositiveActiveReservePrice = ones(ng,1);
-    PositiveActiveReserveQuantity = 0.25*Istr.mpc.gen(:,PMAX);
+    PositiveActiveReserveQuantity = 0.25*mdi.mpc.gen(:,PMAX);
     NegativeActiveReservePrice = ones(ng,1);
     NegativeActiveReserveQuantity = PositiveActiveReserveQuantity;
     PositiveActiveDeltaPrice = ones(ng,1);
     NegativeActiveDeltaPrice = ones(ng,1);
     PositiveLoadFollowReservePrice = ones(ng,1);
-    PositiveLoadFollowReserveQuantity = 0.5*Istr.mpc.gen(:,PMAX);
+    PositiveLoadFollowReserveQuantity = 0.5*mdi.mpc.gen(:,PMAX);
     NegativeLoadFollowReservePrice = ones(ng,1);
     NegativeLoadFollowReserveQuantity = PositiveLoadFollowReserveQuantity;
-    %Istr.mpc.gen(:,RAMP_10) = 0.20 * Istr.mpc.gen(PMAX);
-    %Istr.mpc.gen(:,RAMP_AGC) = 0.20 * Istr.mpc.gen(PMAX);
-    %Istr.mpc.gen(:,RAMP_30) = 0.50 * Istr.mpc.gen(PMAX);
-    Istr.mpc.gen(:,RAMP_10) = 1.0 * Istr.mpc.gen(:,PMAX);
-    Istr.mpc.gen(:,RAMP_AGC) = 1.0 * Istr.mpc.gen(:,PMAX);
-    Istr.mpc.gen(:,RAMP_30) = 1.0 * Istr.mpc.gen(:,PMAX);
+    %mdi.mpc.gen(:,RAMP_10) = 0.20 * mdi.mpc.gen(PMAX);
+    %mdi.mpc.gen(:,RAMP_AGC) = 0.20 * mdi.mpc.gen(PMAX);
+    %mdi.mpc.gen(:,RAMP_30) = 0.50 * mdi.mpc.gen(PMAX);
+    mdi.mpc.gen(:,RAMP_10) = 1.0 * mdi.mpc.gen(:,PMAX);
+    mdi.mpc.gen(:,RAMP_AGC) = 1.0 * mdi.mpc.gen(:,PMAX);
+    mdi.mpc.gen(:,RAMP_30) = 1.0 * mdi.mpc.gen(:,PMAX);
 
-    Istr.RampWearCostCoeff = 0.05 * ones(ng,1);   % (i, t) note different scheme!
+    mdi.RampWearCostCoeff = 0.05 * ones(ng,1);   % (i, t) note different scheme!
     for t = 2:nt
-      Istr.RampWearCostCoeff(:, t) = Istr.RampWearCostCoeff(:, 1);
+      mdi.RampWearCostCoeff(:, t) = mdi.RampWearCostCoeff(:, 1);
     end
-    Istr.Storage(1).UnitIdx = Istr.mpc.iess;
-    ns = length(Istr.Storage.UnitIdx);
+    mdi.Storage(1).UnitIdx = mdi.mpc.iess;
+    ns = length(mdi.Storage.UnitIdx);
     Minstor = zeros(ns,1);
     Maxstor = 200 * ones(ns,1);
-    %Istr.Storage.MinStorageLevel    = zeros(ns,1);
-    %Istr.Storage.MaxStorageLevel    = 200 * ones(ns,1);
-    Istr.Storage.InitialStorage     = 50 * ones(ns,1);
-    Istr.Storage.InitialStorageLowerBound = 50*ones(ns,1);
-    Istr.Storage.InitialStorageUpperBound = 50*ones(ns,1);
-    Istr.Storage.OutEff             = 0.95 * ones(ns,1);
-    Istr.Storage.InEff              = 0.9  * ones(ns ,1);
-    Istr.Storage.InitialStorageCost         = 35 * ones(ns, 1);
-    Istr.Storage.TerminalStoragePrice       = 35 * ones(ns, 1); % applied to psc_tij0, psd_tij0 (non-terminal states)
-    Istr.Storage.TerminalChargingPrice0     = 35 * ones(ns, 1); % applied to psc_tijk (contingency terminal states)
-    Istr.Storage.TerminalDischargingPrice0  = 35 * ones(ns, 1); % applied to psd_tijk (contingency terminal states)
-    Istr.Storage.TerminalChargingPriceK     = 10 * ones(ns, 1); % applied to psc_tij0 (end-of-horizon terminal states)
-    Istr.Storage.TerminalDischargingPriceK  = 40 * ones(ns, 1); % applied to psd_tij0 (end-of-horizon terminal states)
+    %mdi.Storage.MinStorageLevel    = zeros(ns,1);
+    %mdi.Storage.MaxStorageLevel    = 200 * ones(ns,1);
+    mdi.Storage.InitialStorage     = 50 * ones(ns,1);
+    mdi.Storage.InitialStorageLowerBound = 50*ones(ns,1);
+    mdi.Storage.InitialStorageUpperBound = 50*ones(ns,1);
+    mdi.Storage.OutEff             = 0.95 * ones(ns,1);
+    mdi.Storage.InEff              = 0.9  * ones(ns ,1);
+    mdi.Storage.InitialStorageCost         = 35 * ones(ns, 1);
+    mdi.Storage.TerminalStoragePrice       = 35 * ones(ns, 1); % applied to psc_tij0, psd_tij0 (non-terminal states)
+    mdi.Storage.TerminalChargingPrice0     = 35 * ones(ns, 1); % applied to psc_tijk (contingency terminal states)
+    mdi.Storage.TerminalDischargingPrice0  = 35 * ones(ns, 1); % applied to psd_tijk (contingency terminal states)
+    mdi.Storage.TerminalChargingPriceK     = 10 * ones(ns, 1); % applied to psc_tij0 (end-of-horizon terminal states)
+    mdi.Storage.TerminalDischargingPriceK  = 40 * ones(ns, 1); % applied to psd_tij0 (end-of-horizon terminal states)
     mpopt = mpoption(mpopt, 'most.storage.terminal_target', 0);
-    Istr.Storage.ExpectedTerminalStorageAim = Istr.Storage.InitialStorage;  % expected terminal storage if mpopt.most.storage.terminal_target is true
-    Istr.Storage.LossFactor         = zeros(ns,1);  % fraction of storage lost in each period
-    Istr.Storage.IncludeValueOfTerminalStorage = 1;
+    mdi.Storage.ExpectedTerminalStorageAim = mdi.Storage.InitialStorage;  % expected terminal storage if mpopt.most.storage.terminal_target is true
+    mdi.Storage.LossFactor         = zeros(ns,1);  % fraction of storage lost in each period
+    mdi.Storage.IncludeValueOfTerminalStorage = 1;
     mpopt = mpoption(mpopt, 'most.storage.cyclic', 1);
 
     for t = 1:nt
-      Istr.offer(t).gencost = Istr.mpc.gencost;
-      Istr.offer(t).PositiveActiveReservePrice = PositiveActiveReservePrice;
-      Istr.offer(t).PositiveActiveReserveQuantity = PositiveActiveReserveQuantity;
-      Istr.offer(t).NegativeActiveReservePrice = NegativeActiveReservePrice;
-      Istr.offer(t).NegativeActiveReserveQuantity = NegativeActiveReserveQuantity;
-      Istr.offer(t).PositiveActiveDeltaPrice = PositiveActiveDeltaPrice;
-      Istr.offer(t).NegativeActiveDeltaPrice = NegativeActiveDeltaPrice;
-      Istr.offer(t).PositiveLoadFollowReservePrice = PositiveLoadFollowReservePrice;
-      Istr.offer(t).PositiveLoadFollowReserveQuantity = PositiveLoadFollowReserveQuantity;
-      Istr.offer(t).NegativeLoadFollowReservePrice = NegativeLoadFollowReservePrice;
-      Istr.offer(t).NegativeLoadFollowReserveQuantity = NegativeLoadFollowReserveQuantity;
-      Istr.Storage.MinStorageLevel(:,t) = Minstor;
-      Istr.Storage.MaxStorageLevel(:,t) = Maxstor;
+      mdi.offer(t).gencost = mdi.mpc.gencost;
+      mdi.offer(t).PositiveActiveReservePrice = PositiveActiveReservePrice;
+      mdi.offer(t).PositiveActiveReserveQuantity = PositiveActiveReserveQuantity;
+      mdi.offer(t).NegativeActiveReservePrice = NegativeActiveReservePrice;
+      mdi.offer(t).NegativeActiveReserveQuantity = NegativeActiveReserveQuantity;
+      mdi.offer(t).PositiveActiveDeltaPrice = PositiveActiveDeltaPrice;
+      mdi.offer(t).NegativeActiveDeltaPrice = NegativeActiveDeltaPrice;
+      mdi.offer(t).PositiveLoadFollowReservePrice = PositiveLoadFollowReservePrice;
+      mdi.offer(t).PositiveLoadFollowReserveQuantity = PositiveLoadFollowReserveQuantity;
+      mdi.offer(t).NegativeLoadFollowReservePrice = NegativeLoadFollowReservePrice;
+      mdi.offer(t).NegativeLoadFollowReserveQuantity = NegativeLoadFollowReserveQuantity;
+      mdi.Storage.MinStorageLevel(:,t) = Minstor;
+      mdi.Storage.MaxStorageLevel(:,t) = Maxstor;
     end
-    Istr.Storage.MinStorageLevel(:,nt+1) = Minstor;  % Needed if mpopt.most.storage.cyclic
-    Istr.Storage.MaxStorageLevel(:,nt+1) = Maxstor;
+    mdi.Storage.MinStorageLevel(:,nt+1) = Minstor;  % Needed if mpopt.most.storage.cyclic
+    mdi.Storage.MaxStorageLevel(:,nt+1) = Maxstor;
 
-    %Istr.Storage.MinStorageLevel(:,4) = [10 ; 10];  % is this enough to create infeasibility?
-    %Istr.Storage.MaxStorageLevel(:,4) = [10; 50 ];
+    %mdi.Storage.MinStorageLevel(:,4) = [10 ; 10];  % is this enough to create infeasibility?
+    %mdi.Storage.MaxStorageLevel(:,4) = [10; 50 ];
 
-    Istr.UC.CommitSched = ones(ng,nt);
+    mdi.UC.CommitSched = ones(ng,nt);
 
-    Istr.Delta_T = 1;
+    mdi.Delta_T = 1;
     %            0:0  1:00 2:00 3:00 4:00  5:00  6:00  7:00 8:00 9:00 10:00 11:00 12:00 13:00 14:00 15:00 16:00 17:00 18:00 19:00 20:00 21:00 22:00 23:00 
     loadprof = [ 0.6  0.6   0.6 0.7  0.75  0.8   0.9   1.1  1.2  1.3   1.4  1.4   1.3   1.4    1.4   1.4   1.4   1.3   1.1   1.1   1.0   0.9   0.8   0.7  ];
 
 
     %                label  probability   type      row     column      chg type  newvalue
     partialcontabrow =[ 1       0        CT_TBUS     0        PD         CT_REL ];
-    %Istr.tstep(1).OpCondSched(1).tab= [ 
+    %mdi.tstep(1).OpCondSched(1).tab= [ 
     %                   1        0        CT_TBUS     0        PD         CT_REL     0.8  ];
-    %Istr.tstep(2).OpCondSched(1).tab= [ 
+    %mdi.tstep(2).OpCondSched(1).tab= [ 
     %                   1        0        CT_TBUS     0        PD         CT_REL     1.0  ];
-    %Istr.tstep(3).OpCondSched(1).tab= [ 
+    %mdi.tstep(3).OpCondSched(1).tab= [ 
     %                   1        0        CT_TBUS     0        PD         CT_REL     1.2  ];
-    %Istr.tstep(4).OpCondSched(1).tab= [
+    %mdi.tstep(4).OpCondSched(1).tab= [
     %                   1        0        CT_TBUS     0        PD         CT_REL     0.9 ];
 
     for t = 1:nt
-      Istr.tstep(t).OpCondSched(1).tab = [ partialcontabrow   loadprof(t) ];
+      mdi.tstep(t).OpCondSched(1).tab = [ partialcontabrow   loadprof(t) ];
     end
 
 
     for t = 1:nt
-       Istr.tstep(t).OpCondSched(2).tab = Istr.tstep(t).OpCondSched(1).tab;
-       Istr.tstep(t).OpCondSched(2).tab(1,7) = 1.1*Istr.tstep(t).OpCondSched(2).tab(1,7);
-       Istr.tstep(t).OpCondSched(3).tab = Istr.tstep(t).OpCondSched(1).tab;
-       Istr.tstep(t).OpCondSched(3).tab(1,7) = 0.9*Istr.tstep(t).OpCondSched(1).tab(1,7);
+       mdi.tstep(t).OpCondSched(2).tab = mdi.tstep(t).OpCondSched(1).tab;
+       mdi.tstep(t).OpCondSched(2).tab(1,7) = 1.1*mdi.tstep(t).OpCondSched(2).tab(1,7);
+       mdi.tstep(t).OpCondSched(3).tab = mdi.tstep(t).OpCondSched(1).tab;
+       mdi.tstep(t).OpCondSched(3).tab(1,7) = 0.9*mdi.tstep(t).OpCondSched(1).tab(1,7);
     end
 
 
@@ -175,30 +175,30 @@ if have_fcn('cplex') || have_fcn('gurobi') || have_fcn('mosek') || ...
                        ];
 
     for t = 1:nt
-      for j = 1:3  % Istr.idx.nj(t)
-        Istr.cont(t,j).contab = contab;
+      for j = 1:3  % mdi.idx.nj(t)
+        mdi.cont(t,j).contab = contab;
       end
     end
 
 
 
-    Istr.tstep(1).TransMat = [ 1/3;
+    mdi.tstep(1).TransMat = [ 1/3;
                                1/3
                                1/3];
     for t = 2:nt
-      Istr.tstep(t).TransMat = 1/3 * ones(3,3);
+      mdi.tstep(t).TransMat = 1/3 * ones(3,3);
     end
 
 
     nyt = 24;
-    Istr.idx.nyt = nyt;
+    mdi.idx.nyt = nyt;
     m1 = 8;
     m2 = 12;
     B = sparse(m1*m2, ng);
     ilist = [ 2 3 4 5   3 4 5 6   3 4 5 7   3 4 5 7   3 4 5 6   4 5 6 7    2 3 4 ];
     jlist = [ 2 2 2 2   3 3 3 3   5 5 5 5   6 6 6 6   7 7 7 7   8 8 8 8    11 11 11 ];
-    for i = 1:length(Istr.mpc.icoal)
-     B((jlist(i)-1)*m1+ilist(i), Istr.mpc.icoal(i)) = 0.1;
+    for i = 1:length(mdi.mpc.icoal)
+     B((jlist(i)-1)*m1+ilist(i), mdi.mpc.icoal(i)) = 0.1;
     end
     A = mkdif(m1, m2, 0.5, 0.97, [1.0 0]);
     C = [];
@@ -208,23 +208,23 @@ if have_fcn('cplex') || have_fcn('gurobi') || have_fcn('mosek') || ...
     ymin = 0;
     ymax = 100;
     for t = 1:nyt
-     Istr.dstep(t).A = A;
-     Istr.dstep(t).B = B;
-     Istr.dstep(t).C = C;
-     Istr.dstep(t).D = D;
-     Istr.dstep(t).zmin = zmin;
-     Istr.dstep(t).zmax = zmax;
-     Istr.dstep(t).ymin = ymin;
-     Istr.dstep(t).ymax = ymax;
+     mdi.dstep(t).A = A;
+     mdi.dstep(t).B = B;
+     mdi.dstep(t).C = C;
+     mdi.dstep(t).D = D;
+     mdi.dstep(t).zmin = zmin;
+     mdi.dstep(t).zmax = zmax;
+     mdi.dstep(t).ymin = ymin;
+     mdi.dstep(t).ymax = ymax;
     end
-    Istr.z1 = zeros(m1*m2, 1);
+    mdi.z1 = zeros(m1*m2, 1);
 
-    Ostr = most(Istr, mpopt);
+    mdo = most(mdi, mpopt);
 
     s = load(solnfile);
 
     t = 'dynamical system state (Z)';
-    t_is(Ostr.results.Z, s.Z, 4, t);
+    t_is(mdo.results.Z, s.Z, 4, t);
 else
     t_skip(1, 'requires CPLEX, Gurobi, MOSEK or quadprog');
 end

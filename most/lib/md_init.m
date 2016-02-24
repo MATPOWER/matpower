@@ -70,7 +70,7 @@ md.Storage.TerminalDischargingPriceK  = [];   % applied to psd_tijk (contingency
 %                                 % the first column is the cost from initial
 %                                 % state to t=1; if there's a terminal
 %                                 % state, then there must be nt+1 columns
-% md.UC.CommitSched                     = [];   % if UC: solution on output; if not UC (Istr.CommitKey empty) then
+% md.UC.CommitSched                     = [];   % if UC: solution on output; if not UC (mdi.CommitKey empty) then
 %                                                 % must contain UC status
 %                                                 % (i, t)
 % md.UC.CommitKey                       = [];   % If empty, no UC dimension; else, must contain key to be used

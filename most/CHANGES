@@ -16,6 +16,9 @@ Changes since 5/21/15
     - Add most_summary() function to summarize and print some summary
       results. Moved from some of the test files into its own public
       function. (Still very incomplete).
+    - For consistency, rename MOST data struct variables everywhere to
+      mdi (input) from Istr, md_in, and mdin, and to mdo (output) from
+      Ostr, md_out, and mdout.
 
 2/22/16
     - (Tentatively) modify md_init() to initialize only what is needed to

@@ -1,6 +1,6 @@
-function ms = most_summary(md_out)
+function ms = most_summary(mdo)
 %MOST_SUMMARY  Collects and optionally prints a summary of MOST results.
-%   MS = MOST_SUMMARY(MD_OUT)
+%   MS = MOST_SUMMARY(MDO)
 %
 %   Note: Consider this function experimental. It is included because it
 %         is often better than nothing, though it is very incomplete.
@@ -22,7 +22,7 @@ function ms = most_summary(md_out)
 %       lamP    - nb x nt x nj_max x (nc_max+1), shadow price on power balance
 %       muF     - nl x nt x nj_max x (nc_max+1), shadow price on flow limits
 %
-%   Printing to the console is currently controlled by the MD_OUT.QP.verbose
+%   Printing to the console is currently controlled by the MDO.QP.verbose
 %   flag.
 
 %   MOST
@@ -45,28 +45,28 @@ function ms = most_summary(md_out)
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 
 tol = 1e-4;
-verbose = md_out.QP.opt.verbose;
+verbose = mdo.QP.opt.verbose;
 % verbose = 1;
-mpc = md_out.mpc;
+mpc = mdo.mpc;
 nb = size(mpc.bus, 1);
 nl = size(mpc.branch, 1);
 ng = size(mpc.gen, 1);
-nt = md_out.idx.nt;
-nj_max = max(md_out.idx.nj);
-nc_max = max(max(md_out.idx.nc));
+nt = mdo.idx.nt;
+nj_max = max(mdo.idx.nj);
+nc_max = max(max(mdo.idx.nc));
 
 %% summarize results
 Pg = zeros(ng, nt, nj_max, nc_max+1);
-Rup = [zeros(ng, 1) md_out.results.Rrp];
-Rdn = [zeros(ng, 1) md_out.results.Rrm];
+Rup = [zeros(ng, 1) mdo.results.Rrp];
+Rdn = [zeros(ng, 1) mdo.results.Rrm];
 u = zeros(ng, nt);
 lamP = zeros(nb, nt, nj_max, nc_max+1);
 muF = zeros(nl, nt, nj_max, nc_max+1);
 Pf = zeros(nl, nt, nj_max, nc_max+1);
 for t = 1:nt
-  for j = 1:md_out.idx.nj(t)
-    for k = 1:md_out.idx.nc(t,j)+1
-      rr = md_out.flow(t,j,k).mpc;
+  for j = 1:mdo.idx.nj(t)
+    for k = 1:mdo.idx.nc(t,j)+1
+      rr = mdo.flow(t,j,k).mpc;
       u(:, t) = rr.gen(:, GEN_STATUS);
       Pg(:, t, j, k) = rr.gen(:, PG);
       lamP(:, t, j, k) = rr.bus(:, LAM_P);
@@ -77,7 +77,7 @@ for t = 1:nt
 end
 
 ms = struct(...
-    'f',    md_out.QP.f, ...
+    'f',    mdo.QP.f, ...
     'nb',   nb, ...
     'ng',   ng, ...
     'nl',   nl, ...
@@ -96,7 +96,7 @@ ms = struct(...
 %% print results
 if verbose
     fprintf('\n========== OBJECTIVE  ==========\n');
-    fprintf('f = %.12g\n', md_out.QP.f);
+    fprintf('f = %.12g\n', mdo.QP.f);
 
     fprintf('\n========== GEN_STATUS ==========\n');
     fprintf(' Gen ');
