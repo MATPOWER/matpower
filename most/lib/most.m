@@ -162,6 +162,9 @@ if mo.SecurityConstrained && ~(isfield(mdi, 'cont') && ...
       isfield(mdi.cont(1,1), 'contab') && ~isempty(mdi.cont(1,1).contab))
   error('most: MDI.cont(t,j).contab cannot be empty when MPOPT.most.security_constraints = 1');
 end
+if mo.IncludeFixedReserves && mo.SecurityConstrained
+  warning('most: Using MPOPT.most.fixed_res = 1 and MPOPT.most.security_constraints = 1 together is not recommended.');
+end
 if mo.ForceExpectedTerminalStorage == 1;
   if mo.ForceCyclicStorage
     error('most: storage model cannot be both cyclic and include a terminal target value; must change MPOPT.most.storage.cyclic or MPOPT.most.storage.terminal_target');
