@@ -15,6 +15,8 @@ Changes since 5/21/15
 2/25/16
     - Add MATPOWER option 'most.fixed_res' with default of -1 (depends
       on presence of md.FixedReserves) to control md.IncludeFixedReserves.
+    - Move fixed zonal reserve output fields (R, prc, mu.l, m.u, m.Pmax,
+      totalcost) from mdo.FixedReserves(t,j,k) to mdo.flow(t,j,k).mpc.reserves.
 
 2/24/16
     - Add most_summary() function to summarize and print some summary

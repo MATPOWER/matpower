@@ -254,9 +254,9 @@ t_is(rr.gen(:, PG), [200; 139; 60; -499; 100], 7, [t 'Pg']);
 t_is(rr.gen(:, GEN_STATUS), [1; 1; 1; 1; 1], 7, [t 'u']);
 % rr.gen(:, GEN_STATUS)
 t_is(rr.bus(:, LAM_P), [32; 32; 32], 7, [t 'lam P']);
-t_is(mdo.FixedReserves.R, [0; 61; 89; 0; 0], 7, [t 'R']);
-t_is(mdo.FixedReserves.prc, [5; 5; 5; 0; 0], 7, [t 'reserve prc']);
-t_is(mdo.FixedReserves.mu.Pmax + rr.gen(:, MU_PMAX), [7; 2; 0; 0; 32], 7, [t 'reserve muPmax']);
+t_is(rr.reserves.R, [0; 61; 89; 0; 0], 7, [t 'R']);
+t_is(rr.reserves.prc, [5; 5; 5; 0; 0], 7, [t 'reserve prc']);
+t_is(rr.reserves.mu.Pmax + rr.gen(:, MU_PMAX), [7; 2; 0; 0; 32], 7, [t 'reserve muPmax']);
 
 
 %%-----  DC OPF  -----
@@ -295,9 +295,9 @@ t_is(rr.gen(:, GEN_STATUS), [1; 1; 1; 1; 1], 7, [t 'u']);
 % rr.gen(:, GEN_STATUS)
 t_is(rr.bus(:, LAM_P), [29; 40; 51], 6, [t 'lam P']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 33; 0], 7, [t 'mu flow']);
-t_is(mdo.FixedReserves.R, [44; 100; 6; 0; 0], 6, [t 'R']);
-t_is(mdo.FixedReserves.prc, [5; 5; 5; 0; 0], 7, [t 'reserve prc']);
-t_is(mdo.FixedReserves.mu.Pmax + rr.gen(:, MU_PMAX), [4; 0; 0; 0; 40], 7, [t 'reserve muPmax']);
+t_is(rr.reserves.R, [44; 100; 6; 0; 0], 6, [t 'R']);
+t_is(rr.reserves.prc, [5; 5; 5; 0; 0], 7, [t 'reserve prc']);
+t_is(rr.reserves.mu.Pmax + rr.gen(:, MU_PMAX), [4; 0; 0; 0; 40], 7, [t 'reserve muPmax']);
 
 t = sprintf('%s : Secure DC OPF (w/cont,res,ramp) : c3sopf ', solvers{s});
 mpc = mpc0;

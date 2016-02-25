@@ -204,9 +204,9 @@ t_ok(mdo.QP.exitflag > 0, [t 'success']);
 t_is(mdo.QP.f, -442820, 5, [t 'f']);
 t_is(rr.gen(:, PG), [140; 150; 160; -450], 7, [t 'Pg']);
 t_is(rr.bus(:, LAM_P), [32; 32; 32], 7, [t 'lam P']);
-t_is(mdo.FixedReserves.R, [60; 50; 40; 0], 7, [t 'R']);
-t_is(mdo.FixedReserves.prc, [5; 5; 5; 0], 7, [t 'reserve prc']);
-t_is(mdo.FixedReserves.mu.Pmax + rr.gen(:, MU_PMAX), [4; 2; 0; 0], 7, [t 'reserve muPmax']);
+t_is(rr.reserves.R, [60; 50; 40; 0], 7, [t 'R']);
+t_is(rr.reserves.prc, [5; 5; 5; 0], 7, [t 'reserve prc']);
+t_is(rr.reserves.mu.Pmax + rr.gen(:, MU_PMAX), [4; 2; 0; 0], 7, [t 'reserve muPmax']);
 
 
 %%-----  DC OPF  -----
@@ -240,9 +240,9 @@ t_ok(mdo.QP.exitflag > 0, [t 'success']);
 t_is(mdo.QP.f, -442760, 5, [t 'f']);
 t_is(rr.gen(:, PG), [130; 140; 180; -450], 6, [t 'Pg']);
 t_is(rr.bus(:, LAM_P), [30; 36; 42], 6, [t 'lam P']);
-t_is(mdo.FixedReserves.R, [70; 60; 20; 0], 6, [t 'R']);
-t_is(mdo.FixedReserves.prc, [5; 5; 5; 0], 7, [t 'reserve prc']);
-t_is(mdo.FixedReserves.mu.Pmax + rr.gen(:, MU_PMAX), [4; 2; 0; 0], 7, [t 'reserve muPmax']);
+t_is(rr.reserves.R, [70; 60; 20; 0], 6, [t 'R']);
+t_is(rr.reserves.prc, [5; 5; 5; 0], 7, [t 'reserve prc']);
+t_is(rr.reserves.mu.Pmax + rr.gen(:, MU_PMAX), [4; 2; 0; 0], 7, [t 'reserve muPmax']);
 
 %%-----  DC OPF w/contingencies  -----
 if verbose

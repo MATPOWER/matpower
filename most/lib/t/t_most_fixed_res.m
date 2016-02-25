@@ -83,43 +83,43 @@ xgd_table.data = [
 
 ng = size(mpc.gen, 1);      %% number of gens
 xgd = loadxgendata(xgd_table, mpc);
-md = loadmd(mpc, [], xgd);
-md.FixedReserves = mpc.reserves;
+mdi = loadmd(mpc, [], xgd);
+mdi.FixedReserves = mpc.reserves;
 
 %%-----  run most_fixed_res  -----
 %r1 = rundcopf(mpc);
-r2 = most(md, mpopt);
+mdo = most(mdi, mpopt);
 
 %%-----  test it  -----
 t = 'success1';
 t_ok(r1.success, t);
 
 t = 'success2';
-t_ok(r2.QP.exitflag, t);
+t_ok(mdo.QP.exitflag, t);
 
 t = 'f';
-t_is(r2.results.f, r1.f, 8, t);
+t_is(mdo.results.f, r1.f, 8, t);
 
 t = 'Pg';
-t_is(r2.flow.mpc.gen(:, PG), r1.gen(:, PG), 8, t);
+t_is(mdo.flow.mpc.gen(:, PG), r1.gen(:, PG), 8, t);
 
 t = 'R';
-t_is(r2.FixedReserves.R, r1.reserves.R, 8, t);
+t_is(mdo.flow.mpc.reserves.R, r1.reserves.R, 8, t);
 
 t = 'prc';
-t_is(r2.FixedReserves.prc, r1.reserves.prc, 8, t);
+t_is(mdo.flow.mpc.reserves.prc, r1.reserves.prc, 8, t);
 
 t = 'totalcost';
-t_is(r2.FixedReserves.totalcost, r1.reserves.totalcost, 8, t);
+t_is(mdo.flow.mpc.reserves.totalcost, r1.reserves.totalcost, 8, t);
 
 t = 'mu.l';
-t_is(r2.FixedReserves.mu.l, r1.reserves.mu.l, 8, t);
+t_is(mdo.flow.mpc.reserves.mu.l, r1.reserves.mu.l, 8, t);
 
 t = 'mu.u';
-t_is(r2.FixedReserves.mu.u, r1.reserves.mu.u, 8, t);
+t_is(mdo.flow.mpc.reserves.mu.u, r1.reserves.mu.u, 8, t);
 
 t = 'mu.Pmax';
-t_is(r2.FixedReserves.mu.Pmax, r1.reserves.mu.Pmax, 8, t);
+t_is(mdo.flow.mpc.reserves.mu.Pmax, r1.reserves.mu.Pmax, 8, t);
 
 
 %%-----  try again with 3 periods  -----
@@ -131,10 +131,10 @@ profiles = struct( ...
     'col', CT_LOAD_ALL_PQ, ...
     'chgtype', CT_REL, ...
     'values', [1.0; 1.1; 1.2] );
-md = loadmd(mpc, nt, xgd, [], [], profiles);
+mdi = loadmd(mpc, nt, xgd, [], [], profiles);
 
 for t = 1:nt
-    md.FixedReserves(t,1,1) = mpc.reserves;
+    mdi.FixedReserves(t,1,1) = mpc.reserves;
 end
 
 %%-----  run most  -----
@@ -146,39 +146,39 @@ for tt = 1:nt
     f = f + r(tt).f;
 end
 
-r2 = most(md, mpopt);
+mdo = most(mdi, mpopt);
 
 %%-----  test it  -----
 t = 'success2';
-t_ok(r2.QP.exitflag, t);
+t_ok(mdo.QP.exitflag, t);
 
 t = 'f';
-t_is(r2.results.f, f, 5, t);
+t_is(mdo.results.f, f, 5, t);
 
 for tt = 1:nt
     t = 'success1';
     t_ok(r(tt).success, t);
 
     t = 'Pg';
-    t_is(r2.flow(tt,1,1).mpc.gen(:, PG), r(tt).gen(:, PG), 4, sprintf('(t=%d) : %s', tt, t));
+    t_is(mdo.flow(tt,1,1).mpc.gen(:, PG), r(tt).gen(:, PG), 4, sprintf('(t=%d) : %s', tt, t));
     
     t = 'R';
-    t_is(r2.FixedReserves(tt,1,1).R, r(tt).reserves.R, 4, sprintf('(t=%d) : %s', tt, t));
+    t_is(mdo.flow(tt,1,1).mpc.reserves.R, r(tt).reserves.R, 4, sprintf('(t=%d) : %s', tt, t));
     
     t = 'prc';
-    t_is(r2.FixedReserves(tt,1,1).prc, r(tt).reserves.prc, 5, sprintf('(t=%d) : %s', tt, t));
+    t_is(mdo.flow(tt,1,1).mpc.reserves.prc, r(tt).reserves.prc, 5, sprintf('(t=%d) : %s', tt, t));
     
     t = 'totalcost';
-    t_is(r2.FixedReserves(tt,1,1).totalcost, r(tt).reserves.totalcost, 5, sprintf('(t=%d) : %s', tt, t));
+    t_is(mdo.flow(tt,1,1).mpc.reserves.totalcost, r(tt).reserves.totalcost, 5, sprintf('(t=%d) : %s', tt, t));
     
     t = 'mu.l';
-    t_is(r2.FixedReserves(tt,1,1).mu.l, r(tt).reserves.mu.l, 5, sprintf('(t=%d) : %s', tt, t));
+    t_is(mdo.flow(tt,1,1).mpc.reserves.mu.l, r(tt).reserves.mu.l, 5, sprintf('(t=%d) : %s', tt, t));
     
     t = 'mu.u';
-    t_is(r2.FixedReserves(tt,1,1).mu.u, r(tt).reserves.mu.u, 6, sprintf('(t=%d) : %s', tt, t));
+    t_is(mdo.flow(tt,1,1).mpc.reserves.mu.u, r(tt).reserves.mu.u, 6, sprintf('(t=%d) : %s', tt, t));
     
     t = 'mu.Pmax';
-    t_is(r2.FixedReserves(tt,1,1).mu.Pmax, r(tt).reserves.mu.Pmax, 5, sprintf('(t=%d) : %s', tt, t));
+    t_is(mdo.flow(tt,1,1).mpc.reserves.mu.Pmax, r(tt).reserves.mu.Pmax, 5, sprintf('(t=%d) : %s', tt, t));
 end
 
 t_end;

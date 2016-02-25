@@ -2173,14 +2173,13 @@ if mpopt.most.solve_model
                     mdo.QP.lambda.lower(vv.i1.Qg(t,j,k):vv.iN.Qg(t,j,k)) / baseMVA;
           end
         end
-        mdo.flow(t,j,k).mpc = mpc;     %% stash modified mpc in output struct
         if mdi.IncludeFixedReserves
           z = zeros(ng, 1);
-          mdo.FixedReserves(t,j,k).R   = z;
-          mdo.FixedReserves(t,j,k).prc = z;
-          mdo.FixedReserves(t,j,k).mu = struct('l', z, 'u', z, 'Pmax', z);
-          mdo.FixedReserves(t,j,k).totalcost = compute_cost(om, mdo.QP.x, 'Rcost', {t,j,k});
           r = mdo.FixedReserves(t,j,k);
+          r.R   = z;
+          r.prc = z;
+          r.mu = struct('l', z, 'u', z, 'Pmax', z);
+          r.totalcost = compute_cost(om, mdo.QP.x, 'Rcost', {t,j,k});
           r.R(r.igr) = mdo.QP.x(vv.i1.R(t,j,k):vv.iN.R(t,j,k)) * baseMVA;
           for gg = r.igr
             iz = find(r.zones(:, gg));
@@ -2190,8 +2189,9 @@ if mpopt.most.solve_model
           r.mu.l(r.igr)    = mdo.QP.lambda.lower(vv.i1.R(t,j,k):vv.iN.R(t,j,k)) / baseMVA;
           r.mu.u(r.igr)    = mdo.QP.lambda.upper(vv.i1.R(t,j,k):vv.iN.R(t,j,k)) / baseMVA;
           r.mu.Pmax(r.igr) = mdo.QP.lambda.mu_u(ll.i1.Pg_plus_R(t,j,k):ll.iN.Pg_plus_R(t,j,k)) / baseMVA;
-          mdo.FixedReserves(t,j,k) = r;
+          mpc.reserves = r;
         end
+        mdo.flow(t,j,k).mpc = mpc;     %% stash modified mpc in output struct
       end
     end
     % Contract, contingency reserves, energy limits
