@@ -1,4 +1,4 @@
-function ms = most_summary(mdo)
+function mso = most_summary(mdo)
 %MOST_SUMMARY  Collects and optionally prints a summary of MOST results.
 %   MS = MOST_SUMMARY(MDO)
 %
@@ -57,8 +57,13 @@ nc_max = max(max(mdo.idx.nc));
 
 %% summarize results
 Pg = zeros(ng, nt, nj_max, nc_max+1);
-Rup = [zeros(ng, 1) mdo.results.Rrp];
-Rdn = [zeros(ng, 1) mdo.results.Rrm];
+if mdo.idx.ntramp
+    Rup = [zeros(ng, 1) mdo.results.Rrp];
+    Rdn = [zeros(ng, 1) mdo.results.Rrm];
+else
+    Rup = [];
+    Rdn = [];
+end
 u = zeros(ng, nt);
 lamP = zeros(nb, nt, nj_max, nc_max+1);
 muF = zeros(nl, nt, nj_max, nc_max+1);
@@ -125,13 +130,18 @@ if verbose
     fprintf('\n');
 
     print_most_summary_section('PG', 'Gen', nt, nj_max, nc_max, Pg);
-    print_most_summary_section('RAMP UP', 'Gen', nt, 1, 0, Rup);
-    print_most_summary_section('RAMP DOWN', 'Gen', nt, 1, 0, Rdn);
+    if mdo.idx.ntramp
+        print_most_summary_section('RAMP UP', 'Gen', nt, 1, 0, Rup);
+        print_most_summary_section('RAMP DOWN', 'Gen', nt, 1, 0, Rdn);
+    end
     print_most_summary_section('LAM_P', 'Bus', nt, nj_max, nc_max, lamP);
     print_most_summary_section('PF',   'Brch', nt, nj_max, nc_max, Pf);
     print_most_summary_section('MU_F', 'Brch', nt, nj_max, nc_max, muF);
 end
 
+if nargout
+    mso = ms;
+end
 
 %%---------------------------------------------------------
 function print_most_summary_section(label, section_type, nt, nj_max, nc_max, data, tol)
