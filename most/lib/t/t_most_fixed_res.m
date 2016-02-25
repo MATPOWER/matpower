@@ -84,7 +84,6 @@ xgd_table.data = [
 ng = size(mpc.gen, 1);      %% number of gens
 xgd = loadxgendata(xgd_table, mpc);
 md = loadmd(mpc, [], xgd);
-md.IncludeFixedReserves = 1;
 md.FixedReserves = mpc.reserves;
 
 %%-----  run most_fixed_res  -----
@@ -133,7 +132,6 @@ profiles = struct( ...
     'chgtype', CT_REL, ...
     'values', [1.0; 1.1; 1.2] );
 md = loadmd(mpc, nt, xgd, [], [], profiles);
-md.IncludeFixedReserves = 1;
 
 for t = 1:nt
     md.FixedReserves(t,1,1) = mpc.reserves;

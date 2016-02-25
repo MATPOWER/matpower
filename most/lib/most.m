@@ -26,10 +26,12 @@ function mdo = most(mdi, mpopt)
 %                   unchanged except for new coordination cost
 %           most.dc_model (1) - use DC flow network model as opposed to simple
 %                   generation = demand constraint
+%           most.fixed_res (-1) - include fixed zonal reserve contstraints,
+%                   -1 = if present, 1 = always include, 0 = never include
 %           most.q_coordination (0) - create Qg variables for reactive power
 %                   coordination
 %           most.security_constraints (-1) - include contingency contstraints,
-%                   if present, 1 = always include, 0 = never include
+%                   -1 = if present, 1 = always include, 0 = never include
 %           most.storage.terminal_target (-1) - constrain the expected terminal
 %                   storage to target value, if present (1 = always, 0 = never)
 %           most.storage.cyclic (0) - if 1, then initial storage is a variable
@@ -88,9 +90,6 @@ end
 if ~mpopt.most.build_model && ~mpopt.most.solve_model
   error('most: Ah ... are you sure you want to do nothing? (either ''most.build_model'' or ''most.solve_model'' must be true)');
 end
-if ~isfield(mdi, 'IncludeFixedReserves')
-  mdi.IncludeFixedReserves = false;
-end
 
 %% set up some variables we use throughout
 ng = size(mdi.mpc.gen, 1);
@@ -123,6 +122,7 @@ if UC == -1
 end
 mo = struct(...
     'DCMODEL',                      mpopt.most.dc_model, ...
+    'IncludeFixedReserves',         mpopt.most.fixed_res, ...
     'SecurityConstrained',          mpopt.most.security_constraints, ...
     'QCoordination',                mpopt.most.q_coordination, ...
     'ForceCyclicStorage',           mpopt.most.storage.cyclic, ...
@@ -130,6 +130,13 @@ mo = struct(...
     'ForceExpectedTerminalStorage', mpopt.most.storage.terminal_target, ...
     'alpha',                        mpopt.most.alpha ...
 );
+if mo.IncludeFixedReserves == -1
+  if isfield(mdi, 'FixedReserves') && isfield(mdi.FixedReserves(1,1,1), 'req')
+    mo.IncludeFixedReserves = 1;
+  else
+    mo.IncludeFixedReserves = 0;
+  end
+end
 if mo.SecurityConstrained == -1
   if isfield(mdi, 'cont') && isfield(mdi.cont(1,1), 'contab') && ...
           ~isempty(mdi.cont(1,1).contab)
@@ -146,6 +153,10 @@ if mo.ForceExpectedTerminalStorage == -1
   else
     mo.ForceExpectedTerminalStorage = 1;
   end
+end
+if mo.IncludeFixedReserves && ~(isfield(mdi, 'FixedReserves') && ...
+      isfield(mdi.FixedReserves(1,1,1), 'req'))
+  error('most: MDI.FixedReserves(t,j,k) must be specified when MPOPT.most.fixed_res = 1');
 end
 if mo.SecurityConstrained && ~(isfield(mdi, 'cont') && ...
       isfield(mdi.cont(1,1), 'contab') && ~isempty(mdi.cont(1,1).contab))
@@ -166,7 +177,7 @@ if mo.ForceExpectedTerminalStorage == 1;
   end
 end
 if UC && (~isfield(mdi.UC, 'CommitKey') || isempty(mdi.UC.CommitKey))
-  error('most: cannot run unit commitment without specifying MD.UC.CommitKey');
+  error('most: cannot run unit commitment without specifying MDI.UC.CommitKey');
 end
 
 if ns
@@ -331,6 +342,7 @@ if mpopt.most.build_model
 
   %% save model options in data structure
   mdi.DCMODEL                               = mo.DCMODEL;
+  mdi.IncludeFixedReserves                  = mo.IncludeFixedReserves;
   mdi.SecurityConstrained                   = mo.SecurityConstrained;
   mdi.QCoordination                         = mo.QCoordination;
   mdi.Storage.ForceCyclicStorage            = mo.ForceCyclicStorage;
@@ -2014,22 +2026,25 @@ mdo = mdi;
 if mpopt.most.solve_model
   %% check consistency of model options (in case mdi was built in previous call)
   if mdi.DCMODEL ~= mo.DCMODEL
-    error('MD.DCMODEL inconsistent with MPOPT.most.dc_model');
+    error('MDI.DCMODEL inconsistent with MPOPT.most.dc_model');
+  end
+  if mdi.IncludeFixedReserves ~= mo.IncludeFixedReserves
+    error('MDI.IncludeFixedReserves inconsistent with MPOPT.most.fixed_res (and possible presence of MDI.FixedReserves(t,j,k))');
   end
   if mdi.SecurityConstrained ~= mo.SecurityConstrained
-    error('MD.SecurityConstrained inconsistent with MPOPT.most.security_constraints (and possible presence of MD.cont(t,j).contab)');
+    error('MDI.SecurityConstrained inconsistent with MPOPT.most.security_constraints (and possible presence of MDI.cont(t,j).contab)');
   end
   if mdi.QCoordination ~= mo.QCoordination
-    error('MD.QCoordination inconsistent with MPOPT.most.q_coordination');
+    error('MDI.QCoordination inconsistent with MPOPT.most.q_coordination');
   end
   if mdi.Storage.ForceCyclicStorage ~= mo.ForceCyclicStorage
-    error('MD.Storage.ForceCyclicStorage inconsistent with MPOPT.most.storage.cyclic');
+    error('MDI.Storage.ForceCyclicStorage inconsistent with MPOPT.most.storage.cyclic');
   end
   if mdi.Storage.ForceExpectedTerminalStorage ~= mo.ForceExpectedTerminalStorage
-    error('MD.Storage.ForceExpectedTerminalStorage inconsistent with MPOPT.most.storage.terminal_target (and possible presence of MD.Storage.ExpectedTerminalStorageAim|Min|Max)');
+    error('MDI.Storage.ForceExpectedTerminalStorage inconsistent with MPOPT.most.storage.terminal_target (and possible presence of MDI.Storage.ExpectedTerminalStorageAim|Min|Max)');
   end
   if mdi.UC.run ~= UC
-    error('MD.UC.run inconsistent with MPOPT.most.uc.run (and possible presence of MD.UC.CommitKey)');
+    error('MDI.UC.run inconsistent with MPOPT.most.uc.run (and possible presence of MDI.UC.CommitKey)');
   end
   %% set options
   if any(any(mdi.QP.H))

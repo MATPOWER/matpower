@@ -12,6 +12,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5/21/15
 ---------------------
 
+2/25/16
+    - Add MATPOWER option 'most.fixed_res' with default of -1 (depends
+      on presence of md.FixedReserves) to control md.IncludeFixedReserves.
+
 2/24/16
     - Add most_summary() function to summarize and print some summary
       results. Moved from some of the test files into its own public

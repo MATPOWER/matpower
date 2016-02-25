@@ -39,6 +39,7 @@ if have_fcn('most')
                     'solve_model',                  1, ...          %% was md.Solve
                     'resolve_new_cost',             0, ...          %% was md.ReSolveNewCoordCost
                     'dc_model',                     1, ...          %% was md.DCMODEL = []
+                    'fixed_res',                    -1, ...         %% was md.IncludeFixedReserves = []
                     'q_coordination',               0, ...          %% was md.QCoordination
                     'security_constraints',         -1, ...         %% was md.SecurityConstrained = []
                     'storage',                      struct(...
