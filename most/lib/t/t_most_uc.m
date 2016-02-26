@@ -41,7 +41,7 @@ if have_fcn('octave')
     warning('off', file_in_path_warn_id);
 end
 
-casefile = 'eg_case3';
+casefile = 'ex_case3';
 solnfile =  't_most_uc_soln';
 soln = load(solnfile);
 mpopt = mpoption;
@@ -131,15 +131,15 @@ end
 mpc = loadcase(casefile);
 
 
-profiles = getprofiles('eg_load_profile');
+profiles = getprofiles('ex_load_profile');
 nt = size(profiles.values, 1);
 
 nb = size(mpc.bus, 1);
 nl = size(mpc.branch, 1);
 ng = size(mpc.gen, 1);
 
-xgd = loadxgendata('eg_xgd', mpc);
-[iwind, mpc, xgd] = addwind('eg_wind', mpc, xgd);
+xgd = loadxgendata('ex_xgd', mpc);
+[iwind, mpc, xgd] = addwind('ex_wind', mpc, xgd);
 
 mpc00 = mpc;
 xgd00 = xgd;
@@ -276,7 +276,7 @@ for s = 1:length(solvers)
         if mpopt.out.all
             fprintf('Add storage\n');
         end
-        [iess, mpc, xgd, sd] = addstorage('eg_storage', mpc, xgd);
+        [iess, mpc, xgd, sd] = addstorage('ex_storage', mpc, xgd);
         mdi = loadmd(mpc, nt, xgd, sd, [], profiles);
         mdo = most(mdi, mpopt);
         ms = most_summary(mdo);

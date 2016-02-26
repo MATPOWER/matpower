@@ -33,7 +33,7 @@ else
 end
 % verbose = 2;
 
-casefile = 'eg_case3';
+casefile = 'ex_case3';
 %solnfile =  't_most_spuc_soln';
 %soln = load(solnfile);
 mpopt = mpoption;
@@ -127,11 +127,11 @@ mpc.gencost(:, STARTUP) = 0;
 mpc.gencost(:, SHUTDOWN) = 0;
 
 %%-----  contingencies  -----
-contab = loadgenericdata('eg_contab', 'array');
+contab = loadgenericdata('ex_contab', 'array');
 pp = [1-sum(contab(:,2)); contab(1,2); contab(2,2)];
 
-xgd = loadxgendata('eg_xgd', mpc);
-[iwind, mpc, xgd] = addwind('eg_wind', mpc, xgd);
+xgd = loadxgendata('ex_xgd', mpc);
+[iwind, mpc, xgd] = addwind('ex_wind', mpc, xgd);
 mpc.reserves.zones = [mpc.reserves.zones 0];
 mpc.gen(4, PMIN) = -499;
 mpc0 = mpc;
@@ -410,7 +410,7 @@ contab0 = [
 mpc1 = mpc;
 mpc1.gen(iwind, PMAX) = mpc1.gen(iwind, PMAX) * profiles.values(2);
 mpc1.gen(3, GEN_STATUS) = 0;
-wind = loadgenericdata('eg_wind', 'struct', 'gen', 'wind');
+wind = loadgenericdata('ex_wind', 'struct', 'gen', 'wind');
 offers = [xgd_table.data; wind.xgd_table.data(:, [3:8])];
 % mpopt.verbose = 2;
 % mpopt.out.all = -1;

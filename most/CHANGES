@@ -12,6 +12,9 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 Changes since 5/21/15
 ---------------------
 
+2/26/16
+    - Rename example files in most/t to start with ex_ instead of eg_.
+
 2/25/16
     - Add MATPOWER option 'most.fixed_res' with default of -1 (depends
       on presence of md.FixedReserves) to control md.IncludeFixedReserves.

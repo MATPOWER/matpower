@@ -43,7 +43,7 @@ if have_fcn('octave')
     warning('off', file_in_path_warn_id);
 end
 
-casefile = 'eg_case3';
+casefile = 'ex_case3';
 solnfile =  't_most_suc_soln';
 soln = load(solnfile);
 mpopt = mpoption;
@@ -134,17 +134,17 @@ end
 mpc = loadcase(casefile);
 
 
-profiles = getprofiles('eg_load_profile');
+profiles = getprofiles('ex_load_profile');
 nt = size(profiles.values, 1);
 
 nb = size(mpc.bus, 1);
 nl = size(mpc.branch, 1);
 ng = size(mpc.gen, 1);
 
-xgd = loadxgendata('eg_xgd', mpc);
-[iwind, mpc, xgd] = addwind('eg_wind', mpc, xgd);
-profiles_s = getprofiles('eg_wind_profile', iwind);
-profiles_s = getprofiles('eg_load_profile', profiles_s);
+xgd = loadxgendata('ex_xgd', mpc);
+[iwind, mpc, xgd] = addwind('ex_wind', mpc, xgd);
+profiles_s = getprofiles('ex_wind_profile', iwind);
+profiles_s = getprofiles('ex_load_profile', profiles_s);
 
 mpc0 = mpc;
 xgd0 = xgd;
@@ -201,7 +201,7 @@ for s = 1:length(solvers)
 
         t = sprintf('%s : full transition probabilities : ', solvers{s});
 %        transmat_sf = transmat_s;
-        transmat_sf = eg_transmat(nt);
+        transmat_sf = ex_transmat(nt);
 %         transmat_sf = cell(1, nt);
 %         T = [ 0.158655253931457; 0.682689492137086; 0.158655253931457 ];
 %         [transmat_sf{:}] = deal(T * ones(1,3));
@@ -224,7 +224,7 @@ for s = 1:length(solvers)
         % keyboard;
 
         t = sprintf('%s : full transition probabilities + cont : ', solvers{s});
-        mdi = loadmd(mpc, transmat_sf, xgd, [], 'eg_contab', profiles_s);
+        mdi = loadmd(mpc, transmat_sf, xgd, [], 'ex_contab', profiles_s);
 %        mdi = filter_ramp_transitions(mdi, 0.9);
         mdo = most(mdi, mpopt);
         ms = most_summary(mdo);
@@ -245,8 +245,8 @@ for s = 1:length(solvers)
         if mpopt.out.all
             fprintf('Add storage\n');
         end
-        [iess, mpc, xgd, sd] = addstorage('eg_storage', mpc, xgd);
-        mdi = loadmd(mpc, transmat_sf, xgd, sd, 'eg_contab', profiles_s);
+        [iess, mpc, xgd, sd] = addstorage('ex_storage', mpc, xgd);
+        mdi = loadmd(mpc, transmat_sf, xgd, sd, 'ex_contab', profiles_s);
         mdo = most(mdi, mpopt);
         ms = most_summary(mdo);
         t_ok(mdo.QP.exitflag > 0, [t 'success']);
