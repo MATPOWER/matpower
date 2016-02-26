@@ -33,7 +33,7 @@ else
 end
 % verbose = 2;
 
-casefile = 'ex_case3';
+casefile = 'ex_case3b';
 %solnfile =  't_most_spuc_soln';
 %soln = load(solnfile);
 mpopt = mpoption;

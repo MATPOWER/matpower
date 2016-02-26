@@ -24,7 +24,7 @@ else
 end
 % verbose  = 2;
 
-casefile = 't_case3a_most';
+casefile = 'ex_case3a';
 mpopt = mpoption;
 mpopt = mpoption(mpopt, 'out.gen', 1);
 mpopt = mpoption(mpopt, 'verbose', verbose);

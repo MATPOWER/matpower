@@ -41,7 +41,7 @@ if have_fcn('octave')
     warning('off', file_in_path_warn_id);
 end
 
-casefile = 'ex_case3';
+casefile = 'ex_case3b';
 solnfile =  't_most_uc_soln';
 soln = load(solnfile);
 mpopt = mpoption;
