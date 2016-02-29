@@ -16,6 +16,10 @@ For change history for MOST, see most/docs/CHANGES.
 Changes since 5.1
 -----------------
 
+2/29/16
+    - Added option to call scale_load() with full case struct, with
+      'cost' field in opt to indicate when to include cost scaling.
+
 2/22/16
     - Add major new feature: MATPOWER Optimal Scheduling Tool (MOST).
       See docs/MOST-manual.pdf for details.
