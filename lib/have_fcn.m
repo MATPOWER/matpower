@@ -183,7 +183,8 @@ else        %% detect availability
                 end
             case {'fmincon', 'fmincon_ipm', 'intlinprog', 'linprog', ...
                         'linprog_ds', 'optimoptions', 'quadprog', 'quadprog_ls'}
-                if license('test', 'optimization_toolbox')
+                matlab = have_fcn('matlab');
+                if ~matlab || (matlab && license('test', 'optimization_toolbox'))
                     v = ver('optim');
                     if length(v) > 1
                         warning('The built-in VER command is behaving strangely, probably as a result of installing a 3rd party toolbox in a directory named ''optim'' on your path. Check each element of the output of ver(''optim'') to find the offending toolbox, then move the toolbox to a more appropriately named directory.');
@@ -193,41 +194,45 @@ else        %% detect availability
                     rdate = v.Date;
                     switch tag
                         case 'fmincon'
-                            TorF = exist('fmincon', 'file') == 2 || ...
-                                exist('fmincon', 'file') == 6;
+                            TorF = (exist('fmincon', 'file') == 2 || ...
+                                exist('fmincon', 'file') == 6) & matlab;
                         case 'intlinprog'
-                            TorF = exist('intlinprog', 'file') == 2;
+                            TorF = exist('intlinprog', 'file') == 2 & matlab;
                         case 'linprog'
-                            TorF = exist('linprog', 'file') == 2;
+                            TorF = exist('linprog', 'file') == 2 & matlab;  %% don't try to use Octave linprog
                         case 'quadprog'
                             TorF = exist('quadprog', 'file') == 2;
                         otherwise
-                            otver = vstr2num(vstr);
-                            switch tag
-                                case 'fmincon_ipm'
-                                    if otver >= 4       %% Opt Tbx 4.0+ (R208a+, Matlab 7.6+)
-                                        TorF = 1;
-                                    else
-                                        TorF = 0;
-                                    end
-                                case 'linprog_ds'
-                                    if otver >= 7.001   %% Opt Tbx 7.1+ (R2014b+, Matlab 8.4+)
-                                        TorF = 1;
-                                    else
-                                        TorF = 0;
-                                    end
-                                case 'optimoptions'
-                                    if otver >= 6.003   %% Opt Tbx 6.3+ (R2013a+, Matlab 8.1+)
-                                        TorF = 1;
-                                    else
-                                        TorF = 0;
-                                    end
-                                case 'quadprog_ls'
-                                    if otver >= 6       %% Opt Tbx 6.0+ (R2011a+, Matlab 7.12+)
-                                        TorF = 1;
-                                    else
-                                        TorF = 0;
-                                    end
+                            if matlab
+                                otver = vstr2num(vstr);
+                                switch tag
+                                    case 'fmincon_ipm'
+                                        if otver >= 4       %% Opt Tbx 4.0+ (R208a+, Matlab 7.6+)
+                                            TorF = 1;
+                                        else
+                                            TorF = 0;
+                                        end
+                                    case 'linprog_ds'
+                                        if otver >= 7.001   %% Opt Tbx 7.1+ (R2014b+, Matlab 8.4+)
+                                            TorF = 1;
+                                        else
+                                            TorF = 0;
+                                        end
+                                    case 'optimoptions'
+                                        if otver >= 6.003   %% Opt Tbx 6.3+ (R2013a+, Matlab 8.1+)
+                                            TorF = 1;
+                                        else
+                                            TorF = 0;
+                                        end
+                                    case 'quadprog_ls'
+                                        if otver >= 6       %% Opt Tbx 6.0+ (R2011a+, Matlab 7.12+)
+                                            TorF = 1;
+                                        else
+                                            TorF = 0;
+                                        end
+                                end
+                            else    %% octave
+                                TorF = 0;
                             end
                     end
                 else
