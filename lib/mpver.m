@@ -51,12 +51,14 @@ else
         v{3} = v{3}(1);
     end
     for n = 1:3
-        if n == 3 && isempty(v{3})
-            fprintf('\n%-22s -- not installed --', 'Optimization Toolbox');
-            continue;
-        elseif n == 3 && ~license('test', 'optimization_toolbox')
-            fprintf('\n%-22s -- no license --', 'Optimization Toolbox');
-            continue;
+        if n == 3
+            if isempty(v{3})
+                fprintf('\n%-22s -- not installed --', 'Optimization Toolbox');
+                continue;
+            elseif have_fcn('matlab') && ~license('test', 'optimization_toolbox')
+                fprintf('\n%-22s -- no license --', 'Optimization Toolbox');
+                continue;
+            end
         end
         fprintf('\n%-22s Version %-9s', v{n}.Name, v{n}.Version);
         if ~isempty(v{n}.Date)
