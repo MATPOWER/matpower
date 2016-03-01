@@ -329,6 +329,12 @@ mdi.idx.nyds = nyds;
     CT_LOAD_DIS_P, CT_TGENCOST, CT_TAREAGENCOST, CT_MODCOST_F, ...
     CT_MODCOST_X] = idx_ct;
 
+%% check that bus numbers are equal to indices to bus (one set of bus numbers)
+nb  = size(mdi.mpc.bus, 1);
+if any(mdi.mpc.bus(:, BUS_I) ~= (1:nb)')
+    error('most: buses must be numbered consecutively in bus matrix; use ext2int() to convert to internal ordering')
+end
+
 % Make data tables with full # of cols and add also pseudo OPF results to
 % be able to run printpf on them
 mdi.mpc.bus(:, MU_VMIN) = 0;
