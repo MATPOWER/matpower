@@ -59,54 +59,13 @@ end
 mpc = loadcase(casefile);
 
 %% initial xGenData
-xgd_table.colnames = {
-    'PositiveActiveReservePrice', ...
-            'PositiveActiveReserveQuantity', ...
-                    'NegativeActiveReservePrice', ...
-                            'NegativeActiveReserveQuantity', ...
-                                    'PositiveActiveDeltaPrice', ...
-                                            'NegativeActiveDeltaPrice', ...
-};
-xgd_table.data = [
-    1e-8    250     2e-8    250     1e-9    1e-9;
-    1e-8    250     2e-8    250     1e-9    1e-9;
-    1e-8    600     2e-8    600     1e-9    1e-9;
-    1e-8    800     2e-8    800     1e-9    1e-9;
-];
+xgd_table = loadgenericdata('ex_xgd', 'struct');
 
 %%-----  wind  -----
-%% generator data
-%	bus	Pg	Qg	Qmax	Qmin	Vg	mBase	status	Pmax	Pmin	Pc1	Pc2	Qc1min	Qc1max	Qc2min	Qc2max	ramp_agc	ramp_10	ramp_30	ramp_q	apf
-wind.gen = [
-	2	0	0	50	-50	1	100	1	100	0	0	0	0	0	0	0	0	200	200	0	0;
-];
-%% xGenData
-wind.xgd_table.colnames = {
-	'InitialPg', ...
-		'RampWearCostCoeff', ...
-			'PositiveActiveReservePrice', ...
-				'PositiveActiveReserveQuantity', ...
-					'NegativeActiveReservePrice', ...
-						'NegativeActiveReserveQuantity', ...
-							'PositiveActiveDeltaPrice', ...
-								'NegativeActiveDeltaPrice', ...
-									'PositiveLoadFollowReservePrice', ...
-										'PositiveLoadFollowReserveQuantity', ...
-											'NegativeLoadFollowReservePrice', ...
-												'NegativeLoadFollowReserveQuantity', ...
-};
-
-wind.xgd_table.data = [
-	0	0	1e-8	200	2e-8	200	1e-9	1e-9	1e-6	200	1e-6	200;
-];
+wind = loadgenericdata('ex_wind', 'struct');
 
 %%-----  contingencies  -----
-%% contingency table
-% label probty  type        row column      chgtype newvalue
-contab = [
-    1   0.20    CT_TGEN     2   GEN_STATUS  CT_REP  0;      %% gen 2 at bus 1
-    2   0.05    CT_TBRCH    2   BR_STATUS   CT_REP  0;      %% line 1-3
-];
+contab = loadgenericdata('ex_contab', 'array');
 pp = [1-sum(contab(:,2)); contab(1,2); contab(2,2)];
 
 xgd = loadxgendata(xgd_table, mpc);
@@ -326,20 +285,7 @@ t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 980]*pp(3), 7, [t 'mu flo
 % mpopt.out.all = -1;
 
 t = 'Secure DC OPF (w/cont,res,ramp) : c3sopf ';
-xgd_table.colnames = {
-    'PositiveActiveReservePrice', ...
-            'PositiveActiveReserveQuantity', ...
-                    'NegativeActiveReservePrice', ...
-                            'NegativeActiveReserveQuantity', ...
-                                    'PositiveActiveDeltaPrice', ...
-                                            'NegativeActiveDeltaPrice', ...
-};
-xgd_table.data = [
-    5       250     10      0       1e-9    1e-9;
-    1e-8    100     2e-8    0       1e-9    1e-9;
-    1.5     600     3       0       1e-9    1e-9;
-    1e-8    800     2e-8    0       1e-9    1e-9;
-];
+xgd_table = loadgenericdata('ex_xgd_res', 'struct');
 xgd = loadxgendata(xgd_table, mpc);
 % xgd.PositiveActiveReserveQuantity(2) = 100;
 % xgd.PositiveActiveReserveQuantity(4) = 500;

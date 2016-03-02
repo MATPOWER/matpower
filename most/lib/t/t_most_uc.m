@@ -138,8 +138,8 @@ nb = size(mpc.bus, 1);
 nl = size(mpc.branch, 1);
 ng = size(mpc.gen, 1);
 
-xgd = loadxgendata('ex_xgd', mpc);
-[iwind, mpc, xgd] = addwind('ex_wind', mpc, xgd);
+xgd = loadxgendata('ex_xgd_uc', mpc);
+[iwind, mpc, xgd] = addwind('ex_wind_uc', mpc, xgd);
 
 mpc00 = mpc;
 xgd00 = xgd;

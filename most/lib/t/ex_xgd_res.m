@@ -1,5 +1,5 @@
-function xgd_table = ex_xgd(mpc)
-%EX_XGD  Example xGenData table for stochastic OPF.
+function xgd_table = ex_xgd_res(mpc)
+%EX_XGD_RES  Example xGenData table for stochastic OPF w/reserve costs.
 
 %   MOST
 %   Copyright (c) 2015-2016 by Power System Engineering Research Center (PSERC)
@@ -21,8 +21,8 @@ xgd_table.colnames = {
                                             'NegativeActiveDeltaPrice', ...
 };
 xgd_table.data = [
-    1e-8    250     2e-8    250     1e-9    1e-9;
-    1e-8    250     2e-8    250     1e-9    1e-9;
-    1e-8    600     2e-8    600     1e-9    1e-9;
-    1e-8    800     2e-8    800     1e-9    1e-9;
+    5       250     10      0       1e-9    1e-9;
+    1e-8    100     2e-8    0       1e-9    1e-9;
+    1.5     600     3       0       1e-9    1e-9;
+    1e-8    800     2e-8    0       1e-9    1e-9;
 ];
