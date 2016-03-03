@@ -17,6 +17,8 @@ end
 
 solvers = {'CPLEX', 'GLPK', 'GUROBI', 'MOSEK', 'OT'};
 fcn = {'cplex', 'glpk', 'gurobi', 'mosek', 'intlinprog'};
+% solvers = {'CPLEX'};
+% fcn = {'cplex'};
 % solvers = {'OT'};
 % fcn = {'intlinprog'};
 % solvers = {'GUROBI'};
@@ -101,8 +103,8 @@ if have_fcn('intlinprog')
     %mpopt = mpoption(mpopt, 'linprog.Algorithm', 'active-set');
     %mpopt = mpoption(mpopt, 'linprog.Algorithm', 'simplex');
     mpopt = mpoption(mpopt, 'linprog.Algorithm', 'dual-simplex');
-    mpopt = mpoption(mpopt, 'intlinprog.RootLPAlgorithm', 'primal-simplex');
-    % mpopt = mpoption(mpopt, 'intlinprog.RootLPAlgorithm', 'dual-simplex');
+    % mpopt = mpoption(mpopt, 'intlinprog.RootLPAlgorithm', 'primal-simplex');
+    mpopt = mpoption(mpopt, 'intlinprog.RootLPAlgorithm', 'dual-simplex');
     mpopt = mpoption(mpopt, 'intlinprog.TolCon', 1e-9);
     mpopt = mpoption(mpopt, 'intlinprog.TolGapAbs', 0);
     mpopt = mpoption(mpopt, 'intlinprog.TolGapRel', 0);
@@ -190,9 +192,9 @@ for s = 1:length(solvers)
         ex = soln.transprob1;
         t_is(ms.f, ex.f, 5, [t 'f']);
         t_is(ms.Pg, ex.Pg, 6, [t 'Pg']);
-        t_is(ms.Rup, ex.Rup, 8, [t 'Rup']);
-        t_is(ms.Rdn, ex.Rdn, 8, [t 'Rdn']);
-        t_is(ms.Pf, ex.Pf, 8, [t 'Pf']);
+        t_is(ms.Rup, ex.Rup, 6, [t 'Rup']);
+        t_is(ms.Rdn, ex.Rdn, 6, [t 'Rdn']);
+        t_is(ms.Pf, ex.Pf, 6, [t 'Pf']);
         t_is(ms.u, ex.u, 8, [t 'u']);
         % t_is(ms.lamP, ex.lamP, 5, [t 'lamP']);
         % t_is(ms.muF, ex.muF, 5, [t 'muF']);
@@ -271,3 +273,8 @@ end
 t_end;
 
 % save t_most_suc_soln determ transprob1 transprobfull transprobcont wstorage
+% determ.u
+% transprob1.u
+% transprobcont.u
+% transprobfull.u
+% wstorage.u
