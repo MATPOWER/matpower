@@ -16,6 +16,11 @@ For change history for MOST, see most/docs/CHANGES.
 Changes since 5.1
 -----------------
 
+3/3/16
+    - Copying a field containing a struct to a non-struct field with 
+      nested_struct_copy() now overwrites rather than causing a fatal
+      error.
+
 2/29/16
     - Added option to call scale_load() with full case struct, with
       'cost' field in opt to indicate when to include cost scaling.
