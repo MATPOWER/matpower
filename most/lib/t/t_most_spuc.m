@@ -187,7 +187,7 @@ if verbose
 end
 t = sprintf('%s : DC OPF : runopf ', solvers{s});
 mpc = mpc0;
-% mpc.gen(4, PMIN) = -500;
+% mpc = scale_load(500, mpc, [], struct('scale', 'QUANTITY'));
 r = runuopf(mpc, mpopt);
 t_ok(r.success, [t 'success']);
 t_is(r.f, -486040, 7, [t 'f']);
@@ -199,7 +199,7 @@ t_is(r.branch(:, MU_SF) + r.branch(:, MU_ST), [0; 0; 0], 7, [t 'mu flow']);
 %% most
 t = sprintf('%s : DC OPF : most   ', solvers{s});
 mpc = mpc0;
-% mpc.gen(4, PMIN) = -500;
+% mpc = scale_load(500, mpc, [], struct('scale', 'QUANTITY'));
 mpopt = mpoption(mpopt, 'most.dc_model', 1);
 mdi = loadmd(mpc, [], xgd);
 mdo = most(mdi, mpopt);
@@ -239,7 +239,7 @@ t_is(r.reserves.mu.Pmax + r.gen(:, MU_PMAX), [7; 2; 0; 0; 32], 7, [t 'reserve mu
 %% most
 t = sprintf('%s : economic dispatch (w/reserves) : most   ', solvers{s});
 mpc = mpc0;
-% mpc.gen(4, PMIN) = -350.8;
+% mpc = scale_load(350.8, mpc, [], struct('scale', 'QUANTITY'));
 mpopt = mpoption(mpopt, 'most.dc_model', 0);
 mdi = loadmd(mpc, [], xgd);
 mdi.FixedReserves = mpc.reserves;
@@ -282,7 +282,7 @@ t_is(r.reserves.mu.Pmax + r.gen(:, MU_PMAX), [4; 0; 0; 0; 40], 7, [t 'reserve mu
 %% most
 t = sprintf('%s : DC OPF (w/reserves) : most   ', solvers{s});
 mpc = mpc0;
-% mpc.gen(4, PMIN) = -350.8;
+% mpc = scale_load(350.8, mpc, [], struct('scale', 'QUANTITY'));
 mpopt = mpoption(mpopt, 'most.dc_model', 1);
 mdi = loadmd(mpc, [], xgd);
 mdi.FixedReserves = mpc.reserves;
@@ -301,7 +301,7 @@ t_is(rr.reserves.mu.Pmax + rr.gen(:, MU_PMAX), [4; 0; 0; 0; 40], 7, [t 'reserve 
 
 t = sprintf('%s : Secure DC OPF (w/cont,res,ramp) : c3sopf ', solvers{s});
 mpc = mpc0;
-mpc.gen(4, PMIN) = -350;
+mpc = scale_load(350, mpc, [], struct('scale', 'QUANTITY'));
 xgd_table.colnames = {
     'PositiveActiveReservePrice', ...
             'PositiveActiveReserveQuantity', ...
