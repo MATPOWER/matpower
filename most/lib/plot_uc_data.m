@@ -143,7 +143,7 @@ h.XTickLabel = {1:n};
 h.YTickLabel = {m:-1:1};
 h.TickLength = [0 0];
 h.YAxisLocation = 'right';
-h.YTickLabel = opt.rowlabels;
+h.YTickLabel = opt.rowlabels(m:-1:1);
 if ~isempty(opt.xlabel)
     xlabel(opt.xlabel, 'FontSize', 16*opt.size_factor);
 end

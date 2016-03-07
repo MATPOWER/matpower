@@ -28,7 +28,7 @@ function hh = plot_uc(md, varargin)
 %                       UC1 and UC2 are supplied
 %       'xlabel'        ('Period') label for horizontal axis
 %       'ylabel'        (<empty>) label for vertical axis
-%       'rowlabels'     ({'1', '2', '3', ...) labels for rows
+%       'rowlabels'     ({'1', '2', '3', ...) labels for rows (top to bottom)
 %       'saveit'        (false) flag to indicate whether to create PDF file
 %       'saveall'       (false) flag to indicate whether to create a single
 %                       PDF file or, if both MPSD and MPSD2 are supplied, three
