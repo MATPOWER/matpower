@@ -130,16 +130,15 @@ end
 %% load base case file
 mpc = loadcase(casefile);
 
-
-profiles = getprofiles('ex_load_profile');
-nt = size(profiles.values, 1);
-
 nb = size(mpc.bus, 1);
 nl = size(mpc.branch, 1);
 ng = size(mpc.gen, 1);
 
 xgd = loadxgendata('ex_xgd_uc', mpc);
 [iwind, mpc, xgd] = addwind('ex_wind_uc', mpc, xgd);
+profiles = getprofiles('ex_wind_profile_d', iwind);
+profiles = getprofiles('ex_load_profile', profiles);
+nt = size(profiles(1).values, 1);
 
 mpc00 = mpc;
 xgd00 = xgd;
@@ -198,7 +197,7 @@ for s = 1:length(solvers)
         t_is(ms.Rdn, ex.Rdn, 8, [t 'Rdn']);
         t_is(ms.Pf, ex.Pf, 8, [t 'Pf']);
         t_is(ms.u, ex.u, 8, [t 'u']);
-        t_is(ms.lamP, ex.lamP, 8, [t 'lamP']);
+        t_is(ms.lamP, ex.lamP, 5, [t 'lamP']);
         t_is(ms.muF, ex.muF, 8, [t 'muF']);
         % dcopf = most_summary(mdo);
         % keyboard;
