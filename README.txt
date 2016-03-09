@@ -284,7 +284,13 @@ PUBLICATIONS & PRESENTATIONS
      for Power Systems Research and Education," accepted to IEEE
      Transactions on Power Systems.
         http://www.pserc.cornell.edu/matpower/MATPOWER-paper.pdf
+        http://dx.doi.org/10.1109/TPWRS.2010.2051168
 
+[3]  H. Wang, C. E. Murillo-Sánchez, R. D. Zimmerman, R. J. Thomas,
+     "On Computational Issues of Market-Based Optimal Power Flow,"
+     Power Systems, IEEE Transactions on, vol. 22, no. 3,
+     pp. 1185-1193, Aug. 2007.
+        http://dx.doi.org/10.1109/TPWRS.2007.901301
 
 -------------------
  OPTIONAL PACKAGES
