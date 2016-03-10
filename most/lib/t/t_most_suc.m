@@ -103,7 +103,7 @@ if have_fcn('intlinprog')
     %mpopt = mpoption(mpopt, 'linprog.Algorithm', 'active-set');
     %mpopt = mpoption(mpopt, 'linprog.Algorithm', 'simplex');
     mpopt = mpoption(mpopt, 'linprog.Algorithm', 'dual-simplex');
-    % mpopt = mpoption(mpopt, 'intlinprog.RootLPAlgorithm', 'primal-simplex');
+    %mpopt = mpoption(mpopt, 'intlinprog.RootLPAlgorithm', 'primal-simplex');
     mpopt = mpoption(mpopt, 'intlinprog.RootLPAlgorithm', 'dual-simplex');
     mpopt = mpoption(mpopt, 'intlinprog.TolCon', 1e-9);
     mpopt = mpoption(mpopt, 'intlinprog.TolGapAbs', 0);
@@ -135,18 +135,17 @@ end
 %% load base case file
 mpc = loadcase(casefile);
 
-
-profiles = getprofiles('ex_load_profile');
-nt = size(profiles.values, 1);
-
 nb = size(mpc.bus, 1);
 nl = size(mpc.branch, 1);
 ng = size(mpc.gen, 1);
 
 xgd = loadxgendata('ex_xgd_uc', mpc);
 [iwind, mpc, xgd] = addwind('ex_wind_uc', mpc, xgd);
+profiles_d = getprofiles('ex_wind_profile_d', iwind);
+profiles_d = getprofiles('ex_load_profile', profiles_d);
 profiles_s = getprofiles('ex_wind_profile', iwind);
 profiles_s = getprofiles('ex_load_profile', profiles_s);
+nt = size(profiles_d(1).values, 1);
 
 mpc0 = mpc;
 xgd0 = xgd;
@@ -163,7 +162,7 @@ for s = 1:length(solvers)
         xgd = xgd0;
 
         t = sprintf('%s : deterministic : ', solvers{s});
-        mdi = loadmd(mpc, nt, xgd, [], [], profiles);
+        mdi = loadmd(mpc, nt, xgd, [], [], profiles_d);
         mdo = most(mdi, mpopt);
         ms = most_summary(mdo);
         t_ok(mdo.QP.exitflag > 0, [t 'success']);
@@ -183,7 +182,7 @@ for s = 1:length(solvers)
         transmat_s = cell(1, nt);
         I = speye(3);
         [transmat_s{:}] = deal(I);
-        transmat_s{1} = [0.2; 0.6; 0.2];
+        transmat_s{1} = [ 0.158655253931457; 0.682689492137086; 0.158655253931457 ];
         mdi = loadmd(mpc, transmat_s, xgd, [], [], profiles_s);
         mdi = filter_ramp_transitions(mdi, 0.1);
         mdo = most(mdi, mpopt);
@@ -255,7 +254,7 @@ for s = 1:length(solvers)
         ex = soln.wstorage;
         t_is(ms.f, ex.f, 3, [t 'f']);
         t_is(ms.Pg, ex.Pg, 3, [t 'Pg']);
-        t_is(ms.Rup, ex.Rup, 8, [t 'Rup']);
+        t_is(ms.Rup, ex.Rup, 3, [t 'Rup']);
         t_is(ms.Rdn, ex.Rdn, 8, [t 'Rdn']);
         t_is(ms.Pf, ex.Pf, 3, [t 'Pf']);
         t_is(ms.u, ex.u, 8, [t 'u']);
