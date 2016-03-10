@@ -1,5 +1,10 @@
-function t_most_spuc(quiet)
+function t_most_spuc(quiet, create_plots, create_pdfs, savepath)
 %T_MOST_SPUC  Tests of single-period unit commitment optimizations
+%
+%   T_MOST_SPUC(QUIET, CREATE_PLOTS, CREATE_PDFS, SAVEPATH)
+%   Can generate summary plots and save them as PDFs in a directory of
+%   your choice.
+%   E.g. t_most_spuc(0, 1, 1, '~/Downloads/spuc_plots')
 
 %   MOST
 %   Copyright (c) 2015-2016 by Power System Engineering Research Center (PSERC)
@@ -11,8 +16,17 @@ function t_most_spuc(quiet)
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-if nargin < 1
-    quiet = 0;
+if nargin < 4
+    savepath = '.';             %% save in current working directory by default
+    if nargin < 3
+        create_pdfs = 0;        %% do NOT save plots to PDF files
+        if nargin < 2
+            create_plots = 0;   %% do NOT create summary plots of results
+            if nargin < 1
+                quiet = 0;      %% verbose by default
+            end
+        end
+    end
 end
 
 solvers = {'CPLEX', 'GLPK', 'GUROBI', 'MOSEK', 'OT'};
@@ -135,6 +149,16 @@ mpc = scale_load(499, mpc, [], struct('scale', 'QUANTITY'));
 mpc0 = mpc;
 xgd0 = xgd;
 
+%% data structures for results for plotting
+if create_plots
+    j = 1;
+    Pg   = NaN(5, 7);
+    Rp   = NaN(5, 7);
+    Rm   = NaN(5, 7);
+    lamP = NaN(3, 7);
+    muF  = zeros(3, 7);
+end
+
 for s = 1:length(solvers)
     if ~have_fcn(fcn{s})     %% check if we have the solver
         t_skip(ntests, sprintf('%s not installed', solvers{s}));
@@ -175,6 +199,14 @@ t_is(rr.gen(:, PG), [200; 199; 0; -499; 100], 7, [t 'Pg']);
 t_is(rr.gen(:, GEN_STATUS), [1; 1; 0; 1; 1], 7, [t 'u']);
 % rr.gen(:, GEN_STATUS)
 t_is(rr.bus(:, LAM_P), [30; 30; 30], 7, [t 'lam P']);
+if s == 1 && create_plots
+    Pg(:, j) = mdo.results.ExpectedDispatch;
+    Rp(:, j) = 0;
+    Rm(:, j) = 0;
+    lamP(:, j) = rr.bus(:, LAM_P);
+    j = j + 1;
+end
+
 
 %%-----  DC OPF  -----
 if verbose
@@ -212,6 +244,15 @@ t_is(rr.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 % rr.gen(:, GEN_STATUS)
 t_is(rr.bus(:, LAM_P), [40; 40; 40], 7, [t 'lam P']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 6, [t 'mu flow']);
+if s == 1 && create_plots
+    Pg(:, j) = mdo.results.ExpectedDispatch;
+    Rp(:, j) = 0;
+    Rm(:, j) = 0;
+    lamP(:, j) = rr.bus(:, LAM_P);
+    muF(:, j)  = rr.branch(:, MU_SF) + rr.branch(:, MU_ST);
+    j = j + 1;
+end
+
 
 %%-----  economic dispatch (w/reserves)  -----
 if verbose
@@ -255,6 +296,13 @@ t_is(rr.bus(:, LAM_P), [32; 32; 32], 7, [t 'lam P']);
 t_is(rr.reserves.R, [0; 61; 89; 0; 0], 7, [t 'R']);
 t_is(rr.reserves.prc, [5; 5; 5; 0; 0], 7, [t 'reserve prc']);
 t_is(rr.reserves.mu.Pmax + rr.gen(:, MU_PMAX), [7; 2; 0; 0; 32], 7, [t 'reserve muPmax']);
+if s == 1 && create_plots
+    Pg(:, j) = mdo.results.ExpectedDispatch;
+    Rp(:, j) = rr.reserves.R;
+    Rm(:, j) = 0;
+    lamP(:, j) = rr.bus(:, LAM_P);
+    j = j + 1;
+end
 
 
 %%-----  DC OPF  -----
@@ -296,6 +344,14 @@ t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 33; 0], 7, [t 'mu flow']);
 t_is(rr.reserves.R, [44; 100; 6; 0; 0], 6, [t 'R']);
 t_is(rr.reserves.prc, [5; 5; 5; 0; 0], 7, [t 'reserve prc']);
 t_is(rr.reserves.mu.Pmax + rr.gen(:, MU_PMAX), [4; 0; 0; 0; 40], 7, [t 'reserve muPmax']);
+if s == 1 && create_plots
+    Pg(:, j) = mdo.results.ExpectedDispatch;
+    Rp(:, j) = rr.reserves.R;
+    Rm(:, j) = 0;
+    lamP(:, j) = rr.bus(:, LAM_P);
+    muF(:, j)  = rr.branch(:, MU_SF) + rr.branch(:, MU_ST);
+    j = j + 1;
+end
 
 t = sprintf('%s : Secure DC OPF (w/cont,res,ramp) : c3sopf ', solvers{s});
 mpc = mpc0;
@@ -371,6 +427,11 @@ t_is(rr.gen(:, PG), [190; 0; 60; -350; 100], 6, [t 'Pg base']);
 t_is(rr.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 % t_is(rr.bus(:, LAM_P), [20; 20; 20], 7, [t 'lam P base']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 6, [t 'mu flow base']);
+if s == 1 && create_plots
+    lamP(:, j) = rr.bus(:, LAM_P);
+    muF(:, j)  = rr.branch(:, MU_SF) + rr.branch(:, MU_ST);
+end
+
 rr1 = rr;
 rr = mdo.flow(1,1,2).mpc;
 % fprintf('[%.7f; %.7f; %.7f; %.7f; %.7f]\n', rr.gen(:, PG));
@@ -381,6 +442,11 @@ t_is(rr.gen(:, PG), [190; 0; 60; -350; 100], 5, [t 'Pg 1']);
 t_is(rr.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 t_is(rr1.bus(:, LAM_P) + rr.bus(:, LAM_P), [25; 25; 25], 7, [t 'lam P base + lam P 1']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 7, [t 'mu flow 1']);
+if s == 1 && create_plots
+    lamP(:, j) = lamP(:, j) + rr.bus(:, LAM_P);
+    muF(:, j)  = muF(:, j) + rr.branch(:, MU_SF) + rr.branch(:, MU_ST);
+end
+
 rr = mdo.flow(1,1,3).mpc;
 % fprintf('[%.7f; %.7f; %.7f; %.7f; %.7f]\n', rr.gen(:, PG));
 % fprintf('[%d; %d; %d; %d; %d]\n', rr.gen(:, GEN_STATUS));
@@ -390,6 +456,14 @@ t_is(rr.gen(:, PG), [190; 0; 60; -300; 50], 5, [t 'Pg 2']);
 t_is(rr.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 t_is(rr.bus(:, LAM_P), [0; 0; 40], 7, [t 'lam P 2']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 40], 7, [t 'mu flow 2']);
+if s == 1 && create_plots
+    Pg(:, j) = mdo.results.ExpectedDispatch;
+    Rp(:, j) = mdo.results.Rpp + mdo.results.Pc - mdo.results.ExpectedDispatch;
+    Rm(:, j) = mdo.results.Rpm - mdo.results.Pc + mdo.results.ExpectedDispatch;
+    lamP(:, j) = lamP(:, j) + rr.bus(:, LAM_P);
+    muF(:, j)  = muF(:, j) + rr.branch(:, MU_SF) + rr.branch(:, MU_ST);
+    j = j + 1;
+end
 
 t = sprintf('%s : Stochastic DC OPF (w/wind,res) : c3sopf ', solvers{s});
 nt = 1;
@@ -448,6 +522,11 @@ t_is(rr.gen(:, PG), [200; 150; 0; -350; 0], 7, [t 'Pg 1']);
 t_is(rr.gen(:, GEN_STATUS), [1; 1; 0; 1; 1], 7, [t 'u']);
 t_is(rr.bus(:, LAM_P), [4.7596576; 4.7596576; 4.7596576], 7, [t 'lam P 1']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 7, [t 'mu flow 1']);
+if s == 1 && create_plots
+    lamP(:, j) = rr.bus(:, LAM_P);
+    muF(:, j)  = rr.branch(:, MU_SF) + rr.branch(:, MU_ST);
+end
+
 rr = mdo.flow(1,2,1).mpc;
 % fprintf('[%.7f; %.7f; %.7f; %.7f; %.7f]\n', rr.gen(:, PG));
 % fprintf('[%d; %d; %d; %d; %d]\n', rr.gen(:, GEN_STATUS));
@@ -457,6 +536,11 @@ t_is(rr.gen(:, PG), [200; 100; 0; -350; 50], 7, [t 'Pg 2']);
 t_is(rr.gen(:, GEN_STATUS), [1; 1; 0; 1; 1], 7, [t 'u']);
 t_is(rr.bus(:, LAM_P), [20.4806848; 20.4806848; 20.4806848], 6, [t 'lam P 2']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 6, [t 'mu flow 2']);
+if s == 1 && create_plots
+    lamP(:, j) = lamP(:, j) + rr.bus(:, LAM_P);
+    muF(:, j)  = muF(:, j) + rr.branch(:, MU_SF) + rr.branch(:, MU_ST);
+end
+
 rr = mdo.flow(1,3,1).mpc;
 % fprintf('[%.7f; %.7f; %.7f; %.7f; %.7f]\n', rr.gen(:, PG));
 % fprintf('[%d; %d; %d; %d; %d]\n', rr.gen(:, GEN_STATUS));
@@ -466,6 +550,14 @@ t_is(rr.gen(:, PG), [200; 65; 0; -350; 85], 5, [t 'Pg 3']);
 t_is(rr.gen(:, GEN_STATUS), [1; 1; 0; 1; 1], 7, [t 'u']);
 t_is(rr.bus(:, LAM_P), [0; 0; 0], 6, [t 'lam P 3']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 7, [t 'mu flow 3']);
+if s == 1 && create_plots
+    Pg(:, j) = mdo.results.ExpectedDispatch;
+    Rp(:, j) = mdo.results.Rpp + mdo.results.Pc - mdo.results.ExpectedDispatch;
+    Rm(:, j) = mdo.results.Rpm - mdo.results.Pc + mdo.results.ExpectedDispatch;
+    lamP(:, j) = lamP(:, j) + rr.bus(:, LAM_P);
+    muF(:, j)  = muF(:, j) + rr.branch(:, MU_SF) + rr.branch(:, MU_ST);
+    j = j + 1;
+end
 % keyboard;
 
 t = sprintf('%s : Secure Stochastic DC OPF (w/wind,cont,res,ramp) : most ', solvers{s});
@@ -487,6 +579,10 @@ t_is(rr.gen(:, PG), [200; 0; 150; -350; 0], 7, [t 'Pg 1 base']);
 t_is(rr.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 % t_is(rr.bus(:, LAM_P), [7.2115891; 7.2115891; 7.2115891], 6, [t 'lam P 1 base']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 2, [t 'mu flow 1 base']);
+if s == 1 && create_plots
+    lamP(:, j) = rr.bus(:, LAM_P);
+    muF(:, j)  = rr.branch(:, MU_SF) + rr.branch(:, MU_ST);
+end
 
 rr1 = rr;
 rr = mdo.flow(1,1,2).mpc;
@@ -499,6 +595,10 @@ t_is(rr.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 % t_is(rr.bus(:, LAM_P), [0.3807726; 0.3807726; 0.3807726], 7, [t 'lam P 1 1']);
 t_is(rr1.bus(:, LAM_P) + rr.bus(:, LAM_P), [7.5923617; 7.5923617; 7.5923617], 7, [t 'lam P 1 1']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 6, [t 'mu flow 1 1']);
+if s == 1 && create_plots
+    lamP(:, j) = lamP(:, j) + rr.bus(:, LAM_P);
+    muF(:, j)  = muF(:, j) + rr.branch(:, MU_SF) + rr.branch(:, MU_ST);
+end
 
 rr = mdo.flow(1,1,3).mpc;
 % fprintf('[%.7f; %.7f; %.7f; %.7f; %.7f]\n', rr.gen(:, PG));
@@ -509,6 +609,10 @@ t_is(rr.gen(:, PG), [200; 0; 100; -300; 0], 4, [t 'Pg 1 2']);
 t_is(rr.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 t_is(rr.bus(:, LAM_P), [0.2538484; 0.2538484; 6.3462102], 6, [t 'lam P 1 2']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 6.0923618], 6, [t 'mu flow 1 2']);
+if s == 1 && create_plots
+    lamP(:, j) = lamP(:, j) + rr.bus(:, LAM_P);
+    muF(:, j)  = muF(:, j) + rr.branch(:, MU_SF) + rr.branch(:, MU_ST);
+end
 
 rr = mdo.flow(1,2,1).mpc;
 % fprintf('[%.7f; %.7f; %.7f; %.7f; %.7f]\n', rr.gen(:, PG));
@@ -519,6 +623,10 @@ t_is(rr.gen(:, PG), [200; 0; 100; -350; 50], 6, [t 'Pg 2 base']);
 t_is(rr.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 t_is(rr.bus(:, LAM_P), [24.5768217; 24.5768217; 24.5768217], 6, [t 'lam P 2 base']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 6, [t 'mu flow 2 base']);
+if s == 1 && create_plots
+    lamP(:, j) = lamP(:, j) + rr.bus(:, LAM_P);
+    muF(:, j)  = muF(:, j) + rr.branch(:, MU_SF) + rr.branch(:, MU_ST);
+end
 
 rr = mdo.flow(1,2,2).mpc;
 % fprintf('[%.7f; %.7f; %.7f; %.7f; %.7f]\n', rr.gen(:, PG));
@@ -529,6 +637,10 @@ t_is(rr.gen(:, PG), [200; 0; 100; -350; 50], 6, [t 'Pg 2 1']);
 t_is(rr.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 t_is(rr.bus(:, LAM_P), [1.6384548; 1.6384548; 1.6384548], 6, [t 'lam P 2 1']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 6, [t 'mu flow 2 1']);
+if s == 1 && create_plots
+    lamP(:, j) = lamP(:, j) + rr.bus(:, LAM_P);
+    muF(:, j)  = muF(:, j) + rr.branch(:, MU_SF) + rr.branch(:, MU_ST);
+end
 
 rr = mdo.flow(1,2,3).mpc;
 % fprintf('[%.7f; %.7f; %.7f; %.7f; %.7f]\n', rr.gen(:, PG));
@@ -539,6 +651,10 @@ t_is(rr.gen(:, PG), [200; 0; 60; -300; 40], 6, [t 'Pg 2 2']);
 t_is(rr.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 t_is(rr.bus(:, LAM_P), [0; 0; 27.3075797], 5, [t 'lam P 2 2']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 27.3075797], 6, [t 'mu flow 2 2']);
+if s == 1 && create_plots
+    lamP(:, j) = lamP(:, j) + rr.bus(:, LAM_P);
+    muF(:, j)  = muF(:, j) + rr.branch(:, MU_SF) + rr.branch(:, MU_ST);
+end
 
 rr = mdo.flow(1,3,1).mpc;
 % fprintf('[%.7f; %.7f; %.7f; %.7f; %.7f]\n', rr.gen(:, PG));
@@ -549,6 +665,10 @@ t_is(rr.gen(:, PG), [200; 0; 60; -350; 90], 6, [t 'Pg 3 base']);
 t_is(rr.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 t_is(rr.bus(:, LAM_P), [0; 0; 0], 6, [t 'lam P 3 base']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 5, [t 'mu flow 3 base']);
+if s == 1 && create_plots
+    lamP(:, j) = lamP(:, j) + rr.bus(:, LAM_P);
+    muF(:, j)  = muF(:, j) + rr.branch(:, MU_SF) + rr.branch(:, MU_ST);
+end
 
 rr = mdo.flow(1,3,2).mpc;
 % fprintf('[%.7f; %.7f; %.7f; %.7f; %.7f]\n', rr.gen(:, PG));
@@ -559,6 +679,10 @@ t_is(rr.gen(:, PG), [200; 0; 60; -350; 90], 6, [t 'Pg 3 1']);
 t_is(rr.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 t_is(rr.bus(:, LAM_P), [0; 0; 0], 6, [t 'lam P 3 1']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 6, [t 'mu flow 3 1']);
+if s == 1 && create_plots
+    lamP(:, j) = lamP(:, j) + rr.bus(:, LAM_P);
+    muF(:, j)  = muF(:, j) + rr.branch(:, MU_SF) + rr.branch(:, MU_ST);
+end
 
 rr = mdo.flow(1,3,3).mpc;
 % fprintf('[%.7f; %.7f; %.7f; %.7f; %.7f]\n', rr.gen(:, PG));
@@ -572,6 +696,125 @@ t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 6.3462102], 6, [t 'mu flo
 % keyboard;
 end
 
+if s == 1 && create_plots
+    Pg(:, j) = mdo.results.ExpectedDispatch;
+    Rp(:, j) = mdo.results.Rpp + mdo.results.Pc - mdo.results.ExpectedDispatch;
+    Rm(:, j) = mdo.results.Rpm - mdo.results.Pc + mdo.results.ExpectedDispatch;
+    lamP(:, j) = lamP(:, j) + rr.bus(:, LAM_P);
+    muF(:, j)  = muF(:, j) + rr.branch(:, MU_SF) + rr.branch(:, MU_ST);
+%    R(4:5, :) = NaN;
+    R = Rp + Rm;
+
+    labels = {'Economic Dispatch'; 'DC OPF'; 'Economic Dispatch w/reserves'; 'DC OPF w/reserves'; 'secure DC OPF'; 'stochastic DC OPF'; 'secure stochastic DC OPF'};
+
+    figure(1);
+
+    subplot(4, 1, 1);
+    bar(abs(Pg([1:3 5],:)'),'stacked');
+    title('Generation');
+    ylabel('MW');
+    h = gca;
+    h.XTickLabel = labels;
+    h.XTickLabelRotation = 20;
+
+    subplot(4, 1, 2);
+    bar(abs(R([1:3 5],:)'),'stacked');
+    title('Reserves');
+    ylabel('MW');
+    h = gca;
+    h.XTickLabel = labels;
+    h.XTickLabelRotation = 20;
+
+    subplot(4, 1, 3);
+    plot(lamP');
+    title('Nodal Prices');
+    ylabel('$/MW');
+    h = gca;
+    h.XTickLabel = {'', labels{:}, ''}';
+    h.XTickLabelRotation = 20;
+    h = [0 8 0 100];
+    axis(h);
+
+    subplot(4, 1, 4);
+    plot(muF');
+    title('Flow Constraint Shadow Prices');
+    ylabel('$/MW');
+    h = gca;
+    h.XTickLabel = {'', labels{:}, ''}';
+    h.XTickLabelRotation = 20;
+    h = [0 8 0 60];
+    axis(h);
+
+    if create_pdfs
+        fname = 'single-period-uc';
+        h = gcf;
+        set(h, 'PaperSize', [11 8.5]);
+        set(h, 'PaperPosition', [0.25 0.25 10.5 8]);
+        print('-dpdf', fullfile(savepath, fname));
+    end
+
+    for j = 1:7;
+        figure(j+1);
+        if create_pdfs
+            fname = sprintf('single-period-uc-%d', j);
+        else
+            fname = '';
+        end
+        plot_case(labels{j}, Pg([1:3 5], j), Rp([1:3 5], j), Rm([1:3 5], j), lamP(:, j), muF(:, j), 250, 100, savepath, fname);
+    end
+end
 end
 
 t_end;
+
+
+function h = plot_case(label, Pg, Rp, Rm, lamP, muF, maxq, maxp, mypath, fname)
+
+subplot(1, 3, 1);
+h = bar([Pg-Rm Rm Rp], 'stacked');
+set(h(2), 'FaceColor', [0 0.35 0.33]);
+ah1 = gca;
+title('Generation & Reserves');
+ylabel('MW');
+xlabel('Gen');
+set(gca, 'FontSize', 14);
+
+if nargin < 6
+    maxq = ah1.YLim(2);
+end
+ah1.YLim(2) = maxq;
+ah1.YLim(1) = 0;
+
+subplot(1, 3, 2);
+bar(lamP);
+ah3 = gca;
+title('Nodal Prices');
+ylabel('$/MW');
+xlabel('Bus');
+set(gca, 'FontSize', 14);
+
+subplot(1, 3, 3);
+bar(muF);
+ah4 = gca;
+title('Flow Constraint Shadow Prices');
+ylabel('$/MW');
+xlabel('Line');
+set(gca, 'FontSize', 14);
+
+if nargin < 7
+    maxp = max(ah3.YLim(2), ah4.YLim(2));
+end
+ah3.YLim(1) = 0;
+ah4.YLim(1) = 0;
+ah3.YLim(2) = maxp;
+ah4.YLim(2) = maxp;
+
+[ax,h] = suplabel(label, 't');
+set(h, 'FontSize', 18)
+
+if nargin > 7 && ~isempty(fname)
+    h = gcf;
+    set(h, 'PaperSize', [11 8.5]);
+    set(h, 'PaperPosition', [0.25 0.25 10.5 8]);
+    print('-dpdf', fullfile(mypath, fname));
+end

@@ -1,5 +1,10 @@
-function t_most_suc(quiet)
+function t_most_suc(quiet, create_plots, create_pdfs, savepath)
 %T_MOST_SUC  Tests of stochastic unit commitment optimizations.
+%
+%   T_MOST_SUC(QUIET, CREATE_PLOTS, CREATE_PDFS, SAVEPATH)
+%   Can generate summary plots and save them as PDFs in a directory of
+%   your choice.
+%   E.g. t_most_suc(0, 1, 1, '~/Downloads/suc_plots')
 
 %   MOST
 %   Copyright (c) 2015-2016 by Power System Engineering Research Center (PSERC)
@@ -11,8 +16,25 @@ function t_most_suc(quiet)
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-if nargin < 1
-    quiet = 0;
+if nargin < 4
+    savepath = '.';             %% save in current working directory by default
+    if nargin < 3
+        create_pdfs = 0;        %% do NOT save plots to PDF files
+        if nargin < 2
+            create_plots = 0;   %% do NOT create summary plots of results
+            if nargin < 1
+                quiet = 0;      %% verbose by default
+            end
+        end
+    end
+end
+if create_plots
+    if create_pdfs
+        fname = 'suc-ex';
+    else
+        fname = '';
+    end
+    pp = 0;     %% plot counter
 end
 
 solvers = {'CPLEX', 'GLPK', 'GUROBI', 'MOSEK', 'OT'};
@@ -176,6 +198,10 @@ for s = 1:length(solvers)
         t_is(ms.lamP, ex.lamP, 8, [t 'lamP']);
         t_is(ms.muF, ex.muF, 8, [t 'muF']);
         % determ = most_summary(mdo);
+        if s == 1 && create_plots
+            pp = pp + 1;
+            plot_case('Base : Deterministic', mdo, ms, 500, 100, savepath, pp, fname);
+        end
         % keyboard;
 
         t = sprintf('%s : individual trajectories : ', solvers{s});
@@ -198,6 +224,10 @@ for s = 1:length(solvers)
         % t_is(ms.lamP, ex.lamP, 5, [t 'lamP']);
         % t_is(ms.muF, ex.muF, 5, [t 'muF']);
         % transprob1 = most_summary(mdo);
+        if s == 1 && create_plots
+            pp = pp + 1;
+            plot_case('Individual Trajectories', mdo, ms, 500, 100, savepath, pp, fname);
+        end
         % keyboard;
 
         t = sprintf('%s : full transition probabilities : ', solvers{s});
@@ -222,6 +252,10 @@ for s = 1:length(solvers)
         % t_is(ms.lamP, ex.lamP, 5, [t 'lamP']);
         % t_is(ms.muF, ex.muF, 5, [t 'muF']);
         % transprobfull = most_summary(mdo);
+        if s == 1 && create_plots
+            pp = pp + 1;
+            plot_case('Full Transition Probabilities', mdo, ms, 500, 100, savepath, pp, fname);
+        end
         % keyboard;
 
         t = sprintf('%s : full transition probabilities + cont : ', solvers{s});
@@ -240,6 +274,10 @@ for s = 1:length(solvers)
         % t_is(ms.lamP, ex.lamP, 5, [t 'lamP']);
         % t_is(ms.muF, ex.muF, 5, [t 'muF']);
         % transprobcont = most_summary(mdo);
+        if s == 1 && create_plots
+            pp = pp + 1;
+            plot_case('+ Contingencies', mdo, ms, 500, 100, savepath, pp, fname);
+        end
         % keyboard;
 
         t = sprintf('%s : + storage : ', solvers{s});
@@ -261,6 +299,10 @@ for s = 1:length(solvers)
         % t_is(ms.lamP, ex.lamP, 5, [t 'lamP']);
         % t_is(ms.muF, ex.muF, 5, [t 'muF']);
         % wstorage = most_summary(mdo);
+        if s == 1 && create_plots
+            pp = pp + 1;
+            plot_case('+ Storage', mdo, ms, 500, 100, savepath, pp, fname);
+        end
         % keyboard;
     end
 end
@@ -277,3 +319,99 @@ t_end;
 % transprobcont.u
 % transprobfull.u
 % wstorage.u
+
+
+function h = plot_case(label, md, ms, maxq, maxp, mypath, pp, fname)
+
+if nargin < 8
+    fname = '';
+end
+
+%% colors:  blue     red               yellow           purple            green
+cc = {[0 0.45 0.74], [0.85 0.33 0.1], [0.93 0.69 0.13], [0.49 0.18 0.56], [0.47 0.67 0.19]};
+
+ig = (1:3)';
+id = 4;
+iw = 5;
+is = 6;
+
+subplot(3, 1, 1);
+md.mpc = rmfield(md.mpc, 'genfuel');
+plot_uc(md, [], 'title', label);
+ylabel('Unit Commitment', 'FontSize', 16);
+ah = gca;
+ah.YAxisLocation = 'left';
+
+subplot(3, 1, 2);
+x = (1:ms.nt)';
+Pg = md.results.ExpectedDispatch;
+y1 = Pg(ig, :)';
+if ms.ng == 6
+    y1 = [y1 max(-Pg(is, :), 0)' max(Pg(is, :), 0)'];
+end
+y2 = -sum(Pg([id; iw], :), 1)';
+[ah1, h1, h2] = plotyy(x, y1, x, y2);
+axis(ah1(1), [0.5 12.5 0 maxq]);
+axis(ah1(2), [0.5 12.5 0 maxq]);
+% ah1(1).XLim = [0.5 12.5];
+% ah1(2).XLim = [0.5 12.5];
+% ah1(1).YLim = [0 300];
+% ah1(2).YLim = [0 450];
+ah1(1).YTickMode = 'auto';
+ah1(2).YTickMode = 'auto';
+ah1(1).XTick = 1:12;
+nn = 3;
+for j = 1:3
+    h1(j).LineWidth = 2;
+    h1(j).Color = cc{j};
+end
+if ms.ng == 6
+    h1(4).LineWidth = 2;
+    h1(4).Color = cc{5};
+    h1(4).LineStyle = ':';
+    h1(5).LineWidth = 2;
+    h1(5).Color = cc{5};
+end
+h2.LineWidth = 2;
+h2.Color = cc{4};
+h2.LineStyle = ':';
+ah1(2).YColor = cc{4};
+%title('Generation & Net Load', 'FontSize', 16);
+ylabel(ah1(1), 'Generation, MW', 'FontSize', 16);
+ylabel(ah1(2), 'Net Load, MW', 'FontSize', 16);
+xlabel('Period', 'FontSize', 16);
+set(ah1(1), 'FontSize', 14);
+set(ah1(2), 'FontSize', 14);
+if ms.ng == 6
+    legend('Gen 1', 'Gen 2', 'Gen 3', 'Storage Charge', 'Storage Discharge', 'Location', [0.7 0.6 0 0]);
+else
+    legend('Gen 1', 'Gen 2', 'Gen 3', 'Location', [0.7 0.58 0 0]);
+end
+
+subplot(3, 1, 3);
+if length(size(ms.lamP)) == 4
+    elamP = sum(sum(ms.lamP, 4), 3) ./ (ones(ms.nb,1) * md.StepProb);
+%     elamP = sum(sum(ms.lamP, 4), 3);
+elseif length(size(ms.lamP)) == 3
+    elamP = sum(ms.lamP, 3);
+else
+    elamP = ms.lamP;
+end
+
+y1 = elamP';
+plot(x, y1, 'LineWidth', 2);
+% title('Nodal Price', 'FontSize', 16);
+ylabel('Nodal Price, $/MWh', 'FontSize', 16);
+xlabel('Period', 'FontSize', 16);
+axis([0.5 12.5 0 maxp]);
+ah = gca;
+set(ah, 'FontSize', 14);
+ah.XTick = 1:12;
+legend('Bus 1', 'Bus 2', 'Bus 3', 'Location', [0.7 0.28 0 0]);
+
+if nargin > 7 && ~isempty(fname)
+    h = gcf;
+    set(h, 'PaperSize', [11 8.5]);
+    set(h, 'PaperPosition', [0.25 0.25 10.5 8]);
+    print('-dpdf', fullfile(mypath, sprintf('%s-%d', fname, pp)));
+end
