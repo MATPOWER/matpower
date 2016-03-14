@@ -38,6 +38,13 @@ end
 if have_fcn('mosek')
     mpopt = mpoption(mpopt, 'mosek.lp_alg', 4);     %% dual-simplex
 end
+if have_fcn('linprog')
+    if have_fcn('linprog_ds')
+        mpopt = mpoption(mpopt, 'linprog.Algorithm', 'dual-simplex');
+    else
+        mpopt = mpoption(mpopt, 'linprog.Algorithm', 'simplex');
+    end
+end
 mpoptac = mpoption(mpopt, 'model', 'AC');
 mpoptdc = mpoption(mpopt, 'model', 'DC');
 mpopt = mpoption(mpopt, 'most.solver', algs.dc{1});

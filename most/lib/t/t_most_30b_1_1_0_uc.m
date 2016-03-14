@@ -26,6 +26,14 @@ mpopt = mpoption('verbose', 0, 'out.all', 0);
 % mpopt = mpoption('verbose', 2, 'out.all', -1);
 mpopt = mpoption(mpopt, 'out.bus', 0, 'out.branch', 0, 'out.gen', 2);
 mpopt = mpoption(mpopt, 'opf.violation', 5e-7, 'mips.comptol', 5e-8);
+if have_fcn('intlinprog')
+    mpopt = mpoption(mpopt, 'linprog.Algorithm', 'dual-simplex');
+    mpopt = mpoption(mpopt, 'intlinprog.RootLPAlgorithm', 'dual-simplex');
+    mpopt = mpoption(mpopt, 'intlinprog.TolCon', 1e-9);
+    mpopt = mpoption(mpopt, 'intlinprog.TolGapAbs', 0);
+    mpopt = mpoption(mpopt, 'intlinprog.TolGapRel', 0);
+    mpopt = mpoption(mpopt, 'intlinprog.TolInteger', 1e-6);
+end
 mpoptac = mpoption(mpopt, 'model', 'AC');
 mpoptdc = mpoption(mpopt, 'model', 'DC');
 mpopt = mpoption(mpopt, 'most.solver', 'DEFAULT');
