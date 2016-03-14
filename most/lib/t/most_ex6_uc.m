@@ -98,12 +98,16 @@ xgd.NegativeLoadFollowReservePrice(3) = 1e-6;
 mpopt = mpoption(mpopt, 'most.dc_model', 0);    % use model with no network
 mdi = loadmd(mpc, nt, xgd, [], [], profiles);
 mdo = most(mdi, mpopt);
-ms = most_summary(mdo);
+if verbose
+    ms = most_summary(mdo);
+end
 
 %%-----  + DC Network  -----
 mpopt = mpoption(mpopt, 'most.dc_model', 1);    % use DC network model (default)
 mdo = most(mdi, mpopt);
-ms = most_summary(mdo);
+if verbose
+    ms = most_summary(mdo);
+end
 
 %%-----  + startup/shutdown costs  -----
 mpc.gencost(2, [STARTUP SHUTDOWN]) = [ 200 200];
@@ -111,13 +115,17 @@ mpc.gencost(3, [STARTUP SHUTDOWN]) = [3000 600];
 % equivalent to doing: mpc = mpc_full;
 mdi = loadmd(mpc, nt, xgd, [], [], profiles);
 mdo = most(mdi, mpopt);
-ms = most_summary(mdo);
+if verbose
+    ms = most_summary(mdo);
+end
 
 %%-----  + min up/down time constraints  -----
 xgd.MinUp(2) = 3;
 mdi = loadmd(mpc, nt, xgd, [], [], profiles);
 mdo = most(mdi, mpopt);
-ms = most_summary(mdo);
+if verbose
+    ms = most_summary(mdo);
+end
 
 %%-----  + ramp constraint/ramp res cost  -----
 xgd.PositiveLoadFollowReserveQuantity(3) = 100; % restore ramp reserve
@@ -126,11 +134,15 @@ xgd.NegativeLoadFollowReservePrice(3) = 10;
 % equivalent to doing: xgd = xgd_full;
 mdi = loadmd(mpc, nt, xgd, [], [], profiles);
 mdo = most(mdi, mpopt);
-ms = most_summary(mdo);
+if verbose
+    ms = most_summary(mdo);
+end
 
 %%-----  + storage  -----
 mpopt = mpoption(mpopt, 'most.storage.cyclic', 1);
 [iess, mpc, xgd, sd] = addstorage('ex_storage', mpc, xgd);
 mdi = loadmd(mpc, nt, xgd, sd, [], profiles);
 mdo = most(mdi, mpopt);
-ms = most_summary(mdo);
+if verbose
+    ms = most_summary(mdo);
+end

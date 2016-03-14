@@ -13,7 +13,7 @@ function most_ex5_mpopf(quiet)
 
 %% set up options
 define_constants;
-verbose = 0;
+verbose = 1;
 mpopt = mpoption('verbose', verbose);
 mpopt = mpoption(mpopt, 'out.gen', 1);
 mpopt = mpoption(mpopt, 'model', 'DC');

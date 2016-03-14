@@ -94,21 +94,29 @@ transmat_s{1} = [ 0.158655253931457; 0.682689492137086; 0.158655253931457 ];
 mdi = loadmd(mpc, transmat_s, xgd, [], [], profiles);
 mdi = filter_ramp_transitions(mdi, 0.1);
 mdo = most(mdi, mpopt);
-ms = most_summary(mdo);
+if verbose
+    ms = most_summary(mdo);
+end
 
 %%-----  Full Transition Probabilities  -----
 transmat = ex_transmat(nt);
 mdi = loadmd(mpc, transmat, xgd, [], [], profiles);
 mdo = most(mdi, mpopt);
-ms = most_summary(mdo);
+if verbose
+    ms = most_summary(mdo);
+end
 
 %%-----  Full Transition Probabilities + Contingencies  -----
 mdi = loadmd(mpc, transmat, xgd, [], 'ex_contab', profiles);
 mdo = most(mdi, mpopt);
-ms = most_summary(mdo);
+if verbose
+    ms = most_summary(mdo);
+end
 
 %%-----  Plus Storage  -----
 [iess, mpc, xgd, sd] = addstorage('ex_storage', mpc, xgd);
 mdi = loadmd(mpc, transmat, xgd, sd, 'ex_contab', profiles);
 mdo = most(mdi, mpopt);
-ms = most_summary(mdo);
+if verbose
+    ms = most_summary(mdo);
+end

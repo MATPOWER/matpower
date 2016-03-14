@@ -163,17 +163,14 @@ profiles = getprofiles('ex_wind_profile_d', iwind);
 profiles = getprofiles('ex_load_profile', profiles);
 nt = size(profiles(1).values, 1);
 
-mpc00 = mpc;
-xgd00 = xgd;
+mpc_full = mpc;
+xgd_full = xgd;
 
-mpc.gencost(2, STARTUP) = 0;
-mpc.gencost(2, SHUTDOWN) = 0;
-mpc.gencost(3, STARTUP) = 0;
-mpc.gencost(3, SHUTDOWN) = 0;
-xgd.MinUp(2) = 1;
-xgd.PositiveLoadFollowReserveQuantity(3) = 250;
-xgd.PositiveLoadFollowReservePrice(3) = 1e-6;
-    xgd.NegativeLoadFollowReservePrice(3) = 1e-6;
+mpc.gencost(:, [STARTUP SHUTDOWN]) = 0; % remove startup/shutdown costs
+xgd.MinUp(2) = 1;                       % remove min up-time constraint
+xgd.PositiveLoadFollowReserveQuantity(3) = 250; % remove ramp reserve
+xgd.PositiveLoadFollowReservePrice(3) = 1e-6;   % constraint and costs
+xgd.NegativeLoadFollowReservePrice(3) = 1e-6;
 mpc0 = mpc;
 xgd0 = xgd;
 
@@ -237,7 +234,7 @@ for s = 1:length(solvers)
         if mpopt.out.all
             fprintf('Add STARTUP and SHUTDOWN costs\n');
         end
-        mpc = mpc00;
+        mpc = mpc_full;
         % mpc.gencost(3, STARTUP)  = 3524.9944997;    %% CPLEX, GLPK
         % mpc.gencost(3, SHUTDOWN) = 3524.9944997;
         % mpc.gencost(3, STARTUP)  = 3524.99499778;    %% Gurobi
@@ -293,7 +290,7 @@ for s = 1:length(solvers)
         if mpopt.out.all
             fprintf('Restrict ramping and add ramp reserve costs\n');
         end
-        xgd = xgd00;
+        xgd = xgd_full;
         mdi = loadmd(mpc, nt, xgd, [], [], profiles);
         mdo = most(mdi, mpopt);
         ms = most_summary(mdo);
