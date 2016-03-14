@@ -200,7 +200,7 @@ for s = 1:length(solvers)
         % determ = most_summary(mdo);
         if s == 1 && create_plots
             pp = pp + 1;
-            plot_case('Base : Deterministic', mdo, ms, 500, 100, savepath, pp, fname);
+            plot_case('Base : Deterministic', mdo, ms, 500, 150, savepath, pp, fname);
         end
         % keyboard;
 
@@ -226,7 +226,7 @@ for s = 1:length(solvers)
         % transprob1 = most_summary(mdo);
         if s == 1 && create_plots
             pp = pp + 1;
-            plot_case('Individual Trajectories', mdo, ms, 500, 100, savepath, pp, fname);
+            plot_case('Individual Trajectories', mdo, ms, 500, 150, savepath, pp, fname);
         end
         % keyboard;
 
@@ -254,7 +254,7 @@ for s = 1:length(solvers)
         % transprobfull = most_summary(mdo);
         if s == 1 && create_plots
             pp = pp + 1;
-            plot_case('Full Transition Probabilities', mdo, ms, 500, 100, savepath, pp, fname);
+            plot_case('Full Transition Probabilities', mdo, ms, 500, 150, savepath, pp, fname);
         end
         % keyboard;
 
@@ -276,7 +276,7 @@ for s = 1:length(solvers)
         % transprobcont = most_summary(mdo);
         if s == 1 && create_plots
             pp = pp + 1;
-            plot_case('+ Contingencies', mdo, ms, 500, 100, savepath, pp, fname);
+            plot_case('+ Contingencies', mdo, ms, 500, 150, savepath, pp, fname);
         end
         % keyboard;
 
@@ -301,7 +301,7 @@ for s = 1:length(solvers)
         % wstorage = most_summary(mdo);
         if s == 1 && create_plots
             pp = pp + 1;
-            plot_case('+ Storage', mdo, ms, 500, 100, savepath, pp, fname);
+            plot_case('+ Storage', mdo, ms, 500, 150, savepath, pp, fname);
         end
         % keyboard;
     end
