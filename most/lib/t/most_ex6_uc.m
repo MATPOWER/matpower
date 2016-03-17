@@ -76,6 +76,9 @@ if have_fcn('intlinprog')
     mpopt = mpoption(mpopt, 'intlinprog.TolGapAbs', 0);
     mpopt = mpoption(mpopt, 'intlinprog.TolGapRel', 0);
     mpopt = mpoption(mpopt, 'intlinprog.TolInteger', 1e-6);
+    %% next line is to work around a bug in intlinprog
+    % (Technical Support Case #01841662)
+    mpopt = mpoption(mpopt, 'intlinprog.LPPreprocess', 'none');
 end
 
 casefile = 'ex_case3b';
