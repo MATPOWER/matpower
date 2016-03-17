@@ -78,7 +78,9 @@ if have_fcn('intlinprog')
     mpopt = mpoption(mpopt, 'intlinprog.TolInteger', 1e-6);
     %% next line is to work around a bug in intlinprog
     % (Technical Support Case #01841662)
-    mpopt = mpoption(mpopt, 'intlinprog.LPPreprocess', 'none');
+    % (except actually in this case it triggers it rather than working
+    %  around it, so we comment it out)
+    %mpopt = mpoption(mpopt, 'intlinprog.LPPreprocess', 'none');
 end
 
 casefile = 'ex_case3b';
