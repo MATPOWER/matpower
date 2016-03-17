@@ -125,22 +125,22 @@ for k = 1:nc
 end
 
 t = 'energy prices';
-t_is(r.results.GenPrices, s.rdc.energy.prc.sum_bus_lam_p(gbus), 6, t);
+t_is(r.results.GenPrices, s.rdc.energy.prc.sum_bus_lam_p(gbus), 5, t);
 
 t = 'Pc';
 t_is(r.results.Pc, s.rdc.energy.Pc, 4, t);
 
 t = 'Gmin';
-t_is(r.results.Pc - r.results.Rpm, s.rdc.energy.Gmin, 4, t);
+t_is(r.results.Pc - r.results.Rpm, s.rdc.energy.Gmin, 3.3, t);
 
 t = 'Gmax';
-t_is(r.results.Pc + r.results.Rpp, s.rdc.energy.Gmax, 4, t);
+t_is(r.results.Pc + r.results.Rpp, s.rdc.energy.Gmax, 3.5, t);
 
 t = 'upward contingency reserve quantities';
-t_is(r.results.Rpp, s.rdc.reserve.qty.Rp_pos, 4, t);
+t_is(r.results.Rpp, s.rdc.reserve.qty.Rp_pos, 3.5, t);
 
 t = 'downward contingency reserve quantities';
-t_is(r.results.Rpm, s.rdc.reserve.qty.Rp_neg, 4, t);
+t_is(r.results.Rpm, s.rdc.reserve.qty.Rp_neg, 3.2, t);
 
 t = 'upward contingency reserve prices';
 t_is(r.results.RppPrices, s.rdc.reserve.prc.Rp_pos, 6, t);
@@ -161,7 +161,7 @@ for k = 1:nc+1
     sum_muPmax(ii) = sum_muPmax(ii) + r.flow(1,1,k).mpc.gen(ii, MU_PMAX);
     sum_muPmin(ii) = sum_muPmin(ii) + r.flow(1,1,k).mpc.gen(ii, MU_PMIN);
 end
-t_is(Ramp_P_max, s.rdc.energy.mu.Ramp_P_max, 6, t);
+t_is(Ramp_P_max, s.rdc.energy.mu.Ramp_P_max, 5, t);
 
 t = 'sum_muPmax';
 t_is(sum_muPmax, s.rdc.energy.sum_muPmax, 2, t);

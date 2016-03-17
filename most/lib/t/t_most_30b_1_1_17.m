@@ -219,7 +219,7 @@ t = 'sum_muPmax';
 t_is(sum_muPmax, s.rdc.energy.sum_muPmax, 1, t);
 
 t = 'sum_muPmin';
-t_is(sum_muPmin, s.rdc.energy.sum_muPmin, 1, t);
+t_is(sum_muPmin, s.rdc.energy.sum_muPmin, 0.9, t);
 
 t = 'Rpmax_pos';
 Rpmax_pos = (r.QP.lambda.upper(vv.i1.Rpp(1):vv.iN.Rpp(1)) - r.QP.lambda.lower(vv.i1.Rpp(1):vv.iN.Rpp(1))) / mpc.baseMVA;
