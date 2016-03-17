@@ -7,7 +7,7 @@ function xgd = loadxgendata(xgd_table, mpc)
 %
 %   Loads data from an xGenData table struct, or from a function or MAT-file
 %   that returns such a struct, and converts it to an xGenData struct.
-%   xGenData contains all of the per-generator data required by MPSOPF
+%   xGenData contains all of the per-generator data required by MOST
 %   that is not included in MPC, including reserve offer data.
 %
 %   If the first argument is the name of a function the optional second

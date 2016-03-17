@@ -139,8 +139,8 @@ gbus = mpc.gen(:, GEN_BUS);
 %%-----  get OPF results  -----
 rdc = rundcopf(mpc, mpoptdc);
 % rac = runopf(mpc, mpoptac);
-% save t_mpsopf4_soln rdc rac -v6
-% s = load('t_mpsopf4_soln');
+% save t_most4_soln rdc rac -v6
+% s = load('t_most4_soln');
 s.rdc = rdc;
 % s.rac = rac;
 
@@ -221,7 +221,7 @@ end
 % end
 
 %%-----  do AC run (most)  -----
-%mpsopf;
+%mostac;
 
 
 

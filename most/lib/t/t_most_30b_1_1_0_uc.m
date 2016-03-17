@@ -146,8 +146,8 @@ mpc.gen(ig, PMIN) = 0.2 * mpc.gen(ig, PMAX);
 %%-----  get OPF results  -----
 rdc = runduopf(mpc, mpoptdc);
 % rac = runopf(mpc, mpoptac);
-% save t_mpsopf4_soln rdc rac -v6
-% s = load('t_mpsopf4_soln');
+% save t_most4_soln rdc rac -v6
+% s = load('t_most4_soln');
 s.rdc = rdc;
 % s.rac = rac;
 
