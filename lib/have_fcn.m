@@ -192,6 +192,7 @@ else        %% detect availability
                     end
                     vstr = v.Version;
                     rdate = v.Date;
+                    otver = vstr2num(vstr);
                     switch tag
                         case 'fmincon'
                             TorF = (exist('fmincon', 'file') == 2 || ...
@@ -202,9 +203,14 @@ else        %% detect availability
                             TorF = exist('linprog', 'file') == 2 & matlab;  %% don't try to use Octave linprog
                         case 'quadprog'
                             TorF = exist('quadprog', 'file') == 2;
+                            %% Octave optim 1.5.0 and earlier, had problems with
+                            %% incorrect lambdas, including opposite sign
+                            %% convention for equality multipliers
+                            if ~matlab && otver <= 1.005
+                                TorF = 0;
+                            end
                         otherwise
                             if matlab
-                                otver = vstr2num(vstr);
                                 switch tag
                                     case 'fmincon_ipm'
                                         if otver >= 4       %% Opt Tbx 4.0+ (R208a+, Matlab 7.6+)

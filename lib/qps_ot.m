@@ -187,7 +187,8 @@ else
     verbose = 0;
 end
 %% Matlab or Octave
-if have_fcn('matlab'), matlab = 1; else, matlab = 0; end
+matlab = have_fcn('matlab');
+otver = have_fcn('quadprog', 'vnum');
 
 %% split up linear constraints
 ieq = find( abs(u-l) <= eps );          %% equality
@@ -267,6 +268,7 @@ if isLP
         [x, f, eflag, output, lam] = ...
             linprog(c, Ai, bi, Ae, be, xmin, xmax, x0, ot_opt);
     else
+% don't use linprog under Octave (using GLPK directly is recommended)
 %         [x, f] = linprog(c, Ai, bi, Ae, be, xmin, xmax);
 %         eflag = [];
 %         output = [];
@@ -296,22 +298,33 @@ else
     ku = find(lam.eqlin > 0);   %% upper bound binding
 
     mu_l = zeros(nA, 1);
-    if matlab
+%     %% workaround for Octave optim 1.5.0 and earlier, which
+%     %% has opposite sign convention for equality multipliers
+%     if ~matlab && otver <= 1.005
+%         mu_l(ieq(ku)) = lam.eqlin(ku);
+%     else
         mu_l(ieq(kl)) = -lam.eqlin(kl);
-    else    %% Octave has opposite sign convention for equality multipliers
-        mu_l(ieq(ku)) = lam.eqlin(ku);
-    end
+%     end
     mu_l(igt) = lam.ineqlin(nlt+(1:ngt));
     mu_l(ibx) = lam.ineqlin(nlt+ngt+nbx+(1:nbx));
 
     mu_u = zeros(nA, 1);
-    if matlab
+%     %% workaround for Octave optim 1.5.0 and earlier, which
+%     %% has opposite sign convention for equality multipliers
+%     if ~matlab && otver <= 1.005
+%         mu_u(ieq(kl)) = -lam.eqlin(kl);
+%     else
         mu_u(ieq(ku)) = lam.eqlin(ku);
-    else    %% Octave has opposite sign convention for equality multipliers
-        mu_u(ieq(kl)) = -lam.eqlin(kl);
-    end
+%     end
     mu_u(ilt) = lam.ineqlin(1:nlt);
     mu_u(ibx) = lam.ineqlin(nlt+ngt+(1:nbx));
+
+    %% workaround for Octave optim 1.5.0 and earlier, which
+    %% has opposite sign convention for equality multipliers
+    % if ~matlab && otver <= 1.005
+        %% there are also issues with variable bounds that are
+        %% converted to equalities, and maybe other issues
+    % end
 
     lambda = struct( ...
         'mu_l', mu_l, ...
