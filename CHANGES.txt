@@ -16,6 +16,9 @@ For change history for MOST, see most/docs/CHANGES.
 Changes since 5.1
 -----------------
 
+3/29/16
+    - Add support for quadprog() under GNU Octave.
+
 3/3/16
     - Copying a field containing a struct to a non-struct field with 
       nested_struct_copy() now overwrites rather than causing a fatal
