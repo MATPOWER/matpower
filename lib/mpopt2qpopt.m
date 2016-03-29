@@ -13,9 +13,10 @@ function qpopt = mpopt2qpopt(mpopt, model, alg)
 %               for selection of solver in case ALG is 'DEFAULT' (solver
 %               precedence for each model type list in parentheses):
 %           'LP'   - linear program with all continuous variables
-%                   (GUROBI, CPLEX, MOSEK, OT, GLPK, BPMPD, MIPS)
+%                   (GUROBI, CPLEX, MOSEK, OT (if Matlab), GLPK, BPMPD, MIPS)
 %           'QP'   - quadratic program with all continuous variables
-%                   (GUROBI, CPLEX, MOSEK, OT, BPMPD, MIPS)
+%                   (GUROBI, CPLEX, MOSEK, OT (if large-scale alg available),
+%                    BPMPD, MIPS)
 %           'MILP' - LP with mixed integer/continuous variables
 %                   (GUROBI, CPLEX, MOSEK, OT, GLPK)
 %           'MIQP' - (default) QP with mixed integer/continuous variables
@@ -75,8 +76,8 @@ switch alg
             alg = 'CPLEX';      %% if not, then CPLEX, if available
         elseif have_fcn('mosek')
             alg = 'MOSEK';      %% if not, then MOSEK, if available
-        elseif have_fcn('linprog') && strcmp(model, 'LP') || ...
-                have_fcn('quadprog') && strcmp(model, 'QP') || ...
+        elseif have_fcn('linprog') && strcmp(model, 'LP') && have_fcn('matlab') || ...
+                have_fcn('quadprog_ls') && strcmp(model, 'QP') || ...
                 have_fcn('intlinprog') && strcmp(model, 'MILP')
             alg = 'OT';         %% if not, then Optimization Tbx, if available
                                 %% and applicable
