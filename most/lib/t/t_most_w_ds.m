@@ -16,6 +16,8 @@ if nargin < 1
     quiet = 0;
 end
 
+include_MIPS = 0;   %% set to 1, to attempt even if MIPS is the best solver
+                    %% available (takes a LONG time and currently fails)
 n_tests = 1;
 
 t_begin(n_tests, quiet);
@@ -41,7 +43,7 @@ solnfile = 't_most_w_ds_z';
     CT_MODCOST_X] = idx_ct;
 
 if have_fcn('cplex') || have_fcn('gurobi') || have_fcn('mosek') || ...
-        have_fcn('quadprog')
+        have_fcn('quadprog_ls') || include_MIPS
     mdi = md_init;
 
     mpopt = mpoption('verbose', 0);
@@ -56,17 +58,22 @@ if have_fcn('cplex') || have_fcn('gurobi') || have_fcn('mosek') || ...
         mpopt = mpoption(mpopt, 'gurobi.opts.BarConvTol', 1e-7);        %% 1e-8
         mpopt = mpoption(mpopt, 'gurobi.opts.FeasibilityTol', 1e-5);    %% 1e-6
         mpopt = mpoption(mpopt, 'gurobi.opts.OptimalityTol', 1e-5);     %% 1e-6
-    elseif have_fcn('quadprog')
+    elseif have_fcn('quadprog_ls')
         mpopt = mpoption(mpopt, 'most.solver', 'OT');
         mpopt = mpoption(mpopt, 'quadprog.TolFun', 1e-13);
     elseif have_fcn('mosek')
         mpopt = mpoption(mpopt, 'most.solver', 'MOSEK');
         mpopt = mpoption(mpopt, 'mosek.num_threads', 2);
+    else
+        mpopt = mpoption(mpopt, 'most.solver', 'MIPS');
+        mpopt = mpoption(mpopt, 'mips.max_it', 500);
+        if have_fcn('pardiso')
+            mpopt = mpoption(mpopt, 'mips.linsolver', 'PARDISO');
+        end
     end
     % mpopt = mpoption(mpopt, 'most.solver', 'CLP');
     % mpopt = mpoption(mpopt, 'most.solver', 'IPOPT');
     % mpopt = mpoption(mpopt, 'most.solver', 'MIPS');
-    % mpopt = mpoption(mpopt, 'mips.linsolver', 'PARDISO');
 
     mdi.mpc = loadcase(casefile);
     mdi.InitialPg = mdi.mpc.gen(:,PG);
