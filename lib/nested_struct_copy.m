@@ -157,8 +157,10 @@ for f = 1:length(fields)
     if strcmp(class(cm), 'function_handle')
         %% assign via function handle
         d.(ff) = cm(s.(ff));
-    elseif ~isstruct(s.(ff)) || (ischar(cm) && strcmp(cm, '='))
-        %% non-struct or struct with cm == '=', assign directly
+    elseif ~isstruct(s.(ff)) || (ischar(cm) && strcmp(cm, '=')) || ...
+            (isfield(d, ff) && ~isstruct(d.(ff)))
+        %% non-struct OR struct with cm == '=' OR struct to non-struct copy
+        %% assign directly
         d.(ff) = s.(ff);
     elseif isstruct(s.(ff)) && isempty(cm)
         %% assign via recursive call to nested_struct_copy()

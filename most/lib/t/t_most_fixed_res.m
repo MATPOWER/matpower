@@ -32,6 +32,16 @@ mpopt = mpoption(mpopt, 'most.solver', 'DEFAULT');
 if have_fcn('gurobi')
     mpopt = mpoption(mpopt, 'gurobi.method', 1);    %% dual-simplex
 end
+if have_fcn('mosek')
+    mpopt = mpoption(mpopt, 'mosek.lp_alg', 4);     %% dual-simplex
+end
+if have_fcn('linprog')
+    if have_fcn('linprog_ds')
+        mpopt = mpoption(mpopt, 'linprog.Algorithm', 'dual-simplex');
+    else
+        mpopt = mpoption(mpopt, 'linprog.Algorithm', 'simplex');
+    end
+end
 % mpopt = mpoption(mpopt, 'verbose', 2);
 
 %% define named indices into data matrices
@@ -169,7 +179,7 @@ for tt = 1:nt
     t_is(mdo.flow(tt,1,1).mpc.reserves.prc, r(tt).reserves.prc, 5, sprintf('(t=%d) : %s', tt, t));
     
     t = 'totalcost';
-    t_is(mdo.flow(tt,1,1).mpc.reserves.totalcost, r(tt).reserves.totalcost, 5, sprintf('(t=%d) : %s', tt, t));
+    t_is(mdo.flow(tt,1,1).mpc.reserves.totalcost, r(tt).reserves.totalcost, 4, sprintf('(t=%d) : %s', tt, t));
     
     t = 'mu.l';
     t_is(mdo.flow(tt,1,1).mpc.reserves.mu.l, r(tt).reserves.mu.l, 5, sprintf('(t=%d) : %s', tt, t));

@@ -27,8 +27,8 @@ fudging = struct( ...       %% paramters for fudging reserve contract for sopf2
                             %% with fudge equal to this limit
 
 %% options
-algs.dc     = {'DEFAULT'};  %% opf.dc.solver sequence to try for c3sopf (DC run)
-algs.ac     = {'DEFAULT'};  %% opf.ac.solver sequence to try for c3sopf (AC run)
+algs.dc     = {'MIPS'}; %% opf.dc.solver sequence to try for c3sopf (DC run)
+algs.ac     = {'MIPS'}; %% opf.ac.solver sequence to try for c3sopf (AC run)
 mpopt = mpoption('verbose', 0, 'out.all', 0);
 mpopt = mpoption(mpopt, 'opf.violation', 5e-7, 'mips.comptol', 5e-8);
 mpopt = mpoption(mpopt, 'sopf.force_Pc_eq_P0', 0);  %% don't constrain contracted == base case dispatch
@@ -88,8 +88,8 @@ gbus = mpc.gen(:, GEN_BUS);
 %%-----  get c3sopf results  -----
 rdc = c3sopf_retry(algs.dc, mpc, xgd_table.data, contab, mpoptdc);
 % rac = c3sopf_retry(algs.ac, mpc, xgd_table.data, contab, mpoptac);
-% save t_mpsopf3_soln rdc rac -v6
-% s = load('t_mpsopf3_soln');
+% save t_most3_soln rdc rac -v6
+% s = load('t_most3_soln');
 s.rdc = rdc;
 % s.rac = rac;
 
@@ -197,7 +197,7 @@ end
 % end
 
 %%-----  do AC run (most)  -----
-%mpsopf;
+%mostac;
 
 
 %% turn warnings back on

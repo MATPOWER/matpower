@@ -329,6 +329,12 @@ mdi.idx.nyds = nyds;
     CT_LOAD_DIS_P, CT_TGENCOST, CT_TAREAGENCOST, CT_MODCOST_F, ...
     CT_MODCOST_X] = idx_ct;
 
+%% check that bus numbers are equal to indices to bus (one set of bus numbers)
+nb  = size(mdi.mpc.bus, 1);
+if any(mdi.mpc.bus(:, BUS_I) ~= (1:nb)')
+    error('most: buses must be numbered consecutively in bus matrix; use ext2int() to convert to internal ordering')
+end
+
 % Make data tables with full # of cols and add also pseudo OPF results to
 % be able to run printpf on them
 mdi.mpc.bus(:, MU_VMIN) = 0;
@@ -555,7 +561,7 @@ if mpopt.most.build_model
         if mdi.DCMODEL
           iref = find(mdi.flow(t,j,k).mpc.bus(:,BUS_TYPE) == REF);
           if verbose && length(iref) > 1
-            errstr = ['\nmpsopfl: Warning: Multiple reference buses.\n', ...
+            errstr = ['\nmost: Warning: Multiple reference buses.\n', ...
               '           For a system with islands, a reference bus in each island\n', ...
               '           may help convergence, but in a fully connected system such\n', ...
               '           a situation is probably not reasonable.\n\n' ];

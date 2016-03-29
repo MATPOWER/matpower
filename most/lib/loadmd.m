@@ -17,6 +17,8 @@ function md = loadmd(mpci, transmati, xgdi, storagei, contabi, profilesi, trajda
 %   Inputs:
 %       MPC:       a standard MATPOWER case struct, optionally with
 %                  additional fields such as 'genfuel' and 'i<type>'
+%                  NOTE: Bus numbers must be consecutive beginning at 1
+%                        (i.e. internal ordering).
 %       TRANSMAT:  (optional) NT dimensional cell array of matrices, where
 %                  TRANSMAT{t} is an NJ(t) x NJ(t-1) matrix containing the
 %                  transition probabilities from period t-1 to period t. The
@@ -284,6 +286,12 @@ end
 
 % (C.4) Look for empty input data and assign well-formatted default data
     % which should be assigned in case the corresponding variable is empty.
+
+% (C.4.0) mpc
+%% check that bus numbers are equal to indices to bus (one set of bus numbers)
+if any(mpc.bus(:, BUS_I) ~= (1:nb)')
+    error('loadmd: buses must be numbered consecutively in MPC.bus matrix; use ext2int() to convert to internal ordering')
+end
 
 % (C.4.1) transmat
     % handled previously so dimensions could be set in (C.1)

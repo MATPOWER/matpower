@@ -32,6 +32,13 @@ algs.ac     = {'DEFAULT'};  %% opf.ac.solver sequence to try for c3sopf (AC run)
 mpopt = mpoption('verbose', 0, 'out.all', 0);
 mpopt = mpoption(mpopt, 'opf.violation', 5e-7, 'mips.comptol', 5e-8);
 mpopt = mpoption(mpopt, 'sopf.force_Pc_eq_P0', 0);  %% don't constrain contracted == base case dispatch
+if have_fcn('linprog')
+    if have_fcn('linprog_ds')
+        mpopt = mpoption(mpopt, 'linprog.Algorithm', 'dual-simplex');
+    else
+        mpopt = mpoption(mpopt, 'linprog.Algorithm', 'simplex');
+    end
+end
 mpoptac = mpoption(mpopt, 'model', 'AC');
 mpoptdc = mpoption(mpopt, 'model', 'DC');
 mpopt = mpoption(mpopt, 'most.solver', algs.dc{1});
@@ -133,8 +140,8 @@ gbus = mpc.gen(:, GEN_BUS);
 %%-----  get c3sopf results  -----
 rdc = c3sopf_retry(algs.dc, mpc, xgd_table.data, contab, mpoptdc);
 % rac = c3sopf_retry(algs.ac, mpc, xgd_table.data, contab, mpoptac);
-% save t_mpsopf2_soln rdc rac -v6
-% s = load('t_mpsopf2_soln');
+% save t_most2_soln rdc rac -v6
+% s = load('t_most2_soln');
 s.rdc = rdc;
 % s.rac = rac;
 
@@ -212,7 +219,7 @@ t = 'sum_muPmax';
 t_is(sum_muPmax, s.rdc.energy.sum_muPmax, 1, t);
 
 t = 'sum_muPmin';
-t_is(sum_muPmin, s.rdc.energy.sum_muPmin, 1, t);
+t_is(sum_muPmin, s.rdc.energy.sum_muPmin, 0.9, t);
 
 t = 'Rpmax_pos';
 Rpmax_pos = (r.QP.lambda.upper(vv.i1.Rpp(1):vv.iN.Rpp(1)) - r.QP.lambda.lower(vv.i1.Rpp(1):vv.iN.Rpp(1))) / mpc.baseMVA;
@@ -239,7 +246,7 @@ t_is(Rpmax_neg, s.rdc.reserve.mu.Rpmax_neg, 6, t);
 % end
 
 %%-----  do AC run (most)  -----
-%mpsopf;
+%mostac;
 
 
 %% turn warnings back on

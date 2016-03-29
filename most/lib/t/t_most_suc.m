@@ -1,5 +1,10 @@
-function t_most_suc(quiet)
+function t_most_suc(quiet, create_plots, create_pdfs, savepath)
 %T_MOST_SUC  Tests of stochastic unit commitment optimizations.
+%
+%   T_MOST_SUC(QUIET, CREATE_PLOTS, CREATE_PDFS, SAVEPATH)
+%   Can generate summary plots and save them as PDFs in a directory of
+%   your choice.
+%   E.g. t_most_suc(0, 1, 1, '~/Downloads/suc_plots')
 
 %   MOST
 %   Copyright (c) 2015-2016 by Power System Engineering Research Center (PSERC)
@@ -11,12 +16,31 @@ function t_most_suc(quiet)
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-if nargin < 1
-    quiet = 0;
+if nargin < 4
+    savepath = '.';             %% save in current working directory by default
+    if nargin < 3
+        create_pdfs = 0;        %% do NOT save plots to PDF files
+        if nargin < 2
+            create_plots = 0;   %% do NOT create summary plots of results
+            if nargin < 1
+                quiet = 0;      %% verbose by default
+            end
+        end
+    end
+end
+if create_plots
+    if create_pdfs
+        fname = 'suc-ex';
+    else
+        fname = '';
+    end
+    pp = 0;     %% plot counter
 end
 
 solvers = {'CPLEX', 'GLPK', 'GUROBI', 'MOSEK', 'OT'};
 fcn = {'cplex', 'glpk', 'gurobi', 'mosek', 'intlinprog'};
+% solvers = {'CPLEX'};
+% fcn = {'cplex'};
 % solvers = {'OT'};
 % fcn = {'intlinprog'};
 % solvers = {'GUROBI'};
@@ -101,12 +125,15 @@ if have_fcn('intlinprog')
     %mpopt = mpoption(mpopt, 'linprog.Algorithm', 'active-set');
     %mpopt = mpoption(mpopt, 'linprog.Algorithm', 'simplex');
     mpopt = mpoption(mpopt, 'linprog.Algorithm', 'dual-simplex');
-    mpopt = mpoption(mpopt, 'intlinprog.RootLPAlgorithm', 'primal-simplex');
-    % mpopt = mpoption(mpopt, 'intlinprog.RootLPAlgorithm', 'dual-simplex');
+    %mpopt = mpoption(mpopt, 'intlinprog.RootLPAlgorithm', 'primal-simplex');
+    mpopt = mpoption(mpopt, 'intlinprog.RootLPAlgorithm', 'dual-simplex');
     mpopt = mpoption(mpopt, 'intlinprog.TolCon', 1e-9);
     mpopt = mpoption(mpopt, 'intlinprog.TolGapAbs', 0);
     mpopt = mpoption(mpopt, 'intlinprog.TolGapRel', 0);
     mpopt = mpoption(mpopt, 'intlinprog.TolInteger', 1e-6);
+    %% next line is to work around a bug in intlinprog
+    % (Technical Support Case #01841662)
+    mpopt = mpoption(mpopt, 'intlinprog.LPPreprocess', 'none');
 end
 if ~verbose
     mpopt = mpoption(mpopt, 'out.all', 0);
@@ -133,18 +160,17 @@ end
 %% load base case file
 mpc = loadcase(casefile);
 
-
-profiles = getprofiles('ex_load_profile');
-nt = size(profiles.values, 1);
-
 nb = size(mpc.bus, 1);
 nl = size(mpc.branch, 1);
 ng = size(mpc.gen, 1);
 
-xgd = loadxgendata('ex_xgd', mpc);
-[iwind, mpc, xgd] = addwind('ex_wind', mpc, xgd);
+xgd = loadxgendata('ex_xgd_uc', mpc);
+[iwind, mpc, xgd] = addwind('ex_wind_uc', mpc, xgd);
+profiles_d = getprofiles('ex_wind_profile_d', iwind);
+profiles_d = getprofiles('ex_load_profile', profiles_d);
 profiles_s = getprofiles('ex_wind_profile', iwind);
 profiles_s = getprofiles('ex_load_profile', profiles_s);
+nt = size(profiles_d(1).values, 1);
 
 mpc0 = mpc;
 xgd0 = xgd;
@@ -161,7 +187,7 @@ for s = 1:length(solvers)
         xgd = xgd0;
 
         t = sprintf('%s : deterministic : ', solvers{s});
-        mdi = loadmd(mpc, nt, xgd, [], [], profiles);
+        mdi = loadmd(mpc, nt, xgd, [], [], profiles_d);
         mdo = most(mdi, mpopt);
         ms = most_summary(mdo);
         t_ok(mdo.QP.exitflag > 0, [t 'success']);
@@ -175,13 +201,17 @@ for s = 1:length(solvers)
         t_is(ms.lamP, ex.lamP, 8, [t 'lamP']);
         t_is(ms.muF, ex.muF, 8, [t 'muF']);
         % determ = most_summary(mdo);
+        if s == 1 && create_plots
+            pp = pp + 1;
+            plot_case('Base : Deterministic', mdo, ms, 500, 150, savepath, pp, fname);
+        end
         % keyboard;
 
         t = sprintf('%s : individual trajectories : ', solvers{s});
         transmat_s = cell(1, nt);
         I = speye(3);
         [transmat_s{:}] = deal(I);
-        transmat_s{1} = [0.2; 0.6; 0.2];
+        transmat_s{1} = [ 0.158655253931457; 0.682689492137086; 0.158655253931457 ];
         mdi = loadmd(mpc, transmat_s, xgd, [], [], profiles_s);
         mdi = filter_ramp_transitions(mdi, 0.1);
         mdo = most(mdi, mpopt);
@@ -190,13 +220,17 @@ for s = 1:length(solvers)
         ex = soln.transprob1;
         t_is(ms.f, ex.f, 5, [t 'f']);
         t_is(ms.Pg, ex.Pg, 6, [t 'Pg']);
-        t_is(ms.Rup, ex.Rup, 8, [t 'Rup']);
-        t_is(ms.Rdn, ex.Rdn, 8, [t 'Rdn']);
-        t_is(ms.Pf, ex.Pf, 8, [t 'Pf']);
+        t_is(ms.Rup, ex.Rup, 6, [t 'Rup']);
+        t_is(ms.Rdn, ex.Rdn, 6, [t 'Rdn']);
+        t_is(ms.Pf, ex.Pf, 6, [t 'Pf']);
         t_is(ms.u, ex.u, 8, [t 'u']);
         % t_is(ms.lamP, ex.lamP, 5, [t 'lamP']);
         % t_is(ms.muF, ex.muF, 5, [t 'muF']);
         % transprob1 = most_summary(mdo);
+        if s == 1 && create_plots
+            pp = pp + 1;
+            plot_case('Individual Trajectories', mdo, ms, 500, 150, savepath, pp, fname);
+        end
         % keyboard;
 
         t = sprintf('%s : full transition probabilities : ', solvers{s});
@@ -221,6 +255,10 @@ for s = 1:length(solvers)
         % t_is(ms.lamP, ex.lamP, 5, [t 'lamP']);
         % t_is(ms.muF, ex.muF, 5, [t 'muF']);
         % transprobfull = most_summary(mdo);
+        if s == 1 && create_plots
+            pp = pp + 1;
+            plot_case('Full Transition Probabilities', mdo, ms, 500, 150, savepath, pp, fname);
+        end
         % keyboard;
 
         t = sprintf('%s : full transition probabilities + cont : ', solvers{s});
@@ -239,6 +277,10 @@ for s = 1:length(solvers)
         % t_is(ms.lamP, ex.lamP, 5, [t 'lamP']);
         % t_is(ms.muF, ex.muF, 5, [t 'muF']);
         % transprobcont = most_summary(mdo);
+        if s == 1 && create_plots
+            pp = pp + 1;
+            plot_case('+ Contingencies', mdo, ms, 500, 150, savepath, pp, fname);
+        end
         % keyboard;
 
         t = sprintf('%s : + storage : ', solvers{s});
@@ -253,13 +295,17 @@ for s = 1:length(solvers)
         ex = soln.wstorage;
         t_is(ms.f, ex.f, 3, [t 'f']);
         t_is(ms.Pg, ex.Pg, 3, [t 'Pg']);
-        t_is(ms.Rup, ex.Rup, 8, [t 'Rup']);
+        t_is(ms.Rup, ex.Rup, 3, [t 'Rup']);
         t_is(ms.Rdn, ex.Rdn, 8, [t 'Rdn']);
         t_is(ms.Pf, ex.Pf, 3, [t 'Pf']);
         t_is(ms.u, ex.u, 8, [t 'u']);
         % t_is(ms.lamP, ex.lamP, 5, [t 'lamP']);
         % t_is(ms.muF, ex.muF, 5, [t 'muF']);
         % wstorage = most_summary(mdo);
+        if s == 1 && create_plots
+            pp = pp + 1;
+            plot_case('+ Storage', mdo, ms, 500, 150, savepath, pp, fname);
+        end
         % keyboard;
     end
 end
@@ -271,3 +317,104 @@ end
 t_end;
 
 % save t_most_suc_soln determ transprob1 transprobfull transprobcont wstorage
+% determ.u
+% transprob1.u
+% transprobcont.u
+% transprobfull.u
+% wstorage.u
+
+
+function h = plot_case(label, md, ms, maxq, maxp, mypath, pp, fname)
+
+if nargin < 8
+    fname = '';
+end
+
+%% colors:  blue     red               yellow           purple            green
+cc = {[0 0.45 0.74], [0.85 0.33 0.1], [0.93 0.69 0.13], [0.49 0.18 0.56], [0.47 0.67 0.19]};
+
+ig = (1:3)';
+id = 4;
+iw = 5;
+is = 6;
+
+subplot(3, 1, 1);
+md.mpc = rmfield(md.mpc, 'genfuel');
+plot_uc(md, [], 'title', label);
+ylabel('Unit Commitment', 'FontSize', 16);
+ah = gca;
+ah.YAxisLocation = 'left';
+
+subplot(3, 1, 2);
+x = (1:ms.nt)';
+Pg = md.results.ExpectedDispatch;
+y1 = Pg(ig, :)';
+if ms.ng == 6
+    y1 = [y1 max(-Pg(is, :), 0)' max(Pg(is, :), 0)'];
+end
+y2 = -sum(Pg([id; iw], :), 1)';
+[ah1, h1, h2] = plotyy(x, y1, x, y2);
+axis(ah1(1), [0.5 12.5 0 maxq]);
+axis(ah1(2), [0.5 12.5 0 maxq]);
+% ah1(1).XLim = [0.5 12.5];
+% ah1(2).XLim = [0.5 12.5];
+% ah1(1).YLim = [0 300];
+% ah1(2).YLim = [0 450];
+ah1(1).YTickMode = 'auto';
+ah1(2).YTickMode = 'auto';
+ah1(1).XTick = 1:12;
+nn = 3;
+for j = 1:3
+    h1(j).LineWidth = 2;
+    h1(j).Color = cc{j};
+end
+if ms.ng == 6
+    h1(4).LineWidth = 2;
+    h1(4).Color = cc{5};
+    h1(4).LineStyle = ':';
+    h1(5).LineWidth = 2;
+    h1(5).Color = cc{5};
+end
+h2.LineWidth = 2;
+h2.Color = cc{4};
+h2.LineStyle = ':';
+ah1(2).YColor = cc{4};
+%title('Generation & Net Load', 'FontSize', 16);
+ylabel(ah1(1), 'Generation, MW', 'FontSize', 16);
+ylabel(ah1(2), 'Net Load, MW', 'FontSize', 16);
+xlabel('Period', 'FontSize', 16);
+set(ah1(1), 'FontSize', 14);
+set(ah1(2), 'FontSize', 14);
+if ms.ng == 6
+    legend('Gen 1', 'Gen 2', 'Gen 3', 'Storage Charge', 'Storage Discharge', 'Location', [0.7 0.6 0 0]);
+else
+    legend('Gen 1', 'Gen 2', 'Gen 3', 'Location', [0.7 0.58 0 0]);
+end
+
+subplot(3, 1, 3);
+if length(size(ms.lamP)) == 4
+    elamP = sum(sum(ms.lamP, 4), 3) ./ (ones(ms.nb,1) * md.StepProb);
+%     elamP = sum(sum(ms.lamP, 4), 3);
+elseif length(size(ms.lamP)) == 3
+    elamP = sum(ms.lamP, 3);
+else
+    elamP = ms.lamP;
+end
+
+y1 = elamP';
+plot(x, y1, 'LineWidth', 2);
+% title('Nodal Price', 'FontSize', 16);
+ylabel('Nodal Price, $/MWh', 'FontSize', 16);
+xlabel('Period', 'FontSize', 16);
+axis([0.5 12.5 0 maxp]);
+ah = gca;
+set(ah, 'FontSize', 14);
+ah.XTick = 1:12;
+legend('Bus 1', 'Bus 2', 'Bus 3', 'Location', [0.7 0.28 0 0]);
+
+if nargin > 7 && ~isempty(fname)
+    h = gcf;
+    set(h, 'PaperSize', [11 8.5]);
+    set(h, 'PaperPosition', [0.25 0.25 10.5 8]);
+    print('-dpdf', fullfile(mypath, sprintf('%s-%d', fname, pp)));
+end

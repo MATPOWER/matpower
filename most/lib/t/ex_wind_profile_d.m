@@ -1,5 +1,5 @@
-function windprofile = ex_wind_profile
-%EX_WIND_PROFILE  Example wind profile data for stochastic unit commitment.
+function windprofile = ex_wind_profile_d
+%EX_WIND_PROFILE_D  Example wind profile data for deterministic unit commitment.
 
 %   MOST
 %   Copyright (c) 2015-2016 by Power System Engineering Research Center (PSERC)
@@ -29,17 +29,19 @@ windprofile = struct( ...
     'col', PMAX, ...
     'chgtype', CT_REL, ...
     'values', [] );
-windprofile.values(:, :, 1) = [
-	0.72	0.80	0.88;
-	0.49	0.65	0.81;
-	0.36	0.60	0.84;
-	0.50	0.82	1.14;
-	0.60	1.00	1.40;
-	0.22	0.70	1.18;
-	0.00	0.50	1.00;
-	0.33	0.85	1.37;
-	0.46	1.00	1.54;
-	0.54	1.10	1.66;
-	0.48	1.06	1.64;
-	0.35	0.95	1.55;
-];
+wp = ex_wind_profile;
+windprofile.values(:, :, 1) = mean(wp.values, 2);
+% windprofile.values(:, :, 1) = [
+% 	0.80;
+% 	0.65;
+% 	0.60;
+% 	0.82;
+% 	1.00;
+% 	0.70;
+% 	0.50;
+% 	0.85;
+% 	1.00;
+% 	1.10;
+% 	1.06;
+% 	0.95;
+% ];

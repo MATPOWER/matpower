@@ -38,6 +38,13 @@ end
 if have_fcn('mosek')
     mpopt = mpoption(mpopt, 'mosek.lp_alg', 4);     %% dual-simplex
 end
+if have_fcn('linprog')
+    if have_fcn('linprog_ds')
+        mpopt = mpoption(mpopt, 'linprog.Algorithm', 'dual-simplex');
+    else
+        mpopt = mpoption(mpopt, 'linprog.Algorithm', 'simplex');
+    end
+end
 mpoptac = mpoption(mpopt, 'model', 'AC');
 mpoptdc = mpoption(mpopt, 'model', 'DC');
 mpopt = mpoption(mpopt, 'most.solver', algs.dc{1});
@@ -139,8 +146,8 @@ gbus = mpc.gen(:, GEN_BUS);
 %%-----  get c3sopf results  -----
 rdc = c3sopf_retry(algs.dc, mpc, xgd_table.data, contab, mpoptdc);
 % rac = c3sopf_retry(algs.ac, mpc, xgd_table.data, contab, mpoptac);
-% save t_mpsopf2_soln rdc rac -v6
-% s = load('t_mpsopf2_soln');
+% save t_most2_soln rdc rac -v6
+% s = load('t_most2_soln');
 s.rdc = rdc;
 % s.rac = rac;
 
@@ -249,7 +256,7 @@ end
 % end
 
 %%-----  do AC run (most)  -----
-%mpsopf;
+%mostac;
 
 
 %% turn warnings back on

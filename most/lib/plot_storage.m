@@ -384,7 +384,7 @@ if opt.saveit || opt.saveall
     else
         pdf_name = sprintf(opt.savename, txt);
     end
-    eval(['print -dpdf ' fullfile(opt.savepath, pdf_name)]);
+    print('-dpdf', fullfile(opt.savepath, pdf_name));
 end
 if nargout
     hh = h;

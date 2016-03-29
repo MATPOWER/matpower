@@ -29,6 +29,13 @@ fudging = struct( ...       %% paramters for fudging reserve contract for sopf2
 %% options
 mpopt = mpoption('verbose', 0, 'out.all', 0);
 mpopt = mpoption(mpopt, 'opf.violation', 5e-7, 'mips.comptol', 5e-8);
+if have_fcn('linprog')
+    if have_fcn('linprog_ds')
+        mpopt = mpoption(mpopt, 'linprog.Algorithm', 'dual-simplex');
+    else
+        mpopt = mpoption(mpopt, 'linprog.Algorithm', 'simplex');
+    end
+end
 mpoptac = mpoption(mpopt, 'model', 'AC');
 mpoptdc = mpoption(mpopt, 'model', 'DC');
 mpopt = mpoption(mpopt, 'most.solver', 'DEFAULT');
@@ -132,8 +139,8 @@ gbus = mpc.gen(:, GEN_BUS);
 %%-----  get OPF results  -----
 rdc = rundcopf(mpc, mpoptdc);
 % rac = runopf(mpc, mpoptac);
-% save t_mpsopf4_soln rdc rac -v6
-% s = load('t_mpsopf4_soln');
+% save t_most4_soln rdc rac -v6
+% s = load('t_most4_soln');
 s.rdc = rdc;
 % s.rac = rac;
 
@@ -214,7 +221,7 @@ end
 % end
 
 %%-----  do AC run (most)  -----
-%mpsopf;
+%mostac;
 
 
 

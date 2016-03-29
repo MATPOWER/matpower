@@ -29,6 +29,6 @@ function contab = ex_contab
 %% contingency table
 % label probty  type        row column      chgtype newvalue
 contab = [
-    1   0.20    CT_TGEN     2   GEN_STATUS  CT_REP  0;      %% gen 2 at bus 1
-    2   0.05    CT_TBRCH    2   BR_STATUS   CT_REP  0;      %% line 1-3
+    1   0.06    CT_TGEN     2   GEN_STATUS  CT_REP  0;      %% gen 2 at bus 1
+    2   0.04    CT_TBRCH    2   BR_STATUS   CT_REP  0;      %% line 1-3
 ];

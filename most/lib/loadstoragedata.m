@@ -7,7 +7,7 @@ function sd = loadstoragedata(sd_table, mpc)
 %
 %   Loads data from a StorageData table struct, or from a M-file or MAT-file
 %   that returns such a struct, and converts it to a StorageData struct.
-%   StorageData contains all parameters required by MPSOPF for storage
+%   StorageData contains all parameters required by MOST for storage
 %   units that is not included in MPC or xGenData.
 %
 %   If the first argument is the name of an M-file the optional second
