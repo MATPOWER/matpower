@@ -37,12 +37,16 @@ muP = gen(:, MU_PMAX) - gen(:, MU_PMIN);
 muQ = gen(:, MU_QMAX) - gen(:, MU_QMIN);
 
 %% add P and Q components of multipliers on upper sloped constraint
-muP(ipqh) = muP(ipqh) - mu_PQh .* Apqhdata(:,1)/baseMVA;
-muQ(ipqh) = muQ(ipqh) - mu_PQh .* Apqhdata(:,2)/baseMVA;
+if ~isempty(ipqh)
+    muP(ipqh) = muP(ipqh) - mu_PQh .* Apqhdata(:,1)/baseMVA;
+    muQ(ipqh) = muQ(ipqh) - mu_PQh .* Apqhdata(:,2)/baseMVA;
+end
 
 %% add P and Q components of multipliers on lower sloped constraint
-muP(ipql) = muP(ipql) - mu_PQl .* Apqldata(:,1)/baseMVA;
-muQ(ipql) = muQ(ipql) - mu_PQl .* Apqldata(:,2)/baseMVA;
+if ~isempty(ipql)
+    muP(ipql) = muP(ipql) - mu_PQl .* Apqldata(:,1)/baseMVA;
+    muQ(ipql) = muQ(ipql) - mu_PQl .* Apqldata(:,2)/baseMVA;
+end
 
 %% split back into upper and lower multipliers based on sign
 gen(:, MU_PMAX) = (muP > 0) .*  muP;

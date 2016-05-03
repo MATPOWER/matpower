@@ -16,6 +16,12 @@ For change history for MOST, see most/docs/CHANGES.
 Changes since 5.1
 -----------------
 
+5/3/16
+    - Fix fatal bug in update_mupq() affecting cases where QMIN is
+      greater than or equal to QC1MIN and QC2MIN (or QMAX is less than
+      or equal to QC1MAX and QC2MAX) for all generators.
+      Thanks Jose Miguel.
+
 3/29/16
     - Add support for quadprog() under GNU Octave.
 
