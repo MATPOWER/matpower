@@ -205,7 +205,7 @@ for s = 1:length(solvers)
         t_is(ms.lamP, ex.lamP, 5, [t 'lamP']);
         t_is(ms.muF, ex.muF, 8, [t 'muF']);
         % ed = most_summary(mdo);
-        if s == 1 && create_plots
+        if create_plots
             pp = pp + 1;
             plot_case('Base : No Network', mdo, ms, 500, 100, savepath, pp, fname);
         end
@@ -229,7 +229,7 @@ for s = 1:length(solvers)
         t_is(ms.lamP, ex.lamP, 5, [t 'lamP']);
         t_is(ms.muF, ex.muF, 8, [t 'muF']);
         % dcopf = most_summary(mdo);
-        if s == 1 && create_plots
+        if create_plots
             pp = pp + 1;
             plot_case('+ DC Network', mdo, ms, 500, 100, savepath, pp, fname);
         end
@@ -260,7 +260,7 @@ for s = 1:length(solvers)
         t_is(ms.lamP, ex.lamP, 8, [t 'lamP']);
         t_is(ms.muF, ex.muF, 8, [t 'muF']);
         % wstart = most_summary(mdo);
-        if s == 1 && create_plots
+        if create_plots
             pp = pp + 1;
             plot_case('+ Startup/Shutdown Costs', mdo, ms, 500, 100, savepath, pp, fname);
         end
@@ -285,7 +285,7 @@ for s = 1:length(solvers)
         t_is(ms.lamP, ex.lamP, 8, [t 'lamP']);
         t_is(ms.muF, ex.muF, 8, [t 'muF']);
         % wminup = most_summary(mdo);
-        if s == 1 && create_plots
+        if create_plots
             pp = pp + 1;
             plot_case('+ Min Up/Down Time Constraints', mdo, ms, 500, 100, savepath, pp, fname);
         end
@@ -310,7 +310,7 @@ for s = 1:length(solvers)
         t_is(ms.lamP, ex.lamP, 8, [t 'lamP']);
         t_is(ms.muF, ex.muF, 8, [t 'muF']);
         % wramp = most_summary(mdo);
-        if s == 1 && create_plots
+        if create_plots
             pp = pp + 1;
             plot_case('+ Ramping Constraints/Ramp Reserve Costs', mdo, ms, 500, 100, savepath, pp, fname);
         end
@@ -335,9 +335,10 @@ for s = 1:length(solvers)
         % t_is(ms.lamP, ex.lamP, 5, [t 'lamP']);
         % t_is(ms.muF, ex.muF, 5, [t 'muF']);
         % wstorage = most_summary(mdo);
-        if s == 1 && create_plots
+        if create_plots
             pp = pp + 1;
             plot_case('+ Storage', mdo, ms, 500, 100, savepath, pp, fname);
+            create_plots = 0;   %% don't do them again
         end
         % keyboard;
     end

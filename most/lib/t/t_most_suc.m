@@ -201,7 +201,7 @@ for s = 1:length(solvers)
         t_is(ms.lamP, ex.lamP, 8, [t 'lamP']);
         t_is(ms.muF, ex.muF, 8, [t 'muF']);
         % determ = most_summary(mdo);
-        if s == 1 && create_plots
+        if create_plots
             pp = pp + 1;
             plot_case('Base : Deterministic', mdo, ms, 500, 150, savepath, pp, fname);
         end
@@ -227,7 +227,7 @@ for s = 1:length(solvers)
         % t_is(ms.lamP, ex.lamP, 5, [t 'lamP']);
         % t_is(ms.muF, ex.muF, 5, [t 'muF']);
         % transprob1 = most_summary(mdo);
-        if s == 1 && create_plots
+        if create_plots
             pp = pp + 1;
             plot_case('Individual Trajectories', mdo, ms, 500, 150, savepath, pp, fname);
         end
@@ -255,7 +255,7 @@ for s = 1:length(solvers)
         % t_is(ms.lamP, ex.lamP, 5, [t 'lamP']);
         % t_is(ms.muF, ex.muF, 5, [t 'muF']);
         % transprobfull = most_summary(mdo);
-        if s == 1 && create_plots
+        if create_plots
             pp = pp + 1;
             plot_case('Full Transition Probabilities', mdo, ms, 500, 150, savepath, pp, fname);
         end
@@ -277,7 +277,7 @@ for s = 1:length(solvers)
         % t_is(ms.lamP, ex.lamP, 5, [t 'lamP']);
         % t_is(ms.muF, ex.muF, 5, [t 'muF']);
         % transprobcont = most_summary(mdo);
-        if s == 1 && create_plots
+        if create_plots
             pp = pp + 1;
             plot_case('+ Contingencies', mdo, ms, 500, 150, savepath, pp, fname);
         end
@@ -302,9 +302,10 @@ for s = 1:length(solvers)
         % t_is(ms.lamP, ex.lamP, 5, [t 'lamP']);
         % t_is(ms.muF, ex.muF, 5, [t 'muF']);
         % wstorage = most_summary(mdo);
-        if s == 1 && create_plots
+        if create_plots
             pp = pp + 1;
             plot_case('+ Storage', mdo, ms, 500, 150, savepath, pp, fname);
+            create_plots = 0;   %% don't do them again
         end
         % keyboard;
     end

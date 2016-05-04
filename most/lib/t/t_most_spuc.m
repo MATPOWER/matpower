@@ -202,7 +202,7 @@ t_is(rr.gen(:, PG), [200; 199; 0; -499; 100], 7, [t 'Pg']);
 t_is(rr.gen(:, GEN_STATUS), [1; 1; 0; 1; 1], 7, [t 'u']);
 % rr.gen(:, GEN_STATUS)
 t_is(rr.bus(:, LAM_P), [30; 30; 30], 7, [t 'lam P']);
-if s == 1 && create_plots
+if create_plots
     Pg(:, j) = mdo.results.ExpectedDispatch;
     Rp(:, j) = 0;
     Rm(:, j) = 0;
@@ -247,7 +247,7 @@ t_is(rr.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 % rr.gen(:, GEN_STATUS)
 t_is(rr.bus(:, LAM_P), [40; 40; 40], 7, [t 'lam P']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 6, [t 'mu flow']);
-if s == 1 && create_plots
+if create_plots
     Pg(:, j) = mdo.results.ExpectedDispatch;
     Rp(:, j) = 0;
     Rm(:, j) = 0;
@@ -299,7 +299,7 @@ t_is(rr.bus(:, LAM_P), [32; 32; 32], 7, [t 'lam P']);
 t_is(rr.reserves.R, [0; 61; 89; 0; 0], 7, [t 'R']);
 t_is(rr.reserves.prc, [5; 5; 5; 0; 0], 7, [t 'reserve prc']);
 t_is(rr.reserves.mu.Pmax + rr.gen(:, MU_PMAX), [7; 2; 0; 0; 32], 7, [t 'reserve muPmax']);
-if s == 1 && create_plots
+if create_plots
     Pg(:, j) = mdo.results.ExpectedDispatch;
     Rp(:, j) = rr.reserves.R;
     Rm(:, j) = 0;
@@ -347,7 +347,7 @@ t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 33; 0], 7, [t 'mu flow']);
 t_is(rr.reserves.R, [44; 100; 6; 0; 0], 6, [t 'R']);
 t_is(rr.reserves.prc, [5; 5; 5; 0; 0], 7, [t 'reserve prc']);
 t_is(rr.reserves.mu.Pmax + rr.gen(:, MU_PMAX), [4; 0; 0; 0; 40], 7, [t 'reserve muPmax']);
-if s == 1 && create_plots
+if create_plots
     Pg(:, j) = mdo.results.ExpectedDispatch;
     Rp(:, j) = rr.reserves.R;
     Rm(:, j) = 0;
@@ -430,7 +430,7 @@ t_is(rr.gen(:, PG), [190; 0; 60; -350; 100], 6, [t 'Pg base']);
 t_is(rr.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 % t_is(rr.bus(:, LAM_P), [20; 20; 20], 7, [t 'lam P base']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 6, [t 'mu flow base']);
-if s == 1 && create_plots
+if create_plots
     lamP(:, j) = rr.bus(:, LAM_P);
     muF(:, j)  = rr.branch(:, MU_SF) + rr.branch(:, MU_ST);
 end
@@ -445,7 +445,7 @@ t_is(rr.gen(:, PG), [190; 0; 60; -350; 100], 5, [t 'Pg 1']);
 t_is(rr.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 t_is(rr1.bus(:, LAM_P) + rr.bus(:, LAM_P), [25; 25; 25], 7, [t 'lam P base + lam P 1']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 7, [t 'mu flow 1']);
-if s == 1 && create_plots
+if create_plots
     lamP(:, j) = lamP(:, j) + rr.bus(:, LAM_P);
     muF(:, j)  = muF(:, j) + rr.branch(:, MU_SF) + rr.branch(:, MU_ST);
 end
@@ -459,7 +459,7 @@ t_is(rr.gen(:, PG), [190; 0; 60; -300; 50], 5, [t 'Pg 2']);
 t_is(rr.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 t_is(rr.bus(:, LAM_P), [0; 0; 40], 7, [t 'lam P 2']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 40], 7, [t 'mu flow 2']);
-if s == 1 && create_plots
+if create_plots
     Pg(:, j) = mdo.results.ExpectedDispatch;
     Rp(:, j) = mdo.results.Rpp + mdo.results.Pc - mdo.results.ExpectedDispatch;
     Rm(:, j) = mdo.results.Rpm - mdo.results.Pc + mdo.results.ExpectedDispatch;
@@ -525,7 +525,7 @@ t_is(rr.gen(:, PG), [200; 150; 0; -350; 0], 7, [t 'Pg 1']);
 t_is(rr.gen(:, GEN_STATUS), [1; 1; 0; 1; 1], 7, [t 'u']);
 t_is(rr.bus(:, LAM_P), [4.7596576; 4.7596576; 4.7596576], 7, [t 'lam P 1']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 7, [t 'mu flow 1']);
-if s == 1 && create_plots
+if create_plots
     lamP(:, j) = rr.bus(:, LAM_P);
     muF(:, j)  = rr.branch(:, MU_SF) + rr.branch(:, MU_ST);
 end
@@ -539,7 +539,7 @@ t_is(rr.gen(:, PG), [200; 100; 0; -350; 50], 7, [t 'Pg 2']);
 t_is(rr.gen(:, GEN_STATUS), [1; 1; 0; 1; 1], 7, [t 'u']);
 t_is(rr.bus(:, LAM_P), [20.4806848; 20.4806848; 20.4806848], 6, [t 'lam P 2']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 6, [t 'mu flow 2']);
-if s == 1 && create_plots
+if create_plots
     lamP(:, j) = lamP(:, j) + rr.bus(:, LAM_P);
     muF(:, j)  = muF(:, j) + rr.branch(:, MU_SF) + rr.branch(:, MU_ST);
 end
@@ -553,7 +553,7 @@ t_is(rr.gen(:, PG), [200; 65; 0; -350; 85], 5, [t 'Pg 3']);
 t_is(rr.gen(:, GEN_STATUS), [1; 1; 0; 1; 1], 7, [t 'u']);
 t_is(rr.bus(:, LAM_P), [0; 0; 0], 6, [t 'lam P 3']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 7, [t 'mu flow 3']);
-if s == 1 && create_plots
+if create_plots
     Pg(:, j) = mdo.results.ExpectedDispatch;
     Rp(:, j) = mdo.results.Rpp + mdo.results.Pc - mdo.results.ExpectedDispatch;
     Rm(:, j) = mdo.results.Rpm - mdo.results.Pc + mdo.results.ExpectedDispatch;
@@ -582,7 +582,7 @@ t_is(rr.gen(:, PG), [200; 0; 150; -350; 0], 7, [t 'Pg 1 base']);
 t_is(rr.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 % t_is(rr.bus(:, LAM_P), [7.2115891; 7.2115891; 7.2115891], 6, [t 'lam P 1 base']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 2, [t 'mu flow 1 base']);
-if s == 1 && create_plots
+if create_plots
     lamP(:, j) = rr.bus(:, LAM_P);
     muF(:, j)  = rr.branch(:, MU_SF) + rr.branch(:, MU_ST);
 end
@@ -598,7 +598,7 @@ t_is(rr.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 % t_is(rr.bus(:, LAM_P), [0.3807726; 0.3807726; 0.3807726], 7, [t 'lam P 1 1']);
 t_is(rr1.bus(:, LAM_P) + rr.bus(:, LAM_P), [7.5923617; 7.5923617; 7.5923617], 7, [t 'lam P 1 1']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 6, [t 'mu flow 1 1']);
-if s == 1 && create_plots
+if create_plots
     lamP(:, j) = lamP(:, j) + rr.bus(:, LAM_P);
     muF(:, j)  = muF(:, j) + rr.branch(:, MU_SF) + rr.branch(:, MU_ST);
 end
@@ -612,7 +612,7 @@ t_is(rr.gen(:, PG), [200; 0; 100; -300; 0], 4, [t 'Pg 1 2']);
 t_is(rr.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 t_is(rr.bus(:, LAM_P), [0.2538484; 0.2538484; 6.3462102], 6, [t 'lam P 1 2']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 6.0923618], 6, [t 'mu flow 1 2']);
-if s == 1 && create_plots
+if create_plots
     lamP(:, j) = lamP(:, j) + rr.bus(:, LAM_P);
     muF(:, j)  = muF(:, j) + rr.branch(:, MU_SF) + rr.branch(:, MU_ST);
 end
@@ -626,7 +626,7 @@ t_is(rr.gen(:, PG), [200; 0; 100; -350; 50], 6, [t 'Pg 2 base']);
 t_is(rr.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 t_is(rr.bus(:, LAM_P), [24.5768217; 24.5768217; 24.5768217], 6, [t 'lam P 2 base']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 6, [t 'mu flow 2 base']);
-if s == 1 && create_plots
+if create_plots
     lamP(:, j) = lamP(:, j) + rr.bus(:, LAM_P);
     muF(:, j)  = muF(:, j) + rr.branch(:, MU_SF) + rr.branch(:, MU_ST);
 end
@@ -640,7 +640,7 @@ t_is(rr.gen(:, PG), [200; 0; 100; -350; 50], 6, [t 'Pg 2 1']);
 t_is(rr.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 t_is(rr.bus(:, LAM_P), [1.6384548; 1.6384548; 1.6384548], 6, [t 'lam P 2 1']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 6, [t 'mu flow 2 1']);
-if s == 1 && create_plots
+if create_plots
     lamP(:, j) = lamP(:, j) + rr.bus(:, LAM_P);
     muF(:, j)  = muF(:, j) + rr.branch(:, MU_SF) + rr.branch(:, MU_ST);
 end
@@ -654,7 +654,7 @@ t_is(rr.gen(:, PG), [200; 0; 60; -300; 40], 6, [t 'Pg 2 2']);
 t_is(rr.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 t_is(rr.bus(:, LAM_P), [0; 0; 27.3075797], 5, [t 'lam P 2 2']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 27.3075797], 6, [t 'mu flow 2 2']);
-if s == 1 && create_plots
+if create_plots
     lamP(:, j) = lamP(:, j) + rr.bus(:, LAM_P);
     muF(:, j)  = muF(:, j) + rr.branch(:, MU_SF) + rr.branch(:, MU_ST);
 end
@@ -668,7 +668,7 @@ t_is(rr.gen(:, PG), [200; 0; 60; -350; 90], 6, [t 'Pg 3 base']);
 t_is(rr.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 t_is(rr.bus(:, LAM_P), [0; 0; 0], 6, [t 'lam P 3 base']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 5, [t 'mu flow 3 base']);
-if s == 1 && create_plots
+if create_plots
     lamP(:, j) = lamP(:, j) + rr.bus(:, LAM_P);
     muF(:, j)  = muF(:, j) + rr.branch(:, MU_SF) + rr.branch(:, MU_ST);
 end
@@ -682,7 +682,7 @@ t_is(rr.gen(:, PG), [200; 0; 60; -350; 90], 6, [t 'Pg 3 1']);
 t_is(rr.gen(:, GEN_STATUS), [1; 0; 1; 1; 1], 7, [t 'u']);
 t_is(rr.bus(:, LAM_P), [0; 0; 0], 6, [t 'lam P 3 1']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 6, [t 'mu flow 3 1']);
-if s == 1 && create_plots
+if create_plots
     lamP(:, j) = lamP(:, j) + rr.bus(:, LAM_P);
     muF(:, j)  = muF(:, j) + rr.branch(:, MU_SF) + rr.branch(:, MU_ST);
 end
@@ -699,7 +699,9 @@ t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 6.3462102], 6, [t 'mu flo
 % keyboard;
 end
 
-if s == 1 && create_plots
+if create_plots
+    create_plots = 0;   %% don't do them again
+
     Pg(:, j) = mdo.results.ExpectedDispatch;
     Rp(:, j) = mdo.results.Rpp + mdo.results.Pc - mdo.results.ExpectedDispatch;
     Rm(:, j) = mdo.results.Rpm - mdo.results.Pc + mdo.results.ExpectedDispatch;
