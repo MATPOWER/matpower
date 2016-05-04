@@ -1,20 +1,20 @@
 function hh = plot_uc(md, varargin)
 %PLOT_UC   Plot generator commitment summary
 %
-%   PLOT_UC(MPSD)
-%   PLOT_UC(MPSD, IDX)
-%   PLOT_UC(MPSD, IDX, '<option1_name>', '<option1_value', ...)
-%   PLOT_UC(MPSD, IDX, OPT)
-%   PLOT_UC(MPSD, IDX, OPT, '<option1_name>', '<option1_value', ...)
-%   PLOT_UC(MPSD, MPSD2)
-%   PLOT_UC(MPSD, MPSD2, IDX, )
-%   PLOT_UC(MPSD, MPSD2, IDX, '<option1_name>', '<option1_value', ...)
-%   PLOT_UC(MPSD, MPSD2, IDX, OPT)
-%   PLOT_UC(MPSD, MPSD2, IDX, OPT, '<option1_name>', '<option1_value', ...)
-%   H = PLOT_UC(MPSD, ...)
+%   PLOT_UC(MD)
+%   PLOT_UC(MD, IDX)
+%   PLOT_UC(MD, IDX, '<option1_name>', '<option1_value', ...)
+%   PLOT_UC(MD, IDX, OPT)
+%   PLOT_UC(MD, IDX, OPT, '<option1_name>', '<option1_value', ...)
+%   PLOT_UC(MD, MD2)
+%   PLOT_UC(MD, MD2, IDX, )
+%   PLOT_UC(MD, MD2, IDX, '<option1_name>', '<option1_value', ...)
+%   PLOT_UC(MD, MD2, IDX, OPT)
+%   PLOT_UC(MD, MD2, IDX, OPT, '<option1_name>', '<option1_value', ...)
+%   H = PLOT_UC(MD, ...)
 %
 %   IDX is a vector of gen indices, if empty, it includes all generators in
-%   MPSD. Options can be specified as an OPT struct or as individual pairs of
+%   MD. Options can be specified as an OPT struct or as individual pairs of
 %   'name' and 'value' arguments. The possible options include the following,
 %   where the default is shown in parenthesis:
 %       'title'         ('Unit Commitment - %s') title for the plot, where
@@ -31,8 +31,8 @@ function hh = plot_uc(md, varargin)
 %       'rowlabels'     ({'1', '2', '3', ...) labels for rows (top to bottom)
 %       'saveit'        (false) flag to indicate whether to create PDF file
 %       'saveall'       (false) flag to indicate whether to create a single
-%                       PDF file or, if both MPSD and MPSD2 are supplied, three
-%                       PFF files, one for MPSD, one for MPSD2 and one for both.
+%                       PDF file or, if both MD and MD2 are supplied, three
+%                       PFF files, one for MD, one for MD2 and one for both.
 %       'savepath'      ('') path to directory to save files in
 %       'savename'      ('uc-%s.pdf') name of PDF file
 %                       %s is optional placeholder for storage unit index
@@ -135,7 +135,7 @@ uc1 = md.UC.CommitSched(idx, :);
 if ~isempty(md2)
     uck2 = md2.UC.CommitKey(idx, :);
     if any(any( uck2 ~= md.UC.CommitKey(idx, :) & (uck2 == 2 | uck2 == 0) ))
-        error('plot_uc: CommitKey fields in MPSD and MPSD2 do not match');
+        error('plot_uc: CommitKey fields in MD and MD2 do not match');
     end
     uc2 = md2.UC.CommitSched(idx, :);
 else

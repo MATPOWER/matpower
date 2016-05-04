@@ -1,15 +1,15 @@
-function hh = plot_gen(mpsd, idx, varargin)
+function hh = plot_gen(md, idx, varargin)
 %PLOT_GEN   Plot generator results
 %
-%   PLOT_GEN(MPSD)
-%   PLOT_GEN(MPSD, IDX)
-%   PLOT_GEN(MPSD, IDX, '<option1_name>', '<option1_value', ...)
-%   PLOT_GEN(MPSD, IDX, OPT)
-%   PLOT_GEN(MPSD, IDX, OPT, '<option1_name>', '<option1_value', ...)
-%   H = PLOT_GEN(MPSD, ...)
+%   PLOT_GEN(MD)
+%   PLOT_GEN(MD, IDX)
+%   PLOT_GEN(MD, IDX, '<option1_name>', '<option1_value', ...)
+%   PLOT_GEN(MD, IDX, OPT)
+%   PLOT_GEN(MD, IDX, OPT, '<option1_name>', '<option1_value', ...)
+%   H = PLOT_GEN(MD, ...)
 %
 %   IDX is the gen index. If IDX is a vector, it sums them first,
-%   if empty, it includes all generators in MPSD. Options can be
+%   if empty, it includes all generators in MD. Options can be
 %   specified as an OPT struct or as individual pairs of 'name' and 'value'
 %   arguments. The possible options include the following, where the default
 %   is shown in parenthesis:
@@ -54,10 +54,10 @@ function hh = plot_gen(mpsd, idx, varargin)
 
 %% gather data
 my_xlabel = 'Period';
-nt = mpsd.idx.nt;
-ng = size(mpsd.mpc.gen, 1);
-nj_max = max(mpsd.idx.nj);
-nc_max = max(max(mpsd.idx.nc));
+nt = md.idx.nt;
+ng = size(md.mpc.gen, 1);
+nj_max = max(md.idx.nj);
+nc_max = max(max(md.idx.nc));
 
 %% input args
 if nargin < 2
@@ -70,7 +70,7 @@ nidx = length(idx);
 if nidx > 1 && size(idx, 1) == 1
     idx = idx';     %% convert row vector to column vector
 end
-b = mpsd.mpc.gen(idx, GEN_BUS);
+b = md.mpc.gen(idx, GEN_BUS);
 
 %% default options
 opt = struct( ...
@@ -118,13 +118,13 @@ if opt.saveall && nidx > 1
         error('plot_gen: ''savename'' must include a ''%s'' placeholder when ''saveall'' option is true.');
     end
     for i = 1:nidx
-        plot_gen(mpsd, idx(i), opt, 'saveit', true);
+        plot_gen(md, idx(i), opt, 'saveit', true);
     end
 end
 
 %% initialize data structures to be plotted
-if isfield(mpsd.mpc, 'genfuel')
-    gf = mpsd.mpc.genfuel{idx};
+if isfield(md.mpc, 'genfuel')
+    gf = md.mpc.genfuel{idx};
 else
     gf = '';
 end
@@ -141,38 +141,38 @@ ncPg = NaN(nt, nj_max);
 constantPmax = 1;
 constantPmin = 1;
 for t = 1:nt
-    maxPmax(t) = sum(mpsd.flow(t,1,1).mpc.gen(idx, PMAX), 1);
-    minPmin(t) = sum(mpsd.flow(t,1,1).mpc.gen(idx, PMIN), 1);
-    for j = 1:mpsd.idx.nj(t)
-        if sum(mpsd.flow(t,j,1).mpc.gen(idx, PMAX), 1) ~= maxPmax(t)
+    maxPmax(t) = sum(md.flow(t,1,1).mpc.gen(idx, PMAX), 1);
+    minPmin(t) = sum(md.flow(t,1,1).mpc.gen(idx, PMIN), 1);
+    for j = 1:md.idx.nj(t)
+        if sum(md.flow(t,j,1).mpc.gen(idx, PMAX), 1) ~= maxPmax(t)
             constantPmax = 0;
-            if maxPmax(t) < sum(mpsd.flow(t,j,1).mpc.gen(idx, PMAX), 1);
-                maxPmax(t) = sum(mpsd.flow(t,j,1).mpc.gen(idx, PMAX), 1);
+            if maxPmax(t) < sum(md.flow(t,j,1).mpc.gen(idx, PMAX), 1);
+                maxPmax(t) = sum(md.flow(t,j,1).mpc.gen(idx, PMAX), 1);
             end
         end
-        if sum(mpsd.flow(t,j,1).mpc.gen(idx, PMIN), 1) ~= minPmin(t)
+        if sum(md.flow(t,j,1).mpc.gen(idx, PMIN), 1) ~= minPmin(t)
             constantPmin = 0;
-            if minPmin(t) > sum(mpsd.flow(t,j,1).mpc.gen(idx, PMIN), 1);
-                minPmin(t) = sum(mpsd.flow(t,j,1).mpc.gen(idx, PMIN), 1);
+            if minPmin(t) > sum(md.flow(t,j,1).mpc.gen(idx, PMIN), 1);
+                minPmin(t) = sum(md.flow(t,j,1).mpc.gen(idx, PMIN), 1);
             end
         end
-        Pg(t,j) = sum(mpsd.flow(t,j,1).mpc.gen(idx, PG), 1);
-        for k = 1:mpsd.idx.nc(t,j)
-            Pgk(t,j,k) = sum(mpsd.flow(t,j,k+1).mpc.gen(idx, PG), 1);
+        Pg(t,j) = sum(md.flow(t,j,1).mpc.gen(idx, PG), 1);
+        for k = 1:md.idx.nc(t,j)
+            Pgk(t,j,k) = sum(md.flow(t,j,k+1).mpc.gen(idx, PG), 1);
         end
-        Pmax(t,j) = sum(mpsd.flow(t,j,1).mpc.gen(idx, PMAX), 1);
+        Pmax(t,j) = sum(md.flow(t,j,1).mpc.gen(idx, PMAX), 1);
         if abs(Pmax(t,j) - Pg(t,j)) > opt.tol
             ncPmax(t,j) = Pmax(t,j);
             ncPg(t,j) = Pg(t,j);
         end
     end
 end
-ePg = sum(mpsd.results.ExpectedDispatch(idx, :), 1);
-Pc = sum(mpsd.results.Pc(idx, :), 1)';
-Rpp = sum(mpsd.results.Rpp(idx, :), 1)';
-Rpm = sum(mpsd.results.Rpm(idx, :), 1)';
-Rrp = sum(mpsd.results.Rrp(idx, :), 1)';
-Rrm = sum(mpsd.results.Rrm(idx, :), 1)';
+ePg = sum(md.results.ExpectedDispatch(idx, :), 1);
+Pc = sum(md.results.Pc(idx, :), 1)';
+Rpp = sum(md.results.Rpp(idx, :), 1)';
+Rpm = sum(md.results.Rpm(idx, :), 1)';
+Rrp = sum(md.results.Rrp(idx, :), 1)';
+Rrm = sum(md.results.Rrm(idx, :), 1)';
 Gmax = Pc + Rpp;
 Gmin = Pc - Rpm;
 
@@ -244,8 +244,8 @@ end
 hold off;
 
 if nidx == 1
-    if ~isempty(mpsd.Storage.UnitIdx)
-        s = find(idx == mpsd.Storage.UnitIdx);
+    if ~isempty(md.Storage.UnitIdx)
+        s = find(idx == md.Storage.UnitIdx);
     else
         s = 0;
     end
