@@ -16,6 +16,14 @@ For change history for MOST, see most/docs/CHANGES.
 Changes since 5.1
 -----------------
 
+5/17/16
+    - Add 9 new case files, 8 cases ranging from 1888 to 6515 buses
+      representing the French system, and a 13,659-bus case representing
+      parts of the of the European high voltage transmission network,
+      stemming from the Pan European Grid Advanced Simulation and State
+      Estimation (PEGASE) project. Thanks again to Cedric Josz and
+      colleagues from the French Transmission System Operator.
+
 5/3/16
     - Fix fatal bug in update_mupq() affecting cases where QMIN is
       greater than or equal to QC1MIN and QC2MIN (or QMAX is less than
