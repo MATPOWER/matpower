@@ -23,6 +23,7 @@ Changes since 5.1
       stemming from the Pan European Grid Advanced Simulation and State
       Estimation (PEGASE) project. Thanks again to Cedric Josz and
       colleagues from the French Transmission System Operator.
+    - Add extras/misc/qcqp_opf.m, by Cedric Josz, et. al.
 
 5/3/16
     - Fix fatal bug in update_mupq() affecting cases where QMIN is
