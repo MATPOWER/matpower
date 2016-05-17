@@ -14,8 +14,9 @@ function mpc = case13659pegase
 %
 %   The data stems from the Pan European Grid Advanced Simulation and State
 %   Estimation (PEGASE) project, part of the 7th Framework Program of the
-%   European Union (http://www.fp7-pegase.com/). When publishing results
-%   based on this data, please cite:
+%   European Union (http://www.fp7-pegase.com/).
+%
+%   When publishing results based on this data, please cite:
 %
 %     C. Josz, S. Fliscounakis, J. Maeght, and P. Panciatici, "AC Power Flow
 %     Data in MATPOWER and QCQP Format: iTesla, RTE Snapshots, and PEGASE"

@@ -9,7 +9,7 @@ function mpc = case6468rte
 %   These data should NOT be used for operation
 %   nor planning of the French or European grids.
 %
-%   When publishing results using this data, please cite:
+%   When publishing results based on this data, please cite:
 %
 %     C. Josz, S. Fliscounakis, J. Maeght, and P. Panciatici, "AC Power Flow
 %     Data in MATPOWER and QCQP Format: iTesla, RTE Snapshots, and PEGASE"
