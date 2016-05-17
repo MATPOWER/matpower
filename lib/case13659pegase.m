@@ -17,8 +17,8 @@ function mpc = case13659pegase
 %   European Union (http://www.fp7-pegase.com/). When publishing results
 %   based on this data, please cite:
 %
-%     C. Josz, S. Fliscounakis, J. Maeght, and P. Panciatici, "AC Power
-%     Flow Data in MATPOWER: PEGASE, iTesla, and Rte Snapshots".
+%     C. Josz, S. Fliscounakis, J. Maeght, and P. Panciatici, "AC Power Flow
+%     Data in MATPOWER and QCQP Format: iTesla, RTE Snapshots, and PEGASE"
 %     http://arxiv.org/abs/1603.01533
 %
 %     S. Fliscounakis, P. Panciatici, F. Capitanescu, and L. Wehenkel,
