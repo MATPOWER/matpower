@@ -19,6 +19,8 @@ Changes since 5.1
 5/18/16
     - Add plot_mpc(), contributed by Paul Cuffe, to extras/misc. Plots
       an electrically meaningful drawing of a MATPOWER case.
+    - Add case145.m, IEEE 145 bus, 50 generator dynamic test case from
+      http://www.ee.washington.edu/research/pstca/dyn50/pg_tcadd50.htm.
 
 5/17/16
     - Add 9 new case files, 8 cases ranging from 1888 to 6515 buses
