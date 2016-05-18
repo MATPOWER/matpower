@@ -122,10 +122,8 @@ function [x, f, eflag, output, lambda] = qps_mips(H, c, A, l, u, xmin, xmax, x0,
 %   See also MIPS.
 
 %   MIPS
-%   Copyright (c) 2010-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%
-%   $Id$
 %
 %   This file is part of MIPS.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
