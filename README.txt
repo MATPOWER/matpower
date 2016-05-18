@@ -232,15 +232,17 @@ CHANGES file in the docs directory for all the gory details.
  DOCUMENTATION
 ---------------
 
-There are three primary sources of documentation for MATPOWER.
-    - MATLAB's 'help' command
+There are four primary sources of documentation for MATPOWER.
     - MATPOWER User's Manual
+    - MOST User's Manual
     - MATPOWER Online Function Reference
       (http://www.pserc.cornell.edu/matpower/docs/ref)
+    - MATLAB's 'help' command
 
-The User's Manual is included in the distribution
-(docs/MATPOWER-manual.pdf) or it can be downloaded separately from
-http://www.pserc.cornell.edu/matpower/MATPOWER-manual.pdf. Previous
+The MATPOWER and MOST User's Manuals are included in the distribution
+(docs/MATPOWER-manual.pdf and docs/MOST-manual.pdf) or they can be downloaded
+separately from http://www.pserc.cornell.edu/matpower/MATPOWER-manual.pdf and
+http://www.pserc.cornell.edu/matpower/MOST-manual.pdf. Previous
 versions are available at http://www.pserc.cornell.edu/matpower/docs/.
 
 Each M-file has its own documentation which can be accessed by typing at
