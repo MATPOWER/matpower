@@ -10,7 +10,7 @@ function om = opf_setup(mpc, mpopt)
 %   MATPOWER
 %   Copyright (c) 1996-2015 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
+%   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %
 %   $Id$
 %

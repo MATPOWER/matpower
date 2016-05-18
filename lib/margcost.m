@@ -9,7 +9,7 @@ function marginalcost = margcost(gencost, Pg)
 %   MATPOWER
 %   Copyright (c) 1996-2015 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%   & Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
+%   & Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %
 %   $Id$
 %
