@@ -59,8 +59,6 @@ function mpc = case1354pegase
 %   and Patrick Panciatici
 %   Licensed under the Creative Commons Attribution 4.0 International license,
 %   http://creativecommons.org/licenses/by/4.0/
-%
-%   $Id$
 
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';

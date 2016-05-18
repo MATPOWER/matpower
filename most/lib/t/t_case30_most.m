@@ -9,7 +9,6 @@ function mpc = t_case30_most
 %      done by OPF.
 
 %   MOST
-%   $Id$
 
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';

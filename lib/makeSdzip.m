@@ -10,11 +10,9 @@ function Sd = makeSdzip(baseMVA, bus, mpopt)
 %       Sd = makeSdzip(baseMVA, bus, mpopt);
 
 %   MATPOWER
-%   Copyright (c) 2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2016 by Power System Engineering Research Center (PSERC)
 %   by Shrirang Abhyankar
 %   and Ray Zimmerman, PSERC Cornell
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).

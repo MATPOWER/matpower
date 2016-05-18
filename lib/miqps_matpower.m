@@ -116,10 +116,8 @@ function [x, f, eflag, output, lambda] = miqps_matpower(H, c, A, l, u, xmin, xma
 %       [x, f, s, out, lambda] = miqps_matpower(H, c, A, l, u, xmin, [], x0, vtype, opt);
 
 %   MATPOWER
-%   Copyright (c) 2010-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).

@@ -79,7 +79,6 @@ function mpc = c118swf
 %         case it was defined to be 1.6.
 
 %   MOST
-%   $Id$
 
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';

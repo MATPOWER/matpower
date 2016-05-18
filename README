@@ -12,7 +12,6 @@ Authors:    Ray Zimmerman               <rz10@cornell.edu>
 
             Fri, Mar 20, 2015
 
-$Id$
 Copyright (c) 1997-2015 by Power System Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
 

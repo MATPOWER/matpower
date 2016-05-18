@@ -14,10 +14,8 @@ function rv = userdata(om, name, val)
 %   See also OPT_MODEL.
 
 %   MATPOWER
-%   Copyright (c) 2008-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).

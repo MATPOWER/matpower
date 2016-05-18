@@ -69,7 +69,6 @@ function mpc = case39
 %       for 39-bus system.
 
 %   MATPOWER
-%   $Id$
 
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';

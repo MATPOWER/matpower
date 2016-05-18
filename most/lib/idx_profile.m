@@ -106,8 +106,6 @@ function [PR_REP, PR_REL, PR_ADD, PR_TCONT, PR_TYPES, PR_TMPCD,...
 %   Copyright (c) 2013-2016 by Power System Engineering Research Center (PSERC)
 %   by Daniel Munoz-Alvarez and Ray Zimmerman, PSERC Cornell
 %
-%   $Id$
-%
 %   This file is part of MOST.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.

@@ -22,10 +22,8 @@ function [Ay, by]  = makeAy(baseMVA, ng, gencost, pgbas, qgbas, ybas)
 %       [Ay, by]  = makeAy(baseMVA, ng, gencost, pgbas, qgbas, ybas);
 
 %   MATPOWER
-%   Copyright (c) 1996-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2016 by Power System Engineering Research Center (PSERC)
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).

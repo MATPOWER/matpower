@@ -35,8 +35,6 @@ function [idx, new_mpc, new_xgd] = addwind(wind, mpc, xgd)
 %   Copyright (c) 2013-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
-%   $Id$
-%
 %   This file is part of MOST.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.

@@ -5,8 +5,6 @@ function most_ex4_dcopf_ss(quiet)
 %   Copyright (c) 2015-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
-%   $Id$
-%
 %   This file is part of MOST.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.

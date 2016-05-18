@@ -59,12 +59,10 @@ function [MVAbase, bus, gen, branch, success, et] = ...
 %   See also RUNDCPF.
 
 %   MATPOWER
-%   Copyright (c) 1996-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   Enforcing of generator Q limits inspired by contributions
 %   from Mu Lin, Lincoln University, New Zealand (1/14/05).
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
