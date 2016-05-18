@@ -96,9 +96,9 @@
 %       3   r, resistance (p.u.)
 %       4   x, reactance (p.u.)
 %       5   b, total line charging susceptance (p.u.)
-%       6   rateA, MVA rating A (long term rating)
-%       7   rateB, MVA rating B (short term rating)
-%       8   rateC, MVA rating C (emergency rating)
+%       6   rateA, MVA rating A (long term rating), set to 0 for unlimited
+%       7   rateB, MVA rating B (short term rating), set to 0 for unlimited
+%       8   rateC, MVA rating C (emergency rating), set to 0 for unlimited
 %       9   ratio, transformer off nominal turns ratio ( = 0 for lines )
 %           (taps at 'from' bus, impedance at 'to' bus,
 %            i.e. if r = x = b = 0, then ratio = Vf / Vt)
