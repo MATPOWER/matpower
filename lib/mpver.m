@@ -119,11 +119,7 @@ else
     else
         fprintf('%-22s -- not installed --\n', 'GLPK');
     end
-    if have_fcn('gurobi')
-        gurobiver;
-    else
-        fprintf('%-22s -- not installed --\n', 'Gurobi');
-    end
+    gurobiver;
     if have_fcn('ipopt')
         s = have_fcn('ipopt', 'all');
         if isempty(s.vstr)
