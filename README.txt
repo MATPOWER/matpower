@@ -12,7 +12,6 @@ Authors:    Ray Zimmerman               <rz10@cornell.edu>
 
             Fri, Mar 20, 2015
 
-$Id$
 Copyright (c) 1997-2015 by Power System Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
 
@@ -81,12 +80,14 @@ Installation
 2.  Unzip the downloaded file. Move the resulting matpowerXXX directory
     to the location of your choice. These files should not need to be
     modified, so it is recommended that they be kept separate from your
-    own code. Let $MATPOWER denote the path to this directory.
+    own code. Let <MATPOWER> denote the path to this directory.
 
 3.  Add the following directories to your MATLAB path:
-      $MATPOWER   - core MATPOWER functions
-      $MATPOWER/t - test scripts for MATPOWER
-      (optional) subdirectories of $MATPOWER/extras -
+      <MATPOWER>        - core MATPOWER functions
+      <MATPOWER>/t      - test scripts for MATPOWER
+      <MATPOWER>/most   - core MOST functions
+      <MATPOWER>/most/t - test scripts for MOST
+      (optional) subdirectories of <MATPOWER>/extras -
             additional functionality and contributed code
 
 4.  At the MATLAB prompt, type 'test_matpower' (without the quotes) to
@@ -230,16 +231,18 @@ CHANGES file in the docs directory for all the gory details.
  DOCUMENTATION
 ---------------
 
-There are three primary sources of documentation for MATPOWER.
-    - MATLAB's 'help' command
+There are four primary sources of documentation for MATPOWER.
     - MATPOWER User's Manual
+    - MOST User's Manual
     - MATPOWER Online Function Reference
       (http://www.pserc.cornell.edu/matpower/docs/ref)
+    - MATLAB's 'help' command
 
-The User's Manual is included in the distribution (docs/manual.pdf) or
-it can be downloaded separately from
-http://www.pserc.cornell.edu/matpower/manual.pdf. Previous versions are
-available at http://www.pserc.cornell.edu/matpower/docs/.
+The MATPOWER and MOST User's Manuals are included in the distribution
+(docs/MATPOWER-manual.pdf and docs/MOST-manual.pdf) or they can be downloaded
+separately from http://www.pserc.cornell.edu/matpower/MATPOWER-manual.pdf and
+http://www.pserc.cornell.edu/matpower/MOST-manual.pdf. Previous
+versions are available at http://www.pserc.cornell.edu/matpower/docs/.
 
 Each M-file has its own documentation which can be accessed by typing at
 the MATLAB prompt:
@@ -282,7 +285,13 @@ PUBLICATIONS & PRESENTATIONS
      for Power Systems Research and Education," accepted to IEEE
      Transactions on Power Systems.
         http://www.pserc.cornell.edu/matpower/MATPOWER-paper.pdf
+        http://dx.doi.org/10.1109/TPWRS.2010.2051168
 
+[3]  H. Wang, C. E. Murillo-Sánchez, R. D. Zimmerman, R. J. Thomas,
+     "On Computational Issues of Market-Based Optimal Power Flow,"
+     Power Systems, IEEE Transactions on, vol. 22, no. 3,
+     pp. 1185-1193, Aug. 2007.
+        http://dx.doi.org/10.1109/TPWRS.2007.901301
 
 -------------------
  OPTIONAL PACKAGES
@@ -326,7 +335,7 @@ Terms of Use for details.
                OPTI Toolbox from http://www.i2c2.aut.ac.nz/Wiki/OPTI/,
                and high-performance IPOPT-PARDISO pre-built MEX binaries
                for Mac and Linux from the PARDISO Project at
-               http://www.pardiso-project.org/index.php?p=manual.
+               http://www.pardiso-project.org/.
 
  - KNITRO      A general purpose optimization solver specializing in
                nonlinear problems that MATPOWER can use for AC OPFs.

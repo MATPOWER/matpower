@@ -3,7 +3,6 @@ function [baseMVA, bus, gen, branch] = t_case9_pf
 %   Please see CASEFORMAT for details on the case file format.
 
 %   MATPOWER
-%   $Id$
 
 %% MATPOWER Case Format : Version 1
 

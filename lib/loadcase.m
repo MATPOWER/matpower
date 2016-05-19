@@ -39,11 +39,9 @@ function [baseMVA, bus, gen, branch, areas, gencost, info] = loadcase(casefile)
 %   version 2 format.
 
 %   MATPOWER
-%   Copyright (c) 1996-2015 by Power System Engineering Research Center (PSERC)
-%   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
+%   Copyright (c) 1996-2016 by Power System Engineering Research Center (PSERC)
+%   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %   and Ray Zimmerman, PSERC Cornell
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -95,7 +93,7 @@ if ischar(casefile)
             end
         elseif strcmp(ext,'.m')     %% from M file
             if ~isempty(pathstr)
-                cwd = cd;           %% save working directory to string
+                cwd = pwd;          %% save working directory to string
                 cd(pathstr);        %% cd to specified directory
             end
             try                             %% assume it returns a struct

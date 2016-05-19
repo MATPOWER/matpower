@@ -48,11 +48,9 @@ function [mpc, warnings] = cdf2mpc(cdf_file_name, mpc_name, verbose)
 %   using converted data. This is the case when we converted ieee300.cdf.
 
 %   MATPOWER
-%   Copyright (c) 1996-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2016 by Power System Engineering Research Center (PSERC)
 %   by Deqiang (David) Gan, PSERC Cornell & Zhejiang University
 %   and Ray Zimmerman, PSERC Cornell
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).

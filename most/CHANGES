@@ -1,0 +1,99 @@
+-------------------------
+ Change history for MOST
+-------------------------
+
+Version:    1.0b1
+
+MOST
+Copyright (c) 2015-2016 by Power System Engineering Research Center (PSERC)
+See http://www.pserc.cornell.edu/matpower/ for more info.
+
+
+Changes since 5/21/15
+---------------------
+
+3/1/16
+    - Put checks in loadmd() and most() to require internal bus ordering
+      for mpc, plus explicit notes in documentation.
+
+2/26/16
+    - Rename example files in most/t to start with ex_ instead of eg_.
+
+2/25/16
+    - Add MATPOWER option 'most.fixed_res' with default of -1 (depends
+      on presence of md.FixedReserves) to control md.IncludeFixedReserves.
+    - Move fixed zonal reserve output fields (R, prc, mu.l, m.u, m.Pmax,
+      totalcost) from mdo.FixedReserves(t,j,k) to mdo.flow(t,j,k).mpc.reserves.
+
+2/24/16
+    - Add most_summary() function to summarize and print some summary
+      results. Moved from some of the test files into its own public
+      function. (Still very incomplete).
+    - For consistency, rename MOST data struct variables everywhere to
+      mdi (input) from Istr, md_in, and mdin, and to mdo (output) from
+      Ostr, md_out, and mdout.
+    - Rename md.idx fields for dimensions of dynamic system constraints.
+        nyo  -->  nyds
+        nzd  -->  nzds
+        nyt  -->  ntds
+
+2/22/16
+    - (Tentatively) modify md_init() to initialize only what is needed to
+      run loadmd() and most().
+
+1/26/16
+    - Renamed mops to most, and re-wrote history below accordingly.
+
+12/18/15
+    - Fixed fatal crash triggered by failed solve with verbose option off.
+
+12/9/15
+    - Added ExpectedTerminalStorageMax, ExpectedTerminalStorageMin to
+      md.Storage and StorageData structs. If present ExpectedTerminalStorageAim
+      now simply overwrites both.
+
+10/27/15
+    - Renamed apply_contingency() to apply_changes() and moved from sopf
+      to matpower.
+
+7/17/15
+    - Fixed bug preventing proper printing of exit flag on failed solve.
+
+7/10/15
+    - Added mpopt as optional second argument to most().
+
+7/9/15
+    - Removed all of the old indexing fields from md_init().
+    - Added 'most' to have_fcn().
+    - Added 'most' options to mpoption(), added mpoption_info_most().
+
+7/2/15
+    - Renamed loadmpsd() to loadmd(), mpsd_init() to md_init(), mpsd to md.
+
+7/1/15
+    - Added plot_uc() function for plotting unit commitment schedules.
+
+6/19/15
+    - Moved lots of mpsopf related files to matpower/dist/most temporarily.
+    - Commented out call to oldidx().
+
+6/12/15
+    - In loadmpsd() xgd.CommitKey must be non-empty (in addition to just
+      being present) in order to process unit commitment fields.
+
+6/10/15
+    - Added 'fixed_gencost' field to flow-specific mpc fields to save
+      the fixed cost portion that is removed from gencost, to allow
+      for computation of full flow-specific generator costs from solution.
+
+6/9/15
+    - Modified filter_ramp_transitions() to multiply conditional probability
+      of transition by conditional probability of being in source state
+      (assuming we've made it to that period) before applying cutoff
+      threshold. This will typically cut off more transitions for the same
+      threshold value.
+    - Minor fixes, updates to plot_gen().
+
+5/21/15
+    - Forked development from mpsopfl_fixed_res(), which is currently
+      identical except for function names in error messages.

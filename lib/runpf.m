@@ -59,12 +59,10 @@ function [MVAbase, bus, gen, branch, success, et] = ...
 %   See also RUNDCPF.
 
 %   MATPOWER
-%   Copyright (c) 1996-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   Enforcing of generator Q limits inspired by contributions
 %   from Mu Lin, Lincoln University, New Zealand (1/14/05).
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -216,11 +214,11 @@ else                                %% AC formulation
                 end
                 [V, success, iterations] = gausspf(Ybus, Sbus([]), V0, ref, pv, pq, mpopt);
             otherwise
-                error('Only Newton''s method, fast-decoupled, and Gauss-Seidel power flow algorithms currently implemented.');
+                error('runpf: Only Newton''s method, fast-decoupled, and Gauss-Seidel power flow algorithms currently implemented.');
         end
         
         %% update data matrices with solution
-        [bus, gen, branch] = pfsoln(baseMVA, bus, gen, branch, Ybus, Yf, Yt, V, ref, pv, pq);
+        [bus, gen, branch] = pfsoln(baseMVA, bus, gen, branch, Ybus, Yf, Yt, V, ref, pv, pq, mpopt);
         
         if qlim             %% enforce generator Q limits
             %% find gens with violated Q constraints
@@ -278,7 +276,7 @@ else                                %% AC formulation
                         bus(bi, [PD,QD]) - gen(mx(i), [PG,QG]);
                 end
                 if length(ref) > 1 && any(bus(gen(mx, GEN_BUS), BUS_TYPE) == REF)
-                    error('Sorry, MATPOWER cannot enforce Q limits for slack buses in systems with multiple slacks.');
+                    error('runpf: Sorry, MATPOWER cannot enforce Q limits for slack buses in systems with multiple slacks.');
                 end
                 bus(gen(mx, GEN_BUS), BUS_TYPE) = PQ;   %% & set bus type to PQ
                 

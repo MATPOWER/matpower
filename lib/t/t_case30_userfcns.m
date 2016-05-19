@@ -7,7 +7,6 @@ function mpc = t_case30_userfcns
 %   interface flow limit data in mpc.if at the bottom of the file.
 
 %   MATPOWER
-%   $Id$
 
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';

@@ -13,11 +13,9 @@ function gen = update_mupq(baseMVA, gen, mu_PQh, mu_PQl, data)
 %   See also MAKEAPQ.
 
 %   MATPOWER
-%   Copyright (c) 1996-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
-%
-%   $Id$
+%   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -37,12 +35,16 @@ muP = gen(:, MU_PMAX) - gen(:, MU_PMIN);
 muQ = gen(:, MU_QMAX) - gen(:, MU_QMIN);
 
 %% add P and Q components of multipliers on upper sloped constraint
-muP(ipqh) = muP(ipqh) - mu_PQh .* Apqhdata(:,1)/baseMVA;
-muQ(ipqh) = muQ(ipqh) - mu_PQh .* Apqhdata(:,2)/baseMVA;
+if ~isempty(ipqh)
+    muP(ipqh) = muP(ipqh) - mu_PQh .* Apqhdata(:,1)/baseMVA;
+    muQ(ipqh) = muQ(ipqh) - mu_PQh .* Apqhdata(:,2)/baseMVA;
+end
 
 %% add P and Q components of multipliers on lower sloped constraint
-muP(ipql) = muP(ipql) - mu_PQl .* Apqldata(:,1)/baseMVA;
-muQ(ipql) = muQ(ipql) - mu_PQl .* Apqldata(:,2)/baseMVA;
+if ~isempty(ipql)
+    muP(ipql) = muP(ipql) - mu_PQl .* Apqldata(:,1)/baseMVA;
+    muQ(ipql) = muQ(ipql) - mu_PQl .* Apqldata(:,2)/baseMVA;
+end
 
 %% split back into upper and lower multipliers based on sign
 gen(:, MU_PMAX) = (muP > 0) .*  muP;

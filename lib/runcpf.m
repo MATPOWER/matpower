@@ -71,12 +71,10 @@ function [res, suc] = ...
 %   See also MPOPTION, RUNPF.
 
 %   MATPOWER
-%   Copyright (c) 1996-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell,
 %   Shrirang Abhyankar, Argonne National Laboratory,
 %   and Alexander Flueck, IIT
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -206,19 +204,18 @@ elseif mpopt.verbose > 1
     fprintf('step %3d : lambda = %6.3f, %2d Newton steps\n', 0, 0, iterations);
 end
 
-Sbusb0 = Sbusb(abs(V));
-Sxfr = @(Vm)Sbust(Vm) - Sbusb0;
+Vm = abs(V);
 lamprv = lam;   %% lam at previous step
 Vprv   = V;     %% V at previous step
 continuation = 1;
 cont_steps = 0;
 
 %% input args for callbacks
-Sxf = Sxfr(abs(V));
+Sxfr = Sbust(Vm) - Sbusb(Vm);
 cb_data = struct( ...
     'mpc_base', mpcbase, ...
     'mpc_target', mpctarget, ...
-    'Sxfr', Sxf, ...
+    'Sxfr', Sxfr, ...
     'Ybus', Ybus, ...
     'Yf', Yf, ...
     'Yt', Yt, ...
@@ -234,7 +231,7 @@ for k = 1:length(callbacks)
                             cb_data, cb_state, cb_args);
 end
 
-if norm(Sxf) == 0
+if norm(Sxfr) == 0
     if mpopt.verbose
         fprintf('base case and target case have identical load and generation\n');
     end
@@ -245,10 +242,10 @@ end
 %% tangent predictor z = [dx;dlam]
 z = zeros(2*length(V)+1,1);
 z(end,1) = 1.0;
-while(continuation)
+while continuation
     cont_steps = cont_steps + 1;
     %% prediction for next step
-    [V0, lam0, z] = cpf_predictor(V, lam, Ybus, Sxfr, Sbust, pv, pq, step, z, ...
+    [V0, lam0, z] = cpf_predictor(V, lam, Ybus, Sbusb, Sbust, pv, pq, step, z, ...
         Vprv, lamprv, parameterization);
 
     %% save previous voltage, lambda before updating
@@ -256,8 +253,8 @@ while(continuation)
     lamprv = lam;
 
     %% correction
-    [V, success, i, lam] = cpf_corrector(Ybus, Sbusb0, V0, ref, pv, pq, ...
-                lam0, Sxfr, Sbust, Vprv, lamprv, z, step, parameterization, mpopt_pf);
+    [V, success, i, lam] = cpf_corrector(Ybus, Sbusb, V0, ref, pv, pq, ...
+                lam0, Sbust, Vprv, lamprv, z, step, parameterization, mpopt_pf);
     if ~success
         continuation = 0;
         if mpopt.verbose
@@ -348,13 +345,13 @@ else
 end
 
 %% update bus and gen matrices to reflect the loading and generation
-%% at the noise point
+%% at final lambda
 bust(:,PD) = busb(:,PD) + lam*(bust(:,PD) - busb(:,PD));
 bust(:,QD) = busb(:,QD) + lam*(bust(:,QD) - busb(:,QD));
 gent(:,PG) = genb(:,PG) + lam*(gent(:,PG) - genb(:,PG));
 
 %% update data matrices with solution
-[bust, gent, brancht] = pfsoln(baseMVAt, bust, gent, brancht, Ybus, Yf, Yt, V, ref, pv, pq);
+[bust, gent, brancht] = pfsoln(baseMVAt, bust, gent, brancht, Ybus, Yf, Yt, V, ref, pv, pq, mpopt);
 
 mpctarget.et = etime(clock, t0);
 mpctarget.success = success;

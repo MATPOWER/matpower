@@ -12,8 +12,13 @@ function mpc = case2869pegase
 %
 %   The data stems from the Pan European Grid Advanced Simulation and State
 %   Estimation (PEGASE) project, part of the 7th Framework Program of the
-%   European Union (http://www.fp7-pegase.com/). When publishing results
-%   based on this data, please cite:
+%   European Union (http://www.fp7-pegase.com/).
+%
+%   When publishing results based on this data, please cite:
+%
+%     C. Josz, S. Fliscounakis, J. Maeght, and P. Panciatici, "AC Power Flow
+%     Data in MATPOWER and QCQP Format: iTesla, RTE Snapshots, and PEGASE"
+%     http://arxiv.org/abs/1603.01533
 %
 %     S. Fliscounakis, P. Panciatici, F. Capitanescu, and L. Wehenkel,
 %     "Contingency ranking with respect to overloads in very large power
@@ -40,20 +45,20 @@ function mpc = case2869pegase
 %   (e.g. with negative PMIN) represent aggregations of multiple loads
 %   and generators.
 %
-%   Cédric Josz, Stéphane Fliscounakis, Jean Maeght, Patrick Panciatici
-%   firstname.lastname@rte-france.com
-%   Réseau de Transport d'Electricité (French Transmission System Operator)
-%   Département Expertise Système, Immeuble "Le Colbert"
-%   9 rue de la Porte de Buc, 78000 Versailles Cedex, France
+%   Contacts:
+%     Cédric Josz, Stéphane Fliscounakis, Jean Maeght, Patrick Panciatici
+%     firstname.lastname@rte-france.com
+%     Réseau de Transport d'Electricité (French Transmission System Operator)
+%     Département Expertise Système, Immeuble "Le Colbert"
+%     9 rue de la Porte de Buc, 78000 Versailles Cedex, France
+%
 %   March 18th, 2015
 
 %   MATPOWER
-%   Copyright (c) 2015 by Cédric Josz, Stéphane Fliscounakis, Jean Maeght,
+%   Copyright (c) 2015, 2016 by Cédric Josz, Stéphane Fliscounakis, Jean Maeght,
 %   and Patrick Panciatici
 %   Licensed under the Creative Commons Attribution 4.0 International license,
 %   http://creativecommons.org/licenses/by/4.0/
-%
-%   $Id$
 
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';

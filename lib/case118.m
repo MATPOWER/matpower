@@ -13,7 +13,6 @@ function mpc = case118
 %   08/25/93 UW ARCHIVE           100.0  1961 W IEEE 118 Bus Test Case
 
 %   MATPOWER
-%   $Id$
 
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';

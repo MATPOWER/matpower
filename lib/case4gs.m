@@ -6,7 +6,6 @@ function mpc = case4gs
 %   by John Grainger, Jr., William Stevenson, McGraw-Hill, 1994.
 
 %   MATPOWER
-%   $Id$
 
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';

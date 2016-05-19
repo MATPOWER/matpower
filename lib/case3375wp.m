@@ -13,7 +13,6 @@ function mpc = case3375wp
 %         Jacobian, and has been commented out. (RDZ 4/24/2015)
 
 %   MATPOWER
-%   $Id$
 
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';

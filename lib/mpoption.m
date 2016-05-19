@@ -103,6 +103,8 @@ function opt = mpoption(varargin)
 %                                       callback functions
 %
 %Optimal Power Flow options:
+%   name                    default     description [options]
+%----------------------    ---------   ----------------------------------
 %   opf.ac.solver           'DEFAULT'   AC optimal power flow solver
 %       [ 'DEFAULT' - choose solver based on availability in the following  ]
 %       [             order: 'PDIPM', 'MIPS'                                ]
@@ -174,6 +176,8 @@ function opt = mpoption(varargin)
 %                                       (in fields g, dg, df, d2f) [ 0 or 1 ]
 %
 %Output options:
+%   name                    default     description [options]
+%----------------------    ---------   ----------------------------------
 %   verbose                 1           amount of progress info printed
 %       [   0 - print no progress info                                      ]
 %       [   1 - print a little progress info                                ]
@@ -399,10 +403,8 @@ function opt = mpoption(varargin)
 %                                           for 'pw'
 
 %   MATPOWER
-%   Copyright (c) 2013-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2013-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -1482,7 +1484,7 @@ optt = opt;
 %% globals
 %%-------------------------------------------------------------------
 function v = mpoption_version
-v = 9;      %% version number of MATPOWER options struct
+v = 10;     %% version number of MATPOWER options struct
             %% (must be incremented every time structure is updated)
             %% v1   - first version based on struct (MATPOWER 5.0b1)
             %% v2   - added 'linprog' and 'quadprog' fields
@@ -1499,6 +1501,7 @@ v = 9;      %% version number of MATPOWER options struct
             %%        'mips' options
             %% v9   - added 'exp' for experimental fields, specifically
             %%        'sys_wide_zip_loads.pw', 'sys_wide_zip_loads.qw'
+            %% v10  - added 'most' field
 
 %%-------------------------------------------------------------------
 function db_level = DEBUG
@@ -1508,6 +1511,6 @@ db_level = 0;
 function pkgs = mpoption_optional_pkgs()
 pkgs = {...
     'clp', 'cplex', 'fmincon', 'gurobi', 'glpk', 'intlinprog', 'ipopt', ...
-    'knitro', 'linprog', 'minopf', 'mosek', 'quadprog', 'sdp_pf', 'sopf', ...
-    'tspopf', 'yalmip' ...
+    'knitro', 'linprog', 'minopf', 'most', 'mosek', 'quadprog', 'sdp_pf', ...
+    'sopf', 'tspopf', 'yalmip' ...
 };

@@ -2,10 +2,8 @@ function t_mpoption(quiet)
 %T_MPOPTION  Tests for MPOPTION.
 
 %   MATPOWER
-%   Copyright (c) 2013-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2013-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -15,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-v = 9;
+v = 10;
 
 t_begin(146, quiet);
 

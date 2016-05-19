@@ -93,10 +93,8 @@ function [x, f, eflag, output, lambda] = qps_ot(H, c, A, l, u, xmin, xmax, x0, o
 %   See also QUADPROG, LINPROG.
 
 %   MATPOWER
-%   Copyright (c) 2010-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -186,6 +184,9 @@ if ~isempty(opt) && isfield(opt, 'verbose') && ~isempty(opt.verbose)
 else
     verbose = 0;
 end
+%% Matlab or Octave
+matlab = have_fcn('matlab');
+otver = have_fcn('quadprog', 'vnum');
 
 %% split up linear constraints
 ieq = find( abs(u-l) <= eps );          %% equality
@@ -233,16 +234,24 @@ if have_fcn('optimoptions')     %% Optimization Tbx 6.3 + (R2013a +)
     ot_opt = optimoptions(ot_opt, 'Display', vrb);
 else                            %% need to use optimset()
     if isLP
-        ot_opt = optimset('linprog');
+        if matlab
+            ot_opt = optimset('linprog');
+        else
+            ot_opt = optimset();
+        end
         if ~isempty(opt) && isfield(opt, 'linprog_opt') && ~isempty(opt.linprog_opt)
             ot_opt = nested_struct_copy(ot_opt, opt.linprog_opt);
         end
     else
-        ot_opt = optimset('quadprog');
-        if have_fcn('quadprog_ls')
-            ot_opt = optimset(ot_opt, 'Algorithm', 'interior-point-convex');
+        if matlab
+            ot_opt = optimset('quadprog');
+            if have_fcn('quadprog_ls')
+                ot_opt = optimset(ot_opt, 'Algorithm', 'interior-point-convex');
+            else
+                ot_opt = optimset(ot_opt, 'LargeScale', 'off');
+            end
         else
-            ot_opt = optimset(ot_opt, 'LargeScale', 'off');
+            ot_opt = optimset();
         end
         if ~isempty(opt) && isfield(opt, 'quadprog_opt') && ~isempty(opt.quadprog_opt)
             ot_opt = nested_struct_copy(ot_opt, opt.quadprog_opt);
@@ -253,8 +262,18 @@ end
 
 %% call the solver
 if isLP
-    [x, f, eflag, output, lam] = ...
-        linprog(c, Ai, bi, Ae, be, xmin, xmax, x0, ot_opt);
+    if matlab
+        [x, f, eflag, output, lam] = ...
+            linprog(c, Ai, bi, Ae, be, xmin, xmax, x0, ot_opt);
+    else
+% don't use linprog under Octave (using GLPK directly is recommended)
+%         [x, f] = linprog(c, Ai, bi, Ae, be, xmin, xmax);
+%         eflag = [];
+%         output = [];
+%         lam = [];
+        [x, f, eflag, output, lam] = ...
+            quadprog(sparse(nx,nx), c, Ai, bi, Ae, be, xmin, xmax, x0, ot_opt);
+    end
 else
     [x, f, eflag, output, lam] = ...
         quadprog(H, c, Ai, bi, Ae, be, xmin, xmax, x0, ot_opt);
@@ -277,14 +296,33 @@ else
     ku = find(lam.eqlin > 0);   %% upper bound binding
 
     mu_l = zeros(nA, 1);
-    mu_l(ieq(kl)) = -lam.eqlin(kl);
+%     %% workaround for Octave optim 1.5.0 and earlier, which
+%     %% has opposite sign convention for equality multipliers
+%     if ~matlab && otver <= 1.005
+%         mu_l(ieq(ku)) = lam.eqlin(ku);
+%     else
+        mu_l(ieq(kl)) = -lam.eqlin(kl);
+%     end
     mu_l(igt) = lam.ineqlin(nlt+(1:ngt));
     mu_l(ibx) = lam.ineqlin(nlt+ngt+nbx+(1:nbx));
 
     mu_u = zeros(nA, 1);
-    mu_u(ieq(ku)) = lam.eqlin(ku);
+%     %% workaround for Octave optim 1.5.0 and earlier, which
+%     %% has opposite sign convention for equality multipliers
+%     if ~matlab && otver <= 1.005
+%         mu_u(ieq(kl)) = -lam.eqlin(kl);
+%     else
+        mu_u(ieq(ku)) = lam.eqlin(ku);
+%     end
     mu_u(ilt) = lam.ineqlin(1:nlt);
     mu_u(ibx) = lam.ineqlin(nlt+ngt+(1:nbx));
+
+    %% workaround for Octave optim 1.5.0 and earlier, which
+    %% has opposite sign convention for equality multipliers
+    % if ~matlab && otver <= 1.005
+        %% there are also issues with variable bounds that are
+        %% converted to equalities, and maybe other issues
+    % end
 
     lambda = struct( ...
         'mu_l', mu_l, ...

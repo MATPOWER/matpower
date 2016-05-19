@@ -52,6 +52,7 @@ function rv = have_fcn(tag, rtype)
 %         ktrlink      - KNITRO, version < 9.0.0 (requires Opt Tbx)
 %       matlab      - code is running under Matlab, as opposed to Octave
 %       minopf      - MINOPF, MINOPF, MINOS-based OPF solver
+%       most        - MOST, MATPOWER Optimal Scheduling Tool
 %       mosek       - MOSEK, LP/QP solver (http://www.mosek.com/)
 %       optimoptions - OPTIMOPTIONS, option setting funciton for Optim Tbx 6.3+
 %       pardiso     - PARDISO, Parallel Sparse Direct and Linear Solver
@@ -88,10 +89,8 @@ function rv = have_fcn(tag, rtype)
 %       regexp_split    - support for 'split' argument to regexp()
 
 %   MATPOWER
-%   Copyright (c) 2004-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -182,47 +181,62 @@ else        %% detect availability
                 end
             case {'fmincon', 'fmincon_ipm', 'intlinprog', 'linprog', ...
                         'linprog_ds', 'optimoptions', 'quadprog', 'quadprog_ls'}
-                if license('test', 'optimization_toolbox')
+                matlab = have_fcn('matlab');
+                if ~matlab || (matlab && license('test', 'optimization_toolbox'))
                     v = ver('optim');
+                    if length(v) > 1
+                        warning('The built-in VER command is behaving strangely, probably as a result of installing a 3rd party toolbox in a directory named ''optim'' on your path. Check each element of the output of ver(''optim'') to find the offending toolbox, then move the toolbox to a more appropriately named directory.');
+                        v = v(1);
+                    end
                     vstr = v.Version;
                     rdate = v.Date;
+                    otver = vstr2num(vstr);
                     switch tag
                         case 'fmincon'
-                            TorF = exist('fmincon', 'file') == 2 || ...
-                                exist('fmincon', 'file') == 6;
+                            TorF = (exist('fmincon', 'file') == 2 || ...
+                                exist('fmincon', 'file') == 6) & matlab;
                         case 'intlinprog'
-                            TorF = exist('intlinprog', 'file') == 2;
+                            TorF = exist('intlinprog', 'file') == 2 & matlab;
                         case 'linprog'
-                            TorF = exist('linprog', 'file') == 2;
+                            TorF = exist('linprog', 'file') == 2 & matlab;  %% don't try to use Octave linprog
                         case 'quadprog'
                             TorF = exist('quadprog', 'file') == 2;
+                            %% Octave optim 1.5.0 and earlier, had problems with
+                            %% incorrect lambdas, including opposite sign
+                            %% convention for equality multipliers
+                            if ~matlab && otver <= 1.005
+                                TorF = 0;
+                            end
                         otherwise
-                            otver = vstr2num(vstr);
-                            switch tag
-                                case 'fmincon_ipm'
-                                    if otver >= 4       %% Opt Tbx 4.0+ (R208a+, Matlab 7.6+)
-                                        TorF = 1;
-                                    else
-                                        TorF = 0;
-                                    end
-                                case 'linprog_ds'
-                                    if otver >= 7.001   %% Opt Tbx 7.1+ (R2014b+, Matlab 8.4+)
-                                        TorF = 1;
-                                    else
-                                        TorF = 0;
-                                    end
-                                case 'optimoptions'
-                                    if otver >= 6.003   %% Opt Tbx 6.3+ (R2013a+, Matlab 8.1+)
-                                        TorF = 1;
-                                    else
-                                        TorF = 0;
-                                    end
-                                case 'quadprog_ls'
-                                    if otver >= 6       %% Opt Tbx 6.0+ (R2011a+, Matlab 7.12+)
-                                        TorF = 1;
-                                    else
-                                        TorF = 0;
-                                    end
+                            if matlab
+                                switch tag
+                                    case 'fmincon_ipm'
+                                        if otver >= 4       %% Opt Tbx 4.0+ (R208a+, Matlab 7.6+)
+                                            TorF = 1;
+                                        else
+                                            TorF = 0;
+                                        end
+                                    case 'linprog_ds'
+                                        if otver >= 7.001   %% Opt Tbx 7.1+ (R2014b+, Matlab 8.4+)
+                                            TorF = 1;
+                                        else
+                                            TorF = 0;
+                                        end
+                                    case 'optimoptions'
+                                        if otver >= 6.003   %% Opt Tbx 6.3+ (R2013a+, Matlab 8.1+)
+                                            TorF = 1;
+                                        else
+                                            TorF = 0;
+                                        end
+                                    case 'quadprog_ls'
+                                        if otver >= 6       %% Opt Tbx 6.0+ (R2011a+, Matlab 7.12+)
+                                            TorF = 1;
+                                        else
+                                            TorF = 0;
+                                        end
+                                end
+                            else    %% octave
+                                TorF = 0;
                             end
                     end
                 else
@@ -320,7 +334,7 @@ else        %% detect availability
                     end
                     TorF = exist('fval', 'var') && fval == 1;
                     if TorF
-                        pat = 'KNITRO ([^\s]+)\n';
+                        pat = 'KNITRO ([^\s]+)\n|Knitro ([^\s]+)\n';
                         [s,e,tE,m,t] = regexp(str, pat);
                         if ~isempty(t)
                             vstr = t{1}{1};
@@ -329,6 +343,10 @@ else        %% detect availability
                 end
             case 'matlab'
                 v = ver('matlab');
+                if length(v) > 1
+                    warning('The built-in VER command is behaving strangely, probably as a result of installing a 3rd party toolbox in a directory named ''matlab'' on your path. Check each element of the output of ver(''matlab'') to find the offending toolbox, then move the toolbox to a more appropriately named directory.');
+                    v = v(1);
+                end
                 if ~isempty(v) && isfield(v, 'Version') && ~isempty(v.Version)
                     TorF = 1;
                     vstr = v.Version;
@@ -338,6 +356,13 @@ else        %% detect availability
                 TorF = exist('minopf', 'file') == 3;
                 if TorF
                     v = minopfver('all');
+                    vstr = v.Version;
+                    rdate = v.Date;
+                end
+            case 'most'
+                TorF = exist('most', 'file') == 2;
+                if TorF
+                    v = mpver('all');
                     vstr = v.Version;
                     rdate = v.Date;
                 end
@@ -398,8 +423,7 @@ else        %% detect availability
                 end
             case {'pdipmopf', 'scpdipmopf', 'tralmopf'}
                 if have_fcn('matlab')
-                    v = ver('Matlab');
-                    vn = vstr2num(v.Version);
+                    vn = have_fcn('matlab', 'vnum');
                     %% requires >= MATLAB 6.5 (R13) (released 20-Jun-2002)
                     %% older versions do not have mxCreateDoubleScalar() function
                     %% (they have mxCreateScalarDouble() instead)

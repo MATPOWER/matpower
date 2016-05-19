@@ -10,7 +10,6 @@ function mpc = case5
 %   Distributed with permission.
 
 %   MATPOWER
-%   $Id$
 
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';
