@@ -1451,7 +1451,7 @@ if mpopt.most.build_model
   % Dynamical system contraints
   if nzds || nyds
     if verbose
-      fprintf('  - Building dynamic system constraints.\n');
+      fprintf('  - Building dynamical system constraints.\n');
     end
     % Compute matrices that give the expected dispatch in time period t
     % given that we make it to that period, for all generators at once,
