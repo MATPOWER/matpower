@@ -364,7 +364,7 @@ t_is(rr.gen(:, PG), [142.15; 0; 307.85; -450], 6, [t 'Pg 1']);
 t_is(rr.bus(:, LAM_P), [5.1942; 5.1942; 5.1942], 7, [t 'lam P 1']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 0], 7, [t 'mu flow 1']);
 rr = r.cont(2);
-t_is(rr.gen(:, PG), [142.15; 27.85; 130; -300], 6, [t 'Pg 2']);
+t_is(rr.gen(:, PG), [142.15; 27.85; 130; -300], 5, [t 'Pg 2']);
 t_is(rr.bus(:, LAM_P), [-0.46; -0.46; 40], 7, [t 'lam P 2']);
 t_is(rr.branch(:, MU_SF) + rr.branch(:, MU_ST), [0; 0; 40.46], 7, [t 'mu flow 2']);
 

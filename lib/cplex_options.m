@@ -64,7 +64,7 @@ function opt = cplex_options(overrides, mpopt)
 %   For details on the available options, see the "Parameters of CPLEX"
 %   section of the CPLEX documentation at:
 %
-%       http://pic.dhe.ibm.com/infocenter/cosinfoc/v12r6/
+%       http://www.ibm.com/support/knowledgecenter/SSSA5P
 %
 %   See also CPLEXLP, CPLEXQP, MPOPTION.
 
