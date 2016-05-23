@@ -51,9 +51,9 @@ function [xfmr, bus, warns, bus_name] = psse_convert_xfmr(warns, trans2, trans3,
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 
 %% compatibility
-use_winding_baseV = 0;  %% If true, will use winding base V for any conversions
+use_winding_baseV = 1;  %% If true, will use winding base V for any conversions
                         %% instead of bus base V if they are different.
-                        %% Turned off by default for compatibility with PSS/E
+                        %% Turn off for compatibility with (possilby buggy PSS/E
                         %% conversion from RAW to IEEE format (as checked by YZ)
 
 %% sizes
