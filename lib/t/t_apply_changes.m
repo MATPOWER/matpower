@@ -648,7 +648,7 @@ t_is(-sum(g.gen(ld, QMAX)), total.disp.qmax, 8, [t 'total disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 %%-----  single load zone, one shift quantity  -----
-load = 25 + total_load(mpc.bus, mpc.gen, 'all');
+load = 25 + total_load(mpc, 'all');
 t = 'all fixed loads (PQ) => total + 25 : ';
 e = mpc;
 g = apply_changes(32, mpc, chgtab);

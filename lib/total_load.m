@@ -1,9 +1,18 @@
 function [Pd, Qd] = total_load(bus, gen, load_zone, opt, mpopt)
 %TOTAL_LOAD Returns vector of total load in each load zone.
-%   PD = TOTAL_LOAD(BUS) returns active power demand for each zone.
+%   PD = TOTAL_LOAD(MPC)
+%   PD = TOTAL_LOAD(MPC, LOAD_ZONE)
+%   PD = TOTAL_LOAD(MPC, LOAD_ZONE, OPT)
+%   PD = TOTAL_LOAD(MPC, LOAD_ZONE, OPT, MPOPT)
+%   PD = TOTAL_LOAD(BUS)
+%   PD = TOTAL_LOAD(BUS, GEN)
+%   PD = TOTAL_LOAD(BUS, GEN, LOAD_ZONE)
+%   PD = TOTAL_LOAD(BUS, GEN, LOAD_ZONE, OPT)
 %   PD = TOTAL_LOAD(BUS, GEN, LOAD_ZONE, OPT, MPOPT)
 %   [PD, QD] = TOTAL_LOAD(...) returns both active and reative power
 %   demand for each zone.
+%
+%   MPC - standard MATPOWER case struct
 %
 %   BUS - standard BUS matrix with nb rows, where the fixed active
 %       and reactive loads are specified in columns PD and QD
@@ -62,7 +71,7 @@ function [Pd, Qd] = total_load(bus, gen, load_zone, opt, mpopt)
 %       load_zone = zeros(nb, 1);
 %       load_zone(10:20) = 1;
 %       opt = struct('type', 'DISPATCHABLE', 'nominal', 1);
-%       Pd = total_load(bus, gen, load_zone, opt)
+%       Pd = total_load(mpc, load_zone, opt)
 %
 %   See also SCALE_LOAD.
 
@@ -81,8 +90,6 @@ function [Pd, Qd] = total_load(bus, gen, load_zone, opt, mpopt)
 [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, ...
     PMAX, PMIN, MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN] = idx_gen;
 
-nb = size(bus, 1);          %% number of buses
-
 %%-----  process inputs  -----
 if nargin < 5
     mpopt = [];
@@ -96,6 +103,16 @@ if nargin < 5
         end
     end
 end
+if isstruct(bus)    %% shift input arguments
+    mpopt = opt;
+    opt = load_zone;
+    load_zone = gen;
+    mpc = bus;
+    bus = mpc.bus;
+    gen = mpc.gen;
+end
+
+nb = size(bus, 1);          %% number of buses
 
 %% default options
 if ischar(opt)      %% convert old WHICH_TYPE string option to struct

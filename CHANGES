@@ -18,6 +18,8 @@ Changes since 5.1
 5/24/16
     - Fix bug in toggle_dclines() that resulted in fatal error when
       used with OPF with reactive power costs. Thanks to Irina Boiarchuk.
+    - Add option to call total_load() with full case struct, instead
+      of separate bus and gen matrices.
 
 5/18/16
     - Add plot_mpc(), contributed by Paul Cuffe, to extras/misc. Plots

@@ -340,7 +340,7 @@ for c = 1:length(kk)
             load = val;
         case CT_ADD                                     %% shift
             opt.scale = 'QUANTITY';
-            old_val = total_load(mpc.bus, mpc.gen, load_zone);
+            old_val = total_load(mpc, load_zone);
             load = old_val + val;
         otherwise
           error('apply_changes: unsupported modification type %d for loads', typ);

@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-n_tests = 128;
+n_tests = 250;
 
 t_begin(n_tests, quiet);
 
@@ -533,6 +533,456 @@ t_is(Pd, [area(3).disp.pnom; area(1).disp.pnom], 12, [t 'Pd']);
 
 t = '[Pd, Qd] = total_load(b, g, ld_zone2, ''DISPATCHABLE'') : ';
 [Pd, Qd] = total_load(mpc.bus, mpc.gen, load_zone, 'DISPATCHABLE');
+t_is(Pd, [area(3).disp.pnom; area(1).disp.pnom], 12, [t 'Pd']);
+t_is(Qd, [area(3).disp.qnom; area(1).disp.qnom], 12, [t 'Qd']);
+
+%%------------------------------------------------------------------
+%% mostly same tests below, but with MPC input
+
+ %%-----  all load  -----
+t = '      Pd = total_load(mpc) : ';
+Pd = total_load(mpc);
+t_is(Pd, [area(1).both.p; area(2).both.p; area(3).both.p], 12, [t 'Pd']);
+
+t = '[Pd, Qd] = total_load(mpc) : ';
+[Pd, Qd] = total_load(mpc);
+t_is(Pd, [area(1).both.p; area(2).both.p; area(3).both.p], 12, [t 'Pd']);
+t_is(Qd, [area(1).both.q; area(2).both.q; area(3).both.q], 12, [t 'Qd']);
+
+t = '      Pd = total_load(mpc, ''all'') : ';
+Pd = total_load(mpc, 'all');
+t_is(Pd, total.both.p, 12, [t 'Pd']);
+
+t = '[Pd, Qd] = total_load(mpc, ''all'') : ';
+[Pd, Qd] = total_load(mpc, 'all');
+t_is(Pd, total.both.p, 12, [t 'Pd']);
+t_is(Qd, total.both.q, 12, [t 'Qd']);
+
+t = '      Pd = total_load(mpc, ''all'', .type = ''BOTH'') : ';
+opt = struct('type', 'BOTH');
+Pd = total_load(mpc, 'all', opt);
+t_is(Pd, total.both.p, 12, [t 'Pd']);
+
+t = '      Pd = total_load(mpc, ''all'', .type = ''BOTH'' .nominal = 1) : ';
+opt = struct('type', 'BOTH', 'nominal', 1);
+Pd = total_load(mpc, 'all', opt);
+t_is(Pd, total.both.pnom, 12, [t 'Pd']);
+
+t = '      Pd = total_load(mpc, ''all'', .type = ''BOTH'' .nominal = 0) : ';
+opt = struct('type', 'BOTH', 'nominal', 0);
+Pd = total_load(mpc, 'all', opt);
+t_is(Pd, total.both.p, 12, [t 'Pd']);
+
+t = '[Pd, Qd] = total_load(mpc, ''all'', .type = ''BOTH'') : ';
+opt = struct('type', 'BOTH');
+[Pd, Qd] = total_load(mpc, 'all', opt);
+t_is(Pd, total.both.p, 12, [t 'Pd']);
+t_is(Qd, total.both.q, 12, [t 'Qd']);
+
+t = '      Pd = total_load(mpc, ''all'', .type = ''FIXED'') : ';
+opt = struct('type', 'FIXED');
+Pd = total_load(mpc, 'all', opt);
+t_is(Pd, total.fixed.p, 12, [t 'Pd']);
+
+t = '[Pd, Qd] = total_load(mpc, ''all'', .type = ''FIXED'') : ';
+opt = struct('type', 'FIXED');
+[Pd, Qd] = total_load(mpc, 'all', opt);
+t_is(Pd, total.fixed.p, 12, [t 'Pd']);
+t_is(Qd, total.fixed.q, 12, [t 'Qd']);
+
+t = '      Pd = total_load(mpc, ''all'', .type = ''DISPATCHABLE'') : ';
+opt = struct('type', 'DISPATCHABLE');
+Pd = total_load(mpc, 'all', opt);
+t_is(Pd, total.disp.p, 12, [t 'Pd']);
+
+t = '      Pd = total_load(mpc, ''all'', .type = ''DISP'' .nominal = 1) : ';
+opt = struct('type', 'DISP', 'nominal', 1);
+Pd = total_load(mpc, 'all', opt);
+t_is(Pd, total.disp.pnom, 12, [t 'Pd']);
+
+t = '      Pd = total_load(mpc, ''all'', .type = ''DISP'' .nominal = 0) : ';
+opt = struct('type', 'DISP', 'nominal', 0);
+Pd = total_load(mpc, 'all', opt);
+t_is(Pd, total.disp.p, 12, [t 'Pd']);
+
+t = '[Pd, Qd] = total_load(mpc, ''all'', .type = ''DISPATCHABLE'') : ';
+opt = struct('type', 'DISPATCHABLE');
+[Pd, Qd] = total_load(mpc, 'all', opt);
+t_is(Pd, total.disp.p, 12, [t 'Pd']);
+t_is(Qd, total.disp.q, 12, [t 'Qd']);
+
+t = '[Pd, Qd] = total_load(mpc, ''all'', .type = ''DISP'' .nominal = 1) : ';
+opt = struct('type', 'DISP', 'nominal', 1);
+[Pd, Qd] = total_load(mpc, 'all', opt);
+t_is(Pd, total.disp.pnom, 12, [t 'Pd']);
+t_is(Qd, total.disp.qnom, 12, [t 'Qd']);
+
+t = '[Pd, Qd] = total_load(mpc, ''all'', .type = ''DISP'' .nominal = 0) : ';
+opt = struct('type', 'DISP', 'nominal', 0);
+[Pd, Qd] = total_load(mpc, 'all', opt);
+t_is(Pd, total.disp.p, 12, [t 'Pd']);
+t_is(Qd, total.disp.q, 12, [t 'Qd']);
+
+t = '      Pd = total_load(mpc, [], .type = ''BOTH'') : ';
+opt = struct('type', 'BOTH');
+Pd = total_load(mpc, [], opt);
+t_is(Pd, [area(1).both.p; area(2).both.p; area(3).both.p], 12, [t 'Pd']);
+
+t = '      Pd = total_load(mpc, [], .type = ''BOTH'' .nominal = 1) : ';
+opt = struct('type', 'BOTH', 'nominal', 1);
+Pd = total_load(mpc, [], opt);
+t_is(Pd, [area(1).both.pnom; area(2).both.pnom; area(3).both.pnom], 12, [t 'Pd']);
+
+t = '      Pd = total_load(mpc, [], .type = ''BOTH'' .nominal = 0) : ';
+opt = struct('type', 'BOTH', 'nominal', 0);
+Pd = total_load(mpc, [], opt);
+t_is(Pd, [area(1).both.p; area(2).both.p; area(3).both.p], 12, [t 'Pd']);
+
+t = '[Pd, Qd] = total_load(mpc, [], .type = ''BOTH'') : ';
+opt = struct('type', 'BOTH');
+[Pd, Qd] = total_load(mpc, [], opt);
+t_is(Pd, [area(1).both.p; area(2).both.p; area(3).both.p], 12, [t 'Pd']);
+t_is(Qd, [area(1).both.q; area(2).both.q; area(3).both.q], 12, [t 'Qd']);
+
+t = '[Pd, Qd] = total_load(mpc, [], .type = ''BOTH'' .nominal = 1) : ';
+opt = struct('type', 'BOTH', 'nominal', 1);
+[Pd, Qd] = total_load(mpc, [], opt);
+t_is(Pd, [area(1).both.pnom; area(2).both.pnom; area(3).both.pnom], 12, [t 'Pd']);
+t_is(Qd, [area(1).both.qnom; area(2).both.qnom; area(3).both.qnom], 12, [t 'Qd']);
+
+t = '[Pd, Qd] = total_load(mpc, [], .type = ''BOTH'' .nominal = 0) : ';
+opt = struct('type', 'BOTH', 'nominal', 0);
+[Pd, Qd] = total_load(mpc, [], opt);
+t_is(Pd, [area(1).both.p; area(2).both.p; area(3).both.p], 12, [t 'Pd']);
+t_is(Qd, [area(1).both.q; area(2).both.q; area(3).both.q], 12, [t 'Qd']);
+
+t = '      Pd = total_load(mpc, [], .type = ''FIXED'') : ';
+opt = struct('type', 'FIXED');
+Pd = total_load(mpc, [], opt);
+t_is(Pd, [area(1).fixed.p; area(2).fixed.p; area(3).fixed.p], 12, [t 'Pd']);
+
+t = '[Pd, Qd] = total_load(mpc, [], .type = ''FIXED'') : ';
+opt = struct('type', 'FIXED');
+[Pd, Qd] = total_load(mpc, [], opt);
+t_is(Pd, [area(1).fixed.p; area(2).fixed.p; area(3).fixed.p], 12, [t 'Pd']);
+t_is(Qd, [area(1).fixed.q; area(2).fixed.q; area(3).fixed.q], 12, [t 'Qd']);
+
+t = '      Pd = total_load(mpc, [], .type = ''DISPATCHABLE'') : ';
+opt = struct('type', 'DISPATCHABLE');
+Pd = total_load(mpc, [], opt);
+t_is(Pd, [area(1).disp.p; area(2).disp.p; area(3).disp.p], 12, [t 'Pd']);
+
+t = '      Pd = total_load(mpc, [], .type = ''DISP'' .nominal = 1) : ';
+opt = struct('type', 'DISP', 'nominal', 1);
+Pd = total_load(mpc, [], opt);
+t_is(Pd, [area(1).disp.pnom; area(2).disp.pnom; area(3).disp.pnom], 12, [t 'Pd']);
+
+t = '      Pd = total_load(mpc, [], .type = ''DISP'' .nominal = 0) : ';
+opt = struct('type', 'DISP', 'nominal', 0);
+Pd = total_load(mpc, [], opt);
+t_is(Pd, [area(1).disp.p; area(2).disp.p; area(3).disp.p], 12, [t 'Pd']);
+
+t = '[Pd, Qd] = total_load(mpc, [], .type = ''DISPATCHABLE'') : ';
+opt = struct('type', 'DISPATCHABLE');
+[Pd, Qd] = total_load(mpc, [], opt);
+t_is(Pd, [area(1).disp.p; area(2).disp.p; area(3).disp.p], 12, [t 'Pd']);
+t_is(Qd, [area(1).disp.q; area(2).disp.q; area(3).disp.q], 12, [t 'Qd']);
+
+t = '[Pd, Qd] = total_load(mpc, [], .type = ''DISP'' .nominal = 1) : ';
+opt = struct('type', 'DISP', 'nominal', 1);
+[Pd, Qd] = total_load(mpc, [], opt);
+t_is(Pd, [area(1).disp.pnom; area(2).disp.pnom; area(3).disp.pnom], 12, [t 'Pd']);
+t_is(Qd, [area(1).disp.qnom; area(2).disp.qnom; area(3).disp.qnom], 12, [t 'Qd']);
+
+t = '[Pd, Qd] = total_load(mpc, [], .type = ''DISP'' .nominal = 0) : ';
+opt = struct('type', 'DISP', 'nominal', 0);
+[Pd, Qd] = total_load(mpc, [], opt);
+t_is(Pd, [area(1).disp.p; area(2).disp.p; area(3).disp.p], 12, [t 'Pd']);
+t_is(Qd, [area(1).disp.q; area(2).disp.q; area(3).disp.q], 12, [t 'Qd']);
+
+%%-----  explicit single load zone  -----
+nb = size(mpc.bus, 1);
+load_zone = zeros(nb, 1);
+k = find(mpc.bus(:, BUS_AREA) == 1);    %% area 1
+load_zone(k) = 1;
+t = '      Pd = total_load(mpc, ld_zone1, .type = ''BOTH'') : ';
+opt = struct('type', 'BOTH');
+Pd = total_load(mpc, load_zone, opt);
+t_is(Pd, area(1).both.p, 12, [t 'Pd']);
+
+t = '      Pd = total_load(mpc, ld_zone1, .type = ''BOTH'' .nominal = 1) : ';
+opt = struct('type', 'BOTH', 'nominal', 1);
+Pd = total_load(mpc, load_zone, opt);
+t_is(Pd, area(1).both.pnom, 12, [t 'Pd']);
+
+t = '      Pd = total_load(mpc, ld_zone1, .type = ''BOTH'' .nominal = 0) : ';
+opt = struct('type', 'BOTH', 'nominal', 0);
+Pd = total_load(mpc, load_zone, opt);
+t_is(Pd, area(1).both.p, 12, [t 'Pd']);
+
+t = '[Pd, Qd] = total_load(mpc, ld_zone1, .type = ''BOTH'') : ';
+opt = struct('type', 'BOTH');
+[Pd, Qd] = total_load(mpc, load_zone, opt);
+t_is(Pd, area(1).both.p, 12, [t 'Pd']);
+t_is(Qd, area(1).both.q, 12, [t 'Qd']);
+
+t = '[Pd, Qd] = total_load(mpc, ld_zone1, .type = ''BOTH'' .nominal = 1) : ';
+opt = struct('type', 'BOTH', 'nominal', 1);
+[Pd, Qd] = total_load(mpc, load_zone, opt);
+t_is(Pd, area(1).both.pnom, 12, [t 'Pd']);
+t_is(Qd, area(1).both.qnom, 12, [t 'Qd']);
+
+t = '[Pd, Qd] = total_load(mpc, ld_zone1, .type = ''BOTH'' .nominal = 0) : ';
+opt = struct('type', 'BOTH', 'nominal', 0);
+[Pd, Qd] = total_load(mpc, load_zone, opt);
+t_is(Pd, area(1).both.p, 12, [t 'Pd']);
+t_is(Qd, area(1).both.q, 12, [t 'Qd']);
+
+t = '      Pd = total_load(mpc, ld_zone1, .type = ''FIXED'') : ';
+opt = struct('type', 'FIXED');
+Pd = total_load(mpc, load_zone, opt);
+t_is(Pd, area(1).fixed.p, 12, [t 'Pd']);
+
+t = '[Pd, Qd] = total_load(mpc, ld_zone1, .type = ''FIXED'') : ';
+opt = struct('type', 'FIXED');
+[Pd, Qd] = total_load(mpc, load_zone, opt);
+t_is(Pd, area(1).fixed.p, 12, [t 'Pd']);
+t_is(Qd, area(1).fixed.q, 12, [t 'Qd']);
+
+t = '      Pd = total_load(mpc, ld_zone1, .type = ''DISPATCHABLE'') : ';
+opt = struct('type', 'DISPATCHABLE');
+Pd = total_load(mpc, load_zone, opt);
+t_is(Pd, area(1).disp.p, 12, [t 'Pd']);
+
+t = '      Pd = total_load(mpc, ld_zone1, .type = ''DISP'' .nominal = 1) : ';
+opt = struct('type', 'DISP', 'nominal', 1);
+Pd = total_load(mpc, load_zone, opt);
+t_is(Pd, area(1).disp.pnom, 12, [t 'Pd']);
+
+t = '      Pd = total_load(mpc, ld_zone1, .type = ''DISP'' .nominal = 0) : ';
+opt = struct('type', 'DISP', 'nominal', 0);
+Pd = total_load(mpc, load_zone, opt);
+t_is(Pd, area(1).disp.p, 12, [t 'Pd']);
+
+t = '[Pd, Qd] = total_load(mpc, ld_zone1, .type = ''DISPATCHABLE'') : ';
+opt = struct('type', 'DISPATCHABLE');
+[Pd, Qd] = total_load(mpc, load_zone, opt);
+t_is(Pd, area(1).disp.p, 12, [t 'Pd']);
+t_is(Qd, area(1).disp.q, 12, [t 'Qd']);
+
+t = '[Pd, Qd] = total_load(mpc, ld_zone1, .type = ''DISP'' .nominal = 1) : ';
+opt = struct('type', 'DISP', 'nominal', 1);
+[Pd, Qd] = total_load(mpc, load_zone, opt);
+t_is(Pd, area(1).disp.pnom, 12, [t 'Pd']);
+t_is(Qd, area(1).disp.qnom, 12, [t 'Qd']);
+
+t = '[Pd, Qd] = total_load(mpc, ld_zone1, .type = ''DISP'' .nominal = 0) : ';
+opt = struct('type', 'DISP', 'nominal', 0);
+[Pd, Qd] = total_load(mpc, load_zone, opt);
+t_is(Pd, area(1).disp.p, 12, [t 'Pd']);
+t_is(Qd, area(1).disp.q, 12, [t 'Qd']);
+
+%%-----  explicit multiple load zone  -----
+load_zone = zeros(nb, 1);
+k = find(mpc.bus(:, BUS_AREA) == 3);    %% area 3
+load_zone(k) = 1;
+k = find(mpc.bus(:, BUS_AREA) == 1);    %% area 1
+load_zone(k) = 2;
+t = '      Pd = total_load(mpc, ld_zone2, .type = ''BOTH'') : ';
+opt = struct('type', 'BOTH');
+Pd = total_load(mpc, load_zone, opt);
+t_is(Pd, [area(3).both.p; area(1).both.p], 12, [t 'Pd']);
+
+t = '      Pd = total_load(mpc, ld_zone2, .type = ''BOTH'' .nominal = 1) : ';
+opt = struct('type', 'BOTH', 'nominal', 1);
+Pd = total_load(mpc, load_zone, opt);
+t_is(Pd, [area(3).both.pnom; area(1).both.pnom], 12, [t 'Pd']);
+
+t = '      Pd = total_load(mpc, ld_zone2, .type = ''BOTH'' .nominal = 0) : ';
+opt = struct('type', 'BOTH', 'nominal', 0);
+Pd = total_load(mpc, load_zone, opt);
+t_is(Pd, [area(3).both.p; area(1).both.p], 12, [t 'Pd']);
+
+t = '[Pd, Qd] = total_load(mpc, ld_zone2, .type = ''BOTH'') : ';
+opt = struct('type', 'BOTH');
+[Pd, Qd] = total_load(mpc, load_zone, opt);
+t_is(Pd, [area(3).both.p; area(1).both.p], 12, [t 'Pd']);
+t_is(Qd, [area(3).both.q; area(1).both.q], 12, [t 'Qd']);
+
+t = '[Pd, Qd] = total_load(mpc, ld_zone2, .type = ''BOTH'' .nominal = 1) : ';
+opt = struct('type', 'BOTH', 'nominal', 1);
+[Pd, Qd] = total_load(mpc, load_zone, opt);
+t_is(Pd, [area(3).both.pnom; area(1).both.pnom], 12, [t 'Pd']);
+t_is(Qd, [area(3).both.qnom; area(1).both.qnom], 12, [t 'Qd']);
+
+t = '[Pd, Qd] = total_load(mpc, ld_zone2, .type = ''BOTH'' .nominal = 0) : ';
+opt = struct('type', 'BOTH', 'nominal', 0);
+[Pd, Qd] = total_load(mpc, load_zone, opt);
+t_is(Pd, [area(3).both.p; area(1).both.p], 12, [t 'Pd']);
+t_is(Qd, [area(3).both.q; area(1).both.q], 12, [t 'Qd']);
+
+t = '      Pd = total_load(mpc, ld_zone2, .type = ''FIXED'') : ';
+opt = struct('type', 'FIXED');
+Pd = total_load(mpc, load_zone, opt);
+t_is(Pd, [area(3).fixed.p; area(1).fixed.p], 12, [t 'Pd']);
+
+t = '[Pd, Qd] = total_load(mpc, ld_zone2, .type = ''FIXED'') : ';
+opt = struct('type', 'FIXED');
+[Pd, Qd] = total_load(mpc, load_zone, opt);
+t_is(Pd, [area(3).fixed.p; area(1).fixed.p], 12, [t 'Pd']);
+t_is(Qd, [area(3).fixed.q; area(1).fixed.q], 12, [t 'Qd']);
+
+t = '      Pd = total_load(mpc, ld_zone2, .type = ''DISPATCHABLE'') : ';
+opt = struct('type', 'DISPATCHABLE');
+Pd = total_load(mpc, load_zone, opt);
+t_is(Pd, [area(3).disp.p; area(1).disp.p], 12, [t 'Pd']);
+
+t = '      Pd = total_load(mpc, ld_zone2, .type = ''DISP'' .nominal = 1) : ';
+opt = struct('type', 'DISP', 'nominal', 1);
+Pd = total_load(mpc, load_zone, opt);
+t_is(Pd, [area(3).disp.pnom; area(1).disp.pnom], 12, [t 'Pd']);
+
+t = '      Pd = total_load(mpc, ld_zone2, .type = ''DISP'' .nominal = 0) : ';
+opt = struct('type', 'DISP', 'nominal', 0);
+Pd = total_load(mpc, load_zone, opt);
+t_is(Pd, [area(3).disp.p; area(1).disp.p], 12, [t 'Pd']);
+
+t = '[Pd, Qd] = total_load(mpc, ld_zone2, .type = ''DISPATCHABLE'') : ';
+opt = struct('type', 'DISPATCHABLE');
+[Pd, Qd] = total_load(mpc, load_zone, opt);
+t_is(Pd, [area(3).disp.p; area(1).disp.p], 12, [t 'Pd']);
+t_is(Qd, [area(3).disp.q; area(1).disp.q], 12, [t 'Qd']);
+
+t = '[Pd, Qd] = total_load(mpc, ld_zone2, .type = ''DISP'' .nominal = 1) : ';
+opt = struct('type', 'DISP', 'nominal', 1);
+[Pd, Qd] = total_load(mpc, load_zone, opt);
+t_is(Pd, [area(3).disp.pnom; area(1).disp.pnom], 12, [t 'Pd']);
+t_is(Qd, [area(3).disp.qnom; area(1).disp.qnom], 12, [t 'Qd']);
+
+t = '[Pd, Qd] = total_load(mpc, ld_zone2, .type = ''DISP'' .nominal = 0) : ';
+opt = struct('type', 'DISP', 'nominal', 0);
+[Pd, Qd] = total_load(mpc, load_zone, opt);
+t_is(Pd, [area(3).disp.p; area(1).disp.p], 12, [t 'Pd']);
+t_is(Qd, [area(3).disp.q; area(1).disp.q], 12, [t 'Qd']);
+
+%%-----  old DEPRECATED string options, below  -----
+%%-----  all load  -----
+t = '      Pd = total_load(mpc, ''all'', ''BOTH'') : ';
+Pd = total_load(mpc, 'all', 'BOTH');
+t_is(Pd, total.both.pnom, 12, [t 'Pd']);
+
+t = '[Pd, Qd] = total_load(mpc, ''all'', ''BOTH'') : ';
+[Pd, Qd] = total_load(mpc, 'all', 'BOTH');
+t_is(Pd, total.both.pnom, 12, [t 'Pd']);
+t_is(Qd, total.both.qnom, 12, [t 'Qd']);
+
+t = '      Pd = total_load(mpc, ''all'', ''FIXED'') : ';
+Pd = total_load(mpc, 'all', 'FIXED');
+t_is(Pd, total.fixed.p, 12, [t 'Pd']);
+
+t = '[Pd, Qd] = total_load(mpc, ''all'', ''FIXED'') : ';
+[Pd, Qd] = total_load(mpc, 'all', 'FIXED');
+t_is(Pd, total.fixed.p, 12, [t 'Pd']);
+t_is(Qd, total.fixed.q, 12, [t 'Qd']);
+
+t = '      Pd = total_load(mpc, ''all'', ''DISPATCHABLE'') : ';
+Pd = total_load(mpc, 'all', 'DISPATCHABLE');
+t_is(Pd, total.disp.pnom, 12, [t 'Pd']);
+
+t = '[Pd, Qd] = total_load(mpc, ''all'', ''DISPATCHABLE'') : ';
+[Pd, Qd] = total_load(mpc, 'all', 'DISPATCHABLE');
+t_is(Pd, total.disp.pnom, 12, [t 'Pd']);
+t_is(Qd, total.disp.qnom, 12, [t 'Qd']);
+
+t = '      Pd = total_load(mpc, [], ''BOTH'') : ';
+Pd = total_load(mpc, [], 'BOTH');
+t_is(Pd, [area(1).both.pnom; area(2).both.pnom; area(3).both.pnom], 12, [t 'Pd']);
+
+t = '[Pd, Qd] = total_load(mpc, [], ''BOTH'') : ';
+[Pd, Qd] = total_load(mpc, [], 'BOTH');
+t_is(Pd, [area(1).both.pnom; area(2).both.pnom; area(3).both.pnom], 12, [t 'Pd']);
+t_is(Qd, [area(1).both.qnom; area(2).both.qnom; area(3).both.qnom], 12, [t 'Qd']);
+
+t = '      Pd = total_load(mpc, [], ''FIXED'') : ';
+Pd = total_load(mpc, [], 'FIXED');
+t_is(Pd, [area(1).fixed.p; area(2).fixed.p; area(3).fixed.p], 12, [t 'Pd']);
+
+t = '[Pd, Qd] = total_load(mpc, [], ''FIXED'') : ';
+[Pd, Qd] = total_load(mpc, [], 'FIXED');
+t_is(Pd, [area(1).fixed.p; area(2).fixed.p; area(3).fixed.p], 12, [t 'Pd']);
+t_is(Qd, [area(1).fixed.q; area(2).fixed.q; area(3).fixed.q], 12, [t 'Qd']);
+
+t = '      Pd = total_load(mpc, [], ''DISPATCHABLE'') : ';
+Pd = total_load(mpc, [], 'DISPATCHABLE');
+t_is(Pd, [area(1).disp.pnom; area(2).disp.pnom; area(3).disp.pnom], 12, [t 'Pd']);
+
+t = '[Pd, Qd] = total_load(mpc, [], ''DISPATCHABLE'') : ';
+[Pd, Qd] = total_load(mpc, [], 'DISPATCHABLE');
+t_is(Pd, [area(1).disp.pnom; area(2).disp.pnom; area(3).disp.pnom], 12, [t 'Pd']);
+t_is(Qd, [area(1).disp.qnom; area(2).disp.qnom; area(3).disp.qnom], 12, [t 'Qd']);
+
+%%-----  explicit single load zone  -----
+nb = size(mpc.bus, 1);
+load_zone = zeros(nb, 1);
+k = find(mpc.bus(:, BUS_AREA) == 1);    %% area 1
+load_zone(k) = 1;
+t = '      Pd = total_load(mpc, ld_zone1, ''BOTH'') : ';
+Pd = total_load(mpc, load_zone, 'BOTH');
+t_is(Pd, area(1).both.pnom, 12, [t 'Pd']);
+
+t = '[Pd, Qd] = total_load(mpc, ld_zone1, ''BOTH'') : ';
+[Pd, Qd] = total_load(mpc, load_zone, 'BOTH');
+t_is(Pd, area(1).both.pnom, 12, [t 'Pd']);
+t_is(Qd, area(1).both.qnom, 12, [t 'Qd']);
+
+t = '      Pd = total_load(mpc, ld_zone1, ''FIXED'') : ';
+Pd = total_load(mpc, load_zone, 'FIXED');
+t_is(Pd, area(1).fixed.p, 12, [t 'Pd']);
+
+t = '[Pd, Qd] = total_load(mpc, ld_zone1, ''FIXED'') : ';
+[Pd, Qd] = total_load(mpc, load_zone, 'FIXED');
+t_is(Pd, area(1).fixed.p, 12, [t 'Pd']);
+t_is(Qd, area(1).fixed.q, 12, [t 'Qd']);
+
+t = '      Pd = total_load(mpc, ld_zone1, ''DISPATCHABLE'') : ';
+Pd = total_load(mpc, load_zone, 'DISPATCHABLE');
+t_is(Pd, area(1).disp.pnom, 12, [t 'Pd']);
+
+t = '[Pd, Qd] = total_load(mpc, ld_zone1, ''DISPATCHABLE'') : ';
+[Pd, Qd] = total_load(mpc, load_zone, 'DISPATCHABLE');
+t_is(Pd, area(1).disp.pnom, 12, [t 'Pd']);
+t_is(Qd, area(1).disp.qnom, 12, [t 'Qd']);
+
+%%-----  explicit multiple load zone  -----
+load_zone = zeros(nb, 1);
+k = find(mpc.bus(:, BUS_AREA) == 3);    %% area 3
+load_zone(k) = 1;
+k = find(mpc.bus(:, BUS_AREA) == 1);    %% area 1
+load_zone(k) = 2;
+t = '      Pd = total_load(mpc, ld_zone2, ''BOTH'') : ';
+Pd = total_load(mpc, load_zone, 'BOTH');
+t_is(Pd, [area(3).both.pnom; area(1).both.pnom], 12, [t 'Pd']);
+
+t = '[Pd, Qd] = total_load(mpc, ld_zone2, ''BOTH'') : ';
+[Pd, Qd] = total_load(mpc, load_zone, 'BOTH');
+t_is(Pd, [area(3).both.pnom; area(1).both.pnom], 12, [t 'Pd']);
+t_is(Qd, [area(3).both.qnom; area(1).both.qnom], 12, [t 'Qd']);
+
+t = '      Pd = total_load(mpc, ld_zone2, ''FIXED'') : ';
+Pd = total_load(mpc, load_zone, 'FIXED');
+t_is(Pd, [area(3).fixed.p; area(1).fixed.p], 12, [t 'Pd']);
+
+t = '[Pd, Qd] = total_load(mpc, ld_zone2, ''FIXED'') : ';
+[Pd, Qd] = total_load(mpc, load_zone, 'FIXED');
+t_is(Pd, [area(3).fixed.p; area(1).fixed.p], 12, [t 'Pd']);
+t_is(Qd, [area(3).fixed.q; area(1).fixed.q], 12, [t 'Qd']);
+
+t = '      Pd = total_load(mpc, ld_zone2, ''DISPATCHABLE'') : ';
+Pd = total_load(mpc, load_zone, 'DISPATCHABLE');
+t_is(Pd, [area(3).disp.pnom; area(1).disp.pnom], 12, [t 'Pd']);
+
+t = '[Pd, Qd] = total_load(mpc, ld_zone2, ''DISPATCHABLE'') : ';
+[Pd, Qd] = total_load(mpc, load_zone, 'DISPATCHABLE');
 t_is(Pd, [area(3).disp.pnom; area(1).disp.pnom], 12, [t 'Pd']);
 t_is(Qd, [area(3).disp.qnom; area(1).disp.qnom], 12, [t 'Qd']);
 
