@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 60;
+num_tests = 63;
 
 t_begin(num_tests, quiet);
 
@@ -256,6 +256,17 @@ t_is(r.dcline(:, c.MU_PMIN:c.MU_QMAXT), expected2, 3, [t 'mu']);
 
 t = 'AC OPF (with DC lines + pwl cost) : ';
 mpc.dclinecost(4, 1:8) = [1 0 0 2 0 0 10 73];
+[r, success] = runopf(mpc, mpopt);
+t_ok(success, [t 'success']);
+t_is(r.dcline(:, c.PF:c.VT), expected1, 4, [t 'P Q V']);
+t_is(r.dcline(:, c.MU_PMIN:c.MU_QMAXT), expected2, 3, [t 'mu']);
+
+t = 'AC OPF w/Qg cost (with DC lines + pwl cost) : ';
+mpc.gencost = [mpc.gencost; mpc.gencost];
+mpc.gencost(4:end, COST:end) = 0;
+mpc.gencost(4:end, MODEL) = 2;
+mpc.gencost(4:end, NCOST) = 2;
+mpc.gencost(5, COST+1) = 1;
 [r, success] = runopf(mpc, mpopt);
 t_ok(success, [t 'success']);
 t_is(r.dcline(:, c.PF:c.VT), expected1, 4, [t 'P Q V']);

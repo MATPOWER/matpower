@@ -218,12 +218,17 @@ mpc.gen = [mpc.gen; fg; tg];
 
 %% gencost
 if isfield(mpc, 'gencost') && ~isempty(mpc.gencost)
-    [ngcr, ngcc] = size(mpc.gencost);   %% dimensions of gencost
-    if havecost         %% user has provided costs
-        ndccc = size(dcc, 2);           %% number of dclinecost columns
-        ccc = max([ngcc; ndccc]);       %% number of columns in new gencost
-        if ccc > ngcc                   %% right zero-pad gencost
-            mpc.gencost = [mpc.gencost zeros(ngcr, ccc-ngcc)];
+    ngcc = size(mpc.gencost, 2);    %% dimensions of gencost
+    [pc, qc] = pqcost(mpc.gencost, ng); %% split out re/active costs
+    if havecost                 %% user has provided costs
+        ndccc = size(dcc, 2);       %% number of dclinecost columns
+        ccc = max([ngcc; ndccc]);   %% number of columns in new gencost
+        if ccc > ngcc               %% right zero-pad gencost
+            pc = [pc zeros(ng, ccc-ngcc)];
+            if ~isempty(qc)         %% pad Qg costs, too
+                qc = [qc zeros(ng, ccc-ngcc)];
+            end
+            ngcc = ccc;
         end
 
         %% flip function across vertical axis and append to gencost
@@ -245,19 +250,28 @@ if isfield(mpc, 'gencost') && ~isempty(mpc.gencost)
                 temp(1:2:2*nc) = xx(end:-1:1);
                 temp(2:2:2*nc) = yy(end:-1:1);
             end
-            padding = zeros(1, ccc-NCOST-length(temp));
+            padding = zeros(1, ngcc-NCOST-length(temp));
             gck = [dcc(k, 1:NCOST) temp padding];
             
             %% append to gencost
-            mpc.gencost = [mpc.gencost; gck];
+            pc = [pc; gck];
         end
-        %% use zero cost on "to" end gen
-        tgc = ones(ndc, 1) * [2 0 0 2 zeros(1, ccc-4)];
-        mpc.gencost = [mpc.gencost; tgc];        
+        %% define zero cost for "to" end gen
+        dcgc = ones(ndc, 1) * [2 0 0 2 zeros(1, ngcc-4)];
     else
-        %% use zero cost as default
-        dcgc = ones(2*ndc, 1) * [2 0 0 2 zeros(1, ngcc-4)];
-        mpc.gencost = [mpc.gencost; dcgc];
+        %% use zero cost as default on "from" end gen
+        dcgc = ones(ndc, 1) * [2 0 0 2 zeros(1, ngcc-4)];
+        pc = [pc; dcgc];
+    end
+    %% always use zero cost on "to" end gen
+    pc = [pc; dcgc];
+
+    %% reassemble gencost
+    if ~isempty(qc)
+        qc = [qc; dcgc; dcgc];  %% always use zero cost Qg, both ends
+        mpc.gencost = [pc; qc];
+    else
+        mpc.gencost = pc;
     end
 end
 
