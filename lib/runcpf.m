@@ -100,8 +100,8 @@ function [res, suc] = ...
 %   and Alexander Flueck, IIT
 %
 %   Modified by Shrirang Abhyankar, Argonne National Laboratory
-%   2015.10.25 (Updated to support voltage dependent loads, reactive power
-%               limits, discrete event handling capabilities)
+%   2015.11.25 (Updated to support voltage dependent loads, active and
+%               reactive power limits, discrete event handling capabilities)
 %
 %   $Id$
 %
@@ -147,6 +147,15 @@ adapt_step       = mpopt.cpf.adapt_step;        %% use adaptive step size?
 cb_args          = mpopt.cpf.user_callback_args;
 plim             = mpopt.cpf.enforce_p_lims;    %% enforce active limits
 qlim             = mpopt.cpf.enforce_q_lims;    %% enforce reactive limits
+%% Convert mpopt.cpf.stop_at option to real number. This is to avoid string
+%% comparison in event handling
+if(ischar(mpopt.cpf.stop_at))
+    if(strcmpi(mpopt.cpf.stop_at,'FULL'))
+        mpopt.cpf.stop_at = -1;
+    else %% NOSE
+        mpopt.cpf.stop_at = -2;
+    end
+end
 
 %% set up callbacks
 callback_names = {'cpf_default_callback'};
@@ -158,23 +167,6 @@ if ~isempty(mpopt.cpf.user_callback)
     end
 end
 callbacks = cellfun(@str2func, callback_names, 'UniformOutput', false);
-
-%% set up events
-event_fcn_names = {'cpf_stopat_event'};
-event_postfcn_names = {'cpf_stopat_postevent'};
-if qlim
-    event_fcn_names = {event_fcn_names{:}, 'cpf_q_lims_event'};
-    event_postfcn_names = {event_postfcn_names{:}, 'cpf_q_lims_postevent'};
-end
-if plim
-    event_fcn_names = {event_fcn_names{:}, 'cpf_p_lims_event'};
-    event_postfcn_names = {event_postfcn_names{:}, 'cpf_p_lims_postevent'};
-end
-%% RDZ: order of the above shouldn't matter, but it does
-%%      (linked to tolerances in cpfeventhandler())
-event = struct( 'fcns', [], 'postfcns', [], 'status', cpf_es.NO_EVENT);
-event.fcns = cellfun(@str2func, event_fcn_names, 'UniformOutput', false);
-event.postfcns = cellfun(@str2func, event_postfcn_names, 'UniformOutput', false);
 
 %% run base case power flow
 if mpopt.verbose > 2
@@ -188,19 +180,19 @@ if ~suc
     %% RDZ: this should not be a fatal error
     error('runcpf: Base case power flow did not converge.');
 end
-nb = size(mpcbase.bus, 1);
 
 %% convert to internal indexing
 mpcbase = ext2int(mpcbase);
-[baseMVAb, busb, genb, branchb] = deal(mpcbase.baseMVA, mpcbase.bus, mpcbase.gen, mpcbase.branch);
 
 %% get bus index lists of each type of bus
-[ref, pv, pq] = bustypes(busb, genb);
+[ref, pv, pq] = bustypes(mpcbase.bus, mpcbase.gen);
 
-%% generator info (must be the same for base and target)
-on = find(genb(:, GEN_STATUS) > 0 ...   %% which generators are on?
-        & busb(genb(:, GEN_BUS), BUS_TYPE) ~= PQ);  %% ... and not at PQ buses
-gbus = genb(on, GEN_BUS);               %% what buses are they at?
+nb = size(mpcbase.bus, 1);
+
+%% generator info
+onb = find(mpcbase.gen(:, GEN_STATUS) > 0 ...   %% which generators are on?
+          & mpcbase.bus(mpcbase.gen(:, GEN_BUS), BUS_TYPE) ~= PQ);  %% ... and not at PQ buses
+gbusb = mpcbase.gen(onb, GEN_BUS);             %% what buses are they at?
 
 %% read target case data
 mpctarget = loadcase(targetcasedata);
@@ -212,25 +204,35 @@ end
 
 %% convert to internal indexing
 mpctarget = ext2int(mpctarget);
-[baseMVAt, bust, gent, brancht] = deal(mpctarget.baseMVA, mpctarget.bus, mpctarget.gen, mpctarget.branch);
 
 %% update target bus types in case they've changed due to reactive power limits
-bust(:, BUS_TYPE) = busb(:, BUS_TYPE);
+mpctarget.bus(:,BUS_TYPE) = mpcbase.bus(:,BUS_TYPE);
 
 %% generator info
-ont = find(gent(:, GEN_STATUS) > 0 ...   %% which generators are on?
-        & bust(gent(:, GEN_BUS), BUS_TYPE) ~= PQ);  %% ... and not at PQ buses
-if length(on) ~= length(ont) || any(on ~= ont)
-    error('runcpf: base and target cases must have identical generator status'' and bus types.');
-end
+ont = find(mpctarget.gen(:, GEN_STATUS) > 0 ...   %% which generators are on?
+          & mpctarget.bus(mpctarget.gen(:, GEN_BUS), BUS_TYPE) ~= PQ);  %% ... and not at PQ buses
+gbust = mpctarget.gen(ont, GEN_BUS);             %% what buses are they at?
 
 %% RDZ: figure out purpose of this block of code
 %% need to ensure the following is same for basecase and targetcase
-gent(on, QG) = genb(on, QG);
+mpctarget.gen(ont,QG) = mpctarget.gen(onb,QG);
 for k = 1:length(ref)
-    refgen = find(gbus == ref(k));
-    gent(on(refgen), PG) = genb(on(refgen), PG);
+    refgen = find(gbust == ref(k));
+    mpctarget.gen(ont(refgen), PG) = mpctarget.gen(onb(refgen), PG);
 end
+
+idx_pmax = [];
+if plim
+    %% Set zero transfer for generators at active power limits
+    on = find(mpcbase.gen(:, GEN_STATUS) > 0);
+    idx_pmax = find(abs(mpcbase.gen(on,PG) - mpcbase.gen(on,PMAX)) < mpopt.cpf.q_lims_tol);
+    if ~isempty(idx_pmax)
+        mpctarget.gen(idx_pmax,PG) = mpcbase.gen(idx_pmax,PG);
+    end
+end
+
+[baseMVAb, busb, genb, branchb] = deal(mpcbase.baseMVA, mpcbase.bus, mpcbase.gen, mpcbase.branch);
+[baseMVAt, bust, gent, brancht] = deal(mpctarget.baseMVA, mpctarget.bus, mpctarget.gen, mpctarget.branch);
 
 %%-----  run the continuation power flow  -----
 t0 = clock;
@@ -244,8 +246,8 @@ end
 V0  = busb(:, VM) .* exp(sqrt(-1) * pi/180 * busb(:, VA));
 vcb = ones(size(V0));           %% create mask of voltage-controlled buses
 vcb(pq) = 0;                    %% exclude PQ buses
-k = find(vcb(gbus));            %% in-service gens at v-c buses
-V0(gbus(k)) = genb(on(k), VG) ./ abs(V0(gbus(k))).* V0(gbus(k));
+k = find(vcb(gbusb));           %% in-service gens at v-c buses
+V0(gbusb(k)) = genb(onb(k), VG) ./ abs(V0(gbusb(k))).* V0(gbusb(k));
 
 %% build admittance matrices
 [Ybus, Yf, Yt] = makeYbus(baseMVAb, busb, branchb);
@@ -287,6 +289,7 @@ cb_data = struct( ...
     'ref', ref, ...
     'pv', pv, ...
     'pq', pq, ...
+    'idx_pmax', idx_pmax, ...
     'mpopt', mpopt );
 cb_state = struct();
 
@@ -296,38 +299,77 @@ for k = 1:length(callbacks)
                             cb_data, cb_state, cb_args);
 end
 
-%% invoke event functions
-%% RDZ: why?
-for k = 1:length(event.fcns)
-    [event.fprv{k}, event.terminate{k}, cb_state] = ...
-        event.fcns{k}(cont_steps, V, lam, cb_data, cb_state);
-end
-
 if norm(Sxf) == 0
     if mpopt.verbose
         fprintf('base case and target case have identical load and generation\n');
     end
     continuation = 0;
-    V0 = V; lam0 = lam;
 end
 
 %% tangent predictor z = [dx;dlam]
 z = zeros(2*length(V)+1,1);
 z(end,1) = 1.0;
 zprv = z;
+
+%% set up events
+event_fcn_names = {};
+event_postfcn_names = {};
+event.names = {};
+event.tol = [];
+%% Struct for logging information of located events
+event.log.stepnums = []; %% Continuation step numbers
+event.log.names = {};    %% Names of the events located  
+event.log.izero = {};    %% Indices of the events located in the event function
+event.log.nevents = [];  %% Number of events located at a step
+if qlim
+    event_fcn_names = {event_fcn_names{:},'cpf_q_lims_event'};
+    event_postfcn_names = {event_postfcn_names{:},'cpf_q_lims_postevent'};
+    event.names = {event.names{:},'QGLIM'};
+    event.tol = [event.tol,mpopt.cpf.q_lims_tol/baseMVAb];
+end
+if plim
+    event_fcn_names = {event_fcn_names{:},'cpf_p_lims_event'};
+    event_postfcn_names = {event_postfcn_names{:},'cpf_p_lims_postevent'};
+    event.names = {event.names{:},'PGLIM'};
+    event.tol = [event.tol, mpopt.cpf.p_lims_tol/baseMVAb];
+end
+%% RDZ: order of the above shouldn't matter, but it did in 2015-10-29 version
+%%      (linked to tolerances in cpfeventhandler())
+%%      not sure if it still matters in 2015-11-25 version
+event_fcn_names = {event_fcn_names{:},'cpf_stopat_event'};
+event_postfcn_names = {event_postfcn_names{:},'cpf_stopat_postevent'};
+if mpopt.cpf.stop_at == -1
+    event_name = 'LAM_TRACE_FULL';
+elseif mpopt.cpf.stop_at == -2
+    event_name = 'LAM_TRACE_NOSE';
+else
+    event_name = ['LAM_STOPAT',num2str(mpopt.cpf.stop_at)];
+end
+event.names = {event.names{:},event_name};
+event.tol = [event.tol, 1e-5];
+
+event.fcns = cellfun(@str2func,event_fcn_names,'UniformOutput', false);
+event.postfcns = cellfun(@str2func,event_postfcn_names,'UniformOutput', false);
+event.status = cpf_es.NO_EVENT;
+event.qlim_at_prev_step   = 0;
+
+%% prediction for next step
+[V0, lam0, z] = cpf_predictor(V, lam, Ybus, Sxfr, Sbust, Sbusb, pv, pq, ...
+        step, zprv, Vprv, lamprv, parameterization);
+zprv = z;
+
+zprv2 = zprv;
+Vprv2 = Vprv;
+lamprv2 = lamprv;
+
+%% Call event function
+for k = 1:length(event.fcns)
+    [event.fprv{k},event.terminate{k}] = event.fcns{k}(cont_steps,V,lam,Vprv,lamprv,z,cb_data);
+end
+
 while continuation && event.status ~= cpf_es.TERMINATE
     cont_steps = cont_steps + 1;
-    Vprv2 = Vprv;
-    lamprv2 = lamprv;
     
-    %% prediction for next step
-    [V0, lam0, z] = cpf_predictor(V, lam, Ybus, Sxfr, Sbust, Sbusb, pv, pq, ...
-        step, zprv, Vprv, lamprv, parameterization);
-
-    %% save previous voltage, lambda before updating
-    Vprv = V;
-    lamprv = lam;
-
     %% correction
     [V, success, i, lam] = cpf_corrector(Ybus, Sbusb, V0, ref, pv, pq, ...
                 lam0, Sxfr, Sbust, Vprv, lamprv, z, step, parameterization, mpopt_pf);
@@ -343,16 +385,14 @@ while continuation && event.status ~= cpf_es.TERMINATE
     elseif mpopt.verbose > 1
         fprintf('step %3d : lambda = %6.3f, %2d corrector Newton steps\n', cont_steps, lam, i);
     end
+    
+    [V0next, lam0next, z] = cpf_predictor(V, lam, Ybus, Sxfr, Sbust, Sbusb, pv, pq, step, zprv, ...
+                              Vprv, lamprv, parameterization);
 
     %% invoke event handler
-    [cont_steps, V, lam, step, cb_data, cb_state, event] = ...
-        cpfeventhandler(cont_steps, V, lam, Vprv, lamprv, step, ...
-            cb_data, cb_state, event);
-    
-    if mpopt.verbose
-%         fprintf('           event status = %d\n', event.status);
-%         event
-    end
+    [cont_steps, V, lam, step, cb_data, event, parameterization] = ...
+        cpfeventhandler(cont_steps, V, lam, Vprv, lamprv, z, step, ...
+            cb_data, event);
     
     if event.status == cpf_es.ZERO_LOC 
         %% Post function may have updated cb_data fields.
@@ -376,6 +416,9 @@ while continuation && event.status ~= cpf_es.TERMINATE
         cb_data.Sbusb = Sbusb;
         cb_data.Sbust = Sbust;
         cb_data.Sxfr  = Sxfr;
+        
+        [V0next, lam0next, z] = cpf_predictor(V, lam, Ybus, Sxfr, Sbust, Sbusb, pv, pq, step, z, ...
+                                              Vprv, lamprv, parameterization);
     end
     
     if ~event.rollback
@@ -385,21 +428,32 @@ while continuation && event.status ~= cpf_es.TERMINATE
                                 cb_data, cb_state, cb_args);
         end
         
-        %% Update zprv
+        V0prv = V0;
+        lam0prv = lam0;
+        
+        V0 = V0next;
+        lam0 = lam0next;
+        
+        %% Update
+        Vprv2 = Vprv;
+        lamprv2 = lamprv;
+        zprv2 = zprv;
+        
+        Vprv = V;
+        lamprv = lam;
         zprv = z;
     else
-        Vprv = Vprv2;
-        lamprv = lamprv2;
-    end
-    
-    if(event.status == cpf_es.INFEASIBLE)
-        break;
+
+        %% prediction for next step
+        [V0, lam0, z] = cpf_predictor(Vprv, lamprv, Ybus, Sxfr, Sbust, Sbusb, pv, pq, step, zprv2, ...
+                                      Vprv2, lamprv2, parameterization);
+        
     end
     
     if(~event.rollback && event.status ~= cpf_es.INT_DET)
         if adapt_step && continuation
             %% Adapt stepsize
-            cpf_error = norm([angle(V(pq));abs(V([pv;pq]));lam] - [angle(V0(pq));abs(V0([pv;pq]));lam0],inf);
+            cpf_error = norm([angle(V(pq));abs(V([pv;pq]));lam] - [angle(V0prv(pq));abs(V0prv([pv;pq]));lam0prv],inf);
             if cpf_error < mpopt.cpf.error_tol
                 %% Increase stepsize
                 step = step*mpopt.cpf.error_tol/cpf_error;
@@ -413,6 +467,16 @@ while continuation && event.status ~= cpf_es.TERMINATE
                     step = mpopt.cpf.step_min;
                 end
             end
+            
+            %% Update prediction
+            Vaprv = angle(V);
+            Vmprv = abs(V);
+            Va0   = angle(V0);
+            Vm0   = abs(V0);
+            Va0([pv; pq]) = Vaprv([pv; pq]) + step * z([pv; pq]);
+            Vm0(pq) = Vmprv(pq) + step * z(nb+pq);
+            lam0 = lam + step * z(2*nb+1);
+            V0 = Vm0 .* exp(1j * Va0);
         end
     end
 end
@@ -422,13 +486,8 @@ if success
     cpf_results = struct();
     for k = 1:length(callbacks)
         [cb_state, cpf_results] = callbacks{k}(cont_steps, V, lam, V0, lam0, ...
-                                    cb_data, cb_state, cb_args, cpf_results);
+                                    cb_data, cb_state, cb_args, cpf_results);                        
     end
-
-    %% RDZ: the need for the following seems to stem from a design flaw
-    %% remove fields added from Qlims and stopat events
-    fieldsrm = {'lam_stopat', 'lprv', 'qlim', 'terminate'};
-    cpf_results = rmfield(cpf_results, fieldsrm); 
 else
     cpf_results.iterations = i;
 end
@@ -454,6 +513,8 @@ if success
 end
 results = int2ext(mpctarget);
 results.cpf = cpf_results;
+%% Add event log
+results.cpf.eventlog = event.log;
 
 %% zero out result fields of out-of-service gens & branches
 if ~isempty(results.order.gen.status.off)
@@ -477,13 +538,6 @@ if fname
     end
 end
 printpf(results, 1, mpopt);
-
-%% RDZ: shouldn't print things unless verbose is true, but this status should
-%%      be available in the results
-%% infeasibility 
-if event.status == cpf_es.INFEASIBLE
-    fprintf('CPF ABRUPT TERMINATION!! No REF or PV buses remaining in the system.\n');
-end
 
 %% save solved case
 if solvedcase

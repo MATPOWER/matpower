@@ -23,7 +23,7 @@ function [cb_state, results] = ...
 %               base case injections in p.u. and derivatives w.r.t. |V|
 %           Sbust - handle of function returning nb x 1 vector of complex
 %               target case injections in p.u. and derivatives w.r.t. |V|
-%           Sxfr   - handle of function returning complex vector of scheduled
+%           Sxfr  - handle of function returning complex vector of scheduled
 %               transfers in p.u. (difference between bus injections in base
 %               and target cases)
 %           Ybus - bus admittance matrix

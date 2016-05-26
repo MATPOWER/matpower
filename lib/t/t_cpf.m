@@ -18,7 +18,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 95;
+num_tests = 109;
 t_begin(num_tests, quiet);
 
 if have_fcn('matlab', 'vnum') < 7.001
@@ -113,7 +113,7 @@ else
     iterations = 22;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
-    t_is(r.cpf.max_lam, 0.99025, 3, [t 'max_lam']);
+    t_is(r.cpf.max_lam, 0.99026, 3, [t 'max_lam']);
     t_is(size(r.cpf.V_p), [10 iterations+1], 12, [t 'size(V_p)']);
     t_is(size(r.cpf.V_c), [10 iterations+1], 12, [t 'size(V_c)']);
     t_is(size(r.cpf.lam_p), [1 iterations+1], 12, [t 'size(lam_p)']);
@@ -126,7 +126,7 @@ else
     iterations = 22;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
-    t_is(r.cpf.max_lam, 0.99025, 3, [t 'max_lam']);
+    t_is(r.cpf.max_lam, 0.99026, 3, [t 'max_lam']);
     t_is(size(r.cpf.V_p), [10 iterations+1], 12, [t 'size(V_p)']);
     t_is(size(r.cpf.V_c), [10 iterations+1], 12, [t 'size(V_c)']);
     t_is(size(r.cpf.lam_p), [1 iterations+1], 12, [t 'size(lam_p)']);
@@ -140,6 +140,32 @@ else
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0.95365, 6, [t 'max_lam']);
+    t_is(size(r.cpf.V_p), [10 iterations+1], 12, [t 'size(V_p)']);
+    t_is(size(r.cpf.V_c), [10 iterations+1], 12, [t 'size(V_c)']);
+    t_is(size(r.cpf.lam_p), [1 iterations+1], 12, [t 'size(lam_p)']);
+    t_is(size(r.cpf.lam_c), [1 iterations+1], 12, [t 'size(lam_c)']);
+    
+    t = 'Continuation PF to nose point (pseudo arc length) with P limits: ';
+    mpopt_plim = mpoption(mpopt, 'cpf.stop_at', 'NOSE', 'cpf.parameterization', 3,'cpf.enforce_p_lims',1);
+    mpopt_plim = mpoption(mpopt_plim, 'cpf.adapt_step', 1);
+    r = runcpf(mpcb, mpct, mpopt_plim);
+    iterations = 16;
+    t_ok(r.success, [t 'success']);
+    t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
+    t_is(r.cpf.max_lam, 0.97975, 3, [t 'max_lam']);
+    t_is(size(r.cpf.V_p), [10 iterations+1], 12, [t 'size(V_p)']);
+    t_is(size(r.cpf.V_c), [10 iterations+1], 12, [t 'size(V_c)']);
+    t_is(size(r.cpf.lam_p), [1 iterations+1], 12, [t 'size(lam_p)']);
+    t_is(size(r.cpf.lam_c), [1 iterations+1], 12, [t 'size(lam_c)']);
+    
+    t = 'Continuation PF to nose point (pseudo arc length) with P and Q limits: ';
+    mpopt_pqlim = mpoption(mpopt, 'cpf.stop_at', 'NOSE', 'cpf.parameterization', 3,'cpf.enforce_q_lims',1,'cpf.enforce_p_lims',1);
+    mpopt_pqlim = mpoption(mpopt_pqlim, 'cpf.adapt_step', 1);
+    r = runcpf(mpcb, mpct, mpopt_pqlim);
+    iterations = 16;
+    t_ok(r.success, [t 'success']);
+    t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
+    t_is(r.cpf.max_lam, 0.97975, 3, [t 'max_lam']);
     t_is(size(r.cpf.V_p), [10 iterations+1], 12, [t 'size(V_p)']);
     t_is(size(r.cpf.V_c), [10 iterations+1], 12, [t 'size(V_c)']);
     t_is(size(r.cpf.lam_p), [1 iterations+1], 12, [t 'size(lam_p)']);
