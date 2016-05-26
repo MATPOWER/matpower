@@ -86,7 +86,18 @@ function opt = mpoption(varargin)
 %   cpf.adapt_step          0           toggle adaptive step size feature
 %       [  0 - adaptive step size disabled                                  ]
 %       [  1 - adaptive step size enabled                                   ]
+%   cpf.enforce_p_lims       0          enforce gen active power limits
+%       [  0 - do NOT enforce limits                                        ]
+%       [  1 - enforce limits, simultaneous bus type conversion             ]
+%   cpf.enforce_q_lims       0          enforce gen reactive power limits at
+%                                       expense of |V|
+%       [  0 - do NOT enforce limits                                        ]
+%       [  1 - enforce limits, simultaneous bus type conversion             ]
 %   cpf.error_tol           1e-3        tolerance for adaptive step control
+%   cpf.p_lims_tol          0.01        tolerance for generator active
+%                                       power limit enforcement (MW)
+%   cpf.q_lims_tol          0.01        tolerance for generator reactive
+%                                       power limit enforcement (MVAR)
 %   cpf.step_min            1e-4        minimum allowed step size
 %   cpf.step_max            0.2         maximum allowed step size
 %   cpf.plot.level          0           control plotting of noze curve
@@ -101,17 +112,6 @@ function opt = mpoption(varargin)
 %                                       see 'help cpf_default_callback'
 %   cpf.user_callback_args  <empty>     struct passed to user-defined
 %                                       callback functions
-%   cpf.enforce_q_lims       0          enforce gen reactive power limits at
-%                                       expense of |V|
-%       [  0 - do NOT enforce limits                                        ]
-%       [  1 - enforce limits, simultaneous bus type conversion             ]
-%   cpf.enforce_p_lims       0          enforce gen active power limits
-%       [  0 - do NOT enforce limits                                        ]
-%       [  1 - enforce limits, simultaneous bus type conversion             ]
-%   cpf.q_lims_tol          0.01        tolerance for generator reactive 
-%                                       power limit enforcement (MVAR)
-%   cpf.p_lims_tol          0.01        tolerance for generator active 
-%                                       power limit enforcement (MW)
 %
 %Optimal Power Flow options:
 %   opf.ac.solver           'DEFAULT'   AC optimal power flow solver
@@ -410,13 +410,9 @@ function opt = mpoption(varargin)
 %                                           for 'pw'
 
 %   MATPOWER
-%   Copyright (c) 2013-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2013-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%
-%   Modified by Shrirang Abhyankar, Argonne National Laboratory
-%   2015.10.25 (Added cpf option for enforcing Q limits)
-%
-%   $Id$
+%   and Shrirang Abhyankar, Argonne National Laboratory
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -479,6 +475,12 @@ if have_opt0
             end
             if opt0.v <= 8          %% convert version 8 to 9
                 opt0.exp.sys_wide_zip_loads = opt_d.exp.sys_wide_zip_loads;
+            end
+            if opt0.v <= 10         %% convert version 9,10 to 11
+                opt0.cpf.enforce_p_lims = opt_d.cpf.enforce_p_lims;
+                opt0.cpf.enforce_q_lims = opt_d.cpf.enforce_q_lims;
+                opt0.cpf.p_lims_tol     = opt_d.cpf.p_lims_tol;
+                opt0.cpf.q_lims_tol     = opt_d.cpf.q_lims_tol;
             end
             opt0.v = v;
         end
@@ -1418,18 +1420,18 @@ if ~isstruct(opt)
             'stop_at',              'NOSE', ...     %% 'NOSE', <lam val>, 'FULL'
             'step',                 0.05, ...
             'adapt_step',           0, ...
+            'enforce_p_lims',       0, ...
+            'enforce_q_lims',       0, ...
             'error_tol',            1e-3, ...
+            'p_lims_tol',           0.01, ...
+            'q_lims_tol',           0.01, ...
             'step_min',             1e-4, ...
             'step_max',             0.2, ...
             'plot',                 struct(...
                 'level',                0, ...
                 'bus',                  []  ), ...
             'user_callback',        '', ...
-            'user_callback_args',   struct()    , ...
-	        'enforce_q_lims',         0, ...		
-            'enforce_p_lims',         0, ...
-            'q_lims_tol',            0.01, ...
-            'p_lims_tol',            0.01 ), ...
+            'user_callback_args',   struct()    ), ...
         'opf',                  struct(...
             'ac',                   struct(...
                 'solver',               'DEFAULT'   ), ...
@@ -1500,7 +1502,7 @@ optt = opt;
 %% globals
 %%-------------------------------------------------------------------
 function v = mpoption_version
-v = 10;     %% version number of MATPOWER options struct
+v = 11;     %% version number of MATPOWER options struct
             %% (must be incremented every time structure is updated)
             %% v1   - first version based on struct (MATPOWER 5.0b1)
             %% v2   - added 'linprog' and 'quadprog' fields
@@ -1517,8 +1519,9 @@ v = 10;     %% version number of MATPOWER options struct
             %%        'mips' options
             %% v9   - added 'exp' for experimental fields, specifically
             %%        'sys_wide_zip_loads.pw', 'sys_wide_zip_loads.qw'
-            %% v10  - added 'cpf.enforce_p_lims' and 'cpf.enforce_q_lims'
-            %%        fields
+            %% v11  - added options 'cpf.enforce_p_lims',
+            %%        'cpf.enforce_q_lims', 'cpf.p_lims_tol', and
+            %%        'cpf.q_lims_tol'
 
 %%-------------------------------------------------------------------
 function db_level = DEBUG
