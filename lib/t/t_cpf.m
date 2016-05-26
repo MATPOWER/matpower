@@ -139,7 +139,7 @@ else
     iterations = 18;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
-    t_is(r.cpf.max_lam, 0.95365, 6, [t 'max_lam']);
+    t_is(r.cpf.max_lam, 0.953648, 6, [t 'max_lam']);
     t_is(size(r.cpf.V_p), [10 iterations+1], 12, [t 'size(V_p)']);
     t_is(size(r.cpf.V_c), [10 iterations+1], 12, [t 'size(V_c)']);
     t_is(size(r.cpf.lam_p), [1 iterations+1], 12, [t 'size(lam_p)']);
@@ -202,7 +202,7 @@ else
     iterations = 39;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
-    t_is(r.cpf.max_lam, 0.95364, 6, [t 'max_lam']);
+    t_is(r.cpf.max_lam, 0.953648, 6, [t 'max_lam']);
     t_is(size(r.cpf.V_p), [10 iterations+1], 12, [t 'size(V_p)']);
     t_is(size(r.cpf.V_c), [10 iterations+1], 12, [t 'size(V_c)']);
     t_is(size(r.cpf.lam_p), [1 iterations+1], 12, [t 'size(lam_p)']);
