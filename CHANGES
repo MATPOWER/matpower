@@ -15,6 +15,10 @@ For change history for MOST, see most/docs/CHANGES.
 Changes since 5.1
 -----------------
 
+5/27/16
+    - INCOMPATIBLE CHANGE: Removed fairmax() from the public interface
+      by moving it inside uopf(), the only place it was used.
+
 5/25/16
     - Add contributed code from Camille Hamon to extras/maxloadlim for
       finding the loadability limits in power systems based on an optimal
