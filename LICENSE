@@ -13,11 +13,19 @@ that fact by citing:
   Research and Education," Power Systems, IEEE Transactions on, vol. 26,
   no. 1, pp. 12–19, Feb. 2011.
 
+Publications related to the use of the MATPOWER Optimal Scheduling Tool
+(MOST) should also cite:
+
+  C. E. Murillo-Sanchez, R. D. Zimmerman, C. L. Anderson, and R. J. Thomas,
+  "Secure Planning and Operations of Systems with Stochastic Sources,
+  Energy Storage and Active Demand," Smart Grid, IEEE Transactions on,
+  vol. 4, no. 4, pp. 2220–2229, Dec. 2013.
+
 The following is the official license notice:
 
 -------------------------------------------------------------------------
 
-Copyright (c) 1996-2015, Power System Engineering Research Center (PSERC)
+Copyright (c) 1996-2016, Power System Engineering Research Center (PSERC)
 and individual contributors (see AUTHORS file for details).
 All rights reserved.
 
