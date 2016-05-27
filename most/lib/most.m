@@ -3,7 +3,7 @@ function mdo = most(mdi, mpopt)
 %   MDO = MOST(MDI)
 %   MDO = MOST(MDI, MPOPT)
 %
-%   Solves a multi-period, stochastic, contingency constrained, optimal
+%   Solves a multiperiod, stochastic, contingency constrained, optimal
 %   power flow problem with linear constraints and unit commitment.
 %   Depending on inputs it may include DC power flow constraints or
 %   a simple total power balance condition.
@@ -73,7 +73,7 @@ verbose = mpopt.verbose;
 if verbose
     fprintf('\n=============================================================================\n');
     fprintf(  '          MATPOWER Optimal Scheduling Tool  --  MOST Version %s\n', mostver());
-    fprintf(  '          A multi-period stochastic secure OPF with unit commitment\n');
+    fprintf(  '          A multiperiod stochastic secure OPF with unit commitment\n');
     fprintf(  '                       -----  Built on MATPOWER  -----\n');
     fprintf(  '  by Carlos E. Murillo-Sanchez, Universidad Nacional de Colombia--Manizales\n');
     fprintf(  '                  and Ray D. Zimmerman, Cornell University\n');
