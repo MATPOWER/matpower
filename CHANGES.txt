@@ -2,7 +2,7 @@
  Change history for MATPOWER
 -----------------------------
 
-Version:    5.1
+Version:    6.0b1
 
 maintained by Ray Zimmerman <rz10@cornell.edu>
 
@@ -14,6 +14,9 @@ For change history for MOST, see most/docs/CHANGES.
 
 Changes since 5.1
 -----------------
+
+6/1/16
+    - Released 6.0b1.
 
 5/27/16
     - INCOMPATIBLE CHANGE: Removed fairmax() from the public interface

@@ -1,7 +1,7 @@
 % MATPOWER
-%   Version 5.1      20-Mar-2015
+%   Version 6.0b1    01-Jun-2016
 %
-%   MATPOWER is a package of MATLAB(R) M-files for solving power flow and
+%   MATPOWER is a package of Matlab M-files for solving power flow and
 %   optimal power flow problems. It is intended as a simulation tool for
 %   researchers and educators that is easy to use and modify. MATPOWER is
 %   designed to give the best performance possible while keeping the code
