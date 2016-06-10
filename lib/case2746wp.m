@@ -1,4 +1,4 @@
-function mpc = case2746_wp
+function mpc = case2746wp
 %CASE2746WP  Power flow data for Polish system - winter 2003-04 evening peak.
 %   Please see CASEFORMAT for details on the case file format.
 %
