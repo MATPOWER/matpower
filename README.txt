@@ -174,8 +174,8 @@ CHANGES file in the docs directory for all the gory details.
       flow and dispatchable loads, using maxloadlim() in extras/maxloadlim,
       contributed by Camille Hamon.
     - Create a quadratically-constrained quadratic programming (QCQP)
-      representation of the AC power flow problem using using qcqp_opf()
-      in extras/misc, contributed by Cedric Josz and colleagues.
+      representation of the AC optimal power flow problem using using
+      qcqp_opf() in extras/misc, contributed by Cedric Josz and colleagues.
   - New functions:
     - apply_changes() and idx_ct() provide a general mechanism for
       applying modifications to an existing MATPOWER case.
