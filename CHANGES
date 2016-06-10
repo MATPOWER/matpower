@@ -12,6 +12,14 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 
 For change history for MOST, see most/docs/CHANGES.
 
+Changes since 6.0b1
+-----------------
+
+6/10/16
+    - Fix bug in savecase() where single quotes were not escaped properly
+      in bus names.
+
+
 Changes since 5.1
 -----------------
 

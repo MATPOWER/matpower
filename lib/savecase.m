@@ -394,7 +394,7 @@ else                                %% M-file
             fprintf(fd, '\n%%%% bus names\n');
             fprintf(fd, '%sbus_name = {\n', prefix);
             for k = 1:nb
-                fprintf(fd, '\t''%s'';\n', mpc.bus_name{k});
+                fprintf(fd, '\t''%s'';\n', strrep(mpc.bus_name{k}, '''', ''''''));
             end
             fprintf(fd, '};\n');
         end
