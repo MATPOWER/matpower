@@ -18,6 +18,8 @@ Changes since 6.0b1
 6/10/16
     - Fix bug in savecase() where single quotes were not escaped properly
       in bus names.
+    - Generator capability curve parameters that define a zero-reactive
+      power line no longer cause a fatal error.
 
 
 Changes since 5.1
