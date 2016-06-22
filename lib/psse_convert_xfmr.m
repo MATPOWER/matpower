@@ -53,7 +53,7 @@ function [xfmr, bus, warns, bus_name] = psse_convert_xfmr(warns, trans2, trans3,
 %% compatibility
 use_winding_baseV = 1;  %% If true, will use winding base V for any conversions
                         %% instead of bus base V if they are different.
-                        %% Turn off for compatibility with (apparently buggy
+                        %% Turn off for compatibility with, apparently buggy,
                         %% PSS/E implementation (checked by YZ both for
                         %% PSS/E internal model and conversion from RAW to
                         %% IEEE format)
