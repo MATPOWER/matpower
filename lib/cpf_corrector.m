@@ -17,9 +17,6 @@ function [V, converged, i, lam] = cpf_corrector(Ybus, Sbusb, V0, ref, pv, pq, ..
 %       PV : vector of indices of PV buses
 %       PQ : vector of indices of PQ buses
 %       LAM0 : predicted scalar lambda
-%       SXFR  : handle of function returning complex vector of scheduled
-%               transfers in p.u. (difference between bus injections in base
-%               and target cases)
 %       SBUST : handle of function returning nb x 1 vector of complex
 %               target case injections in p.u. and derivatives w.r.t. |V|
 %       VPRV : complex bus voltage vector at previous solution
