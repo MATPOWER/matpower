@@ -252,6 +252,7 @@ Sbusb = @(Vm)makeSbus(baseMVAb, busb, genb, mpopt, Vm);
 %% function for computing target case V dependent complex bus power injections
 %% (generation - load)
 Sbust = @(Vm)makeSbus(baseMVAt, bust, gent, mpopt, Vm);
+Sxfr = @(Vm)(Sbust(Vm) - Sbusb(Vm));
 
 %% base case power flow solution
 lam = 0;
@@ -270,7 +271,6 @@ continuation = 1;
 cont_steps = 0;
 
 %% input args for callbacks
-Sxfr = Sbust(Vm) - Sbusb(Vm);
 cb_data = struct( ...
     'mpc_base', mpcbase, ...
     'mpc_target', mpctarget, ...
@@ -293,7 +293,7 @@ for k = 1:length(callbacks)
                             cb_data, cb_state, cb_args);
 end
 
-if norm(Sxfr) == 0
+if norm(Sxfr(Vm)) == 0
     if mpopt.verbose
         fprintf('base case and target case have identical load and generation\n');
     end
