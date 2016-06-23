@@ -1,13 +1,17 @@
 function [Bbus, Bf, Pbusinj, Pfinj] = makeBdc(baseMVA, bus, branch)
 %MAKEBDC   Builds the B matrices and phase shift injections for DC power flow.
-%   [BBUS, BF, PBUSINJ, PFINJ] = MAKEBDC(BASEMVA, BUS, BRANCH) returns the
-%   B matrices and phase shift injection vectors needed for a DC power flow.
-%   The bus real power injections are related to bus voltage angles by
+%   [BBUS, BF, PBUSINJ, PFINJ] = MAKEBDC(MPC)
+%   [BBUS, BF, PBUSINJ, PFINJ] = MAKEBDC(BASEMVA, BUS, BRANCH)
+%
+%   Returns the B matrices and phase shift injection vectors needed for
+%   a DC power flow. The bus real power injections are related to bus
+%   voltage angles by
 %       P = BBUS * Va + PBUSINJ
 %   The real power flows at the from end the lines are related to the bus
 %   voltage angles by
 %       Pf = BF * Va + PFINJ
 %   Does appropriate conversions to p.u.
+%   Bus numbers must be consecutive beginning at 1 (i.e. internal ordering).
 %
 %   Example:
 %       [Bbus, Bf, Pbusinj, Pfinj] = makeBdc(baseMVA, bus, branch);
@@ -15,15 +19,21 @@ function [Bbus, Bf, Pbusinj, Pfinj] = makeBdc(baseMVA, bus, branch)
 %   See also DCPF.
 
 %   MATPOWER
-%   Copyright (c) 1996-2015 by Power System Engineering Research Center (PSERC)
-%   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
+%   Copyright (c) 1996-2016 by Power System Engineering Research Center (PSERC)
+%   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %   and Ray Zimmerman, PSERC Cornell
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
+
+%% extract from MPC if necessary
+if nargin < 3
+    mpc     = baseMVA;
+    baseMVA = mpc.baseMVA;
+    bus     = mpc.bus;
+    branch  = mpc.branch;
+end
 
 %% constants
 nb = size(bus, 1);          %% number of buses
@@ -38,7 +48,7 @@ nl = size(branch, 1);       %% number of lines
 
 %% check that bus numbers are equal to indices to bus (one set of bus numbers)
 if any(bus(:, BUS_I) ~= (1:nb)')
-    error('makeBdc: buses must be numbered consecutively in bus matrix')
+    error('makeBdc: buses must be numbered consecutively in bus matrix; use ext2int() to convert to internal ordering')
 end
 
 %% for each branch, compute the elements of the branch B matrix and the phase

@@ -5,7 +5,6 @@ function mpc = t_case9_dcline
 %   See also: TOGGLE_DCLINE, IDX_DCLINE.
 
 %   MATPOWER
-%   $Id$
 
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';

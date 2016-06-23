@@ -22,10 +22,8 @@ function TorF = hasPQcap(gen, hilo)
 %   constraint is not redundant w.r.t the box constraints.
 
 %   MATPOWER
-%   Copyright (c) 2005-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2005-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -47,6 +45,14 @@ ng = size(gen, 1);
 if isempty(k)
     TorF = zeros(ng, 1);
 else
+    %% eliminate cases where QMIN = QMAX = QC
+    kk = find( gen(k, QMIN) == gen(k, QMAX) & ...
+                gen(k, QMIN) == gen(k, QC1MAX) & ...
+                gen(k, QMIN) == gen(k, QC1MIN) & ...
+                gen(k, QMIN) == gen(k, QC2MAX) & ...
+                gen(k, QMIN) == gen(k, QC2MIN) );
+    k(kk) = [];
+
     %% check for errors in capability curve data
     if any( gen(k, PC1) >= gen(k, PC2) )
         error('hasPQcap: must have Pc1 < Pc2');

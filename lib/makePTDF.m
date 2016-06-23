@@ -1,17 +1,22 @@
 function H = makePTDF(baseMVA, bus, branch, slack)
 %MAKEPTDF   Builds the DC PTDF matrix for a given choice of slack.
-%   H = MAKEPTDF(BASEMVA, BUS, BRANCH, SLACK) returns the DC PTDF
-%   matrix for a given choice of slack. The matrix is nbr x nb, where
-%   nbr is the number of branches and nb is the number of buses. The SLACK
-%   can be a scalar (single slack bus) or an nb x 1 column vector of
-%   weights specifying the proportion of the slack taken up at each bus.
-%   If the SLACK is not specified the reference bus is used by default.
+%   H = MAKEPTDF(MPC)
+%   H = MAKEPTDF(MPC, SLACK)
+%   H = MAKEPTDF(BASEMVA, BUS, BRANCH)
+%   H = MAKEPTDF(BASEMVA, BUS, BRANCH, SLACK)
+%
+%   Returns the DC PTDF matrix for a given choice of slack. The matrix is
+%   nbr x nb, where nbr is the number of branches and nb is the number of
+%   buses. The SLACK can be a scalar (single slack bus) or an nb x 1 column
+%   vector of weights specifying the proportion of the slack taken up at each
+%   bus. If the SLACK is not specified the reference bus is used by default.
+%   Bus numbers must be consecutive beginning at 1 (i.e. internal ordering).
 %
 %   Examples:
-%       H = makePTDF(baseMVA, bus, branch);
+%       H = makePTDF(mpc);
 %       H = makePTDF(baseMVA, bus, branch, 1);
 %       slack = rand(size(bus, 1), 1);
-%       H = makePTDF(baseMVA, bus, branch, slack);
+%       H = makePTDF(mpc, slack);
 %
 %   See also MAKELODF.
 
@@ -20,20 +25,30 @@ function H = makePTDF(baseMVA, bus, branch, slack)
 %   at that bus.
 
 %   MATPOWER
-%   Copyright (c) 2006-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2006-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
+%% extract from MPC if necessary
+if nargin < 3
+    mpc     = baseMVA;
+    if nargin == 2
+        slack = bus;
+    end
+    baseMVA = mpc.baseMVA;
+    bus     = mpc.bus;
+    branch  = mpc.branch;
+end
+
+%% define named indices into bus matrix
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
     VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
 
 %% use reference bus for slack by default
-if nargin < 4
+if nargin == 1 || nargin == 3
     slack = find(bus(:, BUS_TYPE) == REF);
     slack = slack(1);
 end
@@ -52,7 +67,7 @@ noslack = find((1:nb)' ~= slack_bus);
 
 %% check that bus numbers are equal to indices to bus (one set of bus numbers)
 if any(bus(:, BUS_I) ~= (1:nb)')
-    error('makePTDF: buses must be numbered consecutively in bus matrix')
+    error('makePTDF: buses must be numbered consecutively in bus matrix; use ext2int() to convert to internal ordering')
 end
 
 %% compute PTDF for single slack_bus

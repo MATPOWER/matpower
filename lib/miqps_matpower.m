@@ -48,6 +48,9 @@ function [x, f, eflag, output, lambda] = miqps_matpower(H, c, A, l, u, xmin, xma
 %               skip the price computation stage, in which the problem
 %               is re-solved for only the continuous variables, with all
 %               others being constrained to their solved values
+%           price_stage_warn_tol (1e-7) - tolerance on the objective fcn
+%               value and primal variable relative match required to avoid
+%               mis-match warning message
 %           cplex_opt - options struct for CPLEX
 %           glpk_opt    - options struct for GLPK
 %           grb_opt   - options struct for GBUROBI_MEX
@@ -113,10 +116,8 @@ function [x, f, eflag, output, lambda] = miqps_matpower(H, c, A, l, u, xmin, xma
 %       [x, f, s, out, lambda] = miqps_matpower(H, c, A, l, u, xmin, [], x0, vtype, opt);
 
 %   MATPOWER
-%   Copyright (c) 2010-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).

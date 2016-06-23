@@ -9,39 +9,22 @@ function rv = gurobiver(varargin)
 %   See also MPVER.
 
 %   MATPOWER
-%   Copyright (c) 2010-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-try
-    model = struct( ...
-        'A', sparse(1), ...
-        'rhs', 1, ...
-        'sense', '=', ...
-        'vtype', 'C', ...
-        'obj', 1, ...
-        'modelsense', 'min' ...
-    );
-    params = struct( ...
-        'outputflag', 0 ...
-    );
-    result = gurobi(model, params);
-    vn = sprintf('%d.%d.%d', result.versioninfo.major, result.versioninfo.minor, result.versioninfo.technical);
-catch gurobiError
-    fprintf('Gurobi Error!\n');
-    disp(gurobiError.message);
-    vn = '<unknown>';
+g = have_fcn('gurobi', 'all');
+if ~g.av
+    g.vstr = '<unknown>';
 end
 
 v = struct( 'Name',     'Gurobi', ... 
-            'Version',  vn, ...
+            'Version',  g.vstr, ...
             'Release',  '', ...
-            'Date',     '' );
+            'Date',     g.date );
 if nargout > 0
     if nargin > 0
         rv = v;
@@ -49,5 +32,9 @@ if nargout > 0
         rv = v.Version;
     end
 else
-    fprintf('%-22s Version %-10s %-11s\n', v.Name, v.Version, v.Date);
+    if g.av
+        fprintf('%-22s Version %-10s %-11s\n', v.Name, v.Version, v.Date);
+    else
+        fprintf('%-22s -- not installed --\n', v.Name);
+    end
 end

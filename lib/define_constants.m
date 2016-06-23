@@ -1,10 +1,11 @@
-%DEFINE_CONSTANTS  Defines constants for named column indices to data matrices.
+%DEFINE_CONSTANTS  Defines useful constants for indexing data, etc.
 %
 %   This is simply a convenience script that defines the constants
 %   listed below, consisting primarily of named indices for the
 %   columns of the data matrices: bus, branch, gen and gencost.
 %   This includes input columns defined in caseformat as well as
-%   columns that are added in the power flow and OPF output.
+%   columns that are added in the power flow and OPF output. It also
+%   defines constants for the change tables used by apply_changes().
 %
 %   bus:
 %      PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM,
@@ -23,9 +24,17 @@
 %   gencost: 
 %      PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST
 %
-%   See CASEFORMAT, IDX_BUS, IDX_BRCH, IDX_GEN and IDX_COST for
+%   change tables:
+%       CT_LABEL, CT_PROB, CT_TABLE, CT_TBUS, CT_TGEN, CT_TBRCH, CT_TAREABUS,
+%       CT_TAREAGEN, CT_TAREABRCH, CT_ROW, CT_COL, CT_CHGTYPE, CT_REP,
+%       CT_REL, CT_ADD, CT_NEWVAL, CT_TLOAD, CT_TAREALOAD, CT_LOAD_ALL_PQ,
+%       CT_LOAD_FIX_PQ, CT_LOAD_DIS_PQ, CT_LOAD_ALL_P, CT_LOAD_FIX_P,
+%       CT_LOAD_DIS_P, CT_TGENCOST, CT_TAREAGENCOST, CT_MODCOST_F,
+%       CT_MODCOST_X
+%
+%   See CASEFORMAT, IDX_BUS, IDX_BRCH, IDX_GEN, IDX_COST and IDX_CT for
 %   details on the meaning of these constants. Internally
-%   DEFINE_CONSTANTS calls IDX_BUS, IDX_BRCH, IDX_GEN and IDX_COST.
+%   DEFINE_CONSTANTS calls IDX_BUS, IDX_BRCH, IDX_GEN, IDX_COST and IDX_CT.
 %   In performance sensitive code, such as internal MATPOWER functions
 %   that are called frequently, it is preferred to call these
 %   functions directly rather than using the DEFINE_CONSTANTS script,
@@ -35,10 +44,8 @@
 %   for high-level code where maximum performance is not a concern.
 
 %   MATPOWER
-%   Copyright (c) 2009-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2016 by Power System Engineering Research Center (PSERC)
 %   by Doug Mitarotonda & Ray Zimmerman, PSERC Cornell
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -54,3 +61,9 @@
     MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
     QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
 [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
+[CT_LABEL, CT_PROB, CT_TABLE, CT_TBUS, CT_TGEN, CT_TBRCH, CT_TAREABUS, ...
+    CT_TAREAGEN, CT_TAREABRCH, CT_ROW, CT_COL, CT_CHGTYPE, CT_REP, ...
+    CT_REL, CT_ADD, CT_NEWVAL, CT_TLOAD, CT_TAREALOAD, CT_LOAD_ALL_PQ, ...
+    CT_LOAD_FIX_PQ, CT_LOAD_DIS_PQ, CT_LOAD_ALL_P, CT_LOAD_FIX_P, ...
+    CT_LOAD_DIS_P, CT_TGENCOST, CT_TAREAGENCOST, CT_MODCOST_F, ...
+    CT_MODCOST_X] = idx_ct;

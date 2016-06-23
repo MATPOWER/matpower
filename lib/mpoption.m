@@ -114,6 +114,8 @@ function opt = mpoption(varargin)
 %                                       callback functions
 %
 %Optimal Power Flow options:
+%   name                    default     description [options]
+%----------------------    ---------   ----------------------------------
 %   opf.ac.solver           'DEFAULT'   AC optimal power flow solver
 %       [ 'DEFAULT' - choose solver based on availability in the following  ]
 %       [             order: 'PDIPM', 'MIPS'                                ]
@@ -185,6 +187,8 @@ function opt = mpoption(varargin)
 %                                       (in fields g, dg, df, d2f) [ 0 or 1 ]
 %
 %Output options:
+%   name                    default     description [options]
+%----------------------    ---------   ----------------------------------
 %   verbose                 1           amount of progress info printed
 %       [   0 - print no progress info                                      ]
 %       [   1 - print a little progress info                                ]
@@ -1519,6 +1523,7 @@ v = 11;     %% version number of MATPOWER options struct
             %%        'mips' options
             %% v9   - added 'exp' for experimental fields, specifically
             %%        'sys_wide_zip_loads.pw', 'sys_wide_zip_loads.qw'
+            %% v10  - added 'most' field
             %% v11  - added options 'cpf.enforce_p_lims',
             %%        'cpf.enforce_q_lims', 'cpf.p_lims_tol', and
             %%        'cpf.q_lims_tol'
@@ -1531,6 +1536,6 @@ db_level = 0;
 function pkgs = mpoption_optional_pkgs()
 pkgs = {...
     'clp', 'cplex', 'fmincon', 'gurobi', 'glpk', 'intlinprog', 'ipopt', ...
-    'knitro', 'linprog', 'minopf', 'mosek', 'quadprog', 'sdp_pf', ...
+    'knitro', 'linprog', 'minopf', 'most', 'mosek', 'quadprog', 'sdp_pf', ...
     'sopf', 'tspopf', 'yalmip' ...
 };

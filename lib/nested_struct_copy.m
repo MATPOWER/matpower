@@ -52,10 +52,8 @@ function d = nested_struct_copy(d, s, opt, parent)
 %           an invalid field so that mpoption can refer to it as option foo.
 
 %   MATPOWER
-%   Copyright (c) 2013-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2013-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -157,8 +155,10 @@ for f = 1:length(fields)
     if strcmp(class(cm), 'function_handle')
         %% assign via function handle
         d.(ff) = cm(s.(ff));
-    elseif ~isstruct(s.(ff)) || (ischar(cm) && strcmp(cm, '='))
-        %% non-struct or struct with cm == '=', assign directly
+    elseif ~isstruct(s.(ff)) || (ischar(cm) && strcmp(cm, '=')) || ...
+            (isfield(d, ff) && ~isstruct(d.(ff)))
+        %% non-struct OR struct with cm == '=' OR struct to non-struct copy
+        %% assign directly
         d.(ff) = s.(ff);
     elseif isstruct(s.(ff)) && isempty(cm)
         %% assign via recursive call to nested_struct_copy()

@@ -2,23 +2,128 @@
  Change history for MATPOWER
 -----------------------------
 
-Version:    5.1
+Version:    6.0b1
 
 maintained by Ray Zimmerman <rz10@cornell.edu>
 
 MATPOWER
-$Id$
-Copyright (c) 1996-2015 by Power System Engineering Research Center (PSERC)
+Copyright (c) 1996-2016 by Power System Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
+
+For change history for MOST, see most/docs/CHANGES.
+
+Changes since 6.0b1
+-----------------
+
+6/23/16
+    - Bad bus numbers no longer cause a fatal error (after reporting the
+      bad bus numbers) in case_info().
+    - Updated versions of qcqp_opf() and qcqp_opf() in extras/misc, from
+      Cedric Josz.
+
+6/10/16
+    - Fix bug in savecase() where single quotes were not escaped properly
+      in bus names.
+    - Generator capability curve parameters that define a zero-reactive
+      power line no longer cause a fatal error.
 
 
 Changes since 5.1
 -----------------
 
+6/1/16
+    - Released 6.0b1.
+
+5/27/16
+    - INCOMPATIBLE CHANGE: Removed fairmax() from the public interface
+      by moving it inside uopf(), the only place it was used.
+
+5/25/16
+    - Add contributed code from Camille Hamon to extras/maxloadlim for
+      finding the loadability limits in power systems based on an optimal
+      power flow using dispatchable loads.
+
+5/24/16
+    - Fix bug in toggle_dclines() that resulted in fatal error when
+      used with OPF with reactive power costs. Thanks to Irina Boiarchuk.
+    - Add option to call total_load() with full case struct, instead
+      of separate bus and gen matrices.
+
+5/18/16
+    - Add plot_mpc(), contributed by Paul Cuffe, to extras/misc. Plots
+      an electrically meaningful drawing of a MATPOWER case.
+    - Add case145.m, IEEE 145 bus, 50 generator dynamic test case from
+      http://www.ee.washington.edu/research/pstca/dyn50/pg_tcadd50.htm.
+
+5/17/16
+    - Add 9 new case files, 8 cases ranging from 1888 to 6515 buses
+      representing the French system, and a 13,659-bus case representing
+      parts of the of the European high voltage transmission network,
+      stemming from the Pan European Grid Advanced Simulation and State
+      Estimation (PEGASE) project. Thanks again to Cedric Josz and
+      colleagues from the French Transmission System Operator.
+    - Add extras/misc/qcqp_opf.m, by Cedric Josz, et. al.
+
+5/3/16
+    - Fix fatal bug in update_mupq() affecting cases where QMIN is
+      greater than or equal to QC1MIN and QC2MIN (or QMAX is less than
+      or equal to QC1MAX and QC2MAX) for all generators.
+      Thanks Jose Miguel.
+
+3/29/16
+    - Add support for quadprog() under GNU Octave.
+
+3/3/16
+    - Copying a field containing a struct to a non-struct field with 
+      nested_struct_copy() now overwrites rather than causing a fatal
+      error.
+
+2/29/16
+    - Added option to call scale_load() with full case struct, with
+      'cost' field in opt to indicate when to include cost scaling.
+
+2/22/16
+    - Add major new feature: MATPOWER Optimal Scheduling Tool (MOST).
+      See docs/MOST-manual.pdf for details.
+
+2/18/16
+    - Updated code from 9/23/16 to turn off pesky CPLEX warnings to
+      included CPLEX 12.6.3.
+
+2/12/16
+    - Added Release History section to Appendix of manual.
+
+1/29/16
+    - Added option to call makePTDF(), makeB(), and makeBdc() with
+      mpc struct instead of individual baseMVA, bus, branch args.
+      Suggested by Alberto Lamadrid.
+
+1/26/16
+    - Introduced work-around and warning for crashes caused by strange
+      behavior from Matlab's ver() function when MATPOWER (or any other
+      3rd party toolbox with a Contents.m) is installed in a directory on
+      the Matlab path named 'matlab' or 'optim' (both case insensitive).
+
+1/15/16
+    - Added feval_w_path() function for evaluating functions located at
+      a specified path, outside of the Matlab path.
+
+1/14/16
+    - Added tests for loadcase() for m-file cases outside the Matlab path.
+
+1/6/16
+    - Added apply_changes() and idx_ct() to implement general method for
+      applying modifications to an existing MATPOWER case.
+
 11/5/15
     - Use voltage dependent loads in both base and target injections
       to define continuation power flow transfer. Should fix issue with
       calculation of final loads.
+
+11/4/15
+    - Fixed a bug in psse_convert_xfmr() where conversion of data for
+      transformers with CZ=3 was done incorrectly. Thanks to Jose Marin
+      and Yujia Zhu.
 
 10/30/15
     - Fixed a bug in cpf_default_callback() introduced with the

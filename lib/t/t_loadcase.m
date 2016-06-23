@@ -2,10 +2,8 @@ function t_loadcase(quiet)
 %T_LOADCASE  Test that LOADCASE works with a struct as well as case file.
 
 %   MATPOWER
-%   Copyright (c) 2004-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -15,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-t_begin(234, quiet);
+t_begin(240, quiet);
 
 %% compare result of loading from M-file file to result of using data matrices
 casefile = 't_case9_opf';
@@ -27,6 +25,8 @@ matfilev2  = 't_mat9_opfv2';
 pfcasefilev2 = 't_case9_pfv2';
 pfmatfilev2  = 't_mat9_pfv2';
 
+[PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
+    VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
 [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
     MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
     QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
@@ -555,5 +555,23 @@ t = 'runpf(modified_struct)';
 c.gen(3,2) = c.gen(3,2) + 1;            %% increase gen 3 output by 1
 [baseMVA5, bus5, gen5, branch5, success, et] = runpf(c, mpopt);
 t_is(gen5(1,2), gen4(1,2) - 1, 1, t);   %% slack bus output should decrease by 1
+
+%% $MATPOWER/t/t_loadcase should not be in path
+if exist('case_for_off_path_test') == 2
+    warning('You have $MATPOWER/t/t_loadcase in your path. In general your path should not include sub-directories of $MATPOWER/t. While harmless, it does prevent this test from verifying the ability to load m-file cases that are outside your path.');
+end
+
+t = 'mpc = loadcase(<file not in path>) : ';
+% find path to t_mfile2fh.m
+cwd = pwd;
+[p, n, e] = fileparts(which('t_loadcase'));
+offpathcase = [p filesep 't_loadcase' filesep 'case_for_off_path_test'];
+mpc = loadcase(offpathcase);
+t_ok(strcmp(mpc.version, '2'), [t 'version']);
+t_is(mpc.baseMVA, 100, 15, [t 'baseMVA']);
+t_is(size(mpc.bus), [2 VMIN], 15, [t 'bus']);
+t_is(size(mpc.gen), [1 APF], 15, [t 'gen']);
+t_is(size(mpc.branch), [1 ANGMAX], 15, [t 'branch']);
+t_is(size(mpc.gencost), [1 7], 15, [t 'gencost']);
 
 t_end;

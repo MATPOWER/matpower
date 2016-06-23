@@ -2,13 +2,8 @@ function t_vdep_load(quiet)
 %T_VDEP_LOAD    Test voltage dependent ZIP load model for PF, CPF, OPF.
 
 %   MATPOWER
-%   Copyright (c) 2009-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%
-%   2015.10.27 Modified by Shrirang Abhyankar, ANL
-%   Added tests for CPF with reactive power limits
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -77,8 +72,8 @@ for k = 1:length(pfalgs)
     zip_w = [0 1 0];
     mpopt = mpoption(mpopt, 'exp.sys_wide_zip_loads', struct('pw', zip_w, 'qw', zip_w));
     r = runpf(mpc, mpopt);
-    [tPd, tQd] = total_load(r.bus, r.gen, 'bus', [], mpopt);
-    % [tPd, tQd] = total_load(r.bus, r.gen, 'bus');
+    [tPd, tQd] = total_load(r, 'bus', [], mpopt);
+    % [tPd, tQd] = total_load(r, 'bus');
     mpc1 = mpc;
     mpc1.bus(:, PD) = mpc1.bus(:, PD) .* r.bus(:, VM);
     mpc1.bus(:, QD) = mpc1.bus(:, QD) .* r.bus(:, VM);
@@ -114,7 +109,7 @@ for k = 1:length(pfalgs)
     zip_w = [0.1 0.4 0.5];
     mpopt = mpoption(mpopt, 'exp.sys_wide_zip_loads.pw', zip_w);
     r = runpf(mpc, mpopt);
-    [tPd, tQd] = total_load(r.bus, r.gen, 'bus', [], mpopt);
+    [tPd, tQd] = total_load(r, 'bus', [], mpopt);
     mpc1 = mpc;
     Vm = r.bus(:, VM);
     scale = [Vm.^0 Vm Vm.^2] * zip_w';
@@ -153,8 +148,8 @@ t = 'OPF - constant current only : ';
 zip_w = [0 1 0];
 mpopt = mpoption(mpopt, 'exp.sys_wide_zip_loads.pw', zip_w);
 r = runopf(mpc, mpopt);
-[tPd, tQd] = total_load(r.bus, r.gen, 'bus', [], mpopt);
-% [tPd, tQd] = total_load(r.bus, r.gen, 'bus');
+[tPd, tQd] = total_load(r, 'bus', [], mpopt);
+% [tPd, tQd] = total_load(r, 'bus');
 mpc1 = mpc;
 mpc1.bus(:, PD) = mpc1.bus(:, PD) .* r.bus(:, VM);
 mpc1.bus(:, QD) = mpc1.bus(:, QD) .* r.bus(:, VM);
@@ -195,7 +190,7 @@ t = 'OPF - combo ZIP loads : ';
 zip_w = [0.1 0.4 0.5];
 mpopt = mpoption(mpopt, 'exp.sys_wide_zip_loads.pw', zip_w);
 r = runopf(mpc, mpopt);
-[tPd, tQd] = total_load(r.bus, r.gen, 'bus', [], mpopt);
+[tPd, tQd] = total_load(r, 'bus', [], mpopt);
 mpc1 = mpc;
 Vm = r.bus(:, VM);
 scale = [Vm.^0 Vm Vm.^2] * zip_w';
@@ -267,7 +262,7 @@ for k = 1:length(cpfparm)
     mpopt = mpoption(mpopt, 'exp.sys_wide_zip_loads.pw', zip_w);
     rb = runpf(mpcb, mpopt);
     r = runcpf(mpcb, mpct, mpopt);
-    [tPd, tQd] = total_load(r.bus, r.gen, 'bus', [], mpopt);
+    [tPd, tQd] = total_load(r, 'bus', [], mpopt);
     mpc1b = mpcb;
     mpc1b.bus(:, PD) = mpc1b.bus(:, PD) .* rb.bus(:, VM);
     mpc1b.bus(:, QD) = mpc1b.bus(:, QD) .* rb.bus(:, VM);
@@ -291,7 +286,7 @@ for k = 1:length(cpfparm)
     mpopt = mpoption(mpopt, 'exp.sys_wide_zip_loads.pw', zip_w);
     rb = runpf(mpcb, mpopt);
     r = runcpf(mpcb, mpct, mpopt);
-    [tPd, tQd] = total_load(r.bus, r.gen, 'bus', [], mpopt);
+    [tPd, tQd] = total_load(r, 'bus', [], mpopt);
     mpc1b = mpcb;
     mpc1b.bus(:, PD) = mpc1b.bus(:, PD) .* rb.bus(:, VM).^2;
     mpc1b.bus(:, QD) = mpc1b.bus(:, QD) .* rb.bus(:, VM).^2;
@@ -315,7 +310,7 @@ for k = 1:length(cpfparm)
     mpopt = mpoption(mpopt, 'exp.sys_wide_zip_loads.pw', zip_w);
     rb = runpf(mpcb, mpopt);
     r = runcpf(mpcb, mpct, mpopt);
-    [tPd, tQd] = total_load(r.bus, r.gen, 'bus', [], mpopt);
+    [tPd, tQd] = total_load(r, 'bus', [], mpopt);
     Vm = abs(rb.bus(:, VM));
     scaleb = [Vm.^0 Vm Vm.^2] * zip_w';
     Vm = abs(r.bus(:, VM));

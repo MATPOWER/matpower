@@ -2,7 +2,7 @@
  MATPOWER - A MATLAB(R) Power System Simulation Package
 ========================================================
 
-Version:    5.1
+Version:    6.0b1
 
 Home Page:  http://www.pserc.cornell.edu/matpower/
 
@@ -10,10 +10,9 @@ Authors:    Ray Zimmerman               <rz10@cornell.edu>
             Carlos E. Murillo-Sanchez   <carlos_murillo@ieee.org>
             and others, see AUTHORS file
 
-            Fri, Mar 20, 2015
+            Wed, Jun 1, 2016
 
-$Id$
-Copyright (c) 1997-2015 by Power System Engineering Research Center (PSERC)
+Copyright (c) 1997-2016 by Power System Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
 
 Copying and distribution of this file, with or without modification,
@@ -81,12 +80,14 @@ Installation
 2.  Unzip the downloaded file. Move the resulting matpowerXXX directory
     to the location of your choice. These files should not need to be
     modified, so it is recommended that they be kept separate from your
-    own code. Let $MATPOWER denote the path to this directory.
+    own code. Let <MATPOWER> denote the path to this directory.
 
 3.  Add the following directories to your MATLAB path:
-      $MATPOWER   - core MATPOWER functions
-      $MATPOWER/t - test scripts for MATPOWER
-      (optional) subdirectories of $MATPOWER/extras -
+      <MATPOWER>        - core MATPOWER functions
+      <MATPOWER>/t      - test scripts for MATPOWER
+      <MATPOWER>/most   - core MOST functions
+      <MATPOWER>/most/t - test scripts for MOST
+      (optional) subdirectories of <MATPOWER>/extras -
             additional functionality and contributed code
 
 4.  At the MATLAB prompt, type 'test_matpower' (without the quotes) to
@@ -130,116 +131,117 @@ documentation for the various MATPOWER functions. For example:
     help caseformat
 
 
----------------------------
- WHAT'S NEW IN VERSION 5.1
----------------------------
+-----------------------------
+ WHAT'S NEW IN VERSION 6.0b1
+-----------------------------
 
-Below is a summary of the changes since version 5.0 of MATPOWER. See the
+Below is a summary of the changes since version 5.1 of MATPOWER. See the
 CHANGES file in the docs directory for all the gory details.
 
-* New license:
-  - Switched to the more permissive 3-clause BSD license from the
-    previously used GNU General Public License (GPL) v3.0.
-
-* New case files:
-  - Added four new case files, ranging from 89 up to 9421 buses,
-    representing parts of the European high voltage transmission network,
+* New Case Files:
+  - Added 9 new case files, 8 cases ranging from 1888 to 6515 buses
+    representing the French system, and a 13,659-bus case representing
+    parts of the of the European high voltage transmission network,
     stemming from the Pan European Grid Advanced Simulation and State
-    Estimation (PEGASE) project. Thanks to Cedric Josz and colleagues from
-    the French Transmission System Operator.
+    Estimation (PEGASE) project. Thanks again to Cedric Josz and
+    colleagues from the French Transmission System Operator.
+  - Added case145.m, IEEE 145 bus, 50 generator dynamic test case from
+    http://www.ee.washington.edu/research/pstca/dyn50/pg_tcadd50.htm.
 
-* New documentation:
-  - Added an online function reference to the web site at
-    http://www.pserc.cornell.edu/matpower/docs/ref/.
-
-* New features:
-  - Added support for using PARDISO (http://www.pardiso-project.org/)
-    as linear solver for computing interior-point update steps in MIPS,
-    resulting in dramatic improvements in computation time and memory use
-    for very large-scale problems.
-  - Added support for LP/QP solver CLP (COIN_OR Linear Programming,
-    http://www.coin-or.org/projects/Clp.xml). Use 'opf.dc.solver'
-    option 'CLP' or qps_clp().
-  - Added support for OPTI Toolbox (http://www.i2c2.aut.ac.nz/Wiki/OPTI/)
-    versions of CLP, GLPK and IPOPT solvers, providing a very simple
-    installation path for some free high-performance solvers on Windows
-    platforms.
-  - Network reduction toolbox for creating smaller approximate network
-    equivalents from a larger original case file, contributed by
-    Yujia Zhu and Daniel Tylavsky.
-  - Added unified interface to various solvers for mixed-integer linear
-    and quadratic programming (MILP/MIQP) problems.
-  - Major update to have_fcn(), which now determines and caches
-    version numbers and release dates for optional packages, and includes
-    ability to toggle the availability of optional functionality.
-  - New and updated support for 3rd party solvers:
-    - High-performance IPOPT-PARDISO solver builds from the PARDISO Project
-      http://www.pardiso-project.org/index.php?p=manual (at time of release
-      this is MATPOWER's highest performing solver for very large scale
-      AC OPF problems)
-    - OPTI Toolbox versions of CLP, GLPK, IPOPT
-    - CLP
-    - Gurobi 6.x
-    - Knitro 9.1
-    - MOSEK 7.1
-    - Optimization Toolbox 7.2
-        - dual-simplex algorithm for linprog()
-        - intlinprog() for MILP
+* New Features:
+  - MATPOWER Optimal Scheduling Tool (MOST) is a major new feature,
+    implementing a full range of optimal power scheduling problems, from a
+    simple as a deterministic, single period economic dispatch problem
+    with no transmission constraints to as complex as a stochastic,
+    security-constrained, combined unit-commitment and multiperiod OPF
+    problem with locational contingency and load-following reserves,
+    ramping costs and constraints, deferrable demands, lossy storage
+    resources and uncertain renewable generation.
+    See docs/MOST-manual.pdf for details.
+  - General mechanism for applying modifications to an existing MATPOWER
+    case. See apply_changes() and idx_ct().
+  - Experimental foundation for handling of ZIP load models in power flow
+    (Newton, fast-decoupled only), continuation power flow, and optimal
+    power flow (MIPS, fmincon, Knitro, IPOPT solvers only). Currently,
+    ZIP loads can only be specified on a system-wide basis using the
+    experimental options 'exp.sys_wide_zip_loads.pw' and
+    'exp.sys_wide_zip_loads.qw'.
+ - Support for quadprog() under GNU Octave.
+ - New contributed extras:
+    - Plot electrically meaningful drawings of a MATPOWER case using
+      plot_mpc() in extras/misc, contributed by Paul Cuffe.
+    - Find the maximum loadability limit of a system via an optimal power
+      flow and dispatchable loads, using maxloadlim() in extras/maxloadlim,
+      contributed by Camille Hamon.
+    - Create a quadratically-constrained quadratic programming (QCQP)
+      representation of the AC optimal power flow problem using using
+      qcqp_opf() in extras/misc, contributed by Cedric Josz and colleagues.
   - New functions:
-    - mplinsolve() provides unified interface for linear system solvers,
-      including PARDISO and built-in backslash operator
-    - miqps_matpower() provides unified interface to multiple MILP/MIQP
-      solvers.
-    - miqps_clex() provides a unified MILP/MIQP interface to CPLEX.
-    - miqps_glpk() provides a unified MILP interface to GLPK.
-    - miqps_gurobi() provides a unified MILP/MIQP interface to Gurobi.
-    - miqps_mosek() provides a unified MILP/MIQP interface to MOSEK.
-    - miqps_ot() provides a unified MILP interface to intlingprog().
-    - mosek_symbcon() defines symbolic constants for setting
-      MOSEK options.
+    - apply_changes() and idx_ct() provide a general mechanism for
+      applying modifications to an existing MATPOWER case.
+    - feval_w_path() evaluates a function located at a specified path,
+      outside of the Matlab path.
+    - mpopt2qpopt() provides a common interface for creating options
+      struct for mi/qps_matpower() from a MATPOWER options struct.
+  - New function options:
+    - Option to call makeB(), makeBdc(), makePTDF(), scale_load(), and
+      total_load() with full case struct (mpc) instead of individual data
+      matrices (bus, branch, etc.).
+    - total_load(), which now computes voltage-dependent load values,
+      accepts the values 'bus' and 'area' as valid values for 'load_zone'
+      argument.
 
-* Other improvements:
-  - Cleaned up and improved consistency of output in printpf() for
-    generation and dispatchable load constraints.
-  - Modified runcpf() to gracefully handle the case when the base
-    and target cases are identical (as opposed to getting lost in
-    an infinite loop).
-  - Optional generator and dispatchable load sections in pretty-printed
-    output now include off-line units.
+* Other Improvements:
+  - Changed default solver order for LP, QP, MILP, MIQP problems to move
+    Gurobi before CPLEX and BPMPD after OT and GLPK.
+  - Added some caching to mpoption() and made minor changes to
+    nested_struct_copy() to greatly decrease the overhead added by
+    mpoption() when running many small problems.
+  - Added "Release History" section to Appendix of manual.
+  - Many new tests.
 
 * Bugs fixed:
-  - Fixed fatal bug in case_info() for islands with no generation.
-  - Fixed fatal bug in toggle_dcline() when pretty-printing results.
-    Thanks to Deep Kiran for reporting.
-  - Fixed sign error on multipliers on lower bound on constraints
-    in qps_clp() and qps_glpk().
-  - Fixed bug in handling of interface flow limits, where multipliers
-    on binding interface flow limits were off by a factor of the p.u.
-    MVA base.
-  - Fixed minor bug with poly2pwl(), affecting units with PMAX <= 0.
-  - Fixed error in qps_mosek() in printout of selected optimizer
-    when using MOSEK 7.
-  - Fixed bug in hasPQcap() that resulted in ignoring generator
-    capability curves for units whose reactive range increases
-    as real power output increases. Thanks to Irina Boiarchuk for
-    reporting.
-  - Fixed several incompatibilities with Matlab versions < 7.3.
+  - Fixed bug in toggle_dclines() that resulted in fatal error when used
+    with OPF with reactive power costs. Thanks to Irina Boiarchuk.
+  - Fixed fatal bug in update_mupq() affecting cases where QMIN is greater
+    than or equal to QC1MIN and QC2MIN (or QMAX is less than or equal to
+    QC1MAX and QC2MAX) for all generators. Thanks Jose Miguel.
+  - Copying a field containing a struct to a non-struct field with
+    nested_struct_copy() now overwrites rather than causing a fatal error.
+  - Fixed a bug in psse_convert_xfmr() where conversion of data for
+    transformers with CZ=3 was done incorrectly. Thanks to Jose Marin
+    and Yujia Zhu.
+  - Fixed a fatal bug in psse_convert_xfmr() affecting transformers with
+    CW and/or CZ equal to 1. Thanks to Matthias Resch.
+  - Fixed a crash in have_fcn() caused by changes in OPTI Toolbox v2.15
+    (or possibly v2.12)
+  - Commented out isolated bus 10287 in case3375wp.m.
+  - Added code to DC OPF to return success = 0 for cases where the matrix
+    is singular (e.g. islanded system without slack).
+  - Fixed problem in have_fcn() where SeDuMi was turning off and leaving
+    off all warnings.
+
+* Incompatible Change:
+  - Removed fairmax() from the public interface by moving it inside uopf(),
+    the only place it was used.
 
 
 ---------------
  DOCUMENTATION
 ---------------
 
-There are three primary sources of documentation for MATPOWER.
-    - MATLAB's 'help' command
+There are four primary sources of documentation for MATPOWER.
     - MATPOWER User's Manual
+    - MOST User's Manual
     - MATPOWER Online Function Reference
       (http://www.pserc.cornell.edu/matpower/docs/ref)
+    - MATLAB's 'help' command
 
-The User's Manual is included in the distribution (docs/manual.pdf) or
-it can be downloaded separately from
-http://www.pserc.cornell.edu/matpower/manual.pdf. Previous versions are
-available at http://www.pserc.cornell.edu/matpower/docs/.
+The MATPOWER and MOST User's Manuals are included in the distribution
+(docs/MATPOWER-manual.pdf and docs/MOST-manual.pdf) or they can be downloaded
+separately from http://www.pserc.cornell.edu/matpower/MATPOWER-manual.pdf and
+http://www.pserc.cornell.edu/matpower/MOST-manual.pdf. Previous
+versions are available at http://www.pserc.cornell.edu/matpower/docs/.
 
 Each M-file has its own documentation which can be accessed by typing at
 the MATLAB prompt:
@@ -282,7 +284,13 @@ PUBLICATIONS & PRESENTATIONS
      for Power Systems Research and Education," accepted to IEEE
      Transactions on Power Systems.
         http://www.pserc.cornell.edu/matpower/MATPOWER-paper.pdf
+        http://dx.doi.org/10.1109/TPWRS.2010.2051168
 
+[3]  H. Wang, C. E. Murillo-Sánchez, R. D. Zimmerman, R. J. Thomas,
+     "On Computational Issues of Market-Based Optimal Power Flow,"
+     Power Systems, IEEE Transactions on, vol. 22, no. 3,
+     pp. 1185-1193, Aug. 2007.
+        http://dx.doi.org/10.1109/TPWRS.2007.901301
 
 -------------------
  OPTIONAL PACKAGES
@@ -326,7 +334,7 @@ Terms of Use for details.
                OPTI Toolbox from http://www.i2c2.aut.ac.nz/Wiki/OPTI/,
                and high-performance IPOPT-PARDISO pre-built MEX binaries
                for Mac and Linux from the PARDISO Project at
-               http://www.pardiso-project.org/index.php?p=manual.
+               http://www.pardiso-project.org/.
 
  - KNITRO      A general purpose optimization solver specializing in
                nonlinear problems that MATPOWER can use for AC OPFs.

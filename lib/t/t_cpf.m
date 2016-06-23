@@ -2,13 +2,8 @@ function res = t_cpf(quiet)
 %T_CPF  Tests for continuation power flow.
 
 %   MATPOWER
-%   Copyright (c) 2013-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2013-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%
-%   2015.10.27 Updated by Shrirang Abhyankar, Argonne National Laboratory
-%   Added tests for generator Q limits
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -113,7 +108,7 @@ else
     iterations = 22;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
-    t_is(r.cpf.max_lam, 0.99026, 3, [t 'max_lam']);
+    t_is(r.cpf.max_lam, 0.99025, 3, [t 'max_lam']);
     t_is(size(r.cpf.V_p), [10 iterations+1], 12, [t 'size(V_p)']);
     t_is(size(r.cpf.V_c), [10 iterations+1], 12, [t 'size(V_c)']);
     t_is(size(r.cpf.lam_p), [1 iterations+1], 12, [t 'size(lam_p)']);
@@ -126,7 +121,7 @@ else
     iterations = 22;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
-    t_is(r.cpf.max_lam, 0.99026, 3, [t 'max_lam']);
+    t_is(r.cpf.max_lam, 0.99025, 3, [t 'max_lam']);
     t_is(size(r.cpf.V_p), [10 iterations+1], 12, [t 'size(V_p)']);
     t_is(size(r.cpf.V_c), [10 iterations+1], 12, [t 'size(V_c)']);
     t_is(size(r.cpf.lam_p), [1 iterations+1], 12, [t 'size(lam_p)']);

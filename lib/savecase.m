@@ -24,11 +24,9 @@ function fname_out = savecase(fname, varargin)
 %   version 1 format before saving.
 
 %   MATPOWER
-%   Copyright (c) 1996-2015 by Power System Engineering Research Center (PSERC)
-%   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Autonoma de Manizales
+%   Copyright (c) 1996-2016 by Power System Engineering Research Center (PSERC)
+%   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %   and Ray Zimmerman, PSERC Cornell
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -396,7 +394,7 @@ else                                %% M-file
             fprintf(fd, '\n%%%% bus names\n');
             fprintf(fd, '%sbus_name = {\n', prefix);
             for k = 1:nb
-                fprintf(fd, '\t''%s'';\n', mpc.bus_name{k});
+                fprintf(fd, '\t''%s'';\n', strrep(mpc.bus_name{k}, '''', ''''''));
             end
             fprintf(fd, '};\n');
         end

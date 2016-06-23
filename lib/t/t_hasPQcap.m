@@ -2,10 +2,8 @@ function t_hasPQcap(quiet)
 %T_HASPQCAP  Tests for HASPQCAP.
 
 %   MATPOWER
-%   Copyright (c) 2005-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2005-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -34,18 +32,19 @@ gen = [
 	1	10	0	10	-10	1	100	1	10	2	0	20	0	0	-20	20	0	0	0	0	0;
 	1	10	0	10	-10	1	100	1	10	2	0	20	0	0	-22	18	0	0	0	0	0;
 	1	10	0	10	-10	1	100	1	10	2	0	20	0	0	-18	22	0	0	0	0	0;
+	1	10	0	0	0	1	100	1	10	2	2	10	0	0	0	0	0	0	0	0	0;
 ];
 
 t = 'hasPQcap(gen)';
-t_is(hasPQcap(gen), [0;1;1;1;1;1;1;0;1;0;0;1;1;1], 12, t);
+t_is(hasPQcap(gen), [0;1;1;1;1;1;1;0;1;0;0;1;1;1;0], 12, t);
 
 t = 'hasPQcap(gen, ''B'')';
-t_is(hasPQcap(gen, 'B'), [0;1;1;1;1;1;1;0;1;0;0;1;1;1], 12, t);
+t_is(hasPQcap(gen, 'B'), [0;1;1;1;1;1;1;0;1;0;0;1;1;1;0], 12, t);
 
 t = 'hasPQcap(gen, ''U'')';
-t_is(hasPQcap(gen, 'U'), [0;1;1;1;0;1;0;0;1;0;0;1;1;1], 12, t);
+t_is(hasPQcap(gen, 'U'), [0;1;1;1;0;1;0;0;1;0;0;1;1;1;0], 12, t);
 
 t = 'hasPQcap(gen, ''L'')';
-t_is(hasPQcap(gen, 'L'), [0;1;0;1;1;1;1;0;0;0;0;1;1;1], 12, t);
+t_is(hasPQcap(gen, 'L'), [0;1;0;1;1;1;1;0;0;0;0;1;1;1;0], 12, t);
 
 t_end;

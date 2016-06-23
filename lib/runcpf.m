@@ -94,16 +94,10 @@ function [res, suc] = ...
 %   See also MPOPTION, RUNPF.
 
 %   MATPOWER
-%   Copyright (c) 1996-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell,
 %   Shrirang Abhyankar, Argonne National Laboratory,
 %   and Alexander Flueck, IIT
-%
-%   Modified by Shrirang Abhyankar, Argonne National Laboratory
-%   2015.11.25 (Updated to support voltage dependent loads, active and
-%               reactive power limits, discrete event handling capabilities)
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -498,7 +492,7 @@ bust(:,QD) = busb(:,QD) + lam*(bust(:,QD) - busb(:,QD));
 gent(:,PG) = genb(:,PG) + lam*(gent(:,PG) - genb(:,PG));
 
 %% update data matrices with solution
-[bust, gent, brancht] = pfsoln(baseMVAt, bust, gent, brancht, Ybus, Yf, Yt, V, ref, pv, pq);
+[bust, gent, brancht] = pfsoln(baseMVAt, bust, gent, brancht, Ybus, Yf, Yt, V, ref, pv, pq, mpopt);
 
 mpctarget.et = etime(clock, t0);
 mpctarget.success = success;

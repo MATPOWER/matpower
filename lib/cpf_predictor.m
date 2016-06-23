@@ -29,11 +29,9 @@ function [V0, lam0, z] = cpf_predictor(V, lam, Ybus, Sbusb, Sbust, pv, pq, ...
 %       Z : the normalized tangent prediction vector
 
 %   MATPOWER
-%   Copyright (c) 1996-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2016 by Power System Engineering Research Center (PSERC)
 %   by Shrirang Abhyankar, Argonne National Laboratory
 %   and Ray Zimmerman, PSERC Cornell
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).

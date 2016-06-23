@@ -64,15 +64,13 @@ function opt = cplex_options(overrides, mpopt)
 %   For details on the available options, see the "Parameters of CPLEX"
 %   section of the CPLEX documentation at:
 %
-%       http://pic.dhe.ibm.com/infocenter/cosinfoc/v12r6/
+%       http://www.ibm.com/support/knowledgecenter/SSSA5P
 %
 %   See also CPLEXLP, CPLEXQP, MPOPTION.
 
 %   MATPOWER
-%   Copyright (c) 2010-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -105,7 +103,7 @@ else
 end
 
 %%-----  set default options for CPLEX  -----
-if have_fcn('matlab', 'vnum') >= 8.006 && have_fcn('cplex', 'vnum') <= 12.006002
+if have_fcn('matlab', 'vnum') >= 8.006 && have_fcn('cplex', 'vnum') <= 12.006003
     s = warning('QUERY', 'MATLAB:lang:badlyScopedReturnValue');
     warning('OFF', 'MATLAB:lang:badlyScopedReturnValue');
     opt = cplexoptimset('cplex');

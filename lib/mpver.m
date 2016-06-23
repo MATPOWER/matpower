@@ -26,9 +26,9 @@ function rv = mpver(varargin)
 % v{1} = ver(p);
 
 v{1} = struct(  'Name',     'MATPOWER', ... 
-                'Version',  '5.1+', ...
+                'Version',  '6.0b1', ...
                 'Release',  '', ...
-                'Date',     '23-Sep-2015' );
+                'Date',     '01-Jun-2016' );
 if nargout > 0
     if nargin > 0
         rv = v{1};
@@ -40,15 +40,25 @@ else
         v{2} = ver('octave');
     else
         v{2} = ver('matlab');
+        if length(v{2}) > 1
+            warning('The built-in VER command is behaving strangely, probably as a result of installing a 3rd party toolbox in a directory named ''matlab'' on your path. Check each element of the output of ver(''matlab'') to find the offending toolbox, then move the toolbox to a more appropriately named directory.');
+            v{2} = v{2}(1);
+        end
     end
     v{3} = ver('optim');
+    if length(v{3}) > 1
+        warning('The built-in VER command is behaving strangely, probably as a result of installing a 3rd party toolbox in a directory named ''optim'' on your path. Check each element of the output of ver(''optim'') to find the offending toolbox, then move the toolbox to a more appropriately named directory.');
+        v{3} = v{3}(1);
+    end
     for n = 1:3
-        if n == 3 && isempty(v{3})
-            fprintf('\n%-22s -- not installed --', 'Optimization Toolbox');
-            continue;
-        elseif n == 3 && ~license('test', 'optimization_toolbox')
-            fprintf('\n%-22s -- no license --', 'Optimization Toolbox');
-            continue;
+        if n == 3
+            if isempty(v{3})
+                fprintf('\n%-22s -- not installed --', 'Optimization Toolbox');
+                continue;
+            elseif have_fcn('matlab') && ~license('test', 'optimization_toolbox')
+                fprintf('\n%-22s -- no license --', 'Optimization Toolbox');
+                continue;
+            end
         end
         fprintf('\n%-22s Version %-9s', v{n}.Name, v{n}.Version);
         if ~isempty(v{n}.Date)
@@ -60,6 +70,7 @@ else
     end
     fprintf('\n');
     mipsver;
+    mostver;
     if have_fcn('sdp_pf')
         sdp_pf_ver;
     else
@@ -108,11 +119,7 @@ else
     else
         fprintf('%-22s -- not installed --\n', 'GLPK');
     end
-    if have_fcn('gurobi')
-        gurobiver;
-    else
-        fprintf('%-22s -- not installed --\n', 'Gurobi');
-    end
+    gurobiver;
     if have_fcn('ipopt')
         s = have_fcn('ipopt', 'all');
         if isempty(s.vstr)

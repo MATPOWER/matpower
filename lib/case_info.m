@@ -18,10 +18,8 @@ function [groupss, isolated] = case_info(mpc, fd)
 %          Report islands that are connected by DC lines.
 
 %   MATPOWER
-%   Copyright (c) 2012-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2012-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -142,6 +140,8 @@ if ndc
         ndc  = size(mpc.dcline, 1); %% number of DC lines
     end
 end
+
+if length(nonpos_bus) == 0  %% no bad bus numbers
 
 %% build connectivity structures
 C_on = sparse(1:nl, e2i(mpc.branch(:, F_BUS)), -mpc.branch(:, BR_STATUS), nl, nb) + ...
@@ -617,6 +617,8 @@ for page = 1:pages
         fprintf(fd, '\n\n');
     end
 end
+
+end     %% no bad bus numbers
 
 %% assign output arguments as requested
 if nargout > 0

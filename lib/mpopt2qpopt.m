@@ -13,27 +13,26 @@ function qpopt = mpopt2qpopt(mpopt, model, alg)
 %               for selection of solver in case ALG is 'DEFAULT' (solver
 %               precedence for each model type list in parentheses):
 %           'LP'   - linear program with all continuous variables
-%                   (GUROBI, CPLEX, MOSEK, OT, GLPK, BPMPD, MIPS)
+%                   (GUROBI, CPLEX, MOSEK, OT (if Matlab), GLPK, BPMPD, MIPS)
 %           'QP'   - quadratic program with all continuous variables
-%                   (GUROBI, CPLEX, MOSEK, OT, BPMPD, MIPS)
+%                   (GUROBI, CPLEX, MOSEK, OT (if large-scale alg available),
+%                    BPMPD, MIPS)
 %           'MILP' - LP with mixed integer/continuous variables
 %                   (GUROBI, CPLEX, MOSEK, OT, GLPK)
 %           'MIQP' - (default) QP with mixed integer/continuous variables
 %                   (GUROBI, CPLEX, MOSEK)
-%       ALG ('opf.dc') : (optional) 'opf.dc' or any valid value of
-%               OPT.alg for QPS_MATPOWER or MIQPS_MATPOWER. The first
-%               option indicates that it should be taken from
-%               MPOPT.opf.dc.solver.
+%       ALG ('opf.dc') : (optional) 'opf.dc', 'most', or any valid value of
+%               OPT.alg for QPS_MATPOWER or MIQPS_MATPOWER. The first two
+%               options indicate that it should be taken from
+%               MPOPT.opf.dc.solver or MPOPT.most.solver, respectively.
 %
 %   Output:
 %       QPOPT : an options struct for use by QPS_MATPOWER or MIQPS_MATPOWER
 %               and friends
 
 %   MATPOWER
-%   Copyright (c) 2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -51,11 +50,17 @@ if isempty(model)
 else
     model = upper(model);
 end
+skip_prices = 0;
+price_stage_warn_tol = [];
 
 %% get ALG from mpopt, if necessary
 switch alg
     case {'opf.dc', ''}
         alg = upper(mpopt.opf.dc.solver);
+    case 'most'
+        alg = upper(mpopt.most.solver);
+        skip_prices             = mpopt.most.skip_prices;
+        price_stage_warn_tol    = mpopt.most.price_stage_warn_tol;
     otherwise
         alg = upper(alg);
 end
@@ -69,8 +74,8 @@ switch alg
             alg = 'CPLEX';      %% if not, then CPLEX, if available
         elseif have_fcn('mosek')
             alg = 'MOSEK';      %% if not, then MOSEK, if available
-        elseif have_fcn('linprog') && strcmp(model, 'LP') || ...
-                have_fcn('quadprog') && strcmp(model, 'QP') || ...
+        elseif have_fcn('linprog') && strcmp(model, 'LP') && have_fcn('matlab') || ...
+                have_fcn('quadprog_ls') && strcmp(model, 'QP') || ...
                 have_fcn('intlinprog') && strcmp(model, 'MILP')
             alg = 'OT';         %% if not, then Optimization Tbx, if available
                                 %% and applicable
@@ -119,4 +124,8 @@ switch alg
         if isfield(mpopt, 'intlinprog') && ~isempty(mpopt.intlinprog)
             qpopt.intlinprog_opt = mpopt.intlinprog;
         end
+end
+if model(1) == 'M'
+    qpopt.skip_prices           = skip_prices;
+    qpopt.price_stage_warn_tol  = price_stage_warn_tol;
 end

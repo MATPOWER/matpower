@@ -1,5 +1,8 @@
 function [bus, gen, gencost] = scale_load(load, bus, gen, load_zone, opt, gencost)
 %SCALE_LOAD Scales fixed and/or dispatchable loads.
+%   MPC = SCALE_LOAD(LOAD, MPC);
+%   MPC = SCALE_LOAD(LOAD, MPC, LOAD_ZONE)
+%   MPC = SCALE_LOAD(LOAD, MPC, LOAD_ZONE, OPT)
 %   BUS = SCALE_LOAD(LOAD, BUS);
 %   [BUS, GEN] = SCALE_LOAD(LOAD, BUS, GEN, LOAD_ZONE, OPT)
 %   [BUS, GEN, GENCOST] = ...
@@ -13,6 +16,8 @@ function [bus, gen, gencost] = scale_load(load, bus, gen, load_zone, opt, gencos
 %       or as a target quantity. If there are nz load zones this
 %       vector has nz elements.
 %
+%   MPC - standard MATPOWER case struct or case file name
+%       
 %   BUS - standard BUS matrix with nb rows, where the fixed active
 %       and reactive loads available for scaling are specified in
 %       columns PD and QD
@@ -55,6 +60,11 @@ function [bus, gen, gencost] = scale_load(load, bus, gen, load_zone, opt, gencos
 %       'DISPATCHABLE' : scale only dispatchable loads
 %       'BOTH'         : scale both fixed and dispatchable loads
 %
+%     OPT.cost : (default = -1) flag to include cost in scaling or not
+%       -1 : include cost if gencost is available
+%        0 : do not include cost
+%        1 : include cost (error if gencost not available)
+%
 %   GENCOST - (optional) standard GENCOST matrix with ng (or 2*ng)
 %       rows, where the dispatchable load rows are determined by
 %       the GEN matrix. If included, the quantity axis of the marginal
@@ -81,10 +91,8 @@ function [bus, gen, gencost] = scale_load(load, bus, gen, load_zone, opt, gencos
 %   See also TOTAL_LOAD.
 
 %   MATPOWER
-%   Copyright (c) 2004-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -97,17 +105,43 @@ function [bus, gen, gencost] = scale_load(load, bus, gen, load_zone, opt, gencos
 [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, ...
     PMAX, PMIN, MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN] = idx_gen;
 
-nb = size(bus, 1);          %% number of buses
-
 %%-----  process inputs  -----
-if nargin < 6
-    gencost = [];
-    if nargin < 5
-        opt = struct;
-        if nargin < 4
-            load_zone = [];
-            if nargin < 3
-                gen = [];
+if ischar(bus)      %% passing in case as file name string
+    bus = loadcase(bus);
+end
+if isstruct(bus)
+    use_mpc = 1;
+    if nargin < 4
+        load_zone = struct;
+        if nargin < 3
+            gen = [];
+        end
+    end
+    %% shift and reassign inputs
+    opt = load_zone;
+    load_zone = gen;
+    mpc = bus;
+    gen = mpc.gen;
+    bus = mpc.bus;
+    if isfield(mpc, 'gencost')
+        gencost = mpc.gencost;
+    else
+        gencost = [];
+    end
+    if nargout > 1
+        error('scale_load: too many output arguments')
+    end
+else
+    use_mpc = 0;
+    if nargin < 6
+        gencost = [];
+        if nargin < 5
+            opt = struct;
+            if nargin < 4
+                load_zone = [];
+                if nargin < 3
+                    gen = [];
+                end
             end
         end
     end
@@ -126,6 +160,9 @@ end
 if ~isfield(opt, 'scale')
     opt.scale = 'FACTOR';   %% 'FACTOR' or 'QUANTITY'
 end
+if ~isfield(opt, 'cost')
+    opt.cost = -1;          %% -1, 0, or 1
+end
 if ~strcmp(opt.pq, 'P') && ~strcmp(opt.pq, 'PQ')
     error('scale_load: opt.pq must equal ''PQ'' or ''P''');
 end
@@ -138,7 +175,14 @@ end
 if isempty(gen) && opt.which(1) ~= 'F'
     error('scale_load: need gen matrix to scale dispatchable loads');
 end
-if nargout < 3 && ~isempty(gencost)
+if opt.cost == -1
+    if isempty(gencost)
+        opt.cost = 0;
+    else
+        opt.cost = 1;
+    end
+end
+if ~use_mpc && nargout < 3 && opt.cost
     error('scale_load: missing gencost as output argument');
 end
 if nargout > 2 && isempty(gencost)
@@ -146,6 +190,7 @@ if nargout > 2 && isempty(gencost)
 end
 
 %% create dispatchable load connection matrix
+nb = size(bus, 1);          %% number of buses
 if ~isempty(gen)
     ng = size(gen, 1);
     is_ld = isload(gen) & gen(:, GEN_STATUS) > 0;
@@ -242,13 +287,13 @@ if opt.which(1) ~= 'F'      %% includes 'DISPATCHABLE', not 'FIXED' only
         ig = ld(i);
 
         gen(ig, [PG PMIN]) = gen(ig, [PG PMIN]) * scale(k);
-        if ~isempty(gencost)
+        if opt.cost
             gencost(ig, :) = modcost(gencost(ig, :), scale(k), 'SCALE_F');
             gencost(ig, :) = modcost(gencost(ig, :), scale(k), 'SCALE_X');
         end
         if strcmp(opt.pq, 'PQ')
             gen(ig, [QG QMIN QMAX]) = gen(ig, [QG QMIN QMAX]) * scale(k);
-            if ~isempty(gencost)
+            if opt.cost
                 [pcost, qcost] = pqcost(gencost, ng);
                 if ~isempty(qcost)
                     qcost(ig, :) = modcost(qcost(ig, :), scale(k), 'SCALE_F');
@@ -258,4 +303,14 @@ if opt.which(1) ~= 'F'      %% includes 'DISPATCHABLE', not 'FIXED' only
             end
         end
     end
+end
+
+%% re-package outputs if necessary
+if use_mpc
+    mpc.bus = bus;
+    mpc.gen = gen;
+    if opt.cost
+        mpc.gencost = gencost;
+    end
+    bus = mpc;
 end

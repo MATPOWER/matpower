@@ -2,10 +2,8 @@ function t_opf_fmincon(quiet)
 %T_OPF_FMINCON  Tests for FMINCON-based optimal power flow.
 
 %   MATPOWER
-%   Copyright (c) 2004-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -41,9 +39,9 @@ mpopt = mpoption('opf.violation', 1e-6, 'fmincon.tol_x', 1e-6, 'fmincon.tol_f', 
 mpopt = mpoption(mpopt, 'out.all', 0, 'verbose', verbose, 'opf.ac.solver', 'FMINCON');
 
 %% use active-set method for Matlab 7.6-7.9 (R2008a-R2009b)
-v = ver('Matlab');
-if strcmp(v.Version, '7.6') || strcmp(v.Version, '7.7') || ...
-        strcmp(v.Version, '7.8') || strcmp(v.Version, '7.9')
+vstr = have_fcn('matlab', 'vstr');
+if strcmp(vstr, '7.6') || strcmp(vstr, '7.7') || ...
+        strcmp(vstr, '7.8') || strcmp(vstr, '7.9')
     mpopt = mpoption(mpopt, 'fmincon.alg', 1);
 end
 

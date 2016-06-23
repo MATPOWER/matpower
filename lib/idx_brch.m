@@ -53,10 +53,8 @@ function [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, ...
 %   See also DEFINE_CONSTANTS.
 
 %   MATPOWER
-%   Copyright (c) 1996-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).

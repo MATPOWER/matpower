@@ -7,10 +7,8 @@ function test_matpower(verbose)
 %   See also T_RUN_TESTS.
 
 %   MATPOWER
-%   Copyright (c) 2004-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -25,6 +23,7 @@ tests = {};
 %% MATPOWER base test
 tests{end+1} = 't_test_fcns';
 tests{end+1} = 't_nested_struct_copy';
+tests{end+1} = 't_feval_w_path';
 tests{end+1} = 't_mpoption';
 tests{end+1} = 't_loadcase';
 tests{end+1} = 't_ext2int2ext';
@@ -110,6 +109,7 @@ tests{end+1} = 't_printpf';
 tests{end+1} = 't_vdep_load';
 tests{end+1} = 't_total_load';
 tests{end+1} = 't_scale_load';
+tests{end+1} = 't_apply_changes';
 tests{end+1} = 't_psse';
 
 %% smartmarket tests

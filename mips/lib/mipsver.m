@@ -9,19 +9,17 @@ function rv = mipsver(varargin)
 %   See also MPVER.
 
 %   MIPS
-%   Copyright (c) 2010-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%
-%   $Id$
 %
 %   This file is part of MIPS.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 v = struct( 'Name',     'MIPS', ... 
-            'Version',  '1.2', ...
+            'Version',  '1.2.1', ...
             'Release',  '', ...
-            'Date',     '20-Mar-2015' );
+            'Date',     '01-Jun-2016' );
 if nargout > 0
     if nargin > 0
         rv = v;

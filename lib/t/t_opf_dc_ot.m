@@ -2,10 +2,8 @@ function t_opf_dc_ot(quiet)
 %T_OPF_DC_OT  Tests for DC optimal power flow using Opt Tbx solvers.
 
 %   MATPOWER
-%   Copyright (c) 2004-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -15,18 +13,23 @@ if nargin < 1
     quiet = 0;
 end
 
-if have_fcn('quadprog_ls')
-    if have_fcn('optimoptions')
-        if have_fcn('linprog_ds')
-            algs  = {'interior-point', 'active-set', 'simplex', 'dual-simplex'};
+matlab = have_fcn('matlab');
+if matlab
+    if have_fcn('quadprog_ls')
+        if have_fcn('optimoptions')
+            if have_fcn('linprog_ds')
+                algs  = {'interior-point', 'active-set', 'simplex', 'dual-simplex'};
+            else
+                algs  = {'interior-point', 'active-set', 'simplex'};
+            end
         else
-            algs  = {'interior-point', 'active-set', 'simplex'};
+            algs  = {'interior-point', 'active-set'};
         end
     else
-        algs  = {'interior-point', 'active-set'};
+        algs  = {''};
     end
 else
-    algs  = {''};
+    algs  = {'default'};
 end
 
 num_tests = 23 * length(algs);
@@ -48,6 +51,15 @@ if quiet
 else
     verbose = 0;
 end
+if have_fcn('octave')
+    if have_fcn('octave', 'vnum') >= 4
+        file_in_path_warn_id = 'Octave:data-file-in-path';
+    else
+        file_in_path_warn_id = 'Octave:load-file-in-path';
+    end
+    s1 = warning('query', file_in_path_warn_id);
+    warning('off', file_in_path_warn_id);
+end
 
 mpopt = mpoption('out.all', 0, 'verbose', verbose);
 mpopt = mpoption(mpopt, 'opf.dc.solver', 'OT');
@@ -57,14 +69,15 @@ warning off optim:linprog:AlgOptsWillError;
 
 %% run DC OPF
 if have_fcn('quadprog')
-    v = ver('optim');
     for k = 1:length(algs)
-        if ~isempty(algs)
-            mpopt = mpoption(mpopt, 'linprog.Algorithm', algs{k});
-        else
-            mpopt = mpoption(mpopt, 'linprog', []);
+        if matlab
+            if ~isempty(algs)
+                mpopt = mpoption(mpopt, 'linprog.Algorithm', algs{k});
+            else
+                mpopt = mpoption(mpopt, 'linprog', []);
+            end
         end
-        if strcmp(algs{k}, 'dual-simplex') && strcmp(v.Version, '7.1')
+        if strcmp(algs{k}, 'dual-simplex') && strcmp(have_fcn('fmincon', 'vstr'), '7.1')
             have_prices = 0;    %% dual-simplex did not return prices in Matlab R2014b!?!
         else
             have_prices = 1;
@@ -179,6 +192,10 @@ if have_fcn('quadprog')
     end
 else
     t_skip(num_tests, 'Optimization Toolbox not available');
+end
+
+if have_fcn('octave')
+    warning(s1.state, file_in_path_warn_id);
 end
 
 t_end;

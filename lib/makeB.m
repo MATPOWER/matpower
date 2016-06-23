@@ -1,10 +1,13 @@
 function [Bp, Bpp] = makeB(baseMVA, bus, branch, alg)
 %MAKEB   Builds the FDPF matrices, B prime and B double prime.
-%   [BP, BPP] = MAKEB(BASEMVA, BUS, BRANCH, ALG) returns the two
-%   matrices B prime and B double prime used in the fast decoupled power
-%   flow. Does appropriate conversions to p.u. ALG is either 'FDXB' or
-%   'FDBX', the corresponding value of MPOPT.pf.alg option specifying the
-%   power flow algorithm.
+%   [BP, BPP] = MAKEB(MPC, ALG)
+%   [BP, BPP] = MAKEB(BASEMVA, BUS, BRANCH, ALG)
+%
+%   Returns the two matrices B prime and B double prime used in the fast
+%   decoupled power flow. Does appropriate conversions to p.u. ALG is either
+%   'FDXB' or 'FDBX', the corresponding value of MPOPT.pf.alg option
+%   specifying the power flow algorithm.
+%   Bus numbers must be consecutive beginning at 1 (i.e. internal ordering).
 %
 %   Note: For backward compatibility, ALG can also take on a value of
 %   2 or 3, corresponding to values of the old PF_ALG option. This usage
@@ -16,14 +19,23 @@ function [Bp, Bpp] = makeB(baseMVA, bus, branch, alg)
 %   See also FDPF.
 
 %   MATPOWER
-%   Copyright (c) 1996-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
+
+%% extract from MPC if necessary
+if nargin < 3
+    mpc     = baseMVA;
+    if nargin == 2
+        alg = bus;
+    end
+    baseMVA = mpc.baseMVA;
+    bus     = mpc.bus;
+    branch  = mpc.branch;
+end
 
 %% constants
 nb = size(bus, 1);          %% number of buses

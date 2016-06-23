@@ -8,21 +8,20 @@ function [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch)
 %   yield the vector currents injected into each line from the "from" and
 %   "to" buses respectively of each line. Does appropriate conversions to p.u.
 %   Inputs can be a MATPOWER case struct or individual BASEMVA, BUS and
-%   BRANCH values. Bus numbers must be consecutive beginning at 1 (internal
-%   ordering).
+%   BRANCH values. Bus numbers must be consecutive beginning at 1
+%   (i.e. internal ordering).
 %
 %   See also MAKEJAC, MAKESBUS, EXT2INT.
 
 %   MATPOWER
-%   Copyright (c) 1996-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
+%% extract from MPC if necessary
 if nargin < 3
     mpc     = baseMVA;
     baseMVA = mpc.baseMVA;
@@ -43,7 +42,7 @@ nl = size(branch, 1);       %% number of lines
 
 %% check that bus numbers are equal to indices to bus (one set of bus numbers)
 if any(bus(:, BUS_I) ~= (1:nb)')
-    error('buses must appear in order by bus number')
+    error('makeYbus: buses must be numbered consecutively in bus matrix; use ext2int() to convert to internal ordering')
 end
 
 %% for each branch, compute the elements of the branch admittance matrix where

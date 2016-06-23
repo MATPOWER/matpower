@@ -52,10 +52,8 @@ function [bus, gen, branch, f, success, info, et, g, jac, xr, pimul] = ...
 %   See also OPF, RUNUOPF.
 
 %   MATPOWER
-%   Copyright (c) 1996-2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%
-%   $Id$
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -194,3 +192,19 @@ elseif results0.success
   results0.et = et;
   printpf(results0, 1, mpopt);
 end
+
+
+function [val, idx] = fairmax(x)
+%FAIRMAX    Same as built-in MAX, except breaks ties randomly.
+%   [VAL, IDX] = FAIRMAX(X) takes a vector as an argument and returns
+%   the same output as the built-in function MAX with two output
+%   parameters, except that where the maximum value occurs at more
+%   than one position in the  vector, the index is chosen randomly
+%   from these positions as opposed to just choosing the first occurance.
+%
+%   See also MAX.
+
+val = max(x);               %% find max value
+i   = find(x == val);       %% find all positions where this occurs
+n   = length(i);            %% number of occurences
+idx = i( fix(n*rand)+1 );   %% select index randomly among occurances

@@ -22,7 +22,6 @@ function mpc = case24_ieee_rts
 %   MATPOWER case file data provided by Bruce Wollenberg.
 
 %   MATPOWER
-%   $Id$
 
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';
