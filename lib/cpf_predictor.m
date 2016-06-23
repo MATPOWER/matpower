@@ -1,4 +1,4 @@
-function [V0, lam0, z] = cpf_predictor(V, lam, Ybus, Sxfr, Sbust, Sbusb, pv, pq, ...
+function [V0, lam0, z] = cpf_predictor(V, lam, Ybus, Sbusb, Sbust, pv, pq, ...
                             step, z, Vprv, lamprv, parameterization)
 %CPF_PREDICTOR  Performs the predictor step for the continuation power flow
 %   [V0, LAM0, Z] = CPF_PREDICTOR(V, LAM, YBUS, SXFR, SBUST, SBUSB, PV, PQ, ...
@@ -11,13 +11,10 @@ function [V0, lam0, z] = cpf_predictor(V, lam, Ybus, Sxfr, Sbust, Sbusb, pv, pq,
 %       V : complex bus voltage vector at current solution
 %       LAM : scalar lambda value at current solution
 %       YBUS : complex bus admittance matrix
-%       SXFR  : handle of function returning complex vector of scheduled
-%               transfers in p.u. (difference between bus injections in base
-%               and target cases)
-%       SBUST : handle of function returning nb x 1 vector of complex
-%               target case injections in p.u. and derivatives w.r.t. |V|
 %       SBUSB : handle of function returning nb x 1 vector of complex
 %               base case injections in p.u. and derivatives w.r.t. |V|
+%       SBUST : handle of function returning nb x 1 vector of complex
+%               target case injections in p.u. and derivatives w.r.t. |V|
 %       PV : vector of indices of PV buses
 %       PQ : vector of indices of PQ buses
 %       STEP : continuation step length
@@ -51,8 +48,8 @@ Vm = abs(V);
 
 %% compute Jacobian for the power flow equations
 [dSbus_dVm, dSbus_dVa] = dSbus_dV(Ybus, V);
-[dummy, neg_dSdt_dVm] = Sbust(Vm);
 [dummy, neg_dSdb_dVm] = Sbusb(Vm);
+[dummy, neg_dSdt_dVm] = Sbust(Vm);
 dSbus_dVm = dSbus_dVm - neg_dSdb_dVm - lam * (neg_dSdt_dVm - neg_dSdb_dVm);
 
 j11 = real(dSbus_dVa([pv; pq], [pv; pq]));
@@ -63,7 +60,7 @@ j22 = imag(dSbus_dVm(pq, pq));
 J = [   j11 j12;
         j21 j22;    ];
 
-Sxf = Sxfr(Vm);     %% update target based on current voltages
+Sxf = Sbust(Vm) - Sbusb(Vm);    %% "transfer" at current voltage level
 dF_dlam = -[real(Sxf([pv; pq])); imag(Sxf(pq))];
 [dP_dV, dP_dlam] = cpf_p_jac(parameterization, z, V, lam, Vprv, lamprv, pv, pq);
 

@@ -269,14 +269,14 @@ elseif mpopt.verbose > 1
     fprintf('step %3d : lambda = %6.3f, %2d Newton steps\n', 0, 0, iterations);
 end
 
-Sxfr = @(Vm)Sbust(Vm) - Sbusb(Vm);
+Vm = abs(V);
 lamprv = lam;   %% lam at previous step
 Vprv   = V;     %% V at previous step
 continuation = 1;
 cont_steps = 0;
 
 %% input args for callbacks
-Sxf = Sxfr(abs(V));
+Sxfr = Sbust(Vm) - Sbusb(Vm);
 cb_data = struct( ...
     'mpc_base', mpcbase, ...
     'mpc_target', mpctarget, ...
@@ -299,7 +299,7 @@ for k = 1:length(callbacks)
                             cb_data, cb_state, cb_args);
 end
 
-if norm(Sxf) == 0
+if norm(Sxfr) == 0
     if mpopt.verbose
         fprintf('base case and target case have identical load and generation\n');
     end
@@ -354,7 +354,7 @@ event.status = cpf_es.NO_EVENT;
 event.qlim_at_prev_step   = 0;
 
 %% prediction for next step
-[V0, lam0, z] = cpf_predictor(V, lam, Ybus, Sxfr, Sbust, Sbusb, pv, pq, ...
+[V0, lam0, z] = cpf_predictor(V, lam, Ybus, Sbusb, Sbust, pv, pq, ...
         step, zprv, Vprv, lamprv, parameterization);
 zprv = z;
 
@@ -372,7 +372,7 @@ while continuation && event.status ~= cpf_es.TERMINATE
     
     %% correction
     [V, success, i, lam] = cpf_corrector(Ybus, Sbusb, V0, ref, pv, pq, ...
-                lam0, Sxfr, Sbust, Vprv, lamprv, z, step, parameterization, mpopt_pf);
+                lam0, Sbust, Vprv, lamprv, z, step, parameterization, mpopt_pf);
     if ~success
         continuation = 0;
         if mpopt.verbose
@@ -386,7 +386,7 @@ while continuation && event.status ~= cpf_es.TERMINATE
         fprintf('step %3d : lambda = %6.3f, %2d corrector Newton steps\n', cont_steps, lam, i);
     end
     
-    [V0next, lam0next, z] = cpf_predictor(V, lam, Ybus, Sxfr, Sbust, Sbusb, pv, pq, step, zprv, ...
+    [V0next, lam0next, z] = cpf_predictor(V, lam, Ybus, Sbusb, Sbust, pv, pq, step, zprv, ...
                               Vprv, lamprv, parameterization);
 
     %% invoke event handler
@@ -417,7 +417,7 @@ while continuation && event.status ~= cpf_es.TERMINATE
         cb_data.Sbust = Sbust;
         cb_data.Sxfr  = Sxfr;
         
-        [V0next, lam0next, z] = cpf_predictor(V, lam, Ybus, Sxfr, Sbust, Sbusb, pv, pq, step, z, ...
+        [V0next, lam0next, z] = cpf_predictor(V, lam, Ybus, Sbusb, Sbust, pv, pq, step, z, ...
                                               Vprv, lamprv, parameterization);
     end
     
@@ -445,7 +445,7 @@ while continuation && event.status ~= cpf_es.TERMINATE
     else
 
         %% prediction for next step
-        [V0, lam0, z] = cpf_predictor(Vprv, lamprv, Ybus, Sxfr, Sbust, Sbusb, pv, pq, step, zprv2, ...
+        [V0, lam0, z] = cpf_predictor(Vprv, lamprv, Ybus, Sbusb, Sbust, pv, pq, step, zprv2, ...
                                       Vprv2, lamprv2, parameterization);
         
     end

@@ -1,9 +1,9 @@
 function [V, converged, i, lam] = cpf_corrector(Ybus, Sbusb, V0, ref, pv, pq, ...
-                lam0, Sxfr, Sbust, Vprv, lamprv, z, step, parameterization, mpopt)
+                lam0, Sbust, Vprv, lamprv, z, step, parameterization, mpopt)
 %CPF_CORRECTOR  Solves the corrector step of a continuation power flow using a
 %   full Newton method with selected parameterization scheme.
 %   [V, CONVERGED, I, LAM] = CPF_CORRECTOR(YBUS, SBUSB, V0, REF, PV, PQ, ...
-%                                       LAM0, SXFR, SBUST, VPRV, LPRV, Z, ...
+%                                       LAM0, SBUST, VPRV, LPRV, Z, ...
 %                                       STEP, PARAMETERIZATION, MPOPT)
 %
 %   Computes the solution for the current continuation step.
@@ -85,10 +85,10 @@ j3 = j2 + 1;    j4 = j2 + npq;      %% j3:j4 - V angle of pq buses
 j5 = j4 + 1;    j6 = j4 + npq;      %% j5:j6 - V mag of pq buses
 j7 = j6 + 1;    j8 = j6 + 1;        %% j7:j8 - lambda
 
-%% evaluate F(x0, lam0), including Sxfr transfer/loading
-Sbusb0 = Sbusb(Vm);
-Sxf = Sxfr(Vm);
-mis = V .* conj(Ybus * V) - Sbusb0 - lam*Sxf;
+%% evaluate F(x0, lam0), including transfer/loading
+Sb = Sbusb(Vm);
+St = Sbust(Vm);
+mis = V .* conj(Ybus * V) - Sb - lam * (St - Sb);
 F = [   real(mis([pv; pq]));
         imag(mis(pq))   ];
 
@@ -132,6 +132,7 @@ while (~converged && i < max_it)
     J = [   j11 j12;
             j21 j22;    ];
 
+    Sxf = St - Sb;
     dF_dlam = -[real(Sxf([pv; pq])); imag(Sxf(pq))];
     [dP_dV, dP_dlam] = cpf_p_jac(parameterization, z, V, lam, Vprv, lamprv, pv, pq);
 
@@ -158,9 +159,9 @@ while (~converged && i < max_it)
     lam = lam + dx(j7:j8);
 
     %% evalute F(x, lam)
-    Sbusb0 = Sbusb(Vm);
-    Sxf = Sxfr(Vm);
-    mis = V .* conj(Ybus * V) - Sbusb0 - lam*Sxf;
+    Sb = Sbusb(Vm);
+    St = Sbust(Vm);
+    mis = V .* conj(Ybus * V) - Sb - lam * (St - Sb);
     F = [   real(mis(pv));
             real(mis(pq));
             imag(mis(pq))   ];
