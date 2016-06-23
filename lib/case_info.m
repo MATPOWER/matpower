@@ -141,6 +141,8 @@ if ndc
     end
 end
 
+if length(nonpos_bus) == 0  %% no bad bus numbers
+
 %% build connectivity structures
 C_on = sparse(1:nl, e2i(mpc.branch(:, F_BUS)), -mpc.branch(:, BR_STATUS), nl, nb) + ...
     sparse(1:nl, e2i(mpc.branch(:, T_BUS)),  mpc.branch(:, BR_STATUS), nl, nb);
@@ -615,6 +617,8 @@ for page = 1:pages
         fprintf(fd, '\n\n');
     end
 end
+
+end     %% no bad bus numbers
 
 %% assign output arguments as requested
 if nargout > 0
