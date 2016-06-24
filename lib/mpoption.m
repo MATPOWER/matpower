@@ -480,7 +480,10 @@ if have_opt0
             if opt0.v <= 8          %% convert version 8 to 9
                 opt0.exp.sys_wide_zip_loads = opt_d.exp.sys_wide_zip_loads;
             end
-            if opt0.v <= 10         %% convert version 9,10 to 11
+            if opt0.v <= 9          %% convert version 9 to 10
+                opt0.most = opt_d.most;
+            end
+            if opt0.v <= 10         %% convert version 10 to 11
                 opt0.cpf.enforce_p_lims = opt_d.cpf.enforce_p_lims;
                 opt0.cpf.enforce_q_lims = opt_d.cpf.enforce_q_lims;
                 opt0.cpf.p_lims_tol     = opt_d.cpf.p_lims_tol;
