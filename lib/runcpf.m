@@ -187,11 +187,10 @@ end
 
 %% convert to internal indexing
 mpcbase = ext2int(mpcbase);
+nb = size(mpcbase.bus, 1);
 
 %% get bus index lists of each type of bus
 [ref, pv, pq] = bustypes(mpcbase.bus, mpcbase.gen);
-
-nb = size(mpcbase.bus, 1);
 
 %% read target case data
 mpctarget = loadcase(targetcasedata);
@@ -208,7 +207,7 @@ mpctarget = ext2int(mpctarget);
 mpctarget.bus(:, BUS_TYPE) = mpcbase.bus(:, BUS_TYPE);
 
 %% generator info
-%% find generators that are on and not at PQ buses
+%% find generators that are ON and at voltage-controlled buses
 ong = find(mpcbase.gen(:, GEN_STATUS) > 0 ...
           & mpcbase.bus(mpcbase.gen(:, GEN_BUS), BUS_TYPE) ~= PQ);
 gbus = mpcbase.gen(ong, GEN_BUS);      %% what buses are they at?
@@ -248,40 +247,36 @@ if mpopt.verbose > 0
     fprintf('\nMATPOWER Version %s, %s', v.Version, v.Date);
     fprintf(' -- AC Continuation Power Flow\n');
 end
+
 %% initial state
-%V0    = ones(size(bus, 1), 1);         %% flat start
 V0  = busb(:, VM) .* exp(sqrt(-1) * pi/180 * busb(:, VA));
-vcb = ones(size(V0));           %% create mask of voltage-controlled buses
-vcb(pq) = 0;                    %% exclude PQ buses
-k = find(vcb(gbus));           %% in-service gens at v-c buses
-V0(gbus(k)) = genb(ong(k), VG) ./ abs(V0(gbus(k))).* V0(gbus(k));
 
 %% build admittance matrices
 [Ybus, Yf, Yt] = makeYbus(baseMVAb, busb, branchb);
 
-%% function for computing base case V dependent complex bus power injections
-%% (generation - load)
+%% functions for computing base and target case V dependent complex bus
+%% power injections: (generation - load)
 Sbusb = @(Vm)makeSbus(baseMVAb, busb, genb, mpopt, Vm);
-%% function for computing target case V dependent complex bus power injections
-%% (generation - load)
 Sbust = @(Vm)makeSbus(baseMVAt, bust, gent, mpopt, Vm);
 Sxfr = @(Vm)(Sbust(Vm) - Sbusb(Vm));
 
-%% base case power flow solution
-lam = 0;
-iterations = 0; %% RDZ: modify runpf() so we can get actual from solved power flow
-V = V0;
-if mpopt.verbose > 2
-    fprintf('step %3d : lambda = %6.3f\n', 0, 0);
-elseif mpopt.verbose > 1
-    fprintf('step %3d : lambda = %6.3f, %2d Newton steps\n', 0, 0, iterations);
-end
-
-Vm = abs(V);
-lamprv = lam;   %% lam at previous step
-Vprv   = V;     %% V at previous step
+%% initialize variables
 continuation = 1;
 cont_steps = 0;
+iterations = mpcbase.iterations;
+lam = 0;
+V   = V0;
+Vm  = abs(V);
+z = [zeros(2*nb, 1); 1];    %% tangent predictor z = [dx;dlam]
+
+%% initialize values at previous step
+lamprv  = lam;
+Vprv    = V;
+zprv    = z;
+
+if mpopt.verbose > 1
+    fprintf('step %3d : lambda = %6.3f, %2d Newton steps\n', 0, 0, iterations);
+end
 
 %% input args for callbacks
 cb_data = struct( ...
@@ -306,6 +301,7 @@ for k = 1:length(callbacks)
                             cb_data, cb_state, cb_args);
 end
 
+%% check for case with no transfer
 if norm(Sxfr(Vm)) == 0
     if mpopt.verbose
         fprintf('base case and target case have identical load and generation\n');
@@ -313,65 +309,62 @@ if norm(Sxfr(Vm)) == 0
     continuation = 0;
 end
 
-%% tangent predictor z = [dx;dlam]
-z = zeros(2*length(V)+1,1);
-z(end,1) = 1.0;
-zprv = z;
-
 %% set up events
 event_fcn_names = {};
 event_postfcn_names = {};
 event.names = {};
 event.tol = [];
 %% Struct for logging information of located events
-event.log.stepnums = []; %% Continuation step numbers
-event.log.names = {};    %% Names of the events located  
-event.log.izero = {};    %% Indices of the events located in the event function
-event.log.nevents = [];  %% Number of events located at a step
+event.log.stepnums = [];    %% continuation step numbers
+event.log.names = {};       %% names of the events located
+event.log.izero = {};       %% indices of the events located in the event function
+event.log.nevents = [];     %% number of events located at a step
 if qlim
-    event_fcn_names = {event_fcn_names{:},'cpf_q_lims_event'};
-    event_postfcn_names = {event_postfcn_names{:},'cpf_q_lims_postevent'};
-    event.names = {event.names{:},'QGLIM'};
-    event.tol = [event.tol,mpopt.cpf.q_lims_tol/baseMVAb];
+    event_fcn_names = {event_fcn_names{:}, 'cpf_q_lims_event'};
+    event_postfcn_names = {event_postfcn_names{:}, 'cpf_q_lims_postevent'};
+    event.names = {event.names{:}, 'QGLIM'};
+    event.tol = [event.tol, mpopt.cpf.q_lims_tol/baseMVAb];
 end
 if plim
-    event_fcn_names = {event_fcn_names{:},'cpf_p_lims_event'};
-    event_postfcn_names = {event_postfcn_names{:},'cpf_p_lims_postevent'};
-    event.names = {event.names{:},'PGLIM'};
+    event_fcn_names = {event_fcn_names{:}, 'cpf_p_lims_event'};
+    event_postfcn_names = {event_postfcn_names{:}, 'cpf_p_lims_postevent'};
+    event.names = {event.names{:}, 'PGLIM'};
     event.tol = [event.tol, mpopt.cpf.p_lims_tol/baseMVAb];
 end
 %% RDZ: order of the above shouldn't matter, but it did in 2015-10-29 version
 %%      (linked to tolerances in cpfeventhandler())
 %%      not sure if it still matters in 2015-11-25 version
-event_fcn_names = {event_fcn_names{:},'cpf_stopat_event'};
-event_postfcn_names = {event_postfcn_names{:},'cpf_stopat_postevent'};
+event_fcn_names = {event_fcn_names{:}, 'cpf_stopat_event'};
+event_postfcn_names = {event_postfcn_names{:}, 'cpf_stopat_postevent'};
 if mpopt.cpf.stop_at == -1
     event_name = 'LAM_TRACE_FULL';
 elseif mpopt.cpf.stop_at == -2
     event_name = 'LAM_TRACE_NOSE';
 else
-    event_name = ['LAM_STOPAT',num2str(mpopt.cpf.stop_at)];
+    event_name = ['LAM_STOPAT_', num2str(mpopt.cpf.stop_at)];
 end
-event.names = {event.names{:},event_name};
-event.tol = [event.tol, 1e-5];
+event.names = {event.names{:}, event_name};
+event.tol = [event.tol, 1e-5];  %% RDZ: this should probably be a user settable tolerance
 
-event.fcns = cellfun(@str2func,event_fcn_names,'UniformOutput', false);
-event.postfcns = cellfun(@str2func,event_postfcn_names,'UniformOutput', false);
+event.fcns = cellfun(@str2func, event_fcn_names, 'UniformOutput', false);
+event.postfcns = cellfun(@str2func, event_postfcn_names, 'UniformOutput', false);
 event.status = cpf_es.NO_EVENT;
 event.qlim_at_prev_step   = 0;
 
 %% prediction for next step
 [V0, lam0, z] = cpf_predictor(V, lam, Ybus, Sbusb, Sbust, pv, pq, ...
         step, zprv, Vprv, lamprv, parameterization);
-zprv = z;
+zprv = z;   %% RDZ: should this happen before the next line?
 
 zprv2 = zprv;
 Vprv2 = Vprv;
 lamprv2 = lamprv;
 
-%% Call event function
+%% call event function
+%% RDZ: Is this just to initialize things? I see no handling of events
 for k = 1:length(event.fcns)
-    [event.fprv{k},event.terminate{k}] = event.fcns{k}(cont_steps,V,lam,Vprv,lamprv,z,cb_data);
+    [event.fprv{k}, event.terminate{k}] = ...
+        event.fcns{k}(cont_steps, V, lam, Vprv, lamprv, z, cb_data);
 end
 
 while continuation && event.status ~= cpf_es.TERMINATE
