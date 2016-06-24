@@ -118,6 +118,7 @@ gbus = gen(on, GEN_BUS);                %% what buses are they at?
 
 %%-----  run the power flow  -----
 t0 = clock;
+its = 0;            %% total iterations
 if mpopt.verbose > 0
     v = mpver('all');
     fprintf('\nMATPOWER Version %s, %s', v.Version, v.Date);
@@ -138,6 +139,7 @@ if dc                               %% DC formulation
     
     %% "run" the power flow
     [Va, success] = dcpf(B, Pbus, Va0, ref, pv, pq);
+    its = 1;
     
     %% update data matrices with solution
     branch(:, [QF, QT]) = zeros(size(branch, 1), 2);
@@ -216,6 +218,7 @@ else                                %% AC formulation
             otherwise
                 error('runpf: Only Newton''s method, fast-decoupled, and Gauss-Seidel power flow algorithms currently implemented.');
         end
+        its = its + iterations;
         
         %% update data matrices with solution
         [bus, gen, branch] = pfsoln(baseMVA, bus, gen, branch, Ybus, Yf, Yt, V, ref, pv, pq, mpopt);
@@ -318,6 +321,7 @@ else                                %% AC formulation
 end
 mpc.et = etime(clock, t0);
 mpc.success = success;
+mpc.iterations = its;
 
 %%-----  output results  -----
 %% convert back to original bus numbering & print results
