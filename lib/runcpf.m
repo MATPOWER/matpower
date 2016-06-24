@@ -56,11 +56,6 @@ function [res, suc] = ...
 %       results = runcpf(basecasedata, targetcasedata, mpopt, fname, solvedcase)
 %       [results, success] = runcpf(...);
 %
-%       Alternatively, for compatibility with previous versions of MATPOWER,
-%       some of the results can be returned as individual output arguments:
-%
-%       [baseMVA, bus, gen, branch, success, et] = runcpf(...);
-%
 %   RDZ: Need description of what happens when 'cpf.enforce_p_lims' is true.
 %
 %   If the 'cpf.enforce_q_lims' option is set to true (default is false) then,
