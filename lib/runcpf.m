@@ -221,10 +221,10 @@ if length(ong) ~= length(ont) || any(ong ~= ont)
 end
 
 %% ensure that Qg and slack Pg for target is same as for base
-mpctarget.gen(ont, QG) = mpcbase.gen(ong, QG);
+mpctarget.gen(ong, QG) = mpcbase.gen(ong, QG);
 for k = 1:length(ref)
     refgen = find(gbus == ref(k));
-    mpctarget.gen(ont(refgen), PG) = mpcbase.gen(ong(refgen), PG);
+    mpctarget.gen(ong(refgen), PG) = mpcbase.gen(ong(refgen), PG);
 end
 
 %% zero transfers for gens that exceed PMAX limits, if necessary
