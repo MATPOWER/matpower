@@ -45,6 +45,7 @@ function [res, suc] = ...
 %                       corrector steps
 %               max_lam - maximum value of lambda in lam_c
 %               iterations - number of continuation steps performed
+%               eventlog - RDZ: <NEEDS DESCRIPTION>
 %       SUCCESS : the success flag can additionally be returned as
 %           a second output argument
 %
@@ -68,11 +69,11 @@ function [res, suc] = ...
 %         will be used as the slack bus. This may result in the transfer at
 %         this generator and the generator at the new reference bus being
 %         slightly off from the specified values.
-%       - if all reference and PV buses are converted, then runcpf raises
+%       - if all reference and PV buses are converted, then RUNCPF raises
 %         infeasibility flag and terminates.
 %
 %   CPF termination modes:
-%       Reached nose point 
+%       Reached nose point
 %       Traced full curve
 %       No ref and pv buses remaining
 %       Limit induced bifurcation detected
@@ -136,6 +137,8 @@ adapt_step       = mpopt.cpf.adapt_step;        %% use adaptive step size?
 cb_args          = mpopt.cpf.user_callback_args;
 plim             = mpopt.cpf.enforce_p_lims;    %% enforce active limits
 qlim             = mpopt.cpf.enforce_q_lims;    %% enforce reactive limits
+%% RDZ: this saves on the order of 1e-5 seconds per run (conservative)
+%%      not worth the extra code, sacrifice in simplicity
 %% Convert mpopt.cpf.stop_at option to real number. This is to avoid string
 %% comparison in event handling
 if(ischar(mpopt.cpf.stop_at))
