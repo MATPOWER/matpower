@@ -181,11 +181,6 @@ mpcbase = ext2int(mpcbase);
 
 nb = size(mpcbase.bus, 1);
 
-%% generator info
-onb = find(mpcbase.gen(:, GEN_STATUS) > 0 ...   %% which generators are on?
-          & mpcbase.bus(mpcbase.gen(:, GEN_BUS), BUS_TYPE) ~= PQ);  %% ... and not at PQ buses
-gbusb = mpcbase.gen(onb, GEN_BUS);             %% what buses are they at?
-
 %% read target case data
 mpctarget = loadcase(targetcasedata);
 
@@ -198,19 +193,26 @@ end
 mpctarget = ext2int(mpctarget);
 
 %% update target bus types in case they've changed due to reactive power limits
-mpctarget.bus(:,BUS_TYPE) = mpcbase.bus(:,BUS_TYPE);
+mpctarget.bus(:, BUS_TYPE) = mpcbase.bus(:, BUS_TYPE);
 
 %% generator info
-ont = find(mpctarget.gen(:, GEN_STATUS) > 0 ...   %% which generators are on?
-          & mpctarget.bus(mpctarget.gen(:, GEN_BUS), BUS_TYPE) ~= PQ);  %% ... and not at PQ buses
-gbust = mpctarget.gen(ont, GEN_BUS);             %% what buses are they at?
+%% find generators that are on and not at PQ buses
+ong = find(mpcbase.gen(:, GEN_STATUS) > 0 ...
+          & mpcbase.bus(mpcbase.gen(:, GEN_BUS), BUS_TYPE) ~= PQ);
+gbus = mpcbase.gen(ong, GEN_BUS);      %% what buses are they at?
 
-%% RDZ: figure out purpose of this block of code
-%% need to ensure the following is same for basecase and targetcase
-mpctarget.gen(ont,QG) = mpctarget.gen(onb,QG);
+%% make sure target case has same GEN_STATUS
+ont = find(mpctarget.gen(:, GEN_STATUS) > 0 ...
+          & mpctarget.bus(mpctarget.gen(:, GEN_BUS), BUS_TYPE) ~= PQ);
+if length(ong) ~= length(ont) || any(ong ~= ont)
+    error('runcpf: GEN_STATUS of all generators must be the same in base and target cases');
+end
+
+%% ensure that Qg and slack Pg for target is same as for base
+mpctarget.gen(ont, QG) = mpcbase.gen(ong, QG);
 for k = 1:length(ref)
-    refgen = find(gbust == ref(k));
-    mpctarget.gen(ont(refgen), PG) = mpctarget.gen(onb(refgen), PG);
+    refgen = find(gbus == ref(k));
+    mpctarget.gen(ont(refgen), PG) = mpcbase.gen(ong(refgen), PG);
 end
 
 idx_pmax = [];
@@ -238,8 +240,8 @@ end
 V0  = busb(:, VM) .* exp(sqrt(-1) * pi/180 * busb(:, VA));
 vcb = ones(size(V0));           %% create mask of voltage-controlled buses
 vcb(pq) = 0;                    %% exclude PQ buses
-k = find(vcb(gbusb));           %% in-service gens at v-c buses
-V0(gbusb(k)) = genb(onb(k), VG) ./ abs(V0(gbusb(k))).* V0(gbusb(k));
+k = find(vcb(gbus));           %% in-service gens at v-c buses
+V0(gbus(k)) = genb(ong(k), VG) ./ abs(V0(gbus(k))).* V0(gbus(k));
 
 %% build admittance matrices
 [Ybus, Yf, Yt] = makeYbus(baseMVAb, busb, branchb);
