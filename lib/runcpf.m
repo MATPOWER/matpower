@@ -160,16 +160,28 @@ if ~isempty(mpopt.cpf.user_callback)
 end
 callbacks = cellfun(@str2func, callback_names, 'UniformOutput', false);
 
-%% run base case power flow
+%% set power flow options
 if mpopt.verbose > 2
     mpopt_pf = mpoption(mpopt, 'verbose', max(0, mpopt.verbose-1));
 else
     mpopt_pf = mpoption(mpopt, 'verbose', max(0, mpopt.verbose-2));
 end
-mpopt_pf.pf.enforce_q_lims = mpopt.cpf.enforce_q_lims;
-[mpcbase, suc] = runpf(basecasedata, mpopt_pf);
+mpopt_pf = mpoption(mpopt_pf, 'pf.enforce_q_lims', mpopt.cpf.enforce_q_lims);
+
+%% load base case data
+mpcbase = loadcase(basecasedata);
+
+%% clip base active generator outputs to PMAX, if necessary
+idx_pmax = [];
+if plim
+    idx_pmax = find(mpcbase.gen(:, PG) > mpcbase.gen(:, PMAX));
+    mpcbase.gen(idx_pmax, PG) = mpcbase.gen(idx_pmax, PMAX);
+end
+
+%% run base case power flow
+[mpcbase, suc] = runpf(mpcbase, mpopt_pf);
 if ~suc
-    %% RDZ: this should not be a fatal error
+    %% RDZ: this should not be a fatal error, simply return suc = 0
     error('runcpf: Base case power flow did not converge.');
 end
 
@@ -215,13 +227,14 @@ for k = 1:length(ref)
     mpctarget.gen(ont(refgen), PG) = mpcbase.gen(ong(refgen), PG);
 end
 
-idx_pmax = [];
+%% zero transfers for gens that exceed PMAX limits, if necessary
 if plim
-    %% Set zero transfer for generators at active power limits
     on = find(mpcbase.gen(:, GEN_STATUS) > 0);
-    idx_pmax = find(abs(mpcbase.gen(on,PG) - mpcbase.gen(on,PMAX)) < mpopt.cpf.q_lims_tol);
+    idx_pmax = find( ...
+        abs(mpcbase.gen(on, PG) - mpcbase.gen(on, PMAX)) < mpopt.cpf.p_lims_tol & ...
+        mpctarget.gen(on, PG) > mpctarget.gen(on, PMAX) );
     if ~isempty(idx_pmax)
-        mpctarget.gen(idx_pmax,PG) = mpcbase.gen(idx_pmax,PG);
+        mpctarget.gen(on(idx_pmax), PG) = mpcbase.gen(on(idx_pmax), PG);
     end
 end
 
