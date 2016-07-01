@@ -69,8 +69,9 @@ function [cb_state, results] = ...
 %% initialize plotting options
 plot_level  = cb_data.mpopt.cpf.plot.level;
 plot_bus    = cb_data.mpopt.cpf.plot.bus;
+plot_bus_default = 0;
 if plot_level
-    if isempty(plot_bus)    %% no bus specified
+    if isempty(plot_bus) && ~isfield(cb_state, 'plot_bus_default')  %% no bus specified
         %% pick PQ bus with largest transfer
         Sxfr = cb_data.Sxfr(abs(V_c));
         [junk, idx] = max(Sxfr(cb_data.pq));
@@ -79,9 +80,16 @@ if plot_level
         else
             idx = cb_data.pq(idx(1));
         end
-        idx_e = cb_data.mpc_target.order.bus.i2e(idx);
+        idx_e = cb_data.mpc_target.order.bus.i2e(idx)
+        
+        %% save it to keep it from changing in subsequent calls
+        plot_bus_default = idx_e;
     else
-        idx_e = plot_bus;   %% external bus number
+        if isempty(plot_bus)
+            idx_e = cb_state.plot_bus_default;  %% external bus number, saved
+        else
+            idx_e = plot_bus;                   %% external bus number, provided
+        end
         idx = full(cb_data.mpc_target.order.bus.e2i(idx_e));
         if idx == 0
             error('cpf_default_callback: %d is not a valid bus number for MPOPT.cpf.plot.bus', idx_e);
@@ -114,6 +122,13 @@ elseif k == 0
                         'V_c', V_c, ...
                         'lam_c', lam_c, ...
                         'iterations', 0);
+
+    %% save default plot bus in the state so we don't have to detect it
+    %% each time, since we don't want it to change in the middle of the run
+    if plot_bus_default
+    
+        cb_state.plot_bus_default = plot_bus_default;
+    end
     
     %% initialize lambda-V nose curve plot
     if plot_level
