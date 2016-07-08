@@ -15,6 +15,10 @@ For change history for MOST, see most/docs/CHANGES.
 Changes since 6.0b1
 -----------------
 
+7/8/16
+    - Updated network reduction code to handle cases with radially connected
+      external buses.
+
 7/1/16
     - Fix bug in cpf_default_callback() that sometimes resulted in plotting
       voltage at different buses for different parts of the curve when the
