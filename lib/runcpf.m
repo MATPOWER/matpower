@@ -137,17 +137,6 @@ adapt_step       = mpopt.cpf.adapt_step;        %% use adaptive step size?
 cb_args          = mpopt.cpf.user_callback_args;
 plim             = mpopt.cpf.enforce_p_lims;    %% enforce active limits
 qlim             = mpopt.cpf.enforce_q_lims;    %% enforce reactive limits
-%% RDZ: this saves on the order of 1e-5 seconds per run (conservative)
-%%      not worth the extra code, sacrifice in simplicity
-%% Convert mpopt.cpf.stop_at option to real number. This is to avoid string
-%% comparison in event handling
-if(ischar(mpopt.cpf.stop_at))
-    if(strcmpi(mpopt.cpf.stop_at,'FULL'))
-        mpopt.cpf.stop_at = -1;
-    else %% NOSE
-        mpopt.cpf.stop_at = -2;
-    end
-end
 
 %% set up callbacks
 callback_names = {'cpf_default_callback'};
@@ -336,12 +325,13 @@ end
 %%      not sure if it still matters in 2015-11-25 version
 event_fcn_names = {event_fcn_names{:}, 'cpf_stopat_event'};
 event_postfcn_names = {event_postfcn_names{:}, 'cpf_stopat_postevent'};
-if mpopt.cpf.stop_at == -1
-    event_name = 'LAM_TRACE_FULL';
-elseif mpopt.cpf.stop_at == -2
-    event_name = 'LAM_TRACE_NOSE';
-else
-    event_name = ['LAM_STOPAT_', num2str(mpopt.cpf.stop_at)];
+switch mpopt.cpf.stop_at
+    case 'FULL'
+        event_name = 'LAM_TRACE_FULL';
+    case 'NOSE'
+        event_name = 'LAM_TRACE_NOSE';
+    otherwise           %% numerical target lambda value
+        event_name = ['LAM_STOPAT_', num2str(mpopt.cpf.stop_at)];
 end
 event.names = {event.names{:}, event_name};
 event.tol = [event.tol, 1e-5];  %% RDZ: this should probably be a user settable tolerance
