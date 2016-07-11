@@ -16,6 +16,7 @@ Changes since 6.0b1
 -----------------
 
 7/11/16
+    - Add step size to CPF callback args and results logging.
     - Add option 'cpf.adapt_step_damping' to control oscillations in
       adaptive step size control for continuation power flow.
 
