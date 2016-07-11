@@ -275,7 +275,7 @@ Vprv    = V;
 zprv    = z;
 
 if mpopt.verbose > 1
-    fprintf('step %3d : lambda = %6.3f, %2d Newton steps\n', 0, 0, iterations);
+    fprintf('step %3d :                 lambda = %6.3f, %2d Newton steps\n', 0, 0, iterations);
 end
 
 %% input args for callbacks
@@ -295,9 +295,9 @@ cb_data = struct( ...
     'mpopt', mpopt );
 cb_state = struct();
 
-%% invoke callbacks
+%% invoke callbacks - "initial" context
 for k = 1:length(callbacks)
-    cb_state = callbacks{k}(cont_steps, V, lam, V, lam, ...
+    cb_state = callbacks{k}(cont_steps, step, V, lam, V, lam, ...
                             cb_data, cb_state, cb_args);
 end
 
@@ -376,14 +376,14 @@ while continuation && event.status ~= cpf_es.TERMINATE
     if ~success
         continuation = 0;
         if mpopt.verbose
-            fprintf('step %3d : lambda = %6.3f, corrector did not converge in %d iterations\n', cont_steps, lam, i);
+            fprintf('step %3d : stepsize = %g, lambda = %6.3f, corrector did not converge in %d iterations\n', cont_steps, step, lam, i);
         end
         break;
     end
     if mpopt.verbose > 2
-        fprintf('step %3d : lambda = %6.3f\n', cont_steps, lam);
+        fprintf('step %3d : stepsize = %g, lambda = %6.3f\n', cont_steps, step, lam);
     elseif mpopt.verbose > 1
-        fprintf('step %3d : lambda = %6.3f, %2d corrector Newton steps\n', cont_steps, lam, i);
+        fprintf('step %3d : stepsize = %g, lambda = %6.3f, %2d corrector Newton steps\n', cont_steps, step, lam, i);
     end
     
     [V0next, lam0next, z] = cpf_predictor(V, lam, Ybus, Sbusb, Sbust, pv, pq, step, zprv, ...
@@ -422,9 +422,9 @@ while continuation && event.status ~= cpf_es.TERMINATE
     end
     
     if ~event.rollback
-        %% invoke callbacks
+        %% invoke callbacks - "iterations" context
         for k = 1:length(callbacks)
-            cb_state = callbacks{k}(cont_steps, V, lam, V0, lam0, ...
+            cb_state = callbacks{k}(cont_steps, step, V, lam, V0, lam0, ...
                                 cb_data, cb_state, cb_args);
         end
         
@@ -481,11 +481,11 @@ while continuation && event.status ~= cpf_es.TERMINATE
     end
 end
 
-%% invoke callbacks
+%% invoke callbacks - "final" context
 if success
     cpf_results = struct();
     for k = 1:length(callbacks)
-        [cb_state, cpf_results] = callbacks{k}(cont_steps, V, lam, V0, lam0, ...
+        [cb_state, cpf_results] = callbacks{k}(cont_steps, step, V, lam, V0, lam0, ...
                                     cb_data, cb_state, cb_args, cpf_results);                        
     end
 else

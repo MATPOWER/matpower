@@ -1,8 +1,8 @@
 function [cb_state, results] = ...
-    cpf_default_callback(k, V_c, lam_c, V_p, lam_p, cb_data, cb_state, cb_args, results)
+    cpf_default_callback(k, step, V_c, lam_c, V_p, lam_p, cb_data, cb_state, cb_args, results)
 %CPF_DEFAULT_CALLBACK   Default callback function for CPF
 %   [CB_STATE, RESULTS] = ...
-%       CPF_DEFAULT_CALLBACK(K, V_C, LAM_C, V_P, LAM_P, ...
+%       CPF_DEFAULT_CALLBACK(K, STEP, V_C, LAM_C, V_P, LAM_P, ...
 %                            CB_DATA, CB_STATE, CB_ARGS, RESULTS)
 %
 %   Default callback function used by RUNCPF. Takes input from current
@@ -11,6 +11,7 @@ function [cb_state, results] = ...
 %
 %   Inputs:
 %       K - continuation step iteration count
+%       STEP - step size for K-th step
 %       V_C - vector of complex bus voltages after K-th corrector step
 %       LAM_C - value of LAMBDA after K-th corrector step
 %       V_P - vector of complex bus voltages after K-th predictor step
@@ -80,7 +81,7 @@ if plot_level
         else
             idx = cb_data.pq(idx(1));
         end
-        idx_e = cb_data.mpc_target.order.bus.i2e(idx)
+        idx_e = cb_data.mpc_target.order.bus.i2e(idx);
         
         %% save it to keep it from changing in subsequent calls
         plot_bus_default = idx_e;
@@ -121,6 +122,7 @@ elseif k == 0
                         'lam_p', lam_p, ...
                         'V_c', V_c, ...
                         'lam_c', lam_c, ...
+                        'steps', step, ...
                         'iterations', 0);
 
     %% save default plot bus in the state so we don't have to detect it
@@ -147,6 +149,7 @@ else
     cb_state.lam_p = [cb_state.lam_p lam_p];
     cb_state.V_c   = [cb_state.V_c V_c];
     cb_state.lam_c = [cb_state.lam_c lam_c];
+    cb_state.steps = [cb_state.steps step];
     cb_state.iterations    = k;
 
     %% plot single step of the lambda-V nose curve
