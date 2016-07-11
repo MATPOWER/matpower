@@ -449,23 +449,22 @@ while continuation && event.status ~= cpf_es.TERMINATE
                                       Vprv2, lamprv2, parameterization);
         
     end
-    
+
     if(~event.rollback && event.status ~= cpf_es.INT_DET)
         if adapt_step && continuation
-            %% Adapt stepsize
-            cpf_error = norm([angle(V(pq));abs(V([pv;pq]));lam] - [angle(V0prv(pq));abs(V0prv([pv;pq]));lam0prv],inf);
-            if cpf_error < mpopt.cpf.error_tol
-                %% Increase stepsize
-                step = step*mpopt.cpf.error_tol/cpf_error;
-                if step > mpopt.cpf.step_max
-                    step = mpopt.cpf.step_max;
-                end
-            else
-                %% decrese stepsize
-                step = step*mpopt.cpf.error_tol/cpf_error;
-                if step < mpopt.cpf.step_min
-                    step = mpopt.cpf.step_min;
-                end
+            %% adapt stepsize
+            cpf_error = norm([angle(V(pq));    abs(V([pv;pq]));    lam] - ...
+                             [angle(V0prv(pq));abs(V0prv([pv;pq]));lam0prv], inf);
+            %% new nominal step size is current size * tol/err, but we reduce
+            %% the change from the current size by a damping factor
+            step = step * (1 + mpopt.cpf.adapt_step_damping * ...
+                            (mpopt.cpf.error_tol/cpf_error - 1));
+            %% limit step-size
+            if step > mpopt.cpf.step_max
+                step = mpopt.cpf.step_max;
+            end
+            if step < mpopt.cpf.step_min
+                step = mpopt.cpf.step_min;
             end
             
             %% Update prediction

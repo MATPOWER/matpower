@@ -36,6 +36,7 @@ else
     %mpopt = mpoption(mpopt, 'cpf.stop_at', 'FULL', );
     mpopt = mpoption(mpopt, 'cpf.step', 0.02);
     %mpopt = mpoption(mpopt, 'cpf.adapt_step', 1);
+%     mpopt = mpoption(mpopt, 'cpf.adapt_step_damping', 1);
     %mpopt = mpoption(mpopt, 'cpf.error_tol', 2e-5);
     mpopt = mpoption(mpopt, 'cpf.plot.level', plot_nose_curve);
     %mpopt = mpoption(mpopt, 'cpf.plot.bus', 9);
@@ -131,7 +132,7 @@ else
     mpopt_qlim = mpoption(mpopt, 'cpf.stop_at', 'NOSE', 'cpf.parameterization', 3,'cpf.enforce_q_lims',1);
     mpopt_qlim = mpoption(mpopt_qlim, 'cpf.adapt_step', 1);
     r = runcpf(mpcb, mpct, mpopt_qlim);
-    iterations = 18;
+    iterations = 17;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0.953648, 6, [t 'max_lam']);
@@ -144,7 +145,7 @@ else
     mpopt_plim = mpoption(mpopt, 'cpf.stop_at', 'NOSE', 'cpf.parameterization', 3,'cpf.enforce_p_lims',1);
     mpopt_plim = mpoption(mpopt_plim, 'cpf.adapt_step', 1);
     r = runcpf(mpcb, mpct, mpopt_plim);
-    iterations = 16;
+    iterations = 17;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0.97975, 3, [t 'max_lam']);
@@ -157,7 +158,7 @@ else
     mpopt_pqlim = mpoption(mpopt, 'cpf.stop_at', 'NOSE', 'cpf.parameterization', 3,'cpf.enforce_q_lims',1,'cpf.enforce_p_lims',1);
     mpopt_pqlim = mpoption(mpopt_pqlim, 'cpf.adapt_step', 1);
     r = runcpf(mpcb, mpct, mpopt_pqlim);
-    iterations = 16;
+    iterations = 17;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0.97975, 3, [t 'max_lam']);
@@ -169,7 +170,7 @@ else
     t = 'Continuation PF (full trace) (arc length) : ';
     mpopt = mpoption(mpopt, 'cpf.stop_at', 'FULL', 'cpf.parameterization', 2);
     r = runcpf(mpcb, mpct, mpopt);
-    iterations = 45;
+    iterations = 46;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0.99025, 3, [t 'max_lam']);
@@ -181,7 +182,7 @@ else
     t = 'Continuation PF (full trace) (pseudo arc length) : ';
     mpopt = mpoption(mpopt, 'cpf.stop_at', 'FULL', 'cpf.parameterization', 3);
     r = runcpf(mpcb, mpct, mpopt);
-    iterations = 45;
+    iterations = 46;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0.99025, 3, [t 'max_lam']);
@@ -194,7 +195,7 @@ else
     mpopt_qlim = mpoption(mpopt, 'cpf.stop_at', 'FULL', 'cpf.parameterization', 3,'cpf.enforce_q_lims',1);
     mpopt_qlim = mpoption(mpopt_qlim, 'cpf.adapt_step', 1);
     r = runcpf(mpcb, mpct, mpopt_qlim);
-    iterations = 39;
+    iterations = 41;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0.953648, 6, [t 'max_lam']);

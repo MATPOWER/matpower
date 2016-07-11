@@ -15,6 +15,10 @@ For change history for MOST, see most/docs/CHANGES.
 Changes since 6.0b1
 -----------------
 
+7/11/16
+    - Add option 'cpf.adapt_step_damping' to control oscillations in
+      adaptive step size control for continuation power flow.
+
 7/8/16
     - Updated network reduction code to handle cases with radially connected
       external buses.

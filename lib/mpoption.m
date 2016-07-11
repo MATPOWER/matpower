@@ -86,6 +86,8 @@ function opt = mpoption(varargin)
 %   cpf.adapt_step          0           toggle adaptive step size feature
 %       [  0 - adaptive step size disabled                                  ]
 %       [  1 - adaptive step size enabled                                   ]
+%   cpf.adapt_step_damping   0.7        damping parameter for adaptive step
+%                                       size adjustments
 %   cpf.enforce_p_lims       0          enforce gen active power limits
 %       [  0 - do NOT enforce limits                                        ]
 %       [  1 - enforce limits, simultaneous bus type conversion             ]
@@ -484,10 +486,11 @@ if have_opt0
                 opt0.most = opt_d.most;
             end
             if opt0.v <= 10         %% convert version 10 to 11
-                opt0.cpf.enforce_p_lims = opt_d.cpf.enforce_p_lims;
-                opt0.cpf.enforce_q_lims = opt_d.cpf.enforce_q_lims;
-                opt0.cpf.p_lims_tol     = opt_d.cpf.p_lims_tol;
-                opt0.cpf.q_lims_tol     = opt_d.cpf.q_lims_tol;
+                opt0.cpf.adapt_step_damping = opt_d.cpf.adapt_step_damping;
+                opt0.cpf.enforce_p_lims     = opt_d.cpf.enforce_p_lims;
+                opt0.cpf.enforce_q_lims     = opt_d.cpf.enforce_q_lims;
+                opt0.cpf.p_lims_tol         = opt_d.cpf.p_lims_tol;
+                opt0.cpf.q_lims_tol         = opt_d.cpf.q_lims_tol;
             end
             opt0.v = v;
         end
@@ -1427,6 +1430,7 @@ if ~isstruct(opt)
             'stop_at',              'NOSE', ...     %% 'NOSE', <lam val>, 'FULL'
             'step',                 0.05, ...
             'adapt_step',           0, ...
+            'adapt_step_damping',   0.7, ...
             'enforce_p_lims',       0, ...
             'enforce_q_lims',       0, ...
             'error_tol',            1e-3, ...
@@ -1527,9 +1531,9 @@ v = 11;     %% version number of MATPOWER options struct
             %% v9   - added 'exp' for experimental fields, specifically
             %%        'sys_wide_zip_loads.pw', 'sys_wide_zip_loads.qw'
             %% v10  - added 'most' field
-            %% v11  - added options 'cpf.enforce_p_lims',
-            %%        'cpf.enforce_q_lims', 'cpf.p_lims_tol', and
-            %%        'cpf.q_lims_tol'
+            %% v11  - added options 'cpf.adapt_step_damping',
+            %%        'cpf.enforce_p_lims', 'cpf.enforce_q_lims', 
+            %%        'cpf.p_lims_tol' and 'cpf.q_lims_tol'
 
 %%-------------------------------------------------------------------
 function db_level = DEBUG
