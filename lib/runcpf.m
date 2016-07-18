@@ -419,7 +419,11 @@ while continuation && event.status ~= cpf_es.TERMINATE
                                               Vprv, lamprv, parameterization);
     end
     
-    if ~event.rollback
+    if event.rollback
+        %% re-do prediction from previous point with the new step size
+        [V0, lam0, z] = cpf_predictor(Vprv, lamprv, Ybus, Sbusb, Sbust, pv, pq, step, zprv2, ...
+                                      Vprv2, lamprv2, parameterization);
+    else                %% carry on
         %% invoke callbacks - "iterations" context
         for k = 1:length(callbacks)
             cb_state = callbacks{k}(cont_steps, step, V, lam, V0, lam0, ...
@@ -443,15 +447,8 @@ while continuation && event.status ~= cpf_es.TERMINATE
         Vprv = V;
         lamprv = lam;
         zprv = z;
-    else
-        %% prediction for next step
-        [V0, lam0, z] = cpf_predictor(Vprv, lamprv, Ybus, Sbusb, Sbust, pv, pq, step, zprv2, ...
-                                      Vprv2, lamprv2, parameterization);
-        
-    end
 
-    if(~event.rollback && event.status ~= cpf_es.INT_DET)
-        if adapt_step && continuation
+        if event.status ~= cpf_es.INT_DET && adapt_step && continuation
             %% adapt stepsize
             cpf_error = norm([angle(V(pq));    abs(V([pv;pq]));    lam] - ...
                              [angle(V0prv(pq));abs(V0prv([pv;pq]));lam0prv], inf);
