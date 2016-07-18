@@ -164,6 +164,10 @@ mpcbase = loadcase(basecasedata);
 idx_pmax = [];
 if plim
     idx_pmax = find(mpcbase.gen(:, PG) > mpcbase.gen(:, PMAX));
+    if mpopt.verbose
+        fprintf('base case real power output of gen %d reduced from %g to %g MW (PMAX)\n', ...
+            [idx_pmax mpcbase.gen(idx_pmax, PG) mpcbase.gen(idx_pmax, PMAX)]');
+    end
     mpcbase.gen(idx_pmax, PG) = mpcbase.gen(idx_pmax, PMAX);
 end
 
@@ -171,6 +175,7 @@ end
 [mpcbase, suc] = runpf(mpcbase, mpopt_pf);
 if ~suc
     %% RDZ: this should not be a fatal error, simply return suc = 0
+    %%      possibly by setting continuation to 0, rather than 1, later
     error('runcpf: Base case power flow did not converge.');
 end
 
@@ -222,6 +227,10 @@ if plim
         abs(mpcbase.gen(on, PG) - mpcbase.gen(on, PMAX)) < mpopt.cpf.p_lims_tol & ...
         mpctarget.gen(on, PG) > mpctarget.gen(on, PMAX) );
     if ~isempty(idx_pmax)
+        if mpopt.verbose
+            fprintf('target case real power output of gen %d reduced from %g to %g MW (PMAX)\n', ...
+                [on(idx_pmax) mpctarget.gen(on(idx_pmax), PG) mpcbase.gen(on(idx_pmax), PG)]');
+        end
         mpctarget.gen(on(idx_pmax), PG) = mpcbase.gen(on(idx_pmax), PG);
     end
 end
@@ -231,7 +240,7 @@ end
 
 %%-----  run the continuation power flow  -----
 t0 = clock;
-if mpopt.verbose > 0
+if mpopt.verbose
     v = mpver('all');
     fprintf('\nMATPOWER Version %s, %s', v.Version, v.Date);
     fprintf(' -- AC Continuation Power Flow\n');
@@ -258,13 +267,13 @@ V   = V0;
 Vm  = abs(V);
 z = [zeros(2*nb, 1); 1];    %% tangent predictor z = [dx;dlam]
 
-%% initialize values at previous step
+%% initialize values at previous continuation step
 lamprv  = lam;
 Vprv    = V;
 zprv    = z;
 
 if mpopt.verbose > 1
-    fprintf('step %3d :                 lambda = %6.3f, %2d Newton steps\n', 0, 0, iterations);
+    fprintf('step %3d :                    lambda = %6.3f, %2d Newton steps\n', 0, 0, iterations);
 end
 
 %% input args for callbacks
@@ -303,7 +312,7 @@ event_fcn_names = {};
 event_postfcn_names = {};
 event.names = {};
 event.tol = [];
-%% Struct for logging information of located events
+%% struct for logging information of located events
 event.log.stepnums = [];    %% continuation step numbers
 event.log.names = {};       %% names of the events located
 event.log.izero = {};       %% indices of the events located in the event function
@@ -350,8 +359,7 @@ zprv2 = zprv;
 Vprv2 = Vprv;
 lamprv2 = lamprv;
 
-%% call event function
-%% RDZ: Is this just to initialize things? I see no handling of events
+%% call event function - to inialize things only (i.e. no handling of events)
 for k = 1:length(event.fcns)
     [event.fprv{k}, event.terminate{k}] = ...
         event.fcns{k}(cont_steps, V, lam, Vprv, lamprv, z, cb_data);
@@ -366,14 +374,14 @@ while continuation && event.status ~= cpf_es.TERMINATE
     if ~success
         continuation = 0;
         if mpopt.verbose
-            fprintf('step %3d : stepsize = %g, lambda = %6.3f, corrector did not converge in %d iterations\n', cont_steps, step, lam, i);
+            fprintf('step %3d : stepsize = %-6.3g, lambda = %6.3f, corrector did not converge in %d iterations\n', cont_steps, step, lam, i);
         end
         break;
     end
     if mpopt.verbose > 2
-        fprintf('step %3d : stepsize = %g, lambda = %6.3f\n', cont_steps, step, lam);
+        fprintf('step %3d : stepsize = %-6.3g, lambda = %6.3f\n', cont_steps, step, lam);
     elseif mpopt.verbose > 1
-        fprintf('step %3d : stepsize = %g, lambda = %6.3f, %2d corrector Newton steps\n', cont_steps, step, lam, i);
+        fprintf('step %3d : stepsize = %-6.3g, lambda = %6.3f, %2d corrector Newton steps\n', cont_steps, step, lam, i);
     end
     
     [V0next, lam0next, z] = cpf_predictor(V, lam, Ybus, Sbusb, Sbust, pv, pq, step, zprv, ...
@@ -384,7 +392,7 @@ while continuation && event.status ~= cpf_es.TERMINATE
         cpfeventhandler(cont_steps, V, lam, Vprv, lamprv, z, step, ...
             cb_data, event);
     
-    if event.status == cpf_es.ZERO_LOC 
+    if event.status == cpf_es.ZERO_LOC
         %% Post function may have updated cb_data fields.
         
         ref  = cb_data.ref;
@@ -418,22 +426,24 @@ while continuation && event.status ~= cpf_es.TERMINATE
                                 cb_data, cb_state, cb_args);
         end
         
+        %% save previous predicted values before update
         V0prv = V0;
         lam0prv = lam0;
         
+        %% update current predicted values
         V0 = V0next;
         lam0 = lam0next;
         
-        %% Update
+        %% save previous corrected values
         Vprv2 = Vprv;
         lamprv2 = lamprv;
         zprv2 = zprv;
         
+        %% save current corrected values
         Vprv = V;
         lamprv = lam;
         zprv = z;
     else
-
         %% prediction for next step
         [V0, lam0, z] = cpf_predictor(Vprv, lamprv, Ybus, Sbusb, Sbust, pv, pq, step, zprv2, ...
                                       Vprv2, lamprv2, parameterization);
