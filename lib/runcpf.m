@@ -440,37 +440,14 @@ while continuation && event.status ~= cpf_es.TERMINATE
                                     zprv2, Vprv2, lamprv2, parameterization);
         [V0, lam0] = cpf_predictor(Vprv, lamprv, z, step, pv, pq);
     else                %% carry on
-        %% invoke callbacks - "iterations" context
-        for k = 1:length(callbacks)
-            cb_state = callbacks{k}(cont_steps, step, V, lam, V0, lam0, ...
-                                cb_data, cb_state, cb_args);
-        end
-        
-        %% save previous predicted values before update
-        V0prv = V0;
-        lam0prv = lam0;
-        
-        %% update current predicted values
-        [V0, lam0] = cpf_predictor(V, lam, z, step, pv, pq);
-        
-        %% save previous corrected values
-        Vprv2 = Vprv;
-        lamprv2 = lamprv;
-        zprv2 = zprv;
-        
-        %% save current corrected values
-        Vprv = V;
-        lamprv = lam;
-        zprv = z;
-
         if event.status ~= cpf_es.INT_DET && adapt_step && continuation
             %% adapt stepsize
             %% RDZ: Adapting stepsize may result in extreme increase right after
             %%      tiny zero-finding steps. Should turn off adaptive sizing for
             %%      one additional step ... i.e. use what was being used right
             %%      before event detection
-            cpf_error = norm([angle(V(pq));    abs(V([pv;pq]));    lam] - ...
-                             [angle(V0prv(pq));abs(V0prv([pv;pq]));lam0prv], inf);
+            cpf_error = norm([angle(V(pq));  abs(V([pv;pq]));  lam] - ...
+                             [angle(V0(pq)); abs(V0([pv;pq])); lam0], inf);
             %% new nominal step size is current size * tol/err, but we reduce
             %% the change from the current size by a damping factor
             step = step * (1 + mpopt.cpf.adapt_step_damping * ...
@@ -483,16 +460,30 @@ while continuation && event.status ~= cpf_es.TERMINATE
                 step = mpopt.cpf.step_min;
             end
             
-            %% Update prediction
-            Vaprv = angle(V);
-            Vmprv = abs(V);
-            Va0   = angle(V0);
-            Vm0   = abs(V0);
-            Va0([pv; pq]) = Vaprv([pv; pq]) + step * z([pv; pq]);
-            Vm0(pq) = Vmprv(pq) + step * z(nb+pq);
-            lam0 = lam + step * z(2*nb+1);
-            V0 = Vm0 .* exp(1j * Va0);
         end
+
+        %% invoke callbacks - "iterations" context
+        for k = 1:length(callbacks)
+            cb_state = callbacks{k}(cont_steps, step, V, lam, V0, lam0, ...
+                                cb_data, cb_state, cb_args);
+        end
+        
+        %% save previous predicted values before update
+        V0prv = V0;
+        lam0prv = lam0;
+        
+        %% save previous corrected values
+        Vprv2 = Vprv;
+        lamprv2 = lamprv;
+        zprv2 = zprv;
+        
+        %% save current corrected values
+        Vprv = V;
+        lamprv = lam;
+        zprv = z;
+
+        %% update prediction
+        [V0, lam0] = cpf_predictor(V, lam, z, step, pv, pq);
     end
 end
 
