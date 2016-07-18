@@ -351,10 +351,10 @@ event.status = cpf_es.NO_EVENT;
 event.qlim_at_prev_step   = 0;
 
 %% prediction for next step
-[V0, lam0, z] = cpf_predictor(V, lam, Ybus, Sbusb, Sbust, pv, pq, ...
-        step, zprv, Vprv, lamprv, parameterization);
-zprv = z;   %% RDZ: should this happen before the next line?
-
+z = cpf_tangent(V, lam, Ybus, Sbusb, Sbust, pv, pq, ...
+                            zprv, Vprv, lamprv, parameterization);
+[V0, lam0] = cpf_predictor(V, lam, z, step, pv, pq);
+zprv = z;
 zprv2 = zprv;
 Vprv2 = Vprv;
 lamprv2 = lamprv;
@@ -384,8 +384,9 @@ while continuation && event.status ~= cpf_es.TERMINATE
         fprintf('step %3d : stepsize = %-6.3g, lambda = %6.3f, %2d corrector Newton steps\n', cont_steps, step, lam, i);
     end
     
-    [V0next, lam0next, z] = cpf_predictor(V, lam, Ybus, Sbusb, Sbust, pv, pq, step, zprv, ...
-                              Vprv, lamprv, parameterization);
+    %% compute tangent direction
+    z = cpf_tangent(V, lam, Ybus, Sbusb, Sbust, pv, pq, ...
+                                zprv, Vprv, lamprv, parameterization);
 
     %% invoke event handler
     [cont_steps, V, lam, step, cb_data, event, parameterization] = ...
@@ -415,14 +416,16 @@ while continuation && event.status ~= cpf_es.TERMINATE
         cb_data.Sbust = Sbust;
         cb_data.Sxfr  = Sxfr;
         
-        [V0next, lam0next, z] = cpf_predictor(V, lam, Ybus, Sbusb, Sbust, pv, pq, step, z, ...
-                                              Vprv, lamprv, parameterization);
+        %% update tangent direction
+        z = cpf_tangent(V, lam, Ybus, Sbusb, Sbust, pv, pq, ...
+                                    z, Vprv, lamprv, parameterization);
     end
     
     if event.rollback
         %% re-do prediction from previous point with the new step size
-        [V0, lam0, z] = cpf_predictor(Vprv, lamprv, Ybus, Sbusb, Sbust, pv, pq, step, zprv2, ...
-                                      Vprv2, lamprv2, parameterization);
+        z = cpf_tangent(Vprv, lamprv, Ybus, Sbusb, Sbust, pv, pq, ...
+                                    zprv2, Vprv2, lamprv2, parameterization);
+        [V0, lam0] = cpf_predictor(Vprv, lamprv, z, step, pv, pq);
     else                %% carry on
         %% invoke callbacks - "iterations" context
         for k = 1:length(callbacks)
@@ -435,8 +438,7 @@ while continuation && event.status ~= cpf_es.TERMINATE
         lam0prv = lam0;
         
         %% update current predicted values
-        V0 = V0next;
-        lam0 = lam0next;
+        [V0, lam0] = cpf_predictor(V, lam, z, step, pv, pq);
         
         %% save previous corrected values
         Vprv2 = Vprv;

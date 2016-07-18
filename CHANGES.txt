@@ -15,6 +15,10 @@ For change history for MOST, see most/docs/CHANGES.
 Changes since 6.0b1
 -----------------
 
+7/18/16
+    - Extract computation of tangent vector from cpf_predictor() into
+      cpf_tangent(), and call sequentially as needed.
+
 7/11/16
     - Add step size to CPF callback args and results logging.
     - Add option 'cpf.adapt_step_damping' to control oscillations in
