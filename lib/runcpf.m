@@ -377,14 +377,14 @@ while continuation && event.status ~= cpf_es.TERMINATE
         %%      and is there anything we can do about it
         continuation = 0;
         if mpopt.verbose
-            fprintf('step %3d : stepsize = %-6.3g, lambda = %6.3f, corrector did not converge in %d iterations\n', cont_steps, step, lam, i);
+            fprintf('step %3d : stepsize = %-6.3g  lambda = %6.3f  corrector did not converge in %d iterations\n', cont_steps, step, lam, i);
         end
         break;
     end
     if mpopt.verbose > 2
-        fprintf('step %3d : stepsize = %-6.3g, lambda = %6.3f\n', cont_steps, step, lam);
+        fprintf('step %3d : stepsize = %-6.3g  lambda = %6.3f\n', cont_steps, step, lam);
     elseif mpopt.verbose > 1
-        fprintf('step %3d : stepsize = %-6.3g, lambda = %6.3f, %2d corrector Newton steps\n', cont_steps, step, lam, i);
+        fprintf('step %3d : stepsize = %-6.3g  lambda = %6.3f  %2d corrector Newton steps\n', cont_steps, step, lam, i);
     end
     
     %% compute tangent direction
