@@ -148,6 +148,7 @@ if ~isempty(mpopt.cpf.user_callback)
     end
 end
 callbacks = cellfun(@str2func, callback_names, 'UniformOutput', false);
+%% RDZ: shouldn't we be setting up (registering) the event functions here?
 
 %% set power flow options
 if mpopt.verbose > 2
@@ -372,6 +373,8 @@ while continuation && event.status ~= cpf_es.TERMINATE
     [V, success, i, lam] = cpf_corrector(Ybus, Sbusb, V0, ref, pv, pq, ...
                 lam0, Sbust, Vprv, lamprv, z, step, parameterization, mpopt_pf);
     if ~success
+        %% RDZ: what is the reason for this (e.g. with case14)?
+        %%      and is there anything we can do about it
         continuation = 0;
         if mpopt.verbose
             fprintf('step %3d : stepsize = %-6.3g, lambda = %6.3f, corrector did not converge in %d iterations\n', cont_steps, step, lam, i);
@@ -395,7 +398,10 @@ while continuation && event.status ~= cpf_es.TERMINATE
     
     if event.status == cpf_es.ZERO_LOC
         %% Post function may have updated cb_data fields.
-        
+        %% RDZ: cb_data WAS PREVIOUSLY assumed to be constant throughout
+        %%      the run, right? If we are going to change things, we need
+        %%      to be very explicit about what, when, where things can
+        %%      change.
         ref  = cb_data.ref;
         pv   = cb_data.pv;
         pq   = cb_data.pq;
@@ -417,6 +423,13 @@ while continuation && event.status ~= cpf_es.TERMINATE
         cb_data.Sxfr  = Sxfr;
         
         %% update tangent direction
+        %% RDZ: Haven't we already done the prediction step we need before
+        %%      calling the event handler (which does nothing but set the
+        %%      event status in the case of ZERO_LOC events), right?
+        %%      Answer: The post event function may have modified some of
+        %%              the inputs.
+        %%      But shouldn't we still be using zprv instead of z, since z
+        %%      does not correspond to Vprv and lamprv like it should.
         z = cpf_tangent(V, lam, Ybus, Sbusb, Sbust, pv, pq, ...
                                     z, Vprv, lamprv, parameterization);
     end
@@ -452,6 +465,10 @@ while continuation && event.status ~= cpf_es.TERMINATE
 
         if event.status ~= cpf_es.INT_DET && adapt_step && continuation
             %% adapt stepsize
+            %% RDZ: Adapting stepsize may result in extreme increase right after
+            %%      tiny zero-finding steps. Should turn off adaptive sizing for
+            %%      one additional step ... i.e. use what was being used right
+            %%      before event detection
             cpf_error = norm([angle(V(pq));    abs(V([pv;pq]));    lam] - ...
                              [angle(V0prv(pq));abs(V0prv([pv;pq]));lam0prv], inf);
             %% new nominal step size is current size * tol/err, but we reduce
