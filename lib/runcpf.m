@@ -387,7 +387,7 @@ while continuation && event.status ~= cpf_es.TERMINATE
         fprintf('step %3d : stepsize = %-6.3g  lambda = %6.3f  %2d corrector Newton steps\n', cont_steps, step, lam, i);
     end
     
-    %% compute tangent direction
+    %% compute tangent direction (some event handlers need it)
     z = cpf_tangent(V, lam, Ybus, Sbusb, Sbust, pv, pq, ...
                                 zprv, Vprv, lamprv, parameterization);
 
@@ -423,18 +423,18 @@ while continuation && event.status ~= cpf_es.TERMINATE
         cb_data.Sxfr  = Sxfr;
         
         %% update tangent direction
-        %% RDZ: Haven't we already done the prediction step we need before
-        %%      calling the event handler (which does nothing but set the
-        %%      event status in the case of ZERO_LOC events), right?
-        %%      Answer: The post event function may have modified some of
-        %%              the inputs.
-        %%      But shouldn't we still be using zprv instead of z, since z
+        %% RDZ: Shouldn't we still be using zprv instead of z, since z
         %%      does not correspond to Vprv and lamprv like it should.
         z = cpf_tangent(V, lam, Ybus, Sbusb, Sbust, pv, pq, ...
                                     z, Vprv, lamprv, parameterization);
     end
     
     if event.rollback
+        if mpopt.verbose
+            %% RDZ: event name will not necessarily be correct if more than
+            %%      one event is detected
+            fprintf('  %s event detected : roll back step %d to locate it\n', event.names{1}, cont_steps+1);
+        end
         %% re-do prediction from previous point with the new step size
         z = cpf_tangent(Vprv, lamprv, Ybus, Sbusb, Sbust, pv, pq, ...
                                     zprv2, Vprv2, lamprv2, parameterization);
