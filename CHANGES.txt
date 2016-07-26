@@ -38,13 +38,6 @@ Changes since 6.0b1
       bad bus numbers) in case_info().
     - Updated versions of qcqp_opf() and qcqp_opf() in extras/misc, from
       Cedric Josz.
-    - Add handling of generator active and reactive power limits in
-      continuation power flow. Thanks to Shrirang Abhyankar. Includes new
-      options:
-        cpf.enforce_p_lims
-        cpf.enforce_q_lims
-        cpf.p_lims_tol
-        cpf.q_lims_tol
 
 6/10/16
     - Fix bug in savecase() where single quotes were not escaped properly

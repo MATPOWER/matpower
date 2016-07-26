@@ -16,7 +16,7 @@ end
 pfalgs = {'NR', 'FDXB', 'FDBX'};
 cpfparm = {'natural', 'arc-len', 'pseudo arc-len'};
 
-t_begin(33+27*length(pfalgs)+39*2*length(cpfparm), quiet);
+t_begin(33+27*length(pfalgs)+39*length(cpfparm), quiet);
 
 if quiet
     verbose = 0;
@@ -232,8 +232,8 @@ mpopt0 = mpopt;
 
     iterations = [
         20 20 20 20;
-        21 22 22 22;
-        21 22 22 22;
+        21 21 22 22;
+        21 21 22 22;
     ];
 
 for k = 1:length(cpfparm)
@@ -243,7 +243,7 @@ for k = 1:length(cpfparm)
     r0 = runcpf(mpcb, mpct, mpopt0);
     t_ok(r0.success, [t 'success']);
     t_is(r0.cpf.iterations, iterations(k, 1), 12, [t 'iterations']);
-    t_is(r0.cpf.max_lam, 1, 5, [t 'max_lam']);
+    t_is(r0.cpf.max_lam, 1, 12, [t 'max_lam']);
 
     mpopt = mpopt0;
     t = sprintf('CPF (%s) - constant power only : ', cpfparm{k});
@@ -273,13 +273,13 @@ for k = 1:length(cpfparm)
     t_ok(r1.success, [t 'success']);
     t_is(r1.cpf.iterations, iterations(k,2), 12, [t 'iterations']);
     t_ok(r.success, [t 'success']);
-    t_is(r.bus(:, [VM VA]), r1.bus(:, [VM VA]), 4, [t 'bus voltages']);
-    t_is(tPd, r1.bus(:, PD), 3, [t 'bus P loads']);
-    t_is(tPd, [0; 0; 0; 0; 143.494121; 0; 163.580859; 0; 191.911932], 3, [t 'bus P loads']);
-    t_is(tQd, r1.bus(:, QD), 3, [t 'bus Q loads']);
-    t_is(tQd, [0; 0; 0; 0; 47.831374; 0; 57.253301; 0; 76.764773], 3, [t 'bus Q loads']);
-    t_is(r.gen(:, [PG QG]), r1.gen(:, [PG QG]), 3, [t 'gen dispatches']);
-    t_is(r.branch, r1.branch, 3, [t 'branch']);
+    t_is(r.bus(:, [VM VA]), r1.bus(:, [VM VA]), 6, [t 'bus voltages']);
+    t_is(tPd, r1.bus(:, PD), 6, [t 'bus P loads']);
+    t_is(tPd, [0; 0; 0; 0; 143.494121; 0; 163.580859; 0; 191.911932], 6, [t 'bus P loads']);
+    t_is(tQd, r1.bus(:, QD), 6, [t 'bus Q loads']);
+    t_is(tQd, [0; 0; 0; 0; 47.831374; 0; 57.253301; 0; 76.764773], 6, [t 'bus Q loads']);
+    t_is(r.gen(:, [PG QG]), r1.gen(:, [PG QG]), 6, [t 'gen dispatches']);
+    t_is(r.branch, r1.branch, 6, [t 'branch']);
 
     t = sprintf('CPF (%s) - constant impedance only : ', cpfparm{k});
     zip_w = [0 0 1];
@@ -297,13 +297,13 @@ for k = 1:length(cpfparm)
     t_ok(r1.success, [t 'success']);
     t_is(r1.cpf.iterations, iterations(k,3), 12, [t 'iterations']);
     t_ok(r.success, [t 'success']);
-    t_is(r.bus(:, [VM VA]), r1.bus(:, [VM VA]), 4, [t 'bus voltages']);
-    t_is(tPd, r1.bus(:, PD), 3, [t 'bus P loads']);
-    t_is(tPd, [0; 0; 0; 0; 132.977098; 0; 154.969557; 0; 172.896177], 3, [t 'bus P loads']);
-    t_is(tQd, r1.bus(:, QD), 3, [t 'bus Q loads']);
-    t_is(tQd, [0; 0; 0; 0; 44.325699; 0; 54.239345; 0; 69.158471], 3, [t 'bus Q loads']);
-    t_is(r.gen(:, [PG QG]), r1.gen(:, [PG QG]), 3, [t 'gen dispatches']);
-    t_is(r.branch, r1.branch, 3, [t 'branch']);
+    t_is(r.bus(:, [VM VA]), r1.bus(:, [VM VA]), 6, [t 'bus voltages']);
+    t_is(tPd, r1.bus(:, PD), 6, [t 'bus P loads']);
+    t_is(tPd, [0; 0; 0; 0; 132.977098; 0; 154.969557; 0; 172.896177], 6, [t 'bus P loads']);
+    t_is(tQd, r1.bus(:, QD), 6, [t 'bus Q loads']);
+    t_is(tQd, [0; 0; 0; 0; 44.325699; 0; 54.239345; 0; 69.158471], 6, [t 'bus Q loads']);
+    t_is(r.gen(:, [PG QG]), r1.gen(:, [PG QG]), 6, [t 'gen dispatches']);
+    t_is(r.branch, r1.branch, 6, [t 'branch']);
 
     t = sprintf('CPF (%s) - combo ZIP loads : ', cpfparm{k});
     zip_w = [0.1 0.4 0.5];
@@ -325,128 +325,13 @@ for k = 1:length(cpfparm)
     t_ok(r1.success, [t 'success']);
     t_is(r1.cpf.iterations, iterations(k,4), 12, [t 'iterations']);
     t_ok(r.success, [t 'success']);
-    t_is(r.bus(:, [VM VA]), r1.bus(:, [VM VA]), 3, [t 'bus voltages']);
-    t_is(tPd, r1.bus(:, PD), 3, [t 'bus P loads']);
-    t_is(tPd, [0; 0; 0; 0; 139.202168; 0; 160.005294; 0; 184.209518], 3, [t 'bus P loads']);
-    t_is(tQd, r1.bus(:, QD), 3, [t 'bus Q loads']);
-    t_is(tQd, [0; 0; 0; 0; 46.400723; 0; 56.001853; 0; 73.683807], 3, [t 'bus Q loads']);
-    t_is(r.gen(:, [PG QG]), r1.gen(:, [PG QG]), 3, [t 'gen dispatches']);
-    t_is(r.branch, r1.branch, 3, [t 'branch']);
-end
-
-
-%% set up base and target cases
-    mpcb = loadcase(casefile);
-    mpct = mpcb;
-    factor = 2.5*0.6;
-    mpct.gen(:, [PG QG]) = mpct.gen(:, [PG QG]) * factor;
-    mpct.bus(:, [PD QD]) = mpct.bus(:, [PD QD]) * factor;
-    mpct.gen(:,QMAX) = 75;
-    mpcb.gen(:,QMAX) = 75;
-    
-%% With Q limits enforced
- iterations = [
-        21 20 20 20;
-        21 21 21 21;
-        21 21 21 21;
-    ];
-
-for k = 1:length(cpfparm)
-    mpopt0 = mpoption(mpopt0, 'cpf.parameterization', k,'cpf.enforce_q_lims',1);
-
-    t = sprintf('CPF (%s) with Q lims - base case : ', cpfparm{k});
-    r0 = runcpf(mpcb, mpct, mpopt0);
-    t_ok(r0.success, [t 'success']);
-    t_is(r0.cpf.iterations, iterations(k, 1), 12, [t 'iterations']);
-    t_is(r0.cpf.max_lam, 1, 5, [t 'max_lam']);
-
-    mpopt = mpopt0;
-    t = sprintf('CPF (%s) with Q lims - constant power only : ', cpfparm{k});
-    zip_w = [1 0 0];
-    mpopt = mpoption(mpopt, 'exp.sys_wide_zip_loads.pw', zip_w);
-    r = runcpf(mpcb, mpct, mpopt);
-    t_ok(r.success, [t 'success']);
-    t_is(r.cpf.iterations, r0.cpf.iterations, 12, [t 'iterations']);
-    t_is(r.cpf.max_lam, r0.cpf.max_lam, 12, [t 'max_lam']);
-    t_is(r.bus, r0.bus, 6, [t 'bus']);
-    t_is(r.gen, r0.gen, 6, [t 'gen']);
-    t_is(r.branch, r0.branch, 6, [t 'branch']);
-
-    t = sprintf('CPF (%s) with Q lims - constant current only : ', cpfparm{k});
-    zip_w = [0 1 0];
-    mpopt = mpoption(mpopt, 'exp.sys_wide_zip_loads.pw', zip_w);
-    rb = runpf(mpcb, mpopt);
-    r = runcpf(mpcb, mpct, mpopt);
-    [tPd, tQd] = total_load(r.bus, r.gen, 'bus', [], mpopt);
-    mpc1b = mpcb;
-    mpc1b.bus(:, PD) = mpc1b.bus(:, PD) .* rb.bus(:, VM);
-    mpc1b.bus(:, QD) = mpc1b.bus(:, QD) .* rb.bus(:, VM);
-    mpc1t = mpct;
-    mpc1t.bus(:, PD) = mpc1t.bus(:, PD) .* r.bus(:, VM);
-    mpc1t.bus(:, QD) = mpc1t.bus(:, QD) .* r.bus(:, VM);
-    r1 = runcpf(mpc1b, mpc1t, mpopt0);
-    t_ok(r1.success, [t 'success']);
-    t_is(r1.cpf.iterations, iterations(k,2), 12, [t 'iterations']);
-    t_ok(r.success, [t 'success']);
-    t_is(r.bus(:, [VM VA]), r1.bus(:, [VM VA]), 4, [t 'bus voltages']);
-    t_is(tPd, r1.bus(:, PD), 3, [t 'bus P loads']);
-    t_is(tPd, [0; 0; 0; 0; 126.246736; 0; 143.114682; 0; 170.231175], 3, [t 'bus P loads']);
-    t_is(tQd, r1.bus(:, QD), 3, [t 'bus Q loads']);
-    t_is(tQd, [0; 0; 0; 0; 42.082245; 0; 50.090138; 0; 68.092710], 3, [t 'bus Q loads']);
-    t_is(r.gen(:, [PG QG]), r1.gen(:, [PG QG]), 3, [t 'gen dispatches']);
-    t_is(r.branch, r1.branch, 3, [t 'branch']);
-
-    t = sprintf('CPF (%s) with Q lims - constant impedance only : ', cpfparm{k});
-    zip_w = [0 0 1];
-    mpopt = mpoption(mpopt, 'exp.sys_wide_zip_loads.pw', zip_w);
-    rb = runpf(mpcb, mpopt);
-    r = runcpf(mpcb, mpct, mpopt);
-    [tPd, tQd] = total_load(r.bus, r.gen, 'bus', [], mpopt);
-    mpc1b = mpcb;
-    mpc1b.bus(:, PD) = mpc1b.bus(:, PD) .* rb.bus(:, VM).^2;
-    mpc1b.bus(:, QD) = mpc1b.bus(:, QD) .* rb.bus(:, VM).^2;
-    mpc1t = mpct;
-    mpc1t.bus(:, PD) = mpc1t.bus(:, PD) .* r.bus(:, VM).^2;
-    mpc1t.bus(:, QD) = mpc1t.bus(:, QD) .* r.bus(:, VM).^2;
-    r1 = runcpf(mpc1b, mpc1t, mpopt0);
-    t_ok(r1.success, [t 'success']);
-    t_is(r1.cpf.iterations, iterations(k,3), 12, [t 'iterations']);
-    t_ok(r.success, [t 'success']);
-    t_is(r.bus(:, [VM VA]), r1.bus(:, [VM VA]), 4, [t 'bus voltages']);
-    t_is(tPd, r1.bus(:, PD), 3, [t 'bus P loads']);
-    t_is(tPd, [0; 0; 0; 0; 119.354069; 0; 137.673893; 0; 157.193899], 3, [t 'bus P loads']);
-    t_is(tQd, r1.bus(:, QD), 3, [t 'bus Q loads']);
-    t_is(tQd, [0; 0; 0; 0; 39.784689; 0; 48.185862; 0; 62.877559], 3, [t 'bus Q loads']);
-    t_is(r.gen(:, [PG QG]), r1.gen(:, [PG QG]), 3, [t 'gen dispatches']);
-    t_is(r.branch, r1.branch, 3, [t 'branch']);
-
-    t = sprintf('CPF (%s) with Q lims - combo ZIP loads : ', cpfparm{k});
-    zip_w = [0.1 0.4 0.5];
-    mpopt = mpoption(mpopt, 'exp.sys_wide_zip_loads.pw', zip_w);
-    rb = runpf(mpcb, mpopt);
-    r = runcpf(mpcb, mpct, mpopt);
-    [tPd, tQd] = total_load(r.bus, r.gen, 'bus', [], mpopt);
-    Vm = abs(rb.bus(:, VM));
-    scaleb = [Vm.^0 Vm Vm.^2] * zip_w';
-    Vm = abs(r.bus(:, VM));
-    scalet = [Vm.^0 Vm Vm.^2] * zip_w';
-    mpc1b = mpcb;
-    mpc1b.bus(:, PD) = mpc1b.bus(:, PD) .* scaleb;
-    mpc1b.bus(:, QD) = mpc1b.bus(:, QD) .* scaleb;
-    mpc1t = mpct;
-    mpc1t.bus(:, PD) = mpc1t.bus(:, PD) .* scalet;
-    mpc1t.bus(:, QD) = mpc1t.bus(:, QD) .* scalet;
-    r1 = runcpf(mpc1b, mpc1t, mpopt0);
-    t_ok(r1.success, [t 'success']);
-    t_is(r1.cpf.iterations, iterations(k,4), 12, [t 'iterations']);
-    t_ok(r.success, [t 'success']);
-    t_is(r.bus(:, [VM VA]), r1.bus(:, [VM VA]), 3, [t 'bus voltages']);
-    t_is(tPd, r1.bus(:, PD), 3, [t 'bus P loads']);
-    t_is(tPd, [0; 0; 0; 0; 123.418124; 0; 140.853612; 0; 164.913503], 3, [t 'bus P loads']);
-    t_is(tQd, r1.bus(:, QD), 3, [t 'bus Q loads']);
-    t_is(tQd, [0; 0; 0; 0; 41.1393746; 0; 49.298764; 0; 65.9654012], 3, [t 'bus Q loads']);
-    t_is(r.gen(:, [PG QG]), r1.gen(:, [PG QG]), 3, [t 'gen dispatches']);
-    t_is(r.branch, r1.branch, 3, [t 'branch']);
+    t_is(r.bus(:, [VM VA]), r1.bus(:, [VM VA]), 6, [t 'bus voltages']);
+    t_is(tPd, r1.bus(:, PD), 6, [t 'bus P loads']);
+    t_is(tPd, [0; 0; 0; 0; 139.202168; 0; 160.005294; 0; 184.209518], 6, [t 'bus P loads']);
+    t_is(tQd, r1.bus(:, QD), 6, [t 'bus Q loads']);
+    t_is(tQd, [0; 0; 0; 0; 46.400723; 0; 56.001853; 0; 73.683807], 6, [t 'bus Q loads']);
+    t_is(r.gen(:, [PG QG]), r1.gen(:, [PG QG]), 6, [t 'gen dispatches']);
+    t_is(r.branch, r1.branch, 6, [t 'branch']);
 end
 
 t_end;

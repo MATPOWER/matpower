@@ -88,18 +88,7 @@ function opt = mpoption(varargin)
 %       [  1 - adaptive step size enabled                                   ]
 %   cpf.adapt_step_damping   0.7        damping parameter for adaptive step
 %                                       size adjustments
-%   cpf.enforce_p_lims       0          enforce gen active power limits
-%       [  0 - do NOT enforce limits                                        ]
-%       [  1 - enforce limits, simultaneous bus type conversion             ]
-%   cpf.enforce_q_lims       0          enforce gen reactive power limits at
-%                                       expense of |V|
-%       [  0 - do NOT enforce limits                                        ]
-%       [  1 - enforce limits, simultaneous bus type conversion             ]
 %   cpf.error_tol           1e-3        tolerance for adaptive step control
-%   cpf.p_lims_tol          0.01        tolerance for generator active
-%                                       power limit enforcement (MW)
-%   cpf.q_lims_tol          0.01        tolerance for generator reactive
-%                                       power limit enforcement (MVAR)
 %   cpf.step_min            1e-4        minimum allowed step size
 %   cpf.step_max            0.2         maximum allowed step size
 %   cpf.plot.level          0           control plotting of noze curve
@@ -418,7 +407,6 @@ function opt = mpoption(varargin)
 %   MATPOWER
 %   Copyright (c) 2013-2016 by Power System Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%   and Shrirang Abhyankar, Argonne National Laboratory
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -487,10 +475,6 @@ if have_opt0
             end
             if opt0.v <= 10         %% convert version 10 to 11
                 opt0.cpf.adapt_step_damping = opt_d.cpf.adapt_step_damping;
-                opt0.cpf.enforce_p_lims     = opt_d.cpf.enforce_p_lims;
-                opt0.cpf.enforce_q_lims     = opt_d.cpf.enforce_q_lims;
-                opt0.cpf.p_lims_tol         = opt_d.cpf.p_lims_tol;
-                opt0.cpf.q_lims_tol         = opt_d.cpf.q_lims_tol;
             end
             opt0.v = v;
         end
@@ -1431,11 +1415,7 @@ if ~isstruct(opt)
             'step',                 0.05, ...
             'adapt_step',           0, ...
             'adapt_step_damping',   0.7, ...
-            'enforce_p_lims',       0, ...
-            'enforce_q_lims',       0, ...
             'error_tol',            1e-3, ...
-            'p_lims_tol',           0.01, ...
-            'q_lims_tol',           0.01, ...
             'step_min',             1e-4, ...
             'step_max',             0.2, ...
             'plot',                 struct(...
@@ -1531,9 +1511,7 @@ v = 11;     %% version number of MATPOWER options struct
             %% v9   - added 'exp' for experimental fields, specifically
             %%        'sys_wide_zip_loads.pw', 'sys_wide_zip_loads.qw'
             %% v10  - added 'most' field
-            %% v11  - added options 'cpf.adapt_step_damping',
-            %%        'cpf.enforce_p_lims', 'cpf.enforce_q_lims', 
-            %%        'cpf.p_lims_tol' and 'cpf.q_lims_tol'
+            %% v11  - added option 'cpf.adapt_step_damping'
 
 %%-------------------------------------------------------------------
 function db_level = DEBUG
