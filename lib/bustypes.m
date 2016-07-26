@@ -37,6 +37,10 @@ pq  = find(bus(:, BUS_TYPE) == PQ | ~bus_gen_status);   %% PQ bus indices
 
 %% pick a new reference bus if for some reason there is none (may have been shut down)
 if isempty(ref)
-    ref = pv(1);                %% use the first PV bus
-    pv = pv(2:length(pv));      %% take it off PV list
+%     if isempty(pv)
+%         %% no PV bus left to convert to reference bus
+%     else
+        ref = pv(1);    %% use the first PV bus
+        pv(1) = [];     %% delete it from PV list
+%     end
 end
