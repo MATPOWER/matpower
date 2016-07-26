@@ -355,10 +355,10 @@ event.qlim_at_prev_step   = 0;
 z = cpf_tangent(V, lam, Ybus, Sbusb, Sbust, pv, pq, ...
                             zprv, Vprv, lamprv, parameterization);
 [V0, lam0] = cpf_predictor(V, lam, z, step, pv, pq);
-zprv = z;
 zprv2 = zprv;
 Vprv2 = Vprv;
 lamprv2 = lamprv;
+zprv = z;
 
 %% call event function - to inialize things only (i.e. no handling of events)
 for k = 1:length(event.fcns)
