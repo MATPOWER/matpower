@@ -111,6 +111,11 @@ else                            %% simple named set
 end
 
 if isempty(cp)                  %% just setting dimensions for indexed set
+    %% use column vector if single dimension
+    if length(idx) == 1
+        idx = {idx{:}, 1};
+    end
+    
     %% add info about this cost set
     om.cost.idx.i1.(name)  = zeros(idx{:}); %% starting index
     om.cost.idx.iN.(name)  = zeros(idx{:}); %% ending index

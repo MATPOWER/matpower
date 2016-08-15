@@ -108,6 +108,11 @@ if nonlin           %% nonlinear
     om.nln.order(om.nln.NS).name = name;
     om.nln.order(om.nln.NS).idx  = {};
 elseif nargs == 0   %% linear: just setting dimensions for indexed set
+    %% use column vector if single dimension
+    if length(idx) == 1
+        idx = {idx{:}, 1};
+    end
+    
     %% add info about this linear constraint set
     om.lin.idx.i1.(name)  = zeros(idx{:});  %% starting index
     om.lin.idx.iN.(name)  = zeros(idx{:});  %% ending index

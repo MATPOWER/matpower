@@ -131,6 +131,11 @@ if isempty(idx)     %% simple named set
     om.var.order(om.var.NS).name = name;
     om.var.order(om.var.NS).idx  = {};
 elseif N == -1      %% just setting dimensions for indexed set
+    %% use column vector if single dimension
+    if length(idx) == 1
+        idx = {idx{:}, 1};
+    end
+    
     %% add info about this var set
     om.var.idx.i1.(name)  = zeros(idx{:});  %% starting index
     om.var.idx.iN.(name)  = zeros(idx{:});  %% ending index

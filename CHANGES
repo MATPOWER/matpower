@@ -15,6 +15,12 @@ For change history for MOST, see most/docs/CHANGES.
 Changes since 6.0b1
 -----------------
 
+8/15/16
+    - Fixed a harmless bug in @opt_model where variable, constraint and
+      cost sets indexed by a single variable would allocate a square
+      matrix of starting and ending indices, rather than a simple vector.
+      Thanks to Alberto Lamadrid for catching this.
+
 7/18/16
     - Extract computation of tangent vector from cpf_predictor() into
       cpf_tangent(), and call sequentially as needed.
