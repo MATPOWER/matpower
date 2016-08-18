@@ -29,13 +29,13 @@ function [V0, lam0] = cpf_predictor(V, lam, z, step, pv, pq)
 %% sizes
 nb = length(V);
 
-Vaprv = angle(V);
-Vmprv = abs(V);
-Va0 = Vaprv;
-Vm0 = Vmprv;
+Va = angle(V);
+Vm = abs(V);
+Va0 = Va;
+Vm0 = Vm;
 
 %% prediction for next step
-Va0([pv; pq]) = Vaprv([pv; pq]) + step * z([pv; pq]);
-Vm0([pq]) = Vmprv([pq]) + step * z([nb+pq]);
+Va0([pv; pq]) = Va([pv; pq]) + step * z([pv; pq]);
+Vm0([pq])     = Vm([pq])     + step * z([nb+pq]);
 lam0 = lam + step * z(2*nb+1);
 V0 = Vm0 .* exp(1j * Va0);
