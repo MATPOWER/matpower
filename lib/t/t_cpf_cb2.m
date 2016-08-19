@@ -20,7 +20,9 @@ if k == 0
     cb_state.cb2.final = 0;
 %%-----  FINAL call  -----
 elseif k < 0
-    results.cb2.final = cb_args.cb2.final;
+    results.cb2.initial     = cb_state.cb2.initial;
+    results.cb2.iteration   = cb_state.cb2.iteration;
+    results.cb2.final       = cb_args.cb2.final;
 %%-----  ITERATION call  -----
 else
     cb_state.cb2.iteration = cb_state.cb2.iteration + cb_args.cb2.iteration;

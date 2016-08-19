@@ -86,12 +86,12 @@ lam_p = nn.lam0;
 %%-----  initialize/update state/results  -----
 if k == 0       %% INITIAL call
     %% initialize state
-    cb_state = struct(  'V_p', V_p, ...
-                        'lam_p', lam_p, ...
-                        'V_c', V_c, ...
-                        'lam_c', lam_c, ...
-                        'steps', step, ...
-                        'iterations', 0);
+    cb_state.V_p = V_p;
+    cb_state.lam_p = lam_p;
+    cb_state.V_c = V_c;
+    cb_state.lam_c = lam_c;
+    cb_state.steps = step;
+    cb_state.iterations = 0;
 elseif k > 0    %% ITERATION call
     %% update state
     cb_state.V_p   = [cb_state.V_p V_p];
@@ -102,9 +102,13 @@ elseif k > 0    %% ITERATION call
     cb_state.iterations    = k;
 else            %% FINAL call
     %% assemble results struct
-    results = cb_state;     %% initialize results with final state
-    results.max_lam = max(cb_state.lam_c);
-    results.iterations = -k;
+    results.V_p         = cb_state.V_p;
+    results.lam_p       = cb_state.lam_p;
+    results.V_c         = cb_state.V_c;
+    results.lam_c       = cb_state.lam_c;
+    results.steps       = cb_state.steps;
+    results.iterations  = -k;
+    results.max_lam     = max(cb_state.lam_c);
 end
 
 %%-----  plot continuation curve  -----

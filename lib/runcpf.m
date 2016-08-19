@@ -142,20 +142,20 @@ cpf_events = [];
 cpf_callbacks = [];
 if ischar(mpopt.cpf.stop_at) && strcmp(mpopt.cpf.stop_at, 'NOSE');
     cpf_events   = cpf_register_event(cpf_events, 'NOSE', 'cpf_nose_event', 1e-5, 1);
-    cpf_callbacks = cpf_register_callback(cpf_callbacks, 'NOSE', 'cpf_nose_event_cb');
+    cpf_callbacks = cpf_register_callback(cpf_callbacks, 'cpf_nose_event_cb', 51);
 else
     cpf_events   = cpf_register_event(cpf_events, 'TARGET_LAM', 'cpf_target_lam_event', 1e-5, 1);
-    cpf_callbacks = cpf_register_callback(cpf_callbacks, 'TARGET_LAM', 'cpf_target_lam_event_cb');
+    cpf_callbacks = cpf_register_callback(cpf_callbacks, 'cpf_target_lam_event_cb', 50);
 end
 if qlim
     cpf_events = cpf_register_event(cpf_events, 'QLIM', 'cpf_qlim_event', mpopt.cpf.q_lims_tol, 1);
-    cpf_callbacks = cpf_register_callback(cpf_callbacks, 'QLIM', 'cpf_qlim_event_cb');
+    cpf_callbacks = cpf_register_callback(cpf_callbacks, 'cpf_qlim_event_cb', 41);
 end
 if plim
     cpf_events = cpf_register_event(cpf_events, 'PLIM', 'cpf_plim_event', mpopt.cpf.p_lims_tol, 1);
-    cpf_callbacks = cpf_register_callback(cpf_callbacks, 'PLIM', 'cpf_plim_event_cb');
+    cpf_callbacks = cpf_register_callback(cpf_callbacks, 'cpf_plim_event_cb', 40);
 end
-cpf_callbacks = cpf_register_callback(cpf_callbacks, 'DEFAULT', 'cpf_default_callback');
+cpf_callbacks = cpf_register_callback(cpf_callbacks, 'cpf_default_callback', 0);
 if ~isempty(mpopt.cpf.user_callback)
     if iscell(mpopt.cpf.user_callback)
         callback_names = mpopt.cpf.user_callback;
@@ -163,12 +163,12 @@ if ~isempty(mpopt.cpf.user_callback)
         callback_names = {mpopt.cpf.user_callback};
     end
     for k = 1:length(callback_names)
-        cpf_callbacks = cpf_register_callback(cpf_callbacks, callback_names{k}, callback_names{k});
+        cpf_callbacks = cpf_register_callback(cpf_callbacks, callback_names{k}, 10);
     end
 end
 
 nef = length(cpf_events);       %% number of event functions registered
-neh = length(cpf_callbacks);    %% number of callback functions registered
+ncb = length(cpf_callbacks);    %% number of callback functions registered
 
 % %% set up callbacks
 % callback_names = {'cpf_default_callback'};
@@ -345,7 +345,7 @@ end
 cb_state = struct();
 
 %% invoke callbacks - "initialize" context
-for k = 1:neh
+for k = 1:ncb
     [cb_state, nn, cc, cb_data, terminate] = cpf_callbacks(k).fcn(cont_steps, ...
         cc, cc, cc, 0, [], 0, cb_data, cb_state, cb_args);
 end
@@ -456,7 +456,7 @@ while continuation
 
     %% invoke callbacks - "iterations" context
     terminate = ~continuation;
-    for k = 1:neh
+    for k = 1:ncb
         [cb_state, nn, cc, cb_data, terminate] = cpf_callbacks(k).fcn(cont_steps, ...
             nn, cc, pp, rollback, critical, terminate, cb_data, cb_state, cb_args);
         if terminate
@@ -576,7 +576,7 @@ if success
     cpf_results = struct();
 
     %% invoke callbacks - "finalize" context
-    for k = 1:neh
+    for k = 1:ncb
         [cb_state, nn, cc, cb_data, terminate, cpf_results] = cpf_callbacks(k).fcn(-cont_steps, ...
             nn, cc, pp, rollback, critical, 0, cb_data, cb_state, cb_args, cpf_results);
     end
