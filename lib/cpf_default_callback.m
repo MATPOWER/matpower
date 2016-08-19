@@ -1,5 +1,5 @@
 function [nn, cc, cb_data, terminate, results] = cpf_default_callback(...
-        cont_steps, nn, cc, pp, rollback, critical, terminate, ...
+        k, nn, cc, pp, rollback, critical, terminate, ...
         cb_data, cb_args, results)
 % function [cb_state, results] = ...
 %     cpf_default_callback(k, step, V_c, lam_c, V_p, lam_p, cb_data, cb_state, cb_args, results)
@@ -71,12 +71,11 @@ function [nn, cc, cb_data, terminate, results] = cpf_default_callback(...
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% skip if rollback, except if it is a FINAL call
-if rollback && cont_steps > 0
+if rollback && k > 0
     return;
 end
 
 %% initialize variables
-k = cont_steps;
 step = nn.step;
 V_c = nn.V;
 lam_c = nn.lam;

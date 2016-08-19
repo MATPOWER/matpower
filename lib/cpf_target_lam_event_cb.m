@@ -1,5 +1,5 @@
 function [nn, cc, cb_data, terminate, results] = cpf_target_lam_event_cb(...
-        cont_steps, nn, cc, pp, rollback, critical, terminate, ...
+        k, nn, cc, pp, rollback, critical, terminate, ...
         cb_data, cb_args, results)
 %CPF_TARGET_LAM_EVENT_CB  Event handler for TARGET_LAM events
 %
@@ -7,7 +7,7 @@ function [nn, cc, cb_data, terminate, results] = cpf_target_lam_event_cb(...
 %           NN, CC, ROLLBACK, CRITICAL, CB_DATA, CB_STATE, CB_ARGS)
 %   
 %   Inputs:
-%       CONT_STEPS : ...
+%       K : ...
 %
 %   Outputs:
 %       CB_STATE : ...
@@ -22,7 +22,7 @@ function [nn, cc, cb_data, terminate, results] = cpf_target_lam_event_cb(...
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% skip if initialize, finalize or terminate
-if cont_steps <= 0 || terminate
+if k <= 0 || terminate
     return;
 end
 
@@ -44,10 +44,10 @@ for i = 1:length(critical)
             case 'ZERO'         %% prepare to terminate
                 if cb_data.mpopt.verbose
                     if stop_at == 0     %% FULL
-                        fprintf('\nTraced full continuation curve in %d continuation steps\n', cont_steps);
+                        fprintf('\nTraced full continuation curve in %d continuation steps\n', k);
                     else                %% target lambda value
                         fprintf('\nReached desired lambda %g in %d continuation steps\n', ...
-                            stop_at, cont_steps);
+                            stop_at, k);
                     end
                 end
 

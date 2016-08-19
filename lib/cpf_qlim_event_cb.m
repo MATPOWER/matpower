@@ -1,5 +1,5 @@
 function [nn, cc, cb_data, terminate, results] = cpf_qlim_event_cb(...
-        cont_steps, nn, cc, pp, rollback, critical, terminate, ...
+        k, nn, cc, pp, rollback, critical, terminate, ...
         cb_data, cb_args, results)
 %CPF_QLIM_EVENT_CB  Event handler for NOSE events
 %
@@ -7,7 +7,7 @@ function [nn, cc, cb_data, terminate, results] = cpf_qlim_event_cb(...
 %           NN, CC, ROLLBACK, CRITICAL, CB_DATA, CB_STATE, CB_ARGS)
 %   
 %   Inputs:
-%       CONT_STEPS : ...
+%       K : ...
 %
 %   Outputs:
 %       CB_STATE : ...
@@ -22,7 +22,7 @@ function [nn, cc, cb_data, terminate, results] = cpf_qlim_event_cb(...
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% skip if initialize, finalize or terminate
-if cont_steps <= 0 || terminate
+if k <= 0 || terminate
     return;
 end
 
@@ -53,21 +53,22 @@ for i = 1:length(critical)
         
         %% find the generator(s) and which lim(s)
         ig = critical(i).idx;
-        for k = 1:length(ig)    %% ig(k) is the gen index of interest
-            ib = mpc.gen(ig(k), GEN_BUS);   %% corresponding bus index
+        for j = 1:length(ig)
+            g = ig(j);                  %% index of gen of interest
+            ib = mpc.gen(g, GEN_BUS);   %% corresponding bus index
             maxlim = 1;
-            if ig(k) > ng
-                ig(k) = ig(k) - ng;
+            if g > ng
+                g = g - ng;
                 maxlim = 0;
             end
 
             if cb_data.mpopt.verbose
                 if maxlim
                     fprintf('  gen %d @ bus %d reached %g MVAr Qmax lim @ lambda = %.3g : bus %d converted to PQ\n', ...
-                        i2e_gen(ig(k)), i2e_bus(ib), mpc.gen(ig(k), QMAX), nn.lam, i2e_bus(ib));
+                        i2e_gen(g), i2e_bus(ib), mpc.gen(g, QMAX), nn.lam, i2e_bus(ib));
                 else
                     fprintf('  gen %d @ bus %d reached %g MVAr Qmin lim @ lambda = %.3g : bus %d converted to PQ\n', ...
-                        i2e_gen(ig(k)), i2e_bus(ib), mpc.gen(ig(k), QMIN), nn.lam, i2e_bus(ib));
+                        i2e_gen(g), i2e_bus(ib), mpc.gen(g, QMIN), nn.lam, i2e_bus(ib));
                 end
             end
 
@@ -76,9 +77,9 @@ for i = 1:length(critical)
 
             %% set Qg to exact limit and convert the generator's bus to PQ bus
             if maxlim
-                mpc.gen(ig(k), QG) = mpc.gen(ig(k), QMAX);
+                mpc.gen(g, QG) = mpc.gen(g, QMAX);
             else
-                mpc.gen(ig(k), QG) = mpc.gen(ig(k), QMIN);
+                mpc.gen(g, QG) = mpc.gen(g, QMIN);
             end
             mpc.bus(ib, BUS_TYPE) = PQ;
 
@@ -107,15 +108,15 @@ for i = 1:length(critical)
             
                 %% update QG for Q limited gen in base and target
                 %% (no more reactive transfer for this gen)
-                cb_data.mpc_base.gen(ig(k), QG)   = mpc.gen(ig(k), QG);
-                cb_data.mpc_target.gen(ig(k), QG) = mpc.gen(ig(k), QG);
+                cb_data.mpc_base.gen(  g, QG) = mpc.gen(g, QG);
+                cb_data.mpc_target.gen(g, QG) = mpc.gen(g, QG);
 
                 %% update PG for previous slack gen in base and target
                 %% (no more active transfer for this gen)
                 %% RDZ: Why?
                 if oldref ~= ref
-                    cb_data.mpc_base.gen(ig(k), PG)   = mpc.gen(ig(k),PG);
-                    cb_data.mpc_target.gen(ig(k), PG) = mpc.gen(ig(k),PG);
+                    cb_data.mpc_base.gen(  g, PG) = mpc.gen(g,PG);
+                    cb_data.mpc_target.gen(g, PG) = mpc.gen(g,PG);
                 end
                 
                 %% update functions
