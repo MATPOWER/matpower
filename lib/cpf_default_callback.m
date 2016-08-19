@@ -1,6 +1,6 @@
-function [cb_state, nn, cc, cb_data, terminate, results] = cpf_default_callback(...
+function [nn, cc, cb_data, terminate, results] = cpf_default_callback(...
         cont_steps, nn, cc, pp, rollback, critical, terminate, ...
-        cb_data, cb_state, cb_args, results)
+        cb_data, cb_args, results)
 % function [cb_state, results] = ...
 %     cpf_default_callback(k, step, V_c, lam_c, V_p, lam_p, cb_data, cb_state, cb_args, results)
 %CPF_DEFAULT_CALLBACK   Default callback function for CPF
@@ -70,7 +70,7 @@ function [cb_state, nn, cc, cb_data, terminate, results] = cpf_default_callback(
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-%% skip if rollback
+%% skip if rollback, except if it is a FINAL call
 if rollback && cont_steps > 0
     return;
 end
@@ -86,29 +86,35 @@ lam_p = nn.lam0;
 %%-----  initialize/update state/results  -----
 if k == 0       %% INITIAL call
     %% initialize state
-    cb_state.V_p = V_p;
-    cb_state.lam_p = lam_p;
-    cb_state.V_c = V_c;
-    cb_state.lam_c = lam_c;
-    cb_state.steps = step;
-    cb_state.iterations = 0;
+    cc.x.V_p = V_p;
+    cc.x.lam_p = lam_p;
+    cc.x.V_c = V_c;
+    cc.x.lam_c = lam_c;
+    cc.x.steps = step;
+    cc.x.iterations = 0;
+    nn.x.V_p = V_p;
+    nn.x.lam_p = lam_p;
+    nn.x.V_c = V_c;
+    nn.x.lam_c = lam_c;
+    nn.x.steps = step;
+    nn.x.iterations = 0;
 elseif k > 0    %% ITERATION call
     %% update state
-    cb_state.V_p   = [cb_state.V_p V_p];
-    cb_state.lam_p = [cb_state.lam_p lam_p];
-    cb_state.V_c   = [cb_state.V_c V_c];
-    cb_state.lam_c = [cb_state.lam_c lam_c];
-    cb_state.steps = [cb_state.steps step];
-    cb_state.iterations    = k;
+    nn.x.V_p   = [nn.x.V_p V_p];
+    nn.x.lam_p = [nn.x.lam_p lam_p];
+    nn.x.V_c   = [nn.x.V_c V_c];
+    nn.x.lam_c = [nn.x.lam_c lam_c];
+    nn.x.steps = [nn.x.steps step];
+    nn.x.iterations    = k;
 else            %% FINAL call
     %% assemble results struct
-    results.V_p         = cb_state.V_p;
-    results.lam_p       = cb_state.lam_p;
-    results.V_c         = cb_state.V_c;
-    results.lam_c       = cb_state.lam_c;
-    results.steps       = cb_state.steps;
+    results.V_p         = nn.x.V_p;
+    results.lam_p       = nn.x.lam_p;
+    results.V_c         = nn.x.V_c;
+    results.lam_c       = nn.x.lam_c;
+    results.steps       = nn.x.steps;
     results.iterations  = -k;
-    results.max_lam     = max(cb_state.lam_c);
+    results.max_lam     = max(nn.x.lam_c);
 end
 
 %%-----  plot continuation curve  -----
@@ -117,7 +123,7 @@ plot_level  = cb_data.mpopt.cpf.plot.level;
 plot_bus    = cb_data.mpopt.cpf.plot.bus;
 plot_bus_default = 0;
 if plot_level
-    if isempty(plot_bus) && ~isfield(cb_state, 'plot_bus_default')  %% no bus specified
+    if isempty(plot_bus) && ~isfield(nn.x, 'plot_bus_default')  %% no bus specified
         %% pick PQ bus with largest transfer
         Sxfr = cb_data.Sxfr(abs(V_c));
         [junk, idx] = max(Sxfr(cb_data.pq));
@@ -132,9 +138,9 @@ if plot_level
         plot_bus_default = idx_e;
     else
         if isempty(plot_bus)
-            idx_e = cb_state.plot_bus_default;  %% external bus number, saved
+            idx_e = nn.x.plot_bus_default;  %% external bus number, saved
         else
-            idx_e = plot_bus;                   %% external bus number, provided
+            idx_e = plot_bus;               %% external bus number, provided
         end
         idx = full(cb_data.mpc_target.order.bus.e2i(idx_e));
         if idx == 0
@@ -144,9 +150,9 @@ if plot_level
 
     %% set bounds for plot axes
     xmin = 0;
-    xmax = max([max(cb_state.lam_p);max(cb_state.lam_c)]);
-    ymin = min([min(abs(cb_state.V_p(idx, :)));min(abs(cb_state.V_c(idx, :)))]);
-    ymax = max([max(abs(cb_state.V_p(idx, :)));max(abs(cb_state.V_c(idx, :)))]);
+    xmax = max([max(nn.x.lam_p);max(nn.x.lam_c)]);
+    ymin = min([min(abs(nn.x.V_p(idx, :)));min(abs(nn.x.V_c(idx, :)))]);
+    ymax = max([max(abs(nn.x.V_p(idx, :)));max(abs(nn.x.V_c(idx, :)))]);
     if xmax < xmin + cb_data.mpopt.cpf.step / 100;
         xmax = xmin + cb_data.mpopt.cpf.step / 100;
     end
@@ -163,12 +169,12 @@ if plot_level
         %% save default plot bus in the state so we don't have to detect it
         %% each time, since we don't want it to change in the middle of the run
         if plot_bus_default
-            cb_state.plot_bus_default = plot_bus_default;
+            cc.x.plot_bus_default = plot_bus_default;
         end
         
         %% initialize lambda-V nose curve plot
         axis([xmin xmax ymin ymax]);
-        plot(cb_state.lam_p(1), abs(cb_state.V_p(idx,1)), '-', 'Color', [0.25 0.25 1]);
+        plot(cc.x.lam_p(1), abs(cc.x.V_p(idx,1)), '-', 'Color', [0.25 0.25 1]);
         title(sprintf('Voltage at Bus %d', idx_e));
         xlabel('\lambda');
         ylabel('Voltage Magnitude');
@@ -178,16 +184,16 @@ if plot_level
         %% plot single step of the lambda-V nose curve
         if plot_level > 1
             axis([xmin xmax ymin ymax]);
-            plot([cb_state.lam_c(k); cb_state.lam_p(k+1)], ...
-                [abs(cb_state.V_c(idx,k)); abs(cb_state.V_p(idx,k+1))], ...
+            plot([nn.x.lam_c(k); nn.x.lam_p(k+1)], ...
+                [abs(nn.x.V_c(idx,k)); abs(nn.x.V_p(idx,k+1))], ...
                 '-', 'Color', 0.85*[1 0.75 0.75]);
-            plot([cb_state.lam_p(k+1); cb_state.lam_c(k+1)], ...
-                [abs(cb_state.V_p(idx,k+1)); abs(cb_state.V_c(idx,k+1))], ...
+            plot([nn.x.lam_p(k+1); nn.x.lam_c(k+1)], ...
+                [abs(nn.x.V_p(idx,k+1)); abs(nn.x.V_c(idx,k+1))], ...
                 '-', 'Color', 0.85*[0.75 1 0.75]);
-            plot(cb_state.lam_p(k+1), abs(cb_state.V_p(idx,k+1)), 'x', ...
+            plot(nn.x.lam_p(k+1), abs(nn.x.V_p(idx,k+1)), 'x', ...
                 'Color', 0.85*[1 0.75 0.75]);
-            plot(cb_state.lam_c(k+1)', ...
-                abs(cb_state.V_c(idx,k+1))', ...
+            plot(nn.x.lam_c(k+1)', ...
+                abs(nn.x.V_c(idx,k+1))', ...
                 '-o', 'Color', [0.25 0.25 1]);
             drawnow;
             if plot_level > 2
@@ -198,8 +204,8 @@ if plot_level
     else    % k < 0
         %% finish final lambda-V nose curve plot
         axis([xmin xmax ymin ymax]);
-        plot(cb_state.lam_c', ...
-            abs(cb_state.V_c(idx,:))', ...
+        plot(nn.x.lam_c', ...
+            abs(nn.x.V_c(idx,:))', ...
             '-', 'Color', [0.25 0.25 1]);
         hold off;
     end

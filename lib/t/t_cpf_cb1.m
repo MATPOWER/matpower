@@ -1,6 +1,6 @@
-function [cb_state, nn, cc, cb_data, terminate, results] = t_cpf_cb1(...
+function [nn, cc, cb_data, terminate, results] = t_cpf_cb1(...
         cont_steps, nn, cc, pp, rollback, critical, terminate, ...
-        cb_data, cb_state, cb_args, results)
+        cb_data, cb_args, results)
 %T_CPF_CB1  User callback function 1 for continuation power flow testing.
 
 %   MATPOWER
@@ -14,16 +14,16 @@ function [cb_state, nn, cc, cb_data, terminate, results] = t_cpf_cb1(...
 k = cont_steps;
 
 %%-----  INITIAL call  -----
-if k == 0
-    cb_state.cb1.initial = 1;
-    cb_state.cb1.iteration = 0;
-    cb_state.cb1.final = 0;
-%%-----  FINAL call  -----
-elseif k < 0
-    results.cb1.initial     = cb_state.cb1.initial;
-    results.cb1.iteration   = cb_state.cb1.iteration;
-    results.cb1.final       = 1;
+if cont_steps == 0
+    cc.x.cb1.initial = 1;
+    cc.x.cb1.iteration = 0;
+    cc.x.cb1.final = 0;
 %%-----  ITERATION call  -----
-else
-    cb_state.cb1.iteration = cb_state.cb1.iteration + 1;
+elseif cont_steps > 0
+    nn.x.cb1.iteration = nn.x.cb1.iteration + 1;
+%%-----  FINAL call  -----
+else    % cont_steps < 0
+    results.cb1.initial     = nn.x.cb1.initial;
+    results.cb1.iteration   = nn.x.cb1.iteration;
+    results.cb1.final       = 1;
 end
