@@ -55,12 +55,12 @@ for i = 1:length(critical)
         ig = critical(i).idx;
         for j = 1:length(ig)
             g = ig(j);                  %% index of gen of interest
-            ib = mpc.gen(g, GEN_BUS);   %% corresponding bus index
             maxlim = 1;
             if g > ng
                 g = g - ng;
                 maxlim = 0;
             end
+            ib = mpc.gen(g, GEN_BUS);   %% corresponding bus index
 
             if cb_data.mpopt.verbose
                 if maxlim
