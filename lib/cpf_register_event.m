@@ -41,5 +41,11 @@ end
 if isempty(cpf_events)
     cpf_events = e;
 else
-    cpf_events(end+1) = e;
+    nef = length(cpf_events);
+    for k = 1:nef
+        if strcmp(cpf_events(k).name, name)
+            error('cpf_register_event: duplicate event name: ''%s''', name);
+        end
+    end
+    cpf_events(nef+1) = e;
 end
