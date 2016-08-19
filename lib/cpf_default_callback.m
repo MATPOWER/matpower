@@ -1,5 +1,8 @@
-function [cb_state, results] = ...
-    cpf_default_callback(k, step, V_c, lam_c, V_p, lam_p, cb_data, cb_state, cb_args, results)
+function [cb_state, nn, cc, cb_data, terminate, results] = cpf_default_callback(...
+        cont_steps, nn, cc, pp, rollback, critical, terminate, ...
+        cb_data, cb_state, cb_args, results)
+% function [cb_state, results] = ...
+%     cpf_default_callback(k, step, V_c, lam_c, V_p, lam_p, cb_data, cb_state, cb_args, results)
 %CPF_DEFAULT_CALLBACK   Default callback function for CPF
 %   [CB_STATE, RESULTS] = ...
 %       CPF_DEFAULT_CALLBACK(K, STEP, V_C, LAM_C, V_P, LAM_P, ...
@@ -67,6 +70,44 @@ function [cb_state, results] = ...
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
+%% skip if rollback
+if rollback && cont_steps > 0
+    return;
+end
+
+%% initialize variables
+k = cont_steps;
+step = nn.step;
+V_c = nn.V;
+lam_c = nn.lam;
+V_p = nn.V0;
+lam_p = nn.lam0;
+
+%%-----  initialize/update state/results  -----
+if k == 0       %% INITIAL call
+    %% initialize state
+    cb_state = struct(  'V_p', V_p, ...
+                        'lam_p', lam_p, ...
+                        'V_c', V_c, ...
+                        'lam_c', lam_c, ...
+                        'steps', step, ...
+                        'iterations', 0);
+elseif k > 0    %% ITERATION call
+    %% update state
+    cb_state.V_p   = [cb_state.V_p V_p];
+    cb_state.lam_p = [cb_state.lam_p lam_p];
+    cb_state.V_c   = [cb_state.V_c V_c];
+    cb_state.lam_c = [cb_state.lam_c lam_c];
+    cb_state.steps = [cb_state.steps step];
+    cb_state.iterations    = k;
+else            %% FINAL call
+    %% assemble results struct
+    results = cb_state;     %% initialize results with final state
+    results.max_lam = max(cb_state.lam_c);
+    results.iterations = -k;
+end
+
+%%-----  plot continuation curve  -----
 %% initialize plotting options
 plot_level  = cb_data.mpopt.cpf.plot.level;
 plot_bus    = cb_data.mpopt.cpf.plot.bus;
@@ -96,80 +137,66 @@ if plot_level
             error('cpf_default_callback: %d is not a valid bus number for MPOPT.cpf.plot.bus', idx_e);
         end
     end
-end
 
-%%-----  FINAL call  -----
-if nargout == 2
-    %% assemble results struct
-    results = cb_state;     %% initialize results with final state
-    results.max_lam = max(cb_state.lam_c);
-    results.iterations = k;
-
-    %% finish final lambda-V nose curve plot
-    if plot_level
-        %% plot the final nose curve
-        plot(cb_state.lam_c', ...
-            abs(cb_state.V_c(idx,:))', ...
-            '-', 'Color', [0.25 0.25 1]);
-        axis([0 max([1;max(cb_state.lam_p);max(cb_state.lam_c)])*1.05 ...
-            0 max([1;max(abs(cb_state.V_p(idx)));max(abs(cb_state.V_c(idx)))*1.05])]);
-        hold off;
+    %% set bounds for plot axes
+    xmin = 0;
+    xmax = max([max(cb_state.lam_p);max(cb_state.lam_c)]);
+    ymin = min([min(abs(cb_state.V_p(idx, :)));min(abs(cb_state.V_c(idx, :)))]);
+    ymax = max([max(abs(cb_state.V_p(idx, :)));max(abs(cb_state.V_c(idx, :)))]);
+    if xmax < xmin + cb_data.mpopt.cpf.step / 100;
+        xmax = xmin + cb_data.mpopt.cpf.step / 100;
     end
-%%-----  INITIAL call  -----
-elseif k == 0
-    %% initialize state
-    cb_state = struct(  'V_p', V_p, ...
-                        'lam_p', lam_p, ...
-                        'V_c', V_c, ...
-                        'lam_c', lam_c, ...
-                        'steps', step, ...
-                        'iterations', 0);
-
-    %% save default plot bus in the state so we don't have to detect it
-    %% each time, since we don't want it to change in the middle of the run
-    if plot_bus_default
-    
-        cb_state.plot_bus_default = plot_bus_default;
+    if ymax - ymin < 2e-5;
+        ymax = ymax + 1e-5;
+        ymin = ymin - 1e-5;
     end
-    
-    %% initialize lambda-V nose curve plot
-    if plot_level
+    xmax = xmax * 1.05;
+    ymax = ymax + 0.05 * (ymax-ymin);
+    ymin = ymin - 0.05 * (ymax-ymin);
+
+    %%-----  INITIAL call  -----
+    if k == 0
+        %% save default plot bus in the state so we don't have to detect it
+        %% each time, since we don't want it to change in the middle of the run
+        if plot_bus_default
+            cb_state.plot_bus_default = plot_bus_default;
+        end
+        
+        %% initialize lambda-V nose curve plot
+        axis([xmin xmax ymin ymax]);
         plot(cb_state.lam_p(1), abs(cb_state.V_p(idx,1)), '-', 'Color', [0.25 0.25 1]);
         title(sprintf('Voltage at Bus %d', idx_e));
         xlabel('\lambda');
         ylabel('Voltage Magnitude');
-        axis([0 max([1;max(cb_state.lam_p);max(cb_state.lam_c)])*1.05 ...
-            0 max([1;max(abs(cb_state.V_p(idx)));max(abs(cb_state.V_c(idx)))*1.05])]);
         hold on;
-    end
-%%-----  ITERATION call  -----
-else
-    %% update state
-    cb_state.V_p   = [cb_state.V_p V_p];
-    cb_state.lam_p = [cb_state.lam_p lam_p];
-    cb_state.V_c   = [cb_state.V_c V_c];
-    cb_state.lam_c = [cb_state.lam_c lam_c];
-    cb_state.steps = [cb_state.steps step];
-    cb_state.iterations    = k;
-
-    %% plot single step of the lambda-V nose curve
-    if plot_level > 1
-        plot([cb_state.lam_c(k); cb_state.lam_p(k+1)], ...
-            [abs(cb_state.V_c(idx,k)); abs(cb_state.V_p(idx,k+1))], ...
-            '-', 'Color', 0.85*[1 0.75 0.75]);
-        plot([cb_state.lam_p(k+1); cb_state.lam_c(k+1)], ...
-            [abs(cb_state.V_p(idx,k+1)); abs(cb_state.V_c(idx,k+1))], ...
-            '-', 'Color', 0.85*[0.75 1 0.75]);
-        plot(cb_state.lam_p(k+1), abs(cb_state.V_p(idx,k+1)), 'x', ...
-            'Color', 0.85*[1 0.75 0.75]);
-        plot(cb_state.lam_c(k+1)', ...
-            abs(cb_state.V_c(idx,k+1))', ...
-            '-o', 'Color', [0.25 0.25 1]);
-        axis([0 max([1;max(cb_state.lam_p);max(cb_state.lam_c)])*1.05 ...
-            0 max([1;max(abs(cb_state.V_p(idx)));max(abs(cb_state.V_c(idx)))*1.05])]);
-        drawnow;
-        if plot_level > 2
-            pause;
+    %%-----  ITERATION call  -----
+    elseif k > 0
+        %% plot single step of the lambda-V nose curve
+        if plot_level > 1
+            axis([xmin xmax ymin ymax]);
+            plot([cb_state.lam_c(k); cb_state.lam_p(k+1)], ...
+                [abs(cb_state.V_c(idx,k)); abs(cb_state.V_p(idx,k+1))], ...
+                '-', 'Color', 0.85*[1 0.75 0.75]);
+            plot([cb_state.lam_p(k+1); cb_state.lam_c(k+1)], ...
+                [abs(cb_state.V_p(idx,k+1)); abs(cb_state.V_c(idx,k+1))], ...
+                '-', 'Color', 0.85*[0.75 1 0.75]);
+            plot(cb_state.lam_p(k+1), abs(cb_state.V_p(idx,k+1)), 'x', ...
+                'Color', 0.85*[1 0.75 0.75]);
+            plot(cb_state.lam_c(k+1)', ...
+                abs(cb_state.V_c(idx,k+1))', ...
+                '-o', 'Color', [0.25 0.25 1]);
+            drawnow;
+            if plot_level > 2
+                pause;
+            end
         end
+    %%-----  FINAL call  -----
+    else    % k < 0
+        %% finish final lambda-V nose curve plot
+        axis([xmin xmax ymin ymax]);
+        plot(cb_state.lam_c', ...
+            abs(cb_state.V_c(idx,:))', ...
+            '-', 'Color', [0.25 0.25 1]);
+        hold off;
     end
 end

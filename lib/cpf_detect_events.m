@@ -15,7 +15,7 @@ function [rollback, critical, cef] = cpf_detect_events(cpf_events, cef, pef, ste
 %           rollback step
 %       CRITICAL_EVENTS : struct array containing information about any
 %           detected events, with fields:
-%           k           : index event in list of registered events
+%           k           : index of event in list of registered events
 %           name        : name of event function
 %           idx         : index(es) of critical elements in event function
 %           step_scale  : linearly interpolated estimate of scaling factor

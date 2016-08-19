@@ -213,7 +213,7 @@ else
     t = '1 user callback : ';
     mpopt = mpoption(mpopt, 'cpf.stop_at', 0.7, 'cpf.parameterization', 3);
     mpopt = mpoption(mpopt, 'cpf.adapt_step', 1);
-    mpopt = mpoption(mpopt, 'cpf.user_callback', 't_cpf_uh1');
+    mpopt = mpoption(mpopt, 'cpf.user_callback', 't_cpf_cb1');
     r = runcpf(mpcb, mpct, mpopt);
     iterations = 8;
     t_ok(r.success, [t 'success']);
@@ -230,7 +230,7 @@ else
     t_is(r.cpf.cb1.final, 1, 12, [t 'r.cpf.cb1.final']);
 
     t = '2 user callbacks (with args) : ';
-    mpopt = mpoption(mpopt, 'cpf.user_callback', {'t_cpf_uh1', 't_cpf_uh2'});
+    mpopt = mpoption(mpopt, 'cpf.user_callback', {'t_cpf_cb1', 't_cpf_cb2'});
     cb_args = struct('cb2', struct('initial', 20, 'iteration', 2, 'final', 200));
     mpopt = mpoption(mpopt, 'cpf.user_callback_args', cb_args);
 %mpopt.verbose = 3;

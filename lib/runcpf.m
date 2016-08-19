@@ -136,26 +136,26 @@ qlim        = mpopt.cpf.enforce_q_lims;    %% enforce reactive limits
 plim        = mpopt.cpf.enforce_p_lims;    %% enforce active limits
 
 
-%% register event function callbacks (for event detection)
-%% and event handling function callbacks
+%% register event functions (for event detection)
+%% and CPF callback functions (for event handling and other tasks)
 cpf_events = [];
-cpf_handlers = [];
+cpf_callbacks = [];
 if ischar(mpopt.cpf.stop_at) && strcmp(mpopt.cpf.stop_at, 'NOSE');
     cpf_events   = cpf_register_event(cpf_events, 'NOSE', 'cpf_nose_event', 1e-5, 1);
-    cpf_handlers = cpf_register_handler(cpf_handlers, 'NOSE', 'cpf_nose_handler');
+    cpf_callbacks = cpf_register_callback(cpf_callbacks, 'NOSE', 'cpf_nose_event_cb');
 else
     cpf_events   = cpf_register_event(cpf_events, 'TARGET_LAM', 'cpf_target_lam_event', 1e-5, 1);
-    cpf_handlers = cpf_register_handler(cpf_handlers, 'TARGET_LAM', 'cpf_target_lam_handler');
+    cpf_callbacks = cpf_register_callback(cpf_callbacks, 'TARGET_LAM', 'cpf_target_lam_event_cb');
 end
 if qlim
     cpf_events = cpf_register_event(cpf_events, 'QLIM', 'cpf_qlim_event', mpopt.cpf.q_lims_tol, 1);
-    cpf_handlers = cpf_register_handler(cpf_handlers, 'QLIM', 'cpf_qlim_handler');
+    cpf_callbacks = cpf_register_callback(cpf_callbacks, 'QLIM', 'cpf_qlim_event_cb');
 end
 if plim
     cpf_events = cpf_register_event(cpf_events, 'PLIM', 'cpf_plim_event', mpopt.cpf.p_lims_tol, 1);
-    cpf_handlers = cpf_register_handler(cpf_handlers, 'PLIM', 'cpf_plim_handler');
+    cpf_callbacks = cpf_register_callback(cpf_callbacks, 'PLIM', 'cpf_plim_event_cb');
 end
-cpf_handlers = cpf_register_handler(cpf_handlers, 'DEFAULT', 'cpf_default_handler');
+cpf_callbacks = cpf_register_callback(cpf_callbacks, 'DEFAULT', 'cpf_default_callback');
 if ~isempty(mpopt.cpf.user_callback)
     if iscell(mpopt.cpf.user_callback)
         callback_names = mpopt.cpf.user_callback;
@@ -163,14 +163,12 @@ if ~isempty(mpopt.cpf.user_callback)
         callback_names = {mpopt.cpf.user_callback};
     end
     for k = 1:length(callback_names)
-        cpf_handlers = cpf_register_handler(cpf_handlers, callback_names{k}, callback_names{k});
+        cpf_callbacks = cpf_register_callback(cpf_callbacks, callback_names{k}, callback_names{k});
     end
 end
 
 nef = length(cpf_events);       %% number of event functions registered
-neh = length(cpf_handlers);     %% number of event handlers registered
-
-%% register event handling function callbacks
+neh = length(cpf_callbacks);    %% number of callback functions registered
 
 % %% set up callbacks
 % callback_names = {'cpf_default_callback'};
@@ -300,8 +298,7 @@ V   = busb(:, VM) .* exp(sqrt(-1) * pi/180 * busb(:, VA));
 
 %% initialize tangent predictor: z = [dx;dlam]
 z = [zeros(2*nb, 1); 1];
-z = cpf_tangent(V, lam, Ybus, Sbusb, Sbust, pv, pq, ...
-                            z, V, lam, parm);
+z = cpf_tangent(V, lam, Ybus, Sbusb, Sbust, pv, pq, z, V, lam, parm);
 
 %% initialize values for current continuation step
 cc = struct(...         %% current values
@@ -347,9 +344,9 @@ end
 %% initialize callback state
 cb_state = struct();
 
-%% invoke event handlers - "initialize" context
+%% invoke callbacks - "initialize" context
 for k = 1:neh
-    [cb_state, nn, cc, cb_data, terminate] = cpf_handlers(k).fcn(cont_steps, ...
+    [cb_state, nn, cc, cb_data, terminate] = cpf_callbacks(k).fcn(cont_steps, ...
         cc, cc, cc, 0, [], 0, cb_data, cb_state, cb_args);
 end
 
@@ -369,7 +366,6 @@ end
 
 rollback = 0;
 locating = 0;
-prev_rollback = rollback;
 cont_steps = cont_steps + 1;
 sub_step = ' ';
 pp = cc;    %% initialize values for previous continuation step
@@ -399,14 +395,10 @@ while continuation
     nn.z = cpf_tangent(nn.V, nn.lam, Ybus, cb_data.Sbusb, cb_data.Sbust, cb_data.pv, cb_data.pq, ...
                                 cc.z, pV, plam, nn.parm);
 
-    %% update event functions
-    for k = 1:nef
-        nn.ef{k} = cpf_events(k).fcn(cb_data, nn);
-    end
-    
     %% detect events
-    prev_rollback = rollback;   %% save rollback flag value from prev step
-%mpopt.verbose = 3;
+    for k = 1:nef
+        nn.ef{k} = cpf_events(k).fcn(cb_data, nn);      %% update event functions
+    end
     [rollback, critical, nn.ef] = cpf_detect_events(cpf_events, nn.ef, cc.ef, nn.step, mpopt.verbose);
 
     %% adjust step-size to locate event function zero, if necessary
@@ -435,8 +427,9 @@ while continuation
         end
     elseif locating
         if strcmp(critical(1).status, 'ZERO')       %% found the zero!
-            %% reset to the previously used default step size
-%            nn.step = nn.default_step;
+            %% RDZ: log event
+
+            %% step size will be reset to previously used default step size
             locating = 0;           %% exit "locating" mode
             sub_step = ' ';
             if mpopt.verbose > 3
@@ -461,10 +454,10 @@ while continuation
 %         end
     end
 
-    %% invoke event handlers - "iterations" context
+    %% invoke callbacks - "iterations" context
     terminate = ~continuation;
     for k = 1:neh
-        [cb_state, nn, cc, cb_data, terminate] = cpf_handlers(k).fcn(cont_steps, ...
+        [cb_state, nn, cc, cb_data, terminate] = cpf_callbacks(k).fcn(cont_steps, ...
             nn, cc, pp, rollback, critical, terminate, cb_data, cb_state, cb_args);
         if terminate
             continuation = 0;
@@ -582,9 +575,9 @@ end
 if success
     cpf_results = struct();
 
-    %% invoke event handlers - "finalize" context
+    %% invoke callbacks - "finalize" context
     for k = 1:neh
-        [cb_state, nn, cc, cb_data, terminate, cpf_results] = cpf_handlers(k).fcn(-cont_steps, ...
+        [cb_state, nn, cc, cb_data, terminate, cpf_results] = cpf_callbacks(k).fcn(-cont_steps, ...
             nn, cc, pp, rollback, critical, 0, cb_data, cb_state, cb_args, cpf_results);
     end
 
