@@ -287,8 +287,8 @@ V   = busb(:, VM) .* exp(sqrt(-1) * pi/180 * busb(:, VA));
 z = [zeros(2*nb, 1); 1];
 z = cpf_tangent(V, lam, Ybus, Sbusb, Sbust, pv, pq, z, V, lam, parm);
 
-%% initialize values for current continuation step
-cc = struct(...         %% current values
+%% initialize state for current continuation step
+cc = struct(...         %% current state
     'lam0', lam, ...            %% predicted lambda
     'V0', V, ...                %% predicted V
     'lam', lam, ...             %% corrected lambda
@@ -301,7 +301,7 @@ cc = struct(...         %% current values
     'step', step, ...           %% current step size
     'parm', parm, ...           %% current parameterization
     'events', [], ...           %% event log
-    'x', struct(), ...          %% user state, for callbacks
+    'x', struct(), ...          %% user state, for callbacks (replaces cb_state)
     'ef', {cell(nef, 1)} ...    %% event function values
 );
 
@@ -348,9 +348,9 @@ rollback = 0;
 locating = 0;
 cont_steps = cont_steps + 1;
 sub_step = ' ';
-pp = cc;    %% initialize values for previous continuation step
+pp = cc;    %% initialize state for previous continuation step
 while continuation
-    %% initialize next candidate with current values
+    %% initialize next candidate with current state
     nn = cc;
     
     %% prediction for next step
@@ -408,7 +408,17 @@ while continuation
     elseif locating
         if strcmp(critical(1).status, 'ZERO')       %% found the zero!
             %% RDZ: log event
-            nn.events = [nn.events critical];
+            for k = 1:length(critical)
+                e = struct( 'k', cont_steps, ...
+                            'name', critical(k).name, ...
+                            'idx', critical(k).idx, ...
+                            'msg', ''   );
+                if isempty(nn.events)
+                    nn.events = e;
+                else
+                    nn.events(end+1) = e;
+                end
+            end
 
             %% step size will be reset to previously used default step size
             locating = 0;           %% exit "locating" mode
