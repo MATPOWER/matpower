@@ -124,7 +124,6 @@ for i = 1:length(critical)
                 t = cb_data.mpc_target;
                 cb_data.Sbusb = @(Vm)makeSbus(b.baseMVA, b.bus, b.gen, d.mpopt, Vm);
                 cb_data.Sbust = @(Vm)makeSbus(t.baseMVA, t.bus, t.gen, d.mpopt, Vm);
-                cb_data.Sxfr  = @(Vm)(cb_data.Sbust(Vm) - cb_data.Sbusb(Vm));
                 
                 %% set size of next step to zero
                 nn.this_step = 0;

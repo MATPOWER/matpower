@@ -27,9 +27,6 @@ function [nn, cc, cb_data, terminate, results] = cpf_default_callback(...
 %               base case injections in p.u. and derivatives w.r.t. |V|
 %           Sbust - handle of function returning nb x 1 vector of complex
 %               target case injections in p.u. and derivatives w.r.t. |V|
-%           Sxfr  - handle of function returning complex vector of scheduled
-%               power transfers in p.u. (difference between bus injections
-%               in base and target cases)
 %           Ybus - bus admittance matrix
 %           Yf - branch admittance matrix, "from" end of branches
 %           Yt - branch admittance matrix, "to" end of branches
@@ -124,7 +121,7 @@ plot_bus_default = 0;
 if plot_level
     if isempty(plot_bus) && ~isfield(nn.x, 'plot_bus_default')  %% no bus specified
         %% pick PQ bus with largest transfer
-        Sxfr = cb_data.Sxfr(abs(V_c));
+        Sxfr = cb_data.Sbust(abs(V_c)) - cb_data.Sbusb(abs(V_c));
         [junk, idx] = max(Sxfr(cb_data.pq));
         if isempty(idx) %% or bus 1 if there are none
             idx = 1;
