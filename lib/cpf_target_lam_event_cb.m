@@ -1,5 +1,5 @@
-function [nx, cx, cb_data, terminate, results] = cpf_target_lam_event_cb(...
-        k, nx, cx, px, rollback, critical, terminate, ...
+function [nx, cx, cb_data, done, results] = cpf_target_lam_event_cb(...
+        k, nx, cx, px, rollback, critical, done, ...
         cb_data, cb_args, results)
 %CPF_TARGET_LAM_EVENT_CB  Event handler for TARGET_LAM events
 %
@@ -21,8 +21,8 @@ function [nx, cx, cb_data, terminate, results] = cpf_target_lam_event_cb(...
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-%% skip if initialize, finalize or terminate
-if k <= 0 || terminate
+%% skip if initialize, finalize or done
+if k <= 0 || done
     return;
 end
 
@@ -54,7 +54,7 @@ for i = 1:length(critical)
                 %% log the event
 
                 event_detected = 1;
-                terminate = 1;
+                done = 1;
                 break;
             case 'INTERVAL'     %% set step-size & parameterization to terminate next time
 

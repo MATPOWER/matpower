@@ -276,7 +276,6 @@ Sbusb = @(Vm)makeSbus(baseMVAb, busb, genb, mpopt, Vm);
 Sbust = @(Vm)makeSbus(baseMVAt, bust, gent, mpopt, Vm);
 
 %% initialize variables
-continuation = 1;
 cont_steps = 0;
 iterations = mpcbase.iterations;
 lam = 0;
@@ -330,7 +329,7 @@ end
 
 %% invoke callbacks - "initialize" context
 for k = 1:ncb
-    [nx, cx, cb_data, terminate] = cpf_callbacks(k).fcn(cont_steps, ...
+    [nx, cx, cb_data, done] = cpf_callbacks(k).fcn(cont_steps, ...
         cx, cx, cx, 0, [], 0, cb_data, cb_args);
 end
 
@@ -339,7 +338,7 @@ if norm(Sbust(abs(cx.V)) - Sbusb(abs(cx.V))) == 0
     if mpopt.verbose
         fprintf('base case and target case have identical load and generation\n');
     end
-    continuation = 0;
+    done = 1;
 end
 
 rollback = 0;
@@ -347,7 +346,7 @@ locating = 0;
 cont_steps = cont_steps + 1;
 sub_step = ' ';
 px = cx;    %% initialize state for previous continuation step
-while continuation
+while ~done
     %% initialize next candidate with current state
     nx = cx;
     
@@ -358,7 +357,7 @@ while continuation
     [nx.V, success, i, nx.lam] = cpf_corrector(Ybus, cb_data.Sbusb, nx.V_hat, cb_data.ref, cb_data.pv, cb_data.pq, ...
                 nx.lam_hat, cb_data.Sbust, cx.V, cx.lam, cx.z, cx.step, cx.parm, mpopt_pf);
     if ~success
-        continuation = 0;
+        done = 1;
         break;
     end
     
@@ -392,7 +391,7 @@ while continuation
                 if mpopt.verbose
                     fprintf('CPF Termination : Could not locate %s event!\n', critical.name);
                 end
-                continuation = 0;
+                done = 1;
             end
         else
             locating = 1;           %% enter "locating" mode
@@ -444,13 +443,9 @@ while continuation
     end
 
     %% invoke callbacks - "iterations" context
-    terminate = ~continuation;
     for k = 1:ncb
-        [nx, cx, cb_data, terminate] = cpf_callbacks(k).fcn(cont_steps, ...
-            nx, cx, px, rollback, critical, terminate, cb_data, cb_args);
-        if terminate
-            continuation = 0;
-        end
+        [nx, cx, cb_data, done] = cpf_callbacks(k).fcn(cont_steps, ...
+            nx, cx, px, rollback, critical, done, cb_data, cb_args);
     end
 
     if mpopt.verbose > 4
@@ -459,7 +454,7 @@ while continuation
         fprintf('step %3d%s : stepsize = %-9.3g lambda = %6.3f  %2d corrector Newton steps\n', cont_steps, sub_step, cx.step, nx.lam, i);
     end
 
-    if adapt_step && continuation && ~locating && ~strcmp(critical(1).status, 'ZERO') && nx.step ~= 0
+    if adapt_step && ~done && ~locating && ~strcmp(critical(1).status, 'ZERO') && nx.step ~= 0
         %% adapt stepsize
         cpf_error = norm([angle(nx.V(    cb_data.pq)); abs(nx.V(    [cb_data.pv;cb_data.pq])); nx.lam] - ...
                          [angle(nx.V_hat(cb_data.pq)); abs(nx.V_hat([cb_data.pv;cb_data.pq])); nx.lam_hat], inf);
@@ -486,7 +481,7 @@ while continuation
     if ~rollback
         px = cx;    %% save current values before update
         cx = nx;    %% update current point to next candidate
-        if continuation
+        if ~done
             cont_steps = cont_steps + 1;
         end
     end
@@ -513,7 +508,7 @@ if success
     %% invoke callbacks - "finalize" context
     cpf_results = struct();     %% initialize results struct
     for k = 1:ncb
-        [nx, cx, cb_data, terminate, cpf_results] = cpf_callbacks(k).fcn(-cont_steps, ...
+        [nx, cx, cb_data, done, cpf_results] = cpf_callbacks(k).fcn(-cont_steps, ...
             nx, cx, px, rollback, critical, 0, cb_data, cb_args, cpf_results);
     end
 else

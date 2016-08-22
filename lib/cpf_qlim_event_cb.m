@@ -1,5 +1,5 @@
-function [nx, cx, cb_data, terminate, results] = cpf_qlim_event_cb(...
-        k, nx, cx, px, rollback, critical, terminate, ...
+function [nx, cx, cb_data, done, results] = cpf_qlim_event_cb(...
+        k, nx, cx, px, rollback, critical, done, ...
         cb_data, cb_args, results)
 %CPF_QLIM_EVENT_CB  Event handler for NOSE events
 %
@@ -21,8 +21,8 @@ function [nx, cx, cb_data, terminate, results] = cpf_qlim_event_cb(...
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-%% skip if initialize, finalize or terminate
-if k <= 0 || terminate
+%% skip if initialize, finalize or done
+if k <= 0 || done
     return;
 end
 
@@ -88,7 +88,7 @@ for i = 1:length(critical)
                       mpc.bus(mpc.gen(:, GEN_BUS), BUS_TYPE) ~= PQ);  %% ... and are not PQ buses
 
             if isempty(on)
-                terminate = 1;
+                done = 1;
                 if cb_data.mpopt.verbose
                     fprintf('CPF termination: No REF, PV buses remaining\n');
                 end

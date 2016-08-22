@@ -1,5 +1,5 @@
-function [nx, cx, cb_data, terminate, results] = cpf_plim_event_cb(...
-        k, nx, cx, px, rollback, critical, terminate, ...
+function [nx, cx, cb_data, done, results] = cpf_plim_event_cb(...
+        k, nx, cx, px, rollback, critical, done, ...
         cb_data, cb_args, results)
 %CPF_PLIM_EVENT_CB  Event handler for NOSE events
 %
@@ -21,8 +21,8 @@ function [nx, cx, cb_data, terminate, results] = cpf_plim_event_cb(...
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-%% skip if initialize, finalize or terminate
-if k <= 0 || terminate
+%% skip if initialize, finalize or done
+if k <= 0 || done
     return;
 end
 
@@ -68,7 +68,7 @@ for i = 1:length(critical)
                 candidates(ib) = 0;
                 new_ref = find(candidates, 1);
                 if isempty(new_ref)
-                    terminate = 1;
+                    done = 1;
                 else
                     %% convert this bus to PV, set new REF bus
                     mpc.bus(ib, BUS_TYPE) = PV;
