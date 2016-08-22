@@ -1,9 +1,8 @@
 function [nx, cx, cb_data, done, results] = cpf_qlim_event_cb(...
-        k, nx, cx, px, rollback, critical, done, ...
-        cb_data, cb_args, results)
+        k, nx, cx, px, rollback, critical, done, cb_data, cb_args, results)
 %CPF_QLIM_EVENT_CB  Event handler for NOSE events
 %
-%   [CB_STATE, NX, CX, CB_DATA, TERMINATE] = CPF_QLIM_EVENT_CB(CONT_STEPS, ...
+%   [CB_STATE, NX, CX, CB_DATA, DONE] = CPF_QLIM_EVENT_CB(CONT_STEPS, ...
 %           NX, CX, ROLLBACK, CRITICAL, CB_DATA, CB_STATE, CB_ARGS)
 %   
 %   Inputs:
@@ -71,9 +70,6 @@ for i = 1:length(critical)
                         i2e_gen(g), i2e_bus(ib), mpc.gen(g, QMIN), nx.lam, i2e_bus(ib));
                 end
             end
-
-            %% log the event
-            
 
             %% set Qg to exact limit and convert the generator's bus to PQ bus
             if maxlim

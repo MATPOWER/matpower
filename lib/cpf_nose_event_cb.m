@@ -1,9 +1,8 @@
 function [nx, cx, cb_data, done, results] = cpf_nose_event_cb(...
-        k, nx, cx, px, rollback, critical, done, ...
-        cb_data, cb_args, results)
+        k, nx, cx, px, rollback, critical, done, cb_data, cb_args, results)
 %CPF_NOSE_EVENT_CB  Event handler for NOSE events
 %
-%   [CB_STATE, NX, CX, CB_DATA, TERMINATE] = CPF_NOSE_EVENT_CB(CONT_STEPS, ...
+%   [CB_STATE, NX, CX, CB_DATA, DONE] = CPF_NOSE_EVENT_CB(CONT_STEPS, ...
 %           NX, CX, ROLLBACK, CRITICAL, CB_DATA, CB_STATE, CB_ARGS)
 %   
 %   Inputs:
@@ -40,8 +39,6 @@ if ~rollback || nx.step == 0
                     fprintf('\nReached steady state loading limit in %d continuation steps\n', k);
                 end
             end
-
-            %% log the event
 
             %% the following conditional is only necessary if we also allow
             %% finding the location of the nose-point without terminating

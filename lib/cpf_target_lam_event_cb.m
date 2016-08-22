@@ -1,9 +1,8 @@
 function [nx, cx, cb_data, done, results] = cpf_target_lam_event_cb(...
-        k, nx, cx, px, rollback, critical, done, ...
-        cb_data, cb_args, results)
+        k, nx, cx, px, rollback, critical, done, cb_data, cb_args, results)
 %CPF_TARGET_LAM_EVENT_CB  Event handler for TARGET_LAM events
 %
-%   [CB_STATE, NX, CX, CB_DATA, TERMINATE] = CPF_TARGET_LAM_EVENT_CB(CONT_STEPS, ...
+%   [CB_STATE, NX, CX, CB_DATA, DONE] = CPF_TARGET_LAM_EVENT_CB(CONT_STEPS, ...
 %           NX, CX, ROLLBACK, CRITICAL, CB_DATA, CB_STATE, CB_ARGS)
 %   
 %   Inputs:
@@ -51,15 +50,10 @@ for i = 1:length(critical)
                     end
                 end
 
-                %% log the event
-
                 event_detected = 1;
                 done = 1;
                 break;
             case 'INTERVAL'     %% set step-size & parameterization to terminate next time
-
-                %% log the event
-
                 if stop_at == 0     %% FULL
                     cx.this_step = cx.lam;
                 else                %% target lambda value

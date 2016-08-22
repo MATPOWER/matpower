@@ -1,6 +1,5 @@
 function [nx, cx, cb_data, done, results] = t_cpf_cb2(...
-        k, nx, cx, px, rollback, critical, done, ...
-        cb_data, cb_args, results)
+        k, nx, cx, px, rollback, critical, done, cb_data, cb_args, results)
 %T_CPF_CB2  User callback function 2 for continuation power flow testing.
 
 %   MATPOWER
