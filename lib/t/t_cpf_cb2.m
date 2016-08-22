@@ -1,5 +1,5 @@
-function [nn, cc, cb_data, terminate, results] = t_cpf_cb2(...
-        k, nn, cc, pp, rollback, critical, terminate, ...
+function [nx, cx, cb_data, terminate, results] = t_cpf_cb2(...
+        k, nx, cx, px, rollback, critical, terminate, ...
         cb_data, cb_args, results)
 %T_CPF_CB2  User callback function 2 for continuation power flow testing.
 
@@ -13,15 +13,22 @@ function [nn, cc, cb_data, terminate, results] = t_cpf_cb2(...
 
 %%-----  INITIAL call  -----
 if k == 0
-    cc.x.cb2.initial = cb_args.cb2.initial;
-    cc.x.cb2.iteration = 0;
-    cc.x.cb2.final = 0;
-%%-----  ITERATION call  -----
-elseif k > 0
-    nn.x.cb2.iteration = nn.x.cb2.iteration + cb_args.cb2.iteration;
-%%-----  FINAL call  -----
-else    % k < 0
-    results.cb2.initial     = nn.x.cb2.initial;
-    results.cb2.iteration   = nn.x.cb2.iteration;
-    results.cb2.final       = cb_args.cb2.final;
+    cxx = struct(   'initial', cb_args.cb2.initial, ...
+                    'iteration', 0, ...
+                    'final', 0  );
+    nxx = cxx;
+    cx.cb.cb2 = cxx;
+    nx.cb.cb2 = nxx;
+else
+    nxx = nx.cb.cb2;        %% get next callback state
+    %%-----  ITERATION call  -----
+    if k > 0
+        nxx.iteration = nxx.iteration + cb_args.cb2.iteration;
+        nx.cb.cb2 = nxx;        %% update next callback state
+    %%-----  FINAL call  -----
+    else    % k < 0
+        results.cb2.initial     = nxx.initial;
+        results.cb2.iteration   = nxx.iteration;
+        results.cb2.final       = cb_args.cb2.final;
+    end
 end

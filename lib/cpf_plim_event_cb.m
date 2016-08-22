@@ -1,10 +1,10 @@
-function [nn, cc, cb_data, terminate, results] = cpf_plim_event_cb(...
-        k, nn, cc, pp, rollback, critical, terminate, ...
+function [nx, cx, cb_data, terminate, results] = cpf_plim_event_cb(...
+        k, nx, cx, px, rollback, critical, terminate, ...
         cb_data, cb_args, results)
 %CPF_PLIM_EVENT_CB  Event handler for NOSE events
 %
-%   [CB_STATE, NN, CC, CB_DATA, TERMINATE] = CPF_PLIM_EVENT_CB(CONT_STEPS, ...
-%           NN, CC, ROLLBACK, CRITICAL, CB_DATA, CB_STATE, CB_ARGS)
+%   [CB_STATE, NX, CX, CB_DATA, TERMINATE] = CPF_PLIM_EVENT_CB(CONT_STEPS, ...
+%           NX, CX, ROLLBACK, CRITICAL, CB_DATA, CB_STATE, CB_ARGS)
 %   
 %   Inputs:
 %       K : ...
@@ -45,7 +45,7 @@ for i = 1:length(critical)
                 error('cpf_plim_event_cb: ''cpf.enforce_plims'' option only valid for systems with exactly one REF bus')
             end
             mpc = cpf_current_mpc(d.mpc_base, d.mpc_target, ...
-                d.Ybus, d.Yf, d.Yt, d.ref, d.pv, d.pq, nn.V, nn.lam, d.mpopt);
+                d.Ybus, d.Yf, d.Yt, d.ref, d.pv, d.pq, nx.V, nx.lam, d.mpopt);
             ng = size(mpc.gen, 1);
             i2e_bus = cb_data.mpc_target.order.bus.i2e;
             i2e_gen = cb_data.mpc_target.order.gen.i2e;
@@ -83,15 +83,15 @@ for i = 1:length(critical)
                 if ib == cb_data.ref   %% at ref bus
                     if isempty(new_ref)
                         fprintf('  gen %d @ bus %d reached %g MW Pmax lim @ lambda = %.3g\nCPF Termination : all generators at Pmax\n', ...
-                            i2e_gen(g), i2e_bus(ib), mpc.gen(g, PMAX), nn.lam);
+                            i2e_gen(g), i2e_bus(ib), mpc.gen(g, PMAX), nx.lam);
                     else
                         fprintf('  gen %d @ bus %d reached %g MW Pmax lim @ lambda = %.3g : ref changed from bus %d to %d\n', ...
-                            i2e_gen(g), i2e_bus(ib), mpc.gen(g, PMAX), nn.lam, ...
+                            i2e_gen(g), i2e_bus(ib), mpc.gen(g, PMAX), nx.lam, ...
                             i2e_bus(ib), i2e_bus(new_ref));
                     end
                 else
                     fprintf('  gen %d @ bus %d reached %g MW Pmax lim @ lambda = %.3g\n', ...
-                        i2e_gen(g), i2e_bus(ib), mpc.gen(g, PMAX), nn.lam);
+                        i2e_gen(g), i2e_bus(ib), mpc.gen(g, PMAX), nx.lam);
                 end
             end
 
@@ -125,7 +125,7 @@ for i = 1:length(critical)
             cb_data.Sbust = @(Vm)makeSbus(t.baseMVA, t.bus, t.gen, d.mpopt, Vm);
             
             %% set size of next step to zero
-            nn.this_step = 0;
+            nx.this_step = 0;
         end
     end
 end

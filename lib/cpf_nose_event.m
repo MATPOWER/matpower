@@ -1,11 +1,11 @@
-function ef = cpf_nose_event(cb_data, cc)
+function ef = cpf_nose_event(cb_data, cx)
 %CPF_NOSE_EVENT  Event function to detect the nose point
 %
-%   EF = CPF_NOSE_EVENT(CB_DATA, CC)
+%   EF = CPF_NOSE_EVENT(CB_DATA, CX)
 %   
 %   Inputs:
 %       CB_DATA : struct of data for callback functions
-%       CC : struct containing info about current point (continuation soln)
+%       CX : struct containing info about current point (continuation soln)
 %
 %   Outputs:
 %       EF : event function value
@@ -21,6 +21,6 @@ function ef = cpf_nose_event(cb_data, cc)
 
 %% event function value is dlam, the last element of the
 %% normalized tangent vector at the current soln
-ef = cc.z(end);
+ef = cx.z(end);
 
 % fprintf('==== NOSE event fcn = %g\n', ef);

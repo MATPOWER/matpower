@@ -1,11 +1,11 @@
-function ef = cpf_qlim_event(cb_data, cc)
+function ef = cpf_qlim_event(cb_data, cx)
 %CPF_QLIM_EVENT  Event function to detect the generator reactive power limits
 %
-%   EF = CPF_QLIM_EVENT(CB_DATA, CC)
+%   EF = CPF_QLIM_EVENT(CB_DATA, CX)
 %   
 %   Inputs:
 %       CB_DATA : struct of data for callback functions
-%       CC : struct containing info about current point (continuation soln)
+%       CX : struct containing info about current point (continuation soln)
 %
 %   Outputs:
 %       EF : event function value
@@ -33,7 +33,7 @@ function ef = cpf_qlim_event(cb_data, cc)
 %% get updated MPC
 d = cb_data;
 mpc = cpf_current_mpc(d.mpc_base, d.mpc_target, ...
-    d.Ybus, d.Yf, d.Yt, d.ref, d.pv, d.pq, cc.V, cc.lam, d.mpopt);
+    d.Ybus, d.Yf, d.Yt, d.ref, d.pv, d.pq, cx.V, cx.lam, d.mpopt);
 
 %% compute Qg violations for on-line gens, not at PQ buses
 ng = size(mpc.gen, 1);

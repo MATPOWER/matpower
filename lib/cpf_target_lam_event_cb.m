@@ -1,10 +1,10 @@
-function [nn, cc, cb_data, terminate, results] = cpf_target_lam_event_cb(...
-        k, nn, cc, pp, rollback, critical, terminate, ...
+function [nx, cx, cb_data, terminate, results] = cpf_target_lam_event_cb(...
+        k, nx, cx, px, rollback, critical, terminate, ...
         cb_data, cb_args, results)
 %CPF_TARGET_LAM_EVENT_CB  Event handler for TARGET_LAM events
 %
-%   [CB_STATE, NN, CC, CB_DATA, TERMINATE] = CPF_TARGET_LAM_EVENT_CB(CONT_STEPS, ...
-%           NN, CC, ROLLBACK, CRITICAL, CB_DATA, CB_STATE, CB_ARGS)
+%   [CB_STATE, NX, CX, CB_DATA, TERMINATE] = CPF_TARGET_LAM_EVENT_CB(CONT_STEPS, ...
+%           NX, CX, ROLLBACK, CRITICAL, CB_DATA, CB_STATE, CB_ARGS)
 %   
 %   Inputs:
 %       K : ...
@@ -61,11 +61,11 @@ for i = 1:length(critical)
                 %% log the event
 
                 if stop_at == 0     %% FULL
-                    cc.this_step = cc.lam;
+                    cx.this_step = cx.lam;
                 else                %% target lambda value
-                    cc.this_step = stop_at - cc.lam;
+                    cx.this_step = stop_at - cx.lam;
                 end
-                cc.this_parm = 1;   %% change to natural parameterization
+                cx.this_parm = 1;   %% change to natural parameterization
                 event_detected = 1;
                 break;
         end
@@ -75,21 +75,21 @@ end
 %% otherwise, check if predicted lambda of next step will overshoot
 %% (by more than remaining distance, to play it safe)
 if ~event_detected && ~rollback
-    if isempty(nn.this_step)
-        step = nn.default_step;
+    if isempty(nx.this_step)
+        step = nx.default_step;
     else
-        step = nn.this_step;
+        step = nx.this_step;
     end
-    [V0, lam0] = cpf_predictor(nn.V, nn.lam, nn.z, step, cb_data.pv, cb_data.pq);
+    [V0, lam0] = cpf_predictor(nx.V, nx.lam, nx.z, step, cb_data.pv, cb_data.pq);
     if stop_at == 0         %% FULL
-        if lam0 < -nn.lam
-            nn.this_step = nn.lam;
-            nn.this_parm = 1;       %% change to natural parameterization
+        if lam0 < -nx.lam
+            nx.this_step = nx.lam;
+            nx.this_parm = 1;       %% change to natural parameterization
         end
     elseif stop_at > 0      %% target lambda value
-        if lam0 > stop_at + (stop_at - nn.lam)
-            nn.this_step = stop_at - nn.lam;
-            nn.this_parm = 1;       %% change to natural parameterization
+        if lam0 > stop_at + (stop_at - nx.lam)
+            nx.this_step = stop_at - nx.lam;
+            nx.this_parm = 1;       %% change to natural parameterization
         end
     end
 end

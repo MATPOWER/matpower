@@ -1,10 +1,10 @@
-function [nn, cc, cb_data, terminate, results] = cpf_nose_event_cb(...
-        k, nn, cc, pp, rollback, critical, terminate, ...
+function [nx, cx, cb_data, terminate, results] = cpf_nose_event_cb(...
+        k, nx, cx, px, rollback, critical, terminate, ...
         cb_data, cb_args, results)
 %CPF_NOSE_EVENT_CB  Event handler for NOSE events
 %
-%   [CB_STATE, NN, CC, CB_DATA, TERMINATE] = CPF_NOSE_EVENT_CB(CONT_STEPS, ...
-%           NN, CC, ROLLBACK, CRITICAL, CB_DATA, CB_STATE, CB_ARGS)
+%   [CB_STATE, NX, CX, CB_DATA, TERMINATE] = CPF_NOSE_EVENT_CB(CONT_STEPS, ...
+%           NX, CX, ROLLBACK, CRITICAL, CB_DATA, CB_STATE, CB_ARGS)
 %   
 %   Inputs:
 %       K : ...
@@ -30,11 +30,11 @@ end
 stop_at = cb_data.mpopt.cpf.stop_at;
 
 %% handle event
-if ~rollback || nn.step == 0
+if ~rollback || nx.step == 0
     for i = 1:length(critical)
         if strcmp(critical(i).name, 'NOSE') && strcmp(critical(i).status, 'ZERO')
             if cb_data.mpopt.verbose
-                if nn.step == 0
+                if nx.step == 0
                     fprintf('\nLimit induced bifurcation at %d continuation steps eliminated nose point\n', k);
                 else
                     fprintf('\nReached steady state loading limit in %d continuation steps\n', k);

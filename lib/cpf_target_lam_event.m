@@ -1,11 +1,11 @@
-function ef = cpf_target_lam_event(cb_data, cc)
+function ef = cpf_target_lam_event(cb_data, cx)
 %CPF_TARGET_LAM_EVENT  Event function to detect a target lambda value
 %
-%   EF = CPF_TARGET_LAM_EVENT(CB_DATA, CC)
+%   EF = CPF_TARGET_LAM_EVENT(CB_DATA, CX)
 %   
 %   Inputs:
 %       CB_DATA : struct of data for callback functions
-%       CC : struct containing info about current point (continuation soln)
+%       CX : struct containing info about current point (continuation soln)
 %
 %   Outputs:
 %       EF : event function value
@@ -24,4 +24,4 @@ target = cb_data.mpopt.cpf.stop_at;
 if ischar(target)
     target = 0;
 end
-ef = cc.lam - target;
+ef = cx.lam - target;
