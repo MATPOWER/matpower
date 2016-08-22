@@ -1,6 +1,6 @@
-function [V0, lam0] = cpf_predictor(V, lam, z, step, pv, pq)
+function [V_hat, lam_hat] = cpf_predictor(V, lam, z, step, pv, pq)
 %CPF_PREDICTOR  Performs the predictor step for the continuation power flow
-%   [V0, LAM0] = CPF_PREDICTOR(V, LAM, Z, STEP, PV, PQ)
+%   [V_HAT, LAM_HAT] = CPF_PREDICTOR(V, LAM, Z, STEP, PV, PQ)
 %
 %   Computes a prediction (approximation) to the next solution of the
 %   continuation power flow using a normalized tangent predictor.
@@ -14,8 +14,8 @@ function [V0, lam0] = cpf_predictor(V, lam, z, step, pv, pq)
 %       PQ : vector of indices of PQ buses
 %
 %   Outputs:
-%       V0 : predicted complex bus voltage vector
-%       LAM0 : predicted lambda continuation parameter
+%       V_HAT : predicted complex bus voltage vector
+%       LAM_HAT : predicted lambda continuation parameter
 
 %   MATPOWER
 %   Copyright (c) 1996-2016 by Power System Engineering Research Center (PSERC)
@@ -31,11 +31,11 @@ nb = length(V);
 
 Va = angle(V);
 Vm = abs(V);
-Va0 = Va;
-Vm0 = Vm;
+Va_hat = Va;
+Vm_hat = Vm;
 
 %% prediction for next step
-Va0([pv; pq]) = Va([pv; pq]) + step * z([pv; pq]);
-Vm0([pq])     = Vm([pq])     + step * z([nb+pq]);
-lam0 = lam + step * z(2*nb+1);
-V0 = Vm0 .* exp(1j * Va0);
+Va_hat([pv; pq]) = Va([pv; pq]) + step * z([pv; pq]);
+Vm_hat([pq])     = Vm([pq])     + step * z([nb+pq]);
+lam_hat = lam + step * z(2*nb+1);
+V_hat = Vm_hat .* exp(1j * Va_hat);

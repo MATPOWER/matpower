@@ -1,9 +1,9 @@
-function [V, converged, i, lam] = cpf_corrector(Ybus, Sbusb, V0, ref, pv, pq, ...
-                lam0, Sbust, Vprv, lamprv, z, step, parameterization, mpopt)
+function [V, converged, i, lam] = cpf_corrector(Ybus, Sbusb, V_hat, ref, pv, pq, ...
+                lam_hat, Sbust, Vprv, lamprv, z, step, parameterization, mpopt)
 %CPF_CORRECTOR  Solves the corrector step of a continuation power flow using a
 %   full Newton method with selected parameterization scheme.
-%   [V, CONVERGED, I, LAM] = CPF_CORRECTOR(YBUS, SBUSB, V0, REF, PV, PQ, ...
-%                                       LAM0, SBUST, VPRV, LPRV, Z, ...
+%   [V, CONVERGED, I, LAM] = CPF_CORRECTOR(YBUS, SBUSB, V_HAT, REF, PV, PQ, ...
+%                                       LAM_HAT, SBUST, VPRV, LPRV, Z, ...
 %                                       STEP, PARAMETERIZATION, MPOPT)
 %
 %   Computes the solution for the current continuation step.
@@ -12,11 +12,11 @@ function [V, converged, i, lam] = cpf_corrector(Ybus, Sbusb, V0, ref, pv, pq, ..
 %       YBUS : complex bus admittance matrix
 %       SBUSB : handle of function returning nb x 1 vector of complex
 %               base case injections in p.u. and derivatives w.r.t. |V|
-%       V0 :  predicted complex bus voltage vector
+%       V_HAT :  predicted complex bus voltage vector
 %       REF : vector of indices for REF buses
 %       PV : vector of indices of PV buses
 %       PQ : vector of indices of PQ buses
-%       LAM0 : predicted scalar lambda
+%       LAM_HAT : predicted scalar lambda
 %       SBUST : handle of function returning nb x 1 vector of complex
 %               target case injections in p.u. and derivatives w.r.t. |V|
 %       VPRV : complex bus voltage vector at previous solution
@@ -63,10 +63,10 @@ max_it  = mpopt.pf.nr.max_it;
 %% initialize
 converged = 0;
 i = 0;
-V = V0;
+V = V_hat;          %% initialize V with predicted V
 Va = angle(V);
 Vm = abs(V);
-lam = lam0;             %% set lam to initial lam0
+lam = lam_hat;      %% initialize lam with predicted lam
 
 %% set up indexing for updating V
 npv = length(pv);
@@ -77,7 +77,7 @@ j3 = j2 + 1;    j4 = j2 + npq;      %% j3:j4 - V angle of pq buses
 j5 = j4 + 1;    j6 = j4 + npq;      %% j5:j6 - V mag of pq buses
 j7 = j6 + 1;    j8 = j6 + 1;        %% j7:j8 - lambda
 
-%% evaluate F(x0, lam0), including transfer/loading
+%% evaluate F(x0, lam_hat), including transfer/loading
 Sb = Sbusb(Vm);
 St = Sbust(Vm);
 mis = V .* conj(Ybus * V) - Sb - lam * (St - Sb);

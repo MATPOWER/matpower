@@ -80,14 +80,14 @@ if ~event_detected && ~rollback
     else
         step = nx.this_step;
     end
-    [V0, lam0] = cpf_predictor(nx.V, nx.lam, nx.z, step, cb_data.pv, cb_data.pq);
+    [V_hat, lam_hat] = cpf_predictor(nx.V, nx.lam, nx.z, step, cb_data.pv, cb_data.pq);
     if stop_at == 0         %% FULL
-        if lam0 < -nx.lam
+        if lam_hat < -nx.lam
             nx.this_step = nx.lam;
             nx.this_parm = 1;       %% change to natural parameterization
         end
     elseif stop_at > 0      %% target lambda value
-        if lam0 > stop_at + (stop_at - nx.lam)
+        if lam_hat > stop_at + (stop_at - nx.lam)
             nx.this_step = stop_at - nx.lam;
             nx.this_parm = 1;       %% change to natural parameterization
         end

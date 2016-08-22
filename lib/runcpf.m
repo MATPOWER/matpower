@@ -35,15 +35,15 @@ function [res, suc] = ...
 %           success - success flag, 1 = succeeded, 0 = failed
 %           cpf - CPF output struct whose content depends on any
 %               user callback functions. Default contains fields:
-%               V_p - (nb x nsteps+1) complex bus voltages from
+%               V_hat - (nb x nsteps+1) complex bus voltages from
 %                       predictor steps
-%               lam_p - (nsteps+1) row vector of lambda values from
+%               lam_hat - (nsteps+1) row vector of lambda values from
 %                       predictor steps
-%               V_c - (nb x nsteps+1) complex bus voltages from
+%               V - (nb x nsteps+1) complex bus voltages from
 %                       corrector steps
-%               lam_c - (nsteps+1) row vector of lambda values from
+%               lam - (nsteps+1) row vector of lambda values from
 %                       corrector steps
-%               max_lam - maximum value of lambda in lam_c
+%               max_lam - maximum value of lambda in lam
 %               iterations - number of continuation steps performed
 %       SUCCESS : the success flag can additionally be returned as
 %           a second output argument
@@ -288,8 +288,8 @@ z = cpf_tangent(V, lam, Ybus, Sbusb, Sbust, pv, pq, z, V, lam, parm);
 
 %% initialize state for current continuation step
 cx = struct(...         %% current state
-    'lam0', lam, ...            %% predicted lambda
-    'V0', V, ...                %% predicted V
+    'lam_hat', lam, ...         %% predicted lambda
+    'V_hat', V, ...             %% predicted V
     'lam', lam, ...             %% corrected lambda
     'V', V, ...                 %% corrected V
     'z', z, ...                 %% tangent predictor
@@ -352,11 +352,11 @@ while continuation
     nx = cx;
     
     %% prediction for next step
-    [nx.V0, nx.lam0] = cpf_predictor(cx.V, cx.lam, cx.z, cx.step, cb_data.pv, cb_data.pq);
+    [nx.V_hat, nx.lam_hat] = cpf_predictor(cx.V, cx.lam, cx.z, cx.step, cb_data.pv, cb_data.pq);
 
     %% correction
-    [nx.V, success, i, nx.lam] = cpf_corrector(Ybus, cb_data.Sbusb, nx.V0, cb_data.ref, cb_data.pv, cb_data.pq, ...
-                nx.lam0, cb_data.Sbust, cx.V, cx.lam, cx.z, cx.step, cx.parm, mpopt_pf);
+    [nx.V, success, i, nx.lam] = cpf_corrector(Ybus, cb_data.Sbusb, nx.V_hat, cb_data.ref, cb_data.pv, cb_data.pq, ...
+                nx.lam_hat, cb_data.Sbust, cx.V, cx.lam, cx.z, cx.step, cx.parm, mpopt_pf);
     if ~success
         continuation = 0;
         break;
@@ -461,8 +461,8 @@ while continuation
 
     if adapt_step && continuation && ~locating && ~strcmp(critical(1).status, 'ZERO') && nx.step ~= 0
         %% adapt stepsize
-        cpf_error = norm([angle(nx.V(cb_data.pq));  abs(nx.V([cb_data.pv;cb_data.pq]));  nx.lam] - ...
-                         [angle(nx.V0(cb_data.pq)); abs(nx.V0([cb_data.pv;cb_data.pq])); nx.lam0], inf);
+        cpf_error = norm([angle(nx.V(    cb_data.pq)); abs(nx.V(    [cb_data.pv;cb_data.pq])); nx.lam] - ...
+                         [angle(nx.V_hat(cb_data.pq)); abs(nx.V_hat([cb_data.pv;cb_data.pq])); nx.lam_hat], inf);
 
         %% new nominal step size is current size * tol/err, but we reduce
         %% the change from the current size by a damping factor and limit
@@ -534,8 +534,8 @@ mpctarget.success = success;
 %% convert back to original bus numbering & print results
 if success
     n = cpf_results.iterations + 1;
-    cpf_results.V_p = i2e_data(mpctarget, cpf_results.V_p, NaN(nb,n), 'bus', 1);
-    cpf_results.V_c = i2e_data(mpctarget, cpf_results.V_c, NaN(nb,n), 'bus', 1);
+    cpf_results.V_hat = i2e_data(mpctarget, cpf_results.V_hat, NaN(nb,n), 'bus', 1);
+    cpf_results.V     = i2e_data(mpctarget, cpf_results.V,     NaN(nb,n), 'bus', 1);
 end
 results = int2ext(mpctarget);
 results.cpf = cpf_results;

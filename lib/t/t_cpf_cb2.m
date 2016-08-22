@@ -20,7 +20,7 @@ if k == 0
     cx.cb.cb2 = cxx;
     nx.cb.cb2 = nxx;
 else
-    nxx = nx.cb.cb2;        %% get next callback state
+    nxx = nx.cb.cb2;            %% get next callback state
     %%-----  ITERATION call  -----
     if k > 0
         nxx.iteration = nxx.iteration + cb_args.cb2.iteration;
