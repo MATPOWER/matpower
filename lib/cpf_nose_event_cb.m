@@ -1,5 +1,5 @@
-function [nx, cx, cb_data, done, results] = cpf_nose_event_cb(...
-        k, nx, cx, px, rollback, critical, done, cb_data, cb_args, results)
+function [nx, cx, done, rollback, evnts, cb_data, results] = cpf_nose_event_cb(...
+        k, nx, cx, px, done, rollback, evnts, cb_data, cb_args, results)
 %CPF_NOSE_EVENT_CB  Event handler for NOSE events
 %
 %   [CB_STATE, NX, CX, CB_DATA, DONE] = CPF_NOSE_EVENT_CB(CONT_STEPS, ...
@@ -21,7 +21,7 @@ function [nx, cx, cb_data, done, results] = cpf_nose_event_cb(...
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% skip if initialize, finalize or done
-if k <= 0 || done
+if k <= 0 || done.flag
     return;
 end
 
@@ -30,20 +30,21 @@ stop_at = cb_data.mpopt.cpf.stop_at;
 
 %% handle event
 if ~rollback || nx.step == 0
-    for i = 1:length(critical)
-        if strcmp(critical(i).name, 'NOSE') && strcmp(critical(i).status, 'ZERO')
-            if cb_data.mpopt.verbose
-                if nx.step == 0
-                    fprintf('\nLimit induced bifurcation at %d continuation steps eliminated nose point\n', k);
-                else
-                    fprintf('\nReached steady state loading limit in %d continuation steps\n', k);
-                end
+    for i = 1:length(evnts)
+        if strcmp(evnts(i).name, 'NOSE') && evnts(i).zero
+            if nx.step == 0
+                evnts(i).msg = ...
+                    sprintf('Nose point eliminated by limit induced bifurcation at %d continuation steps, lambda = %.4g.', k, nx.lam);
+            else
+                evnts(i).msg = ...
+                    sprintf('Reached steady state loading limit in %d continuation steps, lambda = %.4g.', k, nx.lam);
             end
 
             %% the following conditional is only necessary if we also allow
             %% finding the location of the nose-point without terminating
             if ischar(stop_at) && strcmp(stop_at, 'NOSE');
-                done = 1;
+                done.flag = 1;
+                done.msg = evnts(i).msg;
             end
             break;
         end

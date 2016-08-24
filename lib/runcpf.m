@@ -193,354 +193,382 @@ end
 
 %% run base case power flow
 [mpcbase, suc] = runpf(mpcbase, mpopt_pf);
-if ~suc
-    %% RDZ: this should not be a fatal error, simply return suc = 0
-    %%      possibly by setting continuation to 0, rather than 1, later
-    error('runcpf: Base case power flow did not converge.');
+if suc
+    done = struct('flag', 0, 'msg', '');
+else
+    done = struct('flag', 1, 'msg', 'Base case power flow did not converge.');
+    results = mpcbase;
+    results.cpf = struct();
 end
 
-%% convert to internal indexing
-mpcbase = ext2int(mpcbase);
-nb = size(mpcbase.bus, 1);
+if ~done.flag
+    %% convert to internal indexing
+    mpcbase = ext2int(mpcbase);
+    nb = size(mpcbase.bus, 1);
 
-%% get bus index lists of each type of bus
-[ref, pv, pq] = bustypes(mpcbase.bus, mpcbase.gen);
+    %% get bus index lists of each type of bus
+    [ref, pv, pq] = bustypes(mpcbase.bus, mpcbase.gen);
 
-%% read target case data
-mpctarget = loadcase(targetcasedata);
+    %% read target case data
+    mpctarget = loadcase(targetcasedata);
 
-%% add zero columns to branch for flows if needed
-if size(mpctarget.branch,2) < QT
-  mpctarget.branch = [ mpctarget.branch zeros(size(mpctarget.branch, 1), QT-size(mpctarget.branch,2)) ];
-end
+    %% add zero columns to branch for flows if needed
+    if size(mpctarget.branch,2) < QT
+      mpctarget.branch = [ mpctarget.branch zeros(size(mpctarget.branch, 1), QT-size(mpctarget.branch,2)) ];
+    end
 
-%% convert to internal indexing
-mpctarget = ext2int(mpctarget);
-i2e_gen = mpctarget.order.gen.i2e;
+    %% convert to internal indexing
+    mpctarget = ext2int(mpctarget);
+    i2e_gen = mpctarget.order.gen.i2e;
 
-%% ensure target case has same bus types as base case
-mpctarget.bus(:, BUS_TYPE) = mpcbase.bus(:, BUS_TYPE);
+    %% ensure target case has same bus types as base case
+    mpctarget.bus(:, BUS_TYPE) = mpcbase.bus(:, BUS_TYPE);
 
-%% generator info
-%% find generators that are ON and at voltage-controlled buses
-ong = find(mpcbase.gen(:, GEN_STATUS) > 0 ...
-          & mpcbase.bus(mpcbase.gen(:, GEN_BUS), BUS_TYPE) ~= PQ);
-gbus = mpcbase.gen(ong, GEN_BUS);   %% what buses are they at?
+    %% generator info
+    %% find generators that are ON and at voltage-controlled buses
+    ong = find(mpcbase.gen(:, GEN_STATUS) > 0 ...
+              & mpcbase.bus(mpcbase.gen(:, GEN_BUS), BUS_TYPE) ~= PQ);
+    gbus = mpcbase.gen(ong, GEN_BUS);   %% what buses are they at?
 
-%% make sure target case has same GEN_STATUS
-ont = find(mpctarget.gen(:, GEN_STATUS) > 0 ...
-          & mpctarget.bus(mpctarget.gen(:, GEN_BUS), BUS_TYPE) ~= PQ);
-if length(ong) ~= length(ont) || any(ong ~= ont)
-    error('runcpf: GEN_STATUS of all generators must be the same in base and target cases');
-end
+    %% make sure target case has same GEN_STATUS
+    ont = find(mpctarget.gen(:, GEN_STATUS) > 0 ...
+              & mpctarget.bus(mpctarget.gen(:, GEN_BUS), BUS_TYPE) ~= PQ);
+    if length(ong) ~= length(ont) || any(ong ~= ont)
+        error('runcpf: GEN_STATUS of all generators must be the same in base and target cases');
+    end
 
-%% ensure that Qg and slack Pg for target is same as for base
-%% RDZ: why is this necessary?
-mpctarget.gen(ong, QG) = mpcbase.gen(ong, QG);
-for k = 1:length(ref)
-    refgen = find(gbus == ref(k));
-    mpctarget.gen(ong(refgen), PG) = mpcbase.gen(ong(refgen), PG);
-end
+    %% ensure that Qg and slack Pg for target is same as for base
+    %% RDZ: why is this necessary?
+    mpctarget.gen(ong, QG) = mpcbase.gen(ong, QG);
+    for k = 1:length(ref)
+        refgen = find(gbus == ref(k));
+        mpctarget.gen(ong(refgen), PG) = mpcbase.gen(ong(refgen), PG);
+    end
 
-%% zero transfers for gens that exceed PMAX limits, if necessary
-if plim
-    idx_pmax = find( mpcbase.gen(:, GEN_STATUS) > 0 & ...
-        mpcbase.gen(:, PG)   - mpcbase.gen(:, PMAX)   > -mpopt.cpf.p_lims_tol & ...
-        mpctarget.gen(:, PG) - mpctarget.gen(:, PMAX) > -mpopt.cpf.p_lims_tol);
-    if ~isempty(idx_pmax)
-        if mpopt.verbose
-            fprintf('target case real power output of gen %d reduced from %g to %g MW (PMAX)\n', ...
-                [i2e_gen(idx_pmax) mpctarget.gen(idx_pmax, PG) mpcbase.gen(idx_pmax, PG)]');
+    %% zero transfers for gens that exceed PMAX limits, if necessary
+    if plim
+        idx_pmax = find( mpcbase.gen(:, GEN_STATUS) > 0 & ...
+            mpcbase.gen(:, PG)   - mpcbase.gen(:, PMAX)   > -mpopt.cpf.p_lims_tol & ...
+            mpctarget.gen(:, PG) - mpctarget.gen(:, PMAX) > -mpopt.cpf.p_lims_tol);
+        if ~isempty(idx_pmax)
+            if mpopt.verbose
+                fprintf('target case real power output of gen %d reduced from %g to %g MW (PMAX)\n', ...
+                    [i2e_gen(idx_pmax) mpctarget.gen(idx_pmax, PG) mpcbase.gen(idx_pmax, PG)]');
+            end
+            mpctarget.gen(idx_pmax, PG) = mpcbase.gen(idx_pmax, PG);
         end
-        mpctarget.gen(idx_pmax, PG) = mpcbase.gen(idx_pmax, PG);
     end
-end
 
-[baseMVAb, busb, genb, branchb] = deal(mpcbase.baseMVA, mpcbase.bus, mpcbase.gen, mpcbase.branch);
-[baseMVAt, bust, gent, brancht] = deal(mpctarget.baseMVA, mpctarget.bus, mpctarget.gen, mpctarget.branch);
+    [baseMVAb, busb, genb, branchb] = deal(mpcbase.baseMVA, mpcbase.bus, mpcbase.gen, mpcbase.branch);
+    [baseMVAt, bust, gent, brancht] = deal(mpctarget.baseMVA, mpctarget.bus, mpctarget.gen, mpctarget.branch);
 
-%%-----  run the continuation power flow  -----
-t0 = clock;
-if mpopt.verbose
-    v = mpver('all');
-    fprintf('\nMATPOWER Version %s, %s', v.Version, v.Date);
-    fprintf(' -- AC Continuation Power Flow\n');
-end
-
-%% build admittance matrices
-[Ybus, Yf, Yt] = makeYbus(baseMVAb, busb, branchb);
-
-%% functions for computing base and target case V dependent complex bus
-%% power injections: (generation - load)
-Sbusb = @(Vm)makeSbus(baseMVAb, busb, genb, mpopt, Vm);
-Sbust = @(Vm)makeSbus(baseMVAt, bust, gent, mpopt, Vm);
-
-%% initialize variables
-cont_steps = 0;
-iterations = mpcbase.iterations;
-lam = 0;
-V   = busb(:, VM) .* exp(sqrt(-1) * pi/180 * busb(:, VA));
-
-%% initialize tangent predictor: z = [dx;dlam]
-z = [zeros(2*nb, 1); 1];
-z = cpf_tangent(V, lam, Ybus, Sbusb, Sbust, pv, pq, z, V, lam, parm);
-
-%% initialize state for current continuation step
-cx = struct(...         %% current state
-    'lam_hat', lam, ...         %% predicted lambda
-    'V_hat', V, ...             %% predicted V
-    'lam', lam, ...             %% corrected lambda
-    'V', V, ...                 %% corrected V
-    'z', z, ...                 %% tangent predictor
-    'default_step', step, ...   %% default step size
-    'default_parm', parm, ...   %% default parameterization
-    'this_step', [], ...        %% step size for this step only
-    'this_parm', [], ...        %% parameterization for this step only
-    'step', step, ...           %% current step size
-    'parm', parm, ...           %% current parameterization
-    'events', [], ...           %% event log
-    'cb', struct(), ...         %% user state, for callbacks (replaces cb_state)
-    'ef', {cell(nef, 1)} ...    %% event function values
-);
-
-%% input args for callbacks
-cb_data = struct( ...
-    'mpc_base', mpcbase, ...
-    'mpc_target', mpctarget, ...
-    'Sbusb', Sbusb, ...
-    'Sbust', Sbust, ...
-    'Ybus', Ybus, ...
-    'Yf', Yf, ...
-    'Yt', Yt, ...
-    'ref', ref, ...
-    'pv', pv, ...
-    'pq', pq, ...
-    'idx_pmax', idx_pmax, ...
-    'mpopt', mpopt );
-
-%% initialize event function values
-for k = 1:nef
-    cx.ef{k} = cpf_events(k).fcn(cb_data, cx);
-end
-
-if mpopt.verbose > 1
-    fprintf('step %3d  :                      lambda = %6.3f, %2d Newton steps\n', 0, 0, iterations);
-end
-
-%% invoke callbacks - "initialize" context
-for k = 1:ncb
-    [nx, cx, cb_data, done] = cpf_callbacks(k).fcn(cont_steps, ...
-        cx, cx, cx, 0, [], 0, cb_data, cb_args);
-end
-
-%% check for case with no transfer
-if norm(Sbust(abs(cx.V)) - Sbusb(abs(cx.V))) == 0
+    %%-----  run the continuation power flow  -----
+    t0 = clock;
     if mpopt.verbose
-        fprintf('base case and target case have identical load and generation\n');
+        v = mpver('all');
+        fprintf('\nMATPOWER Version %s, %s', v.Version, v.Date);
+        fprintf(' -- AC Continuation Power Flow\n');
     end
-    done = 1;
-end
 
-rollback = 0;
-locating = 0;
-cont_steps = cont_steps + 1;
-sub_step = ' ';
-px = cx;    %% initialize state for previous continuation step
-while ~done
-    %% initialize next candidate with current state
-    nx = cx;
-    
-    %% prediction for next step
-    [nx.V_hat, nx.lam_hat] = cpf_predictor(cx.V, cx.lam, cx.z, cx.step, cb_data.pv, cb_data.pq);
+    %% build admittance matrices
+    [Ybus, Yf, Yt] = makeYbus(baseMVAb, busb, branchb);
 
-    %% correction
-    [nx.V, success, i, nx.lam] = cpf_corrector(Ybus, cb_data.Sbusb, nx.V_hat, cb_data.ref, cb_data.pv, cb_data.pq, ...
-                nx.lam_hat, cb_data.Sbust, cx.V, cx.lam, cx.z, cx.step, cx.parm, mpopt_pf);
-    if ~success
-        done = 1;
-        break;
-    end
-    
-    %% compute new tangent direction
-    if nx.step == 0
-        pV = px.V;
-        plam = px.lam;
-    else
-        pV = cx.V;
-        plam = cx.lam;
-    end
-    nx.z = cpf_tangent(nx.V, nx.lam, Ybus, cb_data.Sbusb, cb_data.Sbust, cb_data.pv, cb_data.pq, ...
-                                cx.z, pV, plam, nx.parm);
+    %% functions for computing base and target case V dependent complex bus
+    %% power injections: (generation - load)
+    Sbusb = @(Vm)makeSbus(baseMVAb, busb, genb, mpopt, Vm);
+    Sbust = @(Vm)makeSbus(baseMVAt, bust, gent, mpopt, Vm);
 
-    %% detect events
+    %% initialize variables
+    cont_steps = 0;
+    iterations = mpcbase.iterations;
+    lam = 0;
+    V   = busb(:, VM) .* exp(sqrt(-1) * pi/180 * busb(:, VA));
+
+    %% initialize tangent predictor: z = [dx;dlam]
+    z = [zeros(2*nb, 1); 1];
+    z = cpf_tangent(V, lam, Ybus, Sbusb, Sbust, pv, pq, z, V, lam, parm);
+
+    %% initialize state for current continuation step
+    cx = struct(...         %% current state
+        'lam_hat', lam, ...         %% predicted lambda
+        'V_hat', V, ...             %% predicted V
+        'lam', lam, ...             %% corrected lambda
+        'V', V, ...                 %% corrected V
+        'z', z, ...                 %% tangent predictor
+        'default_step', step, ...   %% default step size
+        'default_parm', parm, ...   %% default parameterization
+        'this_step', [], ...        %% step size for this step only
+        'this_parm', [], ...        %% parameterization for this step only
+        'step', step, ...           %% current step size
+        'parm', parm, ...           %% current parameterization
+        'events', [], ...           %% event log
+        'cb', struct(), ...         %% user state, for callbacks (replaces cb_state)
+        'ef', {cell(nef, 1)} ...    %% event function values
+    );
+
+    %% input args for callbacks
+    cb_data = struct( ...
+        'mpc_base', mpcbase, ...
+        'mpc_target', mpctarget, ...
+        'Sbusb', Sbusb, ...
+        'Sbust', Sbust, ...
+        'Ybus', Ybus, ...
+        'Yf', Yf, ...
+        'Yt', Yt, ...
+        'ref', ref, ...
+        'pv', pv, ...
+        'pq', pq, ...
+        'idx_pmax', idx_pmax, ...
+        'mpopt', mpopt );
+
+    %% initialize event function values
     for k = 1:nef
-        nx.ef{k} = cpf_events(k).fcn(cb_data, nx);      %% update event functions
+        cx.ef{k} = cpf_events(k).fcn(cb_data, cx);
     end
-    [rollback, critical, nx.ef] = cpf_detect_events(cpf_events, nx.ef, cx.ef, nx.step, mpopt.verbose);
 
-    %% adjust step-size to locate event function zero, if necessary
-    if rollback                                     %% current step overshot
-        %% rollback and initialize next step size based on rollback and previous
-        rx = nx;                    %% save state we're rolling back from
-        rx.critical = critical;     %% and critical event info
-        cx.this_step = critical.step_scale * rx.step;
-        cx.this_parm = rx.parm;     %% keep same parameterization as last step
-        if locating
-            sub_step = char(sub_step + 1);
-            if sub_step > 'z'
-                if mpopt.verbose
-                    fprintf('CPF Termination : Could not locate %s event!\n', critical.name);
+    if mpopt.verbose > 1
+        fprintf('step %3d  :                      lambda = %6.3f, %2d Newton steps\n', 0, 0, iterations);
+    end
+
+    %% invoke callbacks - "initialize" context
+    for k = 1:ncb
+        [nx, cx, done, rollback, evnts, cb_data] = cpf_callbacks(k).fcn( ...
+            cont_steps, cx, cx, cx, done, 0, [], cb_data, cb_args);
+    end
+
+    %% check for case with no transfer
+    if norm(Sbust(abs(cx.V)) - Sbusb(abs(cx.V))) == 0
+        done.flag = 1;
+        done.msg = 'Base case and target case have identical load and generation';
+    end
+
+    rollback = 0;
+    locating = 0;
+    cont_steps = cont_steps + 1;
+    rb_cnt_ef = 0;  %% counter for rollback steps triggered by event function intervals
+    rb_cnt_cb = 0;  %% counter for rollback steps triggered directly by callbacks
+    px = cx;    %% initialize state for previous continuation step
+    while ~done.flag
+        %% initialize next candidate with current state
+        nx = cx;
+    
+        %% prediction for next step
+        [nx.V_hat, nx.lam_hat] = cpf_predictor(cx.V, cx.lam, cx.z, cx.step, cb_data.pv, cb_data.pq);
+
+        %% correction
+        [nx.V, success, i, nx.lam] = cpf_corrector(Ybus, cb_data.Sbusb, nx.V_hat, cb_data.ref, cb_data.pv, cb_data.pq, ...
+                    nx.lam_hat, cb_data.Sbust, cx.V, cx.lam, cx.z, cx.step, cx.parm, mpopt_pf);
+        if ~success
+            done.flag = 1;
+            done.msg = sprintf('Corrector did not converge in %d iterations.', i);
+            if mpopt.verbose
+                fprintf('step %3d  : stepsize = %-9.3g lambda = %6.3f  corrector did not converge in %d iterations\n', cont_steps, cx.step, nx.lam, i);
+            end
+            cont_steps = cont_steps - 1;
+            break;
+        end
+    
+        %% compute new tangent direction, based on a previous state: tx
+        if nx.step == 0     %% if this is a re-do step, cx and nx are the same
+            tx = px;            %% so use px as the previous state
+        else                %% otherwise
+            tx = cx;            %% use cx as the previous state
+        end
+        nx.z = cpf_tangent(nx.V, nx.lam, Ybus, cb_data.Sbusb, cb_data.Sbust, cb_data.pv, cb_data.pq, ...
+                                    cx.z, tx.V, tx.lam, nx.parm);
+
+        %% detect events
+        for k = 1:nef
+            nx.ef{k} = cpf_events(k).fcn(cb_data, nx);      %% update event functions
+        end
+        [rollback, evnts, nx.ef] = cpf_detect_events(cpf_events, nx.ef, cx.ef, nx.step, mpopt.verbose);
+
+        %% adjust step-size to locate event function zero, if necessary
+        if rollback                 %% current step overshot
+            %% rollback and initialize next step size based on rollback and previous
+            rx = nx;                    %% save state we're rolling back from
+            rx.evnts = evnts;           %% and critical event info
+            cx.this_step = evnts.step_scale * rx.step;
+            cx.this_parm = rx.parm;     %% keep same parameterization as last step
+            locating = 1;               %% enter "locating" mode (or stay in it)
+            rb_cnt_ef = rb_cnt_ef + 1;  %% increment rollback counter for ef intervals
+            if rb_cnt_ef > 26
+                done.flag = 1;
+                done.msg = sprintf('Could not locate %s event!', evnts.name);
+            end
+            if mpopt.verbose > 3
+                loc_msg = sprintf('OVERSHOOT  : f = [%g, <<%g>>], step <-- %.4g', ...
+                            cx.ef{evnts.eidx}(evnts.idx(1)), ...
+                            rx.ef{evnts.eidx}(evnts.idx(1)), cx.this_step);
+            end
+        elseif locating
+            if evnts(1).zero        %% found the zero!
+                %% step size will be reset to previously used default step size
+                locating = 0;           %% exit "locating" mode
+                rb_cnt_ef = 0;          %% reset rollback counter for ef intervals
+                if mpopt.verbose > 3
+                    loc_msg = sprintf('ZERO!      : f = %g, step <-- %.4g', ...
+                        nx.ef{rx.evnts.eidx}(rx.evnts.idx(1)), nx.default_step);
                 end
-                done = 1;
+            else                    %% prev rollback undershot
+                %% initialize next step size based on critical event function
+                %% values from prev rollback step and current step
+                rx_ef = rx.ef{rx.evnts.eidx}(rx.evnts.idx(1));
+                cx_ef = nx.ef{rx.evnts.eidx}(rx.evnts.idx(1));
+                step_scale = cx_ef / (cx_ef - rx_ef);
+                nx.this_step = step_scale * (rx.step - nx.step);
+                rb_cnt_ef = 0;          %% reset rollback counter for ef intervals
+                if mpopt.verbose > 3
+                    loc_msg = sprintf('UNDERSHOOT : f [<<%g>>, %g], step <-- %.4g', ...
+                        cx_ef, rx_ef, nx.this_step);
+                end
             end
         else
-            locating = 1;           %% enter "locating" mode
-            sub_step = 'a';
+            loc_msg = '';
         end
-        if mpopt.verbose > 3
-            fprintf('   -- OVERSHOOT  : f = [%g, <<%g>>], step = %g\n', ...
-                        cx.ef{critical.k}(critical.idx(1)), ...
-                        rx.ef{critical.k}(critical.idx(1)), cx.this_step);
+
+        %% invoke callbacks - "iterations" context
+        rb = rollback;
+        for k = 1:ncb
+            [nx, cx, done, rollback, evnts, cb_data] = cpf_callbacks(k).fcn( ...
+                cont_steps, nx, cx, px, done, rollback, evnts, cb_data, cb_args);
         end
-    elseif locating
-        if strcmp(critical(1).status, 'ZERO')       %% found the zero!
-            %% RDZ: log event
-            for k = 1:length(critical)
+        if ~rb && rollback      %% rollback triggered by callback (vs event function interval)
+            rb_cnt_cb = rb_cnt_cb + 1;  %% increment rollback counter for callbacks
+            if rb_cnt_cb > 26
+                done.flag = 1;
+                done.msg = 'Too many rollback steps triggered by callbacks!';
+            end
+        else
+            rb_cnt_cb = 0;              %% reset rollback counter for callbacks
+        end
+
+        %% print iteration information
+        if mpopt.verbose > 1
+            %% set label for rollback step counter
+            if rb_cnt_ef
+                sub_step = char('a' + rb_cnt_ef - 1);
+            elseif rb_cnt_cb
+                sub_step = char('A' + rb_cnt_cb - 1);
+            else
+                sub_step = ' ';
+            end
+            if mpopt.verbose > 4
+                fprintf('step %3d%s : stepsize = %-9.3g lambda = %6.3f', cont_steps, sub_step, cx.step, nx.lam);
+            else
+                fprintf('step %3d%s : stepsize = %-9.3g lambda = %6.3f  %2d corrector Newton steps', cont_steps, sub_step, cx.step, nx.lam, i);
+            end
+            if rollback
+                fprintf(' ^ ROLLBACK\n');
+            else
+                fprintf('\n');
+            end
+            if mpopt.verbose > 3 && ~isempty(loc_msg)
+                fprintf('    LOCATING -- %s\n', loc_msg);
+            end
+        end
+
+        %% log events
+        for k = 1:length(evnts)
+            if evnts(k).log
                 e = struct( 'k', cont_steps, ...
-                            'name', critical(k).name, ...
-                            'idx', critical(k).idx, ...
-                            'msg', ''   );
+                            'name', evnts(k).name, ...
+                            'idx', evnts(k).idx, ...
+                            'msg', evnts(k).msg   );
                 if isempty(nx.events)
                     nx.events = e;
                 else
                     nx.events(end+1) = e;
                 end
             end
-
-            %% step size will be reset to previously used default step size
-            locating = 0;           %% exit "locating" mode
-            sub_step = ' ';
-            if mpopt.verbose > 3
-                fprintf('   -- ZERO!      : f = %g, step = %g\n', ...
-                    nx.ef{rx.critical.k}(rx.critical.idx(1)), nx.default_step);
-            end
-        else                                        %% prev rollback undershot
-            %% initialize next step size based on critical event function
-            %% values from prev rollback step and current step
-            rx_ef = rx.ef{rx.critical.k}(rx.critical.idx(1));
-            cx_ef = nx.ef{rx.critical.k}(rx.critical.idx(1));
-            step_scale = cx_ef / (cx_ef - rx_ef);
-            nx.this_step = step_scale * (rx.step - nx.step);
-            sub_step = ' ';
-            if mpopt.verbose > 3
-                fprintf('   -- UNDERSHOOT : f [<<%g>>, %g], step = %g\n', cx_ef, rx_ef, nx.this_step);
+            if (mpopt.verbose > 2 && evnts(k).log) || ...
+                    (mpopt.verbose > 3 && evnts(k).eidx)
+                fprintf('    %s\n', evnts(k).msg);
             end
         end
-%     else
-%         if mpopt.verbose > 3
-%             fprintf('   -- NORMAL\n');
-%         end
-    end
+        
+        %% adapt stepsize if requested and not terminating, locating a zero
+        %% or re-doing a step after changing the problem data
+        if adapt_step && ~done.flag && ~locating && ~evnts(1).zero && nx.step ~= 0
+            cpf_error = norm([angle(nx.V(    cb_data.pq)); abs(nx.V(    [cb_data.pv;cb_data.pq])); nx.lam] - ...
+                             [angle(nx.V_hat(cb_data.pq)); abs(nx.V_hat([cb_data.pv;cb_data.pq])); nx.lam_hat], inf);
 
-    %% invoke callbacks - "iterations" context
-    for k = 1:ncb
-        [nx, cx, cb_data, done] = cpf_callbacks(k).fcn(cont_steps, ...
-            nx, cx, px, rollback, critical, done, cb_data, cb_args);
-    end
+            %% new nominal step size is current size * tol/err, but we reduce
+            %% the change from the current size by a damping factor and limit
+            %% increases to a factor of 2
+            %% RDZ: reduce this to 2 for release (and update tests)
+            ff = 10000;
+            step_scale = min(ff, 1 + mpopt.cpf.adapt_step_damping * ...
+                            (mpopt.cpf.error_tol/cpf_error - 1));
+            nx.default_step = nx.step * step_scale;
 
-    if mpopt.verbose > 4
-        fprintf('step %3d%s : stepsize = %-9.3g lambda = %6.3f\n', cont_steps, sub_step, cx.step, nx.lam);
-    elseif mpopt.verbose > 1
-        fprintf('step %3d%s : stepsize = %-9.3g lambda = %6.3f  %2d corrector Newton steps\n', cont_steps, sub_step, cx.step, nx.lam, i);
-    end
-
-    if adapt_step && ~done && ~locating && ~strcmp(critical(1).status, 'ZERO') && nx.step ~= 0
-        %% adapt stepsize
-        cpf_error = norm([angle(nx.V(    cb_data.pq)); abs(nx.V(    [cb_data.pv;cb_data.pq])); nx.lam] - ...
-                         [angle(nx.V_hat(cb_data.pq)); abs(nx.V_hat([cb_data.pv;cb_data.pq])); nx.lam_hat], inf);
-
-        %% new nominal step size is current size * tol/err, but we reduce
-        %% the change from the current size by a damping factor and limit
-        %% increases to a factor of 2
-        %% RDZ: reduce this to 2 for release (and update tests)
-        ff = 10000;
-        step_scale = min(ff, 1 + mpopt.cpf.adapt_step_damping * ...
-                        (mpopt.cpf.error_tol/cpf_error - 1));
-        nx.default_step = nx.step * step_scale;
-
-        %% limit step-size
-        if nx.default_step > mpopt.cpf.step_max
-            nx.default_step = mpopt.cpf.step_max;
+            %% limit step-size
+            if nx.default_step > mpopt.cpf.step_max
+                nx.default_step = mpopt.cpf.step_max;
+            end
+            if nx.default_step < mpopt.cpf.step_min
+                nx.default_step = mpopt.cpf.step_min;
+            end
         end
-        if nx.default_step < mpopt.cpf.step_min
-            nx.default_step = mpopt.cpf.step_min;
-        end
-%fprintf('---- ADAPT ');
-    end
 
-    if ~rollback
-        px = cx;    %% save current values before update
-        cx = nx;    %% update current point to next candidate
-        if ~done
-            cont_steps = cont_steps + 1;
+        %% if this is a normal step
+        if ~rollback
+            px = cx;    %% save current state before update
+            cx = nx;    %% update current state to next candidate
+            if ~done.flag
+                cont_steps = cont_steps + 1;
+            end
         end
-    end
     
-    %% set current step size and parameterization, from one-time or defaults
-    if isempty(cx.this_step)
-        cx.step = cx.default_step;
-%fprintf('---- DEFAULT : %g\n', cx.step);
-    else
-        cx.step = cx.this_step;
-        cx.this_step = [];      %% disable for next time
-%fprintf('---- ONETIME : %g\n', cx.step);
+        %% set step size and parameterization, from one-time or defaults
+        if isempty(cx.this_step)
+            cx.step = cx.default_step;
+        else
+            cx.step = cx.this_step;
+            cx.this_step = [];      %% disable for next time
+        end
+        if isempty(cx.this_parm)
+            cx.parm = cx.default_parm;
+        else
+            cx.parm = cx.this_parm;
+            cx.this_parm = [];      %% disable for next time
+        end
     end
-    if isempty(cx.this_parm)
-        cx.parm = cx.default_parm;
-    else
-        cx.parm = cx.this_parm;
-        cx.this_parm = [];      %% disable for next time
-    end
-end
 
-%% invoke callbacks - "final" context
-if success
-    %% invoke callbacks - "finalize" context
+    %% invoke callbacks - "final" context
     cpf_results = struct();     %% initialize results struct
     for k = 1:ncb
-        [nx, cx, cb_data, done, cpf_results] = cpf_callbacks(k).fcn(-cont_steps, ...
-            nx, cx, px, rollback, critical, 0, cb_data, cb_args, cpf_results);
+        [nx, cx, done, rollback, evnts, cb_data, cpf_results] = ...
+            cpf_callbacks(k).fcn(-cont_steps, nx, cx, px, ...
+                done, rollback, evnts, cb_data, cb_args, cpf_results);
     end
-else
-    if mpopt.verbose
-        fprintf('step %3d%s : stepsize = %-9.3g lambda = %6.3f  corrector did not converge in %d iterations\n', cont_steps, sub_step, cx.step, nx.lam, i);
-    end
+    cpf_results.events = cx.events;     %% copy eventlog to results
 
-    cpf_results.iterations = i;
-end
-cpf_results.events = cx.events;     %% copy eventlog to results
+    %% update final case with solution
+    mpctarget = cpf_current_mpc(cb_data.mpc_base, cb_data.mpc_target, Ybus, Yf, Yt, cb_data.ref, cb_data.pv, cb_data.pq, cx.V, cx.lam, mpopt);
+    mpctarget.et = etime(clock, t0);
+    mpctarget.success = success;
 
-%% update final case with solution
-mpctarget = cpf_current_mpc(cb_data.mpc_base, cb_data.mpc_target, Ybus, Yf, Yt, cb_data.ref, cb_data.pv, cb_data.pq, cx.V, cx.lam, mpopt);
-mpctarget.et = etime(clock, t0);
-mpctarget.success = success;
-
-%%-----  output results  -----
-%% convert back to original bus numbering & print results
-if success
+    %%-----  output results  -----
+    %% convert back to original bus numbering & print results
     n = cpf_results.iterations + 1;
     cpf_results.V_hat = i2e_data(mpctarget, cpf_results.V_hat, NaN(nb,n), 'bus', 1);
     cpf_results.V     = i2e_data(mpctarget, cpf_results.V,     NaN(nb,n), 'bus', 1);
-end
-results = int2ext(mpctarget);
-results.cpf = cpf_results;
+    results = int2ext(mpctarget);
+    results.cpf = cpf_results;
 
-%% zero out result fields of out-of-service gens & branches
-if ~isempty(results.order.gen.status.off)
-  results.gen(results.order.gen.status.off, [PG QG]) = 0;
+    %% zero out result fields of out-of-service gens & branches
+    if ~isempty(results.order.gen.status.off)
+      results.gen(results.order.gen.status.off, [PG QG]) = 0;
+    end
+    if ~isempty(results.order.branch.status.off)
+      results.branch(results.order.branch.status.off, [PF QF PT QT]) = 0;
+    end
 end
-if ~isempty(results.order.branch.status.off)
-  results.branch(results.order.branch.status.off, [PF QF PT QT]) = 0;
+
+results.cpf.done_msg = done.msg;
+if mpopt.verbose
+    fprintf('CPF TERMINATION: %s\n', done.msg);
 end
 
 if fname

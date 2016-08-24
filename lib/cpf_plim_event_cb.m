@@ -1,5 +1,5 @@
-function [nx, cx, cb_data, done, results] = cpf_plim_event_cb(...
-        k, nx, cx, px, rollback, critical, done, cb_data, cb_args, results)
+function [nx, cx, done, rollback, evnts, cb_data, results] = cpf_plim_event_cb(...
+        k, nx, cx, px, done, rollback, evnts, cb_data, cb_args, results)
 %CPF_PLIM_EVENT_CB  Event handler for NOSE events
 %
 %   [CB_STATE, NX, CX, CB_DATA, DONE] = CPF_PLIM_EVENT_CB(CONT_STEPS, ...
@@ -21,7 +21,7 @@ function [nx, cx, cb_data, done, results] = cpf_plim_event_cb(...
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% skip if initialize, finalize or done
-if k <= 0 || done
+if k <= 0 || done.flag
     return;
 end
 
@@ -35,8 +35,8 @@ end
 mpc = [];
 
 %% handle event
-for i = 1:length(critical)
-    if strcmp(critical(i).name, 'PLIM') && strcmp(critical(i).status, 'ZERO')
+for i = 1:length(evnts)
+    if strcmp(evnts(i).name, 'PLIM') && evnts(i).zero
         %% get updated MPC, if necessary
         if isempty(mpc)
             d = cb_data;
@@ -49,12 +49,19 @@ for i = 1:length(critical)
             i2e_bus = cb_data.mpc_target.order.bus.i2e;
             i2e_gen = cb_data.mpc_target.order.gen.i2e;
         end
-        
+
         %% find the generator(s) and which lim(s)
-        ig = critical(i).idx;
+        if cb_data.mpopt.verbose > 3
+            msg = sprintf('%s\n    ', evnts(i).msg);
+        else
+            msg = '';
+        end
+        ig = evnts(i).idx;
         for j = 1:length(ig)
             g = ig(j);                  %% index of gen of interest
             ib = mpc.gen(g, GEN_BUS);   %% corresponding bus index
+            msg = sprintf('%sgen %d @ bus %d reached %g MW Pmax lim @ lambda = %.4g', ...
+                msg, i2e_gen(g), i2e_bus(ib), mpc.gen(g, PMAX), nx.lam);
             if ib == cb_data.ref    %% if it is at the ref bus
                 %% find gens that are on and at PMAX
                 idx_pmax = find( mpc.gen(:, GEN_STATUS) > 0 & ...
@@ -67,7 +74,8 @@ for i = 1:length(critical)
                 candidates(ib) = 0;
                 new_ref = find(candidates, 1);
                 if isempty(new_ref)
-                    done = 1;
+                    done.flag = 1;
+                    done.msg = 'All generators at Pmax';
                 else
                     %% convert this bus to PV, set new REF bus
                     mpc.bus(ib, BUS_TYPE) = PV;
@@ -75,22 +83,8 @@ for i = 1:length(critical)
 
                     %% update new bus types
                     [ref, pv, pq] = bustypes(mpc.bus, mpc.gen);
-                end
-            end
-
-            if cb_data.mpopt.verbose
-                if ib == cb_data.ref   %% at ref bus
-                    if isempty(new_ref)
-                        fprintf('  gen %d @ bus %d reached %g MW Pmax lim @ lambda = %.3g\nCPF Termination : all generators at Pmax\n', ...
-                            i2e_gen(g), i2e_bus(ib), mpc.gen(g, PMAX), nx.lam);
-                    else
-                        fprintf('  gen %d @ bus %d reached %g MW Pmax lim @ lambda = %.3g : ref changed from bus %d to %d\n', ...
-                            i2e_gen(g), i2e_bus(ib), mpc.gen(g, PMAX), nx.lam, ...
-                            i2e_bus(ib), i2e_bus(new_ref));
-                    end
-                else
-                    fprintf('  gen %d @ bus %d reached %g MW Pmax lim @ lambda = %.3g\n', ...
-                        i2e_gen(g), i2e_bus(ib), mpc.gen(g, PMAX), nx.lam);
+                    msg = sprintf('%s : ref changed from bus %d to %d', ...
+                        msg, i2e_bus(ib), i2e_bus(new_ref));
                 end
             end
 
@@ -123,5 +117,6 @@ for i = 1:length(critical)
             %% set size of next step to zero
             nx.this_step = 0;
         end
+        evnts(i).msg = msg;
     end
 end

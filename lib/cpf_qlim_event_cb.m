@@ -1,5 +1,5 @@
-function [nx, cx, cb_data, done, results] = cpf_qlim_event_cb(...
-        k, nx, cx, px, rollback, critical, done, cb_data, cb_args, results)
+function [nx, cx, done, rollback, evnts, cb_data, results] = cpf_qlim_event_cb(...
+        k, nx, cx, px, done, rollback, evnts, cb_data, cb_args, results)
 %CPF_QLIM_EVENT_CB  Event handler for NOSE events
 %
 %   [CB_STATE, NX, CX, CB_DATA, DONE] = CPF_QLIM_EVENT_CB(CONT_STEPS, ...
@@ -21,7 +21,7 @@ function [nx, cx, cb_data, done, results] = cpf_qlim_event_cb(...
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% skip if initialize, finalize or done
-if k <= 0 || done
+if k <= 0 || done.flag
     return;
 end
 
@@ -35,8 +35,8 @@ end
 mpc = [];
 
 %% handle event
-for i = 1:length(critical)
-    if strcmp(critical(i).name, 'QLIM') && strcmp(critical(i).status, 'ZERO')
+for i = 1:length(evnts)
+    if strcmp(evnts(i).name, 'QLIM') && evnts(i).zero
         %% get updated MPC, if necessary
         if isempty(mpc)
             d = cb_data;
@@ -49,9 +49,14 @@ for i = 1:length(critical)
             i2e_bus = cb_data.mpc_target.order.bus.i2e;
             i2e_gen = cb_data.mpc_target.order.gen.i2e;
         end
-        
+
         %% find the generator(s) and which lim(s)
-        ig = critical(i).idx;
+        if cb_data.mpopt.verbose > 3
+            msg = sprintf('%s\n    ', evnts(i).msg);
+        else
+            msg = '';
+        end
+        ig = evnts(i).idx;
         for j = 1:length(ig)
             g = ig(j);                  %% index of gen of interest
             maxlim = 1;
@@ -60,15 +65,12 @@ for i = 1:length(critical)
                 maxlim = 0;
             end
             ib = mpc.gen(g, GEN_BUS);   %% corresponding bus index
-
-            if cb_data.mpopt.verbose
-                if maxlim
-                    fprintf('  gen %d @ bus %d reached %g MVAr Qmax lim @ lambda = %.3g : bus %d converted to PQ\n', ...
-                        i2e_gen(g), i2e_bus(ib), mpc.gen(g, QMAX), nx.lam, i2e_bus(ib));
-                else
-                    fprintf('  gen %d @ bus %d reached %g MVAr Qmin lim @ lambda = %.3g : bus %d converted to PQ\n', ...
-                        i2e_gen(g), i2e_bus(ib), mpc.gen(g, QMIN), nx.lam, i2e_bus(ib));
-                end
+            if maxlim
+                msg = sprintf('%sgen %d @ bus %d reached %g MVAr Qmax lim @ lambda = %.4g : bus %d converted to PQ', ...
+                    msg, i2e_gen(g), i2e_bus(ib), mpc.gen(g, QMAX), nx.lam, i2e_bus(ib));
+            else
+                msg = sprintf('%sgen %d @ bus %d reached %g MVAr Qmin lim @ lambda = %.4g : bus %d converted to PQ', ...
+                    msg, i2e_gen(g), i2e_bus(ib), mpc.gen(g, QMIN), nx.lam, i2e_bus(ib));
             end
 
             %% set Qg to exact limit and convert the generator's bus to PQ bus
@@ -84,10 +86,8 @@ for i = 1:length(critical)
                       mpc.bus(mpc.gen(:, GEN_BUS), BUS_TYPE) ~= PQ);  %% ... and are not PQ buses
 
             if isempty(on)
-                done = 1;
-                if cb_data.mpopt.verbose
-                    fprintf('CPF termination: No REF, PV buses remaining\n');
-                end
+                done.flag = 1;
+                done.msg = 'No REF or PV buses remaining.';
             else
                 oldref = cb_data.ref;   %% save previous ref bus
                 [ref, pv, pq] = bustypes(mpc.bus, mpc.gen);
@@ -125,5 +125,6 @@ for i = 1:length(critical)
                 nx.this_step = 0;
             end
         end
+        evnts(i).msg = msg;
     end
 end

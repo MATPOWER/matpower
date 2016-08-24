@@ -1,4 +1,4 @@
-function [rollback, critical, cef] = cpf_detect_events(cpf_events, cef, pef, step, verbose)
+function [rollback, evnts, cef] = cpf_detect_events(cpf_events, cef, pef, step, verbose)
 %CPF_DETECT_EVENTS  Detect events from event function values
 %
 %   [ROLLBACK, CRITICAL_EVENTS, CEF] = CPF_DETECT_EVENTS(CPF_EVENTS, CEF, PEF, STEP, VERBOSE)
@@ -15,12 +15,21 @@ function [rollback, critical, cef] = cpf_detect_events(cpf_events, cef, pef, ste
 %           rollback step
 %       CRITICAL_EVENTS : struct array containing information about any
 %           detected events, with fields:
-%           k           : index of event in list of registered events
-%           name        : name of event function
+%           eidx        : event index, in list of registered events
+%                           0 if no event detected
+%           name        : name of event function, empty if none detected
+%           zero        : 1 if zero has been detected, 0 otherwise
+%                           (interval detected or no event detected)
 %           idx         : index(es) of critical elements in event function
 %           step_scale  : linearly interpolated estimate of scaling factor
 %                         for current step size required to reach event zero
-%           status      : type of event detected 'INTERVAL' or 'ZERO'
+%           log         : 1 log the event in the results, 0 don't log the event
+%                         (set to 1 for zero events, 0 otherwise, can be
+%                           modified by callbacks)
+%           msg         : event message, set to something generic like
+%                           'ZERO detected for TARGET_LAM event' or
+%                           'INTERVAL detected for QLIM(3) event', but intended
+%                         to be changed updated to callbacks
 %       CEF : cell array of Current Event Function values
 
 %   MATPOWER
@@ -34,48 +43,60 @@ function [rollback, critical, cef] = cpf_detect_events(cpf_events, cef, pef, ste
 
 %% initialize result variables
 rollback = 0;
-critical = struct('k', 0, 'name', '', 'idx', 0, 'step_scale', 1, 'status', '');
+evnts = struct( ...
+    'eidx', 0, ...
+    'name', '', ...
+    'zero', 0, ...
+    'idx', 0, ...
+    'step_scale', 1, ...
+    'log', 0, ...
+    'msg', '' ...
+);
 
 %% other initialization
-i = 1;              %% index into critical struct
+i = 1;              %% index into evnts struct
 nef = length(cef);  %% number of event functions
 
 %% detect events, first look for event intervals for events requesting rollback
-for k = 1:nef
-    if ~cpf_events(k).rollback  %% if event does not request rollback
+for eidx = 1:nef
+    if ~cpf_events(eidx).locate %% if event doesn't request rollback to locate zero
         continue;               %%   skip to next event
     end
 
     %% current and previous event function signs
-    c_sign = sign(cef{k});
-    p_sign = sign(pef{k});
+    c_sign = sign(cef{eidx});
+    p_sign = sign(pef{eidx});
 
     %% if there's been a sign change and we aren't within event tolerance ...
     idx = find( abs(c_sign) == 1 & c_sign == -p_sign & ...
-                abs(cef{k}) > cpf_events(k).tol  );
+                abs(cef{eidx}) > cpf_events(eidx).tol  );
     if ~isempty(idx)
         if step == 0    %% if it's a "repeat" step (e.g. after bus type changes)
             %% ... make this one the critical one and call it a ZERO event
-            critical.k = k;
-            critical.name = cpf_events(k).name;
-            critical.idx = idx;
-            critical.step_scale = 1;
-            critical.status = 'ZERO';
+            evnts.eidx = eidx;
+            evnts.name = cpf_events(eidx).name;
+            evnts.zero = 1;
+            evnts.idx = idx;
+            evnts.step_scale = 1;
+            evnts.log = 1;
+            evnts.msg = 'ZERO (BIFURCATION)';
             i = i + 1;
             break;
         else
             %% ... compute step size scaling factors and find index of smallest one
             [step_scale, j] = ...
-                min(pef{k}(idx) ./ (pef{k}(idx) - cef{k}(idx)) );
+                min(pef{eidx}(idx) ./ (pef{eidx}(idx) - cef{eidx}(idx)) );
 
             %% if it's smaller than the current critical one ...
-            if step_scale < critical.step_scale
+            if step_scale < evnts.step_scale
                 %% ... make this one the critical one
-                critical.k = k;
-                critical.name = cpf_events(k).name;
-                critical.idx = idx(j);
-                critical.step_scale = step_scale;
-                critical.status = 'INTERVAL';
+                evnts.eidx = eidx;
+                evnts.name = cpf_events(eidx).name;
+                evnts.zero = 0;
+                evnts.idx = idx(j);
+                evnts.step_scale = step_scale;
+                evnts.log = 0;
+                evnts.msg = 'INTERVAL';
                 rollback = 1;   %% signal that a rollback event has been detected
             end
         end
@@ -85,20 +106,22 @@ end
 %% if no rollback events were detected
 if rollback == 0
     %% search for event zeros
-    for k = 1:nef
+    for eidx = 1:nef
         %% if there's an event zero ...
-        idx = find( abs(cef{k}) <= cpf_events(k).tol );
+        idx = find( abs(cef{eidx}) <= cpf_events(eidx).tol );
         if ~isempty(idx)
             %% set event function to exactly zero
             %% (to prevent possible INTERVAL detection again on next step)
-            cef{k}(idx) = 0;
+            cef{eidx}(idx) = 0;
 
             %% ... make this one the critical one
-            critical(i).k = k;
-            critical(i).name = cpf_events(k).name;
-            critical(i).idx = idx;
-            critical(i).step_scale = 1;
-            critical(i).status = 'ZERO';
+            evnts(i).eidx = eidx;
+            evnts(i).name = cpf_events(eidx).name;
+            evnts(i).zero = 1;
+            evnts(i).idx = idx;
+            evnts(i).step_scale = 1;
+            evnts(i).log = 1;
+            evnts(i).msg = 'ZERO';
             i = i + 1;
         end
     end
@@ -106,37 +129,45 @@ if rollback == 0
     %% and if no zeros were detected
     if i == 1
         %% search for intervals for non-rollback events
-        for k = 1:nef
+        for eidx = 1:nef
             %% current and previous event function signs
-            c_sign = sign(cef{k});
-            p_sign = sign(pef{k});
+            c_sign = sign(cef{eidx});
+            p_sign = sign(pef{eidx});
 
             %% if there's been a sign change ...
             idx = find( abs(c_sign) == 1 & c_sign == -p_sign );
             if ~isempty(idx)
                 %% ... compute step size scaling factors ...
-                step_scale = pef{k}(idx) ./ (pef{k}(idx) - cef{k}(idx));
+                step_scale = pef{eidx}(idx) ./ (pef{eidx}(idx) - cef{eidx}(idx));
 
-                %% ... and save the info
-                critical(i).k = k;
-                critical(i).name = cpf_events(k).name;
-                critical(i).idx = idx;
-                critical(i).step_scale = step_scale;
-                critical(i).status = 'INTERVAL';
+                %% ... and save the info as an interval detection
+                evnts(i).eidx = eidx;
+                evnts(i).name = cpf_events(eidx).name;
+                evnts(i).zero = 0;
+                evnts(i).idx = idx;
+                evnts(i).step_scale = step_scale;
+                evnts(i).log = 0;
+                evnts(i).msg = 'INTERVAL';
                 i = i + 1;
             end
         end
     end
 end
-if verbose > 2 && critical(1).k
-    for i = 1:length(critical)
-        ce = critical(i);
-        k = ce.k;
-        fprintf('   %s detected for %s event : ', ce.status, ce.name);
-        if rollback
-            fprintf('ROLLBACK by %g\n', ce.step_scale);
+
+%% update msgs
+if evnts(1).eidx
+    for i = 1:length(evnts)
+        if length(cef{evnts(i).eidx}) > 1
+            s1 = sprintf('(%d)', evnts(i).idx);
         else
-            fprintf('CONTINUE\n');
+            s1 = '';
         end
+        if rollback
+            s2 = sprintf('ROLLBACK by %g', evnts(i).step_scale);
+        else
+            s2 = 'CONTINUE';
+        end
+        evnts(i).msg = sprintf('%s detected for %s%s event : %s', ...
+            evnts(i).msg, evnts(i).name, s1, s2);
     end
 end
