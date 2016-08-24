@@ -1,15 +1,22 @@
 function [nx, cx, done, rollback, evnts, cb_data, results] = cpf_target_lam_event_cb(...
         k, nx, cx, px, done, rollback, evnts, cb_data, cb_args, results)
-%CPF_TARGET_LAM_EVENT_CB  Event handler for TARGET_LAM events
+%CPF_TARGET_LAM_EVENT_CB  Callback to handle TARGET_LAM events
 %
-%   [CB_STATE, NX, CX, CB_DATA, DONE] = CPF_TARGET_LAM_EVENT_CB(CONT_STEPS, ...
-%           NX, CX, ROLLBACK, CRITICAL, CB_DATA, CB_STATE, CB_ARGS)
-%   
-%   Inputs:
-%       K : ...
+%   [NX, CX, DONE, ROLLBACK, EVNTS, CB_DATA, RESULTS] = 
+%       CPF_TARGET_LAM_EVENT_CB(K, NX, CX, PX, DONE, ROLLBACK, EVNTS, ...
+%                               CB_DATA, CB_ARGS, RESULTS)
 %
-%   Outputs:
-%       CB_STATE : ...
+%   Callback to handle TARGET_LAM events, triggered by event function
+%   CPF_TARGET_LAM_EVENT to indicate that a target lambda value has been
+%   reached or that the full continuation curve has been traced.
+%
+%   This function sets the msg field of the event when the target lambda has
+%   been found, raises the DONE.flag and sets the DONE.msg. If the current
+%   or predicted next step overshoot the target lambda, it adjusts the step
+%   size to be exactly what is needed to reach the target, and sets the
+%   parameterization for that step to be the natural parameterization.
+%
+%   See CPF_DEFAULT_CALLBACK for details of the input and output arguments.
 
 %   MATPOWER
 %   Copyright (c) 2016 by Power System Engineering Research Center (PSERC)

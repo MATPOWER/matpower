@@ -1,15 +1,22 @@
 function [nx, cx, done, rollback, evnts, cb_data, results] = cpf_plim_event_cb(...
         k, nx, cx, px, done, rollback, evnts, cb_data, cb_args, results)
-%CPF_PLIM_EVENT_CB  Event handler for NOSE events
+%CPF_PLIM_EVENT_CB  Callback to handle PLIM events
 %
-%   [CB_STATE, NX, CX, CB_DATA, DONE] = CPF_PLIM_EVENT_CB(CONT_STEPS, ...
-%           NX, CX, ROLLBACK, CRITICAL, CB_DATA, CB_STATE, CB_ARGS)
-%   
-%   Inputs:
-%       K : ...
+%   [NX, CX, DONE, ROLLBACK, EVNTS, CB_DATA, RESULTS] = 
+%       CPF_PLIM_EVENT_CB(K, NX, CX, PX, DONE, ROLLBACK, EVNTS, ...
+%                               CB_DATA, CB_ARGS, RESULTS)
 %
-%   Outputs:
-%       CB_STATE : ...
+%   Callback to handle PLIM events, triggered by event function
+%   CPF_PLIM_EVENT to indicate the point at which an upper active
+%   power output limit is reached for a generator.
+%
+%   When an active power limit is encountered, this function zeros out
+%   subsequent transfers from that generator, chooses a new reference bus
+%   if necessary, and updates the CB_DATA accordingly, setting the next
+%   step size to zero. The event msg is updated with the details of the
+%   changes. It also requests termination if all generators reach PMAX.
+%
+%   See CPF_DEFAULT_CALLBACK for details of the input and output arguments.
 
 %   MATPOWER
 %   Copyright (c) 2016 by Power System Engineering Research Center (PSERC)

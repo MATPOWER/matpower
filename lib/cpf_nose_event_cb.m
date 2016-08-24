@@ -1,15 +1,18 @@
 function [nx, cx, done, rollback, evnts, cb_data, results] = cpf_nose_event_cb(...
         k, nx, cx, px, done, rollback, evnts, cb_data, cb_args, results)
-%CPF_NOSE_EVENT_CB  Event handler for NOSE events
+%CPF_NOSE_EVENT_CB  Callback to handle NOSE events
 %
-%   [CB_STATE, NX, CX, CB_DATA, DONE] = CPF_NOSE_EVENT_CB(CONT_STEPS, ...
-%           NX, CX, ROLLBACK, CRITICAL, CB_DATA, CB_STATE, CB_ARGS)
-%   
-%   Inputs:
-%       K : ...
+%   [NX, CX, DONE, ROLLBACK, EVNTS, CB_DATA, RESULTS] = 
+%       CPF_NOSE_EVENT_CB(K, NX, CX, PX, DONE, ROLLBACK, EVNTS, ...
+%                               CB_DATA, CB_ARGS, RESULTS)
 %
-%   Outputs:
-%       CB_STATE : ...
+%   Callback to handle NOSE events, triggered by event function
+%   CPF_NOSE_EVENT to indicate the nose point of the continuation curve.
+%
+%   This function sets the msg field of the event when the nose point has
+%   been found, raises the DONE.flag and sets the DONE.msg.
+%
+%   See CPF_DEFAULT_CALLBACK for details of the input and output arguments.
 
 %   MATPOWER
 %   Copyright (c) 2016 by Power System Engineering Research Center (PSERC)

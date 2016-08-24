@@ -1,24 +1,49 @@
-function [nx, cx, done, rollback, evnts, cb_data, results] = cpf_default_callback(...
-        k, nx, cx, px, done, rollback, evnts, cb_data, cb_args, results)
-% function [cb_state, results] = ...
-%     cpf_default_callback(k, step, V, lam, V_hat, lam_hat, cb_data, cb_state, cb_args, results)
+function [nx, cx, done, rollback, evnts, cb_data, results] = ...
+    cpf_default_callback(k, nx, cx, px, done, rollback, evnts, ...
+                            cb_data, cb_args, results)
 %CPF_DEFAULT_CALLBACK   Default callback function for CPF
-%   [CB_STATE, RESULTS] = ...
-%       CPF_DEFAULT_CALLBACK(K, STEP, V, LAM, V_HAT, LAM_HAT, ...
-%                            CB_DATA, CB_STATE, CB_ARGS, RESULTS)
+%   [NX, CX, DONE, ROLLBACK, EVNTS, CB_DATA, RESULTS] = 
+%       CPF_DEFAULT_CALLBACK(K, NX, CX, PX, DONE, ROLLBACK, EVNTS, ...
+%                               CB_DATA, CB_ARGS, RESULTS)
 %
-%   Default callback function used by RUNCPF. Takes input from current
-%   iteration, returns a user defined state struct and on the final call
-%   a results struct.
+%   Default callback function used by RUNCPF. Inputs and outputs are defined
+%   below, with the RESULTS argument being optional, used only for the final
+%   call when K is negative.
 %
 %   Inputs:
 %       K - continuation step iteration count
-%       STEP - step size for K-th step
-%       V - vector of complex bus voltages after K-th corrector step
-%       LAM - value of LAMBDA after K-th corrector step
-%       V_HAT - vector of complex bus voltages after K-th predictor step
-%       LAM_HAT - value of LAMBDA after K-th predictor step
-%       CB_DATA - struct containing potentially useful static data,
+%       NX - next state (corresponding to proposed next step), struct with
+%            the following fields:
+%           lam_hat - value of LAMBDA from predictor
+%           V_hat - vector of complex bus voltages from predictor
+%           lam - value of LAMBDA from corrector
+%           V - vector of complex bus voltages from corrector
+%           z - normalized tangent predictor
+%           default_step - default step size
+%           default_parm - default parameterization
+%           this_step - step size for this step only
+%           this_parm - paramterization for this step only
+%           step - current step size
+%           parm - current parameterization
+%           events - struct array, event log
+%           cb - user state, for callbacks (replaces CB_STATE), the user may
+%               add fields containing any information the callback function
+%               would like to pass from one invokation to the next, taking
+%               care not to step on fields being used by other callbacks,
+%               such as the 'default' field used by this default callback
+%           ef - cell array of event function values
+%       CX - current state (corresponding to most recent successful step)
+%            (same structure as NX)
+%       PX - previous state (corresponding to last successful step prior to CX)
+%       DONE - struct, with flag to indicate CPF termination and reason,
+%           with fields:
+%           flag - termination flag, 1 => terminate, 0 => continue
+%           msg - string containing reason for termination
+%       ROLLBACK - scalar flag to indicate that the current step should be
+%           rolled back and retried with a different step size, etc.
+%       EVNTS - struct array listing any events detected for this step,
+%           see CPF_DETECT_EVENTS for details
+%       CB_DATA - struct containing potentially useful "static" data,
 %           with the following fields (all based on internal indexing):
 %           mpc_base - MATPOWER case struct of base state
 %           mpc_target - MATPOWER case struct of target state
@@ -32,29 +57,39 @@ function [nx, cx, done, rollback, evnts, cb_data, results] = cpf_default_callbac
 %           pv - vector of indices of PV buses
 %           pq - vector of indices of PQ buses
 %           ref - vector of indices of REF buses
+%           idx_pmax - vector of generator indices for generators fixed
+%               at their PMAX limits
 %           mpopt - MATPOWER options struct
-%       CB_STATE - struct to which the user may add fields containing
-%           any information the callback function would like to
-%           pass from one invokation to the next (avoiding the
-%           following 5 field names which are already used by
-%           the default callback: V_hat, lam_hat, V, lam, iterations)
 %       CB_ARGS - struct specified in MPOPT.cpf.user_callback_args
 %       RESULTS - initial value of output struct to be assigned to
 %           CPF field of results struct returned by RUNCPF
 %
 %   Outputs:
-%       CB_STATE - updated version of CB_STATE input arg
+%       (all are update versions of the corresponding input arguments)
+%       NX - user state ('cb' field ) should be updated here if ROLLBACK
+%           is false
+%       CX - may contain updated 'this_step' or 'this_parm' values to be used
+%           if ROLLBACK is true
+%       DONE - callback may have requested termination and set the msg field
+%       ROLLBACK - callback can request a rollback step, even if it was not
+%           indicated by an event function
+%       EVNTS - msg field for a given event may be updated
+%       CB_DATA - this data should only be modified if the underlying problem
+%           has been changed (e.g. generator limit reached) and should always
+%           be followed by a step of zero length, i.e. set NX.this_step to 0
+%           It is the job of any callback modifying CB_DATA to ensure that
+%           all data in CB_DATA kept consistent.
 %       RESULTS - updated version of RESULTS input arg
 %
-%   This function is called in three different contexts, distinguished
-%   as follows:
-%   (1) initial - called without RESULTS output arg, with K = 0,
+%   This function is called in three different contexts, distinguished by
+%   the value of K, as follows:
+%   (1) initial - called with K = 0, without RESULTS input/output args,
 %           after base power flow, before 1st CPF step.
-%   (2) iterations - called without RESULTS output arg, with K > 0
+%   (2) iterations - called with K > 0, without RESULTS input/output args,
 %           at each iteration, after predictor-corrector step
-%   (3) final - called with RESULTS output arg, after exiting
-%           predictor-corrector loop, inputs identical to
-%           last iteration call
+%   (3) final - called with K < 0, with RESULTS input/output args, after
+%           exiting predictor-corrector loop, inputs identical to last
+%           iteration call, except K which is negated
 %
 %   See also RUNCPF.
 
