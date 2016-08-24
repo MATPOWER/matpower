@@ -1,7 +1,7 @@
-function cpf_events = cpf_register_event(cpf_events, name, fcn, tol, rollback)
+function cpf_events = cpf_register_event(cpf_events, name, fcn, tol, locate)
 %CPF_REGISTER_EVENT  Register event functions
 %
-%   CPF_EVENTS = CPF_REGISTER_EVENT(CPF_EVENTS, NAME, FCN, TOL, ROLLBACK)
+%   CPF_EVENTS = CPF_REGISTER_EVENT(CPF_EVENTS, NAME, FCN, TOL, LOCATE)
 %   
 %   Inputs:
 %       CPF_EVENTS : struct containing info about registered CPF event fcns
@@ -10,7 +10,8 @@ function cpf_events = cpf_register_event(cpf_events, name, fcn, tol, rollback)
 %             scalar or vector value that changes sign at location of the event
 %       TOL : scalar or vector of same dimension as event function return value
 %             of tolerance for detecting the event, i.e. abs(val) <= tol
-%       ROLLBACK : flag indicating whether the event requests a rollback step
+%       LOCATE : flag indicating whether the event requests a rollback step
+%                to locate the event function zero
 %
 %   Outputs:
 %       CPF_EVENTS : updated struct containing info about registered CPF event fcns
@@ -29,7 +30,7 @@ e = struct( ...
         'name', name, ...
         'fcn', fcn, ...
         'tol', tol, ...
-        'rollback', rollback ...
+        'locate', locate ...
     );
 
 %% convert function names to function handles, as necessary
