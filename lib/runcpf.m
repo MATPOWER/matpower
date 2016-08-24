@@ -496,9 +496,7 @@ if ~done.flag
             %% new nominal step size is current size * tol/err, but we reduce
             %% the change from the current size by a damping factor and limit
             %% increases to a factor of 2
-            %% RDZ: reduce this to 2 for release (and update tests)
-            ff = 10000;
-            step_scale = min(ff, 1 + mpopt.cpf.adapt_step_damping * ...
+            step_scale = min(2, 1 + mpopt.cpf.adapt_step_damping * ...
                             (mpopt.cpf.error_tol/cpf_error - 1));
             nx.default_step = nx.step * step_scale;
 

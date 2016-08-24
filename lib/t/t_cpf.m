@@ -108,7 +108,7 @@ else
     mpopt = mpoption(mpopt, 'cpf.stop_at', 'NOSE', 'cpf.parameterization', 2);
     mpopt = mpoption(mpopt, 'cpf.adapt_step', 1);
     r = runcpf(mpcb, mpct, mpopt);
-    iterations = 22;
+    iterations = 23;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0.99025, 3, [t 'max_lam']);
@@ -121,7 +121,7 @@ else
     mpopt = mpoption(mpopt, 'cpf.stop_at', 'NOSE', 'cpf.parameterization', 3);
     mpopt = mpoption(mpopt, 'cpf.adapt_step', 1);
     r = runcpf(mpcb, mpct, mpopt);
-    iterations = 22;
+    iterations = 23;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0.99025, 3, [t 'max_lam']);
@@ -135,10 +135,10 @@ else
     mpopt_qlim = mpoption(mpopt_qlim, 'cpf.adapt_step', 1);
 %mpopt_qlim = mpoption(mpopt_qlim, 'verbose', 3);
     r = runcpf(mpcb, mpct, mpopt_qlim);
-    iterations = 16;
+    iterations = 19;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
-    t_is(r.cpf.max_lam, 0.795811, 6, [t 'max_lam']);
+    t_is(r.cpf.max_lam, 0.795809, 6, [t 'max_lam']);
     t_is(size(r.cpf.V_hat), [10 iterations+1], 12, [t 'size(V_hat)']);
     t_is(size(r.cpf.V), [10 iterations+1], 12, [t 'size(V)']);
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
@@ -149,7 +149,7 @@ else
     mpopt_plim = mpoption(mpopt_plim, 'cpf.adapt_step', 1);
 %mpopt_plim = mpoption(mpopt_plim, 'verbose', 3);
     r = runcpf(mpcb, mpct, mpopt_plim);
-    iterations = 20;
+    iterations = 21;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0.97975, 4, [t 'max_lam']);
@@ -163,7 +163,7 @@ else
     mpopt_pqlim = mpoption(mpopt_pqlim, 'cpf.adapt_step', 1);
 %mpopt_pqlim = mpoption(mpopt_pqlim, 'verbose', 3);
     r = runcpf(mpcb, mpct, mpopt_pqlim);
-    iterations = 19;
+    iterations = 20;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0.833343, 3, [t 'max_lam']);
@@ -175,7 +175,7 @@ else
     t = 'Continuation PF (full trace) (arc length) : ';
     mpopt = mpoption(mpopt, 'cpf.stop_at', 'FULL', 'cpf.parameterization', 2);
     r = runcpf(mpcb, mpct, mpopt);
-    iterations = 46;
+    iterations = 47;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0.99025, 3, [t 'max_lam']);
@@ -187,7 +187,7 @@ else
     t = 'Continuation PF (full trace) (pseudo arc length) : ';
     mpopt = mpoption(mpopt, 'cpf.stop_at', 'FULL', 'cpf.parameterization', 3);
     r = runcpf(mpcb, mpct, mpopt);
-    iterations = 46;
+    iterations = 47;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0.99025, 3, [t 'max_lam']);
@@ -201,10 +201,10 @@ else
     mpopt_qlim = mpoption(mpopt_qlim, 'cpf.adapt_step', 1);
 %mpopt_qlim = mpoption(mpopt_qlim, 'verbose', 3);
     r = runcpf(mpcb, mpct, mpopt_qlim);
-    iterations = 40;
+    iterations = 43;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
-    t_is(r.cpf.max_lam, 0.795787, 6, [t 'max_lam']);
+    t_is(r.cpf.max_lam, 0.795759, 6, [t 'max_lam']);
     t_is(size(r.cpf.V_hat), [10 iterations+1], 12, [t 'size(V_hat)']);
     t_is(size(r.cpf.V), [10 iterations+1], 12, [t 'size(V)']);
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
@@ -215,7 +215,7 @@ else
     mpopt = mpoption(mpopt, 'cpf.adapt_step', 1);
     mpopt = mpoption(mpopt, 'cpf.user_callback', 't_cpf_cb1');
     r = runcpf(mpcb, mpct, mpopt);
-    iterations = 8;
+    iterations = 9;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0.7, 12, [t 'max_lam']);
@@ -236,7 +236,7 @@ else
 %mpopt.verbose = 3;
     r = runcpf(mpcb, mpct, mpopt);
 %mpopt.verbose = verbose;
-    iterations = 8;
+    iterations = 9;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0.7, 12, [t 'max_lam']);
