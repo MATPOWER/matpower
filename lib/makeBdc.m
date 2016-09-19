@@ -73,7 +73,7 @@ Cft = sparse(i, [f;t], [ones(nl, 1); -ones(nl, 1)], nl, nb);    %% connection ma
 
 %% build Bf such that Bf * Va is the vector of real branch powers injected
 %% at each branch's "from" bus
-Bf = sparse(i, [f; t], [b; -b]);    % = spdiags(b, 0, nl, nl) * Cft;
+Bf = sparse(i, [f; t], [b; -b], nl, nb);    % = spdiags(b, 0, nl, nl) * Cft;
 
 %% build Bbus
 Bbus = Cft' * Bf;
