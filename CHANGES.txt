@@ -15,6 +15,10 @@ For change history for MOST, see most/docs/CHANGES.
 Changes since 6.0b1
 -----------------
 
+9/19/16
+    - Fix dimension bug in makeBdc() when last bus is not connected (should
+      never happen if bus is properly marked as type NONE).
+
 8/15/16
     - Fixed a harmless bug in @opt_model where variable, constraint and
       cost sets indexed by a single variable would allocate a square
