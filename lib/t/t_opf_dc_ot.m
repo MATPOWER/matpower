@@ -18,7 +18,11 @@ if matlab
     if have_fcn('quadprog_ls')
         if have_fcn('optimoptions')
             if have_fcn('linprog_ds')
-                algs  = {'interior-point', 'active-set', 'simplex', 'dual-simplex'};
+                if have_fcn('quadprog', 'vnum') >= 7.005  %% R2016b and later
+                    algs  = {'interior-point', 'dual-simplex'};
+                else
+                    algs  = {'interior-point', 'active-set', 'simplex', 'dual-simplex'};
+                end
             else
                 algs  = {'interior-point', 'active-set', 'simplex'};
             end

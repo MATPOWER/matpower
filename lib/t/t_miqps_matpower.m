@@ -23,6 +23,12 @@ nqp = 28;
 nmiqp = 6;
 t_begin(n*length(algs), quiet);
 
+diff_alg_warn_id = 'optim:linprog:WillRunDiffAlg';
+if have_fcn('quadprog') && have_fcn('quadprog', 'vnum') == 7.005
+    s1 = warning('query', diff_alg_warn_id);
+    warning('off', diff_alg_warn_id);
+end
+
 for k = 1:length(algs)
     if ~isempty(check{k}) && ~have_fcn(check{k})
         t_skip(n, sprintf('%s not installed', names{k}));
@@ -189,6 +195,10 @@ for k = 1:length(algs)
         end
 % opt.verbose = 0;
     end
+end
+
+if have_fcn('quadprog') && have_fcn('quadprog', 'vnum') == 7.005
+    warning(s1.state, diff_alg_warn_id);
 end
 
 t_end;

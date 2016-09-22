@@ -15,6 +15,11 @@ For change history for MOST, see most/docs/CHANGES.
 Changes since 6.0b1
 -----------------
 
+9/22/16
+    - Update tests for compatibility with Optimization Toolbox 7.5 (R2016b),
+      which removes 'active-set' algorithm for quadprog() and 'active-set'
+      and 'simplex' for linprog().
+
 9/19/16
     - Fix dimension bug in makeBdc() when last bus is not connected (should
       never happen if bus is properly marked as type NONE).
