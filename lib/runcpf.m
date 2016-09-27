@@ -497,7 +497,7 @@ if ~done.flag
             %% the change from the current size by a damping factor and limit
             %% increases to a factor of 2
             step_scale = min(2, 1 + mpopt.cpf.adapt_step_damping * ...
-                            (mpopt.cpf.error_tol/cpf_error - 1));
+                            (mpopt.cpf.adapt_step_tol/cpf_error - 1));
             nx.default_step = nx.step * step_scale;
 
             %% limit step-size

@@ -37,7 +37,7 @@ else
     mpopt = mpoption(mpopt, 'cpf.step', 0.02);
     %mpopt = mpoption(mpopt, 'cpf.adapt_step', 1);
     %mpopt = mpoption(mpopt, 'cpf.adapt_step_damping', 1);
-    %mpopt = mpoption(mpopt, 'cpf.error_tol', 2e-5);
+    %mpopt = mpoption(mpopt, 'cpf.adapt_step_tol', 2e-5);
     mpopt = mpoption(mpopt, 'cpf.plot.level', plot_nose_curve);
     %mpopt = mpoption(mpopt, 'cpf.plot.bus', 9);
     %mpopt = mpoption(mpopt, 'pf.tol', 1e-10);
