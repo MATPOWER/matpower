@@ -18,8 +18,8 @@ function [res, suc] = ...
 %           containing the name of the file with the case data defining the
 %           target loading and generation (default is 'case9target')
 %       MPOPT : MATPOWER options struct to override default options
-%           can be used to specify the solution algorithm, output options
-%           termination tolerances, and more (see also MPOPTION).
+%           can be used to specify the parameterization, output options,
+%           termination criteria, and more (see also MPOPTION).
 %       FNAME : name of a file to which the pretty-printed output will
 %           be appended
 %       SOLVEDCASE : name of file to which the solved case will be saved
@@ -43,7 +43,7 @@ function [res, suc] = ...
 %                       corrector steps
 %               lam - (nsteps+1) row vector of lambda values from
 %                       corrector steps
-%               max_lam - maximum value of lambda in lam
+%               max_lam - maximum value of lambda in RESULTS.cpf.lam
 %               iterations - number of continuation steps performed
 %       SUCCESS : the success flag can additionally be returned as
 %           a second output argument
@@ -56,26 +56,46 @@ function [res, suc] = ...
 %       results = runcpf(basecasedata, targetcasedata, mpopt, fname, solvedcase)
 %       [results, success] = runcpf(...);
 %
-%   RDZ: Need description of what happens when 'cpf.enforce_p_lims' is true.
-%
 %   If the 'cpf.enforce_q_lims' option is set to true (default is false) then,
-%       - if any generator reactive power limit is violated during the AC
-%         continuation power flow, the corresponding bus is converted to a PQ
-%         bus, with Qg at the limit.
+%   if any generator reaches its reactive power limits during the AC
+%   continuation power flow,
+%       - the corresponding bus is converted to a PQ bus, and the problem
+%         is modified to eliminate further reactive transfer on this bus
 %       - the voltage magnitude at the bus will deviate from the specified
-%         value in order to satisfy the reactive power limit.
-%       - if the reference bus is converted to PQ, the first remaining PV bus
-%         will be used as the slack bus. This may result in the transfer at
-%         this generator and the generator at the new reference bus being
-%         slightly off from the specified values.
-%       - if all reference and PV buses are converted, then RUNCPF raises
-%         infeasibility flag and terminates.
+%         setpoint to satisfy the reactive power limit,
+%       - if the reference bus is converted to PQ, further real power transfer
+%         for the bus is also eliminated, and the first remaining PV bus is
+%         selected as the new slack, resulting in the transfers at both
+%         reference buses potentially deviating from the specified values
+%       - if all reference and PV buses are converted to PQ, RUNCPF terminates
+%         with an infeasibility message.
 %
-%   CPF termination modes:
-%       Reached nose point
-%       Traced full curve
-%       No ref and pv buses remaining
-%       Limit induced bifurcation detected
+%   If the 'cpf.enforce_p_lims' option is set to true (default is fals) then,
+%   if any generator reaches its maximum active power limit during the AC
+%   continuation power flow,
+%       - the problem is modified to eliminate further active transfer by
+%         this generator
+%       - if the generator was at the reference bus, it is converted to PV
+%         and the first remaining PV bus is selected as the new slack.
+%
+%   Possible CPF termination modes:
+%       when cpf.stop_at == 'NOSE'
+%           - Reached steady state loading limit
+%           - Nose point eliminated by limit induced bifurcation
+%       when cpf.stop_at == 'FULL'
+%           - Traced full continuation curve
+%       when cpf.stop_at == <target_lam_val>
+%           - Reached desired lambda
+%       when cpf.enforce_p_lims == true
+%           - All generators at PMAX
+%       when cpf.enforce_q_lims == true
+%           - No REF or PV buses remaining
+%       other
+%           - Base case power flow did not converge
+%           - Base and target case have identical load and generation
+%           - Corrector did not converge
+%           - Could not locate <event_name> event
+%           - Too many rollback steps triggered by callbacks
 %   
 %   Examples:
 %       results = runcpf('case9', 'case9target');
@@ -109,7 +129,6 @@ function [res, suc] = ...
     MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
     QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
 
-
 %% default arguments
 if nargin < 5
     solvedcase = '';                %% don't save solved case
@@ -139,22 +158,26 @@ plim        = mpopt.cpf.enforce_p_lims;    %% enforce active limits
 %% and CPF callback functions (for event handling and other tasks)
 cpf_events = [];
 cpf_callbacks = [];
+%% to handle CPF termination
 if ischar(mpopt.cpf.stop_at) && strcmp(mpopt.cpf.stop_at, 'NOSE');
     cpf_events   = cpf_register_event(cpf_events, 'NOSE', 'cpf_nose_event', 1e-5, 1);
     cpf_callbacks = cpf_register_callback(cpf_callbacks, 'cpf_nose_event_cb', 51);
-else
+else        %% FULL or target lambda
     cpf_events   = cpf_register_event(cpf_events, 'TARGET_LAM', 'cpf_target_lam_event', 1e-5, 1);
     cpf_callbacks = cpf_register_callback(cpf_callbacks, 'cpf_target_lam_event_cb', 50);
 end
+%% to handle reactive power limits
 if qlim
     cpf_events = cpf_register_event(cpf_events, 'QLIM', 'cpf_qlim_event', mpopt.cpf.q_lims_tol, 1);
     cpf_callbacks = cpf_register_callback(cpf_callbacks, 'cpf_qlim_event_cb', 41);
 end
+%% to handle active power limits
 if plim
     cpf_events = cpf_register_event(cpf_events, 'PLIM', 'cpf_plim_event', mpopt.cpf.p_lims_tol, 1);
     cpf_callbacks = cpf_register_callback(cpf_callbacks, 'cpf_plim_event_cb', 40);
 end
 cpf_callbacks = cpf_register_callback(cpf_callbacks, 'cpf_default_callback', 0);
+%% user callbacks
 if ~isempty(mpopt.cpf.user_callback)
     if iscell(mpopt.cpf.user_callback)
         callback_names = mpopt.cpf.user_callback;
@@ -177,90 +200,79 @@ end
 mpopt_pf = mpoption(mpopt_pf, 'pf.enforce_q_lims', mpopt.cpf.enforce_q_lims);
 
 %% load base case data
-mpcbase = loadcase(basecasedata);
+mpcb = loadcase(basecasedata);
 
 %% clip base active generator outputs to PMAX, if necessary
 idx_pmax = [];      %% indices of generators clipped at PMAX
 if plim
-    idx_pmax = find( mpcbase.gen(:, GEN_STATUS) > 0 & ...
-            mpcbase.gen(:, PG) - mpcbase.gen(:, PMAX) > -mpopt.cpf.p_lims_tol);
+    idx_pmax = find( mpcb.gen(:, GEN_STATUS) > 0 & ...
+            mpcb.gen(:, PG) - mpcb.gen(:, PMAX) > -mpopt.cpf.p_lims_tol);
     if mpopt.verbose && ~isempty(idx_pmax)
         fprintf('base case real power output of gen %d reduced from %g to %g MW (PMAX)\n', ...
-            [idx_pmax mpcbase.gen(idx_pmax, PG) mpcbase.gen(idx_pmax, PMAX)]');
+            [idx_pmax mpcb.gen(idx_pmax, PG) mpcb.gen(idx_pmax, PMAX)]');
     end
-    mpcbase.gen(idx_pmax, PG) = mpcbase.gen(idx_pmax, PMAX);
+    mpcb.gen(idx_pmax, PG) = mpcb.gen(idx_pmax, PMAX);
 end
 
 %% run base case power flow
-[mpcbase, suc] = runpf(mpcbase, mpopt_pf);
+[mpcb, suc] = runpf(mpcb, mpopt_pf);
 if suc
     done = struct('flag', 0, 'msg', '');
 else
     done = struct('flag', 1, 'msg', 'Base case power flow did not converge.');
-    results = mpcbase;
+    results = mpcb;
     results.cpf = struct();
 end
 
 if ~done.flag
-    %% convert to internal indexing
-    mpcbase = ext2int(mpcbase);
-    nb = size(mpcbase.bus, 1);
-
-    %% get bus index lists of each type of bus
-    [ref, pv, pq] = bustypes(mpcbase.bus, mpcbase.gen);
-
     %% read target case data
-    mpctarget = loadcase(targetcasedata);
-
-    %% add zero columns to branch for flows if needed
-    if size(mpctarget.branch,2) < QT
-      mpctarget.branch = [ mpctarget.branch zeros(size(mpctarget.branch, 1), QT-size(mpctarget.branch,2)) ];
+    mpct = loadcase(targetcasedata);
+    if size(mpct.branch,2) < QT     %% add zero columns to branch for flows if needed
+      mpct.branch = [ mpct.branch zeros(size(mpct.branch, 1), QT-size(mpct.branch,2)) ];
     end
 
-    %% convert to internal indexing
-    mpctarget = ext2int(mpctarget);
-    i2e_gen = mpctarget.order.gen.i2e;
+    %% convert both to internal indexing
+    mpcb = ext2int(mpcb);
+    mpct = ext2int(mpct);
+    i2e_gen = mpct.order.gen.i2e;
+    nb = size(mpcb.bus, 1);
 
-    %% ensure target case has same bus types as base case
-    mpctarget.bus(:, BUS_TYPE) = mpcbase.bus(:, BUS_TYPE);
+    %% get bus index lists of each type of bus
+    [ref, pv, pq] = bustypes(mpcb.bus, mpcb.gen);
 
     %% generator info
     %% find generators that are ON and at voltage-controlled buses
-    ong = find(mpcbase.gen(:, GEN_STATUS) > 0 ...
-              & mpcbase.bus(mpcbase.gen(:, GEN_BUS), BUS_TYPE) ~= PQ);
-    gbus = mpcbase.gen(ong, GEN_BUS);   %% what buses are they at?
+    ong = find(mpcb.gen(:, GEN_STATUS) > 0 ...
+              & mpcb.bus(mpcb.gen(:, GEN_BUS), BUS_TYPE) ~= PQ);
+    gbus = mpcb.gen(ong, GEN_BUS);   %% what buses are they at?
 
-    %% make sure target case has same GEN_STATUS
-    ont = find(mpctarget.gen(:, GEN_STATUS) > 0 ...
-              & mpctarget.bus(mpctarget.gen(:, GEN_BUS), BUS_TYPE) ~= PQ);
+    %% make sure target case is same as base case w.r.t
+    %% bus types, GEN_STATUS, Qg and slack Pg
+    mpct.bus(:, BUS_TYPE) = mpcb.bus(:, BUS_TYPE);
+    ont = find(mpct.gen(:, GEN_STATUS) > 0 ...
+              & mpct.bus(mpct.gen(:, GEN_BUS), BUS_TYPE) ~= PQ);
     if length(ong) ~= length(ont) || any(ong ~= ont)
         error('runcpf: GEN_STATUS of all generators must be the same in base and target cases');
     end
-
-    %% ensure that Qg and slack Pg for target is same as for base
-    %% RDZ: why is this necessary?
-    mpctarget.gen(ong, QG) = mpcbase.gen(ong, QG);
+    mpct.gen(ong, QG) = mpcb.gen(ong, QG);
     for k = 1:length(ref)
         refgen = find(gbus == ref(k));
-        mpctarget.gen(ong(refgen), PG) = mpcbase.gen(ong(refgen), PG);
+        mpct.gen(ong(refgen), PG) = mpcb.gen(ong(refgen), PG);
     end
 
     %% zero transfers for gens that exceed PMAX limits, if necessary
     if plim
-        idx_pmax = find( mpcbase.gen(:, GEN_STATUS) > 0 & ...
-            mpcbase.gen(:, PG)   - mpcbase.gen(:, PMAX)   > -mpopt.cpf.p_lims_tol & ...
-            mpctarget.gen(:, PG) - mpctarget.gen(:, PMAX) > -mpopt.cpf.p_lims_tol);
+        idx_pmax = find( mpcb.gen(:, GEN_STATUS) > 0 & ...
+            mpcb.gen(:, PG)   - mpcb.gen(:, PMAX)   > -mpopt.cpf.p_lims_tol & ...
+            mpct.gen(:, PG) - mpct.gen(:, PMAX) > -mpopt.cpf.p_lims_tol);
         if ~isempty(idx_pmax)
             if mpopt.verbose
                 fprintf('target case real power output of gen %d reduced from %g to %g MW (PMAX)\n', ...
-                    [i2e_gen(idx_pmax) mpctarget.gen(idx_pmax, PG) mpcbase.gen(idx_pmax, PG)]');
+                    [i2e_gen(idx_pmax) mpct.gen(idx_pmax, PG) mpcb.gen(idx_pmax, PG)]');
             end
-            mpctarget.gen(idx_pmax, PG) = mpcbase.gen(idx_pmax, PG);
+            mpct.gen(idx_pmax, PG) = mpcb.gen(idx_pmax, PG);
         end
     end
-
-    [baseMVAb, busb, genb, branchb] = deal(mpcbase.baseMVA, mpcbase.bus, mpcbase.gen, mpcbase.branch);
-    [baseMVAt, bust, gent, brancht] = deal(mpctarget.baseMVA, mpctarget.bus, mpctarget.gen, mpctarget.branch);
 
     %%-----  run the continuation power flow  -----
     t0 = clock;
@@ -268,21 +280,28 @@ if ~done.flag
         v = mpver('all');
         fprintf('\nMATPOWER Version %s, %s', v.Version, v.Date);
         fprintf(' -- AC Continuation Power Flow\n');
+        if mpopt.verbose > 1
+            fprintf('step %3d  :                      lambda = %6.3f, %2d Newton steps\n', 0, 0, mpcb.iterations);
+        end
     end
 
     %% build admittance matrices
-    [Ybus, Yf, Yt] = makeYbus(baseMVAb, busb, branchb);
+    [Ybus, Yf, Yt] = makeYbus(mpcb.baseMVA, mpcb.bus, mpcb.branch);
 
-    %% functions for computing base and target case V dependent complex bus
+    %% functions for computing base and target case V-dependent complex bus
     %% power injections: (generation - load)
-    Sbusb = @(Vm)makeSbus(baseMVAb, busb, genb, mpopt, Vm);
-    Sbust = @(Vm)makeSbus(baseMVAt, bust, gent, mpopt, Vm);
+    Sbusb = @(Vm)makeSbus(mpcb.baseMVA, mpcb.bus, mpcb.gen, mpopt, Vm);
+    Sbust = @(Vm)makeSbus(mpct.baseMVA, mpct.bus, mpct.gen, mpopt, Vm);
 
     %% initialize variables
     cont_steps = 0;
-    iterations = mpcbase.iterations;
     lam = 0;
-    V   = busb(:, VM) .* exp(sqrt(-1) * pi/180 * busb(:, VA));
+    V   = mpcb.bus(:, VM) .* exp(sqrt(-1) * pi/180 * mpcb.bus(:, VA));
+    rollback = 0;   %% flag to indicate that a step must be rolled back
+    locating = 0;   %% flag to indicate that an event has interval was detected,
+                    %% but the event has not yet been located
+    rb_cnt_ef = 0;  %% counter for rollback steps triggered by event function intervals
+    rb_cnt_cb = 0;  %% counter for rollback steps triggered directly by callbacks
 
     %% initialize tangent predictor: z = [dx;dlam]
     z = [zeros(2*nb, 1); 1];
@@ -308,26 +327,22 @@ if ~done.flag
 
     %% input args for callbacks
     cb_data = struct( ...
-        'mpc_base', mpcbase, ...
-        'mpc_target', mpctarget, ...
-        'Sbusb', Sbusb, ...
-        'Sbust', Sbust, ...
-        'Ybus', Ybus, ...
-        'Yf', Yf, ...
-        'Yt', Yt, ...
-        'ref', ref, ...
-        'pv', pv, ...
-        'pq', pq, ...
-        'idx_pmax', idx_pmax, ...
-        'mpopt', mpopt );
+        'mpc_base', mpcb, ...       %% MATPOWER case struct - base case
+        'mpc_target', mpct, ...     %% MATPOWER case struct - target case
+        'Sbusb', Sbusb, ...         %% function for computing base bus inj
+        'Sbust', Sbust, ...         %% function for computing target bus inj
+        'Ybus', Ybus, ...           %% bus admittance matrix
+        'Yf', Yf, ...               %% branch admittance matrix, from end
+        'Yt', Yt, ...               %% branch admittance matrix, to end
+        'ref', ref, ...             %% vector of ref bus indices
+        'pv', pv, ...               %% vector of PV bus indices
+        'pq', pq, ...               %% vector of PQ bus indices
+        'idx_pmax', idx_pmax, ...   %% vector of gen indices of gens at PMAX
+        'mpopt', mpopt );           %% MATPOWER option struct
 
     %% initialize event function values
     for k = 1:nef
         cx.ef{k} = cpf_events(k).fcn(cb_data, cx);
-    end
-
-    if mpopt.verbose > 1
-        fprintf('step %3d  :                      lambda = %6.3f, %2d Newton steps\n', 0, 0, iterations);
     end
 
     %% invoke callbacks - "initialize" context
@@ -342,11 +357,7 @@ if ~done.flag
         done.msg = 'Base case and target case have identical load and generation';
     end
 
-    rollback = 0;
-    locating = 0;
     cont_steps = cont_steps + 1;
-    rb_cnt_ef = 0;  %% counter for rollback steps triggered by event function intervals
-    rb_cnt_cb = 0;  %% counter for rollback steps triggered directly by callbacks
     px = cx;    %% initialize state for previous continuation step
     while ~done.flag
         %% initialize next candidate with current state
@@ -543,16 +554,16 @@ if ~done.flag
     cpf_results.events = cx.events;     %% copy eventlog to results
 
     %% update final case with solution
-    mpctarget = cpf_current_mpc(cb_data.mpc_base, cb_data.mpc_target, Ybus, Yf, Yt, cb_data.ref, cb_data.pv, cb_data.pq, cx.V, cx.lam, mpopt);
-    mpctarget.et = etime(clock, t0);
-    mpctarget.success = success;
+    mpct = cpf_current_mpc(cb_data.mpc_base, cb_data.mpc_target, Ybus, Yf, Yt, cb_data.ref, cb_data.pv, cb_data.pq, cx.V, cx.lam, mpopt);
+    mpct.et = etime(clock, t0);
+    mpct.success = success;
 
     %%-----  output results  -----
     %% convert back to original bus numbering & print results
     n = cpf_results.iterations + 1;
-    cpf_results.V_hat = i2e_data(mpctarget, cpf_results.V_hat, NaN(nb,n), 'bus', 1);
-    cpf_results.V     = i2e_data(mpctarget, cpf_results.V,     NaN(nb,n), 'bus', 1);
-    results = int2ext(mpctarget);
+    cpf_results.V_hat = i2e_data(mpct, cpf_results.V_hat, NaN(nb,n), 'bus', 1);
+    cpf_results.V     = i2e_data(mpct, cpf_results.V,     NaN(nb,n), 'bus', 1);
+    results = int2ext(mpct);
     results.cpf = cpf_results;
 
     %% zero out result fields of out-of-service gens & branches
