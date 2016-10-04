@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 145;
+num_tests = 298;
 t_begin(num_tests, quiet);
 
 if have_fcn('matlab', 'vnum') < 7.001
@@ -68,7 +68,7 @@ else
     mpct.bus(:, [PD QD]) = mpct.bus(:, [PD QD]) * factor;
 
     %% run CPF
-    t = 'Continuation PF to lambda = 0.7 (natural) : ';
+    t = 'CPF to lambda = 0.7 (natural) : ';
     mpopt = mpoption(mpopt, 'cpf.stop_at', 0.7, 'cpf.parameterization', 1);
     r = runcpf(mpcb, mpct, mpopt);
     iterations = 35;
@@ -79,8 +79,13 @@ else
     t_is(size(r.cpf.V), [10 iterations+1], 12, [t 'size(V)']);
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
     t_is(size(r.cpf.lam), [1 iterations+1], 12, [t 'size(lam)']);
+    t_ok(strfind(r.cpf.done_msg, 'Reached desired lambda 0.7'), [t 'done_msg']);
+    t_is(length(r.cpf.events), 1, 12, [t 'size(events) == 1']);
+    t_is(r.cpf.events(1).k, iterations, 12, [t 'events(1).k']);
+    t_is(r.cpf.events(1).idx, 1, 12, [t 'events(1).idx']);
+    t_ok(strcmp(r.cpf.events(1).name, 'TARGET_LAM'), [t 'events(1).name']);
 
-    t = 'Continuation PF to lambda = 0.7 (arc length) : ';
+    t = 'CPF to lambda = 0.7 (arc length) : ';
     mpopt = mpoption(mpopt, 'cpf.stop_at', 0.7, 'cpf.parameterization', 2);
     r = runcpf(mpcb, mpct, mpopt);
     iterations = 41;
@@ -91,8 +96,13 @@ else
     t_is(size(r.cpf.V), [10 iterations+1], 12, [t 'size(V)']);
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
     t_is(size(r.cpf.lam), [1 iterations+1], 12, [t 'size(lam)']);
+    t_ok(strfind(r.cpf.done_msg, 'Reached desired lambda 0.7'), [t 'done_msg']);
+    t_is(length(r.cpf.events), 1, 12, [t 'size(events) == 1']);
+    t_is(r.cpf.events(1).k, iterations, 12, [t 'events(1).k']);
+    t_is(r.cpf.events(1).idx, 1, 12, [t 'events(1).idx']);
+    t_ok(strcmp(r.cpf.events(1).name, 'TARGET_LAM'), [t 'events(1).name']);
 
-    t = 'Continuation PF to lambda = 0.7 (pseudo arc length) : ';
+    t = 'CPF to lambda = 0.7 (pseudo arc length) : ';
     mpopt = mpoption(mpopt, 'cpf.stop_at', 0.7, 'cpf.parameterization', 3);
     r = runcpf(mpcb, mpct, mpopt);
     iterations = 41;
@@ -103,8 +113,13 @@ else
     t_is(size(r.cpf.V), [10 iterations+1], 12, [t 'size(V)']);
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
     t_is(size(r.cpf.lam), [1 iterations+1], 12, [t 'size(lam)']);
+    t_ok(strfind(r.cpf.done_msg, 'Reached desired lambda 0.7'), [t 'done_msg']);
+    t_is(length(r.cpf.events), 1, 12, [t 'size(events) == 1']);
+    t_is(r.cpf.events(1).k, iterations, 12, [t 'events(1).k']);
+    t_is(r.cpf.events(1).idx, 1, 12, [t 'events(1).idx']);
+    t_ok(strcmp(r.cpf.events(1).name, 'TARGET_LAM'), [t 'events(1).name']);
 
-    t = 'Continuation PF to nose point (arc length) : ';
+    t = 'CPF to nose pt (arc length) : ';
     mpopt = mpoption(mpopt, 'cpf.stop_at', 'NOSE', 'cpf.parameterization', 2);
     mpopt = mpoption(mpopt, 'cpf.adapt_step', 1);
     r = runcpf(mpcb, mpct, mpopt);
@@ -116,8 +131,13 @@ else
     t_is(size(r.cpf.V), [10 iterations+1], 12, [t 'size(V)']);
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
     t_is(size(r.cpf.lam), [1 iterations+1], 12, [t 'size(lam)']);
+    t_ok(strfind(r.cpf.done_msg, 'Reached steady state loading limit'), [t 'done_msg']);
+    t_is(length(r.cpf.events), 1, 12, [t 'size(events) == 1']);
+    t_is(r.cpf.events(1).k, iterations, 12, [t 'events(1).k']);
+    t_is(r.cpf.events(1).idx, 1, 12, [t 'events(1).idx']);
+    t_ok(strcmp(r.cpf.events(1).name, 'NOSE'), [t 'events(1).name']);
 
-    t = 'Continuation PF to nose point (pseudo arc length) : ';
+    t = 'CPF to nose pt (pseudo arc length) : ';
     mpopt = mpoption(mpopt, 'cpf.stop_at', 'NOSE', 'cpf.parameterization', 3);
     mpopt = mpoption(mpopt, 'cpf.adapt_step', 1);
     r = runcpf(mpcb, mpct, mpopt);
@@ -129,8 +149,13 @@ else
     t_is(size(r.cpf.V), [10 iterations+1], 12, [t 'size(V)']);
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
     t_is(size(r.cpf.lam), [1 iterations+1], 12, [t 'size(lam)']);
+    t_ok(strfind(r.cpf.done_msg, 'Reached steady state loading limit'), [t 'done_msg']);
+    t_is(length(r.cpf.events), 1, 12, [t 'size(events) == 1']);
+    t_is(r.cpf.events(1).k, iterations, 12, [t 'events(1).k']);
+    t_is(r.cpf.events(1).idx, 1, 12, [t 'events(1).idx']);
+    t_ok(strcmp(r.cpf.events(1).name, 'NOSE'), [t 'events(1).name']);
 
-    t = 'Continuation PF to nose point (pseudo arc length) w/Q lims: ';
+    t = 'CPF to nose pt (pseudo arc length) w/Q lims: ';
     mpopt_qlim = mpoption(mpopt, 'cpf.stop_at', 'NOSE', 'cpf.parameterization', 3,'cpf.enforce_q_lims',1);
     mpopt_qlim = mpoption(mpopt_qlim, 'cpf.adapt_step', 1);
 %mpopt_qlim = mpoption(mpopt_qlim, 'verbose', 3);
@@ -143,8 +168,19 @@ else
     t_is(size(r.cpf.V), [10 iterations+1], 12, [t 'size(V)']);
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
     t_is(size(r.cpf.lam), [1 iterations+1], 12, [t 'size(lam)']);
+    t_ok(strfind(r.cpf.done_msg, 'Reached steady state loading limit'), [t 'done_msg']);
+    ek = [12 iterations];
+    eidx = [1 1];
+    ename = {'QLIM', 'NOSE'};
+    ne = length(ek);
+    t_is(length(r.cpf.events), ne, 12, sprintf('%ssize(events) == %d', t, ne));
+    for j = 1:ne
+        t_is(r.cpf.events(j).k, ek(j), 12, sprintf('%sevents(%d).k == %d', t, j, ek(j)));
+        t_is(r.cpf.events(j).idx, eidx(j), 12, sprintf('%sevents(%d).idx == %d', t, j, eidx(j)));
+        t_ok(strcmp(r.cpf.events(j).name, ename{j}), sprintf('%sevents(%d).name = ''%s''', t, j, ename{j}));
+    end
     
-    t = 'Continuation PF to nose point (pseudo arc length) w/P lims: ';
+    t = 'CPF to nose pt (pseudo arc length) w/P lims: ';
     mpopt_plim = mpoption(mpopt, 'cpf.stop_at', 'NOSE', 'cpf.parameterization', 3,'cpf.enforce_p_lims',1);
     mpopt_plim = mpoption(mpopt_plim, 'cpf.adapt_step', 1);
 %mpopt_plim = mpoption(mpopt_plim, 'verbose', 3);
@@ -157,8 +193,19 @@ else
     t_is(size(r.cpf.V), [10 iterations+1], 12, [t 'size(V)']);
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
     t_is(size(r.cpf.lam), [1 iterations+1], 12, [t 'size(lam)']);
+    t_ok(strcmp(r.cpf.done_msg, 'All generators at Pmax'), [t 'done_msg']);
+    ek = [7 13 iterations];
+    eidx = [2 1 3];
+    ename = {'PLIM', 'PLIM', 'PLIM'};
+    ne = length(ek);
+    t_is(length(r.cpf.events), ne, 12, sprintf('%ssize(events) == %d', t, ne));
+    for j = 1:ne
+        t_is(r.cpf.events(j).k, ek(j), 12, sprintf('%sevents(%d).k == %d', t, j, ek(j)));
+        t_is(r.cpf.events(j).idx, eidx(j), 12, sprintf('%sevents(%d).idx == %d', t, j, eidx(j)));
+        t_ok(strcmp(r.cpf.events(j).name, ename{j}), sprintf('%sevents(%d).name = ''%s''', t, j, ename{j}));
+    end
     
-    t = 'Continuation PF to nose point (pseudo arc length) w/PQ lims: ';
+    t = 'CPF to nose pt (pseudo arc length) w/PQ lims: ';
     mpopt_pqlim = mpoption(mpopt, 'cpf.stop_at', 'NOSE', 'cpf.parameterization', 3,'cpf.enforce_q_lims',1,'cpf.enforce_p_lims',1);
     mpopt_pqlim = mpoption(mpopt_pqlim, 'cpf.adapt_step', 1);
 %mpopt_pqlim = mpoption(mpopt_pqlim, 'verbose', 3);
@@ -171,8 +218,19 @@ else
     t_is(size(r.cpf.V), [10 iterations+1], 12, [t 'size(V)']);
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
     t_is(size(r.cpf.lam), [1 iterations+1], 12, [t 'size(lam)']);
+    t_ok(strfind(r.cpf.done_msg, 'Reached steady state loading limit'), [t 'done_msg']);
+    ek = [7 14 iterations];
+    eidx = [2 1 1];
+    ename = {'PLIM', 'QLIM', 'NOSE'};
+    ne = length(ek);
+    t_is(length(r.cpf.events), ne, 12, sprintf('%ssize(events) == %d', t, ne));
+    for j = 1:ne
+        t_is(r.cpf.events(j).k, ek(j), 12, sprintf('%sevents(%d).k == %d', t, j, ek(j)));
+        t_is(r.cpf.events(j).idx, eidx(j), 12, sprintf('%sevents(%d).idx == %d', t, j, eidx(j)));
+        t_ok(strcmp(r.cpf.events(j).name, ename{j}), sprintf('%sevents(%d).name = ''%s''', t, j, ename{j}));
+    end
 
-    t = 'Continuation PF (full trace) (arc length) : ';
+    t = 'CPF (full trace) (arc length) : ';
     mpopt = mpoption(mpopt, 'cpf.stop_at', 'FULL', 'cpf.parameterization', 2);
     r = runcpf(mpcb, mpct, mpopt);
     iterations = 47;
@@ -183,8 +241,13 @@ else
     t_is(size(r.cpf.V), [10 iterations+1], 12, [t 'size(V)']);
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
     t_is(size(r.cpf.lam), [1 iterations+1], 12, [t 'size(lam)']);
+    t_ok(strfind(r.cpf.done_msg, 'Traced full continuation curve in'), [t 'done_msg']);
+    t_is(length(r.cpf.events), 1, 12, [t 'size(events) == 1']);
+    t_is(r.cpf.events(1).k, iterations, 12, [t 'events(1).k']);
+    t_is(r.cpf.events(1).idx, 1, 12, [t 'events(1).idx']);
+    t_ok(strcmp(r.cpf.events(1).name, 'TARGET_LAM'), [t 'events(1).name']);
 
-    t = 'Continuation PF (full trace) (pseudo arc length) : ';
+    t = 'CPF (full trace) (pseudo arc length) : ';
     mpopt = mpoption(mpopt, 'cpf.stop_at', 'FULL', 'cpf.parameterization', 3);
     r = runcpf(mpcb, mpct, mpopt);
     iterations = 47;
@@ -195,8 +258,13 @@ else
     t_is(size(r.cpf.V), [10 iterations+1], 12, [t 'size(V)']);
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
     t_is(size(r.cpf.lam), [1 iterations+1], 12, [t 'size(lam)']);
+    t_ok(strfind(r.cpf.done_msg, 'Traced full continuation curve in'), [t 'done_msg']);
+    t_is(length(r.cpf.events), 1, 12, [t 'size(events) == 1']);
+    t_is(r.cpf.events(1).k, iterations, 12, [t 'events(1).k']);
+    t_is(r.cpf.events(1).idx, 1, 12, [t 'events(1).idx']);
+    t_ok(strcmp(r.cpf.events(1).name, 'TARGET_LAM'), [t 'events(1).name']);
 
-    t = 'Continuation PF (full trace) (pseudo arc length) w/Q lims: ';
+    t = 'CPF (full trace) (pseudo arc length) w/Q lims: ';
     mpopt_qlim = mpoption(mpopt, 'cpf.stop_at', 'FULL', 'cpf.parameterization', 3,'cpf.enforce_q_lims',1);
     mpopt_qlim = mpoption(mpopt_qlim, 'cpf.adapt_step', 1);
 %mpopt_qlim = mpoption(mpopt_qlim, 'verbose', 3);
@@ -209,6 +277,17 @@ else
     t_is(size(r.cpf.V), [10 iterations+1], 12, [t 'size(V)']);
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
     t_is(size(r.cpf.lam), [1 iterations+1], 12, [t 'size(lam)']);
+    t_ok(strcmp(r.cpf.done_msg, 'No REF or PV buses remaining.'), [t 'done_msg']);
+    ek = [12 22 iterations];
+    eidx = [1 2 3];
+    ename = {'QLIM', 'QLIM', 'QLIM'};
+    ne = length(ek);
+    t_is(length(r.cpf.events), ne, 12, sprintf('%ssize(events) == %d', t, ne));
+    for j = 1:ne
+        t_is(r.cpf.events(j).k, ek(j), 12, sprintf('%sevents(%d).k == %d', t, j, ek(j)));
+        t_is(r.cpf.events(j).idx, eidx(j), 12, sprintf('%sevents(%d).idx == %d', t, j, eidx(j)));
+        t_ok(strcmp(r.cpf.events(j).name, ename{j}), sprintf('%sevents(%d).name = ''%s''', t, j, ename{j}));
+    end
 
     t = '1 user callback : ';
     mpopt = mpoption(mpopt, 'cpf.stop_at', 0.7, 'cpf.parameterization', 3);
@@ -220,6 +299,11 @@ else
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0.7, 12, [t 'max_lam']);
     t_is(size(r.cpf.lam), [1 iterations+1], 12, [t 'size(lam)']);
+    t_ok(strfind(r.cpf.done_msg, 'Reached desired lambda 0.7'), [t 'done_msg']);
+    t_is(length(r.cpf.events), 1, 12, [t 'size(events) == 1']);
+    t_is(r.cpf.events(1).k, iterations, 12, [t 'events(1).k']);
+    t_is(r.cpf.events(1).idx, 1, 12, [t 'events(1).idx']);
+    t_ok(strcmp(r.cpf.events(1).name, 'TARGET_LAM'), [t 'events(1).name']);
     t_ok(isfield(r.cpf, 'cb1'), [t 'isfield cpf.cb1']);
     t_ok(isstruct(r.cpf.cb1), [t 'isstruct cpf.cb1']);
     t_ok(isfield(r.cpf.cb1, 'initial'), [t 'isfield cpf.cb1.initial']);
@@ -241,6 +325,11 @@ else
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0.7, 12, [t 'max_lam']);
     t_is(size(r.cpf.lam), [1 iterations+1], 12, [t 'size(lam)']);
+    t_ok(strfind(r.cpf.done_msg, 'Reached desired lambda 0.7'), [t 'done_msg']);
+    t_is(length(r.cpf.events), 1, 12, [t 'size(events) == 1']);
+    t_is(r.cpf.events(1).k, iterations, 12, [t 'events(1).k']);
+    t_is(r.cpf.events(1).idx, 1, 12, [t 'events(1).idx']);
+    t_ok(strcmp(r.cpf.events(1).name, 'TARGET_LAM'), [t 'events(1).name']);
     t_ok(isfield(r.cpf, 'cb1'), [t 'isfield cpf.cb1']);
     t_ok(isstruct(r.cpf.cb1), [t 'isstruct cpf.cb1']);
     t_ok(isfield(r.cpf.cb1, 'initial'), [t 'isfield cpf.cb1.initial']);
@@ -255,14 +344,17 @@ else
     cb_args = struct('initial', 20, 'iteration', 2, 'final', 200);
     cb2 = struct('fcn', 't_cpf_cb2', 'args', cb_args);
     mpopt = mpoption(mpopt, 'cpf.user_callback', {'t_cpf_cb1', cb2});
-%mpopt.verbose = 3;
     r = runcpf(mpcb, mpct, mpopt);
-%mpopt.verbose = verbose;
     iterations = 9;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0.7, 12, [t 'max_lam']);
     t_is(size(r.cpf.lam), [1 iterations+1], 12, [t 'size(lam)']);
+    t_ok(strfind(r.cpf.done_msg, 'Reached desired lambda 0.7'), [t 'done_msg']);
+    t_is(length(r.cpf.events), 1, 12, [t 'size(events) == 1']);
+    t_is(r.cpf.events(1).k, iterations, 12, [t 'events(1).k']);
+    t_is(r.cpf.events(1).idx, 1, 12, [t 'events(1).idx']);
+    t_ok(strcmp(r.cpf.events(1).name, 'TARGET_LAM'), [t 'events(1).name']);
     t_ok(isfield(r.cpf, 'cb1'), [t 'isfield cpf.cb1']);
     t_ok(isstruct(r.cpf.cb1), [t 'isstruct cpf.cb1']);
     t_ok(isfield(r.cpf.cb1, 'initial'), [t 'isfield cpf.cb1.initial']);
@@ -285,14 +377,17 @@ else
     cb_args = struct('initial', 20, 'iteration', 2, 'final', 200);
     cb2 = struct('fcn', 't_cpf_cb2', 'priority', 21, 'args', cb_args);
     mpopt = mpoption(mpopt, 'cpf.user_callback', {'t_cpf_cb1', cb2});
-%mpopt.verbose = 3;
     r = runcpf(mpcb, mpct, mpopt);
-%mpopt.verbose = verbose;
     iterations = 9;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0.7, 12, [t 'max_lam']);
     t_is(size(r.cpf.lam), [1 iterations+1], 12, [t 'size(lam)']);
+    t_ok(strfind(r.cpf.done_msg, 'Reached desired lambda 0.7'), [t 'done_msg']);
+    t_is(length(r.cpf.events), 1, 12, [t 'size(events) == 1']);
+    t_is(r.cpf.events(1).k, iterations, 12, [t 'events(1).k']);
+    t_is(r.cpf.events(1).idx, 1, 12, [t 'events(1).idx']);
+    t_ok(strcmp(r.cpf.events(1).name, 'TARGET_LAM'), [t 'events(1).name']);
     t_ok(isfield(r.cpf, 'cb1'), [t 'isfield cpf.cb1']);
     t_ok(isstruct(r.cpf.cb1), [t 'isstruct cpf.cb1']);
     t_ok(isfield(r.cpf.cb1, 'initial'), [t 'isfield cpf.cb1.initial']);
@@ -310,6 +405,58 @@ else
     t_is(r.cpf.cb2.iteration, 2*iterations, 12, [t 'r.cpf.cb2.iterations']);
     t_is(r.cpf.cb2.final, 200, 12, [t 'r.cpf.cb2.final']);
     t_ok(strcmp(r.cpf.shared, '21212121212121212121'), [t 'r.cpf.shared']);
+
+    t = 'case300 w/Q lims : ';
+    mpopt = mpoption('out.all', 0, 'verbose', verbose);
+    mpopt = mpoption(mpopt, 'cpf.stop_at', 'FULL', 'cpf.step', 0.1);
+    mpopt = mpoption(mpopt, 'cpf.step_max', 0.2);
+    mpopt = mpoption(mpopt, 'cpf.adapt_step', 0);
+    mpopt = mpoption(mpopt, 'cpf.enforce_q_lims', 1);
+    mpcb = loadcase('case300');                         % load base case
+    mpct = mpcb;                                        % set up target case with
+    mpct.gen(:, [PG QG]) = mpcb.gen(:, [PG QG]) * 2.5;  % increased generation
+    mpct.bus(:, [PD QD]) = mpcb.bus(:, [PD QD]) * 2.5;  % and increased load
+
+    r = runcpf(mpcb, mpct, mpopt);
+    iterations = 41;
+    t_ok(r.success, [t 'success']);
+    t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
+    t_is(r.cpf.max_lam, 0.03326947, 6, [t 'max_lam']);
+    t_is(size(r.cpf.V_hat), [300 iterations+1], 12, [t 'size(V_hat)']);
+    t_is(size(r.cpf.V), [300 iterations+1], 12, [t 'size(V)']);
+    t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
+    t_is(size(r.cpf.lam), [1 iterations+1], 12, [t 'size(lam)']);
+    t_ok(strfind(r.cpf.done_msg, 'Traced full continuation curve in'), [t 'done_msg']);
+    ek = [1 3 5 12 14 16 18 21 23 27 36 39 41];
+    eidx = [26 19 67 59 15 69 50 54 66 68 87 89 1];
+    ename = {'QLIM', 'QLIM', 'QLIM', 'QLIM', 'QLIM', 'QLIM', 'QLIM', 'QLIM', 'QLIM', 'QLIM', 'QLIM', 'QLIM', 'TARGET_LAM'};
+    ne = length(ek);
+    t_is(length(r.cpf.events), ne, 12, sprintf('%ssize(events) == %d', t, ne));
+    for j = 1:ne
+        t_is(r.cpf.events(j).k, ek(j), 12, sprintf('%sevents(%d).k == %d', t, j, ek(j)));
+        t_is(r.cpf.events(j).idx, eidx(j), 12, sprintf('%sevents(%d).idx == %d', t, j, eidx(j)));
+        t_ok(strcmp(r.cpf.events(j).name, ename{j}), sprintf('%sevents(%d).name = ''%s''', t, j, ename{j}));
+    end
+
+    t = 'case14 (unsuccessful) : ';
+    mpopt = mpoption(mpopt, 'cpf.adapt_step', 1);
+    mpopt = mpoption(mpopt, 'cpf.enforce_q_lims', 0);
+    mpcb = loadcase('case14');                          % load base case
+    mpct = mpcb;                                        % set up target case with
+    mpct.gen(:, [PG QG]) = mpcb.gen(:, [PG QG]) * 2.5;  % increased generation
+    mpct.bus(:, [PD QD]) = mpcb.bus(:, [PD QD]) * 2.5;  % and increased load
+
+    r = runcpf(mpcb, mpct, mpopt);
+    iterations = 79;
+    t_ok(~r.success, [t 'success']);
+    t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
+    t_is(r.cpf.max_lam, 2.0401678, 6, [t 'max_lam']);
+    t_is(size(r.cpf.V_hat), [14 iterations+1], 12, [t 'size(V_hat)']);
+    t_is(size(r.cpf.V), [14 iterations+1], 12, [t 'size(V)']);
+    t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
+    t_is(size(r.cpf.lam), [1 iterations+1], 12, [t 'size(lam)']);
+    t_ok(strfind(r.cpf.done_msg, 'Corrector did not converge in'), [t 'done_msg']);
+    t_is(length(r.cpf.events), 0, 12, [t 'size(events) == 0']);
 
     if have_fcn('octave')
         warning(s1.state, file_in_path_warn_id);
