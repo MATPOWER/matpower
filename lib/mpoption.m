@@ -96,6 +96,8 @@ function opt = mpoption(varargin)
 %       [  0 - do NOT enforce limits                                        ]
 %       [  1 - enforce limits, simultaneous bus type conversion             ]
 %   cpf.adapt_step_tol      1e-3        tolerance for adaptive step control
+%   cpf.target_lam_tol      1e-5        tolerance for target lambda detection
+%   cpf.nose_tol            1e-5        tolerance for nose point detection (pu)
 %   cpf.p_lims_tol          0.01        tolerance for generator active
 %                                       power limit enforcement (MW)
 %   cpf.q_lims_tol          0.01        tolerance for generator reactive
@@ -502,6 +504,8 @@ if have_opt0
                 opt0.cpf.adapt_step_damping = opt_d.cpf.adapt_step_damping;
                 opt0.cpf.enforce_p_lims     = opt_d.cpf.enforce_p_lims;
                 opt0.cpf.enforce_q_lims     = opt_d.cpf.enforce_q_lims;
+                opt0.cpf.target_lam_tol     = opt_d.cpf.target_lam_tol;
+                opt0.cpf.nose_tol           = opt_d.cpf.nose_tol;
                 opt0.cpf.p_lims_tol         = opt_d.cpf.p_lims_tol;
                 opt0.cpf.q_lims_tol         = opt_d.cpf.q_lims_tol;
                 if (~isempty(opt0.cpf.user_callback_args) && ...
@@ -1446,6 +1450,8 @@ if ~isstruct(opt)
             'enforce_p_lims',       0, ...
             'enforce_q_lims',       0, ...
             'adapt_step_tol',       1e-3, ...
+            'target_lam_tol',       1e-5, ...
+            'nose_tol',             1e-5, ...
             'p_lims_tol',           0.01, ...
             'q_lims_tol',           0.01, ...
             'step_min',             1e-4, ...
@@ -1542,10 +1548,10 @@ v = 11;     %% version number of MATPOWER options struct
             %% v9   - added 'exp' for experimental fields, specifically
             %%        'sys_wide_zip_loads.pw', 'sys_wide_zip_loads.qw'
             %% v10  - added 'most' field
-            %% v11  - added options 'cpf.adapt_step_damping',
-            %%        'cpf.enforce_p_lims', 'cpf.enforce_q_lims', 
-            %%        'cpf.p_lims_tol' and 'cpf.q_lims_tol', removed
-            %%        option 'cpf.user_callback_args'
+            %% v11  - added 'cpf' options 'adapt_step_damping',
+            %%        'enforce_p_lims', 'enforce_q_lims', 'target_lam_tol'
+            %%        'nose_tol', 'p_lims_tol' and 'q_lims_tol',
+            %%        removed option 'cpf.user_callback_args'
 
 %%-------------------------------------------------------------------
 function db_level = DEBUG

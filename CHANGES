@@ -23,6 +23,9 @@ Changes since 6.0b1
     - INCOMPATIBLE CHANGE: Remove 'cpf.user_callback_args' option and
       modify 'cpf.user_callback' to allow for structs defining callback
       priority and args, in addition to just callback function name.
+    - Add user options for setting tolerances for target lambda detection
+      and nose point detection, 'cpf.target_lam_tol' and 'cpf.nose_tol',
+      respectively.
 
 9/27/16
     - INCOMPATIBLE CHANGE: Changed name of 'cpf.error_tol' option to

@@ -159,10 +159,10 @@ cpf_events = [];
 cpf_callbacks = [];
 %% to handle CPF termination
 if ischar(mpopt.cpf.stop_at) && strcmp(mpopt.cpf.stop_at, 'NOSE');
-    cpf_events   = cpf_register_event(cpf_events, 'NOSE', 'cpf_nose_event', 1e-5, 1);
+    cpf_events   = cpf_register_event(cpf_events, 'NOSE', 'cpf_nose_event', mpopt.cpf.nose_tol, 1);
     cpf_callbacks = cpf_register_callback(cpf_callbacks, 'cpf_nose_event_cb', 51);
 else        %% FULL or target lambda
-    cpf_events   = cpf_register_event(cpf_events, 'TARGET_LAM', 'cpf_target_lam_event', 1e-5, 1);
+    cpf_events   = cpf_register_event(cpf_events, 'TARGET_LAM', 'cpf_target_lam_event', mpopt.cpf.target_lam_tol, 1);
     cpf_callbacks = cpf_register_callback(cpf_callbacks, 'cpf_target_lam_event_cb', 50);
 end
 %% to handle reactive power limits
@@ -178,23 +178,27 @@ end
 cpf_callbacks = cpf_register_callback(cpf_callbacks, 'cpf_default_callback', 0);
 %% user callbacks
 if ~isempty(mpopt.cpf.user_callback)
+    %% convert to cell array, if necessary
     if iscell(mpopt.cpf.user_callback)
         user_callbacks = mpopt.cpf.user_callback;
     else
         user_callbacks = {mpopt.cpf.user_callback};
     end
     for k = 1:length(user_callbacks)
+        %% convert each to struct, if necessary
         if isstruct(user_callbacks{k})
             ucb = user_callbacks{k};
         else
             ucb = struct('fcn', user_callbacks{k});
         end
+        %% set default priority, args if not provided
         if ~isfield(ucb, 'priority')
             ucb.priority = [];
         end
         if ~isfield(ucb, 'args')
             ucb.args = [];
         end
+        %% register the user callback
         cpf_callbacks = cpf_register_callback(cpf_callbacks, ...
             ucb.fcn, ucb.priority, ucb.args);
     end
