@@ -15,6 +15,12 @@ For change history for MOST, see most/docs/CHANGES.
 Changes since 6.0b1
 -----------------
 
+10/4/16
+    - Improve backward compatibility of mpoption(), allow it to handle
+      old-style option vectors from earlier versions of MATPOWER, namely
+      3.2 and 4.0, and to accept on old style options vector with new-style
+      name/value pair option overrides.
+
 9/27/16
     - INCOMPATIBLE CHANGE: Changed name of 'cpf.error_tol' option to
       'cpf.adapt_step_tol'.

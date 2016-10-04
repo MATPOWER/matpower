@@ -15,7 +15,7 @@ end
 
 v = 11;
 
-t_begin(146, quiet);
+t_begin(152, quiet);
 
 %% default options struct
 t = 'mpoption() : ';
@@ -183,7 +183,7 @@ t_ok(isequal(mpopt, mpopt0), [t 'everything else']);
 
 t = 'mpoption(mpopt_v, ov) : ';
 ov = struct('verbose', 3, 'model', 'AC', 'opf', struct('ac', struct('solver', 'MIPS')));
-mpopt = mpoption(mpopt_v1, ov);
+mpopt = mpoption(mpopt_v1(1:116), ov);      %% use only first 116 elements, i.e MATPOWER 4.0 vector
 t_is(mpopt.verbose, 3, 12, [t 'mpopt.verbose']);
 t_ok(strcmp(upper(mpopt.model), 'AC'), [t 'mpopt.model']);
 t_ok(strcmp(mpopt.opf.dc.solver, 'MIPS'), [t 'mpopt.opf.dc.solver']);
@@ -197,7 +197,7 @@ mpopt = delete_missing_optional_fields(mpopt, mpopt0);
 t_ok(isequal(mpopt, mpopt0), [t 'everything else']);
 
 t = 'mpoption(mpopt_v, ''t_mpoption_ov'') : ';
-mpopt = mpoption(mpopt_v1, 't_mpoption_ov');
+mpopt = mpoption(mpopt_v1(1:93), 't_mpoption_ov');      %% use only first 93 elements, i.e MATPOWER 3.2 vector
 t_is(mpopt.verbose, 2, 12, [t 'mpopt.verbose']);
 t_ok(strcmp(upper(mpopt.model), 'DC'), [t 'mpopt.model']);
 t_ok(strcmp(mpopt.opf.dc.solver, 'CPLEX'), [t 'mpopt.opf.dc.solver']);
@@ -209,20 +209,19 @@ mpopt.mips.step_control = 0;
 mpopt = delete_missing_optional_fields(mpopt, mpopt0);
 t_ok(isequal(mpopt, mpopt0), [t 'everything else']);
 
-%%-----  this doesn't work, and isn't intended to  -----
-% t = 'mpoption(mpopt_v, <new-style pairs>) : ';
-% mpopt = mpoption(mpopt_v1, 'verbose', 3, 'model', 'AC', 'opf.ac.solver', 'MIPS');
-% t_is(mpopt.verbose, 3, 12, [t 'mpopt.verbose']);
-% t_ok(strcmp(upper(mpopt.model), 'AC'), [t 'mpopt.model']);
-% t_ok(strcmp(mpopt.opf.dc.solver, 'MIPS'), [t 'mpopt.opf.dc.solver']);
-% t_is(mpopt.mips.step_control, 1, 12, [t 'mpopt.mips.step_control']);
-% t_ok(strcmp(mpopt.opf.ac.solver, 'MIPS'), [t 'mpopt.opf.ac.solver']);
-% mpopt.verbose = 1;
-% mpopt.opf.dc.solver = 'DEFAULT';
-% mpopt.mips.step_control = 0;
-% mpopt.opf.ac.solver = 'DEFAULT';
-% mpopt = delete_missing_optional_fields(mpopt, mpopt0);
-% t_ok(isequal(mpopt, mpopt0), [t 'everything else']);
+t = 'mpoption(mpopt_v, <new-style pairs>) : ';
+mpopt = mpoption(mpopt_v1, 'verbose', 3, 'model', 'AC', 'opf.ac.solver', 'MIPS');
+t_is(mpopt.verbose, 3, 12, [t 'mpopt.verbose']);
+t_ok(strcmp(upper(mpopt.model), 'AC'), [t 'mpopt.model']);
+t_ok(strcmp(mpopt.opf.dc.solver, 'MIPS'), [t 'mpopt.opf.dc.solver']);
+t_is(mpopt.mips.step_control, 1, 12, [t 'mpopt.mips.step_control']);
+t_ok(strcmp(mpopt.opf.ac.solver, 'MIPS'), [t 'mpopt.opf.ac.solver']);
+mpopt.verbose = 1;
+mpopt.opf.dc.solver = 'DEFAULT';
+mpopt.mips.step_control = 0;
+mpopt.opf.ac.solver = 'DEFAULT';
+mpopt = delete_missing_optional_fields(mpopt, mpopt0);
+t_ok(isequal(mpopt, mpopt0), [t 'everything else']);
 
 t = 'mpoption(mpopt_v, <old-style pairs>) : ';
 mpopt = mpoption(mpopt_v1, 'VERBOSE', 3, 'PF_DC', 0, 'OPF_ALG', 520);
