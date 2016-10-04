@@ -15,6 +15,12 @@ For change history for MOST, see most/docs/CHANGES.
 Changes since 6.0b1
 -----------------
 
+10/4/16
+    - Improve backward compatibility of mpoption(), allow it to handle
+      old-style option vectors from earlier versions of MATPOWER, namely
+      3.2 and 4.0, and to accept on old style options vector with new-style
+      name/value pair option overrides.
+
 9/22/16
     - Update tests for compatibility with Optimization Toolbox 7.5 (R2016b),
       which removes 'active-set' algorithm for quadprog() and 'active-set'

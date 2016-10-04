@@ -12,7 +12,7 @@ function opt = mpoption(varargin)
 %   OPT = MPOPTION(NAME1, VALUE1, NAME2, VALUE2, ...)
 %       Same as previous, except override options are specified by NAME,
 %       VALUE pairs. This can be used to set any part of the options
-%       struct. The names can be individual fields or multi-level fields
+%       struct. The names can be individual fields or multi-level field
 %       names with embedded periods. The values can be scalars or structs.
 %
 %       For backward compatibility, the NAMES and VALUES may correspond
@@ -413,7 +413,9 @@ function opt = mpoption(varargin)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% some constants
-N = 124;                %% number of options in old-style vector
+N = 124;                %% number of options in old-style vector (MATPOWER 4.1)
+N40 = 116;              %% dimension of MATPOWER 4.0 options vector
+N32 = 93;               %% dimension of MATPOWER 3.2 options vector
 v = mpoption_version;   %% version number of MATPOWER options struct
 
 %% initialize flags and arg counter
@@ -423,10 +425,20 @@ return_old_style = 0;   %% return value as old-style vector?
 k = 1;
 if nargin > 0
     opt0 = varargin{k};
-    if (isstruct(opt0) && isfield(opt0, 'v')) || ...
-        (isnumeric(opt0) && size(opt0, 1) == N && size(opt0, 2) == 1)
+    if isstruct(opt0) && isfield(opt0, 'v')         %% options struct
         have_opt0 = 1;
         k = k + 1;
+    elseif isnumeric(opt0) && size(opt0, 2) == 1    %% options vector
+        nn = size(opt0, 1);
+        if ismember(nn, [N N40 N32])                %% of valid size
+            %% expand smaller option vectors (from before MATPOWER 4.1)
+            if nn < N
+                optv = mpoption_old();
+                opt0(nn+1:N) = optv(nn+1:N);
+            end
+            have_opt0 = 1;
+            k = k + 1;
+        end
     end
 end
 
@@ -513,11 +525,12 @@ if nargin - k == 0          %% looking at last arg, must be OVERRIDES
 elseif nargin - k > 0 && mod(nargin-k, 2)   %% even number of remaining args
     if DEBUG, fprintf('NAME/VALUE pairs override defaults\n'); end
     %% process NAME/VALUE pairs
-    if (have_opt0 && isnumeric(opt0)) ...   %% modifying an old-style options vector
-            || strcmp(varargin{k}, upper(varargin{k}))
-            %% this code implies that top-level option fields
-            %% cannot be all uppercase
-        if have_opt0
+    if strcmp(varargin{k}, upper(varargin{k}))  %% old-style, all UPPERCASE option pairs
+        %% NOTE: new top-level option fields cannot be all uppercase
+        if ~have_opt0
+            opt_v = mpoption_old(varargin{:});  %% create modified vector ...
+            opt = mpoption_v2s(opt_v);          %% ... then convert
+        else
             have_old_style_ov = 1;
             %% convert pairs to struct
             while k < nargin
@@ -526,11 +539,8 @@ elseif nargin - k > 0 && mod(nargin-k, 2)   %% even number of remaining args
                 k = k + 2;
                 ov.(name) = val;
             end
-        else
-            opt_v = mpoption_old(varargin{:});  %% create modified vector ...
-            opt = mpoption_v2s(opt_v);          %% ... then convert
         end
-    else                                    %% modifying options struct
+    else                                        %% new option pairs
         %% convert pairs to struct
         while k < nargin
             name = varargin{k};
