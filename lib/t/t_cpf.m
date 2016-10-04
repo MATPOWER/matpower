@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 109;
+num_tests = 145;
 t_begin(num_tests, quiet);
 
 if have_fcn('matlab', 'vnum') < 7.001
@@ -228,11 +228,33 @@ else
     t_is(r.cpf.cb1.initial, 1, 12, [t 'r.cpf.cb1.initial']);
     t_is(r.cpf.cb1.iteration, iterations, 12, [t 'r.cpf.cb1.iterations']);
     t_is(r.cpf.cb1.final, 1, 12, [t 'r.cpf.cb1.final']);
+    t_ok(strcmp(r.cpf.shared, '1111111111'), [t 'r.cpf.shared']);
+
+    t = '1 user callback : ';
+    cb1 = struct('fcn', 't_cpf_cb1', 'priority', 10);
+    mpopt = mpoption(mpopt, 'cpf.stop_at', 0.7, 'cpf.parameterization', 3);
+    mpopt = mpoption(mpopt, 'cpf.adapt_step', 1);
+    mpopt = mpoption(mpopt, 'cpf.user_callback', cb1);
+    r = runcpf(mpcb, mpct, mpopt);
+    iterations = 9;
+    t_ok(r.success, [t 'success']);
+    t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
+    t_is(r.cpf.max_lam, 0.7, 12, [t 'max_lam']);
+    t_is(size(r.cpf.lam), [1 iterations+1], 12, [t 'size(lam)']);
+    t_ok(isfield(r.cpf, 'cb1'), [t 'isfield cpf.cb1']);
+    t_ok(isstruct(r.cpf.cb1), [t 'isstruct cpf.cb1']);
+    t_ok(isfield(r.cpf.cb1, 'initial'), [t 'isfield cpf.cb1.initial']);
+    t_ok(isfield(r.cpf.cb1, 'iteration'), [t 'isfield cpf.cb1.iteration']);
+    t_ok(isfield(r.cpf.cb1, 'final'), [t 'isfield cpf.cb1.final']);
+    t_is(r.cpf.cb1.initial, 1, 12, [t 'r.cpf.cb1.initial']);
+    t_is(r.cpf.cb1.iteration, iterations, 12, [t 'r.cpf.cb1.iterations']);
+    t_is(r.cpf.cb1.final, 1, 12, [t 'r.cpf.cb1.final']);
+    t_ok(strcmp(r.cpf.shared, '1111111111'), [t 'r.cpf.shared']);
 
     t = '2 user callbacks (with args) : ';
-    mpopt = mpoption(mpopt, 'cpf.user_callback', {'t_cpf_cb1', 't_cpf_cb2'});
-    cb_args = struct('cb2', struct('initial', 20, 'iteration', 2, 'final', 200));
-    mpopt = mpoption(mpopt, 'cpf.user_callback_args', cb_args);
+    cb_args = struct('initial', 20, 'iteration', 2, 'final', 200);
+    cb2 = struct('fcn', 't_cpf_cb2', 'args', cb_args);
+    mpopt = mpoption(mpopt, 'cpf.user_callback', {'t_cpf_cb1', cb2});
 %mpopt.verbose = 3;
     r = runcpf(mpcb, mpct, mpopt);
 %mpopt.verbose = verbose;
@@ -257,6 +279,37 @@ else
     t_is(r.cpf.cb2.initial, 20, 12, [t 'r.cpf.cb2.initial']);
     t_is(r.cpf.cb2.iteration, 2*iterations, 12, [t 'r.cpf.cb2.iterations']);
     t_is(r.cpf.cb2.final, 200, 12, [t 'r.cpf.cb2.final']);
+    t_ok(strcmp(r.cpf.shared, '12121212121212121212'), [t 'r.cpf.shared']);
+
+    t = '2 user callbacks (with priority & args) : ';
+    cb_args = struct('initial', 20, 'iteration', 2, 'final', 200);
+    cb2 = struct('fcn', 't_cpf_cb2', 'priority', 21, 'args', cb_args);
+    mpopt = mpoption(mpopt, 'cpf.user_callback', {'t_cpf_cb1', cb2});
+%mpopt.verbose = 3;
+    r = runcpf(mpcb, mpct, mpopt);
+%mpopt.verbose = verbose;
+    iterations = 9;
+    t_ok(r.success, [t 'success']);
+    t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
+    t_is(r.cpf.max_lam, 0.7, 12, [t 'max_lam']);
+    t_is(size(r.cpf.lam), [1 iterations+1], 12, [t 'size(lam)']);
+    t_ok(isfield(r.cpf, 'cb1'), [t 'isfield cpf.cb1']);
+    t_ok(isstruct(r.cpf.cb1), [t 'isstruct cpf.cb1']);
+    t_ok(isfield(r.cpf.cb1, 'initial'), [t 'isfield cpf.cb1.initial']);
+    t_ok(isfield(r.cpf.cb1, 'iteration'), [t 'isfield cpf.cb1.iteration']);
+    t_ok(isfield(r.cpf.cb1, 'final'), [t 'isfield cpf.cb1.final']);
+    t_is(r.cpf.cb1.initial, 1, 12, [t 'r.cpf.cb1.initial']);
+    t_is(r.cpf.cb1.iteration, iterations, 12, [t 'r.cpf.cb1.iterations']);
+    t_is(r.cpf.cb1.final, 1, 12, [t 'r.cpf.cb1.final']);
+    t_ok(isfield(r.cpf, 'cb2'), [t 'isfield cpf.cb2']);
+    t_ok(isstruct(r.cpf.cb2), [t 'isstruct cpf.cb2']);
+    t_ok(isfield(r.cpf.cb2, 'initial'), [t 'isfield cpf.cb2.initial']);
+    t_ok(isfield(r.cpf.cb2, 'iteration'), [t 'isfield cpf.cb2.iteration']);
+    t_ok(isfield(r.cpf.cb2, 'final'), [t 'isfield cpf.cb2.final']);
+    t_is(r.cpf.cb2.initial, 20, 12, [t 'r.cpf.cb2.initial']);
+    t_is(r.cpf.cb2.iteration, 2*iterations, 12, [t 'r.cpf.cb2.iterations']);
+    t_is(r.cpf.cb2.final, 200, 12, [t 'r.cpf.cb2.final']);
+    t_ok(strcmp(r.cpf.shared, '21212121212121212121'), [t 'r.cpf.shared']);
 
     if have_fcn('octave')
         warning(s1.state, file_in_path_warn_id);

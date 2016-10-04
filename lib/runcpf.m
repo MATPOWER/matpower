@@ -150,7 +150,6 @@ end
 step        = mpopt.cpf.step;              %% continuation step length
 parm        = mpopt.cpf.parameterization;  %% parameterization
 adapt_step  = mpopt.cpf.adapt_step;        %% use adaptive step size?
-cb_args     = mpopt.cpf.user_callback_args;
 qlim        = mpopt.cpf.enforce_q_lims;    %% enforce reactive limits
 plim        = mpopt.cpf.enforce_p_lims;    %% enforce active limits
 
@@ -180,12 +179,24 @@ cpf_callbacks = cpf_register_callback(cpf_callbacks, 'cpf_default_callback', 0);
 %% user callbacks
 if ~isempty(mpopt.cpf.user_callback)
     if iscell(mpopt.cpf.user_callback)
-        callback_names = mpopt.cpf.user_callback;
+        user_callbacks = mpopt.cpf.user_callback;
     else
-        callback_names = {mpopt.cpf.user_callback};
+        user_callbacks = {mpopt.cpf.user_callback};
     end
-    for k = 1:length(callback_names)
-        cpf_callbacks = cpf_register_callback(cpf_callbacks, callback_names{k}, 10);
+    for k = 1:length(user_callbacks)
+        if isstruct(user_callbacks{k})
+            ucb = user_callbacks{k};
+        else
+            ucb = struct('fcn', user_callbacks{k});
+        end
+        if ~isfield(ucb, 'priority')
+            ucb.priority = [];
+        end
+        if ~isfield(ucb, 'args')
+            ucb.args = [];
+        end
+        cpf_callbacks = cpf_register_callback(cpf_callbacks, ...
+            ucb.fcn, ucb.priority, ucb.args);
     end
 end
 nef = length(cpf_events);       %% number of event functions registered
@@ -348,7 +359,7 @@ if ~done.flag
     %% invoke callbacks - "initialize" context
     for k = 1:ncb
         [nx, cx, done, rollback, evnts, cb_data] = cpf_callbacks(k).fcn( ...
-            cont_steps, cx, cx, cx, done, 0, [], cb_data, cb_args);
+            cont_steps, cx, cx, cx, done, 0, [], cb_data, cpf_callbacks(k).args);
     end
 
     %% check for case with no transfer
@@ -442,7 +453,7 @@ if ~done.flag
         rb = rollback;
         for k = 1:ncb
             [nx, cx, done, rollback, evnts, cb_data] = cpf_callbacks(k).fcn( ...
-                cont_steps, nx, cx, px, done, rollback, evnts, cb_data, cb_args);
+                cont_steps, nx, cx, px, done, rollback, evnts, cb_data, cpf_callbacks(k).args);
         end
         if ~rb && rollback      %% rollback triggered by callback (vs event function interval)
             rb_cnt_cb = rb_cnt_cb + 1;  %% increment rollback counter for callbacks
@@ -549,7 +560,7 @@ if ~done.flag
     for k = 1:ncb
         [nx, cx, done, rollback, evnts, cb_data, cpf_results] = ...
             cpf_callbacks(k).fcn(-cont_steps, nx, cx, px, ...
-                done, rollback, evnts, cb_data, cb_args, cpf_results);
+                done, rollback, evnts, cb_data, cpf_callbacks(k).args, cpf_results);
     end
     cpf_results.events = cx.events;     %% copy eventlog to results
 

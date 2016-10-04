@@ -12,22 +12,30 @@ function [nx, cx, done, rollback, evnts, cb_data, results] = t_cpf_cb2(...
 
 %%-----  INITIAL call  -----
 if k == 0
-    cxx = struct(   'initial', cb_args.cb2.initial, ...
+    cxx = struct(   'initial', cb_args.initial, ...
                     'iteration', 0, ...
                     'final', 0  );
     nxx = cxx;
     cx.cb.cb2 = cxx;
     nx.cb.cb2 = nxx;
+    if ~isfield(cx.cb, 'shared')
+        cx.cb.shared = '';
+        nx.cb.shared = '';
+    end
+    cx.cb.shared = [cx.cb.shared '2'];
+    nx.cb.shared = [nx.cb.shared '2'];
 else
     nxx = nx.cb.cb2;            %% get next callback state
     %%-----  ITERATION call  -----
     if k > 0
-        nxx.iteration = nxx.iteration + cb_args.cb2.iteration;
+        nxx.iteration = nxx.iteration + cb_args.iteration;
         nx.cb.cb2 = nxx;        %% update next callback state
+        nx.cb.shared = [nx.cb.shared '2'];  %% update next callback state
     %%-----  FINAL call  -----
     else    % k < 0
         results.cb2.initial     = nxx.initial;
         results.cb2.iteration   = nxx.iteration;
-        results.cb2.final       = cb_args.cb2.final;
+        results.cb2.final       = cb_args.final;
+        results.shared          = nx.cb.shared;
     end
 end

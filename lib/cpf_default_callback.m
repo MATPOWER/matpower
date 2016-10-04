@@ -60,7 +60,7 @@ function [nx, cx, done, rollback, evnts, cb_data, results] = ...
 %           idx_pmax - vector of generator indices for generators fixed
 %               at their PMAX limits
 %           mpopt - MATPOWER options struct
-%       CB_ARGS - struct specified in MPOPT.cpf.user_callback_args
+%       CB_ARGS - arbitrary data structure containing callback arguments
 %       RESULTS - initial value of output struct to be assigned to
 %           CPF field of results struct returned by RUNCPF
 %
@@ -91,7 +91,22 @@ function [nx, cx, done, rollback, evnts, cb_data, results] = ...
 %           exiting predictor-corrector loop, inputs identical to last
 %           iteration call, except K which is negated
 %
-%   See also RUNCPF.
+%   User Defined CPF Callback Functions:
+%       The user can define their own callback functions which take
+%       the same form and are called in the same contexts as
+%       CPF_DEFAULT_CALLBACK. These are specified via the MATPOWER
+%       option 'cpf.user_callback'. This option can be a string containing
+%       the name of the callback function, or a struct with the following
+%       fields, where all but the first are optional:
+%           'fcn'       - string with name of callback function
+%           'priority'  - numerical value specifying callback priority
+%                (default = 20, see CPF_REGISTER_CALLBACK for details)
+%           'args'      - arbitrary value (any type) passed to the callback
+%                         as CB_ARGS each time it is invoked
+%       Multiple user callbacks can be registered by assigning a cell array
+%       of such strings and/or structs to the 'cpf.user_callback' option.
+%
+%   See also RUNCPF, CPF_REGISTER_CALLBACK.
 
 %   MATPOWER
 %   Copyright (c) 2013-2016 by Power System Engineering Research Center (PSERC)

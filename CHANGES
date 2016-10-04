@@ -20,6 +20,9 @@ Changes since 6.0b1
       old-style option vectors from earlier versions of MATPOWER, namely
       3.2 and 4.0, and to accept on old style options vector with new-style
       name/value pair option overrides.
+    - INCOMPATIBLE CHANGE: Remove 'cpf.user_callback_args' option and
+      modify 'cpf.user_callback' to allow for structs defining callback
+      priority and args, in addition to just callback function name.
 
 9/27/16
     - INCOMPATIBLE CHANGE: Changed name of 'cpf.error_tol' option to
