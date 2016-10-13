@@ -158,6 +158,10 @@ function opt = mpoption(varargin)
 %       [             available from: http://www.mosek.com/                 ]
 %       [ 'OT'      - MATLAB Optimization Toolbox, QUADPROG, LINPROG        ]
 %   opf.violation           5e-6        constraint violation tolerance
+%   opf.use_vg              0           respect gen voltage setpt     [ 0-1 ]
+%       [ 0 - use specified bus Vmin & Vmax, and ignore gen Vg              ]
+%       [ 1 - replace specified bus Vmin & Vmax by corresponding gen Vg     ]
+%       [ between 0 and 1 - use a weighted average of the 2 options         ]
 %   opf.flow_lim            'S'         quantity limited by branch flow
 %                                       constraints
 %       [ 'S' - apparent power flow (limit in MVA)                          ]
@@ -487,6 +491,9 @@ if have_opt0
             end
             if opt0.v <= 10         %% convert version 10 to 11
                 opt0.cpf.adapt_step_damping = opt_d.cpf.adapt_step_damping;
+            end
+            if opt0.v <= 11         %% convert version 11 to 12
+                opt0.cpf.use_vg = opt_d.cpf.use_vg;
             end
             opt0.v = v;
         end
@@ -1439,6 +1446,7 @@ if ~isstruct(opt)
             'dc',                   struct(...
                 'solver',               'DEFAULT'   ), ...
             'violation',            5e-6, ...
+            'use_vg',               0, ...
             'flow_lim',             'S', ...
             'ignore_angle_lim',     0, ...
             'init_from_mpc',        -1, ...
@@ -1503,7 +1511,7 @@ optt = opt;
 %% globals
 %%-------------------------------------------------------------------
 function v = mpoption_version
-v = 11;     %% version number of MATPOWER options struct
+v = 12;     %% version number of MATPOWER options struct
             %% (must be incremented every time structure is updated)
             %% v1   - first version based on struct (MATPOWER 5.0b1)
             %% v2   - added 'linprog' and 'quadprog' fields
@@ -1522,6 +1530,7 @@ v = 11;     %% version number of MATPOWER options struct
             %%        'sys_wide_zip_loads.pw', 'sys_wide_zip_loads.qw'
             %% v10  - added 'most' field
             %% v11  - added option 'cpf.adapt_step_damping'
+            %% v12  - added option 'opf.use_vg'
 
 %%-------------------------------------------------------------------
 function db_level = DEBUG

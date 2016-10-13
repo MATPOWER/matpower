@@ -19,6 +19,7 @@ function om = opf_setup(mpc, mpopt)
 %% options
 dc  = strcmp(upper(mpopt.model), 'DC');
 alg = upper(mpopt.opf.ac.solver);
+use_vg = mpopt.opf.use_vg;
 
 %% define named indices into data matrices
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
@@ -71,6 +72,27 @@ if dc
         end
       end
       mpc.N(:, acc) = [];               %% delete Vm and Qg columns
+    end
+  end
+else    %% AC
+  if use_vg     %% adjust bus voltage limits based on generator Vg setpoint
+    %% gen connection matrix, element i, j is 1 if, generator j at bus i is ON
+    Cg = sparse(mpc.gen(:, GEN_BUS), (1:ng)', mpc.gen(:, GEN_STATUS) > 0, nb, ng);
+    Vbg = Cg * sparse(1:ng, 1:ng, mpc.gen(:, VG), ng, ng);
+    Vmax = max(Vbg, [], 2); %% zero for non-gen buses, else max Vg of gens @ bus
+    ib = find(Vmax);                %% buses with online gens
+    Vmin = max(2*Cg - Vbg, [], 2);  %% same as Vmax, except min Vg of gens @ bus
+    Vmin(ib) = 2 - Vmin(ib);
+
+    if use_vg == 1      %% use Vg setpoint directly
+        mpc.bus(ib, VMAX) = Vmax(ib);   %% max set by max Vg @ bus
+        mpc.bus(ib, VMIN) = Vmin(ib);   %% min set by min Vg @ bus
+    elseif use_vg > 0 && use_vg < 1     %% fractional value
+        %% use weighted avg between original Vmin/Vmax limits and Vg
+        mpc.bus(ib, VMAX) = (1-use_vg) * mpc.bus(ib, VMAX) + use_vg * Vmax(ib);
+        mpc.bus(ib, VMIN) = (1-use_vg) * mpc.bus(ib, VMIN) + use_vg * Vmin(ib);
+    else
+        error('opf_setup: option ''opf.use_vg'' (= %g) cannot be negative or greater than 1', use_vg);
     end
   end
 end
