@@ -15,6 +15,13 @@ For change history for MOST, see most/docs/CHANGES.
 Changes since 6.0b1
 -----------------
 
+10/14/16
+    - Fixed bugs in AC OPF solver code for fmincon, IPOPT, and Knitro
+      involving shadow prices on variable bounds, when upper and lower bounds
+      are equal (such as a voltage magnitude setpoint when 'opf.use_vg' is 1).
+      In IPOPT the prices are missing, and Knitro and fmincon can both return
+      negative prices on the wrong constraint.
+
 10/13/16
     - Added 'opf.use_vg' option to provide a convenient way to have the
       OPF respect the generator voltage setpoints specified in the gen

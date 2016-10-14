@@ -234,6 +234,15 @@ if ~isempty(il)
     muSt(il) = 2 * Lambda.ineqnonlin((1:nl2)+nl2) .* branch(il, RATE_A) / baseMVA;
 end
 
+%% fix Lambdas
+%% (shadow prices on equality variable bounds can come back on wrong limit)
+kl = find(Lambda.lower > 0 & Lambda.upper == 0);
+Lambda.upper(kl) = Lambda.lower(kl);
+Lambda.lower(kl) = 0;
+ku = find(Lambda.upper < 0 & Lambda.lower == 0);
+Lambda.lower(ku) = Lambda.upper(ku);
+Lambda.upper(ku) = 0;
+
 %% update Lagrange multipliers
 bus(:, MU_VMAX)  = Lambda.upper(vv.i1.Vm:vv.iN.Vm);
 bus(:, MU_VMIN)  = -Lambda.lower(vv.i1.Vm:vv.iN.Vm);
