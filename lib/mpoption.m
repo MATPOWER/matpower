@@ -172,6 +172,10 @@ function opt = mpoption(varargin)
 %       [             available from: http://www.mosek.com/                 ]
 %       [ 'OT'      - MATLAB Optimization Toolbox, QUADPROG, LINPROG        ]
 %   opf.violation           5e-6        constraint violation tolerance
+%   opf.use_vg              0           respect gen voltage setpt     [ 0-1 ]
+%       [ 0 - use specified bus Vmin & Vmax, and ignore gen Vg              ]
+%       [ 1 - replace specified bus Vmin & Vmax by corresponding gen Vg     ]
+%       [ between 0 and 1 - use a weighted average of the 2 options         ]
 %   opf.flow_lim            'S'         quantity limited by branch flow
 %                                       constraints
 %       [ 'S' - apparent power flow (limit in MVA)                          ]
@@ -515,6 +519,9 @@ if have_opt0
                     warning('The ''cpf.user_callback_args'' option has been removed. Please include the args in a struct in ''cpf.user_callback'' instead.')
                 end
                 opt0.cpf = rmfield(opt0.cpf, 'user_callback_args');
+            end
+            if opt0.v <= 11         %% convert version 11 to 12
+                opt0.cpf.use_vg = opt_d.cpf.use_vg;
             end
             opt0.v = v;
         end
@@ -1466,6 +1473,7 @@ if ~isstruct(opt)
             'dc',                   struct(...
                 'solver',               'DEFAULT'   ), ...
             'violation',            5e-6, ...
+            'use_vg',               0, ...
             'flow_lim',             'S', ...
             'ignore_angle_lim',     0, ...
             'init_from_mpc',        -1, ...
@@ -1530,7 +1538,7 @@ optt = opt;
 %% globals
 %%-------------------------------------------------------------------
 function v = mpoption_version
-v = 11;     %% version number of MATPOWER options struct
+v = 12;     %% version number of MATPOWER options struct
             %% (must be incremented every time structure is updated)
             %% v1   - first version based on struct (MATPOWER 5.0b1)
             %% v2   - added 'linprog' and 'quadprog' fields
@@ -1552,6 +1560,7 @@ v = 11;     %% version number of MATPOWER options struct
             %%        'enforce_p_lims', 'enforce_q_lims', 'target_lam_tol'
             %%        'nose_tol', 'p_lims_tol' and 'q_lims_tol',
             %%        removed option 'cpf.user_callback_args'
+            %% v12  - added option 'opf.use_vg'
 
 %%-------------------------------------------------------------------
 function db_level = DEBUG

@@ -101,11 +101,24 @@ end
 %% find branches with flow limits
 il = find(branch(:, RATE_A) ~= 0 & branch(:, RATE_A) < 1e10);
 nl2 = length(il);           %% number of constrained lines
+nx = length(x0);
+
+%% replace equality variable bounds with an equality constraint
+%% (since IPOPT does not return shadow prices on variables that it eliminates)
+kk = find(xmin(nb+1:end) == xmax(nb+1:end));    %% all bounds except ref angles
+nk = length(kk);
+if nk
+    kk = kk + nb;               %% adjust index for missing ref angles
+    A = [ A; sparse((1:nk)', kk, 1, nk, nx) ];
+    l = [ l; xmin(kk) ];
+    u = [ u; xmax(kk) ];
+    xmin(kk) = -Inf;
+    xmax(kk) = Inf;
+end
 
 %%-----  run opf  -----
 %% build Jacobian and Hessian structure
 nA = size(A, 1);                %% number of original linear constraints
-nx = length(x0);
 f = branch(:, F_BUS);                           %% list of "from" buses
 t = branch(:, T_BUS);                           %% list of "to" buses
 Cf = sparse(1:nl, f, ones(nl, 1), nl, nb);      %% connection matrix for line & from buses
@@ -234,6 +247,20 @@ if ~isempty(il)
     muSf(il) = 2 * info.lambda(2*nb+    (1:nl2)) .* branch(il, RATE_A) / baseMVA;
     muSt(il) = 2 * info.lambda(2*nb+nl2+(1:nl2)) .* branch(il, RATE_A) / baseMVA;
 end
+
+%% extract shadow prices for equality var bounds converted to eq constraints
+%% (since IPOPT does not return shadow prices on variables that it eliminates)
+if nk
+    lam_tmp = info.lambda(2*nb+2*nl2+nA-nk+(1:nk));
+    kl = find(lam_tmp < 0);             %% lower bound binding
+    ku = find(lam_tmp > 0);             %% upper bound binding
+    info.zl(kk(kl)) = -lam_tmp(kl);
+    info.zu(kk(ku)) =  lam_tmp(ku);
+
+    info.lambda(2*nb+2*nl2+nA-nk+(1:nk)) = [];  %% remove these shadow prices
+    nA = nA - nk;                               %% reduce dimension accordingly
+end
+
 
 %% update Lagrange multipliers
 bus(:, MU_VMAX)  = info.zu(vv.i1.Vm:vv.iN.Vm);
