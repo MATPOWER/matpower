@@ -42,7 +42,8 @@ Changes since 6.0b1
 
 9/19/16
     - Fix dimension bug in makeBdc() when last bus is not connected (should
-      never happen if bus is properly marked as type NONE).
+      never happen if bus is properly marked as type NONE). Thanks to
+      Samuel Perkin.
 
 8/15/16
     - Fixed a harmless bug in @opt_model where variable, constraint and
