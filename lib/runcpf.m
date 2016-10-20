@@ -30,6 +30,7 @@ function [res, suc] = ...
 %       RESULTS : results struct, with the following fields:
 %           (all fields from the input MATPOWER case, i.e. bus, branch,
 %               gen, etc., but with solved voltages, power flows, etc.)
+%           version - MATPOWER version
 %           order - info used in external <-> internal data conversion
 %           et - elapsed time in seconds
 %           success - success flag, 1 = succeeded, 0 = failed
@@ -41,10 +42,22 @@ function [res, suc] = ...
 %                       predictor steps
 %               V - (nb x nsteps+1) complex bus voltages from
 %                       corrector steps
+%               steps - (nsteps) row vector of stepsizes taken at each
+%                       continuation step
 %               lam - (nsteps+1) row vector of lambda values from
 %                       corrector steps
 %               max_lam - maximum value of lambda in RESULTS.cpf.lam
 %               iterations - number of continuation steps performed
+%               done_msg - Text message describing the cause of
+%                    continuation termination
+%               events - an array of structs of size nevents. Each event
+%                    struct has the following fields
+%                    k - the continuation step number at which event was
+%                      located
+%                    name - the name of the event
+%                    idx - A unique integer id to differentiate multiple
+%                      events located at the same step
+%                    msg - Descriptive text for the event
 %       SUCCESS : the success flag can additionally be returned as
 %           a second output argument
 %
