@@ -44,8 +44,22 @@ for k = 1:length(algs)
             mpopt = mpoption;
 %             sc = mosek_symbcon;
 %             alg = sc.MSK_OPTIMIZER_DUAL_SIMPLEX;    %% use dual simplex
+%             alg = sc.MSK_OPTIMIZER_INTPNT;          %% use interior point
 %             mpopt = mpoption(mpopt, 'mosek.lp_alg', alg );
             mpopt = mpoption(mpopt, 'mosek.gap_tol', 1e-10);
+%             mpopt = mpoption(mpopt, 'mosek.opts.MSK_DPAR_INTPNT_TOL_PFEAS', 1e-10);
+%             mpopt = mpoption(mpopt, 'mosek.opts.MSK_DPAR_INTPNT_TOL_DFEAS', 1e-10);
+%             mpopt = mpoption(mpopt, 'mosek.opts.MSK_DPAR_INTPNT_TOL_INFEAS', 1e-10);
+%             mpopt = mpoption(mpopt, 'mosek.opts.MSK_DPAR_INTPNT_TOL_REL_GAP', 1e-10);
+            vnum = have_fcn('mosek', 'vnum');
+            if vnum >= 8
+%                 mpopt = mpoption(mpopt, 'mosek.opts.MSK_DPAR_INTPNT_QO_TOL_PFEAS', 1e-10);
+%                 mpopt = mpoption(mpopt, 'mosek.opts.MSK_DPAR_INTPNT_QO_TOL_DFEAS', 1e-10);
+%                 mpopt = mpoption(mpopt, 'mosek.opts.MSK_DPAR_INTPNT_QO_TOL_INFEAS', 1e-10);
+%                 mpopt = mpoption(mpopt, 'mosek.opts.MSK_DPAR_INTPNT_QO_TOL_MU_RED', 1e-10);
+                mpopt = mpoption(mpopt, 'mosek.opts.MSK_DPAR_INTPNT_QO_TOL_REL_GAP', 1e-10);
+            end
+%             opt.verbose = 3;
             opt.mosek_opt = mosek_options([], mpopt);
         end
 
@@ -100,7 +114,7 @@ for k = 1:length(algs)
             t_is(x, [2; 4]/3, 7, [t 'x']);
             t_is(f, -74/9, 6, [t 'f']);
             t_is(lam.mu_l, [0;0;0], 13, [t 'lam.mu_l']);
-            t_is(lam.mu_u, [28;4;0]/9, 7, [t 'lam.mu_u']);
+            t_is(lam.mu_u, [28;4;0]/9, 4, [t 'lam.mu_u']);
             t_is(lam.lower, zeros(size(x)), 7, [t 'lam.lower']);
             t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 

@@ -231,13 +231,16 @@ else                                %% AC formulation
                     & gen(:, QG) < gen(:, QMIN) - mpopt.opf.violation );
             
             if ~isempty(mx) || ~isempty(mn)  %% we have some Q limit violations
-                %% first check for INFEASIBILITY (all remaining gens violating)
+                %% first check for INFEASIBILITY
                 infeas = union(mx', mn')';  %% transposes handle fact that
                     %% union of scalars is a row vector
                 remaining = find( gen(:, GEN_STATUS) > 0 & ...
                                 ( bus(gen(:, GEN_BUS), BUS_TYPE) == PV | ...
                                   bus(gen(:, GEN_BUS), BUS_TYPE) == REF ));
-                if length(infeas) == length(remaining) && all(infeas == remaining)
+                if length(infeas) == length(remaining) && all(infeas == remaining) && ...
+                        (isempty(mx) || isempty(mn))
+                    %% all remaining PV/REF gens are violating AND all are
+                    %% violating same limit (all violating Qmin or all Qmax)
                     if mpopt.verbose
                         fprintf('All %d remaining gens exceed their Q limits : INFEASIBLE PROBLEM\n', length(infeas));
                     end

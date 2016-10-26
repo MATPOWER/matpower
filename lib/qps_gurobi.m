@@ -234,7 +234,7 @@ else
     m.Q = 0.5 * H;
 end
 if verbose
-    methods = {
+    alg_names = {
         'automatic',
         'primal simplex',
         'dual simplex',
@@ -244,7 +244,7 @@ if verbose
     };
     vn = gurobiver;
     fprintf('Gurobi Version %s -- %s %s solver\n', ...
-        vn, methods{g_opt.Method+2}, lpqp);
+        vn, alg_names{g_opt.Method+2}, lpqp);
 end
 results = gurobi(m, g_opt);
 switch results.status

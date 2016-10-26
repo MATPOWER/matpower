@@ -15,6 +15,15 @@ For change history for MOST, see most/docs/CHANGES.
 Changes since 6.0b1
 -----------------
 
+10/26/16
+    - Include support for MOSEK 8, some algorithms eliminated, others changed
+      algorithm code set via 'mosek.lp_alg' option.
+
+10/19/16
+    - Improved robustness of infeasibility detection when 'pf.enforce_q_lims'
+      option is used.
+    - Add tests for power flow with 'pf.enforce_q_lims' option.
+
 10/14/16
     - Fixed bugs in AC OPF solver code for fmincon, IPOPT, and Knitro
       involving shadow prices on variable bounds, when upper and lower bounds
@@ -52,7 +61,8 @@ Changes since 6.0b1
 
 9/19/16
     - Fix dimension bug in makeBdc() when last bus is not connected (should
-      never happen if bus is properly marked as type NONE).
+      never happen if bus is properly marked as type NONE). Thanks to
+      Samuel Perkin.
 
 8/15/16
     - Fix a harmless bug in @opt_model where variable, constraint and

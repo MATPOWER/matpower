@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-t_begin(44, quiet);
+t_begin(53, quiet);
 
 casefile = 't_case9_pf';
 if quiet
@@ -191,6 +191,37 @@ warning('off', 'all');  %% turn of (near-)singular matrix warnings
 r = rundcpf(mpc, mpopt);
 warning(warn_state);
 t_ok(~r.success, [t 'success']);
+
+%% case 14 with Q limits
+t = 'pf.enforce_q_lims == 0 : ';
+mpc = loadcase('case14');
+mpc.gen(1, QMIN) = -10;
+mpc.gen(:, QMAX) = [10; 30; 29; 15; 15];
+bt0 = mpc.bus(:, BUS_TYPE);
+bt = bt0;
+mpopt = mpoption(mpopt, 'pf.enforce_q_lims', 0);
+r = runpf(mpc, mpopt);
+t_ok(r.success, [t 'success']);
+t_is(r.bus(:, BUS_TYPE), bt, 12, [t 'bus type']);
+t_is(r.gen(:, QG), [-16.549300542; 43.557100134; 25.075348495; 12.730944405; 17.623451366], 8, [t 'Qg']);
+
+t = 'pf.enforce_q_lims == 1 : ';
+mpopt = mpoption(mpopt, 'pf.enforce_q_lims', 1);
+r = runpf(mpc, mpopt);
+bt = bt0;
+bt([1 2 3 8]) = [PQ PQ REF PQ];
+t_ok(~r.success, [t '~success']);
+t_is(r.bus(:, BUS_TYPE), bt, 12, [t 'bus type']);
+t_is(r.gen(:, QG), [-10; 30; 31.608422873; 16.420423190; 15], 4, [t 'Qg']);
+
+t = 'pf.enforce_q_lims == 2 : ';
+mpopt = mpoption(mpopt, 'pf.enforce_q_lims', 2);
+r = runpf(mpc, mpopt);
+bt = bt0;
+bt([1 2 3 6 8]) = [REF PQ PQ PQ PQ];
+t_ok(r.success, [t 'success']);
+t_is(r.bus(:, BUS_TYPE), bt, 12, [t 'bus type']);
+t_is(r.gen(:, QG), [-6.30936644; 30; 29; 15; 15], 8, [t 'Qg']);
 
 t_end;
 
