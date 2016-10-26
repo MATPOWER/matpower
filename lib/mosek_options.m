@@ -106,23 +106,36 @@ end
 %%-----  set default options for MOSEK  -----
 %% solution algorithm
 if have_mpopt
+    vnum = have_fcn('mosek', 'vnum');
+    valid_alg = {                                   %% v6.x v7.x v8.x
+            sc.MSK_OPTIMIZER_FREE,                  %%  0    0    2
+            sc.MSK_OPTIMIZER_INTPNT,                %%  1    1    4
+            sc.MSK_OPTIMIZER_PRIMAL_SIMPLEX,        %%  4    3    6
+            sc.MSK_OPTIMIZER_DUAL_SIMPLEX,          %%  5    4    1
+            sc.MSK_OPTIMIZER_FREE_SIMPLEX           %%  7    6    3
+    };
+    if vnum < 8
+        valid_alg{end+1} = ...
+            sc.MSK_OPTIMIZER_PRIMAL_DUAL_SIMPLEX;   %%  6    5    -
+        valid_alg{end+1} = ...
+            sc.MSK_OPTIMIZER_CONCURRENT;            %% 10   10    - 
+    end
+    if vnum >= 7 && vnum < 8
+        valid_alg{end+1} = ...
+            sc.MSK_OPTIMIZER_NETWORK_PRIMAL_SIMPLEX;%%  -    7    -
+    end
+
     alg = mpopt.mosek.lp_alg;
-    switch alg                                          %% v6.x v7.x
-        case {  sc.MSK_OPTIMIZER_FREE,                  %%  0    0
-                sc.MSK_OPTIMIZER_INTPNT,                %%  1    1
-                sc.MSK_OPTIMIZER_PRIMAL_SIMPLEX,        %%  4    3
-                sc.MSK_OPTIMIZER_DUAL_SIMPLEX,          %%  5    4
-                sc.MSK_OPTIMIZER_PRIMAL_DUAL_SIMPLEX,   %%  6    5
-                sc.MSK_OPTIMIZER_FREE_SIMPLEX,          %%  7    6
-%                 sc.MSK_OPTIMIZER_NETWORK_PRIMAL_SIMPLEX,%%  -    7 (non-existent for MOSEK v6)
-                sc.MSK_OPTIMIZER_CONCURRENT }           %% 10   10
+    switch alg
+        case valid_alg
             opt.MSK_IPAR_OPTIMIZER = alg;
         otherwise
-            if have_fcn('mosek', 'vnum') >= 7 && ...
-                    alg == sc.MSK_OPTIMIZER_NETWORK_PRIMAL_SIMPLEX
-                opt.MSK_IPAR_OPTIMIZER = alg;
-            else
+            if alg == 0     %% MATPOWER still interprets this to be 'default'
+                            %% even for MOSEK 8, since the conic optimizer is
+                            %% not directly supported by mi/qps_matpower()
                 opt.MSK_IPAR_OPTIMIZER = sc.MSK_OPTIMIZER_FREE;
+            else
+                error('mosek_options: %d is not a valid value for MSK_IPAR_OPTIMIZER', alg);
             end
     end
 

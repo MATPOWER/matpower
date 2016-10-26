@@ -185,9 +185,6 @@ if ~isempty(p.opt) && isfield(p.opt, 'mosek_opt') && ~isempty(p.opt.mosek_opt)
 else
     mosek_opt = mosek_options;
 end
-if qp
-    mosek_opt.MSK_IPAR_OPTIMIZER = 0;   %% default solver only for QP
-end
 
 %% set up problem struct for MOSEK
 prob.c = p.c;
@@ -257,7 +254,7 @@ end
 if verbose
     s = have_fcn('mosek', 'all');
     if s.vnum < 7
-        methods = {
+        alg_names = {           %% version 6.x
             'default',              %%  0 : MSK_OPTIMIZER_FREE
             'interior point',       %%  1 : MSK_OPTIMIZER_INTPNT
             '<conic>',              %%  2 : MSK_OPTIMIZER_CONIC
@@ -270,8 +267,8 @@ if verbose
             '<nonconvex>',          %%  9 : MSK_OPTIMIZER_NONCONVEX
             'concurrent'            %% 10 : MSK_OPTIMIZER_CONCURRENT
         };
-    else
-        methods = {
+    elseif s.vnum < 8
+        alg_names = {           %% version 7.x
             'default',              %%  0 : MSK_OPTIMIZER_FREE
             'interior point',       %%  1 : MSK_OPTIMIZER_INTPNT
             '<conic>',              %%  2 : MSK_OPTIMIZER_CONIC
@@ -284,6 +281,16 @@ if verbose
             '<mixed int>',          %%  9 : MSK_OPTIMIZER_MIXED_INT
             'concurrent',           %% 10 : MSK_OPTIMIZER_CONCURRENT
             '<nonconvex>'           %% 11 : MSK_OPTIMIZER_NONCONVEX
+        };
+    else
+        alg_names = {           %% version 8.x
+            '<conic>',              %%  0 : MSK_OPTIMIZER_CONIC
+            'dual simplex',         %%  1 : MSK_OPTIMIZER_DUAL_SIMPLEX
+            'default',              %%  2 : MSK_OPTIMIZER_FREE
+            'automatic simplex',    %%  3 : MSK_OPTIMIZER_FREE_SIMPLEX
+            'interior point',       %%  4 : MSK_OPTIMIZER_INTPNT
+            '<mixed int>',          %%  5 : MSK_OPTIMIZER_MIXED_INT
+            'primal simplex'        %%  6 : MSK_OPTIMIZER_PRIMAL_SIMPLEX
         };
     end
     if qp
@@ -299,7 +306,7 @@ if verbose
         vn = '<unknown>';
     end
     fprintf('MOSEK Version %s -- %s %s solver\n', ...
-            vn, methods{mosek_opt.MSK_IPAR_OPTIMIZER+1}, lpqp);
+            vn, alg_names{mosek_opt.MSK_IPAR_OPTIMIZER+1}, lpqp);
 end
 cmd = sprintf('minimize echo(%d)', verbose);
 [r, res] = mosekopt(cmd, prob, mosek_opt);
@@ -436,13 +443,17 @@ if mi && eflag == 1 && (~isfield(p.opt, 'skip_prices') || ~p.opt.skip_prices)
     else
         tol = 1e-7;
     end
-    qp = p;
+    pp = p;
     x(prob.ints.sub) = round(x(prob.ints.sub));
-    qp.xmin(prob.ints.sub) = x(prob.ints.sub);
-    qp.xmax(prob.ints.sub) = x(prob.ints.sub);
-    qp.x0 = x;
-    qp.opt.mosek_opt.MSK_IPAR_OPTIMIZER = sc.MSK_OPTIMIZER_PRIMAL_SIMPLEX;
-    [x_, f_, eflag_, output_, lambda] = qps_mosek(qp);
+    pp.xmin(prob.ints.sub) = x(prob.ints.sub);
+    pp.xmax(prob.ints.sub) = x(prob.ints.sub);
+    pp.x0 = x;
+    if qp
+        pp.opt.mosek_opt.MSK_IPAR_OPTIMIZER = sc.MSK_OPTIMIZER_FREE;
+    else
+        pp.opt.mosek_opt.MSK_IPAR_OPTIMIZER = sc.MSK_OPTIMIZER_PRIMAL_SIMPLEX;
+    end
+    [x_, f_, eflag_, output_, lambda] = qps_mosek(pp);
     if eflag ~= eflag_
         error('miqps_mosek: EXITFLAG from price computation stage = %d', eflag_);
     end

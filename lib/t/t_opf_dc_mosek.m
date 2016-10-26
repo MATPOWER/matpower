@@ -13,27 +13,71 @@ if nargin < 1
     quiet = 0;
 end
 
-sc = mosek_symbcon;
-algs = [
-    sc.MSK_OPTIMIZER_FREE;
-    sc.MSK_OPTIMIZER_INTPNT;
-    sc.MSK_OPTIMIZER_PRIMAL_SIMPLEX;
-    sc.MSK_OPTIMIZER_DUAL_SIMPLEX;
-    sc.MSK_OPTIMIZER_PRIMAL_DUAL_SIMPLEX;
-    sc.MSK_OPTIMIZER_FREE_SIMPLEX;
-%     sc.MSK_OPTIMIZER_NETWORK_PRIMAL_SIMPLEX;  %% not a network problem (according to MOSEK)
-    sc.MSK_OPTIMIZER_CONCURRENT;
-];
-alg_names = {
-    'free',
-    'interior point',
-    'primal simplex',
-    'dual simplex',
-    'primal dual simplex',
-    'free simplex',
-%     'network primal simplex',  %% not a network problem (according to MOSEK)
-    'concurrent'
-};
+s = have_fcn('mosek', 'all');
+
+if s.av
+    sc = mosek_symbcon;
+    if s.vnum < 7
+        alg_names = {           %% version 6.x
+            'default',              %%  0 : MSK_OPTIMIZER_FREE
+            'interior point',       %%  1 : MSK_OPTIMIZER_INTPNT
+            '<conic>',              %%  2 : MSK_OPTIMIZER_CONIC
+            '<qcone>',              %%  3 : MSK_OPTIMIZER_QCONE
+            'primal simplex',       %%  4 : MSK_OPTIMIZER_PRIMAL_SIMPLEX
+            'dual simplex',         %%  5 : MSK_OPTIMIZER_DUAL_SIMPLEX
+            'primal dual simplex',  %%  6 : MSK_OPTIMIZER_PRIMAL_DUAL_SIMPLEX
+            'automatic simplex',    %%  7 : MSK_OPTIMIZER_FREE_SIMPLEX
+            '<mixed int>',          %%  8 : MSK_OPTIMIZER_MIXED_INT
+            '<nonconvex>',          %%  9 : MSK_OPTIMIZER_NONCONVEX
+            'concurrent'            %% 10 : MSK_OPTIMIZER_CONCURRENT
+        };
+    elseif s.vnum < 8
+        alg_names = {           %% version 7.x
+            'default',              %%  0 : MSK_OPTIMIZER_FREE
+            'interior point',       %%  1 : MSK_OPTIMIZER_INTPNT
+            '<conic>',              %%  2 : MSK_OPTIMIZER_CONIC
+            'primal simplex',       %%  3 : MSK_OPTIMIZER_PRIMAL_SIMPLEX
+            'dual simplex',         %%  4 : MSK_OPTIMIZER_DUAL_SIMPLEX
+            'primal dual simplex',  %%  5 : MSK_OPTIMIZER_PRIMAL_DUAL_SIMPLEX
+            'automatic simplex',    %%  6 : MSK_OPTIMIZER_FREE_SIMPLEX
+            'network simplex',      %%  7 : MSK_OPTIMIZER_NETWORK_PRIMAL_SIMPLEX
+            '<mixed int conic>',    %%  8 : MSK_OPTIMIZER_MIXED_INT_CONIC
+            '<mixed int>',          %%  9 : MSK_OPTIMIZER_MIXED_INT
+            'concurrent',           %% 10 : MSK_OPTIMIZER_CONCURRENT
+            '<nonconvex>'           %% 11 : MSK_OPTIMIZER_NONCONVEX
+        };
+    else
+        alg_names = {           %% version 8.x
+            '<conic>',              %%  0 : MSK_OPTIMIZER_CONIC
+            'dual simplex',         %%  1 : MSK_OPTIMIZER_DUAL_SIMPLEX
+            'default',              %%  2 : MSK_OPTIMIZER_FREE
+            'automatic simplex',    %%  3 : MSK_OPTIMIZER_FREE_SIMPLEX
+            'interior point',       %%  4 : MSK_OPTIMIZER_INTPNT
+            '<mixed int>',          %%  5 : MSK_OPTIMIZER_MIXED_INT
+            'primal simplex'        %%  6 : MSK_OPTIMIZER_PRIMAL_SIMPLEX
+        };
+    end
+    algs = [                                        %% v6.x v7.x v8.x
+        sc.MSK_OPTIMIZER_FREE;                      %%  0    0    2
+        sc.MSK_OPTIMIZER_INTPNT;                    %%  1    1    4
+        sc.MSK_OPTIMIZER_PRIMAL_SIMPLEX;            %%  4    3    6
+        sc.MSK_OPTIMIZER_DUAL_SIMPLEX;              %%  5    4    1
+        sc.MSK_OPTIMIZER_FREE_SIMPLEX;              %%  7    6    3
+    ];
+    if s.vnum < 8
+        algs(end+1) = ...
+            sc.MSK_OPTIMIZER_PRIMAL_DUAL_SIMPLEX;   %%  6    5    -
+        algs(end+1) = ...
+            sc.MSK_OPTIMIZER_CONCURRENT;            %% 10   10    - 
+    end
+%     if s.vnum >= 7 && s.vnum < 8    %% MOSEK claims OPF is not a network problem
+%         algs(end+1) = ...
+%             sc.MSK_OPTIMIZER_NETWORK_PRIMAL_SIMPLEX;%%  -    7    -
+%     end
+else
+    algs = 0;
+end
+
 num_tests = 23 * length(algs);
 
 t_begin(num_tests, quiet);
@@ -58,10 +102,10 @@ mpopt = mpoption('out.all', 0, 'verbose', verbose);
 mpopt = mpoption(mpopt, 'opf.dc.solver', 'MOSEK');
 
 %% run DC OPF
-if have_fcn('mosek')
+if s.av     %% if have_fcn('mosek')
     for k = 1:length(algs)
         mpopt = mpoption(mpopt, 'mosek.lp_alg', algs(k));
-    t0 = sprintf('DC OPF (MOSEK %s): ', alg_names{k});
+    t0 = sprintf('DC OPF (MOSEK %s): ', alg_names{algs(k)+1});
 
     %% set up indices
     ib_data     = [1:BUS_AREA BASE_KV:VMIN];

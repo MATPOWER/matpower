@@ -15,6 +15,10 @@ For change history for MOST, see most/docs/CHANGES.
 Changes since 6.0b1
 -----------------
 
+10/26/16
+    - Include support for MOSEK 8, some algorithms eliminated, others changed
+      algorithm code set via 'mosek.lp_alg' option.
+
 10/19/16
     - Improved robustness of infeasibility detection when 'pf.enforce_q_lims'
       option is used.
