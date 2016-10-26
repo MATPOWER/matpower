@@ -230,7 +230,7 @@ end
 
 %% call the solver
 if verbose
-    methods = {
+    alg_names = {
         'default',
         'primal simplex',
         'dual simplex',
@@ -243,14 +243,14 @@ end
 if isempty(H) || ~any(any(H))
     if verbose
         fprintf('CPLEX Version %s -- %s LP solver\n', ...
-            vstr, methods{cplex_opt.lpmethod+1});
+            vstr, alg_names{cplex_opt.lpmethod+1});
     end
     [x, f, eflag, output, lam] = ...
         cplexlp(c, Ai, bi, Ae, be, xmin, xmax, x0, cplex_opt);
 else
     if verbose
         fprintf('CPLEX Version %s --  %s QP solver\n', ...
-            vstr, methods{cplex_opt.qpmethod+1});
+            vstr, alg_names{cplex_opt.qpmethod+1});
     end
     %% ensure H is numerically symmetric
     if ~isequal(H, H')
