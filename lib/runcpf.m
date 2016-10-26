@@ -30,34 +30,33 @@ function [res, suc] = ...
 %       RESULTS : results struct, with the following fields:
 %           (all fields from the input MATPOWER case, i.e. bus, branch,
 %               gen, etc., but with solved voltages, power flows, etc.)
-%           version - MATPOWER version
 %           order - info used in external <-> internal data conversion
 %           et - elapsed time in seconds
 %           success - success flag, 1 = succeeded, 0 = failed
 %           cpf - CPF output struct whose content depends on any
-%               user callback functions. Default contains fields:
-%               V_hat - (nb x nsteps+1) complex bus voltages from
-%                       predictor steps
-%               lam_hat - (nsteps+1) row vector of lambda values from
-%                       predictor steps
-%               V - (nb x nsteps+1) complex bus voltages from
-%                       corrector steps
-%               steps - (nsteps) row vector of stepsizes taken at each
-%                       continuation step
-%               lam - (nsteps+1) row vector of lambda values from
-%                       corrector steps
-%               max_lam - maximum value of lambda in RESULTS.cpf.lam
+%                   user callback functions, where default contains fields:
+%               done_msg - string with message describing cause of
+%                       continuation termination
 %               iterations - number of continuation steps performed
-%               done_msg - Text message describing the cause of
-%                    continuation termination
-%               events - an array of structs of size nevents. Each event
-%                    struct has the following fields
-%                    k - the continuation step number at which event was
-%                      located
-%                    name - the name of the event
-%                    idx - A unique integer id to differentiate multiple
-%                      events located at the same step
-%                    msg - Descriptive text for the event
+%               lam - (nsteps+1) row vector of lambda values from
+%                       correction steps
+%               lam_hat - (nsteps+1) row vector of lambda values from
+%                       prediction steps
+%               max_lam - maximum value of lambda in RESULTS.cpf.lam
+%               steps - (nsteps+1) row vector of stepsizes taken at each
+%                       continuation step
+%               V - (nb x nsteps+1) complex bus voltages from
+%                       correction steps
+%               V_hat - (nb x nsteps+1) complex bus voltages from
+%                       prediction steps
+%               events - an array of structs of size nevents with the
+%                   following fields:
+%                    k - continuation step number at which event was located
+%                    name - name of event
+%                    idx - index(es) of critical elements in corresponding
+%                       event function, e.g. index of generator reaching VAr
+%                       limit
+%                    msg - descriptive text detailing the event
 %       SUCCESS : the success flag can additionally be returned as
 %           a second output argument
 %
