@@ -30,9 +30,10 @@ mpopt = mpoption(mpopt, 'most.solver', 'DEFAULT');
 if have_fcn('gurobi')
     mpopt = mpoption(mpopt, 'gurobi.method', 1);    %% dual-simplex
 end
-if have_fcn('mosek')
-    mpopt = mpoption(mpopt, 'mosek.lp_alg', 4);     %% dual-simplex
-end
+% if have_fcn('mosek')
+%     sc = mosek_symbcon;
+%     mpopt = mpoption(mpopt, 'mosek.lp_alg', sc.MSK_OPTIMIZER_DUAL_SIMPLEX);     %% dual simplex
+% end
 if have_fcn('linprog')
     if have_fcn('linprog_ds')
         mpopt = mpoption(mpopt, 'linprog.Algorithm', 'dual-simplex');
@@ -106,7 +107,7 @@ t = 'success2';
 t_ok(mdo.QP.exitflag, t);
 
 t = 'f';
-t_is(mdo.results.f, r1.f, 8, t);
+t_is(mdo.results.f, r1.f, 7, t);
 
 t = 'Pg';
 t_is(mdo.flow.mpc.gen(:, PG), r1.gen(:, PG), 8, t);
@@ -118,7 +119,7 @@ t = 'prc';
 t_is(mdo.flow.mpc.reserves.prc, r1.reserves.prc, 8, t);
 
 t = 'totalcost';
-t_is(mdo.flow.mpc.reserves.totalcost, r1.reserves.totalcost, 8, t);
+t_is(mdo.flow.mpc.reserves.totalcost, r1.reserves.totalcost, 7, t);
 
 t = 'mu.l';
 t_is(mdo.flow.mpc.reserves.mu.l, r1.reserves.mu.l, 8, t);
@@ -161,7 +162,7 @@ t = 'success2';
 t_ok(mdo.QP.exitflag, t);
 
 t = 'f';
-t_is(mdo.results.f, f, 5, t);
+t_is(mdo.results.f, f, 4, t);
 
 for tt = 1:nt
     t = 'success1';

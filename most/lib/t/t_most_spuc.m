@@ -81,19 +81,17 @@ if have_fcn('gurobi')
     mpopt = mpoption(mpopt, 'gurobi.opts.MIPGapAbs', 0);
 end
 if have_fcn('mosek')
-    %mpopt = mpoption(mpopt, 'mosek.lp_alg', 0);         %% automatic
-    %mpopt = mpoption(mpopt, 'mosek.lp_alg', 1);         %% interior point
-    %mpopt = mpoption(mpopt, 'mosek.lp_alg', 3);         %% primal simplex
-    mpopt = mpoption(mpopt, 'mosek.lp_alg', 4);         %% dual simplex
     sc = mosek_symbcon;
-    %mpopt = mpoption(mpopt, 'mosek.lp_alg', 5);         %% primal dual simplex
-    %mpopt = mpoption(mpopt, 'mosek.lp_alg', 6);         %% automatic simplex
-    %mpopt = mpoption(mpopt, 'mosek.lp_alg', 7);         %% network primal simplex
+    %mpopt = mpoption(mpopt, 'mosek.lp_alg', sc.MSK_OPTIMIZER_FREE);            %% default
+    %mpopt = mpoption(mpopt, 'mosek.lp_alg', sc.MSK_OPTIMIZER_INTPNT);          %% interior point
+    %mpopt = mpoption(mpopt, 'mosek.lp_alg', sc.MSK_OPTIMIZER_PRIMAL_SIMPLEX);  %% primal simplex
+    mpopt = mpoption(mpopt, 'mosek.lp_alg', sc.MSK_OPTIMIZER_DUAL_SIMPLEX);     %% dual simplex
+    %mpopt = mpoption(mpopt, 'mosek.lp_alg', sc.MSK_OPTIMIZER_FREE_SIMPLEX);    %% automatic simplex
     %mpopt = mpoption(mpopt, 'mosek.opts.MSK_DPAR_MIO_TOL_X', 0);
     mpopt = mpoption(mpopt, 'mosek.opts.MSK_IPAR_MIO_NODE_OPTIMIZER', sc.MSK_OPTIMIZER_DUAL_SIMPLEX);
     mpopt = mpoption(mpopt, 'mosek.opts.MSK_IPAR_MIO_ROOT_OPTIMIZER', sc.MSK_OPTIMIZER_DUAL_SIMPLEX);
     mpopt = mpoption(mpopt, 'mosek.opts.MSK_DPAR_MIO_TOL_ABS_RELAX_INT', 1e-9);
-    mpopt = mpoption(mpopt, 'mosek.opts.MSK_DPAR_MIO_TOL_REL_RELAX_INT', 0);
+    %mpopt = mpoption(mpopt, 'mosek.opts.MSK_DPAR_MIO_TOL_REL_RELAX_INT', 0);
     mpopt = mpoption(mpopt, 'mosek.opts.MSK_DPAR_MIO_TOL_REL_GAP', 0);
     mpopt = mpoption(mpopt, 'mosek.opts.MSK_DPAR_MIO_TOL_ABS_GAP', 0);
 end

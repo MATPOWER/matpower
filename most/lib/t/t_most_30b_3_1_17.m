@@ -34,7 +34,8 @@ if have_fcn('gurobi')
     mpopt = mpoption(mpopt, 'gurobi.method', 1);    %% dual-simplex
 end
 if have_fcn('mosek')
-    mpopt = mpoption(mpopt, 'mosek.lp_alg', 4);     %% dual-simplex
+    sc = mosek_symbcon;
+    mpopt = mpoption(mpopt, 'mosek.lp_alg', sc.MSK_OPTIMIZER_DUAL_SIMPLEX);     %% dual simplex
 end
 if have_fcn('linprog')
     if have_fcn('linprog_ds')
