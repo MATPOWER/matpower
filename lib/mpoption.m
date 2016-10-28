@@ -82,28 +82,28 @@ function opt = mpoption(varargin)
 %       [ 'NOSE'     - stop when nose point is reached                      ]
 %       [ 'FULL'     - trace full nose curve                                ]
 %       [ <lam_stop> - stop upon reaching specified target lambda value     ]
+%   cpf.enforce_p_lims      0           enforce gen active power limits
+%       [  0 - do NOT enforce limits                                        ]
+%       [  1 - enforce limits, simultaneous bus type conversion             ]
+%   cpf.enforce_q_lims      0           enforce gen reactive power limits at
+%                                       expense of |V|
+%       [  0 - do NOT enforce limits                                        ]
+%       [  1 - enforce limits, simultaneous bus type conversion             ]
 %   cpf.step                0.05        continuation power flow step size
 %   cpf.adapt_step          0           toggle adaptive step size feature
 %       [  0 - adaptive step size disabled                                  ]
 %       [  1 - adaptive step size enabled                                   ]
-%   cpf.adapt_step_damping   0.7        damping parameter for adaptive step
-%                                       size adjustments
-%   cpf.enforce_p_lims       0          enforce gen active power limits
-%       [  0 - do NOT enforce limits                                        ]
-%       [  1 - enforce limits, simultaneous bus type conversion             ]
-%   cpf.enforce_q_lims       0          enforce gen reactive power limits at
-%                                       expense of |V|
-%       [  0 - do NOT enforce limits                                        ]
-%       [  1 - enforce limits, simultaneous bus type conversion             ]
-%   cpf.adapt_step_tol      1e-3        tolerance for adaptive step control
+%   cpf.step_min            1e-4        minimum allowed step size
+%   cpf.step_max            0.2         maximum allowed step size
+%   cpf.adapt_step_damping  0.7         damping factor for adaptive step
+%                                       sizing
+%   cpf.adapt_step_tol      1e-3        tolerance for adaptive step sizing
 %   cpf.target_lam_tol      1e-5        tolerance for target lambda detection
 %   cpf.nose_tol            1e-5        tolerance for nose point detection (pu)
 %   cpf.p_lims_tol          0.01        tolerance for generator active
 %                                       power limit enforcement (MW)
 %   cpf.q_lims_tol          0.01        tolerance for generator reactive
 %                                       power limit enforcement (MVAR)
-%   cpf.step_min            1e-4        minimum allowed step size
-%   cpf.step_max            0.2         maximum allowed step size
 %   cpf.plot.level          0           control plotting of noze curve
 %       [  0 - do not plot nose curve                                       ]
 %       [  1 - plot when completed                                          ]
@@ -503,9 +503,9 @@ if have_opt0
                 opt0.most = opt_d.most;
             end
             if opt0.v <= 10         %% convert version 10 to 11
-                opt0.cpf.adapt_step_damping = opt_d.cpf.adapt_step_damping;
                 opt0.cpf.enforce_p_lims     = opt_d.cpf.enforce_p_lims;
                 opt0.cpf.enforce_q_lims     = opt_d.cpf.enforce_q_lims;
+                opt0.cpf.adapt_step_damping = opt_d.cpf.adapt_step_damping;
                 opt0.cpf.target_lam_tol     = opt_d.cpf.target_lam_tol;
                 opt0.cpf.nose_tol           = opt_d.cpf.nose_tol;
                 opt0.cpf.p_lims_tol         = opt_d.cpf.p_lims_tol;
@@ -1449,18 +1449,18 @@ if ~isstruct(opt)
         'cpf',                  struct(...
             'parameterization',     3, ...
             'stop_at',              'NOSE', ...     %% 'NOSE', <lam val>, 'FULL'
-            'step',                 0.05, ...
-            'adapt_step',           0, ...
-            'adapt_step_damping',   0.7, ...
             'enforce_p_lims',       0, ...
             'enforce_q_lims',       0, ...
+            'step',                 0.05, ...
+            'step_min',             1e-4, ...
+            'step_max',             0.2, ...
+            'adapt_step',           0, ...
+            'adapt_step_damping',   0.7, ...
             'adapt_step_tol',       1e-3, ...
             'target_lam_tol',       1e-5, ...
             'nose_tol',             1e-5, ...
             'p_lims_tol',           0.01, ...
             'q_lims_tol',           0.01, ...
-            'step_min',             1e-4, ...
-            'step_max',             0.2, ...
             'plot',                 struct(...
                 'level',                0, ...
                 'bus',                  []  ), ...

@@ -340,7 +340,7 @@ if ~done.flag
         'V_hat', V, ...             %% predicted V
         'lam', lam, ...             %% corrected lambda
         'V', V, ...                 %% corrected V
-        'z', z, ...                 %% tangent predictor
+        'z', z, ...                 %% normalized tangent predictor
         'default_step', step, ...   %% default step size
         'default_parm', parm, ...   %% default parameterization
         'this_step', [], ...        %% step size for this step only
