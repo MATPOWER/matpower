@@ -1,7 +1,6 @@
 function [nx, cx, done, rollback, evnts, cb_data, results] = cpf_target_lam_event_cb(...
         k, nx, cx, px, done, rollback, evnts, cb_data, cb_args, results)
 %CPF_TARGET_LAM_EVENT_CB  Callback to handle TARGET_LAM events
-%
 %   [NX, CX, DONE, ROLLBACK, EVNTS, CB_DATA, RESULTS] = 
 %       CPF_TARGET_LAM_EVENT_CB(K, NX, CX, PX, DONE, ROLLBACK, EVNTS, ...
 %                               CB_DATA, CB_ARGS, RESULTS)

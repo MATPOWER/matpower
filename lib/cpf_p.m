@@ -1,6 +1,5 @@
 function P = cpf_p(parameterization, step, z, V, lam, Vprv, lamprv, pv, pq)
 %CPF_P Computes the value of the CPF parameterization function.
-%
 %   P = CPF_P(PARAMETERIZATION, STEP, Z, V, LAM, VPRV, LAMPRV, PV, PQ)
 %
 %   Computes the value of the parameterization function at the current

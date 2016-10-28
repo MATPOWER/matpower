@@ -1,8 +1,9 @@
 function cpf_callbacks = cpf_register_callback(cpf_callbacks, fcn, priority, args)
 %CPF_REGISTER_CALLBACK  Register CPF callback functions
-%
 %   CPF_CALLBACKS = CPF_REGISTER_CALLBACK(CPF_CALLBACKS, FCN, PRIORITY)
-%   
+%
+%   Registers a CPF callback function to be called by RUNCPF.
+%
 %   Inputs:
 %       CPF_CALLBACKS : struct containing info about registered CPF
 %                       callback fcns

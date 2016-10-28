@@ -1,7 +1,9 @@
 function ef = cpf_nose_event(cb_data, cx)
 %CPF_NOSE_EVENT  Event function to detect the nose point
-%
 %   EF = CPF_NOSE_EVENT(CB_DATA, CX)
+%
+%   CPF event function to detect the nose point of the continuation curve,
+%   based on the sign of the lambda component of the tangent vector.
 %   
 %   Inputs:
 %       CB_DATA : struct of data for callback functions
@@ -22,5 +24,3 @@ function ef = cpf_nose_event(cb_data, cx)
 %% event function value is dlam, the last element of the
 %% normalized tangent vector at the current soln
 ef = cx.z(end);
-
-% fprintf('==== NOSE event fcn = %g\n', ef);

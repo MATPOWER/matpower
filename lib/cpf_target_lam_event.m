@@ -1,8 +1,10 @@
 function ef = cpf_target_lam_event(cb_data, cx)
 %CPF_TARGET_LAM_EVENT  Event function to detect a target lambda value
-%
 %   EF = CPF_TARGET_LAM_EVENT(CB_DATA, CX)
-%   
+%
+%   CPF event function to detect the completion of the continuation curve
+%   or another target value of lambda.
+%
 %   Inputs:
 %       CB_DATA : struct of data for callback functions
 %       CX : struct containing info about current point (continuation soln)

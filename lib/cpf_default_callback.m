@@ -6,9 +6,10 @@ function [nx, cx, done, rollback, evnts, cb_data, results] = ...
 %       CPF_DEFAULT_CALLBACK(K, NX, CX, PX, DONE, ROLLBACK, EVNTS, ...
 %                               CB_DATA, CB_ARGS, RESULTS)
 %
-%   Default callback function used by RUNCPF. Inputs and outputs are defined
-%   below, with the RESULTS argument being optional, used only for the final
-%   call when K is negative.
+%   Default callback function used by RUNCPF that collects the resulst and
+%   optionally, plots the nose curve. Inputs and outputs are defined below,
+%   with the RESULTS argument being optional, used only for the final call
+%   when K is negative.
 %
 %   Inputs:
 %       K - continuation step iteration count
@@ -65,7 +66,7 @@ function [nx, cx, done, rollback, evnts, cb_data, results] = ...
 %           CPF field of results struct returned by RUNCPF
 %
 %   Outputs:
-%       (all are update versions of the corresponding input arguments)
+%       (all are updated versions of the corresponding input arguments)
 %       NX - user state ('cb' field ) should be updated here if ROLLBACK
 %           is false
 %       CX - may contain updated 'this_step' or 'this_parm' values to be used
@@ -78,7 +79,7 @@ function [nx, cx, done, rollback, evnts, cb_data, results] = ...
 %           has been changed (e.g. generator limit reached) and should always
 %           be followed by a step of zero length, i.e. set NX.this_step to 0
 %           It is the job of any callback modifying CB_DATA to ensure that
-%           all data in CB_DATA kept consistent.
+%           all data in CB_DATA is kept consistent.
 %       RESULTS - updated version of RESULTS input arg
 %
 %   This function is called in three different contexts, distinguished by

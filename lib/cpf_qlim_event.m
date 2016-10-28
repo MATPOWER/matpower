@@ -1,8 +1,10 @@
 function ef = cpf_qlim_event(cb_data, cx)
 %CPF_QLIM_EVENT  Event function to detect the generator reactive power limits
-%
 %   EF = CPF_QLIM_EVENT(CB_DATA, CX)
-%   
+%
+%   CPF event function to detect a generator reactive power limits,
+%   i.e. Qg <= Qmin or Qg >= Qmax.
+%
 %   Inputs:
 %       CB_DATA : struct of data for callback functions
 %       CX : struct containing info about current point (continuation soln)
@@ -20,8 +22,8 @@ function ef = cpf_qlim_event(cb_data, cx)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% event function value is 2 ng x 1 vector equal to:
-%%      [ QG - QMAX ]
-%%      [ QMIN - QG ]
+%%      [ Qg - Qmax ]
+%%      [ Qmin - Qg ]
 
 %% define named indices into bus, gen, branch matrices
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
@@ -46,6 +48,3 @@ v_Qmin(on) = mpc.gen(on, QMIN) - mpc.gen(on, QG);
 
 %% assemble event function value
 ef = [v_Qmax; v_Qmin];
-% [mpc.gen(:, QMIN) mpc.gen(:, QG) mpc.gen(:, QMAX) ]
-
-% fprintf('==== QLIM event fcn = %g\n', ef);

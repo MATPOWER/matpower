@@ -1,7 +1,6 @@
 function [nx, cx, done, rollback, evnts, cb_data, results] = cpf_qlim_event_cb(...
         k, nx, cx, px, done, rollback, evnts, cb_data, cb_args, results)
 %CPF_QLIM_EVENT_CB  Callback to handle QLIM events
-%
 %   [NX, CX, DONE, ROLLBACK, EVNTS, CB_DATA, RESULTS] = 
 %       CPF_QLIM_EVENT_CB(K, NX, CX, PX, DONE, ROLLBACK, EVNTS, ...
 %                               CB_DATA, CB_ARGS, RESULTS)
@@ -117,7 +116,6 @@ for i = 1:length(evnts)
 
                 %% update PG for previous slack gen in base and target
                 %% (no more active transfer for this gen)
-                %% RDZ: Why?
                 if oldref ~= ref
                     cb_data.mpc_base.gen(  g, PG) = mpc.gen(g,PG);
                     cb_data.mpc_target.gen(g, PG) = mpc.gen(g,PG);

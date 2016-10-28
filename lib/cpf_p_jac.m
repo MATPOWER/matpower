@@ -1,6 +1,5 @@
 function [dP_dV, dP_dlam] = cpf_p_jac(parameterization, z, V, lam, Vprv, lamprv, pv, pq)
 %CPF_P_JAC Computes partial derivatives of CPF parameterization function.
-%
 %   [DP_DV, DP_DLAM ] = CPF_P_JAC(PARAMETERIZATION, Z, V, LAM, ...
 %                                                   VPRV, LAMPRV, PV, PQ)
 %

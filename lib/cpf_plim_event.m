@@ -1,8 +1,10 @@
 function ef = cpf_plim_event(cb_data, cx)
 %CPF_PLIM_EVENT  Event function to detect the generator active power limits
-%
 %   EF = CPF_PLIM_EVENT(CB_DATA, CX)
-%   
+%
+%   CPF event function to detect a generator active power limit,
+%   i.e. Pg >= Pmax.
+%
 %   Inputs:
 %       CB_DATA : struct of data for callback functions
 %       CX : struct containing info about current point (continuation soln)
@@ -19,9 +21,8 @@ function ef = cpf_plim_event(cb_data, cx)
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-%% event function value is 2 ng x 1 vector equal to:
-%%      [ PG - PMAX ]
-%%      [ PMIN - PG ]
+%% event function value is ng x 1 vector equal to:
+%%      [ Pg - Pmax ]
 
 %% define named indices into bus, gen, branch matrices
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
@@ -38,13 +39,9 @@ mpc = cpf_current_mpc(d.mpc_base, d.mpc_target, ...
 %% compute Pg violations for on-line gens, that weren't previously at Pmax
 ng = size(mpc.gen, 1);
 v_Pmax = NaN(ng, 1);
-%v_Pmin = v_Pmax;
 on = find(mpc.gen(:, GEN_STATUS) > 0);   %% which generators are on?
 v_Pmax(on) = mpc.gen(on, PG) - mpc.gen(on, PMAX);
-%v_Pmin(on) = mpc.gen(on, PMIN) - mpc.gen(on, PG);
 v_Pmax(d.idx_pmax) = NaN;
 
 %% assemble event function value
 ef = v_Pmax;
-%ef = [v_Pmax; v_Pmin];
-% [mpc.gen(:, PMIN) mpc.gen(:, PG) mpc.gen(:, PMAX) ]

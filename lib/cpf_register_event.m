@@ -1,8 +1,9 @@
 function cpf_events = cpf_register_event(cpf_events, name, fcn, tol, locate)
-%CPF_REGISTER_EVENT  Register event functions
-%
+%CPF_REGISTER_EVENT  Register event functions=
 %   CPF_EVENTS = CPF_REGISTER_EVENT(CPF_EVENTS, NAME, FCN, TOL, LOCATE)
-%   
+%
+%   Registers a CPF event function to be called by RUNCPF.
+%
 %   Inputs:
 %       CPF_EVENTS : struct containing info about registered CPF event fcns
 %       NAME : string containing event name
