@@ -49,12 +49,22 @@ Please see the LICENSE file for the details. But here is the summary:
 
 - While not required by the terms of the license, we do request that
   publications derived from the use of MATPOWER explicitly acknowledge
-  that fact by citing [1].
+  that fact by citing [2].
 
-[1]  R. D. Zimmerman, C. E. Murillo-Sanchez, and R. J. Thomas,
+[2]  R. D. Zimmerman, C. E. Murillo-Sanchez, and R. J. Thomas,
      "MATPOWER: Steady-State Operations, Planning and Analysis Tools
      for Power Systems Research and Education," Power Systems, IEEE
      Transactions on, vol. 26, no. 1, pp. 12–19, Feb. 2011.
+
+  Additionally, we request that publications derived from the use of
+  the MATPOWER Optimal Scheduling Tool (MOST), explicitly acknowledge
+  that fact by citing [4] as well as [2].
+
+[4]  C. E. Murillo-Sanchez, R. D. Zimmerman, C. L. Anderson, and
+     R. J. Thomas, "Secure Planning and Operations of Systems with
+     Stochastic Sources, Energy Storage and Active Demand," Smart Grid,
+     IEEE Transactions on, vol. 4, no. 4, pp. 2220–2229, Dec. 2013.
+        http://dx.doi.org/10.1109/TSG.2013.2281001
 
 Note:  Versions 4.0 through 5.0 were licensed under the GPL and versions
        prior to MATPOWER 4 use a different license.
@@ -281,8 +291,8 @@ PUBLICATIONS & PRESENTATIONS
 
 [2]  R. D. Zimmerman, C. E. Murillo-Sanchez, and R. J. Thomas,
      "MATPOWER: Steady-State Operations, Planning and Analysis Tools
-     for Power Systems Research and Education," accepted to IEEE
-     Transactions on Power Systems.
+     for Power Systems Research and Education," Power Systems, IEEE
+     Transactions on, vol. 26, no. 1, pp. 12–19, Feb. 2011.
         http://www.pserc.cornell.edu/matpower/MATPOWER-paper.pdf
         http://dx.doi.org/10.1109/TPWRS.2010.2051168
 
@@ -291,6 +301,13 @@ PUBLICATIONS & PRESENTATIONS
      Power Systems, IEEE Transactions on, vol. 22, no. 3,
      pp. 1185-1193, Aug. 2007.
         http://dx.doi.org/10.1109/TPWRS.2007.901301
+
+[4]  C. E. Murillo-S ́anchez, R. D. Zimmerman, C. L. Anderson, and
+     R. J. Thomas, "Secure Planning and Operations of Systems with
+     Stochastic Sources, Energy Storage and Active Demand," Smart Grid,
+     IEEE Transactions on, vol. 4, no. 4, pp. 2220–2229, Dec. 2013.
+        http://dx.doi.org/10.1109/TSG.2013.2281001
+
 
 -------------------
  OPTIONAL PACKAGES
