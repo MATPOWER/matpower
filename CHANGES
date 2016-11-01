@@ -2,7 +2,7 @@
  Change history for MATPOWER
 -----------------------------
 
-Version:    6.0b1
+Version:    6.0b2
 
 maintained by Ray Zimmerman <rz10@cornell.edu>
 
@@ -14,6 +14,9 @@ For change history for MOST, see most/docs/CHANGES.
 
 Changes since 6.0b1
 -----------------
+
+11/1/16
+    - Released 6.0b2.
 
 10/26/16
     - Include support for MOSEK 8, some algorithms eliminated, others changed

@@ -2,7 +2,7 @@
  MATPOWER - A MATLAB(R) Power System Simulation Package
 ========================================================
 
-Version:    6.0b1
+Version:    6.0b2
 
 Home Page:  http://www.pserc.cornell.edu/matpower/
 
@@ -10,7 +10,7 @@ Authors:    Ray Zimmerman               <rz10@cornell.edu>
             Carlos E. Murillo-Sanchez   <carlos_murillo@ieee.org>
             and others, see AUTHORS file
 
-            Wed, Jun 1, 2016
+            Tue, Nov 1, 2016
 
 Copyright (c) 1997-2016 by Power System Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
@@ -139,6 +139,53 @@ documentation for the various MATPOWER functions. For example:
     help runopf
     help mpoption
     help caseformat
+
+
+-----------------------------
+ WHAT'S NEW IN VERSION 6.0b2
+-----------------------------
+
+Below is a summary of the changes since version 6.0b1 of MATPOWER. See the
+CHANGES file in the docs directory for all the gory details.
+
+* New Features:
+  - Redesigned CPF callback mechanism to handle CPF events such as
+    generator limits, nose point detection, etc. Included event log
+    in CPF results.
+  - Added options 'cpf.enforce_p_lims' and 'cpf.enforce_q_lims' to
+    enforce generator active and reactive power limts in the
+    continuation power flow.
+  - Added OPF option 'opf.use_vg' to provide a convenient way to have
+    the OPF respect the generator voltage setpoints specified in the
+    gen matrix.
+
+* Other Improvements:
+  - Added option 'cpf.adapt_step_damping' to control oscillations in
+    adaptive step size control for continuation power flow.
+  - Added CPF user options for setting tolerances for target lambda
+    detection and nose point detection, 'cpf.target_lam_tol' and
+    'cpf.nose_tol', respectively.
+  - Added support for Matlab Optimization Toolbox 7.5 (R2016b).
+  - Added support for MOSEK v8.x.
+  - Added tests for power flow with 'pf.enforce_q_lims' option.
+  - Updated network reduction code to handle cases with radially
+    connected external buses.
+  - Updated versions of qcqp_opf() and qcqp_opf() in extras/misc, from
+    Cedric Josz.
+
+* Bugs fixed:
+  - Fixed shadow prices on variable bounds for AC OPF for fmincon,
+    IPOPT, and Knitro.
+  - In savecase() single quotes are now escaped properly in bus names.
+  - Generator capability curve parameters that define a zero-reactive
+    power line no longer cause a fatal error.
+  - Bad bus numbers no longer cause a fatal error (after reporting the
+    bad bus numbers) in case_info().
+
+* Incompatible Changes:
+  - Removed 'cpf.user_callback_args' option and modified
+    'cpf.user_callback'.
+  - Changed name of 'cpf.error_tol' option to 'cpf.adapt_step_tol'.
 
 
 -----------------------------
