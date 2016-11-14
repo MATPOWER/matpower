@@ -51,6 +51,12 @@ if ~verbose
 end
 % mpopt = mpoption(mpopt, 'out.all', -1);
 
+%% turn off warnings
+if have_fcn('octave')
+    s = warning('query', 'Octave:nearly-singular-matrix');
+    warning('off', 'Octave:nearly-singular-matrix');
+end
+
 %% define named indices into data matrices
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
     VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
@@ -676,6 +682,11 @@ if create_plots
         end
         plot_case(labels{j}, Pg([1:3 5], j), Rp([1:3 5], j), Rm([1:3 5], j), lamP(:, j), muF(:, j), 320, 100, savepath, fname);
     end
+end
+
+%% turn warnings back on
+if have_fcn('octave')
+    warning(s.state, 'Octave:nearly-singular-matrix');
 end
 
 t_end;

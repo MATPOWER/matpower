@@ -35,10 +35,15 @@ mpoptdc = mpoption(mpopt, 'model', 'DC');
 mpopt = mpoption(mpopt, 'most.solver', algs.dc{1});
 
 %% turn off warnings
-s7 = warning('query', 'MATLAB:nearlySingularMatrix');
-s6 = warning('query', 'MATLAB:nearlySingularMatrixUMFPACK');
-warning('off', 'MATLAB:nearlySingularMatrix');
-warning('off', 'MATLAB:nearlySingularMatrixUMFPACK');
+if have_fcn('octave')
+    s = warning('query', 'Octave:nearly-singular-matrix');
+    warning('off', 'Octave:nearly-singular-matrix');
+else
+    s7 = warning('query', 'MATLAB:nearlySingularMatrix');
+    s6 = warning('query', 'MATLAB:nearlySingularMatrixUMFPACK');
+    warning('off', 'MATLAB:nearlySingularMatrix');
+    warning('off', 'MATLAB:nearlySingularMatrixUMFPACK');
+end
 
 %% define named indices into data matrices
 [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
@@ -199,8 +204,12 @@ end
 
 
 %% turn warnings back on
-warning(s7.state, 'MATLAB:nearlySingularMatrix');
-warning(s6.state, 'MATLAB:nearlySingularMatrixUMFPACK');
+if have_fcn('octave')
+    warning(s.state, 'Octave:nearly-singular-matrix');
+else
+    warning(s7.state, 'MATLAB:nearlySingularMatrix');
+    warning(s6.state, 'MATLAB:nearlySingularMatrixUMFPACK');
+end
 
 t_end;
 
