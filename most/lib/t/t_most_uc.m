@@ -70,7 +70,7 @@ mpopt = mpoption(mpopt, 'verbose', verbose);
 % mpopt = mpoption(mpopt, 'opf.violation', 1e-6, 'mips.gradtol', 1e-8, ...
 %         'mips.comptol', 1e-8, 'mips.costtol', 1e-8);
 mpopt = mpoption(mpopt, 'model', 'DC');
-mpopt = mpoption(mpopt, 'most.price_stage_warn_tol', 1e-5);
+mpopt = mpoption(mpopt, 'most.price_stage_warn_tol', 1e1);
 
 %% solver options
 if have_fcn('cplex')
