@@ -12,6 +12,16 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 
 For change history for MOST, see most/docs/CHANGES.
 
+
+Changes since 6.0b2
+-----------------
+
+12/6/16
+    - Remove dependence of t_mpsolve() on presence of have_fcn() to
+      detect PARDISO installation.
+    - Remove dependence of mpver() on presence of mostver().
+
+
 Changes since 6.0b1
 -----------------
 
