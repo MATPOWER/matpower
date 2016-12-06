@@ -408,7 +408,7 @@ x = mplinsolve(A, b, '\', []);
 t_is(x, ex, 12, t);
 
 t = 'PARDISO';
-if have_fcn('pardiso')
+if exist('have_fcn', 'file') && have_fcn('pardiso') || have_pardiso()
     x = mplinsolve(A, b, 'PARDISO', struct('solver', 0));
     t_is(x, ex, 12, [t ' : direct']);
 
@@ -419,3 +419,27 @@ else
 end
 
 t_end;
+
+
+function TorF = have_pardiso()
+TorF = exist('pardisoinit', 'file') == 3 && ...
+        exist('pardisoreorder', 'file') == 3 && ...
+        exist('pardisofactor', 'file') == 3 && ...
+        exist('pardisosolve', 'file') == 3 && ...
+        exist('pardisofree', 'file') == 3;
+if TorF
+    try
+        A = sparse([1 2; 3 4]);
+        b = [1;1];
+        info = pardisoinit(11, 0);
+        info = pardisoreorder(A, info, false);
+        info = pardisofactor(A, info, false);
+        [x, info] = pardisosolve(A, b, info, false);
+        pardisofree(info);
+        if any(x ~= [-1; 1])
+            TorF = 0;
+        end
+    catch
+        TorF = 0;
+    end
+end
