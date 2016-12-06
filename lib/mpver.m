@@ -70,7 +70,11 @@ else
     end
     fprintf('\n');
     mipsver;
-    mostver;
+    if have_fcn('most')
+        mostver;
+    else
+        fprintf('%-22s -- not installed --\n', 'MOST');
+    end
     if have_fcn('sdp_pf')
         sdp_pf_ver;
     else
