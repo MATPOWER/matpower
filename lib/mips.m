@@ -1,5 +1,5 @@
 function [x, f, eflag, output, lambda] = mips(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt)
-%MIPS  MATLAB Interior Point Solver.
+%MIPS  MATPOWER Interior Point Solver.
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
 %       MIPS(F_FCN, X0, A, L, U, XMIN, XMAX, GH_FCN, HESS_FCN, OPT)
 %   Primal-dual interior point method for NLP (nonlinear programming).
@@ -416,7 +416,7 @@ end
 if opt.verbose
     if opt.step_control, s = '-sc'; else, s = ''; end
     v = mipsver('all');
-    fprintf('MATLAB Interior Point Solver -- MIPS%s, Version %s, %s\n (using %s linear solver)', ...
+    fprintf('MATPOWER Interior Point Solver -- MIPS%s, Version %s, %s\n (using %s linear solver)', ...
         s, v.Version, v.Date, ls);
     if opt.verbose > 1
         fprintf('\n it    objective   step size   feascond     gradcond     compcond     costcond  ');
