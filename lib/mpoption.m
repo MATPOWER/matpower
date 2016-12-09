@@ -124,7 +124,7 @@ function opt = mpoption(varargin)
 %   opf.ac.solver           'DEFAULT'   AC optimal power flow solver
 %       [ 'DEFAULT' - choose solver based on availability in the following  ]
 %       [             order: 'PDIPM', 'MIPS'                                ]
-%       [ 'MIPS'    - MIPS, Matlab Interior Point Solver, primal/dual       ]
+%       [ 'MIPS'    - MIPS, MATPOWER Interior Point Solver, primal/dual     ]
 %       [             interior point method (pure Matlab)                   ]
 %       [ 'FMINCON' - MATLAB Optimization Toolbox, FMINCON                  ]
 %       [ 'IPOPT'   - IPOPT, requires MEX interface to IPOPT solver         ]
@@ -151,7 +151,7 @@ function opt = mpoption(varargin)
 %       [ 'DEFAULT' - choose solver based on availability in the following  ]
 %       [             order: 'GUROBI', 'CPLEX', 'MOSEK', 'OT',              ]
 %       [             'GLPK' (linear costs only), 'BPMPD', 'MIPS'           ]
-%       [ 'MIPS'    - MIPS, Matlab Interior Point Solver, primal/dual       ]
+%       [ 'MIPS'    - MIPS, MATPOWER Interior Point Solver, primal/dual     ]
 %       [             interior point method (pure Matlab)                   ]
 %       [ 'BPMPD'   - BPMPD, requires optional MEX-based BPMPD_MEX package  ]
 %       [             available from: http://www.pserc.cornell.edu/bpmpd/   ]

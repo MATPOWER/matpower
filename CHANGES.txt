@@ -16,6 +16,11 @@ For change history for MOST, see most/docs/CHANGES.
 Changes since 6.0b2
 -----------------
 
+12/9/16
+    - Bumped version to 1.2.2.
+    - Renamed MIPS from MATLAB Interior Point Solver to MATPOWER Interior
+      Point Solver.
+
 12/6/16
     - Remove dependence of t_mpsolve() on presence of have_fcn() to
       detect PARDISO installation.

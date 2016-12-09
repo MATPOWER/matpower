@@ -58,7 +58,7 @@ function [options, names] = mpoption_old(varargin)
 %           [        TSPOPF (see 540)                                       ]
 %           [  550 - TRALM, trust region based augmented Langrangian        ]
 %           [        method, requires TSPOPF (see 540)                      ]
-%           [  560 - MIPS, MATLAB Interior Point Solver                     ]
+%           [  560 - MIPS, MATPOWER Interior Point Solver                   ]
 %           [        primal/dual interior point method (pure MATLAB)        ]
 %           [  565 - MIPS-sc, step-controlled variant of MIPS               ]
 %           [        primal/dual interior point method (pure MATLAB)        ]

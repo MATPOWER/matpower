@@ -30,7 +30,7 @@ function [x, f, eflag, output, lambda] = qps_matpower(H, c, A, l, u, xmin, xmax,
 %               'DEFAULT' : (or 0) automatic, first available of CPLEX,
 %                       Gurobi, MOSEK, Opt Tbx (if Matlab), GLPK (LPs only),
 %                       BPMPD, MIPS
-%               'MIPS'    : (or 200) MIPS, MATLAB Interior Point Solver
+%               'MIPS'    : (or 200) MIPS, MATPOWER Interior Point Solver
 %                        pure MATLAB implementation of a primal-dual
 %                        interior point method, if mips_opt.step_control = 1
 %                        (or alg=250) it uses MIPS-sc, a step controlled
