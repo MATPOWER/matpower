@@ -2,7 +2,7 @@ function t_nested_struct_copy(quiet)
 %T_NESTED_STUCT_COPY  Tests for NESTED_STUCT_COPY.
 
 %   MATPOWER
-%   Copyright (c) 2013-2016 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2013-2016, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

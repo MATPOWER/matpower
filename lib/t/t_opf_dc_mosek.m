@@ -2,7 +2,7 @@ function t_opf_dc_mosek(quiet)
 %T_OPF_DC_MOSEK  Tests for DC optimal power flow using MOSEK solver.
 
 %   MATPOWER
-%   Copyright (c) 2004-2016 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2016, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

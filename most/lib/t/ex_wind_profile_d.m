@@ -2,7 +2,7 @@ function windprofile = ex_wind_profile_d
 %EX_WIND_PROFILE_D  Example wind profile data for deterministic unit commitment.
 
 %   MOST
-%   Copyright (c) 2015-2016 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2016, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

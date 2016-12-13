@@ -9,7 +9,7 @@ function md = filter_ramp_transitions(md0, threshold)
 %   probability of being in state j1, given that you've made it to period t.
 
 %   MOST
-%   Copyright (c) 2012-2016 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2012-2016, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

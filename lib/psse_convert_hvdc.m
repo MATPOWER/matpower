@@ -18,7 +18,7 @@ function dcline = psse_convert_hvdc(dc, bus)
 %   See also PSSE_CONVERT.
 
 %   MATPOWER
-%   Copyright (c) 2014-2016 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2014-2016, Power Systems Engineering Research Center (PSERC)
 %   by Yujia Zhu, PSERC ASU
 %   and Ray Zimmerman, PSERC Cornell
 %   Based on mpdcin.m and mpqhvdccal.m, written by:

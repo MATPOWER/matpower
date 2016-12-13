@@ -3,7 +3,7 @@ function [nx, cx, done, rollback, evnts, cb_data, results] = t_cpf_cb1(...
 %T_CPF_CB1  User callback function 1 for continuation power flow testing.
 
 %   MATPOWER
-%   Copyright (c) 2013-2016 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2013-2016, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

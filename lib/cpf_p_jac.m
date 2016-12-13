@@ -24,7 +24,7 @@ function [dP_dV, dP_dlam] = cpf_p_jac(parameterization, z, V, lam, Vprv, lamprv,
 %   See also CPF_PREDICTOR, CPF_CORRECTOR.
 
 %   MATPOWER
-%   Copyright (c) 1996-2016 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
 %   by Shrirang Abhyankar, Argonne National Laboratory
 %   and Ray Zimmerman, PSERC Cornell
 %

@@ -63,7 +63,7 @@ function sd = loadstoragedata(sd_table, mpc)
 %           .rho                                (ns x 1) or (1 x 1)
 
 %   MOST
-%   Copyright (c) 2013-2016 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2013-2016, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

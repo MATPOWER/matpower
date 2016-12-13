@@ -26,7 +26,7 @@ function mso = most_summary(mdo)
 %   flag.
 
 %   MOST
-%   Copyright (c) 2015-2016 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2016, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

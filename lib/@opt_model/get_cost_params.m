@@ -20,7 +20,7 @@ function cp = get_cost_params(om, name, idx)
 %   See also OPT_MODEL, ADD_COSTS, BUILD_COST_PARAMS, COMPUTE_COST.
 
 %   MATPOWER
-%   Copyright (c) 2008-2016 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2016, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

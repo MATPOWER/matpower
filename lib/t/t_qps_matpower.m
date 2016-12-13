@@ -2,7 +2,7 @@ function t_qps_matpower(quiet)
 %T_QPS_MATPOWER  Tests of QPS_MATPOWER QP solvers.
 
 %   MATPOWER
-%   Copyright (c) 2010-2016 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2016, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

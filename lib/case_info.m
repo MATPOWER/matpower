@@ -18,7 +18,7 @@ function [groupss, isolated] = case_info(mpc, fd)
 %          Report islands that are connected by DC lines.
 
 %   MATPOWER
-%   Copyright (c) 2012-2016 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2012-2016, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

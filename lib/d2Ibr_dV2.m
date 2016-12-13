@@ -27,7 +27,7 @@ function [Haa, Hav, Hva, Hvv] = d2Ibr_dV2(Ybr, V, lam)
 %             http://www.pserc.cornell.edu/matpower/TN2-OPF-Derivatives.pdf
 
 %   MATPOWER
-%   Copyright (c) 2008-2016 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2016, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

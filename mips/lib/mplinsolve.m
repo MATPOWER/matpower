@@ -28,7 +28,7 @@ function [x, info] = mplinsolve(A, b, solver, opt)
 %               1st, 2nd columns are index, value of parameter respectively
 
 %   MIPS
-%   Copyright (c) 2015-2016 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2016, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MIPS.

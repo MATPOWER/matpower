@@ -110,7 +110,7 @@ function [nx, cx, done, rollback, evnts, cb_data, results] = ...
 %   See also RUNCPF, CPF_REGISTER_CALLBACK.
 
 %   MATPOWER
-%   Copyright (c) 2013-2016 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2013-2016, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

@@ -31,7 +31,7 @@ function [mpc, warnings] = psse2mpc(rawfile_name, mpc_name, verbose, rev)
 %       and hvdc line data. Other data sections are currently ignored.
 
 %   MATPOWER
-%   Copyright (c) 2014-2016 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2014-2016, Power Systems Engineering Research Center (PSERC)
 %   by Yujia Zhu, PSERC ASU
 %   and Ray Zimmerman, PSERC Cornell
 %   Based on mpraw2mp.m, written by: Yujia Zhu, Jan 2014, yzhu54@asu.edu.

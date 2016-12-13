@@ -18,7 +18,7 @@ function [V_hat, lam_hat] = cpf_predictor(V, lam, z, step, pv, pq)
 %       LAM_HAT : predicted lambda continuation parameter
 
 %   MATPOWER
-%   Copyright (c) 1996-2016 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
 %   by Shrirang Abhyankar, Argonne National Laboratory
 %   and Ray Zimmerman, PSERC Cornell
 %

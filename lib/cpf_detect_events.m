@@ -32,7 +32,7 @@ function [rollback, evnts, cef] = cpf_detect_events(cpf_events, cef, pef, step, 
 %       CEF : cell array of Current Event Function values
 
 %   MATPOWER
-%   Copyright (c) 2016 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2016, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Shrirang Abhyankar, Argonne National Laboratory
 %

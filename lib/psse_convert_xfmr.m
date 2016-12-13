@@ -33,7 +33,7 @@ function [xfmr, bus, warns, bus_name] = psse_convert_xfmr(warns, trans2, trans3,
 %   See also PSSE_CONVERT.
 
 %   MATPOWER
-%   Copyright (c) 2014-2016 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2014-2016, Power Systems Engineering Research Center (PSERC)
 %   by Yujia Zhu, PSERC ASU
 %   and Ray Zimmerman, PSERC Cornell
 %   Based on mptransin.m and mptransficbus.m, written by:

@@ -27,7 +27,7 @@ function [mpco, NewGenIdx] = addgen2mpc(mpci, gen, gencost, fuel)
 %       IDX : generator indices of the newly added generators
 
 %   MOST
-%   Copyright (c) 2013-2016 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2013-2016, Power Systems Engineering Research Center (PSERC)
 %   by Daniel Munoz-Alvarez and Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

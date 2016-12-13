@@ -41,7 +41,7 @@ function cpf_callbacks = cpf_register_callback(cpf_callbacks, fcn, priority, arg
 %   See also RUNCPF, CPF_DEFAULT_CALLBACK.
 
 %   MATPOWER
-%   Copyright (c) 2016 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2016, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Shrirang Abhyankar, Argonne National Laboratory
 %

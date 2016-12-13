@@ -3,7 +3,7 @@ function t_opf_softlims(quiet)
 %   Includes high-level tests of soft limits implementations.
 
 %   MATPOWER
-%   Copyright (c) 2009-2016 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2016, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

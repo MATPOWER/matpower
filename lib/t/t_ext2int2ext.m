@@ -4,7 +4,7 @@ function t_ext2int2ext(quiet)
 %   E2I_FIELD, I2E_FIELD, EXT2INT and INT2EXT.
 
 %   MATPOWER
-%   Copyright (c) 2009-2016 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2016, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

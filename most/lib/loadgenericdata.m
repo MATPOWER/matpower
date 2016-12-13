@@ -35,7 +35,7 @@ function var = loadgenericdata(varfile, vartype, fields, varname, args)
 %       VAR : Returned data structure of the first matching VARTYPE.
 
 %   MOST
-%   Copyright (c) 2013-2016 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2013-2016, Power Systems Engineering Research Center (PSERC)
 %   by Daniel Munoz-Alvarez and Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

@@ -18,7 +18,7 @@ function [nx, cx, done, rollback, evnts, cb_data, results] = cpf_target_lam_even
 %   See CPF_DEFAULT_CALLBACK for details of the input and output arguments.
 
 %   MATPOWER
-%   Copyright (c) 2016 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2016, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Shrirang Abhyankar, Argonne National Laboratory
 %

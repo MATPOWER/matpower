@@ -103,7 +103,7 @@ function [PR_REP, PR_REL, PR_ADD, PR_TCONT, PR_TYPES, PR_TMPCD,...
 %           expansion. These "expansions" occur within loadmd().
 
 %   MOST
-%   Copyright (c) 2013-2016 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2013-2016, Power Systems Engineering Research Center (PSERC)
 %   by Daniel Munoz-Alvarez and Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

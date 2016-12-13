@@ -63,7 +63,7 @@ function [CT_LABEL, CT_PROB, CT_TABLE, CT_TBUS, CT_TGEN, CT_TBRCH, ...
 %           type CT_ADD adds value in CT_NEWVAL column to old value
 
 %   MATPOWER
-%   Copyright (c) 2000-2016 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2000-2016, Power Systems Engineering Research Center (PSERC)
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %   and Ray Zimmerman, PSERC Cornell
 %

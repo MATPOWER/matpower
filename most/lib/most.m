@@ -53,7 +53,7 @@ function mdo = most(mdi, mpopt)
 %               mis-match warning message, see 'help miqps_matpower' for details
 
 %   MOST
-%   Copyright (c) 2010-2016 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2016, Power Systems Engineering Research Center (PSERC)
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %   and Ray Zimmerman, PSERC Cornell
 %

@@ -2,7 +2,7 @@ function t_test_fcns(quiet)
 %T_TEST_FCNS  Test T_OK and T_IS and manually check output of failed tests.
 
 %   MATPOWER
-%   Copyright (c) 2015 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 2015, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

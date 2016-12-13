@@ -152,7 +152,7 @@ function [busout, genout, branchout, f, success, info, et, g, jac, xr, pimul] = 
 %   See also RUNOPF, DCOPF, UOPF, CASEFORMAT.
 
 %   MATPOWER
-%   Copyright (c) 1996-2016 by Power System Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %
