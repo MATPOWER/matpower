@@ -172,6 +172,8 @@ CHANGES file in the docs directory for all the gory details.
     colleagues from the French Transmission System Operator.
   - Added case145.m, IEEE 145 bus, 50 generator dynamic test case from
     http://www.ee.washington.edu/research/pstca/dyn50/pg_tcadd50.htm.
+  - Added case33bw.m, a 33-bus radial distribution system from Baran
+    and Wu.
 
 * New Features:
   - MATPOWER Optimal Scheduling Tool (MOST) is a major new feature,
