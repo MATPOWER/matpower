@@ -2,7 +2,7 @@
  Change history for MOST
 -------------------------
 
-Version:    1.0b1
+Version:    1.0
 
 MOST
 Copyright (c) 2015-2016, Power Systems Engineering Research Center (PSERC)
@@ -11,6 +11,10 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 
 Changes since 5/21/15
 ---------------------
+
+12/15/16
+    - Released 1.0.
+    - Moved development to GitHub <https://github.com/MATPOWER/most>.
 
 3/1/16
     - Put checks in loadmd() and most() to require internal bus ordering

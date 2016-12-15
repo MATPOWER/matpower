@@ -2,15 +2,16 @@
  MATPOWER - A MATLAB(R) Power System Simulation Package
 ========================================================
 
-Version:    6.0b2
+Version:    6.0
 
-Home Page:  http://www.pserc.cornell.edu/matpower/
+Website:    http://www.pserc.cornell.edu/matpower/
+GitHub:     https://github.com/MATPOWER/matpower
 
 Authors:    Ray Zimmerman               <rz10@cornell.edu>
             Carlos E. Murillo-Sanchez   <carlos_murillo@ieee.org>
             and others, see AUTHORS file
 
-            Tue, Nov 1, 2016
+            Thu, Dec 15, 2016
 
 Copyright (c) 1997-2016, Power Systems Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
@@ -32,7 +33,8 @@ is designed to give the best performance possible while keeping the code
 simple to understand and modify. It was initially developed as part
 of the PowerWeb project <http://www.pserc.cornell.edu/powerweb/>.
 
-MATPOWER can be downloaded from the MATPOWER home page above. 
+MATPOWER can be downloaded from the MATPOWER website, or cloned
+from the MATPOWER GitHub project, both listed above.
 
 
 --------------
@@ -83,7 +85,7 @@ System Requirements
 
 Installation
 ------------
-1.  Follow the download instructions on the MATPOWER home page. You
+1.  Follow the download instructions on the MATPOWER website. You
     should end up with a file named matpowerXXX.zip, where XXX depends
     on the version of MATPOWER.
 
@@ -141,59 +143,25 @@ documentation for the various MATPOWER functions. For example:
     help caseformat
 
 
------------------------------
- WHAT'S NEW IN VERSION 6.0b2
------------------------------
-
-Below is a summary of the changes since version 6.0b1 of MATPOWER. See the
-CHANGES file in the docs directory for all the gory details.
-
-* New Features:
-  - Redesigned CPF callback mechanism to handle CPF events such as
-    generator limits, nose point detection, etc. Included event log
-    in CPF results.
-  - Added options 'cpf.enforce_p_lims' and 'cpf.enforce_q_lims' to
-    enforce generator active and reactive power limts in the
-    continuation power flow.
-  - Added OPF option 'opf.use_vg' to provide a convenient way to have
-    the OPF respect the generator voltage setpoints specified in the
-    gen matrix.
-
-* Other Improvements:
-  - Added option 'cpf.adapt_step_damping' to control oscillations in
-    adaptive step size control for continuation power flow.
-  - Added CPF user options for setting tolerances for target lambda
-    detection and nose point detection, 'cpf.target_lam_tol' and
-    'cpf.nose_tol', respectively.
-  - Added support for Matlab Optimization Toolbox 7.5 (R2016b).
-  - Added support for MOSEK v8.x.
-  - Added tests for power flow with 'pf.enforce_q_lims' option.
-  - Updated network reduction code to handle cases with radially
-    connected external buses.
-  - Updated versions of qcqp_opf() and qcqp_opf() in extras/misc, from
-    Cedric Josz.
-
-* Bugs fixed:
-  - Fixed shadow prices on variable bounds for AC OPF for fmincon,
-    IPOPT, and Knitro.
-  - In savecase() single quotes are now escaped properly in bus names.
-  - Generator capability curve parameters that define a zero-reactive
-    power line no longer cause a fatal error.
-  - Bad bus numbers no longer cause a fatal error (after reporting the
-    bad bus numbers) in case_info().
-
-* Incompatible Changes:
-  - Removed 'cpf.user_callback_args' option and modified
-    'cpf.user_callback'.
-  - Changed name of 'cpf.error_tol' option to 'cpf.adapt_step_tol'.
-
-
------------------------------
- WHAT'S NEW IN VERSION 6.0b1
------------------------------
+---------------------------
+ WHAT'S NEW IN VERSION 6.0
+---------------------------
 
 Below is a summary of the changes since version 5.1 of MATPOWER. See the
 CHANGES file in the docs directory for all the gory details.
+
+* New Open Development Model
+  - MATPOWER development has moved to GitHub! The code repository is
+    now publicly available to clone and submit pull requests.
+    <https://github.com/MATPOWER/matpower>
+  - Public issue tracker for reporting bugs, submitting patches, etc.
+    <https://github.com/MATPOWER/matpower/issues>
+  - Separate repositories for MOST, MIPS, MP-Test, all available
+    through <https://github.com/MATPOWER/>.
+  - New developer e-mail list (MATPOWER-DEV-L) to facilitate
+    communication between those collaborating on MATPOWER development.
+    Sign up at:
+    <http://www.pserc.cornell.edu/matpower/mailinglists.html#devlist>.
 
 * New Case Files:
   - Added 9 new case files, 8 cases ranging from 1888 to 6515 buses
@@ -217,6 +185,15 @@ CHANGES file in the docs directory for all the gory details.
     See docs/MOST-manual.pdf for details.
   - General mechanism for applying modifications to an existing MATPOWER
     case. See apply_changes() and idx_ct().
+  - Redesigned CPF callback mechanism to handle CPF events such as
+    generator limits, nose point detection, etc. Included event log
+    in CPF results.
+  - Added options 'cpf.enforce_p_lims' and 'cpf.enforce_q_lims' to
+    enforce generator active and reactive power limts in the
+    continuation power flow.
+  - Added OPF option 'opf.use_vg' to provide a convenient way to have
+    the OPF respect the generator voltage setpoints specified in the
+    gen matrix.
   - Experimental foundation for handling of ZIP load models in power flow
     (Newton, fast-decoupled only), continuation power flow, and optimal
     power flow (MIPS, fmincon, Knitro, IPOPT solvers only). Currently,
@@ -254,6 +231,18 @@ CHANGES file in the docs directory for all the gory details.
   - Added some caching to mpoption() and made minor changes to
     nested_struct_copy() to greatly decrease the overhead added by
     mpoption() when running many small problems.
+  - Added option 'cpf.adapt_step_damping' to control oscillations in
+    adaptive step size control for continuation power flow.
+  - Added CPF user options for setting tolerances for target lambda
+    detection and nose point detection, 'cpf.target_lam_tol' and
+    'cpf.nose_tol', respectively.
+  - Added support for Matlab Optimization Toolbox 7.5 (R2016b).
+  - Added support for MOSEK v8.x.
+  - Added tests for power flow with 'pf.enforce_q_lims' option.
+  - Updated network reduction code to handle cases with radially
+    connected external buses.
+  - Updated versions of qcqp_opf() and qcqp_opf() in extras/misc, from
+    Cedric Josz.
   - Added "Release History" section to Appendix of manual.
   - Many new tests.
 
@@ -277,10 +266,20 @@ CHANGES file in the docs directory for all the gory details.
     is singular (e.g. islanded system without slack).
   - Fixed problem in have_fcn() where SeDuMi was turning off and leaving
     off all warnings.
+  - Fixed shadow prices on variable bounds for AC OPF for fmincon,
+    IPOPT, and Knitro.
+  - In savecase() single quotes are now escaped properly in bus names.
+  - Generator capability curve parameters that define a zero-reactive
+    power line no longer cause a fatal error.
+  - Bad bus numbers no longer cause a fatal error (after reporting the
+    bad bus numbers) in case_info().
 
-* Incompatible Change:
+* Incompatible Changes:
   - Removed fairmax() from the public interface by moving it inside uopf(),
     the only place it was used.
+  - Removed 'cpf.user_callback_args' option and modified
+    'cpf.user_callback'.
+  - Changed name of 'cpf.error_tol' option to 'cpf.adapt_step_tol'.
 
 
 ---------------
@@ -427,40 +426,26 @@ simple and it includes pre-built MEX files for several of the above
 solvers, including CLP, GLPK and IPOPT.
 
 
---------------
- MAILING LIST
---------------
+---------------
+ MAILING LISTS
+---------------
 
-An e-mail list <MATPOWER-L@cornell.edu> has been set up to facilitate
-discussion of MATPOWER. Only list subscribers are permitted to post to
-the list.
+There are three MATPOWER e-mail lists available to serve the MATPOWER
+community:
 
-Feel free to use this list to discuss anything related to MATPOWER, to
-ask questions about MATPOWER, or to provide feedback to the developers
-of MATPOWER, such as bug reports, patches or ideas for improvements
-(though we make no guarantees about if/when they might be included).
+- MATPOWER-ANNOUNCE-L is a simple announcement list for those who
+  wish to be notified of the release of new versions of MATPOWER.
 
-Also, if you have any of your own MATLAB power systems code that you
-would like to contribute, feel free to contact us via this list about
-making it available on the MATPOWER web site.
+- MATPOWER-L is for MATPOWER users, to facilitate discussion and
+  provide a forum for help with MATPOWER related questions.
 
-Joining the list
-----------------
-To join the MATPOWER mailing list, send an e-mail to
-<MATPOWER-L-request@cornell.edu> with a single line with the word "join"
-in the body of the message. You must send the request from the e-mail
-address where you want to receive the list's messages. And be sure it is
-a plain text e-mail, that is, with no formatting, font styles or HTML
-code.
+- MATPOWER-DEV-L is for MATPOWER developers, to provide a forum for
+  discussion related to the development of the MATPOWER software or
+  proposed contributions.
 
-Sending mail to the list
-------------------------
-To send an e-mail to all of the subscribers of the MATPOWER mailing
-list, simply address your e-mail to <MATPOWER-L@cornell.edu>. Only
-subscribers are permitted to send e-mail to the list.
+For details see the Mailing Lists section of the MATPOWER website.
 
-Leaving the list
-----------------
-You can unsubscribe from the list at any time by sending an e-mail to
-<MATPOWER-L-request@cornell.edu> with a single line with the word
-"leave" in the body of the message
+Please select the most appropriate list for your post and do *not*
+cross-post to both MATPOWER-L and MATPOWER-DEV-L. Bug reports,
+software patches, proposed enhancements, etc. should be submitted to
+the issue tracker on GitHub.

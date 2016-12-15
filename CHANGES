@@ -2,7 +2,7 @@
  Change history for MATPOWER
 -----------------------------
 
-Version:    6.0b2
+Version:    6.0
 
 maintained by Ray Zimmerman <rz10@cornell.edu>
 
@@ -15,6 +15,10 @@ For change history for MOST, see most/docs/CHANGES.
 
 Changes since 6.0b2
 -----------------
+
+12/15/16
+    - Released 6.0.
+    - Moved development to GitHub <https://github.com/MATPOWER/matpower>.
 
 12/9/16
     - Bumped version to 1.2.2.
