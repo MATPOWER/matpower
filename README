@@ -157,7 +157,7 @@ CHANGES file in the docs directory for all the gory details.
   - Public issue tracker for reporting bugs, submitting patches, etc.
     <https://github.com/MATPOWER/matpower/issues>
   - Separate repositories for MOST, MIPS, MP-Test, all available
-    through <https://github.com/MATPOWER/>.
+    from <https://github.com/MATPOWER/>.
   - New developer e-mail list (MATPOWER-DEV-L) to facilitate
     communication between those collaborating on MATPOWER development.
     Sign up at:
