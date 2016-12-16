@@ -137,7 +137,8 @@ if ~isempty(mpc.bus)
                   strcmp(alg, 'NR-SP') || strcmp(alg, 'NR-SC') || ...
                   strcmp(alg, 'NR-IP') || strcmp(alg, 'NR-IC') || ...
                   strcmp(alg, 'FDXB') || strcmp(alg, 'FDBX') || ...
-                  strcmp(alg, 'FSOLVE') || strcmp(alg, 'GS')) && ...
+                  strcmp(alg, 'FSOLVE') || strcmp(alg, 'GS') || ...
+                  strcmp(alg, 'ZG')) && ...
                   mpopt.pf.v_cartesian ~= 2
             use_mpe = 1;
         end
@@ -223,6 +224,8 @@ if ~isempty(mpc.bus)
                     solver = 'fsolve';
                 case 'GS'
                     solver = 'Gauss-Seidel';
+                case 'ZG'
+                    solver = 'Implicit Z-bus Gauss';
                 case 'PQSUM'
                     solver = 'Power Summation';
                 case 'ISUM'
@@ -246,6 +249,8 @@ if ~isempty(mpc.bus)
                 warnstr = 'Newton algorithm (current or cartesian/hybrid versions) do';
             elseif strcmp(alg, 'GS')
                 warnstr = 'Gauss-Seidel algorithm does';
+            elseif strcmp(alg, 'ZG')
+                warnstr = 'Implicit Z-bus Gauss algorithm does';
             else
                 warnstr = '';
             end
@@ -334,6 +339,14 @@ if ~isempty(mpc.bus)
                         [V, success, iterations] = fdpf(Ybus, Sbus, V0, Bp, Bpp, ref, pv, pq, mpopt);
                     case 'GS'
                         [V, success, iterations] = gausspf(Ybus, Sbus([]), V0, ref, pv, pq, mpopt);
+                    case 'ZG'
+                        %% get B matrix for updating Q at PV buses
+                        if isempty(pv)
+                            Bpp = [];
+                        else
+                            [Bp, Bpp] = makeB(baseMVA, bus, branch, 'FDBX');
+                        end
+                        [V, success, iterations] = zgausspf(Ybus, Sbus([]), V0, ref, pv, pq, Bpp, mpopt);
                     case {'PQSUM', 'ISUM', 'YSUM'}
                         [mpc, success, iterations] = radial_pf(mpc, mpopt);
                     otherwise
@@ -344,7 +357,7 @@ if ~isempty(mpc.bus)
 
             %% update data matrices with solution
             switch alg
-                case {'NR', 'NR-SP', 'NR-SC', 'NR-SH', 'NR-IP', 'NR-IC', 'NR-IH', 'FDXB', 'FDBX', 'FSOLVE', 'GS'}
+                case {'NR', 'NR-SP', 'NR-SC', 'NR-SH', 'NR-IP', 'NR-IC', 'NR-IH', 'FDXB', 'FDBX', 'FSOLVE', 'GS', 'ZG'}
                     [bus, gen, branch] = pfsoln(baseMVA, bus, gen, branch, Ybus, Yf, Yt, V, ref, pv, pq, mpopt);
                 case {'PQSUM', 'ISUM', 'YSUM'}
                     bus = mpc.bus;

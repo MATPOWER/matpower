@@ -1142,7 +1142,7 @@ v_m^{\{j\}}
 
 This yields a system of nonlinear equations with $n_{pv} + 2n_{pq}$ equations and unknowns, where $n_{pv}$ and $n_{pq}$ are the number of PV and PQ buses, respectively. After solving for $x$, the remaining real power balance equation can be used to compute the generator real power injection at the slack bus. Similarly, the remaining $n_{pv} + 1$ reactive power balance equations yield the generator reactive power injections.
 
-\matpower{} includes four different algorithms for solving the general AC power flow problem.\footnote{Three more that are specific to radial networks typical of distribution systems are described in Section~\ref{sec:pfdist}.} The default solver is based on a standard Newton's method~\cite{tinney1967} using a polar form and a full Jacobian updated at each iteration. Each Newton step involves computing the mismatch $g(x)$, forming the Jacobian based on the sensitivities of these mismatches to changes in $x$ and solving for an updated value of $x$ by factorizing this Jacobian. This method is described in detail in many textbooks. As of version~7, \matpower{} also includes variants of the Newton method using nodal current balance equations and/or cartesian/hybrid representations for voltage as described in~\cite{sereeter2019}.
+\matpower{} includes several different algorithms for solving the general AC power flow problem.\footnote{Four of them, described in Section~\ref{sec:pfdist}, are focused on distribution systems, three of which are specific to networks with a radial topology.} The default solver is based on a standard Newton's method~\cite{tinney1967} using a polar form and a full Jacobian updated at each iteration. Each Newton step involves computing the mismatch $g(x)$, forming the Jacobian based on the sensitivities of these mismatches to changes in $x$ and solving for an updated value of $x$ by factorizing this Jacobian. This method is described in detail in many textbooks. As of version~7, \matpower{} also includes variants of the Newton method using nodal current balance equations and/or cartesian/hybrid representations for voltage as described in~\cite{sereeter2019}.
 
 Also included are solvers based on variations of the fast-decoupled method~\cite{stott1974}, specifically, the XB and BX methods described in~\cite{amerongen1989}. These solvers greatly reduce the amount of computation per iteration, by updating the voltage magnitudes and angles separately based on constant approximate Jacobians which are factored only once at the beginning of the solution process. These per-iteration savings, however, come at the cost of more iterations.
 
@@ -1466,6 +1466,9 @@ In such a way the PV generator will inject purely reactive power, as it is suppo
 
 Before proceeding with the next iteration, the bus voltage corrections are calculated. In order to do that, the radial network is solved by applying incremental current changes $\Delta I_{pv} =  \Delta C_{pv} + j \Delta D_{pv}$ at the PV buses as excitations and setting $v_1 = 0$. After the backward/forward sweep is performed with the current summation method, the voltage corrections at all buses are known. They are added to the latest voltages in order to obtain the new bus voltages, which are used in the next iteration \cite{rajicic1994}.
 
+\subsubsection{Implicit Z-bus Gauss Power Flow}
+The implicit Z-bus Gauss method~\cite{chen1991}, which is not limited to networks with radial topology, can be selected by setting \code{pf.alg} to \codeq{ZG}. It generally works well for distribution systems with no PV buses, but the current implementation does not scale well to large numbers of PV buses.
+
 \subsection{{\tt runpf}}
 \label{sec:runpf}
 
@@ -1539,6 +1542,7 @@ name & default & description \\
 \codeq{PQSUM} & Power Summation (radial networks only) \\
 \codeq{ISUM} & Current Summation (radial networks only) \\
 \codeq{YSUM} & Admittance Summation (radial networks only) \\
+\codeq{ZG} & Implicit Z-bus Gauss \\
 \end{tabular}	\\
 \code{pf.current\_balance}\tnote{\ddag}	& 0	& use current, as opposed to power, balance for AC PF, 0 or 1	\\
 \code{pf.v\_cartesian}\tnote{\ddag}	& 0	& voltage representation	\\
@@ -1549,7 +1553,7 @@ name & default & description \\
 \end{tabular}	\\
 \code{pf.tol}	& $10^{-8}$	& termination tolerance on per unit P and Q dispatch	\\
 \code{pf.nr.max\_it}	& 10	& maximum number of iterations for Newton's method	\\
-\code{pf.nr.lin\_solver}	& \codeq{}	& linear solver option for \code{mplinsolve} for computing Newton update step \\
+\code{pf.nr.lin\_solver}	& \codeq{}	& solver option for \code{mplinsolve} for computing Newton update \\
 && (see \code{mplinsolve} for complete list of all options)	\\
 && \begin{tabular}{c @{ -- } p{0.57\textwidth}}
 \codeq{} & default to \codeq{\textbackslash} for small systems, \codeq{LU3} for larger ones \\
@@ -4785,6 +4789,7 @@ name & default & description \\
 \codeq{PQSUM} & Power Summation (radial networks only) \\
 \codeq{ISUM} & Current Summation (radial networks only) \\
 \codeq{YSUM} & Admittance Summation (radial networks only) \\
+\codeq{ZG} & Implicit Z-bus Gauss \\
 \end{tabular}	\\
 \code{pf.current\_balance}\tnote{\ddag}	& 0	& use current, as opposed to power, balance for AC PF, 0 or 1	\\
 \code{pf.v\_cartesian}\tnote{\ddag}	& 0	& voltage representation	\\
@@ -4795,7 +4800,7 @@ name & default & description \\
 \end{tabular}	\\
 \code{pf.tol}	& $10^{-8}$	& termination tolerance on per unit P and Q dispatch	\\
 \code{pf.nr.max\_it}	& 10	& maximum number of iterations for Newton's method	\\
-\code{pf.nr.lin\_solver}	& \codeq{}	& linear solver option for \code{mplinsolve} for computing Newton update step \\
+\code{pf.nr.lin\_solver}	& \codeq{}	& solver option for \code{mplinsolve} for computing Newton update \\
 && (see \code{mplinsolve} for complete list of all options)	\\
 && \begin{tabular}{c @{ -- } p{0.57\textwidth}}
 \codeq{} & default to \codeq{\textbackslash} for small systems, \codeq{LU3} for larger ones \\
@@ -8204,6 +8209,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-8.0.pdf}{\matpower{} 8.0 Use
     \item AC OPF for solvers MIPS, \code{fmincon}, \ipopt{}, and \knitro{}, for
     all formulations
 \end{itemize}
+\item New Implicit Z-bus Gauss method power flow for distribution systems.
 \item New options:
 \begin{itemize}
     \item \code{pf.alg} now accepts \codeq{FSOLVE} to select the \code{fsolve()} function\footnote{Part of the \matlab{} \ot{} and included in Octave. Supported via \mpelink{} only.} as the AC power flow solver
@@ -8404,6 +8410,10 @@ backward/forward power flow for radial and weakly meshed networks,'' in
 \emph{2001 IEEE Porto Power Tech Proceedings (Cat. No.01EX502)}, vol.~3,
 2001, 6 pp.
 \doi{10.1109/PTC.2001.964896}
+
+\bibitem{chen1991}
+T.~H.~Chen, M.~S.~Chen, K.~J.~Hwang, P.~Kotas, and E.~A.~Chebi, ``Distribution system power flow analysis-a rigid approach,'' \emph{IEEE Transactions on Power Delivery}, vol.~6, no.~3, pp.~1146--1152, July~1991.
+\doi{10.1109/61.85860}
 
 \bibitem{wood1996}
 A.~J. Wood and B.~F. Wollenberg, \emph{Power Generation, Operation, and

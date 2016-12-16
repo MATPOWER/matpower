@@ -25,6 +25,7 @@ cfg = {
     {'FDXB',    'Fast Decoupled (XB)',          [],         []  },
     {'FDBX',    'Fast Decoupled (BX)',          [],         []  },
     {'GS',      'Gauss-Seidel',                 [],         []  },
+    {'ZG',      'Implicit Z-bus Gauss',         [],         []  },
 };
 if have_feature('mp_element')
     cfg{end+1} = {'FSOLVE',  'fsolve (power-polar)',         'fsolve',   []  };

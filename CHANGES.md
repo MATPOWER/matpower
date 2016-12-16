@@ -46,6 +46,10 @@ Changes since 7.1
   - Fix fatal bug in `int2ext()` when called with `mpopt` and an `int2ext`
     user callback function.
 
+#### 10/27/20
+- Add Implicit Z-bus Gauss power flow solver for distribution systems.
+  Select by setting `pf.alg` to `'ZG'`.
+
 #### 10/22/20
 - Add experimental support for [MP-Element][30], a new, generalized
   network and element modeling layer for MATPOWER. See also [MATPOWER
