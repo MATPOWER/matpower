@@ -1,0 +1,1151 @@
+%! program = pdflatex
+
+\documentclass[12pt]{article}
+
+%%% PACKAGES
+\usepackage{ifpdf}
+\usepackage{booktabs}   % for much better looking tables
+\usepackage{array}      % for better arrays (eg matrices) in maths
+\usepackage{paralist}   % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+%\usepackage{verbatim}   % adds environment for commenting out blocks of text & for better verbatim
+\usepackage{subfigure}  % make it possible to include more than one captioned figure/table in a single float
+% These packages are all incorporated in the memoir class to one degree or another...
+\ifpdf
+\usepackage[pdftex]{graphicx}
+\else
+\usepackage[dvips]{graphicx}
+\fi
+\usepackage{epstopdf}
+\usepackage[cmex10]{amsmath}
+\interdisplaylinepenalty=2500
+
+%%% PAGE DIMENSIONS
+\usepackage{geometry} % to change the page dimensions
+\geometry{letterpaper}
+%\geometry{margins=2in} % for example, change the margins to 2 inches all round
+%\geometry{landscape} % set up the page for landscape
+% read geometry.pdf for detailed page layout information
+
+%% HEADERS & FOOTERS
+\usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
+\pagestyle{fancy} % options: empty , plain , fancy
+\renewcommand{\headrulewidth}{0pt} % customise the layout...
+%\lhead{}\chead{}\rhead{\hl{--- DRAFT ---}}
+\lhead{}\chead{}\rhead{}
+\lfoot{}\cfoot{\thepage}\rfoot{}
+
+% *** MY ADDITIONAL PACKAGES ***
+\usepackage{amsfonts}
+\usepackage{amstext}
+%\usepackage{ctable}        % messes up table captions among other things
+\usepackage{booktabs}       % defines \toprule, \midrule, \bottomrule
+\usepackage{threeparttable} % needed for table notes
+\usepackage{longtable}      % for multi-page tables
+\usepackage[font=normalsize]{caption}   % to keep caption for multi-page
+                            % table normal size after using \footnotesize
+                            % to reduce rest of table
+%\usepackage{multirow}
+%\usepackage{mathenv}
+\usepackage{textcomp}      % improves \textregistered, provides \textquotesingle
+\usepackage[usenames]{color}
+\usepackage{soul}
+\usepackage{fancyvrb}
+\usepackage{relsize}
+\usepackage[noadjust]{cite} % prevent adding a space
+%\usepackage{url}
+\usepackage{xr-hyper}
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor} % additional named colors
+\usepackage[colorlinks=true,urlcolor=blue,hyperfootnotes=false,backref=section,citecolor=LimeGreen]{hyperref}
+%\usepackage[colorlinks=true,urlcolor=blue,hyperfootnotes=false]{hyperref}
+% These are (supposedly) the defaults
+% \hypersetup{
+%     bookmarks=true,         % show bookmarks bar?
+%     unicode=false,          % non-Latin characters in Acrobat's bookmarks
+%     pdftoolbar=true,        % show Acrobat's toolbar?
+%     pdfmenubar=true,        % show Acrobat's menu?
+%     pdffitwindow=true,      % page fit to window when opened
+%     pdftitle={My title},    % title
+%     pdfauthor={Author},     % author
+%     pdfsubject={Subject},   % subject of the document
+%     pdfcreator={Creator},   % creator of the document
+%     pdfproducer={Producer}, % producer of the document
+%     pdfkeywords={keywords}, % list of keywords
+%     pdfnewwindow=true,      % links in new window
+%     colorlinks=false,       % false: boxed links; true: colored links
+%     linkcolor=red,          % color of internal links
+%     citecolor=green,        % color of links to bibliography
+%     filecolor=magenta,      % color of file links
+%     urlcolor=cyan           % color of external links
+% }
+\usepackage{upquote}        % single quotes in verbatim environments
+\usepackage[title,titletoc]{appendix}
+
+%%% SECTION TITLE APPEARANCE
+% \usepackage{sectsty}
+% \allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
+% (This matches ConTeXt defaults)
+
+%%% ToC APPEARANCE
+\usepackage[nottoc,notlof,notlot]{tocbibind} % Put the bibliography in the ToC
+% \usepackage[titles]{tocloft} % Alter the style of the Table of Contents
+% \renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
+% \renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
+
+% Namelist environment generates a list with an item width of your choice.
+% Syntax:  \begin{namelist}{widthstring} .  From Buerger's book.
+\newcommand{\namelistlabel}[1]{\mbox{#1}\hfil}
+\newenvironment{namelist}[1]{%
+\begin{list}{}
+  {
+    \let\makelabel\namelistlabel
+    \settowidth{\labelwidth}{#1}
+    \setlength{\leftmargin}{1.1\labelwidth}
+  }
+ }{%
+\end{list}}
+
+% define my verbatim environment, requires packages fancyvrb & relsize
+\renewcommand{\FancyVerbFormatLine}[1]{\makebox[2mm][l]{}#1}
+\DefineVerbatimEnvironment%
+  {Code}{Verbatim}
+  {fontsize=\relsize{-1.5},
+  samepage=true,
+  frame=single}
+
+% define my verbatim environment, requires packages fancyvrb & relsize
+\renewcommand{\FancyVerbFormatLine}[1]{\makebox[2mm][l]{}#1}
+\DefineVerbatimEnvironment%
+  {Notice}{Verbatim}
+  {fontsize=\relsize{-1.5},
+  samepage=true,
+  xleftmargin=15mm,
+  framesep=5mm,
+  frame=single}
+
+%% makes verbatim text 'small' (using verbatim package)
+%\makeatletter
+%\g@addto@macro\@verbatim\small
+%\makeatother
+
+%\hyphenation{matpower}
+
+\newcommand{\mpver}[0]{6.0}
+%\newcommand{\matlab}[0]{{Matlab}}
+%\newcommand{\matlab}[0]{{\sc Matlab}\textsuperscript{\tiny \textregistered}}
+\newcommand{\matlab}[0]{{\sc Matlab}}
+\newcommand{\matpower}[0]{{\sc Matpower}}
+\newcommand{\matpowerurl}[0]{http://www.pserc.cornell.edu/matpower/}
+\newcommand{\matpowerlink}[0]{\href{\matpowerurl}{\matpower{}}}
+\newcommand{\matpowergithuburl}[0]{https://github.com/MATPOWER/matpower}
+\newcommand{\mptest}[0]{{MP-Test}}
+\newcommand{\mptesturl}[0]{https://github.com/MATPOWER/mptest}
+\newcommand{\mptestlink}[0]{\href{\mptesturl}{\mptest{}}}
+\newcommand{\mips}[0]{{MIPS}}
+\newcommand{\mipsurl}[0]{https://github.com/MATPOWER/mips}
+\newcommand{\mipslink}[0]{\href{\mipsurl}{\mips{}}}
+\newcommand{\mipsname}[0]{{{\bf M}{\sc atpower} \textbf{I}nterior \textbf{P}oint \textbf{S}olver}}
+\newcommand{\mipsver}[0]{1.2.2}
+\newcommand{\most}[0]{{MOST}}
+\newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
+\newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
+\newcommand{\mostver}[0]{1.0}
+\newcommand{\md}[0]{{\most{} Data struct}}
+\newcommand{\powerweb}[0]{{\sc PowerWeb}}
+\newcommand{\pserc}[0]{{\sc PSerc}}
+\newcommand{\PSERC}[0]{{Power Systems Engineering Research Center (\pserc{})}}
+\newcommand{\ipopt}[0]{{\sc Ipopt}}
+\newcommand{\knitro}[0]{{KNITRO}}
+\newcommand{\clp}[0]{{CLP}}
+\newcommand{\cplex}[0]{{CPLEX}}
+\newcommand{\glpk}[0]{{GLPK}}
+\newcommand{\gurobi}[0]{{Gurobi}}
+\newcommand{\mosek}[0]{{MOSEK}}
+\newcommand{\ot}[0]{{Optimization Toolbox}}
+\newcommand{\pardiso}[0]{{PARDISO}}
+\newcommand{\sdppf}[0]{\texttt{SDP\_PF}}
+\newcommand{\sdppfver}[0]{1.0}
+\newcommand{\sdpopf}[0]{SDPOPF}
+\newcommand{\code}[1]{{\relsize{-0.5}{\tt{{#1}}}}}  % requires package relsize
+% Note: to get straight single quotes in \code you have to use one of the
+%       following: \char13 \char'15 \char"0D \textquotesingle
+\newcommand{\codeq}[1]{\code{\textquotesingle{}#1\textquotesingle}}  % requires package textcomp
+\newcommand{\mppath}[1]{\textsf{\textsl{{\relsize{-1.0}\textless{}\mbox{MATPOWER}\textgreater{}}}}\code{{#1}}}  % requires package relsize
+%\newcommand{\mostpath}[1]{\code{\$MOST{#1}}}
+\newcommand{\mipspath}[1]{\textsf{\textsl{{\relsize{-1.0}\textless{}\mbox{MIPS}\textgreater{}}}}\code{{#1}}}  % requires package relsize
+\newcommand{\mostpath}[1]{\mppath{}\code{/most{#1}}}
+\newcommand{\baseMVA}[0]{\code{baseMVA}}
+\newcommand{\bus}[0]{\code{bus}}
+\newcommand{\branch}[0]{\code{branch}}
+\newcommand{\gen}[0]{\code{gen}}
+\newcommand{\gencost}[0]{\code{gencost}}
+\newcommand{\areas}[0]{\code{areas}}
+\newcommand{\mpc}[0]{\code{mpc}}
+\newcommand{\results}[0]{\code{results}}
+\newcommand{\mumurl}[0]{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-\mpver.pdf}
+\newcommand{\mum}[0]{\href{\mumurl}{\matpower{} User's Manual}}
+\newcommand{\mipsmanurl}[0]{http://www.pserc.cornell.edu/matpower/docs/MIPS-manual-\mipsver.pdf}
+\newcommand{\mostmanurl}[0]{http://www.pserc.cornell.edu/matpower/docs/MOST-manual-\mostver.pdf}
+\newcommand{\currentmumurl}[0]{http://www.pserc.cornell.edu/matpower/MATPOWER-manual.pdf}
+\newcommand{\currentmipsmanurl}[0]{\mipsurl/blob/master/MIPS-manual.pdf}
+\newcommand{\currentmostmanurl}[0]{http://www.pserc.cornell.edu/matpower/MOST-manual.pdf}
+\newcommand{\mipsman}[0]{\href{\mipsmanurl}{\mips{} User's Manual}}
+\newcommand{\mostman}[0]{\href{\mostmanurl}{\most{} User's Manual}}
+\newcommand{\dg}[0]{\sp\dagger}                         % hermitian conjugate
+\newcommand{\trans}[1]{{#1}^{\ensuremath{\mathsf{T}}}}  % transpose
+%\newcommand{\trans}[1]{#1^{\ensuremath{\mathsf{T}}}}    % transpose
+\newcommand{\cc}[1]{{#1}^{\ast}}                        % complex conjugate
+\newcommand{\hc}[1]{{#1}^{\dg}}                         % hermitian conjugate
+\newcommand{\conj}[1]{{#1}^{+}}                         % hermitian conjugate
+\newcommand{\diag}[1]{\left[{#1}\right]}                % diagonal
+\newcommand{\R}{\mathbb{R}}          % requires \usepackage{amsfonts|bbold}
+\newcommand{\der}[2]{\frac{\partial{#1}}{\partial{#2}}} % partial derivative
+
+\def\sectionautorefname{Chapter}
+\def\subsectionautorefname{Section}
+\def\subsubsectionautorefname{Section}
+\newcommand{\secref}[1]{\autoref{#1} \nameref{#1}}
+
+\numberwithin{equation}{section}
+\numberwithin{table}{section}
+\renewcommand{\thetable}{\thesection\mbox{-}\arabic{table}}
+\numberwithin{figure}{section}
+\renewcommand{\thefigure}{\thesection\mbox{-}\arabic{figure}}
+
+\externaldocument[MOSTMAN-]{MOST-manual}[\mostmanurl]
+
+
+%\title{\hl{--- DRAFT  ---}\\\hl{\em do not distribute}\\~\\\mipsname{}\\\mips{} \mipsver{}\\
+\title{\mipsname{}\\\mips{} \mipsver{}\\
+User's Manual}
+\author{Ray~D.~Zimmerman \and Hongye~Wang}
+\date{December 16, 2016} % comment this line to display the current date
+%\date{December 14, 2011\thanks{Second revision. First revision was December 13, 2011}} % comment this line to display the current date
+
+%%% BEGIN DOCUMENT
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+\vfill
+\begin{center}
+{\scriptsize
+\copyright~2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016~\PSERC{}\\
+All Rights Reserved}
+\end{center}
+
+\clearpage
+%\setcounter{page}{2}
+\tableofcontents
+\clearpage
+%\listoffigures
+\listoftables
+
+%%------------------------------------------
+\clearpage
+\section{Introduction}
+
+\subsection{Background}
+
+\mipsname{} (\mipslink{}) is a package of \matlab{} language M-files\footnote{Also compatible with GNU Octave~\cite{octave}.} for solving non-linear programming problems (NLPs) using a primal dual interior point method. The \mips{} project page can be found at:
+
+\bigskip
+
+~~~~~~~~\url{\mipsurl}
+
+\bigskip
+
+\mipslink{} is based on code written in C language~\cite{tspopf} by Hongye Wang as a graduate student at Cornell University for optimal power flow applications~\cite{wang2007a,wang2007}. It was later ported to the \matlab{} language by Ray~D.~Zimmerman of \pserc{}\footnote{\url{http://pserc.org/}} at Cornell University for use in \matpowerlink{}~\cite{matpower,zimmerman2011}.
+
+Up until version 6 of \matpower{}, \mips{} was distributed only as an integrated part of \matpower{}. After the release of \matpower{} 6, \mips{} was split out into a separate project, though it is still included with \matpower{} as its default AC optimal power flow solver.
+
+
+\clearpage
+\subsection{License and Terms of Use}
+
+The code in \mips{} is distributed under the 3-clause BSD license\footnote{Versions 1.0 through 1.1 of \mips{} were distributed under version 3.0 of the GNU General Public License (GPL)~\cite{gpl} with an exception added to clarify our intention to allow \mips{} to interface with \matlab{} as well as any other \matlab{} code or MEX-files a user may have installed, regardless of their licensing terms. The full text of the GPL can be found at \url{http://www.gnu.org/licenses/gpl-3.0.txt}.}
+~\cite{bsd}. The full text of the license can be found in the \code{LICENSE} file at the top level of the distribution or at \url{https://github.com/MATPOWER/mips/blob/master/LICENSE} and reads as follows.
+
+\begin{Notice}
+Copyright (c) 1996-2016, Power Systems Engineering Research Center
+(PSERC) and individual contributors (see AUTHORS file for details).
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+1. Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright
+notice, this list of conditions and the following disclaimer in the
+documentation and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+\end{Notice}
+
+\subsection{Citing \mips{}}
+
+While not required by the terms of the license, we do request that publications derived from the use of \mips{} explicitly acknowledge that fact by citing reference~\cite{wang2007}.
+
+\begin{quote}
+\footnotesize
+H.~Wang, C.~E. Murillo-S{\'a}nchez, R.~D. Zimmerman, and R.~J. Thomas, ``On
+  Computational Issues of Market-Based Optimal Power Flow,'' \emph{Power
+  Systems, IEEE Transactions on}, vol.~22, no.~3, pp. 1185--1193, August 2007.\\
+  \url{http://dx.doi.org/10.1109/TPWRS.2010.2051168}
+\end{quote}
+
+\subsection{\mips{} Development}
+\label{sec:development}
+
+Following the release of \mips{} 1.2.2 (with \matpower{} 6.0), the \mips{} project moved to an open development paradigm, hosted on the \mips{} GitHub project page:
+
+\bigskip
+
+~~~~~~~~\url{\mipsurl}
+
+\bigskip
+
+The \mips{} GitHub project hosts the public Git code repository as well as a public issue tracker for handling bug reports, patches, and other issues and contributions. There are separate GitHub hosted repositories and issue trackers for \matpower{}, \most{}, \mips{} and the testing framework used by all of them, \mptest{}, all available from \url{https://github.com/MATPOWER/}.
+
+
+%%------------------------------------------
+%\clearpage
+\section{Getting Started}
+
+\subsection{System Requirements}
+\label{sec:sysreq}
+To use \mips{} \mipsver{} you will need:
+\begin{itemize}
+\item \matlab{}\textsuperscript{\tiny \textregistered} version 7 (R14) or later\footnote{\matlab{} is available from The MathWorks, Inc. (\url{http://www.mathworks.com/}). \matlab{} is a registered trademark of The MathWorks, Inc.}, or
+\item GNU Octave version 3.4 or later\footnote{GNU Octave \cite{octave} is free software, available online at \url{http://www.gnu.org/software/octave/}. \mips{} \mipsver{} may work on earlier versions of Octave, but it has not been tested on versions prior to 3.4.}
+\item \mptestlink{}, for running the \mips{} test suite.\footnote{\mptest{} is available at \url{\mptesturl}.}
+\end{itemize}
+
+For the hardware requirements, please refer to the system requirements for the version of \matlab{}\footnote{\url{http://www.mathworks.com/support/sysreq/previous_releases.html}} or Octave that you are using.
+
+In this manual, references to \matlab{} usually apply to Octave as well.
+
+%\clearpage
+\subsection{Installation}
+\label{sec:installation}
+
+Installation and use of \mips{} requires familiarity with the basic operation of \matlab{} or Octave, including setting up your \matlab{} path.
+
+\begin{enumerate}[\bfseries Step 1:] % requires package paralist
+\item Clone the repository or download and extract the zip file of the \mips{} distribution from the \href{\mipsurl{}}{\mips{} project page}\footnote{\url{\mipsurl}} to the location of your choice. The files in the resulting \code{mips} or \code{mipsXXX} directory, where \code{XXX} depends on the version of \mips{}, should not need to be modified, so it is recommended that they be kept separate from your own code.
+We will use \mipspath{} to denote the path to this directory.
+\item Add the following directories to your \matlab{} or Octave path:
+\begin{itemize}
+\item \mipspath{/lib} -- core \mips{} functions
+\item \mipspath{/lib/t} -- test scripts for \mips{}
+\end{itemize}
+\item At the \matlab{} prompt, type \code{test\_mips} to run the test suite and verify that \mips{} is properly installed and functioning.\footnote{The tests require a functioning installation of \mptestlink{}.} The result should resemble the following:
+%\clearpage
+%--LATER--
+%\\\hl{re-do before release (run on fastest machine available)}
+\begin{Code}
+>> test_mips
+t_mplinsolve....ok
+t_mips..........ok
+t_qps_mips......ok
+All tests successful (136 of 136)
+Elapsed time 0.11 seconds.
+\end{Code}
+\end{enumerate}
+
+
+\subsection{Documentation}
+\label{sec:documentation}
+
+There are two primary sources of documentation for \mips{}. The first is \href{\mipsmanurl}{this manual}, which gives an overview of the capabilities and structure of \mips{} and describes the formulations behind the code. It can be found in your \mips{} distribution at \mipspath{/docs/MIPS-manual.pdf} and the \href{\currentmipsmanurl}{latest version} is always available at: \url{\currentmipsmanurl}.
+
+And second is the built-in \code{help} command. As with the built-in functions and toolbox routines in \matlab{} and Octave, you can type \code{help} followed by the name of a command or M-file to get help on that particular function. All of the M-files in \mips{} have such documentation and this should be considered the main reference for the calling options for each function. See Appendix~\ref{app:functions} for a list of \mips{} functions.
+
+%%------------------------------------------
+\clearpage
+\section{\mips{} -- \mipsname{}}
+\label{sec:mips}
+
+\mips{}, that is, the \mipsname{}, is a primal-dual interior point solver implemented in pure \matlab{} code, derived from the MEX implementation of the algorithms included in TSPOPF~\cite{tspopf} and described in~\cite{wang2007a, wang2007}.
+
+This solver has application to general nonlinear optimization problems of the following form:
+\begin{equation}
+\min_x f(x) \label{eq:mips_prob_begin}
+\end{equation}
+subject to
+\begin{eqnarray}
+& g(x) = 0 & \label{eq:mips_g}  \\
+& h(x) \le 0 & \label{eq:mips_h}  \\
+& l \le A x \le u  & \label{eq:mips_linear_constraints}  \\
+& x_\mathrm{min} \le x \le x_\mathrm{max} & \label{eq:mips_var_bounds}
+\end{eqnarray}
+where $f \colon \R^n \to \R$, $g \colon \R^n \to \R^m$ and $h \colon \R^n \to \R^p$.
+
+The solver is implemented by the \code{mips} function, which can be called as follows,
+\begin{Code}
+[x, f, exitflag, output, lambda] = ...
+    mips(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt);
+\end{Code}
+where the input and output arguments are described in Tables~\ref{tab:mips_input} and \ref{tab:mips_output}, respectively. Alternatively, the input arguments can be packaged as fields in a \code{problem} struct and passed in as a single argument, where all fields except \code{f\_fcn} and \code{x0} are optional.
+\begin{Code}
+[x, f, exitflag, output, lambda] = mips(problem);
+\end{Code}
+
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{Input Arguments for \code{mips}\tnote{\dag}}
+\label{tab:mips_input}
+\footnotesize
+\begin{tabular}{lp{0.85\textwidth}}
+\toprule
+name & description \\
+\midrule
+\code{f\_fcn}	& Handle to a function that evaluates the objective function, its gradients and Hessian\tnote{\ddag} for a given value of $x$. Calling syntax for this function:	\\
+&~~~~\code{[f, df, d2f] = f\_fcn(x)}	\\
+\code{x0}	& Starting value of optimization vector $x$.	\\
+\code{A}, \code{l}, \code{u}	& Define the optional linear constraints $l \le A x \le u$. Default values for the elements of \code{l} and \code{u} are \code{-Inf} and \code{Inf}, respectively.	\\
+\code{xmin}, \code{xmax}	& Optional lower and upper bounds on the $x$ variables, defaults are \code{-Inf} and \code{Inf}, respectively.	\\
+\code{gh\_fcn}	& Handle to function that evaluates the optional nonlinear constraints and their gradients for a given value of $x$. Calling syntax for this function is:	\\
+&~~~~\code{[h, g, dh, dg] = gh\_fcn(x)}	\\
+\code{hess\_fcn}	& Handle to function that computes the Hessian\tnote{\ddag} of the Lagrangian for given values of $x$, $\lambda$ and $\mu$, where $\lambda$ and $\mu$ are the multipliers on the equality and inequality constraints, $g$ and $h$, respectively. The calling syntax for this function is:	\\
+&~~~~\code{Lxx = hess\_fcn(x, lam, cost\_mult)},	\\
+&where $\lambda$ = \code{lam.eqnonlin}, $\mu$ = \code{lam.ineqnonlin} and \code{cost\_mult} is a parameter used to scale the objective function	\\
+\code{opt}	& Optional options structure with fields, all of which are also optional, described in Table~\ref{tab:mips_options}. \\
+\code{problem}	& Alternative, single argument input struct with fields corresponding to arguments above.	\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [\dag] {All inputs are optional except \code{f\_fcn} and \code{x0}.}
+ \item [\ddag] {If \code{gh\_fcn} is provided then \code{hess\_fcn} is also required. Specifically, if there are nonlinear constraints, the Hessian information must provided by the \code{hess\_fcn} function and it need not be computed in \code{f\_fcn}.}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{Output Arguments for \code{mips}}
+\label{tab:mips_output}
+\footnotesize
+\begin{tabular}{lp{0.8\textwidth}}
+\toprule
+name & description \\
+\midrule
+\code{x}	& solution vector	\\
+\code{f}	& final objective function value	\\
+\code{exitflag}	& exit flag	\\
+&\begin{tabular}{r @{ -- } l}
+1 & first order optimality conditions satisfied \\
+0 & maximum number of iterations reached \\
+-1 & numerically failed \\
+\end{tabular} 	\\
+\code{output}	& output struct with fields	\\
+&\begin{tabular}{lp{0.65\textwidth}}
+\code{iterations} & number of iterations performed \\
+\code{hist} & struct array with trajectories of the following: \code{feascond}, \code{gradcond}, \code{compcond}, \code{costcond}, \code{gamma}, \code{stepsize}, \code{obj}, \code{alphap}, \code{alphad} \\
+\code{message} & exit message \\
+\end{tabular} 	\\
+\code{lambda}	& struct containing the Langrange and Kuhn-Tucker multipliers on the constraints, with fields:	\\
+&\begin{tabular}{lp{0.65\textwidth}}
+\code{eqnonlin} & nonlinear equality constraints	\\
+\code{ineqnonlin} & nonlinear inequality constraints	\\
+\code{mu\_l} & lower (left-hand) limit on linear constraints	\\
+\code{mu\_u} & upper (right-hand) limit on linear constraints	\\
+\code{lower} & lower bound on optimization variables	\\
+\code{upper} & upper bound on optimization variables	\\
+\end{tabular} 	\\
+\bottomrule
+\end{tabular}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{Options for \code{mips}\tnote{\dag}}
+\label{tab:mips_options}
+\footnotesize
+\begin{tabular}{lcp{0.65\textwidth}}
+\toprule
+name & default & description \\
+\midrule
+\code{opt.verbose} & 0 & controls level of progress output displayed \\
+&& \begin{tabular}{r @{ -- } l}
+0 & print no progress info \\
+1 & print a little progress info \\
+2 & print a lot of progress info \\
+3 & print all progress info \\
+\end{tabular} 	\\
+\code{opt.feastol} & $10^{-6}$ & termination tolerance for feasibility condition \\
+\code{opt.gradtol} & $10^{-6}$ & termination tolerance for gradient condition \\
+\code{opt.comptol} & $10^{-6}$ & termination tolerance for complementarity condition \\
+\code{opt.costtol} & $10^{-6}$ & termination tolerance for cost condition \\
+\code{opt.max\_it} & 150 & maximum number of iterations \\
+\code{opt.step\_control} & 0 & set to 1 to enable step-size control \\
+\code{opt.sc.red\_it} & 20 & max number of step-size reductions if step-control is on \\
+\code{opt.cost\_mult} & 1 & cost multiplier used to scale the objective function for improved conditioning. Note: This value is also passed as the 3\textsuperscript{rd} argument to the Hessian evaluation function so that it can appropriately scale the objective function term in the Hessian of the Lagrangian.	\\
+\code{opt.xi} & 0.99995 & $\xi$ constant used in $\alpha$ updates in \eqref{eq:alphap} and \eqref{eq:alphad} \\
+\code{opt.sigma} & 0.1 & centering parameter $\sigma$ used in $\gamma$ update in \eqref{eq:gamma} \\
+\code{opt.z0} & 1 & used to initialize elements of slack variable $Z$ \\
+\code{opt.alpha\_min} & $10^{-8}$ & algorithm returns ``Numerically Failed'' if the $\alpha_p$ or $\alpha_d$ from \eqref{eq:alphap} and \eqref{eq:alphad} become smaller than this value \\
+\code{opt.rho\_min} & 0.95 & lower bound on $\rho_t$ corresponding to $1 - \eta$ in Fig.~5 in \cite{wang2007a} \\
+\code{opt.rho\_max} & 1.05 & upper bound on $\rho_t$ corresponding to $1 + \eta$ in Fig.~5 in \cite{wang2007a} \\
+\code{opt.mu\_threshold} & $10^{-5}$ & Kuhn-Tucker multipliers smaller than this value for non-binding constraints are forced to zero \\
+\code{opt.max\_stepsize} & $10^{10}$ & algorithm returns ``Numerically Failed'' if the 2-norm of the Newton step $\left[\begin{array}{c}\Delta X \\ \Delta \lambda \\ \end{array}\right]$ from \eqref{eq:ipm_reduced_system} exceeds this value \\
+\bottomrule
+\end{tabular}
+\end{threeparttable}
+\end{table}
+
+
+The calling syntax is nearly identical to that used by \code{fmincon} from \matlab{}'s \ot{}. The primary difference is that the linear constraints are specified in terms of a single doubly-bounded linear function ($l \le A x \le u$) as opposed to separate equality constrained ($A_{eq} x = b_{eq}$) and upper bounded ($A x \le b$) functions. Internally, equality constraints are handled explicitly and determined at run-time based on the values of $l$ and $u$.
+
+The user-defined functions for evaluating the objective function, constraints and Hessian are identical to those required by \code{fmincon}, with one exception described below for the Hessian evaluation function. Specifically, \code{f\_fcn} should return \code{f} as the scalar objective function value $f(x)$, \code{df} as an $n \times 1$ vector equal to $\nabla f$ and, unless \code{gh\_fcn} is provided and the Hessian is computed by \code{hess\_fcn}, \code{d2f} as an $n \times n$ matrix equal to the Hessian $\der{^2f}{x^2}$. Similarly, the constraint evaluation function \code{gh\_fcn} must return the $m \times 1$ vector of nonlinear equality constraint violations $g(x)$, the $p \times 1$ vector of nonlinear inequality constraint violations $h(x)$ along with their gradients in \code{dg} and \code{dh}. Here \code{dg} is an $n \times m$ matrix whose $j^\mathrm{th}$ column is $\nabla g_j$ and \code{dh} is $n \times p$, with $j^\mathrm{th}$ column equal to $\nabla h_j$. Finally, for cases with nonlinear constraints, \code{hess\_fcn} returns the $n \times n$ Hessian $\der{^2\mathcal{L}}{x^2}$ of the Lagrangian function
+\begin{equation}
+\mathcal{L}(x, \lambda, \mu, \sigma) = \sigma f(x) + \trans{\lambda} g(x) + \trans{\mu} h(x)
+\end{equation}
+for given values of the multipliers $\lambda$ and $\mu$, where $\sigma$ is the \code{cost\_mult} scale factor for the objective function. Unlike \code{fmincon}, \code{mips} passes this scale factor to the Hessian evaluation function in the 3\textsuperscript{rd} argument.
+
+The use of \code{nargout} in \code{f\_fcn} and \code{gh\_fcn} is recommended so that the gradients and Hessian are only computed when required.
+
+
+\subsection{Example 1}
+
+The following code, included as \code{mips\_example1.m} in \mipspath{lib/t}, shows a simple example of using \code{mips} to solve a 2-dimensional unconstrained optimization of Rosenbrock's ``banana'' function\footnote{\url{http://en.wikipedia.org/wiki/Rosenbrock_function}}
+\begin{equation}
+f(x) = 100 (x_2-x_1^2)^2+(1-x_1)^2.
+\end{equation}
+
+First, create a \matlab{} function that will evaluate the objective function, its gradients and Hessian, for a given value of $x$. In this case, the coefficient of the first term is defined as a paramter \code{a}.
+\begin{Code}
+function [f, df, d2f] = banana(x, a)
+f = a*(x(2)-x(1)^2)^2+(1-x(1))^2;
+if nargout > 1          %% gradient is required
+    df = [  4*a*(x(1)^3 - x(1)*x(2)) + 2*x(1)-2;
+            2*a*(x(2) - x(1)^2)                     ];
+    if nargout > 2      %% Hessian is required
+        d2f = 4*a*[ 3*x(1)^2 - x(2) + 1/(2*a),  -x(1);
+                    -x(1)                       1/2 ];
+    end
+end
+\end{Code}
+Then, create a handle to the function, defining the value of the paramter \code{a} to be 100, set up the starting value of $x$, and call the \code{mips} function to solve it.
+\begin{Code}
+>> f_fcn = @(x)banana(x, 100);
+>> x0 = [-1.9; 2];
+>> [x, f] = mips(f_fcn, x0)
+
+x =
+
+     1
+     1
+
+
+f =
+
+     0
+
+\end{Code}
+
+
+\subsection{Example 2}
+
+The second example\footnote{From \url{http://en.wikipedia.org/wiki/Nonlinear\_programming\#3-dimensional\_example}.} solves the following 3-dimensional constrained optimization, printing the details of the solver's progress:
+\begin{equation}
+\min_x f(x) = -x_1 x_2 - x_2 x_3
+\end{equation}
+subject to
+\begin{eqnarray}
+x_1^2 - x_2^2 + x_3^2 - 2 & \le & 0 \\
+x_1^2 + x_2^2 + x_3^2 - 10 & \le & 0.
+\end{eqnarray}
+
+First, create a \matlab{} function to evaluate the objective function and its gradients,\footnote{Since the problem has nonlinear constraints and the Hessian is provided by \code{hess\_fcn}, this function will never be called with three output arguments, so the code to compute \code{d2f} is actually not necessary.}
+\begin{Code}
+function [f, df, d2f] = f2(x)
+f = -x(1)*x(2) - x(2)*x(3);
+if nargout > 1           %% gradient is required
+    df = -[x(2); x(1)+x(3); x(2)];
+    if nargout > 2       %% Hessian is required
+        d2f = -[0 1 0; 1 0 1; 0 1 0];   %% actually not used since
+    end                                 %% 'hess_fcn' is provided
+end
+\end{Code}
+one to evaluate the constraints, in this case inequalities only, and their gradients,
+\begin{Code}
+function [h, g, dh, dg] = gh2(x)
+h = [ 1 -1 1; 1 1 1] * x.^2 + [-2; -10];
+dh = 2 * [x(1) x(1); -x(2) x(2); x(3) x(3)];
+g = []; dg = [];
+\end{Code}
+and another to evaluate the Hessian of the Lagrangian.
+\begin{Code}
+function Lxx = hess2(x, lam, cost_mult)
+if nargin < 3, cost_mult = 1; end   %% allows to be used with 'fmincon'
+mu = lam.ineqnonlin;
+Lxx = cost_mult * [0 -1 0; -1 0 -1; 0 -1 0] + ...
+        [2*[1 1]*mu 0 0; 0 2*[-1 1]*mu 0; 0 0 2*[1 1]*mu];
+\end{Code}
+Then create a \code{problem} struct with handles to these functions, a starting value for $x$ and an option to print the solver's progress. Finally, pass this struct to \code{mips} to solve the problem and print some of the return values to get the output below.
+\begin{Code}
+function mips_example2
+problem = struct( ...
+    'f_fcn',    @(x)f2(x), ...
+    'gh_fcn',   @(x)gh2(x), ...
+    'hess_fcn', @(x, lam, cost_mult)hess2(x, lam, cost_mult), ...
+    'x0',       [1; 1; 0], ...
+    'opt',      struct('verbose', 2) ...
+);
+[x, f, exitflag, output, lambda] = mips(problem);
+fprintf('\nf = %g   exitflag = %d\n', f, exitflag);
+fprintf('\nx = \n');
+fprintf('   %g\n', x);
+fprintf('\nlambda.ineqnonlin =\n');
+fprintf('   %g\n', lambda.ineqnonlin);
+\end{Code}
+\begin{Code}
+>> mips_example2
+MATPOWER Interior Point Solver -- MIPS, Version 1.2.2, 16-Dec-2016
+ (using built-in linear solver)
+ it    objective   step size   feascond     gradcond     compcond     costcond  
+----  ------------ --------- ------------ ------------ ------------ ------------
+  0            -1                       0          1.5            5            0
+  1    -5.3250167     1.6875            0     0.894235     0.850653      2.16251
+  2    -7.4708991    0.97413     0.129183   0.00936418     0.117278     0.339269
+  3    -7.0553031    0.10406            0   0.00174933    0.0196518    0.0490616
+  4    -7.0686267   0.034574            0   0.00041301    0.0030084   0.00165402
+  5    -7.0706104  0.0065191            0  1.53531e-05  0.000337971  0.000245844
+  6    -7.0710134 0.00062152            0  1.22094e-07  3.41308e-05  4.99387e-05
+  7    -7.0710623 5.7217e-05            0  9.84879e-10  3.41587e-06  6.05875e-06
+  8    -7.0710673 5.6761e-06            0  9.73527e-12  3.41615e-07  6.15483e-07
+Converged!
+
+f = -7.07107   exitflag = 1
+
+x = 
+   1.58114
+   2.23607
+   1.58114
+
+lambda.ineqnonlin =
+   0
+   0.707107
+\end{Code}
+This example can be found in \code{mips\_example2.m}. More example problems for \code{mips} can be found in \code{t\_mips.m}, both in \mipspath{lib/t}.
+
+\subsection{Quadratic Programming Solver}
+
+A convenience wrapper function called \code{qps\_mips} is provided to make it trivial to set up and solve linear programming (LP) and quadratic programming (QP) problems of the following form:
+\begin{equation}
+\min_x \frac{1}{2} \trans{x} H x + \trans{c} x
+\end{equation}
+subject to
+\begin{eqnarray}
+& l \le A x \le u  & \\
+& x_\mathrm{min} \le x \le x_\mathrm{max}. &
+\end{eqnarray}
+Instead of a function handle, the objective function is specified in terms of the paramters $H$ and $c$ of quadratic cost coefficients. Internally, \code{qps\_mips} passes \code{mips} the handle of a function that uses these paramters to evaluate the objective function, gradients and Hessian.
+
+The calling syntax for \code{qps\_mips} is similar to that used by \code{quadprog} from the \matlab{} \ot{}.
+\begin{Code}
+[x, f, exitflag, output, lambda] = qps_mips(H, c, A, l, u, xmin, xmax, x0, opt);
+\end{Code}
+Alternatively, the input arguments can be packaged as fields in a \code{problem} struct and passed in as a single argument, where all fields except \code{H}, \code{c}, \code{A} and \code{l} are optional.
+\begin{Code}
+[x, f, exitflag, output, lambda] = qps_mips(problem);
+\end{Code}
+Aside from \code{H} and \code{c}, all input and output arguments correspond exactly to the same arguments for \code{mips} as described in Tables~\ref{tab:mips_input} and \ref{tab:mips_output}.
+
+As with \code{mips} and \code{fmincon}, the primary difference between the calling syntax for \code{qps\_mips} and \code{quadprog} is that the linear constraints are specified in terms of a single doubly-bounded linear function ($l \le A x \le u$) as opposed to separate equality constrained ($A_{eq} x = b_{eq}$) and upper bounded ($A x \le b$) functions.
+
+\mips{} also includes another wrapper function \code{qps\_matpower} that provides a consistent interface for all of the QP and LP solvers it has available. This interface is identical to that used by \code{qps\_mips} with the exception of the structure of the \code{opt} input argument. The solver is chosen according to the value of \code{opt.alg}. See the help for \code{qps\_matpower} for details.
+
+Several examples of using \code{qps\_matpower} to solve LP and QP problems can be found in \code{t\_qps\_matpower.m}.
+
+\subsection{Primal-Dual Interior Point Algorithm}
+
+This section provides some details on the primal-dual interior point algorithm used by \mips{} and described in~\cite{wang2007a, wang2007}.
+
+\subsubsection{Notation}
+
+For a scalar function $f \colon \R^n \to \R$ of a real vector $X = \trans{\left[\begin{array}{cccc}x_1 & x_2 & \cdots & x_n\end{array}\right]}$, we use the following notation for the first derivatives (transpose of the gradient):
+\begin{equation}
+f_X = \der{f}{X} = \left[\begin{array}{cccc}
+\der{f}{x_1} &
+\der{f}{x_2} &
+\cdots &
+\der{f}{x_n}
+\end{array}\right].
+\end{equation}
+The matrix of second partial derivatives, the Hessian of $f$, is:
+\begin{equation}
+f_{XX} = \der{^2f}{X^2} = \der{}{X}\trans{\left( \der{f}{X} \right)}
+= \left[\begin{array}{cccc}
+\der{^2f}{x_1^2} &
+\cdots &
+\der{^2f}{x_1 \partial x_n} \\
+\vdots &
+\ddots &
+\vdots \\
+\der{^2f}{x_n \partial x_1} &
+\cdots &
+\der{^2f}{x_n^2} \\
+\end{array}\right].
+\end{equation}
+
+For a vector function $F \colon \R^n \to \R^m$ of a vector $X$, where
+\begin{equation}
+F(X) = \trans{\left[\begin{array}{cccc}
+f_1(X) & f_2(X) & \cdots & f_m(X)
+\end{array}\right]}
+\end{equation}
+the first derivatives form the Jacobian matrix, where row $i$ is the transpose of the gradient of $f_i$
+\begin{equation}
+F_X = \der{F}{X} = \left[\begin{array}{cccc}
+\der{f_1}{x_1} &
+\cdots &
+\der{f_1}{x_n} \\
+\vdots &
+\ddots &
+\vdots \\
+\der{f_m}{x_1} &
+\cdots &
+\der{f_m}{x_n} \\
+\end{array}\right].
+\end{equation}
+In these derivations, the full 3-dimensional set of second partial derivatives of $F$ will not be computed. Instead a matrix of partial derivatives will be formed by computing the Jacobian of the vector function obtained by multiplying the transpose of the Jacobian of $F$ by a vector $\lambda$, using the following notation
+\begin{equation}
+F_{XX}(\lambda) = \der{}{X} \left( \trans{F_X} \lambda \right).
+\end{equation}
+
+Please note also that $\diag{A}$ is used to denote a diagonal matrix with vector $A$ on the diagonal and $e$ is a vector of all ones.
+
+
+\subsubsection{Problem Formulation and Lagrangian}
+
+The primal-dual interior point method used by \mips{} solves a problem of the form:
+\begin{equation}
+\min_X f(X)
+\end{equation}
+subject to
+\begin{align}
+G(X) &= 0 \\
+H(X) &\le 0
+\end{align}
+where the linear constraints and variable bounds from \eqref{eq:mips_linear_constraints} and \eqref{eq:mips_var_bounds} have been incorporated into $G(X)$ and $H(X)$. The approach taken involves converting the $n_i$ inequality constraints into equality constraints using a barrier function and vector of positive slack variables $Z$.
+\begin{equation}
+\min_X \left[f(X) - \gamma \sum_{m=1}^{n_i} \ln(Z_m)\right]
+\end{equation}
+subject to
+\begin{align}
+G(X) &= 0 \\
+H(X) + Z &= 0 \\
+Z &> 0
+\end{align}
+As the parameter of perturbation $\gamma$ approaches zero, the solution to this problem approaches that of the original problem.
+
+For a given value of $\gamma$, the Lagrangian for this equality constrained problem is
+\begin{equation}
+\mathcal{L}^\gamma(X, Z, \lambda, \mu) = f(X) + \trans{\lambda} G(X) + \trans{\mu} (H(X) + Z) - \gamma \sum_{m=1}^{n_i} \ln(Z_m).
+\label{eq:L}
+\end{equation}
+Taking the partial derivatives with respect to each of the variables yields:
+\begin{eqnarray}
+\mathcal{L}^\gamma_X(X, Z, \lambda, \mu) &=& f_X + \trans{\lambda} G_X + \trans{\mu} H_X \\
+\mathcal{L}^\gamma_Z(X, Z, \lambda, \mu) &=& \trans{\mu} - \gamma \trans{e} \diag{Z}^{-1} \\
+\mathcal{L}^\gamma_\lambda(X, Z, \lambda, \mu) &=& \trans{G}(X) \\
+\mathcal{L}^\gamma_\mu(X, Z, \lambda, \mu) &=& \trans{H}(X) + \trans{Z}.
+\end{eqnarray}
+And the Hessian of the Lagrangian with respect to $X$ is given by
+\begin{equation}
+\mathcal{L}^\gamma_{XX}(X, Z, \lambda, \mu) = f_{XX} + G_{XX}(\lambda) + H_{XX}(\mu).
+\end{equation}
+
+\subsubsection{First Order Optimality Conditions}
+
+The first order optimality (Karush-Kuhn-Tucker) conditions for this problem are satisfied when the partial derivatives of the Lagrangian above are all set to zero:
+\begin{eqnarray}
+F(X, Z, \lambda, \mu) = 0 && \\
+Z > 0 && \\
+\mu > 0 &&
+\end{eqnarray}
+where
+\begin{equation}
+F(X, Z, \lambda, \mu) = \left[\begin{array}{c}
+\trans{\mathcal{L}^\gamma_X} \\
+\diag{\mu} Z - \gamma e \\
+G(X) \\
+H(X) + Z \\
+\end{array}\right] = \left[\begin{array}{c}
+\trans{f_X} + \trans{G_X} \lambda + \trans{H_X} \mu \\
+\diag{\mu} Z - \gamma e \\
+G(X) \\
+H(X) + Z \\
+\end{array}\right].
+\end{equation}
+
+\subsubsection{Newton Step}
+
+The first order optimality conditions are solved using Newton's method. The Newton update step can be written as follows:
+\begin{equation}
+\left[\begin{array}{cccc}
+F_X & F_Z & F_\lambda & F_\mu
+\end{array}\right]
+\left[\begin{array}{c}
+\Delta X \\
+\Delta Z \\
+\Delta \lambda \\
+\Delta \mu
+\end{array}\right]
+= -F(X, Z, \lambda, \mu)
+\end{equation}
+\begin{equation}
+\left[\begin{array}{cccc}
+\mathcal{L}^\gamma_{XX} & 0 & \trans{G_X} & \trans{H_X} \\
+0 & \diag{\mu} & 0 & \diag{Z} \\
+G_X & 0 & 0 & 0 \\
+H_X & I & 0 & 0
+\end{array}\right]
+\left[\begin{array}{c}
+\Delta X \\
+\Delta Z \\
+\Delta \lambda \\
+\Delta \mu
+\end{array}\right]
+= -\left[\begin{array}{c}
+\trans{\mathcal{L}^\gamma_X} \\
+\diag{\mu} Z - \gamma e \\
+G(X) \\
+H(X) + Z \\
+\end{array}\right].
+\label{eq:newton_step}
+\end{equation}
+
+This set of equations can be simplified and reduced to a smaller set of equations by solving explicitly for $\Delta \mu$ in terms of $\Delta Z$ and for $\Delta Z$ in terms of $\Delta X$. Taking the 2\textsuperscript{nd} row of \eqref{eq:newton_step} and solving for $\Delta \mu$ we get
+\begin{align}
+\diag{\mu} \Delta Z + \diag{Z} \Delta \mu &= -\diag{\mu} Z + \gamma e \nonumber \\
+\diag{Z} \Delta \mu &= -\diag{Z} \mu + \gamma e - \diag{\mu} \Delta Z \nonumber \\
+\Delta \mu &= - \mu + \diag{Z}^{-1} (\gamma e - \diag{\mu} \Delta Z).
+\label{eq:2nd_row}
+\end{align}
+Solving the 4\textsuperscript{th} row of \eqref{eq:newton_step} for $\Delta Z$ yields
+\begin{align}
+H_X \Delta X + \Delta Z &= -H(X) - Z \nonumber \\
+\Delta Z &= -H(X) - Z - H_X \Delta X.
+\label{eq:4th_row}
+\end{align}
+Then, substituting \eqref{eq:2nd_row} and \eqref{eq:4th_row} into the 1\textsuperscript{st} row of \eqref{eq:newton_step} results in
+\begin{alignat}{2}
+&\mathcal{L}^\gamma_{XX} \Delta X + \trans{G_X} \Delta \lambda + \trans{H_X} \Delta \mu &&\;= -\trans{\mathcal{L}^\gamma_X} \nonumber \\
+&\mathcal{L}^\gamma_{XX} \Delta X + \trans{G_X} \Delta \lambda + \trans{H_X} (- \mu + \diag{Z}^{-1} (\gamma e - \diag{\mu} \Delta Z)) &&\;= -\trans{\mathcal{L}^\gamma_X} \nonumber \\
+&\mathcal{L}^\gamma_{XX} \Delta X + \trans{G_X} \Delta \lambda & \nonumber \\
+&+ \trans{H_X} (- \mu + \diag{Z}^{-1} (\gamma e - \diag{\mu} (-H(X) - Z - H_X \Delta X))) &&\;= -\trans{\mathcal{L}^\gamma_X} \nonumber \\
+&\mathcal{L}^\gamma_{XX} \Delta X + \trans{G_X} \Delta \lambda - \trans{H_X} \mu + \trans{H_X} \diag{Z}^{-1} \gamma e & \nonumber \\
+&+ \trans{H_X} \diag{Z}^{-1} \diag{\mu} H(X) + \trans{H_X} \diag{Z}^{-1} \diag{Z} \mu + \trans{H_X} \diag{Z}^{-1} \diag{\mu} H_X \Delta X &&\;= -\trans{\mathcal{L}^\gamma_X} \nonumber \\
+&(\mathcal{L}^\gamma_{XX} + \trans{H_X} \diag{Z}^{-1} \diag{\mu} H_X) \Delta X + \trans{G_X} \Delta \lambda  & \nonumber \\
+&+ \trans{H_X} \diag{Z}^{-1} (\gamma e + \diag{\mu} H(X)) &&\;= -\trans{\mathcal{L}^\gamma_X} \nonumber \\
+&M \Delta X + \trans{G_X} \Delta \lambda &&\;= -N
+\label{eq:1st_row}
+\end{alignat}
+where
+\begin{align}
+M &\equiv \mathcal{L}^\gamma_{XX} + \trans{H_X} \diag{Z}^{-1} \diag{\mu} H_X  \\
+  &= f_{XX} + G_{XX}(\lambda) + H_{XX}(\mu) + \trans{H_X} \diag{Z}^{-1} \diag{\mu} H_X
+\end{align}
+and
+\begin{align}
+N &\equiv \trans{\mathcal{L}^\gamma_X} + \trans{H_X} \diag{Z}^{-1} (\gamma e + \diag{\mu} H(X)) \\
+  &= \trans{f_X} + \trans{G_X} \lambda + \trans{H_X} \mu + \trans{H_X} \diag{Z}^{-1} (\gamma e + \diag{\mu} H(X)).
+\end{align}
+
+Combining \eqref{eq:1st_row} and the 3\textsuperscript{rd} row of \eqref{eq:newton_step} results in a system of equations of reduced size:
+\begin{equation}
+\left[\begin{array}{cc}
+M & \trans{G_X} \\
+G_X & 0 \\
+\end{array}\right]
+\left[\begin{array}{c}
+\Delta X \\
+\Delta \lambda \\
+\end{array}\right]
+= \left[\begin{array}{c}
+-N \\
+-G(X) \\
+\end{array}\right]. \label{eq:ipm_reduced_system}
+\end{equation}
+The Newton update can then be computed in the following 3 steps:
+
+\begin{enumerate}
+\item Compute $\Delta X$ and $\Delta \lambda$ from \eqref{eq:ipm_reduced_system}.
+\item Compute $\Delta Z$ from \eqref{eq:4th_row}.
+\item Compute $\Delta \mu$ from \eqref{eq:2nd_row}.
+\end{enumerate}
+
+In order to maintain strict feasibility of the trial solution, the algorithm truncates the Newton step by scaling the primal and dual variables by $\alpha_p$ and $\alpha_d$, respectively, where these scale factors are computed as follows:
+\begin{align}
+\alpha_p &= \min \left(\xi \min_{\Delta Z_m < 0} \left(-\frac{Z_m}{\Delta Z_m}\right), 1 \right)  \label{eq:alphap} \\
+\alpha_d &= \min \left(\xi \min_{\Delta \mu_m < 0} \left(-\frac{\mu_m}{\Delta \mu_m}\right), 1 \right)  \label{eq:alphad}
+\end{align}
+resulting in the variable updates below.
+\begin{align}
+X &\gets X + \alpha_p \Delta X  \\
+Z &\gets Z + \alpha_p \Delta Z  \\
+\lambda &\gets \lambda + \alpha_d \Delta \lambda  \\
+\mu &\gets \mu + \alpha_d \Delta \mu
+\end{align}
+
+The parameter $\xi$ is a constant scalar with a value slightly less than one. In \mips{}, $\xi$ is set to 0.99995.
+
+In this method, during the Newton-like iterations, the perturbation parameter $\gamma$ must converge to zero in order to satisfy the first order optimality conditions of the original problem. \mips{} uses the following rule to update $\gamma$ at each iteration, after updating $Z$ and $\mu$:
+\begin{equation}
+\gamma \gets \sigma \frac{\trans{Z} \mu}{n_i} \label{eq:gamma}
+\end{equation}
+where $\sigma$ is a scalar constant between 0 and 1. In \mips{}, $\sigma$ is set to 0.1.
+
+
+\begin{appendices}
+
+%%------------------------------------------
+\clearpage
+\section{\mips{} Files and Functions}
+\label{app:functions}
+
+This appendix lists all of the files and functions that \mips{} provides. In most cases, the function is found in a \matlab{} M-file in the \code{lib} directory of the distribution, where the \code{.m} extension is omitted from this listing. For more information on each, at the \matlab{} prompt, simply type \code{help} followed by the name of the function. For documentation and other files, the filename extensions are included.
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{\mips{} Files and Functions}
+\label{tab:solvers}
+\footnotesize
+\begin{tabular}{p{0.25\textwidth}p{0.68\textwidth}}
+\toprule
+name & description \\
+\midrule
+\code{AUTHORS}	& list of authors and contributors	\\
+\code{CHANGES}	& \mips{} change history	\\
+\code{CONTRIBUTING.md}	& notes on how to contribute to the \mips{} project	\\
+\code{LICENSE}	& \mips{} license (3-clause BSD license)	\\
+\code{README.md}	& basic introduction to \mips{}	\\
+\code{docs/}	& 	\\
+\code{~~MIPS-manual.pdf}	& \mipsman{}	\\
+\code{~~MIPS-manual.tex}	& LaTeX source for \mips{} User's Manual	\\
+\code{lib/}	& 	\\
+\code{~~mips}	& \mipsname{} -- primal/dual interior point solver for NLP	\\
+\code{~~mipsver}	& prints version information for \mips{}	\\
+\code{~~mplinsolve}	& common linear system solver interface, used by \mips{}	\\
+\code{~~qps\_mips}	& common QP/LP solver interface to \mips{}-based solver	\\
+\code{~~t/}	& 	\\
+\code{~~~~mips\_example1}	& implements example 1 from \mips{} User's Manual	\\
+\code{~~~~mips\_example2}	& implements example 2 from \mips{} User's Manual	\\
+\code{~~~~test\_mips}	& runs full \mips{} test suite	\\
+\code{~~~~t\_mips}	& runs tests for \mips{} NLP solver	\\
+\code{~~~~t\_mplinsolve}	& tests for \code{mplinsolve}	\\
+\code{~~~~t\_qps\_mips}	& runs tests for \code{qps\_mips}	\\
+\bottomrule
+\end{tabular}
+% \begin{tablenotes}
+%  \scriptsize
+%  \item [\dag] {Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.}
+% \end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+
+%%------------------------------------------
+\clearpage
+\section{\pardiso{} -- Parallel Sparse Direct and Multi-Recursive Iterative Linear Solvers}
+\label{app:pardiso}
+
+The \pardiso{} package is a thread-safe, high-performance, robust, memory efficient and easy to use software for solving large sparse symmetric and non-symmetric linear systems of equations on shared-memory and distributed-memory multiprocessor systems~\cite{pardiso, pardiso2}. More information is available at \url{http://www.pardiso-project.org}.
+
+When the \matlab{} interface to \pardiso{} is installed, \pardiso{}'s solvers can be used to replace the built-in \code{\textbackslash{}} operator for solving for the Newton update step in \mips{} by setting the \code{linsolver} option equal to \codeq{PARDISO}. The \code{mplinsolve} function can also be called directly to solve $A x = b$ problems via \pardiso{} or the built-in solver, depending on the arguments supplied. This interface also gives access to the full range of \pardiso{}'s options. For details, see \code{help mplinsolve} and the \pardiso{} User's Manual at \url{http://www.pardiso-project.org/manual/manual.pdf}.
+
+
+%%------------------------------------------
+\clearpage
+\section{Release History}
+\label{app:release_history}
+
+The full release history can be found in \code{CHANGES.md} or \href{https://github.com/MATPOWER/mips/blob/master/CHANGES.md}{online} at \url{https://github.com/MATPOWER/mips/blob/master/CHANGES.md}.
+
+
+\subsection{Version 1.2.2 -- released Dec 16, 2016}
+\label{app:v122}
+
+Documentation found in the \mipsman{}\footnote{\url{\mipsmanurl}} or in Appendix A of the \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.0.pdf}{\matpower{} 6.0 User's Manual}, available online.\footnote{\url{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.0.pdf}}
+
+\subsubsection*{New Open Development Model}
+\begin{itemize}
+% \item \hl{Fill in details from announcement or ``What's New'' section of index.html or README.}
+\item \mips{} development has moved to GitHub! The code repository is now publicly available to clone and submit pull requests.\footnote{\url{https://github.com/MATPOWER/mips}}
+\item Public issue tracker for reporting bugs, submitting patches, etc.\footnote{\url{https://github.com/MATPOWER/mips/issues}}
+\end{itemize}
+
+\subsubsection*{Other Changes}
+\begin{itemize}
+\item Renamed from \matlab{} Interior Point Solver to \mipsname{}.
+\item Remove dependence of \code{t\_mpsolve()} on presence of \code{have\_fcn()} (from \matpower{}) to detect PARDISO installation.
+.
+\end{itemize}
+
+
+
+\subsection{Version 1.2.1 -- released Jun 1, 2016}
+\label{app:v121}
+
+Documentation found in Appendix A of the \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.0b1.pdf}{\matpower{} 6.0b1 User's Manual}, available online.\footnote{\url{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.0b1.pdf}}
+
+
+\subsubsection*{Bug Fixed}
+\begin{itemize}
+\item Fixed issue where default value of \codeq{feastol} option was not being set correctly in \code{mips()} when called directly (or via \code{qps\_mips()}) with \codeq{feastol}\code{ = 0}.
+\end{itemize}
+
+
+
+\subsection{Version 1.2 -- released Mar 20, 2015}
+\label{app:v12}
+
+Documentation found in Appendix A of the \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-5.1.pdf}{\matpower{} 5.1 User's Manual}, available online.\footnote{\url{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-5.1.pdf}}
+
+\subsubsection*{New License}
+\begin{itemize}
+\item Switched to the more permissive 3-clause BSD license from the previously used GNU General Public License (GPL) v3.0.
+\end{itemize}
+
+\subsubsection*{New Documentation}
+\begin{itemize}
+\item Added an online function reference to the \matpowerlink{} website at \url{http://www.pserc.cornell.edu/matpower/docs/ref/}.
+\end{itemize}
+
+\subsubsection*{New Features}
+\begin{itemize}
+\item Added support for using \pardiso{} (\url{http://www.pardiso-project.org/}) as linear solver for computing interior-point update steps in \mips{}, resulting in dramatic improvements in computation time and memory use for very large-scale problems.
+\item New functions:
+    \begin{itemize}
+    \item \code{mplinsolve()} provides unified interface for linear system solvers, including \pardiso{} and built-in backslash operator
+    \end{itemize}
+\end{itemize}
+
+
+\subsection{Version 1.1 -- released Dec 17, 2014}
+\label{app:v11}
+
+Documentation found in Appendix A of the \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-5.0.pdf}{\matpower{} 5.0 User's Manual}, available online.\footnote{\url{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-5.0.pdf}}
+
+\subsubsection*{New Features}
+\begin{itemize}
+\item Many new user-settable options.
+\end{itemize}
+
+\subsubsection*{Incompatible Changes}
+\begin{itemize}
+\item The name of the \code{mips()} option used to specify the maximum number of step-size reductions with \code{step\_control} on was changed from \code{max\_red} to \code{sc.red\_it} for consistency with other \matpower{} options.
+\end{itemize}
+
+
+\subsection{Version 1.0.2 -- released Nov 5, 2013}
+\label{app:v102}
+
+Documentation found in Appendix A of the \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-4.0.pdf}{\matpower{} 4.0 User's Manual}, available online.\footnote{\url{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-4.0.pdf}}
+
+\subsubsection*{Bug Fixed}
+\begin{itemize}
+\item Fixed a bug in \mips{} where a near-singular matrix could produce an extremely large Newton step, resulting in incorrectly satisfying the relative feasibility criterion for successful termination.
+\end{itemize}
+
+
+\subsection{Version 1.0.1 -- released Apr 30, 2012}
+\label{app:v101}
+
+Documentation found in Appendix A of the \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-4.0.pdf}{\matpower{} 4.0 User's Manual}, available online.\footnote{\url{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-4.0.pdf}}
+
+\subsubsection*{Bug Fixed}
+\begin{itemize}
+\item Fixed fatal bug in \mips{} for unconstrained, scalar problems. \emph{Thanks to Han Na Gwon.}
+\end{itemize}
+
+
+\subsection{Version 1.0 -- released Feb 7, 2011}
+\label{app:v10}
+
+Documentation found in Appendix A of the \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-4.0.pdf}{\matpower{} 4.0 User's Manual}, available online.\footnote{\url{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-4.0.pdf}}
+
+\subsubsection*{Changes}
+\begin{itemize}
+\item Licensed under the GNU General Public License (GPL).
+\item Added compatibility with GNU Octave, a free, open-source \matlab{} clone.
+\item \mips{} (\mipsname{}), a new a pure-\matlab{} implementation of the primal-dual interior point methods from the optional package TSPOPF.
+\end{itemize}
+
+\end{appendices}
+
+
+%%------------------------------------------
+\clearpage
+%\addcontentsline{toc}{section}{References}
+\begin{thebibliography}{99}
+\bibitem{tspopf}
+TSPOPF. [Online]. Available: \url{http://www.pserc.cornell.edu/tspopf/}.
+
+\bibitem{wang2007a}
+H.~Wang, C.~E. Murillo-S{\'a}nchez, R.~D. Zimmerman, and R.~J. Thomas, ``On
+  Computational Issues of Market-Based Optimal Power Flow,'' \emph{Power
+  Systems, IEEE Transactions on}, vol.~22, no.~3, pp. 1185--1193, August 2007.\\
+  \url{http://dx.doi.org/10.1109/TPWRS.2010.2051168}
+
+\bibitem{wang2007}
+H.~Wang, \emph{On the Computation and Application of Multi-period Security-constrained Optimal Power Flow for Real-time Electricity Market Operations}, Ph.D. thesis, Electrical and Computer Engineering, Cornell University, May 2007.
+
+\bibitem{matpower}
+R.~D. Zimmerman and C.~Murillo-S{\'a}nchez. \matpower{} User's Manual,
+  [Online]. Available: \url{\matpowerurl}
+
+\bibitem{zimmerman2011}
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez, and R.~J. Thomas, ``\matpower{}: Steady-State Operations, Planning and Analysis Tools for Power Systems Research and Education,'' \emph{Power Systems, IEEE Transactions on}, vol.~26, no.~1, pp.~12--19, Feb.~2011. \url{http://dx.doi.org/10.1109/TPWRS.2010.2051168}
+
+\bibitem{octave}
+John~W.~Eaton, David~Bateman, S{\o}ren~Hauberg, Rik~Wehbring (2015). \emph{GNU Octave version 4.0.0 manual: a high-level interactive language for numerical computations.} Available: \url{http://www.gnu.org/software/octave/doc/interpreter/}.
+
+\bibitem{bsd}
+The BSD 3-Clause License. [Online]. Available: \url{http://opensource.org/licenses/BSD-3-Clause}.
+
+\bibitem{gpl}
+GNU General Public License. [Online]. Available: \url{http://www.gnu.org/licenses/}.
+
+\bibitem{pardiso}
+O.~Shenk and K.~G\"artner, ``Solving unsymmetric sparse systems of linear equations with PARDISO,'' \emph{Journal of Future Generation Computer Systems}, 20(3):475--487,~2004.
+
+\bibitem{pardiso2}
+A.~Kuzmin, M.~Luisier and O.~Shenk, ``Fast methods for computing selected elements of the Greens function in massively parallel nanoelectronic device simulations,'' in F.~Wolf, B.~Mohr and D.~Mey, editors, \emph{Euro-Par 2013 Parallel Processing}, Vol.~8097, \emph{Lecture Notes in Computer Science}, pp.~533Ð-544, Springer Berlin Heidelberg, 2013.
+
+\end{thebibliography}
+
+
+\end{document}
