@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-AC_alg = {'NR', 'NR-SP', 'NR-SC', 'NR-SH', 'NR-IP', 'NR-IC', 'NR-IH', 'FDXB', 'FDBX', 'GS'};
+AC_alg = {'NR', 'NR-SP', 'NR-SC', 'NR-SH', 'NR-IP', 'NR-IC', 'NR-IH', 'FDXB', 'FDBX', 'GS', 'ZG'};
 AC_name = {
     'Newton (default, power-polar)',
     'Newton (power-polar)',
@@ -24,7 +24,8 @@ AC_name = {
     'Newton (current-hybrid)',
     'Fast Decoupled (XB)',
     'Fast Decoupled (BX)',
-    'Gauss-Seidel'
+    'Gauss-Seidel',
+    'Implicit Z-bus Gauss'
 };
 % AC_alg = {'NR'};
 % AC_name = {'Newton (default, power-polar)'};
