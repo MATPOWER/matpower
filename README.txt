@@ -11,7 +11,7 @@ Authors:    Ray Zimmerman               <rz10@cornell.edu>
             Carlos E. Murillo-Sanchez   <carlos_murillo@ieee.org>
             and others, see AUTHORS file
 
-            Thu, Dec 15, 2016
+            Fri, Dec 16, 2016
 
 Copyright (c) 1997-2016, Power Systems Engineering Research Center (PSERC)
 See http://www.pserc.cornell.edu/matpower/ for more info.
