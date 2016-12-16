@@ -1,0 +1,43 @@
+function windprofile = ex_wind_profile
+%EX_WIND_PROFILE  Example wind profile data for stochastic unit commitment.
+
+%   MOST
+%   Copyright (c) 2015-2016, Power Systems Engineering Research Center (PSERC)
+%   by Ray Zimmerman, PSERC Cornell
+%
+%   This file is part of MOST.
+%   Covered by the 3-clause BSD License (see LICENSE file for details).
+%   See https://github.com/MATPOWER/most for more info.
+
+%% define constants
+[GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
+    MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
+    QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
+[CT_LABEL, CT_PROB, CT_TABLE, CT_TBUS, CT_TGEN, CT_TBRCH, CT_TAREABUS, ...
+    CT_TAREAGEN, CT_TAREABRCH, CT_ROW, CT_COL, CT_CHGTYPE, CT_REP, ...
+    CT_REL, CT_ADD, CT_NEWVAL, CT_TLOAD, CT_TAREALOAD, CT_LOAD_ALL_PQ, ...
+    CT_LOAD_FIX_PQ, CT_LOAD_DIS_PQ, CT_LOAD_ALL_P, CT_LOAD_FIX_P, ...
+    CT_LOAD_DIS_P, CT_TGENCOST, CT_TAREAGENCOST, CT_MODCOST_F, ...
+    CT_MODCOST_X] = idx_ct;
+
+windprofile = struct( ...
+    'type', 'mpcData', ...
+    'table', CT_TGEN, ...
+    'rows', 1, ...
+    'col', PMAX, ...
+    'chgtype', CT_REL, ...
+    'values', [] );
+windprofile.values(:, :, 1) = [
+	0.72	0.80	0.88;
+	0.49	0.65	0.81;
+	0.36	0.60	0.84;
+	0.50	0.82	1.14;
+	0.60	1.00	1.40;
+	0.22	0.70	1.18;
+	0.00	0.50	1.00;
+	0.33	0.85	1.37;
+	0.46	1.00	1.54;
+	0.54	1.10	1.66;
+	0.48	1.06	1.64;
+	0.35	0.95	1.55;
+];
