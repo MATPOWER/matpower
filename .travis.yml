@@ -1,0 +1,20 @@
+dist: xenial
+
+language: generic
+
+install:
+- apt-get install -q octave liboctave-dev
+
+env:
+- MP_PATH=-p $TRAVIS_BUILD_DIR/lib
+  -p $TRAVIS_BUILD_DIR/lib/t
+  -p $TRAVIS_BUILD_DIR/mptest/lib
+  -p $TRAVIS_BUILD_DIR/mptest/lib/t
+  -p $TRAVIS_BUILD_DIR/mips/lib
+  -p $TRAVIS_BUILD_DIR/mips/lib/t
+  -p $TRAVIS_BUILD_DIR/most/lib
+  -p $TRAVIS_BUILD_DIR/most/lib/t
+
+script:
+- octave $MP_PATH --eval test_matpower
+- octave $MP_PATH --eval test_most
