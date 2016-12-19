@@ -70,7 +70,9 @@ gen = [
     Inf(nld, 4), ...                %% ramp rates
     zeros(nld, 1), ...              %% participation factor
 ];
-mpc.gen =  [mpc.gen; gen];  %% add dispatchable loads
+[ng, nc] = size(mpc.gen);
+mpc.gen = [mpc.gen; zeros(nld, nc)];
+mpc.gen(ng+1:ng+nld, 1:APF) = gen;   %% add dispatchable loads
 
 %% bus table
 mpc.bus(idx, [PD, QD]) = 0; %% zero out fixed loads
