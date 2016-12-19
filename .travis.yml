@@ -11,5 +11,5 @@ env:
 
 script:
 - echo $MP_PATH
-- octave $MP_PATH --eval test_matpower
-- octave $MP_PATH --eval test_most
+- octave -p $MP_PATH --eval test_matpower
+- octave -p $MP_PATH --eval test_most
