@@ -2,8 +2,11 @@ dist: xenial
 
 language: generic
 
-install:
-- apt-get install -q octave liboctave-dev
+addons:
+  apt:
+    packages:
+    - octave
+    - liboctave-dev
 
 env:
 - MP_PATH=-p $TRAVIS_BUILD_DIR/lib
