@@ -7,14 +7,7 @@ install:
 - sudo apt-get install -q octave liboctave-dev
 
 env:
-- MP_PATH=$TRAVIS_BUILD_DIR/lib
-:$TRAVIS_BUILD_DIR/lib/t
-:$TRAVIS_BUILD_DIR/mptest/lib
-:$TRAVIS_BUILD_DIR/mptest/lib/t
-:$TRAVIS_BUILD_DIR/mips/lib
-:$TRAVIS_BUILD_DIR/mips/lib/t
-:$TRAVIS_BUILD_DIR/most/lib
-:$TRAVIS_BUILD_DIR/most/lib/t
+- MP_PATH=$TRAVIS_BUILD_DIR/lib:$TRAVIS_BUILD_DIR/lib/t:$TRAVIS_BUILD_DIR/mptest/lib:$TRAVIS_BUILD_DIR/mptest/lib/t:$TRAVIS_BUILD_DIR/mips/lib:$TRAVIS_BUILD_DIR/mips/lib/t:$TRAVIS_BUILD_DIR/most/lib:$TRAVIS_BUILD_DIR/most/lib/t
 
 script:
 - echo $MP_PATH
