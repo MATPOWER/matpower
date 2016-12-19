@@ -8,14 +8,15 @@ install:
 
 env:
 - MP_PATH=$TRAVIS_BUILD_DIR/lib
-  :$TRAVIS_BUILD_DIR/lib/t
-  :$TRAVIS_BUILD_DIR/mptest/lib
-  :$TRAVIS_BUILD_DIR/mptest/lib/t
-  :$TRAVIS_BUILD_DIR/mips/lib
-  :$TRAVIS_BUILD_DIR/mips/lib/t
-  :$TRAVIS_BUILD_DIR/most/lib
-  :$TRAVIS_BUILD_DIR/most/lib/t
+:$TRAVIS_BUILD_DIR/lib/t
+:$TRAVIS_BUILD_DIR/mptest/lib
+:$TRAVIS_BUILD_DIR/mptest/lib/t
+:$TRAVIS_BUILD_DIR/mips/lib
+:$TRAVIS_BUILD_DIR/mips/lib/t
+:$TRAVIS_BUILD_DIR/most/lib
+:$TRAVIS_BUILD_DIR/most/lib/t
 
 script:
+- echo $MP_PATH
 - octave $MP_PATH --eval test_matpower
 - octave $MP_PATH --eval test_most
