@@ -9,14 +9,14 @@ install:
 - sudo apt-get install -qq octave liboctave-dev
 
 env:
-- MP_PATH=$TRAVIS_BUILD_DIR/lib\
-  :$TRAVIS_BUILD_DIR/lib/t\
-  :$TRAVIS_BUILD_DIR/mptest/lib\
-  :$TRAVIS_BUILD_DIR/mptest/lib/t\
-  :$TRAVIS_BUILD_DIR/mips/lib\
-  :$TRAVIS_BUILD_DIR/mips/lib/t\
-  :$TRAVIS_BUILD_DIR/most/lib\
-  :$TRAVIS_BUILD_DIR/most/lib/t
+- MP_PATH=$TRAVIS_BUILD_DIR/lib
+- MP_PATH=$MP_PATH:$TRAVIS_BUILD_DIR/lib/t
+- MP_PATH=$MP_PATH:$TRAVIS_BUILD_DIR/mptest/lib
+- MP_PATH=$MP_PATH:$TRAVIS_BUILD_DIR/mptest/lib/t
+- MP_PATH=$MP_PATH:$TRAVIS_BUILD_DIR/mips/lib
+- MP_PATH=$MP_PATH:$TRAVIS_BUILD_DIR/mips/lib/t
+- MP_PATH=$MP_PATH:$TRAVIS_BUILD_DIR/most/lib
+- MP_PATH=$MP_PATH:$TRAVIS_BUILD_DIR/most/lib/t
 
 script:
 - octave -p $MP_PATH --eval test_matpower
