@@ -4,7 +4,9 @@ dist: xenial
 language: generic
 
 install:
-- sudo apt-get install -q octave liboctave-dev
+- sudo apt-add-repository -y ppa:octave/stable
+- sudo apt-get update -qq
+- sudo apt-get install -qq octave liboctave-dev
 
 env:
 - MP_PATH=$TRAVIS_BUILD_DIR/lib:$TRAVIS_BUILD_DIR/lib/t:$TRAVIS_BUILD_DIR/mptest/lib:$TRAVIS_BUILD_DIR/mptest/lib/t:$TRAVIS_BUILD_DIR/mips/lib:$TRAVIS_BUILD_DIR/mips/lib/t:$TRAVIS_BUILD_DIR/most/lib:$TRAVIS_BUILD_DIR/most/lib/t
