@@ -1,0 +1,21 @@
+sudo: required
+dist: xenial
+
+language: generic
+
+install:
+- sudo apt-add-repository -y ppa:octave/stable
+- sudo apt-get update -qq
+- sudo apt-get install -qq octave liboctave-dev
+
+env:
+  global:
+    - MP_PATH=$TRAVIS_BUILD_DIR/lib:$TRAVIS_BUILD_DIR/lib/t
+    - MPTEST_PATH=$TRAVIS_BUILD_DIR/mptest/lib:$TRAVIS_BUILD_DIR/mptest/lib/t
+    - MIPS_PATH=$TRAVIS_BUILD_DIR/mips/lib:$TRAVIS_BUILD_DIR/mips/lib/t
+    - MOST_PATH=$TRAVIS_BUILD_DIR/most/lib:$TRAVIS_BUILD_DIR/most/lib/t
+    - SEARCH_PATH=$MP_PATH:$MPTEST_PATH:$MIPS_PATH:$MOST_PATH
+
+script:
+- octave -p $SEARCH_PATH --eval test_matpower
+- octave -p $SEARCH_PATH --eval test_most
