@@ -9,6 +9,13 @@ Copyright (c) 2015-2016, Power Systems Engineering Research Center (PSERC)
 See https://github.com/MATPOWER/most for more info.
 
 
+Changes last release
+--------------------
+
+12/21/16
+    - Add Travis-CI integration (thanks to Richard Lincoln).
+
+
 Changes since 5/21/15
 ---------------------
 

@@ -1,8 +1,14 @@
-function test_most(verbose)
+function success = test_most(verbose, exit_on_fail)
 %TEST_MOST  Run all MOST tests.
-%   TEST_MOST runs all of the MOST tests.
-%   TEST_MOST(VERBOSE) prints the details of the individual tests
-%   if VERBOSE is true.
+%   TEST_MOST
+%   TEST_MOST(VERBOSE)
+%   TEST_MOST(VERBOSE, EXIT_ON_FAIL)
+%   SUCCESS = TEST_MOST(...)
+%
+%   Runs all of the MOST tests. If VERBOSE is true (false by default),
+%   it prints the details of the individual tests. If EXIT_ON_FAIL is true
+%   (false by default), it will exit Matlab or Octave with a status of 1
+%   unless T_RUN_TESTS returns ALL_OK.
 %
 %   See also T_RUN_TESTS.
 
@@ -14,13 +20,16 @@ function test_most(verbose)
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See https://github.com/MATPOWER/most for more info.
 
-if nargin < 1
-    verbose = 0;
+if nargin < 2
+    exit_on_fail = 0;
+    if nargin < 1
+        verbose = 0;
+    end
 end
 
 tests = {};
 
-%% MATPOWER base test
+%% MOST tests
 have_c3sopf = exist('c3sopf', 'file') == 2;
 tests{end+1} = 't_most_3b_1_1_0';
 tests{end+1} = 't_most_3b_3_1_0';
@@ -44,4 +53,13 @@ end
 tests{end+1} = 't_most_uc';
 tests{end+1} = 't_most_suc';
 
-t_run_tests( tests, verbose );
+%% run the tests
+all_ok = t_run_tests( tests, verbose );
+
+%% handle success/failure
+if exit_on_fail && ~all_ok
+    exit(1);
+end
+if nargout
+    success = all_ok;
+end
