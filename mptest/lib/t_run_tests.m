@@ -1,8 +1,11 @@
-function t_run_tests(test_names, verbose)
+function all_ok_ = t_run_tests(test_names, verbose)
 %T_RUN_TESTS  Run a series of tests.
-%   T_RUN_TESTS(TEST_NAMES, VERBOSE) runs a set of tests whose names
-%   are given in the cell array TEST_NAMES. If the optional parameter
-%   VERBOSE is true, it prints the details of the individual tests.
+%   ALL_OK = T_RUN_TESTS(TEST_NAMES, VERBOSE)
+%
+%   Runs a set of tests whose names are given in the cell array TEST_NAMES.
+%   If the optional parameter VERBOSE is true, it prints the details of the
+%   individual tests. Optionally returns an ALL_OK flag, equal to 1 if all
+%   tests pass (and the number matches the expected number), 0 otherwise.s
 %
 %   Example:
 %       tests{end+1} = 't_loadcase';
@@ -68,6 +71,7 @@ if verbose
     fprintf('\n\n----------  Summary  ----------\n');
 end
 if counter == num_of_tests && counter == ok_cnt + skip_cnt && not_ok_cnt == 0
+    all_ok = 1;
     if skip_cnt
         fprintf('All tests successful (%d passed, %d skipped of %d)', ...
             ok_cnt, skip_cnt, num_of_tests);
@@ -75,6 +79,7 @@ if counter == num_of_tests && counter == ok_cnt + skip_cnt && not_ok_cnt == 0
         fprintf('All tests successful (%d of %d)', ok_cnt, num_of_tests);
     end
 else
+    all_ok = 0;
     fprintf('Ran %d of %d tests: %d passed, %d failed', ...
         counter, num_of_tests, ok_cnt, not_ok_cnt);
     if skip_cnt
@@ -82,3 +87,7 @@ else
     end
 end
 fprintf('\nElapsed time %.2f seconds.\n', etime(clock, t0));
+
+if nargout
+    all_ok_ = all_ok;   %% copy to optional output arg
+end

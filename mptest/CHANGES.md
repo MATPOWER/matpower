@@ -2,6 +2,13 @@ Change history for MP-Test
 ==========================
 
 
+Since last release
+------------------
+
+* 2016-12-21 - Updates for [Travis-CI][1] integration (thanks to Richard
+  Lincoln), with option to exit Octave or Matlab if any test fails.
+
+
 6.0 (2016-12-16)
 ----------------
 
@@ -142,3 +149,6 @@ Change history for MP-Test
 * 2004-08-25 - Added skipping of tests and reporting of skipped tests.
 
 * 2004-07-15 - Added `t` subdirectory with various tests and testing tools.
+
+----
+[1]: https://travis-ci.org
