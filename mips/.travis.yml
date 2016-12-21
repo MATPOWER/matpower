@@ -1,0 +1,21 @@
+sudo: required
+dist: xenial
+
+language: generic
+
+install:
+- sudo apt-add-repository -y ppa:octave/stable
+- sudo apt-get update -qq
+- sudo apt-get install -qq octave liboctave-dev
+- sudo git clone --depth=50 https://github.com/MATPOWER/mptest.git $TRAVIS_BUILD_DIR/mptest
+
+env:
+  global:
+    - MIPS_PATH=$TRAVIS_BUILD_DIR/lib:$TRAVIS_BUILD_DIR/lib/t
+    - MPTEST_PATH=$TRAVIS_BUILD_DIR/mptest/lib:$TRAVIS_BUILD_DIR/mptest/lib/t
+    - SEARCH_PATH=$MIPS_PATH:$MPTEST_PATH
+
+script:
+- octave-cli --no-gui -p $SEARCH_PATH --eval ver
+- octave-cli --no-gui -p $SEARCH_PATH --eval "test_mptest(0,1)"
+- octave-cli --no-gui -p $SEARCH_PATH --eval "test_mips(0,1)"

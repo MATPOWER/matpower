@@ -1,6 +1,12 @@
 Change history for MIPS
 =======================
 
+Since last release
+------------------
+
+* 2016-12-21 - Add [Travis-CI][1] integration (thanks to Richard Lincoln).
+
+
 1.2.2 (2016-12-16) - released with MATPOWER 6.0
 -----------------------------------------------
 
@@ -145,3 +151,6 @@ Change history for MIPS
 
 * 2009-03-13 - Added a pure MATLAB implementation of the PDIPM (primal-dual
   interior point method) solver.
+
+----
+[1]: https://travis-ci.org
