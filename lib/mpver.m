@@ -52,8 +52,12 @@ else
     end
     for n = 1:3
         if n == 3
-            if isempty(v{3})
-                fprintf('\n%-22s -- not installed --', 'Optimization Toolbox');
+            if isempty(v{3}) || isempty(v{3}.Version)
+                if have_fcn('matlab')
+                    fprintf('\n%-22s -- not installed --', 'Optimization Toolbox');
+                else    %% Octave
+                    fprintf('\n%-22s -- not installed --', 'optim');
+                end
                 continue;
             elseif have_fcn('matlab') && ~license('test', 'optimization_toolbox')
                 fprintf('\n%-22s -- no license --', 'Optimization Toolbox');
