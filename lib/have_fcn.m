@@ -188,8 +188,13 @@ else        %% detect availability
                         warning('The built-in VER command is behaving strangely, probably as a result of installing a 3rd party toolbox in a directory named ''optim'' on your path. Check each element of the output of ver(''optim'') to find the offending toolbox, then move the toolbox to a more appropriately named directory.');
                         v = v(1);
                     end
-                    vstr = v.Version;
-                    rdate = v.Date;
+                    if isempty(v) || isempty(v.Version)
+                        vstr = '';      %% make sure it's a string
+                        rdate = [];
+                    else
+                        vstr = v.Version;
+                        rdate = v.Date;
+                    end
                     otver = vstr2num(vstr);
                     switch tag
                         case 'fmincon'
