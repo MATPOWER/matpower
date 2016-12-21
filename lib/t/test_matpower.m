@@ -1,8 +1,14 @@
-function test_matpower(verbose)
+function success = test_matpower(verbose, exit_on_fail)
 %TEST_MATPOWER  Run all MATPOWER tests.
-%   TEST_MATPOWER runs all of the MATPOWER tests.
-%   TEST_MATPOWER(VERBOSE) prints the details of the individual tests
-%   if VERBOSE is true.
+%   TEST_MATPOWER
+%   TEST_MATPOWER(VERBOSE)
+%   TEST_MATPOWER(VERBOSE, EXIT_ON_FAIL)
+%   SUCCESS = TEST_MATPOWER(...)
+%
+%   Runs all of the MATPOWER tests. If VERBOSE is true (false by default),
+%   it prints the details of the individual tests. If EXIT_ON_FAIL is true
+%   (false by default), it will exit Matlab or Octave with a status of 1
+%   unless T_RUN_TESTS returns ALL_OK.
 %
 %   See also T_RUN_TESTS.
 
@@ -14,8 +20,11 @@ function test_matpower(verbose)
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-if nargin < 1
-    verbose = 0;
+if nargin < 2
+    exit_on_fail = 0;
+    if nargin < 1
+        verbose = 0;
+    end
 end
 
 tests = {};
@@ -126,4 +135,13 @@ if have_fcn('smartmarket')
     tests{end+1} = 't_runmarket';
 end
 
-t_run_tests( tests, verbose );
+%% run the tests
+all_ok = t_run_tests( tests, verbose );
+
+%% handle success/failure
+if exit_on_fail && ~all_ok
+    exit(1);
+end
+if nargout
+    success = all_ok;
+end
