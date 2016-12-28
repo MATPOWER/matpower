@@ -59,6 +59,9 @@ function opt = mpoption(varargin)
 %       [ 'FDXB' - Fast-Decoupled (XB version)                              ]
 %       [ 'FDBX' - Fast-Decoupled (BX version)                              ]
 %       [ 'GS'   - Gauss-Seidel                                             ]
+%       [ 'PQSUM'- Power Summation method                                   ]
+%       [ 'ISUM' - Current Summation method                                 ]
+%       [ 'YSUM' - Admittance Summation method                              ]
 %   pf.tol                  1e-8        termination tolerance on per unit
 %                                       P & Q mismatch
 %   pf.nr.max_it            10          maximum number of iterations for
@@ -67,6 +70,12 @@ function opt = mpoption(varargin)
 %                                       fast decoupled method
 %   pf.gs.max_it            1000        maximum number of iterations for
 %                                       Gauss-Seidel method
+%   pf.radial.max_it        20          maximum number of iterations for
+%                                       radial power flow methods
+%   pf.radial.vcorr         0           perform voltage correction procedure
+%                                       in distribution power flow
+%       [  0 - do NOT perform voltage correction                            ]
+%       [  1 - perform voltage correction                                   ]
 %   pf.enforce_q_lims       0           enforce gen reactive power limits at
 %                                       expense of |V|
 %       [  0 - do NOT enforce limits                                        ]
@@ -1445,6 +1454,9 @@ if ~isstruct(opt)
                 'max_it',               30  ), ...
             'gs',                   struct(...
                 'max_it',               1000  ), ...
+            'radial',               struct(...
+                'max_it',               20   , ...
+                'vcorr',                 0  ), ...
             'enforce_q_lims',       0   ), ...
         'cpf',                  struct(...
             'parameterization',     3, ...
