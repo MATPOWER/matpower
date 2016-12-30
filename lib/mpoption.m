@@ -519,7 +519,7 @@ if have_opt0
                 opt0.cpf = rmfield(opt0.cpf, 'user_callback_args');
             end
             if opt0.v <= 11         %% convert version 11 to 12
-                opt0.cpf.use_vg = opt_d.cpf.use_vg;
+                opt0.opf.use_vg = opt_d.opf.use_vg;
             end
             opt0.v = v;
         end

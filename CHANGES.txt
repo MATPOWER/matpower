@@ -20,6 +20,16 @@ Changes last release
     - Add Travis-CI integration (thanks to Richard Lincoln).
 
 
+Changes since last release
+--------------------------
+
+12/29/16
+    - Fix bug in converting older versions of MATPOWER options struct.
+
+12/21/16
+    - Add Travis-CI integration (thanks to Richard Lincoln).
+
+
 Changes since 6.0b2
 -------------------
 
