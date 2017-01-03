@@ -32,7 +32,7 @@ function Lxx = opf_hessfcn(x, lambda, cost_mult, om, Ybus, Yf, Yt, mpopt, il)
 %   See also OPF_COSTFCN, OPF_CONSFCN.
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2017, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %
@@ -56,6 +56,7 @@ if isempty(cost_mult)
 end
 
 %% unpack data
+lim_type = upper(mpopt.opf.flow_lim(1));
 mpc = get_mpc(om);
 [baseMVA, bus, gen, branch, gencost] = ...
     deal(mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch, mpc.gencost);
@@ -161,7 +162,7 @@ else    %% keep dimensions of empty matrices/vectors compatible
     muF = zeros(0,1);   %% (required to avoid problems when using Knitro
     muT = zeros(0,1);   %%  on cases with all lines unconstrained)
 end
-if upper(mpopt.opf.flow_lim(1)) == 'I'      %% current
+if lim_type == 'I'          %% square of current
     [dIf_dVa, dIf_dVm, dIt_dVa, dIt_dVm, If, It] = dIbr_dV(branch(il,:), Yf, Yt, V);
     [Hfaa, Hfav, Hfva, Hfvv] = d2AIbr_dV2(dIf_dVa, dIf_dVm, If, Yf, V, muF);
     [Htaa, Htav, Htva, Htvv] = d2AIbr_dV2(dIt_dVa, dIt_dVm, It, Yt, V, muT);
@@ -171,10 +172,15 @@ else
   Cf = sparse(1:nl2, f, ones(nl2, 1), nl2, nb);     %% connection matrix for line & from buses
   Ct = sparse(1:nl2, t, ones(nl2, 1), nl2, nb);     %% connection matrix for line & to buses
   [dSf_dVa, dSf_dVm, dSt_dVa, dSt_dVm, Sf, St] = dSbr_dV(branch(il,:), Yf, Yt, V);
-  if upper(mpopt.opf.flow_lim(1)) == 'P'    %% real power
+  if lim_type == '2'        %% square of real power
     [Hfaa, Hfav, Hfva, Hfvv] = d2ASbr_dV2(real(dSf_dVa), real(dSf_dVm), real(Sf), Cf, Yf, V, muF);
     [Htaa, Htav, Htva, Htvv] = d2ASbr_dV2(real(dSt_dVa), real(dSt_dVm), real(St), Ct, Yt, V, muT);
-  else                                      %% apparent power
+  elseif lim_type == 'P'    %% real power                                 
+    [Hfaa, Hfav, Hfva, Hfvv] = d2Sbr_dV2(Cf, Yf, V, muF);
+    [Htaa, Htav, Htva, Htvv] = d2Sbr_dV2(Ct, Yt, V, muT);
+    [Hfaa, Hfav, Hfva, Hfvv] = deal(real(Hfaa), real(Hfav), real(Hfva), real(Hfvv));
+    [Htaa, Htav, Htva, Htvv] = deal(real(Htaa), real(Htav), real(Htva), real(Htvv));
+  else                      %% square of apparent power
     [Hfaa, Hfav, Hfva, Hfvv] = d2ASbr_dV2(dSf_dVa, dSf_dVm, Sf, Cf, Yf, V, muF);
     [Htaa, Htav, Htva, Htvv] = d2ASbr_dV2(dSt_dVa, dSt_dVm, St, Ct, Yt, V, muT);
   end

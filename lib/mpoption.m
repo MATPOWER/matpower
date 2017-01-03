@@ -179,7 +179,8 @@ function opt = mpoption(varargin)
 %   opf.flow_lim            'S'         quantity limited by branch flow
 %                                       constraints
 %       [ 'S' - apparent power flow (limit in MVA)                          ]
-%       [ 'P' - active power flow (limit in MW)                             ]
+%       [ 'P' - active power flow, implemented using P   (limit in MW)      ]
+%       [ '2' - active power flow, implemented using P^2 (limit in MW)      ]
 %       [ 'I' - current magnitude (limit in MVA at 1 p.u. voltage)          ]
 %   opf.ignore_angle_lim    0           angle diff limits for branches
 %       [ 0 - include angle difference limits, if specified                 ]
@@ -421,7 +422,7 @@ function opt = mpoption(varargin)
 %                                           for 'pw'
 
 %   MATPOWER
-%   Copyright (c) 2013-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2013-2017, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Shrirang Abhyankar, Argonne National Laboratory
 %
@@ -1169,7 +1170,7 @@ end
 switch upper(opt_s.opf.flow_lim)
     case 'S'
         OPF_FLOW_LIM = 0;
-    case 'P'
+    case {'P', '2'}
         OPF_FLOW_LIM = 1;
     case 'I'
         OPF_FLOW_LIM = 2;
