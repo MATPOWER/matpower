@@ -13,13 +13,6 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 For change history for MOST, see most/docs/CHANGES.
 
 
-Changes last release
---------------------
-
-12/21/16
-    - Add Travis-CI integration (thanks to Richard Lincoln).
-
-
 Changes since last release
 --------------------------
 

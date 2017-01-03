@@ -13,8 +13,11 @@ See http://www.pserc.cornell.edu/matpower/ for more info.
 For change history for MOST, see most/docs/CHANGES.
 
 
-Changes last release
---------------------
+Changes since last release
+--------------------------
+
+12/29/16
+    - Fix bug in converting older versions of MATPOWER options struct.
 
 12/21/16
     - Add Travis-CI integration (thanks to Richard Lincoln).
