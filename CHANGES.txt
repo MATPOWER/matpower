@@ -16,6 +16,10 @@ For change history for MOST, see most/docs/CHANGES.
 Changes since last release
 --------------------------
 
+1/4/17
+    - When genfuel field is present in mpc, load2disp() now augments
+      it with 'dl' entries for the dispatchable loads it adds.
+
 1/3/17
     - Change default implementation of active power line flow
       constraints (opf.flow_lim = 'P') to use flow directly, rather

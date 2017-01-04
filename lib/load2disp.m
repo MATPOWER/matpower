@@ -93,6 +93,15 @@ gencost = [             %% use a linear, polynomial cost format
 ];
 mpc.gencost = [mpc.gencost; gencost];
 
+%% (optional) generator fuel types
+if isfield(mpc, 'genfuel') && iscell(mpc.genfuel)
+    genfuel = cell(nld, 1);
+    for k = 1:nld
+        genfuel{k} = 'dl';
+    end
+    mpc.genfuel = [mpc.genfuel; genfuel];
+end
+
 %% save case, if filename is given
 if nargin > 1 && ~isempty(fname)
     savecase(fname, mpc, '2');
