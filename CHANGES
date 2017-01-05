@@ -16,6 +16,11 @@ For change history for MOST, see most/docs/CHANGES.
 Changes since last release
 --------------------------
 
+1/5/17
+    - Fix bug #4 where some Q limits were not being respected by CPF
+      when buses were converted to PQ by initial power flow run.
+      (thanks to Shruti Rao)
+
 1/4/17
     - When genfuel field is present in mpc, load2disp() now augments
       it with 'dl' entries for the dispatchable loads it adds.

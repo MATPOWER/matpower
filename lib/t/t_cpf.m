@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 298;
+num_tests = 300;
 t_begin(num_tests, quiet);
 
 if have_fcn('matlab', 'vnum') < 7.001
@@ -418,17 +418,21 @@ else
     mpct.bus(:, [PD QD]) = mpcb.bus(:, [PD QD]) * 2.5;  % and increased load
 
     r = runcpf(mpcb, mpct, mpopt);
-    iterations = 41;
+    iterations = 43;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
-    t_is(r.cpf.max_lam, 0.03326947, 6, [t 'max_lam']);
+    t_is(r.cpf.max_lam, 0.03830560, 6, [t 'max_lam']);
     t_is(size(r.cpf.V_hat), [300 iterations+1], 12, [t 'size(V_hat)']);
     t_is(size(r.cpf.V), [300 iterations+1], 12, [t 'size(V)']);
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
     t_is(size(r.cpf.lam), [1 iterations+1], 12, [t 'size(lam)']);
     t_ok(strfind(r.cpf.done_msg, 'Traced full continuation curve in'), [t 'done_msg']);
-    ek = [1 3 5 12 14 16 18 21 23 27 36 39 41];
-    eidx = [26 19 67 59 15 69 50 54 66 68 87 89 1];
+    qmin_violation = max(0, r.gen(:, QMIN) - r.gen(:, QG));
+    qmax_violation = max(0, r.gen(:, QG) - r.gen(:, QMAX));
+    t_is(qmin_violation, 0, 12, [t 'Qmin violation']);
+    t_is(qmax_violation, 0, 12, [t 'Qmax violation']);
+    ek = [1 3 5 12 14 17 19 22 24 28 38 41 43];
+    eidx = [26 19 67 15 59 69 50 66 54 68 87 89 1];
     ename = {'QLIM', 'QLIM', 'QLIM', 'QLIM', 'QLIM', 'QLIM', 'QLIM', 'QLIM', 'QLIM', 'QLIM', 'QLIM', 'QLIM', 'TARGET_LAM'};
     ne = length(ek);
     t_is(length(r.cpf.events), ne, 12, sprintf('%ssize(events) == %d', t, ne));
