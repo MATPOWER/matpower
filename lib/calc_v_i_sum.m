@@ -116,5 +116,5 @@ Sslack = V(1)*conj(I(1));
 I = I(2:end);
 f = f(2:end);
 % calculate branch flows
-Sf = V(f).*conj(I) + conj(Ybf) .* abs(V(f)).^2 / 2;
-St = V(2:end).*conj(I) - conj(Ybt) .* abs(V(2:end)).^2 / 2;
+Sf = V(f).*conj(I) + conj(Ybf) .* abs(V(f)).^2;
+St = V(2:end).*conj(I) - conj(Ybt) .* abs(V(2:end)).^2;

@@ -121,5 +121,5 @@ f = f(2:end);
 Zb = Zb(2:end);
 % calculate branch flows
 I = (V(f) - V(2:end))./Zb;
-Sf = V(f).*conj(I) + conj(Ybf) .* abs(V(f)).^2 / 2;
-St = V(2:end).*conj(I) - conj(Ybt) .* abs(V(2:end)).^2 / 2;
+Sf = V(f).*conj(I) + conj(Ybf) .* abs(V(f)).^2;
+St = V(2:end).*conj(I) - conj(Ybt) .* abs(V(2:end)).^2;

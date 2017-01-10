@@ -115,5 +115,5 @@ Sf = Sf(2:end);
 St = St(2:end);
 f = f(2:end);
 % correct branch flows to account for branch shunt admittances
-Sf = Sf + conj(Ybf) .* abs(V(f)).^2 / 2;
-St = St - conj(Ybt) .* abs(V(2:end)).^2 / 2;
+Sf = Sf + conj(Ybf) .* abs(V(f)).^2;
+St = St - conj(Ybt) .* abs(V(2:end)).^2;
