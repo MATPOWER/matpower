@@ -55,6 +55,10 @@ end
 npv = length(pv);
 Qpv = zeros(npv,1);
 %% do brackward-forward iterations
+if mpopt.verbose > 1
+    fprintf('\n it    max V mismatch (p.u.)');
+    fprintf('\n----  ----------------------');
+end
 Ye = conj(Sdz) + Yd;
 D = zeros(nl,1);
 for k = nl:-1:2
@@ -82,6 +86,9 @@ while success == 0 && iter < iter_max
     % check for convergence
     DU = abs(V - Vold);
     DU(isnan(DU)) = inf;
+    if mpopt.verbose > 1
+        fprintf('\n%3d        %10.3e', iter, max(DU));
+    end
     if max(DU) > tol
         Vold = V;
         % update PV generators reactive powers

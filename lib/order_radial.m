@@ -12,9 +12,11 @@ function mpc = order_radial(mpc)
 %
 %   See also RADIAL_PF.
 
+%% define named indices into bus, gen, branch matrices
+define_constants;
 %% Initialize
-slack = mpc.bus(mpc.bus(:,2) == 3, 1);
-[f, t] = deal(mpc.branch(:,1),mpc.branch(:,2));
+slack = mpc.bus(mpc.bus(:,BUS_TYPE) == REF, 1);
+[f, t] = deal(mpc.branch(:,F_BUS),mpc.branch(:,T_BUS));
 nl = size(mpc.branch,1);
 branch_number = (1:nl)';
 mpc.branch_order = [];
@@ -46,18 +48,18 @@ mpc.branch = mpc.branch(mpc.branch_order,:);
 % Make an "inverse" vector out of bus_order
 mpc.bus_order_inv = sparse(mpc.bus_order,ones(nl+1,1),1:nl+1);
 % Swap indicies in "from" and "to" buses using bus_order_inv
-[f, t] = deal(mpc.branch(:,1),mpc.branch(:,2));
+[f, t] = deal(mpc.branch(:,F_BUS),mpc.branch(:,T_BUS));
 f = mpc.bus_order_inv(f);
 t = mpc.bus_order_inv(t);
 % Reverse branch orientation of "from" is biger than "to"
 mpc.br_reverse = f > t;
 [f(mpc.br_reverse), t(mpc.br_reverse)] = deal(t(mpc.br_reverse), f(mpc.br_reverse));
 % Put new "from" and "to" indicies in branch
-mpc.branch(:,1:2) = [f t];
+mpc.branch(:,[F_BUS T_BUS]) = [f t];
 % Make an "inverse" vector out of branch_order
 mpc.branch_order_inv = sparse(mpc.branch_order,ones(nl,1),1:nl);
 % Permute rows in bus and replace bus indicies
 mpc.bus = mpc.bus(mpc.bus_order,:);
-mpc.bus(:,1) = mpc.bus_order_inv(mpc.bus(:,1));
+mpc.bus(:,BUS_I) = mpc.bus_order_inv(mpc.bus(:,BUS_I));
 % Replace bus indicies in gen
-mpc.gen(:,1) = mpc.bus_order_inv(mpc.gen(:,1));
+mpc.gen(:,GEN_BUS) = mpc.bus_order_inv(mpc.gen(:,GEN_BUS));
