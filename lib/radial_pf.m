@@ -35,8 +35,14 @@ nl = size(mpc.branch,1);
 nb = size(mpc.bus,1);
 Sd  =  Sd/mpc.baseMVA;
 Ysh = Ysh/mpc.baseMVA;
-Ybf = Yb/2;
-Ybt = Yb/2;
+tap = ones(nl, 1);        % default tap ratio = 1
+i = find(mpc.branch(:, TAP)); % indices of non-zero tap ratios
+tap(i) = mpc.branch(i, TAP);  % assign non-zero tap ratios
+Ybf = Yb/2 + 1./tap .* (1./tap-1) ./ Zb;
+Ybt = Yb/2 + (1-1./tap) ./ Zb;
+[Ybf(mpc.br_reverse), Ybt(mpc.br_reverse)] = ...
+    deal(Ybt(mpc.br_reverse), Ybf(mpc.br_reverse)); % reversed branches
+Zb = Zb .* tap;
 Yd = Ysh + (sparse(f, f, Ybf, nb, nb) + sparse(t, t, Ybt, nb, nb)) * ones(nb,1);
 % generator data (other than the slack bus)
 pv = mpc.gen(2:end,GEN_BUS);

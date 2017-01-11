@@ -1,7 +1,7 @@
-function Zpv = make_zpv(pv,nb,nl,f,Zb)
+function Zpv = make_zpv(pv,nb,nl,f,Zb,Yd)
 %MAKE_ZPV  Calculates loop impedances for all PV buses.
 %
-%   Zpv = make_zpv(pv,nb,nl,f,Zb)
+%   Zpv = make_zpv(pv,nb,nl,f,Zb,Yd)
 %
 %   Loop impedance of a PV bus is defined as impedance of the path between
 %   the bus and the slack bus. The mutual impedance between two PV buses is
@@ -16,17 +16,26 @@ function Zpv = make_zpv(pv,nb,nl,f,Zb)
 
 npv = length(pv);
 Zpv = zeros(npv);
+Ye = Yd;
+D = zeros(nl,1);
+for k = nl:-1:2
+    D(k) = 1 / (1 + Zb(k)*Ye(k));
+    i = f(k);
+    Ye(i) = Ye(i) + D(k)*Ye(k);
+end
 for ipv = 1:npv
     V = zeros(nb,1);
-    I = zeros(nb,1);
-    I(pv(ipv)) = -1;
+    Je = zeros(nb,1);
+    Je(pv(ipv)) = -1;
+    % backward sweep
     for k = nl:-1:2
         i = f(k);
-        I(i) = I(i) + I(k);
+        Je(i) = Je(i) + D(k)*Je(k);
     end
+    % forward sweep
     for k = 2:nl
         i = f(k);
-        V(k) = V(i) - Zb(k) * I(k);
-    end 
+        V(k) = D(k) * (V(i)-Zb(k)*Je(k));
+    end
     Zpv(:,ipv) = V(pv);
 end

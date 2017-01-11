@@ -36,7 +36,7 @@ mpopt = mpoption('out.all', 0, 'verbose', verbose);
 %% Test Distribution Power Flow
 mpopt0 = mpoption(mpopt, 'pf.alg', 'NR');
 mpopt1 = mpoption(mpopt, 'pf.alg', 'PQSUM');
-mpopt2 = mpoption(mpopt, 'pf.alg', 'ISUM');
+mpopt2 = mpoption(mpopt, 'pf.alg', 'ISUM','pf.tol',1e-9);
 mpopt3 = mpoption(mpopt, 'pf.alg', 'YSUM');
 casefile = {
     'case4_dist'

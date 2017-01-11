@@ -53,7 +53,7 @@ Zb = [0; Zb];
 nl = nl + 1;
 %% make Zpv matrix, for calculation of the PV generators reactive powers
 if ~isempty(pv)
-    Zpv = make_zpv(pv,nb,nl,f,Zb);
+    Zpv = make_zpv(pv,nb,nl,f,Zb,Yd);
     Bpv = (imag(Zpv))^-1;
 end
 npv = length(pv);
