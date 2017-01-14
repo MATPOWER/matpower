@@ -243,6 +243,8 @@ d0 = struct( ...
     'Qd_disp_cap_off', 0, ...
     'Pd_disp', 0, ...
     'Qd_disp', 0, ...
+    'Pd_curtailed', 0, ...
+    'Qd_curtailed', 0, ...
     'Pd_cap', 0, ...
     'Qd_cap', 0, ...
     'Pd_cap_on', 0, ...
@@ -387,6 +389,8 @@ for k = 1:ngr+have_isolated
     d(k).Qd_disp_cap        = d(k).Qd_disp_cap_on + d(k).Qd_disp_cap_off;
     d(k).Pd_disp            = sum(-mpc.gen(idld_on,  PG));
     d(k).Qd_disp            = sum(-mpc.gen(idld_on,  QG));
+    d(k).Pd_curtailed       = d(k).Pd_disp_cap_on - d(k).Pd_disp;
+    d(k).Qd_curtailed       = d(k).Qd_disp_cap_on - d(k).Qd_disp;
     d(k).Pd                 = d(k).Pd_fixed + d(k).Pd_disp;
     d(k).Qd                 = d(k).Qd_fixed + d(k).Qd_disp;
     d(k).Pd_cap             = d(k).Pd_fixed + d(k).Pd_disp_cap;
@@ -528,6 +532,7 @@ for page = 1:pages
     print_row(fd, p, '%11.1f ', '    dispatched',       'Pd');
     print_row(fd, p, '%11.1f ', '      fixed',          'Pd_fixed');
     print_row(fd, p, '%11.1f ', '      dispatchable',   'Pd_disp');
+    print_row(fd, p, '%11.1f ', '    curtailed',        'Pd_curtailed');
     print_row(fd, p, '%11.1f ', '    nominal',          'Pd_cap');
     print_row(fd, p, '%11.1f ', '      on',             'Pd_cap_on');
     print_row(fd, p, '%11.1f ', '      off',            'Pd_cap_off');
@@ -539,6 +544,7 @@ for page = 1:pages
     print_row(fd, p, '%11.1f ', '    dispatched',       'Qd');
     print_row(fd, p, '%11.1f ', '      fixed',          'Qd_fixed');
     print_row(fd, p, '%11.1f ', '      dispatchable',   'Qd_disp');
+    print_row(fd, p, '%11.1f ', '    curtailed',        'Qd_curtailed');
     print_row(fd, p, '%11.1f ', '    nominal',          'Qd_cap');
     print_row(fd, p, '%11.1f ', '      on',             'Qd_cap_on');
     print_row(fd, p, '%11.1f ', '      off',            'Qd_cap_off');

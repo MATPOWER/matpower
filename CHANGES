@@ -16,6 +16,9 @@ For change history for MOST, see most/docs/CHANGES.
 Changes since last release
 --------------------------
 
+1/14/17
+    - Add line for curtailed load to case_info() output.
+
 1/5/17
     - Fix bug #4 where some Q limits were not being respected by CPF
       when buses were converted to PQ by initial power flow run.
