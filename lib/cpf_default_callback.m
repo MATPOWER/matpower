@@ -189,17 +189,23 @@ if plot_level
         else
             idx_e = plot_bus;               %% external bus number, provided
         end
+        if any(idx_e > length(cb_data.mpc_target.order.bus.e2i))
+            kk = find(idx_e > length(cb_data.mpc_target.order.bus.e2i));
+            error('cpf_default_callback: %d is not a valid bus number for MPOPT.cpf.plot.bus', idx_e(kk(1)));
+        end
         idx = full(cb_data.mpc_target.order.bus.e2i(idx_e));
-        if idx == 0
-            error('cpf_default_callback: %d is not a valid bus number for MPOPT.cpf.plot.bus', idx_e);
+        if any(idx == 0)
+            kk = find(idx == 0);
+            error('cpf_default_callback: %d is not a valid bus number for MPOPT.cpf.plot.bus', idx_e(kk(1)));
         end
     end
+    nplots = length(idx_e);
 
     %% set bounds for plot axes
     xmin = 0;
     xmax = max([max(nxx.lam_hat); max(nxx.lam)]);
-    ymin = min([min(abs(nxx.V_hat(idx, :))); min(abs(nxx.V(idx, :)))]);
-    ymax = max([max(abs(nxx.V_hat(idx, :))); max(abs(nxx.V(idx, :)))]);
+    ymin = min([min(min(abs(nxx.V_hat(idx, :)))); min(min(abs(nxx.V(idx, :))))]);
+    ymax = max([max(max(abs(nxx.V_hat(idx, :)))); max(max(abs(nxx.V(idx, :))))]);
     if xmax < xmin + cb_data.mpopt.cpf.step / 100;
         xmax = xmin + cb_data.mpopt.cpf.step / 100;
     end
@@ -222,7 +228,11 @@ if plot_level
         %% initialize lambda-V nose curve plot
         axis([xmin xmax ymin ymax]);
         plot(cxx.lam_hat(1), abs(cxx.V_hat(idx,1)), '-', 'Color', [0.25 0.25 1]);
-        title(sprintf('Voltage at Bus %d', idx_e));
+        if nplots > 1
+            title('Voltage at Multiple Buses');
+        else
+            title(sprintf('Voltage at Bus %d', idx_e));
+        end
         xlabel('\lambda');
         ylabel('Voltage Magnitude');
         hold on;
@@ -231,17 +241,23 @@ if plot_level
         %% plot single step of the lambda-V nose curve
         if plot_level > 1
             axis([xmin xmax ymin ymax]);
-            plot([nxx.lam(k); nxx.lam_hat(k+1)], ...
-                [abs(nxx.V(idx,k)); abs(nxx.V_hat(idx,k+1))], '-', ...
-                'Color', 0.85*[1 0.75 0.75]);
-            plot([nxx.lam_hat(k+1); nxx.lam(k+1)], ...
-                [abs(nxx.V_hat(idx,k+1)); abs(nxx.V(idx,k+1))], '-', ...
-                'Color', 0.85*[0.75 1 0.75]);
-            plot(nxx.lam_hat(k+1), abs(nxx.V_hat(idx,k+1)), 'x', ...
-                'Color', 0.85*[1 0.75 0.75]);
-            plot(nxx.lam(k+1)', abs(nxx.V(idx,k+1))', '-o', ...
-                'Color', [0.25 0.25 1]);
-            drawnow;
+            for kk = 1:nplots
+                %% prediction line
+                plot([nxx.lam(k); nxx.lam_hat(k+1)], ...
+                    [abs(nxx.V(idx(kk),k)); abs(nxx.V_hat(idx(kk),k+1))], '-', ...
+                    'Color', 0.85*[1 0.75 0.75]);
+                %% correction line
+                plot([nxx.lam_hat(k+1); nxx.lam(k+1)], ...
+                    [abs(nxx.V_hat(idx(kk),k+1)); abs(nxx.V(idx(kk),k+1))], '-', ...
+                    'Color', 0.85*[0.75 1 0.75]);
+                %% prediciton point
+                plot(nxx.lam_hat(k+1), abs(nxx.V_hat(idx(kk),k+1)), 'x', ...
+                    'Color', 0.85*[1 0.75 0.75]);
+                %% correction point
+                plot(nxx.lam(k+1)', abs(nxx.V(idx(kk),k+1))', '-o', ...
+                    'Color', [0.25 0.25 1]);
+                drawnow;
+            end
             if plot_level > 2
                 pause;
             end
@@ -250,7 +266,16 @@ if plot_level
     else    % k < 0
         %% finish final lambda-V nose curve plot
         axis([xmin xmax ymin ymax]);
-        plot(nxx.lam', abs(nxx.V(idx,:))',  '-', 'Color', [0.25 0.25 1]);
+        %% curve of corrected points
+        set(gca, 'ColorOrderIndex', 1); %% start over with color 1
+        hp = plot(nxx.lam', abs(nxx.V(idx,:))',  '-');
+        if nplots > 1
+            leg = cell(nplots, 1);
+            for kk = 1:nplots
+                leg{kk} = sprintf('Bus %d', idx_e(kk));
+            end
+            legend(hp, leg);
+        end
         hold off;
     end
 end

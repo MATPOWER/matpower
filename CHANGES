@@ -16,6 +16,10 @@ For change history for MOST, see most/docs/CHANGES.
 Changes since last release
 --------------------------
 
+1/16/17
+    - Support plotting of multiple nose curves in CPF by allowing
+      option 'cpf.plot.bus' to take on vector values.
+
 1/14/17
     - Add line for curtailed load to case_info() output.
 
