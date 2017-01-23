@@ -267,7 +267,9 @@ if plot_level
         %% finish final lambda-V nose curve plot
         axis([xmin xmax ymin ymax]);
         %% curve of corrected points
-        set(gca, 'ColorOrderIndex', 1); %% start over with color 1
+        if isprop(gca, 'ColorOrderIndex')
+            set(gca, 'ColorOrderIndex', 1); %% start over with color 1
+        end
         hp = plot(nxx.lam', abs(nxx.V(idx,:))',  '-');
         if nplots > 1
             leg = cell(nplots, 1);
