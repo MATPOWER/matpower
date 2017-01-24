@@ -1,6 +1,9 @@
 Change history for MATPOWER
 ===========================
 
+MATPOWER release notes, found in [`docs/relnotes`](docs/relnotes),
+contain summaries of the primary changes in each versioned release.
+
 For change history for [MP-Test][1], see [mptest/CHANGES.md](mptest/CHANGES.md).  
 For change history for [MIPS][2], see [mips/CHANGES.md](mips/CHANGES.md).  
 For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
@@ -8,6 +11,12 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 
 Since last release
 ------------------
+
+#### 1/24/17
+  - Update documentation in `README.md`, `CHANGES.md`,
+    `CONTRIBUTING.md`, `relnotes/RELEASE-NOTES-6.0.md`,
+    `docs/MATPOWER-dev-guide.md` to go along with move to GitHub
+    and addition of installer.
 
 #### 1/23/17
   - Add `install_matpower()` to assist with installation by
