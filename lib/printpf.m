@@ -29,7 +29,7 @@ function printpf(baseMVA, bus, gen, branch, f, success, et, fd, mpopt)
 %       fclose(fd);
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2017, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -694,11 +694,12 @@ if isOPF && (success || OUT_FORCE)
     end
 
     %% line flow constraints
-    if upper(mpopt.opf.flow_lim(1)) == 'P' || isDC  %% |P| limit
+    lim_type = upper(mpopt.opf.flow_lim(1));
+    if isDC || lim_type == 'P' || lim_type == '2'   %% |P| limit
         Ff = branch(:, PF);
         Ft = branch(:, PT);
         str = '\n  #     Bus    Pf  mu     Pf      |Pmax|      Pt      Pt  mu   Bus';
-    elseif upper(mpopt.opf.flow_lim(1)) == 'I'      %% |I| limit
+    elseif lim_type == 'I'                          %% |I| limit
         Ff = abs( (branch(:, PF) + 1j * branch(:, QF)) ./ V(e2i(branch(:, F_BUS))) );
         Ft = abs( (branch(:, PT) + 1j * branch(:, QT)) ./ V(e2i(branch(:, T_BUS))) );
         str = '\n  #     Bus   |If| mu    |If|     |Imax|     |It|    |It| mu   Bus';

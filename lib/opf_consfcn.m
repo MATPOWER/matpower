@@ -20,9 +20,11 @@ function [h, g, dh, dg] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt, il, varargin)
 %
 %   Outputs:
 %     H  : vector of inequality constraint values (flow limits)
-%          limit^2 - flow^2, where the flow can be apparent power
-%          real power or current, depending on value of
-%          opf.flow_lim in MPOPT (only for constrained lines)
+%          where the flow can be apparent power, real power, or
+%          current, depending on the value of opf.flow_lim in MPOPT
+%          (only for constrained lines), normally expressed as
+%          (limit^2 - flow^2), except when opf.flow_lim == 'P',
+%          in which case it is simply (limit - flow).
 %     G  : vector of equality constraint values (power balances)
 %     DH : (optional) inequality constraint gradients, column j is
 %          gradient of H(j)
@@ -36,9 +38,9 @@ function [h, g, dh, dg] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt, il, varargin)
 %   See also OPF_COSTFCN, OPF_HESSFCN.
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2017, Power Systems Engineering Research Center (PSERC)
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
-%   Ray Zimmerman, PSERC Cornell and Shrirang Abhyankar
+%   and Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -54,6 +56,7 @@ function [h, g, dh, dg] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt, il, varargin)
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 
 %% unpack data
+lim_type = upper(mpopt.opf.flow_lim(1));
 mpc = get_mpc(om);
 [baseMVA, bus, gen, branch] = deal(mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch);
 vv = get_idx(om);
@@ -97,9 +100,12 @@ g = [ real(mis);            %% active power mismatch for all buses
 
 %% then, the inequality constraints (branch flow limits)
 if nl2 > 0
-  flow_max = (branch(il, RATE_A)/baseMVA).^2;
+  flow_max = branch(il, RATE_A) / baseMVA;
   flow_max(flow_max == 0) = Inf;
-  if upper(mpopt.opf.flow_lim(1)) == 'I'    %% current magnitude limit, |I|
+  if lim_type ~= 'P'        %% typically use square of flow
+    flow_max = flow_max.^2;
+  end
+  if lim_type == 'I'    %% current magnitude limit, |I|
     If = Yf * V;
     It = Yt * V;
     h = [ If .* conj(If) - flow_max;    %% branch current limits (from bus)
@@ -108,12 +114,15 @@ if nl2 > 0
     %% compute branch power flows
     Sf = V(branch(il, F_BUS)) .* conj(Yf * V);  %% complex power injected at "from" bus (p.u.)
     St = V(branch(il, T_BUS)) .* conj(Yt * V);  %% complex power injected at "to" bus (p.u.)
-    if upper(mpopt.opf.flow_lim(1)) == 'P'  %% active power limit, P (Pan Wei)
-      h = [ real(Sf).^2 - flow_max;         %% branch real power limits (from bus)
-            real(St).^2 - flow_max ];       %% branch real power limits (to bus)
-    else                                    %% apparent power limit, |S|
-      h = [ Sf .* conj(Sf) - flow_max;      %% branch apparent power limits (from bus)
-            St .* conj(St) - flow_max ];    %% branch apparent power limits (to bus)
+    if lim_type == '2'                          %% active power limit, P squared (Pan Wei)
+      h = [ real(Sf).^2 - flow_max;             %% branch real power limits (from bus)
+            real(St).^2 - flow_max ];           %% branch real power limits (to bus)
+    elseif lim_type == 'P'                      %% active power limit, P
+      h = [ real(Sf) - flow_max;                %% branch real power limits (from bus)
+            real(St) - flow_max ];              %% branch real power limits (to bus
+    else                                        %% apparent power limit, |S|
+      h = [ Sf .* conj(Sf) - flow_max;          %% branch apparent power limits (from bus)
+            St .* conj(St) - flow_max ];        %% branch apparent power limits (to bus)
     end
   end
 else
@@ -145,12 +154,12 @@ if nargout > 2
 
   if nl2 > 0
     %% compute partials of Flows w.r.t. V
-    if upper(mpopt.opf.flow_lim(1)) == 'I'  %% current
+    if lim_type == 'I'                      %% current
       [dFf_dVa, dFf_dVm, dFt_dVa, dFt_dVm, Ff, Ft] = dIbr_dV(branch(il,:), Yf, Yt, V);
-    else                            %% power
+    else                                    %% power
       [dFf_dVa, dFf_dVm, dFt_dVa, dFt_dVm, Ff, Ft] = dSbr_dV(branch(il,:), Yf, Yt, V);
     end
-    if upper(mpopt.opf.flow_lim(1)) == 'P'  %% real part of flow (active power)
+    if lim_type == 'P' || lim_type == '2'   %% real part of flow (active power)
       dFf_dVa = real(dFf_dVa);
       dFf_dVm = real(dFf_dVm);
       dFt_dVa = real(dFt_dVa);
@@ -158,11 +167,16 @@ if nargout > 2
       Ff = real(Ff);
       Ft = real(Ft);
     end
-  
-    %% squared magnitude of flow (of complex power or current, or real power)
-    [df_dVa, df_dVm, dt_dVa, dt_dVm] = ...
+
+    if lim_type == 'P'
+      %% active power
+      [df_dVa, df_dVm, dt_dVa, dt_dVm] = deal(dFf_dVa, dFf_dVm, dFt_dVa, dFt_dVm);
+    else
+      %% squared magnitude of flow (of complex power or current, or real power)
+      [df_dVa, df_dVm, dt_dVa, dt_dVm] = ...
             dAbr_dV(dFf_dVa, dFf_dVm, dFt_dVa, dFt_dVm, Ff, Ft);
-  
+    end
+
     %% construct Jacobian of inequality (branch flow) constraints & transpose
     dh = sparse(2*nl2, nxyz);
     dh(:, [iVa iVm]) = [

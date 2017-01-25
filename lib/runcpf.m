@@ -224,7 +224,7 @@ if mpopt.verbose > 4
 else
     mpopt_pf = mpoption(mpopt, 'verbose', 0);
 end
-mpopt_pf = mpoption(mpopt_pf, 'pf.enforce_q_lims', mpopt.cpf.enforce_q_lims);
+mpopt_pf = mpoption(mpopt_pf, 'pf.enforce_q_lims', qlim);
 
 %% load base case data
 mpcb = loadcase(basecasedata);
@@ -242,12 +242,18 @@ if plim
 end
 
 %% run base case power flow
-[mpcb, suc] = runpf(mpcb, mpopt_pf);
+[rb, suc] = runpf(mpcb, mpopt_pf);
 if suc
     done = struct('flag', 0, 'msg', '');
+    if qlim
+        %% find buses that were converted to PQ or REF by initial power flow
+        b2ref = rb.bus(:, BUS_TYPE) == REF & mpcb.bus(:, BUS_TYPE) ~= REF;
+        b2pq  = rb.bus(:, BUS_TYPE) == PQ  & mpcb.bus(:, BUS_TYPE) ~= PQ;
+    end
+    mpcb = rb;      %% update base case with solved power flow
 else
     done = struct('flag', 1, 'msg', 'Base case power flow did not converge.');
-    results = mpcb;
+    results = rb;
     results.cpf = struct();
 end
 
@@ -261,7 +267,11 @@ if ~done.flag
     %% convert both to internal indexing
     mpcb = ext2int(mpcb);
     mpct = ext2int(mpct);
-    i2e_gen = mpct.order.gen.i2e;
+    i2e_gen = mpcb.order.gen.i2e;
+    if qlim
+        b2ref = e2i_data(mpcb, b2ref, 'bus');
+        b2pq  = e2i_data(mpcb, b2pq,  'bus');
+    end
     nb = size(mpcb.bus, 1);
 
     %% get bus index lists of each type of bus
@@ -275,13 +285,23 @@ if ~done.flag
 
     %% make sure target case is same as base case w.r.t
     %% bus types, GEN_STATUS, Qg and slack Pg
-    mpct.bus(:, BUS_TYPE) = mpcb.bus(:, BUS_TYPE);
-    ont = find(mpct.gen(:, GEN_STATUS) > 0 ...
-              & mpct.bus(mpct.gen(:, GEN_BUS), BUS_TYPE) ~= PQ);
-    if length(ong) ~= length(ont) || any(ong ~= ont)
+    if qlim
+        bb = find(b2ref | b2pq);
+        mpct.bus(bb, BUS_TYPE) = mpcb.bus(bb, BUS_TYPE);
+    end
+    if any(mpcb.bus(:, BUS_TYPE) ~= mpct.bus(:, BUS_TYPE))
+        error('runcpf: BUS_TYPE of all buses must be the same in base and target cases');
+    end
+    if any(mpcb.gen(:, GEN_STATUS) ~= mpct.gen(:, GEN_STATUS))
         error('runcpf: GEN_STATUS of all generators must be the same in base and target cases');
     end
     mpct.gen(ong, QG) = mpcb.gen(ong, QG);
+    if qlim
+        %% find generators that are ON and at buses that were
+        %% converted to PQ by initial power flow
+        g2pq  = find(mpcb.gen(:, GEN_STATUS) > 0 & b2pq(mpcb.gen(:, GEN_BUS)));
+        mpct.gen(g2pq, QG) = mpcb.gen(g2pq, QG);
+    end
     for k = 1:length(ref)
         refgen = find(gbus == ref(k));
         mpct.gen(ong(refgen), PG) = mpcb.gen(ong(refgen), PG);
