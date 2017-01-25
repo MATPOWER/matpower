@@ -12,6 +12,10 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 1/25/17
+  - Move case files to new `data` directory. Requires user to update
+    MATLAB or Octave path.
+
 #### 1/24/17
   - Update documentation in `README.md`, `CHANGES.md`,
     `CONTRIBUTING.md`, `relnotes/RELEASE-NOTES-6.0.md`,
