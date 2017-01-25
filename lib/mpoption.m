@@ -59,9 +59,9 @@ function opt = mpoption(varargin)
 %       [ 'FDXB' - Fast-Decoupled (XB version)                              ]
 %       [ 'FDBX' - Fast-Decoupled (BX version)                              ]
 %       [ 'GS'   - Gauss-Seidel                                             ]
-%       [ 'PQSUM'- Power Summation method                                   ]
-%       [ 'ISUM' - Current Summation method                                 ]
-%       [ 'YSUM' - Admittance Summation method                              ]
+%       [ 'PQSUM'- Power Summation method (radial networks only)            ]
+%       [ 'ISUM' - Current Summation method (radial networks only)          ]
+%       [ 'YSUM' - Admittance Summation method (radial networks only)       ]
 %   pf.tol                  1e-8        termination tolerance on per unit
 %                                       P & Q mismatch
 %   pf.nr.max_it            10          maximum number of iterations for
@@ -530,6 +530,10 @@ if have_opt0
             end
             if opt0.v <= 11         %% convert version 11 to 12
                 opt0.opf.use_vg = opt_d.opf.use_vg;
+            end
+            if opt0.v <= 12         %% convert version 12 to 13
+                opt0.radial.max_it  = opt_d.radial.max_it;
+                opt0.radial.vcorr   = opt_d.radial.vcorr;
             end
             opt0.v = v;
         end
@@ -1549,7 +1553,7 @@ optt = opt;
 %% globals
 %%-------------------------------------------------------------------
 function v = mpoption_version
-v = 12;     %% version number of MATPOWER options struct
+v = 13;     %% version number of MATPOWER options struct
             %% (must be incremented every time structure is updated)
             %% v1   - first version based on struct (MATPOWER 5.0b1)
             %% v2   - added 'linprog' and 'quadprog' fields
@@ -1572,6 +1576,7 @@ v = 12;     %% version number of MATPOWER options struct
             %%        'nose_tol', 'p_lims_tol' and 'q_lims_tol',
             %%        removed option 'cpf.user_callback_args'
             %% v12  - added option 'opf.use_vg'
+            %% v13  - added 'pf.radial.max_it', 'pf.radial.vcorr'
 
 %%-------------------------------------------------------------------
 function db_level = DEBUG
