@@ -340,7 +340,7 @@ if verbose
     fprintf('Or to run the MATPOWER test suite to ensure everything is\n');
     fprintf('working correctly, type: test_matpower\n\n');
 
-    if modify
+    if interactive && modify
         s = '?';
         while ~isempty(s) && (s(1) ~= 'Y' && s(1) ~= 'N')
             s = upper(input('Would you like to run the MATPOWER tests now? [Y or N] (default = N) : ', 's'));
