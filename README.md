@@ -1,5 +1,5 @@
- MATPOWER
-=========
+MATPOWER
+========
 
 A Power System Simulation Package for Matlab and Octave
 -------------------------------------------------------
@@ -131,7 +131,7 @@ There are four primary sources of documentation for MATPOWER.
 #### Manuals
 
 The MATPOWER and MOST User's Manuals are included in the distribution
-([`docs/MATPOWER-manual.pdf`][8] and [`docs/MOST-manual.pdf`][10]) and
+([`docs/MATPOWER-manual.pdf`][8] and [`most/docs/MOST-manual.pdf`][10]) and
 the latest released versions are always available online, respectively, at:
   - http://www.pserc.cornell.edu/matpower/MATPOWER-manual.pdf
   - http://www.pserc.cornell.edu/matpower/MOST-manual.pdf.
@@ -280,7 +280,7 @@ MATPOWER is distributed under the [3-clause BSD license][27].
 [7]: CONTRIBUTING.md
 [8]: docs/MATPOWER-manual.pdf
 [9]: http://www.pserc.cornell.edu/matpower/docs/ref/
-[10]: docs/MOST-manual.pdf
+[10]: most/docs/MOST-manual.pdf
 [11]: CHANGES.md
 [12]: http://www.pserc.cornell.edu/matpower/MATPOWER-paper.pdf
 [13]: http://dx.doi.org/10.1109/TPWRS.2010.2051168
