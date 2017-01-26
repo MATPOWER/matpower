@@ -12,6 +12,10 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 1/26/17
+  - Add sources for MATPOWER User's Manual to `docs/src`.
+  - Move MOST User's Manual from `docs` to `most/docs`.
+
 #### 1/25/17
   - Move case files to new `data` directory. Requires user to update
     MATLAB or Octave path.
@@ -61,7 +65,7 @@ Version 6.0 - *Dec 16, 2016*
 
 #### 12/16/16
   - Released 6.0.
-  - Moved development to GitHub <https://github.com/MATPOWER/matpower>.
+  - Moved development to GitHub: <https://github.com/MATPOWER/matpower>.
 
 #### 12/9/16
   - Bumped MIPS version to 1.2.2.
