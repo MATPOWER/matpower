@@ -148,6 +148,7 @@
 \newcommand{\most}[0]{{MOST}}
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
+\newcommand{\mostlink}[0]{\href{\mosturl}{\most{}}}
 \newcommand{\mostver}[0]{1.0}
 \newcommand{\md}[0]{{\most{} Data struct}}
 \newcommand{\powerweb}[0]{{\sc PowerWeb}}
@@ -171,7 +172,9 @@
 \newcommand{\codeq}[1]{\code{\textquotesingle{}#1\textquotesingle}}  % requires package textcomp
 \newcommand{\mppath}[1]{\textsf{\textsl{{\relsize{-1.0}\textless{}\mbox{MATPOWER}\textgreater{}}}}\code{{#1}}}  % requires package relsize
 %\newcommand{\mostpath}[1]{\code{\$MOST{#1}}}
-\newcommand{\mipspath}[1]{\textsf{\textsl{{\relsize{-1.0}\textless{}\mbox{MIPS}\textgreater{}}}}\code{{#1}}}  % requires package relsize
+%\newcommand{\mipspath}[1]{\textsf{\textsl{{\relsize{-1.0}\textless{}\mbox{MIPS}\textgreater{}}}}\code{{#1}}}  % requires package relsize
+\newcommand{\mptestpath}[1]{\mppath{}\code{/mptest{#1}}}
+\newcommand{\mipspath}[1]{\mppath{}\code{/mips{#1}}}
 \newcommand{\mostpath}[1]{\mppath{}\code{/most{#1}}}
 \newcommand{\baseMVA}[0]{\code{baseMVA}}
 \newcommand{\bus}[0]{\code{bus}}
@@ -367,10 +370,10 @@ These files should not need to be modified, so it is recommended that they be ke
 We will use \mppath{} to denote the path to this directory.
 \item Add the following directories to your \matlab{} path:
 \begin{itemize}
-\item \mppath{} -- core \matpower{} functions
-\item \mppath{/t} -- test scripts for \matpower{}
-\item \mostpath -- core \most{} functions
-\item \mostpath{/t} -- test scripts for \most{}
+\item \mppath{/lib} -- core \matpower{} functions
+\item \mppath{/lib/t} -- test scripts for \matpower{}
+\item \mostpath{/lib} -- core \most{} functions
+\item \mostpath{/lib/t} -- test scripts for \most{}
 \item (optional) sub-directories of \mppath{/extras} -- additional functionality and contributed code (see Appendix~\ref{app:extras} for details).
 \end{itemize}
 \item At the \matlab{} prompt, type \code{test\_matpower} to run the test suite and verify that \matpower{} is properly installed and functioning.\footnote{The \most{} test suite is run separately by typing \code{test\_most}. See the \mostman{} for details.} The result should resemble the following, possibly including extra tests, depending on the availablility of optional packages, solvers and extras.
@@ -5643,20 +5646,31 @@ idx & old option & new option & notes \\
 \section{\matpower{} Files and Functions}
 \label{app:functions}
 
-This appendix lists all of the files and functions that \matpower{} provides, with the exception of those in the \code{extras} directory (see Appendix~\ref{app:extras}). In most cases, the function is found in a \matlab{} M-file of the same name in the top-level of the distribution, where the \code{.m} extension is omitted from this listing. For more information on each, at the \matlab{} prompt, simply type \code{help} followed by the name of the function. For documentation and data files, the filename extensions are included.
+This appendix lists all of the files and functions that \matpower{}
+provides, with the exception of those in the \code{extras} directory
+(see Appendix~\ref{app:extras}). In most cases, the function is
+found in a \matlab{} M-file of the same name in the \code{lib}
+directory of the distribution, where the \code{.m} extension is
+omitted from this listing. For more information on each, at the
+\matlab{} prompt, simply type \code{help} followed by the name of
+the function. For documentation and data files, the filename
+extensions are included.
 
 % \begin{namelist}{XXXXXXXXX}
 % \item [\code{runpf}] run a power flow program
 % \item [\code{runopf}] run an optimal power flow program
 % \end{namelist}
 
-\subsection{Documentation Files}
+\subsection{Directory Layout and Documentation Files}
+
+Some of these files appear at the top level of the distribution and others
+in the \code{docs} directory.
 
 \begin{table}[!ht]
 %\renewcommand{\arraystretch}{1.2}
 \centering
 \begin{threeparttable}
-\caption{\matpower{} Documentation Files}
+\caption{\matpower{} Directory Layout and Documentation Files}
 \label{tab:docs}
 \footnotesize
 \begin{tabular}{p{0.3\textwidth}p{0.62\textwidth}}
@@ -5664,21 +5678,40 @@ This appendix lists all of the files and functions that \matpower{} provides, wi
 \toprule
 name & description \\
 \midrule
-\code{README}	& basic introduction to \matpower{}	\\
-\code{docs/}	& 	\\
-\code{~~CHANGES}	& \matpower{} change history	\\
-\code{~~MATPOWER-manual.pdf}	& \href{\mumurl}{\matpower{} \mpver{} User's Manual}	\\
-\code{~~MOST-manual.pdf}	& \href{\mostmanurl}{\most{} \mostver{} User's Manual}	\\
+\code{data/}	& \matpower{} cases (see Section~\ref{sec:matpowercases})	\\
+\code{docs/}	& \matpower{} documentation	\\
+\code{~~MATPOWER-dev-guide.md}	& \matpower{} Developer's Guide	\\
+\code{~~MATPOWER-manual.pdf}	& \href{\mumurl}{\matpower{} User's Manual}\tnote{\dag}	\\
+\code{~~relnotes/}	& \matpower{} release notes	\\
+\code{~~src/}	& \LaTeX{} source for \emph{\matpower{} User's Manual}	\\
 \code{~~TN1-OPF-Auctions.pdf}	& Tech Note 1 \href{http://www.pserc.cornell.edu/matpower/TN1-OPF-Auctions.pdf}{\emph{Uniform Price Auctions and Optimal Power Flow}}~\cite{zimmerman2010a}	\\
 \code{~~TN2-OPF-Derivatives.pdf}	& Tech Note 2 \href{http://www.pserc.cornell.edu/matpower/TN2-OPF-Derivatives.pdf}{\emph{AC Power Flows, Generalized OPF Costs and their Derivatives using Complex Matrix Notation}}~\cite{zimmerman2010b}	\\
-\code{caseformat}	& help file documenting \matpower{} case format (i.e.~at the command prompt, type \code{help caseformat} to see details)	\\
+\code{lib/}	& \matpower{} software (see Section~\ref{sec:matpowersw})	\\
+\code{~~caseformat.m}	& help file documenting \matpower{} case format (i.e.~at the command prompt, type \code{help caseformat} to see details)	\\
+\code{~~t/}	& \matpower{} tests and examples (see Section~\ref{sec:matpowertests})	\\
+\code{mips/}	& integrated \mipslink{} distribution\tnote{\dag}	\\
+\code{most/}	& integrated \mostlink{} distribution\tnote{\dag}	\\
+\code{mptest/}	& integrated \mptestlink{} distribution (see Table~\ref{tab:mptest})	\\
+\code{AUTHORS}	& list of \matpower{} authors	\\
+\code{CHANGES.md}	& \matpower{} change history	\\
+\code{CONTRIBUTING.md}	& \matpower{} Contributors Guide	\\
+\code{LICENSE}	& license file	\\
+\code{README.md}	& basic introduction to \matpower{}	\\
 \bottomrule
 \end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [\dag] {The \mipsman{} and \mostman{} are found in \mipspath{/docs} and \mostpath{/docs}, respectively.}
+\end{tablenotes}
 \end{threeparttable}
 \end{table}
 
 \clearpage
 \subsection{\matpower{} Functions}
+\label{sec:matpowersw}
+
+All of the functions listed in this section are found in \mppath{/lib},
+unless noted otherwise.
 
 \begin{table}[!ht]
 %\renewcommand{\arraystretch}{1.2}
@@ -5699,14 +5732,14 @@ name & description \\
 \code{rundcopf}	& DC optimal power flow\tnote{\ddag}	\\
 \code{runduopf}	& DC optimal power flow with unit-decommitment\tnote{\ddag}	\\
 \code{runopf\_w\_res}	& optimal power flow with fixed reserve requirements\tnote{\dag}	\\
-\code{most}	& \most{}, \mostname{} \tnote{\ddag}	\\
+\code{most}	& \most{}, \mostname{} \tnote{\S}	\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
  \item [\dag] {Uses AC model by default.}
  \item [\ddag] {Simple wrapper function to set option to use DC model before calling the corresponding general function above.}
- \item [\ddag] {\most{} and its supporting files and functions in the \code{most/} sub-directory are documented in the \mostman{} and listed in its Appendix~\ref{MOSTMAN-app:functions}.}
+ \item [\S] {\most{} and its supporting files and functions in the \code{most/} sub-directory are documented in the \mostman{} and listed in its Appendix~\ref{MOSTMAN-app:functions}.}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -6173,6 +6206,10 @@ name & description \\
 
 \clearpage
 \subsection{Example \matpower{} Cases}
+\label{sec:matpowercases}
+
+All of the functions listed in this section are found in \mppath{/data},
+unless noted otherwise.
 
 \begin{table}[!ht]
 %\renewcommand{\arraystretch}{1.2}
@@ -6299,19 +6336,23 @@ name & description \\
 
 \clearpage
 \subsection{Automated Test Suite}
+\label{sec:matpowertests}
+
+All of the functions and files listed in this section are found in
+\mppath{/lib/t}, unless noted otherwise.
 
 \begin{table}[!ht]
 %\renewcommand{\arraystretch}{1.2}
 \centering
 \begin{threeparttable}
-\caption{Automated Test Utility Functions}
-\label{tab:test_utils}
+\caption{Automated Test Functions from \mptestlink{}\tnote{\dag}}
+\label{tab:mptest}
 \footnotesize
 \begin{tabular}{p{0.28\textwidth}p{0.67\textwidth}}
 \toprule
 name & description \\
 \midrule
-\code{t/}	& 	\\
+\code{mptest/lib/}	& 	\\
 \code{~~t\_begin}	& begin running tests	\\
 \code{~~t\_end}	& finish running tests and print statistics	\\
 \code{~~t\_is}	& tests if two matrices are identical to with a specified tolerance	\\
@@ -6320,6 +6361,10 @@ name & description \\
 \code{~~t\_skip}	& skips a number of tests, with explanatory message	\\
 \bottomrule
 \end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [\dag] {These functions are part of \mptestlink{} and are found in \mptestpath{/lib}.}
+\end{tablenotes}
 \end{threeparttable}
 \end{table}
 
@@ -6335,33 +6380,32 @@ name & description \\
 \toprule
 name & description \\
 \midrule
-\code{t/}	& 	\\
-\code{~~pretty\_print\_acopf.txt}	& pretty-printed output of an example AC OPF run	\\
-\code{~~pretty\_print\_dcopf.txt}	& pretty-printed output of an example DC OPF run	\\
-\code{~~soln9\_dcopf.mat}	& solution data, DC OPF of \code{t\_case9\_opf} 	\\
-\code{~~soln9\_dcpf.mat}	& solution data, DC power flow of \code{t\_case9\_pf} 	\\
-\code{~~soln9\_opf\_ang.mat}	& 	solution data, AC OPF of \code{t\_case9\_opfv2} w/only branch angle difference limits (gen PQ capability constraints removed)	\\
-\code{~~soln9\_opf\_extras1.mat}	& solution data, AC OPF of \code{t\_case9\_opf} w/extra cost/constraints	\\
-\code{~~soln9\_opf\_Plim.mat}	& solution data, AC OPF of \code{t\_case9\_opf} w/\code{opf.flow\_lim} = \codeq{P}	\\
-\code{~~soln9\_opf\_PQcap.mat}	& solution data, AC OPF of \code{t\_case9\_opfv2} w/only gen PQ capability constraints (branch angle diff limits removed)	\\
-\code{~~soln9\_opf\_vg.mat}	& solution data, AC OPF of \code{t\_case9\_opf} with option \code{opf.use\_vg}	\\
-\code{~~soln9\_opf.mat}	& solution data, AC OPF of \code{t\_case9\_opf}	\\
-\code{~~soln9\_pf.mat}	& solution data, AC power flow of \code{t\_case9\_pf}	\\
-\code{~~t\_auction\_case.m}	& case data used to test auction code	\\
-\code{~~t\_case\_ext.m}	& case data used to test \code{ext2int} and \code{int2ext}, external indexing	\\
-\code{~~t\_case\_info\_eg.txt}	& example output from \code{case\_info}, used by \code{t\_islands}	\\
-\code{~~t\_case\_int.m}	& case data used to test \code{ext2int} and \code{int2ext}, internal indexing	\\
-\code{~~t\_case9\_dcline.m}	& same as \code{t\_case9\_opfv2} with additional DC line data	\\
-\code{~~t\_case9\_opf.m}	& sample case file with OPF data, version 1 format	\\
-\code{~~t\_case9\_opfv2.m}	& sample case file with OPF data, version 2 format, includes additional branch angle diff limits \& gen PQ capability constraints	\\
-\code{~~t\_case9\_pf.m}	& sample case file with only power flow data, version 1 format	\\
-\code{~~t\_case9\_pfv2.m}	& sample case file with only power flow data, version 2 format	\\
-\code{~~t\_case30\_userfcns.m}	& sample case file with OPF, reserves and interface flow limit data	\\
-\code{~~t\_psse\_case.raw}	& sample PSS/E format RAW file used to test conversion code	\\
-\code{~~t\_psse\_case2.m}	& result of converting \code{t\_psse\_case2.raw} to \matpower{} format	\\
-\code{~~t\_psse\_case2.raw}	& sample PSS/E format RAW file used to test conversion code	\\
-\code{~~t\_psse\_case3.m}	& result of converting \code{t\_psse\_case3.raw} to \matpower{} format	\\
-\code{~~t\_psse\_case3.raw}	& sample PSS/E format RAW file used to test conversion code	\\
+\code{pretty\_print\_acopf.txt}	& pretty-printed output of an example AC OPF run	\\
+\code{pretty\_print\_dcopf.txt}	& pretty-printed output of an example DC OPF run	\\
+\code{soln9\_dcopf.mat}	& solution data, DC OPF of \code{t\_case9\_opf} 	\\
+\code{soln9\_dcpf.mat}	& solution data, DC power flow of \code{t\_case9\_pf} 	\\
+\code{soln9\_opf\_ang.mat}	& 	solution data, AC OPF of \code{t\_case9\_opfv2} w/only branch angle difference limits (gen PQ capability constraints removed)	\\
+\code{soln9\_opf\_extras1.mat}	& solution data, AC OPF of \code{t\_case9\_opf} w/extra cost/constraints	\\
+\code{soln9\_opf\_Plim.mat}	& solution data, AC OPF of \code{t\_case9\_opf} w/\code{opf.flow\_lim} = \codeq{P}	\\
+\code{soln9\_opf\_PQcap.mat}	& solution data, AC OPF of \code{t\_case9\_opfv2} w/only gen PQ capability constraints (branch angle diff limits removed)	\\
+\code{soln9\_opf\_vg.mat}	& solution data, AC OPF of \code{t\_case9\_opf} with option \code{opf.use\_vg}	\\
+\code{soln9\_opf.mat}	& solution data, AC OPF of \code{t\_case9\_opf}	\\
+\code{soln9\_pf.mat}	& solution data, AC power flow of \code{t\_case9\_pf}	\\
+\code{t\_auction\_case.m}	& case data used to test auction code	\\
+\code{t\_case\_ext.m}	& case data used to test \code{ext2int} and \code{int2ext}, external indexing	\\
+\code{t\_case\_info\_eg.txt}	& example output from \code{case\_info}, used by \code{t\_islands}	\\
+\code{t\_case\_int.m}	& case data used to test \code{ext2int} and \code{int2ext}, internal indexing	\\
+\code{t\_case9\_dcline.m}	& same as \code{t\_case9\_opfv2} with additional DC line data	\\
+\code{t\_case9\_opf.m}	& sample case file with OPF data, version 1 format	\\
+\code{t\_case9\_opfv2.m}	& sample case file with OPF data, version 2 format, includes additional branch angle diff limits \& gen PQ capability constraints	\\
+\code{t\_case9\_pf.m}	& sample case file with only power flow data, version 1 format	\\
+\code{t\_case9\_pfv2.m}	& sample case file with only power flow data, version 2 format	\\
+\code{t\_case30\_userfcns.m}	& sample case file with OPF, reserves and interface flow limit data	\\
+\code{t\_psse\_case.raw}	& sample PSS/E format RAW file used to test conversion code	\\
+\code{t\_psse\_case2.m}	& result of converting \code{t\_psse\_case2.raw} to \matpower{} format	\\
+\code{t\_psse\_case2.raw}	& sample PSS/E format RAW file used to test conversion code	\\
+\code{t\_psse\_case3.m}	& result of converting \code{t\_psse\_case3.raw} to \matpower{} format	\\
+\code{t\_psse\_case3.raw}	& sample PSS/E format RAW file used to test conversion code	\\
 \bottomrule
 \end{tabular}
 \end{threeparttable}
@@ -6379,50 +6423,49 @@ name & description \\
 \toprule
 name & description \\
 \midrule
-\code{t/}	& 	\\
-\code{~~test\_matpower}	& runs full \matpower{} test suite	\\
-\code{~~test\_most}\tnote{\ddag}	& runs full \most{} test suite	\\
-\code{~~t\_apply\_changes}	& runs tests for \code{apply\_changes}	\\ \code{~~t\_auction\_minopf}	& runs tests for \code{auction} using MINOPF\tnote{\dag}	\\
-\code{~~t\_auction\_mips}	& runs tests for \code{auction} using \mips{}	\\
-\code{~~t\_auction\_tspopf\_pdipm}	& runs tests for \code{auction} using PDIPM\tnote{\dag}	\\
-\code{~~t\_cpf}	& runs tests for AC continuation power flow	\\
-\code{~~t\_cpf\_cb1}	& example CPF callback function for \code{t\_cpf}	\\
-\code{~~t\_cpf\_cb2}	& example CPF callback function with \code{cb\_args} for \code{t\_cpf}	\\
-\code{~~t\_dcline}	& runs tests for DC line implementation in \code{toggle\_dcline}	\\
-\code{~~t\_ext2int2ext}	& runs tests for \code{ext2int} and \code{int2ext}	\\
-\code{~~t\_get\_losses}	& runs tests for \code{get\_losses}	\\
-\code{~~t\_hasPQcap}	& runs tests for \code{hasPQcap}	\\
-\code{~~t\_hessian}	& runs tests for 2\textsuperscript{nd} derivative code	\\
-\code{~~t\_islands}	& runs test for \code{find\_islands} and \code{extract\_islands}	\\
-\code{~~t\_jacobian}	& runs test for partial derivative code	\\
-\code{~~t\_load2disp}	& runs tests for \code{load2disp}	\\
-\code{~~t\_loadcase}	& runs tests for \code{loadcase}	\\
-\code{~~t\_makeLODF}	& runs tests for \code{makeLODF}	\\
-\code{~~t\_makePTDF}	& runs tests for \code{makePTDF}	\\
-\code{~~t\_margcost}	& runs tests for \code{margcost}	\\
-\code{~~t\_mips}	& runs tests for \mips{} NLP solver	\\
-\code{~~t\_miqps\_matpower}	& runs tests for \code{miqps\_matpower}	\\
-\code{~~t\_modcost}	& runs tests for \code{modcost}	\\
-\code{~~t\_mplinsolve}	& tests for \code{mplinsolve}	\\
-\code{~~t\_mpoption}	& runs tests for \code{mpoption}	\\
-\code{~~t\_nested\_struct\_copy}	& runs tests for \code{nested\_struct\_copy}	\\
-\code{~~t\_off2case}	& runs tests for \code{off2case}	\\
-\code{~~t\_opf\_model}	& runs tests for \code{opf\_model} and \code{opt\_model} objects	\\
-\code{~~t\_printpf}	& runs tests for \code{printpf}	\\
-\code{~~t\_psse}	& runs tests for \code{psse2mpc} and related functions	\\
-\code{~~t\_qps\_matpower}	& runs tests for \code{qps\_matpower}	\\
-\code{~~t\_pf}	& runs tests for AC and DC power flow	\\
-\code{~~t\_runmarket}	& runs tests for \code{runmarket}	\\
-\code{~~t\_scale\_load}	& runs tests for \code{scale\_load}	\\
-\code{~~t\_total\_load}	& runs tests for \code{total\_load}	\\
-\code{~~t\_vdep\_load}	& runs PF, CPF and OPF tests for voltage dependent (ZIP) loads	\\
-\code{~~t\_totcost}	& runs tests for \code{totcost}	\\
+\code{test\_matpower}	& runs full \matpower{} test suite	\\
+\code{test\_most}\tnote{\ddag}	& runs full \most{} test suite	\\
+\code{t\_apply\_changes}	& runs tests for \code{apply\_changes}	\\ \code{t\_auction\_minopf}	& runs tests for \code{auction} using MINOPF\tnote{\dag}	\\
+\code{t\_auction\_mips}	& runs tests for \code{auction} using \mips{}	\\
+\code{t\_auction\_tspopf\_pdipm}	& runs tests for \code{auction} using PDIPM\tnote{\dag}	\\
+\code{t\_cpf}	& runs tests for AC continuation power flow	\\
+\code{t\_cpf\_cb1}	& example CPF callback function for \code{t\_cpf}	\\
+\code{t\_cpf\_cb2}	& example CPF callback function with \code{cb\_args} for \code{t\_cpf}	\\
+\code{t\_dcline}	& runs tests for DC line implementation in \code{toggle\_dcline}	\\
+\code{t\_ext2int2ext}	& runs tests for \code{ext2int} and \code{int2ext}	\\
+\code{t\_get\_losses}	& runs tests for \code{get\_losses}	\\
+\code{t\_hasPQcap}	& runs tests for \code{hasPQcap}	\\
+\code{t\_hessian}	& runs tests for 2\textsuperscript{nd} derivative code	\\
+\code{t\_islands}	& runs test for \code{find\_islands} and \code{extract\_islands}	\\
+\code{t\_jacobian}	& runs test for partial derivative code	\\
+\code{t\_load2disp}	& runs tests for \code{load2disp}	\\
+\code{t\_loadcase}	& runs tests for \code{loadcase}	\\
+\code{t\_makeLODF}	& runs tests for \code{makeLODF}	\\
+\code{t\_makePTDF}	& runs tests for \code{makePTDF}	\\
+\code{t\_margcost}	& runs tests for \code{margcost}	\\
+\code{t\_mips}	& runs tests for \mips{} NLP solver	\\
+\code{t\_miqps\_matpower}	& runs tests for \code{miqps\_matpower}	\\
+\code{t\_modcost}	& runs tests for \code{modcost}	\\
+\code{t\_mplinsolve}	& tests for \code{mplinsolve}	\\
+\code{t\_mpoption}	& runs tests for \code{mpoption}	\\
+\code{t\_nested\_struct\_copy}	& runs tests for \code{nested\_struct\_copy}	\\
+\code{t\_off2case}	& runs tests for \code{off2case}	\\
+\code{t\_opf\_model}	& runs tests for \code{opf\_model} and \code{opt\_model} objects	\\
+\code{t\_printpf}	& runs tests for \code{printpf}	\\
+\code{t\_psse}	& runs tests for \code{psse2mpc} and related functions	\\
+\code{t\_qps\_matpower}	& runs tests for \code{qps\_matpower}	\\
+\code{t\_pf}	& runs tests for AC and DC power flow	\\
+\code{t\_runmarket}	& runs tests for \code{runmarket}	\\
+\code{t\_scale\_load}	& runs tests for \code{scale\_load}	\\
+\code{t\_total\_load}	& runs tests for \code{total\_load}	\\
+\code{t\_vdep\_load}	& runs PF, CPF and OPF tests for voltage dependent (ZIP) loads	\\
+\code{t\_totcost}	& runs tests for \code{totcost}	\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
  \item [\dag] {Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.}
- \item [\ddag] {While \code{test\_most} is listed here with other tests, it is actually located in \mostpath{/t}, not \mppath{/t}. \most{} and its supporting files and functions in the \code{most/} sub-directory are documented in the \mostman{} and listed in its Appendix~\ref{MOSTMAN-app:functions}.}
+ \item [\ddag] {While \code{test\_most} is listed here with other tests, it is actually located in \mostpath{/lib/t}, not \mppath{/lib/t}. \most{} and its supporting files and functions in the \code{most/} sub-directory are documented in the \mostman{} and listed in its Appendix~\ref{MOSTMAN-app:functions}.}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -6440,29 +6483,28 @@ name & description \\
 \toprule
 name & description \\
 \midrule
-\code{t/}	& 	\\
-\code{~~t\_opf\_dc\_bpmpd}	& runs tests for DC OPF solver using BPMPD\_MEX\tnote{\dag}	\\
-\code{~~t\_opf\_dc\_clp}	& runs tests for DC OPF solver using \clp{}\tnote{\dag}	\\
-\code{~~t\_opf\_dc\_cplex}	& runs tests for DC OPF solver using \cplex{}\tnote{\dag}	\\
-\code{~~t\_opf\_dc\_glpk}	& runs tests for DC OPF solver using \glpk{}\tnote{\dag}	\\
-\code{~~t\_opf\_dc\_gurobi}	& runs tests for DC OPF solver using \gurobi{}\tnote{\dag}	\\
-\code{~~t\_opf\_dc\_ipopt}	& runs tests for DC OPF solver using \ipopt{}\tnote{\dag}	\\
-\code{~~t\_opf\_dc\_mosek}	& runs tests for DC OPF solver using \mosek{}\tnote{\dag}	\\
-\code{~~t\_opf\_dc\_ot}	& runs tests for DC OPF solver using \matlab{} Opt Toolbox	\\
-\code{~~t\_opf\_dc\_mips}	& runs tests for DC OPF solver using \mips{}	\\
-\code{~~t\_opf\_dc\_mips\_sc}	& runs tests for DC OPF solver using MIPS-sc	\\
-\code{~~t\_opf\_fmincon}	& runs tests for AC OPF solver using \code{fmincon}	\\
-\code{~~t\_opf\_ipopt}	& runs tests for AC OPF solver using \ipopt{}\tnote{\dag}	\\
-\code{~~t\_opf\_knitro}	& runs tests for AC OPF solver using \knitro{}\tnote{\dag}	\\
-\code{~~t\_opf\_minopf}	& runs tests for AC OPF solver using MINOPF\tnote{\dag}	\\
-\code{~~t\_opf\_mips}	& runs tests for AC OPF solver using \mips{}	\\
-\code{~~t\_opf\_mips\_sc}	& runs tests for AC OPF solver using MIPS-sc	\\
-\code{~~t\_opf\_softlims}	& runs tests for DC OPF with user callback functions for branch flow soft limits	\\
-\code{~~t\_opf\_tspopf\_pdipm}	& runs tests for AC OPF solver using PDIPM\tnote{\dag}	\\
-\code{~~t\_opf\_tspopf\_scpdipm}	& runs tests for AC OPF solver using SC-PDIPM\tnote{\dag}	\\
-\code{~~t\_opf\_tspopf\_tralm}	& runs tests for AC OPF solver using TRALM\tnote{\dag}	\\
-\code{~~t\_opf\_userfcns}	& runs tests for AC OPF with user callback functions for reserves and interface flow limits	\\
-\code{~~t\_runopf\_w\_res}	& runs tests for AC OPF with fixed reserve requirements	\\
+\code{t\_opf\_dc\_bpmpd}	& runs tests for DC OPF solver using BPMPD\_MEX\tnote{\dag}	\\
+\code{t\_opf\_dc\_clp}	& runs tests for DC OPF solver using \clp{}\tnote{\dag}	\\
+\code{t\_opf\_dc\_cplex}	& runs tests for DC OPF solver using \cplex{}\tnote{\dag}	\\
+\code{t\_opf\_dc\_glpk}	& runs tests for DC OPF solver using \glpk{}\tnote{\dag}	\\
+\code{t\_opf\_dc\_gurobi}	& runs tests for DC OPF solver using \gurobi{}\tnote{\dag}	\\
+\code{t\_opf\_dc\_ipopt}	& runs tests for DC OPF solver using \ipopt{}\tnote{\dag}	\\
+\code{t\_opf\_dc\_mosek}	& runs tests for DC OPF solver using \mosek{}\tnote{\dag}	\\
+\code{t\_opf\_dc\_ot}	& runs tests for DC OPF solver using \matlab{} Opt Toolbox	\\
+\code{t\_opf\_dc\_mips}	& runs tests for DC OPF solver using \mips{}	\\
+\code{t\_opf\_dc\_mips\_sc}	& runs tests for DC OPF solver using MIPS-sc	\\
+\code{t\_opf\_fmincon}	& runs tests for AC OPF solver using \code{fmincon}	\\
+\code{t\_opf\_ipopt}	& runs tests for AC OPF solver using \ipopt{}\tnote{\dag}	\\
+\code{t\_opf\_knitro}	& runs tests for AC OPF solver using \knitro{}\tnote{\dag}	\\
+\code{t\_opf\_minopf}	& runs tests for AC OPF solver using MINOPF\tnote{\dag}	\\
+\code{t\_opf\_mips}	& runs tests for AC OPF solver using \mips{}	\\
+\code{t\_opf\_mips\_sc}	& runs tests for AC OPF solver using MIPS-sc	\\
+\code{t\_opf\_softlims}	& runs tests for DC OPF with user callback functions for branch flow soft limits	\\
+\code{t\_opf\_tspopf\_pdipm}	& runs tests for AC OPF solver using PDIPM\tnote{\dag}	\\
+\code{t\_opf\_tspopf\_scpdipm}	& runs tests for AC OPF solver using SC-PDIPM\tnote{\dag}	\\
+\code{t\_opf\_tspopf\_tralm}	& runs tests for AC OPF solver using TRALM\tnote{\dag}	\\
+\code{t\_opf\_userfcns}	& runs tests for AC OPF with user callback functions for reserves and interface flow limits	\\
+\code{t\_runopf\_w\_res}	& runs tests for AC OPF with fixed reserve requirements	\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -6561,7 +6603,7 @@ In single sided markets, in order to handle situations where the offered capacit
 
 \subsection{Example}
 
-The case file \code{t/t\_auction\_case.m}, used for this example, is a modified version of the 30-bus system that has 9~generators, where the last three have negative \code{PMIN} to model the dispatchable loads.
+The case file \code{lib/t/t\_auction\_case.m}, used for this example, is a modified version of the 30-bus system that has 9~generators, where the last three have negative \code{PMIN} to model the dispatchable loads.
 
 \begin{itemize}
 \item Six generators with three blocks of capacity each, offering as shown in Table~\ref{tab:offers}.
