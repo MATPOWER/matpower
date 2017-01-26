@@ -1,5 +1,5 @@
- MATPOWER
-=========
+MATPOWER
+========
 
 A Power System Simulation Package for Matlab and Octave
 -------------------------------------------------------
@@ -33,7 +33,7 @@ There are three options for obtaining a copy of MATPOWER:
   - Go to the [MATPOWER website][1].
   - Click the "Download Now" button.
   - *Use this option if you want to stick to using versioned releases.*
-2. Clone the MATPOWER repository.
+2. Clone the MATPOWER repository from GitHub.
   - `git clone https://github.com/MATPOWER/matpower.git`
   - *Use this option if you want to be able to easily update to the
     current stable release, with the latest bug fixes and new
@@ -74,7 +74,7 @@ move to GitHub after version 6.0.
             install_matpower
 
 3.  **That's it.** There is no step 3.
-    - If you chose not to have the installer run the test suite for
+    - But, if you chose not to have the installer run the test suite for
       you in step 2, you can run it now to verify that MATPOWER is
       installed and functioning properly, by typing:
 
@@ -131,7 +131,7 @@ There are four primary sources of documentation for MATPOWER.
 #### Manuals
 
 The MATPOWER and MOST User's Manuals are included in the distribution
-([`docs/MATPOWER-manual.pdf`][8] and [`docs/MOST-manual.pdf`][10]) and
+([`docs/MATPOWER-manual.pdf`][8] and [`most/docs/MOST-manual.pdf`][10]) and
 the latest released versions are always available online, respectively, at:
   - http://www.pserc.cornell.edu/matpower/MATPOWER-manual.pdf
   - http://www.pserc.cornell.edu/matpower/MOST-manual.pdf.
@@ -280,7 +280,7 @@ MATPOWER is distributed under the [3-clause BSD license][27].
 [7]: CONTRIBUTING.md
 [8]: docs/MATPOWER-manual.pdf
 [9]: http://www.pserc.cornell.edu/matpower/docs/ref/
-[10]: docs/MOST-manual.pdf
+[10]: most/docs/MOST-manual.pdf
 [11]: CHANGES.md
 [12]: http://www.pserc.cornell.edu/matpower/MATPOWER-paper.pdf
 [13]: http://dx.doi.org/10.1109/TPWRS.2010.2051168
