@@ -255,8 +255,6 @@ All Rights Reserved}
 
 \bigskip
 
-%\subsection{Where did it come from?}
-
 \matpower{} was initially developed by Ray~D.~Zimmerman, Carlos~E.~Murillo-S\'anchez and Deqiang~Gan of \pserc{}\footnote{\url{http://pserc.org/}} at Cornell University under the direction of Robert~J.~Thomas. The initial need for \matlab{}-based power flow and optimal power flow code was born out of the computational requirements of the PowerWeb project\footnote{\url{http://www.pserc.cornell.edu/powerweb/}}. Many others have contributed to \matpower{} over the years and it continues to be developed and maintained under the direction of Ray~Zimmerman.
 
 Beginning with version 6, \matpower{} includes a framework for solving generalized steady-state electric power scheduling problems. This framework is known as \most{}, for \mostname{}~\cite{murillo-sanchez2013a}.
@@ -448,8 +446,7 @@ Installation and use of \matpower{} requires familiarity with the basic operatio
 
 
 \clearpage
-%--LATER--
-%\\\hl{re-do before release (run on fastest machine available)}
+% UPDATE BEFORE RELEASE
 \begin{Code}
 >> test_matpower
 t_test_fcns.............ok
@@ -589,8 +586,7 @@ Last, but certainly not least, is the built-in \code{help} command. As with \mat
 
 %\clearpage
 As an example, the help for \code{runopf} looks like:
-%--LATER--
-%\hl{\footnotesize (update before release)}
+% UPDATE BEFORE RELEASE
 \begin{Code}
 >> help runopf
  RUNOPF  Runs an optimal power flow.
@@ -704,23 +700,6 @@ Let $S_g = P_g + j Q_g$ be the $n_g \times 1$ vector of these generator injectio
 \begin{equation}
 S_{g,\mathrm{bus}} = C_g \cdot S_g.
 \end{equation}
-
-% Let $S_g = P_g + j Q_g$ be the $n_g \times 1$ vector of these generator injections. A sparse $n_b \times n_g$ generator connection matrix $C_g$ can be defined such that the $(i,j)^\mathrm{th}$ element is 
-% \begin{equation}
-% c_g^{ij} =
-% 	\left\{
-% 		\begin{array}{cl}
-% 			1,	& \text{if generator~$j$ is located at bus~$i$}	\\
-% 			0, 	& \text{otherwise}
-% 		\end{array}
-% 	\right.
-% \label{eq:Cg}
-% \end{equation}
-% The $n_b \times 1$ vector of all bus injections from generators can then be expressed as
-% 
-% \begin{equation}
-% S_{g,\mathrm{bus}} = C_g \cdot S_g
-% \end{equation}
 
 \subsection{Loads}
 
@@ -1044,44 +1023,6 @@ The options that control the power flow simulation are listed in Table~\ref{tab:
 
 By default, \code{runpf} solves an AC power flow problem using a standard Newton's method solver. To run a DC power flow, the \code{model} option must be set to \codeq{DC}. For convenience, \matpower{} provides a function \code{rundcpf} which is simply a wrapper that sets the \code{model} option to \codeq{DC} before calling \code{runpf}.
 
-% \begin{table}[!ht]
-% %\renewcommand{\arraystretch}{1.2}
-% \centering
-% \begin{threeparttable}
-% \caption{Power Flow Options}
-% \label{tab:pfoptions}
-% \footnotesize
-% \begin{tabular}{clcl}
-% \toprule
-% idx & name & default & description \\
-% \midrule
-% 1	& \code{PF\_ALG}	& 1	& AC power flow algorithm: \\
-% &&& \begin{tabular}{r @{ -- } l}
-% 1 & Newtons's method \\
-% 2 & Fast-Decoupled (XB version) \\
-% 3 & Fast-Decouple (BX version) \\
-% 4 & Gauss-Seidel \\
-% \end{tabular} 	\\
-% 2	& \code{PF\_TOL}	& $10^{-8}$	& termination tolerance on per unit P and Q dispatch	\\
-% 3	& \code{PF\_MAX\_IT}	& 10	& maximum number of iterations for Newton's method	\\
-% 4	& \code{PF\_MAX\_IT\_FD}	& 30	& maximum number of iterations for fast-decoupled method	\\
-% 5	& \code{PF\_MAX\_IT\_GS}	& 1000	& maximum number of iterations for Gauss-Seidel method	\\
-% 6	& \code{ENFORCE\_Q\_LIMS}	& 0	& enforce gen reactive power limits at expense of $|V_m|$	\\
-% &&& \begin{tabular}{r @{ -- } l}
-% 0 & do \emph{not} enforce limits \\
-% 1 & enforce limits, simultaneous bus type conversion \\
-% 2 & enforce limits, one-at-a-time bus type conversion \\
-% \end{tabular} 	\\
-% 10	& \code{PF\_DC}	& 0	& DC modeling for power flow and OPF formulation \\
-% &&& \begin{tabular}{r @{ -- } l}
-% 0 & use AC formulation and corresponding alg options \\
-% 1 & use DC formulation and corresponding alg options \\
-% \end{tabular} 	\\
-% \bottomrule
-% \end{tabular}
-% \end{threeparttable}
-% \end{table}
-
 \begin{table}[!ht]
 %\renewcommand{\arraystretch}{1.2}
 \centering
@@ -1126,46 +1067,6 @@ name & default & description \\
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
-
-
-% \begin{table}[!ht]
-% %\renewcommand{\arraystretch}{1.2}
-% \centering
-% \begin{threeparttable}
-% \caption{Power Flow Output Options}
-% \label{tab:pfoutputoptions}
-% \footnotesize
-% \begin{tabular}{clcl}
-% \toprule
-% idx & name & default & description \\
-% \midrule
-% 31	& \code{VERBOSE}	& 1	& amount of progress info to be printed \\
-% &&& \begin{tabular}{r @{ -- } l}
-% 0 & print no progress info \\
-% 1 & print a little progress info \\
-% 2 & print a lot of progress info \\
-% 3 & print all progress info \\
-% \end{tabular} 	\\
-% 32	& \code{OUT\_ALL}	& -1	& controls pretty-printing of results \\
-% &&& \begin{tabular}{r @{ -- } l}
-% -1 & individual flags control what is printed \\
-% 0 & do \emph{not} print anything\tnote{\dag} \\
-% 1 & print everything\tnote{\dag} \\
-% \end{tabular} 	\\
-% 33	& \code{OUT\_SYS\_SUM}	& 1	& print system summary (0 or 1) \\
-% 34	& \code{OUT\_AREA\_SUM}	& 0	& print area summaries (0 or 1) \\
-% 35	& \code{OUT\_BUS}	& 1	& print bus detail, includes per bus gen info (0 or 1) \\
-% 36	& \code{OUT\_BRANCH}	& 1	& print branch detail (0 or 1) \\
-% 37	& \code{OUT\_GEN}	& 0	& print generator detail (0 or 1) \\
-% 44	& \code{OUT\_FORCE}	& 0	& print results even if success flag = 0 (0 or 1) \\
-% \bottomrule
-% \end{tabular}
-% \begin{tablenotes}
-%  \scriptsize
-%  \item [\dag] {Overrides individual flags.}
-% \end{tablenotes}
-% \end{threeparttable}
-% \end{table}
 
 Internally, the \code{runpf} function does a number of conversions to the problem data before calling the appropriate solver routine for the selected power flow algorithm. This external-to-internal format conversion is performed by the \code{ext2int} function, described in more detail in Section~\ref{sec:ext2int_callback}, and includes the elimination of out-of-service equipment, the consecutive renumbering of buses and the reordering of generators by increasing bus number. All computations are done using this internal indexing. When the simulation has completed, the data is converted back to external format by \code{int2ext} before the results are printed and returned.
 
@@ -1247,45 +1148,21 @@ The values of $(x, \lambda)$ along the solution curve can parameterized in a num
 \begin{itemize}
 
 \item{\bf Natural parameterization} simply uses $\lambda$ directly as the parameter, so the new $\lambda$ is simply the previous value plus the step size.
-% \begin{equation}
-% p\left(x,\lambda\right) = \lambda^{j+1} - \lambda^{j} - \sigma^j = 0
-% \label{eq:natural_parm}
-% \end{equation}
 \begin{equation}
-p^j(x,\lambda) = \lambda - \lambda^{j} - \sigma^j = 0
+p^j(x,\lambda) = \lambda - \lambda^j - \sigma^j = 0
 \label{eq:natural_parm}
 \end{equation}
 
 \item {\bf Arc length parameterization} results in the following relationship, where the step size is equal to the 2-norm of the distance from one solution to the next.
-% \begin{equation}
-% p\left(x,\lambda\right) = \sum\limits^n_{i=1}(x^{j+1} - x^j)^2 + (\lambda^{j+1} - \lambda^{j})^2 - (\sigma^j)^2 = 0
-% \label{eq:arc_parm}
-% \end{equation}
 \begin{equation}
-p^j(x,\lambda) = \sum\limits_i(x_i - x_i^j)^2 + (\lambda - \lambda^{j})^2 - (\sigma^j)^2 = 0
+p^j(x,\lambda) = \sum\limits_i(x_i - x_i^j)^2 + (\lambda - \lambda^j)^2 - (\sigma^j)^2 = 0
 \label{eq:arc_parm}
 \end{equation}
 \item {\bf Pseudo arc length parameterization} \cite{mori2002} is \matpower{}'s default parameterization scheme, where the next point $(x,\lambda)$ on the solution curve is constrained to lie in the hyperplane running through the predicted solution $(\hat{x}^{j+1}, \hat{\lambda}^{j+1})$ orthogonal to the tangent line from the previous corrected solution $(x^j,\lambda^j)$. This relationship can be quantified by the function
-% \begin{equation}
-% p\left(x,\lambda\right) = \trans{\left(\left[\begin{array}{c}x^{j+1} \\ \lambda^{j+1}\end{array}\right] - \left[\begin{array}{c}x^{j} \\ \lambda^j\end{array}\right]\right)} \left[ \begin{array}{c}dx \\ d\lambda\end{array} \right] -\sigma^j = 0,
-% \label{eq:psuedo_arc_parm}
-% \end{equation}
-% \begin{equation}
-% p\left(x,\lambda\right) = \trans{\left(\left[\begin{array}{c}x^{j+1} \\ \lambda^{j+1}\end{array}\right] - \left[\begin{array}{c}x^{j} \\ \lambda^j\end{array}\right]\right)} \bar{z}^j -\sigma^j = 0,
-% \label{eq:psuedo_arc_parm}
-% \end{equation}
-% \begin{equation}
-% p\left(x,\lambda\right) = \trans{\left(\left[\begin{array}{c}x \\ \lambda\end{array}\right] - \left[\begin{array}{c}x^{j} \\ \lambda^j\end{array}\right]\right)} \bar{z}^j -\sigma^j = 0,
-% \label{eq:psuedo_arc_parm}
-% \end{equation}
 \begin{equation}
 p^j(x,\lambda) = \trans{ \left(\left[\begin{array}{c}x \\ \lambda\end{array}\right] - \left[\begin{array}{c}x^{j} \\ \lambda^j\end{array}\right]\right) } \bar{z}^j -\sigma^j = 0,
 \label{eq:psuedo_arc_parm}
 \end{equation}
-% \begin{equation}
-% p\left(x(s),\lambda(s)\right) = \trans{\bar{z}^j} \left(\left[\begin{array}{c}x(s) \\ \lambda(s)\end{array}\right] - \left[\begin{array}{c}x^{j} \\ \lambda^j\end{array}\right]\right) - (s-s^j) = 0,
-% \label{eq:psuedo_arc_parm}
-% \end{equation}
 where $\bar{z}^j$ is the normalized tangent vector at $(x^j, \lambda^j)$ and $\sigma^j$ is the continuation step size parameter.
 
 \end{itemize}
@@ -1303,20 +1180,6 @@ The predictor is used to produce an estimate for the next solution. The better t
 \label{eq:tangent_predictor}
 \end{equation}
 The matrix on the left-hand side is simply the standard power flow Jacobian with an additional column and row added. The extra column $f_\lambda$ is simply the negative of the power transfer vector $b$ and the extra row, required to make the system non-singular and define the magnitude of $z^j$, is the derivative of the the parameterization function at the previous solution point $p^{j-1}$.
-
-% The matrix on the left-hand side is simply the standard power flow Jacobian with an additional column and row added,
-% \begin{equation}
-% \left[ \begin{array}{c}
-%   \begin{array}{c|c}f_x & -b\end{array} \\[+2pt]
-%   \hline \\[-12pt]
-%   \trans{z^{j-1}}
-% \end{array} \right] z^j =
-% \left[ \begin{array}{c}
-%   0 \\
-%   1  \end{array} \right],
-% \label{eq:tangent_predictor2}
-% \end{equation}
-% where the column is the negative of the power transfer vector $b$ and the row is the previous normalized tangent vector, which is required to make the system non-singular and define the magnitude of $z^j$.
 
 The resulting tangent vector is then normalized
 \begin{equation}
@@ -1741,9 +1604,6 @@ and the overall problem reduces to the following form.
 \min_{\Theta, P_g} \sum_{i=1}^{n_g} f_P^i(p_g^i)
 \end{equation}
 subject to
-% \begin{equation}
-% g_P(\Theta, P_g) = A \left[\begin{array}{c}\Theta \\ P_g \end{array}\right] + b = 0
-% \end{equation}
 \begin{equation}
 g_P(\Theta, P_g) = B_\mathrm{bus} \Theta + P_\mathrm{bus,shift} + P_d + G_{sh} - C_g P_g = 0 \label{eq:dcopf_eq}
 \end{equation}
@@ -1755,11 +1615,6 @@ h_t(\Theta) &=  & -B_f \Theta - P_{f,\mathrm{shift}} -  F_\mathrm{max} &\le 0  \
 & \theta_i^\mathrm{ref} \le \theta_i \le \theta_i^\mathrm{ref}, \quad & i \in  \mathcal{I}_\mathrm{ref} \\
 & p_g^{i,\mathrm{min}} \le p_g^i \le p_g^{i, \mathrm{max}}, \quad & i=1 \ldots n_g
 \end{eqnarray}
-% where
-% \begin{align}
-% A &= \left[\begin{array}{cc} B_\mathrm{bus} & -C_g\end{array}\right] \\
-% b &=  P_\mathrm{bus,shift} + P_d + G_{sh}
-% \end{align}
 
 \subsection{Extended OPF Formulation}
 \label{sec:extended_opf}
@@ -2100,64 +1955,6 @@ name & default & description \\
 \end{table}
 
 
-
-% \begin{table}[!ht]
-% %\renewcommand{\arraystretch}{1.2}
-% \centering
-% \begin{threeparttable}
-% \caption{Optimal Power Flow Options}
-% \label{tab:opfoptions}
-% \footnotesize
-% \begin{tabular}{clcl}
-% \toprule
-% idx & name & default & description \\
-% \midrule
-% 11	& \code{OPF\_ALG}	& 0	& AC optimal power flow algorithm: \\
-% &&& \begin{tabular}{r @{ -- } p{0.45\textwidth}}
-% 0 & choose default solver based on availability in the following order: 540, 560 \\
-% 500 & MINOPF, MINOS-based solver\tnote{\dag} \\
-% 520 & \code{fmincon}, \matlab{} Opt Toolbox $\ge$ 2.x \\
-% 540 & PDIPM, primal/dual interior point method\tnote{\dag} \\
-% 545 & SC-PDIPM, step-controlled variant of PDIPM\tnote{\dag} \\
-% 550 & TRALM, trust region based augmented Langrangian method\tnote{\dag} \\
-% 560 & \mips{}, \mipsname{}, primal/dual interior point method \\
-% 565 & MIPS-sc, step-controlled variant of \mips{} \\
-% 580 & \ipopt{}\tnote{\dag} \\
-% 600 & \knitro{}\tnote{\dag} \\
-% \end{tabular} 	\\
-% 16	& \code{OPF\_VIOLATION}	& $5 \times 10^{-6}$	& constraint violation tolerance	\\
-% 24	& \code{OPF\_FLOW\_LIM}	& 0	& quantity to limit for branch flow constraints	\\
-% &&& \begin{tabular}{r @{ -- } p{0.45\textwidth}}
-% 0 & apparent power flow (limit in MVA) \\
-% 1 & active power flow (limit in MW) \\
-% 2 & current magnitude (limit in MVA at 1~p.u. voltage) \\
-% \end{tabular} 	\\
-% 25	& \code{OPF\_IGNORE\_ANG\_LIM}	& 0	& ignore angle difference limits for branches	\\
-% &&& \begin{tabular}{r @{ -- } l}
-% 0 & include angle difference limits, if specified \\
-% 1 & ignore angle difference limits even if specified \\
-% \end{tabular} 	\\
-% 26	& \code{OPF\_ALG\_DC}	& 0	& DC optimal power flow algorithm: \\
-% &&& \begin{tabular}{r @{ -- } p{0.45\textwidth}}
-% 0 & choose default solver based on availability in the following order: 700, 600, 500, 100, 200 \\
-% 100 & BPMPD\tnote{\dag} \\
-% 200 & \mips{}, \mipsname{}, primal/dual interior point method \\
-% 250 & MIPS-sc, step-controlled variant of \mips{} \\
-% 300 & \matlab{} Opt Toolbox, \code{quadprog}, \code{linprog} \\
-% 400 & \ipopt{}\tnote{\dag} \\
-% 500 & \cplex{}\tnote{\dag} \\
-% 600 & \mosek{}\tnote{\dag} \\
-% 700 & \gurobi{}\tnote{\dag} \\
-% \end{tabular} 	\\
-% \bottomrule
-% \end{tabular}
-% \begin{tablenotes}
-%  \scriptsize
-%  \item [\dag] {Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.}
-% \end{tablenotes}
-% \end{threeparttable}
-% \end{table}
-
 \begin{table}[!ht]
 %\renewcommand{\arraystretch}{1.2}
 \centering
@@ -2195,43 +1992,6 @@ name & default & description \\
 \end{threeparttable}
 \end{table}
 
-% \begin{table}[!ht]
-% %\renewcommand{\arraystretch}{1.2}
-% \centering
-% \begin{threeparttable}
-% \caption{OPF Output Options}
-% \label{tab:opfoutputoptions}
-% \footnotesize
-% \begin{tabular}{clcp{0.55\textwidth}}
-% \toprule
-% idx & name & default & description \\
-% \midrule
-% 38	& \code{OUT\_ALL\_LIM}	& -1	& controls constraint info output \\
-% &&& \begin{tabular}{r @{ -- } l}
-% -1 & individual flags control what is printed \\
-% 0 & do \emph{not} print any constraint info\tnote{\dag} \\
-% 1 & print only binding constraint info\tnote{\dag} \\
-% 2 & print all constraint info\tnote{\dag} \\
-% \end{tabular} 	\\
-% 39	& \code{OUT\_V\_LIM}	& 1	& control output of voltage limit info \\
-% &&& \begin{tabular}{r @{ -- } l}
-% 0 & do \emph{not} print \\
-% 1 & print binding constraints only \\
-% 2 & print all constraints \\
-% \end{tabular} 	\\
-% 40	& \code{OUT\_LINE\_LIM}	& 1	& control output of line flow limit info\tnote{\ddag} \\
-% 41	& \code{OUT\_PG\_LIM}	& 1	& control output of gen active power limit info\tnote{\ddag} \\
-% 42	& \code{OUT\_QG\_LIM}	& 1	& control output of gen reactive power limit info\tnote{\ddag} \\
-% 52	& \code{RETURN\_RAW\_DER}	& 0	& for AC OPF, return constraint and derivative info in \code{results.raw} (in fields \code{g}, \code{dg}, \code{df}, \code{d2f}) \\
-% \bottomrule
-% \end{tabular}
-% \begin{tablenotes}
-%  \scriptsize
-%  \item [\dag] {Overrides individual flags.}
-%  \item [\ddag] {Takes values of 0, 1 or 2 as for \code{OUT\_V\_LIM}.}
-% \end{tablenotes}
-% \end{threeparttable}
-% \end{table}
 
 Internally, the \code{runopf} function does a number of conversions to the problem data before calling the appropriate solver routine for the selected OPF algorithm. This external-to-internal format conversion is performed by the \code{ext2int} function, described in more detail in Section~\ref{sec:ext2int_callback}, and includes the elimination of out-of-service equipment, the consecutive renumbering of buses and the reordering of generators by increasing bus number. All computations are done using this internal indexing. When the simulation has completed, the data is converted back to external format by \code{int2ext} before the results are printed and returned. In addition, both \code{ext2int} and \code{int2ext} can be customized via user-supplied callback routines to convert data needed by user-supplied variables, constraints or costs into internal indexing.
 
@@ -4472,45 +4232,6 @@ name & default & description \\
 \end{table}
 
 
-% \begin{table}[!ht]
-% %\renewcommand{\arraystretch}{1.2}
-% \centering
-% \begin{threeparttable}
-% \caption{Power Flow Options}
-% \label{tab:pfoptions3}
-% \footnotesize
-% \begin{tabular}{clcl}
-% \toprule
-% idx & name & default & description \\
-% \midrule
-% 1	& \code{PF\_ALG}	& 1	& AC power flow algorithm: \\
-% &&& \begin{tabular}{r @{ -- } l}
-% 1 & Newtons's method \\
-% 2 & Fast-Decoupled (XB version) \\
-% 3 & Fast-Decouple (BX version) \\
-% 4 & Gauss-Seidel \\
-% \end{tabular} 	\\
-% 2	& \code{PF\_TOL}	& $10^{-8}$	& termination tolerance on per unit P and Q dispatch	\\
-% 3	& \code{PF\_MAX\_IT}	& 10	& maximum number of iterations for Newton's method	\\
-% 4	& \code{PF\_MAX\_IT\_FD}	& 30	& maximum number of iterations for fast-decoupled method	\\
-% 5	& \code{PF\_MAX\_IT\_GS}	& 1000	& maximum number of iterations for Gauss-Seidel method	\\
-% 6	& \code{ENFORCE\_Q\_LIMS}	& 0	& enforce gen reactive power limits at expense of $|V_m|$	\\
-% &&& \begin{tabular}{r @{ -- } l}
-% 0 & do \emph{not} enforce limits \\
-% 1 & enforce limits, simultaneous bus type conversion \\
-% 2 & enforce limits, one-at-a-time bus type conversion \\
-% \end{tabular} 	\\
-% 10	& \code{PF\_DC}	& 0	& DC modeling for power flow and OPF formulation \\
-% &&& \begin{tabular}{r @{ -- } l}
-% 0 & use AC formulation and corresponding alg options \\
-% 1 & use DC formulation and corresponding alg options \\
-% \end{tabular} 	\\
-% \bottomrule
-% \end{tabular}
-% \end{threeparttable}
-% \end{table}
-
-
 \begin{table}[!ht]
 \centering
 \begin{threeparttable}
@@ -4562,41 +4283,6 @@ name & default & description \\
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
-
-
-% \begin{table}[!ht]
-% \centering
-% \begin{threeparttable}
-% \caption{Continuation Power Flow Options}
-% \label{tab:cpfoptions3}
-% \footnotesize
-% \begin{tabular}{clcp{0.65\textwidth}}
-% \toprule
-% idx & name & default & description \\
-% \midrule
-%  125 & \code{CPF\_STEP} & 0.05 & continuation power flow step size \\
-%  126 & \code{CPF\_ADAPT\_STEP} & 0 & enable/disable step adaptivity \\
-%   & & & ~0 --- do not take variable step \\
-%   & & & ~1 --- take adaptive steps \\
-%  127 & \code{CPF\_ERROR\_TOL} &  $10^{-3}$ & tolerance for the adaptive step controller \\
-%  128 & \code{CPF\_STEP\_MIN} & $10^{-4}$ & minimum allowed step size \\
-%  129 & \code{CPF\_STEP\_MAX} & 0.2 & maximum allowed step size \\
-%  130 & \code{CPF\_TRACE\_NOSE} & 1 & terminate CPF at nose point of the curve \\
-%  131 & \code{CPF\_TRACE\_LAMBDA} & 0 & terminate CPF at given lambda value \\
-%  132 & \code{CPF\_TRACE\_FULL} & 0 & trace the full continuation curve \\
-%  133 & \code{CPF\_USER\_CALLBACK} & 0 & if non-zero, appended to \code{cpf\_user\_callback\_} to form the name of a user-supplied function called at each iteration of the CPF\tnote{\dag} \\
-%  133 & \code{CPF\_PARAMETERIZATION} & 3 & Choice of parameterization \\
-%     & & & ~1 --- Natural \\
-%     & & & ~2 --- Arclength \\
-%     & & & ~3 --- Pseudo Arclength \\
-% \bottomrule
-% \end{tabular}
-% \begin{tablenotes}
-%  \scriptsize
-%  \item [\dag] {See \code{help cpf\_default\_callback} for details.}
-% \end{tablenotes}
-% \end{threeparttable}
-% \end{table}
 
 
 \begin{table}[!ht]
@@ -4692,63 +4378,6 @@ name & default & description \\
 \end{threeparttable}
 \end{table}
 
-% \begin{table}[!ht]
-% %\renewcommand{\arraystretch}{1.2}
-% \centering
-% \begin{threeparttable}
-% \caption{General OPF Options}
-% \label{tab:opfoptions3}
-% \footnotesize
-% \begin{tabular}{clcl}
-% \toprule
-% idx & name & default & description \\
-% \midrule
-% 11	& \code{OPF\_ALG}	& 0	& AC optimal power flow algorithm: \\
-% &&& \begin{tabular}{r @{ -- } p{0.45\textwidth}}
-% 0 & choose default solver based on availability in the following order: 540, 560 \\
-% 500 & MINOPF, MINOS-based solver\tnote{\dag} \\
-% 520 & \code{fmincon}, \matlab{} Opt Toolbox $\ge$ 2.x \\
-% 540 & PDIPM, primal/dual interior point method\tnote{\dag} \\
-% 545 & SC-PDIPM, step-controlled variant of PDIPM\tnote{\dag} \\
-% 550 & TRALM, trust region based augmented Langrangian method\tnote{\dag} \\
-% 560 & \mips{}, \mipsname{}, primal/dual interior point method \\
-% 565 & MIPS-sc, step-controlled variant of \mips{} \\
-% 580 & \ipopt{}\tnote{\dag} \\
-% 600 & \knitro{}\tnote{\dag} \\
-% \end{tabular} 	\\
-% 16	& \code{OPF\_VIOLATION}	& $5 \times 10^{-6}$	& constraint violation tolerance	\\
-% 24	& \code{OPF\_FLOW\_LIM}	& 0	& quantity to limit for branch flow constraints	\\
-% &&& \begin{tabular}{r @{ -- } p{0.45\textwidth}}
-% 0 & apparent power flow (limit in MVA) \\
-% 1 & active power flow (limit in MW) \\
-% 2 & current magnitude (limit in MVA at 1~p.u. voltage) \\
-% \end{tabular} 	\\
-% 25	& \code{OPF\_IGNORE\_ANG\_LIM}	& 0	& ignore angle difference limits for branches	\\
-% &&& \begin{tabular}{r @{ -- } l}
-% 0 & include angle difference limits, if specified \\
-% 1 & ignore angle difference limits even if specified \\
-% \end{tabular} 	\\
-% 26	& \code{OPF\_ALG\_DC}	& 0	& DC optimal power flow algorithm: \\
-% &&& \begin{tabular}{r @{ -- } p{0.45\textwidth}}
-% 0 & choose default solver based on availability in the following order: 700, 600, 500, 100, 200 \\
-% 100 & BPMPD\tnote{\dag} \\
-% 200 & \mips{}, \mipsname{}, primal/dual interior point method \\
-% 250 & MIPS-sc, step-controlled variant of \mips{} \\
-% 300 & \matlab{} Opt Toolbox, \code{quadprog}, \code{linprog} \\
-% 400 & \ipopt{}\tnote{\dag} \\
-% 500 & \cplex{}\tnote{\dag} \\
-% 600 & \mosek{}\tnote{\dag} \\
-% 700 & \gurobi{}\tnote{\dag} \\
-% \end{tabular} 	\\
-% \bottomrule
-% \end{tabular}
-% \begin{tablenotes}
-%  \scriptsize
-%  \item [\dag] {Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.}
-% \end{tablenotes}
-% \end{threeparttable}
-% \end{table}
-
 \begin{table}[!ht]
 %\renewcommand{\arraystretch}{1.2}
 \centering
@@ -4813,64 +4442,6 @@ name & default & description \\
 \end{table}
 
 
-% \begin{table}[!ht]
-% %\renewcommand{\arraystretch}{1.2}
-% \centering
-% \begin{threeparttable}
-% \caption{Power Flow and OPF Output Options}
-% \label{tab:outputoptions2}
-% \footnotesize
-% \begin{tabular}{clcp{0.55\textwidth}}
-% \toprule
-% idx & name & default & description \\
-% \midrule
-% 31	& \code{VERBOSE}	& 1	& amount of progress info to be printed \\
-% &&& \begin{tabular}{r @{ -- } l}
-% 0 & print no progress info \\
-% 1 & print a little progress info \\
-% 2 & print a lot of progress info \\
-% 3 & print all progress info \\
-% \end{tabular} 	\\
-% 32	& \code{OUT\_ALL}	& -1	& controls pretty-printing of results \\
-% &&& \begin{tabular}{r @{ -- } l}
-% -1 & individual flags control what is printed \\
-% 0 & do \emph{not} print anything\tnote{\dag} \\
-% 1 & print everything\tnote{\dag} \\
-% \end{tabular} 	\\
-% 33	& \code{OUT\_SYS\_SUM}	& 1	& print system summary (0 or 1) \\
-% 34	& \code{OUT\_AREA\_SUM}	& 0	& print area summaries (0 or 1) \\
-% 35	& \code{OUT\_BUS}	& 1	& print bus detail, includes per bus gen info (0 or 1) \\
-% 36	& \code{OUT\_BRANCH}	& 1	& print branch detail (0 or 1) \\
-% 37	& \code{OUT\_GEN}	& 0	& print generator detail (0 or 1) \\
-% 38	& \code{OUT\_ALL\_LIM}	& -1	& controls constraint info output \\
-% &&& \begin{tabular}{r @{ -- } l}
-% -1 & individual flags control what is printed \\
-% 0 & do \emph{not} print any constraint info\tnote{\dag} \\
-% 1 & print only binding constraint info\tnote{\dag} \\
-% 2 & print all constraint info\tnote{\dag} \\
-% \end{tabular} 	\\
-% 39	& \code{OUT\_V\_LIM}	& 1	& control output of voltage limit info \\
-% &&& \begin{tabular}{r @{ -- } l}
-% 0 & do \emph{not} print \\
-% 1 & print binding constraints only \\
-% 2 & print all constraints \\
-% \end{tabular} 	\\
-% 40	& \code{OUT\_LINE\_LIM}	& 1	& control output of line flow limit info\tnote{\ddag} \\
-% 41	& \code{OUT\_PG\_LIM}	& 1	& control output of gen active power limit info\tnote{\ddag} \\
-% 42	& \code{OUT\_QG\_LIM}	& 1	& control output of gen reactive power limit info\tnote{\ddag} \\
-% 44	& \code{OUT\_FORCE}	& 0	& print results even if success flag = 0 (0 or 1) \\
-% 52	& \code{RETURN\_RAW\_DER}	& 0	& for AC OPF, return constraint and derivative info in \code{results.raw} (in fields \code{g}, \code{dg}, \code{df}, \code{d2f}) \\
-% \bottomrule
-% \end{tabular}
-% \begin{tablenotes}
-%  \scriptsize
-%  \item [\dag] {Overrides individual flags.}
-%  \item [\ddag] {Takes values of 0, 1 or 2 as for \code{OUT\_V\_LIM}.}
-% \end{tablenotes}
-% \end{threeparttable}
-% \end{table}
-
-
 \begin{table}[!ht]
 %\renewcommand{\arraystretch}{1.2}
 \centering
@@ -4904,46 +4475,6 @@ name & default & description \\
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
-
-
-% \begin{table}[!ht]
-% %\renewcommand{\arraystretch}{1.2}
-% \centering
-% \begin{threeparttable}
-% \caption{OPF Options for \mips{} and TSPOPF}
-% \label{tab:tspopfoptions}
-% \footnotesize
-% \begin{tabular}{clcl}
-% \toprule
-% idx & name & default & description \\
-% \midrule
-% 81	& \code{PDIPM\_FEASTOL}\tnote{\dag}	& 0	& feasibiliy (equality) tolerance	\\
-% &&& ~~set to value of \code{OPF\_VIOLATION} by default	\\
-% 82	& \code{PDIPM\_GRADTOL}\tnote{\dag}	& $10^{-6}$	& gradient tolerance	\\
-% 83	& \code{PDIPM\_COMPTOL}\tnote{\dag}	& $10^{-6}$	& complementarity condition (inequality) tolerance	\\
-% 84	& \code{PDIPM\_COSTTOL}\tnote{\dag}	& $10^{-6}$	& optimality tolerance	\\
-% 85	& \code{PDIPM\_MAX\_IT}\tnote{\dag}	& 150	& maximum number of iterations	\\
-% 86	& \code{SCPDIPM\_RED\_IT}\tnote{\ddag}	& 20	& maximum number of step size reductions per iteration	\\
-% 
-% 87	& \code{TRALM\_FEASTOL}\tnote{*}	& 0	& feasibiliy tolerance	\\
-% &&& ~~set to value of \code{OPF\_VIOLATION} by default	\\
-% 88	& \code{TRALM\_PRIMETOL}\tnote{*}	& $5 \times 10^{-4}$	& primal variable tolerance	\\
-% 89	& \code{TRALM\_DUALTOL}\tnote{*}	& $5 \times 10^{-4}$	& dual variable tolerance	\\
-% 90	& \code{TRALM\_COSTTOL}\tnote{*}	& $10^{-5}$	& optimality tolerance	\\
-% 91	& \code{TRALM\_MAJOR\_IT}\tnote{*}	& 40	& maximum number of major iterations	\\
-% 92	& \code{TRALM\_MINOR\_IT}\tnote{*}	& 100	& maximum number of minor iterations	\\
-% 93	& \code{SMOOTHING\_RATIO}\tnote{\S}	& 0.04	& piecewise linear curve smoothing ratio	\\
-% \bottomrule
-% \end{tabular}
-% \begin{tablenotes}
-%  \scriptsize
-%  \item [\dag] {For \code{OPF\_ALG} option set to 540, 545, 560 or 565 and \code{OPF\_ALG\_DC} option set to 200 or 250 (\mips{}, PDIPM and SC-PDIPM solvers) only.}
-%  \item [\ddag] {For \code{OPF\_ALG} option set to 545 or 565 and \code{OPF\_ALG\_DC} option set to 250 (step-controlled solvers MIPS-sc or SC-PDIPM) only.}
-%  \item [*] {For \code{OPF\_ALG} option set to 550 (TRALM solver) only.}
-%  \item [\S] {For \code{OPF\_ALG} option set to 545 or 550 (SC-PDIPM or TRALM solvers) only.}
-% \end{tablenotes}
-% \end{threeparttable}
-% \end{table}
 
 
 \begin{table}[!ht]
@@ -5013,47 +4544,6 @@ name & default & description \\
 \end{table}
 
 
-% \begin{table}[!ht]
-% %\renewcommand{\arraystretch}{1.2}
-% \centering
-% \begin{threeparttable}
-% \caption{OPF Options for \cplex{}\tnote{\dag}}
-% \label{tab:cplexoptions}
-% \footnotesize
-% \begin{tabular}{clcp{0.65\textwidth}}
-% \toprule
-% idx & name & default & description \\
-% \midrule
-% 95	& \code{CPLEX\_LPMETHOD}	& 0	& algorithm used by \cplex{} for LP problems	\\
-% &&& \begin{tabular}{r @{ -- } l}
-% 0 & automatic; let \cplex{} choose	\\
-% 1 & primal simplex	\\
-% 2 & dual simplex	\\
-% 3 & network simplex	\\
-% 4 & barrier	\\
-% 5 & sifting	\\
-% 6 & concurrent (dual, barrier, and primal)	\\
-% \end{tabular} 	\\
-% 96	& \code{CPLEX\_QPMETHOD}	& 0	& algorithm used by \cplex{} for QP problems	\\
-% &&& \begin{tabular}{r @{ -- } l}
-% 0 & automatic; let \cplex{} choose	\\
-% 1 & primal simplex	\\
-% 2 & dual simplex	\\
-% 3 & network simplex	\\
-% 4 & barrier	\\
-% \end{tabular} 	\\
-% 97	& \code{CPLEX\_OPT}	& 0	& if non-zero, appended to \code{cplex\_user\_options\_} to form the name of a user-supplied function called to modify the default options struct for \cplex{}\tnote{\ddag} \\
-% \bottomrule
-% \end{tabular}
-% \begin{tablenotes}
-%  \scriptsize
-%  \item [\dag] {For \code{OPF\_ALG\_DC} option set to 500 only. Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.}
-%  \item [\ddag] {See \code{help cplex\_options} for details.}
-% \end{tablenotes}
-% \end{threeparttable}
-% \end{table}
-
-
 \begin{table}[!ht]
 %\renewcommand{\arraystretch}{1.2}
 \centering
@@ -5091,40 +4581,6 @@ name & default & description \\
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
-
-
-% \begin{table}[!ht]
-% %\renewcommand{\arraystretch}{1.2}
-% \centering
-% \begin{threeparttable}
-% \caption{OPF Options for \code{fmincon} and \knitro{}}
-% \label{tab:otopfoptions}
-% \footnotesize
-% \begin{tabular}{clcl}
-% \toprule
-% idx & name & default & description \\
-% \midrule
-% 17	& \code{CONSTR\_TOL\_X}\tnote{\dag}	& $10^{-4}$	& termination tolerance on $x$	\\
-% 18	& \code{CONSTR\_TOL\_F}\tnote{\dag}	& $10^{-4}$	& termination tolerance on $f$	\\
-% 19	& \code{CONSTR\_MAX\_IT}\tnote{\dag}	& 0	& maximum number of iterations	\\
-% &&& ~~$0 \Rightarrow$ use solver's default value	\\
-% 55	& \code{FMC\_ALG}\tnote{\ddag}	& 4	& algorithm used by \code{fmincon} in \matlab{} Opt Toolbox $\ge$ 4	\\
-% &&& \begin{tabular}{r @{ -- } l}
-% 1 & active-set	\\
-% 2 & interior-point, default ``bfgs'' Hessian approximation	\\
-% 3 & interior-point, ``lbfgs'' Hessian approximation	\\
-% 4 & interior-point, exact user-supplied Hessian	\\
-% 5 & interior-point, Hessian via finite-differences	\\
-% \end{tabular} 	\\
-% \bottomrule
-% \end{tabular}
-% \begin{tablenotes}
-%  \scriptsize
-%  \item [\dag] {For \code{OPF\_ALG} option set to 520 or 600 (\code{fmincon} and \knitro{} solvers) only.}
-%  \item [\ddag] {For \code{OPF\_ALG} option set to 520 (\code{fmincon} solver) only.}
-% \end{tablenotes}
-% \end{threeparttable}
-% \end{table}
 
 
 \begin{table}[!ht]
@@ -5187,40 +4643,6 @@ name & default\tnote{\S} & description \\
 \end{table}
 
 
-% \begin{table}[!ht]
-% %\renewcommand{\arraystretch}{1.2}
-% \centering
-% \begin{threeparttable}
-% \caption{OPF Options for \gurobi{}\tnote{\dag}}
-% \label{tab:gurobioptions}
-% \footnotesize
-% \begin{tabular}{clcp{0.65\textwidth}}
-% \toprule
-% idx & name & default\tnote{\ddag} & description \\
-% \midrule
-% 121	& \code{GRB\_METHOD}	& 0	& algorithm used by \gurobi{} for LP/QP problems	\\
-% &&& \begin{tabular}{r @{ -- } l}
-% 0 & primal simplex	\\
-% 1 & dual simplex	\\
-% 2 & barrier	\\
-% 3 & concurrent (LP only)	\\
-% 4 & deterministic concurrent (LP only)	\\
-% \end{tabular} 	\\
-% 122	& \code{GRB\_TIMELIMIT}	& $\infty$	& maximum time allowed for solver (secs) \\
-% 123	& \code{GRB\_THREADS}	& 0 (auto)	& maximum number of threads to use \\
-% 124	& \code{GRB\_OPT}	& 0	& if non-zero, appended to \code{gurobi\_user\_options\_} to form the name of a user-supplied function called to modify the default options struct for \gurobi{}\tnote{\S} \\
-% \bottomrule
-% \end{tabular}
-% \begin{tablenotes}
-%  \scriptsize
-%  \item [\dag] {For \code{OPF\_ALG\_DC} option set to 700 only. Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.}
-%  \item [\ddag] {Default values in parenthesis refer to defaults assigned by \gurobi{} if called with option equal to 0.}
-%  \item [\S] {See \code{help gurobi\_options} for details.}
-% \end{tablenotes}
-% \end{threeparttable}
-% \end{table}
-
-
 \begin{table}[!ht]
 %\renewcommand{\arraystretch}{1.2}
 \centering
@@ -5245,28 +4667,6 @@ name & default & description \\
 \end{threeparttable}
 \end{table}
 
-
-% \begin{table}[!ht]
-% %\renewcommand{\arraystretch}{1.2}
-% \centering
-% \begin{threeparttable}
-% \caption{OPF Options for \ipopt{}\tnote{\dag}}
-% \label{tab:ipoptoptions}
-% \footnotesize
-% \begin{tabular}{clcp{0.65\textwidth}}
-% \toprule
-% idx & name & default & description \\
-% \midrule
-% 60	& \code{IPOPT\_OPT}	& 0	& if non-zero, appended to \code{ipopt\_user\_options\_} to form the name of a user-supplied function called to modify the default options struct for \ipopt{}\tnote{\ddag} \\
-% \bottomrule
-% \end{tabular}
-% \begin{tablenotes}
-%  \scriptsize
-%  \item [\dag] {For \code{OPF\_ALG} option set to 580 and \code{OPF\_ALG\_DC} set to 400 only. Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.}
-%  \item [\ddag] {See \code{help ipopt\_options} for details.}
-% \end{tablenotes}
-% \end{threeparttable}
-% \end{table}
 
 \begin{table}[!ht]
 %\renewcommand{\arraystretch}{1.2}
@@ -5296,28 +4696,6 @@ name & default & description \\
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
-
-
-% \begin{table}[!ht]
-% %\renewcommand{\arraystretch}{1.2}
-% \centering
-% \begin{threeparttable}
-% \caption{OPF Options for \knitro{}\tnote{\dag}}
-% \label{tab:knitrooptions}
-% \footnotesize
-% \begin{tabular}{clcp{0.65\textwidth}}
-% \toprule
-% idx & name & default & description \\
-% \midrule
-% 58	& \code{KNITRO\_OPT}	& 0	& if non-zero, a positive integer $n$ indicating that all \knitro{} options should be handled by a \knitro{} options file named \code{knitro\_user\_options\_$n$.txt} \\
-% \bottomrule
-% \end{tabular}
-% \begin{tablenotes}
-%  \scriptsize
-%  \item [\dag] {For \code{OPF\_ALG} option set to 600 only. Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.}
-% \end{tablenotes}
-% \end{threeparttable}
-% \end{table}
 
 
 \begin{table}[!ht]
@@ -5366,51 +4744,6 @@ name & default\tnote{\ddag} & description \\
 \end{table}
 
 
-% \begin{table}[!ht]
-% %\renewcommand{\arraystretch}{1.2}
-% \centering
-% \begin{threeparttable}
-% \caption{OPF Options for MINOPF\tnote{\dag}}
-% \label{tab:minopfoptions}
-% \footnotesize
-% \begin{tabular}{clcl}
-% \toprule
-% idx & name & default\tnote{\ddag} & description \\
-% \midrule
-% 61	& \code{MNS\_FEASTOL}	& 0 ($10^{-3}$)	& primal feasibility tolerance	\\
-% &&& ~~set to value of \code{OPF\_VIOLATION} by default	\\
-% 62	& \code{MNS\_ROWTOL}	& 0 ($10^{-3}$)	& row tolerance	\\
-% &&& ~~set to value of \code{OPF\_VIOLATION} by default	\\
-% 63	& \code{MNS\_XTOL}	& 0 ($10^{-3}$)	& $x$ tolerance	\\
-% 64	& \code{MNS\_MAJDAMP}	& 0 (0.5)	& major damping parameter	\\
-% 65	& \code{MNS\_MINDAMP}	& 0 (2.0)	& minor damping parameter	\\
-% 66	& \code{MNS\_PENALTY\_PARM}	& 0 (1.0)	& penalty parameter	\\
-% 67	& \code{MNS\_MAJOR\_IT}	& 0 (200)	& major iterations	\\
-% 68	& \code{MNS\_MINOR\_IT}	& 0 (2500)	& minor iterations	\\
-% 69	& \code{MNS\_MAX\_IT}	& 0 (2500)	& iteration limit	\\
-% 70	& \code{MNS\_VERBOSITY}	& -1	& amount of progress output printed by MEX file	\\
-% &&& \begin{tabular}{r @{ -- } l}
-% -1 & controlled by \code{VERBOSE} option \\
-% 0 & do \emph{not} print anything \\
-% 1 & print only only termination status message \\
-% 2 & print termination status \& screen progress \\
-% 3 & print screen progress, report file (usually fort.9) \\
-% \end{tabular} 	\\
-% 71	& \code{MNS\_CORE}	& 0 	& memory allocation	\\
-% &&& ~~defaults to $1200 n_b + 2 (n_b + n_g)^2$	\\
-% 72	& \code{MNS\_SUPBASIC\_LIM}	& 0	& superbasics limit, defaults to $2 n_b + 2 n_g$	\\
-% 73	& \code{MNS\_MULT\_PRICE}	& 0 (30)	& multiple price	\\
-% \bottomrule
-% \end{tabular}
-% \begin{tablenotes}
-%  \scriptsize
-%  \item [\dag] {For \code{OPF\_ALG} option set to 500 only. Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.}
-%  \item [\ddag] {Default values in parenthesis refer to defaults assigned in MEX file if called with option equal to 0.}
-% \end{tablenotes}
-% \end{threeparttable}
-% \end{table}
-
-
 \begin{table}[!ht]
 %\renewcommand{\arraystretch}{1.2}
 \centering
@@ -5455,44 +4788,6 @@ name & default\tnote{\S} & description \\
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
-
-
-% \begin{table}[!ht]
-% %\renewcommand{\arraystretch}{1.2}
-% \centering
-% \begin{threeparttable}
-% \caption{OPF Options for \mosek{}\tnote{\dag}}
-% \label{tab:mosekoptions}
-% \footnotesize
-% \begin{tabular}{clcp{0.65\textwidth}}
-% \toprule
-% idx & name & default\tnote{\ddag} & description \\
-% \midrule
-% 111	& \code{MOSEK\_LP\_ALG}	& 0	& solution algorithm used by \mosek{} for continuous LP problems	\\
-% &&& \begin{tabular}{r @{ -- } l}
-% 0 & automatic; let \mosek{} choose	\\
-% 1 & interior point	\\
-% 4 & primal simplex	\\
-% 5 & dual simplex	\\
-% 6 & primal dual simplex	\\
-% 7 & automatic simplex (\mosek{} chooses which simplex)	\\
-% 10 & concurrent	\\
-% \end{tabular} 	\\
-% 112	& \code{MOSEK\_MAX\_IT}	& 0 (400)	& MSK\_IPAR\_INTPNT\_MAX\_ITERATIONS, interior point maximum iterations	\\
-% 113	& \code{MOSEK\_GAP\_TOL}	& 0 (1e-8)	& MSK\_DPAR\_INTPNT\_TOL\_REL\_GAP, interior point relative gap tolerance	\\
-% 114	& \code{MOSEK\_MAX\_TIME}	& 0 (-1)	& MSK\_DPAR\_OPTIMIZER\_MAX\_TIME, maximum time allowed for solver (negative means Inf)	\\
-% 115	& \code{MOSEK\_NUM\_THREADS}	& 0 (1)	& MSK\_IPAR\_INTPNT\_NUM\_THREADS, maximum number of threads to use	\\
-% 116	& \code{MOSEK\_OPT}	& 0	& if non-zero, appended to \code{mosek\_user\_options\_} to form the name of a user-supplied function called to modify the default options struct for \mosek{}\tnote{\S} \\
-% \bottomrule
-% \end{tabular}
-% \begin{tablenotes}
-%  \scriptsize
-%  \item [\dag] {For \code{OPF\_ALG\_DC} option set to 600 only. Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.}
-%  \item [\ddag] {Default values in parenthesis refer to defaults assigned by \mosek{} if called with option equal to 0.}
-%  \item [\S] {See \code{help mosek\_options} for details.}
-% \end{tablenotes}
-% \end{threeparttable}
-% \end{table}
 
 
 \begin{table}[!ht]
@@ -5582,7 +4877,6 @@ idx & old option & new option & notes \\
 \endhead
 \bottomrule
 \multicolumn{4}{r}{\emph{continued on next page}} \\
-% &&& \emph{continued on next page} \\
 \endfoot
 \bottomrule
 \endlastfoot
@@ -5728,11 +5022,6 @@ omitted from this listing. For more information on each, at the
 the function. For documentation and data files, the filename
 extensions are included.
 
-% \begin{namelist}{XXXXXXXXX}
-% \item [\code{runpf}] run a power flow program
-% \item [\code{runopf}] run an optimal power flow program
-% \end{namelist}
-
 \subsection{Directory Layout and Documentation Files}
 
 Some of these files appear at the top level of the distribution and others
@@ -5746,7 +5035,6 @@ in the \code{docs} directory.
 \label{tab:docs}
 \footnotesize
 \begin{tabular}{p{0.3\textwidth}p{0.62\textwidth}}
-%\begin{tabular}{ll}
 \toprule
 name & description \\
 \midrule
@@ -6195,7 +5483,6 @@ name & description \\
 \label{tab:utility}
 \footnotesize
 \begin{tabular}{p{0.25\textwidth}p{0.67\textwidth}}
-%\begin{tabular}{lp{0.75\textwidth}}
 \toprule
 name & description \\
 \midrule
@@ -6228,10 +5515,6 @@ name & description \\
 \code{total\_load}	& returns vector of total load in each load zone	\\
 \bottomrule
 \end{tabular}
-% \begin{tablenotes}
-%  \scriptsize
-%  \item [*] {Deprecated. Will be removed in a subsequent version.}
-% \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
@@ -6243,7 +5526,6 @@ name & description \\
 \label{tab:otherfcns}
 \footnotesize
 \begin{tabular}{p{0.27\textwidth}p{0.65\textwidth}}
-%\begin{tabular}{lp{0.75\textwidth}}
 \toprule
 name & description \\
 \midrule
@@ -6269,10 +5551,6 @@ name & description \\
 \code{psse\_read}	& reads data from a PSS/E RAW data file	\\
 \bottomrule
 \end{tabular}
-% \begin{tablenotes}
-%  \scriptsize
-%  \item [*] {Deprecated. Will be removed in a subsequent version.}
-% \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
