@@ -33,7 +33,7 @@ There are three options for obtaining a copy of MATPOWER:
   - Go to the [MATPOWER website][1].
   - Click the "Download Now" button.
   - *Use this option if you want to stick to using versioned releases.*
-2. Clone the MATPOWER repository.
+2. Clone the MATPOWER repository from GitHub.
   - `git clone https://github.com/MATPOWER/matpower.git`
   - *Use this option if you want to be able to easily update to the
     current stable release, with the latest bug fixes and new
@@ -74,7 +74,7 @@ move to GitHub after version 6.0.
             install_matpower
 
 3.  **That's it.** There is no step 3.
-    - If you chose not to have the installer run the test suite for
+    - But, if you chose not to have the installer run the test suite for
       you in step 2, you can run it now to verify that MATPOWER is
       installed and functioning properly, by typing:
 

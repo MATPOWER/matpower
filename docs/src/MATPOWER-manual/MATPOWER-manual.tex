@@ -220,7 +220,7 @@
 %\title{\hl{--- DRAFT  ---}\\\hl{\em do not distribute}\\~\\\matpower{} \mpver{}\\User's Manual}
 \title{\matpower{} \mpver{}\\User's Manual}
 \author{Ray~D.~Zimmerman \and Carlos~E.~Murillo-S\'anchez}
-\date{December 16, 2016} % comment this line to display the current date
+%\date{December 16, 2016} % comment this line to display the current date
 %\date{December 14, 2011\thanks{Second revision. First revision was December 13, 2011}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
@@ -355,28 +355,98 @@ For the hardware requirements, please refer to the system requirements for the v
 
 In this manual, references to \matlab{} usually apply to Octave as well. At the time of writing, none of the optional MEX-based \matpower{} packages have been built for Octave, but Octave does typically include \glpk{}.
 
+\subsection{Getting \matpower{}}
+\label{sec:gettingmatpower}
+
+There are three options for obtaining a copy of \matpower{}:
+
+\begin{enumerate}
+\item Download the latest release version from the \matpower{} website\footnote{\url{\matpowerurl}}.
+    \begin{itemize}
+        \item Go to the \href{\matpowerurl}{\matpower{} website}.
+        \item Click the ``Download Now'' button.
+    \end{itemize}
+
+    \emph{Use this option if you want to stick to using versioned releases.}
+\item Clone the \matpower{} repository from GitHub.
+    \begin{itemize}
+        \item \code{git clone https://github.com/MATPOWER/matpower.git}
+    \end{itemize}
+
+    \emph{Use this option if you want to be able to easily
+            update to the current stable release, with the latest bug
+            fixes and new features, using a simple \code{git pull}
+            command, or if you want to help with testing the latest
+            versions. This requires that you have a Git client\footnote{
+            See \url{https://git-scm.com/downloads} for
+            information on downloading Git clients.}
+            (GUI or command-line) installed.}
+\item Download a zip file of the \matpower{} repository from GitHub.
+    \begin{itemize}
+        \item Go to the
+            \href{\matpowergithuburl}{\matpower{} GitHub repository
+            page}.\footnote{\matpowergithuburl{}}
+        \item Click the green ``Clone or download'' button,
+            then ``Download ZIP''.
+    \end{itemize}
+
+    \emph{Use this option if you need features or fixes
+            introduced since the latest versioned release, but you don't
+            have access to or are not ready to begin using Git
+            (but don't be afraid to give Git a try).}\footnote{
+            A good place to start is \url{https://git-scm.com}.}
+\end{enumerate}
+
+See \code{CONTRIBUTING.md} for information on how to get a local copy
+of your own \matpower{} fork, if you are interesting in contributing
+your own code or modifications.
+
+
 \clearpage
 \subsection{Installation}
 \label{sec:installation}
 
-Installation and use of \matpower{} requires familiarity with the basic operation of \matlab{}, including setting up your \matlab{} path.
+Installation and use of \matpower{} requires familiarity with the basic operation of \matlab{} or Octave.
 
 \begin{enumerate}[\bfseries Step 1:] % requires package paralist
-\item Follow the download instructions on the \matpower{} home page\footnote{\url{\matpowerurl}}. You should end up with a file named \code{matpowerXXX.zip}, where \code{XXX} depends on the version of \matpower{}.
-\item Unzip the downloaded file.
-Move the resulting \code{matpowerXXX} directory to the location of your choice.\footnote{
-Do \emph{not} place \matpower{}'s files in a directory named \codeq{matlab} or \codeq{optim} (both case-insensitive), as these can cause \matlab{}'s built-in \code{ver} command to behave strangely in ways that affect \matpower{}.}
-These files should not need to be modified, so it is recommended that they be kept separate from your own code.
-We will use \mppath{} to denote the path to this directory.
-\item Add the following directories to your \matlab{} path:
-\begin{itemize}
-\item \mppath{/lib} -- core \matpower{} functions
-\item \mppath{/lib/t} -- test scripts for \matpower{}
-\item \mostpath{/lib} -- core \most{} functions
-\item \mostpath{/lib/t} -- test scripts for \most{}
-\item (optional) sub-directories of \mppath{/extras} -- additional functionality and contributed code (see Appendix~\ref{app:extras} for details).
-\end{itemize}
-\item At the \matlab{} prompt, type \code{test\_matpower} to run the test suite and verify that \matpower{} is properly installed and functioning.\footnote{The \most{} test suite is run separately by typing \code{test\_most}. See the \mostman{} for details.} The result should resemble the following, possibly including extra tests, depending on the availablility of optional packages, solvers and extras.
+\item {\bf Get a copy of \matpower{}} as described above.
+
+    Clone the repository or download and extract the zip file of the
+    \matpower{} distribution and place the resulting directory in the
+    location of your choice.\footnote{Do \emph{not} place \matpower{}'s
+    files in a directory named \codeq{matlab} or \codeq{optim} (both
+    case-insensitive), as these can cause \matlab{}'s built-in
+    \code{ver} command to behave strangely in ways that affect \matpower{}.}
+    We will use \mppath{} to denote the path to this directory.
+    The files in \mppath{} should not need to be modified, so it
+    is recommended that they be kept separate from your own code.
+% \item Add the following directories to your \matlab{} path:
+% \begin{itemize}
+% \item \mppath{/lib} -- core \matpower{} functions
+% \item \mppath{/lib/t} -- test scripts for \matpower{}
+% \item (optional) sub-directories of \mppath{/extras} -- additional functionality and contributed code (see Appendix~\ref{app:extras} for details).
+% \end{itemize}
+\item {\bf Run the installer.}
+
+    Open \matlab{} or Octave and change to the \mppath{} directory.
+
+    Run the installer and follow the directions to add the
+            required directories to your \matlab{} or Octave path,
+            by typing:
+
+            \code{~~~install\_matpower}
+
+\item {\bf That's it.} There is no step~3.
+
+    But, if you chose not to have the installer run the test suite for
+    you in step~2, you can run it now to verify that \matpower{} is
+    installed and functioning properly, by typing:\footnote{The \most{} test suite is run separately by typing \code{test\_most}. See the \mostman{} for details.}
+
+            \code{~~~test\_matpower}
+
+    The result should resemble the following, possibly including extra tests, depending on the availablility of optional packages, solvers and extras.
+
+
 \clearpage
 %--LATER--
 %\\\hl{re-do before release (run on fastest machine available)}
