@@ -16,7 +16,7 @@ env:
     - MOST_PATH=$TRAVIS_BUILD_DIR/lib:$TRAVIS_BUILD_DIR/lib/t
     - MPTEST_PATH=$TRAVIS_BUILD_DIR/mptest/lib:$TRAVIS_BUILD_DIR/mptest/lib/t
     - MIPS_PATH=$TRAVIS_BUILD_DIR/mips/lib:$TRAVIS_BUILD_DIR/mips/lib/t
-    - MATPOWER_PATH=$TRAVIS_BUILD_DIR/matpower/lib:$TRAVIS_BUILD_DIR/matpower/lib/t
+    - MATPOWER_PATH=$TRAVIS_BUILD_DIR/matpower/lib:$TRAVIS_BUILD_DIR/matpower/data:$TRAVIS_BUILD_DIR/matpower/lib/t
     - SEARCH_PATH=$MOST_PATH:$MPTEST_PATH:$MIPS_PATH:$MATPOWER_PATH
 
 script:

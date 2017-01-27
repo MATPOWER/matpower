@@ -59,9 +59,9 @@ function opt = mpoption(varargin)
 %       [ 'FDXB' - Fast-Decoupled (XB version)                              ]
 %       [ 'FDBX' - Fast-Decoupled (BX version)                              ]
 %       [ 'GS'   - Gauss-Seidel                                             ]
-%       [ 'PQSUM'- Power Summation method                                   ]
-%       [ 'ISUM' - Current Summation method                                 ]
-%       [ 'YSUM' - Admittance Summation method                              ]
+%       [ 'PQSUM'- Power Summation method (radial networks only)            ]
+%       [ 'ISUM' - Current Summation method (radial networks only)          ]
+%       [ 'YSUM' - Admittance Summation method (radial networks only)       ]
 %   pf.tol                  1e-8        termination tolerance on per unit
 %                                       P & Q mismatch
 %   pf.nr.max_it            10          maximum number of iterations for
@@ -188,7 +188,8 @@ function opt = mpoption(varargin)
 %   opf.flow_lim            'S'         quantity limited by branch flow
 %                                       constraints
 %       [ 'S' - apparent power flow (limit in MVA)                          ]
-%       [ 'P' - active power flow (limit in MW)                             ]
+%       [ 'P' - active power flow, implemented using P   (limit in MW)      ]
+%       [ '2' - active power flow, implemented using P^2 (limit in MW)      ]
 %       [ 'I' - current magnitude (limit in MVA at 1 p.u. voltage)          ]
 %   opf.ignore_angle_lim    0           angle diff limits for branches
 %       [ 0 - include angle difference limits, if specified                 ]
@@ -430,7 +431,7 @@ function opt = mpoption(varargin)
 %                                           for 'pw'
 
 %   MATPOWER
-%   Copyright (c) 2013-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2013-2017, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Shrirang Abhyankar, Argonne National Laboratory
 %
@@ -528,7 +529,11 @@ if have_opt0
                 opt0.cpf = rmfield(opt0.cpf, 'user_callback_args');
             end
             if opt0.v <= 11         %% convert version 11 to 12
-                opt0.cpf.use_vg = opt_d.cpf.use_vg;
+                opt0.opf.use_vg = opt_d.opf.use_vg;
+            end
+            if opt0.v <= 12         %% convert version 12 to 13
+                opt0.radial.max_it  = opt_d.radial.max_it;
+                opt0.radial.vcorr   = opt_d.radial.vcorr;
             end
             opt0.v = v;
         end
@@ -1178,7 +1183,7 @@ end
 switch upper(opt_s.opf.flow_lim)
     case 'S'
         OPF_FLOW_LIM = 0;
-    case 'P'
+    case {'P', '2'}
         OPF_FLOW_LIM = 1;
     case 'I'
         OPF_FLOW_LIM = 2;
@@ -1548,7 +1553,7 @@ optt = opt;
 %% globals
 %%-------------------------------------------------------------------
 function v = mpoption_version
-v = 12;     %% version number of MATPOWER options struct
+v = 13;     %% version number of MATPOWER options struct
             %% (must be incremented every time structure is updated)
             %% v1   - first version based on struct (MATPOWER 5.0b1)
             %% v2   - added 'linprog' and 'quadprog' fields
@@ -1571,6 +1576,7 @@ v = 12;     %% version number of MATPOWER options struct
             %%        'nose_tol', 'p_lims_tol' and 'q_lims_tol',
             %%        removed option 'cpf.user_callback_args'
             %% v12  - added option 'opf.use_vg'
+            %% v13  - added 'pf.radial.max_it', 'pf.radial.vcorr'
 
 %%-------------------------------------------------------------------
 function db_level = DEBUG

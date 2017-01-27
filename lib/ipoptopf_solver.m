@@ -35,7 +35,7 @@ function [results, success, raw] = ipoptopf_solver(om, mpopt)
 %   See also OPF, IPOPT.
 
 %   MATPOWER
-%   Copyright (c) 2000-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2000-2017, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %
@@ -239,13 +239,18 @@ branch(:, QF) = imag(Sf) * baseMVA;
 branch(:, PT) = real(St) * baseMVA;
 branch(:, QT) = imag(St) * baseMVA;
 
-%% line constraint is actually on square of limit
+%% line constraint is typically on square of limit
 %% so we must fix multipliers
 muSf = zeros(nl, 1);
 muSt = zeros(nl, 1);
 if ~isempty(il)
-    muSf(il) = 2 * info.lambda(2*nb+    (1:nl2)) .* branch(il, RATE_A) / baseMVA;
-    muSt(il) = 2 * info.lambda(2*nb+nl2+(1:nl2)) .* branch(il, RATE_A) / baseMVA;
+    if upper(mpopt.opf.flow_lim(1)) == 'P'
+        muSf(il) = info.lambda(2*nb+    (1:nl2));
+        muSt(il) = info.lambda(2*nb+nl2+(1:nl2));
+    else
+        muSf(il) = 2 * info.lambda(2*nb+    (1:nl2)) .* branch(il, RATE_A) / baseMVA;
+        muSt(il) = 2 * info.lambda(2*nb+nl2+(1:nl2)) .* branch(il, RATE_A) / baseMVA;
+    end
 end
 
 %% extract shadow prices for equality var bounds converted to eq constraints
