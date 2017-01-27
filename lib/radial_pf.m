@@ -21,6 +21,15 @@ function [mpc, success, iterations] = radial_pf(casedata,mpopt)
 
 %% load case data
 mpc = loadcase(casedata);
+nb = size(mpc.bus,1);
+nl = size(mpc.branch,1);
+if nb - nl ~= 1
+    fprintf('\nradial_pf: power flow algorithm %s can only handle radial networks.\n', mpopt.pf.alg);
+    iterations = 0;
+    success = 0;
+    mpc.success = success;
+    return
+end
 %% branch ordering
 mpc = order_radial(mpc);
 %% define named indices into bus, gen, branch matrices

@@ -5,7 +5,7 @@ if nargin < 1
     quiet = 0;
 end
 
-t_begin(84, quiet);
+t_begin(252, quiet);
 
 if quiet
     verbose = 0;
@@ -34,10 +34,7 @@ mpopt = mpoption('out.all', 0, 'verbose', verbose);
     QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
 
 %% Test Distribution Power Flow
-mpopt0 = mpoption(mpopt, 'pf.alg', 'NR');
-mpopt1 = mpoption(mpopt, 'pf.alg', 'PQSUM');
-mpopt2 = mpoption(mpopt, 'pf.alg', 'ISUM','pf.tol',1e-9);
-mpopt3 = mpoption(mpopt, 'pf.alg', 'YSUM');
+mpopt = mpoption(mpopt, 'pf.alg', 'NR', 'pf.radial.max_it', 100);
 casefile = {
     'case4_dist'
     'case18'
@@ -47,33 +44,95 @@ casefile = {
     'case85'
     'case141'
     };
+method = {
+    'PQSUM' 'Power Summation'
+    'ISUM'  'Current Summation'
+    'YSUM'  'Admittance Summation'
+    };
+
+% Original test cases (no PV buses)
+iter_nopv = zeros(size(casefile,1),size(method,1)+1);
 for i = 1:length(casefile)
-    [baseMVA, bus0, gen0, branch0, success0, et0] = runpf(casefile{i}, mpopt0);
-    [baseMVA, bus1, gen1, branch1, success1, et1] = runpf(casefile{i}, mpopt1);
-    [baseMVA, bus2, gen2, branch2, success2, et2] = runpf(casefile{i}, mpopt2);
-    [baseMVA, bus3, gen3, branch3, success3, et3] = runpf(casefile{i}, mpopt3);
-    % Power Summation
-    t = ['Power Summation, ' casefile{i} ' : '];
-    t_ok(success1, [t 'success']);
-    t_is(bus1, bus0, 6, [t 'bus']);
-    t_is(gen1, gen0, 6, [t 'gen']);
-    t_is(branch1, branch0, 6, [t 'branch']);
-    % Current Summation
-    t = ['Current Summation, ' casefile{i} ' : '];
-    t_ok(success2, [t 'success']);
-    t_is(bus2, bus0, 6, [t 'bus']);
-    t_is(gen2, gen0, 6, [t 'gen']);
-    t_is(branch2, branch0, 6, [t 'branch']);
-    % Admittance Summation
-    t = ['Admittance Summation, ' casefile{i} ' : '];
-    t_ok(success3, [t 'success']);
-    t_is(bus3, bus0, 6, [t 'bus']);
-    t_is(gen3, gen0, 6, [t 'gen']);
-    t_is(branch3, branch0, 6, [t 'branch']);
+    mpc = loadcase(casefile{i});
+    r = runpf(mpc, mpopt);
+    iter_nopv(i,1) = r.iterations;
+    for j = 1:size(method,1)
+        mpopt1 = mpoption(mpopt,'pf.alg',method{j,1});
+        r1 = runpf(mpc,mpopt1);
+        iter_nopv(i,j+1) = r1.iterations;
+        t = [method{j,2} ', ' casefile{i} ' : '];
+        t_ok(r1.success, [t 'success']);
+        t_is(r1.bus, r.bus, 6, [t 'bus']);
+        t_is(r1.gen, r.gen, 6, [t 'gen']);
+        t_is(r1.branch, r.branch, 6, [t 'branch']);
+    end
+end
+
+% Test cases with added PV buses
+iter_pv = zeros(size(casefile,1),size(method,1)+1,2);
+for i = 1:length(casefile)
+    mpc = loadcase(casefile{i});
+    pv = mpc.bus(:,BUS_TYPE) == PV;
+    if all(~pv)
+        %%% ADD PV BUSES %%%
+        N = 5; % How many PV buses should I add?
+        % Solve the case without PV buses with Newton method
+        r = runpf(mpc, mpopt);
+        % Find the last N buses with lowest voltage
+        [Vm, B] = sort(r.bus(:,VM));
+         B = B(1:N);
+        Vm = Vm(1:N);
+        % add PV generators at buses in B
+        % set VG 0.05 pu bigger then voltage at buses in B
+        mpc.gen = repmat(mpc.gen,N+1,1);
+        mpc.gen(2:end,GEN_BUS) = B;
+        mpc.gen(2:end,VG) = Vm + 0.05;
+        mpc.bus(B,BUS_TYPE) = 2;
+        if isfield(mpc,'gencost')
+            mpc.gencost = repmat(mpc.gencost,N+1,1);
+        end
+        %%% END OF ADD PV BUSES %%%
+    end
+    r = runpf(mpc, mpopt);
+    iter_pv(i,1,1) = r.iterations;
+    iter_pv(i,1,2) = r.iterations;
+    for j = 1:size(method,1)
+        for vcorr = 0:1
+            mpopt1 = mpoption(mpopt,'pf.alg',method{j,1},'pf.radial.vcorr',vcorr);
+            r1 = runpf(mpc,mpopt1);
+            iter_pv(i,j+1,vcorr+1) = r1.iterations;
+            t = [method{j,2} ', vcorr = ' num2str(vcorr) ', ' casefile{i} ' : '];
+            t_ok(r1.success, [t 'success']);
+            t_is(r1.bus, r.bus, 6, [t 'bus']);
+            t_is(r1.gen, r.gen, 6, [t 'gen']);
+            t_is(r1.branch, r.branch, 6, [t 'branch']);
+        end
+    end
 end
 
 t_end;
 
+fprintf('\nITERATIONS: Original test cases (no PV buses), pf.radial.vcorr = 0\n');
+print_iterations(casefile,method,iter_nopv)
+fprintf('\nITERATIONS: Test cases with added PV buses, pf.radial.vcorr = 0\n');
+print_iterations(casefile,method,iter_pv(:,:,1))
+fprintf('\nITERATIONS: Test cases with added PV buses, pf.radial.vcorr = 1\n');
+print_iterations(casefile,method,iter_pv(:,:,2))
+
 if have_fcn('octave')
     warning(s1.state, file_in_path_warn_id);
+end
+
+function print_iterations(casefile,method,iterations)
+fprintf('%22s','NR');
+for j = 1:size(method,1)
+    fprintf('%7s',method{j,1});
+end
+fprintf('\n');
+for i = 1:length(casefile)
+    fprintf('%15s',casefile{i});
+    for j = 1:size(method,1)+1
+        fprintf('%7i',iterations(i,j));
+    end
+    fprintf('\n');
 end
