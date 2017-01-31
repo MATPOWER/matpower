@@ -5,7 +5,7 @@ if nargin < 1
     quiet = 0;
 end
 
-t_begin(252, quiet);
+t_begin(329, quiet);
 
 if quiet
     verbose = 0;
@@ -51,17 +51,37 @@ method = {
     };
 
 % Original test cases (no PV buses)
+iter_expected = {
+           'none'    'NR' 'PQSUM' 'ISUM' 'YSUM'
+     'case4_dist'      3      12     12     11
+         'case18'      4       9     12     10
+         'case22'      3       3      6      6
+       'case33bw'      3       5      8      8
+         'case69'      4       5      8      8
+         'case85'      4       5      9      9
+        'case141'      3       4      7      7
+        };
 iter_nopv = zeros(size(casefile,1),size(method,1)+1);
 for i = 1:length(casefile)
+    % which row in iter_expected is for current casefile
+    row = find(strcmp(casefile{i}, iter_expected(:,1)) == 1);
     mpc = loadcase(casefile{i});
+    % solve it with NR
     r = runpf(mpc, mpopt);
     iter_nopv(i,1) = r.iterations;
+    % which columng in iter_expected is for current method
+    col = find(strcmp('NR', iter_expected(1,:)) == 1);
+    t = ['Newton''s method, ' casefile{i} ' : '];
+    t_is(r.iterations, iter_expected{row,col}, 6, [t 'iterations']);
     for j = 1:size(method,1)
         mpopt1 = mpoption(mpopt,'pf.alg',method{j,1});
         r1 = runpf(mpc,mpopt1);
         iter_nopv(i,j+1) = r1.iterations;
+        % which columng in iter_expected is for current method
+        col = find(strcmp(method{j,1}, iter_expected(1,:)) == 1);
         t = [method{j,2} ', ' casefile{i} ' : '];
         t_ok(r1.success, [t 'success']);
+        t_is(r1.iterations, iter_expected{row,col}, 6, [t 'iterations']);
         t_is(r1.bus, r.bus, 6, [t 'bus']);
         t_is(r1.gen, r.gen, 6, [t 'gen']);
         t_is(r1.branch, r.branch, 6, [t 'branch']);
@@ -69,8 +89,33 @@ for i = 1:length(casefile)
 end
 
 % Test cases with added PV buses
+clear iter_expected
+iter_expected{1} = {
+% pf.radial.vcorr = 0
+           'none'    'NR' 'PQSUM' 'ISUM' 'YSUM'
+     'case4_dist'      3      12     12     11
+         'case18'      4      20     16     13
+         'case22'      4      11     25     25
+       'case33bw'      4       8     16     16
+         'case69'      4      12     27     27
+         'case85'      5       9     17     17
+        'case141'      5       9     18     18
+};
+iter_expected{2} = {
+% pf.radial.vcorr = 1
+           'none'    'NR' 'PQSUM' 'ISUM' 'YSUM'
+     'case4_dist'      3      14     13     11
+         'case18'      4      20     23     18
+         'case22'      4      10     23     23
+       'case33bw'      4      10     14     14
+         'case69'      4      12     17     17
+         'case85'      5      11     16     16
+        'case141'      5      10     13     13
+};
 iter_pv = zeros(size(casefile,1),size(method,1)+1,2);
 for i = 1:length(casefile)
+    % which row in iter_expected is for current casefile
+    row = find(strcmp(casefile{i}, iter_expected{1}(:,1)) == 1);
     mpc = loadcase(casefile{i});
     pv = mpc.bus(:,BUS_TYPE) == PV;
     if all(~pv)
@@ -96,13 +141,20 @@ for i = 1:length(casefile)
     r = runpf(mpc, mpopt);
     iter_pv(i,1,1) = r.iterations;
     iter_pv(i,1,2) = r.iterations;
+    % which columng in iter_expected is for current method
+    col = find(strcmp('NR', iter_expected{1}(1,:)) == 1);
+    t = ['Newton''s method, ' casefile{i} ' : '];
+    t_is(r.iterations, iter_expected{1}{row,col}, 6, [t 'iterations']);
     for j = 1:size(method,1)
         for vcorr = 0:1
             mpopt1 = mpoption(mpopt,'pf.alg',method{j,1},'pf.radial.vcorr',vcorr);
             r1 = runpf(mpc,mpopt1);
             iter_pv(i,j+1,vcorr+1) = r1.iterations;
+            % which columng in iter_expected is for current method
+            col = find(strcmp(method{j,1}, iter_expected{vcorr+1}(1,:)) == 1);
             t = [method{j,2} ', vcorr = ' num2str(vcorr) ', ' casefile{i} ' : '];
             t_ok(r1.success, [t 'success']);
+            t_is(r1.iterations, iter_expected{vcorr+1}{row,col}, 6, [t 'iterations']);
             t_is(r1.bus, r.bus, 6, [t 'bus']);
             t_is(r1.gen, r.gen, 6, [t 'gen']);
             t_is(r1.branch, r.branch, 6, [t 'branch']);
@@ -112,12 +164,14 @@ end
 
 t_end;
 
-fprintf('\nITERATIONS: Original test cases (no PV buses), pf.radial.vcorr = 0\n');
-print_iterations(casefile,method,iter_nopv)
-fprintf('\nITERATIONS: Test cases with added PV buses, pf.radial.vcorr = 0\n');
-print_iterations(casefile,method,iter_pv(:,:,1))
-fprintf('\nITERATIONS: Test cases with added PV buses, pf.radial.vcorr = 1\n');
-print_iterations(casefile,method,iter_pv(:,:,2))
+if verbose == 1
+    fprintf('\nITERATIONS: Original test cases (no PV buses), pf.radial.vcorr = 0\n');
+    print_iterations(casefile,method,iter_nopv)
+    fprintf('\nITERATIONS: Test cases with added PV buses, pf.radial.vcorr = 0\n');
+    print_iterations(casefile,method,iter_pv(:,:,1))
+    fprintf('\nITERATIONS: Test cases with added PV buses, pf.radial.vcorr = 1\n');
+    print_iterations(casefile,method,iter_pv(:,:,2))
+end
 
 if have_fcn('octave')
     warning(s1.state, file_in_path_warn_id);
