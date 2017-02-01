@@ -23,19 +23,15 @@ define_constants;
 %% branch ordering
 mpc = order_radial(mpc);
 if ~isempty(mpc.loop)
-    fprintf('\nradial_pf: power flow algorithm %s can only handle radial networks.\n', mpopt.pf.alg);
-    fprintf('\nNumber of loops detected: %i\n', length(mpc.loop));
-    if mpopt.verbose > 1
+    fprintf('\nNumber of detected loops: %i\n', length(mpc.loop));
+    if mpopt.verbose > 0
         fprintf('\nBranches forming loops\n')
         fprintf('LOOP# F_BUS T_BUS\n');
         for i = 1:length(mpc.loop)
             fprintf('%5i %5i %5i\n',i,mpc.branch(mpc.loop(i),[F_BUS T_BUS]));
         end
     end
-    iterations = 0;
-    success = 0;
-    mpc.success = success;
-    return
+    error('radial_pf: power flow algorithm %s can only handle radial networks.', mpopt.pf.alg)
 end
 %% define vectors needed for backward-forward sweep method
 % branch and demand data

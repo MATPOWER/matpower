@@ -164,7 +164,7 @@ end
 
 t_end;
 
-if verbose == 1
+if verbose > 0
     fprintf('\nITERATIONS: Original test cases (no PV buses), pf.radial.vcorr = 0\n');
     print_iterations(casefile,method,iter_nopv)
     fprintf('\nITERATIONS: Test cases with added PV buses, pf.radial.vcorr = 0\n');
