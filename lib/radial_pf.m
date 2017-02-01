@@ -1,11 +1,10 @@
-function [mpc, success, iterations] = radial_pf(casedata,mpopt)
+function [mpc, success, iterations] = radial_pf(mpc,mpopt)
 %RADIAL_PF  Solves the power flow using a backward-forward sweep method.
 %
-%   [mpc, success, iterations] = radial_pf(casedata,mpopt)
+%   [mpc, success, iterations] = radial_pf(mpc,mpopt)
 %
 %   Inputs:
-%       casedata : either a MATPOWER case struct or a string containing
-%           the name of the file with the case data
+%       mpc : MATPOWER case struct with internal bus numbering
 %       mpopt : MATPOWER options struct to override default options
 %           can be used to specify the solution algorithm, output options
 %           termination tolerances, and more.
@@ -19,21 +18,21 @@ function [mpc, success, iterations] = radial_pf(casedata,mpopt)
 %
 %  See also CASEFORMAT, LOADCASE, MPOPTION.
 
-%% load case data
-mpc = loadcase(casedata);
-nb = size(mpc.bus,1);
-nl = size(mpc.branch,1);
-if nb - nl ~= 1
-    fprintf('\nradial_pf: power flow algorithm %s can only handle radial networks.\n', mpopt.pf.alg);
-    iterations = 0;
-    success = 0;
-    mpc.success = success;
-    return
-end
-%% branch ordering
-mpc = order_radial(mpc);
 %% define named indices into bus, gen, branch matrices
 define_constants;
+%% branch ordering
+mpc = order_radial(mpc);
+if ~isempty(mpc.loop)
+    fprintf('\nNumber of detected loops: %i\n', length(mpc.loop));
+    if mpopt.verbose > 0
+        fprintf('\nBranches forming loops\n')
+        fprintf('LOOP# F_BUS T_BUS\n');
+        for i = 1:length(mpc.loop)
+            fprintf('%5i %5i %5i\n',i,mpc.branch(mpc.loop(i),[F_BUS T_BUS]));
+        end
+    end
+    error('radial_pf: power flow algorithm %s can only handle radial networks.', mpopt.pf.alg)
+end
 %% define vectors needed for backward-forward sweep method
 % branch and demand data
 [f, t, Zb, Yb, Sd, Ysh] = ...
