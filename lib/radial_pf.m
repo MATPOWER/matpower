@@ -28,7 +28,7 @@ if ~isempty(mpc.loop)
         fprintf('\nBranches forming loops\n')
         fprintf('LOOP# F_BUS T_BUS\n');
         for i = 1:length(mpc.loop)
-            fprintf('%5i %5i %5i\n',i,mpc.branch(mpc.loop(i),[F_BUS T_BUS]));
+            fprintf('%5i %5i %5i\n',i,mpc.order.bus.i2e(mpc.branch(mpc.loop(i),[F_BUS T_BUS])));
         end
     end
     error('radial_pf: power flow algorithm %s can only handle radial networks.', mpopt.pf.alg)
