@@ -931,10 +931,26 @@ The fourth algorithm is the standard Gauss-Seidel method from Glimm and Stagg~\c
 
 By default, the AC power flow solvers simply solve the problem described above, ignoring any generator limits, branch flow limits, voltage magnitude limits, etc. However, there is an option (\code{pf.enforce\_q\_lims}) that allows for the generator reactive power limits to be respected at the expense of the voltage setpoint. This is done in a rather brute force fashion by adding an outer loop around the AC power flow solution. If any generator has a violated reactive power limit, its reactive injection is fixed at the limit, the corresponding bus is converted to a PQ bus and the power flow is solved again. This procedure is repeated until there are no more violations. Note that this option is based solely on the \code{QMAX} and \code{QMIN} parameters for the generator, from columns 4 and 5 of the \gen{} matrix, and does not take into account the trapezoidal generator capability curves described in Section~\ref{sec:cap_curve} and specifed in columns \code{PC1}--\code{QC2MAX} (11--16). Note also that this option affects generators even if the bus they are attached to is already of type PQ.
 
+\subsection{DC Power Flow}
+
+For the DC power flow problem~\cite{wood1996}, the vector $x$ consists of the set of voltage angles at non-reference buses
+\begin{equation}
+x = \left[ \theta_{\{i\}} \right], \quad \forall i \notin \mathcal{I}_\mathrm{ref}
+\end{equation}
+and \eqref{eq:gx0} takes the form
+\begin{equation}
+B_{dc} x - P_{dc} = 0
+\label{eq:dcpf2}
+\end{equation}
+where $B_{dc}$ is the $(n_b-1) \times (n_b-1)$ matrix obtained by simply eliminating from $B_\mathrm{bus}$ the row and column corresponding to the slack bus and reference angle, respectively. Given that the generator injections $P_g$ are specified at all but the slack bus, $P_{dc}$ can be formed directly from the non-slack rows of the last four terms of \eqref{eq:dcpf}.
+
+The voltage angles in $x$ are computed by a direct solution of the set of linear equations. The branch flows and slack bus generator injection are then calculated directly from the bus voltage angles via \eqref{eq:Pf} and the appropriate row in \eqref{eq:dcpf}, respectively.
+
 %---------------------------------------------------
-\subsubsection{Radial Power Flow}
+\subsection{Distribution Power Flow}
 Distribution systems are different from transmission systems in a number of aspects, such as the $X/R$ branch ratio, magnitudes of $X$ and $R$ and most importantly the radial structures. Due to these differences, a number of power flow solution methods have been developed to account for the specific nature of distribution systems and most widely used are the \textit{backward/forward} sweep methods \cite{shirmohammadi1988,luo1990}.
 
+\subsubsection{Radial Power Flow}
 When solving radial distribution networks it is practical to number bran\-ches with numbers that are equal to the receiving bus numbers. An example is given in Figure \ref{fig:ordering}, where branches are drawn black. Furthermore, the oriented branch ordering \cite{rajicic1994} offers a possibility for fast and efficient backward/forward sweeps. All branches are always oriented from the sending bus to the receiving bus and the only requirement is that the sending bus number should be smaller than the receiving bus number. This means that for branch $i-k$ the following stands $i < k$. The indices of the sending nodes of branches are stored in vector $F$ such that $i = f_k$.
 
 \begin{figure}[hbtp]
@@ -1191,21 +1207,6 @@ The following table should replace existing table entitled "Power Flow Options".
   \end{threeparttable}
 \end{table}
 %---------------------------------------------------
-
-\subsection{DC Power Flow}
-
-For the DC power flow problem~\cite{wood1996}, the vector $x$ consists of the set of voltage angles at non-reference buses
-\begin{equation}
-x = \left[ \theta_{\{i\}} \right], \quad \forall i \notin \mathcal{I}_\mathrm{ref}
-\end{equation}
-and \eqref{eq:gx0} takes the form
-\begin{equation}
-B_{dc} x - P_{dc} = 0
-\label{eq:dcpf2}
-\end{equation}
-where $B_{dc}$ is the $(n_b-1) \times (n_b-1)$ matrix obtained by simply eliminating from $B_\mathrm{bus}$ the row and column corresponding to the slack bus and reference angle, respectively. Given that the generator injections $P_g$ are specified at all but the slack bus, $P_{dc}$ can be formed directly from the non-slack rows of the last four terms of \eqref{eq:dcpf}.
-
-The voltage angles in $x$ are computed by a direct solution of the set of linear equations. The branch flows and slack bus generator injection are then calculated directly from the bus voltage angles via \eqref{eq:Pf} and the appropriate row in \eqref{eq:dcpf}, respectively.
 
 
 \subsection{{\tt runpf}}
