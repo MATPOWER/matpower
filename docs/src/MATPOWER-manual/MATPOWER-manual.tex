@@ -104,6 +104,17 @@
  }{%
 \end{list}}
 
+%%% CIRCUIT DIAGRAMS
+\usepackage[americanvoltages,americancurrents,europeanresistors]{circuitikz}
+\usetikzlibrary{arrows}
+\newcommand*\circled[1]{
+  \tikz[baseline=(char.base)]{
+    \node[shape=circle,draw,inner sep=2pt] (char) {#1};}
+}
+\def\centerarc[#1](#2)(#3:#4:#5)% Syntax: [draw options] (center) (initial angle:final angle:radius)
+{ \draw[#1] ($(#2)+({#5*cos(#3)},{#5*sin(#3)})$) arc (#3:#4:#5); }
+
+
 % define my verbatim environment, requires packages fancyvrb & relsize
 \renewcommand{\FancyVerbFormatLine}[1]{\makebox[2mm][l]{}#1}
 \DefineVerbatimEnvironment%
@@ -919,6 +930,267 @@ Also included are solvers based on variations of the fast-decoupled method~\cite
 The fourth algorithm is the standard Gauss-Seidel method from Glimm and Stagg~\cite{glimm1957}. It has numerous disadvantages relative to the Newton method and is included primarily for academic interest.
 
 By default, the AC power flow solvers simply solve the problem described above, ignoring any generator limits, branch flow limits, voltage magnitude limits, etc. However, there is an option (\code{pf.enforce\_q\_lims}) that allows for the generator reactive power limits to be respected at the expense of the voltage setpoint. This is done in a rather brute force fashion by adding an outer loop around the AC power flow solution. If any generator has a violated reactive power limit, its reactive injection is fixed at the limit, the corresponding bus is converted to a PQ bus and the power flow is solved again. This procedure is repeated until there are no more violations. Note that this option is based solely on the \code{QMAX} and \code{QMIN} parameters for the generator, from columns 4 and 5 of the \gen{} matrix, and does not take into account the trapezoidal generator capability curves described in Section~\ref{sec:cap_curve} and specifed in columns \code{PC1}--\code{QC2MAX} (11--16). Note also that this option affects generators even if the bus they are attached to is already of type PQ.
+
+%---------------------------------------------------
+\subsubsection{Radial Power Flow}
+Distribution systems are different from transmission systems in a number of aspects, such as the $X/R$ branch ratio, magnitudes of $X$ and $R$ and most importantly the radial structures. Due to these differences, a number of power flow solution methods have been developed to account for the specific nature of distribution systems and most widely used are the \textit{backward/forward} sweep methods \cite{shirmohammadi1988,luo1990}.
+
+When solving radial distribution networks it is practical to number bran\-ches with numbers that are equal to the receiving bus numbers. An example is given in Figure \ref{fig:ordering}, where branches are drawn black. Furthermore, the oriented branch ordering \cite{rajicic1994} offers a possibility for fast and efficient backward/forward sweeps. All branches are always oriented from the sending bus to the receiving bus and the only requirement is that the sending bus number should be smaller than the receiving bus number. This means that for branch $i-k$ the following stands $i < k$. The indices of the sending nodes of branches are stored in vector $F$ such that $i = f_k$.
+
+\begin{figure}[hbtp]
+  \centering
+  \begin{tikzpicture}[thick]
+  \draw[dashed,red,rounded corners=10mm] (0,0) -- (1.5,1.732) -- (5,1.732);
+  \draw[dashed,red,rounded corners=10mm] (0,0) -- (1.5,-2.5) -- (6.5,-2.5) -- (8,0);
+  \centerarc[red,-stealth'](3,0.5)(135:45:1)
+  \node[red] at (2,1) {Loop 1};
+  \centerarc[red,-stealth'](5.5,-1)(270:360:1)
+  \node[red] at (5,-1.5) {Loop 2};
+  \node[above] at (-2,0) {0};
+  \draw[dashed] (-2,0) to[short,o-o,l=\circled{1}] (0,0) node[above]{1};
+  \draw (0,0) to[short,o-o,l=\circled{2}] (2,0) node[above]{2};
+  \draw (2,0) to[short,o-o,l=\circled{3}] (4,0) node[below]{3};
+  \draw (4,0) to[short,o-o,l=\circled{4}] (6,0) node[above]{4};
+  \draw (6,0) to[short,o-o,l=\circled{7}] (8,0) node[above]{7};
+  \node[red,right] at (8,0) {${\rm PV_2}$};
+  \draw (2,0) to[short,o-o] ++(-60:2) node[below]{6};
+  \node[right] at (2.5,-0.866) {\circled{6}};
+  \draw (4,0) to[short,o-o] ++(60:2) node[above]{5};
+  \node[red,right] at (5,1.732) {${\rm PV_1}$};
+  \node[left] at (4.5,0.866) {\circled{5}};
+  \end{tikzpicture}
+  \caption{Oriented Ordering}
+  \label{fig:ordering}
+\end{figure}
+As usual, the supply bus (slack bus) is given index 1, meaning that branch indices should go from 2 to $n_b$ which is the number of buses in the network. Introducing fictitious branch with index 1 and zero impedance, given with dashed black line in Figure \ref{fig:ordering}, the number of branches $n_l$ becomes equal to the number of buses $n_b$.
+
+For the example of Figure \ref{fig:ordering} vector $F$ is the following
+\begin{equation*}
+  F = \left[\begin{array}{ccccccc}
+    0 & 1 & 2 & 3 & 3 & 2 & 4
+  \end{array}\right]^T,
+\end{equation*}
+and it offers an easy way to follow the path between any bus and the bus 0. If we consider bus 4, the path to the slack bus consists of following branches: branch 4, since considered bus is their receiving bus; branch 3, since $f_4 = 3$; branch 2, since $f_3 = 2$; and branch 1, since $f_2 = 1$.
+
+The representation of branch $k$, connecting buses $i$ and $k$, is given in Figure \ref{fig:branch_rep}, where it is modeled with its serial impedance $z_b^k$. At both ends there are load demands $s_d^i$ and $s_d^k$, and shunt admittances $y_d^i$ and $y_d^k$ comprised of admittances due capacitance of all lines and shunt elements connected to buses $i$ and $k$
+\begin{equation*}
+  y_d^k = j \left( \sum b_{\rm lines}^k + \sum b_{\rm shunt}^k \right).
+\end{equation*}
+
+\begin{figure}[htb]
+  \centering
+  \begin{tikzpicture}[thick]
+    \node[above] at (0,0) {$i$};
+    \draw (0,0) to[short,i=$s_f^k$] (1,0);
+    \draw (1,0) to[R,l=$z_b^k$] (3,0);
+    \draw (3,0) to[short,i=$s_t^k$] (4,0) node[above] {$k$};
+    \draw[-stealth'] (0,0) -- (0,-1) node[right] {$s_d^i$};
+    \draw (0,0) to[short,o-] (-1,-0.5) to[R,l=$y_d^i$,v=$v_i$] (-1,-2.5) node[rground] {};
+    \draw[-stealth'] (4,0) -- (4,-1) node[left] {$s_d^k$};
+    \draw (4,0) to[short,o-] (5,-0.5) to[R,l_=$y_d^k$,v^=$v_k$] (5,-2.5) node[rground] {};
+  \end{tikzpicture}
+  \caption{Branch Representation: branch $k$ between buses $i$ (sending) and $k$ (receiving) and load demand and shunt admittances at both buses}
+  \label{fig:branch_rep}
+\end{figure}
+
+\subsubsection{Current Summation Method}
+The voltage calculation procedure with the Current Summation Method is performed in 5 steps as follows \cite{shirmohammadi1988,luo1990}.
+
+\begin{enumerate}
+  
+  \item Set all voltages to 1 pu (flat start). Set iteration count $\nu = 1$.
+  
+  \item Set branch current flow equal to the sum of current of the demand at receiving end ($s_d^k$) and the current drawn in the admittance ($y_d^k$) connected to bus $k$
+  \begin{equation}
+  \label{eq:j_branch}
+  j_b^k = \left(\frac{s_d^k}{v_k}\right)^* + y_d^k \cdot v_k, \quad k = 1, 2, \ldots ,n_b.
+  \end{equation}
+  \label{step2i}
+  
+  \item \textit{Backward sweep}: Perform current summation, starting from the branch with the biggest index and heading towards the branch whose index is equal to 1, the current of branch $k$ is added to the current of the branch whose index is equal to $i = f_k$
+  \begin{equation}
+  j_{b,\rm new}^i = j_b^i + j_b^k, \quad k = n_l, n_l - 1, \ldots ,2
+  \label{eq:back_i}
+  \end{equation}
+  
+  \item \textit{Forward sweep}: The receiving end bus voltages are calculated with known branch currents and sending bus voltages
+  \begin{equation}
+  \label{eq:for_i}
+  v_k = v_i - z_b^k \cdot j_b^k, \quad k = 2, 3, \ldots ,n_l
+  \end{equation}
+  
+  \item Compare voltages in iteration $\nu$ with the corresponding ones from iteration $\nu - 1$. If the maximum difference in magnitude is less then specified tolerance
+  \begin{equation}
+  \max_{i = 1 \ldots n_b} \left\lbrace \left| v_i^{\nu} - v_i^{\nu - 1} \right| \right\rbrace < \varepsilon
+  \label{eq:tol_i}
+  \end{equation}
+  the procedure is finished. Otherwise go to step \ref{step2i}.
+  
+\end{enumerate}
+
+\subsubsection{Power Summation Method}
+The voltage calculation procedure with the Power Summation Method is performed in 5 steps as follows \cite{rajicic1994}.
+
+\begin{enumerate}
+  
+  \item Set all voltages to 1 pu (flat start). Set iteration count $\nu = 1$.
+  
+  \item Set receiving end branch flow equal to the sum of the demand at receiving end ($s_d^k$) and the power drawn in the admittance ($y_d^k$) connected to bus $k$
+  \begin{equation}
+  \label{eq:s_receiving}
+  s_t^k = s_d^k + \frac{\left(y_d^k\right)^*}{v_k^2}, \quad k = 1, 2, \ldots ,n_b.
+  \end{equation}
+  \label{step2pq}
+  
+  \item \textit{Backward sweep}: Calculate sending end branch power flows as a sum of receiving end branch power flows and branch losses (\ref{eq:back_pq_1}). Perform power summation, starting from the branch with the biggest index and heading towards the branch whose index is equal to 1, the sending power of branch $k$ is added to the receiving power of the branch whose index is equal to $i = f_k$ (\ref{eq:back_pq_2}).
+  \begin{align}
+  s_f^k &= s_t^k + z_b^k \cdot \left|\frac{s_t^k}{v_k}\right|^2 & k = n_l, n_l - 1, \ldots ,2
+  \label{eq:back_pq_1}
+  \\
+  s_{t,{\rm new}}^i &= s_t^i + s_f^k & k = n_l, n_l - 1, \ldots ,2
+  \label{eq:back_pq_2}
+  \end{align}
+  
+  \item \textit{Forward sweep}: The receiving end bus voltages are calculated with known sending powers and voltages
+  \begin{equation}
+  \label{eq:for_pq}
+  v_k = v_i - z_b^k \cdot \left(\frac{s_f^k}{v_i}\right)^* \quad k = 2, 3, \ldots ,n_l
+  \end{equation}
+  
+  \item Compare voltages in iteration $\nu$ with the corresponding ones from iteration $\nu - 1$, using (\ref{eq:tol_i}). If the maximum difference in magnitude is less then specified tolerance the procedure is finished. Otherwise go to step \ref{step2pq}.
+  
+\end{enumerate}
+
+\subsubsection{Admittance Summation Method}
+For each node, besides the known admittance $y_d^k$, we define the admittance $y_e^k$ as the driving point admittance of the part of the network fed by node $k$, including shunt admittance $y_d^k$. We also define an equivalent current generator $j_e^k$ for the part of the network fed by node $k$. The current of this generator consists of all load currents fed by node $k$.
+
+The process of calculation of bus voltages with the admittance summation method consists of the following 5 steps \cite{rajicic1998}
+
+\begin{enumerate}
+  
+  \item Set all voltages to 1 pu (flat start). Set iteration count $\nu = 1$. Set initial values
+  \begin{equation}
+    y_e^k = y_d^k, \quad k = 1, 2, \ldots ,n_b.
+  \end{equation}
+
+  \item For each node $k$ calculate equivalent admittance $y_e^k$. Perform admittance summation, starting from the branch with the biggest index and heading towards the branch whose index is equal to 1. The driving point admittance of branch $k$ is added to the driving point admittance of the branch whose index is equal to $i = f_k$ (\ref{eq:back_y_2a}).
+  \begin{align}
+  d_b^k &= \frac{1}{1 + z_b^k \cdot y_e^k} & k = n_l, n_l - 1, \ldots ,2
+  \label{eq:back_y_1a}
+  \\
+  y_{e,{\rm new}}^i &= y_e^i + d_b^k \cdot y_e^k & k = n_l, n_l - 1, \ldots ,2
+  \label{eq:back_y_2a}
+  \end{align}
+ 
+  \item \textit{Backward sweep}: For each node $k$ calculate equivalent current generator $j_e^k$, first set it equal to load current $j_d^k$ and perform current summation over equivalent admittances using factor $d_b^k$ (\ref{eq:back_y_1a})
+  \begin{align}
+  j_e^k &= j_d^k = \left(\frac{s_d^k}{v_k}\right)^* & k = n_l, n_l - 1, \ldots ,2
+  \label{eq:back_y_1}
+  \\
+  j_{e,{\rm new}}^i &= j_e^i + d_b^k \cdot j_e^k & k = n_l, n_l - 1, \ldots ,2
+  \label{eq:back_y_2}
+  \end{align}
+  \label{step3y}
+  
+  \item \textit{Forward sweep}: The receiving end bus voltages are calculated with known equivalent current generators and sending bus voltages
+  \begin{equation}
+  \label{eq:for_y}
+  v_k = d_b^k \cdot (v_i - z_b^k \cdot j_e^k) \quad k = 2, 3, \ldots ,n_l
+  \end{equation}
+  
+  \item Compare voltages in iteration $\nu$ with the corresponding ones from iteration $\nu - 1$, using (\ref{eq:tol_i}). If the maximum difference in magnitude is less then specified tolerance the procedure is finished. Otherwise go to step \ref{step3y}.
+  
+\end{enumerate}
+
+\subsubsection{Handling PV Buses}
+The methods explained in the previous three subsections are applicable to radial network without loops and PV buses. These methods can be used to solve the power flows problem in weakly meshed networks if a compensation procedure based on Thevenin equivalent impedance matrix is added \cite{shirmohammadi1988,luo1990}. In \cite{rajicic1994} a voltage correction procedure is added to the process.
+
+The list of branches is expanded by a set
+of $n_{pv}$ fictitious links, corresponding to the PV nodes. Each of these links starts at the slack bus and ends at a corresponding PV bus, thus forming a loop in the network. A fictitious link going to bus $k$ is represented by a voltage generator with a voltage magnitude equal to the specified voltage magnitude at bus $k$. Its phase angle is equal to the calculated phase angle at bus $k$.
+
+A loop impedance matrix $Z_l$ is formed for the loops made by the fictitious links and it has the following properties
+\begin{itemize}
+\item Element $z_l^{mm}$ is equal to the sum of branch impedances off all branches related to loop $m$,
+\item Element $z_l^{mk}$ is equal to the sum of branch impedances of mutual branches of loops $m$ and $k$.
+\end{itemize}
+
+As an illustration, in Figure \ref{fig:ordering} there a two PV generators at buses 5 and 7. The fictitious links and loops orientation are drawn in red. The Thevenin matrix for this case is
+\begin{equation*}
+Z_l = \left[\begin{array}{cc}
+z_b^2 + z_b^3 + z_b^5 & z_b^2 + z_b^3 \\
+z_b^2 + z_b^3 & z_b^2 + z_b^3 + z_b^4 + z_b^7
+\end{array}
+\right].
+\end{equation*}
+
+First column elements are equal to PV bus voltages when the current injection at bus 5 is 1 pu and $v_1 = 0$. Bus voltages can be calculated with the current summation method in a single iteration. By repeating the procedure for bus 7 one can calculate the elements of second column.
+
+By breaking all links the network becomes radial \cite{luo1990} and the three backward/forward sweep methods are applicable. Since all link are fictitious, only the injected reactive power at their receiving bus $m$ is determined \cite{rajicic1994} by the following equation
+\begin{equation}
+\Delta q_{pv}^m = \Delta d_{pv}^m \frac{v_m^2}{\Re \left\{ v_m \right\} },
+\end{equation}
+which is practically an increment in reactive power injection of the corresponding PV generator for the current iteration.
+
+The incremental changes $\Delta d_{pv}^m$ can be obtained by solving the matrix equation
+\begin{equation}
+\Im \left\{ Z_l \right\}  \cdot \Delta D_{pv} = \Delta E_{pv},
+\end{equation}
+where
+\begin{equation}
+\Delta e_{pv}^m = \left( \frac{v_g^m}{ \left| v_m \right|  } - 1 \right) \cdot \Re \left\{ v_m \right\}, \quad m = 1, 2, \ldots , n_{pv}.
+\end{equation}
+
+Before proceeding with the next iteration, the bus voltage corrections are calculated. In order to do that, the radial network is solved by applying incremental current changes $\Delta D_{pv}$ at the PV buses as excitations and setting $v_1 = 0$. After the backward/forward sweep is performed with the current summation method, the voltage corrections at all buses are known. They are added to the latest voltages in order to obtain the new bus voltages, which are used in the next iteration \cite{rajicic1994}.
+
+\subsubsection{New Table for Power Flow Options}
+The following table should replace existing table entitled "Power Flow Options".
+\begin{table}[!ht]
+  %\renewcommand{\arraystretch}{1.2}
+  \centering
+  \begin{threeparttable}
+    \caption{Power Flow Options}
+    \label{tab:pfoptions}
+    \footnotesize
+    \begin{tabular}{lcl}
+      \toprule
+      name & default & description \\
+      \midrule
+      \code{model}	& \codeq{AC}	& AC vs. DC modeling for power flow and OPF formulation \\
+      && \begin{tabular}{c @{ -- } l}
+        \codeq{AC} & use AC formulation and corresponding alg options \\
+        \codeq{DC} & use DC formulation and corresponding alg options \\
+      \end{tabular} 	\\
+      \code{pf.alg}	& \codeq{NR}	& AC power flow algorithm: \\
+      && \begin{tabular}{c @{ -- } l}
+        \codeq{NR} & Newtons's method \\
+        \codeq{FDXB} & Fast-Decoupled (XB version) \\
+        \codeq{FDBX} & Fast-Decouple (BX version) \\
+        \codeq{GS} & Gauss-Seidel \\
+        \codeq{PQSUM} & Power Summation (radial networks only) \\
+        \codeq{ISUM} & Current Summation (radial networks only) \\
+        \codeq{YSUM} & Admittance Summation (radial networks only) \\
+      \end{tabular} 	\\
+      \code{pf.tol}	& $10^{-8}$	& termination tolerance on per unit P and Q dispatch	\\
+      \code{pf.nr.max\_it}	& 10	& maximum number of iterations for Newton's method	\\
+      \code{pf.fd.max\_it}	& 30	& maximum number of iterations for fast-decoupled method	\\
+      \code{pf.gs.max\_it}	& 1000	& maximum number of iterations for Gauss-Seidel method	\\
+      \code{pf.radial.max\_it}	& 20	& maximum number of iterations for radial power flow methods	\\
+      \code{pf.radial.vcorr}	& 0	& perform voltage correction procedure in distribution power flow	\\
+      && \begin{tabular}{r @{ -- } l}
+        0 & do \emph{not} perform voltage correction \\
+        1 & perform voltage correction \\
+      \end{tabular} 	\\
+      \code{pf.enforce\_q\_lims}	& 0	& enforce gen reactive power limits at expense of $|V_m|$	\\
+      && \begin{tabular}{r @{ -- } l}
+        0 & do \emph{not} enforce limits \\
+        1 & enforce limits, simultaneous bus type conversion \\
+        2 & enforce limits, one-at-a-time bus type conversion \\
+      \end{tabular} 	\\
+      \bottomrule
+    \end{tabular}
+  \end{threeparttable}
+\end{table}
+%---------------------------------------------------
 
 \subsection{DC Power Flow}
 
@@ -6884,6 +7156,29 @@ R.~A.~M. van Amerongen, ``A General-Purpose Version of the Fast Decoupled Load
 A.~F. Glimm and G.~W. Stagg, ``Automatic Calculation of Load Flows,''
   \emph{AIEE Transactions (Power Apparatus and Systems)}, vol.~76, pp.
   817--828, October 1957.
+
+\bibitem{shirmohammadi1988}
+D.~Shirmohammadi, H.~W. Hong, A.~Semlyen, and G.~X. Luo, ``A compensation-based
+  power flow method for weakly meshed distribution and transmission networks,''
+  \emph{IEEE Transactions on Power Systems}, vol.~3, no.~2, pp. 753--762, May
+  1988. [Online]. Available: \url{https://doi.org/10.1109/59.192932}
+
+\bibitem{luo1990}
+G.~X. Luo and A.~Semlyen, ``Efficient load flow for large weakly meshed
+  networks,'' \emph{IEEE Transactions on Power Systems}, vol.~5, no.~4, pp.
+  1309--1316, Nov 1990. [Online]. Available:
+  \url{https://doi.org/10.1109/59.99382}
+
+\bibitem{rajicic1994}
+D.~Raji\v{c}i\'{c}, R.~Ackovski, and R.~Taleski, ``Voltage correction power flow,''
+  \emph{IEEE Transactions on Power Delivery}, vol.~9, no.~2, pp. 1056--1062,
+  Apr 1994. [Online]. Available: \url{https://doi.org/10.1109/61.296308}
+
+\bibitem{rajicic1998}
+D.~Raji\v{c}i\'{c} and R.~Taleski, ``Two novel methods for radial and weakly
+  meshed network analysis,'' \emph{Electric Power Systems Research}, vol.~48,
+  no.~2, pp. 79 -- 87, 1998. [Online]. Available:
+  \url{//www.sciencedirect.com/science/article/pii/S0378779698000674}
 
 \bibitem{wood1996}
 A.~J. Wood and B.~F. Wollenberg, \emph{Power Generation, Operation, and
