@@ -33,19 +33,34 @@ while ~isempty(f) && iter <= nl
     mt = ismember(t,mpc.bus_order);
     is_loop = mf & mt;
     % Add branch to loop and delete it from the list
-    mpc.loop = [mpc.loop; branch_number(is_loop)];
-    mf(is_loop) = [];
-    mt(is_loop) = [];
-    f(is_loop) = [];
-    t(is_loop) = [];
-    branch_number(is_loop) = [];
-    % Add buses to bus_order
-    mpc.bus_order = [mpc.bus_order; t(mf)];
-    % Add branch to branch_order and delete it from the list
-    mpc.branch_order = [mpc.branch_order; branch_number(mf)];
-    f(mf) = [];
-    t(mf) = [];
-    branch_number(mf) = [];
+    if any(is_loop)
+        mpc.loop = [mpc.loop; branch_number(is_loop)];
+        mf(is_loop) = [];
+%         mt(is_loop) = [];
+        f(is_loop) = [];
+        t(is_loop) = [];
+        branch_number(is_loop) = [];
+    end
+    % Add unique buses to bus_order
+    if any(mf)
+        u = unique(t(mf)); % unique buses
+        [junk,i] = intersect(t.*mf,u); % first occurence of unique buses in t
+        mpc.bus_order = [mpc.bus_order; t(i)];
+        % Add branch to branch_order and delete it from the list
+        mpc.branch_order = [mpc.branch_order; branch_number(i)];
+        mf(i) = [];
+%         mt(i) = [];
+        f(i) = [];
+        t(i) = [];
+        branch_number(i) = [];
+    end
+    % Add any remaining branch to loop and delete it from the list
+    if any(mf)
+        mpc.loop = [mpc.loop; branch_number(mf)];
+        f(mf) = [];
+        t(mf) = [];
+        branch_number(mf) = [];
+    end
     % For each of the "to" buses that are in bus_order,
     % add the corresponding "from" buses to it. If both "from" and "to" are
     % in bus_order, the branch is forming loop. Add corresponding branch
@@ -54,19 +69,34 @@ while ~isempty(f) && iter <= nl
     mt = ismember(t,mpc.bus_order);
     is_loop = mf & mt;
     % Add branch to loop and delete it from the list
-    mpc.loop = [mpc.loop; branch_number(is_loop)];
-    mt(is_loop) = [];
-    mf(is_loop) = [];
-    f(is_loop) = [];
-    t(is_loop) = [];
-    branch_number(is_loop) = [];
-    % Add buses to bus_order
-    mpc.bus_order = [mpc.bus_order; f(mt)];
-    % Add branch to branch_order and delete it from the list
-    mpc.branch_order = [mpc.branch_order; branch_number(mt)];
-    f(mt) = [];
-    t(mt) = [];
-    branch_number(mt) = [];
+    if any(is_loop)
+        mpc.loop = [mpc.loop; branch_number(is_loop)];
+        mt(is_loop) = [];
+%         mf(is_loop) = [];
+        f(is_loop) = [];
+        t(is_loop) = [];
+        branch_number(is_loop) = [];
+    end
+    % Add unique buses to bus_order
+    if any(mt)
+        u = unique(f(mt)); % unique buses
+        [junk,i] = intersect(f.*mt,u); % first occurence of unique buses in f
+        mpc.bus_order = [mpc.bus_order; f(i)];
+        % Add branch to branch_order and delete it from the list
+        mpc.branch_order = [mpc.branch_order; branch_number(i)];
+%         mf(i) = [];
+        mt(i) = [];
+        f(i) = [];
+        t(i) = [];
+        branch_number(i) = [];
+    end
+    % Add any remaining branch to loop and delete it from the list
+    if any(mt)
+        mpc.loop = [mpc.loop; branch_number(mt)];
+        f(mt) = [];
+        t(mt) = [];
+        branch_number(mt) = [];
+    end
     iter = iter + 1;
 end
 if ~isempty(f)
