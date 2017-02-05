@@ -91,8 +91,9 @@ while success == 0 && iter < iter_max
         if ~isempty(pv)
             DE = (Vg./abs(V(pv))-1).*real(V(pv)); % Rajicic (VCPF)
             DD = Bpv * DE;
+            DC = DD .* imag(V(pv))./real(V(pv));
             if vcorr
-                V_corr = make_vcorr(DD,pv,nb,nl,f,Zb);
+                V_corr = make_vcorr(DC+1j*DD,pv,nb,nl,f,Zb);
                 V = V + V_corr;
             end
             DQ = DD .* abs(V(pv)).^2 ./ real(V(pv));

@@ -104,13 +104,13 @@ iter_expected{1} = {
 iter_expected{2} = {
 % pf.radial.vcorr = 1
            'none'    'NR' 'PQSUM' 'ISUM' 'YSUM'
-     'case4_dist'      3      14     13     11
-         'case18'      4      20     23     18
-         'case22'      4      10     23     23
-       'case33bw'      4      10     14     14
-         'case69'      4      12     17     17
-         'case85'      5      11     16     16
-        'case141'      5      10     13     13
+     'case4_dist'      3       7      6      7
+         'case18'      4      10     12     12
+         'case22'      4      12     14     14
+       'case33bw'      4       8     11     11
+         'case69'      4      13     17     17
+         'case85'      5       9     13     13
+        'case141'      5       9     12     12
 };
 iter_pv = zeros(size(casefile,1),size(method,1)+1,2);
 for i = 1:length(casefile)
