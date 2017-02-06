@@ -5427,13 +5427,24 @@ name & description \\
 \toprule
 name & description \\
 \midrule
+\code{calc\_v\_i\_sum}	& implementation of current summation power flow solver\tnote{\dag}	\\
+\code{calc\_v\_pq\_sum}	& implementation of power summation power flow solver\tnote{\dag}	\\
+\code{calc\_v\_y\_sum}	& implementation of admittance summation power flow solver\tnote{\dag}	\\
 \code{dcpf}	& implementation of DC power flow solver	\\
 \code{fdpf}	& implementation of fast-decoupled power flow solver	\\
 \code{gausspf}	& implementation of Gauss-Seidel power flow solver	\\
+\code{make\_vcorr}	& calculate voltage corrections for radial power flow\tnote{\dag}	\\
+\code{make\_zpv}	& form loop impedance for PV bus handling in radial power flow\tnote{\dag}	\\
 \code{newtonpf}	& implementation of Newton-method power flow solver	\\
+\code{order\_radial}	& performs oriented ordering of buses and branches for radial power flow\tnote{\dag}	\\
 \code{pfsoln}	& computes branch flows, generator reactive power (and real power for slack bus), updates \bus{}, \gen{}, \branch{} matrices with solved values	\\
+\code{radial\_pf}	& wrapper for backward/forward sweep power flow solvers\tnote{\dag}	\\
 \bottomrule
 \end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [\dag] {For radial networks only.}
+\end{tablenotes}
 \end{threeparttable}
 \end{table}
 
@@ -5828,7 +5839,7 @@ unless noted otherwise.
 %\renewcommand{\arraystretch}{1.2}
 \centering
 \begin{threeparttable}
-\caption{Small Test Cases}
+\caption{Small Transmission System Test Cases}
 \label{tab:casefiles}
 \footnotesize
 \begin{tabular}{ll}
@@ -5847,7 +5858,6 @@ name & description \\
 \code{case\_ieee30}	& IEEE 30-bus case	\\
 \code{case30pwl}	& \code{case30} with piecewise linear costs	\\
 \code{case30Q}	& \code{case30} with reactive power costs	\\
-\code{case33bw}	& 33-bus radial distribution system from Baran and Wu	\\
 \code{case39}	& 39-bus New England case	\\
 \code{case57}	& IEEE 57-bus case	\\
 \code{case118}	& IEEE 118-bus case	\\
@@ -5860,6 +5870,29 @@ name & description \\
  \scriptsize
  \item [*] {Please cite reference \cite{birchfield2017} when publishing results based on this data.}
 \end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{Small Radial Distribution System Test Cases}
+\label{tab:distcasefiles}
+\footnotesize
+\begin{tabular}{ll}
+\toprule
+name & description \\
+\midrule
+\code{case4\_dist}	& 4-bus example radial distribution system case	\\
+\code{case18}	& 18-bus radial distribution system from Grady, Samotyj and Noyola	\\
+\code{case22}	& 22-bus radial distribution system from Raju, Murthy and Ravindra	\\
+\code{case33bw}	& 33-bus radial distribution system from Baran and Wu	\\
+\code{case69}	& 69-bus radial distribution system from Das	\\
+\code{case85}	& 85-bus radial distribution system from Das, Kothari and Kalam	\\
+\code{case141}	& 141-bus radial distribution system from Khodr, Olsina, De Jesus and Yusta	\\
+\bottomrule
+\end{tabular}
 \end{threeparttable}
 \end{table}
 
@@ -6068,6 +6101,7 @@ name & description \\
 \code{t\_psse}	& runs tests for \code{psse2mpc} and related functions	\\
 \code{t\_qps\_matpower}	& runs tests for \code{qps\_matpower}	\\
 \code{t\_pf}	& runs tests for AC and DC power flow	\\
+\code{t\_pf\_radial}	& runs tests for AC power flow for radial distribution systems	\\
 \code{t\_runmarket}	& runs tests for \code{runmarket}	\\
 \code{t\_scale\_load}	& runs tests for \code{scale\_load}	\\
 \code{t\_total\_load}	& runs tests for \code{total\_load}	\\
