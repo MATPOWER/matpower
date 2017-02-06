@@ -4,7 +4,7 @@ function mpc = order_radial(mpc)
 %   mpc = order_radial(mpc)
 %
 %   orders the branches by the the principle of oriented ordering:
-%   indicies of sending nodes are smaller then the indicies of the
+%   indicies of sending nodes are smaller than the indicies of the
 %   receiving nodes. The branch index is equal to the index of their
 %   receiving node. The ordering is taken from:
 %   D. Rajicic, R. Ackovski and R. Taleski, "Voltage correction power flow,"

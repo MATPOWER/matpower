@@ -1,5 +1,5 @@
 function mpc = case22
-%CASE22  Power flow data for 69 bus distribution system
+%CASE22  Power flow data for 22 bus distribution system
 %    Please see CASEFORMAT for details on the case file format.
 %
 %    Data from ...
