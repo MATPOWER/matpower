@@ -169,6 +169,12 @@ else                                %% AC formulation
                 solver = 'fast-decoupled, BX';
             case 'GS'
                 solver = 'Gauss-Seidel';
+            case 'PQSUM'
+                solver = 'Power Summation';
+            case 'ISUM'
+                solver = 'Current Summation';
+            case 'YSUM'
+                solver = 'Admittance Summation';
             otherwise
                 solver = 'unknown';
         end
@@ -215,13 +221,22 @@ else                                %% AC formulation
                                     struct('pw', [], 'qw', []));
                 end
                 [V, success, iterations] = gausspf(Ybus, Sbus([]), V0, ref, pv, pq, mpopt);
+            case {'PQSUM', 'ISUM', 'YSUM'}
+                [mpc, success, iterations] = radial_pf(mpc,mpopt);
             otherwise
                 error('runpf: Only Newton''s method, fast-decoupled, and Gauss-Seidel power flow algorithms currently implemented.');
         end
         its = its + iterations;
         
         %% update data matrices with solution
-        [bus, gen, branch] = pfsoln(baseMVA, bus, gen, branch, Ybus, Yf, Yt, V, ref, pv, pq, mpopt);
+        switch alg
+            case {'NR', 'FDXB', 'FDBX', 'GS'}
+                [bus, gen, branch] = pfsoln(baseMVA, bus, gen, branch, Ybus, Yf, Yt, V, ref, pv, pq, mpopt);
+            case {'PQSUM', 'ISUM', 'YSUM'}
+                bus = mpc.bus;
+                gen = mpc.gen;
+                branch = mpc.branch;
+        end
         
         if qlim             %% enforce generator Q limits
             %% find gens with violated Q constraints
