@@ -19,14 +19,13 @@ Since last release
     `pf.radial.max_it` and `pf.radial.vcorr`. See Section 4.3 on
     "Distribution Power Flow" in the manual for details.
     *Thanks to Mirko Todorovski.*
-  - Add 6 new radial distribution system cases.
+  - Add 6 new radial distribution system cases. *Thanks to Mirko Todorovski.*
     - `case4_dist`
     - `case18`
     - `case22`
     - `case69`
     - `case85`
     - `case141`
-  *Thanks to Mirko Todorovski.*
 
 #### 1/26/17
   - Add sources for MATPOWER User's Manual to `docs/src`.
@@ -99,6 +98,10 @@ Version 6.0b2 - *Nov 1, 2016*
 
 #### 11/1/16
   - Released 6.0b2.
+
+#### 10/28/16
+  - Added new general event handling mechanism to continuation power flow
+    (CPF), including handling of generator real and reactive power limits.
 
 #### 10/26/16
   - Include support for MOSEK 8, some algorithms eliminated, others changed
