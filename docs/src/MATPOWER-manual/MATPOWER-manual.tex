@@ -2048,7 +2048,7 @@ The difference between the bus voltage angle $\theta_f$ at the \emph{from} end o
 \subsection{Solvers}
 \label{sec:solvers}
 
-Early versions of \matpower{} relied on \matlab{}'s \ot{}~\cite{ot} to provide the NLP and QP solvers needed to solve the AC and DC OPF problems, respectively. While they worked reasonably well for very small systems, they did not scale well to larger networks. Eventually, optional packages with additional solvers were added to improve performance, typically relying on \matlab{} extension (MEX) files implemented in Fortran or C and pre-compiled for each machine architecture. Some of these MEX files are distributed as optional packages due to differences in terms of use. For DC optimal power flow, there is a MEX build~\cite{bpmpdmex} of the high performance interior point BPMPD solver~\cite{meszaros1996} for LP/QP problems. For the AC OPF problem, the MINOPF~\cite{minopf} and TSPOPF~\cite{tspopf} packages provide solvers suitable for much larger systems. The former is based on MINOS~\cite{murtagh} and the latter includes the primal-dual interior point and trust region based augmented Lagrangian methods described in~\cite{wang2007a}. \matpower{} version~4 and later also includes the option to use the open-source \ipopt{} solver\footnote{Available from \url{http://www.coin-or.org/projects/Ipopt.xml}.} for solving both AC and DC OPFs, based on the \matlab{} MEX interface to \ipopt{}\footnote{See \url{https://projects.coin-or.org/Ipopt/wiki/MatlabInterface}.}. It also includes the option to use \cplex{}\footnote{See \url{http://www.ibm.com/software/integration/optimization/cplex-optimizer/}.} or \mosek{}\footnote{See \url{http://www.mosek.com/}.} for DC OPFs. \matpower{}~4.1 added the option to use \knitro{}~\cite{knitro}\footnote{See \url{http://www.ziena.com/}.} for AC OPFs and the \gurobi{} Optimizer\footnote{See \url{http://www.gurobi.com/}.} for DC OPFs and \matpower{}~5 added \glpk{} and 5.1 added \clp{}. See Appendix~\ref{app:optional_packages} for more details on these optional packages.
+Early versions of \matpower{} relied on \matlab{}'s \ot{}~\cite{ot} to provide the NLP and QP solvers needed to solve the AC and DC OPF problems, respectively. While they worked reasonably well for very small systems, they did not scale well to larger networks. Eventually, optional packages with additional solvers were added to improve performance, typically relying on \matlab{} extension (MEX) files implemented in Fortran or C and pre-compiled for each machine architecture. Some of these MEX files are distributed as optional packages due to differences in terms of use. For DC optimal power flow, there is a MEX build~\cite{bpmpdmex} of the high performance interior point BPMPD solver~\cite{meszaros1996} for LP/QP problems. For the AC OPF problem, the MINOPF~\cite{minopf} and TSPOPF~\cite{tspopf} packages provide solvers suitable for much larger systems. The former is based on MINOS~\cite{murtagh} and the latter includes the primal-dual interior point and trust region based augmented Lagrangian methods described in~\cite{wang2007a}. \matpower{} version~4 and later also includes the option to use the open-source \ipopt{} solver\footnote{Available from \url{http://www.coin-or.org/projects/Ipopt.xml}.} for solving both AC and DC OPFs, based on the \matlab{} MEX interface to \ipopt{}\footnote{See \url{https://projects.coin-or.org/Ipopt/wiki/MatlabInterface}.}. It also includes the option to use \cplex{}\footnote{See \url{http://www.ibm.com/software/integration/optimization/cplex-optimizer/}.} or \mosek{}\footnote{See \url{http://www.mosek.com/}.} for DC OPFs. \matpower{}~4.1 added the option to use \knitro{}~\cite{knitro}\footnote{See \url{http://www.ziena.com/}.} for AC OPFs and the \gurobi{} Optimizer~\cite{gurobi}\footnote{See \url{http://www.gurobi.com/}.} for DC OPFs and \matpower{}~5 added \glpk{}~\cite{glpk} and 5.1 added \clp{}~\cite{clp}. See Appendix~\ref{app:optional_packages} for more details on these optional packages.
 
 Beginnning with version~4, \matpower{} also includes its own primal-dual interior point method implemented in pure-\matlab{} code, derived from the MEX implementation of the algorithms described in~\cite{wang2007a}. This solver is called \mips{} (\mipsname{}) and is described in more detail in Appendix~\ref{app:mips}. If no optional packages are installed, \mips{} will be used by default for both the AC OPF and as the QP solver used by the DC OPF. The AC OPF solver also employs a unique technique for efficiently forming the required Hessians via a few simple matrix operations~\cite{zimmerman2010b}. This solver has application to general nonlinear optimization problems outside of \matpower{} and can be called directly as \code{mips}. There is also a convenience wrapper function called \code{qps\_mips} making it trivial to set up and solve LP and QP problems, with an interface similar to \code{quadprog} from the \matlab{} \ot{}.
 
@@ -6521,7 +6521,7 @@ When \glpk{} is installed, either as part of Octave or with a MEX interface for 
 \subsection{\gurobi{} -- High-performance LP and QP Solvers}
 \label{app:gurobi}
 
-\gurobi{} is a collection of optimization tools that includes high-performance solvers for large-scale linear programming (LP) and quadratic programming (QP) problems, among others. The project was started by some former \cplex{} developers. More information is available at \url{http://www.gurobi.com/}.
+\gurobi{}~\cite{gurobi} is a collection of optimization tools that includes high-performance solvers for large-scale linear programming (LP) and quadratic programming (QP) problems, among others. The project was started by some former \cplex{} developers. More information is available at \url{http://www.gurobi.com/}.
 
 Although \gurobi{} is a commercial package, at the time of this writing their is a free academic license available. See \url{http://www.gurobi.com/html/academic.html} for more details.
 
@@ -6579,7 +6579,7 @@ It can also be used to solve general LP and QP problems via \matpower{}'s common
 \subsection{\ot{} -- LP, QP, NLP and MILP Solvers}
 \label{app:ot}
 
-\matlab{}'s \ot{}~\cite{ot}, available from The MathWorks, provides a number of high-performance solvers that \matpower{} can take advantage of.
+\matlab{}'s \ot{}~\cite{ot, otug}, available from The MathWorks, provides a number of high-performance solvers that \matpower{} can take advantage of.
 
 It includes \code{fmincon} for non-linear programming problems (NLP), and \code{linprog} and \code{quadprog} for linear programming (LP) and quadratic programming (QP) problems, respectively.
 For mixed-integer linear programs (MILP), it provides \code{intlingprog}.
@@ -6592,7 +6592,7 @@ The solution algorithm used by \code{fmincon} for NLP problems can be controlled
 See Table~\ref{tab:fminconoptions} for other \matpower{} options related to \code{fmincon}.
 For \code{linprog}, \code{quadprog} and \code{intlingprog}, the corresponding \matpower{} option can be used to pass in native \ot{} options directly to the solver.
 For example, to set the LP solver to use a dual simplex method, simply set \matpower{}'s \codeq{linprog.Algorithm} option to \codeq{dual-simplex}.
-For details on the full set of \ot{} options, please refer to their documentation.\footnote{See \url{http://www.mathworks.com/help/optim/} and \cite{ot2015b}.}
+For details on the full set of \ot{} options, please refer to their documentation.\footnote{See \url{http://www.mathworks.com/help/optim/} and \cite{otug}.}
 
 The \ot{} can also be used to solve general LP and QP problems via \matpower{}'s common QP solver interface \code{qps\_matpower}, or MILP problems via \code{miqps\_matpower}, with the algorithm option set to \codeq{OT}, or by calling \code{qps\_ot} or \code{miqps\_ot} directly.
 
@@ -7255,10 +7255,6 @@ H.~Wang, C.~E. Murillo-S{\'a}nchez, R.~D. Zimmerman, and R.~J. Thomas, ``On
 \emph{Optimization Toolbox}, The MathWorks, Inc.
   [Online]. Available: \url{http://www.mathworks.com/products/optimization/}.
 
-\bibitem{ot2015b}
-\emph{Optimization Toolbox Users's Guide}, The MathWorks, Inc., 2015.
-  [Online]. Available: \url{http://www.mathworks.com/help/releases/R2015b/pdf_doc/optim/optim_tb.pdf}.
-
 \bibitem{bpmpdmex}
 BPMPD\_MEX. [Online]. Available:
   \url{http://www.pserc.cornell.edu/bpmpd/}.
@@ -7274,6 +7270,22 @@ MINOPF. [Online]. Available:
 \bibitem{murtagh}
 B.~A. Murtagh and M.~A. Saunders, \emph{MINOS 5.5 User's Guide}, Stanford
   University Systems Optimization Laboratory Technical Report SOL83-20R.
+
+\bibitem{knitro}
+R.~H.~Byrd, J.~Nocedal, and R.~A.~Waltz, ``KNITRO: An Integrated Package for Nonlinear Optimization'', \emph{Large-Scale Nonlinear Optimization}, G. di Pillo and M. Roma, eds, pp. 35-59 (2006), Springer-Verlag.\\
+\url{http://www.ziena.com/papers/integratedpackage.pdf}
+
+\bibitem{gurobi}
+Gurobi Optimization, Inc., ``Gurobi Optimizer Reference Manual,'' 2016. [Online]. Available:
+  \url{http://www.gurobi.com/}.
+
+\bibitem{glpk}
+GLPK. [Online]. Available:
+  \url{http://www.gnu.org/software/glpk/}.
+
+\bibitem{clp}
+COIN-OR Linear Programming (CLP) Solver. [Online]. Available:
+  \url{http://www.coin-or.org/projects/Clp.xml}.
 
 \bibitem{zimmerman2010b}
 R.~D. Zimmerman, \emph{AC Power Flows, Generalized OPF Costs and their Derivatives using Complex Matrix Notation}, \matpower{} Technical Note 2, February 2010. [Online]. Available: \url{http://www.pserc.cornell.edu/matpower/TN2-OPF-Derivatives.pdf}
@@ -7305,16 +7317,8 @@ P.~Cuffe and A.~Keane, ``Visualizing the Electrical Structure of Power Systems,'
 \bibitem{zimmerman2010a}
 R.~D. Zimmerman, \emph{Uniform Price Auctions and Optimal Power Flow}, \matpower{} Technical Note 1, February 2010. [Online]. Available: \url{http://www.pserc.cornell.edu/matpower/TN1-OPF-Auctions.pdf}
 
-\bibitem{clp}
-COIN-OR Linear Programming (CLP) Solver. [Online]. Available:
-  \url{http://www.coin-or.org/projects/Clp.xml}.
-
 \bibitem{opti}
 J.~Currie and D.~I.~Wilson,``OPTI: Lowering the Barrier Between Open Source Optimizers and the Industrial MATLAB User,'' \emph{Foundations of Computer-Aided Process Operations}, Georgia, USA, 2012.
-
-\bibitem{glpk}
-GLPK. [Online]. Available:
-  \url{http://www.gnu.org/software/glpk/}.
 
 \bibitem{gurobimex}
 Wotao~Yin. \emph{Gurobi Mex: A MATLAB interface for Gurobi}, URL: \url{http://convexoptimization.com/wikimization/index.php/gurobi_mex}, 2009-2011.
@@ -7328,9 +7332,9 @@ O.~Shenk and K.~G\"artner, ``Solving unsymmetric sparse systems of linear equati
 \bibitem{pardiso2}
 A.~Kuzmin, M.~Luisier and O.~Shenk, ``Fast methods for computing selected elements of the Greens function in massively parallel nanoelectronic device simulations,'' in F.~Wolf, B.~Mohr and D.~Mey, editors, \emph{Euro-Par 2013 Parallel Processing}, Vol.~8097, \emph{Lecture Notes in Computer Science}, pp.~533Ð-544, Springer Berlin Heidelberg, 2013.
 
-\bibitem{knitro}
-R.~H.~Byrd, J.~Nocedal, and R.~A.~Waltz, ``KNITRO: An Integrated Package for Nonlinear Optimization'', \emph{Large-Scale Nonlinear Optimization}, G. di Pillo and M. Roma, eds, pp. 35-59 (2006), Springer-Verlag.\\
-\url{http://www.ziena.com/papers/integratedpackage.pdf}
+\bibitem{otug}
+\emph{Optimization Toolbox Users's Guide}, The MathWorks, Inc., 2016.
+  [Online]. Available: \url{http://www.mathworks.com/help/releases/R2016b/pdf_doc/optim/optim_tb.pdf}.
 
 \end{thebibliography}
 
