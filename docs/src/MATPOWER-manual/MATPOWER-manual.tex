@@ -6636,6 +6636,55 @@ Builds are available for Linux (32-bit, 64-bit), Mac OS X (PPC, Intel 32-bit, In
 
 The full release history can be found in \code{docs/CHANGES} or \href{http://www.pserc.cornell.edu/matpower/CHANGES.txt}{online} at \url{http://www.pserc.cornell.edu/matpower/CHANGES.txt}.
 
+\subsection{Version 6.1-dev -- not yet released}
+\label{app:v61}
+
+The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.1.pdf}{\matpower{} 6.1 User's Manual} is available online.\footnote{\url{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.1.pdf}}
+
+\subsubsection*{New Features}
+\begin{itemize}
+\item Three new power flow algorithms for radial distribution systems selected via the three new options for \code{pf.alg}, namely \codeq{PQSUM}, \codeq{ISUM}, \codeq{YSUM}. Also includes new \matpower{} options \code{pf.radial.max\_it} and \code{pf.radial.vcorr}. See Section~\ref{sec:pfdist} on ``Distribution Power Flow'' for details. \emph{Thanks to Mirko Todorovski.}
+\item New \matpower{} installer \code{install\_matpower()} updates Matlab or Octave paths or providing the commands required to so.
+\item Support plotting of multiple nose curves in CPF by allowing option \code{cpf.plot.bus} to take on vector values.
+\item Continuous integration via GitHub and Travis-CI integration.
+\item Include \LaTeX{} source code for \mum{} in \code{docs/src} and for \mostman{} in \code{most/docs/src}.
+\end{itemize}
+
+\subsubsection*{New Case Files}
+\begin{itemize}
+\item Six new radial distribution system cases. \emph{Thanks to Mirko Todorovski.}
+    \begin{itemize}
+        \setlength{\itemsep}{6pt}
+        \setlength{\parskip}{-9pt}
+%        \setlength{\parsep}{-3pt}
+        \item \code{case4\_dist}
+        \item \code{case18}
+        \item \code{case22}
+        \item \code{case69}
+        \item \code{case85}
+        \item \code{case141}
+    \end{itemize}
+\end{itemize}
+
+\subsubsection*{Other Improvements}
+\begin{itemize}
+\item Add line for curtailed load to \code{case\_info()} output.
+\item Change default implementation of active power line flow constraints (\code{opf.flow\_lim = }\codeq{P}) to use flow directly, rather than square of flow, which is now a separate option, namely \code{opf.flow\_lim = }\codeq{2}. \emph{Thanks to Nico Meyer-Huebner}.
+\end{itemize}
+
+\subsubsection*{Bugs Fixed}
+\begin{itemize}
+\item Fix bug in conversion of older versions of \matpower{} options.
+\item Fix bug \#4 where some Q limits were not being respected by CPF when buses were converted to PQ by initial power flow run. \emph{Thanks to Shruti Rao.}
+\end{itemize}
+
+\subsubsection*{Incompatible Changes}
+\begin{itemize}
+\item Move included \matpower{} case files to new \code{data} subdirectory.
+\end{itemize}
+
+
+
 \subsection{Version 6.0 -- released Dec 16, 2016}
 \label{app:v60}
 
