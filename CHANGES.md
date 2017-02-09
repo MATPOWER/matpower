@@ -12,7 +12,7 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
-#### 2/6/17
+#### 2/9/17
   - Add three new power flow algorithms for radial distribution
     systems selected via the three new options for `pf.alg`, namely
     `PQSUM`, `ISUM`, `YSUM`. Also includes new MATPOWER options
@@ -26,7 +26,7 @@ Since last release
     - `case69`
     - `case85`
     - `case141`
-    *Thanks to Mirko Todorovski.*
+  *Thanks to Mirko Todorovski.*
 
 #### 1/26/17
   - Add sources for MATPOWER User's Manual to `docs/src`.
