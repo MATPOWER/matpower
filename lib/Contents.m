@@ -1,5 +1,5 @@
 % MATPOWER
-%   Version 6.0      16-Dec-2016
+%   Version 6.1-dev     11-Feb-2017
 %
 %   MATPOWER is a package of Matlab M-files for solving power flow and
 %   optimal power flow problems. It is intended as a simulation tool for
@@ -15,7 +15,7 @@
 %   MATPOWER is covered by the 3-clause BSD License (see LICENSE for details).
 
 %   MATPOWER
-%   Copyright (c) 2004-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2017, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
