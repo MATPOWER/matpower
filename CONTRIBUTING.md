@@ -19,7 +19,7 @@ developer community managing and developing this open source project.
 Repository Organization
 -----------------------
 
-This repository is for the MATPOWER core distribution organized in the
+This repository, for the MATPOWER core distribution, is organized in the
 following directories:
 - `data` - MATPOWER case files
 - `docs` - PDF version of User's Manuals and other documentation
@@ -100,7 +100,7 @@ Submitting Additions or Modifications to the Code
 Code contributions are a great help and are always welcome. This includes
 bug fixes, enhancements to existing functionality, new features or tests,
 and even edits to the included documentation. It is always a good idea to
-discuss your ideas first on the the [developer mailing list][6], especially
+discuss your ideas first on the [developer mailing list][6], especially
 for larger or more complex contributions.
 
 Contributions should be submitted as pull requests, as described below.

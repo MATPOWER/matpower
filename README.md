@@ -212,7 +212,8 @@ Publications and Tech Notes
 Citing MATPOWER
 ---------------
 
-We request that publications derived from the use of MATPOWER explicitly acknowledge that fact by citing [reference \[1\]][13] above, namely:
+We request that publications derived from the use of MATPOWER explicitly
+acknowledge that fact by citing [reference \[1\]][13] above, namely:
 
 >   R. D. Zimmerman, C. E. Murillo-Sanchez, and R. J. Thomas,
     "MATPOWER: Steady-State Operations, Planning and Analysis Tools
