@@ -33,11 +33,7 @@ end
 %% options
 tol     = mpopt.pf.tol;
 max_it  = mpopt.pf.fd.max_it;
-if have_fcn('matlab') && have_fcn('matlab', 'vnum') < 7.3
-    lu_vec = 0;     %% lu(..., 'vector') syntax not supported
-else
-    lu_vec = 1;
-end
+lu_vec  = have_fcn('lu_vec');
 
 %% initialize
 converged = 0;
