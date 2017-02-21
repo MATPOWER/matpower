@@ -2,7 +2,7 @@ function t_mplinsolve(quiet)
 %T_MPLINSOLVE  Tests of MIPS/MATPOWER linear solvers.
 
 %   MIPS
-%   Copyright (c) 2015-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2017, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MIPS.
@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-t_begin(4, quiet);
+t_begin(9, quiet);
 
 ijs = [
     1 1 1205.63;
@@ -405,6 +405,26 @@ t_is(x, ex, 12, t);
 
 t = '\';
 x = mplinsolve(A, b, '\', []);
+t_is(x, ex, 12, t);
+
+t = 'LU';
+x = mplinsolve(A, b, 'LU', []);
+t_is(x, ex, 12, t);
+
+t = 'LU_GP';
+x = mplinsolve(A, b, 'LU_GP', []);
+t_is(x, ex, 12, t);
+
+t = 'LU_GP0';
+x = mplinsolve(A, b, 'LU_GP0', []);
+t_is(x, ex, 12, t);
+
+t = 'LU_AMD';
+x = mplinsolve(A, b, 'LU_AMD', []);
+t_is(x, ex, 12, t);
+
+t = 'LU_AMD0';
+x = mplinsolve(A, b, 'LU_AMD0', []);
 t_is(x, ex, 12, t);
 
 t = 'PARDISO';
