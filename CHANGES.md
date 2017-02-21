@@ -12,6 +12,13 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 2/21/17
+  - In the Newton power flow, use explicit LU decomposition with
+    back-substitution to calculate the Newton update step. Under Matlab
+    use Gilbert-Peierls and AMD reordering for a 1.3x to 2.0x speedup,
+    with up to 1.1x speedup observed on Octave.
+    *Thanks to Jose Luis Marin.*
+
 #### 2/9/17
   - Add three new power flow algorithms for radial distribution
     systems selected via the three new options for `pf.alg`, namely
