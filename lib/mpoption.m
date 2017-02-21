@@ -532,8 +532,8 @@ if have_opt0
                 opt0.opf.use_vg = opt_d.opf.use_vg;
             end
             if opt0.v <= 12         %% convert version 12 to 13
-                opt0.radial.max_it  = opt_d.radial.max_it;
-                opt0.radial.vcorr   = opt_d.radial.vcorr;
+                opt0.pf.radial.max_it   = opt_d.pf.radial.max_it;
+                opt0.pf.radial.vcorr    = opt_d.pf.radial.vcorr;
             end
             opt0.v = v;
         end
