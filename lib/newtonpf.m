@@ -33,13 +33,16 @@ end
 %% options
 tol         = mpopt.pf.tol;
 max_it      = mpopt.pf.nr.max_it;
-if have_fcn('matlab')
-    lin_solver = 'LU_GP';
-else    %% Octave
-    if length(V0) < 1000
-        lin_solver = '\';
-    else
-        lin_solver = 'LU';
+lin_solver  = mpopt.pf.nr.lin_solver;
+if isempty(lin_solver)      %% default, attempt to pick fastest option
+    if have_fcn('matlab')
+        lin_solver = 'LU_GP';
+    else    %% Octave
+        if length(V0) < 1000
+            lin_solver = '\';
+        else
+            lin_solver = 'LU';
+        end
     end
 end
 

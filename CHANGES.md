@@ -18,6 +18,8 @@ Since last release
     use Gilbert-Peierls and AMD reordering for a 1.3x to 2.0x speedup,
     with up to 1.1x speedup observed on Octave.
     *Thanks to Jose Luis Marin.*
+  - Add new `pf.nr.lin_solver` option to control the linear solver used
+    to compute the Newton update step in the Newton-Raphson power flow.
 
 #### 2/9/17
   - Add three new power flow algorithms for radial distribution

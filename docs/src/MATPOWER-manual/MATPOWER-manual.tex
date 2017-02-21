@@ -1250,6 +1250,14 @@ name & default & description \\
 \end{tabular} 	\\
 \code{pf.tol}	& $10^{-8}$	& termination tolerance on per unit P and Q dispatch	\\
 \code{pf.nr.max\_it}	& 10	& maximum number of iterations for Newton's method	\\
+\code{pf.nr.lin\_solver}	& \codeq{}	& linear solver option for \code{mplinsolve} for computing Newton update step 	\\
+&& \begin{tabular}{c @{ -- } p{0.57\textwidth}}
+\codeq{} & default to \codeq{LU} for Octave, \codeq{LU\_GP} for Matlab \\
+\codeq{\textbackslash} & built-in backslash operator \\
+\codeq{LU} & explicit default LU decomposition and back substitution \\
+\codeq{LU\_GP} & Gilbert-Peierls algorithm for LU Decomposition with approximate minimum degree (AMD) reordering \\
+\codeq{LU\_AMD} & default LU decomposition with AMD reordering \\
+\end{tabular} 	\\
 \code{pf.fd.max\_it}	& 30	& maximum number of iterations for fast-decoupled method	\\
 \code{pf.gs.max\_it}	& 1000	& maximum number of iterations for Gauss-Seidel method	\\
 \code{pf.radial.max\_it}	& 20	& maximum number of iterations for radial power flow methods	\\
@@ -4475,6 +4483,14 @@ name & default & description \\
 \end{tabular} 	\\
 \code{pf.tol}	& $10^{-8}$	& termination tolerance on per unit P and Q dispatch	\\
 \code{pf.nr.max\_it}	& 10	& maximum number of iterations for Newton's method	\\
+\code{pf.nr.lin\_solver}	& \codeq{}	& linear solver option for \code{mplinsolve} for computing Newton update step 	\\
+&& \begin{tabular}{c @{ -- } p{0.57\textwidth}}
+\codeq{} & default to \codeq{LU} for Octave, \codeq{LU\_GP} for Matlab \\
+\codeq{\textbackslash} & built-in backslash operator \\
+\codeq{LU} & explicit default LU decomposition and back substitution \\
+\codeq{LU\_GP} & Gilbert-Peierls algorithm for LU Decomposition with approximate minimum degree (AMD) reordering \\
+\codeq{LU\_AMD} & default LU decomposition with AMD reordering \\
+\end{tabular} 	\\
 \code{pf.fd.max\_it}	& 30	& maximum number of iterations for fast-decoupled method	\\
 \code{pf.gs.max\_it}	& 1000	& maximum number of iterations for Gauss-Seidel method	\\
 \code{pf.radial.max\_it}	& 20	& maximum number of iterations for radial power flow methods	\\
