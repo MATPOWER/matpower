@@ -4,11 +4,24 @@ Change history for MIPS
 Since last release
 ------------------
 
-#### 2/21/17
-  - Add solver options `'LU'` for explicit LU decomposition with back
-    substitution, `'LU_AMD'` for LU decomposition with approximate
-    minimum degree (AMD) reordering, and `'LU_GP'` for the Gilbert-Peierls
-    algorithm for LU decompostion with AMD reordering.
+#### 3/16/17
+  - Move ``mplinsolve`` PARDISO options to `opt.pardiso` in preparation
+    for adding options for other solvers.
+  - Add ``mplinsolve`` solver option `'LU'` for explicit LU decomposition
+    with back substitution, with options in ``opt.lu`` for specifying the
+    number of output arguments in call to ``lu`` (``opt.lu.nout``),
+    whether to use permutation vectors or matrices (``opt.lu.vec`) and
+    pivot threshold options (``opt.lu.thresh``). The following values for
+    the `solver` argument act as shortcuts for specifying various options:
+      - ``LU3``
+      - ``LU3a``
+      - ``LU4``
+      - ``LU5``
+      - ``LU3m``
+      - ``LU3am``
+      - ``LU4m``
+      - ``LU5m``
+    See ``help mplinsolve`` for details.
     *Thanks to Jose Luis Marin.*
 
 #### 12/21/16
