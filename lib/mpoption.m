@@ -67,14 +67,15 @@ function opt = mpoption(varargin)
 %   pf.nr.max_it            10          maximum number of iterations for
 %                                       Newton's method
 %   pf.nr.lin_solver        ''          linear solver passed to MPLINSOLVE to
-%                                       solve Newton update step (see
-%                                       MPLINSOLVE for list of all options)
-%       [ ''      - default to 'LU' for Octave, 'LU_GP' for Matlab          ]
+%                                       solve Newton update step
+%       [ ''      - default to '\' for small systems, 'LU3' for larger ones ]
 %       [ '\'     - built-in backslash operator                             ]
 %       [ 'LU'    - explicit default LU decomposition and back substitution ]
-%       [ 'LU_GP' - Gilbert-Peierls algorithm for LU Decomposition with     ]
+%       [ 'LU3'   - 3 output arg form of LU, Gilbert-Peierls algorithm with ]
 %       [           approximate minimum degree (AMD) reordering             ]
-%       [ 'LU_AMD'- default LU decomposition with AMD reordering            ]
+%       [ 'LU4'   - 4 output arg form of LU, UMFPACK solver (same as 'LU')  ]
+%       [ 'LU5'   - 5 output arg form of LU, UMFPACK solver, w/row scaling  ]
+%       [       (see MPLINSOLVE for complete list of all options)           ]
 %   pf.fd.max_it            30          maximum number of iterations for
 %                                       fast decoupled method
 %   pf.gs.max_it            1000        maximum number of iterations for

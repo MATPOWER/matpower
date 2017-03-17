@@ -1250,13 +1250,15 @@ name & default & description \\
 \end{tabular} 	\\
 \code{pf.tol}	& $10^{-8}$	& termination tolerance on per unit P and Q dispatch	\\
 \code{pf.nr.max\_it}	& 10	& maximum number of iterations for Newton's method	\\
-\code{pf.nr.lin\_solver}	& \codeq{}	& linear solver option for \code{mplinsolve} for computing Newton update step 	\\
+\code{pf.nr.lin\_solver}	& \codeq{}	& linear solver option for \code{mplinsolve} for computing Newton update step \\
+&& (see \code{mplinsolve} for complete list of all options)	\\
 && \begin{tabular}{c @{ -- } p{0.57\textwidth}}
-\codeq{} & default to \codeq{LU} for Octave, \codeq{LU\_GP} for Matlab \\
+\codeq{} & default to \codeq{\textbackslash} for small systems, \codeq{LU3} for larger ones \\
 \codeq{\textbackslash} & built-in backslash operator \\
 \codeq{LU} & explicit default LU decomposition and back substitution \\
-\codeq{LU\_GP} & Gilbert-Peierls algorithm for LU Decomposition with approximate minimum degree (AMD) reordering \\
-\codeq{LU\_AMD} & default LU decomposition with AMD reordering \\
+\codeq{LU3} & 3 output arg form of \code{lu}, Gilbert-Peierls algorithm with approximate minimum degree (AMD) reordering \\
+\codeq{LU4} & 4 output arg form of \code{lu}, UMFPACK solver (same as \codeq{LU}) \\
+\codeq{LU5} & 5 output arg form of \code{lu}, UMFPACK solver w/row scaling \\
 \end{tabular} 	\\
 \code{pf.fd.max\_it}	& 30	& maximum number of iterations for fast-decoupled method	\\
 \code{pf.gs.max\_it}	& 1000	& maximum number of iterations for Gauss-Seidel method	\\
@@ -4483,13 +4485,15 @@ name & default & description \\
 \end{tabular} 	\\
 \code{pf.tol}	& $10^{-8}$	& termination tolerance on per unit P and Q dispatch	\\
 \code{pf.nr.max\_it}	& 10	& maximum number of iterations for Newton's method	\\
-\code{pf.nr.lin\_solver}	& \codeq{}	& linear solver option for \code{mplinsolve} for computing Newton update step 	\\
+\code{pf.nr.lin\_solver}	& \codeq{}	& linear solver option for \code{mplinsolve} for computing Newton update step \\
+&& (see \code{mplinsolve} for complete list of all options)	\\
 && \begin{tabular}{c @{ -- } p{0.57\textwidth}}
-\codeq{} & default to \codeq{LU} for Octave, \codeq{LU\_GP} for Matlab \\
+\codeq{} & default to \codeq{\textbackslash} for small systems, \codeq{LU3} for larger ones \\
 \codeq{\textbackslash} & built-in backslash operator \\
 \codeq{LU} & explicit default LU decomposition and back substitution \\
-\codeq{LU\_GP} & Gilbert-Peierls algorithm for LU Decomposition with approximate minimum degree (AMD) reordering \\
-\codeq{LU\_AMD} & default LU decomposition with AMD reordering \\
+\codeq{LU3} & 3 output arg form of \code{lu}, Gilbert-Peierls algorithm with approximate minimum degree (AMD) reordering \\
+\codeq{LU4} & 4 output arg form of \code{lu}, UMFPACK solver (same as \codeq{LU}) \\
+\codeq{LU5} & 5 output arg form of \code{lu}, UMFPACK solver w/row scaling \\
 \end{tabular} 	\\
 \code{pf.fd.max\_it}	& 30	& maximum number of iterations for fast-decoupled method	\\
 \code{pf.gs.max\_it}	& 1000	& maximum number of iterations for Gauss-Seidel method	\\

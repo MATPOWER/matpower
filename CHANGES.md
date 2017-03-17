@@ -12,11 +12,11 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
-#### 2/21/17
-  - In the Newton power flow, use explicit LU decomposition with
-    back-substitution to calculate the Newton update step. Under Matlab
-    use Gilbert-Peierls and AMD reordering for a 1.3x to 2.0x speedup,
-    with up to 1.1x speedup observed on Octave.
+#### 3/17/17
+  - In the Newton power flow, for larger systems use explicit LU
+    decomposition with AMD reordering the 3 output argument form of LU
+    (to select the Gilbert-Peierls algorithm), resulting in up to a 2x
+    speedup in Matlab, 1.1x in Octave.
     *Thanks to Jose Luis Marin.*
   - Add new `pf.nr.lin_solver` option to control the linear solver used
     to compute the Newton update step in the Newton-Raphson power flow.

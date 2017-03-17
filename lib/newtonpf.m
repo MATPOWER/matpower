@@ -34,17 +34,6 @@ end
 tol         = mpopt.pf.tol;
 max_it      = mpopt.pf.nr.max_it;
 lin_solver  = mpopt.pf.nr.lin_solver;
-if isempty(lin_solver)      %% default, attempt to pick fastest option
-    if have_fcn('matlab')
-        lin_solver = 'LU_GP';
-    else    %% Octave
-        if length(V0) < 1000
-            lin_solver = '\';
-        else
-            lin_solver = 'LU';
-        end
-    end
-end
 
 %% initialize
 converged = 0;
@@ -76,6 +65,16 @@ if normF < tol
     converged = 1;
     if mpopt.verbose > 1
         fprintf('\nConverged!\n');
+    end
+end
+
+%% attempt to pick fastest linear solver, if not specified
+if isempty(lin_solver)
+    nx = length(F);
+    if nx <= 10 || (nx <= 2000 && have_fcn('octave'))
+        lin_solver = '\';       %% default \ operator
+    else    %% Matlab and nx > 10 or Octave and nx > 2000
+        lin_solver = 'LU3';     %% LU decomp with 3 output args, AMD ordering
     end
 end
 
