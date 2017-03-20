@@ -14,7 +14,7 @@ Since last release
 
 #### 3/17/17
   - In the Newton power flow, for larger systems use explicit LU
-    decomposition with AMD reordering the 3 output argument form of LU
+    decomposition with AMD reordering and the 3 output argument form of LU
     (to select the Gilbert-Peierls algorithm), resulting in up to a 2x
     speedup in Matlab, 1.1x in Octave.
     *Thanks to Jose Luis Marin.*
