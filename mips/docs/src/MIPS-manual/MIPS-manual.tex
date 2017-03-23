@@ -1002,10 +1002,8 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MIPS-manual-1.3.pdf}{\mips{
 
 \subsubsection*{New Features}
 \begin{itemize}
-\item New solver options \codeq{LU} for explicit LU decomposition with back
-    substitution, \codeq{LU\_AMD} for LU decomposition with approximate
-    minimum degree (AMD) reordering, and \codeq{LU\_GP} for the Gilbert-Peierls
-    algorithm for LU decompostion with AMD reordering.
+\item Add \code{mplinsolve} solver option \codeq{LU} for explicit LU decomposition with back substitution, with options in \code{opt.lu} for specifying the number of output arguments in call to \code{lu} (\code{opt.lu.nout}), whether to use permutation vectors or matrices (\code{opt.lu.vec}) and pivot threshold options (\code{opt.lu.thresh}). The following values for the \code{solver} argument act as shortcuts for specifying various combinations of options: \codeq{LU3} \codeq{LU3a} \codeq{LU4} \codeq{LU5} \codeq{LU3m} \codeq{LU3am} \codeq{LU4m} \codeq{LU5m}.
+    See \code{help mplinsolve} for details.
     \emph{Thanks to Jose Luis Mar\'in.}
 \end{itemize}
 
@@ -1016,7 +1014,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MIPS-manual-1.3.pdf}{\mips{
 
 \subsubsection*{Other Changes}
 \begin{itemize}
-\item 
+\item Move \code{mplinsolve} PARDISO options to \code{opt.pardiso} in preparation for adding options for other solvers.
 \end{itemize}
 
 
