@@ -12,7 +12,8 @@ function [J, Ybus, Yf, Yt] = makeJac(baseMVA, bus, branch, gen, fullJac)
 %   at 1 (i.e. internal ordering). If the FULLJAC argument is present and
 %   true, it returns the full Jacobian (sensitivities of all bus injections
 %   w.r.t all voltage angles/magnitudes) as opposed to the reduced version
-%   used in the Newton power flow updates.
+%   used in the Newton power flow updates. The units for all quantities are
+%   in per unit with radians for voltage angles.
 %
 %   Note: This function builds the Jacobian from scratch, rebuilding the
 %         YBUS matrix in the process. You probably don't want to use this
