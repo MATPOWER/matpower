@@ -12,6 +12,15 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 3/17/17
+  - In the Newton power flow, for larger systems use explicit LU
+    decomposition with AMD reordering and the 3 output argument form of LU
+    (to select the Gilbert-Peierls algorithm), resulting in up to a 2x
+    speedup in Matlab, 1.1x in Octave.
+    *Thanks to Jose Luis Marin.*
+  - Add new `pf.nr.lin_solver` option to control the linear solver used
+    to compute the Newton update step in the Newton-Raphson power flow.
+
 #### 2/9/17
   - Add three new power flow algorithms for radial distribution
     systems selected via the three new options for `pf.alg`, namely

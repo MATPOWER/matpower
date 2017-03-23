@@ -66,6 +66,16 @@ function opt = mpoption(varargin)
 %                                       P & Q mismatch
 %   pf.nr.max_it            10          maximum number of iterations for
 %                                       Newton's method
+%   pf.nr.lin_solver        ''          linear solver passed to MPLINSOLVE to
+%                                       solve Newton update step
+%       [ ''      - default to '\' for small systems, 'LU3' for larger ones ]
+%       [ '\'     - built-in backslash operator                             ]
+%       [ 'LU'    - explicit default LU decomposition and back substitution ]
+%       [ 'LU3'   - 3 output arg form of LU, Gilbert-Peierls algorithm with ]
+%       [           approximate minimum degree (AMD) reordering             ]
+%       [ 'LU4'   - 4 output arg form of LU, UMFPACK solver (same as 'LU')  ]
+%       [ 'LU5'   - 5 output arg form of LU, UMFPACK solver, w/row scaling  ]
+%       [       (see MPLINSOLVE for complete list of all options)           ]
 %   pf.fd.max_it            30          maximum number of iterations for
 %                                       fast decoupled method
 %   pf.gs.max_it            1000        maximum number of iterations for
@@ -534,6 +544,9 @@ if have_opt0
             if opt0.v <= 12         %% convert version 12 to 13
                 opt0.pf.radial.max_it   = opt_d.pf.radial.max_it;
                 opt0.pf.radial.vcorr    = opt_d.pf.radial.vcorr;
+            end
+            if opt0.v <= 13         %% convert version 13 to 14
+                opt0.pf.nr.lin_solver   = opt_d.pf.nr.lin_solver;
             end
             opt0.v = v;
         end
@@ -1454,11 +1467,12 @@ if ~isstruct(opt)
             'alg',                  'NR', ...
             'tol',                  1e-8, ...
             'nr',                   struct(...
-                'max_it',               10  ), ...
+                'max_it',               10, ...
+                'lin_solver',            '' ), ...
             'fd',                   struct(...
                 'max_it',               30  ), ...
             'gs',                   struct(...
-                'max_it',               1000  ), ...
+                'max_it',               1000    ), ...
             'radial',               struct(...
                 'max_it',               20   , ...
                 'vcorr',                 0  ), ...
@@ -1553,7 +1567,7 @@ optt = opt;
 %% globals
 %%-------------------------------------------------------------------
 function v = mpoption_version
-v = 13;     %% version number of MATPOWER options struct
+v = 14;     %% version number of MATPOWER options struct
             %% (must be incremented every time structure is updated)
             %% v1   - first version based on struct (MATPOWER 5.0b1)
             %% v2   - added 'linprog' and 'quadprog' fields
@@ -1577,6 +1591,7 @@ v = 13;     %% version number of MATPOWER options struct
             %%        removed option 'cpf.user_callback_args'
             %% v12  - added option 'opf.use_vg'
             %% v13  - added 'pf.radial.max_it', 'pf.radial.vcorr'
+            %% v14  - added 'pf.nr.lin_solver'
 
 %%-------------------------------------------------------------------
 function db_level = DEBUG

@@ -86,6 +86,7 @@ function rv = have_fcn(tag, rtype)
 %       catchme         - support for 'catch me' syntax in try/catch constructs
 %       evalc           - support for evalc() function
 %       ipopt_auxdata   - support for ipopt_auxdata(), required by 3.11 and later
+%       lu_vec          - support for lu(..., 'vector') syntax
 %       regexp_split    - support for 'split' argument to regexp()
 
 %   MATPOWER
@@ -526,6 +527,12 @@ else        %% detect availability
                     if ~isempty(vn) && vn >= 3.011
                         TorF = 1;
                     end
+                end
+            case 'lu_vec'       %% lu(..., 'vector') syntax supported?
+                if have_fcn('matlab') && have_fcn('matlab', 'vnum') < 7.003
+                    TorF = 0;     %% lu(..., 'vector') syntax not supported
+                else
+                    TorF = 1;
                 end
             case 'regexp_split'     %% missing for Matlab < 7.3 & Octave < 3.8
                 if have_fcn('matlab') && have_fcn('matlab', 'vnum') >= 7.003

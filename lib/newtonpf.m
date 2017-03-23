@@ -18,7 +18,7 @@ function [V, converged, i] = newtonpf(Ybus, Sbus, V0, ref, pv, pq, mpopt)
 %   See also RUNPF.
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2017, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -31,8 +31,9 @@ if nargin < 7
 end
 
 %% options
-tol     = mpopt.pf.tol;
-max_it  = mpopt.pf.nr.max_it;
+tol         = mpopt.pf.tol;
+max_it      = mpopt.pf.nr.max_it;
+lin_solver  = mpopt.pf.nr.lin_solver;
 
 %% initialize
 converged = 0;
@@ -67,6 +68,16 @@ if normF < tol
     end
 end
 
+%% attempt to pick fastest linear solver, if not specified
+if isempty(lin_solver)
+    nx = length(F);
+    if nx <= 10 || (nx <= 2000 && have_fcn('octave'))
+        lin_solver = '\';       %% default \ operator
+    else    %% Matlab and nx > 10 or Octave and nx > 2000
+        lin_solver = 'LU3';     %% LU decomp with 3 output args, AMD ordering
+    end
+end
+
 %% do Newton iterations
 while (~converged && i < max_it)
     %% update iteration counter
@@ -86,7 +97,7 @@ while (~converged && i < max_it)
             j21 j22;    ];
 
     %% compute update step
-    dx = -(J \ F);
+    dx = mplinsolve(J, -F, lin_solver);
 
     %% update voltage
     if npv

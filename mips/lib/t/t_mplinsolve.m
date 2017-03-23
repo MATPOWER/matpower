@@ -2,7 +2,7 @@ function t_mplinsolve(quiet)
 %T_MPLINSOLVE  Tests of MIPS/MATPOWER linear solvers.
 
 %   MIPS
-%   Copyright (c) 2015-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2017, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MIPS.
@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-t_begin(4, quiet);
+t_begin(21, quiet);
 
 ijs = [
     1 1 1205.63;
@@ -400,11 +400,79 @@ ex = [
 ];
 
 t = '''''';
-x = mplinsolve(A, b, '', []);
+x = mplinsolve(A, b, '');
 t_is(x, ex, 12, t);
 
 t = '\';
-x = mplinsolve(A, b, '\', []);
+x = mplinsolve(A, b, '\');
+t_is(x, ex, 12, t);
+
+t = 'LU';
+x = mplinsolve(A, b, 'LU');
+t_is(x, ex, 12, t);
+
+t = 'LU3';
+x = mplinsolve(A, b, 'LU3');
+t_is(x, ex, 12, t);
+t = 'LU, nout = 3, vec = 1, thresh = 1';
+opt = struct('nout', 3, 'vec', 1, 'thresh', 1);
+x = mplinsolve(A, b, 'LU', opt);
+t_is(x, ex, 12, t);
+
+t = 'LU3a';
+x = mplinsolve(A, b, 'LU3a');
+t_is(x, ex, 12, t);
+t = 'LU, nout = 3, vec = 1';
+opt = struct('nout', 3, 'vec', 1);
+x = mplinsolve(A, b, 'LU', opt);
+t_is(x, ex, 12, t);
+
+t = 'LU4';
+x = mplinsolve(A, b, 'LU4');
+t_is(x, ex, 12, t);
+t = 'LU, nout = 4, vec = 1';
+opt = struct('nout', 4, 'vec', 1);
+x = mplinsolve(A, b, 'LU', opt);
+t_is(x, ex, 12, t);
+
+t = 'LU5';
+x = mplinsolve(A, b, 'LU5');
+t_is(x, ex, 12, t);
+t = 'LU, nout = 5, vec = 1';
+opt = struct('nout', 5, 'vec', 1);
+x = mplinsolve(A, b, 'LU', opt);
+t_is(x, ex, 12, t);
+
+t = 'LU3m';
+x = mplinsolve(A, b, 'LU3m');
+t_is(x, ex, 12, t);
+t = 'LU, nout = 3, vec = 0, thresh = 1';
+opt = struct('nout', 3, 'vec', 0, 'thresh', 1);
+x = mplinsolve(A, b, 'LU', opt);
+t_is(x, ex, 12, t);
+
+t = 'LU3am';
+x = mplinsolve(A, b, 'LU3am');
+t_is(x, ex, 12, t);
+t = 'LU, nout = 3, vec = 0';
+opt = struct('nout', 3, 'vec', 0);
+x = mplinsolve(A, b, 'LU', opt);
+t_is(x, ex, 12, t);
+
+t = 'LU4m';
+x = mplinsolve(A, b, 'LU4m');
+t_is(x, ex, 12, t);
+t = 'LU, nout = 4, vec = 0';
+opt = struct('nout', 4, 'vec', 0);
+x = mplinsolve(A, b, 'LU', opt);
+t_is(x, ex, 12, t);
+
+t = 'LU5m';
+x = mplinsolve(A, b, 'LU5m');
+t_is(x, ex, 12, t);
+t = 'LU, nout = 5, vec = 0';
+opt = struct('nout', 5, 'vec', 0);
+x = mplinsolve(A, b, 'LU', opt);
 t_is(x, ex, 12, t);
 
 t = 'PARDISO';
