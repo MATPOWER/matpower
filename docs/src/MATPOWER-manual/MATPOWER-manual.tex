@@ -6665,6 +6665,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.1.pdf}{\m
 \begin{itemize}
 \item Three new power flow algorithms for radial distribution systems selected via the three new options for \code{pf.alg}, namely \codeq{PQSUM}, \codeq{ISUM}, \codeq{YSUM}. Also includes new \matpower{} options \code{pf.radial.max\_it} and \code{pf.radial.vcorr}. See Section~\ref{sec:pfdist} on ``Distribution Power Flow'' for details. \emph{Thanks to Mirko Todorovski.}
 \item New \matpower{} installer \code{install\_matpower()} updates Matlab or Octave paths or providing the commands required to so.
+\item Add new \code{pf.nr.lin\_solver} option to control the linear solver used to compute the Newton update step in the Newton-Raphson power flow.
 \item Support plotting of multiple nose curves in CPF by allowing option \code{cpf.plot.bus} to take on vector values.
 \item Continuous integration via GitHub and Travis-CI integration.
 \item Include \LaTeX{} source code for \mum{} in \code{docs/src} and for \mostman{} in \code{most/docs/src}.
@@ -6688,6 +6689,9 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.1.pdf}{\m
 
 \subsubsection*{Other Improvements}
 \begin{itemize}
+\item Update MIPS to version 1.3.
+\item In the Newton power flow, for larger systems use explicit LU decomposition with AMD reordering and the 3 output argument form of \code{lu} (to select the Gilbert-Peierls algorithm), resulting in up to a 2x speedup in Matlab, 1.1x in Octave.
+\emph{Thanks to Jose Luis Mar\'in.}
 \item Add line for curtailed load to \code{case\_info()} output.
 \item Change default implementation of active power line flow constraints (\code{opf.flow\_lim = }\codeq{P}) to use flow directly, rather than square of flow, which is now a separate option, namely \code{opf.flow\_lim = }\codeq{2}. \emph{Thanks to Nico Meyer-Huebner}.
 \end{itemize}
