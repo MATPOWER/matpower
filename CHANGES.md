@@ -12,6 +12,11 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 4/7/17
+  - Fix fatal bug when calling `runcpf` with base and target cases with
+    identical load and generation.
+    *Thanks to Felix.*
+
 #### 3/17/17
   - In the Newton power flow, for larger systems use explicit LU
     decomposition with AMD reordering and the 3 output argument form of LU

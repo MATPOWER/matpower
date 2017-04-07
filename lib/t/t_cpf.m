@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 300;
+num_tests = 309;
 t_begin(num_tests, quiet);
 
 if have_fcn('matlab', 'vnum') < 7.001
@@ -68,6 +68,19 @@ else
     mpct.bus(:, [PD QD]) = mpct.bus(:, [PD QD]) * factor;
 
     %% run CPF
+    t = 'base == target : ';
+    r = runcpf(mpcb, mpcb, mpopt);
+    iterations = 1;
+    t_ok(r.success, [t 'success']);
+    t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
+    t_is(r.cpf.max_lam, 0, 12, [t 'max_lam']);
+    t_is(size(r.cpf.V_hat), [10 1], 12, [t 'size(V_hat)']);
+    t_is(size(r.cpf.V), [10 1], 12, [t 'size(V)']);
+    t_is(size(r.cpf.lam_hat), [1 1], 12, [t 'size(lam_hat)']);
+    t_is(size(r.cpf.lam), [1 1], 12, [t 'size(lam)']);
+    t_ok(strfind(r.cpf.done_msg, 'Base case and target case have identical load and generation'), [t 'done_msg']);
+    t_is(length(r.cpf.events), 0, 12, [t 'size(events) == 0']);
+
     t = 'CPF to lambda = 0.7 (natural) : ';
     mpopt = mpoption(mpopt, 'cpf.stop_at', 0.7, 'cpf.parameterization', 1);
     r = runcpf(mpcb, mpct, mpopt);

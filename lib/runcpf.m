@@ -242,8 +242,8 @@ if plim
 end
 
 %% run base case power flow
-[rb, suc] = runpf(mpcb, mpopt_pf);
-if suc
+[rb, success] = runpf(mpcb, mpopt_pf);
+if success
     done = struct('flag', 0, 'msg', '');
     if qlim
         %% find buses that were converted to PQ or REF by initial power flow
@@ -345,7 +345,7 @@ if ~done.flag
     lam = 0;
     V   = mpcb.bus(:, VM) .* exp(sqrt(-1) * pi/180 * mpcb.bus(:, VA));
     rollback = 0;   %% flag to indicate that a step must be rolled back
-    locating = 0;   %% flag to indicate that an event has interval was detected,
+    locating = 0;   %% flag to indicate that an event interval was detected,
                     %% but the event has not yet been located
     rb_cnt_ef = 0;  %% counter for rollback steps triggered by event function intervals
     rb_cnt_cb = 0;  %% counter for rollback steps triggered directly by callbacks
@@ -607,7 +607,7 @@ if ~done.flag
 
     %%-----  output results  -----
     %% convert back to original bus numbering & print results
-    n = cpf_results.iterations + 1;
+    n = size(cpf_results.V, 2);
     cpf_results.V_hat = i2e_data(mpct, cpf_results.V_hat, NaN(nb,n), 'bus', 1);
     cpf_results.V     = i2e_data(mpct, cpf_results.V,     NaN(nb,n), 'bus', 1);
     results = int2ext(mpct);
