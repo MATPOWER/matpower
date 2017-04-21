@@ -13,6 +13,10 @@ Since last release
 ------------------
 
 #### 4/7/17
+  - Fix fatal bug in `get_losses` when computing derivatives of reactive
+    branch injections and fix some related tests.
+
+#### 4/7/17
   - Fix fatal bug when calling `runcpf` with base and target cases with
     identical load and generation.
     *Thanks to Felix.*

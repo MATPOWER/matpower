@@ -81,7 +81,8 @@ t_is(imag(loss), r.branch(:, QF)+r.branch(:, QT)+tchg+fchg, 12, [t 'Q_loss = Qf+
 
 t = '[loss, fchg, tchg, dloss_dV, dchg_dVm] = get_losses(r) : ';
 [loss, fchg, tchg, dloss_dV, dchg_dVm] = get_losses(r);
-epsilon = 1e-8;
+epsilonVa = 1e-9;
+epsilonVm = 1e-8;
 %% build numerical versions of dloss_dVa and dloss_dVm
 nb = size(r.bus, 1);    %% number of buses
 nl = size(r.branch, 1); %% number of branches
@@ -91,24 +92,24 @@ dfchg_dVm = sparse(nl, nb);
 dtchg_dVm = sparse(nl, nb);
 for j = 1:nb
     mpc = r;
-    mpc.bus(j, VA) = mpc.bus(j, VA) + 180 / pi * epsilon;
+    mpc.bus(j, VA) = mpc.bus(j, VA) + 180 / pi * epsilonVa;
     loss2 = get_losses(mpc);
-    dloss_dVa(:, j) = (loss2 - loss) / epsilon;
+    dloss_dVa(:, j) = (loss2 - loss) / epsilonVa;
 end
 for j = 1:nb
     mpc = r;
-    mpc.bus(j, VM) = mpc.bus(j, VM) + epsilon;
+    mpc.bus(j, VM) = mpc.bus(j, VM) + epsilonVm;
     [loss2, fchg2, tchg2] = get_losses(mpc);
-    dloss_dVm(:, j) = (loss2 - loss) / epsilon;
-    dfchg_dVm(:, j) = (fchg2 - fchg) / epsilon;
-    dtchg_dVm(:, j) = (tchg2 - tchg) / epsilon;
+    dloss_dVm(:, j) = (loss2 - loss) / epsilonVm;
+    dfchg_dVm(:, j) = (fchg2 - fchg) / epsilonVm;
+    dtchg_dVm(:, j) = (tchg2 - tchg) / epsilonVm;
 end
 t_is(full(real(dloss_dV.a)), full(real(dloss_dVa)), 5, [t 'dPloss/dVa']);
-t_is(full(imag(dloss_dV.a)), full(imag(dloss_dVa)), 4, [t 'dQloss/dVa']);
+t_is(full(imag(dloss_dV.a)), full(imag(dloss_dVa)), 5, [t 'dQloss/dVa']);
 t_is(full(real(dloss_dV.m)), full(real(dloss_dVm)), 5, [t 'dPloss/dVm']);
 t_is(full(imag(dloss_dV.m)), full(imag(dloss_dVm)), 4, [t 'dQloss/dVm']);
-t_is(full(dchg_dVm.f), full(dfchg_dVm), 5, [t 'dfchg/dVm']);
-t_is(full(dchg_dVm.t), full(dtchg_dVm), 5, [t 'dtchg/dVm']);
+t_is(full(dchg_dVm.f), full(dfchg_dVm), 6, [t 'dfchg/dVm']);
+t_is(full(dchg_dVm.t), full(dtchg_dVm), 6, [t 'dtchg/dVm']);
 
 t = 'Loss Sensitivity Factors (LSF)';
 %% convert to internal indexing to use makeJac()
@@ -129,7 +130,7 @@ LSF = zeros(nl, 2*nb);
 LSF(ri.order.branch.status.on, [ri.order.bus.status.on; nb+ri.order.bus.status.on]) = LSFi;
 
 numLSF = zeros(nl, 2*nb);
-epsilon = 1e-4;
+epsilon = 5e-6;
 mpopt = mpoption('out.all', 0, 'verbose', 0, 'pf.tol', 1e-12);
 for j = 1:nb
     mpc = r;
@@ -144,7 +145,7 @@ for j = 1:nb
     loss2 = get_losses(rr);
     numLSF(:, nb+j) = real(loss2 - loss) / epsilon;
 end
-t_is(LSF, numLSF, 1e-6, t);
+t_is(LSF, numLSF, 6, t);
 
 % norm(numLSF - LSF, Inf)
 % norm(numLSF(:, 1:nb) - LSF(:, 1:nb), Inf)
