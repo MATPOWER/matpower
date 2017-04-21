@@ -56,9 +56,12 @@ end
 
 %% extract voltage
 V = bus(:, VM) .* exp(sqrt(-1) * pi/180 * bus(:, VA));
+
+%% make sure we use generator setpoint voltage for PV and slack buses
 on = find(gen(:, GEN_STATUS) > 0);      %% which generators are on?
 gbus = gen(on, GEN_BUS);                %% what buses are they at?
-V(gbus) = gen(on, VG) ./ abs(V(gbus)).* V(gbus);
+k = find(bus(gbus, BUS_TYPE) == PV | bus(gbus, BUS_TYPE) == REF);
+V(gbus(k)) = gen(on(k), VG) ./ abs(V(gbus(k))).* V(gbus(k));
 
 %% build Jacobian
 [dSbus_dVm, dSbus_dVa] = dSbus_dV(Ybus, V);

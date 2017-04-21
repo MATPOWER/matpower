@@ -15,6 +15,8 @@ Since last release
 #### 4/7/17
   - Fix fatal bug in `get_losses` when computing derivatives of reactive
     branch injections and fix some related tests.
+  - Fix bug in `makeJac` in which voltage was set by generator voltage
+    setpoint even for PQ buses.
 
 #### 4/7/17
   - Fix fatal bug when calling `runcpf` with base and target cases with
