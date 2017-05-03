@@ -101,12 +101,14 @@ if have_fcn('quadprog')
     tests{end+1} = 't_opf_dc_ot';
 end
 if have_fcn('sdp_pf')
-    tests{end+1} = 't_opf_sdpopf';
-    tests{end+1} = 't_testglobalopt';
-    tests{end+1} = 't_insolvablepf';
-    tests{end+1} = 't_insolvablepf_limitQ';
+    if have_fcn('mosek') || have_fcn('sdpt3') || have_fcn('sedumi')
+        tests{end+1} = 't_opf_sdpopf';
+        tests{end+1} = 't_insolvablepf';
+        tests{end+1} = 't_insolvablepf_limitQ';
+    end
     tests{end+1} = 't_insolvablepfsos';
     tests{end+1} = 't_insolvablepfsos_limitQ';
+    tests{end+1} = 't_testglobalopt';
 end
 tests{end+1} = 't_opf_userfcns';
 tests{end+1} = 't_opf_softlims';

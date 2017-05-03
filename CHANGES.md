@@ -12,6 +12,12 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 5/3/17
+  - Fix fatal error encountered when running `test_matpower` with
+    SDP_PF and YALMIP installed, but no SDP solver. Now checks for
+    availability of SeDuMi, SDP3 or MOSEK before attempting to run
+    SDP_PF tests that require solving an SDP.
+
 #### 4/7/17
   - Fix fatal bug in `get_losses` when computing derivatives of reactive
     branch injections and fix some related tests.
