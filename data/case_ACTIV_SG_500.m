@@ -1,28 +1,38 @@
 function mpc = case_ACTIV_SG_500
-%CASE_ACTIV_SG_500  Synthetic 500-bus power system model.
+%CASE_ACTIV_SG_500  Synthetic South Carolina 500-bus power system model.
+%
+%   This is an entirely synthetic 500 bus case, geographically situated
+%   in the northwestern part of the US state of South Carolina. The case is
+%   designed with a 345, 138 and 13.8 kV transmission network to serve
+%   a load that roughly mimics the actual population of its geographic
+%   footprint. The synthetic transmission system was designed by
+%   algorithms described in [1] to be statistically similar to actual
+%   transmission system models but without modeling any actual lines.
+%
+%   When publishing results based on this data, please cite:
+%
+%   [1] A.B. Birchfield, T. Xu, K.M. Gegner, K.S. Shetye, T.J. Overbye,
+%       "Grid Structural Characteristics as Validation Criteria for
+%       Synthetic Networks," IEEE Transactions on Power Systems, 2017.
 %
 %   This is a synthetic power system model that does not represent the
-%   actual grid. It was developed as part of the US ARPA-E Grid Data
+%   actual grid. It was developed as part of the US ARPA-E GRID DATA
 %   research project and contains no CEII.
 %
-%   Reference:
-%       A.B. Birchfield, T. Xu, K.M. Gegner, K.S. Shetye, and T.J. Overbye,
-%       "Grid Structural Characteristics as Validation Criteria for Synthetic
-%       Networks," to appear, IEEE Transactions on Power Systems, 2017.
+%   One-line diagrams and other data formats available at:
+%       https://electricgrids.engr.tamu.edu
 %
 %   April 28, 2017
+
+%   Created from ACTIV_SG_500.pwb, saved by
+%   PowerWorld Simulator, version 20 Beta, build date April 26, 2017,
+%   then by MATPOWER 6.0.
 
 %   MATPOWER
 %   Copyright (c) 2017 by A.B. Birchfield, T. Xu, K.M. Gegner, K.S. Shetye,
 %   and T.J. Overbye
 %   Licensed under the Creative Commons Attribution 4.0 International license,
 %   http://creativecommons.org/licenses/by/4.0/
-
-% Case saved by PowerWorld Simulator, version 20 Beta, build date April 26, 2017
-% Case Information Header = 2 lines
-% This is a synthetic power system model that does not represent the actual grid. It was developed as part of the US ARPA-E Grid Data research project and contains no CEII.
-% Reference: A.B. Birchfield, T. Xu, K.M. Gegner, K.S. Shetye, and T.J. Overbye, "Grid Structural Characteristics as Validation Criteria for Synthetic Networks," to appear, IEEE Transactions on Power Systems, 2017.
-
 
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';
