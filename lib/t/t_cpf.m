@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 309;
+num_tests = 311;
 t_begin(num_tests, quiet);
 
 if have_fcn('matlab', 'vnum') < 7.001
@@ -301,6 +301,16 @@ else
         t_is(r.cpf.events(j).idx, eidx(j), 12, sprintf('%sevents(%d).idx == %d', t, j, eidx(j)));
         t_ok(strcmp(r.cpf.events(j).name, ename{j}), sprintf('%sevents(%d).name = ''%s''', t, j, ename{j}));
     end
+
+    t = 'bug #12 : early termination : ';
+    mpcbx = mpcb;
+    mpctx = mpct;
+    mpcbx.gen(1, QMAX) = 24.07;
+    mpctx.gen(1, QMAX) = 24.07;
+    r = runcpf(mpcbx, mpctx, mpopt_qlim);
+    iterations = 38;
+    t_ok(r.success, [t 'success']);
+    t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
 
     t = '1 user callback : ';
     mpopt = mpoption(mpopt, 'cpf.stop_at', 0.7, 'cpf.parameterization', 3);

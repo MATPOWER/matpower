@@ -409,7 +409,7 @@ if ~done.flag
     while ~done.flag
         %% initialize next candidate with current state
         nx = cx;
-    
+
         %% prediction for next step
         [nx.V_hat, nx.lam_hat] = cpf_predictor(cx.V, cx.lam, cx.z, cx.step, cb_data.pv, cb_data.pq);
 
@@ -425,7 +425,7 @@ if ~done.flag
             cont_steps = cont_steps - 1;
             break;
         end
-    
+
         %% compute new tangent direction, based on a previous state: tx
         if nx.step == 0     %% if this is a re-do step, cx and nx are the same
             tx = px;            %% so use px as the previous state

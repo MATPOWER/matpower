@@ -6687,7 +6687,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.1.pdf}{\m
 \subsubsection*{New Features}
 \begin{itemize}
 \item Three new power flow algorithms for radial distribution systems selected via the three new options for \code{pf.alg}, namely \codeq{PQSUM}, \codeq{ISUM}, \codeq{YSUM}. Also includes new \matpower{} options \code{pf.radial.max\_it} and \code{pf.radial.vcorr}. See Section~\ref{sec:pfdist} on ``Distribution Power Flow'' for details. \emph{Thanks to Mirko Todorovski.}
-\item New \matpower{} installer \code{install\_matpower()} updates Matlab or Octave paths or providing the commands required to so.
+\item New \matpower{} installer \code{install\_matpower()} updates Matlab or Octave paths or provides the commands required to so.
 \item Add new \code{pf.nr.lin\_solver} option to control the linear solver used to compute the Newton update step in the Newton-Raphson power flow.
 \item Support plotting of multiple nose curves in CPF by allowing option \code{cpf.plot.bus} to take on vector values.
 \item Continuous integration via GitHub and Travis-CI integration.
@@ -6732,6 +6732,10 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.1.pdf}{\m
 \begin{itemize}
 \item Fix bug in conversion of older versions of \matpower{} options.
 \item Fix bug \#4 where some Q limits were not being respected by CPF when buses were converted to PQ by initial power flow run. \emph{Thanks to Shruti Rao.}
+\item Fix fatal bug \#8 when calling \code{runcpf} with base and target cases with identical load and generation. \emph{Thanks to Felix.}
+\item Fix fatal bug in \code{get\_losses} when computing derivatives of reactive branch injections and fix some related tests.
+\item Fix \#11 fatal error encountered when running \code{test\_matpower} with \sdppf{} and YALMIP installed, but no SDP solver. Now checks for availability of SeDuMi, SDP3 or MOSEK before attempting to run \sdppf{} tests that require solving an SDP. \emph{Thanks to Felix.}
+\item Fix bug \#12 where the CPF could terminate early when requesting trace of the full curve with P or Q limits enforced, if a limit becomes binding at the base case. \emph{Thanks to Felix.}
 \end{itemize}
 
 \subsubsection*{Incompatible Changes}

@@ -12,6 +12,12 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 5/11/17
+  - Fix bug #12 where the CPF could terminate early when requesting
+    trace of the full curve with P or Q limits enforced, if a limit
+    becomes binding at the base case.
+    *Thanks to Felix.*
+
 #### 5/8/17
   - Add three new purely synthetic cases from the ACTIV team (ASU, Cornell,
     Texas A&M, U of IL, and VCU), resulting from work supported by the
@@ -21,7 +27,7 @@ Since last release
     - `case_ACTIV_SG_2000` (2000-bus Texas synthetic model)
 
 #### 5/3/17
-  - Fix fatal error encountered when running `test_matpower` with
+  - Fix #11 fatal error encountered when running `test_matpower` with
     SDP_PF and YALMIP installed, but no SDP solver. Now checks for
     availability of SeDuMi, SDP3 or MOSEK before attempting to run
     SDP_PF tests that require solving an SDP.
@@ -33,7 +39,7 @@ Since last release
     setpoint even for PQ buses.
 
 #### 4/7/17
-  - Fix fatal bug when calling `runcpf` with base and target cases with
+  - Fix fatal bug #8 when calling `runcpf` with base and target cases with
     identical load and generation.
     *Thanks to Felix.*
 

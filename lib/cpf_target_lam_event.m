@@ -23,7 +23,11 @@ function ef = cpf_target_lam_event(cb_data, cx)
 
 %% event function value is a scalar equal to: current lambda - target lambda
 target = cb_data.mpopt.cpf.stop_at;
-if ischar(target)
-    target = 0;
+if ischar(target)       %% 'FULL' trace requested
+    if cx.z(end) >= 0   %% before the nose point ...
+        target = -1;    %% prevent early termination (e.g. itr 1 rollback to 0)
+    else                %% after the nose point ...
+        target = 0;     %% terminate at lam = 0
+    end
 end
 ef = cx.lam - target;
