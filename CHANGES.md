@@ -12,19 +12,20 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 5/19/17
+  - Add three new purely synthetic cases from the ACTIVSg team (ASU, Cornell,
+    Texas A&M, U of IL, and VCU - Synthetic grids), resulting from work
+    supported by the ARPA-E GRID DATA program.
+    *Thanks to Adam Birchfield and the ACTIVSg team.*
+    - `case_ACTIVSg200` (200-bus Illinios synthetic model)
+    - `case_ACTIVSg500` (500-bus South Carolina synthetic model)
+    - `case_ACTIVSg2000` (2000-bus Texas synthetic model)
+
 #### 5/11/17
   - Fix bug #12 where the CPF could terminate early when requesting
     trace of the full curve with P or Q limits enforced, if a limit
     becomes binding at the base case.
     *Thanks to Felix.*
-
-#### 5/8/17
-  - Add three new purely synthetic cases from the ACTIV team (ASU, Cornell,
-    Texas A&M, U of IL, and VCU), resulting from work supported by the
-    ARPA-E GRID DATA program. *Thanks to Adam Birchfield and the ACTIV team.*
-    - `case_ACTIV_SG_200` (200-bus Illinios synthetic model)
-    - `case_ACTIV_SG_500` (500-bus South Carolina synthetic model)
-    - `case_ACTIV_SG_2000` (2000-bus Texas synthetic model)
 
 #### 5/3/17
   - Fix #11 fatal error encountered when running `test_matpower` with
