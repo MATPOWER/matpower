@@ -1,5 +1,5 @@
-function mpc = case_ACTIV_SG_200
-%CASE_ACTIV_SG_200  Synthetic Illinois 200-bus power system model.
+function mpc = case_ACTIVSg200
+%CASE_ACTIVSG200  Synthetic Illinois 200-bus power system model.
 %
 %   This is an entirely synthetic 200 bus case, geographically situated
 %   in the central part of the US state of Illinois. The case is
@@ -22,7 +22,7 @@ function mpc = case_ACTIV_SG_200
 %   One-line diagrams and other data formats available at:
 %       https://electricgrids.engr.tamu.edu
 %
-%   April 28, 2017
+%   May 16, 2017
 
 %   Created from ACTIV_SG_200.pwb, saved by
 %   PowerWorld Simulator, version 20 Beta, build date April 26, 2017,
