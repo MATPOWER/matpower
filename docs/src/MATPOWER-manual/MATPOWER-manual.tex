@@ -5788,6 +5788,8 @@ name & description \\
 \code{extract\_islands}	& extracts islands in a network into their own \matpower{} case struct	\\
 \code{feval\_w\_path}	& same as \matlab{}'s \code{feval} function, except the function being evaluated need not be in the \matlab{} path	\\
 \code{find\_islands}	& finds islands and isolated buses in a network	\\
+\code{genfuels}	& list of standard values for generator fuel types, for \code{mpc.genfuel}	\\
+\code{gentypes}	& list of standard values for generator unit types, for \code{mpc.gentype}	\\
 \code{get\_losses}	& compute branch losses (and derivatives) as functions of bus voltage	\\
 \code{hasPQcap}	& checks for generator P-Q capability curve constraints	\\
 \code{have\_fcn}	& checks for availability of optional functionality	\\
@@ -6726,6 +6728,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.1.pdf}{\m
 \emph{Thanks to Jose Luis Mar\'in.}
 \item Add line for curtailed load to \code{case\_info()} output.
 \item Change default implementation of active power line flow constraints (\code{opf.flow\_lim = }\codeq{P}) to use flow directly, rather than square of flow, which is now a separate option, namely \code{opf.flow\_lim = }\codeq{2}. \emph{Thanks to Nico Meyer-Huebner}.
+\item Add \code{genfuels} and \code{gentypes} to establish standard set of values for optional \code{mpc.genfuel} and \code{mpc.gentype} fields for generator fuel type and generator unit type, respectively.
 \end{itemize}
 
 \subsubsection*{Bugs Fixed}

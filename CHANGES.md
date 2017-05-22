@@ -13,6 +13,10 @@ Since last release
 ------------------
 
 #### 5/22/17
+  - 
+  - Add `genfuels` and `gentypes` to establish standard set of values for
+    optional `mpc.genfuel` and `mpc.gentype` fields for generator fuel
+    type and generator unit type, respectively.
   - Fix bug #13 where setting all buses to type `NONE` (isolated) resulted
     in a fatal error for `ext2int`, `runpf`, `runcpf` and `runopf`.
     *Thanks to SNPerkin.*
