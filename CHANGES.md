@@ -12,6 +12,11 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 5/22/17
+  - Fix bug #13 where setting all buses to type `NONE` (isolated) resulted
+    in a fatal error for `ext2int`, `runpf`, `runcpf` and `runopf`.
+    *Thanks to SNPerkin.*
+
 #### 5/19/17
   - Add three new purely synthetic cases from the ACTIVSg team (ASU, Cornell,
     Texas A&M, U of IL, and VCU - Synthetic grids), resulting from work

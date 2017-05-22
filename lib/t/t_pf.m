@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-t_begin(53, quiet);
+t_begin(54, quiet);
 
 casefile = 't_case9_pf';
 if quiet
@@ -191,6 +191,15 @@ warning('off', 'all');  %% turn of (near-)singular matrix warnings
 r = rundcpf(mpc, mpopt);
 warning(warn_state);
 t_ok(~r.success, [t 'success']);
+
+t = 'all buses isolated : ';
+mpc.bus(:, BUS_TYPE) = NONE;
+try
+    r = runpf(mpc, mpopt);
+    t_is(r.success, 0, 12, [t 'success = 0']);
+catch
+    t_ok(0, [t 'unexpected fatal error']);
+end
 
 %% case 14 with Q limits
 t = 'pf.enforce_q_lims == 0 : ';

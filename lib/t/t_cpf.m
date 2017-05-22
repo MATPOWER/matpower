@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 311;
+num_tests = 312;
 t_begin(num_tests, quiet);
 
 if have_fcn('matlab', 'vnum') < 7.001
@@ -311,6 +311,15 @@ else
     iterations = 38;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
+
+    t = 'all buses isolated : ';
+    mpcbx.bus(:, BUS_TYPE) = NONE;
+    try
+        r = runcpf(mpcbx, mpctx, mpopt);
+        t_is(r.success, 0, 12, [t 'success = 0']);
+    catch
+        t_ok(0, [t 'unexpected fatal error']);
+    end
 
     t = '1 user callback : ';
     mpopt = mpoption(mpopt, 'cpf.stop_at', 0.7, 'cpf.parameterization', 3);

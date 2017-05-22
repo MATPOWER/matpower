@@ -61,7 +61,8 @@ if isstruct(i2e)
             %% convert back "extra" fields
             if isfield(mpc, 'gencost')
                 ordering = {'gen'};         %% Pg cost only
-                if size(mpc.gencost, 1) == 2*size(mpc.gen, 1)
+                if size(mpc.gencost, 1) == 2*size(mpc.gen, 1) && ...
+                        size(mpc.gencost, 1) ~= 0
                     ordering{2} = 'gen';    %% include Qg cost
                 end
                 mpc = i2e_field(mpc, 'gencost', ordering);

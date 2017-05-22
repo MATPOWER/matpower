@@ -15,9 +15,13 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 122;
+num_tests = 129;
 t_begin(num_tests, quiet);
 
+%% define named indices into data matrices
+[PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
+    VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
+    
 if have_fcn('matlab', 'vnum') < 7.001
     t_skip(num_tests, 'test requires cellfun() construct not available before Matlab 7.1');
 else
@@ -588,6 +592,30 @@ else
     t_is(mpc.gencost, mpce.gencost, 12, [t 'gencost']);
     t_is(mpc.A, mpce.A, 12, [t 'A']);
     t_is(mpc.N, mpce.N, 12, [t 'N']);
+
+    t = 'mpc = ext2int(mpc) - all buses isolated : ';
+    mpc = loadcase('t_case_ext');
+    mpc.bus(:, BUS_TYPE) = NONE;
+    try
+        mpci = ext2int(mpc);
+        t_is(size(mpci.bus, 1), 0, 12, [t 'internal case empty']);
+    catch
+        t_ok(0, [t 'unexpected fatal error']);
+    end
+
+    t = 'mpc = int2ext(mpc) - all buses isolated : ';
+    try
+        mpce = int2ext(mpci);
+        t_is(mpc.bus, mpce.bus, 12, [t 'bus']);
+        t_is(mpc.branch, mpce.branch, 12, [t 'branch']);
+        t_is(mpc.gen, mpce.gen, 12, [t 'gen']);
+        t_is(mpc.gencost, mpce.gencost, 12, [t 'gencost']);
+        t_is(mpc.A, mpce.A, 12, [t 'A']);
+        t_is(mpc.N, mpce.N, 12, [t 'N']);
+    catch
+        t_ok(0, [t 'unexpected fatal error']);
+        t_skip(5, [t 'unexpected fatal error']);
+    end
 end
 
 t_end;

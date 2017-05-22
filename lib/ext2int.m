@@ -114,6 +114,7 @@ if isstruct(bus)
             %% sizes
             nb = size(mpc.bus, 1);
             ng = size(mpc.gen, 1);
+            nb0 = nb;
             ng0 = ng;
             if isfield(mpc, 'A') && size(mpc.A, 2) < 2*nb + 2*ng
                 dc = 1;
@@ -166,8 +167,12 @@ if isstruct(bus)
 
             %% apply consecutive bus numbering
             o.bus.i2e = mpc.bus(:, BUS_I);
-            o.bus.e2i = sparse(max(o.bus.i2e), 1);
-            o.bus.e2i(o.bus.i2e) = (1:nb)';
+            if nb
+                o.bus.e2i = sparse(max(o.bus.i2e), 1);
+                o.bus.e2i(o.bus.i2e) = (1:nb)';
+            else
+                o.bus.e2i = sparse(0, 1);
+            end
             mpc.bus(:, BUS_I)       = o.bus.e2i( mpc.bus(:, BUS_I)      );
             mpc.gen(:, GEN_BUS)     = o.bus.e2i( mpc.gen(:, GEN_BUS)    );
             mpc.branch(:, F_BUS)    = o.bus.e2i( mpc.branch(:, F_BUS)   );

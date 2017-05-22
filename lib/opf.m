@@ -201,7 +201,16 @@ om = opf_setup(mpc, mpopt);
 if nargout > 7
     mpopt.opf.return_raw_der = 1;
 end
-[results, success, raw] = opf_execute(om, mpopt);
+if ~isempty(mpc.bus)
+    [results, success, raw] = opf_execute(om, mpopt);
+else
+    results = mpc;
+    success = 0;
+    raw.output.message = 'MATPOWER case contains no connected buses';
+    if mpopt.verbose
+        fprintf('OPF not valid : %s', raw.output.message);
+    end
+end
 
 %%-----  revert to original ordering, including out-of-service stuff  -----
 results = int2ext(results);

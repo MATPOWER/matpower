@@ -6736,6 +6736,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.1.pdf}{\m
 \item Fix fatal bug in \code{get\_losses} when computing derivatives of reactive branch injections and fix some related tests.
 \item Fix \#11 fatal error encountered when running \code{test\_matpower} with \sdppf{} and YALMIP installed, but no SDP solver. Now checks for availability of SeDuMi, SDP3 or MOSEK before attempting to run \sdppf{} tests that require solving an SDP. \emph{Thanks to Felix.}
 \item Fix bug \#12 where the CPF could terminate early when requesting trace of the full curve with P or Q limits enforced, if a limit becomes binding at the base case. \emph{Thanks to Felix.}
+\item Fix bug \#13 where setting all buses to type \code{NONE} (isolated) resulted in a fatal error for \code{ext2int}, \code{runpf}, \code{runcpf} and \code{runopf}. \emph{Thanks to SNPerkin.}
 \end{itemize}
 
 \subsubsection*{Incompatible Changes}
