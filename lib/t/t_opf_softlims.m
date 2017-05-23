@@ -21,7 +21,7 @@ else
     verbose = 0;
 end
 
-t_begin(55, quiet);
+t_begin(59, quiet);
 
 %% define constants
 [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
@@ -97,7 +97,9 @@ t_is(mpc1.softlims.idx, mpc.softlims.idx, 5, [t 'mpc.softlims.idx']);
 t_ok(isfield(mpc1.softlims, 'cost'), [t 'mpc.softlims.cost']);
 t_is(mpc1.softlims.cost, mpc.softlims.cost, 5, [t 'mpc.softlims.cost']);
 
-t = 'savecase(fname, results) : ';
+t = 'savecase(fname, results) + gentype/genfuel: ';
+r.genfuel = {'ng'; 'coal'; 'hydro'};
+r.gentype = {'GT'; 'ST'; 'HY'};
 fn = sprintf('softlims_savecase_test_%d', fix(1e8*rand));
 savecase(fn, r);
 mpc1 = loadcase(fn);
@@ -111,6 +113,18 @@ t_ok(isfield(mpc1.softlims, 'overload'), [t 'results.softlims.overload']);
 t_is(mpc1.softlims.overload, r.softlims.overload, 5, [t 'results.softlims.overload']);
 t_ok(isfield(mpc1.softlims, 'ovl_cost'), [t 'results.softlims.ovl_cost']);
 t_is(mpc1.softlims.ovl_cost, r.softlims.ovl_cost, 4, [t 'results.softlims.ovl_cost']);
+t_ok(isfield(mpc1, 'gentype'), [t 'results.gentype']);
+t_ok(isfield(mpc1, 'genfuel'), [t 'results.genfuel']);
+if isfield(mpc1, 'gentype')
+    t_ok(isequal(mpc1.gentype, r.gentype), [t 'results.results.gentype']);
+else
+    t_ok(0, [t 'results.results.gentype']);
+end
+if isfield(mpc1, 'genfuel')
+    t_ok(isequal(mpc1.genfuel, r.genfuel), [t 'results.results.genfuel']);
+else
+    t_ok(0, [t 'results.results.genfuel']);
+end
 
 t = 'soft limits (violated) : ';
 mpc = rmfield(mpc, 'softlims');

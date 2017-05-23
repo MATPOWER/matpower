@@ -12,8 +12,11 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 5/23/17
+  - Add support for `gentype` and `genfuel` fields for MATPOWER case struct
+    in `extract_islands`, `ext2int`, `int2ext`, `load2disp`  and `savecase`.
+
 #### 5/22/17
-  - 
   - Add `genfuels` and `gentypes` to establish standard set of values for
     optional `mpc.genfuel` and `mpc.gentype` fields for generator fuel
     type and generator unit type, respectively.

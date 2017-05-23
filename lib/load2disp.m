@@ -102,6 +102,15 @@ if isfield(mpc, 'genfuel') && iscell(mpc.genfuel)
     mpc.genfuel = [mpc.genfuel; genfuel];
 end
 
+%% (optional) generator unit types
+if isfield(mpc, 'gentype') && iscell(mpc.gentype)
+    gentype = cell(nld, 1);
+    for k = 1:nld
+        gentype{k} = 'DL';
+    end
+    mpc.gentype = [mpc.gentype; gentype];
+end
+
 %% save case, if filename is given
 if nargin > 1 && ~isempty(fname)
     savecase(fname, mpc, '2');

@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 60;
+num_tests = 64;
 
 t_begin(num_tests, quiet);
 
@@ -132,7 +132,9 @@ t_is(r0.branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
 t_is(r0.branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
 t_is(r0.branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
 
-t = 'mpc = load2disp(solved_mpc) : ';
+t = 'mpc = load2disp(solved_mpc) + gentype/genfuel : ';
+r0.genfuel = {'ng'; 'coal'; 'hydro'};
+r0.gentype = {'GT'; 'ST'; 'HY'};
 mpc3 = load2disp(r0);
 ib = find(mpc0.bus(:, PD));
 ig = ng+(1:length(ib));
@@ -148,6 +150,22 @@ t_is(mpc3.gen(ig, VG), r0.bus(ib, VM), 12, [t 'VG']);
 t_is(mpc3.gencost(ig, MODEL), 2, 12, [t 'gencost(:, MODEL)']);
 t_is(mpc3.gencost(ig, NCOST), 2, 12, [t 'gencost(:, NCOST)']);
 t_is(mpc3.gencost(ig, COST), 5000, 12, [t 'gencost(:, COST)']);
+t_ok(isfield(mpc3, 'gentype'), [t 'results.gentype']);
+t_ok(isfield(mpc3, 'genfuel'), [t 'results.genfuel']);
+if isfield(mpc3, 'gentype')
+    t_ok(isequal(mpc3.gentype, {r0.gentype{:}, 'DL', 'DL', 'DL'}'), [t 'results.results.gentype']);
+else
+    t_ok(0, [t 'results.results.gentype']);
+    got = mpc3.gentype
+    expected = {r0.gentype{:}, 'DL', 'DL', 'DL'}'
+end
+if isfield(mpc3, 'genfuel')
+    t_ok(isequal(mpc3.genfuel, {r0.genfuel{:}, 'dl', 'dl', 'dl'}'), [t 'results.results.genfuel']);
+else
+    t_ok(0, [t 'results.results.genfuel']);
+    got = mpc3.genfuel
+    expected = {r0.genfuel{:}, 'dl', 'dl', 'dl'}'
+end
 
 
 if have_fcn('octave')

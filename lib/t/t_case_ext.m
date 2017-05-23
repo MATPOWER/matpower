@@ -60,6 +60,22 @@ mpc.gencost = [
 	1	0	0	4	0	0	100	2000	200	4403.5	270	6363.5;
 ];
 
+%% generator unit type (see GENTYPES)
+mpc.gentype = {
+	'ST';
+	'GT';
+	'WT';
+	'HY';
+};
+
+%% generator fuel type (see GENFUELS)
+mpc.genfuel = {
+	'coal';
+	'ng';
+	'wind';
+	'hydro';
+};
+
 mpc.A = [
 	1	2	3	4	5	0	7	8	9	10	11	12	13	14	15	0	17	18	19	20	21	22	0	24	25	26	0	28	29	30;
 	2	4	6	8	10	0	14	16	18	20	22	24	26	28	30	0	34	36	38	40	42	44	0	48	50	52	0	56	58	60;

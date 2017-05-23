@@ -184,6 +184,15 @@ if nnz(C)
                 mpck{kk}.gencost = mpc.gencost(ig, :);
             end
         end
+        if isfield(mpck{kk}, 'gentype')
+            mpck{kk}.gentype = mpc.gentype(ig);
+        end
+        if isfield(mpck{kk}, 'genfuel')
+            mpck{kk}.genfuel = mpc.genfuel(ig);
+        end
+        if isfield(mpck{kk}, 'bus_name')
+            mpck{kk}.bus_name = mpc.bus_name(b);
+        end
         if ndc
             mpck{kk}.dcline = mpc.dcline(idc, :);
             if isfield(mpck{kk}, 'dclinecost')

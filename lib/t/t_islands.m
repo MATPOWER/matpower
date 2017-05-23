@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 236;
+num_tests = 308;
 
 t_begin(num_tests, quiet);
 
@@ -42,31 +42,42 @@ if have_fcn('octave')
     warning('off', file_in_path_warn_id);
 end
 
+gt = gentypes();
+gf = genfuels();
+ngt = length(gt);
+ngf = length(gf);
+
 %% load cases
 casenames = {'case118', 'case30', 'case14', 'case9'};
 n = length(casenames);
 for k = 1:n
     mpc{k} = loadcase(casenames{k});
     
-    %% add bus names
+    %% add bus names, labels
     nb = size(mpc{k}.bus, 1);
     mpc{k}.bus_name = cell(nb, 1);
+    mpc{k}.bus_label = cell(nb, 1);
     for b = 1:nb
         mpc{k}.bus_name{b} = sprintf('bus %d', mpc{k}.bus(b, BUS_I));
+        mpc{k}.bus_label{b} = sprintf('--%d--', mpc{k}.bus(b, BUS_I));
     end
     
-    %% add gen emission.rate, genid
+    %% add gen emission.rate, genid, gentype, genfuel
     ng = size(mpc{k}.gen, 1);
     mpc{k}.emission.rate = zeros(ng, 3);
     mpc{k}.genid1 = zeros(ng, 2);
     mpc{k}.genid2 = zeros(2, ng);
+    mpc{k}.gentype = cell(ng, 1);
+    mpc{k}.genfuel = cell(ng, 1);
     for g = 1:ng
         mpc{k}.emission.rate(g,:) = g * [1 2 3];
         mpc{k}.genid1(g, :) = [g  mpc{k}.gen(g, PMAX)];
         mpc{k}.genid2(:, g) = [g; mpc{k}.gen(g, PMAX)];
+        mpc{k}.gentype{g} = gt{mod(g-1, ngt) + 1};
+        mpc{k}.genfuel{g} = gf{mod(g-1, ngf) + 1};
     end
 end
-custom.bus{1} = { 'bus_name' };
+custom.bus{1} = { 'bus_label' };
 custom.gen{1} = { {'emission', 'rate'}, 'genid1' };
 custom.gen{2} = { 'genid2' };
 custom.branch{2} = { 'nonexistent' };
@@ -98,6 +109,9 @@ for k = 2:n
     mpc0.gencost    = [mpc0.gencost; mpc{k}.gencost];
     
     mpc0.bus_name       = [mpc0.bus_name;       mpc{k}.bus_name];
+    mpc0.gentype        = [mpc0.gentype;        mpc{k}.gentype];
+    mpc0.genfuel        = [mpc0.genfuel;        mpc{k}.genfuel];
+    mpc0.bus_label      = [mpc0.bus_label;      mpc{k}.bus_label];
     mpc0.emission.rate  = [mpc0.emission.rate;  mpc{k}.emission.rate];
     mpc0.genid1         = [mpc0.genid1;         mpc{k}.genid1];
     mpc0.genid2         = [mpc0.genid2          mpc{k}.genid2];
@@ -127,7 +141,10 @@ for k = 1:n
     t_is(mpc1{k}.gen,     mpc{k}.gen,     10, sprintf('%smpcs{%d}.gen', t, k));
     t_is(mpc1{k}.branch,  mpc{k}.branch,  10, sprintf('%smpcs{%d}.branch', t, k));
     t_is(mpc1{k}.gencost, mpc{k}.gencost, 10, sprintf('%smpcs{%d}.gencost', t, k));
-    t_is(length(mpc1{k}.bus_name), length(mpc0.bus_name), 10, sprintf('%smpcs{%d}.bus_name dim', t, k));
+    t_ok(isequaln(mpc1{k}.bus_name, mpc{k}.bus_name), sprintf('%smpcs{%d}.bus_name', t, k));
+    t_ok(isequaln(mpc1{k}.gentype, mpc{k}.gentype), sprintf('%smpcs{%d}.gentype', t, k));
+    t_ok(isequaln(mpc1{k}.genfuel, mpc{k}.genfuel), sprintf('%smpcs{%d}.genfuel', t, k));
+    t_ok(isequaln(mpc1{k}.bus_label, mpc0.bus_label), sprintf('%smpcs{%d}.bus_label', t, k));
     t_is(mpc1{k}.emission.rate, mpc0.emission.rate,     10, sprintf('%smpcs{%d}.emission.rate', t, k));
     t_is(mpc1{k}.genid1,        mpc0.genid1,            10, sprintf('%smpcs{%d}.genid1', t, k));
     t_is(mpc1{k}.genid2,        mpc0.genid2,            10, sprintf('%smpcs{%d}.genid2', t, k));
@@ -144,7 +161,10 @@ for k = 1:n
     t_is(mpc1{k}.gen,     mpc{k}.gen,     10, sprintf('%smpcs{%d}.gen', t, k));
     t_is(mpc1{k}.branch,  mpc{k}.branch,  10, sprintf('%smpcs{%d}.branch', t, k));
     t_is(mpc1{k}.gencost, mpc{k}.gencost, 10, sprintf('%smpcs{%d}.gencost', t, k));
-    t_is(length(mpc1{k}.bus_name), length(mpc{k}.bus_name), 10, sprintf('%smpcs{%d}.bus_name dim', t, k));
+    t_ok(isequaln(mpc1{k}.bus_name, mpc{k}.bus_name), sprintf('%smpcs{%d}.bus_name', t, k));
+    t_ok(isequaln(mpc1{k}.gentype, mpc{k}.gentype), sprintf('%smpcs{%d}.gentype', t, k));
+    t_ok(isequaln(mpc1{k}.genfuel, mpc{k}.genfuel), sprintf('%smpcs{%d}.genfuel', t, k));
+    t_ok(isequaln(mpc1{k}.bus_label, mpc{k}.bus_label), sprintf('%smpcs{%d}.bus_label', t, k));
     t_is(mpc1{k}.emission.rate, mpc{k}.emission.rate,     10, sprintf('%smpcs{%d}.emission.rate', t, k));
     t_is(mpc1{k}.genid1,        mpc{k}.genid1,            10, sprintf('%smpcs{%d}.genid1', t, k));
     t_is(mpc1{k}.genid2,        mpc{k}.genid2,            10, sprintf('%smpcs{%d}.genid2', t, k));
@@ -159,7 +179,10 @@ t_is(mpc3.bus,     mpc{k}.bus,     10, sprintf('%smpc%d.bus', t, k));
 t_is(mpc3.gen,     mpc{k}.gen,     10, sprintf('%smpc%d.gen', t, k));
 t_is(mpc3.branch,  mpc{k}.branch,  10, sprintf('%smpc%d.branch', t, k));
 t_is(mpc3.gencost, mpc{k}.gencost, 10, sprintf('%smpc%d.gencost', t, k));
-t_is(length(mpc3.bus_name), length(mpc0.bus_name), 10, sprintf('%smpc%d.bus_name dim', t, k));
+t_ok(isequaln(mpc3.bus_name, mpc{k}.bus_name), sprintf('%smpc%d.bus_name', t, k));
+t_ok(isequaln(mpc3.gentype, mpc{k}.gentype), sprintf('%smpc%d.gentype', t, k));
+t_ok(isequaln(mpc3.genfuel, mpc{k}.genfuel), sprintf('%smpc%d.genfuel', t, k));
+t_ok(isequaln(mpc3.bus_label, mpc0.bus_label), sprintf('%smpc%d.bus_label', t, k));
 t_is(mpc3.emission.rate, mpc0.emission.rate,     10, sprintf('%smpc%d.emission.rate', t, k));
 t_is(mpc3.genid1,        mpc0.genid1,            10, sprintf('%smpc%d.genid1', t, k));
 t_is(mpc3.genid2,        mpc0.genid2,            10, sprintf('%smpc%d.genid2', t, k));
@@ -173,7 +196,10 @@ t_is(mpc3.bus,     mpc{k}.bus,     10, sprintf('%smpc%d.bus', t, k));
 t_is(mpc3.gen,     mpc{k}.gen,     10, sprintf('%smpc%d.gen', t, k));
 t_is(mpc3.branch,  mpc{k}.branch,  10, sprintf('%smpc%d.branch', t, k));
 t_is(mpc3.gencost, mpc{k}.gencost, 10, sprintf('%smpc%d.gencost', t, k));
-t_is(length(mpc3.bus_name), length(mpc{k}.bus_name), 10, sprintf('%smpc%d.bus_name dim', t, k));
+t_ok(isequaln(mpc3.bus_name, mpc{k}.bus_name), sprintf('%smpc%d.bus_name', t, k));
+t_ok(isequaln(mpc3.gentype, mpc{k}.gentype), sprintf('%smpc%d.gentype', t, k));
+t_ok(isequaln(mpc3.genfuel, mpc{k}.genfuel), sprintf('%smpc%d.genfuel', t, k));
+t_ok(isequaln(mpc3.bus_label, mpc{k}.bus_label), sprintf('%smpc%d.bus_label', t, k));
 t_is(mpc3.emission.rate, mpc{k}.emission.rate,     10, sprintf('%smpc%d.emission.rate', t, k));
 t_is(mpc3.genid1,        mpc{k}.genid1,            10, sprintf('%smpc%d.genid1', t, k));
 t_is(mpc3.genid2,        mpc{k}.genid2,            10, sprintf('%smpc%d.genid2', t, k));
@@ -200,7 +226,10 @@ for k = 1:n
     t_is(mpc2{k}.gen,     mpc{k}.gen,     10, sprintf('%smpcs{%d}.gen', t, k));
     t_is(mpc2{k}.branch,  mpc{k}.branch,  10, sprintf('%smpcs{%d}.branch', t, k));
     t_is(mpc2{k}.gencost, mpc{k}.gencost, 10, sprintf('%smpcs{%d}.gencost', t, k));
-    t_is(length(mpc2{k}.bus_name), length(mpc0.bus_name), 10, sprintf('%smpcs{%d}.bus_name dim', t, k));
+    t_ok(isequaln(mpc2{k}.bus_name, mpc{k}.bus_name), sprintf('%smpcs{%d}.bus_name', t, k));
+    t_ok(isequaln(mpc2{k}.gentype, mpc{k}.gentype), sprintf('%smpcs{%d}.gentype', t, k));
+    t_ok(isequaln(mpc2{k}.genfuel, mpc{k}.genfuel), sprintf('%smpcs{%d}.genfuel', t, k));
+    t_ok(isequaln(mpc2{k}.bus_label, mpc0.bus_label), sprintf('%smpcs{%d}.bus_label', t, k));
     t_is(mpc2{k}.emission.rate, mpc0.emission.rate,     10, sprintf('%smpcs{%d}.emission.rate', t, k));
     t_is(mpc2{k}.genid1,        mpc0.genid1,            10, sprintf('%smpcs{%d}.genid1', t, k));
     t_is(mpc2{k}.genid2,        mpc0.genid2,            10, sprintf('%smpcs{%d}.genid2', t, k));
@@ -216,7 +245,10 @@ for k = 1:n
     t_is(mpc2{k}.gen,     mpc{k}.gen,     10, sprintf('%smpcs{%d}.gen', t, k));
     t_is(mpc2{k}.branch,  mpc{k}.branch,  10, sprintf('%smpcs{%d}.branch', t, k));
     t_is(mpc2{k}.gencost, mpc{k}.gencost, 10, sprintf('%smpcs{%d}.gencost', t, k));
-    t_is(length(mpc2{k}.bus_name), length(mpc{k}.bus_name), 10, sprintf('%smpcs{%d}.bus_name dim', t, k));
+    t_ok(isequaln(mpc2{k}.bus_name, mpc{k}.bus_name), sprintf('%smpcs{%d}.bus_name', t, k));
+    t_ok(isequaln(mpc2{k}.gentype, mpc{k}.gentype), sprintf('%smpcs{%d}.gentype', t, k));
+    t_ok(isequaln(mpc2{k}.genfuel, mpc{k}.genfuel), sprintf('%smpcs{%d}.genfuel', t, k));
+    t_ok(isequaln(mpc2{k}.bus_label, mpc{k}.bus_label), sprintf('%smpcs{%d}.bus_label', t, k));
     t_is(mpc2{k}.emission.rate, mpc{k}.emission.rate,     10, sprintf('%smpcs{%d}.emission.rate', t, k));
     t_is(mpc2{k}.genid1,        mpc{k}.genid1,            10, sprintf('%smpcs{%d}.genid1', t, k));
     t_is(mpc2{k}.genid2,        mpc{k}.genid2,            10, sprintf('%smpcs{%d}.genid2', t, k));
@@ -231,7 +263,10 @@ t_is(mpc4.bus,     mpc{k}.bus,     10, sprintf('%smpc%d.bus', t, k));
 t_is(mpc4.gen,     mpc{k}.gen,     10, sprintf('%smpc%d.gen', t, k));
 t_is(mpc4.branch,  mpc{k}.branch,  10, sprintf('%smpc%d.branch', t, k));
 t_is(mpc4.gencost, mpc{k}.gencost, 10, sprintf('%smpc%d.gencost', t, k));
-t_is(length(mpc4.bus_name), length(mpc0.bus_name), 10, sprintf('%smpc%d.bus_name dim', t, k));
+t_ok(isequaln(mpc4.bus_name, mpc{k}.bus_name), sprintf('%smpc%d.bus_name', t, k));
+t_ok(isequaln(mpc4.gentype, mpc{k}.gentype), sprintf('%smpc%d.gentype', t, k));
+t_ok(isequaln(mpc4.genfuel, mpc{k}.genfuel), sprintf('%smpc%d.genfuel', t, k));
+t_ok(isequaln(mpc4.bus_label, mpc0.bus_label), sprintf('%smpc%d.bus_label', t, k));
 t_is(mpc4.emission.rate, mpc0.emission.rate,     10, sprintf('%smpc%d.emission.rate', t, k));
 t_is(mpc4.genid1,        mpc0.genid1,            10, sprintf('%smpc%d.genid1', t, k));
 t_is(mpc4.genid2,        mpc0.genid2,            10, sprintf('%smpc%d.genid2', t, k));
@@ -245,7 +280,10 @@ t_is(mpc4.bus,     mpc{k}.bus,     10, sprintf('%smpc%d.bus', t, k));
 t_is(mpc4.gen,     mpc{k}.gen,     10, sprintf('%smpc%d.gen', t, k));
 t_is(mpc4.branch,  mpc{k}.branch,  10, sprintf('%smpc%d.branch', t, k));
 t_is(mpc4.gencost, mpc{k}.gencost, 10, sprintf('%smpc%d.gencost', t, k));
-t_is(length(mpc4.bus_name), length(mpc{k}.bus_name), 10, sprintf('%smpc%d.bus_name dim', t, k));
+t_ok(isequal(mpc4.bus_name, mpc{k}.bus_name), sprintf('%smpc%d.bus_name', t, k));
+t_ok(isequal(mpc4.gentype, mpc{k}.gentype), sprintf('%smpc%d.gentype', t, k));
+t_ok(isequal(mpc4.genfuel, mpc{k}.genfuel), sprintf('%smpc%d.genfuel', t, k));
+t_ok(isequal(mpc4.bus_label, mpc{k}.bus_label), sprintf('%smpc%d.bus_label', t, k));
 t_is(mpc4.emission.rate, mpc{k}.emission.rate,     10, sprintf('%smpc%d.emission.rate', t, k));
 t_is(mpc4.genid1,        mpc{k}.genid1,            10, sprintf('%smpc%d.genid1', t, k));
 t_is(mpc4.genid2,        mpc{k}.genid2,            10, sprintf('%smpc%d.genid2', t, k));
@@ -260,7 +298,10 @@ t_is(mpc1.bus,     mpc{k}.bus,     10, sprintf('%smpc%d.bus', t, k));
 t_is(mpc1.gen,     mpc{k}.gen,     10, sprintf('%smpc%d.gen', t, k));
 t_is(mpc1.branch,  mpc{k}.branch,  10, sprintf('%smpc%d.branch', t, k));
 t_is(mpc1.gencost, mpc{k}.gencost, 10, sprintf('%smpc%d.gencost', t, k));
-t_is(length(mpc1.bus_name), length(mpc0.bus_name), 10, sprintf('%smpc%d.bus_name dim', t, k));
+t_ok(isequal(mpc1.bus_name, mpc{k}.bus_name), sprintf('%smpc%d.bus_name', t, k));
+t_ok(isequal(mpc1.gentype, mpc{k}.gentype), sprintf('%smpc%d.gentype', t, k));
+t_ok(isequal(mpc1.genfuel, mpc{k}.genfuel), sprintf('%smpc%d.genfuel', t, k));
+t_ok(isequal(mpc1.bus_label, mpc0.bus_label), sprintf('%smpc%d.bus_label', t, k));
 t_is(mpc1.emission.rate, mpc0.emission.rate,     10, sprintf('%smpc%d.emission.rate', t, k));
 t_is(mpc1.genid1,        mpc0.genid1,            10, sprintf('%smpc%d.genid1', t, k));
 t_is(mpc1.genid2,        mpc0.genid2,            10, sprintf('%smpc%d.genid2', t, k));
@@ -269,7 +310,10 @@ t_is(mpc3.bus,     mpc{k}.bus,     10, sprintf('%smpc%d.bus', t, k));
 t_is(mpc3.gen,     mpc{k}.gen,     10, sprintf('%smpc%d.gen', t, k));
 t_is(mpc3.branch,  mpc{k}.branch,  10, sprintf('%smpc%d.branch', t, k));
 t_is(mpc3.gencost, mpc{k}.gencost, 10, sprintf('%smpc%d.gencost', t, k));
-t_is(length(mpc3.bus_name), length(mpc0.bus_name), 10, sprintf('%smpc%d.bus_name dim', t, k));
+t_ok(isequaln(mpc3.bus_name, mpc{k}.bus_name), sprintf('%smpc%d.bus_name', t, k));
+t_ok(isequaln(mpc3.gentype, mpc{k}.gentype), sprintf('%smpc%d.gentype', t, k));
+t_ok(isequaln(mpc3.genfuel, mpc{k}.genfuel), sprintf('%smpc%d.genfuel', t, k));
+t_ok(isequaln(mpc3.bus_label, mpc0.bus_label), sprintf('%smpc%d.bus_label', t, k));
 t_is(mpc3.emission.rate, mpc0.emission.rate,     10, sprintf('%smpc%d.emission.rate', t, k));
 t_is(mpc3.genid1,        mpc0.genid1,            10, sprintf('%smpc%d.genid1', t, k));
 t_is(mpc3.genid2,        mpc0.genid2,            10, sprintf('%smpc%d.genid2', t, k));
@@ -284,7 +328,10 @@ t_is(mpc1.bus,     mpc{k}.bus,     10, sprintf('%smpc%d.bus', t, k));
 t_is(mpc1.gen,     mpc{k}.gen,     10, sprintf('%smpc%d.gen', t, k));
 t_is(mpc1.branch,  mpc{k}.branch,  10, sprintf('%smpc%d.branch', t, k));
 t_is(mpc1.gencost, mpc{k}.gencost, 10, sprintf('%smpc%d.gencost', t, k));
-t_is(length(mpc1.bus_name), length(mpc{k}.bus_name), 10, sprintf('%smpc%d.bus_name dim', t, k));
+t_ok(isequaln(mpc1.bus_name, mpc{k}.bus_name), sprintf('%smpc%d.bus_name', t, k));
+t_ok(isequaln(mpc1.gentype, mpc{k}.gentype), sprintf('%smpc%d.gentype', t, k));
+t_ok(isequaln(mpc1.genfuel, mpc{k}.genfuel), sprintf('%smpc%d.genfuel', t, k));
+t_ok(isequaln(mpc1.bus_label, mpc{k}.bus_label), sprintf('%smpc%d.bus_label', t, k));
 t_is(mpc1.emission.rate, mpc{k}.emission.rate,     10, sprintf('%smpc%d.emission.rate', t, k));
 t_is(mpc1.genid1,        mpc{k}.genid1,            10, sprintf('%smpc%d.genid1', t, k));
 t_is(mpc1.genid2,        mpc{k}.genid2,            10, sprintf('%smpc%d.genid2', t, k));
@@ -293,7 +340,10 @@ t_is(mpc3.bus,     mpc{k}.bus,     10, sprintf('%smpc%d.bus', t, k));
 t_is(mpc3.gen,     mpc{k}.gen,     10, sprintf('%smpc%d.gen', t, k));
 t_is(mpc3.branch,  mpc{k}.branch,  10, sprintf('%smpc%d.branch', t, k));
 t_is(mpc3.gencost, mpc{k}.gencost, 10, sprintf('%smpc%d.gencost', t, k));
-t_is(length(mpc3.bus_name), length(mpc{k}.bus_name), 10, sprintf('%smpc%d.bus_name dim', t, k));
+t_ok(isequaln(mpc3.bus_name, mpc{k}.bus_name), sprintf('%smpc%d.bus_name', t, k));
+t_ok(isequaln(mpc3.gentype, mpc{k}.gentype), sprintf('%smpc%d.gentype', t, k));
+t_ok(isequaln(mpc3.genfuel, mpc{k}.genfuel), sprintf('%smpc%d.genfuel', t, k));
+t_ok(isequaln(mpc3.bus_label, mpc{k}.bus_label), sprintf('%smpc%d.bus_label', t, k));
 t_is(mpc3.emission.rate, mpc{k}.emission.rate,     10, sprintf('%smpc%d.emission.rate', t, k));
 t_is(mpc3.genid1,        mpc{k}.genid1,            10, sprintf('%smpc%d.genid1', t, k));
 t_is(mpc3.genid2,        mpc{k}.genid2,            10, sprintf('%smpc%d.genid2', t, k));

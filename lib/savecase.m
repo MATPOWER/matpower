@@ -369,6 +369,21 @@ else                                %% M-file
             fprintf(fd, '];\n');
         end
 
+        %% (optional) generator unit types
+        if isfield(mpc, 'gentype') && iscell(mpc.gentype)
+            ng = length(mpc.gentype);
+            if size(mpc.gen, 1) ~= ng
+                warning('savecase: gentype field does not have the expected dimensions (length = %d, expected %d)', ng, size(mpc.gen, 1));
+            end
+            
+            fprintf(fd, '\n%%%% generator unit type (see GENTYPES)\n');
+            fprintf(fd, '%sgentype = {\n', prefix);
+            for k = 1:ng
+                fprintf(fd, '\t''%s'';\n', mpc.gentype{k});
+            end
+            fprintf(fd, '};\n');
+        end
+
         %% (optional) generator fuel types
         if isfield(mpc, 'genfuel') && iscell(mpc.genfuel)
             ng = length(mpc.genfuel);
@@ -376,7 +391,7 @@ else                                %% M-file
                 warning('savecase: genfuel field does not have the expected dimensions (length = %d, expected %d)', ng, size(mpc.gen, 1));
             end
             
-            fprintf(fd, '\n%%%% generator fuel type\n');
+            fprintf(fd, '\n%%%% generator fuel type (see GENFUELS)\n');
             fprintf(fd, '%sgenfuel = {\n', prefix);
             for k = 1:ng
                 fprintf(fd, '\t''%s'';\n', mpc.genfuel{k});

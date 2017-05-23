@@ -189,13 +189,19 @@ if isstruct(bus)
             o.state = 'i';
             mpc.order = o;
 
-            %% update gencost, A and N
+            %% update gencost, gentype, genfuel, A and N
             if isfield(mpc, 'gencost')
                 ordering = {'gen'};         %% Pg cost only
                 if size(mpc.gencost, 1) == 2*ng0
                     ordering{2} = 'gen';    %% include Qg cost
                 end
                 mpc = e2i_field(mpc, 'gencost', ordering);
+            end
+            if isfield(mpc, 'gentype')
+                mpc = e2i_field(mpc, 'gentype', {'gen'});
+            end
+            if isfield(mpc, 'genfuel')
+                mpc = e2i_field(mpc, 'genfuel', {'gen'});
             end
             if isfield(mpc, 'A') || isfield(mpc, 'N')
                 if dc
@@ -218,7 +224,7 @@ if isstruct(bus)
         end
 
         i2e = mpc;
-    else                    %% convert extra data
+    else                    %% convert extra data (DEPRECATED)
         ordering = branch;              %% rename argument
         if nargin < 4
             dim = 1;

@@ -67,6 +67,12 @@ if isstruct(i2e)
                 end
                 mpc = i2e_field(mpc, 'gencost', ordering);
             end
+            if isfield(mpc, 'gentype')
+                mpc = i2e_field(mpc, 'gentype', {'gen'});
+            end
+            if isfield(mpc, 'genfuel')
+                mpc = i2e_field(mpc, 'genfuel', {'gen'});
+            end
             %% assume A and N are "read-only"
             %% (otherwise need to convert back, using i2e_field() which
             %% requires knowing if they are sized for AC or DC)

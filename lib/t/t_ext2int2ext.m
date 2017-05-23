@@ -15,7 +15,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 129;
+num_tests = 135;
 t_begin(num_tests, quiet);
 
 %% define named indices into data matrices
@@ -171,6 +171,8 @@ else
     t_is(mpc.branch, mpci.branch, 12, [t 'branch']);
     t_is(mpc.gen, mpci.gen, 12, [t 'gen']);
     t_is(mpc.gencost, mpci.gencost, 12, [t 'gencost']);
+    t_ok(isequaln(mpc.gentype, mpci.gentype), [t 'gentype']);
+    t_ok(isequaln(mpc.genfuel, mpci.genfuel), [t 'genfuel']);
     t_is(mpc.A, mpci.A, 12, [t 'A']);
     t_is(mpc.N, mpci.N, 12, [t 'N']);
     t = 'mpc = ext2int(mpc) - repeat : ';
@@ -179,6 +181,8 @@ else
     t_is(mpc.branch, mpci.branch, 12, [t 'branch']);
     t_is(mpc.gen, mpci.gen, 12, [t 'gen']);
     t_is(mpc.gencost, mpci.gencost, 12, [t 'gencost']);
+    t_ok(isequaln(mpc.gentype, mpci.gentype), [t 'gentype']);
+    t_ok(isequaln(mpc.genfuel, mpci.genfuel), [t 'genfuel']);
     t_is(mpc.A, mpci.A, 12, [t 'A']);
     t_is(mpc.N, mpci.N, 12, [t 'N']);
     t = 'mpc = int2ext(mpc) : ';
@@ -187,6 +191,8 @@ else
     t_is(mpc.branch, mpce.branch, 12, [t 'branch']);
     t_is(mpc.gen, mpce.gen, 12, [t 'gen']);
     t_is(mpc.gencost, mpce.gencost, 12, [t 'gencost']);
+    t_ok(isequaln(mpc.gentype, mpce.gentype), [t 'gentype']);
+    t_ok(isequaln(mpc.genfuel, mpce.genfuel), [t 'genfuel']);
     t_is(mpc.A, mpce.A, 12, [t 'A']);
     t_is(mpc.N, mpce.N, 12, [t 'N']);
 
