@@ -189,13 +189,16 @@ if isstruct(bus)
             o.state = 'i';
             mpc.order = o;
 
-            %% update gencost, gentype, genfuel, A and N
+            %% update gencost, bus_name, gentype, genfuel, A and N
             if isfield(mpc, 'gencost')
                 ordering = {'gen'};         %% Pg cost only
                 if size(mpc.gencost, 1) == 2*ng0
                     ordering{2} = 'gen';    %% include Qg cost
                 end
                 mpc = e2i_field(mpc, 'gencost', ordering);
+            end
+            if isfield(mpc, 'bus_name')
+                mpc = e2i_field(mpc, 'bus_name', {'bus'});
             end
             if isfield(mpc, 'gentype')
                 mpc = e2i_field(mpc, 'gentype', {'gen'});

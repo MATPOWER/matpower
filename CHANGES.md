@@ -13,8 +13,10 @@ Since last release
 ------------------
 
 #### 5/23/17
-  - Add support for `gentype` and `genfuel` fields for MATPOWER case struct
+  - Add support for `gentype` and `genfuel` fields of MATPOWER case struct
     in `extract_islands`, `ext2int`, `int2ext`, `load2disp`  and `savecase`.
+  - Add support for `bus_name` field of MATPOWER case struct to
+    `extract_islands`, `ext2int` and `int2ext`.
 
 #### 5/22/17
   - Add `genfuels` and `gentypes` to establish standard set of values for

@@ -67,6 +67,9 @@ if isstruct(i2e)
                 end
                 mpc = i2e_field(mpc, 'gencost', ordering);
             end
+            if isfield(mpc, 'bus_name')
+                mpc = i2e_field(mpc, 'bus_name', {'bus'});
+            end
             if isfield(mpc, 'gentype')
                 mpc = i2e_field(mpc, 'gentype', {'gen'});
             end

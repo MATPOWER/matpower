@@ -60,6 +60,20 @@ mpc.gencost = [
 	1	0	0	4	0	0	100	2000	200	4403.5	270	6363.5;
 ];
 
+%% bus names
+mpc.bus_name = {
+            'BUS 1';
+            'BUS 2';
+            'BUS 30';
+            'BUS 4';
+            'BUS 5';
+            'BUS 20';
+            'BUS 6';
+            'BUS 7';
+            'BUS 8';
+            'BUS 9';
+};
+
 %% generator unit type (see GENTYPES)
 mpc.gentype = {
 	'ST';
