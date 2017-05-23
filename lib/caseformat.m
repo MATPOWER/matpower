@@ -30,10 +30,11 @@
 %   are added to the bus, branch and gen matrices by the power flow and OPF
 %   solvers.
 %
-%   The case struct also also allows for additional fields to be included.
+%   The case struct also allows for additional fields to be included.
 %   The OPF is designed to recognize fields named A, l, u, H, Cw, N,
 %   fparm, z0, zl and zu as parameters used to directly extend the OPF
-%   formulation (see OPF for details). Other user-defined fields may also
+%   formulation (see OPF for details). Additional standard optional fields
+%   include bus_name, gentype and genfuel. Other user-defined fields may also
 %   be included and will be automatically loaded by the LOADCASE function
 %   and, given an appropriate 'savecase' callback function (see
 %   ADD_USERFCN), saved by the SAVECASE function.
@@ -145,7 +146,7 @@
 %   and IDX_COST.
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2017, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

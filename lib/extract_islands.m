@@ -50,14 +50,17 @@ function mpck = extract_islands(mpc, varargin)
 %           mpc3 = extract_islands(mpc, groups, 3);
 %
 %       Extract the 2nd island, including custom fields, where
-%       mpc.bus_name{b} contains the name of bus b, and mpc.genfuel{g},
+%       mpc.bus_label{b} contains a label for bus b, and mpc.gen_name{g},
 %       mpc.emissions.rate(g, :), and mpc.genloc(:, g) contain,
-%       respectively, the generator's fuel type, emission rates and
+%       respectively, the generator's name, emission rates and
 %       location coordinates:
-%           custom.bus{1} = {'bus_name'};
-%           custom.gen{1} = {'genfuel', {'emissions', 'rate'}};
+%           custom.bus{1} = {'bus_label'};
+%           custom.gen{1} = {'gen_name', {'emissions', 'rate'}};
 %           custom.gen{2} = {'genloc'};
 %           mpc = extract_islands(mpc, 1, custom);
+%
+%       Note: Fields bus_name, gentype and genfuel are handled automatically
+%             and do not need to be included in custom.
 %
 %   See also FIND_ISLANDS, CASE_INFO, CONNECTED_COMPONENTS.
 
