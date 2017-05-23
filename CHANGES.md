@@ -17,6 +17,7 @@ Since last release
     in `extract_islands`, `ext2int`, `int2ext`, `load2disp`  and `savecase`.
   - Add support for `bus_name` field of MATPOWER case struct to
     `extract_islands`, `ext2int` and `int2ext`.
+  - Add `gentype` and `genfuel` fields to three ACTIVSg cases.
 
 #### 5/22/17
   - Add `genfuels` and `gentypes` to establish standard set of values for

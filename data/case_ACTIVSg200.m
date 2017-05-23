@@ -25,8 +25,8 @@ function mpc = case_ACTIVSg200
 %   May 16, 2017
 
 %   Created from ACTIV_SG_200.pwb, saved by
-%   PowerWorld Simulator, version 20 Beta, build date April 26, 2017,
-%   then by MATPOWER 6.0.
+%   PowerWorld Simulator, version 20 Beta, build date May 19, 2017,
+%   then by MATPOWER 6.
 
 %   MATPOWER
 %   Copyright (c) 2017 by A.B. Birchfield, T. Xu, K.M. Gegner, K.S. Shetye,
@@ -605,6 +605,112 @@ mpc.gencost = [
 	2	0	0	3	0.002	23.588	701.25;
 	2	0	0	3	0.002	23.588	701.25;
 ];
+
+%% generator unit type (see GENTYPES)
+mpc.gentype = {
+	'ST';
+	'ST';
+	'ST';
+	'ST';
+	'ST';
+	'W2';
+	'ST';
+	'ST';
+	'ST';
+	'ST';
+	'ST';
+	'ST';
+	'ST';
+	'GT';
+	'GT';
+	'GT';
+	'GT';
+	'GT';
+	'GT';
+	'GT';
+	'ST';
+	'W2';
+	'W2';
+	'W2';
+	'W2';
+	'ST';
+	'ST';
+	'ST';
+	'ST';
+	'ST';
+	'W2';
+	'ST';
+	'ST';
+	'ST';
+	'ST';
+	'ST';
+	'GT';
+	'GT';
+	'GT';
+	'GT';
+	'GT';
+	'GT';
+	'GT';
+	'GT';
+	'ST';
+	'ST';
+	'NB';
+	'GT';
+	'GT';
+};
+
+%% generator fuel type (see GENFUELS)
+mpc.genfuel = {
+	'coal';
+	'coal';
+	'coal';
+	'coal';
+	'coal';
+	'wind';
+	'coal';
+	'coal';
+	'coal';
+	'coal';
+	'coal';
+	'coal';
+	'coal';
+	'ng';
+	'ng';
+	'ng';
+	'ng';
+	'ng';
+	'ng';
+	'ng';
+	'coal';
+	'wind';
+	'wind';
+	'wind';
+	'wind';
+	'coal';
+	'coal';
+	'coal';
+	'coal';
+	'coal';
+	'wind';
+	'coal';
+	'coal';
+	'coal';
+	'coal';
+	'coal';
+	'ng';
+	'ng';
+	'ng';
+	'ng';
+	'ng';
+	'ng';
+	'ng';
+	'ng';
+	'coal';
+	'coal';
+	'nuclear';
+	'ng';
+	'ng';
+};
 
 %% bus names
 mpc.bus_name = {

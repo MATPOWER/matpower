@@ -25,8 +25,8 @@ function mpc = case_ACTIVSg500
 %   May 16, 2017
 
 %   Created from ACTIV_SG_500.pwb, saved by
-%   PowerWorld Simulator, version 20 Beta, build date April 26, 2017,
-%   then by MATPOWER 6.0.
+%   PowerWorld Simulator, version 20 Beta, build date May 19, 2017,
+%   then by MATPOWER 6.
 
 %   MATPOWER
 %   Copyright (c) 2017 by A.B. Birchfield, T. Xu, K.M. Gegner, K.S. Shetye,
@@ -1339,6 +1339,194 @@ mpc.gencost = [
 	2	0	0	3	0	0	0;
 	2	0	0	3	0	0	0;
 ];
+
+%% generator unit type (see GENTYPES)
+mpc.gentype = {
+	'ST';
+	'NB';
+	'NB';
+	'NB';
+	'ST';
+	'ST';
+	'GT';
+	'HY';
+	'HY';
+	'HY';
+	'HY';
+	'HY';
+	'HY';
+	'HY';
+	'HY';
+	'NB';
+	'NB';
+	'HY';
+	'HY';
+	'HY';
+	'ST';
+	'ST';
+	'HY';
+	'HY';
+	'HY';
+	'HY';
+	'ST';
+	'GT';
+	'GT';
+	'GT';
+	'ST';
+	'ST';
+	'ST';
+	'ST';
+	'ST';
+	'GT';
+	'GT';
+	'GT';
+	'ST';
+	'ST';
+	'HY';
+	'HY';
+	'HY';
+	'HY';
+	'HY';
+	'HY';
+	'HY';
+	'GT';
+	'GT';
+	'GT';
+	'GT';
+	'GT';
+	'GT';
+	'GT';
+	'GT';
+	'GT';
+	'GT';
+	'GT';
+	'GT';
+	'GT';
+	'GT';
+	'GT';
+	'GT';
+	'GT';
+	'GT';
+	'HY';
+	'HY';
+	'HY';
+	'HY';
+	'HY';
+	'HY';
+	'HY';
+	'HY';
+	'HY';
+	'HY';
+	'GT';
+	'GT';
+	'GT';
+	'GT';
+	'GT';
+	'PV';
+	'ST';
+	'HY';
+	'HY';
+	'HY';
+	'HY';
+	'HY';
+	'ST';
+	'HY';
+	'HY';
+};
+
+%% generator fuel type (see GENFUELS)
+mpc.genfuel = {
+	'coal';
+	'nuclear';
+	'nuclear';
+	'nuclear';
+	'coal';
+	'coal';
+	'ng';
+	'hydro';
+	'hydro';
+	'hydro';
+	'hydro';
+	'hydro';
+	'hydro';
+	'hydro';
+	'hydro';
+	'nuclear';
+	'nuclear';
+	'hydro';
+	'hydro';
+	'hydro';
+	'coal';
+	'coal';
+	'hydro';
+	'hydro';
+	'hydro';
+	'hydro';
+	'coal';
+	'ng';
+	'ng';
+	'ng';
+	'coal';
+	'coal';
+	'coal';
+	'coal';
+	'coal';
+	'ng';
+	'ng';
+	'ng';
+	'coal';
+	'coal';
+	'hydro';
+	'hydro';
+	'hydro';
+	'hydro';
+	'hydro';
+	'hydro';
+	'hydro';
+	'ng';
+	'ng';
+	'ng';
+	'ng';
+	'ng';
+	'ng';
+	'ng';
+	'ng';
+	'ng';
+	'ng';
+	'ng';
+	'ng';
+	'ng';
+	'ng';
+	'ng';
+	'ng';
+	'ng';
+	'ng';
+	'hydro';
+	'hydro';
+	'hydro';
+	'hydro';
+	'hydro';
+	'hydro';
+	'hydro';
+	'hydro';
+	'hydro';
+	'hydro';
+	'ng';
+	'ng';
+	'ng';
+	'ng';
+	'ng';
+	'solar';
+	'coal';
+	'hydro';
+	'hydro';
+	'hydro';
+	'hydro';
+	'hydro';
+	'coal';
+	'hydro';
+	'hydro';
+};
 
 %% bus names
 mpc.bus_name = {
