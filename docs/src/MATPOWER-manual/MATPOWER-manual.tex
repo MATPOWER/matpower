@@ -3074,6 +3074,15 @@ Since the IEEE CDF format does not contain all of the data needed to run an opti
 
 The \code{psse2mpc} function converts a PSS/E RAW data file into a \matpower{} case struct. Given an optional file name \code{mpc\_name}, it can save the converted case to a \matpower{} case file. Warnings generated during the conversion process can be optionally returned in the \code{warnings} argument. By default, \code{psse2mpc} attempts to determine the revision of the PSS/E RAW file from the contents, but the user can specify an explicit revision number to use in the optional \code{rev} argument.
 
+\subsubsection{\tt save2psse}
+
+\begin{Code}
+  save2psse(fname, mpc)
+  fname_out = save2psse(fname, mpc)
+\end{Code}
+
+The \code{save2psse} function saves a \matpower{} case struct \code{mpc} as a PSS/E RAW file. The \code{fname} parameter is a string containing the name of the file to be created or overwritten. If \code{fname} does not include a file extension, codeq{.raw} will be added. Optionally returns the, possibly updated, filename. Currently exports to RAW format Rev 33.
+
 
 \subsection{System Information}
 
@@ -5403,7 +5412,8 @@ name & description \\
 \code{loadcase}	& loads data from a \matpower{} case file or struct into data matrices or a case struct	\\
 \code{mpoption}	& sets and retrieves \matpower{} options	\\
 \code{printpf}	& pretty prints power flow and OPF results	\\
-\code{psse2mpc}	& converts power flow data from PSS/E format to \matpower{} format	\\
+\code{psse2mpc}	& converts power flow data from PSS/E RAW format to \matpower{} format	\\
+\code{save2psse}	& exports \matpower{} case to PSS/E RAW format	\\
 \code{savecase}	& saves case data to a \matpower{} case file	\\
 \bottomrule
 \end{tabular}
@@ -6091,6 +6101,7 @@ name & description \\
 \code{t\_case9\_opfv2.m}	& sample case file with OPF data, version 2 format, includes additional branch angle diff limits \& gen PQ capability constraints	\\
 \code{t\_case9\_pf.m}	& sample case file with only power flow data, version 1 format	\\
 \code{t\_case9\_pfv2.m}	& sample case file with only power flow data, version 2 format	\\
+\code{t\_case9\_save2psse.m}	& sample 9-bus case file used by \code{t\_psse} for testing \code{save2psse}	\\
 \code{t\_case30\_userfcns.m}	& sample case file with OPF, reserves and interface flow limit data	\\
 \code{t\_psse\_case.raw}	& sample PSS/E format RAW file used to test conversion code	\\
 \code{t\_psse\_case2.m}	& result of converting \code{t\_psse\_case2.raw} to \matpower{} format	\\
@@ -6694,6 +6705,13 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.1.pdf}{\m
 \item Support plotting of multiple nose curves in CPF by allowing option \code{cpf.plot.bus} to take on vector values.
 \item Continuous integration via GitHub and Travis-CI integration.
 \item Include \LaTeX{} source code for \mum{} in \code{docs/src} and for \mostman{} in \code{most/docs/src}.
+\item Add support for exporting \matpower{} case to PSS/E RAW data format.
+\item New functions:
+    \begin{itemize}
+    \item \code{install\_matpower()} installs \matpower{} modifying or showing needed modifications to Matlab or Octave path.
+    \item \code{gentypes()} and \code{genfuels} provide list of standard generator unit types and fuel types, respectively.
+    \item \code{save2psse()} to export a \matpower{} case to PSS/E RAW data format.
+    \end{itemize}
 \end{itemize}
 
 \subsubsection*{New Case Files}
@@ -6955,7 +6973,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-5.0.pdf}{\m
     \item \code{find\_islands()} to detect network islands.
     \item \code{@opt\_model/describe\_idx()} to identify variable, constraint or cost row indices to aid in debugging.
     \item \code{margcost()} for computing the marginal cost of generation.
-    \item \code{psse2mpc()} to convert PSS/E RAW date into \matpower{} case format.
+    \item \code{psse2mpc()} to convert PSS/E RAW data into \matpower{} case format.
     \item \code{get\_losses()} to compute branch series losses and reactive charging injections and derivatives as functions of bus voltages.
     \item New experimental functions in \code{extras/misc} for computing loss factors, checking feasibility of solutions, converting losses to negative bus injections and modifying an OPF problem to make it feasible.
     \end{itemize}

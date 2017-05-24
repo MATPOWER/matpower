@@ -13,12 +13,13 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 137;
+num_tests = 142;
 
 t_begin(num_tests, quiet);
 
 raw = 't_psse_case.raw';
 case_n = 't_psse_case%d';
+casefile = 't_case9_save2psse';
 if quiet
     verbose = 0;
 else
@@ -116,6 +117,18 @@ else
         delete(tmpcasename);
         t_ok(strcmp(str, str2), sprintf('%s : %s', t, fname));
     end
+
+    t = 'save2psse -> psse2mpc : ';
+    mpc0 = loadcase(casefile);
+    tmpfname = sprintf('t_save2psse_%d', fix(1e9*rand));
+    tmpfname = save2psse(tmpfname, mpc0);
+    mpc = psse2mpc(tmpfname, 0);
+    delete(tmpfname);
+    t_is(mpc.bus, mpc0.bus, 12, [t 'bus']);
+    t_is(mpc.branch, mpc0.branch, 12, [t 'branch']);
+    t_is(mpc.gen, mpc0.gen, 12, [t 'gen']);
+    t_is(mpc.dcline, mpc0.dcline, 4, [t 'dcline']);
+    t_ok(isequal(mpc.bus_name, mpc0.bus_name), [t 'bus_name']);
 end
 
 if have_fcn('octave')
