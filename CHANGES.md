@@ -12,6 +12,9 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 5/24/17
+  - Remove OPF result columns from `gen` matrix returned by `psse2mpc`.
+
 #### 5/23/17
   - Add support for `gentype` and `genfuel` fields of MATPOWER case struct
     in `extract_islands`, `ext2int`, `int2ext`, `load2disp`  and `savecase`.

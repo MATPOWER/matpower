@@ -36,11 +36,11 @@ mpc.bus = [
 ];
 
 %% generator data
-%	bus	Pg	Qg	Qmax	Qmin	Vg	mBase	status	Pmax	Pmin	Pc1	Pc2	Qc1min	Qc1max	Qc2min	Qc2max	ramp_agc	ramp_10	ramp_30	ramp_q	apf	mu_Pmax	mu_Pmin	mu_Qmax	mu_Qmin
+%	bus	Pg	Qg	Qmax	Qmin	Vg	mBase	status	Pmax	Pmin	Pc1	Pc2	Qc1min	Qc1max	Qc2min	Qc2max	ramp_agc	ramp_10	ramp_30	ramp_q	apf
 mpc.gen = [
-	1	71.37	3.7	247.5	-247.5	1.04	247.5	1	247.5	0	0	0	0	0	0	0	0	0	0	0	0	0.0000	0.0000	0.0000	0.0000;
-	2	163	13.04	192	-192	1.025	192	1	163.2	0	0	0	0	0	0	0	0	0	0	0	0	0.0000	0.0000	0.0000	0.0000;
-	3	85	-4.2	128	-128	1.025	128	1	108.8	0	0	0	0	0	0	0	0	0	0	0	0	0.0000	0.0000	0.0000	0.0000;
+	1	71.37	3.7	247.5	-247.5	1.04	247.5	1	247.5	0	0	0	0	0	0	0	0	0	0	0	0;
+	2	163	13.04	192	-192	1.025	192	1	163.2	0	0	0	0	0	0	0	0	0	0	0	0;
+	3	85	-4.2	128	-128	1.025	128	1	108.8	0	0	0	0	0	0	0	0	0	0	0	0;
 ];
 
 %% branch data

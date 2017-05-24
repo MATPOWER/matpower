@@ -4,7 +4,7 @@ function mpc = t_case9_pfv2
 
 %   MATPOWER
 
-%% MATPOWER Case Version 2
+%% MATPOWER Case Format : Version 2
 mpc.version = '2';
 
 %%-----  Power Flow Data  -----%%

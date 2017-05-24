@@ -187,7 +187,6 @@ end
 ng = size(data.gen.num, 1);
 genbus = e2i(data.gen.num(:,1));
 gen = zeros(ng, APF);
-gen = zeros(ng, MU_QMIN);
 gen(:, [GEN_BUS PG QG QMAX QMIN VG MBASE GEN_STATUS PMAX PMIN]) = ...
     data.gen.num(:, [1 3 4 5 6 7 9 15 17 18]);
 
