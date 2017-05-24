@@ -290,7 +290,7 @@ end
 if nargin > 6 && nargout > 3
     starbus_name = cell(nt3, 1);
     for k = 1:nt3
-        starbus_name{k} = sprintf('STAR_POINT_XFMR_%d', k);
+        starbus_name{k} = sprintf('STR_PT_XF_%-2d', k);
     end
     bus_name = [bus_name; starbus_name];
 end

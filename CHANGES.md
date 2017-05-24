@@ -14,6 +14,7 @@ Since last release
 
 #### 5/24/17
   - Remove OPF result columns from `gen` matrix returned by `psse2mpc`.
+  - Limit length of name of star-buses added by `psse2mpc` to 12 chars.
 
 #### 5/23/17
   - Add support for `gentype` and `genfuel` fields of MATPOWER case struct

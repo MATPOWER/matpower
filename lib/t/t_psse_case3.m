@@ -204,10 +204,10 @@ mpc.bus_name = {
 	'WINDBUS1    ';
 	'WINDBUS2    ';
 	'WINDBUS3    ';
-	'STAR_POINT_XFMR_1';
-	'STAR_POINT_XFMR_2';
-	'STAR_POINT_XFMR_3';
-	'STAR_POINT_XFMR_4';
+	'STR_PT_XF_1 ';
+	'STR_PT_XF_2 ';
+	'STR_PT_XF_3 ';
+	'STR_PT_XF_4 ';
 };
 
 %%-----  DC Line Data  -----%%
