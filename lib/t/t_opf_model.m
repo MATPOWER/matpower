@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 305;
+num_tests = 306;
 
 t_begin(num_tests, quiet);
 
@@ -451,6 +451,10 @@ t_is(f, 52, 14, t);
 t = 'compute_cost(om, ''wc'', {2,1})';
 f = compute_cost(om, x, 'wc', {2,1});
 t_is(f, 91, 14, t);
+
+t = 'compute_cost(om, ''wc'')';
+f = compute_cost(om, x, 'wc');
+t_is(f, 239, 14, t);
 
 % om
 % om = struct(om);

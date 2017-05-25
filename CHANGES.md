@@ -12,6 +12,10 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 5/25/17
+  - Add option to call `@opt_model/compute_cost` without `idx` argument
+    and have it total over all indices for a given `name`.
+
 #### 5/24/17
   - Remove OPF result columns from `gen` matrix returned by `psse2mpc`.
   - Limit length of name of star-buses added by `psse2mpc` to 12 chars.
