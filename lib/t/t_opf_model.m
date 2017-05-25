@@ -126,29 +126,29 @@ t = 'getN(om, ''var'', ''Pg'') == 3';
 t_ok(getN(om, 'var', 'Pg') == 3, t);
 
 t = 'size(getN(om, ''var'', ''x'')) == [2 2]';
-t_is(size(getN(om, 'var', 'x')), [2,2], 1e-14, t);
+t_is(size(getN(om, 'var', 'x')), [2,2], 14, t);
 
 t = 'getN(om, ''var'', ''x'')(1,2) == 2';
 N = getN(om, 'var', 'x');
-t_is(N(1,2), 2, 1e-14, t);
+t_is(N(1,2), 2, 14, t);
 
 t = 'getN(om, ''var'', ''x'', {2,1}) == 3';
-t_is(getN(om, 'var', 'x', {2,1}), 3, 1e-14, t);
+t_is(getN(om, 'var', 'x', {2,1}), 3, 14, t);
 
 t = 'getN(om, ''var'', ''y'', {2,1,3}) == 6';
-t_is(getN(om, 'var', 'y', {2,1,3}), 6, 1e-14, t);
+t_is(getN(om, 'var', 'y', {2,1,3}), 6, 14, t);
 
 t = 'getN(om, ''var'')';
-t_is(getN(om, 'var'), vN, 1e-14, t);
+t_is(getN(om, 'var'), vN, 14, t);
 
 %%-----  get_idx  -----
 t = 'get_idx : var';
 vv = get_idx(om);
-t_is([vv.i1.Pg vv.iN.Pg vv.N.Pg], [5 7 3], 1e-14, [t ' : Pg']);
-t_is(size(vv.i1.x), [2, 2], 1e-14, [t ' : size(vv.i1.x)']);
-t_is([vv.i1.x(2,1) vv.iN.x(2,1) vv.N.x(2,1)], [22 24 3], 1e-14, [t ' : x(2,1)']);
-t_is(size(vv.i1.y), [2, 3, 4], 1e-14, [t ' : size(vv.i1.y)']);
-t_is([vv.i1.y(2,2,4) vv.iN.y(2,2,4) vv.N.y(2,2,4)], [133 140 8], 1e-14, [t ' : y(2,2,4)']);
+t_is([vv.i1.Pg vv.iN.Pg vv.N.Pg], [5 7 3], 14, [t ' : Pg']);
+t_is(size(vv.i1.x), [2, 2], 14, [t ' : size(vv.i1.x)']);
+t_is([vv.i1.x(2,1) vv.iN.x(2,1) vv.N.x(2,1)], [22 24 3], 14, [t ' : x(2,1)']);
+t_is(size(vv.i1.y), [2, 3, 4], 14, [t ' : size(vv.i1.y)']);
+t_is([vv.i1.y(2,2,4) vv.iN.y(2,2,4) vv.N.y(2,2,4)], [133 140 8], 14, [t ' : y(2,2,4)']);
 
 %%-----  getv  -----
 t = 'getv(om, ''Va'')';
@@ -159,25 +159,25 @@ t_ok(all(isinf(vu) & vu > 0), [t ' : vu']);
 
 t = 'getv(om, ''Pg'')';
 [v0, vl, vu] = getv(om, 'Pg');
-t_is(v0, [2;4;6], 1e-14, [t ' : v0']);
-t_is(vl, [1;2;3], 1e-14, [t ' : vl']);
-t_is(vu, [10;20;30], 1e-14, [t ' : vu']);
+t_is(v0, [2;4;6], 14, [t ' : v0']);
+t_is(vl, [1;2;3], 14, [t ' : vl']);
+t_is(vu, [10;20;30], 14, [t ' : vu']);
 
 t = 'getv(om, ''Vm1'')';
 [v0, vl, vu, vt] = getv(om, 'Vm1');
-t_is(double(vt), double('I'), 1e-14, [t ' : vt']);
+t_is(double(vt), double('I'), 14, [t ' : vt']);
 
 t = 'getv(om, ''Vm2'')';
 [v0, vl, vu, vt] = getv(om, 'Vm2');
-t_is(double(vt), double('CIBIC'), 1e-14, [t ' : vt']);
+t_is(double(vt), double('CIBIC'), 14, [t ' : vt']);
 
 t = 'getv(om, ''x'')';
 [v0, vl, vu, vt] = getv(om, 'x');
-t_is(size(v0), [2,2], 1e-14, [t ' : size(v0)']);
-t_is(v0{2,2}, [1;0], 1e-14, [t ' : v0{2,2}']);
-t_is(vl{2,2}, [0;-1], 1e-14, [t ' : vl{2,2}']);
-t_is(vu{2,2}, [2;1], 1e-14, [t ' : vu{2,2}']);
-t_is(double(vt{2,2}), double('C'), 1e-14, [t ' : vt{2,2}']);
+t_is(size(v0), [2,2], 14, [t ' : size(v0)']);
+t_is(v0{2,2}, [1;0], 14, [t ' : v0{2,2}']);
+t_is(vl{2,2}, [0;-1], 14, [t ' : vl{2,2}']);
+t_is(vu{2,2}, [2;1], 14, [t ' : vu{2,2}']);
+t_is(double(vt{2,2}), double('C'), 14, [t ' : vt{2,2}']);
 
 for i = 1:2
     for j = 1:3
@@ -191,10 +191,10 @@ for i = 1:2
             end
             t = sprintf('getv(om, ''y'', {%d,%d,%d})', i, j, k);
             [v0, vl, vu, gvt] = getv(om, 'y', {i,j,k});
-            t_is(v0, 10*(n:-1:1)', 1e-14, [t ' : v0']);
-            t_is(vl, -1*(n:-1:1)', 1e-14, [t ' : vl']);
-            t_is(vu, 100+(n:-1:1)', 1e-14, [t ' : vu']);
-            t_is(gvt, vt, 1e-14, [t ' : vt']);
+            t_is(v0, 10*(n:-1:1)', 14, [t ' : v0']);
+            t_is(vl, -1*(n:-1:1)', 14, [t ' : vl']);
+            t_is(vu, 100+(n:-1:1)', 14, [t ' : vu']);
+            t_is(gvt, vt, 14, [t ' : vt']);
         end
     end
 end
@@ -204,17 +204,17 @@ t = 'getv(om)';
 t_ok(length(v0) == getN(om, 'var'), [t ' : length(v0)']);
 t_ok(length(vl) == getN(om, 'var'), [t ' : length(vl)']);
 t_ok(length(vu) == getN(om, 'var'), [t ' : length(vu)']);
-t_is(v0(vv.i1.x(2,2):vv.iN.x(2,2)), [1;0], 1e-14, [t ' : v0(vv.i1.x(2,2):vv.iN.x(2,2))']);
-t_is(vl(vv.i1.x(2,2):vv.iN.x(2,2)), [0;-1], 1e-14, [t ' : vl(vv.i1.x(2,2):vv.iN.x(2,2))']);
-t_is(vu(vv.i1.x(2,2):vv.iN.x(2,2)), [2;1], 1e-14, [t ' : vu(vv.i1.x(2,2):vv.iN.x(2,2))']);
-t_is(vt(vv.i1.x(2,2):vv.iN.x(2,2)), 'C', 1e-14, [t ' : vt(vv.i1.x(2,2):vv.iN.x(2,2))']);
+t_is(v0(vv.i1.x(2,2):vv.iN.x(2,2)), [1;0], 14, [t ' : v0(vv.i1.x(2,2):vv.iN.x(2,2))']);
+t_is(vl(vv.i1.x(2,2):vv.iN.x(2,2)), [0;-1], 14, [t ' : vl(vv.i1.x(2,2):vv.iN.x(2,2))']);
+t_is(vu(vv.i1.x(2,2):vv.iN.x(2,2)), [2;1], 14, [t ' : vu(vv.i1.x(2,2):vv.iN.x(2,2))']);
+t_is(vt(vv.i1.x(2,2):vv.iN.x(2,2)), 'C', 14, [t ' : vt(vv.i1.x(2,2):vv.iN.x(2,2))']);
 n = 8;
-t_is(v0(vv.i1.y(2,2,4):vv.iN.y(2,2,4)), 10*(n:-1:1)', 1e-14, [t ' : v0(vv.i1.y(2,2,4):vv.iN.y(2,2,4))']);
-t_is(vl(vv.i1.y(2,2,4):vv.iN.y(2,2,4)), -1*(n:-1:1)', 1e-14, [t ' : vl(vv.i1.y(2,2,4):vv.iN.y(2,2,4))']);
-t_is(vu(vv.i1.y(2,2,4):vv.iN.y(2,2,4)), 100+(n:-1:1)', 1e-14, [t ' : vu(vv.i1.y(2,2,4):vv.iN.y(2,2,4))']);
-t_is(vt(vv.i1.y(2,2,4):vv.iN.y(2,2,4)), 'IIBIIIII', 1e-14, [t ' : vt(vv.i1.y(2,2,4):vv.iN.y(2,2,4))']);
+t_is(v0(vv.i1.y(2,2,4):vv.iN.y(2,2,4)), 10*(n:-1:1)', 14, [t ' : v0(vv.i1.y(2,2,4):vv.iN.y(2,2,4))']);
+t_is(vl(vv.i1.y(2,2,4):vv.iN.y(2,2,4)), -1*(n:-1:1)', 14, [t ' : vl(vv.i1.y(2,2,4):vv.iN.y(2,2,4))']);
+t_is(vu(vv.i1.y(2,2,4):vv.iN.y(2,2,4)), 100+(n:-1:1)', 14, [t ' : vu(vv.i1.y(2,2,4):vv.iN.y(2,2,4))']);
+t_is(vt(vv.i1.y(2,2,4):vv.iN.y(2,2,4)), 'IIBIIIII', 14, [t ' : vt(vv.i1.y(2,2,4):vv.iN.y(2,2,4))']);
 vt0 = 'CCCCCCCIIIIICIBICCCCCCCCCCCCCCCCCCCCCCCCCCCCIIIIIIIIIIIIIIIIIIIIIIBBBBBBBBBBBBBBBBBBBBBBBBBBCICCCICCCCICCCCCICCCCCIIBIIIIBIIIIIBIIIIIIBIIIIIBBBCBBBBBCBBBBBBCBBBBBBBCBBBBB';
-t_is(vt, vt0, 1e-14, [t ' : vt']);
+t_is(vt, vt0, 14, [t ' : vt']);
 
 %%-----  add_constraints  -----
 t = 'add_constraints';
@@ -260,21 +260,21 @@ end
 %%-----  get_idx  -----
 t = 'get_idx : lin';
 [vv, ll] = get_idx(om);
-t_is([ll.i1.Qmis ll.iN.Qmis ll.N.Qmis], [4 6 3], 1e-14, [t ' : Qmis']);
-t_is(size(ll.i1.mylin), [2, 2], 1e-14, [t ' : size(ll.i1.mylin)']);
-t_is([ll.i1.mylin(2,1) ll.iN.mylin(2,1) ll.N.mylin(2,1)], [12 14 3], 1e-14, [t ' : mylin(2,1)']);
+t_is([ll.i1.Qmis ll.iN.Qmis ll.N.Qmis], [4 6 3], 14, [t ' : Qmis']);
+t_is(size(ll.i1.mylin), [2, 2], 14, [t ' : size(ll.i1.mylin)']);
+t_is([ll.i1.mylin(2,1) ll.iN.mylin(2,1) ll.N.mylin(2,1)], [12 14 3], 14, [t ' : mylin(2,1)']);
 
 %%-----  linear_constraints  -----
 t = 'linear_constraints';
 [A, l, u] = linear_constraints(om);
 t_ok(issparse(A), [t ' : issparse(A)']);
-t_is(size(A), [lN, vN], 1e-14, [t ' : size(A)']);
-t_is(length(l), lN, 1e-14, [t ' : length(l)']);
-t_is(length(u), lN, 1e-14, [t ' : length(u)']);
+t_is(size(A), [lN, vN], 14, [t ' : size(A)']);
+t_is(length(l), lN, 14, [t ' : length(l)']);
+t_is(length(u), lN, 14, [t ' : length(u)']);
 AA = sparse([1:3 1:3 1:3]', [1:3 4:6 7 7 7]', [1 1 1 -1 -1 -1 2 3 4]', 3, vN);
-t_is(full(A(ll.i1.Qmis:ll.iN.Qmis, :)), full(AA), 1e-14, [t ' : A(<Qmis>,:)']);
-t_is(full(A(ll.i1.mylin(2,1):ll.iN.mylin(2,1), vv.i1.Pg:vv.iN.Pg)), eye(3,3), 1e-14, [t ' : A(<mylin(2,1)>,<Pg>)']);
-t_is(full(A(ll.i1.mylin(2,1):ll.iN.mylin(2,1), vv.i1.x(2,1):vv.iN.x(2,1))), [0 -1 0;0 -1 0;0 -1 0], 1e-14, [t ' : A(<mylin(2,1)>,<x(2,1)>)']);
+t_is(full(A(ll.i1.Qmis:ll.iN.Qmis, :)), full(AA), 14, [t ' : A(<Qmis>,:)']);
+t_is(full(A(ll.i1.mylin(2,1):ll.iN.mylin(2,1), vv.i1.Pg:vv.iN.Pg)), eye(3,3), 14, [t ' : A(<mylin(2,1)>,<Pg>)']);
+t_is(full(A(ll.i1.mylin(2,1):ll.iN.mylin(2,1), vv.i1.x(2,1):vv.iN.x(2,1))), [0 -1 0;0 -1 0;0 -1 0], 14, [t ' : A(<mylin(2,1)>,<x(2,1)>)']);
 
 %%-----  add_costs  -----
 t = 'add_costs';
@@ -338,32 +338,32 @@ t_ok(isfield(cp, 'N'), t);
 %%-----  get_idx  -----
 t = 'get_idx : cost';
 [vv, ll, nn, cc] = get_idx(om);
-t_is([cc.i1.vcost cc.iN.vcost cc.N.vcost], [3 4 2], 1e-14, [t ' : vcost']);
-t_is(size(cc.i1.wc), [2, 2], 1e-14, [t ' : size(cc.i1.wc)']);
-t_is([cc.i1.wc(2,1) cc.iN.wc(2,1) cc.N.wc(2,1)], [10 12 3], 1e-14, [t ' : wc(2,1)']);
+t_is([cc.i1.vcost cc.iN.vcost cc.N.vcost], [3 4 2], 14, [t ' : vcost']);
+t_is(size(cc.i1.wc), [2, 2], 14, [t ' : size(cc.i1.wc)']);
+t_is([cc.i1.wc(2,1) cc.iN.wc(2,1) cc.N.wc(2,1)], [10 12 3], 14, [t ' : wc(2,1)']);
 
 %%-----  get_cost_params  -----
 t = 'get_cost_params(om, ''ucost'')';
 cp = get_cost_params(om, 'ucost');
 N = sparse([1:2 1:2 1:2]', [1:4 5 7]', [1 1 -1 -1 2 2]', 2, vN);
-t_is(full(cp.N), full(N), 1e-14, [t, ' : N']);
-t_is(cp.Cw, [2;3], 1e-14, [t, ' : Cw']);
-t_is(full(cp.H), zeros(2,2), 1e-14, [t, ' : H']);
-t_is(cp.dd, ones(2,1),  1e-14, [t, ' : dd']);
-t_is(cp.rh, zeros(2,1), 1e-14, [t, ' : rh']);
-t_is(cp.kk, zeros(2,1), 1e-14, [t, ' : kk']);
-t_is(cp.mm, ones(2,1),  1e-14, [t, ' : mm']);
+t_is(full(cp.N), full(N), 14, [t, ' : N']);
+t_is(cp.Cw, [2;3], 14, [t, ' : Cw']);
+t_is(full(cp.H), zeros(2,2), 14, [t, ' : H']);
+t_is(cp.dd, ones(2,1),  14, [t, ' : dd']);
+t_is(cp.rh, zeros(2,1), 14, [t, ' : rh']);
+t_is(cp.kk, zeros(2,1), 14, [t, ' : kk']);
+t_is(cp.mm, ones(2,1),  14, [t, ' : mm']);
 
 t = 'get_cost_params(om, ''vcost'')';
 cp = get_cost_params(om, 'vcost');
 N = sparse([1:2 1:2 1:2]', [1:4 5 7]', [1 1 -1 -1 2 2]', 2, vN);
-t_is(full(cp.N), full(N), 1e-14, [t, ' : N']);
-t_is(cp.Cw, [2;3], 1e-14, [t, ' : Cw']);
-t_is(full(cp.H), zeros(2,2), 1e-14, [t, ' : H']);
-t_is(cp.dd, ones(2,1),  1e-14, [t, ' : dd']);
-t_is(cp.rh, zeros(2,1), 1e-14, [t, ' : rh']);
-t_is(cp.kk, zeros(2,1), 1e-14, [t, ' : kk']);
-t_is(cp.mm, ones(2,1),  1e-14, [t, ' : mm']);
+t_is(full(cp.N), full(N), 14, [t, ' : N']);
+t_is(cp.Cw, [2;3], 14, [t, ' : Cw']);
+t_is(full(cp.H), zeros(2,2), 14, [t, ' : H']);
+t_is(cp.dd, ones(2,1),  14, [t, ' : dd']);
+t_is(cp.rh, zeros(2,1), 14, [t, ' : rh']);
+t_is(cp.kk, zeros(2,1), 14, [t, ' : kk']);
+t_is(cp.mm, ones(2,1),  14, [t, ' : mm']);
 
 t = 'get_cost_params(om, ''wc'') : error';
 try
@@ -376,81 +376,81 @@ end
 t = 'get_cost_params(om, ''wc'', {1,2})';
 cp = get_cost_params(om, 'wc', {1,2});
 N = sparse([1:3 1:3]', [vv.i1.Pg-1+(1:3) vv.i1.x(1,2)+ones(1,3)]', [ones(3,1);-ones(3,1)], 3, vN);
-t_is(full(cp.N), full(N), 1e-14, [t, ' : N']);
-t_is(cp.Cw, [3;2;1], 1e-14, [t, ' : Cw']);
-t_is(full(cp.H), zeros(3,3), 1e-14, [t, ' : H']);
-t_is(cp.dd, ones(3,1),  1e-14, [t, ' : dd']);
-t_is(cp.rh, zeros(3,1), 1e-14, [t, ' : rh']);
-t_is(cp.kk, zeros(3,1), 1e-14, [t, ' : kk']);
-t_is(cp.mm, ones(3,1),  1e-14, [t, ' : mm']);
+t_is(full(cp.N), full(N), 14, [t, ' : N']);
+t_is(cp.Cw, [3;2;1], 14, [t, ' : Cw']);
+t_is(full(cp.H), zeros(3,3), 14, [t, ' : H']);
+t_is(cp.dd, ones(3,1),  14, [t, ' : dd']);
+t_is(cp.rh, zeros(3,1), 14, [t, ' : rh']);
+t_is(cp.kk, zeros(3,1), 14, [t, ' : kk']);
+t_is(cp.mm, ones(3,1),  14, [t, ' : mm']);
 
 t = 'get_cost_params(om, ''wc'', {2,1})';
 cp = get_cost_params(om, 'wc', {2,1});
 N = sparse([1:3 1:3]', [vv.i1.Pg-1+(1:3) vv.i1.x(2,1)+ones(1,3)]', [ones(3,1);-ones(3,1)], 3, vN);
-t_is(full(cp.N), full(N), 1e-14, [t, ' : N']);
-t_is(cp.Cw, [3;2;1], 1e-14, [t, ' : Cw']);
+t_is(full(cp.N), full(N), 14, [t, ' : N']);
+t_is(cp.Cw, [3;2;1], 14, [t, ' : Cw']);
 H = sparse(1:3, 1:3, 1:3, 3, 3);
-t_is(full(cp.H), full(H), 1e-14, [t, ' : H']);
-t_is(cp.dd, ones(3,1),  1e-14, [t, ' : dd']);
-t_is(cp.rh, zeros(3,1), 1e-14, [t, ' : rh']);
-t_is(cp.kk, zeros(3,1), 1e-14, [t, ' : kk']);
-t_is(cp.mm, ones(3,1),  1e-14, [t, ' : mm']);
+t_is(full(cp.H), full(H), 14, [t, ' : H']);
+t_is(cp.dd, ones(3,1),  14, [t, ' : dd']);
+t_is(cp.rh, zeros(3,1), 14, [t, ' : rh']);
+t_is(cp.kk, zeros(3,1), 14, [t, ' : kk']);
+t_is(cp.mm, ones(3,1),  14, [t, ' : mm']);
 
 t = 'get_cost_params(om)';
 cp = get_cost_params(om);
 t_ok(issparse(cp.N), [t ' : issparse(cp.N)']);
-t_is(size(cp.N), [cN, vN], 1e-14, [t ' : size(cp.N)']);
-t_is(size(cp.H), [cN, cN], 1e-14, [t ' : size(cp.H)']);
-t_is(length(cp.Cw), cN, 1e-14, [t ' : length(cp.Cw)']);
-t_is(length(cp.dd), cN, 1e-14, [t ' : length(cp.dd)']);
-t_is(length(cp.rh), cN, 1e-14, [t ' : length(cp.rh)']);
-t_is(length(cp.kk), cN, 1e-14, [t ' : length(cp.kk)']);
-t_is(length(cp.mm), cN, 1e-14, [t ' : length(cp.mm)']);
+t_is(size(cp.N), [cN, vN], 14, [t ' : size(cp.N)']);
+t_is(size(cp.H), [cN, cN], 14, [t ' : size(cp.H)']);
+t_is(length(cp.Cw), cN, 14, [t ' : length(cp.Cw)']);
+t_is(length(cp.dd), cN, 14, [t ' : length(cp.dd)']);
+t_is(length(cp.rh), cN, 14, [t ' : length(cp.rh)']);
+t_is(length(cp.kk), cN, 14, [t ' : length(cp.kk)']);
+t_is(length(cp.mm), cN, 14, [t ' : length(cp.mm)']);
 N = sparse([1:2 1:2]', [1:4]', [1 1 -1 -1]', 2, 4);
 Cw = [2;3];
 H = zeros(2,2);
-t_is(full(cp.N(cc.i1.vcost:cc.iN.vcost, vv.i1.Va:vv.iN.Va)), full(N), 1e-14, [t ' : N(<vcost>,<Va>)']);
+t_is(full(cp.N(cc.i1.vcost:cc.iN.vcost, vv.i1.Va:vv.iN.Va)), full(N), 14, [t ' : N(<vcost>,<Va>)']);
 N = sparse([1:2]', [1 3]', [2 2]', 2, 3);
-t_is(full(cp.N(cc.i1.vcost:cc.iN.vcost, vv.i1.Pg:vv.iN.Pg)), full(N), 1e-14, [t ' : N(<vcost>,<Pg>)']);
-t_is(full(cp.Cw(cc.i1.vcost:cc.iN.vcost)), Cw, 1e-14, [t ' : Cw(<vcost>)']);
-t_is(full(cp.H(cc.i1.vcost:cc.iN.vcost, cc.i1.vcost:cc.iN.vcost)), full(H), 1e-14, [t ' : H(<vcost>,<vcost>)']);
+t_is(full(cp.N(cc.i1.vcost:cc.iN.vcost, vv.i1.Pg:vv.iN.Pg)), full(N), 14, [t ' : N(<vcost>,<Pg>)']);
+t_is(full(cp.Cw(cc.i1.vcost:cc.iN.vcost)), Cw, 14, [t ' : Cw(<vcost>)']);
+t_is(full(cp.H(cc.i1.vcost:cc.iN.vcost, cc.i1.vcost:cc.iN.vcost)), full(H), 14, [t ' : H(<vcost>,<vcost>)']);
 N = sparse([1:3]', [1:3]', [1 1 1]', 3, 3);
-t_is(full(cp.N(cc.i1.wc(1,2):cc.iN.wc(1,2), vv.i1.Pg:vv.iN.Pg)), full(N), 1e-14, [t ' : N(<wc(1,2)>,<Pg>)']);
+t_is(full(cp.N(cc.i1.wc(1,2):cc.iN.wc(1,2), vv.i1.Pg:vv.iN.Pg)), full(N), 14, [t ' : N(<wc(1,2)>,<Pg>)']);
 N = sparse([1:3]', [2 2 2]', [-1 -1 -1]', 3, 2);
 Cw = [3;2;1];
 H = zeros(3,3);
-t_is(full(cp.N(cc.i1.wc(1,2):cc.iN.wc(1,2), vv.i1.x(1,2):vv.iN.x(1,2))), full(N), 1e-14, [t ' : N(<wc(1,2)>,<x(1,2)>)']);
-t_is(full(cp.Cw(cc.i1.wc(1,2):cc.iN.wc(1,2))), Cw, 1e-14, [t ' : Cw(<wc(1,2)>)']);
-t_is(full(cp.H(cc.i1.wc(1,2):cc.iN.wc(1,2), cc.i1.wc(1,2):cc.iN.wc(1,2))), full(H), 1e-14, [t ' : H(<wc(1,2)>,<wc(1,2)>)']);
+t_is(full(cp.N(cc.i1.wc(1,2):cc.iN.wc(1,2), vv.i1.x(1,2):vv.iN.x(1,2))), full(N), 14, [t ' : N(<wc(1,2)>,<x(1,2)>)']);
+t_is(full(cp.Cw(cc.i1.wc(1,2):cc.iN.wc(1,2))), Cw, 14, [t ' : Cw(<wc(1,2)>)']);
+t_is(full(cp.H(cc.i1.wc(1,2):cc.iN.wc(1,2), cc.i1.wc(1,2):cc.iN.wc(1,2))), full(H), 14, [t ' : H(<wc(1,2)>,<wc(1,2)>)']);
 
 N = sparse([1:3]', [1:3]', [1 1 1]', 3, 3);
-t_is(full(cp.N(cc.i1.wc(2,1):cc.iN.wc(2,1), vv.i1.Pg:vv.iN.Pg)), full(N), 1e-14, [t ' : N(<wc(2,1)>,<Pg>)']);
+t_is(full(cp.N(cc.i1.wc(2,1):cc.iN.wc(2,1), vv.i1.Pg:vv.iN.Pg)), full(N), 14, [t ' : N(<wc(2,1)>,<Pg>)']);
 N = sparse([1:3]', [2 2 2]', [-1 -1 -1]', 3, 3);
 Cw = [3;2;1];
 H = full(sparse((1:3)', (1:3)', (1:3)', 3, 3));
-t_is(full(cp.N(cc.i1.wc(2,1):cc.iN.wc(2,1), vv.i1.x(2,1):vv.iN.x(2,1))), full(N), 1e-14, [t ' : N(<wc(2,1)>,<x(2,1)>)']);
-t_is(full(cp.Cw(cc.i1.wc(2,1):cc.iN.wc(2,1))), Cw, 1e-14, [t ' : Cw(<wc(2,1)>)']);
-t_is(full(cp.H(cc.i1.wc(2,1):cc.iN.wc(2,1), cc.i1.wc(2,1):cc.iN.wc(2,1))), full(H), 1e-14, [t ' : H(<wc(2,1)>,<wc(2,1)>)']);
+t_is(full(cp.N(cc.i1.wc(2,1):cc.iN.wc(2,1), vv.i1.x(2,1):vv.iN.x(2,1))), full(N), 14, [t ' : N(<wc(2,1)>,<x(2,1)>)']);
+t_is(full(cp.Cw(cc.i1.wc(2,1):cc.iN.wc(2,1))), Cw, 14, [t ' : Cw(<wc(2,1)>)']);
+t_is(full(cp.H(cc.i1.wc(2,1):cc.iN.wc(2,1), cc.i1.wc(2,1):cc.iN.wc(2,1))), full(H), 14, [t ' : H(<wc(2,1)>,<wc(2,1)>)']);
 
-t_is(cp.dd, ones(cN,1),  1e-14, [t, ' : dd']);
-t_is(cp.rh, zeros(cN,1), 1e-14, [t, ' : rh']);
-t_is(cp.kk, zeros(cN,1), 1e-14, [t, ' : kk']);
-t_is(cp.mm, ones(cN,1),  1e-14, [t, ' : mm']);
+t_is(cp.dd, ones(cN,1),  14, [t, ' : dd']);
+t_is(cp.rh, zeros(cN,1), 14, [t, ' : rh']);
+t_is(cp.kk, zeros(cN,1), 14, [t, ' : kk']);
+t_is(cp.mm, ones(cN,1),  14, [t, ' : mm']);
 
 %%-----  compute_cost  -----
 % f = compute_cost(om, x, name, idx)
 t = 'compute_cost(om, x)';
 x = [1:7 rand(1,10) 8:(vN-10)]';
 f = compute_cost(om, x);
-t_is(f, 343, 1e-14, t);
+t_is(f, 343, 14, t);
 
 t = 'compute_cost(om, ''ucost'')';
 f = compute_cost(om, x, 'ucost');
-t_is(f, 52, 1e-14, t);
+t_is(f, 52, 14, t);
 
 t = 'compute_cost(om, ''wc'', {2,1})';
 f = compute_cost(om, x, 'wc', {2,1});
-t_is(f, 91, 1e-14, t);
+t_is(f, 91, 14, t);
 
 % om
 % om = struct(om);
