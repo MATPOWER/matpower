@@ -37,8 +37,8 @@ System Requirements
 Installation
 ------------
 
-Installation and use of MOST requires familiarity with the basic operation
-of Matlab or Octave, including setting up your Matlab path.
+The preferred method of installation is simply to install [MATPOWER][3],
+which is a prerequisite for MOST and also includes its own copy of MOST.
 
 If you have followed the directions for installing MATPOWER found in 
 the [MATPOWER User's Manual][7], then MOST should already be installed and
@@ -69,13 +69,25 @@ All tests successful (762 passed, 932 skipped of 1694)
 Elapsed time 93.13 seconds.
 ```
 
+If, for some reason, you prefer to install your own copy of MOST directly
+from the [MOST GitHub repository][1], simply clone the repository to the
+location of your choice, where we use `<MOST>` to denote the path the
+resulting `most` directory. Then add the following directories to your
+Matlab or Octave path:
+ *  `<MOST>/lib`
+ *  `<MOST>/lib/t`
+
+It is important that they appear before MATPOWER in your path if you want
+to use this version of MOST, rather than the one included with MATPOWER.
+
+
 Documentation
 -------------
 
 There are two primary sources of documentation for MOST. The first is
 the [MOST User's Manual][8], which gives an overview of the capabilities
 and structure of MOST and describes the problem formulation. It
-can be found in your MATPOWER distribution at `<MATPOWER>/docs/MOST-manual.pdf`
+can be found in your MATPOWER distribution at `<MATPOWER>/most/docs/MOST-manual.pdf`
 and the latest version is always available at:
 <https://github.com/MATPOWER/most/blob/master/docs/MOST-manual.pdf>.
 
@@ -86,11 +98,51 @@ function. All of the M-files in MOST have such documentation and this
 should be considered the main reference for the calling options for each
 function.
 
+
+Publications
+------------
+
+1.  R. D. Zimmerman, C. E. Murillo-Sanchez, and R. J. Thomas,
+    ["MATPOWER: Steady-State Operations, Planning and Analysis Tools
+    for Power Systems Research and Education,"][12] *Power Systems, IEEE
+    Transactions on*, vol. 26, no. 1, pp. 12–19, Feb. 2011.  
+    DOI: [10.1109/TPWRS.2010.2051168][11].
+
+2.  C. E. Murillo-Sanchez, R. D. Zimmerman, C. L. Anderson, and
+     R. J. Thomas, ["Secure Planning and Operations of Systems with
+     Stochastic Sources, Energy Storage and Active Demand,"][12]
+     *Smart Grid, IEEE Transactions on*, vol. 4, no. 4, pp. 2220–2229,
+     Dec. 2013.  
+     DOI: [10.1109/TSG.2013.2281001][12].
+
+
+Citing MATPOWER and MOST
+------------------------
+
+We request that publications derived from the use of MATPOWER explicitly
+acknowledge that fact by citing [reference \[1\]][11] above, namely:
+
+>   R. D. Zimmerman, C. E. Murillo-Sanchez, and R. J. Thomas,
+    "MATPOWER: Steady-State Operations, Planning and Analysis Tools
+    for Power Systems Research and Education," Power Systems, IEEE
+    Transactions on, vol. 26, no. 1, pp. 12–19, Feb. 2011.
+
+Additionally, we request that publications derived from the use of
+the [MATPOWER Optimal Scheduling Tool (MOST)][1], explicitly
+acknowledge that fact by citing [reference \[2\]][12] as well as [\[1\]][11].
+
+>   C. E. Murillo-Sanchez, R. D. Zimmerman, C. L. Anderson, and
+    R. J. Thomas, "Secure Planning and Operations of Systems with
+    Stochastic Sources, Energy Storage and Active Demand," Smart Grid,
+    IEEE Transactions on, vol. 4, no. 4, pp. 2220–2229, Dec. 2013.
+
+
 Contributing
 ------------
 
 Please see our [contributing guidelines][9] for details on how to
 contribute to the project or report issues.
+
 
 License
 -------
@@ -108,3 +160,5 @@ MOST is distributed under the [3-clause BSD license][10].
 [8]: https://github.com/MATPOWER/most/blob/master/docs/MOST-manual.pdf
 [9]: CONTRIBUTING.md
 [10]: LICENSE
+[11]: http://dx.doi.org/10.1109/TPWRS.2010.2051168
+[12]: http://dx.doi.org/10.1109/TSG.2013.2281001

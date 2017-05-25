@@ -148,7 +148,7 @@
 \newcommand{\most}[0]{{MOST}}
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
-\newcommand{\mostver}[0]{1.0}
+\newcommand{\mostver}[0]{1.0.1-dev}
 \newcommand{\md}[0]{{\most{} Data struct}}
 \newcommand{\powerweb}[0]{{\sc PowerWeb}}
 \newcommand{\pserc}[0]{{\sc PSerc}}
@@ -175,6 +175,7 @@
 %\newcommand{\mostpath}[1]{\code{\$MOST{#1}}}
 \newcommand{\mipspath}[1]{\textsf{\textsl{{\relsize{-1.0}\textless{}\mbox{MIPS}\textgreater{}}}}\code{{#1}}}  % requires package relsize
 \newcommand{\mostpath}[1]{\mppath{}\code{/most{#1}}}
+\newcommand{\mostpathb}[1]{\textsf{\textsl{{\relsize{-1.0}\textless{}\mbox{MOST}\textgreater{}}}}\code{{#1}}}  % requires package relsize
 \newcommand{\baseMVA}[0]{\code{baseMVA}}
 \newcommand{\bus}[0]{\code{bus}}
 \newcommand{\branch}[0]{\code{branch}}
@@ -333,6 +334,9 @@ But even for continuous LP and QP problems, these solvers will offer much better
 
 \subsection{Installation}
 
+The preferred method of installation is simply to install \matpower{}, which
+is a prerequisite for \most{} and also includes its own copy of \most{}.
+
 If you have followed the directions for installing \matpower{} found in Section~\ref{MUM-sec:installation} of the \mum{}, then \most{} should already be installed in the \mostpath{} directory and the appropriate paths\footnote{To use \most{} your \matlab{} path must include \mostpath{/lib} and, to run the tests, \mostpath{/lib/t}.} added to your \matlab{} path.
 
 To run the test suite and verify that \most{} is properly installed and functioning, at the \matlab{} prompt, type \code{test\_most} . The result should resemble the following, possibly including extra tests, depending on the availablility of optional packages.
@@ -358,6 +362,19 @@ All tests successful (762 passed, 932 skipped of 1694)
 Elapsed time 93.13 seconds.
 \end{Code}
 
+If, for some reason, you prefer to install your own copy of MOST directly
+from the \most{} GitHub repository\footnote{\url{https://github.com/MATPOWER/most}},
+simply clone the repository to the
+location of your choice, where we use \mostpathb{} to denote the path the
+resulting \code{most} directory. Then add the following directories to your \matlab{} or Octave path:
+\begin{itemize}
+\setlength{\itemsep}{0pt}
+\setlength{\parskip}{0pt}
+\item \mostpathb{/lib} -- core \most{} functions
+\item \mostpathb{/lib/t} -- test scripts for \most{}
+\end{itemize}
+It is important that they appear before \matpower{} in your path if you want
+to use this version of \most{}, rather than the one included with \matpower{}.
 
 \subsection{Running a Simulation}
 
@@ -3209,6 +3226,17 @@ name & description \\
 \label{app:release_history}
 
 The full release history can be found in \mostpath{/docs/CHANGES}.
+
+\subsection{Version 1.0.1-dev -- not yet released}
+\label{app:v101}
+
+The \href{http://www.pserc.cornell.edu/matpower/docs/MOST-manual-1.0.1.pdf}{\most{} 1.0.1 User's Manual} is available online.\footnote{\url{http://www.pserc.cornell.edu/matpower/docs/MOST-manual-1.0.1.pdf}}
+
+\subsubsection*{Bugs Fixed}
+\begin{itemize}
+\item Fix dimension of \code{RampWear} cost indexing if \code{mdi.OpenEnded} is true.
+\item Add missing constant term to objective function value reported by \code{most\_summary}.
+\end{itemize}
 
 \subsection{Version 1.0 -- released Dec 16, 2016}
 \label{app:v10}

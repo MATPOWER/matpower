@@ -1,7 +1,7 @@
-function t_most_suc(quiet, create_plots, create_pdfs, savepath)
+function t_most_suc(quiet, create_plots, create_pdfs, savedir)
 %T_MOST_SUC  Tests of stochastic unit commitment optimizations.
 %
-%   T_MOST_SUC(QUIET, CREATE_PLOTS, CREATE_PDFS, SAVEPATH)
+%   T_MOST_SUC(QUIET, CREATE_PLOTS, CREATE_PDFS, SAVEDIR)
 %   Can generate summary plots and save them as PDFs in a directory of
 %   your choice.
 %   E.g. t_most_suc(0, 1, 1, '~/Downloads/suc_plots')
@@ -15,7 +15,7 @@ function t_most_suc(quiet, create_plots, create_pdfs, savepath)
 %   See https://github.com/MATPOWER/most for more info.
 
 if nargin < 4
-    savepath = '.';             %% save in current working directory by default
+    savedir = '.';              %% save in current working directory by default
     if nargin < 3
         create_pdfs = 0;        %% do NOT save plots to PDF files
         if nargin < 2
@@ -199,7 +199,7 @@ for s = 1:length(solvers)
         % determ = most_summary(mdo);
         if create_plots
             pp = pp + 1;
-            plot_case('Base : Deterministic', mdo, ms, 500, 150, savepath, pp, fname);
+            plot_case('Base : Deterministic', mdo, ms, 500, 150, savedir, pp, fname);
         end
         % keyboard;
 
@@ -225,7 +225,7 @@ for s = 1:length(solvers)
         % transprob1 = most_summary(mdo);
         if create_plots
             pp = pp + 1;
-            plot_case('Individual Trajectories', mdo, ms, 500, 150, savepath, pp, fname);
+            plot_case('Individual Trajectories', mdo, ms, 500, 150, savedir, pp, fname);
         end
         % keyboard;
 
@@ -253,7 +253,7 @@ for s = 1:length(solvers)
         % transprobfull = most_summary(mdo);
         if create_plots
             pp = pp + 1;
-            plot_case('Full Transition Probabilities', mdo, ms, 500, 150, savepath, pp, fname);
+            plot_case('Full Transition Probabilities', mdo, ms, 500, 150, savedir, pp, fname);
         end
         % keyboard;
 
@@ -275,7 +275,7 @@ for s = 1:length(solvers)
         % transprobcont = most_summary(mdo);
         if create_plots
             pp = pp + 1;
-            plot_case('+ Contingencies', mdo, ms, 500, 150, savepath, pp, fname);
+            plot_case('+ Contingencies', mdo, ms, 500, 150, savedir, pp, fname);
         end
         % keyboard;
 
@@ -300,7 +300,7 @@ for s = 1:length(solvers)
         % wstorage = most_summary(mdo);
         if create_plots
             pp = pp + 1;
-            plot_case('+ Storage', mdo, ms, 500, 150, savepath, pp, fname);
+            plot_case('+ Storage', mdo, ms, 500, 150, savedir, pp, fname);
             create_plots = 0;   %% don't do them again
         end
         % keyboard;

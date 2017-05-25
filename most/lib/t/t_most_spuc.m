@@ -1,7 +1,7 @@
-function t_most_spuc(quiet, create_plots, create_pdfs, savepath)
+function t_most_spuc(quiet, create_plots, create_pdfs, savedir)
 %T_MOST_SPUC  Tests of single-period unit commitment optimizations
 %
-%   T_MOST_SPUC(QUIET, CREATE_PLOTS, CREATE_PDFS, SAVEPATH)
+%   T_MOST_SPUC(QUIET, CREATE_PLOTS, CREATE_PDFS, SAVEDIR)
 %   Can generate summary plots and save them as PDFs in a directory of
 %   your choice.
 %   E.g. t_most_spuc(0, 1, 1, '~/Downloads/spuc_plots')
@@ -15,7 +15,7 @@ function t_most_spuc(quiet, create_plots, create_pdfs, savepath)
 %   See https://github.com/MATPOWER/most for more info.
 
 if nargin < 4
-    savepath = '.';             %% save in current working directory by default
+    savedir = '.';              %% save in current working directory by default
     if nargin < 3
         create_pdfs = 0;        %% do NOT save plots to PDF files
         if nargin < 2
@@ -751,7 +751,7 @@ if create_plots
         h = gcf;
         set(h, 'PaperSize', [11 8.5]);
         set(h, 'PaperPosition', [0.25 0.25 10.5 8]);
-        print('-dpdf', fullfile(savepath, fname));
+        print('-dpdf', fullfile(savedir, fname));
     end
 
     for j = 1:7;
@@ -761,7 +761,7 @@ if create_plots
         else
             fname = '';
         end
-        plot_case(labels{j}, Pg([1:3 5], j), Rp([1:3 5], j), Rm([1:3 5], j), lamP(:, j), muF(:, j), 250, 100, savepath, fname);
+        plot_case(labels{j}, Pg([1:3 5], j), Rp([1:3 5], j), Rm([1:3 5], j), lamP(:, j), muF(:, j), 250, 100, savedir, fname);
     end
 end
 end

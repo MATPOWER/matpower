@@ -1679,7 +1679,11 @@ if mpopt.most.build_model
   % efficient.  All other accesses to H1 will be diagonal insertions, which
   % take less time than anti-diagonal insertions.
   % First do first period wrt to InitialPg.
-  om = add_costs(om, 'RampWear', {nt+1, nj_max, nj_max});
+  if mdi.OpenEnded
+    om = add_costs(om, 'RampWear', {nt, nj_max, nj_max});
+  else
+    om = add_costs(om, 'RampWear', {nt+1, nj_max, nj_max});
+  end
   for j = 1:mdi.idx.nj(1)
     w = mdi.tstep(1).TransMat(j,1);  % the probability of going from initial state to jth
     H = spdiags(w * baseMVA^2 * mdi.RampWearCostCoeff(:,1), 0, ng, ng);

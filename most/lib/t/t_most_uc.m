@@ -1,7 +1,7 @@
-function t_most_uc(quiet, create_plots, create_pdfs, savepath)
+function t_most_uc(quiet, create_plots, create_pdfs, savedir)
 %T_MOST_UC  Tests of deteministic unit commitment optimizations
 %
-%   T_MOST_UC(QUIET, CREATE_PLOTS, CREATE_PDFS, SAVEPATH)
+%   T_MOST_UC(QUIET, CREATE_PLOTS, CREATE_PDFS, SAVEDIR)
 %   Can generate summary plots and save them as PDFs in a directory of
 %   your choice.
 %   E.g. t_most_uc(0, 1, 1, '~/Downloads/uc_plots')
@@ -15,7 +15,7 @@ function t_most_uc(quiet, create_plots, create_pdfs, savepath)
 %   See https://github.com/MATPOWER/most for more info.
 
 if nargin < 4
-    savepath = '.';             %% save in current working directory by default
+    savedir = '.';              %% save in current working directory by default
     if nargin < 3
         create_pdfs = 0;        %% do NOT save plots to PDF files
         if nargin < 2
@@ -203,7 +203,7 @@ for s = 1:length(solvers)
         % ed = most_summary(mdo);
         if create_plots
             pp = pp + 1;
-            plot_case('Base : No Network', mdo, ms, 500, 100, savepath, pp, fname);
+            plot_case('Base : No Network', mdo, ms, 500, 100, savedir, pp, fname);
         end
         % keyboard;
 
@@ -227,7 +227,7 @@ for s = 1:length(solvers)
         % dcopf = most_summary(mdo);
         if create_plots
             pp = pp + 1;
-            plot_case('+ DC Network', mdo, ms, 500, 100, savepath, pp, fname);
+            plot_case('+ DC Network', mdo, ms, 500, 100, savedir, pp, fname);
         end
         % keyboard;
 
@@ -258,7 +258,7 @@ for s = 1:length(solvers)
         % wstart = most_summary(mdo);
         if create_plots
             pp = pp + 1;
-            plot_case('+ Startup/Shutdown Costs', mdo, ms, 500, 100, savepath, pp, fname);
+            plot_case('+ Startup/Shutdown Costs', mdo, ms, 500, 100, savedir, pp, fname);
         end
         % keyboard;
 
@@ -283,7 +283,7 @@ for s = 1:length(solvers)
         % wminup = most_summary(mdo);
         if create_plots
             pp = pp + 1;
-            plot_case('+ Min Up/Down Time Constraints', mdo, ms, 500, 100, savepath, pp, fname);
+            plot_case('+ Min Up/Down Time Constraints', mdo, ms, 500, 100, savedir, pp, fname);
         end
         % keyboard;
 
@@ -308,7 +308,7 @@ for s = 1:length(solvers)
         % wramp = most_summary(mdo);
         if create_plots
             pp = pp + 1;
-            plot_case('+ Ramping Constraints/Ramp Reserve Costs', mdo, ms, 500, 100, savepath, pp, fname);
+            plot_case('+ Ramping Constraints/Ramp Reserve Costs', mdo, ms, 500, 100, savedir, pp, fname);
         end
         % keyboard;
 
@@ -333,7 +333,7 @@ for s = 1:length(solvers)
         % wstorage = most_summary(mdo);
         if create_plots
             pp = pp + 1;
-            plot_case('+ Storage', mdo, ms, 500, 100, savepath, pp, fname);
+            plot_case('+ Storage', mdo, ms, 500, 100, savedir, pp, fname);
             create_plots = 0;   %% don't do them again
         end
         % keyboard;
