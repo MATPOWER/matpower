@@ -225,7 +225,7 @@ if ~isempty(mpc.bus)
                 case {'PQSUM', 'ISUM', 'YSUM'}
                     [mpc, success, iterations] = radial_pf(mpc,mpopt);
                 otherwise
-                    error('runpf: Only Newton''s method, fast-decoupled, and Gauss-Seidel power flow algorithms currently implemented.');
+                    error('runpf: ''%s'' is not a valid power flow algorithm. See ''pf.alg'' details in MPOPTION help.', alg);
             end
             its = its + iterations;
         
