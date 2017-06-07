@@ -13,7 +13,7 @@ function display(om)
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-display(om.opt_model)
+om.display@opt_model()
 
 fprintf('  mpc = ');
 if ~isempty(fieldnames(om.mpc))

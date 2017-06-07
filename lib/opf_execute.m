@@ -139,7 +139,7 @@ if success
     if ll.N.PQh > 0 || ll.N.PQl > 0
       mu_PQh = results.mu.lin.l(ll.i1.PQh:ll.iN.PQh) - results.mu.lin.u(ll.i1.PQh:ll.iN.PQh);
       mu_PQl = results.mu.lin.l(ll.i1.PQl:ll.iN.PQl) - results.mu.lin.u(ll.i1.PQl:ll.iN.PQl);
-      Apqdata = userdata(om, 'Apqdata');
+      Apqdata = get_userdata(om, 'Apqdata');
       results.gen = update_mupq(results.baseMVA, results.gen, mu_PQh, mu_PQl, Apqdata);
     end
 
@@ -173,7 +173,7 @@ if success
 
   %% angle limit constraint multipliers
   if ~sdp && ll.N.ang > 0
-    iang = userdata(om, 'iang');
+    iang = get_userdata(om, 'iang');
     results.branch(iang, MU_ANGMIN) = results.mu.lin.l(ll.i1.ang:ll.iN.ang) * pi/180;
     results.branch(iang, MU_ANGMAX) = results.mu.lin.u(ll.i1.ang:ll.iN.ang) * pi/180;
   end
@@ -236,7 +236,7 @@ if ~sdp
   %% if single-block PWL costs were converted to POLY, insert dummy y into x
   %% Note: The "y" portion of x will be nonsense, but everything should at
   %%       least be in the expected locations.
-  pwl1 = userdata(om, 'pwl1');
+  pwl1 = get_userdata(om, 'pwl1');
   if ~isempty(pwl1) && ~strcmp(alg, 'TRALM') && ~(strcmp(alg, 'PDIPM') && mpopt.pdipm.step_control)
     %% get indexing
     vv = get_idx(om);

@@ -221,20 +221,20 @@ end
 %% construct OPF model object
 om = opf_model(mpc);
 if ~isempty(pwl1)
-  om = userdata(om, 'pwl1', pwl1);
+  om.userdata.pwl1 = pwl1;
 end
 if dc
-  om = userdata(om, 'Bf', Bf);
-  om = userdata(om, 'Pfinj', Pfinj);
-  om = userdata(om, 'iang', iang);
+  om.userdata.Bf = Bf;
+  om.userdata.Pfinj = Pfinj;
+  om.userdata.iang = iang;
   om = add_vars(om, 'Va', nb, Va, Val, Vau);
   om = add_vars(om, 'Pg', ng, Pg, Pmin, Pmax);
   om = add_constraints(om, 'Pmis', Amis, bmis, bmis, {'Va', 'Pg'}); %% nb
   om = add_constraints(om, 'Pf',  Bf(il,:), -upt, upf, {'Va'});     %% nl2
   om = add_constraints(om, 'ang', Aang, lang, uang, {'Va'});        %% nang
 else
-  om = userdata(om, 'Apqdata', Apqdata);
-  om = userdata(om, 'iang', iang);
+  om.userdata.Apqdata = Apqdata;
+  om.userdata.iang = iang;
   om = add_vars(om, 'Va', nb, Va, Val, Vau);
   om = add_vars(om, 'Vm', nb, Vm, bus(:, VMIN), bus(:, VMAX));
   om = add_vars(om, 'Pg', ng, Pg, Pmin, Pmax);

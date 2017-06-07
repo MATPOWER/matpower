@@ -1,4 +1,4 @@
-function om = opf_model(mpc)
+classdef opf_model < opt_model
 %OPF_MODEL  Constructor for OPF model class.
 %   OM = OPF_MODEL(MPC)
 %
@@ -13,15 +13,9 @@ function om = opf_model(mpc)
 %   along with the get_mpc() method.
 %
 %   The following is the structure of the data in the OPF model object.
-%   Each field of .idx or .data is a struct whose field names are the names
-%   of the corresponding blocks of vars, constraints or costs (found in
-%   order in the corresponding .order field). The description next to these
-%   fields gives the meaning of the value for each named sub-field.
-%   E.g. om.var.data.v0.Pg contains a vector of initial values for the 'Pg'
-%   block of variables.
 %
 %   om
-%       .opt_model  - the corresponding OPT_MODEL object
+%       <opt_model fields> - see OPT_MODEL for details
 %       .mpc        - MATPOWER case struct used to create this model object
 %           .baseMVA
 %           .bus
@@ -39,28 +33,35 @@ function om = opf_model(mpc)
 %   See also OPT_MODEL.
 
 %   MATPOWER
-%   Copyright (c) 2008-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2017, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-if nargin == 0
-    es = struct();
-    s = struct('mpc', es);
-    om = opt_model;
-    om = class(s, 'opf_model', om);
-else
-    if isa(mpc,'opf_model') 
-        om = mpc;
-    else
-        if isfield(mpc, 'om')   %% avoid nesting
-            s = struct('mpc', rmfield(mpc, 'om'));
-        else
-            s = struct('mpc', mpc);
+    properties
+        mpc = struct();
+    end
+
+    methods
+        %% constructor
+        function om = opf_model(mpc)
+            args = {};
+            have_mpc = 0;
+            if nargin > 0
+                if isa(mpc, 'opf_model')
+                    args = { mpc };
+                elseif isstruct(mpc)
+                    have_mpc = 1;
+                end
+            end
+
+            om@opt_model(args{:});
+            
+            if have_mpc
+                om.mpc = mpc;
+            end
         end
-        om = opt_model;
-        om = class(s, 'opf_model', om);
     end
 end

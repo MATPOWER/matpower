@@ -59,8 +59,8 @@ mpc = get_mpc(om);
 cp = get_cost_params(om);
 [N, H, Cw] = deal(cp.N, cp.H, cp.Cw);
 fparm = [cp.dd cp.rh cp.kk cp.mm];
-Bf = userdata(om, 'Bf');
-Pfinj = userdata(om, 'Pfinj');
+Bf = get_userdata(om, 'Bf');
+Pfinj = get_userdata(om, 'Pfinj');
 [vv, ll] = get_idx(om);
 
 %% problem dimensions
