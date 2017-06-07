@@ -163,7 +163,7 @@ function om = userfcn_reserves_formulation(om, args)
     QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
 
 %% initialize some things
-mpc = get_mpc(om);
+mpc = om.get_mpc();
 r = mpc.reserves;
 igr = r.igr;                %% indices of gens available to provide reserves
 ngr = length(igr);          %% number of gens available to provide reserves
@@ -190,10 +190,10 @@ lreq = r.req / mpc.baseMVA;
 Cw = r.cost(igr) * mpc.baseMVA;     %% per unit cost coefficients
 
 %% add them to the model
-om = add_vars(om, 'R', ngr, [], Rmin, Rmax);
-om = add_constraints(om, 'Pg_plus_R', Ar, [], ur, {'Pg', 'R'});
-om = add_constraints(om, 'Rreq', r.zones(:, igr), lreq, [], {'R'});
-om = add_costs(om, 'Rcost', struct('N', I, 'Cw', Cw), {'R'});
+om.add_vars('R', ngr, [], Rmin, Rmax);
+om.add_constraints('Pg_plus_R', Ar, [], ur, {'Pg', 'R'});
+om.add_constraints('Rreq', r.zones(:, igr), lreq, [], {'R'});
+om.add_costs('Rcost', struct('N', I, 'Cw', Cw), {'R'});
 
 
 %%-----  int2ext  ------------------------------------------------------
@@ -236,7 +236,7 @@ ng0  = size(o.ext.gen, 1);  %% number of gens (+ disp loads)
 %%-----  results post-processing  -----
 %% get the results (per gen reserves, multipliers) with internal gen indexing
 %% and convert from p.u. to per MW units
-[R0, Rl, Ru] = getv(results.om, 'R');
+[R0, Rl, Ru] = results.om.getv('R');
 R       = zeros(ng, 1);
 Rmin    = zeros(ng, 1);
 Rmax    = zeros(ng, 1);

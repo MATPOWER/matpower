@@ -1,6 +1,6 @@
 function label = describe_idx(om, idx_type, idxs)
 %DESCRIBE_IDX  Identifies variable, constraint and cost row indices.
-%   LABEL = DESCRIBE_IDX(OM, IDX_TYPE, IDXS)
+%   LABEL = OM.DESCRIBE_IDX(IDX_TYPE, IDXS)
 %
 %   Returns strings describing (name and index) the variable, constraint
 %   or cost row that corresponds to the indices in IDXS. IDX_TYPE must be
@@ -11,8 +11,8 @@ function label = describe_idx(om, idx_type, idxs)
 %   dimension as IDXS.
 %
 %   Examples:
-%       label = describe_idx(om, 'var', 87));
-%       labels = describe_idx(om, 'lin', [38; 49; 93]));
+%       label = om.describe_idx('var', 87));
+%       labels = om.describe_idx('lin', [38; 49; 93]));
 %   
 %   See also OPT_MODEL.
 

@@ -1,6 +1,6 @@
 function mpc = get_mpc(om)
 %GET_MPC  Returns the MATPOWER case struct.
-%   MPC = GET_MPC(OM)
+%   MPC = OM.GET_MPC()
 %
 %   See also OPT_MODEL.
 

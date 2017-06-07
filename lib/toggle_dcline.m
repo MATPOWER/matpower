@@ -306,7 +306,7 @@ function om = userfcn_dcline_formulation(om, args)
 c = idx_dcline;
 
 %% initialize some things
-mpc = get_mpc(om);
+mpc = om.get_mpc();
 dc = mpc.dcline;
 ndc = size(dc, 1);              %% number of in-service DC lines
 ng  = size(mpc.gen, 1) - 2*ndc; %% number of original gens/disp loads
@@ -317,7 +317,7 @@ L1  =  dc(:, c.LOSS1);
 Adc = [sparse(ndc, ng) spdiags(1-L1, 0, ndc, ndc) speye(ndc, ndc)];
 
 %% add them to the model
-om = add_constraints(om, 'dcline', Adc, nL0, nL0, {'Pg'});
+om.add_constraints('dcline', Adc, nL0, nL0, {'Pg'});
 
 
 %%-----  int2ext  ------------------------------------------------------

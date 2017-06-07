@@ -120,7 +120,7 @@ function om = userfcn_iflims_formulation(om, args)
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 
 %% initialize some things
-mpc = get_mpc(om);
+mpc = om.get_mpc();
 [baseMVA, bus, branch] = deal(mpc.baseMVA, mpc.bus, mpc.branch);
 ifmap = mpc.if.map;
 iflims = mpc.if.lims;
@@ -155,7 +155,7 @@ for k = 1:nifs
 end
 
 %% add interface constraint
-om = add_constraints(om, 'iflims',  Aif, lif, uif, {'Va'});      %% nifs
+om.add_constraints('iflims',  Aif, lif, uif, {'Va'});      %% nifs
 
 
 %%-----  int2ext  ------------------------------------------------------

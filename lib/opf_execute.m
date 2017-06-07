@@ -32,10 +32,10 @@ alg = upper(mpopt.opf.ac.solver);
 sdp = strcmp(alg, 'SDPOPF');
 
 %% build user-defined costs
-om = build_cost_params(om);
+om.build_cost_params();
 
 %% get indexing
-[vv, ll, nn] = get_idx(om);
+[vv, ll, nn] = om.get_idx();
 
 if mpopt.verbose > 0
     v = mpver('all');
@@ -139,7 +139,7 @@ if success
     if ll.N.PQh > 0 || ll.N.PQl > 0
       mu_PQh = results.mu.lin.l(ll.i1.PQh:ll.iN.PQh) - results.mu.lin.u(ll.i1.PQh:ll.iN.PQh);
       mu_PQl = results.mu.lin.l(ll.i1.PQl:ll.iN.PQl) - results.mu.lin.u(ll.i1.PQl:ll.iN.PQl);
-      Apqdata = get_userdata(om, 'Apqdata');
+      Apqdata = om.get_userdata('Apqdata');
       results.gen = update_mupq(results.baseMVA, results.gen, mu_PQh, mu_PQl, Apqdata);
     end
 
@@ -152,7 +152,7 @@ if success
       end
       %% compute g, dg, unless already done by post-v4.0 MINOPF or TSPOPF
       if ~isfield(raw, 'dg')
-        mpc = get_mpc(om);
+        mpc = om.get_mpc();
         [Ybus, Yf, Yt] = makeYbus(mpc.baseMVA, mpc.bus, mpc.branch);
         [g, geq, dg, dgeq] = opf_consfcn(results.x, om, Ybus, Yf, Yt, mpopt);
         raw.g = [ geq; g];
@@ -173,7 +173,7 @@ if success
 
   %% angle limit constraint multipliers
   if ~sdp && ll.N.ang > 0
-    iang = get_userdata(om, 'iang');
+    iang = om.get_userdata('iang');
     results.branch(iang, MU_ANGMIN) = results.mu.lin.l(ll.i1.ang:ll.iN.ang) * pi/180;
     results.branch(iang, MU_ANGMAX) = results.mu.lin.u(ll.i1.ang:ll.iN.ang) * pi/180;
   end
@@ -189,10 +189,10 @@ end
 
 if ~sdp
   %% assign values and limit shadow prices for variables
-  om_var_order = get(om, 'var', 'order');
+  om_var_order = om.get('var', 'order');
   for k = 1:length(om_var_order)
     name = om_var_order(k).name;
-    if getN(om, 'var', name)
+    if om.getN('var', name)
       idx = vv.i1.(name):vv.iN.(name);
       results.var.val.(name) = results.x(idx);
       results.var.mu.l.(name) = results.mu.var.l(idx);
@@ -201,10 +201,10 @@ if ~sdp
   end
 
   %% assign shadow prices for linear constraints
-  om_lin_order = get(om, 'lin', 'order');
+  om_lin_order = om.get('lin', 'order');
   for k = 1:length(om_lin_order)
     name = om_lin_order(k).name;
-    if getN(om, 'lin', name)
+    if om.getN('lin', name)
       idx = ll.i1.(name):ll.iN.(name);
       results.lin.mu.l.(name) = results.mu.lin.l(idx);
       results.lin.mu.u.(name) = results.mu.lin.u(idx);
@@ -213,10 +213,10 @@ if ~sdp
 
   %% assign shadow prices for nonlinear constraints
   if ~dc
-    om_nln_order = get(om, 'nln', 'order');
+    om_nln_order = om.get('nln', 'order');
     for k = 1:length(om_nln_order)
       name = om_nln_order(k).name;
-      if getN(om, 'nln', name)
+      if om.getN('nln', name)
         idx = nn.i1.(name):nn.iN.(name);
         results.nln.mu.l.(name) = results.mu.nln.l(idx);
         results.nln.mu.u.(name) = results.mu.nln.u(idx);
@@ -225,21 +225,21 @@ if ~sdp
   end
 
   %% assign values for components of user cost
-  om_cost_order = get(om, 'cost', 'order');
+  om_cost_order = om.get('cost', 'order');
   for k = 1:length(om_cost_order)
     name = om_cost_order(k).name;
-    if getN(om, 'cost', name)
-      results.cost.(name) = compute_cost(om, results.x, name);
+    if om.getN('cost', name)
+      results.cost.(name) = om.compute_cost(results.x, name);
     end
   end
 
   %% if single-block PWL costs were converted to POLY, insert dummy y into x
   %% Note: The "y" portion of x will be nonsense, but everything should at
   %%       least be in the expected locations.
-  pwl1 = get_userdata(om, 'pwl1');
+  pwl1 = om.get_userdata('pwl1');
   if ~isempty(pwl1) && ~strcmp(alg, 'TRALM') && ~(strcmp(alg, 'PDIPM') && mpopt.pdipm.step_control)
     %% get indexing
-    vv = get_idx(om);
+    vv = om.get_idx();
     if dc
       nx = vv.iN.Pg;
     else

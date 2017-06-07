@@ -1,22 +1,22 @@
 function N = getN(om, selector, name, idx)
 %GETN  Returns the number of variables, constraints or cost rows.
-%   N = GETN(OM, SELECTOR)
-%   N = GETN(OM, SELECTOR, NAME)
-%   N = GETN(OM, SELECTOR, NAME, IDX)
+%   N = OM.GETN(SELECTOR)
+%   N = OM.GETN(SELECTOR, NAME)
+%   N = OM.GETN(SELECTOR, NAME, IDX)
 %
 %   Returns either the total number of variables/constraints/cost rows
 %   or the number corresponding to a specified named block.
 %
 %   Examples:
-%       N = getN(om, 'var')         : total number of variables
-%       N = getN(om, 'lin')         : total number of linear constraints
-%       N = getN(om, 'nln')         : total number of nonlinear constraints
-%       N = getN(om, 'cost')        : total number of cost rows (in N)
-%       N = getN(om, 'var', name)   : number of variables in named set
-%       N = getN(om, 'lin', name)   : number of linear constraints in named set
-%       N = getN(om, 'nln', name)   : number of nonlinear cons. in named set
-%       N = getN(om, 'cost', name)  : number of cost rows (in N) in named set
-%       N = getN(om, 'var', name, idx) : number of variables in indexed named set
+%       N = om.getN('var')          : total number of variables
+%       N = om.getN('lin')          : total number of linear constraints
+%       N = om.getN('nln')          : total number of nonlinear constraints
+%       N = om.getN('cost')         : total number of cost rows (in N)
+%       N = om.getN('var', name)    : number of variables in named set
+%       N = om.getN('lin', name)    : number of linear constraints in named set
+%       N = om.getN('nln', name)    : number of nonlinear cons. in named set
+%       N = om.getN('cost', name)   : number of cost rows (in N) in named set
+%       N = om.getN('var', name, idx) : number of variables in indexed named set
 %
 %   See also OPT_MODEL.
 

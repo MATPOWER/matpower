@@ -153,7 +153,7 @@ function om = userfcn_softlims_formulation(om, args)
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 
 %% initialize some things
-mpc = get_mpc(om);
+mpc = om.get_mpc();
 [baseMVA, bus, branch] = deal(mpc.baseMVA, mpc.bus, mpc.branch);
 s = mpc.softlims;
 
@@ -175,9 +175,9 @@ us = [   Pfinj(s.idx) + s.Pfmax;
 Cw = s.cost(:, 1) * mpc.baseMVA;
 
 %% add vars, costs, constraints
-om = add_vars(om, 'flv', ns, zeros(ns, 1), zeros(ns, 1), Inf(ns, 1));
-om = add_costs(om, 'vc', struct('N', I, 'Cw', Cw), {'flv'});
-om = add_constraints(om, 'softlims',  As, ls, us, {'Va', 'flv'});   %% 2*ns
+om.add_vars('flv', ns, zeros(ns, 1), zeros(ns, 1), Inf(ns, 1));
+om.add_costs('vc', struct('N', I, 'Cw', Cw), {'flv'});
+om.add_constraints('softlims',  As, ls, us, {'Va', 'flv'});   %% 2*ns
 
 
 %%-----  int2ext  ------------------------------------------------------

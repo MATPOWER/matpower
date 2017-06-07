@@ -1,16 +1,16 @@
 function om = add_vars(om, name, idx, varargin)
 %ADD_VARS  Adds a set of variables to the model.
-%   OM = ADD_VARS(OM, NAME, N, V0, VL, VU, VT)
-%   OM = ADD_VARS(OM, NAME, N, V0, VL, VU)
-%   OM = ADD_VARS(OM, NAME, N, V0, VL)
-%   OM = ADD_VARS(OM, NAME, N, V0)
-%   OM = ADD_VARS(OM, NAME, N)
-%   OM = ADD_VARS(OM, NAME, DIM_LIST)
-%   OM = ADD_VARS(OM, NAME, IDX_LIST, N, V0, VL, VU, VT)
-%   OM = ADD_VARS(OM, NAME, IDX_LIST, N, V0, VL, VU)
-%   OM = ADD_VARS(OM, NAME, IDX_LIST, N, V0, VL)
-%   OM = ADD_VARS(OM, NAME, IDX_LIST, N, V0)
-%   OM = ADD_VARS(OM, NAME, IDX_LIST, N)
+%   OM.ADD_VARS(NAME, N, V0, VL, VU, VT)
+%   OM.ADD_VARS(NAME, N, V0, VL, VU)
+%   OM.ADD_VARS(NAME, N, V0, VL)
+%   OM.ADD_VARS(NAME, N, V0)
+%   OM.ADD_VARS(NAME, N)
+%   OM.ADD_VARS(NAME, DIM_LIST)
+%   OM.ADD_VARS(NAME, IDX_LIST, N, V0, VL, VU, VT)
+%   OM.ADD_VARS(NAME, IDX_LIST, N, V0, VL, VU)
+%   OM.ADD_VARS(NAME, IDX_LIST, N, V0, VL)
+%   OM.ADD_VARS(NAME, IDX_LIST, N, V0)
+%   OM.ADD_VARS(NAME, IDX_LIST, N)
 %   
 %   Adds a set of variables to the model, where N is the number of
 %   variables in the set, V0 is the initial value of those variables,
@@ -25,12 +25,12 @@ function om = add_vars(om, name, idx, varargin)
 %   (VL = -Inf, VU = Inf), and continuous (VT = 'C').
 %
 %   Examples:
-%       om = add_vars(om, 'V', nb, V0, Vmin, Vmax, 'C');
+%       om.add_vars('V', nb, V0, Vmin, Vmax, 'C');
 %
-%       om = add_vars(om, 'x', {2, 3});
+%       om.add_vars('x', {2, 3});
 %       for i = 1:2
 %         for j = 1:3
-%           om = add_vars(om, 'x', {i, j}, nx(i,j), ...);
+%           om.add_vars('x', {i, j}, nx(i,j), ...);
 %         end
 %       end
 %

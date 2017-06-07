@@ -1,8 +1,8 @@
 function [v0, vl, vu, vt] = getv(om, name, idx)
 %GETV  Returns initial value, lower bound and upper bound for opt variables.
-%   [V0, VL, VU] = GETV(OM)
-%   [V0, VL, VU] = GETV(OM, NAME)
-%   [V0, VL, VU] = GETV(OM, NAME, IDX)
+%   [V0, VL, VU] = OM.GETV()
+%   [V0, VL, VU] = OM.GETV(NAME)
+%   [V0, VL, VU] = OM.GETV(NAME, IDX)
 %   [V0, VL, VU, VT] = GETV(...)
 %   Returns the initial value V0, lower bound VL and upper bound VU for
 %   the full optimization variable vector, or for a specific named or named
@@ -11,9 +11,9 @@ function [v0, vl, vu, vt] = getv(om, name, idx)
 %   integer and binary variables, respectively.
 %
 %   Examples:
-%       [x, xmin, xmax] = getv(om);
-%       [Pg, Pmin, Pmax] = getv(om, 'Pg');
-%       [zij0, zijmin, zijmax, ztype] = getv(om, 'z', {i, j});
+%       [x, xmin, xmax] = om.getv();
+%       [Pg, Pmin, Pmax] = om.getv('Pg');
+%       [zij0, zijmin, zijmax, ztype] = om.getv('z', {i, j});
 %   
 %   See also OPT_MODEL.
 

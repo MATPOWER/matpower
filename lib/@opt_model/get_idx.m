@@ -1,9 +1,9 @@
 function [vv, ll, nn, cc] = get_idx(om)
 %GET_IDX  Returns the idx struct for vars, lin/nln constraints, costs.
-%   VV = GET_IDX(OM)
-%   [VV, LL] = GET_IDX(OM)
-%   [VV, LL, NN] = GET_IDX(OM)
-%   [VV, LL, NN, CC] = GET_IDX(OM)
+%   VV = OM.GET_IDX()
+%   [VV, LL] = OM.GET_IDX()
+%   [VV, LL, NN] = OM.GET_IDX()
+%   [VV, LL, NN, CC] = OM.GET_IDX()
 %
 %   Returns a structure for each with the beginning and ending
 %   index value and the number of elements for each named block.
@@ -32,7 +32,7 @@ function [vv, ll, nn, cc] = get_idx(om)
 %       The number of nonlinear constraints in a set named 'bar':
 %           nbar = nn.N.bar;
 %         (note: the following is preferable ...
-%           nbar = getN(om, 'nln', 'bar');
+%           nbar = om.getN('nln', 'bar');
 %         ... if you haven't already called get_idx to get nn.)
 %
 %       If 'z', 'foo' and 'bar' are indexed sets, then you can

@@ -42,16 +42,16 @@ function [f, df, d2f] = opf_costfcn(x, om, varargin)
 [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 
 %% unpack data
-mpc = get_mpc(om);
+mpc = om.get_mpc();
 [baseMVA, gen, gencost] = deal(mpc.baseMVA, mpc.gen, mpc.gencost);
-cp = get_cost_params(om);
+cp = om.get_cost_params();
 [N, Cw, H, dd, rh, kk, mm] = deal(cp.N, cp.Cw, cp.H, cp.dd, ...
                                     cp.rh, cp.kk, cp.mm);
-vv = get_idx(om);
+vv = om.get_idx();
 
 %% problem dimensions
 ng = size(gen, 1);          %% number of dispatchable injections
-ny = getN(om, 'var', 'y');  %% number of piece-wise linear costs
+ny = om.getN('var', 'y');   %% number of piece-wise linear costs
 nxyz = length(x);           %% total number of control vars of all types
 
 %% grab Pg & Qg

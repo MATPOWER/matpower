@@ -53,15 +53,15 @@ function [results, success, raw] = dcopf_solver(om, mpopt)
 [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 
 %% unpack data
-mpc = get_mpc(om);
+mpc = om.get_mpc();
 [baseMVA, bus, gen, branch, gencost] = ...
     deal(mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch, mpc.gencost);
-cp = get_cost_params(om);
+cp = om.get_cost_params();
 [N, H, Cw] = deal(cp.N, cp.H, cp.Cw);
 fparm = [cp.dd cp.rh cp.kk cp.mm];
-Bf = get_userdata(om, 'Bf');
-Pfinj = get_userdata(om, 'Pfinj');
-[vv, ll] = get_idx(om);
+Bf = om.get_userdata('Bf');
+Pfinj = om.get_userdata('Pfinj');
+[vv, ll] = om.get_idx();
 
 %% problem dimensions
 ipol = find(gencost(:, MODEL) == POLYNOMIAL); %% polynomial costs
@@ -69,12 +69,12 @@ ipwl = find(gencost(:, MODEL) == PW_LINEAR);  %% piece-wise linear costs
 nb = size(bus, 1);          %% number of buses
 nl = size(branch, 1);       %% number of branches
 nw = size(N, 1);            %% number of general cost vars, w
-ny = getN(om, 'var', 'y');  %% number of piece-wise linear costs
-nxyz = getN(om, 'var');     %% total number of control vars of all types
+ny = om.getN('var', 'y');   %% number of piece-wise linear costs
+nxyz = om.getN('var');      %% total number of control vars of all types
 
 %% linear constraints & variable bounds
-[A, l, u] = linear_constraints(om);
-[x0, xmin, xmax] = getv(om);
+[A, l, u] = om.linear_constraints();
+[x0, xmin, xmax] = om.getv();
 
 %% set up objective function of the form: f = 1/2 * X'*HH*X + CC'*X
 %% where X = [x;y;z]. First set up as quadratic function of w,

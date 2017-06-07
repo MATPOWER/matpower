@@ -60,22 +60,22 @@ use_ktropts_file = 1;       %% use a KNITRO options file to pass options
 create_ktropts_file = 0;    %% generate a KNITRO options file on the fly
 
 %% unpack data
-mpc = get_mpc(om);
+mpc = om.get_mpc();
 [baseMVA, bus, gen, branch, gencost] = ...
     deal(mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch, mpc.gencost);
-[vv, ll, nn] = get_idx(om);
+[vv, ll, nn] = om.get_idx();
 
 %% problem dimensions
 nb = size(bus, 1);          %% number of buses
 ng = size(gen, 1);          %% number of gens
 nl = size(branch, 1);       %% number of branches
-ny = getN(om, 'var', 'y');  %% number of piece-wise linear costs
+ny = om.getN('var', 'y');   %% number of piece-wise linear costs
 
 %% bounds on optimization vars
-[x0, xmin, xmax] = getv(om);
+[x0, xmin, xmax] = om.getv();
 
 %% linear constraints
-[A, l, u] = linear_constraints(om);
+[A, l, u] = om.linear_constraints();
 
 %% split l <= A*x <= u into less than, equal to, greater than, and
 %% doubly-bounded sets
@@ -261,7 +261,7 @@ branch(:, MU_SF) = muSf / baseMVA;
 branch(:, MU_ST) = muSt / baseMVA;
 
 %% package up results
-nlnN = getN(om, 'nln');
+nlnN = om.getN('nln');
 nlt = length(ilt);
 ngt = length(igt);
 nbx = length(ibx);

@@ -2403,7 +2403,7 @@ function om = userfcn_reserves_formulation(om, args)
 
 %% initialize some things
 define_constants;
-mpc = get_mpc(om);
+mpc = om.get_mpc();
 r = mpc.reserves;
 ng  = size(mpc.gen, 1);             %% number of on-line gens
 
@@ -2424,10 +2424,10 @@ lreq = r.req / mpc.baseMVA;
 Cw = r.cost * mpc.baseMVA;          %% per unit cost coefficients
 
 %% add them to the model
-om = add_vars(om, 'R', ng, [], Rmin, Rmax);
-om = add_constraints(om, 'Pg_plus_R', Ar, [], Pmax, {'Pg', 'R'});
-om = add_constraints(om, 'Rreq', r.zones, lreq, [], {'R'});
-om = add_costs(om, 'Rcost', struct('N', I, 'Cw', Cw), {'R'});
+om.add_vars('R', ng, [], Rmin, Rmax);
+om.add_constraints('Pg_plus_R', Ar, [], Pmax, {'Pg', 'R'});
+om.add_constraints('Rreq', r.zones, lreq, [], {'R'});
+om.add_costs('Rcost', struct('N', I, 'Cw', Cw), {'R'});
 \end{Code}
 
 
@@ -2486,7 +2486,7 @@ ng0 = size(results.order.ext.gen, 1);   %% number of gens (external)
 %%-----  results post-processing  -----
 %% get the results (per gen reserves, multipliers) with internal gen indexing
 %% and convert from p.u. to per MW units
-[R0, Rl, Ru] = getv(results.om, 'R');
+[R0, Rl, Ru] = results.om.getv('R');
 R       = results.var.val.R * results.baseMVA;
 Rmin    = Rl * results.baseMVA;
 Rmax    = Ru * results.baseMVA;

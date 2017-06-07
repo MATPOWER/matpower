@@ -1,10 +1,10 @@
 function om = add_costs(om, name, idx, varargin)
 %ADD_COSTS  Adds a set of user costs to the model.
-%   OM = ADD_COSTS(OM, NAME, CP);
-%   OM = ADD_COSTS(OM, NAME, CP, VARSETS);
-%   OM = ADD_COSTS(OM, NAME, DIM_LIST);
-%   OM = ADD_COSTS(OM, NAME, IDX_LIST, CP);
-%   OM = ADD_COSTS(OM, NAME, IDX_LIST, CP, VARSETS);
+%   OM.ADD_COSTS(NAME, CP);
+%   OM.ADD_COSTS(NAME, CP, VARSETS);
+%   OM.ADD_COSTS(NAME, DIM_LIST);
+%   OM.ADD_COSTS(NAME, IDX_LIST, CP);
+%   OM.ADD_COSTS(NAME, IDX_LIST, CP, VARSETS);
 %
 %   Adds a named block of user-defined costs to the model. Each set is
 %   defined by the CP struct described below. All user-defined sets of
@@ -16,13 +16,13 @@ function om = add_costs(om, name, idx, varargin)
 %       cp1 = struct('N', N1, 'Cw', Cw1);
 %       cp2 = struct('N', N2, 'Cw', Cw2, 'H', H, 'dd', dd, ...
 %                     'rh', rh, 'kk', kk, 'mm', mm);
-%       om = add_costs(om, 'usr1', cp1, {'Pg', 'Qg', 'z'});
-%       om = add_costs(om, 'usr2', cp2, {'Vm', 'Pg', 'Qg', 'z'});
+%       om.add_costs('usr1', cp1, {'Pg', 'Qg', 'z'});
+%       om.add_costs('usr2', cp2, {'Vm', 'Pg', 'Qg', 'z'});
 %
-%       om = add_costs(om, 'c', {2, 3});
+%       om.add_costs('c', {2, 3});
 %       for i = 1:2
 %         for j = 1:3
-%           om = add_costs(om, 'c', {i, j}, cp(i,j), ...);
+%           om.add_costs('c', {i, j}, cp(i,j), ...);
 %         end
 %       end
 %

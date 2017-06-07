@@ -543,14 +543,14 @@ if mpopt.most.build_model
   Ing = speye(ng);
   Ins = speye(ns);
   if mdi.DCMODEL
-    om = add_vars(om, 'Va', {nt, nj_max, nc_max+1});
+    om.add_vars('Va', {nt, nj_max, nc_max+1});
   end
-  om = add_vars(om, 'Pg', {nt, nj_max, nc_max+1});
-  om = add_vars(om, 'dPp', {nt, nj_max, nc_max+1});
-  om = add_vars(om, 'dPm', {nt, nj_max, nc_max+1});
-  om = add_vars(om, 'y', {nt, nj_max, nc_max+1});
+  om.add_vars('Pg', {nt, nj_max, nc_max+1});
+  om.add_vars('dPp', {nt, nj_max, nc_max+1});
+  om.add_vars('dPm', {nt, nj_max, nc_max+1});
+  om.add_vars('y', {nt, nj_max, nc_max+1});
   if mdi.IncludeFixedReserves
-    om = add_vars(om, 'R', {nt, nj_max, nc_max+1});
+    om.add_vars('R', {nt, nj_max, nc_max+1});
   end
   for t = 1:nt
     for j = 1:mdi.idx.nj(t)
@@ -571,7 +571,7 @@ if mpopt.most.build_model
           Va_min(iref) = mdi.flow(t,j,k).mpc.bus(iref,VA)*pi/180;
           Va_max(iref) = Va_min(iref);
           
-          om = add_vars(om, 'Va', {t,j,k}, mdi.idx.nb(t,j,k), Va0, Va_min, Va_max);
+          om.add_vars('Va', {t,j,k}, mdi.idx.nb(t,j,k), Va0, Va_min, Va_max);
         end
       end
       % All active injections in c3sopf cell
@@ -586,7 +586,7 @@ if mpopt.most.build_model
           pmin = genmask .* mpc.gen(:, PMIN) / baseMVA;
           pmax = genmask .* mpc.gen(:, PMAX) / baseMVA;
         end
-        om = add_vars(om, 'Pg', {t,j,k}, ng, p0, pmin, pmax);
+        om.add_vars('Pg', {t,j,k}, ng, p0, pmin, pmax);
       end
       if mdi.IncludeFixedReserves
         for k = 1:mdi.idx.nc(t,j)+1
@@ -635,16 +635,16 @@ if mpopt.most.build_model
           kk = find(r.qty(r.igr) < Rmax);
           Rmax(kk) = r.qty(r.igr(kk));      %% ... stated max reserve qty
           Rmax = Rmax / baseMVA;
-          om = add_vars(om, 'R', {t,j,k}, ngr, [], zeros(ngr, 1), Rmax);
+          om.add_vars('R', {t,j,k}, ngr, [], zeros(ngr, 1), Rmax);
         end
       end
       % All deltaP plus in c3sopf cell
       for k = 1:mdi.idx.nc(t,j)+1
-        om = add_vars(om, 'dPp', {t,j,k}, ng, [], zeros(ng,1), []);
+        om.add_vars('dPp', {t,j,k}, ng, [], zeros(ng,1), []);
       end
       % All deltaP minus in c3sopf cell
       for k = 1:mdi.idx.nc(t,j)+1
-        om = add_vars(om, 'dPm', {t,j,k}, ng, [], zeros(ng,1), []);
+        om.add_vars('dPm', {t,j,k}, ng, [], zeros(ng,1), []);
       end
       % All y variables in c3sopf cell - even if not committed.  There must
       % be a fixed cost associated with u(t,i,j) such that if u(t,i,j) = 0,
@@ -652,16 +652,16 @@ if mpopt.most.build_model
       % u(t,i,j) = 1, then the fixed cost plus that interpolated from the
       % (x,y) pairs is as desired.
       for k = 1:mdi.idx.nc(t,j)+1
-        om = add_vars(om, 'y', {t,j,k}, mdi.idx.ny(t,j,k), [], [], []);
+        om.add_vars('y', {t,j,k}, mdi.idx.ny(t,j,k), [], [], []);
       end %
     end % for j
   end % for t
   % Continue with pc, rpp, rpm, one set for each time period
-  om = add_vars(om, 'Pc', {nt});
-  om = add_vars(om, 'Rpp', {nt});
-  om = add_vars(om, 'Rpm', {nt});
+  om.add_vars('Pc', {nt});
+  om.add_vars('Rpp', {nt});
+  om.add_vars('Rpm', {nt});
   for t = 1:nt
-    om = add_vars(om, 'Pc', {t}, ng);
+    om.add_vars('Pc', {t}, ng);
     %% non-negativity on Rpp and Rpm is redundant, leave unbounded below
     %% (except where gen is off-line for all j and k)
     Rpmin = -Inf(ng,1);
@@ -672,8 +672,8 @@ if mpopt.most.build_model
       end
     end
     Rpmin(off == 1) = 0;
-    om = add_vars(om, 'Rpp', {t}, ng, [], Rpmin, mdi.offer(t).PositiveActiveReserveQuantity/baseMVA);
-    om = add_vars(om, 'Rpm', {t}, ng, [], Rpmin, mdi.offer(t).NegativeActiveReserveQuantity/baseMVA);
+    om.add_vars('Rpp', {t}, ng, [], Rpmin, mdi.offer(t).PositiveActiveReserveQuantity/baseMVA);
+    om.add_vars('Rpm', {t}, ng, [], Rpmin, mdi.offer(t).NegativeActiveReserveQuantity/baseMVA);
   end
   % Now load following ramping reserves.  In open ended problem, we need to
   % specify nt-1 ramping reserves, those needed to transition 1-2, 2-3, ..
@@ -686,31 +686,31 @@ if mpopt.most.build_model
   else
     mdi.idx.ntramp = nt - 1;
   end
-  om = add_vars(om, 'Rrp', {mdi.idx.ntramp});
-  om = add_vars(om, 'Rrm', {mdi.idx.ntramp});
+  om.add_vars('Rrp', {mdi.idx.ntramp});
+  om.add_vars('Rrm', {mdi.idx.ntramp});
   for t = 1:mdi.idx.ntramp
     ramp30 = mdi.flow(t,1,1).mpc.gen(:,RAMP_30)*2*mdi.Delta_T;
-    om = add_vars(om, 'Rrp', {t}, ng, [], zeros(ng,1), ...
+    om.add_vars('Rrp', {t}, ng, [], zeros(ng,1), ...
         min(mdi.offer(t).PositiveLoadFollowReserveQuantity, ramp30)/baseMVA);
-%     om = add_vars(om, 'Rrm', {t}, ng, [], zeros(ng,1), ...
+%     om.add_vars('Rrm', {t}, ng, [], zeros(ng,1), ...
 %         min(mdi.offer(t).NegativeLoadFollowReserveQuantity, ramp30)/baseMVA);
   end
   for t = 1:mdi.idx.ntramp
     ramp30 = mdi.flow(t,1,1).mpc.gen(:,RAMP_30)*2*mdi.Delta_T;
-    om = add_vars(om, 'Rrm', {t}, ng, [], zeros(ng,1), ...
+    om.add_vars('Rrm', {t}, ng, [], zeros(ng,1), ...
         min(mdi.offer(t).NegativeLoadFollowReserveQuantity, ramp30)/baseMVA);
   end
   % Continue with storage charge/discharge injections, one of each
   % for each flow; first all charge injections, then all discharge
   % injections
-  om = add_vars(om, 'Psc', {nt, nj_max, nc_max+1});
-  om = add_vars(om, 'Psd', {nt, nj_max, nc_max+1});
+  om.add_vars('Psc', {nt, nj_max, nc_max+1});
+  om.add_vars('Psd', {nt, nj_max, nc_max+1});
   for t = 1:nt
     for j = 1:mdi.idx.nj(t)
       for k = 1:mdi.idx.nc(t,j)+1
         if ns
-          om = add_vars(om, 'Psc', {t,j,k}, ns, [], [], zeros(ns,1));
-%           om = add_vars(om, 'Psd', {t,j,k}, ns, [], zeros(ns,1), []);
+          om.add_vars('Psc', {t,j,k}, ns, [], [], zeros(ns,1));
+%           om.add_vars('Psd', {t,j,k}, ns, [], zeros(ns,1), []);
         end
       end
     end
@@ -719,35 +719,35 @@ if mpopt.most.build_model
     for t = 1:nt
       for j = 1:mdi.idx.nj(t)
         for k = 1:mdi.idx.nc(t,j)+1
-          om = add_vars(om, 'Psd', {t,j,k}, ns, [], zeros(ns,1), []);
+          om.add_vars('Psd', {t,j,k}, ns, [], zeros(ns,1), []);
         end
       end
     end
   end
   % Continue with storage upper and lower bounds, one for each time period
   % and unit
-  om = add_vars(om, 'Sp', {nt});
-  om = add_vars(om, 'Sm', {nt});
+  om.add_vars('Sp', {nt});
+  om.add_vars('Sm', {nt});
   if ns
     for t = 1:nt
-      om = add_vars(om, 'Sp', {t}, ns, [], [], MaxStorageLevel(:,t)/baseMVA);
-%       om = add_vars(om, 'Sm', {t}, ns, [], MinStorageLevel(:,t)/baseMVA, []);
+      om.add_vars('Sp', {t}, ns, [], [], MaxStorageLevel(:,t)/baseMVA);
+%       om.add_vars('Sm', {t}, ns, [], MinStorageLevel(:,t)/baseMVA, []);
     end
     for t = 1:nt
-      om = add_vars(om, 'Sm', {t}, ns, [], MinStorageLevel(:,t)/baseMVA, []);
+      om.add_vars('Sm', {t}, ns, [], MinStorageLevel(:,t)/baseMVA, []);
     end
   end
   % Possible initial storage quantities when using cyclic storage dispatch
   % so that initial storage = expected terminal storage is a constraint
   if ns && mdi.Storage.ForceCyclicStorage
-    om = add_vars(om, 'S0', ns, [], ...
+    om.add_vars('S0', ns, [], ...
         mdi.Storage.InitialStorageLowerBound / baseMVA, ...
         mdi.Storage.InitialStorageUpperBound / baseMVA);
   end
   % If there is a dynamical system with non-null state vector,
   % add those states here
   if nzds
-    om = add_vars(om, 'Z', {ntds});
+    om.add_vars('Z', {ntds});
     for t = 1:ntds
       if t == 1
         zmin = mdi.z1;
@@ -757,14 +757,14 @@ if mpopt.most.build_model
         zmax = mdi.dstep(t).zmax;
       end
       z0 = (zmax - zmin) / 2;
-      om = add_vars(om, 'Z', {t}, nzds, z0, zmin, zmax);
+      om.add_vars('Z', {t}, nzds, z0, zmin, zmax);
     end
   end
   % Now the integer variables; u variables mean on/off status
   if UC
-    om = add_vars(om, 'u', {nt});
-    om = add_vars(om, 'v', {nt});
-    om = add_vars(om, 'w', {nt});
+    om.add_vars('u', {nt});
+    om.add_vars('v', {nt});
+    om.add_vars('w', {nt});
     vt0 = char('B' * ones(1, ng));  % default variable type for u is binary
     for t = 1:nt
       umin = zeros(ng, 1);
@@ -788,22 +788,22 @@ if mpopt.most.build_model
       vt = vt0;                 % initialize all variable types to binary
       vt(umin == umax) = 'C';   % make continuous for those that are fixed
       
-      om = add_vars(om, 'u', {t}, ng, zeros(ng, 1), umin, umax, vt);
+      om.add_vars('u', {t}, ng, zeros(ng, 1), umin, umax, vt);
     end
     % v variables mean startup events
     for t = 1:nt
-      om = add_vars(om, 'v', {t}, ng, zeros(ng, 1), zeros(ng, 1), ones(ng, 1));
+      om.add_vars('v', {t}, ng, zeros(ng, 1), zeros(ng, 1), ones(ng, 1));
     end
     % w variables mean shutdown events
     for t = 1:nt
-      om = add_vars(om, 'w', {t}, ng, zeros(ng, 1), zeros(ng, 1), ones(ng, 1));
+      om.add_vars('w', {t}, ng, zeros(ng, 1), zeros(ng, 1), ones(ng, 1));
     end
   end
   % An external program may be using coordination with AC flows, and in
   % that case we need corresponding Qg variables, whose only function is to
   % be constrained to zero if the commitment decision asks for that.
   if mdi.QCoordination
-    om = add_vars(om, 'Qg', {nt, nj_max, nc_max+1});
+    om.add_vars('Qg', {nt, nj_max, nc_max+1});
     for t = 1:nt
       for j = 1:mdi.idx.nj(t)
         for k = 1:mdi.idx.nc(t,j)+1
@@ -817,12 +817,12 @@ if mpopt.most.build_model
             qmin = genmask .* mpc.gen(:, QMIN) / baseMVA;
             qmax = genmask .* mpc.gen(:, QMAX) / baseMVA;
           end
-          om = add_vars(om, 'Qg', {t,j,k}, ng, q0, qmin, qmax);
+          om.add_vars('Qg', {t,j,k}, ng, q0, qmin, qmax);
         end
       end
     end
   end
-  nvars = getN(om, 'var');
+  nvars = om.getN('var');
   mdi.idx.nvars = nvars;
 
   % Construct mechanism to keep track of expected storage states. This is
@@ -869,7 +869,7 @@ if mpopt.most.build_model
   end
   if ns
     % The following code assumes that no more variables will be added
-    vv = get_idx(om);
+    vv = om.get_idx();
     for t = 1:nt
       nsxnjt = ns*mdi.idx.nj(t);
       % Form G(t), H(t), B1(t), B2(t)
@@ -928,13 +928,13 @@ if mpopt.most.build_model
     fprintf('- Building constraint submatrices.\n');
   end
   baseMVA = mdi.mpc.baseMVA;
-  om = add_constraints(om, 'Pmis', {nt, nj_max, nc_max+1});
+  om.add_constraints('Pmis', {nt, nj_max, nc_max+1});
   if mdi.DCMODEL
     % Construct all load flow equations using a DC flow model
     if verbose
       fprintf('  - Building DC flow constraints.\n');
     end
-    om = add_constraints(om, 'Pf', {nt, nj_max, nc_max+1});
+    om.add_constraints('Pf', {nt, nj_max, nc_max+1});
     for t = 1:nt
       for j = 1:mdi.idx.nj(t)
         for k = 1:mdi.idx.nc(t,j)+1
@@ -948,13 +948,13 @@ if mpopt.most.build_model
           A = [Bdc negCg];
           b = -(mpc.bus(:,PD)+mpc.bus(:,GS))/baseMVA-Psh;
           vs = struct('name', {'Va', 'Pg'}, 'idx', {{t,j,k}, {t,j,k}});
-          om = add_constraints(om, 'Pmis', {t,j,k}, A, b, b, vs);
+          om.add_constraints('Pmis', {t,j,k}, A, b, b, vs);
           % Then the thermal limits
           tmp = mpc.branch(ion,RATE_A)/baseMVA;
           iuncon = find(~tmp);
           tmp(iuncon) = Inf(size(iuncon));
           vs = struct('name', {'Va'}, 'idx', {{t,j,k}});
-          om = add_constraints(om, 'Pf', {t,j,k}, Bl, -tmp-PLsh, tmp-PLsh, vs);
+          om.add_constraints('Pf', {t,j,k}, Bl, -tmp-PLsh, tmp-PLsh, vs);
         end
       end
     end
@@ -970,7 +970,7 @@ if mpopt.most.build_model
           A = sparse(ones(1, ng));
           b = 1.0*sum(mpc.bus(:, PD)+mpc.bus(:,GS))/baseMVA;
           vs = struct('name', {'Pg'}, 'idx', {{t,j,k}});
-          om = add_constraints(om, 'Pmis', {t,j,k}, A, b, b, vs);
+          om.add_constraints('Pmis', {t,j,k}, A, b, b, vs);
         end
       end
     end
@@ -979,8 +979,8 @@ if mpopt.most.build_model
     if verbose
       fprintf('  - Building fixed zonal reserve constraints.\n');
     end
-    om = add_constraints(om, 'Pg_plus_R', {nt, nj_max, nc_max+1});
-    om = add_constraints(om, 'Rreq', {nt, nj_max, nc_max+1});
+    om.add_constraints('Pg_plus_R', {nt, nj_max, nc_max+1});
+    om.add_constraints('Rreq', {nt, nj_max, nc_max+1});
     for t = 1:nt
       for j = 1:mdi.idx.nj(t)
         for k = 1:mdi.idx.nc(t,j)+1
@@ -1000,11 +1000,11 @@ if mpopt.most.build_model
             u = mpc.gen(r.igr, PMAX) / baseMVA;
             vs = struct('name', {'Pg', 'R'}, 'idx', {{t,j,k}, {t,j,k}});
           end
-          om = add_constraints(om, 'Pg_plus_R', {t,j,k}, A, [], u, vs);
+          om.add_constraints('Pg_plus_R', {t,j,k}, A, [], u, vs);
           A = r.zones(:, r.igr);
           l = r.req / mpc.baseMVA;
           vs = struct('name', {'R'}, 'idx', {{t,j,k}});
-          om = add_constraints(om, 'Rreq', {t,j,k}, A, l, [], vs);
+          om.add_constraints('Rreq', {t,j,k}, A, l, [], vs);
         end
       end
     end
@@ -1015,14 +1015,14 @@ if mpopt.most.build_model
   if verbose && ~isempty(mdi.Storage.UnitIdx)
     fprintf('  - Splitting storage injections into charge/discharge.\n');
   end
-  om = add_constraints(om, 'Ps', {nt, nj_max, nc_max+1});
+  om.add_constraints('Ps', {nt, nj_max, nc_max+1});
   for t = 1:nt
     for j = 1:mdi.idx.nj(t)
       for k = 1:mdi.idx.nc(t,j)+1
         A = [sparse((1:ns)', mdi.Storage.UnitIdx, -1, ns, ng) Ins Ins];
         b = zeros(ns, 1);
         vs = struct('name', {'Pg', 'Psc', 'Psd'}, 'idx', {{t,j,k}, {t,j,k}, {t,j,k}});
-        om = add_constraints(om, 'Ps', {t,j,k}, A, b, b, vs);
+        om.add_constraints('Ps', {t,j,k}, A, b, b, vs);
       end
     end
   end
@@ -1038,14 +1038,14 @@ if mpopt.most.build_model
   if verbose
     fprintf('  - Building CCV constraints for piecewise-linear costs.\n');
   end
-  om = add_constraints(om, 'ycon', {nt, nj_max, nc_max+1});
+  om.add_constraints('ycon', {nt, nj_max, nc_max+1});
   for t = 1:nt,
     for j = 1:mdi.idx.nj(t)
       for k = 1:mdi.idx.nc(t,j)+1
         mpc = mdi.flow(t,j,k).mpc;
         [A, u] = makeAy(baseMVA, ng, mpc.gencost, 1, [], ng+1);
         vs = struct('name', {'Pg', 'y'}, 'idx', {{t,j,k}, {t,j,k}});
-        om = add_constraints(om, 'ycon', {t,j,k}, A, [], u, vs);
+        om.add_constraints('ycon', {t,j,k}, A, [], u, vs);
       end
     end
   end
@@ -1060,7 +1060,7 @@ if mpopt.most.build_model
   if verbose
     fprintf('  - Building contingency reserve constraints.\n');
   end
-  om = add_constraints(om, 'rampcont', {nt, nj_max, nc_max+1});
+  om.add_constraints('rampcont', {nt, nj_max, nc_max+1});
   for t =1:nt
     for j = 1:mdi.idx.nj(t)
       for k = 2:mdi.idx.nc(t,j)+1
@@ -1069,7 +1069,7 @@ if mpopt.most.build_model
         A = sparse((1:ngtmp)', ii, 1, ngtmp, ng);
         u = mdi.flow(t,j,k).mpc.gen(ii,RAMP_10)/baseMVA;
         vs = struct('name', {'Pg', 'Pg'}, 'idx', {{t,j,1}, {t,j,k}});
-        om = add_constraints(om, 'rampcont', {t,j,k}, [-A A], -u, u, vs);
+        om.add_constraints('rampcont', {t,j,k}, [-A A], -u, u, vs);
       end
     end
   end
@@ -1080,7 +1080,7 @@ if mpopt.most.build_model
   % all scenarios and flows of a given time slice 0 <= rpp - dpp; these
   % are the ones that set the price of reserves. Include all units that are
   % potentially committed.
-  om = add_constraints(om, 'dPpRp', {nt, nj_max, nc_max+1});
+  om.add_constraints('dPpRp', {nt, nj_max, nc_max+1});
   for t = 1:nt
     for j = 1:mdi.idx.nj(t);
       for k = 1:mdi.idx.nc(t,j)+1
@@ -1089,7 +1089,7 @@ if mpopt.most.build_model
         A = sparse((1:ngtmp)', ii, 1, ngtmp, ng);
         l = zeros(ngtmp, 1);
         vs = struct('name', {'dPp', 'Rpp'}, 'idx', {{t,j,k}, {t}});
-        om = add_constraints(om, 'dPpRp', {t,j,k}, [-A A], l, [], vs);
+        om.add_constraints('dPpRp', {t,j,k}, [-A A], l, [], vs);
       end
     end
   end
@@ -1097,7 +1097,7 @@ if mpopt.most.build_model
   % all scenarios and flows of a given time slice  0 <= rpm - dpm; these
   % are the ones that set the price of reserves. Include all units that are
   % potentially committed.
-  om = add_constraints(om, 'dPmRm', {nt, nj_max, nc_max+1});
+  om.add_constraints('dPmRm', {nt, nj_max, nc_max+1});
   for t = 1:nt
     for j = 1:mdi.idx.nj(t);
       for k = 1:mdi.idx.nc(t,j)+1
@@ -1106,14 +1106,14 @@ if mpopt.most.build_model
         A = sparse((1:ngtmp)', ii, 1, ngtmp, ng);
         l = zeros(ngtmp, 1);
         vs = struct('name', {'dPm', 'Rpm'}, 'idx', {{t,j,k}, {t}});
-        om = add_constraints(om, 'dPmRm', {t,j,k}, [-A A], l, [], vs);
+        om.add_constraints('dPmRm', {t,j,k}, [-A A], l, [], vs);
       end
     end
   end
   % The difference between the injection and the contract
   % is equal to the inc minus the dec: Ptjk - Ptc = dPp - dPm
   % Include all units that are potentially committed.
-  om = add_constraints(om, 'dPdef', {nt, nj_max, nc_max+1});
+  om.add_constraints('dPdef', {nt, nj_max, nc_max+1});
   for t = 1:nt
     for j = 1:mdi.idx.nj(t);
       for k = 1:mdi.idx.nc(t,j)+1
@@ -1123,7 +1123,7 @@ if mpopt.most.build_model
         b = zeros(ngtmp, 1);
         vs = struct('name', {'Pg', 'Pc', 'dPp', 'dPm'}, ...
                     'idx', {{t,j,k}, {t}, {t,j,k}, {t,j,k}});
-        om = add_constraints(om, 'dPdef', {t,j,k}, [A -A -A A], b, b, vs);
+        om.add_constraints('dPdef', {t,j,k}, [A -A -A A], b, b, vs);
       end
     end
   end
@@ -1143,7 +1143,7 @@ if mpopt.most.build_model
   if verbose
     fprintf('  - Building ramping transitions and reserve constraints.\n');
   end
-  om = add_constraints(om, 'Rrp', {nt, nj_max, nj_max});
+  om.add_constraints('Rrp', {nt, nj_max, nj_max});
   % First, do from t=1:nt-1, since the last one is different and may not
   % even exist depending on the type of horizon
   for t = 1:nt-1
@@ -1154,7 +1154,7 @@ if mpopt.most.build_model
           l = zeros(ng, 1);
           vs = struct('name', {'Pg', 'Pg', 'Rrp'}, ...
                       'idx', {{t,j1,1}, {t+1,j2,1}, {t}});
-          om = add_constraints(om, 'Rrp', {t,j1,j2}, A, l, [], vs);
+          om.add_constraints('Rrp', {t,j1,j2}, A, l, [], vs);
         end
       end
     end
@@ -1171,13 +1171,13 @@ if mpopt.most.build_model
       l = mdi.TerminalPg/baseMVA;
       vs = struct('name', {'Pg', 'Rrp'}, ...
                   'idx', {{nt,j1,1}, {nt}});
-      om = add_constraints(om, 'Rrp', {nt,j1,1}, A, l, [], vs);
+      om.add_constraints('Rrp', {nt,j1,1}, A, l, [], vs);
     end
   end
   % Now on to downward ramping reserves.
   % First, bound downward ramping reserves from below by all base-case
   % ramping possibilities, 0 <= rrm(t) + p(t+1)j20 - p(t)j10
-  om = add_constraints(om, 'Rrm', {nt, nj_max, nj_max});
+  om.add_constraints('Rrm', {nt, nj_max, nj_max});
   % First, do from t=1:nt-1, since the last one is different and may not
   % even exist depending on the type of horizon
   for t = 1:nt-1
@@ -1188,7 +1188,7 @@ if mpopt.most.build_model
           l = zeros(ng, 1);
           vs = struct('name', {'Pg', 'Pg', 'Rrm'}, ...
                       'idx', {{t,j1,1}, {t+1,j2,1}, {t}});
-          om = add_constraints(om, 'Rrm', {t,j1,j2}, A, l, [], vs);
+          om.add_constraints('Rrm', {t,j1,j2}, A, l, [], vs);
         end
       end
     end
@@ -1205,7 +1205,7 @@ if mpopt.most.build_model
       l = -mdi.TerminalPg/baseMVA;
       vs = struct('name', {'Pg', 'Rrm'}, ...
                   'idx', {{nt,j1,1}, {nt}});
-      om = add_constraints(om, 'Rrm', {nt,j1,1}, A, l, [], vs);
+      om.add_constraints('Rrm', {nt,j1,1}, A, l, [], vs);
     end
   end
   %
@@ -1217,14 +1217,14 @@ if mpopt.most.build_model
     end
     % First bound sm(t) based on sm(t-1), with sm(1) being bound by the initial
     % data; this is for base case trajectories only
-    om = add_constraints(om, 'Sm', {nt, nj_max});
+    om.add_constraints('Sm', {nt, nj_max});
     if mdi.Storage.ForceCyclicStorage
       % sm(1) - beta1*s0 + beta2*Delta_T*[eta_c*psc(1,j,0) + (1/eta_d)*psd(1,j,0)] <= 0
       for j = 1:mdi.idx.nj(1)
         A = [ diagBeta2EtaIn1 diagBeta2overEtaOut1 Ins -spdiags(beta1(:,1), 0, ns, ns)];
         u = zeros(ns, 1);
         vs = struct('name', {'Psc', 'Psd', 'Sm', 'S0'}, 'idx', {{1,j,1}, {1,j,1}, {1}, {}});
-        om = add_constraints(om, 'Sm', {1,j}, A, [], u, vs);
+        om.add_constraints('Sm', {1,j}, A, [], u, vs);
       end
     else
       % sm(1) + beta2*Delta_T*[eta_c*psc(1,j,0) + (1/eta_d)*psd(1,j,0)] <= beta1*Initial/baseMVA
@@ -1232,7 +1232,7 @@ if mpopt.most.build_model
         A = [ diagBeta2EtaIn1 diagBeta2overEtaOut1 Ins ];
         u = beta1(:,1).*mdi.Storage.InitialStorageLowerBound/baseMVA;
         vs = struct('name', {'Psc', 'Psd', 'Sm'}, 'idx', {{1,j,1}, {1,j,1}, {1}});
-        om = add_constraints(om, 'Sm', {1,j}, A, [], u, vs);
+        om.add_constraints('Sm', {1,j}, A, [], u, vs);
       end
     end
     % Then the rest of the periods
@@ -1257,18 +1257,18 @@ if mpopt.most.build_model
         else
           u = full(diag1minusRhoBeta1 * Lij * mdi.Storage.InitialStorage/baseMVA);
         end
-        om = add_constraints(om, 'Sm', {t,j}, A, [], u);
+        om.add_constraints('Sm', {t,j}, A, [], u);
       end
     end
     % Do the same we did for sm(t) for sp(t). First the initial step ...
-    om = add_constraints(om, 'Sp', {nt, nj_max});
+    om.add_constraints('Sp', {nt, nj_max});
     if mdi.Storage.ForceCyclicStorage
       % -sp(1) + beta1*s0 - beta2*Delta_T*[eta_c*psc(1,j,0) + (1/eta_d)*psd(1,j,0)] <= 0
       for j = 1:mdi.idx.nj(1)
         A = [ -diagBeta2EtaIn1 -diagBeta2overEtaOut1 -Ins spdiags(beta1(:,1), 0, ns, ns) ];
         u = zeros(ns, 1);
         vs = struct('name', {'Psc', 'Psd', 'Sp', 'S0'}, 'idx', {{1,j,1}, {1,j,1}, {1}, {}});
-        om = add_constraints(om, 'Sp', {1,j}, A, [], u, vs);
+        om.add_constraints('Sp', {1,j}, A, [], u, vs);
       end
     else
       % -sp(1) - beta2*Delta_T*[eta_c*psc(1,j,0) + (1/eta_d)*psd(1,j,0)] <= -beta1*Initial/baseMVA
@@ -1276,7 +1276,7 @@ if mpopt.most.build_model
         A = [ -diagBeta2EtaIn1 -diagBeta2overEtaOut1 -Ins ];
         u = -beta1(:,1).*mdi.Storage.InitialStorageUpperBound/baseMVA;
         vs = struct('name', {'Psc', 'Psd', 'Sp'}, 'idx', {{1,j,1}, {1,j,1}, {1}});
-        om = add_constraints(om, 'Sp', {1,j}, A, [], u, vs);
+        om.add_constraints('Sp', {1,j}, A, [], u, vs);
       end
     end
     % Then the rest of the periods
@@ -1301,13 +1301,13 @@ if mpopt.most.build_model
         else
           u = full(-diag1minusRhoBeta1 * Lij * mdi.Storage.InitialStorage/baseMVA);
         end
-        om = add_constraints(om, 'Sp', {t,j}, A, [], u);
+        om.add_constraints('Sp', {t,j}, A, [], u);
       end
     end
     % Now go on and limit the amount of energy that can be used if a
     % contingency does happen. Bound sm first. First examine time period 1 wrt to initial
     % stored energy, then t=2 and on.
-    om = add_constraints(om, 'contSm', {nt, nj_max, nc_max+1});
+    om.add_constraints('contSm', {nt, nj_max, nc_max+1});
     for j = 1:mdi.idx.nj(1)
       for k = 2:mdi.idx.nc(1,j)+1  %% NOTE NO k=1!!!
         if mdi.Storage.ForceCyclicStorage
@@ -1323,7 +1323,7 @@ if mpopt.most.build_model
           vs = struct('name', {'Psc', 'Psd', 'Psc', 'Psd'}, ...
                       'idx', {{1,j,1}, {1,j,1}, {1,j,k}, {1,j,k}});
         end
-        om = add_constraints(om, 'contSm', {1,j,k}, A, [], u, vs);
+        om.add_constraints('contSm', {1,j,k}, A, [], u, vs);
       end
     end
     % then the rest of the periods
@@ -1349,13 +1349,13 @@ if mpopt.most.build_model
           else
             u = u + diag1minusRhoBeta5 * Lij * mdi.Storage.InitialStorageLowerBound/baseMVA;
           end
-          om = add_constraints(om, 'contSm', {t,j,k}, A, [], u);
+          om.add_constraints('contSm', {t,j,k}, A, [], u);
         end
       end
     end
     % Bound sp first. First examine time period 1 wrt to initial
     % stored energy, then t=2 and on.
-    om = add_constraints(om, 'contSp', {nt, nj_max, nc_max+1});
+    om.add_constraints('contSp', {nt, nj_max, nc_max+1});
     for j = 1:mdi.idx.nj(1)
       for k = 2:mdi.idx.nc(1,j)+1
         if mdi.Storage.ForceCyclicStorage
@@ -1371,7 +1371,7 @@ if mpopt.most.build_model
           vs = struct('name', {'Psc', 'Psd', 'Psc', 'Psd'}, ...
                       'idx', {{1,j,1}, {1,j,1}, {1,j,k}, {1,j,k}});
         end
-        om = add_constraints(om, 'contSp', {1,j,k}, A, [], u, vs);
+        om.add_constraints('contSp', {1,j,k}, A, [], u, vs);
       end
     end
     % then the rest of the periods
@@ -1397,7 +1397,7 @@ if mpopt.most.build_model
           else
             u = u - diag1minusRhoBeta5 * Lij * mdi.Storage.InitialStorageUpperBound/baseMVA;
           end
-          om = add_constraints(om, 'contSp', {t,j,k}, A, [], u);
+          om.add_constraints('contSp', {t,j,k}, A, [], u);
         end
       end
     end
@@ -1426,7 +1426,7 @@ if mpopt.most.build_model
       b = (1/endprob) * b;
       l = mdi.Storage.ExpectedTerminalStorageMin / baseMVA - b;
       u = mdi.Storage.ExpectedTerminalStorageMax / baseMVA - b;
-      om = add_constraints(om, 'ESnt', A, l, u);
+      om.add_constraints('ESnt', A, l, u);
     elseif mdi.Storage.ForceCyclicStorage
       % 2) Constrain the initial storage (a variable) to be the same as the final expected storage
       A = sparse(ns, nvars);
@@ -1444,7 +1444,7 @@ if mpopt.most.build_model
       end
       A(:, vv.i1.S0:vv.iN.S0) = (1/endprob) * A(:, vv.i1.S0:vv.iN.S0) - speye(ns);
       b = zeros(ns, 1);
-      om = add_constraints(om, 'ESnt', A, b, b);
+      om.add_constraints('ESnt', A, b, b);
     end
   end
 
@@ -1470,7 +1470,7 @@ if mpopt.most.build_model
   % Form the dynamical system state equations and bound constraints on the
   % state vector
   if nzds
-    om = add_constraints(om, 'DSz', {ntds-1});
+    om.add_constraints('DSz', {ntds-1});
     b = zeros(nzds, 1);
     for t = 1:ntds-1
       if t <= nt  % We have p(t) available to drive the dynamical system up to t=nt
@@ -1485,13 +1485,13 @@ if mpopt.most.build_model
       end
       A(:, vv.i1.Z(t):vv.iN.Z(t)) = mdi.dstep(t).A;
       A(:, vv.i1.Z(t+1):vv.iN.Z(t+1)) = -speye(nzds);
-      om = add_constraints(om, 'DSz', {t}, A, b, b);
+      om.add_constraints('DSz', {t}, A, b, b);
     end
   end
   
   % Form the output equations and their restrictions
   if nyds
-    om = add_constraints(om, 'DSy', {ntds});
+    om.add_constraints('DSy', {ntds});
     for t = 1:ntds
       if t <= nt
         A = mdi.dstep(t).D * mdi.tstep(t).E;
@@ -1503,7 +1503,7 @@ if mpopt.most.build_model
       end
       l = mdi.dstep(t).ymin;
       u = mdi.dstep(t).ymax;
-      om = add_constraints(om, 'DSy', {t}, A, l, u);
+      om.add_constraints('DSy', {t}, A, l, u);
     end
   end
   
@@ -1513,7 +1513,7 @@ if mpopt.most.build_model
       fprintf('  - Building unit commitment constraints.\n');
     end
     % u(t,i) - u(t-1,i) - v(t,i) + w(t,i) = 0
-    om = add_constraints(om, 'uvw', {nt});
+    om.add_constraints('uvw', {nt});
     for t = 1:nt
       if t == 1
         % First for t=1 when u(t-1,i) is really u(0,i) or u(nt,i)
@@ -1532,11 +1532,11 @@ if mpopt.most.build_model
         A = [Ing -Ing -Ing Ing];
         b = zeros(ng, 1);
       end
-      om = add_constraints(om, 'uvw', {t}, A, b, b, vs);
+      om.add_constraints('uvw', {t}, A, b, b, vs);
     end
     % Then continue with minimimum up time constraints. Again, two
     % different forms depending on whether the horizon is cyclical or not
-    om = add_constraints(om, 'minup', {nt, ng});
+    om.add_constraints('minup', {nt, ng});
     for t = 1:nt
       for i = 1:ng
         ti = t-mdi.UC.MinUp(i)+1:t;
@@ -1558,12 +1558,12 @@ if mpopt.most.build_model
             vs(end).idx  = {ti(tt)};
             A = [A sparse(1, i, 1, 1, ng)];
         end
-        om = add_constraints(om, 'minup', {t, i}, A, [], 0, vs);
+        om.add_constraints('minup', {t, i}, A, [], 0, vs);
       end
     end
     % Continue with minimimum downtime constraints. Two
     % different forms depending on whether the horizon is cyclical or not
-    om = add_constraints(om, 'mindown', {nt, ng});
+    om.add_constraints('mindown', {nt, ng});
     for t = 1:nt
       for i = 1:ng
         ti = t-mdi.UC.MinDown(i)+1:t;
@@ -1585,14 +1585,14 @@ if mpopt.most.build_model
             vs(end).idx  = {ti(tt)};
             A = [A sparse(1, i, 1, 1, ng)];
         end
-        om = add_constraints(om, 'mindown', {t, i}, A, [], 1, vs);
+        om.add_constraints('mindown', {t, i}, A, [], 1, vs);
       end
     end
     % Limit generation ranges based on commitment status; first Pmax;
     % p - u*Pmax <= 0
     % For contingent flows, however, if a generator is ousted as a result
     % of the contingency, then this constraint should not be enforced.
-    om = add_constraints(om, 'uPmax', {nt, nj_max, nc_max+1});
+    om.add_constraints('uPmax', {nt, nj_max, nc_max+1});
     for t = 1:nt
       for j = 1:mdi.idx.nj(t)
         for k = 1:mdi.idx.nc(t,j)+1
@@ -1603,12 +1603,12 @@ if mpopt.most.build_model
           A = [ sparse(1:nii, ii, 1, nii, ng) ...
                 sparse(1:nii, ii, -mpc.gen(ii, PMAX)/baseMVA, nii, ng) ];
           u = zeros(nii, 1);
-          om = add_constraints(om, 'uPmax', {t,j,k}, A, [], u, vs);
+          om.add_constraints('uPmax', {t,j,k}, A, [], u, vs);
         end
       end
     end
     % Then Pmin,  -p + u*Pmin <= 0
-    om = add_constraints(om, 'uPmin', {nt, nj_max, nc_max+1});
+    om.add_constraints('uPmin', {nt, nj_max, nc_max+1});
     for t = 1:nt
       for j = 1:mdi.idx.nj(t)
         for k = 1:mdi.idx.nc(t,j)+1
@@ -1619,7 +1619,7 @@ if mpopt.most.build_model
           A = [ sparse(1:nii, ii, -1, nii, ng) ...
                 sparse(1:nii, ii, mpc.gen(ii, PMIN)/baseMVA, nii, ng) ];
           u = zeros(nii, 1);
-          om = add_constraints(om, 'uPmin', {t,j,k}, A, [], u, vs);
+          om.add_constraints('uPmin', {t,j,k}, A, [], u, vs);
         end
       end
     end
@@ -1628,7 +1628,7 @@ if mpopt.most.build_model
     % For contingent flows, however, if a generator is ousted as a result
     % of the contingency, then this constraint should not be enforced.
     if mdi.QCoordination
-      om = add_constraints(om, 'uQmax', {nt, nj_max, nc_max+1});
+      om.add_constraints('uQmax', {nt, nj_max, nc_max+1});
       for t = 1:nt
         for j = 1:mdi.idx.nj(t)
           for k = 1:mdi.idx.nc(t,j)+1
@@ -1639,12 +1639,12 @@ if mpopt.most.build_model
             A = [ sparse(1:nii, ii, 1, nii, ng) ...
                   sparse(1:nii, ii, -mpc.gen(ii, QMAX)/baseMVA, nii, ng) ];
             u = zeros(nii, 1);
-            om = add_constraints(om, 'uQmax', {t,j,k}, A, [], u, vs);
+            om.add_constraints('uQmax', {t,j,k}, A, [], u, vs);
           end
         end
       end
       % Then Qmin,  -q + u*Qmin <= 0
-      om = add_constraints(om, 'uQmin', {nt, nj_max, nc_max+1});
+      om.add_constraints('uQmin', {nt, nj_max, nc_max+1});
       for t = 1:nt
         for j = 1:mdi.idx.nj(t)
           for k = 1:mdi.idx.nc(t,j)+1
@@ -1655,7 +1655,7 @@ if mpopt.most.build_model
             A = [ sparse(1:nii, ii, -1, nii, ng) ...
                   sparse(1:nii, ii, mpc.gen(ii, QMIN)/baseMVA, nii, ng) ];
             u = zeros(nii, 1);
-            om = add_constraints(om, 'uQmin', {t,j,k}, A, [], u, vs);
+            om.add_constraints('uQmin', {t,j,k}, A, [], u, vs);
           end
         end
       end
@@ -1680,9 +1680,9 @@ if mpopt.most.build_model
   % take less time than anti-diagonal insertions.
   % First do first period wrt to InitialPg.
   if mdi.OpenEnded
-    om = add_costs(om, 'RampWear', {nt, nj_max, nj_max});
+    om.add_costs('RampWear', {nt, nj_max, nj_max});
   else
-    om = add_costs(om, 'RampWear', {nt+1, nj_max, nj_max});
+    om.add_costs('RampWear', {nt+1, nj_max, nj_max});
   end
   for j = 1:mdi.idx.nj(1)
     w = mdi.tstep(1).TransMat(j,1);  % the probability of going from initial state to jth
@@ -1690,7 +1690,7 @@ if mpopt.most.build_model
     Cw = -w * baseMVA * mdi.RampWearCostCoeff(:,1) .* mdi.InitialPg;
     cp = struct('H', H, 'Cw', Cw);
     vs = struct('name', {'Pg'}, 'idx', {{1,j,1}});
-    om = add_costs(om, 'RampWear', {1,j,1}, cp, vs);
+    om.add_costs('RampWear', {1,j,1}, cp, vs);
     c1 = c1 + w * 0.5 * mdi.RampWearCostCoeff(:,1)' * mdi.InitialPg.^2;
   end
   % Then the remaining periods
@@ -1704,7 +1704,7 @@ if mpopt.most.build_model
         H = sparse([i;j;i;j], [i;i;j;j], [h;-h;-h;h], 2*ng, 2*ng);
         cp = struct('H', H, 'Cw', zeros(2*ng,1));
         vs = struct('name', {'Pg', 'Pg'}, 'idx', {{t-1,j1,1}, {t,j2,1}});
-        om = add_costs(om, 'RampWear', {t,j1,j2}, cp, vs);
+        om.add_costs('RampWear', {t,j1,j2}, cp, vs);
       end
     end
   end
@@ -1719,22 +1719,22 @@ if mpopt.most.build_model
       Cw = -w * baseMVA * mdi.RampWearCostCoeff(:,nt+1) .* mdi.TerminalPg;
       cp = struct('H', H, 'Cw', Cw);
       vs = struct('name', {'Pg'}, 'idx', {{nt,j,1}});
-      om = add_costs(om, 'RampWear', {nt+1,j,1}, cp, vs);
+      om.add_costs('RampWear', {nt+1,j,1}, cp, vs);
       c1 = c1 + w * 0.5 * mdi.RampWearCostCoeff(:,nt+1)' * mdi.TerminalPg.^2;
     end
   end
 
   % Now go on and assign energy, inc/dec and contingency reserves
   % costs for all committed units.
-  om = add_costs(om, 'Cp', {nt, nj_max, nc_max+1});
-  om = add_costs(om, 'Cy', {nt, nj_max, nc_max+1});
-  om = add_costs(om, 'Cpp', {nt, nj_max, nc_max+1});
-  om = add_costs(om, 'Cpm', {nt, nj_max, nc_max+1});
+  om.add_costs('Cp', {nt, nj_max, nc_max+1});
+  om.add_costs('Cy', {nt, nj_max, nc_max+1});
+  om.add_costs('Cpp', {nt, nj_max, nc_max+1});
+  om.add_costs('Cpm', {nt, nj_max, nc_max+1});
   if mdi.IncludeFixedReserves
-    om = add_costs(om, 'Rcost', {nt, nj_max, nc_max+1});
+    om.add_costs('Rcost', {nt, nj_max, nc_max+1});
   end
-  om = add_costs(om, 'Crpp', {nt});
-  om = add_costs(om, 'Crpm', {nt});
+  om.add_costs('Crpp', {nt});
+  om.add_costs('Crpm', {nt});
   for t = 1:nt
     for j = 1:mdi.idx.nj(t)
       for k = 1:mdi.idx.nc(t,j)+1
@@ -1778,7 +1778,7 @@ if mpopt.most.build_model
           end
           cp = struct('H', H, 'Cw', Cw);
           vs = struct('name', {'Pg'}, 'idx', {{t,j,k}});
-          om = add_costs(om, 'Cp', {t,j,k}, cp, vs);
+          om.add_costs('Cp', {t,j,k}, cp, vs);
         end
 
         % weighted y-variables for piecewise linear energy costs for committed units
@@ -1786,22 +1786,22 @@ if mpopt.most.build_model
         if mdi.idx.ny(t,j,k)
           cp = struct('Cw', w * ones(mdi.idx.ny(t,j,k),1));
           vs = struct('name', {'y'}, 'idx', {{t,j,k}});
-          om = add_costs(om, 'Cy', {t,j,k}, cp, vs);
+          om.add_costs('Cy', {t,j,k}, cp, vs);
         end
 
         % inc and dec offers for each flow
         cp = struct('Cw', w * baseMVA * mdi.offer(t).PositiveActiveDeltaPrice(:));
         vs = struct('name', {'dPp'}, 'idx', {{t,j,k}});
-        om = add_costs(om, 'Cpp', {t,j,k}, cp, vs);
+        om.add_costs('Cpp', {t,j,k}, cp, vs);
         cp = struct('Cw', w * baseMVA * mdi.offer(t).NegativeActiveDeltaPrice(:));
         vs = struct('name', {'dPm'}, 'idx', {{t,j,k}});
-        om = add_costs(om, 'Cpm', {t,j,k}, cp, vs);
+        om.add_costs('Cpm', {t,j,k}, cp, vs);
 
         % weighted fixed reserves cost
         if mdi.IncludeFixedReserves
           cp = struct('Cw', w * mdi.FixedReserves(t,j,k).cost(r.igr) * baseMVA);
           vs = struct('name', {'R'}, 'idx', {{t,j,k}});
-          om = add_costs(om, 'Rcost', {t,j,k}, cp, vs);
+          om.add_costs('Rcost', {t,j,k}, cp, vs);
         end
       end
     end
@@ -1809,37 +1809,37 @@ if mpopt.most.build_model
     % contingency reserve costs
     cp = struct('Cw', baseMVA * mdi.StepProb(t) * mdi.offer(t).PositiveActiveReservePrice(:));
     vs = struct('name', {'Rpp'}, 'idx', {{t}});
-    om = add_costs(om, 'Crpp', {t}, cp, vs);
+    om.add_costs('Crpp', {t}, cp, vs);
     cp = struct('Cw', baseMVA * mdi.StepProb(t) * mdi.offer(t).NegativeActiveReservePrice(:));
     vs = struct('name', {'Rpm'}, 'idx', {{t}});
-    om = add_costs(om, 'Crpm', {t}, cp, vs);
+    om.add_costs('Crpm', {t}, cp, vs);
   end
   % Assign load following ramp reserve costs.  Do first nt-1 periods first
-  om = add_costs(om, 'Crrp', {mdi.idx.ntramp});
-  om = add_costs(om, 'Crrm', {mdi.idx.ntramp});
+  om.add_costs('Crrp', {mdi.idx.ntramp});
+  om.add_costs('Crrm', {mdi.idx.ntramp});
   for t = 1:nt-1,
     cp = struct('Cw', baseMVA * mdi.StepProb(t+1) * mdi.offer(t).PositiveLoadFollowReservePrice(:));
     vs = struct('name', {'Rrp'}, 'idx', {{t}});
-    om = add_costs(om, 'Crrp', {t}, cp, vs);
+    om.add_costs('Crrp', {t}, cp, vs);
     cp = struct('Cw', baseMVA * mdi.StepProb(t+1) * mdi.offer(t).NegativeLoadFollowReservePrice(:));
     vs = struct('name', {'Rrm'}, 'idx', {{t}});
-    om = add_costs(om, 'Crrm', {t}, cp, vs);
+    om.add_costs('Crrm', {t}, cp, vs);
   end
   % Then do last period if needed Terminal state case
   if ~mdi.OpenEnded
     %% are these costs missing a mdi.StepProb(t)?  -- rdz
     cp = struct('Cw', baseMVA * mdi.offer(nt).PositiveLoadFollowReservePrice(:));
     vs = struct('name', {'Rrp'}, 'idx', {{nt}});
-    om = add_costs(om, 'Crrp', {nt}, cp, vs);
+    om.add_costs('Crrp', {nt}, cp, vs);
     cp = struct('Cw', baseMVA * mdi.offer(nt).NegativeLoadFollowReservePrice(:));
     vs = struct('name', {'Rrm'}, 'idx', {{nt}});
-    om = add_costs(om, 'Crrm', {nt}, cp, vs);
+    om.add_costs('Crrm', {nt}, cp, vs);
   end
   % Assign startup/shutdown costs, if any, and fixed operating costs
   if UC
-    om = add_costs(om, 'c00', {nt});
-    om = add_costs(om, 'startup', {nt});
-    om = add_costs(om, 'shutdown', {nt});
+    om.add_costs('c00', {nt});
+    om.add_costs('startup', {nt});
+    om.add_costs('shutdown', {nt});
     for t = 1:nt
       ww = zeros(ng, 1);
       for j = 1:mdi.idx.nj(t)
@@ -1849,13 +1849,13 @@ if mpopt.most.build_model
       end
       cp = struct('Cw', ww.*mdi.UC.c00(:,t));
       vs = struct('name', {'u'}, 'idx', {{t}});
-      om = add_costs(om, 'c00', {t}, cp, vs);
+      om.add_costs('c00', {t}, cp, vs);
       cp = struct('Cw', mdi.StepProb(t)*mdi.flow(t,1,1).mpc.gencost(:, STARTUP));
       vs = struct('name', {'v'}, 'idx', {{t}});
-      om = add_costs(om, 'startup', {t}, cp, vs);
+      om.add_costs('startup', {t}, cp, vs);
       cp = struct('Cw', mdi.StepProb(t)*mdi.flow(t,1,1).mpc.gencost(:, SHUTDOWN));
       vs = struct('name', {'w'}, 'idx', {{t}});
-      om = add_costs(om, 'shutdown', {t}, cp, vs);
+      om.add_costs('shutdown', {t}, cp, vs);
     end
   end
   % Finally, assign any value to leftover stored energy
@@ -1868,7 +1868,7 @@ if mpopt.most.build_model
     A6 = sparse(ns, nvars);
     A7 = sparse(ns, nvars);
     % The following code assumes that no more variables will be added
-    vv = get_idx(om);
+    vv = om.get_idx();
     for t = 1:nt
       % Compute cost coefficients for value of expected leftover storage
       % after a contingency
@@ -1922,15 +1922,15 @@ if mpopt.most.build_model
           baseMVA * mdi.Storage.TerminalStoragePrice' * A1;
     end
     cp = struct('Cw', Cfstor');
-    om = add_costs(om, 'fstor', cp);
+    om.add_costs('fstor', cp);
 
     % The following is a hack to make the storage state bounds tight;
     % assign them a very small cost
-    om = add_costs(om, 'SpSmFudge', {nt});
+    om.add_costs('SpSmFudge', {nt});
     cp = struct('Cw', 1e-2 * [-ones(ns,1); ones(ns,1)]);
     for t = 1:nt
       vs = struct('name', {'Sm', 'Sp'}, 'idx', {{t}, {t}});
-      om = add_costs(om, 'SpSmFudge', {t}, cp, vs);
+      om.add_costs('SpSmFudge', {t}, cp, vs);
     end
   else
     Cfstor = sparse(1, nvars);
@@ -1940,8 +1940,8 @@ if mpopt.most.build_model
   if verbose
     fprintf('- Assembling full set of costs.\n');
   end
-  om = build_cost_params(om, 'force');
-  cp = get_cost_params(om);
+  om.build_cost_params('force');
+  cp = om.get_cost_params();
   mdi.QP.Cfstor = Cfstor;
   mdi.QP.H1 = cp.N' * cp.H * cp.N;
   mdi.QP.C1 = cp.N' * cp.Cw;
@@ -1969,22 +1969,22 @@ if isfield(mdi, 'CoordCost') && ...
 %   cp = struct('Cw', mdi.CoordCost.Cuser(:), ...
 %         'H', [ mdi.CoordCost.Huser     sparse(nvuser,nvars-nvuser) ;
 %             sparse(nvars-nvuser,nvuser) sparse(nvars-nvuser,nvars-nvuser) ]);
-%   om = add_costs(om, 'CoordCost', cp);
-%   om = build_cost_params(om, 'force');
+%   om.add_costs('CoordCost', cp);
+%   om.build_cost_params('force');
 end
 
 mdi.om = om;
-[vv, ll] = get_idx(om);
+[vv, ll] = om.get_idx();
 if verbose
   fprintf('- Assembling full set of constraints.\n');
 end
-[mdi.QP.A, mdi.QP.l, mdi.QP.u] = linear_constraints(om);
+[mdi.QP.A, mdi.QP.l, mdi.QP.u] = om.linear_constraints();
 if verbose
   fprintf('- Assembling full set of variable bounds.\n');
 end
-[mdi.QP.x0, mdi.QP.xmin, mdi.QP.xmax, mdi.QP.vtype] = getv(om);
+[mdi.QP.x0, mdi.QP.xmin, mdi.QP.xmax, mdi.QP.vtype] = om.getv();
 
-% cp = get_cost_params(om);
+% cp = om.get_cost_params();
 % mdi.QP.H = cp.N' * cp.H * cp.N;
 % mdi.QP.C = cp.N' * cp.Cw;
 % oldidx(mdi, mdi);
@@ -2187,7 +2187,7 @@ if mpopt.most.solve_model
           r.R   = z;
           r.prc = z;
           r.mu = struct('l', z, 'u', z, 'Pmax', z);
-          r.totalcost = compute_cost(om, mdo.QP.x, 'Rcost', {t,j,k});
+          r.totalcost = om.compute_cost(mdo.QP.x, 'Rcost', {t,j,k});
           r.R(r.igr) = mdo.QP.x(vv.i1.R(t,j,k):vv.iN.R(t,j,k)) * baseMVA;
           for gg = r.igr
             iz = find(r.zones(:, gg));

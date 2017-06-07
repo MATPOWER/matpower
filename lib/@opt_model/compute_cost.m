@@ -1,8 +1,8 @@
 function f = compute_cost(om, x, name, idx)
 %COMPUTE_COST  Computes a user-defined cost.
-%   F_U = COMPUTE_COST(OM, X)
-%   F_U = COMPUTE_COST(OM, X, NAME)
-%   F_U = COMPUTE_COST(OM, X, NAME, IDX)
+%   F_U = OM.COMPUTE_COST(X)
+%   F_U = OM.COMPUTE_COST(X, NAME)
+%   F_U = OM.COMPUTE_COST(X, NAME, IDX)
 %
 %   Computes the value of a user defined cost, either for all user
 %   defined costs or for a named set of costs. Requires calling
@@ -59,17 +59,17 @@ function f = compute_cost(om, x, name, idx)
 
 done = 0;
 if nargin < 3
-    cp = get_cost_params(om);
+    cp = om.get_cost_params();
 elseif nargin < 4
     dims = size(om.cost.idx.i1.(name));
     if prod(dims) == 1  %% indexing not required
-        cp = get_cost_params(om, name);
+        cp = om.get_cost_params(name);
     else                %% indexing required
         f = 0;          %% initialize cumulative cost
         idx = num2cell(ones(size(dims))); %% initialize idx
         while ~done
             %% call compute_cost() recursively
-            f = f + compute_cost(om, x, name, idx);
+            f = f + om.compute_cost(x, name, idx);
             
             %% increment idx
             D = length(dims);
@@ -86,7 +86,7 @@ elseif nargin < 4
         end
     end
 else
-    cp = get_cost_params(om, name, idx);
+    cp = om.get_cost_params(name, idx);
 end
 
 if ~done

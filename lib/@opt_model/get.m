@@ -1,9 +1,9 @@
 function val = get(om, varargin)
 %GET  Returns the value of a field.
-%   VAL = GET(OM, FIELD1, FIELD2, ...)
+%   VAL = OM.GET(FIELD1, FIELD2, ...)
 %
 %   Example:
-%       var_order = get(om, 'var', 'order');
+%       var_order = om.get('var', 'order');
 %
 %   See also OPT_MODEL.
 

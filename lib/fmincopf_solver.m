@@ -55,21 +55,21 @@ function [results, success, raw] = fmincopf_solver(om, mpopt)
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 
 %% unpack data
-mpc = get_mpc(om);
+mpc = om.get_mpc();
 [baseMVA, bus, gen, branch] = ...
     deal(mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch);
-[vv, ll, nn] = get_idx(om);
+[vv, ll, nn] = om.get_idx();
 
 %% problem dimensions
 nb = size(bus, 1);          %% number of buses
 nl = size(branch, 1);       %% number of branches
-ny = getN(om, 'var', 'y');  %% number of piece-wise linear costs
+ny = om.getN('var', 'y');   %% number of piece-wise linear costs
 
 %% bounds on optimization vars
-[x0, LB, UB] = getv(om);
+[x0, LB, UB] = om.getv();
 
 %% linear constraints
-[A, l, u] = linear_constraints(om);
+[A, l, u] = om.linear_constraints();
 
 %% split l <= A*x <= u into less than, equal to, greater than, and
 %% doubly-bounded sets
@@ -204,7 +204,7 @@ branch(:, MU_SF) = muSf / baseMVA;
 branch(:, MU_ST) = muSt / baseMVA;
 
 %% package up results
-nlnN = getN(om, 'nln');
+nlnN = om.getN('nln');
 nlt = length(ilt);
 ngt = length(igt);
 nbx = length(ibx);

@@ -1,11 +1,11 @@
 function om = add_constraints(om, name, idx, varargin)
 %ADD_CONSTRAINTS  Adds a set of constraints to the model.
-%   OM = ADD_CONSTRAINTS(OM, NAME, A, L, U);
-%   OM = ADD_CONSTRAINTS(OM, NAME, A, L, U, VARSETS);
-%   OM = ADD_CONSTRAINTS(OM, NAME, DIM_LIST);
-%   OM = ADD_CONSTRAINTS(OM, NAME, IDX_LIST, A, L, U);
-%   OM = ADD_CONSTRAINTS(OM, NAME, IDX_LIST, A, L, U, VARSETS);
-%   OM = ADD_CONSTRAINTS(OM, NAME, N, 'NON-LINEAR');
+%   OM.ADD_CONSTRAINTS(NAME, A, L, U);
+%   OM.ADD_CONSTRAINTS(NAME, A, L, U, VARSETS);
+%   OM.ADD_CONSTRAINTS(NAME, DIM_LIST);
+%   OM.ADD_CONSTRAINTS(NAME, IDX_LIST, A, L, U);
+%   OM.ADD_CONSTRAINTS(NAME, IDX_LIST, A, L, U, VARSETS);
+%   OM.ADD_CONSTRAINTS(NAME, N, 'NON-LINEAR');
 %
 %   Linear constraints are of the form L <= A * x <= U, where
 %   x is a vector made of of the vars specified in VARSETS (in
@@ -22,13 +22,13 @@ function om = add_constraints(om, name, idx, varargin)
 %   additional nonlinear constraints.
 %
 %   Examples:
-%       om = add_constraints(om, 'vl', Avl, lvl, uvl, {'Pg', 'Qg'});
-%       om = add_constraints(om, 'Pmis', nb, 'nonlinear');
+%       om.add_constraints('vl', Avl, lvl, uvl, {'Pg', 'Qg'});
+%       om.add_constraints('Pmis', nb, 'nonlinear');
 %
-%       om = add_constraints(om, 'R', {2, 3});
+%       om.add_constraints('R', {2, 3});
 %       for i = 1:2
 %         for j = 1:3
-%           om = add_constraints(om, 'R', {i, j}, A{i,j}, ...);
+%           om.add_constraints('R', {i, j}, A{i,j}, ...);
 %         end
 %       end
 %

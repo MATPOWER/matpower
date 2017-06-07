@@ -1,8 +1,8 @@
 function cp = get_cost_params(om, name, idx)
 %GET_COST_PARAMS  Returns the cost parameter struct for user-defined costs.
-%   CP = GET_COST_PARAMS(OM)
-%   CP = GET_COST_PARAMS(OM, NAME)
-%   CP = GET_COST_PARAMS(OM, NAME, IDX)
+%   CP = OM.GET_COST_PARAMS()
+%   CP = OM.GET_COST_PARAMS(NAME)
+%   CP = OM.GET_COST_PARAMS(NAME, IDX)
 %
 %   Requires calling BUILD_COST_PARAMS first to build the full set of
 %   parameters. Returns the full cost parameter struct for all user-defined

@@ -7,7 +7,7 @@ function rv = run_userfcn(userfcn, stage, varargin)
 %   (additional arguments) some stages require additional arguments.
 %
 %   Example:
-%       mpc = get_mpc(om);
+%       mpc = om.get_mpc();
 %       om = run_userfcn(mpc.userfcn, 'formulation', om);
 %
 %   See also ADD_USERFCN, REMOVE_USERFCN, TOGGLE_RESERVES, TOGGLE_IFLIMS,

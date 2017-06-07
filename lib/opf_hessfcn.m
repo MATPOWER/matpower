@@ -57,13 +57,13 @@ end
 
 %% unpack data
 lim_type = upper(mpopt.opf.flow_lim(1));
-mpc = get_mpc(om);
+mpc = om.get_mpc();
 [baseMVA, bus, gen, branch, gencost] = ...
     deal(mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch, mpc.gencost);
-cp = get_cost_params(om);
+cp = om.get_cost_params();
 [N, Cw, H, dd, rh, kk, mm] = deal(cp.N, cp.Cw, cp.H, cp.dd, ...
                                     cp.rh, cp.kk, cp.mm);
-vv = get_idx(om);
+vv = om.get_idx();
 
 %% unpack needed parameters
 nb = size(bus, 1);          %% number of buses

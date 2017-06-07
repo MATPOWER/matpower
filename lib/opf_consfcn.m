@@ -57,9 +57,9 @@ function [h, g, dh, dg] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt, il, varargin)
 
 %% unpack data
 lim_type = upper(mpopt.opf.flow_lim(1));
-mpc = get_mpc(om);
+mpc = om.get_mpc();
 [baseMVA, bus, gen, branch] = deal(mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch);
-vv = get_idx(om);
+vv = om.get_idx();
 
 %% problem dimensions
 nb = size(bus, 1);          %% number of buses

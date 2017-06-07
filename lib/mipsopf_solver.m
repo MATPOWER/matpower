@@ -66,21 +66,21 @@ if ~isfield(opt, 'cost_mult') || isempty(opt.cost_mult)
 end
 
 %% unpack data
-mpc = get_mpc(om);
+mpc = om.get_mpc();
 [baseMVA, bus, gen, branch, gencost] = ...
     deal(mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch, mpc.gencost);
-[vv, ll, nn] = get_idx(om);
+[vv, ll, nn] = om.get_idx();
 
 %% problem dimensions
 nb = size(bus, 1);          %% number of buses
 nl = size(branch, 1);       %% number of branches
-ny = getN(om, 'var', 'y');  %% number of piece-wise linear costs
+ny = om.getN('var', 'y');   %% number of piece-wise linear costs
 
 %% linear constraints
-[A, l, u] = linear_constraints(om);
+[A, l, u] = om.linear_constraints();
 
 %% bounds on optimization vars
-[x0, xmin, xmax] = getv(om);
+[x0, xmin, xmax] = om.getv();
 
 %% build admittance matrices
 [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
@@ -169,7 +169,7 @@ branch(:, MU_SF) = muSf / baseMVA;
 branch(:, MU_ST) = muSt / baseMVA;
 
 %% package up results
-nlnN = getN(om, 'nln');
+nlnN = om.getN('nln');
 
 %% extract multipliers for nonlinear constraints
 kl = find(Lambda.eqnonlin < 0);
