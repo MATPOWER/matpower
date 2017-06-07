@@ -173,10 +173,12 @@ if isstruct(bus)
             else
                 o.bus.e2i = sparse(0, 1);
             end
-            mpc.bus(:, BUS_I)       = o.bus.e2i( mpc.bus(:, BUS_I)      );
-            mpc.gen(:, GEN_BUS)     = o.bus.e2i( mpc.gen(:, GEN_BUS)    );
-            mpc.branch(:, F_BUS)    = o.bus.e2i( mpc.branch(:, F_BUS)   );
-            mpc.branch(:, T_BUS)    = o.bus.e2i( mpc.branch(:, T_BUS)   );
+            if nb
+                mpc.bus(:, BUS_I)       = o.bus.e2i( mpc.bus(:, BUS_I)      );
+                mpc.gen(:, GEN_BUS)     = o.bus.e2i( mpc.gen(:, GEN_BUS)    );
+                mpc.branch(:, F_BUS)    = o.bus.e2i( mpc.branch(:, F_BUS)   );
+                mpc.branch(:, T_BUS)    = o.bus.e2i( mpc.branch(:, T_BUS)   );
+            end
 
             %% reorder gens in order of increasing bus number
             [tmp, o.gen.e2i] = sort(mpc.gen(:, GEN_BUS));
