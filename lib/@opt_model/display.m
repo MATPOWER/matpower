@@ -56,17 +56,17 @@ else
     fprintf('%s  :  <none>\n', 'VARIABLES');
 end
 if om.nln.NS
-    fprintf('\n%-17s %12s %8s %8s %8s\n', 'NON-LINEAR CONSTRAINTS', 'name', 'i1', 'iN', 'N');
-    fprintf('%-17s %12s %8s %8s %8s\n', '======================', '------', '-----', '-----', '------');
+    fprintf('\n%-21s %8s %8s %8s %8s\n', 'NONLINEAR CONSTRAINTS', 'name', 'i1', 'iN', 'N');
+    fprintf('%-21s %8s %8s %8s %8s\n', '=====================', '------', '-----', '-----', '------');
     idx = om.nln.idx;
     for k = 1:om.nln.NS
         name = om.nln.order(k).name;
-        fprintf('%15d:%12s %8d %8d %8d\n', k, name, idx.i1.(name), idx.iN.(name), idx.N.(name));
+        fprintf('%10d:%19s %8d %8d %8d\n', k, name, idx.i1.(name), idx.iN.(name), idx.N.(name));
     end
     fprintf('%10d = nln.NS%29d = nln.N\n', om.nln.NS, om.nln.N);
     fprintf('\n');
 else
-    fprintf('%s  :  <none>\n', 'NON-LINEAR CONSTRAINTS');
+    fprintf('%s  :  <none>\n', 'NONLINEAR CONSTRAINTS');
 end
 if om.lin.NS
     fprintf('\n%-17s %12s %8s %8s %8s\n', 'LINEAR CONSTRAINTS', 'name', 'i1', 'iN', 'N');
