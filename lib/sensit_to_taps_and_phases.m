@@ -153,4 +153,3 @@ for k=1:stevilo_pha_sh % partial derivatives for phases
 end
 
 sensitivity_of_H_to_U_taps_and_phasess = HpoU - HpoX * ( (GpoX) \ (GpoU) ); %total sensitivity of line active powers and nodal voltages w.r.t. all taps and phases
-en
