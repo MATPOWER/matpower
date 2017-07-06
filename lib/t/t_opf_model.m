@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 364;
+num_tests = 370;
 
 t_begin(num_tests, quiet);
 
@@ -436,6 +436,29 @@ e = [[0 0 0 0 7 6 7; 0 0 0 0 0 2 0; 0 0 0 0 0 0 2] zeros(3, 17) [25 26; 0 0; 0 0
 t_is(full(dh(11:13, :)), e, 14, [t ' : dh(11:13, :) [mynli(2,2)]']);
 % h
 %full(dh)'
+
+t = 'nonlin_constraint_hess';
+lam = (1:neN)'/100;
+d2G = om.nonlin_constraint_hess(x, lam, 1);
+t_ok(issparse(d2G), [t ' : issparse(d2G)']);
+t_is(size(d2G), [vN, vN], 14, [t ' : size(d2G)']);
+% t_is(full(d2G(27:end, :)), zeros(vN-26, vN), 14, [t ' : d2G(27:end, :)']);
+% t_is(full(d2G(:, 27:end)), zeros(vN, vN-26), 14, [t ' : d2G(:, 27:end)']);
+e = sparse([1:3 5:7 25], [1:3 5:7 25], [22.09 12.06 13.07 41.48 46.53 43.48 27.19], vN, vN);
+t_is(d2G, e, 13, [t ' : d2G']);
+
+%d2G
+
+lam = -(1:niN)'/100;
+d2H = om.nonlin_constraint_hess(x, lam, 0);
+t_ok(issparse(d2H), [t ' : issparse(d2H)']);
+t_is(size(d2H), [vN, vN], 14, [t ' : size(d2H)']);
+% t_is(full(d2H(27:end, :)), zeros(vN-26, vN), 14, [t ' : d2H(27:end, :)']);
+% t_is(full(d2H(:, 27:end)), zeros(vN, vN-26), 14, [t ' : d2H(:, 27:end)']);
+e = sparse([1:2 5:7], [1:2 5:7], [-9.04 -8.05 20.66 18.68 5.84], vN, vN);
+t_is(d2H, e, 13, [t ' : d2H']);
+
+%d2H
 
 %%-----  add_costs  -----
 t = 'add_costs';
