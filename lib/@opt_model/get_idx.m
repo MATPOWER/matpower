@@ -1,9 +1,11 @@
 function [vv, ll, nn, cc] = get_idx(om)
-%GET_IDX  Returns the idx struct for vars, lin/nln constraints, costs.
+%GET_IDX  Returns the idx struct for vars, lin/nonlin constraints, costs.
 %   VV = OM.GET_IDX()
 %   [VV, LL] = OM.GET_IDX()
 %   [VV, LL, NN] = OM.GET_IDX()
 %   [VV, LL, NN, CC] = OM.GET_IDX()
+%   [VV, LL, NN, CC, NNE] = OM.GET_IDX()
+%   [VV, LL, NN, CC, NNE, NNI] = OM.GET_IDX()
 %
 %   Returns a structure for each with the beginning and ending
 %   index value and the number of elements for each named block.
@@ -56,6 +58,12 @@ if nargout > 1
         nn = om.nln.idx;
         if nargout > 3
             cc = om.cost.idx;
-         end
+            if nargout > 4
+                nne = om.nle.idx;
+                if nargout > 5
+                    nni = om.nli.idx;
+                end
+            end
+        end
     end
 end

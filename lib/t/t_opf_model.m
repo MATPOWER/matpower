@@ -2,7 +2,7 @@ function t_opf_model(quiet)
 %T_OPF_MODEL Tests for OPF_MODEL.
 
 %   MATPOWER
-%   Copyright (c) 2012-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2012-2017, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 306;
+num_tests = 344;
 
 t_begin(num_tests, quiet);
 
@@ -216,7 +216,7 @@ t_is(vt(vv.i1.y(2,2,4):vv.iN.y(2,2,4)), 'IIBIIIII', 14, [t ' : vt(vv.i1.y(2,2,4)
 vt0 = 'CCCCCCCIIIIICIBICCCCCCCCCCCCCCCCCCCCCCCCCCCCIIIIIIIIIIIIIIIIIIIIIIBBBBBBBBBBBBBBBBBBBBBBBBBBCICCCICCCCICCCCCICCCCCIIBIIIIBIIIIIBIIIIIIBIIIIIBBBCBBBBBCBBBBBBCBBBBBBBCBBBBB';
 t_is(vt, vt0, 14, [t ' : vt']);
 
-%%-----  add_constraints  -----
+%%-----  add_constraints (linear)  -----
 t = 'add_constraints';
 lN = 0;
 lNS = 0;
@@ -240,6 +240,7 @@ t_ok(om.get('lin', 'NS') == lNS, sprintf('%s : lin.NS = %d', t, lNS));
 
 t = 'om.add_constraints(''mylin'', {2, 2})';
 om.add_constraints('mylin', {2, 2});
+% om.add_constraints('mylin', {2, 2}, 'lin');
 t_ok(om.getN('lin') == lN, sprintf('%s : lin.N  = %d', t, lN));
 t_ok(om.get('lin', 'NS') == lNS, sprintf('%s : lin.NS = %d', t, lNS));
 
@@ -254,6 +255,115 @@ for i = 1:2
         lNS = lNS + 1; lN = lN + i+j;
         t_ok(om.getN('lin') == lN, sprintf('%s : lin.N  = %d', t, lN));
         t_ok(om.get('lin', 'NS') == lNS, sprintf('%s : lin.NS = %d', t, lNS));
+    end
+end
+
+%%-----  add_constraints (nonlinear 'legacy')  -----
+t = 'add_constraints (nonlinear, legacy)';
+nN = 0;
+nNS = 0;
+t_ok(om.getN('nln') == nN, sprintf('%s : nln.N  = %d', t, nN));
+t_ok(om.get('nln', 'NS') == nNS, sprintf('%s : nln.NS = %d', t, nNS));
+
+t = 'om.add_constraints(''Pmis'', N, ''nonlinear'')';
+N = 4;
+om.add_constraints('Pmis', N, 'nonlinear');
+nNS = nNS + 1; nN = nN + N;
+t_ok(om.getN('nln') == nN, sprintf('%s : nln.N  = %d', t, nN));
+t_ok(om.get('nln', 'NS') == nNS, sprintf('%s : nln.NS = %d', t, nNS));
+
+t = 'om.add_constraints(''Qmis'', N, ''nonlinear'')';
+N = 3;
+om.add_constraints('Qmis', N, 'nonlinear');
+nNS = nNS + 1; nN = nN + N;
+t_ok(om.getN('nln') == nN, sprintf('%s : nln.N  = %d', t, nN));
+t_ok(om.get('nln', 'NS') == nNS, sprintf('%s : nln.NS = %d', t, nNS));
+
+%%-----  add_constraints (nonlinear, equality)  -----
+t = 'add_constraints (nonlinear, equality)';
+neN = 0;
+neNS = 0;
+t_ok(om.getN('nle') == neN, sprintf('%s : nle.N  = %d', t, neN));
+t_ok(om.get('nle', 'NS') == neNS, sprintf('%s : nle.NS = %d', t, neNS));
+
+t = 'om.add_constraints(''Pmise'', N, 1, g_dg, d2G, {''Va'', ''Pg''})';
+N = 4;
+g_dg = @(x)my_g_dg(x, N, 2);
+d2G = @(x, lam, sigma)my_d2G(x, lam, sigma, 10);
+om.add_constraints('Pmise', N, 1, g_dg, d2G, {'Va', 'Pg'});
+neNS = neNS + 1; neN = neN + N;
+t_ok(om.getN('nle') == neN, sprintf('%s : nle.N  = %d', t, neN));
+t_ok(om.get('nle', 'NS') == neNS, sprintf('%s : nle.NS = %d', t, neNS));
+
+t = 'om.add_constraints(''Qmise'', N, 1, g_dg, d2G)';
+N = 3;
+g_dg = @(x)my_g_dg(x, N, 2);
+d2G = @(x, lam, sigma)my_d2G(x, lam, sigma, 10);
+om.add_constraints('Qmise', N, 1, g_dg, d2G);
+neNS = neNS + 1; neN = neN + N;
+t_ok(om.getN('nle') == neN, sprintf('%s : nle.N  = %d', t, neN));
+t_ok(om.get('nle', 'NS') == neNS, sprintf('%s : nle.NS = %d', t, neNS));
+
+t = 'om.add_constraints(''mynle'', {2, 2})';
+om.add_constraints('mynle', {2, 2}, 'nle');
+t_ok(om.getN('nle') == neN, sprintf('%s : nle.N  = %d', t, neN));
+t_ok(om.get('nle', 'NS') == neNS, sprintf('%s : nle.NS = %d', t, neNS));
+
+for i = 1:2
+    for j = 1:2
+        t = sprintf('om.add_constraints(''mynle'', {%d,%d}, N, 1, g_dg, d2G, vs)', i,j);
+        N = i+j;
+        g_dg = @(x)my_g_dg(x, N, i);
+        d2G = @(x, lam, sigma)my_d2G(x, lam, sigma, j);
+        vs = struct('name', {'Pg', 'x'}, 'idx', {{}, {i,j}});
+        om.add_constraints('mynle', {i, j}, N, 1, g_dg, d2G, vs);
+        neNS = neNS + 1; neN = neN + N;
+        t_ok(om.getN('nle') == neN, sprintf('%s : nle.N  = %d', t, neN));
+        t_ok(om.get('nle', 'NS') == neNS, sprintf('%s : nle.NS = %d', t, neNS));
+    end
+end
+
+%%-----  add_constraints (nonlinear, inequality)  -----
+t = 'add_constraints (nonlinear, inequality)';
+niN = 0;
+niNS = 0;
+t_ok(om.getN('nli') == niN, sprintf('%s : nli.N  = %d', t, niN));
+t_ok(om.get('nli', 'NS') == niNS, sprintf('%s : nli.NS = %d', t, niNS));
+
+t = 'om.add_constraints(''Pmisi'', N, 0, g_dg, d2G, {''Va'', ''Pg''})';
+N = 3;
+g_dg = @(x)my_g_dg(x, N, -2);
+d2G = @(x, lam, sigma)my_d2G(x, lam, sigma, -10);
+om.add_constraints('Pmisi', N, 0, g_dg, d2G, {'Va', 'Pg'});
+niNS = niNS + 1; niN = niN + N;
+t_ok(om.getN('nli') == niN, sprintf('%s : nli.N  = %d', t, niN));
+t_ok(om.get('nli', 'NS') == niNS, sprintf('%s : nli.NS = %d', t, niNS));
+
+t = 'om.add_constraints(''Qmisi'', N, 0, g_dg, d2G)';
+N = 2;
+g_dg = @(x)my_g_dg(x, N, -2);
+d2G = @(x, lam, sigma)my_d2G(x, lam, sigma, -10);
+om.add_constraints('Qmisi', N, 0, g_dg, d2G);
+niNS = niNS + 1; niN = niN + N;
+t_ok(om.getN('nli') == niN, sprintf('%s : nli.N  = %d', t, niN));
+t_ok(om.get('nli', 'NS') == niNS, sprintf('%s : nli.NS = %d', t, niNS));
+
+t = 'om.add_constraints(''mynli'', {2, 2})';
+om.add_constraints('mynli', {2, 2}, 'nli');
+t_ok(om.getN('nli') == niN, sprintf('%s : nli.N  = %d', t, niN));
+t_ok(om.get('nli', 'NS') == niNS, sprintf('%s : nli.NS = %d', t, niNS));
+
+for i = 1:2
+    for j = 1:2
+        t = sprintf('om.add_constraints(''mynli'', {%d,%d}, N, 0, g_dg, d2G, vs)', i,j);
+        N = i+j-1;
+        g_dg = @(x)my_g_dg(x, N, i);
+        d2G = @(x, lam, sigma)my_d2G(x, lam, sigma, j);
+        vs = struct('name', {'Pg', 'x'}, 'idx', {{}, {i,j}});
+        om.add_constraints('mynli', {i, j}, N, 0, g_dg, d2G, vs);
+        niNS = niNS + 1; niN = niN + N;
+        t_ok(om.getN('nli') == niN, sprintf('%s : nli.N  = %d', t, niN));
+        t_ok(om.get('nli', 'NS') == niNS, sprintf('%s : nli.NS = %d', t, niNS));
     end
 end
 
@@ -459,4 +569,36 @@ t_is(f, 239, 14, t);
 % om
 % om = struct(om);
 
-t_end;
+t_end
+
+function [g, dg] = my_g_dg(x, p1, p2)
+if iscell(x)
+    xx = [];
+    for k = 1:length(x)
+        xx = [xx; x{k}];
+    end
+else
+    xx = x;
+end
+M = p1;
+N = length(xx);
+if M > N
+    error('M <= length(x)');
+end
+g = xx(1:M) + p2;
+dg = sparse(1:M, 1:M, p2, M, N) + sparse(1, 1:N, xx, M, N);
+
+function d2G = my_d2G(x, lam, p3)
+if iscell(x)
+    xx = [];
+    for k = 1:length(x)
+        xx = [xx; x{k}];
+    end
+else
+    xx = x;
+end
+N = length(xx);
+M = length(lam);
+MM = min(M, N);
+d2G = sparse(1:MM, 1:MM, xx(1:MM) + lam(1:MM) + p3, N, N);
+%full(d2G(1:MM,1:MM))

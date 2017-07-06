@@ -8,13 +8,17 @@ function N = getN(om, selector, name, idx)
 %   or the number corresponding to a specified named block.
 %
 %   Examples:
-%       N = om.getN('var')          : total number of variables
-%       N = om.getN('lin')          : total number of linear constraints
-%       N = om.getN('nln')          : total number of nonlinear constraints
+%       N = om.getN('var')      : total number of variables
+%       N = om.getN('lin')      : total number of linear constraints
+%       N = om.getN('nln')      : total number of nonlinear constraints
+%       N = om.getN('nle')      : total number of nonlin equality constraints
+%       N = om.getN('nli')      : total number of nonlin inequality constraints
 %       N = om.getN('cost')         : total number of cost rows (in N)
 %       N = om.getN('var', name)    : number of variables in named set
 %       N = om.getN('lin', name)    : number of linear constraints in named set
 %       N = om.getN('nln', name)    : number of nonlinear cons. in named set
+%       N = om.getN('nle', name)    : number of nonlin eq cons. in named set
+%       N = om.getN('nli', name)    : number of nonlin ineq cons. in named set
 %       N = om.getN('cost', name)   : number of cost rows (in N) in named set
 %       N = om.getN('var', name, idx) : number of variables in indexed named set
 %

@@ -4,20 +4,21 @@ function label = describe_idx(om, idx_type, idxs)
 %
 %   Returns strings describing (name and index) the variable, constraint
 %   or cost row that corresponds to the indices in IDXS. IDX_TYPE must be
-%   one of the following: 'var', 'lin', 'nln', or 'cost', corresponding
-%   to indices for variables, linear constraints, non-linear constraints
-%   and cost rows, respectively. The return value is a string if IDXS is
-%   a scalar, otherwise it is a cell array of strings of the same
-%   dimension as IDXS.
+%   one of the following: 'var', 'lin', 'nln', 'nle', 'nli' or 'cost',
+%   corresponding to indices for variables, linear constraints, non-linear
+%   constraints (legacy), nonlinear equality constraints, nonlinear
+%   inequality constraints and cost rows, respectively. The return value
+%   is a string if IDXS is a scalar, otherwise it is a cell array of
+%   strings of the same dimension as IDXS.
 %
 %   Examples:
 %       label = om.describe_idx('var', 87));
 %       labels = om.describe_idx('lin', [38; 49; 93]));
-%   
+%
 %   See also OPT_MODEL.
 
 %   MATPOWER
-%   Copyright (c) 2012-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2012-2017, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
