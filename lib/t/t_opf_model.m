@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 344;
+num_tests = 364;
 
 t_begin(num_tests, quiet);
 
@@ -286,11 +286,11 @@ neNS = 0;
 t_ok(om.getN('nle') == neN, sprintf('%s : nle.N  = %d', t, neN));
 t_ok(om.get('nle', 'NS') == neNS, sprintf('%s : nle.NS = %d', t, neNS));
 
-t = 'om.add_constraints(''Pmise'', N, 1, g_dg, d2G, {''Va'', ''Pg''})';
+t = 'om.add_constraints(''Pmise'', N, 1, g_dg, d2G, {''Pg'', ''Va''})';
 N = 4;
 g_dg = @(x)my_g_dg(x, N, 2);
-d2G = @(x, lam, sigma)my_d2G(x, lam, sigma, 10);
-om.add_constraints('Pmise', N, 1, g_dg, d2G, {'Va', 'Pg'});
+d2G = @(x, lam)my_d2G(x, lam, 10);
+om.add_constraints('Pmise', N, 1, g_dg, d2G, {'Pg', 'Va'});
 neNS = neNS + 1; neN = neN + N;
 t_ok(om.getN('nle') == neN, sprintf('%s : nle.N  = %d', t, neN));
 t_ok(om.get('nle', 'NS') == neNS, sprintf('%s : nle.NS = %d', t, neNS));
@@ -298,7 +298,7 @@ t_ok(om.get('nle', 'NS') == neNS, sprintf('%s : nle.NS = %d', t, neNS));
 t = 'om.add_constraints(''Qmise'', N, 1, g_dg, d2G)';
 N = 3;
 g_dg = @(x)my_g_dg(x, N, 2);
-d2G = @(x, lam, sigma)my_d2G(x, lam, sigma, 10);
+d2G = @(x, lam)my_d2G(x, lam, 10);
 om.add_constraints('Qmise', N, 1, g_dg, d2G);
 neNS = neNS + 1; neN = neN + N;
 t_ok(om.getN('nle') == neN, sprintf('%s : nle.N  = %d', t, neN));
@@ -314,7 +314,7 @@ for i = 1:2
         t = sprintf('om.add_constraints(''mynle'', {%d,%d}, N, 1, g_dg, d2G, vs)', i,j);
         N = i+j;
         g_dg = @(x)my_g_dg(x, N, i);
-        d2G = @(x, lam, sigma)my_d2G(x, lam, sigma, j);
+        d2G = @(x, lam)my_d2G(x, lam, j);
         vs = struct('name', {'Pg', 'x'}, 'idx', {{}, {i,j}});
         om.add_constraints('mynle', {i, j}, N, 1, g_dg, d2G, vs);
         neNS = neNS + 1; neN = neN + N;
@@ -330,11 +330,11 @@ niNS = 0;
 t_ok(om.getN('nli') == niN, sprintf('%s : nli.N  = %d', t, niN));
 t_ok(om.get('nli', 'NS') == niNS, sprintf('%s : nli.NS = %d', t, niNS));
 
-t = 'om.add_constraints(''Pmisi'', N, 0, g_dg, d2G, {''Va'', ''Pg''})';
+t = 'om.add_constraints(''Pmisi'', N, 0, g_dg, d2G, {''Pg'', ''Va''})';
 N = 3;
 g_dg = @(x)my_g_dg(x, N, -2);
-d2G = @(x, lam, sigma)my_d2G(x, lam, sigma, -10);
-om.add_constraints('Pmisi', N, 0, g_dg, d2G, {'Va', 'Pg'});
+d2G = @(x, lam)my_d2G(x, lam, -10);
+om.add_constraints('Pmisi', N, 0, g_dg, d2G, {'Pg', 'Va'});
 niNS = niNS + 1; niN = niN + N;
 t_ok(om.getN('nli') == niN, sprintf('%s : nli.N  = %d', t, niN));
 t_ok(om.get('nli', 'NS') == niNS, sprintf('%s : nli.NS = %d', t, niNS));
@@ -342,7 +342,7 @@ t_ok(om.get('nli', 'NS') == niNS, sprintf('%s : nli.NS = %d', t, niNS));
 t = 'om.add_constraints(''Qmisi'', N, 0, g_dg, d2G)';
 N = 2;
 g_dg = @(x)my_g_dg(x, N, -2);
-d2G = @(x, lam, sigma)my_d2G(x, lam, sigma, -10);
+d2G = @(x, lam)my_d2G(x, lam, -10);
 om.add_constraints('Qmisi', N, 0, g_dg, d2G);
 niNS = niNS + 1; niN = niN + N;
 t_ok(om.getN('nli') == niN, sprintf('%s : nli.N  = %d', t, niN));
@@ -358,7 +358,7 @@ for i = 1:2
         t = sprintf('om.add_constraints(''mynli'', {%d,%d}, N, 0, g_dg, d2G, vs)', i,j);
         N = i+j-1;
         g_dg = @(x)my_g_dg(x, N, i);
-        d2G = @(x, lam, sigma)my_d2G(x, lam, sigma, j);
+        d2G = @(x, lam)my_d2G(x, lam, j);
         vs = struct('name', {'Pg', 'x'}, 'idx', {{}, {i,j}});
         om.add_constraints('mynli', {i, j}, N, 0, g_dg, d2G, vs);
         niNS = niNS + 1; niN = niN + N;
@@ -385,6 +385,57 @@ AA = sparse([1:3 1:3 1:3]', [1:3 4:6 7 7 7]', [1 1 1 -1 -1 -1 2 3 4]', 3, vN);
 t_is(full(A(ll.i1.Qmis:ll.iN.Qmis, :)), full(AA), 14, [t ' : A(<Qmis>,:)']);
 t_is(full(A(ll.i1.mylin(2,1):ll.iN.mylin(2,1), vv.i1.Pg:vv.iN.Pg)), eye(3,3), 14, [t ' : A(<mylin(2,1)>,<Pg>)']);
 t_is(full(A(ll.i1.mylin(2,1):ll.iN.mylin(2,1), vv.i1.x(2,1):vv.iN.x(2,1))), [0 -1 0;0 -1 0;0 -1 0], 14, [t ' : A(<mylin(2,1)>,<x(2,1)>)']);
+
+%om
+
+%%-----  nonlin_constraints  -----
+t = 'nonlin_constraints';
+x = (1:om.getN('var'))';
+[g, dg] = om.nonlin_constraints(x, 1);
+t_is(length(g), neN, 14, [t ' : length(g)']);
+t_ok(issparse(dg), [t ' : issparse(dg)']);
+t_is(size(dg), [neN, vN], 14, [t ' : size(dg)']);
+t_is(g, [7 8 9 3 3 4 5 6 7 6 7 8 7 8 9 7 8 9 27]', 14, [t ' : g']);
+e = [[  1 2 3 4 7 6 7;
+        0 0 0 0 0 2 0;
+        0 0 0 0 0 0 2;
+        2 0 0 0 0 0 0 ] zeros(4, vN-7) ];
+t_is(full(dg(1:4, :)), e, 14, [t ' : dg(1:4, :)   [Pmise]']);
+e = [[3 2:vN]; [0 2 0 zeros(1, vN-3)]; [0 0 2 zeros(1, vN-3)]];
+t_is(full(dg(5:7, :)), e, 14, [t ' : dg(5:7, :)   [Qmise]']);
+e = [[0 0 0 0 6 6 7; 0 0 0 0 0 1 0] zeros(2, 10) [18 19; 0 0] zeros(2, vN-19)];
+t_is(full(dg(8:9, :)), e, 14, [t ' : dg(8:9, :)   [mynle(1,1)]']);
+e = [[0 0 0 0 6 6 7; 0 0 0 0 0 1 0; 0 0 0 0 0 0 1] zeros(3, 12) [20 21; 0 0; 0 0] zeros(3, vN-21)];
+t_is(full(dg(10:12, :)), e, 14, [t ' : dg(10:12, :) [mynle(1,2)]']);
+e = [[0 0 0 0 7 6 7; 0 0 0 0 0 2 0; 0 0 0 0 0 0 2] zeros(3, 14) [22 23 24; 0 0 0; 0 0 0] zeros(3, vN-24)];
+t_is(full(dg(13:15, :)), e, 14, [t ' : dg(13:15, :) [mynle(2,1)]']);
+e = [[0 0 0 0 7 6 7; 0 0 0 0 0 2 0; 0 0 0 0 0 0 2; 0 0 0 0 0 0 0] zeros(4, 17) [25 26; 0 0; 0 0; 2 0] zeros(4, vN-26)];
+t_is(full(dg(16:19, :)), e, 14, [t ' : dg(16:19, :) [mynle(2,2)]']);
+% g
+% full(dg)
+% full(dg)'
+
+[h, dh] = om.nonlin_constraints(x, 0);
+t_is(length(h), niN, 14, [t ' : length(h)']);
+t_ok(issparse(dh), [t ' : issparse(dh)']);
+t_is(size(dh), [niN, vN], 14, [t ' : size(dh)']);
+t_is(h, [3 4 5 -1 0 6 6 7 7 8 7 8 9]', 14, [t ' : h']);
+e = [[  1 2 3 4 3 6 7;
+        0 0 0 0 0 -2 0;
+        0 0 0 0 0 0 -2 ] zeros(3, vN-7) ];
+t_is(full(dh(1:3, :)), e, 14, [t ' : dh(1:3, :)   [Pmisi]']);
+e = [[-1 2:vN]; [0 -2 zeros(1, vN-2)]];
+t_is(full(dh(4:5, :)), e, 14, [t ' : dh(5:7, :)   [Qmisi]']);
+e = [[0 0 0 0 6 6 7] zeros(1, 10) [18 19] zeros(1, vN-19)];
+t_is(full(dh(6, :)), e, 14, [t ' : dh(6, :)     [mynli(1,1)]']);
+e = [[0 0 0 0 6 6 7; 0 0 0 0 0 1 0] zeros(2, 12) [20 21; 0 0] zeros(2, vN-21)];
+t_is(full(dh(7:8, :)), e, 14, [t ' : dh(7:8, :)   [mynli(1,2)]']);
+e = [[0 0 0 0 7 6 7; 0 0 0 0 0 2 0] zeros(2, 14) [22 23 24; 0 0 0] zeros(2, vN-24)];
+t_is(full(dh(9:10, :)), e, 14, [t ' : dh(9:10, :)  [mynli(2,1)]']);
+e = [[0 0 0 0 7 6 7; 0 0 0 0 0 2 0; 0 0 0 0 0 0 2] zeros(3, 17) [25 26; 0 0; 0 0] zeros(3, vN-26)];
+t_is(full(dh(11:13, :)), e, 14, [t ' : dh(11:13, :) [mynli(2,2)]']);
+% h
+%full(dh)'
 
 %%-----  add_costs  -----
 t = 'add_costs';
