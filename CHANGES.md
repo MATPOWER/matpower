@@ -12,6 +12,18 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 7/10/17
+  - Add ability of `@opt_model` to handle nonlinear constraints with
+    function handles for evaluating the constraint function, gradients
+    and Hessian.
+
+#### 6/8/17
+  - Move `@opt_model`, `@opf_model` to use `classdef`. Modify code to use
+    OOP notation everywhere for `@opt_model`/`@opf_model` objects,
+    e.g. `om.property`, `om.method()`.
+    __IMPORTANT NOTE__: For Octave users, the minimum requirements for
+    MATPOWER are now Octave 4 or later.
+
 #### 5/25/17
   - Add option to call `@opt_model/compute_cost` without `idx` argument
     and have it total over all indices for a given `name`.

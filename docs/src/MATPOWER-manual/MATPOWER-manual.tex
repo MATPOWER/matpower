@@ -355,7 +355,7 @@ The \matpower{} GitHub project hosts the public Git code repository as well as a
 To use \matpower{} \mpver{} you will need:
 \begin{itemize}
 \item \matlab{}\textsuperscript{\tiny \textregistered} version 7 (R14) or later\footnote{\matlab{} is available from The MathWorks, Inc. (\url{http://www.mathworks.com/}). \matpower{}~4 required \matlab{}~6.5 (R13), \matpower{}~3.2 required \matlab{}~6 (R12), \matpower{}~3.0 required \matlab{}~5 and \matpower{}~2.0 and earlier required only \matlab{}~4. \matlab{} is a registered trademark of The MathWorks, Inc.}, or
-\item GNU Octave version 3.4 or later\footnote{GNU Octave \cite{octave} is free software, available online at \url{http://www.gnu.org/software/octave/}. Some parts of \matpower{} \mpver{} may work on earlier versions of Octave, but it has not been tested on versions prior to 3.4.}
+\item GNU Octave version 4 or later\footnote{GNU Octave \cite{octave} is free software, available online at \url{http://www.gnu.org/software/octave/}. \matpower{}~6.0 required Octave~3.4 or greater.}
 \end{itemize}
 
 The PSS/E RAW data import function \code{psse2mpc} currently requires \matlab{}~7.3 or newer or Octave 3.8 or newer. The continuation power flow \code{runcpf} is not supported in \matlab{}~7.0.x (requires 7.1 or newer). See Section~\ref{MOSTMAN-sec:sysreq} in the \mostman{} for any requirements specific to \most{}.
@@ -6708,6 +6708,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.1.pdf}{\m
 \item Continuous integration via GitHub and Travis-CI integration.
 \item Include \LaTeX{} source code for \mum{} in \code{docs/src} and for \mostman{} in \code{most/docs/src}.
 \item Add support for exporting \matpower{} case to PSS/E RAW data format.
+\item Add support to core optimization model for general non-linear constraints.
 \item New functions:
     \begin{itemize}
     \item \code{install\_matpower()} installs \matpower{} modifying or showing needed modifications to Matlab or Octave path.

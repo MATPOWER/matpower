@@ -22,7 +22,7 @@ downloaded or cloned from the [MATPOWER GitHub project][2]. The
 System Requirements
 -------------------
 *   [Matlab][3] version 7 (R14) or later, or
-*   [GNU Octave][4] version 3.4 or later
+*   [GNU Octave][4] version 4 or later
 
 Getting MATPOWER
 ----------------
