@@ -286,20 +286,20 @@ neNS = 0;
 t_ok(om.getN('nle') == neN, sprintf('%s : nle.N  = %d', t, neN));
 t_ok(om.get('nle', 'NS') == neNS, sprintf('%s : nle.NS = %d', t, neNS));
 
-t = 'om.add_constraints(''Pmise'', N, 1, g_dg, d2G, {''Pg'', ''Va''})';
+t = 'om.add_constraints(''Pmise'', N, 1, fcn, hess, {''Pg'', ''Va''})';
 N = 4;
-g_dg = @(x)my_g_dg(x, N, 2);
-d2G = @(x, lam)my_d2G(x, lam, 10);
-om.add_constraints('Pmise', N, 1, g_dg, d2G, {'Pg', 'Va'});
+fcn = @(x)my_fcn(x, N, 2);
+hess = @(x, lam)my_hess(x, lam, 10);
+om.add_constraints('Pmise', N, 1, fcn, hess, {'Pg', 'Va'});
 neNS = neNS + 1; neN = neN + N;
 t_ok(om.getN('nle') == neN, sprintf('%s : nle.N  = %d', t, neN));
 t_ok(om.get('nle', 'NS') == neNS, sprintf('%s : nle.NS = %d', t, neNS));
 
-t = 'om.add_constraints(''Qmise'', N, 1, g_dg, d2G)';
+t = 'om.add_constraints(''Qmise'', N, 1, fcn, hess)';
 N = 3;
-g_dg = @(x)my_g_dg(x, N, 2);
-d2G = @(x, lam)my_d2G(x, lam, 10);
-om.add_constraints('Qmise', N, 1, g_dg, d2G);
+fcn = @(x)my_fcn(x, N, 2);
+hess = @(x, lam)my_hess(x, lam, 10);
+om.add_constraints('Qmise', N, 1, fcn, hess);
 neNS = neNS + 1; neN = neN + N;
 t_ok(om.getN('nle') == neN, sprintf('%s : nle.N  = %d', t, neN));
 t_ok(om.get('nle', 'NS') == neNS, sprintf('%s : nle.NS = %d', t, neNS));
@@ -311,12 +311,12 @@ t_ok(om.get('nle', 'NS') == neNS, sprintf('%s : nle.NS = %d', t, neNS));
 
 for i = 1:2
     for j = 1:2
-        t = sprintf('om.add_constraints(''mynle'', {%d,%d}, N, 1, g_dg, d2G, vs)', i,j);
+        t = sprintf('om.add_constraints(''mynle'', {%d,%d}, N, 1, fcn, hess, vs)', i,j);
         N = i+j;
-        g_dg = @(x)my_g_dg(x, N, i);
-        d2G = @(x, lam)my_d2G(x, lam, j);
+        fcn = @(x)my_fcn(x, N, i);
+        hess = @(x, lam)my_hess(x, lam, j);
         vs = struct('name', {'Pg', 'x'}, 'idx', {{}, {i,j}});
-        om.add_constraints('mynle', {i, j}, N, 1, g_dg, d2G, vs);
+        om.add_constraints('mynle', {i, j}, N, 1, fcn, hess, vs);
         neNS = neNS + 1; neN = neN + N;
         t_ok(om.getN('nle') == neN, sprintf('%s : nle.N  = %d', t, neN));
         t_ok(om.get('nle', 'NS') == neNS, sprintf('%s : nle.NS = %d', t, neNS));
@@ -330,20 +330,20 @@ niNS = 0;
 t_ok(om.getN('nli') == niN, sprintf('%s : nli.N  = %d', t, niN));
 t_ok(om.get('nli', 'NS') == niNS, sprintf('%s : nli.NS = %d', t, niNS));
 
-t = 'om.add_constraints(''Pmisi'', N, 0, g_dg, d2G, {''Pg'', ''Va''})';
+t = 'om.add_constraints(''Pmisi'', N, 0, fcn, hess, {''Pg'', ''Va''})';
 N = 3;
-g_dg = @(x)my_g_dg(x, N, -2);
-d2G = @(x, lam)my_d2G(x, lam, -10);
-om.add_constraints('Pmisi', N, 0, g_dg, d2G, {'Pg', 'Va'});
+fcn = @(x)my_fcn(x, N, -2);
+hess = @(x, lam)my_hess(x, lam, -10);
+om.add_constraints('Pmisi', N, 0, fcn, hess, {'Pg', 'Va'});
 niNS = niNS + 1; niN = niN + N;
 t_ok(om.getN('nli') == niN, sprintf('%s : nli.N  = %d', t, niN));
 t_ok(om.get('nli', 'NS') == niNS, sprintf('%s : nli.NS = %d', t, niNS));
 
-t = 'om.add_constraints(''Qmisi'', N, 0, g_dg, d2G)';
+t = 'om.add_constraints(''Qmisi'', N, 0, fcn, hess)';
 N = 2;
-g_dg = @(x)my_g_dg(x, N, -2);
-d2G = @(x, lam)my_d2G(x, lam, -10);
-om.add_constraints('Qmisi', N, 0, g_dg, d2G);
+fcn = @(x)my_fcn(x, N, -2);
+hess = @(x, lam)my_hess(x, lam, -10);
+om.add_constraints('Qmisi', N, 0, fcn, hess);
 niNS = niNS + 1; niN = niN + N;
 t_ok(om.getN('nli') == niN, sprintf('%s : nli.N  = %d', t, niN));
 t_ok(om.get('nli', 'NS') == niNS, sprintf('%s : nli.NS = %d', t, niNS));
@@ -355,12 +355,12 @@ t_ok(om.get('nli', 'NS') == niNS, sprintf('%s : nli.NS = %d', t, niNS));
 
 for i = 1:2
     for j = 1:2
-        t = sprintf('om.add_constraints(''mynli'', {%d,%d}, N, 0, g_dg, d2G, vs)', i,j);
+        t = sprintf('om.add_constraints(''mynli'', {%d,%d}, N, 0, fcn, hess, vs)', i,j);
         N = i+j-1;
-        g_dg = @(x)my_g_dg(x, N, i);
-        d2G = @(x, lam)my_d2G(x, lam, j);
+        fcn = @(x)my_fcn(x, N, i);
+        hess = @(x, lam)my_hess(x, lam, j);
         vs = struct('name', {'Pg', 'x'}, 'idx', {{}, {i,j}});
-        om.add_constraints('mynli', {i, j}, N, 0, g_dg, d2G, vs);
+        om.add_constraints('mynli', {i, j}, N, 0, fcn, hess, vs);
         niNS = niNS + 1; niN = niN + N;
         t_ok(om.getN('nli') == niN, sprintf('%s : nli.N  = %d', t, niN));
         t_ok(om.get('nli', 'NS') == niNS, sprintf('%s : nli.NS = %d', t, niNS));
@@ -645,7 +645,7 @@ t_is(f, 239, 14, t);
 
 t_end
 
-function [g, dg] = my_g_dg(x, p1, p2)
+function [g, dg] = my_fcn(x, p1, p2)
 if iscell(x)
     xx = [];
     for k = 1:length(x)
@@ -662,7 +662,7 @@ end
 g = xx(1:M) + p2;
 dg = sparse(1:M, 1:M, p2, M, N) + sparse(1, 1:N, xx, M, N);
 
-function d2G = my_d2G(x, lam, p3)
+function d2G = my_hess(x, lam, p3)
 if iscell(x)
     xx = [];
     for k = 1:length(x)

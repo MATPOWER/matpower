@@ -4,8 +4,8 @@ function om = add_constraints(om, name, varargin)
 %   OM.ADD_CONSTRAINTS(NAME, A, L, U);
 %   OM.ADD_CONSTRAINTS(NAME, A, L, U, VARSETS);
 %
-%   OM.ADD_CONSTRAINTS(NAME, N, ISEQ, G_DG, D2G);
-%   OM.ADD_CONSTRAINTS(NAME, N, ISEQ, G_DG, D2G, VARSETS);
+%   OM.ADD_CONSTRAINTS(NAME, N, ISEQ, FCN, HESS);
+%   OM.ADD_CONSTRAINTS(NAME, N, ISEQ, FCN, HESS, VARSETS);
 %   OM.ADD_CONSTRAINTS(NAME, N, 'nonlinear');  (legacy)
 %
 %   OM.ADD_CONSTRAINTS(NAME, DIM_LIST);           %% linear
@@ -16,8 +16,8 @@ function om = add_constraints(om, name, varargin)
 %   OM.ADD_CONSTRAINTS(NAME, IDX_LIST, A, L, U);
 %   OM.ADD_CONSTRAINTS(NAME, IDX_LIST, A, L, U, VARSETS);
 %
-%   OM.ADD_CONSTRAINTS(NAME, IDX_LIST, N, ISEQ, G_DG, D2G);
-%   OM.ADD_CONSTRAINTS(NAME, IDX_LIST, N, ISEQ, G_DG, D2G, VARSETS);
+%   OM.ADD_CONSTRAINTS(NAME, IDX_LIST, N, ISEQ, FCN, HESS);
+%   OM.ADD_CONSTRAINTS(NAME, IDX_LIST, N, ISEQ, FCN, HESS, VARSETS);
 %
 %   Linear Constraints
 %
@@ -35,28 +35,28 @@ function om = add_constraints(om, name, varargin)
 %
 %   Nonlinear Constraints
 %
-%       OM.ADD_CONSTRAINTS(NAME, N, ISEQ, G_DG, D2G);
-%       OM.ADD_CONSTRAINTS(NAME, N, ISEQ, G_DG, D2G, VARSETS);
+%       OM.ADD_CONSTRAINTS(NAME, N, ISEQ, FCN, HESS);
+%       OM.ADD_CONSTRAINTS(NAME, N, ISEQ, FCN, HESS, VARSETS);
 %       OM.ADD_CONSTRAINTS(NAME, N, 'nonlinear');  (legacy)
 %
 %       For nonlinear constraints, N specifies the number of constraints
 %       in the set, ISEQ is a one character string specifying whether it
 %       is an equality or inequality constraint set ('=' or '<' respectively),
-%       G_DG is the handle of a function that evaluates the constraint
-%       and its gradients, and D2G is the handle of a function that
+%       FCN is the handle of a function that evaluates the constraint
+%       and its gradients, and HESS is the handle of a function that
 %       evaluates the Hessian of the constraints.
 %
-%       For a constraint G(x) = 0, G_DG should point to a function with the
+%       For a constraint G(x) = 0, FCN should point to a function with the
 %       following interface:
-%           G = G_DG(X)
-%           [G, DG] = G_DG(X)
+%           G = FCN(X)
+%           [G, DG] = FCN(X)
 %       where G is an N x 1 vector and DG is the N x NX gradient, where
 %           DG(i, j) = dG(i)/dX(j)
 %       and NX is the number of elements in X.
 %
-%       D2G should point to a function that returns an NX x NX matrix
+%       HESS should point to a function that returns an NX x NX matrix
 %       of derivatives of DG * LAMBDA, with the following interface:
-%           D2G = D2G(X, LAMBDA)
+%           D2G = HESS(X, LAMBDA)
 %
 %       For both functions, the first input argument X can take two forms.
 %       If the constraint set is added VARSETS empty or missing, then X
@@ -89,8 +89,8 @@ function om = add_constraints(om, name, varargin)
 %
 %       OM.ADD_CONSTRAINTS(NAME, IDX_LIST, A, L, U);
 %       OM.ADD_CONSTRAINTS(NAME, IDX_LIST, A, L, U, VARSETS);
-%       OM.ADD_CONSTRAINTS(NAME, IDX_LIST, N, ISEQ, G_DG, D2G);
-%       OM.ADD_CONSTRAINTS(NAME, IDX_LIST, N, ISEQ, G_DG, D2G, VARSETS);
+%       OM.ADD_CONSTRAINTS(NAME, IDX_LIST, N, ISEQ, FCN, HESS);
+%       OM.ADD_CONSTRAINTS(NAME, IDX_LIST, N, ISEQ, FCN, HESS, VARSETS);
 %
 %   Examples:
 %       %% linear constraint
@@ -101,7 +101,7 @@ function om = add_constraints(om, name, varargin)
 %
 %       %% nonlinear equality constraint with constraint/gradient and Hessian
 %       %% evaluation functions provided
-%       om.add_constraints('Qmis', nb, 1, g_dg, d2G);
+%       om.add_constraints('Qmis', nb, 1, fcn, hess);
 %
 %       %% linear constraints with indexed named set 'R(i,j)'
 %       om.add_constraints('R', {2, 3}, 'lin');
@@ -220,8 +220,8 @@ if ~isempty(idx) && nargs == 0      %% just set dimensions for indexed set
     om.(ff).data.vs.(name)   = cell(idx{:});
     if nonlin
         %% add info about this nonlinear constraint set
-        om.(ff).data.g_dg.(name) = cell(idx{:});
-        om.(ff).data.d2G.(name)  = cell(idx{:});
+        om.(ff).data.fcn.(name)  = cell(idx{:});
+        om.(ff).data.hess.(name) = cell(idx{:});
     else
         %% add info about this linear constraint set
         om.(ff).data.A.(name)    = cell(idx{:});
@@ -231,11 +231,11 @@ if ~isempty(idx) && nargs == 0      %% just set dimensions for indexed set
 else
     if nonlin           %% nonlinear
         if nargs == 2
-            [N, iseq, g_dg, d2G, varsets] = deal(args{:}, [], [], {});
+            [N, iseq, fcn, hess, varsets] = deal(args{:}, [], [], {});
         elseif nargs < 5
-            [N, iseq, g_dg, d2G, varsets] = deal(args{1:4}, {});
+            [N, iseq, fcn, hess, varsets] = deal(args{1:4}, {});
         else
-            [N, iseq, g_dg, d2G, varsets] = deal(args{1:5});
+            [N, iseq, fcn, hess, varsets] = deal(args{1:5});
         end
     else                %% linear
         if nargs < 4
@@ -296,9 +296,9 @@ else
         om.(ff).order(om.(ff).NS).idx  = {};
 
         if nonlin
-            if ~isempty(g_dg)
-                om.(ff).data.g_dg.(name) = g_dg;
-                om.(ff).data.d2G.(name)  = d2G;
+            if ~isempty(fcn)
+                om.(ff).data.fcn.(name)  = fcn;
+                om.(ff).data.hess.(name) = hess;
             end
         else
             om.(ff).data.A.(name)  = A;
@@ -322,8 +322,8 @@ else
 
         if nonlin
             %% add info about this nonlinear constraint set
-            om.(ff).data.g_dg   = subsasgn(om.(ff).data.g_dg, s2, g_dg);
-            om.(ff).data.d2G    = subsasgn(om.(ff).data.d2G, s2, d2G);
+            om.(ff).data.fcn   = subsasgn(om.(ff).data.fcn, s2, fcn);
+            om.(ff).data.hess  = subsasgn(om.(ff).data.hess, s2, hess);
         else
             om.(ff).data.A  = subsasgn(om.(ff).data.A, s2, A);
             om.(ff).data.l  = subsasgn(om.(ff).data.l, s2, l);

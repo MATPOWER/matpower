@@ -55,12 +55,12 @@ for k = 1:om.(ff).NS
     end
     if N                                %% non-zero number of rows
         if isempty(idx)
-            d2G_fcn = om.(ff).data.d2G.(name);  %% d2G fcn for kth constraint set
+            d2G_fcn = om.(ff).data.hess.(name); %% Hessian fcn for kth constraint set
             i1 = om.(ff).idx.i1.(name);         %% starting row index
             iN = om.(ff).idx.iN.(name);         %% ending row index
             vsl = om.(ff).data.vs.(name);       %% var set list
         else
-            d2G_fcn = subsref(om.(ff).data.d2G, s2);  %% d2G fcn for kth constraint set
+            d2G_fcn = subsref(om.(ff).data.hess, s2);  %% Hessian fcn for kth constraint set
             i1 = subsref(om.(ff).idx.i1, s1);    %% starting row index
             iN = subsref(om.(ff).idx.iN, s1);    %% ending row index
             vsl = subsref(om.(ff).data.vs, s2);  %% var set list

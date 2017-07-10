@@ -56,15 +56,15 @@ for k = 1:om.(ff).NS
     end
     if N                                %% non-zero number of rows
         if isempty(idx)
-            g_dg = om.(ff).data.g_dg.(name);    %% g_dg fcn for kth constraint set
+            fcn = om.(ff).data.fcn.(name);      %% fcn for kth constraint set
             i1 = om.(ff).idx.i1.(name);         %% starting row index
             iN = om.(ff).idx.iN.(name);         %% ending row index
             vsl = om.(ff).data.vs.(name);       %% var set list
         else
-            g_dg = subsref(om.(ff).data.g_dg, s2);  %% g_dg fcn for kth constraint set
-            i1 = subsref(om.(ff).idx.i1, s1);    %% starting row index
-            iN = subsref(om.(ff).idx.iN, s1);    %% ending row index
-            vsl = subsref(om.(ff).data.vs, s2);  %% var set list
+            fcn = subsref(om.(ff).data.fcn, s2);%% fcn for kth constraint set
+            i1 = subsref(om.(ff).idx.i1, s1);   %% starting row index
+            iN = subsref(om.(ff).idx.iN, s1);   %% ending row index
+            vsl = subsref(om.(ff).data.vs, s2); %% var set list
         end
         if isempty(vsl)         %% all rows of x
             xx = x;
@@ -81,7 +81,7 @@ for k = 1:om.(ff).NS
                 xx{v} = x(j1:jN);
             end
         end
-        [gk, dgk] = g_dg(xx);   %% evaluate kth constraint and gradient
+        [gk, dgk] = fcn(xx);    %% evaluate kth constraint and gradient
         g(i1:iN) = gk;          %% assign kth constraint
         
         if isempty(vsl)         %% all rows of x
