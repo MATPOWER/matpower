@@ -15,7 +15,7 @@ function [vv, ll, nn, cc] = get_idx(om)
 %   the named blocks.
 %
 %   Examples:
-%       [vv, ll, nn] = get_idx(om);
+%       [vv, ll, nn] = om.get_idx();
 %
 %       For a variable block named 'z' we have ...
 %           vv.i1.z - starting index for 'z' in optimization vector x
