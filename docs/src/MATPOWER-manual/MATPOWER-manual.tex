@@ -665,7 +665,7 @@ The data files used by \matpower{} are \matlab{} M-files or MAT-files which defi
 \subsection{Branches}
 \label{sec:branch}
 
-All transmission lines\footnote{This does not include DC transmission lines. For more information the handling of DC transmission lines in \matpower{}, see Section~\ref{sec:dclines}.}, transformers and phase shifters are modeled with a common branch model, consisting of a standard $\pi$ transmission line model, with series impedance $z_s = r_s + j x_s$ and total charging susceptance $b_c$, in series with an ideal phase shifting transformer. The transformer, whose tap ratio has magnitude $\tau$ and phase shift angle $\theta_\mathrm{shift}$, is located at the \emph{from} end of the branch, as shown in \figurename~\ref{fig:branch_model}. The parameters $r_s$, $x_s$, $b_c$, $\tau$ and $\theta_\mathrm{shift}$ are specified directly in columns \code{BR\_R} (3), \code{BR\_X} (4), \code{BR\_B} (5), \code{TAP} (9) and \code{SHIFT} (10), respectively, of the corresponding row of the \branch{} matrix.
+All transmission lines\footnote{This does not include DC transmission lines. For more information the handling of DC transmission lines in \matpower{}, see Section~\ref{sec:dclines}.}, transformers and phase shifters are modeled with a common branch model, consisting of a standard $\pi$ transmission line model, with series impedance $z_s = r_s + j x_s$ and total charging susceptance $b_c$, in series with an ideal phase shifting transformer. The transformer, whose tap ratio has magnitude $\tau$ and phase shift angle $\theta_\mathrm{shift}$, is located at the \emph{from} end of the branch, as shown in \figurename~\ref{fig:branch_model}. The parameters $r_s$, $x_s$, $b_c$, $\tau$ and $\theta_\mathrm{shift}$ are specified directly in columns \code{BR\_R} (3), \code{BR\_X} (4), \code{BR\_B} (5), \code{TAP} (9) and \code{SHIFT} (10), respectively, of the corresponding row of the \branch{} matrix.\footnote{A value of zero in the \code{TAP} column indicates that the branch is a transmission line and not a transformer, i.e. mathematically equivalent to a transformer with tap ratio set to 1.}
 
 The complex current injections $i_f$ and $i_t$ at the \emph{from} and \emph{to} ends of the branch, respectively, can be expressed in terms of the $2 \times 2$ branch admittance matrix $Y_{br}$ and the respective terminal voltages $v_f$ and $v_t$
 \begin{equation}
@@ -4242,7 +4242,7 @@ $\leq 0$ = machine out-of-service \\
 \caption{Branch Data (\mpc{}.\branch{})}
 \label{tab:branchdata}
 \footnotesize
-\begin{tabular}{lcl}
+\begin{tabular}{lcp{0.66\textwidth}}
 \toprule
 name & column & description \\
 \midrule
@@ -4254,8 +4254,7 @@ name & column & description \\
 \code{RATE\_A}	& 6	& MVA rating A (long term rating), set to 0 for unlimited	\\
 \code{RATE\_B}	& 7	& MVA rating B (short term rating), set to 0 for unlimited	\\
 \code{RATE\_C}	& 8	& MVA rating C (emergency rating), set to 0 for unlimited	\\
-\code{TAP}	& 9	& transformer off nominal turns ratio, (taps at ``from'' bus, 	\\
-&&	impedance at ``to'' bus, i.e. if $r = x = b = 0$, $tap = \frac{|V_f|}{|V_t|}$)	\\
+\code{TAP}	& 9	& transformer off nominal turns ratio, if non-zero (taps at ``from'' bus, impedance at ``to'' bus, i.e. if $r = x = b = 0$, $tap = \frac{|V_f|}{|V_t|}$; $tap = 0$ used to indicate transmission line rather than transformer, i.e. mathematically equivalent to transformer with $tap = 1$)	\\
 \code{SHIFT}	& 10	& transformer phase shift angle (degrees), positive $\Rightarrow$ delay	\\
 \code{BR\_STATUS}	& 11	& initial branch status, 1 = in-service, 0 = out-of-service	\\
 \code{ANGMIN}\tnote{*}	& 12	& minimum angle difference, $\theta_f - \theta_t$ (degrees)	\\

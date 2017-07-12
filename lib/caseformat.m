@@ -100,10 +100,12 @@
 %       6   rateA, MVA rating A (long term rating), set to 0 for unlimited
 %       7   rateB, MVA rating B (short term rating), set to 0 for unlimited
 %       8   rateC, MVA rating C (emergency rating), set to 0 for unlimited
-%       9   ratio, transformer off nominal turns ratio ( = 0 for lines )
-%           (taps at 'from' bus, impedance at 'to' bus,
-%            i.e. if r = x = b = 0, then ratio = Vf / Vt)
-%       10  angle, transformer phase shift angle (degrees), positive => delay
+%       9   tap, transformer off nominal turns ratio, if non-zero
+%           (taps at "from" bus, impedance at "to" bus, i.e. if r = x = b = 0,
+%            then tap = Vf / Vt; tap = 0 used to indicate transmission
+%           line rather than transformer, i.e. mathematically equivalent to
+%           transformer with tap = 1)
+%       10  shift, transformer phase shift angle (degrees), positive => delay
 %   (-)     (Gf, shunt conductance at from bus p.u.)
 %   (-)     (Bf, shunt susceptance at from bus p.u.)
 %   (-)     (Gt, shunt conductance at to bus p.u.)
