@@ -4785,7 +4785,7 @@ name & default\tnote{\S} & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {For \code{opf.solver.dc} option set to \codeq{CLP} only. Requires the installation of the optional \clp{} package. See Appendix~\ref{app:clp} for details.}
+ \item [\dag] {For \code{opf.dc.solver} option set to \codeq{CLP} only. Requires the installation of the optional \clp{} package. See Appendix~\ref{app:clp} for details.}
  \item [\ddag] {For details, see \code{help clp\_options} or \code{help clp}.}
 \end{tablenotes}
 \end{threeparttable}
@@ -4828,7 +4828,7 @@ name & default & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {For \code{opf.solver.dc} option set to \codeq{CPLEX} only. Requires the installation of the optional \cplex{} package. See Appendix~\ref{app:cplex} for details.}
+ \item [\dag] {For \code{opf.dc.solver} option set to \codeq{CPLEX} only. Requires the installation of the optional \cplex{} package. See Appendix~\ref{app:cplex} for details.}
  \item [\ddag] {For details, see \code{help cplex\_options} and the ``Parameters of \cplex{}'' section of the \cplex{} documentation at \url{http://www.ibm.com/support/knowledgecenter/SSSA5P}.}
 \end{tablenotes}
 \end{threeparttable}
@@ -4891,7 +4891,7 @@ name & default\tnote{\S} & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {For \code{opf.solver.dc} option set to \codeq{GLPK} only. Requires the installation of the optional \glpk{} package. See Appendix~\ref{app:glpk} for details.}
+ \item [\dag] {For \code{opf.dc.solver} option set to \codeq{GLPK} only. Requires the installation of the optional \glpk{} package. See Appendix~\ref{app:glpk} for details.}
  \item [\ddag] {For details, see \code{help glpk\_options} or the ``param'' section of the \glpk{} documentation at  \url{http://www.gnu.org/software/octave/doc/interpreter/Linear-Programming.html}.}
 \end{tablenotes}
 \end{threeparttable}
@@ -4926,7 +4926,7 @@ name & default\tnote{\S} & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {For \code{opf.solver.dc} option set to \codeq{GUROBI} only. Requires the installation of the optional \gurobi{} package. See Appendix~\ref{app:gurobi} for details.}
+ \item [\dag] {For \code{opf.dc.solver} option set to \codeq{GUROBI} only. Requires the installation of the optional \gurobi{} package. See Appendix~\ref{app:gurobi} for details.}
  \item [\S] {Default values in parenthesis refer to defaults assigned by \gurobi{} if called with option equal to 0.}
  \item [\ddag] {For details, see \code{help gurobi\_options} and the ``Parameters'' section of the ``Gurobi Optimizer Reference Manual'' at \url{http://www.gurobi.com/documentation/6.0/refman/parameters.html}.}
 \end{tablenotes}
@@ -4952,7 +4952,7 @@ name & default & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {For \code{opf.solver.ac} or \code{opf.solver.dc} option set to \codeq{IPOPT} only. Requires the installation of the optional \ipopt{} package~\cite{ipopt}. See Appendix~\ref{app:ipopt} for details.}
+ \item [\dag] {For \code{opf.ac.solver} or \code{opf.dc.solver} option set to \codeq{IPOPT} only. Requires the installation of the optional \ipopt{} package~\cite{ipopt}. See Appendix~\ref{app:ipopt} for details.}
  \item [\ddag] {For details, see \code{help ipopt\_options} and the options reference section of the \ipopt{} documentation at \url{http://www.coin-or.org/Ipopt/documentation/}.}
 \end{tablenotes}
 \end{threeparttable}
@@ -4981,7 +4981,7 @@ name & default & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {For \code{opf.solver.ac} option set to \codeq{KNITRO} only. Requires the installation of the optional \knitro{} package~\cite{knitro}. See Appendix~\ref{app:knitro} for details.}
+ \item [\dag] {For \code{opf.ac.solver} option set to \codeq{KNITRO} only. Requires the installation of the optional \knitro{} package~\cite{knitro}. See Appendix~\ref{app:knitro} for details.}
  \item [\ddag] {Note that \knitro{} uses the \code{opt\_fname} option slightly differently from other optional solvers. Specifically, it is the name of a text file processed directly by \knitro{}, not a \matlab{} function that returns an options struct passed to the solver.}
 % \item [\ddag] {For details, see \code{help knitro\_options} \hl{and ... (note that knitro\_options(), knitro.opts, knitro.opt\_fname are not yet implemented)}}
 \end{tablenotes}
@@ -5028,7 +5028,7 @@ name & default\tnote{\ddag} & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {For \code{opf.solver.ac} option set to \codeq{MINOPF} only. Requires the installation of the optional MINOPF package~\cite{minopf}. See Appendix~\ref{app:minopf} for details.}
+ \item [\dag] {For \code{opf.ac.solver} option set to \codeq{MINOPF} only. Requires the installation of the optional MINOPF package~\cite{minopf}. See Appendix~\ref{app:minopf} for details.}
  \item [\ddag] {Default values in parenthesis refer to defaults assigned in MEX file if called with option equal to 0.}
 \end{tablenotes}
 \end{threeparttable}
@@ -5072,7 +5072,7 @@ name & default\tnote{\S} & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {For \code{opf.solver.dc} option set to \codeq{MOSEK} only. Requires the installation of the optional \mosek{} package. See Appendix~\ref{app:mosek} for details.}
+ \item [\dag] {For \code{opf.dc.solver} option set to \codeq{MOSEK} only. Requires the installation of the optional \mosek{} package. See Appendix~\ref{app:mosek} for details.}
  \item [\S] {Default values in parenthesis refer to defaults assigned by \mosek{} if called with option equal to 0.}
  \item [*] {The values listed here correspond to those used by MOSEK version 7.x. Version 6.x was different. It is probably safer to write your code using the symbolic constants defined by \code{mosek\_symbcon} rather than using explicit numerical values.}
  \item [\ddag] {For details, see \code{help mosek\_options} and the ``Parameters'' reference in ``The MOSEK optimization toolbox for MATLAB manual'' at \url{http://docs.mosek.com/7.1/toolbox/Parameters.html}.}
@@ -6538,7 +6538,7 @@ The current version of the MEX interface is based on version 2.21 of the BPMPD s
 
 Builds are available for Linux (32-bit), Mac OS X (PPC, Intel 32-bit) and Windows (32-bit) at \url{http://www.pserc.cornell.edu/bpmpd/}.
 
-When installed BPMPD\_MEX can be selected as the solver for DC OPFs by setting the \code{opf.solver.dc} option to \codeq{BPMPD}. It can also be used to solve general LP and QP problems via \matpower{}'s common QP solver interface \code{qps\_matpower} with the algorithm option set to \codeq{BPMPD} (or 100 for backward compatibility), or by calling \code{qps\_bpmpd} directly.
+When installed BPMPD\_MEX can be selected as the solver for DC OPFs by setting the \code{opf.dc.solver} option to \codeq{BPMPD}. It can also be used to solve general LP and QP problems via \matpower{}'s common QP solver interface \code{qps\_matpower} with the algorithm option set to \codeq{BPMPD} (or 100 for backward compatibility), or by calling \code{qps\_bpmpd} directly.
 
 \subsection{\clp{} -- COIN-OR Linear Programming}
 \label{app:clp}
@@ -6548,7 +6548,7 @@ The \clp{}~\cite{clp} ({\bf C}OIN-OR {\bf L}inear {\bf P}rogramming) solver is a
 To use \clp{} with \matpower{}, a MEX interface is required\footnote{According to David Gleich at \url{http://web.stanford.edu/~dgleich/notebook/2009/03/coinor_clop_for_matlab.html}, there was a \matlab{} MEX interface to \clp{} written by Johan Lofberg and available (at some point in the past) at \url{http://control.ee.ethz.ch/~joloef/mexclp.zip}. Unfortunately, at the time of this writing, it seems it is no longer available there, but Davide Barcelli makes some precompiled MEX files for some platforms available here \url{http://www.dii.unisi.it/~barcelli/software.php}, and the ZIP file linked as Clp 1.14.3 contains the MEX source as well as a \code{clp.m} wrapper function with some rudimentary documentation.}. For Microsoft Windows users, a pre-compiled MEX version of \clp{} (and numerous other solvers, such as \glpk{} and \ipopt{}) are easily installable as part of the OPTI Toolbox\footnote{The OPTI Toolbox is available from 
 \url{http://www.i2c2.aut.ac.nz/Wiki/OPTI/}.}~\cite{opti}
 
-With the \matlab{} interface to \clp{} installed, it can be used to solve DC OPF problems by setting the \code{opf.solver.dc} option equal to \codeq{CLP}. The solution algorithms and other \clp{} parameters can be set directly via \matpower{}'s \code{clp.opts} option. A ``\clp{} user options'' function can also be specified via \code{clp.opt\_fname} to override the defaults for any of the many \clp{} parameters. See \code{help clp} for details. See Table~\ref{tab:clpoptions} for a summary of the \clp{}-related \matpower{} options.
+With the \matlab{} interface to \clp{} installed, it can be used to solve DC OPF problems by setting the \code{opf.dc.solver} option equal to \codeq{CLP}. The solution algorithms and other \clp{} parameters can be set directly via \matpower{}'s \code{clp.opts} option. A ``\clp{} user options'' function can also be specified via \code{clp.opt\_fname} to override the defaults for any of the many \clp{} parameters. See \code{help clp} for details. See Table~\ref{tab:clpoptions} for a summary of the \clp{}-related \matpower{} options.
 
 \clp{} can also be used to solve general LP and QP problems via \matpower{}'s common QP solver interface \code{qps\_matpower} with the algorithm option set to \codeq{CLP}, or by calling \code{qps\_clp} directly.
 
@@ -6559,7 +6559,7 @@ The IBM ILOG \cplex{} Optimizer, or simply \cplex{}, is a collection of optimiza
 
 Although \cplex{} is a commercial package, at the time of this writing the full version is available to academics at no charge through the IBM Academic Initiative program for teaching and non-commercial research. See \url{http://www.ibm.com/support/docview.wss?uid=swg21419058} for more details.
 
-When the \matlab{} interface to \cplex{} is installed, the \cplex{} LP and QP solvers, \code{cplexlp} and \code{cplexqp}, can be used to solve DC OPF problems by setting the \code{opf.solver.dc} option equal to \codeq{CPLEX}. The solution algorithms can be controlled by \matpower{}'s \code{cplex.lpmethod} and  \code{cplex.qpmethod} options. See Table~\ref{tab:cplexoptions} for a summary of the \cplex{}-related \matpower{} options. A ``\cplex{} user options'' function can also be specified via \code{cplex.opt\_fname} to override the defaults for any of the many \cplex{} parameters. See \code{help cplex\_options} and the ``Parameters of \cplex{}'' section of the \cplex{} documentation at \url{http://www.ibm.com/support/knowledgecenter/SSSA5P} for details.
+When the \matlab{} interface to \cplex{} is installed, the \cplex{} LP and QP solvers, \code{cplexlp} and \code{cplexqp}, can be used to solve DC OPF problems by setting the \code{opf.dc.solver} option equal to \codeq{CPLEX}. The solution algorithms can be controlled by \matpower{}'s \code{cplex.lpmethod} and  \code{cplex.qpmethod} options. See Table~\ref{tab:cplexoptions} for a summary of the \cplex{}-related \matpower{} options. A ``\cplex{} user options'' function can also be specified via \code{cplex.opt\_fname} to override the defaults for any of the many \cplex{} parameters. See \code{help cplex\_options} and the ``Parameters of \cplex{}'' section of the \cplex{} documentation at \url{http://www.ibm.com/support/knowledgecenter/SSSA5P} for details.
 
 It can also be used to solve general LP and QP problems via \matpower{}'s common QP solver interface \code{qps\_matpower}, or MILP and MIQP problems via \code{miqps\_matpower}, with the algorithm option set to \codeq{CPLEX} (or 500 for backward compatibility), or by calling \code{qps\_cplex} or \code{miqps\_cplex} directly.
 
@@ -6571,7 +6571,7 @@ The \glpk{}~\cite{glpk} ({\bf G}NU {\bf L}inear {\bf P}rogramming {\bf K}it) pac
 To use \glpk{} with \matpower{}, a MEX interface is required\footnote{The \url{http://glpkmex.sourceforge.net} site and Davide Barcelli's page \url{http://www.dii.unisi.it/~barcelli/software.php} may be useful in obtaining the MEX source or pre-compiled binaries for Mac or Linux platforms.}. For Microsoft Windows users, a pre-compiled MEX version of \glpk{} (and numerous other solvers, such as \clp{} and \ipopt{}) are easily installable as part of the OPTI Toolbox\footnote{The OPTI Toolbox is available from 
 \url{http://www.i2c2.aut.ac.nz/Wiki/OPTI/}.}~\cite{opti}.
 
-When \glpk{} is installed, either as part of Octave or with a MEX interface for \matlab{}, it can be used to solve DC OPF problems that do not include any quadratic costs by setting the \code{opf.solver.dc} option equal to \codeq{GLPK}. The solution algorithms and other \glpk{} parameters can be set directly via \matpower{}'s \code{glpk.opts} option. A ``\glpk{} user options'' function can also be specified via \code{glpk.opt\_fname} to override the defaults for any of the many \glpk{} parameters. See \code{help glpk\_options} and the parameters section the \glpk{} documentation at \url{http://www.gnu.org/software/octave/doc/interpreter/Linear-Programming.html} for details. See Table~\ref{tab:glpkoptions} for a summary of the \glpk{}-related \matpower{} options. 
+When \glpk{} is installed, either as part of Octave or with a MEX interface for \matlab{}, it can be used to solve DC OPF problems that do not include any quadratic costs by setting the \code{opf.dc.solver} option equal to \codeq{GLPK}. The solution algorithms and other \glpk{} parameters can be set directly via \matpower{}'s \code{glpk.opts} option. A ``\glpk{} user options'' function can also be specified via \code{glpk.opt\_fname} to override the defaults for any of the many \glpk{} parameters. See \code{help glpk\_options} and the parameters section the \glpk{} documentation at \url{http://www.gnu.org/software/octave/doc/interpreter/Linear-Programming.html} for details. See Table~\ref{tab:glpkoptions} for a summary of the \glpk{}-related \matpower{} options. 
 
 \glpk{} can also be used to solve general LP problems via \matpower{}'s common QP solver interface \code{qps\_matpower}, or MILP problems via \code{miqps\_matpower}, with the algorithm option set to \codeq{GLPK}, or by calling \code{qps\_glpk} or \code{miqps\_glpk} directly.
 
@@ -6584,7 +6584,7 @@ Although \gurobi{} is a commercial package, at the time of this writing their is
 
 Beginning with version~5.0.0, \gurobi{} includes a native \matlab{} interface, which is supported in \matpower{} version~4.2 and above.\footnote{\matpower{} version~4.1 supported \gurobi{} version 4.x, which required a free third-party \matlab{} MEX interface \cite{gurobimex}, available at \url{http://www.convexoptimization.com/wikimization/index.php/Gurobi_mex}.}
 
-When \gurobi{} is installed, it can be used to solve DC OPF problems by setting the \code{opf.solver.dc} option equal to \codeq{GUROBI}. The solution algorithms can be controlled by \matpower{}'s \code{gurobi.method} option. See Table~\ref{tab:gurobioptions} for a summary of the \gurobi{}-related \matpower{} options. A ``\gurobi{} user options'' function can also be specified via \code{gurobi.opt\_fname} to override the defaults for any of the many \gurobi{} parameters. See \code{help gurobi\_options} and the ``Parameters'' section of the ``Gurobi Optimizer Reference Manual'' at \url{http://www.gurobi.com/documentation/6.0/refman/parameters.html} for details.
+When \gurobi{} is installed, it can be used to solve DC OPF problems by setting the \code{opf.dc.solver} option equal to \codeq{GUROBI}. The solution algorithms can be controlled by \matpower{}'s \code{gurobi.method} option. See Table~\ref{tab:gurobioptions} for a summary of the \gurobi{}-related \matpower{} options. A ``\gurobi{} user options'' function can also be specified via \code{gurobi.opt\_fname} to override the defaults for any of the many \gurobi{} parameters. See \code{help gurobi\_options} and the ``Parameters'' section of the ``Gurobi Optimizer Reference Manual'' at \url{http://www.gurobi.com/documentation/6.0/refman/parameters.html} for details.
 
 It can also be used to solve general LP and QP problems via \matpower{}'s common QP solver interface \code{qps\_matpower}, or MILP and MIQP problems via \code{miqps\_matpower}, with the algorithm option set to \codeq{GUROBI} (or 700 for backward compatibility), or by calling \code{qps\_gurobi} or \code{miqps\_gurobi} directly.
 
@@ -6598,7 +6598,7 @@ It can also be used to solve general LP and QP problems via \matpower{}'s common
 Precompiled MEX binaries for a high-performance version of \ipopt{}, using the \pardiso{} linear solver~\cite{pardiso, pardiso2}, are available from the \pardiso{} project\footnote{See \url{http://www.pardiso-project.org/} for the download links.}. At the time of this writing, these are the highest performing solvers available to \matpower{} for very large scale AC OPF problems. For Microsoft Windows users, a pre-compiled MEX version of \ipopt{} (and numerous other solvers, such as \clp{} and \glpk{}) are easily installable as part of the OPTI Toolbox\footnote{The OPTI Toolbox is available from 
 \url{http://www.i2c2.aut.ac.nz/Wiki/OPTI/}.}~\cite{opti}.
 
-When installed, \ipopt{} can be used by \matpower{} to solve both AC and DC OPF problems by setting the \code{opf.solver.ac} or \code{opf.solver.dc} options, respectively, equal to \codeq{IPOPT}. See Table~\ref{tab:ipoptoptions} for a summary of the \ipopt{}-related \matpower{} options. The many algorithm options can be set by creating an ``\ipopt{} user options'' function and specifying it via \code{ipopt.opt\_fname} to override the defaults set by \code{ipopt\_options}. See \code{help ipopt\_options} and the options reference section of the \ipopt{} documentation at \url{http://www.coin-or.org/Ipopt/documentation/} for details.
+When installed, \ipopt{} can be used by \matpower{} to solve both AC and DC OPF problems by setting the \code{opf.ac.solver} or \code{opf.dc.solver} options, respectively, equal to \codeq{IPOPT}. See Table~\ref{tab:ipoptoptions} for a summary of the \ipopt{}-related \matpower{} options. The many algorithm options can be set by creating an ``\ipopt{} user options'' function and specifying it via \code{ipopt.opt\_fname} to override the defaults set by \code{ipopt\_options}. See \code{help ipopt\_options} and the options reference section of the \ipopt{} documentation at \url{http://www.coin-or.org/Ipopt/documentation/} for details.
 
 It can also be used to solve general LP and QP problems via \matpower{}'s common QP solver interface \code{qps\_matpower} with the algorithm option set to \codeq{IPOPT} (or 400 for backward compatibility), or by calling \code{qps\_ipopt} directly.
 
@@ -6609,7 +6609,7 @@ It can also be used to solve general LP and QP problems via \matpower{}'s common
 
 Although \knitro{} is a commercial package, at the time of this writing there is a free academic license available, with details on their download page.
 
-When installed, \knitro{}'s \matlab{} interface function, \code{knitromatlab} or \code{ktrlink}, can be used by \matpower{} to solve AC OPF problems by simply setting the \code{opf.solver.ac} option to \codeq{KNITRO}. See Table~\ref{tab:knitrooptions} for a summary of \knitro{}-related \matpower{} options. The \code{knitromatlab} function uses callbacks to \matlab{} functions to evaluate the objective function and its gradient, the constraint values and Jacobian, and the Hessian of the Lagrangian.
+When installed, \knitro{}'s \matlab{} interface function, \code{knitromatlab} or \code{ktrlink}, can be used by \matpower{} to solve AC OPF problems by simply setting the \code{opf.ac.solver} option to \codeq{KNITRO}. See Table~\ref{tab:knitrooptions} for a summary of \knitro{}-related \matpower{} options. The \code{knitromatlab} function uses callbacks to \matlab{} functions to evaluate the objective function and its gradient, the constraint values and Jacobian, and the Hessian of the Lagrangian.
 
 \knitro{} options can be controlled directly by creating a standard \knitro{} options file in your working directory and specifying it via the \code{knitro.opt\_fname} (or, for backward compatibility, naming it \code{knitro\_user\_options\_$n$.txt} and setting \matpower{}'s \code{knitro.opt} option to $n$, where $n$ is some positive integer value). See the \knitro{} user manuals at \url{http://www.ziena.com/documentation.htm} for details on the available options.
 
@@ -6618,7 +6618,7 @@ When installed, \knitro{}'s \matlab{} interface function, \code{knitromatlab} or
 
 MINOPF~\cite{minopf} is a MINOS-based optimal power flow solver for use with \matpower{}. It is for educational and research use only. MINOS~\cite{murtagh} is a legacy Fortran-based software package, developed at the Systems Optimization Laboratory at Stanford University, for solving large-scale optimization problems.
 
-While MINOPF is often \matpower{}'s fastest AC OPF solver on small problems, as of \matpower{}~4, it no longer becomes the default AC OPF solver when it is installed. It can be selected manually by setting the \code{opf.solver.ac} option to \codeq{MINOPF} (see \code{help mpoption} for details).
+While MINOPF is often \matpower{}'s fastest AC OPF solver on small problems, as of \matpower{}~4, it no longer becomes the default AC OPF solver when it is installed. It can be selected manually by setting the \code{opf.ac.solver} option to \codeq{MINOPF} (see \code{help mpoption} for details).
 
 Builds are available for Linux (32-bit), Mac OS X (PPC, Intel 32-bit) and Windows (32-bit) at \url{http://www.pserc.cornell.edu/minopf/}.
 
@@ -6629,7 +6629,7 @@ Builds are available for Linux (32-bit), Mac OS X (PPC, Intel 32-bit) and Window
 
 Although \mosek{} is a commercial package, at the time of this writing there is a free academic license available. See \url{http://mosek.com/resources/academic-license/} for more details.
 
-When the \matlab{} interface to \mosek{} is installed, the \mosek{} LP and QP solvers can be used to solve DC OPF problems by setting the \code{opf.solver.dc} option equal to \codeq{MOSEK}. The solution algorithm for LP problems can be controlled by \matpower{}'s \code{mosek.lp\_alg} option. See Table~\ref{tab:mosekoptions} for other \mosek{}-related \matpower{} options. A ``\mosek{} user options'' function can also be specified via \code{mosek.opt\_fname} to override the defaults for any of the many \mosek{} parameters. For details see \code{help mosek\_options} and the ``Parameters'' reference in ``The MOSEK optimization toolbox for MATLAB manual'' at \url{http://docs.mosek.com/7.1/toolbox/Parameters.html}. You may also find it helpful to use the symbolic constants defined by \code{mosek\_symbcon}.
+When the \matlab{} interface to \mosek{} is installed, the \mosek{} LP and QP solvers can be used to solve DC OPF problems by setting the \code{opf.dc.solver} option equal to \codeq{MOSEK}. The solution algorithm for LP problems can be controlled by \matpower{}'s \code{mosek.lp\_alg} option. See Table~\ref{tab:mosekoptions} for other \mosek{}-related \matpower{} options. A ``\mosek{} user options'' function can also be specified via \code{mosek.opt\_fname} to override the defaults for any of the many \mosek{} parameters. For details see \code{help mosek\_options} and the ``Parameters'' reference in ``The MOSEK optimization toolbox for MATLAB manual'' at \url{http://docs.mosek.com/7.1/toolbox/Parameters.html}. You may also find it helpful to use the symbolic constants defined by \code{mosek\_symbcon}.
 
 It can also be used to solve general LP and QP problems via \matpower{}'s common QP solver interface \code{qps\_matpower}, or MILP and MIQP problems via \code{miqps\_matpower}, with the algorithm option set to \codeq{MOSEK} (or 600 for backward compatibility), or by calling \code{qps\_mosek} or \code{miqps\_mosek} directly.
 
@@ -6643,7 +6643,7 @@ For mixed-integer linear programs (MILP), it provides \code{intlingprog}.
 Each solver implements a number of different solution algorithms.
 More information is available from The MathWorks, Inc. at \url{http://www.mathworks.com/}.
 
-When available, the \ot{} solvers can be used to solve AC or DC OPF problems by setting the \code{opf.solver.ac} or \code{opf.solver.dc} options, respectively, equal to \codeq{OT}.
+When available, the \ot{} solvers can be used to solve AC or DC OPF problems by setting the \code{opf.ac.solver} or \code{opf.dc.solver} options, respectively, equal to \codeq{OT}.
 
 The solution algorithm used by \code{fmincon} for NLP problems can be controlled by \matpower{}'s \code{fmincon.alg} option.
 See Table~\ref{tab:fminconoptions} for other \matpower{} options related to \code{fmincon}.
