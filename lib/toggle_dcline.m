@@ -48,11 +48,14 @@ if strcmp(upper(on_off), 'ON')
         error('toggle_dcline: number of rows in ''dcline'' field (%d) and ''dclinecost'' field (%d) do not match.', ...
             size(mpc.dcline, 1), size(mpc.dclinecost, 1));
     end
-%     k = find(mpc.dcline(:, c.LOSS1) < 0);
-%     if ~isempty(k)
-%         warning('toggle_dcline: linear loss term is negative for DC line from bus %d to %d\n', ...
-%             [mpc.dcline(k, c.F_BUS:c.T_BUS)]');
-%     end
+    l0 = mpc.dcline(:, c.LOSS0);
+    l1 = mpc.dcline(:, c.LOSS1);
+    k = find( (l0 + l1 .* mpc.dcline(:, c.PMIN) < 0) | ...
+              (l0 + l1 .* mpc.dcline(:, c.PMAX) < 0) );
+    if ~isempty(k)
+        warning('toggle_dcline: loss can be negative for DC line from bus %d to %d\n', ...
+            [mpc.dcline(k, c.F_BUS:c.T_BUS)]');
+    end
 
     %% add callback functions
     %% note: assumes all necessary data included in 1st arg (mpc, om, results)
