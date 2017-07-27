@@ -2053,7 +2053,7 @@ If one of the sloped portions of the capability constraints is binding for gener
 
 \subsubsection{Branch Angle Difference Limits}
 
-The difference between the bus voltage angle $\theta_f$ at the \emph{from} end of a branch and the angle $\theta_t$ at the \emph{to} end can be bounded above and below to act as a proxy for a transient stability limit, for example. If these limits are provided in columns \code{ANGMIN} (12) and \code{ANGMAX} (13) of the \branch{} matrix, \matpower{} creates the corresponding constraints on the voltage angle variables.\footnote{The voltage angle difference for branch~$k$ is taken to be unbounded below if \code{branch(k,~ANGMIN)} is less than $-360$ and unbounded above if \code{branch(k,~ANGMAX)} is greater than 360. If both parameters are zero, the voltage angle difference is unconstrained.}
+The difference between the bus voltage angle $\theta_f$ at the \emph{from} end of a branch and the angle $\theta_t$ at the \emph{to} end can be bounded above and below to act as a proxy for a transient stability limit, for example. If these limits are provided in columns \code{ANGMIN} (12) and \code{ANGMAX} (13) of the \branch{} matrix, \matpower{} creates the corresponding constraints on the voltage angle variables.\footnote{The voltage angle difference for branch~$k$ is taken to be unbounded below if \code{branch(k,~ANGMIN)} is less than or equal to $-360$ and unbounded above if \code{branch(k,~ANGMAX)} is greater than or equal to 360. If both parameters are zero, the voltage angle difference is unconstrained.}
 
 \subsection{Solvers}
 \label{sec:solvers}
@@ -4271,7 +4271,7 @@ name & column & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [*] {Not included in version~1 case format. The voltage angle difference is taken to be unbounded below if \code{ANGMIN} $< -360$ and unbounded above if \code{ANGMAX} $> 360$. If both parameters are zero, the voltage angle difference is unconstrained.}
+ \item [*] {Not included in version~1 case format. The voltage angle difference is taken to be unbounded below if \code{ANGMIN} $\le -360$ and unbounded above if \code{ANGMAX} $\ge 360$. If both parameters are zero, the voltage angle difference is unconstrained.}
  \item [\dag] {Included in power flow and OPF output, ignored on input.}
  \item [\ddag] {Included in OPF output, typically not included (or ignored) in input matrix. Here we assume the objective function has units $u$.}
 \end{tablenotes}

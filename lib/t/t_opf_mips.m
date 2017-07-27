@@ -18,7 +18,7 @@ if have_fcn('pardiso')
     linsolvers{end+1} = 'PARDISO';
 end
 
-num_tests = 137;
+num_tests = 139;
 
 t_begin(2*num_tests + 1, quiet);
 
@@ -296,6 +296,17 @@ for k = 1:length(linsolvers)
     t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
     t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
     t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
+
+    %% angle bounded above by 0, unbounded below
+    %% for issue/18
+    t = [t0 'w/angle difference limit = 0 : '];
+    mpc = loadcase(casefile);
+    b = 5;
+    mpc.branch(b, ANGMAX) = 0;
+    r = runopf(mpc, mpopt);
+    t_ok(success, [t 'success']);
+    diff = r.bus(r.branch(b, F_BUS), VA) - r.bus(r.branch(b, T_BUS), VA);
+    t_is(diff, 0, 5, t);
 
     %%-----  test OPF with opf.use_vg  -----
     %% get solved AC OPF case from MAT-file

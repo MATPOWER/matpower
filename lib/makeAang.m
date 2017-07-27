@@ -37,16 +37,22 @@ if mpopt.opf.ignore_angle_lim
   uang  = [];
   iang  = [];
 else
-  iang = find((branch(:, ANGMIN) & branch(:, ANGMIN) > -360) | ...
-              (branch(:, ANGMAX) & branch(:, ANGMAX) < 360));
+  iang = find( (branch(:, ANGMIN) & branch(:, ANGMIN) > -360) | ...
+               (branch(:, ANGMAX) & branch(:, ANGMAX) <  360) | ...
+               ( branch(:, ANGMIN) & ~branch(:, ANGMAX)) | ...
+               (~branch(:, ANGMIN) &  branch(:, ANGMAX)) );
   nang = length(iang);
 
   if nang > 0
     ii = [(1:nang)'; (1:nang)'];
     jj = [branch(iang, F_BUS); branch(iang, T_BUS)];
     Aang = sparse(ii, jj, [ones(nang, 1); -ones(nang, 1)], nang, nb);
-    lang = branch(iang, ANGMIN) * pi/180;
-    uang = branch(iang, ANGMAX) * pi/180;
+    lang = branch(iang, ANGMIN);
+    uang = branch(iang, ANGMAX);
+    lang(lang < -360) = -Inf;
+    uang(uang >  360) =  Inf;
+    lang = lang * pi/180;
+    uang = uang * pi/180;
   else
     Aang = sparse(0, nb);
     lang =[];
