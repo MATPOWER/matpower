@@ -93,7 +93,6 @@ for k = 1:om.(ff).NS
             end
         else                    %% selected rows of x
             kN = 0;                             %% initialize last col of d2Gk used
-            dgi = sparse(N, om.var.N);
             ii = [];
             for v = 1:length(vsl)
                 % (calls to substruct() are relatively expensive ...
