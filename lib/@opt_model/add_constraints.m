@@ -64,10 +64,23 @@ function om = add_constraints(om, name, varargin)
 %       array of vectors corresponding to the variable sets specified in
 %       VARSETS.
 %
+%       For nonlinear constraints, NAME can be a cell array of constraint
+%       set names, in which case N is a vector, specifying the number of
+%       constraints in each set. FCN and HESS are still single function
+%       handles for functions that compute the values for the entire
+%       collection of constraint sets together.
+%
 %       For backward compatibility, ADD_CONSTRAINTS can also simply include
-%       the number of constraints N followed by the string 'nonlinear' to
-%       indicate a placeholder in the indexing for constraints that will
-%       be implemented outside of the OPT_MODEL.
+%       the number of constraints N followed by the string 'nonlinear' or
+%       'nln' to indicate a placeholder in the indexing for constraints that
+%       will be implemented outside of the OPT_MODEL.
+%
+%       Similarly, if the third argument is a string containing 'nle' or
+%       'nli', it indicates a placeholder in the indexing for a constraint
+%       set whose implmentation is included in another constraint set. This
+%       functionality is only intended to be used internally to handle
+%       constraint/gradient and Hessian functions that handle more than one
+%       constraint set simultaneously.
 %
 %   Indexed Named Sets
 %       A constraint set can be identified by a single NAME, as described
@@ -123,16 +136,15 @@ function om = add_constraints(om, name, varargin)
 
 %% determine whether it's linear or nonlinear, simple or indexed
 %% and if indexed, just setting dimensions or actually adding constraints
-%%      linear    : nonlin = 0, ff = 'lin', label = 'linear'
+%%      linear    : nonlin = 0, ff = 'lin'
 %%      nonlinear : nonlin = 1
-%%          equality :          ff = 'nle', label = 'nonlinear equality'
-%%          inequality :        ff = 'nli', label = 'nonlinear inequality'
+%%          equality :          ff = 'nle'
+%%          inequality :        ff = 'nli'
 %%      simple    : idx empty, args not empty
 %%      indexed   : idx not empty
 %%          set dims only : args empty
 %%          add idx'd cons: args not empty
 nonlin = 0;
-label = 'linear';
 ff = 'lin';
 if iscell(varargin{1})          %% indexed named set
     idx = varargin{1};          %% dimensions or indices
@@ -141,45 +153,22 @@ if iscell(varargin{1})          %% indexed named set
         if length(varargin) > 1
             ff = lower(varargin{2});
             if strcmp(ff, 'nle')
-                label = 'nonlinear equality';
                 nonlin = 1;
             elseif strcmp(ff, 'nli')
-                label = 'nonlinear inequality';
                 nonlin = 1;
             elseif ~strcmp(ff, 'lin')
                 error('@opt_model/add_constraints: ''%s'' is not a valid type (''lin'', ''nle'', or ''nli'') for an indexed constraint set', ff);
             end
         end
-        %% prevent duplicate named constraint sets
-        if isfield(om.(ff).idx.N, name)
-            error('@opt_model/add_constraints: %s constraint set named ''%s'' already exists', label, name);
-        end
     else                        %% indexed set
         args = varargin(2:end);
-
-        % (calls to substruct() are relatively expensive ...
-        % s1 = substruct('.', name, '()', idx);
-        % s2 = substruct('.', name, '{}', idx);
-        % ... so replace them with these more efficient lines)
-        s1 = struct('type', {'.', '()'}, 'subs', {name, idx});
-        s2 = s1;
-        s2(2).type = '{}';
-
-        %% prevent duplicate named constraint sets
         if isa(args{3}, 'function_handle')
             if args{2}
-                label = 'nonlinear equality';
                 ff = 'nle';
             else
-                label = 'nonlinear inequality';
                 ff = 'nli';
             end
             nonlin = 1;
-        end
-        if subsref(om.(ff).idx.i1, s1) ~= 0
-            str = '%d'; for m = 2:length(idx), str = [str ',%d']; end
-            nname = sprintf(['%s(' str, ')'], name, idx{:});
-            error('@opt_model/add_constraints: %s constraint set named ''%s'' already exists', label, nname);
         end
     end
 else                            %% simple named set
@@ -188,46 +177,19 @@ else                            %% simple named set
 
     if length(args) < 3 || isa(args{3}, 'function_handle')
         if length(args) < 3         %% legacy
-            label = 'nonlinear';
             ff = 'nln';
         elseif args{2}
-            label = 'nonlinear equality';
             ff = 'nle';
         else
-            label = 'nonlinear inequality';
             ff = 'nli';
         end
         nonlin = 1;
-    end
-
-    %% prevent duplicate named constraint sets
-    if isfield(om.(ff).idx.N, name)
-        error('@opt_model/add_constraints: %s constraint set named ''%s'' already exists', label, name);
     end
 end
 nargs = length(args);
 
 if ~isempty(idx) && nargs == 0      %% just set dimensions for indexed set
-    %% use column vector if single dimension
-    if length(idx) == 1
-        idx = {idx{:}, 1};
-    end
-
-    %% add info about this constraint set
-    om.(ff).idx.i1.(name)    = zeros(idx{:});   %% starting index
-    om.(ff).idx.iN.(name)    = zeros(idx{:});   %% ending index
-    om.(ff).idx.N.(name)     = zeros(idx{:});   %% number of constraints
-    om.(ff).data.vs.(name)   = cell(idx{:});
-    if nonlin
-        %% add info about this nonlinear constraint set
-        om.(ff).data.fcn.(name)  = cell(idx{:});
-        om.(ff).data.hess.(name) = cell(idx{:});
-    else
-        %% add info about this linear constraint set
-        om.(ff).data.A.(name)    = cell(idx{:});
-        om.(ff).data.l.(name)    = cell(idx{:});
-        om.(ff).data.u.(name)    = cell(idx{:});
-    end
+    om.init_indexed_name(ff, name, idx);
 else
     if nonlin           %% nonlinear
         if nargs == 2
@@ -237,97 +199,17 @@ else
         else
             [N, iseq, fcn, hess, varsets] = deal(args{1:5});
         end
+        if strcmp(ff, 'nln')
+            om.add_nln_constraints(name, idx, N, 'nonlinear');
+        else
+            om.add_nln_constraints(name, idx, N, iseq, fcn, hess, varsets);
+        end
     else                %% linear
         if nargs < 4
             [A, l, u, varsets] = deal(args{1:3}, {});
         else
             [A, l, u, varsets] = deal(args{1:4});
         end
-        [N, M] = size(A);
-        if isempty(l)                   %% default l is -Inf
-            l = -Inf(N, 1);
-        end
-        if isempty(u)                   %% default u is Inf
-            u = Inf(N, 1);
-        end
-
-        %% check sizes
-        if size(l, 1) ~= N || size(u, 1) ~= N
-            error('@opt_model/add_constraints: sizes of A, l and u must match');
-        end
-    end
-
-    if ~isempty(varsets) && iscell(varsets)
-        empty_cells = cell(1, length(varsets));
-        [empty_cells{:}] = deal({});    %% empty cell arrays
-        varsets = struct('name', varsets, 'idx', empty_cells);
-    end
-    if isempty(varsets)
-        nv = om.var.N;
-    else
-        nv = 0;
-        s = struct('type', {'.', '()'}, 'subs', {'', 1});
-        for k = 1:length(varsets)
-            % (calls to substruct() are relatively expensive ...
-            % s = substruct('.', varsets(k).name, '()', varsets(k).idx);
-            % ... so replace it with these more efficient lines)
-            s(1).subs = varsets(k).name;
-            s(2).subs = varsets(k).idx;
-            nv = nv + subsref(om.var.idx.N, s);
-        end
-    end
-    if ~nonlin && M ~= nv
-        error('@opt_model/add_constraints: number of columns of A does not match\nnumber of variables, A is %d x %d, nv = %d\n', N, M, nv);
-    end
-
-    if isempty(idx)     %% simple
-        %% add info about this constraint set
-        om.(ff).idx.i1.(name)  = om.(ff).N + 1; %% starting index
-        om.(ff).idx.iN.(name)  = om.(ff).N + N; %% ending index
-        om.(ff).idx.N.(name)   = N;             %% number of constraints
-        om.(ff).data.vs.(name) = varsets;
-
-        %% update number of constraints and constraint sets
-        om.(ff).N  = om.(ff).idx.iN.(name);
-        om.(ff).NS = om.(ff).NS + 1;
-
-        %% add to ordered list of constraint sets
-        om.(ff).order(om.(ff).NS).name = name;
-        om.(ff).order(om.(ff).NS).idx  = {};
-
-        if nonlin
-            if ~isempty(fcn)
-                om.(ff).data.fcn.(name)  = fcn;
-                om.(ff).data.hess.(name) = hess;
-            end
-        else
-            om.(ff).data.A.(name)  = A;
-            om.(ff).data.l.(name)  = l;
-            om.(ff).data.u.(name)  = u;
-        end
-    else                %% indexed
-        %% add info about this constraint set
-        om.(ff).idx.i1  = subsasgn(om.(ff).idx.i1, s1, om.(ff).N + 1);  %% starting index
-        om.(ff).idx.iN  = subsasgn(om.(ff).idx.iN, s1, om.(ff).N + N);  %% ending index
-        om.(ff).idx.N   = subsasgn(om.(ff).idx.N,  s1, N);              %% number of constraints
-        om.(ff).data.vs = subsasgn(om.(ff).data.vs, s2, varsets);
-
-        %% update number of constraints and constraint sets
-        om.(ff).N  = subsref(om.(ff).idx.iN, s1);
-        om.(ff).NS = om.(ff).NS + 1;
-
-        %% add to ordered list of constraint sets
-        om.(ff).order(om.(ff).NS).name = name;
-        om.(ff).order(om.(ff).NS).idx  = idx;
-
-        if nonlin
-            %% add info about this nonlinear constraint set
-            om.(ff).data.fcn   = subsasgn(om.(ff).data.fcn, s2, fcn);
-            om.(ff).data.hess  = subsasgn(om.(ff).data.hess, s2, hess);
-        else
-            om.(ff).data.A  = subsasgn(om.(ff).data.A, s2, A);
-            om.(ff).data.l  = subsasgn(om.(ff).data.l, s2, l);
-            om.(ff).data.u  = subsasgn(om.(ff).data.u, s2, u);
-        end
+        om.add_lin_constraints(name, idx, A, l, u, varsets);
     end
 end

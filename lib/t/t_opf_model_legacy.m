@@ -1,5 +1,5 @@
-function t_opf_model(quiet)
-%T_OPF_MODEL Tests for OPF_MODEL.
+function t_opf_model_legacy(quiet)
+%T_OPF_MODEL_LEGACY Tests for OPF_MODEL, using the deprecated ADD_CONSTRAINTS.
 
 %   MATPOWER
 %   Copyright (c) 2012-2017, Power Systems Engineering Research Center (PSERC)
@@ -69,8 +69,8 @@ vNS = vNS + 1; vN = vN + 5;
 t_ok(om.getN('var') == vN, sprintf('%s : var.N  = %d', t, vN));
 t_ok(om.get('var', 'NS') == vNS, sprintf('%s : var.NS = %d', t, vNS));
 
-t = 'om.init_indexed_name(''var'', ''x'', dims)';
-om.init_indexed_name('var', 'x', {2,2});
+t = 'om.add_vars(''x'', dims)';
+om.add_vars('x', {2,2});
 t_ok(om.getN('var') == vN, sprintf('%s : var.N  = %d', t, vN));
 t_ok(om.get('var', 'NS') == vNS, sprintf('%s : var.NS = %d', t, vNS));
 
@@ -98,8 +98,8 @@ vNS = vNS + 1; vN = vN + 2;
 t_ok(om.getN('var') == vN, sprintf('%s : var.N  = %d', t, vN));
 t_ok(om.get('var', 'NS') == vNS, sprintf('%s : var.NS = %d', t, vNS));
 
-t = 'om.init_indexed_name(''var'', ''y'', {2,3,4})';
-om.init_indexed_name('var', 'y', {2,3,4});
+t = 'om.add_vars(''y'', {2,3,4})';
+om.add_vars('y', {2,3,4});
 vt0 = {'C', 'I', 'B'};
 for i = 1:2
     for j = 1:3
@@ -216,150 +216,151 @@ t_is(vt(vv.i1.y(2,2,4):vv.iN.y(2,2,4)), 'IIBIIIII', 14, [t ' : vt(vv.i1.y(2,2,4)
 vt0 = 'CCCCCCCIIIIICIBICCCCCCCCCCCCCCCCCCCCCCCCCCCCIIIIIIIIIIIIIIIIIIIIIIBBBBBBBBBBBBBBBBBBBBBBBBBBCICCCICCCCICCCCCICCCCCIIBIIIIBIIIIIBIIIIIIBIIIIIBBBCBBBBBCBBBBBBCBBBBBBBCBBBBB';
 t_is(vt, vt0, 14, [t ' : vt']);
 
-%%-----  add_lin_constraints  -----
-t = 'add_lin_constraints';
+%%-----  add_constraints (linear)  -----
+t = 'add_constraints';
 lN = 0;
 lNS = 0;
 t_ok(om.getN('lin') == lN, sprintf('%s : lin.N  = %d', t, lN));
 t_ok(om.get('lin', 'NS') == lNS, sprintf('%s : lin.NS = %d', t, lNS));
 
-t = 'om.add_lin_constraints(''Pmis'', A, l, u, {''Va'', ''Pg''})';
+t = 'om.add_constraints(''Pmis'', A, l, u, {''Va'', ''Pg''})';
 A = sparse([1:3 1:3 1:3]', [1:3 4:6 7 7 7]', [1 1 1 -1 -1 -1 2 3 4]', 3, 7);
 l = -(1:3)'; u = (1:3)';
-om.add_lin_constraints('Pmis', A, l, u, {'Va', 'Pg'});
+om.add_constraints('Pmis', A, l, u, {'Va', 'Pg'});
 lNS = lNS + 1; lN = lN + 3;
 t_ok(om.getN('lin') == lN, sprintf('%s : lin.N  = %d', t, lN));
 t_ok(om.get('lin', 'NS') == lNS, sprintf('%s : lin.NS = %d', t, lNS));
 
-t = 'om.add_lin_constraints(''Qmis'', A, l, u)';
+t = 'om.add_constraints(''Qmis'', A, l, u)';
 A = sparse([1:3 1:3 1:3]', [1:3 4:6 7 7 7]', [1 1 1 -1 -1 -1 2 3 4]', 3, vN);
-om.add_lin_constraints('Qmis', A, l, u);
+om.add_constraints('Qmis', A, l, u);
 lNS = lNS + 1; lN = lN + 3;
 t_ok(om.getN('lin') == lN, sprintf('%s : lin.N  = %d', t, lN));
 t_ok(om.get('lin', 'NS') == lNS, sprintf('%s : lin.NS = %d', t, lNS));
 
-t = 'om.init_indexed_name(''lin'', ''mylin'', {2, 2})';
-om.init_indexed_name('lin', 'mylin', {2, 2});
+t = 'om.add_constraints(''mylin'', {2, 2})';
+om.add_constraints('mylin', {2, 2});
+% om.add_constraints('mylin', {2, 2}, 'lin');
 t_ok(om.getN('lin') == lN, sprintf('%s : lin.N  = %d', t, lN));
 t_ok(om.get('lin', 'NS') == lNS, sprintf('%s : lin.NS = %d', t, lNS));
 
 for i = 1:2
     for j = 1:2
-        t = sprintf('om.add_lin_constraints(''mylin'', {%d,%d}, A, l, u, vs)', i,j);
+        t = sprintf('om.add_constraints(''mylin'', {%d,%d}, A, l, u, vs)', i,j);
         A = sparse([1:(i+j) 1:(i+j)]', [1:(i+j) 5*ones(1,i+j)]', ...
             [ones(i+j,1);-ones(i+j,1)], i+j, 3+2+(i==2 && j==1));
         l = -ones(i+j, 1); u = [];
         vs = struct('name', {'Pg', 'x'}, 'idx', {{}, {i,j}});
-        om.add_lin_constraints('mylin', {i, j}, A, l, u, vs);
+        om.add_constraints('mylin', {i, j}, A, l, u, vs);
         lNS = lNS + 1; lN = lN + i+j;
         t_ok(om.getN('lin') == lN, sprintf('%s : lin.N  = %d', t, lN));
         t_ok(om.get('lin', 'NS') == lNS, sprintf('%s : lin.NS = %d', t, lNS));
     end
 end
 
-%%-----  add_nln_constraints ('legacy')  -----
-t = 'add_nln_constraints (legacy)';
+%%-----  add_constraints (nonlinear 'legacy')  -----
+t = 'add_constraints (nonlinear, legacy)';
 nN = 0;
 nNS = 0;
 t_ok(om.getN('nln') == nN, sprintf('%s : nln.N  = %d', t, nN));
 t_ok(om.get('nln', 'NS') == nNS, sprintf('%s : nln.NS = %d', t, nNS));
 
-t = 'om.add_nln_constraints(''Pmis'', N, ''nonlinear'')';
+t = 'om.add_constraints(''Pmis'', N, ''nonlinear'')';
 N = 4;
-om.add_nln_constraints('Pmis', N, 'nonlinear');
+om.add_constraints('Pmis', N, 'nonlinear');
 nNS = nNS + 1; nN = nN + N;
 t_ok(om.getN('nln') == nN, sprintf('%s : nln.N  = %d', t, nN));
 t_ok(om.get('nln', 'NS') == nNS, sprintf('%s : nln.NS = %d', t, nNS));
 
-t = 'om.add_nln_constraints(''Qmis'', N, ''nonlinear'')';
+t = 'om.add_constraints(''Qmis'', N, ''nonlinear'')';
 N = 3;
-om.add_nln_constraints('Qmis', N, 'nonlinear');
+om.add_constraints('Qmis', N, 'nonlinear');
 nNS = nNS + 1; nN = nN + N;
 t_ok(om.getN('nln') == nN, sprintf('%s : nln.N  = %d', t, nN));
 t_ok(om.get('nln', 'NS') == nNS, sprintf('%s : nln.NS = %d', t, nNS));
 
-%%-----  add_nln_constraints (equality)  -----
-t = 'add_nln_constraints (equality)';
+%%-----  add_constraints (nonlinear, equality)  -----
+t = 'add_constraints (nonlinear, equality)';
 neN = 0;
 neNS = 0;
 t_ok(om.getN('nle') == neN, sprintf('%s : nle.N  = %d', t, neN));
 t_ok(om.get('nle', 'NS') == neNS, sprintf('%s : nle.NS = %d', t, neNS));
 
-t = 'om.add_nln_constraints(''Pmise'', N, 1, fcn, hess, {''Pg'', ''Va''})';
+t = 'om.add_constraints(''Pmise'', N, 1, fcn, hess, {''Pg'', ''Va''})';
 N = 4;
 fcn = @(x)my_fcn(x, N, 2);
 hess = @(x, lam)my_hess(x, lam, 10);
-om.add_nln_constraints('Pmise', N, 1, fcn, hess, {'Pg', 'Va'});
+om.add_constraints('Pmise', N, 1, fcn, hess, {'Pg', 'Va'});
 neNS = neNS + 1; neN = neN + N;
 t_ok(om.getN('nle') == neN, sprintf('%s : nle.N  = %d', t, neN));
 t_ok(om.get('nle', 'NS') == neNS, sprintf('%s : nle.NS = %d', t, neNS));
 
-t = 'om.add_nln_constraints(''Qmise'', N, 1, fcn, hess)';
+t = 'om.add_constraints(''Qmise'', N, 1, fcn, hess)';
 N = 3;
 fcn = @(x)my_fcn(x, N, 2);
 hess = @(x, lam)my_hess(x, lam, 10);
-om.add_nln_constraints('Qmise', N, 1, fcn, hess);
+om.add_constraints('Qmise', N, 1, fcn, hess);
 neNS = neNS + 1; neN = neN + N;
 t_ok(om.getN('nle') == neN, sprintf('%s : nle.N  = %d', t, neN));
 t_ok(om.get('nle', 'NS') == neNS, sprintf('%s : nle.NS = %d', t, neNS));
 
-t = 'om.init_indexed_name(''nle'', ''mynle'', {2, 2})';
-om.init_indexed_name('nle', 'mynle', {2, 2});
+t = 'om.add_constraints(''mynle'', {2, 2})';
+om.add_constraints('mynle', {2, 2}, 'nle');
 t_ok(om.getN('nle') == neN, sprintf('%s : nle.N  = %d', t, neN));
 t_ok(om.get('nle', 'NS') == neNS, sprintf('%s : nle.NS = %d', t, neNS));
 
 for i = 1:2
     for j = 1:2
-        t = sprintf('om.add_nln_constraints(''mynle'', {%d,%d}, N, 1, fcn, hess, vs)', i,j);
+        t = sprintf('om.add_constraints(''mynle'', {%d,%d}, N, 1, fcn, hess, vs)', i,j);
         N = i+j;
         fcn = @(x)my_fcn(x, N, i);
         hess = @(x, lam)my_hess(x, lam, j);
         vs = struct('name', {'Pg', 'x'}, 'idx', {{}, {i,j}});
-        om.add_nln_constraints('mynle', {i, j}, N, 1, fcn, hess, vs);
+        om.add_constraints('mynle', {i, j}, N, 1, fcn, hess, vs);
         neNS = neNS + 1; neN = neN + N;
         t_ok(om.getN('nle') == neN, sprintf('%s : nle.N  = %d', t, neN));
         t_ok(om.get('nle', 'NS') == neNS, sprintf('%s : nle.NS = %d', t, neNS));
     end
 end
 
-%%-----  add_nln_constraints (inequality)  -----
-t = 'add_nln_constraints (inequality)';
+%%-----  add_constraints (nonlinear, inequality)  -----
+t = 'add_constraints (nonlinear, inequality)';
 niN = 0;
 niNS = 0;
 t_ok(om.getN('nli') == niN, sprintf('%s : nli.N  = %d', t, niN));
 t_ok(om.get('nli', 'NS') == niNS, sprintf('%s : nli.NS = %d', t, niNS));
 
-t = 'om.add_nln_constraints(''Pmisi'', N, 0, fcn, hess, {''Pg'', ''Va''})';
+t = 'om.add_constraints(''Pmisi'', N, 0, fcn, hess, {''Pg'', ''Va''})';
 N = 3;
 fcn = @(x)my_fcn(x, N, -2);
 hess = @(x, lam)my_hess(x, lam, -10);
-om.add_nln_constraints('Pmisi', N, 0, fcn, hess, {'Pg', 'Va'});
+om.add_constraints('Pmisi', N, 0, fcn, hess, {'Pg', 'Va'});
 niNS = niNS + 1; niN = niN + N;
 t_ok(om.getN('nli') == niN, sprintf('%s : nli.N  = %d', t, niN));
 t_ok(om.get('nli', 'NS') == niNS, sprintf('%s : nli.NS = %d', t, niNS));
 
-t = 'om.add_nln_constraints(''Qmisi'', N, 0, fcn, hess)';
+t = 'om.add_constraints(''Qmisi'', N, 0, fcn, hess)';
 N = 2;
 fcn = @(x)my_fcn(x, N, -2);
 hess = @(x, lam)my_hess(x, lam, -10);
-om.add_nln_constraints('Qmisi', N, 0, fcn, hess);
+om.add_constraints('Qmisi', N, 0, fcn, hess);
 niNS = niNS + 1; niN = niN + N;
 t_ok(om.getN('nli') == niN, sprintf('%s : nli.N  = %d', t, niN));
 t_ok(om.get('nli', 'NS') == niNS, sprintf('%s : nli.NS = %d', t, niNS));
 
-t = 'om.init_indexed_name(''nli'', ''mynli'', {2, 2})';
-om.init_indexed_name('nli', 'mynli', {2, 2});
+t = 'om.add_constraints(''mynli'', {2, 2})';
+om.add_constraints('mynli', {2, 2}, 'nli');
 t_ok(om.getN('nli') == niN, sprintf('%s : nli.N  = %d', t, niN));
 t_ok(om.get('nli', 'NS') == niNS, sprintf('%s : nli.NS = %d', t, niNS));
 
 for i = 1:2
     for j = 1:2
-        t = sprintf('om.add_nln_constraints(''mynli'', {%d,%d}, N, 0, fcn, hess, vs)', i,j);
+        t = sprintf('om.add_constraints(''mynli'', {%d,%d}, N, 0, fcn, hess, vs)', i,j);
         N = i+j-1;
         fcn = @(x)my_fcn(x, N, i);
         hess = @(x, lam)my_hess(x, lam, j);
         vs = struct('name', {'Pg', 'x'}, 'idx', {{}, {i,j}});
-        om.add_nln_constraints('mynli', {i, j}, N, 0, fcn, hess, vs);
+        om.add_constraints('mynli', {i, j}, N, 0, fcn, hess, vs);
         niNS = niNS + 1; niN = niN + N;
         t_ok(om.getN('nli') == niN, sprintf('%s : nli.N  = %d', t, niN));
         t_ok(om.get('nli', 'NS') == niNS, sprintf('%s : nli.NS = %d', t, niNS));
@@ -482,8 +483,8 @@ cNS = cNS + 1; cN = cN + 2;
 t_ok(om.getN('cost') == cN, sprintf('%s : cost.N  = %d', t, cN));
 t_ok(om.get('cost', 'NS') == cNS, sprintf('%s : cost.NS = %d', t, cNS));
 
-t = 'om.init_indexed_name(''cost'', ''wc'', {2,2})';
-om.init_indexed_name('cost', 'wc', {2,2});
+t = 'om.add_costs(''wc'', {2,2})';
+om.add_costs('wc', {2,2});
 t_ok(om.getN('cost') == cN, sprintf('%s : cost.N  = %d', t, cN));
 t_ok(om.get('cost', 'NS') == cNS, sprintf('%s : cost.NS = %d', t, cNS));
 

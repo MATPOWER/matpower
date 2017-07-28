@@ -12,11 +12,14 @@ classdef opt_model < handle
 %   Below are the list of available methods for use with the Opt Model class.
 %   Please see the help on each individual method for more details:
 %
-%   Modify the OPF formulation by adding named blocks of constraints, costs
+%   Modify the OPF formulation by adding named blocks of costs, constraints
 %   or variables:
-%       add_constraints
 %       add_costs
+%       add_lin_constraints
+%       add_nln_constraints
 %       add_vars
+%       init_indexed_name
+%       add_constraints (deprecated)
 %
 %   Return the number of linear constraints, nonlinear constraints,
 %   variables or cost rows, optionally for a single named block:

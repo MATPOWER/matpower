@@ -45,47 +45,19 @@ function om = add_vars(om, name, idx, varargin)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% set up default args
-if iscell(idx)
-    if ~isempty(varargin)
-        % (calls to substruct() are relatively expensive ...
-        % s1 = substruct('.', name, '()', idx);
-        % s2 = substruct('.', name, '{}', idx);
-        % ... so replace them with these more efficient lines)
-        s1 = struct('type', {'.', '()'}, 'subs', {name, idx});
-        s2 = s1;
-        s2(2).type = '{}';
-
-        %% prevent duplicate named var sets
-        if subsref(om.var.idx.i1, s1) ~= 0
-            str = '%d'; for m = 2:length(idx), str = [str ',%d']; end
-            nname = sprintf(['%s(' str, ')'], name, idx{:});
-            error('@opt_model/add_vars: variable set named ''%s'' already exists', nname);
-        end
-
+if iscell(idx) && isempty(varargin) %% just setting dimensions for indexed set
+    om.init_indexed_name('var', name, idx);
+else
+    if iscell(idx)
         N = varargin{1};
         args = varargin(2:end);
-    else        %% just setting dimensions for indexed set
-        %% prevent duplicate named var sets
-        if isfield(om.var.idx.N, name)
-            error('@opt_model/add_vars: variable set named ''%s'' already exists', name);
-        end
-
-        N = -1;
-        args = {};
+    else
+        N = idx;
+        idx = {};
+        args = varargin;
     end
-else
-    %% prevent duplicate named var sets
-    if isfield(om.var.idx.N, name)
-        error('@opt_model/add_vars: variable set named ''%s'' already exists', name);
-    end
-
-    N = idx;
-    idx = {};
-    args = varargin;
-end
-nargs = length(args);
-
-if N ~= -1      %% not just setting dimensions for indexed set
+    nargs = length(args);
+    
     v0 = []; vl = []; vu = []; vt = [];
     if nargs >= 1
         v0 = args{1};
@@ -111,54 +83,6 @@ if N ~= -1      %% not just setting dimensions for indexed set
     if isempty(vt) && N > 0
         vt = 'C';           %% all continuous by default
     end
-end
 
-if isempty(idx)     %% simple named set
-    %% add info about this var set
-    om.var.idx.i1.(name)  = om.var.N + 1;   %% starting index
-    om.var.idx.iN.(name)  = om.var.N + N;   %% ending index
-    om.var.idx.N.(name)   = N;              %% number of vars
-    om.var.data.v0.(name) = v0;             %% initial value
-    om.var.data.vl.(name) = vl;             %% lower bound
-    om.var.data.vu.(name) = vu;             %% upper bound
-    om.var.data.vt.(name) = vt;             %% variable type
-    
-    %% update number of vars and var sets
-    om.var.N  = om.var.idx.iN.(name);
-    om.var.NS = om.var.NS + 1;
-    
-    %% add to ordered list of var sets
-    om.var.order(om.var.NS).name = name;
-    om.var.order(om.var.NS).idx  = {};
-elseif N == -1      %% just setting dimensions for indexed set
-    %% use column vector if single dimension
-    if length(idx) == 1
-        idx = {idx{:}, 1};
-    end
-    
-    %% add info about this var set
-    om.var.idx.i1.(name)  = zeros(idx{:});  %% starting index
-    om.var.idx.iN.(name)  = zeros(idx{:});  %% ending index
-    om.var.idx.N.(name)   = zeros(idx{:});  %% number of vars
-    om.var.data.v0.(name) = cell(idx{:});   %% initial value
-    om.var.data.vl.(name) = cell(idx{:});   %% lower bound
-    om.var.data.vu.(name) = cell(idx{:});   %% upper bound
-    om.var.data.vt.(name) = cell(idx{:});   %% variable type
-else                %% indexed named set
-    %% add info about this var set
-    om.var.idx.i1  = subsasgn(om.var.idx.i1, s1, om.var.N + 1); %% starting index
-    om.var.idx.iN  = subsasgn(om.var.idx.iN, s1, om.var.N + N); %% ending index
-    om.var.idx.N   = subsasgn(om.var.idx.N,  s1, N);            %% number of vars
-    om.var.data.v0 = subsasgn(om.var.data.v0, s2, v0);          %% initial value
-    om.var.data.vl = subsasgn(om.var.data.vl, s2, vl);          %% lower bound
-    om.var.data.vu = subsasgn(om.var.data.vu, s2, vu);          %% upper bound
-    om.var.data.vt = subsasgn(om.var.data.vt, s2, vt);          %% variable type
-    
-    %% update number of vars and var sets
-    om.var.N  = subsref(om.var.idx.iN, s1);
-    om.var.NS = om.var.NS + 1;
-    
-    %% add to ordered list of var sets
-    om.var.order(om.var.NS).name = name;
-    om.var.order(om.var.NS).idx  = idx;
+    om.add_named_set('var', name, idx, N, v0, vl, vu, vt);
 end

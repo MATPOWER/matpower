@@ -2383,11 +2383,11 @@ This stage is also a good place to check the consistency of any additional input
 \subsubsection{{\tt formulation} Callback}
 \label{sec:formulation_callback}
 
-This stage is called from \code{opf} after the OPF Model (\code{om}) object has been initialized with the standard OPF formulation, but before calling the solver. This is the ideal place for modifying the problem formulation with additional variables, constraints and costs, using the \code{add\_vars}, \code{add\_constraints} and \code{add\_costs} methods of the OPF Model object. Inputs are the \code{om} object and any (optional) \code{args} supplied when the callback was registered via \code{add\_userfcn}. Output is the updated \code{om} object.
+This stage is called from \code{opf} after the OPF Model (\code{om}) object has been initialized with the standard OPF formulation, but before calling the solver. This is the ideal place for modifying the problem formulation with additional variables, constraints and costs, using the \code{add\_vars}, \code{add\_lin\_constraints} and \code{add\_costs} methods of the OPF Model object. Inputs are the \code{om} object and any (optional) \code{args} supplied when the callback was registered via \code{add\_userfcn}. Output is the updated \code{om} object.
 
 The \code{om} object contains both the original \matpower{} case data as well as all of the indexing data for the variables and constraints of the standard OPF formulation.\footnote{It is perfectly legitimate to register more than one callback per stage, such as when enabling multiple independent OPF extensions. In this case, the callbacks are executed in the order they were registered with \code{add\_userfcn}. E.g. when the second and subsequent \code{formulation} callbacks are invoked, the \code{om} object will reflect any modifications performed by earlier \code{formulation} callbacks.} See the on-line help for \code{opf\_model} for more details on the OPF model object and the methods available for manipulating and accessing it.
 
-In the example code, a new variable block named \code{R} with $n_g$ elements and the limits from \eqref{eq:reserve_var} is added to the model via the \code{add\_vars} method. Similarly, two linear constraint blocks named \code{Pg\_plus\_R} and \code{Rreq}, implementing \eqref{eq:Pg_plus_R} and \eqref{eq:reserve_req}, respectively, are added via the \code{add\_constraints} method. And finally, the \code{add\_costs} method is used to add to the model a user-defined cost block corresponding to \eqref{eq:reserve_cost}.
+In the example code, a new variable block named \code{R} with $n_g$ elements and the limits from \eqref{eq:reserve_var} is added to the model via the \code{add\_vars} method. Similarly, two linear constraint blocks named \code{Pg\_plus\_R} and \code{Rreq}, implementing \eqref{eq:Pg_plus_R} and \eqref{eq:reserve_req}, respectively, are added via the \code{add\_lin\_constraints} method. And finally, the \code{add\_costs} method is used to add to the model a user-defined cost block corresponding to \eqref{eq:reserve_cost}.
 
 \begin{figure}[!b]
   \centering
@@ -2396,7 +2396,7 @@ In the example code, a new variable block named \code{R} with $n_g$ elements and
   \label{fig:varsets}
 \end{figure}
 
-Notice that the last argument to \code{add\_constraints} and \code{add\_costs} allows the constraints and costs to be defined only in terms of the relevant parts of the optimization variable $x$. For example, the \code{A} matrix for the \code{Pg\_plus\_R} constraint contains only columns corresponding to real power generation (\code{Pg}) and reserves (\code{R}) and need not bother with voltages, reactive power injections, etc. As illustrated in \figurename~\ref{fig:varsets}, this allows the same code to be used with both the AC OPF, where $x$ includes $V_m$ and $Q_g$, and the DC OPF where it does not. This code is also independent of any additional variables that may have been added by \matpower{} (e.g. $y$ variables from \matpower{}'s CCV handling of piece-wise linear costs) or by the user via previous \code{formulation} callbacks. \matpower{} will place the constraint matrix blocks in the appropriate place when it constructs the overall \code{A} matrix at run-time. This is an important feature that enables independently developed \matpower{} OPF extensions to work together.
+Notice that the last argument to \code{add\_lin\_constraints} and \code{add\_costs} allows the constraints and costs to be defined only in terms of the relevant parts of the optimization variable $x$. For example, the \code{A} matrix for the \code{Pg\_plus\_R} constraint contains only columns corresponding to real power generation (\code{Pg}) and reserves (\code{R}) and need not bother with voltages, reactive power injections, etc. As illustrated in \figurename~\ref{fig:varsets}, this allows the same code to be used with both the AC OPF, where $x$ includes $V_m$ and $Q_g$, and the DC OPF where it does not. This code is also independent of any additional variables that may have been added by \matpower{} (e.g. $y$ variables from \matpower{}'s CCV handling of piece-wise linear costs) or by the user via previous \code{formulation} callbacks. \matpower{} will place the constraint matrix blocks in the appropriate place when it constructs the overall \code{A} matrix at run-time. This is an important feature that enables independently developed \matpower{} OPF extensions to work together.
 
 \begin{Code}
 function om = userfcn_reserves_formulation(om, args)
@@ -2425,8 +2425,8 @@ Cw = r.cost * mpc.baseMVA;          %% per unit cost coefficients
 
 %% add them to the model
 om.add_vars('R', ng, [], Rmin, Rmax);
-om.add_constraints('Pg_plus_R', Ar, [], Pmax, {'Pg', 'R'});
-om.add_constraints('Rreq', r.zones, lreq, [], {'R'});
+om.add_lin_constraints('Pg_plus_R', Ar, [], Pmax, {'Pg', 'R'});
+om.add_lin_constraints('Rreq', r.zones, lreq, [], {'R'});
 om.add_costs('Rcost', struct('N', I, 'Cw', Cw), {'R'});
 \end{Code}
 
@@ -2442,7 +2442,7 @@ This conversion essentially undoes everything that was done by \code{ext2int}. G
 
 This callback is invoked from \code{int2ext} immediately before the resulting case is converted from internal back to external indexing. At this point, the simulation has been completed and the \results{} struct, a superset of the original \matpower{} case struct passed to the OPF, contains all of the results. This \results{} struct is passed to the callback, along with any (optional) \code{args} supplied when the callback was registered via \code{add\_userfcn}. The output of the callback is the updated \results{} struct. This is typically used to convert any results to external indexing and populate any corresponding fields in the \results{} struct.
 
-The \results{} struct contains, in addition to the standard OPF results, solution information related to all of the user-defined variables, constraints and costs. Table~\ref{tab:extended_results} summarizes where the various data is found. Each of the fields listed in the table is actually a struct whose fields correspond to the named sets created by \code{add\_vars}, \code{add\_constraints} and \code{add\_costs}.
+The \results{} struct contains, in addition to the standard OPF results, solution information related to all of the user-defined variables, constraints and costs. Table~\ref{tab:extended_results} summarizes where the various data is found. Each of the fields listed in the table is actually a struct whose fields correspond to the named sets created by \code{add\_vars}, \code{add\_lin\_constraints} and \code{add\_costs}.
 
 \begin{table}[!ht]
 %\renewcommand{\arraystretch}{1.2}
@@ -5557,28 +5557,35 @@ name & description \\
 \code{~~get\_mpc}	& returns the \matpower{} case struct	\\
 \code{~~opf\_model}	& constructor for the \code{opf\_model} class	\\
 \code{@opt\_model/}	& optimization model object (\code{@opf\_model} base class)	\\
-\code{~~add\_constraints}	& adds a named subset of constraints to the model	\\
+\code{~~add\_constraints}\tnote{*}	& adds a named subset of constraints to the model	\\
 \code{~~add\_costs}	& adds a named subset of user-defined costs to the model	\\
+\code{~~add\_lin\_constraints}	& adds a named subset of linear constraints to the model	\\
+\code{~~add\_named\_set}\tnote{\dag}	& adds a named subset of costs, constraints or variables to the model	\\
+\code{~~add\_nln\_constraints}	& adds a named subset of nonlinear constraints to the model	\\
 \code{~~add\_vars}	& adds a named subset of optimization variables to the model	\\
 \code{~~build\_cost\_params}	& builds and stores the full generalized cost parameters in the model	\\
-\code{~~compute\_cost}	& computes a user-defined cost\tnote{\dag}	\\
+\code{~~compute\_cost}	& computes a user-defined cost\tnote{\ddag}	\\
 \code{~~describe\_idx}	& identifies variable, constraint or cost row indices	\\
 \code{~~display}	& called to display object when statement not terminated by semicolon	\\
-\code{~~get\_cost\_params}	& returns the cost parameter struct created by \code{build\_cost\_params}\tnote{\dag}	\\
+\code{~~get\_cost\_params}	& returns the cost parameter struct created by \code{build\_cost\_params}\tnote{\ddag}	\\
 \code{~~get\_idx}	& returns the idx struct for vars, lin/nln constraints, costs	\\
-\code{~~getN}	& returns the number of variables, constraints or cost rows\tnote{\dag}	\\
+\code{~~get\_userdata}	& returns values of user data stored in the model	\\
+\code{~~getN}	& returns the number of variables, constraints or cost rows\tnote{\ddag}	\\
 \code{~~get}	& returns the value of a field of the object	\\
-\code{~~getv}	& returns the initial values and bounds for optimimization vector\tnote{\dag}	\\
+\code{~~getv}	& returns the initial values and bounds for optimimization vector\tnote{\ddag}	\\
+\code{~~init\_indexed\_name}	& initializes the dimensions for an indexed named set of costs, constraints or variables	\\
 \code{~~linear\_constraints}	& builds and returns the full set of linear constraints ($A, l, u$)	\\
 \code{~~nonlin\_constraints}	& builds and returns the full set of nonlinear equality or inequality constraints and their gradients	\\
 \code{~~nonlin\_constraint\_hess}	& builds and returns the Hessian for the full set of nonlinear equality or inequality constraints	\\
 \code{~~opt\_model}	& constructor for the \code{opt\_model} class	\\
-\code{~~get\_userdata}	& returns values of user data stored in the model	\\
+\code{~~valid\_named\_set\_type}\tnote{\dag}	& returns a label for given named set type if valid, empty otherwise	\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {For all, or alternatively, only for a named (and possibly indexed) subset.}
+ \item [*] {Deprecated.}
+ \item [\dag] {Private method for internal use only.}
+ \item [\ddag] {For all, or alternatively, only for a named (and possibly indexed) subset.}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -6154,6 +6161,7 @@ name & description \\
 \code{t\_nested\_struct\_copy}	& runs tests for \code{nested\_struct\_copy}	\\
 \code{t\_off2case}	& runs tests for \code{off2case}	\\
 \code{t\_opf\_model}	& runs tests for \code{opf\_model} and \code{opt\_model} objects	\\
+\code{t\_opf\_model\_legacy}	& runs tests for \code{opf\_model} and \code{opt\_model} objects using legacy (deprecated) \code{add\_constraints} method \\
 \code{t\_printpf}	& runs tests for \code{printpf}	\\
 \code{t\_psse}	& runs tests for \code{psse2mpc} and related functions	\\
 \code{t\_qps\_matpower}	& runs tests for \code{qps\_matpower}	\\

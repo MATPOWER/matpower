@@ -51,6 +51,7 @@ tests{end+1} = 't_pf_radial';
 tests{end+1} = 't_cpf';
 tests{end+1} = 't_islands';
 tests{end+1} = 't_opf_model';
+tests{end+1} = 't_opf_model_legacy';
 if have_fcn('fmincon')
     tests{end+1} = 't_opf_fmincon';
 end

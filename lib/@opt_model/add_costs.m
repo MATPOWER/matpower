@@ -71,59 +71,18 @@ function om = add_costs(om, name, idx, varargin)
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-if iscell(idx)
-    if ~isempty(varargin)       %% indexed named set
-        % (calls to substruct() are relatively expensive ...
-        % s1 = substruct('.', name, '()', idx);
-        % s2 = substruct('.', name, '{}', idx);
-        % ... so replace them with these more efficient lines)
-        s1 = struct('type', {'.', '()'}, 'subs', {name, idx});
-        s2 = s1;
-        s2(2).type = '{}';
-        
-        %% prevent duplicate named cost sets
-        if subsref(om.cost.idx.i1, s1) ~= 0
-            str = '%d'; for m = 2:length(idx), str = [str ',%d']; end
-            nname = sprintf(['%s(' str, ')'], name, idx{:});
-            error('@opt_model/add_costs: cost set named ''%s'' already exists', nname);
-        end
-        
+if iscell(idx) && isempty(varargin) %% just setting dimensions for indexed set
+    om.init_indexed_name('cost', name, idx);
+else
+    if iscell(idx)
         cp = varargin{1};
         args = varargin(2:end);
-    else                        %% just setting dimensions for indexed set
-        %% prevent duplicate named cost sets
-        if isfield(om.cost.idx.N, name)
-            error('@opt_model/add_costs: cost set named ''%s'' already exists', name);
-        end
-        
-        cp = [];
-        args = {};
+    else                            %% simple named set
+        cp = idx;
+        args = varargin;
+        idx = {};
     end
-else                            %% simple named set
-    %% prevent duplicate named cost sets
-    if isfield(om.cost.idx.N, name)
-        error('@opt_model/add_costs: cost set named ''%s'' already exists', name);
-    end
-    
-    cp = idx;
-    args = varargin;
-    idx = {};
-end
 
-if isempty(cp)                  %% just setting dimensions for indexed set
-    %% use column vector if single dimension
-    if length(idx) == 1
-        idx = {idx{:}, 1};
-    end
-    
-    %% add info about this cost set
-    om.cost.idx.i1.(name)  = zeros(idx{:}); %% starting index
-    om.cost.idx.iN.(name)  = zeros(idx{:}); %% ending index
-    om.cost.idx.N.(name)   = zeros(idx{:}); %% number of costs (nw)
-    om.cost.data.N.(name)  = cell(idx{:});
-    om.cost.data.Cw.(name) = cell(idx{:});
-    om.cost.data.vs.(name) = cell(idx{:});
-else
     if isempty(args)
         varsets = {};
     else
@@ -183,68 +142,5 @@ else
         error('@opt_model/add_costs: number of rows of mm (%d x %d) and N (%d x %d) must match\n', size(cp.mm), nw, nx);
     end
     
-    if isempty(idx)     %% simple named set
-        %% add info about this user cost set
-        om.cost.idx.i1.(name)  = om.cost.N + 1;     %% starting index
-        om.cost.idx.iN.(name)  = om.cost.N + nw;    %% ending index
-        om.cost.idx.N.(name)   = nw;                %% number of costs (nw)
-        om.cost.data.N.(name)  = cp.N;
-        om.cost.data.Cw.(name) = cp.Cw;
-        om.cost.data.vs.(name) = varsets;
-        if isfield(cp, 'H')
-            om.cost.data.H.(name)  = cp.H;
-        end
-        if isfield(cp, 'dd')
-            om.cost.data.dd.(name) = cp.dd;
-        end
-        if isfield(cp, 'rh')
-            om.cost.data.rh.(name) = cp.rh;
-        end
-        if isfield(cp, 'kk')
-            om.cost.data.kk.(name) = cp.kk;
-        end
-        if isfield(cp, 'mm')
-            om.cost.data.mm.(name) = cp.mm;
-        end
-        
-        %% update number of vars and var sets
-        om.cost.N  = om.cost.idx.iN.(name);
-        om.cost.NS = om.cost.NS + 1;
-        
-        %% add to ordered list of var sets
-        om.cost.order(om.cost.NS).name = name;
-        om.cost.order(om.cost.NS).idx  = {};
-    else                %% indexed named set
-        %% add info about this user cost set
-        om.cost.idx.i1  = subsasgn(om.cost.idx.i1, s1, om.cost.N + 1);  %% starting index
-        om.cost.idx.iN  = subsasgn(om.cost.idx.iN, s1, om.cost.N + nw); %% ending index
-        om.cost.idx.N   = subsasgn(om.cost.idx.N,  s1, nw);             %% number of costs (nw)
-        
-        om.cost.data.N  = subsasgn(om.cost.data.N,  s2, cp.N);
-        om.cost.data.Cw = subsasgn(om.cost.data.Cw, s2, cp.Cw);
-        om.cost.data.vs = subsasgn(om.cost.data.vs, s2, varsets);
-        if isfield(cp, 'H')
-            om.cost.data.H = subsasgn(om.cost.data.H, s2, cp.H);
-        end
-        if isfield(cp, 'dd')
-            om.cost.data.dd = subsasgn(om.cost.data.dd, s2, cp.dd);
-        end
-        if isfield(cp, 'rh')
-            om.cost.data.rh = subsasgn(om.cost.data.rh, s2, cp.rh);
-        end
-        if isfield(cp, 'kk')
-            om.cost.data.kk = subsasgn(om.cost.data.kk, s2, cp.kk);
-        end
-        if isfield(cp, 'mm')
-            om.cost.data.mm = subsasgn(om.cost.data.mm, s2, cp.mm);
-        end
-        
-        %% update number of costs and cost sets
-        om.cost.N  = subsref(om.cost.idx.iN, s1);
-        om.cost.NS = om.cost.NS + 1;
-        
-        %% add to ordered list of cost sets
-        om.cost.order(om.cost.NS).name = name;
-        om.cost.order(om.cost.NS).idx  = idx;
-    end
+    om.add_named_set('cost', name, idx, nw, cp, varsets);
 end
