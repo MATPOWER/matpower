@@ -56,17 +56,15 @@ if isempty(cost_mult)
 end
 
 %% unpack data
-lim_type = upper(mpopt.opf.flow_lim(1));
 mpc = om.get_mpc();
-[baseMVA, bus, gen, branch, gencost] = ...
-    deal(mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch, mpc.gencost);
+[baseMVA, gen, branch, gencost] = ...
+    deal(mpc.baseMVA, mpc.gen, mpc.branch, mpc.gencost);
 cp = om.get_cost_params();
 [N, Cw, H, dd, rh, kk, mm] = deal(cp.N, cp.Cw, cp.H, cp.dd, ...
                                     cp.rh, cp.kk, cp.mm);
 vv = om.get_idx();
 
 %% unpack needed parameters
-nb = size(bus, 1);          %% number of buses
 nl = size(branch, 1);       %% number of branches
 ng = size(gen, 1);          %% number of dispatchable injections
 nxyz = length(x);           %% total number of control vars of all types
@@ -75,22 +73,12 @@ nxyz = length(x);           %% total number of control vars of all types
 if nargin < 8
     il = (1:nl);            %% all lines have limits by default
 end
-nl2 = length(il);           %% number of constrained lines
 
 %% grab Pg & Qg
 Pg = x(vv.i1.Pg:vv.iN.Pg);  %% active generation in p.u.
 Qg = x(vv.i1.Qg:vv.iN.Qg);  %% reactive generation in p.u.
 
-%% put Pg & Qg back in gen
-gen(:, PG) = Pg * baseMVA;  %% active generation in MW
-gen(:, QG) = Qg * baseMVA;  %% reactive generation in MVAr
- 
 %% reconstruct V
-Va = zeros(nb, 1);
-Va = x(vv.i1.Va:vv.iN.Va);
-Vm = x(vv.i1.Vm:vv.iN.Vm);
-V = Vm .* exp(1j * Va);
-nxtra = nxyz - 2*nb;
 pcost = gencost(1:ng, :);
 if size(gencost, 1) > ng
     qcost = gencost(ng+1:2*ng, :);
@@ -138,67 +126,10 @@ end
 d2f = d2f * cost_mult;
 
 %%----- evaluate Hessian of power balance constraints -----
-nlam = length(lambda.eqnonlin) / 2;
-lamP = lambda.eqnonlin(1:nlam);
-lamQ = lambda.eqnonlin((1:nlam)+nlam);
-[Gpaa, Gpav, Gpva, Gpvv] = d2Sbus_dV2(Ybus, V, lamP);
-[Gqaa, Gqav, Gqva, Gqvv] = d2Sbus_dV2(Ybus, V, lamQ);
-%% constant impedance part of ZIP loads
-diaglam = sparse(1:nb, 1:nb, lamP, nb, nb);
-Sd = makeSdzip(baseMVA, bus, mpopt);
-diagSdz = sparse(1:nb, 1:nb, Sd.z, nb, nb);
-Gpvv = Gpvv + 2 * diaglam * diagSdz;
-d2G = [
-    real([Gpaa Gpav; Gpva Gpvv]) + imag([Gqaa Gqav; Gqva Gqvv]) sparse(2*nb, nxtra);
-    sparse(nxtra, 2*nb + nxtra)
-];
-d2G2 = om.nonlin_constraint_hess(x, lambda.eqnonlin, 1);
-%norm(d2G-d2G2, Inf)
-if norm(d2G-d2G2, Inf)
-    error('Yikes!  %g\n', norm(d2G-d2G2, Inf));
-end
+d2G = om.nonlin_constraint_hess(x, lambda.eqnonlin, 1);
 
 %%----- evaluate Hessian of flow constraints -----
-nmu = length(lambda.ineqnonlin) / 2;
-if nmu
-    muF = lambda.ineqnonlin(1:nmu);
-    muT = lambda.ineqnonlin((1:nmu)+nmu);
-else    %% keep dimensions of empty matrices/vectors compatible
-    muF = zeros(0,1);   %% (required to avoid problems when using Knitro
-    muT = zeros(0,1);   %%  on cases with all lines unconstrained)
-end
-if lim_type == 'I'          %% square of current
-    [dIf_dVa, dIf_dVm, dIt_dVa, dIt_dVm, If, It] = dIbr_dV(branch(il,:), Yf, Yt, V);
-    [Hfaa, Hfav, Hfva, Hfvv] = d2AIbr_dV2(dIf_dVa, dIf_dVm, If, Yf, V, muF);
-    [Htaa, Htav, Htva, Htvv] = d2AIbr_dV2(dIt_dVa, dIt_dVm, It, Yt, V, muT);
-else
-  f = branch(il, F_BUS);    %% list of "from" buses
-  t = branch(il, T_BUS);    %% list of "to" buses
-  Cf = sparse(1:nl2, f, ones(nl2, 1), nl2, nb);     %% connection matrix for line & from buses
-  Ct = sparse(1:nl2, t, ones(nl2, 1), nl2, nb);     %% connection matrix for line & to buses
-  [dSf_dVa, dSf_dVm, dSt_dVa, dSt_dVm, Sf, St] = dSbr_dV(branch(il,:), Yf, Yt, V);
-  if lim_type == '2'        %% square of real power
-    [Hfaa, Hfav, Hfva, Hfvv] = d2ASbr_dV2(real(dSf_dVa), real(dSf_dVm), real(Sf), Cf, Yf, V, muF);
-    [Htaa, Htav, Htva, Htvv] = d2ASbr_dV2(real(dSt_dVa), real(dSt_dVm), real(St), Ct, Yt, V, muT);
-  elseif lim_type == 'P'    %% real power                                 
-    [Hfaa, Hfav, Hfva, Hfvv] = d2Sbr_dV2(Cf, Yf, V, muF);
-    [Htaa, Htav, Htva, Htvv] = d2Sbr_dV2(Ct, Yt, V, muT);
-    [Hfaa, Hfav, Hfva, Hfvv] = deal(real(Hfaa), real(Hfav), real(Hfva), real(Hfvv));
-    [Htaa, Htav, Htva, Htvv] = deal(real(Htaa), real(Htav), real(Htva), real(Htvv));
-  else                      %% square of apparent power
-    [Hfaa, Hfav, Hfva, Hfvv] = d2ASbr_dV2(dSf_dVa, dSf_dVm, Sf, Cf, Yf, V, muF);
-    [Htaa, Htav, Htva, Htvv] = d2ASbr_dV2(dSt_dVa, dSt_dVm, St, Ct, Yt, V, muT);
-  end
-end
-d2H = [
-    [Hfaa Hfav; Hfva Hfvv] + [Htaa Htav; Htva Htvv] sparse(2*nb, nxtra);
-    sparse(nxtra, 2*nb + nxtra)
-];
-d2H2 = om.nonlin_constraint_hess(x, lambda.ineqnonlin, 0);
-%norm(d2H-d2H2, Inf)
-if norm(d2H-d2H2, Inf)
-    error('Yikes!  %g\n', norm(d2H-d2H2, Inf));
-end
+d2H = om.nonlin_constraint_hess(x, lambda.ineqnonlin, 0);
 
 %%-----  do numerical check using (central) finite differences  -----
 if 0
