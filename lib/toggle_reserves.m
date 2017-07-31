@@ -191,8 +191,8 @@ Cw = r.cost(igr) * mpc.baseMVA;     %% per unit cost coefficients
 
 %% add them to the model
 om.add_vars('R', ngr, [], Rmin, Rmax);
-om.add_constraints('Pg_plus_R', Ar, [], ur, {'Pg', 'R'});
-om.add_constraints('Rreq', r.zones(:, igr), lreq, [], {'R'});
+om.add_lin_constraints('Pg_plus_R', Ar, [], ur, {'Pg', 'R'});
+om.add_lin_constraints('Rreq', r.zones(:, igr), lreq, [], {'R'});
 om.add_costs('Rcost', struct('N', I, 'Cw', Cw), {'R'});
 
 

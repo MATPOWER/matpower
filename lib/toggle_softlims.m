@@ -177,7 +177,7 @@ Cw = s.cost(:, 1) * mpc.baseMVA;
 %% add vars, costs, constraints
 om.add_vars('flv', ns, zeros(ns, 1), zeros(ns, 1), Inf(ns, 1));
 om.add_costs('vc', struct('N', I, 'Cw', Cw), {'flv'});
-om.add_constraints('softlims',  As, ls, us, {'Va', 'flv'});   %% 2*ns
+om.add_lin_constraints('softlims',  As, ls, us, {'Va', 'flv'});     %% 2*ns
 
 
 %%-----  int2ext  ------------------------------------------------------

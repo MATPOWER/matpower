@@ -320,7 +320,7 @@ L1  =  dc(:, c.LOSS1);
 Adc = [sparse(ndc, ng) spdiags(1-L1, 0, ndc, ndc) speye(ndc, ndc)];
 
 %% add them to the model
-om.add_constraints('dcline', Adc, nL0, nL0, {'Pg'});
+om.add_lin_constraints('dcline', Adc, nL0, nL0, {'Pg'});
 
 
 %%-----  int2ext  ------------------------------------------------------

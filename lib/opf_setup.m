@@ -229,9 +229,9 @@ if dc
   om.userdata.iang = iang;
   om.add_vars('Va', nb, Va, Val, Vau);
   om.add_vars('Pg', ng, Pg, Pmin, Pmax);
-  om.add_constraints('Pmis', Amis, bmis, bmis, {'Va', 'Pg'});   %% nb
-  om.add_constraints('Pf',  Bf(il,:), -upt, upf, {'Va'});       %% nl2
-  om.add_constraints('ang', Aang, lang, uang, {'Va'});          %% nang
+  om.add_lin_constraints('Pmis', Amis, bmis, bmis, {'Va', 'Pg'});   %% nb
+  om.add_lin_constraints('Pf',  Bf(il,:), -upt, upf, {'Va'});       %% nl2
+  om.add_lin_constraints('ang', Aang, lang, uang, {'Va'});          %% nang
 else
   om.userdata.Apqdata = Apqdata;
   om.userdata.iang = iang;
@@ -243,16 +243,16 @@ else
   om.add_constraints('Qmis', nb, 'nonlinear');
   om.add_constraints('Sf', nl, 'nonlinear');
   om.add_constraints('St', nl, 'nonlinear');
-  om.add_constraints('PQh', Apqh, [], ubpqh, {'Pg', 'Qg'});     %% npqh
-  om.add_constraints('PQl', Apql, [], ubpql, {'Pg', 'Qg'});     %% npql
-  om.add_constraints('vl',  Avl, lvl, uvl,   {'Pg', 'Qg'});     %% nvl
-  om.add_constraints('ang', Aang, lang, uang, {'Va'});          %% nang
+  om.add_lin_constraints('PQh', Apqh, [], ubpqh, {'Pg', 'Qg'});     %% npqh
+  om.add_lin_constraints('PQl', Apql, [], ubpql, {'Pg', 'Qg'});     %% npql
+  om.add_lin_constraints('vl',  Avl, lvl, uvl,   {'Pg', 'Qg'});     %% nvl
+  om.add_lin_constraints('ang', Aang, lang, uang, {'Va'});          %% nang
 end
 
 %% y vars, constraints for piece-wise linear gen costs
 if ny > 0
   om.add_vars('y', ny);
-  om.add_constraints('ycon', Ay, [], by, ycon_vars);            %% ncony
+  om.add_lin_constraints('ycon', Ay, [], by, ycon_vars);            %% ncony
 end
 
 %% add user vars, constraints and costs (as specified via A, ..., N, ...)
@@ -261,7 +261,7 @@ if nz > 0
   user_vars{end+1} = 'z';
 end
 if nusr
-  om.add_constraints('usr', mpc.A, lbu, ubu, user_vars);        %% nusr
+  om.add_lin_constraints('usr', mpc.A, lbu, ubu, user_vars);        %% nusr
 end
 if nw
   user_cost.N = mpc.N;
