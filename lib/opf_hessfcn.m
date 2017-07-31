@@ -152,6 +152,11 @@ d2G = [
     real([Gpaa Gpav; Gpva Gpvv]) + imag([Gqaa Gqav; Gqva Gqvv]) sparse(2*nb, nxtra);
     sparse(nxtra, 2*nb + nxtra)
 ];
+d2G2 = om.nonlin_constraint_hess(x, lambda.eqnonlin, 1);
+%norm(d2G-d2G2, Inf)
+if norm(d2G-d2G2, Inf)
+    error('Yikes!  %g\n', norm(d2G-d2G2, Inf));
+end
 
 %%----- evaluate Hessian of flow constraints -----
 nmu = length(lambda.ineqnonlin) / 2;
@@ -189,6 +194,11 @@ d2H = [
     [Hfaa Hfav; Hfva Hfvv] + [Htaa Htav; Htva Htvv] sparse(2*nb, nxtra);
     sparse(nxtra, 2*nb + nxtra)
 ];
+d2H2 = om.nonlin_constraint_hess(x, lambda.ineqnonlin, 0);
+%norm(d2H-d2H2, Inf)
+if norm(d2H-d2H2, Inf)
+    error('Yikes!  %g\n', norm(d2H-d2H2, Inf));
+end
 
 %%-----  do numerical check using (central) finite differences  -----
 if 0

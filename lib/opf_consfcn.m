@@ -97,6 +97,11 @@ mis = V .* conj(Ybus * V) - Sbus;
 %% first, the equality constraints (power flow)
 g = [ real(mis);            %% active power mismatch for all buses
       imag(mis) ];          %% reactive power mismatch for all buses
+g2 = om.nonlin_constraints(x, 1);
+%norm(g-g2, Inf)
+if norm(g-g2, Inf)
+    error('Yikes!  %g\n', norm(g-g2, Inf));
+end
 
 %% then, the inequality constraints (branch flow limits)
 if nl2 > 0
@@ -128,6 +133,11 @@ if nl2 > 0
 else
   h = zeros(0,1);
 end
+h2 = om.nonlin_constraints(x, 0);
+%norm(h-h2, Inf)
+if norm(h-h2, Inf)
+    error('Yikes!  %g\n', norm(h-h2, Inf));
+end
 
 %%----- evaluate partials of constraints -----
 if nargout > 2
@@ -150,6 +160,11 @@ if nargout > 2
     real([dSbus_dVa dSbus_dVm]) neg_Cg sparse(nb, ng);  %% P mismatch w.r.t Va, Vm, Pg, Qg
     imag([dSbus_dVa dSbus_dVm]) sparse(nb, ng) neg_Cg;  %% Q mismatch w.r.t Va, Vm, Pg, Qg
   ];
+  [g2 dg2] = om.nonlin_constraints(x, 1);
+  %norm(dg-dg2, Inf)
+  if norm(dg-dg2, Inf)
+      error('Yikes!  %g\n', norm(dg-dg2, Inf));
+  end
   dg = dg';
 
   if nl2 > 0
@@ -183,6 +198,11 @@ if nargout > 2
       df_dVa, df_dVm;                     %% "from" flow limit
       dt_dVa, dt_dVm;                     %% "to" flow limit
     ];
+    [h2, dh2] = om.nonlin_constraints(x, 0);
+    %norm(dh-dh2, Inf)
+    if norm(dh-dh2, Inf)
+        error('Yikes!  %g\n', norm(dh-dh2, Inf));
+    end
     dh = dh';
   else
     dh = sparse(nxyz, 0);
