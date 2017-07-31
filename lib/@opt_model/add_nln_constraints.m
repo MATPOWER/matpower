@@ -31,10 +31,11 @@ function om = add_nln_constraints(om, name, idx, N, iseq, fcn, hess, varsets)
 %   be the full optimization vector. Otherwise it will be a cell array of
 %   vectors corresponding to the variable sets specified in VARSETS.
 %
-%   NAME can be a cell array of constraint set names, in which case N is a
-%   vector, specifying the number of constraints in each corresponding set.
-%   FCN and HESS are still single function handles for functions that
-%   compute the values for the entire collection of constraint sets together.
+%   For simple (not indexed) named sets, NAME can be a cell array of
+%   constraint set names, in which case N is a vector, specifying the number
+%   of constraints in each corresponding set. FCN and HESS are still single
+%   function handles for functions that compute the values for the entire
+%   collection of constraint sets together.
 %
 %   For backward compatibility, ADD_NLN_CONSTRAINTS can also simply include
 %   the number of constraints N followed by the string 'nonlinear' to
@@ -132,10 +133,10 @@ if iscell(name)
     if length(name) ~= length(N)
         error('@opt_model/add_nln_constraints: dimensions of NAME and N must match');
     end
-    om.add_named_set(ff, name{1}, idx, N(1), fcn, hess, varsets);
+    om.add_named_set(ff, name{1}, idx, N(1), fcn, hess, '', varsets);
     for k = 2:length(name)
-        om.add_named_set(ff, name{k}, idx, N(k), [], [], varsets);
+        om.add_named_set(ff, name{k}, idx, N(k), [], [], name{1}, varsets);
     end
 else
-    om.add_named_set(ff, name, idx, N, fcn, hess, varsets);
+    om.add_named_set(ff, name, idx, N, fcn, hess, '', varsets);
 end

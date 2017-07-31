@@ -40,8 +40,17 @@ s2(2).type = '{}';
 for k = 1:om.(ff).NS
     name = om.(ff).order(k).name;
     idx  = om.(ff).order(k).idx;
+    if isempty(idx) && ~isfield(om.(ff).data.hess, name)
+        continue;   %% skip, there is no function handle stored here,
+                    %% the function value for this named set was included
+                    %% in the value computed by a previous named set
+    end
     if isempty(idx)
-        N = om.(ff).idx.N.(name);
+        N = om.(ff).idx.N.(name);   %% number of constraint functions
+                                    %% evaluated for this named set
+        if isfield(om.(ff).data.include, name)
+            N = N + sum(om.(ff).data.include.(name).N);
+        end
     else
         % (calls to substruct() are relatively expensive ...
         % s1 = substruct('.', name, '()', idx);
@@ -57,7 +66,7 @@ for k = 1:om.(ff).NS
         if isempty(idx)
             d2G_fcn = om.(ff).data.hess.(name); %% Hessian fcn for kth constraint set
             i1 = om.(ff).idx.i1.(name);         %% starting row index
-            iN = om.(ff).idx.iN.(name);         %% ending row index
+            iN = i1 + N - 1;                    %% ending row index
             vsl = om.(ff).data.vs.(name);       %% var set list
         else
             d2G_fcn = subsref(om.(ff).data.hess, s2);  %% Hessian fcn for kth constraint set

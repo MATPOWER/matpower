@@ -8,22 +8,22 @@ function om = add_named_set(om, set_type, name, idx, N, varargin)
 %   and ADD_COSTS.
 %
 %   Variable Set
-%       OM.ADD_NAMED_SET('var', IDX_LIST, N, V0, VL, VU, VT);
+%       OM.ADD_NAMED_SET('var', NAME, IDX_LIST, N, V0, VL, VU, VT);
 %
 %   Linear Constraint Set
-%       OM.ADD_NAMED_SET('lin', IDX_LIST, N, A, L, U, VARSETS);
+%       OM.ADD_NAMED_SET('lin', NAME, IDX_LIST, N, A, L, U, VARSETS);
 %
 %   Nonlinear Inequality Constraint Set
-%       OM.ADD_NAMED_SET('nle', IDX_LIST, N, FCN, HESS, VARSETS);
+%       OM.ADD_NAMED_SET('nle', NAME, IDX_LIST, N, FCN, HESS, COMPUTED_BY, VARSETS);
 %
 %   Nonlinear Inequality Constraint Set
-%       OM.ADD_NAMED_SET('nli', IDX_LIST, N, FCN, HESS, VARSETS);
+%       OM.ADD_NAMED_SET('nli', NAME, IDX_LIST, N, FCN, HESS, COMPUTED_BY, VARSETS);
 %
 %   Nonlinear Constraint Set (legacy)
-%       OM.ADD_NAMED_SET('nln', IDX_LIST, N);
+%       OM.ADD_NAMED_SET('nln', NAME, IDX_LIST, N);
 %
 %   Cost Set
-%       OM.ADD_NAMED_SET('cost', IDX_LIST, N, CP, VARSETS);
+%       OM.ADD_NAMED_SET('cost', NAME, IDX_LIST, N, CP, VARSETS);
 %
 %   See also OPT_MODEL, ADD_VARS, ADD_LIN_CONSTRAINTS, ADD_NLN_CONSTRAINTS
 %   and ADD_COSTS.
@@ -114,14 +114,27 @@ switch ff
             om.(ff).data.vs = subsasgn(om.(ff).data.vs, s2, varsets);
         end
     case {'nle', 'nli'} %% nonlinear constraint set
-        [fcn, hess, varsets] = deal(varargin{:});
+        [fcn, hess, computed_by, varsets] = deal(varargin{:});
         if isempty(idx)
-            if ~isempty(fcn)
-                om.(ff).data.fcn.(name)  = fcn;
-                om.(ff).data.hess.(name) = hess;
+            if isempty(computed_by)
+                if ~isempty(fcn)
+                    om.(ff).data.fcn.(name)  = fcn;
+                    om.(ff).data.hess.(name) = hess;
+                end
+            else
+                if isfield(om.(ff).data.include, computed_by)
+                    om.(ff).data.include.(computed_by).name{end+1} = name;
+                    om.(ff).data.include.(computed_by).N(end+1) = N;
+                else
+                    om.(ff).data.include.(computed_by).name = {name};
+                    om.(ff).data.include.(computed_by).N = N;
+                end
             end
             om.(ff).data.vs.(name) = varsets;
         else
+            if ~isempty(computed_by)
+                error('add_named_set: a nonlinear constraint set computed by another set is currently only implemented for simple named sets, not yet for indexed named sets');
+            end
             om.(ff).data.fcn   = subsasgn(om.(ff).data.fcn, s2, fcn);
             om.(ff).data.hess  = subsasgn(om.(ff).data.hess, s2, hess);
             om.(ff).data.vs = subsasgn(om.(ff).data.vs, s2, varsets);

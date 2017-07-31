@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 370;
+num_tests = 373;
 
 t_begin(num_tests, quiet);
 
@@ -303,6 +303,15 @@ neNS = neNS + 1; neN = neN + N;
 t_ok(om.getN('nle') == neN, sprintf('%s : nle.N  = %d', t, neN));
 t_ok(om.get('nle', 'NS') == neNS, sprintf('%s : nle.NS = %d', t, neNS));
 
+t = 'om.add_nln_constraints({''P'',''Q'',''R''}, [3;2;1], 1, fcn, hess, {''Pg'', ''Va''})';
+N = [3;2;1];
+fcn = @(x)my_fcn(x, sum(N), 2);
+hess = @(x, lam)my_hess(x, lam, 10);
+om.add_nln_constraints({'P', 'Q', 'R'}, N, 1, fcn, hess, {'Pg', 'Va'});
+neNS = neNS + length(N); neN = neN + sum(N);
+t_ok(om.getN('nle') == neN, sprintf('%s : nle.N  = %d', t, neN));
+t_ok(om.get('nle', 'NS') == neNS, sprintf('%s : nle.NS = %d', t, neNS));
+
 t = 'om.init_indexed_name(''nle'', ''mynle'', {2, 2})';
 om.init_indexed_name('nle', 'mynle', {2, 2});
 t_ok(om.getN('nle') == neN, sprintf('%s : nle.N  = %d', t, neN));
@@ -394,7 +403,7 @@ x = (1:om.getN('var'))';
 t_is(length(g), neN, 14, [t ' : length(g)']);
 t_ok(issparse(dg), [t ' : issparse(dg)']);
 t_is(size(dg), [neN, vN], 14, [t ' : size(dg)']);
-t_is(g, [7 8 9 3 3 4 5 6 7 6 7 8 7 8 9 7 8 9 27]', 14, [t ' : g']);
+t_is(g, [7 8 9 3 3 4 5 7 8 9 3 4 5 6 7 6 7 8 7 8 9 7 8 9 27]', 14, [t ' : g']);
 e = [[  1 2 3 4 7 6 7;
         0 0 0 0 0 2 0;
         0 0 0 0 0 0 2;
@@ -402,14 +411,21 @@ e = [[  1 2 3 4 7 6 7;
 t_is(full(dg(1:4, :)), e, 14, [t ' : dg(1:4, :)   [Pmise]']);
 e = [[3 2:vN]; [0 2 0 zeros(1, vN-3)]; [0 0 2 zeros(1, vN-3)]];
 t_is(full(dg(5:7, :)), e, 14, [t ' : dg(5:7, :)   [Qmise]']);
+e = [[  1 2 3 4 7 6 7;
+        0 0 0 0 0 2 0;
+        0 0 0 0 0 0 2;
+        2 0 0 0 0 0 0;
+        0 2 0 0 0 0 0;
+        0 0 2 0 0 0 0 ] zeros(6, vN-7) ];
+t_is(full(dg(8:13, :)), e, 14, [t ' : dg(8:13, :)  [mynle(1,1)]']);
 e = [[0 0 0 0 6 6 7; 0 0 0 0 0 1 0] zeros(2, 10) [18 19; 0 0] zeros(2, vN-19)];
-t_is(full(dg(8:9, :)), e, 14, [t ' : dg(8:9, :)   [mynle(1,1)]']);
+t_is(full(dg(14:15, :)), e, 14, [t ' : dg(14:15, :) [mynle(1,1)]']);
 e = [[0 0 0 0 6 6 7; 0 0 0 0 0 1 0; 0 0 0 0 0 0 1] zeros(3, 12) [20 21; 0 0; 0 0] zeros(3, vN-21)];
-t_is(full(dg(10:12, :)), e, 14, [t ' : dg(10:12, :) [mynle(1,2)]']);
+t_is(full(dg(16:18, :)), e, 14, [t ' : dg(16:18, :) [mynle(1,2)]']);
 e = [[0 0 0 0 7 6 7; 0 0 0 0 0 2 0; 0 0 0 0 0 0 2] zeros(3, 14) [22 23 24; 0 0 0; 0 0 0] zeros(3, vN-24)];
-t_is(full(dg(13:15, :)), e, 14, [t ' : dg(13:15, :) [mynle(2,1)]']);
+t_is(full(dg(19:21, :)), e, 14, [t ' : dg(19:21, :) [mynle(2,1)]']);
 e = [[0 0 0 0 7 6 7; 0 0 0 0 0 2 0; 0 0 0 0 0 0 2; 0 0 0 0 0 0 0] zeros(4, 17) [25 26; 0 0; 0 0; 2 0] zeros(4, vN-26)];
-t_is(full(dg(16:19, :)), e, 14, [t ' : dg(16:19, :) [mynle(2,2)]']);
+t_is(full(dg(22:25, :)), e, 14, [t ' : dg(22:25, :) [mynle(2,2)]']);
 % g
 % full(dg)
 % full(dg)'
@@ -443,10 +459,10 @@ t_ok(issparse(d2G), [t ' : issparse(d2G)']);
 t_is(size(d2G), [vN, vN], 14, [t ' : size(d2G)']);
 % t_is(full(d2G(27:end, :)), zeros(vN-26, vN), 14, [t ' : d2G(27:end, :)']);
 % t_is(full(d2G(:, 27:end)), zeros(vN, vN-26), 14, [t ' : d2G(:, 27:end)']);
-e = sparse([1:3 5:7 25], [1:3 5:7 25], [22.09 12.06 13.07 41.48 46.53 43.48 27.19], vN, vN);
+e = sparse([1:3 5:7 25], [1:3 5:7 25], [33.2 24.18 26.2 56.8 62.86 60.76 27.25], vN, vN);
 t_is(d2G, e, 13, [t ' : d2G']);
 
-%d2G
+% d2G
 
 lam = -(1:niN)'/100;
 d2H = om.nonlin_constraint_hess(x, lam, 0);
