@@ -5540,7 +5540,6 @@ name & description \\
 \end{threeparttable}
 \end{table}
 
-
 \begin{table}[!ht]
 %\renewcommand{\arraystretch}{1.2}
 \centering
@@ -5548,11 +5547,11 @@ name & description \\
 \caption{OPF Model Objects}
 \label{tab:opf_model}
 \footnotesize
-\begin{tabular}{ll}
+\begin{tabular}{lp{0.66\textwidth}}
 \toprule
 name & description \\
 \midrule
-\code{@opf\_model/}	& OPF model object used to encapsulate the OPF problem formulation	\\
+\code{@opf\_model/}	& OPF model object used to encapsulate OPF problem formulation	\\
 \code{~~display}	& called to display object when statement not terminated by semicolon	\\
 \code{~~get\_mpc}	& returns the \matpower{} case struct	\\
 \code{~~opf\_model}	& constructor for the \code{opf\_model} class	\\
@@ -5626,7 +5625,7 @@ name & description \\
 \caption{Other OPF Functions}
 \label{tab:other_opf}
 \footnotesize
-\begin{tabular}{p{0.14\textwidth}p{0.76\textwidth}}
+\begin{tabular}{lp{0.66\textwidth}}
 \toprule
 name & description \\
 \midrule
@@ -5638,9 +5637,13 @@ name & description \\
 \code{opf\_args}	& input argument handling for \code{opf}	\\
 \code{opf\_setup}	& constructs an OPF model object from a \matpower{} case \\
 \code{opf\_execute}	& executes the OPF specified by an OPF model object \\
+\code{opf\_branch\_flow\_fcn}\tnote{\dag}	& evaluates AC branch flow limit constraints and gradients	\\
+\code{opf\_branch\_flow\_hess}\tnote{\dag}	& evaluates Hessian of AC branch flow limit constraints	\\
 \code{opf\_consfcn}\tnote{\dag}	& evaluates function and gradients for AC OPF nonlinear constraints	\\
 \code{opf\_costfcn}\tnote{\dag}	& evaluates function, gradients and Hessian for AC OPF objective function	\\
 \code{opf\_hessfcn}\tnote{\dag}	& evaluates the Hessian of the Lagrangian for AC OPF	\\
+\code{opf\_power\_balance\_fcn}\tnote{\dag}	& evaluates AC power balance constraints and gradients	\\
+\code{opf\_power\_balance\_hess}\tnote{\dag}	& evaluates Hessian of AC power balance constraints	\\
 \code{totcost}	& computes the total cost of generation as a function of generator output	\\
 \code{update\_mupq}	& updates generator limit prices based on the shadow prices on capability curve constraints	\\
 \bottomrule

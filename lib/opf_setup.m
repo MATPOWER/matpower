@@ -167,6 +167,13 @@ else                %% AC model
   nq    = ng;           %% number of Qg vars
   q1    = 1+ng;         %% index of 1st Qg column in Ay
 
+  %% find branches with flow limits
+  il = find(branch(:, RATE_A) ~= 0 & branch(:, RATE_A) < 1e10);
+  nl2 = length(il);         %% number of constrained lines
+
+  %% build admittance matrices
+  [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
+
   %% dispatchable load, constant power factor constraints
   [Avl, lvl, uvl]  = makeAvl(baseMVA, gen);
   
@@ -175,6 +182,12 @@ else                %% AC model
 
   user_vars = {'Va', 'Vm', 'Pg', 'Qg'};
   ycon_vars = {'Pg', 'Qg', 'y'};
+
+  %% nonlinear constraint functions
+  fcn_mis = @(x)opf_power_balance_fcn(x, mpc, Ybus, mpopt);
+  hess_mis = @(x, lam)opf_power_balance_hess(x, lam, mpc, Ybus, mpopt);
+  fcn_flow = @(x)opf_branch_flow_fcn(x, mpc, Yf(il, :), Yt(il, :), il, mpopt);
+  hess_flow = @(x, lam)opf_branch_flow_hess(x, lam, mpc, Yf(il, :), Yt(il, :), il, mpopt);
 end
 
 %% voltage angle reference constraints
@@ -239,10 +252,14 @@ else
   om.add_vars('Vm', nb, Vm, bus(:, VMIN), bus(:, VMAX));
   om.add_vars('Pg', ng, Pg, Pmin, Pmax);
   om.add_vars('Qg', ng, Qg, Qmin, Qmax);
-  om.add_constraints('Pmis', nb, 'nonlinear');
-  om.add_constraints('Qmis', nb, 'nonlinear');
-  om.add_constraints('Sf', nl, 'nonlinear');
-  om.add_constraints('St', nl, 'nonlinear');
+  %% nonlinear constraints
+  om.add_nln_constraints({'Pmis', 'Qmis'}, [nb;nb], 1, fcn_mis, hess_mis, {'Va', 'Vm', 'Pg', 'Qg'});
+  om.add_nln_constraints('Pmis', nb, 'nonlinear');
+  om.add_nln_constraints('Qmis', nb, 'nonlinear');
+  om.add_nln_constraints({'Sf', 'St'}, [nl2;nl2], 0, fcn_flow, hess_flow, {'Va', 'Vm'});
+  om.add_nln_constraints('Sf', nl, 'nonlinear');
+  om.add_nln_constraints('St', nl, 'nonlinear');
+  %% linear constraints
   om.add_lin_constraints('PQh', Apqh, [], ubpqh, {'Pg', 'Qg'});     %% npqh
   om.add_lin_constraints('PQl', Apql, [], ubpql, {'Pg', 'Qg'});     %% npql
   om.add_lin_constraints('vl',  Avl, lvl, uvl,   {'Pg', 'Qg'});     %% nvl
