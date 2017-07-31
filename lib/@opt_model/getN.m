@@ -1,8 +1,8 @@
-function N = getN(om, selector, name, idx)
+function N = getN(om, set_type, name, idx)
 %GETN  Returns the number of variables, constraints or cost rows.
-%   N = OM.GETN(SELECTOR)
-%   N = OM.GETN(SELECTOR, NAME)
-%   N = OM.GETN(SELECTOR, NAME, IDX)
+%   N = OM.GETN(SET_TYPE)
+%   N = OM.GETN(SET_TYPE, NAME)
+%   N = OM.GETN(SET_TYPE, NAME, IDX)
 %
 %   Returns either the total number of variables/constraints/cost rows
 %   or the number corresponding to a specified named block.
@@ -33,14 +33,14 @@ function N = getN(om, selector, name, idx)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 if nargin < 3
-    N = om.(selector).N;
+    N = om.(set_type).N;
 else
-    if isfield(om.(selector).idx.N, name)
+    if isfield(om.(set_type).idx.N, name)
         if nargin < 4
             idx = {};
         end
         s1 = substruct('.', name, '()', idx);
-        N = subsref(om.(selector).idx.N, s1);
+        N = subsref(om.(set_type).idx.N, s1);
     else
         N = 0;
     end

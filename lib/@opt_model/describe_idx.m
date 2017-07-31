@@ -1,9 +1,9 @@
-function label = describe_idx(om, idx_type, idxs)
+function label = describe_idx(om, set_type, idxs)
 %DESCRIBE_IDX  Identifies variable, constraint and cost row indices.
-%   LABEL = OM.DESCRIBE_IDX(IDX_TYPE, IDXS)
+%   LABEL = OM.DESCRIBE_IDX(SET_TYPE, IDXS)
 %
 %   Returns strings describing (name and index) the variable, constraint
-%   or cost row that corresponds to the indices in IDXS. IDX_TYPE must be
+%   or cost row that corresponds to the indices in IDXS. SET_TYPE must be
 %   one of the following: 'var', 'lin', 'nln', 'nle', 'nli' or 'cost',
 %   corresponding to indices for variables, linear constraints, non-linear
 %   constraints (legacy), nonlinear equality constraints, nonlinear
@@ -28,29 +28,29 @@ function label = describe_idx(om, idx_type, idxs)
 label = cell(size(idxs));       %% pre-allocate return cell array
 for i = 1:length(idxs(:))
     ii = idxs(i);
-    if ii > om.(idx_type).N
-        error('@opt_model/describe_idx: index exceeds maximum %s index (%d)', idx_type, om.(idx_type).N);
+    if ii > om.(set_type).N
+        error('@opt_model/describe_idx: index exceeds maximum %s index (%d)', set_type, om.(set_type).N);
     end
     if ii < 1
         error('@opt_model/describe_idx: index must be positive');
     end
-    for k = om.(idx_type).NS:-1:1
-        name = om.(idx_type).order(k).name;
-        idx = om.(idx_type).order(k).idx;
+    for k = om.(set_type).NS:-1:1
+        name = om.(set_type).order(k).name;
+        idx = om.(set_type).order(k).idx;
         if isempty(idx)
-            if ii >= om.(idx_type).idx.i1.(name)
-                label{i} = sprintf('%s(%d)', name, ii - om.(idx_type).idx.i1.(name) + 1);
+            if ii >= om.(set_type).idx.i1.(name)
+                label{i} = sprintf('%s(%d)', name, ii - om.(set_type).idx.i1.(name) + 1);
                 break;
             end
         else
             s = substruct('.', name, '()', idx);
-            if ii >= subsref(om.(idx_type).idx.i1, s)
+            if ii >= subsref(om.(set_type).idx.i1, s)
                 idxstr = sprintf('%d', idx{1});
                 for j = 2:length(idx)
                     idxstr = sprintf('%s,%d', idxstr, idx{j});
                 end
                 label{i} = sprintf('%s(%s)(%d)', name, idxstr, ...
-                            ii - subsref(om.(idx_type).idx.i1, s) + 1);
+                            ii - subsref(om.(set_type).idx.i1, s) + 1);
                 break;
             end
         end
