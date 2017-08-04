@@ -29,13 +29,8 @@ else            %% inequality constraints
     om_nlx = om.nli;
 end
 
-%% initialize d2G
-use_transpose = 1;
-if use_transpose
-    d2Gt = sparse(om.var.N, om.var.N);
-else
-    d2G = sparse(om.var.N, om.var.N);
-end
+%% initialize d2G (use transpose for speed on older versions of Matlab)
+d2Gt = sparse(om.var.N, om.var.N);
 
 %% fill in each piece
 s = struct('type', {'.', '()'}, 'subs', {'', 1});
@@ -105,22 +100,13 @@ for k = 1:om_nlx.NS
         if isempty(vsl)         %% all rows of x
             Nk = size(d2Gk, 2);
             if Nk == om.var.N
-                if use_transpose
-                    d2Gkt_full = d2Gk';
-                else
-                    d2Gk_full = d2Gk;
-                end
+                d2Gkt_full = d2Gk';
             else                %% must have added vars since adding
                                 %% this constraint set
-                if use_transpose
-                    d2Gk_all_cols = sparse(Nk, om.var.N);
-                    d2Gk_all_cols(:, 1:Nk) = d2Gk;
-                    d2Gkt_full = sparse(om.var.N, om.var.N);
-                    d2Gkt_full(:, 1:Nk) = d2Gk_all_cols';
-                else
-                    d2Gk_full = sparse(om.var.N, om.var.N);
-                    d2Gk_full(1:Nk, 1:Nk) = d2Gk;
-                end
+                d2Gk_all_cols = sparse(Nk, om.var.N);
+                d2Gk_all_cols(:, 1:Nk) = d2Gk;
+                d2Gkt_full = sparse(om.var.N, om.var.N);
+                d2Gkt_full(:, 1:Nk) = d2Gk_all_cols';
             end
         else                    %% selected rows of x
             kN = 0;                             %% initialize last col of d2Gk used
@@ -141,23 +127,12 @@ for k = 1:om_nlx.NS
                 end
                 ii = [ii; (j1:jN)'];
             end
-            if use_transpose
-                d2Gk_all_cols = sparse(size(d2Gk,2), om.var.N);
-                d2Gk_all_cols(:, ii) = d2Gk;
-                d2Gkt_full = sparse(om.var.N, om.var.N);
-                d2Gkt_full(:, ii) = d2Gk_all_cols';
-            else
-                d2Gk_full = sparse(om.var.N, om.var.N);
-                d2Gk_full(ii, ii) = d2Gk;
-            end
+            d2Gk_all_cols = sparse(size(d2Gk,2), om.var.N);
+            d2Gk_all_cols(:, ii) = d2Gk;
+            d2Gkt_full = sparse(om.var.N, om.var.N);
+            d2Gkt_full(:, ii) = d2Gk_all_cols';
         end
-        if use_transpose
-            d2Gt = d2Gt + d2Gkt_full;
-        else
-            d2G = d2G + d2Gk_full;
-        end
+        d2Gt = d2Gt + d2Gkt_full;
     end
 end
-if use_transpose
-    d2G = d2Gt';
-end
+d2G = d2Gt';
