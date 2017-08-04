@@ -30,8 +30,15 @@ else            %% inequality constraints
 end
 
 %% initialize g, dg
+dg_method = 1;     %% method to build dg: 1 = stacking, 2 = indexing, 3 = indexing using transpose
 g = NaN(om_nlx.N, 1);
-dgt = sparse(om.var.N, om_nlx.N);  %% use transpose of dg for speed
+if dg_method == 1           %% stacking
+    dg = sparse(0, om.var.N);
+elseif dg_method == 2       %% indexing
+    dg = sparse(om_nlx.N, om.var.N);
+else    %% dg_method == 3   %% indexing transpose (for speed on older Matlabs)
+    dgt = sparse(om.var.N, om_nlx.N);
+end
 
 %% fill in each piece
 s = struct('type', {'.', '()'}, 'subs', {'', 1});
@@ -101,10 +108,20 @@ for k = 1:om_nlx.NS
         
         if isempty(vsl)         %% all rows of x
             if size(dgk, 2) == om.var.N
-                dgt(:, i1:iN) = dgk';     %% assign as columns in transpose for speed
+                if dg_method == 1           %% stacking
+                    dg = [dg; dgk];
+                elseif dg_method == 2       %% indexing
+                    dg(i1:iN, :) = dgk;
+                else    %% dg_method == 3   %% indexing transpose (for speed on older Matlabs)
+                    dgt(:, i1:iN) = dgk';     %% assign as columns in transpose for speed
+                end
             else                %% must have added vars since adding
                                 %% this constraint set
-                dgt(1:size(dgk, 2), i1:iN) = dgk';  %% assign as columns in transpose for speed
+                if dg_method == 3   %% indexing transpose (for speed on older Matlabs)
+                    dgt(1:size(dgk, 2), i1:iN) = dgk';  %% assign as columns in transpose for speed
+                else    %% dg_method == 1 or 2 : stacking, indexing
+                    dg(i1:iN, 1:size(dgk, 2)) = dgk;
+                end
             end
         else                    %% selected rows of x
             kN = 0;                             %% initialize last col of dgk used
@@ -129,8 +146,16 @@ for k = 1:om_nlx.NS
                 end
                 dgi(:, j1:jN) = dgk(:, k1:kN);
             end
-            dgt(:, i1:iN) = dgi';     %% assign as columns in transpose for speed
+            if dg_method == 1           %% stacking
+                dg = [dg; dgi];
+            elseif dg_method == 2       %% indexing
+                dg(i1:iN, :) = dgi;
+            else    %% dg_method == 3   %% indexing transpose (for speed on older Matlabs)
+                dgt(:, i1:iN) = dgi';     %% assign as columns in transpose for speed
+            end
         end
     end
 end
-dg = dgt';
+if dg_method == 3   %% indexing transpose (for speed on older Matlabs)
+    dg = dgt';
+end
