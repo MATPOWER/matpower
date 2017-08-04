@@ -103,15 +103,15 @@ switch ff
     case 'lin'          %% linear constraint set
         [A, l, u, varsets] = deal(varargin{:});
         if isempty(idx)
-            om.(ff).data.A.(name)  = A;
-            om.(ff).data.l.(name)  = l;
-            om.(ff).data.u.(name)  = u;
-            om.(ff).data.vs.(name) = varsets;
+            om.lin.data.A.(name)  = A;
+            om.lin.data.l.(name)  = l;
+            om.lin.data.u.(name)  = u;
+            om.lin.data.vs.(name) = varsets;
         else
-            om.(ff).data.A  = subsasgn(om.(ff).data.A, s2, A);
-            om.(ff).data.l  = subsasgn(om.(ff).data.l, s2, l);
-            om.(ff).data.u  = subsasgn(om.(ff).data.u, s2, u);
-            om.(ff).data.vs = subsasgn(om.(ff).data.vs, s2, varsets);
+            om.lin.data.A  = subsasgn(om.lin.data.A, s2, A);
+            om.lin.data.l  = subsasgn(om.lin.data.l, s2, l);
+            om.lin.data.u  = subsasgn(om.lin.data.u, s2, u);
+            om.lin.data.vs = subsasgn(om.lin.data.vs, s2, varsets);
         end
     case {'nle', 'nli'} %% nonlinear constraint set
         [fcn, hess, computed_by, varsets] = deal(varargin{:});
@@ -135,9 +135,9 @@ switch ff
             if ~isempty(computed_by)
                 error('add_named_set: a nonlinear constraint set computed by another set is currently only implemented for simple named sets, not yet for indexed named sets');
             end
-            om.(ff).data.fcn   = subsasgn(om.(ff).data.fcn, s2, fcn);
-            om.(ff).data.hess  = subsasgn(om.(ff).data.hess, s2, hess);
-            om.(ff).data.vs = subsasgn(om.(ff).data.vs, s2, varsets);
+            om.(ff).data.fcn  = subsasgn(om.(ff).data.fcn, s2, fcn);
+            om.(ff).data.hess = subsasgn(om.(ff).data.hess, s2, hess);
+            om.(ff).data.vs   = subsasgn(om.(ff).data.vs, s2, varsets);
         end
     case 'cost'         %% cost set
         [cp, varsets] = deal(varargin{:});

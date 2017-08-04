@@ -78,10 +78,10 @@ switch ff
         om.var.data.vu.(name)   = empty_cell;   %% upper bound
         om.var.data.vt.(name)   = empty_cell;   %% variable type
     case 'lin'          %% linear constraint set
-        om.(ff).data.A.(name)   = empty_cell;
-        om.(ff).data.l.(name)   = empty_cell;
-        om.(ff).data.u.(name)   = empty_cell;
-        om.(ff).data.vs.(name)  = empty_cell;
+        om.lin.data.A.(name)   = empty_cell;
+        om.lin.data.l.(name)   = empty_cell;
+        om.lin.data.u.(name)   = empty_cell;
+        om.lin.data.vs.(name)  = empty_cell;
     case {'nle', 'nli'} %% nonlinear constraint set
         om.(ff).data.fcn.(name) = empty_cell;
         om.(ff).data.hess.(name)= empty_cell;

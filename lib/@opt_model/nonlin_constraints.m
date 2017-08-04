@@ -24,33 +24,33 @@ function [g, dg] = nonlin_constraints(om, x, iseq)
 
 %% get constraint type
 if iseq         %% equality constraints
-    ff = 'nle';
+    om_nlx = om.nle;
 else            %% inequality constraints
-    ff = 'nli';
+    om_nlx = om.nli;
 end
 
 %% initialize g, dg
-g = NaN(om.(ff).N, 1);
-dgt = sparse(om.var.N, om.(ff).N);  %% use transpose of dg for speed
+g = NaN(om_nlx.N, 1);
+dgt = sparse(om.var.N, om_nlx.N);  %% use transpose of dg for speed
 
 %% fill in each piece
 s = struct('type', {'.', '()'}, 'subs', {'', 1});
 s1 = s;
 s2 = s;
 s2(2).type = '{}';
-for k = 1:om.(ff).NS
-    name = om.(ff).order(k).name;
-    idx  = om.(ff).order(k).idx;
+for k = 1:om_nlx.NS
+    name = om_nlx.order(k).name;
+    idx  = om_nlx.order(k).idx;
     if isempty(idx)
-        if ~isfield(om.(ff).data.fcn, name)
+        if ~isfield(om_nlx.data.fcn, name)
             continue;   %% skip, there is no function handle stored here,
                         %% the function value for this named set was included
                         %% in the value computed by a previous named set
         end
-        N = om.(ff).idx.N.(name);   %% number of constraint functions
+        N = om_nlx.idx.N.(name);    %% number of constraint functions
                                     %% evaluated for this named set
-        if isfield(om.(ff).data.include, name)
-            N = N + sum(om.(ff).data.include.(name).N);
+        if isfield(om_nlx.data.include, name)
+            N = N + sum(om_nlx.data.include.(name).N);
         end
     else
         % (calls to substruct() are relatively expensive ...
@@ -61,32 +61,38 @@ for k = 1:om.(ff).NS
         s1(2).subs = idx;
         s2(1).subs = name;
         s2(2).subs = idx;
-        N = subsref(om.(ff).idx.N, s1);
+        N = subsref(om_nlx.idx.N, s1);
     end
     if N                                %% non-zero number of rows
         if isempty(idx)
-            fcn = om.(ff).data.fcn.(name);      %% fcn for kth constraint set
-            i1 = om.(ff).idx.i1.(name);         %% starting row index
+            fcn = om_nlx.data.fcn.(name);       %% fcn for kth constraint set
+            i1 = om_nlx.idx.i1.(name);          %% starting row index
             iN = i1 + N - 1;                    %% ending row index
-            vsl = om.(ff).data.vs.(name);       %% var set list
+            vsl = om_nlx.data.vs.(name);        %% var set list
         else
-            fcn = subsref(om.(ff).data.fcn, s2);%% fcn for kth constraint set
-            i1 = subsref(om.(ff).idx.i1, s1);   %% starting row index
-            iN = subsref(om.(ff).idx.iN, s1);   %% ending row index
-            vsl = subsref(om.(ff).data.vs, s2); %% var set list
+            fcn = subsref(om_nlx.data.fcn, s2); %% fcn for kth constraint set
+            i1 = subsref(om_nlx.idx.i1, s1);    %% starting row index
+            iN = subsref(om_nlx.idx.iN, s1);    %% ending row index
+            vsl = subsref(om_nlx.data.vs, s2);  %% var set list
         end
         if isempty(vsl)         %% all rows of x
             xx = x;
         else                    %% selected rows of x
             xx = cell(size(vsl));
             for v = 1:length(vsl)
-                % (calls to substruct() are relatively expensive ...
-                % s = substruct('.', vsl(v).name, '()', vsl(v).idx);
-                % ... so replace it with these more efficient lines)
-                s(1).subs = vsl(v).name;
-                s(2).subs = vsl(v).idx;
-                j1 = subsref(om.var.idx.i1, s); %% starting row in full x
-                jN = subsref(om.var.idx.iN, s); %% ending row in full x
+                vidx = vsl(v).idx;
+                if isempty(vidx)
+                    j1 = om.var.idx.i1.(vsl(v).name);
+                    jN = om.var.idx.iN.(vsl(v).name);
+                else
+                    % (calls to substruct() are relatively expensive ...
+                    % s = substruct('.', vsl(v).name, '()', vsl(v).idx);
+                    % ... so replace it with these more efficient lines)
+                    s(1).subs = vsl(v).name;
+                    s(2).subs = vsl(v).idx;
+                    j1 = subsref(om.var.idx.i1, s); %% starting row in full x
+                    jN = subsref(om.var.idx.iN, s); %% ending row in full x
+                end
                 xx{v} = x(j1:jN);
             end
         end
@@ -104,15 +110,23 @@ for k = 1:om.(ff).NS
             kN = 0;                             %% initialize last col of dgk used
             dgi = sparse(N, om.var.N);
             for v = 1:length(vsl)
-                % (calls to substruct() are relatively expensive ...
-                % s = substruct('.', vsl(v).name, '()', vsl(v).idx);
-                % ... so replace it with these more efficient lines)
-                s(1).subs = vsl(v).name;
-                s(2).subs = vsl(v).idx;
-                j1 = subsref(om.var.idx.i1, s); %% starting row in full x
-                jN = subsref(om.var.idx.iN, s); %% ending row in full x
-                k1 = kN + 1;                    %% starting column in dgk
-                kN = kN + subsref(om.var.idx.N, s);%% ending column in dgk
+                vidx = vsl(v).idx;
+                if isempty(vidx)
+                    j1 = om.var.idx.i1.(vsl(v).name);
+                    jN = om.var.idx.iN.(vsl(v).name);
+                    k1 = kN + 1;                    %% starting column in dgk
+                    kN = kN + om.var.idx.N.(vsl(v).name);%% ending column in dgk
+                else
+                    % (calls to substruct() are relatively expensive ...
+                    % s = substruct('.', vsl(v).name, '()', vsl(v).idx);
+                    % ... so replace it with these more efficient lines)
+                    s(1).subs = vsl(v).name;
+                    s(2).subs = vsl(v).idx;
+                    j1 = subsref(om.var.idx.i1, s); %% starting row in full x
+                    jN = subsref(om.var.idx.iN, s); %% ending row in full x
+                    k1 = kN + 1;                    %% starting column in dgk
+                    kN = kN + subsref(om.var.idx.N, s);%% ending column in dgk
+                end
                 dgi(:, j1:jN) = dgk(:, k1:kN);
             end
             dgt(:, i1:iN) = dgi';     %% assign as columns in transpose for speed
