@@ -1,4 +1,4 @@
-function [vv, ll, nn, cc] = get_idx(om)
+function varargout = get_idx(om, varargin)
 %GET_IDX  Returns the idx struct for vars, lin/nonlin constraints, costs.
 %   VV = OM.GET_IDX()
 %   [VV, LL] = OM.GET_IDX()
@@ -14,8 +14,25 @@ function [vv, ll, nn, cc] = get_idx(om)
 %   'N' contains all the sizes. Each is a struct whose fields are
 %   the named blocks.
 %
+%   Alternatively, you can specify the type of named set(s) directly
+%   as inputs ...
+%
+%   [IDX1, IDX2, ...] = OM.GET_IDX(SET_TYPE1, SET_TYPE2, ...);
+%   [CC, VV] = OM.GET_IDX('cost', 'var');
+%   [LL, NNE, NNI] = OM.GET_IDX('lin', 'nle', 'nli');
+%
+%   The specific type of named set being referenced is
+%   given by the SET_TYPE inputs, with the following valid options:
+%       SET_TYPE = 'var'   => variable set
+%       SET_TYPE = 'lin'   => linear constraint set
+%       SET_TYPE = 'nln'   => nonlinear constraint set (legacy)
+%       SET_TYPE = 'nle'   => nonlinear equality constraint set
+%       SET_TYPE = 'nli'   => nonlinear inequality constraint set
+%       SET_TYPE = 'cost'  => cost set
+%
 %   Examples:
 %       [vv, ll, nn] = om.get_idx();
+%       [vv, ll, cc] = om.get_idx('var', 'lin', 'cost');
 %
 %       For a variable block named 'z' we have ...
 %           vv.i1.z - starting index for 'z' in optimization vector x
@@ -41,7 +58,8 @@ function [vv, ll, nn, cc] = get_idx(om)
 %       replace them with something like 'z(i,j)', 'foo(i,j,k)'
 %       or 'bar(i)' in the examples above.
 %
-%   See also OPT_MODEL, ADD_VARS, ADD_CONSTRAINTS, ADD_COSTS.
+%   See also OPT_MODEL, ADD_VARS, ADD_LIN_CONSTRAINTS, ADD_NLN_CONSTRAINTS,
+%   ADD_COSTS.
 
 %   MATPOWER
 %   Copyright (c) 2008-2016, Power Systems Engineering Research Center (PSERC)
@@ -51,19 +69,25 @@ function [vv, ll, nn, cc] = get_idx(om)
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-vv = om.var.idx;
-if nargout > 1
-    ll = om.lin.idx;
-    if nargout > 2
-        nn = om.nln.idx;
-        if nargout > 3
-            cc = om.cost.idx;
-            if nargout > 4
-                nne = om.nle.idx;
-                if nargout > 5
-                    nni = om.nli.idx;
+if nargin == 1
+    varargout{1} = om.var.idx;
+    if nargout > 1
+        varargout{2} = om.lin.idx;
+        if nargout > 2
+            varargout{3} = om.nln.idx;
+            if nargout > 3
+                varargout{4} = om.cost.idx;
+                if nargout > 4
+                    varargout{5} = om.nle.idx;
+                    if nargout > 5
+                        varargout{6} = om.nli.idx;
+                    end
                 end
             end
         end
+    end
+else
+    for k = nargout:-1:1
+        varargout{k} = om.(varargin{k}).idx;
     end
 end

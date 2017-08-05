@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 373;
+num_tests = 392;
 
 t_begin(num_tests, quiet);
 
@@ -144,6 +144,14 @@ t_is(om.getN('var'), vN, 14, t);
 %%-----  get_idx  -----
 t = 'get_idx : var';
 vv = om.get_idx();
+t_is([vv.i1.Pg vv.iN.Pg vv.N.Pg], [5 7 3], 14, [t ' : Pg']);
+t_is(size(vv.i1.x), [2, 2], 14, [t ' : size(vv.i1.x)']);
+t_is([vv.i1.x(2,1) vv.iN.x(2,1) vv.N.x(2,1)], [22 24 3], 14, [t ' : x(2,1)']);
+t_is(size(vv.i1.y), [2, 3, 4], 14, [t ' : size(vv.i1.y)']);
+t_is([vv.i1.y(2,2,4) vv.iN.y(2,2,4) vv.N.y(2,2,4)], [133 140 8], 14, [t ' : y(2,2,4)']);
+
+t = 'get_idx(''var'')';
+vv = om.get_idx('var');
 t_is([vv.i1.Pg vv.iN.Pg vv.N.Pg], [5 7 3], 14, [t ' : Pg']);
 t_is(size(vv.i1.x), [2, 2], 14, [t ' : size(vv.i1.x)']);
 t_is([vv.i1.x(2,1) vv.iN.x(2,1) vv.N.x(2,1)], [22 24 3], 14, [t ' : x(2,1)']);
@@ -382,6 +390,12 @@ t_is([ll.i1.Qmis ll.iN.Qmis ll.N.Qmis], [4 6 3], 14, [t ' : Qmis']);
 t_is(size(ll.i1.mylin), [2, 2], 14, [t ' : size(ll.i1.mylin)']);
 t_is([ll.i1.mylin(2,1) ll.iN.mylin(2,1) ll.N.mylin(2,1)], [12 14 3], 14, [t ' : mylin(2,1)']);
 
+t = 'get_idx(''lin'')';
+ll = om.get_idx('lin');
+t_is([ll.i1.Qmis ll.iN.Qmis ll.N.Qmis], [4 6 3], 14, [t ' : Qmis']);
+t_is(size(ll.i1.mylin), [2, 2], 14, [t ' : size(ll.i1.mylin)']);
+t_is([ll.i1.mylin(2,1) ll.iN.mylin(2,1) ll.N.mylin(2,1)], [12 14 3], 14, [t ' : mylin(2,1)']);
+
 %%-----  linear_constraints  -----
 t = 'linear_constraints';
 [A, l, u] = om.linear_constraints();
@@ -540,6 +554,20 @@ t = 'get_idx : cost';
 t_is([cc.i1.vcost cc.iN.vcost cc.N.vcost], [3 4 2], 14, [t ' : vcost']);
 t_is(size(cc.i1.wc), [2, 2], 14, [t ' : size(cc.i1.wc)']);
 t_is([cc.i1.wc(2,1) cc.iN.wc(2,1) cc.N.wc(2,1)], [10 12 3], 14, [t ' : wc(2,1)']);
+
+t = 'get_idx(''var'', ''cost'', ''lin'')';
+[vv, cc, ll] = om.get_idx('var', 'cost', 'lin');
+t_is([vv.i1.Pg vv.iN.Pg vv.N.Pg], [5 7 3], 14, [t ' : Pg']);
+t_is(size(vv.i1.x), [2, 2], 14, [t ' : size(vv.i1.x)']);
+t_is([vv.i1.x(2,1) vv.iN.x(2,1) vv.N.x(2,1)], [22 24 3], 14, [t ' : x(2,1)']);
+t_is(size(vv.i1.y), [2, 3, 4], 14, [t ' : size(vv.i1.y)']);
+t_is([vv.i1.y(2,2,4) vv.iN.y(2,2,4) vv.N.y(2,2,4)], [133 140 8], 14, [t ' : y(2,2,4)']);
+t_is([cc.i1.vcost cc.iN.vcost cc.N.vcost], [3 4 2], 14, [t ' : vcost']);
+t_is(size(cc.i1.wc), [2, 2], 14, [t ' : size(cc.i1.wc)']);
+t_is([cc.i1.wc(2,1) cc.iN.wc(2,1) cc.N.wc(2,1)], [10 12 3], 14, [t ' : wc(2,1)']);
+t_is([ll.i1.Qmis ll.iN.Qmis ll.N.Qmis], [4 6 3], 14, [t ' : Qmis']);
+t_is(size(ll.i1.mylin), [2, 2], 14, [t ' : size(ll.i1.mylin)']);
+t_is([ll.i1.mylin(2,1) ll.iN.mylin(2,1) ll.N.mylin(2,1)], [12 14 3], 14, [t ' : mylin(2,1)']);
 
 %%-----  get_cost_params  -----
 t = 'om.get_cost_params(''ucost'')';

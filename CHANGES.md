@@ -12,6 +12,10 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 8/4/17
+  - Add option for `opt_model/get_idx()` to return arbitrarily selected
+    index types.
+
 #### 7/10/17
   - Add ability of `@opt_model` to handle nonlinear constraints with
     function handles for evaluating the constraint function, gradients
