@@ -29,7 +29,7 @@ function [h, dh] = opf_branch_flow_fcn(x, mpc, Yf, Yt, il, mpopt)
 %       h = opf_branch_flow_fcn(x, mpc, Yf, Yt, il, mpopt);
 %       [h, dh] = opf_branch_flow_fcn(x, mpc, Yf, Yt, il, mpopt);
 %
-%   See also OPF_COSTFCN, OPF_HESSFCN.
+%   See also OPF_BRANCH_FLOW_HESS.
 
 %   MATPOWER
 %   Copyright (c) 1996-2017, Power Systems Engineering Research Center (PSERC)

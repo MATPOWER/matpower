@@ -22,7 +22,7 @@ function d2H = opf_branch_flow_hess(x, lambda, mpc, Yf, Yt, il, mpopt)
 %   Example:
 %       d2H = opf_branch_flow_hess(x, lambda, mpc, Yf, Yt, il, mpopt);
 %
-%   See also OPF_COSTFCN, OPF_CONSFCN.
+%   See also OPF_BRANCH_FLOW_FCN.
 
 %   MATPOWER
 %   Copyright (c) 1996-2017, Power Systems Engineering Research Center (PSERC)

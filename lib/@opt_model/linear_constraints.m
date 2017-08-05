@@ -2,14 +2,14 @@ function [A, l, u] = linear_constraints(om)
 %LINEAR_CONSTRAINTS  Builds and returns the full set of linear constraints.
 %   [A, L, U] = OM.LINEAR_CONSTRAINTS()
 %   Builds the full set of linear constraints based on those added by
-%   ADD_CONSTRAINTS.
+%   ADD_LIN_CONSTRAINTS.
 %
 %       L <= A * x <= U
 %
 %   Example:
 %       [A, l, u] = om.linear_constraints();
 %
-%   See also OPT_MODEL, ADD_CONSTRAINTS.
+%   See also OPT_MODEL, ADD_LIN_CONSTRAINTS.
 
 %   MATPOWER
 %   Copyright (c) 2008-2016, Power Systems Engineering Research Center (PSERC)
