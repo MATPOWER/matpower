@@ -59,7 +59,7 @@ function [results, success, raw] = ipoptopf_solver(om, mpopt)
 mpc = om.get_mpc();
 [baseMVA, bus, gen, branch, gencost] = ...
     deal(mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch, mpc.gencost);
-[vv, ll, nn] = om.get_idx();
+[vv, ll, nne, nni] = om.get_idx('var', 'lin', 'nle', 'nli');
 
 %% problem dimensions
 nb = size(bus, 1);          %% number of buses
@@ -245,25 +245,26 @@ muSf = zeros(nl, 1);
 muSt = zeros(nl, 1);
 if ~isempty(il)
     if upper(mpopt.opf.flow_lim(1)) == 'P'
-        muSf(il) = info.lambda(2*nb+    (1:nl2));
-        muSt(il) = info.lambda(2*nb+nl2+(1:nl2));
+        muSf(il) = info.lambda(om.nle.N+(nni.i1.Sf:nni.iN.Sf));
+        muSt(il) = info.lambda(om.nle.N+(nni.i1.St:nni.iN.St));
     else
-        muSf(il) = 2 * info.lambda(2*nb+    (1:nl2)) .* branch(il, RATE_A) / baseMVA;
-        muSt(il) = 2 * info.lambda(2*nb+nl2+(1:nl2)) .* branch(il, RATE_A) / baseMVA;
+        muSf(il) = 2 * info.lambda(om.nle.N+(nni.i1.Sf:nni.iN.Sf)) .* branch(il, RATE_A) / baseMVA;
+        muSt(il) = 2 * info.lambda(om.nle.N+(nni.i1.St:nni.iN.St)) .* branch(il, RATE_A) / baseMVA;
     end
 end
 
 %% extract shadow prices for equality var bounds converted to eq constraints
 %% (since IPOPT does not return shadow prices on variables that it eliminates)
 if nk
-    lam_tmp = info.lambda(2*nb+2*nl2+nA-nk+(1:nk));
+    offset = om.nle.N + om.nli.N + nA - nk;
+    lam_tmp = info.lambda(offset+(1:nk));
     kl = find(lam_tmp < 0);             %% lower bound binding
     ku = find(lam_tmp > 0);             %% upper bound binding
     info.zl(kk(kl)) = -lam_tmp(kl);
     info.zu(kk(ku)) =  lam_tmp(ku);
 
-    info.lambda(2*nb+2*nl2+nA-nk+(1:nk)) = [];  %% remove these shadow prices
-    nA = nA - nk;                               %% reduce dimension accordingly
+    info.lambda(offset+(1:nk)) = [];    %% remove these shadow prices
+    nA = nA - nk;                       %% reduce dimension accordingly
 end
 
 
@@ -274,24 +275,24 @@ gen(:, MU_PMAX)  = info.zu(vv.i1.Pg:vv.iN.Pg) / baseMVA;
 gen(:, MU_PMIN)  = info.zl(vv.i1.Pg:vv.iN.Pg) / baseMVA;
 gen(:, MU_QMAX)  = info.zu(vv.i1.Qg:vv.iN.Qg) / baseMVA;
 gen(:, MU_QMIN)  = info.zl(vv.i1.Qg:vv.iN.Qg) / baseMVA;
-bus(:, LAM_P)    = info.lambda(nn.i1.Pmis:nn.iN.Pmis) / baseMVA;
-bus(:, LAM_Q)    = info.lambda(nn.i1.Qmis:nn.iN.Qmis) / baseMVA;
+bus(:, LAM_P)    = info.lambda(nne.i1.Pmis:nne.iN.Pmis) / baseMVA;
+bus(:, LAM_Q)    = info.lambda(nne.i1.Qmis:nne.iN.Qmis) / baseMVA;
 branch(:, MU_SF) = muSf / baseMVA;
 branch(:, MU_ST) = muSt / baseMVA;
 
 %% package up results
-nlnN = om.getN('nln');
+nlnN = om.nle.N + 2*nl;     %% because muSf and muSt are nl x 1, not nl2 x 1
 
 %% extract multipliers for nonlinear constraints
-kl = find(info.lambda(1:2*nb) < 0);
-ku = find(info.lambda(1:2*nb) > 0);
+kl = find(info.lambda(1:om.nle.N) < 0);
+ku = find(info.lambda(1:om.nle.N) > 0);
 nl_mu_l = zeros(nlnN, 1);
-nl_mu_u = [zeros(2*nb, 1); muSf; muSt];
+nl_mu_u = [zeros(om.nle.N, 1); muSf; muSt];
 nl_mu_l(kl) = -info.lambda(kl);
 nl_mu_u(ku) =  info.lambda(ku);
 
 %% extract multipliers for linear constraints
-lam_lin = info.lambda(2*nb+2*nl2+(1:nA));   %% lambda for linear constraints
+lam_lin = info.lambda(om.nle.N+om.nli.N+(1:nA));    %% lambda for linear constraints
 kl = find(lam_lin < 0);                     %% lower bound binding
 ku = find(lam_lin > 0);                     %% upper bound binding
 mu_l = zeros(nA, 1);

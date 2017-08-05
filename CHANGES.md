@@ -13,6 +13,9 @@ Since last release
 ------------------
 
 #### 8/4/17
+  - Modify AC OPF to use the new nonlinear constraint handling of
+    `opt_model` to build and evaluate power balance and branch flow
+    constraints and their derivatives, and index shadow prices.
   - Add option for `opt_model/get_idx()` to return arbitrarily selected
     index types.
 

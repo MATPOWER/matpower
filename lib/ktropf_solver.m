@@ -63,7 +63,7 @@ create_ktropts_file = 0;    %% generate a KNITRO options file on the fly
 mpc = om.get_mpc();
 [baseMVA, bus, gen, branch, gencost] = ...
     deal(mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch, mpc.gencost);
-[vv, ll, nn] = om.get_idx();
+[vv, ll, nne, nni] = om.get_idx('var', 'lin', 'nle', 'nli');
 
 %% problem dimensions
 nb = size(bus, 1);          %% number of buses
@@ -231,11 +231,11 @@ muSf = zeros(nl, 1);
 muSt = zeros(nl, 1);
 if ~isempty(il)
     if upper(mpopt.opf.flow_lim(1)) == 'P'
-        muSf(il) = Lambda.ineqnonlin(1:nl2);
-        muSt(il) = Lambda.ineqnonlin((1:nl2)+nl2);
+        muSf(il) = Lambda.ineqnonlin(nni.i1.Sf:nni.iN.Sf);
+        muSt(il) = Lambda.ineqnonlin(nni.i1.St:nni.iN.St);
     else
-        muSf(il) = 2 * Lambda.ineqnonlin(1:nl2)       .* branch(il, RATE_A) / baseMVA;
-        muSt(il) = 2 * Lambda.ineqnonlin((1:nl2)+nl2) .* branch(il, RATE_A) / baseMVA;
+        muSf(il) = 2 * Lambda.ineqnonlin(nni.i1.Sf:nni.iN.Sf) .* branch(il, RATE_A) / baseMVA;
+        muSt(il) = 2 * Lambda.ineqnonlin(nni.i1.St:nni.iN.St) .* branch(il, RATE_A) / baseMVA;
     end
 end
 
@@ -255,13 +255,13 @@ gen(:, MU_PMAX)  = Lambda.upper(vv.i1.Pg:vv.iN.Pg) / baseMVA;
 gen(:, MU_PMIN)  = -Lambda.lower(vv.i1.Pg:vv.iN.Pg) / baseMVA;
 gen(:, MU_QMAX)  = Lambda.upper(vv.i1.Qg:vv.iN.Qg) / baseMVA;
 gen(:, MU_QMIN)  = -Lambda.lower(vv.i1.Qg:vv.iN.Qg) / baseMVA;
-bus(:, LAM_P)    = Lambda.eqnonlin(nn.i1.Pmis:nn.iN.Pmis) / baseMVA;
-bus(:, LAM_Q)    = Lambda.eqnonlin(nn.i1.Qmis:nn.iN.Qmis) / baseMVA;
+bus(:, LAM_P)    = Lambda.eqnonlin(nne.i1.Pmis:nne.iN.Pmis) / baseMVA;
+bus(:, LAM_Q)    = Lambda.eqnonlin(nne.i1.Qmis:nne.iN.Qmis) / baseMVA;
 branch(:, MU_SF) = muSf / baseMVA;
 branch(:, MU_ST) = muSt / baseMVA;
 
 %% package up results
-nlnN = om.getN('nln');
+nlnN = om.nle.N + 2*nl;     %% because muSf and muSt are nl x 1, not nl2 x 1
 nlt = length(ilt);
 ngt = length(igt);
 nbx = length(ibx);
@@ -270,7 +270,7 @@ nbx = length(ibx);
 kl = find(Lambda.eqnonlin < 0);
 ku = find(Lambda.eqnonlin > 0);
 nl_mu_l = zeros(nlnN, 1);
-nl_mu_u = [zeros(2*nb, 1); muSf; muSt];
+nl_mu_u = [zeros(om.nle.N, 1); muSf; muSt];
 nl_mu_l(kl) = -Lambda.eqnonlin(kl);
 nl_mu_u(ku) =  Lambda.eqnonlin(ku);
 
