@@ -21,9 +21,12 @@ Since last release
 
 #### 7/10/17
   - Lay ground work for user-defined nonlinear OPF constraints, by adding
-    support for `@opt_model` to handle nonlinear constraints with
+    support for `opt_model` to handle nonlinear constraints with
     function handles for evaluating the constraint function, gradients
     and Hessian.
+  - Deprecated the `add_constraints()` method of `opt_model`. Use the
+    corresponding one of the following methods instead:
+    `add_lin_constraints()`, `add_nln_constraints()` or `init_indexed_name()`.
 
 #### 6/8/17
   - Move `@opt_model`, `@opf_model` to use `classdef`. Modify code to use

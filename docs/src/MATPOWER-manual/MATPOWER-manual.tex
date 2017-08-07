@@ -6724,6 +6724,13 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.1.pdf}{\m
     \item \code{install\_matpower()} installs \matpower{} modifying or showing needed modifications to Matlab or Octave path.
     \item \code{gentypes()} and \code{genfuels} provide list of standard generator unit types and fuel types, respectively.
     \item \code{save2psse()} to export a \matpower{} case to PSS/E RAW data format.
+    \item \code{opt\_model/add\_lin\_constraints()} to add linear constraints to an optimization model.
+    \item \code{opt\_model/add\_nln\_constraints()} to add nonlinear constraints to an optimization model.
+    \item \code{opt\_model/init\_indexed\_name()} to initialize the indexes for an indexed name set of constraints, costs or variables.
+    \end{itemize}
+    \item Deprecated function:
+    \begin{itemize}
+    \item \code{opt\_model/add\_constraints()} -- use the corresponding one of the following methods instead: \code{add\_lin\_constraints()}, \code{add\_nln\_constraints()}, or \code{init\_indexed\_name()}.
     \end{itemize}
 \end{itemize}
 

@@ -2,7 +2,7 @@ function om = add_costs(om, name, idx, varargin)
 %ADD_COSTS  Adds a set of user costs to the model.
 %   OM.ADD_COSTS(NAME, CP);
 %   OM.ADD_COSTS(NAME, CP, VARSETS);
-%   OM.ADD_COSTS(NAME, DIM_LIST);
+%   OM.ADD_COSTS(NAME, DIM_LIST); (deprecated, use INIT_INDEXED_NAME instead)
 %   OM.ADD_COSTS(NAME, IDX_LIST, CP);
 %   OM.ADD_COSTS(NAME, IDX_LIST, CP, VARSETS);
 %
