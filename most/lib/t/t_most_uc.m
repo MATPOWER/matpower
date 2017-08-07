@@ -81,6 +81,9 @@ if have_fcn('cplex')
     %mpopt = mpoption(mpopt, 'cplex.lpmethod', 4);       %% barrier
     mpopt = mpoption(mpopt, 'cplex.opts.mip.tolerances.mipgap', 0);
     mpopt = mpoption(mpopt, 'cplex.opts.mip.tolerances.absmipgap', 0);
+    mpopt = mpoption(mpopt, 'cplex.opts.simplex.tolerances.optimality', 1e-9);
+    mpopt = mpoption(mpopt, 'cplex.opts.simplex.tolerances.feasibility', 1e-9);
+    mpopt = mpoption(mpopt, 'cplex.opts.emphasis.numerical', 1);
     mpopt = mpoption(mpopt, 'cplex.opts.threads', 2);
 end
 if have_fcn('glpk')

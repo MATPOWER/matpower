@@ -3238,6 +3238,11 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MOST-manual-1.0.1.pdf}{\mos
 \item Add missing constant term to objective function value reported by \code{most\_summary}.
 \end{itemize}
 
+\subsubsection*{Other Changes}
+\begin{itemize}
+\item Updated to use OOP notation for \code{opt\_model} object, and avoid calls to deprecated methods, using \code{init\_indexed\_name()} and \code{add\_lin\_constraints()} instead.
+\end{itemize}
+
 \subsection{Version 1.0 -- released Dec 16, 2016}
 \label{app:v10}
 

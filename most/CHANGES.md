@@ -5,6 +5,13 @@ Change history for MOST
 Since last release
 ------------------
 
+#### 8/7/17
+  - Switch to OOP notation everywhere for `opt_model` object,
+    e.g. `om.method()`.
+  - Use `om.init_indexed_name()` instead of deprecated form of calls to
+    `add_vars()`, `add_constraints()` or `add_costs()`.
+  - Use `om.add_lin_constraints()` in place of deprecated `add_constraints()`.
+
 #### 5/25/17
   - Fix dimension of `RampWear` cost indexing if `mdi.OpenEnded` is true.
   - Add missing constant term to objective function value reported
