@@ -254,11 +254,12 @@ else
   om.add_vars('Qg', ng, Qg, Qmin, Qmax);
   %% nonlinear constraints
   om.add_nln_constraints({'Pmis', 'Qmis'}, [nb;nb], 1, fcn_mis, hess_mis, {'Va', 'Vm', 'Pg', 'Qg'});
-  om.add_nln_constraints('Pmis', nb, 'nonlinear');
-  om.add_nln_constraints('Qmis', nb, 'nonlinear');
-  om.add_nln_constraints({'Sf', 'St'}, [nl2;nl2], 0, fcn_flow, hess_flow, {'Va', 'Vm'});
-  om.add_nln_constraints('Sf', nl, 'nonlinear');
-  om.add_nln_constraints('St', nl, 'nonlinear');
+  if strcmp(alg, 'MINOPF') || strcmp(alg, 'PDIPM') || ...
+        strcmp(alg, 'TRALM') || strcmp(alg, 'SDPOPF')
+    om.add_nln_constraints({'Sf', 'St'}, [nl;nl], 0, fcn_flow, hess_flow, {'Va', 'Vm'});
+  else
+    om.add_nln_constraints({'Sf', 'St'}, [nl2;nl2], 0, fcn_flow, hess_flow, {'Va', 'Vm'});
+  end
   %% linear constraints
   om.add_lin_constraints('PQh', Apqh, [], ubpqh, {'Pg', 'Qg'});     %% npqh
   om.add_lin_constraints('PQl', Apql, [], ubpql, {'Pg', 'Qg'});     %% npql

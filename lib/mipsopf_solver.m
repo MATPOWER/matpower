@@ -17,9 +17,11 @@ function [results, success, raw] = mipsopf_solver(om, mpopt)
 %           .var
 %               .l  lower bounds on variables
 %               .u  upper bounds on variables
-%           .nln
+%           .nln    (deprecated) 2*nb+2*nl - Pmis, Qmis, Sf, St
 %               .l  lower bounds on nonlinear constraints
 %               .u  upper bounds on nonlinear constraints
+%           .nle    nonlinear equality constraints
+%           .nli    nonlinear inequality constraints
 %           .lin
 %               .l  lower bounds on linear constraints
 %               .u  upper bounds on linear constraints
@@ -69,7 +71,7 @@ end
 mpc = om.get_mpc();
 [baseMVA, bus, gen, branch, gencost] = ...
     deal(mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch, mpc.gencost);
-[vv, ll, nne, nni] = om.get_idx('var', 'lin', 'nle', 'nli');
+[vv, ll, nne, nni] = om.get_idx();
 
 %% problem dimensions
 nb = size(bus, 1);          %% number of buses
@@ -169,7 +171,7 @@ branch(:, MU_SF) = muSf / baseMVA;
 branch(:, MU_ST) = muSt / baseMVA;
 
 %% package up results
-nlnN = om.nle.N + 2*nl;     %% because muSf and muSt are nl x 1, not nl2 x 1
+nlnN = 2*nb + 2*nl;     %% because muSf and muSt are nl x 1, not nl2 x 1
 
 %% extract multipliers for nonlinear constraints
 kl = find(Lambda.eqnonlin < 0);
@@ -182,6 +184,8 @@ nl_mu_u(ku) =  Lambda.eqnonlin(ku);
 mu = struct( ...
   'var', struct('l', Lambda.lower, 'u', Lambda.upper), ...
   'nln', struct('l', nl_mu_l, 'u', nl_mu_u), ...
+  'nle', Lambda.eqnonlin, ...
+  'nli', Lambda.ineqnonlin, ...
   'lin', struct('l', Lambda.mu_l, 'u', Lambda.mu_u) );
 
 results = mpc;

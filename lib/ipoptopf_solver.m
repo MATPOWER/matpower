@@ -17,9 +17,11 @@ function [results, success, raw] = ipoptopf_solver(om, mpopt)
 %           .var
 %               .l  lower bounds on variables
 %               .u  upper bounds on variables
-%           .nln
+%           .nln    (deprecated) 2*nb+2*nl - Pmis, Qmis, Sf, St
 %               .l  lower bounds on nonlinear constraints
 %               .u  upper bounds on nonlinear constraints
+%           .nle    nonlinear equality constraints
+%           .nli    nonlinear inequality constraints
 %           .lin
 %               .l  lower bounds on linear constraints
 %               .u  upper bounds on linear constraints
@@ -59,7 +61,7 @@ function [results, success, raw] = ipoptopf_solver(om, mpopt)
 mpc = om.get_mpc();
 [baseMVA, bus, gen, branch, gencost] = ...
     deal(mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch, mpc.gencost);
-[vv, ll, nne, nni] = om.get_idx('var', 'lin', 'nle', 'nli');
+[vv, ll, nne, nni] = om.get_idx();
 
 %% problem dimensions
 nb = size(bus, 1);          %% number of buses
@@ -281,7 +283,7 @@ branch(:, MU_SF) = muSf / baseMVA;
 branch(:, MU_ST) = muSt / baseMVA;
 
 %% package up results
-nlnN = om.nle.N + 2*nl;     %% because muSf and muSt are nl x 1, not nl2 x 1
+nlnN = 2*nb + 2*nl;     %% because muSf and muSt are nl x 1, not nl2 x 1
 
 %% extract multipliers for nonlinear constraints
 kl = find(info.lambda(1:om.nle.N) < 0);
@@ -303,6 +305,8 @@ mu_u(ku) = lam_lin(ku);
 mu = struct( ...
   'var', struct('l', info.zl, 'u', info.zu), ...
   'nln', struct('l', nl_mu_l, 'u', nl_mu_u), ...
+  'nle', info.lambda(1:om.nle.N), ...
+  'nli', info.lambda(om.nle.N + (1:om.nli.N)), ...
   'lin', struct('l', mu_l, 'u', mu_u) );
 
 results = mpc;

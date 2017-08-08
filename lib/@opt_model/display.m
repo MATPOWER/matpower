@@ -34,18 +34,6 @@ if om.var.NS
 else
     fprintf('%s  :  <none>\n', 'VARIABLES');
 end
-if om.nln.NS
-    fprintf('\n%-21s %8s %8s %8s %8s\n', 'NONLINEAR CONSTRAINTS', 'name', 'i1', 'iN', 'N');
-    fprintf('%-21s %8s %8s %8s %8s\n', '=====================', '------', '-----', '-----', '------');
-    idx = om.nln.idx;
-    for k = 1:om.nln.NS
-        name = om.nln.order(k).name;
-        fprintf('%10d:%19s %8d %8d %8d\n', k, name, idx.i1.(name), idx.iN.(name), idx.N.(name));
-    end
-    fprintf('%10d = nln.NS%29d = nln.N\n\n', om.nln.NS, om.nln.N);
-else
-    fprintf('%s  :  <none>\n', 'NONLINEAR CONSTRAINTS');
-end
 if om.nle.NS
     fprintf('\n%-21s %8s %8s %8s %8s\n', 'NONLIN EQ CONSTRAINTS', 'name', 'i1', 'iN', 'N');
     fprintf('%-21s %8s %8s %8s %8s\n', '=====================', '------', '-----', '-----', '------');

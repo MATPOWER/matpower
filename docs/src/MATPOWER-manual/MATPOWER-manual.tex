@@ -2112,7 +2112,8 @@ name & description \\
 \code{results.raw}	& raw solver output in form returned by MINOS, and more\tnote{\ddag}	\\
 \code{results.var.val}	& final value of optimization variables, by named subset\tnote{\ddag}	\\
 \code{results.var.mu}	& shadow prices on variable bounds, by named subset\tnote{\ddag}	\\
-\code{results.nln}	& shadow prices on nonlinear constraints, by named subset\tnote{\ddag}	\\
+\code{results.nle}	& shadow prices on nonlinear equality constraints, by named subset\tnote{\ddag}	\\
+\code{results.nli}	& shadow prices on nonlinear inequality constraints, by named subset\tnote{\ddag}	\\
 \code{results.lin}	& shadow prices on linear constraints, by named subset\tnote{\ddag}	\\
 \code{results.cost}	& final value of user-defined costs, by named subset\tnote{\ddag}	\\
 \bottomrule
@@ -6809,6 +6810,8 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.1.pdf}{\m
 \subsubsection*{Incompatible Changes}
 \begin{itemize}
 \item Move included \matpower{} case files to new \code{data} subdirectory.
+\item Remove \code{nln.mu.l.<name>} and \code{nln.mu.u.<name>} fields from OPF \code{results} struct. Use \code{nle.lambda.<name>} and \code{nli.mu.<name>} fields instead for nonlinear constraint multipliers.
+\item Modify order of default output arguments of \code{opt\_model/get\_idx()}.
 \end{itemize}
 
 

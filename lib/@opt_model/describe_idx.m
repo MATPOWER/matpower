@@ -4,12 +4,11 @@ function label = describe_idx(om, set_type, idxs)
 %
 %   Returns strings describing (name and index) the variable, constraint
 %   or cost row that corresponds to the indices in IDXS. SET_TYPE must be
-%   one of the following: 'var', 'lin', 'nln', 'nle', 'nli' or 'cost',
-%   corresponding to indices for variables, linear constraints, non-linear
-%   constraints (legacy), nonlinear equality constraints, nonlinear
-%   inequality constraints and cost rows, respectively. The return value
-%   is a string if IDXS is a scalar, otherwise it is a cell array of
-%   strings of the same dimension as IDXS.
+%   one of the following: 'var', 'lin', 'nle', 'nli' or 'cost',
+%   corresponding to indices for variables, linear constraints, nonlinear
+%   equality constraints, nonlinear inequality constraints and cost rows,
+%   respectively. The return value is a string if IDXS is a scalar,
+%   otherwise it is a cell array of strings of the same dimension as IDXS.
 %
 %   Examples:
 %       label = om.describe_idx('var', 87));

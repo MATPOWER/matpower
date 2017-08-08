@@ -9,7 +9,6 @@ function om = add_constraints(om, name, varargin)
 %
 %   OM.ADD_CONSTRAINTS(NAME, N, ISEQ, FCN, HESS);
 %   OM.ADD_CONSTRAINTS(NAME, N, ISEQ, FCN, HESS, VARSETS);
-%   OM.ADD_CONSTRAINTS(NAME, N, 'nonlinear');  (legacy)
 %
 %   OM.ADD_CONSTRAINTS(NAME, DIM_LIST);           %% linear
 %   OM.ADD_CONSTRAINTS(NAME, DIM_LIST, 'lin');    %% linear
@@ -40,7 +39,6 @@ function om = add_constraints(om, name, varargin)
 %
 %       OM.ADD_CONSTRAINTS(NAME, N, ISEQ, FCN, HESS);
 %       OM.ADD_CONSTRAINTS(NAME, N, ISEQ, FCN, HESS, VARSETS);
-%       OM.ADD_CONSTRAINTS(NAME, N, 'nonlinear');  (legacy)
 %
 %       For nonlinear constraints, N specifies the number of constraints
 %       in the set, ISEQ is a one character string specifying whether it
@@ -72,11 +70,6 @@ function om = add_constraints(om, name, varargin)
 %       constraints in each set. FCN and HESS are still single function
 %       handles for functions that compute the values for the entire
 %       collection of constraint sets together.
-%
-%       For backward compatibility, ADD_CONSTRAINTS can also simply include
-%       the number of constraints N followed by the string 'nonlinear' or
-%       'nln' to indicate a placeholder in the indexing for constraints that
-%       will be implemented outside of the OPT_MODEL.
 %
 %       Similarly, if the third argument is a string containing 'nle' or
 %       'nli', it indicates a placeholder in the indexing for a constraint
@@ -111,9 +104,6 @@ function om = add_constraints(om, name, varargin)
 %   Examples:
 %       %% linear constraint
 %       om.add_constraints('vl', Avl, lvl, uvl, {'Pg', 'Qg'});
-%
-%       %% legacy nonlinear constraint (indexing placeholder)
-%       om.add_constraints('Pmis', nb, 'nonlinear');
 %
 %       %% nonlinear equality constraint with constraint/gradient and Hessian
 %       %% evaluation functions provided
@@ -179,9 +169,7 @@ else                            %% simple named set
     args = varargin;
 
     if length(args) < 3 || isa(args{3}, 'function_handle')
-        if length(args) < 3         %% legacy
-            ff = 'nln';
-        elseif args{2}
+        if args{2}
             ff = 'nle';
         else
             ff = 'nli';
@@ -202,11 +190,7 @@ else
         else
             [N, iseq, fcn, hess, varsets] = deal(args{1:5});
         end
-        if strcmp(ff, 'nln')
-            om.add_nln_constraints(name, idx, N, 'nonlinear');
-        else
-            om.add_nln_constraints(name, idx, N, iseq, fcn, hess, varsets);
-        end
+        om.add_nln_constraints(name, idx, N, iseq, fcn, hess, varsets);
     else                %% linear
         if nargs < 4
             [A, l, u, varsets] = deal(args{1:3}, {});

@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 392;
+num_tests = 386;
 
 t_begin(num_tests, quiet);
 
@@ -264,27 +264,6 @@ for i = 1:2
         t_ok(om.get('lin', 'NS') == lNS, sprintf('%s : lin.NS = %d', t, lNS));
     end
 end
-
-%%-----  add_nln_constraints ('legacy')  -----
-t = 'add_nln_constraints (legacy)';
-nN = 0;
-nNS = 0;
-t_ok(om.getN('nln') == nN, sprintf('%s : nln.N  = %d', t, nN));
-t_ok(om.get('nln', 'NS') == nNS, sprintf('%s : nln.NS = %d', t, nNS));
-
-t = 'om.add_nln_constraints(''Pmis'', N, ''nonlinear'')';
-N = 4;
-om.add_nln_constraints('Pmis', N, 'nonlinear');
-nNS = nNS + 1; nN = nN + N;
-t_ok(om.getN('nln') == nN, sprintf('%s : nln.N  = %d', t, nN));
-t_ok(om.get('nln', 'NS') == nNS, sprintf('%s : nln.NS = %d', t, nNS));
-
-t = 'om.add_nln_constraints(''Qmis'', N, ''nonlinear'')';
-N = 3;
-om.add_nln_constraints('Qmis', N, 'nonlinear');
-nNS = nNS + 1; nN = nN + N;
-t_ok(om.getN('nln') == nN, sprintf('%s : nln.N  = %d', t, nN));
-t_ok(om.get('nln', 'NS') == nNS, sprintf('%s : nln.NS = %d', t, nNS));
 
 %%-----  add_nln_constraints (equality)  -----
 t = 'add_nln_constraints (equality)';
@@ -550,7 +529,7 @@ t_ok(isfield(cp, 'N'), t);
 
 %%-----  get_idx  -----
 t = 'get_idx : cost';
-[vv, ll, nn, cc] = om.get_idx();
+[vv, ll, nne, nni, cc] = om.get_idx();
 t_is([cc.i1.vcost cc.iN.vcost cc.N.vcost], [3 4 2], 14, [t ' : vcost']);
 t_is(size(cc.i1.wc), [2, 2], 14, [t ' : size(cc.i1.wc)']);
 t_is([cc.i1.wc(2,1) cc.iN.wc(2,1) cc.N.wc(2,1)], [10 12 3], 14, [t ' : wc(2,1)']);

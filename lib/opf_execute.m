@@ -35,7 +35,7 @@ sdp = strcmp(alg, 'SDPOPF');
 om.build_cost_params();
 
 %% get indexing
-[vv, ll, nn] = om.get_idx();
+[vv, ll, nne, nni] = om.get_idx();
 
 if mpopt.verbose > 0
     v = mpver('all');
@@ -213,13 +213,19 @@ if ~sdp
 
   %% assign shadow prices for nonlinear constraints
   if ~dc
-    om_nln_order = om.get('nln', 'order');
-    for k = 1:length(om_nln_order)
-      name = om_nln_order(k).name;
-      if om.getN('nln', name)
-        idx = nn.i1.(name):nn.iN.(name);
-        results.nln.mu.l.(name) = results.mu.nln.l(idx);
-        results.nln.mu.u.(name) = results.mu.nln.u(idx);
+    om_nle_order = om.get('nle', 'order');
+    for k = 1:length(om_nle_order)
+      name = om_nle_order(k).name;
+      if om.getN('nle', name)
+        results.nle.lambda.(name) = results.mu.nle(nne.i1.(name):nne.iN.(name));
+      end
+    end
+
+    om_nli_order = om.get('nli', 'order');
+    for k = 1:length(om_nli_order)
+      name = om_nli_order(k).name;
+      if om.getN('nli', name)
+        results.nli.mu.(name) = results.mu.nli(nni.i1.(name):nni.iN.(name));
       end
     end
   end

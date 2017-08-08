@@ -2,10 +2,9 @@ function varargout = get_idx(om, varargin)
 %GET_IDX  Returns the idx struct for vars, lin/nonlin constraints, costs.
 %   VV = OM.GET_IDX()
 %   [VV, LL] = OM.GET_IDX()
-%   [VV, LL, NN] = OM.GET_IDX()
-%   [VV, LL, NN, CC] = OM.GET_IDX()
-%   [VV, LL, NN, CC, NNE] = OM.GET_IDX()
-%   [VV, LL, NN, CC, NNE, NNI] = OM.GET_IDX()
+%   [VV, LL, NNE] = OM.GET_IDX()
+%   [VV, LL, NNE, NNI] = OM.GET_IDX()
+%   [VV, LL, NNE, NNI, CC] = OM.GET_IDX()
 %
 %   Returns a structure for each with the beginning and ending
 %   index value and the number of elements for each named block.
@@ -25,13 +24,12 @@ function varargout = get_idx(om, varargin)
 %   given by the SET_TYPE inputs, with the following valid options:
 %       SET_TYPE = 'var'   => variable set
 %       SET_TYPE = 'lin'   => linear constraint set
-%       SET_TYPE = 'nln'   => nonlinear constraint set (legacy)
 %       SET_TYPE = 'nle'   => nonlinear equality constraint set
 %       SET_TYPE = 'nli'   => nonlinear inequality constraint set
 %       SET_TYPE = 'cost'  => cost set
 %
 %   Examples:
-%       [vv, ll, nn] = om.get_idx();
+%       [vv, ll, nne] = om.get_idx();
 %       [vv, ll, cc] = om.get_idx('var', 'lin', 'cost');
 %
 %       For a variable block named 'z' we have ...
@@ -48,11 +46,11 @@ function varargout = get_idx(om, varargin)
 %           mu_l_foo = mu_l(ll.i1.foo:ll.iN.foo);
 %           mu_u_foo = mu_u(ll.i1.foo:ll.iN.foo);
 %
-%       The number of nonlinear constraints in a set named 'bar':
-%           nbar = nn.N.bar;
+%       The number of nonlinear equality constraints in a set named 'bar':
+%           nbar = nne.N.bar;
 %         (note: the following is preferable ...
-%           nbar = om.getN('nln', 'bar');
-%         ... if you haven't already called get_idx to get nn.)
+%           nbar = om.getN('nle', 'bar');
+%         ... if you haven't already called get_idx to get nne.)
 %
 %       If 'z', 'foo' and 'bar' are indexed sets, then you can
 %       replace them with something like 'z(i,j)', 'foo(i,j,k)'
@@ -62,7 +60,7 @@ function varargout = get_idx(om, varargin)
 %   ADD_COSTS.
 
 %   MATPOWER
-%   Copyright (c) 2008-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2017, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -74,14 +72,11 @@ if nargin == 1
     if nargout > 1
         varargout{2} = om.lin.idx;
         if nargout > 2
-            varargout{3} = om.nln.idx;
+            varargout{3} = om.nle.idx;
             if nargout > 3
-                varargout{4} = om.cost.idx;
+                varargout{4} = om.nli.idx;
                 if nargout > 4
-                    varargout{5} = om.nle.idx;
-                    if nargout > 5
-                        varargout{6} = om.nli.idx;
-                    end
+                    varargout{5} = om.cost.idx;
                 end
             end
         end

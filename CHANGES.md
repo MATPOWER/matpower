@@ -19,6 +19,19 @@ Since last release
     `'cpf.flow_lims_tol'` to control the respective detection tolerances.
     *Thanks to Ahmad Sadiq Abubakar and Shrirang Abhyankar.*
 
+#### 8/8/17
+  - Remove `nln` (nonlinear constraints) field from `opt_model` object,
+    in favor of `nle` (nonlinear equalities) and `nli` (nonlinear
+    inequalities).
+  - Add `nle.lambda.<name>` and `nli.mu.<name>` to OPF `results` struct.
+  - Add `nle` and `nli` fields to `results.mu` returned by `*opf_solver`
+    functions.
+  - **INCOMPATIBLE CHANGE:** Remove `nln.mu.l.<name>` and `nln.mu.u.<name>`
+    fields from OPF `results` struct. Use `nle.lambda.<name>` and
+    `nli.mu.<name>` fields instead for nonlinear constraint multipliers.
+  - **INCOMPATIBLE CHANGE:** Modify order of default output arguments of 
+    `opt_model/get_idx()`.
+
 #### 8/4/17
   - Refactor AC OPF code to use the new nonlinear constraint handling
     of `opt_model` to build and evaluate power balance and branch flow

@@ -125,15 +125,18 @@ function [busout, genout, branchout, f, success, info, et, g, jac, xr, pimul] = 
 %                   .Va, Vm, Pg, Qg, y, (other)
 %               .u  upper bound shadow prices
 %                   .Va, Vm, Pg, Qg, y, (other)
-%       .nln    (AC only)
-%           .mu     shadow prices on nonlinear constraints, by named block
-%               .l  lower bounds
+%       .nle    (AC only)
+%           .lambda shadow prices on nonlinear equality constraints,
+%                   by named block
 %                   .Pmis   real power mismatch equations
 %                   .Qmis   reactive power mismatch equations
+%                   (other) use defined constraints
+%       .nli    (AC only)
+%           .mu     shadow prices on nonlinear inequality constraints,
+%                   by named block
 %                   .Sf     flow limits at "from" end of branches
 %                   .St     flow limits at "to" end of branches
-%               .u  upper bounds
-%                   .Pmis, Qmis, Sf, St
+%                   (other) use defined constraints
 %       .lin
 %           .mu     shadow prices on linear constraints, by named block
 %               .l  lower bounds

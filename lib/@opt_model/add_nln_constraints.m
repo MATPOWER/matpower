@@ -3,7 +3,6 @@ function om = add_nln_constraints(om, name, idx, N, iseq, fcn, hess, varsets)
 %
 %   OM.ADD_NLN_CONSTRAINTS(NAME, N, ISEQ, FCN, HESS);
 %   OM.ADD_NLN_CONSTRAINTS(NAME, N, ISEQ, FCN, HESS, VARSETS);
-%   OM.ADD_NLN_CONSTRAINTS(NAME, N, 'nonlinear');  (legacy)
 %
 %   OM.ADD_NLN_CONSTRAINTS(NAME, IDX_LIST, N, ISEQ, FCN, HESS);
 %   OM.ADD_NLN_CONSTRAINTS(NAME, IDX_LIST, N, ISEQ, FCN, HESS, VARSETS);
@@ -37,11 +36,6 @@ function om = add_nln_constraints(om, name, idx, N, iseq, fcn, hess, varsets)
 %   function handles for functions that compute the values for the entire
 %   collection of constraint sets together.
 %
-%   For backward compatibility, ADD_NLN_CONSTRAINTS can also simply include
-%   the number of constraints N followed by the string 'nonlinear' to
-%   indicate a placeholder in the indexing for constraints that will be
-%   implemented outside of the OPT_MODEL.
-%
 %   Likewise, if FCN or HESS are empty, it also indicates a placeholder in
 %   the indexing for a constraint set whose implmentation is included in
 %   another constraint set. This functionality is only intended to be used
@@ -63,9 +57,6 @@ function om = add_nln_constraints(om, name, idx, N, iseq, fcn, hess, varsets)
 %       OM.ADD_NLN_CONSTRAINTS(NAME, IDX_LIST, N, ISEQ, FCN, HESS, VARSETS);
 %
 %   Examples:
-%       %% legacy nonlinear constraint (indexing placeholder)
-%       om.add_nln_constraints('Pmis', nb, 'nonlinear');
-%
 %       %% nonlinear equality constraint with constraint/gradient and Hessian
 %       %% evaluation functions provided
 %       om.add_nln_constraints('Qmis', nb, 1, fcn, hess);
@@ -107,19 +98,10 @@ else                    %% simple named set
     N = idx;
     idx = {};
 end
-if nargin < 6
-    ff = iseq;
-    if strcmp(ff, 'nonlinear')  %% legacy
-        ff = 'nln';
-        fcn = [];
-        hess = [];
-    end
+if iseq
+    ff = 'nle';     %% nonlinear equality
 else
-    if iseq
-        ff = 'nle';     %% nonlinear equality
-    else
-        ff = 'nli';     %% nonlinear inequality
-    end
+    ff = 'nli';     %% nonlinear inequality
 end
 
 %% convert varsets from cell to struct array if necessary

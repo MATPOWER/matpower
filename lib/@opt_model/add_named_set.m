@@ -19,9 +19,6 @@ function om = add_named_set(om, set_type, name, idx, N, varargin)
 %   Nonlinear Inequality Constraint Set
 %       OM.ADD_NAMED_SET('nli', NAME, IDX_LIST, N, FCN, HESS, COMPUTED_BY, VARSETS);
 %
-%   Nonlinear Constraint Set (legacy)
-%       OM.ADD_NAMED_SET('nln', NAME, IDX_LIST, N);
-%
 %   Cost Set
 %       OM.ADD_NAMED_SET('cost', NAME, IDX_LIST, N, CP, VARSETS);
 %
