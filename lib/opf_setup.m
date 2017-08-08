@@ -36,10 +36,12 @@ use_vg = mpopt.opf.use_vg;
 nb   = size(mpc.bus, 1);    %% number of buses
 nl   = size(mpc.branch, 1); %% number of branches
 ng   = size(mpc.gen, 1);    %% number of dispatchable injections
+nnle = 0;                   %% number of nonlinear user-defined equality cons
+nnli = 0;                   %% number of nonlinear user-defined inequality cons
 if isfield(mpc, 'A')
-  nusr = size(mpc.A, 1);    %% number of linear user constraints
+  nlin = size(mpc.A, 1);    %% number of linear user constraints
 else
-  nusr = 0;
+  nlin = 0;
 end
 if isfield(mpc, 'N')
   nw = size(mpc.N, 1);      %% number of general cost vars, w
@@ -52,9 +54,9 @@ if dc
   mpc.gencost = pqcost(mpc.gencost, ng);
 
   %% reduce A and/or N from AC dimensions to DC dimensions, if needed
-  if nusr || nw
+  if nlin || nw
     acc = [nb+(1:nb) 2*nb+ng+(1:ng)];   %% Vm and Qg columns
-    if nusr && size(mpc.A, 2) >= 2*nb + 2*ng
+    if nlin && size(mpc.A, 2) >= 2*nb + 2*ng
       %% make sure there aren't any constraints on Vm or Qg
       if any(any(mpc.A(:, acc)))
         error('opf_setup: attempting to solve DC OPF with user constraints on Vm or Qg');
@@ -93,6 +95,16 @@ else    %% AC
         mpc.bus(ib, VMIN) = (1-use_vg) * mpc.bus(ib, VMIN) + use_vg * Vmin(ib);
     else
         error('opf_setup: option ''opf.use_vg'' (= %g) cannot be negative or greater than 1', use_vg);
+    end
+  end
+  if isfield(mpc, 'nle_constraints')
+    for k = 1:length(mpc.nle_constraints)
+      nnle = nnle + mpc.nle_constraints{k}{2};
+    end
+  end
+  if isfield(mpc, 'nli_constraints')
+    for k = 1:length(mpc.nli_constraints)
+      nnli = nnli + mpc.nli_constraints{k}{2};
     end
   end
 end
@@ -217,7 +229,7 @@ end
 
 %% more problem dimensions
 nx    = nb+nv + ng+nq;  %% number of standard OPF control variables
-if nusr
+if nlin
   nz = size(mpc.A, 2) - nx; %% number of user z variables
   if nz < 0
     error('opf_setup: user supplied A matrix must have at least %d columns.', nx);
@@ -278,8 +290,24 @@ if nz > 0
   om.add_vars('z', nz, z0, zl, zu);
   user_vars{end+1} = 'z';
 end
-if nusr
-  om.add_lin_constraints('usr', mpc.A, lbu, ubu, user_vars);        %% nusr
+if nlin
+  om.add_lin_constraints('usr', mpc.A, lbu, ubu, user_vars);        %% nlin
+end
+if nnle
+  for k = 1:length(mpc.nle_constraints)
+    nlc = mpc.nle_constraints{k};
+    fcn  = eval(['@(x)' nlc{3} '(x, nlc{6}{:})']);
+    hess = eval(['@(x, lam)' nlc{4} '(x, lam, nlc{6}{:})']);
+    om.add_nln_constraints(nlc{1:2}, 1, fcn, hess, nlc{5});
+  end
+end
+if nnli
+  for k = 1:length(mpc.nli_constraints)
+    nlc = mpc.nli_constraints{k};
+    fcn  = eval(['@(x)' nlc{3} '(x, nlc{6}{:})']);
+    hess = eval(['@(x, lam)' nlc{4} '(x, lam, nlc{6}{:})']);
+    om.add_nln_constraints(nlc{1:2}, 0, fcn, hess, nlc{5});
+  end
 end
 if nw
   user_cost.N = mpc.N;
