@@ -141,9 +141,9 @@ mpc.reserves.igr = find(mpc.reserves.rgens);    %% internal indexing
 
 
 %%-----  formulation  --------------------------------------------------
-function om = userfcn_reserves_formulation(om, args)
+function om = userfcn_reserves_formulation(om, mpopt, args)
 %
-%   om = userfcn_reserves_formulation(om, args)
+%   om = userfcn_reserves_formulation(om, mpopt, args)
 %
 %   This is the 'formulation' stage userfcn callback that defines the
 %   user costs and constraints for fixed reserves. It expects to find
@@ -383,7 +383,7 @@ end
 %%-----  savecase  -----------------------------------------------------
 function mpc = userfcn_reserves_savecase(mpc, fd, prefix, args)
 %
-%   mpc = userfcn_reserves_savecase(mpc, fd, mpopt, args)
+%   mpc = userfcn_reserves_savecase(mpc, fd, prefix, args)
 %
 %   This is the 'savecase' stage userfcn callback that prints the M-file
 %   code to save the 'reserves' field in the case file. It expects a

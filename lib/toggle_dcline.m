@@ -280,9 +280,9 @@ end
 
 
 %%-----  formulation  --------------------------------------------------
-function om = userfcn_dcline_formulation(om, args)
+function om = userfcn_dcline_formulation(om, mpopt, args)
 %
-%   om = userfcn_dcline_formulation(om, args)
+%   om = userfcn_dcline_formulation(om, mpopt, args)
 %
 %   This is the 'formulation' stage userfcn callback that defines the
 %   user constraints for the dummy generators representing DC lines.
@@ -513,7 +513,7 @@ end
 %%-----  savecase  -----------------------------------------------------
 function mpc = userfcn_dcline_savecase(mpc, fd, prefix, args)
 %
-%   mpc = userfcn_dcline_savecase(mpc, fd, mpopt, args)
+%   mpc = userfcn_dcline_savecase(mpc, fd, prefix, args)
 %
 %   This is the 'savecase' stage userfcn callback that prints the M-file
 %   code to save the 'dcline' field in the case file. It expects a

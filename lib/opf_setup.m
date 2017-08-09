@@ -325,4 +325,4 @@ if nw
 end
 
 %% execute userfcn callbacks for 'formulation' stage
-om = run_userfcn(userfcn, 'formulation', om);
+om = run_userfcn(userfcn, 'formulation', om, mpopt);

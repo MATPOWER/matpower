@@ -2394,7 +2394,7 @@ This stage is also a good place to check the consistency of any additional input
 \subsubsection{{\tt formulation} Callback}
 \label{sec:formulation_callback}
 
-This stage is called from \code{opf} after the OPF Model (\code{om}) object has been initialized with the standard OPF formulation, but before calling the solver. This is the ideal place for modifying the problem formulation with additional variables, constraints and costs, using the \code{add\_vars}, \code{add\_lin\_constraints} and \code{add\_costs} methods of the OPF Model object. Inputs are the \code{om} object and any (optional) \code{args} supplied when the callback was registered via \code{add\_userfcn}. Output is the updated \code{om} object.
+This stage is called from \code{opf} after the OPF Model (\code{om}) object has been initialized with the standard OPF formulation, but before calling the solver. This is the ideal place for modifying the problem formulation with additional variables, constraints and costs, using the \code{add\_vars}, \code{add\_lin\_constraints} and \code{add\_costs} methods of the OPF Model object. Inputs are the \code{om} object, the \matpower{} options struct \code{mpopt} and any (optional) \code{args} supplied when the callback was registered via \code{add\_userfcn}. Output is the updated \code{om} object.
 
 The \code{om} object contains both the original \matpower{} case data as well as all of the indexing data for the variables and constraints of the standard OPF formulation.\footnote{It is perfectly legitimate to register more than one callback per stage, such as when enabling multiple independent OPF extensions. In this case, the callbacks are executed in the order they were registered with \code{add\_userfcn}. E.g. when the second and subsequent \code{formulation} callbacks are invoked, the \code{om} object will reflect any modifications performed by earlier \code{formulation} callbacks.} See the on-line help for \code{opf\_model} for more details on the OPF model object and the methods available for manipulating and accessing it.
 
@@ -2410,7 +2410,7 @@ In the example code, a new variable block named \code{R} with $n_g$ elements and
 Notice that the last argument to \code{add\_lin\_constraints} and \code{add\_costs} allows the constraints and costs to be defined only in terms of the relevant parts of the optimization variable $x$. For example, the \code{A} matrix for the \code{Pg\_plus\_R} constraint contains only columns corresponding to real power generation (\code{Pg}) and reserves (\code{R}) and need not bother with voltages, reactive power injections, etc. As illustrated in \figurename~\ref{fig:varsets}, this allows the same code to be used with both the AC OPF, where $x$ includes $V_m$ and $Q_g$, and the DC OPF where it does not. This code is also independent of any additional variables that may have been added by \matpower{} (e.g. $y$ variables from \matpower{}'s CCV handling of piece-wise linear costs) or by the user via previous \code{formulation} callbacks. \matpower{} will place the constraint matrix blocks in the appropriate place when it constructs the overall \code{A} matrix at run-time. This is an important feature that enables independently developed \matpower{} OPF extensions to work together.
 
 \begin{Code}
-function om = userfcn_reserves_formulation(om, args)
+function om = userfcn_reserves_formulation(om, mpopt, args)
 
 %% initialize some things
 define_constants;

@@ -138,9 +138,9 @@ mpc.order.int.softlims = s;
 
 
 %%-----  formulation  --------------------------------------------------
-function om = userfcn_softlims_formulation(om, args)
+function om = userfcn_softlims_formulation(om, mpopt, args)
 %
-%   om = userfcn_softlims_formulation(om, args)
+%   om = userfcn_softlims_formulation(om, mpopt, args)
 %
 %   This is the 'formulation' stage userfcn callback that defines the
 %   user costs and constraints for interface flow limits. It expects to
@@ -281,7 +281,7 @@ end
 %%-----  savecase  -----------------------------------------------------
 function mpc = userfcn_softlims_savecase(mpc, fd, prefix, args)
 %
-%   mpc = userfcn_softlims_savecase(mpc, fd, mpopt, args)
+%   mpc = userfcn_softlims_savecase(mpc, fd, prefix, args)
 %
 %   This is the 'savecase' stage userfcn callback that prints the M-file
 %   code to save the 'softlims' field in the case file. It expects a

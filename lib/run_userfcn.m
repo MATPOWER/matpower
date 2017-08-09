@@ -29,16 +29,11 @@ if ~isempty(userfcn) && isfield(userfcn, stage)
         else
             args = [];
         end
-        switch stage
-            case {'ext2int', 'formulation', 'int2ext'}
-                % mpc     = userfcn_*_ext2int(mpc, args);
-                % om      = userfcn_*_formulation(om, args);
-                % results = userfcn_*_int2ext(results, args);
-                rv = feval(userfcn.(stage)(k).fcn, rv, args);
-            case {'printpf', 'savecase'}
-                % results = userfcn_*_printpf(results, fd, mpopt, args);
-                % mpc     = userfcn_*_savecase(mpc, fd, prefix, args);
-                rv = feval(userfcn.(stage)(k).fcn, rv, varargin{2}, varargin{3}, args);
-        end
+        rv = feval(userfcn.(stage)(k).fcn, rv, varargin{2:end}, args);
+        % mpc     = userfcn_*_ext2int(mpc, args);
+        % om      = userfcn_*_formulation(om, mpopt, args);
+        % results = userfcn_*_int2ext(results, args);
+        % results = userfcn_*_printpf(results, fd, mpopt, args);
+        % mpc     = userfcn_*_savecase(mpc, fd, prefix, args);
     end
 end
