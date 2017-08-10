@@ -5,7 +5,7 @@ function mpc = toggle_softlims(mpc, on_off)
 %   T_F = TOGGLE_SOFTLIMS(MPC, 'status')
 %
 %   Enables, disables or checks the status of a set of OPF userfcn
-%   callbacks to implement relaxed branch flow limits a DC optimal flow model.
+%   callbacks to implement relaxed branch flow limits for an OPF model.
 %
 %   These callbacks expect to find a 'softlims' field in the input MPC,
 %   where MPC.softlims is a struct with the following fields:
@@ -32,7 +32,6 @@ function mpc = toggle_softlims(mpc, on_off)
 %   See also ADD_USERFCN, REMOVE_USERFCN, RUN_USERFCN, T_CASE30_USERFCNS.
 
 %   To do for future versions:
-%       - make softlims input field optional, convert all lines if missing
 %       Inputs:
 %       cost    n x 3, linear marginal cost per MW of exceeding each of
 %               RATE_A, RATE_B and RATE_C. Columns 2 and 3 are optional.
@@ -156,28 +155,43 @@ function om = userfcn_softlims_formulation(om, mpopt, args)
 mpc = om.get_mpc();
 [baseMVA, bus, branch] = deal(mpc.baseMVA, mpc.bus, mpc.branch);
 s = mpc.softlims;
+ns = length(s.idx);         %% number of soft limits
 
-%% form B matrices for DC model
-[B, Bf, Pbusinj, Pfinj] = makeBdc(baseMVA, bus, branch);
-n = size(Bf, 2);        %% dim of theta
+%% cheat by sticking mpopt in om temporarily for use by int2ext callback
+om.userdata.mpopt = mpopt;
 
-%% form constraints (flv is flow limit violation variable)
-%%   -Bf * Va - flv <=  Pfinj + Pfmax
-%%    Bf * Va - flv <= -Pfinj + Pfmax
-ns = length(s.idx);     %% number of soft limits
-I = speye(ns, ns);
-As = [-Bf(s.idx, :) -I; Bf(s.idx, :) -I];
-ls = -Inf(2*ns, 1);
-us = [   Pfinj(s.idx) + s.Pfmax;
-        -Pfinj(s.idx) + s.Pfmax ];
-
-%% costs on flv variable
-Cw = s.cost(:, 1) * mpc.baseMVA;
-
-%% add vars, costs, constraints
+%% add flow limit violation variable (flv) and cost
 om.add_vars('flv', ns, zeros(ns, 1), zeros(ns, 1), Inf(ns, 1));
+Cw = s.cost(:, 1) * mpc.baseMVA;
+I = speye(ns, ns);
 om.add_costs('vc', struct('N', I, 'Cw', Cw), {'flv'});
-om.add_lin_constraints('softlims',  As, ls, us, {'Va', 'flv'});     %% 2*ns
+
+if strcmp(mpopt.model, 'DC')
+    %% fetch Bf matrix for DC model
+    Bf = om.get_userdata('Bf');
+    Pfinj = om.get_userdata('Pfinj');
+
+    %% form constraints
+    %%    Bf * Va - flv <= -Pfinj + Pfmax
+    %%   -Bf * Va - flv <=  Pfinj + Pfmax
+    Asf = [ Bf(s.idx, :) -I];
+    Ast = [-Bf(s.idx, :) -I];
+    lsf = -Inf(ns, 1);
+    lst = lsf;
+    usf = [ -Pfinj(s.idx) + s.Pfmax ];
+    ust = [  Pfinj(s.idx) + s.Pfmax ];
+
+    om.add_lin_constraints('softPf',  Asf, lsf, usf, {'Va', 'flv'});    %% ns
+    om.add_lin_constraints('softPt',  Ast, lst, ust, {'Va', 'flv'});    %% ns
+else
+    %% form constraints (see softlims_fcn() below)
+    %% build admittance matrices
+    [Ybus, Yf, Yt] = makeYbus(mpc.baseMVA, mpc.bus, mpc.branch);
+
+    fcn = @(x)softlims_fcn(x, mpc, Yf(s.idx, :), Yt(s.idx, :), s.idx, mpopt, s.Pfmax);
+    hess = @(x, lam)softlims_hess(x, lam, mpc, Yf(s.idx, :), Yt(s.idx, :), s.idx, mpopt);
+    om.add_nln_constraints({'softSf', 'softSt'}, [ns;ns], 0, fcn, hess, {'Va', 'Vm', 'flv'});
+end
 
 
 %%-----  int2ext  ------------------------------------------------------
@@ -197,8 +211,10 @@ function results = userfcn_softlims_int2ext(results, args)
     TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 
-%% get internal softlims struct
+%% get internal softlims struct and mpopt
 s = results.softlims;
+mpopt = results.om.get_userdata('mpopt');   %% extract and remove mpopt from om
+results.om.userdata = rmfield(results.om.userdata, 'mpopt');
 
 %%-----  convert stuff back to external indexing  -----
 o = results.order;
@@ -211,19 +227,60 @@ results.softlims = results.order.ext.softlims;
 results.branch(s.idx, RATE_A) = s.Pfmax * results.baseMVA;
 
 %%-----  results post-processing  -----
-%% get shadow prices
-n = size(results.lin.mu.u.softlims, 1) / 2;
-results.branch(s.idx, MU_ST) = results.lin.mu.u.softlims(1:n) / results.baseMVA;
-results.branch(s.idx, MU_SF) = results.lin.mu.u.softlims(n+1:end) / results.baseMVA;
 %% get overloads and overload costs
 results.softlims.overload = zeros(nl0, 1);
-k = find(results.branch(:, RATE_A) & ...
-         abs(results.branch(:, PF)) > results.branch(:, RATE_A) );
-results.softlims.overload(o.branch.status.on(k)) = ...
-        abs(results.branch(k, PF)) - results.branch(k, RATE_A);
-results.softlims.ovl_cost = zeros(size(results.softlims.overload));
-results.softlims.ovl_cost(o.branch.status.on(s.idx)) = ...
-    results.softlims.overload(o.branch.status.on(s.idx)) .* s.cost(:, 1);
+results.softlims.ovl_cost = zeros(nl0, 1);
+flv = results.var.val.flv * results.baseMVA;
+flv(flv < 1e-8) = 0;
+results.softlims.overload(o.branch.status.on(s.idx)) = flv;
+results.softlims.ovl_cost(o.branch.status.on(s.idx)) = flv .* s.cost(:, 1);
+
+%% get shadow prices
+if strcmp(mpopt.model, 'DC')
+    results.branch(s.idx, MU_SF) = results.lin.mu.u.softPf / results.baseMVA;
+    results.branch(s.idx, MU_ST) = results.lin.mu.u.softPt / results.baseMVA;
+
+    if 1    %% double-check value of overloads being returned
+        vv = results.om.get_idx();
+        check1 = zeros(nl0, 1);
+        check1(o.branch.status.on(s.idx)) = results.x(vv.i1.flv:vv.iN.flv) * results.baseMVA;
+        check2 = zeros(nl0, 1);
+        k = find(results.branch(:, RATE_A) & ...
+                 abs(results.branch(:, PF)) > results.branch(:, RATE_A) );
+        check2(o.branch.status.on(k)) = ...
+                abs(results.branch(k, PF)) - results.branch(k, RATE_A);
+        err1 = norm(results.softlims.overload-check1);
+        err2 = norm(results.softlims.overload-check2);
+        errtol = 1e-4;
+        if err1 > errtol || err2 > errtol
+            [ results.softlims.overload check1 results.softlims.overload-check1 ]
+            [ results.softlims.overload check2 results.softlims.overload-check2 ]
+            error('userfcn_softlims_int2ext: problem with consistency of overload values');
+        end
+    end
+else
+    if upper(mpopt.opf.flow_lim(1)) == 'P'
+        results.branch(s.idx, MU_ST) = results.nli.mu.softSf / results.baseMVA;
+        results.branch(s.idx, MU_SF) = results.nli.mu.softSt / results.baseMVA;
+    else
+        %% conversion factor for squared constraints (2*F)
+        cf = 2 * (s.Pfmax + flv / results.baseMVA);
+        results.branch(s.idx, MU_ST) = results.nli.mu.softSf .* cf / results.baseMVA;
+        results.branch(s.idx, MU_SF) = results.nli.mu.softSt .* cf / results.baseMVA;
+    end
+
+    if 1    %% double-check value of overloads being returned
+        vv = results.om.get_idx();
+        check1 = zeros(nl0, 1);
+        check1(o.branch.status.on(s.idx)) = results.x(vv.i1.flv:vv.iN.flv) * results.baseMVA;
+        err1 = norm(results.softlims.overload-check1);
+        errtol = 1e-4;
+        if err1 > errtol
+            [ results.softlims.overload check1 results.softlims.overload-check1 ]
+            error('userfcn_softlims_int2ext: problem with consistency of overload values');
+        end
+    end
+end
 
 
 %%-----  printpf  ------------------------------------------------------
@@ -349,3 +406,63 @@ end
 if length(s.cost) == 1 && length(s.idx) > 1
     s.cost = s.cost * ones(size(s.idx));
 end
+
+
+%%-----  softlims_fcn  -------------------------------------------------
+function [h, dh] = softlims_fcn(x, mpc, Yf, Yt, il, mpopt, Fmax)
+%
+%   Evaluates AC branch flow soft limit constraints and Jacobian.
+
+%% options
+lim_type = upper(mpopt.opf.flow_lim(1));
+
+%% form constraints
+%% compute flow (opf.flow_lim = 'P') or square of flow ('S', 'I', '2')
+%% note that the Fmax used by opf_branch_flow_fcn() from branch matrix is zero
+if nargout == 1
+    h = opf_branch_flow_fcn(x(1:2), mpc, Yf, Yt, il, mpopt);
+else
+    [h, dh] = opf_branch_flow_fcn(x(1:2), mpc, Yf, Yt, il, mpopt);
+end
+flv = x{3};     %% flow limit violation variable
+if lim_type == 'P'
+    %%   Ff(Va,Vm) - flv <=  Fmax ===> Ff(Va,Vm) - flv - Fmax <= 0
+    %%   Ft(Va,Vm) - flv <=  Fmax ===> Ff(Va,Vm) - flv - Fmax <= 0
+    tmp2 = Fmax + flv;
+else    %% lim_type == 'S', 'I', '2'
+    %%   |Ff(Va,Vm)| - flv <=  Fmax ===> |Ff(Va,Vm)|.^2 - (flv + Fmax).^2 <= 0
+    %%   |Ft(Va,Vm)| - flv <=  Fmax ===> |Ff(Va,Vm)|.^2 - (flv + Fmax).^2 <= 0
+    tmp1 = Fmax + flv;
+    tmp2 = tmp1.^2;
+end
+h = h - [tmp2; tmp2];
+if nargout == 2
+    ns = length(il);        %% number of soft limits
+    if lim_type == 'P'
+        tmp3 = -speye(ns, ns);
+    else    %% lim_type == 'S', 'I', '2'
+        tmp3 = spdiags(-2*tmp1, 0, ns, ns);
+    end
+    dh = [ dh [tmp3; tmp3] ];
+end
+
+%%-----  softlims_hess  ------------------------------------------------
+function d2H = softlims_hess(x, lambda, mpc, Yf, Yt, il, mpopt)
+%
+%   Evaluates AC branch flow soft limit constraint Hessian.
+
+%% options
+lim_type = upper(mpopt.opf.flow_lim(1));
+
+%% form Hessian
+d2H = opf_branch_flow_hess(x(1:2), lambda, mpc, Yf, Yt, il, mpopt);
+nh = size(d2H, 1);
+ns = length(il);        %% number of soft limits
+
+if lim_type == 'P'
+    tmp = sparse(ns, ns);
+else    %% lim_type == 'S', 'I', '2'
+    tmp = spdiags(-2*lambda, 0, ns, ns);
+end
+d2H = [     d2H         sparse(nh, ns);
+        sparse(ns, nh)      tmp         ];

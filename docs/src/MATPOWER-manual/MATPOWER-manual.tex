@@ -2908,10 +2908,14 @@ mpc = toggle_dcline(mpc, 'on');
 results = runopf(mpc);
 \end{Code}
 
-\subsubsection{DC OPF Branch Flow Soft Limits}
+\subsubsection{OPF Branch Flow Soft Limits}
 \label{sec:softlims}
 
-Beginning with version 5.0, \matpower{} includes an extension that replaces the branch flow limits on specified branches in a DC optimal power flow with soft limits, that is, limits that can be violated with some linear penalty cost. This can be useful in identifying the cause of infeasibility in some DC optimal power flow problems. The extension is implemented in \code{toggle\_softlims}.
+\matpower{} includes an extension that replaces the branch flow limits on specified branches in an optimal power flow with soft limits, that is, limits that can be violated with some linear penalty cost. This can be useful in identifying the cause of infeasibility in some optimal power flow problems. The extension is implemented in \code{toggle\_softlims}.
+
+This extension implements two forms, one for DC OPF and another for AC OPF. The DC version was introduced in \matpower{} 5.0 and the AC version in \hl{6.1}.
+
+\hl{This section needs to be rewritten to include descriptions of the AC method.}
 
 A new variable $f_{\mathrm v}^i$ is defined to represent the flow limit violation on branch~$i$. This variable is constrained to be positive and the sum of $f_{\mathrm v}^i$ and the flow limit must be greater than both the flow and the negative of the flow on the branch, both of which are expressed as functions of the bus voltage angles, from \eqref{eq:Pf}. The three constraints on the new flow violation variable can be written as
 \begin{align}
@@ -6745,6 +6749,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.1.pdf}{\m
 \item Add support for exporting \matpower{} case to PSS/E RAW data format.
 \item Add support to core optimization model for general non-linear constraints.
 \item Add options \codeq{cpf.enforce\_v\_lims} and \codeq{cpf.enforce\_flow\_lims} to enforce bus voltage magnitude and branch flow limits in the continuation power flow, and \codeq{cpf.v\_lims\_tol} and \codeq{cpf.flow\_lims\_tol} to control the respective detection tolerances.  \emph{Thanks to Ahmad Sadiq Abubakar and Shrirang Abhyankar.}
+\item Expand support for soft branch flow limits to include AC OPF problems.
 \item New functions:
     \begin{itemize}
     \item \code{install\_matpower()} installs \matpower{} modifying or showing needed modifications to Matlab or Octave path.

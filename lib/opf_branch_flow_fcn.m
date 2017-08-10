@@ -61,7 +61,6 @@ if nl2 > 0
     V = Vm .* exp(1j * Va);
 
     flow_max = branch(il, RATE_A) / mpc.baseMVA;
-    flow_max(flow_max == 0) = Inf;
     if lim_type ~= 'P'      %% typically use square of flow
         flow_max = flow_max.^2;
     end
