@@ -18,7 +18,7 @@ if have_fcn('pardiso')
     linsolvers{end+1} = 'PARDISO';
 end
 
-num_tests = 139;
+num_tests = 141;
 
 t_begin(2*num_tests + 1, quiet);
 
@@ -354,6 +354,16 @@ for k = 1:length(linsolvers)
     t_is(r.branch(:,ibr_data  ), branch_soln1(:,ibr_data  ), 10, [t 'branch data']);
     t_is(r.branch(:,ibr_flow  ), branch_soln1(:,ibr_flow  ),  3, [t 'branch flow']);
     t_is(r.branch(:,ibr_mu    ), branch_soln1(:,ibr_mu    ),  2, [t 'branch mu']);
+
+    %% OPF with user-defined nonlinear constraints
+    t = [t0 'w/nonlin eq constraint'];
+    mpc = loadcase('case30');
+    mpc.nle_constraints = {
+        {'Pg_usr', 1, 'opf_nle_fcn1', 'opf_nle_hess1', {'Pg'}, {}}
+    };
+    r = runopf(mpc, mpopt);
+    t_is(r.gen(1, PG) * r.gen(2, PG) / 100, r.gen(6, PG), 8, t);
+    t_is(r.gen(6, PG), 20.751163, 5, t);
 end
 
 t = 'MIPS : all buses isolated : ';
