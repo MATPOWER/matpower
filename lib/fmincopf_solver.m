@@ -215,7 +215,7 @@ nbx = length(ibx);
 kl = find(Lambda.eqnonlin < 0);
 ku = find(Lambda.eqnonlin > 0);
 nl_mu_l = zeros(nlnN, 1);
-nl_mu_u = [zeros(om.nle.N, 1); muSf; muSt];
+nl_mu_u = [zeros(2*nb, 1); muSf; muSt];
 nl_mu_l(kl) = -Lambda.eqnonlin(kl);
 nl_mu_u(ku) =  Lambda.eqnonlin(ku);
 

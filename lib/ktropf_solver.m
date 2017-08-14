@@ -120,30 +120,41 @@ il = find(branch(:, RATE_A) ~= 0 & branch(:, RATE_A) < 1e10);
 nl2 = length(il);           %% number of constrained lines
 
 %% build Jacobian and Hessian structure
-nA = size(A, 1);                %% number of original linear constraints
-nx = length(x0);
-f = branch(:, F_BUS);                           %% list of "from" buses
-t = branch(:, T_BUS);                           %% list of "to" buses
-Cf = sparse(1:nl, f, ones(nl, 1), nl, nb);      %% connection matrix for line & from buses
-Ct = sparse(1:nl, t, ones(nl, 1), nl, nb);      %% connection matrix for line & to buses
-Cl = Cf + Ct;
-Cb = Cl' * Cl + speye(nb);
-Cl2 = Cl(il, :);
-Cg = sparse(gen(:, GEN_BUS), (1:ng)', 1, nb, ng);
-nz = nx - 2*(nb+ng);
-nxtra = nx - 2*nb;
-Js = [
-    Cl2     Cl2     sparse(nl2, 2*ng)               sparse(nl2,nz);
-    Cl2     Cl2     sparse(nl2, 2*ng)               sparse(nl2,nz);
-    Cb      Cb      Cg              sparse(nb,ng)   sparse(nb,nz);
-    Cb      Cb      sparse(nb,ng)   Cg              sparse(nb,nz);
-];
-[f, df, d2f] = opf_costfcn(x0, om);
-Hs = d2f + [
-    Cb  Cb  sparse(nb,nxtra);
-    Cb  Cb  sparse(nb,nxtra);
-    sparse(nxtra,nx);
-];
+% nA = size(A, 1);                %% number of original linear constraints
+% nx = length(x0);
+% f = branch(:, F_BUS);                           %% list of "from" buses
+% t = branch(:, T_BUS);                           %% list of "to" buses
+% Cf = sparse(1:nl, f, ones(nl, 1), nl, nb);      %% connection matrix for line & from buses
+% Ct = sparse(1:nl, t, ones(nl, 1), nl, nb);      %% connection matrix for line & to buses
+% Cl = Cf + Ct;
+% Cb = Cl' * Cl + speye(nb);
+% Cl2 = Cl(il, :);
+% Cg = sparse(gen(:, GEN_BUS), (1:ng)', 1, nb, ng);
+% nz = nx - 2*(nb+ng);
+% nxtra = nx - 2*nb;
+% [h, g, dh, dg] = opf_consfcn(x0, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
+% Js = [dh'; dg'];
+% Js = [
+%     Cl2     Cl2     sparse(nl2, 2*ng)               sparse(nl2,nz);
+%     Cl2     Cl2     sparse(nl2, 2*ng)               sparse(nl2,nz);
+%     Cb      Cb      Cg              sparse(nb,ng)   sparse(nb,nz);
+%     Cb      Cb      sparse(nb,ng)   Cg              sparse(nb,nz);
+% ];
+% lam = struct('eqnonlin', ones(size(dg,2),1), 'ineqnonlin', ones(size(dh,2),1) );
+% Hs = opf_hessfcn(x0, lam, 1, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
+% [f, df, d2f] = opf_costfcn(x0, om);
+% Hs = d2f + [
+%     Cb  Cb  sparse(nb,nxtra);
+%     Cb  Cb  sparse(nb,nxtra);
+%     sparse(nxtra,nx);
+% ];
+randx = rand(size(x0));
+[h, g, dh, dg] = opf_consfcn(randx, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
+Js = [dh'; dg'];
+lam = struct('eqnonlin', ones(size(dg,2),1), 'ineqnonlin', ones(size(dh,2),1) );
+Hs = opf_hessfcn(randx, lam, 1, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
+neq = length(g);
+niq = length(h);
 
 %% basic optimset options needed for ktrlink
 hess_fcn = @(x, lambda)opf_hessfcn(x, lambda, 1, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
@@ -272,7 +283,7 @@ nbx = length(ibx);
 kl = find(Lambda.eqnonlin < 0);
 ku = find(Lambda.eqnonlin > 0);
 nl_mu_l = zeros(nlnN, 1);
-nl_mu_u = [zeros(om.nle.N, 1); muSf; muSt];
+nl_mu_u = [zeros(2*nb, 1); muSf; muSt];
 nl_mu_l(kl) = -Lambda.eqnonlin(kl);
 nl_mu_u(ku) =  Lambda.eqnonlin(ku);
 

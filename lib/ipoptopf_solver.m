@@ -121,29 +121,36 @@ end
 %%-----  run opf  -----
 %% build Jacobian and Hessian structure
 nA = size(A, 1);                %% number of original linear constraints
-f = branch(:, F_BUS);                           %% list of "from" buses
-t = branch(:, T_BUS);                           %% list of "to" buses
-Cf = sparse(1:nl, f, ones(nl, 1), nl, nb);      %% connection matrix for line & from buses
-Ct = sparse(1:nl, t, ones(nl, 1), nl, nb);      %% connection matrix for line & to buses
-Cl = Cf + Ct;
-Cb = Cl' * Cl + speye(nb);
-Cl2 = Cl(il, :);
-Cg = sparse(gen(:, GEN_BUS), (1:ng)', 1, nb, ng);
-nz = nx - 2*(nb+ng);
-nxtra = nx - 2*nb;
-Js = [
-    Cb      Cb      Cg              sparse(nb,ng)   sparse(nb,nz);
-    Cb      Cb      sparse(nb,ng)   Cg              sparse(nb,nz);
-    Cl2     Cl2     sparse(nl2, 2*ng)               sparse(nl2,nz);
-    Cl2     Cl2     sparse(nl2, 2*ng)               sparse(nl2,nz);
-    A;
-];
-[f, df, d2f] = opf_costfcn(x0, om);
-Hs = tril(d2f + [
-    Cb  Cb  sparse(nb,nxtra);
-    Cb  Cb  sparse(nb,nxtra);
-    sparse(nxtra,nx);
-]);
+% f = branch(:, F_BUS);                           %% list of "from" buses
+% t = branch(:, T_BUS);                           %% list of "to" buses
+% Cf = sparse(1:nl, f, ones(nl, 1), nl, nb);      %% connection matrix for line & from buses
+% Ct = sparse(1:nl, t, ones(nl, 1), nl, nb);      %% connection matrix for line & to buses
+% Cl = Cf + Ct;
+% Cb = Cl' * Cl + speye(nb);
+% Cl2 = Cl(il, :);
+% Cg = sparse(gen(:, GEN_BUS), (1:ng)', 1, nb, ng);
+% nz = nx - 2*(nb+ng);
+% nxtra = nx - 2*nb;
+% Js = [
+%     Cb      Cb      Cg              sparse(nb,ng)   sparse(nb,nz);
+%     Cb      Cb      sparse(nb,ng)   Cg              sparse(nb,nz);
+%     Cl2     Cl2     sparse(nl2, 2*ng)               sparse(nl2,nz);
+%     Cl2     Cl2     sparse(nl2, 2*ng)               sparse(nl2,nz);
+%     A;
+% ];
+% [f, df, d2f] = opf_costfcn(x0, om);
+% Hs = tril(d2f + [
+%     Cb  Cb  sparse(nb,nxtra);
+%     Cb  Cb  sparse(nb,nxtra);
+%     sparse(nxtra,nx);
+% ]);
+randx = rand(size(x0));
+[h, g, dh, dg] = opf_consfcn(randx, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
+Js = [dg'; dh'; A];
+lam = struct('eqnonlin', ones(size(dg,2),1), 'ineqnonlin', ones(size(dh,2),1) );
+Hs = tril(opf_hessfcn(randx, lam, 1, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il));
+neq = length(g);
+niq = length(h);
 
 %% set options struct for IPOPT
 options.ipopt = ipopt_options([], mpopt);
@@ -158,14 +165,14 @@ options.auxdata = struct( ...
     'il',       il, ...
     'A',        A, ...
     'nA',       nA, ...
-    'neqnln',   2*nb, ...
-    'niqnln',   2*nl2, ...
+    'neqnln',   neq, ...
+    'niqnln',   niq, ...
     'Js',       Js, ...
     'Hs',       Hs    );
 
 % %% check Jacobian and Hessian structure
 % xr                  = rand(size(x0));
-% lambda              = rand(2*nb+2*nl2, 1);
+% lambda              = rand(neq+niq, 1);
 % options.auxdata.Js  = jacobian(xr, options.auxdata);
 % options.auxdata.Hs  = tril(hessian(xr, 1, lambda, options.auxdata));
 % Js1 = options.auxdata.Js;
@@ -185,8 +192,8 @@ options.auxdata = struct( ...
 %% define variable and constraint bounds
 options.lb = xmin;
 options.ub = xmax;
-options.cl = [zeros(2*nb, 1);  -Inf(2*nl2, 1); l];
-options.cu = [zeros(2*nb, 1); zeros(2*nl2, 1); u];
+options.cl = [zeros(neq, 1);  -Inf(niq, 1); l];
+options.cu = [zeros(neq, 1); zeros(niq, 1); u];
 
 %% assign function handles
 funcs.objective         = @objective;
@@ -289,7 +296,7 @@ nlnN = 2*nb + 2*nl;     %% because muSf and muSt are nl x 1, not nl2 x 1
 kl = find(info.lambda(1:om.nle.N) < 0);
 ku = find(info.lambda(1:om.nle.N) > 0);
 nl_mu_l = zeros(nlnN, 1);
-nl_mu_u = [zeros(om.nle.N, 1); muSf; muSt];
+nl_mu_u = [zeros(2*nb, 1); muSf; muSt];
 nl_mu_l(kl) = -info.lambda(kl);
 nl_mu_u(ku) =  info.lambda(ku);
 
