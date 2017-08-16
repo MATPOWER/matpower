@@ -164,6 +164,8 @@ parm        = mpopt.cpf.parameterization;  %% parameterization
 adapt_step  = mpopt.cpf.adapt_step;        %% use adaptive step size?
 qlim        = mpopt.cpf.enforce_q_lims;    %% enforce reactive limits
 plim        = mpopt.cpf.enforce_p_lims;    %% enforce active limits
+vlim        = mpopt.cpf.enforce_v_lims;    %% enforce voltage magnitude limits
+llim        = mpopt.cpf.enforce_flow_lims; %% enforce line flow limits
 
 %% register event functions (for event detection)
 %% and CPF callback functions (for event handling and other tasks)
@@ -176,6 +178,16 @@ if ischar(mpopt.cpf.stop_at) && strcmp(mpopt.cpf.stop_at, 'NOSE');
 else        %% FULL or target lambda
     cpf_events   = cpf_register_event(cpf_events, 'TARGET_LAM', 'cpf_target_lam_event', mpopt.cpf.target_lam_tol, 1);
     cpf_callbacks = cpf_register_callback(cpf_callbacks, 'cpf_target_lam_event_cb', 50);
+end
+%% to handle line flow limits
+if llim
+    cpf_events = cpf_register_event(cpf_events, 'LLIM', 'cpf_llim_event', mpopt.cpf.flow_lims_tol, 1);
+    cpf_callbacks = cpf_register_callback(cpf_callbacks, 'cpf_llim_event_cb', 53);
+end
+%% to handle voltage limits
+if vlim
+    cpf_events = cpf_register_event(cpf_events, 'VLIM', 'cpf_vlim_event', mpopt.cpf.v_lims_tol, 1);
+    cpf_callbacks = cpf_register_callback(cpf_callbacks, 'cpf_vlim_event_cb', 52);
 end
 %% to handle reactive power limits
 if qlim
