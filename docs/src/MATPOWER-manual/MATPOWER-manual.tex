@@ -1490,6 +1490,8 @@ A continuation power flow \emph{event} is triggered when the value of one of the
     \item the end of a full trace
     \item a generator reactive power limit
     \item a generator active power limit
+    \item a bus voltage magnitude limit
+    \item a line flow limit
 \end{itemize}
 
 Each event function is registered with an event name, a flag indicating whether or not the location of the event should be pinpointed, and if so, to within what tolerance. For events that are to be located, when an event interval is detected, that is, when an element of the event function value changes sign, \matpower{} adjusts the continuation step size via a False Position or Regula Falsi method until it locates the point of the zero-crossing to within the specified tolerance.
@@ -1572,6 +1574,12 @@ name & default & description \\
  \code{cpf.enforce\_q\_lims}	& 0	& enforce gen reactive power limits at expense of $V_m$	\\
    & & ~0 --- do \emph{not} enforce limits \\
    & & ~1 --- enforce limits \\
+ \code{cpf.enforce\_v\_lims}	& 0	& enforce bus voltage magnitude limits	\\
+   & & ~0 --- do \emph{not} enforce limits \\
+   & & ~1 --- enforce limits \\
+ \code{cpf.enforce\_flow\_lims}	& 0	& enforce line MVA flow limits	\\
+   & & ~0 --- do \emph{not} enforce limits \\
+   & & ~1 --- enforce limits \\
  \code{cpf.step} & 0.05 & default value for continuation power flow step size $\sigma$ \\
  \code{cpf.step\_min} & $10^{-4}$ & minimum allowed step size, $\sigma_\mathrm{min}$ \\
  \code{cpf.step\_max} & 0.2 & maximum allowed step size, $\sigma_\mathrm{max}$ \\
@@ -1584,6 +1592,8 @@ name & default & description \\
  \code{cpf.nose\_tol} &  $10^{-5}$ & tolerance for nose point detection (p.u.) \\
  \code{cpf.p\_lims\_tol} &  $10^{-2}$ & tolerance for generator active power limit detection (MW) \\
  \code{cpf.q\_lims\_tol} &  $10^{-2}$ & tolerance for generator reactive power limit detection (MVAr) \\
+ \code{cpf.v\_lims\_tol} &  $10^{-4}$ & tolerance for bus voltage magnitude limit detection (p.u) \\
+ \code{cpf.flow\_lims\_tol} &  0.01 & tolerance for line flow limit detection (MVA) \\
  \code{cpf.plot.level} & 0 & control plotting of nose curve \\
     & & ~0 --- do not plot nose curve \\
     & & ~1 --- plot when completed \\
@@ -4547,6 +4557,12 @@ name & default & description \\
  \code{cpf.enforce\_q\_lims}	& 0	& enforce gen reactive power limits at expense of $V_m$	\\
    & & ~0 --- do \emph{not} enforce limits \\
    & & ~1 --- enforce limits \\
+ \code{cpf.enforce\_v\_lims}	& 0	& enforce bus voltage magnitude limits	\\
+   & & ~0 --- do \emph{not} enforce limits \\
+   & & ~1 --- enforce limits \\
+ \code{cpf.enforce\_flow\_lims}	& 0	& enforce line MVA flow limits	\\
+   & & ~0 --- do \emph{not} enforce limits \\
+   & & ~1 --- enforce limits \\
  \code{cpf.step} & 0.05 & default value for continuation power flow step size $\sigma$ \\
  \code{cpf.step\_min} & $10^{-4}$ & minimum allowed step size, $\sigma_\mathrm{min}$ \\
  \code{cpf.step\_max} & 0.2 & maximum allowed step size, $\sigma_\mathrm{max}$ \\
@@ -6817,6 +6833,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.0.pdf}{\m
 \item \mostname{} (\most{}) 1.0b1 is a {\bf major new feature}, implementing a full range of optimal power scheduling problems, from a simple as a deterministic, single period economic dispatch problem with no transmission constraints to as complex as a stochastic, security-constrained, combined unit-commitment and multiperiod OPF problem with locational contingency and load-following reserves, ramping costs and constraints, deferrable demands, lossy storage resources and uncertain renewable generation. See \code{docs/MOST-manual.pdf} for details.
 \item General mechanism for applying modifications to an existing \matpower{} case. See \code{apply\_changes()} and \code{idx\_ct()}.
 \item Redesigned CPF callback mechanism to handle CPF events such as generator limits, nose point detection, etc. Included event log in CPF results.
+\item Added options \codeq{cpf.enforce\_v\_lims} and \codeq{cpf.enforce\_flow\_lims} to enforce bus voltage magnitude and line MVA flow limits in the continuation power flow.
 \item Added options \codeq{cpf.enforce\_p\_lims} and \codeq{cpf.enforce\_q\_lims} to enforce generator active and reactive power limts in the continuation power flow.
 \item Added OPF option \codeq{opf.use\_vg} to provide a convenient way to have the OPF respect the generator voltage setpoints specified in the \gen{} matrix.
 \item Experimental foundation for handling of ZIP load models in power flow (Newton, fast-decoupled only), continuation power flow, and optimal power flow (\mips{}, \code{fmincon}, \knitro{}, \ipopt{} solvers only). Currently, ZIP loads can only be specified on a system-wide basis using the experimental options \\ \codeq{exp.sys\_wide\_zip\_loads.pw} and \codeq{exp.sys\_wide\_zip\_loads.qw}.
