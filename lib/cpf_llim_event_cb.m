@@ -107,7 +107,7 @@ for i = 1:length(evnts)
         iL = evnts(i).idx;
         for j = 1:length(iL)
             L = iL(j);                                  %%index of critical line event of interest
-            msg = sprintf('%s Line flow limits violation\nLine %d -- %d at MVA limit %3.2f @ lambda = %.4g, in %d continuation steps',...
+            msg = sprintf('%s Line flow limit reached\nLine %d -- %d at MVA limit %3.2f @ lambda = %.4g, in %d continuation steps',...
                 msg, i2e_bus(f(L)), i2e_bus(t(L)), SrateA(L), nx.lam, k);  %%  i2e_bus(ibb)
                
             %%prepare to terminate

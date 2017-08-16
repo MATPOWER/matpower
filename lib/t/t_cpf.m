@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 312;
+num_tests = 348;
 t_begin(num_tests, quiet);
 
 if have_fcn('matlab', 'vnum') < 7.001
@@ -209,7 +209,7 @@ else
     t_ok(strcmp(r.cpf.done_msg, 'All generators at Pmax'), [t 'done_msg']);
     ek = [7 13 iterations];
     eidx = [2 1 3];
-    ename = {'PLIM', 'PLIM', 'PLIM'};
+    ename = {'PLIM', 'PLIM','PLIM'};
     ne = length(ek);
     t_is(length(r.cpf.events), ne, 12, sprintf('%ssize(events) == %d', t, ne));
     for j = 1:ne
@@ -217,6 +217,63 @@ else
         t_is(r.cpf.events(j).idx, eidx(j), 12, sprintf('%sevents(%d).idx == %d', t, j, eidx(j)));
         t_ok(strcmp(r.cpf.events(j).name, ename{j}), sprintf('%sevents(%d).name = ''%s''', t, j, ename{j}));
     end
+    
+    t = 'CPF to nose pt (pseudo arc length) w/Flow lims: ';
+    mpopt_flowlim = mpoption(mpopt, 'cpf.stop_at', 'NOSE', 'cpf.parameterization', 3,'cpf.enforce_flow_lims',1);
+    mpopt_flowlim = mpoption(mpopt_flowlim, 'cpf.adapt_step', 1);
+%mpopt_qlim = mpoption(mpopt_qlim, 'verbose', 3);
+    r = runcpf(mpcb, mpct, mpopt_flowlim);
+    iterations = 3;
+    t_ok(r.success, [t 'success']);
+    t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
+    t_is(r.cpf.max_lam, 0.110684, 6, [t 'max_lam']);
+    t_is(size(r.cpf.V_hat), [10 iterations+1], 12, [t 'size(V_hat)']);
+    t_is(size(r.cpf.V), [10 iterations+1], 12, [t 'size(V)']);
+    t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
+    t_is(size(r.cpf.lam), [1 iterations+1], 12, [t 'size(lam)']);
+    t_ok(strfind(r.cpf.done_msg, 'Line flow limit reached'), [t 'done_msg']);
+    t_is(length(r.cpf.events), 1, 12, [t 'size(events) == 1']);
+    t_is(r.cpf.events(1).k, iterations, 12, [t 'events(1).k']);
+    t_is(r.cpf.events(1).idx, 5, 12, [t 'events(1).idx']);
+    t_ok(strcmp(r.cpf.events(1).name, 'LLIM'), [t 'events(1).name']);
+    
+    t = 'CPF to nose pt (pseudo arc length) w/V lims: ';
+    mpopt_vlim = mpoption(mpopt, 'cpf.stop_at', 'NOSE', 'cpf.parameterization', 3,'cpf.enforce_v_lims',1);
+    mpopt_vlim = mpoption(mpopt_vlim, 'cpf.adapt_step', 1);
+%mpopt_qlim = mpoption(mpopt_qlim, 'verbose', 3);
+    r = runcpf(mpcb, mpct, mpopt_vlim);
+    iterations = 6;
+    t_ok(r.success, [t 'success']);
+    t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
+    t_is(r.cpf.max_lam, 0.316932, 6, [t 'max_lam']);
+    t_is(size(r.cpf.V_hat), [10 iterations+1], 12, [t 'size(V_hat)']);
+    t_is(size(r.cpf.V), [10 iterations+1], 12, [t 'size(V)']);
+    t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
+    t_is(size(r.cpf.lam), [1 iterations+1], 12, [t 'size(lam)']);
+    t_ok(strfind(r.cpf.done_msg, 'Bus voltage magnitude limit reached'), [t 'done_msg']);
+    t_is(length(r.cpf.events), 1, 12, [t 'size(events) == 1']);
+    t_is(r.cpf.events(1).k, iterations, 12, [t 'events(1).k']);
+    t_is(r.cpf.events(1).idx, 9, 12, [t 'events(1).idx']);
+    t_ok(strcmp(r.cpf.events(1).name, 'VLIM'), [t 'events(1).name']);
+    
+    t = 'CPF to nose pt (pseudo arc length) w/V_FLOW lims: ';
+    mpopt_vlim = mpoption(mpopt, 'cpf.stop_at', 'NOSE', 'cpf.parameterization', 3,'cpf.enforce_v_lims',1,'cpf.enforce_flow_lims',1);
+    mpopt_vlim = mpoption(mpopt_vlim, 'cpf.adapt_step', 1);
+%mpopt_qlim = mpoption(mpopt_qlim, 'verbose', 3);
+    r = runcpf(mpcb, mpct, mpopt_vlim);
+    iterations = 3;
+    t_ok(r.success, [t 'success']);
+    t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
+    t_is(r.cpf.max_lam, 0.110684, 6, [t 'max_lam']);
+    t_is(size(r.cpf.V_hat), [10 iterations+1], 12, [t 'size(V_hat)']);
+    t_is(size(r.cpf.V), [10 iterations+1], 12, [t 'size(V)']);
+    t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
+    t_is(size(r.cpf.lam), [1 iterations+1], 12, [t 'size(lam)']);
+    t_ok(strfind(r.cpf.done_msg, 'Line flow limit reached'), [t 'done_msg']);
+    t_is(length(r.cpf.events), 1, 12, [t 'size(events) == 1']);
+    t_is(r.cpf.events(1).k, iterations, 12, [t 'events(1).k']);
+    t_is(r.cpf.events(1).idx, 5, 12, [t 'events(1).idx']);
+    t_ok(strcmp(r.cpf.events(1).name, 'LLIM'), [t 'events(1).name']);
     
     t = 'CPF to nose pt (pseudo arc length) w/PQ lims: ';
     mpopt_pqlim = mpoption(mpopt, 'cpf.stop_at', 'NOSE', 'cpf.parameterization', 3,'cpf.enforce_q_lims',1,'cpf.enforce_p_lims',1);
