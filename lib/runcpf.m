@@ -89,6 +89,14 @@ function [res, suc] = ...
 %         this generator
 %       - if the generator was at the reference bus, it is converted to PV
 %         and the first remaining PV bus is selected as the new slack.
+
+%   If the 'cpf.enforce_v_lims' option is set to true (default is false)
+%   then the continuation power flow is set to terminate if any bus voltage
+%   magnitude exceeds its minimum or maximum limit.
+%
+%   If the 'cpf.enforce_flow_lims' option is set to true (default is false)
+%   then the continuation power flow is set to terminate if any line MVA
+%   flow exceeds its rateA limit.
 %
 %   Possible CPF termination modes:
 %       when cpf.stop_at == 'NOSE'
@@ -102,6 +110,10 @@ function [res, suc] = ...
 %           - All generators at PMAX
 %       when cpf.enforce_q_lims == true
 %           - No REF or PV buses remaining
+%       when cpf.enforce_v_lims == true
+%           - any bus voltage magnitude is at min. or max.
+%       when cpf.enforce_flow_lims == true
+%           - any line MVA flow is at max (rateA limit).
 %       other
 %           - Base case power flow did not converge
 %           - Base and target case have identical load and generation
@@ -117,6 +129,8 @@ function [res, suc] = ...
 %                           mpoption('cpf.enforce_q_lims', 1));
 %       results = runcpf('case9', 'case9target', ...
 %                           mpoption('cpf.stop_at', 'FULL'));
+%       results = runcpf('case9', 'case9target', ...
+%                           mpoption('cpf.enforce_v_lims', 1, 'cpf.enforce_flow_lims', 1));
 %
 %   See also MPOPTION, RUNPF.
 
