@@ -1853,10 +1853,11 @@ F_f(\Theta, V_m) = \left\{
 S_f(\Theta, V_m), \quad & \text{apparent power} \\
 P_f(\Theta, V_m), \quad & \text{real power} \\
 I_f(\Theta, V_m), \quad & \text{current}
+\label{eq:flowlimoptions}
 \end{aligned}
 \right.
 \end{equation}
-where $I_f$ is defined in \eqref{eq:If}, $S_f$ in \eqref{eq:Sf}, $P_f = \Re \{S_f\}$ and the vector of flow limits $F_\mathrm{max}$ has the appropriate units for the type of constraint. It is likewise for $F_t(\Theta, V_m)$. The values used by \matpower{}'s OPF for the flow limits $F_\mathrm{max}$ are specified in the \code{RATE\_A} column (6) of the \branch{} matrix.\footnote{Setting the \code{RATE\_A} column (6) of \branch{} to zero is the preferred way to indicate a completely unconstrained line.}
+where $I_f$ is defined in \eqref{eq:If}, $S_f$ in \eqref{eq:Sf}, $P_f = \Re \{S_f\}$ and the vector of flow limits $F_\mathrm{max}$ has the appropriate units for the type of constraint. It is likewise for $F_t(\Theta, V_m)$. The values used by \matpower{}'s OPF for the flow limits $F_\mathrm{max}$ are specified in the \code{RATE\_A} column (6) of the \branch{} matrix,\footnote{Setting the \code{RATE\_A} column (6) of \branch{} to zero is the preferred way to indicate a completely unconstrained line.} and the selection of flow constraint type in \eqref{eq:flowlimoptions} is determined by the \code{opf.flow\_lim} option.
 
 The variable limits \eqref{eq:xlims} include an equality constraint on any reference bus angle and upper and lower limits on all bus voltage magnitudes and real and reactive generator injections:
 \begin{eqnarray}
@@ -1908,6 +1909,13 @@ subject to
 \end{eqnarray}
 
 Section~\ref{sec:extending_opf} describes the mechanisms available to the user for taking advantage of the extensible formulation described here.
+
+For OPF solvers that use Matlab code to implement the function, gradient and Hessian evaluations,\footnote{Currently, this includes solvers based on \mipslink{}, \code{fmincon}, \ipopt{} and \knitro{}.} the formulation can include additional nonlinear constraints,
+\begin{eqnarray}
+g_u^i(x) &= 0 \qquad \forall{i} \in \mathcal{G}_u \label{eq:usereq} \\
+h_u^i(x) &\le 0 \qquad \forall{i} \in \mathcal{H}_u, \label{eq:userieq}
+\end{eqnarray}
+where $\mathcal{G}_u$ and $\mathcal{H}_u$ are sets of indices for user-defined equality and inequality constraint sets, respectively.
 
 \subsubsection{User-defined Costs}
 \label{sec:user_costs}
@@ -1971,7 +1979,9 @@ Some limitations are imposed on the parameters in the case of the DC OPF since \
 
 \subsubsection{User-defined Constraints}
 
-The user-defined constraints \eqref{eq:A} are general linear restrictions involving all of the optimization variables and are specified via matrix $A$ and lower and upper bound vectors $l$ and $u$. These parameters can be used to create equality constraints ($l_i = u_i$) or inequality constraints that are bounded below ($u_i = \infty$), bounded above ($l_i = \infty$) or bounded on both sides.
+The user-defined linear constraints \eqref{eq:A} are general linear restrictions involving all of the optimization variables and are specified via matrix $A$ and lower and upper bound vectors $l$ and $u$. These parameters can be used to create equality constraints ($l_i = u_i$) or inequality constraints that are bounded below ($u_i = \infty$), bounded above ($l_i = \infty$) or bounded on both sides.
+
+The user-defined nonlinear constraint sets $g_u^i(x)$ and $h_u^i(x)$ in \eqref{eq:usereq} and \eqref{eq:userieq} are each defined by two M-file functions, similar to those required by \mipslink{}, one that computes the constraint values and their gradients (Jacobian), and the other that computes Hessian values.
 
 \subsubsection{User-defined Variables}
 
@@ -2120,7 +2130,7 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {See help for \code{opf\_model} for more details.}
+ \item [\dag] {See help for \code{opf\_model} and \code{opt\_model} for more details.}
  \item [\ddag] {See help for \code{opf} for more details.}
 \end{tablenotes}
 \end{threeparttable}
@@ -2277,20 +2287,76 @@ Internally, the \code{runopf} function does a number of conversions to the probl
 \section{Extending the OPF}
 \label{sec:extending_opf}
 
-The extended OPF formulation described in Section~\ref{sec:extended_opf} allows the user to modify the standard OPF formulation to include additional variables, costs and/or constraints. There are two primary mechanisms available for the user to accomplish this. The first is by directly constructing the full parameters for the addional costs or constraints and supplying them either as fields in the case struct or directly as arguments to the \code{opf} function. The second, and more powerful, method is via a set of callback functions that customize the OPF at various stages of the execution. \matpower{} includes two examples of using the latter method, one to add a fixed zonal reserve requirement and another to implement interface flow limits.
+The extended OPF formulation described in Section~\ref{sec:extended_opf} allows the user to modify the standard OPF formulation to include additional variables, costs and/or constraints. There are two primary mechanisms available for the user to accomplish this. The first is by directly constructing the full parameters for the addional costs or constraints and supplying them either as fields in the case struct or directly as arguments to the \code{opf} function. The second, and more powerful, method is via a set of callback functions that customize the OPF at various stages of the execution. \matpower{} includes several examples of using the latter method, for example to add a fixed zonal reserve requirement, to implement interface flow limits, dispatchable DC transmission lines, or branch flow soft limits.
 
 \subsection{Direct Specification}
 \label{sec:extend_direct}
 
+\subsubsection{User-defined Costs}
 To add costs directly, the parameters $H$, $C$, $N$, $\hat{r}$, $k$, $d$ and $m$ of \eqref{eq:fu}--\eqref{eq:fdi} described in Section~\ref{sec:user_costs} are specified as fields or arguments \code{H}, \code{Cw}, \code{N} and \code{fparm}, repectively, where \code{fparm} is the $n_w \times 4$ matrix
 \begin{equation}
 f_\mathrm{parm} = \left[\begin{array}{cccc}d & \hat{r} & k & m \end{array}\right].
 \end{equation}
 When specifying additional costs, \code{N} and \code{Cw} are required, while \code{H} and \code{fparm} are optional. The default value for $H$ is a zero matrix, and the default for $f_\mathrm{parm}$ is such that $d$ and $m$ are all ones and $\hat{r}$ and $k$ are all zeros, resulting in simple linear cost, with no shift or ``dead-zone''. \code{N} and \code{H} should be specified as sparse matrices.
 
-For additional constraints, the $A$, $l$ and $u$ parameters of \eqref{eq:A} are specified as fields or arguments of the same names, \code{A}, \code{l} and \code{u}, respectively, where \code{A} is sparse.
+\subsubsection{User-defined Constraints}
+
+For additional linear constraints, the $A$, $l$ and $u$ parameters of \eqref{eq:A} are specified as fields or arguments of the same names, \code{A}, \code{l} and \code{u}, respectively, where \code{A} is sparse.
+
+A user-defined nonlinear constraint set, $g_u^i(x)$ or $h_u^i(x)$ from \eqref{eq:usereq} or \eqref{eq:userieq}, is implemented by defining two M-file functions, similar to those required by \mipslink{}. The first is a function to compute the constraint values and their gradients (Jacobian),\footnote{The differences between this function and the one required by \mips{} is that (1) this one represents a single set of equality constraints or inequality constraints, not both, (2) it returns in \code{dg} the $m \times n$ Jacobian (for $m$ constraints and $n$ variables), whereas \mips{} expects the $n \times m$ transpose, (3) this function allows arbitrary additional parameters, and (4) \code{x} can be a cell array of sub-vectors of optimization variable $x$ (see \code{varsets} in Table~\ref{tab:nl_constraints}).} with calling syntax:
+
+\code{[g, dg] = my\_constraint\_fcn(x, <p1>, <p2>, ...)} \\
+Here \code{<p1>} and \code{<p2>} represent arbitrary optional input parameters that remain constant for all calls to the function. The second is a function to compute the Hessian of the corresponding term in the Lagrangian function, that is the term corresponding to $\trans{\lambda}g_u^i(x)$ or $\trans{\mu}h_u^i(x)$. This function has the following calling syntax:
+
+\code{d2G = my\_constraint\_hess(x, lambda, <p1>, <p2>, ...)} \\
+Once again this is similar to the form of the Hessian evaluation function expected by \mips{}.\footnote{The differences between this function and the one required by \mips{} is that (1) this one returns the Hessian of a single term of the Lagrangian, not of the full Lagrangian, (2) the \code{lambda} argument is a simple vector of multipliers ($\lambda$ or $\mu$) corresponding just to this set of constraints, not a struct containing the full $\lambda$ and $\mu$ vectors in fields \code{eqnonlin} and \code{ineqnonlin} \code{nonlineq}, respectively, and (3) this function allows arbitrary additional parameters, and (4) \code{x} can be a cell array of sub-vectors of optimization variable $x$ (see \code{varsets} in Table~\ref{tab:nl_constraints}).}
+
+In order to add a set of user-defined nonlinear constraints to the formulation through direct specification, an entry must be added to the optional \code{nle\_constraints} (nonlinear equality) or \code{nli\_constraints} (nonlinear inequality) fields of the \matpower{} case struct. These fields are cell arrays, in which each element (also a cell array) specifies a constraint set of the corresponding kind. The format is as follows, where the details are described in Table~\ref{tab:nl_constraints}.
+\begin{Code}
+mpc.nle_constraints = {
+    {name, N, g_fcn, hess_fcn, varsets, params},
+    ...
+};
+\end{Code}
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{User-defined Nonlinear Constraint Specification}
+\label{tab:nl_constraints}
+\footnotesize
+\begin{tabular}{lp{0.85\textwidth}}
+\toprule
+name & description \\
+\midrule
+\code{name}	& string with name of constraint set, used to label multipliers in \results{} struct \\
+\code{N}	& number of constraints, i.e. dimension of $g_u^i(x)$ (or $h_u^i(x)$ as the case may be) \\
+\code{g\_fcn}	& string containing name of function to evaluate constraint and gradients (Jacobian) \\
+\code{hess\_fcn}	& string containing name of function to evaluate Hessian of corresponding term of Lagrangian \\
+\code{varsets}	& cell array of variable set names, specifying sub-vectors of optimization vector $x$ to be passed as inputs in \code{x}\tnote{\dag} \\
+\code{params}	&  cell array of optional, arbitrary parameters to pass to each call to the constraint and Hessian evaluation functions\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [\dag] {If \code{varsets} is empty, \code{x} will be the full optimization vector $x$, otherwise it will be a cell array of sub-vectors of $x$ for the specified variable sets. Valid names include \codeq{Va}, \codeq{Vm}, \codeq{Pg}, and \codeq{Qg}. It can include others depending on the OPF extensions in use. See the variable names displayed by \code{results.om} for a complete list for your problem.}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+There is an example in the OPF testing code (e.g. \code{t\_opf\_mips}) near the end, that implements a nonlinear relationship between three different generator outputs by adding the following line.
+\begin{Code}
+mpc.nle_constraints = {
+    {'Pg_usr', 1, 'opf_nle_fcn1', 'opf_nle_hess1', {'Pg'}, {}}
+};
+\end{Code}
+This adds a single constraint named \codeq{Pg\_usr} as a function of the vector of generator active injections (\code{x} will be \code{\{Pg\}}, where \code{Pg} is a sub-vector of the optimization vector $x$ containing only the generator active injections). The constraints and gradients are evaluated by a function named \codeq{opf\_nle\_fcn1} and the Hessian of the corresponding term of the Lagrangian by a function named \codeq{opf\_nle\_hess1}, neither of which expect any additional parameters.
+
+\subsubsection{User-defined Variables}
 
 Additional variables are created implicitly based on the difference between the number of columns in $A$ and the number $n_x$ of standard OPF variables. If $A$ has more columns than $x$ has elements, the extra columns are assumed to correspond to a new $z$ variable. The initial value and lower and upper bounds for $z$ can also be specified in the optional fields or arguments, \code{z0}, \code{zl} and \code{zu}, respectively.
+
+\subsubsection{Additional Comments}
 
 For a simple formulation extension to be used for a small number of OPF cases, this method has the advantage of being direct and straightforward. While \matpower{} does include code to eliminate the columns of $A$ and $N$ corresponding to $V_m$ and $Q_g$ when running a DC OPF\footnote{Only if they contain all zeros.}, as well as code to reorder and eliminate columns appropriately when converting from external to internal data formats, this mechanism still requires the user to take special care in preparing the $A$ and $N$ matrices to ensure that the columns match the ordering of the elements of the opimization vectors $x$ and $z$. All extra constraints and variables must be incorporated into a single set of parameters that are constructed before calling the OPF. The bookkeeping needed to access the resulting variables and shadow prices on constraints and variable bounds must be handled manually by the user outside of the OPF, along with any processing of additional input data and processing, printing or saving of the additional result data. Making further modifications to a formulation that already includes user-supplied costs, constraints or variables, requires that both sets be incorporated into a new single consistent set of parameters.
 
@@ -2394,18 +2460,11 @@ This stage is also a good place to check the consistency of any additional input
 \subsubsection{{\tt formulation} Callback}
 \label{sec:formulation_callback}
 
-This stage is called from \code{opf} after the OPF Model (\code{om}) object has been initialized with the standard OPF formulation, but before calling the solver. This is the ideal place for modifying the problem formulation with additional variables, constraints and costs, using the \code{add\_vars}, \code{add\_lin\_constraints} and \code{add\_costs} methods of the OPF Model object. Inputs are the \code{om} object, the \matpower{} options struct \code{mpopt} and any (optional) \code{args} supplied when the callback was registered via \code{add\_userfcn}. Output is the updated \code{om} object.
+This stage is called at the end of \code{opf\_setup} after the OPF Model (\code{om}) object has been initialized with the standard OPF formulation, but before calling the solver. This is the ideal place for modifying the problem formulation with additional variables, constraints and costs, using the \code{add\_vars}, \code{add\_lin\_constraints}, \code{add\_nln\_constraints} and \code{add\_costs} methods of the OPF Model object.\footnote{It is perfectly legitimate to register more than one callback per stage, such as when enabling multiple independent OPF extensions. In this case, the callbacks are executed in the order they were registered with \code{add\_userfcn}. E.g. when the second and subsequent \code{formulation} callbacks are invoked, the \code{om} object will reflect any modifications performed by earlier \code{formulation} callbacks.} Inputs are the \code{om} object, the \matpower{} options struct \code{mpopt} and any (optional) \code{args} supplied when the callback was registered via \code{add\_userfcn}. Output is the updated \code{om} object.
 
-The \code{om} object contains both the original \matpower{} case data as well as all of the indexing data for the variables and constraints of the standard OPF formulation.\footnote{It is perfectly legitimate to register more than one callback per stage, such as when enabling multiple independent OPF extensions. In this case, the callbacks are executed in the order they were registered with \code{add\_userfcn}. E.g. when the second and subsequent \code{formulation} callbacks are invoked, the \code{om} object will reflect any modifications performed by earlier \code{formulation} callbacks.} See the on-line help for \code{opf\_model} for more details on the OPF model object and the methods available for manipulating and accessing it.
+The \code{om} object contains both the original \matpower{} case data as well as all of the indexing data for the variables and constraints of the standard OPF formulation. See the on-line help for \code{opf\_model} and \code{opt\_model} for more details on the OPF model object and the methods available for manipulating and accessing it.
 
 In the example code, a new variable block named \code{R} with $n_g$ elements and the limits from \eqref{eq:reserve_var} is added to the model via the \code{add\_vars} method. Similarly, two linear constraint blocks named \code{Pg\_plus\_R} and \code{Rreq}, implementing \eqref{eq:Pg_plus_R} and \eqref{eq:reserve_req}, respectively, are added via the \code{add\_lin\_constraints} method. And finally, the \code{add\_costs} method is used to add to the model a user-defined cost block corresponding to \eqref{eq:reserve_cost}.
-
-\begin{figure}[!b]
-  \centering
-  \includegraphics[scale=0.6]{./figures/variables_constraints}
-  \caption{Adding Constraints Across Subsets of Variables}
-  \label{fig:varsets}
-\end{figure}
 
 Notice that the last argument to \code{add\_lin\_constraints} and \code{add\_costs} allows the constraints and costs to be defined only in terms of the relevant parts of the optimization variable $x$. For example, the \code{A} matrix for the \code{Pg\_plus\_R} constraint contains only columns corresponding to real power generation (\code{Pg}) and reserves (\code{R}) and need not bother with voltages, reactive power injections, etc. As illustrated in \figurename~\ref{fig:varsets}, this allows the same code to be used with both the AC OPF, where $x$ includes $V_m$ and $Q_g$, and the DC OPF where it does not. This code is also independent of any additional variables that may have been added by \matpower{} (e.g. $y$ variables from \matpower{}'s CCV handling of piece-wise linear costs) or by the user via previous \code{formulation} callbacks. \matpower{} will place the constraint matrix blocks in the appropriate place when it constructs the overall \code{A} matrix at run-time. This is an important feature that enables independently developed \matpower{} OPF extensions to work together.
 
@@ -2441,7 +2500,14 @@ om.add_lin_constraints('Rreq', r.zones, lreq, [], {'R'});
 om.add_costs('Rcost', struct('N', I, 'Cw', Cw), {'R'});
 \end{Code}
 
+\begin{figure}[!hb]
+  \centering
+  \includegraphics[scale=0.6]{./figures/variables_constraints}
+  \caption{Adding Constraints Across Subsets of Variables}
+  \label{fig:varsets}
+\end{figure}
 
+\clearpage
 \subsubsection{{\tt int2ext} Callback}
 \label{sec:int2ext_callback}
 
@@ -2913,29 +2979,34 @@ results = runopf(mpc);
 
 \matpower{} includes an extension that replaces the branch flow limits on specified branches in an optimal power flow with soft limits, that is, limits that can be violated with some linear penalty cost. This can be useful in identifying the cause of infeasibility in some optimal power flow problems. The extension is implemented in \code{toggle\_softlims}.
 
-This extension implements two forms, one for DC OPF and another for AC OPF. The DC version was introduced in \matpower{} 5.0 and the AC version in \hl{6.1}.
+This extension implements two forms, one for DC OPF and another for AC OPF. The DC version was introduced in \matpower{} 5.0 and the AC version, which provides an example of user-defined nonlinear constraints, was added in \hl{6.1}.
+In both cases, a new variable $f_{\mathrm v}^i$ is defined to represent the flow limit violation on branch~$i$. This variable is constrained to be positive and no less than the difference between the absolute value of the actual flow at either end of the branch and the flow limit, that is than the limit violation. These flow constraints can be expressed by replacing the right hand side in \eqref{eq:acopf_ieqf} and \eqref{eq:acopf_ieqt} with the flow violation variable $f_{\mathrm v}^i$. So the constraints on this new variable can be written as
+\begin{alignat}{2}
+&& f_{\mathrm v}^i &\ge 0 \\
+h_f^i(\Theta, V_m) &=\;& \left| f_f^i(\Theta, V_m) \right| - f_\mathrm{max}^i &\le f_{\mathrm v}^i \qquad \forall{i} \\
+h_t^i(\Theta, V_m) &= & \left| f_t^i(\Theta, V_m) \right| - f_\mathrm{max}^i &\le f_{\mathrm v}^i \qquad \forall{i}.
+\end{alignat}
 
-\hl{This section needs to be rewritten to include descriptions of the AC method.}
-
-A new variable $f_{\mathrm v}^i$ is defined to represent the flow limit violation on branch~$i$. This variable is constrained to be positive and the sum of $f_{\mathrm v}^i$ and the flow limit must be greater than both the flow and the negative of the flow on the branch, both of which are expressed as functions of the bus voltage angles, from \eqref{eq:Pf}. The three constraints on the new flow violation variable can be written as
+In the case of AC flow constraints, the flow functions $f_f^i$ and $f_t^i$ are nonlinear and can be either apparent power, active power, or current as shown in \eqref{eq:flowlimoptions}. In the case of DC flow constraints, where there are no losses, these flows can be implemented in terms of the flow at the \emph{from} end of the line and its negative, both linear functions of the bus voltage angles, based on \eqref{eq:dcopf_ieqf} and \eqref{eq:dcopf_ieqt}.
 \begin{align}
 f_{\mathrm v}^i &\ge 0 \\
-f_{\mathrm v}^i + p_f^{i,\mathrm{max}} &\ge \;\;\: p_f^i = \;\;\: B_f^i \Theta + p_{f,\mathrm{shift}}^i \\
-f_{\mathrm v}^i + p_f^{i,\mathrm{max}} &\ge -p_f^i = -B_f^i \Theta - p_{f,\mathrm{shift}}^i, \label{eq:softlimconstraint}
+B_f^i \Theta + p_{f,\mathrm{shift}}^i -  p_f^{i,\mathrm{max}} &\le f_{\mathrm v}^i \qquad \forall{i}  \\
+-B_f^i \Theta - p_{f,\mathrm{shift}}^i -  p_f^{i,\mathrm{max}} &\le f_{\mathrm v}^i \qquad \forall{i}, \label{eq:softlimconstraint}
 \end{align}
 where the feasible area is illustrated in \figurename~\ref{fig:softlims}.
-Furthermore, a simple linear cost coefficient $c_{\mathrm v}^i$ is applied to each flow violation variable, so that the additional user defined cost term from \eqref{eq:minfxz} looks like
-\begin{equation}
-f_u(x,z) = \trans{c_{\mathrm v}} f_{\mathrm v}.
-\label{eq:softlims_cost}
-\end{equation}
 
-\begin{figure}[hbp]
+\begin{figure}[!hbp]
   \centering
   \includegraphics[width=0.8\textwidth]{./figures/softlims}
   \caption{Feasible Region for Branch Flow Violation Constraints}
   \label{fig:softlims}
 \end{figure}
+
+Finally, a simple linear cost coefficient $c_{\mathrm v}^i$ is applied to each flow violation variable, so that the additional user defined cost term from \eqref{eq:minfxz} looks like
+\begin{equation}
+f_u(x,z) = \trans{c_{\mathrm v}} f_{\mathrm v}.
+\label{eq:softlims_cost}
+\end{equation}
 
 The data for the problem is specifed in an additional \code{softlims} field in the \matpower{} case struct \mpc{}. This field is itself a struct with two optional sub-fields, \code{idx} and \code{cost}, for input and two others, \code{overload} and \code{ovl\_cost} used for output data. Flow constraint shadow prices are reported in the usual columns of the \branch{} matrix in the \results{}. The format for this data is detailed in Tables~\ref{tab:softlimsinputs} and \ref{tab:softlimsoutputs}.
 
@@ -2987,7 +3058,7 @@ name & description \\
 \end{table}
 
 
-See \code{help toggle\_softlims} for more information. Examples of using this extension can be found in \code{t\_opf\_softlims}. Note that, while this extension can be used for AC OPF problems, the flow violations will not be actual AC flow violations, since the computed violations are based on a DC flow model, and it is those values that incur the penalty cost.
+See \code{help toggle\_softlims} for more information. Examples of using this extension can be found in \code{t\_opf\_softlims}.
 
 \clearpage
 
@@ -6678,7 +6749,7 @@ It can also be used to solve general LP and QP problems via \matpower{}'s common
 
 \matlab{}'s \ot{}~\cite{ot, otug}, available from The MathWorks, provides a number of high-performance solvers that \matpower{} can take advantage of.
 
-It includes \code{fmincon} for non-linear programming problems (NLP), and \code{linprog} and \code{quadprog} for linear programming (LP) and quadratic programming (QP) problems, respectively.
+It includes \code{fmincon} for nonlinear programming problems (NLP), and \code{linprog} and \code{quadprog} for linear programming (LP) and quadratic programming (QP) problems, respectively.
 For mixed-integer linear programs (MILP), it provides \code{intlingprog}.
 Each solver implements a number of different solution algorithms.
 More information is available from The MathWorks, Inc. at \url{http://www.mathworks.com/}.
@@ -6747,8 +6818,9 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.1.pdf}{\m
 \item Continuous integration via GitHub and Travis-CI integration.
 \item Include \LaTeX{} source code for \mum{} in \code{docs/src} and for \mostman{} in \code{most/docs/src}.
 \item Add support for exporting \matpower{} case to PSS/E RAW data format.
-\item Add support to core optimization model for general non-linear constraints.
 \item Add options \codeq{cpf.enforce\_v\_lims} and \codeq{cpf.enforce\_flow\_lims} to enforce bus voltage magnitude and branch flow limits in the continuation power flow, and \codeq{cpf.v\_lims\_tol} and \codeq{cpf.flow\_lims\_tol} to control the respective detection tolerances.  \emph{Thanks to Ahmad Sadiq Abubakar and Shrirang Abhyankar.}
+\item Add support to core optimization model for general nonlinear constraints.
+\item Add support for user-defined nonlinear constraints in AC OPF.
 \item Expand support for soft branch flow limits to include AC OPF problems.
 \item New functions:
     \begin{itemize}
@@ -7097,7 +7169,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-4.1.pdf}{\m
 \begin{itemize}
 \item More new high performance OPF solvers:
     \begin{itemize}
-    \item Support for the \knitro{} interior point optimizer for large scale non-linear optimization. Use \code{OPF\_ALG}~=~600 for to select \knitro{} to solve the AC OPF. Requires the \matlab{} \ot{} and a license for \knitro{}, available from \url{http://www.ziena.com/}. See \code{help mpoption} for more \knitro{} options.
+    \item Support for the \knitro{} interior point optimizer for large scale nonlinear optimization. Use \code{OPF\_ALG}~=~600 for to select \knitro{} to solve the AC OPF. Requires the \matlab{} \ot{} and a license for \knitro{}, available from \url{http://www.ziena.com/}. See \code{help mpoption} for more \knitro{} options.
     \item Support for \gurobi{} to solve LP and QP problems. Set option \code{OPF\_ALG\_DC}~=~700 to use \gurobi{} to solve the DC OPF. Requires \gurobi{} (\url{http://www.gurobi.com/}) and the \gurobi{} MEX interface (\url{http://www.convexoptimization.com/wikimization/index.php/Gurobi_mex}). See \code{help mpoption} for more \gurobi{} options.
     \item Updated for compatibility with \cplex{} 12.3.
     \item Changed options so that \code{fmincon} uses its interior-point solver by default. Much faster on larger systems.
@@ -7137,8 +7209,8 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-4.0.pdf}{\m
     \end{itemize}
 \item New high performance OPF solvers:
     \begin{itemize}
-    \item \mips{} (\mipsname{}), a new a pure-\matlab{} implementation of the primal-dual interior point methods from the optional package TSPOPF. \mips{} is suitable for large systems and is used as \matpower{}'s default solver for AC and DC OPF problems if no other optional solvers are installed. To select \mips{} explicitly, use \code{OPF\_ALG}~=~560/565 and \code{OPF\_ALG\_DC}~=~200/250 for AC and DC OPF, respectively. \mips{} can also be used independently of \matpower{} as a solver for general non-linear constrained optimization problems.
-    \item Support for the \ipopt{} interior point optimizer for large scale non-linear optimization. Use \code{OPF\_ALG}~=~580 and \code{OPF\_ALG\_DC}~=~400 for AC and DC OPF, respectively. Requires the \matlab{} MEX interface for \ipopt{}, available from \url{https://projects.coin-or.org/Ipopt/}.
+    \item \mips{} (\mipsname{}), a new a pure-\matlab{} implementation of the primal-dual interior point methods from the optional package TSPOPF. \mips{} is suitable for large systems and is used as \matpower{}'s default solver for AC and DC OPF problems if no other optional solvers are installed. To select \mips{} explicitly, use \code{OPF\_ALG}~=~560/565 and \code{OPF\_ALG\_DC}~=~200/250 for AC and DC OPF, respectively. \mips{} can also be used independently of \matpower{} as a solver for general nonlinear constrained optimization problems.
+    \item Support for the \ipopt{} interior point optimizer for large scale nonlinear optimization. Use \code{OPF\_ALG}~=~580 and \code{OPF\_ALG\_DC}~=~400 for AC and DC OPF, respectively. Requires the \matlab{} MEX interface for \ipopt{}, available from \url{https://projects.coin-or.org/Ipopt/}.
     \item Support for \cplex{} to solve LP and QP problems. Set option \code{OPF\_ALG\_DC}~=~500 to use \cplex{} to solve the DC OPF. Requires the \matlab{} interface to \cplex{}, available from \url{http://www.ibm.com/software/integration/optimization/cplex-optimizer/}. See \code{help mpoption} for more \cplex{} options.
     \item Support for \mosek{} to solve LP and QP problems. Set option \code{OPF\_ALG\_DC}~=~600 to use \mosek{} to solve the DC OPF. Requires the \matlab{} interface to \mosek{}, available from \url{http://www.mosek.com/}. See \code{help mpoption} for more \mosek{} options.
     \item Updated support for MathWorks' \ot{} solvers, \code{fmincon()}, \code{linprog()} and \code{quadprog()}.
