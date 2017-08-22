@@ -1,4 +1,4 @@
-function mpc = cpf_current_mpc(mpcb, mpc, Ybus, Yf, Yt, ref, pv, pq, V, lam, mpopt)
+function mpc = cpf_current_mpc(mpc, mpct, Ybus, Yf, Yt, ref, pv, pq, V, lam, mpopt)
 %CPF_CURRENT_MPC  Construct MPC for current continuation step.
 %   MPC = CPF_CURRENT_MPC(MPC_BASE, MPC_TARGET, YBUS, YF, YT, REF, PV, PQ, V, LAM, MPOPT)
 %
@@ -22,9 +22,9 @@ function mpc = cpf_current_mpc(mpcb, mpc, Ybus, Yf, Yt, ref, pv, pq, V, lam, mpo
     QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
 
 %% update bus and gen matrices to reflect the loading and generation
-mpc.bus(:, PD) = mpcb.bus(:, PD) + lam * (mpc.bus(:, PD) - mpcb.bus(:, PD));
-mpc.bus(:, QD) = mpcb.bus(:, QD) + lam * (mpc.bus(:, QD) - mpcb.bus(:, QD));
-mpc.gen(:, PG) = mpcb.gen(:, PG) + lam * (mpc.gen(:, PG) - mpcb.gen(:, PG));
+mpc.bus(:, PD) = mpc.bus(:, PD) + lam * (mpct.bus(:, PD) - mpc.bus(:, PD));
+mpc.bus(:, QD) = mpc.bus(:, QD) + lam * (mpct.bus(:, QD) - mpc.bus(:, QD));
+mpc.gen(:, PG) = mpc.gen(:, PG) + lam * (mpct.gen(:, PG) - mpc.gen(:, PG));
 
 %% update data matrices with solution
 [mpc.bus, mpc.gen, mpc.branch] = pfsoln(mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch, Ybus, Yf, Yt, V, ref, pv, pq, mpopt);
