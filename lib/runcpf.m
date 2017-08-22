@@ -89,7 +89,7 @@ function [res, suc] = ...
 %         this generator
 %       - if the generator was at the reference bus, it is converted to PV
 %         and the first remaining PV bus is selected as the new slack.
-
+%
 %   If the 'cpf.enforce_v_lims' option is set to true (default is false)
 %   then the continuation power flow is set to terminate if any bus voltage
 %   magnitude exceeds its minimum or maximum limit.
@@ -111,9 +111,9 @@ function [res, suc] = ...
 %       when cpf.enforce_q_lims == true
 %           - No REF or PV buses remaining
 %       when cpf.enforce_v_lims == true
-%           - any bus voltage magnitude is at min. or max.
+%           - Any bus voltage magnitude limit is reached
 %       when cpf.enforce_flow_lims == true
-%           - any line MVA flow is at max (rateA limit).
+%           - Any branch MVA flow limit is reached
 %       other
 %           - Base case power flow did not converge
 %           - Base and target case have identical load and generation
@@ -129,13 +129,11 @@ function [res, suc] = ...
 %                           mpoption('cpf.enforce_q_lims', 1));
 %       results = runcpf('case9', 'case9target', ...
 %                           mpoption('cpf.stop_at', 'FULL'));
-%       results = runcpf('case9', 'case9target', ...
-%                           mpoption('cpf.enforce_v_lims', 1, 'cpf.enforce_flow_lims', 1));
 %
 %   See also MPOPTION, RUNPF.
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2017, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell,
 %   Shrirang Abhyankar, Argonne National Laboratory,
 %   and Alexander Flueck, IIT
@@ -179,7 +177,7 @@ adapt_step  = mpopt.cpf.adapt_step;        %% use adaptive step size?
 qlim        = mpopt.cpf.enforce_q_lims;    %% enforce reactive limits
 plim        = mpopt.cpf.enforce_p_lims;    %% enforce active limits
 vlim        = mpopt.cpf.enforce_v_lims;    %% enforce voltage magnitude limits
-llim        = mpopt.cpf.enforce_flow_lims; %% enforce line flow limits
+llim        = mpopt.cpf.enforce_flow_lims; %% enforce branch flow limits
 
 %% register event functions (for event detection)
 %% and CPF callback functions (for event handling and other tasks)
@@ -193,7 +191,7 @@ else        %% FULL or target lambda
     cpf_events   = cpf_register_event(cpf_events, 'TARGET_LAM', 'cpf_target_lam_event', mpopt.cpf.target_lam_tol, 1);
     cpf_callbacks = cpf_register_callback(cpf_callbacks, 'cpf_target_lam_event_cb', 50);
 end
-%% to handle line flow limits
+%% to handle branch flow limits
 if llim
     cpf_events = cpf_register_event(cpf_events, 'LLIM', 'cpf_llim_event', mpopt.cpf.flow_lims_tol, 1);
     cpf_callbacks = cpf_register_callback(cpf_callbacks, 'cpf_llim_event_cb', 53);

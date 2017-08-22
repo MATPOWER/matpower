@@ -1491,7 +1491,7 @@ A continuation power flow \emph{event} is triggered when the value of one of the
     \item a generator reactive power limit
     \item a generator active power limit
     \item a bus voltage magnitude limit
-    \item a line flow limit
+    \item a branch flow limit
 \end{itemize}
 
 Each event function is registered with an event name, a flag indicating whether or not the location of the event should be pinpointed, and if so, to within what tolerance. For events that are to be located, when an event interval is detected, that is, when an element of the event function value changes sign, \matpower{} adjusts the continuation step size via a False Position or Regula Falsi method until it locates the point of the zero-crossing to within the specified tolerance.
@@ -1577,7 +1577,7 @@ name & default & description \\
  \code{cpf.enforce\_v\_lims}	& 0	& enforce bus voltage magnitude limits	\\
    & & ~0 --- do \emph{not} enforce limits \\
    & & ~1 --- enforce limits \\
- \code{cpf.enforce\_flow\_lims}	& 0	& enforce line MVA flow limits	\\
+ \code{cpf.enforce\_flow\_lims}	& 0	& enforce branch MVA flow limits	\\
    & & ~0 --- do \emph{not} enforce limits \\
    & & ~1 --- enforce limits \\
  \code{cpf.step} & 0.05 & default value for continuation power flow step size $\sigma$ \\
@@ -1593,7 +1593,7 @@ name & default & description \\
  \code{cpf.p\_lims\_tol} &  $10^{-2}$ & tolerance for generator active power limit detection (MW) \\
  \code{cpf.q\_lims\_tol} &  $10^{-2}$ & tolerance for generator reactive power limit detection (MVAr) \\
  \code{cpf.v\_lims\_tol} &  $10^{-4}$ & tolerance for bus voltage magnitude limit detection (p.u) \\
- \code{cpf.flow\_lims\_tol} &  0.01 & tolerance for line flow limit detection (MVA) \\
+ \code{cpf.flow\_lims\_tol} &  0.01 & tolerance for branch flow limit detection (MVA) \\
  \code{cpf.plot.level} & 0 & control plotting of nose curve \\
     & & ~0 --- do not plot nose curve \\
     & & ~1 --- plot when completed \\
@@ -4560,7 +4560,7 @@ name & default & description \\
  \code{cpf.enforce\_v\_lims}	& 0	& enforce bus voltage magnitude limits	\\
    & & ~0 --- do \emph{not} enforce limits \\
    & & ~1 --- enforce limits \\
- \code{cpf.enforce\_flow\_lims}	& 0	& enforce line MVA flow limits	\\
+ \code{cpf.enforce\_flow\_lims}	& 0	& enforce branch MVA flow limits	\\
    & & ~0 --- do \emph{not} enforce limits \\
    & & ~1 --- enforce limits \\
  \code{cpf.step} & 0.05 & default value for continuation power flow step size $\sigma$ \\
@@ -4575,6 +4575,8 @@ name & default & description \\
  \code{cpf.nose\_tol} &  $10^{-5}$ & tolerance for nose point detection (p.u.) \\
  \code{cpf.p\_lims\_tol} &  $10^{-2}$ & tolerance for generator active power limit detection (MW) \\
  \code{cpf.q\_lims\_tol} &  $10^{-2}$ & tolerance for generator reactive power limit detection (MVAr) \\
+ \code{cpf.v\_lims\_tol} &  $10^{-4}$ & tolerance for bus voltage magnitude limit detection (p.u) \\
+ \code{cpf.flow\_lims\_tol} &  0.01 & tolerance for branch flow limit detection (MVA) \\
  \code{cpf.plot.level} & 0 & control plotting of nose curve \\
     & & ~0 --- do not plot nose curve \\
     & & ~1 --- plot when completed \\

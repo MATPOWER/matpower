@@ -1,8 +1,8 @@
 function ef = cpf_plim_event(cb_data, cx)
-%CPF_PLIM_EVENT  Event function to detect the generator active power limits
+%CPF_PLIM_EVENT  Event function to detect gen active power limit violations
 %   EF = CPF_PLIM_EVENT(CB_DATA, CX)
 %
-%   CPF event function to detect a generator active power limit,
+%   CPF event function to detect generator active power limit violations,
 %   i.e. Pg >= Pmax.
 %
 %   Inputs:

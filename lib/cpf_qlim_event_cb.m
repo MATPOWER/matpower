@@ -1,13 +1,13 @@
 function [nx, cx, done, rollback, evnts, cb_data, results] = cpf_qlim_event_cb(...
         k, nx, cx, px, done, rollback, evnts, cb_data, cb_args, results)
 %CPF_QLIM_EVENT_CB  Callback to handle QLIM events
-%   [NX, CX, DONE, ROLLBACK, EVNTS, CB_DATA, RESULTS] = 
+%   [NX, CX, DONE, ROLLBACK, EVNTS, CB_DATA, RESULTS] =
 %       CPF_QLIM_EVENT_CB(K, NX, CX, PX, DONE, ROLLBACK, EVNTS, ...
 %                               CB_DATA, CB_ARGS, RESULTS)
 %
-%   Callback to handle QLIM events, triggered by event function
-%   CPF_QLIM_EVENT to indicate the point at which an upper or lower reactive
-%   power output limit is reached for a generator.
+%   Callback to handle QLIM (generator reactive power limit violation) events,
+%   triggered by event function CPF_QLIM_EVENT to indicate the point at which
+%   an upper or lower reactive power output limit is reached for a generator.
 %
 %   When a reactive power limit is encountered, this function zeros out
 %   subsequent transfers from that generator, changes it's bus type to PQ,
@@ -53,8 +53,8 @@ for i = 1:length(evnts)
             mpc = cpf_current_mpc(d.mpc_base, d.mpc_target, ...
                 d.Ybus, d.Yf, d.Yt, d.ref, d.pv, d.pq, nx.V, nx.lam, d.mpopt);
             ng = size(mpc.gen, 1);
-            i2e_bus = cb_data.mpc_target.order.bus.i2e;
-            i2e_gen = cb_data.mpc_target.order.gen.i2e;
+            i2e_bus = mpc.order.bus.i2e;
+            i2e_gen = mpc.order.gen.i2e;
         end
 
         %% find the generator(s) and which lim(s)

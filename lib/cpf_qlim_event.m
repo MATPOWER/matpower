@@ -1,8 +1,8 @@
 function ef = cpf_qlim_event(cb_data, cx)
-%CPF_QLIM_EVENT  Event function to detect the generator reactive power limits
+%CPF_QLIM_EVENT  Event function to detect gen reactive power limit violations
 %   EF = CPF_QLIM_EVENT(CB_DATA, CX)
 %
-%   CPF event function to detect a generator reactive power limits,
+%   CPF event function to detect generator reactive power limit violations,
 %   i.e. Qg <= Qmin or Qg >= Qmax.
 %
 %   Inputs:

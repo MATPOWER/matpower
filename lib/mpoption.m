@@ -111,7 +111,7 @@ function opt = mpoption(varargin)
 %   cpf.enforce_v_lims      0           enforce bus voltage magnitude limits
 %       [  0 - do NOT enforce limits                                        ]
 %       [  1 - enforce limits, termination on detection                     ]
-%   cpf.enforce_flow_lims   0           enforce line flow MVA limits                                   
+%   cpf.enforce_flow_lims   0           enforce branch flow MVA limits
 %       [  0 - do NOT enforce limits                                        ]
 %       [  1 - enforce limits, termination on detection                     ]
 %   cpf.step                0.05        continuation power flow step size
