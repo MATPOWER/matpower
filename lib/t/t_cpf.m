@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 348;
+num_tests = 366;
 t_begin(num_tests, quiet);
 
 if have_fcn('matlab', 'vnum') < 7.001
@@ -234,6 +234,23 @@ else
     t_is(r.cpf.events(1).idx, 5, 12, [t 'events(1).idx']);
     t_ok(strcmp(r.cpf.events(1).name, 'LLIM'), [t 'events(1).name']);
     
+    t = 'CPF to nose pt (pseudo arc length) w/violated flow lims: ';
+    mpopt_flowlim = mpoption(mpopt, 'cpf.stop_at', 'NOSE', 'cpf.parameterization', 3,'cpf.enforce_flow_lims',1);
+    mpopt_flowlim = mpoption(mpopt_flowlim, 'cpf.adapt_step', 1);
+    mpcb1 = mpcb;
+    mpcb1.branch(1, RATE_A) = 75;
+    r = runcpf(mpcb1, mpct, mpopt_flowlim);
+    iterations = 1;
+    t_ok(r.success, [t 'success']);
+    t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
+    t_is(r.cpf.max_lam, 0, 6, [t 'max_lam']);
+    t_is(size(r.cpf.V_hat), [10 iterations], 12, [t 'size(V_hat)']);
+    t_is(size(r.cpf.V), [10 iterations], 12, [t 'size(V)']);
+    t_is(size(r.cpf.lam_hat), [1 iterations], 12, [t 'size(lam_hat)']);
+    t_is(size(r.cpf.lam), [1 iterations], 12, [t 'size(lam)']);
+    t_ok(strfind(r.cpf.done_msg, 'branch flow limit violated in base case'), [t 'done_msg']);
+    t_is(length(r.cpf.events), 0, 12, [t 'length(events) == 0']);
+    
     t = 'CPF to nose pt (pseudo arc length) w/V lims: ';
     mpopt_vlim = mpoption(mpopt, 'cpf.stop_at', 'NOSE', 'cpf.parameterization', 3,'cpf.enforce_v_lims',1);
     mpopt_vlim = mpoption(mpopt_vlim, 'cpf.adapt_step', 1);
@@ -251,6 +268,23 @@ else
     t_is(r.cpf.events(1).k, iterations, 12, [t 'events(1).k']);
     t_is(r.cpf.events(1).idx, 9, 12, [t 'events(1).idx']);
     t_ok(strcmp(r.cpf.events(1).name, 'VLIM'), [t 'events(1).name']);
+    
+    t = 'CPF to nose pt (pseudo arc length) w/violated V lims: ';
+    mpopt_vlim = mpoption(mpopt, 'cpf.stop_at', 'NOSE', 'cpf.parameterization', 3,'cpf.enforce_v_lims',1);
+    mpopt_vlim = mpoption(mpopt_vlim, 'cpf.adapt_step', 1);
+    mpcb1 = mpcb;
+    mpcb1.bus(6, VMIN) = 0.98;
+    r = runcpf(mpcb1, mpct, mpopt_vlim);
+    iterations = 1;
+    t_ok(r.success, [t 'success']);
+    t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
+    t_is(r.cpf.max_lam, 0, 6, [t 'max_lam']);
+    t_is(size(r.cpf.V_hat), [10 iterations], 12, [t 'size(V_hat)']);
+    t_is(size(r.cpf.V), [10 iterations], 12, [t 'size(V)']);
+    t_is(size(r.cpf.lam_hat), [1 iterations], 12, [t 'size(lam_hat)']);
+    t_is(size(r.cpf.lam), [1 iterations], 12, [t 'size(lam)']);
+    t_ok(strfind(r.cpf.done_msg, 'bus voltage magnitude limit violated in base case'), [t 'done_msg']);
+    t_is(length(r.cpf.events), 0, 12, [t 'length(events) == 0']);
     
     t = 'CPF to nose pt (pseudo arc length) w/V+flow lims: ';
     mpopt_vlim = mpoption(mpopt, 'cpf.stop_at', 'NOSE', 'cpf.parameterization', 3,'cpf.enforce_v_lims',1,'cpf.enforce_flow_lims',1);
