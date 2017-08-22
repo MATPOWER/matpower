@@ -177,7 +177,7 @@ adapt_step  = mpopt.cpf.adapt_step;        %% use adaptive step size?
 qlim        = mpopt.cpf.enforce_q_lims;    %% enforce reactive limits
 plim        = mpopt.cpf.enforce_p_lims;    %% enforce active limits
 vlim        = mpopt.cpf.enforce_v_lims;    %% enforce voltage magnitude limits
-llim        = mpopt.cpf.enforce_flow_lims; %% enforce branch flow limits
+flim        = mpopt.cpf.enforce_flow_lims; %% enforce branch flow limits
 
 %% register event functions (for event detection)
 %% and CPF callback functions (for event handling and other tasks)
@@ -192,9 +192,9 @@ else        %% FULL or target lambda
     cpf_callbacks = cpf_register_callback(cpf_callbacks, 'cpf_target_lam_event_cb', 50);
 end
 %% to handle branch flow limits
-if llim
-    cpf_events = cpf_register_event(cpf_events, 'LLIM', 'cpf_llim_event', mpopt.cpf.flow_lims_tol, 1);
-    cpf_callbacks = cpf_register_callback(cpf_callbacks, 'cpf_llim_event_cb', 53);
+if flim
+    cpf_events = cpf_register_event(cpf_events, 'FLIM', 'cpf_flim_event', mpopt.cpf.flow_lims_tol, 1);
+    cpf_callbacks = cpf_register_callback(cpf_callbacks, 'cpf_flim_event_cb', 53);
 end
 %% to handle voltage limits
 if vlim

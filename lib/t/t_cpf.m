@@ -232,7 +232,7 @@ else
     t_is(length(r.cpf.events), 1, 12, [t 'length(events) == 1']);
     t_is(r.cpf.events(1).k, iterations, 12, [t 'events(1).k']);
     t_is(r.cpf.events(1).idx, 5, 12, [t 'events(1).idx']);
-    t_ok(strcmp(r.cpf.events(1).name, 'LLIM'), [t 'events(1).name']);
+    t_ok(strcmp(r.cpf.events(1).name, 'FLIM'), [t 'events(1).name']);
     
     t = 'CPF to nose pt (pseudo arc length) w/violated flow lims: ';
     mpopt_flowlim = mpoption(mpopt, 'cpf.stop_at', 'NOSE', 'cpf.parameterization', 3,'cpf.enforce_flow_lims',1);
@@ -302,7 +302,7 @@ else
     t_is(length(r.cpf.events), 1, 12, [t 'length(events) == 1']);
     t_is(r.cpf.events(1).k, iterations, 12, [t 'events(1).k']);
     t_is(r.cpf.events(1).idx, 5, 12, [t 'events(1).idx']);
-    t_ok(strcmp(r.cpf.events(1).name, 'LLIM'), [t 'events(1).name']);
+    t_ok(strcmp(r.cpf.events(1).name, 'FLIM'), [t 'events(1).name']);
     
     t = 'CPF to nose pt (pseudo arc length) w/PQ lims: ';
     mpopt_pqlim = mpoption(mpopt, 'cpf.stop_at', 'NOSE', 'cpf.parameterization', 3,'cpf.enforce_q_lims',1,'cpf.enforce_p_lims',1);

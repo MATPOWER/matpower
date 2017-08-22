@@ -12,7 +12,7 @@ function cpf_callbacks = cpf_register_callback(cpf_callbacks, fcn, priority, arg
 %                  callback functions, where higher numbers run first,
 %                  default priority is 20, where the standard callbacks
 %                  are called with the following priority:
-%                       cpf_llim_event_cb       53
+%                       cpf_flim_event_cb       53
 %                       cpf_vlim_event_cb       52
 %                       cpf_nose_event_cb       51
 %                       cpf_target_lam_event_cb 50

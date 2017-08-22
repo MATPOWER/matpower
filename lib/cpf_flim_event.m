@@ -1,6 +1,6 @@
-function ef = cpf_llim_event(cb_data, cx)
-%CPF_LLIM_EVENT  Event function to detect branch flow limit (MVA) violations
-%   EF = CPF_LLIM_EVENT(CB_DATA, CX)
+function ef = cpf_flim_event(cb_data, cx)
+%CPF_FLIM_EVENT  Event function to detect branch flow limit (MVA) violations
+%   EF = CPF_FLIM_EVENT(CB_DATA, CX)
 %
 %   CPF event function to detect branch flow limit (MVA) violations,
 %   i.e. max(Sf,St) >= SrateA.

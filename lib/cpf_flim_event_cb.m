@@ -1,12 +1,12 @@
-function [nx, cx, done, rollback, evnts, cb_data, results] = cpf_llim_event_cb(...
+function [nx, cx, done, rollback, evnts, cb_data, results] = cpf_flim_event_cb(...
         k, nx, cx, px, done, rollback, evnts, cb_data, cb_args, results)
-%CPF_LLIM_EVENT_CB  Callback to handle LLIM events
+%CPF_FLIM_EVENT_CB  Callback to handle FLIM events
 %   [NX, CX, DONE, ROLLBACK, EVNTS, CB_DATA, RESULTS] =
 %       CPF_NOSE_EVENT_CB(K, NX, CX, PX, DONE, ROLLBACK, EVNTS, ...
 %                               CB_DATA, CB_ARGS, RESULTS)
 %
-%   Callback to handle LLIM (branch flow limit violation) events,
-%   triggered by event function CPF_LLIM_EVENT to indicate the point at which
+%   Callback to handle FLIM (branch flow limit violation) events,
+%   triggered by event function CPF_FLIM_EVENT to indicate the point at which
 %   a branch flow limit is reached.
 %
 %   All branch flows are expected to be within limits for the base case,
@@ -73,7 +73,7 @@ end
 
 %% handle event
 for i = 1:length(evnts)
-    if strcmp(evnts(i).name, 'LLIM') && evnts(i).zero
+    if strcmp(evnts(i).name, 'FLIM') && evnts(i).zero
         if cb_data.mpopt.verbose > 3
             msg = sprintf('%s\n    ', evnts(i).msg);
         else
