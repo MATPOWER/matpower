@@ -5511,20 +5511,24 @@ name & description \\
 \code{cpf\_current\_mpc}	& construct \matpower{} case struct for current continuation step	\\
 \code{cpf\_default\_callback}	& callback function that accumulates, and optionally plots, results from each iteration	\\
 \code{cpf\_detect\_events}	& detects event intervals and zeros given previous and current event function values	\\
+\code{cpf\_flim\_event\_cb}	& callback function to handle \codeq{FLIM} events	\\
+\code{cpf\_flim\_event}	& event function for \codeq{FLIM} events, to detect branch MVA flow limits	\\
 \code{cpf\_nose\_event\_cb}	& callback function to handle \codeq{NOSE} events	\\
 \code{cpf\_nose\_event}	& event function for \codeq{NOSE} events, to detect nose point of continuation curve	\\
 \code{cpf\_p\_jac}	& computes partial derivatives of parameterization function	\\
 \code{cpf\_p}	& computes value of parameterization function at current solution	\\
 \code{cpf\_plim\_event\_cb}	& callback function to handle \codeq{PLIM} events	\\
-\code{cpf\_plim\_event}	& event function for \codeq{PLIM} events, to detect generator active power limit	\\
+\code{cpf\_plim\_event}	& event function for \codeq{PLIM} events, to detect generator active power limits	\\
 \code{cpf\_predictor}	& computes the predicted solution from the current solution and tangent direction	\\
 \code{cpf\_qlim\_event\_cb}	& callback function to handle \codeq{QLIM} events	\\
-\code{cpf\_qlim\_event}	& event function for \codeq{QLIM} events, to detect generator reactive power limit	\\
+\code{cpf\_qlim\_event}	& event function for \codeq{QLIM} events, to detect generator reactive power limits	\\
 \code{cpf\_register\_callback}	& registers a CPF callback function to be called by \code{runcpf}	\\
 \code{cpf\_register\_event}	& registers a CPF event function to be called by \code{runcpf}	\\
 \code{cpf\_tangent}	& computes the normalized tangent vector at the current solution	\\
 \code{cpf\_target\_lam\_event\_cb}	& callback function to handle \codeq{TARGET\_LAM} events	\\
 \code{cpf\_target\_lam\_event}	& event function for \codeq{TARGET\_LAM} events, to detect end of continuation curve or other target $\lambda$ value	\\
+\code{cpf\_vlim\_event\_cb}	& callback function to handle \codeq{VLIM} events	\\
+\code{cpf\_vlim\_event}	& event function for \codeq{VLIM} events, to detect bus voltage magnitude limits	\\
 \bottomrule
 \end{tabular}
 \end{threeparttable}
@@ -6737,6 +6741,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.1.pdf}{\m
 \item Include \LaTeX{} source code for \mum{} in \code{docs/src} and for \mostman{} in \code{most/docs/src}.
 \item Add support for exporting \matpower{} case to PSS/E RAW data format.
 \item Add support to core optimization model for general non-linear constraints.
+\item Add options \codeq{cpf.enforce\_v\_lims} and \codeq{cpf.enforce\_flow\_lims} to enforce bus voltage magnitude and branch flow limits in the continuation power flow, and \codeq{cpf.v\_lims\_tol} and \codeq{cpf.flow\_lims\_tol} to control the respective detection tolerances.  \emph{Thanks to Ahmad Sadiq Abubakar and Shrirang Abhyankar.}
 \item New functions:
     \begin{itemize}
     \item \code{install\_matpower()} installs \matpower{} modifying or showing needed modifications to Matlab or Octave path.
@@ -6835,7 +6840,6 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.0.pdf}{\m
 \item \mostname{} (\most{}) 1.0b1 is a {\bf major new feature}, implementing a full range of optimal power scheduling problems, from a simple as a deterministic, single period economic dispatch problem with no transmission constraints to as complex as a stochastic, security-constrained, combined unit-commitment and multiperiod OPF problem with locational contingency and load-following reserves, ramping costs and constraints, deferrable demands, lossy storage resources and uncertain renewable generation. See \code{docs/MOST-manual.pdf} for details.
 \item General mechanism for applying modifications to an existing \matpower{} case. See \code{apply\_changes()} and \code{idx\_ct()}.
 \item Redesigned CPF callback mechanism to handle CPF events such as generator limits, nose point detection, etc. Included event log in CPF results.
-\item Added options \codeq{cpf.enforce\_v\_lims} and \codeq{cpf.enforce\_flow\_lims} to enforce bus voltage magnitude and line MVA flow limits in the continuation power flow.
 \item Added options \codeq{cpf.enforce\_p\_lims} and \codeq{cpf.enforce\_q\_lims} to enforce generator active and reactive power limts in the continuation power flow.
 \item Added OPF option \codeq{opf.use\_vg} to provide a convenient way to have the OPF respect the generator voltage setpoints specified in the \gen{} matrix.
 \item Experimental foundation for handling of ZIP load models in power flow (Newton, fast-decoupled only), continuation power flow, and optimal power flow (\mips{}, \code{fmincon}, \knitro{}, \ipopt{} solvers only). Currently, ZIP loads can only be specified on a system-wide basis using the experimental options \\ \codeq{exp.sys\_wide\_zip\_loads.pw} and \codeq{exp.sys\_wide\_zip\_loads.qw}.

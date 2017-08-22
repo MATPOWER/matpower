@@ -12,6 +12,13 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 8/22/17
+  - Add options `'cpf.enforce_v_lims'` and `'cpf.enforce_flow_lims'` to
+    enforce bus voltage magnitude and branch flow limits in the
+    continuation power flow, and `'cpf.v_lims_tol'` and
+    `'cpf.flow_lims_tol'` to control the respective detection tolerances.
+    *Thanks to Ahmad Sadiq Abubakar and Shrirang Abhyankar.*
+
 #### 8/4/17
   - Refactor AC OPF code to use the new nonlinear constraint handling
     of `opt_model` to build and evaluate power balance and branch flow
