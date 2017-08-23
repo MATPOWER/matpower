@@ -540,8 +540,6 @@ if have_opt0
                 opt0.cpf.nose_tol           = opt_d.cpf.nose_tol;
                 opt0.cpf.p_lims_tol         = opt_d.cpf.p_lims_tol;
                 opt0.cpf.q_lims_tol         = opt_d.cpf.q_lims_tol;
-                opt0.cpf.v_lims_tol         = opt_d.cpf.v_lims_tol;
-                opt0.cpf.flow_lims_tol      = opt_d.cpf.flow_lims_tol;
                 if (~isempty(opt0.cpf.user_callback_args) && ...
                         ~isstruct(opt0.cpf.user_callback_args)) || ...
                         (isstruct(opt0.cpf.user_callback_args) && ...
@@ -559,6 +557,12 @@ if have_opt0
             end
             if opt0.v <= 13         %% convert version 13 to 14
                 opt0.pf.nr.lin_solver   = opt_d.pf.nr.lin_solver;
+            end
+            if opt0.v <= 14         %% convert version 14 to 15
+                opt0.cpf.enforce_v_lims     = opt_d.cpf.enforce_v_lims;
+                opt0.cpf.enforce_flow_lims  = opt_d.cpf.enforce_flow_lims;
+                opt0.cpf.v_lims_tol         = opt_d.cpf.v_lims_tol;
+                opt0.cpf.flow_lims_tol      = opt_d.cpf.flow_lims_tol;
             end
             opt0.v = v;
         end
@@ -1583,7 +1587,7 @@ optt = opt;
 %% globals
 %%-------------------------------------------------------------------
 function v = mpoption_version
-v = 14;     %% version number of MATPOWER options struct
+v = 15;     %% version number of MATPOWER options struct
             %% (must be incremented every time structure is updated)
             %% v1   - first version based on struct (MATPOWER 5.0b1)
             %% v2   - added 'linprog' and 'quadprog' fields
@@ -1608,6 +1612,8 @@ v = 14;     %% version number of MATPOWER options struct
             %% v12  - added option 'opf.use_vg'
             %% v13  - added 'pf.radial.max_it', 'pf.radial.vcorr'
             %% v14  - added 'pf.nr.lin_solver'
+            %% v15  - added 'cpf.enforce_v_lims', 'cpf.enforce_flow_lims',
+            %%        'cpf.v_lims_tol', and 'cpf.flow_lims_tol'
 
 %%-------------------------------------------------------------------
 function db_level = DEBUG
