@@ -111,6 +111,7 @@ if ~isempty(varsets) && iscell(varsets)
     varsets = struct('name', varsets, 'idx', empty_cells);
 end
 
+%% add the named nonlinear constraint set
 if iscell(name)
     if length(name) ~= length(N)
         error('@opt_model/add_nln_constraints: dimensions of NAME and N must match');

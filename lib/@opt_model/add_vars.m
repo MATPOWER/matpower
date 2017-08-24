@@ -27,7 +27,7 @@ function om = add_vars(om, name, idx, varargin)
 %   Examples:
 %       om.add_vars('V', nb, V0, Vmin, Vmax, 'C');
 %
-%       om.add_vars('x', {2, 3});
+%       om.init_indexed_name('x', {2, 3});
 %       for i = 1:2
 %         for j = 1:3
 %           om.add_vars('x', {i, j}, nx(i,j), ...);
@@ -84,5 +84,6 @@ else
         vt = 'C';           %% all continuous by default
     end
 
+    %% add the named variable set
     om.add_named_set('var', name, idx, N, v0, vl, vu, vt);
 end

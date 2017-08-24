@@ -107,5 +107,5 @@ if M ~= nv
     error('@opt_model/add_lin_constraints: number of columns of A does not match\nnumber of variables, A is %d x %d, nv = %d\n', N, M, nv);
 end
 
-%% the named linear constraint set
+%% add the named linear constraint set
 om.add_named_set('lin', name, idx, N, A, l, u, varsets);

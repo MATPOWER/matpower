@@ -40,12 +40,12 @@ s2(2).type = '{}';
 for k = 1:om_nlx.NS
     name = om_nlx.order(k).name;
     idx  = om_nlx.order(k).idx;
-    if isempty(idx) && ~isfield(om_nlx.data.hess, name)
-        continue;   %% skip, there is no function handle stored here,
-                    %% the function value for this named set was included
-                    %% in the value computed by a previous named set
-    end
     if isempty(idx)
+        if ~isfield(om_nlx.data.hess, name)
+            continue;   %% skip, there is no function handle stored here,
+                        %% the function value for this named set was included
+                        %% in the value computed by a previous named set
+        end
         N = om_nlx.idx.N.(name);    %% number of constraint functions
                                     %% evaluated for this named set
         if isfield(om_nlx.data.include, name)

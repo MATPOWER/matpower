@@ -19,7 +19,7 @@ function om = add_costs(om, name, idx, varargin)
 %       om.add_costs('usr1', cp1, {'Pg', 'Qg', 'z'});
 %       om.add_costs('usr2', cp2, {'Vm', 'Pg', 'Qg', 'z'});
 %
-%       om.add_costs('c', {2, 3});
+%       om.init_indexed_name('c', {2, 3});
 %       for i = 1:2
 %         for j = 1:3
 %           om.add_costs('c', {i, j}, cp(i,j), ...);
@@ -142,5 +142,6 @@ else
         error('@opt_model/add_costs: number of rows of mm (%d x %d) and N (%d x %d) must match\n', size(cp.mm), nw, nx);
     end
     
+    %% add the legacy cost set
     om.add_named_set('cost', name, idx, nw, cp, varsets);
 end
