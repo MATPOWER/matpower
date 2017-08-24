@@ -79,14 +79,14 @@ if nargin > 1 || ~isfield(om.cost.params, 'N')
                 Nk = om.cost.data.N.(name);         %% N for kth cost set
                 i1 = om.cost.idx.i1.(name);         %% starting row index
                 iN = om.cost.idx.iN.(name);         %% ending row index
-                vsl = om.cost.data.vs.(name);       %% var set list
+                vs = om.cost.data.vs.(name);        %% var sets
             else
                 Nk = subsref(om.cost.data.N, s2);   %% N for kth cost set
                 i1 = subsref(om.cost.idx.i1, s1);   %% starting row index
                 iN = subsref(om.cost.idx.iN, s1);   %% ending row index
-                vsl = subsref(om.cost.data.vs, s2); %% var set list
+                vs = subsref(om.cost.data.vs, s2);  %% var sets
             end
-            if isempty(vsl)         %% full rows
+            if isempty(vs)          %% full rows
                 if size(Nk,2) == om.var.N
                     NNt(:, i1:iN) = Nk';     %% assign as columns in transpose for speed
                 else                %% must have added vars since adding
@@ -96,12 +96,12 @@ if nargin > 1 || ~isfield(om.cost.params, 'N')
             else                    %% selected columns
                 kN = 0;                             %% initialize last col of Nk used
                 Ni = sparse(N, om.var.N);
-                for v = 1:length(vsl)
+                for v = 1:length(vs)
                     % (calls to substruct() are relatively expensive ...
-                    % s = substruct('.', vsl(v).name, '()', vsl(v).idx);
+                    % s = substruct('.', vs(v).name, '()', vs(v).idx);
                     % ... so replace it with these more efficient lines)
-                    s(1).subs = vsl(v).name;
-                    s(2).subs = vsl(v).idx;
+                    s(1).subs = vs(v).name;
+                    s(2).subs = vs(v).idx;
                     j1 = subsref(om.var.idx.i1, s); %% starting column in N
                     jN = subsref(om.var.idx.iN, s); %% ending column in N
                     k1 = kN + 1;                    %% starting column in Nk

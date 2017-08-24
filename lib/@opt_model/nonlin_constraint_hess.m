@@ -67,37 +67,17 @@ for k = 1:om_nlx.NS
             d2G_fcn = om_nlx.data.hess.(name);  %% Hessian fcn for kth constraint set
             i1 = om_nlx.idx.i1.(name);          %% starting row index
             iN = i1 + N - 1;                    %% ending row index
-            vsl = om_nlx.data.vs.(name);        %% var set list
+            vs = om_nlx.data.vs.(name);         %% var sets
         else
             d2G_fcn = subsref(om_nlx.data.hess, s2);  %% Hessian fcn for kth constraint set
             i1 = subsref(om_nlx.idx.i1, s1);    %% starting row index
             iN = subsref(om_nlx.idx.iN, s1);    %% ending row index
-            vsl = subsref(om_nlx.data.vs, s2);  %% var set list
+            vs = subsref(om_nlx.data.vs, s2);   %% var sets
         end
-        if isempty(vsl)         %% all rows of x
-            xx = x;
-        else                    %% selected rows of x
-            xx = cell(size(vsl));
-            for v = 1:length(vsl)
-                vidx = vsl(v).idx;
-                if isempty(vidx)
-                    j1 = om.var.idx.i1.(vsl(v).name);
-                    jN = om.var.idx.iN.(vsl(v).name);
-                else
-                    % (calls to substruct() are relatively expensive ...
-                    % s = substruct('.', vsl(v).name, '()', vsl(v).idx);
-                    % ... so replace it with these more efficient lines)
-                    s(1).subs = vsl(v).name;
-                    s(2).subs = vsl(v).idx;
-                    j1 = subsref(om.var.idx.i1, s); %% starting row in full x
-                    jN = subsref(om.var.idx.iN, s); %% ending row in full x
-                end
-                xx{v} = x(j1:jN);
-            end
-        end
+        xx = om.varsets_x(x, vs);
         d2Gk = d2G_fcn(xx, lam(i1:iN));     %% evaluate kth Hessian
         
-        if isempty(vsl)         %% all rows of x
+        if isempty(vs)          %% all rows of x
             Nk = size(d2Gk, 2);
             if Nk == om.var.N
                 d2Gkt_full = d2Gk';
@@ -111,17 +91,16 @@ for k = 1:om_nlx.NS
         else                    %% selected rows of x
             kN = 0;                             %% initialize last col of d2Gk used
             ii = [];
-            for v = 1:length(vsl)
-                vidx = vsl(v).idx;
-                if isempty(vidx)
-                    j1 = om.var.idx.i1.(vsl(v).name);
-                    jN = om.var.idx.iN.(vsl(v).name);
+            for v = 1:length(vs)
+                if isempty(vs(v).idx)
+                    j1 = om.var.idx.i1.(vs(v).name);
+                    jN = om.var.idx.iN.(vs(v).name);
                 else
                     % (calls to substruct() are relatively expensive ...
-                    % s = substruct('.', vsl(v).name, '()', vsl(v).idx);
+                    % s = substruct('.', vs(v).name, '()', vs(v).idx);
                     % ... so replace it with these more efficient lines)
-                    s(1).subs = vsl(v).name;
-                    s(2).subs = vsl(v).idx;
+                    s(1).subs = vs(v).name;
+                    s(2).subs = vs(v).idx;
                     j1 = subsref(om.var.idx.i1, s); %% starting row in full x
                     jN = subsref(om.var.idx.iN, s); %% ending row in full x
                 end

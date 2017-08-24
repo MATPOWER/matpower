@@ -105,11 +105,7 @@ else
 end
 
 %% convert varsets from cell to struct array if necessary
-if ~isempty(varsets) && iscell(varsets)
-    empty_cells = cell(1, length(varsets));
-    [empty_cells{:}] = deal({});    %% empty cell arrays
-    varsets = struct('name', varsets, 'idx', empty_cells);
-end
+varsets = om.varsets_cell2struct(varsets);
 
 %% add the named nonlinear constraint set
 if iscell(name)

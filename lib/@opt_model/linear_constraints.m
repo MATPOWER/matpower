@@ -66,14 +66,14 @@ for k = 1:om.lin.NS
             Ak = om.lin.data.A.(name);          %% A for kth linear constrain set
             i1 = om.lin.idx.i1.(name);          %% starting row index
             iN = om.lin.idx.iN.(name);          %% ending row index
-            vsl = om.lin.data.vs.(name);        %% var set list
+            vs = om.lin.data.vs.(name);         %% var sets
         else
             Ak = subsref(om.lin.data.A, s2);    %% A for kth linear constrain set
             i1 = subsref(om.lin.idx.i1, s1);    %% starting row index
             iN = subsref(om.lin.idx.iN, s1);    %% ending row index
-            vsl = subsref(om.lin.data.vs, s2);  %% var set list
+            vs = subsref(om.lin.data.vs, s2);   %% var sets
         end
-        if isempty(vsl)         %% full rows
+        if isempty(vs)          %% full rows
             if size(Ak,2) == om.var.N
                 At(:, i1:iN) = Ak';     %% assign as columns in transpose for speed
             else                %% must have added vars since adding
@@ -83,12 +83,12 @@ for k = 1:om.lin.NS
         else                    %% selected columns
             kN = 0;                             %% initialize last col of Ak used
             Ai = sparse(N, om.var.N);
-            for v = 1:length(vsl)
+            for v = 1:length(vs)
                 % (calls to substruct() are relatively expensive ...
-                % s = substruct('.', vsl(v).name, '()', vsl(v).idx);
+                % s = substruct('.', vs(v).name, '()', vs(v).idx);
                 % ... so replace it with these more efficient lines)
-                s(1).subs = vsl(v).name;
-                s(2).subs = vsl(v).idx;
+                s(1).subs = vs(v).name;
+                s(2).subs = vs(v).idx;
                 j1 = subsref(om.var.idx.i1, s); %% starting column in A
                 jN = subsref(om.var.idx.iN, s); %% ending column in A
                 k1 = kN + 1;                    %% starting column in Ak

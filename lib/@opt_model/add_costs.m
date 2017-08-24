@@ -88,11 +88,11 @@ else
     else
         varsets = args{1};
     end
-    if ~isempty(varsets) && iscell(varsets)
-        empty_cells = cell(1, length(varsets));
-        [empty_cells{:}] = deal({});    %% empty cell arrays
-        varsets = struct('name', varsets, 'idx', empty_cells);
-    end
+
+    %% convert varsets from cell to struct array if necessary
+    varsets = om.varsets_cell2struct(varsets);
+    nv = om.varsets_len(varsets);   %% number of variables
+
     if isfield(cp, 'N')
         [nw, nx] = size(cp.N);
     else
@@ -102,20 +102,6 @@ else
     end
     
     %% check sizes
-    if isempty(varsets)
-        nv = om.var.N;
-    else
-        nv = 0;
-        s = struct('type', {'.', '()'}, 'subs', {'', 1});
-        for k = 1:length(varsets)
-            % (calls to substruct() are relatively expensive ...
-            % s = substruct('.', varsets(k).name, '()', varsets(k).idx);
-            % ... so replace it with these more efficient lines)
-            s(1).subs = varsets(k).name;
-            s(2).subs = varsets(k).idx;
-            nv = nv + subsref(om.var.idx.N, s);
-        end
-    end
     if nx ~= nv
         if nw == 0
             cp.N = sparse(nw, nx);

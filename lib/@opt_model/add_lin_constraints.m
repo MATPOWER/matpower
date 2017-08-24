@@ -82,27 +82,10 @@ if size(l, 1) ~= N || size(u, 1) ~= N
 end
 
 %% convert varsets from cell to struct array if necessary
-if ~isempty(varsets) && iscell(varsets)
-    empty_cells = cell(1, length(varsets));
-    [empty_cells{:}] = deal({});    %% empty cell arrays
-    varsets = struct('name', varsets, 'idx', empty_cells);
-end
+varsets = om.varsets_cell2struct(varsets);
+nv = om.varsets_len(varsets);   %% number of variables
 
 %% check consistency of varsets with size of A
-if isempty(varsets)
-    nv = om.var.N;
-else
-    nv = 0;
-    s = struct('type', {'.', '()'}, 'subs', {'', 1});
-    for k = 1:length(varsets)
-        % (calls to substruct() are relatively expensive ...
-        % s = substruct('.', varsets(k).name, '()', varsets(k).idx);
-        % ... so replace it with these more efficient lines)
-        s(1).subs = varsets(k).name;
-        s(2).subs = varsets(k).idx;
-        nv = nv + subsref(om.var.idx.N, s);
-    end
-end
 if M ~= nv
     error('@opt_model/add_lin_constraints: number of columns of A does not match\nnumber of variables, A is %d x %d, nv = %d\n', N, M, nv);
 end
