@@ -1,0 +1,142 @@
+function [Q, c, k, vs] = params_quad_cost(om, name, idx)
+%PARAMS_QUAD_COST  Returns the cost parameter struct for user-defined costs.
+%   [Q, C] = OM.PARAMS_QUAD_COST()
+%   [Q, C] = OM.PARAMS_QUAD_COST(NAME)
+%   [Q, C] = OM.PARAMS_QUAD_COST(NAME, IDX)
+%   [Q, C, K] = OM.PARAMS_QUAD_COST(...)
+%   [Q, C, K, VS] = OM.PARAMS_QUAD_COST(NAME, ...)
+%
+%   With no input parameters, it assembles and returns the parameters
+%   for the aggregate quadratic cost from all quadratic cost sets. The values
+%   of these parameters are cached for subsequent calls. The parameters are
+%   Q, C, and optionally K, where the quadratic cost is of the form
+%       F(X) = 1/2 * X'*Q*X + C'*X + K
+%
+%   If a NAME is provided then it simply returns the parameters for the
+%   corresponding named set. Likewise for indexed named sets specified
+%   by NAME and IDX. In this case, Q and K may be vectors, corresponding
+%   to a cost function of the form
+%       F(X) = 1/2 * Q .* X.^2 + C .* X + K
+%
+%   In the case where a name is provided, an optional 4th output argument
+%   VS indicates the variable sets used by this cost set. The size of Q
+%   and C will be consistent with VS.
+%
+%   See also OPT_MODEL, ADD_QUADRATIC_COSTS.
+
+%   MATPOWER
+%   Copyright (c) 2017, Power Systems Engineering Research Center (PSERC)
+%   by Ray Zimmerman, PSERC Cornell
+%
+%   This file is part of MATPOWER.
+%   Covered by the 3-clause BSD License (see LICENSE file for details).
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
+
+if nargin > 1       %% individual set
+    if nargin < 3 || isempty(idx)
+        idx = {};
+    end
+    if nargin < 3 || isempty(idx)
+        if prod(size(om.qdc.idx.i1.(name))) == 1
+            Q = om.qdc.data.Q.(name);
+            c = om.qdc.data.c.(name);
+            k = om.qdc.data.k.(name);
+            if nargout > 3
+                vs = om.qdc.data.vs.(name);
+            end
+        else
+            error('@opt_model/params_quad_cost: quadratic cost set ''%s'' requires an IDX arg', name);
+        end
+    else
+        % (calls to substruct() are relatively expensive ...
+        % s = substruct('.', name, '{}', idx);
+        % ... so replace it with these more efficient lines)
+        s = struct('type', {'.', '{}'}, 'subs', {name, idx});
+        Q = subsref(om.qdc.data.Q, s);
+        c = subsref(om.qdc.data.c, s);
+        k = subsref(om.qdc.data.k, s);
+        if nargout > 3
+            vs = subsref(om.qdc.data.vs, s);
+        end
+    end
+else                %% aggregate
+    cache = om.qdc.params;
+    if isempty(cache)       %% build the aggregate
+        nx = om.var.N;          %% number of variables
+        Qt = sparse(nx, nx);    %% transpose of quadratic coefficients
+        c = zeros(nx, 1);       %% linear coefficients
+        k = 0;                  %% constant term
+        s = struct('type', {'.', '()'}, 'subs', {'', 1});
+        for i = 1:om.qdc.NS
+            name = om.qdc.order(i).name;
+            idx  = om.qdc.order(i).idx;
+            [Qk, ck, kk, vs] = om.params_quad_cost(name, idx);
+            haveQ = ~isempty(Qk);
+            havec = ~isempty(ck);
+            Nk = max(size(Qk, 1), size(ck, 1));     %% size of Qk and/or ck
+            if isempty(vs)
+                if Nk == nx     %% full size
+                    if size(Qk, 2) == 1     %% Qk is a column vector
+                        Qkt_full = spdiags(Qk, 0, nx, nx);
+                    elseif haveQ            %% Qk is a matrix
+                        Qkt_full = Qk';
+                    end
+                    if havec
+                        ck_full = ck;
+                    end
+                else            %% vars added since adding this cost set
+                    if size(Qk, 2) == 1     %% Qk is a column vector
+                        Qkt_full = sparse(1:Nk, 1:Nk, Qk, nx, nx);
+                    elseif haveQ            %% Qk is a matrix
+                        Qk_all_cols = sparse(Nk, nx);
+                        Qk_all_cols(:, 1:Nk) = Qk;
+                        Qkt_full(:, 1:Nk) = Qk_all_cols';
+                    end
+                    if havec
+                        ck_full = zeros(nx, 1);
+                        ck_full(1:Nk) = ck;
+                    end
+                end
+            else
+                ii = [];
+                for v = 1:length(vs)
+                    % (calls to substruct() are relatively expensive ...
+                    % s = substruct('.', vs(v).name, '()', vs(v).idx);
+                    % ... so replace it with these more efficient lines)
+                    s(1).subs = vs(v).name;
+                    s(2).subs = vs(v).idx;
+                    j1 = subsref(om.var.idx.i1, s); %% starting index in Q/c
+                    jN = subsref(om.var.idx.iN, s); %% ending index in Q/c
+                    ii = [ii j1:jN];
+                end
+                if size(Qk, 2) == 1     %% Qk is a column vector
+                    Qkt_full = sparse(ii, ii, Qk, nx, nx);
+                elseif haveQ            %% Qk is a matrix
+                    Qk_all_rows = sparse(Nk, nx);
+                    Qk_all_rows(:, ii) = Qk;
+                    Qkt_full = sparse(nx, nx);
+                    Qkt_full(:, ii) = Qk_all_rows';
+                end
+                if havec
+                    ck_full = zeros(nx, 1);
+                    ck_full(ii) = ck;
+                end
+            end
+            if haveQ
+                Qt = Qt + Qkt_full;
+            end
+            if havec
+                c = c + ck_full;
+            end
+            k = k + sum(kk);
+        end
+        Q = Qt';
+
+        %% cache aggregated parameters
+        om.qdc.params = struct('Q', Q, 'c', c, 'k', k);
+    else                    %% return cached values
+        Q = cache.Q;
+        c = cache.c;
+        k = cache.k;
+    end
+end

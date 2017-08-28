@@ -27,7 +27,7 @@ function cp = get_cost_params(om, name, idx)
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-if ~isfield(om.cost.params, 'N')
+if isempty(om.cost.params)
     error('@opt_model/get_cost_params: must call build_cost_params first');
 end
 

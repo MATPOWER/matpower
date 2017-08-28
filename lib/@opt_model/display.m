@@ -97,9 +97,30 @@ if om.lin.NS
 else
     fprintf('%s  :  <none>\n', 'LINEAR CONSTRAINTS');
 end
+if om.qdc.NS
+    fprintf('\n%-17s %12s %8s %8s %8s\n', 'QUADRATIC COSTS', 'name', 'i1', 'iN', 'N');
+    fprintf('%-17s %12s %8s %8s %8s\n', '===============', '------', '-----', '-----', '------');
+    idx = om.qdc.idx;
+    for k = 1:om.qdc.NS
+        name = om.qdc.order(k).name;
+        if isempty(om.qdc.order(k).idx)
+            fprintf('%10d:%19s %8d %8d %8d\n', k, name, idx.i1.(name), idx.iN.(name), idx.N.(name));
+        else
+            vsidx = om.qdc.order(k).idx;
+            str = '%d'; for m = 2:length(vsidx), str = [str ',%d']; end
+            s = substruct('.', name, '()', vsidx);
+            nname = sprintf(['%s(' str, ')'], name, vsidx{:});
+            fprintf('%10d:%19s %8d %8d %8d\n', k, nname, ...
+                    subsref(idx.i1, s), subsref(idx.iN, s), subsref(idx.N, s));
+        end
+    end
+    fprintf('%10d = qdc.NS%28d = qdc.N\n\n', om.qdc.NS, om.qdc.N);
+else
+    fprintf('%s  :  <none>\n', 'QUADRATIC COSTS');
+end
 if om.cost.NS
-    fprintf('\n%-17s %12s %8s %8s %8s\n', 'COSTS', 'name', 'i1', 'iN', 'N');
-    fprintf('%-17s %12s %8s %8s %8s\n', '=====', '------', '-----', '-----', '------');
+    fprintf('\n%-17s %12s %8s %8s %8s\n', 'LEGACY COSTS', 'name', 'i1', 'iN', 'N');
+    fprintf('%-17s %12s %8s %8s %8s\n', '============', '------', '-----', '-----', '------');
     idx = om.cost.idx;
     for k = 1:om.cost.NS
         name = om.cost.order(k).name;
@@ -116,7 +137,7 @@ if om.cost.NS
     end
     fprintf('%10d = cost.NS%28d = cost.N\n\n', om.cost.NS, om.cost.N);
 else
-    fprintf('%s  :  <none>\n', 'COSTS');
+    fprintf('%s  :  <none>\n', 'LEGACY COSTS');
 end
 
 fprintf('  userdata = ');

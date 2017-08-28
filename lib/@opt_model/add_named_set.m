@@ -19,7 +19,10 @@ function om = add_named_set(om, set_type, name, idx, N, varargin)
 %   Nonlinear Inequality Constraint Set
 %       OM.ADD_NAMED_SET('nli', NAME, IDX_LIST, N, FCN, HESS, COMPUTED_BY, VARSETS);
 %
-%   Cost Set
+%   Quadratic Cost Set
+%       OM.ADD_NAMED_SET('qdc', NAME, IDX_LIST, N, CP, VARSETS);
+%
+%   Legacy Cost Set
 %       OM.ADD_NAMED_SET('cost', NAME, IDX_LIST, N, CP, VARSETS);
 %
 %   See also OPT_MODEL, ADD_VARS, ADD_LIN_CONSTRAINTS, ADD_NLN_CONSTRAINTS
@@ -110,6 +113,9 @@ switch ff
             om.lin.data.u  = subsasgn(om.lin.data.u, s2, u);
             om.lin.data.vs = subsasgn(om.lin.data.vs, s2, varsets);
         end
+        if ~isempty(om.lin.params)      %% clear cache of aggregated params
+            om.lin.params = [];
+        end
     case {'nle', 'nli'} %% nonlinear constraint set
         [fcn, hess, computed_by, varsets] = deal(varargin{:});
         if isempty(idx)
@@ -135,6 +141,22 @@ switch ff
             om.(ff).data.fcn  = subsasgn(om.(ff).data.fcn, s2, fcn);
             om.(ff).data.hess = subsasgn(om.(ff).data.hess, s2, hess);
             om.(ff).data.vs   = subsasgn(om.(ff).data.vs, s2, varsets);
+        end
+    case 'qdc'          %% quadratic cost set
+        [Q, c, k, varsets] = deal(varargin{:});
+        if isempty(idx)
+            om.qdc.data.Q.(name)  = Q;
+            om.qdc.data.c.(name)  = c;
+            om.qdc.data.k.(name)  = k;
+            om.qdc.data.vs.(name) = varsets;
+        else
+            om.qdc.data.Q  = subsasgn(om.qdc.data.Q, s2, Q);
+            om.qdc.data.c  = subsasgn(om.qdc.data.c, s2, c);
+            om.qdc.data.k  = subsasgn(om.qdc.data.k, s2, k);
+            om.qdc.data.vs = subsasgn(om.qdc.data.vs, s2, varsets);
+        end
+        if ~isempty(om.qdc.params)      %% clear cache of aggregated params
+            om.qdc.params = [];
         end
     case 'cost'         %% cost set
         [cp, varsets] = deal(varargin{:});
@@ -176,5 +198,8 @@ switch ff
             if isfield(cp, 'mm')
                 om.cost.data.mm = subsasgn(om.cost.data.mm, s2, cp.mm);
             end
+        end
+        if ~isempty(om.cost.params)     %% clear cache of aggregated params
+            om.cost.params = [];
         end
 end

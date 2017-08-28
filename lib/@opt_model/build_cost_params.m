@@ -20,7 +20,7 @@ function om = build_cost_params(om, force)
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-if nargin > 1 || ~isfield(om.cost.params, 'N')
+if nargin > 1 || isempty(om.cost.params)
     %% initialize parameters
     nw = om.cost.N;
     nnzN = 0;

@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 386;
+num_tests = 444;
 
 t_begin(num_tests, quiet);
 
@@ -41,14 +41,16 @@ t_ok(om.getN('var') == vN, sprintf('%s : var.N  = %d', t, vN));
 t_ok(om.get('var', 'NS') == vNS, sprintf('%s : var.NS = %d', t, vNS));
 
 t = 'om.add_vars(''Va'', 4)';
-om.add_vars('Va', 4);
-vNS = vNS + 1; vN = vN + 4;
+nVa = 4;
+om.add_vars('Va', nVa);
+vNS = vNS + 1; vN = vN + nVa;
 t_ok(om.getN('var') == vN, sprintf('%s : var.N  = %d', t, vN));
 t_ok(om.get('var', 'NS') == vNS, sprintf('%s : var.NS = %d', t, vNS));
 
 t = 'om.add_vars(''Pg'', 3, Pg0, Pgmin, Pgmax)';
-om.add_vars('Pg', 3, [2;4;6], [1;2;3], [10;20;30]);
-vNS = vNS + 1; vN = vN + 3;
+nPg = 3;
+om.add_vars('Pg', nPg, [2;4;6], [1;2;3], [10;20;30]);
+vNS = vNS + 1; vN = vN + nPg;
 t_ok(om.getN('var') == vN, sprintf('%s : var.N  = %d', t, vN));
 t_ok(om.get('var', 'NS') == vNS, sprintf('%s : var.NS = %d', t, vNS));
 
@@ -63,9 +65,10 @@ t_ok(om.getN('var') == vN, sprintf('%s : var.N  = %d', t, vN));
 t_ok(om.get('var', 'NS') == vNS, sprintf('%s : var.NS = %d', t, vNS));
 
 t = 'om.add_vars(''Vm2'', 5, V0, Vmin, Vmax, ''CIBIC'')';
+nVm2 = 5;
 vt = 'CIBIC';
-om.add_vars('Vm2', 5, V0, Vmin, Vmax, vt);
-vNS = vNS + 1; vN = vN + 5;
+om.add_vars('Vm2', nVm2, V0, Vmin, Vmax, vt);
+vNS = vNS + 1; vN = vN + nVm2;
 t_ok(om.getN('var') == vN, sprintf('%s : var.N  = %d', t, vN));
 t_ok(om.get('var', 'NS') == vNS, sprintf('%s : var.NS = %d', t, vNS));
 
@@ -467,6 +470,155 @@ e = sparse([1:2 5:7], [1:2 5:7], [-9.04 -8.05 20.66 18.68 5.84], vN, vN);
 t_is(d2H, e, 13, [t ' : d2H']);
 
 %d2H
+
+%%-----  add_quadratic_costs  -----
+t = 'add_quadratic_costs';
+qcN = 0;
+qcNS = 0;
+t_ok(om.getN('qdc') == qcN, sprintf('%s : qdc.N  = %d', t, qcN));
+t_ok(om.get('qdc', 'NS') == qcNS, sprintf('%s : qdc.NS = %d', t, qcNS));
+
+t = 'om.add_quadratic_costs(''qc1'', Q<matrix>, c, k, {''Pg'', ''Va''})';
+n = nVa + nPg;
+Q1 = sparse(1:n, 1:n, 1:n, n, n) + sparse(1:n, n:-1:1, 1:n, n, n);
+c1 = 10*(1:n)';
+k1 = n;
+om.add_quadratic_costs('qc1', Q1, c1, k1, {'Pg', 'Va'});
+qcNS = qcNS + 1; qcN = qcN + 1;
+t_ok(om.getN('qdc') == qcN, sprintf('%s : qdc.N  = %d', t, qcN));
+t_ok(om.get('qdc', 'NS') == qcNS, sprintf('%s : qdc.NS = %d', t, qcNS));
+
+t = 'om.add_quadratic_costs(''qc2'', Q<matrix>, c)';
+n = om.getN('var');
+Q2 = sparse(1, 1:n, 1:n, n, n) + sparse(1:n, 1, n:-1:1, n, n);
+c2 = 10*(n:-1:1)';
+om.add_quadratic_costs('qc2', Q2, c2);
+qcNS = qcNS + 1; qcN = qcN + 1;
+t_ok(om.getN('qdc') == qcN, sprintf('%s : qdc.N  = %d', t, qcN));
+t_ok(om.get('qdc', 'NS') == qcNS, sprintf('%s : qdc.NS = %d', t, qcNS));
+
+t = 'om.add_quadratic_costs(''qc3'', Q<vector>, c, k, {''Vm2'', ''Pg''})';
+n = nVm2 + nPg;
+Q3 = 2*(1:n)';
+c3 = -1*(1:n)';
+k3 = -n;
+om.add_quadratic_costs('qc3', Q3, c3, k3, {'Vm2', 'Pg'});
+qcNS = qcNS + 1; qcN = qcN + n;
+t_ok(om.getN('qdc') == qcN, sprintf('%s : qdc.N  = %d', t, qcN));
+t_ok(om.get('qdc', 'NS') == qcNS, sprintf('%s : qdc.NS = %d', t, qcNS));
+
+t = 'om.add_quadratic_costs(''qc4'', Q<vector>, [], 0, vs)';
+n = om.getN('var', 'x', {2,1}) + om.getN('var', 'y', {1,1,1});
+Q4 = 1./(1:n)';
+vs = struct('name', {'x', 'y'}, 'idx', {{2,1}, {1,1,1}});
+om.add_quadratic_costs('qc4', Q4, [], 0, vs);
+qcNS = qcNS + 1; qcN = qcN + n;
+t_ok(om.getN('qdc') == qcN, sprintf('%s : qdc.N  = %d', t, qcN));
+t_ok(om.get('qdc', 'NS') == qcNS, sprintf('%s : qdc.NS = %d', t, qcNS));
+
+t = 'om.add_quadratic_costs(''qc5'', [], c, k, {''Pg'', ''Va''})';
+n = nVa + nPg;
+c5 = 100*(1:n)';
+k5 = (1:n)';
+om.add_quadratic_costs('qc5', [], c5, k5, {'Pg', 'Va'});
+qcNS = qcNS + 1; qcN = qcN + n;
+t_ok(om.getN('qdc') == qcN, sprintf('%s : qdc.N  = %d', t, qcN));
+t_ok(om.get('qdc', 'NS') == qcNS, sprintf('%s : qdc.NS = %d', t, qcNS));
+
+t = 'om.add_quadratic_costs(''qc6'', [], c)';
+n = om.getN('var');
+c6 = -(1:n)';
+om.add_quadratic_costs('qc6', [], c6);
+qcNS = qcNS + 1; qcN = qcN + n;
+t_ok(om.getN('qdc') == qcN, sprintf('%s : qdc.N  = %d', t, qcN));
+t_ok(om.get('qdc', 'NS') == qcNS, sprintf('%s : qdc.NS = %d', t, qcNS));
+
+t = 'om.init_indexed_name(''qdc'', ''qc'', {2,2})';
+om.init_indexed_name('qdc', 'qc', {2,2});
+t_ok(om.getN('qdc') == qcN, sprintf('%s : qdc.N  = %d', t, qcN));
+t_ok(om.get('qdc', 'NS') == qcNS, sprintf('%s : qdc.NS = %d', t, qcNS));
+
+for i = 1:2
+    for j = 1:2
+        t = 'om.add_quadratic_costs(''qc'', {i, j}, cp, vs)';
+        n = nPg + om.getN('var', 'x', {i,j});
+        QQ = sparse(1:n, 1:n, 1:n, n, n) + sparse(1:n, n*ones(n,1), 1:n, n, n);
+        cc = -2*(1:n)';
+        kk = 1000;
+        vs = struct('name', {'Pg', 'x'}, 'idx', {{}, {i,j}});
+        om.add_quadratic_costs('qc', {i, j}, QQ, cc, kk, vs);
+        qcNS = qcNS + 1; qcN = qcN + 1;
+        t_ok(om.getN('qdc') == qcN, sprintf('%s : qdc.N  = %d', t, qcN));
+        t_ok(om.get('qdc', 'NS') == qcNS, sprintf('%s : qdc.NS = %d', t, qcNS));
+    end
+end
+
+%%-----  params_quad_cost  -----
+t = 'om.params_quad_cost(''qc1'')';
+[Q, c, k, vs] = om.params_quad_cost('qc1');
+t_is(Q, Q1, 14, [t, ' : Q']);
+t_is(c, c1, 14, [t, ' : c']);
+t_is(k, k1, 14, [t, ' : k']);
+vs1 = struct('name', {'Pg', 'Va'}, 'idx', {{}, {}});
+t_ok(isequal(vs, vs1), [t, ' : vs']);
+
+t = 'om.params_quad_cost(''qc2'')';
+[Q, c, k, vs] = om.params_quad_cost('qc2');
+t_is(Q, Q2, 14, [t, ' : Q']);
+t_is(c, c2, 14, [t, ' : c']);
+t_is(k, 0, 14, [t, ' : k']);
+t_ok(isequal(vs, {}), [t, ' : vs']);
+
+t = 'om.params_quad_cost(''qc3'')';
+[Q, c, k] = om.params_quad_cost('qc3');
+t_is(Q, Q3, 14, [t, ' : Q']);
+t_is(c, c3, 14, [t, ' : c']);
+t_is(k, k3, 14, [t, ' : k']);
+
+t = 'om.params_quad_cost(''qc4'')';
+[Q, c] = om.params_quad_cost('qc4');
+t_is(Q, Q4, 14, [t, ' : Q']);
+t_ok(isempty(c), [t, ' : c']);
+% t_is(k, 0, 14, [t, ' : k']);
+
+t = 'om.params_quad_cost(''qc5'')';
+[Q, c, k] = om.params_quad_cost('qc5');
+t_ok(isempty(Q), [t, ' : Q']);
+t_is(c, c5, 14, [t, ' : c']);
+t_is(k, k5, 14, [t, ' : k']);
+
+t = 'om.params_quad_cost(''qc6'')';
+[Q, c, k] = om.params_quad_cost('qc6');
+t_ok(isempty(Q), [t, ' : Q']);
+t_is(c, c6, 14, [t, ' : c']);
+t_is(k, 0, 14, [t, ' : k']);
+
+for i = 1:2
+    for j = 1:2
+        t = sprintf('om.params_quad_cost(''qc'', {%d, %d})', i, j);
+        n = nPg + om.getN('var', 'x', {i,j});
+        QQ = sparse(1:n, 1:n, 1:n, n, n) + sparse(1:n, n*ones(n,1), 1:n, n, n);
+        cc = -2*(1:n)';
+        kk = 1000;
+        [Q, c, k] = om.params_quad_cost('qc', {i,j});
+        t_is(Q, QQ, 14, [t, ' : Q']);
+        t_is(c, cc, 14, [t, ' : c']);
+        t_is(k, kk, 14, [t, ' : k']);
+    end
+end
+
+t = 'om.params_quad_cost()';
+[Q, c, k] = om.params_quad_cost();
+% [ii, jj, ss] = find(Q)
+ii = [1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142 143 144 145 146 147 148 149 150 151 152 153 154 155 156 157 158 159 160 161 162 163 164 165 166 167 168 169 170 1 2 7 1 3 6 1 4 5 1 4 5 1 3 6 1 2 7 1 1 1 1 1 1 13 1 14 1 15 1 16 1 17 1 18 1 5 6 7 18 19 1 20 1 5 6 7 20 21 1 22 1 23 1 5 6 7 22 23 24 1 25 1 5 6 7 25 26 1 27 1 28 1 29 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1]';
+jj = [1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 3 3 3 4 4 4 5 5 5 6 6 6 7 7 7 8 9 10 11 12 13 13 14 14 15 15 16 16 17 17 18 18 19 19 19 19 19 19 20 20 21 21 21 21 21 21 22 22 23 23 24 24 24 24 24 24 24 25 25 26 26 26 26 26 26 27 27 28 28 29 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142 143 144 145 146 147 148 149 150 151 152 153 154 155 156 157 158 159 160 161 162 163 164 165 166 167 168 169 170]';
+ss = [179 169 168 167 166 165 164 163 162 161 160 159 158 157 156 155 154 153 152 151 150 149 148 147 146 145 144 143 142 141 140 139 138 137 136 135 134 133 132 131 130 129 128 127 126 125 124 123 122 121 120 119 118 117 116 115 114 113 112 111 110 109 108 107 106 105 104 103 102 101 100 99 98 97 96 95 94 93 92 91 90 89 88 87 86 85 84 83 82 81 80 79 78 77 76 75 74 73 72 71 70 69 68 67 66 65 64 63 62 61 60 59 58 57 56 55 54 53 52 51 50 49 48 47 46 45 44 43 42 41 40 39 38 37 36 35 34 33 32 31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 2 5 3 3 6 2 4 7 1 5 7 17 6 6 24 7 5 31 8 9 10 11 12 13 2 14 4 15 6 16 8 17 10 18 4 19 1 2 3 4 10 20 4 21 1 2 3 4 10 22 5 23 5.5 24 1 2 3 4 5 12.3333333333333333 25 4 26 1 2 3 4 10 27 0.25 28 0.2 29 0.1666666666666667 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142 143 144 145 146 147 148 149 150 151 152 153 154 155 156 157 158 159 160 161 162 163 164 165 166 167 168 169 170];
+QQ = sparse(ii, jj, ss, om.var.N, om.var.N);
+cc = [ 2139 2238 2337 2436 1751 1841 1931 1622 1611 1600 1589 1578 1566 1554 1542 1530 1518 1504 1491 1482 1469 1460 1447 1434 1427 1414 1413 1402 1391 1380 1369 1358 1347 1336 1325 1314 1303 1292 1281 1270 1259 1248 1237 1226 1215 1204 1193 1182 1171 1160 1149 1138 1127 1116 1105 1094 1083 1072 1061 1050 1039 1028 1017 1006 995 984 973 962 951 940 929 918 907 896 885 874 863 852 841 830 819 808 797 786 775 764 753 742 731 720 709 698 687 676 665 654 643 632 621 610 599 588 577 566 555 544 533 522 511 500 489 478 467 456 445 434 423 412 401 390 379 368 357 346 335 324 313 302 291 280 269 258 247 236 225 214 203 192 181 170 159 148 137 126 115 104 93 82 71 60 49 38 27 16 5 -6 -17 -28 -39 -50 -61 -72 -83 -94 -105 -116 -127 -138 -149 -160]';
+t_is(Q, QQ, 14, [t, ' : Q']);
+t_is(c, cc, 14, [t, ' : c']);
+t_is(k, 4027, 14, [t, ' : k']);
+
 
 %%-----  add_costs  -----
 t = 'add_costs';
