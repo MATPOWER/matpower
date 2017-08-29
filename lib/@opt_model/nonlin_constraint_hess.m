@@ -89,24 +89,7 @@ for k = 1:om_nlx.NS
                 d2Gkt_full(:, 1:nk) = d2Gk_all_cols';
             end
         else                    %% selected rows of x
-            jj = [];
-            for v = 1:length(vs)
-                vname = vs(v).name;
-                vidx = vs(v).idx;
-                if isempty(vidx)
-                    j1 = om.var.idx.i1.(vname);     %% starting row in full x
-                    jN = om.var.idx.iN.(vname);     %% ending row in full x
-                else
-                    % (calls to substruct() are relatively expensive ...
-                    % s = substruct('.', vname, '()', vidx);
-                    % ... so replace it with these more efficient lines)
-                    s(1).subs = vname;
-                    s(2).subs = vidx;
-                    j1 = subsref(om.var.idx.i1, s); %% starting row in full x
-                    jN = subsref(om.var.idx.iN, s); %% ending row in full x
-                end
-                jj = [jj j1:jN];
-            end
+            jj = om.varsets_idx(vs);    %% indices for var set
             d2Gk_all_cols = sparse(nk, om.var.N);
             d2Gk_all_cols(:, jj) = d2Gk;
             d2Gkt_full = sparse(om.var.N, om.var.N);

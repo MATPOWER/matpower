@@ -98,24 +98,7 @@ else                %% aggregate
                     end
                 end
             else
-                jj = [];                %% column indices for var set
-                for v = 1:length(vs)
-                    vname = vs(v).name;
-                    vidx = vs(v).idx;
-                    if isempty(vidx)
-                        j1 = om.var.idx.i1.(vname);     %% starting index in Q/c
-                        jN = om.var.idx.iN.(vname);     %% ending index in Q/c
-                    else
-                        % (calls to substruct() are relatively expensive ...
-                        % s = substruct('.', vname, '()', vidx);
-                        % ... so replace it with these more efficient lines)
-                        s(1).subs = vname;
-                        s(2).subs = vidx;
-                        j1 = subsref(om.var.idx.i1, s); %% starting index in Q/c
-                        jN = subsref(om.var.idx.iN, s); %% ending index in Q/c
-                    end
-                    jj = [jj j1:jN];    %% column indices for var set
-                end
+                jj = om.varsets_idx(vs);    %% indices for var set
                 if size(Qk, 2) == 1     %% Qk is a column vector
                     Qkt_full = sparse(jj, jj, Qk, nx, nx);
                 elseif haveQ            %% Qk is a matrix

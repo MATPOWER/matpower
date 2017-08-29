@@ -94,24 +94,7 @@ if nargin > 1 || isempty(om.cost.params)
                     NNt(1:size(Nk,2), i1:iN) = Nk';  %% assign as columns in transpose for speed
                 end
             else                    %% selected columns
-                jj = [];                %% column indices for var set
-                for v = 1:length(vs)
-                    vname = vs(v).name;
-                    vidx = vs(v).idx;
-                    if isempty(vidx)
-                        j1 = om.var.idx.i1.(vname);     %% starting column in N
-                        jN = om.var.idx.iN.(vname);     %% ending column in N
-                    else
-                        % (calls to substruct() are relatively expensive ...
-                        % s = substruct('.', vname, '()', vidx);
-                        % ... so replace it with these more efficient lines)
-                        s(1).subs = vname;
-                        s(2).subs = vidx;
-                        j1 = subsref(om.var.idx.i1, s); %% starting column in N
-                        jN = subsref(om.var.idx.iN, s); %% ending column in N
-                    end
-                    jj = [jj j1:jN];    %% column indices for var set
-                end
+                jj = om.varsets_idx(vs);    %% column indices for var set
                 Ni = sparse(N, om.var.N);
                 Ni(:, jj) = Nk;
                 NNt(:, i1:iN) = Ni';    %% assign as columns in transpose for speed

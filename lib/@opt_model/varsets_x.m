@@ -2,7 +2,8 @@ function xx = varsets_x(om, x, vs)
 %VARSETS_X  Returns a cell array of sub-vectors of X specified by VARSETS
 %   X = OM.VARSETS_X(X, VARSETS)
 %
-%   Returns a cell array of sub-vectors of X specified by VARSETS.
+%   Returns a cell array of sub-vectors of X specified by VARSETS, or
+%   the full optimization vector X, if VARSETS is empty.
 %
 %   See also VARSET_LEN
 
@@ -24,17 +25,17 @@ else                    %% selected rows of x
         vname = vs(v).name;
         vidx = vs(v).idx;
         if isempty(vidx)
-            j1 = om.var.idx.i1.(vname);     %% starting row in full x
-            jN = om.var.idx.iN.(vname);     %% ending row in full x
+            i1 = om.var.idx.i1.(vname);     %% starting row in full x
+            iN = om.var.idx.iN.(vname);     %% ending row in full x
         else
             % (calls to substruct() are relatively expensive ...
             % s = substruct('.', vname, '()', vidx);
             % ... so replace it with these more efficient lines)
             s(1).subs = vname;
             s(2).subs = vidx;
-            j1 = subsref(om.var.idx.i1, s); %% starting row in full x
-            jN = subsref(om.var.idx.iN, s); %% ending row in full x
+            i1 = subsref(om.var.idx.i1, s); %% starting row in full x
+            iN = subsref(om.var.idx.iN, s); %% ending row in full x
         end
-        xx{v} = x(j1:jN);
+        xx{v} = x(i1:iN);
     end
 end

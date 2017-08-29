@@ -87,24 +87,7 @@ for k = 1:om_nlx.NS
                 dg(i1:iN, 1:size(dgk, 2)) = dgk;
             end
         else                    %% selected rows of x
-            jj = [];                %% column indices for var set
-            for v = 1:length(vs)
-                vname = vs(v).name;
-                vidx = vs(v).idx;
-                if isempty(vidx)
-                    j1 = om.var.idx.i1.(vname);     %% starting row in full x
-                    jN = om.var.idx.iN.(vname);     %% ending row in full x
-                else
-                    % (calls to substruct() are relatively expensive ...
-                    % s = substruct('.', vname, '()', vidx);
-                    % ... so replace it with these more efficient lines)
-                    s(1).subs = vname;
-                    s(2).subs = vidx;
-                    j1 = subsref(om.var.idx.i1, s); %% starting row in full x
-                    jN = subsref(om.var.idx.iN, s); %% ending row in full x
-                end
-                jj = [jj j1:jN];    %% column indices for var set
-            end
+            jj = om.varsets_idx(vs);    %% column indices for var set
             dgi = sparse(N, om.var.N);
             dgi(:, jj) = dgk;
             dg = [dg; dgi];
