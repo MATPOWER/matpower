@@ -20,12 +20,12 @@ if isempty(vs)
 else
     nv = 0;
     s = struct('type', {'.', '()'}, 'subs', {'', 1});
-    for k = 1:length(vs)
+    for v = 1:length(vs)
         % (calls to substruct() are relatively expensive ...
-        % s = substruct('.', vs(k).name, '()', vs(k).idx);
+        % s = substruct('.', vs(v).name, '()', vs(v).idx);
         % ... so replace it with these more efficient lines)
-        s(1).subs = vs(k).name;
-        s(2).subs = vs(k).idx;
+        s(1).subs = vs(v).name;
+        s(2).subs = vs(v).idx;
         nv = nv + subsref(om.var.idx.N, s);
     end
 end

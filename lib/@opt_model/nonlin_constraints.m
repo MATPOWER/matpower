@@ -87,27 +87,26 @@ for k = 1:om_nlx.NS
                 dg(i1:iN, 1:size(dgk, 2)) = dgk;
             end
         else                    %% selected rows of x
-            kN = 0;                             %% initialize last col of dgk used
-            dgi = sparse(N, om.var.N);
+            jj = [];                %% column indices for var set
             for v = 1:length(vs)
-                if isempty(vs(v).idx)
-                    j1 = om.var.idx.i1.(vs(v).name);
-                    jN = om.var.idx.iN.(vs(v).name);
-                    k1 = kN + 1;                    %% starting column in dgk
-                    kN = kN + om.var.idx.N.(vs(v).name);%% ending column in dgk
+                vname = vs(v).name;
+                vidx = vs(v).idx;
+                if isempty(vidx)
+                    j1 = om.var.idx.i1.(vname);     %% starting row in full x
+                    jN = om.var.idx.iN.(vname);     %% ending row in full x
                 else
                     % (calls to substruct() are relatively expensive ...
-                    % s = substruct('.', vs(v).name, '()', vs(v).idx);
+                    % s = substruct('.', vname, '()', vidx);
                     % ... so replace it with these more efficient lines)
-                    s(1).subs = vs(v).name;
-                    s(2).subs = vs(v).idx;
+                    s(1).subs = vname;
+                    s(2).subs = vidx;
                     j1 = subsref(om.var.idx.i1, s); %% starting row in full x
                     jN = subsref(om.var.idx.iN, s); %% ending row in full x
-                    k1 = kN + 1;                    %% starting column in dgk
-                    kN = kN + subsref(om.var.idx.N, s);%% ending column in dgk
                 end
-                dgi(:, j1:jN) = dgk(:, k1:kN);
+                jj = [jj j1:jN];    %% column indices for var set
             end
+            dgi = sparse(N, om.var.N);
+            dgi(:, jj) = dgk;
             dg = [dg; dgi];
         end
     end

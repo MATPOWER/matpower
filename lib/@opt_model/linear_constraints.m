@@ -81,20 +81,26 @@ for k = 1:om.lin.NS
                 At(1:size(Ak,2), i1:iN) = Ak';  %% assign as columns in transpose for speed
             end
         else                    %% selected columns
-            kN = 0;                             %% initialize last col of Ak used
-            Ai = sparse(N, om.var.N);
+            jj = [];                %% column indices for var set
             for v = 1:length(vs)
-                % (calls to substruct() are relatively expensive ...
-                % s = substruct('.', vs(v).name, '()', vs(v).idx);
-                % ... so replace it with these more efficient lines)
-                s(1).subs = vs(v).name;
-                s(2).subs = vs(v).idx;
-                j1 = subsref(om.var.idx.i1, s); %% starting column in A
-                jN = subsref(om.var.idx.iN, s); %% ending column in A
-                k1 = kN + 1;                    %% starting column in Ak
-                kN = kN + subsref(om.var.idx.N, s);%% ending column in Ak
-                Ai(:, j1:jN) = Ak(:, k1:kN);
+                vname = vs(v).name;
+                vidx = vs(v).idx;
+                if isempty(vidx)
+                    j1 = om.var.idx.i1.(vname);     %% starting column in A
+                    jN = om.var.idx.iN.(vname);     %% ending column in A
+                else
+                    % (calls to substruct() are relatively expensive ...
+                    % s = substruct('.', vname, '()', vidx);
+                    % ... so replace it with these more efficient lines)
+                    s(1).subs = vname;
+                    s(2).subs = vidx;
+                    j1 = subsref(om.var.idx.i1, s); %% starting column in A
+                    jN = subsref(om.var.idx.iN, s); %% ending column in A
+                end
+                jj = [jj j1:jN];    %% column indices for var set
             end
+            Ai = sparse(N, om.var.N);
+            Ai(:, jj) = Ak;
             At(:, i1:iN) = Ai';     %% assign as columns in transpose for speed
         end
 

@@ -73,9 +73,9 @@ else                %% aggregate
             [Qk, ck, kk, vs] = om.params_quad_cost(name, idx);
             haveQ = ~isempty(Qk);
             havec = ~isempty(ck);
-            Nk = max(size(Qk, 1), size(ck, 1));     %% size of Qk and/or ck
+            nk = max(size(Qk, 1), size(ck, 1));     %% size of Qk and/or ck
             if isempty(vs)
-                if Nk == nx     %% full size
+                if nk == nx     %% full size
                     if size(Qk, 2) == 1     %% Qk is a column vector
                         Qkt_full = spdiags(Qk, 0, nx, nx);
                     elseif haveQ            %% Qk is a matrix
@@ -86,40 +86,47 @@ else                %% aggregate
                     end
                 else            %% vars added since adding this cost set
                     if size(Qk, 2) == 1     %% Qk is a column vector
-                        Qkt_full = sparse(1:Nk, 1:Nk, Qk, nx, nx);
+                        Qkt_full = sparse(1:nk, 1:nk, Qk, nx, nx);
                     elseif haveQ            %% Qk is a matrix
-                        Qk_all_cols = sparse(Nk, nx);
-                        Qk_all_cols(:, 1:Nk) = Qk;
-                        Qkt_full(:, 1:Nk) = Qk_all_cols';
+                        Qk_all_cols = sparse(nk, nx);
+                        Qk_all_cols(:, 1:nk) = Qk;
+                        Qkt_full(:, 1:nk) = Qk_all_cols';
                     end
                     if havec
                         ck_full = zeros(nx, 1);
-                        ck_full(1:Nk) = ck;
+                        ck_full(1:nk) = ck;
                     end
                 end
             else
-                ii = [];
+                jj = [];                %% column indices for var set
                 for v = 1:length(vs)
-                    % (calls to substruct() are relatively expensive ...
-                    % s = substruct('.', vs(v).name, '()', vs(v).idx);
-                    % ... so replace it with these more efficient lines)
-                    s(1).subs = vs(v).name;
-                    s(2).subs = vs(v).idx;
-                    j1 = subsref(om.var.idx.i1, s); %% starting index in Q/c
-                    jN = subsref(om.var.idx.iN, s); %% ending index in Q/c
-                    ii = [ii j1:jN];
+                    vname = vs(v).name;
+                    vidx = vs(v).idx;
+                    if isempty(vidx)
+                        j1 = om.var.idx.i1.(vname);     %% starting index in Q/c
+                        jN = om.var.idx.iN.(vname);     %% ending index in Q/c
+                    else
+                        % (calls to substruct() are relatively expensive ...
+                        % s = substruct('.', vname, '()', vidx);
+                        % ... so replace it with these more efficient lines)
+                        s(1).subs = vname;
+                        s(2).subs = vidx;
+                        j1 = subsref(om.var.idx.i1, s); %% starting index in Q/c
+                        jN = subsref(om.var.idx.iN, s); %% ending index in Q/c
+                    end
+                    jj = [jj j1:jN];    %% column indices for var set
                 end
                 if size(Qk, 2) == 1     %% Qk is a column vector
-                    Qkt_full = sparse(ii, ii, Qk, nx, nx);
+                    Qkt_full = sparse(jj, jj, Qk, nx, nx);
                 elseif haveQ            %% Qk is a matrix
-                    Qk_all_rows = sparse(Nk, nx);
-                    Qk_all_rows(:, ii) = Qk;
+                    Qk_all_rows = sparse(nk, nx);
+                    Qk_all_rows(:, jj) = Qk;
                     Qkt_full = sparse(nx, nx);
-                    Qkt_full(:, ii) = Qk_all_rows';
+                    Qkt_full(:, jj) = Qk_all_rows';
                 end
                 if havec
                     ck_full = zeros(nx, 1);
-                    ck_full(ii) = ck;
+                    ck_full(jj) = ck;
                 end
             end
             if haveQ
