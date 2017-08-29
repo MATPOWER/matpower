@@ -219,34 +219,24 @@ else        %% detect availability
                                     case 'fmincon_ipm'
                                         if otver >= 4       %% Opt Tbx 4.0+ (R208a+, Matlab 7.6+)
                                             TorF = 1;
-                                        else
-                                            TorF = 0;
                                         end
                                     case 'linprog_ds'
                                         if otver >= 7.001   %% Opt Tbx 7.1+ (R2014b+, Matlab 8.4+)
                                             TorF = 1;
-                                        else
-                                            TorF = 0;
                                         end
                                     case 'optimoptions'
                                         if otver >= 6.003   %% Opt Tbx 6.3+ (R2013a+, Matlab 8.1+)
                                             TorF = 1;
-                                        else
-                                            TorF = 0;
                                         end
                                     case 'quadprog_ls'
                                         if otver >= 6       %% Opt Tbx 6.0+ (R2011a+, Matlab 7.12+)
                                             TorF = 1;
-                                        else
-                                            TorF = 0;
                                         end
                                 end
                             else    %% octave
                                 TorF = 0;
                             end
                     end
-                else
-                    TorF = 0;
                 end
             case 'glpk'
                 if exist('glpk','file') == 3    %% Windows OPTI install (no glpk.m)
@@ -444,12 +434,8 @@ else        %% detect availability
                                 %% older versions do not include the needed form of chol()
                                 if vn >= 7.003
                                     TorF = exist('tralmopf', 'file') == 3;
-                                else
-                                    TorF = 0;
                                 end
                         end
-                    else
-                        TorF = 0;
                     end
                     if TorF
                         v = feval([tag 'ver'], 'all');
@@ -503,22 +489,16 @@ else        %% detect availability
             %%-----  private tags  -----
             case 'catchme'  %% not supported by Matlab <= 7.4 (R2007a), Octave <= 3.6
                 if have_fcn('octave')
-                    if have_fcn('octave', 'vnum') <= 3.006
-                        TorF = 0;
-                    else
+                    if have_fcn('octave', 'vnum') > 3.006
                         TorF = 1;
                     end
                 else
-                    if have_fcn('matlab', 'vnum') <= 7.004
-                        TorF = 0;
-                    else
+                    if have_fcn('matlab', 'vnum') > 7.004
                         TorF = 1;
                     end
                 end
             case 'evalc'
-                if have_fcn('octave')
-                    TorF = 0;
-                else
+                if have_fcn('matlab')
                     TorF = 1;
                 end
             case 'ipopt_auxdata'
@@ -544,7 +524,6 @@ else        %% detect availability
         %%-----  unknown tag  -----
             otherwise
                 warning('have_fcn: unknown functionality ''%s''', tag);
-                TorF = 0;
                 vstr = 'unknown';
         end
 
