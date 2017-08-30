@@ -22,6 +22,9 @@ function om = add_named_set(om, set_type, name, idx, N, varargin)
 %   Quadratic Cost Set
 %       OM.ADD_NAMED_SET('qdc', NAME, IDX_LIST, N, CP, VARSETS);
 %
+%   General Nonlinear Cost Set
+%       OM.ADD_NAMED_SET('nlc', NAME, IDX_LIST, N, FCN, VARSETS);
+%
 %   Legacy Cost Set
 %       OM.ADD_NAMED_SET('cost', NAME, IDX_LIST, N, CP, VARSETS);
 %
@@ -156,6 +159,15 @@ switch ff
         end
         if ~isempty(om.qdc.params)      %% clear cache of aggregated params
             om.qdc.params = [];
+        end
+    case 'nlc'          %% general nonlinear cost set
+        [fcn, varsets] = deal(varargin{:});
+        if isempty(idx)
+            om.nlc.data.fcn.(name)  = fcn;
+            om.nlc.data.vs.(name) = varsets;
+        else
+            om.nlc.data.fcn  = subsasgn(om.nlc.data.fcn, sc, fcn);
+            om.nlc.data.vs   = subsasgn(om.nlc.data.vs, sc, varsets);
         end
     case 'cost'         %% cost set
         [cp, varsets] = deal(varargin{:});

@@ -5650,7 +5650,7 @@ name & description \\
 name & description \\
 \midrule
 \code{@opf\_model/}	& OPF model object used to encapsulate OPF problem formulation	\\
-\code{~~display}	& called to display object when statement not terminated by semicolon	\\
+\code{~~display}	& called to display object when statement not ended with semicolon	\\
 \code{~~get\_mpc}	& returns the \matpower{} case struct	\\
 \code{~~opf\_model}	& constructor for the \code{opf\_model} class	\\
 \code{@opt\_model/}	& optimization model object (\code{@opf\_model} base class)	\\
@@ -5659,12 +5659,14 @@ name & description \\
 \code{~~add\_lin\_constraints}	& adds a named subset of linear constraints to the model	\\
 \code{~~add\_named\_set}\tnote{\dag}	& adds a named subset of costs, constraints or variables to the model	\\
 \code{~~add\_nln\_constraints}	& adds a named subset of nonlinear constraints to the model	\\
+\code{~~add\_nln\_costs}	& adds a named subset of general nonlinear costs to the model	\\
 \code{~~add\_quadratic\_costs}	& adds a named subset of quadratic costs to the model	\\
 \code{~~add\_vars}	& adds a named subset of optimization variables to the model	\\
 \code{~~build\_cost\_params}	& builds and stores the full generalized cost parameters in the model	\\
 \code{~~compute\_cost}	& computes a user-defined cost\tnote{\ddag}	\\
 \code{~~describe\_idx}	& identifies variable, constraint or cost row indices	\\
-\code{~~display}	& called to display object when statement not terminated by semicolon	\\
+\code{~~display}	& called to display object when statement not ended with semicolon	\\
+\code{~~eval\_nonlin\_cost}	& evaluates general nonlinear costs and derivatives	\\
 \code{~~get\_cost\_params}	& returns the cost parameter struct created by \code{build\_cost\_params}\tnote{\ddag}	\\
 \code{~~get\_idx}	& returns the idx struct for vars, lin/nln constraints, costs	\\
 \code{~~get\_userdata}	& returns values of user data stored in the model	\\
