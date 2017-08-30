@@ -80,6 +80,12 @@ nxyz = om.getN('var');      %% total number of control vars of all types
 %% where X = [x;y;z]. First set up as quadratic function of w,
 %% f = 1/2 * w'*HHw*w + CCw'*w, where w = diag(M) * (N*X - Rhat). We
 %% will be building on the (optionally present) user supplied parameters.
+if any(cp.dd ~= 1)
+    error('dcopf_solver: DC OPF can only handle user-defined costs with d = 1');
+end
+if any(cp.kk)
+    error('dcopf_solver: DC OPF can only handle user-defined costs with no "dead zone", i.e. k = 0');
+end
 
 %% piece-wise linear costs
 any_pwl = (ny > 0);
@@ -98,7 +104,7 @@ end
 %% quadratic costs
 npol = length(ipol);
 if any(find(gencost(ipol, NCOST) > 3))
-    error('DC opf cannot handle polynomial costs with higher than quadratic order.');
+    error('dcopf_solver: DC opf cannot handle polynomial costs with higher than quadratic order.');
 end
 iqdr = find(gencost(ipol, NCOST) == 3);
 ilin = find(gencost(ipol, NCOST) == 2);
