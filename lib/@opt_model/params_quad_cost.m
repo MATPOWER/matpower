@@ -51,12 +51,12 @@ if nargin > 1       %% individual set
         % (calls to substruct() are relatively expensive ...
         % s = substruct('.', name, '{}', idx);
         % ... so replace it with these more efficient lines)
-        s = struct('type', {'.', '{}'}, 'subs', {name, idx});
-        Q = subsref(om.qdc.data.Q, s);
-        c = subsref(om.qdc.data.c, s);
-        k = subsref(om.qdc.data.k, s);
+        sc = struct('type', {'.', '{}'}, 'subs', {name, idx});
+        Q = subsref(om.qdc.data.Q, sc);
+        c = subsref(om.qdc.data.c, sc);
+        k = subsref(om.qdc.data.k, sc);
         if nargout > 3
-            vs = subsref(om.qdc.data.vs, s);
+            vs = subsref(om.qdc.data.vs, sc);
         end
     end
 else                %% aggregate
@@ -66,7 +66,6 @@ else                %% aggregate
         Qt = sparse(nx, nx);    %% transpose of quadratic coefficients
         c = zeros(nx, 1);       %% linear coefficients
         k = 0;                  %% constant term
-        s = struct('type', {'.', '()'}, 'subs', {'', 1});
         for i = 1:om.qdc.NS
             name = om.qdc.order(i).name;
             idx  = om.qdc.order(i).idx;
@@ -102,10 +101,10 @@ else                %% aggregate
                 if size(Qk, 2) == 1     %% Qk is a column vector
                     Qkt_full = sparse(jj, jj, Qk, nx, nx);
                 elseif haveQ            %% Qk is a matrix
-                    Qk_all_rows = sparse(nk, nx);
-                    Qk_all_rows(:, jj) = Qk;
+                    Qk_all_cols = sparse(nk, nx);
+                    Qk_all_cols(:, jj) = Qk;
                     Qkt_full = sparse(nx, nx);
-                    Qkt_full(:, jj) = Qk_all_rows';
+                    Qkt_full(:, jj) = Qk_all_cols';
                 end
                 if havec
                     ck_full = zeros(nx, 1);

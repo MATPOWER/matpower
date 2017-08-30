@@ -32,7 +32,10 @@ else
 end
 if nargin < 2
     v0 = []; vl = []; vu = []; vt = char([]);
-    s1 = struct('type', {'.', '{}'}, 'subs', {'', 1});
+    %% calls to substruct() are relatively expensive, so we pre-build the
+    %% structs for addressing cell and numeric array fields, updating only
+    %% the subscripts before use
+    sc = struct('type', {'.', '{}'}, 'subs', {'', 1});  %% cell array field
     for k = 1:om.var.NS
         name = om.var.order(k).name;
         idx = om.var.order(k).idx;
@@ -51,21 +54,20 @@ if nargin < 2
             end
         else
             % (calls to substruct() are relatively expensive ...
-            % s1 = substruct('.', name, '{}', idx);
+            % sc = substruct('.', name, '{}', idx);
             % ... so replace it with these more efficient lines)
-            s1(1).subs = name;
-            s1(2).subs = idx;
-            v0 = [ v0; subsref(om.var.data.v0, s1) ];
-            vl = [ vl; subsref(om.var.data.vl, s1) ];
-            vu = [ vu; subsref(om.var.data.vu, s1) ];
+            sc(1).subs = name;
+            sc(2).subs = idx;
+            v0 = [ v0; subsref(om.var.data.v0, sc) ];
+            vl = [ vl; subsref(om.var.data.vl, sc) ];
+            vu = [ vu; subsref(om.var.data.vu, sc) ];
             if have_vt
                 % (calls to substruct() are relatively expensive ...
-                % s2 = substruct('.', name, '()', idx);
+                % sn = substruct('.', name, '()', idx);
                 % ... so replace it with these more efficient lines)
-                s2 = s1;
-                s2(2).type = '()';
-                N = subsref(om.var.idx.N, s2);
-                vt0 = subsref(om.var.data.vt, s1);
+                sn = sc; sn(2).type = '()';
+                N = subsref(om.var.idx.N, sn);
+                vt0 = subsref(om.var.data.vt, sc);
                 if isscalar(vt0) && N > 1 
                     vt = [ vt char(vt0 * ones(1, N)) ];
                 else
@@ -93,20 +95,19 @@ else
             end
         else
             % (calls to substruct() are relatively expensive ...
-            % s1 = substruct('.', name, '{}', idx);
+            % sc = substruct('.', name, '{}', idx);
             % ... so replace it with these more efficient lines)
-            s1 = struct('type', {'.', '{}'}, 'subs', {name, idx});
-            v0 = subsref(om.var.data.v0, s1);
-            vl = subsref(om.var.data.vl, s1);
-            vu = subsref(om.var.data.vu, s1);
+            sc = struct('type', {'.', '{}'}, 'subs', {name, idx});
+            v0 = subsref(om.var.data.v0, sc);
+            vl = subsref(om.var.data.vl, sc);
+            vu = subsref(om.var.data.vu, sc);
             if have_vt
                 % (calls to substruct() are relatively expensive ...
-                % s2 = substruct('.', name, '()', idx);
+                % sn = substruct('.', name, '()', idx);
                 % ... so replace it with these more efficient lines)
-                s2 = s1;
-                s2(2).type = '()';
-                N = subsref(om.var.idx.N, s2);
-                vt0 = subsref(om.var.data.vt, s1);
+                sn = sc; sn(2).type = '()';
+                N = subsref(om.var.idx.N, sn);
+                vt0 = subsref(om.var.data.vt, sc);
                 if isscalar(vt0) && N > 1 
                     vt = char(vt0 * ones(1, N));
                 else

@@ -19,13 +19,18 @@ if isempty(vs)
     nv = om.var.N;
 else
     nv = 0;
-    s = struct('type', {'.', '()'}, 'subs', {'', 1});
+
+    %% calls to substruct() are relatively expensive, so we pre-build the
+    %% struct for addressing numeric array fields, updating only
+    %% the subscripts before use
+    sn = struct('type', {'.', '()'}, 'subs', {'', 1});
+
     for v = 1:length(vs)
         % (calls to substruct() are relatively expensive ...
-        % s = substruct('.', vs(v).name, '()', vs(v).idx);
+        % sn = substruct('.', vs(v).name, '()', vs(v).idx);
         % ... so replace it with these more efficient lines)
-        s(1).subs = vs(v).name;
-        s(2).subs = vs(v).idx;
-        nv = nv + subsref(om.var.idx.N, s);
+        sn(1).subs = vs(v).name;
+        sn(2).subs = vs(v).idx;
+        nv = nv + subsref(om.var.idx.N, sn);
     end
 end

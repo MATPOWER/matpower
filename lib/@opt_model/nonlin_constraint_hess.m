@@ -32,11 +32,13 @@ end
 %% initialize d2G (use transpose for speed on older versions of Matlab)
 d2Gt = sparse(om.var.N, om.var.N);
 
+%% calls to substruct() are relatively expensive, so we pre-build the
+%% structs for addressing cell and numeric array fields, updating only
+%% the subscripts before use
+sc = struct('type', {'.', '{}'}, 'subs', {'', 1});  %% cell array field
+sn = sc; sn(2).type = '()';                         %% num array field
+
 %% fill in each piece
-s = struct('type', {'.', '()'}, 'subs', {'', 1});
-s1 = s;
-s2 = s;
-s2(2).type = '{}';
 for k = 1:om_nlx.NS
     name = om_nlx.order(k).name;
     idx  = om_nlx.order(k).idx;
@@ -53,14 +55,14 @@ for k = 1:om_nlx.NS
         end
     else
         % (calls to substruct() are relatively expensive ...
-        % s1 = substruct('.', name, '()', idx);
-        % s2 = substruct('.', name, '{}', idx);
+        % sn = substruct('.', name, '()', idx);
+        % sc = substruct('.', name, '{}', idx);
         % ... so replace them with these more efficient lines)
-        s1(1).subs = name;
-        s1(2).subs = idx;
-        s2(1).subs = name;
-        s2(2).subs = idx;
-        N = subsref(om_nlx.idx.N, s1);
+        sn(1).subs = name;
+        sn(2).subs = idx;
+        sc(1).subs = name;
+        sc(2).subs = idx;
+        N = subsref(om_nlx.idx.N, sn);
     end
     if N                                %% non-zero number of rows
         if isempty(idx)
@@ -69,10 +71,10 @@ for k = 1:om_nlx.NS
             iN = i1 + N - 1;                    %% ending row index
             vs = om_nlx.data.vs.(name);         %% var sets
         else
-            d2G_fcn = subsref(om_nlx.data.hess, s2);  %% Hessian fcn for kth constraint set
-            i1 = subsref(om_nlx.idx.i1, s1);    %% starting row index
-            iN = subsref(om_nlx.idx.iN, s1);    %% ending row index
-            vs = subsref(om_nlx.data.vs, s2);   %% var sets
+            d2G_fcn = subsref(om_nlx.data.hess, sc);  %% Hessian fcn for kth constraint set
+            i1 = subsref(om_nlx.idx.i1, sn);    %% starting row index
+            iN = subsref(om_nlx.idx.iN, sn);    %% ending row index
+            vs = subsref(om_nlx.data.vs, sc);   %% var sets
         end
         xx = om.varsets_x(x, vs);
         d2Gk = d2G_fcn(xx, lam(i1:iN));     %% evaluate kth Hessian

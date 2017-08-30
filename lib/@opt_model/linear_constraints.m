@@ -22,7 +22,13 @@ function [A, l, u] = linear_constraints(om)
 
 %% initialize A, l and u
 nnzA = 0;
-s = struct('type', {'.', '{}'}, 'subs', {'', 1});
+
+%% calls to substruct() are relatively expensive, so we pre-build the
+%% structs for addressing cell and numeric array fields, updating only
+%% the subscripts before use
+sc = struct('type', {'.', '{}'}, 'subs', {'', 1});  %% cell array field
+sn = sc; sn(2).type = '()';                         %% num array field
+
 for k = 1:om.lin.NS
     name = om.lin.order(k).name;
     idx  = om.lin.order(k).idx;
@@ -30,11 +36,11 @@ for k = 1:om.lin.NS
         nnzA = nnzA + nnz(om.lin.data.A.(name));
     else
         % (calls to substruct() are relatively expensive ...
-        % s = substruct('.', name, '{}', idx);
+        % sc = substruct('.', name, '{}', idx);
         % ... so replace it with these more efficient lines)
-        s(1).subs = name;
-        s(2).subs = idx;
-        nnzA = nnzA + nnz(subsref(om.lin.data.A, s));
+        sc(1).subs = name;
+        sc(2).subs = idx;
+        nnzA = nnzA + nnz(subsref(om.lin.data.A, sc));
     end
 end
 At = sparse([], [], [], om.var.N, om.lin.N, nnzA);  %% use A transpose for speed
@@ -42,9 +48,6 @@ u = Inf(om.lin.N, 1);
 l = -u;
 
 %% fill in each piece
-s2 = s;
-s(2).type = '()';
-s1 = s;
 for k = 1:om.lin.NS
     name = om.lin.order(k).name;
     idx  = om.lin.order(k).idx;
@@ -52,14 +55,14 @@ for k = 1:om.lin.NS
         N = om.lin.idx.N.(name);
     else
         % (calls to substruct() are relatively expensive ...
-        % s1 = substruct('.', name, '()', idx);
-        % s2 = substruct('.', name, '{}', idx);
+        % sn = substruct('.', name, '()', idx);
+        % sc = substruct('.', name, '{}', idx);
         % ... so replace them with these more efficient lines)
-        s1(1).subs = name;
-        s1(2).subs = idx;
-        s2(1).subs = name;
-        s2(2).subs = idx;
-        N = subsref(om.lin.idx.N, s1);
+        sn(1).subs = name;
+        sn(2).subs = idx;
+        sc(1).subs = name;
+        sc(2).subs = idx;
+        N = subsref(om.lin.idx.N, sn);
     end
     if N                                %% non-zero number of rows to add
         if isempty(idx)
@@ -68,10 +71,10 @@ for k = 1:om.lin.NS
             iN = om.lin.idx.iN.(name);          %% ending row index
             vs = om.lin.data.vs.(name);         %% var sets
         else
-            Ak = subsref(om.lin.data.A, s2);    %% A for kth linear constrain set
-            i1 = subsref(om.lin.idx.i1, s1);    %% starting row index
-            iN = subsref(om.lin.idx.iN, s1);    %% ending row index
-            vs = subsref(om.lin.data.vs, s2);   %% var sets
+            Ak = subsref(om.lin.data.A, sc);    %% A for kth linear constrain set
+            i1 = subsref(om.lin.idx.i1, sn);    %% starting row index
+            iN = subsref(om.lin.idx.iN, sn);    %% ending row index
+            vs = subsref(om.lin.data.vs, sc);   %% var sets
         end
         if isempty(vs)          %% full rows
             if size(Ak,2) == om.var.N
@@ -91,8 +94,8 @@ for k = 1:om.lin.NS
             l(i1:iN) = om.lin.data.l.(name);
             u(i1:iN) = om.lin.data.u.(name);
         else
-            l(i1:iN) = subsref(om.lin.data.l, s2);
-            u(i1:iN) = subsref(om.lin.data.u, s2);
+            l(i1:iN) = subsref(om.lin.data.l, sc);
+            u(i1:iN) = subsref(om.lin.data.u, sc);
         end
     end
 end

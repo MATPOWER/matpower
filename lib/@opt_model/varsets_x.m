@@ -19,22 +19,26 @@ function xx = varsets_x(om, x, vs)
 if isempty(vs)          %% all rows of x
     xx = x;
 else                    %% selected rows of x
-    s = struct('type', {'.', '()'}, 'subs', {'', 1});
+    %% calls to substruct() are relatively expensive, so we pre-build the
+    %% struct for addressing numeric array fields, updating only
+    %% the subscripts before use
+    sn = struct('type', {'.', '()'}, 'subs', {'', 1});
+
     xx = cell(size(vs));
     for v = 1:length(vs)
         vname = vs(v).name;
         vidx = vs(v).idx;
         if isempty(vidx)
-            i1 = om.var.idx.i1.(vname);     %% starting row in full x
-            iN = om.var.idx.iN.(vname);     %% ending row in full x
+            i1 = om.var.idx.i1.(vname);         %% starting row in full x
+            iN = om.var.idx.iN.(vname);         %% ending row in full x
         else
             % (calls to substruct() are relatively expensive ...
-            % s = substruct('.', vname, '()', vidx);
+            % sn = substruct('.', vname, '()', vidx);
             % ... so replace it with these more efficient lines)
-            s(1).subs = vname;
-            s(2).subs = vidx;
-            i1 = subsref(om.var.idx.i1, s); %% starting row in full x
-            iN = subsref(om.var.idx.iN, s); %% ending row in full x
+            sn(1).subs = vname;
+            sn(2).subs = vidx;
+            i1 = subsref(om.var.idx.i1, sn);    %% starting row in full x
+            iN = subsref(om.var.idx.iN, sn);    %% ending row in full x
         end
         xx{v} = x(i1:iN);
     end

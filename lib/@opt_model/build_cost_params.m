@@ -25,7 +25,13 @@ if nargin > 1 || isempty(om.cost.params)
     nw = om.cost.N;
     nnzN = 0;
     nnzH = 0;
-    s = struct('type', {'.', '{}'}, 'subs', {'', 1});
+
+    %% calls to substruct() are relatively expensive, so we pre-build the
+    %% structs for addressing cell and numeric array fields, updating only
+    %% the subscripts before use
+    sc = struct('type', {'.', '{}'}, 'subs', {'', 1});  %% cell array field
+    sn = sc; sn(2).type = '()';                         %% num array field
+
     for k = 1:om.cost.NS
         name = om.cost.order(k).name;
         idx  = om.cost.order(k).idx;
@@ -36,13 +42,13 @@ if nargin > 1 || isempty(om.cost.params)
             end
         else
             % (calls to substruct() are relatively expensive ...
-            % s = substruct('.', name, '{}', idx);
+            % sc = substruct('.', name, '{}', idx);
             % ... so replace it with these more efficient lines)
-            s(1).subs = name;
-            s(2).subs = idx;
-            nnzN = nnzN + nnz(subsref(om.cost.data.N, s));
+            sc(1).subs = name;
+            sc(2).subs = idx;
+            nnzN = nnzN + nnz(subsref(om.cost.data.N, sc));
             if isfield(om.cost.data.H, name)
-                nnzH = nnzH + nnz(subsref(om.cost.data.H, s));
+                nnzH = nnzH + nnz(subsref(om.cost.data.H, sc));
             end
         end
     end
@@ -55,9 +61,6 @@ if nargin > 1 || isempty(om.cost.params)
     mm = dd;                                %% default => no scaling
     
     %% fill in each piece
-    s2 = s;
-    s(2).type = '()';
-    s1 = s;
     for k = 1:om.cost.NS
         name = om.cost.order(k).name;
         idx  = om.cost.order(k).idx;
@@ -65,14 +68,14 @@ if nargin > 1 || isempty(om.cost.params)
             N = om.cost.idx.N.(name);       %% number of rows to add
         else
             % (calls to substruct() are relatively expensive ...
-            % s1 = substruct('.', name, '()', idx);
-            % s2 = substruct('.', name, '{}', idx);
+            % sn = substruct('.', name, '()', idx);
+            % sc = substruct('.', name, '{}', idx);
             % ... so replace them with these more efficient lines)
-            s1(1).subs = name;
-            s1(2).subs = idx;
-            s2(1).subs = name;
-            s2(2).subs = idx;
-            N = subsref(om.cost.idx.N, s1); %% number of rows to add
+            sn(1).subs = name;
+            sn(2).subs = idx;
+            sc(1).subs = name;
+            sc(2).subs = idx;
+            N = subsref(om.cost.idx.N, sn); %% number of rows to add
         end
         if N                                %% non-zero number of rows to add
             if isempty(idx)
@@ -81,10 +84,10 @@ if nargin > 1 || isempty(om.cost.params)
                 iN = om.cost.idx.iN.(name);         %% ending row index
                 vs = om.cost.data.vs.(name);        %% var sets
             else
-                Nk = subsref(om.cost.data.N, s2);   %% N for kth cost set
-                i1 = subsref(om.cost.idx.i1, s1);   %% starting row index
-                iN = subsref(om.cost.idx.iN, s1);   %% ending row index
-                vs = subsref(om.cost.data.vs, s2);  %% var sets
+                Nk = subsref(om.cost.data.N, sc);   %% N for kth cost set
+                i1 = subsref(om.cost.idx.i1, sn);   %% starting row index
+                iN = subsref(om.cost.idx.iN, sn);   %% ending row index
+                vs = subsref(om.cost.data.vs, sc);  %% var sets
             end
             if isempty(vs)          %% full rows
                 if size(Nk,2) == om.var.N
@@ -118,21 +121,21 @@ if nargin > 1 || isempty(om.cost.params)
                     mm(i1:iN) = om.cost.data.mm.(name);
                 end
             else
-                Cw(i1:iN) = subsref(om.cost.data.Cw, s2);
-                if isfield(om.cost.data.H, name) && ~isempty(subsref(om.cost.data.H, s2))
-                    H(i1:iN, i1:iN) = subsref(om.cost.data.H, s2);
+                Cw(i1:iN) = subsref(om.cost.data.Cw, sc);
+                if isfield(om.cost.data.H, name) && ~isempty(subsref(om.cost.data.H, sc))
+                    H(i1:iN, i1:iN) = subsref(om.cost.data.H, sc);
                 end
-                if isfield(om.cost.data.dd, name) && ~isempty(subsref(om.cost.data.dd, s2))
-                    dd(i1:iN) = subsref(om.cost.data.dd, s2);
+                if isfield(om.cost.data.dd, name) && ~isempty(subsref(om.cost.data.dd, sc))
+                    dd(i1:iN) = subsref(om.cost.data.dd, sc);
                 end
-                if isfield(om.cost.data.rh, name) && ~isempty(subsref(om.cost.data.rh, s2))
-                    rh(i1:iN) = subsref(om.cost.data.rh, s2);
+                if isfield(om.cost.data.rh, name) && ~isempty(subsref(om.cost.data.rh, sc))
+                    rh(i1:iN) = subsref(om.cost.data.rh, sc);
                 end
-                if isfield(om.cost.data.kk, name) && ~isempty(subsref(om.cost.data.kk, s2))
-                    kk(i1:iN) = subsref(om.cost.data.kk, s2);
+                if isfield(om.cost.data.kk, name) && ~isempty(subsref(om.cost.data.kk, sc))
+                    kk(i1:iN) = subsref(om.cost.data.kk, sc);
                 end
-                if isfield(om.cost.data.mm, name) && ~isempty(subsref(om.cost.data.mm, s2))
-                    mm(i1:iN) = subsref(om.cost.data.mm, s2);
+                if isfield(om.cost.data.mm, name) && ~isempty(subsref(om.cost.data.mm, sc))
+                    mm(i1:iN) = subsref(om.cost.data.mm, sc);
                 end
             end
         end
