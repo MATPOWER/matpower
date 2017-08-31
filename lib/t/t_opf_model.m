@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 512;
+num_tests = 548;
 
 t_begin(num_tests, quiet);
 
@@ -543,7 +543,7 @@ t_is(full(A(ll.i1.mylin(2,1):ll.iN.mylin(2,1), vv.i1.x(2,1):vv.iN.x(2,1))), [0 -
 
 %%-----  nonlin_constraints  -----
 t = 'nonlin_constraints';
-x = (1:om.getN('var'))';
+x = (1:om.var.N)';
 [g, dg] = om.nonlin_constraints(x, 1);
 t_is(length(g), neN, 14, [t ' : length(g)']);
 t_ok(issparse(dg), [t ' : issparse(dg)']);
@@ -627,7 +627,7 @@ qcNS = 0;
 t_ok(om.getN('qdc') == qcN, sprintf('%s : qdc.N  = %d', t, qcN));
 t_ok(om.get('qdc', 'NS') == qcNS, sprintf('%s : qdc.NS = %d', t, qcNS));
 
-t = 'om.add_quadratic_costs(''qc1'', Q<matrix>, c, k, {''Pg'', ''Va''})';
+t = 'om.add_quadratic_costs(''qc1'', <mat>Q, c, k, {''Pg'', ''Va''})';
 n = nVa + nPg;
 Q1 = sparse(1:n, 1:n, 1:n, n, n) + sparse(1:n, n:-1:1, 1:n, n, n);
 c1 = 10*(1:n)';
@@ -637,7 +637,7 @@ qcNS = qcNS + 1; qcN = qcN + 1;
 t_ok(om.getN('qdc') == qcN, sprintf('%s : qdc.N  = %d', t, qcN));
 t_ok(om.get('qdc', 'NS') == qcNS, sprintf('%s : qdc.NS = %d', t, qcNS));
 
-t = 'om.add_quadratic_costs(''qc2'', Q<matrix>, c)';
+t = 'om.add_quadratic_costs(''qc2'', <mat>Q, c)';
 n = om.getN('var');
 Q2 = sparse(1, 1:n, 1:n, n, n) + sparse(1:n, 1, n:-1:1, n, n);
 c2 = 10*(n:-1:1)';
@@ -646,7 +646,7 @@ qcNS = qcNS + 1; qcN = qcN + 1;
 t_ok(om.getN('qdc') == qcN, sprintf('%s : qdc.N  = %d', t, qcN));
 t_ok(om.get('qdc', 'NS') == qcNS, sprintf('%s : qdc.NS = %d', t, qcNS));
 
-t = 'om.add_quadratic_costs(''qc3'', Q<vector>, c, k, {''Vm2'', ''Pg''})';
+t = 'om.add_quadratic_costs(''qc3'', <vec>Q, c, k, {''Vm2'', ''Pg''})';
 n = nVm2 + nPg;
 Q3 = 2*(1:n)';
 c3 = -1*(1:n)';
@@ -656,7 +656,7 @@ qcNS = qcNS + 1; qcN = qcN + n;
 t_ok(om.getN('qdc') == qcN, sprintf('%s : qdc.N  = %d', t, qcN));
 t_ok(om.get('qdc', 'NS') == qcNS, sprintf('%s : qdc.NS = %d', t, qcNS));
 
-t = 'om.add_quadratic_costs(''qc4'', Q<vector>, [], 0, vs)';
+t = 'om.add_quadratic_costs(''qc4'', <vec>Q, [], 0, vs)';
 n = om.getN('var', 'x', {2,1}) + om.getN('var', 'y', {1,1,1});
 Q4 = 1./(1:n)';
 vs = struct('name', {'x', 'y'}, 'idx', {{2,1}, {1,1,1}});
@@ -767,6 +767,97 @@ cc = [ 2139 2238 2337 2436 1751 1841 1931 1622 1611 1600 1589 1578 1566 1554 154
 t_is(Q, QQ, 14, [t, ' : Q']);
 t_is(c, cc, 14, [t, ' : c']);
 t_is(k, 4027, 14, [t, ' : k']);
+
+%%-----  eval_quad_cost  -----
+t = 'om.eval_quad_cost(x, ''qc1'')';
+x = (1:om.var.N)';
+[Q, c, k, vs] = om.params_quad_cost('qc1');
+xx = om.varsets_x(x, vs, 'vector');
+ef = 1/2 * xx'*Q*xx + c'*xx + k;
+edf = Q*xx + c;
+f = om.eval_quad_cost(x, 'qc1');
+t_is(f, ef, 14, [t, ' : f']);
+[f, df] = om.eval_quad_cost(x, 'qc1');
+t_is(f, ef, 14, [t, ' : f']);
+t_is(df, edf, 14, [t, ' : df']);
+[f, df, d2f] = om.eval_quad_cost(x, 'qc1');
+t_is(f, ef, 14, [t, ' : f']);
+t_is(df, edf, 14, [t, ' : df']);
+t_is(d2f, Q, 14, [t, ' : d2f']);
+
+t = 'om.eval_quad_cost(x, ''qc2'')';
+[Q, c, k, vs] = om.params_quad_cost('qc2');
+xx = om.varsets_x(x, vs, 'vector');
+ef = 1/2 * xx'*Q*xx + c'*xx + k;
+edf = Q*xx + c;
+[f, df, d2f] = om.eval_quad_cost(x, 'qc2');
+t_is(f, ef, 14, [t, ' : f']);
+t_is(df, edf, 14, [t, ' : df']);
+t_is(d2f, Q, 14, [t, ' : d2f']);
+
+t = 'om.eval_quad_cost(x, ''qc3'')';
+[Q, c, k, vs] = om.params_quad_cost('qc3');
+xx = om.varsets_x(x, vs, 'vector');
+ef = 1/2 * Q.*xx.^2 + c.*xx + k;
+edf = Q.*xx + c;
+[f, df, d2f] = om.eval_quad_cost(x, 'qc3');
+t_is(f, ef, 14, [t, ' : f']);
+t_is(df, edf, 14, [t, ' : df']);
+t_is(d2f, Q, 14, [t, ' : d2f']);
+
+t = 'om.eval_quad_cost(x, ''qc4'')';
+[Q, c, k, vs] = om.params_quad_cost('qc4');
+xx = om.varsets_x(x, vs, 'vector');
+ef = 1/2 * Q.*xx.^2 + k;
+edf = Q.*xx;
+[f, df, d2f] = om.eval_quad_cost(x, 'qc4');
+t_is(f, ef, 14, [t, ' : f']);
+t_is(df, edf, 14, [t, ' : df']);
+t_is(d2f, Q, 14, [t, ' : d2f']);
+
+t = 'om.eval_quad_cost(x, ''qc5'')';
+[Q, c, k, vs] = om.params_quad_cost('qc5');
+xx = om.varsets_x(x, vs, 'vector');
+ef = c.*xx + k;
+edf = c;
+[f, df, d2f] = om.eval_quad_cost(x, 'qc5');
+t_is(f, ef, 14, [t, ' : f']);
+t_is(df, edf, 14, [t, ' : df']);
+t_is(d2f, sparse(length(xx), 1), 14, [t, ' : d2f']);
+
+t = 'om.eval_quad_cost(x, ''qc6'')';
+[Q, c, k, vs] = om.params_quad_cost('qc6');
+xx = x;
+ef = c.*xx + k;
+edf = c;
+[f, df, d2f] = om.eval_quad_cost(x, 'qc6');
+t_is(f, ef, 14, [t, ' : f']);
+t_is(df, edf, 14, [t, ' : df']);
+t_is(d2f, sparse(length(x), 1), 14, [t, ' : d2f']);
+
+for i = 1:2
+    for j = 1:2
+        t = sprintf('om.eval_quad_cost(x, ''qc'', {%d, %d})', i, j);
+        [Q, c, k, vs] = om.params_quad_cost('qc', {i,j});
+        xx = om.varsets_x(x, vs, 'vector');
+        ef = 1/2 * xx'*Q*xx + c'*xx + k;
+        edf = Q*xx + c;
+        [f, df, d2f] = om.eval_quad_cost(x, 'qc', {i,j});
+        t_is(f, ef, 14, [t, ' : f']);
+        t_is(df, edf, 14, [t, ' : df']);
+        t_is(d2f, Q, 14, [t, ' : d2f']);
+    end
+end
+
+t = 'om.eval_quad_cost(x)';
+[Q, c, k] = om.params_quad_cost();
+xx = x;
+ef = 1/2 * xx'*Q*xx + c'*xx + k;
+edf = Q*xx + c;
+[f, df, d2f] = om.eval_quad_cost(x);
+t_is(f, ef, 14, [t, ' : f']);
+t_is(df, edf, 14, [t, ' : df']);
+t_is(d2f, Q, 14, [t, ' : d2f']);
 
 
 %%-----  add_costs  -----

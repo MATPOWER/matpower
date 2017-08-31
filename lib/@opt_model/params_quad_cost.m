@@ -128,4 +128,7 @@ else                %% aggregate
         c = cache.c;
         k = cache.k;
     end
+    if nargout > 3
+        vs = {};
+    end
 end
