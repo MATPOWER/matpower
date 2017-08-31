@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 444;
+num_tests = 512;
 
 t_begin(num_tests, quiet);
 
@@ -226,6 +226,155 @@ t_is(vu(vv.i1.y(2,2,4):vv.iN.y(2,2,4)), 100+(n:-1:1)', 14, [t ' : vu(vv.i1.y(2,2
 t_is(vt(vv.i1.y(2,2,4):vv.iN.y(2,2,4)), 'IIBIIIII', 14, [t ' : vt(vv.i1.y(2,2,4):vv.iN.y(2,2,4))']);
 vt0 = 'CCCCCCCIIIIICIBICCCCCCCCCCCCCCCCCCCCCCCCCCCCIIIIIIIIIIIIIIIIIIIIIIBBBBBBBBBBBBBBBBBBBBBBBBBBCICCCICCCCICCCCCICCCCCIIBIIIIBIIIIIBIIIIIIBIIIIIBBBCBBBBBCBBBBBBCBBBBBBBCBBBBB';
 t_is(vt, vt0, 14, [t ' : vt']);
+
+%%-----  varsets_len  -----
+t = 'om.varsets_len(vs) : ';
+vs = om.varsets_cell2struct({'Pg'});
+t_is(om.varsets_len(vs), 3, 14, [t '{''Pg''}']);
+
+vs = om.varsets_cell2struct({'Pg', 'Va'});
+t_is(om.varsets_len(vs), 7, 14, [t '{''Pg'', ''Va''}']);
+
+vs = struct('name', 'x', 'idx', {{1,1},{2,1}});
+t_is(om.varsets_len(vs), 5, 14, [t '''x'', {{1,1},{2,1}}']);
+
+vs = om.varsets_cell2struct({'x'});
+t_is(om.varsets_len(vs), 9, 14, [t '{''x''}']);
+
+vs = om.varsets_cell2struct({'x', 'y', 'Pg'});
+t_is(om.varsets_len(vs), 156, 14, [t '{''x'', ''y'', ''Pg''}']);
+
+vs = om.varsets_cell2struct({});
+t_is(om.varsets_len(vs), om.var.N, 14, [t '<all>']);
+
+%%-----  varsets_idx  -----
+t = 'om.varsets_idx(vs) : ';
+vv = om.get_idx('var');
+vs = om.varsets_cell2struct({'Pg'});
+t_is(om.varsets_idx(vs), [vv.i1.Pg:vv.iN.Pg], 14, [t '{''Pg''}']);
+
+vs = om.varsets_cell2struct({'Pg', 'Va'});
+t_is(om.varsets_idx(vs), [vv.i1.Pg:vv.iN.Pg vv.i1.Va:vv.iN.Va], 14, [t '{''Pg'', ''Va''}']);
+
+vs = struct('name', 'x', 'idx', {{1,1},{2,1}});
+t_is(om.varsets_idx(vs), [vv.i1.x(1,1):vv.iN.x(1,1) vv.i1.x(2,1):vv.iN.x(2,1)], 14, [t '''x'', {{1,1},{2,1}}']);
+
+vs = om.varsets_cell2struct({'x'});
+t_is(om.varsets_idx(vs), [vv.i1.x(1,1):vv.iN.x(1,1) vv.i1.x(1,2):vv.iN.x(1,2) vv.i1.x(2,1):vv.iN.x(2,1) vv.i1.x(2,2):vv.iN.x(2,2)], 14, [t '{''x''}']);
+
+vs = om.varsets_cell2struct({});
+t_is(om.varsets_idx(vs), 1:om.var.N, 14, [t '<all>']);
+
+%%-----  varsets_x  -----
+t = 'varsets_x(x, vs) : ';
+x = (1:om.var.N)';
+vs = om.varsets_cell2struct({'Pg'});
+xx = om.varsets_x(x, vs);
+t_is(length(xx), 1, 14, [t '{''Pg''} : length']);
+t_is(xx{1}, [vv.i1.Pg:vv.iN.Pg]', 14, [t '{''Pg''} : 1']);
+
+vs = om.varsets_cell2struct({'Pg', 'Va'});
+xx = om.varsets_x(x, vs);
+t_is(length(xx), 2, 14, [t '{''Pg'', ''Va''} : length']);
+t_is(xx{1}, [vv.i1.Pg:vv.iN.Pg]', 14, [t '{''Pg'', ''Va''} : 1']);
+t_is(xx{2}, [vv.i1.Va:vv.iN.Va]', 14, [t '{''Pg'', ''Va''} : 2']);
+
+vs = struct('name', 'x', 'idx', {{1,1},{2,1}});
+xx = om.varsets_x(x, vs);
+t_is(length(xx), 2, 14, [t '''x'', {{1,1},{2,1}} : length']);
+t_is(xx{1}, [vv.i1.x(1,1):vv.iN.x(1,1)]', 14, [t '''x'', {{1,1},{2,1}} : 1']);
+t_is(xx{2}, [vv.i1.x(2,1):vv.iN.x(2,1)]', 14, [t '''x'', {{1,1},{2,1}} : 2']);
+
+vs = om.varsets_cell2struct({'x'});
+xx = om.varsets_x(x, vs);
+t_is(length(xx), 4, 14, [t '{''x''} : length']);
+t_is(xx{1}, [vv.i1.x(1,1):vv.iN.x(1,1)]', 14, [t '{''x''} : 1']);
+t_is(xx{2}, [vv.i1.x(1,2):vv.iN.x(1,2)]', 14, [t '{''x''} : 2']);
+t_is(xx{3}, [vv.i1.x(2,1):vv.iN.x(2,1)]', 14, [t '{''x''} : 3']);
+t_is(xx{4}, [vv.i1.x(2,2):vv.iN.x(2,2)]', 14, [t '{''x''} : 4']);
+
+vs = om.varsets_cell2struct({'x', 'y', 'Pg'});
+xx = om.varsets_x(x, vs);
+t_is(length(xx), 29, 14, [t '{''x'', ''y'', ''Pg''} : length']);
+t_is(xx{ 1}, [vv.i1.x(1,1):vv.iN.x(1,1)]', 14, [t '{''x'', ''y'', ''Pg''} :  1']);
+t_is(xx{ 2}, [vv.i1.x(1,2):vv.iN.x(1,2)]', 14, [t '{''x'', ''y'', ''Pg''} :  2']);
+t_is(xx{ 3}, [vv.i1.x(2,1):vv.iN.x(2,1)]', 14, [t '{''x'', ''y'', ''Pg''} :  3']);
+t_is(xx{ 4}, [vv.i1.x(2,2):vv.iN.x(2,2)]', 14, [t '{''x'', ''y'', ''Pg''} :  4']);
+t_is(xx{ 5}, [vv.i1.y(1,1,1):vv.iN.y(1,1,1)]', 14, [t '{''x'', ''y'', ''Pg''} :  5']);
+t_is(xx{ 6}, [vv.i1.y(1,1,2):vv.iN.y(1,1,2)]', 14, [t '{''x'', ''y'', ''Pg''} :  6']);
+t_is(xx{ 7}, [vv.i1.y(1,1,3):vv.iN.y(1,1,3)]', 14, [t '{''x'', ''y'', ''Pg''} :  7']);
+t_is(xx{ 8}, [vv.i1.y(1,1,4):vv.iN.y(1,1,4)]', 14, [t '{''x'', ''y'', ''Pg''} :  8']);
+t_is(xx{ 9}, [vv.i1.y(1,2,1):vv.iN.y(1,2,1)]', 14, [t '{''x'', ''y'', ''Pg''} :  9']);
+t_is(xx{10}, [vv.i1.y(1,2,2):vv.iN.y(1,2,2)]', 14, [t '{''x'', ''y'', ''Pg''} : 10']);
+t_is(xx{11}, [vv.i1.y(1,2,3):vv.iN.y(1,2,3)]', 14, [t '{''x'', ''y'', ''Pg''} : 11']);
+t_is(xx{12}, [vv.i1.y(1,2,4):vv.iN.y(1,2,4)]', 14, [t '{''x'', ''y'', ''Pg''} : 12']);
+t_is(xx{13}, [vv.i1.y(1,3,1):vv.iN.y(1,3,1)]', 14, [t '{''x'', ''y'', ''Pg''} : 13']);
+t_is(xx{14}, [vv.i1.y(1,3,2):vv.iN.y(1,3,2)]', 14, [t '{''x'', ''y'', ''Pg''} : 14']);
+t_is(xx{15}, [vv.i1.y(1,3,3):vv.iN.y(1,3,3)]', 14, [t '{''x'', ''y'', ''Pg''} : 15']);
+t_is(xx{16}, [vv.i1.y(1,3,4):vv.iN.y(1,3,4)]', 14, [t '{''x'', ''y'', ''Pg''} : 16']);
+t_is(xx{17}, [vv.i1.y(2,1,1):vv.iN.y(2,1,1)]', 14, [t '{''x'', ''y'', ''Pg''} : 17']);
+t_is(xx{18}, [vv.i1.y(2,1,2):vv.iN.y(2,1,2)]', 14, [t '{''x'', ''y'', ''Pg''} : 18']);
+t_is(xx{19}, [vv.i1.y(2,1,3):vv.iN.y(2,1,3)]', 14, [t '{''x'', ''y'', ''Pg''} : 19']);
+t_is(xx{20}, [vv.i1.y(2,1,4):vv.iN.y(2,1,4)]', 14, [t '{''x'', ''y'', ''Pg''} : 20']);
+t_is(xx{21}, [vv.i1.y(2,2,1):vv.iN.y(2,2,1)]', 14, [t '{''x'', ''y'', ''Pg''} : 21']);
+t_is(xx{22}, [vv.i1.y(2,2,2):vv.iN.y(2,2,2)]', 14, [t '{''x'', ''y'', ''Pg''} : 22']);
+t_is(xx{23}, [vv.i1.y(2,2,3):vv.iN.y(2,2,3)]', 14, [t '{''x'', ''y'', ''Pg''} : 23']);
+t_is(xx{24}, [vv.i1.y(2,2,4):vv.iN.y(2,2,4)]', 14, [t '{''x'', ''y'', ''Pg''} : 24']);
+t_is(xx{25}, [vv.i1.y(2,3,1):vv.iN.y(2,3,1)]', 14, [t '{''x'', ''y'', ''Pg''} : 25']);
+t_is(xx{26}, [vv.i1.y(2,3,2):vv.iN.y(2,3,2)]', 14, [t '{''x'', ''y'', ''Pg''} : 26']);
+t_is(xx{27}, [vv.i1.y(2,3,3):vv.iN.y(2,3,3)]', 14, [t '{''x'', ''y'', ''Pg''} : 27']);
+t_is(xx{28}, [vv.i1.y(2,3,4):vv.iN.y(2,3,4)]', 14, [t '{''x'', ''y'', ''Pg''} : 28']);
+t_is(xx{29}, [vv.i1.Pg:vv.iN.Pg]', 14, [t '{''x'', ''y'', ''Pg''} : 29']);
+
+vs = om.varsets_cell2struct({});
+xx = om.varsets_x(x, vs);
+t_is(length(xx), om.var.N, 14, [t '<all> : length']);
+t_is(xx, [1:om.var.N]', 14, [t '<all>']);
+
+t = 'varsets_x(x, vs, ''vector'') : ';
+vs = om.varsets_cell2struct({'Pg'});
+xx = om.varsets_x(x, vs, 'vector');
+t_is(length(xx), vv.N.Pg, 14, [t '{''Pg''} : length']);
+t_is(xx, [vv.i1.Pg:vv.iN.Pg]', 14, [t '{''Pg''}']);
+
+vs = om.varsets_cell2struct({'Pg', 'Va'});
+xx = om.varsets_x(x, vs, 'vector');
+t_is(length(xx), vv.N.Va + vv.N.Pg, 14, [t '{''Pg'', ''Va''} : length']);
+t_is(xx, [vv.i1.Pg:vv.iN.Pg vv.i1.Va:vv.iN.Va]', 14, [t '{''Pg'', ''Va''}']);
+
+vs = struct('name', 'x', 'idx', {{1,1},{2,1}});
+xx = om.varsets_x(x, vs, 'vector');
+t_is(length(xx), vv.N.x(1,1) + vv.N.x(2,1), 14, [t '''x'', {{1,1},{2,1}} : length']);
+t_is(xx, [vv.i1.x(1,1):vv.iN.x(1,1) vv.i1.x(2,1):vv.iN.x(2,1)]', 14, [t '''x'', {{1,1},{2,1}}']);
+
+vs = om.varsets_cell2struct({'x'});
+xx = om.varsets_x(x, vs, 'vector');
+t_is(length(xx), sum(vv.N.x(:)), 14, [t '{''x''} : length']);
+t_is(xx, [vv.i1.x(1,1):vv.iN.x(1,1) vv.i1.x(1,2):vv.iN.x(1,2) vv.i1.x(2,1):vv.iN.x(2,1) vv.i1.x(2,2):vv.iN.x(2,2)]', 14, [t '{''x''}']);
+
+vs = om.varsets_cell2struct({'x', 'y', 'Pg'});
+xx = om.varsets_x(x, vs, 'vector');
+t_is(length(xx), sum(vv.N.x(:))+sum(vv.N.y(:))+vv.N.Pg, 14, [t '{''x'', ''y'', ''Pg''} : length']);
+t_is(xx, [  vv.i1.x(1,1):vv.iN.x(1,1) vv.i1.x(1,2):vv.iN.x(1,2) ...
+            vv.i1.x(2,1):vv.iN.x(2,1) vv.i1.x(2,2):vv.iN.x(2,2) ...
+            vv.i1.y(1,1,1):vv.iN.y(1,1,1) vv.i1.y(1,1,2):vv.iN.y(1,1,2) ...
+            vv.i1.y(1,1,3):vv.iN.y(1,1,3) vv.i1.y(1,1,4):vv.iN.y(1,1,4) ...
+            vv.i1.y(1,2,1):vv.iN.y(1,2,1) vv.i1.y(1,2,2):vv.iN.y(1,2,2) ...
+            vv.i1.y(1,2,3):vv.iN.y(1,2,3) vv.i1.y(1,2,4):vv.iN.y(1,2,4) ...
+            vv.i1.y(1,3,1):vv.iN.y(1,3,1) vv.i1.y(1,3,2):vv.iN.y(1,3,2) ...
+            vv.i1.y(1,3,3):vv.iN.y(1,3,3) vv.i1.y(1,3,4):vv.iN.y(1,3,4) ...
+            vv.i1.y(2,1,1):vv.iN.y(2,1,1) vv.i1.y(2,1,2):vv.iN.y(2,1,2) ...
+            vv.i1.y(2,1,3):vv.iN.y(2,1,3) vv.i1.y(2,1,4):vv.iN.y(2,1,4) ...
+            vv.i1.y(2,2,1):vv.iN.y(2,2,1) vv.i1.y(2,2,2):vv.iN.y(2,2,2) ...
+            vv.i1.y(2,2,3):vv.iN.y(2,2,3) vv.i1.y(2,2,4):vv.iN.y(2,2,4) ...
+            vv.i1.y(2,3,1):vv.iN.y(2,3,1) vv.i1.y(2,3,2):vv.iN.y(2,3,2) ...
+            vv.i1.y(2,3,3):vv.iN.y(2,3,3) vv.i1.y(2,3,4):vv.iN.y(2,3,4) ...
+            vv.i1.Pg:vv.iN.Pg]', 14, [t '{''x'', ''y'', ''Pg''}']);
+
+vs = om.varsets_cell2struct({});
+xx = om.varsets_x(x, vs, 'vector');
+t_is(length(xx), om.var.N, 14, [t '<all> : length']);
+t_is(xx, [1:om.var.N]', 14, [t '<all>']);
 
 %%-----  add_lin_constraints  -----
 t = 'add_lin_constraints';

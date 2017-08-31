@@ -31,6 +31,7 @@ else
         % ... so replace it with these more efficient lines)
         sn(1).subs = vs(v).name;
         sn(2).subs = vs(v).idx;
-        nv = nv + subsref(om.var.idx.N, sn);
+        N = subsref(om.var.idx.N, sn);
+        nv = nv + sum(N(:));
     end
 end

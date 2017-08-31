@@ -1,9 +1,13 @@
-function xx = varsets_x(om, x, vs)
+function xx = varsets_x(om, x, vs, want_vector)
 %VARSETS_X  Returns a cell array of sub-vectors of X specified by VARSETS
 %   X = OM.VARSETS_X(X, VARSETS)
+%   X = OM.VARSETS_X(X, VARSETS, 'vector')
 %
 %   Returns a cell array of sub-vectors of X specified by VARSETS, or
 %   the full optimization vector X, if VARSETS is empty.
+%
+%   If a 3rd argument is present (value is ignored) the returned value is
+%   a single numeric vector.
 %
 %   See also VARSET_LEN
 
@@ -24,7 +28,7 @@ else                    %% selected rows of x
     %% the subscripts before use
     sn = struct('type', {'.', '()'}, 'subs', {'', 1});
 
-    xx = cell(size(vs));
+    xx = {};
     for v = 1:length(vs)
         vname = vs(v).name;
         vidx = vs(v).idx;
@@ -40,6 +44,18 @@ else                    %% selected rows of x
             i1 = subsref(om.var.idx.i1, sn);    %% starting row in full x
             iN = subsref(om.var.idx.iN, sn);    %% ending row in full x
         end
-        xx{v} = x(i1:iN);
+        if isscalar(i1)                 %% simple named set, or indexed named set
+            xx{end+1} = x(i1:iN);           %% single set of indices for varset
+        else                            %% multi-dim named set w/no index specified
+            ii1 = permute(i1, ndims(i1):-1:1);
+            iiN = permute(iN, ndims(i1):-1:1);
+            for j = 1:length(ii1(:))
+                xx{end+1} = x(ii1(j):iiN(j));   %% multiple sets of indices for varset
+            end
+        end
+
+    end
+    if nargin > 3
+        xx = vertcat(xx{:});
     end
 end
