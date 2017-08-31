@@ -12,18 +12,20 @@ function N = getN(om, set_type, name, idx)
 %       N = om.getN('lin')      : total number of linear constraints
 %       N = om.getN('nle')      : total number of nonlin equality constraints
 %       N = om.getN('nli')      : total number of nonlin inequality constraints
-%       N = om.getN('cost')         : total number of cost rows (in N)
-%       N = om.getN('var', name)    : number of variables in named set
-%       N = om.getN('lin', name)    : number of linear constraints in named set
-%       N = om.getN('nle', name)    : number of nonlin eq cons. in named set
-%       N = om.getN('nli', name)    : number of nonlin ineq cons. in named set
-%       N = om.getN('cost', name)   : number of cost rows (in N) in named set
-%       N = om.getN('var', name, idx) : number of variables in indexed named set
+%       N = om.getN('qdc')      : total number of quadratic cost rows
+%       N = om.getN('cost')     : total number of legacy cost rows (in N)
+%       N = om.getN('var', name)    : # of variables in named set
+%       N = om.getN('lin', name)    : # of linear constraints in named set
+%       N = om.getN('nle', name)    : # of nonlin eq cons. in named set
+%       N = om.getN('nli', name)    : # of nonlin ineq cons. in named set
+%       N = om.getN('qdc', name)    : # of quadratic cost rows in named set
+%       N = om.getN('cost', name)   : # of legacy cost rows (in N) in named set
+%       N = om.getN('var', name, idx) : # of variables in indexed named set
 %
 %   See also OPT_MODEL.
 
 %   MATPOWER
-%   Copyright (c) 2008-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2017, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

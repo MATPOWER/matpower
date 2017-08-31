@@ -137,6 +137,18 @@ HH = MN' * HHw * MN;
 CC = full(MN' * (CCw - HMR));
 C0 = 1/2 * MR' * HMR + sum(polycf(:, 3));   %% constant term of cost
 
+%% other quadratic costs
+if om.qdc.NS
+    [Q, c, k] = om.params_quad_cost();
+    if ~isempty(Q)
+        HH = HH + Q;
+    end
+    if ~isempty(c)
+        CC = CC + c;
+    end
+    C0 = C0 + k;
+end
+
 %% options
 if isempty(HH) || ~any(any(HH))
     model = 'LP';

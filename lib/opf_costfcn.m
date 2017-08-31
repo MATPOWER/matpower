@@ -36,9 +36,6 @@ function [f, df, d2f] = opf_costfcn(x, om, varargin)
 [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
     MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
     QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
-[F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
-    TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
-    ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 
 %% unpack data
@@ -78,7 +75,19 @@ else
   ccost = zeros(1, nxyz);
 end
 
-%% generalized cost term
+%% quadratic costs
+if om.qdc.NS
+    if nargout == 3
+        [fq, dfq, d2fq] = om.eval_quad_cost(x);
+    elseif nargout == 2
+        [fq, dfq] = om.eval_quad_cost(x);
+    else
+        fq = om.eval_quad_cost(x);
+    end
+    f = f + fq;
+end
+
+%% legacy user cost term
 if ~isempty(N)
     nw = size(N, 1);
     r = N * x - rh;                 %% Nx - rhat
@@ -120,7 +129,12 @@ if nargout > 1
   df = df + ccost';  % As in MINOS, the linear cost row is additive wrt
                      % any nonlinear cost.
 
-  %% generalized cost term
+  %% quadratic costs
+  if om.qdc.NS
+      df = df + dfq;
+  end
+
+  %% legacy user cost term
   if ~isempty(N)
     HwC = H * w + Cw;
     AA = N' * M * (LL + 2 * QQ * diagrr);
@@ -169,7 +183,12 @@ if nargout > 1
     i = [iPg iQg]';
     d2f = sparse(i, i, [d2f_dPg2; d2f_dQg2], nxyz, nxyz);
 
-    %% generalized cost
+    %% quadratic costs
+    if om.qdc.NS
+        d2f = d2f + d2fq;
+    end
+
+    %% legacy user cost
     if ~isempty(N)
         d2f = d2f + AA * H * AA' + 2 * N' * M * QQ * sparse(1:nw, 1:nw, HwC, nw, nw) * N;
     end

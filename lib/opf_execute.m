@@ -230,6 +230,15 @@ if ~sdp
     end
   end
 
+  %% assign values for components of quadratic cost
+  om_qdc_order = om.get('qdc', 'order');
+  for k = 1:length(om_qdc_order)
+    name = om_qdc_order(k).name;
+    if om.getN('qdc', name)
+      results.qdc.(name) = om.eval_quad_cost(results.x, name);
+    end
+  end
+
   %% assign values for components of user cost
   om_cost_order = om.get('cost', 'order');
   for k = 1:length(om_cost_order)
