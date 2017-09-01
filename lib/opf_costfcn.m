@@ -71,14 +71,6 @@ if norm(f-f1, Inf)
     error('Yikes! f: %g\n', norm(f-f1, Inf));
 end
 
-%% piecewise linear cost of P and Q
-if ny > 0
-  ccost = full(sparse(ones(1,ny), vv.i1.y:vv.iN.y, ones(1,ny), 1, nxyz));
-  f = f + ccost * x;
-else
-  ccost = zeros(1, nxyz);
-end
-
 %% quadratic costs
 if om.qdc.NS
     if nargout == 3
@@ -107,10 +99,6 @@ if nargout > 1
 if norm(df-df1, Inf)
     error('Yikes! df: %g\n', norm(df-df1, Inf));
 end
-
-  %% piecewise linear cost of P and Q
-  df = df + ccost';  % As in MINOS, the linear cost row is additive wrt
-                     % any nonlinear cost.
 
   %% quadratic costs
   if om.qdc.NS

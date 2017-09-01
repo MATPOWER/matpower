@@ -321,6 +321,9 @@ end
 if ny > 0
   om.add_vars('y', ny);
   om.add_lin_constraints('ycon', Ay, [], by, ycon_vars);            %% ncony
+  if ~legacy_formulation
+    om.add_quadratic_costs('pwl', [], ones(ny, 1), 0, {'y'});
+  end
 end
 
 %% add user vars, constraints and costs (as specified via A, ..., N, ...)

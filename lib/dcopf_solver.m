@@ -75,22 +75,7 @@ nxyz = om.getN('var');      %% total number of control vars of all types
 
 %% set up objective function of the form: f = 1/2 * X'*HH*X + CC'*X
 %% where X = [x;y;z]. First set up as quadratic function of w,
-%% f = 1/2 * w'*HHw*w + CCw'*w, where w = diag(M) * (N*X - Rhat). We
-%% will be building on the (optionally present) user supplied parameters.
-
-%% piece-wise linear costs
-any_pwl = (ny > 0);
-if any_pwl
-    Npwl = sparse(ones(ny,1), vv.i1.y:vv.iN.y, 1, 1, nxyz);     %% sum of y vars
-    Hpwl = 0;
-    Cpwl = 1;
-    fparm_pwl = [1 0 0 1];
-else
-    Npwl = sparse(0, nxyz);
-    Hpwl = [];
-    Cpwl = [];
-    fparm_pwl = [];
-end
+%% f = 1/2 * w'*HHw*w + CCw'*w, where w = diag(M) * (N*X - Rhat).
 
 %% quadratic costs
 npol = length(ipol);
@@ -105,21 +90,13 @@ if ~isempty(iqdr)
 end
 polycf(ilin, 2:3) = gencost(ipol(ilin), COST:COST+1);
 polycf = polycf * diag([ baseMVA^2 baseMVA 1]);     %% convert to p.u.
-Npol = sparse(1:npol, vv.i1.Pg-1+ipol, 1, npol, nxyz);         %% Pg vars
-Hpol = sparse(1:npol, 1:npol, 2*polycf(:, 1), npol, npol);
-Cpol = polycf(:, 2);
-fparm_pol = ones(npol,1) * [ 1 0 0 1 ];
-
-%% combine with user costs
-NN = [ Npwl; Npol ];
-HHw = [ Hpwl, sparse(any_pwl, npol);
-        sparse(npol, any_pwl), Hpol ];
-CCw = [Cpwl; Cpol];
-ffparm = [ fparm_pwl; fparm_pol ];
+NN = sparse(1:npol, vv.i1.Pg-1+ipol, 1, npol, nxyz);         %% Pg vars
+HHw = sparse(1:npol, 1:npol, 2*polycf(:, 1), npol, npol);
+CCw = polycf(:, 2);
+ffparm = ones(npol,1) * [ 1 0 0 1 ];
 
 %% transform quadratic coefficients for w into coefficients for X
-nnw = any_pwl+npol;
-M   = sparse(1:nnw, 1:nnw, ffparm(:, 4), nnw, nnw);
+M   = sparse(1:npol, 1:npol, ffparm(:, 4), npol, npol);
 MR  = M * ffparm(:, 2);
 HMR = HHw * MR;
 MN  = M * NN;
