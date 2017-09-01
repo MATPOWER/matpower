@@ -163,8 +163,7 @@ om.userdata.mpopt = mpopt;
 %% add flow limit violation variable (flv) and cost
 om.add_vars('flv', ns, zeros(ns, 1), zeros(ns, 1), Inf(ns, 1));
 Cw = s.cost(:, 1) * mpc.baseMVA;
-I = speye(ns, ns);
-om.add_costs('vc', struct('N', I, 'Cw', Cw), {'flv'});
+om.add_quadratic_costs('vc', [], Cw, 0, {'flv'});
 
 if strcmp(mpopt.model, 'DC')
     %% fetch Bf matrix for DC model
@@ -174,6 +173,7 @@ if strcmp(mpopt.model, 'DC')
     %% form constraints
     %%    Bf * Va - flv <= -Pfinj + Pfmax
     %%   -Bf * Va - flv <=  Pfinj + Pfmax
+    I = speye(ns, ns);
     Asf = [ Bf(s.idx, :) -I];
     Ast = [-Bf(s.idx, :) -I];
     lsf = -Inf(ns, 1);

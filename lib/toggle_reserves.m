@@ -193,7 +193,7 @@ Cw = r.cost(igr) * mpc.baseMVA;     %% per unit cost coefficients
 om.add_vars('R', ngr, [], Rmin, Rmax);
 om.add_lin_constraints('Pg_plus_R', Ar, [], ur, {'Pg', 'R'});
 om.add_lin_constraints('Rreq', r.zones(:, igr), lreq, [], {'R'});
-om.add_costs('Rcost', struct('N', I, 'Cw', Cw), {'R'});
+om.add_quadratic_costs('Rcost', [], Cw, 0, {'R'});
 
 
 %%-----  int2ext  ------------------------------------------------------
@@ -263,7 +263,7 @@ for k = igr0
     iz = find(r.zones(:, k));
     results.reserves.prc(k) = sum(results.lin.mu.l.Rreq(iz)) / results.baseMVA;
 end
-results.reserves.totalcost = results.cost.Rcost;
+results.reserves.totalcost = sum(results.qdc.Rcost);
 
 %% replace ng x 1 cost, qty with ngr x 1 originals
 if isfield(r, 'original')
