@@ -16,6 +16,7 @@ classdef opt_model < handle
 %   or variables:
 %       add_costs
 %       add_quadratic_costs
+%       add_nln_costs
 %       add_lin_constraints
 %       add_nln_constraints
 %       add_vars
@@ -37,6 +38,9 @@ classdef opt_model < handle
 %       get_idx
 %
 %   Build and return cost parameters and evaluate user-defined costs:
+%       params_quad_cost
+%       eval_quad_cost
+%       eval_nonlin_cost
 %       build_cost_params
 %       get_cost_params
 %       compute_cost
