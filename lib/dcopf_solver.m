@@ -57,8 +57,6 @@ mpc = om.get_mpc();
 [baseMVA, bus, gen, branch, gencost] = ...
     deal(mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch, mpc.gencost);
 cp = om.get_cost_params();
-[N, H, Cw] = deal(cp.N, cp.H, cp.Cw);
-fparm = [cp.dd cp.rh cp.kk cp.mm];
 Bf = om.get_userdata('Bf');
 Pfinj = om.get_userdata('Pfinj');
 [vv, ll] = om.get_idx();
@@ -68,7 +66,6 @@ ipol = find(gencost(:, MODEL) == POLYNOMIAL); %% polynomial costs
 ipwl = find(gencost(:, MODEL) == PW_LINEAR);  %% piece-wise linear costs
 nb = size(bus, 1);          %% number of buses
 nl = size(branch, 1);       %% number of branches
-nw = size(N, 1);            %% number of general cost vars, w
 ny = om.getN('var', 'y');   %% number of piece-wise linear costs
 nxyz = om.getN('var');      %% total number of control vars of all types
 
@@ -80,12 +77,6 @@ nxyz = om.getN('var');      %% total number of control vars of all types
 %% where X = [x;y;z]. First set up as quadratic function of w,
 %% f = 1/2 * w'*HHw*w + CCw'*w, where w = diag(M) * (N*X - Rhat). We
 %% will be building on the (optionally present) user supplied parameters.
-if any(cp.dd ~= 1)
-    error('dcopf_solver: DC OPF can only handle user-defined costs with d = 1');
-end
-if any(cp.kk)
-    error('dcopf_solver: DC OPF can only handle user-defined costs with no "dead zone", i.e. k = 0');
-end
 
 %% piece-wise linear costs
 any_pwl = (ny > 0);
@@ -120,15 +111,14 @@ Cpol = polycf(:, 2);
 fparm_pol = ones(npol,1) * [ 1 0 0 1 ];
 
 %% combine with user costs
-NN = [ Npwl; Npol; N ];
-HHw = [ Hpwl, sparse(any_pwl, npol+nw);
-        sparse(npol, any_pwl), Hpol, sparse(npol, nw);
-        sparse(nw, any_pwl+npol), H   ];
-CCw = [Cpwl; Cpol; Cw];
-ffparm = [ fparm_pwl; fparm_pol; fparm ];
+NN = [ Npwl; Npol ];
+HHw = [ Hpwl, sparse(any_pwl, npol);
+        sparse(npol, any_pwl), Hpol ];
+CCw = [Cpwl; Cpol];
+ffparm = [ fparm_pwl; fparm_pol ];
 
 %% transform quadratic coefficients for w into coefficients for X
-nnw = any_pwl+npol+nw;
+nnw = any_pwl+npol;
 M   = sparse(1:nnw, 1:nnw, ffparm(:, 4), nnw, nnw);
 MR  = M * ffparm(:, 2);
 HMR = HHw * MR;

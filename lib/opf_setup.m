@@ -364,3 +364,52 @@ end
 
 %% execute userfcn callbacks for 'formulation' stage
 om = run_userfcn(userfcn, 'formulation', om, mpopt);
+
+%% implement legacy user costs using quadratic or general non-linear costs
+om.build_cost_params();     %% construct full legacy user cost params
+cp = om.get_cost_params();  %% fetch them
+[N, H, Cw, rh, mm] = deal(cp.N, cp.H, cp.Cw, cp.rh, cp.mm);
+[nw, nx] = size(N);
+if nw
+    if any(cp.dd ~= 1) || any(cp.kk)    %% not simple quadratic form
+        if dc                           %% (includes "dead zone" or
+            if any(cp.dd ~= 1)          %% quadratic "penalty"
+                error('opf_setup: DC OPF can only handle legacy user-defined costs with d = 1');
+            end
+            if any(cp.kk)
+                error('opf_setup: DC OPF can only handle legacy user-defined costs with no "dead zone", i.e. k = 0');
+            end
+        elseif ~legacy_formulation
+            %% use general nonlinear cost to implement legacy user cost
+            user_cost_fcn = @(x)opf_legacy_user_cost_fcn(x, cp);
+            om.add_nln_costs('usr', user_cost_fcn);
+        end
+    else                                %% simple quadratic form
+        %% use a quadratic cost to implement legacy user cost
+        if dc || ~legacy_formulation
+            %% f = 1/2 * w'*H*w + Cw'*w, where w = diag(mm)*(N*x - rh)
+            %% Let: MN = diag(mm)*N
+            %%      MR = M * rh
+            %%      HMR  = H  * MR;
+            %%      HtMR = H' * MR;
+            %%  =>   w = MN*x - MR
+            %% f = 1/2 * (MN*x - MR)'*H*(MN*x - MR) + Cw'*(MN*x - MR)
+            %%   = 1/2 * x'*MN'*H*MN*x +
+            %%          (Cw'*MN - 1/2 * MR'*(H+H')*MN)*x +
+            %%          1/2 * MR'*H*MR - Cw'*MR
+            %%   = 1/2 * x'*Q*w + c'*x + k
+    
+            [N, H, Cw, rh, mm] = deal(cp.N, cp.H, cp.Cw, cp.rh, cp.mm);
+            nw = size(N, 1);            %% number of general cost vars, w
+            M    = sparse(1:nw, 1:nw, mm, nw, nw);
+            MN   = M * N;
+            MR   = M * rh;
+            HMR  = H  * MR;
+            HtMR = H' * MR;
+            Q = MN' * H * MN;
+            c = full(MN' * (Cw - 1/2*(HMR+HtMR)));
+            k = (1/2 * HtMR - Cw)' * MR;
+            om.add_quadratic_costs('usr', Q, c, k);
+        end
+    end
+end

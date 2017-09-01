@@ -41,9 +41,6 @@ function [f, df, d2f] = opf_costfcn(x, om, varargin)
 %% unpack data
 mpc = om.get_mpc();
 [baseMVA, gen, gencost] = deal(mpc.baseMVA, mpc.gen, mpc.gencost);
-cp = om.get_cost_params();
-[N, Cw, H, dd, rh, kk, mm] = deal(cp.N, cp.Cw, cp.H, cp.dd, ...
-                                    cp.rh, cp.kk, cp.mm);
 vv = om.get_idx();
 
 %% problem dimensions
@@ -94,31 +91,6 @@ if om.qdc.NS
     f = f + fq;
 end
 
-%% legacy user cost term
-if ~isempty(N)
-    nw = size(N, 1);
-    r = N * x - rh;                 %% Nx - rhat
-    iLT = find(r < -kk);            %% below dead zone
-    iEQ = find(r == 0 & kk == 0);   %% dead zone doesn't exist
-    iGT = find(r > kk);             %% above dead zone
-    iND = [iLT; iEQ; iGT];          %% rows that are Not in the Dead region
-    iL = find(dd == 1);             %% rows using linear function
-    iQ = find(dd == 2);             %% rows using quadratic function
-    LL = sparse(iL, iL, 1, nw, nw);
-    QQ = sparse(iQ, iQ, 1, nw, nw);
-    kbar = sparse(iND, iND, [   ones(length(iLT), 1);
-                                zeros(length(iEQ), 1);
-                                -ones(length(iGT), 1)], nw, nw) * kk;
-    rr = r + kbar;                  %% apply non-dead zone shift
-    M = sparse(iND, iND, mm(iND), nw, nw);  %% dead zone or scale
-    diagrr = sparse(1:nw, 1:nw, rr, nw, nw);
-    
-    %% linear rows multiplied by rr(i), quadratic rows by rr(i)^2
-    w = M * (LL + QQ * diagrr) * rr;
-
-    f = f + (w' * H * w) / 2 + Cw' * w;
-end
-
 %%----- evaluate cost gradient -----
 if nargout > 1
   %% index ranges
@@ -143,34 +115,6 @@ end
   %% quadratic costs
   if om.qdc.NS
       df = df + dfq;
-  end
-
-  %% legacy user cost term
-  if ~isempty(N)
-    HwC = H * w + Cw;
-    AA = N' * M * (LL + 2 * QQ * diagrr);
-    df = df + AA * HwC;
-    
-    %% numerical check
-    if 0    %% 1 to check, 0 to skip check
-      ddff = zeros(size(df));
-      step = 1e-7;
-      tol  = 1e-3;
-      for k = 1:length(x)
-        xx = x;
-        xx(k) = xx(k) + step;
-        ddff(k) = (opf_costfcn(xx, om) - f) / step;
-      end
-      if max(abs(ddff - df)) > tol
-        idx = find(abs(ddff - df) == max(abs(ddff - df)));
-        fprintf('\nMismatch in gradient\n');
-        fprintf('idx             df(num)         df              diff\n');
-        fprintf('%4d%16g%16g%16g\n', [ 1:length(df); ddff'; df'; abs(ddff - df)' ]);
-        fprintf('MAX\n');
-        fprintf('%4d%16g%16g%16g\n', [ idx'; ddff(idx)'; df(idx)'; abs(ddff(idx) - df(idx))' ]);
-        fprintf('\n');
-      end
-    end     %% numeric check
   end
 
   %% ---- evaluate cost Hessian -----
@@ -201,11 +145,6 @@ end
     %% quadratic costs
     if om.qdc.NS
         d2f = d2f + d2fq;
-    end
-
-    %% legacy user cost
-    if ~isempty(N)
-        d2f = d2f + AA * H * AA' + 2 * N' * M * QQ * sparse(1:nw, 1:nw, HwC, nw, nw) * N;
     end
   end
 end

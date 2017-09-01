@@ -31,9 +31,6 @@ dc  = strcmp(upper(mpopt.model), 'DC');
 alg = upper(mpopt.opf.ac.solver);
 sdp = strcmp(alg, 'SDPOPF');
 
-%% build user-defined costs
-om.build_cost_params();
-
 %% get indexing
 [vv, ll, nne, nni] = om.get_idx();
 
