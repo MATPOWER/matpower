@@ -67,6 +67,13 @@ else
   f = 0;
 end
 
+%% general nonlinear costs
+[f1, df1, d2f1] = eval_nonlin_cost(om, x);
+%norm(f-f1, Inf)
+if norm(f-f1, Inf)
+    error('Yikes! f: %g\n', norm(f-f1, Inf));
+end
+
 %% piecewise linear cost of P and Q
 if ny > 0
   ccost = full(sparse(ones(1,ny), vv.i1.y:vv.iN.y, ones(1,ny), 1, nxyz));
@@ -124,6 +131,10 @@ if nargout > 1
   df = zeros(nxyz, 1);
   df(iPg) = df_dPgQg(1:ng);
   df(iQg) = df_dPgQg((1:ng) + ng);
+%norm(df-df1, Inf)
+if norm(df-df1, Inf)
+    error('Yikes! df: %g\n', norm(df-df1, Inf));
+end
 
   %% piecewise linear cost of P and Q
   df = df + ccost';  % As in MINOS, the linear cost row is additive wrt
@@ -182,6 +193,10 @@ if nargout > 1
     end
     i = [iPg iQg]';
     d2f = sparse(i, i, [d2f_dPg2; d2f_dQg2], nxyz, nxyz);
+%norm(d2f-d2f1, Inf)
+if norm(d2f-d2f1, Inf)
+    error('Yikes! d2f: %g\n', norm(d2f-d2f1, Inf));
+end
 
     %% quadratic costs
     if om.qdc.NS

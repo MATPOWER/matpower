@@ -32,6 +32,17 @@ use_vg = mpopt.opf.use_vg;
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 
+%% define flag to indicate whether we are tied to legacy formulation
+%% implemented by legacy MINOS and PDIPM solvers (e.g. with hard-coded
+%% costs and constrain
+if strcmp(alg, 'MINOPF') || strcmp(alg, 'PDIPM') || ...
+        strcmp(alg, 'TRALM') || strcmp(alg, 'SDPOPF')
+    legacy_formulation = 1;
+else
+    legacy_formulation = 0;
+end
+
+
 %% data dimensions
 nb   = size(mpc.bus, 1);    %% number of buses
 nl   = size(mpc.branch, 1); %% number of branches
@@ -140,13 +151,15 @@ end
 
 %% set up initial variables and bounds
 Va   = bus(:, VA) * (pi/180);
-Vm   = bus(:, VM);
 Pg   = gen(:, PG) / baseMVA;
-Qg   = gen(:, QG) / baseMVA;
 Pmin = gen(:, PMIN) / baseMVA;
 Pmax = gen(:, PMAX) / baseMVA;
-Qmin = gen(:, QMIN) / baseMVA;
-Qmax = gen(:, QMAX) / baseMVA;
+if ~dc
+  Vm   = bus(:, VM);
+  Qg   = gen(:, QG) / baseMVA;
+  Qmin = gen(:, QMIN) / baseMVA;
+  Qmax = gen(:, QMAX) / baseMVA;
+end
 
 if dc               %% DC model
   %% more problem dimensions
@@ -200,6 +213,13 @@ else                %% AC model
   hess_mis = @(x, lam)opf_power_balance_hess(x, lam, mpc, Ybus, mpopt);
   fcn_flow = @(x)opf_branch_flow_fcn(x, mpc, Yf(il, :), Yt(il, :), il, mpopt);
   hess_flow = @(x, lam)opf_branch_flow_hess(x, lam, mpc, Yf(il, :), Yt(il, :), il, mpopt);
+  
+  %% nonlinear cost functions
+  [pcost qcost] = pqcost(mpc.gencost, ng);
+  cost_Pg = @(x)opf_gen_cost_fcn(x, baseMVA, pcost, mpopt);
+  if ~isempty(qcost)
+    cost_Qg = @(x)opf_gen_cost_fcn(x, baseMVA, qcost, mpopt);
+  end
 end
 
 %% voltage angle reference constraints
@@ -249,34 +269,52 @@ if ~isempty(pwl1)
   om.userdata.pwl1 = pwl1;
 end
 if dc
+  %% user data
   om.userdata.Bf = Bf;
   om.userdata.Pfinj = Pfinj;
   om.userdata.iang = iang;
+
+  %% optimization variables
   om.add_vars('Va', nb, Va, Val, Vau);
   om.add_vars('Pg', ng, Pg, Pmin, Pmax);
+
+  %% linear constraints
   om.add_lin_constraints('Pmis', Amis, bmis, bmis, {'Va', 'Pg'});   %% nb
   om.add_lin_constraints('Pf',  Bf(il,:), -upt, upf, {'Va'});       %% nl2
   om.add_lin_constraints('ang', Aang, lang, uang, {'Va'});          %% nang
+
+  %% quadratic generator costs
+%  om.add_quadratic_costs('polPg', Qpg, cpg, kpg, {'Pg'});
 else
+  %% user data
   om.userdata.Apqdata = Apqdata;
   om.userdata.iang = iang;
+
+  %% optimization variables
   om.add_vars('Va', nb, Va, Val, Vau);
   om.add_vars('Vm', nb, Vm, bus(:, VMIN), bus(:, VMAX));
   om.add_vars('Pg', ng, Pg, Pmin, Pmax);
   om.add_vars('Qg', ng, Qg, Qmin, Qmax);
+
   %% nonlinear constraints
   om.add_nln_constraints({'Pmis', 'Qmis'}, [nb;nb], 1, fcn_mis, hess_mis, {'Va', 'Vm', 'Pg', 'Qg'});
-  if strcmp(alg, 'MINOPF') || strcmp(alg, 'PDIPM') || ...
-        strcmp(alg, 'TRALM') || strcmp(alg, 'SDPOPF')
+  if legacy_formulation
     om.add_nln_constraints({'Sf', 'St'}, [nl;nl], 0, fcn_flow, hess_flow, {'Va', 'Vm'});
   else
     om.add_nln_constraints({'Sf', 'St'}, [nl2;nl2], 0, fcn_flow, hess_flow, {'Va', 'Vm'});
   end
+
   %% linear constraints
   om.add_lin_constraints('PQh', Apqh, [], ubpqh, {'Pg', 'Qg'});     %% npqh
   om.add_lin_constraints('PQl', Apql, [], ubpql, {'Pg', 'Qg'});     %% npql
   om.add_lin_constraints('vl',  Avl, lvl, uvl,   {'Pg', 'Qg'});     %% nvl
   om.add_lin_constraints('ang', Aang, lang, uang, {'Va'});          %% nang
+
+  %% generator polynomial costs
+  om.add_nln_costs('polPg', cost_Pg, {'Pg'});
+  if ~isempty(qcost)
+    om.add_nln_costs('polQg', cost_Qg, {'Qg'});
+  end
 end
 
 %% y vars, constraints for piece-wise linear gen costs
