@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 141;
+num_tests = 163;
 
 t_begin(num_tests, quiet);
 
@@ -157,7 +157,9 @@ if have_fcn('fmincon')
     qgbas    = pgend+1;       qgend    = qgbas+ng-1;
     nxyz = 2*nb + 2*ng;
     N = sparse((1:ng)', (pgbas:pgend)', mpc.baseMVA * ones(ng,1), ng, nxyz);
-    fparm = ones(ng,1) * [ 1 0 0 1 ];
+    fparm = [ 1    0   0 1;
+              1 -100 100 1;
+              1  -10  10 1 ];
     [junk, ix] = sort(mpc.gen(:, 1));
     H = 2 * spdiags(mpc.gencost(ix, 5), 0, ng, ng);
     Cw = mpc.gencost(ix, 6);
@@ -180,6 +182,39 @@ if have_fcn('fmincon')
     t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
     t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
     t_is(r.cost.usr, f, 12, [t 'user cost']);
+
+    %%-----  run OPF with legacy costs and deadzone  -----
+    load soln9_opf;
+    mpc = loadcase(casefile);
+    mpc.N = sparse((1:nb)', (vbas:vend)', ones(nb,1), nb, nxyz);
+    mpc.fparm = ones(nb,1) * [ 2 1.08 0.02 1e8 ];
+    mpc.Cw = ones(nb, 1);
+    t = [t0 'w/legacy cost, in deadzone : '];
+    r = runopf(mpc, mpopt);
+    [f, bus, gen, branch] = deal(r.f, r.bus, r.gen, r.branch);
+    t_ok(r.success, [t 'success']);
+    t_is(f, f_soln, 3, [t 'f']);
+    t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
+    t_is(   bus(:,ib_voltage),    bus_soln(:,ib_voltage),  3, [t 'bus voltage']);
+    t_is(   bus(:,ib_lam    ),    bus_soln(:,ib_lam    ),  3, [t 'bus lambda']);
+    t_is(   bus(:,ib_mu     ),    bus_soln(:,ib_mu     ),  2, [t 'bus mu']);
+    t_is(   gen(:,ig_data   ),    gen_soln(:,ig_data   ), 10, [t 'gen data']);
+    t_is(   gen(:,ig_disp   ),    gen_soln(:,ig_disp   ),  3, [t 'gen dispatch']);
+    t_is(   gen(:,ig_mu     ),    gen_soln(:,ig_mu     ),  3, [t 'gen mu']);
+    t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
+    t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
+    t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
+    t_is(r.cost.usr, 0, 12, [t 'user cost']);
+
+    t = [t0 'w/legacy cost, not in deadzone : '];
+    mpc.fparm = ones(nb,1) * [ 2 1.08 0.01 1e8 ];
+    r = runopf(mpc, mpopt);
+    [f, bus, gen, branch] = deal(r.f, r.bus, r.gen, r.branch);
+    t_ok(r.success, [t 'success']);
+    t_is(f, 9009.0890, 3, [t 'f']);
+    t_is([min(bus(:, VM)) mean(bus(:, VM)) max(bus(:, VM))], ...
+        [1.066624, 1.083980, 1.091698], 5, [t 'bus voltage']);
+    t_is(r.cost.usr, 1673.065465, 4, [t 'user cost']);
 
     %%-----  run OPF with extra linear user constraints & costs  -----
     %% single new z variable constrained to be greater than or equal to
@@ -345,6 +380,21 @@ if have_fcn('fmincon')
     t_is(r.branch(:,ibr_flow  ), branch_soln1(:,ibr_flow  ),  3, [t 'branch flow']);
     t_is(r.branch(:,ibr_mu    ), branch_soln1(:,ibr_mu    ),  2, [t 'branch mu']);
 
+    t = [t0 'hi-deg polynomial costs : '];
+    mpc = loadcase(casefile);
+    mpc.gencost = [
+        2   1500    0   6   1e-6/5  0   0   0   0   0;
+        2   2000    0   3   1/2     0   0   0   0   0;
+        2   3000    0   5   1e-4/4  0   0   0   0   0;
+    ];
+    r = runopf(mpc, mpopt);
+    [f, bus, gen, branch] = deal(r.f, r.bus, r.gen, r.branch);
+    t_ok(r.success, [t 'success']);
+    t_is(f, 11899.4652, 4, [t 'f']);
+    t_is(gen(:, PG), [100.703628; 128.679485; 88.719864], 5, [t 'f']);
+    t_is([min(bus(:, VM)) mean(bus(:, VM)) max(bus(:, VM))], ...
+        [1.059191 1.079404 1.1], 5, [t 'bus voltage']);
+
     %% OPF with user-defined nonlinear constraints
     t = [t0 'w/nonlin eq constraint'];
     mpc = loadcase('case30');
@@ -352,6 +402,7 @@ if have_fcn('fmincon')
         {'Pg_usr', 1, 'opf_nle_fcn1', 'opf_nle_hess1', {'Pg'}, {}}
     };
     r = runopf(mpc, mpopt);
+    t_ok(r.success, [t 'success']);
     t_is(r.gen(1, PG) * r.gen(2, PG) / 100, r.gen(6, PG), 8, t);
     t_is(r.gen(6, PG), 20.751163, 5, t);
 else

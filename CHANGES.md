@@ -12,6 +12,12 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 9/5/17
+  - Add tests for OPF with high-degree polynomial (greater than quadratic)
+    generator cost functions.
+  - Add tests for OPF with legacy user-defined cost functions that include
+    "dead zone" with quadratic "penalty".
+
 #### 8/22/17
   - Add options `'cpf.enforce_v_lims'` and `'cpf.enforce_flow_lims'` to
     enforce bus voltage magnitude and branch flow limits in the
