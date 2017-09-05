@@ -32,8 +32,7 @@ function [f, df, d2f] = opf_legacy_user_cost_fcn(x, cp)
 %% unpack data
 [N, Cw, H, dd, rh, kk, mm] = ...
     deal(cp.N, cp.Cw, cp.H, cp.dd, cp.rh, cp.kk, cp.mm);
-xx = vertcat(x{:});
-nx = length(xx);
+nx = length(x);
 
 if isempty(N)
     f = 0;
