@@ -37,7 +37,7 @@ if nargout == 3
     [f, df, d2f]    = om.eval_nonlin_cost(x);
     if om.qdc.NS
         [fq, dfq, d2fq] = om.eval_quad_cost(x);
-        f = f + fq;
+        f = f + sum(fq);
         df = df + dfq;
         d2f = d2f + d2fq;
     end
@@ -45,13 +45,13 @@ elseif nargout == 2
     [f, df]   = om.eval_nonlin_cost(x);
     if om.qdc.NS
         [fq, dfq] = om.eval_quad_cost(x);
-        f = f + fq;
+        f = f + sum(fq);
         df = df + dfq;
     end
 else
     f  = om.eval_nonlin_cost(x);
     if om.qdc.NS
         fq = om.eval_quad_cost(x);
-        f = f + fq;
+        f = f + sum(fq);
     end
 end

@@ -42,7 +42,6 @@ else
     legacy_formulation = 0;
 end
 
-
 %% data dimensions
 nb   = size(mpc.bus, 1);    %% number of buses
 nl   = size(mpc.branch, 1); %% number of branches
@@ -161,7 +160,57 @@ if ~dc
   Qmax = gen(:, QMAX) / baseMVA;
 end
 
+%% find/prepare polynomial generator costs
+cpg = [];
+cqg = [];
+[pcost qcost] = pqcost(mpc.gencost, ng);
+ip0 = find(pcost(:, MODEL) == POLYNOMIAL & pcost(:, NCOST) == 1);   %% constant
+ip1 = find(pcost(:, MODEL) == POLYNOMIAL & pcost(:, NCOST) == 2);   %% linear
+ip2 = find(pcost(:, MODEL) == POLYNOMIAL & pcost(:, NCOST) == 3);   %% quadratic
+ip3 = find(pcost(:, MODEL) == POLYNOMIAL & pcost(:, NCOST) > 3);    %% cubic or greater
+if ~isempty(ip2) || ~isempty(ip1) || ~isempty(ip0)
+    kpg = zeros(ng, 1);
+    cpg = zeros(ng, 1);
+    if ~isempty(ip2)
+        Qpg = zeros(ng, 1);
+        Qpg(ip2) = 2 * pcost(ip2, COST) * baseMVA^2;
+        cpg(ip2) = cpg(ip2) + pcost(ip2, COST+1) * baseMVA;
+        kpg(ip2) = kpg(ip2) + pcost(ip2, COST+2);
+    else
+        Qpg = [];   %% no quadratic terms
+    end
+    cpg(ip1) = cpg(ip1) + pcost(ip1, COST) * baseMVA;
+    kpg(ip1) = kpg(ip1) + pcost(ip1, COST+1);
+    kpg(ip0) = kpg(ip0) + pcost(ip0, COST);
+end
+if ~isempty(qcost)
+    iq0 = find(qcost(:, MODEL) == POLYNOMIAL & qcost(:, NCOST) == 1);   %% constant
+    iq1 = find(qcost(:, MODEL) == POLYNOMIAL & qcost(:, NCOST) == 2);   %% linear
+    iq2 = find(qcost(:, MODEL) == POLYNOMIAL & qcost(:, NCOST) == 3);   %% quadratic
+    iq3 = find(qcost(:, MODEL) == POLYNOMIAL & qcost(:, NCOST) > 3);    %% cubic or greater
+    if ~isempty(iq2) || ~isempty(iq1) || ~isempty(iq0)
+        kqg = zeros(ng, 1);
+        cqg = zeros(ng, 1);
+        if ~isempty(iq2)
+            Qqg = zeros(ng, 1);
+            Qqg(iq2) = 2 * qcost(iq2, COST) * baseMVA^2;
+            cqg(iq2) = cqg(iq2) + qcost(iq2, COST+1) * baseMVA;
+            kqg(iq2) = kqg(iq2) + qcost(iq2, COST+2);
+        else
+            Qqg = [];   %% no quadratic terms
+        end
+        cqg(iq1) = cqg(iq1) + qcost(iq1, COST) * baseMVA;
+        kqg(iq1) = kqg(iq1) + qcost(iq1, COST+1);
+        kqg(iq0) = kqg(iq0) + qcost(iq0, COST);
+    end
+end
+
 if dc               %% DC model
+  %% check generator costs
+  if ~isempty(ip3)
+    error('opf_setup: DC OPF cannot handle polynomial costs with higher than quadratic order.');
+  end
+
   %% more problem dimensions
   nv    = 0;            %% number of voltage magnitude vars
   nq    = 0;            %% number of Qg vars
@@ -215,10 +264,11 @@ else                %% AC model
   hess_flow = @(x, lam)opf_branch_flow_hess(x, lam, mpc, Yf(il, :), Yt(il, :), il, mpopt);
   
   %% nonlinear cost functions
-  [pcost qcost] = pqcost(mpc.gencost, ng);
-  cost_Pg = @(x)opf_gen_cost_fcn(x, baseMVA, pcost, mpopt);
-  if ~isempty(qcost)
-    cost_Qg = @(x)opf_gen_cost_fcn(x, baseMVA, qcost, mpopt);
+  if ~isempty(ip3)
+    cost_Pg = @(x)opf_gen_cost_fcn(x, baseMVA, pcost, ip3, mpopt);
+  end
+  if ~isempty(qcost) && ~isempty(iq3)
+    cost_Qg = @(x)opf_gen_cost_fcn(x, baseMVA, qcost, iq3, mpopt);
   end
 end
 
@@ -245,7 +295,6 @@ end
 if any(gencost(:, MODEL) ~= POLYNOMIAL & gencost(:, MODEL) ~= PW_LINEAR)
     error('opf_setup: some generator cost rows have invalid MODEL value');
 end
-
 
 %% more problem dimensions
 nx    = nb+nv + ng+nq;  %% number of standard OPF control variables
@@ -284,7 +333,9 @@ if dc
   om.add_lin_constraints('ang', Aang, lang, uang, {'Va'});          %% nang
 
   %% quadratic generator costs
-%  om.add_quadratic_costs('polPg', Qpg, cpg, kpg, {'Pg'});
+  if ~isempty(cpg)
+    om.add_quadratic_costs('polPg', Qpg, cpg, kpg, {'Pg'});
+  end
 else
   %% user data
   om.userdata.Apqdata = Apqdata;
@@ -310,10 +361,23 @@ else
   om.add_lin_constraints('vl',  Avl, lvl, uvl,   {'Pg', 'Qg'});     %% nvl
   om.add_lin_constraints('ang', Aang, lang, uang, {'Va'});          %% nang
 
-  %% generator polynomial costs
-  om.add_nln_costs('polPg', cost_Pg, {'Pg'});
-  if ~isempty(qcost)
-    om.add_nln_costs('polQg', cost_Qg, {'Qg'});
+  %% polynomial generator costs
+  if ~legacy_formulation
+    %% quadratic/linear generator costs
+    if ~isempty(cpg)
+      om.add_quadratic_costs('polPg', Qpg, cpg, kpg, {'Pg'});
+    end
+    if ~isempty(cqg)
+      om.add_quadratic_costs('polQg', Qqg, cqg, kqg, {'Qg'});
+    end
+
+    %% higher order polynomial generator costs
+    if ~isempty(ip3)
+      om.add_nln_costs('polPg', cost_Pg, {'Pg'});
+    end
+    if ~isempty(qcost) && ~isempty(iq3)
+      om.add_nln_costs('polQg', cost_Qg, {'Qg'});
+    end
   end
 end
 
@@ -376,7 +440,7 @@ cp = om.get_cost_params();  %% fetch them
 if nw
     if any(cp.dd ~= 1) || any(cp.kk)    %% not simple quadratic form
         if dc                           %% (includes "dead zone" or
-            if any(cp.dd ~= 1)          %% quadratic "penalty"
+            if any(cp.dd ~= 1)          %%  quadratic "penalty")
                 error('opf_setup: DC OPF can only handle legacy user-defined costs with d = 1');
             end
             if any(cp.kk)

@@ -62,59 +62,16 @@ Pfinj = om.get_userdata('Pfinj');
 [vv, ll] = om.get_idx();
 
 %% problem dimensions
-ipol = find(gencost(:, MODEL) == POLYNOMIAL); %% polynomial costs
-ipwl = find(gencost(:, MODEL) == PW_LINEAR);  %% piece-wise linear costs
 nb = size(bus, 1);          %% number of buses
 nl = size(branch, 1);       %% number of branches
 ny = om.getN('var', 'y');   %% number of piece-wise linear costs
-nxyz = om.getN('var');      %% total number of control vars of all types
 
 %% linear constraints & variable bounds
 [A, l, u] = om.linear_constraints();
 [x0, xmin, xmax] = om.getv();
 
-%% set up objective function of the form: f = 1/2 * X'*HH*X + CC'*X
-%% where X = [x;y;z]. First set up as quadratic function of w,
-%% f = 1/2 * w'*HHw*w + CCw'*w, where w = diag(M) * (N*X - Rhat).
-
-%% quadratic costs
-npol = length(ipol);
-if any(find(gencost(ipol, NCOST) > 3))
-    error('dcopf_solver: DC opf cannot handle polynomial costs with higher than quadratic order.');
-end
-iqdr = find(gencost(ipol, NCOST) == 3);
-ilin = find(gencost(ipol, NCOST) == 2);
-polycf = zeros(npol, 3);                            %% quadratic coeffs for Pg
-if ~isempty(iqdr)
-  polycf(iqdr, :)   = gencost(ipol(iqdr), COST:COST+2);
-end
-polycf(ilin, 2:3) = gencost(ipol(ilin), COST:COST+1);
-polycf = polycf * diag([ baseMVA^2 baseMVA 1]);     %% convert to p.u.
-NN = sparse(1:npol, vv.i1.Pg-1+ipol, 1, npol, nxyz);         %% Pg vars
-HHw = sparse(1:npol, 1:npol, 2*polycf(:, 1), npol, npol);
-CCw = polycf(:, 2);
-ffparm = ones(npol,1) * [ 1 0 0 1 ];
-
-%% transform quadratic coefficients for w into coefficients for X
-M   = sparse(1:npol, 1:npol, ffparm(:, 4), npol, npol);
-MR  = M * ffparm(:, 2);
-HMR = HHw * MR;
-MN  = M * NN;
-HH = MN' * HHw * MN;
-CC = full(MN' * (CCw - HMR));
-C0 = 1/2 * MR' * HMR + sum(polycf(:, 3));   %% constant term of cost
-
-%% other quadratic costs
-if om.qdc.NS
-    [Q, c, k] = om.params_quad_cost();
-    if ~isempty(Q)
-        HH = HH + Q;
-    end
-    if ~isempty(c)
-        CC = CC + c;
-    end
-    C0 = C0 + k;
-end
+%% get cost parameters
+[HH, CC, C0] = om.params_quad_cost();
 
 %% options
 if isempty(HH) || ~any(any(HH))

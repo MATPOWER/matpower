@@ -1,4 +1,4 @@
-function [f, df, d2f] = opf_gen_cost_fcn(x, baseMVA, gencost, mpopt)
+function [f, df, d2f] = opf_gen_cost_fcn(x, baseMVA, gencost, ig, mpopt)
 %OPF_GEN_COST_FCN  Evaluates polynomial generator costs and derivatives.
 %   [F, DF, D2F] = OPF_GEN_COST_FCN(X, BASEMVA, COST, MPOPT)
 %
@@ -10,6 +10,7 @@ function [f, df, d2f] = opf_gen_cost_fcn(x, baseMVA, gencost, mpopt)
 %     BASEMVA : system per unit base
 %     GENCOST : standard gencost matrix corresponding to dispatch
 %               (active or reactive) provided in X
+%     IG : vector of generator indexes of interest
 %     MPOPT : MATPOWER options struct
 %
 %   Outputs:
@@ -18,9 +19,9 @@ function [f, df, d2f] = opf_gen_cost_fcn(x, baseMVA, gencost, mpopt)
 %     D2F : (optional) Hessian of polynomial costs
 %
 %   Examples:
-%       f = opf_gen_cost_fcn(x, baseMVA, gencost, mpopt);
-%       [f, df] = opf_gen_cost_fcn(x, baseMVA, gencost, mpopt);
-%       [f, df, d2f] = opf_gen_cost_fcn(x, baseMVA, gencost, mpopt);
+%       f = opf_gen_cost_fcn(x, baseMVA, gencost, ig, mpopt);
+%       [f, df] = opf_gen_cost_fcn(x, baseMVA, gencost, ig, mpopt);
+%       [f, df, d2f] = opf_gen_cost_fcn(x, baseMVA, gencost, ig, mpopt);
 
 %   MATPOWER
 %   Copyright (c) 1996-2017, Power Systems Engineering Research Center (PSERC)
@@ -32,32 +33,26 @@ function [f, df, d2f] = opf_gen_cost_fcn(x, baseMVA, gencost, mpopt)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %%----- initialize -----
-%% define named indices into data matrices
-[PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
-
-%% grab Pg or Qg
+if isempty(ig)
+    [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
+    ig = find(gencost(:, MODEL) == POLYNOMIAL);     %% poly MW / MVAr costs
+end
 PQg = x{1};                 %% active or reactive dispatch in p.u.
 ng = length(PQg);           %% number of dispatchable injections
 
 %%----- evaluate objective function -----
-%% polynomial cost
-ipol = find(gencost(:, MODEL) == POLYNOMIAL);   %% poly MW and MVAr costs
-xx = PQg(ipol) * baseMVA;   %% active or reactive dispatch in MW/MVAr
-if ~isempty(ipol)
-    f = sum( totcost(gencost(ipol, :), xx) );   %% cost of poly P or Q
-else
-    f = 0;
-end
+xx = PQg(ig) * baseMVA;     %% active or reactive dispatch in MW/MVAr
+f = sum( totcost(gencost(ig, :), xx) ); %% cost of poly P or Q
 
 %%----- evaluate cost gradient -----
 if nargout > 1
     %% polynomial cost of P and Q
-    df = zeros(ng, 1);        %% w.r.t p.u. Pg / Qg
-    df(ipol) = baseMVA * polycost(gencost(ipol, :), xx, 1);
+    df = zeros(ng, 1);      %% w.r.t p.u. Pg / Qg
+    df(ig) = baseMVA * polycost(gencost(ig, :), xx, 1);
 
     %% ---- evaluate cost Hessian -----
     if nargout > 2
         %% polynomial generator costs
-        d2f = sparse(ipol, ipol, baseMVA^2 * polycost(gencost(ipol, :), xx, 2), ng, ng);
+        d2f = sparse(ig, ig, baseMVA^2 * polycost(gencost(ig, :), xx, 2), ng, ng);
     end
 end
