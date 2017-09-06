@@ -7,9 +7,10 @@ function [Q, c, k, vs] = params_quad_cost(om, name, idx)
 %   [Q, C, K, VS] = OM.PARAMS_QUAD_COST(NAME, ...)
 %
 %   With no input parameters, it assembles and returns the parameters
-%   for the aggregate quadratic cost from all quadratic cost sets. The values
-%   of these parameters are cached for subsequent calls. The parameters are
-%   Q, C, and optionally K, where the quadratic cost is of the form
+%   for the aggregate quadratic cost from all quadratic cost sets added
+%   using ADD_QUADRATIC_COSTS. The values of these parameters are cached
+%   for subsequent calls. The parameters are Q, C, and optionally K,
+%   where the quadratic cost is of the form
 %       F(X) = 1/2 * X'*Q*X + C'*X + K
 %
 %   If a NAME is provided then it simply returns the parameters for the
@@ -18,9 +19,8 @@ function [Q, c, k, vs] = params_quad_cost(om, name, idx)
 %   to a cost function of the form
 %       F(X) = 1/2 * Q .* X.^2 + C .* X + K
 %
-%   In the case where a name is provided, an optional 4th output argument
-%   VS indicates the variable sets used by this cost set. The size of Q
-%   and C will be consistent with VS.
+%   An optional 4th output argument VS indicates the variable sets used by
+%   this cost set. The size of Q and C will be consistent with VS.
 %
 %   See also OPT_MODEL, ADD_QUADRATIC_COSTS.
 

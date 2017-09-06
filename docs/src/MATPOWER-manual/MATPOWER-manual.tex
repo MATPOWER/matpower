@@ -5655,7 +5655,7 @@ name & description \\
 \code{~~opf\_model}	& constructor for the \code{opf\_model} class	\\
 \code{@opt\_model/}	& optimization model object (\code{@opf\_model} base class)	\\
 \code{~~add\_constraints}\tnote{*}	& adds a named subset of constraints to the model	\\
-\code{~~add\_costs}	& adds a named subset of user-defined costs to the model	\\
+\code{~~add\_costs}\tnote{*}	& adds a named subset of legacy user-defined costs to the model	\\
 \code{~~add\_lin\_constraints}	& adds a named subset of linear constraints to the model	\\
 \code{~~add\_named\_set}\tnote{\dag}	& adds a named subset of costs, constraints or variables to the model	\\
 \code{~~add\_nln\_constraints}	& adds a named subset of nonlinear constraints to the model	\\
@@ -6830,7 +6830,12 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.1.pdf}{\m
 \item Include \LaTeX{} source code for \mum{} in \code{docs/src} and for \mostman{} in \code{most/docs/src}.
 \item Add support for exporting \matpower{} case to PSS/E RAW data format.
 \item Add options \codeq{cpf.enforce\_v\_lims} and \codeq{cpf.enforce\_flow\_lims} to enforce bus voltage magnitude and branch flow limits in the continuation power flow, and \codeq{cpf.v\_lims\_tol} and \codeq{cpf.flow\_lims\_tol} to control the respective detection tolerances.  \emph{Thanks to Ahmad Sadiq Abubakar and Shrirang Abhyankar.}
-\item Add support to core optimization model for general nonlinear constraints.
+\item Add support to core optimization model for:
+    \begin{itemize}
+    \item general nonlinear constraints
+    \item general nonlinear costs
+    \item quadratic costs
+    \end{itemize}
 \item Add support for user-defined nonlinear constraints in AC OPF.
 \item Expand support for soft branch flow limits to include AC OPF problems.
 \item New functions:
@@ -6842,9 +6847,10 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.1.pdf}{\m
     \item \code{opt\_model/add\_nln\_constraints()} to add nonlinear constraints to an optimization model.
     \item \code{opt\_model/init\_indexed\_name()} to initialize the indexes for an indexed name set of constraints, costs or variables.
     \end{itemize}
-    \item Deprecated function:
+    \item Deprecated functions:
     \begin{itemize}
     \item \code{opt\_model/add\_constraints()} -- use the corresponding one of the following methods instead: \code{add\_lin\_constraints()}, \code{add\_nln\_constraints()}, or \code{init\_indexed\_name()}.
+    \item \code{opt\_model/add\_costs()} -- use the corresponding one of the following methods instead: \code{add\_quadratic\_costs()},  \code{add\_nln\_costs()}, or \code{init\_indexed\_name()}.
     \end{itemize}
 \end{itemize}
 

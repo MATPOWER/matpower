@@ -12,11 +12,23 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 9/6/17
+  - Refactor AC and DC OPF code to use the new quadratic and general
+    nonlinear cost handling of `opt_model` to build and evaluate
+    generator and user-defined costs and their derivatives.
+
 #### 9/5/17
   - Add tests for OPF with high-degree polynomial (greater than quadratic)
     generator cost functions.
   - Add tests for OPF with legacy user-defined cost functions that include
     "dead zone" with quadratic "penalty".
+  - Lay ground work for user-defined nonlinear OPF costs by adding
+    support to `opt_model` for handling nonlinear costs with function
+    handles for evaluating the cost function, gradients and Hessian.
+  - Add support to `opt_model` for handling quadratic costs.
+  - Deprecate the legacy generalized cost mechanism in `opt_model`
+    based on `add_costs()` in favor the quadratic and general nonlinear
+    mechanisms, `add_quadratic_costs()` and `add_nln_costs()`.
 
 #### 8/22/17
   - Add options `'cpf.enforce_v_lims'` and `'cpf.enforce_flow_lims'` to
@@ -43,7 +55,7 @@ Since last release
   - **INCOMPATIBLE CHANGE:** Remove `nln.mu.l.<name>` and `nln.mu.u.<name>`
     fields from OPF `results` struct. Use `nle.lambda.<name>` and
     `nli.mu.<name>` fields instead for nonlinear constraint multipliers.
-  - **INCOMPATIBLE CHANGE:** Modify order of default output arguments of 
+  - **INCOMPATIBLE CHANGE:** Modify order of default output arguments of
     `opt_model/get_idx()`.
 
 #### 8/4/17
@@ -54,11 +66,11 @@ Since last release
     index types.
 
 #### 7/10/17
-  - Lay ground work for user-defined nonlinear OPF constraints, by adding
-    support for `opt_model` to handle nonlinear constraints with
+  - Lay ground work for user-defined nonlinear OPF constraints by adding
+    support to `opt_model` for handling nonlinear constraints with
     function handles for evaluating the constraint function, gradients
     and Hessian.
-  - Deprecated the `add_constraints()` method of `opt_model`. Use the
+  - Deprecate the `add_constraints()` method of `opt_model`. Use the
     corresponding one of the following methods instead:
     `add_lin_constraints()`, `add_nln_constraints()` or `init_indexed_name()`.
 
