@@ -71,7 +71,7 @@ ny = om.getN('var', 'y');   %% number of piece-wise linear costs
 [x0, LB, UB] = om.getv();
 
 %% linear constraints
-[A, l, u] = om.linear_constraints();
+[A, l, u] = om.params_lin_cons();
 
 %% split l <= A*x <= u into less than, equal to, greater than, and
 %% doubly-bounded sets

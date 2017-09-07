@@ -5675,11 +5675,12 @@ name & description \\
 \code{~~get}	& returns the value of a field of the object	\\
 \code{~~getv}	& returns the initial values and bounds for optimimization vector\tnote{\ddag}	\\
 \code{~~init\_indexed\_name}	& initializes the dimensions for an indexed named set of costs, constraints or variables	\\
-\code{~~linear\_constraints}	& builds and returns the full set of linear constraints ($A, l, u$)	\\
+\code{~~linear\_constraints}\tnote{*}	& builds and returns the full set of linear constraints ($A, l, u$)	\\
 \code{~~nonlin\_constraints}	& builds and returns the full set of nonlinear equality or inequality constraints and their gradients	\\
 \code{~~nonlin\_constraint\_hess}	& builds and returns the Hessian for the full set of nonlinear equality or inequality constraints	\\
 \code{~~opt\_model}	& constructor for the \code{opt\_model} class	\\
-\code{~~params\_quad\_cost}	& builds and returns the full set of quadratic cost coefficients	\\
+\code{~~params\_lin\_cons}	& builds and returns individual or full set of linear constraint parameters	\\
+\code{~~params\_quad\_cost}	& builds and returns individual or full set of quadratic cost coefficients	\\
 \code{~~valid\_named\_set\_type}\tnote{\dag}	& returns a label for given named set type if valid, empty otherwise	\\
 \code{~~varsets\_cell2struct}\tnote{\dag}	& converts a variable set list from a cell array to a struct array	\\
 \code{~~varsets\_idx}	& returns a vector of indices into the optimization variable~$x$ for variable set list	\\
@@ -6851,6 +6852,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.1.pdf}{\m
     \begin{itemize}
     \item \code{opt\_model/add\_constraints()} -- use the corresponding one of the following methods instead: \code{add\_lin\_constraints()}, \code{add\_nln\_constraints()}, or \code{init\_indexed\_name()}.
     \item \code{opt\_model/add\_costs()} -- use the corresponding one of the following methods instead: \code{add\_quadratic\_costs()},  \code{add\_nln\_costs()}, or \code{init\_indexed\_name()}.
+    \item \code{opt\_model/linear\_constraints()} -- use \code{opt\_model/params\_lin\_cons()} instead
     \end{itemize}
 \end{itemize}
 

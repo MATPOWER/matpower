@@ -527,9 +527,9 @@ t_is([ll.i1.Qmis ll.iN.Qmis ll.N.Qmis], [4 6 3], 14, [t ' : Qmis']);
 t_is(size(ll.i1.mylin), [2, 2], 14, [t ' : size(ll.i1.mylin)']);
 t_is([ll.i1.mylin(2,1) ll.iN.mylin(2,1) ll.N.mylin(2,1)], [12 14 3], 14, [t ' : mylin(2,1)']);
 
-%%-----  linear_constraints  -----
-t = 'linear_constraints';
-[A, l, u] = om.linear_constraints();
+%%-----  params_lin_cons  -----
+t = 'params_lin_cons';
+[A, l, u] = om.params_lin_cons();
 t_ok(issparse(A), [t ' : issparse(A)']);
 t_is(size(A), [lN, vN], 14, [t ' : size(A)']);
 t_is(length(l), lN, 14, [t ' : length(l)']);

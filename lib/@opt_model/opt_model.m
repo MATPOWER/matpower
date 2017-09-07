@@ -31,7 +31,8 @@ classdef opt_model < handle
 %       getv
 %
 %   Build and return full set of linear constraints:
-%       linear_constraints
+%       params_lin_cons
+%       linear_constraints (deprecated)
 %
 %   Return index structure for variables, linear and nonlinear constraints
 %   and costs:
