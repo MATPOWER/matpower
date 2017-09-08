@@ -1,8 +1,9 @@
 function om = add_costs(om, name, idx, varargin)
 %ADD_COSTS  Adds a set of user costs to the model.
 %
-%   -----  DEPRECATED - Please use one of the following instead:        -----
-%   -----  ADD_QUADRATIC_COSTS, ADD_NLN_COSTS, INIT_INDEXED_NAME  -----
+%   -----  DEPRECATED - Please use one of the following instead:  -----
+%   -----  ADD_QUADRATIC_COSTS, ADD_NLN_COSTS, ADD_LEGACY_COSTS   -----
+%   -----  or INIT_INDEXED_NAME                                   -----
 %
 %   OM.ADD_COSTS(NAME, CP);
 %   OM.ADD_COSTS(NAME, CP, VARSETS);
@@ -68,7 +69,7 @@ function om = add_costs(om, name, idx, varargin)
 %   See also OPT_MODEL, BUILD_COST_PARAMS, GET_COST_PARAMS, COMPUTE_COST.
 
 %   MATPOWER
-%   Copyright (c) 2008-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2017, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -78,60 +79,5 @@ function om = add_costs(om, name, idx, varargin)
 if iscell(idx) && isempty(varargin) %% just setting dimensions for indexed set
     om.init_indexed_name('cost', name, idx);
 else
-    if iscell(idx)
-        cp = varargin{1};
-        args = varargin(2:end);
-    else                            %% simple named set
-        cp = idx;
-        args = varargin;
-        idx = {};
-    end
-
-    if isempty(args)
-        varsets = {};
-    else
-        varsets = args{1};
-    end
-
-    %% convert varsets from cell to struct array if necessary
-    varsets = om.varsets_cell2struct(varsets);
-    nv = om.varsets_len(varsets);   %% number of variables
-
-    if isfield(cp, 'N')
-        [nw, nx] = size(cp.N);
-    else
-        nw = length(cp.Cw);
-        nx = nw;
-        cp.N = speye(nw, nx);
-    end
-    
-    %% check sizes
-    if nx ~= nv
-        if nw == 0
-            cp.N = sparse(nw, nx);
-        else
-            error('@opt_model/add_costs: number of columns in N (%d x %d) does not match\nnumber of variables (%d)\n', nw, nx, nv);
-        end
-    end
-    if size(cp.Cw, 1) ~= nw
-        error('@opt_model/add_costs: number of rows of Cw (%d x %d) and N (%d x %d) must match\n', size(cp.Cw), nw, nx);
-    end
-    if isfield(cp, 'H') && (size(cp.H, 1) ~= nw || size(cp.H, 2) ~= nw)
-        error('@opt_model/add_costs: both dimensions of H (%d x %d) must match the number of rows in N (%d x %d)\n', size(cp.H), nw, nx);
-    end
-    if isfield(cp, 'dd') && size(cp.dd, 1) ~= nw
-        error('@opt_model/add_costs: number of rows of dd (%d x %d) and N (%d x %d) must match\n', size(cp.dd), nw, nx);
-    end
-    if isfield(cp, 'rh') && size(cp.rh, 1) ~= nw
-        error('@opt_model/add_costs: number of rows of rh (%d x %d) and N (%d x %d) must match\n', size(cp.rh), nw, nx);
-    end
-    if isfield(cp, 'kk') && size(cp.kk, 1) ~= nw
-        error('@opt_model/add_costs: number of rows of kk (%d x %d) and N (%d x %d) must match\n', size(cp.kk), nw, nx);
-    end
-    if isfield(cp, 'mm') && size(cp.mm, 1) ~= nw
-        error('@opt_model/add_costs: number of rows of mm (%d x %d) and N (%d x %d) must match\n', size(cp.mm), nw, nx);
-    end
-    
-    %% add the legacy cost set
-    om.add_named_set('cost', name, idx, nw, cp, varsets);
+    om.add_legacy_costs(name, idx, varargin{:});
 end

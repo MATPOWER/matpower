@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 364;
+num_tests = 363;
 
 t_begin(num_tests, quiet);
 
@@ -482,15 +482,6 @@ for i = 1:2
         t_ok(om.getN('cost') == cN, sprintf('%s : cost.N  = %d', t, cN));
         t_ok(om.get('cost', 'NS') == cNS, sprintf('%s : cost.NS = %d', t, cNS));
     end
-end
-
-%%-----  get_cost_params/build_cost_params  -----
-t = 'get_cost_params : error';
-try
-    cp = om.get_cost_params();
-    t_ok(0, t);
-catch
-    t_ok(strfind(lasterr, '@opt_model/get_cost_params: must call build_cost_params first'), t);
 end
 
 t = 'build_cost_params';

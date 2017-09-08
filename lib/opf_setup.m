@@ -426,15 +426,14 @@ if nw
   if ~isempty(H)
     user_cost.H = H;
   end
-  om.add_costs('usr', user_cost, user_vars);
+  om.add_legacy_costs('usr', user_cost, user_vars);
 end
 
 %% execute userfcn callbacks for 'formulation' stage
 om = run_userfcn(userfcn, 'formulation', om, mpopt);
 
 %% implement legacy user costs using quadratic or general non-linear costs
-om.build_cost_params();     %% construct full legacy user cost params
-cp = om.get_cost_params();  %% fetch them
+cp = om.params_legacy_cost();   %% construct/fetch the parameters
 [N, H, Cw, rh, mm] = deal(cp.N, cp.H, cp.Cw, cp.rh, cp.mm);
 [nw, nx] = size(N);
 if nw
@@ -448,8 +447,8 @@ if nw
             end
         elseif ~legacy_formulation
             %% use general nonlinear cost to implement legacy user cost
-            user_cost_fcn = @(x)opf_legacy_user_cost_fcn(x, cp);
-            om.add_nln_costs('usr', user_cost_fcn);
+            legacy_cost_fcn = @(x)opf_legacy_user_cost_fcn(x, cp);
+            om.add_nln_costs('usr', legacy_cost_fcn);
         end
     else                                %% simple quadratic form
         %% use a quadratic cost to implement legacy user cost

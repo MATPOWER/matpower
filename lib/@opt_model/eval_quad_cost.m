@@ -14,7 +14,7 @@ function [f, df, d2f] = eval_quad_cost(om, x, name, idx)
 %       [f, df, d2f] = om.eval_quad_cost(x, name)
 %       [f, df, d2f] = om.eval_quad_cost(x, name, idx)
 %
-%   See also OPT_MODEL, ADD_QUADRATIC_COSTS.
+%   See also OPT_MODEL, ADD_QUADRATIC_COSTS, PARAMS_QUAD_COST.
 
 %   MATPOWER
 %   Copyright (c) 2008-2017, Power Systems Engineering Research Center (PSERC)

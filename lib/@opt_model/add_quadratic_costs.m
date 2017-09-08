@@ -45,7 +45,7 @@ function om = add_quadratic_costs(om, name, idx, Q, c, k, varsets)
 %         end
 %       end
 %
-%   See also OPT_MODEL, BUILD_COST_PARAMS, GET_COST_PARAMS, COMPUTE_COST.
+%   See also OPT_MODEL, PARAMS_QUAD_COST, EVAL_QUAD_COST.
 
 %   MATPOWER
 %   Copyright (c) 2008-2017, Power Systems Engineering Research Center (PSERC)

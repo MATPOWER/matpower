@@ -14,6 +14,7 @@ classdef opt_model < handle
 %
 %   Modify the OPF formulation by adding named blocks of costs, constraints
 %   or variables:
+%       add_legacy_costs
 %       add_quadratic_costs
 %       add_nln_costs
 %       add_lin_constraints
@@ -40,11 +41,13 @@ classdef opt_model < handle
 %
 %   Build and return cost parameters and evaluate user-defined costs:
 %       params_quad_cost
-%       eval_quad_cost
+%       params_legacy_cost
+%       eval_legacy_cost
 %       eval_nonlin_cost
-%       build_cost_params
+%       eval_quad_cost
 %       get_cost_params
-%       compute_cost
+%       compute_cost (deprecated)
+%       build_cost_params (deprecated)
 %
 %   Retreive user data in the model object:
 %       get_userdata
@@ -174,7 +177,7 @@ classdef opt_model < handle
 %                     in the order they were added
 %               .name   - name of the block, e.g. R
 %               .idx    - indices for name, {2,3} => R(2,3)
-%       .cost       - data for user-defined costs
+%       .cost       - data for legacy user-defined costs
 %           .idx
 %               .i1 - starting row index within full N matrix
 %               .iN - ending row index within full N matrix
@@ -182,7 +185,7 @@ classdef opt_model < handle
 %           .N      - total number of rows in full N matrix
 %           .NS     - number of cost blocks
 %           .data   - data for each user-defined cost block
-%               .N  - see help for ADD_COSTS for details
+%               .N  - see help for ADD_LEGACY_COSTS for details
 %               .H  -               "
 %               .Cw -               "
 %               .dd -               "

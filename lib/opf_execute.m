@@ -236,12 +236,12 @@ if ~sdp
     end
   end
 
-  %% assign values for components of user cost
+  %% assign values for components of legacy user cost
   om_cost_order = om.get('cost', 'order');
   for k = 1:length(om_cost_order)
     name = om_cost_order(k).name;
     if om.getN('cost', name)
-      results.cost.(name) = om.compute_cost(results.x, name);
+      results.cost.(name) = om.eval_legacy_cost(results.x, name);
     end
   end
 
