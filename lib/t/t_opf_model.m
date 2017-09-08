@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 547;
+num_tests = 591;
 
 t_begin(num_tests, quiet);
 
@@ -1046,6 +1046,139 @@ t = 'om.eval_legacy_cost(''wc'')';
 f = om.eval_legacy_cost(x, 'wc');
 t_is(f, 239, 14, t);
 
+%%-----  add_nln_costs  -----
+t = 'add_nln_costs';
+nlcN = 0;
+nlcNS = 0;
+t_ok(om.getN('nlc') == nlcN, sprintf('%s : nlc.N  = %d', t, nlcN));
+t_ok(om.get('nlc', 'NS') == nlcNS, sprintf('%s : nlc.NS = %d', t, nlcNS));
+
+t = 'om.add_nln_costs(''ucost'', 1, fcn, {''Va'', ''Pg''})';
+cp = struct('N', sparse([1:2 1:2 1:2]', [1:4 5 7]', [1 1 -1 -1 2 2]', 2,7), ...
+            'Cw', [2;3]);
+fcn = @(x)my_legacy_cost_fcn(x, cp, om, {'Va', 'Pg'});
+om.add_nln_costs('ucost', 1, fcn, {'Va', 'Pg'});
+nlcNS = nlcNS + 1; nlcN = nlcN + 1;
+t_ok(om.getN('nlc') == nlcN, sprintf('%s : nlc.N  = %d', t, nlcN));
+t_ok(om.get('nlc', 'NS') == nlcNS, sprintf('%s : nlc.NS = %d', t, nlcNS));
+
+t = 'om.add_nln_costs(''vcost'', cp)';
+cp = struct('N', sparse([1:2 1:2 1:2]', [1:4 5 7]', [1 1 -1 -1 2 2]', 2, vN), ...
+            'Cw', [2;3]);
+fcn = @(x)my_legacy_cost_fcn(x, cp, om);
+om.add_nln_costs('vcost', 1, fcn);
+nlcNS = nlcNS + 1; nlcN = nlcN + 1;
+t_ok(om.getN('nlc') == nlcN, sprintf('%s : nlc.N  = %d', t, nlcN));
+t_ok(om.get('nlc', 'NS') == nlcNS, sprintf('%s : nlc.NS = %d', t, nlcNS));
+
+t = 'om.init_indexed_name(''nlc'', ''wc'', {2,2})';
+om.init_indexed_name('nlc', 'wc', {2,2});
+t_ok(om.getN('nlc') == nlcN, sprintf('%s : nlc.N  = %d', t, nlcN));
+t_ok(om.get('nlc', 'NS') == nlcNS, sprintf('%s : nlc.NS = %d', t, nlcNS));
+
+for i = 1:2
+    for j = 1:2
+        t = 'om.add_nln_costs(''wc'', {i, j}, cp, vs)';
+        cp.N = sparse([1:(i+j) 1:(i+j)]', [1:(i+j) 5*ones(1,i+j)]', ...
+            [ones(i+j,1);-ones(i+j,1)], i+j, 3+2+(i==2 && j==1));
+        cp.Cw = (i+j:-1:1)';
+        if i == 2
+            cp.H = sparse((1:i+j)', (1:i+j)', (1:i+j)', i+j, i+j);
+        end
+        vs = struct('name', {'Pg', 'x'}, 'idx', {{}, {i,j}});
+        fcn = @(x)my_legacy_cost_fcn(x, cp, om, vs);
+        om.add_nln_costs('wc', {i, j}, 1, fcn, vs);
+        nlcNS = nlcNS + 1; nlcN = nlcN + 1;
+        t_ok(om.getN('nlc') == nlcN, sprintf('%s : nlc.N  = %d', t, nlcN));
+        t_ok(om.get('nlc', 'NS') == nlcNS, sprintf('%s : nlc.NS = %d', t, nlcNS));
+    end
+end
+
+%%-----  params_nln_cost  -----
+t = 'om.params_nln_cost(''ucost'')';
+[N, fcn] = om.params_nln_cost('ucost');
+t_is(N, 1, 14, [t, ' : N']);
+t_ok(isa(fcn, 'function_handle'), [t, ' : fcn']);
+
+t = 'om.params_nln_cost(''vcost'')';
+[N, fcn] = om.params_nln_cost('vcost');
+t_is(N, 1, 14, [t, ' : N']);
+t_ok(isa(fcn, 'function_handle'), [t, ' : fcn']);
+
+t = 'om.params_nln_cost(''wc'') : error';
+try
+    [N, fcn] = om.params_nln_cost('wc')
+    t_ok(0, t);
+catch
+    t_ok(strfind(lasterr, '@opt_model/params_nln_cost: general nonlinear cost set ''wc'' requires an IDX arg'), t);
+end
+
+t = 'om.params_nln_cost(''wc'', {1,2})';
+[N, fcn] = om.params_nln_cost('wc', {1,2});
+t_is(N, 1, 14, [t, ' : N']);
+t_ok(isa(fcn, 'function_handle'), [t, ' : fcn']);
+
+t = 'om.params_nln_cost(''wc'', {2,1})';
+[N, fcn] = om.params_nln_cost('wc', {2,1});
+t_is(N, 1, 14, [t, ' : N']);
+t_ok(isa(fcn, 'function_handle'), [t, ' : fcn']);
+
+%%-----  eval_nonlin_cost  -----
+t = 'om.eval_nonlin_cost(x) : ';
+x = [1:7 rand(1,10) 8:(vN-10)]';
+f = om.eval_nonlin_cost(x);
+ef = 343;
+ii = [1 2 3 4 5 6 7 19 21 23 25 26];
+jj = [1 1 1 1 1 1 1 1 1 1 1 1];
+ss = [4 6 -4 -6 1 -26 -29 -3 -6 34 -3 52];
+edf = full(sparse(ii,jj,ss,vN,1));
+ii = [5 23 26 6 23 26 7 23 26 5 6 7 23 25 26 5 6 7 25 26];
+jj = [5 5 5 6 6 6 7 7 7 23 23 23 23 25 25 26 26 26 26 26];
+ss = [2 -1 -1 4 -2 -2 6 -3 -3 -1 -2 -3 6 4 -4 -1 -2 -3 -4 10];
+ed2f = full(sparse(ii,jj,ss,vN,vN));
+t_is(f, ef, 14, [t 'f']);
+[f, df] = om.eval_nonlin_cost(x);
+t_is(f, ef, 14, [t 'f']);
+t_is(df, edf, 14, [t 'df']);
+[f, df, d2f] = om.eval_nonlin_cost(x);
+t_is(f, ef, 14, [t 'f']);
+t_is(df, edf, 14, [t 'df']);
+t_is(d2f, ed2f, 14, [t 'd2f']);
+
+t = 'om.eval_nonlin_cost(''ucost'') : ';
+f = om.eval_nonlin_cost(x, 'ucost');
+ef = 52;
+edf = [2; 3; -2; -3; 4; 0; 6];
+t_is(f, ef, 14, [t 'f']);
+[f, df] = om.eval_nonlin_cost(x, 'ucost');
+t_is(f, ef, 14, [t 'f']);
+t_is(df, edf, 14, [t 'df']);
+[f, df, d2f] = om.eval_nonlin_cost(x, 'ucost');
+t_is(f, ef, 14, [t 'f']);
+t_is(df, edf, 14, [t 'df']);
+t_is(full(d2f), zeros(7,7), 14, [t 'd2f']);
+
+t = 'om.eval_nonlin_cost(''wc'', {2,1}) : ';
+f = om.eval_nonlin_cost(x, 'wc', {2,1});
+ef = 91;
+edf = [-5; -12; -17; 0; 34; 0];
+ii = [1 5 2 5 3 5 1 2 3 5];
+jj = [1 1 2 2 3 3 5 5 5 5];
+ss = [1 -1 2 -2 3 -3 -1 -2 -3 6];
+ed2f = full(sparse(ii,jj,ss,6,6));
+t_is(f, ef, 14, [t 'f']);
+[f, df] = om.eval_nonlin_cost(x, 'wc', {2,1});
+t_is(f, ef, 14, [t 'f']);
+t_is(df, edf, 14, [t 'df']);
+[f, df, d2f] = om.eval_nonlin_cost(x, 'wc', {2,1});
+t_is(f, ef, 14, [t 'f']);
+t_is(df, edf, 14, [t 'df']);
+t_is(d2f, ed2f, 14, [t 'd2f']);
+
+t = 'om.eval_nonlin_cost(''wc'') : ';
+f = om.eval_nonlin_cost(x, 'wc');
+t_is(f, 239, 14, [t 'f']);
+
 % om
 % om = struct(om);
 
@@ -1082,3 +1215,31 @@ M = length(lam);
 MM = min(M, N);
 d2G = sparse(1:MM, 1:MM, xx(1:MM) + lam(1:MM) + p3, N, N);
 %full(d2G(1:MM,1:MM))
+
+function [varargout] = my_legacy_cost_fcn(x, cp, om, vs)
+[nw, nx] = size(cp.N);
+if ~isfield(cp, 'H') || isempty(cp.H)
+    cp.H = sparse(nw, nw);
+end
+if ~isfield(cp, 'dd') || isempty(cp.dd)
+    cp.dd = ones(nw, 1);
+end
+if ~isfield(cp, 'rh') || isempty(cp.rh)
+    cp.rh = zeros(nw, 1);
+end
+if ~isfield(cp, 'kk') || isempty(cp.kk)
+    cp.kk = zeros(nw, 1);
+end
+if ~isfield(cp, 'mm') || isempty(cp.mm)
+    cp.mm = ones(nw, 1);
+end
+if nargin < 4
+    vs = {};
+end
+if iscell(x)
+    xx = vertcat(x{:});
+else
+    xx = x;
+end
+vs = om.varsets_cell2struct(vs);
+[varargout{1:nargout}] = opf_legacy_user_cost_fcn(xx, cp);

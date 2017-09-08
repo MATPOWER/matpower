@@ -85,10 +85,10 @@ if iscell(idx)          %% indexed named set
         varsets = {};
     end
 else                    %% simple named set
-    if nargin > 6
-        varsets = hess;
-    else
+    if nargin < 7
         varsets = {};
+    else
+        varsets = hess;
     end
     if nargin > 4
         hess = fcn;

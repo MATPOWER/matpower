@@ -40,6 +40,7 @@ classdef opt_model < handle
 %       get_idx
 %
 %   Build and return cost parameters and evaluate user-defined costs:
+%       params_nln_cost
 %       params_quad_cost
 %       params_legacy_cost
 %       eval_legacy_cost

@@ -373,10 +373,10 @@ else
 
     %% higher order polynomial generator costs
     if ~isempty(ip3)
-      om.add_nln_costs('polPg', cost_Pg, {'Pg'});
+      om.add_nln_costs('polPg', 1, cost_Pg, {'Pg'});
     end
     if ~isempty(qcost) && ~isempty(iq3)
-      om.add_nln_costs('polQg', cost_Qg, {'Qg'});
+      om.add_nln_costs('polQg', 1, cost_Qg, {'Qg'});
     end
   end
 end
@@ -448,7 +448,7 @@ if nw
         elseif ~legacy_formulation
             %% use general nonlinear cost to implement legacy user cost
             legacy_cost_fcn = @(x)opf_legacy_user_cost_fcn(x, cp);
-            om.add_nln_costs('usr', legacy_cost_fcn);
+            om.add_nln_costs('usr', 1, legacy_cost_fcn);
         end
     else                                %% simple quadratic form
         %% use a quadratic cost to implement legacy user cost
