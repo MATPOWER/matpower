@@ -236,6 +236,15 @@ if ~sdp
     end
   end
 
+  %% assign values for components of general nonlinear cost
+  om_nlc_order = om.get('nlc', 'order');
+  for k = 1:length(om_nlc_order)
+    name = om_nlc_order(k).name;
+    if om.getN('nlc', name)
+      results.nlc.(name) = om.eval_nonlin_cost(results.x, name);
+    end
+  end
+
   %% assign values for components of legacy user cost
   om_cost_order = om.get('cost', 'order');
   for k = 1:length(om_cost_order)

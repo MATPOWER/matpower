@@ -12,6 +12,9 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 9/8/17
+  - Add general nonlinear cost values to OPF results in `results.nlc`.
+
 #### 9/6/17
   - Refactor AC and DC OPF code to use the new quadratic and general
     nonlinear cost handling of `opt_model` to build and evaluate
