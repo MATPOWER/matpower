@@ -1,10 +1,10 @@
 function [Q, c, k, vs] = params_quad_cost(om, name, idx)
-%PARAMS_QUAD_COST  Returns the cost parameter struct for user-defined costs.
+%PARAMS_QUAD_COST  Returns the cost parameters for quadratic costs.
 %   [Q, C] = OM.PARAMS_QUAD_COST()
 %   [Q, C] = OM.PARAMS_QUAD_COST(NAME)
 %   [Q, C] = OM.PARAMS_QUAD_COST(NAME, IDX)
 %   [Q, C, K] = OM.PARAMS_QUAD_COST(...)
-%   [Q, C, K, VS] = OM.PARAMS_QUAD_COST(NAME, ...)
+%   [Q, C, K, VS] = OM.PARAMS_QUAD_COST(...)
 %
 %   With no input parameters, it assembles and returns the parameters
 %   for the aggregate quadratic cost from all quadratic cost sets added
@@ -33,21 +33,21 @@ function [Q, c, k, vs] = params_quad_cost(om, name, idx)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 if nargin > 1       %% individual set
-    if nargin < 3 || isempty(idx)
+    if nargin < 3
         idx = {};
     end
-    if nargin < 3 || isempty(idx)
-        if prod(size(om.qdc.idx.i1.(name))) == 1
+    if isempty(idx)                 %% name, no index provided
+        if prod(size(om.qdc.idx.i1.(name))) == 1    %% simple named set
             Q = om.qdc.data.Q.(name);
             c = om.qdc.data.c.(name);
             k = om.qdc.data.k.(name);
             if nargout > 3
                 vs = om.qdc.data.vs.(name);
             end
-        else
+        else                                        %% indexing required
             error('@opt_model/params_quad_cost: quadratic cost set ''%s'' requires an IDX arg', name);
         end
-    else
+    else                            %% indexed named set
         % (calls to substruct() are relatively expensive ...
         % s = substruct('.', name, '{}', idx);
         % ... so replace it with these more efficient lines)

@@ -39,10 +39,10 @@ function [A, l, u, vs, i1, iN] = params_lin_cons(om, name, idx)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 if nargin > 1       %% individual set
-    if nargin < 3 || isempty(idx)
+    if nargin < 3
         idx = {};
     end
-    if nargin < 3 || isempty(idx)
+    if isempty(idx)
         if prod(size(om.lin.idx.i1.(name))) == 1
             A = om.lin.data.A.(name);
             l = om.lin.data.l.(name);

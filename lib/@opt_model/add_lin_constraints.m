@@ -57,10 +57,10 @@ if iscell(idx)          %% indexed named set
         varsets = {};
     end
 else                    %% simple named set
-    if nargin > 5
-        varsets = u;
-    else
+    if nargin < 6
         varsets = {};
+    else
+        varsets = u;
     end
     u = l;
     l = A;

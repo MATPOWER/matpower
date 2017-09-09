@@ -61,15 +61,15 @@ if iscell(idx)          %% indexed named set
         varsets = {};
     end
 else                    %% simple named set
-    if nargin > 5
-        varsets = k;
-    else
+    if nargin < 6
         varsets = {};
-    end
-    if nargin > 4
-        k = c;
     else
+        varsets = k;
+    end
+    if nargin < 5
         k = 0;
+    else
+        k = c;
     end
     c = Q;
     Q = idx;
