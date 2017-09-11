@@ -82,7 +82,7 @@ ny = om.getN('var', 'y');   %% number of piece-wise linear costs
 [A, l, u] = om.params_lin_cons();
 
 %% bounds on optimization vars
-[x0, xmin, xmax] = om.getv();
+[x0, xmin, xmax] = om.params_var();
 
 %% build admittance matrices
 [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);

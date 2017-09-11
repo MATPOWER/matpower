@@ -29,7 +29,8 @@ classdef opt_model < handle
 %       getN
 %
 %   Return the intial values, bounds and type for optimization variables:
-%       getv
+%       params_var
+%       getv (deprecated)
 %
 %   Build and return full set of linear constraints:
 %       params_lin_cons

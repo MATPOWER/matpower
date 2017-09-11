@@ -236,7 +236,7 @@ ng0  = size(o.ext.gen, 1);  %% number of gens (+ disp loads)
 %%-----  results post-processing  -----
 %% get the results (per gen reserves, multipliers) with internal gen indexing
 %% and convert from p.u. to per MW units
-[R0, Rl, Ru] = results.om.getv('R');
+[R0, Rl, Ru] = results.om.params_var('R');
 R       = zeros(ng, 1);
 Rmin    = zeros(ng, 1);
 Rmax    = zeros(ng, 1);

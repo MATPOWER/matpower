@@ -2567,7 +2567,7 @@ ng0 = size(results.order.ext.gen, 1);   %% number of gens (external)
 %%-----  results post-processing  -----
 %% get the results (per gen reserves, multipliers) with internal gen indexing
 %% and convert from p.u. to per MW units
-[R0, Rl, Ru] = results.om.getv('R');
+[R0, Rl, Ru] = results.om.params_var('R');
 R       = results.var.val.R * results.baseMVA;
 Rmin    = Rl * results.baseMVA;
 Rmax    = Ru * results.baseMVA;
@@ -5674,7 +5674,6 @@ name & description \\
 \code{~~get\_userdata}	& returns values of user data stored in the model	\\
 \code{~~getN}	& returns the number of variables, constraints or cost rows\tnote{\ddag}	\\
 \code{~~get}	& returns the value of a field of the object	\\
-\code{~~getv}	& returns the initial values and bounds for optimimization vector\tnote{\ddag}	\\
 \code{~~init\_indexed\_name}	& initializes the dimensions for an indexed named set of costs, constraints or variables	\\
 \code{~~nonlin\_constraints}	& builds and returns the full set of nonlinear equality or inequality constraints and their gradients	\\
 \code{~~nonlin\_constraint\_hess}	& builds and returns the Hessian for the full set of nonlinear equality or inequality constraints	\\
@@ -5683,6 +5682,7 @@ name & description \\
 \code{~~params\_legacy\_cost}	& builds and returns individual or full set of legacy user cost coefficients	\\
 \code{~~params\_nln\_cost}	& returns individual general nonlinear cost parameters	\\
 \code{~~params\_quad\_cost}	& builds and returns individual or full set of quadratic cost coefficients	\\
+\code{~~params\_var}	& returns the initial values, bounds and variable type for optimimization vector\tnote{\ddag}	\\
 \code{~~valid\_named\_set\_type}\tnote{\dag}	& returns a label for given named set type if valid, empty otherwise	\\
 \code{~~varsets\_cell2struct}\tnote{\dag}	& converts a variable set list from a cell array to a struct array	\\
 \code{~~varsets\_idx}	& returns a vector of indices into the optimization variable~$x$ for variable set list	\\
@@ -5716,6 +5716,7 @@ name & description \\
 \code{~~build\_cost\_params}\tnote{*}	& builds and stores the full generalized cost parameters in the model	\\
 \code{~~compute\_cost}\tnote{*}	& computes a user-defined cost\tnote{\ddag}	\\
 \code{~~get\_cost\_params}\tnote{*}	& returns the cost parameter struct created by \code{build\_cost\_params}\tnote{\ddag}	\\
+\code{~~getv}	& returns the initial values and bounds for optimimization vector\tnote{\ddag}	\\
 \code{~~linear\_constraints}\tnote{*}	& builds and returns the full set of linear constraints ($A, l, u$)	\\
 \bottomrule
 \end{tabular}

@@ -161,29 +161,29 @@ t_is([vv.i1.x(2,1) vv.iN.x(2,1) vv.N.x(2,1)], [22 24 3], 14, [t ' : x(2,1)']);
 t_is(size(vv.i1.y), [2, 3, 4], 14, [t ' : size(vv.i1.y)']);
 t_is([vv.i1.y(2,2,4) vv.iN.y(2,2,4) vv.N.y(2,2,4)], [133 140 8], 14, [t ' : y(2,2,4)']);
 
-%%-----  getv  -----
-t = 'om.getv(''Va'')';
-[v0, vl, vu] = om.getv('Va');
+%%-----  params_var  -----
+t = 'om.params_var(''Va'')';
+[v0, vl, vu] = om.params_var('Va');
 t_ok(~any(v0), [t ' : v0']);
 t_ok(all(isinf(vl) & vl < 0), [t ' : vl']);
 t_ok(all(isinf(vu) & vu > 0), [t ' : vu']);
 
-t = 'om.getv(''Pg'')';
-[v0, vl, vu] = om.getv('Pg');
+t = 'om.params_var(''Pg'')';
+[v0, vl, vu] = om.params_var('Pg');
 t_is(v0, [2;4;6], 14, [t ' : v0']);
 t_is(vl, [1;2;3], 14, [t ' : vl']);
 t_is(vu, [10;20;30], 14, [t ' : vu']);
 
-t = 'om.getv(''Vm1'')';
-[v0, vl, vu, vt] = om.getv('Vm1');
+t = 'om.params_var(''Vm1'')';
+[v0, vl, vu, vt] = om.params_var('Vm1');
 t_is(double(vt), double('I'), 14, [t ' : vt']);
 
-t = 'om.getv(''Vm2'')';
-[v0, vl, vu, vt] = om.getv('Vm2');
+t = 'om.params_var(''Vm2'')';
+[v0, vl, vu, vt] = om.params_var('Vm2');
 t_is(double(vt), double('CIBIC'), 14, [t ' : vt']);
 
-t = 'om.getv(''x'')';
-[v0, vl, vu, vt] = om.getv('x');
+t = 'om.params_var(''x'')';
+[v0, vl, vu, vt] = om.params_var('x');
 t_is(size(v0), [2,2], 14, [t ' : size(v0)']);
 t_is(v0{2,2}, [1;0], 14, [t ' : v0{2,2}']);
 t_is(vl{2,2}, [0;-1], 14, [t ' : vl{2,2}']);
@@ -200,8 +200,8 @@ for i = 1:2
                 vt = char(vt0{j} * ones(1, n));
                 vt(j+1) = vt0{1+rem(j,3)};
             end
-            t = sprintf('om.getv(''y'', {%d,%d,%d})', i, j, k);
-            [v0, vl, vu, gvt] = om.getv('y', {i,j,k});
+            t = sprintf('om.params_var(''y'', {%d,%d,%d})', i, j, k);
+            [v0, vl, vu, gvt] = om.params_var('y', {i,j,k});
             t_is(v0, 10*(n:-1:1)', 14, [t ' : v0']);
             t_is(vl, -1*(n:-1:1)', 14, [t ' : vl']);
             t_is(vu, 100+(n:-1:1)', 14, [t ' : vu']);
@@ -210,8 +210,8 @@ for i = 1:2
     end
 end
 
-t = 'om.getv()';
-[v0, vl, vu, vt] = om.getv();
+t = 'om.params_var()';
+[v0, vl, vu, vt] = om.params_var();
 t_ok(length(v0) == om.getN('var'), [t ' : length(v0)']);
 t_ok(length(vl) == om.getN('var'), [t ' : length(vl)']);
 t_ok(length(vu) == om.getN('var'), [t ' : length(vu)']);

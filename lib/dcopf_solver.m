@@ -68,7 +68,7 @@ ny = om.getN('var', 'y');   %% number of piece-wise linear costs
 
 %% linear constraints & variable bounds
 [A, l, u] = om.params_lin_cons();
-[x0, xmin, xmax] = om.getv();
+[x0, xmin, xmax] = om.params_var();
 
 %% get cost parameters
 [HH, CC, C0] = om.params_quad_cost();
