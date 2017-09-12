@@ -31,7 +31,7 @@ Since last release
   - Add support to `opt_model` for handling quadratic costs.
   - Deprecate the legacy generalized cost mechanism in `opt_model`
     based on `add_costs()` in favor the quadratic and general nonlinear
-    mechanisms, `add_quadratic_costs()` and `add_nln_costs()`.
+    mechanisms, `add_quad_cost()` and `add_nln_cost()`.
 
 #### 8/22/17
   - Add options `'cpf.enforce_v_lims'` and `'cpf.enforce_flow_lims'` to
@@ -75,7 +75,7 @@ Since last release
     and Hessian.
   - Deprecate the `add_constraints()` method of `opt_model`. Use the
     corresponding one of the following methods instead:
-    `add_lin_constraints()`, `add_nln_constraints()` or `init_indexed_name()`.
+    `add_lin_constraint()`, `add_nln_constraint()` or `init_indexed_name()`.
 
 #### 6/8/17
   - Move `@opt_model`, `@opf_model` to use `classdef`. Modify code to use

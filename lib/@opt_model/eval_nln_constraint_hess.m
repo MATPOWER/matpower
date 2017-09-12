@@ -1,6 +1,6 @@
-function d2G = nonlin_constraint_hess(om, x, lam, iseq)
-%NONLIN_CONSTRAINT_HESS  Builds and returns Hessian of nonlinear constraints.
-%   D2G = OM.NONLIN_CONSTRAINT_HESS(X, LAM, ISEQ)
+function d2G = eval_nln_constraint_hess(om, x, lam, iseq)
+%EVAL_NLN_CONSTRAINT_HESS  Builds and returns Hessian of nonlinear constraints.
+%   D2G = OM.EVAL_NLN_CONSTRAINT_HESS(X, LAM, ISEQ)
 %   Builds the Hessian of the full set of nonlinear equality or inequality
 %   constraints for given values of the optimization vector X and dual
 %   variables LAM, based on constraints added by ADD_NLN_CONSTRAINT.
@@ -9,8 +9,8 @@ function d2G = nonlin_constraint_hess(om, x, lam, iseq)
 %       h(X) <= 0
 %
 %   Example:
-%       d2G = om.nonlin_constraint_hess(x, lam, 1)
-%       d2H = om.nonlin_constraint_hess(x, lam, 0)
+%       d2G = om.eval_nln_constraint_hess(x, lam, 1)
+%       d2H = om.eval_nln_constraint_hess(x, lam, 0)
 %
 %   See also OPT_MODEL, ADD_NLN_CONSTRAINT, EVAL_NLN_CONSTRAINT.
 

@@ -126,10 +126,10 @@ end
 d2f = d2f * cost_mult;
 
 %%----- evaluate Hessian of power balance constraints -----
-d2G = om.nonlin_constraint_hess(x, lambda.eqnonlin, 1);
+d2G = om.eval_nln_constraint_hess(x, lambda.eqnonlin, 1);
 
 %%----- evaluate Hessian of flow constraints -----
-d2H = om.nonlin_constraint_hess(x, lambda.ineqnonlin, 0);
+d2H = om.eval_nln_constraint_hess(x, lambda.ineqnonlin, 0);
 
 %%-----  do numerical check using (central) finite differences  -----
 if 0

@@ -12,7 +12,7 @@ function [g, dg] = eval_nln_constraint(om, x, iseq)
 %       [g, dg] = om.eval_nln_constraint(x, 1)
 %       [h, dh] = om.eval_nln_constraint(x, 0)
 %
-%   See also OPT_MODEL, ADD_NLN_CONSTRAINT, NONLIN_CONSTRAINT_HESS.
+%   See also OPT_MODEL, ADD_NLN_CONSTRAINT, EVAL_NLN_CONSTRAINT_HESS.
 
 %   MATPOWER
 %   Copyright (c) 2008-2017, Power Systems Engineering Research Center (PSERC)

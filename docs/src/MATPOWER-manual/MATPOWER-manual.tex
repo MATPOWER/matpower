@@ -5669,6 +5669,7 @@ name & description \\
 \code{~~display}	& called to display object when statement not ended with semicolon	\\
 \code{~~eval\_legacy\_cost}	& evaluates legacy user costs and derivatives	\\
 \code{~~eval\_nln\_constraint}	& builds and returns the full set of nonlinear equality or inequality constraints and their gradients	\\
+\code{~~eval\_nln\_constraint\_hess}	& builds and returns the Hessian for the full set of nonlinear equality or inequality constraints	\\
 \code{~~eval\_nln\_cost}	& evaluates general nonlinear costs and derivatives	\\
 \code{~~eval\_quad\_cost}	& evaluates quadratic costs and derivatives	\\
 \code{~~get\_idx}	& returns the idx struct for vars, lin/nln constraints, costs	\\
@@ -5676,7 +5677,6 @@ name & description \\
 \code{~~getN}	& returns the number of variables, constraints or cost rows\tnote{\ddag}	\\
 \code{~~get}	& returns the value of a field of the object	\\
 \code{~~init\_indexed\_name}	& initializes the dimensions for an indexed named set of costs, constraints or variables	\\
-\code{~~nonlin\_constraint\_hess}	& builds and returns the Hessian for the full set of nonlinear equality or inequality constraints	\\
 \code{~~opt\_model}	& constructor for the \code{opt\_model} class	\\
 \code{~~params\_lin\_constraint}	& builds and returns individual or full set of linear constraint parameters	\\
 \code{~~params\_legacy\_cost}	& builds and returns individual or full set of legacy user cost coefficients	\\
