@@ -860,25 +860,25 @@ t_is(df, edf, 14, [t, ' : df']);
 t_is(d2f, Q, 14, [t, ' : d2f']);
 
 
-%%-----  add_legacy_costs  -----
-t = 'add_legacy_costs';
+%%-----  add_legacy_cost  -----
+t = 'add_legacy_cost';
 cN = 0;
 cNS = 0;
 t_ok(om.getN('cost') == cN, sprintf('%s : cost.N  = %d', t, cN));
 t_ok(om.get('cost', 'NS') == cNS, sprintf('%s : cost.NS = %d', t, cNS));
 
-t = 'om.add_legacy_costs(''ucost'', cp, {''Va'', ''Pg''})';
+t = 'om.add_legacy_cost(''ucost'', cp, {''Va'', ''Pg''})';
 cp = struct('N', sparse([1:2 1:2 1:2]', [1:4 5 7]', [1 1 -1 -1 2 2]', 2,7), ...
             'Cw', [2;3]);
-om.add_legacy_costs('ucost', cp, {'Va', 'Pg'});
+om.add_legacy_cost('ucost', cp, {'Va', 'Pg'});
 cNS = cNS + 1; cN = cN + 2;
 t_ok(om.getN('cost') == cN, sprintf('%s : cost.N  = %d', t, cN));
 t_ok(om.get('cost', 'NS') == cNS, sprintf('%s : cost.NS = %d', t, cNS));
 
-t = 'om.add_legacy_costs(''vcost'', cp)';
+t = 'om.add_legacy_cost(''vcost'', cp)';
 cp = struct('N', sparse([1:2 1:2 1:2]', [1:4 5 7]', [1 1 -1 -1 2 2]', 2, vN), ...
             'Cw', [2;3]);
-om.add_legacy_costs('vcost', cp);
+om.add_legacy_cost('vcost', cp);
 cNS = cNS + 1; cN = cN + 2;
 t_ok(om.getN('cost') == cN, sprintf('%s : cost.N  = %d', t, cN));
 t_ok(om.get('cost', 'NS') == cNS, sprintf('%s : cost.NS = %d', t, cNS));
@@ -890,7 +890,7 @@ t_ok(om.get('cost', 'NS') == cNS, sprintf('%s : cost.NS = %d', t, cNS));
 
 for i = 1:2
     for j = 1:2
-        t = 'om.add_legacy_costs(''wc'', {i, j}, cp, vs)';
+        t = 'om.add_legacy_cost(''wc'', {i, j}, cp, vs)';
         cp.N = sparse([1:(i+j) 1:(i+j)]', [1:(i+j) 5*ones(1,i+j)]', ...
             [ones(i+j,1);-ones(i+j,1)], i+j, 3+2+(i==2 && j==1));
         cp.Cw = (i+j:-1:1)';
@@ -898,7 +898,7 @@ for i = 1:2
             cp.H = sparse((1:i+j)', (1:i+j)', (1:i+j)', i+j, i+j);
         end
         vs = struct('name', {'Pg', 'x'}, 'idx', {{}, {i,j}});
-        om.add_legacy_costs('wc', {i, j}, cp, vs);
+        om.add_legacy_cost('wc', {i, j}, cp, vs);
         cNS = cNS + 1; cN = cN + i+j;
         t_ok(om.getN('cost') == cN, sprintf('%s : cost.N  = %d', t, cN));
         t_ok(om.get('cost', 'NS') == cNS, sprintf('%s : cost.NS = %d', t, cNS));

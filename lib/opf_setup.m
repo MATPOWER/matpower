@@ -426,7 +426,7 @@ if nw
   if ~isempty(H)
     user_cost.H = H;
   end
-  om.add_legacy_costs('usr', user_cost, user_vars);
+  om.add_legacy_cost('usr', user_cost, user_vars);
 end
 
 %% execute userfcn callbacks for 'formulation' stage

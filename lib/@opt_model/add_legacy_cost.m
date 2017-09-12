@@ -1,13 +1,13 @@
-function om = add_legacy_costs(om, name, idx, varargin)
-%ADD_LEGACY_COSTS  Adds a set of user costs to the model.
+function om = add_legacy_cost(om, name, idx, varargin)
+%ADD_LEGACY_COST  Adds a set of user costs to the model.
 %
 %   -----  DEPRECATED - Please use one of the following instead:        -----
 %   -----  ADD_QUAD_COST, ADD_NLN_COST, INIT_INDEXED_NAME  -----
 %
-%   OM.ADD_LEGACY_COSTS(NAME, CP);
-%   OM.ADD_LEGACY_COSTS(NAME, CP, VARSETS);
-%   OM.ADD_LEGACY_COSTS(NAME, IDX_LIST, CP);
-%   OM.ADD_LEGACY_COSTS(NAME, IDX_LIST, CP, VARSETS);
+%   OM.ADD_LEGACY_COST(NAME, CP);
+%   OM.ADD_LEGACY_COST(NAME, CP, VARSETS);
+%   OM.ADD_LEGACY_COST(NAME, IDX_LIST, CP);
+%   OM.ADD_LEGACY_COST(NAME, IDX_LIST, CP, VARSETS);
 %
 %   Adds a named block of user-defined costs to the model. Each set is
 %   defined by the CP struct described below. All user-defined sets of
@@ -19,13 +19,13 @@ function om = add_legacy_costs(om, name, idx, varargin)
 %       cp1 = struct('N', N1, 'Cw', Cw1);
 %       cp2 = struct('N', N2, 'Cw', Cw2, 'H', H, 'dd', dd, ...
 %                     'rh', rh, 'kk', kk, 'mm', mm);
-%       om.add_legacy_costs('usr1', cp1, {'Pg', 'Qg', 'z'});
-%       om.add_legacy_costs('usr2', cp2, {'Vm', 'Pg', 'Qg', 'z'});
+%       om.add_legacy_cost('usr1', cp1, {'Pg', 'Qg', 'z'});
+%       om.add_legacy_cost('usr2', cp2, {'Vm', 'Pg', 'Qg', 'z'});
 %
 %       om.init_indexed_name('c', {2, 3});
 %       for i = 1:2
 %         for j = 1:3
-%           om.add_legacy_costs('c', {i, j}, cp(i,j), ...);
+%           om.add_legacy_cost('c', {i, j}, cp(i,j), ...);
 %         end
 %       end
 %
@@ -106,26 +106,26 @@ if nx ~= nv
     if nw == 0
         cp.N = sparse(nw, nx);
     else
-        error('@opt_model/add_legacy_costs: number of columns in N (%d x %d) does not match\nnumber of variables (%d)\n', nw, nx, nv);
+        error('@opt_model/add_legacy_cost: number of columns in N (%d x %d) does not match\nnumber of variables (%d)\n', nw, nx, nv);
     end
 end
 if size(cp.Cw, 1) ~= nw
-    error('@opt_model/add_legacy_costs: number of rows of Cw (%d x %d) and N (%d x %d) must match\n', size(cp.Cw), nw, nx);
+    error('@opt_model/add_legacy_cost: number of rows of Cw (%d x %d) and N (%d x %d) must match\n', size(cp.Cw), nw, nx);
 end
 if isfield(cp, 'H') && (size(cp.H, 1) ~= nw || size(cp.H, 2) ~= nw)
-    error('@opt_model/add_legacy_costs: both dimensions of H (%d x %d) must match the number of rows in N (%d x %d)\n', size(cp.H), nw, nx);
+    error('@opt_model/add_legacy_cost: both dimensions of H (%d x %d) must match the number of rows in N (%d x %d)\n', size(cp.H), nw, nx);
 end
 if isfield(cp, 'dd') && size(cp.dd, 1) ~= nw
-    error('@opt_model/add_legacy_costs: number of rows of dd (%d x %d) and N (%d x %d) must match\n', size(cp.dd), nw, nx);
+    error('@opt_model/add_legacy_cost: number of rows of dd (%d x %d) and N (%d x %d) must match\n', size(cp.dd), nw, nx);
 end
 if isfield(cp, 'rh') && size(cp.rh, 1) ~= nw
-    error('@opt_model/add_legacy_costs: number of rows of rh (%d x %d) and N (%d x %d) must match\n', size(cp.rh), nw, nx);
+    error('@opt_model/add_legacy_cost: number of rows of rh (%d x %d) and N (%d x %d) must match\n', size(cp.rh), nw, nx);
 end
 if isfield(cp, 'kk') && size(cp.kk, 1) ~= nw
-    error('@opt_model/add_legacy_costs: number of rows of kk (%d x %d) and N (%d x %d) must match\n', size(cp.kk), nw, nx);
+    error('@opt_model/add_legacy_cost: number of rows of kk (%d x %d) and N (%d x %d) must match\n', size(cp.kk), nw, nx);
 end
 if isfield(cp, 'mm') && size(cp.mm, 1) ~= nw
-    error('@opt_model/add_legacy_costs: number of rows of mm (%d x %d) and N (%d x %d) must match\n', size(cp.mm), nw, nx);
+    error('@opt_model/add_legacy_cost: number of rows of mm (%d x %d) and N (%d x %d) must match\n', size(cp.mm), nw, nx);
 end
 
 %% add the legacy cost set

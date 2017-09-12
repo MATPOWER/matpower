@@ -5,7 +5,7 @@ function om = add_named_set(om, set_type, name, idx, N, varargin)
 %
 %   This method is intended to be a private method, used internally by
 %   the public methods ADD_VARS, ADD_LIN_CONSTRAINT, ADD_NLN_CONSTRAINT
-%   ADD_QUAD_COST, ADD_NLN_COST and ADD_LEGACY_COSTS.
+%   ADD_QUAD_COST, ADD_NLN_COST and ADD_LEGACY_COST.
 %
 %   Variable Set
 %       OM.ADD_NAMED_SET('var', NAME, IDX_LIST, N, V0, VL, VU, VT);

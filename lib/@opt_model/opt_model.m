@@ -14,7 +14,7 @@ classdef opt_model < handle
 %
 %   Modify the OPF formulation by adding named blocks of costs, constraints
 %   or variables:
-%       add_legacy_costs
+%       add_legacy_cost
 %       add_quad_cost
 %       add_nln_cost
 %       add_lin_constraint
@@ -187,7 +187,7 @@ classdef opt_model < handle
 %           .N      - total number of rows in full N matrix
 %           .NS     - number of cost blocks
 %           .data   - data for each user-defined cost block
-%               .N  - see help for ADD_LEGACY_COSTS for details
+%               .N  - see help for ADD_LEGACY_COST for details
 %               .H  -               "
 %               .Cw -               "
 %               .dd -               "

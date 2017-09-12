@@ -8,7 +8,7 @@ function [cp, vs, i1, iN] = params_legacy_cost(om, name, idx)
 %
 %   With no input parameters, it assembles and returns the parameters
 %   for the aggregate legacy user-defined cost from all legacy cost sets
-%   added using ADD_LEGACY_COSTS. The values of these parameters are cached
+%   added using ADD_LEGACY_COST. The values of these parameters are cached
 %   for subsequent calls. The parameters are contained in the struct CP,
 %   described below.
 %
@@ -58,7 +58,7 @@ function [cp, vs, i1, iN] = params_legacy_cost(om, name, idx)
 %
 %       F_U(X, CP) = 1/2 * w'*H*w + Cw'*w
 %
-%   See also OPT_MODEL, ADD_LEGACY_COSTS, EVAL_LEGACY_COST.
+%   See also OPT_MODEL, ADD_LEGACY_COST, EVAL_LEGACY_COST.
 
 %   MATPOWER
 %   Copyright (c) 2017, Power Systems Engineering Research Center (PSERC)

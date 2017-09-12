@@ -34,7 +34,7 @@ function om = init_indexed_name(om, set_type, name, dim_list)
 %       end
 %
 %   See also OPT_MODEL, ADD_VARS, ADD_LIN_CONSTRAINT, ADD_NLN_CONSTRAINT,
-%            ADD_QUAD_COST, ADD_NLN_COST and ADD_LEGACY_COSTS.
+%            ADD_QUAD_COST, ADD_NLN_COST and ADD_LEGACY_COST.
 
 %   MATPOWER
 %   Copyright (c) 2008-2017, Power Systems Engineering Research Center (PSERC)

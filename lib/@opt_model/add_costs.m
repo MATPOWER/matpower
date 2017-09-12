@@ -2,7 +2,7 @@ function om = add_costs(om, name, idx, varargin)
 %ADD_COSTS  Adds a set of user costs to the model.
 %
 %   -----  DEPRECATED - Please use one of the following instead:  -----
-%   -----  ADD_QUAD_COST, ADD_NLN_COST, ADD_LEGACY_COSTS   -----
+%   -----  ADD_QUAD_COST, ADD_NLN_COST, ADD_LEGACY_COST           -----
 %   -----  or INIT_INDEXED_NAME                                   -----
 %
 %   OM.ADD_COSTS(NAME, CP);
@@ -79,5 +79,5 @@ function om = add_costs(om, name, idx, varargin)
 if iscell(idx) && isempty(varargin) %% just setting dimensions for indexed set
     om.init_indexed_name('cost', name, idx);
 else
-    om.add_legacy_costs(name, idx, varargin{:});
+    om.add_legacy_cost(name, idx, varargin{:});
 end

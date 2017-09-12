@@ -7,14 +7,14 @@ function [f, df, d2f] = eval_legacy_cost(om, x, name, idx)
 %   [F, DF, D2F] = OM.EVAL_LEGACY_COST(X, NAME, IDX)
 %   Evaluates an individual named set or the full set of legacy user
 %   costs and their derivatives for a given value of the optimization vector
-%   X, based on costs added by ADD_LEGACY_COSTS.
+%   X, based on costs added by ADD_LEGACY_COST.
 %
 %   Example:
 %       [f, df, d2f] = om.eval_legacy_cost(x)
 %       [f, df, d2f] = om.eval_legacy_cost(x, name)
 %       [f, df, d2f] = om.eval_legacy_cost(x, name, idx)
 %
-%   See also OPT_MODEL, ADD_LEGACY_COSTS, PARAMS_LEGACY_COST.
+%   See also OPT_MODEL, ADD_LEGACY_COST, PARAMS_LEGACY_COST.
 
 %   MATPOWER
 %   Copyright (c) 2008-2017, Power Systems Engineering Research Center (PSERC)
