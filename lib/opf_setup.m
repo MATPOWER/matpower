@@ -107,14 +107,16 @@ else    %% AC
         error('opf_setup: option ''opf.use_vg'' (= %g) cannot be negative or greater than 1', use_vg);
     end
   end
-  if isfield(mpc, 'nle_constraints')
-    for k = 1:length(mpc.nle_constraints)
-      nnle = nnle + mpc.nle_constraints{k}{2};
+  if isfield(mpc, 'user_constraints')
+    if isfield(mpc.user_constraints, 'nle')
+      for k = 1:length(mpc.user_constraints.nle)
+        nnle = nnle + mpc.user_constraints.nle{k}{2};
+      end
     end
-  end
-  if isfield(mpc, 'nli_constraints')
-    for k = 1:length(mpc.nli_constraints)
-      nnli = nnli + mpc.nli_constraints{k}{2};
+    if isfield(mpc.user_constraints, 'nli')
+      for k = 1:length(mpc.user_constraints.nli)
+        nnli = nnli + mpc.user_constraints.nli{k}{2};
+      end
     end
   end
 end
@@ -399,16 +401,16 @@ if nlin
   om.add_lin_constraint('usr', mpc.A, lbu, ubu, user_vars);         %% nlin
 end
 if nnle
-  for k = 1:length(mpc.nle_constraints)
-    nlc = mpc.nle_constraints{k};
+  for k = 1:length(mpc.user_constraints.nle)
+    nlc = mpc.user_constraints.nle{k};
     fcn  = eval(['@(x)' nlc{3} '(x, nlc{6}{:})']);
     hess = eval(['@(x, lam)' nlc{4} '(x, lam, nlc{6}{:})']);
     om.add_nln_constraint(nlc{1:2}, 1, fcn, hess, nlc{5});
   end
 end
 if nnli
-  for k = 1:length(mpc.nli_constraints)
-    nlc = mpc.nli_constraints{k};
+  for k = 1:length(mpc.user_constraints.nli)
+    nlc = mpc.user_constraints.nli{k};
     fcn  = eval(['@(x)' nlc{3} '(x, nlc{6}{:})']);
     hess = eval(['@(x, lam)' nlc{4} '(x, lam, nlc{6}{:})']);
     om.add_nln_constraint(nlc{1:2}, 0, fcn, hess, nlc{5});

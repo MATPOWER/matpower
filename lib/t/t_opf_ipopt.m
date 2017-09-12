@@ -400,7 +400,7 @@ if have_fcn('ipopt')
     %% OPF with user-defined nonlinear constraints
     t = [t0 'w/nonlin eq constraint'];
     mpc = loadcase('case30');
-    mpc.nle_constraints = {
+    mpc.user_constraints.nle = {
         {'Pg_usr', 1, 'opf_nle_fcn1', 'opf_nle_hess1', {'Pg'}, {}}
     };
     r = runopf(mpc, mpopt);

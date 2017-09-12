@@ -56,8 +56,8 @@ Since last release
   - Expand support for soft branch flow limits in `toggle_softlims` to
     include AC OPF problems as well as DC OPF.
   - Add support for direct specification of user-defined nonlinear
-    constraints for AC OPF, in mpc.nle_constraints and
-    mpc.nli_constraints, for equality and inequality constraints,
+    constraints for AC OPF, in `mpc.user_constraints.nle` and
+    `mpc.user_constraints.nli`, for equality and inequality constraints,
     respectively.
 
 #### 8/14/17

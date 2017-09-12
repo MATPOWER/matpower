@@ -2311,9 +2311,9 @@ Here \code{<p1>} and \code{<p2>} represent arbitrary optional input parameters t
 \code{d2G = my\_constraint\_hess(x, lambda, <p1>, <p2>, ...)} \\
 Once again this is similar to the form of the Hessian evaluation function expected by \mips{}.\footnote{The differences between this function and the one required by \mips{} is that (1) this one returns the Hessian of a single term of the Lagrangian, not of the full Lagrangian, (2) the \code{lambda} argument is a simple vector of multipliers ($\lambda$ or $\mu$) corresponding just to this set of constraints, not a struct containing the full $\lambda$ and $\mu$ vectors in fields \code{eqnonlin} and \code{ineqnonlin} \code{nonlineq}, respectively, and (3) this function allows arbitrary additional parameters, and (4) \code{x} can be a cell array of sub-vectors of optimization variable $x$ (see \code{varsets} in Table~\ref{tab:nl_constraints}).}
 
-In order to add a set of user-defined nonlinear constraints to the formulation through direct specification, an entry must be added to the optional \code{nle\_constraints} (nonlinear equality) or \code{nli\_constraints} (nonlinear inequality) fields of the \matpower{} case struct. These fields are cell arrays, in which each element (also a cell array) specifies a constraint set of the corresponding kind. The format is as follows, where the details are described in Table~\ref{tab:nl_constraints}.
+In order to add a set of user-defined nonlinear constraints to the formulation through direct specification, an entry must be added to the optional \code{user\_constraints.nle} (nonlinear equality) or \code{user\_constraints.nli} (nonlinear inequality) fields of the \matpower{} case struct. These fields are cell arrays, in which each element (also a cell array) specifies a constraint set of the corresponding kind. The format is as follows, where the details are described in Table~\ref{tab:nl_constraints}.
 \begin{Code}
-mpc.nle_constraints = {
+mpc.user_constraints.nle = {
     {name, N, g_fcn, hess_fcn, varsets, params},
     ...
 };
@@ -2346,7 +2346,7 @@ name & description \\
 
 There is an example in the OPF testing code (e.g. \code{t\_opf\_mips}) near the end, that implements a nonlinear relationship between three different generator outputs by adding the following line.
 \begin{Code}
-mpc.nle_constraints = {
+mpc.user_constraints.nle = {
     {'Pg_usr', 1, 'opf_nle_fcn1', 'opf_nle_hess1', {'Pg'}, {}}
 };
 \end{Code}
