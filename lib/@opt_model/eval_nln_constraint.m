@@ -1,6 +1,6 @@
-function [g, dg] = nonlin_constraints(om, x, iseq)
-%NONLIN_CONSTRAINTS  Builds and returns full set of nonlinear constraints.
-%   [G, DG] = OM.NONLIN_CONSTRAINTS(X, ISEQ)
+function [g, dg] = eval_nln_constraint(om, x, iseq)
+%EVAL_NLN_CONSTRAINT  Builds and returns full set of nonlinear constraints.
+%   [G, DG] = OM.EVAL_NLN_CONSTRAINT(X, ISEQ)
 %   Builds a full set of nonlinear equality or inequality constraints and
 %   their gradients for a given value of the optimization vector X,
 %   based on constraints added by ADD_NLN_CONSTRAINT.
@@ -9,8 +9,8 @@ function [g, dg] = nonlin_constraints(om, x, iseq)
 %       h(X) <= 0
 %
 %   Example:
-%       [g, dg] = om.nonlin_constraints(x, 1)
-%       [h, dh] = om.nonlin_constraints(x, 0)
+%       [g, dg] = om.eval_nln_constraint(x, 1)
+%       [h, dh] = om.eval_nln_constraint(x, 0)
 %
 %   See also OPT_MODEL, ADD_NLN_CONSTRAINT, NONLIN_CONSTRAINT_HESS.
 

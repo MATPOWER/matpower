@@ -47,11 +47,11 @@ function [h, g, dh, dg] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt, il, varargin)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 if nargout == 2     %% contraints only
-    g = om.nonlin_constraints(x, 1);        %% equalities (power flow)
-    h = om.nonlin_constraints(x, 0);        %% inequalities (branch flow limits)
+    g = om.eval_nln_constraint(x, 1);       %% equalities (power flow)
+    h = om.eval_nln_constraint(x, 0);       %% inequalities (branch flow limits)
 else                %% constraints and derivatives
-    [g, dg] = om.nonlin_constraints(x, 1);  %% equalities (power flow)
-    [h, dh] = om.nonlin_constraints(x, 0);  %% inequalities (branch flow limits)
+    [g, dg] = om.eval_nln_constraint(x, 1); %% equalities (power flow)
+    [h, dh] = om.eval_nln_constraint(x, 0); %% inequalities (branch flow limits)
     dg = dg';
     dh = dh';
 end

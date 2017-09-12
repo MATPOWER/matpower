@@ -117,7 +117,7 @@ function om = add_constraints(om, name, varargin)
 %         end
 %       end
 %
-%   See also OPT_MODEL, LINEAR_CONSTRAINTS, NONLIN_CONSTRAINTS.
+%   See also OPT_MODEL, LINEAR_CONSTRAINTS, EVAL_NLN_CONSTRAINT.
 
 %   MATPOWER
 %   Copyright (c) 2008-2017, Power Systems Engineering Research Center (PSERC)

@@ -69,7 +69,7 @@ function om = add_nln_constraint(om, name, idx, N, iseq, fcn, hess, varsets)
 %         end
 %       end
 %
-%   See also OPT_MODEL, NONLIN_CONSTRAINTS.
+%   See also OPT_MODEL, EVAL_NLN_CONSTRAINT.
 
 %   MATPOWER
 %   Copyright (c) 2008-2017, Power Systems Engineering Research Center (PSERC)

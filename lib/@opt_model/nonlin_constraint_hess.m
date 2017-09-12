@@ -12,7 +12,7 @@ function d2G = nonlin_constraint_hess(om, x, lam, iseq)
 %       d2G = om.nonlin_constraint_hess(x, lam, 1)
 %       d2H = om.nonlin_constraint_hess(x, lam, 0)
 %
-%   See also OPT_MODEL, ADD_NLN_CONSTRAINT, NONLIN_CONSTRAINTS.
+%   See also OPT_MODEL, ADD_NLN_CONSTRAINT, EVAL_NLN_CONSTRAINT.
 
 %   MATPOWER
 %   Copyright (c) 2008-2017, Power Systems Engineering Research Center (PSERC)

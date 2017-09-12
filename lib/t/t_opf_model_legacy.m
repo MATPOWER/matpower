@@ -367,10 +367,10 @@ t_is(full(A(ll.i1.mylin(2,1):ll.iN.mylin(2,1), vv.i1.x(2,1):vv.iN.x(2,1))), [0 -
 
 %om
 
-%%-----  nonlin_constraints  -----
-t = 'nonlin_constraints';
+%%-----  eval_nln_constraint  -----
+t = 'eval_nln_constraint';
 x = (1:om.getN('var'))';
-[g, dg] = om.nonlin_constraints(x, 1);
+[g, dg] = om.eval_nln_constraint(x, 1);
 t_is(length(g), neN, 14, [t ' : length(g)']);
 t_ok(issparse(dg), [t ' : issparse(dg)']);
 t_is(size(dg), [neN, vN], 14, [t ' : size(dg)']);
@@ -394,7 +394,7 @@ t_is(full(dg(16:19, :)), e, 14, [t ' : dg(16:19, :) [mynle(2,2)]']);
 % full(dg)
 % full(dg)'
 
-[h, dh] = om.nonlin_constraints(x, 0);
+[h, dh] = om.eval_nln_constraint(x, 0);
 t_is(length(h), niN, 14, [t ' : length(h)']);
 t_ok(issparse(dh), [t ' : issparse(dh)']);
 t_is(size(dh), [niN, vN], 14, [t ' : size(dh)']);
