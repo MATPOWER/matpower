@@ -1,8 +1,8 @@
 function om = add_constraints(om, name, varargin)
 %ADD_CONSTRAINTS  Adds a set of constraints to the model.
 %
-%   -----  DEPRECATED - Please use one of the following instead:        -----
-%   -----  ADD_LIN_CONSTRAINTS, ADD_NLN_CONSTRAINT, INIT_INDEXED_NAME  -----
+%   -----  DEPRECATED - Please use one of the following instead:      -----
+%   -----  ADD_LIN_CONSTRAINT, ADD_NLN_CONSTRAINT, INIT_INDEXED_NAME  -----
 %
 %   OM.ADD_CONSTRAINTS(NAME, A, L, U);
 %   OM.ADD_CONSTRAINTS(NAME, A, L, U, VARSETS);
@@ -197,6 +197,6 @@ else
         else
             [A, l, u, varsets] = deal(args{1:4});
         end
-        om.add_lin_constraints(name, idx, A, l, u, varsets);
+        om.add_lin_constraint(name, idx, A, l, u, varsets);
     end
 end

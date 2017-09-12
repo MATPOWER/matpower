@@ -8,7 +8,7 @@ function [A, l, u, vs, i1, iN] = params_lin_constraint(om, name, idx)
 %
 %   With no input parameters, it assembles and returns the parameters
 %   for the aggregate linear constraints from all linear constraint sets
-%   added using ADD_LIN_CONSTRAINTS. The values of these parameters are
+%   added using ADD_LIN_CONSTRAINT. The values of these parameters are
 %   cached for subsequent calls. The parameters are A, L and U where the
 %   linear constraint is of the form
 %       L <= A * x <= U
@@ -28,7 +28,7 @@ function [A, l, u, vs, i1, iN] = params_lin_constraint(om, name, idx)
 %       [A, l, u] = om.params_lin_constraint();
 %       [A, l, u, vs, i1, i2] = om.params_lin_constraint('Pmis');
 %
-%   See also OPT_MODEL, ADD_LIN_CONSTRAINTS.
+%   See also OPT_MODEL, ADD_LIN_CONSTRAINT.
 
 %   MATPOWER
 %   Copyright (c) 2008-2017, Power Systems Engineering Research Center (PSERC)

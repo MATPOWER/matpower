@@ -328,9 +328,9 @@ if dc
   om.add_vars('Pg', ng, Pg, Pmin, Pmax);
 
   %% linear constraints
-  om.add_lin_constraints('Pmis', Amis, bmis, bmis, {'Va', 'Pg'});   %% nb
-  om.add_lin_constraints('Pf',  Bf(il,:), -upt, upf, {'Va'});       %% nl2
-  om.add_lin_constraints('ang', Aang, lang, uang, {'Va'});          %% nang
+  om.add_lin_constraint('Pmis', Amis, bmis, bmis, {'Va', 'Pg'});    %% nb
+  om.add_lin_constraint('Pf',  Bf(il,:), -upt, upf, {'Va'});        %% nl2
+  om.add_lin_constraint('ang', Aang, lang, uang, {'Va'});           %% nang
 
   %% quadratic generator costs
   if ~isempty(cpg)
@@ -356,10 +356,10 @@ else
   end
 
   %% linear constraints
-  om.add_lin_constraints('PQh', Apqh, [], ubpqh, {'Pg', 'Qg'});     %% npqh
-  om.add_lin_constraints('PQl', Apql, [], ubpql, {'Pg', 'Qg'});     %% npql
-  om.add_lin_constraints('vl',  Avl, lvl, uvl,   {'Pg', 'Qg'});     %% nvl
-  om.add_lin_constraints('ang', Aang, lang, uang, {'Va'});          %% nang
+  om.add_lin_constraint('PQh', Apqh, [], ubpqh, {'Pg', 'Qg'});      %% npqh
+  om.add_lin_constraint('PQl', Apql, [], ubpql, {'Pg', 'Qg'});      %% npql
+  om.add_lin_constraint('vl',  Avl, lvl, uvl,   {'Pg', 'Qg'});      %% nvl
+  om.add_lin_constraint('ang', Aang, lang, uang, {'Va'});           %% nang
 
   %% polynomial generator costs
   if ~legacy_formulation
@@ -384,7 +384,7 @@ end
 %% y vars, constraints for piece-wise linear gen costs
 if ny > 0
   om.add_vars('y', ny);
-  om.add_lin_constraints('ycon', Ay, [], by, ycon_vars);            %% ncony
+  om.add_lin_constraint('ycon', Ay, [], by, ycon_vars);             %% ncony
   if ~legacy_formulation
     om.add_quad_cost('pwl', [], ones(ny, 1), 0, {'y'});
   end
@@ -396,7 +396,7 @@ if nz > 0
   user_vars{end+1} = 'z';
 end
 if nlin
-  om.add_lin_constraints('usr', mpc.A, lbu, ubu, user_vars);        %% nlin
+  om.add_lin_constraint('usr', mpc.A, lbu, ubu, user_vars);         %% nlin
 end
 if nnle
   for k = 1:length(mpc.nle_constraints)

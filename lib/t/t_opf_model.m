@@ -376,24 +376,24 @@ xx = om.varsets_x(x, vs, 'vector');
 t_is(length(xx), om.var.N, 14, [t '<all> : length']);
 t_is(xx, [1:om.var.N]', 14, [t '<all>']);
 
-%%-----  add_lin_constraints  -----
-t = 'add_lin_constraints';
+%%-----  add_lin_constraint  -----
+t = 'add_lin_constraint';
 lN = 0;
 lNS = 0;
 t_ok(om.getN('lin') == lN, sprintf('%s : lin.N  = %d', t, lN));
 t_ok(om.get('lin', 'NS') == lNS, sprintf('%s : lin.NS = %d', t, lNS));
 
-t = 'om.add_lin_constraints(''Pmis'', A, l, u, {''Va'', ''Pg''})';
+t = 'om.add_lin_constraint(''Pmis'', A, l, u, {''Va'', ''Pg''})';
 A = sparse([1:3 1:3 1:3]', [1:3 4:6 7 7 7]', [1 1 1 -1 -1 -1 2 3 4]', 3, 7);
 l = -(1:3)'; u = (1:3)';
-om.add_lin_constraints('Pmis', A, l, u, {'Va', 'Pg'});
+om.add_lin_constraint('Pmis', A, l, u, {'Va', 'Pg'});
 lNS = lNS + 1; lN = lN + 3;
 t_ok(om.getN('lin') == lN, sprintf('%s : lin.N  = %d', t, lN));
 t_ok(om.get('lin', 'NS') == lNS, sprintf('%s : lin.NS = %d', t, lNS));
 
-t = 'om.add_lin_constraints(''Qmis'', A, l, u)';
+t = 'om.add_lin_constraint(''Qmis'', A, l, u)';
 A = sparse([1:3 1:3 1:3]', [1:3 4:6 7 7 7]', [1 1 1 -1 -1 -1 2 3 4]', 3, vN);
-om.add_lin_constraints('Qmis', A, l, u);
+om.add_lin_constraint('Qmis', A, l, u);
 lNS = lNS + 1; lN = lN + 3;
 t_ok(om.getN('lin') == lN, sprintf('%s : lin.N  = %d', t, lN));
 t_ok(om.get('lin', 'NS') == lNS, sprintf('%s : lin.NS = %d', t, lNS));
@@ -405,12 +405,12 @@ t_ok(om.get('lin', 'NS') == lNS, sprintf('%s : lin.NS = %d', t, lNS));
 
 for i = 1:2
     for j = 1:2
-        t = sprintf('om.add_lin_constraints(''mylin'', {%d,%d}, A, l, u, vs)', i,j);
+        t = sprintf('om.add_lin_constraint(''mylin'', {%d,%d}, A, l, u, vs)', i,j);
         A = sparse([1:(i+j) 1:(i+j)]', [1:(i+j) 5*ones(1,i+j)]', ...
             [ones(i+j,1);-ones(i+j,1)], i+j, 3+2+(i==2 && j==1));
         l = -ones(i+j, 1); u = [];
         vs = struct('name', {'Pg', 'x'}, 'idx', {{}, {i,j}});
-        om.add_lin_constraints('mylin', {i, j}, A, l, u, vs);
+        om.add_lin_constraint('mylin', {i, j}, A, l, u, vs);
         lNS = lNS + 1; lN = lN + i+j;
         t_ok(om.getN('lin') == lN, sprintf('%s : lin.N  = %d', t, lN));
         t_ok(om.get('lin', 'NS') == lNS, sprintf('%s : lin.NS = %d', t, lNS));

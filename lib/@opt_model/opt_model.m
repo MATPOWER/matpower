@@ -17,7 +17,7 @@ classdef opt_model < handle
 %       add_legacy_costs
 %       add_quad_cost
 %       add_nln_cost
-%       add_lin_constraints
+%       add_lin_constraint
 %       add_nln_constraint
 %       add_vars
 %       init_indexed_name

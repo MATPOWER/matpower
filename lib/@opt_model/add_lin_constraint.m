@@ -1,11 +1,11 @@
-function om = add_lin_constraints(om, name, idx, A, l, u, varsets)
-%ADD_LIN_CONSTRAINTS  Adds a set of linear constraints to the model.
+function om = add_lin_constraint(om, name, idx, A, l, u, varsets)
+%ADD_LIN_CONSTRAINT  Adds a set of linear constraints to the model.
 %
-%   OM.ADD_LIN_CONSTRAINTS(NAME, A, L, U);
-%   OM.ADD_LIN_CONSTRAINTS(NAME, A, L, U, VARSETS);
+%   OM.ADD_LIN_CONSTRAINT(NAME, A, L, U);
+%   OM.ADD_LIN_CONSTRAINT(NAME, A, L, U, VARSETS);
 %
-%   OM.ADD_LIN_CONSTRAINTS(NAME, IDX_LIST, A, L, U);
-%   OM.ADD_LIN_CONSTRAINTS(NAME, IDX_LIST, A, L, U, VARSETS);
+%   OM.ADD_LIN_CONSTRAINT(NAME, IDX_LIST, A, L, U);
+%   OM.ADD_LIN_CONSTRAINT(NAME, IDX_LIST, A, L, U, VARSETS);
 %
 %   Linear constraints are of the form L <= A * x <= U, where x is a
 %   vector made of the vars specified in VARSETS (in the order given).
@@ -26,18 +26,18 @@ function om = add_lin_constraints(om, name, idx, A, l, u, varsets)
 %       all arguments are as described above, except IDX_LIST is a cell
 %       array of the indices for the particular constraint set being added.
 %
-%       OM.ADD_LIN_CONSTRAINTS(NAME, IDX_LIST, A, L, U);
-%       OM.ADD_LIN_CONSTRAINTS(NAME, IDX_LIST, A, L, U, VARSETS);
+%       OM.ADD_LIN_CONSTRAINT(NAME, IDX_LIST, A, L, U);
+%       OM.ADD_LIN_CONSTRAINT(NAME, IDX_LIST, A, L, U, VARSETS);
 %
 %   Examples:
 %       %% linear constraint
-%       om.add_lin_constraints('vl', Avl, lvl, uvl, {'Pg', 'Qg'});
+%       om.add_lin_constraint('vl', Avl, lvl, uvl, {'Pg', 'Qg'});
 %
 %       %% linear constraints with indexed named set 'R(i,j)'
 %       om.init_indexed_name('lin', 'R', {2, 3});
 %       for i = 1:2
 %         for j = 1:3
-%           om.add_lin_constraints('R', {i, j}, A{i,j}, ...);
+%           om.add_lin_constraint('R', {i, j}, A{i,j}, ...);
 %         end
 %       end
 %
@@ -78,7 +78,7 @@ end
 
 %% check sizes
 if size(l, 1) ~= N || size(u, 1) ~= N
-    error('@opt_model/add_lin_constraints: sizes of A, l and u must match');
+    error('@opt_model/add_lin_constraint: sizes of A, l and u must match');
 end
 
 %% convert varsets from cell to struct array if necessary
@@ -87,7 +87,7 @@ nv = om.varsets_len(varsets);   %% number of variables
 
 %% check consistency of varsets with size of A
 if M ~= nv
-    error('@opt_model/add_lin_constraints: number of columns of A does not match\nnumber of variables, A is %d x %d, nv = %d\n', N, M, nv);
+    error('@opt_model/add_lin_constraint: number of columns of A does not match\nnumber of variables, A is %d x %d, nv = %d\n', N, M, nv);
 end
 
 %% add the named linear constraint set

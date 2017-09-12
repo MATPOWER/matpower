@@ -29,11 +29,11 @@ function om = init_indexed_name(om, set_type, name, dim_list)
 %       om.init_indexed_name('lin', 'R', {2, 3});
 %       for i = 1:2
 %         for j = 1:3
-%           om.add_lin_constraints('R', {i, j}, A{i,j}, ...);
+%           om.add_lin_constraint('R', {i, j}, A{i,j}, ...);
 %         end
 %       end
 %
-%   See also OPT_MODEL, ADD_VARS, ADD_LIN_CONSTRAINTS, ADD_NLN_CONSTRAINT,
+%   See also OPT_MODEL, ADD_VARS, ADD_LIN_CONSTRAINT, ADD_NLN_CONSTRAINT,
 %            ADD_QUAD_COST, ADD_NLN_COST and ADD_LEGACY_COSTS.
 
 %   MATPOWER

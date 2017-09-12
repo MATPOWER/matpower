@@ -155,7 +155,7 @@ for k = 1:nifs
 end
 
 %% add interface constraint
-om.add_lin_constraints('iflims',  Aif, lif, uif, {'Va'});   %% nifs
+om.add_lin_constraint('iflims',  Aif, lif, uif, {'Va'});   %% nifs
 
 
 %%-----  int2ext  ------------------------------------------------------

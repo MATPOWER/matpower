@@ -181,8 +181,8 @@ if strcmp(mpopt.model, 'DC')
     usf = [ -Pfinj(s.idx) + s.Pfmax ];
     ust = [  Pfinj(s.idx) + s.Pfmax ];
 
-    om.add_lin_constraints('softPf',  Asf, lsf, usf, {'Va', 'flv'});    %% ns
-    om.add_lin_constraints('softPt',  Ast, lst, ust, {'Va', 'flv'});    %% ns
+    om.add_lin_constraint('softPf',  Asf, lsf, usf, {'Va', 'flv'});     %% ns
+    om.add_lin_constraint('softPt',  Ast, lst, ust, {'Va', 'flv'});     %% ns
 else
     %% form constraints (see softlims_fcn() below)
     %% build admittance matrices
