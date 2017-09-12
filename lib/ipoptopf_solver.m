@@ -70,7 +70,7 @@ nl = size(branch, 1);       %% number of branches
 ny = om.getN('var', 'y');   %% number of piece-wise linear costs
 
 %% linear constraints
-[A, l, u] = om.params_lin_cons();
+[A, l, u] = om.params_lin_constraint();
 
 %% bounds on optimization vars
 [x0, xmin, xmax] = om.params_var();

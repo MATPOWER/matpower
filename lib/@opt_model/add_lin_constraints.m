@@ -41,7 +41,7 @@ function om = add_lin_constraints(om, name, idx, A, l, u, varsets)
 %         end
 %       end
 %
-%   See also OPT_MODEL, LINEAR_CONSTRAINTS.
+%   See also OPT_MODEL, PARAMS_LIN_CONSTRAINT.
 
 %   MATPOWER
 %   Copyright (c) 2008-2017, Power Systems Engineering Research Center (PSERC)

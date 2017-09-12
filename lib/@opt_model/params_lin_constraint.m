@@ -1,10 +1,10 @@
-function [A, l, u, vs, i1, iN] = params_lin_cons(om, name, idx)
-%PARAMS_LIN_CONS  Builds and returns linear constraint parameters.
-%   [A, L, U] = OM.PARAMS_LIN_CONS()
-%   [A, L, U] = OM.PARAMS_LIN_CONS(NAME)
-%   [A, L, U] = OM.PARAMS_LIN_CONS(NAME, IDX)
-%   [A, L, U, VS] = OM.PARAMS_LIN_CONS(...)
-%   [A, L, U, VS, I1, IN] = OM.PARAMS_LIN_CONS(...)
+function [A, l, u, vs, i1, iN] = params_lin_constraint(om, name, idx)
+%PARAMS_LIN_CONSTRAINT  Builds and returns linear constraint parameters.
+%   [A, L, U] = OM.PARAMS_LIN_CONSTRAINT()
+%   [A, L, U] = OM.PARAMS_LIN_CONSTRAINT(NAME)
+%   [A, L, U] = OM.PARAMS_LIN_CONSTRAINT(NAME, IDX)
+%   [A, L, U, VS] = OM.PARAMS_LIN_CONSTRAINT(...)
+%   [A, L, U, VS, I1, IN] = OM.PARAMS_LIN_CONSTRAINT(...)
 %
 %   With no input parameters, it assembles and returns the parameters
 %   for the aggregate linear constraints from all linear constraint sets
@@ -25,8 +25,8 @@ function [A, l, u, vs, i1, iN] = params_lin_cons(om, name, idx)
 %   constraint set in the full aggregate constraint matrix.
 %
 %   Examples:
-%       [A, l, u] = om.params_lin_cons();
-%       [A, l, u, vs, i1, i2] = om.params_lin_cons('Pmis');
+%       [A, l, u] = om.params_lin_constraint();
+%       [A, l, u, vs, i1, i2] = om.params_lin_constraint('Pmis');
 %
 %   See also OPT_MODEL, ADD_LIN_CONSTRAINTS.
 
@@ -55,7 +55,7 @@ if nargin > 1       %% individual set
                 end
             end
         else
-            error('@opt_model/params_lin_cons: linear constraint set ''%s'' requires an IDX arg', name);
+            error('@opt_model/params_lin_constraint: linear constraint set ''%s'' requires an IDX arg', name);
         end
     else
         % (calls to substruct() are relatively expensive ...
@@ -87,7 +87,7 @@ else                %% aggregate
         for k = 1:om.lin.NS
             name = om.lin.order(k).name;
             idx  = om.lin.order(k).idx;
-            [Ak, lk, uk, vs, i1, iN] = om.params_lin_cons(name, idx);
+            [Ak, lk, uk, vs, i1, iN] = om.params_lin_constraint(name, idx);
             [mk, nk] = size(Ak);        %% size of Ak
             if mk
                 Akt_full = sparse(nx, nlin);
