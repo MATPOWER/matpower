@@ -33,7 +33,7 @@ function om = init_indexed_name(om, set_type, name, dim_list)
 %         end
 %       end
 %
-%   See also OPT_MODEL, ADD_VARS, ADD_LIN_CONSTRAINT, ADD_NLN_CONSTRAINT,
+%   See also OPT_MODEL, ADD_VAR, ADD_LIN_CONSTRAINT, ADD_NLN_CONSTRAINT,
 %            ADD_QUAD_COST, ADD_NLN_COST and ADD_LEGACY_COST.
 
 %   MATPOWER

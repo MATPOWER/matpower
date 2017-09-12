@@ -33,41 +33,41 @@ om = opf_model;
 t_ok(isa(om, 'opf_model'), t);
 t_ok(isa(om, 'opt_model'), t);
 
-%%-----  add_vars  -----
-t = 'add_vars';
+%%-----  add_var  -----
+t = 'add_var';
 vN = 0;
 vNS = 0;
 t_ok(om.getN('var') == vN, sprintf('%s : var.N  = %d', t, vN));
 t_ok(om.get('var', 'NS') == vNS, sprintf('%s : var.NS = %d', t, vNS));
 
-t = 'om.add_vars(''Va'', 4)';
+t = 'om.add_var(''Va'', 4)';
 nVa = 4;
-om.add_vars('Va', nVa);
+om.add_var('Va', nVa);
 vNS = vNS + 1; vN = vN + nVa;
 t_ok(om.getN('var') == vN, sprintf('%s : var.N  = %d', t, vN));
 t_ok(om.get('var', 'NS') == vNS, sprintf('%s : var.NS = %d', t, vNS));
 
-t = 'om.add_vars(''Pg'', 3, Pg0, Pgmin, Pgmax)';
+t = 'om.add_var(''Pg'', 3, Pg0, Pgmin, Pgmax)';
 nPg = 3;
-om.add_vars('Pg', nPg, [2;4;6], [1;2;3], [10;20;30]);
+om.add_var('Pg', nPg, [2;4;6], [1;2;3], [10;20;30]);
 vNS = vNS + 1; vN = vN + nPg;
 t_ok(om.getN('var') == vN, sprintf('%s : var.N  = %d', t, vN));
 t_ok(om.get('var', 'NS') == vNS, sprintf('%s : var.NS = %d', t, vNS));
 
-t = 'om.add_vars(''Vm1'', 5, V0, Vmin, Vmax, ''I'')';
+t = 'om.add_var(''Vm1'', 5, V0, Vmin, Vmax, ''I'')';
 V0 = [1;1;1;1;1];
 Vmin = zeros(5, 1);
 Vmax = 1 + 0.01*(1:5)';
 vt = 'I';
-om.add_vars('Vm1', 5, V0, Vmin, Vmax, vt);
+om.add_var('Vm1', 5, V0, Vmin, Vmax, vt);
 vNS = vNS + 1; vN = vN + 5;
 t_ok(om.getN('var') == vN, sprintf('%s : var.N  = %d', t, vN));
 t_ok(om.get('var', 'NS') == vNS, sprintf('%s : var.NS = %d', t, vNS));
 
-t = 'om.add_vars(''Vm2'', 5, V0, Vmin, Vmax, ''CIBIC'')';
+t = 'om.add_var(''Vm2'', 5, V0, Vmin, Vmax, ''CIBIC'')';
 nVm2 = 5;
 vt = 'CIBIC';
-om.add_vars('Vm2', nVm2, V0, Vmin, Vmax, vt);
+om.add_var('Vm2', nVm2, V0, Vmin, Vmax, vt);
 vNS = vNS + 1; vN = vN + nVm2;
 t_ok(om.getN('var') == vN, sprintf('%s : var.N  = %d', t, vN));
 t_ok(om.get('var', 'NS') == vNS, sprintf('%s : var.NS = %d', t, vNS));
@@ -77,26 +77,26 @@ om.init_indexed_name('var', 'x', {2,2});
 t_ok(om.getN('var') == vN, sprintf('%s : var.N  = %d', t, vN));
 t_ok(om.get('var', 'NS') == vNS, sprintf('%s : var.NS = %d', t, vNS));
 
-t = 'om.add_vars(''x'', {1,1}, 2)';
-om.add_vars('x', {1,1}, 2);
+t = 'om.add_var(''x'', {1,1}, 2)';
+om.add_var('x', {1,1}, 2);
 vNS = vNS + 1; vN = vN + 2;
 t_ok(om.getN('var') == vN, sprintf('%s : var.N  = %d', t, vN));
 t_ok(om.get('var', 'NS') == vNS, sprintf('%s : var.NS = %d', t, vNS));
 
-t = 'om.add_vars(''x'', {1,2}, 2, x0(1,2))';
-om.add_vars('x', {1,2}, 2, [-1;-2]);
+t = 'om.add_var(''x'', {1,2}, 2, x0(1,2))';
+om.add_var('x', {1,2}, 2, [-1;-2]);
 vNS = vNS + 1; vN = vN + 2;
 t_ok(om.getN('var') == vN, sprintf('%s : var.N  = %d', t, vN));
 t_ok(om.get('var', 'NS') == vNS, sprintf('%s : var.NS = %d', t, vNS));
 
-t = 'om.add_vars(''x'', {2,1}, 3)';
-om.add_vars('x', {2,1}, 3);
+t = 'om.add_var(''x'', {2,1}, 3)';
+om.add_var('x', {2,1}, 3);
 vNS = vNS + 1; vN = vN + 3;
 t_ok(om.getN('var') == vN, sprintf('%s : var.N  = %d', t, vN));
 t_ok(om.get('var', 'NS') == vNS, sprintf('%s : var.NS = %d', t, vNS));
 
-t = 'om.add_vars(''x'', {2,2}, 2, x0(2,2), xmin(2,2), xmax(2,2))';
-om.add_vars('x', {2,2}, 2, [1;0],[0;-1],[2;1]);
+t = 'om.add_var(''x'', {2,2}, 2, x0(2,2), xmin(2,2), xmax(2,2))';
+om.add_var('x', {2,2}, 2, [1;0],[0;-1],[2;1]);
 vNS = vNS + 1; vN = vN + 2;
 t_ok(om.getN('var') == vN, sprintf('%s : var.N  = %d', t, vN));
 t_ok(om.get('var', 'NS') == vNS, sprintf('%s : var.NS = %d', t, vNS));
@@ -115,8 +115,8 @@ for i = 1:2
                 vt(j+1) = vt0{1+rem(j,3)};
             end
 %             fprintf('%d %d %d : %s\n', i, j, k, vt);
-            t = sprintf('om.add_vars(''y'', {%d,%d,%d}, y0, ymin, ymax, vt)', i,j,k);
-            om.add_vars('y', {i,j,k}, n, 10*(n:-1:1)', -1*(n:-1:1)', 100+(n:-1:1)', vt);
+            t = sprintf('om.add_var(''y'', {%d,%d,%d}, y0, ymin, ymax, vt)', i,j,k);
+            om.add_var('y', {i,j,k}, n, 10*(n:-1:1)', -1*(n:-1:1)', 100+(n:-1:1)', vt);
             vNS = vNS + 1; vN = vN + n;
             t_ok(om.getN('var') == vN, sprintf('%s : var.N  = %d', t, vN));
             t_ok(om.get('var', 'NS') == vNS, sprintf('%s : var.NS = %d', t, vNS));

@@ -19,10 +19,11 @@ classdef opt_model < handle
 %       add_nln_cost
 %       add_lin_constraint
 %       add_nln_constraint
-%       add_vars
+%       add_var
 %       init_indexed_name
 %       add_costs (deprecated)
 %       add_constraints (deprecated)
+%       add_vars (deprecated)
 %
 %   Return the number of linear constraints, nonlinear constraints,
 %   variables or cost rows, optionally for a single named block:

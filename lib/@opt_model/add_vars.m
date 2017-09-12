@@ -1,5 +1,8 @@
-function om = add_vars(om, name, idx, varargin)
+function varargout = add_vars(om, varargin)
 %ADD_VARS  Adds a set of variables to the model.
+%
+%   -----  DEPRECATED - use ADD_VAR instead  -----
+%
 %   OM.ADD_VARS(NAME, N, V0, VL, VU, VT)
 %   OM.ADD_VARS(NAME, N, V0, VL, VU)
 %   OM.ADD_VARS(NAME, N, V0, VL)
@@ -44,46 +47,4 @@ function om = add_vars(om, name, idx, varargin)
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-%% set up default args
-if iscell(idx) && isempty(varargin) %% just setting dimensions for indexed set
-    om.init_indexed_name('var', name, idx);
-else
-    if iscell(idx)
-        N = varargin{1};
-        args = varargin(2:end);
-    else
-        N = idx;
-        idx = {};
-        args = varargin;
-    end
-    nargs = length(args);
-    
-    v0 = []; vl = []; vu = []; vt = [];
-    if nargs >= 1
-        v0 = args{1};
-        if nargs >= 2
-            vl = args{2};
-            if nargs >= 3
-                vu = args{3};
-                if nargs >= 4
-                    vt = args{4};
-                end
-            end
-        end
-    end
-    if isempty(v0)
-        v0 = zeros(N, 1);   %% init to zero by default
-    end
-    if isempty(vl)
-        vl = -Inf(N, 1);    %% unbounded below by default
-    end
-    if isempty(vu)
-        vu = Inf(N, 1);     %% unbounded above by default
-    end
-    if isempty(vt) && N > 0
-        vt = 'C';           %% all continuous by default
-    end
-
-    %% add the named variable set
-    om.add_named_set('var', name, idx, N, v0, vl, vu, vt);
-end
+[varargout{1:nargout}] = om.add_var(varargin{:});

@@ -4,7 +4,7 @@ function om = add_named_set(om, set_type, name, idx, N, varargin)
 %   -----  PRIVATE METHOD  -----
 %
 %   This method is intended to be a private method, used internally by
-%   the public methods ADD_VARS, ADD_LIN_CONSTRAINT, ADD_NLN_CONSTRAINT
+%   the public methods ADD_VAR, ADD_LIN_CONSTRAINT, ADD_NLN_CONSTRAINT
 %   ADD_QUAD_COST, ADD_NLN_COST and ADD_LEGACY_COST.
 %
 %   Variable Set
@@ -28,7 +28,7 @@ function om = add_named_set(om, set_type, name, idx, N, varargin)
 %   Legacy Cost Set
 %       OM.ADD_NAMED_SET('cost', NAME, IDX_LIST, N, CP, VARSETS);
 %
-%   See also OPT_MODEL, ADD_VARS, ADD_LIN_CONSTRAINT, ADD_NLN_CONSTRAINT
+%   See also OPT_MODEL, ADD_VAR, ADD_LIN_CONSTRAINT, ADD_NLN_CONSTRAINT
 %            ADD_QUAD_COST and ADD_NLN_COST.
 
 %   MATPOWER

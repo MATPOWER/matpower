@@ -56,8 +56,8 @@ function varargout = get_idx(om, varargin)
 %       replace them with something like 'z(i,j)', 'foo(i,j,k)'
 %       or 'bar(i)' in the examples above.
 %
-%   See also OPT_MODEL, ADD_VARS, ADD_LIN_CONSTRAINT, ADD_NLN_CONSTRAINT,
-%   ADD_QUAD_COST, ADD_NLN_COST and ADD_LEGACY_COST.
+%   See also OPT_MODEL, ADD_VAR, ADD_LIN_CONSTRAINT, ADD_NLN_CONSTRAINT,
+%            ADD_QUAD_COST, ADD_NLN_COST and ADD_LEGACY_COST.
 
 %   MATPOWER
 %   Copyright (c) 2008-2017, Power Systems Engineering Research Center (PSERC)

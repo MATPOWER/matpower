@@ -190,7 +190,7 @@ lreq = r.req / mpc.baseMVA;
 Cw = r.cost(igr) * mpc.baseMVA;     %% per unit cost coefficients
 
 %% add them to the model
-om.add_vars('R', ngr, [], Rmin, Rmax);
+om.add_var('R', ngr, [], Rmin, Rmax);
 om.add_lin_constraint('Pg_plus_R', Ar, [], ur, {'Pg', 'R'});
 om.add_lin_constraint('Rreq', r.zones(:, igr), lreq, [], {'R'});
 om.add_quad_cost('Rcost', [], Cw, 0, {'R'});

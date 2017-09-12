@@ -324,8 +324,8 @@ if dc
   om.userdata.iang = iang;
 
   %% optimization variables
-  om.add_vars('Va', nb, Va, Val, Vau);
-  om.add_vars('Pg', ng, Pg, Pmin, Pmax);
+  om.add_var('Va', nb, Va, Val, Vau);
+  om.add_var('Pg', ng, Pg, Pmin, Pmax);
 
   %% linear constraints
   om.add_lin_constraint('Pmis', Amis, bmis, bmis, {'Va', 'Pg'});    %% nb
@@ -342,10 +342,10 @@ else
   om.userdata.iang = iang;
 
   %% optimization variables
-  om.add_vars('Va', nb, Va, Val, Vau);
-  om.add_vars('Vm', nb, Vm, bus(:, VMIN), bus(:, VMAX));
-  om.add_vars('Pg', ng, Pg, Pmin, Pmax);
-  om.add_vars('Qg', ng, Qg, Qmin, Qmax);
+  om.add_var('Va', nb, Va, Val, Vau);
+  om.add_var('Vm', nb, Vm, bus(:, VMIN), bus(:, VMAX));
+  om.add_var('Pg', ng, Pg, Pmin, Pmax);
+  om.add_var('Qg', ng, Qg, Qmin, Qmax);
 
   %% nonlinear constraints
   om.add_nln_constraint({'Pmis', 'Qmis'}, [nb;nb], 1, fcn_mis, hess_mis, {'Va', 'Vm', 'Pg', 'Qg'});
@@ -383,7 +383,7 @@ end
 
 %% y vars, constraints for piece-wise linear gen costs
 if ny > 0
-  om.add_vars('y', ny);
+  om.add_var('y', ny);
   om.add_lin_constraint('ycon', Ay, [], by, ycon_vars);             %% ncony
   if ~legacy_formulation
     om.add_quad_cost('pwl', [], ones(ny, 1), 0, {'y'});
@@ -392,7 +392,7 @@ end
 
 %% add user vars, constraints and costs (as specified via A, ..., N, ...)
 if nz > 0
-  om.add_vars('z', nz, z0, zl, zu);
+  om.add_var('z', nz, z0, zl, zu);
   user_vars{end+1} = 'z';
 end
 if nlin
