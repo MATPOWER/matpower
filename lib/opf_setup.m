@@ -348,11 +348,11 @@ else
   om.add_vars('Qg', ng, Qg, Qmin, Qmax);
 
   %% nonlinear constraints
-  om.add_nln_constraints({'Pmis', 'Qmis'}, [nb;nb], 1, fcn_mis, hess_mis, {'Va', 'Vm', 'Pg', 'Qg'});
+  om.add_nln_constraint({'Pmis', 'Qmis'}, [nb;nb], 1, fcn_mis, hess_mis, {'Va', 'Vm', 'Pg', 'Qg'});
   if legacy_formulation
-    om.add_nln_constraints({'Sf', 'St'}, [nl;nl], 0, fcn_flow, hess_flow, {'Va', 'Vm'});
+    om.add_nln_constraint({'Sf', 'St'}, [nl;nl], 0, fcn_flow, hess_flow, {'Va', 'Vm'});
   else
-    om.add_nln_constraints({'Sf', 'St'}, [nl2;nl2], 0, fcn_flow, hess_flow, {'Va', 'Vm'});
+    om.add_nln_constraint({'Sf', 'St'}, [nl2;nl2], 0, fcn_flow, hess_flow, {'Va', 'Vm'});
   end
 
   %% linear constraints
@@ -403,7 +403,7 @@ if nnle
     nlc = mpc.nle_constraints{k};
     fcn  = eval(['@(x)' nlc{3} '(x, nlc{6}{:})']);
     hess = eval(['@(x, lam)' nlc{4} '(x, lam, nlc{6}{:})']);
-    om.add_nln_constraints(nlc{1:2}, 1, fcn, hess, nlc{5});
+    om.add_nln_constraint(nlc{1:2}, 1, fcn, hess, nlc{5});
   end
 end
 if nnli
@@ -411,7 +411,7 @@ if nnli
     nlc = mpc.nli_constraints{k};
     fcn  = eval(['@(x)' nlc{3} '(x, nlc{6}{:})']);
     hess = eval(['@(x, lam)' nlc{4} '(x, lam, nlc{6}{:})']);
-    om.add_nln_constraints(nlc{1:2}, 0, fcn, hess, nlc{5});
+    om.add_nln_constraint(nlc{1:2}, 0, fcn, hess, nlc{5});
   end
 end
 if nw

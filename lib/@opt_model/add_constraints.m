@@ -2,7 +2,7 @@ function om = add_constraints(om, name, varargin)
 %ADD_CONSTRAINTS  Adds a set of constraints to the model.
 %
 %   -----  DEPRECATED - Please use one of the following instead:        -----
-%   -----  ADD_LIN_CONSTRAINTS, ADD_NLN_CONSTRAINTS, INIT_INDEXED_NAME  -----
+%   -----  ADD_LIN_CONSTRAINTS, ADD_NLN_CONSTRAINT, INIT_INDEXED_NAME  -----
 %
 %   OM.ADD_CONSTRAINTS(NAME, A, L, U);
 %   OM.ADD_CONSTRAINTS(NAME, A, L, U, VARSETS);
@@ -190,7 +190,7 @@ else
         else
             [N, iseq, fcn, hess, varsets] = deal(args{1:5});
         end
-        om.add_nln_constraints(name, idx, N, iseq, fcn, hess, varsets);
+        om.add_nln_constraint(name, idx, N, iseq, fcn, hess, varsets);
     else                %% linear
         if nargs < 4
             [A, l, u, varsets] = deal(args{1:3}, {});

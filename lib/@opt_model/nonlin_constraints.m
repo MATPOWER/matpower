@@ -3,7 +3,7 @@ function [g, dg] = nonlin_constraints(om, x, iseq)
 %   [G, DG] = OM.NONLIN_CONSTRAINTS(X, ISEQ)
 %   Builds a full set of nonlinear equality or inequality constraints and
 %   their gradients for a given value of the optimization vector X,
-%   based on constraints added by ADD_NLN_CONSTRAINTS.
+%   based on constraints added by ADD_NLN_CONSTRAINT.
 %
 %       g(X) = 0
 %       h(X) <= 0
@@ -12,7 +12,7 @@ function [g, dg] = nonlin_constraints(om, x, iseq)
 %       [g, dg] = om.nonlin_constraints(x, 1)
 %       [h, dh] = om.nonlin_constraints(x, 0)
 %
-%   See also OPT_MODEL, ADD_NLN_CONSTRAINTS, NONLIN_CONSTRAINT_HESS.
+%   See also OPT_MODEL, ADD_NLN_CONSTRAINT, NONLIN_CONSTRAINT_HESS.
 
 %   MATPOWER
 %   Copyright (c) 2008-2017, Power Systems Engineering Research Center (PSERC)

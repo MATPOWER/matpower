@@ -190,7 +190,7 @@ else
 
     fcn = @(x)softlims_fcn(x, mpc, Yf(s.idx, :), Yt(s.idx, :), s.idx, mpopt, s.Pfmax);
     hess = @(x, lam)softlims_hess(x, lam, mpc, Yf(s.idx, :), Yt(s.idx, :), s.idx, mpopt);
-    om.add_nln_constraints({'softSf', 'softSt'}, [ns;ns], 0, fcn, hess, {'Va', 'Vm', 'flv'});
+    om.add_nln_constraint({'softSf', 'softSt'}, [ns;ns], 0, fcn, hess, {'Va', 'Vm', 'flv'});
 end
 
 

@@ -1,11 +1,11 @@
-function om = add_nln_constraints(om, name, idx, N, iseq, fcn, hess, varsets)
-%ADD_NLN_CONSTRAINTS  Adds a set of nonlinear constraints to the model.
+function om = add_nln_constraint(om, name, idx, N, iseq, fcn, hess, varsets)
+%ADD_NLN_CONSTRAINT  Adds a set of nonlinear constraints to the model.
 %
-%   OM.ADD_NLN_CONSTRAINTS(NAME, N, ISEQ, FCN, HESS);
-%   OM.ADD_NLN_CONSTRAINTS(NAME, N, ISEQ, FCN, HESS, VARSETS);
+%   OM.ADD_NLN_CONSTRAINT(NAME, N, ISEQ, FCN, HESS);
+%   OM.ADD_NLN_CONSTRAINT(NAME, N, ISEQ, FCN, HESS, VARSETS);
 %
-%   OM.ADD_NLN_CONSTRAINTS(NAME, IDX_LIST, N, ISEQ, FCN, HESS);
-%   OM.ADD_NLN_CONSTRAINTS(NAME, IDX_LIST, N, ISEQ, FCN, HESS, VARSETS);
+%   OM.ADD_NLN_CONSTRAINT(NAME, IDX_LIST, N, ISEQ, FCN, HESS);
+%   OM.ADD_NLN_CONSTRAINT(NAME, IDX_LIST, N, ISEQ, FCN, HESS, VARSETS);
 %
 %   N specifies the number of constraints in the set, ISEQ is a one
 %   character string specifying whether it is an equality or inequality
@@ -53,19 +53,19 @@ function om = add_nln_constraints(om, name, idx, N, iseq, fcn, hess, varsets)
 %       all arguments are as described above, except IDX_LIST is a cell
 %       array of the indices for the particular constraint set being added.
 %
-%       OM.ADD_NLN_CONSTRAINTS(NAME, IDX_LIST, N, ISEQ, FCN, HESS);
-%       OM.ADD_NLN_CONSTRAINTS(NAME, IDX_LIST, N, ISEQ, FCN, HESS, VARSETS);
+%       OM.ADD_NLN_CONSTRAINT(NAME, IDX_LIST, N, ISEQ, FCN, HESS);
+%       OM.ADD_NLN_CONSTRAINT(NAME, IDX_LIST, N, ISEQ, FCN, HESS, VARSETS);
 %
 %   Examples:
 %       %% nonlinear equality constraint with constraint/gradient and Hessian
 %       %% evaluation functions provided
-%       om.add_nln_constraints('Qmis', nb, 1, fcn, hess);
+%       om.add_nln_constraint('Qmis', nb, 1, fcn, hess);
 %
 %       %% nonlinear inequality constraints with indexed named set 'S(i,j)'
 %       om.init_indexed_name('nli', 'S', {2, 3});
 %       for i = 1:2
 %         for j = 1:3
-%           om.add_nln_constraints('S', {i, j}, N{i,j}, ...);
+%           om.add_nln_constraint('S', {i, j}, N{i,j}, ...);
 %         end
 %       end
 %
@@ -110,7 +110,7 @@ varsets = om.varsets_cell2struct(varsets);
 %% add the named nonlinear constraint set
 if iscell(name)
     if length(name) ~= length(N)
-        error('@opt_model/add_nln_constraints: dimensions of NAME and N must match');
+        error('@opt_model/add_nln_constraint: dimensions of NAME and N must match');
     end
     om.add_named_set(ff, name{1}, idx, N(1), fcn, hess, '', varsets);
     for k = 2:length(name)

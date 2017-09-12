@@ -2460,7 +2460,7 @@ This stage is also a good place to check the consistency of any additional input
 \subsubsection{{\tt formulation} Callback}
 \label{sec:formulation_callback}
 
-This stage is called at the end of \code{opf\_setup} after the OPF Model (\code{om}) object has been initialized with the standard OPF formulation, but before calling the solver. This is the ideal place for modifying the problem formulation with additional variables, constraints and costs, using the \code{add\_vars}, \code{add\_lin\_constraints}, \code{add\_nln\_constraints}, \code{add\_quad\_cost}, \code{add\_nln\_cost} and \code{add\_legacy\_costs} methods of the OPF Model object.\footnote{It is perfectly legitimate to register more than one callback per stage, such as when enabling multiple independent OPF extensions. In this case, the callbacks are executed in the order they were registered with \code{add\_userfcn}. E.g. when the second and subsequent \code{formulation} callbacks are invoked, the \code{om} object will reflect any modifications performed by earlier \code{formulation} callbacks.} Inputs are the \code{om} object, the \matpower{} options struct \code{mpopt} and any (optional) \code{args} supplied when the callback was registered via \code{add\_userfcn}. Output is the updated \code{om} object.
+This stage is called at the end of \code{opf\_setup} after the OPF Model (\code{om}) object has been initialized with the standard OPF formulation, but before calling the solver. This is the ideal place for modifying the problem formulation with additional variables, constraints and costs, using the \code{add\_vars}, \code{add\_lin\_constraints}, \code{add\_nln\_constraint}, \code{add\_quad\_cost}, \code{add\_nln\_cost} and \code{add\_legacy\_costs} methods of the OPF Model object.\footnote{It is perfectly legitimate to register more than one callback per stage, such as when enabling multiple independent OPF extensions. In this case, the callbacks are executed in the order they were registered with \code{add\_userfcn}. E.g. when the second and subsequent \code{formulation} callbacks are invoked, the \code{om} object will reflect any modifications performed by earlier \code{formulation} callbacks.} Inputs are the \code{om} object, the \matpower{} options struct \code{mpopt} and any (optional) \code{args} supplied when the callback was registered via \code{add\_userfcn}. Output is the updated \code{om} object.
 
 The \code{om} object contains both the original \matpower{} case data as well as all of the indexing data for the variables and constraints of the standard OPF formulation. See the on-line help for \code{opf\_model} and \code{opt\_model} for more details on the OPF model object and the methods available for manipulating and accessing it.
 
@@ -2519,7 +2519,7 @@ This conversion essentially undoes everything that was done by \code{ext2int}. G
 
 This callback is invoked from \code{int2ext} immediately before the resulting case is converted from internal back to external indexing. At this point, the simulation has been completed and the \results{} struct, a superset of the original \matpower{} case struct passed to the OPF, contains all of the results. This \results{} struct is passed to the callback, along with any (optional) \code{args} supplied when the callback was registered via \code{add\_userfcn}. The output of the callback is the updated \results{} struct. This is typically used to convert any results to external indexing and populate any corresponding fields in the \results{} struct.
 
-The \results{} struct contains, in addition to the standard OPF results, solution information related to all of the user-defined variables, constraints and costs. Table~\ref{tab:extended_results} summarizes where the various data is found. Each of the fields listed in the table is actually a struct whose fields correspond to the named sets created by \code{add\_vars}, \code{add\_lin\_constraints}, \code{add\_nln\_constraints}, \code{add\_quad\_cost}, \code{add\_nln\_cost} and \code{add\_legacy\_costs}.
+The \results{} struct contains, in addition to the standard OPF results, solution information related to all of the user-defined variables, constraints and costs. Table~\ref{tab:extended_results} summarizes where the various data is found. Each of the fields listed in the table is actually a struct whose fields correspond to the named sets created by \code{add\_vars}, \code{add\_lin\_constraints}, \code{add\_nln\_constraint}, \code{add\_quad\_cost}, \code{add\_nln\_cost} and \code{add\_legacy\_costs}.
 
 \begin{table}[!ht]
 %\renewcommand{\arraystretch}{1.2}
@@ -5661,7 +5661,7 @@ name & description \\
 \code{~~add\_legacy\_costs}	& adds a named subset of legacy user-defined costs to the model	\\
 \code{~~add\_lin\_constraints}	& adds a named subset of linear constraints to the model	\\
 \code{~~add\_named\_set}\tnote{\dag}	& adds a named subset of costs, constraints or variables to the model	\\
-\code{~~add\_nln\_constraints}	& adds a named subset of nonlinear constraints to the model	\\
+\code{~~add\_nln\_constraint}	& adds a named subset of nonlinear constraints to the model	\\
 \code{~~add\_nln\_cost}	& adds a named subset of general nonlinear costs to the model	\\
 \code{~~add\_quad\_cost}	& adds a named subset of quadratic costs to the model	\\
 \code{~~add\_vars}	& adds a named subset of optimization variables to the model	\\
@@ -6877,12 +6877,12 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.1.pdf}{\m
     \item \code{gentypes()} and \code{genfuels} provide list of standard generator unit types and fuel types, respectively.
     \item \code{save2psse()} to export a \matpower{} case to PSS/E RAW data format.
     \item \code{opt\_model/add\_lin\_constraints()} to add linear constraints to an optimization model.
-    \item \code{opt\_model/add\_nln\_constraints()} to add nonlinear constraints to an optimization model.
+    \item \code{opt\_model/add\_nln\_constraint()} to add nonlinear constraints to an optimization model.
     \item \code{opt\_model/init\_indexed\_name()} to initialize the indexes for an indexed name set of constraints, costs or variables.
     \end{itemize}
     \item Deprecated functions:
     \begin{itemize}
-    \item \code{opt\_model/add\_constraints()} -- use the corresponding one of the following methods instead: \code{add\_lin\_constraints()}, \code{add\_nln\_constraints()}, or \code{init\_indexed\_name()}.
+    \item \code{opt\_model/add\_constraints()} -- use the corresponding one of the following methods instead: \code{add\_lin\_constraints()}, \code{add\_nln\_constraint()}, or \code{init\_indexed\_name()}.
     \item \code{opt\_model/add\_costs()} -- use the corresponding one of the following methods instead: \code{add\_quad\_cost()},  \code{add\_nln\_cost()}, \code{add\_legacy\_costs()}, or \code{init\_indexed\_name()}.
     \item \code{opt\_model/linear\_constraints()} -- use \code{opt\_model/params\_lin\_constraint()} instead
     \item \code{opt\_model/build\_cost\_params()} -- no longer needed, incorporated into \code{opt\_model/params\_legacy\_cost()}
