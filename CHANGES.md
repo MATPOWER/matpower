@@ -60,6 +60,8 @@ Since last release
     `nli.mu.<name>` fields instead for nonlinear constraint multipliers.
   - **INCOMPATIBLE CHANGE:** Modify order of default output arguments of
     `opt_model/get_idx()`.
+  - **INCOMPATIBLE CHANGE:** Add `mpopt` to OPF `formulation` callback
+    input args.
 
 #### 8/4/17
   - Refactor AC OPF code to use the new nonlinear constraint handling
