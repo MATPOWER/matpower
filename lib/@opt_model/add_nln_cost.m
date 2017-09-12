@@ -1,9 +1,9 @@
-function om = add_nln_costs(om, name, idx, N, fcn, varsets)
-%ADD_NLN_COSTS  Adds a set of general nonlinear costs to the model.
-%   OM.ADD_NLN_COSTS(NAME, N, FCN);
-%   OM.ADD_NLN_COSTS(NAME, N, FCN, VARSETS);
-%   OM.ADD_NLN_COSTS(NAME, IDX_LIST, N, FCN);
-%   OM.ADD_NLN_COSTS(NAME, IDX_LIST, N, FCN, VARSETS);
+function om = add_nln_cost(om, name, idx, N, fcn, varsets)
+%ADD_NLN_COST  Adds a set of general nonlinear costs to the model.
+%   OM.ADD_NLN_COST(NAME, N, FCN);
+%   OM.ADD_NLN_COST(NAME, N, FCN, VARSETS);
+%   OM.ADD_NLN_COST(NAME, IDX_LIST, N, FCN);
+%   OM.ADD_NLN_COST(NAME, IDX_LIST, N, FCN, VARSETS);
 %
 %   Adds a named block of general nonlinear costs to the model. FCN is
 %   a handle to function that evaluates the cost, its gradient and Hessian
@@ -38,20 +38,20 @@ function om = add_nln_costs(om, name, idx, N, fcn, varsets)
 %       all arguments are as described above, except IDX_LIST is a cell
 %       array of the indices for the particular cost set being added.
 %
-%       OM.ADD_NLN_COSTS(NAME, IDX_LIST, FCN);
-%       OM.ADD_NLN_COSTS(NAME, IDX_LIST, FCN, VARSETS);
+%       OM.ADD_NLN_COST(NAME, IDX_LIST, FCN);
+%       OM.ADD_NLN_COST(NAME, IDX_LIST, FCN, VARSETS);
 %
 %   Examples:
 %
 %       fcn1 = @(x)my_cost_function1(x, other_args)
 %       fcn2 = @(x)my_cost_function2(x, other_args)
-%       om.add_nln_costs('mycost1', 1, fcn1);
-%       om.add_nln_costs('mycost2', 1, fcn2, {'Vm', 'Pg', 'Qg', 'z'});
+%       om.add_nln_cost('mycost1', 1, fcn1);
+%       om.add_nln_cost('mycost2', 1, fcn2, {'Vm', 'Pg', 'Qg', 'z'});
 %
 %       om.init_indexed_name('c', {2, 3});
 %       for i = 1:2
 %         for j = 1:3
-%           om.add_nln_costs('c', {i, j}, 1, fcn(i,j), ...);
+%           om.add_nln_cost('c', {i, j}, 1, fcn(i,j), ...);
 %         end
 %       end
 %
@@ -82,7 +82,7 @@ else                    %% simple named set
 end
 
 if N ~= 1
-    error('@opt_model/add_nln_costs: not yet implemented for vector valued functions (i.e. N currently must equal 1)');
+    error('@opt_model/add_nln_cost: not yet implemented for vector valued functions (i.e. N currently must equal 1)');
 end
 
 %% convert varsets from cell to struct array if necessary

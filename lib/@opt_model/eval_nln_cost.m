@@ -3,12 +3,12 @@ function [f, df, d2f] = eval_nln_cost(om, x, name, idx)
 %   [F, DF, D2F] = OM.EVAL_NLN_COST(X)
 %   Evaluates an individual named set or the full set of general nonlinear
 %   costs and their derivatives for a given value of the optimization vector
-%   X, based on costs added by ADD_NLN_COSTS.
+%   X, based on costs added by ADD_NLN_COST.
 %
 %   Example:
 %       [f, df, d2f] = om.eval_nln_cost(x)
 %
-%   See also OPT_MODEL, ADD_NLN_COSTS, PARAMS_NLN_COST.
+%   See also OPT_MODEL, ADD_NLN_COST, PARAMS_NLN_COST.
 
 %   MATPOWER
 %   Copyright (c) 2008-2017, Power Systems Engineering Research Center (PSERC)

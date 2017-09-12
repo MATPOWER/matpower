@@ -11,7 +11,7 @@ function [N, fcn, vs] = params_nln_cost(om, name, idx)
 %   An optional 3rd output argument VS indicates the variable sets used by
 %   this cost set.
 %
-%   See also OPT_MODEL, ADD_NLN_COSTS, EVAL_NLN_COST.
+%   See also OPT_MODEL, ADD_NLN_COST, EVAL_NLN_COST.
 
 %   MATPOWER
 %   Copyright (c) 2017, Power Systems Engineering Research Center (PSERC)

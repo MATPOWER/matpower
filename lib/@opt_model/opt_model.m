@@ -16,7 +16,7 @@ classdef opt_model < handle
 %   or variables:
 %       add_legacy_costs
 %       add_quad_cost
-%       add_nln_costs
+%       add_nln_cost
 %       add_lin_constraints
 %       add_nln_constraints
 %       add_vars

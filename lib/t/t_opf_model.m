@@ -1046,27 +1046,27 @@ t = 'om.eval_legacy_cost(''wc'')';
 f = om.eval_legacy_cost(x, 'wc');
 t_is(f, 239, 14, t);
 
-%%-----  add_nln_costs  -----
-t = 'add_nln_costs';
+%%-----  add_nln_cost  -----
+t = 'add_nln_cost';
 nlcN = 0;
 nlcNS = 0;
 t_ok(om.getN('nlc') == nlcN, sprintf('%s : nlc.N  = %d', t, nlcN));
 t_ok(om.get('nlc', 'NS') == nlcNS, sprintf('%s : nlc.NS = %d', t, nlcNS));
 
-t = 'om.add_nln_costs(''ucost'', 1, fcn, {''Va'', ''Pg''})';
+t = 'om.add_nln_cost(''ucost'', 1, fcn, {''Va'', ''Pg''})';
 cp = struct('N', sparse([1:2 1:2 1:2]', [1:4 5 7]', [1 1 -1 -1 2 2]', 2,7), ...
             'Cw', [2;3]);
 fcn = @(x)my_legacy_cost_fcn(x, cp, om, {'Va', 'Pg'});
-om.add_nln_costs('ucost', 1, fcn, {'Va', 'Pg'});
+om.add_nln_cost('ucost', 1, fcn, {'Va', 'Pg'});
 nlcNS = nlcNS + 1; nlcN = nlcN + 1;
 t_ok(om.getN('nlc') == nlcN, sprintf('%s : nlc.N  = %d', t, nlcN));
 t_ok(om.get('nlc', 'NS') == nlcNS, sprintf('%s : nlc.NS = %d', t, nlcNS));
 
-t = 'om.add_nln_costs(''vcost'', cp)';
+t = 'om.add_nln_cost(''vcost'', cp)';
 cp = struct('N', sparse([1:2 1:2 1:2]', [1:4 5 7]', [1 1 -1 -1 2 2]', 2, vN), ...
             'Cw', [2;3]);
 fcn = @(x)my_legacy_cost_fcn(x, cp, om);
-om.add_nln_costs('vcost', 1, fcn);
+om.add_nln_cost('vcost', 1, fcn);
 nlcNS = nlcNS + 1; nlcN = nlcN + 1;
 t_ok(om.getN('nlc') == nlcN, sprintf('%s : nlc.N  = %d', t, nlcN));
 t_ok(om.get('nlc', 'NS') == nlcNS, sprintf('%s : nlc.NS = %d', t, nlcNS));
@@ -1078,7 +1078,7 @@ t_ok(om.get('nlc', 'NS') == nlcNS, sprintf('%s : nlc.NS = %d', t, nlcNS));
 
 for i = 1:2
     for j = 1:2
-        t = 'om.add_nln_costs(''wc'', {i, j}, cp, vs)';
+        t = 'om.add_nln_cost(''wc'', {i, j}, cp, vs)';
         cp.N = sparse([1:(i+j) 1:(i+j)]', [1:(i+j) 5*ones(1,i+j)]', ...
             [ones(i+j,1);-ones(i+j,1)], i+j, 3+2+(i==2 && j==1));
         cp.Cw = (i+j:-1:1)';
@@ -1087,7 +1087,7 @@ for i = 1:2
         end
         vs = struct('name', {'Pg', 'x'}, 'idx', {{}, {i,j}});
         fcn = @(x)my_legacy_cost_fcn(x, cp, om, vs);
-        om.add_nln_costs('wc', {i, j}, 1, fcn, vs);
+        om.add_nln_cost('wc', {i, j}, 1, fcn, vs);
         nlcNS = nlcNS + 1; nlcN = nlcN + 1;
         t_ok(om.getN('nlc') == nlcN, sprintf('%s : nlc.N  = %d', t, nlcN));
         t_ok(om.get('nlc', 'NS') == nlcNS, sprintf('%s : nlc.NS = %d', t, nlcNS));
