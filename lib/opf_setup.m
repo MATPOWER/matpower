@@ -334,7 +334,7 @@ if dc
 
   %% quadratic generator costs
   if ~isempty(cpg)
-    om.add_quadratic_costs('polPg', Qpg, cpg, kpg, {'Pg'});
+    om.add_quad_cost('polPg', Qpg, cpg, kpg, {'Pg'});
   end
 else
   %% user data
@@ -365,10 +365,10 @@ else
   if ~legacy_formulation
     %% quadratic/linear generator costs
     if ~isempty(cpg)
-      om.add_quadratic_costs('polPg', Qpg, cpg, kpg, {'Pg'});
+      om.add_quad_cost('polPg', Qpg, cpg, kpg, {'Pg'});
     end
     if ~isempty(cqg)
-      om.add_quadratic_costs('polQg', Qqg, cqg, kqg, {'Qg'});
+      om.add_quad_cost('polQg', Qqg, cqg, kqg, {'Qg'});
     end
 
     %% higher order polynomial generator costs
@@ -386,7 +386,7 @@ if ny > 0
   om.add_vars('y', ny);
   om.add_lin_constraints('ycon', Ay, [], by, ycon_vars);            %% ncony
   if ~legacy_formulation
-    om.add_quadratic_costs('pwl', [], ones(ny, 1), 0, {'y'});
+    om.add_quad_cost('pwl', [], ones(ny, 1), 0, {'y'});
   end
 end
 
@@ -475,7 +475,7 @@ if nw
             Q = MN' * H * MN;
             c = full(MN' * (Cw - 1/2*(HMR+HtMR)));
             k = (1/2 * HtMR - Cw)' * MR;
-            om.add_quadratic_costs('usr', Q, c, k);
+            om.add_quad_cost('usr', Q, c, k);
         end
     end
 end

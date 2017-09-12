@@ -8,7 +8,7 @@ function [Q, c, k, vs] = params_quad_cost(om, name, idx)
 %
 %   With no input parameters, it assembles and returns the parameters
 %   for the aggregate quadratic cost from all quadratic cost sets added
-%   using ADD_QUADRATIC_COSTS. The values of these parameters are cached
+%   using ADD_QUAD_COST. The values of these parameters are cached
 %   for subsequent calls. The parameters are Q, C, and optionally K,
 %   where the quadratic cost is of the form
 %       F(X) = 1/2 * X'*Q*X + C'*X + K
@@ -22,7 +22,7 @@ function [Q, c, k, vs] = params_quad_cost(om, name, idx)
 %   An optional 4th output argument VS indicates the variable sets used by
 %   this cost set. The size of Q and C will be consistent with VS.
 %
-%   See also OPT_MODEL, ADD_QUADRATIC_COSTS.
+%   See also OPT_MODEL, ADD_QUAD_COST.
 
 %   MATPOWER
 %   Copyright (c) 2017, Power Systems Engineering Research Center (PSERC)

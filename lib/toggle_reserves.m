@@ -193,7 +193,7 @@ Cw = r.cost(igr) * mpc.baseMVA;     %% per unit cost coefficients
 om.add_vars('R', ngr, [], Rmin, Rmax);
 om.add_lin_constraints('Pg_plus_R', Ar, [], ur, {'Pg', 'R'});
 om.add_lin_constraints('Rreq', r.zones(:, igr), lreq, [], {'R'});
-om.add_quadratic_costs('Rcost', [], Cw, 0, {'R'});
+om.add_quad_cost('Rcost', [], Cw, 0, {'R'});
 
 
 %%-----  int2ext  ------------------------------------------------------

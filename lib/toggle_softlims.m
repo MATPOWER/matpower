@@ -163,7 +163,7 @@ om.userdata.mpopt = mpopt;
 %% add flow limit violation variable (flv) and cost
 om.add_vars('flv', ns, zeros(ns, 1), zeros(ns, 1), Inf(ns, 1));
 Cw = s.cost(:, 1) * mpc.baseMVA;
-om.add_quadratic_costs('vc', [], Cw, 0, {'flv'});
+om.add_quad_cost('vc', [], Cw, 0, {'flv'});
 
 if strcmp(mpopt.model, 'DC')
     %% fetch Bf matrix for DC model

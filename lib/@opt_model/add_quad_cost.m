@@ -1,11 +1,11 @@
-function om = add_quadratic_costs(om, name, idx, Q, c, k, varsets)
-%ADD_QUADRATIC_COSTS  Adds a set of user costs to the model.
-%   OM.ADD_QUADRATIC_COSTS(NAME, Q, C);
-%   OM.ADD_QUADRATIC_COSTS(NAME, Q, C, K);
-%   OM.ADD_QUADRATIC_COSTS(NAME, Q, C, K, VARSETS);
-%   OM.ADD_QUADRATIC_COSTS(NAME, IDX_LIST, Q, C);
-%   OM.ADD_QUADRATIC_COSTS(NAME, IDX_LIST, Q, C, K);
-%   OM.ADD_QUADRATIC_COSTS(NAME, IDX_LIST, Q, C, K, VARSETS);
+function om = add_quad_cost(om, name, idx, Q, c, k, varsets)
+%ADD_QUAD_COST  Adds a set of user costs to the model.
+%   OM.ADD_QUAD_COST(NAME, Q, C);
+%   OM.ADD_QUAD_COST(NAME, Q, C, K);
+%   OM.ADD_QUAD_COST(NAME, Q, C, K, VARSETS);
+%   OM.ADD_QUAD_COST(NAME, IDX_LIST, Q, C);
+%   OM.ADD_QUAD_COST(NAME, IDX_LIST, Q, C, K);
+%   OM.ADD_QUAD_COST(NAME, IDX_LIST, Q, C, K, VARSETS);
 %
 %   Adds a named block of quadratic costs to the model. Costs are of the
 %   form
@@ -31,17 +31,17 @@ function om = add_quadratic_costs(om, name, idx, Q, c, k, varsets)
 %       all arguments are as described above, except IDX_LIST is a cell
 %       array of the indices for the particular cost set being added.
 %
-%       OM.ADD_QUADRATIC_COSTS(NAME, IDX_LIST, Q, C, K);
-%       OM.ADD_QUADRATIC_COSTS(NAME, IDX_LIST, Q, C, K, VARSETS);
+%       OM.ADD_QUAD_COST(NAME, IDX_LIST, Q, C, K);
+%       OM.ADD_QUAD_COST(NAME, IDX_LIST, Q, C, K, VARSETS);
 %
 %   Examples:
-%       om.add_quadratic_costs('quad_cost1', Q1, c1, 0);
-%       om.add_quadratic_costs('lin_cost2',  [], c2, k2, {'Vm', 'Pg', 'z'});
+%       om.add_quad_cost('quad_cost1', Q1, c1, 0);
+%       om.add_quad_cost('lin_cost2',  [], c2, k2, {'Vm', 'Pg', 'z'});
 %
 %       om.init_indexed_name('c', {2, 3});
 %       for i = 1:2
 %         for j = 1:3
-%           om.add_quadratic_costs('c', {i, j}, Q{i,j}, ...);
+%           om.add_quad_cost('c', {i, j}, Q{i,j}, ...);
 %         end
 %       end
 %
@@ -85,25 +85,25 @@ nv = om.varsets_len(varsets);   %% number of variables
 [Mc, Nc] = size(c);
 if MQ
     if NQ ~= MQ && NQ ~= 1
-        error('@opt_model/add_quadratic_costs: Q (%d x %d) must be square or a column vector (or empty)', MQ, NQ);
+        error('@opt_model/add_quad_cost: Q (%d x %d) must be square or a column vector (or empty)', MQ, NQ);
     end
 end
 if Mc && Nc ~= 1
-    error('@opt_model/add_quadratic_costs: c (%d x %d) must be a column vector (or empty)', Mc, Nc);
+    error('@opt_model/add_quad_cost: c (%d x %d) must be a column vector (or empty)', Mc, Nc);
 end
 if MQ
     if Mc && Mc ~= MQ
-        error('@opt_model/add_quadratic_costs: dimensions of Q (%d x %d) and c (%d x %d) are not compatible', MQ, NQ, Mc, Nc);
+        error('@opt_model/add_quad_cost: dimensions of Q (%d x %d) and c (%d x %d) are not compatible', MQ, NQ, Mc, Nc);
     end
     nx = MQ;
 else
     if ~Mc
-        error('@opt_model/add_quadratic_costs: Q and c cannot both be empty');
+        error('@opt_model/add_quad_cost: Q and c cannot both be empty');
     end
     nx = Mc;
 end
 if nx ~= nv
-    error('@opt_model/add_quadratic_costs: dimensions of Q (%d x %d) and c (%d x %d) do not match\nnumber of variables (%d)\n', MQ, NQ, Mc, Nc, nv);
+    error('@opt_model/add_quad_cost: dimensions of Q (%d x %d) and c (%d x %d) do not match\nnumber of variables (%d)\n', MQ, NQ, Mc, Nc, nv);
 end
 
 %% size of named cost set

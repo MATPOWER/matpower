@@ -15,7 +15,7 @@ classdef opt_model < handle
 %   Modify the OPF formulation by adding named blocks of costs, constraints
 %   or variables:
 %       add_legacy_costs
-%       add_quadratic_costs
+%       add_quad_cost
 %       add_nln_costs
 %       add_lin_constraints
 %       add_nln_constraints

@@ -57,7 +57,7 @@ function varargout = get_idx(om, varargin)
 %       or 'bar(i)' in the examples above.
 %
 %   See also OPT_MODEL, ADD_VARS, ADD_LIN_CONSTRAINTS, ADD_NLN_CONSTRAINTS,
-%   ADD_QUADRATIC_COSTS, ADD_NLN_COSTS and ADD_LEGACY_COSTS.
+%   ADD_QUAD_COST, ADD_NLN_COSTS and ADD_LEGACY_COSTS.
 
 %   MATPOWER
 %   Copyright (c) 2008-2017, Power Systems Engineering Research Center (PSERC)

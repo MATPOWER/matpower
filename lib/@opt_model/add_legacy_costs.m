@@ -2,7 +2,7 @@ function om = add_legacy_costs(om, name, idx, varargin)
 %ADD_LEGACY_COSTS  Adds a set of user costs to the model.
 %
 %   -----  DEPRECATED - Please use one of the following instead:        -----
-%   -----  ADD_QUADRATIC_COSTS, ADD_NLN_COSTS, INIT_INDEXED_NAME  -----
+%   -----  ADD_QUAD_COST, ADD_NLN_COSTS, INIT_INDEXED_NAME  -----
 %
 %   OM.ADD_LEGACY_COSTS(NAME, CP);
 %   OM.ADD_LEGACY_COSTS(NAME, CP, VARSETS);

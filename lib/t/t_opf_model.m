@@ -620,64 +620,64 @@ t_is(d2H, e, 13, [t ' : d2H']);
 
 %d2H
 
-%%-----  add_quadratic_costs  -----
-t = 'add_quadratic_costs';
+%%-----  add_quad_cost  -----
+t = 'add_quad_cost';
 qcN = 0;
 qcNS = 0;
 t_ok(om.getN('qdc') == qcN, sprintf('%s : qdc.N  = %d', t, qcN));
 t_ok(om.get('qdc', 'NS') == qcNS, sprintf('%s : qdc.NS = %d', t, qcNS));
 
-t = 'om.add_quadratic_costs(''qc1'', <mat>Q, c, k, {''Pg'', ''Va''})';
+t = 'om.add_quad_cost(''qc1'', <mat>Q, c, k, {''Pg'', ''Va''})';
 n = nVa + nPg;
 Q1 = sparse(1:n, 1:n, 1:n, n, n) + sparse(1:n, n:-1:1, 1:n, n, n);
 c1 = 10*(1:n)';
 k1 = n;
-om.add_quadratic_costs('qc1', Q1, c1, k1, {'Pg', 'Va'});
+om.add_quad_cost('qc1', Q1, c1, k1, {'Pg', 'Va'});
 qcNS = qcNS + 1; qcN = qcN + 1;
 t_ok(om.getN('qdc') == qcN, sprintf('%s : qdc.N  = %d', t, qcN));
 t_ok(om.get('qdc', 'NS') == qcNS, sprintf('%s : qdc.NS = %d', t, qcNS));
 
-t = 'om.add_quadratic_costs(''qc2'', <mat>Q, c)';
+t = 'om.add_quad_cost(''qc2'', <mat>Q, c)';
 n = om.getN('var');
 Q2 = sparse(1, 1:n, 1:n, n, n) + sparse(1:n, 1, n:-1:1, n, n);
 c2 = 10*(n:-1:1)';
-om.add_quadratic_costs('qc2', Q2, c2);
+om.add_quad_cost('qc2', Q2, c2);
 qcNS = qcNS + 1; qcN = qcN + 1;
 t_ok(om.getN('qdc') == qcN, sprintf('%s : qdc.N  = %d', t, qcN));
 t_ok(om.get('qdc', 'NS') == qcNS, sprintf('%s : qdc.NS = %d', t, qcNS));
 
-t = 'om.add_quadratic_costs(''qc3'', <vec>Q, c, k, {''Vm2'', ''Pg''})';
+t = 'om.add_quad_cost(''qc3'', <vec>Q, c, k, {''Vm2'', ''Pg''})';
 n = nVm2 + nPg;
 Q3 = 2*(1:n)';
 c3 = -1*(1:n)';
 k3 = -n;
-om.add_quadratic_costs('qc3', Q3, c3, k3, {'Vm2', 'Pg'});
+om.add_quad_cost('qc3', Q3, c3, k3, {'Vm2', 'Pg'});
 qcNS = qcNS + 1; qcN = qcN + n;
 t_ok(om.getN('qdc') == qcN, sprintf('%s : qdc.N  = %d', t, qcN));
 t_ok(om.get('qdc', 'NS') == qcNS, sprintf('%s : qdc.NS = %d', t, qcNS));
 
-t = 'om.add_quadratic_costs(''qc4'', <vec>Q, [], 0, vs)';
+t = 'om.add_quad_cost(''qc4'', <vec>Q, [], 0, vs)';
 n = om.getN('var', 'x', {2,1}) + om.getN('var', 'y', {1,1,1});
 Q4 = 1./(1:n)';
 vs = struct('name', {'x', 'y'}, 'idx', {{2,1}, {1,1,1}});
-om.add_quadratic_costs('qc4', Q4, [], 0, vs);
+om.add_quad_cost('qc4', Q4, [], 0, vs);
 qcNS = qcNS + 1; qcN = qcN + n;
 t_ok(om.getN('qdc') == qcN, sprintf('%s : qdc.N  = %d', t, qcN));
 t_ok(om.get('qdc', 'NS') == qcNS, sprintf('%s : qdc.NS = %d', t, qcNS));
 
-t = 'om.add_quadratic_costs(''qc5'', [], c, k, {''Pg'', ''Va''})';
+t = 'om.add_quad_cost(''qc5'', [], c, k, {''Pg'', ''Va''})';
 n = nVa + nPg;
 c5 = 100*(1:n)';
 k5 = (1:n)';
-om.add_quadratic_costs('qc5', [], c5, k5, {'Pg', 'Va'});
+om.add_quad_cost('qc5', [], c5, k5, {'Pg', 'Va'});
 qcNS = qcNS + 1; qcN = qcN + n;
 t_ok(om.getN('qdc') == qcN, sprintf('%s : qdc.N  = %d', t, qcN));
 t_ok(om.get('qdc', 'NS') == qcNS, sprintf('%s : qdc.NS = %d', t, qcNS));
 
-t = 'om.add_quadratic_costs(''qc6'', [], c)';
+t = 'om.add_quad_cost(''qc6'', [], c)';
 n = om.getN('var');
 c6 = -(1:n)';
-om.add_quadratic_costs('qc6', [], c6);
+om.add_quad_cost('qc6', [], c6);
 qcNS = qcNS + 1; qcN = qcN + n;
 t_ok(om.getN('qdc') == qcN, sprintf('%s : qdc.N  = %d', t, qcN));
 t_ok(om.get('qdc', 'NS') == qcNS, sprintf('%s : qdc.NS = %d', t, qcNS));
@@ -689,13 +689,13 @@ t_ok(om.get('qdc', 'NS') == qcNS, sprintf('%s : qdc.NS = %d', t, qcNS));
 
 for i = 1:2
     for j = 1:2
-        t = 'om.add_quadratic_costs(''qc'', {i, j}, cp, vs)';
+        t = 'om.add_quad_cost(''qc'', {i, j}, cp, vs)';
         n = nPg + om.getN('var', 'x', {i,j});
         QQ = sparse(1:n, 1:n, 1:n, n, n) + sparse(1:n, n*ones(n,1), 1:n, n, n);
         cc = -2*(1:n)';
         kk = 1000;
         vs = struct('name', {'Pg', 'x'}, 'idx', {{}, {i,j}});
-        om.add_quadratic_costs('qc', {i, j}, QQ, cc, kk, vs);
+        om.add_quad_cost('qc', {i, j}, QQ, cc, kk, vs);
         qcNS = qcNS + 1; qcN = qcN + 1;
         t_ok(om.getN('qdc') == qcN, sprintf('%s : qdc.N  = %d', t, qcN));
         t_ok(om.get('qdc', 'NS') == qcNS, sprintf('%s : qdc.NS = %d', t, qcNS));

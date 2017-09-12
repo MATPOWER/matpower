@@ -7,14 +7,14 @@ function [f, df, d2f] = eval_quad_cost(om, x, name, idx)
 %   [F, DF, D2F] = OM.EVAL_QUAD_COST(X, NAME, IDX)
 %   Evaluates an individual named set or the full set of quadratic
 %   costs and their derivatives for a given value of the optimization vector
-%   X, based on costs added by ADD_QUADRATIC_COSTS.
+%   X, based on costs added by ADD_QUAD_COST.
 %
 %   Example:
 %       [f, df, d2f] = om.eval_quad_cost(x)
 %       [f, df, d2f] = om.eval_quad_cost(x, name)
 %       [f, df, d2f] = om.eval_quad_cost(x, name, idx)
 %
-%   See also OPT_MODEL, ADD_QUADRATIC_COSTS, PARAMS_QUAD_COST.
+%   See also OPT_MODEL, ADD_QUAD_COST, PARAMS_QUAD_COST.
 
 %   MATPOWER
 %   Copyright (c) 2008-2017, Power Systems Engineering Research Center (PSERC)
