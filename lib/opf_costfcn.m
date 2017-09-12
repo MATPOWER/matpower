@@ -34,7 +34,7 @@ function [f, df, d2f] = opf_costfcn(x, om, varargin)
 %%----- evaluate objective function -----
 %% general nonlinear costs
 if nargout == 3
-    [f, df, d2f]    = om.eval_nonlin_cost(x);
+    [f, df, d2f]    = om.eval_nln_cost(x);
     if om.qdc.NS
         [fq, dfq, d2fq] = om.eval_quad_cost(x);
         f = f + sum(fq);
@@ -42,14 +42,14 @@ if nargout == 3
         d2f = d2f + d2fq;
     end
 elseif nargout == 2
-    [f, df]   = om.eval_nonlin_cost(x);
+    [f, df]   = om.eval_nln_cost(x);
     if om.qdc.NS
         [fq, dfq] = om.eval_quad_cost(x);
         f = f + sum(fq);
         df = df + dfq;
     end
 else
-    f  = om.eval_nonlin_cost(x);
+    f  = om.eval_nln_cost(x);
     if om.qdc.NS
         fq = om.eval_quad_cost(x);
         f = f + sum(fq);

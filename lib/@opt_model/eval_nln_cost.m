@@ -1,12 +1,12 @@
-function [f, df, d2f] = eval_nonlin_cost(om, x, name, idx)
-%EVAL_NONLIN_COST  Evaluates individual or full set of general nonlinear costs.
-%   [F, DF, D2F] = OM.EVAL_NONLIN_COST(X)
+function [f, df, d2f] = eval_nln_cost(om, x, name, idx)
+%EVAL_NLN_COST  Evaluates individual or full set of general nonlinear costs.
+%   [F, DF, D2F] = OM.EVAL_NLN_COST(X)
 %   Evaluates an individual named set or the full set of general nonlinear
 %   costs and their derivatives for a given value of the optimization vector
 %   X, based on costs added by ADD_NLN_COSTS.
 %
 %   Example:
-%       [f, df, d2f] = om.eval_nonlin_cost(x)
+%       [f, df, d2f] = om.eval_nln_cost(x)
 %
 %   See also OPT_MODEL, ADD_NLN_COSTS, PARAMS_NLN_COST.
 
@@ -39,7 +39,7 @@ if nargin < 3                       %% full set
         idx  = nlc.order(k).idx;
         [N, fcn, vs] = om.params_nln_cost(name, idx);
         if N ~= 1
-            error('@opt_model/eval_nonlin_cost: not yet implemented for vector valued functions');
+            error('@opt_model/eval_nln_cost: not yet implemented for vector valued functions');
         end
         xx = om.varsets_x(x, vs);
         if nargout == 3
@@ -87,7 +87,7 @@ else                                %% individual named set
     if ~isempty(idx) || prod(dims) == 1 %% indexed, or simple named set
         [N, fcn, vs] = om.params_nln_cost(name, idx);
         if N ~= 1
-            error('@opt_model/eval_nonlin_cost: not yet implemented for vector valued functions');
+            error('@opt_model/eval_nln_cost: not yet implemented for vector valued functions');
         end
         xx = om.varsets_x(x, vs);
         if nargout == 3
@@ -101,8 +101,8 @@ else                                %% individual named set
         done = 0;
         f = 0;          %% initialize cumulative cost
         idx = num2cell(ones(size(dims))); %% initialize idx
-        while ~done     %% call eval_nonlin_cost() recursively
-            f = f + sum(om.eval_nonlin_cost(x, name, idx));
+        while ~done     %% call eval_nln_cost() recursively
+            f = f + sum(om.eval_nln_cost(x, name, idx));
         
             %% increment idx
             D = length(dims);
@@ -118,6 +118,6 @@ else                                %% individual named set
             end
         end
     else
-        error('@opt_model/eval_nonlin_cost: general nonlinear cost set ''%s'' requires an IDX arg when requesting DF output', name)
+        error('@opt_model/eval_nln_cost: general nonlinear cost set ''%s'' requires an IDX arg when requesting DF output', name)
     end
 end

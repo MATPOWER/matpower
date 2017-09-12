@@ -241,7 +241,7 @@ if ~sdp
   for k = 1:length(om_nlc_order)
     name = om_nlc_order(k).name;
     if om.getN('nlc', name)
-      results.nlc.(name) = om.eval_nonlin_cost(results.x, name);
+      results.nlc.(name) = om.eval_nln_cost(results.x, name);
     end
   end
 

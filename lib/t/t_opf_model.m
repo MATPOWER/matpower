@@ -1123,10 +1123,10 @@ t = 'om.params_nln_cost(''wc'', {2,1})';
 t_is(N, 1, 14, [t, ' : N']);
 t_ok(isa(fcn, 'function_handle'), [t, ' : fcn']);
 
-%%-----  eval_nonlin_cost  -----
-t = 'om.eval_nonlin_cost(x) : ';
+%%-----  eval_nln_cost  -----
+t = 'om.eval_nln_cost(x) : ';
 x = [1:7 rand(1,10) 8:(vN-10)]';
-f = om.eval_nonlin_cost(x);
+f = om.eval_nln_cost(x);
 ef = 343;
 ii = [1 2 3 4 5 6 7 19 21 23 25 26];
 jj = [1 1 1 1 1 1 1 1 1 1 1 1];
@@ -1137,29 +1137,29 @@ jj = [5 5 5 6 6 6 7 7 7 23 23 23 23 25 25 26 26 26 26 26];
 ss = [2 -1 -1 4 -2 -2 6 -3 -3 -1 -2 -3 6 4 -4 -1 -2 -3 -4 10];
 ed2f = full(sparse(ii,jj,ss,vN,vN));
 t_is(f, ef, 14, [t 'f']);
-[f, df] = om.eval_nonlin_cost(x);
+[f, df] = om.eval_nln_cost(x);
 t_is(f, ef, 14, [t 'f']);
 t_is(df, edf, 14, [t 'df']);
-[f, df, d2f] = om.eval_nonlin_cost(x);
+[f, df, d2f] = om.eval_nln_cost(x);
 t_is(f, ef, 14, [t 'f']);
 t_is(df, edf, 14, [t 'df']);
 t_is(d2f, ed2f, 14, [t 'd2f']);
 
-t = 'om.eval_nonlin_cost(''ucost'') : ';
-f = om.eval_nonlin_cost(x, 'ucost');
+t = 'om.eval_nln_cost(''ucost'') : ';
+f = om.eval_nln_cost(x, 'ucost');
 ef = 52;
 edf = [2; 3; -2; -3; 4; 0; 6];
 t_is(f, ef, 14, [t 'f']);
-[f, df] = om.eval_nonlin_cost(x, 'ucost');
+[f, df] = om.eval_nln_cost(x, 'ucost');
 t_is(f, ef, 14, [t 'f']);
 t_is(df, edf, 14, [t 'df']);
-[f, df, d2f] = om.eval_nonlin_cost(x, 'ucost');
+[f, df, d2f] = om.eval_nln_cost(x, 'ucost');
 t_is(f, ef, 14, [t 'f']);
 t_is(df, edf, 14, [t 'df']);
 t_is(full(d2f), zeros(7,7), 14, [t 'd2f']);
 
-t = 'om.eval_nonlin_cost(''wc'', {2,1}) : ';
-f = om.eval_nonlin_cost(x, 'wc', {2,1});
+t = 'om.eval_nln_cost(''wc'', {2,1}) : ';
+f = om.eval_nln_cost(x, 'wc', {2,1});
 ef = 91;
 edf = [-5; -12; -17; 0; 34; 0];
 ii = [1 5 2 5 3 5 1 2 3 5];
@@ -1167,16 +1167,16 @@ jj = [1 1 2 2 3 3 5 5 5 5];
 ss = [1 -1 2 -2 3 -3 -1 -2 -3 6];
 ed2f = full(sparse(ii,jj,ss,6,6));
 t_is(f, ef, 14, [t 'f']);
-[f, df] = om.eval_nonlin_cost(x, 'wc', {2,1});
+[f, df] = om.eval_nln_cost(x, 'wc', {2,1});
 t_is(f, ef, 14, [t 'f']);
 t_is(df, edf, 14, [t 'df']);
-[f, df, d2f] = om.eval_nonlin_cost(x, 'wc', {2,1});
+[f, df, d2f] = om.eval_nln_cost(x, 'wc', {2,1});
 t_is(f, ef, 14, [t 'f']);
 t_is(df, edf, 14, [t 'df']);
 t_is(d2f, ed2f, 14, [t 'd2f']);
 
-t = 'om.eval_nonlin_cost(''wc'') : ';
-f = om.eval_nonlin_cost(x, 'wc');
+t = 'om.eval_nln_cost(''wc'') : ';
+f = om.eval_nln_cost(x, 'wc');
 t_is(f, 239, 14, [t 'f']);
 
 % om

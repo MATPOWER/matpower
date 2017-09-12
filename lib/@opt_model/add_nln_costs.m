@@ -55,7 +55,7 @@ function om = add_nln_costs(om, name, idx, N, fcn, varsets)
 %         end
 %       end
 %
-%   See also OPT_MODEL, EVAL_NONLIN_COST.
+%   See also OPT_MODEL, EVAL_NLN_COST.
 
 %   MATPOWER
 %   Copyright (c) 2008-2017, Power Systems Engineering Research Center (PSERC)

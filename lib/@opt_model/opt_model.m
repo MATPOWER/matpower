@@ -45,7 +45,7 @@ classdef opt_model < handle
 %       params_quad_cost
 %       params_legacy_cost
 %       eval_legacy_cost
-%       eval_nonlin_cost
+%       eval_nln_cost
 %       eval_quad_cost
 %       get_cost_params
 %       compute_cost (deprecated)
