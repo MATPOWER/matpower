@@ -1832,15 +1832,15 @@ The optimization vector $x$ for the standard AC OPF problem consists of the $n_b
 \begin{equation}
 x = \left[\begin{array}{c}\Theta \\ V_m \\ P_g \\ Q_g \end{array}\right]
 \end{equation}
-The objective function \eqref{eq:minfx} is simply a summation of individual polynomial cost functions $f_P^i$ and $f_Q^i$ of real and reactive power injections, respectively, for each generator:
+The objective function $f(x)$ in \eqref{eq:minfx} is simply a summation of individual polynomial cost functions $f_P^i$ and $f_Q^i$ of real and reactive power injections, respectively, for each generator:
 \begin{equation}
-\min_{\Theta, V_m, P_g, Q_g} \sum_{i=1}^{n_g} f_P^i(p_g^i) +  f_Q^i(q_g^i).
+f(P_g, Q_g) = \sum_{i=1}^{n_g} f_P^i(p_g^i) +  f_Q^i(q_g^i).
 \end{equation}
 The equality constraints in \eqref{eq:gx_eq_0} are simply the full set of $2 \cdot n_b$ nonlinear real and reactive power balance equations from \eqref{eq:acpf_p} and \eqref{eq:acpf_q}.
-% \begin{eqnarray}
-% & g_P(\Theta, V_m, P_g) = 0 & \label{eq:gP_eq_0} \\
-% & g_Q(\Theta, V_m, Q_g) = 0 & \label{eq:gQ_eq_0}
-% \end{eqnarray}
+\begin{alignat}{2}
+g_P(\Theta, V_m, P_g) &= P_\mathrm{bus}(\Theta, V_m) + P_d - C_g P_g &&= 0 \\
+g_Q(\Theta, V_m, Q_g) &= Q_\mathrm{bus}(\Theta, V_m) + Q_d - C_g Q_g &&= 0
+\end{alignat}
 The inequality constraints \eqref{eq:hx_le_0} consist of two sets of $n_l$ branch flow limits as nonlinear functions of the bus voltage angles and magnitudes, one for the \emph{from} end and one for the \emph{to} end of each branch:
 \begin{alignat}{2}
 h_f(\Theta, V_m) &=\;& \left| F_f(\Theta, V_m) \right| - F_\mathrm{max} &\le 0 \label{eq:acopf_ieqf} \\
@@ -1894,7 +1894,7 @@ h_t(\Theta) &=  & -B_f \Theta - P_{f,\mathrm{shift}} -  F_\mathrm{max} &\le 0  \
 \subsection{Extended OPF Formulation}
 \label{sec:extended_opf}
 
-\matpower{} employs an extensible OPF structure~\cite{zimmerman2009} to allow the user to modify or augment the problem formulation without rewriting the portions that are shared with the standard OPF formulation. This is done through optional input parameters, preserving the ability to use pre-compiled solvers. The standard formulation is modified by introducing additional optional user-defined costs $f_u$, constraints, and variables $z$ and can be written in the following form:
+\matpower{} employs an extensible OPF structure~\cite{zimmerman2009} to allow the user to modify or augment the problem formulation without rewriting the portions that are shared with the standard OPF formulation. Up through version 6.0 of \matpower{} this was handled via optional input parameters to a pre-defined cost and constraint format, preserving the ability to use solvers that employ pre-compiled MEX files to compute the costs and constraints. This is referred to as \matpower{}'s legacy extended OPF formulation. The standard formulation is modified by introducing additional optional user-defined costs $f_u$, linear constraints, and variables $z$ and can be written in the following form:
 \begin{equation}
 \min_{x,z} f(x) + f_u(x, z)
 \label{eq:minfxz}
@@ -1908,14 +1908,14 @@ subject to
 & z_\mathrm{min} \le z \le z_\mathrm{max}. & \label{eq:zlims}
 \end{eqnarray}
 
-Section~\ref{sec:extending_opf} describes the mechanisms available to the user for taking advantage of the extensible formulation described here.
-
 For OPF solvers that use Matlab code to implement the function, gradient and Hessian evaluations,\footnote{Currently, this includes solvers based on \mipslink{}, \code{fmincon}, \ipopt{} and \knitro{}.} the formulation can include additional nonlinear constraints,
 \begin{eqnarray}
 g_u^i(x) &= 0 \qquad \forall{i} \in \mathcal{G}_u \label{eq:usereq} \\
 h_u^i(x) &\le 0 \qquad \forall{i} \in \mathcal{H}_u, \label{eq:userieq}
 \end{eqnarray}
 where $\mathcal{G}_u$ and $\mathcal{H}_u$ are sets of indices for user-defined equality and inequality constraint sets, respectively.
+
+Section~\ref{sec:extending_opf} describes the mechanisms available to the user for taking advantage of the extensible formulation described here.
 
 \subsubsection{User-defined Costs}
 \label{sec:user_costs}
@@ -5668,26 +5668,26 @@ name & description \\
 \code{~~describe\_idx}	& identifies variable, constraint or cost row indices	\\
 \code{~~display}	& called to display object when statement not ended with semicolon	\\
 \code{~~eval\_legacy\_cost}	& evaluates legacy user costs and derivatives	\\
-\code{~~eval\_nln\_constraint}	& builds and returns the full set of nonlinear equality or inequality constraints and their gradients	\\
-\code{~~eval\_nln\_constraint\_hess}	& builds and returns the Hessian for the full set of nonlinear equality or inequality constraints	\\
+\code{~~eval\_nln\_constraint}	& returns full set of nonlinear equality or inequality constraints and their gradients	\\
+\code{~~eval\_nln\_constraint\_hess}	& returns Hessian for full set of nonlinear equality or inequality constraints	\\
 \code{~~eval\_nln\_cost}	& evaluates general nonlinear costs and derivatives	\\
 \code{~~eval\_quad\_cost}	& evaluates quadratic costs and derivatives	\\
 \code{~~get\_idx}	& returns the idx struct for vars, lin/nln constraints, costs	\\
 \code{~~get\_userdata}	& returns values of user data stored in the model	\\
 \code{~~getN}	& returns the number of variables, constraints or cost rows\tnote{\ddag}	\\
 \code{~~get}	& returns the value of a field of the object	\\
-\code{~~init\_indexed\_name}	& initializes the dimensions for an indexed named set of costs, constraints or variables	\\
+\code{~~init\_indexed\_name}	& initializes dimensions for indexed named set of costs, constraints or variables	\\
 \code{~~opt\_model}	& constructor for the \code{opt\_model} class	\\
-\code{~~params\_lin\_constraint}	& builds and returns individual or full set of linear constraint parameters	\\
-\code{~~params\_legacy\_cost}	& builds and returns individual or full set of legacy user cost coefficients	\\
+\code{~~params\_lin\_constraint}	& returns individual or full set of linear constraint parameters	\\
+\code{~~params\_legacy\_cost}	& returns individual or full set of legacy user cost coefficients	\\
 \code{~~params\_nln\_cost}	& returns individual general nonlinear cost parameters	\\
-\code{~~params\_quad\_cost}	& builds and returns individual or full set of quadratic cost coefficients	\\
-\code{~~params\_var}	& returns the initial values, bounds and variable type for optimimization vector\tnote{\ddag}	\\
-\code{~~valid\_named\_set\_type}\tnote{\dag}	& returns a label for given named set type if valid, empty otherwise	\\
-\code{~~varsets\_cell2struct}\tnote{\dag}	& converts a variable set list from a cell array to a struct array	\\
-\code{~~varsets\_idx}	& returns a vector of indices into the optimization variable~$x$ for variable set list	\\
+\code{~~params\_quad\_cost}	& returns individual or full set of quadratic cost coefficients	\\
+\code{~~params\_var}	& returns initial values, bounds and variable type for optimimization vector~$x$\tnote{\ddag}	\\
+\code{~~valid\_named\_set\_type}\tnote{\dag}	& returns label for given named set type if valid, empty otherwise	\\
+\code{~~varsets\_cell2struct}\tnote{\dag}	& converts variable set list from cell array to struct array	\\
+\code{~~varsets\_idx}	& returns vector of indices into opt vector~$x$ for variable set list	\\
 \code{~~varsets\_len}	& returns total number of optimization variables for variable set list	\\
-\code{~~varsets\_x}	& assembles cell array of sub-vectors of optimization vector~$x$ specified by variable set list	\\
+\code{~~varsets\_x}	& assembles cell array of sub-vectors of opt vector~$x$ specified by variable set list	\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -5711,21 +5711,19 @@ name & description \\
 name & description \\
 \midrule
 \code{@opt\_model/}	& optimization model object (\code{@opf\_model} base class)	\\
-\code{~~add\_constraints}\tnote{*}	& adds a named subset of constraints to the model	\\
-\code{~~add\_costs}\tnote{*}	& adds a named subset of legacy user-defined costs to the model	\\
-\code{~~add\_vars}	& adds a named subset of optimization variables to the model	\\
-\code{~~build\_cost\_params}\tnote{*}	& builds and stores the full generalized cost parameters in the model	\\
-\code{~~compute\_cost}\tnote{*}	& computes a user-defined cost\tnote{\ddag}	\\
-\code{~~get\_cost\_params}\tnote{*}	& returns the cost parameter struct created by \code{build\_cost\_params}\tnote{\ddag}	\\
-\code{~~getv}	& returns the initial values and bounds for optimimization vector\tnote{\ddag}	\\
-\code{~~linear\_constraints}\tnote{*}	& builds and returns the full set of linear constraints ($A, l, u$)	\\
+\code{~~add\_constraints}	& use \code{add\_lin\_constraint} or \code{add\_nln\_constraint} instead\tnote{\dag}	\\
+\code{~~add\_costs}	& use \code{add\_legacy\_cost}, \code{add\_nln\_cost} or \code{add\_quad\_cost} instead\tnote{\dag}	\\
+\code{~~add\_vars}	& use \code{add\_var} instead\tnote{\dag}	\\
+\code{~~build\_cost\_params}	& \emph{no longer needed}	\\
+\code{~~compute\_cost}	& use \code{eval\_legacy\_cost} instead	\\
+\code{~~get\_cost\_params}	& use \code{params\_legacy\_cost} instead	\\
+\code{~~getv}	& use \code{params\_var} instead	\\
+\code{~~linear\_constraints}	& use \code{params\_lin\_constraint} instead	\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [*] {Deprecated.}
- \item [\dag] {Private method for internal use only.}
- \item [\ddag] {For all, or alternatively, only for a named (and possibly indexed) subset.}
+ \item [\dag] {Or \code{init\_indexed\_name} if simply initializing the dimensions for an indexed named set.}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -6857,14 +6855,14 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.1.pdf}{\m
 \subsubsection*{New Features}
 \begin{itemize}
 \item Three new power flow algorithms for radial distribution systems selected via the three new options for \code{pf.alg}, namely \codeq{PQSUM}, \codeq{ISUM}, \codeq{YSUM}. Also includes new \matpower{} options \code{pf.radial.max\_it} and \code{pf.radial.vcorr}. See Section~\ref{sec:pfdist} on ``Distribution Power Flow'' for details. \emph{Thanks to Mirko Todorovski.}
-\item New \matpower{} installer \code{install\_matpower()} updates Matlab or Octave paths or provides the commands required to so.
+\item New \matpower{} installer \code{install\_matpower()} updates \matlab{} or Octave paths or provides the commands required to so.
 \item Add new \code{pf.nr.lin\_solver} option to control the linear solver used to compute the Newton update step in the Newton-Raphson power flow.
 \item Support plotting of multiple nose curves in CPF by allowing option \code{cpf.plot.bus} to take on vector values.
 \item Continuous integration via GitHub and Travis-CI integration.
 \item Include \LaTeX{} source code for \mum{} in \code{docs/src} and for \mostman{} in \code{most/docs/src}.
 \item Add support for exporting \matpower{} case to PSS/E RAW data format.
 \item Add options \codeq{cpf.enforce\_v\_lims} and \codeq{cpf.enforce\_flow\_lims} to enforce bus voltage magnitude and branch flow limits in the continuation power flow, and \codeq{cpf.v\_lims\_tol} and \codeq{cpf.flow\_lims\_tol} to control the respective detection tolerances.  \emph{Thanks to Ahmad Sadiq Abubakar and Shrirang Abhyankar.}
-\item Add support to core optimization model for:
+\item Add support to core optimization model \code{opt\_model} for:
     \begin{itemize}
     \item general nonlinear constraints
     \item general nonlinear costs
@@ -6874,7 +6872,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.1.pdf}{\m
 \item Expand support for soft branch flow limits to include AC OPF problems.
 \item New functions:
     \begin{itemize}
-    \item \code{install\_matpower()} installs \matpower{} modifying or showing needed modifications to Matlab or Octave path.
+    \item \code{install\_matpower()} installs \matpower{} modifying or showing needed modifications to \matlab{} or Octave path.
     \item \code{gentypes()} and \code{genfuels} provide list of standard generator unit types and fuel types, respectively.
     \item \code{save2psse()} to export a \matpower{} case to PSS/E RAW data format.
     \item \code{opt\_model/add\_lin\_constraint()} to add linear constraints to an optimization model.
@@ -6919,14 +6917,14 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.1.pdf}{\m
 \subsubsection*{Other Improvements}
 \begin{itemize}
 \item Update MIPS to version 1.3.
-\item In the Newton power flow, for larger systems use explicit LU decomposition with AMD reordering and the 3 output argument form of \code{lu} (to select the Gilbert-Peierls algorithm), resulting in up to a 2x speedup in Matlab, 1.1x in Octave.
+\item In the Newton power flow, for larger systems use explicit LU decomposition with AMD reordering and the 3 output argument form of \code{lu} (to select the Gilbert-Peierls algorithm), resulting in up to a 2x speedup in \matlab{}, 1.1x in Octave.
 \emph{Thanks to Jose Luis Mar\'in.}
 \item Add line for curtailed load to \code{case\_info()} output.
 \item Change default implementation of active power line flow constraints (\code{opf.flow\_lim = }\codeq{P}) to use flow directly, rather than square of flow, which is now a separate option, namely \code{opf.flow\_lim = }\codeq{2}. \emph{Thanks to Nico Meyer-Huebner}.
 \item Add \code{genfuels} and \code{gentypes} to establish standard set of values for optional \code{mpc.genfuel} and \code{mpc.gentype} fields for generator fuel type and generator unit type, respectively.
 \item Add support for \code{gentype} and \code{genfuel} fields of \matpower{} case struct in \code{extract\_islands}, \code{ext2int}, \code{int2ext}, \code{load2disp}  and \code{savecase}.
 \item Add support for \code{bus\_name} field of \matpower{} case struct to \code{extract\_islands}, \code{ext2int} and \code{int2ext}.
-\item Lay groundwork for user-defined nonlinear constraints, by adding support for \code{opt\_model} to handle nonlinear constraints with function handles for evaluating the constraints and their derivatives. Refactor AC OPF code to use this new capability.
+\item Refactor OPF code to take advantage of new \code{opt\_model} capabilities for nonlinear constraints and quadratic and nonlinear costs.
 \end{itemize}
 
 \subsubsection*{Bugs Fixed}
@@ -6990,7 +6988,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.0.pdf}{\m
 \item New functions:
     \begin{itemize}
     \item \code{apply\_changes()} and \code{idx\_ct()} provide a general mechanism for applying modifications to an existing \matpower{} case.
-    \item \code{feval\_w\_path()} evaluates a function located at a specified path, outside of the Matlab path.
+    \item \code{feval\_w\_path()} evaluates a function located at a specified path, outside of the \matlab{} path.
     \item \code{mpopt2qpopt()} provides a common interface for creating options struct for \code{mi/qps\_matpower()} from a \matpower{} options struct.
     \end{itemize}
 \item New function options:

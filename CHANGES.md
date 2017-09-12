@@ -12,6 +12,18 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 9/12/17
+  - Update `@opt_model` API for method naming consistency. Summary of
+    deprecated method names, with new alternatives in parenthesis:
+    - `add_vars` (`add_var`)
+    - `add_costs` (`add_legacy_cost`, `add_quad_cost` or `add_nln_cost`)
+    - `add_constraints` (`add_lin_constraint` or `add_nln_constraint`)
+    - `build_cost_params` (no longer needed)
+    - `compute_cost` (`eval_legacy_cost`)
+    - `get_cost_params` (`params_legacy_cost`)
+    - `getv` (`params_var`)
+    - `linear_constraints` (`params_lin_constraint`)
+
 #### 9/8/17
   - Add general nonlinear cost values to OPF results in `results.nlc`.
 
