@@ -5,7 +5,7 @@
 ;
 [subrepo]
 	remote = git@github.com:MATPOWER/most
-	branch = master
-	commit = a7b1714cb75b5ee44798dde7972215ad20cbff2c
-	parent = 611f50a046cfffa96b1d1392107b0ac8671034d1
+	branch = opt_model-cleanup
+	commit = 3a4ba5270254e0633eafa1a1d5d7348e4023000a
+	parent = eca16af81afc90bf3ff0d30eae0af9bf1d2904da
 	cmdver = 0.3.1
