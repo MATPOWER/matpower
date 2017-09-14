@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 137;
+num_tests = 141;
 
 t_begin(num_tests, quiet);
 
@@ -409,6 +409,17 @@ if have_fcn('scpdipmopf')
     catch
         t_ok(0, [t 'unexpected fatal error']);
     end
+
+    %% OPF with no branch limits
+    t = [t0 'w/no branch limits'];
+    mpc = loadcase(casefile);
+    mpc.branch(:, RATE_A) = 0;
+    r = runopf(mpc, mpopt);
+    t_ok(r.success, [t 'success']);
+    t_is(f, 11899.4652, 4, [t 'f']);
+    t_is(gen(:, PG), [100.703628; 128.679485; 88.719864], 5, [t 'f']);
+    t_is([min(bus(:, VM)) mean(bus(:, VM)) max(bus(:, VM))], ...
+        [1.059191 1.079404 1.1], 5, [t 'bus voltage']);
 else
     t_skip(num_tests, [t0 'not available']);
 end

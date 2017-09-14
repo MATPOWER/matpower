@@ -18,7 +18,7 @@ if have_fcn('pardiso')
     linsolvers{end+1} = 'PARDISO';
 end
 
-num_tests = 164;
+num_tests = 168;
 
 t_begin(2*num_tests, quiet);
 
@@ -425,8 +425,18 @@ for k = 1:length(linsolvers)
     catch
         t_ok(0, [t 'unexpected fatal error']);
     end
-end
 
+    %% OPF with no branch limits
+    t = [t0 'w/no branch limits'];
+    mpc = loadcase(casefile);
+    mpc.branch(:, RATE_A) = 0;
+    r = runopf(mpc, mpopt);
+    t_ok(r.success, [t 'success']);
+    t_is(f, 11899.4652, 4, [t 'f']);
+    t_is(gen(:, PG), [100.703628; 128.679485; 88.719864], 5, [t 'f']);
+    t_is([min(bus(:, VM)) mean(bus(:, VM)) max(bus(:, VM))], ...
+        [1.059191 1.079404 1.1], 5, [t 'bus voltage']);
+end
 
 if ~have_fcn('pardiso')
     t_skip(num_tests, 'PARDISO linear solver not available');
