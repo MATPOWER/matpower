@@ -28,7 +28,7 @@ if have_fcn('octave')
 else
     dual = [0; 2; 1];
 end
-num_tests = 23 * length(algs);
+num_tests = 24 * length(algs);
 
 t_begin(num_tests, quiet);
 
@@ -150,6 +150,17 @@ if have_fcn('glpk')
     mpc.l = 600;
     [r, success] = rundcopf(mpc, mpopt);
     t_ok(~success, [t 'no success']);
+
+    %% OPF with all buses isolated
+    t = [t0 'all buses isolated : '];
+    mpc = loadcase(casefile);
+    mpc.bus(:, BUS_TYPE) = NONE;
+    try
+        r = rundcopf(mpc, mpopt);
+        t_is(r.success, 0, 12, [t 'success = 0']);
+    catch
+        t_ok(0, [t 'unexpected fatal error']);
+    end
 
     end
 else

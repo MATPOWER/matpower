@@ -18,9 +18,9 @@ if have_fcn('pardiso')
     linsolvers{end+1} = 'PARDISO';
 end
 
-num_tests = 163;
+num_tests = 164;
 
-t_begin(2*num_tests + 1, quiet);
+t_begin(2*num_tests, quiet);
 
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
     VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
@@ -415,16 +415,18 @@ for k = 1:length(linsolvers)
     t_ok(r.success, [t 'success']);
     t_is(r.gen(1, PG) * r.gen(2, PG) / 100, r.gen(6, PG), 8, t);
     t_is(r.gen(6, PG), 20.751163, 5, t);
+
+    %% OPF with all buses isolated
+    t = [t0 'all buses isolated : '];
+    mpc.bus(:, BUS_TYPE) = NONE;
+    try
+        r = runopf(mpc, mpopt);
+        t_is(r.success, 0, 12, [t 'success = 0']);
+    catch
+        t_ok(0, [t 'unexpected fatal error']);
+    end
 end
 
-t = 'MIPS : all buses isolated : ';
-mpc.bus(:, BUS_TYPE) = NONE;
-try
-    r = runopf(mpc, mpopt);
-    t_is(r.success, 0, 12, [t 'success = 0']);
-catch
-    t_ok(0, [t 'unexpected fatal error']);
-end
 
 if ~have_fcn('pardiso')
     t_skip(num_tests, 'PARDISO linear solver not available');

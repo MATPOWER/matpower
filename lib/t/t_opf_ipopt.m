@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 163;
+num_tests = 164;
 
 t_begin(num_tests, quiet);
 
@@ -407,6 +407,16 @@ if have_fcn('ipopt')
     t_ok(r.success, [t 'success']);
     t_is(r.gen(1, PG) * r.gen(2, PG) / 100, r.gen(6, PG), 8, t);
     t_is(r.gen(6, PG), 20.751163, 5, t);
+
+    %% OPF with all buses isolated
+    t = [t0 'all buses isolated : '];
+    mpc.bus(:, BUS_TYPE) = NONE;
+    try
+        r = runopf(mpc, mpopt);
+        t_is(r.success, 0, 12, [t 'success = 0']);
+    catch
+        t_ok(0, [t 'unexpected fatal error']);
+    end
 else
     t_skip(num_tests, 'IPOPT not available');
 end

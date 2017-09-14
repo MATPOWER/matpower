@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 112;
+num_tests = 113;
 
 t_begin(num_tests, quiet);
 
@@ -388,6 +388,27 @@ if have_fcn('tralmopf')
     t_is(gen(:, PG), [100.703628; 128.679485; 88.719864], 5, [t 'f']);
     t_is([min(bus(:, VM)) mean(bus(:, VM)) max(bus(:, VM))], ...
         [1.059191 1.079404 1.1], 5, [t 'bus voltage']);
+
+%     %% OPF with user-defined nonlinear constraints
+%     t = [t0 'w/nonlin eq constraint'];
+%     mpc = loadcase('case30');
+%     mpc.user_constraints.nle = {
+%         {'Pg_usr', 1, 'opf_nle_fcn1', 'opf_nle_hess1', {'Pg'}, {}}
+%     };
+%     r = runopf(mpc, mpopt);
+%     t_ok(r.success, [t 'success']);
+%     t_is(r.gen(1, PG) * r.gen(2, PG) / 100, r.gen(6, PG), 8, t);
+%     t_is(r.gen(6, PG), 20.751163, 5, t);
+
+    %% OPF with all buses isolated
+    t = [t0 'all buses isolated : '];
+    mpc.bus(:, BUS_TYPE) = NONE;
+    try
+        r = runopf(mpc, mpopt);
+        t_is(r.success, 0, 12, [t 'success = 0']);
+    catch
+        t_ok(0, [t 'unexpected fatal error']);
+    end
 else
     t_skip(num_tests, [t0 'not available']);
 end
