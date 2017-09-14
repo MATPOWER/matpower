@@ -1825,6 +1825,7 @@ subject to
 & h(x) \le 0 & \label{eq:hx_le_0} \\
 & x_\mathrm{min} \le x \le x_\mathrm{max} & \label{eq:xlims}.
 \end{eqnarray}
+In both cases, the objective function $f(x)$ consists of the polynomial cost generator injections, the equality constraints $g(x)$ are the power balance equations, the inequality constraints $h(x)$ are the branch flow limits, and the $x_\mathrm{min}$ and $x_\mathrm{max}$ bounds include reference bus angles, voltage magnitudes (for AC) and generator injections.
 
 \subsection{Standard AC OPF}
 
@@ -1894,44 +1895,90 @@ h_t(\Theta) &=  & -B_f \Theta - P_{f,\mathrm{shift}} -  F_\mathrm{max} &\le 0  \
 \subsection{Extended OPF Formulation}
 \label{sec:extended_opf}
 
-\matpower{} employs an extensible OPF structure~\cite{zimmerman2009} to allow the user to modify or augment the problem formulation without rewriting the portions that are shared with the standard OPF formulation. Up through version 6.0 of \matpower{} this was handled via optional input parameters to a pre-defined cost and constraint format, preserving the ability to use solvers that employ pre-compiled MEX files to compute the costs and constraints. This is referred to as \matpower{}'s legacy extended OPF formulation. The standard formulation is modified by introducing additional optional user-defined costs $f_u$, linear constraints, and variables $z$ and can be written in the following form:
+\matpower{} employs an extensible OPF structure to allow the user to modify or augment the problem formulation without rewriting the portions that are shared with the standard OPF formulation described above. The standard formulation is modified by introducing additional variables, user-defined costs, and/or user-defined constraints. The full extended formulation can be written as follows:
+
 \begin{equation}
-\min_{x,z} f(x) + f_u(x, z)
-\label{eq:minfxz}
+\min_{\hat{x}} f(x) + f_u(\hat{x})
+\label{eq:minfxhat}
 \end{equation}
 subject to
 \begin{eqnarray}
-& g(x) = 0 & \\
-& h(x) \le 0 & \\
-& x_\mathrm{min} \le x \le x_\mathrm{max} & \\
-& l \le A \left[\begin{array}{c}x \\ z \end{array}\right] \le u & \label{eq:A} \\
-& z_\mathrm{min} \le z \le z_\mathrm{max}. & \label{eq:zlims}
+& \hat{g}(\hat{x}) = 0 & \\
+& \hat{h}(\hat{x}) \le 0 & \\
+& \hat{x}_\mathrm{min} \le \hat{x} \le \hat{x}_\mathrm{max} & \\
+& l \le A \hat{x} \le u & \label{eq:A}
 \end{eqnarray}
 
-For OPF solvers that use Matlab code to implement the function, gradient and Hessian evaluations,\footnote{Currently, this includes solvers based on \mipslink{}, \code{fmincon}, \ipopt{} and \knitro{}.} the formulation can include additional nonlinear constraints,
+The first difference to note is that the optimization variable $x$ from the standard OPF formulation has been augmented with additional variables $z$ to form a new optimization variable $\hat{x}$, and likewise with the lower and upper bounds.
+\begin{equation}
+\hat{x} = \left[\begin{array}{c}x \\ z \end{array}\right] \quad
+\hat{x}_\mathrm{min} = \left[\begin{array}{c}x_\mathrm{min} \\ z_\mathrm{min} \end{array}\right] \quad
+\hat{x}_\mathrm{max} = \left[\begin{array}{c}x_\mathrm{max} \\ z_\mathrm{max} \end{array}\right]
+\label{eq:xhat}
+\end{equation}
+Second, there is an additional user-defined cost term $f_u(\hat{x})$ in the objective function. This cost consists of three pieces that will be described in more detail below.
+\begin{equation}
+f_u(\hat{x}) = f_\mathrm{q}(\hat{x}) + f_\mathrm{nln}(\hat{x}) + f_\mathrm{legacy}(\hat{x})
+\label{eq:f_u}
+\end{equation}
+Third, the nonlinear constraints $g$ and $h$ are augmented with user defined additions $g_u$ and $h_u$ to give $\hat{g}$ and $\hat{h}$.
 \begin{eqnarray}
-g_u^i(x) &= 0 \qquad \forall{i} \in \mathcal{G}_u \label{eq:usereq} \\
-h_u^i(x) &\le 0 \qquad \forall{i} \in \mathcal{H}_u, \label{eq:userieq}
+& \hat{g}(\hat{x}) = \left[\begin{array}{c}g(x) \\ g_u(\hat{x}) \end{array}\right], \quad \hat{h}(\hat{x}) = \left[\begin{array}{c}h(x) \\ h_u(\hat{x}) \end{array}\right] &
+\end{eqnarray}
+And finally, a new set of linear constraints are included in \eqref{eq:A}.
+
+Up through version 6.0 of \matpower{}, the OPF extensions were handled via optional input parameters that define any additional variables,\footnote{Parameters $z_\mathrm{min}$ and $z_\mathrm{max}$ in \eqref{eq:xhat}.} linear constraints,\footnote{Parameters $A$, $l$, $u$ in \eqref{eq:A}.} and costs of the pre-specified form defined by $f_\mathrm{legacy}$.\footnote{Parameters $H$, $C$, $N$, $\hat{r}$, $k$, $d$, $m$ in \eqref{eq:flegacy}--\eqref{eq:fdi}.} This preserved the ability to use solvers that employ pre-compiled MEX files to compute all of the costs and constraints. This is referred to as \matpower{}'s legacy extended OPF formulation~\cite{zimmerman2009}.
+
+For the AC OPF, subsequent versions also include the general nonlinear constraints $g_u$ and $h_u$, and the quadratic and general nonlinear costs $f_\mathrm{q}$ and $f_\mathrm{nln}$. The new quadratic cost terms can be handled by all of \matpower{}'s AC OPF solvers, but the general nonlinear costs and constraints require a solver that uses \matlab{} code to implement the function, gradient and Hessian evaluations.\footnote{At the time of this writing, this includes solvers based on \mipslink{}, \code{fmincon}, \ipopt{} and \knitro{}.} 
+
+Section~\ref{sec:extending_opf} describes the mechanisms available to the user for taking advantage of the extensible formulation described here.
+
+\subsubsection{User-defined Variables}
+
+The creation of additional user-defined $z$ variables can be done explicitly or implicitly based on the difference between the number of columns in $A$ and the dimension of the standard OPF optimization variable $x$. The optional vectors $z_\mathrm{min}$ and $z_\mathrm{max}$ are available to impose lower and upper bounds on $z$, respectively.
+
+\subsubsection{User-defined Constraints}
+
+\begin{itemize}
+\item {\bf Linear Constraints} -- The user-defined linear constraints \eqref{eq:A} are general linear restrictions involving all of the optimization variables and are specified via matrix $A$ and lower and upper bound vectors $l$ and $u$. These parameters can be used to create equality constraints ($l_i = u_i$) or inequality constraints that are bounded below ($u_i = \infty$), bounded above ($l_i = \infty$) or bounded on both sides.
+\item {\bf Nonlinear Constraints} -- The user-defined general nonlinear constraints take the form
+\begin{eqnarray}
+&& g_u^j(x) = 0 \quad \forall{j} \in \mathcal{G}_u \label{eq:usereq} \\
+&& h_u^j(x) \le 0 \quad \forall{j} \in \mathcal{H}_u, \label{eq:userieq}
 \end{eqnarray}
 where $\mathcal{G}_u$ and $\mathcal{H}_u$ are sets of indices for user-defined equality and inequality constraint sets, respectively.
 
-Section~\ref{sec:extending_opf} describes the mechanisms available to the user for taking advantage of the extensible formulation described here.
+Each of these constraint sets is defined by two M-file functions, similar to those required by \mipslink{}, one that computes the constraint values and their gradients (Jacobian), and the other that computes Hessian values.
+\end{itemize}
 
 \subsubsection{User-defined Costs}
 \label{sec:user_costs}
 
-The user-defined cost function $f_u$ is specified in terms of parameters $H$, $C$, $N$, $\hat{r}$, $k$, $d$ and $m$. All of the parameters are $n_w \times 1$ vectors except the symmetric $n_w \times n_w$ matrix $H$ and the $n_w \times (n_x + n_z)$ matrix $N$. The cost takes the form
-\begin{equation}
-f_u(x, z) = \frac{1}{2} \trans{w} H w + \trans{C} w
+The user-defined cost function $f_u$ consists of three terms for three different types of costs: quadratic, general nonlinear, and legacy. Each term is a simple summation over all of the cost sets of that type.
+\begin{eqnarray}
+& f_\mathrm{q}(\hat{x}) = \sum_j f^j_\mathrm{q}(\hat{x}) & \\
+& f_\mathrm{nln}(\hat{x}) = \sum_j f^j_\mathrm{nln}(\hat{x}) & \\
+& f_\mathrm{legacy}(\hat{x}) = \sum_j f^j_\mathrm{legacy}(\hat{x}) &
 \label{eq:fu}
+\end{eqnarray}
+
+\begin{itemize}
+\item {\bf Quadratic Costs} for a cost set $j$ are specified by parameters $Q_j$, $c_j$ and $k_j$ that define a quadratic function of the optimization variable $\hat{x}$.
+\begin{equation}
+f^j_\mathrm{q}(\hat{x}) = \trans{\hat{x}} Q_j \hat{x} + \trans{c_j} \hat{x} + k_j
+\label{eq:quad_cost}
+\end{equation}
+
+\item {\bf General Nonlinear Costs} for a cost set $j$ consist of a cost function $f^j_\mathrm{nln}(\hat{x})$ provided in the form of a function handle to an M-file function that evaluates the cost and its gradients and Hessian for a given value of $\hat{x}$.
+
+\item {\bf Legacy Costs} $f^j_\mathrm{legacy}(\hat{x})$ are specified in terms of parameters $H_j$, $C_j$, $N_j$, $\hat{r}_j$, $k_j$, $d_j$ and $m_j$. For simplicity of presentation, we will drop the $j$ subscript for the rest of this discussion. All of the parameters are $n_w \times 1$ vectors except the symmetric $n_w \times n_w$ matrix $H$ and the $n_w \times n_{\hat{x}}$ matrix $N$. The legacy user cost function takes the form
+\begin{equation}
+f_\mathrm{legacy}(\hat{x}) = \frac{1}{2} \trans{w} H w + \trans{C} w
+\label{eq:flegacy}
 \end{equation}
 where $w$ is defined in several steps as follows. First, a new vector $u$ is created by applying a linear transformation $N$ and shift $\hat{r}$ to the full set of optimization variables
 \begin{equation}
-r = N \left[\begin{array}{c}x \\ z \end{array}\right],
-\label{eq:r}
-\end{equation}
-\begin{equation}
-u = r - \hat{r},
+u = N \hat{x} - \hat{r},
 \label{eq:u}
 \end{equation}
 then a scaled function with a ``dead zone'' is applied to each element of $u$ to produce the corresponding element of $w$.
@@ -1973,19 +2020,11 @@ as illustrated in \figurename~\ref{fig:deadzone} and \figurename~\ref{fig:deadzo
   \label{fig:deadzone2}
 \end{figure}
 
-This form for $f_u$ provides the flexibility to handle a wide range of costs, from simple linear functions of the optimization variables to scaled quadratic penalties on quantities, such as voltages, lying outside a desired range, to functions of linear combinations of variables, inspired by the requirements of price coordination terms found in the decomposition of large loosely coupled problems encountered in our own research.
+This form for $f_\mathrm{legacy}$ provides the flexibility to handle a wide range of costs, from simple linear functions of the optimization variables to scaled quadratic penalties on quantities, such as voltages, lying outside a desired range, to functions of linear combinations of variables, inspired by the requirements of price coordination terms found in the decomposition of large loosely coupled problems encountered in our own research.
 
 Some limitations are imposed on the parameters in the case of the DC OPF since \matpower{} uses a generic quadratic programming (QP) solver for the optimization. In particular, $k_i = 0$ and $d_i = 1$ for all $i$, so the ``dead zone'' is not considered and only the linear option is available for $f_{d_i}$. As a result, for the DC case \eqref{eq:w} simplifies to $w_i = m_i u_i$.
+\end{itemize}
 
-\subsubsection{User-defined Constraints}
-
-The user-defined linear constraints \eqref{eq:A} are general linear restrictions involving all of the optimization variables and are specified via matrix $A$ and lower and upper bound vectors $l$ and $u$. These parameters can be used to create equality constraints ($l_i = u_i$) or inequality constraints that are bounded below ($u_i = \infty$), bounded above ($l_i = \infty$) or bounded on both sides.
-
-The user-defined nonlinear constraint sets $g_u^i(x)$ and $h_u^i(x)$ in \eqref{eq:usereq} and \eqref{eq:userieq} are each defined by two M-file functions, similar to those required by \mipslink{}, one that computes the constraint values and their gradients (Jacobian), and the other that computes Hessian values.
-
-\subsubsection{User-defined Variables}
-
-The creation of additional user-defined $z$ variables is done implicitly based on the difference between the number of columns in $A$ and the dimension of $x$. The optional vectors $z_\mathrm{min}$ and $z_\mathrm{max}$ are available to impose lower and upper bounds on $z$, respectively.
 
 \subsection{Standard Extensions}
 \label{sec:standard_extensions}
@@ -2292,24 +2331,25 @@ The extended OPF formulation described in Section~\ref{sec:extended_opf} allows 
 \subsection{Direct Specification}
 \label{sec:extend_direct}
 
-\subsubsection{User-defined Costs}
-To add costs directly, the parameters $H$, $C$, $N$, $\hat{r}$, $k$, $d$ and $m$ of \eqref{eq:fu}--\eqref{eq:fdi} described in Section~\ref{sec:user_costs} are specified as fields or arguments \code{H}, \code{Cw}, \code{N} and \code{fparm}, repectively, where \code{fparm} is the $n_w \times 4$ matrix
-\begin{equation}
-f_\mathrm{parm} = \left[\begin{array}{cccc}d & \hat{r} & k & m \end{array}\right].
-\end{equation}
-When specifying additional costs, \code{N} and \code{Cw} are required, while \code{H} and \code{fparm} are optional. The default value for $H$ is a zero matrix, and the default for $f_\mathrm{parm}$ is such that $d$ and $m$ are all ones and $\hat{r}$ and $k$ are all zeros, resulting in simple linear cost, with no shift or ``dead-zone''. \code{N} and \code{H} should be specified as sparse matrices.
+This section describes the additional fields that can be added to \mpc{} (the \matpower{} case struct) or, alternatively, the input parameters that can be passed directly to the \code{opf} function. The former is the preferred approach, as it allows the normal use of \code{runopf} and related functions.
+
+\subsubsection{User-defined Variables}
+
+In the case of direct specification, additional variables are created implicitly based on the difference between the number of columns in $A$ and the number $n_x$ of standard OPF variables. If $A$ has more columns than $x$ has elements, the extra columns are assumed to correspond to a new $z$ variable. The initial value and lower and upper bounds for $z$ can also be specified in the optional fields or arguments, \code{z0}, \code{zl} and \code{zu}, respectively.
 
 \subsubsection{User-defined Constraints}
+\label{sec:extend_direct_constraints}
 
-For additional linear constraints, the $A$, $l$ and $u$ parameters of \eqref{eq:A} are specified as fields or arguments of the same names, \code{A}, \code{l} and \code{u}, respectively, where \code{A} is sparse.
+\begin{itemize}
+\item {\bf Linear Constraints} can be added by specifying the $A$, $l$ and $u$ parameters of \eqref{eq:A} directly as fields or arguments of the same names, \code{A}, \code{l} and \code{u}, respectively, where \code{A} is sparse.
 
-A user-defined nonlinear constraint set, $g_u^i(x)$ or $h_u^i(x)$ from \eqref{eq:usereq} or \eqref{eq:userieq}, is implemented by defining two M-file functions, similar to those required by \mipslink{}. The first is a function to compute the constraint values and their gradients (Jacobian),\footnote{The differences between this function and the one required by \mips{} is that (1) this one represents a single set of equality constraints or inequality constraints, not both, (2) it returns in \code{dg} the $m \times n$ Jacobian (for $m$ constraints and $n$ variables), whereas \mips{} expects the $n \times m$ transpose, (3) this function allows arbitrary additional parameters, and (4) \code{x} can be a cell array of sub-vectors of optimization variable $x$ (see \code{varsets} in Table~\ref{tab:nl_constraints}).} with calling syntax:
+\item {\bf Nonlinear Constraints} for a constraint set $j$, that is, $g_u^j(x)$ or $h_u^j(x)$ from \eqref{eq:usereq} or \eqref{eq:userieq}, are implemented by defining two M-file functions, similar to those required by \mipslink{}. The first is a function to compute the constraint values and their gradients (Jacobian),\footnote{The differences between this function and the one required by \mips{} is that (1) this one represents a single set of equality constraints or inequality constraints, not both, (2) it returns in \code{dg} the $m \times n$ Jacobian (for $m$ constraints and $n$ variables), whereas \mips{} expects the $n \times m$ transpose, (3) this function allows arbitrary additional parameters, and (4) \code{x} can be a cell array of sub-vectors of optimization variable $\hat{x}$ (see \code{varsets} in Table~\ref{tab:nl_constraints}).} with calling syntax:
 
-\code{[g, dg] = my\_constraint\_fcn(x, <p1>, <p2>, ...)} \\
-Here \code{<p1>} and \code{<p2>} represent arbitrary optional input parameters that remain constant for all calls to the function. The second is a function to compute the Hessian of the corresponding term in the Lagrangian function, that is the term corresponding to $\trans{\lambda}g_u^i(x)$ or $\trans{\mu}h_u^i(x)$. This function has the following calling syntax:
+\code{[g, dg] = my\_constraint\_fcn(x, <p1>, <p2>, ...)} \\ \\
+Here \code{<p1>} and \code{<p2>} represent arbitrary optional input parameters that remain constant for all calls to the function. The second is a function to compute the Hessian of the corresponding term in the Lagrangian function, that is the term corresponding to $\trans{\lambda}g_u^j(x)$ or $\trans{\mu}h_u^j(x)$. This function has the following calling syntax:
 
-\code{d2G = my\_constraint\_hess(x, lambda, <p1>, <p2>, ...)} \\
-Once again this is similar to the form of the Hessian evaluation function expected by \mips{}.\footnote{The differences between this function and the one required by \mips{} is that (1) this one returns the Hessian of a single term of the Lagrangian, not of the full Lagrangian, (2) the \code{lambda} argument is a simple vector of multipliers ($\lambda$ or $\mu$) corresponding just to this set of constraints, not a struct containing the full $\lambda$ and $\mu$ vectors in fields \code{eqnonlin} and \code{ineqnonlin} \code{nonlineq}, respectively, and (3) this function allows arbitrary additional parameters, and (4) \code{x} can be a cell array of sub-vectors of optimization variable $x$ (see \code{varsets} in Table~\ref{tab:nl_constraints}).}
+\code{d2G = my\_constraint\_hess(x, lambda, <p1>, <p2>, ...)} \\ \\
+Once again this is similar to the form of the Hessian evaluation function expected by \mips{}.\footnote{The differences between this function and the one required by \mips{} is that (1) this one returns the Hessian of a single term of the Lagrangian, not of the full Lagrangian, (2) the \code{lambda} argument is a simple vector of multipliers ($\lambda$ or $\mu$) corresponding just to this set of constraints, not a struct containing the full $\lambda$ and $\mu$ vectors, in fields \code{eqnonlin} and \code{ineqnonlin}, respectively, and (3) this function allows arbitrary additional parameters, and (4) \code{x} can be a cell array of sub-vectors of optimization variable $\hat{x}$ (see \code{varsets} in Table~\ref{tab:nl_constraints}).}
 
 In order to add a set of user-defined nonlinear constraints to the formulation through direct specification, an entry must be added to the optional \code{user\_constraints.nle} (nonlinear equality) or \code{user\_constraints.nli} (nonlinear inequality) fields of the \matpower{} case struct. These fields are cell arrays, in which each element (also a cell array) specifies a constraint set of the corresponding kind. The format is as follows, where the details are described in Table~\ref{tab:nl_constraints}.
 \begin{Code}
@@ -2330,16 +2370,16 @@ mpc.user_constraints.nle = {
 name & description \\
 \midrule
 \code{name}	& string with name of constraint set, used to label multipliers in \results{} struct \\
-\code{N}	& number of constraints, i.e. dimension of $g_u^i(x)$ (or $h_u^i(x)$ as the case may be) \\
+\code{N}	& number of constraints, i.e. dimension of $g_u^j(x)$ (or $h_u^j(x)$ as the case may be) \\
 \code{g\_fcn}	& string containing name of function to evaluate constraint and gradients (Jacobian) \\
 \code{hess\_fcn}	& string containing name of function to evaluate Hessian of corresponding term of Lagrangian \\
-\code{varsets}	& cell array of variable set names, specifying sub-vectors of optimization vector $x$ to be passed as inputs in \code{x}\tnote{\dag} \\
+\code{varsets}	& cell array of variable set names, specifying sub-vectors of optimization vector $\hat{x}$ to be passed as inputs in \code{x}\tnote{\dag} \\
 \code{params}	&  cell array of optional, arbitrary parameters to pass to each call to the constraint and Hessian evaluation functions\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {If \code{varsets} is empty, \code{x} will be the full optimization vector $x$, otherwise it will be a cell array of sub-vectors of $x$ for the specified variable sets. Valid names include \codeq{Va}, \codeq{Vm}, \codeq{Pg}, and \codeq{Qg}. It can include others depending on the OPF extensions in use. See the variable names displayed by \code{results.om} for a complete list for your problem.}
+ \item [\dag] {If \code{varsets} is empty, \code{x} will be the full optimization vector $\hat{x}$, otherwise it will be a cell array of sub-vectors of $\hat{x}$ for the specified variable sets. Valid names include \codeq{Va}, \codeq{Vm}, \codeq{Pg}, and \codeq{Qg}. It can include others depending on the OPF extensions in use. See the variable names displayed by \code{results.om} for a complete list for your problem.}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -2350,15 +2390,24 @@ mpc.user_constraints.nle = {
     {'Pg_usr', 1, 'opf_nle_fcn1', 'opf_nle_hess1', {'Pg'}, {}}
 };
 \end{Code}
-This adds a single constraint named \codeq{Pg\_usr} as a function of the vector of generator active injections (\code{x} will be \code{\{Pg\}}, where \code{Pg} is a sub-vector of the optimization vector $x$ containing only the generator active injections). The constraints and gradients are evaluated by a function named \codeq{opf\_nle\_fcn1} and the Hessian of the corresponding term of the Lagrangian by a function named \codeq{opf\_nle\_hess1}, neither of which expect any additional parameters.
+This adds a single constraint named \codeq{Pg\_usr} as a function of the vector of generator active injections (\code{x} will be \code{\{Pg\}}, where \code{Pg} is a sub-vector of the optimization vector $\hat{x}$ containing only the generator active injections). The constraints and gradients are evaluated by a function named \codeq{opf\_nle\_fcn1} and the Hessian of the corresponding term of the Lagrangian by a function named \codeq{opf\_nle\_hess1}, neither of which expect any additional parameters.
+\end{itemize}
 
-\subsubsection{User-defined Variables}
+\subsubsection{User-defined Costs}
 
-Additional variables are created implicitly based on the difference between the number of columns in $A$ and the number $n_x$ of standard OPF variables. If $A$ has more columns than $x$ has elements, the extra columns are assumed to correspond to a new $z$ variable. The initial value and lower and upper bounds for $z$ can also be specified in the optional fields or arguments, \code{z0}, \code{zl} and \code{zu}, respectively.
+\begin{itemize}
+\item {\bf Quadratic Costs} by direct specification are not currently supported.
+\item {\bf General Nonlinear Costs} by direct specification are not currently supported.
+\item {\bf Legacy Costs} -- To add legacy costs directly, the parameters $H$, $C$, $N$, $\hat{r}$, $k$, $d$ and $m$ of \eqref{eq:flegacy}--\eqref{eq:fdi} described in Section~\ref{sec:user_costs} are specified as fields or arguments \code{H}, \code{Cw}, \code{N} and \code{fparm}, respectively, where \code{fparm} is the $n_w \times 4$ matrix
+\begin{equation}
+f_\mathrm{parm} = \left[\begin{array}{cccc}d & \hat{r} & k & m \end{array}\right].
+\end{equation}
+When specifying additional costs, \code{N} and \code{Cw} are required, while \code{H} and \code{fparm} are optional. The default value for $H$ is a zero matrix, and the default for $f_\mathrm{parm}$ is such that $d$ and $m$ are all ones and $\hat{r}$ and $k$ are all zeros, resulting in simple linear cost, with no shift or ``dead-zone''. \code{N} and \code{H} should be specified as sparse matrices.
+\end{itemize}
 
 \subsubsection{Additional Comments}
 
-For a simple formulation extension to be used for a small number of OPF cases, this method has the advantage of being direct and straightforward. While \matpower{} does include code to eliminate the columns of $A$ and $N$ corresponding to $V_m$ and $Q_g$ when running a DC OPF\footnote{Only if they contain all zeros.}, as well as code to reorder and eliminate columns appropriately when converting from external to internal data formats, this mechanism still requires the user to take special care in preparing the $A$ and $N$ matrices to ensure that the columns match the ordering of the elements of the opimization vectors $x$ and $z$. All extra constraints and variables must be incorporated into a single set of parameters that are constructed before calling the OPF. The bookkeeping needed to access the resulting variables and shadow prices on constraints and variable bounds must be handled manually by the user outside of the OPF, along with any processing of additional input data and processing, printing or saving of the additional result data. Making further modifications to a formulation that already includes user-supplied costs, constraints or variables, requires that both sets be incorporated into a new single consistent set of parameters.
+For a simple formulation extension to be used for a small number of OPF cases, this method has the advantage of being direct and straightforward. While \matpower{} does include code to eliminate the columns of $A$ and $N$ corresponding to $V_m$ and $Q_g$ when running a DC OPF\footnote{Only if they contain all zeros.}, as well as code to reorder and eliminate columns appropriately when converting from external to internal data formats, this mechanism still requires the user to take special care in preparing the $A$ and $N$ matrices to ensure that the columns match the ordering of the elements of the optimization vectors $x$ and $z$. All extra constraints and variables must be incorporated into a single set of parameters that are constructed before calling the OPF. The bookkeeping needed to access the resulting variables and shadow prices on constraints and variable bounds must be handled manually by the user outside of the OPF, along with any processing of additional input data and processing, printing or saving of the additional result data. Making further modifications to a formulation that already includes user-supplied costs, constraints or variables, requires that both sets be incorporated into a new single consistent set of parameters.
 
 \subsection{Callback Functions}
 \label{sec:extend_callbacks}
@@ -2366,12 +2415,68 @@ For a simple formulation extension to be used for a small number of OPF cases, t
 The second method, based on defining a set of callback functions, offers several distinct advantages, especially for more complex scenarios or for adding a feature for others to use, such as the zonal reserve requirement or the interface flow limits mentioned previously. This approach makes it possible to:
 
 \begin{itemize}
-\item define and access variable/constraint sets as individual named blocks
+\item define and access variable/constraint/cost sets as individual named blocks
 \item define constraints, costs only in terms of variables directly involved
 \item pre-process input data and/or post-process result data
 \item print and save new result data
 \item simultaneously use multiple, independently developed extensions (e.g. zonal reserve requirements and interface flow limits)
 \end{itemize}
+
+With this approach the OPF formulation is modified in the \code{formulation} callback, which is described and illustrated below in Section~\ref{sec:formulation_callback}. The modifications to the formulation are handled by adding variables, costs and/or constraints to the OPF Model object (\code{om}) using one of the \code{add\_*} methods. Please see the documentation for each of these methods for more details.
+
+\subsubsection{User-defined Variables}
+
+Additional variables are added using the \code{add\_var} method.
+\begin{Code}
+om.add_var('myV', N, myV0, myV_min, myV_max);
+\end{Code}
+Here \code{myV} is the name of the variable set, \code{N} the number of variables being added (i.e. this is an $N \times 1$ vector being appended to the current optimization variable $\hat{x}$), and \code{myV0}, \code{myV\_min}, \code{myV\_max} are vectors of initial values, lower bounds and upper bounds, respectively.
+
+\subsubsection{User-defined Costs}
+
+\begin{itemize}
+\item {\bf Quadratic Costs} are added using the \code{add\_quad\_cost} method.
+\begin{Code}
+om.add_quad_cost('myQcost', Q, c, k, varsets);
+\end{Code}
+Here \code{myQcost} is the name of the cost set, \code{Q}, \code{c} and \code{k} are the $Q_j$, $c_j$ and $k_j$ parameters from \eqref{eq:quad_cost}, respectively, and \code{var\_sets} is an optional cell array of variable set names. If \code{var\_sets} is provided, the dimensions of \code{Q} and \code{c} will correspond, not to the full optimization vector $\hat{x}$, but to the subvector formed by stacking only the variable sets specified in \code{var\_sets}.
+
+\item {\bf General Nonlinear Costs} are added using the \code{add\_nln\_cost} method.
+\begin{Code}
+om.add_nln_cost('myNonlinCost', 1, fcn, varsets);
+\end{Code}
+Here \code{myNonlinCost} is the name of the cost set, \code{fcn} is a function handle and \code{var\_sets} is an optional cell array of variable set names. The function handle \code{fcn} must point to a function that implements the $f^j_\mathrm{nln}(\hat{x})$ function from \eqref{eq:fu}, returning the value of the function, along with its gradient and Hessian. This function has a format similar to that required by \mipslink{} for its cost function.
+
+If \code{var\_sets} is provided, instead of the full optimization vector $\hat{x}$, the \code{x} passed to the function \code{fcn} will be a cell array of sub-vectors of $\hat{x}$ corresponding to the specified variable sets.
+
+\item {\bf Legacy Costs} are added using the \code{add\_legacy\_cost} method.
+\begin{Code}
+om.add_legacy_cost('myLegacyCost', cp, varsets);
+\end{Code}
+Here \code{myLegacyCost} is the name of the cost set, \code{cp} is a struct containing the cost parameters $H$, $C$, $N$, $\hat{r}$, $k$, $d$ and $m$ from \eqref{eq:flegacy}--\eqref{eq:fdi} in fields \code{H}, \code{Cw}, \code{N}, \code{rh}, \code{kk}, \code{dd} and \code{mm}, respectively, and \code{var\_sets} is an optional cell array of variable set names. If \code{var\_sets} is provided, the number of columns in \code{N} will correspond, not to the full optimization vector $\hat{x}$, but to the subvector formed by stacking only the variable sets specified in \code{var\_sets}.
+\end{itemize}
+
+\subsubsection{User-defined Constraints}
+
+\begin{itemize}
+\item {\bf Linear Constraints} are added using the \code{add\_lin\_constraint} method.
+\begin{Code}
+om.lin_constraint('myLinCons', A, l, u, varsets);
+\end{Code}
+Here \code{myLinCons} is the name of the constraint set, \code{A}, \code{l} and \code{u} correspond to additional rows to add to the $A$, $l$ and $u$ parameters in \eqref{eq:A}, respectively, and \code{var\_sets} is an optional cell array of variable set names. If \code{var\_sets} is provided, the number of columns in \code{A} will correspond, not to the full optimization vector $\hat{x}$, but to the subvector formed by stacking only the variable sets specified in \code{var\_sets}.
+
+\item {\bf Nonlinear Constraints} are added using the \code{add\_nln\_constraint} method.
+\begin{Code}
+om.nln_constraint('myNonlinCons', N, iseq, fcn, hess, varsets);
+\end{Code}
+Here \code{myNonlinCons} is the name of the constraint set, \code{N} is the number of constraints being added, \code{iseq} is a true or false value indicating whether this is a set of equality (or else inequality) constraints, \code{fcn} and \code{hess} are function handles and \code{var\_sets} is an optional cell array of variable set names. The function handle \code{fcn} must point to a function that implements the corresponding constraint function $g_u^j(x)$ or $h_u^j(x)$ and its gradients, and \code{hess} to one that evaluates the corresponding term in the Hessian of the Lagrangian function. This function has a format similar to that required by \mipslink{} for its cost function. See more details in Section~\ref{sec:extend_direct_constraints}.
+
+If \code{var\_sets} is provided, instead of the full optimization vector $\hat{x}$, the \code{x} passed to the function \code{fcn} will be a cell array of sub-vectors of $\hat{x}$ corresponding to the specified variable sets.
+
+\end{itemize}
+
+\subsection{Callback Stages and Example}
+\label{sec:extend_callback_ex}
 
 \matpower{} defines five stages in the execution of a simulation where custom code can be inserted to alter the behavior or data before proceeding to the next stage. This custom code is defined as a set of ``callback'' functions that are registered via \code{add\_userfcn} for \matpower{} to call automatically at one of the five stages. Each stage has a name and, by convention, the name of a user-defined callback function ends with the name of the corresponding stage. For example, a callback for the \code{formulation} stage that modifies the OPF problem formulation to add reserve requirements could be registered with the following line of code.
 \begin{Code}
@@ -2386,9 +2491,9 @@ Consider the problem of jointly optimizing the allocation of both energy and res
 \label{eq:reserve_var}
 \end{equation}
 
-If the vector $c$ contains the marginal cost of reserves for each generator, the user defined cost term from \eqref{eq:minfxz} is simply
+If the vector $c$ contains the marginal cost of reserves for each generator, the user defined cost term from \eqref{eq:minfxhat} is simply
 \begin{equation}
-f_u(x,z) = \trans{c} r.
+f_u(\hat{x}) = \trans{c} r.
 \label{eq:reserve_cost}
 \end{equation}
 
@@ -2466,7 +2571,7 @@ The \code{om} object contains both the original \matpower{} case data as well as
 
 In the example code, a new variable block named \code{R} with $n_g$ elements and the limits from \eqref{eq:reserve_var} is added to the model via the \code{add\_var} method. Similarly, two linear constraint blocks named \code{Pg\_plus\_R} and \code{Rreq}, implementing \eqref{eq:Pg_plus_R} and \eqref{eq:reserve_req}, respectively, are added via the \code{add\_lin\_constraint} method. And finally, the \code{add\_quad\_cost} method is used to add to the model a quadratic (actually linear) cost block corresponding to \eqref{eq:reserve_cost}.
 
-Notice that the last argument to \code{add\_lin\_constraint} and \code{add\_quad\_cost} allows the constraints and costs to be defined only in terms of the relevant parts of the optimization variable $x$. For example, the \code{A} matrix for the \code{Pg\_plus\_R} constraint contains only columns corresponding to real power generation (\code{Pg}) and reserves (\code{R}) and need not bother with voltages, reactive power injections, etc. As illustrated in \figurename~\ref{fig:varsets}, this allows the same code to be used with both the AC OPF, where $x$ includes $V_m$ and $Q_g$, and the DC OPF where it does not. This code is also independent of any additional variables that may have been added by \matpower{} (e.g. $y$ variables from \matpower{}'s CCV handling of piece-wise linear costs) or by the user via previous \code{formulation} callbacks. \matpower{} will place the constraint matrix blocks in the appropriate place when it constructs the overall \code{A} matrix at run-time. This is an important feature that enables independently developed \matpower{} OPF extensions to work together.
+Notice that the last argument to \code{add\_lin\_constraint} and \code{add\_quad\_cost} allows the constraints and costs to be defined only in terms of the relevant parts of the optimization variable $\hat{x}$. For example, the \code{A} matrix for the \code{Pg\_plus\_R} constraint contains only columns corresponding to real power generation (\code{Pg}) and reserves (\code{R}) and need not bother with voltages, reactive power injections, etc. As illustrated in \figurename~\ref{fig:varsets}, this allows the same code to be used with both the AC OPF, where $\hat{x}$ includes $V_m$ and $Q_g$, and the DC OPF where it does not. This code is also independent of any additional variables that may have been added by \matpower{} (e.g. $y$ variables from \matpower{}'s CCV handling of piece-wise linear costs) or by the user via previous \code{formulation} callbacks. \matpower{} will place the constraint and cost matrix blocks in the appropriate place when it constructs the aggregated constraint and cost matrices at run-time. This is an important feature that enables independently developed \matpower{} OPF extensions to work together.
 
 \begin{Code}
 function om = userfcn_reserves_formulation(om, mpopt, args)
@@ -2796,7 +2901,7 @@ name & invoked \dots & typical use \\
 \subsubsection{Fixed Zonal Reserves}
 \label{sec:reserves}
 
-This extension is a more complete version of the example of fixed zonal reserve requirements used for illustration above in Sections~\ref{sec:extend_callbacks} and \ref{sec:registeringcallbacks}. The details of the extensions to the standard OPF problem are given in equations~\eqref{eq:reserve_var}--\eqref{eq:reserve_req} and a description of the relevant input and output data structures is summarized in Tables~\ref{tab:reservesinputs} and \ref{tab:reservesoutputs}, respectively.
+This extension is a more complete version of the example of fixed zonal reserve requirements used for illustration above in Sections~\ref{sec:extend_callback_ex} and \ref{sec:registeringcallbacks}. The details of the extensions to the standard OPF problem are given in equations~\eqref{eq:reserve_var}--\eqref{eq:reserve_req} and a description of the relevant input and output data structures is summarized in Tables~\ref{tab:reservesinputs} and \ref{tab:reservesoutputs}, respectively.
 
 \begin{table}[!ht]
 %\renewcommand{\arraystretch}{1.2}
@@ -3006,9 +3111,9 @@ where the feasible area is illustrated in \figurename~\ref{fig:softlims}.
   \label{fig:softlims}
 \end{figure}
 
-Finally, a simple linear cost coefficient $c_{\mathrm v}^i$ is applied to each flow violation variable, so that the additional user defined cost term from \eqref{eq:minfxz} looks like
+Finally, a simple linear cost coefficient $c_{\mathrm v}^i$ is applied to each flow violation variable, so that the additional user defined cost term from \eqref{eq:minfxhat} looks like
 \begin{equation}
-f_u(x,z) = \trans{c_{\mathrm v}} f_{\mathrm v}.
+f_u(\hat{x}) = \trans{c_{\mathrm v}} f_{\mathrm v}.
 \label{eq:softlims_cost}
 \end{equation}
 
@@ -4233,7 +4338,7 @@ Numerous examples can be found in the case files listed in Table~\ref{tab:casefi
 The details of the \matpower{} case format are given in the tables below and can also be accessed by typing \code{help caseformat} at the \matlab{} prompt. First, the \baseMVA{} field is a simple scalar value specifying the system MVA base used for converting power into per unit quantities. For convenience and code portability, \code{idx\_bus} defines a set of constants to be used as named indices into the columns of the \bus{} matrix. Similarly, \code{idx\_brch}, \code{idx\_gen} and \code{idx\_cost} define names for the columns of \branch{}, \gen{} and \gencost{}, respectively. The script \code{define\_constants} provides a simple way to define all the usual constants at one shot. These are the names that appear in the first column of the tables below.
 
 \clearpage
-The \matpower{} case format also allows for additional fields to be included in the structure. The OPF is designed to recognize fields named \code{A}, \code{l}, \code{u}, \code{H}, \code{Cw}, \code{N}, \code{fparm}, \code{z0}, \code{zl} and \code{zu} as parameters used to directly extend the OPF formulation as described in Section~\ref{sec:extend_direct}. Additional standard optional fields include \code{bus\_name}, \code{gentype} and \code{genfuel}.\footnote{All three of these are cell arrays of strings. See \code{gentypes} and \code{genfuels} for more information on the corresponding fields.} Other user-defined fields may also be included, such as the \code{reserves} field used in the example code throughout Section~\ref{sec:extend_callbacks}. The \code{loadcase} function will automatically load any extra fields from a case file and, if the appropriate \codeq{savecase} callback function (see Section~\ref{sec:savecase_callback}) is added via \code{add\_userfcn}, \code{savecase} will also save them back to a case file.
+The \matpower{} case format also allows for additional fields to be included in the structure. The OPF is designed to recognize fields named \code{A}, \code{l}, \code{u}, \code{H}, \code{Cw}, \code{N}, \code{fparm}, \code{z0}, \code{zl} and \code{zu} as parameters used to directly extend the OPF formulation as described in Section~\ref{sec:extend_direct}. Additional standard optional fields include \code{bus\_name}, \code{gentype} and \code{genfuel}.\footnote{All three of these are cell arrays of strings. See \code{gentypes} and \code{genfuels} for more information on the corresponding fields.} Other user-defined fields may also be included, such as the \code{reserves} field used in the example code throughout Section~\ref{sec:extend_callback_ex}. The \code{loadcase} function will automatically load any extra fields from a case file and, if the appropriate \codeq{savecase} callback function (see Section~\ref{sec:savecase_callback}) is added via \code{add\_userfcn}, \code{savecase} will also save them back to a case file.
 
 \begin{table}[!ht]
 %\renewcommand{\arraystretch}{1.2}
@@ -5682,12 +5787,12 @@ name & description \\
 \code{~~params\_legacy\_cost}	& returns individual or full set of legacy user cost coefficients	\\
 \code{~~params\_nln\_cost}	& returns individual general nonlinear cost parameters	\\
 \code{~~params\_quad\_cost}	& returns individual or full set of quadratic cost coefficients	\\
-\code{~~params\_var}	& returns initial values, bounds and variable type for optimimization vector~$x$\tnote{\ddag}	\\
+\code{~~params\_var}	& returns initial values, bounds and variable type for optimimization vector~$\hat{x}$\tnote{\ddag}	\\
 \code{~~valid\_named\_set\_type}\tnote{\dag}	& returns label for given named set type if valid, empty otherwise	\\
 \code{~~varsets\_cell2struct}\tnote{\dag}	& converts variable set list from cell array to struct array	\\
-\code{~~varsets\_idx}	& returns vector of indices into opt vector~$x$ for variable set list	\\
+\code{~~varsets\_idx}	& returns vector of indices into opt vector~$\hat{x}$ for variable set list	\\
 \code{~~varsets\_len}	& returns total number of optimization variables for variable set list	\\
-\code{~~varsets\_x}	& assembles cell array of sub-vectors of opt vector~$x$ specified by variable set list	\\
+\code{~~varsets\_x}	& assembles cell array of sub-vectors of opt vector~$\hat{x}$ specified by variable set list	\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
