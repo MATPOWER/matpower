@@ -12,6 +12,13 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 9/15/17
+  - Add another purely synthetic case from the ACTIVSg team (ASU, Cornell,
+    Texas A&M, U of IL, and VCU - Synthetic grids), resulting from work
+    supported by the ARPA-E GRID DATA program.
+    *Thanks to Adam Birchfield and the ACTIVSg team.*
+    - `case_ACTIVSg10k` (10,000-bus US WECC synthetic model)
+
 #### 9/12/17
   - Update `@opt_model` API for method naming consistency. Summary of
     deprecated method names, with new alternatives in parenthesis:
