@@ -15,6 +15,7 @@ function nv = varsets_len(om, vs)
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
+persistent sn;
 if isempty(vs)
     nv = om.var.N;
 else
@@ -23,7 +24,9 @@ else
     %% calls to substruct() are relatively expensive, so we pre-build the
     %% struct for addressing numeric array fields, updating only
     %% the subscripts before use
-    sn = struct('type', {'.', '()'}, 'subs', {'', 1});
+    if isempty(sn)
+        sn = struct('type', {'.', '()'}, 'subs', {'', 1});
+    end
 
     for v = 1:length(vs)
         % (calls to substruct() are relatively expensive ...

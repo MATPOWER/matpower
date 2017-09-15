@@ -43,25 +43,26 @@ function om = add_named_set(om, set_type, name, idx, N, varargin)
 st_label = om.valid_named_set_type(set_type);
 if st_label
     ff = set_type;
+    om_ff = om.(ff);
 else
-    error('@opt_model/add_named_set: ''%s'' is not a valid SET_TYPE, must be one of ''var'', ''lin'', ''nle'', ''nli'', ''cost''', set_type);
+    error('@opt_model/add_named_set: ''%s'' is not a valid SET_TYPE, must be one of ''var'', ''lin'', ''nle'', ''nli'', ''qdc'', ''nlc'', ''cost''', set_type);
 end
 
 %% add general indexing info about this named set
 if isempty(idx)     %% simple named set
     %% prevent duplicate name in set of specified type
-    if isfield(om.(ff).idx.N, name)
+    if isfield(om_ff.idx.N, name)
         error('@opt_model/add_named_set: %s set named ''%s'' already exists', st_label, name);
     end
 
     %% add indexing info about this set
-    om.(ff).idx.i1.(name)  = om.(ff).N + 1; %% starting index
-    om.(ff).idx.iN.(name)  = om.(ff).N + N; %% ending index
-    om.(ff).idx.N.(name)   = N;             %% number in set
-    om.(ff).N  = om.(ff).idx.iN.(name);     %% number of elements of this type
-    om.(ff).NS = om.(ff).NS + 1;            %% number of sets of this type
-    om.(ff).order(om.(ff).NS).name = name;  %% add name to ordered list of sets
-    om.(ff).order(om.(ff).NS).idx  = {};
+    om_ff.idx.i1.(name)  = om_ff.N + 1; %% starting index
+    om_ff.idx.iN.(name)  = om_ff.N + N; %% ending index
+    om_ff.idx.N.(name)   = N;           %% number in set
+    om_ff.N  = om_ff.idx.iN.(name);     %% number of elements of this type
+    om_ff.NS = om_ff.NS + 1;            %% number of sets of this type
+    om_ff.order(om_ff.NS).name = name;  %% add name to ordered list of sets
+    om_ff.order(om_ff.NS).idx  = {};
 else                %% indexed named set
     %% calls to substruct() are relatively expensive, so we pre-build the
     %% structs for addressing cell and numeric array fields
@@ -71,20 +72,20 @@ else                %% indexed named set
     sn = sc; sn(2).type = '()';                             %% num array field
 
     %% prevent duplicate name in set of specified type
-    if subsref(om.(ff).idx.i1, sn) ~= 0
+    if subsref(om_ff.idx.i1, sn) ~= 0
         str = '%d'; for m = 2:length(idx), str = [str ',%d']; end
         nname = sprintf(['%s(' str, ')'], name, idx{:});
         error('@opt_model/add_named_set: %s set named ''%s'' already exists', st_label, nname);
     end
 
     %% add indexing info about this set
-    om.(ff).idx.i1  = subsasgn(om.(ff).idx.i1, sn, om.(ff).N + 1);  %% starting index
-    om.(ff).idx.iN  = subsasgn(om.(ff).idx.iN, sn, om.(ff).N + N);  %% ending index
-    om.(ff).idx.N   = subsasgn(om.(ff).idx.N,  sn, N);              %% number in set
-    om.(ff).N  = subsref(om.(ff).idx.iN, sn);   %% number of elements of this type
-    om.(ff).NS = om.(ff).NS + 1;                %% number of sets of this type
-    om.(ff).order(om.(ff).NS).name = name;      %% add name to ordered list of sets
-    om.(ff).order(om.(ff).NS).idx  = idx;       %% add indexes to ordered list of sets
+    om_ff.idx.i1  = subsasgn(om_ff.idx.i1, sn, om_ff.N + 1);    %% starting index
+    om_ff.idx.iN  = subsasgn(om_ff.idx.iN, sn, om_ff.N + N);    %% ending index
+    om_ff.idx.N   = subsasgn(om_ff.idx.N,  sn, N);              %% number in set
+    om_ff.N  = subsref(om_ff.idx.iN, sn);   %% number of elements of this type
+    om_ff.NS = om_ff.NS + 1;                %% number of sets of this type
+    om_ff.order(om_ff.NS).name = name;      %% add name to ordered list of sets
+    om_ff.order(om_ff.NS).idx  = idx;       %% add indexes to ordered list of sets
 end
 
 %% add type-specific data for named set
@@ -92,125 +93,126 @@ switch ff
     case 'var'          %% variable set
         [v0, vl, vu, vt] = deal(varargin{:});
         if isempty(idx)
-            om.var.data.v0.(name) = v0;             %% initial value
-            om.var.data.vl.(name) = vl;             %% lower bound
-            om.var.data.vu.(name) = vu;             %% upper bound
-            om.var.data.vt.(name) = vt;             %% variable type
+            om_ff.data.v0.(name) = v0;          %% initial value
+            om_ff.data.vl.(name) = vl;          %% lower bound
+            om_ff.data.vu.(name) = vu;          %% upper bound
+            om_ff.data.vt.(name) = vt;          %% variable type
         else
-            om.var.data.v0 = subsasgn(om.var.data.v0, sc, v0); %% initial value
-            om.var.data.vl = subsasgn(om.var.data.vl, sc, vl); %% lower bound
-            om.var.data.vu = subsasgn(om.var.data.vu, sc, vu); %% upper bound
-            om.var.data.vt = subsasgn(om.var.data.vt, sc, vt); %% variable type
+            om_ff.data.v0 = subsasgn(om_ff.data.v0, sc, v0);    %% initial value
+            om_ff.data.vl = subsasgn(om_ff.data.vl, sc, vl);    %% lower bound
+            om_ff.data.vu = subsasgn(om_ff.data.vu, sc, vu);    %% upper bound
+            om_ff.data.vt = subsasgn(om_ff.data.vt, sc, vt);    %% variable type
         end
     case 'lin'          %% linear constraint set
         [A, l, u, varsets] = deal(varargin{:});
         if isempty(idx)
-            om.lin.data.A.(name)  = A;
-            om.lin.data.l.(name)  = l;
-            om.lin.data.u.(name)  = u;
-            om.lin.data.vs.(name) = varsets;
+            om_ff.data.A.(name)  = A;
+            om_ff.data.l.(name)  = l;
+            om_ff.data.u.(name)  = u;
+            om_ff.data.vs.(name) = varsets;
         else
-            om.lin.data.A  = subsasgn(om.lin.data.A, sc, A);
-            om.lin.data.l  = subsasgn(om.lin.data.l, sc, l);
-            om.lin.data.u  = subsasgn(om.lin.data.u, sc, u);
-            om.lin.data.vs = subsasgn(om.lin.data.vs, sc, varsets);
+            om_ff.data.A  = subsasgn(om_ff.data.A, sc, A);
+            om_ff.data.l  = subsasgn(om_ff.data.l, sc, l);
+            om_ff.data.u  = subsasgn(om_ff.data.u, sc, u);
+            om_ff.data.vs = subsasgn(om_ff.data.vs, sc, varsets);
         end
-        if ~isempty(om.lin.params)      %% clear cache of aggregated params
-            om.lin.params = [];
+        if ~isempty(om_ff.params)       %% clear cache of aggregated params
+            om_ff.params = [];
         end
     case {'nle', 'nli'} %% nonlinear constraint set
         [fcn, hess, computed_by, varsets] = deal(varargin{:});
         if isempty(idx)
             if isempty(computed_by)
                 if ~isempty(fcn)
-                    om.(ff).data.fcn.(name)  = fcn;
-                    om.(ff).data.hess.(name) = hess;
+                    om_ff.data.fcn.(name)  = fcn;
+                    om_ff.data.hess.(name) = hess;
                 end
             else
-                if isfield(om.(ff).data.include, computed_by)
-                    om.(ff).data.include.(computed_by).name{end+1} = name;
-                    om.(ff).data.include.(computed_by).N(end+1) = N;
+                if isfield(om_ff.data.include, computed_by)
+                    om_ff.data.include.(computed_by).name{end+1} = name;
+                    om_ff.data.include.(computed_by).N(end+1) = N;
                 else
-                    om.(ff).data.include.(computed_by).name = {name};
-                    om.(ff).data.include.(computed_by).N = N;
+                    om_ff.data.include.(computed_by).name = {name};
+                    om_ff.data.include.(computed_by).N = N;
                 end
             end
-            om.(ff).data.vs.(name) = varsets;
+            om_ff.data.vs.(name) = varsets;
         else
             if ~isempty(computed_by)
                 error('add_named_set: a nonlinear constraint set computed by another set is currently only implemented for simple named sets, not yet for indexed named sets');
             end
-            om.(ff).data.fcn  = subsasgn(om.(ff).data.fcn, sc, fcn);
-            om.(ff).data.hess = subsasgn(om.(ff).data.hess, sc, hess);
-            om.(ff).data.vs   = subsasgn(om.(ff).data.vs, sc, varsets);
+            om_ff.data.fcn  = subsasgn(om_ff.data.fcn, sc, fcn);
+            om_ff.data.hess = subsasgn(om_ff.data.hess, sc, hess);
+            om_ff.data.vs   = subsasgn(om_ff.data.vs, sc, varsets);
         end
     case 'qdc'          %% quadratic cost set
         [Q, c, k, varsets] = deal(varargin{:});
         if isempty(idx)
-            om.qdc.data.Q.(name)  = Q;
-            om.qdc.data.c.(name)  = c;
-            om.qdc.data.k.(name)  = k;
-            om.qdc.data.vs.(name) = varsets;
+            om_ff.data.Q.(name)  = Q;
+            om_ff.data.c.(name)  = c;
+            om_ff.data.k.(name)  = k;
+            om_ff.data.vs.(name) = varsets;
         else
-            om.qdc.data.Q  = subsasgn(om.qdc.data.Q, sc, Q);
-            om.qdc.data.c  = subsasgn(om.qdc.data.c, sc, c);
-            om.qdc.data.k  = subsasgn(om.qdc.data.k, sc, k);
-            om.qdc.data.vs = subsasgn(om.qdc.data.vs, sc, varsets);
+            om_ff.data.Q  = subsasgn(om_ff.data.Q, sc, Q);
+            om_ff.data.c  = subsasgn(om_ff.data.c, sc, c);
+            om_ff.data.k  = subsasgn(om_ff.data.k, sc, k);
+            om_ff.data.vs = subsasgn(om_ff.data.vs, sc, varsets);
         end
-        if ~isempty(om.qdc.params)      %% clear cache of aggregated params
-            om.qdc.params = [];
+        if ~isempty(om_ff.params)       %% clear cache of aggregated params
+            om_ff.params = [];
         end
     case 'nlc'          %% general nonlinear cost set
         [fcn, varsets] = deal(varargin{:});
         if isempty(idx)
-            om.nlc.data.fcn.(name)  = fcn;
-            om.nlc.data.vs.(name) = varsets;
+            om_ff.data.fcn.(name)  = fcn;
+            om_ff.data.vs.(name) = varsets;
         else
-            om.nlc.data.fcn  = subsasgn(om.nlc.data.fcn, sc, fcn);
-            om.nlc.data.vs   = subsasgn(om.nlc.data.vs, sc, varsets);
+            om_ff.data.fcn  = subsasgn(om_ff.data.fcn, sc, fcn);
+            om_ff.data.vs   = subsasgn(om_ff.data.vs, sc, varsets);
         end
     case 'cost'         %% cost set
         [cp, varsets] = deal(varargin{:});
         if isempty(idx)
-            om.cost.data.N.(name)  = cp.N;
-            om.cost.data.Cw.(name) = cp.Cw;
-            om.cost.data.vs.(name) = varsets;
+            om_ff.data.N.(name)  = cp.N;
+            om_ff.data.Cw.(name) = cp.Cw;
+            om_ff.data.vs.(name) = varsets;
             if isfield(cp, 'H')
-                om.cost.data.H.(name)  = cp.H;
+                om_ff.data.H.(name)  = cp.H;
             end
             if isfield(cp, 'dd')
-                om.cost.data.dd.(name) = cp.dd;
+                om_ff.data.dd.(name) = cp.dd;
             end
             if isfield(cp, 'rh')
-                om.cost.data.rh.(name) = cp.rh;
+                om_ff.data.rh.(name) = cp.rh;
             end
             if isfield(cp, 'kk')
-                om.cost.data.kk.(name) = cp.kk;
+                om_ff.data.kk.(name) = cp.kk;
             end
             if isfield(cp, 'mm')
-                om.cost.data.mm.(name) = cp.mm;
+                om_ff.data.mm.(name) = cp.mm;
             end
         else
-            om.cost.data.N  = subsasgn(om.cost.data.N,  sc, cp.N);
-            om.cost.data.Cw = subsasgn(om.cost.data.Cw, sc, cp.Cw);
-            om.cost.data.vs = subsasgn(om.cost.data.vs, sc, varsets);
+            om_ff.data.N  = subsasgn(om_ff.data.N,  sc, cp.N);
+            om_ff.data.Cw = subsasgn(om_ff.data.Cw, sc, cp.Cw);
+            om_ff.data.vs = subsasgn(om_ff.data.vs, sc, varsets);
             if isfield(cp, 'H')
-                om.cost.data.H = subsasgn(om.cost.data.H, sc, cp.H);
+                om_ff.data.H = subsasgn(om_ff.data.H, sc, cp.H);
             end
             if isfield(cp, 'dd')
-                om.cost.data.dd = subsasgn(om.cost.data.dd, sc, cp.dd);
+                om_ff.data.dd = subsasgn(om_ff.data.dd, sc, cp.dd);
             end
             if isfield(cp, 'rh')
-                om.cost.data.rh = subsasgn(om.cost.data.rh, sc, cp.rh);
+                om_ff.data.rh = subsasgn(om_ff.data.rh, sc, cp.rh);
             end
             if isfield(cp, 'kk')
-                om.cost.data.kk = subsasgn(om.cost.data.kk, sc, cp.kk);
+                om_ff.data.kk = subsasgn(om_ff.data.kk, sc, cp.kk);
             end
             if isfield(cp, 'mm')
-                om.cost.data.mm = subsasgn(om.cost.data.mm, sc, cp.mm);
+                om_ff.data.mm = subsasgn(om_ff.data.mm, sc, cp.mm);
             end
         end
-        if ~isempty(om.cost.params)     %% clear cache of aggregated params
-            om.cost.params = [];
+        if ~isempty(om_ff.params)       %% clear cache of aggregated params
+            om_ff.params = [];
         end
 end
+om.(ff) = om_ff;

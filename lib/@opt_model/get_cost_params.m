@@ -41,7 +41,10 @@ if nargin > 1
                 error('@opt_model/get_cost_params: cost set ''%s'' requires an idx arg', name);
             end
         else
-            sn = substruct('.', name, '()', idx);
+            %% calls to substruct() are relatively expensive, so we pre-build the
+            %% structs for addressing cell and numeric array fields
+            %% sn = substruct('.', name, '()', idx);
+            sn = struct('type', {'.', '()'}, 'subs', {name, idx});  %% num array field
             i1 = subsref(om.cost.idx.i1, sn);
             iN = subsref(om.cost.idx.iN, sn);
         end

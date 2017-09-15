@@ -20,15 +20,21 @@ function xx = varsets_x(om, x, vs, want_vector)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 
+persistent sn;
 if isempty(vs)          %% all rows of x
     xx = x;
 else                    %% selected rows of x
+    vsN = length(vs);
+    xx = cell(1, vsN);
+
     %% calls to substruct() are relatively expensive, so we pre-build the
     %% struct for addressing numeric array fields, updating only
     %% the subscripts before use
-    sn = struct('type', {'.', '()'}, 'subs', {'', 1});
+    if isempty(sn)
+        sn = struct('type', {'.', '()'}, 'subs', {'', 1});
+    end
 
-    xx = {};
+    ki = 0;
     for v = 1:length(vs)
         vname = vs(v).name;
         vidx = vs(v).idx;
@@ -44,16 +50,17 @@ else                    %% selected rows of x
             i1 = subsref(om.var.idx.i1, sn);    %% starting row in full x
             iN = subsref(om.var.idx.iN, sn);    %% ending row in full x
         end
-        if isscalar(i1)                 %% simple named set, or indexed named set
-            xx{end+1} = x(i1:iN);           %% single set of indices for varset
-        else                            %% multi-dim named set w/no index specified
+        if isscalar(i1)             %% simple named set, or indexed named set
+            ki = ki + 1;
+            xx{ki} = x(i1:iN);              %% single set of indices for varset
+        else                        %% multi-dim named set w/no index specified
             ii1 = permute(i1, ndims(i1):-1:1);
             iiN = permute(iN, ndims(i1):-1:1);
             for j = 1:length(ii1(:))
-                xx{end+1} = x(ii1(j):iiN(j));   %% multiple sets of indices for varset
+                ki = ki + 1;
+                xx{ki} = x(ii1(j):iiN(j));  %% multiple sets of indices for varset
             end
         end
-
     end
     if nargin > 3
         xx = vertcat(xx{:});
