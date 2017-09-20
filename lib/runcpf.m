@@ -376,7 +376,8 @@ if ~done.flag
 
     %% initialize tangent predictor: z = [dx;dlam]
     z = [zeros(2*nb, 1); 1];
-    z = cpf_tangent(V, lam, Ybus, Sbusb, Sbust, pv, pq, z, V, lam, parm);
+    direction = 1;
+    z = cpf_tangent(V, lam, Ybus, Sbusb, Sbust, pv, pq, z, V, lam, parm,direction);
 
     %% initialize state for current continuation step
     cx = struct(...         %% current state
@@ -457,7 +458,7 @@ if ~done.flag
             tx = cx;            %% use cx as the previous state
         end
         nx.z = cpf_tangent(nx.V, nx.lam, Ybus, cb_data.Sbusb, cb_data.Sbust, cb_data.pv, cb_data.pq, ...
-                                    cx.z, tx.V, tx.lam, nx.parm);
+                                    cx.z, tx.V, tx.lam, nx.parm,direction);
 
         %% detect events
         for k = 1:nef
@@ -507,6 +508,7 @@ if ~done.flag
             end
         else
             loc_msg = '';
+            direction = 1;
         end
 
         %% invoke callbacks - "iterations" context
@@ -522,6 +524,11 @@ if ~done.flag
                 done.msg = 'Too many rollback steps triggered by callbacks!';
             end
         else
+            if ~done.flag && evnts(1).zero
+                mpce = cpf_current_mpc(cb_data.mpc_base, cb_data.mpc_target, Ybus, Yf, Yt, cb_data.ref, cb_data.pv, cb_data.pq, nx.V, nx.lam, mpopt);
+                J = makeJac(mpce);
+                direction = sign(min(real(eigs(J,1,'SR'))));
+            end
             rb_cnt_cb = 0;              %% reset rollback counter for callbacks
         end
 

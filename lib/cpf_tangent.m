@@ -1,8 +1,8 @@
-function z = cpf_tangent(V, lam, Ybus, Sbusb, Sbust, pv, pq, ...
-                            zprv, Vprv, lamprv, parameterization)
+function [z,J] = cpf_tangent(V, lam, Ybus, Sbusb, Sbust, pv, pq, ...
+                            zprv, Vprv, lamprv, parameterization, direction)
 %CPF_TANGENT  Computes normalized tangent predictor for continuation power flow
-%   Z = CPF_TANGENT(V, LAM, YBUS, SBUSB, SBUST, PV, PQ, ...
-%                                 Z, VPRV, LAMPRV, PARAMETERIZATION)
+%   [Z] = CPF_TANGENT(V, LAM, YBUS, SBUSB, SBUST, PV, PQ, ...
+%                                 Z, VPRV, LAMPRV, PARAMETERIZATION, DIRECTION)
 %
 %   Computes a normalized tangent predictor for the continuation power flow.
 %
@@ -20,6 +20,8 @@ function z = cpf_tangent(V, lam, Ybus, Sbusb, Sbust, pv, pq, ...
 %       VPRV : complex bus voltage vector at previous solution
 %       LAMPRV : scalar lambda value at previous solution
 %       PARAMETERIZATION : Value of cpf.parameterization option.
+%       DIRECTION: Continuation direction (+1 for postive lambda
+%                  increase, -1 otherwise)
 %
 %   Outputs:
 %       Z : the normalized tangent prediction vector
@@ -68,6 +70,6 @@ J = [   J   dF_dlam;
 %% compute normalized tangent predictor
 z = zprv;
 s = zeros(npv+2*npq+1, 1);
-s(end,1) = 1;                       %% increase in the direction of lambda
+s(end,1) = direction;               
 z([pv; pq; nb+pq; 2*nb+1]) = J\s;   %% tangent vector
 z = z/norm(z);                      %% normalize tangent predictor
