@@ -389,7 +389,7 @@ if have_fcn('knitro')
         [1.059191 1.079404 1.1], 5, [t 'bus voltage']);
 
     %% OPF with user-defined nonlinear constraints
-    t = [t0 'w/nonlin eq constraint'];
+    t = [t0 'w/nonlin eq constraint : '];
     mpc = loadcase('case30');
     mpc.user_constraints.nle = {
         {'Pg_usr', 1, 'opf_nle_fcn1', 'opf_nle_hess1', {'Pg'}, {}}
@@ -410,7 +410,7 @@ if have_fcn('knitro')
     end
 
     %% OPF with no branch limits
-    t = [t0 'w/no branch limits'];
+    t = [t0 'w/no branch limits : '];
     mpc = loadcase(casefile);
     mpc.branch(:, RATE_A) = 0;
     r = runopf(mpc, mpopt);
