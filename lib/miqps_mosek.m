@@ -244,15 +244,21 @@ if ~isfield(prob, 'a') || isempty(prob.a)
 else
     unconstrained = 0;
 end
+sc = mosek_symbcon;
+s = have_fcn('mosek', 'all');
 if isfield(prob, 'ints') && isfield(prob.ints, 'sub') && ~isempty(prob.ints.sub)
     mi = 1;
+    if s.vnum >= 8
+        mosek_opt.MSK_IPAR_OPTIMIZER = sc.MSK_OPTIMIZER_MIXED_INT;
+%     else
+%         mosek_opt.MSK_IPAR_OPTIMIZER = sc.MSK_OPTIMIZER_MIXED_INT_CONIC;
+    end
 else
     mi = 0;
 end
 
 %%-----  run optimization  -----
 if verbose
-    s = have_fcn('mosek', 'all');
     if s.vnum < 7
         alg_names = {           %% version 6.x
             'default',              %%  0 : MSK_OPTIMIZER_FREE
@@ -327,11 +333,6 @@ else
 end
 
 %%-----  process return codes  -----
-if isfield(res, 'symbcon')
-    sc = res.symbcon;
-else    
-    sc = mosek_symbcon;
-end
 eflag = -r;
 msg = '';
 switch (r)

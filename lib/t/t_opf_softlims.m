@@ -47,6 +47,12 @@ if verbose <= 1
 end
 mpopt = mpoption(mpopt, 'verbose', verbose);
 
+if have_fcn('matlab')
+    sing_matrix_warn_id = 'MATLAB:nearlySingularMatrix';
+    s2 = warning('query', sing_matrix_warn_id);
+    warning('off', sing_matrix_warn_id);
+end
+
 %% load and modify case file
 mpc = loadcase(casefile);
 nl = size(mpc.branch, 1);
@@ -378,5 +384,9 @@ t_is(r.branch(:, QT), [-21.917920; -27.565103; -17.970864; 23.130558; 0; -7.7590
 t_is(r.branch(:, MU_SF)+r.branch(:, MU_ST), [0; 0; 20; 0; 0; 11.526783; 0; 0; 0; 0], 4, [t 'mu Sf+St']);
 t_is(r.softlims.overload, [0; 0; 4.07774; 0; 0; 0; 0; 0; 0; 0], 6, [t 'softlims.overload']);
 t_is(r.softlims.ovl_cost, [0; 0; 81.554809; 0; 0; 0; 0; 0; 0; 0], 4, [t 'softlims.ovl_cost']);
+
+if have_fcn('matlab')
+    warning(s2.state, sing_matrix_warn_id);
+end
 
 t_end;

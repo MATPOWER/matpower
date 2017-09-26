@@ -129,6 +129,8 @@ if have_mpopt
     switch alg
         case valid_alg
             opt.MSK_IPAR_OPTIMIZER = alg;
+            opt.MSK_IPAR_MIO_ROOT_OPTIMIZER = alg;
+            opt.MSK_IPAR_MIO_NODE_OPTIMIZER = alg;
         otherwise
             if alg == 0     %% MATPOWER still interprets this to be 'default'
                             %% even for MOSEK 8, since the conic optimizer is

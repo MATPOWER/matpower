@@ -370,7 +370,12 @@ else        %% detect availability
                     % MOSEK Version 7.0.0.134 (Build date: 2014-10-2 11:10:02)
                     pat = 'Version (\.*\d)+.*Build date: (\d+-\d+-\d+)';
                     [s,e,tE,m,t] = regexp(evalc('mosekopt'), pat);
-                    if ~isempty(t)
+                    if isempty(t)
+                        [r, res] = mosekopt('version');
+                        v = res.version;
+                        vstr = sprintf('%d.%d.%d.%d', ...
+                            v.major, v.minor, v.build, v.revision);
+                    else
                         vstr = t{1}{1};
                         rdate = datestr(t{1}{2}, 'dd-mmm-yyyy');
                     end
@@ -454,12 +459,12 @@ else        %% detect availability
                 TorF = ~have_fcn('octave') && exist('yalmip','file') == 2;
                 %% YALMIP does not yet work with Octave, rdz 1/6/14
                 if TorF
-                    str = evalc('yalmip;');
-                    pat = 'Version\s+([^\s]+)\n';
-                    [s,e,tE,m,t] = regexp(str, pat);
-                    if ~isempty(t)
-                        rdate = t{1}{1};
-                        vstr = datestr(rdate, 'yy.mm.dd');
+                    vstr = yalmip('version');
+                    if length(vstr) == 8
+                        yr = str2num(vstr(1:4));
+                        mo = str2num(vstr(5:6));
+                        dy = str2num(vstr(7:8));
+                        rdate = datestr([yr mo dy 0 0 0], 'dd-mmm-yyyy');
                     end
                 end
             case 'sdpt3'

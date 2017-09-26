@@ -411,9 +411,9 @@ if eflag > 0
                     max(ineq_violation));
         end
         if verbose > 0
-			fprintf('\nWARNING: This version of BPMPD_MEX has a bug which caused it to return\n');
-			fprintf(  '         an incorrect (infeasible) solution for this particular problem.\n');
-		end
+            fprintf('\nWARNING: This version of BPMPD_MEX has a bug which caused it to return\n');
+            fprintf(  '         an incorrect (infeasible) solution for this particular problem.\n');
+        end
         for err_idx = 1:err_cnt
             fprintf('         %s\n', errs{err_idx});
         end

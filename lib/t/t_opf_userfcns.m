@@ -23,7 +23,7 @@ else
     verbose = 0;
 end
 mpopt = mpoption('opf.violation', 1e-6, 'mips.gradtol', 1e-8, ...
-        'mips.comptol', 1e-8, 'mips.costtol', 1e-9);
+        'mips.comptol', 1e-7, 'mips.costtol', 1e-9);
 mpopt = mpoption(mpopt, 'out.all', 0, 'verbose', verbose);
 mpopt = mpoption(mpopt, 'opf.ac.solver', 'MIPS', 'opf.dc.solver', 'MIPS');
 % mpopt = mpoption(mpopt, 'verbose', 2, 'out.all', -1, 'out.gen', 1);
