@@ -74,13 +74,16 @@ switch alg
             alg = 'CPLEX';      %% if not, then CPLEX, if available
         elseif have_fcn('mosek')
             alg = 'MOSEK';      %% if not, then MOSEK, if available
-        elseif have_fcn('linprog') && strcmp(model, 'LP') && have_fcn('matlab') || ...
+        elseif have_fcn('linprog_ds') && strcmp(model, 'LP') && have_fcn('matlab') || ...
                 have_fcn('quadprog_ls') && strcmp(model, 'QP') || ...
                 have_fcn('intlinprog') && strcmp(model, 'MILP')
-            alg = 'OT';         %% if not, then Optimization Tbx, if available
-                                %% and applicable
+            alg = 'OT';         %% if not, then newer Optimization Tbx, if
+                                %% available and applicable
         elseif have_fcn('glpk') && model(end-1) == 'L'  %% LP or MILP
             alg = 'GLPK';       %% if not, then GLPK, if available & applicable
+        elseif have_fcn('linprog') && strcmp(model, 'LP') && have_fcn('matlab')
+            alg = 'OT';         %% if not, then older Optimization Tbx, if
+                                %% available and applicable
         elseif model(1) ~= 'M'  %% LP or QP
             if have_fcn('bpmpd')
                 alg = 'BPMPD';  %% if not, then BPMPD_MEX, if available
@@ -104,6 +107,10 @@ switch alg
         end
     case {'IPOPT', 400}
         qpopt.ipopt_opt = ipopt_options([], mpopt);
+    case {'BPMPD', 100}
+        bp_opt = bpopt;
+        bp_opt(20) = 1e-9;  %% TOPT1
+        qpopt.bp_opt = bp_opt;
     case 'CLP'
         qpopt.clp_opt = clp_options([], mpopt);
     case {'CPLEX', 500}
