@@ -559,7 +559,7 @@ end
 if ns > 0
     for p = 1:nprof
         if strcmp(profiles(p).type, 'StorageData')
-            md.Storage = apply_profile(profiles(p), md.Storage, [nt nj ns]);
+            md.Storage = apply_profile(profiles(p), md.Storage, ns);
         end
     end
 end
@@ -569,7 +569,7 @@ end
 % (C.7.5) xGenData: assign xgd related variables
 for p = 1:nprof
     if strcmp(profiles(p).type, 'xGenData')
-        xgd = apply_profile(profiles(p), xgd, [nt nj_max ng]);
+        xgd = apply_profile(profiles(p), xgd, ng);
     end
 end
 
@@ -655,7 +655,7 @@ ct_subset = ones(nt, nj_max, size(contab,1)); % subset of contingencies
 %                                               period.
 for p = 1:nprof
     if strcmp(profiles(p).type, 'ContingencyData')
-        ct_subset = apply_profile(profiles(p), ct_subset, [nt nj_max ncont]);
+        ct_subset = apply_profile(profiles(p), ct_subset, ncont);
     end
 end
 

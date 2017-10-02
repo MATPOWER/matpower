@@ -5,11 +5,15 @@ Change history for MOST
 Since last release
 ------------------
 
+#### 9/27/17
+  - Fix bug #1 in `loadmd()` where profiles that modify xGenData or
+    StorageData resulted in a fatal error.
+
 #### 9/12/17
-  - Update for @opt_model API cleanup.
+  - Update for `@opt_model` API cleanup.
 
 #### 9/1/17
-  - Use MATPOWER's new quadratic costs in @opt_model in place of the
+  - Use MATPOWER's new quadratic costs in `@opt_model` in place of the
     legacy cost model.
 
 #### 8/7/17
