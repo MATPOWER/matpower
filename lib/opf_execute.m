@@ -51,16 +51,6 @@ else
     fprintf(' -- AC Optimal Power Flow\n');
   end
 
-  %% if opf.ac.solver not set, choose best available option
-  if strcmp(alg, 'DEFAULT')
-    if have_fcn('pdipmopf')
-      alg = 'PDIPM';            %% PDIPM
-    else
-      alg = 'MIPS';             %% MIPS
-    end
-    mpopt = mpoption(mpopt, 'opf.ac.solver', alg);
-  end
-
   %% ZIP loads?
   if (~isempty(mpopt.exp.sys_wide_zip_loads.pw) && ...
           any(mpopt.exp.sys_wide_zip_loads.pw(2:3))) || ...

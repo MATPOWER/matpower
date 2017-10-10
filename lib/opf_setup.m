@@ -387,7 +387,7 @@ end
 if ny > 0
   om.add_var('y', ny);
   om.add_lin_constraint('ycon', Ay, [], by, ycon_vars);             %% ncony
-  if ~legacy_formulation
+  if dc || ~legacy_formulation
     om.add_quad_cost('pwl', [], ones(ny, 1), 0, {'y'});
   end
 end
