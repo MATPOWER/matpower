@@ -12,6 +12,10 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 10/10/17
+  - Add `savechgtab` function to save change tables, such as those used
+    by `apply_changes`, to a file.
+
 #### 9/26/17
   - Minor updates to support the latest versions of Matlab, MOSEK and YALMIP.
 

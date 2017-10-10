@@ -3575,6 +3575,15 @@ A change table can be used to easily create modified cases from an existing base
 mpc_new = apply_changes(2, mpc, chgtab);
 \end{Code}
 
+\subsubsection{\tt savechgtab}
+\begin{Code}
+  savechgtab(fname, chgtab)
+  savechgtab(fname, chgtab, warnings)
+  fname = savechgtab(fname, ...)
+\end{Code}
+
+This function can be used to save a \emph{change table} matrix, \code{chgtab}, to a file specified by \code{fname}. If the \code{fname} string ends with \codeq{.mat} it saves \code{chgtab} and \code{warnings} to a MAT-file as the variables \code{chgtab} and \code{warnings}, respectively. Otherwise, it saves an M-file function that returns the \code{chgtab}, with the optional \code{warnings} included in the comments, where \code{warnings} is a cell array of warning messages such as those returned by \code{pssecon2chgtab}.
+
 \subsection{Conversion between External and Internal Numbering}
 
 \subsubsection{{\tt ext2int}, {\tt int2ext}}
@@ -6074,6 +6083,7 @@ name & description \\
 \code{poly2pwl}	& creates piecewise linear approximation to polynomial cost function	\\
 \code{polycost}	& evaluates polynomial generator cost and its derivatives	\\
 \code{pqcost}	& splits \gencost{} into real and reactive power costs	\\
+\code{savechgtab}	& saves a change table, such as used by \code{apply\_changes}, to a file	\\
 \code{scale\_load}	& scales fixed and/or dispatchable loads by load zone	\\
 \code{total\_load}	& returns vector of total load in each load zone	\\
 \bottomrule
@@ -6363,6 +6373,7 @@ name & description \\
 \code{t\_case9\_pfv2.m}	& sample case file with only power flow data, version 2 format	\\
 \code{t\_case9\_save2psse.m}	& sample 9-bus case file used by \code{t\_psse} for testing \code{save2psse}	\\
 \code{t\_case30\_userfcns.m}	& sample case file with OPF, reserves and interface flow limit data	\\
+\code{t\_chgtab.m}	& sample \emph{change table} data, used by \code{t\_apply\_changes}	\\
 \code{t\_psse\_case.raw}	& sample PSS/E format RAW file used to test conversion code	\\
 \code{t\_psse\_case2.m}	& result of converting \code{t\_psse\_case2.raw} to \matpower{} format	\\
 \code{t\_psse\_case2.raw}	& sample PSS/E format RAW file used to test conversion code	\\
@@ -6981,6 +6992,8 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.1.pdf}{\m
     \item \code{install\_matpower()} installs \matpower{} modifying or showing needed modifications to \matlab{} or Octave path.
     \item \code{gentypes()} and \code{genfuels} provide list of standard generator unit types and fuel types, respectively.
     \item \code{save2psse()} to export a \matpower{} case to PSS/E RAW data format.
+    \item \code{savechgtab()} to save change tables, such as those used
+    by \code{apply\_changes}, to a file.
     \item \code{opt\_model/add\_lin\_constraint()} to add linear constraints to an optimization model.
     \item \code{opt\_model/add\_nln\_constraint()} to add nonlinear constraints to an optimization model.
     \item \code{opt\_model/init\_indexed\_name()} to initialize the indexes for an indexed name set of constraints, costs or variables.
