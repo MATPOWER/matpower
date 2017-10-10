@@ -134,18 +134,14 @@ fname = fullfile(pathstr, [fcn_name extension]);
 
 %% open and write the file
 if strcmp(upper(extension), '.MAT')     %% MAT-file
-    vflag = '';
-    if str2double(version('-release')) > 13
-        vflag = '-v6';
-    end
     if strcmp(mpc_ver, '1')
         if exist('areas', 'var') && exist('gencost', 'var')
-            save(fname, 'baseMVA', 'bus', 'gen', 'branch', 'areas', 'gencost', vflag);
+            save(fname, 'baseMVA', 'bus', 'gen', 'branch', 'areas', 'gencost');
         else
-            save(fname, 'baseMVA', 'bus', 'gen', 'branch', vflag);
+            save(fname, 'baseMVA', 'bus', 'gen', 'branch');
         end
     else
-        save(fname, 'baseMVA', 'mpc', vflag);
+        save(fname, 'baseMVA', 'mpc');
     end
 else                                %% M-file
     %% open file
@@ -174,9 +170,9 @@ else                                %% M-file
     for k = 1:length(comment)
         fprintf(fd, '%%%s\n', comment{k});
     end
-    fprintf(fd, '\n%%%% MATPOWER Case Format : Version %s\n', mpc_ver);    
+    fprintf(fd, '\n%%%% MATPOWER Case Format : Version %s\n', mpc_ver);
     if ~strcmp(mpc_ver, '1')
-        fprintf(fd, 'mpc.version = ''%s'';\n', mpc_ver);    
+        fprintf(fd, 'mpc.version = ''%s'';\n', mpc_ver);
     end
     fprintf(fd, '\n%%%%-----  Power Flow Data  -----%%%%\n');
     fprintf(fd, '%%%% system MVA base\n');
