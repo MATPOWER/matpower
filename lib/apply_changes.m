@@ -334,22 +334,22 @@ for c = 1:length(kk)
       switch typ
         case CT_REP                                     %% replace
             opt.scale = 'QUANTITY';
-            load = val;
+            dmd = val;
         case CT_REL                                     %% scale
             opt.scale = 'FACTOR';
-            load = val;
+            dmd = val;
         case CT_ADD                                     %% shift
             opt.scale = 'QUANTITY';
             old_val = total_load(mpc, load_zone);
-            load = old_val + val;
+            dmd = old_val + val;
         otherwise
           error('apply_changes: unsupported modification type %d for loads', typ);
       end
       %% scale the loads ...
       if col < 0    %% ... including dispatchable load costs
-          [mpc.bus, mpc.gen, mpc.gencost] = scale_load(load, mpc.bus, mpc.gen, load_zone, opt, mpc.gencost);
+          [mpc.bus, mpc.gen, mpc.gencost] = scale_load(dmd, mpc.bus, mpc.gen, load_zone, opt, mpc.gencost);
       else          %% ... not including dispatchable load costs
-          [mpc.bus, mpc.gen] = scale_load(load, mpc.bus, mpc.gen, load_zone, opt);
+          [mpc.bus, mpc.gen] = scale_load(dmd, mpc.bus, mpc.gen, load_zone, opt);
       end
     else
       error('apply_changes: CHGTAB attempts to modify unsupported table type')

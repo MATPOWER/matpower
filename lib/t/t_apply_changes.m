@@ -37,7 +37,7 @@ t_begin(n_tests, quiet);
 mpc = loadcase('t_auction_case');
 mpc.gen(8, GEN_BUS) = 2;    %% multiple d. loads per area, same bus as gen
 mpc.gen(8, [QG QMIN QMAX]) = [ 3 0 3 ];
-%% put it load before gen in matrix
+%% put load before gen in matrix
 mpc.gen = [mpc.gen(8, :); mpc.gen(1:7, :); mpc.gen(9, :)];
 ld = find(isload(mpc.gen));
 
@@ -428,12 +428,12 @@ e.gencost(ga{2}, :) = modcost(mpc.gencost(ga{2}, :), -10, 'SHIFT_F');
 t_is(g.gencost, e.gencost, 12, t);
 
 %%-----  single load zone, one scale factor  -----
-load = 2;
+dmd = 2;
 t = 'all fixed loads (PQ) * 2 : ';
 e = mpc;
 g = apply_changes(20, mpc, chgtab);
-t_is(sum(g.bus(:, PD)), load*total.fixed.p, 8, [t 'total fixed P']);
-t_is(sum(g.bus(:, QD)), load*total.fixed.q, 8, [t 'total fixed Q']);
+t_is(sum(g.bus(:, PD)), dmd*total.fixed.p, 8, [t 'total fixed P']);
+t_is(sum(g.bus(:, QD)), dmd*total.fixed.q, 8, [t 'total fixed Q']);
 t_is(-sum(g.gen(ld, PMIN)), total.disp.p, 8, [t 'total disp P']);
 t_is(-sum(g.gen(ld, QMIN)), total.disp.qmin, 8, [t 'total disp Qmin']);
 t_is(-sum(g.gen(ld, QMAX)), total.disp.qmax, 8, [t 'total disp Qmax']);
@@ -442,7 +442,7 @@ t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 t = 'all fixed loads (P) * 2 : ';
 e = mpc;
 g = apply_changes(21, mpc, chgtab);
-t_is(sum(g.bus(:, PD)), load*total.fixed.p, 8, [t 'total fixed P']);
+t_is(sum(g.bus(:, PD)), dmd*total.fixed.p, 8, [t 'total fixed P']);
 t_is(sum(g.bus(:, QD)), total.fixed.q, 8, [t 'total fixed Q']);
 t_is(-sum(g.gen(ld, PMIN)), total.disp.p, 8, [t 'total disp P']);
 t_is(-sum(g.gen(ld, QMIN)), total.disp.qmin, 8, [t 'total disp Qmin']);
@@ -452,19 +452,19 @@ t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 t = 'all loads (PQ) * 2 : ';
 e = mpc;
 g = apply_changes(22, mpc, chgtab);
-t_is(sum(g.bus(:, PD)), load*total.fixed.p, 8, [t 'total fixed P']);
-t_is(sum(g.bus(:, QD)), load*total.fixed.q, 8, [t 'total fixed Q']);
-t_is(-sum(g.gen(ld, PMIN)), load*total.disp.p, 8, [t 'total disp P']);
-t_is(-sum(g.gen(ld, QMIN)), load*total.disp.qmin, 8, [t 'total disp Qmin']);
-t_is(-sum(g.gen(ld, QMAX)), load*total.disp.qmax, 8, [t 'total disp Qmax']);
+t_is(sum(g.bus(:, PD)), dmd*total.fixed.p, 8, [t 'total fixed P']);
+t_is(sum(g.bus(:, QD)), dmd*total.fixed.q, 8, [t 'total fixed Q']);
+t_is(-sum(g.gen(ld, PMIN)), dmd*total.disp.p, 8, [t 'total disp P']);
+t_is(-sum(g.gen(ld, QMIN)), dmd*total.disp.qmin, 8, [t 'total disp Qmin']);
+t_is(-sum(g.gen(ld, QMAX)), dmd*total.disp.qmax, 8, [t 'total disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 t = 'all loads (P) * 2 : ';
 e = mpc;
 g = apply_changes(23, mpc, chgtab);
-t_is(sum(g.bus(:, PD)), load*total.fixed.p, 8, [t 'total fixed P']);
+t_is(sum(g.bus(:, PD)), dmd*total.fixed.p, 8, [t 'total fixed P']);
 t_is(sum(g.bus(:, QD)), total.fixed.q, 8, [t 'total fixed Q']);
-t_is(-sum(g.gen(ld, PMIN)), load*total.disp.p, 8, [t 'total disp P']);
+t_is(-sum(g.gen(ld, PMIN)), dmd*total.disp.p, 8, [t 'total disp P']);
 t_is(-sum(g.gen(ld, QMIN)), total.disp.qmin, 8, [t 'total disp Qmin']);
 t_is(-sum(g.gen(ld, QMAX)), total.disp.qmax, 8, [t 'total disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
@@ -474,9 +474,9 @@ e = mpc;
 g = apply_changes(24, mpc, chgtab);
 t_is(sum(g.bus(:, PD)), total.fixed.p, 8, [t 'total fixed P']);
 t_is(sum(g.bus(:, QD)), total.fixed.q, 8, [t 'total fixed Q']);
-t_is(-sum(g.gen(ld, PMIN)), load*total.disp.p, 8, [t 'total disp P']);
-t_is(-sum(g.gen(ld, QMIN)), load*total.disp.qmin, 8, [t 'total disp Qmin']);
-t_is(-sum(g.gen(ld, QMAX)), load*total.disp.qmax, 8, [t 'total disp Qmax']);
+t_is(-sum(g.gen(ld, PMIN)), dmd*total.disp.p, 8, [t 'total disp P']);
+t_is(-sum(g.gen(ld, QMIN)), dmd*total.disp.qmin, 8, [t 'total disp Qmin']);
+t_is(-sum(g.gen(ld, QMAX)), dmd*total.disp.qmax, 8, [t 'total disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 t = 'all disp loads (P) * 2 : ';
@@ -484,66 +484,66 @@ e = mpc;
 g = apply_changes(25, mpc, chgtab);
 t_is(sum(g.bus(:, PD)), total.fixed.p, 8, [t 'total fixed P']);
 t_is(sum(g.bus(:, QD)), total.fixed.q, 8, [t 'total fixed Q']);
-t_is(-sum(g.gen(ld, PMIN)), load*total.disp.p, 8, [t 'total disp P']);
+t_is(-sum(g.gen(ld, PMIN)), dmd*total.disp.p, 8, [t 'total disp P']);
 t_is(-sum(g.gen(ld, QMIN)), total.disp.qmin, 8, [t 'total disp Qmin']);
 t_is(-sum(g.gen(ld, QMAX)), total.disp.qmax, 8, [t 'total disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 t = 'all loads+cost (PQ) * 2 : ';
 e = mpc;
-e.gencost(ld, :) = modcost(e.gencost(ld, :), load, 'SCALE_F');
-e.gencost(ld, :) = modcost(e.gencost(ld, :), load, 'SCALE_X');
+e.gencost(ld, :) = modcost(e.gencost(ld, :), dmd, 'SCALE_F');
+e.gencost(ld, :) = modcost(e.gencost(ld, :), dmd, 'SCALE_X');
 g = apply_changes(122, mpc, chgtab);
-t_is(sum(g.bus(:, PD)), load*total.fixed.p, 8, [t 'total fixed P']);
-t_is(sum(g.bus(:, QD)), load*total.fixed.q, 8, [t 'total fixed Q']);
-t_is(-sum(g.gen(ld, PMIN)), load*total.disp.p, 8, [t 'total disp P']);
-t_is(-sum(g.gen(ld, QMIN)), load*total.disp.qmin, 8, [t 'total disp Qmin']);
-t_is(-sum(g.gen(ld, QMAX)), load*total.disp.qmax, 8, [t 'total disp Qmax']);
+t_is(sum(g.bus(:, PD)), dmd*total.fixed.p, 8, [t 'total fixed P']);
+t_is(sum(g.bus(:, QD)), dmd*total.fixed.q, 8, [t 'total fixed Q']);
+t_is(-sum(g.gen(ld, PMIN)), dmd*total.disp.p, 8, [t 'total disp P']);
+t_is(-sum(g.gen(ld, QMIN)), dmd*total.disp.qmin, 8, [t 'total disp Qmin']);
+t_is(-sum(g.gen(ld, QMAX)), dmd*total.disp.qmax, 8, [t 'total disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 t = 'all loads+cost (P) * 2 : ';
 e = mpc;
-e.gencost(ld, :) = modcost(e.gencost(ld, :), load, 'SCALE_F');
-e.gencost(ld, :) = modcost(e.gencost(ld, :), load, 'SCALE_X');
+e.gencost(ld, :) = modcost(e.gencost(ld, :), dmd, 'SCALE_F');
+e.gencost(ld, :) = modcost(e.gencost(ld, :), dmd, 'SCALE_X');
 g = apply_changes(123, mpc, chgtab);
-t_is(sum(g.bus(:, PD)), load*total.fixed.p, 8, [t 'total fixed P']);
+t_is(sum(g.bus(:, PD)), dmd*total.fixed.p, 8, [t 'total fixed P']);
 t_is(sum(g.bus(:, QD)), total.fixed.q, 8, [t 'total fixed Q']);
-t_is(-sum(g.gen(ld, PMIN)), load*total.disp.p, 8, [t 'total disp P']);
+t_is(-sum(g.gen(ld, PMIN)), dmd*total.disp.p, 8, [t 'total disp P']);
 t_is(-sum(g.gen(ld, QMIN)), total.disp.qmin, 8, [t 'total disp Qmin']);
 t_is(-sum(g.gen(ld, QMAX)), total.disp.qmax, 8, [t 'total disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 t = 'all disp loads+cost (PQ) * 2 : ';
 e = mpc;
-e.gencost(ld, :) = modcost(e.gencost(ld, :), load, 'SCALE_F');
-e.gencost(ld, :) = modcost(e.gencost(ld, :), load, 'SCALE_X');
+e.gencost(ld, :) = modcost(e.gencost(ld, :), dmd, 'SCALE_F');
+e.gencost(ld, :) = modcost(e.gencost(ld, :), dmd, 'SCALE_X');
 g = apply_changes(124, mpc, chgtab);
 t_is(sum(g.bus(:, PD)), total.fixed.p, 8, [t 'total fixed P']);
 t_is(sum(g.bus(:, QD)), total.fixed.q, 8, [t 'total fixed Q']);
-t_is(-sum(g.gen(ld, PMIN)), load*total.disp.p, 8, [t 'total disp P']);
-t_is(-sum(g.gen(ld, QMIN)), load*total.disp.qmin, 8, [t 'total disp Qmin']);
-t_is(-sum(g.gen(ld, QMAX)), load*total.disp.qmax, 8, [t 'total disp Qmax']);
+t_is(-sum(g.gen(ld, PMIN)), dmd*total.disp.p, 8, [t 'total disp P']);
+t_is(-sum(g.gen(ld, QMIN)), dmd*total.disp.qmin, 8, [t 'total disp Qmin']);
+t_is(-sum(g.gen(ld, QMAX)), dmd*total.disp.qmax, 8, [t 'total disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 t = 'all disp loads+cost (P) * 2 : ';
 e = mpc;
-e.gencost(ld, :) = modcost(e.gencost(ld, :), load, 'SCALE_F');
-e.gencost(ld, :) = modcost(e.gencost(ld, :), load, 'SCALE_X');
+e.gencost(ld, :) = modcost(e.gencost(ld, :), dmd, 'SCALE_F');
+e.gencost(ld, :) = modcost(e.gencost(ld, :), dmd, 'SCALE_X');
 g = apply_changes(125, mpc, chgtab);
 t_is(sum(g.bus(:, PD)), total.fixed.p, 8, [t 'total fixed P']);
 t_is(sum(g.bus(:, QD)), total.fixed.q, 8, [t 'total fixed Q']);
-t_is(-sum(g.gen(ld, PMIN)), load*total.disp.p, 8, [t 'total disp P']);
+t_is(-sum(g.gen(ld, PMIN)), dmd*total.disp.p, 8, [t 'total disp P']);
 t_is(-sum(g.gen(ld, QMIN)), total.disp.qmin, 8, [t 'total disp Qmin']);
 t_is(-sum(g.gen(ld, QMAX)), total.disp.qmax, 8, [t 'total disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 %%-----  single load zone, one replace quantity  -----
-load = 200;
+dmd = 200;
 t = 'all fixed loads (PQ) => total = 200 : ';
 e = mpc;
 g = apply_changes(26, mpc, chgtab);
-t_is(sum(g.bus(:, PD)), load-total.disp.p, 8, [t 'total fixed P']);
-t_is(sum(g.bus(:, QD)), (load-total.disp.p)/total.fixed.p*total.fixed.q, 8, [t 'total fixed Q']);
+t_is(sum(g.bus(:, PD)), dmd-total.disp.p, 8, [t 'total fixed P']);
+t_is(sum(g.bus(:, QD)), (dmd-total.disp.p)/total.fixed.p*total.fixed.q, 8, [t 'total fixed Q']);
 t_is(-sum(g.gen(ld, PMIN)), total.disp.p, 8, [t 'total disp P']);
 t_is(-sum(g.gen(ld, QMIN)), total.disp.qmin, 8, [t 'total disp Qmin']);
 t_is(-sum(g.gen(ld, QMAX)), total.disp.qmax, 8, [t 'total disp Qmax']);
@@ -552,7 +552,7 @@ t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 t = 'all fixed loads (P) => total = 200 : ';
 e = mpc;
 g = apply_changes(27, mpc, chgtab);
-t_is(sum(g.bus(:, PD)), load-total.disp.p, 8, [t 'total fixed P']);
+t_is(sum(g.bus(:, PD)), dmd-total.disp.p, 8, [t 'total fixed P']);
 t_is(sum(g.bus(:, QD)), total.fixed.q, 8, [t 'total fixed Q']);
 t_is(-sum(g.gen(ld, PMIN)), total.disp.p, 8, [t 'total disp P']);
 t_is(-sum(g.gen(ld, QMIN)), total.disp.qmin, 8, [t 'total disp Qmin']);
@@ -562,19 +562,19 @@ t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 t = 'all loads (PQ) => total = 200 : ';
 e = mpc;
 g = apply_changes(28, mpc, chgtab);
-t_is(sum(g.bus(:, PD)), load/total.both.p*total.fixed.p, 8, [t 'total fixed P']);
-t_is(sum(g.bus(:, QD)), load/total.both.p*total.fixed.q, 8, [t 'total fixed Q']);
-t_is(-sum(g.gen(ld, PMIN)), load/total.both.p*total.disp.p, 8, [t 'total disp P']);
-t_is(-sum(g.gen(ld, QMIN)), load/total.both.p*total.disp.qmin, 8, [t 'total disp Qmin']);
-t_is(-sum(g.gen(ld, QMAX)), load/total.both.p*total.disp.qmax, 8, [t 'total disp Qmax']);
+t_is(sum(g.bus(:, PD)), dmd/total.both.p*total.fixed.p, 8, [t 'total fixed P']);
+t_is(sum(g.bus(:, QD)), dmd/total.both.p*total.fixed.q, 8, [t 'total fixed Q']);
+t_is(-sum(g.gen(ld, PMIN)), dmd/total.both.p*total.disp.p, 8, [t 'total disp P']);
+t_is(-sum(g.gen(ld, QMIN)), dmd/total.both.p*total.disp.qmin, 8, [t 'total disp Qmin']);
+t_is(-sum(g.gen(ld, QMAX)), dmd/total.both.p*total.disp.qmax, 8, [t 'total disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 t = 'all loads (P) => total = 200 : ';
 e = mpc;
 g = apply_changes(29, mpc, chgtab);
-t_is(sum(g.bus(:, PD)), load/total.both.p*total.fixed.p, 8, [t 'total fixed P']);
+t_is(sum(g.bus(:, PD)), dmd/total.both.p*total.fixed.p, 8, [t 'total fixed P']);
 t_is(sum(g.bus(:, QD)), total.fixed.q, 8, [t 'total fixed Q']);
-t_is(-sum(g.gen(ld, PMIN)), load/total.both.p*total.disp.p, 8, [t 'total disp P']);
+t_is(-sum(g.gen(ld, PMIN)), dmd/total.both.p*total.disp.p, 8, [t 'total disp P']);
 t_is(-sum(g.gen(ld, QMIN)), total.disp.qmin, 8, [t 'total disp Qmin']);
 t_is(-sum(g.gen(ld, QMAX)), total.disp.qmax, 8, [t 'total disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
@@ -584,9 +584,9 @@ e = mpc;
 g = apply_changes(30, mpc, chgtab);
 t_is(sum(g.bus(:, PD)), total.fixed.p, 8, [t 'total fixed P']);
 t_is(sum(g.bus(:, QD)), total.fixed.q, 8, [t 'total fixed Q']);
-t_is(-sum(g.gen(ld, PMIN)), load-total.fixed.p, 8, [t 'total disp P']);
-t_is(-sum(g.gen(ld, QMIN)), (load-total.fixed.p)/total.disp.p*total.disp.qmin, 8, [t 'total disp Qmin']);
-t_is(-sum(g.gen(ld, QMAX)), (load-total.fixed.p)/total.disp.p*total.disp.qmax, 8, [t 'total disp Qmax']);
+t_is(-sum(g.gen(ld, PMIN)), dmd-total.fixed.p, 8, [t 'total disp P']);
+t_is(-sum(g.gen(ld, QMIN)), (dmd-total.fixed.p)/total.disp.p*total.disp.qmin, 8, [t 'total disp Qmin']);
+t_is(-sum(g.gen(ld, QMAX)), (dmd-total.fixed.p)/total.disp.p*total.disp.qmax, 8, [t 'total disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 t = 'all disp loads (P) => total = 200 : ';
@@ -594,66 +594,66 @@ e = mpc;
 g = apply_changes(31, mpc, chgtab);
 t_is(sum(g.bus(:, PD)), total.fixed.p, 8, [t 'total fixed P']);
 t_is(sum(g.bus(:, QD)), total.fixed.q, 8, [t 'total fixed Q']);
-t_is(-sum(g.gen(ld, PMIN)), load-total.fixed.p, 8, [t 'total disp P']);
+t_is(-sum(g.gen(ld, PMIN)), dmd-total.fixed.p, 8, [t 'total disp P']);
 t_is(-sum(g.gen(ld, QMIN)), total.disp.qmin, 8, [t 'total disp Qmin']);
 t_is(-sum(g.gen(ld, QMAX)), total.disp.qmax, 8, [t 'total disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 t = 'all loads+cost (PQ) => total = 200 : ';
 e = mpc;
-e.gencost(ld, :) = modcost(e.gencost(ld, :), load/total.both.p, 'SCALE_F');
-e.gencost(ld, :) = modcost(e.gencost(ld, :), load/total.both.p, 'SCALE_X');
+e.gencost(ld, :) = modcost(e.gencost(ld, :), dmd/total.both.p, 'SCALE_F');
+e.gencost(ld, :) = modcost(e.gencost(ld, :), dmd/total.both.p, 'SCALE_X');
 g = apply_changes(128, mpc, chgtab);
-t_is(sum(g.bus(:, PD)), load/total.both.p*total.fixed.p, 8, [t 'total fixed P']);
-t_is(sum(g.bus(:, QD)), load/total.both.p*total.fixed.q, 8, [t 'total fixed Q']);
-t_is(-sum(g.gen(ld, PMIN)), load/total.both.p*total.disp.p, 8, [t 'total disp P']);
-t_is(-sum(g.gen(ld, QMIN)), load/total.both.p*total.disp.qmin, 8, [t 'total disp Qmin']);
-t_is(-sum(g.gen(ld, QMAX)), load/total.both.p*total.disp.qmax, 8, [t 'total disp Qmax']);
+t_is(sum(g.bus(:, PD)), dmd/total.both.p*total.fixed.p, 8, [t 'total fixed P']);
+t_is(sum(g.bus(:, QD)), dmd/total.both.p*total.fixed.q, 8, [t 'total fixed Q']);
+t_is(-sum(g.gen(ld, PMIN)), dmd/total.both.p*total.disp.p, 8, [t 'total disp P']);
+t_is(-sum(g.gen(ld, QMIN)), dmd/total.both.p*total.disp.qmin, 8, [t 'total disp Qmin']);
+t_is(-sum(g.gen(ld, QMAX)), dmd/total.both.p*total.disp.qmax, 8, [t 'total disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 t = 'all loads+cost (P) => total = 200 : ';
 e = mpc;
-e.gencost(ld, :) = modcost(e.gencost(ld, :), load/total.both.p, 'SCALE_F');
-e.gencost(ld, :) = modcost(e.gencost(ld, :), load/total.both.p, 'SCALE_X');
+e.gencost(ld, :) = modcost(e.gencost(ld, :), dmd/total.both.p, 'SCALE_F');
+e.gencost(ld, :) = modcost(e.gencost(ld, :), dmd/total.both.p, 'SCALE_X');
 g = apply_changes(129, mpc, chgtab);
-t_is(sum(g.bus(:, PD)), load/total.both.p*total.fixed.p, 8, [t 'total fixed P']);
+t_is(sum(g.bus(:, PD)), dmd/total.both.p*total.fixed.p, 8, [t 'total fixed P']);
 t_is(sum(g.bus(:, QD)), total.fixed.q, 8, [t 'total fixed Q']);
-t_is(-sum(g.gen(ld, PMIN)), load/total.both.p*total.disp.p, 8, [t 'total disp P']);
+t_is(-sum(g.gen(ld, PMIN)), dmd/total.both.p*total.disp.p, 8, [t 'total disp P']);
 t_is(-sum(g.gen(ld, QMIN)), total.disp.qmin, 8, [t 'total disp Qmin']);
 t_is(-sum(g.gen(ld, QMAX)), total.disp.qmax, 8, [t 'total disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 t = 'all disp loads+cost (PQ) => total = 200 : ';
 e = mpc;
-e.gencost(ld, :) = modcost(e.gencost(ld, :), (load-total.fixed.p)/total.disp.p, 'SCALE_F');
-e.gencost(ld, :) = modcost(e.gencost(ld, :), (load-total.fixed.p)/total.disp.p, 'SCALE_X');
+e.gencost(ld, :) = modcost(e.gencost(ld, :), (dmd-total.fixed.p)/total.disp.p, 'SCALE_F');
+e.gencost(ld, :) = modcost(e.gencost(ld, :), (dmd-total.fixed.p)/total.disp.p, 'SCALE_X');
 g = apply_changes(130, mpc, chgtab);
 t_is(sum(g.bus(:, PD)), total.fixed.p, 8, [t 'total fixed P']);
 t_is(sum(g.bus(:, QD)), total.fixed.q, 8, [t 'total fixed Q']);
-t_is(-sum(g.gen(ld, PMIN)), load-total.fixed.p, 8, [t 'total disp P']);
-t_is(-sum(g.gen(ld, QMIN)), (load-total.fixed.p)/total.disp.p*total.disp.qmin, 8, [t 'total disp Qmin']);
-t_is(-sum(g.gen(ld, QMAX)), (load-total.fixed.p)/total.disp.p*total.disp.qmax, 8, [t 'total disp Qmax']);
+t_is(-sum(g.gen(ld, PMIN)), dmd-total.fixed.p, 8, [t 'total disp P']);
+t_is(-sum(g.gen(ld, QMIN)), (dmd-total.fixed.p)/total.disp.p*total.disp.qmin, 8, [t 'total disp Qmin']);
+t_is(-sum(g.gen(ld, QMAX)), (dmd-total.fixed.p)/total.disp.p*total.disp.qmax, 8, [t 'total disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 t = 'all disp loads+cost (P) => total = 200 : ';
 e = mpc;
-e.gencost(ld, :) = modcost(e.gencost(ld, :), (load-total.fixed.p)/total.disp.p, 'SCALE_F');
-e.gencost(ld, :) = modcost(e.gencost(ld, :), (load-total.fixed.p)/total.disp.p, 'SCALE_X');
+e.gencost(ld, :) = modcost(e.gencost(ld, :), (dmd-total.fixed.p)/total.disp.p, 'SCALE_F');
+e.gencost(ld, :) = modcost(e.gencost(ld, :), (dmd-total.fixed.p)/total.disp.p, 'SCALE_X');
 g = apply_changes(131, mpc, chgtab);
 t_is(sum(g.bus(:, PD)), total.fixed.p, 8, [t 'total fixed P']);
 t_is(sum(g.bus(:, QD)), total.fixed.q, 8, [t 'total fixed Q']);
-t_is(-sum(g.gen(ld, PMIN)), load-total.fixed.p, 8, [t 'total disp P']);
+t_is(-sum(g.gen(ld, PMIN)), dmd-total.fixed.p, 8, [t 'total disp P']);
 t_is(-sum(g.gen(ld, QMIN)), total.disp.qmin, 8, [t 'total disp Qmin']);
 t_is(-sum(g.gen(ld, QMAX)), total.disp.qmax, 8, [t 'total disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 %%-----  single load zone, one shift quantity  -----
-load = 25 + total_load(mpc, 'all');
+dmd = 25 + total_load(mpc, 'all');
 t = 'all fixed loads (PQ) => total + 25 : ';
 e = mpc;
 g = apply_changes(32, mpc, chgtab);
-t_is(sum(g.bus(:, PD)), load-total.disp.p, 8, [t 'total fixed P']);
-t_is(sum(g.bus(:, QD)), (load-total.disp.p)/total.fixed.p*total.fixed.q, 8, [t 'total fixed Q']);
+t_is(sum(g.bus(:, PD)), dmd-total.disp.p, 8, [t 'total fixed P']);
+t_is(sum(g.bus(:, QD)), (dmd-total.disp.p)/total.fixed.p*total.fixed.q, 8, [t 'total fixed Q']);
 t_is(-sum(g.gen(ld, PMIN)), total.disp.p, 8, [t 'total disp P']);
 t_is(-sum(g.gen(ld, QMIN)), total.disp.qmin, 8, [t 'total disp Qmin']);
 t_is(-sum(g.gen(ld, QMAX)), total.disp.qmax, 8, [t 'total disp Qmax']);
@@ -662,7 +662,7 @@ t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 t = 'all fixed loads (P) => total + 25 : ';
 e = mpc;
 g = apply_changes(33, mpc, chgtab);
-t_is(sum(g.bus(:, PD)), load-total.disp.p, 8, [t 'total fixed P']);
+t_is(sum(g.bus(:, PD)), dmd-total.disp.p, 8, [t 'total fixed P']);
 t_is(sum(g.bus(:, QD)), total.fixed.q, 8, [t 'total fixed Q']);
 t_is(-sum(g.gen(ld, PMIN)), total.disp.p, 8, [t 'total disp P']);
 t_is(-sum(g.gen(ld, QMIN)), total.disp.qmin, 8, [t 'total disp Qmin']);
@@ -672,19 +672,19 @@ t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 t = 'all loads (PQ) => total + 25 : ';
 e = mpc;
 g = apply_changes(34, mpc, chgtab);
-t_is(sum(g.bus(:, PD)), load/total.both.p*total.fixed.p, 8, [t 'total fixed P']);
-t_is(sum(g.bus(:, QD)), load/total.both.p*total.fixed.q, 8, [t 'total fixed Q']);
-t_is(-sum(g.gen(ld, PMIN)), load/total.both.p*total.disp.p, 8, [t 'total disp P']);
-t_is(-sum(g.gen(ld, QMIN)), load/total.both.p*total.disp.qmin, 8, [t 'total disp Qmin']);
-t_is(-sum(g.gen(ld, QMAX)), load/total.both.p*total.disp.qmax, 8, [t 'total disp Qmax']);
+t_is(sum(g.bus(:, PD)), dmd/total.both.p*total.fixed.p, 8, [t 'total fixed P']);
+t_is(sum(g.bus(:, QD)), dmd/total.both.p*total.fixed.q, 8, [t 'total fixed Q']);
+t_is(-sum(g.gen(ld, PMIN)), dmd/total.both.p*total.disp.p, 8, [t 'total disp P']);
+t_is(-sum(g.gen(ld, QMIN)), dmd/total.both.p*total.disp.qmin, 8, [t 'total disp Qmin']);
+t_is(-sum(g.gen(ld, QMAX)), dmd/total.both.p*total.disp.qmax, 8, [t 'total disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 t = 'all loads (P) => total + 25 : ';
 e = mpc;
 g = apply_changes(35, mpc, chgtab);
-t_is(sum(g.bus(:, PD)), load/total.both.p*total.fixed.p, 8, [t 'total fixed P']);
+t_is(sum(g.bus(:, PD)), dmd/total.both.p*total.fixed.p, 8, [t 'total fixed P']);
 t_is(sum(g.bus(:, QD)), total.fixed.q, 8, [t 'total fixed Q']);
-t_is(-sum(g.gen(ld, PMIN)), load/total.both.p*total.disp.p, 8, [t 'total disp P']);
+t_is(-sum(g.gen(ld, PMIN)), dmd/total.both.p*total.disp.p, 8, [t 'total disp P']);
 t_is(-sum(g.gen(ld, QMIN)), total.disp.qmin, 8, [t 'total disp Qmin']);
 t_is(-sum(g.gen(ld, QMAX)), total.disp.qmax, 8, [t 'total disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
@@ -694,9 +694,9 @@ e = mpc;
 g = apply_changes(36, mpc, chgtab);
 t_is(sum(g.bus(:, PD)), total.fixed.p, 8, [t 'total fixed P']);
 t_is(sum(g.bus(:, QD)), total.fixed.q, 8, [t 'total fixed Q']);
-t_is(-sum(g.gen(ld, PMIN)), load-total.fixed.p, 8, [t 'total disp P']);
-t_is(-sum(g.gen(ld, QMIN)), (load-total.fixed.p)/total.disp.p*total.disp.qmin, 8, [t 'total disp Qmin']);
-t_is(-sum(g.gen(ld, QMAX)), (load-total.fixed.p)/total.disp.p*total.disp.qmax, 8, [t 'total disp Qmax']);
+t_is(-sum(g.gen(ld, PMIN)), dmd-total.fixed.p, 8, [t 'total disp P']);
+t_is(-sum(g.gen(ld, QMIN)), (dmd-total.fixed.p)/total.disp.p*total.disp.qmin, 8, [t 'total disp Qmin']);
+t_is(-sum(g.gen(ld, QMAX)), (dmd-total.fixed.p)/total.disp.p*total.disp.qmax, 8, [t 'total disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 t = 'all disp loads (P) => total + 25 : ';
@@ -704,55 +704,55 @@ e = mpc;
 g = apply_changes(37, mpc, chgtab);
 t_is(sum(g.bus(:, PD)), total.fixed.p, 8, [t 'total fixed P']);
 t_is(sum(g.bus(:, QD)), total.fixed.q, 8, [t 'total fixed Q']);
-t_is(-sum(g.gen(ld, PMIN)), load-total.fixed.p, 8, [t 'total disp P']);
+t_is(-sum(g.gen(ld, PMIN)), dmd-total.fixed.p, 8, [t 'total disp P']);
 t_is(-sum(g.gen(ld, QMIN)), total.disp.qmin, 8, [t 'total disp Qmin']);
 t_is(-sum(g.gen(ld, QMAX)), total.disp.qmax, 8, [t 'total disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 t = 'all loads+cost (PQ) => total + 25 : ';
 e = mpc;
-e.gencost(ld, :) = modcost(e.gencost(ld, :), load/total.both.p, 'SCALE_F');
-e.gencost(ld, :) = modcost(e.gencost(ld, :), load/total.both.p, 'SCALE_X');
+e.gencost(ld, :) = modcost(e.gencost(ld, :), dmd/total.both.p, 'SCALE_F');
+e.gencost(ld, :) = modcost(e.gencost(ld, :), dmd/total.both.p, 'SCALE_X');
 g = apply_changes(134, mpc, chgtab);
-t_is(sum(g.bus(:, PD)), load/total.both.p*total.fixed.p, 8, [t 'total fixed P']);
-t_is(sum(g.bus(:, QD)), load/total.both.p*total.fixed.q, 8, [t 'total fixed Q']);
-t_is(-sum(g.gen(ld, PMIN)), load/total.both.p*total.disp.p, 8, [t 'total disp P']);
-t_is(-sum(g.gen(ld, QMIN)), load/total.both.p*total.disp.qmin, 8, [t 'total disp Qmin']);
-t_is(-sum(g.gen(ld, QMAX)), load/total.both.p*total.disp.qmax, 8, [t 'total disp Qmax']);
+t_is(sum(g.bus(:, PD)), dmd/total.both.p*total.fixed.p, 8, [t 'total fixed P']);
+t_is(sum(g.bus(:, QD)), dmd/total.both.p*total.fixed.q, 8, [t 'total fixed Q']);
+t_is(-sum(g.gen(ld, PMIN)), dmd/total.both.p*total.disp.p, 8, [t 'total disp P']);
+t_is(-sum(g.gen(ld, QMIN)), dmd/total.both.p*total.disp.qmin, 8, [t 'total disp Qmin']);
+t_is(-sum(g.gen(ld, QMAX)), dmd/total.both.p*total.disp.qmax, 8, [t 'total disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 t = 'all loads+cost (P) => total + 25 : ';
 e = mpc;
-e.gencost(ld, :) = modcost(e.gencost(ld, :), load/total.both.p, 'SCALE_F');
-e.gencost(ld, :) = modcost(e.gencost(ld, :), load/total.both.p, 'SCALE_X');
+e.gencost(ld, :) = modcost(e.gencost(ld, :), dmd/total.both.p, 'SCALE_F');
+e.gencost(ld, :) = modcost(e.gencost(ld, :), dmd/total.both.p, 'SCALE_X');
 g = apply_changes(135, mpc, chgtab);
-t_is(sum(g.bus(:, PD)), load/total.both.p*total.fixed.p, 8, [t 'total fixed P']);
+t_is(sum(g.bus(:, PD)), dmd/total.both.p*total.fixed.p, 8, [t 'total fixed P']);
 t_is(sum(g.bus(:, QD)), total.fixed.q, 8, [t 'total fixed Q']);
-t_is(-sum(g.gen(ld, PMIN)), load/total.both.p*total.disp.p, 8, [t 'total disp P']);
+t_is(-sum(g.gen(ld, PMIN)), dmd/total.both.p*total.disp.p, 8, [t 'total disp P']);
 t_is(-sum(g.gen(ld, QMIN)), total.disp.qmin, 8, [t 'total disp Qmin']);
 t_is(-sum(g.gen(ld, QMAX)), total.disp.qmax, 8, [t 'total disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 t = 'all disp loads+cost (PQ) => total + 25 : ';
 e = mpc;
-e.gencost(ld, :) = modcost(e.gencost(ld, :), (load-total.fixed.p)/total.disp.p, 'SCALE_F');
-e.gencost(ld, :) = modcost(e.gencost(ld, :), (load-total.fixed.p)/total.disp.p, 'SCALE_X');
+e.gencost(ld, :) = modcost(e.gencost(ld, :), (dmd-total.fixed.p)/total.disp.p, 'SCALE_F');
+e.gencost(ld, :) = modcost(e.gencost(ld, :), (dmd-total.fixed.p)/total.disp.p, 'SCALE_X');
 g = apply_changes(136, mpc, chgtab);
 t_is(sum(g.bus(:, PD)), total.fixed.p, 8, [t 'total fixed P']);
 t_is(sum(g.bus(:, QD)), total.fixed.q, 8, [t 'total fixed Q']);
-t_is(-sum(g.gen(ld, PMIN)), load-total.fixed.p, 8, [t 'total disp P']);
-t_is(-sum(g.gen(ld, QMIN)), (load-total.fixed.p)/total.disp.p*total.disp.qmin, 8, [t 'total disp Qmin']);
-t_is(-sum(g.gen(ld, QMAX)), (load-total.fixed.p)/total.disp.p*total.disp.qmax, 8, [t 'total disp Qmax']);
+t_is(-sum(g.gen(ld, PMIN)), dmd-total.fixed.p, 8, [t 'total disp P']);
+t_is(-sum(g.gen(ld, QMIN)), (dmd-total.fixed.p)/total.disp.p*total.disp.qmin, 8, [t 'total disp Qmin']);
+t_is(-sum(g.gen(ld, QMAX)), (dmd-total.fixed.p)/total.disp.p*total.disp.qmax, 8, [t 'total disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 t = 'all disp loads+cost (P) => total + 25 : ';
 e = mpc;
-e.gencost(ld, :) = modcost(e.gencost(ld, :), (load-total.fixed.p)/total.disp.p, 'SCALE_F');
-e.gencost(ld, :) = modcost(e.gencost(ld, :), (load-total.fixed.p)/total.disp.p, 'SCALE_X');
+e.gencost(ld, :) = modcost(e.gencost(ld, :), (dmd-total.fixed.p)/total.disp.p, 'SCALE_F');
+e.gencost(ld, :) = modcost(e.gencost(ld, :), (dmd-total.fixed.p)/total.disp.p, 'SCALE_X');
 g = apply_changes(137, mpc, chgtab);
 t_is(sum(g.bus(:, PD)), total.fixed.p, 8, [t 'total fixed P']);
 t_is(sum(g.bus(:, QD)), total.fixed.q, 8, [t 'total fixed Q']);
-t_is(-sum(g.gen(ld, PMIN)), load-total.fixed.p, 8, [t 'total disp P']);
+t_is(-sum(g.gen(ld, PMIN)), dmd-total.fixed.p, 8, [t 'total disp P']);
 t_is(-sum(g.gen(ld, QMIN)), total.disp.qmin, 8, [t 'total disp Qmin']);
 t_is(-sum(g.gen(ld, QMAX)), total.disp.qmax, 8, [t 'total disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
@@ -762,14 +762,14 @@ nb = size(mpc.bus, 1);
 ng = size(mpc.gen, 1);
 idx1 = [1 3:nb]';
 idx2 = (2:ng)';
-load = 2;
+dmd = 2;
 t = 'bus 2 fixed loads (PQ) * 2 : ';
 e = mpc;
 g = apply_changes(40, mpc, chgtab);
 t_is(g.bus(idx1, :), mpc.bus(idx1, :), 12, [t 'bus']);
 t_is(g.gen(idx2, :), mpc.gen(idx2, :), 12, [t 'gen']);
-t_is(g.bus(2, PD), load*mpc.bus(2, PD), 8, [t 'fixed P']);
-t_is(g.bus(2, QD), load*mpc.bus(2, QD), 8, [t 'fixed Q']);
+t_is(g.bus(2, PD), dmd*mpc.bus(2, PD), 8, [t 'fixed P']);
+t_is(g.bus(2, QD), dmd*mpc.bus(2, QD), 8, [t 'fixed Q']);
 t_is(g.gen(1, PMIN), mpc.gen(1, PMIN), 8, [t 'disp P']);
 t_is(g.gen(1, QMIN), mpc.gen(1, QMIN), 8, [t 'disp Qmin']);
 t_is(g.gen(1, QMAX), mpc.gen(1, QMAX), 8, [t 'disp Qmax']);
@@ -780,7 +780,7 @@ e = mpc;
 g = apply_changes(41, mpc, chgtab);
 t_is(g.bus(idx1, :), mpc.bus(idx1, :), 12, [t 'bus']);
 t_is(g.gen(idx2, :), mpc.gen(idx2, :), 12, [t 'gen']);
-t_is(g.bus(2, PD), load*mpc.bus(2, PD), 8, [t 'fixed P']);
+t_is(g.bus(2, PD), dmd*mpc.bus(2, PD), 8, [t 'fixed P']);
 t_is(g.bus(2, QD), mpc.bus(2, QD), 8, [t 'fixed Q']);
 t_is(g.gen(1, PMIN), mpc.gen(1, PMIN), 8, [t 'disp P']);
 t_is(g.gen(1, QMIN), mpc.gen(1, QMIN), 8, [t 'disp Qmin']);
@@ -792,11 +792,11 @@ e = mpc;
 g = apply_changes(42, mpc, chgtab);
 t_is(g.bus(idx1, :), mpc.bus(idx1, :), 12, [t 'bus']);
 t_is(g.gen(idx2, :), mpc.gen(idx2, :), 12, [t 'gen']);
-t_is(g.bus(2, PD), load*mpc.bus(2, PD), 8, [t 'fixed P']);
-t_is(g.bus(2, QD), load*mpc.bus(2, QD), 8, [t 'fixed Q']);
-t_is(g.gen(1, PMIN), load*mpc.gen(1, PMIN), 8, [t 'disp P']);
-t_is(g.gen(1, QMIN), load*mpc.gen(1, QMIN), 8, [t 'disp Qmin']);
-t_is(g.gen(1, QMAX), load*mpc.gen(1, QMAX), 8, [t 'disp Qmax']);
+t_is(g.bus(2, PD), dmd*mpc.bus(2, PD), 8, [t 'fixed P']);
+t_is(g.bus(2, QD), dmd*mpc.bus(2, QD), 8, [t 'fixed Q']);
+t_is(g.gen(1, PMIN), dmd*mpc.gen(1, PMIN), 8, [t 'disp P']);
+t_is(g.gen(1, QMIN), dmd*mpc.gen(1, QMIN), 8, [t 'disp Qmin']);
+t_is(g.gen(1, QMAX), dmd*mpc.gen(1, QMAX), 8, [t 'disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 t = 'bus 2 loads (P) * 2 : ';
@@ -804,9 +804,9 @@ e = mpc;
 g = apply_changes(43, mpc, chgtab);
 t_is(g.bus(idx1, :), mpc.bus(idx1, :), 12, [t 'bus']);
 t_is(g.gen(idx2, :), mpc.gen(idx2, :), 12, [t 'gen']);
-t_is(g.bus(2, PD), load*mpc.bus(2, PD), 8, [t 'fixed P']);
+t_is(g.bus(2, PD), dmd*mpc.bus(2, PD), 8, [t 'fixed P']);
 t_is(g.bus(2, QD), mpc.bus(2, QD), 8, [t 'fixed Q']);
-t_is(g.gen(1, PMIN), load*mpc.gen(1, PMIN), 8, [t 'disp P']);
+t_is(g.gen(1, PMIN), dmd*mpc.gen(1, PMIN), 8, [t 'disp P']);
 t_is(g.gen(1, QMIN), mpc.gen(1, QMIN), 8, [t 'disp Qmin']);
 t_is(g.gen(1, QMAX), mpc.gen(1, QMAX), 8, [t 'disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
@@ -818,9 +818,9 @@ t_is(g.bus(idx1, :), mpc.bus(idx1, :), 12, [t 'bus']);
 t_is(g.gen(idx2, :), mpc.gen(idx2, :), 12, [t 'gen']);
 t_is(g.bus(2, PD), mpc.bus(2, PD), 8, [t 'fixed P']);
 t_is(g.bus(2, QD), mpc.bus(2, QD), 8, [t 'fixed Q']);
-t_is(g.gen(1, PMIN), load*mpc.gen(1, PMIN), 8, [t 'disp P']);
-t_is(g.gen(1, QMIN), load*mpc.gen(1, QMIN), 8, [t 'disp Qmin']);
-t_is(g.gen(1, QMAX), load*mpc.gen(1, QMAX), 8, [t 'disp Qmax']);
+t_is(g.gen(1, PMIN), dmd*mpc.gen(1, PMIN), 8, [t 'disp P']);
+t_is(g.gen(1, QMIN), dmd*mpc.gen(1, QMIN), 8, [t 'disp Qmin']);
+t_is(g.gen(1, QMAX), dmd*mpc.gen(1, QMAX), 8, [t 'disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 t = 'bus 2 disp loads (P) * 2 : ';
@@ -830,71 +830,71 @@ t_is(g.bus(idx1, :), mpc.bus(idx1, :), 12, [t 'bus']);
 t_is(g.gen(idx2, :), mpc.gen(idx2, :), 12, [t 'gen']);
 t_is(g.bus(2, PD), mpc.bus(2, PD), 8, [t 'fixed P']);
 t_is(g.bus(2, QD), mpc.bus(2, QD), 8, [t 'fixed Q']);
-t_is(g.gen(1, PMIN), load*mpc.gen(1, PMIN), 8, [t 'disp P']);
+t_is(g.gen(1, PMIN), dmd*mpc.gen(1, PMIN), 8, [t 'disp P']);
 t_is(g.gen(1, QMIN), mpc.gen(1, QMIN), 8, [t 'disp Qmin']);
 t_is(g.gen(1, QMAX), mpc.gen(1, QMAX), 8, [t 'disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 t = 'bus 2 loads+cost (PQ) * 2 : ';
 e = mpc;
-e.gencost(1, :) = modcost(e.gencost(1, :), load, 'SCALE_F');
-e.gencost(1, :) = modcost(e.gencost(1, :), load, 'SCALE_X');
+e.gencost(1, :) = modcost(e.gencost(1, :), dmd, 'SCALE_F');
+e.gencost(1, :) = modcost(e.gencost(1, :), dmd, 'SCALE_X');
 g = apply_changes(142, mpc, chgtab);
 t_is(g.bus(idx1, :), mpc.bus(idx1, :), 12, [t 'bus']);
 t_is(g.gen(idx2, :), mpc.gen(idx2, :), 12, [t 'gen']);
-t_is(g.bus(2, PD), load*mpc.bus(2, PD), 8, [t 'fixed P']);
-t_is(g.bus(2, QD), load*mpc.bus(2, QD), 8, [t 'fixed Q']);
-t_is(g.gen(1, PMIN), load*mpc.gen(1, PMIN), 8, [t 'disp P']);
-t_is(g.gen(1, QMIN), load*mpc.gen(1, QMIN), 8, [t 'disp Qmin']);
-t_is(g.gen(1, QMAX), load*mpc.gen(1, QMAX), 8, [t 'disp Qmax']);
+t_is(g.bus(2, PD), dmd*mpc.bus(2, PD), 8, [t 'fixed P']);
+t_is(g.bus(2, QD), dmd*mpc.bus(2, QD), 8, [t 'fixed Q']);
+t_is(g.gen(1, PMIN), dmd*mpc.gen(1, PMIN), 8, [t 'disp P']);
+t_is(g.gen(1, QMIN), dmd*mpc.gen(1, QMIN), 8, [t 'disp Qmin']);
+t_is(g.gen(1, QMAX), dmd*mpc.gen(1, QMAX), 8, [t 'disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 t = 'bus 2 loads+cost (P) * 2 : ';
 e = mpc;
-e.gencost(1, :) = modcost(e.gencost(1, :), load, 'SCALE_F');
-e.gencost(1, :) = modcost(e.gencost(1, :), load, 'SCALE_X');
+e.gencost(1, :) = modcost(e.gencost(1, :), dmd, 'SCALE_F');
+e.gencost(1, :) = modcost(e.gencost(1, :), dmd, 'SCALE_X');
 g = apply_changes(143, mpc, chgtab);
 t_is(g.bus(idx1, :), mpc.bus(idx1, :), 12, [t 'bus']);
 t_is(g.gen(idx2, :), mpc.gen(idx2, :), 12, [t 'gen']);
-t_is(g.bus(2, PD), load*mpc.bus(2, PD), 8, [t 'fixed P']);
+t_is(g.bus(2, PD), dmd*mpc.bus(2, PD), 8, [t 'fixed P']);
 t_is(g.bus(2, QD), mpc.bus(2, QD), 8, [t 'fixed Q']);
-t_is(g.gen(1, PMIN), load*mpc.gen(1, PMIN), 8, [t 'disp P']);
+t_is(g.gen(1, PMIN), dmd*mpc.gen(1, PMIN), 8, [t 'disp P']);
 t_is(g.gen(1, QMIN), mpc.gen(1, QMIN), 8, [t 'disp Qmin']);
 t_is(g.gen(1, QMAX), mpc.gen(1, QMAX), 8, [t 'disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 t = 'bus 2 disp loads+cost (PQ) * 2 : ';
 e = mpc;
-e.gencost(1, :) = modcost(e.gencost(1, :), load, 'SCALE_F');
-e.gencost(1, :) = modcost(e.gencost(1, :), load, 'SCALE_X');
+e.gencost(1, :) = modcost(e.gencost(1, :), dmd, 'SCALE_F');
+e.gencost(1, :) = modcost(e.gencost(1, :), dmd, 'SCALE_X');
 g = apply_changes(144, mpc, chgtab);
 t_is(g.bus(idx1, :), mpc.bus(idx1, :), 12, [t 'bus']);
 t_is(g.gen(idx2, :), mpc.gen(idx2, :), 12, [t 'gen']);
 t_is(g.bus(2, PD), mpc.bus(2, PD), 8, [t 'fixed P']);
 t_is(g.bus(2, QD), mpc.bus(2, QD), 8, [t 'fixed Q']);
-t_is(g.gen(1, PMIN), load*mpc.gen(1, PMIN), 8, [t 'disp P']);
-t_is(g.gen(1, QMIN), load*mpc.gen(1, QMIN), 8, [t 'disp Qmin']);
-t_is(g.gen(1, QMAX), load*mpc.gen(1, QMAX), 8, [t 'disp Qmax']);
+t_is(g.gen(1, PMIN), dmd*mpc.gen(1, PMIN), 8, [t 'disp P']);
+t_is(g.gen(1, QMIN), dmd*mpc.gen(1, QMIN), 8, [t 'disp Qmin']);
+t_is(g.gen(1, QMAX), dmd*mpc.gen(1, QMAX), 8, [t 'disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 t = 'bus 2 disp loads+cost (P) * 2 : ';
 e = mpc;
-e.gencost(1, :) = modcost(e.gencost(1, :), load, 'SCALE_F');
-e.gencost(1, :) = modcost(e.gencost(1, :), load, 'SCALE_X');
+e.gencost(1, :) = modcost(e.gencost(1, :), dmd, 'SCALE_F');
+e.gencost(1, :) = modcost(e.gencost(1, :), dmd, 'SCALE_X');
 g = apply_changes(145, mpc, chgtab);
 t_is(g.bus(idx1, :), mpc.bus(idx1, :), 12, [t 'bus']);
 t_is(g.gen(idx2, :), mpc.gen(idx2, :), 12, [t 'gen']);
 t_is(g.bus(2, PD), mpc.bus(2, PD), 8, [t 'fixed P']);
 t_is(g.bus(2, QD), mpc.bus(2, QD), 8, [t 'fixed Q']);
-t_is(g.gen(1, PMIN), load*mpc.gen(1, PMIN), 8, [t 'disp P']);
+t_is(g.gen(1, PMIN), dmd*mpc.gen(1, PMIN), 8, [t 'disp P']);
 t_is(g.gen(1, QMIN), mpc.gen(1, QMIN), 8, [t 'disp Qmin']);
 t_is(g.gen(1, QMAX), mpc.gen(1, QMAX), 8, [t 'disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 %%-----  single bus, one replace quantity  -----
-load = 50;
+dmd = 50;
 t = 'bus 2 fixed loads (PQ) => Pd = 50 : ';
-scale = (load+mpc.gen(1, PMIN)) / mpc.bus(2, PD);
+scale = (dmd+mpc.gen(1, PMIN)) / mpc.bus(2, PD);
 e = mpc;
 g = apply_changes(46, mpc, chgtab);
 t_is(g.bus(idx1, :), mpc.bus(idx1, :), 12, [t 'bus']);
@@ -919,7 +919,7 @@ t_is(g.gen(1, QMAX), mpc.gen(1, QMAX), 8, [t 'disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 t = 'bus 2 loads (PQ) => Pd = 50 : ';
-scale = load / (mpc.bus(2, PD) - mpc.gen(1, PMIN));
+scale = dmd / (mpc.bus(2, PD) - mpc.gen(1, PMIN));
 e = mpc;
 g = apply_changes(48, mpc, chgtab);
 t_is(g.bus(idx1, :), mpc.bus(idx1, :), 12, [t 'bus']);
@@ -944,7 +944,7 @@ t_is(g.gen(1, QMAX), mpc.gen(1, QMAX), 8, [t 'disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 t = 'bus 2 disp loads (PQ) => Pd = 50 : ';
-scale = (load - mpc.bus(2, PD)) / -mpc.gen(1, PMIN);
+scale = (dmd - mpc.bus(2, PD)) / -mpc.gen(1, PMIN);
 e = mpc;
 g = apply_changes(50, mpc, chgtab);
 t_is(g.bus(idx1, :), mpc.bus(idx1, :), 12, [t 'bus']);
@@ -969,7 +969,7 @@ t_is(g.gen(1, QMAX), mpc.gen(1, QMAX), 8, [t 'disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 t = 'bus 2 loads+cost (PQ) => Pd = 50 : ';
-scale = load / (mpc.bus(2, PD) - mpc.gen(1, PMIN));
+scale = dmd / (mpc.bus(2, PD) - mpc.gen(1, PMIN));
 e = mpc;
 e.gencost(1, :) = modcost(e.gencost(1, :), scale, 'SCALE_F');
 e.gencost(1, :) = modcost(e.gencost(1, :), scale, 'SCALE_X');
@@ -998,7 +998,7 @@ t_is(g.gen(1, QMAX), mpc.gen(1, QMAX), 8, [t 'disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 t = 'bus 2 disp loads+cost (PQ) => Pd = 50 : ';
-scale = (load - mpc.bus(2, PD)) / -mpc.gen(1, PMIN);
+scale = (dmd - mpc.bus(2, PD)) / -mpc.gen(1, PMIN);
 e = mpc;
 e.gencost(1, :) = modcost(e.gencost(1, :), scale, 'SCALE_F');
 e.gencost(1, :) = modcost(e.gencost(1, :), scale, 'SCALE_X');
@@ -1027,9 +1027,9 @@ t_is(g.gen(1, QMAX), mpc.gen(1, QMAX), 8, [t 'disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 %%-----  single bus, one shift quantity  -----
-load = 10 + (mpc.bus(2, PD) - mpc.gen(1, PMIN));
+dmd = 10 + (mpc.bus(2, PD) - mpc.gen(1, PMIN));
 t = 'bus 2 fixed loads (PQ) => total + 25 : ';
-scale = (load+mpc.gen(1, PMIN)) / mpc.bus(2, PD);
+scale = (dmd+mpc.gen(1, PMIN)) / mpc.bus(2, PD);
 e = mpc;
 g = apply_changes(52, mpc, chgtab);
 t_is(g.bus(idx1, :), mpc.bus(idx1, :), 12, [t 'bus']);
@@ -1054,7 +1054,7 @@ t_is(g.gen(1, QMAX), mpc.gen(1, QMAX), 8, [t 'disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 t = 'bus 2 loads (PQ) => total + 25 : ';
-scale = load / (mpc.bus(2, PD) - mpc.gen(1, PMIN));
+scale = dmd / (mpc.bus(2, PD) - mpc.gen(1, PMIN));
 e = mpc;
 g = apply_changes(54, mpc, chgtab);
 t_is(g.bus(idx1, :), mpc.bus(idx1, :), 12, [t 'bus']);
@@ -1079,7 +1079,7 @@ t_is(g.gen(1, QMAX), mpc.gen(1, QMAX), 8, [t 'disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 t = 'bus 2 disp loads (PQ) => total + 25 : ';
-scale = (load - mpc.bus(2, PD)) / -mpc.gen(1, PMIN);
+scale = (dmd - mpc.bus(2, PD)) / -mpc.gen(1, PMIN);
 e = mpc;
 g = apply_changes(56, mpc, chgtab);
 t_is(g.bus(idx1, :), mpc.bus(idx1, :), 12, [t 'bus']);
@@ -1104,7 +1104,7 @@ t_is(g.gen(1, QMAX), mpc.gen(1, QMAX), 8, [t 'disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 t = 'bus 2 loads+cost (PQ) => total + 25 : ';
-scale = load / (mpc.bus(2, PD) - mpc.gen(1, PMIN));
+scale = dmd / (mpc.bus(2, PD) - mpc.gen(1, PMIN));
 e = mpc;
 e.gencost(1, :) = modcost(e.gencost(1, :), scale, 'SCALE_F');
 e.gencost(1, :) = modcost(e.gencost(1, :), scale, 'SCALE_X');
@@ -1133,7 +1133,7 @@ t_is(g.gen(1, QMAX), mpc.gen(1, QMAX), 8, [t 'disp Qmax']);
 t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 t = 'bus 2 disp loads+cost (PQ) => total + 25 : ';
-scale = (load - mpc.bus(2, PD)) / -mpc.gen(1, PMIN);
+scale = (dmd - mpc.bus(2, PD)) / -mpc.gen(1, PMIN);
 e = mpc;
 e.gencost(1, :) = modcost(e.gencost(1, :), scale, 'SCALE_F');
 e.gencost(1, :) = modcost(e.gencost(1, :), scale, 'SCALE_X');
@@ -1163,16 +1163,16 @@ t_is(g.gencost(ld, :), e.gencost(ld, :), 8, [t 'disp gencost']);
 
 %%-----  1 zone, area scale factor  -----
 t = 'area fixed loads (PQ) * [3 1 1] : ';
-load = [3 1 1];
+dmd = [3 1 1];
 e = mpc;
 g = apply_changes(60, mpc, chgtab);
-for k = 1:length(load)
+for k = 1:length(dmd)
     if k > 1
         t_is(g.bus(a{k}, :), mpc.bus(a{k}, :), 12, sprintf('%s area %d bus', t, k));
         t_is(g.gen(ga{k}, :), mpc.gen(ga{k}, :), 12, sprintf('%s area %d gen', t, k));
     else
-        t_is(sum(g.bus(a{k}, PD)), load(k)*area(k).fixed.p, 8, sprintf('%s area %d fixed P', t, k));
-        t_is(sum(g.bus(a{k}, QD)), load(k)*area(k).fixed.q, 8, sprintf('%s area %d fixed Q', t, k));
+        t_is(sum(g.bus(a{k}, PD)), dmd(k)*area(k).fixed.p, 8, sprintf('%s area %d fixed P', t, k));
+        t_is(sum(g.bus(a{k}, QD)), dmd(k)*area(k).fixed.q, 8, sprintf('%s area %d fixed Q', t, k));
         t_is(-sum(g.gen(lda{k}, PMIN)), area(k).disp.p, 8, sprintf('%s area %d disp P', t, k));
         t_is(-sum(g.gen(lda{k}, QMIN)), area(k).disp.qmin, 8, sprintf('%s area %d disp Qmin', t, k));
         t_is(-sum(g.gen(lda{k}, QMAX)), area(k).disp.qmax, 8, sprintf('%s area %d disp Qmax', t, k));
@@ -1182,12 +1182,12 @@ end
 t = 'area fixed loads (P) * [3 1 1] : ';
 e = mpc;
 g = apply_changes(61, mpc, chgtab);
-for k = 1:length(load)
+for k = 1:length(dmd)
     if k > 1
         t_is(g.bus(a{k}, :), mpc.bus(a{k}, :), 12, sprintf('%s area %d bus', t, k));
         t_is(g.gen(ga{k}, :), mpc.gen(ga{k}, :), 12, sprintf('%s area %d gen', t, k));
     else
-        t_is(sum(g.bus(a{k}, PD)), load(k)*area(k).fixed.p, 8, sprintf('%s area %d fixed P', t, k));
+        t_is(sum(g.bus(a{k}, PD)), dmd(k)*area(k).fixed.p, 8, sprintf('%s area %d fixed P', t, k));
         t_is(sum(g.bus(a{k}, QD)), area(k).fixed.q, 8, sprintf('%s area %d fixed Q', t, k));
         t_is(-sum(g.gen(lda{k}, PMIN)), area(k).disp.p, 8, sprintf('%s area %d disp P', t, k));
         t_is(-sum(g.gen(lda{k}, QMIN)), area(k).disp.qmin, 8, sprintf('%s area %d disp Qmin', t, k));
@@ -1198,30 +1198,30 @@ end
 t = 'all area loads (PQ) * [3 1 1] : ';
 e = mpc;
 g = apply_changes(62, mpc, chgtab);
-for k = 1:length(load)
+for k = 1:length(dmd)
     if k > 1
         t_is(g.bus(a{k}, :), mpc.bus(a{k}, :), 12, sprintf('%s area %d bus', t, k));
         t_is(g.gen(ga{k}, :), mpc.gen(ga{k}, :), 12, sprintf('%s area %d gen', t, k));
     else
-        t_is(sum(g.bus(a{k}, PD)), load(k)*area(k).fixed.p, 8, sprintf('%s area %d fixed P', t, k));
-        t_is(sum(g.bus(a{k}, QD)), load(k)*area(k).fixed.q, 8, sprintf('%s area %d fixed Q', t, k));
-        t_is(-sum(g.gen(lda{k}, PMIN)), load(k)*area(k).disp.p, 8, sprintf('%s area %d disp P', t, k));
-        t_is(-sum(g.gen(lda{k}, QMIN)), load(k)*area(k).disp.qmin, 8, sprintf('%s area %d disp Qmin', t, k));
-        t_is(-sum(g.gen(lda{k}, QMAX)), load(k)*area(k).disp.qmax, 8, sprintf('%s area %d disp Qmax', t, k));
+        t_is(sum(g.bus(a{k}, PD)), dmd(k)*area(k).fixed.p, 8, sprintf('%s area %d fixed P', t, k));
+        t_is(sum(g.bus(a{k}, QD)), dmd(k)*area(k).fixed.q, 8, sprintf('%s area %d fixed Q', t, k));
+        t_is(-sum(g.gen(lda{k}, PMIN)), dmd(k)*area(k).disp.p, 8, sprintf('%s area %d disp P', t, k));
+        t_is(-sum(g.gen(lda{k}, QMIN)), dmd(k)*area(k).disp.qmin, 8, sprintf('%s area %d disp Qmin', t, k));
+        t_is(-sum(g.gen(lda{k}, QMAX)), dmd(k)*area(k).disp.qmax, 8, sprintf('%s area %d disp Qmax', t, k));
     end
 end
 
 t = 'all area loads (P) * [3 1 1] : ';
 e = mpc;
 g = apply_changes(63, mpc, chgtab);
-for k = 1:length(load)
+for k = 1:length(dmd)
     if k > 1
         t_is(g.bus(a{k}, :), mpc.bus(a{k}, :), 12, sprintf('%s area %d bus', t, k));
         t_is(g.gen(ga{k}, :), mpc.gen(ga{k}, :), 12, sprintf('%s area %d gen', t, k));
     else
-        t_is(sum(g.bus(a{k}, PD)), load(k)*area(k).fixed.p, 8, sprintf('%s area %d fixed P', t, k));
+        t_is(sum(g.bus(a{k}, PD)), dmd(k)*area(k).fixed.p, 8, sprintf('%s area %d fixed P', t, k));
         t_is(sum(g.bus(a{k}, QD)), area(k).fixed.q, 8, sprintf('%s area %d fixed Q', t, k));
-        t_is(-sum(g.gen(lda{k}, PMIN)), load(k)*area(k).disp.p, 8, sprintf('%s area %d disp P', t, k));
+        t_is(-sum(g.gen(lda{k}, PMIN)), dmd(k)*area(k).disp.p, 8, sprintf('%s area %d disp P', t, k));
         t_is(-sum(g.gen(lda{k}, QMIN)), area(k).disp.qmin, 8, sprintf('%s area %d disp Qmin', t, k));
         t_is(-sum(g.gen(lda{k}, QMAX)), area(k).disp.qmax, 8, sprintf('%s area %d disp Qmax', t, k));
     end
@@ -1230,30 +1230,30 @@ end
 t = 'area disp loads (PQ) * [3 1 1] : ';
 e = mpc;
 g = apply_changes(64, mpc, chgtab);
-for k = 1:length(load)
+for k = 1:length(dmd)
     if k > 1
         t_is(g.bus(a{k}, :), mpc.bus(a{k}, :), 12, sprintf('%s area %d bus', t, k));
         t_is(g.gen(ga{k}, :), mpc.gen(ga{k}, :), 12, sprintf('%s area %d gen', t, k));
     else
         t_is(sum(g.bus(a{k}, PD)), area(k).fixed.p, 8, sprintf('%s area %d fixed P', t, k));
         t_is(sum(g.bus(a{k}, QD)), area(k).fixed.q, 8, sprintf('%s area %d fixed Q', t, k));
-        t_is(-sum(g.gen(lda{k}, PMIN)), load(k)*area(k).disp.p, 8, sprintf('%s area %d disp P', t, k));
-        t_is(-sum(g.gen(lda{k}, QMIN)), load(k)*area(k).disp.qmin, 8, sprintf('%s area %d disp Qmin', t, k));
-        t_is(-sum(g.gen(lda{k}, QMAX)), load(k)*area(k).disp.qmax, 8, sprintf('%s area %d disp Qmax', t, k));
+        t_is(-sum(g.gen(lda{k}, PMIN)), dmd(k)*area(k).disp.p, 8, sprintf('%s area %d disp P', t, k));
+        t_is(-sum(g.gen(lda{k}, QMIN)), dmd(k)*area(k).disp.qmin, 8, sprintf('%s area %d disp Qmin', t, k));
+        t_is(-sum(g.gen(lda{k}, QMAX)), dmd(k)*area(k).disp.qmax, 8, sprintf('%s area %d disp Qmax', t, k));
     end
 end
 
 t = 'area disp loads (P) * [3 1 1] : ';
 e = mpc;
 g = apply_changes(65, mpc, chgtab);
-for k = 1:length(load)
+for k = 1:length(dmd)
     if k > 1
         t_is(g.bus(a{k}, :), mpc.bus(a{k}, :), 12, sprintf('%s area %d bus', t, k));
         t_is(g.gen(ga{k}, :), mpc.gen(ga{k}, :), 12, sprintf('%s area %d gen', t, k));
     else
         t_is(sum(g.bus(a{k}, PD)), area(k).fixed.p, 8, sprintf('%s area %d fixed P', t, k));
         t_is(sum(g.bus(a{k}, QD)), area(k).fixed.q, 8, sprintf('%s area %d fixed Q', t, k));
-        t_is(-sum(g.gen(lda{k}, PMIN)), load(k)*area(k).disp.p, 8, sprintf('%s area %d disp P', t, k));
+        t_is(-sum(g.gen(lda{k}, PMIN)), dmd(k)*area(k).disp.p, 8, sprintf('%s area %d disp P', t, k));
         t_is(-sum(g.gen(lda{k}, QMIN)), area(k).disp.qmin, 8, sprintf('%s area %d disp Qmin', t, k));
         t_is(-sum(g.gen(lda{k}, QMAX)), area(k).disp.qmax, 8, sprintf('%s area %d disp Qmax', t, k));
     end
@@ -1261,11 +1261,11 @@ end
 
 %%-----  1 zones, area target quantity  -----
 t = 'area fixed loads (PQ) => total = 100 : ';
-load = 100;
+dmd = 100;
 e = mpc;
 g = apply_changes(66, mpc, chgtab);
-scale = [(load-area(1).disp.p) / area(1).fixed.p 1 1];
-for k = 1:length(load)
+scale = [(dmd-area(1).disp.p) / area(1).fixed.p 1 1];
+for k = 1:length(dmd)
     if k > 1
         t_is(g.bus(a{k}, :), mpc.bus(a{k}, :), 12, sprintf('%s area %d bus', t, k));
         t_is(g.gen(ga{k}, :), mpc.gen(ga{k}, :), 12, sprintf('%s area %d gen', t, k));
@@ -1281,7 +1281,7 @@ end
 t = 'area fixed loads (P) => total = 100 : ';
 e = mpc;
 g = apply_changes(67, mpc, chgtab);
-for k = 1:length(load)
+for k = 1:length(dmd)
     if k > 1
         t_is(g.bus(a{k}, :), mpc.bus(a{k}, :), 12, sprintf('%s area %d bus', t, k));
         t_is(g.gen(ga{k}, :), mpc.gen(ga{k}, :), 12, sprintf('%s area %d gen', t, k));
@@ -1297,8 +1297,8 @@ end
 t = 'all area loads (PQ) => total = 100 : ';
 e = mpc;
 g = apply_changes(68, mpc, chgtab);
-scale = [load / (area(1).fixed.p + area(1).disp.p) 1 1];
-for k = 1:length(load)
+scale = [dmd / (area(1).fixed.p + area(1).disp.p) 1 1];
+for k = 1:length(dmd)
     if k > 1
         t_is(g.bus(a{k}, :), mpc.bus(a{k}, :), 12, sprintf('%s area %d bus', t, k));
         t_is(g.gen(ga{k}, :), mpc.gen(ga{k}, :), 12, sprintf('%s area %d gen', t, k));
@@ -1314,7 +1314,7 @@ end
 t = 'all area loads (P) => total = 100 : ';
 e = mpc;
 g = apply_changes(69, mpc, chgtab);
-for k = 1:length(load)
+for k = 1:length(dmd)
     if k > 1
         t_is(g.bus(a{k}, :), mpc.bus(a{k}, :), 12, sprintf('%s area %d bus', t, k));
         t_is(g.gen(ga{k}, :), mpc.gen(ga{k}, :), 12, sprintf('%s area %d gen', t, k));
@@ -1330,8 +1330,8 @@ end
 t = 'area disp loads (PQ) => total = 100 : ';
 e = mpc;
 g = apply_changes(70, mpc, chgtab);
-scale = [(load - area(1).fixed.p) / area(1).disp.p 1 1];
-for k = 1:length(load)
+scale = [(dmd - area(1).fixed.p) / area(1).disp.p 1 1];
+for k = 1:length(dmd)
     if k > 1
         t_is(g.bus(a{k}, :), mpc.bus(a{k}, :), 12, sprintf('%s area %d bus', t, k));
         t_is(g.gen(ga{k}, :), mpc.gen(ga{k}, :), 12, sprintf('%s area %d gen', t, k));
@@ -1347,7 +1347,7 @@ end
 t = 'area disp loads (P) => total = 100 : ';
 e = mpc;
 g = apply_changes(71, mpc, chgtab);
-for k = 1:length(load)
+for k = 1:length(dmd)
     if k > 1
         t_is(g.bus(a{k}, :), mpc.bus(a{k}, :), 12, sprintf('%s area %d bus', t, k));
         t_is(g.gen(ga{k}, :), mpc.gen(ga{k}, :), 12, sprintf('%s area %d gen', t, k));
@@ -1362,11 +1362,11 @@ end
 
 %%-----  1 zones, area shift quantity  -----
 t = 'area fixed loads (PQ) => total = total + 20 : ';
-load = area(1).both.p + 20;
+dmd = area(1).both.p + 20;
 e = mpc;
 g = apply_changes(72, mpc, chgtab);
-scale = [(load-area(1).disp.p) / area(1).fixed.p 1 1];
-for k = 1:length(load)
+scale = [(dmd-area(1).disp.p) / area(1).fixed.p 1 1];
+for k = 1:length(dmd)
     if k > 1
         t_is(g.bus(a{k}, :), mpc.bus(a{k}, :), 12, sprintf('%s area %d bus', t, k));
         t_is(g.gen(ga{k}, :), mpc.gen(ga{k}, :), 12, sprintf('%s area %d gen', t, k));
@@ -1382,7 +1382,7 @@ end
 t = 'area fixed loads (P) => total + 20 : ';
 e = mpc;
 g = apply_changes(73, mpc, chgtab);
-for k = 1:length(load)
+for k = 1:length(dmd)
     if k > 1
         t_is(g.bus(a{k}, :), mpc.bus(a{k}, :), 12, sprintf('%s area %d bus', t, k));
         t_is(g.gen(ga{k}, :), mpc.gen(ga{k}, :), 12, sprintf('%s area %d gen', t, k));
@@ -1398,8 +1398,8 @@ end
 t = 'all area loads (PQ) => total + 20 : ';
 e = mpc;
 g = apply_changes(74, mpc, chgtab);
-scale = [load / (area(1).fixed.p + area(1).disp.p) 1 1];
-for k = 1:length(load)
+scale = [dmd / (area(1).fixed.p + area(1).disp.p) 1 1];
+for k = 1:length(dmd)
     if k > 1
         t_is(g.bus(a{k}, :), mpc.bus(a{k}, :), 12, sprintf('%s area %d bus', t, k));
         t_is(g.gen(ga{k}, :), mpc.gen(ga{k}, :), 12, sprintf('%s area %d gen', t, k));
@@ -1415,7 +1415,7 @@ end
 t = 'all area loads (P) => total + 20 : ';
 e = mpc;
 g = apply_changes(75, mpc, chgtab);
-for k = 1:length(load)
+for k = 1:length(dmd)
     if k > 1
         t_is(g.bus(a{k}, :), mpc.bus(a{k}, :), 12, sprintf('%s area %d bus', t, k));
         t_is(g.gen(ga{k}, :), mpc.gen(ga{k}, :), 12, sprintf('%s area %d gen', t, k));
@@ -1431,8 +1431,8 @@ end
 t = 'area disp loads (PQ) => total + 20 : ';
 e = mpc;
 g = apply_changes(76, mpc, chgtab);
-scale = [(load - area(1).fixed.p) / area(1).disp.p 1 1];
-for k = 1:length(load)
+scale = [(dmd - area(1).fixed.p) / area(1).disp.p 1 1];
+for k = 1:length(dmd)
     if k > 1
         t_is(g.bus(a{k}, :), mpc.bus(a{k}, :), 12, sprintf('%s area %d bus', t, k));
         t_is(g.gen(ga{k}, :), mpc.gen(ga{k}, :), 12, sprintf('%s area %d gen', t, k));
@@ -1448,7 +1448,7 @@ end
 t = 'area disp loads (P) => total + 20 : ';
 e = mpc;
 g = apply_changes(77, mpc, chgtab);
-for k = 1:length(load)
+for k = 1:length(dmd)
     if k > 1
         t_is(g.bus(a{k}, :), mpc.bus(a{k}, :), 12, sprintf('%s area %d bus', t, k));
         t_is(g.gen(ga{k}, :), mpc.gen(ga{k}, :), 12, sprintf('%s area %d gen', t, k));

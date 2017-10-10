@@ -1,4 +1,4 @@
-function [bus, gen, gencost] = scale_load(load, bus, gen, load_zone, opt, gencost)
+function [bus, gen, gencost] = scale_load(dmd, bus, gen, load_zone, opt, gencost)
 %SCALE_LOAD Scales fixed and/or dispatchable loads.
 %   MPC = SCALE_LOAD(LOAD, MPC);
 %   MPC = SCALE_LOAD(LOAD, MPC, LOAD_ZONE)
@@ -85,8 +85,8 @@ function [bus, gen, gencost] = scale_load(load, bus, gen, load_zone, opt, gencos
 %       load_zone(1:10) = 1;
 %       load_zone(11:20) = 2;
 %       opt = struct('pq', 'P', 'scale', 'QUANTITY');
-%       load = [100; 50];
-%       [bus, gen] = scale_load(load, bus, gen, load_zone, opt);
+%       dmd = [100; 50];
+%       [bus, gen] = scale_load(dmd, bus, gen, load_zone, opt);
 %
 %   See also TOTAL_LOAD.
 
@@ -208,7 +208,7 @@ else
 end
 
 if isempty(load_zone)
-    if length(load) == 1        %% make a single zone of all load buses
+    if length(dmd) == 1         %% make a single zone of all load buses
         load_zone = zeros(nb, 1);                           %% initialize
         load_zone(bus(:, PD) ~= 0 | bus(:, QD) ~= 0) = 1;   %% FIXED loads
         if ~isempty(gen)
@@ -220,12 +220,12 @@ if isempty(load_zone)
 end
 
 %% check load_zone to make sure it's consistent with size of load vector
-if max(load_zone) > length(load)
+if max(load_zone) > length(dmd)
     error('scale_load: load vector must have a value for each load zone specified');
 end
 
 %%-----  compute scale factors for each zone  -----
-scale = load;
+scale = dmd;
 Pdd = zeros(nb, 1);     %% dispatchable P at each bus
 if opt.scale(1) == 'Q'  %% 'QUANTITY'
     %% find load capacity from dispatchable loads
@@ -234,34 +234,34 @@ if opt.scale(1) == 'Q'  %% 'QUANTITY'
     end
 
     %% compute scale factors
-    for k = 1:length(load)
+    for k = 1:length(dmd)
         idx = find( load_zone == k );
         fixed = sum(bus(idx, PD));
         dispatchable = sum(Pdd(idx));
         total = fixed + dispatchable;
         if opt.which(1) == 'B'      %% 'BOTH'
             if total ~= 0
-                scale(k) = load(k) / total;
-            elseif load(k) == total
+                scale(k) = dmd(k) / total;
+            elseif dmd(k) == total
                 scale(k) = 1;
             else
-                error('scale_load: impossible to make zone %d load equal %g by scaling non-existent loads', k, load(k));
+                error('scale_load: impossible to make zone %d load equal %g by scaling non-existent loads', k, dmd(k));
             end
         elseif opt.which(1) == 'F'  %% 'FIXED'
             if fixed ~= 0
-                scale(k) = (load(k) - dispatchable) / fixed;
-            elseif load(k) == dispatchable
+                scale(k) = (dmd(k) - dispatchable) / fixed;
+            elseif dmd(k) == dispatchable
                 scale(k) = 1;
             else
-                error('scale_load: impossible to make zone %d load equal %g by scaling non-existent fixed load', k, load(k));
+                error('scale_load: impossible to make zone %d load equal %g by scaling non-existent fixed load', k, dmd(k));
             end
         elseif opt.which(1) == 'D'  %% 'DISPATCHABLE'
             if dispatchable ~= 0
-                scale(k) = (load(k) - fixed) / dispatchable;
-            elseif load(k) == fixed
+                scale(k) = (dmd(k) - fixed) / dispatchable;
+            elseif dmd(k) == fixed
                 scale(k) = 1;
             else
-                error('scale_load: impossible to make zone %d load equal %g by scaling non-existent dispatchable load', k, load(k));
+                error('scale_load: impossible to make zone %d load equal %g by scaling non-existent dispatchable load', k, dmd(k));
             end
         end
     end
