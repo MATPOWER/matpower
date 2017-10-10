@@ -61,7 +61,7 @@ if ischar(ln)
     n = regexp(ln, pat, 'names');
 
     %% extract data
-    if have_fcn('octave')
+    if have_fcn('octave') && have_fcn('octave', 'vnum') < 4.003
         nc = length(n.col);
         if nc && isempty(n.col{nc})
             data = n.col(1:nc-1);
