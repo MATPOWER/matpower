@@ -12,6 +12,15 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 10/11/17
+  - Add `t_opf_default` to test AC OPF with `opf.ac.solver` set to `DEFAULT`.
+  - Fix bug in setup of OPF (introduced since v6.0), triggered by running
+    an AC OPF with `opf.ac.solver` set to `DEFAULT` with TSPOPF installed.
+    *Thanks to Carlos Murillo-Sanchez.*
+  - Fix bug in setup of OPF (introduced since v6.0), triggered by running a
+    DC OPF with `opf.ac.solver` set one of the legacy MEX-based solvers such
+    as `PDIPM`. Set `opf.ac.solver` to `PDIPM` for some of the DC OPF tests.
+
 #### 10/10/17
   - Add `savechgtab` function to save change tables, such as those used
     by `apply_changes`, to a file.

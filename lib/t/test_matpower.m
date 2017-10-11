@@ -52,6 +52,7 @@ tests{end+1} = 't_cpf';
 tests{end+1} = 't_islands';
 tests{end+1} = 't_opf_model';
 tests{end+1} = 't_opf_model_legacy';
+tests{end+1} = 't_opf_default';
 if have_fcn('fmincon')
     tests{end+1} = 't_opf_fmincon';
 end

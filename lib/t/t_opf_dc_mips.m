@@ -46,6 +46,11 @@ t0 = 'DC OPF (MIPS): ';
 mpopt = mpoption('out.all', 0, 'verbose', verbose);
 mpopt = mpoption(mpopt, 'opf.dc.solver', 'MIPS');
 
+%% reveals a bug introduced with summer 2017 OPF refactorization
+if have_fcn('pdipmopf')
+    mpopt = mpoption(mpopt, 'opf.ac.solver', 'PDIPM');
+end
+
 if have_fcn('octave')
     sing_matrix_warn_id = 'Octave:singular-matrix';
 else
