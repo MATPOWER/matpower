@@ -6209,6 +6209,12 @@ name & description \\
 \code{case\_ACTIVSg500}	& 500-bus South Carolina synthetic model\tnote{*}	\\
 \code{case\_ACTIVSg2000}	& 2000-bus Texas synthetic model\tnote{*}	\\
 \code{case\_ACTIVSg10k}	& 10,000-bus US WECC synthetic model\tnote{*}	\\
+\code{contab\_ACTIVSg200}	& contingency table for \code{case\_ACTIVSg200}\tnote{*}	\\
+\code{contab\_ACTIVSg500}	& contingency table for \code{case\_ACTIVSg500}\tnote{*}	\\
+\code{contab\_ACTIVSg2000}	& contingency table for \code{case\_ACTIVSg2000}\tnote{*}	\\
+\code{contab\_ACTIVSg10k}	& contingency table for \code{case\_ACTIVSg10k}\tnote{*}	\\
+\code{scenarios\_ACTIVSg200}	& one year of hourly zonal load scenarios for \code{case\_ACTIVSg200}\tnote{*}	\\
+\code{scenarios\_ACTIVSg2000}	& one year of hourly area load scenarios for \code{case\_ACTIVSg2000}\tnote{*}	\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -7021,6 +7027,20 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.1.pdf}{\m
         \item \code{case\_ACTIVSg2000} -- 2000-bus Texas synthetic model
         \item \code{case\_ACTIVSg10k} -- 10,000-bus US WECC synthetic model
     \end{itemize}
+
+These cases also include contingency tables and two of them include hourly load scenarios for 1 year.
+    \begin{itemize}
+        \setlength{\itemsep}{6pt}
+        \setlength{\parskip}{-9pt}
+%        \setlength{\parsep}{-3pt}
+        \item \code{contab\_ACTIVSg200}
+        \item \code{contab\_ACTIVSg500}
+        \item \code{contab\_ACTIVSg2000}
+        \item \code{contab\_ACTIVSg10k}
+        \item \code{scenarios\_ACTIVSg200}
+        \item \code{scenarios\_ACTIVSg2000}
+    \end{itemize}
+
 \item Six new radial distribution system cases. \emph{Thanks to Mirko Todorovski.}
     \begin{itemize}
         \setlength{\itemsep}{6pt}
