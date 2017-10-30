@@ -3,7 +3,7 @@ function mpc = case_ACTIVSg200
 %
 %   This is an entirely synthetic 200 bus case, geographically situated
 %   in the central part of the US state of Illinois. The case is
-%   designed with a 230, 115 and 13.8 kV transmission network to serve
+%   designed with a 230 and 115 kV transmission network to serve
 %   a load that roughly mimics the actual population of its geographic
 %   footprint. The synthetic transmission system was designed by
 %   algorithms described in [1] to be statistically similar to actual

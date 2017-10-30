@@ -3,7 +3,7 @@ function mpc = case_ACTIVSg500
 %
 %   This is an entirely synthetic 500 bus case, geographically situated
 %   in the northwestern part of the US state of South Carolina. The case is
-%   designed with a 345, 138 and 13.8 kV transmission network to serve
+%   designed with a 345 and 138 kV transmission network to serve
 %   a load that roughly mimics the actual population of its geographic
 %   footprint. The synthetic transmission system was designed by
 %   algorithms described in [1] to be statistically similar to actual
