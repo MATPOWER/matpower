@@ -12,6 +12,16 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 10/31/17
+  - Update `case9` with complete reference to source data and updated
+    generator voltages, initial reactive injections and slack active
+    injection to more closely match original source.
+
+#### 10/27/17
+  - Add contingencies and scenarios for ACTIVSg cases, contingencies for
+    all four, and one year of hourly zonal or area load scenarios for 200
+    and 2000 bus cases.
+
 #### 10/11/17
   - Add `t_opf_default` to test AC OPF with `opf.ac.solver` set to `DEFAULT`.
   - Fix bug in setup of OPF (introduced since v6.0), triggered by running
