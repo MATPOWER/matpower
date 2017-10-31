@@ -31,7 +31,7 @@ function [x, f, eflag, output, lambda] = miqps_matpower(H, c, A, l, u, xmin, xma
 %           all of which are also optional (default values shown in
 %           parentheses)
 %           alg ('DEFAULT') : determines which solver to use, can be either
-%                   a (new-style) string or an (old-style) numerical alg code
+%                   a string (new-style) or a numerical alg code (old-style)
 %               'DEFAULT' : (or 0) automatic, first available of CPLEX,
 %                       Gurobi, MOSEK, Opt Tbx (MILPs only), GLPK (MILPs only)
 %               'CPLEX'   : (or 500) CPLEX
