@@ -2,7 +2,17 @@ function mpc = case9
 %CASE9    Power flow data for 9 bus, 3 generator case.
 %   Please see CASEFORMAT for details on the case file format.
 %
-%   Based on data from Joe H. Chow's book, p. 70.
+%   Based on data from p. 70 of:
+%
+%   Chow, J. H., editor. Time-Scale Modeling of Dynamic Networks with
+%   Applications to Power Systems. Springer-Verlag, 1982.
+%   Part of the Lecture Notes in Control and Information Sciences book
+%   series (LNCIS, volume 46)
+%
+%   which in turn appears to come from:
+%
+%   R.P. Schulz, A.E. Turner and D.N. Ewart, "Long Term Power System
+%   Dynamics," EPRI Report 90-7-0, Palo Alto, California, 1974.
 
 %   MATPOWER
 
