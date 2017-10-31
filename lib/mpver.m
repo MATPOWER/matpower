@@ -73,6 +73,9 @@ else
         end
     end
     fprintf('\n');
+    if have_fcn('e4st')
+        e4st_ver;
+    end
     mipsver;
     if have_fcn('most')
         mostver;

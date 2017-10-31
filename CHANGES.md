@@ -19,6 +19,7 @@ Since last release
   - Make AC OPF solver always default to MIPS, even if TSPOPF is installed.
     i.e. `opf.ac.solver = 'DEFAULT'` is now identical to
     `opf.ac.solver = 'MIPS'`.
+  - Add [E4ST](http://e4st.com/) to `have_fcn()` and `mpver` output.
 
 #### 10/27/17
   - Add contingencies and scenarios for ACTIVSg cases, contingencies for

@@ -36,6 +36,7 @@ function rv = have_fcn(tag, rtype)
 %        opti_clp   -   version of CLP distributed with OPTI Toolbox
 %                       (http://www.i2c2.aut.ac.nz/Wiki/OPTI/)
 %       cplex       - CPLEX, IBM ILOG CPLEX Optimizer
+%       e4st        - E4ST (http://e4st.com/)
 %       fmincon     - FMINCON, solver from Optimization Toolbox 2.x +
 %       fmincon_ipm - FMINCON with Interior Point solver, from Opt Tbx 4.x +
 %       glpk        - GLPK, GNU Linear Programming Kit
@@ -179,6 +180,13 @@ else        %% detect availability
                     catch
                         TorF = 0;
                     end
+                end
+            case 'e4st'
+                TorF = exist('e4st_ver', 'file') == 2;
+                if TorF
+                    v = e4st_ver('all');
+                    vstr = v.Version;
+                    rdate = v.Date;
                 end
             case {'fmincon', 'fmincon_ipm', 'intlinprog', 'linprog', ...
                         'linprog_ds', 'optimoptions', 'quadprog', 'quadprog_ls'}
