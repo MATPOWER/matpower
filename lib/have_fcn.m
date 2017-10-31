@@ -358,7 +358,7 @@ else        %% detect availability
             case 'most'
                 TorF = exist('most', 'file') == 2;
                 if TorF
-                    v = mpver('all');
+                    v = mostver('all');
                     vstr = v.Version;
                     rdate = v.Date;
                 end
