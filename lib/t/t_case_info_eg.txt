@@ -49,7 +49,7 @@ Load
 
 Generation          
   active (MW)       
-    dispatched           5087.0      4377.4       189.2       272.4       248.0 
+    dispatched           5159.3      4377.4       189.2       272.4       320.3 
     max capacity        11893.6      9966.2       335.0       772.4       820.0 
       on                11893.6      9966.2       335.0       772.4       820.0 
       off                   -           -           -           -           -   
@@ -57,7 +57,7 @@ Generation
       on                   30.0         -           -           -          30.0 
       off                   -           -           -           -           -   
   reactive (MVAr)   
-    dispatched             78.5         -           -          78.5         -   
+    dispatched            101.1         -           -          78.5        22.6 
     max capacity        13230.9     11777.0       405.9       148.0       900.0 
       on                13230.9     11777.0       405.9       148.0       900.0 
       off                   -           -           -           -           -   

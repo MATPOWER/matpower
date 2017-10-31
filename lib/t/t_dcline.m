@@ -279,7 +279,7 @@ mpc = loadcase(casefile2);
 %%-----  DC Line Data  -----
 %	fbus	tbus	status	Pf	Pt	Qf	Qt	Vf	Vt	Pmin	Pmax	QminF	QmaxF	QminT	QmaxT	loss0	loss1
 mpc.dcline = [
-	8	2	1	-163	163	0	0	1	1	-200	200	0	0	0	0	0	0;
+	8	2	1	-163	163	0	0	1.025	1.025	-200	200	0	0	0	0	0	0;
 ];
 mpc.branch(7, BR_STATUS) = 0;
 mpc.bus(2, BUS_TYPE) = REF;
@@ -293,18 +293,18 @@ t_is(r.dcline(:, c.MU_PMIN:c.MU_QMAXT), [0 0 0.1311 0 0 0], 4, [t 'mu']);
 t = 'AC PF (isolated gen bus w/DC connection) : ';
 [r, success] = runpf(mpc, mpopt);
 t_ok(success, [t 'success']);
-t_is(r.dcline(:, c.PF:c.VT), [-163 -163 0.2146 0 1 1], 4, [t 'P Q V']);
+t_is(r.dcline(:, c.PF:c.VT), [-163 -163 -9.6926 0 1.025 1.025], 4, [t 'P Q V']);
 
 t = 'DC OPF (isolated gen bus w/DC connection) : ';
 [r, success] = rundcopf(mpc, mpopt);
 t_ok(success, [t 'success']);
-t_is(r.dcline(:, c.PF:c.VT), [-134.3776 -134.3776 0 0 1 1], 4, [t 'P Q V']);
+t_is(r.dcline(:, c.PF:c.VT), [-134.3776 -134.3776 0 0 1.025 1.025], 4, [t 'P Q V']);
 t_is(r.dcline(:, c.MU_PMIN:c.MU_QMAXT), [0 0 0 0 0 0], 3, [t 'mu']);
 
 t = 'DC PF (isolated gen bus w/DC connection) : ';
 [r, success] = rundcpf(mpc, mpopt);
 t_ok(success, [t 'success']);
-t_is(r.dcline(:, c.PF:c.VT), [-163 -163 0 0 1 1], 4, [t 'P Q V']);
+t_is(r.dcline(:, c.PF:c.VT), [-163 -163 0 0 1.025 1.025], 4, [t 'P Q V']);
 
 
 if have_fcn('octave')
