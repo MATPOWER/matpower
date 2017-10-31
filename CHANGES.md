@@ -16,6 +16,9 @@ Since last release
   - Update `case9` with complete reference to source data and updated
     generator voltages, initial reactive injections and slack active
     injection to more closely match original source.
+  - Make AC OPF solver always default to MIPS, even if TSPOPF is installed.
+    i.e. `opf.ac.solver = 'DEFAULT'` is now identical to
+    `opf.ac.solver = 'MIPS'`.
 
 #### 10/27/17
   - Add contingencies and scenarios for ACTIVSg cases, contingencies for

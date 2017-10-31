@@ -180,13 +180,9 @@ t0 = clock;         %% start timer
 %% process input arguments
 [mpc, mpopt] = opf_args(varargin{:});
 
-%% if opf.ac.solver not set, choose best available option
+%% if opf.ac.solver not set, choose MIPS
 if strcmp(upper(mpopt.opf.ac.solver), 'DEFAULT')
-    if have_fcn('pdipmopf')
-        mpopt = mpoption(mpopt, 'opf.ac.solver', 'PDIPM');  %% PDIPM
-    else
-        mpopt = mpoption(mpopt, 'opf.ac.solver', 'MIPS');   %% MIPS
-    end
+    mpopt = mpoption(mpopt, 'opf.ac.solver', 'MIPS');   %% MIPS
 end
 
 %% add zero columns to bus, gen, branch for multipliers, etc if needed

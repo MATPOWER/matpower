@@ -151,8 +151,7 @@ function opt = mpoption(varargin)
 %   name                    default     description [options]
 %----------------------    ---------   ----------------------------------
 %   opf.ac.solver           'DEFAULT'   AC optimal power flow solver
-%       [ 'DEFAULT' - choose solver based on availability in the following  ]
-%       [             order: 'PDIPM', 'MIPS'                                ]
+%       [ 'DEFAULT' - choose default solver, i.e. 'MIPS'                    ]
 %       [ 'MIPS'    - MIPS, MATPOWER Interior Point Solver, primal/dual     ]
 %       [             interior point method (pure Matlab)                   ]
 %       [ 'FMINCON' - MATLAB Optimization Toolbox, FMINCON                  ]
