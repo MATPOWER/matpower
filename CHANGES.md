@@ -12,6 +12,9 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 11/3/17
+  - Add `case_RTS_GMLC` from [here](https://github.com/GridMod/RTS-GMLC).
+
 #### 10/31/17
   - Update `case9` with complete reference to source data and updated
     generator voltages, initial reactive injections and slack active

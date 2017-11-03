@@ -6159,15 +6159,16 @@ name & description \\
 \code{case30Q}	& \code{case30} with reactive power costs	\\
 \code{case39}	& 39-bus New England case	\\
 \code{case57}	& IEEE 57-bus case	\\
+\code{case\_RTS\_GMLC}	& 96-machine, 73-bus Reliability Test System\tnote{*} \\
 \code{case118}	& IEEE 118-bus case	\\
 \code{case145}	& IEEE 145-bus case, 50 generator dynamic test case	\\
 \code{case300}	& IEEE 300-bus case	\\
 \bottomrule
 \end{tabular}
-% \begin{tablenotes}
-%  \scriptsize
-%  \item [*] {.}
-% \end{tablenotes}
+\begin{tablenotes}
+ \scriptsize
+ \item [*] {Reliability Test System Grid Modernization Lab Consortium data from\\ \url{https://github.com/GridMod/RTS-GMLC}.}
+\end{tablenotes}
 \end{threeparttable}
 \end{table}
 
@@ -7041,6 +7042,13 @@ These cases also include contingency tables and two of them include hourly load 
         \item \code{scenarios\_ACTIVSg2000}
     \end{itemize}
 
+\item New RTS-GMLC case from \url{https://github.com/GridMod/RTS-GMLC}.
+    \begin{itemize}
+        \setlength{\itemsep}{6pt}
+        \setlength{\parskip}{-9pt}
+%        \setlength{\parsep}{-3pt}
+        \item \code{case4\_RTS\_GMLC}
+    \end{itemize}
 \item Six new radial distribution system cases. \emph{Thanks to Mirko Todorovski.}
     \begin{itemize}
         \setlength{\itemsep}{6pt}
