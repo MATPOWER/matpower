@@ -16,7 +16,8 @@ Since last release
   - Remove deprecated non-fatal error mechanism in `loadcase()`.
   - Update `feval_w_path()` to allow empty string for path, equivalent to
     calling `feval()` directly.
-  - Modify `loadcase()` to use `feval_w_path()`
+  - Modify `loadcase()` to use `feval_w_path()`.
+  - Make `install_matpower()` check for minimum required MATLAB/Octave version.
 
 #### 11/3/17
   - Add `case_RTS_GMLC` from [here](https://github.com/GridMod/RTS-GMLC).

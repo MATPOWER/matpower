@@ -7,7 +7,7 @@ function succ = install_matpower(modify, save_it, verbose)
 %   SUCCESS = INSTALL_MATPOWER(...)
 %
 %   Assists the user in setting up the proper Matlab/Octave path to
-%   be able to use MATPOWER and run its tests. With input no arguments
+%   be able to use MATPOWER and run its tests. With no input arguments
 %   it prompts interactively to determine how to handle the paths.
 %
 %   Inputs (all are optional):
@@ -53,6 +53,8 @@ function succ = install_matpower(modify, save_it, verbose)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% installation data for each component
+min_ver.Octave = '4.0.0';
+min_ver.MATLAB = '7.0.0';
 install = struct( ...
     'name', { ...
         'matpower', ...
@@ -115,6 +117,28 @@ if exist('OCTAVE_VERSION', 'builtin') == 5
 else
     sw = 'MATLAB';
 end
+
+%% check for required version of Matlab or Octave
+vstr = '';
+switch sw
+    case 'Octave'
+        v = ver('octave');
+    case 'MATLAB'
+        v = ver('matlab');
+        if length(v) > 1
+            warning('The built-in VER command is behaving strangely, probably as a result of installing a 3rd party toolbox in a directory named ''matlab'' on your path. Check each element of the output of ver(''matlab'') to find the offending toolbox, then move the toolbox to a more appropriately named directory.');
+            v = v(1);
+        end
+end
+if ~isempty(v) && isfield(v, 'Version') && ~isempty(v.Version)
+    vstr = v.Version;
+    if vstr2num(vstr) < vstr2num(min_ver.(sw))
+        error('\n\n%s\n  MATPOWER requires %s %s or later.\n      You are using %s %s.\n%s\n\n', repmat('!',1,45), sw, min_ver.(sw), sw, vstr, repmat('!',1,45));
+    end
+else
+    warning('\n\n%s\n  Unable to determine your %s version. This indicates\n  a likely problem with your %s installation.\n%s\n', repmat('!',1,60), sw, sw, repmat('!',1,60));
+end
+
 
 %% get installation options interactively, if necessary
 div_line = sprintf('\n-------------------------------------------------------------------\n\n');
@@ -356,4 +380,16 @@ end
 
 if nargout
     succ = success;
+end
+
+function num = vstr2num(vstr)
+% Converts version string to numerical value suitable for < or > comparisons
+% E.g. '3.11.4' -->  3.011004
+pat = '\.?(\d+)';
+[s,e,tE,m,t] = regexp(vstr, pat);
+b = 1;
+num = 0;
+for k = 1:length(t)
+    num = num + b * str2num(t{k}{1});
+    b = b / 1000;
 end
