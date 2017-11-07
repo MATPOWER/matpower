@@ -76,12 +76,8 @@ if ischar(casefile)
                 info = 3;
             end
         elseif strcmp(ext,'.m')     %% from M file
-            if ~isempty(pathstr)
-                cwd = pwd;          %% save working directory to string
-                cd(pathstr);        %% cd to specified directory
-            end
             try                             %% assume it returns a struct
-                s = feval(fname);
+                s = feval_w_path(pathstr, fname);
             catch
                 info = 4;
             end
@@ -90,26 +86,28 @@ if ischar(casefile)
                 s.version = '1';
                 if expect_gencost
                     try
-                        [s.baseMVA, s.bus, s.gen, s.branch, ...
-                            s.areas, s.gencost] = feval(fname);
+                        [s.baseMVA, s.bus, s.gen, s.branch, s.areas, ...
+                            s.gencost] = feval_w_path(pathstr, fname);
                     catch
                         info = 4;
                     end
                 else
                     if return_as_struct
                         try
-                            [s.baseMVA, s.bus, s.gen, s.branch, ...
-                                s.areas, s.gencost] = feval(fname);
+                            [s.baseMVA, s.bus, s.gen, s.branch, s.areas, ...
+                                s.gencost] = feval_w_path(pathstr, fname);
                         catch
                             try
-                                [s.baseMVA, s.bus, s.gen, s.branch] = feval(fname);
+                                [s.baseMVA, s.bus, s.gen, s.branch] = ...
+                                    feval_w_path(pathstr, fname);
                             catch
                                 info = 4;
                             end
                         end
                     else
                         try
-                            [s.baseMVA, s.bus, s.gen, s.branch] = feval(fname);
+                            [s.baseMVA, s.bus, s.gen, s.branch] = ...
+                                feval_w_path(pathstr, fname);
                         catch
                             info = 4;
                         end
@@ -119,9 +117,6 @@ if ischar(casefile)
             if info == 4 && exist(fullfile(pathstr, [fname '.m']), 'file') == 2
                 info = 5;
                 err5 = lasterr;
-            end
-            if ~isempty(pathstr)    %% change working directory back to original
-                cd(cwd);
             end
         end
     end
