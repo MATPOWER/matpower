@@ -14,6 +14,8 @@ Since last release
 
 #### 11/7/17
   - Remove deprecated non-fatal error mechanism in `loadcase()`.
+  - Update `feval_w_path()` to allow empty string for path, equivalent to
+    calling `feval()` directly.
 
 #### 11/3/17
   - Add `case_RTS_GMLC` from [here](https://github.com/GridMod/RTS-GMLC).

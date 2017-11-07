@@ -43,17 +43,21 @@ if ~ischar(fname)
     error('feval_w_path: FNAME must be a string');
 end
 
-%% see if path exists
-if exist(fpath, 'dir') ~= 7
-    error('feval_w_path: Sorry, ''%s'' is not a valid directory path.', fpath);
-end
-
-cwd = pwd;      %% save the current working dir
-cd(fpath);      %% switch to the dir with the mfile
-try
+if isempty(fpath)   %% just call feval directly, no cd necessary
     [varargout{1:nargout}] = feval(fname, varargin{:});
-    cd(cwd);    %% switch back to saved dir
-catch
-    cd(cwd);    %% switch back to saved dir
-    rethrow(lasterror);
+else
+    %% see if path exists
+    if exist(fpath, 'dir') ~= 7
+        error('feval_w_path: Sorry, ''%s'' is not a valid directory path.', fpath);
+    end
+
+    cwd = pwd;      %% save the current working dir
+    cd(fpath);      %% switch to the dir with the mfile
+    try
+        [varargout{1:nargout}] = feval(fname, varargin{:});
+        cd(cwd);    %% switch back to saved dir
+    catch
+        cd(cwd);    %% switch back to saved dir
+        rethrow(lasterror);
+    end
 end

@@ -13,17 +13,24 @@ if nargin < 1
     quiet = 0;
 end
 
-n_tests = 20;
+n_tests = 23;
 
 t_begin(n_tests, quiet);
 
 t = '$MATPOWER/t/t_feval_w_path must not be in path';
 t_ok(exist('rithmaticker') ~= 2, t);
 
-% find path to this test file
+%% find path to this test file
 cwd = pwd;
 [p, n, e] = fileparts(which('t_feval_w_path'));
 
+%% test with empty path (do NOT cd anywhere)
+t = 'ab = feval_w_path(<empty path>, fname, a, b)';
+rv = feval_w_path('', 't_ok', 1, 'true');
+t_ok(strcmp(cwd, pwd), [t ' : cwd unchanged']);
+t_is(rv, 1, 15, t);
+
+%% test with absolute path
 t = 'ab = feval_w_path(<absolute path>, fname, a, b)';
 rv = feval_w_path(fullfile(p, 't_feval_w_path'), 'rithmaticker', 3, 4);
 t_ok(strcmp(cwd, pwd), [t ' : cwd unchanged']);
@@ -49,6 +56,7 @@ t_is(rv2, 7, 15, t);
 cd(p);
 cwd2 = pwd;
 
+%% test with relative path
 t = 'ab = feval_w_path(<relative path>, fname, a, b)';
 rv = feval_w_path('t_feval_w_path', 'rithmaticker', 3, 4);
 t_ok(strcmp(cwd2, pwd), [t ' : cwd unchanged']);
@@ -69,7 +77,6 @@ t = '[ab, a_b] = feval_w_path(<relative path>, fname, a, b)';
 t_ok(strcmp(cwd2, pwd), [t ' : cwd unchanged']);
 t_is(rv, 12, 15, t);
 t_is(rv2, 7, 15, t);
-
 
 cd(cwd);
 t = 'successful switch to original working directory';
