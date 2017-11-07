@@ -16,22 +16,6 @@ function [baseMVA, bus, gen, branch, areas, gencost, info] = loadcase(casefile)
 %   M-file.  If the file does not exist or doesn't define all required
 %   matrices, the routine aborts with an appropriate error message.
 %
-%   Alternatively, it can be called with the following syntax, though this
-%   option is now deprecated and will be removed in a future version:
-%
-%   [BASEMVA, BUS, GEN, BRANCH, AREAS, GENCOST, INFO] = LOADCASE(CASEFILE)
-%   [MPC, INFO] = LOADCASE(CASEFILE)
-%
-%   In this case, the function will not abort, but INFO will contain an exit
-%   code as follows:
-%
-%       0:  all variables successfully defined
-%       1:  input argument is not a string or struct
-%       2:  specified extension-less file name does not exist in search path
-%       3:  specified MAT-file does not exist in search path
-%       4:  specified M-file does not exist in search path
-%       5:  specified file fails to define all matrices or contains syntax err
-%
 %   If the input data is from an M-file or MAT-file defining individual
 %   data matrices, or from a struct with out a 'version' field whose
 %   GEN matrix has fewer than 21 columns, then it is assumed to be a
@@ -39,7 +23,7 @@ function [baseMVA, bus, gen, branch, areas, gencost, info] = loadcase(casefile)
 %   version 2 format.
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2017, Power Systems Engineering Research Center (PSERC)
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %   and Ray Zimmerman, PSERC Cornell
 %
@@ -204,28 +188,19 @@ if info == 0    %% no errors
         end
     end
 else            %% we have a problem captain
-    if nargout == 2 || nargout == 7   %% return error code
-        if return_as_struct
-            baseMVA = struct([]);
-        else
-            baseMVA = []; bus = []; gen = []; branch = [];
-            areas = []; gencost = [];
-        end
-    else                                            %% die on error
-        switch info
-            case 1,
-                error('loadcase: input arg should be a struct or a string containing a filename');
-            case 2,
-                error('loadcase: specified case not in MATLAB''s search path');
-            case 3,
-                error('loadcase: specified MAT file does not exist');
-            case 4,
-                error('loadcase: specified M file does not exist');
-            case 5,
-                error('loadcase: syntax error or undefined data matrix(ices) in the file\n%s', err5);
-            otherwise,
-                error('loadcase: unknown error');
-        end
+    switch info
+        case 1,
+            error('loadcase: input arg should be a struct or a string containing a filename');
+        case 2,
+            error('loadcase: specified case not in MATLAB''s search path');
+        case 3,
+            error('loadcase: specified MAT file does not exist');
+        case 4,
+            error('loadcase: specified M file does not exist');
+        case 5,
+            error('loadcase: syntax error or undefined data matrix(ices) in the file\n%s', err5);
+        otherwise,
+            error('loadcase: unknown error');
     end
 end
 

@@ -12,6 +12,9 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 11/7/17
+  - Remove deprecated non-fatal error mechanism in `loadcase()`.
+
 #### 11/3/17
   - Add `case_RTS_GMLC` from [here](https://github.com/GridMod/RTS-GMLC).
 
@@ -30,7 +33,7 @@ Since last release
     and 2000 bus cases.
 
 #### 10/11/17
-  - Add `t_opf_default` to test AC OPF with `opf.ac.solver` set to `DEFAULT`.
+  - Add `t_opf_default()` to test AC OPF with `opf.ac.solver` set to `DEFAULT`.
   - Fix bug in setup of OPF (introduced since v6.0), triggered by running
     an AC OPF with `opf.ac.solver` set to `DEFAULT` with TSPOPF installed.
     *Thanks to Carlos Murillo-Sanchez.*
@@ -39,8 +42,8 @@ Since last release
     as `PDIPM`. Set `opf.ac.solver` to `PDIPM` for some of the DC OPF tests.
 
 #### 10/10/17
-  - Add `savechgtab` function to save change tables, such as those used
-    by `apply_changes`, to a file.
+  - Add `savechgtab()` function to save change tables, such as those used
+    by `apply_changes()`, to a file.
   - Fix issues with PSS/E import on newer Octave versions (e.g. 4.3).
     Fixes to Matlab incompatibilities in `regexp` behavior eliminated the
     need for Octave-specific workarounds.
