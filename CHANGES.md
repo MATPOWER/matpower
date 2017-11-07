@@ -18,6 +18,9 @@ Since last release
     calling `feval()` directly.
   - Modify `loadcase()` to use `feval_w_path()`.
   - Make `install_matpower()` check for minimum required MATLAB/Octave version.
+  - __IMPORTANT NOTE__: For MATLAB users, the minimum requirement for
+    MATPOWER is now MATLAB 7.3.0 (R2006b). _(No access to older versions
+    for testing)_.
 
 #### 11/3/17
   - Add `case_RTS_GMLC` from [here](https://github.com/GridMod/RTS-GMLC).
@@ -145,8 +148,8 @@ Since last release
   - Move `@opt_model`, `@opf_model` to use `classdef`. Modify code to use
     OOP notation everywhere for `@opt_model`/`@opf_model` objects,
     e.g. `om.property`, `om.method()`.
-    __IMPORTANT NOTE__: For Octave users, the minimum requirements for
-    MATPOWER are now Octave 4 or later.
+    __IMPORTANT NOTE__: For Octave users, the minimum requirement for
+    MATPOWER is now Octave 4 or later.
 
 #### 5/25/17
   - Add option to call `@opt_model/compute_cost` without `idx` argument
