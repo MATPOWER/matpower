@@ -227,23 +227,47 @@
 
 \externaldocument[MOSTMAN-]{MOST-manual}[\mostmanurl]
 
-
 %\title{\hl{--- DRAFT  ---}\\\hl{\em do not distribute}\\~\\\matpower{} \mpver{}\\User's Manual}
-\title{\matpower{} \mpver{}\\User's Manual}
+\title{User's Manual}
 \author{Ray~D.~Zimmerman \and Carlos~E.~Murillo-S\'anchez}
 %\date{December 16, 2016} % comment this line to display the current date
 %\date{December 14, 2011\thanks{Second revision. First revision was December 13, 2011}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
 \begin{document}
-\maketitle
-\thispagestyle{empty}
+
+\makeatletter
+    \begin{titlepage}
+        \begin{center}
+            \includegraphics[width=0.75\textwidth]{./figures/MATPOWER-logo}%
+            \vskip 0.5ex%
+            {\huge \bfseries  \@title \par}%\\[2ex]
+            \vskip 2em%
+            {\LARGE Version \mpver{} \par}%\\[2ex]
+            \vskip 3em%
+            {\large
+                \lineskip .75em%
+                \begin{tabular}[t]{c}%
+                \@author
+            \end{tabular}\par}%\\[50ex]
+            \vskip 1.5em%
+            {\large \@date \par}%
 \vfill
-\begin{center}
 {\scriptsize
-\copyright~2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017~\PSERC{}\\
+\copyright~2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017~PSERC\\
 All Rights Reserved}
-\end{center}
+        \end{center}
+    \end{titlepage}
+\makeatother
+\thispagestyle{empty}
+\newpage
+
+%Add content for page two here (useful for two-sided printing)
+\thispagestyle{empty}
+\newpage
+
+% \maketitle
+\setcounter{page}{1} %Start the actually document on page 1
 
 \clearpage
 %\setcounter{page}{2}
@@ -254,6 +278,9 @@ All Rights Reserved}
 
 %%------------------------------------------
 \clearpage
+\begin{center}
+\noindent\includegraphics[width=0.5\textwidth]{./figures/MATPOWER-logo}
+\end{center}
 \section{Introduction}
 
 \subsection{Background}

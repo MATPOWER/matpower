@@ -13,6 +13,9 @@ Since last release
 ------------------
 
 #### 11/7/17
+  - Add MATPOWER logo to User's Manual.
+
+#### 11/7/17
   - Remove deprecated non-fatal error mechanism in `loadcase()`.
   - Update `feval_w_path()` to allow empty string for path, equivalent to
     calling `feval()` directly.
