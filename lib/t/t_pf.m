@@ -112,7 +112,7 @@ mpc.gen(1, [QMIN QMAX]) = [10 10];
 mpc.gen(2, [QMIN QMAX]) = [-50 -50];
 [baseMVA, bus, gen, branch, success, et] = runpf(mpc, mpopt);
 t_ok(success, [t 'success']);
-t_is(gen(1:2, QG), [12.03; 12.03], 2, [t '2 gens, Qmin = Qmax for both']);
+t_is(gen(1:2, QG), [42.03; -17.97], 2, [t '2 gens, Qmin = Qmax for both']);
 
 mpc.gen(1, [QMIN QMAX]) = [0 50];
 mpc.gen(2, [QMIN QMAX]) = [0 100];

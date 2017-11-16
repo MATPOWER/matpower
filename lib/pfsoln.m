@@ -71,12 +71,18 @@ if length(on) > 1
     Qg_tot = Cg' * gen(on, QG);     %% nb x 1 vector of total Qg at each bus
     Qg_min = sum(Cmin)';            %% nb x 1 vector of min total Qg at each bus
     Qg_max = sum(Cmax)';            %% nb x 1 vector of max total Qg at each bus
-    ig = find(Cg * Qg_min == Cg * Qg_max);  %% gens at buses with Qg range = 0
-    Qg_save = gen(on(ig), QG);
     gen(on, QG) = gen(on, QMIN) + ...
         (Cg * ((Qg_tot - Qg_min)./(Qg_max - Qg_min + eps))) .* ...
             (gen(on, QMAX) - gen(on, QMIN));    %%    ^ avoid div by 0
-    gen(on(ig), QG) = Qg_save;
+
+    %% fix gens at buses with Qg range = 0 (use equal violation for all)
+    ig = find(abs(Cg * (Qg_min - Qg_max)) < 10*eps);  %% gens at buses with Qg range = 0
+    if ~isempty(ig)
+        ib = find(sum(Cg(ig,:), 1)');   %% buses with Qg range = 0
+        %% total mismatch @ bus div by number of gens
+        mis = sparse(ib, 1, (Qg_tot(ib) - Qg_min(ib)) ./ sum(Cg(:, ib)'), nb, 1);
+        gen(on(ig), QG) = gen(on(ig), QMIN) + Cg(ig, :) * mis;
+    end
 end                                             %% (terms are mult by 0 anyway)
 
 %% update Pg for slack gen(s)
