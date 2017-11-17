@@ -12,10 +12,11 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
-#### 11/16/17
+#### 11/17/17
   - Improve handling of allocation of reactive power among multiple
     generators at a bus in power flow solution. Use equal violation at
-    buses where total Qmin == total Qmax.
+    buses where total Qmin == total Qmax. Eliminate NaNs in case of
+    infinite Q ranges.
 
 #### 11/14/17
   - Add MATPOWER logo to User's Manual.

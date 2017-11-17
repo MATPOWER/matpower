@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-t_begin(54, quiet);
+t_begin(62, quiet);
 
 casefile = 't_case9_pf';
 if quiet
@@ -125,6 +125,30 @@ mpc.gen(2, [QMIN QMAX]) = [50 150];
 [baseMVA, bus, gen, branch, success, et] = runpf(mpc, mpopt);
 t_ok(success, [t 'success']);
 t_is(gen(1:2, QG), [-50+8.02; 50+16.05], 2, [t '2 gens, proportional']);
+
+mpc.gen(1, [QMIN QMAX]) = [-50 Inf];
+mpc.gen(2, [QMIN QMAX]) = [50 150];
+[baseMVA, bus, gen, branch, success, et] = runpf(mpc, mpopt);
+t_ok(success, [t 'success']);
+t_is(gen(1:2, QG), [-31.61; 55.68], 2, [t '2 gens, one infinite range']);
+
+mpc.gen(1, [QMIN QMAX]) = [-50 Inf];
+mpc.gen(2, [QMIN QMAX]) = [50 Inf];
+[baseMVA, bus, gen, branch, success, et] = runpf(mpc, mpopt);
+t_ok(success, [t 'success']);
+t_is(gen(1:2, QG), [-33.12; 57.18], 2, [t '2 gens, both infinite range']);
+
+mpc.gen(1, [QMIN QMAX]) = [-50 Inf];
+mpc.gen(2, [QMIN QMAX]) = [-Inf 150];
+[baseMVA, bus, gen, branch, success, et] = runpf(mpc, mpopt);
+t_ok(success, [t 'success']);
+t_is(gen(1:2, QG), [76.07; -52], 2, [t '2 gens, both infinite range']);
+
+mpc.gen(1, [QMIN QMAX]) = [-Inf Inf];
+mpc.gen(2, [QMIN QMAX]) = [-Inf Inf];
+[baseMVA, bus, gen, branch, success, et] = runpf(mpc, mpopt);
+t_ok(success, [t 'success']);
+t_is(gen(1:2, QG), [12.03; 12.03], 2, [t '2 gens, both infinite range']);
 
 t = 'reactive generation allocation : ';
 mpc = loadcase(casefile);

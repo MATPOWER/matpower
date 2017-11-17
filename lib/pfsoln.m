@@ -65,15 +65,27 @@ if length(on) > 1
     ngg = Cg * sum(Cg)';    %% ngon x 1, number of gens at this gen's bus
     gen(on, QG) = gen(on, QG) ./ ngg;
 
+    %% prep 
+    Qmin = gen(on, QMIN);
+    Qmax = gen(on, QMAX);
+    M = abs(gen(on, QG));
+    M(~isinf(Qmax)) = M(~isinf(Qmax)) + abs(Qmax(~isinf(Qmax)));
+    M(~isinf(Qmin)) = M(~isinf(Qmin)) + abs(Qmin(~isinf(Qmin)));
+    M = Cg * Cg' * M;
+    Qmin(Qmin ==  Inf) =  M(Qmin ==  Inf);
+    Qmin(Qmin == -Inf) = -M(Qmin == -Inf);
+    Qmax(Qmax ==  Inf) =  M(Qmax ==  Inf);
+    Qmax(Qmax == -Inf) = -M(Qmax == -Inf);
+
     %% divide proportionally
-    Cmin = sparse((1:ngon)', gbus, gen(on, QMIN), ngon, nb);
-    Cmax = sparse((1:ngon)', gbus, gen(on, QMAX), ngon, nb);
+    Cmin = sparse((1:ngon)', gbus, Qmin, ngon, nb);
+    Cmax = sparse((1:ngon)', gbus, Qmax, ngon, nb);
     Qg_tot = Cg' * gen(on, QG);     %% nb x 1 vector of total Qg at each bus
     Qg_min = sum(Cmin)';            %% nb x 1 vector of min total Qg at each bus
     Qg_max = sum(Cmax)';            %% nb x 1 vector of max total Qg at each bus
-    gen(on, QG) = gen(on, QMIN) + ...
+    gen(on, QG) = Qmin + ...
         (Cg * ((Qg_tot - Qg_min)./(Qg_max - Qg_min + eps))) .* ...
-            (gen(on, QMAX) - gen(on, QMIN));    %%    ^ avoid div by 0
+            (Qmax - Qmin);          %%                ^ avoid div by 0
 
     %% fix gens at buses with Qg range = 0 (use equal violation for all)
     ig = find(abs(Cg * (Qg_min - Qg_max)) < 10*eps);  %% gens at buses with Qg range = 0
@@ -81,7 +93,7 @@ if length(on) > 1
         ib = find(sum(Cg(ig,:), 1)');   %% buses with Qg range = 0
         %% total mismatch @ bus div by number of gens
         mis = sparse(ib, 1, (Qg_tot(ib) - Qg_min(ib)) ./ sum(Cg(:, ib)'), nb, 1);
-        gen(on(ig), QG) = gen(on(ig), QMIN) + Cg(ig, :) * mis;
+        gen(on(ig), QG) = Qmin(ig) + Cg(ig, :) * mis;
     end
 end                                             %% (terms are mult by 0 anyway)
 
