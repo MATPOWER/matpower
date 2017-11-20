@@ -92,7 +92,7 @@ if length(on) > 1
     if ~isempty(ig)
         ib = find(sum(Cg(ig,:), 1)');   %% buses with Qg range = 0
         %% total mismatch @ bus div by number of gens
-        mis = sparse(ib, 1, (Qg_tot(ib) - Qg_min(ib)) ./ sum(Cg(:, ib)'), nb, 1);
+        mis = sparse(ib, 1, (Qg_tot(ib) - Qg_min(ib)) ./ sum(Cg(:, ib)', 2), nb, 1);
         gen(on(ig), QG) = Qmin(ig) + Cg(ig, :) * mis;
     end
 end                                             %% (terms are mult by 0 anyway)
