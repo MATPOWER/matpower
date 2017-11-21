@@ -12,6 +12,11 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 11/21/17
+  - Add MATLAB toolbox (.mltbx) version of MATPOWER to MATLAB Central
+    File Exchange and update installation instructions to include option
+    to install via MATLAB's build-in Add-On Explorer.
+
 #### 11/17/17
   - Improve handling of allocation of reactive power among multiple
     generators at a bus in power flow solution. Use equal violation at
