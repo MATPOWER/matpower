@@ -6,7 +6,7 @@ function succ = install_matpower(modify, save_it, verbose)
 %   INSTALL_MATPOWER(MODIFY, SAVE_IT, VERBOSE)
 %   SUCCESS = INSTALL_MATPOWER(...)
 %
-%   Assists the user in setting up the proper Matlab/Octave path to
+%   Assists the user in setting up the proper MATLAB/Octave path to
 %   be able to use MATPOWER and run its tests. With no input arguments
 %   it prompts interactively to determine how to handle the paths.
 %
@@ -111,14 +111,14 @@ end
 %% get path to new MATPOWER installation root
 [root, n, e] = fileparts(which('install_matpower'));
 
-%% Matlab or Octave
+%% MATLAB or Octave
 if exist('OCTAVE_VERSION', 'builtin') == 5
     sw = 'Octave';
 else
     sw = 'MATLAB';
 end
 
-%% check for required version of Matlab or Octave
+%% check for required version of MATLAB or Octave
 vstr = '';
 switch sw
     case 'Octave'

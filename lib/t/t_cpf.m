@@ -17,7 +17,7 @@ num_tests = 366;
 t_begin(num_tests, quiet);
 
 if have_fcn('matlab', 'vnum') < 7.001
-    t_skip(num_tests, 'RUNCPF requires cellfun() construct not available before Matlab 7.1');
+    t_skip(num_tests, 'RUNCPF requires cellfun() construct not available before MATLAB 7.1');
 else
     plot_nose_curve = 0;
     verbose = 0;

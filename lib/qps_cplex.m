@@ -100,7 +100,7 @@ function [x, f, eflag, output, lambda] = qps_cplex(H, c, A, l, u, xmin, xmax, x0
 
 %% check for CPLEX
 % if ~have_fcn('cplexqp')
-%     error('qps_cplex: requires the Matlab interface for CPLEX');
+%     error('qps_cplex: requires the MATLAB interface for CPLEX');
 % end
 
 %%----- input argument handling  -----

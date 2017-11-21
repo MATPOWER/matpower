@@ -73,7 +73,7 @@ if isempty(lin_solver)
     nx = length(F);
     if nx <= 10 || (nx <= 2000 && have_fcn('octave'))
         lin_solver = '\';       %% default \ operator
-    else    %% Matlab and nx > 10 or Octave and nx > 2000
+    else    %% MATLAB and nx > 10 or Octave and nx > 2000
         lin_solver = 'LU3';     %% LU decomp with 3 output args, AMD ordering
     end
 end

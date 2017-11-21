@@ -112,7 +112,7 @@ function [x, f, eflag, output, lambda] = miqps_cplex(H, c, A, l, u, xmin, xmax, 
 
 %% check for CPLEX
 % if ~have_fcn('cplexqp')
-%     error('miqps_cplex: requires the Matlab interface for CPLEX');
+%     error('miqps_cplex: requires the MATLAB interface for CPLEX');
 % end
 
 %%----- input argument handling  -----

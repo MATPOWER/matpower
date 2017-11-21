@@ -53,7 +53,7 @@ end
 
 % Form A matrix.  Use two different loops, one for the Pg/Qg coeffs,
 % then another for the y coeffs so that everything is filled in the
-% same order as the compressed column sparse format used by Matlab;
+% same order as the compressed column sparse format used by MATLAB;
 % this should be the quickest.
 
 m = sum(gencost(iycost, NCOST));  % total number of cost points

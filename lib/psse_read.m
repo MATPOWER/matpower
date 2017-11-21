@@ -45,7 +45,7 @@ section_name    = @(s)regexp(s, '/\s*END OF (.*)\s', 'tokens');
 
 %% check for regexp split support
 if ~have_fcn('regexp_split')
-    error('psse_read: Sorry, but PSSE2MPC requires support for the ''split'' argument to regexp(), so it does not work on versions of Matlab prior to 7.3 or Octave prior to 3.8.');
+    error('psse_read: Sorry, but PSSE2MPC requires support for the ''split'' argument to regexp(), so it does not work on versions of MATLAB prior to 7.3 or Octave prior to 3.8.');
 end
 
 %% read in the file, split on newlines
@@ -89,7 +89,7 @@ names = cell(1, ns);
 names{1} = 'ID';
 for k = 2:ns
     tmp = regexp(records{eos(k-1)}, 'DATA', 'split');
-    if isempty(tmp)     %% workaround a bug in Matlab 7.3 (R2006b) (and possibly earlier)
+    if isempty(tmp)     %% workaround a bug in MATLAB 7.3 (R2006b) (and possibly earlier)
         names{k} = '';
     else
         tmp2 = section_name(tmp{1});

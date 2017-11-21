@@ -66,11 +66,11 @@ Since last release
   - Add `savechgtab()` function to save change tables, such as those used
     by `apply_changes()`, to a file.
   - Fix issues with PSS/E import on newer Octave versions (e.g. 4.3).
-    Fixes to Matlab incompatibilities in `regexp` behavior eliminated the
+    Fixes to MATLAB incompatibilities in `regexp` behavior eliminated the
     need for Octave-specific workarounds.
 
 #### 9/26/17
-  - Minor updates to support the latest versions of Matlab, MOSEK and YALMIP.
+  - Minor updates to support the latest versions of MATLAB, MOSEK and YALMIP.
 
 #### 9/15/17
   - Add another purely synthetic case from the ACTIVSg team (ASU, Cornell,
@@ -226,7 +226,7 @@ Since last release
   - In the Newton power flow, for larger systems use explicit LU
     decomposition with AMD reordering and the 3 output argument form of LU
     (to select the Gilbert-Peierls algorithm), resulting in up to a 2x
-    speedup in Matlab, 1.1x in Octave.
+    speedup in MATLAB, 1.1x in Octave.
     *Thanks to Jose Luis Marin.*
   - Add new `pf.nr.lin_solver` option to control the linear solver used
     to compute the Newton update step in the Newton-Raphson power flow.
@@ -262,7 +262,7 @@ Since last release
 
 #### 1/23/17
   - Add `install_matpower()` to assist with installation by
-    updating Matlab or Octave paths or providing the commands
+    updating MATLAB or Octave paths or providing the commands
     required to so.
 
 #### 1/16/17
@@ -480,16 +480,16 @@ Version 6.0b1 - *Jun 1, 2016*
 
 #### 1/26/16
   - Introduced work-around and warning for crashes caused by strange
-    behavior from Matlab's `ver()` function when MATPOWER (or any other
+    behavior from MATLAB's `ver()` function when MATPOWER (or any other
     3rd party toolbox with a `Contents.m`) is installed in a directory on
-    the Matlab path named `matlab` or `optim` (both case insensitive).
+    the MATLAB path named `matlab` or `optim` (both case insensitive).
 
 #### 1/15/16
   - Added `feval_w_path()` function for evaluating functions located at
-    a specified path, outside of the Matlab path.
+    a specified path, outside of the MATLAB path.
 
 #### 1/14/16
-  - Added tests for `loadcase()` for m-file cases outside the Matlab path.
+  - Added tests for `loadcase()` for m-file cases outside the MATLAB path.
 
 #### 1/6/16
   - Added `apply_changes()` and `idx_ct()` to implement general method for
@@ -523,7 +523,7 @@ Version 6.0b1 - *Jun 1, 2016*
   - Added code in `cplex_options()`, `insolvablepfsos()`,
     `insolvablepfsos_limitQ()` and `yalmip_options()` to turn off
     `MATLAB:lang:badlyScopedReturnValue` warning triggered by
-    CPLEX when using Matlab R2015b (8.6) and later.
+    CPLEX when using MATLAB R2015b (8.6) and later.
 
 #### 7/16/15
   - Added `mpopt2qpopt()` to provide common interface for creating
@@ -633,21 +633,21 @@ Version 5.1 - *Mar 20, 2015*
 
 #### 2/13/15
   - Added explicit colors to plots in `cpf_default_callback()` so things
-    look right in newer Matlab versions (R2014b and later).
+    look right in newer MATLAB versions (R2014b and later).
 
 #### 2/6/15
   - Modified `nested_struct_copy()` to eliminate `cellfun()` call that
-    was not supported in Matlab 7.0.x. Noted that `runcpf()` also
-    requires Matlab 7.1 or later due to a call to `cellfun()`.
+    was not supported in MATLAB 7.0.x. Noted that `runcpf()` also
+    requires MATLAB 7.1 or later due to a call to `cellfun()`.
     Included code to skip certain tests that require that `cellfun()`
-    functionality when running under Matlab 7.0.x.
+    functionality when running under MATLAB 7.0.x.
 
 #### 2/5/15
   - Replaced `regexp(... 'split')` construct in `mpoption()` with
     `regexp(... 'tokens')` since it was causing fatal errors on
-    Matlab versions < 7.3, which did not have that feature.
+    MATLAB versions < 7.3, which did not have that feature.
   - Fixed fatal error in when using fast-decoupled power flow
-    on Matlab versions < 7.3, caused by use of newer
+    on MATLAB versions < 7.3, caused by use of newer
     `lu(... 'vector')` construct.
 
 #### 2/3/15
@@ -708,7 +708,7 @@ Version 5.1 - *Mar 20, 2015*
 #### 1/13/15
   - Updated `t_opf_dc_ot()` to remove the skipping of the checking of
     price results for the dual-simplex algorithm for all versions of
-    Matlab except R2014b, the first version that included the
+    MATLAB except R2014b, the first version that included the
     dual-simplex algorthm. For some reason, in this version it did
     not return any Lagrange multipliers!?!.
   - Increment MATPOWER options version number to 5 (forgot to do it
@@ -744,9 +744,9 @@ Version 5.0 - *Dec 17, 2014*
     tests to `t_island()`.
 
 #### 12/12/14
-  - Added code in `psse_read()` to work around a bug in Matlab 7.3.
+  - Added code in `psse_read()` to work around a bug in MATLAB 7.3.
   - Added private `catchme` tag (for internal use only) to `have_fcn()`
-    to detect older versions of Matlab and Octave that do not support
+    to detect older versions of MATLAB and Octave that do not support
     the `catch me` syntax in try/catch constructs.
   - Added private `regexp_split` tag (for internal use only) to
     `have_fcn()` to detect older versions of Octave that do not support
@@ -912,7 +912,7 @@ Version 5.0b1 - *Jul 1, 2014*
 
 #### 6/13/14
   - Added ability for `loadcase()` to load MATPOWER case M-files
-    that are not in the Matlab path by specifying an explicit
+    that are not in the MATLAB path by specifying an explicit
     path in the input filename.
 
 #### 6/9/14
@@ -1067,7 +1067,7 @@ Version 5.0b1 - *Jul 1, 2014*
     for variables that are only bounded on one side.
 
 #### 10/11/13
-  - Removed support for Matlab 6.x. Removed `anon_fcns` option from
+  - Removed support for MATLAB 6.x. Removed `anon_fcns` option from
     `have_fcn()`. Files removed:
      - `fmincopf6_solver.m`
      - `mips6.m`
@@ -1175,7 +1175,7 @@ Version 5.0b1 - *Jul 1, 2014*
     set of dimension zero.
 
 #### 6/18/12
-  - Updated Gurobi interface for compatibility with native Matlab
+  - Updated Gurobi interface for compatibility with native MATLAB
     support introduced in Gurobi 5.
     **INCOMPATIBLE CHANGE:** No longer works with older Gurobi 4.x/
     `gurobi_mex()` interface.
@@ -1232,7 +1232,7 @@ Version 5.0b1 - *Jul 1, 2014*
 
 #### 12/14/11
   - Modified `t/t_opf_fmincon.m` to use active-set method for testing
-    `fmincopf` for Matlab versions 7.6-7.9, since fmincon's interior
+    `fmincopf` for MATLAB versions 7.6-7.9, since fmincon's interior
     point solver (now default) was not accurate enough in these
     versions.
 
@@ -1402,7 +1402,7 @@ Version 4.0b5 - *Dec 13, 2010*
   - Added support for the MOSEK optimizer for large-scale linear and
     quadratic programming. To use MOSEK for the DC OPF, set
     `OPF_ALG_DC = 600`. Specific LP algorithms can be selected by
-    the `MOSEK_LP_ALG` option. Requires the Matlab interface for MOSEK,
+    the `MOSEK_LP_ALG` option. Requires the MATLAB interface for MOSEK,
     available from http://www.mosek.com/.
   - Added function `qps_mosek()` for solving QP and LP problems using
     the common QP solver interface used in MATPOWER. The `qps_matpower()`
@@ -1415,7 +1415,7 @@ Version 4.0b5 - *Dec 13, 2010*
     large scale linear and quadratic programming. To use CPLEX
     for the DC OPF, set `OPF_ALG_DC = 500` and choose the specific
     CPLEX solver using options `CPLEX_LPMETHOD` and `CPLEX_QPMETHOD`.
-    Requires the Matlab interface for CPLEX, available from
+    Requires the MATLAB interface for CPLEX, available from
     http://www.ibm.com/software/integration/optimization/cplex-optimizer/.
   - Added function `qps_cplex()` for using CPLEX to solve QP and LP
     problems using the common QP solver interface used in MATPOWER. The
@@ -1462,7 +1462,7 @@ Version 4.0b4 - *May 21, 2010*
   - Added support for the IPOPT interior point optimizer for
     large scale non-linear optimization. Use `OPF_ALG = 580`
     and `OPF_ALG_DC = 400` for AC and DC OPF, respectively. Requires
-    the Matlab MEX interface for IPOPT, available from
+    the MATLAB MEX interface for IPOPT, available from
     http://www.coin-or.org/projects/Ipopt.xml.
 
 #### 5/13/10

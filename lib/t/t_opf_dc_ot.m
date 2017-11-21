@@ -82,7 +82,7 @@ if have_fcn('quadprog')
             end
         end
         if strcmp(algs{k}, 'dual-simplex') && strcmp(have_fcn('fmincon', 'vstr'), '7.1')
-            have_prices = 0;    %% dual-simplex did not return prices in Matlab R2014b!?!
+            have_prices = 0;    %% dual-simplex did not return prices in MATLAB R2014b!?!
         else
             have_prices = 1;
         end

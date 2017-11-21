@@ -29,7 +29,7 @@ else            %% inequality constraints
     om_nlx = om.nli;
 end
 
-%% initialize d2G (use transpose for speed on older versions of Matlab)
+%% initialize d2G (use transpose for speed on older versions of MATLAB)
 d2Gt = sparse(om.var.N, om.var.N);
 
 %% calls to substruct() are relatively expensive, so we pre-build the

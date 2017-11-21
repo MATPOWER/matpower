@@ -13,7 +13,7 @@ function qpopt = mpopt2qpopt(mpopt, model, alg)
 %               for selection of solver in case ALG is 'DEFAULT' (solver
 %               precedence for each model type list in parentheses):
 %           'LP'   - linear program with all continuous variables
-%                   (GUROBI, CPLEX, MOSEK, OT (if Matlab), GLPK, BPMPD, MIPS)
+%                   (GUROBI, CPLEX, MOSEK, OT (if MATLAB), GLPK, BPMPD, MIPS)
 %           'QP'   - quadratic program with all continuous variables
 %                   (GUROBI, CPLEX, MOSEK, OT (if large-scale alg available),
 %                    BPMPD, MIPS)

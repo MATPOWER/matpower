@@ -22,13 +22,13 @@ t_begin(num_tests, quiet);
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
     VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
 
-%% for Matlab versions prior to R2012a (v 7.14)
+%% for MATLAB versions prior to R2012a (v 7.14)
 if ~exist('isequaln')
     eval('isequaln = @isequalwithequalnans;');
 end
 
 if have_fcn('matlab', 'vnum') < 7.001
-    t_skip(num_tests, 'test requires cellfun() construct not available before Matlab 7.1');
+    t_skip(num_tests, 'test requires cellfun() construct not available before MATLAB 7.1');
 else
     mpce = loadcase('t_case_ext');
     mpci = loadcase('t_case_int');

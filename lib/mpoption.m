@@ -153,7 +153,7 @@ function opt = mpoption(varargin)
 %   opf.ac.solver           'DEFAULT'   AC optimal power flow solver
 %       [ 'DEFAULT' - choose default solver, i.e. 'MIPS'                    ]
 %       [ 'MIPS'    - MIPS, MATPOWER Interior Point Solver, primal/dual     ]
-%       [             interior point method (pure Matlab)                   ]
+%       [             interior point method (pure MATLAB/Octave)            ]
 %       [ 'FMINCON' - MATLAB Optimization Toolbox, FMINCON                  ]
 %       [ 'IPOPT'   - IPOPT, requires MEX interface to IPOPT solver         ]
 %       [             available from:                                       ]
@@ -180,7 +180,7 @@ function opt = mpoption(varargin)
 %       [             order: 'GUROBI', 'CPLEX', 'MOSEK', 'OT',              ]
 %       [             'GLPK' (linear costs only), 'BPMPD', 'MIPS'           ]
 %       [ 'MIPS'    - MIPS, MATPOWER Interior Point Solver, primal/dual     ]
-%       [             interior point method (pure Matlab)                   ]
+%       [             interior point method (pure MATLAB/Octave)            ]
 %       [ 'BPMPD'   - BPMPD, requires optional MEX-based BPMPD_MEX package  ]
 %       [             available from: http://www.pserc.cornell.edu/bpmpd/   ]
 %       [ 'CLP'     - CLP, requires interface to COIN-OP LP solver          ]
@@ -196,7 +196,7 @@ function opt = mpoption(varargin)
 %       [ 'IPOPT'   - IPOPT, requires MEX interface to IPOPT solver         ]
 %       [             available from:                                       ]
 %       [                 http://www.coin-or.org/projects/Ipopt.xml         ]
-%       [ 'MOSEK'   - MOSEK, requires Matlab interface to MOSEK solver      ]
+%       [ 'MOSEK'   - MOSEK, requires MATLAB interface to MOSEK solver      ]
 %       [             available from: http://www.mosek.com/                 ]
 %       [ 'OT'      - MATLAB Optimization Toolbox, QUADPROG, LINPROG        ]
 %   opf.violation           5e-6        constraint violation tolerance

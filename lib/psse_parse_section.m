@@ -186,7 +186,7 @@ if nr
                         xc_fcn  = @(n){extract_col_octave(n, c)};
                     end
             end
-        else                    %% running under Matlab (or Octave 4.3 or later)
+        else                    %% running under MATLAB (or Octave 4.3 or later)
             switch t
                 case {'d', 'f', 'g', 'D', 'F', 'G'} %% numeric data
                     if t == upper(t)                %% possibly quoted

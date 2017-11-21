@@ -51,7 +51,7 @@ function rv = have_fcn(tag, rtype)
 %       knitro      - KNITRO, NLP solver (http://www.ziena.com/)
 %         knitromatlab - KNITRO, version 9.0.0+
 %         ktrlink      - KNITRO, version < 9.0.0 (requires Opt Tbx)
-%       matlab      - code is running under Matlab, as opposed to Octave
+%       matlab      - code is running under MATLAB, as opposed to Octave
 %       minopf      - MINOPF, MINOPF, MINOS-based OPF solver
 %       most        - MOST, MATPOWER Optimal Scheduling Tool
 %       mosek       - MOSEK, LP/QP solver (http://www.mosek.com/)
@@ -225,19 +225,19 @@ else        %% detect availability
                             if matlab
                                 switch tag
                                     case 'fmincon_ipm'
-                                        if otver >= 4       %% Opt Tbx 4.0+ (R208a+, Matlab 7.6+)
+                                        if otver >= 4       %% Opt Tbx 4.0+ (R208a+, MATLAB 7.6+)
                                             TorF = 1;
                                         end
                                     case 'linprog_ds'
-                                        if otver >= 7.001   %% Opt Tbx 7.1+ (R2014b+, Matlab 8.4+)
+                                        if otver >= 7.001   %% Opt Tbx 7.1+ (R2014b+, MATLAB 8.4+)
                                             TorF = 1;
                                         end
                                     case 'optimoptions'
-                                        if otver >= 6.003   %% Opt Tbx 6.3+ (R2013a+, Matlab 8.1+)
+                                        if otver >= 6.003   %% Opt Tbx 6.3+ (R2013a+, MATLAB 8.1+)
                                             TorF = 1;
                                         end
                                     case 'quadprog_ls'
-                                        if otver >= 6       %% Opt Tbx 6.0+ (R2011a+, Matlab 7.12+)
+                                        if otver >= 6       %% Opt Tbx 6.0+ (R2011a+, MATLAB 7.12+)
                                             TorF = 1;
                                         end
                                 end
@@ -267,7 +267,7 @@ else        %% detect availability
                                 vstr = t{1}{1};
                             end
                         end
-                    elseif exist('glpkcc','file') == 3  %% Matlab glpkcc MEX
+                    elseif exist('glpkcc','file') == 3  %% MATLAB glpkcc MEX
                         TorF = 1;
                         str = evalc('glpk');
                         pat = 'GLPK Matlab interface\. Version: ([^\s,]+)';     %% glpkccm, Giorgetti/Klitgord
@@ -500,7 +500,7 @@ else        %% detect availability
                 end
 
             %%-----  private tags  -----
-            case 'catchme'  %% not supported by Matlab <= 7.4 (R2007a), Octave <= 3.6
+            case 'catchme'  %% not supported by MATLAB <= 7.4 (R2007a), Octave <= 3.6
                 if have_fcn('octave')
                     if have_fcn('octave', 'vnum') > 3.006
                         TorF = 1;
@@ -527,7 +527,7 @@ else        %% detect availability
                 else
                     TorF = 1;
                 end
-            case 'regexp_split'     %% missing for Matlab < 7.3 & Octave < 3.8
+            case 'regexp_split'     %% missing for MATLAB < 7.3 & Octave < 3.8
                 if have_fcn('matlab') && have_fcn('matlab', 'vnum') >= 7.003
                     TorF = 1;
                 elseif have_fcn('octave', 'vnum') >= 3.008

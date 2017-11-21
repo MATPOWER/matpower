@@ -184,7 +184,7 @@ if ~isempty(opt) && isfield(opt, 'verbose') && ~isempty(opt.verbose)
 else
     verbose = 0;
 end
-%% Matlab or Octave
+%% MATLAB or Octave
 matlab = have_fcn('matlab');
 otver = have_fcn('quadprog', 'vnum');
 

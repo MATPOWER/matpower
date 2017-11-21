@@ -73,7 +73,7 @@ previous versions, see Appendix H of the [MATPOWER User's Manual][2].
     - `apply_changes()` and `idx_ct()` provide a general mechanism for
       applying modifications to an existing MATPOWER case.
     - `feval_w_path()` evaluates a function located at a specified path,
-      outside of the Matlab path.
+      outside of the MATLAB path.
     - `mpopt2qpopt()` provides a common interface for creating options
       struct for `mi/qps_matpower()` from a MATPOWER options struct.
   - New function options:
@@ -95,7 +95,7 @@ previous versions, see Appendix H of the [MATPOWER User's Manual][2].
   - Added CPF user options for setting tolerances for target lambda
     detection and nose point detection, `cpf.target_lam_tol` and
     `cpf.nose_tol`, respectively.
-  - Added support for Matlab Optimization Toolbox 7.5 (R2016b).
+  - Added support for MATLAB Optimization Toolbox 7.5 (R2016b).
   - Added support for MOSEK v8.x.
   - Added tests for power flow with `pf.enforce_q_lims` option.
   - Updated network reduction code to handle cases with radially

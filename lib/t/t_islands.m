@@ -42,7 +42,7 @@ if have_fcn('octave')
     warning('off', file_in_path_warn_id);
 end
 
-%% for Matlab versions prior to R2012a (v 7.14)
+%% for MATLAB versions prior to R2012a (v 7.14)
 if ~exist('isequaln')
     eval('isequaln = @isequalwithequalnans;');
 end
