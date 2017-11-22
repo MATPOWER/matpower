@@ -2326,19 +2326,27 @@ name & default & description \\
 0 & include angle difference limits, if specified \\
 1 & ignore angle difference limits even if specified \\
 \end{tabular} 	\\
-\code{opf.init\_from\_mpc}	& -1	& specify whether to use the current state in \matpower{} case to initialize OPF\tnote{\ddag}	\\
+\code{opf.init\_from\_mpc}\tnote{*}	& -1	& specify whether to use the current state in \matpower{} case to initialize OPF\tnote{\ddag}	\\
 && \begin{tabular}{r @{ -- } l}
 -1 & \matpower{} decides based on solver/algorithm \\
 0 & ignore current state when initializing OPF \\
 1 & use current state to initialize OPF \\
+\end{tabular} 	\\
+\code{opf.start}	& 0	& specify how to set OPF starting point	\\
+&& \begin{tabular}{r @{ -- } p{0.5\textwidth}}
+0 & default, use interior point estimate for \code{fmincon}, \ipopt{}, \knitro{} and \mips{}; use current state for other solvers \\
+1 & ignore current state when initializing OPF,\tnote{\ddag} \emph{i.e. currently identical to 0} \\
+2 & use current state to initialize OPF \\
+3 & attempt to solve power flow to initialize OPF \\
 \end{tabular} 	\\
 \code{opf.return\_raw\_der}	& 0	& for AC OPF, return constraint and derivative info in \code{results.raw} (in fields \code{g}, \code{dg}, \code{df}, \code{d2f}) \\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
+ \item [*] {Deprecated. Use \code{opf.start} instead.}
  \item [\dag] {Using a value between 0 and 1 results in the limits being determined by the corresponding weighted average of the 2 options.}
- \item [\ddag] {Currently supported only for \ipopt{}, \knitro{} and \mips{} solvers.}
+ \item [\ddag] {Currently supported only for \code{fmincon}, \ipopt{}, \knitro{} and \mips{} solvers.}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -4929,19 +4937,27 @@ name & default & description \\
 0 & include angle difference limits, if specified \\
 1 & ignore angle difference limits even if specified \\
 \end{tabular} 	\\
-\code{opf.init\_from\_mpc}	& -1	& specify whether to use the current state in \matpower{} case to initialize OPF\tnote{\ddag}	\\
+\code{opf.init\_from\_mpc}\tnote{*}	& -1	& specify whether to use the current state in \matpower{} case to initialize OPF\tnote{\ddag}	\\
 && \begin{tabular}{r @{ -- } l}
 -1 & \matpower{} decides based on solver/algorithm \\
 0 & ignore current state when initializing OPF \\
 1 & use current state to initialize OPF \\
+\end{tabular} 	\\
+\code{opf.start}	& 0	& specify how to set OPF starting point	\\
+&& \begin{tabular}{r @{ -- } p{0.5\textwidth}}
+0 & default, use interior point estimate for \code{fmincon}, \ipopt{}, \knitro{} and \mips{}; use current state for other solvers \\
+1 & ignore current state when initializing OPF,\tnote{\ddag} \emph{i.e. currently identical to 0} \\
+2 & use current state to initialize OPF \\
+3 & attempt to solve power flow to initialize OPF \\
 \end{tabular} 	\\
 \code{opf.return\_raw\_der}	& 0	& for AC OPF, return constraint and derivative info in \code{results.raw} (in fields \code{g}, \code{dg}, \code{df}, \code{d2f}) \\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
+ \item [*] {Deprecated. Use \code{opf.start} instead.}
  \item [\dag] {Using a value between 0 and 1 results in the limits being determined by the corresponding weighted average of the 2 options.}
- \item [\ddag] {Currently supported only for \ipopt{}, \knitro{} and \mips{} solvers.}
+ \item [\ddag] {Currently supported only for \code{fmincon}, \ipopt{}, \knitro{} and \mips{} solvers.}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -7052,6 +7068,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.1.pdf}{\m
 \item Continuous integration via GitHub and Travis-CI integration.
 \item Include \LaTeX{} source code for \mum{} in \code{docs/src} and for \mostman{} in \code{most/docs/src}.
 \item Support for exporting \matpower{} case to PSS/E RAW data format.
+\item New option \codeq{opf.start} to replace deprecated \codeq{opf.init\_from\_mpc} and add a new possibility to automatically run a power flow to initialize the starting state for the OPF.
 \item New options \codeq{cpf.enforce\_v\_lims} and \codeq{cpf.enforce\_flow\_lims} to enforce bus voltage magnitude and branch flow limits in the continuation power flow, and \codeq{cpf.v\_lims\_tol} and \codeq{cpf.flow\_lims\_tol} to control the respective detection tolerances.  \emph{Thanks to Ahmad Sadiq Abubakar and Shrirang Abhyankar.}
 \item Support in core optimization model \code{opt\_model} for:
     \begin{itemize}

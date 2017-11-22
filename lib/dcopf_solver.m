@@ -82,18 +82,18 @@ end
 opt = mpopt2qpopt(mpopt, model);
 
 %% try to select an interior initial point, unless requested not to
-if mpopt.opf.init_from_mpc ~= 1 && ...
+if mpopt.opf.start < 2 && ...
         (strcmp(opt.alg, 'MIPS') || strcmp(opt.alg, 'IPOPT'))
-    Varefs = bus(bus(:, BUS_TYPE) == REF, VA) * (pi/180);
-
+    s = 1e-3;                   %% set init point inside bounds by s
     lb = xmin; ub = xmax;
     lb(xmin == -Inf) = -1e10;   %% replace Inf with numerical proxies
     ub(xmax ==  Inf) =  1e10;
     x0 = (lb + ub) / 2;         %% set x0 mid-way between bounds
     k = find(xmin == -Inf & xmax < Inf);    %% if only bounded above
-    x0(k) = xmax(k) - 1;                    %% set just below upper bound
+    x0(k) = xmax(k) - s;                    %% set just below upper bound
     k = find(xmin > -Inf & xmax == Inf);    %% if only bounded below
-    x0(k) = xmin(k) + 1;                    %% set just above lower bound
+    x0(k) = xmin(k) + s;                    %% set just above lower bound
+    Varefs = bus(bus(:, BUS_TYPE) == REF, VA) * (pi/180);
     x0(vv.i1.Va:vv.iN.Va) = Varefs(1);  %% angles set to first reference angle
     if ny > 0
         ipwl = find(gencost(:, MODEL) == PW_LINEAR);

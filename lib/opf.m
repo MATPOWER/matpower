@@ -180,9 +180,30 @@ t0 = clock;         %% start timer
 %% process input arguments
 [mpc, mpopt] = opf_args(varargin{:});
 
-%% if opf.ac.solver not set, choose MIPS
+%% if 'opf.ac.solver' not set, choose MIPS
 if strcmp(upper(mpopt.opf.ac.solver), 'DEFAULT')
     mpopt = mpoption(mpopt, 'opf.ac.solver', 'MIPS');   %% MIPS
+end
+
+%% handle deprecated 'opf.init_from_mpc' option
+if mpopt.opf.start == 0
+    if mpopt.opf.init_from_mpc == 0     %% ignore MPC
+        mpopt.opf.start = 1;
+    elseif mpopt.opf.init_from_mpc == 1 %% use MPC
+        mpopt.opf.start = 2;
+    end
+end
+
+%% initialize state with power flow solution, if requested
+if mpopt.opf.start == 3
+    mpopt_pf = mpoption(mpopt, 'out.all', 0, 'verbose', max(0, mpopt.verbose-1));
+    if mpopt.verbose
+        fprintf('Running power flow to initialize OPF.\n');
+    end
+    rpf = runpf(mpc, mpopt_pf);
+    if rpf.success
+        mpc = rpf;      %% or should I just copy Va, Vm, Pg, Qg?
+    end
 end
 
 %% add zero columns to bus, gen, branch for multipliers, etc if needed

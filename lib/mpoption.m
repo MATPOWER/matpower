@@ -213,7 +213,8 @@ function opt = mpoption(varargin)
 %   opf.ignore_angle_lim    0           angle diff limits for branches
 %       [ 0 - include angle difference limits, if specified                 ]
 %       [ 1 - ignore angle difference limits even if specified              ]
-%   opf.init_from_mpc       -1          specify whether to use current state
+%   opf.init_from_mpc       -1          (DEPRECATED: use opf.start instead)
+%                                       specify whether to use current state
 %                                       in MATPOWER case to initialize OPF
 %                                       (currently only supported by fmincon,
 %                                        Ipopt, Knitro and MIPS solvers,
@@ -221,6 +222,13 @@ function opt = mpoption(varargin)
 %       [  -1 - MATPOWER decides, based on solver/algorithm                 ]
 %       [   0 - ignore current state when initializing OPF                  ]
 %       [   1 - use current state to initialize OPF                         ]
+%   opf.start               0           specify how to set OPF starting point
+%       [   0 - default, use interior point estimate for fmincon, Ipopt,    ]
+%       [       Knitro and MIPS; use current state for other solvers        ]
+%       [   1 - ignore current state when initializing OPF (only applies to ]
+%       [       fmincon, Ipopt, Knitro and MIPS), currently identical to 0  ]
+%       [   2 - use current state to initialize OPF                         ]
+%       [   3 - attempt to solve power flow to initialize OPF               ]
 %   opf.return_raw_der      0           for AC OPF, return constraint and
 %                                       derivative info in results.raw
 %                                       (in fields g, dg, df, d2f) [ 0 or 1 ]
@@ -563,6 +571,9 @@ if have_opt0
                 opt0.cpf.enforce_flow_lims  = opt_d.cpf.enforce_flow_lims;
                 opt0.cpf.v_lims_tol         = opt_d.cpf.v_lims_tol;
                 opt0.cpf.flow_lims_tol      = opt_d.cpf.flow_lims_tol;
+            end
+            if opt0.v <= 15          %% convert version 15 to 16
+                opt0.opf.start  = opt_d.opf.start;
             end
             opt0.v = v;
         end
@@ -1526,6 +1537,7 @@ if ~isstruct(opt)
             'flow_lim',             'S', ...
             'ignore_angle_lim',     0, ...
             'init_from_mpc',        -1, ...
+            'start',                0, ...
             'return_raw_der',       0   ), ...
         'verbose',              1, ...
         'out',                  struct(...
@@ -1587,7 +1599,7 @@ optt = opt;
 %% globals
 %%-------------------------------------------------------------------
 function v = mpoption_version
-v = 15;     %% version number of MATPOWER options struct
+v = 16;     %% version number of MATPOWER options struct
             %% (must be incremented every time structure is updated)
             %% v1   - first version based on struct (MATPOWER 5.0b1)
             %% v2   - added 'linprog' and 'quadprog' fields
@@ -1614,6 +1626,7 @@ v = 15;     %% version number of MATPOWER options struct
             %% v14  - added 'pf.nr.lin_solver'
             %% v15  - added 'cpf.enforce_v_lims', 'cpf.enforce_flow_lims',
             %%        'cpf.v_lims_tol', and 'cpf.flow_lims_tol'
+            %% v16  - added 'opf.start' (deprecated 'opf.init_from_mpc')
 
 %%-------------------------------------------------------------------
 function db_level = DEBUG
