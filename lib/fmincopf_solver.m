@@ -55,11 +55,12 @@ function [results, success, raw] = fmincopf_solver(om, mpopt)
 [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
     TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
+[PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 
 %% unpack data
 mpc = om.get_mpc();
-[baseMVA, bus, gen, branch] = ...
-    deal(mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch);
+[baseMVA, bus, gen, branch, gencost] = ...
+    deal(mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch, mpc.gencost);
 [vv, ll, nne, nni] = om.get_idx();
 
 %% problem dimensions
@@ -68,7 +69,7 @@ nl = size(branch, 1);       %% number of branches
 ny = om.getN('var', 'y');   %% number of piece-wise linear costs
 
 %% bounds on optimization vars
-[x0, LB, UB] = om.params_var();
+[x0, xmin, xmax] = om.params_var();
 
 %% linear constraints
 [A, l, u] = om.params_lin_constraint();
@@ -86,6 +87,29 @@ bfeq = u(ieq);
 
 %% build admittance matrices
 [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
+
+%% try to select an interior initial point
+if mpopt.opf.init_from_mpc ~= 1
+    s = 1e-3;                   %% set init point inside bounds by s
+    ll = xmin; uu = xmax;
+    ll(xmin == -Inf) = -1e10;   %% replace Inf with numerical proxies
+    uu(xmax ==  Inf) =  1e10;
+    x0 = (ll + uu) / 2;         %% set x0 mid-way between bounds
+    k = find(xmin == -Inf & xmax < Inf);    %% if only bounded above
+    x0(k) = xmax(k) - s;                    %% set just below upper bound
+    k = find(xmin > -Inf & xmax == Inf);    %% if only bounded below
+    x0(k) = xmin(k) + s;                    %% set just above lower bound
+    Varefs = bus(bus(:, BUS_TYPE) == REF, VA) * (pi/180);
+    x0(vv.i1.Va:vv.iN.Va) = Varefs(1);  %% angles set to first reference angle
+    if ny > 0
+        ipwl = find(gencost(:, MODEL) == PW_LINEAR);
+    %     PQ = [gen(:, PMAX); gen(:, QMAX)];
+    %     c = totcost(gencost(ipwl, :), PQ(ipwl));
+        c = gencost(sub2ind(size(gencost), ipwl, NCOST+2*gencost(ipwl, NCOST)));    %% largest y-value in CCV data
+        x0(vv.i1.y:vv.iN.y) = max(c) + 0.1 * abs(max(c));
+    %     x0(vv.i1.y:vv.iN.y) = c + 0.1 * abs(c);
+    end
+end
 
 %% find branches with flow limits
 il = find(branch(:, RATE_A) ~= 0 & branch(:, RATE_A) < 1e10);
@@ -144,7 +168,7 @@ end
 f_fcn = @(x)opf_costfcn(x, om);
 gh_fcn = @(x)opf_consfcn(x, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
 [x, f, info, Output, Lambda] = ...
-  fmincon(f_fcn, x0, Af, bf, Afeq, bfeq, LB, UB, gh_fcn, fmoptions);
+  fmincon(f_fcn, x0, Af, bf, Afeq, bfeq, xmin, xmax, gh_fcn, fmoptions);
 success = (info > 0);
 
 %% update solution data

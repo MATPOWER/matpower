@@ -215,8 +215,9 @@ function opt = mpoption(varargin)
 %       [ 1 - ignore angle difference limits even if specified              ]
 %   opf.init_from_mpc       -1          specify whether to use current state
 %                                       in MATPOWER case to initialize OPF
-%                                       (currently supported only for Ipopt,
-%                                        Knitro and MIPS solvers)
+%                                       (currently only supported by fmincon,
+%                                        Ipopt, Knitro and MIPS solvers,
+%                                        others always use mpc)
 %       [  -1 - MATPOWER decides, based on solver/algorithm                 ]
 %       [   0 - ignore current state when initializing OPF                  ]
 %       [   1 - use current state to initialize OPF                         ]
