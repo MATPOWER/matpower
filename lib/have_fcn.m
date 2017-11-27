@@ -302,7 +302,7 @@ else        %% detect availability
             case 'ipopt'
                 TorF = exist('ipopt', 'file') == 3;
                 if TorF
-                    str = evalc('qps_ipopt([],1,1,1,1,1,1,1,struct(''verbose'', 2))');
+                    str = evalc('qps_ipopt([],[1; 1],[1 1],[2],[2],[1; 1],[1; 1],[1; 1],struct(''verbose'', 2))');
                     pat = 'Ipopt version ([^\s,]+)';
                     [s,e,tE,m,t] = regexp(str, pat);
                     if ~isempty(t)
