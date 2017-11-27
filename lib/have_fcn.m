@@ -250,11 +250,15 @@ else        %% detect availability
                 if exist('glpk','file') == 3    %% Windows OPTI install (no glpk.m)
                     TorF = 1;
                     str = evalc('glpk');
-                    pat = 'GLPK: GNU Linear Programming Kit \[v([^\s,]+), Built ([^\],])+(,[^\]]*)*\]';  %% OPTI, Giorgetti/Currie
+                    pat = 'GLPK: GNU Linear Programming Kit \[v([^\s,\]]+).*\]';  %% OPTI, Giorgetti/Currie
                     [s,e,tE,m,t] = regexp(str, pat);
                     if ~isempty(t)
                         vstr = t{1}{1};
-                        rdate = datestr(t{1}{2}, 'dd-mmm-yyyy');
+                    end
+                    pat = 'Built ([^\],])+';  %% OPTI, Giorgetti/Currie
+                    [s,e,tE,m,t] = regexp(str, pat);
+                    if ~isempty(t)
+                        rdate = datestr(t{1}{1}, 'dd-mmm-yyyy');
                     end
                 elseif exist('glpk','file') == 2    %% others have glpk.m and ...
                     if exist('__glpk__','file') == 3    %% octave __glpk__ MEX
