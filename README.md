@@ -1,5 +1,4 @@
-MATPOWER
-========
+![MATPOWER][logo]
 
 A Power System Simulation Package for MATLAB and Octave
 -------------------------------------------------------
@@ -346,3 +345,4 @@ MATPOWER is distributed under the [3-clause BSD license][29].
 [27]: http://www.pserc.cornell.edu/matpower/mailinglists.html
 [28]: https://github.com/MATPOWER/matpower/issues
 [29]: LICENSE
+[logo]: docs/src/images/MATPOWER-md.png
