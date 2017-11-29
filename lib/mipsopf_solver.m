@@ -89,7 +89,7 @@ ny = om.getN('var', 'y');   %% number of piece-wise linear costs
 
 %% try to select an interior initial point, unless requested not to
 if mpopt.opf.start < 2
-    s = 1e-3;                   %% set init point inside bounds by s
+    s = 1;                      %% set init point inside bounds by s
     lb = xmin; ub = xmax;
     lb(xmin == -Inf) = -1e10;   %% replace Inf with numerical proxies
     ub(xmax ==  Inf) =  1e10;

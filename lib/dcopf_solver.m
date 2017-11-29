@@ -84,7 +84,7 @@ opt = mpopt2qpopt(mpopt, model);
 %% try to select an interior initial point, unless requested not to
 if mpopt.opf.start < 2 && ...
         (strcmp(opt.alg, 'MIPS') || strcmp(opt.alg, 'IPOPT'))
-    s = 1e-3;                   %% set init point inside bounds by s
+    s = 1;                      %% set init point inside bounds by s
     lb = xmin; ub = xmax;
     lb(xmin == -Inf) = -1e10;   %% replace Inf with numerical proxies
     ub(xmax ==  Inf) =  1e10;
