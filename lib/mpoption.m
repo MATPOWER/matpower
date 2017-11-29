@@ -220,15 +220,18 @@ function opt = mpoption(varargin)
 %                                        Ipopt, Knitro and MIPS solvers,
 %                                        others always use mpc)
 %       [  -1 - MATPOWER decides, based on solver/algorithm                 ]
-%       [   0 - ignore current state when initializing OPF                  ]
-%       [   1 - use current state to initialize OPF                         ]
-%   opf.start               0           specify how to set OPF starting point
-%       [   0 - default, use interior point estimate for fmincon, Ipopt,    ]
-%       [       Knitro and MIPS; use current state for other solvers        ]
-%       [   1 - ignore current state when initializing OPF (only applies to ]
-%       [       fmincon, Ipopt, Knitro and MIPS), currently identical to 0  ]
-%       [   2 - use current state to initialize OPF                         ]
-%       [   3 - attempt to solve power flow to initialize OPF               ]
+%       [   0 - ignore current state in MATPOWER case (only applies to      ]
+%       [       fmincon, Ipopt, Knitro and MIPS, which use an interior pt   ]
+%       [       estimate; others use current state as with opf.start = 2)   ]
+%       [   1 - use current state in MATPOWER case                          ]
+%   opf.start               0           strategy for initializing OPF start pt
+%       [   0 - default, MATPOWER decides based on solver                   ]
+%       [       (currently identical to 1)                                  ]
+%       [   1 - ignore current state in MATPOWER case (only applies to      ]
+%       [       fmincon, Ipopt, Knitro and MIPS, which use an interior pt   ]
+%       [       estimate; others use current state as with opf.start = 2)   ]
+%       [   2 - use current state in MATPOWER case                          ]
+%       [   3 - solve power flow and use resulting state                    ]
 %   opf.return_raw_der      0           for AC OPF, return constraint and
 %                                       derivative info in results.raw
 %                                       (in fields g, dg, df, d2f) [ 0 or 1 ]

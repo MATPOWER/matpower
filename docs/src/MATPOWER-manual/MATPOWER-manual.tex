@@ -2326,18 +2326,18 @@ name & default & description \\
 0 & include angle difference limits, if specified \\
 1 & ignore angle difference limits even if specified \\
 \end{tabular} 	\\
-\code{opf.init\_from\_mpc}\tnote{*}	& -1	& specify whether to use the current state in \matpower{} case to initialize OPF\tnote{\ddag}	\\
+\code{opf.init\_from\_mpc}\tnote{*}	& -1	& specify whether to use the current state in \matpower{} case to initialize OPF	\\
 && \begin{tabular}{r @{ -- } l}
 -1 & \matpower{} decides based on solver/algorithm \\
-0 & ignore current state when initializing OPF \\
-1 & use current state to initialize OPF \\
+0 & ignore current state in \matpower{} case\tnote{\ddag} \\
+1 & use current state in \matpower{} case \\
 \end{tabular} 	\\
-\code{opf.start}	& 0	& specify how to set OPF starting point	\\
+\code{opf.start}	& 0	& strategy for initializing OPF starting point	\\
 && \begin{tabular}{r @{ -- } p{0.5\textwidth}}
-0 & default, use interior point estimate for \code{fmincon}, \ipopt{}, \knitro{} and \mips{}; use current state for other solvers \\
-1 & ignore current state when initializing OPF,\tnote{\ddag} \emph{i.e. currently identical to 0} \\
-2 & use current state to initialize OPF \\
-3 & attempt to solve power flow to initialize OPF \\
+0 & default, \matpower{} decides based on solver, \emph{(currently identical to 1)} \\
+1 & ignore current state in \matpower{} case\tnote{\ddag} \\
+2 & use current state in \matpower{} case \\
+3 & solve power flow and use resulting state \\
 \end{tabular} 	\\
 \code{opf.return\_raw\_der}	& 0	& for AC OPF, return constraint and derivative info in \code{results.raw} (in fields \code{g}, \code{dg}, \code{df}, \code{d2f}) \\
 \bottomrule
@@ -2346,7 +2346,7 @@ name & default & description \\
  \scriptsize
  \item [*] {Deprecated. Use \code{opf.start} instead.}
  \item [\dag] {Using a value between 0 and 1 results in the limits being determined by the corresponding weighted average of the 2 options.}
- \item [\ddag] {Currently supported only for \code{fmincon}, \ipopt{}, \knitro{} and \mips{} solvers.}
+ \item [\ddag] {Only applies to \code{fmincon}, \ipopt{}, \knitro{} and \mips{} solvers, which use an interior point estimate; others use current state in \matpower{} case, as with \code{opf.start} = 2.}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -4937,18 +4937,18 @@ name & default & description \\
 0 & include angle difference limits, if specified \\
 1 & ignore angle difference limits even if specified \\
 \end{tabular} 	\\
-\code{opf.init\_from\_mpc}\tnote{*}	& -1	& specify whether to use the current state in \matpower{} case to initialize OPF\tnote{\ddag}	\\
+\code{opf.init\_from\_mpc}\tnote{*}	& -1	& specify whether to use the current state in \matpower{} case to initialize OPF	\\
 && \begin{tabular}{r @{ -- } l}
 -1 & \matpower{} decides based on solver/algorithm \\
-0 & ignore current state when initializing OPF \\
-1 & use current state to initialize OPF \\
+0 & ignore current state in \matpower{} case\tnote{\ddag} \\
+1 & use current state in \matpower{} case \\
 \end{tabular} 	\\
-\code{opf.start}	& 0	& specify how to set OPF starting point	\\
+\code{opf.start}	& 0	& strategy for initializing OPF starting point	\\
 && \begin{tabular}{r @{ -- } p{0.5\textwidth}}
-0 & default, use interior point estimate for \code{fmincon}, \ipopt{}, \knitro{} and \mips{}; use current state for other solvers \\
-1 & ignore current state when initializing OPF,\tnote{\ddag} \emph{i.e. currently identical to 0} \\
-2 & use current state to initialize OPF \\
-3 & attempt to solve power flow to initialize OPF \\
+0 & default, \matpower{} decides based on solver, \emph{(currently identical to 1)} \\
+1 & ignore current state in \matpower{} case\tnote{\ddag} \\
+2 & use current state in \matpower{} case \\
+3 & solve power flow and use resulting state \\
 \end{tabular} 	\\
 \code{opf.return\_raw\_der}	& 0	& for AC OPF, return constraint and derivative info in \code{results.raw} (in fields \code{g}, \code{dg}, \code{df}, \code{d2f}) \\
 \bottomrule
@@ -4957,7 +4957,7 @@ name & default & description \\
  \scriptsize
  \item [*] {Deprecated. Use \code{opf.start} instead.}
  \item [\dag] {Using a value between 0 and 1 results in the limits being determined by the corresponding weighted average of the 2 options.}
- \item [\ddag] {Currently supported only for \code{fmincon}, \ipopt{}, \knitro{} and \mips{} solvers.}
+ \item [\ddag] {Only applies to \code{fmincon}, \ipopt{}, \knitro{} and \mips{} solvers, which use an interior point estimate; others use current state in \matpower{} case, as with \code{opf.start} = 2.}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}

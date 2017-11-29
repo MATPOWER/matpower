@@ -186,12 +186,10 @@ if strcmp(upper(mpopt.opf.ac.solver), 'DEFAULT')
 end
 
 %% handle deprecated 'opf.init_from_mpc' option
-if mpopt.opf.start == 0
-    if mpopt.opf.init_from_mpc == 0     %% ignore MPC
-        mpopt.opf.start = 1;
-    elseif mpopt.opf.init_from_mpc == 1 %% use MPC
-        mpopt.opf.start = 2;
-    end
+if mpopt.opf.start == 0 && mpopt.opf.init_from_mpc ~= -1
+    %% init_from_mpc = 0 --> start = 1      don't use mpc
+    %% init_from_mpc = 1 --> start = 2      do use mpc
+    mpopt.opf.start = mpopt.opf.init_from_mpc + 1;
 end
 
 %% initialize state with power flow solution, if requested
