@@ -171,8 +171,8 @@ if use_ktropts_file
         ktropts.feastol             = mpopt.opf.violation;
         ktropts.xtol                = mpopt.knitro.tol_x;
         ktropts.opttol              = mpopt.knitro.tol_f;
-        if mpopt.fmincon.max_it ~= 0
-            ktropts.maxit           = mpopt.fmincon.max_it;
+        if mpopt.knitro.maxit ~= 0
+            ktropts.maxit           = mpopt.knitro.maxit;
         end
         ktropts.bar_directinterval  = 0;
         opt_fname = write_ktropts(ktropts);

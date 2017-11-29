@@ -360,6 +360,8 @@ function opt = mpoption(varargin)
 %   KNITRO:
 %       knitro.tol_x            1e-4        termination tol on x
 %       knitro.tol_f            1e-4        termination tol on f
+%       knitro.maxit            0           maximum number of iterations
+%                                                           [  0 => default ]
 %       knitro.opt_fname        <empty>     name of user-supplied native
 %                                           KNITRO options file that overrides
 %                                           all other options
@@ -574,6 +576,11 @@ if have_opt0
             end
             if opt0.v <= 15          %% convert version 15 to 16
                 opt0.opf.start  = opt_d.opf.start;
+            end
+            if opt0.v <= 16          %% convert version 16 to 17
+                if isfield(opt_d, 'knitro')
+                    opt0.knitro.maxit  = opt_d.knitro.maxit;
+                end
             end
             opt0.v = v;
         end
@@ -1599,7 +1606,7 @@ optt = opt;
 %% globals
 %%-------------------------------------------------------------------
 function v = mpoption_version
-v = 16;     %% version number of MATPOWER options struct
+v = 17;     %% version number of MATPOWER options struct
             %% (must be incremented every time structure is updated)
             %% v1   - first version based on struct (MATPOWER 5.0b1)
             %% v2   - added 'linprog' and 'quadprog' fields
@@ -1627,6 +1634,7 @@ v = 16;     %% version number of MATPOWER options struct
             %% v15  - added 'cpf.enforce_v_lims', 'cpf.enforce_flow_lims',
             %%        'cpf.v_lims_tol', and 'cpf.flow_lims_tol'
             %% v16  - added 'opf.start' (deprecated 'opf.init_from_mpc')
+            %% v17  - added 'knitro.maxit'
 
 %%-------------------------------------------------------------------
 function db_level = DEBUG

@@ -12,6 +12,10 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 11/29/17
+  - Add new option `knitro.maxit` to set maximum number of iterations
+    for AC OPF solver using Knitro.
+
 #### 11/22/17
   - Add new option `opf.start` to replace deprecated `opf.init_from_mpc`
     and add a new possibility to automatically run a power flow to
