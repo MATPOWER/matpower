@@ -6488,11 +6488,42 @@ name & description \\
 \code{~~t\_ok}	& tests if a condition is true	\\
 \code{~~t\_run\_tests}	& run a series of tests	\\
 \code{~~t\_skip}	& skips a number of tests, with explanatory message	\\
+\code{~~t/}	& \mptest{} tests	\\
+\code{~~~~test\_mptest}	& runs full \mptest{} test suite	\\
+\code{~~~~t\_test\_fcns}	& test \code{t\_ok} and \code{t\_is}	\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
  \item [\dag] {These functions are part of \mptestlink{} and are found in \mptestpath{/lib}.}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{\mipslink{} Tests\tnote{\dag}}
+\label{tab:mips}
+\footnotesize
+\begin{tabular}{p{0.28\textwidth}p{0.67\textwidth}}
+\toprule
+name & description \\
+\midrule
+\code{mips/lib/}	& 	\\
+\code{~~t/}	& \mips{} tests	\\
+\code{~~~~test\_mips}	& runs full \mips{} test suite	\\
+\code{~~~~t\_mips}	& runs tests for \mips{} NLP solver	\\
+\code{~~~~t\_mips\_pardiso}	& runs tests for \mips{} NLP solver, using PARDISO as linear solver	\\
+\code{~~~~t\_mplinsolve}	& tests for \code{mplinsolve}	\\
+\code{~~~~t\_qps\_mips}	& runs tests for \code{qps\_mips}	\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [\dag] {These tests are part of \mipslink{} and are found in \mipspath{/lib/t}.}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -6576,10 +6607,8 @@ name & description \\
 \code{t\_makeLODF}	& runs tests for \code{makeLODF}	\\
 \code{t\_makePTDF}	& runs tests for \code{makePTDF}	\\
 \code{t\_margcost}	& runs tests for \code{margcost}	\\
-\code{t\_mips}	& runs tests for \mips{} NLP solver	\\
 \code{t\_miqps\_matpower}	& runs tests for \code{miqps\_matpower}	\\
 \code{t\_modcost}	& runs tests for \code{modcost}	\\
-\code{t\_mplinsolve}	& tests for \code{mplinsolve}	\\
 \code{t\_mpoption}	& runs tests for \code{mpoption}	\\
 \code{t\_nested\_struct\_copy}	& runs tests for \code{nested\_struct\_copy}	\\
 \code{t\_off2case}	& runs tests for \code{off2case}	\\

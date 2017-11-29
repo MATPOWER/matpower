@@ -12,6 +12,9 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 9/10/18
+  - Add support for PARDISO v6.x.
+
 #### 8/30/18
   - Update to Aug 9, 2018 version of `case_ACTIVSg2000`.
 

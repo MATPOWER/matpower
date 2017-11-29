@@ -44,6 +44,7 @@ tests{end+1} = 't_modcost';
 tests{end+1} = 't_hasPQcap';
 tests{end+1} = 't_mplinsolve';
 tests{end+1} = 't_mips';
+tests{end+1} = 't_mips_pardiso';
 tests{end+1} = 't_qps_matpower';
 tests{end+1} = 't_miqps_matpower';
 tests{end+1} = 't_pf';

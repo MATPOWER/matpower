@@ -8,7 +8,7 @@ function rv = mpver(varargin)
 %   MIPS and any optional MATPOWER packages.
 
 %   MATPOWER
-%   Copyright (c) 2005-2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2005-2018, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -28,7 +28,7 @@ function rv = mpver(varargin)
 v{1} = struct(  'Name',     'MATPOWER', ... 
                 'Version',  '6.1-dev', ...
                 'Release',  '', ...
-                'Date',     '04-Apr-2018' );
+                'Date',     '10-Sep-2018' );
 if nargout > 0
     if nargin > 0
         rv = v{1};

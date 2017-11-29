@@ -56,7 +56,7 @@ function rv = have_fcn(tag, rtype)
 %       most        - MOST, MATPOWER Optimal Scheduling Tool
 %       mosek       - MOSEK, LP/QP solver (http://www.mosek.com/)
 %       optimoptions - OPTIMOPTIONS, option setting funciton for Optim Tbx 6.3+
-%       pardiso     - PARDISO, Parallel Sparse Direct and Linear Solver
+%       pardiso     - PARDISO, Parallel Sparse Direct & Iterative Linear Solver
 %                       (http://www.pardiso-project.org)
 %       quadprog    - QUADPROG, QP solver from Optimization Toolbox 2.x +
 %       quadprog_ls - QUADPROG with large-scale interior point convex solver
@@ -88,6 +88,8 @@ function rv = have_fcn(tag, rtype)
 %       evalc           - support for evalc() function
 %       ipopt_auxdata   - support for ipopt_auxdata(), required by 3.11 and later
 %       lu_vec          - support for lu(..., 'vector') syntax
+%       pardiso_legacy  - PARDISO v5, individual MEX files for factor, solve, etc
+%       pardiso_object  - PARDISO v6 and later, object interface
 %       regexp_split    - support for 'split' argument to regexp()
 
 %   MATPOWER
@@ -407,33 +409,7 @@ else        %% detect availability
                     rdate = v.Date;
                 end
             case 'pardiso'
-                TorF = exist('pardisoinit', 'file') == 3 && ...
-                        exist('pardisoreorder', 'file') == 3 && ...
-                        exist('pardisofactor', 'file') == 3 && ...
-                        exist('pardisosolve', 'file') == 3 && ...
-                        exist('pardisofree', 'file') == 3;
-                if TorF
-                    try
-                        A = sparse([1 2; 3 4]);
-                        b = [1;1];
-                        % Summary PARDISO 5.1.0: ( reorder to reorder )
-                        pat = 'Summary PARDISO (\.*\d)+:';
-                        info = pardisoinit(11, 0);
-                        info = pardisoreorder(A, info, false);
-%                         [s,e,tE,m,t] = regexp(evalc('info = pardisoreorder(A, info, true);'), pat);
-%                         if ~isempty(t)
-%                             vstr = t{1}{1};
-%                         end
-                        info = pardisofactor(A, info, false);
-                        [x, info] = pardisosolve(A, b, info, false);
-                        pardisofree(info);
-                        if any(x ~= [-1; 1])
-                            TorF = 0;
-                        end
-                    catch
-                        TorF = 0;
-                    end
-                end
+                TorF = have_fcn('pardiso_object') || have_fcn('pardiso_legacy');
             case {'pdipmopf', 'scpdipmopf', 'tralmopf'}
                 if have_fcn('matlab')
                     vn = have_fcn('matlab', 'vnum');
@@ -530,6 +506,53 @@ else        %% detect availability
                     TorF = 0;     %% lu(..., 'vector') syntax not supported
                 else
                     TorF = 1;
+                end
+            case 'pardiso_object'
+                TorF = exist('pardiso', 'file') == 2;
+                if TorF
+                    try
+                        id = 1;
+                        A = sparse([1 2; 3 4]);
+                        b = [1;1];
+                        p = pardiso(id, 11, 0);
+                        p.factorize(id, A);
+                        x = p.solve(id, A, b);
+                        p.free(id);
+                        p.clear();
+                        if any(x ~= [-1; 1])
+                            TorF = 0;
+                        end
+                    catch
+                        TorF = 0;
+                    end
+                end
+            case 'pardiso_legacy'
+                TorF = exist('pardisoinit', 'file') == 3 && ...
+                        exist('pardisoreorder', 'file') == 3 && ...
+                        exist('pardisofactor', 'file') == 3 && ...
+                        exist('pardisosolve', 'file') == 3 && ...
+                        exist('pardisofree', 'file') == 3;
+                if TorF
+                    try
+                        A = sparse([1 2; 3 4]);
+                        b = [1;1];
+                        info = pardisoinit(11, 0);
+                        info = pardisoreorder(A, info, false);
+%                         % Summary PARDISO 5.1.0: ( reorder to reorder )
+%                         pat = 'Summary PARDISO (\.*\d)+:';
+%                         [s,e,tE,m,t] = regexp(evalc('info = pardisoreorder(A, info, true);'), pat);
+%                         if ~isempty(t)
+%                             vstr = t{1}{1};
+%                         end
+                        info = pardisofactor(A, info, false);
+                        [x, info] = pardisosolve(A, b, info, false);
+                        pardisofree(info);
+                        if any(x ~= [-1; 1])
+                            TorF = 0;
+                        end
+                    catch
+                        TorF = 0;
+                    end
                 end
             case 'regexp_split'     %% missing for MATLAB < 7.3 & Octave < 3.8
                 if have_fcn('matlab') && have_fcn('matlab', 'vnum') >= 7.003
