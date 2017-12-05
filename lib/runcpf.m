@@ -527,7 +527,14 @@ if ~done.flag
             if ~done.flag && evnts(1).zero
                 mpce = cpf_current_mpc(cb_data.mpc_base, cb_data.mpc_target, Ybus, Yf, Yt, cb_data.ref, cb_data.pv, cb_data.pq, nx.V, nx.lam, mpopt);
                 J = makeJac(mpce);
-                direction = sign(min(real(eigs(J,1,'SR'))));
+                opts.tol = 1e-3;
+                opts.it = 2*length(mpce.bus(:,1));
+                %% find buses with negative V-Q sensitivity. If found, retain the original direction, otherwise
+                %% change the direction based on tangent direction and manifold (eigen value)
+                if(isempty(find(nx.z(nb+pq) > 0, 1)))
+                    direction = sign(nx.z(end)*min(real(eigs(J,1,'SR',opts))));
+                end
+                
             end
             rb_cnt_cb = 0;              %% reset rollback counter for callbacks
         end
