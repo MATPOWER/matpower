@@ -12,6 +12,11 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 12/6/17
+  - Fix bug #23 where the continuation power flow could switch
+    directions unexpectedly when the operating point switched from
+    stable to unstable manifold or vice-versa after hitting a limit.
+
 #### 11/29/17
   - Add new option `knitro.maxit` to set maximum number of iterations
     for AC OPF solver using Knitro.

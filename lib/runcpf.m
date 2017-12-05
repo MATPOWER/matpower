@@ -377,7 +377,8 @@ if ~done.flag
     %% initialize tangent predictor: z = [dx;dlam]
     z = [zeros(2*nb, 1); 1];
     direction = 1;
-    z = cpf_tangent(V, lam, Ybus, Sbusb, Sbust, pv, pq, z, V, lam, parm,direction);
+    z = cpf_tangent(V, lam, Ybus, Sbusb, Sbust, pv, pq, ...
+                    z, V, lam, parm, direction);
 
     %% initialize state for current continuation step
     cx = struct(...         %% current state
@@ -457,8 +458,9 @@ if ~done.flag
         else                %% otherwise
             tx = cx;            %% use cx as the previous state
         end
-        nx.z = cpf_tangent(nx.V, nx.lam, Ybus, cb_data.Sbusb, cb_data.Sbust, cb_data.pv, cb_data.pq, ...
-                                    cx.z, tx.V, tx.lam, nx.parm,direction);
+        nx.z = cpf_tangent(nx.V, nx.lam, Ybus, cb_data.Sbusb, cb_data.Sbust, ...
+                            cb_data.pv, cb_data.pq, ...
+                            cx.z, tx.V, tx.lam, nx.parm, direction);
 
         %% detect events
         for k = 1:nef
@@ -528,13 +530,13 @@ if ~done.flag
                 mpce = cpf_current_mpc(cb_data.mpc_base, cb_data.mpc_target, Ybus, Yf, Yt, cb_data.ref, cb_data.pv, cb_data.pq, nx.V, nx.lam, mpopt);
                 J = makeJac(mpce);
                 opts.tol = 1e-3;
-                opts.it = 2*length(mpce.bus(:,1));
-                %% find buses with negative V-Q sensitivity. If found, retain the original direction, otherwise
-                %% change the direction based on tangent direction and manifold (eigen value)
-                if(isempty(find(nx.z(nb+pq) > 0, 1)))
+                opts.it = 2*nb;
+                %% retain original direction for buses with negative V-Q
+                %% sensitivity, otherwise change direction based on tangent
+                %% direction and manifold (eigenvalue)
+                if isempty(find(nx.z(nb+pq) > 0, 1))
                     direction = sign(nx.z(end)*min(real(eigs(J,1,'SR',opts))));
                 end
-                
             end
             rb_cnt_cb = 0;              %% reset rollback counter for callbacks
         end
