@@ -20,6 +20,10 @@ Since last release
     directions unexpectedly when the operating point switched from
     stable to unstable manifold or vice-versa after hitting a limit.
     *Thanks to Elis Nycander and Shrirang Abhyankar.*
+  - Fix bug #26 where, in a continuation power flow, a reactive limit
+    at a bus could be detected in error if multiple generators at the bus
+    had reactive ranges of very different sizes.
+    *Thanks to Elis Nycander and Shrirang Abhyankar.*
 
 #### 11/29/17
   - Add new option `knitro.maxit` to set maximum number of iterations

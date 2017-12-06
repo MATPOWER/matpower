@@ -38,13 +38,23 @@ mpc = cpf_current_mpc(d.mpc_base, d.mpc_target, ...
     d.Ybus, d.Yf, d.Yt, d.ref, d.pv, d.pq, cx.V, cx.lam, d.mpopt);
 
 %% compute Qg violations for on-line gens, not at PQ buses
+nb = size(mpc.bus, 1);
 ng = size(mpc.gen, 1);
-v_Qmax = NaN(ng, 1);
-v_Qmin = v_Qmax;
 on = find(mpc.gen(:, GEN_STATUS) > 0 & ...  %% which generators are on?
           mpc.bus(mpc.gen(:, GEN_BUS), BUS_TYPE) ~= PQ);  %% ... and are not PQ buses
-v_Qmax(on) = mpc.gen(on, QG) - mpc.gen(on, QMAX);
-v_Qmin(on) = mpc.gen(on, QMIN) - mpc.gen(on, QG);
+gbus = mpc.gen(on, GEN_BUS);                %% what buses are they at?
+ngon = size(on, 1);
+
+%% build connection matrix, element i, j is 1 if gen on(i) at bus j is ON
+Cg = sparse((1:ngon)', gbus, ones(ngon, 1), ngon, nb);
+C = Cg * Cg';
+
+%% violations are based on total violation at bus, not individual violations
+%% (see https://github.com/MATPOWER/matpower/issues/26)
+v_Qmax = NaN(ng, 1);
+v_Qmin = v_Qmax;
+v_Qmax(on) = C * (mpc.gen(on, QG) - mpc.gen(on, QMAX));
+v_Qmin(on) = C * (mpc.gen(on, QMIN) - mpc.gen(on, QG));
 
 %% assemble event function value
 ef = [v_Qmax; v_Qmin];

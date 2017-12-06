@@ -7172,6 +7172,7 @@ These cases also include contingency tables and two of them include hourly load 
 \item Fix bug \#13 where setting all buses to type \code{NONE} (isolated) resulted in a fatal error for \code{ext2int}, \code{runpf}, \code{runcpf} and \code{runopf}. \emph{Thanks to SNPerkin.}
 \item Fix bug \#21 where a continuation power flow that failed the first corrector step would produce a fatal error. \emph{Thanks to Elis Nycander.}
 \item Fix bug \#23 where the continuation power flow could switch directions unexpectedly when the operating point switched from stable to unstable manifold or vice-versa after hitting a limit. \emph{Thanks to Elis Nycander and Shrirang Abhyankar.}
+\item Fix bug \#26 where, in a continuation power flow, a reactive limit at a bus could be detected in error if multiple generators at the bus had reactive ranges of very different sizes. \emph{Thanks to Elis Nycander and Shrirang Abhyankar.}
 \end{itemize}
 
 \subsubsection*{Incompatible Changes}
