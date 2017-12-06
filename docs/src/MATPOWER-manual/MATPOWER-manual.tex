@@ -7170,6 +7170,8 @@ These cases also include contingency tables and two of them include hourly load 
 \item Fix \#11 fatal error encountered when running \code{test\_matpower} with \sdppf{} and YALMIP installed, but no SDP solver. Now checks for availability of SeDuMi, SDP3 or MOSEK before attempting to run \sdppf{} tests that require solving an SDP. \emph{Thanks to Felix.}
 \item Fix bug \#12 where the CPF could terminate early when requesting trace of the full curve with P or Q limits enforced, if a limit becomes binding at the base case. \emph{Thanks to Felix.}
 \item Fix bug \#13 where setting all buses to type \code{NONE} (isolated) resulted in a fatal error for \code{ext2int}, \code{runpf}, \code{runcpf} and \code{runopf}. \emph{Thanks to SNPerkin.}
+\item Fix bug \#21 where a continuation power flow that failed the first corrector step would produce a fatal error. \emph{Thanks to Elis Nycander.}
+\item Fix bug \#23 where the continuation power flow could switch directions unexpectedly when the operating point switched from stable to unstable manifold or vice-versa after hitting a limit. \emph{Thanks to Elis Nycander and Shrirang Abhyankar.}
 \end{itemize}
 
 \subsubsection*{Incompatible Changes}

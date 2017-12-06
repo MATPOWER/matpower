@@ -13,9 +13,13 @@ Since last release
 ------------------
 
 #### 12/6/17
+  - Fix bug #21 where a continuation power flow that failed the first
+    corrector step would produce a fatal error.
+    *Thanks to Elis Nycander.*
   - Fix bug #23 where the continuation power flow could switch
     directions unexpectedly when the operating point switched from
     stable to unstable manifold or vice-versa after hitting a limit.
+    *Thanks to Elis Nycander and Shrirang Abhyankar.*
 
 #### 11/29/17
   - Add new option `knitro.maxit` to set maximum number of iterations

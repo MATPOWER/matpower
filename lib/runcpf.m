@@ -442,13 +442,13 @@ if ~done.flag
         %% correction
         [nx.V, success, i, nx.lam] = cpf_corrector(Ybus, cb_data.Sbusb, nx.V_hat, cb_data.ref, cb_data.pv, cb_data.pq, ...
                     nx.lam_hat, cb_data.Sbust, cx.V, cx.lam, cx.z, cx.step, cx.parm, mpopt_pf);
-        if ~success
+        if ~success     %% corrector failed
             done.flag = 1;
             done.msg = sprintf('Corrector did not converge in %d iterations.', i);
             if mpopt.verbose
                 fprintf('step %3d  : stepsize = %-9.3g lambda = %6.3f  corrector did not converge in %d iterations\n', cont_steps, cx.step, nx.lam, i);
             end
-            cont_steps = cont_steps - 1;
+            cont_steps = max(cont_steps - 1, 1);    %% go back to last step, but not to 0
             break;
         end
 
