@@ -13,7 +13,9 @@ function mpc = case_ACTIVSg500
 %
 %   [1] A.B. Birchfield, T. Xu, K.M. Gegner, K.S. Shetye, T.J. Overbye,
 %       "Grid Structural Characteristics as Validation Criteria for
-%       Synthetic Networks," IEEE Transactions on Power Systems, 2017.
+%       Synthetic Networks," IEEE Transactions on Power Systems,
+%       vol. 32, no. 4, pp. 3258-3265, July 2017.
+%       DOI: 10.1109/TPWRS.2016.2616385
 %
 %   This is a synthetic power system model that does not represent the
 %   actual grid. It was developed as part of the US ARPA-E GRID DATA
