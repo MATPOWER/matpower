@@ -17,7 +17,7 @@ function [V, Qpv, Sf, St, Sslack, iter, success] = calc_v_y_sum(Vslack,nb,nl,f,Z
 %   Dragoslav Rajičić, Rubin Taleski, Two novel methods for radial and
 %   weakly meshed network analysis, Electric Power Systems Research,
 %   Volume 48, Issue 2, 15 December 1998, Pages 79-87
-%   http://dx.doi.org/10.1016/S0378-7796(98)00067-4
+%   https://doi.org/10.1016/S0378-7796(98)00067-4
 %
 %   See also RADIAL_PF.
 

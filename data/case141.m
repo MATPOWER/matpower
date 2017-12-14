@@ -7,7 +7,7 @@ function mpc = case141
 %       Maximum savings approach for location and sizing of capacitors in
 %       distribution systems, Electric Power Systems Research, Volume 78,
 %       Issue 7, July 2008, Pages 1192-1203
-%       http://dx.doi.org/10.1016/j.epsr.2007.10.002
+%       https://doi.org/10.1016/j.epsr.2007.10.002
 
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';

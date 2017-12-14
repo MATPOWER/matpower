@@ -7,7 +7,7 @@ function mpc = case22
 %       Direct search algorithm for capacitive compensation in radial
 %       distribution systems, International Journal of Electrical Power &
 %       Energy Systems, Volume 42, Issue 1, November 2012, Pages 24-30
-%       http://dx.doi.org/10.1016/j.ijepes.2012.03.006
+%       https://doi.org/10.1016/j.ijepes.2012.03.006
 
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';

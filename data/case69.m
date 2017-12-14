@@ -7,7 +7,7 @@ function mpc = case69
 %       system using a Fuzzy-GA method, International Journal of Electrical
 %       Power & Energy Systems, Volume 30, Issues 6–7, July–September 2008,
 %       Pages 361-367
-%       http://dx.doi.org/10.1016/j.ijepes.2007.08.004
+%       https://doi.org/10.1016/j.ijepes.2007.08.004
 
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';

@@ -330,12 +330,12 @@ MATPOWER is distributed under the [3-clause BSD license][29].
 [12]: most/docs/MOST-manual.pdf
 [13]: CHANGES.md
 [14]: http://www.pserc.cornell.edu/matpower/MATPOWER-paper.pdf
-[15]: http://dx.doi.org/10.1109/TPWRS.2010.2051168
+[15]: https://doi.org/10.1109/TPWRS.2010.2051168
 [16]: http://www.pserc.cornell.edu/matpower/MATPOWER-OPF.pdf
-[17]: http://dx.doi.org/10.1109/PES.2009.5275967
+[17]: https://doi.org/10.1109/PES.2009.5275967
 [18]: http://www.pserc.cornell.edu/matpower/MATPOWER-OPF-slides.pdf
-[19]: http://dx.doi.org/10.1109/TPWRS.2007.901301
-[20]: http://dx.doi.org/10.1109/TSG.2013.2281001
+[19]: https://doi.org/10.1109/TPWRS.2007.901301
+[20]: https://doi.org/10.1109/TSG.2013.2281001
 [21]: http://www.pserc.cornell.edu/matpower/TN1-OPF-Auctions.pdf
 [22]: http://www.pserc.cornell.edu/matpower/TN2-OPF-Derivatives.pdf
 [23]: https://github.com/MATPOWER/most

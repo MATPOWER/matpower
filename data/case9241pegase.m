@@ -24,7 +24,7 @@ function mpc = case9241pegase
 %     "Contingency ranking with respect to overloads in very large power
 %     systems taking into account uncertainty, preventive and corrective
 %     actions", Power Systems, IEEE Trans. on, (28)4:4909-4917, 2013.
-%     http://dx.doi.org/10.1109/TPWRS.2013.2251015
+%     https://doi.org/10.1109/TPWRS.2013.2251015
 %
 %   Remarks:
 %

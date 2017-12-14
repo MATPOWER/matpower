@@ -7,7 +7,7 @@ function mpc = case85
 %       load flow solution of radial distribution networks, International
 %       Journal of Electrical Power & Energy Systems, Volume 17, Issue 5,
 %       1995, Pages 335-346.
-%       http://dx.doi.org/10.1016/0142-0615(95)00050-0
+%       https://doi.org/10.1016/0142-0615(95)00050-0
 
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';
