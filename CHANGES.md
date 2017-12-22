@@ -12,6 +12,14 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 12/22/17
+  - Add another purely synthetic case from the ACTIVSg team (ASU, Cornell,
+    Texas A&M, U of IL, and VCU - Synthetic grids), resulting from work
+    supported by the ARPA-E GRID DATA program.
+    *Thanks to Adam Birchfield and the ACTIVSg team.*
+    - `case_ACTIVSg25k` (25,000-bus US Northeast/Mid-Atlantic synthetic
+       model)
+
 #### 12/6/17
   - Fix bug #21 where a continuation power flow that failed the first
     corrector step would produce a fatal error.
