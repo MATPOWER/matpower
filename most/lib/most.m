@@ -692,8 +692,6 @@ if mpopt.most.build_model
     ramp30 = mdi.flow(t,1,1).mpc.gen(:,RAMP_30)*2*mdi.Delta_T;
     om.add_var('Rrp', {t}, ng, [], zeros(ng,1), ...
         min(mdi.offer(t).PositiveLoadFollowReserveQuantity, ramp30)/baseMVA);
-%     om.add_var('Rrm', {t}, ng, [], zeros(ng,1), ...
-%         min(mdi.offer(t).NegativeLoadFollowReserveQuantity, ramp30)/baseMVA);
   end
   for t = 1:mdi.idx.ntramp
     ramp30 = mdi.flow(t,1,1).mpc.gen(:,RAMP_30)*2*mdi.Delta_T;
@@ -710,7 +708,6 @@ if mpopt.most.build_model
       for k = 1:mdi.idx.nc(t,j)+1
         if ns
           om.add_var('Psc', {t,j,k}, ns, [], [], zeros(ns,1));
-%           om.add_var('Psd', {t,j,k}, ns, [], zeros(ns,1), []);
         end
       end
     end
@@ -731,7 +728,6 @@ if mpopt.most.build_model
   if ns
     for t = 1:nt
       om.add_var('Sp', {t}, ns, [], [], MaxStorageLevel(:,t)/baseMVA);
-%       om.add_var('Sm', {t}, ns, [], MinStorageLevel(:,t)/baseMVA, []);
     end
     for t = 1:nt
       om.add_var('Sm', {t}, ns, [], MinStorageLevel(:,t)/baseMVA, []);
@@ -1978,45 +1974,6 @@ end
 
 tmptime(2,:) = clock;
 
-% TEST SECTION
-% create generation excess variables to impose a cost on excess generation
-% nexcess = mdi.idx.nf_total;
-% kk = nvars + 1;
-% for t = 1:nt
-%   for j = 1:mdi.idx.nj(t)
-%     for k = 1:mdi.idx.nc(t,j)+1
-%       mdi.idx.exbase(t,j,k) = kk;
-%       mdi.idx.exend(t,j,k) = kk;
-%       kk = kk + 1;
-%     end
-%   end
-% end
-% nvars = kk - 1;
-% Aex = sparse(0, nvars);
-% lex = [];
-% uex = [];
-% kk = size(mdi.QP.A, 1) + 1;
-% for t = 1:nt
-%   for j = 1:mdi.idx.nj(t)
-%     for k = 1:mdi.idx.nc(t,j)+1
-%       Aex = [ Aex;
-%               sparse( ones(ng+1,1), [mdi.idx.pbas(t,j,k):mdi.idx.pend(t,j,k) mdi.idx.exbase(t,j,k)]', [ones(ng,1); -1], 1, nvars) ];
-%       lex = [ lex; 1.01*sum(mdi.flow(t,j,k).mpc.bus(:,PD))/baseMVA ];
-%       uex = [ uex; Inf ];
-%     end
-%   end
-% end
-% mdi.QP.A = [ mdi.QP.A sparse(size(mdi.QP.A,1), nvars-mdi.idx.nvars);
-%               Aex];
-% mdi.QP.l = [ mdi.QP.l; lex];
-% mdi.QP.u = [ mdi.QP.u; uex];
-% mdi.QP.xmin = [ mdi.QP.xmin; zeros(nexcess,1) ];
-% mdi.QP.xmax = [ mdi.QP.xmax; ones(nexcess,1) ];
-% mdi.QP.H = [ mdi.QP.H sparse(mdi.idx.nvars, nvars-mdi.idx.nvars);
-%               sparse(nvars-mdi.idx.nvars, nvars) ];
-% mdi.QP.C = [ mdi.QP.C;  1e5*ones(nexcess,1)];
-
-
 % Call solver!
 mdo = mdi;
 if mpopt.most.solve_model
@@ -2119,7 +2076,6 @@ if mpopt.most.solve_model
           mpc.branch(:, MU_SF) = 0;
           mpc.branch(:, MU_ST) = 0;
           ion = find(mpc.branch(:, BR_STATUS));
-          %ioff = find(~mpc.branch(:, BR_STATUS));
           rows = ll.i1.Pf(t,j,k):ll.iN.Pf(t,j,k);
           cols = vv.i1.Va(t,j,k):vv.iN.Va(t,j,k);
           lf = baseMVA * (mdo.QP.A(rows,cols) * mdo.QP.x(cols) + mdo.flow(t,j,k).PLsh);
@@ -2336,5 +2292,3 @@ mdo.results.SolveTime = etime(tmptime(3,:), tmptime(2,:));
 if verbose
   fprintf('- MOST: Done.\n\n');
 end
-
-return;

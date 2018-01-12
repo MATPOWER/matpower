@@ -129,7 +129,7 @@
 
 %\hyphenation{matpower}
 
-\newcommand{\mpver}[0]{6.0}
+\newcommand{\mpver}[0]{6.1-dev}
 %\newcommand{\matlab}[0]{{Matlab}}
 %\newcommand{\matlab}[0]{{\sc Matlab}\textsuperscript{\tiny \textregistered}}
 \newcommand{\matlab}[0]{{\sc Matlab}}
@@ -296,11 +296,20 @@ POSSIBILITY OF SUCH DAMAGE.
 
 \subsection{Citing \most{}}
 
-While not required by the terms of the license, we do request that publications derived from the use of \most{} explicitly acknowledge that fact by citing both the main \matpower{} reference~\cite{zimmerman2011} and reference~\cite{murillo-sanchez2013a}:
+While not required by the terms of the license, we do request that publications derived from the use of \most{} explicitly acknowledge that fact by citing both the main \matpower{} reference~\cite{zimmerman2011}:
 
 \begin{quote}
 \footnotesize
-C.~E. Murillo-S{\'a}nchez, R.~D. Zimmerman, C.~L. Anderson, and R.~J. Thomas, ``Secure Planning and Operations of Systems with Stochastic Sources, Energy Storage and Active Demand,'' \emph{Smart Grid, IEEE Transactions on}, vol.~4, no.~4, pp.~2220--2229, Dec.~2013, \url{http://dx.doi.org/10.1109/TSG.2013.2281001}.
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez, and R.~J. Thomas, ``\matpower{}: Steady-State Operations, Planning and Analysis Tools for Power Systems Research and Education,'' \emph{Power Systems, IEEE Transactions on}, vol.~26, no.~1, pp.~12--19, Feb.~2011.\\
+DOI:~\href{https://doi.org/10.1109/TPWRS.2010.2051168}{10.1109/TPWRS.2010.2051168}
+\end{quote}
+
+and reference~\cite{murillo-sanchez2013a}:
+
+\begin{quote}
+\footnotesize
+C.~E. Murillo-S{\'a}nchez, R.~D. Zimmerman, C.~L. Anderson, and R.~J. Thomas, ``Secure Planning and Operations of Systems with Stochastic Sources, Energy Storage and Active Demand,'' \emph{Smart Grid, IEEE Transactions on}, vol.~4, no.~4, pp.~2220--2229, Dec.~2013.\\
+DOI:~\href{https://doi.org/10.1109/TSG.2013.2281001}{10.1109/TSG.2013.2281001}
 \end{quote}
 
 \subsection{\most{} Development}
@@ -2237,7 +2246,7 @@ name & value & description \\
 \end{Code}
 
 The \code{loadgenericdata} function loads data from a variable, M-file or MAT-file and checks that it matches a specified type.
-The first argument, \code{varfile}, is a variable containing the data structure or a string containing the name of a function M-file or a MAT-file on the Matlab path.
+The first argument, \code{varfile}, is a variable containing the data structure or a string containing the name of a function M-file or a MAT-file on the \matlab{} path.
 If no file extension is provided, it will attempt to load a MAT-file with the specified name and, if not found, will call a function by that name to get the data.
 The function M-file should return a single argument containing the data.
 A MAT-file should either contain a single variable with the desired data or provide the variable name in \code{varname}.
@@ -3273,18 +3282,18 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MOST-manual-1.0.pdf}{\most{
 \begin{thebibliography}{99}
 \bibitem{zimmerman2011}
 R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez, and R.~J. Thomas,
-  ``\matpower{}: Steady-State Operations, Planning and Analysis Tools for Power Systems Research and Education,'' \emph{Power Systems, IEEE Transactions on}, vol.~26, no.~1, pp.~12--19, Feb.~2011,
-\url{http://dx.doi.org/10.1109/TPWRS.2010.2051168}.
+  ``\matpower{}: Steady-State Operations, Planning and Analysis Tools for Power Systems Research and Education,'' \emph{Power Systems, IEEE Transactions on}, vol.~26, no.~1, pp.~12--19, Feb.~2011.
+DOI:~\href{https://doi.org/10.1109/TPWRS.2010.2051168}{10.1109/TPWRS.2010.2051168}
 
 \bibitem{murillo-sanchez2013a}
-C.~E. Murillo-S{\'a}nchez, R.~D. Zimmerman, C.~L. Anderson, and R.~J. Thomas, ``Secure Planning and Operations of Systems with Stochastic Sources, Energy Storage and Active Demand,'' \emph{Smart Grid, IEEE Transactions on}, vol.~4, no.~4, pp.~2220--2229, Dec.~2013,
-\url{http://dx.doi.org/10.1109/TSG.2013.2281001}.
+C.~E. Murillo-S{\'a}nchez, R.~D. Zimmerman, C.~L. Anderson, and R.~J. Thomas, ``Secure Planning and Operations of Systems with Stochastic Sources, Energy Storage and Active Demand,'' \emph{Smart Grid, IEEE Transactions on}, vol.~4, no.~4, pp.~2220--2229, Dec.~2013.
+DOI:~\href{https://doi.org/10.1109/TSG.2013.2281001}{10.1109/TSG.2013.2281001}
 
 \bibitem{zimmerman2009}
 R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez, and R.~J. Thomas, ``\matpower{}'s
-  Extensible Optimal Power Flow Architecture,'' \emph{Power and Energy Society
-  General Meeting, 2009 IEEE}, pp. 1--7, July 26--30 2009,
-  \url{http://dx.doi.org/10.1109/PES.2009.5275967}.
+Extensible Optimal Power Flow Architecture,'' \emph{Power and Energy Society
+General Meeting, 2009 IEEE}, pp. 1--7, July 26--30 2009.
+DOI:~\href{https://doi.org/10.1109/PES.2009.5275967}{10.1109/PES.2009.5275967}
 
 \bibitem{matpower}
 R.~D. Zimmerman and C.~E. Murillo-S{\'a}nchez, \mum{},
@@ -3300,8 +3309,8 @@ A.~J.~Lamadrid, S.~Maneevitjit, T.~D.~Mount, C.~E.~Murillo-S{\'a}nchez,
   [Online]. Available: \url{http://certs.lbl.gov/pdf/superopf-framework.pdf}
 
 \bibitem{murillo-sanchez2013}
-C.~E. Murillo-S{\'a}nchez, R.~D. Zimmerman, C.~L. Anderson, and R.~J. Thomas, ``A Stochastic, Contingency-Based Security-Constrained Optimal Power Flow for the Procurement of Energy and Distributed Reserve,'' \emph{Decision Support Systems}, Vol.~56, Dec.~2013, pp.~1-10,
-\url{http://dx.doi.org/10.1016/j.dss.2013.04.006}.
+C.~E. Murillo-S{\'a}nchez, R.~D. Zimmerman, C.~L. Anderson, and R.~J. Thomas, ``A Stochastic, Contingency-Based Security-Constrained Optimal Power Flow for the Procurement of Energy and Distributed Reserve,'' \emph{Decision Support Systems}, Vol.~56, pp.~1-10, Dec.~2013, ISSN 0167-9236.
+DOI:~\href{https://doi.org/10.1016/j.dss.2013.04.006}{10.1016/j.dss.2013.04.006}
 
 \end{thebibliography}
 

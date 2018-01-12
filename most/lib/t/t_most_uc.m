@@ -275,7 +275,7 @@ for s = 1:length(solvers)
         ms = most_summary(mdo);
         t_ok(mdo.QP.exitflag > 0, [t 'success']);
         ex = soln.wminup;
-        t_is(ms.f, ex.f, 8, [t 'f']);
+        t_is(ms.f, ex.f, 6, [t 'f']);
         t_is(ms.Pg, ex.Pg, 8, [t 'Pg']);
         t_is(ms.Rup, ex.Rup, 8, [t 'Rup']);
         t_is(ms.Rdn, ex.Rdn, 8, [t 'Rdn']);

@@ -217,7 +217,7 @@ the existing MOST test files (e.g. [`t_most_sp`](lib/t/t_most_sp.m)) for
 examples of how to write tests.
 
 You can run your tests by typing the name of your test function at the
-Matlab or Octave prompt, or `test_most` to run the entire test suite.
+MATLAB or Octave prompt, or `test_most` to run the entire test suite.
 
 ### Sharing your changes
 

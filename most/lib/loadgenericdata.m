@@ -12,7 +12,7 @@ function var = loadgenericdata(varfile, vartype, fields, varname, args)
 %   Inputs:
 %       VARFILE : Variable containing the data structure or a string
 %                 containing the name of a function M-file or a MAT-file
-%                 on the Matlab path. If no file extension is provided
+%                 on the MATLAB path. If no file extension is provided
 %                 it will attempt to load a MAT-file with that name and,
 %                 if not found, will call a function by that name to
 %                 get the data. The function M-file should return a
@@ -79,7 +79,7 @@ if ischar(varfile)      %% it's a file name
         elseif exist([rootname '.m'], 'file') == 2
             extension = '.m';
         else
-            error('loadgenericdata: No file named ''%s.mat'' or ''%s.m'' found in Matlab path.', rootname, rootname);
+            error('loadgenericdata: No file named ''%s.mat'' or ''%s.m'' found in MATLAB path.', rootname, rootname);
         end
     end
 

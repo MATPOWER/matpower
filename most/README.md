@@ -20,17 +20,17 @@ AC implementation, but it is not yet ready for release.
 The primary developers of MOST are Carlos E. Murillo-Sanchez and
 Ray D. Zimmerman, with significant contributions from
 Daniel Munoz-Alvarez and Alberto J. Lamadrid. It is built on top
-of [MATPOWER][2], a package of Matlab language M-files for solving
+of [MATPOWER][2], a package of MATLAB/Octave M-files for solving
 power flow and optimal power flow problems.
 
 System Requirements
 -------------------
 
-*   [Matlab][3] version 7 (R14) or later, or
-*   [GNU Octave][4] version 3.4 or later
+*   [MATLAB][3] version 7.3 (R2006b) or later, or
+*   [GNU Octave][4] version 4.0 or later
 *   [MATPOWER][5] version 6 or later,
 *   [MP-Test][6], for running the MOST test suite (included with [MATPOWER][5])
-*   A good LP/MILP, QP/MIQP solver, such as Gurobi, CPLEX, MOSEK, Matlab's
+*   A good LP/MILP, QP/MIQP solver, such as Gurobi, CPLEX, MOSEK, MATLAB's
     Optimization Toolbox, or GLPK (included with Octave).
 
 
@@ -42,10 +42,10 @@ which is a prerequisite for MOST and also includes its own copy of MOST.
 
 If you have followed the directions for installing MATPOWER found in 
 the [MATPOWER User's Manual][7], then MOST should already be installed and
-the appropriate paths added to your Matlab path.
+the appropriate paths added to your MATLAB path.
 
 To run the test suite and verify that MOST is properly installed and
-functioning, at the Matlab prompt, type `test_most`. The result
+functioning, at the MATLAB prompt, type `test_most`. The result
 should resemble the following, possibly including extra tests,
 depending on the availablility of optional packages:
 ```matlab
@@ -73,7 +73,7 @@ If, for some reason, you prefer to install your own copy of MOST directly
 from the [MOST GitHub repository][1], simply clone the repository to the
 location of your choice, where we use `<MOST>` to denote the path the
 resulting `most` directory. Then add the following directories to your
-Matlab or Octave path:
+MATLAB or Octave path:
  *  `<MOST>/lib`
  *  `<MOST>/lib/t`
 
@@ -92,7 +92,7 @@ and the latest version is always available at:
 <https://github.com/MATPOWER/most/blob/master/docs/MOST-manual.pdf>.
 
 And second is the built-in `help` command. As with the built-in
-functions and toolbox routines in Matlab and Octave, you can type `help`
+functions and toolbox routines in MATLAB and Octave, you can type `help`
 followed by the name of a command or M-file to get help on that particular
 function. All of the M-files in MOST have such documentation and this
 should be considered the main reference for the calling options for each
@@ -160,5 +160,5 @@ MOST is distributed under the [3-clause BSD license][10].
 [8]: https://github.com/MATPOWER/most/blob/master/docs/MOST-manual.pdf
 [9]: CONTRIBUTING.md
 [10]: LICENSE
-[11]: http://dx.doi.org/10.1109/TPWRS.2010.2051168
-[12]: http://dx.doi.org/10.1109/TSG.2013.2281001
+[11]: https://doi.org/10.1109/TPWRS.2010.2051168
+[12]: https://doi.org/10.1109/TSG.2013.2281001
