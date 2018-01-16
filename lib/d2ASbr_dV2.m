@@ -1,13 +1,13 @@
 function [Haa, Hav, Hva, Hvv] = ...
-    d2ASbr_dV2(dSbr_dVa, dSbr_dVm, Sbr, Cbr, Ybr, V, lam)
+    d2ASbr_dV2(dSbr_dVa, dSbr_dVm, Sbr, Cbr, Ybr, V, mu)
 %D2ASBR_DV2   Computes 2nd derivatives of |complex power flow|^2 w.r.t. V.
-%   [HAA, HAV, HVA, HVV] = D2ASBR_DV2(DSBR_DVA, DSBR_DVM, SBR, CBR, YBR, V, LAM)
+%   [HAA, HAV, HVA, HVV] = D2ASBR_DV2(DSBR_DVA, DSBR_DVM, SBR, CBR, YBR, V, MU)
 %   returns 4 matrices containing the partial derivatives w.r.t. voltage
-%   angle and magnitude of the product of a vector LAM with the 1st partial
+%   angle and magnitude of the product of a vector MU with the 1st partial
 %   derivatives of the square of the magnitude of branch complex power flows.
 %   Takes sparse first derivative matrices of complex flow, complex flow
 %   vector, sparse connection matrix CBR, sparse branch admittance matrix YBR,
-%   voltage vector V and nl x 1 vector of multipliers LAM. Output matrices
+%   voltage vector V and nl x 1 vector of multipliers MU. Output matrices
 %   are sparse.
 %
 %   Example:
@@ -22,13 +22,13 @@ function [Haa, Hav, Hva, Hvv] = ...
 %       dSbr_dVm = dSf_dVm;
 %       Sbr = Sf;
 %       [Haa, Hav, Hva, Hvv] = ...
-%             d2ASbr_dV2(dSbr_dVa, dSbr_dVm, Sbr, Cbr, Ybr, V, lam);
+%             d2ASbr_dV2(dSbr_dVa, dSbr_dVm, Sbr, Cbr, Ybr, V, mu);
 %
 %   Here the output matrices correspond to:
-%     Haa = (d/dVa (dASbr_dVa.')) * lam
-%     Hav = (d/dVm (dASbr_dVa.')) * lam
-%     Hva = (d/dVa (dASbr_dVm.')) * lam
-%     Hvv = (d/dVm (dASbr_dVm.')) * lam
+%     Haa = (d/dVa (dASbr_dVa.')) * mu
+%     Hav = (d/dVm (dASbr_dVa.')) * mu
+%     Hva = (d/dVa (dASbr_dVm.')) * mu
+%     Hvv = (d/dVm (dASbr_dVm.')) * mu
 %
 %   See also DSBR_DV.
 %
@@ -49,13 +49,13 @@ function [Haa, Hav, Hva, Hvv] = ...
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% define
-nl = length(lam);
+nl = length(mu);
 
-diaglam = sparse(1:nl, 1:nl, lam, nl, nl);
+diagmu = sparse(1:nl, 1:nl, mu, nl, nl);
 diagSbr_conj = sparse(1:nl, 1:nl, conj(Sbr), nl, nl);
 
-[Saa, Sav, Sva, Svv] = d2Sbr_dV2(Cbr, Ybr, V, diagSbr_conj * lam);
-Haa = 2 * real( Saa + dSbr_dVa.' * diaglam * conj(dSbr_dVa) );
-Hva = 2 * real( Sva + dSbr_dVm.' * diaglam * conj(dSbr_dVa) );
-Hav = 2 * real( Sav + dSbr_dVa.' * diaglam * conj(dSbr_dVm) );
-Hvv = 2 * real( Svv + dSbr_dVm.' * diaglam * conj(dSbr_dVm) );
+[Saa, Sav, Sva, Svv] = d2Sbr_dV2(Cbr, Ybr, V, diagSbr_conj * mu);
+Haa = 2 * real( Saa + dSbr_dVa.' * diagmu * conj(dSbr_dVa) );
+Hva = 2 * real( Sva + dSbr_dVm.' * diagmu * conj(dSbr_dVa) );
+Hav = 2 * real( Sav + dSbr_dVa.' * diagmu * conj(dSbr_dVm) );
+Hvv = 2 * real( Svv + dSbr_dVm.' * diagmu * conj(dSbr_dVm) );

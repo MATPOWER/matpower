@@ -1,11 +1,11 @@
-function [Haa, Hav, Hva, Hvv] = d2Sbr_dV2(Cbr, Ybr, V, lam)
+function [Haa, Hav, Hva, Hvv] = d2Sbr_dV2(Cbr, Ybr, V, mu)
 %D2SBR_DV2   Computes 2nd derivatives of complex power flow w.r.t. voltage.
-%   [HAA, HAV, HVA, HVV] = D2SBR_DV2(CBR, YBR, V, LAM) returns 4 matrices
+%   [HAA, HAV, HVA, HVV] = D2SBR_DV2(CBR, YBR, V, MU) returns 4 matrices
 %   containing the partial derivatives w.r.t. voltage angle and magnitude
-%   of the product of a vector LAM with the 1st partial derivatives of the
+%   of the product of a vector MU with the 1st partial derivatives of the
 %   complex branch power flows. Takes sparse connection matrix CBR, sparse
 %   branch admittance matrix YBR, voltage vector V and nl x 1 vector of
-%   multipliers LAM. Output matrices are sparse.
+%   multipliers MU. Output matrices are sparse.
 %
 %   Example:
 %       f = branch(:, F_BUS);
@@ -13,13 +13,13 @@ function [Haa, Hav, Hva, Hvv] = d2Sbr_dV2(Cbr, Ybr, V, lam)
 %       [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
 %       Cbr = Cf;
 %       Ybr = Yf;
-%       [Haa, Hav, Hva, Hvv] = d2Sbr_dV2(Cbr, Ybr, V, lam);
+%       [Haa, Hav, Hva, Hvv] = d2Sbr_dV2(Cbr, Ybr, V, mu);
 %
 %   Here the output matrices correspond to:
-%       Haa = (d/dVa (dSbr_dVa.')) * lam
-%       Hav = (d/dVm (dSbr_dVa.')) * lam
-%       Hva = (d/dVa (dSbr_dVm.')) * lam
-%       Hvv = (d/dVm (dSbr_dVm.')) * lam
+%       Haa = (d/dVa (dSbr_dVa.')) * mu
+%       Hav = (d/dVm (dSbr_dVa.')) * mu
+%       Hva = (d/dVa (dSbr_dVm.')) * mu
+%       Hvv = (d/dVm (dSbr_dVm.')) * mu
 %
 %   For more details on the derivations behind the derivative code used
 %   in MATPOWER information, see:
@@ -38,13 +38,13 @@ function [Haa, Hav, Hva, Hvv] = d2Sbr_dV2(Cbr, Ybr, V, lam)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% define
-nl = length(lam);
+nl = length(mu);
 nb = length(V);
 
-diaglam = sparse(1:nl, 1:nl, lam, nl, nl);
-diagV   = sparse(1:nb, 1:nb, V, nb, nb);
+diagmu = sparse(1:nl, 1:nl, mu, nl, nl);
+diagV  = sparse(1:nb, 1:nb, V, nb, nb);
 
-A = Ybr' * diaglam * Cbr;
+A = Ybr' * diagmu * Cbr;
 B = conj(diagV) * A * diagV;
 D = sparse(1:nb, 1:nb, (A*V) .* conj(V), nb, nb);
 E = sparse(1:nb, 1:nb, (A.'*conj(V)) .* V, nb, nb);

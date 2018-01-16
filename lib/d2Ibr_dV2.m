@@ -1,22 +1,22 @@
-function [Haa, Hav, Hva, Hvv] = d2Ibr_dV2(Ybr, V, lam)
+function [Haa, Hav, Hva, Hvv] = d2Ibr_dV2(Ybr, V, mu)
 %D2IBR_DV2   Computes 2nd derivatives of complex branch current w.r.t. voltage.
-%   [HAA, HAV, HVA, HVV] = D2IBR_DV2(CBR, YBR, V, LAM) returns 4 matrices
+%   [HAA, HAV, HVA, HVV] = D2IBR_DV2(CBR, YBR, V, MU) returns 4 matrices
 %   containing the partial derivatives w.r.t. voltage angle and magnitude
-%   of the product of a vector LAM with the 1st partial derivatives of the
+%   of the product of a vector MU with the 1st partial derivatives of the
 %   complex branch currents. Takes sparse branch admittance matrix YBR,
-%   voltage vector V and nl x 1 vector of multipliers LAM. Output matrices
+%   voltage vector V and nl x 1 vector of multipliers MU. Output matrices
 %   are sparse.
 %
 %   Example:
 %       [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
 %       Ybr = Yf;
-%       [Haa, Hav, Hva, Hvv] = d2Ibr_dV2(Ybr, V, lam);
+%       [Haa, Hav, Hva, Hvv] = d2Ibr_dV2(Ybr, V, mu);
 %
 %   Here the output matrices correspond to:
-%       Haa = (d/dVa (dIbr_dVa.')) * lam
-%       Hav = (d/dVm (dIbr_dVa.')) * lam
-%       Hva = (d/dVa (dIbr_dVm.')) * lam
-%       Hvv = (d/dVm (dIbr_dVm.')) * lam
+%       Haa = (d/dVa (dIbr_dVa.')) * mu
+%       Hav = (d/dVm (dIbr_dVa.')) * mu
+%       Hva = (d/dVa (dIbr_dVm.')) * mu
+%       Hvv = (d/dVm (dIbr_dVm.')) * mu
 %
 %   For more details on the derivations behind the derivative code used
 %   in MATPOWER information, see:
@@ -39,7 +39,7 @@ nb = length(V);
 
 diaginvVm = sparse(1:nb, 1:nb, ones(nb, 1)./abs(V), nb, nb);
 
-Haa = sparse(1:nb, 1:nb, -(Ybr.' * lam) .* V, nb, nb);
+Haa = sparse(1:nb, 1:nb, -(Ybr.' * mu) .* V, nb, nb);
 Hva = -1j * Haa * diaginvVm;
 Hav = Hva;
 Hvv = sparse(nb, nb);
