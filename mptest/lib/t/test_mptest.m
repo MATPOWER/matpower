@@ -7,7 +7,7 @@ function success = test_mptest(verbose, exit_on_fail)
 %
 %   Runs all of the MPTEST tests. If VERBOSE is true (false by default),
 %   it prints the details of the individual tests. If EXIT_ON_FAIL is true
-%   (false by default), it will exit Matlab or Octave with a status of 1
+%   (false by default), it will exit MATLAB or Octave with a status of 1
 %   unless T_RUN_TESTS returns ALL_OK.
 %
 %   See also T_RUN_TESTS.

@@ -1,7 +1,7 @@
 MP-Test
 =======
 
-MP-Test is a set of functions for implementing unit testing in Matlab or
+MP-Test is a set of functions for implementing unit testing in MATLAB or
 Octave. It was initially developed for [MATPOWER][1], and is used by
 [MATPOWER][1], [MATPOWER Interior Point Solver (MIPS)][2] and
 [MATPOWER Optimal Scheduling Tool (MOST)][3].
@@ -10,7 +10,7 @@ Installation
 ------------
 
 Installation and use of MP-Test requires familiarity with the basic operation
-of Matlab or Octave, including setting up your Matlab path.
+of MATLAB or Octave, including setting up your MATLAB path.
 
 1.  Clone the repository or download and extract the zip file of the MIPS
     distribution from the [MP-Test project page][4] to the location of your
@@ -19,11 +19,11 @@ of Matlab or Octave, including setting up your Matlab path.
     modified, so it is recommended that they be kept separate from your
     own code. We will use `<MPTEST>` to denote the path to this directory.
 
-2.  Add the following directories to your Matlab path:
+2.  Add the following directories to your MATLAB/Octave path:
     *   `<MPTEST>/lib`
     *   `<MPTEST>/lib/t`
 
-3.  At the Matlab prompt, type `test_mptest` to run the test suite and
+3.  At the MATLAB prompt, type `test_mptest` to run the test suite and
     verify that MP-Test is properly installed and functioning. The result
     should resemble the following:
 ```matlab
@@ -92,7 +92,7 @@ Documentation
 -------------
 
 The primary source of documentation for MP-Test is the built-in `help`
-command. As with the built-in functions and toolbox routines in Matlab
+command. As with the built-in functions and toolbox routines in MATLAB
 and Octave, you can type `help` followed by the name of a command or
 M-file to get help on that particular function. All of the M-files in
 MP-Test have such documentation and this should be considered the main

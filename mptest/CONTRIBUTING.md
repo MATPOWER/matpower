@@ -9,8 +9,8 @@ submitting the patch that your contributions are licensed under the
 --
 
 Before submitting the pull request, please make sure you have tested
-your changes and that they follow the [MATPOWER project guidelines][2]
-for contributing code.
+your changes and that they follow the guidelines from the [MATPOWER
+Contributors Guide][2] for contributing code.
 
 [1]: ./LICENSE
-[2]: .
+[2]: https://github.com/MATPOWER/matpower/blob/master/CONTRIBUTING.md
