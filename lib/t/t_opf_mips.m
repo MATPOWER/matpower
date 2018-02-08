@@ -13,14 +13,29 @@ if nargin < 1
     quiet = 0;
 end
 
-linsolvers = {'\'};
-if have_fcn('pardiso')
-    linsolvers{end+1} = 'PARDISO';
-end
+%% current mismatch, cartesian V, step-control, linsolver
+options = {
+    {0, 0, 0, '\'      },
+    {0, 1, 0, '\'      },
+    {1, 0, 0, '\'      },
+    {1, 1, 0, '\'      },
+    {0, 0, 1, '\'      },
+%     {0, 1, 1, '\'      },
+%     {1, 0, 1, '\'      },
+%     {1, 1, 1, '\'      },
+    {0, 0, 0, 'PARDISO'},
+%     {0, 1, 0, 'PARDISO'},
+%     {1, 0, 0, 'PARDISO'},
+%     {1, 1, 0, 'PARDISO'},
+%     {0, 0, 1, 'PARDISO'},
+%     {0, 1, 1, 'PARDISO'},
+%     {1, 0, 1, 'PARDISO'},
+%     {1, 1, 1, 'PARDISO'},
+};
 
 num_tests = 204;
 
-t_begin(2*num_tests, quiet);
+t_begin(length(options)*num_tests, quiet);
 
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
     VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
@@ -48,13 +63,26 @@ if have_fcn('octave')
     warning('off', file_in_path_warn_id);
 end
 
-mpopt = mpoption('opf.violation', 1e-6, 'mips.gradtol', 1e-8, ...
-        'mips.comptol', 1e-8, 'mips.costtol', 1e-9);
+mpopt = mpoption('opf.violation', 1e-6);
 mpopt = mpoption(mpopt, 'out.all', 0, 'verbose', verbose, 'opf.ac.solver', 'MIPS');
 
-for k = 1:length(linsolvers)
-    mpopt = mpoption(mpopt, 'mips.linsolver', linsolvers{k});
-    t0 = sprintf('MIPS (%s): ', linsolvers{k});
+for k = 1:length(options)
+    if options{k}{1}, bal = 'I';  else, bal = 'S'; end  %% nodal balance
+    if options{k}{2}, crd = 'c';  else, crd = 'p'; end  %% V coordinates
+    if options{k}{3}, sc = '-sc'; else, sc  = '';  end  %% step control
+    t0 = sprintf('MIPS%s (%s,%s,%s) : ', sc, bal, crd, options{k}{4});
+
+    if strcmp(options{k}{4}, 'PARDISO') && ~have_fcn('pardiso')
+        t_skip(num_tests, [t0 'PARDISO not available']);
+        continue;
+    end
+
+    mpopt = mpoption(mpopt, 'mips.gradtol', 1e-8, ...
+        'mips.comptol', 1e-8, 'mips.costtol', 1e-9);
+    mpopt = mpoption(mpopt, 'opf.current_balance',  options{k}{1}, ...
+                            'opf.v_cartesian',      options{k}{2}, ...
+                            'mips.step_control',    options{k}{3}, ...
+                            'mips.linsolver',       options{k}{4} );
 
     %% set up indices
     ib_data     = [1:BUS_AREA BASE_KV:VMIN];
@@ -228,7 +256,7 @@ for k = 1:length(linsolvers)
     t_is(f, 9009.0890, 3, [t 'f']);
     t_is([min(bus(:, VM)) mean(bus(:, VM)) max(bus(:, VM))], ...
         [1.066624, 1.083980, 1.091698], 5, [t 'bus voltage']);
-    t_is(r.cost.usr, 1673.065465, 5, [t 'user cost']);
+    t_is(r.cost.usr, 1673.065465, 4, [t 'user cost']);
 
     %%-----  run OPF with extra linear user constraints & costs  -----
     %% single new z variable constrained to be greater than or equal to
@@ -440,10 +468,6 @@ for k = 1:length(linsolvers)
     t_is(gen(:, PG), [100.703628; 128.679485; 88.719864], 5, [t 'f']);
     t_is([min(bus(:, VM)) mean(bus(:, VM)) max(bus(:, VM))], ...
         [1.059191 1.079404 1.1], 5, [t 'bus voltage']);
-end
-
-if ~have_fcn('pardiso')
-    t_skip(num_tests, 'PARDISO linear solver not available');
 end
 
 if have_fcn('octave')

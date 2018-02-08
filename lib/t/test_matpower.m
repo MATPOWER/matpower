@@ -60,7 +60,6 @@ if have_fcn('minopf')
     tests{end+1} = 't_opf_minopf';
 end
 tests{end+1} = 't_opf_mips';
-tests{end+1} = 't_opf_mips_sc';
 if have_fcn('pdipmopf')
     tests{end+1} = 't_opf_tspopf_pdipm';
 end
