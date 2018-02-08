@@ -13,9 +13,17 @@ if nargin < 1
     quiet = 0;
 end
 
+%% current mismatch, cartesian V
+options = {
+    {0, 0},
+    {0, 1},
+    {1, 0},
+    {1, 1},
+};
+
 num_tests = 204;
 
-t_begin(num_tests, quiet);
+t_begin(length(options)*num_tests, quiet);
 
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
     VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
@@ -34,11 +42,23 @@ else
     verbose = 0;
 end
 
-t0 = 'knitro OPF : ';
-mpopt = mpoption('opf.violation', 1e-8, 'knitro.tol_x', 1e-8, 'knitro.tol_f', 1e-8);
+mpopt = mpoption('opf.violation', 1e-8);
 mpopt = mpoption(mpopt, 'out.all', 0, 'verbose', verbose, 'opf.ac.solver', 'KNITRO');
 
-if have_fcn('knitro')
+for k = 1:length(options)
+    if options{k}{1}, bal = 'I';  else, bal = 'S'; end  %% nodal balance
+    if options{k}{2}, crd = 'c';  else, crd = 'p'; end  %% V coordinates
+    t0 = sprintf('Knitro OPF (%s,%s) : ', bal, crd);
+
+    if ~have_fcn('knitro')
+        t_skip(num_tests, 'KNITRO not available');
+        continue;
+    end
+
+    mpopt = mpoption(mpopt, 'knitro.tol_x', 1e-8, 'knitro.tol_f', 1e-8);
+    mpopt = mpoption(mpopt, 'opf.current_balance',  options{k}{1}, ...
+                            'opf.v_cartesian',      options{k}{2} );
+
     %% set up indices
     ib_data     = [1:BUS_AREA BASE_KV:VMIN];
     ib_voltage  = [VM VA];

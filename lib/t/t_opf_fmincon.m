@@ -13,9 +13,17 @@ if nargin < 1
     quiet = 0;
 end
 
+%% current mismatch, cartesian V
+options = {
+    {0, 0},
+    {0, 1},
+    {1, 0},
+    {1, 1},
+};
+
 num_tests = 204;
 
-t_begin(num_tests, quiet);
+t_begin(length(options)*num_tests, quiet);
 
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
     VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
@@ -34,8 +42,7 @@ else
     verbose = 0;
 end
 
-t0 = 'fmincon OPF : ';
-mpopt = mpoption('opf.violation', 1e-6, 'fmincon.tol_x', 1e-7, 'fmincon.tol_f', 1e-9);
+mpopt = mpoption('opf.violation', 1e-6);
 mpopt = mpoption(mpopt, 'out.all', 0, 'verbose', verbose, 'opf.ac.solver', 'FMINCON');
 
 %% use active-set method for MATLAB 7.6-7.9 (R2008a-R2009b)
@@ -45,7 +52,20 @@ if strcmp(vstr, '7.6') || strcmp(vstr, '7.7') || ...
     mpopt = mpoption(mpopt, 'fmincon.alg', 1);
 end
 
-if have_fcn('fmincon')
+for k = 1:length(options)
+    if options{k}{1}, bal = 'I';  else, bal = 'S'; end  %% nodal balance
+    if options{k}{2}, crd = 'c';  else, crd = 'p'; end  %% V coordinates
+    t0 = sprintf('fmincon OPF (%s,%s) : ', bal, crd);
+
+    if ~have_fcn('fmincon')
+        t_skip(num_tests, 'fmincon not available');
+        continue;
+    end
+
+    mpopt = mpoption(mpopt, 'fmincon.tol_x', 1e-7, 'fmincon.tol_f', 1e-9);
+    mpopt = mpoption(mpopt, 'opf.current_balance',  options{k}{1}, ...
+                            'opf.v_cartesian',      options{k}{2} );
+
     %% set up indices
     ib_data     = [1:BUS_AREA BASE_KV:VMIN];
     ib_voltage  = [VM VA];
