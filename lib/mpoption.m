@@ -199,6 +199,12 @@ function opt = mpoption(varargin)
 %       [ 'MOSEK'   - MOSEK, requires MATLAB interface to MOSEK solver      ]
 %       [             available from: http://www.mosek.com/                 ]
 %       [ 'OT'      - MATLAB Optimization Toolbox, QUADPROG, LINPROG        ]
+%   opf.current_balance     0           type of nodal balance equation
+%       [ 0 - use complex power balance equations                           ]
+%       [ 1 - use complex current balance equations                         ]
+%   opf.v_cartesian         0           voltage representation
+%       [ 0 - bus voltage variables represented in polar coordinates        ]
+%       [ 1 - bus voltage variables represented in Cartesian coordinates    ]
 %   opf.violation           5e-6        constraint violation tolerance
 %   opf.use_vg              0           respect gen voltage setpt     [ 0-1 ]
 %       [ 0 - use specified bus Vmin & Vmax, and ignore gen Vg              ]
@@ -584,6 +590,10 @@ if have_opt0
                 if isfield(opt_d, 'knitro')
                     opt0.knitro.maxit  = opt_d.knitro.maxit;
                 end
+            end
+            if opt0.v <= 17         %% convert version 17 to 18
+                opt0.opf.current_balance = opt_d.opf.current_balance;
+                opt0.opf.v_cartesian     = opt_d.opf.v_cartesian;
             end
             opt0.v = v;
         end
@@ -1542,6 +1552,8 @@ if ~isstruct(opt)
                 'solver',               'DEFAULT'   ), ...
             'dc',                   struct(...
                 'solver',               'DEFAULT'   ), ...
+            'current_balance',      0, ...
+            'v_cartesian',          0, ...
             'violation',            5e-6, ...
             'use_vg',               0, ...
             'flow_lim',             'S', ...
@@ -1609,7 +1621,7 @@ optt = opt;
 %% globals
 %%-------------------------------------------------------------------
 function v = mpoption_version
-v = 17;     %% version number of MATPOWER options struct
+v = 18;     %% version number of MATPOWER options struct
             %% (must be incremented every time structure is updated)
             %% v1   - first version based on struct (MATPOWER 5.0b1)
             %% v2   - added 'linprog' and 'quadprog' fields
@@ -1638,6 +1650,7 @@ v = 17;     %% version number of MATPOWER options struct
             %%        'cpf.v_lims_tol', and 'cpf.flow_lims_tol'
             %% v16  - added 'opf.start' (deprecated 'opf.init_from_mpc')
             %% v17  - added 'knitro.maxit'
+            %% v18  - added 'opf.current_balance' and 'opf.v_cartesian'
 
 %%-------------------------------------------------------------------
 function db_level = DEBUG
