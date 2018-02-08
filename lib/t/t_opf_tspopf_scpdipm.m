@@ -91,7 +91,7 @@ if have_fcn('scpdipmopf')
     t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
     t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
     xr = [r.var.val.Va;r.var.val.Vm;r.var.val.Pg;r.var.val.Qg];
-    t_is(r.x, xr, 8, [t 'check on raw x returned from OPF']);
+    t_is(r.x, xr, 8, [t 'raw x returned from OPF']);
 
 %     %% get solved AC OPF case from MAT-file
 %     load soln9_opf_Plim;       %% defines bus_soln, gen_soln, branch_soln, f_soln
