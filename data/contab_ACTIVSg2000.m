@@ -12,10 +12,10 @@ function chgtab = contab_ACTIVSg2000
 % Warnings:
 %     Circuit 2 does not exist from bus 1071 to bus 1019, using circuit 1 instead.
 %
-%   Nov 10, 2017
+%   February 3, 2018
 
 %   MATPOWER
-%   Copyright (c) 2017 by A.B. Birchfield, T. Xu, K.M. Gegner, K.S. Shetye,
+%   Copyright (c) 2017-2018 by A.B. Birchfield, T. Xu, K.M. Gegner, K.S. Shetye,
 %   and T.J. Overbye
 %   Licensed under the Creative Commons Attribution 4.0 International license,
 %   http://creativecommons.org/licenses/by/4.0/
