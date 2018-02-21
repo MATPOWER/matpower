@@ -25,7 +25,7 @@ diagLamS  = sparse(1:nb, 1:nb, Sbus.*lam, nb, nb);
 diagV3    = sparse(1:nb, 1:nb, 1./(V.^3), nb, nb);    
     
 Gii   = 2*conj(diagLamS*diagV3);
-Grr   = - G_Vi2;
-Gir = 1j*G_Vi2;
+Grr   = - Gii;
+Gir = 1j*Gii;
 Gri = Gir;
 end
