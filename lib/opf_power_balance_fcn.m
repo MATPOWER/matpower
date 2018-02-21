@@ -38,22 +38,34 @@ function [g, dg] = opf_power_balance_fcn(x, mpc, Ybus, mpopt)
 
 %% unpack data
 [baseMVA, bus, gen] = deal(mpc.baseMVA, mpc.bus, mpc.gen);
-[Va, Vm, Pg, Qg] = deal(x{:});
+
+if mpopt.opf.v_cartesian
+    [Vi, Vr, Pg, Qg] = deal(x{:});
+    %% reconstruct V
+    V = Vr + 1j* Vi;  
+    %% problem dimensions
+    nb = length(Vi);            %% number of buses
+    ng = length(Pg);            %% number of dispatchable injections    
+else
+    [Va, Vm, Pg, Qg] = deal(x{:});
+    %% reconstruct V
+    V = Vm .* exp(1j * Va);
+    %% problem dimensions
+    nb = length(Va);            %% number of buses
+    ng = length(Pg);            %% number of dispatchable injections
+end 
 
 %% ----- evaluate constraints -----
-%% problem dimensions
-nb = length(Va);            %% number of buses
-ng = length(Pg);            %% number of dispatchable injections
-
 %% put Pg, Qg back in gen
 gen(:, PG) = Pg * baseMVA;  %% active generation in MW
-gen(:, QG) = Qg * baseMVA;  %% reactive generation in MVAr
-
-%% reconstruct V
-V = Vm .* exp(1j * Va);
+gen(:, QG) = Qg * baseMVA;  %% reactive generation in MVAr 
 
 %% rebuild Sbus
-Sbus = makeSbus(baseMVA, bus, gen, mpopt, Vm);  %% net injected power in p.u.
+if mpopt.opf.v_cartesian
+    Sbus = makeSbus(baseMVA, bus, gen);             %% net injected power in p.u.
+else
+    Sbus = makeSbus(baseMVA, bus, gen, mpopt, Vm);  %% net injected power in p.u.
+end
 
 %% evaluate complex power balance mismatches
 mis = V .* conj(Ybus * V) - Sbus;
@@ -65,15 +77,22 @@ g = [ real(mis);    %% active power mismatch
 %%----- evaluate constraint gradients -----
 if nargout > 1
     %% compute partials of injected bus powers
-    [dSbus_dVm, dSbus_dVa] = dSbus_dV(Ybus, V);         %% w.r.t. V
     neg_Cg = sparse(gen(:, GEN_BUS), 1:ng, -1, nb, ng); %% Pbus w.r.t. Pg
+    if mpopt.opf.v_cartesian
+        [dSbus_dVr, dSbus_dVi] = dSbus_dV_C(Ybus, V);         %% w.r.t. V
+        dg = [
+            real([dSbus_dVi dSbus_dVr]) neg_Cg sparse(nb, ng);  %% P mismatch w.r.t Vi, Vr, Pg, Qg
+            imag([dSbus_dVi dSbus_dVr]) sparse(nb, ng) neg_Cg;  %% Q mismatch w.r.t Vi, Vr, Pg, Qg
+        ];        
+    else
+        [dSbus_dVm, dSbus_dVa] = dSbus_dV_P(Ybus, V);         %% w.r.t. V
+        %% adjust for voltage dependent loads
+        [dummy, neg_dSd_dVm] = makeSbus(baseMVA, bus, gen, mpopt, Vm);
+        dSbus_dVm = dSbus_dVm - neg_dSd_dVm;
 
-    %% adjust for voltage dependent loads
-    [dummy, neg_dSd_dVm] = makeSbus(baseMVA, bus, gen, mpopt, Vm);
-    dSbus_dVm = dSbus_dVm - neg_dSd_dVm;
-
-    dg = [
-        real([dSbus_dVa dSbus_dVm]) neg_Cg sparse(nb, ng);  %% P mismatch w.r.t Va, Vm, Pg, Qg
-        imag([dSbus_dVa dSbus_dVm]) sparse(nb, ng) neg_Cg;  %% Q mismatch w.r.t Va, Vm, Pg, Qg
-    ];
+        dg = [
+            real([dSbus_dVa dSbus_dVm]) neg_Cg sparse(nb, ng);  %% P mismatch w.r.t Va, Vm, Pg, Qg
+            imag([dSbus_dVa dSbus_dVm]) sparse(nb, ng) neg_Cg;  %% Q mismatch w.r.t Va, Vm, Pg, Qg
+        ];
+    end
 end
