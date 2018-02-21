@@ -161,6 +161,11 @@ if ~dc
   Qg   = gen(:, QG) / baseMVA;
   Qmin = gen(:, QMIN) / baseMVA;
   Qmax = gen(:, QMAX) / baseMVA;
+  if mpopt.opf.v_cartesian
+    V = Vm .* exp(1j*Va);
+    Vr = real(V);
+    Vi = imag(V);
+  end
 end
 
 %% find/prepare polynomial generator costs
@@ -235,7 +240,6 @@ if dc               %% DC model
     upf = [];
     upt = [];
   end
-
   user_vars = {'Va', 'Pg'};
   ycon_vars = {'Pg', 'y'};
 else                %% AC model
@@ -256,13 +260,21 @@ else                %% AC model
   
   %% generator PQ capability curve constraints
   [Apqh, ubpqh, Apql, ubpql, Apqdata] = makeApq(baseMVA, gen);
-
-  user_vars = {'Va', 'Vm', 'Pg', 'Qg'};
+  if mpopt.opf.v_cartesian
+      user_vars = {'Vi', 'Vr', 'Pg', 'Qg'};      
+  else
+      user_vars = {'Va', 'Vm', 'Pg', 'Qg'};      
+  end  
   ycon_vars = {'Pg', 'Qg', 'y'};
 
   %% nonlinear constraint functions
-  fcn_mis = @(x)opf_power_balance_fcn(x, mpc, Ybus, mpopt);
-  hess_mis = @(x, lam)opf_power_balance_hess(x, lam, mpc, Ybus, mpopt);
+  if mpopt.opf.current_balance
+     fcn_mis = @(x)opf_current_balance_fcn(x, mpc, Ybus, mpopt);  
+     hess_mis = @(x, lam)opf_current_balance_hess(x, lam, mpc, Ybus, mpopt);
+  else
+     fcn_mis = @(x)opf_power_balance_fcn(x, mpc, Ybus, mpopt);
+     hess_mis = @(x, lam)opf_power_balance_hess(x, lam, mpc, Ybus, mpopt);
+  end
   fcn_flow = @(x)opf_branch_flow_fcn(x, mpc, Yf(il, :), Yt(il, :), il, mpopt);
   hess_flow = @(x, lam)opf_branch_flow_hess(x, lam, mpc, Yf(il, :), Yt(il, :), il, mpopt);
   
@@ -345,24 +357,47 @@ else
   om.userdata.iang = iang;
 
   %% optimization variables
-  om.add_var('Va', nb, Va, Val, Vau);
-  om.add_var('Vm', nb, Vm, bus(:, VMIN), bus(:, VMAX));
-  om.add_var('Pg', ng, Pg, Pmin, Pmax);
-  om.add_var('Qg', ng, Qg, Qmin, Qmax);
-
-  %% nonlinear constraints
-  om.add_nln_constraint({'Pmis', 'Qmis'}, [nb;nb], 1, fcn_mis, hess_mis, {'Va', 'Vm', 'Pg', 'Qg'});
-  if legacy_formulation
-    om.add_nln_constraint({'Sf', 'St'}, [nl;nl], 0, fcn_flow, hess_flow, {'Va', 'Vm'});
+  if mpopt.opf.v_cartesian
+      Vmin = bus(:, VMIN).*exp(1j*Val);
+      Vmax = bus(:, VMAX).*exp(1j*Vau);
+      om.add_var('Vi', nb, Vi, imag(Vmin), imag(Vmax));
+      om.add_var('Vr', nb, Vr, real(Vmin), real(Vmax)); 
+      om.add_var('Pg', ng, Pg, Pmin, Pmax);
+      om.add_var('Qg', ng, Qg, Qmin, Qmax); 
+      
+      %% nonlinear constraints
+      om.add_nln_constraint({'Pmis', 'Qmis'}, [nb;nb], 1, fcn_mis, hess_mis, {'Vi', 'Vr', 'Pg', 'Qg'});
+      if legacy_formulation
+        om.add_nln_constraint({'Sf', 'St'}, [nl;nl], 0, fcn_flow, hess_flow, {'Vi', 'Vr'});
+      else
+        om.add_nln_constraint({'Sf', 'St'}, [nl2;nl2], 0, fcn_flow, hess_flow, {'Vi', 'Vr'});
+      end      
+      
+      %% linear constraints
+      om.add_lin_constraint('PQh', Apqh, [], ubpqh, {'Pg', 'Qg'});      %% npqh
+      om.add_lin_constraint('PQl', Apql, [], ubpql, {'Pg', 'Qg'});      %% npql
+      om.add_lin_constraint('vl',  Avl, lvl, uvl,   {'Pg', 'Qg'});      %% nvl
+      om.add_lin_constraint('ang', Aang, lang, uang, {'Vi'});           %% nang         
   else
-    om.add_nln_constraint({'Sf', 'St'}, [nl2;nl2], 0, fcn_flow, hess_flow, {'Va', 'Vm'});
-  end
+      om.add_var('Va', nb, Va, Val, Vau);
+      om.add_var('Vm', nb, Vm, bus(:, VMIN), bus(:, VMAX));
+      om.add_var('Pg', ng, Pg, Pmin, Pmax);
+      om.add_var('Qg', ng, Qg, Qmin, Qmax);     
+      
+      %% nonlinear constraints
+      om.add_nln_constraint({'Pmis', 'Qmis'}, [nb;nb], 1, fcn_mis, hess_mis, {'Va', 'Vm', 'Pg', 'Qg'});
+      if legacy_formulation
+        om.add_nln_constraint({'Sf', 'St'}, [nl;nl], 0, fcn_flow, hess_flow, {'Va', 'Vm'});
+      else
+        om.add_nln_constraint({'Sf', 'St'}, [nl2;nl2], 0, fcn_flow, hess_flow, {'Va', 'Vm'});
+      end
 
-  %% linear constraints
-  om.add_lin_constraint('PQh', Apqh, [], ubpqh, {'Pg', 'Qg'});      %% npqh
-  om.add_lin_constraint('PQl', Apql, [], ubpql, {'Pg', 'Qg'});      %% npql
-  om.add_lin_constraint('vl',  Avl, lvl, uvl,   {'Pg', 'Qg'});      %% nvl
-  om.add_lin_constraint('ang', Aang, lang, uang, {'Va'});           %% nang
+      %% linear constraints
+      om.add_lin_constraint('PQh', Apqh, [], ubpqh, {'Pg', 'Qg'});      %% npqh
+      om.add_lin_constraint('PQl', Apql, [], ubpql, {'Pg', 'Qg'});      %% npql
+      om.add_lin_constraint('vl',  Avl, lvl, uvl,   {'Pg', 'Qg'});      %% nvl
+      om.add_lin_constraint('ang', Aang, lang, uang, {'Va'});           %% nang      
+  end
 
   %% polynomial generator costs
   if ~legacy_formulation
