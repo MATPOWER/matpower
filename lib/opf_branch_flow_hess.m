@@ -41,14 +41,20 @@ function d2H = opf_branch_flow_hess(x, lambda, mpc, Yf, Yt, il, mpopt)
 
 %% unpack data
 lim_type = upper(mpopt.opf.flow_lim(1));
-[Va, Vm] = deal(x{:});
-
-%% unpack needed parameters
-nb = length(Va);        %% number of buses
-nl2 = length(il);       %% number of constrained lines
-
-%% reconstruct V
-V = Vm .* exp(1j * Va);
+if mpopt.opf.v_cartesian
+    [Vi, Vr] = deal(x{:});
+    nb = length(Vi);        %% number of buses
+    nl2 = length(il);       %% number of constrained lines
+    %% reconstruct V
+    V = Vr + 1j*Vi;    
+else
+    [Va, Vm] = deal(x{:});
+    %% unpack needed parameters
+    nb = length(Va);        %% number of buses
+    nl2 = length(il);       %% number of constrained lines
+    %% reconstruct V
+    V = Vm .* exp(1j * Va);
+end
 
 %%----- evaluate Hessian of flow constraints -----
 %% keep dimensions of empty matrices/vectors compatible
@@ -63,26 +69,51 @@ else    %% keep dimensions of empty matrices/vectors compatible
     muT = zeros(0,1);   %%  on cases with all lines unconstrained)
 end
 if lim_type == 'I'          %% square of current
-    [dIf_dVa, dIf_dVm, dIt_dVa, dIt_dVm, If, It] = dIbr_dV(mpc.branch(il,:), Yf, Yt, V);
-    [Hfaa, Hfav, Hfva, Hfvv] = d2AIbr_dV2(dIf_dVa, dIf_dVm, If, Yf, V, muF);
-    [Htaa, Htav, Htva, Htvv] = d2AIbr_dV2(dIt_dVa, dIt_dVm, It, Yt, V, muT);
+    if mpopt.opf.v_cartesian
+        warning('Current magnitude limit |I| is not calculated in Cartesian coordinates')
+    else    
+        [dIf_dVa, dIf_dVm, dIt_dVa, dIt_dVm, If, It] = dIbr_dV(mpc.branch(il,:), Yf, Yt, V);
+        [Hfaa, Hfav, Hfva, Hfvv] = d2AIbr_dV2(dIf_dVa, dIf_dVm, If, Yf, V, muF);
+        [Htaa, Htav, Htva, Htvv] = d2AIbr_dV2(dIt_dVa, dIt_dVm, It, Yt, V, muT);        
+    end
 else
     f = mpc.branch(il, F_BUS);    %% list of "from" buses
     t = mpc.branch(il, T_BUS);    %% list of "to" buses
     Cf = sparse(1:nl2, f, ones(nl2, 1), nl2, nb);   %% connection matrix for line & from buses
     Ct = sparse(1:nl2, t, ones(nl2, 1), nl2, nb);   %% connection matrix for line & to buses
-    [dSf_dVa, dSf_dVm, dSt_dVa, dSt_dVm, Sf, St] = dSbr_dV(mpc.branch(il,:), Yf, Yt, V);
+    if mpopt.opf.v_cartesian
+        [dSf_dVi, dSf_dVr, dSt_dVi, dSt_dVr, Sf, St] = dSbr_dV_C(mpc.branch(il,:), Yf, Yt, V);
+    else
+        [dSf_dVa, dSf_dVm, dSt_dVa, dSt_dVm, Sf, St] = dSbr_dV_P(mpc.branch(il,:), Yf, Yt, V);
+    end
     if lim_type == '2'        %% square of real power
-        [Hfaa, Hfav, Hfva, Hfvv] = d2ASbr_dV2(real(dSf_dVa), real(dSf_dVm), real(Sf), Cf, Yf, V, muF);
-        [Htaa, Htav, Htva, Htvv] = d2ASbr_dV2(real(dSt_dVa), real(dSt_dVm), real(St), Ct, Yt, V, muT);
+        if mpopt.opf.v_cartesian
+            warning('Square of real power is not calculated in Cartesian coordinates')
+        else
+            [Hfaa, Hfav, Hfva, Hfvv] = d2ASbr_dV2_P(real(dSf_dVa), real(dSf_dVm), real(Sf), Cf, Yf, V, muF);
+            [Htaa, Htav, Htva, Htvv] = d2ASbr_dV2_P(real(dSt_dVa), real(dSt_dVm), real(St), Ct, Yt, V, muT);            
+        end
     elseif lim_type == 'P'    %% real power                                 
-        [Hfaa, Hfav, Hfva, Hfvv] = d2Sbr_dV2(Cf, Yf, V, muF);
-        [Htaa, Htav, Htva, Htvv] = d2Sbr_dV2(Ct, Yt, V, muT);
-        [Hfaa, Hfav, Hfva, Hfvv] = deal(real(Hfaa), real(Hfav), real(Hfva), real(Hfvv));
-        [Htaa, Htav, Htva, Htvv] = deal(real(Htaa), real(Htav), real(Htva), real(Htvv));
+        if mpopt.opf.v_cartesian
+            warning('Real power is not calculated in Cartesian coordinates')
+        else
+            [Hfaa, Hfav, Hfva, Hfvv] = d2Sbr_dV2_P(Cf, Yf, V, muF);
+            [Htaa, Htav, Htva, Htvv] = d2Sbr_dV2_P(Ct, Yt, V, muT);
+            [Hfaa, Hfav, Hfva, Hfvv] = deal(real(Hfaa), real(Hfav), real(Hfva), real(Hfvv));
+            [Htaa, Htav, Htva, Htvv] = deal(real(Htaa), real(Htav), real(Htva), real(Htvv));            
+        end
     else                      %% square of apparent power
-        [Hfaa, Hfav, Hfva, Hfvv] = d2ASbr_dV2(dSf_dVa, dSf_dVm, Sf, Cf, Yf, V, muF);
-        [Htaa, Htav, Htva, Htvv] = d2ASbr_dV2(dSt_dVa, dSt_dVm, St, Ct, Yt, V, muT);
+        if mpopt.opf.v_cartesian
+            [Hfii, Hfir, Hfri, Hfrr] = d2ASbr_dV2_C(dSf_dVi, dSf_dVr, Sf, Cf, Yf, V, muF);
+            [Htii, Htir, Htri, Htrr] = d2ASbr_dV2_C(dSt_dVi, dSt_dVr, St, Ct, Yt, V, muT);            
+        else
+            [Hfaa, Hfav, Hfva, Hfvv] = d2ASbr_dV2_P(dSf_dVa, dSf_dVm, Sf, Cf, Yf, V, muF);
+            [Htaa, Htav, Htva, Htvv] = d2ASbr_dV2_P(dSt_dVa, dSt_dVm, St, Ct, Yt, V, muT);            
+        end
     end
 end
-d2H = [Hfaa Hfav; Hfva Hfvv] + [Htaa Htav; Htva Htvv];
+if mpopt.opf.v_cartesian
+    d2H = [Hfii Hfir; Hfri Hfrr] + [Htii Htir; Htri Htrr];
+else
+    d2H = [Hfaa Hfav; Hfva Hfvv] + [Htaa Htav; Htva Htvv];
+end
