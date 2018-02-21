@@ -30,32 +30,50 @@ function d2G = opf_power_balance_hess(x, lambda, mpc, Ybus, mpopt)
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-%%----- initialize -----
-%% unpack data
-[Va, Vm, Pg, Qg] = deal(x{:});
+%% ----- evaluate Hessian of power balance constraints -----
+    nlam = length(lambda) / 2;
+    lamP = lambda(1:nlam);
+    lamQ = lambda((1:nlam)+nlam);
+    
+%%----- initialize -----    
+if mpopt.opf.v_cartesian
+    [Vi, Vr, Pg, Qg] = deal(x{:});  %% unpack data
+    %% reconstruct V
+    V = Vr + 1j* Vi;  
+    %% problem dimensions
+    nb = length(Vi);            %% number of buses
+    ng = length(Pg);            %% number of dispatchable injections
+    
+    [Gpii, Gpir, Gpri, Gprr] = d2Sbus_dV2_C(Ybus, V, lamP);
+    [Gqii, Gqir, Gqri, Gqrr] = d2Sbus_dV2_C(Ybus, V, lamQ);    
+    %% construct Hessian
+    d2G = [
+        real([Gpii Gpir; Gpri Gprr]) + imag([Gqii Gqir; Gqri Gqrr]) sparse(2*nb, 2*ng);
+        sparse(2*ng, 2*nb + 2*ng)
+    ];      
+else
+    [Va, Vm, Pg, Qg] = deal(x{:});  %% unpack data
+    %% reconstruct V
+    V = Vm .* exp(1j * Va);
+    
+    %% problem dimensions
+    nb = length(Va);            %% number of buses
+    ng = length(Pg);            %% number of dispatchable injections
 
-%% problem dimensions
-nb = length(Va);            %% number of buses
-ng = length(Pg);            %% number of dispatchable injections
+    [Gpaa, Gpav, Gpva, Gpvv] = d2Sbus_dV2_P(Ybus, V, lamP);
+    [Gqaa, Gqav, Gqva, Gqvv] = d2Sbus_dV2_P(Ybus, V, lamQ);
 
-%% reconstruct V
-V = Vm .* exp(1j * Va);
+    %% adjust for voltage dependent loads (constant impedance part of ZIP loads)
+    diaglam = sparse(1:nb, 1:nb, lamP, nb, nb);
+    Sd = makeSdzip(mpc.baseMVA, mpc.bus, mpopt);
+    diagSdz = sparse(1:nb, 1:nb, Sd.z, nb, nb);
+    Gpvv = Gpvv + 2 * diaglam * diagSdz;
 
-%%----- evaluate Hessian of power balance constraints -----
-nlam = length(lambda) / 2;
-lamP = lambda(1:nlam);
-lamQ = lambda((1:nlam)+nlam);
-[Gpaa, Gpav, Gpva, Gpvv] = d2Sbus_dV2(Ybus, V, lamP);
-[Gqaa, Gqav, Gqva, Gqvv] = d2Sbus_dV2(Ybus, V, lamQ);
+    %% construct Hessian
+    d2G = [
+        real([Gpaa Gpav; Gpva Gpvv]) + imag([Gqaa Gqav; Gqva Gqvv]) sparse(2*nb, 2*ng);
+        sparse(2*ng, 2*nb + 2*ng)
+    ];    
+end
 
-%% adjust for voltage dependent loads (constant impedance part of ZIP loads)
-diaglam = sparse(1:nb, 1:nb, lamP, nb, nb);
-Sd = makeSdzip(mpc.baseMVA, mpc.bus, mpopt);
-diagSdz = sparse(1:nb, 1:nb, Sd.z, nb, nb);
-Gpvv = Gpvv + 2 * diaglam * diagSdz;
 
-%% construct Hessian
-d2G = [
-    real([Gpaa Gpav; Gpva Gpvv]) + imag([Gqaa Gqav; Gqva Gqvv]) sparse(2*nb, 2*ng);
-    sparse(2*ng, 2*nb + 2*ng)
-];
