@@ -1,5 +1,5 @@
 function [G_SV, G_VS] = d2Imis_dVdSg_P(V, lam, Cg)
-%d2Imis_dVdSg_P   Computes 2nd derivatives of current balance w.r.t. voltage and generation power.
+%d2Imis_dVdSg_P   Computes 2nd derivatives of current balance w.r.t. voltage and complex power generation.
 %   [G_SV, G_VS] = d2Imis_dVdSg_P(V, LAM, CG) returns 2 matrices
 %   containing the partial derivatives w.r.t. voltage magnitude, voltage angle, and real and reactive 
 %   power generations of the product of a vector LAM with the 1st partial derivatives of the
