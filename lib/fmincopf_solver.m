@@ -100,11 +100,18 @@ if mpopt.opf.start < 2
     k = find(xmin > -Inf & xmax == Inf);    %% if only bounded below
     x0(k) = xmin(k) + s;                    %% set just above lower bound
     Varefs = bus(bus(:, BUS_TYPE) == REF, VA) * (pi/180);
-    x0(vv.i1.Va:vv.iN.Va) = Varefs(1);  %% angles set to first reference angle
-    if ny > 0
-        ipwl = find(gencost(:, MODEL) == PW_LINEAR);
-        c = gencost(sub2ind(size(gencost), ipwl, NCOST+2*gencost(ipwl, NCOST)));    %% largest y-value in CCV data
-        x0(vv.i1.y:vv.iN.y) = max(c) + 0.1 * abs(max(c));
+    if mpopt.opf.v_cartesian
+        Vm = (bus(:, VMAX) + bus(:, VMIN)) / 2;
+        V = Vm * exp(1j*Varefs(1));
+        x0(vv.i1.Vr:vv.iN.Vr) = real(V);
+        x0(vv.i1.Vi:vv.iN.Vi) = imag(V);
+    else
+        x0(vv.i1.Va:vv.iN.Va) = Varefs(1);  %% angles set to first reference angle
+        if ny > 0
+            ipwl = find(gencost(:, MODEL) == PW_LINEAR);
+            c = gencost(sub2ind(size(gencost), ipwl, NCOST+2*gencost(ipwl, NCOST)));    %% largest y-value in CCV data
+            x0(vv.i1.y:vv.iN.y) = max(c) + 0.1 * abs(max(c));
+        end
     end
 end
 
