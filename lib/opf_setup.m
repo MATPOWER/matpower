@@ -358,10 +358,10 @@ else
 
   %% optimization variables
   if mpopt.opf.v_cartesian
-      Vmin = bus(:, VMIN).*exp(1j*Val);
-      Vmax = bus(:, VMAX).*exp(1j*Vau);
-      om.add_var('Vi', nb, Vi, imag(Vmin), imag(Vmax));
-      om.add_var('Vr', nb, Vr, real(Vmin), real(Vmax)); 
+      V_min = bus(:, VMIN).*exp(1j*Val);
+      V_max = bus(:, VMAX).*exp(1j*Vau);
+      om.add_var('Vi', nb, Vi, imag(V_min), imag(V_max));
+      om.add_var('Vr', nb, Vr, real(V_min), real(V_max)); 
       om.add_var('Pg', ng, Pg, Pmin, Pmax);
       om.add_var('Qg', ng, Qg, Qmin, Qmax); 
       
