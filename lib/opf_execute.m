@@ -30,6 +30,7 @@ function [results, success, raw] = opf_execute(om, mpopt)
 dc  = strcmp(upper(mpopt.model), 'DC');
 alg = upper(mpopt.opf.ac.solver);
 sdp = strcmp(alg, 'SDPOPF');
+vcart = ~dc && mpopt.opf.v_cartesian;
 
 %% get indexing
 [vv, ll, nne, nni] = om.get_idx();
@@ -159,7 +160,7 @@ if success
   end
 
   %% angle limit constraint multipliers
-  if ~sdp && ll.N.ang > 0
+  if ~sdp && ~vcart && ll.N.ang > 0
     iang = om.get_userdata('iang');
     results.branch(iang, MU_ANGMIN) = results.mu.lin.l(ll.i1.ang:ll.iN.ang) * pi/180;
     results.branch(iang, MU_ANGMAX) = results.mu.lin.u(ll.i1.ang:ll.iN.ang) * pi/180;

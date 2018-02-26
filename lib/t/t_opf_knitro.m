@@ -201,7 +201,7 @@ for k = 1:length(options)
     t_is(r.cost.usr, f, 12, [t 'user cost']);
 
     %%-----  run OPF with legacy costs and deadzone  -----
-    if options{k}{2}
+    if mpopt.opf.v_cartesian
         t_skip(17, 'legacy cost example n/a to cartesian V case')
     else
         load soln9_opf;
@@ -241,7 +241,7 @@ for k = 1:length(options)
     %% single new z variable constrained to be greater than or equal to
     %% deviation from 1 pu voltage at bus 1, linear cost on this z
     %% get solved AC OPF case from MAT-file
-    if options{k}{2}
+    if mpopt.opf.v_cartesian
         t_skip(14, 'lin constraint/cost example n/a to cartesian V case')
     else
         load soln9_opf_extras1;   %% defines bus_soln, gen_soln, branch_soln, f_soln
@@ -299,9 +299,9 @@ for k = 1:length(options)
     t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
 
     %%-----  test OPF with angle difference limits  -----
-%     if options{k}{2}
-%         t_skip(13, 'ang diff lim example n/a to cartesian V case')
-%     else
+    if mpopt.opf.v_cartesian
+        t_skip(13, 'ang diff lim example n/a to cartesian V case')
+    else
         mpc = loadcase('t_case9_opfv2');
         %% remove capability curves
         mpc.gen(2:3, [PC1, PC2, QC1MIN, QC1MAX, QC2MIN, QC2MAX]) = zeros(2,6);
@@ -325,7 +325,7 @@ for k = 1:length(options)
         t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
         t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
         t_is(branch(:,ibr_angmu ), branch_soln(:,ibr_angmu ),  2, [t 'branch angle mu']);
-%     end
+    end
 
     %%-----  test OPF with ignored angle difference limits  -----
     %% get solved AC OPF case from MAT-file
@@ -351,9 +351,9 @@ for k = 1:length(options)
     t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
     t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
 
-%     if options{k}{2}
-%         t_skip(2, 'ang diff lim=0 example n/a to cartesian V case')
-%     else
+   if mpopt.opf.v_cartesian
+        t_skip(2, 'ang diff lim=0 example n/a to cartesian V case')
+    else
         %% angle bounded above by 0, unbounded below
         %% for issue/18
         t = [t0 'w/angle difference limit = 0 : '];
@@ -364,7 +364,7 @@ for k = 1:length(options)
         t_ok(success, [t 'success']);
         diff = r.bus(r.branch(b, F_BUS), VA) - r.bus(r.branch(b, T_BUS), VA);
         t_is(diff, 0, 5, t);
-%     end
+    end
 
     %%-----  test OPF with opf.use_vg  -----
     %% get solved AC OPF case from MAT-file

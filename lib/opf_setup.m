@@ -20,6 +20,7 @@ function om = opf_setup(mpc, mpopt)
 dc  = strcmp(upper(mpopt.model), 'DC');
 alg = upper(mpopt.opf.ac.solver);
 use_vg = mpopt.opf.use_vg;
+vcart = ~dc && mpopt.opf.v_cartesian;
 
 %% define named indices into data matrices
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
@@ -38,6 +39,9 @@ use_vg = mpopt.opf.use_vg;
 if strcmp(alg, 'MINOPF') || strcmp(alg, 'PDIPM') || ...
         strcmp(alg, 'TRALM') || strcmp(alg, 'SDPOPF')
     legacy_formulation = 1;
+    if vcart
+        error('Option ''opf.v_cartesian'' = 1 is not compatible with ''opf.solver.ac''=''%s''.', alg);
+    end
 else
     legacy_formulation = 0;
 end
@@ -153,6 +157,10 @@ end
 
 %% set up initial variables and bounds
 Va   = bus(:, VA) * (pi/180);
+Vau = Inf(nb, 1);       %% voltage angle limits
+Val = -Vau;
+Vau(refs) = Va(refs);   %% voltage angle reference constraints
+Val(refs) = Va(refs);
 Pg   = gen(:, PG) / baseMVA;
 Pmin = gen(:, PMIN) / baseMVA;
 Pmax = gen(:, PMAX) / baseMVA;
@@ -161,7 +169,7 @@ if ~dc
   Qg   = gen(:, QG) / baseMVA;
   Qmin = gen(:, QMIN) / baseMVA;
   Qmax = gen(:, QMAX) / baseMVA;
-  if mpopt.opf.v_cartesian
+  if vcart
     V = Vm .* exp(1j*Va);
     Vr = real(V);
     Vi = imag(V);
@@ -240,6 +248,7 @@ if dc               %% DC model
     upf = [];
     upt = [];
   end
+
   user_vars = {'Va', 'Pg'};
   ycon_vars = {'Pg', 'y'};
 else                %% AC model
@@ -260,16 +269,21 @@ else                %% AC model
   
   %% generator PQ capability curve constraints
   [Apqh, ubpqh, Apql, ubpql, Apqdata] = makeApq(baseMVA, gen);
-  if mpopt.opf.v_cartesian
-      user_vars = {'Vi', 'Vr', 'Pg', 'Qg'};      
+
+  if vcart
+      user_vars = {'Vi', 'Vr', 'Pg', 'Qg'};
+      nodal_balance_vars = {'Vi', 'Vr', 'Pg', 'Qg'};
+      flow_lim_vars = {'Vi', 'Vr'};
   else
-      user_vars = {'Va', 'Vm', 'Pg', 'Qg'};      
-  end  
+      user_vars = {'Va', 'Vm', 'Pg', 'Qg'};
+      nodal_balance_vars = {'Va', 'Vm', 'Pg', 'Qg'};
+      flow_lim_vars = {'Va', 'Vm'};
+  end
   ycon_vars = {'Pg', 'Qg', 'y'};
 
   %% nonlinear constraint functions
   if mpopt.opf.current_balance
-     fcn_mis = @(x)opf_current_balance_fcn(x, mpc, Ybus, mpopt);  
+     fcn_mis = @(x)opf_current_balance_fcn(x, mpc, Ybus, mpopt);
      hess_mis = @(x, lam)opf_current_balance_hess(x, lam, mpc, Ybus, mpopt);
   else
      fcn_mis = @(x)opf_power_balance_fcn(x, mpc, Ybus, mpopt);
@@ -286,12 +300,6 @@ else                %% AC model
     cost_Qg = @(x)opf_gen_cost_fcn(x, baseMVA, qcost, iq3, mpopt);
   end
 end
-
-%% voltage angle reference constraints
-Vau = Inf(nb, 1);
-Val = -Vau;
-Vau(refs) = Va(refs);
-Val(refs) = Va(refs);
 
 %% branch voltage angle difference limits
 [Aang, lang, uang, iang]  = makeAang(baseMVA, branch, nb, mpopt);
@@ -357,44 +365,32 @@ else
   om.userdata.iang = iang;
 
   %% optimization variables
-  if mpopt.opf.v_cartesian
+  if vcart
       om.add_var('Vi', nb, Vi, bus(:, VMIN), bus(:, VMAX));
       om.add_var('Vr', nb, Vr, bus(:, VMIN), bus(:, VMAX));
-      om.add_var('Pg', ng, Pg, Pmin, Pmax);
-      om.add_var('Qg', ng, Qg, Qmin, Qmax); 
-      
-      %% nonlinear constraints
-      om.add_nln_constraint({'Pmis', 'Qmis'}, [nb;nb], 1, fcn_mis, hess_mis, {'Vi', 'Vr', 'Pg', 'Qg'});
-      if legacy_formulation
-        om.add_nln_constraint({'Sf', 'St'}, [nl;nl], 0, fcn_flow, hess_flow, {'Vi', 'Vr'});
-      else
-        om.add_nln_constraint({'Sf', 'St'}, [nl2;nl2], 0, fcn_flow, hess_flow, {'Vi', 'Vr'});
-      end      
-      
-      %% linear constraints
-      om.add_lin_constraint('PQh', Apqh, [], ubpqh, {'Pg', 'Qg'});      %% npqh
-      om.add_lin_constraint('PQl', Apql, [], ubpql, {'Pg', 'Qg'});      %% npql
-      om.add_lin_constraint('vl',  Avl, lvl, uvl,   {'Pg', 'Qg'});      %% nvl
-      om.add_lin_constraint('ang', Aang, lang, uang, {'Vi'});           %% nang         
   else
       om.add_var('Va', nb, Va, Val, Vau);
       om.add_var('Vm', nb, Vm, bus(:, VMIN), bus(:, VMAX));
-      om.add_var('Pg', ng, Pg, Pmin, Pmax);
-      om.add_var('Qg', ng, Qg, Qmin, Qmax);     
-      
-      %% nonlinear constraints
-      om.add_nln_constraint({'Pmis', 'Qmis'}, [nb;nb], 1, fcn_mis, hess_mis, {'Va', 'Vm', 'Pg', 'Qg'});
-      if legacy_formulation
-        om.add_nln_constraint({'Sf', 'St'}, [nl;nl], 0, fcn_flow, hess_flow, {'Va', 'Vm'});
-      else
-        om.add_nln_constraint({'Sf', 'St'}, [nl2;nl2], 0, fcn_flow, hess_flow, {'Va', 'Vm'});
-      end
+  end
+  om.add_var('Pg', ng, Pg, Pmin, Pmax);
+  om.add_var('Qg', ng, Qg, Qmin, Qmax);
 
-      %% linear constraints
-      om.add_lin_constraint('PQh', Apqh, [], ubpqh, {'Pg', 'Qg'});      %% npqh
-      om.add_lin_constraint('PQl', Apql, [], ubpql, {'Pg', 'Qg'});      %% npql
-      om.add_lin_constraint('vl',  Avl, lvl, uvl,   {'Pg', 'Qg'});      %% nvl
-      om.add_lin_constraint('ang', Aang, lang, uang, {'Va'});           %% nang      
+  %% nonlinear constraints
+  om.add_nln_constraint({'Pmis', 'Qmis'}, [nb;nb], 1, fcn_mis, hess_mis, nodal_balance_vars);
+  if legacy_formulation
+    om.add_nln_constraint({'Sf', 'St'}, [nl;nl], 0, fcn_flow, hess_flow, flow_lim_vars);
+  else
+    om.add_nln_constraint({'Sf', 'St'}, [nl2;nl2], 0, fcn_flow, hess_flow, flow_lim_vars);
+  end
+
+  %% linear constraints
+  om.add_lin_constraint('PQh', Apqh, [], ubpqh, {'Pg', 'Qg'});      %% npqh
+  om.add_lin_constraint('PQl', Apql, [], ubpql, {'Pg', 'Qg'});      %% npql
+  om.add_lin_constraint('vl',  Avl, lvl, uvl,   {'Pg', 'Qg'});      %% nvl
+  if ~vcart
+    om.add_lin_constraint('ang', Aang, lang, uang, {'Va'});         %% nang
+  elseif ~isempty(Aang)
+    error('opf_setup: branch voltage angle difference limits not implemented for ''opf.v_cartesian'' = 1');
   end
 
   %% polynomial generator costs
