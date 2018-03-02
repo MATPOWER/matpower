@@ -120,45 +120,52 @@ for k = 1:length(options)
     t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
     t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
     t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
-    xr = [r.var.val.Va;r.var.val.Vm;r.var.val.Pg;r.var.val.Qg;0;r.var.val.y];
+    if mpopt.opf.v_cartesian
+        xr = [r.var.val.Vi;r.var.val.Vr;r.var.val.Pg;r.var.val.Qg;0;r.var.val.y];
+    else
+        xr = [r.var.val.Va;r.var.val.Vm;r.var.val.Pg;r.var.val.Qg;0;r.var.val.y];
+    end
     t_is(r.x, xr, 8, [t 'raw x returned from OPF']);
 
     %% get solved AC OPF case from MAT-file
     load soln9_opf_Plim;       %% defines bus_soln, gen_soln, branch_soln, f_soln
 
     %% run OPF with active power line limits
-    t = [t0 '(P line lim) : '];
-    mpopt1 = mpoption(mpopt, 'opf.flow_lim', 'P');
-    [baseMVA, bus, gen, gencost, branch, f, success, et] = runopf(casefile, mpopt1);
-    t_ok(success, [t 'success']);
-    t_is(f, f_soln, 3, [t 'f']);
-    t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
-    t_is(   bus(:,ib_voltage),    bus_soln(:,ib_voltage),  3, [t 'bus voltage']);
-    t_is(   bus(:,ib_lam    ),    bus_soln(:,ib_lam    ),  3, [t 'bus lambda']);
-    t_is(   bus(:,ib_mu     ),    bus_soln(:,ib_mu     ),  2, [t 'bus mu']);
-    t_is(   gen(:,ig_data   ),    gen_soln(:,ig_data   ), 10, [t 'gen data']);
-    t_is(   gen(:,ig_disp   ),    gen_soln(:,ig_disp   ),  3, [t 'gen dispatch']);
-    t_is(   gen(:,ig_mu     ),    gen_soln(:,ig_mu     ),  3, [t 'gen mu']);
-    t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
-    t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
-    t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
-
-    %% run OPF with active power line limits
-    t = [t0 '(P^2 line lim) : '];
-    mpopt1 = mpoption(mpopt, 'opf.flow_lim', '2');
-    [baseMVA, bus, gen, gencost, branch, f, success, et] = runopf(casefile, mpopt1);
-    t_ok(success, [t 'success']);
-    t_is(f, f_soln, 3, [t 'f']);
-    t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
-    t_is(   bus(:,ib_voltage),    bus_soln(:,ib_voltage),  3, [t 'bus voltage']);
-    t_is(   bus(:,ib_lam    ),    bus_soln(:,ib_lam    ),  3, [t 'bus lambda']);
-    t_is(   bus(:,ib_mu     ),    bus_soln(:,ib_mu     ),  2, [t 'bus mu']);
-    t_is(   gen(:,ig_data   ),    gen_soln(:,ig_data   ), 10, [t 'gen data']);
-    t_is(   gen(:,ig_disp   ),    gen_soln(:,ig_disp   ),  3, [t 'gen dispatch']);
-    t_is(   gen(:,ig_mu     ),    gen_soln(:,ig_mu     ),  3, [t 'gen mu']);
-    t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
-    t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
-    t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
+    if mpopt.opf.v_cartesian
+        t_skip(24, 'P line lims not yet implemented for cartesian V case')
+    else    
+        t = [t0 '(P line lim) : '];
+        mpopt1 = mpoption(mpopt, 'opf.flow_lim', 'P');
+        [baseMVA, bus, gen, gencost, branch, f, success, et] = runopf(casefile, mpopt1);
+        t_ok(success, [t 'success']);
+        t_is(f, f_soln, 3, [t 'f']);
+        t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
+        t_is(   bus(:,ib_voltage),    bus_soln(:,ib_voltage),  3, [t 'bus voltage']);
+        t_is(   bus(:,ib_lam    ),    bus_soln(:,ib_lam    ),  3, [t 'bus lambda']);
+        t_is(   bus(:,ib_mu     ),    bus_soln(:,ib_mu     ),  2, [t 'bus mu']);
+        t_is(   gen(:,ig_data   ),    gen_soln(:,ig_data   ), 10, [t 'gen data']);
+        t_is(   gen(:,ig_disp   ),    gen_soln(:,ig_disp   ),  3, [t 'gen dispatch']);
+        t_is(   gen(:,ig_mu     ),    gen_soln(:,ig_mu     ),  3, [t 'gen mu']);
+        t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
+        t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
+        t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
+        
+        t = [t0 '(P^2 line lim) : '];
+        mpopt1 = mpoption(mpopt, 'opf.flow_lim', '2');
+        [baseMVA, bus, gen, gencost, branch, f, success, et] = runopf(casefile, mpopt1);
+        t_ok(success, [t 'success']);
+        t_is(f, f_soln, 3, [t 'f']);
+        t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
+        t_is(   bus(:,ib_voltage),    bus_soln(:,ib_voltage),  3, [t 'bus voltage']);
+        t_is(   bus(:,ib_lam    ),    bus_soln(:,ib_lam    ),  3, [t 'bus lambda']);
+        t_is(   bus(:,ib_mu     ),    bus_soln(:,ib_mu     ),  2, [t 'bus mu']);
+        t_is(   gen(:,ig_data   ),    gen_soln(:,ig_data   ), 10, [t 'gen data']);
+        t_is(   gen(:,ig_disp   ),    gen_soln(:,ig_disp   ),  3, [t 'gen dispatch']);
+        t_is(   gen(:,ig_mu     ),    gen_soln(:,ig_mu     ),  3, [t 'gen mu']);
+        t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
+        t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
+        t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);        
+    end
 
     %%-----  test OPF with quadratic gen costs moved to generalized costs  -----
     mpc = loadcase(casefile);
