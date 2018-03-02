@@ -176,12 +176,20 @@ gh_fcn = @(x)opf_consfcn(x, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
 success = (info > 0);
 
 %% update solution data
-Va = x(vv.i1.Va:vv.iN.Va);
-Vm = x(vv.i1.Vm:vv.iN.Vm);
+if mpopt.opf.v_cartesian
+    Vi = x(vv.i1.Vi:vv.iN.Vi);
+    Vr = x(vv.i1.Vr:vv.iN.Vr);
+    V = Vr + 1j*Vi; 
+    Va = angle(V);
+    Vm = abs(V);    
+else    
+    Va = x(vv.i1.Va:vv.iN.Va);
+    Vm = x(vv.i1.Vm:vv.iN.Vm);
+    V = Vm .* exp(1j*Va);
+end
 Pg = x(vv.i1.Pg:vv.iN.Pg);
 Qg = x(vv.i1.Qg:vv.iN.Qg);
-V = Vm .* exp(1j*Va);
-
+    
 %%-----  calculate return values  -----
 %% update voltages & generator outputs
 bus(:, VA) = Va * 180/pi;
@@ -222,8 +230,13 @@ Lambda.lower(ku) = -Lambda.upper(ku);
 Lambda.upper(ku) = 0;
 
 %% update Lagrange multipliers
-bus(:, MU_VMAX)  = Lambda.upper(vv.i1.Vm:vv.iN.Vm);
-bus(:, MU_VMIN)  = Lambda.lower(vv.i1.Vm:vv.iN.Vm);
+if mpopt.opf.v_cartesian
+    bus(:, MU_VMAX)  = Lambda.upper(vv.i1.Vr:vv.iN.Vr);
+    bus(:, MU_VMIN)  = Lambda.lower(vv.i1.Vr:vv.iN.Vr);    
+else
+    bus(:, MU_VMAX)  = Lambda.upper(vv.i1.Vm:vv.iN.Vm);
+    bus(:, MU_VMIN)  = Lambda.lower(vv.i1.Vm:vv.iN.Vm);
+end
 gen(:, MU_PMAX)  = Lambda.upper(vv.i1.Pg:vv.iN.Pg) / baseMVA;
 gen(:, MU_PMIN)  = Lambda.lower(vv.i1.Pg:vv.iN.Pg) / baseMVA;
 gen(:, MU_QMAX)  = Lambda.upper(vv.i1.Qg:vv.iN.Qg) / baseMVA;
