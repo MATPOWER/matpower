@@ -291,6 +291,14 @@ else                %% AC model
   end
   fcn_flow = @(x)opf_branch_flow_fcn(x, mpc, Yf(il, :), Yt(il, :), il, mpopt);
   hess_flow = @(x, lam)opf_branch_flow_hess(x, lam, mpc, Yf(il, :), Yt(il, :), il, mpopt);
+%   if vcart
+%     fcn_vref = @(x)opf_vref_fcn(x, mpc, ref, mpopt);
+%     hess_vref = @(x, lam)opf_vref_hess(x, lam, ref, mpopt);
+%     fcn_vlim = @(x)opf_vlim_fcn(x, mpc, ref, mpopt);
+%     hess_vlim = @(x, lam)opf_vlim_hess(x, lam, ref, mpopt);
+%     fcn_ang = @(x)opf_branch_ang_fcn(x, mpc, ref, mpopt);
+%     hess_ang = @(x, lam)opf_branch_ang_hess(x, lam, ref, mpopt);
+%   end
   
   %% nonlinear cost functions
   if ~isempty(ip3)
@@ -366,8 +374,8 @@ else
 
   %% optimization variables
   if vcart
-      om.add_var('Vi', nb, Vi, bus(:, VMIN), bus(:, VMAX));
-      om.add_var('Vr', nb, Vr, bus(:, VMIN), bus(:, VMAX));
+      om.add_var('Vi', nb, Vi, -bus(:, VMAX), bus(:, VMAX));
+      om.add_var('Vr', nb, Vr, -bus(:, VMAX), bus(:, VMAX));
   else
       om.add_var('Va', nb, Va, Val, Vau);
       om.add_var('Vm', nb, Vm, bus(:, VMIN), bus(:, VMAX));
@@ -382,6 +390,11 @@ else
   else
     om.add_nln_constraint({'Sf', 'St'}, [nl2;nl2], 0, fcn_flow, hess_flow, flow_lim_vars);
   end
+%   if vcart
+%     om.add_nln_constraint('Vref', nref, 1, fcn_vref, hess_vref, {'Vr', 'Vi'});
+%     om.add_nln_constraint({'Vmin', 'Vmax'}, [nb;nb], 0, fcn_vlim, hess_vlim, {'Vr', 'Vi'});
+%     om.add_nln_constraint('ang', length(iang), 0, fcn_ang, hess_ang, {'Vr', 'Vi'});
+%   end
 
   %% linear constraints
   om.add_lin_constraint('PQh', Apqh, [], ubpqh, {'Pg', 'Qg'});      %% npqh
