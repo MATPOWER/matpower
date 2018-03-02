@@ -133,7 +133,7 @@ for k = 1:length(options)
     %% run OPF with active power line limits
     if mpopt.opf.v_cartesian
         t_skip(24, 'P line lims not yet implemented for cartesian V case')
-    else    
+    else
         t = [t0 '(P line lim) : '];
         mpopt1 = mpoption(mpopt, 'opf.flow_lim', 'P');
         [baseMVA, bus, gen, gencost, branch, f, success, et] = runopf(casefile, mpopt1);
@@ -149,7 +149,7 @@ for k = 1:length(options)
         t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
         t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
         t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
-        
+
         t = [t0 '(P^2 line lim) : '];
         mpopt1 = mpoption(mpopt, 'opf.flow_lim', '2');
         [baseMVA, bus, gen, gencost, branch, f, success, et] = runopf(casefile, mpopt1);

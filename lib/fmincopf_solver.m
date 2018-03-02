@@ -181,15 +181,15 @@ if mpopt.opf.v_cartesian
     Vr = x(vv.i1.Vr:vv.iN.Vr);
     V = Vr + 1j*Vi; 
     Va = angle(V);
-    Vm = abs(V);    
-else    
+    Vm = abs(V);
+else
     Va = x(vv.i1.Va:vv.iN.Va);
     Vm = x(vv.i1.Vm:vv.iN.Vm);
     V = Vm .* exp(1j*Va);
 end
 Pg = x(vv.i1.Pg:vv.iN.Pg);
 Qg = x(vv.i1.Qg:vv.iN.Qg);
-    
+
 %%-----  calculate return values  -----
 %% update voltages & generator outputs
 bus(:, VA) = Va * 180/pi;
@@ -232,7 +232,7 @@ Lambda.upper(ku) = 0;
 %% update Lagrange multipliers
 if mpopt.opf.v_cartesian
     bus(:, MU_VMAX)  = Lambda.upper(vv.i1.Vr:vv.iN.Vr);
-    bus(:, MU_VMIN)  = Lambda.lower(vv.i1.Vr:vv.iN.Vr);    
+    bus(:, MU_VMIN)  = Lambda.lower(vv.i1.Vr:vv.iN.Vr);
 else
     bus(:, MU_VMAX)  = Lambda.upper(vv.i1.Vm:vv.iN.Vm);
     bus(:, MU_VMIN)  = Lambda.lower(vv.i1.Vm:vv.iN.Vm);
