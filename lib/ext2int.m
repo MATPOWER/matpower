@@ -167,12 +167,7 @@ if isstruct(bus)
 
             %% apply consecutive bus numbering
             o.bus.i2e = mpc.bus(:, BUS_I);
-            if nb
-                o.bus.e2i = sparse(max(o.bus.i2e), 1);
-                o.bus.e2i(o.bus.i2e) = (1:nb)';
-            else
-                o.bus.e2i = sparse(0, 1);
-            end
+            o.bus.e2i = sparse(o.bus.i2e, 1, 1:nb);
             if nb
                 mpc.bus(:, BUS_I)       = o.bus.e2i( mpc.bus(:, BUS_I)      );
                 mpc.gen(:, GEN_BUS)     = o.bus.e2i( mpc.gen(:, GEN_BUS)    );
