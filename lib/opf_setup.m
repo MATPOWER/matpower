@@ -99,6 +99,7 @@ else    %% AC
     if use_vg == 1      %% use Vg setpoint directly
         mpc.bus(ib, VMAX) = Vmax(ib);   %% max set by max Vg @ bus
         mpc.bus(ib, VMIN) = Vmin(ib);   %% min set by min Vg @ bus
+        mpc.bus(ib, VM) = mpc.bus(ib, VMAX);
     elseif use_vg > 0 && use_vg < 1     %% fractional value
         %% use weighted avg between original Vmin/Vmax limits and Vg
         mpc.bus(ib, VMAX) = (1-use_vg) * mpc.bus(ib, VMAX) + use_vg * Vmax(ib);
