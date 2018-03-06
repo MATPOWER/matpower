@@ -374,8 +374,8 @@ else
 
   %% optimization variables
   if vcart
+      om.add_var('Vr', nb, Vr, -bus(:, VMAX), bus(:, VMAX));      
       om.add_var('Vi', nb, Vi, -bus(:, VMAX), bus(:, VMAX));
-      om.add_var('Vr', nb, Vr, -bus(:, VMAX), bus(:, VMAX));
   else
       om.add_var('Va', nb, Va, Val, Vau);
       om.add_var('Vm', nb, Vm, bus(:, VMIN), bus(:, VMAX));
