@@ -41,7 +41,7 @@ t_counter = 1;
 t_ok_cnt = 0;
 t_not_ok_cnt = 0;
 t_skip_cnt = 0;
-t_clock = clock;
+t_clock = tic;
 
 if ~t_quiet
     fprintf('1..%d\n', num_of_tests);

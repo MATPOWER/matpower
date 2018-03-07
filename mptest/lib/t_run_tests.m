@@ -49,7 +49,7 @@ ok_cnt = 0;
 not_ok_cnt = 0;
 skip_cnt = 0;
 
-t0 = clock;
+t0 = tic;
 for k = 1:length(test_names)
     if verbose
         fprintf('\n----------  %s  ----------\n', test_names{k});
@@ -86,7 +86,7 @@ else
         fprintf(', %d skipped', skip_cnt);
     end
 end
-fprintf('\nElapsed time %.2f seconds.\n', etime(clock, t0));
+fprintf('\nElapsed time %.2f seconds.\n', toc(t0));
 
 if nargout
     all_ok_ = all_ok;   %% copy to optional output arg

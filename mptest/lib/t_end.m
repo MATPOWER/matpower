@@ -69,5 +69,5 @@ else
             fprintf(', %d skipped', t_skip_cnt);
         end
     end
-    fprintf('\nElapsed time %.2f seconds.\n', etime(clock, t_clock));
+    fprintf('\nElapsed time %.2f seconds.\n', toc(t_clock));
 end
