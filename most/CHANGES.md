@@ -5,6 +5,9 @@ Change history for MOST
 Since last release
 ------------------
 
+#### 3/7/18
+  - Replace clock()/etime() with tic()/toc() for timing.
+
 #### 9/27/17
   - Fix bug #1 in `loadmd()` where profiles that modify xGenData or
     StorageData resulted in a fatal error.

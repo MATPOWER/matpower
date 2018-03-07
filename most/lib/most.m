@@ -61,7 +61,7 @@ function mdo = most(mdi, mpopt)
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See https://github.com/MATPOWER/most for more info.
 
-tmptime(1,:) = clock;
+t0 = tic;
 
 %% default arguments
 if nargin < 2
@@ -1972,7 +1972,8 @@ if verbose
 end
 [mdi.QP.x0, mdi.QP.xmin, mdi.QP.xmax, mdi.QP.vtype] = om.params_var();
 
-tmptime(2,:) = clock;
+et_setup = toc(t0);
+t0 = tic;
 
 % Call solver!
 mdo = mdi;
@@ -2284,10 +2285,8 @@ if mpopt.most.solve_model
   mdo.results.f = mdo.QP.f;
 end % if mpopt.most.solve_model
 
-tmptime(3,:) = clock;
-
-mdo.results.SetupTime = etime(tmptime(2,:), tmptime(1,:));
-mdo.results.SolveTime = etime(tmptime(3,:), tmptime(2,:));
+mdo.results.SetupTime = et_setup;
+mdo.results.SolveTime = toc(t0);
 
 if verbose
   fprintf('- MOST: Done.\n\n');
