@@ -400,30 +400,13 @@ You can either download an official \emph{versioned release} or you can obtain t
 
 \subsubsection{Versioned Releases}
 
-There are two main options for obtaining an official versioned release
-of \matpower{}.
-
-\begin{enumerate}
-\item Download the ZIP file from the \href{\matpowerurl}{\matpower{} website}\footnote{\url{\matpowerurl}}.
+\begin{itemize}
+\item Download the ZIP file of the latest official versioned release from the \href{\matpowerurl}{\matpower{} website}\footnote{\url{\matpowerurl}}.
     \begin{itemize}
         \item Go to the \href{\matpowerurl}{\matpower{} website}.
         \item Click the {\bfseries Download Now} button.
     \end{itemize}
-
-\item Use \matlab{}'s built-in Add-On Explorer to download and install \matpower{} as a \matlab{} toolbox (\code{.mltbx} file).
-    \begin{itemize}
-        \item In \matlab{}, click the Add-Ons button in the toolbar to open
-            the Add-On Explorer.
-        \item Enter ``MATPOWER'' in the search field, then click on
-            {\bfseries MATPOWER} in the search results.
-        \item Click the {\bfseries Add} button.
-        \item This also takes care of installing \matpower{}, so if you choose
-            this option, you can skip directly to step 3 in the Installation
-            instructions in Section~\ref{sec:installation} below.
-    \end{itemize}
-\end{enumerate}
-
-\matpower{} releases are also generally available for direct download as a ZIP or \matlab{} toolbox (\code{.mltbx}) file from the \href{https://www.mathworks.com/matlabcentral/fileexchange/65042-matpower}{\matpower{} page}\footnote{\url{https://www.mathworks.com/matlabcentral/fileexchange/65042-matpower}} on \href{https://www.mathworks.com/matlabcentral/fileexchange/}{\matlab{} Central File Exchange}\footnote{\url{https://www.mathworks.com/matlabcentral/fileexchange/}}. See the \matlab{} documentation for \matlab{} toolbox (\code{.mltbx}) installation instructions. \emph{(Hint: just click {\bfseries Open} in the \matlab{} toolbar, select the file and follow the prompts.)}
+\end{itemize}
 
 \subsubsection{Current Development Version}
 
@@ -438,7 +421,7 @@ of \matpower{} from the \code{master} branch on GitHub.
             \item \code{git clone https://github.com/MATPOWER/matpower.git}
         \end{itemize}
         \item Or, from the \href{\matpowergithuburl}{\matpower{} GitHub
-            repository page}\footnote{\url{\matpowergithuburl{}}}:
+            repository page}\footnote{\url{\matpowergithuburl}}:
         \begin{itemize}
             \item Click the green {\bfseries Clone or download} button,
             then {\bfseries Open in Desktop}.
@@ -478,9 +461,6 @@ your own code or modifications.
 \label{sec:installation}
 
 Installation and use of \matpower{} requires familiarity with the basic operation of \matlab{} or Octave. Make sure you follow the installation instructions for the version of \matpower{} you are installing. The process was simplified with an install script following version 6.0.
-
-\emph{Skip directly to step 3 if you used \matlab{}'s built-in Add-On Explorer
-or installed a \matlab{} toolbox (\code{.mltbx}) file.}
 
 \begin{enumerate}[\bfseries Step 1:] % requires package paralist
 \item {\bf Get a copy of \matpower{}} as described above.
@@ -7066,7 +7046,6 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.1.pdf}{\m
 \begin{itemize}
 \item Three new power flow algorithms for radial distribution systems selected via the three new options for \code{pf.alg}, namely \codeq{PQSUM}, \codeq{ISUM}, \codeq{YSUM}. Also includes new \matpower{} options \code{pf.radial.max\_it} and \code{pf.radial.vcorr}. See Section~\ref{sec:pfdist} on ``Distribution Power Flow'' for details. \emph{Thanks to Mirko Todorovski.}
 \item New \matpower{} installer \code{install\_matpower()} updates \matlab{} or Octave paths or provides the commands required to so.
-\item Option to install \matpower{} directly from \matlab{} Central File Exchange via \matlab{}'s build-in Add-On Explorer.
 \item New \code{pf.nr.lin\_solver} option to control the linear solver used to compute the Newton update step in the Newton-Raphson power flow.
 \item Support plotting of multiple nose curves in CPF by allowing option \code{cpf.plot.bus} to take on vector values.
 \item Continuous integration via GitHub and Travis-CI integration.
