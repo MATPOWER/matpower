@@ -12,6 +12,9 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 3/7/18
+  - Replace clock()/etime() with tic()/toc() for timing.
+
 #### 12/22/17
   - Add another purely synthetic case from the ACTIVSg team (ASU, Cornell,
     Texas A&M, U of IL, and VCU - Synthetic grids), resulting from work

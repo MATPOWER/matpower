@@ -164,7 +164,7 @@ function [busout, genout, branchout, f, success, info, et, g, jac, xr, pimul] = 
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %%----- initialization -----
-t0 = clock;         %% start timer
+t0 = tic;       %% start timer
 
 %% define named indices into data matrices
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
@@ -251,7 +251,7 @@ if ~isempty(results.order.branch.status.off)
 end
 
 %%-----  finish preparing output  -----
-et = etime(clock, t0);      %% compute elapsed time
+et = toc(t0);       %% compute elapsed time
 if nargout > 0
   if nargout <= 2
     results.et = et;

@@ -346,7 +346,7 @@ if ~done.flag
     end
 
     %%-----  run the continuation power flow  -----
-    t0 = clock;
+    t0 = tic;
     if mpopt.verbose
         v = mpver('all');
         fprintf('\nMATPOWER Version %s, %s', v.Version, v.Date);
@@ -642,7 +642,7 @@ if ~done.flag
 
     %% update final case with solution
     mpct = cpf_current_mpc(cb_data.mpc_base, cb_data.mpc_target, Ybus, Yf, Yt, cb_data.ref, cb_data.pv, cb_data.pq, cx.V, cx.lam, mpopt);
-    mpct.et = etime(clock, t0);
+    mpct.et = toc(t0);
     mpct.success = success;
 
     %%-----  output results  -----

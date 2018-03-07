@@ -60,7 +60,7 @@ function [bus, gen, branch, f, success, info, et, g, jac, xr, pimul] = ...
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %%----- initialization -----
-t0 = clock;                                 %% start timer
+t0 = tic;       %% start timer
 
 %% process input arguments
 [mpc, mpopt] = opf_args(varargin{:});
@@ -168,7 +168,7 @@ else
 end
 
 %% compute elapsed time
-et = etime(clock, t0);
+et = toc(t0);
 
 %% finish preparing output
 if nargout > 0

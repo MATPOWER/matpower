@@ -118,7 +118,7 @@ if ~isempty(mpc.bus)
     gbus = gen(on, GEN_BUS);                %% what buses are they at?
 
     %%-----  run the power flow  -----
-    t0 = clock;
+    t0 = tic;
     its = 0;            %% total iterations
     if mpopt.verbose > 0
         v = mpver('all');
@@ -339,14 +339,14 @@ if ~isempty(mpc.bus)
         end
     end
 else
-    t0 = clock;
+    t0 = tic;
     success = 0;
     its = 0;
     if mpopt.verbose
         fprintf('Power flow not valid : MATPOWER case contains no connected buses');
     end
 end
-mpc.et = etime(clock, t0);
+mpc.et = toc(t0);
 mpc.success = success;
 mpc.iterations = its;
 
