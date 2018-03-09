@@ -139,7 +139,7 @@ for k = 1:length(options)
     t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
     t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
     if mpopt.opf.v_cartesian
-        xr = [r.var.val.Vi;r.var.val.Vr;r.var.val.Pg;r.var.val.Qg;0;r.var.val.y];
+        xr = [r.var.val.Vr;r.var.val.Vi;r.var.val.Pg;r.var.val.Qg;0;r.var.val.y];
     else
         xr = [r.var.val.Va;r.var.val.Vm;r.var.val.Pg;r.var.val.Qg;0;r.var.val.y];
     end
