@@ -271,9 +271,9 @@ else                %% AC model
   [Apqh, ubpqh, Apql, ubpql, Apqdata] = makeApq(baseMVA, gen);
 
   if vcart
-      user_vars = {'Vi', 'Vr', 'Pg', 'Qg'};
-      nodal_balance_vars = {'Vi', 'Vr', 'Pg', 'Qg'};
-      flow_lim_vars = {'Vi', 'Vr'};
+      user_vars = {'Vr', 'Vi', 'Pg', 'Qg'};
+      nodal_balance_vars = {'Vr', 'Vi', 'Pg', 'Qg'};
+      flow_lim_vars = {'Vr', 'Vi'};
   else
       user_vars = {'Va', 'Vm', 'Pg', 'Qg'};
       nodal_balance_vars = {'Va', 'Vm', 'Pg', 'Qg'};

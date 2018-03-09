@@ -37,7 +37,7 @@ function d2G = opf_power_balance_hess(x, lambda, mpc, Ybus, mpopt)
     
 %%----- initialize -----    
 if mpopt.opf.v_cartesian
-    [Vi, Vr, Pg, Qg] = deal(x{:});  %% unpack data
+    [Vr, Vi, Pg, Qg] = deal(x{:});  %% unpack data
     %% reconstruct V
     V = Vr + 1j* Vi;  
     %% problem dimensions

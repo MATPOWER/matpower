@@ -42,7 +42,7 @@ function d2H = opf_branch_flow_hess(x, lambda, mpc, Yf, Yt, il, mpopt)
 %% unpack data
 lim_type = upper(mpopt.opf.flow_lim(1));
 if mpopt.opf.v_cartesian
-    [Vi, Vr] = deal(x{:});
+    [Vr, Vi] = deal(x{:});
     nb = length(Vi);        %% number of buses
     nl2 = length(il);       %% number of constrained lines
     %% reconstruct V

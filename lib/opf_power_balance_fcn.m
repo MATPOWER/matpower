@@ -40,7 +40,7 @@ function [g, dg] = opf_power_balance_fcn(x, mpc, Ybus, mpopt)
 [baseMVA, bus, gen] = deal(mpc.baseMVA, mpc.bus, mpc.gen);
 
 if mpopt.opf.v_cartesian
-    [Vi, Vr, Pg, Qg] = deal(x{:});
+    [Vr, Vi, Pg, Qg] = deal(x{:});
     %% reconstruct V
     V = Vr + 1j* Vi;  
     %% problem dimensions

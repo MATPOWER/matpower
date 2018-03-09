@@ -50,7 +50,7 @@ function [h, dh] = opf_branch_flow_fcn(x, mpc, Yf, Yt, il, mpopt)
 lim_type = upper(mpopt.opf.flow_lim(1));
 branch = mpc.branch;
 if mpopt.opf.v_cartesian
-    [Vi, Vr] = deal(x{:});
+    [Vr, Vi] = deal(x{:});
     %% problem dimensions
     nb = length(Vi);        %% number of buses
     nl2 = length(il);       %% number of constrained lines        
