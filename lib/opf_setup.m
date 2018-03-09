@@ -221,6 +221,9 @@ if ~isempty(qcost)
     end
 end
 
+%% branch voltage angle difference limits
+[Aang, lang, uang, iang]  = makeAang(baseMVA, branch, nb, mpopt);
+
 if dc               %% DC model
   %% check generator costs
   if ~isempty(ip3)
@@ -292,12 +295,12 @@ else                %% AC model
   fcn_flow = @(x)opf_branch_flow_fcn(x, mpc, Yf(il, :), Yt(il, :), il, mpopt);
   hess_flow = @(x, lam)opf_branch_flow_hess(x, lam, mpc, Yf(il, :), Yt(il, :), il, mpopt);
 %   if vcart
-%     fcn_vref = @(x)opf_vref_fcn(x, mpc, ref, mpopt);
-%     hess_vref = @(x, lam)opf_vref_hess(x, lam, ref, mpopt);
-%     fcn_vlim = @(x)opf_vlim_fcn(x, mpc, ref, mpopt);
-%     hess_vlim = @(x, lam)opf_vlim_hess(x, lam, ref, mpopt);
-%     fcn_ang = @(x)opf_branch_ang_fcn(x, mpc, ref, mpopt);
-%     hess_ang = @(x, lam)opf_branch_ang_hess(x, lam, ref, mpopt);
+%     fcn_vref = @(x)opf_vref_fcn(x, mpc, refs, mpopt);
+%     hess_vref = @(x, lam)opf_vref_hess(x, lam, mpc, refs, mpopt);
+%     fcn_vlim = @(x)opf_vlim_fcn(x, mpc, mpopt);
+%     hess_vlim = @(x, lam)opf_vlim_hess(x, lam, mpc, mpopt);
+%     fcn_ang = @(x)opf_branch_ang_fcn(x, Aang, lang, uang, iang, mpopt);
+%     hess_ang = @(x, lam)opf_branch_ang_hess(x, lam, Aang, lang, uang, iang, mpopt);
 %   end
   
   %% nonlinear cost functions
@@ -308,9 +311,6 @@ else                %% AC model
     cost_Qg = @(x)opf_gen_cost_fcn(x, baseMVA, qcost, iq3, mpopt);
   end
 end
-
-%% branch voltage angle difference limits
-[Aang, lang, uang, iang]  = makeAang(baseMVA, branch, nb, mpopt);
 
 %% basin constraints for piece-wise linear gen cost variables
 if (strcmp(alg, 'PDIPM') && mpopt.pdipm.step_control) || strcmp(alg, 'TRALM')
