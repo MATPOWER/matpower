@@ -1,6 +1,6 @@
-function [Vm, dVm] = opf_vlim_fcn(x,mpc, ref, mpopt)
+function [Vlims, dVlims] = opf_vlim_fcn(x,mpc, mpopt)
 %OPF_VLIM_FCN  Evaluates voltage magnitudes and their gradients.
-%   [Vm, dVm] = OPF_VLIM_FCN(X, mpc, ref, MPOPT)
+%   [Vlims, dVlims] = OPF_VLIM_FCN(X, mpc, ref, MPOPT)
 %
 %   Computes the voltage magnitudes using real and imaginary part of complex voltage for
 %   AC optimal power flow. Computes constraint vectors and their gradients.
@@ -11,12 +11,12 @@ function [Vm, dVm] = opf_vlim_fcn(x,mpc, ref, mpopt)
 %     MPOPT : MATPOWER options struct
 %
 %   Outputs:
-%     VM  : vector of voltage magnitudes
-%     DVM : (optional) magnitude gradients
+%     VLIMS  : vector of voltage magnitudes
+%     DVLIMS : (optional) magnitude gradients
 %
 %   Examples:
-%       Vm = opf_vlim_fcn(x, mpc, ref, mpopt);
-%       [Vm, dVm] = opf_vlim_fcn(x, mpc, ref, mpopt);
+%       Vlims = opf_vlim_fcn(x, mpc, ref, mpopt);
+%       [Vlims, dVlims] = opf_vlim_fcn(x, mpc, ref, mpopt);
 %
 %   See also OPF_VLIM_HESS
 
@@ -28,6 +28,9 @@ function [Vm, dVm] = opf_vlim_fcn(x,mpc, ref, mpopt)
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
+%% define named indices into data matrices
+[PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
+    VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
 %% unpack data
 [Vr, Vi] = deal(x{:});
 
@@ -36,11 +39,13 @@ nb = length(Vi);            %% number of buses
 
 %% compute voltage magnitude
 Vm = sqrt(Vr.^2 + Vi.^2);
-
-%%----- evaluate constraint gradients -----
+Vlims = [ mpc.bus(:, VMIN) - Vm;
+          Vm - mpc.bus(:, VMAX) ];
+      
 if nargout > 1
     %% compute partials of voltage magnitue w.r.t Vr and Vi
     dVm_dVr = sparse(1:nb, 1:nb, Vr./Vm, nb, nb);
     dVm_dVi = sparse(1:nb, 1:nb, Vi./Vm, nb, nb);
-    dVm = [dVm_dVi dVm_dVr];        %% Vm w.r.t Vi, Vr
+    dVlims = [ -[dVm_dVr dVm_dVi];      %% Vlims w.r.t Vr, Vi
+                [dVm_dVr dVm_dVi]];
 end
