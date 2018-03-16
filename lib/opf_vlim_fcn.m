@@ -15,8 +15,8 @@ function [Vlims, dVlims] = opf_vlim_fcn(x,mpc, mpopt)
 %     DVLIMS : (optional) magnitude gradients
 %
 %   Examples:
-%       Vlims = opf_vlim_fcn(x, mpc, ref, mpopt);
-%       [Vlims, dVlims] = opf_vlim_fcn(x, mpc, ref, mpopt);
+%       Vlims = opf_vlim_fcn(x, mpc, mpopt);
+%       [Vlims, dVlims] = opf_vlim_fcn(x, mpc, mpopt);
 %
 %   See also OPF_VLIM_HESS
 
