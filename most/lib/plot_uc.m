@@ -158,13 +158,16 @@ if opt.saveall
     opt.saveit = 1;
 end
 if opt.saveall || isempty(uc2)
+    clf;
     h = plot_uc_data(uc1, [], opt);
 end
 if ~isempty(uc2)
     if opt.saveall || isempty(uc1)
+        clf;
         h = plot_uc_data([], uc2, opt);
     end
     if opt.saveall || ~isempty(uc1)
+        clf;
         h = plot_uc_data(uc1, uc2, opt);
     end
 end

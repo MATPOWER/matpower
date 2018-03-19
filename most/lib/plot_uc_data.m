@@ -114,13 +114,16 @@ for i = 1:m
     for j = 1:n
         y = m-[i-1; i; i; i-1];
         x = [j-1; j-1; j; j];
-        if uc1(i, j) && ~uc2(i, j)
+        if uc1(i, j)                %% 1 committed
             h1 = patch(x, y, c1);
-        elseif ~uc1(i, j) && uc2(i, j)  %% 2 committed
+        end
+        if uc2(i, j)                %% 2 committed
             h2 = patch(x, y, c2);
-        elseif uc1(i, j) && uc2(i, j)
+        end
+        if uc1(i, j) && uc2(i, j)   %% both committed
             hb = patch(x, y, cb);
-        else
+        end
+        if ~uc1(i, j) && ~uc2(i, j) %% neither committed
             hn = patch(x, y, cn);
         end
     end
@@ -129,6 +132,8 @@ end
 %% legend
 if strcmp(txt, 'both') && iscell(opt.subtitle) && length(opt.subtitle) == 3
     legend([h1 h2 hb], opt.subtitle, 'Location', [0.86 0.03 0.1 0.05], 'FontSize', 12*opt.size_factor);
+else
+    legend('off')
 end
 
 %% pretty it up
