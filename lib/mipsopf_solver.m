@@ -130,7 +130,7 @@ success = (info > 0);
 if mpopt.opf.v_cartesian
     Vi = x(vv.i1.Vi:vv.iN.Vi);
     Vr = x(vv.i1.Vr:vv.iN.Vr);
-    V = Vr + 1j*Vi; 
+    V = Vr + 1j*Vi;
     Va = angle(V);
     Vm = abs(V);
 else

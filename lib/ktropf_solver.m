@@ -105,11 +105,18 @@ if mpopt.opf.start < 2
     k = find(xmin > -Inf & xmax == Inf);    %% if only bounded below
     x0(k) = xmin(k) + s;                    %% set just above lower bound
     Varefs = bus(bus(:, BUS_TYPE) == REF, VA) * (pi/180);
-    x0(vv.i1.Va:vv.iN.Va) = Varefs(1);  %% angles set to first reference angle
-    if ny > 0
-        ipwl = find(gencost(:, MODEL) == PW_LINEAR);
-        c = gencost(sub2ind(size(gencost), ipwl, NCOST+2*gencost(ipwl, NCOST)));    %% largest y-value in CCV data
-        x0(vv.i1.y:vv.iN.y) = max(c) + 0.1 * abs(max(c));
+    if mpopt.opf.v_cartesian
+        Vm = (bus(:, VMAX) + bus(:, VMIN)) / 2;
+        V = Vm * exp(1j*Varefs(1));
+        x0(vv.i1.Vr:vv.iN.Vr) = real(V);
+        x0(vv.i1.Vi:vv.iN.Vi) = imag(V);
+    else
+        x0(vv.i1.Va:vv.iN.Va) = Varefs(1);  %% angles set to first reference angle
+        if ny > 0
+            ipwl = find(gencost(:, MODEL) == PW_LINEAR);
+            c = gencost(sub2ind(size(gencost), ipwl, NCOST+2*gencost(ipwl, NCOST)));    %% largest y-value in CCV data
+            x0(vv.i1.y:vv.iN.y) = max(c) + 0.1 * abs(max(c));
+        end
     end
 end
 
@@ -214,11 +221,19 @@ if create_ktropts_file  %% ... but only if I created it
 end
 
 %% update solution data
-Va = x(vv.i1.Va:vv.iN.Va);
-Vm = x(vv.i1.Vm:vv.iN.Vm);
+if mpopt.opf.v_cartesian
+    Vi = x(vv.i1.Vi:vv.iN.Vi);
+    Vr = x(vv.i1.Vr:vv.iN.Vr);
+    V = Vr + 1j*Vi;
+    Va = angle(V);
+    Vm = abs(V);
+else
+    Va = x(vv.i1.Va:vv.iN.Va);
+    Vm = x(vv.i1.Vm:vv.iN.Vm);
+    V = Vm .* exp(1j*Va);
+end
 Pg = x(vv.i1.Pg:vv.iN.Pg);
 Qg = x(vv.i1.Qg:vv.iN.Qg);
-V = Vm .* exp(1j*Va);
 
 %%-----  calculate return values  -----
 %% update voltages & generator outputs
@@ -260,8 +275,13 @@ Lambda.lower(ku) = Lambda.upper(ku);
 Lambda.upper(ku) = 0;
 
 %% update Lagrange multipliers
-bus(:, MU_VMAX)  = Lambda.upper(vv.i1.Vm:vv.iN.Vm);
-bus(:, MU_VMIN)  = -Lambda.lower(vv.i1.Vm:vv.iN.Vm);
+if mpopt.opf.v_cartesian
+    bus(:, MU_VMAX)  = Lambda.upper(vv.i1.Vr:vv.iN.Vr);
+    bus(:, MU_VMIN)  = -Lambda.lower(vv.i1.Vr:vv.iN.Vr);
+else
+    bus(:, MU_VMAX)  = Lambda.upper(vv.i1.Vm:vv.iN.Vm);
+    bus(:, MU_VMIN)  = -Lambda.lower(vv.i1.Vm:vv.iN.Vm);
+end
 gen(:, MU_PMAX)  = Lambda.upper(vv.i1.Pg:vv.iN.Pg) / baseMVA;
 gen(:, MU_PMIN)  = -Lambda.lower(vv.i1.Pg:vv.iN.Pg) / baseMVA;
 gen(:, MU_QMAX)  = Lambda.upper(vv.i1.Qg:vv.iN.Qg) / baseMVA;
