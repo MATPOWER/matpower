@@ -286,11 +286,13 @@ else                %% AC model
 
   %% nonlinear constraint functions
   if mpopt.opf.current_balance
-     fcn_mis = @(x)opf_current_balance_fcn(x, mpc, Ybus, mpopt);
-     hess_mis = @(x, lam)opf_current_balance_hess(x, lam, mpc, Ybus, mpopt);
+    mis_cons = {'rImis', 'iImis'};
+    fcn_mis = @(x)opf_current_balance_fcn(x, mpc, Ybus, mpopt);
+    hess_mis = @(x, lam)opf_current_balance_hess(x, lam, mpc, Ybus, mpopt);
   else
-     fcn_mis = @(x)opf_power_balance_fcn(x, mpc, Ybus, mpopt);
-     hess_mis = @(x, lam)opf_power_balance_hess(x, lam, mpc, Ybus, mpopt);
+    mis_cons = {'Pmis', 'Qmis'};
+    fcn_mis = @(x)opf_power_balance_fcn(x, mpc, Ybus, mpopt);
+    hess_mis = @(x, lam)opf_power_balance_hess(x, lam, mpc, Ybus, mpopt);
   end
   fcn_flow = @(x)opf_branch_flow_fcn(x, mpc, Yf(il, :), Yt(il, :), il, mpopt);
   hess_flow = @(x, lam)opf_branch_flow_hess(x, lam, mpc, Yf(il, :), Yt(il, :), il, mpopt);
@@ -384,7 +386,7 @@ else
   om.add_var('Qg', ng, Qg, Qmin, Qmax);
 
   %% nonlinear constraints
-  om.add_nln_constraint({'Pmis', 'Qmis'}, [nb;nb], 1, fcn_mis, hess_mis, nodal_balance_vars);
+  om.add_nln_constraint(mis_cons, [nb;nb], 1, fcn_mis, hess_mis, nodal_balance_vars);
   if legacy_formulation
     om.add_nln_constraint({'Sf', 'St'}, [nl;nl], 0, fcn_flow, hess_flow, flow_lim_vars);
   else

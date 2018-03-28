@@ -241,8 +241,24 @@ gen(:, MU_PMAX)  = Lambda.upper(vv.i1.Pg:vv.iN.Pg) / baseMVA;
 gen(:, MU_PMIN)  = Lambda.lower(vv.i1.Pg:vv.iN.Pg) / baseMVA;
 gen(:, MU_QMAX)  = Lambda.upper(vv.i1.Qg:vv.iN.Qg) / baseMVA;
 gen(:, MU_QMIN)  = Lambda.lower(vv.i1.Qg:vv.iN.Qg) / baseMVA;
-bus(:, LAM_P)    = Lambda.eqnonlin(nne.i1.Pmis:nne.iN.Pmis) / baseMVA;
-bus(:, LAM_Q)    = Lambda.eqnonlin(nne.i1.Qmis:nne.iN.Qmis) / baseMVA;
+if mpopt.opf.current_balance
+    %% convert current balance shadow prices to equivalent lamP and lamQ
+    %% P + jQ = (Vr + jVi) * (M - jN)
+    %% M = (Vr P + Vi Q) / (Vr^2 + Vi^2)
+    %% N = (Vi P - Vr Q) / (Vr^2 + Vi^2)
+    %% lamP = df/dP = df/dM * dM/dP + df/dN + dN/dP
+    %% lamQ = df/dQ = df/dM * dM/dQ + df/dN + dN/dQ
+    VV = V ./ (V .* conj(V));   %% V / Vm^2
+    VVr = real(VV);
+    VVi = imag(VV);
+    lamM = Lambda.eqnonlin(nne.i1.rImis:nne.iN.rImis);
+    lamN = Lambda.eqnonlin(nne.i1.iImis:nne.iN.iImis);
+    bus(:, LAM_P) = (VVr.*lamM + VVi.*lamN) / baseMVA;
+    bus(:, LAM_Q) = (VVi.*lamM - VVr.*lamN) / baseMVA;
+else
+    bus(:, LAM_P) = Lambda.eqnonlin(nne.i1.Pmis:nne.iN.Pmis) / baseMVA;
+    bus(:, LAM_Q) = Lambda.eqnonlin(nne.i1.Qmis:nne.iN.Qmis) / baseMVA;
+end
 branch(:, MU_SF) = muSf / baseMVA;
 branch(:, MU_ST) = muSt / baseMVA;
 
