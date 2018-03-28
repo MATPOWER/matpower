@@ -182,7 +182,7 @@ for k = 1:length(options)
         t_is(   gen(:,ig_mu     ),    gen_soln(:,ig_mu     ),  3, [t 'gen mu']);
         t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
         t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
-        t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);        
+        t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
     end
 
     %%-----  test OPF with quadratic gen costs moved to generalized costs  -----
@@ -340,7 +340,7 @@ for k = 1:length(options)
 
         %% get solved AC OPF case from MAT-file
         load soln9_opf_ang;   %% defines bus_soln, gen_soln, branch_soln, f_soln
-    
+
         %% run OPF with angle difference limits
         t = [t0 'w/angle difference limits : '];
         [baseMVA, bus, gen, gencost, branch, f, success, et] = runopf(mpc, mpopt);
