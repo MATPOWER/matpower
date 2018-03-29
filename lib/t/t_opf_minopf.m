@@ -416,10 +416,10 @@ if have_fcn('minopf')
     mpc.branch(:, RATE_A) = 0;
     r = runopf(mpc, mpopt);
     t_ok(r.success, [t 'success']);
-    t_is(f, 11899.4652, 4, [t 'f']);
-    t_is(gen(:, PG), [100.703628; 128.679485; 88.719864], 5, [t 'f']);
-    t_is([min(bus(:, VM)) mean(bus(:, VM)) max(bus(:, VM))], ...
-        [1.059191 1.079404 1.1], 5, [t 'bus voltage']);
+    t_is(r.f, 5496.128635, 4, [t 'f']);
+    t_is(r.gen(:, PG), [90; 10; 220.463932], 5, [t 'Pg']);
+    t_is([min(r.bus(:, VM)) mean(r.bus(:, VM)) max(r.bus(:, VM))], ...
+        [1.070692 1.090449 1.1], 5, [t 'bus voltage']);
 else
     t_skip(num_tests, [t0 'not available']);
 end
