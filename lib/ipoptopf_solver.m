@@ -292,8 +292,8 @@ end
 
 %% update Lagrange multipliers
 if mpopt.opf.v_cartesian
-    bus(:, MU_VMAX)  = info.zu(vv.i1.Vr:vv.iN.Vr);
-    bus(:, MU_VMIN)  = info.zl(vv.i1.Vr:vv.iN.Vr);
+    bus(:, MU_VMAX)  = info.lambda(om.nle.N+(nni.i1.Vmax:nni.iN.Vmax));
+    bus(:, MU_VMIN)  = info.lambda(om.nle.N+(nni.i1.Vmin:nni.iN.Vmin));
 else
     bus(:, MU_VMAX)  = info.zu(vv.i1.Vm:vv.iN.Vm);
     bus(:, MU_VMIN)  = info.zl(vv.i1.Vm:vv.iN.Vm);

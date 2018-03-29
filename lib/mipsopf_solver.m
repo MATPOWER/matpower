@@ -173,8 +173,8 @@ end
 
 %% update Lagrange multipliers
 if mpopt.opf.v_cartesian
-    bus(:, MU_VMAX)  = Lambda.upper(vv.i1.Vr:vv.iN.Vr);
-    bus(:, MU_VMIN)  = Lambda.lower(vv.i1.Vr:vv.iN.Vr);
+    bus(:, MU_VMAX)  = Lambda.ineqnonlin(nni.i1.Vmax:nni.iN.Vmax);
+    bus(:, MU_VMIN)  = Lambda.ineqnonlin(nni.i1.Vmin:nni.iN.Vmin);
 else
     bus(:, MU_VMAX)  = Lambda.upper(vv.i1.Vm:vv.iN.Vm);
     bus(:, MU_VMIN)  = Lambda.lower(vv.i1.Vm:vv.iN.Vm);
