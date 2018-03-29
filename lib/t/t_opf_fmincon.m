@@ -44,6 +44,7 @@ end
 
 mpopt = mpoption('opf.violation', 1e-6);
 mpopt = mpoption(mpopt, 'out.all', 0, 'verbose', verbose, 'opf.ac.solver', 'FMINCON');
+mpopt = mpoption(mpopt, 'fmincon.tol_x', 1e-7, 'fmincon.tol_f', 1e-9);
 
 %% use active-set method for MATLAB 7.6-7.9 (R2008a-R2009b)
 vstr = have_fcn('matlab', 'vstr');
@@ -62,7 +63,6 @@ for k = 1:length(options)
         continue;
     end
 
-    mpopt = mpoption(mpopt, 'fmincon.tol_x', 1e-7, 'fmincon.tol_f', 1e-9);
     mpopt = mpoption(mpopt, 'opf.current_balance',  options{k}{1}, ...
                             'opf.v_cartesian',      options{k}{2} );
 
@@ -313,13 +313,13 @@ for k = 1:length(options)
     t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
 
     %%-----  test OPF with angle difference limits  -----
+    mpc = loadcase('t_case9_opfv2');
+    %% remove capability curves
+    mpc.gen(2:3, [PC1, PC2, QC1MIN, QC1MAX, QC2MIN, QC2MAX]) = zeros(2,6);
+
     if mpopt.opf.v_cartesian
         t_skip(13, 'ang diff lim example n/a to cartesian V case')
     else
-        mpc = loadcase('t_case9_opfv2');
-        %% remove capability curves
-        mpc.gen(2:3, [PC1, PC2, QC1MIN, QC1MAX, QC2MIN, QC2MAX]) = zeros(2,6);
-
         %% get solved AC OPF case from MAT-file
         load soln9_opf_ang;   %% defines bus_soln, gen_soln, branch_soln, f_soln
 
