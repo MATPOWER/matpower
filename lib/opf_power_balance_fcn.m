@@ -25,6 +25,7 @@ function [g, dg] = opf_power_balance_fcn(x, mpc, Ybus, mpopt)
 %   Copyright (c) 1996-2017, Power Systems Engineering Research Center (PSERC)
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %   and Ray Zimmerman, PSERC Cornell
+%   and Baljinnyam Sereeter, Delft University of Technology
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -38,27 +39,22 @@ function [g, dg] = opf_power_balance_fcn(x, mpc, Ybus, mpopt)
 
 %% unpack data
 [baseMVA, bus, gen] = deal(mpc.baseMVA, mpc.bus, mpc.gen);
-
 if mpopt.opf.v_cartesian
     [Vr, Vi, Pg, Qg] = deal(x{:});
-    %% reconstruct V
-    V = Vr + 1j* Vi;  
-    %% problem dimensions
-    nb = length(Vi);            %% number of buses
-    ng = length(Pg);            %% number of dispatchable injections    
+    V = Vr + 1j * Vi;           %% reconstruct V
 else
     [Va, Vm, Pg, Qg] = deal(x{:});
-    %% reconstruct V
-    V = Vm .* exp(1j * Va);
-    %% problem dimensions
-    nb = length(Va);            %% number of buses
-    ng = length(Pg);            %% number of dispatchable injections
-end 
+    V = Vm .* exp(1j * Va);     %% reconstruct V
+end
+
+%% problem dimensions
+nb = length(V);             %% number of buses
+ng = length(Pg);            %% number of dispatchable injections
 
 %% ----- evaluate constraints -----
 %% put Pg, Qg back in gen
 gen(:, PG) = Pg * baseMVA;  %% active generation in MW
-gen(:, QG) = Qg * baseMVA;  %% reactive generation in MVAr 
+gen(:, QG) = Qg * baseMVA;  %% reactive generation in MVAr
 
 %% rebuild Sbus
 if mpopt.opf.v_cartesian
@@ -81,9 +77,9 @@ if nargout > 1
     if mpopt.opf.v_cartesian
         [dSbus_dVr, dSbus_dVi] = dSbus_dV_C(Ybus, V);         %% w.r.t. V
         dg = [
-            real([dSbus_dVi dSbus_dVr]) neg_Cg sparse(nb, ng);  %% P mismatch w.r.t Vi, Vr, Pg, Qg
-            imag([dSbus_dVi dSbus_dVr]) sparse(nb, ng) neg_Cg;  %% Q mismatch w.r.t Vi, Vr, Pg, Qg
-        ];        
+            real([dSbus_dVr dSbus_dVi]) neg_Cg sparse(nb, ng);  %% P mismatch w.r.t Vi, Vr, Pg, Qg
+            imag([dSbus_dVr dSbus_dVi]) sparse(nb, ng) neg_Cg;  %% Q mismatch w.r.t Vi, Vr, Pg, Qg
+        ];
     else
         [dSbus_dVm, dSbus_dVa] = dSbus_dV_P(Ybus, V);         %% w.r.t. V
         %% adjust for voltage dependent loads

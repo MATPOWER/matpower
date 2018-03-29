@@ -1,6 +1,6 @@
-function [dSf_dVi, dSf_dVr, dSt_dVi, dSt_dVr, Sf, St] = dSbr_dV_C(branch, Yf, Yt, V)
+function [dSf_dVr, dSf_dVi, dSt_dVr, dSt_dVi, Sf, St] = dSbr_dV_C(branch, Yf, Yt, V)
 %dSbr_dV_C   Computes partial derivatives of power flows w.r.t. voltage.
-%   [DSF_DVI, DSF_DVR, DST_DVI, DST_DVR, SF, ST] = dSbr_dV_C(BRANCH, YF, YT, V)
+%   [DSF_DVR, DSF_DVI, DST_DVR, DST_DVI, SF, ST] = dSbr_dV_C(BRANCH, YF, YT, V)
 %   returns four matrices containing partial derivatives of the complex
 %   branch power flows at "from" and "to" ends of each branch w.r.t real
 %   an imaginary part of complex voltage respectively (for all buses). If YF is a
@@ -14,13 +14,13 @@ function [dSf_dVi, dSf_dVr, dSt_dVi, dSt_dVr, Sf, St] = dSbr_dV_C(branch, Yf, Yt
 %   Partials of V, Vf & If w.r.t. imaginary part of complex voltage
 %       dV/dVi  = j * diag(ones(n,1))
 %       dVf/dVi = j * Cf
-%       dIf/dVi = Yf * j 
+%       dIf/dVi = Yf * j
 %   where Cf is connection matrix for line & from buses
 %
 %   Partials of V, Vf & If w.r.t. real part of complex voltage
 %       dV/dVr  = diag(ones(n,1))
 %       dVf/dVr = Cf
-%       dIf/dVr = Yf 
+%       dIf/dVr = Yf
 %
 %   Partials of Sf w.r.t. imaginary part of complex voltage
 %       dSf/dVi = j * (conj(diag(If)) * Cf - diag(Vf) * conj(Yf))
@@ -32,7 +32,7 @@ function [dSf_dVi, dSf_dVr, dSt_dVi, dSt_dVr, Sf, St] = dSbr_dV_C(branch, Yf, Yt
 %
 %   Example:
 %       [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
-%       [dSf_dVi, dSf_dVr, dSt_dVi, dSt_dVr, Sf, St] = ...
+%       [dSf_dVr, dSf_dVi, dSt_dVr, dSt_dVi, Sf, St] = ...
 %           dSbr_dV_C(branch, Yf, Yt, V);
 %
 %   For more details on the derivations behind the derivative code used
@@ -49,31 +49,38 @@ t = branch(:, T_BUS);       %% list of "to" buses
 nl = length(f);
 nb = length(V);
 
-%% compute currents
-If = Yf * V;
-It = Yt * V;
+%% compute intermediate values
+Yfc = conj(Yf);
+Ytc = conj(Yt);
+Vc = conj(V);
+Ifc = Yfc * Vc;     %% conjugate of "from" current
+Itc = Ytc * Vc;     %% conjugate of "to" current
 
 Cf = sparse(1:nl, f, ones(nl, 1), nl, nb);      %% connection matrix for line & from buses
-Ct = sparse(1:nl, t, ones(nl, 1), nl, nb);      %% connection matrix for line & to buses    
+Ct = sparse(1:nl, t, ones(nl, 1), nl, nb);      %% connection matrix for line & to buses
 if issparse(Yf)             %% sparse version (if Yf is sparse)
     diagVf      = sparse(1:nl, 1:nl, V(f), nl, nl);
     diagVt      = sparse(1:nl, 1:nl, V(t), nl, nl);
-    diagIf      = sparse(1:nl, 1:nl, If, nl, nl);
-    diagIt      = sparse(1:nl, 1:nl, It, nl, nl);
+    diagIfc     = sparse(1:nl, 1:nl, Ifc, nl, nl);
+    diagItc     = sparse(1:nl, 1:nl, Itc, nl, nl);
 else                        %% dense version
     diagVf      = diag(V(f));
     diagVt      = diag(V(t));
-    diagIf      = diag(If);    
-    diagIt      = diag(It);
+    diagIfc     = diag(Ifc);
+    diagItc     = diag(Itc);
 end
-    dSf_dVi = 1j * (conj(diagIf)*Cf - diagVf * conj(Yf));   %% dSf_dVi
-    dSf_dVr = conj(diagIf)*Cf + diagVf * conj(Yf) ;         %% dSf_dVr
+Af = diagIfc * Cf;
+Bf = diagVf * Yfc;
+At = diagItc * Ct;
+Bt = diagVt * Ytc;
 
-    dSt_dVi = 1j * (conj(diagIt)*Ct - diagVt * conj(Yt));   %% dSt_dVi
-    dSt_dVr = conj(diagIt)*Ct + diagVt * conj(Yt) ;         %% dSt_dVr
-   
+dSf_dVr = Af + Bf;          %% dSf_dVr
+dSf_dVi = 1j * (Af - Bf);   %% dSf_dVi
+
+dSt_dVr = At + Bt;          %% dSt_dVr
+dSt_dVi = 1j * (At - Bt);   %% dSt_dVi
+
 if nargout > 4
-    Sf = V(f) .* conj(If);
-    St = V(t) .* conj(It);
-end
+    Sf = V(f) .* Ifc;
+    St = V(t) .* Itc;
 end

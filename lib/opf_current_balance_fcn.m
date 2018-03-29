@@ -19,7 +19,16 @@ function [g, dg] = opf_current_balance_fcn(x, mpc, Ybus, mpopt)
 %       g = opf_current_balance_fcn(x, mpc, Ybus, mpopt);
 %       [g, dg] = opf_current_balance_fcn(x, mpc, Ybus, mpopt);
 %
-%   See also OPF_CURRENT_BALANCE_HESS
+%   See also OPF_POWER_BALANCE_HESS
+
+%   MATPOWER
+%   Copyright (c) 1996-2018, Power Systems Engineering Research Center (PSERC)
+%   by Baljinnyam Sereeter, Delft University of Technology
+%   and Ray Zimmerman, PSERC Cornell
+%
+%   This file is part of MATPOWER.
+%   Covered by the 3-clause BSD License (see LICENSE file for details).
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %%----- initialize -----
 %% define named indices into data matrices
@@ -29,22 +38,17 @@ function [g, dg] = opf_current_balance_fcn(x, mpc, Ybus, mpopt)
 
 %% unpack data
 [baseMVA, bus, gen] = deal(mpc.baseMVA, mpc.bus, mpc.gen);
-
 if mpopt.opf.v_cartesian
     [Vr, Vi, Pg, Qg] = deal(x{:});
-    %% reconstruct V
-    V = Vr + 1j* Vi;  
-    %% problem dimensions
-    nb = length(Vi);            %% number of buses
-    ng = length(Pg);            %% number of dispatchable injections        
+    V = Vr + 1j* Vi;        %% reconstruct V
 else
     [Va, Vm, Pg, Qg] = deal(x{:});
-    %% reconstruct V
-    V = Vm .* exp(1j * Va);
-    %% problem dimensions
-    nb = length(Va);            %% number of buses
-    ng = length(Pg);            %% number of dispatchable injections    
-end 
+    V = Vm .* exp(1j * Va); %% reconstruct V
+end
+
+%% problem dimensions
+nb = length(V);             %% number of buses
+ng = length(Pg);            %% number of dispatchable injections
 
 %% ----- evaluate constraints -----
 %% put Pg, Qg back in gen
@@ -70,16 +74,16 @@ if nargout > 1
     dImis_dQg = 1j*InvConjV*Cg;     % dImis w.r.t. Qg
 
     if mpopt.opf.v_cartesian
-        [dImis_dVr, dImis_dVi] = dImis_dV_C(Sbus, Ybus, V);          % w.r.t. V
+        [dImis_dVr, dImis_dVi] = dImis_dV_C(Sbus, Ybus, V);     %% w.r.t. V
         dg = [
-            real([dImis_dVi dImis_dVr dImis_dPg dImis_dQg]);   %% Ir mismatch w.r.t Vi, Vr, Pg, Qg
-            imag([dImis_dVi dImis_dVr dImis_dPg dImis_dQg]) ;  %% Ii mismatch w.r.t Vi, Vr, Pg, Qg
-        ];        
+            real([dImis_dVr dImis_dVi dImis_dPg dImis_dQg]);    %% Ir mismatch w.r.t Vr, Vi, Pg, Qg
+            imag([dImis_dVr dImis_dVi dImis_dPg dImis_dQg]) ;   %% Ii mismatch w.r.t Vr, Vi, Pg, Qg
+        ];
     else
-        [dImis_dVm, dImis_dVa] = dImis_dV_P(Sbus, Ybus, V);          % w.r.t. V
+        [dImis_dVm, dImis_dVa] = dImis_dV_P(Sbus, Ybus, V);     %% w.r.t. V
         dg = [
-            real([dImis_dVa dImis_dVm dImis_dPg dImis_dQg]);  %% Ir mismatch w.r.t Va, Vm, Pg, Qg
-            imag([dImis_dVa dImis_dVm dImis_dPg dImis_dQg]);  %% Ii mismatch w.r.t Va, Vm, Pg, Qg
+            real([dImis_dVa dImis_dVm dImis_dPg dImis_dQg]);    %% Ir mismatch w.r.t Va, Vm, Pg, Qg
+            imag([dImis_dVa dImis_dVm dImis_dPg dImis_dQg]);    %% Ii mismatch w.r.t Va, Vm, Pg, Qg
         ];
     end
 end

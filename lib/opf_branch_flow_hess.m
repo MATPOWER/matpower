@@ -43,18 +43,15 @@ function d2H = opf_branch_flow_hess(x, lambda, mpc, Yf, Yt, il, mpopt)
 lim_type = upper(mpopt.opf.flow_lim(1));
 if mpopt.opf.v_cartesian
     [Vr, Vi] = deal(x{:});
-    nb = length(Vi);        %% number of buses
-    nl2 = length(il);       %% number of constrained lines
-    %% reconstruct V
-    V = Vr + 1j*Vi;    
+    V = Vr + 1j * Vi;           %% reconstruct V
 else
     [Va, Vm] = deal(x{:});
-    %% unpack needed parameters
-    nb = length(Va);        %% number of buses
-    nl2 = length(il);       %% number of constrained lines
-    %% reconstruct V
-    V = Vm .* exp(1j * Va);
+    V = Vm .* exp(1j * Va);     %% reconstruct V
 end
+
+%% problem dimensions
+nb = length(V);         %% number of buses
+nl2 = length(il);       %% number of constrained lines
 
 %%----- evaluate Hessian of flow constraints -----
 %% keep dimensions of empty matrices/vectors compatible
@@ -71,10 +68,10 @@ end
 if lim_type == 'I'          %% square of current
     if mpopt.opf.v_cartesian
         warning('Current magnitude limit |I| is not calculated in Cartesian coordinates')
-    else    
+    else
         [dIf_dVa, dIf_dVm, dIt_dVa, dIt_dVm, If, It] = dIbr_dV(mpc.branch(il,:), Yf, Yt, V);
         [Hfaa, Hfav, Hfva, Hfvv] = d2AIbr_dV2(dIf_dVa, dIf_dVm, If, Yf, V, muF);
-        [Htaa, Htav, Htva, Htvv] = d2AIbr_dV2(dIt_dVa, dIt_dVm, It, Yt, V, muT);        
+        [Htaa, Htav, Htva, Htvv] = d2AIbr_dV2(dIt_dVa, dIt_dVm, It, Yt, V, muT);
     end
 else
     f = mpc.branch(il, F_BUS);    %% list of "from" buses
@@ -82,7 +79,7 @@ else
     Cf = sparse(1:nl2, f, ones(nl2, 1), nl2, nb);   %% connection matrix for line & from buses
     Ct = sparse(1:nl2, t, ones(nl2, 1), nl2, nb);   %% connection matrix for line & to buses
     if mpopt.opf.v_cartesian
-        [dSf_dVi, dSf_dVr, dSt_dVi, dSt_dVr, Sf, St] = dSbr_dV_C(mpc.branch(il,:), Yf, Yt, V);
+        [dSf_dVr, dSf_dVi, dSt_dVr, dSt_dVi, Sf, St] = dSbr_dV_C(mpc.branch(il,:), Yf, Yt, V);
     else
         [dSf_dVa, dSf_dVm, dSt_dVa, dSt_dVm, Sf, St] = dSbr_dV_P(mpc.branch(il,:), Yf, Yt, V);
     end
@@ -91,29 +88,29 @@ else
             warning('Square of real power is not calculated in Cartesian coordinates')
         else
             [Hfaa, Hfav, Hfva, Hfvv] = d2ASbr_dV2_P(real(dSf_dVa), real(dSf_dVm), real(Sf), Cf, Yf, V, muF);
-            [Htaa, Htav, Htva, Htvv] = d2ASbr_dV2_P(real(dSt_dVa), real(dSt_dVm), real(St), Ct, Yt, V, muT);            
+            [Htaa, Htav, Htva, Htvv] = d2ASbr_dV2_P(real(dSt_dVa), real(dSt_dVm), real(St), Ct, Yt, V, muT);
         end
-    elseif lim_type == 'P'    %% real power                                 
+    elseif lim_type == 'P'    %% real power
         if mpopt.opf.v_cartesian
             warning('Real power is not calculated in Cartesian coordinates')
         else
             [Hfaa, Hfav, Hfva, Hfvv] = d2Sbr_dV2_P(Cf, Yf, V, muF);
             [Htaa, Htav, Htva, Htvv] = d2Sbr_dV2_P(Ct, Yt, V, muT);
             [Hfaa, Hfav, Hfva, Hfvv] = deal(real(Hfaa), real(Hfav), real(Hfva), real(Hfvv));
-            [Htaa, Htav, Htva, Htvv] = deal(real(Htaa), real(Htav), real(Htva), real(Htvv));            
+            [Htaa, Htav, Htva, Htvv] = deal(real(Htaa), real(Htav), real(Htva), real(Htvv));
         end
     else                      %% square of apparent power
         if mpopt.opf.v_cartesian
-            [Hfii, Hfir, Hfri, Hfrr] = d2ASbr_dV2_C(dSf_dVi, dSf_dVr, Sf, Cf, Yf, V, muF);
-            [Htii, Htir, Htri, Htrr] = d2ASbr_dV2_C(dSt_dVi, dSt_dVr, St, Ct, Yt, V, muT);            
+            [Hfrr, Hfri, Hfir, Hfii] = d2ASbr_dV2_C(dSf_dVr, dSf_dVi, Sf, Cf, Yf, V, muF);
+            [Htrr, Htri, Htir, Htii] = d2ASbr_dV2_C(dSt_dVr, dSt_dVi, St, Ct, Yt, V, muT);
         else
             [Hfaa, Hfav, Hfva, Hfvv] = d2ASbr_dV2_P(dSf_dVa, dSf_dVm, Sf, Cf, Yf, V, muF);
-            [Htaa, Htav, Htva, Htvv] = d2ASbr_dV2_P(dSt_dVa, dSt_dVm, St, Ct, Yt, V, muT);            
+            [Htaa, Htav, Htva, Htvv] = d2ASbr_dV2_P(dSt_dVa, dSt_dVm, St, Ct, Yt, V, muT);
         end
     end
 end
 if mpopt.opf.v_cartesian
-    d2H = [Hfii Hfir; Hfri Hfrr] + [Htii Htir; Htri Htrr];
+    d2H = [Hfrr Hfri; Hfir Hfii] + [Htrr Htri; Htir Htii];
 else
     d2H = [Hfaa Hfav; Hfva Hfvv] + [Htaa Htav; Htva Htvv];
 end

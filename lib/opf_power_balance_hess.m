@@ -25,41 +25,43 @@ function d2G = opf_power_balance_hess(x, lambda, mpc, Ybus, mpopt)
 %   Copyright (c) 1996-2017, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
+%   and Baljinnyam Sereeter, Delft University of Technology
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-%% ----- evaluate Hessian of power balance constraints -----
-    nlam = length(lambda) / 2;
-    lamP = lambda(1:nlam);
-    lamQ = lambda((1:nlam)+nlam);
-    
-%%----- initialize -----    
+%%----- initialize -----
+%% unpack data
+[Var, Vmi, Pg, Qg] = deal(x{:});
+
+%% problem dimensions
+nb = length(Var);           %% number of buses
+ng = length(Pg);            %% number of dispatchable injections
+
+nlam = length(lambda) / 2;
+lamP = lambda(1:nlam);
+lamQ = lambda((1:nlam)+nlam);
+
+%%----- evaluate Hessian of power balance constraints -----
 if mpopt.opf.v_cartesian
-    [Vr, Vi, Pg, Qg] = deal(x{:});  %% unpack data
     %% reconstruct V
-    V = Vr + 1j* Vi;  
-    %% problem dimensions
-    nb = length(Vi);            %% number of buses
-    ng = length(Pg);            %% number of dispatchable injections
-    
-    [Gpii, Gpir, Gpri, Gprr] = d2Sbus_dV2_C(Ybus, V, lamP);
-    [Gqii, Gqir, Gqri, Gqrr] = d2Sbus_dV2_C(Ybus, V, lamQ);    
+    V = Var + 1j* Vmi;
+
+    %% compute 2nd derivatives
+    [Gprr, Gpri, Gpir, Gpii] = d2Sbus_dV2_C(Ybus, V, lamP);
+    [Gqrr, Gqri, Gqir, Gqii] = d2Sbus_dV2_C(Ybus, V, lamQ);
+
     %% construct Hessian
     d2G = [
-        real([Gpii Gpir; Gpri Gprr]) + imag([Gqii Gqir; Gqri Gqrr]) sparse(2*nb, 2*ng);
+        real([Gprr Gpri; Gpir Gpii]) + imag([Gqrr Gqri; Gqir Gqii]) sparse(2*nb, 2*ng);
         sparse(2*ng, 2*nb + 2*ng)
-    ];      
+    ];
 else
-    [Va, Vm, Pg, Qg] = deal(x{:});  %% unpack data
     %% reconstruct V
-    V = Vm .* exp(1j * Va);
-    
-    %% problem dimensions
-    nb = length(Va);            %% number of buses
-    ng = length(Pg);            %% number of dispatchable injections
+    V = Vmi .* exp(1j * Var);
 
+    %% compute 2nd derivatives
     [Gpaa, Gpav, Gpva, Gpvv] = d2Sbus_dV2_P(Ybus, V, lamP);
     [Gqaa, Gqav, Gqva, Gqvv] = d2Sbus_dV2_P(Ybus, V, lamQ);
 
@@ -73,7 +75,5 @@ else
     d2G = [
         real([Gpaa Gpav; Gpva Gpvv]) + imag([Gqaa Gqav; Gqva Gqvv]) sparse(2*nb, 2*ng);
         sparse(2*ng, 2*nb + 2*ng)
-    ];    
+    ];
 end
-
-

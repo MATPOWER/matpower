@@ -21,27 +21,30 @@ function d2Vref = opf_vref_hess(x, lam, mpc, refs, mpopt)
 %   See also OPF_VREF_FCN.
 
 %   MATPOWER
-%   Copyright (c) 1996-2017, Power Systems Engineering Research Center (PSERC)
-%   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
+%   Copyright (c) 2018, Power Systems Engineering Research Center (PSERC)
+%   by Baljinnyam Sereeter, Delft University of Technology
 %   and Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
+
 %% unpack data
 [Vr, Vi] = deal(x{:});
+nb = length(Vr);
 
-%% ----- evaluate constraint gradients -----
-diagVrVm4   = diag(Vr./(Vr(refs).^4 + 2*(Vr(refs).^2).*(Vi(refs).^2)+ Vi(refs).^4));
-diagViVm4   = diag(Vi./(Vr(refs).^4 + 2*(Vr(refs).^2).*(Vi(refs).^2)+ Vi(refs).^4));
-diaglamV2 = diag(lam./(Vr(refs).^2 + Vi(refs).^2));
-diagVrlam = diag(2*Vr(refs).*lam);
-diagVilam = diag(2*Vi(refs).*lam);
+%%----- evaluate Hessian of voltage angle constraints -----
+VVr = Vr(refs);
+VVi = Vi(refs);
+VVr2 = VVr.^2;
+VVi2 = VVi.^2;
+lamVm4 = lam(refs) ./ (VVr2 + VVi2).^2;
 
-Vref_ii = -diagVrlam*diagViVm4; 
-Vref_ir = diaglamV2 - diagVrlam*diagVrVm4;
-Vref_ri = -Vref_ir;
-Vref_rr = diagVilam*diagVrVm4;
+d2Vref_rr = sparse(refs, refs, 2 * lamVm4 .*  VVr .* VVi,   nb, nb);
+d2Vref_ri = sparse(refs, refs,     lamVm4 .* (VVi2 - VVr2), nb, nb);
+d2Vref_ir =  d2Vref_ri;
+d2Vref_ii = -d2Vref_rr;
+
 %% construct Hessian
-d2Vref = [ Vref_ii Vref_ir; Vref_ri Vref_rr];
-end
+d2Vref = [  d2Vref_rr d2Vref_ri;
+            d2Vref_ir d2Vref_ii   ];

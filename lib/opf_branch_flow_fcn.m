@@ -51,23 +51,18 @@ lim_type = upper(mpopt.opf.flow_lim(1));
 branch = mpc.branch;
 if mpopt.opf.v_cartesian
     [Vr, Vi] = deal(x{:});
-    %% problem dimensions
-    nb = length(Vi);        %% number of buses
-    nl2 = length(il);       %% number of constrained lines        
-    %% reconstruct V
-    V = Vr + 1j*Vi;    
+    V = Vr + 1j * Vi;           %% reconstruct V
 else
     [Va, Vm] = deal(x{:});
-    %% problem dimensions
-    nb = length(Va);        %% number of buses
-    nl2 = length(il);       %% number of constrained lines    
-    %% reconstruct V
-    V = Vm .* exp(1j * Va);    
+    V = Vm .* exp(1j * Va);     %% reconstruct V
 end
+
+%% problem dimensions
+nb = length(V);         %% number of buses
+nl2 = length(il);       %% number of constrained lines
 
 %% ----- evaluate constraints -----
 if nl2 > 0
-
     flow_max = branch(il, RATE_A) / mpc.baseMVA;
     if lim_type ~= 'P'      %% typically use square of flow
         flow_max = flow_max.^2;
@@ -108,53 +103,53 @@ if nargout > 1
             end
         else                                    %% power
             if mpopt.opf.v_cartesian
-                [dFf_dVi, dFf_dVr, dFt_dVi, dFt_dVr, Ff, Ft] = dSbr_dV_C(branch(il,:), Yf, Yt, V);
+                [dFf_dVr, dFf_dVi, dFt_dVr, dFt_dVi, Ff, Ft] = dSbr_dV_C(branch(il,:), Yf, Yt, V);
             else
                 [dFf_dVa, dFf_dVm, dFt_dVa, dFt_dVm, Ff, Ft] = dSbr_dV_P(branch(il,:), Yf, Yt, V);
             end
         end
         if lim_type == 'P' || lim_type == '2'   %% real part of flow (active power)
             if mpopt.opf.v_cartesian
-                dFf_dVi = real(dFf_dVi);
                 dFf_dVr = real(dFf_dVr);
-                dFt_dVi = real(dFt_dVi);
+                dFf_dVi = real(dFf_dVi);
                 dFt_dVr = real(dFt_dVr);
+                dFt_dVi = real(dFt_dVi);
                 Ff = real(Ff);
-                Ft = real(Ft);                
+                Ft = real(Ft);
             else
                 dFf_dVa = real(dFf_dVa);
                 dFf_dVm = real(dFf_dVm);
                 dFt_dVa = real(dFt_dVa);
                 dFt_dVm = real(dFt_dVm);
                 Ff = real(Ff);
-                Ft = real(Ft);                
+                Ft = real(Ft);
             end
         end
 
         if lim_type == 'P'
             %% active power
             if mpopt.opf.v_cartesian
-                [df_dVi, df_dVr, dt_dVi, dt_dVr] = deal(dFf_dVi, dFf_dVr, dFt_dVi, dFt_dVr);
+                [df_dVr, df_dVi, dt_dVr, dt_dVi] = deal(dFf_dVr, dFf_dVi, dFt_dVr, dFt_dVi);
             else
                 [df_dVa, df_dVm, dt_dVa, dt_dVm] = deal(dFf_dVa, dFf_dVm, dFt_dVa, dFt_dVm);
             end
         else
             %% squared magnitude of flow (of complex power or current, or real power)
             if mpopt.opf.v_cartesian
-                [df_dVi, df_dVr, dt_dVi, dt_dVr] = ...
-                  dAbr_dV_C(dFf_dVi, dFf_dVr, dFt_dVi, dFt_dVr, Ff, Ft);                
+                [df_dVr, df_dVi, dt_dVr, dt_dVi] = ...
+                  dAbr_dV_C(dFf_dVr, dFf_dVi, dFt_dVr, dFt_dVi, Ff, Ft);
             else
                 [df_dVa, df_dVm, dt_dVa, dt_dVm] = ...
                   dAbr_dV_P(dFf_dVa, dFf_dVm, dFt_dVa, dFt_dVm, Ff, Ft);
             end
         end
-        %% construct Jacobian of "from" branch flow ineq constraints        
+        %% construct Jacobian of "from" branch flow ineq constraints
         if mpopt.opf.v_cartesian
-            dh = [ df_dVi df_dVr;                   %% "from" flow limit
-                   dt_dVi dt_dVr ];                 %% "to" flow limit        
+            dh = [ df_dVr df_dVi;                   %% "from" flow limit
+                   dt_dVr dt_dVi ];                 %% "to" flow limit
         else
             dh = [ df_dVa df_dVm;                   %% "from" flow limit
-                   dt_dVa dt_dVm ];                 %% "to" flow limit            
+                   dt_dVa dt_dVm ];                 %% "to" flow limit
         end
     else
         dh = sparse(0, 2*nb);

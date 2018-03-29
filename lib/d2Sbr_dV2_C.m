@@ -1,6 +1,6 @@
-function [Hii, Hir, Hri, Hrr] = d2Sbr_dV2_C(Cbr, Ybr, V, mu)
+function [Hrr, Hri, Hir, Hii] = d2Sbr_dV2_C(Cbr, Ybr, V, mu)
 %d2Sbr_dV2_C   Computes 2nd derivatives of complex power flow w.r.t. voltage.
-%   [HII, HIR, HRI, HRR] = d2Sbr_dV2_C(CBR, YBR, V, MU) returns 4 matrices
+%   [HRR, HRI, HIR, HII] = d2Sbr_dV2_C(CBR, YBR, V, MU) returns 4 matrices
 %   containing the partial derivatives w.r.t. real and imaginary part of
 %   complex voltage of the product of a vector MU with the 1st partial derivatives of the
 %   complex branch power flows. Takes sparse connection matrix CBR, sparse
@@ -13,13 +13,13 @@ function [Hii, Hir, Hri, Hrr] = d2Sbr_dV2_C(Cbr, Ybr, V, mu)
 %       [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
 %       Cbr = Cf;
 %       Ybr = Yf;
-%       [Hii, Hir, Hri, Hrr] = d2Sbr_dV2_C(Cbr, Ybr, V, mu);
+%       [Hrr, Hri, Hir, Hii] = d2Sbr_dV2_C(Cbr, Ybr, V, mu);
 %
 %   Here the output matrices correspond to:
-%       Hii = (d/dVi (dSbr_dVi.')) * mu
-%       Hir = (d/dVr (dSbr_dVi.')) * mu
-%       Hri = (d/dVi (dSbr_dVr.')) * mu
 %       Hrr = (d/dVr (dSbr_dVr.')) * mu
+%       Hri = (d/dVi (dSbr_dVr.')) * mu
+%       Hir = (d/dVr (dSbr_dVi.')) * mu
+%       Hii = (d/dVi (dSbr_dVi.')) * mu
 %
 %   For more details on the derivations behind the derivative code used
 %   in MATPOWER information, see:
@@ -28,11 +28,11 @@ function [Hii, Hir, Hri, Hrr] = d2Sbr_dV2_C(Cbr, Ybr, V, mu)
 nl = length(mu);
 diagSMu = sparse(1:nl, 1:nl, mu, nl, nl);
 
-CmuY    = Cbr'*diagSMu*conj(Ybr);
-YmuC    = Ybr'*diagSMu*Cbr;
+A = Cbr' * sparse(1:nl, 1:nl, mu, nl, nl) * conj(Ybr);
+B = A + A';
+D = 1j * (A - A');
 
-Hii = CmuY + YmuC;
-Hir = 1j*(CmuY - YmuC);
-Hrr = Hii;
-Hri = -Hir;    
-end
+Hrr = B;
+Hri = -D;
+Hir = D;
+Hii = B;
