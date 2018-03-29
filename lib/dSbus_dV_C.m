@@ -1,7 +1,7 @@
 function [dSbus_dVr, dSbus_dVi] = dSbus_dV_C(Ybus, V)
 %dSbus_dV_C   Computes partial derivatives of power injection w.r.t. voltage.
 %   [DSBUS_DVR, DSBUS_DVI] = dSbus_dV_C(YBUS, V) returns two matrices containing
-%   partial derivatives of the complex bus power injections w.r.t real and 
+%   partial derivatives of the complex bus power injections w.r.t real and
 %   imaginary part of complex voltage respectively (for all buses). If YBUS is a
 %   sparse matrix, the return values will be also. The following explains
 %   the expressions used to form the matrices:
@@ -10,17 +10,17 @@ function [dSbus_dVr, dSbus_dVi] = dSbus_dV_C(Ybus, V)
 %
 %   Partials of V & Ibus w.r.t. real part of complex voltage
 %       dV/dVr = diag(ones(n,1))
-%       dI/dVr = Ybus * dV/dVr = Ybus 
+%       dI/dVr = Ybus * dV/dVr = Ybus
 %
-%   Partials of V & Ibus w.r.t. imaginary part of complex voltage 
+%   Partials of V & Ibus w.r.t. imaginary part of complex voltage
 %       dV/dVi = j * diag(ones(n,1))
-%       dI/dVi = Ybus * dV/dVi = Ybus * j 
+%       dI/dVi = Ybus * dV/dVi = Ybus * j
 %
 %   Partials of S w.r.t. real part of complex voltage
 %       dS/dVr = diag(V) * conj(dI/dVr) + diag(conj(Ibus)) * dV/dVr
-%              = diag(V) * conj(Ybus) + conj(diag(Ibus)) 
+%              = diag(V) * conj(Ybus) + conj(diag(Ibus))
 %
-%   Partials of S w.r.t. imaginary part of complex voltage 
+%   Partials of S w.r.t. imaginary part of complex voltage
 %       dS/dVi = diag(V) * conj(dI/dVi) + diag(conj(Ibus)) * dV/dVi
 %              = j * (conj(diag(Ibus)) - diag(V) conj(Ybus))
 %
@@ -40,6 +40,5 @@ else                        %% dense version
     diagV       = diag(V);
     diagIbus    = diag(Ibus);
 end
-dSbus_dVi = 1j* (conj(diagIbus) - diagV*conj(Ybus));   
-dSbus_dVr = conj(diagIbus) + diagV* conj(Ybus);   
-end
+dSbus_dVi = 1j* (conj(diagIbus) - diagV*conj(Ybus));
+dSbus_dVr = conj(diagIbus) + diagV* conj(Ybus);

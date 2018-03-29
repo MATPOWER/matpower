@@ -25,13 +25,12 @@ absV = abs(V);
 diagV    = sparse(1:nb, 1:nb, V, nb, nb);
 diagV1   = sparse(1:nb, 1:nb, 1./V, nb, nb);
 diagVmV1 = sparse(1:nb, 1:nb, 1./(V.*absV), nb, nb);
-diagVmV2 = sparse(1:nb, 1:nb, 1./(V.*(absV.^2)), nb, nb);    
+diagVmV2 = sparse(1:nb, 1:nb, 1./(V.*(absV.^2)), nb, nb);
 diagLamS = sparse(1:nb, 1:nb, lam.*Sbus, nb, nb);
 diagYlam = sparse(1:nb, 1:nb, Ybus.'*lam, nb, nb);
 diagE    = sparse(1:nb, 1:nb, V./absV, nb, nb);
-    
+
 Gaa   = - diagYlam* diagV + conj(diagLamS*diagV1);
 Gvv   = - 2 * conj(diagLamS*diagVmV2);
 Gva = 1j * ( diagYlam* diagE + conj(diagLamS*diagVmV1)) ;
 Gav = Gva.';
-end

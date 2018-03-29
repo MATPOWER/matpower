@@ -11,7 +11,7 @@ Va = angle(Vr + 1j* Vi);
 Ax = Aang * Va;
 VaDif = [ lang - Ax;
              Ax - uang ];
-               
+
 if nargout > 1
     %% compute partials of branch angle difference w.r.t Vr and Vi
     Vm2 = Vr.^2 + Vi.^2;
@@ -19,5 +19,4 @@ if nargout > 1
     AangdVa_dVi = Aang*sparse(1:nb, 1:nb,  Vr./Vm2, nb, nb);
     dVaDif = [ -[AangdVa_dVr AangdVa_dVi];                      %% VaDif w.r.t Vr, Vi
                 [AangdVa_dVr AangdVa_dVi]];
-end
 end
