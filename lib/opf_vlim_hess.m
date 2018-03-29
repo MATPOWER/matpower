@@ -1,6 +1,6 @@
-function d2Vlims = opf_vlim_hess(x, lambda, mpc, mpopt)
+function d2Vlims = opf_vlim_hess(x, lambda, mpc, idx, mpopt)
 %OPF_VLIM_HESS  Evaluates Hessian of voltage magnitudes.
-%   D2VLIMS = OPF_VLIM_HESS(X, LAMBDA, MPC, MPOPT)
+%   D2VLIMS = OPF_VLIM_HESS(X, LAMBDA, MPC, IDX, MPOPT)
 %
 %   Hessian evaluation function for voltage magnitudes.
 %
@@ -9,13 +9,14 @@ function d2Vlims = opf_vlim_hess(x, lambda, mpc, mpopt)
 %     LAMBDA : column vector of Lagrange multipliers on active and reactive
 %              power balance constraints
 %     MPC : MATPOWER case struct
+%     IDX : index of buses whose voltage magnitudes should be fixed
 %     MPOPT : MATPOWER options struct
 %
 %   Outputs:
 %     D2VLIMS : Hessian of voltage magnitudes.
 %
 %   Example:
-%       d2Vlims = opf_vlim_hess(x, lambda, mpc, mpopt);
+%       d2Vlims = opf_vlim_hess(x, lambda, mpc, idx, mpopt);
 %
 %   See also OPF_VLIM_FCN.
 
@@ -33,11 +34,12 @@ function d2Vlims = opf_vlim_hess(x, lambda, mpc, mpopt)
 
 %% problem dimensions
 nb = length(Vi);            %% number of buses
+n = length(idx);            %% number of buses with voltage limits
 
 %% compute voltage magnitude cubed
-Vr2 = Vr.^2;
-Vi2 = Vi.^2;
-VrVi = Vr .* Vi;
+Vr2 = Vr(idx).^2;
+Vi2 = Vi(idx).^2;
+VrVi = Vr(idx) .* Vi(idx);
 Vm3 = (Vr2 + Vi2).^(3/2);   %% Vm.^3;
 
 %%----- evaluate Hessian of voltage limit constraints -----
@@ -53,15 +55,15 @@ end
 lamVmax_over_Vm3 = lamVmax ./ Vm3;
 lamVmin_over_Vm3 = lamVmin ./ Vm3;
 
-Vmax_rr = sparse(1:nb, 1:nb,  Vi2  .* lamVmax_over_Vm3, nb, nb);
-Vmax_ri = sparse(1:nb, 1:nb, -VrVi .* lamVmax_over_Vm3, nb, nb);
+Vmax_rr = sparse(idx, idx,  Vi2  .* lamVmax_over_Vm3, nb, nb);
+Vmax_ri = sparse(idx, idx, -VrVi .* lamVmax_over_Vm3, nb, nb);
 Vmax_ir = Vmax_ri;
-Vmax_ii = sparse(1:nb, 1:nb,  Vr2  .* lamVmax_over_Vm3, nb, nb);
+Vmax_ii = sparse(idx, idx,  Vr2  .* lamVmax_over_Vm3, nb, nb);
 
-Vmin_rr = sparse(1:nb, 1:nb,  Vi2  .* lamVmin_over_Vm3, nb, nb);
-Vmin_ri = sparse(1:nb, 1:nb, -VrVi .* lamVmin_over_Vm3, nb, nb);
+Vmin_rr = sparse(idx, idx,  Vi2  .* lamVmin_over_Vm3, nb, nb);
+Vmin_ri = sparse(idx, idx, -VrVi .* lamVmin_over_Vm3, nb, nb);
 Vmin_ir = Vmin_ri;
-Vmin_ii = sparse(1:nb, 1:nb,  Vr2  .* lamVmin_over_Vm3, nb, nb);
+Vmin_ii = sparse(idx, idx,  Vr2  .* lamVmin_over_Vm3, nb, nb);
 
 %% construct Hessian
 d2Vlims =  -[Vmin_rr Vmin_ri; Vmin_ir Vmin_ii] + ...

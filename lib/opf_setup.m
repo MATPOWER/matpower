@@ -299,8 +299,16 @@ else                %% AC model
   if vcart
     fcn_vref = @(x)opf_vref_fcn(x, mpc, refs, mpopt);
     hess_vref = @(x, lam)opf_vref_hess(x, lam, mpc, refs, mpopt);
-    fcn_vlim = @(x)opf_vlim_fcn(x, mpc, mpopt);
-    hess_vlim = @(x, lam)opf_vlim_hess(x, lam, mpc, mpopt);
+    veq = find(mpc.bus(:, VMIN) == mpc.bus(:, VMAX));
+    viq = find(mpc.bus(:, VMIN) ~= mpc.bus(:, VMAX));
+    nveq = length(veq);
+    nvlims = length(viq);
+    if nveq
+      fcn_veq = @(x)opf_veq_fcn(x, mpc, veq, mpopt);
+      hess_veq = @(x, lam)opf_veq_hess(x, lam, mpc, veq, mpopt);
+    end
+    fcn_vlim = @(x)opf_vlim_fcn(x, mpc, viq, mpopt);
+    hess_vlim = @(x, lam)opf_vlim_hess(x, lam, mpc, viq, mpopt);
     fcn_ang = @(x)opf_branch_ang_fcn(x, Aang, lang, uang, iang, mpopt);
     hess_ang = @(x, lam)opf_branch_ang_hess(x, lam, Aang, lang, uang, iang, mpopt);
   end
@@ -393,8 +401,13 @@ else
     om.add_nln_constraint({'Sf', 'St'}, [nl2;nl2], 0, fcn_flow, hess_flow, flow_lim_vars);
   end
   if vcart
+    om.userdata.veq = veq;  %% buses with voltage magnitude equality constraints
+    om.userdata.viq = viq;  %% buses with voltage magnitude limits
     om.add_nln_constraint('Vref', length(refs), 1, fcn_vref, hess_vref, {'Vr', 'Vi'});
-    om.add_nln_constraint({'Vmin', 'Vmax'}, [nb;nb], 0, fcn_vlim, hess_vlim, {'Vr', 'Vi'});
+    if nveq
+      om.add_nln_constraint('Veq', nveq, 1, fcn_veq, hess_veq, {'Vr', 'Vi'});
+    end
+    om.add_nln_constraint({'Vmin', 'Vmax'}, [nvlims;nvlims], 0, fcn_vlim, hess_vlim, {'Vr', 'Vi'});
     om.add_nln_constraint('ang', length(iang), 0, fcn_ang, hess_ang, {'Vr', 'Vi'});
   end
 

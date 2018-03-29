@@ -289,11 +289,19 @@ if nk
     nA = nA - nk;                       %% reduce dimension accordingly
 end
 
-
 %% update Lagrange multipliers
 if mpopt.opf.v_cartesian
-    bus(:, MU_VMAX)  = info.lambda(om.nle.N+(nni.i1.Vmax:nni.iN.Vmax));
-    bus(:, MU_VMIN)  = info.lambda(om.nle.N+(nni.i1.Vmin:nni.iN.Vmin));
+    if om.userdata.veq
+        lam = info.lambda(nne.i1.Veq:nne.iN.Veq);
+        mu_Vmax = zeros(size(lam));
+        mu_Vmin = zeros(size(lam));
+        mu_Vmax(lam > 0) =  lam(lam > 0);
+        mu_Vmin(lam < 0) = -lam(lam < 0);
+        bus(om.userdata.veq, MU_VMAX) = mu_Vmax;
+        bus(om.userdata.veq, MU_VMIN) = mu_Vmin;
+    end
+    bus(om.userdata.viq, MU_VMAX)  = info.lambda(om.nle.N+(nni.i1.Vmax:nni.iN.Vmax));
+    bus(om.userdata.viq, MU_VMIN)  = info.lambda(om.nle.N+(nni.i1.Vmin:nni.iN.Vmin));
 else
     bus(:, MU_VMAX)  = info.zu(vv.i1.Vm:vv.iN.Vm);
     bus(:, MU_VMIN)  = info.zl(vv.i1.Vm:vv.iN.Vm);

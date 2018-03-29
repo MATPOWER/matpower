@@ -73,11 +73,11 @@ ng = size(gen, 1);          %% number of gens
 nl = size(branch, 1);       %% number of branches
 ny = om.getN('var', 'y');   %% number of piece-wise linear costs
 
-%% bounds on optimization vars
-[x0, xmin, xmax] = om.params_var();
-
 %% linear constraints
 [A, l, u] = om.params_lin_constraint();
+
+%% bounds on optimization vars
+[x0, xmin, xmax] = om.params_var();
 
 %% split l <= A*x <= u into less than, equal to, greater than, and
 %% doubly-bounded sets
@@ -276,8 +276,17 @@ Lambda.upper(ku) = 0;
 
 %% update Lagrange multipliers
 if mpopt.opf.v_cartesian
-    bus(:, MU_VMAX)  = Lambda.ineqnonlin(nni.i1.Vmax:nni.iN.Vmax);
-    bus(:, MU_VMIN)  = Lambda.ineqnonlin(nni.i1.Vmin:nni.iN.Vmin);
+    if om.userdata.veq
+        lam = Lambda.eqnonlin(nne.i1.Veq:nne.iN.Veq);
+        mu_Vmax = zeros(size(lam));
+        mu_Vmin = zeros(size(lam));
+        mu_Vmax(lam > 0) =  lam(lam > 0);
+        mu_Vmin(lam < 0) = -lam(lam < 0);
+        bus(om.userdata.veq, MU_VMAX) = mu_Vmax;
+        bus(om.userdata.veq, MU_VMIN) = mu_Vmin;
+    end
+    bus(om.userdata.viq, MU_VMAX) = Lambda.ineqnonlin(nni.i1.Vmax:nni.iN.Vmax);
+    bus(om.userdata.viq, MU_VMIN) = Lambda.ineqnonlin(nni.i1.Vmin:nni.iN.Vmin);
 else
     bus(:, MU_VMAX)  = Lambda.upper(vv.i1.Vm:vv.iN.Vm);
     bus(:, MU_VMIN)  = -Lambda.lower(vv.i1.Vm:vv.iN.Vm);
