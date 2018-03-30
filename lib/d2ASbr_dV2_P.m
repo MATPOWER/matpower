@@ -54,7 +54,7 @@ nl = length(mu);
 diagmu = sparse(1:nl, 1:nl, mu, nl, nl);
 diagSbr_conj = sparse(1:nl, 1:nl, conj(Sbr), nl, nl);
 
-[Saa, Sav, Sva, Svv] = d2Sbr_dV2_P(Cbr, Ybr, V, diagSbr_conj * mu);
+[Saa, Sav, Sva, Svv] = d2Sbr_dV2(Cbr, Ybr, V, diagSbr_conj * mu, 0);
 Haa = 2 * real( Saa + dSbr_dVa.' * diagmu * conj(dSbr_dVa) );
 Hva = 2 * real( Sva + dSbr_dVm.' * diagmu * conj(dSbr_dVa) );
 Hav = 2 * real( Sav + dSbr_dVa.' * diagmu * conj(dSbr_dVm) );

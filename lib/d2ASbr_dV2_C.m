@@ -15,7 +15,7 @@ function [Hrr, Hri, Hir, Hii] = ...
 %       Cf =  sparse(1:nl, f, ones(nl, 1), nl, nb);
 %       [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
 %       [dSf_dVr, dSf_dVi, dSt_dVr, dSt_dVi, Sf, St] = ...
-%               dSbr_dV_C(branch, Yf, Yt, V);
+%               dSbr_dV(branch, Yf, Yt, V, 1);
 %       Cbr = Cf;
 %       Ybr = Yf;
 %       dSbr_dVr = dSf_dVr;
@@ -54,7 +54,7 @@ nl = length(mu);
 diagmu = sparse(1:nl, 1:nl, mu, nl, nl);
 diagSbr_conj = sparse(1:nl, 1:nl, conj(Sbr), nl, nl);
 
-[Srr, Sri, Sir, Sii] = d2Sbr_dV2_C(Cbr, Ybr, V, diagSbr_conj * mu);
+[Srr, Sri, Sir, Sii] = d2Sbr_dV2(Cbr, Ybr, V, diagSbr_conj * mu, 1);
 Hrr = 2 * real( Srr + dSbr_dVr.' * diagmu * conj(dSbr_dVr) );
 Hir = 2 * real( Sir + dSbr_dVi.' * diagmu * conj(dSbr_dVr) );
 Hri = 2 * real( Sri + dSbr_dVr.' * diagmu * conj(dSbr_dVi) );

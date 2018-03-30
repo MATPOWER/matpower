@@ -99,58 +99,36 @@ if nargout > 1
             if mpopt.opf.v_cartesian
                 warning('Current magnitude limit |I| is not calculated in Cartesian coordinates')
             else
-                [dFf_dVa, dFf_dVm, dFt_dVa, dFt_dVm, Ff, Ft] = dIbr_dV(branch(il,:), Yf, Yt, V);
+                [dFf_dV1, dFf_dV2, dFt_dV1, dFt_dV2, Ff, Ft] = dIbr_dV(branch(il,:), Yf, Yt, V);
             end
         else                                    %% power
-            if mpopt.opf.v_cartesian
-                [dFf_dVr, dFf_dVi, dFt_dVr, dFt_dVi, Ff, Ft] = dSbr_dV_C(branch(il,:), Yf, Yt, V);
-            else
-                [dFf_dVa, dFf_dVm, dFt_dVa, dFt_dVm, Ff, Ft] = dSbr_dV_P(branch(il,:), Yf, Yt, V);
-            end
+            [dFf_dV1, dFf_dV2, dFt_dV1, dFt_dV2, Ff, Ft] = dSbr_dV(branch(il,:), Yf, Yt, V, mpopt.opf.v_cartesian);
         end
         if lim_type == 'P' || lim_type == '2'   %% real part of flow (active power)
-            if mpopt.opf.v_cartesian
-                dFf_dVr = real(dFf_dVr);
-                dFf_dVi = real(dFf_dVi);
-                dFt_dVr = real(dFt_dVr);
-                dFt_dVi = real(dFt_dVi);
-                Ff = real(Ff);
-                Ft = real(Ft);
-            else
-                dFf_dVa = real(dFf_dVa);
-                dFf_dVm = real(dFf_dVm);
-                dFt_dVa = real(dFt_dVa);
-                dFt_dVm = real(dFt_dVm);
-                Ff = real(Ff);
-                Ft = real(Ft);
-            end
+            dFf_dV1 = real(dFf_dV1);
+            dFf_dV2 = real(dFf_dV2);
+            dFt_dV1 = real(dFt_dV1);
+            dFt_dV2 = real(dFt_dV2);
+            Ff = real(Ff);
+            Ft = real(Ft);
         end
 
         if lim_type == 'P'
             %% active power
-            if mpopt.opf.v_cartesian
-                [df_dVr, df_dVi, dt_dVr, dt_dVi] = deal(dFf_dVr, dFf_dVi, dFt_dVr, dFt_dVi);
-            else
-                [df_dVa, df_dVm, dt_dVa, dt_dVm] = deal(dFf_dVa, dFf_dVm, dFt_dVa, dFt_dVm);
-            end
+            [df_dV1, df_dV2, dt_dV1, dt_dV2] = deal(dFf_dV1, dFf_dV2, dFt_dV1, dFt_dV2);
         else
             %% squared magnitude of flow (of complex power or current, or real power)
             if mpopt.opf.v_cartesian
-                [df_dVr, df_dVi, dt_dVr, dt_dVi] = ...
-                  dAbr_dV_C(dFf_dVr, dFf_dVi, dFt_dVr, dFt_dVi, Ff, Ft);
+                [df_dV1, df_dV2, dt_dV1, dt_dV2] = ...
+                  dAbr_dV_C(dFf_dV1, dFf_dV2, dFt_dV1, dFt_dV2, Ff, Ft);
             else
-                [df_dVa, df_dVm, dt_dVa, dt_dVm] = ...
-                  dAbr_dV_P(dFf_dVa, dFf_dVm, dFt_dVa, dFt_dVm, Ff, Ft);
+                [df_dV1, df_dV2, dt_dV1, dt_dV2] = ...
+                  dAbr_dV_P(dFf_dV1, dFf_dV2, dFt_dV1, dFt_dV2, Ff, Ft);
             end
         end
         %% construct Jacobian of "from" branch flow ineq constraints
-        if mpopt.opf.v_cartesian
-            dh = [ df_dVr df_dVi;                   %% "from" flow limit
-                   dt_dVr dt_dVi ];                 %% "to" flow limit
-        else
-            dh = [ df_dVa df_dVm;                   %% "from" flow limit
-                   dt_dVa dt_dVm ];                 %% "to" flow limit
-        end
+        dh = [ df_dV1 df_dV2;                   %% "from" flow limit
+               dt_dV1 dt_dV2 ];                 %% "to" flow limit
     else
         dh = sparse(0, 2*nb);
     end
