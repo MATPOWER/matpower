@@ -73,22 +73,21 @@ g = [ real(mis);    %% active power mismatch
 %%----- evaluate constraint gradients -----
 if nargout > 1
     %% compute partials of injected bus powers
-    neg_Cg = sparse(gen(:, GEN_BUS), 1:ng, -1, nb, ng); %% Pbus w.r.t. Pg
+%     [dSbus_dV1, dSbus_dV2] = dSbus_dV(Ybus, V, mpopt.opf.v_cartesian);  %% w.r.t. V
+%     (currently returns the opposite order for polar coordinates)
+    neg_Cg = sparse(gen(:, GEN_BUS), 1:ng, -1, nb, ng);     %% Pbus w.r.t. Pg
     if mpopt.opf.v_cartesian
-        [dSbus_dVr, dSbus_dVi] = dSbus_dV_C(Ybus, V);         %% w.r.t. V
-        dg = [
-            real([dSbus_dVr dSbus_dVi]) neg_Cg sparse(nb, ng);  %% P mismatch w.r.t Vi, Vr, Pg, Qg
-            imag([dSbus_dVr dSbus_dVi]) sparse(nb, ng) neg_Cg;  %% Q mismatch w.r.t Vi, Vr, Pg, Qg
-        ];
+        [dSbus_dV1, dSbus_dV2] = dSbus_dV(Ybus, V, 1);  %% w.r.t. V (cartesian)
     else
-        [dSbus_dVm, dSbus_dVa] = dSbus_dV_P(Ybus, V);         %% w.r.t. V
+        [dSbus_dV2, dSbus_dV1] = dSbus_dV(Ybus, V, 0);  %% w.r.t. V (polar)
+        %% (notice it returns in opposite order, for backward compatibility)
+
         %% adjust for voltage dependent loads
         [dummy, neg_dSd_dVm] = makeSbus(baseMVA, bus, gen, mpopt, Vm);
-        dSbus_dVm = dSbus_dVm - neg_dSd_dVm;
-
-        dg = [
-            real([dSbus_dVa dSbus_dVm]) neg_Cg sparse(nb, ng);  %% P mismatch w.r.t Va, Vm, Pg, Qg
-            imag([dSbus_dVa dSbus_dVm]) sparse(nb, ng) neg_Cg;  %% Q mismatch w.r.t Va, Vm, Pg, Qg
-        ];
+        dSbus_dV2 = dSbus_dV2 - neg_dSd_dVm;
     end
+    dg = [
+        real([dSbus_dV1 dSbus_dV2]) neg_Cg sparse(nb, ng);  %% P mismatch w.r.t V1, V2, Pg, Qg
+        imag([dSbus_dV1 dSbus_dV2]) sparse(nb, ng) neg_Cg;  %% Q mismatch w.r.t V1, V2, Pg, Qg
+    ];
 end

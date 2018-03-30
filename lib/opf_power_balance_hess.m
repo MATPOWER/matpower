@@ -33,47 +33,37 @@ function d2G = opf_power_balance_hess(x, lambda, mpc, Ybus, mpopt)
 
 %%----- initialize -----
 %% unpack data
-[Var, Vmi, Pg, Qg] = deal(x{:});
+if mpopt.opf.v_cartesian
+    [Vr, Vi, Pg, Qg] = deal(x{:});
+    V = Vr + 1j * Vi;           %% reconstruct V
+else
+    [Va, Vm, Pg, Qg] = deal(x{:});
+    V = Vm .* exp(1j * Va);     %% reconstruct V
+end
 
 %% problem dimensions
-nb = length(Var);           %% number of buses
+nb = length(V);             %% number of buses
 ng = length(Pg);            %% number of dispatchable injections
 
 nlam = length(lambda) / 2;
 lamP = lambda(1:nlam);
 lamQ = lambda((1:nlam)+nlam);
 
+%% compute 2nd derivatives
+[Gp11, Gp12, Gp21, Gp22] = d2Sbus_dV2(Ybus, V, lamP, mpopt.opf.v_cartesian);
+[Gq11, Gq12, Gq21, Gq22] = d2Sbus_dV2(Ybus, V, lamQ, mpopt.opf.v_cartesian);
+
 %%----- evaluate Hessian of power balance constraints -----
-if mpopt.opf.v_cartesian
-    %% reconstruct V
-    V = Var + 1j* Vmi;
-
-    %% compute 2nd derivatives
-    [Gprr, Gpri, Gpir, Gpii] = d2Sbus_dV2_C(Ybus, V, lamP);
-    [Gqrr, Gqri, Gqir, Gqii] = d2Sbus_dV2_C(Ybus, V, lamQ);
-
-    %% construct Hessian
-    d2G = [
-        real([Gprr Gpri; Gpir Gpii]) + imag([Gqrr Gqri; Gqir Gqii]) sparse(2*nb, 2*ng);
-        sparse(2*ng, 2*nb + 2*ng)
-    ];
-else
-    %% reconstruct V
-    V = Vmi .* exp(1j * Var);
-
-    %% compute 2nd derivatives
-    [Gpaa, Gpav, Gpva, Gpvv] = d2Sbus_dV2_P(Ybus, V, lamP);
-    [Gqaa, Gqav, Gqva, Gqvv] = d2Sbus_dV2_P(Ybus, V, lamQ);
-
+if ~mpopt.opf.v_cartesian
     %% adjust for voltage dependent loads (constant impedance part of ZIP loads)
     diaglam = sparse(1:nb, 1:nb, lamP, nb, nb);
     Sd = makeSdzip(mpc.baseMVA, mpc.bus, mpopt);
     diagSdz = sparse(1:nb, 1:nb, Sd.z, nb, nb);
-    Gpvv = Gpvv + 2 * diaglam * diagSdz;
-
-    %% construct Hessian
-    d2G = [
-        real([Gpaa Gpav; Gpva Gpvv]) + imag([Gqaa Gqav; Gqva Gqvv]) sparse(2*nb, 2*ng);
-        sparse(2*ng, 2*nb + 2*ng)
-    ];
+    Gp22 = Gp22 + 2 * diaglam * diagSdz;
 end
+
+%% construct Hessian
+d2G = [
+    real([Gp11 Gp12; Gp21 Gp22]) + imag([Gq11 Gq12; Gq21 Gq22]) sparse(2*nb, 2*ng);
+    sparse(2*ng, 2*nb + 2*ng)
+];
