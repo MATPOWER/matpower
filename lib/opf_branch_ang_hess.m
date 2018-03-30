@@ -1,40 +1,70 @@
 function d2VaDif = opf_branch_ang_hess(x, lambda, Aang, lang, uang, iang, mpopt)
+%OPF_BRANCH_ANG_HESS  Evaluates Hessian of branch angle difference constraints.
+%   D2VADIF = OPF_BRANCH_ANG_HESS(X, LAMBDA, AANG, LANG, UANG, IANG, MPOPT)
+%
+%   Hessian evaluation function for branch angle difference constraints
+%   for voltages in cartesian coordinates.
+%
+%   Inputs:
+%     X : optimization vector
+%     LAMBDA : column vector of Lagrange multipliers on branch angle
+%           difference constraints, lower, then upper
+%     AANG : constraint matrix, see MAKEAANG
+%     LANG : lower bound vector, see MAKEAANG
+%     UANG : upper bound vector, see MAKEAANG
+%     IANG : index vector of branches corresponding to rows of AANG, LANG, UANG
+%     MPOPT : MATPOWER options struct
+%
+%   Outputs:
+%     D2VADIF : Hessian of branch angle difference constraints.
+%
+%   Example:
+%       d2VaDif = opf_branch_ang_hess(x, lambda, Aang, lang, uang, iang, mpopt);
+%
+%   See also OPF_BRANCH_ANG_FCN.
+
+%   MATPOWER
+%   Copyright (c) 2018, Power Systems Engineering Research Center (PSERC)
+%   by Ray Zimmerman, PSERC Cornell
+%   and Baljinnyam Sereeter, Delft University of Technology
+%
+%   This file is part of MATPOWER.
+%   Covered by the 3-clause BSD License (see LICENSE file for details).
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
+
+
 %% unpack data
 [Vr, Vi] = deal(x{:});
+nb = length(Vr);
 
-%% problem dimensions
-nb = length(Vi);            %% number of buses
-
-%% ----- evaluate constraint gradients -----
+%%----- evaluate Hessian of branch angle difference constraints -----
 nlam = length(lambda) / 2;
 if nlam
-    lamUp = lambda(1:nlam);
-    lamLow = lambda((1:nlam)+nlam);
+    lamU = lambda(1:nlam);
+    lamL = lambda((1:nlam)+nlam);
 else
-    lamUp = zeros(0,1);
-    lamLow = zeros(0,1);
+    lamU = zeros(0,1);
+    lamL = zeros(0,1);
 end
-%% ----- evaluate constraint gradients -----
-diagVrVm4   = sparse(1:nb, 1:nb, 2*Vr./(Vr.^4 + 2*(Vr.^2).*(Vi.^2)+ Vi.^4), nb, nb);
-diagViVm4   = sparse(1:nb, 1:nb, 2*Vi./(Vr.^4 + 2*(Vr.^2).*(Vi.^2)+ Vi.^4), nb, nb);
-diagVm2     = sparse(1:nb, 1:nb, 1./(Vr.^2 + Vi.^2), nb, nb);
-diagVr = sparse(1:nb, 1:nb, Vr, nb, nb);
-diagVi = sparse(1:nb, 1:nb,Vi, nb, nb);
-%% for upper limit
-    diagAlam = sparse(1:nb, 1:nb, Aang'*lamUp, nb, nb);
-    diagAlamV2 = sparse(1:nb, 1:nb, diagVm2*Aang'*lamUp, nb, nb);
 
-    VaDifU_ii = - diagVr*diagAlam*diagViVm4;
-    VaDifU_ir = diagAlamV2 - diagVi*diagAlam*diagVrVm4;
-    VaDifU_ri = - VaDifU_ir;
-    VaDifU_rr = diagVi*diagAlam*diagVrVm4;
-%% for lower limit
-    diagAlam = sparse(1:nb, 1:nb, Aang'*lamLow, nb, nb);
-    diagAlamV2 = sparse(1:nb, 1:nb, diagVm2*Aang'*lamLow, nb, nb);
+Vr2 = Vr.^2;
+Vi2 = Vi.^2;
 
-    VaDifL_ii = - diagVr*diagAlam*diagViVm4;
-    VaDifL_ir = diagAlamV2 - diagVi*diagAlam*diagVrVm4;
-    VaDifL_ri = - VaDifL_ir;
-    VaDifL_rr = diagVi*diagAlam*diagVrVm4;
+lamU_Vm4 = (Aang' * lamU) ./ (Vr2 + Vi2).^2;
+lamL_Vm4 = (Aang' * lamL) ./ (Vr2 + Vi2).^2;
+
+VaDifU_rr = sparse(1:nb, 1:nb, 2 * lamU_Vm4 .*  Vr .* Vi,   nb, nb);
+VaDifU_ri = sparse(1:nb, 1:nb,     lamU_Vm4 .* (Vi2 - Vr2), nb, nb);
+VaDifU_ir =  VaDifU_ri;
+VaDifU_ii = -VaDifU_rr;
+
+VaDifL_rr = sparse(1:nb, 1:nb, 2 * lamL_Vm4 .*  Vr .* Vi,   nb, nb);
+VaDifL_ri = sparse(1:nb, 1:nb,     lamL_Vm4 .* (Vi2 - Vr2), nb, nb);
+VaDifL_ir =  VaDifL_ri;
+VaDifL_ii = -VaDifL_rr;
+
 %% construct Hessian
-d2VaDif = - [ VaDifL_rr VaDifL_ri; VaDifL_ir VaDifL_ii] + [ VaDifU_rr VaDifU_ri; VaDifU_ir VaDifU_ii];
+d2VaDif = -[ VaDifL_rr VaDifL_ri;
+             VaDifL_ir VaDifL_ii ] + ...
+           [ VaDifU_rr VaDifU_ri;
+             VaDifU_ir VaDifU_ii ];

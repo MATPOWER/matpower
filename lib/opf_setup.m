@@ -223,6 +223,7 @@ end
 
 %% branch voltage angle difference limits
 [Aang, lang, uang, iang]  = makeAang(baseMVA, branch, nb, mpopt);
+nang = length(iang);
 
 if dc               %% DC model
   %% check generator costs
@@ -269,7 +270,7 @@ else                %% AC model
 
   %% dispatchable load, constant power factor constraints
   [Avl, lvl, uvl]  = makeAvl(baseMVA, gen);
-  
+
   %% generator PQ capability curve constraints
   [Apqh, ubpqh, Apql, ubpql, Apqdata] = makeApq(baseMVA, gen);
 
@@ -384,8 +385,9 @@ else
 
   %% optimization variables
   if vcart
-      om.add_var('Vr', nb, Vr, -bus(:, VMAX), bus(:, VMAX));      
-      om.add_var('Vi', nb, Vi, -bus(:, VMAX), bus(:, VMAX));
+      Vclim = 1.1 * bus(:, VMAX);
+      om.add_var('Vr', nb, Vr, -Vclim, Vclim);
+      om.add_var('Vi', nb, Vi, -Vclim, Vclim);
   else
       om.add_var('Va', nb, Va, Val, Vau);
       om.add_var('Vm', nb, Vm, bus(:, VMIN), bus(:, VMAX));
@@ -408,7 +410,7 @@ else
       om.add_nln_constraint('Veq', nveq, 1, fcn_veq, hess_veq, {'Vr', 'Vi'});
     end
     om.add_nln_constraint({'Vmin', 'Vmax'}, [nvlims;nvlims], 0, fcn_vlim, hess_vlim, {'Vr', 'Vi'});
-    om.add_nln_constraint('ang', length(iang), 0, fcn_ang, hess_ang, {'Vr', 'Vi'});
+    om.add_nln_constraint({'angL', 'angU'}, [nang;nang], 0, fcn_ang, hess_ang, {'Vr', 'Vi'});
   end
 
   %% linear constraints
@@ -417,8 +419,6 @@ else
   om.add_lin_constraint('vl',  Avl, lvl, uvl,   {'Pg', 'Qg'});      %% nvl
   if ~vcart
     om.add_lin_constraint('ang', Aang, lang, uang, {'Va'});         %% nang
-  elseif ~isempty(Aang)
-    error('opf_setup: branch voltage angle difference limits not implemented for ''opf.v_cartesian'' = 1');
   end
 
   %% polynomial generator costs

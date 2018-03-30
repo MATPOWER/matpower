@@ -160,10 +160,17 @@ if success
   end
 
   %% angle limit constraint multipliers
-  if ~sdp && ~vcart && ll.N.ang > 0
-    iang = om.get_userdata('iang');
-    results.branch(iang, MU_ANGMIN) = results.mu.lin.l(ll.i1.ang:ll.iN.ang) * pi/180;
-    results.branch(iang, MU_ANGMAX) = results.mu.lin.u(ll.i1.ang:ll.iN.ang) * pi/180;
+  iang = om.get_userdata('iang');
+  if ~sdp && length(iang)
+    if vcart
+      iang = om.get_userdata('iang');
+      results.branch(iang, MU_ANGMIN) = results.mu.nli(nni.i1.angL:nni.iN.angL) * pi/180;
+      results.branch(iang, MU_ANGMAX) = results.mu.nli(nni.i1.angU:nni.iN.angU) * pi/180;
+    else
+      iang = om.get_userdata('iang');
+      results.branch(iang, MU_ANGMIN) = results.mu.lin.l(ll.i1.ang:ll.iN.ang) * pi/180;
+      results.branch(iang, MU_ANGMAX) = results.mu.lin.u(ll.i1.ang:ll.iN.ang) * pi/180;
+    end
   end
 else
   %% assign empty g, dg, f, df, d2f if requested by opf.return_raw_der = 1
