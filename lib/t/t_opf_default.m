@@ -341,7 +341,7 @@ end
     r = runopf(mpc, mpopt);
     t_ok(success, [t 'success']);
     diff = r.bus(r.branch(b, F_BUS), VA) - r.bus(r.branch(b, T_BUS), VA);
-    t_is(diff, 0, 5, t);
+    t_is(diff, 0, 5, [t 'angle diff']);
 
     %%-----  test OPF with opf.use_vg  -----
     %% get solved AC OPF case from MAT-file
