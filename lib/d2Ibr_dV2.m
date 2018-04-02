@@ -1,4 +1,4 @@
-function [Haa, Hav, Hva, Hvv] = d2Ibr_dV2(Ybr, V, mu, vcart)
+function [H11, H12, H21, H22] = d2Ibr_dV2(Ybr, V, mu, vcart)
 %D2IBR_DV2   Computes 2nd derivatives of complex branch current w.r.t. voltage.
 %
 %   The derivatives can be take with respect to polar or cartesian coordinates
@@ -77,7 +77,7 @@ else
     diagInvVm = sparse(1:nb, 1:nb, ones(nb, 1)./abs(V), nb, nb);
 
     H11 = sparse(1:nb, 1:nb, -(Ybr.' * mu) .* V, nb, nb);
-    H21 = -1j * Haa * diagInvVm;
+    H21 = -1j * H11 * diagInvVm;
     H12 = H21;
     H22 = sparse(nb, nb);
 end
