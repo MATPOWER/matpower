@@ -67,14 +67,5 @@ if nargin < 8
     vcart = 0;      %% default to polar coordinates
 end
 
-%% define
-nl = length(mu);
-
-diagmu = sparse(1:nl, 1:nl, mu, nl, nl);
-diagSbr_conj = sparse(1:nl, 1:nl, conj(Sbr), nl, nl);
-
-[S11, S12, S21, S22] = d2Sbr_dV2(Cbr, Ybr, V, diagSbr_conj * mu, vcart);
-H11 = 2 * real( S11 + dSbr_dV1.' * diagmu * conj(dSbr_dV1) );
-H21 = 2 * real( S21 + dSbr_dV2.' * diagmu * conj(dSbr_dV1) );
-H12 = 2 * real( S12 + dSbr_dV1.' * diagmu * conj(dSbr_dV2) );
-H22 = 2 * real( S22 + dSbr_dV2.' * diagmu * conj(dSbr_dV2) );
+d2F_dV2 = @(V, mu)d2Sbr_dV2(Cbr, Ybr, V, mu, vcart);
+[H11, H12, H21, H22] = d2Abr_dV2(d2F_dV2, dSbr_dV1, dSbr_dV2, Sbr, V, mu);

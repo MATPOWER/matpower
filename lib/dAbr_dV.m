@@ -1,5 +1,5 @@
 function [dAf_dV1, dAf_dV2, dAt_dV1, dAt_dV2] = ...
-                        dAbr_dV(dSf_dV1, dSf_dV2, dSt_dV1, dSt_dV2, Sf, St)
+                        dAbr_dV(dFf_dV1, dFf_dV2, dFt_dV1, dFt_dV2, Ff, Ft)
 %DABR_DV   Partial derivatives of squared flow magnitudes w.r.t voltage.
 %   [DAF_DV1, DAF_DV2, DAT_DV1, DAT_DV2] = ...
 %               DABR_DV(DFF_DV1, DFF_DV2, DFT_DV1, DFT_DV2, FF, FT)
@@ -74,16 +74,16 @@ function [dAf_dV1, dAf_dV2, dAt_dV1, dAt_dV2] = ...
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% dimensions
-nl = length(Sf);
+nl = length(Ff);
 
-%%----- partials w.r.t. real and reactive power flows -----
-dAf_dPf = sparse(1:nl, 1:nl, 2 * real(Sf), nl, nl);
-dAf_dQf = sparse(1:nl, 1:nl, 2 * imag(Sf), nl, nl);
-dAt_dPt = sparse(1:nl, 1:nl, 2 * real(St), nl, nl);
-dAt_dQt = sparse(1:nl, 1:nl, 2 * imag(St), nl, nl);
+%%----- partials w.r.t. real and imaginary flows -----
+dAf_dFfr = sparse(1:nl, 1:nl, 2 * real(Ff), nl, nl);
+dAf_dFfi = sparse(1:nl, 1:nl, 2 * imag(Ff), nl, nl);
+dAt_dFtr = sparse(1:nl, 1:nl, 2 * real(Ft), nl, nl);
+dAt_dFti = sparse(1:nl, 1:nl, 2 * imag(Ft), nl, nl);
 
-%% partials w.r.t. voltage magnitudes and angles
-dAf_dV1 = dAf_dPf * real(dSf_dV1) + dAf_dQf * imag(dSf_dV1);
-dAf_dV2 = dAf_dPf * real(dSf_dV2) + dAf_dQf * imag(dSf_dV2);
-dAt_dV1 = dAt_dPt * real(dSt_dV1) + dAt_dQt * imag(dSt_dV1);
-dAt_dV2 = dAt_dPt * real(dSt_dV2) + dAt_dQt * imag(dSt_dV2);
+%% partials w.r.t. voltage components (angle, magnitude or real, imaginary)
+dAf_dV1 = dAf_dFfr * real(dFf_dV1) + dAf_dFfi * imag(dFf_dV1);
+dAf_dV2 = dAf_dFfr * real(dFf_dV2) + dAf_dFfi * imag(dFf_dV2);
+dAt_dV1 = dAt_dFtr * real(dFt_dV1) + dAt_dFti * imag(dFt_dV1);
+dAt_dV2 = dAt_dFtr * real(dFt_dV2) + dAt_dFti * imag(dFt_dV2);

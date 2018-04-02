@@ -24,10 +24,10 @@ function [Haa, Hav, Hva, Hvv] = ...
 %             d2AIbr_dV2(dIbr_dVa, dIbr_dVm, Ibr, Ybr, V, mu);
 %
 %   Here the output matrices correspond to:
-%     Haa = (d/dVa (dAIbr_dVa.')) * mu
-%     Hav = (d/dVm (dAIbr_dVa.')) * mu
-%     Hva = (d/dVa (dAIbr_dVm.')) * mu
-%     Hvv = (d/dVm (dAIbr_dVm.')) * mu
+%     Haa = d/dVa (dAIbr_dVa.' * mu)
+%     Hav = d/dVm (dAIbr_dVa.' * mu)
+%     Hva = d/dVa (dAIbr_dVm.' * mu)
+%     Hvv = d/dVm (dAIbr_dVm.' * mu)
 %
 %   See also DIBR_DV.
 %
@@ -40,21 +40,12 @@ function [Haa, Hav, Hva, Hvv] = ...
 %             http://www.pserc.cornell.edu/matpower/TN2-OPF-Derivatives.pdf
 
 %   MATPOWER
-%   Copyright (c) 2008-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2018, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-%% define
-nl = length(mu);
-
-diagmu = sparse(1:nl, 1:nl, mu, nl, nl);
-diagIbr_conj = sparse(1:nl, 1:nl, conj(Ibr), nl, nl);
-
-[Iaa, Iav, Iva, Ivv] = d2Ibr_dV2(Ybr, V, diagIbr_conj * mu);
-Haa = 2 * real( Iaa + dIbr_dVa.' * diagmu * conj(dIbr_dVa) );
-Hva = 2 * real( Iva + dIbr_dVm.' * diagmu * conj(dIbr_dVa) );
-Hav = 2 * real( Iav + dIbr_dVa.' * diagmu * conj(dIbr_dVm) );
-Hvv = 2 * real( Ivv + dIbr_dVm.' * diagmu * conj(dIbr_dVm) );
+d2F_dV2 = @(V, mu)d2Ibr_dV2(Ybr, V, mu);
+[Haa, Hav, Hva, Hvv] = d2Abr_dV2(d2F_dV2, dIbr_dVa, dIbr_dVm, Ibr, V, mu);
