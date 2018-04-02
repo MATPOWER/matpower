@@ -38,10 +38,16 @@ function d2G = opf_current_balance_hess(x, lambda, mpc, Ybus, mpopt)
 
 %% unpack data
 [baseMVA, bus, gen] = deal(mpc.baseMVA, mpc.bus, mpc.gen);
-[Var, Vmi, Pg, Qg] = deal(x{:});
+if mpopt.opf.v_cartesian
+    [Vr, Vi, Pg, Qg] = deal(x{:});
+    V = Vr + 1j * Vi;           %% reconstruct V
+else
+    [Va, Vm, Pg, Qg] = deal(x{:});
+    V = Vm .* exp(1j * Va);     %% reconstruct V
+end
 
 %% problem dimensions
-nb = length(Var);           %% number of buses
+nb = length(V);             %% number of buses
 ng = length(Pg);            %% number of dispatchable injections
 
 nlam = length(lambda) / 2;
@@ -56,31 +62,15 @@ gen(:, QG) = Qg * baseMVA;  %% reactive generation in MVAr
 %% rebuild Sbus
 Sbus = makeSbus(baseMVA, bus, gen);
 
-%%----- evaluate Hessian of power balance constraints -----
-if mpopt.opf.v_cartesian
-    %% reconstruct V
-    V = Var + 1j* Vmi;
-
-    %% compute 2nd derivatives
-    [Gr_SV, Gr_VS] = d2Imis_dVdSg_C(V, lamP, Cg);
-    [Gi_SV, Gi_VS] = d2Imis_dVdSg_C(V, lamQ, Cg);
-    % RDZ: The above do not need to return both since the 2nd return arg is
-    % always the transpose of the first. Just use the transpose directly below.
-else
-    %% reconstruct V
-    V = Vmi .* exp(1j * Var);
-
-    %% compute 2nd derivatives
-    [Gr_SV, Gr_VS] = d2Imis_dVdSg_P(V, lamP, Cg);
-    [Gi_SV, Gi_VS] = d2Imis_dVdSg_P(V, lamQ, Cg);
-end
-
+%%----- evaluate Hessian of current balance constraints -----
 %% compute 2nd derivatives
 [Gr11, Gr12, Gr21, Gr22] = d2Imis_dV2(Sbus, Ybus, V, lamP, mpopt.opf.v_cartesian);
 [Gi11, Gi12, Gi21, Gi22] = d2Imis_dV2(Sbus, Ybus, V, lamQ, mpopt.opf.v_cartesian);
+Gr_sv = d2Imis_dVdSg(Cg, V, lamP, mpopt.opf.v_cartesian);
+Gi_sv = d2Imis_dVdSg(Cg, V, lamQ, mpopt.opf.v_cartesian);
 
 %% construct Hessian
 d2G = [
-    real([Gr11 Gr12; Gr21 Gr22]) + imag([Gi11 Gi12; Gi21 Gi22]), real(Gr_VS) + imag(Gi_VS);
-    real(Gr_SV) + imag(Gi_SV), sparse(2*ng, 2*ng)
+    real([Gr11 Gr12; Gr21 Gr22]) + imag([Gi11 Gi12; Gi21 Gi22]), real(Gr_sv.') + imag(Gi_sv.');
+    real(Gr_sv) + imag(Gi_sv), sparse(2*ng, 2*ng)
 ];
