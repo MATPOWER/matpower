@@ -61,7 +61,7 @@ Sbus = makeSbus(baseMVA, bus, gen);  %% net injected power in p.u.
 %% evaluate complex current balance mismatches
 mis = Ybus*V - conj(Sbus./V);
 
-%% assemble active and reactive power balance constraints
+%% assemble real and imaginary current balance constraints
 g = [ real(mis);    %% real current mismatch
       imag(mis) ];  %% imaginary current mismatch
 

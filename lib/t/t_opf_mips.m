@@ -151,7 +151,6 @@ for k = 1:length(options)
     %% run OPF with active power line limits
     t = [t0 '(P line lim) : '];
     mpopt1 = mpoption(mpopt, 'opf.flow_lim', 'P');
-mpopt1 = mpoption(mpopt1, 'verbose', 2);
     [baseMVA, bus, gen, gencost, branch, f, success, et] = runopf(casefile, mpopt1);
     t_ok(success, [t 'success']);
     t_is(f, f_soln, 3, [t 'f']);
@@ -168,7 +167,6 @@ mpopt1 = mpoption(mpopt1, 'verbose', 2);
 
     t = [t0 '(P^2 line lim) : '];
     mpopt1 = mpoption(mpopt, 'opf.flow_lim', '2');
-mpopt1 = mpoption(mpopt1, 'verbose', 2);
     [baseMVA, bus, gen, gencost, branch, f, success, et] = runopf(casefile, mpopt1);
     t_ok(success, [t 'success']);
     t_is(f, f_soln, 3, [t 'f']);

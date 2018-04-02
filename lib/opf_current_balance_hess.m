@@ -7,8 +7,8 @@ function d2G = opf_current_balance_hess(x, lambda, mpc, Ybus, mpopt)
 %
 %   Inputs:
 %     X : optimization vector
-%     LAMBDA : column vector of Lagrange multipliers on active and reactive
-%              power balance constraints
+%     LAMBDA : column vector of Lagrange multipliers on real and imaginary
+%              current balance constraints
 %     MPC : MATPOWER case struct
 %     YBUS : bus admittance matrix
 %     MPOPT : MATPOWER options struct
