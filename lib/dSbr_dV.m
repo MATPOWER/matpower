@@ -11,7 +11,7 @@ function [dSf_dV1, dSf_dV2, dSt_dV1, dSt_dV2, Sf, St] = dSbr_dV(branch, Yf, Yt, 
 %   branch power flows at "from" and "to" ends of each branch w.r.t voltage
 %   magnitude and voltage angle, respectively (for all buses).
 %
-%   [DSF_DVR, DSF_DVI, DST_DVR, DST_DVI, SF, ST] = dSbr_dV(BRANCH, YF, YT, V, 1)
+%   [DSF_DVR, DSF_DVI, DST_DVR, DST_DVI, SF, ST] = DSBR_DV(BRANCH, YF, YT, V, 1)
 %
 %   Returns four matrices containing partial derivatives of the complex
 %   branch power flows at "from" and "to" ends of each branch w.r.t real and

@@ -2,7 +2,7 @@ function [H11, H12, H21, H22] = d2Sbr_dV2(Cbr, Ybr, V, mu, vcart)
 %D2SBR_DV2   Computes 2nd derivatives of complex brch power flow w.r.t. voltage.
 %
 %   The derivatives can be take with respect to polar or cartesian coordinates
-%   of voltage, depending on the 4th argument.
+%   of voltage, depending on the 5th argument.
 %
 %   [HAA, HAV, HVA, HVV] = D2SBR_DV2(CBR, YBR, V, MU)
 %   [HAA, HAV, HVA, HVV] = D2SBR_DV2(CBR, YBR, V, MU, 0)
