@@ -62,31 +62,25 @@ if mpopt.opf.v_cartesian
     V = Var + 1j* Vmi;
 
     %% compute 2nd derivatives
-    [Grrr, Grri, Grir, Grii] = d2Imis_dV2_C(Sbus, Ybus, V, lamP);
-    [Girr, Giri, Giir, Giii] = d2Imis_dV2_C(Sbus, Ybus, V, lamQ);
     [Gr_SV, Gr_VS] = d2Imis_dVdSg_C(V, lamP, Cg);
     [Gi_SV, Gi_VS] = d2Imis_dVdSg_C(V, lamQ, Cg);
     % RDZ: The above do not need to return both since the 2nd return arg is
     % always the transpose of the first. Just use the transpose directly below.
-
-    %% construct Hessian
-    d2G = [
-        real([Grrr Grri; Grir Grii]) + imag([Girr Giri; Giir Giii]), real(Gr_VS) + imag(Gi_VS);
-        real(Gr_SV) + imag(Gi_SV), sparse(2*ng, 2*ng)
-    ];
 else
     %% reconstruct V
     V = Vmi .* exp(1j * Var);
 
     %% compute 2nd derivatives
-    [Graa, Grav, Grva, Grvv] = d2Imis_dV2_P(Sbus, Ybus, V, lamP);
-    [Giaa, Giav, Giva, Givv] = d2Imis_dV2_P(Sbus, Ybus, V, lamQ);
     [Gr_SV, Gr_VS] = d2Imis_dVdSg_P(V, lamP, Cg);
     [Gi_SV, Gi_VS] = d2Imis_dVdSg_P(V, lamQ, Cg);
-
-    %% construct Hessian
-    d2G = [
-        real([Graa Grav; Grva Grvv]) + imag([Giaa Giav; Giva Givv]), real(Gr_VS) + imag(Gi_VS);
-        real(Gr_SV) + imag(Gi_SV), sparse(2*ng, 2*ng)
-    ];
 end
+
+%% compute 2nd derivatives
+[Gr11, Gr12, Gr21, Gr22] = d2Imis_dV2(Sbus, Ybus, V, lamP, mpopt.opf.v_cartesian);
+[Gi11, Gi12, Gi21, Gi22] = d2Imis_dV2(Sbus, Ybus, V, lamQ, mpopt.opf.v_cartesian);
+
+%% construct Hessian
+d2G = [
+    real([Gr11 Gr12; Gr21 Gr22]) + imag([Gi11 Gi12; Gi21 Gi22]), real(Gr_VS) + imag(Gi_VS);
+    real(Gr_SV) + imag(Gi_SV), sparse(2*ng, 2*ng)
+];

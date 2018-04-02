@@ -70,20 +70,11 @@ if nargout > 1
     %% compute partials of injected bus powers
     Cg = sparse(gen(:, GEN_BUS), 1:ng, 1, nb, ng);
     InvConjV = sparse(1:nb, 1:nb, 1./conj(V), nb, nb);
-    dImis_dPg = -InvConjV*Cg;       % dImis w.r.t. Pg
-    dImis_dQg = 1j*InvConjV*Cg;     % dImis w.r.t. Qg
-
-    if mpopt.opf.v_cartesian
-        [dImis_dVr, dImis_dVi] = dImis_dV_C(Sbus, Ybus, V);     %% w.r.t. V
-        dg = [
-            real([dImis_dVr dImis_dVi dImis_dPg dImis_dQg]);    %% Ir mismatch w.r.t Vr, Vi, Pg, Qg
-            imag([dImis_dVr dImis_dVi dImis_dPg dImis_dQg]) ;   %% Ii mismatch w.r.t Vr, Vi, Pg, Qg
-        ];
-    else
-        [dImis_dVm, dImis_dVa] = dImis_dV_P(Sbus, Ybus, V);     %% w.r.t. V
-        dg = [
-            real([dImis_dVa dImis_dVm dImis_dPg dImis_dQg]);    %% Ir mismatch w.r.t Va, Vm, Pg, Qg
-            imag([dImis_dVa dImis_dVm dImis_dPg dImis_dQg]);    %% Ii mismatch w.r.t Va, Vm, Pg, Qg
-        ];
-    end
+    dImis_dPg = -InvConjV * Cg;     %% dImis w.r.t. Pg
+    dImis_dQg = -1j * dImis_dPg;    %% dImis w.r.t. Qg
+    [dImis_dV1, dImis_dV2] = dImis_dV(Sbus, Ybus, V, mpopt.opf.v_cartesian);     %% w.r.t. V
+    dg = [
+        real([dImis_dV1 dImis_dV2 dImis_dPg dImis_dQg]);    %% Ir mismatch w.r.t V1, V2, Pg, Qg
+        imag([dImis_dV1 dImis_dV2 dImis_dPg dImis_dQg]) ;   %% Ii mismatch w.r.t V1, V2, Pg, Qg
+    ];
 end
