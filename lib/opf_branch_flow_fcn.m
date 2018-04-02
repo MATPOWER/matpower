@@ -32,7 +32,7 @@ function [h, dh] = opf_branch_flow_fcn(x, mpc, Yf, Yt, il, mpopt)
 %   See also OPF_BRANCH_FLOW_HESS.
 
 %   MATPOWER
-%   Copyright (c) 1996-2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2018, Power Systems Engineering Research Center (PSERC)
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %   and Ray Zimmerman, PSERC Cornell
 %
@@ -96,11 +96,7 @@ if nargout > 1
     if nl2 > 0
         %% compute partials of Flows w.r.t. V
         if lim_type == 'I'                      %% current
-            if mpopt.opf.v_cartesian
-                warning('Current magnitude limit |I| is not calculated in Cartesian coordinates')
-            else
-                [dFf_dV1, dFf_dV2, dFt_dV1, dFt_dV2, Ff, Ft] = dIbr_dV(branch(il,:), Yf, Yt, V);
-            end
+            [dFf_dV1, dFf_dV2, dFt_dV1, dFt_dV2, Ff, Ft] = dIbr_dV(branch(il,:), Yf, Yt, V, mpopt.opf.v_cartesian);
         else                                    %% power
             [dFf_dV1, dFf_dV2, dFt_dV1, dFt_dV2, Ff, Ft] = dSbr_dV(branch(il,:), Yf, Yt, V, mpopt.opf.v_cartesian);
         end
@@ -121,7 +117,8 @@ if nargout > 1
             [df_dV1, df_dV2, dt_dV1, dt_dV2] = ...
               dAbr_dV(dFf_dV1, dFf_dV2, dFt_dV1, dFt_dV2, Ff, Ft);
         end
-        %% construct Jacobian of "from" branch flow ineq constraints
+
+        %% construct Jacobian of "from" and "to" branch flow ineq constraints
         dh = [ df_dV1 df_dV2;                   %% "from" flow limit
                dt_dV1 dt_dV2 ];                 %% "to" flow limit
     else

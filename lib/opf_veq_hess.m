@@ -22,8 +22,8 @@ function d2Veq = opf_veq_hess(x, lambda, mpc, idx, mpopt)
 
 %   MATPOWER
 %   Copyright (c) 2018, Power Systems Engineering Research Center (PSERC)
-%   by Baljinnyam Sereeter, Delft University of Technology
-%   and Ray Zimmerman, PSERC Cornell
+%   by Ray Zimmerman, PSERC Cornell
+%   and Baljinnyam Sereeter, Delft University of Technology
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).

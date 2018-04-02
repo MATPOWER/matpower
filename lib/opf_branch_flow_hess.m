@@ -25,7 +25,7 @@ function d2H = opf_branch_flow_hess(x, lambda, mpc, Yf, Yt, il, mpopt)
 %   See also OPF_BRANCH_FLOW_FCN.
 
 %   MATPOWER
-%   Copyright (c) 1996-2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2018, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %
@@ -66,10 +66,7 @@ else    %% keep dimensions of empty matrices/vectors compatible
     muT = zeros(0,1);   %%  on cases with all lines unconstrained)
 end
 if lim_type == 'I'          %% square of current
-    if mpopt.opf.v_cartesian
-        warning('Current magnitude limit |I| is not calculated in Cartesian coordinates')
-    end
-    [dIf_dV1, dIf_dV2, dIt_dV1, dIt_dV2, If, It] = dIbr_dV(mpc.branch(il,:), Yf, Yt, V);
+    [dIf_dV1, dIf_dV2, dIt_dV1, dIt_dV2, If, It] = dIbr_dV(mpc.branch(il,:), Yf, Yt, V, mpopt.opf.v_cartesian);
     d2If_dV2 = @(V, mu)d2Ibr_dV2(Yf, V, mu, mpopt.opf.v_cartesian);
     d2It_dV2 = @(V, mu)d2Ibr_dV2(Yt, V, mu, mpopt.opf.v_cartesian);
     [Hf11, Hf12, Hf21, Hf22] = d2Abr_dV2(d2If_dV2, dIf_dV1, dIf_dV2, If, V, muF);
@@ -83,15 +80,9 @@ else
     d2Sf_dV2 = @(V, mu)d2Sbr_dV2(Cf, Yf, V, mu, mpopt.opf.v_cartesian);
     d2St_dV2 = @(V, mu)d2Sbr_dV2(Ct, Yt, V, mu, mpopt.opf.v_cartesian);
     if lim_type == '2'        %% square of real power
-        if mpopt.opf.v_cartesian
-            warning('Square of real power is not calculated in Cartesian coordinates')
-        end
         [Hf11, Hf12, Hf21, Hf22] = d2Abr_dV2(d2Sf_dV2, real(dSf_dV1), real(dSf_dV2), real(Sf), V, muF);
         [Ht11, Ht12, Ht21, Ht22] = d2Abr_dV2(d2St_dV2, real(dSt_dV1), real(dSt_dV2), real(St), V, muT);
     elseif lim_type == 'P'    %% real power
-        if mpopt.opf.v_cartesian
-            warning('Real power is not calculated in Cartesian coordinates')
-        end
         [Hf11, Hf12, Hf21, Hf22] = d2Sf_dV2(V, muF);
         [Ht11, Ht12, Ht21, Ht22] = d2St_dV2(V, muT);
         [Hf11, Hf12, Hf21, Hf22] = deal(real(Hf11), real(Hf12), real(Hf21), real(Hf22));

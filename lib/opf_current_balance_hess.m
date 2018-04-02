@@ -22,9 +22,9 @@ function d2G = opf_current_balance_hess(x, lambda, mpc, Ybus, mpopt)
 %   See also OPF_CURRENT_BALANCE_FCN.
 
 %   MATPOWER
-%   Copyright (c) 1996-2017, Power Systems Engineering Research Center (PSERC)
-%   by Ray Zimmerman, PSERC Cornell
-%   and Baljinnyam Sereeter, Delft University of Technology
+%   Copyright (c) 1996-2018, Power Systems Engineering Research Center (PSERC)
+%   by Baljinnyam Sereeter, Delft University of Technology
+%   and Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
