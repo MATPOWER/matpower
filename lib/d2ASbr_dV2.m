@@ -1,34 +1,48 @@
-function [Haa, Hav, Hva, Hvv] = ...
-    d2ASbr_dV2(dSbr_dVa, dSbr_dVm, Sbr, Cbr, Ybr, V, mu)
-%D2ASBR_DV2   Computes 2nd derivatives of |complex power flow|^2 w.r.t. V.
-%   [HAA, HAV, HVA, HVV] = D2ASBR_DV2(DSBR_DVA, DSBR_DVM, SBR, CBR, YBR, V, MU)
-%   returns 4 matrices containing the partial derivatives w.r.t. voltage
+function [H11, H12, H21, H22] = ...
+    d2ASbr_dV2(dSbr_dV1, dSbr_dV2, Sbr, Cbr, Ybr, V, mu, vcart)
+%D2ASBR_DV2   Computes 2nd derivatives of |power flow|^2 w.r.t. V.
+%
+%   The derivatives can be take with respect to polar or cartesian coordinates
+%   of voltage, depending on the 8th argument.
+%
+%   [H11, H12, H21, H22] = D2ASBR_DV2(DSBR_DV1, DSBR_DV2, SBR, CBR, YBR, V, MU)
+%   [H11, H12, H21, H22] = D2ASBR_DV2(DSBR_DV1, DSBR_DV2, SBR, CBR, YBR, V, MU, 0)
+%
+%   Returns 4 matrices containing the partial derivatives w.r.t. voltage
 %   angle and magnitude of the product of a vector MU with the 1st partial
-%   derivatives of the square of the magnitude of branch complex power flows.
-%   Takes sparse first derivative matrices of complex flow, complex flow
-%   vector, sparse connection matrix CBR, sparse branch admittance matrix YBR,
-%   voltage vector V and nl x 1 vector of multipliers MU. Output matrices
+%   derivatives of the square of the magnitude of branch power flows.
+%
+%   [H11, H12, H21, H22] = D2ASBR_DV2(DSBR_DV1, DSBR_DV2, SBR, CBR, YBR, V, MU, 1)
+%
+%   Returns 4 matrices containing the partial derivatives w.r.t. real and
+%   imaginary part of complex voltage of the product of a vector MU with the
+%   1st partial derivatives of the square of the magnitude of branch power
+%   flows.
+%
+%   Takes as inputs sparse first derivative matrices of complex flow, complex
+%   flow vector, sparse connection matrix CBR, sparse branch admittance matrix
+%   YBR, voltage vector V and nl x 1 vector of multipliers MU. Output matrices
 %   are sparse.
 %
 %   Example:
 %       f = branch(:, F_BUS);
 %       Cf =  sparse(1:nl, f, ones(nl, 1), nl, nb);
 %       [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
-%       [dSf_dVa, dSf_dVm, dSt_dVa, dSt_dVm, Sf, St] = ...
+%       [dSf_dV1, dSf_dV2, dSt_dV1, dSt_dV2, Sf, St] = ...
 %               dSbr_dV(branch, Yf, Yt, V);
 %       Cbr = Cf;
 %       Ybr = Yf;
-%       dSbr_dVa = dSf_dVa;
-%       dSbr_dVm = dSf_dVm;
+%       dSbr_dV1 = dSf_dV1;
+%       dSbr_dV2 = dSf_dV2;
 %       Sbr = Sf;
-%       [Haa, Hav, Hva, Hvv] = ...
-%             d2ASbr_dV2(dSbr_dVa, dSbr_dVm, Sbr, Cbr, Ybr, V, mu);
+%       [H11, H12, H21, H22] = ...
+%             d2ASbr_dV2(dSbr_dV1, dSbr_dV2, Sbr, Cbr, Ybr, V, mu);
 %
 %   Here the output matrices correspond to:
-%     Haa = (d/dVa (dASbr_dVa.')) * mu
-%     Hav = (d/dVm (dASbr_dVa.')) * mu
-%     Hva = (d/dVa (dASbr_dVm.')) * mu
-%     Hvv = (d/dVm (dASbr_dVm.')) * mu
+%     H11 = d/dV1 (dASbr_dV1.' * mu)
+%     H12 = d/dV2 (dASbr_dV1.' * mu)
+%     H21 = d/dV1 (dASbr_dV2.' * mu)
+%     H22 = d/dV2 (dASbr_dV2.' * mu)
 %
 %   See also DSBR_DV.
 %
@@ -41,12 +55,17 @@ function [Haa, Hav, Hva, Hvv] = ...
 %             http://www.pserc.cornell.edu/matpower/TN2-OPF-Derivatives.pdf
 
 %   MATPOWER
-%   Copyright (c) 2008-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2018, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
+
+%% default input args
+if nargin < 8
+    vcart = 0;      %% default to polar coordinates
+end
 
 %% define
 nl = length(mu);
@@ -54,8 +73,8 @@ nl = length(mu);
 diagmu = sparse(1:nl, 1:nl, mu, nl, nl);
 diagSbr_conj = sparse(1:nl, 1:nl, conj(Sbr), nl, nl);
 
-[Saa, Sav, Sva, Svv] = d2Sbr_dV2(Cbr, Ybr, V, diagSbr_conj * mu);
-Haa = 2 * real( Saa + dSbr_dVa.' * diagmu * conj(dSbr_dVa) );
-Hva = 2 * real( Sva + dSbr_dVm.' * diagmu * conj(dSbr_dVa) );
-Hav = 2 * real( Sav + dSbr_dVa.' * diagmu * conj(dSbr_dVm) );
-Hvv = 2 * real( Svv + dSbr_dVm.' * diagmu * conj(dSbr_dVm) );
+[S11, S12, S21, S22] = d2Sbr_dV2(Cbr, Ybr, V, diagSbr_conj * mu, vcart);
+H11 = 2 * real( S11 + dSbr_dV1.' * diagmu * conj(dSbr_dV1) );
+H21 = 2 * real( S21 + dSbr_dV2.' * diagmu * conj(dSbr_dV1) );
+H12 = 2 * real( S12 + dSbr_dV1.' * diagmu * conj(dSbr_dV2) );
+H22 = 2 * real( S22 + dSbr_dV2.' * diagmu * conj(dSbr_dV2) );

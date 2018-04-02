@@ -69,9 +69,9 @@ if lim_type == 'I'          %% square of current
     if mpopt.opf.v_cartesian
         warning('Current magnitude limit |I| is not calculated in Cartesian coordinates')
     else
-        [dIf_dVa, dIf_dVm, dIt_dVa, dIt_dVm, If, It] = dIbr_dV(mpc.branch(il,:), Yf, Yt, V);
-        [Hfaa, Hfav, Hfva, Hfvv] = d2AIbr_dV2(dIf_dVa, dIf_dVm, If, Yf, V, muF);
-        [Htaa, Htav, Htva, Htvv] = d2AIbr_dV2(dIt_dVa, dIt_dVm, It, Yt, V, muT);
+        [dIf_dV1, dIf_dV2, dIt_dV1, dIt_dV2, If, It] = dIbr_dV(mpc.branch(il,:), Yf, Yt, V);
+        [Hf11, Hf12, Hf21, Hf22] = d2AIbr_dV2(dIf_dV1, dIf_dV2, If, Yf, V, muF);
+        [Ht11, Ht12, Ht21, Ht22] = d2AIbr_dV2(dIt_dV1, dIt_dV2, It, Yt, V, muT);
     end
 else
     f = mpc.branch(il, F_BUS);    %% list of "from" buses
@@ -83,30 +83,21 @@ else
         if mpopt.opf.v_cartesian
             warning('Square of real power is not calculated in Cartesian coordinates')
         else
-            [Hfaa, Hfav, Hfva, Hfvv] = d2ASbr_dV2_P(real(dSf_dV1), real(dSf_dV2), real(Sf), Cf, Yf, V, muF);
-            [Htaa, Htav, Htva, Htvv] = d2ASbr_dV2_P(real(dSt_dV1), real(dSt_dV2), real(St), Ct, Yt, V, muT);
+            [Hf11, Hf12, Hf21, Hf22] = d2ASbr_dV2(real(dSf_dV1), real(dSf_dV2), real(Sf), Cf, Yf, V, muF, 0);
+            [Ht11, Ht12, Ht21, Ht22] = d2ASbr_dV2(real(dSt_dV1), real(dSt_dV2), real(St), Ct, Yt, V, muT, 0);
         end
     elseif lim_type == 'P'    %% real power
         if mpopt.opf.v_cartesian
             warning('Real power is not calculated in Cartesian coordinates')
         else
-            [Hfaa, Hfav, Hfva, Hfvv] = d2Sbr_dV2(Cf, Yf, V, muF, 0);
-            [Htaa, Htav, Htva, Htvv] = d2Sbr_dV2(Ct, Yt, V, muT, 0);
-            [Hfaa, Hfav, Hfva, Hfvv] = deal(real(Hfaa), real(Hfav), real(Hfva), real(Hfvv));
-            [Htaa, Htav, Htva, Htvv] = deal(real(Htaa), real(Htav), real(Htva), real(Htvv));
+            [Hf11, Hf12, Hf21, Hf22] = d2Sbr_dV2(Cf, Yf, V, muF, 0);
+            [Ht11, Ht12, Ht21, Ht22] = d2Sbr_dV2(Ct, Yt, V, muT, 0);
+            [Hf11, Hf12, Hf21, Hf22] = deal(real(Hf11), real(Hf12), real(Hf21), real(Hf22));
+            [Ht11, Ht12, Ht21, Ht22] = deal(real(Ht11), real(Ht12), real(Ht21), real(Ht22));
         end
     else                      %% square of apparent power
-        if mpopt.opf.v_cartesian
-            [Hfrr, Hfri, Hfir, Hfii] = d2ASbr_dV2_C(dSf_dV1, dSf_dV2, Sf, Cf, Yf, V, muF);
-            [Htrr, Htri, Htir, Htii] = d2ASbr_dV2_C(dSt_dV1, dSt_dV2, St, Ct, Yt, V, muT);
-        else
-            [Hfaa, Hfav, Hfva, Hfvv] = d2ASbr_dV2_P(dSf_dV1, dSf_dV2, Sf, Cf, Yf, V, muF);
-            [Htaa, Htav, Htva, Htvv] = d2ASbr_dV2_P(dSt_dV1, dSt_dV2, St, Ct, Yt, V, muT);
-        end
+        [Hf11, Hf12, Hf21, Hf22] = d2ASbr_dV2(dSf_dV1, dSf_dV2, Sf, Cf, Yf, V, muF, mpopt.opf.v_cartesian);
+        [Ht11, Ht12, Ht21, Ht22] = d2ASbr_dV2(dSt_dV1, dSt_dV2, St, Ct, Yt, V, muT, mpopt.opf.v_cartesian);
     end
 end
-if mpopt.opf.v_cartesian
-    d2H = [Hfrr Hfri; Hfir Hfii] + [Htrr Htri; Htir Htii];
-else
-    d2H = [Hfaa Hfav; Hfva Hfvv] + [Htaa Htav; Htva Htvv];
-end
+d2H = [Hf11 Hf12; Hf21 Hf22] + [Ht11 Ht12; Ht21 Ht22];

@@ -1,11 +1,12 @@
-function [dAf_dVa, dAf_dVm, dAt_dVa, dAt_dVm] = ...
-                        dAbr_dV(dSf_dVa, dSf_dVm, dSt_dVa, dSt_dVm, Sf, St)
+function [dAf_dV1, dAf_dV2, dAt_dV1, dAt_dV2] = ...
+                        dAbr_dV(dSf_dV1, dSf_dV2, dSt_dV1, dSt_dV2, Sf, St)
 %DABR_DV   Partial derivatives of squared flow magnitudes w.r.t voltage.
-%   [DAF_DVA, DAF_DVM, DAT_DVA, DAT_DVM] = ...
-%               DABR_DV(DFF_DVA, DFF_DVM, DFT_DVA, DFT_DVM, FF, FT)
+%   [DAF_DV1, DAF_DV2, DAT_DV1, DAT_DV2] = ...
+%               DABR_DV(DFF_DV1, DFF_DV2, DFT_DV1, DFT_DV2, FF, FT)
 %   returns four matrices containing partial derivatives of the square of
 %   the branch flow magnitudes at "from" & "to" ends of each branch w.r.t
-%   voltage magnitude and voltage angle respectively (for all buses), given
+%   voltage components (either angle and magnitude, respectively, if polar,
+%   or real and imaginary, respectively, if cartesian) for all buses, given
 %   the flows and flow sensitivities. Flows could be complex current or
 %   complex or real power. Notation below is based on complex power. The
 %   following explains the expressions used to form the matrices:
@@ -25,34 +26,34 @@ function [dAf_dVa, dAf_dVm, dAt_dVa, dAt_dVm] = ...
 %   Partial w.r.t reactive power,
 %       dAf/dQf = 2 * diag(Qf)
 %
-%   Partial w.r.t Vm & Va
-%       dAf/dVm = dAf/dPf * dPf/dVm + dAf/dQf * dQf/dVm
-%       dAf/dVa = dAf/dPf * dPf/dVa + dAf/dQf * dQf/dVa
+%   Partial w.r.t V1 & V2 (e.g. Va and Vm, or Vr and Vi)
+%       dAf/dV1 = dAf/dPf * dPf/dV1 + dAf/dQf * dQf/dV1
+%       dAf/dV2 = dAf/dPf * dPf/dV2 + dAf/dQf * dQf/dV2
 %
 %   Derivations for "to" bus are similar.
 %
 %   Examples:
 %       %% squared current magnitude
-%       [dFf_dVa, dFf_dVm, dFt_dVa, dFt_dVm, Ff, Ft] = ...
+%       [dFf_dV1, dFf_dV2, dFt_dV1, dFt_dV2, Ff, Ft] = ...
 %               dIbr_dV(branch(il,:), Yf, Yt, V);
-%       [dAf_dVa, dAf_dVm, dAt_dVa, dAt_dVm] = ...
-%               dAbr_dV(dFf_dVa, dFf_dVm, dFt_dVa, dFt_dVm, Ff, Ft);
+%       [dAf_dV1, dAf_dV2, dAt_dV1, dAt_dV2] = ...
+%               dAbr_dV(dFf_dV1, dFf_dV2, dFt_dV1, dFt_dV2, Ff, Ft);
 %
 %       %% squared apparent power flow
-%       [dFf_dVa, dFf_dVm, dFt_dVa, dFt_dVm, Ff, Ft] = ...
+%       [dFf_dV1, dFf_dV2, dFt_dV1, dFt_dV2, Ff, Ft] = ...
 %               dSbr_dV(branch(il,:), Yf, Yt, V);
-%       [dAf_dVa, dAf_dVm, dAt_dVa, dAt_dVm] = ...
-%               dAbr_dV(dFf_dVa, dFf_dVm, dFt_dVa, dFt_dVm, Ff, Ft);
+%       [dAf_dV1, dAf_dV2, dAt_dV1, dAt_dV2] = ...
+%               dAbr_dV(dFf_dV1, dFf_dV2, dFt_dV1, dFt_dV2, Ff, Ft);
 %
 %       %% squared real power flow
-%       [dFf_dVa, dFf_dVm, dFt_dVa, dFt_dVm, Ff, Ft] = ...
+%       [dFf_dV1, dFf_dV2, dFt_dV1, dFt_dV2, Ff, Ft] = ...
 %               dSbr_dV(branch(il,:), Yf, Yt, V);
-%       dFf_dVa = real(dFf_dVa);
-%       dFf_dVm = real(dFf_dVm);
-%       dFt_dVa = real(dFt_dVa);
-%       dFt_dVm = real(dFt_dVm);
-%       [dAf_dVa, dAf_dVm, dAt_dVa, dAt_dVm] = ...
-%               dAbr_dV(dFf_dVa, dFf_dVm, dFt_dVa, dFt_dVm, Ff, Ft);
+%       dFf_dV1 = real(dFf_dV1);
+%       dFf_dV2 = real(dFf_dV2);
+%       dFt_dV1 = real(dFt_dV1);
+%       dFt_dV2 = real(dFt_dV2);
+%       [dAf_dV1, dAf_dV2, dAt_dV1, dAt_dV2] = ...
+%               dAbr_dV(dFf_dV1, dFf_dV2, dFt_dV1, dFt_dV2, Ff, Ft);
 %
 %   See also DIBR_DV, DSBR_DV.
 %
@@ -65,7 +66,7 @@ function [dAf_dVa, dAf_dVm, dAt_dVa, dAt_dVm] = ...
 %             http://www.pserc.cornell.edu/matpower/TN2-OPF-Derivatives.pdf
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2018, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -82,7 +83,7 @@ dAt_dPt = sparse(1:nl, 1:nl, 2 * real(St), nl, nl);
 dAt_dQt = sparse(1:nl, 1:nl, 2 * imag(St), nl, nl);
 
 %% partials w.r.t. voltage magnitudes and angles
-dAf_dVm = dAf_dPf * real(dSf_dVm) + dAf_dQf * imag(dSf_dVm);
-dAf_dVa = dAf_dPf * real(dSf_dVa) + dAf_dQf * imag(dSf_dVa);
-dAt_dVm = dAt_dPt * real(dSt_dVm) + dAt_dQt * imag(dSt_dVm);
-dAt_dVa = dAt_dPt * real(dSt_dVa) + dAt_dQt * imag(dSt_dVa);
+dAf_dV1 = dAf_dPf * real(dSf_dV1) + dAf_dQf * imag(dSf_dV1);
+dAf_dV2 = dAf_dPf * real(dSf_dV2) + dAf_dQf * imag(dSf_dV2);
+dAt_dV1 = dAt_dPt * real(dSt_dV1) + dAt_dQt * imag(dSt_dV1);
+dAt_dV2 = dAt_dPt * real(dSt_dV2) + dAt_dQt * imag(dSt_dV2);

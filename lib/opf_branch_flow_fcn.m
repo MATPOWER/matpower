@@ -118,13 +118,8 @@ if nargout > 1
             [df_dV1, df_dV2, dt_dV1, dt_dV2] = deal(dFf_dV1, dFf_dV2, dFt_dV1, dFt_dV2);
         else
             %% squared magnitude of flow (of complex power or current, or real power)
-            if mpopt.opf.v_cartesian
-                [df_dV1, df_dV2, dt_dV1, dt_dV2] = ...
-                  dAbr_dV_C(dFf_dV1, dFf_dV2, dFt_dV1, dFt_dV2, Ff, Ft);
-            else
-                [df_dV1, df_dV2, dt_dV1, dt_dV2] = ...
-                  dAbr_dV_P(dFf_dV1, dFf_dV2, dFt_dV1, dFt_dV2, Ff, Ft);
-            end
+            [df_dV1, df_dV2, dt_dV1, dt_dV2] = ...
+              dAbr_dV(dFf_dV1, dFf_dV2, dFt_dV1, dFt_dV2, Ff, Ft);
         end
         %% construct Jacobian of "from" branch flow ineq constraints
         dh = [ df_dV1 df_dV2;                   %% "from" flow limit
