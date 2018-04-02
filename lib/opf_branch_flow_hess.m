@@ -68,36 +68,37 @@ end
 if lim_type == 'I'          %% square of current
     if mpopt.opf.v_cartesian
         warning('Current magnitude limit |I| is not calculated in Cartesian coordinates')
-    else
-        [dIf_dV1, dIf_dV2, dIt_dV1, dIt_dV2, If, It] = dIbr_dV(mpc.branch(il,:), Yf, Yt, V);
-        [Hf11, Hf12, Hf21, Hf22] = d2AIbr_dV2(dIf_dV1, dIf_dV2, If, Yf, V, muF);
-        [Ht11, Ht12, Ht21, Ht22] = d2AIbr_dV2(dIt_dV1, dIt_dV2, It, Yt, V, muT);
     end
+    [dIf_dV1, dIf_dV2, dIt_dV1, dIt_dV2, If, It] = dIbr_dV(mpc.branch(il,:), Yf, Yt, V);
+    d2If_dV2 = @(V, mu)d2Ibr_dV2(Yf, V, mu, mpopt.opf.v_cartesian);
+    d2It_dV2 = @(V, mu)d2Ibr_dV2(Yt, V, mu, mpopt.opf.v_cartesian);
+    [Hf11, Hf12, Hf21, Hf22] = d2Abr_dV2(d2If_dV2, dIf_dV1, dIf_dV2, If, V, muF);
+    [Ht11, Ht12, Ht21, Ht22] = d2Abr_dV2(d2It_dV2, dIt_dV1, dIt_dV2, It, V, muT);
 else
     f = mpc.branch(il, F_BUS);    %% list of "from" buses
     t = mpc.branch(il, T_BUS);    %% list of "to" buses
     Cf = sparse(1:nl2, f, ones(nl2, 1), nl2, nb);   %% connection matrix for line & from buses
     Ct = sparse(1:nl2, t, ones(nl2, 1), nl2, nb);   %% connection matrix for line & to buses
     [dSf_dV1, dSf_dV2, dSt_dV1, dSt_dV2, Sf, St] = dSbr_dV(mpc.branch(il,:), Yf, Yt, V, mpopt.opf.v_cartesian);
+    d2Sf_dV2 = @(V, mu)d2Sbr_dV2(Cf, Yf, V, mu, mpopt.opf.v_cartesian);
+    d2St_dV2 = @(V, mu)d2Sbr_dV2(Ct, Yt, V, mu, mpopt.opf.v_cartesian);
     if lim_type == '2'        %% square of real power
         if mpopt.opf.v_cartesian
             warning('Square of real power is not calculated in Cartesian coordinates')
-        else
-            [Hf11, Hf12, Hf21, Hf22] = d2ASbr_dV2(real(dSf_dV1), real(dSf_dV2), real(Sf), Cf, Yf, V, muF, 0);
-            [Ht11, Ht12, Ht21, Ht22] = d2ASbr_dV2(real(dSt_dV1), real(dSt_dV2), real(St), Ct, Yt, V, muT, 0);
         end
+        [Hf11, Hf12, Hf21, Hf22] = d2Abr_dV2(d2Sf_dV2, real(dSf_dV1), real(dSf_dV2), real(Sf), V, muF);
+        [Ht11, Ht12, Ht21, Ht22] = d2Abr_dV2(d2St_dV2, real(dSt_dV1), real(dSt_dV2), real(St), V, muT);
     elseif lim_type == 'P'    %% real power
         if mpopt.opf.v_cartesian
             warning('Real power is not calculated in Cartesian coordinates')
-        else
-            [Hf11, Hf12, Hf21, Hf22] = d2Sbr_dV2(Cf, Yf, V, muF, 0);
-            [Ht11, Ht12, Ht21, Ht22] = d2Sbr_dV2(Ct, Yt, V, muT, 0);
-            [Hf11, Hf12, Hf21, Hf22] = deal(real(Hf11), real(Hf12), real(Hf21), real(Hf22));
-            [Ht11, Ht12, Ht21, Ht22] = deal(real(Ht11), real(Ht12), real(Ht21), real(Ht22));
         end
+        [Hf11, Hf12, Hf21, Hf22] = d2Sf_dV2(V, muF);
+        [Ht11, Ht12, Ht21, Ht22] = d2St_dV2(V, muT);
+        [Hf11, Hf12, Hf21, Hf22] = deal(real(Hf11), real(Hf12), real(Hf21), real(Hf22));
+        [Ht11, Ht12, Ht21, Ht22] = deal(real(Ht11), real(Ht12), real(Ht21), real(Ht22));
     else                      %% square of apparent power
-        [Hf11, Hf12, Hf21, Hf22] = d2ASbr_dV2(dSf_dV1, dSf_dV2, Sf, Cf, Yf, V, muF, mpopt.opf.v_cartesian);
-        [Ht11, Ht12, Ht21, Ht22] = d2ASbr_dV2(dSt_dV1, dSt_dV2, St, Ct, Yt, V, muT, mpopt.opf.v_cartesian);
+        [Hf11, Hf12, Hf21, Hf22] = d2Abr_dV2(d2Sf_dV2, dSf_dV1, dSf_dV2, Sf, V, muF);
+        [Ht11, Ht12, Ht21, Ht22] = d2Abr_dV2(d2St_dV2, dSt_dV1, dSt_dV2, St, V, muT);
     end
 end
 d2H = [Hf11 Hf12; Hf21 Hf22] + [Ht11 Ht12; Ht21 Ht22];

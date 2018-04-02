@@ -2,6 +2,9 @@ function [H11, H12, H21, H22] = ...
     d2ASbr_dV2(dSbr_dV1, dSbr_dV2, Sbr, Cbr, Ybr, V, mu, vcart)
 %D2ASBR_DV2   Computes 2nd derivatives of |power flow|^2 w.r.t. V.
 %
+%   -----  DEPRECATED - Please use D2ABR_DV2 instead    -----
+%   -----  See wrapper code in D2ASBR_DV2 for example.  -----
+%%
 %   The derivatives can be take with respect to polar or cartesian coordinates
 %   of voltage, depending on the 8th argument.
 %

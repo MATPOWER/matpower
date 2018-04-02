@@ -1,23 +1,16 @@
-function [H11, H12, H21, H22] = ...
-    d2Abr_dV2(d2F_dV2, dF_dV1, dF_dV2, F, V, mu, vcart)
+function [H11, H12, H21, H22] = d2Abr_dV2(d2F_dV2, dF_dV1, dF_dV2, F, V, mu)
 %D2ABR_DV2   Computes 2nd derivatives of |branch flow|^2 w.r.t. V.
 %
 %   The derivatives can be take with respect to polar or cartesian coordinates
-%   of voltage, depending on the 8th argument. Flows could be complex current
-%   or complex or real power. Notation below is based on complex power.
+%   of voltage, depending on the first 3 arguments. Flows could be complex
+%   current or complex or real power. Notation below is based on complex power.
 %
 %   [H11, H12, H21, H22] = D2ABR_DV2(D2F_DV2, DF_DV1, DF_DV2, F, V, MU)
-%   [H11, H12, H21, H22] = D2ABR_DV2(D2F_DV2, DF_DV1, DF_DV2, F, V, MU, 0)
 %
 %   Returns 4 matrices containing the partial derivatives w.r.t. voltage
-%   angle and magnitude of the product of a vector MU with the 1st partial
-%   derivatives of the square of the magnitude of branch flows.
-%
-%   [H11, H12, H21, H22] = D2ABR_DV2(D2F_DV2, DF_DV1, DF_DV2, F, V, MU, 1)
-%
-%   Returns 4 matrices containing the partial derivatives w.r.t. real and
-%   imaginary part of complex voltage of the product of a vector MU with the
-%   1st partial derivatives of the square of the magnitude of branch flows.
+%   components (angle, magnitude or real, imaginary) of the product of a
+%   vector MU with the 1st partial derivatives of the square of the magnitude
+%   of branch flows.
 %
 %   Takes as inputs a handle to a function that evaluates the 2nd derivatives
 %   of the flows (with args V and mu only), sparse first derivative matrices
@@ -60,11 +53,6 @@ function [H11, H12, H21, H22] = ...
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
-
-%% default input args
-if nargin < 9
-    vcart = 0;      %% default to polar coordinates
-end
 
 %% define
 nl = length(mu);

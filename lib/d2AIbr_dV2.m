@@ -1,6 +1,10 @@
 function [Haa, Hav, Hva, Hvv] = ...
     d2AIbr_dV2(dIbr_dVa, dIbr_dVm, Ibr, Ybr, V, mu)
 %D2AIBR_DV2   Computes 2nd derivatives of |complex current|^2 w.r.t. V.
+%
+%   -----  DEPRECATED - Please use D2ABR_DV2 instead    -----
+%   -----  See wrapper code in D2AIBR_DV2 for example.  -----
+%
 %   [HAA, HAV, HVA, HVV] = D2AIBR_DV2(DIBR_DVA, DIBR_DVM, IBR, YBR, V, MU)
 %   returns 4 matrices containing the partial derivatives w.r.t. voltage
 %   angle and magnitude of the product of a vector MU with the 1st partial
