@@ -51,12 +51,12 @@ function Gsv = d2Imis_dVdSg(Cg, V, lam, vcart)
 %             http://www.pserc.cornell.edu/matpower/TN2-OPF-Derivatives.pdf
 %   [TN3]  B. Sereeter and R. D. Zimmerman, "Addendum to AC Power Flows and
 %          their Derivatives using Complex Matrix Notation: Nodal Current
-%          Balance," MATPOWER Technical Note 3, March 2018.
+%          Balance," MATPOWER Technical Note 3, April 2018.
 %             http://www.pserc. cornell.edu/matpower/
 %                                           TN3-More-OPF-Derivatives.pdf
 %   [TN4]  B. Sereeter and R. D. Zimmerman, "AC Power Flows and their
 %          Derivatives using Complex Matrix Notation and Cartesian
-%          Coordinate Voltages," MATPOWER Technical Note 4, March 2018.
+%          Coordinate Voltages," MATPOWER Technical Note 4, April 2018.
 %             http://www.pserc.cornell.edu/matpower/
 %                                           TN4-OPF-Derivatives-Cartesian.pdf
 

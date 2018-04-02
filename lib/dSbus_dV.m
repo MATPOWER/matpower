@@ -75,7 +75,7 @@ function [dSbus_dV1, dSbus_dV2] = dSbus_dV(Ybus, V, vcart)
 %             http://www.pserc.cornell.edu/matpower/TN2-OPF-Derivatives.pdf
 %   [TN4]  B. Sereeter and R. D. Zimmerman, "AC Power Flows and their
 %          Derivatives using Complex Matrix Notation and Cartesian
-%          Coordinate Voltages," MATPOWER Technical Note 4, March 2018.
+%          Coordinate Voltages," MATPOWER Technical Note 4, April 2018.
 %             http://www.pserc.cornell.edu/matpower/
 %                                           TN4-OPF-Derivatives-Cartesian.pdf
 

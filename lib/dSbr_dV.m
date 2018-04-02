@@ -87,7 +87,7 @@ function [dSf_dV1, dSf_dV2, dSt_dV1, dSt_dV2, Sf, St] = dSbr_dV(branch, Yf, Yt, 
 %             http://www.pserc.cornell.edu/matpower/TN2-OPF-Derivatives.pdf
 %   [TN4]  B. Sereeter and R. D. Zimmerman, "AC Power Flows and their
 %          Derivatives using Complex Matrix Notation and Cartesian
-%          Coordinate Voltages," MATPOWER Technical Note 4, March 2018.
+%          Coordinate Voltages," MATPOWER Technical Note 4, April 2018.
 %             http://www.pserc.cornell.edu/matpower/
 %                                           TN4-OPF-Derivatives-Cartesian.pdf
 
