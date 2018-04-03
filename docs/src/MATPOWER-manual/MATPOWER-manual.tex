@@ -6009,15 +6009,25 @@ name & description \\
 \code{opf\_args}	& input argument handling for \code{opf}	\\
 \code{opf\_setup}	& constructs an OPF model object from a \matpower{} case \\
 \code{opf\_execute}	& executes the OPF specified by an OPF model object \\
+\code{opf\_branch\_ang\_fcn}\tnote{\dag}	& evaluates AC branch angle difference limit constraints and gradients\tnote{\ddag}	\\
+\code{opf\_branch\_ang\_hess}\tnote{\dag}	& evaluates Hessian of AC branch angle difference limit constraints\tnote{\ddag}	\\
 \code{opf\_branch\_flow\_fcn}\tnote{\dag}	& evaluates AC branch flow limit constraints and gradients	\\
 \code{opf\_branch\_flow\_hess}\tnote{\dag}	& evaluates Hessian of AC branch flow limit constraints	\\
 \code{opf\_consfcn}\tnote{\dag}	& evaluates function and gradients for AC OPF nonlinear constraints	\\
 \code{opf\_costfcn}\tnote{\dag}	& evaluates function, gradients and Hessian for AC OPF objective function	\\
+\code{opf\_current\_balance\_fcn}\tnote{\dag}	& evaluates AC current balance constraints and gradients	\\
+\code{opf\_current\_balance\_hess}\tnote{\dag}	& evaluates Hessian of AC current balance constraints	\\
 \code{opf\_gen\_cost\_fcn}\tnote{\dag}	& evaluates polynomial generator costs and derivatives	\\
 \code{opf\_hessfcn}\tnote{\dag}	& evaluates the Hessian of the Lagrangian for AC OPF	\\
 \code{opf\_legacy\_user\_cost\_fcn}\tnote{\dag}	& evaluates legacy user-defined costs and derivatives	\\
 \code{opf\_power\_balance\_fcn}\tnote{\dag}	& evaluates AC power balance constraints and gradients	\\
 \code{opf\_power\_balance\_hess}\tnote{\dag}	& evaluates Hessian of AC power balance constraints	\\
+\code{opf\_veq\_fcn}\tnote{\dag}	& evaluates voltage magnitude equality constraints and gradients\tnote{\ddag}	\\
+\code{opf\_veq\_hess}\tnote{\dag}	& evaluates Hessian of voltage magnitude equality constraints\tnote{\ddag}	\\
+\code{opf\_vlim\_fcn}\tnote{\dag}	& evaluates voltage magnitude limit constraints and gradients\tnote{\ddag}	\\
+\code{opf\_vlim\_hess}\tnote{\dag}	& evaluates Hessian of voltage magnitude limit constraints\tnote{\ddag}	\\
+\code{opf\_vref\_fcn}\tnote{\dag}	& evaluates reference voltage angle equality constraints and gradients\tnote{\ddag}	\\
+\code{opf\_vref\_hess}\tnote{\dag}	& evaluates Hessian of reference voltage angle equality constraints\tnote{\ddag}	\\
 \code{totcost}	& computes the total cost of generation as a function of generator output	\\
 \code{update\_mupq}	& updates generator limit prices based on the shadow prices on capability curve constraints	\\
 \bottomrule
@@ -6025,6 +6035,7 @@ name & description \\
 \begin{tablenotes}
  \scriptsize
  \item [\dag] {Used by \code{fmincon}, \mips{}, \ipopt{} and \knitro{} for AC OPF.}
+ \item [\ddag] {Used with cartesian coordinate voltage representation only. I.e. \code{opf.v\_cartesian} option set to 1.}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -6065,20 +6076,25 @@ name & description \\
 \toprule
 name & description\tnote{\dag} \\
 \midrule
-\code{dIbr\_dV}	& evaluates the partial derivatives of $I_{f|t}$ evaluates the $V$	\\
-\code{dSbr\_dV}	& evaluates the partial derivatives of $S_{f|t}$ evaluates the $V$	\\
-\code{dSbus\_dV}	& evaluates the partial derivatives of $S_\mathrm{bus}$ evaluates the $V$	\\
+\code{dIbr\_dV}	& evaluates the partial derivatives of $I_{f|t}$ with respect to $V$	\\
+\code{dSbr\_dV}	& evaluates the partial derivatives of $S_{f|t}$ with respect to $V$	\\
 \code{dAbr\_dV}	& evaluates the partial derivatives of $|F_{f|t}|^2$ with respect to $V$	\\
-\code{d2Ibr\_dV2}	& evaluates the 2\textsuperscript{nd} derivatives of $I_{f|t}$ evaluates the $V$	\\
-\code{d2Sbr\_dV2}	& evaluates the 2\textsuperscript{nd} derivatives of $S_{f|t}$ evaluates the $V$	\\
-\code{d2AIbr\_dV2}	& evaluates the 2\textsuperscript{nd} derivatives of $|I_{f|t}|^2$ evaluates the $V$	\\
-\code{d2ASbr\_dV2}	& evaluates the 2\textsuperscript{nd} derivatives of $|S_{f|t}|^2$ evaluates the $V$	\\
-\code{d2Sbus\_dV2}	& evaluates the 2\textsuperscript{nd} derivatives of $S_\mathrm{bus}$ evaluates the $V$	\\
+\code{dImis\_dV}	& evaluates the partial derivatives of $I_\mathrm{mis}$ with respect to $V$	\\
+\code{dSbus\_dV}	& evaluates the partial derivatives of $S_\mathrm{bus}$ with respect to $V$	\\
+\code{d2Ibr\_dV2}	& evaluates the 2\textsuperscript{nd} derivatives of $I_{f|t}$ with respect to $V$	\\
+\code{d2Sbr\_dV2}	& evaluates the 2\textsuperscript{nd} derivatives of $S_{f|t}$ with respect to $V$	\\
+\code{d2Abr\_dV2}	& evaluates the 2\textsuperscript{nd} derivatives of $|F_{f|t}|^2$ with respect to $V$	\\
+\code{d2AIbr\_dV2}\tnote{*}	& evaluates the 2\textsuperscript{nd} derivatives of $|I_{f|t}|^2$ with respect to $V$	\\
+\code{d2ASbr\_dV2}\tnote{*}	& evaluates the 2\textsuperscript{nd} derivatives of $|S_{f|t}|^2$ with respect to $V$	\\
+\code{d2Imis\_dV2}	& evaluates the 2\textsuperscript{nd} derivatives of $I_\mathrm{mis}$ with respect to $V$	\\
+\code{d2Imis\_dVdSg}	& evaluates the 2\textsuperscript{nd} derivatives of $I_\mathrm{mis}$ with respect to $V$ and $S_g$.	\\
+\code{d2Sbus\_dV2}	& evaluates the 2\textsuperscript{nd} derivatives of $S_\mathrm{bus}$ with respect to $V$	\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {$V$ represents complex bus voltages, $I_{f|t}$ complex branch current injections, $S_{f|t}$ complex branch power injections, $I_\mathrm{bus}$ complex bus current injections, $S_\mathrm{bus}$ complex bus power injections} and $F_{f|t}$ refers to branch flows, either $I_{f|t}$ or $S_{f|t}$, depending on the inputs. The second derivatives are all actually partial derivatives of the product of a first derivative matrix and a vector $\lambda$.
+ \item [*] {Deprecated. Please use \code{d2Abr\_dV2} instead.}
+ \item [\dag] {$V$ represents complex bus voltages, $S_g$ the complex generator power injections, $I_{f|t}$ complex branch current injections, $S_{f|t}$ complex branch power injections, $I_\mathrm{mis}$ complex bus current injections, $S_\mathrm{bus}$ complex bus power injections} and $F_{f|t}$ refers to branch flows, either $I_{f|t}$ or $S_{f|t}$, depending on the inputs. The second derivatives are all actually partial derivatives of the product of a first derivative matrix and a vector $\lambda$. Please see \TNtwo{}~\cite{zimmerman2010b}, \TNthree{}~\cite{sereeter2018a} and \TNfour{}~\cite{sereeter2018b} for the detailed derivations of the formulas implemented by these functions.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -7100,6 +7116,8 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.1.pdf}{\m
 \subsubsection*{New Features}
 \begin{itemize}
 \item Three new power flow algorithms for radial distribution systems selected via the three new options for \code{pf.alg}, namely \codeq{PQSUM}, \codeq{ISUM}, \codeq{YSUM}. Also includes new \matpower{} options \code{pf.radial.max\_it} and \code{pf.radial.vcorr}. See Section~\ref{sec:pfdist} on ``Distribution Power Flow'' for details. \emph{Thanks to Mirko Todorovski.}
+\item Three new variants of the standard AC OPF formulation, for a total of four, including both nodal power and current balance constraints and both polar and cartesian representations of voltage. See the new \code{opf.current\_balance} and \code{v\_cartesian} options. \emph{Thanks to Baljinnyam Sereeter.}
+\item Derivative functions now support cartesian coordinates for voltage in addition to polar coordinates.
 \item New \matpower{} installer \code{install\_matpower()} updates \matlab{} or Octave paths or provides the commands required to so.
 \item New \code{pf.nr.lin\_solver} option to control the linear solver used to compute the Newton update step in the Newton-Raphson power flow.
 \item Support plotting of multiple nose curves in CPF by allowing option \code{cpf.plot.bus} to take on vector values.
@@ -7120,6 +7138,20 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.1.pdf}{\m
     \begin{itemize}
     \item \code{install\_matpower()} installs \matpower{} modifying or showing needed modifications to \matlab{} or Octave path.
     \item \code{gentypes()} and \code{genfuels} provide list of standard generator unit types and fuel types, respectively.
+    \item \code{dImis\_dV()} evaluates the partial derivatives of nodal current balance with respect to bus voltages.
+    \item \code{d2Imis\_dV2()} evaluates the 2\textsuperscript{nd} derivatives of nodal current balance with respect to bus voltages.
+    \item \code{d2Imis\_dVdSg()} evaluates the 2\textsuperscript{nd} derivatives of nodal current balance with respect to bus voltages and generator injections.
+    \item \code{d2Abr\_dV2()} evaluates the 2\textsuperscript{nd} derivatives of squared branch flows with respect to bus voltages.
+    \item \code{opf\_branch\_ang\_fcn()} evaluates AC branch flow limit constraints and gradients.
+    \item \code{opf\_branch\_ang\_hess()} evaluates Hessian of AC branch flow limit constraints.
+    \item \code{opf\_current\_balance\_fcn()} evaluates AC current balance constraints and gradients.
+    \item \code{opf\_current\_balance\_hess()} evaluates Hessian of AC current balance constraints.
+    \item \code{opf\_veq\_fcn()} evaluates voltage magnitude equality constraints and gradients.
+    \item \code{opf\_veq\_hess()} evaluates Hessian of voltage magnitude equality constraints.
+    \item \code{opf\_vlim\_fcn()} evaluates voltage magnitude limit constraints and gradients.
+    \item \code{opf\_vlim\_hess()} evaluates Hessian of voltage magnitude limit constraints.
+    \item \code{opf\_vref\_fcn()} evaluates reference voltage angle equality constraints and gradients.
+    \item \code{opf\_vref\_hess()} evaluates Hessian of reference voltage angle equality constraints.
     \item \code{save2psse()} to export a \matpower{} case to PSS/E RAW data format.
     \item \code{savechgtab()} to save change tables, such as those used
     by \code{apply\_changes}, to a file.
@@ -7129,6 +7161,8 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.1.pdf}{\m
     \end{itemize}
     \item Deprecated functions:
     \begin{itemize}
+    \item \code{d2AIbr\_dV2()} -- use \code{dA2br\_dV2()} instead.
+    \item \code{d2ASbr\_dV2()} -- use \code{dA2br\_dV2()} instead.
     \item \code{opt\_model/add\_constraints()} -- use the corresponding one of the following methods instead: \code{add\_lin\_constraint()}, \code{add\_nln\_constraint()}, or \code{init\_indexed\_name()}.
     \item \code{opt\_model/add\_costs()} -- use the corresponding one of the following methods instead: \code{add\_quad\_cost()},  \code{add\_nln\_cost()}, \code{add\_legacy\_cost()}, or \code{init\_indexed\_name()}.
     \item \code{opt\_model/linear\_constraints()} -- use \code{opt\_model/params\_lin\_constraint()} instead
