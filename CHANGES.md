@@ -12,6 +12,37 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 4/3/18
+  - Add three new variants of the standard AC OPF formulation, for a total
+    of four, including both nodal power and current balance constraints and
+    both polar and cartesian representations of voltage. See the new
+    `opf.current_balance` and `v_cartesian` options.
+    *Thanks to Baljinnyam Sereeter.*
+  - Update existing functions that compute derivatives with respect to
+    voltage to handle cartesian coordinate voltages in addition to polar.
+    *Thanks to Baljinnyam Sereeter.*
+  - Update existing functions that compute derivatives with respect to
+    voltage to handle cartesian coordinate voltages in addition to polar.
+    *Thanks to Baljinnyam Sereeter.*
+  - Add functions to compute derivatives of current balance constraint:
+    *Thanks to Baljinnyam Sereeter.*
+    - `dImis_dV`
+    - `d2Imis_dV2`
+    - `d2Imis_dVdSg`
+  - Add functions to implement constraints for new AC OPF variants.
+    *Thanks to Baljinnyam Sereeter.*
+    - `opf_branch_ang_fcn`, `opf_branch_ang_hess`
+    - `opf_current_balance_fcn`, `opf_current_balance_hess`
+    - `opf_veq_fcn`, `opf_veq_hess`
+    - `opf_vlim_fcn`, `opf_vlim_hess`
+    - `opf_vref_fcn`, `opf_vref_hess`
+  - Add two new Technical Notes (TN3, TN4) and updated revision of TN2.
+    *Thanks to Baljinnyam Sereeter.*
+    - [MATPOWER Technical Note 3](http://www.pserc.cornell.edu/matpower/TN3-More-OPF-Derivatives.pdf)
+    - [MATPOWER Technical Note 4](http://www.pserc.cornell.edu/matpower/TN4-OPF-Derivatives-Cartesian.pdf)
+  - Add `d2Abr_dV2()` to replace the (now deprecated) separate functions
+    `d2AIbr_dV2()` and `d2ASbr_dV2()`.
+
 #### 3/7/18
   - Replace clock()/etime() with tic()/toc() for timing.
 
