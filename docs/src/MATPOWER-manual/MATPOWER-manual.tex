@@ -1893,8 +1893,8 @@ f(P_g, Q_g) = \sum_{i=1}^{n_g} f_P^i(p_g^i) +  f_Q^i(q_g^i).
 \end{equation}
 The equality constraints in \eqref{eq:gx_eq_0} are simply the full set of $2 \cdot n_b$ nonlinear real and reactive power balance equations from \eqref{eq:acpf_p} and \eqref{eq:acpf_q}.
 \begin{alignat}{2}
-g_P(\Theta, V_m, P_g) &= P_\mathrm{bus}(\Theta, V_m) + P_d - C_g P_g &&= 0 \\
-g_Q(\Theta, V_m, Q_g) &= Q_\mathrm{bus}(\Theta, V_m) + Q_d - C_g Q_g &&= 0
+g_P(\Theta, V_m, P_g) &= P_\mathrm{bus}(\Theta, V_m) + P_d - C_g P_g &&= 0 \label{eq:polar_pwrbal_p} \\
+g_Q(\Theta, V_m, Q_g) &= Q_\mathrm{bus}(\Theta, V_m) + Q_d - C_g Q_g &&= 0 \label{eq:polar_pwrbal_q}
 \end{alignat}
 The inequality constraints \eqref{eq:hx_le_0} consist of two sets of $n_l$ branch flow limits as nonlinear functions of the bus voltage angles and magnitudes, one for the \emph{from} end and one for the \emph{to} end of each branch:
 \begin{alignat}{2}
@@ -1916,12 +1916,53 @@ where $I_f$ is defined in \eqref{eq:If}, $S_f$ in \eqref{eq:Sf}, $P_f = \Re \{S_
 
 The variable limits \eqref{eq:xlims} include an equality constraint on any reference bus angle and upper and lower limits on all bus voltage magnitudes and real and reactive generator injections:
 \begin{eqnarray}
-& \theta_i^\mathrm{ref} \le \theta_i \le \theta_i^\mathrm{ref}, \quad & i \in  \mathcal{I}_\mathrm{ref} \\
+& \theta_i^\mathrm{ref} \le \theta_i \le \theta_i^\mathrm{ref}, \quad & i \in  \mathcal{I}_\mathrm{ref} \label{eq:vref} \\
 & v_m^{i,\mathrm{min}} \le v_m^i \le v_m^{i, \mathrm{max}}, \quad & i=1 \ldots n_b \label{eq:vlims} \\
 & p_g^{i,\mathrm{min}} \le p_g^i \le p_g^{i, \mathrm{max}}, \quad & i=1 \ldots n_g \\
 & q_g^{i,\mathrm{min}} \le q_g^i \le q_g^{i, \mathrm{max}}, \quad & i=1 \ldots n_g. \label{eq:qlims}
 \end{eqnarray}
 The voltage reference angle $\theta_i^\mathrm{ref}$ and voltage magnitude bounds $v_m^{i, \mathrm{max}}$ and $v_m^{i, \mathrm{min}}$ are specified in columns \code{VA} (9), \code{VMAX} (12) and \code{VMIN} (13), respectively, of row~$i$ of the \bus{} matrix. Similarly, the generator bounds $q_g^{i,\mathrm{max}}$, $q_g^{i,\mathrm{min}}$, $p_g^{i,\mathrm{max}}$ and $p_g^{i,\mathrm{min}}$ are specfied in columns \code{QMAX} (4), \code{QMIN} (5), \code{PMAX} (9) and \code{PMIN} (10), respectively, of row~$i$ of the \gen{} matrix.
+
+\subsubsection{Cartesian vs. Polar Coordinates for Voltage}
+
+Another variation of the standard AC OPF problem represents the bus voltages in cartesian, rather than polar, coordinates. That is, instead of $\Theta$ and $V_m$, the optimization vector $x$ includes the real and imaginary parts of the complex voltage, denoted respectively by $U$ and $W$, where $V = U + j W$.
+\begin{equation}
+x = \left[\begin{array}{c}U \\ W \\ P_g \\ Q_g \end{array}\right]
+\end{equation}
+
+The objective function remains unchanged, but the nodal power balance constraints~\eqref{eq:polar_pwrbal_p} and \eqref{eq:polar_pwrbal_q} and branch flow constraints~\eqref{eq:acopf_ieqf} and \eqref{eq:acopf_ieqt} are implemented as functions of $U$ and $W$.
+\begin{alignat}{2}
+g_P(U, W, P_g) &= P_\mathrm{bus}(U, W) + P_d - C_g P_g &&= 0 \label{eq:cart_pwrbal_p} \\
+g_Q(U, W, Q_g) &= Q_\mathrm{bus}(U, W) + Q_d - C_g Q_g &&= 0 \label{eq:cart_pwrbal_q}
+\end{alignat}
+\begin{alignat}{2}
+h_f(U, W) &=\;& \left| F_f(U, W) \right| - F_\mathrm{max} &\le 0 \label{eq:acopf_ieqf_cart} \\
+h_t(U, W) &= & \left| F_t(U, W) \right| - F_\mathrm{max} &\le 0. \label{eq:acopf_ieqt_cart}
+\end{alignat}
+
+In this formulation, the voltage angle reference constraint~\eqref{eq:vref} and voltage magnitude limits~\eqref{eq:vlims} cannot be simply applied as bounds on optimization variables. These constrained quantities also become functions of $U$ and $W$.
+\begin{eqnarray}
+& \theta_i^\mathrm{ref} \le \theta_i(u_i, w_i) \le \theta_i^\mathrm{ref}, \quad & i \in  \mathcal{I}_\mathrm{ref} \label{eq:vref_cart} \\
+& v_m^{i,\mathrm{min}} \le v_m^i(u_i, w_i) \le v_m^{i, \mathrm{max}}, \quad & i=1 \ldots n_b \label{eq:vlims_cart}
+\end{eqnarray}
+
+In \matpower{} setting the \code{opf.v\_cartesian} option to 1 (0 by default) selects the cartesian representation for voltages when running an AC OPF.\footnote{This option only applies to solvers based on \mipslink{}, \code{fmincon}, \ipopt{} and \knitro{}.}
+
+\subsubsection{Current vs. Power for Nodal Balance Constraints}
+
+Another variation of the standard AC OPF problem uses current balance constraints in place of the power balance constraints~\eqref{eq:polar_pwrbal_p}--\eqref{eq:polar_pwrbal_q} or \eqref{eq:cart_pwrbal_p}--\eqref{eq:cart_pwrbal_q}. If we let $M$ and $N$ represent the real and imaginary parts, respectively, of the current, we can express the current balance functions for the polar form as
+\begin{alignat}{2}
+g_M(\Theta, V_m, P_g, Q_g) &= \Re\{I_\mathrm{bus}(\Theta, V_m) + [V^*]^{-1}(S_d - C_g S_g)^*\} &&= 0 \label{eq:polar_curbal_m} \\
+g_N(\Theta, V_m, P_g, Q_g) &= \Im\{I_\mathrm{bus}(\Theta, V_m) + [V^*]^{-1}(S_d - C_g S_g)^*\} &&= 0 \label{eq:polar_curbal_n}
+\end{alignat}
+and for the cartesian form as
+\begin{alignat}{2}
+g_M(U, W, P_g, Q_g) &= \Re\{I_\mathrm{bus}(U, W) + [V^*]^{-1}(S_d - C_g S_g)^*\} &&= 0 \label{eq:cart_curbal_m} \\
+g_N(U, W, P_g, Q_g) &= \Im\{I_\mathrm{bus}(U, W) + [V^*]^{-1}(S_d - C_g S_g)^*\} &&= 0 \label{eq:cart_curbal_n}
+\end{alignat}
+where $S_d = P_d + j Q_d$, $S_g = P_g + j Q_g$ and $[V^*]^{-1}$ is a diagonal matrix whose $i$-th diagonal entry is $1/v_i^*$, that is $\frac{1}{v_m^i}e^{j\theta_i}$ or $1/(u_i - j w_i)$.
+
+In this formulation, which can be selected by setting the \code{opf.current\_balance} option to 1,\footnote{This option only applies to solvers based on \mipslink{}, \code{fmincon}, \ipopt{} and \knitro{}.} the objective function and other constraints are not affected. This option can be used in conjuntion with either the polar or cartesian representation of bus voltages.
 
 \subsection{Standard DC OPF}
 
