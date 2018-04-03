@@ -213,6 +213,14 @@
 \newcommand{\diag}[1]{\left[{#1}\right]}                % diagonal
 \newcommand{\R}{\mathbb{R}}          % requires \usepackage{amsfonts|bbold}
 \newcommand{\der}[2]{\frac{\partial{#1}}{\partial{#2}}} % partial derivative
+\newcommand{\TNoneurl}[0]{http://www.pserc.cornell.edu/matpower/TN1-OPF-Auctions.pdf}
+\newcommand{\TNone}[0]{\href{\TNoneurl}{\it \matpower{} Technical Note 1}}
+\newcommand{\TNtwourl}[0]{http://www.pserc.cornell.edu/matpower/TN2-OPF-Derivatives.pdf}
+\newcommand{\TNtwo}[0]{\href{\TNtwourl}{\it \matpower{} Technical Note 2}}
+\newcommand{\TNthreeurl}[0]{http://www.pserc.cornell.edu/matpower/TN3-More-OPF-Derivatives.pdf}
+\newcommand{\TNthree}[0]{\href{\TNthreeurl}{\it \matpower{} Technical Note 3}}
+\newcommand{\TNfoururl}[0]{http://www.pserc.cornell.edu/matpower/TN4-OPF-Derivatives-Cartesian.pdf}
+\newcommand{\TNfour}[0]{\href{\TNfoururl}{\it \matpower{} Technical Note 4}}
 
 \def\sectionautorefname{Chapter}
 \def\subsectionautorefname{Section}
@@ -2165,7 +2173,7 @@ The difference between the bus voltage angle $\theta_f$ at the \emph{from} end o
 
 Early versions of \matpower{} relied on \matlab{}'s \ot{}~\cite{ot} to provide the NLP and QP solvers needed to solve the AC and DC OPF problems, respectively. While they worked reasonably well for very small systems, they did not scale well to larger networks. Eventually, optional packages with additional solvers were added to improve performance, typically relying on \matlab{} extension (MEX) files implemented in Fortran or C and pre-compiled for each machine architecture. Some of these MEX files are distributed as optional packages due to differences in terms of use. For DC optimal power flow, there is a MEX build~\cite{bpmpdmex} of the high performance interior point BPMPD solver~\cite{meszaros1996} for LP/QP problems. For the AC OPF problem, the MINOPF~\cite{minopf} and TSPOPF~\cite{tspopf} packages provide solvers suitable for much larger systems. The former is based on MINOS~\cite{murtagh} and the latter includes the primal-dual interior point and trust region based augmented Lagrangian methods described in~\cite{wang2007a}. \matpower{} version~4 and later also includes the option to use the open-source \ipopt{} solver\footnote{Available from \url{http://www.coin-or.org/projects/Ipopt.xml}.} for solving both AC and DC OPFs, based on the \matlab{} MEX interface to \ipopt{}\footnote{See \url{https://projects.coin-or.org/Ipopt/wiki/MatlabInterface}.}. It also includes the option to use \cplex{}\footnote{See \url{http://www.ibm.com/software/integration/optimization/cplex-optimizer/}.} or \mosek{}\footnote{See \url{http://www.mosek.com/}.} for DC OPFs. \matpower{}~4.1 added the option to use \knitro{}~\cite{knitro}\footnote{See \url{http://www.ziena.com/}.} for AC OPFs and the \gurobi{} Optimizer~\cite{gurobi}\footnote{See \url{http://www.gurobi.com/}.} for DC OPFs and \matpower{}~5 added \glpk{}~\cite{glpk} and 5.1 added \clp{}~\cite{clp}. See Appendix~\ref{app:optional_packages} for more details on these optional packages.
 
-Beginnning with version~4, \matpower{} also includes its own primal-dual interior point method implemented in pure-\matlab{} code, derived from the MEX implementation of the algorithms described in~\cite{wang2007a}. This solver is called \mips{} (\mipsname{}) and is described in more detail in Appendix~\ref{app:mips}. If no optional packages are installed, \mips{} will be used by default for both the AC OPF and as the QP solver used by the DC OPF. The AC OPF solver also employs a unique technique for efficiently forming the required Hessians via a few simple matrix operations~\cite{zimmerman2010b}. This solver has application to general nonlinear optimization problems outside of \matpower{} and can be called directly as \code{mips}. There is also a convenience wrapper function called \code{qps\_mips} making it trivial to set up and solve LP and QP problems, with an interface similar to \code{quadprog} from the \matlab{} \ot{}.
+Beginnning with version~4, \matpower{} also includes its own primal-dual interior point method implemented in pure-\matlab{} code, derived from the MEX implementation of the algorithms described in~\cite{wang2007a}. This solver is called \mips{} (\mipsname{}) and is described in more detail in Appendix~\ref{app:mips}. If no optional packages are installed, \mips{} will be used by default for both the AC OPF and as the QP solver used by the DC OPF. The AC OPF solver also employs a unique technique for efficiently forming the required Hessians via a few simple matrix operations~\cite{zimmerman2010b, sereeter2018a, sereeter2018b}. This solver has application to general nonlinear optimization problems outside of \matpower{} and can be called directly as \code{mips}. There is also a convenience wrapper function called \code{qps\_mips} making it trivial to set up and solve LP and QP problems, with an interface similar to \code{quadprog} from the \matlab{} \ot{}.
 
 
 \subsection{{\tt runopf}}
@@ -5601,7 +5609,7 @@ in the \code{docs} directory.
 \caption{\matpower{} Directory Layout and Documentation Files}
 \label{tab:docs}
 \footnotesize
-\begin{tabular}{p{0.3\textwidth}p{0.62\textwidth}}
+\begin{tabular}{p{0.42\textwidth}p{0.5\textwidth}}
 \toprule
 name & description \\
 \midrule
@@ -5611,8 +5619,10 @@ name & description \\
 \code{~~MATPOWER-manual.pdf}	& \href{\mumurl}{\matpower{} User's Manual}\tnote{\dag}	\\
 \code{~~relnotes/}	& \matpower{} release notes	\\
 \code{~~src/}	& \LaTeX{} source for \emph{\matpower{} User's Manual}	\\
-\code{~~TN1-OPF-Auctions.pdf}	& Tech Note 1 \href{http://www.pserc.cornell.edu/matpower/TN1-OPF-Auctions.pdf}{\emph{Uniform Price Auctions and Optimal Power Flow}}~\cite{zimmerman2010a}	\\
-\code{~~TN2-OPF-Derivatives.pdf}	& Tech Note 2 \href{http://www.pserc.cornell.edu/matpower/TN2-OPF-Derivatives.pdf}{\emph{AC Power Flows, Generalized OPF Costs and their Derivatives using Complex Matrix Notation}}~\cite{zimmerman2010b}	\\
+\code{~~TN1-OPF-Auctions.pdf}	& \TNone{} ``Uniform Price Auctions and Optimal Power Flow''~\cite{zimmerman2010a}	\\
+\code{~~TN2-OPF-Derivatives.pdf}	& \TNtwo{} ``AC Power Flows, Generalized OPF Costs and their Derivatives using Complex Matrix Notation''~\cite{zimmerman2010b}	\\
+\code{~~TN3-More-OPF-Derivatives.pdf}	& \TNthree{} ``Addendum to AC Power Flows and their Derivatives using Complex Matrix Notation: Nodal Current Balance''~\cite{sereeter2018a}	\\
+\code{~~TN4-OPF-Derivatives-Cartesian.pdf}	& \TNfour{} ``AC Power Flows and their Derivatives using Complex Matrix Notation and Cartesian Coordinate Voltages''~\cite{sereeter2018b}	\\
 \code{lib/}	& \matpower{} software (see Section~\ref{sec:matpowersw})	\\
 \code{~~caseformat.m}	& help file documenting \matpower{} case format (i.e.~at the command prompt, type \code{help caseformat} to see details)	\\
 \code{~~t/}	& \matpower{} tests and examples (see Section~\ref{sec:matpowertests})	\\
@@ -7130,6 +7140,15 @@ Some of these cases also include contingency tables and/or hourly load scenarios
     \end{itemize}
 \end{itemize}
 
+\subsubsection*{New Documentation}
+\begin{itemize}
+    \item Two new Tech Notes, available from \href{\matpowerurl}{\matpower{} home page}.
+        \begin{itemize}
+        \item \TNthree{} ``Addendum to AC Power Flows and their Derivatives using Complex Matrix Notation: Nodal Current Balance''~\cite{sereeter2018a}
+        \item \TNfour{} ``AC Power Flows and their Derivatives using Complex Matrix Notation and Cartesian Coordinate Voltages''~\cite{sereeter2018b}
+        \end{itemize}
+\end{itemize}
+
 \subsubsection*{Other Improvements}
 \begin{itemize}
 \item Update MIPS to version 1.3.
@@ -7820,7 +7839,13 @@ COIN-OR Linear Programming (CLP) Solver. [Online]. Available:
   \url{http://www.coin-or.org/projects/Clp.xml}.
 
 \bibitem{zimmerman2010b}
-R.~D. Zimmerman, \emph{AC Power Flows, Generalized OPF Costs and their Derivatives using Complex Matrix Notation}, \matpower{} Technical Note 2, February 2010. [Online]. Available: \url{http://www.pserc.cornell.edu/matpower/TN2-OPF-Derivatives.pdf}
+R.~D. Zimmerman, \emph{AC Power Flows, Generalized OPF Costs and their Derivatives using Complex Matrix Notation}, \TNtwo, February 2010. [Online]. Available: \url{\TNtwourl}
+
+\bibitem{sereeter2018a}
+B. Sereeter and R.~D. Zimmerman, \emph{Addendum to AC Power Flows and their Derivatives using Complex Matrix Notation: Nodal Current Balance}, \TNthree, April 2018. [Online]. Available: \url{\TNthreeurl}
+
+\bibitem{sereeter2018b}
+B. Sereeter and R.~D. Zimmerman, \emph{AC Power Flows and their Derivatives using Complex Matrix Notation and Cartesian Coordinate Voltages}, \TNfour, April 2018. [Online]. Available: \url{\TNfoururl}
 
 \bibitem{superopf2008}
 A.~J.~Lamadrid, S.~Maneevitjit, T.~D.~Mount, C.~E.~Murillo-S{\'a}nchez, R.~J.~Thomas, R.~D.~Zimmerman, ``A `SuperOPF' Framework'', \emph{CERTS Report}, December 2008. [Online]. Available: \url{http://certs.lbl.gov/pdf/superopf-framework.pdf}
@@ -7850,7 +7875,7 @@ P.~Cuffe and A.~Keane, ``Visualizing the Electrical Structure of Power Systems,'
 DOI:~\href{https://doi.org/10.1109/JSYST.2015.2427994}{10.1109/JSYST.2015.2427994}
 
 \bibitem{zimmerman2010a}
-R.~D. Zimmerman, \emph{Uniform Price Auctions and Optimal Power Flow}, \matpower{} Technical Note 1, February 2010. [Online]. Available: \url{http://www.pserc.cornell.edu/matpower/TN1-OPF-Auctions.pdf}
+R.~D. Zimmerman, \emph{Uniform Price Auctions and Optimal Power Flow}, \TNone, February 2010. [Online]. Available: \url{\TNoneurl}
 
 \bibitem{opti}
 J.~Currie and D.~I.~Wilson,``OPTI: Lowering the Barrier Between Open Source Optimizers and the Industrial MATLAB User,'' \emph{Foundations of Computer-Aided Process Operations}, Georgia, USA, 2012.
