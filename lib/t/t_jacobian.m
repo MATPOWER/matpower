@@ -292,15 +292,15 @@ t_is(dSt_dVi_full, num_dSt_dVi, 5, 'dSt_dVi (full)');
 
 %%-----  check dAbr_dV code  -----
 %% full matrices
-[dAf_dVi_full, dAf_dVr_full, dAt_dVi_full, dAt_dVr_full] = ...
-                        dAbr_dV(dSf_dVi_full, dSf_dVr_full, dSt_dVi_full, dSt_dVr_full, Sf, St);
+[dAf_dVr_full, dAf_dVi_full, dAt_dVr_full, dAt_dVi_full] = ...
+                        dAbr_dV(dSf_dVr_full, dSf_dVi_full, dSt_dVr_full, dSt_dVi_full, Sf, St);
 %% sparse matrices
-[dAf_dVi, dAf_dVr, dAt_dVi, dAt_dVr] = ...
-                        dAbr_dV(dSf_dVi, dSf_dVr, dSt_dVi, dSt_dVr, Sf, St);
-dAf_dVi_sp = full(dAf_dVi);
+[dAf_dVr, dAf_dVi, dAt_dVr, dAt_dVi] = ...
+                        dAbr_dV(dSf_dVr, dSf_dVi, dSt_dVr, dSt_dVi, Sf, St);
 dAf_dVr_sp = full(dAf_dVr);
-dAt_dVi_sp = full(dAt_dVi);
+dAf_dVi_sp = full(dAf_dVi);
 dAt_dVr_sp = full(dAt_dVr);
+dAt_dVi_sp = full(dAt_dVi);
 
 %% compute numerically to compare
 num_dAf_dVr = full( (abs(Srpf).^2 - abs(Sf2).^2) / pert );
