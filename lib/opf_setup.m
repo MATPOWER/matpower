@@ -45,6 +45,17 @@ if strcmp(alg, 'MINOPF') || strcmp(alg, 'PDIPM') || ...
 else
     legacy_formulation = 0;
 end
+if ~dc && ( ~isempty(mpopt.exp.sys_wide_zip_loads.pw) && ...
+                    ~isequal(mpopt.exp.sys_wide_zip_loads.pw, [1 0 0]) || ...
+            ~isempty(mpopt.exp.sys_wide_zip_loads.qw) && ...
+                    ~isequal(mpopt.exp.sys_wide_zip_loads.qw, [1 0 0]) )
+    if vcart
+        warning('Voltage dependent loads are not supported with option ''opf.v_cartesian'' = 1. Reverting to constant power load model.');
+    end
+    if mpopt.opf.current_balance
+        warning('Voltage dependent loads are not supported with option ''opf.current_balance'' = 1. Reverting to constant power load model.');
+    end
+end
 
 %% data dimensions
 nb   = size(mpc.bus, 1);    %% number of buses
