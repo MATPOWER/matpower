@@ -74,8 +74,8 @@ if vcart
     G = 1j * (E - E.');
 
     G11 = F;        %% Grr
-    G12 = G;        %% Gri
-    G21 = G12.';    %% Gir
+    G21 = G;        %% Gir
+    G12 = G21.';    %% Gri
     G22 = G11;      %% Gii
 else
     Ibus    = Ybus * V;
