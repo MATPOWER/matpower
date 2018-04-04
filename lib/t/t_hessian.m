@@ -4,6 +4,7 @@ function t_hessian(quiet)
 %   MATPOWER
 %   Copyright (c) 2004-2016, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
+%   and Baljinnyam Sereeter, Delft University of Technology
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -194,8 +195,8 @@ t_is(full(Gtav), num_Gtav, 4, ['Gtav' t]);
 t_is(full(Gtva), num_Gtva, 4, ['Gtva' t]);
 t_is(full(Gtvv), num_Gtvv, 4, ['Gtvv' t]);
 
-%%-----  check d2AIbr_dV2 code  -----
-t = ' - d2AIbr_dV2 (squared current magnitudes)';
+%%-----  check d2Abr_dV2 code  -----
+t = ' - d2Abr_dV2 (squared current magnitudes)';
 lam = 10 * rand(nl, 1);
 % lam = [1; zeros(nl-1, 1)];
 num_Gfaa = zeros(nb, nb);
@@ -206,11 +207,13 @@ num_Gtaa = zeros(nb, nb);
 num_Gtav = zeros(nb, nb);
 num_Gtva = zeros(nb, nb);
 num_Gtvv = zeros(nb, nb);
+d2If_dV2 = @(V, mu)d2Ibr_dV2(Yf, V, mu, vcart);
+d2It_dV2 = @(V, mu)d2Ibr_dV2(Yt, V, mu, vcart);
 [dIf_dVa, dIf_dVm, dIt_dVa, dIt_dVm, If, It] = dIbr_dV(branch, Yf, Yt, V, vcart);
 [dAf_dVa, dAf_dVm, dAt_dVa, dAt_dVm] = ...
                         dAbr_dV(dIf_dVa, dIf_dVm, dIt_dVa, dIt_dVm, If, It);
-[Gfaa, Gfav, Gfva, Gfvv] = d2AIbr_dV2(dIf_dVa, dIf_dVm, If, Yf, V, lam, vcart);
-[Gtaa, Gtav, Gtva, Gtvv] = d2AIbr_dV2(dIt_dVa, dIt_dVm, It, Yt, V, lam, vcart);
+[Gfaa, Gfav, Gfva, Gfvv] = d2Abr_dV2(d2If_dV2, dIf_dVa, dIf_dVm, If, V, lam);
+[Gtaa, Gtav, Gtva, Gtvv] = d2Abr_dV2(d2It_dV2, dIt_dVa, dIt_dVm, It, V, lam);
 for i = 1:nb
     Vap = V;
     Vap(i) = Vm(i) * exp(1j * (Va(i) + pert));
@@ -245,8 +248,8 @@ t_is(full(Gtav), num_Gtav, 3, ['Gtav' t]);
 t_is(full(Gtva), num_Gtva, 3, ['Gtva' t]);
 t_is(full(Gtvv), num_Gtvv, 2, ['Gtvv' t]);
 
-%%-----  check d2ASbr_dV2 code  -----
-t = ' - d2ASbr_dV2 (squared apparent power flows)';
+%%-----  check d2Abr_dV2 code  -----
+t = ' - d2Abr_dV2 (squared apparent power flows)';
 lam = 10 * rand(nl, 1);
 % lam = [1; zeros(nl-1, 1)];
 num_Gfaa = zeros(nb, nb);
@@ -257,11 +260,13 @@ num_Gtaa = zeros(nb, nb);
 num_Gtav = zeros(nb, nb);
 num_Gtva = zeros(nb, nb);
 num_Gtvv = zeros(nb, nb);
+d2Sf_dV2 = @(V, mu)d2Sbr_dV2(Cf, Yf, V, mu, vcart);
+d2St_dV2 = @(V, mu)d2Sbr_dV2(Ct, Yt, V, mu, vcart);
 [dSf_dVa, dSf_dVm, dSt_dVa, dSt_dVm, Sf, St] = dSbr_dV(branch, Yf, Yt, V, vcart);
 [dAf_dVa, dAf_dVm, dAt_dVa, dAt_dVm] = ...
                         dAbr_dV(dSf_dVa, dSf_dVm, dSt_dVa, dSt_dVm, Sf, St);
-[Gfaa, Gfav, Gfva, Gfvv] = d2ASbr_dV2(dSf_dVa, dSf_dVm, Sf, Cf, Yf, V, lam, vcart);
-[Gtaa, Gtav, Gtva, Gtvv] = d2ASbr_dV2(dSt_dVa, dSt_dVm, St, Ct, Yt, V, lam, vcart);
+[Gfaa, Gfav, Gfva, Gfvv] = d2Abr_dV2(d2Sf_dV2, dSf_dVa, dSf_dVm, Sf, V, lam);
+[Gtaa, Gtav, Gtva, Gtvv] = d2Abr_dV2(d2St_dV2, dSt_dVa, dSt_dVm, St, V, lam);
 for i = 1:nb
     Vap = V;
     Vap(i) = Vm(i) * exp(1j * (Va(i) + pert));
@@ -296,8 +301,8 @@ t_is(full(Gtav), num_Gtav, 2, ['Gtav' t]);
 t_is(full(Gtva), num_Gtva, 2, ['Gtva' t]);
 t_is(full(Gtvv), num_Gtvv, 2, ['Gtvv' t]);
 
-%%-----  check d2ASbr_dV2 code  -----
-t = ' - d2ASbr_dV2 (squared real power flows)';
+%%-----  check d2Abr_dV2 code  -----
+t = ' - d2Abr_dV2 (squared real power flows)';
 lam = 10 * rand(nl, 1);
 % lam = [1; zeros(nl-1, 1)];
 num_Gfaa = zeros(nb, nb);
@@ -308,11 +313,13 @@ num_Gtaa = zeros(nb, nb);
 num_Gtav = zeros(nb, nb);
 num_Gtva = zeros(nb, nb);
 num_Gtvv = zeros(nb, nb);
+d2Sf_dV2 = @(V, mu)d2Sbr_dV2(Cf, Yf, V, mu, vcart);
+d2St_dV2 = @(V, mu)d2Sbr_dV2(Ct, Yt, V, mu, vcart);
 [dSf_dVa, dSf_dVm, dSt_dVa, dSt_dVm, Sf, St] = dSbr_dV(branch, Yf, Yt, V, vcart);
 [dAf_dVa, dAf_dVm, dAt_dVa, dAt_dVm] = ...
                         dAbr_dV(real(dSf_dVa), real(dSf_dVm), real(dSt_dVa), real(dSt_dVm), real(Sf), real(St));
-[Gfaa, Gfav, Gfva, Gfvv] = d2ASbr_dV2(real(dSf_dVa), real(dSf_dVm), real(Sf), Cf, Yf, V, lam, vcart);
-[Gtaa, Gtav, Gtva, Gtvv] = d2ASbr_dV2(real(dSt_dVa), real(dSt_dVm), real(St), Ct, Yt, V, lam, vcart);
+[Gfaa, Gfav, Gfva, Gfvv] = d2Abr_dV2(d2Sf_dV2, real(dSf_dVa), real(dSf_dVm), real(Sf), V, lam);
+[Gtaa, Gtav, Gtva, Gtvv] = d2Abr_dV2(d2St_dV2, real(dSt_dVa), real(dSt_dVm), real(St), V, lam);
 for i = 1:nb
     Vap = V;
     Vap(i) = Vm(i) * exp(1j * (Va(i) + pert));
@@ -496,8 +503,8 @@ t_is(full(Gtri), num_Gtri, 4, ['Gtri' t]);
 t_is(full(Gtir), num_Gtir, 4, ['Gtir' t]);
 t_is(full(Gtii), num_Gtii, 4, ['Gtii' t]);
 
-%%-----  check d2AIbr_dV2 code  -----
-t = ' - d2AIbr_dV2 (squared current magnitudes)';
+%%-----  check d2Abr_dV2 code  -----
+t = ' - d2Abr_dV2 (squared current magnitudes)';
 lam = 10 * rand(nl, 1);
 % lam = [1; zeros(nl-1, 1)];
 num_Gfrr = zeros(nb, nb);
@@ -508,11 +515,13 @@ num_Gtrr = zeros(nb, nb);
 num_Gtri = zeros(nb, nb);
 num_Gtir = zeros(nb, nb);
 num_Gtii = zeros(nb, nb);
+d2If_dV2 = @(V, mu)d2Ibr_dV2(Yf, V, mu, vcart);
+d2It_dV2 = @(V, mu)d2Ibr_dV2(Yt, V, mu, vcart);
 [dIf_dVr, dIf_dVi, dIt_dVr, dIt_dVi, If, It] = dIbr_dV(branch, Yf, Yt, V, vcart);
 [dAf_dVr, dAf_dVi, dAt_dVr, dAt_dVi] = ...
                         dAbr_dV(dIf_dVr, dIf_dVi, dIt_dVr, dIt_dVi, If, It);
-[Gfrr, Gfri, Gfir, Gfii] = d2AIbr_dV2(dIf_dVr, dIf_dVi, If, Yf, V, lam, vcart);
-[Gtrr, Gtri, Gtir, Gtii] = d2AIbr_dV2(dIt_dVr, dIt_dVi, It, Yt, V, lam, vcart);
+[Gfrr, Gfri, Gfir, Gfii] = d2Abr_dV2(d2If_dV2, dIf_dVr, dIf_dVi, If, V, lam);
+[Gtrr, Gtri, Gtir, Gtii] = d2Abr_dV2(d2It_dV2, dIt_dVr, dIt_dVi, It, V, lam);
 for i = 1:nb
     Vrp = V;
     Vrp(i) = (Vr(i) + pert) + 1j * Vi(i);
@@ -547,8 +556,8 @@ t_is(full(Gtri), num_Gtri, 3, ['Gtri' t]);
 t_is(full(Gtir), num_Gtir, 3, ['Gtir' t]);
 t_is(full(Gtii), num_Gtii, 3, ['Gtii' t]);
 
-%%-----  check d2ASbr_dV2 code  -----
-t = ' - d2ASbr_dV2 (squared apparent power flows)';
+%%-----  check d2Abr_dV2 code  -----
+t = ' - d2Abr_dV2 (squared apparent power flows)';
 lam = 10 * rand(nl, 1);
 % lam = [1; zeros(nl-1, 1)];
 num_Gfrr = zeros(nb, nb);
@@ -559,11 +568,13 @@ num_Gtrr = zeros(nb, nb);
 num_Gtri = zeros(nb, nb);
 num_Gtir = zeros(nb, nb);
 num_Gtii = zeros(nb, nb);
+d2Sf_dV2 = @(V, mu)d2Sbr_dV2(Cf, Yf, V, mu, vcart);
+d2St_dV2 = @(V, mu)d2Sbr_dV2(Ct, Yt, V, mu, vcart);
 [dSf_dVr, dSf_dVi, dSt_dVr, dSt_dVi, Sf, St] = dSbr_dV(branch, Yf, Yt, V, vcart);
 [dAf_dVr, dAf_dVi, dAt_dVr, dAt_dVi] = ...
                         dAbr_dV(dSf_dVr, dSf_dVi, dSt_dVr, dSt_dVi, Sf, St);
-[Gfrr, Gfri, Gfir, Gfii] = d2ASbr_dV2(dSf_dVr, dSf_dVi, Sf, Cf, Yf, V, lam, vcart);
-[Gtrr, Gtri, Gtir, Gtii] = d2ASbr_dV2(dSt_dVr, dSt_dVi, St, Ct, Yt, V, lam, vcart);
+[Gfrr, Gfri, Gfir, Gfii] = d2Abr_dV2(d2Sf_dV2, dSf_dVr, dSf_dVi, Sf, V, lam);
+[Gtrr, Gtri, Gtir, Gtii] = d2Abr_dV2(d2St_dV2, dSt_dVr, dSt_dVi, St, V, lam);
 for i = 1:nb
     Vrp = V;
     Vrp(i) = (Vr(i) + pert) + 1j * Vi(i);
@@ -598,8 +609,8 @@ t_is(full(Gtri), num_Gtri, 2, ['Gtri' t]);
 t_is(full(Gtir), num_Gtir, 2, ['Gtir' t]);
 t_is(full(Gtii), num_Gtii, 2, ['Gtii' t]);
 
-%%-----  check d2ASbr_dV2 code  -----
-t = ' - d2ASbr_dV2 (squared real power flows)';
+%%-----  check d2Abr_dV2 code  -----
+t = ' - d2Abr_dV2 (squared real power flows)';
 lam = 10 * rand(nl, 1);
 % lam = [1; zeros(nl-1, 1)];
 num_Gfrr = zeros(nb, nb);
@@ -610,11 +621,13 @@ num_Gtrr = zeros(nb, nb);
 num_Gtri = zeros(nb, nb);
 num_Gtir = zeros(nb, nb);
 num_Gtii = zeros(nb, nb);
+d2Sf_dV2 = @(V, mu)d2Sbr_dV2(Cf, Yf, V, mu, vcart);
+d2St_dV2 = @(V, mu)d2Sbr_dV2(Ct, Yt, V, mu, vcart);
 [dSf_dVr, dSf_dVi, dSt_dVr, dSt_dVi, Sf, St] = dSbr_dV(branch, Yf, Yt, V, vcart);
 [dAf_dVr, dAf_dVi, dAt_dVr, dAt_dVi] = ...
                         dAbr_dV(real(dSf_dVr), real(dSf_dVi), real(dSt_dVr), real(dSt_dVi), real(Sf), real(St));
-[Gfrr, Gfri, Gfir, Gfii] = d2ASbr_dV2(real(dSf_dVr), real(dSf_dVi), real(Sf), Cf, Yf, V, lam, vcart);
-[Gtrr, Gtri, Gtir, Gtii] = d2ASbr_dV2(real(dSt_dVr), real(dSt_dVi), real(St), Ct, Yt, V, lam, vcart);
+[Gfrr, Gfri, Gfir, Gfii] = d2Abr_dV2(d2Sf_dV2, real(dSf_dVr), real(dSf_dVi), real(Sf), V, lam);
+[Gtrr, Gtri, Gtir, Gtii] = d2Abr_dV2(d2St_dV2, real(dSt_dVr), real(dSt_dVi), real(St), V, lam);
 for i = 1:nb
     Vrp = V;
     Vrp(i) = (Vr(i) + pert) + 1j * Vi(i);

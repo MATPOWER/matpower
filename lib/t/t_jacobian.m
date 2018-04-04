@@ -4,6 +4,7 @@ function t_jacobian(quiet)
 %   MATPOWER
 %   Copyright (c) 2004-2016, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
+%   and Baljinnyam Sereeter, Delft University of Technology
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
