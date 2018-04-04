@@ -36,7 +36,7 @@ function [H11, H12, H21, H22] = d2Abr_dV2(d2F_dV2, dF_dV1, dF_dV2, F, V, mu)
 %     H21 = d/dV1 (dAF_dV2.' * mu)
 %     H22 = d/dV2 (dAF_dV2.' * mu)
 %
-%   See also DSBR_DV.
+%   See also DABR_DV, DIBR_DV, DSBR_DV.
 %
 %   For more details on the derivations behind the derivative code used
 %   in MATPOWER information, see:

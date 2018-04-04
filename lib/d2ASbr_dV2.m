@@ -8,14 +8,14 @@ function [H11, H12, H21, H22] = ...
 %   The derivatives can be take with respect to polar or cartesian coordinates
 %   of voltage, depending on the 8th argument.
 %
-%   [H11, H12, H21, H22] = D2ASBR_DV2(DSBR_DV1, DSBR_DV2, SBR, CBR, YBR, V, MU)
-%   [H11, H12, H21, H22] = D2ASBR_DV2(DSBR_DV1, DSBR_DV2, SBR, CBR, YBR, V, MU, 0)
+%   [HAA, HAV, HVA, HVV] = D2ASBR_DV2(DSBR_DV1, DSBR_DV2, SBR, CBR, YBR, V, MU)
+%   [HAA, HAV, HVA, HVV] = D2ASBR_DV2(DSBR_DV1, DSBR_DV2, SBR, CBR, YBR, V, MU, 0)
 %
 %   Returns 4 matrices containing the partial derivatives w.r.t. voltage
 %   angle and magnitude of the product of a vector MU with the 1st partial
 %   derivatives of the square of the magnitude of branch power flows.
 %
-%   [H11, H12, H21, H22] = D2ASBR_DV2(DSBR_DV1, DSBR_DV2, SBR, CBR, YBR, V, MU, 1)
+%   [HRR, HRI, HIR, HII] = D2ASBR_DV2(DSBR_DV1, DSBR_DV2, SBR, CBR, YBR, V, MU, 1)
 %
 %   Returns 4 matrices containing the partial derivatives w.r.t. real and
 %   imaginary part of complex voltage of the product of a vector MU with the
@@ -32,14 +32,14 @@ function [H11, H12, H21, H22] = ...
 %       Cf =  sparse(1:nl, f, ones(nl, 1), nl, nb);
 %       [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
 %       [dSf_dV1, dSf_dV2, dSt_dV1, dSt_dV2, Sf, St] = ...
-%               dSbr_dV(branch, Yf, Yt, V);
+%               dSbr_dV(branch, Yf, Yt, V, vcart);
 %       Cbr = Cf;
 %       Ybr = Yf;
 %       dSbr_dV1 = dSf_dV1;
 %       dSbr_dV2 = dSf_dV2;
 %       Sbr = Sf;
 %       [H11, H12, H21, H22] = ...
-%             d2ASbr_dV2(dSbr_dV1, dSbr_dV2, Sbr, Cbr, Ybr, V, mu);
+%             d2ASbr_dV2(dSbr_dV1, dSbr_dV2, Sbr, Cbr, Ybr, V, mu, vcart);
 %
 %   Here the output matrices correspond to:
 %     H11 = d/dV1 (dASbr_dV1.' * mu)
@@ -47,7 +47,7 @@ function [H11, H12, H21, H22] = ...
 %     H21 = d/dV1 (dASbr_dV2.' * mu)
 %     H22 = d/dV2 (dASbr_dV2.' * mu)
 %
-%   See also DSBR_DV.
+%   See also DSBR_DV, DABR_DV.
 %
 %   For more details on the derivations behind the derivative code used
 %   in MATPOWER information, see:
