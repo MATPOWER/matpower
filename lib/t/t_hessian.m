@@ -102,11 +102,7 @@ for vcart = 0:1
     num_H12 = zeros(nb, nb);
     num_H21 = zeros(nb, nb);
     num_H22 = zeros(nb, nb);
-    if vcart
-        [dSbus_dV1, dSbus_dV2] = dSbus_dV(Ybus, V, vcart);
-    else    %% for backward compatibility dSbus_dV still returns opposite order
-        [dSbus_dV2, dSbus_dV1] = dSbus_dV(Ybus, V, vcart);
-    end
+    [dSbus_dV1, dSbus_dV2] = dSbus_dV(Ybus, V, vcart);
     [H11, H12, H21, H22] = d2Sbus_dV2(Ybus, V, lam, vcart);
     for i = 1:nb
         V1p = V;
@@ -118,19 +114,11 @@ for vcart = 0:1
             V1p(i) = Vm(i) * exp(1j * (Va(i) + pert));  %% perturb Va
             V2p(i) = (Vm(i) + pert) * exp(1j * Va(i));  %% perturb Vm
         end
-        if vcart
-            [dSbus_dV1_1p, dSbus_dV2_1p] = dSbus_dV(Ybus, V1p, vcart);
-        else    %% for backward compatibility dSbus_dV still returns opposite order
-            [dSbus_dV2_1p, dSbus_dV1_1p] = dSbus_dV(Ybus, V1p, vcart);
-        end
+        [dSbus_dV1_1p, dSbus_dV2_1p] = dSbus_dV(Ybus, V1p, vcart);
         num_H11(:, i) = (dSbus_dV1_1p - dSbus_dV1).' * lam / pert;
         num_H21(:, i) = (dSbus_dV2_1p - dSbus_dV2).' * lam / pert;
 
-        if vcart
-            [dSbus_dV1_2p, dSbus_dV2_2p] = dSbus_dV(Ybus, V2p, vcart);
-        else    %% for backward compatibility dSbus_dV still returns opposite order
-            [dSbus_dV2_2p, dSbus_dV1_2p] = dSbus_dV(Ybus, V2p, vcart);
-        end
+        [dSbus_dV1_2p, dSbus_dV2_2p] = dSbus_dV(Ybus, V2p, vcart);
         num_H12(:, i) = (dSbus_dV1_2p - dSbus_dV1).' * lam / pert;
         num_H22(:, i) = (dSbus_dV2_2p - dSbus_dV2).' * lam / pert;
     end

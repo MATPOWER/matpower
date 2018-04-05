@@ -73,15 +73,9 @@ g = [ real(mis);    %% active power mismatch
 %%----- evaluate constraint gradients -----
 if nargout > 1
     %% compute partials of injected bus powers
-%     [dSbus_dV1, dSbus_dV2] = dSbus_dV(Ybus, V, mpopt.opf.v_cartesian);  %% w.r.t. V
-%     (currently returns the opposite order for polar coordinates)
+    [dSbus_dV1, dSbus_dV2] = dSbus_dV(Ybus, V, mpopt.opf.v_cartesian);  %% w.r.t. V
     neg_Cg = sparse(gen(:, GEN_BUS), 1:ng, -1, nb, ng);     %% Pbus w.r.t. Pg
-    if mpopt.opf.v_cartesian
-        [dSbus_dV1, dSbus_dV2] = dSbus_dV(Ybus, V, 1);  %% w.r.t. V (cartesian)
-    else
-        [dSbus_dV2, dSbus_dV1] = dSbus_dV(Ybus, V, 0);  %% w.r.t. V (polar)
-        %% (notice it returns in opposite order, for backward compatibility)
-
+    if ~mpopt.opf.v_cartesian
         %% adjust for voltage dependent loads
         [dummy, neg_dSd_dVm] = makeSbus(baseMVA, bus, gen, mpopt, Vm);
         dSbus_dV2 = dSbus_dV2 - neg_dSd_dVm;

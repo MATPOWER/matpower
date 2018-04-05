@@ -87,18 +87,10 @@ for vcart = 0:1
 
     %%-----  check dSbus_dV code  -----
     %% full matrices
-    if vcart
-        [dSbus_dV1_full, dSbus_dV2_full] = dSbus_dV(Ybus_full, V, vcart);
-    else    %% for backward compatibility dSbus_dV still returns opposite order
-        [dSbus_dV2_full, dSbus_dV1_full] = dSbus_dV(Ybus_full, V, vcart);
-    end
+    [dSbus_dV1_full, dSbus_dV2_full] = dSbus_dV(Ybus_full, V, vcart);
 
     %% sparse matrices
-    if vcart
-        [dSbus_dV1, dSbus_dV2] = dSbus_dV(Ybus, V, vcart);
-    else    %% for backward compatibility dSbus_dV still returns opposite order
-        [dSbus_dV2, dSbus_dV1] = dSbus_dV(Ybus, V, vcart);
-    end
+    [dSbus_dV1, dSbus_dV2] = dSbus_dV(Ybus, V, vcart);
     dSbus_dV1_sp = full(dSbus_dV1);
     dSbus_dV2_sp = full(dSbus_dV2);
 

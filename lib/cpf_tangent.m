@@ -43,7 +43,7 @@ npq = length(pq);
 Vm = abs(V);
 
 %% compute Jacobian for the power flow equations
-[dSbus_dVm, dSbus_dVa] = dSbus_dV(Ybus, V);
+[dSbus_dVa, dSbus_dVm] = dSbus_dV(Ybus, V);
 [dummy, neg_dSdb_dVm] = Sbusb(Vm);
 [dummy, neg_dSdt_dVm] = Sbust(Vm);
 dSbus_dVm = dSbus_dVm - neg_dSdb_dVm - lam * (neg_dSdt_dVm - neg_dSdb_dVm);

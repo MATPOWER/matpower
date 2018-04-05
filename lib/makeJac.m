@@ -64,7 +64,7 @@ k = find(bus(gbus, BUS_TYPE) == PV | bus(gbus, BUS_TYPE) == REF);
 V(gbus(k)) = gen(on(k), VG) ./ abs(V(gbus(k))).* V(gbus(k));
 
 %% build Jacobian
-[dSbus_dVm, dSbus_dVa] = dSbus_dV(Ybus, V);
+[dSbus_dVa, dSbus_dVm] = dSbus_dV(Ybus, V);
 if fullJac
     j11 = real(dSbus_dVa);
     j12 = real(dSbus_dVm);

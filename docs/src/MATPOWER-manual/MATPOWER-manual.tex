@@ -7257,6 +7257,7 @@ Some of these cases also include contingency tables and/or hourly load scenarios
 
 \subsubsection*{Incompatible Changes}
 \begin{itemize}
+\item Swap the order of the output arguments of \code{dSbus\_dV()}) for polar coordinate voltages (angle before magnitude) for consistency.
 \item Move included \matpower{} case files to new \code{data} subdirectory.
 \item Remove \code{nln.mu.l.<name>} and \code{nln.mu.u.<name>} fields from OPF \code{results} struct. Use \code{nle.lambda.<name>} and \code{nli.mu.<name>} fields instead for nonlinear constraint multipliers.
 \item Modify order of default output arguments of \code{opt\_model/get\_idx()}.

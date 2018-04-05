@@ -84,7 +84,7 @@ while (~converged && i < max_it)
     i = i + 1;
     
     %% evaluate Jacobian
-    [dSbus_dVm, dSbus_dVa] = dSbus_dV(Ybus, V);
+    [dSbus_dVa, dSbus_dVm] = dSbus_dV(Ybus, V);
     [dummy, neg_dSd_dVm] = Sbus(Vm);
     dSbus_dVm = dSbus_dVm - neg_dSd_dVm;
     

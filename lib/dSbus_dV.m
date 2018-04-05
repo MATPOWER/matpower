@@ -4,11 +4,11 @@ function [dSbus_dV1, dSbus_dV2] = dSbus_dV(Ybus, V, vcart)
 %   The derivatives can be take with respect to polar or cartesian coordinates
 %   of voltage, depending on the 3rd argument.
 %
-%   [DSBUS_DVM, DSBUS_DVA] = DSBUS_DV(YBUS, V)
-%   [DSBUS_DVM, DSBUS_DVA] = DSBUS_DV(YBUS, V, 0)
+%   [DSBUS_DVA, DSBUS_DVM] = DSBUS_DV(YBUS, V)
+%   [DSBUS_DVA, DSBUS_DVM] = DSBUS_DV(YBUS, V, 0)
 %
 %   Returns two matrices containing partial derivatives of the complex bus
-%   power injections w.r.t voltage magnitude and voltage angle, respectively
+%   power injections w.r.t voltage angle and voltage magnitude, respectively
 %   (for all buses).
 %
 %   [DSBUS_DVR, DSBUS_DVI] = DSBUS_DV(YBUS, V, 1)
@@ -63,7 +63,7 @@ function [dSbus_dV1, dSbus_dV2] = dSbus_dV(Ybus, V, vcart)
 %
 %   Examples:
 %       [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
-%       [dSbus_dVm, dSbus_dVa] = dSbus_dV(Ybus, V);
+%       [dSbus_dVa, dSbus_dVm] = dSbus_dV(Ybus, V);
 %       [dSbus_dVr, dSbus_dVi] = dSbus_dV(Ybus, V, 1);
 %
 %   For more details on the derivations behind the derivative code used
@@ -114,6 +114,6 @@ if vcart
     dSbus_dV1 = conj(diagIbus) + diagV * conj(Ybus);        %% dSbus/dVr
     dSbus_dV2 = 1j * (conj(diagIbus) - diagV * conj(Ybus)); %% dSbus/dVi
 else
-    dSbus_dV1 = diagV * conj(Ybus * diagVnorm) + conj(diagIbus) * diagVnorm;    %% dSbus/dVm
-    dSbus_dV2 = 1j * diagV * conj(diagIbus - Ybus * diagV);                     %% dSbus/dVa
+    dSbus_dV1 = 1j * diagV * conj(diagIbus - Ybus * diagV);                     %% dSbus/dVa
+    dSbus_dV2 = diagV * conj(Ybus * diagVnorm) + conj(diagIbus) * diagVnorm;    %% dSbus/dVm
 end

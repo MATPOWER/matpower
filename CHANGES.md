@@ -12,6 +12,11 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 4/5/18
+  - **INCOMPATIBLE CHANGE:** Swap the order of the output arguments of
+    `dSbus_dV()` for polar coordinate voltages (angle before magnitude)
+    for consistency.
+
 #### 4/3/18
   - Add three new variants of the standard AC OPF formulation, for a total
     of four, including both nodal power and current balance constraints and
