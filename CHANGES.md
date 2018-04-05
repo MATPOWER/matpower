@@ -16,7 +16,7 @@ Since last release
   - Add three new variants of the standard AC OPF formulation, for a total
     of four, including both nodal power and current balance constraints and
     both polar and cartesian representations of voltage. See the new
-    `opf.current_balance` and `v_cartesian` options.
+    `opf.current_balance` and `opf.v_cartesian` options.
     *Thanks to Baljinnyam Sereeter.*
   - Update existing functions that compute derivatives with respect to
     voltage to handle cartesian coordinate voltages in addition to polar.

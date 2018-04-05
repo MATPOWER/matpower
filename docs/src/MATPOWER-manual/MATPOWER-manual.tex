@@ -7116,7 +7116,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.1.pdf}{\m
 \subsubsection*{New Features}
 \begin{itemize}
 \item Three new power flow algorithms for radial distribution systems selected via the three new options for \code{pf.alg}, namely \codeq{PQSUM}, \codeq{ISUM}, \codeq{YSUM}. Also includes new \matpower{} options \code{pf.radial.max\_it} and \code{pf.radial.vcorr}. See Section~\ref{sec:pfdist} on ``Distribution Power Flow'' for details. \emph{Thanks to Mirko Todorovski.}
-\item Three new variants of the standard AC OPF formulation, for a total of four, including both nodal power and current balance constraints and both polar and cartesian representations of voltage. See the new \code{opf.current\_balance} and \code{v\_cartesian} options. \emph{Thanks to Baljinnyam Sereeter.}
+\item Three new variants of the standard AC OPF formulation, for a total of four, including both nodal power and current balance constraints and both polar and cartesian representations of voltage. See the new \code{opf.current\_balance} and \code{opf.v\_cartesian} options. \emph{Thanks to Baljinnyam Sereeter.}
 \item Derivative functions now support cartesian coordinates for voltage in addition to polar coordinates.
 \item New \matpower{} installer \code{install\_matpower()} updates \matlab{} or Octave paths or provides the commands required to so.
 \item New \code{pf.nr.lin\_solver} option to control the linear solver used to compute the Newton update step in the Newton-Raphson power flow.
