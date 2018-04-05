@@ -13,12 +13,14 @@ if nargin < 1
     quiet = 0;
 end
 
+skip_failing_tests = 1;
+
 %% current mismatch, cartesian V
 options = {
     {0, 0},
-%    {0, 1},    % commented out because some tests were failing
-%    {1, 0},    % commented out because some tests were failing
-%    {1, 1},    % commented out because some tests were failing
+    {0, 1},
+    {1, 0},
+    {1, 1},
 };
 
 num_tests = 204;
@@ -87,6 +89,9 @@ for k = 1:length(options)
     for s = 0:3
         mpopt = mpoption(mpopt, 'opf.start', s);
         t = sprintf('%s(start=%d): ', t0, s);
+        if skip_failing_tests && ~mpopt.opf.current_balance && mpopt.opf.v_cartesian
+            t_skip(12, [t 'NONCONVERGENT']);
+        else
         [baseMVA, bus, gen, gencost, branch, f, success, et] = runopf(casefile, mpopt);
         t_ok(success, [t 'success']);
         t_is(f, f_soln, 3, [t 'f']);
@@ -100,11 +105,15 @@ for k = 1:length(options)
         t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
         t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
         t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
+        end
     end
     mpopt = mpoption(mpopt, 'opf.start', 0);    %% set 'opf.start' back to default
 
     %% run with automatic conversion of single-block pwl to linear costs
     t = [t0 '(single-block PWL) : '];
+    if skip_failing_tests && ~mpopt.opf.current_balance && mpopt.opf.v_cartesian
+        t_skip(13, [t 'NONCONVERGENT']);
+    else
     mpc = loadcase(casefile);
     mpc.gencost(3, NCOST) = 2;
     [r, success] = runopf(mpc, mpopt);
@@ -127,12 +136,16 @@ for k = 1:length(options)
         xr = [r.var.val.Va;r.var.val.Vm;r.var.val.Pg;r.var.val.Qg;0;r.var.val.y];
     end
     t_is(r.x, xr, 8, [t 'raw x returned from OPF']);
+    end
 
     %% get solved AC OPF case from MAT-file
     load soln9_opf_Plim;       %% defines bus_soln, gen_soln, branch_soln, f_soln
 
     %% run OPF with active power line limits
     t = [t0 '(P line lim) : '];
+    if skip_failing_tests && (mpopt.opf.current_balance || mpopt.opf.v_cartesian)
+        t_skip(12, [t 'NONCONVERGENT']);
+    else
     mpopt1 = mpoption(mpopt, 'opf.flow_lim', 'P');
     [baseMVA, bus, gen, gencost, branch, f, success, et] = runopf(casefile, mpopt1);
     t_ok(success, [t 'success']);
@@ -147,8 +160,12 @@ for k = 1:length(options)
     t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
     t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
     t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
+    end
 
     t = [t0 '(P^2 line lim) : '];
+    if skip_failing_tests && ~mpopt.opf.current_balance && mpopt.opf.v_cartesian
+        t_skip(12, [t 'NONCONVERGENT']);
+    else
     mpopt1 = mpoption(mpopt, 'opf.flow_lim', '2');
     [baseMVA, bus, gen, gencost, branch, f, success, et] = runopf(casefile, mpopt1);
     t_ok(success, [t 'success']);
@@ -163,6 +180,7 @@ for k = 1:length(options)
     t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
     t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
     t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
+    end
 
     %%-----  test OPF with quadratic gen costs moved to generalized costs  -----
     mpc = loadcase(casefile);
@@ -195,6 +213,9 @@ for k = 1:length(options)
 
     %% run OPF with quadratic gen costs moved to generalized costs
     t = [t0 'w/quadratic generalized gen cost : '];
+    if skip_failing_tests && ~mpopt.opf.current_balance && mpopt.opf.v_cartesian
+        t_skip(13, [t 'NONCONVERGENT']);
+    else
     [r, success] = opf(mpc, A, l, u, mpopt, N, fparm, H, Cw);
     [f, bus, gen, branch] = deal(r.f, r.bus, r.gen, r.branch);
     t_ok(success, [t 'success']);
@@ -210,6 +231,7 @@ for k = 1:length(options)
     t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
     t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
     t_is(r.cost.usr, f, 12, [t 'user cost']);
+    end
 
     %%-----  run OPF with legacy costs and deadzone  -----
     if mpopt.opf.v_cartesian
@@ -340,6 +362,9 @@ for k = 1:length(options)
 
     %% run OPF with ignored angle difference limits
     t = [t0 'w/ignored angle difference limits : '];
+    if skip_failing_tests && ~mpopt.opf.current_balance && mpopt.opf.v_cartesian
+        t_skip(12, [t 'NONCONVERGENT']);
+    else
     mpopt1 = mpoption(mpopt, 'opf.ignore_angle_lim', 1);
     [baseMVA, bus, gen, gencost, branch, f, success, et] = runopf(mpc, mpopt1);
     %% ang limits are not in this solution data, so let's remove them
@@ -357,6 +382,7 @@ for k = 1:length(options)
     t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
     t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
     t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
+    end
 
     %% angle bounded above by 0, unbounded below
     %% for issue/18
@@ -367,7 +393,11 @@ for k = 1:length(options)
     r = runopf(mpc, mpopt);
     t_ok(success, [t 'success']);
     diff = r.bus(r.branch(b, F_BUS), VA) - r.bus(r.branch(b, T_BUS), VA);
+    if skip_failing_tests && ~mpopt.opf.current_balance && mpopt.opf.v_cartesian
+        t_skip(1, [t 'FAILS']);
+    else
     t_is(diff, 0, 5, [t 'angle diff']);
+    end
 
     %%-----  test OPF with opf.use_vg  -----
     %% get solved AC OPF case from MAT-file
@@ -417,6 +447,9 @@ for k = 1:length(options)
     t_is(r.branch(:,ibr_mu    ), branch_soln1(:,ibr_mu    ),  2, [t 'branch mu']);
 
     t = [t0 'hi-deg polynomial costs : '];
+    if skip_failing_tests && ~mpopt.opf.current_balance && mpopt.opf.v_cartesian
+        t_skip(4, [t 'NONCONVERGENT']);
+    else
     mpc = loadcase(casefile);
     mpc.gencost = [
         2   1500    0   6   1e-6/5  0   0   0   0   0;
@@ -430,6 +463,7 @@ for k = 1:length(options)
     t_is(gen(:, PG), [100.703628; 128.679485; 88.719864], 5, [t 'f']);
     t_is([min(bus(:, VM)) mean(bus(:, VM)) max(bus(:, VM))], ...
         [1.059191 1.079404 1.1], 5, [t 'bus voltage']);
+    end
 
     %% OPF with user-defined nonlinear constraints
     t = [t0 'w/nonlin eq constraint : '];
@@ -454,6 +488,9 @@ for k = 1:length(options)
 
     %% OPF with no branch limits
     t = [t0 'w/no branch limits : '];
+    if skip_failing_tests && mpopt.opf.v_cartesian
+        t_skip(4, [t 'NONCONVERGENT']);
+    else
     mpc = loadcase(casefile);
     mpc.branch(:, RATE_A) = 0;
     r = runopf(mpc, mpopt);
@@ -462,6 +499,7 @@ for k = 1:length(options)
     t_is(r.gen(:, PG), [90; 10; 220.463932], 5, [t 'Pg']);
     t_is([min(r.bus(:, VM)) mean(r.bus(:, VM)) max(r.bus(:, VM))], ...
         [1.070692 1.090449 1.1], 5, [t 'bus voltage']);
+    end
 end
 
 if have_fcn('octave')
