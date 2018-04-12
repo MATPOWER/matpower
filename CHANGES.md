@@ -12,6 +12,10 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 4/12/18
+  - Add to `nested_struct_copy()` ability to copy fields that are struct
+    arrays.
+
 #### 4/5/18
   - **INCOMPATIBLE CHANGE:** Swap the order of the output arguments of
     `dSbus_dV()` for polar coordinate voltages (angle before magnitude)
