@@ -38,7 +38,7 @@ VVr = Vr(refs);
 VVi = Vi(refs);
 VVr2 = VVr.^2;
 VVi2 = VVi.^2;
-lamVm4 = lam(refs) ./ (VVr2 + VVi2).^2;
+lamVm4 = lam ./ (VVr2 + VVi2).^2;
 
 d2Vref_rr = sparse(refs, refs, 2 * lamVm4 .*  VVr .* VVi,   nb, nb);
 d2Vref_ri = sparse(refs, refs,     lamVm4 .* (VVi2 - VVr2), nb, nb);

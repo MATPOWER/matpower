@@ -14,6 +14,7 @@ Since last release
 
 #### 4/19/18
   - Add AC OPF tests for cases with ref bus ~= 1 and ref angle ~= 0.
+  - Fix fatal error in `opf_vref_hess()` for cases where ref bus ~= 1.
 
 #### 4/12/18
   - Add to `nested_struct_copy()` ability to copy fields that are struct
