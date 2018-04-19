@@ -33,7 +33,7 @@ options = {
 %     {1, 1, 1, 'PARDISO'},
 };
 
-num_tests = 204;
+num_tests = 216;
 
 t_begin(length(options)*num_tests, quiet);
 
@@ -385,6 +385,27 @@ for k = 1:length(options)
     t_ok(success, [t 'success']);
     diff = r.bus(r.branch(b, F_BUS), VA) - r.bus(r.branch(b, T_BUS), VA);
     t_is(diff, 0, 5, [t 'angle diff']);
+
+    %%-----  OPF with ref bus not = bus 1, ref angle not = 0  -----
+    t = [t0 'ref bus ~= 1, ref ang ~= 0 : '];
+    mpc = loadcase(casefile);
+    mpc.bus([1;3], BUS_TYPE) = [PV; REF];   %% swap bus types
+    bus_soln([1;3], BUS_TYPE) = bus_soln([3;1], BUS_TYPE);   %% swap bus types
+    mpc.bus(3, VA) = 3.3014277;
+    r = runopf(mpc, mpopt);
+    [success, f, bus, gen, branch] = deal(r.success, r.f, r.bus, r.gen, r.branch);
+    t_ok(success, [t 'success']);
+    t_is(f, f_soln, 3, [t 'f']);
+    t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
+    t_is(   bus(:,ib_voltage),    bus_soln(:,ib_voltage),  3, [t 'bus voltage']);
+    t_is(   bus(:,ib_lam    ),    bus_soln(:,ib_lam    ),  3, [t 'bus lambda']);
+    t_is(   bus(:,ib_mu     ),    bus_soln(:,ib_mu     ),  2, [t 'bus mu']);
+    t_is(   gen(:,ig_data   ),    gen_soln(:,ig_data   ), 10, [t 'gen data']);
+    t_is(   gen(:,ig_disp   ),    gen_soln(:,ig_disp   ),  3, [t 'gen dispatch']);
+    t_is(   gen(:,ig_mu     ),    gen_soln(:,ig_mu     ),  3, [t 'gen mu']);
+    t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
+    t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
+    t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
 
     %%-----  test OPF with opf.use_vg  -----
     %% get solved AC OPF case from MAT-file
