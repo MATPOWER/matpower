@@ -1,4 +1,4 @@
-function t_opf_softlims2(quiet)
+function t_opf_softlims(quiet)
 %T_OPF_SOFTLIMS  Tests for userfcn callbacks (softlims) w/OPF.
 %   Includes high-level tests of soft limits implementations.
 
@@ -37,8 +37,8 @@ t_begin(629, quiet);
     VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
 
 %% set options
-mpopt = mpoption('opf.dc.solver', 'MIPS', 'opf.ac.solver', 'IPOPT');
-% mpopt = mpoption('opf.dc.solver', 'MIPS', 'opf.ac.solver', 'MIPS');
+%mpopt = mpoption('opf.dc.solver', 'MIPS', 'opf.ac.solver', 'IPOPT');
+mpopt = mpoption('opf.dc.solver', 'MIPS', 'opf.ac.solver', 'MIPS');
 %mpopt = mpoption('opf.dc.solver', 'GLPK', 'opf.ac.solver', 'FMINCON');
 %mpopt = mpoption('opf.dc.solver', 'GUROBI', 'opf.ac.solver', 'IPOPT');
 %mpopt = mpoption('opf.dc.solver', 'CPLEX', 'opf.ac.solver', 'KNITRO');
@@ -52,11 +52,15 @@ if verbose <= 1
 end
 mpopt = mpoption(mpopt, 'verbose', verbose);
 
-if have_fcn('matlab')
+if have_fcn('octave')
+    sing_matrix_warn_id = 'Octave:singular-matrix';
+    sing_matrix_warn_id = 'Octave:nearly-singular-matrix';
+else
+    sing_matrix_warn_id = 'MATLAB:singularMatrix';
     sing_matrix_warn_id = 'MATLAB:nearlySingularMatrix';
-    s2 = warning('query', sing_matrix_warn_id);
-    warning('off', sing_matrix_warn_id);
 end
+s2 = warning('query', sing_matrix_warn_id);
+warning('off', sing_matrix_warn_id);
 
 %% load and modify case file
 mpc = loadcase(casefile);
@@ -690,14 +694,11 @@ t_is(r.branch(:, MU_SF)+r.branch(:, MU_ST), [0; 0; 20; 0; 0; 11.526783; 0; 0; 0;
 t_is(r.softlims.RATE_A.overload, [0; 0; 4.07774; 0; 0; 0; 0; 0; 0; 0], 6, [t 'softlims.RATE_A.overload']);
 t_is(r.softlims.RATE_A.ovl_cost, [0; 0; 81.554809; 0; 0; 0; 0; 0; 0; 0], 4, [t 'softlims.RATE_A.ovl_cost']);
 
-
-
-if have_fcn('matlab')
-    warning(s2.state, sing_matrix_warn_id);
-end
+warning(s2.state, sing_matrix_warn_id);
 
 t_end;
-%%
+
+
 function overload_loop(r, t, yn, lst)
 %%% r is the result structure
 %%% t is the test string
