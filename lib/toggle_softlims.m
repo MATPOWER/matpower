@@ -5,28 +5,28 @@ function mpc = toggle_softlims(mpc, on_off)
 %   T_F = TOGGLE_SOFTLIMS(MPC, 'status')
 %
 %   Enables, disables or checks the status of a set of OPF userfcn
-%   callbacks to implement relaxed branch flow limits for an OPF model.
+%   callbacks to implement relaxed inequality constraints for an OPF model.
 %
 %   These callbacks expect to find a 'softlims' field in the input MPC,
 %   where MPC.softlims is a struct with fields corresponding to the
 %   possible limits, namely:
-%       VMIN, VMAX, RATE_A, PMIN, PMAX, QMIN, QMAX, ANGMAX, ANGMIN, 
+%       VMIN, VMAX, RATE_A, PMIN, PMAX, QMIN, QMAX, ANGMAX, ANGMIN,
 %   Each of these is a structure in its own right with the following
 %   fields:
 %       idx     index of affected buses, branches, or generators. When
 %               specifying buses, these should be bus numbers. For all
-%               others these are indecies into the respective matrix. The
+%               others these are indexes into the respective matrix. The
 %               default are all elements that are not unbounded.
 %
 %       cost    linear cost to be added for the slack variable. Defaults
-%               are: 
+%               are:
 %                   $100,000 $/pu   for VMAX and VMIN
 %                      $1000 $/MW   for RATE_A, PMAX, and PMIN
 %                      $1000 $/MVAr for QMAX, QMIN
 %                      $1000 $/deg  for ANGMAX, ANGMIN
 %
-%       type    type of slack slack variable options are:
-%                   'unbnd': unbounded limit 
+%       type    type of slack variable options are:
+%                   'unbnd': unbounded limit
 %                   'cnst' : constant upper bound for slack variable
 %                   'frac' : multiplier of current limit
 %                   'none' : No softlimit for this property
@@ -35,12 +35,12 @@ function mpc = toggle_softlims(mpc, on_off)
 %               assumed these are already the desired upperbounds (should
 %               be done in conjunction with type 'cnst' or 'frac'). If a
 %               SCALAR is passed in conjuction with 'cnst' the resulting ub
-%               is: ub - abs(hard limit). The sign is flipped for VMIN and 
+%               is: ub - abs(hard limit). The sign is flipped for VMIN and
 %               PMIN, since they need to be positive quantities.
-%               If a SCALAR is passed in conjunction with with 'frac', the 
+%               If a SCALAR is passed in conjunction with 'frac', the
 %               resulting ub is: ub*abs(hard limit).
 %
-%       sav     original limits (this is handled in the defaults function.
+%       sav     original limits (this is handled in the defaults function).
 %
 %       rval    value to place in mpc structure to effectively eliminate
 %               the constraint. Also handled in the default function.
@@ -87,7 +87,7 @@ function mpc = toggle_softlims(mpc, on_off)
 %       the shadow price on a soft limit constraint is equal to the
 %       user-specified soft limit violation cost.
 %
-%   See also ADD_USERFCN, REMOVE_USERFCN, RUN_USERFCN, T_CASE30_USERFCNS.
+%   See also ADD_USERFCN, REMOVE_USERFCN, RUN_USERFCN, T_OPF_SOFTLIMS.
 
 %   To do for future versions:
 %       Inputs:
@@ -98,9 +98,9 @@ function mpc = toggle_softlims(mpc, on_off)
 %       base_flow   n x 1, arbitrary baseline (other than RATE_A)
 
 %   MATPOWER
-%   Copyright (c) 2009-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2018, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
-%   updated by Eran Schweitzer, Eran.Schweitzer@asu.edu
+%   and Eran Schweitzer, Arizona State University
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
@@ -148,42 +148,51 @@ function mpc = userfcn_softlims_ext2int(mpc, args)
 %   mpc as described above. The optional args are not currently used.
 
 %% define named indices into data matrices
+[PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
+    VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
+[GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
+    MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
+    QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
 [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
     TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 
-[PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
-    VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
-
-[GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
-    MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
-    QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
-
 % structures used to index into softlims in a loop
-lims = struct('VMAX', 'bus', 'VMIN','bus', 'ANGMAX', 'branch', 'ANGMIN', 'branch',...
-							'RATE_A', 'branch', 'PMAX', 'gen', 'PMIN', 'gen', 'QMAX', 'gen', 'QMIN', 'gen');
-mat2lims = struct('bus', {{'VMAX', 'VMIN'}}, 'branch', {{'ANGMAX', 'ANGMIN', 'RATE_A'}},...
-						'gen', {{'PMAX', 'PMIN', 'QMAX', 'QMIN'}});
+lims = struct(...
+    'VMAX', 'bus', ...
+    'VMIN','bus', ...
+    'ANGMAX', 'branch', ...
+    'ANGMIN', 'branch', ...
+    'RATE_A', 'branch', ...
+    'PMAX', 'gen', ...
+    'PMIN', 'gen', ...
+    'QMAX', 'gen', ...
+    'QMIN', 'gen' ...
+);
+mat2lims = struct(...
+    'bus', {{'VMAX', 'VMIN'}}, ...
+    'branch', {{'ANGMAX', 'ANGMIN', 'RATE_A'}}, ...
+    'gen', {{'PMAX', 'PMIN', 'QMAX', 'QMIN'}} ...
+);
+
 %% check for proper softlims inputs
 if isfield(mpc, 'softlims')
     % loop over limit types
     for prop = fieldnames(lims).'
-        prop = prop{1};
-        mat  = lims.(prop);
-        if isfield(mpc.softlims, prop)
-            mpc.softlims.(prop) = softlims_defaults(mpc.softlims.(prop), prop, mpc.order.ext.(mat));
+        mat  = lims.(prop{:});
+        if isfield(mpc.softlims, prop{:})
+            mpc.softlims.(prop{:}) = softlims_defaults(mpc.softlims.(prop{:}), prop{:}, mpc.order.ext.(mat));
         else
             % passing an empty struct, results in assignment of defaults
-            mpc.softlims.(prop) = softlims_defaults(struct(), prop, mpc.order.ext.(mat));
+            mpc.softlims.(prop{:}) = softlims_defaults(struct(), prop{:}, mpc.order.ext.(mat));
         end
     end
 else
     % looping over limit types and assign defaults
     % passing an empty struct, results in assignment of defaults
     for prop = fieldnames(lims).'
-        prop = prop{1};
-        mat  = lims.(prop);
-        mpc.softlims.(prop) = softlims_defaults(struct(), prop, mpc.order.ext.(mat));
+        mat  = lims.(prop{:});
+        mpc.softlims.(prop{:}) = softlims_defaults(struct(), prop{:}, mpc.order.ext.(mat));
     end
 end
 
@@ -204,18 +213,17 @@ for mat = {'bus', 'branch', 'gen'}
     e2i = zeros(n0, 1);
     e2i(o.(mat).status.on) = (1:n)';  %% ext->int index mapping
     for prop = mat2lims.(mat)
-        prop = prop{1};
-        if ~strcmp( s.(prop).type, 'none')
-            s.(prop).idx = e2i(s.(prop).idx);
-            k = find(s.(prop).idx == 0);   %% find idxes corresponding to off-line elements
-            s.(prop).idx(k)     = [];      %% delete them
-            s.(prop).cost(k, :) = [];
-            s.(prop).sav(k)     = [];
-            if ~isscalar(s.(prop).ub)
-                s.(prop).ub(k)  = [];
+        if ~strcmp( s.(prop{:}).type, 'none')
+            s.(prop{:}).idx = e2i(s.(prop{:}).idx);
+            k = find(s.(prop{:}).idx == 0); %% find idxes corresponding to off-line elements
+            s.(prop{:}).idx(k)     = [];    %% delete them
+            s.(prop{:}).cost(k, :) = [];
+            s.(prop{:}).sav(k)     = [];
+            if ~isscalar(s.(prop{:}).ub)
+                s.(prop{:}).ub(k)  = [];
             end
-            if isempty(s.(prop).idx)
-                s.(prop).type = 'none';
+            if isempty(s.(prop{:}).idx)
+                s.(prop{:}).type = 'none';
             end
         end
     end
@@ -223,21 +231,19 @@ end
 
 % permute generators, since they are reordered inside of ext2int
 for prop = mat2lims.gen
-    prop = prop{1};
-    if ~strcmp( s.(prop).type, 'none')
-        s.(prop).idx   = s.(prop).idx(o.gen.e2i);
+    if ~strcmp( s.(prop{:}).type, 'none')
+        s.(prop{:}).idx   = s.(prop{:}).idx(o.gen.e2i);
     end
 end
 
 
 %%%%-------- remove hard limits on elements with soft limits
 for prop = fieldnames(lims).'
-    prop  = prop{1};      %% property to relax
-    if ~strcmp(s.(prop).type, 'none')
-        mat = lims.(prop); %% mpc matrix
-        mpc.(mat)(s.(prop).idx, eval(prop)) = s.(prop).rval;
+    if ~strcmp(s.(prop{:}).type, 'none')
+        mat = lims.(prop{:});  %% mpc matrix
+        mpc.(mat)(s.(prop{:}).idx, eval(prop{:})) = s.(prop{:}).rval;
     end
-end	
+end
 
 mpc.softlims = s;
 mpc.order.int.softlims = s;
@@ -270,33 +276,32 @@ om.userdata.mpopt = mpopt;
 
 %%%%-------- limits that are the same for DC and AC formulation -----
 for prop = fieldnames(s).'
-    prop = prop{1};
-    if strcmp(s.(prop).type, 'none')
+    if strcmp(s.(prop{:}).type, 'none')
         continue
     end
-    varname = ['s_', lower(prop)];
-    cstname = ['cs_', lower(prop)];
-    ns = length(s.(prop).idx); % number of softlims
+    varname = ['s_', lower(prop{:})];
+    cstname = ['cs_', lower(prop{:})];
+    ns = length(s.(prop{:}).idx); % number of softlims
 
     %%%%%% variable and cost
-    if ismember(prop, {'VMIN', 'VMAX'})
-        om.add_var(varname, ns, zeros(ns, 1), zeros(ns, 1), s.(prop).ub ); %% add variable
-        Cw = s.(prop).cost(:,1);  % cost in $/pu
+    if ismember(prop{:}, {'VMIN', 'VMAX'})
+        om.add_var(varname, ns, zeros(ns, 1), zeros(ns, 1), s.(prop{:}).ub ); %% add variable
+        Cw = s.(prop{:}).cost(:,1);  % cost in $/pu
         om.add_quad_cost(cstname, [], Cw, 0, {varname});
-    elseif ismember(prop, {'RATE_A', 'PMIN', 'PMAX', 'QMIN', 'QMAX'})
-        om.add_var(varname, ns, zeros(ns, 1), zeros(ns, 1), s.(prop).ub / mpc.baseMVA ); %% add variable
-        Cw = s.(prop).cost(:,1) * mpc.baseMVA;  % cost in $/MW -> $/pu
+    elseif ismember(prop{:}, {'RATE_A', 'PMIN', 'PMAX', 'QMIN', 'QMAX'})
+        om.add_var(varname, ns, zeros(ns, 1), zeros(ns, 1), s.(prop{:}).ub / mpc.baseMVA ); %% add variable
+        Cw = s.(prop{:}).cost(:,1) * mpc.baseMVA;  % cost in $/MW -> $/pu
         om.add_quad_cost(cstname, [], Cw, 0, {varname});
-    elseif ismember(prop, {'ANGMIN', 'ANGMAX'})
-        om.add_var(varname, ns, zeros(ns, 1), zeros(ns, 1), s.(prop).ub * pi/180 ); %% add variable
-        Cw = s.(prop).cost(:,1) * 180/pi;  % cost in $/deg -> $/rad
+    elseif ismember(prop{:}, {'ANGMIN', 'ANGMAX'})
+        om.add_var(varname, ns, zeros(ns, 1), zeros(ns, 1), s.(prop{:}).ub * pi/180 ); %% add variable
+        Cw = s.(prop{:}).cost(:,1) * 180/pi;  % cost in $/deg -> $/rad
         om.add_quad_cost(cstname, [], Cw, 0, {varname});
     else
-        error('userfcn_soflims_formulation: woops! property %s is unknown ', prop)
+        error('userfcn_soflims_formulation: woops! property %s is unknown ', prop{:})
     end
 
     %%%%%% constraints
-    if strcmp(prop, 'ANGMIN')
+    if strcmp(prop{:}, 'ANGMIN')
         %%% theta_f - theta_t + s_angmin >= s.ANGMIN.sav
         ns = length(s.ANGMIN.idx);
         Av = sparse([1:ns,1:ns].', [mpc.branch(s.ANGMIN.idx, F_BUS); mpc.branch(s.ANGMIN.idx, T_BUS)], [ones(ns,1);-ones(ns,1)], ns, size(mpc.bus,1));
@@ -306,7 +311,7 @@ for prop = fieldnames(s).'
 
         om.add_lin_constraint('soft_angmin', [Av As], lb, ub, {'Va', 's_angmin'});
     end
-    if strcmp(prop, 'ANGMAX')
+    if strcmp(prop{:}, 'ANGMAX')
         %%% theta_f - theta_t - s_angmax <= s.ANGMAX.sav
         ns = length(s.ANGMAX.idx);
         Av = sparse([1:ns,1:ns].', [mpc.branch(s.ANGMAX.idx, F_BUS); mpc.branch(s.ANGMAX.idx, T_BUS)], [ones(ns,1);-ones(ns,1)], ns, size(mpc.bus,1));
@@ -316,7 +321,7 @@ for prop = fieldnames(s).'
 
         om.add_lin_constraint('soft_angmax', [Av -As], lb, ub, {'Va', 's_angmax'});
     end
-    if strcmp(prop, 'PMIN')
+    if strcmp(prop{:}, 'PMIN')
         %%% Pg + s_pmin >= s.PMIN.sav
         ns = length(s.PMIN.idx);
         Av = sparse(1:ns, s.PMIN.idx, 1, ns, size(mpc.gen,1));
@@ -326,7 +331,7 @@ for prop = fieldnames(s).'
 
         om.add_lin_constraint('soft_pmin', [Av As], lb, ub, {'Pg', 's_pmin'});
     end
-    if strcmp(prop, 'PMAX')
+    if strcmp(prop{:}, 'PMAX')
         %%% Pg - s_pmax <= s.PMAX.sav
         ns = length(s.PMAX.idx);
         Av = sparse(1:ns, s.PMAX.idx, 1, ns, size(mpc.gen,1));
@@ -361,7 +366,7 @@ else
     %% form AC constraints (see softlims_fcn() below)
     %%%%% voltage limits
     if ~strcmp(s.VMIN.type, 'none')
-        %%% Vm + s_vmin >= s.VMIN.sav 
+        %%% Vm + s_vmin >= s.VMIN.sav
         ns  = length(s.VMIN.idx);
         Av  = sparse(1:ns, s.VMIN.idx, 1, ns, size(mpc.bus,1));
         As  = speye(ns);
@@ -425,22 +430,27 @@ function results = userfcn_softlims_int2ext(results, args)
 %   in results.softlims. The optional args are not currently used.
 
 %% define named indices into data matrices
+[PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
+    VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
+[GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
+    MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
+    QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
 [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
     TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 
-[PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
-    VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
-
-[GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
-    MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
-    QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
-
 % structures used to index into softlims in a loop
-lims = struct('VMAX', 'bus', 'VMIN','bus', 'ANGMAX', 'branch', 'ANGMIN', 'branch',...
-							'RATE_A', 'branch', 'PMAX', 'gen', 'PMIN', 'gen', 'QMAX', 'gen', 'QMIN', 'gen');
-mat2lims = struct('bus', {{'VMAX', 'VMIN'}}, 'branch', {{'ANGMAX', 'ANGMIN', 'RATE_A'}},...
-						'gen', {{'PMAX', 'PMIN', 'QMAX', 'QMIN'}});
+lims = struct(...
+    'VMAX', 'bus', ...
+    'VMIN','bus', ...
+    'ANGMAX', 'branch', ...
+    'ANGMIN', 'branch', ...
+    'RATE_A', 'branch', ...
+    'PMAX', 'gen', ...
+    'PMIN', 'gen', ...
+    'QMAX', 'gen', ...
+    'QMIN', 'gen' ...
+);
 
 %% get internal softlims struct and mpopt
 isOPF  = isfield(results, 'f') && ~isempty(results.f);
@@ -460,69 +470,67 @@ results.softlims = results.order.ext.softlims;
 
 %%-----  restore hard limits  -----
 for prop = fieldnames(s).'
-    prop = prop{1};
-    mat  = lims.(prop);
-    if strcmp(s.(prop).type, 'none')
+    mat  = lims.(prop{:});
+    if strcmp(s.(prop{:}).type, 'none')
         continue
     end
-    results.(mat)(s.(prop).idx, eval(prop)) = s.(prop).sav;
+    results.(mat)(s.(prop{:}).idx, eval(prop{:})) = s.(prop{:}).sav;
 end
 
 %%-----  results post-processing  -----
 %% get overloads and overload costs
 for prop = fieldnames(s).'
-    prop = prop{1};
-    mat  = lims.(prop);
-    if strcmp(s.(prop).type, 'none')
+    mat  = lims.(prop{:});
+    if strcmp(s.(prop{:}).type, 'none')
         continue
     end
     n0 = size(o.ext.(mat), 1);    %% original number
     n  = size(results.(mat), 1);  %% number on-line
-    results.softlims.(prop).overload = zeros(n0, 1);
-    results.softlims.(prop).ovl_cost = zeros(n0, 1);
-    varname = ['s_', lower(prop)];  %% variable name
-    if ismember(prop, {'VMIN', 'VMAX'}) 
+    results.softlims.(prop{:}).overload = zeros(n0, 1);
+    results.softlims.(prop{:}).ovl_cost = zeros(n0, 1);
+    varname = ['s_', lower(prop{:})];  %% variable name
+    if ismember(prop{:}, {'VMIN', 'VMAX'})
         if ~strcmp(mpopt.model, 'AC')
             continue
         end
         var = results.var.val.(varname); %stays in p.u.
         var(var < 1e-8) = 0;
-    elseif ismember(prop, {'RATE_A', 'PMIN', 'PMAX', })
+    elseif ismember(prop{:}, {'RATE_A', 'PMIN', 'PMAX', })
         var = results.var.val.(varname);
         var(var < 1e-8) = 0;
         var = var * results.baseMVA; % p.u. -> MW
-    elseif ismember(prop, {'QMIN', 'QMAX', }) 
+    elseif ismember(prop{:}, {'QMIN', 'QMAX', })
         if ~strcmp(mpopt.model, 'AC')
             continue
         end
         var = results.var.val.(varname);
         var(var < 1e-8) = 0;
         var = var * results.baseMVA; % p.u. -> MVAr
-    elseif ismember(prop, {'ANGMIN', 'ANGMAX'})
+    elseif ismember(prop{:}, {'ANGMIN', 'ANGMAX'})
         var = results.var.val.(varname);
         var(var < 1e-8) = 0;
         var = var * 180/pi; % rad -> deg
     else
-        error('userfcn_soflims_formulation: woops! property %s is unknown ', prop)
+        error('userfcn_soflims_formulation: woops! property %s is unknown ', prop{:})
     end
 %     var(var < 1e-8) = 0;
     % NOTE: o.(mat).status.on is a vector nx1 where n is the INTERNAL number of
-    % elements. The entries are the EXTERNAL locations (row numbers). 
-    results.softlims.(prop).overload(o.(mat).status.on(s.(prop).idx)) = var;
-    results.softlims.(prop).ovl_cost(o.(mat).status.on(s.(prop).idx)) = var .* s.(prop).cost(:,1);
+    % elements. The entries are the EXTERNAL locations (row numbers).
+    results.softlims.(prop{:}).overload(o.(mat).status.on(s.(prop{:}).idx)) = var;
+    results.softlims.(prop{:}).ovl_cost(o.(mat).status.on(s.(prop{:}).idx)) = var .* s.(prop{:}).cost(:,1);
 end
 
 %% get shadow prices
-if ~strcmp(s.ANGMAX.type, 'none') 
+if ~strcmp(s.ANGMAX.type, 'none')
     results.branch(s.ANGMAX.idx, MU_ANGMAX) = results.lin.mu.u.soft_angmax * pi/180;
 end
-if ~strcmp(s.ANGMIN.type, 'none') 
+if ~strcmp(s.ANGMIN.type, 'none')
     results.branch(s.ANGMIN.idx, MU_ANGMIN) = results.lin.mu.l.soft_angmin * pi/180;
 end
-if ~strcmp(s.PMAX.type, 'none') 
+if ~strcmp(s.PMAX.type, 'none')
     results.gen(s.PMAX.idx, MU_PMAX) = results.lin.mu.u.soft_pmax / results.baseMVA;
 end
-if ~strcmp(s.PMIN.type, 'none') 
+if ~strcmp(s.PMIN.type, 'none')
     results.gen(s.PMIN.idx, MU_PMIN) = results.lin.mu.l.soft_pmin / results.baseMVA;
 end
 if strcmp(mpopt.model, 'DC')
@@ -556,10 +564,10 @@ else %AC model
     if ~strcmp(s.VMIN.type, 'none')
         results.bus(s.VMIN.idx, MU_VMIN) = results.lin.mu.l.soft_vmin;
     end
-    if ~strcmp(s.QMAX.type, 'none') 
+    if ~strcmp(s.QMAX.type, 'none')
         results.gen(s.QMAX.idx, MU_QMAX) = results.lin.mu.u.soft_qmax / results.baseMVA;
     end
-    if ~strcmp(s.QMIN.type, 'none') 
+    if ~strcmp(s.QMIN.type, 'none')
         results.gen(s.QMIN.idx, MU_QMIN) = results.lin.mu.l.soft_qmin / results.baseMVA;
     end
     if ~strcmp(s.RATE_A.type, 'none')
@@ -600,19 +608,14 @@ function results = userfcn_softlims_printpf(results, fd, mpopt, args)
 %   options struct. The optional args are not currently used.
 
 %% define named indices into data matrices
-[F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
-    TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
-    ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
-
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
     VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
-
 [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
     MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
     QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
-
-lims = struct('VMAX', 'bus', 'VMIN','bus', 'ANGMAX', 'branch', 'ANGMIN', 'branch',...
-							'RATE_A', 'branch', 'PMAX', 'gen', 'PMIN', 'gen', 'QMAX', 'gen', 'QMIN', 'gen');
+[F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
+    TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
+    ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 
 %%-----  print results  -----
 ptol = 1e-6;        %% tolerance for displaying shadow prices
@@ -655,7 +658,7 @@ if isOPF && OUT_BRANCH && (results.success || OUT_FORCE)
                     sum(s.RATE_A.overload(s.RATE_A.idx(k))));
             fprintf(fd, '\n');
         end
-    end 
+    end
     if ~strcmp(s.VMAX.type,'none') && strcmp(mpopt.model, 'AC')
         k = find(s.VMAX.overload(s.VMAX.idx) | results.bus(s.VMAX.idx, MU_VMAX) > ptol);
         fprintf(fd, '\nMaximum Voltage Magnitude Limits:');
@@ -843,8 +846,18 @@ function mpc = userfcn_softlims_savecase(mpc, fd, prefix, args)
 %   (usually 'mpc.'). The optional args are not currently used.
 
 % structures used to index into softlims in a loop
-lims = struct('VMAX', 'bus', 'VMIN','bus', 'ANGMAX', 'branch', 'ANGMIN', 'branch',...
-							'RATE_A', 'branch', 'PMAX', 'gen', 'PMIN', 'gen', 'QMAX', 'gen', 'QMIN', 'gen');
+lims = struct(...
+    'VMAX', 'bus', ...
+    'VMIN','bus', ...
+    'ANGMAX', 'branch', ...
+    'ANGMIN', 'branch', ...
+    'RATE_A', 'branch', ...
+    'PMAX', 'gen', ...
+    'PMIN', 'gen', ...
+    'QMAX', 'gen', ...
+    'QMIN', 'gen' ...
+);
+
 % convenience structure for the different fields
 fields = struct('type', struct('desc','Soft limit type', 'tok','%s'),...
     'busidx', struct('desc','bus ids for where soft voltage limit is applied','tok', '%d'),...
@@ -862,22 +875,21 @@ if isfield(mpc, 'softlims')
     fprintf(fd, '\n%%%%-----  Soft Limit Data  -----%%%%\n');
     
     for prop = fieldnames(lims).'
-        prop = prop{1};
-        fprintf(fd,'\n%%%% Property: %s %%%%\n', prop);
+        fprintf(fd,'\n%%%% Property: %s %%%%\n', prop{:});
         for f = fieldnames(fields).'
             f = f{1};
-            if isfield(s.(prop),f)
+            if isfield(s.(prop{:}),f)
                 if strcmp(f, 'idx')
-                    desc = sprintf(fields.idx.desc, lims.(prop));
+                    desc = sprintf(fields.idx.desc, lims.(prop{:}));
                 else
                     desc = fields.(f).desc;
                 end
                 fprintf(fd,'%% %s\n',desc);
                 if strcmp(f,'type')
-                    fprintf(fd, '%ssoftlims.%s.type = ''%s'';\n', prefix,prop, s.(prop).type);
+                    fprintf(fd, '%ssoftlims.%s.type = ''%s'';\n', prefix,prop{:}, s.(prop{:}).type);
                 else
-                    fprintf(fd, '%ssoftlims.%s.%s = [\n', prefix,prop,f);
-                    fprintf(fd, ['\t',fields.(f).tok,';\n'], s.(prop).(f));
+                    fprintf(fd, '%ssoftlims.%s.%s = [\n', prefix,prop{:},f);
+                    fprintf(fd, ['\t',fields.(f).tok,';\n'], s.(prop{:}).(f));
                     fprintf(fd, '];\n\n');
                 end
             end
@@ -890,26 +902,24 @@ function s = softlims_defaults(s, prop, mat)
 % for each property we want
 %   idx: index of affected buses, branches, or generators
 %	cost: linear cost to be added for the slack variable
-%	type: 'unbnd': unbounded limit, 
-%         'cnst' : constant upper bound, 
+%	type: 'unbnd': unbounded limit,
+%         'cnst' : constant upper bound,
 %		  'frac' : multiplier of current limit
 %		  'none' : Don't apply softlimit to this property
 %	ub: upper bound of slack variable, if 'cnst' it can be a scalar or a vector.
 %   sav: original limits
 %	rval: value to place in mpc structure to effectively eliminate the constraint
 %% define named indices into data matrices
+[PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
+    VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
+[GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
+    MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
+    QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
 [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
     TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 
-[GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
-    MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
-    QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
-
-[PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
-    VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
-
-default_cost = struct('VMAX', 100000, 'VMIN', 100000,...% $/pu 
+default_cost = struct('VMAX', 100000, 'VMIN', 100000,...% $/pu
                       'ANGMAX', 1000, 'ANGMIN', 1000,...% $/deg
                       'RATE_A', 1000, ... %$/MW
                       'PMIN', 1000, 'PMAX', 1000, ... %$/MW
@@ -926,7 +936,7 @@ end
 if ismember(prop, {'VMAX', 'VMIN'})
     % Initial list of candidates for voltage limits contains all buses
     % NOTE: idxfull contains EXTERNAL bus numbers
-   
+    
     idxfull = mat(:, BUS_I);
     
 elseif ismember(prop, {'ANGMAX', 'ANGMIN'})
@@ -942,12 +952,12 @@ elseif strcmp(prop, 'RATE_A')
     % NOTE: idxfull contains locations in EXTERNAL branch list
     
     idxfull = find(mat(:, BR_STATUS) > 0 & mat(:, RATE_A) > 0);
-   
+    
 elseif ismember(prop, {'PMAX', 'QMAX', 'QMIN'})
     % Initial list of candidates for generation limits (except Pmin) are
     % all active generators
     % NOTE: idxfull contains locations in EXTERNAL generator list
-   
+    
     idxfull = find(mat(:, GEN_STATUS) > 0);
     
 elseif strcmp(prop, 'PMIN')
@@ -955,7 +965,7 @@ elseif strcmp(prop, 'PMIN')
     % non-zero Pmin.
     % NOTE: idxfull contains locations in EXTERNAL generator list
     
-    idxfull = find(mat(:, GEN_STATUS) > 0 & mat(:, PMIN) > 0); 
+    idxfull = find(mat(:, GEN_STATUS) > 0 & mat(:, PMIN) > 0);
     
 end
 
@@ -965,14 +975,14 @@ if isfield(s, 'idx')
     idxmask = ismember(s.idx, idxfull);
     s.idx = s.idx(idxmask); %remove possibly irrelevant entries entered by user
 else
-    % if no indecies specified by user use the full list idxfull.
+    % if no indices specified by user use the full list idxfull.
     idxmask = true(size(idxfull));
     s.idx = idxfull;
 end
 
 if ismember(prop, {'VMAX', 'VMIN'})
     % for consistency between all the different limits, we want s.idx for
-    % buses to contain locations rather than external bus numbers. 
+    % buses to contain locations rather than external bus numbers.
     % External bus numbers are stored in s.busidx and s.idx is rewritten to
     % include the locations (rows) of those buses.
     s.busidx = s.idx;
@@ -989,7 +999,7 @@ end
 
 %% sav: saves original values
 % if ismember(prop, {'VMAX', 'VMIN'})
-%     % save original bus numbers. 
+%     % save original bus numbers.
 %     s.sav = mat(ismember(mat(:,BUS_I), s.idx), eval(prop));
 if ismember(prop, {'VMAX', 'VMIN', 'RATE_A', 'PMAX', 'PMIN', 'QMAX', 'QMIN', 'ANGMAX', 'ANGMIN'})
     % Again note that here s.idx contains locations in the relevant matrix

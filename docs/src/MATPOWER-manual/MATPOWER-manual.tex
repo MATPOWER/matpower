@@ -1291,7 +1291,7 @@ name & default & description \\
 && \begin{tabular}{c @{ -- } l}
 \codeq{AC} & use AC formulation and corresponding alg options \\
 \codeq{DC} & use DC formulation and corresponding alg options \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{pf.alg}	& \codeq{NR}	& AC power flow algorithm: \\
 && \begin{tabular}{c @{ -- } l}
 \codeq{NR} & Newtons's method \\
@@ -1301,7 +1301,7 @@ name & default & description \\
 \codeq{PQSUM} & Power Summation (radial networks only) \\
 \codeq{ISUM} & Current Summation (radial networks only) \\
 \codeq{YSUM} & Admittance Summation (radial networks only) \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{pf.tol}	& $10^{-8}$	& termination tolerance on per unit P and Q dispatch	\\
 \code{pf.nr.max\_it}	& 10	& maximum number of iterations for Newton's method	\\
 \code{pf.nr.lin\_solver}	& \codeq{}	& linear solver option for \code{mplinsolve} for computing Newton update step \\
@@ -1313,7 +1313,7 @@ name & default & description \\
 \codeq{LU3} & 3 output arg form of \code{lu}, Gilbert-Peierls algorithm with approximate minimum degree (AMD) reordering \\
 \codeq{LU4} & 4 output arg form of \code{lu}, UMFPACK solver (same as \codeq{LU}) \\
 \codeq{LU5} & 5 output arg form of \code{lu}, UMFPACK solver w/row scaling \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{pf.fd.max\_it}	& 30	& maximum number of iterations for fast-decoupled method	\\
 \code{pf.gs.max\_it}	& 1000	& maximum number of iterations for Gauss-Seidel method	\\
 \code{pf.radial.max\_it}	& 20	& maximum number of iterations for radial power flow methods	\\
@@ -1321,13 +1321,13 @@ name & default & description \\
 && \begin{tabular}{c @{ -- } l}
 0 & do \emph{not} perform voltage correction \\
 1 & perform voltage correction \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{pf.enforce\_q\_lims}	& 0	& enforce gen reactive power limits at expense of $|V_m|$	\\
 && \begin{tabular}{r @{ -- } l}
 0 & do \emph{not} enforce limits \\
 1 & enforce limits, simultaneous bus type conversion \\
 2 & enforce limits, one-at-a-time bus type conversion \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \bottomrule
 \end{tabular}
 \end{threeparttable}
@@ -1358,13 +1358,13 @@ name & default & description \\
 1 & print a little progress info \\
 2 & print a lot of progress info \\
 3 & print all progress info \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{out.all}	& -1	& controls pretty-printing of results \\
 && \begin{tabular}{r @{ -- } l}
 -1 & individual flags control what is printed \\
 0 & do \emph{not} print anything\tnote{\dag} \\
 1 & print everything\tnote{\dag} \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{out.sys\_sum}	& 1	& print system summary (0 or 1) \\
 \code{out.area\_sum}	& 0	& print area summaries (0 or 1) \\
 \code{out.bus}	& 1	& print bus detail, includes per bus gen info (0 or 1) \\
@@ -1376,7 +1376,7 @@ name & default & description \\
 -1 & suppress details for large systems ($>$~500~buses) \\
 0 & do \emph{not} suppress any output specified by other flags \\
 1 & suppress all output except system summary section\tnote{\dag} \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -2309,7 +2309,7 @@ name & default & description \\
 \codeq{PDIPM} & PDIPM\tnote{*}, primal/dual interior point method\tnote{\ddag} \\
 \codeq{SDPOPF} & \sdpopf{}\tnote{*}, solver based on semidefinite relaxation \\
 \codeq{TRALM} & TRALM\tnote{*}, trust region based augmented Langrangian method \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{opf.dc.solver}	& \codeq{DEFAULT}	& DC optimal power flow solver: \\
 && \begin{tabular}{l @{ -- } p{0.45\textwidth}}
 \codeq{DEFAULT} & choose default solver based on availability in the following order: \codeq{GUROBI}, \codeq{CPLEX}, \codeq{MOSEK}, \codeq{OT}, \codeq{GLPK} \emph{(linear costs only)}, \codeq{BPMPD}, \codeq{MIPS} \\
@@ -2322,7 +2322,7 @@ name & default & description \\
 \codeq{IPOPT} & \ipopt{}\tnote{*} \\
 \codeq{MOSEK} & \mosek{}\tnote{*} \\
 \codeq{OT} & \matlab{} Opt Toolbox, \code{quadprog}, \code{linprog} \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -2352,32 +2352,32 @@ name & default & description \\
 && \begin{tabular}{r @{ -- } p{0.5\textwidth}}
 0 & use voltage magnitude limits specified in \bus{}, ignore \code{VG} in \gen{} \\
 1 & replace voltage magnitude limits specified in \bus{} by \code{VG} in corresponding \gen{} \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{opf.flow\_lim}	& \codeq{S}	& quantity to limit for branch flow constraints	\\
 && \begin{tabular}{r @{ -- } p{0.45\textwidth}}
 \codeq{S} & apparent power flow (limit in MVA) \\
 \codeq{P} & active power flow (limit in MW) \\
 \codeq{I} & current magnitude (limit in MVA at 1~p.u. voltage) \\
 \codeq{2} & same as \codeq{P}, but implemented using square of active flow, rather than simple max \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{opf.ignore\_angle\_lim}	& 0	& ignore angle difference limits for branches	\\
 && \begin{tabular}{r @{ -- } l}
 0 & include angle difference limits, if specified \\
 1 & ignore angle difference limits even if specified \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{opf.init\_from\_mpc}\tnote{*}	& -1	& specify whether to use the current state in \matpower{} case to initialize OPF	\\
 && \begin{tabular}{r @{ -- } l}
 -1 & \matpower{} decides based on solver/algorithm \\
 0 & ignore current state in \matpower{} case\tnote{\ddag} \\
 1 & use current state in \matpower{} case \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{opf.start}	& 0	& strategy for initializing OPF starting point	\\
 && \begin{tabular}{r @{ -- } p{0.5\textwidth}}
 0 & default, \matpower{} decides based on solver, \emph{(currently identical to 1)} \\
 1 & ignore current state in \matpower{} case\tnote{\ddag} \\
 2 & use current state in \matpower{} case \\
 3 & solve power flow and use resulting state \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{opf.return\_raw\_der}	& 0	& for AC OPF, return constraint and derivative info in \code{results.raw} (in fields \code{g}, \code{dg}, \code{df}, \code{d2f}) \\
 \bottomrule
 \end{tabular}
@@ -2408,13 +2408,13 @@ name & default & description \\
 0 & do \emph{not} print any constraint info\tnote{\dag} \\
 1 & print only binding constraint info\tnote{\dag} \\
 2 & print all constraint info\tnote{\dag} \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{out.lim.v}	& 1	& control output of voltage limit info \\
 && \begin{tabular}{r @{ -- } l}
 0 & do \emph{not} print \\
 1 & print binding constraints only \\
 2 & print all constraints \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{out.lim.line}	& 1	& control output of line flow limit info\tnote{\ddag} \\
 \code{out.lim.pg}	& 1	& control output of gen active power limit info\tnote{\ddag} \\
 \code{out.lim.qg}	& 1	& control output of gen reactive power limit info\tnote{\ddag} \\
@@ -3987,13 +3987,13 @@ name & description \\
 1 & first order optimality conditions satisfied \\
 0 & maximum number of iterations reached \\
 -1 & numerically failed \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{output}	& output struct with fields	\\
 &\begin{tabular}{lp{0.65\textwidth}}
 \code{iterations} & number of iterations performed \\
 \code{hist} & struct array with trajectories of the following: \code{feascond}, \code{gradcond}, \code{compcond}, \code{costcond}, \code{gamma}, \code{stepsize}, \code{obj}, \code{alphap}, \code{alphad} \\
 \code{message} & exit message \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{lambda}	& struct containing the Langrange and Kuhn-Tucker multipliers on the constraints, with fields:	\\
 &\begin{tabular}{lp{0.65\textwidth}}
 \code{eqnonlin} & nonlinear equality constraints	\\
@@ -4002,7 +4002,7 @@ name & description \\
 \code{mu\_u} & upper (right-hand) limit on linear constraints	\\
 \code{lower} & lower bound on optimization variables	\\
 \code{upper} & upper bound on optimization variables	\\
-\end{tabular} 	\\
+\end{tabular}	\\
 \bottomrule
 \end{tabular}
 \end{threeparttable}
@@ -4025,7 +4025,7 @@ name & default & description \\
 1 & print a little progress info \\
 2 & print a lot of progress info \\
 3 & print all progress info \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{opt.feastol} & $10^{-6}$ & termination tolerance for feasibility condition \\
 \code{opt.gradtol} & $10^{-6}$ & termination tolerance for gradient condition \\
 \code{opt.comptol} & $10^{-6}$ & termination tolerance for complementarity condition \\
@@ -4759,7 +4759,7 @@ name & default & description \\
 && \begin{tabular}{c @{ -- } l}
 \codeq{AC} & use AC formulation and corresponding algs/options \\
 \codeq{DC} & use DC formulation and corresponding algs/options \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{pf}	& \emph{see Table~\ref{tab:pfoptions2}}	& power flow options \\
 \code{cpf}	& \emph{see Table~\ref{tab:cpfoptions2}}	& continuation power flow options\\
 \code{opf}	& \emph{see Tables~\ref{tab:opfsolveroptions2}, \ref{tab:opfoptions2}}	& optimal power flow options \\
@@ -4769,7 +4769,7 @@ name & default & description \\
 1 & print a little progress info \\
 2 & print a lot of progress info \\
 3 & print all progress info \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{out}	& \emph{see Table~\ref{tab:outputoptions}}	& pretty-printed output options \\
 \code{mips}	& \emph{see Table~\ref{tab:mipsoptions}}	& \mips{} options \\
 \code{clp}	& \emph{see Table~\ref{tab:clpoptions}}	& \clp{} options\tnote{*} \\
@@ -4814,7 +4814,7 @@ name & default & description \\
 \codeq{PQSUM} & Power Summation (radial networks only) \\
 \codeq{ISUM} & Current Summation (radial networks only) \\
 \codeq{YSUM} & Admittance Summation (radial networks only) \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{pf.tol}	& $10^{-8}$	& termination tolerance on per unit P and Q dispatch	\\
 \code{pf.nr.max\_it}	& 10	& maximum number of iterations for Newton's method	\\
 \code{pf.nr.lin\_solver}	& \codeq{}	& linear solver option for \code{mplinsolve} for computing Newton update step \\
@@ -4826,7 +4826,7 @@ name & default & description \\
 \codeq{LU3} & 3 output arg form of \code{lu}, Gilbert-Peierls algorithm with approximate minimum degree (AMD) reordering \\
 \codeq{LU4} & 4 output arg form of \code{lu}, UMFPACK solver (same as \codeq{LU}) \\
 \codeq{LU5} & 5 output arg form of \code{lu}, UMFPACK solver w/row scaling \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{pf.fd.max\_it}	& 30	& maximum number of iterations for fast-decoupled method	\\
 \code{pf.gs.max\_it}	& 1000	& maximum number of iterations for Gauss-Seidel method	\\
 \code{pf.radial.max\_it}	& 20	& maximum number of iterations for radial power flow methods	\\
@@ -4834,13 +4834,13 @@ name & default & description \\
 && \begin{tabular}{c @{ -- } l}
 0 & do \emph{not} perform voltage correction \\
 1 & perform voltage correction \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{pf.enforce\_q\_lims}	& 0	& enforce gen reactive power limits at expense of $|V_m|$	\\
 && \begin{tabular}{r @{ -- } l}
 0 & do \emph{not} enforce limits \\
 1 & enforce limits, simultaneous bus type conversion \\
 2 & enforce limits, one-at-a-time bus type conversion \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \bottomrule
 \end{tabular}
 \end{threeparttable}
@@ -4930,7 +4930,7 @@ name & default & description \\
 \codeq{PDIPM} & PDIPM\tnote{*}, primal/dual interior point method\tnote{\ddag} \\
 \codeq{SDPOPF} & \sdpopf{}\tnote{*}, solver based on semidefinite relaxation \\
 \codeq{TRALM} & TRALM\tnote{*}, trust region based augmented Langrangian method \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{opf.dc.solver}	& \codeq{DEFAULT}	& DC optimal power flow solver: \\
 && \begin{tabular}{l @{ -- } p{0.45\textwidth}}
 \codeq{DEFAULT} & choose default solver based on availability in the following order: \codeq{GUROBI}, \codeq{CPLEX}, \codeq{MOSEK}, \codeq{OT}, \codeq{GLPK} \emph{(linear costs only)}, \codeq{BPMPD}, \codeq{MIPS} \\
@@ -4943,7 +4943,7 @@ name & default & description \\
 \codeq{IPOPT} & \ipopt{}\tnote{*} \\
 \codeq{MOSEK} & \mosek{}\tnote{*} \\
 \codeq{OT} & \matlab{} Opt Toolbox, \code{quadprog}, \code{linprog} \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -4973,32 +4973,32 @@ name & default & description \\
 && \begin{tabular}{r @{ -- } p{0.5\textwidth}}
 0 & use voltage magnitude limits specified in \bus{}, ignore \code{VG} in \gen{} \\
 1 & replace voltage magnitude limits specified in \bus{} by \code{VG} in corresponding \gen{} \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{opf.flow\_lim}	& \codeq{S}	& quantity to limit for branch flow constraints	\\
 && \begin{tabular}{r @{ -- } p{0.45\textwidth}}
 \codeq{S} & apparent power flow (limit in MVA) \\
 \codeq{P} & active power flow (limit in MW) \\
 \codeq{I} & current magnitude (limit in MVA at 1~p.u. voltage) \\
 \codeq{2} & same as \codeq{P}, but implemented using square of active flow, rather than simple max \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{opf.ignore\_angle\_lim}	& 0	& ignore angle difference limits for branches	\\
 && \begin{tabular}{r @{ -- } l}
 0 & include angle difference limits, if specified \\
 1 & ignore angle difference limits even if specified \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{opf.init\_from\_mpc}\tnote{*}	& -1	& specify whether to use the current state in \matpower{} case to initialize OPF	\\
 && \begin{tabular}{r @{ -- } l}
 -1 & \matpower{} decides based on solver/algorithm \\
 0 & ignore current state in \matpower{} case\tnote{\ddag} \\
 1 & use current state in \matpower{} case \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{opf.start}	& 0	& strategy for initializing OPF starting point	\\
 && \begin{tabular}{r @{ -- } p{0.5\textwidth}}
 0 & default, \matpower{} decides based on solver, \emph{(currently identical to 1)} \\
 1 & ignore current state in \matpower{} case\tnote{\ddag} \\
 2 & use current state in \matpower{} case \\
 3 & solve power flow and use resulting state \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{opf.return\_raw\_der}	& 0	& for AC OPF, return constraint and derivative info in \code{results.raw} (in fields \code{g}, \code{dg}, \code{df}, \code{d2f}) \\
 \bottomrule
 \end{tabular}
@@ -5028,13 +5028,13 @@ name & default & description \\
 1 & print a little progress info \\
 2 & print a lot of progress info \\
 3 & print all progress info \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{out.all}	& -1	& controls pretty-printing of results \\
 && \begin{tabular}{r @{ -- } l}
 -1 & individual flags control what is printed \\
 0 & do \emph{not} print anything\tnote{\dag} \tnote{*} \\
 1 & print everything\tnote{\dag} \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{out.sys\_sum}	& 1	& print system summary (0 or 1) \\
 \code{out.area\_sum}	& 0	& print area summaries (0 or 1) \\
 \code{out.bus}	& 1	& print bus detail, includes per bus gen info (0 or 1) \\
@@ -5046,13 +5046,13 @@ name & default & description \\
 0 & do \emph{not} print any constraint info\tnote{\dag} \\
 1 & print only binding constraint info\tnote{\dag} \\
 2 & print all constraint info\tnote{\dag} \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{out.lim.v}	& 1	& control output of voltage limit info \\
 && \begin{tabular}{r @{ -- } l}
 0 & do \emph{not} print \\
 1 & print binding constraints only \\
 2 & print all constraints \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{out.lim.line}	& 1	& control output of line flow limit info\tnote{\ddag} \\
 \code{out.lim.pg}	& 1	& control output of gen active power limit info\tnote{\ddag} \\
 \code{out.lim.qg}	& 1	& control output of gen reactive power limit info\tnote{\ddag} \\
@@ -5062,7 +5062,7 @@ name & default & description \\
 -1 & suppress details for large systems ($>$~500~buses) \\
 0 & do \emph{not} suppress any output specified by other flags \\
 1 & suppress all output except system summary section\tnote{\dag} \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -5090,7 +5090,7 @@ name & default & description \\
 && \begin{tabular}{r @{ -- } l}
 \codeq{} or \codeq{\textbackslash{}} & built-in backslash \code{\textbackslash{}} operator	\\
 \codeq{PARDISO} & \pardiso{} solver\tnote{\dag}	\\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{mips.feastol}	& 0	& feasibiliy (equality) tolerance	\\
 && ~~set to value of \code{opf.violation} by default	\\
 \code{mips.gradtol}	& $10^{-6}$	& gradient tolerance	\\
@@ -5154,7 +5154,7 @@ name & default & description \\
 4 & barrier	\\
 5 & sifting	\\
 6 & concurrent (dual, barrier, and primal)	\\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{cplex.qpmethod}	& 0	& algorithm used by \cplex{} for QP problems	\\
 && \begin{tabular}{r @{ -- } l}
 0 & automatic; let \cplex{} choose	\\
@@ -5162,7 +5162,7 @@ name & default & description \\
 2 & dual simplex	\\
 3 & network simplex	\\
 4 & barrier	\\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{cplex.opts}	& \emph{empty}	& struct of native \cplex{} options (for \code{cplexoptimset}) passed to \code{cplex\_options} to override defaults, applied after overrides from \code{cplex.opt\_fname}\tnote{\ddag} \\
 \code{cplex.opt\_fname}	& \emph{empty}	& name of user-supplied function passed as \code{FNAME} argument to \code{cplex\_options} to override defaults\tnote{\ddag} \\
 \code{cplex.opt}	& 0	& if \code{cplex.opt\_fname} is empty and \code{cplex.opt} is non-zero, the value of \code{cplex.opt\_fname} is generated by appending \code{cplex.opt} to \codeq{cplex\_user\_options\_} (for backward compatibility with old \matpower{} option \code{CPLEX\_OPT}) \\
@@ -5196,7 +5196,7 @@ name & default & description \\
 4 & interior-point, exact user-supplied Hessian	\\
 5 & interior-point, Hessian via finite-differences	\\
 6 & sqp, sequential quadratic programming\tnote{\ddag}	\\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{fmincon.tol\_x}	& $10^{-4}$	& termination tolerance on $x$\tnote{*}	\\
 \code{fmincon.tol\_f}	& $10^{-4}$	& termination tolerance on $f$\tnote{*}	\\
 \code{fmincon.max\_it}	& 0	& maximum number of iterations\tnote{*}	\\
@@ -5258,7 +5258,7 @@ name & default\tnote{\S} & description \\
 2 & barrier	\\
 3 & concurrent (LP only)	\\
 4 & deterministic concurrent (LP only)	\\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{gurobi.timelimit}	& $\infty$	& maximum time allowed for solver (secs) \\
 \code{gurobi.threads}	& 0 (auto)	& maximum number of threads to use \\
 \code{gurobi.opts}	& \emph{empty}	& struct of native \gurobi{} options passed to \code{gurobi\_options} to override defaults, applied after overrides from \code{gurobi.opt\_fname}\tnote{\ddag} \\
@@ -5363,7 +5363,7 @@ name & default\tnote{\ddag} & description \\
 1 & print only only termination status message \\
 2 & print termination status \& screen progress \\
 3 & print screen progress, report file (usually fort.9) \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{minopf.core}	& 0 	& memory allocation	\\
 && ~~defaults to $1200 n_b + 2 (n_b + n_g)^2$	\\
 \code{minopf.supbasic\_lim}	& 0	& superbasics limit, defaults to $2 n_b + 2 n_g$	\\
@@ -5401,7 +5401,7 @@ name & default\tnote{\S} & description \\
 6 & automatic simplex (\mosek{} chooses which simplex)	\\
 7 & network primal simplex	\\
 10 & concurrent	\\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{mosek.max\_it}	& 0 (400)	& interior point maximum iterations \\
 && ~~~(\code{MSK\_IPAR\_INTPNT\_MAX\_ITERATIONS}) 	\\
 \code{mosek.gap\_tol}	& 0 ($10^{-8}$)	& interior point relative gap tolerance \\ && ~~~(\code{MSK\_DPAR\_INTPNT\_TOL\_REL\_GAP})	\\
@@ -7170,6 +7170,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.1.pdf}{\m
 \item Continuous integration via GitHub and Travis-CI integration.
 \item Include \LaTeX{} source code for \mum{} in \code{docs/src} and for \mostman{} in \code{most/docs/src}.
 \item Support for exporting \matpower{} case to PSS/E RAW data format.
+\item Support for soft limits on all OPF inequality constraints, i.e. bus voltage bounds, generator active and reactive bounds, branch flow and branch angle difference limits. \emph{Thanks to Eran Schweitzer.}
 \item New option \codeq{opf.start} to replace deprecated \codeq{opf.init\_from\_mpc} and add a new possibility to automatically run a power flow to initialize the starting state for the OPF.
 \item New options \codeq{cpf.enforce\_v\_lims} and \codeq{cpf.enforce\_flow\_lims} to enforce bus voltage magnitude and branch flow limits in the continuation power flow, and \codeq{cpf.v\_lims\_tol} and \codeq{cpf.flow\_lims\_tol} to control the respective detection tolerances.  \emph{Thanks to Ahmad Sadiq Abubakar and Shrirang Abhyankar.}
 \item Support in core optimization model \code{opt\_model} for:
@@ -7305,6 +7306,7 @@ Some of these cases also include contingency tables and/or hourly load scenarios
 
 \subsubsection*{Incompatible Changes}
 \begin{itemize}
+\item Turning soft limits on without specifying any parameters explicitly in \code{mpc.softlims} now implements soft limits for all constraints, by default, not just branch flow limits. And the format of the input parameters in \code{mpc.softlims} has changed. See \code{help toggle\_softlims} or Table~\ref{tab:softlimsinputs} for the details.
 \item Swap the order of the output arguments of \code{dSbus\_dV()}) for polar coordinate voltages (angle before magnitude) for consistency.
 \item Move included \matpower{} case files to new \code{data} subdirectory.
 \item Remove \code{nln.mu.l.<name>} and \code{nln.mu.u.<name>} fields from OPF \code{results} struct. Use \code{nle.lambda.<name>} and \code{nli.mu.<name>} fields instead for nonlinear constraint multipliers.

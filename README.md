@@ -290,7 +290,7 @@ Manual][8] for details.
 License and Terms of Use
 ------------------------
 
-MATPOWER is distributed under the [3-clause BSD license][27].
+MATPOWER is distributed as open-source under the [3-clause BSD license][27].
 
 
 [1]: http://www.pserc.cornell.edu/matpower/

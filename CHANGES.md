@@ -43,12 +43,22 @@ Since last release
     flow on larger systems. In Octave 4.4 it generates warnings about
     potential LU failures **and** slows it down.
 
-
 #### 5/10/18
   - Fix bug in order of lambdas used in `opf_branch_ang_hess()` and
     `opf_vlim_hess()` that resulted in wrong sign in Hessian terms.
   - Fix bug #36 where Hessian structure for Ipopt and Knitro were
     incorrect. Re-enabled skipped tests that were previously failing.
+
+#### 4/27/18
+  - Update `toggle_softlims()` to implement soft limits for all OPF inequality
+    constraints, i.e. bus voltage bounds, generator active & reactive bounds,
+    branch flow and branch angle difference limits.
+    *Thanks to Eran Schweitzer.*
+  - **INCOMPATIBLE CHANGE:** Turning soft limits on without specifying any
+    parameters explicitly in `mpc.softlims` now implements soft limits for
+    all constraints, by default, not just branch flow limits. And the
+    format of the input parameters in `mpc.softlims` has changed. See
+    `help toggle_softlims` for the details.
 
 #### 4/19/18
   - Add AC OPF tests for cases with ref bus ~= 1 and ref angle ~= 0.
