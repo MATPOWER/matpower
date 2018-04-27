@@ -2365,6 +2365,11 @@ name & default & description \\
 0 & include angle difference limits, if specified \\
 1 & ignore angle difference limits even if specified \\
 \end{tabular}	\\
+\code{opf.softlims.default}	& 1	& default behavior of implicit soft limits,  where parameters are not explicitly provided	\\
+&& \begin{tabular}{r @{ -- } p{0.48\textwidth}}
+0 & do \emph{not} include softlims if not explicitly specified  \\
+1 & include softlims with default values if not explicitly specified \\
+\end{tabular}	\\
 \code{opf.init\_from\_mpc}\tnote{*}	& -1	& specify whether to use the current state in \matpower{} case to initialize OPF	\\
 && \begin{tabular}{r @{ -- } l}
 -1 & \matpower{} decides based on solver/algorithm \\
@@ -4986,6 +4991,11 @@ name & default & description \\
 0 & include angle difference limits, if specified \\
 1 & ignore angle difference limits even if specified \\
 \end{tabular}	\\
+\code{opf.softlims.default}	& 1	& default behavior of implicit soft limits,  where parameters are not explicitly provided	\\
+&& \begin{tabular}{r @{ -- } p{0.48\textwidth}}
+0 & do \emph{not} include softlims if not explicitly specified  \\
+1 & include softlims with default values if not explicitly specified \\
+\end{tabular}	\\
 \code{opf.init\_from\_mpc}\tnote{*}	& -1	& specify whether to use the current state in \matpower{} case to initialize OPF	\\
 && \begin{tabular}{r @{ -- } l}
 -1 & \matpower{} decides based on solver/algorithm \\
@@ -7173,6 +7183,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.1.pdf}{\m
 \item Support for soft limits on all OPF inequality constraints, i.e. bus voltage bounds, generator active and reactive bounds, branch flow and branch angle difference limits. \emph{Thanks to Eran Schweitzer.}
 \item New option \codeq{opf.start} to replace deprecated \codeq{opf.init\_from\_mpc} and add a new possibility to automatically run a power flow to initialize the starting state for the OPF.
 \item New options \codeq{cpf.enforce\_v\_lims} and \codeq{cpf.enforce\_flow\_lims} to enforce bus voltage magnitude and branch flow limits in the continuation power flow, and \codeq{cpf.v\_lims\_tol} and \codeq{cpf.flow\_lims\_tol} to control the respective detection tolerances.  \emph{Thanks to Ahmad Sadiq Abubakar and Shrirang Abhyankar.}
+\item New option \codeq{opf.softlims.default} for use with enhanced \code{toggle\_softlims()} to determine whether or not to include soft limits on constraints whose parameters are not specified explicitly in the \code{mpc.softlims} struct.
 \item Support in core optimization model \code{opt\_model} for:
     \begin{itemize}
     \item general nonlinear constraints

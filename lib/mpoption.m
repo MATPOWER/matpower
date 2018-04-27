@@ -219,6 +219,11 @@ function opt = mpoption(varargin)
 %   opf.ignore_angle_lim    0           angle diff limits for branches
 %       [ 0 - include angle difference limits, if specified                 ]
 %       [ 1 - ignore angle difference limits even if specified              ]
+%   opf.softlims.default    1           default behavior of implicit soft
+%                                       limits, where parameters are not
+%                                       explicitly provided)
+%       [ 0 - do not include softlims if not explicitly specified           ]
+%       [ 1 - include softlims w/default values if not explicitly specified ]
 %   opf.init_from_mpc       -1          (DEPRECATED: use opf.start instead)
 %                                       specify whether to use current state
 %                                       in MATPOWER case to initialize OPF
@@ -594,6 +599,9 @@ if have_opt0
             if opt0.v <= 17         %% convert version 17 to 18
                 opt0.opf.current_balance = opt_d.opf.current_balance;
                 opt0.opf.v_cartesian     = opt_d.opf.v_cartesian;
+            end
+            if opt0.v <= 18         %% convert version 18 to 19
+                opt0.opf.softlims.default = opt_d.opf.softlims.default;
             end
             opt0.v = v;
         end
@@ -1558,6 +1566,8 @@ if ~isstruct(opt)
             'use_vg',               0, ...
             'flow_lim',             'S', ...
             'ignore_angle_lim',     0, ...
+            'softlims',             struct(...
+                'default',               1  ), ...
             'init_from_mpc',        -1, ...
             'start',                0, ...
             'return_raw_der',       0   ), ...
@@ -1621,7 +1631,7 @@ optt = opt;
 %% globals
 %%-------------------------------------------------------------------
 function v = mpoption_version
-v = 18;     %% version number of MATPOWER options struct
+v = 19;     %% version number of MATPOWER options struct
             %% (must be incremented every time structure is updated)
             %% v1   - first version based on struct (MATPOWER 5.0b1)
             %% v2   - added 'linprog' and 'quadprog' fields
@@ -1651,6 +1661,7 @@ v = 18;     %% version number of MATPOWER options struct
             %% v16  - added 'opf.start' (deprecated 'opf.init_from_mpc')
             %% v17  - added 'knitro.maxit'
             %% v18  - added 'opf.current_balance' and 'opf.v_cartesian'
+            %% v19  - added 'opf.softlims.default'
 
 %%-------------------------------------------------------------------
 function db_level = DEBUG

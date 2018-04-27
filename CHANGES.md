@@ -50,6 +50,10 @@ Since last release
     incorrect. Re-enabled skipped tests that were previously failing.
 
 #### 4/27/18
+  - Add option `opf.softlims.default` for use with enhanced
+    `toggle_softlims()` to determine whether or not to include soft limits
+    on constraints whose parameters are not specified explicitly in the
+    `mpc.softlims` struct.
   - Update `toggle_softlims()` to implement soft limits for all OPF inequality
     constraints, i.e. bus voltage bounds, generator active & reactive bounds,
     branch flow and branch angle difference limits.
