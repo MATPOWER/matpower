@@ -23,7 +23,7 @@ else
 end
 
 % t_begin(59+37*4, quiet);
-t_begin(629, quiet);
+t_begin(672, quiet);
 
 %% define constants
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
@@ -105,6 +105,61 @@ for prop = {'RATE_A', 'VMIN', 'VMAX', 'ANGMIN', 'ANGMAX', 'PMIN', 'PMAX', 'QMIN'
     elseif strcmp(prop{:}, 'PMIN')
         sdefault.(prop{:}).type = 'frac';
         sdefault.(prop{:}).ub   = 1;
+    end
+end
+%% opf.softlims.default = 0
+mpopt.opf.softlims.default = 0;
+mpc = mpc0;
+mpc = rmfield(mpc,'softlims');
+
+t = 'mpopt test - opf.softlims.default = 0 (all none): ';
+mpc = toggle_softlims(mpc,'on', mpopt);
+r = toggle_run_check(mpc, mpopt, t, 1);
+for prop = fieldnames(r.softlims).'
+    t_ok(strcmp(r.softlims.(prop{:}).type, 'none'), [t prop{:} '.type is ''none'''])
+end
+
+t = 'mpopt test - opf.softlims.default = 0 (Include RATE_A): ';
+mpc.softlims.RATE_A = struct(); %initializing an empty strucure results in default
+r = toggle_run_check(mpc, mpopt, t, 1);
+for prop = fieldnames(r.softlims).'
+    if ~strcmp(prop{:}, 'RATE_A')
+        t_ok(strcmp(r.softlims.(prop{:}).type, 'none'), [t prop{:} '.type is ''none'''])
+    else
+        t_ok(strcmp(r.softlims.RATE_A.type,'frac'), [t prop{:} '.type is ''frac'''])
+        t_is(r.softlims.RATE_A.ub, 0.5*r.branch(r.softlims.RATE_A.idx,RATE_A), 5, [t 'ub is 0.5*RATE_A'])
+    end
+end
+
+mpopt.opf.softlims.default = 1;
+mpc = mpc0;
+mpc = rmfield(mpc,'softlims');
+t = 'mpopt test - opf.softlims.default = 1 (all default): ';
+mpc = toggle_softlims(mpc,'on', mpopt);
+r = toggle_run_check(mpc, mpopt, t, 1);
+for prop = fieldnames(r.softlims).'
+    if ismember(prop{:}, {'PMAX', 'QMAX', 'QMIN'})
+        % default is 'unbnd'
+        t_ok(strcmp(r.softlims.(prop{:}).type,'unbnd'), [t prop{:} '.type is ''unbnd'''])
+        t_ok(all(isinf(r.softlims.(prop{:}).ub)), [t prop{:} ' ub is Inf'])
+    elseif ismember(prop{:}, {'VMAX', 'VMIN'})
+        % default is 0.5 x hard limit
+        t_ok(strcmp(r.softlims.(prop{:}).type,'frac'), [t prop{:} '.type is ''frac'''])
+        t_is(r.softlims.(prop{:}).ub, 0.5*r.bus(r.softlims.(prop{:}).idx,eval(prop{:})), 5, [t 'ub is 0.5*' prop{:}])
+    elseif strcmp(prop{:}, 'RATE_A')
+        % default is 0.5 x hard limit
+        t_ok(strcmp(r.softlims.(prop{:}).type,'frac'), [t prop{:} '.type is ''frac'''])
+        t_is(r.softlims.RATE_A.ub, 0.5*r.branch(r.softlims.RATE_A.idx,RATE_A), 5, [t 'ub is 0.5*RATE_A'])
+    elseif strcmp(prop{:}, 'PMIN')
+        % default is 1 x hard limit
+        t_ok(strcmp(r.softlims.(prop{:}).type,'frac'), [t prop{:} '.type is ''frac'''])
+        t_is(r.softlims.PMIN.ub, r.gen(r.softlims.PMIN.idx,PMIN), 5, [t 'ub is 1*PMIN'])
+    elseif ismember(prop{:}, {'ANGMAX', 'ANGMIN'})
+        % default is 360 - abs(hard limit)
+        t_ok(strcmp(r.softlims.(prop{:}).type,'cnst'), [t prop{:} '.type is ''cnst'''])
+        t_is(r.softlims.(prop{:}).ub, 360 - abs(r.branch(r.softlims.(prop{:}).idx,eval(prop{:}))), 5, [t 'ub is |360 - ' prop{:} '|'])
+    else
+        error('t_opf_softlims: unknown property %s', prop{:})
     end
 end
 %% Default settings check

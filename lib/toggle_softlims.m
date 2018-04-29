@@ -1,7 +1,8 @@
-function mpc = toggle_softlims(mpc, on_off)
+function mpc = toggle_softlims(mpc, on_off, varargin)
 %TOGGLE_SOFTLIMS Relax DC optimal power flow branch limits.
 %   MPC = TOGGLE_SOFTLIMS(MPC, 'on')
 %   MPC = TOGGLE_SOFTLIMS(MPC, 'off')
+%   MPC = TOGGLE_SOFTLIMS(MPC, 'on', MPOPT)
 %   T_F = TOGGLE_SOFTLIMS(MPC, 'status')
 %
 %   Enables, disables or checks the status of a set of OPF userfcn
@@ -87,6 +88,15 @@ function mpc = toggle_softlims(mpc, on_off)
 %       the shadow price on a soft limit constraint is equal to the
 %       user-specified soft limit violation cost.
 %
+%   MPC = TOGGLE_SOFTLIMS(MPC, 'on', MPOPT) additionally passes the
+%   matpower options structure, which is added as an optional arg in the
+%   ext2int callback. If mpopt.opf.softlims.default = 1 (default) the
+%   default softlimits are applied to unspecified limits in the softlims
+%   structure. If mpopt.opf.softlims.default = 0 the unspecified softlims
+%   are ignored. In this case, to initialize the default soft limit a blank
+%   structure should be created. For example, to use the default settings
+%   for VMAX the command, mpc.softlims.VMAX = struct(), should be issued.
+%
 %   See also ADD_USERFCN, REMOVE_USERFCN, RUN_USERFCN, T_OPF_SOFTLIMS.
 
 %   To do for future versions:
@@ -113,7 +123,12 @@ if strcmp(upper(on_off), 'ON')
     %% add callback functions
     %% note: assumes all necessary data included in 1st arg (mpc, om, results)
     %%       so, no additional explicit args are needed
-    mpc = add_userfcn(mpc, 'ext2int', @userfcn_softlims_ext2int);
+    if ~isempty(varargin)
+        args = varargin{1};
+    else
+        args = [];
+    end
+    mpc = add_userfcn(mpc, 'ext2int', @userfcn_softlims_ext2int, args);
     mpc = add_userfcn(mpc, 'formulation', @userfcn_softlims_formulation);
     mpc = add_userfcn(mpc, 'int2ext', @userfcn_softlims_int2ext);
     mpc = add_userfcn(mpc, 'printpf', @userfcn_softlims_printpf);
@@ -175,6 +190,14 @@ mat2lims = struct(...
     'gen', {{'PMAX', 'PMIN', 'QMAX', 'QMIN'}} ...
 );
 
+%% check opf.softlims.default
+use_default = 1;
+if ~isempty(args)
+    try 
+        use_default = args.opf.softlims.default;
+    catch
+    end
+end 
 %% check for proper softlims inputs
 if isfield(mpc, 'softlims')
     % loop over limit types
@@ -183,16 +206,24 @@ if isfield(mpc, 'softlims')
         if isfield(mpc.softlims, prop{:})
             mpc.softlims.(prop{:}) = softlims_defaults(mpc.softlims.(prop{:}), prop{:}, mpc.order.ext.(mat));
         else
-            % passing an empty struct, results in assignment of defaults
-            mpc.softlims.(prop{:}) = softlims_defaults(struct(), prop{:}, mpc.order.ext.(mat));
+            if use_default
+                % passing an empty struct, results in assignment of defaults
+                mpc.softlims.(prop{:}) = softlims_defaults(struct(), prop{:}, mpc.order.ext.(mat));
+            else
+                mpc.softlims.(prop{:}).type = 'none';
+            end
         end
     end
 else
     % looping over limit types and assign defaults
     % passing an empty struct, results in assignment of defaults
     for prop = fieldnames(lims).'
-        mat  = lims.(prop{:});
-        mpc.softlims.(prop{:}) = softlims_defaults(struct(), prop{:}, mpc.order.ext.(mat));
+        if use_default
+            mat  = lims.(prop{:});
+            mpc.softlims.(prop{:}) = softlims_defaults(struct(), prop{:}, mpc.order.ext.(mat));
+        else
+            mpc.softlims.(prop{:}).type = 'none';
+        end
     end
 end
 
