@@ -58,7 +58,12 @@ if isstruct(i2e)
 
             %% execute userfcn callbacks for 'int2ext' stage
             if isfield(mpc, 'userfcn')
-                mpc = run_userfcn(mpc.userfcn, 'int2ext', mpc);
+                if nargin < 2
+                    mpopt = struct();
+                else
+                    mpopt = gen;
+                end
+                mpc = run_userfcn(mpc.userfcn, 'int2ext', mpc, mpopt);
             end
             
             %% convert back "extra" fields

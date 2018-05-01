@@ -2667,10 +2667,10 @@ mpc = ext2int(mpc, mpopt);
 \end{Code}
 All isolated buses, out-of-service generators and branches are removed, along with any generators or branches connected to isolated buses. The buses are renumbered consecutively, beginning at 1, and the in-service generators are sorted by increasing bus number. All of the related indexing information and the original data matrices are stored in an \code{order} field in the case struct to be used later by \code{int2ext} to perform the reverse conversions when the simulation is complete.
 
-The first stage callback is invoked from within the \code{ext2int} function immediately after the case data has been converted. Inputs are a \matpower{} case struct (\mpc{}), freshly converted to internal indexing and any (optional) \code{args} value supplied when the callback was registered via \code{add\_userfcn}. Output is the (presumably updated) \mpc{}. This is typically used to reorder any input arguments that may be needed in internal ordering by the formulation stage. The example shows how \code{e2i\_field} can also be used, with a case struct that has already been converted to internal indexing, to convert other data structures by passing in 2 or 3 extra parameters in addition to the case struct. In this case, it automatically converts the input data in the \code{qty}, \code{cost} and \code{zones} fields of \code{mpc.reserves} to be consistent with the internal generator ordering, where off-line generators have been eliminated and the on-line generators are sorted in order of increasing bus number. Notice that it is the second dimension (columns) of \code{mpc.reserves.zones} that is being re-ordered. See the on-line help for \code{e2i\_field} and \code{e2i\_data} for more details on what all they can do.
+The first stage callback is invoked from within the \code{ext2int} function immediately after the case data has been converted. Inputs are a \matpower{} case struct (\mpc{}) freshly converted to internal indexing, a \matpower{} options struct \code{mpopt},\footnote{The \code{mpopt} may be empty if \code{ext2int()} is called manually without providing it.} and any (optional) \code{args} value supplied when the callback was registered via \code{add\_userfcn}. Output is the (presumably updated) \mpc{}. This is typically used to reorder any input arguments that may be needed in internal ordering by the formulation stage. The example shows how \code{e2i\_field} can also be used, with a case struct that has already been converted to internal indexing, to convert other data structures by passing in 2 or 3 extra parameters in addition to the case struct. In this case, it automatically converts the input data in the \code{qty}, \code{cost} and \code{zones} fields of \code{mpc.reserves} to be consistent with the internal generator ordering, where off-line generators have been eliminated and the on-line generators are sorted in order of increasing bus number. Notice that it is the second dimension (columns) of \code{mpc.reserves.zones} that is being re-ordered. See the on-line help for \code{e2i\_field} and \code{e2i\_data} for more details on what all they can do.
 
 \begin{Code}
-function mpc = userfcn_reserves_ext2int(mpc, args)
+function mpc = userfcn_reserves_ext2int(mpc, mpopt, args)
 
 mpc = e2i_field(mpc, {'reserves', 'qty'}, 'gen');
 mpc = e2i_field(mpc, {'reserves', 'cost'}, 'gen');
@@ -2739,7 +2739,7 @@ results = int2ext(results, mpopt);
 \end{Code}
 This conversion essentially undoes everything that was done by \code{ext2int}. Generators are restored to their original ordering, buses to their original numbering and all out-of-service or isolated generators, branches and buses are restored.
 
-This callback is invoked from \code{int2ext} immediately before the resulting case is converted from internal back to external indexing. At this point, the simulation has been completed and the \results{} struct, a superset of the original \matpower{} case struct passed to the OPF, contains all of the results. This \results{} struct is passed to the callback, along with any (optional) \code{args} supplied when the callback was registered via \code{add\_userfcn}. The output of the callback is the updated \results{} struct. This is typically used to convert any results to external indexing and populate any corresponding fields in the \results{} struct.
+This callback is invoked from \code{int2ext} immediately before the resulting case is converted from internal back to external indexing. At this point, the simulation has been completed and the \results{} struct, a superset of the original \matpower{} case struct passed to the OPF, contains all of the results. This \results{} struct is passed to the callback, along with the \matpower{} options struct \code{mpopt},\footnote{The \code{mpopt} may be empty if \code{int2ext()} is called manually without providing it.} and any (optional) \code{args} supplied when the callback was registered via \code{add\_userfcn}. The output of the callback is the updated \results{} struct. This is typically used to convert any results to external indexing and populate any corresponding fields in the \results{} struct.
 
 The \results{} struct contains, in addition to the standard OPF results, solution information related to all of the user-defined variables, constraints and costs. Table~\ref{tab:extended_results} summarizes where the various data is found. Each of the fields listed in the table is actually a struct whose fields correspond to the named sets created by \code{add\_var}, \code{add\_lin\_constraint}, \code{add\_nln\_constraint}, \code{add\_quad\_cost}, \code{add\_nln\_cost} and \code{add\_legacy\_cost}.
 
@@ -2774,7 +2774,7 @@ In the example code below, the callback function begins by converting the reserv
 Then the reserves results of interest are extracted from the appropriate sub-fields of \code{results.var}, \code{results.lin} and \code{results.cost}, converted from per unit to per MW where necessary, and stored with external indexing for the end user in the chosen fields of the \results{} struct.
 
 \begin{Code}
-function results = userfcn_reserves_int2ext(results, args)
+function results = userfcn_reserves_int2ext(results, mpopt, args)
 
 %%-----  convert stuff back to external indexing  -----
 %% convert all reserve parameters (zones, costs, qty, rgens)
@@ -3721,7 +3721,7 @@ This function can be used to save a \emph{change table} matrix, \code{chgtab}, t
   mpc_ext = int2ext(mpc_int, mpopt)
 \end{Code}
 
-These functions convert a \matpower{} case struct from external to internal, and from internal to external numbering, respectively. \code{ext2int} first removes all isolated buses, off-line generators and branches, and any generators or branches connected to isolated buses. Then the buses are renumbered consecutively, beginning at 1, and the generators are sorted by increasing bus number. Any \codeq{ext2int} callback routines registered in the case are also invoked automatically. All of the related indexing information and the original data matrices are stored in an \codeq{order} field in the struct to be used later by code{int2ext} to perform the reverse conversions. If the case is already using internal numbering it is returned unchanged.
+These functions convert a \matpower{} case struct from external to internal, and from internal to external numbering, respectively. \code{ext2int} first removes all isolated buses, off-line generators and branches, and any generators or branches connected to isolated buses. Then the buses are renumbered consecutively, beginning at 1, and the generators are sorted by increasing bus number. Any \codeq{ext2int} callback routines registered in the case are also invoked automatically. All of the related indexing information and the original data matrices are stored in an \codeq{order} field in the struct to be used later by code{int2ext} to perform the reverse conversions. If the case is already using internal numbering it is returned unchanged. The optional \matpower{} options struct (\code{mpopt}) input argument is only needed in conjunction with callback routines that depend on it, e.g. when \code{toggle\_softlims} is on.
 
 \subsubsection{{\tt e2i\_data}, {\tt i2e\_data}}
 
@@ -7324,7 +7324,7 @@ Some of these cases also include contingency tables and/or hourly load scenarios
 \item Move included \matpower{} case files to new \code{data} subdirectory.
 \item Remove \code{nln.mu.l.<name>} and \code{nln.mu.u.<name>} fields from OPF \code{results} struct. Use \code{nle.lambda.<name>} and \code{nli.mu.<name>} fields instead for nonlinear constraint multipliers.
 \item Modify order of default output arguments of \code{opt\_model/get\_idx()}.
-\item Add \code{mpopt} to OPF \codeq{formulation} callback input args.
+\item Add \code{mpopt} to input args for OPF \codeq{ext2int}, \codeq{formulation}, and \codeq{int2ext} callbacks.
 \end{itemize}
 
 

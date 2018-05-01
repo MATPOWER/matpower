@@ -10,7 +10,7 @@ function mpc = add_userfcn(mpc, stage, fcn, args, allow_multiple)
 %
 %   MPC   : the case struct
 %   STAGE : the name of the stage at which this function should be
-%           called: ext2int, formulation, int2ext, printpf
+%           called: ext2int, formulation, int2ext, printpf, savecase
 %   FCN   : the name of the userfcn
 %   ARGS  : (optional) the value to be passed as an argument to the
 %           userfcn (typically a struct)
@@ -33,7 +33,7 @@ function mpc = add_userfcn(mpc, stage, fcn, args, allow_multiple)
 %   typically used to reorder any input arguments that may be needed in
 %   internal ordering by the formulation stage.
 %
-%   E.g. mpc = userfcn_reserves_ext2int(mpc, args)
+%   E.g. mpc = userfcn_reserves_ext2int(mpc, mpopt, args)
 %
 %   2. formulation
 %
@@ -43,7 +43,7 @@ function mpc = add_userfcn(mpc, stage, fcn, args, allow_multiple)
 %   Output is the OM object. This is the ideal place to add any additional
 %   vars, constraints or costs to the OPF formulation.
 %
-%   E.g. om = userfcn_reserves_formulation(om, args)
+%   E.g. om = userfcn_reserves_formulation(om, mpopt, args)
 %
 %   3. int2ext
 %
@@ -53,7 +53,7 @@ function mpc = add_userfcn(mpc, stage, fcn, args, allow_multiple)
 %   struct. This is typically used to convert any results to external
 %   indexing and populate any corresponding fields in the RESULTS struct.
 %
-%   E.g. results = userfcn_reserves_int2ext(results, args)
+%   E.g. results = userfcn_reserves_int2ext(results, mpopt, args)
 %
 %   4. printpf
 %
@@ -80,7 +80,7 @@ function mpc = add_userfcn(mpc, stage, fcn, args, allow_multiple)
 %   TOGGLE_DCLINE, TOGGLE_SOFTLIMS, and RUNOPF_W_RES.
 
 %   MATPOWER
-%   Copyright (c) 2009-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2018, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

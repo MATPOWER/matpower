@@ -154,9 +154,9 @@ end
 
 
 %%-----  ext2int  ------------------------------------------------------
-function mpc = userfcn_softlims_ext2int(mpc, args)
+function mpc = userfcn_softlims_ext2int(mpc, mpopt, args)
 %
-%   mpc = userfcn_softlims_ext2int(mpc, args)
+%   mpc = userfcn_softlims_ext2int(mpc, mpopt, args)
 %
 %   This is the 'ext2int' stage userfcn callback that prepares the input
 %   data for the formulation stage. It expects to find a 'softlims' field in
@@ -449,9 +449,9 @@ end
 
 
 %%-----  int2ext  ------------------------------------------------------
-function results = userfcn_softlims_int2ext(results, args)
+function results = userfcn_softlims_int2ext(results, mpopt, args)
 %
-%   results = userfcn_softlims_int2ext(results, args)
+%   results = userfcn_softlims_int2ext(results, mpopt, args)
 %
 %   This is the 'int2ext' stage userfcn callback that converts everything
 %   back to external indexing and packages up the results. It expects to

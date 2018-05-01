@@ -3,7 +3,7 @@ function rv = run_userfcn(userfcn, stage, varargin)
 %   RV = RUN_USERFCN(USERFCN, STAGE, VARARGIN)
 %
 %   USERFCN : the 'userfcn' field of mpc, populated by ADD_USERFCN
-%   STAGE   : the name of the callback stage begin executed
+%   STAGE   : the name of the callback stage being executed
 %   (additional arguments) some stages require additional arguments.
 %
 %   Example:
@@ -30,9 +30,9 @@ if ~isempty(userfcn) && isfield(userfcn, stage)
             args = [];
         end
         rv = feval(userfcn.(stage)(k).fcn, rv, varargin{2:end}, args);
-        % mpc     = userfcn_*_ext2int(mpc, args);
+        % mpc     = userfcn_*_ext2int(mpc, mpopt, args);
         % om      = userfcn_*_formulation(om, mpopt, args);
-        % results = userfcn_*_int2ext(results, args);
+        % results = userfcn_*_int2ext(results, mpopt, args);
         % results = userfcn_*_printpf(results, fd, mpopt, args);
         % mpc     = userfcn_*_savecase(mpc, fd, prefix, args);
     end

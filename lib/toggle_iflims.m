@@ -76,9 +76,9 @@ end
 
 
 %%-----  ext2int  ------------------------------------------------------
-function mpc = userfcn_iflims_ext2int(mpc, args)
+function mpc = userfcn_iflims_ext2int(mpc, mpopt, args)
 %
-%   mpc = userfcn_iflims_ext2int(mpc, args)
+%   mpc = userfcn_iflims_ext2int(mpc, mpopt, args)
 %
 %   This is the 'ext2int' stage userfcn callback that prepares the input
 %   data for the formulation stage. It expects to find an 'if' field in
@@ -159,9 +159,9 @@ om.add_lin_constraint('iflims',  Aif, lif, uif, {'Va'});   %% nifs
 
 
 %%-----  int2ext  ------------------------------------------------------
-function results = userfcn_iflims_int2ext(results, args)
+function results = userfcn_iflims_int2ext(results, mpopt, args)
 %
-%   results = userfcn_iflims_int2ext(results, args)
+%   results = userfcn_iflims_int2ext(results, mpopt, args)
 %
 %   This is the 'int2ext' stage userfcn callback that converts everything
 %   back to external indexing and packages up the results. It expects to

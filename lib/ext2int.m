@@ -222,7 +222,12 @@ if isstruct(bus)
 
             %% execute userfcn callbacks for 'ext2int' stage
             if isfield(mpc, 'userfcn')
-                mpc = run_userfcn(mpc.userfcn, 'ext2int', mpc);
+                if nargin < 2
+                    mpopt = struct();
+                else
+                    mpopt = gen;
+                end
+                mpc = run_userfcn(mpc.userfcn, 'ext2int', mpc, mpopt);
             end
         end
 

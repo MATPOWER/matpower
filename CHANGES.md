@@ -51,6 +51,8 @@ Since last release
 
 #### 4/30/18
   - Add optional `mpopt` argument to calls to `ext2int()` and `int2ext()`.
+  - **INCOMPATIBLE CHANGE:** Add `mpopt` to input args for OPF `ext2int`
+    and `int2ext` callbacks.
 
 #### 4/27/18
   - Add option `opf.softlims.default` for use with enhanced
