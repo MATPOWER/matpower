@@ -49,6 +49,9 @@ Since last release
   - Fix bug #36 where Hessian structure for Ipopt and Knitro were
     incorrect. Re-enabled skipped tests that were previously failing.
 
+#### 4/30/18
+  - Add optional `mpopt` argument to calls to `ext2int()` and `int2ext()`.
+
 #### 4/27/18
   - Add option `opf.softlims.default` for use with enhanced
     `toggle_softlims()` to determine whether or not to include soft limits

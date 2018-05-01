@@ -289,8 +289,8 @@ if ~done.flag
     end
 
     %% convert both to internal indexing
-    mpcb = ext2int(mpcb);
-    mpct = ext2int(mpct);
+    mpcb = ext2int(mpcb, mpopt);
+    mpct = ext2int(mpct, mpopt);
     i2e_gen = mpcb.order.gen.i2e;
     if qlim
         b2ref = e2i_data(mpcb, b2ref, 'bus');

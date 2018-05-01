@@ -219,7 +219,7 @@ if size(mpc.branch,2) < MU_ANGMAX
 end
 
 %%-----  convert to internal numbering, remove out-of-service stuff  -----
-mpc = ext2int(mpc);
+mpc = ext2int(mpc, mpopt);
 
 %%-----  construct OPF model object  -----
 om = opf_setup(mpc, mpopt);

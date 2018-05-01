@@ -19,20 +19,23 @@ function [bus, gen, branch, areas] = int2ext(i2e, bus, gen, branch, areas)
 %       [bus, gen, branch] = int2ext(i2e, bus, gen, branch);
 %
 %   2.  MPC = INT2EXT(MPC)
+%       MPC = INT2EXT(MPC, MPOPT)
 %
-%   If the input is a single MATPOWER case struct, then it restores all
-%   buses, generators and branches that were removed because of being
-%   isolated or off-line, and reverts to the original generator ordering
-%   and original bus numbering. This requires that the 'order' field
-%   created by EXT2INT be in place.
+%   If the input is a single MATPOWER case struct, followed optionally
+%   by a MATOWER options struct, then it restores all buses, generators
+%   and branches that were removed because of being isolated or off-line,
+%   and reverts to the original generator ordering and original bus
+%   numbering. This requires that the 'order' field created by EXT2INT be
+%   in place.
 %
-%   Example:
+%   Examples:
 %       mpc = int2ext(mpc);
+%       mpc = int2ext(mpc, mpopt);
 %
 %   See also EXT2INT, I2E_FIELD, I2E_DATA.
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2018, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -41,7 +44,7 @@ function [bus, gen, branch, areas] = int2ext(i2e, bus, gen, branch, areas)
 
 if isstruct(i2e)
     mpc = i2e;
-    if nargin == 1
+    if nargin < 3
         if ~isfield(mpc, 'order')
             error('int2ext: mpc does not have the ''order'' field required for conversion back to external numbering.');
         end

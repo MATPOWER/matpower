@@ -22,20 +22,23 @@ function [i2e, bus, gen, branch, areas] = ext2int(bus, gen, branch, areas)
 %       [i2e, bus, gen, branch] = ext2int(bus, gen, branch);
 %
 %   2.  MPC = EXT2INT(MPC)
+%       MPC = EXT2INT(MPC, MPOPT)
 %
-%   If the input is a single MATPOWER case struct, then all isolated
-%   buses, off-line generators and branches are removed along with any
-%   generators or branches connected to isolated buses. Then the
-%   buses are renumbered consecutively, beginning at 1, and the
-%   generators are sorted by increasing bus number. Any 'ext2int'
-%   callback routines registered in the case are also invoked
-%   automatically. All of the related indexing information and the
-%   original data matrices are stored in an 'order' field in the struct
-%   to be used by INT2EXT to perform the reverse conversions. If the
-%   case is already using internal numbering it is returned unchanged.
+%   If the input is a single MATPOWER case struct, followed optionally
+%   by a MATOWER options struct, then all isolated buses, off-line
+%   generators and branches are removed along with any generators or
+%   branches connected to isolated buses. Then the buses are renumbered
+%   consecutively, beginning at 1, and the generators are sorted by
+%   increasing bus number. Any 'ext2int' callback routines registered in
+%   the case are also invoked automatically. All of the related indexing
+%   information and the original data matrices are stored in an 'order'
+%   field in the struct to be used by INT2EXT to perform the reverse
+%   conversions. If the case is already using internal numbering it is
+%   returned unchanged.
 %
-%   Example:
+%   Examples:
 %       mpc = ext2int(mpc);
+%       mpc = ext2int(mpc, mpopt);
 %
 %   The 'order' field of MPC used to store the indexing information
 %   needed for subsequent internal to external conversion is structured
@@ -70,7 +73,7 @@ function [i2e, bus, gen, branch, areas] = ext2int(bus, gen, branch, areas)
 %   See also INT2EXT, E2I_FIELD, E2I_DATA.
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2018, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -79,7 +82,7 @@ function [i2e, bus, gen, branch, areas] = ext2int(bus, gen, branch, areas)
 
 if isstruct(bus)
     mpc = bus;
-    if nargin == 1
+    if nargin < 3
         first = ~isfield(mpc, 'order');
         if first || mpc.order.state == 'e'
             %% define names for columns to data matrices

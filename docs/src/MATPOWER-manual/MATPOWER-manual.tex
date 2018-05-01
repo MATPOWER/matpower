@@ -2663,7 +2663,7 @@ Table~\ref{tab:reserves} describes some of the variables and names that are used
 
 Before doing any simulation of a case, \matpower{} performs some data conversion on the case struct in order to achieve a consistent internal structure, by calling the following.
 \begin{Code}
-mpc = ext2int(mpc);
+mpc = ext2int(mpc, mpopt);
 \end{Code}
 All isolated buses, out-of-service generators and branches are removed, along with any generators or branches connected to isolated buses. The buses are renumbered consecutively, beginning at 1, and the in-service generators are sorted by increasing bus number. All of the related indexing information and the original data matrices are stored in an \code{order} field in the case struct to be used later by \code{int2ext} to perform the reverse conversions when the simulation is complete.
 
@@ -2735,7 +2735,7 @@ om.add_quad_cost('Rcost', [], Cw, 0, {'R'});
 
 After the simulation is complete and before the results are printed or saved, \matpower{} converts the case data in the \results{} struct back to external indexing by calling the following.
 \begin{Code}
-results = int2ext(results);
+results = int2ext(results, mpopt);
 \end{Code}
 This conversion essentially undoes everything that was done by \code{ext2int}. Generators are restored to their original ordering, buses to their original numbering and all out-of-service or isolated generators, branches and buses are restored.
 
@@ -3716,7 +3716,9 @@ This function can be used to save a \emph{change table} matrix, \code{chgtab}, t
 
 \begin{Code}
   mpc_int = ext2int(mpc_ext)
+  mpc_int = ext2int(mpc_ext, mpopt)
   mpc_ext = int2ext(mpc_int)
+  mpc_ext = int2ext(mpc_int, mpopt)
 \end{Code}
 
 These functions convert a \matpower{} case struct from external to internal, and from internal to external numbering, respectively. \code{ext2int} first removes all isolated buses, off-line generators and branches, and any generators or branches connected to isolated buses. Then the buses are renumbered consecutively, beginning at 1, and the generators are sorted by increasing bus number. Any \codeq{ext2int} callback routines registered in the case are also invoked automatically. All of the related indexing information and the original data matrices are stored in an \codeq{order} field in the struct to be used later by code{int2ext} to perform the reverse conversions. If the case is already using internal numbering it is returned unchanged.

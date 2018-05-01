@@ -106,7 +106,7 @@ if size(mpc.branch,2) < QT
 end
 
 %% convert to internal indexing
-mpc = ext2int(mpc);
+mpc = ext2int(mpc, mpopt);
 [baseMVA, bus, gen, branch] = deal(mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch);
 
 if ~isempty(mpc.bus)
