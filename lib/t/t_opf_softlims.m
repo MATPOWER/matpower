@@ -113,7 +113,7 @@ mpc = mpc0;
 mpc = rmfield(mpc,'softlims');
 
 t = 'mpopt test - opf.softlims.default = 0 (all none): ';
-mpc = toggle_softlims(mpc,'on', mpopt);
+mpc = toggle_softlims(mpc,'on');
 r = toggle_run_check(mpc, mpopt, t, 1);
 for prop = fieldnames(r.softlims).'
     t_ok(strcmp(r.softlims.(prop{:}).type, 'none'), [t prop{:} '.type is ''none'''])
@@ -135,7 +135,7 @@ mpopt.opf.softlims.default = 1;
 mpc = mpc0;
 mpc = rmfield(mpc,'softlims');
 t = 'mpopt test - opf.softlims.default = 1 (all default): ';
-mpc = toggle_softlims(mpc,'on', mpopt);
+mpc = toggle_softlims(mpc,'on');
 r = toggle_run_check(mpc, mpopt, t, 1);
 for prop = fieldnames(r.softlims).'
     if ismember(prop{:}, {'PMAX', 'QMAX', 'QMIN'})
