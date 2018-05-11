@@ -40,28 +40,28 @@ nb = length(Vr);
 %%----- evaluate Hessian of branch angle difference constraints -----
 nlam = length(lambda) / 2;
 if nlam
-    lamU = lambda(1:nlam);
-    lamL = lambda((1:nlam)+nlam);
+    lamL = lambda(1:nlam);
+    lamU = lambda((1:nlam)+nlam);
 else
-    lamU = zeros(0,1);
     lamL = zeros(0,1);
+    lamU = zeros(0,1);
 end
 
 Vr2 = Vr.^2;
 Vi2 = Vi.^2;
 
-lamU_Vm4 = (Aang' * lamU) ./ (Vr2 + Vi2).^2;
 lamL_Vm4 = (Aang' * lamL) ./ (Vr2 + Vi2).^2;
-
-VaDifU_rr = sparse(1:nb, 1:nb, 2 * lamU_Vm4 .*  Vr .* Vi,   nb, nb);
-VaDifU_ri = sparse(1:nb, 1:nb,     lamU_Vm4 .* (Vi2 - Vr2), nb, nb);
-VaDifU_ir =  VaDifU_ri;
-VaDifU_ii = -VaDifU_rr;
+lamU_Vm4 = (Aang' * lamU) ./ (Vr2 + Vi2).^2;
 
 VaDifL_rr = sparse(1:nb, 1:nb, 2 * lamL_Vm4 .*  Vr .* Vi,   nb, nb);
 VaDifL_ri = sparse(1:nb, 1:nb,     lamL_Vm4 .* (Vi2 - Vr2), nb, nb);
 VaDifL_ir =  VaDifL_ri;
 VaDifL_ii = -VaDifL_rr;
+
+VaDifU_rr = sparse(1:nb, 1:nb, 2 * lamU_Vm4 .*  Vr .* Vi,   nb, nb);
+VaDifU_ri = sparse(1:nb, 1:nb,     lamU_Vm4 .* (Vi2 - Vr2), nb, nb);
+VaDifU_ir =  VaDifU_ri;
+VaDifU_ii = -VaDifU_rr;
 
 %% construct Hessian
 d2VaDif = -[ VaDifL_rr VaDifL_ri;

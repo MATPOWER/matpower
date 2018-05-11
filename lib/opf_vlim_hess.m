@@ -45,25 +45,25 @@ Vm3 = (Vr2 + Vi2).^(3/2);   %% Vm.^3;
 %%----- evaluate Hessian of voltage limit constraints -----
 nlam = length(lambda) / 2;
 if nlam
-    lamVmax = lambda(1:nlam);
-    lamVmin = lambda((1:nlam)+nlam);
+    lamVmin = lambda(1:nlam);
+    lamVmax = lambda((1:nlam)+nlam);
 else    %% keep dimensions of empty matrices/vectors compatible
-    lamVmax = zeros(0,1);
     lamVmin = zeros(0,1);
+    lamVmax = zeros(0,1);
 end
 
-lamVmax_over_Vm3 = lamVmax ./ Vm3;
 lamVmin_over_Vm3 = lamVmin ./ Vm3;
-
-Vmax_rr = sparse(idx, idx,  Vi2  .* lamVmax_over_Vm3, nb, nb);
-Vmax_ri = sparse(idx, idx, -VrVi .* lamVmax_over_Vm3, nb, nb);
-Vmax_ir = Vmax_ri;
-Vmax_ii = sparse(idx, idx,  Vr2  .* lamVmax_over_Vm3, nb, nb);
+lamVmax_over_Vm3 = lamVmax ./ Vm3;
 
 Vmin_rr = sparse(idx, idx,  Vi2  .* lamVmin_over_Vm3, nb, nb);
 Vmin_ri = sparse(idx, idx, -VrVi .* lamVmin_over_Vm3, nb, nb);
 Vmin_ir = Vmin_ri;
 Vmin_ii = sparse(idx, idx,  Vr2  .* lamVmin_over_Vm3, nb, nb);
+
+Vmax_rr = sparse(idx, idx,  Vi2  .* lamVmax_over_Vm3, nb, nb);
+Vmax_ri = sparse(idx, idx, -VrVi .* lamVmax_over_Vm3, nb, nb);
+Vmax_ir = Vmax_ri;
+Vmax_ii = sparse(idx, idx,  Vr2  .* lamVmax_over_Vm3, nb, nb);
 
 %% construct Hessian
 d2Vlims =  -[Vmin_rr Vmin_ri; Vmin_ir Vmin_ii] + ...
