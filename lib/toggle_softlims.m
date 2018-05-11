@@ -255,7 +255,11 @@ end
 % permute generators, since they are reordered inside of ext2int
 for prop = mat2lims.gen
     if ~strcmp( s.(prop{:}).type, 'none')
-        s.(prop{:}).idx   = s.(prop{:}).idx(o.gen.e2i(s.(prop{:}).idx));
+        tmp = NaN(size(o.gen.e2i));
+        tmp(s.(prop{:}).idx) = s.(prop{:}).idx;
+        tmp = tmp(o.gen.e2i);
+        s.(prop{:}).idx = tmp(~isnan(tmp));
+%         s.(prop{:}).idx   = s.(prop{:}).idx(o.gen.e2i(s.(prop{:}).idx));
     end
 end
 
