@@ -13,8 +13,6 @@ if nargin < 1
     quiet = 0;
 end
 
-skip_failing_tests = 1;
-
 %% current mismatch, cartesian V
 options = {
     {0, 0},
@@ -127,9 +125,6 @@ for k = 1:length(options)
 
     %% run OPF with active power line limits
     t = [t0 '(P line lim) : '];
-    if skip_failing_tests && mpopt.opf.current_balance
-        t_skip(12, [t 'NONCONVERGENT']);
-    else
     mpopt1 = mpoption(mpopt, 'opf.flow_lim', 'P');
     [baseMVA, bus, gen, gencost, branch, f, success, et] = runopf(casefile, mpopt1);
     t_ok(success, [t 'success']);
@@ -144,7 +139,6 @@ for k = 1:length(options)
     t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
     t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
     t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
-    end
 
     t = [t0 '(P^2 line lim) : '];
     mpopt1 = mpoption(mpopt, 'opf.flow_lim', '2');
@@ -436,9 +430,6 @@ for k = 1:length(options)
     t_is(r.branch(:,ibr_mu    ), branch_soln1(:,ibr_mu    ),  2, [t 'branch mu']);
 
     t = [t0 'hi-deg polynomial costs : '];
-    if skip_failing_tests && ~mpopt.opf.current_balance && mpopt.opf.v_cartesian
-        t_skip(4, [t 'NONCONVERGENT']);
-    else
     mpc = loadcase(casefile);
     mpc.gencost = [
         2   1500    0   6   1e-6/5  0   0   0   0   0;
@@ -452,7 +443,6 @@ for k = 1:length(options)
     t_is(gen(:, PG), [100.703628; 128.679485; 88.719864], 5, [t 'f']);
     t_is([min(bus(:, VM)) mean(bus(:, VM)) max(bus(:, VM))], ...
         [1.059191 1.079404 1.1], 5, [t 'bus voltage']);
-    end
 
     %% OPF with user-defined nonlinear constraints
     t = [t0 'w/nonlin eq constraint : '];
@@ -477,9 +467,6 @@ for k = 1:length(options)
 
     %% OPF with no branch limits
     t = [t0 'w/no branch limits : '];
-    if skip_failing_tests && mpopt.opf.current_balance && mpopt.opf.v_cartesian
-        t_skip(4, [t 'NONCONVERGENT']);
-    else
     mpc = loadcase(casefile);
     mpc.branch(:, RATE_A) = 0;
     r = runopf(mpc, mpopt);
@@ -488,7 +475,10 @@ for k = 1:length(options)
     t_is(r.gen(:, PG), [90; 10; 220.463932], 5, [t 'Pg']);
     t_is([min(r.bus(:, VM)) mean(r.bus(:, VM)) max(r.bus(:, VM))], ...
         [1.070692 1.090449 1.1], 5, [t 'bus voltage']);
-    end
+end
+
+if have_fcn('octave')
+    warning(s1.state, file_in_path_warn_id);
 end
 
 t_end;

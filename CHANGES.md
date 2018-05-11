@@ -15,6 +15,8 @@ Since last release
 #### 5/10/18
   - Fix bug in order of lambdas used in `opf_branch_ang_hess()` and
     `opf_vlim_hess()` that resulted in wrong sign in Hessian terms.
+  - Fix bug #36 where Hessian structure for Ipopt and Knitro were
+    incorrect. Re-enabled skipped tests that were previously failing.
 
 #### 4/19/18
   - Add AC OPF tests for cases with ref bus ~= 1 and ref angle ~= 0.
