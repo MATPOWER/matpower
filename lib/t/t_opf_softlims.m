@@ -23,7 +23,7 @@ else
 end
 
 % t_begin(59+37*4, quiet);
-t_begin(672, quiet);
+t_begin(679, quiet);
 
 %% define constants
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
@@ -107,6 +107,28 @@ for prop = {'RATE_A', 'VMIN', 'VMAX', 'ANGMIN', 'ANGMAX', 'PMIN', 'PMAX', 'QMIN'
         sdefault.(prop{:}).ub   = 1;
     end
 end
+%% generator ordering
+mpc = mpc0;
+mpc.bus(:,QD) = mpc.bus(:,QD)*2;
+mpc.gen = mpc.gen([3,1,2],:);
+mpc.gen(:,[QMAX,QMIN]) = [1.1,-1.1;2.2,-2.2;3.3,-3.3];
+mpc.gen(:,PMIN) = [1.1;2.2;3.3];
+mpc.gen = [mpc.gen(1,:); mpc.gen(3,:); mpc.gen(2:end,:)];
+mpc.gen(2,GEN_STATUS) = 0;
+mpc.gencost = [mpc.gencost(1,:); mpc.gencost(3,:); mpc.gencost(2:end,:)];
+
+mpc.softlims = sdefault;
+mpc.softlims.QMAX.idx = [1,3];
+
+t = 'generator ordering: ';
+mpc = toggle_softlims(mpc,'on');
+r = toggle_run_check(mpc,mpopt, t, 1);
+t_is(mpc.gen(:,QMAX), r.gen(:,QMAX), 6, [t 'matching QMAX'])
+t_is(mpc.gen(:,QMIN), r.gen(:,QMIN), 6, [t 'matching QMIN'])
+t_is(mpc.gen(:,PMAX), r.gen(:,PMAX), 6, [t 'matching PMAX'])
+t_is(mpc.gen(:,PMIN), r.gen(:,PMIN), 6, [t 'matching PMIN'])
+mask = r.gen(:,QG) - r.gen(:,QMAX) > 0;
+t_is(r.softlims.QMAX.overload(mask), r.gen(mask,QG) - r.gen(mask,QMAX), 4, [t 'QG = overload'])
 %% opf.softlims.default = 0
 mpopt.opf.softlims.default = 0;
 mpc = mpc0;

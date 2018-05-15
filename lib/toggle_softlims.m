@@ -232,9 +232,15 @@ mpc.order.ext.softlims = s;
 for mat = {'bus', 'branch', 'gen'}
     mat = mat{1};
     n0  = size(o.ext.(mat), 1);  %% original number
-    n   = size(mpc.(mat), 1);    %% on-line number
+    n   = size(mpc.(mat), 1);    %% on-line number  
     e2i = zeros(n0, 1);
-    e2i(o.(mat).status.on) = (1:n)';  %% ext->int index mapping
+    if strcmp(mat,'gen')
+        % for generators, the permutation of the generator matrix needs to
+        % be accounted for
+        e2i(o.gen.status.on(o.gen.e2i)) = (1:n)';
+    else
+        e2i(o.(mat).status.on) = (1:n)';  %% ext->int index mapping
+    end
     for prop = mat2lims.(mat)
         if ~strcmp( s.(prop{:}).type, 'none')
             s.(prop{:}).idx = e2i(s.(prop{:}).idx);
@@ -251,18 +257,6 @@ for mat = {'bus', 'branch', 'gen'}
         end
     end
 end
-
-% permute generators, since they are reordered inside of ext2int
-for prop = mat2lims.gen
-    if ~strcmp( s.(prop{:}).type, 'none')
-        tmp = NaN(size(o.gen.e2i));
-        tmp(s.(prop{:}).idx) = s.(prop{:}).idx;
-        tmp = tmp(o.gen.e2i);
-        s.(prop{:}).idx = tmp(~isnan(tmp));
-%         s.(prop{:}).idx   = s.(prop{:}).idx(o.gen.e2i(s.(prop{:}).idx));
-    end
-end
-
 
 %%%%-------- remove hard limits on elements with soft limits
 for prop = fieldnames(lims).'
@@ -543,8 +537,13 @@ for prop = fieldnames(s).'
 %     var(var < 1e-8) = 0;
     % NOTE: o.(mat).status.on is a vector nx1 where n is the INTERNAL number of
     % elements. The entries are the EXTERNAL locations (row numbers).
-    results.softlims.(prop{:}).overload(o.(mat).status.on(s.(prop{:}).idx)) = var;
-    results.softlims.(prop{:}).ovl_cost(o.(mat).status.on(s.(prop{:}).idx)) = var .* s.(prop{:}).cost(:,1);
+    if strcmp(mat, 'gen')
+        results.softlims.(prop{:}).overload(o.(mat).status.on(o.gen.e2i(s.(prop{:}).idx))) = var;
+        results.softlims.(prop{:}).ovl_cost(o.(mat).status.on(o.gen.e2i(s.(prop{:}).idx))) = var .* s.(prop{:}).cost(:,1);
+    else
+        results.softlims.(prop{:}).overload(o.(mat).status.on(s.(prop{:}).idx)) = var;
+        results.softlims.(prop{:}).ovl_cost(o.(mat).status.on(s.(prop{:}).idx)) = var .* s.(prop{:}).cost(:,1);
+    end
 end
 
 %% get shadow prices
@@ -999,6 +998,12 @@ end
 if isfield(s, 'idx')
     %idxmask returns a boolean vector the size of s.idx. Entry i of
     %idxmask is 1 if s.idx(i) is in idxfull and 0 otherwise.
+    if size(s.idx,2) > 1
+        s.idx = s.idx.';
+        if size(s.idx, 2) > 1
+            error('softlim_defaults: idx must be a vector (error on property ''%s''',prop)
+        end
+    end
     idxmask = ismember(s.idx, idxfull);
     s.idx = s.idx(idxmask); %remove possibly irrelevant entries entered by user
 else
