@@ -16,10 +16,11 @@ function gf = genfuels()
 %       hydro       - Hydro
 %       hydrops     - Hydro Pumped Storage
 %       jetfuel     - Jet Fuel
+%       lng         - Liquefied Natural Gas
 %       ng          - Natural Gas
 %       nuclear     - Nuclear
 %       oil         - Unspecified Oil
-%       refuse      - Refuse, Municipal Solid Waster
+%       refuse      - Refuse, Municipal Solid Waste
 %       rfo         - Residual Fuel Oil (FO5, FO6)
 %       solar       - Solar
 %       syncgen     - Synchronous Condensor
@@ -54,6 +55,7 @@ gf = { ...
     'hydro';
     'hydrops';
     'jetfuel';
+    'lng';
     'ng';
     'nuclear';
     'oil';

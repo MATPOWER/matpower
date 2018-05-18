@@ -12,6 +12,9 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 5/18/18
+  - Add `lng` for "Liquefied Natural Gas" to `genfuels()`.
+
 #### 5/10/18
   - Fix bug in order of lambdas used in `opf_branch_ang_hess()` and
     `opf_vlim_hess()` that resulted in wrong sign in Hessian terms.
