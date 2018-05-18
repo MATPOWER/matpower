@@ -14,6 +14,11 @@ Since last release
 
 #### 5/18/18
   - Add `lng` for "Liquefied Natural Gas" to `genfuels()`.
+  - Under Octave, disable the use of explicit LU decomposition with AMD
+    reordering and the 3 output argument form of LU for Newton power
+    flow on larger systems. In Octave 4.4 it generates warnings about
+    potential LU failures **and** slows it down.
+
 
 #### 5/10/18
   - Fix bug in order of lambdas used in `opf_branch_ang_hess()` and
