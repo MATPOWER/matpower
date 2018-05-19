@@ -3449,6 +3449,14 @@ The \code{margcost} function computes the marginal cost for generators given a m
 
 The \code{isload} function returns a column vector of 1's and 0's. The 1's correspond to rows of the \gen{} matrix which represent dispatchable loads. The current test is $P_{\rm min} < 0$ and $P_{\rm max} = 0$.
 
+\subsubsection{\tt loadshed}
+\begin{Code}
+  shed = loadshed(gen)
+  shed = loadshed(gen, ild)
+\end{Code}
+
+The \code{loadshed} function returns a column vector of MW curtailments of dispatchable loads, computed as the difference between the \code{PG} and \code{PMIN} values in the corresponding rows of the \gen{} matrix. The optional \code{ild} argument is a column vector of generator indices to the dispatchable loads of interest.
+
 \subsubsection{\tt printpf}
 \begin{Code}
   printpf(results, fd, mpopt)
@@ -6212,6 +6220,7 @@ name & description \\
 \code{idx\_gen}	& named column index definitions for \gen{} matrix	\\
 \code{isload}	& checks if generators are actually dispatchable loads	\\
 \code{load2disp}	& converts fixed loads to dispatchable loads	\\
+\code{loadshed}	& computes MW curtailments of dispatchable loads	\\
 \code{mpver}	& prints version information for \matpower{} and optional packages	\\
 \code{modcost}	& modifies \gencost{} by horizontal or vertical scaling or shifting	\\
 \code{nested\_struct\_copy}	& copies the contents of nested structs	\\
@@ -7137,6 +7146,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.1.pdf}{\m
 \item New functions:
     \begin{itemize}
     \item \code{install\_matpower()} installs \matpower{} modifying or showing needed modifications to \matlab{} or Octave path.
+    \item \code{loadshed()} computes MW curtailments of dispatchable loads.
     \item \code{gentypes()} and \code{genfuels} provide list of standard generator unit types and fuel types, respectively.
     \item \code{dImis\_dV()} evaluates the partial derivatives of nodal current balance with respect to bus voltages.
     \item \code{d2Imis\_dV2()} evaluates the 2\textsuperscript{nd} derivatives of nodal current balance with respect to bus voltages.

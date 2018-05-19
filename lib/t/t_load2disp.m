@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 64;
+num_tests = 72;
 
 t_begin(num_tests, quiet);
 
@@ -167,6 +167,30 @@ else
     expected = {r0.genfuel{:}, 'dl', 'dl', 'dl'}'
 end
 
+t = 'loadshed(mpc) : ';
+shed = loadshed(mpc3.gen);
+t_is(size(shed), [3 1], 12, [t 'size']);
+t_is(shed, [0;0;0], 12, [t 'all zeros']);
+
+t = 'loadshed(mpc, ild) : ';
+ild = [6; 5];
+shed = loadshed(mpc3.gen, ild);
+t_is(size(shed), [2 1], 12, [t 'size']);
+t_is(shed, [0;0], 12, [t 'all zeros']);
+
+ild = find(isload(mpc3.gen));
+mpc3.gen(ild, PG) = [-80; -100; -120];
+
+t = 'loadshed(mpc) : ';
+shed = loadshed(mpc3.gen);
+t_is(size(shed), [3 1], 12, [t 'size']);
+t_is(shed, [10;0;5], 12, [t 'all zeros']);
+
+t = 'loadshed(mpc, ild) : ';
+ild = [6; 5];
+shed = loadshed(mpc3.gen, ild);
+t_is(size(shed), [2 1], 12, [t 'size']);
+t_is(shed, [5;0], 12, [t 'all zeros']);
 
 if have_fcn('octave')
     warning(s1.state, file_in_path_warn_id);

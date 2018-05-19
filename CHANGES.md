@@ -12,6 +12,10 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 5/19/18
+  - Add `loadshed()` function to compute MW curtailments of dispatchable
+    loads.
+
 #### 5/18/18
   - Add `lng` for "Liquefied Natural Gas" to `genfuels()`.
   - Under Octave, disable the use of explicit LU decomposition with AMD
