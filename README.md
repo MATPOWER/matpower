@@ -238,8 +238,8 @@ acknowledge that fact by citing [reference \[1\]][13] above, namely:
 
 >   R. D. Zimmerman, C. E. Murillo-Sanchez, and R. J. Thomas,
     "MATPOWER: Steady-State Operations, Planning and Analysis Tools
-    for Power Systems Research and Education," Power Systems, IEEE
-    Transactions on, vol. 26, no. 1, pp. 12–19, Feb. 2011.
+    for Power Systems Research and Education," *Power Systems, IEEE
+    Transactions on*, vol. 26, no. 1, pp. 12–19, Feb. 2011.
 
 Additionally, we request that publications derived from the use of
 the [MATPOWER Optimal Scheduling Tool (MOST)][21], explicitly
@@ -247,8 +247,8 @@ acknowledge that fact by citing [reference \[4\]][18] as well as [\[1\]][13].
 
 >   C. E. Murillo-Sanchez, R. D. Zimmerman, C. L. Anderson, and
     R. J. Thomas, "Secure Planning and Operations of Systems with
-    Stochastic Sources, Energy Storage and Active Demand," Smart Grid,
-    IEEE Transactions on, vol. 4, no. 4, pp. 2220–2229, Dec. 2013.
+    Stochastic Sources, Energy Storage and Active Demand," *Smart Grid,
+    IEEE Transactions on*, vol. 4, no. 4, pp. 2220–2229, Dec. 2013.
 
 
 E-mail Lists
