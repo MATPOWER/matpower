@@ -23,7 +23,7 @@ else
 end
 
 % t_begin(59+37*4, quiet);
-t_begin(899, quiet);
+t_begin(877, quiet);
 
 %% define constants
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
@@ -64,6 +64,9 @@ warning('off', sing_matrix_warn_id);
 
 %% load and modify case file
 mpc = loadcase(casefile);
+mpc.bus(:,BUS_I) = 10*mpc.bus(:,BUS_I);
+mpc.branch(:,[F_BUS,T_BUS]) = 10*mpc.branch(:,[F_BUS,T_BUS]);
+mpc.gen(:,GEN_BUS) = 10*mpc.gen(:,GEN_BUS);
 nl = size(mpc.branch, 1);
 mpc.gencost(:, NCOST) = 2;
 mpc.gencost(:, COST) = [];
@@ -428,8 +431,8 @@ t = 'voltage limits (replace) - softlimits with overloads: ';
 r = toggle_run_check(mpc, mpopt, t, 1);
 overload_loop(r, t, 1, {'VMIN', 'VMAX'})
 overload_loop(r, t, 0, {'VMIN', 'VMAX'})
-t_ok(all(r.softlims.VMIN.ub == (r.bus(r.softlims.VMIN.idx,VMIN) - 0.7)), [t 'VMIN ub = VMIN - 0.7'])
-t_ok(all(r.softlims.VMAX.ub == (1.2 - r.bus(r.softlims.VMAX.idx,VMAX))), [t 'VMIN ub = 1.2 - VMAX'])
+t_ok(all(r.softlims.VMIN.ub == (r.bus(r.softlims.VMIN.rowidx,VMIN) - 0.7)), [t 'VMIN ub = VMIN - 0.7'])
+t_ok(all(r.softlims.VMAX.ub == (1.2 - r.bus(r.softlims.VMAX.rowidx,VMAX))), [t 'VMIN ub = 1.2 - VMAX'])
 mu_cost_test(r,t);
 gen_order_check(mpc, r, t)
 
@@ -920,18 +923,23 @@ for prop = fieldnames(lims).'
         continue
     end
     s = r.softlims.(prop{:});
+    if ismember(prop{:}, {'VMIN', 'VMAX'})
+        idx = s.rowidx;
+    else
+        idx = s.idx;
+    end
     % slack variable is non zero
     mumask1 = s.overload > 1e-6;
     % ensure that overloads are not at the slack variable boundary since
     % then the shadow price can take on any value again.
     mumask2 = true(size(mumask1));
-    mumask2(s.idx) = s.overload(s.idx) < s.ub;
+    mumask2(idx) = s.overload(idx) < s.ub;
     
     mumask = mumask1 & mumask2;
     
     % linear cost
     cst = zeros(size(mumask1));
-    cst(s.idx) = s.cost;
+    cst(idx) = s.cost;
     cst = cst(mumask); %keep only relevant entries
     
     if strcmp(prop{:},'RATE_A')

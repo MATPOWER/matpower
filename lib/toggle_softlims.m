@@ -641,6 +641,16 @@ else %AC model
         end
     end
 end
+%%----- swap bus idx vectors -----
+% set s.VMIN.idx and s.VMAX.idx to include external bus numbers (stored in
+% busidx. Store row indices in rowidx to be used by the print function.
+for prop = {'VMAX', 'VMIN'}
+    if ~strcmp(s.(prop{:}).hl_mod, 'none')
+        results.softlims.(prop{:}).idx = s.(prop{:}).busidx;
+        results.softlims.(prop{:}).rowidx = s.(prop{:}).idx;
+        results.softlims.(prop{:}) = rmfield(results.softlims.(prop{:}), 'busidx');
+    end
+end
 
 %%-----  printpf  ------------------------------------------------------
 function results = userfcn_softlims_printpf(results, fd, mpopt, args)
@@ -704,7 +714,7 @@ if isOPF && OUT_BRANCH && (results.success || OUT_FORCE)
         end
     end
     if ~strcmp(s.VMAX.hl_mod,'none') && strcmp(mpopt.model, 'AC')
-        k = find(s.VMAX.overload(s.VMAX.idx) | results.bus(s.VMAX.idx, MU_VMAX) > ptol);
+        k = find(s.VMAX.overload(s.VMAX.rowidx) | results.bus(s.VMAX.rowidx, MU_VMAX) > ptol);
         fprintf(fd, '\nMaximum Voltage Magnitude Limits:');
         fprintf(fd, '\n----------------------------------------');
         if isempty(k)
@@ -714,18 +724,18 @@ if isOPF && OUT_BRANCH && (results.success || OUT_FORCE)
             fprintf(fd, '\n  #    Mag(pu)   (pu)     (pu)     ($/pu)');
             fprintf(fd, '\n-----  -------  -------  -------  ---------');
             fprintf(fd, '\n%5d%8.3f%9.3f%9.3f%11.3f',...
-                [ s.VMAX.busidx(k), results.bus(s.VMAX.idx(k),[VM, VMAX]),...
-                  s.VMAX.overload(s.VMAX.idx(k)), ...
-                  results.bus(s.VMAX.idx(k), MU_VMAX)...
+                [ s.VMAX.idx(k), results.bus(s.VMAX.rowidx(k),[VM, VMAX]),...
+                  s.VMAX.overload(s.VMAX.rowidx(k)), ...
+                  results.bus(s.VMAX.rowidx(k), MU_VMAX)...
                 ]');
             fprintf(fd, '\n                        --------');
             fprintf(fd, '\n               Total:%10.2f', ...
-                    sum(s.VMAX.overload(s.VMAX.idx(k))));
+                    sum(s.VMAX.overload(s.VMAX.rowidx(k))));
             fprintf(fd, '\n');
         end
     end
     if ~strcmp(s.VMIN.hl_mod,'none') && strcmp(mpopt.model, 'AC')
-        k = find(s.VMIN.overload(s.VMIN.idx) | results.bus(s.VMIN.idx, MU_VMIN) > ptol);
+        k = find(s.VMIN.overload(s.VMIN.rowidx) | results.bus(s.VMIN.rowidx, MU_VMIN) > ptol);
         fprintf(fd, '\nMinimum Voltage Magnitude Limits:');
         fprintf(fd, '\n----------------------------------------');
         if isempty(k)
@@ -736,13 +746,13 @@ if isOPF && OUT_BRANCH && (results.success || OUT_FORCE)
             fprintf(fd, '\n  #    Mag(pu)   (pu)     (pu)     ($/pu)');
             fprintf(fd, '\n-----  -------  -------  -------  ---------');
             fprintf(fd, '\n%5d%8.3f%9.3f%9.3f%11.3f',...
-                [ s.VMIN.busidx(k), results.bus(s.VMIN.idx(k),[VM, VMIN]),...
-                  s.VMIN.overload(s.VMIN.idx(k)), ...
-                  results.bus(s.VMIN.idx(k), MU_VMIN)...
+                [ s.VMIN.idx(k), results.bus(s.VMIN.rowidx(k),[VM, VMIN]),...
+                  s.VMIN.overload(s.VMIN.rowidx(k)), ...
+                  results.bus(s.VMIN.rowidx(k), MU_VMIN)...
                 ]');
             fprintf(fd, '\n                        --------');
             fprintf(fd, '\n               Total:%10.2f', ...
-                    sum(s.VMIN.overload(s.VMIN.idx(k))));
+                    sum(s.VMIN.overload(s.VMIN.rowidx(k))));
             fprintf(fd, '\n');
         end
     end
@@ -906,6 +916,7 @@ lims = struct(...
 fields = struct('hl_mod', struct('desc','Hard limit modifcation', 'tok','%s'),...
     'hl_val', struct('desc', 'New hard limit value', 'tok', '%g'),...
     'busidx', struct('desc','bus ids for where soft voltage limit is applied','tok', '%d'),...
+    'rowidx', struct('desc','bus matrix row indices', 'tok', '%d'),...
     'idx', struct('desc','%s matrix indices','tok','%d'),...
     'cost', struct('desc','violation cost coefficient','tok','%g'),...
     'ub', struct('desc','Slack variable upper bound','tok','%g'),...
@@ -925,7 +936,11 @@ if isfield(mpc, 'softlims')
             f = f{1};
             if isfield(s.(prop{:}),f)
                 if strcmp(f, 'idx')
-                    desc = sprintf(fields.idx.desc, lims.(prop{:}));
+                    if ismember(prop{:}, {'VMIN', 'VMAX'})
+                        desc = fields.busidx.desc;
+                    else
+                        desc = sprintf(fields.idx.desc, lims.(prop{:}));
+                    end
                 else
                     desc = fields.(f).desc;
                 end
