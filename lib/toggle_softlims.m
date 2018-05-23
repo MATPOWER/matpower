@@ -1094,7 +1094,7 @@ if isfield(s, 'hl_mod')
     switch s.hl_mod
         case 'remove'
             % slack upper bound and new limit are both infinit
-            s.hl_val = Inf;
+            s.hl_val = ubsign.(prop)*Inf;
             s.ub = Inf(size(s.idx));
         case 'scale'
             % new hard limit is hl_val * original limit
