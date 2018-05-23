@@ -508,6 +508,14 @@ for prop = fieldnames(s).'
     results.(mat)(s.(prop{:}).idx, eval(prop{:})) = s.(prop{:}).sav;
 end
 
+%%-----  remove rval, and sav fields  -----
+for prop = fieldnames(s).'
+    if strcmp(s.(prop{:}).hl_mod, 'none')
+        continue
+    end
+    results.softlims.(prop{:}) = rmfield(results.softlims.(prop{:}), 'sav');
+    results.softlims.(prop{:}) = rmfield(results.softlims.(prop{:}), 'rval');
+end
 %%-----  results post-processing  -----
 %% get overloads and overload costs
 for prop = fieldnames(s).'
