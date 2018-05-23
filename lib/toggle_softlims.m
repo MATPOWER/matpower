@@ -16,7 +16,9 @@ function mpc = toggle_softlims(mpc, on_off)
 %       idx     index of affected buses, branches, or generators. When
 %               specifying buses, these should be bus numbers. For all
 %               others these are indexes into the respective matrix. The
-%               default are all elements that are not unbounded.
+%               default are all online elements that are not unbounded.
+%               Additionally, dispachable loads (using isload(gen)) are
+%               discarded from possible generators to relax.
 %
 %       cost    linear cost to be added for the slack variable. Defaults
 %               are:
@@ -24,54 +26,53 @@ function mpc = toggle_softlims(mpc, on_off)
 %                      $1000 $/MW   for RATE_A, PMAX, and PMIN
 %                      $1000 $/MVAr for QMAX, QMIN
 %                      $1000 $/deg  for ANGMAX, ANGMIN
+%               the final cost is determined by taking the maximum between
+%               the cost above and 2*gen_max_cost, where gen_max_cost is
+%               the maximum generator marginal cost of online generators.
 %
-%       type    type of slack variable options are:
-%                   'unbnd': unbounded limit
-%                   'cnst' : constant upper bound for slack variable
-%                   'frac' : multiplier of current limit
-%                   'none' : No softlimit for this property
+%       hl_mod  type of modification to hard limit, hl, are:
+%                   'remove'  : unbounded limit
+%                   'replace' : new hard limit specified in hl_val
+%                   'scale'   : new hard limit is hl_val*hl
+%                   'shift'   : new hard limit is hl + sign*hl where sign
+%                               either 1 or -1 depending on the limit
+%                   'none'    : No soft limit for this property
+%       hl_val  Value used in conjuction with hl_mod to modify the
+%               constraint hard limit. It can be specified as either a
+%               scalar, or a vector that MUST be the same length as idx.
+%               when...
+%                    hl_mod = 'remove': hl_val is ALWAYS Inf
+%                    hl_mod = 'replace': hl_val MUST be specified.
+%                    hl_mod = 'scale': if hl_val is NOT specified positive
+%                                      limits (as well as QMIN and ANGMIN)
+%                                      are doubled (hl_val = 2) and negative
+%                                      limits are halved (hl_val = 0.5).
+%                    hl_mod = 'shift': If hl_val is NOT specified voltage
+%                                      limits are shifted by 0.25 pu (in
+%                                      appropriate direction) and the rest
+%                                      are shifted by 10.
 %
-%       ub      slack variable upper bound. If a VECTOR is passed it is
-%               assumed these are already the desired upperbounds (should
-%               be done in conjunction with type 'cnst' or 'frac'). If a
-%               SCALAR is passed in conjuction with 'cnst' the resulting ub
-%               is: ub - abs(hard limit). The sign is flipped for VMIN and
-%               PMIN, since they need to be positive quantities.
-%               If a SCALAR is passed in conjunction with 'frac', the
-%               resulting ub is: ub*abs(hard limit).
+%       ub      Internally calculated upperbound on the slack variable that
+%               implements the sof limit (handled in the defaults function).
 %
-%       sav     original limits (this is handled in the defaults function).
+%       sav     original limits (handled in the defaults function).
 %
-%       rval    value to place in mpc structure to effectively eliminate
-%               the constraint. Also handled in the default function.
+%       rval    value to place in mpc structure to eliminate the original 
+%               constraint (handled in the default function).
 %
-%   Default values are assigned to any property that is not specified. The
-%   default structure is:
+%   Defaults are assigned depending on the mpopt.opf.softlims.default
+%   option. If it is 0, any limit not specified in the softlims structrue
+%   is set to hl_mod = 'none' (i.e ignored). If
+%   mpopt.opf.softlims.default = 1 (the default) all limits not included in
+%   the softlims structure are set to hl_mod = 'remove' except:
 %   softlims
-%           .VMIN
-%               .type = 'frac'
-%               .ub   = 0.5
-%           .VMAX
-%               .type = 'frac'
-%               .ub   = 0.5
-%           .RATE_A
-%               .type = 'frac'
-%               .ub   = 0.5
-%           .PMIN
-%               .type = 'frac'
-%               .ub   = 1
-%           .PMAX
-%               .type = 'unbnd'
-%           .QMIN
-%               .type = 'unbnd'
-%           .QMAX
-%               .type = 'unbnd'
-%           .ANGMIN
-%               .type = 'cnst'
-%               .ub   = 360
-%           .ANGMAX
-%               .type = 'cnst'
-%               .ub   = 360
+%         .VMIN
+%           .hl_mod = 'replace'
+%           .hl_val = 0
+%         .PMIN
+%           .hl_mod = 'replace'
+%           .hl_val = 0    for normal generators (PMIN > 0)
+%           .hl_val = -Inf for for generators with PMIN < 0 AND PMAX > 0
 %
 %   The 'int2ext' callback also packages up results and stores them in
 %   the following output fields of results.softlims.(prop), where prop is
@@ -163,6 +164,7 @@ function mpc = userfcn_softlims_ext2int(mpc, mpopt, args)
 [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
     TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
+[PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 
 % structures used to index into softlims in a loop
 lims = struct(...
@@ -190,19 +192,24 @@ else
     use_default = mpopt.opf.softlims.default;
 end 
 
+%% get maximum generator marginal cost
+% since mpc.gen and not mpc.order.ext.gen is used this is the maximum of
+% ONLINE generators.
+max_gen_cost = max(margcost(mpc.gencost, mpc.gen(:, PMAX)));
+
 %% check for proper softlims inputs
 if isfield(mpc, 'softlims')
     % loop over limit types
     for prop = fieldnames(lims).'
         mat  = lims.(prop{:});
         if isfield(mpc.softlims, prop{:})
-            mpc.softlims.(prop{:}) = softlims_defaults(mpc.softlims.(prop{:}), prop{:}, mpc.order.ext.(mat));
+            mpc.softlims.(prop{:}) = softlims_defaults(mpc.softlims.(prop{:}), prop{:}, mpc.order.ext.(mat), max_gen_cost);
         else
             if use_default
                 % passing an empty struct, results in assignment of defaults
-                mpc.softlims.(prop{:}) = softlims_defaults(struct(), prop{:}, mpc.order.ext.(mat));
+                mpc.softlims.(prop{:}) = softlims_defaults(struct(), prop{:}, mpc.order.ext.(mat), max_gen_cost);
             else
-                mpc.softlims.(prop{:}).type = 'none';
+                mpc.softlims.(prop{:}).hl_mod = 'none';
             end
         end
     end
@@ -212,9 +219,9 @@ else
     for prop = fieldnames(lims).'
         if use_default
             mat  = lims.(prop{:});
-            mpc.softlims.(prop{:}) = softlims_defaults(struct(), prop{:}, mpc.order.ext.(mat));
+            mpc.softlims.(prop{:}) = softlims_defaults(struct(), prop{:}, mpc.order.ext.(mat), max_gen_cost);
         else
-            mpc.softlims.(prop{:}).type = 'none';
+            mpc.softlims.(prop{:}).hl_mod = 'none';
         end
     end
 end
@@ -242,7 +249,7 @@ for mat = {'bus', 'branch', 'gen'}
         e2i(o.(mat).status.on) = (1:n)';  %% ext->int index mapping
     end
     for prop = mat2lims.(mat)
-        if ~strcmp( s.(prop{:}).type, 'none')
+        if ~strcmp( s.(prop{:}).hl_mod, 'none')
             s.(prop{:}).idx = e2i(s.(prop{:}).idx);
             k = find(s.(prop{:}).idx == 0); %% find idxes corresponding to off-line elements
             s.(prop{:}).idx(k)     = [];    %% delete them
@@ -251,8 +258,11 @@ for mat = {'bus', 'branch', 'gen'}
             if ~isscalar(s.(prop{:}).ub)
                 s.(prop{:}).ub(k)  = [];
             end
+            if ~isscalar(s.(prop{:}).hl_val)
+                s.(prop{:}).hl_val(k)  = [];
+            end
             if isempty(s.(prop{:}).idx)
-                s.(prop{:}).type = 'none';
+                s.(prop{:}).hl_mod = 'none';
             end
         end
     end
@@ -260,7 +270,7 @@ end
 
 %%%%-------- remove hard limits on elements with soft limits
 for prop = fieldnames(lims).'
-    if ~strcmp(s.(prop{:}).type, 'none')
+    if ~strcmp(s.(prop{:}).hl_mod, 'none')
         mat = lims.(prop{:});  %% mpc matrix
         mpc.(mat)(s.(prop{:}).idx, eval(prop{:})) = s.(prop{:}).rval;
     end
@@ -297,7 +307,7 @@ om.userdata.mpopt = mpopt;
 
 %%%%-------- limits that are the same for DC and AC formulation -----
 for prop = fieldnames(s).'
-    if strcmp(s.(prop{:}).type, 'none')
+    if strcmp(s.(prop{:}).hl_mod, 'none')
         continue
     end
     varname = ['s_', lower(prop{:})];
@@ -364,7 +374,7 @@ for prop = fieldnames(s).'
     end
 end
 
-if strcmp(mpopt.model, 'DC') && ~strcmp(s.RATE_A.type, 'none')
+if strcmp(mpopt.model, 'DC') && ~strcmp(s.RATE_A.hl_mod, 'none')
     ns  = length(s.RATE_A.idx);
     %%% fetch Bf matrix for DC model
     Bf = om.get_userdata('Bf');
@@ -386,7 +396,7 @@ if strcmp(mpopt.model, 'DC') && ~strcmp(s.RATE_A.type, 'none')
 else
     %% form AC constraints (see softlims_fcn() below)
     %%%%% voltage limits
-    if ~strcmp(s.VMIN.type, 'none')
+    if ~strcmp(s.VMIN.hl_mod, 'none')
         %%% Vm + s_vmin >= s.VMIN.sav
         ns  = length(s.VMIN.idx);
         Av  = sparse(1:ns, s.VMIN.idx, 1, ns, size(mpc.bus,1));
@@ -396,7 +406,7 @@ else
 
         om.add_lin_constraint('soft_vmin', [Av As], lb, ub, {'Vm', 's_vmin'});
     end
-    if ~strcmp(s.VMAX.type, 'none')
+    if ~strcmp(s.VMAX.hl_mod, 'none')
         %%% Vm - s_vmax <= s.VMAX.sav
         ns  = length(s.VMAX.idx);
         Av  = sparse(1:ns, s.VMAX.idx, 1, ns, size(mpc.bus,1));
@@ -406,7 +416,7 @@ else
 
         om.add_lin_constraint('soft_vmax', [Av -As], lb, ub, {'Vm', 's_vmax'});
     end
-    if ~strcmp(s.QMIN.type, 'none')
+    if ~strcmp(s.QMIN.hl_mod, 'none')
         %%% Qg + s_pmin >= s.QMIN.max
         ns  = length(s.QMIN.idx);
         Av  = sparse(1:ns, s.QMIN.idx, 1, ns, size(mpc.gen,1));
@@ -416,7 +426,7 @@ else
 
         om.add_lin_constraint('soft_qmin', [Av As], lb, ub, {'Qg', 's_qmin'});
     end
-    if ~strcmp(s.QMAX.type, 'none')
+    if ~strcmp(s.QMAX.hl_mod, 'none')
         %%% Qg - s_pmax <= s.QMAX.sav
         ns  = length(s.QMAX.idx);
         Av  = sparse(1:ns, s.QMAX.idx, 1, ns, size(mpc.gen,1));
@@ -426,7 +436,7 @@ else
 
         om.add_lin_constraint('soft_qmax', [Av -As], lb, ub, {'Qg', 's_qmax'});
     end
-    if ~strcmp(s.RATE_A.type, 'none')
+    if ~strcmp(s.RATE_A.hl_mod, 'none')
         %% build admittance matrices
         ns  = length(s.RATE_A.idx);
         [Ybus, Yf, Yt] = makeYbus(mpc.baseMVA, mpc.bus, mpc.branch);
@@ -492,7 +502,7 @@ results.softlims = results.order.ext.softlims;
 %%-----  restore hard limits  -----
 for prop = fieldnames(s).'
     mat  = lims.(prop{:});
-    if strcmp(s.(prop{:}).type, 'none')
+    if strcmp(s.(prop{:}).hl_mod, 'none')
         continue
     end
     results.(mat)(s.(prop{:}).idx, eval(prop{:})) = s.(prop{:}).sav;
@@ -502,7 +512,7 @@ end
 %% get overloads and overload costs
 for prop = fieldnames(s).'
     mat  = lims.(prop{:});
-    if strcmp(s.(prop{:}).type, 'none')
+    if strcmp(s.(prop{:}).hl_mod, 'none')
         continue
     end
     n0 = size(o.ext.(mat), 1);    %% original number
@@ -547,20 +557,20 @@ for prop = fieldnames(s).'
 end
 
 %% get shadow prices
-if ~strcmp(s.ANGMAX.type, 'none')
+if ~strcmp(s.ANGMAX.hl_mod, 'none')
     results.branch(s.ANGMAX.idx, MU_ANGMAX) = results.lin.mu.u.soft_angmax * pi/180;
 end
-if ~strcmp(s.ANGMIN.type, 'none')
+if ~strcmp(s.ANGMIN.hl_mod, 'none')
     results.branch(s.ANGMIN.idx, MU_ANGMIN) = results.lin.mu.l.soft_angmin * pi/180;
 end
-if ~strcmp(s.PMAX.type, 'none')
+if ~strcmp(s.PMAX.hl_mod, 'none')
     results.gen(s.PMAX.idx, MU_PMAX) = results.lin.mu.u.soft_pmax / results.baseMVA;
 end
-if ~strcmp(s.PMIN.type, 'none')
+if ~strcmp(s.PMIN.hl_mod, 'none')
     results.gen(s.PMIN.idx, MU_PMIN) = results.lin.mu.l.soft_pmin / results.baseMVA;
 end
 if strcmp(mpopt.model, 'DC')
-    if ~strcmp(s.RATE_A.type, 'none')
+    if ~strcmp(s.RATE_A.hl_mod, 'none')
         results.branch(s.RATE_A.idx, MU_SF) = results.lin.mu.u.softPf / results.baseMVA;
         results.branch(s.RATE_A.idx, MU_ST) = results.lin.mu.u.softPt / results.baseMVA;
 
@@ -584,19 +594,19 @@ if strcmp(mpopt.model, 'DC')
         end
     end
 else %AC model
-    if ~strcmp(s.VMAX.type, 'none')
+    if ~strcmp(s.VMAX.hl_mod, 'none')
         results.bus(s.VMAX.idx, MU_VMAX) = results.lin.mu.u.soft_vmax;
     end
-    if ~strcmp(s.VMIN.type, 'none')
+    if ~strcmp(s.VMIN.hl_mod, 'none')
         results.bus(s.VMIN.idx, MU_VMIN) = results.lin.mu.l.soft_vmin;
     end
-    if ~strcmp(s.QMAX.type, 'none')
+    if ~strcmp(s.QMAX.hl_mod, 'none')
         results.gen(s.QMAX.idx, MU_QMAX) = results.lin.mu.u.soft_qmax / results.baseMVA;
     end
-    if ~strcmp(s.QMIN.type, 'none')
+    if ~strcmp(s.QMIN.hl_mod, 'none')
         results.gen(s.QMIN.idx, MU_QMIN) = results.lin.mu.l.soft_qmin / results.baseMVA;
     end
-    if ~strcmp(s.RATE_A.type, 'none')
+    if ~strcmp(s.RATE_A.hl_mod, 'none')
         if upper(mpopt.opf.flow_lim(1)) == 'P'
             results.branch(s.RATE_A.idx, MU_ST) = results.nli.mu.softSf / results.baseMVA;
             results.branch(s.RATE_A.idx, MU_SF) = results.nli.mu.softSt / results.baseMVA;
@@ -663,7 +673,7 @@ if isOPF && OUT_BRANCH && (results.success || OUT_FORCE)
     fprintf(fd, '\n================================================================================');
     fprintf(fd, '\n|     Soft Limits                                                              |');
     fprintf(fd, '\n================================================================================');
-    if ~strcmp(s.RATE_A.type, 'none')
+    if ~strcmp(s.RATE_A.hl_mod, 'none')
         k = find(s.RATE_A.overload(s.RATE_A.idx) | sum(results.branch(s.RATE_A.idx, MU_SF:MU_ST), 2) > ptol);
         fprintf(fd, '\nFlow Limits:');
         fprintf(fd, '\n----------------------------------------');
@@ -685,7 +695,7 @@ if isOPF && OUT_BRANCH && (results.success || OUT_FORCE)
             fprintf(fd, '\n');
         end
     end
-    if ~strcmp(s.VMAX.type,'none') && strcmp(mpopt.model, 'AC')
+    if ~strcmp(s.VMAX.hl_mod,'none') && strcmp(mpopt.model, 'AC')
         k = find(s.VMAX.overload(s.VMAX.idx) | results.bus(s.VMAX.idx, MU_VMAX) > ptol);
         fprintf(fd, '\nMaximum Voltage Magnitude Limits:');
         fprintf(fd, '\n----------------------------------------');
@@ -706,7 +716,7 @@ if isOPF && OUT_BRANCH && (results.success || OUT_FORCE)
             fprintf(fd, '\n');
         end
     end
-    if ~strcmp(s.VMIN.type,'none') && strcmp(mpopt.model, 'AC')
+    if ~strcmp(s.VMIN.hl_mod,'none') && strcmp(mpopt.model, 'AC')
         k = find(s.VMIN.overload(s.VMIN.idx) | results.bus(s.VMIN.idx, MU_VMIN) > ptol);
         fprintf(fd, '\nMinimum Voltage Magnitude Limits:');
         fprintf(fd, '\n----------------------------------------');
@@ -728,7 +738,7 @@ if isOPF && OUT_BRANCH && (results.success || OUT_FORCE)
             fprintf(fd, '\n');
         end
     end
-    if ~strcmp(s.PMAX.type,'none')
+    if ~strcmp(s.PMAX.hl_mod,'none')
         k = find(s.PMAX.overload(s.PMAX.idx) | results.gen(s.PMAX.idx, MU_PMAX) > ptol);
         fprintf(fd, '\nMaximum Generator P Limits:');
         fprintf(fd, '\n----------------------------------------');
@@ -749,7 +759,7 @@ if isOPF && OUT_BRANCH && (results.success || OUT_FORCE)
             fprintf(fd, '\n');
         end
     end
-    if ~strcmp(s.PMIN.type,'none')
+    if ~strcmp(s.PMIN.hl_mod,'none')
         k = find(s.PMIN.overload(s.PMIN.idx) | results.gen(s.PMIN.idx, MU_PMIN) > ptol);
         fprintf(fd, '\nMinimum Generator P Limits:');
         fprintf(fd, '\n----------------------------------------');
@@ -770,7 +780,7 @@ if isOPF && OUT_BRANCH && (results.success || OUT_FORCE)
             fprintf(fd, '\n');
         end
     end
-    if ~strcmp(s.QMAX.type,'none') && strcmp(mpopt.model, 'AC')
+    if ~strcmp(s.QMAX.hl_mod,'none') && strcmp(mpopt.model, 'AC')
         k = find(s.QMAX.overload(s.QMAX.idx) | results.gen(s.QMAX.idx, MU_QMAX) > ptol);
         fprintf(fd, '\nMaximum Generator Q Limits:');
         fprintf(fd, '\n----------------------------------------');
@@ -791,7 +801,7 @@ if isOPF && OUT_BRANCH && (results.success || OUT_FORCE)
             fprintf(fd, '\n');
         end
     end
-    if ~strcmp(s.QMIN.type,'none') && strcmp(mpopt.model, 'AC')
+    if ~strcmp(s.QMIN.hl_mod,'none') && strcmp(mpopt.model, 'AC')
         k = find(s.QMIN.overload(s.QMIN.idx) | results.gen(s.QMIN.idx, MU_QMIN) > ptol);
         fprintf(fd, '\nMinimum Generator Q Limits:');
         fprintf(fd, '\n----------------------------------------');
@@ -812,7 +822,7 @@ if isOPF && OUT_BRANCH && (results.success || OUT_FORCE)
             fprintf(fd, '\n');
         end
     end
-    if ~strcmp(s.ANGMAX.type,'none')
+    if ~strcmp(s.ANGMAX.hl_mod,'none')
         k = find(s.ANGMAX.overload(s.ANGMAX.idx) | results.branch(s.ANGMAX.idx, MU_ANGMAX) > ptol);
         delta = calc_branch_angle(results);
         fprintf(fd, '\nMaximum Angle Difference Limits:');
@@ -835,7 +845,7 @@ if isOPF && OUT_BRANCH && (results.success || OUT_FORCE)
             fprintf(fd, '\n');
         end
     end
-    if ~strcmp(s.ANGMIN.type,'none')
+    if ~strcmp(s.ANGMIN.hl_mod,'none')
         k = find(s.ANGMIN.overload(s.ANGMIN.idx) | results.branch(s.ANGMIN.idx, MU_ANGMIN) > ptol);
         delta = calc_branch_angle(results);
         fprintf(fd, '\nMinimum Angle Difference Limits:');
@@ -885,7 +895,8 @@ lims = struct(...
 );
 
 % convenience structure for the different fields
-fields = struct('type', struct('desc','Soft limit type', 'tok','%s'),...
+fields = struct('hl_mod', struct('desc','Hard limit modifcation', 'tok','%s'),...
+    'hl_val', struct('desc', 'New hard limit value', 'tok', '%g'),...
     'busidx', struct('desc','bus ids for where soft voltage limit is applied','tok', '%d'),...
     'idx', struct('desc','%s matrix indices','tok','%d'),...
     'cost', struct('desc','violation cost coefficient','tok','%g'),...
@@ -911,8 +922,8 @@ if isfield(mpc, 'softlims')
                     desc = fields.(f).desc;
                 end
                 fprintf(fd,'%% %s\n',desc);
-                if strcmp(f,'type')
-                    fprintf(fd, '%ssoftlims.%s.type = ''%s'';\n', prefix,prop{:}, s.(prop{:}).type);
+                if strcmp(f,'hl_mod')
+                    fprintf(fd, '%ssoftlims.%s.hl_mod = ''%s'';\n', prefix,prop{:}, s.(prop{:}).hl_mod);
                 else
                     fprintf(fd, '%ssoftlims.%s.%s = [\n', prefix,prop{:},f);
                     fprintf(fd, ['\t',fields.(f).tok,';\n'], s.(prop{:}).(f));
@@ -924,17 +935,20 @@ if isfield(mpc, 'softlims')
 end
 
 %%-----  softlims_defaults  --------------------------------------------
-function s = softlims_defaults(s, prop, mat)
+function s = softlims_defaults(s, prop, mat, max_gen_cost)
 % for each property we want
 %   idx: index of affected buses, branches, or generators
 %	cost: linear cost to be added for the slack variable
-%	type: 'unbnd': unbounded limit,
-%         'cnst' : constant upper bound,
-%		  'frac' : multiplier of current limit
-%		  'none' : Don't apply softlimit to this property
-%	ub: upper bound of slack variable, if 'cnst' it can be a scalar or a vector.
+%	hl_mod: 'remove'  : unbounded limit,
+%           'replace' : replace hard limt,
+%           'scale'   : hard limit is multiple of original limit
+%           'shift'   : shift hard limit limit
+%		    'none'    : Don't apply softlimit to this property
+%   hl_val: pais with hl_mod to determin how the potentially new hard limit is set
+%	ub: upper bound of slack variable. Calculated internaly
 %   sav: original limits
-%	rval: value to place in mpc structure to effectively eliminate the constraint
+%	rval: value to place in mpc structure to eliminate the constraint
+
 %% define named indices into data matrices
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
     VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
@@ -945,15 +959,20 @@ function s = softlims_defaults(s, prop, mat)
     TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 
-default_cost = struct('VMAX', 100000, 'VMIN', 100000,...% $/pu
-                      'ANGMAX', 1000, 'ANGMIN', 1000,...% $/deg
-                      'RATE_A', 1000, ... %$/MW
-                      'PMIN', 1000, 'PMAX', 1000, ... %$/MW
-                      'QMIN', 1000, 'QMAX', 1000); %$/MW
+% default cost is default_cost*cost_scale.(prop)
+default_cost  = 1000;
+cost_scale = struct('VMAX', 100, 'VMIN', 100,...% $/pu
+                      'ANGMAX', 1, 'ANGMIN', 1,...% $/deg
+                      'RATE_A', 1, ... %$/MW
+                      'PMIN', 1, 'PMAX', 1, ... %$/MW
+                      'QMIN', 1, 'QMAX', 1); %$/MW
 
-%% ignore if type none specified
-if isfield(s, 'type')
-    if strcmp(s.type, 'none')
+if nargin < 4
+    max_gen_cost = 0;
+end
+%% ignore if hl_mod none specified
+if isfield(s, 'hl_mod')
+    if strcmp(s.hl_mod, 'none')
         return
     end
 end
@@ -984,14 +1003,14 @@ elseif ismember(prop, {'PMAX', 'QMAX', 'QMIN'})
     % all active generators
     % NOTE: idxfull contains locations in EXTERNAL generator list
     
-    idxfull = find(mat(:, GEN_STATUS) > 0);
+    idxfull = find( (mat(:, GEN_STATUS) > 0) & ~isload(mat) );
     
 elseif strcmp(prop, 'PMIN')
-    % Initial list of candidates for Pmin are all active generators with
-    % non-zero Pmin.
+    % Initial list of candidates for Pmin are all active generators that
+    % are NOT dispachable loads
     % NOTE: idxfull contains locations in EXTERNAL generator list
     
-    idxfull = find(mat(:, GEN_STATUS) > 0 & mat(:, PMIN) > 0);
+    idxfull = find( (mat(:, GEN_STATUS) > 0) & ~isload(mat) );
     
 end
 
@@ -1021,9 +1040,9 @@ if ismember(prop, {'VMAX', 'VMIN'})
     s.idx =  find(ismember(mat(:,BUS_I), s.idx));
 end
 
-% if there are no constraints to relax, set type to none and exit
+% if there are no constraints to relax, set hl_mod to none and exit
 if isempty(s.idx)
-    s.type = 'none';
+    s.hl_mod = 'none';
     return
 end
 
@@ -1054,77 +1073,158 @@ if isfield(s, 'cost')
         s.cost = s.cost * ones(size(s.idx));
     end
 else
-    s.cost = default_cost.(prop) * ones(size(s.idx));
+    % default cost is the maximum between a  predefined value and 
+    % 2 times the maximum generation marginal cost. A scaling is applyed
+    % to account for the fact that we are essentially equation 1MW with
+    % 0.01 p.u. voltage or 1 deg angle difference.
+    
+    ctmp = max(default_cost*cost_scale.(prop), 2*cost_scale.(prop)*max_gen_cost);
+    s.cost = ctmp * ones(size(s.idx));    
 end
 
 
 %% type of limit and upper bound of slack variable
-if isfield(s, 'type')
-    if strcmp(s.type, 'unbnd')
-        s.ub = Inf(size(s.idx));
-    else
-        if isfield(s, 'ub')
-            if all(size(s.ub) == size(idxmask))
-                % vector of upper bounds specified
-                s.ub = s.ub(idxmask);
-            elseif isscalar(s.ub)
-                switch s.type
-                    case 'cnst'
-                        s.ub = s.ub - abs(mat(s.idx, eval(prop)));
-                        if ismember(prop,{'VMIN','PMIN'})
-                            % since VMIN and PMIN are expected to be
-                            % positive qantities the sign needs to be
-                            % flipped.
-                            s.ub = -s.ub;
+ubsign = struct('VMAX', 1 , 'VMIN', -1, 'RATE_A', 1, ...
+                'PMAX', 1, 'PMIN', -1, 'QMAX', 1, 'QMIN', -1, ...
+                'ANGMAX', 1, 'ANGMIN', -1);
+shift_defaults = struct('VMAX', 0.25 , 'VMIN', 0.25, 'RATE_A', 10, ...
+                'PMAX', 10, 'PMIN', 10, 'QMAX', 10, 'QMIN', 10, ...
+                'ANGMAX', 10, 'ANGMIN', 10);
+if isfield(s, 'hl_mod')
+    switch s.hl_mod
+        case 'remove'
+            % slack upper bound and new limit are both infinit
+            s.hl_val = Inf;
+            s.ub = Inf(size(s.idx));
+        case 'scale'
+            % new hard limit is hl_val * original limit
+            % for softlims in a positive direction the upper limit is:
+            %           s.ub = (hl_val) * original limit - original limit
+            %                = (hl_val - 1) * original limit
+            % for softlims is a negative direction the upper limit is
+            %           s.ub = original limit - hl_val*original limit
+            %                = (1 - hl_val)*original limit
+            switch vectorcheck(s, idxmask)
+                case 0
+                    error('softlims_defaults: provided hl_val vector does not conform to idx vector. When specifying hl_val as a vector idx must also be explicitely given') 
+                case 1 % vector of values
+                    s.ub = ubsign.(prop)*(s.hl_val(idxmax) - 1).*mat(s.idx, eval(prop));
+                case 2 % scalar value
+                    s.ub = ubsign.(prop)*(s.hl_val - 1)*mat(s.idx, eval(prop));
+                case 3 % no hl_val specified use 0.5 for negative (except ANGMIN and QMIN) and 2 for positive
+                    if ubsign.(prop) > 0
+                        s.hl_val = 2;
+                        s.ub = mat(s.idx, eval(prop));
+                    else
+                        if ismember(prop,{'ANGMIN', 'QMIN'})
+                            s.hl_val = 2;
+                            s.ub = -mat(s.idx, eval(prop));
+                        else
+                            s.hl_val = 0.5;
+                            s.ub = 0.5*mat(s.idx, eval(prop));
                         end
-                    case 'frac'
-                        s.ub = s.ub*abs(mat(s.idx, eval(prop)));
-                    otherwise
-                        error('softlims_defaults: unknown upper bound type %s', s.type)
-                end
-            else
-                error('soflims_defaults: when specifying an upper bound ''ub'' must be the same shape as ''idx'' or a scalar.')
+                    end
             end
-        else
-            error('sofltims_defaults: when specifying a non-unbounded type, field ''ub'' must be specified.')
-        end
+        case 'shift'
+            % new hard limit is original limit + ubsign*hl_val
+            % for positive direction limits:
+            %    s.ub = original limit + hl_val - original limit = hl_val
+            % for negative direction limits:
+            %    s.ub = original limit - (original limit - hl_val) = hl_val
+            % s.ub is therefore simply hl_val
+            switch vectorcheck(s, idxmask)
+                case 0
+                    error('softlims_defaults: provided hl_val vector does not conform to idx vector. When specifying hl_val as a vector idx must also be explicitely given')
+                case 1 % vector of values
+                    s.ub = s.hl_val(idxmask);
+                case 2 % scalar value
+                    s.ub = s.hl_val*ones(size(s.idx));
+                case 3 % no hl_val specified use defaults in shift_defaults
+                    s.hl_val = shift_defaults.(prop);
+                    s.ub = shift_defaults.(prop)*ones(size(s.idx));
+            end
+        case 'replace'
+            % new hard limit is hl_val
+            % for positive direction limits:
+            %    s.ub = hl_val - original limit
+            % for negative direction limits:
+            %    s.ub = original limit - hl_val
+            % Therefore s.ub = ubsign*(hl_val - original limit)
+            switch vectorcheck(s, idxmask)
+                case 0
+                    error('softlims_defaults: provided hl_val vector does not conform to idx vector. When specifying hl_val as a vector idx must also be explicitely given')
+                case 1 % vector of values
+                    s.ub = ubsign.(prop)*(s.hl_val(idxmask) - mat(s.idx, eval(prop)));
+                case 2 % scalar value
+                    s.ub = ubsign.(prop)*(s.hl_val - mat(s.idx, eval(prop)));
+                case 3 % non specified
+                    error('softlims_defaults: for hard limit modification ''replace'' replacement value hl_val must be specified')
+            end
+        otherwise
+            error('softlims_defaults: unknown hard limit modification %s', s.hl_mod)
     end
 else
     % defaults
-    if ismember(prop, {'VMAX', 'VMIN'})
-        s.type = 'frac';
-        s.ub     = 0.5*mat(s.idx, eval(prop));
-    elseif ismember(prop, {'ANGMAX', 'ANGMIN'})
-        s.type = 'cnst';
-        s.ub   = 360 - abs(mat(s.idx, eval(prop)));
-    elseif strcmp(prop, 'RATE_A')
-        s.type = 'frac';
-        s.ub   = 0.5*mat(s.idx, eval(prop));
-    elseif ismember(prop, {'PMAX', 'QMAX', 'QMIN'})
-        s.type = 'unbnd';
-        s.ub   = Inf(size(s.idx));
-    elseif strcmp(prop, 'PMIN')
-        s.type = 'frac';
-        s.ub   = mat(s.idx, PMIN);
+    switch prop
+        case 'PMIN'
+            % Normal generators (PMIN > 0) can only be relaxed to 0
+            % If PMIN < 0 allow PMIN to go to -Inf
+            s.hl_mod = 'replace';
+            s.hl_val = zeros(size(s.idx));
+            s.hl_val(mat(s.idx, PMIN) < 0) = -Inf;
+            s.ub     = mat(s.idx, PMIN) - s.hl_val;
+        case 'VMIN'
+            % VMIN can only be relaxed to zero, not further.
+            s.hl_mod = 'replace';
+            s.hl_val = 0;
+            s.ub     = mat(s.idx, VMIN);
+        case {'QMIN', 'ANGMIN'}
+            s.hl_mod = 'remove';
+            s.hl_val = -Inf;
+            s.ub     = Inf(size(s.idx));
+        otherwise
+            s.hl_mod = 'remove';
+            s.hl_val = Inf;
+            s.ub     = Inf(size(s.idx));
     end
 end
 
 % check that all ub are non negative
 if any(s.ub < 0)
-    error('softlims_defaults: negative upper bound found for softlim %s', prop)
+    error('softlims_defaults: some soft limit for %s has a negative upper bound. There is most likely a problem in the specification of hl_val.', prop)
 end
 
 %% rval: replacement value to remove constraint in initial OPF formulation
-if ismember(prop, {'VMIN', 'PMIN', 'ANGMAX', 'ANGMIN', 'RATE_A'})
+if ismember(prop, {'ANGMAX', 'ANGMIN', 'RATE_A'})
     s.rval = 0;
 elseif ismember(prop, {'VMAX', 'PMAX', 'QMAX'})
     s.rval = Inf;
-elseif strcmp(prop, 'QMIN')
+elseif ismember(prop, {'QMIN', 'PMIN','VMIN'})
     s.rval = -Inf;
 else
     error('softlims_defaults: woops! property %s does not have an ''rval'' assigned', prop)
 end
 
+%%----- vector check ---------------------------------------------------
+function out = vectorcheck(s, idx)
+% Utility function for softlims_defaults. Checks whether a field in the
+% softlims structure is a scalar or a vector. If it is a vector, makes sure
+% that it conforms with the idx vector
+% OUTPUT:
+%           out      0  hl_val is not scalar and does NOT conform to idx
+%                    1  hl_val is not scalar and DOES conform to idx
+%                    2  hl_val is a scalar
+%                    3  hl_val is not given (use default)
+
+if ~isfield(s,'hl_val')
+    out = 3;
+else
+    if isscalar(s.hl_val)
+        out = 2;
+    else
+        out = all(size(s.hl_val) == size(idx));
+    end
+end
 
 %%-----  softlims_fcn  -------------------------------------------------
 function [h, dh] = softlims_fcn(x, mpc, Yf, Yt, il, mpopt, Fmax)
