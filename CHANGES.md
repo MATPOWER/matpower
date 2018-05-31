@@ -12,6 +12,13 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 5/31/18
+  - Add another purely synthetic case from the ACTIVSg team (ASU, Cornell,
+    Texas A&M, U of IL, and VCU - Synthetic grids), resulting from work
+    supported by the ARPA-E GRID DATA program.
+    *Thanks to Adam Birchfield and the ACTIVSg team.*
+    - `case_ACTIVSg70k` (70,000-bus Eastern US synthetic model)
+
 #### 5/19/18
   - Add `loadshed()` function to compute MW curtailments of dispatchable
     loads.
