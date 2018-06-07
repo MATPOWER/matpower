@@ -42,6 +42,9 @@ if strcmp(alg, 'MINOPF') || strcmp(alg, 'PDIPM') || ...
     if vcart
         error('Option ''opf.v_cartesian'' = 1 is not compatible with ''opf.solver.ac''=''%s''.', alg);
     end
+    if mpopt.opf.current_balance
+        error('Option ''opf.current_balance'' = 1 is not compatible with ''opf.solver.ac''=''%s''.', alg);
+    end
 else
     legacy_formulation = 0;
 end
