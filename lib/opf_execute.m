@@ -49,7 +49,22 @@ if dc
 else
   %%-----  run AC OPF solver  -----
   if mpopt.verbose > 0
-    fprintf(' -- AC Optimal Power Flow\n');
+    fprintf(' -- AC Optimal Power Flow\n  AC OPF formulation: ');
+    if sdp
+        fprintf('SDP relaxation\n');
+    else
+        if vcart
+            v = 'cartesian';
+        else
+            v = 'polar';
+        end
+        if mpopt.opf.current_balance
+            v2 = 'current';
+        else
+            v2 = 'power';
+        end
+        fprintf('%s voltages, %s balance eqns\n', v, v2);
+    end
   end
 
   %% ZIP loads?
