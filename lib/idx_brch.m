@@ -37,10 +37,10 @@ function [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, ...
 %
 %   columns 14-17 are added to matrix after power flow or OPF solution
 %   they are typically not present in the input matrix
-%    14 PF          real power injected at "from" bus end (MW)
-%    15 QF          reactive power injected at "from" bus end (MVAr)
-%    16 PT          real power injected at "to" bus end (MW)
-%    17 QT          reactive power injected at "to" bus end (MVAr)
+%    14 PF          real power injected into "from" end of branch (MW)
+%    15 QF          reactive power injected into "from" end of branch (MVAr)
+%    16 PT          real power injected into "to" end of branch (MW)
+%    17 QT          reactive power injected into "to" end of branch (MVAr)
 %
 %   columns 18-21 are added to matrix after OPF solution
 %   they are typically not present in the input matrix
