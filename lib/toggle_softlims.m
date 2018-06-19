@@ -244,7 +244,7 @@ for mat = {'bus', 'branch', 'gen'}
     if strcmp(mat,'gen')
         % for generators, the permutation of the generator matrix needs to
         % be accounted for
-        e2i(o.gen.status.on(o.gen.e2i)) = (1:n)';
+        e2i(o.gen.status.on(o.gen.i2e)) = (1:n)';
     else
         e2i(o.(mat).status.on) = (1:n)';  %% ext->int index mapping
     end
@@ -556,8 +556,8 @@ for prop = fieldnames(s).'
     % NOTE: o.(mat).status.on is a vector nx1 where n is the INTERNAL number of
     % elements. The entries are the EXTERNAL locations (row numbers).
     if strcmp(mat, 'gen')
-        results.softlims.(prop{:}).overload(o.(mat).status.on(o.gen.e2i(s.(prop{:}).idx))) = var;
-        results.softlims.(prop{:}).ovl_cost(o.(mat).status.on(o.gen.e2i(s.(prop{:}).idx))) = var .* s.(prop{:}).cost(:,1);
+        results.softlims.(prop{:}).overload(o.(mat).status.on(o.gen.i2e(s.(prop{:}).idx))) = var;
+        results.softlims.(prop{:}).ovl_cost(o.(mat).status.on(o.gen.i2e(s.(prop{:}).idx))) = var .* s.(prop{:}).cost(:,1);
     else
         results.softlims.(prop{:}).overload(o.(mat).status.on(s.(prop{:}).idx)) = var;
         results.softlims.(prop{:}).ovl_cost(o.(mat).status.on(s.(prop{:}).idx)) = var .* s.(prop{:}).cost(:,1);
