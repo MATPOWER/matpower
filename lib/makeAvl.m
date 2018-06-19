@@ -1,6 +1,7 @@
 function [Avl, lvl, uvl, ivl]  = makeAvl(baseMVA, gen)
 %MAKEAVL Construct linear constraints for constant power factor var loads.
-%   [AVL, LVL, UVL, IVL]  = MAKEAVL(BASEMVA, GEN)
+%   [AVL, LVL, UVL, IVL]  = MAKEAVL(MPC)
+%   [AVL, LVL, UVL, IVL]  = MAKEAVL(BASEMVA, GEN) (deprecated)
 %
 %   Constructs parameters for the following linear constraint enforcing a
 %   constant power factor constraint for dispatchable loads.
@@ -10,10 +11,11 @@ function [Avl, lvl, uvl, ivl]  = makeAvl(baseMVA, gen)
 %   IVL is the vector of indices of generators representing variable loads.
 %
 %   Example:
-%       [Avl, lvl, uvl, ivl]  = makeAvl(baseMVA, gen);
+%       [Avl, lvl, uvl, ivl]  = makeAvl(mpc);
+%       [Avl, lvl, uvl, ivl]  = makeAvl(baseMVA, gen);  %% deprecated
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2018, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %
@@ -25,6 +27,14 @@ function [Avl, lvl, uvl, ivl]  = makeAvl(baseMVA, gen)
 [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
     MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
     QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
+
+if nargin < 2
+    mpc = baseMVA;
+    baseMVA = mpc.baseMVA;
+    gen = mpc.gen;
+else
+    mpc = [];
+end
 
 %% data dimensions
 ng = size(gen, 1);      %% number of dispatchable injections
@@ -49,7 +59,18 @@ nvl  = size(ivl, 1);  %% number of dispatchable loads
 
 %% at least one of the Q limits must be zero (corresponding to Pmax == 0)
 if any( Qmin(ivl) ~= 0 & Qmax(ivl) ~= 0 )
-    error('makeAvl: either Qmin or Qmax must be equal to zero for each dispatchable load.');
+    if isempty(mpc)
+        s = '';
+    else
+        k = find(Qmin(ivl) ~= 0 & Qmax(ivl) ~= 0);
+        if isfield(mpc, 'order') && mpc.order.state == 'i'
+            gidx = mpc.order.gen.i2e(ivl(k));
+        else
+            gidx = ivl(k);
+        end
+        s = sprintf('Invalid Q limits for dispatchable load in row %d of gen matrix\n', gidx);
+    end
+    error('makeAvl: Either Qmin or Qmax must be equal to zero for each dispatchable load.\n%s', s);
 end
 
 % Initial values of PG and QG must be consistent with specified power factor
@@ -59,9 +80,22 @@ end
 Qlim = (Qmin(ivl) == 0) .* Qmax(ivl) + ...
     (Qmax(ivl) == 0) .* Qmin(ivl);
 if any( abs( Qg(ivl) - Pg(ivl) .* Qlim ./ Pmin(ivl) ) > 1e-6 )
-    error('makeAvl: %s\n         %s\n', ...
+    if isempty(mpc)
+        s = '';
+    else
+        k = find(abs( Qg(ivl) - Pg(ivl) .* Qlim ./ Pmin(ivl) ) > 1e-6);
+        if isfield(mpc, 'order') && mpc.order.state == 'i'
+            gidx = mpc.order.gen.i2e(ivl(k));
+        else
+            gidx = ivl(k);
+        end
+        s = sprintf('QG for dispatchable load in row %d of gen matrix must be PG * %g\n', [gidx Qlim ./ Pmin(ivl)]');
+    end
+    error('makeAvl: %s\n         %s\n         %s\n         %s\n%s', ...
         'For a dispatchable load, PG and QG must be consistent', ...
-        'with the power factor defined by PMIN and the Q limits.');
+        'with the power factor defined by PMIN and the relevant', ...
+        '(non-zero) QMIN or QMAX limit.', ...
+        'Note: Setting PG = QG = 0 satisfies this condition.', s);
 end
 
 % make Avl, lvl, uvl, for lvl <= Avl * [Pg; Qg] <= uvl

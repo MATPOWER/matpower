@@ -16,6 +16,8 @@ Since last release
   - Correct (swap) names of fields `e2i` and `i2e` used internally
     (in `mpc.order.gen`) to map between external and internal indexing
     of generators.
+  - Improve error messages and documentation related to specifying
+    dispatchable loads and their power factor constraints.
 
 #### 5/31/18
   - Add another purely synthetic case from the ACTIVSg team (ASU, Cornell,

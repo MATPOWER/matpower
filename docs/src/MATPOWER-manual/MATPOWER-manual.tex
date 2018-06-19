@@ -2185,9 +2185,16 @@ Consider the example of a price-sensitive load whose marginal benefit function i
 
 This corresponds to a negative generator with the piecewise linear cost curve shown in \figurename~\ref{fig:neg-cost}. Note that this approach assumes that the demand blocks can be partially dispatched or ``split''. Requiring blocks to be accepted or rejected in their entirety would pose a mixed-integer problem that is beyond the scope of the current \matpower{} implementation.
 
+It should be noted that, with this definition of dispatchable loads as negative generators, if the negative cost corresponds to a benefit for consumption, minimizing the cost $f(x)$ of generation is equivalent to maximizing social welfare.
+
 With an AC network model, there is also the question of reactive dispatch for such loads. Typically the reactive injection for a generator is allowed to take on any value within its defined limits. Since this is not normal load behavior, the model used in \matpower{} assumes that dispatchable loads maintain a constant power factor. When formulating the AC OPF problem, \matpower{} will automatically generate an additional equality constraint to enforce a constant power factor for any ``negative generator'' being used to model a dispatchable load.
 
-It should be noted that, with this definition of dispatchable loads as negative generators, if the negative cost corresponds to a benefit for consumption, minimizing the cost $f(x)$ of generation is equivalent to maximizing social welfare.
+The power factor, which can be lagging or leading, is determined by the ratio of reactive to active power for the load and is specified by the active and reactive limits defining the nominal load in the \gen{} matrix. For all dispatchable loads, the value in the \code{PMIN} column is negative and defines the nominal active power of the load. And \code{PMAX} is zero, allowing the load to be fully curtailed depending on the price. The reactive limits, \code{QMIN} and \code{QMAX}, depend on whether the power flow is lagging or leading. One defines the nominal reactive load and the other must be zero to allow the load to be fully curtailed. The values of \code{PG} and \code{QG} must be defined to be consistent with the nominal power factor.
+
+\begin{itemize}
+\item {\bf Lagging Power Factor} -- The reactive injection is negative, meaning that reactive power is consumed by the load. Hence, \code{QMIN} is negative, \code{QMAX} is zero, and \code{PG} and \code{QG} must be set so that \code{QG} is equal to \code{PG * QMIN/PMIN}.
+\item {\bf Leading Power Factor} -- The reactive injection is positive, that is, reactive power is produced by the load. Hence, \code{QMAX} is positive, \code{QMIN} is zero, and \code{PG} and \code{QG} must be set so that \code{QG} is equal to \code{PG * QMAX/PMIN}.
+\end{itemize}
 
 \subsubsection{Generator Capability Curves}
 \label{sec:cap_curve}

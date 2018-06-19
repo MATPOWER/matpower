@@ -283,7 +283,7 @@ else                %% AC model
   [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
 
   %% dispatchable load, constant power factor constraints
-  [Avl, lvl, uvl]  = makeAvl(baseMVA, gen);
+  [Avl, lvl, uvl]  = makeAvl(mpc);
 
   %% generator PQ capability curve constraints
   [Apqh, ubpqh, Apql, ubpql, Apqdata] = makeApq(baseMVA, gen);
