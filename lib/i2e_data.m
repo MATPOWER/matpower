@@ -1,5 +1,5 @@
 function newval = i2e_data(mpc, val, oldval, ordering, dim)
-%I2E_DATA   Converts data from internal to external bus numbering.
+%I2E_DATA   Converts data from internal to external indexing.
 %
 %   VAL = I2E_DATA(MPC, VAL, OLDVAL, ORDERING)
 %   VAL = I2E_DATA(MPC, VAL, OLDVAL, ORDERING, DIM)
@@ -64,7 +64,7 @@ if nargin < 5
 end
 if ischar(ordering)         %% single set
     if strcmp(ordering, 'gen')
-        v = get_reorder(val, o.(ordering).i2e, dim);
+        v = get_reorder(val, o.(ordering).e2i, dim);
     else
         v = val;
     end

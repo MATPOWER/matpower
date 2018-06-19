@@ -176,9 +176,9 @@ if isstruct(bus)
             end
 
             %% reorder gens in order of increasing bus number
-            [tmp, o.gen.e2i] = sort(mpc.gen(:, GEN_BUS));
-            [tmp, o.gen.i2e] = sort(o.gen.e2i);
-            mpc.gen = mpc.gen(o.gen.e2i, :);
+            [tmp, o.gen.i2e] = sort(mpc.gen(:, GEN_BUS));
+            [tmp, o.gen.e2i] = sort(o.gen.i2e);
+            mpc.gen = mpc.gen(o.gen.i2e, :);
 
             if isfield(o, 'int')
                 o = rmfield(o, 'int');

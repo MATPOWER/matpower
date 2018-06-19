@@ -61,7 +61,7 @@ if nargin < 4
 end
 if ischar(ordering)         %% single set
     if strcmp(ordering, 'gen')
-        idx = o.(ordering).status.on(o.(ordering).e2i);
+        idx = o.(ordering).status.on(o.(ordering).i2e);
     else
         idx = o.(ordering).status.on;
     end

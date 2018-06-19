@@ -12,6 +12,11 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 6/19/18
+  - Correct (swap) names of fields `e2i` and `i2e` used internally
+    (in `mpc.order.gen`) to map between external and internal indexing
+    of generators.
+
 #### 5/31/18
   - Add another purely synthetic case from the ACTIVSg team (ASU, Cornell,
     Texas A&M, U of IL, and VCU - Synthetic grids), resulting from work

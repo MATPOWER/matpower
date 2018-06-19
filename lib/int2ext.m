@@ -116,7 +116,7 @@ if isstruct(i2e)
             %% update data (in bus, branch, and gen only)
             mpc.bus(o.bus.status.on, :)       = o.int.bus;
             mpc.branch(o.branch.status.on, :) = o.int.branch;
-            mpc.gen(o.gen.status.on, :)       = o.int.gen(o.gen.i2e, :);
+            mpc.gen(o.gen.status.on, :)       = o.int.gen(o.gen.e2i, :);
 
             %% revert to original bus numbers
             mpc.bus(o.bus.status.on, BUS_I) = ...
