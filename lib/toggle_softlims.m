@@ -485,12 +485,12 @@ lims = struct(...
 
 %% get internal softlims struct and mpopt
 isOPF  = isfield(results, 'f') && ~isempty(results.f);
-if ~isOPF
-    return
-end
+
 s = results.softlims;
-mpopt = results.om.get_userdata('mpopt');   %% extract and remove mpopt from om
-results.om.userdata = rmfield(results.om.userdata, 'mpopt');
+if isOPF
+    mpopt = results.om.get_userdata('mpopt');   %% extract and remove mpopt from om
+    results.om.userdata = rmfield(results.om.userdata, 'mpopt');
+end
 
 %%-----  convert stuff back to external indexing  -----
 o = results.order;
@@ -518,125 +518,127 @@ for prop = fieldnames(s).'
 end
 %%-----  results post-processing  -----
 %% get overloads and overload costs
-for prop = fieldnames(s).'
-    mat  = lims.(prop{:});
-    if strcmp(s.(prop{:}).hl_mod, 'none')
-        continue
-    end
-    n0 = size(o.ext.(mat), 1);    %% original number
-    n  = size(results.(mat), 1);  %% number on-line
-    results.softlims.(prop{:}).overload = zeros(n0, 1);
-    results.softlims.(prop{:}).ovl_cost = zeros(n0, 1);
-    varname = ['s_', lower(prop{:})];  %% variable name
-    if ismember(prop{:}, {'VMIN', 'VMAX'})
-        if ~strcmp(mpopt.model, 'AC')
+if isOPF
+    for prop = fieldnames(s).'
+        mat  = lims.(prop{:});
+        if strcmp(s.(prop{:}).hl_mod, 'none')
             continue
         end
-        var = results.var.val.(varname); %stays in p.u.
-        var(var < 1e-8) = 0;
-    elseif ismember(prop{:}, {'RATE_A', 'PMIN', 'PMAX', })
-        var = results.var.val.(varname);
-        var(var < 1e-8) = 0;
-        var = var * results.baseMVA; % p.u. -> MW
-    elseif ismember(prop{:}, {'QMIN', 'QMAX', })
-        if ~strcmp(mpopt.model, 'AC')
-            continue
+        n0 = size(o.ext.(mat), 1);    %% original number
+        n  = size(results.(mat), 1);  %% number on-line
+        results.softlims.(prop{:}).overload = zeros(n0, 1);
+        results.softlims.(prop{:}).ovl_cost = zeros(n0, 1);
+        varname = ['s_', lower(prop{:})];  %% variable name
+        if ismember(prop{:}, {'VMIN', 'VMAX'})
+            if ~strcmp(mpopt.model, 'AC')
+                continue
+            end
+            var = results.var.val.(varname); %stays in p.u.
+            var(var < 1e-8) = 0;
+        elseif ismember(prop{:}, {'RATE_A', 'PMIN', 'PMAX', })
+            var = results.var.val.(varname);
+            var(var < 1e-8) = 0;
+            var = var * results.baseMVA; % p.u. -> MW
+        elseif ismember(prop{:}, {'QMIN', 'QMAX', })
+            if ~strcmp(mpopt.model, 'AC')
+                continue
+            end
+            var = results.var.val.(varname);
+            var(var < 1e-8) = 0;
+            var = var * results.baseMVA; % p.u. -> MVAr
+        elseif ismember(prop{:}, {'ANGMIN', 'ANGMAX'})
+            var = results.var.val.(varname);
+            var(var < 1e-8) = 0;
+            var = var * 180/pi; % rad -> deg
+        else
+            error('userfcn_soflims_formulation: woops! property %s is unknown ', prop{:})
         end
-        var = results.var.val.(varname);
-        var(var < 1e-8) = 0;
-        var = var * results.baseMVA; % p.u. -> MVAr
-    elseif ismember(prop{:}, {'ANGMIN', 'ANGMAX'})
-        var = results.var.val.(varname);
-        var(var < 1e-8) = 0;
-        var = var * 180/pi; % rad -> deg
-    else
-        error('userfcn_soflims_formulation: woops! property %s is unknown ', prop{:})
+    %     var(var < 1e-8) = 0;
+        % NOTE: o.(mat).status.on is a vector nx1 where n is the INTERNAL number of
+        % elements. The entries are the EXTERNAL locations (row numbers).
+        if strcmp(mat, 'gen')
+            results.softlims.(prop{:}).overload(o.(mat).status.on(o.gen.i2e(s.(prop{:}).idx))) = var;
+            results.softlims.(prop{:}).ovl_cost(o.(mat).status.on(o.gen.i2e(s.(prop{:}).idx))) = var .* s.(prop{:}).cost(:,1);
+        else
+            results.softlims.(prop{:}).overload(o.(mat).status.on(s.(prop{:}).idx)) = var;
+            results.softlims.(prop{:}).ovl_cost(o.(mat).status.on(s.(prop{:}).idx)) = var .* s.(prop{:}).cost(:,1);
+        end
     end
-%     var(var < 1e-8) = 0;
-    % NOTE: o.(mat).status.on is a vector nx1 where n is the INTERNAL number of
-    % elements. The entries are the EXTERNAL locations (row numbers).
-    if strcmp(mat, 'gen')
-        results.softlims.(prop{:}).overload(o.(mat).status.on(o.gen.i2e(s.(prop{:}).idx))) = var;
-        results.softlims.(prop{:}).ovl_cost(o.(mat).status.on(o.gen.i2e(s.(prop{:}).idx))) = var .* s.(prop{:}).cost(:,1);
-    else
-        results.softlims.(prop{:}).overload(o.(mat).status.on(s.(prop{:}).idx)) = var;
-        results.softlims.(prop{:}).ovl_cost(o.(mat).status.on(s.(prop{:}).idx)) = var .* s.(prop{:}).cost(:,1);
+
+    %% get shadow prices
+    if ~strcmp(s.ANGMAX.hl_mod, 'none')
+        results.branch(s.ANGMAX.idx, MU_ANGMAX) = results.lin.mu.u.soft_angmax * pi/180;
     end
-end
+    if ~strcmp(s.ANGMIN.hl_mod, 'none')
+        results.branch(s.ANGMIN.idx, MU_ANGMIN) = results.lin.mu.l.soft_angmin * pi/180;
+    end
+    if ~strcmp(s.PMAX.hl_mod, 'none')
+        results.gen(s.PMAX.idx, MU_PMAX) = results.lin.mu.u.soft_pmax / results.baseMVA;
+    end
+    if ~strcmp(s.PMIN.hl_mod, 'none')
+        results.gen(s.PMIN.idx, MU_PMIN) = results.lin.mu.l.soft_pmin / results.baseMVA;
+    end
+    if strcmp(mpopt.model, 'DC')
+        if ~strcmp(s.RATE_A.hl_mod, 'none')
+            results.branch(s.RATE_A.idx, MU_SF) = results.lin.mu.u.softPf / results.baseMVA;
+            results.branch(s.RATE_A.idx, MU_ST) = results.lin.mu.u.softPt / results.baseMVA;
 
-%% get shadow prices
-if ~strcmp(s.ANGMAX.hl_mod, 'none')
-    results.branch(s.ANGMAX.idx, MU_ANGMAX) = results.lin.mu.u.soft_angmax * pi/180;
-end
-if ~strcmp(s.ANGMIN.hl_mod, 'none')
-    results.branch(s.ANGMIN.idx, MU_ANGMIN) = results.lin.mu.l.soft_angmin * pi/180;
-end
-if ~strcmp(s.PMAX.hl_mod, 'none')
-    results.gen(s.PMAX.idx, MU_PMAX) = results.lin.mu.u.soft_pmax / results.baseMVA;
-end
-if ~strcmp(s.PMIN.hl_mod, 'none')
-    results.gen(s.PMIN.idx, MU_PMIN) = results.lin.mu.l.soft_pmin / results.baseMVA;
-end
-if strcmp(mpopt.model, 'DC')
-    if ~strcmp(s.RATE_A.hl_mod, 'none')
-        results.branch(s.RATE_A.idx, MU_SF) = results.lin.mu.u.softPf / results.baseMVA;
-        results.branch(s.RATE_A.idx, MU_ST) = results.lin.mu.u.softPt / results.baseMVA;
-
-        if 1    %% double-check value of overloads being returned
-            vv = results.om.get_idx();
-            check1 = zeros(nl0, 1);
-            check1(o.branch.status.on(s.RATE_A.idx)) = results.x(vv.i1.s_rate_a:vv.iN.s_rate_a) * results.baseMVA;
-            check2 = zeros(nl0, 1);
-            k = find(results.branch(:, RATE_A) & ...
-                     abs(results.branch(:, PF)) > results.branch(:, RATE_A) );
-            check2(o.branch.status.on(k)) = ...
-                    abs(results.branch(k, PF)) - results.branch(k, RATE_A);
-            err1 = norm(results.softlims.RATE_A.overload-check1);
-            err2 = norm(results.softlims.RATE_A.overload-check2);
-            errtol = 1e-4;
-            if err1 > errtol || err2 > errtol
-                [ results.softlims.RATE_A.overload check1 results.softlims.RATE_A.overload-check1 ]
-                [ results.softlims.RATE_A.overload check2 results.softlims.RATE_A.overload-check2 ]
-                error('userfcn_softlims_int2ext: problem with consistency of overload values');
+            if 1    %% double-check value of overloads being returned
+                vv = results.om.get_idx();
+                check1 = zeros(nl0, 1);
+                check1(o.branch.status.on(s.RATE_A.idx)) = results.x(vv.i1.s_rate_a:vv.iN.s_rate_a) * results.baseMVA;
+                check2 = zeros(nl0, 1);
+                k = find(results.branch(:, RATE_A) & ...
+                         abs(results.branch(:, PF)) > results.branch(:, RATE_A) );
+                check2(o.branch.status.on(k)) = ...
+                        abs(results.branch(k, PF)) - results.branch(k, RATE_A);
+                err1 = norm(results.softlims.RATE_A.overload-check1);
+                err2 = norm(results.softlims.RATE_A.overload-check2);
+                errtol = 1e-4;
+                if err1 > errtol || err2 > errtol
+                    [ results.softlims.RATE_A.overload check1 results.softlims.RATE_A.overload-check1 ]
+                    [ results.softlims.RATE_A.overload check2 results.softlims.RATE_A.overload-check2 ]
+                    error('userfcn_softlims_int2ext: problem with consistency of overload values');
+                end
             end
         end
-    end
-else %AC model
-    if ~strcmp(s.VMAX.hl_mod, 'none')
-        results.bus(s.VMAX.idx, MU_VMAX) = results.lin.mu.u.soft_vmax;
-    end
-    if ~strcmp(s.VMIN.hl_mod, 'none')
-        results.bus(s.VMIN.idx, MU_VMIN) = results.lin.mu.l.soft_vmin;
-    end
-    if ~strcmp(s.QMAX.hl_mod, 'none')
-        results.gen(s.QMAX.idx, MU_QMAX) = results.lin.mu.u.soft_qmax / results.baseMVA;
-    end
-    if ~strcmp(s.QMIN.hl_mod, 'none')
-        results.gen(s.QMIN.idx, MU_QMIN) = results.lin.mu.l.soft_qmin / results.baseMVA;
-    end
-    if ~strcmp(s.RATE_A.hl_mod, 'none')
-        if upper(mpopt.opf.flow_lim(1)) == 'P'
-            results.branch(s.RATE_A.idx, MU_ST) = results.nli.mu.softSf / results.baseMVA;
-            results.branch(s.RATE_A.idx, MU_SF) = results.nli.mu.softSt / results.baseMVA;
-        else
-                    var = results.var.val.s_rate_a * results.baseMVA;
-                    var(var < 1e-8) = 0;
-            %% conversion factor for squared constraints (2*F)
-            cf = 2 * (s.RATE_A.sav + var)/results.baseMVA;
-            %cf = 2 * (s.Pfmax + flv / results.baseMVA);
-            results.branch(s.RATE_A.idx, MU_ST) = results.nli.mu.softSf .* cf / results.baseMVA;
-            results.branch(s.RATE_A.idx, MU_SF) = results.nli.mu.softSt .* cf / results.baseMVA;
+    else %AC model
+        if ~strcmp(s.VMAX.hl_mod, 'none')
+            results.bus(s.VMAX.idx, MU_VMAX) = results.lin.mu.u.soft_vmax;
         end
+        if ~strcmp(s.VMIN.hl_mod, 'none')
+            results.bus(s.VMIN.idx, MU_VMIN) = results.lin.mu.l.soft_vmin;
+        end
+        if ~strcmp(s.QMAX.hl_mod, 'none')
+            results.gen(s.QMAX.idx, MU_QMAX) = results.lin.mu.u.soft_qmax / results.baseMVA;
+        end
+        if ~strcmp(s.QMIN.hl_mod, 'none')
+            results.gen(s.QMIN.idx, MU_QMIN) = results.lin.mu.l.soft_qmin / results.baseMVA;
+        end
+        if ~strcmp(s.RATE_A.hl_mod, 'none')
+            if upper(mpopt.opf.flow_lim(1)) == 'P'
+                results.branch(s.RATE_A.idx, MU_ST) = results.nli.mu.softSf / results.baseMVA;
+                results.branch(s.RATE_A.idx, MU_SF) = results.nli.mu.softSt / results.baseMVA;
+            else
+                        var = results.var.val.s_rate_a * results.baseMVA;
+                        var(var < 1e-8) = 0;
+                %% conversion factor for squared constraints (2*F)
+                cf = 2 * (s.RATE_A.sav + var)/results.baseMVA;
+                %cf = 2 * (s.Pfmax + flv / results.baseMVA);
+                results.branch(s.RATE_A.idx, MU_ST) = results.nli.mu.softSf .* cf / results.baseMVA;
+                results.branch(s.RATE_A.idx, MU_SF) = results.nli.mu.softSt .* cf / results.baseMVA;
+            end
 
-        if 1    %% double-check value of overloads being returned
-            vv = results.om.get_idx();
-            check1 = zeros(nl0, 1);
-            check1(o.branch.status.on(s.RATE_A.idx)) = results.x(vv.i1.s_rate_a:vv.iN.s_rate_a) * results.baseMVA;
-            err1 = norm(results.softlims.RATE_A.overload-check1);
-            errtol = 1e-4;
-            if err1 > errtol
-                [ results.softlims.RATE_A.overload check1 results.softlims.RATE_A.overload-check1 ]
-                error('userfcn_softlims_int2ext: problem with consistency of overload values');
+            if 1    %% double-check value of overloads being returned
+                vv = results.om.get_idx();
+                check1 = zeros(nl0, 1);
+                check1(o.branch.status.on(s.RATE_A.idx)) = results.x(vv.i1.s_rate_a:vv.iN.s_rate_a) * results.baseMVA;
+                err1 = norm(results.softlims.RATE_A.overload-check1);
+                errtol = 1e-4;
+                if err1 > errtol
+                    [ results.softlims.RATE_A.overload check1 results.softlims.RATE_A.overload-check1 ]
+                    error('userfcn_softlims_int2ext: problem with consistency of overload values');
+                end
             end
         end
     end
