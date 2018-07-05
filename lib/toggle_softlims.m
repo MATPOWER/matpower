@@ -1025,10 +1025,10 @@ elseif strcmp(prop, 'RATE_A')
     
 elseif ismember(prop, {'PMAX', 'QMAX', 'QMIN'})
     % Initial list of candidates for generation limits (except Pmin) are
-    % all active generators
+    % all active generators whose limits are not infinit
     % NOTE: idxfull contains locations in EXTERNAL generator list
     
-    idxfull = find( (mat(:, GEN_STATUS) > 0) & ~isload(mat) );
+    idxfull = find( (mat(:, GEN_STATUS) > 0) & ~isload(mat) & ~isinf(mat(:, eval(prop))) );
     
 elseif strcmp(prop, 'PMIN')
     % Initial list of candidates for Pmin are all active generators that
