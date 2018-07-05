@@ -240,6 +240,7 @@ else
 end
 
 %%-----  revert to original ordering, including out-of-service stuff  -----
+results.success = success; % add success before int2ext so callbacks can access it
 results = int2ext(results);
 
 %% zero out result fields of out-of-service gens & branches

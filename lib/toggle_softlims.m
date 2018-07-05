@@ -583,7 +583,7 @@ if isOPF
             results.branch(s.RATE_A.idx, MU_SF) = results.lin.mu.u.softPf / results.baseMVA;
             results.branch(s.RATE_A.idx, MU_ST) = results.lin.mu.u.softPt / results.baseMVA;
 
-            if 1    %% double-check value of overloads being returned
+            if results.success    %% double-check value of overloads being returned (if solution was successful)
                 vv = results.om.get_idx();
                 check1 = zeros(nl0, 1);
                 check1(o.branch.status.on(s.RATE_A.idx)) = results.x(vv.i1.s_rate_a:vv.iN.s_rate_a) * results.baseMVA;
@@ -629,7 +629,7 @@ if isOPF
                 results.branch(s.RATE_A.idx, MU_SF) = results.nli.mu.softSt .* cf / results.baseMVA;
             end
 
-            if 1    %% double-check value of overloads being returned
+            if results.success    %% double-check value of overloads being returned (if solution was successful)
                 vv = results.om.get_idx();
                 check1 = zeros(nl0, 1);
                 check1(o.branch.status.on(s.RATE_A.idx)) = results.x(vv.i1.s_rate_a:vv.iN.s_rate_a) * results.baseMVA;
