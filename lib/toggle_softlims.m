@@ -583,24 +583,24 @@ if isOPF
             results.branch(s.RATE_A.idx, MU_SF) = results.lin.mu.u.softPf / results.baseMVA;
             results.branch(s.RATE_A.idx, MU_ST) = results.lin.mu.u.softPt / results.baseMVA;
 
-            if results.success    %% double-check value of overloads being returned (if solution was successful)
-                vv = results.om.get_idx();
-                check1 = zeros(nl0, 1);
-                check1(o.branch.status.on(s.RATE_A.idx)) = results.x(vv.i1.s_rate_a:vv.iN.s_rate_a) * results.baseMVA;
-                check2 = zeros(nl0, 1);
-                k = find(results.branch(:, RATE_A) & ...
-                         abs(results.branch(:, PF)) > results.branch(:, RATE_A) );
-                check2(o.branch.status.on(k)) = ...
-                        abs(results.branch(k, PF)) - results.branch(k, RATE_A);
-                err1 = norm(results.softlims.RATE_A.overload-check1);
-                err2 = norm(results.softlims.RATE_A.overload-check2);
-                errtol = 1e-4;
-                if err1 > errtol || err2 > errtol
-                    [ results.softlims.RATE_A.overload check1 results.softlims.RATE_A.overload-check1 ]
-                    [ results.softlims.RATE_A.overload check2 results.softlims.RATE_A.overload-check2 ]
-                    error('userfcn_softlims_int2ext: problem with consistency of overload values');
-                end
-            end
+            %if results.success    %% double-check value of overloads being returned (if solution was successful)
+            %    vv = results.om.get_idx();
+            %    check1 = zeros(nl0, 1);
+            %    check1(o.branch.status.on(s.RATE_A.idx)) = results.x(vv.i1.s_rate_a:vv.iN.s_rate_a) * results.baseMVA;
+            %    check2 = zeros(nl0, 1);
+            %    k = find(results.branch(:, RATE_A) & ...
+            %             abs(results.branch(:, PF)) > results.branch(:, RATE_A) );
+            %    check2(o.branch.status.on(k)) = ...
+            %            abs(results.branch(k, PF)) - results.branch(k, RATE_A);
+            %    err1 = norm(results.softlims.RATE_A.overload-check1);
+            %    err2 = norm(results.softlims.RATE_A.overload-check2);
+            %    errtol = 1e-4;
+            %    if err1 > errtol || err2 > errtol
+            %        [ results.softlims.RATE_A.overload check1 results.softlims.RATE_A.overload-check1 ]
+            %        [ results.softlims.RATE_A.overload check2 results.softlims.RATE_A.overload-check2 ]
+            %        error('userfcn_softlims_int2ext: problem with consistency of overload values');
+            %    end
+            %end
         end
     else %AC model
         if ~strcmp(s.VMAX.hl_mod, 'none')
@@ -629,17 +629,17 @@ if isOPF
                 results.branch(s.RATE_A.idx, MU_SF) = results.nli.mu.softSt .* cf / results.baseMVA;
             end
 
-            if results.success    %% double-check value of overloads being returned (if solution was successful)
-                vv = results.om.get_idx();
-                check1 = zeros(nl0, 1);
-                check1(o.branch.status.on(s.RATE_A.idx)) = results.x(vv.i1.s_rate_a:vv.iN.s_rate_a) * results.baseMVA;
-                err1 = norm(results.softlims.RATE_A.overload-check1);
-                errtol = 1e-4;
-                if err1 > errtol
-                    [ results.softlims.RATE_A.overload check1 results.softlims.RATE_A.overload-check1 ]
-                    error('userfcn_softlims_int2ext: problem with consistency of overload values');
-                end
-            end
+            %if results.success    %% double-check value of overloads being returned (if solution was successful)
+            %    vv = results.om.get_idx();
+            %    check1 = zeros(nl0, 1);
+            %    check1(o.branch.status.on(s.RATE_A.idx)) = results.x(vv.i1.s_rate_a:vv.iN.s_rate_a) * results.baseMVA;
+            %    err1 = norm(results.softlims.RATE_A.overload-check1);
+            %    errtol = 1e-4;
+            %    if err1 > errtol
+            %        [ results.softlims.RATE_A.overload check1 results.softlims.RATE_A.overload-check1 ]
+            %        error('userfcn_softlims_int2ext: problem with consistency of overload values');
+            %    end
+            %end
         end
     end
 end
