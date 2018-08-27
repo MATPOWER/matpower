@@ -55,13 +55,23 @@ function opt = mpoption(varargin)
 %
 %Power Flow options:
 %   pf.alg                  'NR'        AC power flow algorithm
-%       [ 'NR'   - Newton's method                                          ]
-%       [ 'FDXB' - Fast-Decoupled (XB version)                              ]
-%       [ 'FDBX' - Fast-Decoupled (BX version)                              ]
-%       [ 'GS'   - Gauss-Seidel                                             ]
-%       [ 'PQSUM'- Power Summation method (radial networks only)            ]
-%       [ 'ISUM' - Current Summation method (radial networks only)          ]
-%       [ 'YSUM' - Admittance Summation method (radial networks only)       ]
+%       [ 'NR'    - Newton's method (formulation depends on values of       ]
+%       [           pf.current_balance and pf.v_cartesian options)          ]
+%       [ 'NR-SC' - Newton's method (power mismatch, cartesian)             ]
+%       [ 'NR-IP' - Newton's method (current mismatch, polar)               ]
+%       [ 'NR-IC' - Newton's method (current mismatch, cartesian)           ]
+%       [ 'FDXB'  - Fast-Decoupled (XB version)                             ]
+%       [ 'FDBX'  - Fast-Decoupled (BX version)                             ]
+%       [ 'GS'    - Gauss-Seidel                                            ]
+%       [ 'PQSUM' - Power Summation method (radial networks only)           ]
+%       [ 'ISUM'  - Current Summation method (radial networks only)         ]
+%       [ 'YSUM'  - Admittance Summation method (radial networks only)      ]
+%   pf.current_balance     0           type of nodal balance equation
+%       [ 0 - use complex power balance equations                           ]
+%       [ 1 - use complex current balance equations                         ]
+%   pf.v_cartesian         0           voltage representation
+%       [ 0 - bus voltage variables represented in polar coordinates        ]
+%       [ 1 - bus voltage variables represented in Cartesian coordinates    ]
 %   pf.tol                  1e-8        termination tolerance on per unit
 %                                       P & Q mismatch
 %   pf.nr.max_it            10          maximum number of iterations for
@@ -602,6 +612,10 @@ if have_opt0
             end
             if opt0.v <= 18         %% convert version 18 to 19
                 opt0.opf.softlims.default = opt_d.opf.softlims.default;
+            end
+            if opt0.v <= 19         %% convert version 19 to 20
+                opt0.pf.current_balance = opt_d.pf.current_balance;
+                opt0.pf.v_cartesian     = opt_d.pf.v_cartesian;
             end
             opt0.v = v;
         end
@@ -1520,6 +1534,8 @@ if ~isstruct(opt)
         'model',                'AC', ...
         'pf',                   struct(...
             'alg',                  'NR', ...
+            'current_balance',      0, ...
+            'v_cartesian',          0, ...
             'tol',                  1e-8, ...
             'nr',                   struct(...
                 'max_it',               10, ...
@@ -1631,7 +1647,7 @@ optt = opt;
 %% globals
 %%-------------------------------------------------------------------
 function v = mpoption_version
-v = 19;     %% version number of MATPOWER options struct
+v = 20;     %% version number of MATPOWER options struct
             %% (must be incremented every time structure is updated)
             %% v1   - first version based on struct (MATPOWER 5.0b1)
             %% v2   - added 'linprog' and 'quadprog' fields
@@ -1662,6 +1678,7 @@ v = 19;     %% version number of MATPOWER options struct
             %% v17  - added 'knitro.maxit'
             %% v18  - added 'opf.current_balance' and 'opf.v_cartesian'
             %% v19  - added 'opf.softlims.default'
+            %% v20  - added 'pf.current_balance' and 'pf.v_cartesian'
 
 %%-------------------------------------------------------------------
 function db_level = DEBUG
