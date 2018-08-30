@@ -12,6 +12,9 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 8/30/18
+  - Update to Aug 9, 2018 version of `case_ACTIVSg2000`.
+
 #### 6/19/18
   - Correct (swap) names of fields `e2i` and `i2e` used internally
     (in `mpc.order.gen`) to map between external and internal indexing
