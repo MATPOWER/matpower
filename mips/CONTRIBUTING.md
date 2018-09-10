@@ -113,7 +113,7 @@ Make sure git knows your name and email address:
 
 #### Step 2 : [Fork][12] the repository.
 
-Click "Fork" on the [repository page][13] on GitHub to create your own fork
+Click "Fork" on the [repository page][1] on GitHub to create your own fork
 of the project.
 
 #### Step 3 : Clone
@@ -217,7 +217,7 @@ the existing MIPS test files (e.g. [`t_mips`](lib/t/t_mips.m)) for
 examples of how to write tests.
 
 You can run your tests by typing the name of your test function at the
-Matlab or Octave prompt, or `test_mips` to run the entire test suite.
+MATLAB or Octave prompt, or `test_mips` to run the entire test suite.
 
 ### Sharing your changes
 
@@ -231,8 +231,8 @@ development branch from time to time, and especially before pushing.
   git rebase upstream/master
   ```
 
-And use Git's [interactive rebase][14] feature to tidy up your commits, if
-necessary, *before* making them public. See [this article][15] for some
+And use Git's [interactive rebase][13] feature to tidy up your commits, if
+necessary, *before* making them public. See [this article][14] for some
 helpful background on `git rebase` vs. `git merge`.
 
 #### Step 9 : Push
@@ -243,7 +243,7 @@ Push your topic branch up to your fork on GitHub.
   git push origin <topic-branch-name>
   ```
 
-#### Step 10 : [Open a Pull Request][16]
+#### Step 10 : [Open a Pull Request][15]
 
 Open a pull request against the `master` branch, by going to the GitHub page
 for your fork (`https://github.com/<your-username>/mips`), and selecting
@@ -253,7 +253,7 @@ using a clear, accurate title and description.
 _**IMPORTANT:** By submitting a pull request, you represent that you have
 the right to license your contribution to PSERC and the community, and
 agree by submitting the patch that your contributions are licensed under
-the [3-clause BSD license][17]._
+the [3-clause BSD license][16]._
 
 #### Step 11 : Discuss and update
 
@@ -264,7 +264,7 @@ discouraged.
 To make changes to an existing pull request, make the changes to your branch.
 When you push that branch to your fork, GitHub will automatically update the
 pull request. Each time the pull request is updated it triggers a [CI
-(continuous integration) test run][18] which results in a check mark or an
+(continuous integration) test run][17] which results in a check mark or an
 X next to the commit on the pull request page and next to the pull request
 name in the issue tracker, indicating whether or not all tests passed.
 
@@ -277,7 +277,7 @@ thanks!
 
 ### Git Workflow and Branching Model
 
-We use [GitHub Flow][19], meaning that the `master` branch should always
+We use [GitHub Flow][18], meaning that the `master` branch should always
 be ready for release and all new work is done in descriptively named
 branches off of `master`, which are then reviewed via pull requests. The
 only addition is that we do still have a `release` branch that always
@@ -291,7 +291,7 @@ Licensing
 By submitting a pull request, you represent that you have the right to
 license your contribution to PSERC and the community, and agree by
 submitting the patch that your contributions are licensed under the
-[3-clause BSD license][17].
+[3-clause BSD license][16].
 
 
 Thanks
@@ -315,10 +315,9 @@ the optimization and power systems communities. **Thank you!**
 [10]: https://github.com/MATPOWER/matpower/blob/master/docs/MATPOWER-dev-guide.md
 [11]: https://help.github.com/articles/set-up-git/
 [12]: https://help.github.com/articles/fork-a-repo/
-[13]: https://github.com/MATPOWER/matpower
-[14]: https://help.github.com/articles/interactive-rebase
-[15]: https://medium.com/@porteneuve/getting-solid-at-git-rebase-vs-merge-4fa1a48c53aa#.7gmldhj6m
-[16]: https://help.github.com/articles/about-pull-requests/
-[17]: LICENSE
-[18]: https://travis-ci.org/MATPOWER/matpower
-[19]: http://scottchacon.com/2011/08/31/github-flow.html
+[13]: https://help.github.com/articles/interactive-rebase
+[14]: https://medium.com/@porteneuve/getting-solid-at-git-rebase-vs-merge-4fa1a48c53aa#.7gmldhj6m
+[15]: https://help.github.com/articles/about-pull-requests/
+[16]: LICENSE
+[17]: https://travis-ci.org/MATPOWER/mips
+[18]: http://scottchacon.com/2011/08/31/github-flow.html

@@ -36,7 +36,7 @@ function [x, info] = mplinsolve(A, b, solver, opt)
 %                   used for 4 or 5 output args, Gilbert-Peierls algorithm
 %                   with AMD ordering for 3 output args.
 %               vec (1)  - use permutation vectors instead of matrices
-%                   (permutation matrices used by default for Matlab < 7.3)
+%                   (permutation matrices used by default for MATLAB < 7.3)
 %               thresh   - pivot threshold, see 'help lu' for details
 %           pardiso : struct of PARDISO options (default shown in parens),
 %                 see PARDISO documentation for details
@@ -49,7 +49,7 @@ function [x, info] = mplinsolve(A, b, solver, opt)
 %                  1st, 2nd columns are index, value of parameter respectively
 
 %   MIPS
-%   Copyright (c) 2015-2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2018, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MIPS.
@@ -159,48 +159,64 @@ switch solver
                 end
         end
     case {'PARDISO'}
-        %% get number of threads from OpenMP env variable
-        persistent num_threads;
-        if isempty(num_threads)
-            num_threads = str2num(getenv('OMP_NUM_THREADS'));
-            if ~num_threads
-                num_threads = 1;
-            end
-        end
-
         %% set default options
         verbose = false;
         mtype = 11;
-        solver = 0;
+        pardiso_solver = 0;
 
         %% override if provided via opt
         if ~isempty(opt) && isfield(opt, 'pardiso')
-            if isfield(opt.pardiso, 'verbose')
-                verbose = opt.pardiso.verbose;
+            if isfield(opt.pardiso, 'verbose') && opt.pardiso.verbose
+                verbose = true;
             end
             if isfield(opt.pardiso, 'mtype')
                 mtype = opt.pardiso.mtype;
             end
             if isfield(opt.pardiso, 'solver')
-                solver = opt.pardiso.solver;
+                pardiso_solver = opt.pardiso.solver;
             end
         end
 
         %% begin setup and solve
-        info = pardisoinit(mtype, solver);
-        info.iparm(3) = num_threads;
+        v6 = have_pardiso_object();
+        if v6               %% PARDISO v6+
+            id = 1;
+            p = pardiso(id, mtype, pardiso_solver);
+            if verbose
+                p.verbose();
+            end
+        else                %% PARDISO v5
+            p = pardisoinit(mtype, pardiso_solver);
+        end
         if ~isempty(opt) && isfield(opt, 'pardiso')
             if isfield(opt.pardiso, 'iparm') && ~isempty(opt.pardiso.iparm)
-                info.iparm(opt.pardiso.iparm(:, 1)) = opt.pardiso.iparm(:, 2);
+                p.iparm(opt.pardiso.iparm(:, 1)) = opt.pardiso.iparm(:, 2);
             end
             if isfield(opt.pardiso, 'dparm') && ~isempty(opt.pardiso.dparm)
-                info.iparm(opt.pardiso.dparm(:, 1)) = opt.pardiso.dparm(:, 2);
+                p.dparm(opt.pardiso.dparm(:, 1)) = opt.pardiso.dparm(:, 2);
             end
         end
-        info = pardisoreorder(A, info, verbose);
-        info = pardisofactor(A, info, verbose);
-        [x, info] = pardisosolve(A, b, info, verbose);
-        pardisofree(info);
+        if v6 || abs(mtype) == 2 || mtype == 6  %% need non-zero diagonal
+            nx = size(A, 1);
+            if abs(mtype) == 2 || mtype == 6    %% symmetric
+                myeps = 1e-14;
+                A = tril(A);
+            else                                %% non-symmetric
+                myeps = 1e-8;
+            end
+            A = A + myeps * speye(nx, nx);
+        end
+        if v6
+            p.factorize(id, A);
+            x = p.solve(id, A, b);
+            p.free(id);
+            p.clear();
+        else
+            p = pardisoreorder(A, p, verbose);
+            p = pardisofactor(A, p, verbose);
+            [x, p] = pardisosolve(A, b, p, verbose);
+            pardisofree(p);
+        end
     otherwise
         warning('mplinsolve: ''%s'' is not a valid value for SOLVER, using default.', solver);
         x = A \ b;
@@ -211,7 +227,7 @@ function TorF = have_lu_vec()
 % Checks whether or not LU supports lu(..., 'vector') syntax
 persistent lu_vec;      %% cache the result for performance reasons
 if isempty(lu_vec)
-    lu_vec = 1;         %% assume it does, unless this is Matlab ver < 7.3
+    lu_vec = 1;         %% assume it does, unless this is MATLAB ver < 7.3
     v = ver('matlab');
     if length(v) > 1
         warning('The built-in VER command is behaving strangely, probably as a result of installing a 3rd party toolbox in a directory named ''matlab'' on your path. Check each element of the output of ver(''matlab'') to find the offending toolbox, then move the toolbox to a more appropriately named directory.');
@@ -225,6 +241,15 @@ if isempty(lu_vec)
     end
 end
 TorF = lu_vec;
+
+
+function TorF = have_pardiso_object()
+% Checks for availability of PARDISO 6
+persistent pardiso_object;    %% cache the result for performance reasons
+if isempty(pardiso_object)
+    pardiso_object = exist('pardiso', 'file') == 2;
+end
+TorF = pardiso_object;
 
 
 function num = vstr2num_(vstr)

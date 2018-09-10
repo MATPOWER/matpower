@@ -1,17 +1,17 @@
 MIPS - MATPOWER Interior Point Solver
 =====================================
 
-The [MATPOWER Interior Point Solver (MIPS)][1] is a package of Matlab language
+The [MATPOWER Interior Point Solver (MIPS)][1] is a package of MATLAB/Octave
 M-files for solving non-linear programming problems (NLPs) using a primal
 dual interior point method. MIPS is based on [code written in C language][2]
 by Hongye Wang as a graduate student at Cornell University for optimal
-power flow applications. It was later ported to the Matlab language by
+power flow applications. It was later ported to the MATLAB/Octave language by
 Ray D. Zimmerman for use in [MATPOWER][3].
 
 System Requirements
 -------------------
 
-*   [Matlab][4] version 7 (R14) or later, or
+*   [MATLAB][4] version 7 (R14) or later, or
 *   [GNU Octave][5] version 3.4 or later
 *   [MP-Test][6], for running the MIPS test suite
 
@@ -20,7 +20,7 @@ Installation
 ------------
 
 Installation and use of MIPS requires familiarity with the basic operation
-of Matlab or Octave, including setting up your Matlab path.
+of MATLAB or Octave, including setting up your MATLAB path.
 
 1.  Clone the repository or download and extract the zip file of the MIPS
     distribution from the [MIPS project page][1] to the location of your
@@ -29,11 +29,11 @@ of Matlab or Octave, including setting up your Matlab path.
     modified, so it is recommended that they be kept separate from your
     own code. We will use `<MIPS>` to denote the path to this directory.
 
-2.  Add the following directories to your Matlab or Octave path:
+2.  Add the following directories to your MATLAB or Octave path:
     *   `<MIPS>/lib`
     *   `<MIPS>/lib/t`
 
-3.  At the Matlab prompt, type `test_mips` to run the test suite and
+3.  At the MATLAB prompt, type `test_mips` to run the test suite and
     verify that MIPS is properly installed and functioning. (Note: The
     tests require a functioning installation of [MP-Test][6]) The result
     should resemble the following:
@@ -57,7 +57,7 @@ and the latest version is always available at:
 <https://github.com/MATPOWER/mips/blob/master/docs/MIPS-manual.pdf>.
 
 And second is the built-in `help` command. As with the built-in
-functions and toolbox routines in Matlab and Octave, you can type `help`
+functions and toolbox routines in MATLAB and Octave, you can type `help`
 followed by the name of a command or M-file to get help on that particular
 function. All of the M-files in MIPS have such documentation and this
 should be considered the main reference for the calling options for each
@@ -87,7 +87,7 @@ acknowledge that fact by citing [reference \[1\]][10] above, namely:
 
 >   H. Wang, C. E. Murillo-Sánchez, R. D. Zimmerman, R. J. Thomas,
     "On Computational Issues of Market-Based Optimal Power Flow,"
-     Power Systems, IEEE Transactions on*, vol. 22, no. 3,
+     *Power Systems, IEEE Transactions on*, vol. 22, no. 3,
      pp. 1185-1193, Aug. 2007.
 
 
@@ -112,4 +112,4 @@ MIPS is distributed under the [3-clause BSD license][9].
 [7]: https://github.com/MATPOWER/mips/blob/master/docs/MIPS-manual.pdf
 [8]: CONTRIBUTING.md
 [9]: LICENSE
-[10]: http://dx.doi.org/10.1109/TPWRS.2007.901301
+[10]: https://doi.org/10.1109/TPWRS.2007.901301

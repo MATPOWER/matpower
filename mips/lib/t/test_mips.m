@@ -7,13 +7,13 @@ function success = test_mips(verbose, exit_on_fail)
 %
 %   Runs all of the MIPS tests. If VERBOSE is true (false by default),
 %   it prints the details of the individual tests. If EXIT_ON_FAIL is true
-%   (false by default), it will exit Matlab or Octave with a status of 1
+%   (false by default), it will exit MATLAB or Octave with a status of 1
 %   unless T_RUN_TESTS returns ALL_OK.
 %
 %   See also T_RUN_TESTS.
 
 %   MIPS
-%   Copyright (c) 2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2016-2018, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MIPS.
@@ -32,6 +32,7 @@ tests = {};
 %% MIPS tests
 tests{end+1} = 't_mplinsolve';
 tests{end+1} = 't_mips';
+tests{end+1} = 't_mips_pardiso';
 tests{end+1} = 't_qps_mips';
 
 %% run the tests

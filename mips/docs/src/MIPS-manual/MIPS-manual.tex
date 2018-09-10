@@ -305,9 +305,9 @@ While not required by the terms of the license, we do request that publications 
 \begin{quote}
 \footnotesize
 H.~Wang, C.~E. Murillo-S{\'a}nchez, R.~D. Zimmerman, and R.~J. Thomas, ``On
-  Computational Issues of Market-Based Optimal Power Flow,'' \emph{Power
-  Systems, IEEE Transactions on}, vol.~22, no.~3, pp. 1185--1193, August 2007.\\
-  \url{http://dx.doi.org/10.1109/TPWRS.2010.2051168}
+Computational Issues of Market-Based Optimal Power Flow,'' \emph{Power
+Systems, IEEE Transactions on}, vol.~22, no.~3, pp. 1185--1193, August 2007.\\
+DOI:~\href{https://doi.org/10.1109/TPWRS.2010.2051168}{10.1109/TPWRS.2010.2051168}
 \end{quote}
 
 \subsection{\mips{} Development}
@@ -964,6 +964,7 @@ name & description \\
 \code{~~~~mips\_example2}	& implements example 2 from \mips{} User's Manual	\\
 \code{~~~~test\_mips}	& runs full \mips{} test suite	\\
 \code{~~~~t\_mips}	& runs tests for \mips{} NLP solver	\\
+\code{~~~~t\_mips\_pardiso}	& runs tests for \mips{} NLP solver, using PARDISO as linear solver	\\
 \code{~~~~t\_mplinsolve}	& tests for \code{mplinsolve}	\\
 \code{~~~~t\_qps\_mips}	& runs tests for \code{qps\_mips}	\\
 \bottomrule
@@ -1002,6 +1003,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MIPS-manual-1.3.pdf}{\mips{
 
 \subsubsection*{New Features}
 \begin{itemize}
+\item Add support for PARDISO 6.x.
 \item Add \code{mplinsolve} solver option \codeq{LU} for explicit LU decomposition with back substitution, with options in \code{opt.lu} for specifying the number of output arguments in call to \code{lu} (\code{opt.lu.nout}), whether to use permutation vectors or matrices (\code{opt.lu.vec}) and pivot threshold options (\code{opt.lu.thresh}). The following values for the \code{solver} argument act as shortcuts for specifying various combinations of options: \codeq{LU3} \codeq{LU3a} \codeq{LU4} \codeq{LU5} \codeq{LU3m} \codeq{LU3am} \codeq{LU4m} \codeq{LU5m}.
     See \code{help mplinsolve} for details.
     \emph{Thanks to Jose Luis Mar\'in.}
@@ -1009,7 +1011,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MIPS-manual-1.3.pdf}{\mips{
 
 \subsubsection*{Bugs Fixed}
 \begin{itemize}
-\item 
+\item Fix bug preventing \code{pardiso.dparm} options from being set.
 \end{itemize}
 
 \subsubsection*{Other Changes}
@@ -1139,9 +1141,9 @@ TSPOPF. [Online]. Available: \url{http://www.pserc.cornell.edu/tspopf/}.
 
 \bibitem{wang2007a}
 H.~Wang, C.~E. Murillo-S{\'a}nchez, R.~D. Zimmerman, and R.~J. Thomas, ``On
-  Computational Issues of Market-Based Optimal Power Flow,'' \emph{Power
-  Systems, IEEE Transactions on}, vol.~22, no.~3, pp. 1185--1193, August 2007.\\
-  \url{http://dx.doi.org/10.1109/TPWRS.2010.2051168}
+Computational Issues of Market-Based Optimal Power Flow,'' \emph{Power
+Systems, IEEE Transactions on}, vol.~22, no.~3, pp. 1185--1193, August 2007.
+DOI:~\href{https://doi.org/10.1109/TPWRS.2010.2051168}{10.1109/TPWRS.2010.2051168}
 
 \bibitem{wang2007}
 H.~Wang, \emph{On the Computation and Application of Multi-period Security-constrained Optimal Power Flow for Real-time Electricity Market Operations}, Ph.D. thesis, Electrical and Computer Engineering, Cornell University, May 2007.
@@ -1151,7 +1153,7 @@ R.~D. Zimmerman and C.~Murillo-S{\'a}nchez. \matpower{} User's Manual,
   [Online]. Available: \url{\matpowerurl}
 
 \bibitem{zimmerman2011}
-R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez, and R.~J. Thomas, ``\matpower{}: Steady-State Operations, Planning and Analysis Tools for Power Systems Research and Education,'' \emph{Power Systems, IEEE Transactions on}, vol.~26, no.~1, pp.~12--19, Feb.~2011. \url{http://dx.doi.org/10.1109/TPWRS.2010.2051168}
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez, and R.~J. Thomas, ``\matpower{}: Steady-State Operations, Planning and Analysis Tools for Power Systems Research and Education,'' \emph{Power Systems, IEEE Transactions on}, vol.~26, no.~1, pp.~12--19, Feb.~2011. DOI:~\href{https://doi.org/10.1109/TPWRS.2010.2051168}{10.1109/TPWRS.2010.2051168}
 
 \bibitem{octave}
 John~W.~Eaton, David~Bateman, S{\o}ren~Hauberg, Rik~Wehbring (2015). \emph{GNU Octave version 4.0.0 manual: a high-level interactive language for numerical computations.} Available: \url{http://www.gnu.org/software/octave/doc/interpreter/}.

@@ -1,5 +1,5 @@
-function t_mips(quiet)
-%T_MIPS  Tests of MIPS NLP solver.
+function t_mips_pardiso(quiet)
+%T_MIPS_PARDISO  Tests of MIPS NLP solver, using PARDISO as linear solver.
 
 %   MIPS
 %   Copyright (c) 2010-2018, Power Systems Engineering Research Center (PSERC)
@@ -17,12 +17,16 @@ num_tests = 60;
 
 t_begin(num_tests, quiet);
 
+if have_pardiso()
+
+opt = struct('linsolver', 'PARDISO');
+
 t = 'unconstrained banana function : ';
 %% from MATLAB Optimization Toolbox's bandem.m
 f_fcn = @(x)f2(x);
 x0 = [-1.9; 2];
 % [x, f, s, out, lam] = mips(f_fcn, x0, [], [], [], [], [], [], [], struct('verbose', 2));
-[x, f, s, out, lam] = mips(f_fcn, x0);
+[x, f, s, out, lam] = mips(f_fcn, x0, [], [], [], [], [], [], [], opt);
 t_is(s, 1, 13, [t 'success']);
 t_is(x, [1; 1], 13, [t 'x']);
 t_is(f, 0, 13, [t 'f']);
@@ -37,7 +41,7 @@ t = 'unconstrained 3-d quadratic : ';
 f_fcn = @(x)f3(x);
 x0 = [0; 0; 0];
 % [x, f, s, out, lam] = mips(f_fcn, x0, [], [], [], [], [], [], [], struct('verbose', 2));
-[x, f, s, out, lam] = mips(f_fcn, x0);
+[x, f, s, out, lam] = mips(f_fcn, x0, [], [], [], [], [], [], [], opt);
 t_is(s, 1, 13, [t 'success']);
 t_is(x, [3; 5; 7], 13, [t 'x']);
 t_is(f, -244, 13, [t 'f']);
@@ -57,7 +61,7 @@ l = [1; 0.10];
 u = [1; Inf];
 xmin = zeros(4,1);
 % [x, f, s, out, lam] = mips(f_fcn, x0, A, l, u, xmin, [], [], [], struct('verbose', 2));
-[x, f, s, out, lam] = mips(f_fcn, x0, A, l, u, xmin);
+[x, f, s, out, lam] = mips(f_fcn, x0, A, l, u, xmin, [], [], [], opt);
 t_is(s, 1, 13, [t 'success']);
 t_is(x, [0; 2.8; 0.2; 0]/3, 6, [t 'x']);
 t_is(f, 3.29/3, 6, [t 'f']);
@@ -91,7 +95,7 @@ x0 = [1.1; 0];
 xmin = zeros(2, 1);
 % xmax = 3 * ones(2, 1);
 % [x, f, s, out, lam] = mips(f_fcn, x0, [], [], [], xmin, [], gh_fcn, hess_fcn, struct('verbose', 2));
-[x, f, s, out, lam] = mips(f_fcn, x0, [], [], [], xmin, [], gh_fcn, hess_fcn);
+[x, f, s, out, lam] = mips(f_fcn, x0, [], [], [], xmin, [], gh_fcn, hess_fcn, opt);
 t_is(s, 1, 13, [t 'success']);
 t_is(x, [1; 1], 6, [t 'x']);
 t_is(f, -2, 6, [t 'f']);
@@ -117,7 +121,7 @@ gh_fcn = @(x)gh6(x);
 hess_fcn = @(x, lam, cost_mult)hess6(x, lam, cost_mult);
 x0 = [1; 1; 0];
 % [x, f, s, out, lam] = mips(f_fcn, x0, [], [], [], [], [], gh_fcn, hess_fcn, struct('verbose', 2, 'comptol', 1e-9));
-[x, f, s, out, lam] = mips(f_fcn, x0, [], [], [], [], [], gh_fcn, hess_fcn);
+[x, f, s, out, lam] = mips(f_fcn, x0, [], [], [], [], [], gh_fcn, hess_fcn, opt);
 t_is(s, 1, 13, [t 'success']);
 t_is(x, [1.58113883; 2.23606798; 1.58113883], 6, [t 'x']);
 t_is(f, -5*sqrt(2), 6, [t 'f']);
@@ -127,14 +131,6 @@ t_ok(isempty(lam.mu_l), [t 'lam.mu_l']);
 t_ok(isempty(lam.mu_u), [t 'lam.mu_u']);
 t_is(lam.lower, zeros(size(x)), 13, [t 'lam.lower']);
 t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
-% %% check with fmincon (for dev testing only)
-% % fmoptions = optimset('Algorithm', 'interior-point');
-% % [x, f, s, out, lam] = fmincon(f_fcn, x0, [], [], [], [], xmin, [], gh_fcn, fmoptions);
-% [x, f, s, out, lam] = fmincon(f_fcn, x0, [], [], [], [], [], [], gh_fcn);
-% t_is(s, 1, 13, [t 'success']);
-% t_is(x, [1.58113883; 2.23606798; 1.58113883], 4, [t 'x']);
-% t_is(f, -5*sqrt(2), 8, [t 'f']);
-% t_is(lam.ineqnonlin, [0;sqrt(2)/2], 8, [t 'lam.ineqnonlin']);
 
 t = 'constrained 3-d nonlinear (struct) : ';
 p = struct('f_fcn', f_fcn, 'x0', x0, 'gh_fcn', gh_fcn, 'hess_fcn', hess_fcn);
@@ -158,7 +154,7 @@ x0 = [1; 5; 5; 1];
 xmin = ones(4, 1);
 xmax = 5 * xmin;
 % [x, f, s, out, lam] = mips(f_fcn, x0, [], [], [], xmin, xmax, gh_fcn, hess_fcn, struct('verbose', 2, 'comptol', 1e-9));
-[x, f, s, out, lam] = mips(f_fcn, x0, [], [], [], xmin, xmax, gh_fcn, hess_fcn);
+[x, f, s, out, lam] = mips(f_fcn, x0, [], [], [], xmin, xmax, gh_fcn, hess_fcn, opt);
 t_is(s, 1, 13, [t 'success']);
 t_is(x, [1; 4.7429994; 3.8211503; 1.3794082], 6, [t 'x']);
 t_is(f, 17.0140173, 6, [t 'f']);
@@ -168,6 +164,10 @@ t_ok(isempty(lam.mu_l), [t 'lam.mu_l']);
 t_ok(isempty(lam.mu_u), [t 'lam.mu_u']);
 t_is(lam.lower, [1.08787121024; 0; 0; 0], 5, [t 'lam.lower']);
 t_is(lam.upper, zeros(size(x)), 7, [t 'lam.upper']);
+
+else
+    t_skip(num_tests, 'PARDISO not available.');
+end
 
 t_end;
 
@@ -295,3 +295,51 @@ function Lxx = hess7(x, lam, sigma)
                     x(3)*x(4)     0     x(1)*x(4) x(1)*x(3);
                     x(2)*x(4) x(1)*x(4)     0     x(1)*x(2);
                     x(2)*x(3) x(1)*x(3) x(1)*x(2)     0  ]);
+
+
+function TorF = have_pardiso()
+TorF = have_pardiso_object() || have_pardiso_legacy();
+
+function TorF = have_pardiso_object()
+TorF = exist('pardiso', 'file') == 2;
+if TorF
+    try
+        id = 1;
+        A = sparse([1 2; 3 4]);
+        b = [1;1];
+        p = pardiso(id, 1, 0);
+        p.factorize(id, A);
+        x = p.solve(id, A, b);
+        p.free(id);
+        p.clear();
+        if any(x ~= [-1; 1])
+            TorF = 0;
+        end
+    catch
+        TorF = 0;
+    end
+end
+
+function TorF = have_pardiso_legacy()
+TorF = exist('pardisoinit', 'file') == 3 && ...
+        exist('pardisoreorder', 'file') == 3 && ...
+        exist('pardisofactor', 'file') == 3 && ...
+        exist('pardisosolve', 'file') == 3 && ...
+        exist('pardisofree', 'file') == 3;
+if TorF
+    try
+        A = sparse([1 2; 3 4]);
+        b = [1;1];
+        info = pardisoinit(11, 0);
+        info = pardisoreorder(A, info, false);
+        info = pardisofactor(A, info, false);
+        [x, info] = pardisosolve(A, b, info, false);
+        pardisofree(info);
+        if any(x ~= [-1; 1])
+            TorF = 0;
+        end
+    catch
+        info
+        TorF = 0;
+    end
+end
