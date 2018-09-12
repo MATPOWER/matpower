@@ -506,7 +506,7 @@ if exist('have_fcn', 'file') && have_fcn('pardiso') || have_pardiso()
     if have_pardiso_object()
         tols = [6 5 12 12 6 5];     %% tolerances for PARDISO v6
     else
-        tols = [13 13 13 13 1 2];   %% tolerances for PARDISO v5
+        tols = [13 13 12 12 1 2];   %% tolerances for PARDISO v5
     end
     vb = false;
 

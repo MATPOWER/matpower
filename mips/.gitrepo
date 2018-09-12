@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git@github.com:MATPOWER/mips
 	branch = master
-	commit = a97e119bebc91fb40890af087ded699556577e8e
-	parent = 8e27c61bac3e855f7e310a13bab7b2f562aaf099
+	commit = 1e0b5963ca1dfda175d64a084d1a22c513e2d514
+	parent = f9fada658ed37893fe0fe0566b26a520805c1851
 	cmdver = 0.3.1
