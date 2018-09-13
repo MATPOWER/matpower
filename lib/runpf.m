@@ -59,7 +59,7 @@ function [MVAbase, bus, gen, branch, success, et] = ...
 %   See also RUNDCPF.
 
 %   MATPOWER
-%   Copyright (c) 1996-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2019, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   Enforcing of generator Q limits inspired by contributions
 %   from Mu Lin, Lincoln University, New Zealand (1/14/05).
@@ -130,18 +130,18 @@ if ~isempty(mpc.bus)
         end
         %% initial state
         Va0 = bus(:, VA) * (pi/180);
-    
+
         %% build B matrices and phase shift injections
         [B, Bf, Pbusinj, Pfinj] = makeBdc(baseMVA, bus, branch);
-    
+
         %% compute complex bus power injections (generation - load)
         %% adjusted for phase shifters and real shunts
         Pbus = real(makeSbus(baseMVA, bus, gen)) - Pbusinj - bus(:, GS) / baseMVA;
-    
+
         %% "run" the power flow
         [Va, success] = dcpf(B, Pbus, Va0, ref, pv, pq);
         its = 1;
-    
+
         %% update data matrices with solution
         branch(:, [QF, QT]) = zeros(size(branch, 1), 2);
         branch(:, PF) = (Bf * Va + Pfinj) * baseMVA;
@@ -164,6 +164,15 @@ if ~isempty(mpc.bus)
             switch alg
                 case 'NR'
                     solver = 'Newton';
+                case 'NR-SC'
+                    solver = 'Newton-SC';
+                    mpopt = mpoption(mpopt, 'pf.current_balance', 0, 'pf.v_cartesian', 1);
+                case 'NR-IP'
+                    solver = 'Newton-IP';
+                    mpopt = mpoption(mpopt, 'pf.current_balance', 1, 'pf.v_cartesian', 0);
+                case 'NR-IC'
+                    solver = 'Newton-IC';
+                    mpopt = mpoption(mpopt, 'pf.current_balance', 1, 'pf.v_cartesian', 1);
                 case 'FDXB'
                     solver = 'fast-decoupled, XB';
                 case 'FDBX'
@@ -188,7 +197,7 @@ if ~isempty(mpc.bus)
         vcb(pq) = 0;                    %% exclude PQ buses
         k = find(vcb(gbus));            %% in-service gens at v-c buses
         V0(gbus(k)) = gen(on(k), VG) ./ abs(V0(gbus(k))).* V0(gbus(k));
-    
+
         if qlim
             ref0 = ref;                         %% save index and angle of
             Varef0 = bus(ref0, VA);             %%   original reference bus(es)
@@ -198,17 +207,30 @@ if ~isempty(mpc.bus)
 
         %% build admittance matrices
         [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
-    
+
         repeat = 1;
         while (repeat)
             %% function for computing V dependent complex bus power injections
             %% (generation - load)
             Sbus = @(Vm)makeSbus(baseMVA, bus, gen, mpopt, Vm);
-        
+
             %% run the power flow
             switch alg
-                case 'NR'
-                    [V, success, iterations] = newtonpf(Ybus, Sbus, V0, ref, pv, pq, mpopt);
+                case {'NR', 'NR-SC', 'NR-IP', 'NR-IC'}
+                    if mpopt.pf.current_balance
+                        if mpopt.pf.v_cartesian     %% current, cartesian
+                            newtonpf_fcn = @newtonpf_I_cart;
+                        else                        %% current, polar
+                            newtonpf_fcn = @newtonpf_I_polar;
+                        end
+                    else
+                        if mpopt.pf.v_cartesian     %% power, cartesian
+                            newtonpf_fcn = @newtonpf_S_cart;
+                        else                        %% default - power, polar
+                            newtonpf_fcn = @newtonpf;
+                        end
+                    end
+                    [V, success, iterations] = newtonpf_fcn(Ybus, Sbus, V0, ref, pv, pq, mpopt);
                 case {'FDXB', 'FDBX'}
                     [Bp, Bpp] = makeB(baseMVA, bus, branch, alg);
                     [V, success, iterations] = fdpf(Ybus, Sbus, V0, Bp, Bpp, ref, pv, pq, mpopt);
@@ -228,24 +250,24 @@ if ~isempty(mpc.bus)
                     error('runpf: ''%s'' is not a valid power flow algorithm. See ''pf.alg'' details in MPOPTION help.', alg);
             end
             its = its + iterations;
-        
+
             %% update data matrices with solution
             switch alg
-                case {'NR', 'FDXB', 'FDBX', 'GS'}
+                case {'NR', 'NR-SC', 'NR-IP', 'NR-IC', 'FDXB', 'FDBX', 'GS'}
                     [bus, gen, branch] = pfsoln(baseMVA, bus, gen, branch, Ybus, Yf, Yt, V, ref, pv, pq, mpopt);
                 case {'PQSUM', 'ISUM', 'YSUM'}
                     bus = mpc.bus;
                     gen = mpc.gen;
                     branch = mpc.branch;
             end
-        
+
             if success && qlim      %% enforce generator Q limits
                 %% find gens with violated Q constraints
                 mx = find( gen(:, GEN_STATUS) > 0 ...
                         & gen(:, QG) > gen(:, QMAX) + mpopt.opf.violation );
                 mn = find( gen(:, GEN_STATUS) > 0 ...
                         & gen(:, QG) < gen(:, QMIN) - mpopt.opf.violation );
-            
+
                 if ~isempty(mx) || ~isempty(mn)  %% we have some Q limit violations
                     %% first check for INFEASIBILITY
                     infeas = union(mx', mn')';  %% transposes handle fact that
@@ -283,12 +305,12 @@ if ~isempty(mpc.bus)
                     if mpopt.verbose && ~isempty(mn)
                         fprintf('Gen %d at lower Q limit, converting to PQ bus\n', mn);
                     end
-                
+
                     %% save corresponding limit values
                     fixedQg(mx) = gen(mx, QMAX);
                     fixedQg(mn) = gen(mn, QMIN);
                     mx = [mx;mn];
-                
+
                     %% convert to PQ bus
                     gen(mx, QG) = fixedQg(mx);      %% set Qg to binding limit
                     gen(mx, GEN_STATUS) = 0;        %% temporarily turn off gen,
@@ -301,7 +323,7 @@ if ~isempty(mpc.bus)
                         error('runpf: Sorry, MATPOWER cannot enforce Q limits for slack buses in systems with multiple slacks.');
                     end
                     bus(gen(mx, GEN_BUS), BUS_TYPE) = PQ;   %% & set bus type to PQ
-                
+
                     %% update bus index lists of each type of bus
                     ref_temp = ref;
                     [ref, pv, pq] = bustypes(bus, gen);
