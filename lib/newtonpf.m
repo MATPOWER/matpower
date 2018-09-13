@@ -134,13 +134,13 @@ while (~converged && i < max_it)
     if normF < tol
         converged = 1;
         if mpopt.verbose
-            fprintf('\nNewton''s method power flow converged in %d iterations.\n', i);
+            fprintf('\nNewton''s method power flow using power balance in polar coordinates converged in %d iterations.\n', i);
         end
     end
 end
 
 if mpopt.verbose
     if ~converged
-        fprintf('\nNewton''s method power flow did not converge in %d iterations.\n', i);
+        fprintf('\nNewton''s method power flow using power balance in polar coordinates did not converge in %d iterations.\n', i);
     end
 end

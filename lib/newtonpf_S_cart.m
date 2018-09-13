@@ -1,4 +1,4 @@
-function [V, converged, i] = newtonpf_CP(Ybus, Sbus, V0, ref, pv, pq, mpopt)
+function [V, converged, i] = newtonpf_S_cart(Ybus, Sbus, V0, ref, pv, pq, mpopt)
 %% default arguments
 if nargin < 7
     mpopt = mpoption;
@@ -15,25 +15,21 @@ i = 0;
 V = V0;
 Va = angle(V);
 Vm = abs(V);
-n = length(V0);
 
 %% set up indexing for updating V
 npv = length(pv);
 npq = length(pq);
-j1 = 1;         j2 = npv;           %% j1:j2 - V angle of pv buses
-j3 = j2 + 1;    j4 = j2 + npq;      %% j3:j4 - V angle of pq buses
-j5 = j4 + 1;    j6 = j4 + npv;      %% j5:j6 - Q of pv buses
-j7 = j6 + 1;    j8 = j6 + npq;      %% j7:j8 - V mag of pq buses
+j1 = 1;         j2 = npv;           %% j1:j2 - Vi of pv buses
+j3 = j2 + 1;    j4 = j2 + npq;      %% j3:j4 - Vi of pq buses
+j5 = j4 + 1;    j6 = j4 + npq;      %% j5:j6 - Vr of pq buses
 %% evaluate F(x0)
-Sbus1 = Sbus(Vm);
-Sbus1(pv) = real(Sbus1(pv)) + 1j*imag(V(pv).* conj(Ybus(pv,:)*V));
-mis = Ybus*V - conj(Sbus1./V);
+mis = V .* conj(Ybus * V) - Sbus(Vm);
 F = [   real(mis([pv; pq]));
-        imag(mis([pv; pq]))   ];
+        imag(mis(pq))   ];
 %% check tolerance
 normF = norm(F, inf);
 if mpopt.verbose > 1
-    fprintf('\n it    max Ir & Im mismatch (p.u.)');
+    fprintf('\n it    max P & Q mismatch (p.u.)');
     fprintf('\n----  ---------------------------');
     fprintf('\n%3d        %10.3e', i, normF);
 end
@@ -60,15 +56,14 @@ while (~converged && i < max_it)
     i = i + 1;
     
     %% evaluate Jacobian
-    dImis_dQ  = sparse(1:n, 1:n, 1j./conj(V), n, n); 
-    [dImis_dVa, dImis_dVm] = dImis_dV(Sbus1, Ybus, V);
-     dImis_dVm(:,pv) = dImis_dQ(:,pv);    
+    [dSbus_dVr, dSbus_dVi] = dSbus_dV(Ybus, V, 1);
+        dSbus_dVi(:,pv) = dSbus_dVi(:,pv) - dSbus_dVr(:,pv)*sparse(1:npv, 1:npv, imag(V(pv))./real(V(pv)), npv, npv);
 %    [dummy, neg_dSd_dVm] = Sbus(Vm);
 %    dSbus_dVm = dSbus_dVm - neg_dSd_dVm;
-    j11 = real(dImis_dVa([pv; pq], [pv; pq]));
-    j12 = real(dImis_dVm([pv; pq], [pv; pq]));
-    j21 = imag(dImis_dVa([pv; pq], [pv; pq]));
-    j22 = imag(dImis_dVm([pv; pq], [pv; pq]));
+    j11 = real(dSbus_dVi([pv; pq], [pv; pq]));
+    j12 = real(dSbus_dVr([pv; pq], pq));
+    j21 = imag(dSbus_dVi(pq, [pv; pq]));
+    j22 = imag(dSbus_dVr(pq, pq));
     
     J = [   j11 j12;
             j21 j22;    ];
@@ -78,21 +73,20 @@ while (~converged && i < max_it)
 
     %% update voltage
     if npv
-        Va(pv) = Va(pv) + dx(j1:j2);
-        Sbus1(pv) = real(Sbus1(pv)) + 1j*(imag(Sbus1(pv)) + dx(j5:j6));
+        Va(pv) = Va(pv) + dx(j1:j2)./real(V(pv));
     end
     if npq
-        Va(pq) = Va(pq) + dx(j3:j4);
-        Vm(pq) = Vm(pq) + dx(j7:j8);
+        Vm(pq) = Vm(pq) + (real(V(pq))./Vm(pq)).*dx(j5:j6) + (imag(V(pq))./Vm(pq)).*dx(j3:j4);           
+        Va(pq) = Va(pq) + (real(V(pq))./(Vm(pq).^2)).*dx(j3:j4) - (imag(V(pq))./(Vm(pq).^2)).*dx(j5:j6);
     end
     V = Vm .* exp(1j * Va);
     Vm = abs(V);            %% update Vm and Va again in case
     Va = angle(V);          %% we wrapped around with a negative Vm
 
     %% evalute F(x)
-    mis = Ybus*V - conj(Sbus1./V);
+    mis = V .* conj(Ybus * V) - Sbus(Vm);
     F = [   real(mis([pv; pq]));
-            imag(mis([pv; pq]))   ];
+            imag(mis(pq))   ];
 
     %% check for convergence
     normF = norm(F, inf);
@@ -102,13 +96,13 @@ while (~converged && i < max_it)
     if normF < tol
         converged = 1;
         if mpopt.verbose
-            fprintf('\nNewton''s method power flow using current balance in polar coordinates converged in %d iterations.\n', i);
+            fprintf('\nNewton''s method power flow using power balance in Cartesian coordinates converged in %d iterations.\n', i);
         end
     end
 end
 
 if mpopt.verbose
     if ~converged
-        fprintf('\nNewton''s method power flow using current balance in polar coordinates did not converge in %d iterations.\n', i);
+        fprintf('\nNewton''s method power flow using power balance in Cartesian coordinates did not converge in %d iterations.\n', i);
     end
 end

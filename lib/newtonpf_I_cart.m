@@ -1,4 +1,4 @@
-function [V, converged, i] = newtonpf_CC(Ybus, Sbus, V0, ref, pv, pq, mpopt)
+function [V, converged, i] = newtonpf_I_cart(Ybus, Sbus, V0, ref, pv, pq, mpopt)
 %% default arguments
 if nargin < 7
     mpopt = mpoption;
