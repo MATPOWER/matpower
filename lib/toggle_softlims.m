@@ -11,22 +11,21 @@ function mpc = toggle_softlims(mpc, on_off)
 %   where MPC.softlims is a struct with fields corresponding to the
 %   possible limits, namely:
 %       VMIN, VMAX, RATE_A, PMIN, PMAX, QMIN, QMAX, ANGMAX, ANGMIN,
-%   Each of these is a structure in its own right with the following
-%   fields:
-%       idx     index of affected buses, branches, or generators. When
-%               specifying buses, these should be bus numbers. For all
-%               others these are indexes into the respective matrix. The
-%               default are all online elements that are not unbounded.
-%               Additionally, dispachable loads (using isload(gen)) are
-%               discarded from possible generators to relax.
-%
-%       cost    linear cost to be added for the slack variable. Defaults
-%               are:
+%   Each of these is itself a struct with the following fields, all of which
+%   are optional:
+%       idx     index of affected buses, branches, or generators
+%               For buses these are bus numbers. For all others these are
+%               indexes into the respective matrix. The default is to include
+%               all online elements for which the constraint in question is
+%               not unbounded, except for generators, which also exclude those
+%               used to model dispatchable loads (i.e. isload(gen) is true).
+%       cost    linear marginal cost of exceeding the original limit
+%               Defaults are:
 %                   $100,000 $/pu   for VMAX and VMIN
 %                      $1000 $/MW   for RATE_A, PMAX, and PMIN
 %                      $1000 $/MVAr for QMAX, QMIN
 %                      $1000 $/deg  for ANGMAX, ANGMIN
-%               the final cost is determined by taking the maximum between
+%               The final cost is determined by taking the maximum between
 %               the cost above and 2*gen_max_cost, where gen_max_cost is
 %               the maximum generator marginal cost of online generators.
 %
@@ -1118,7 +1117,7 @@ shift_defaults = struct('VMAX', 0.25 , 'VMIN', 0.25, 'RATE_A', 10, ...
 if isfield(s, 'hl_mod')
     switch s.hl_mod
         case 'remove'
-            % slack upper bound and new limit are both infinit
+            % slack upper bound and new limit are both infinite
             s.hl_val = ubsign.(prop)*Inf;
             s.ub = Inf(size(s.idx));
         case 'scale'
@@ -1126,29 +1125,24 @@ if isfield(s, 'hl_mod')
             % for softlims in a positive direction the upper limit is:
             %           s.ub = (hl_val) * original limit - original limit
             %                = (hl_val - 1) * original limit
-            % for softlims is a negative direction the upper limit is
+            % for softlims in a negative direction the upper limit is
             %           s.ub = original limit - hl_val*original limit
             %                = (1 - hl_val)*original limit
             switch vectorcheck(s, idxmask)
                 case 0
-                    error('softlims_defaults: provided hl_val vector does not conform to idx vector. When specifying hl_val as a vector idx must also be explicitely given') 
+                    error('softlims_defaults: provided hl_val vector does not conform to idx vector. When specifying hl_val as a vector idx must also be explicitly given') 
                 case 1 % vector of values
-                    s.ub = ubsign.(prop)*(s.hl_val(idxmax) - 1).*mat(s.idx, eval(prop));
+                    s.ub = ubsign.(prop)*(s.hl_val(idxmask) - 1).*mat(s.idx, eval(prop));
                 case 2 % scalar value
                     s.ub = ubsign.(prop)*(s.hl_val - 1)*mat(s.idx, eval(prop));
-                case 3 % no hl_val specified use 0.5 for negative (except ANGMIN and QMIN) and 2 for positive
-                    if ubsign.(prop) > 0
-                        s.hl_val = 2;
-                        s.ub = mat(s.idx, eval(prop));
-                    else
-                        if ismember(prop,{'ANGMIN', 'QMIN'})
-                            s.hl_val = 2;
-                            s.ub = -mat(s.idx, eval(prop));
-                        else
-                            s.hl_val = 0.5;
-                            s.ub = 0.5*mat(s.idx, eval(prop));
-                        end
-                    end
+                case 3 % no hl_val specified, use default of 2 or 1/2
+                    % use 2 if ubsign and original constraint have same sign
+                    % otherwise use 1/2
+                    orig_lim = mat(s.idx, eval(prop));
+                    s.hl_val = 2 * ones(size(s.idx));   % scale up by 2
+                    k = find(ubsign.(prop) * orig_lim < 0); % unless opp. sign
+                    s.hl_val(k) = 1/2;                  % then scale down by 2
+                    s.ub = abs((s.hl_val - 1) .* orig_lim);
             end
         case 'shift'
             % new hard limit is original limit + ubsign*hl_val
@@ -1243,12 +1237,10 @@ function out = vectorcheck(s, idx)
 
 if ~isfield(s,'hl_val')
     out = 3;
+elseif isscalar(s.hl_val)
+    out = 2;
 else
-    if isscalar(s.hl_val)
-        out = 2;
-    else
-        out = all(size(s.hl_val) == size(idx));
-    end
+    out = all(size(s.hl_val) == size(idx));
 end
 
 %%-----  softlims_fcn  -------------------------------------------------
