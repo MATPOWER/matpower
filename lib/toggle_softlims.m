@@ -186,28 +186,17 @@ end
 % ONLINE generators.
 max_gen_cost = max(margcost(mpc.gencost, mpc.gen(:, PMAX)));
 
-%% check for proper softlims inputs
-if isfield(mpc, 'softlims')
-    % loop over limit types
-    for prop = fieldnames(lims).'
-        mat  = lims.(prop{:});
-        if isfield(mpc.softlims, prop{:})
-            mpc.softlims.(prop{:}) = softlims_defaults(mpc.softlims.(prop{:}), prop{:}, mpc.order.ext.(mat), max_gen_cost);
-        else
-            if use_default
-                % passing an empty struct, results in assignment of defaults
-                mpc.softlims.(prop{:}) = softlims_defaults(struct(), prop{:}, mpc.order.ext.(mat), max_gen_cost);
-            else
-                mpc.softlims.(prop{:}).hl_mod = 'none';
-            end
-        end
-    end
-else
-    % looping over limit types and assign defaults
-    % passing an empty struct, results in assignment of defaults
-    for prop = fieldnames(lims).'
+%% set up softlims defaults
+if ~isfield(mpc, 'softlims')
+    mpc.softlims = struct();
+end
+for prop = fieldnames(lims).'
+    mat  = lims.(prop{:});
+    if isfield(mpc.softlims, prop{:}) && ~isempty(mpc.softlims.(prop{:}))
+        mpc.softlims.(prop{:}) = softlims_defaults(mpc.softlims.(prop{:}), prop{:}, mpc.order.ext.(mat), max_gen_cost);
+    else
         if use_default
-            mat  = lims.(prop{:});
+            %% pass an empty struct to assign defaults
             mpc.softlims.(prop{:}) = softlims_defaults(struct(), prop{:}, mpc.order.ext.(mat), max_gen_cost);
         else
             mpc.softlims.(prop{:}).hl_mod = 'none';
@@ -970,68 +959,63 @@ function s = softlims_defaults(s, prop, mat, max_gen_cost)
     TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 
-% default cost is default_cost*cost_scale.(prop)
+%% default cost is default_cost * cost_scale.(prop)
 default_cost  = 1000;
-cost_scale = struct('VMAX', 100, 'VMIN', 100,...% $/pu
-                      'ANGMAX', 1, 'ANGMIN', 1,...% $/deg
-                      'RATE_A', 1, ... %$/MW
-                      'PMIN', 1, 'PMAX', 1, ... %$/MW
-                      'QMIN', 1, 'QMAX', 1); %$/MW
+cost_scale = struct( ...
+    'VMAX', 100, 'VMIN', 100, ...   %% $/pu
+    'ANGMAX', 1, 'ANGMIN', 1, ...   %% $/deg
+    'RATE_A', 1, ...                %% $/MW
+    'PMIN', 1, 'PMAX', 1, ...       %% $/MW
+    'QMIN', 1, 'QMAX', 1 );         %% $/MVar
 
 if nargin < 4
     max_gen_cost = 0;
 end
+
+if ~ismember(prop, {'VMAX', 'VMIN', 'RATE_A', 'PMAX', 'PMIN', 'QMAX', 'QMIN', 'ANGMAX', 'ANGMIN'})
+    error('softlims_defaults: Unknown limit type ''%s''', prop)
+end
+
 %% ignore if hl_mod none specified
-if isfield(s, 'hl_mod')
-    if strcmp(s.hl_mod, 'none')
-        return
-    end
+if isfield(s, 'hl_mod') && strcmp(s.hl_mod, 'none')
+    return
 end
 
 %% idx: indicies of bounds to relax
-if ismember(prop, {'VMAX', 'VMIN'})
-    % Initial list of candidates for voltage limits contains all buses
-    % NOTE: idxfull contains EXTERNAL bus numbers
-    
-    idxfull = mat(:, BUS_I);
-    
-elseif ismember(prop, {'ANGMAX', 'ANGMIN'})
-    % Initial list of candidates for branch angle differences contains all
-    % active branches with a meaningful limit (not 0, +360 or -360).
-    % NOTE: idxfull contains locations in EXTERNAL branch list
-    
-    idxfull = find(mat(:, BR_STATUS) > 0 & abs(mat(:, eval(prop))) < 360 & mat(:, eval(prop)) );
-    
-elseif strcmp(prop, 'RATE_A')
-    % Initial list of candidates for line rating are all active branches
-    % with rating not set to infinit (0).
-    % NOTE: idxfull contains locations in EXTERNAL branch list
-    
-    idxfull = find(mat(:, BR_STATUS) > 0 & mat(:, RATE_A) > 0);
-    
-elseif ismember(prop, {'PMAX', 'QMAX', 'QMIN'})
-    % Initial list of candidates for generation limits (except Pmin) are
-    % all active generators whose limits are not infinit
-    % NOTE: idxfull contains locations in EXTERNAL generator list
-    
-    idxfull = find( (mat(:, GEN_STATUS) > 0) & ~isload(mat) & ~isinf(mat(:, eval(prop))) );
-    
-elseif strcmp(prop, 'PMIN')
-    % Initial list of candidates for Pmin are all active generators that
-    % are NOT dispachable loads
-    % NOTE: idxfull contains locations in EXTERNAL generator list
-    
-    idxfull = find( (mat(:, GEN_STATUS) > 0) & ~isload(mat) );
-    
+switch prop
+    case {'VMAX', 'VMIN'}
+        % Initial list of candidates for voltage limits contains all buses
+        % NOTE: idxfull contains EXTERNAL bus numbers
+        idxfull = mat(:, BUS_I);
+    case {'ANGMAX', 'ANGMIN'}
+        % Initial list of candidates for branch angle differences contains all
+        % active branches with a meaningful limit (not 0, +360 or -360).
+        % NOTE: idxfull contains locations in EXTERNAL branch list
+        idxfull = find(mat(:, BR_STATUS) > 0 & mat(:, eval(prop)) & abs(mat(:, eval(prop))) < 360 );
+    case 'RATE_A'
+        % Initial list of candidates for line rating are all active branches
+        % with rating not set to infinit (0).
+        % NOTE: idxfull contains locations in EXTERNAL branch list
+        idxfull = find(mat(:, BR_STATUS) > 0 & mat(:, RATE_A) > 0);
+    case {'PMAX', 'QMAX', 'QMIN'}
+        % Initial list of candidates for generation limits (except Pmin) are
+        % all active generators whose limits are not infinit
+        % NOTE: idxfull contains locations in EXTERNAL generator list
+        idxfull = find( (mat(:, GEN_STATUS) > 0) & ~isload(mat) & ~isinf(mat(:, eval(prop))) );
+    case 'PMIN'
+        % Initial list of candidates for Pmin are all active generators that
+        % are NOT dispachable loads
+        % NOTE: idxfull contains locations in EXTERNAL generator list
+        idxfull = find( (mat(:, GEN_STATUS) > 0) & ~isload(mat) );
 end
 
 if isfield(s, 'idx')
-    %idxmask returns a boolean vector the size of s.idx. Entry i of
-    %idxmask is 1 if s.idx(i) is in idxfull and 0 otherwise.
-    if size(s.idx,2) > 1
+    % idxmask is a boolean vector the size of s.idx. Entry i of
+    % idxmask is 1 if s.idx(i) is in idxfull and 0 otherwise.
+    if size(s.idx, 2) > 1
         s.idx = s.idx.';
         if size(s.idx, 2) > 1
-            error('softlim_defaults: idx must be a vector (error on property ''%s''',prop)
+            error('softlim_defaults: mpc.softlims.%s.idx must be a vector', prop)
         end
     end
     idxmask = ismember(s.idx, idxfull);
@@ -1057,42 +1041,30 @@ if isempty(s.idx)
     return
 end
 
+%% save original values in s.sav
+s.sav = mat(s.idx, eval(prop));     %% s.idx is row index into relevant matrix
 
-
-%% sav: saves original values
-% if ismember(prop, {'VMAX', 'VMIN'})
-%     % save original bus numbers.
-%     s.sav = mat(ismember(mat(:,BUS_I), s.idx), eval(prop));
-if ismember(prop, {'VMAX', 'VMIN', 'RATE_A', 'PMAX', 'PMIN', 'QMAX', 'QMIN', 'ANGMAX', 'ANGMIN'})
-    % Again note that here s.idx contains locations in the relevant matrix
-    s.sav = mat(s.idx, eval(prop)) ;
-else
-    error('softlims_defaults: woops! property %s is not known.', prop)
-end
 %% cost: cost of violating softlim
-if isfield(s, 'cost')
-    if ~isscalar(s.cost)
-        % if vector is specified aply the idxmask filter in case some
-        % elements were removed in the idx stage.
+if isfield(s, 'cost') && ~isempty(s.cost)
+    if isscalar(s.cost)
+        s.cost = s.cost * ones(size(s.idx));
+    else    % vector: apply idxmask filter in case elements removed in idx stage
         try
             s.cost = s.cost(idxmask);
         catch ME
             warning('softlims_defaults: something went wrong when handling the cost for property %s. Perhaps the size of the ''cost'' vector didn''t match the size of the ''idx'' vector?', prop)
             rethrow(ME)
         end
-    else
-        s.cost = s.cost * ones(size(s.idx));
     end
 else
-    % default cost is the maximum between a  predefined value and 
-    % 2 times the maximum generation marginal cost. A scaling is applyed
-    % to account for the fact that we are essentially equation 1MW with
+    % default cost is the maximum between a predefined value and
+    % 2 times the maximum generation marginal cost. A scaling is applied
+    % to account for the fact that we are essentially equating 1MW with
     % 0.01 p.u. voltage or 1 deg angle difference.
     
-    ctmp = max(default_cost*cost_scale.(prop), 2*cost_scale.(prop)*max_gen_cost);
-    s.cost = ctmp * ones(size(s.idx));    
+    ctmp = cost_scale.(prop) * max(default_cost, 2*max_gen_cost);
+    s.cost = ctmp * ones(size(s.idx));
 end
-
 
 %% type of limit and upper bound of slack variable
 ubsign = struct('VMAX', 1 , 'VMIN', -1, 'RATE_A', 1, ...
