@@ -219,9 +219,9 @@ function opt = mpoption(varargin)
 %   opf.ignore_angle_lim    0           angle diff limits for branches
 %       [ 0 - include angle difference limits, if specified                 ]
 %       [ 1 - ignore angle difference limits even if specified              ]
-%   opf.softlims.default    1           default behavior of implicit soft
-%                                       limits, where parameters are not
-%                                       explicitly provided)
+%   opf.softlims.default    1           behavior of OPF soft limits for
+%                                       which parameters are not explicitly
+%                                       provided
 %       [ 0 - do not include softlims if not explicitly specified           ]
 %       [ 1 - include softlims w/default values if not explicitly specified ]
 %   opf.init_from_mpc       -1          (DEPRECATED: use opf.start instead)
