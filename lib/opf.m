@@ -238,9 +238,9 @@ else
         fprintf('OPF not valid : %s', raw.output.message);
     end
 end
+results.success = success;  %% make success available to subsequent callbacks
 
 %%-----  revert to original ordering, including out-of-service stuff  -----
-results.success = success; % add success before int2ext so callbacks can access it
 results = int2ext(results);
 
 %% zero out result fields of out-of-service gens & branches
@@ -256,7 +256,6 @@ et = toc(t0);       %% compute elapsed time
 if nargout > 0
   if nargout <= 2
     results.et = et;
-    results.success = success;
     results.raw = raw;
     busout = results;
     genout = success;
@@ -272,6 +271,5 @@ if nargout > 0
   end
 elseif success
   results.et = et;
-  results.success = success;
   printpf(results, 1, mpopt);
 end
