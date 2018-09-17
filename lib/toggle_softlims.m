@@ -181,28 +181,11 @@ else
     use_default = mpopt.opf.softlims.default;
 end 
 
-%% get maximum generator marginal cost
-% since mpc.gen and not mpc.order.ext.gen is used this is the maximum of
-% ONLINE generators.
-max_gen_cost = max(margcost(mpc.gencost, mpc.gen(:, PMAX)));
-
 %% set up softlims defaults
 if ~isfield(mpc, 'softlims')
     mpc.softlims = struct();
 end
-for prop = fieldnames(lims).'
-    mat  = lims.(prop{:});
-    if isfield(mpc.softlims, prop{:}) && ~isempty(mpc.softlims.(prop{:}))
-        mpc.softlims.(prop{:}) = softlims_defaults(mpc.softlims.(prop{:}), prop{:}, mpc.order.ext.(mat), max_gen_cost);
-    else
-        if use_default
-            %% pass an empty struct to assign defaults
-            mpc.softlims.(prop{:}) = softlims_defaults(struct(), prop{:}, mpc.order.ext.(mat), max_gen_cost);
-        else
-            mpc.softlims.(prop{:}).hl_mod = 'none';
-        end
-    end
-end
+mpc.softlims = softlims_defaults(mpc, mpopt);
 
 %% initialize some things
 s = mpc.softlims;
@@ -932,9 +915,56 @@ lim2mat = struct(...
 );
 
 %%-----  softlims_defaults  --------------------------------------------
-function s = softlims_defaults(s, prop, mat, max_gen_cost)
+function s = softlims_defaults(mpc, mpopt)
 %
-%   s = softlims_defaults(s, prop, mat, max_gen_cost)
+%   s = softlims_defaults(mpc, mpopt)
+%
+%   Returns a softlims field for mpc in which any missing inputs have
+%   been filled in with defaults, so that each limit type has the all
+%   4 input fields (idx, cost, hl_mod, hl_cost) and idx has been expanded
+%   to a vector, unless hl_mod == 'none', in which case the others need
+%   not be present (and are, in any case, ignored).
+
+%% define named indices into data matrices
+[GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
+    MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
+    QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
+
+%% initialization
+lims = softlims_lim2mat();
+s = mpc.softlims;
+if isempty(mpopt)
+    warning('userfcn_softlims_ext2int: Assuming ''mpopt.opf.softlims.default'' = 1, since mpopt was not provided.');
+    use_default = 1;
+else
+    use_default = mpopt.opf.softlims.default;
+end 
+
+%% get maximum generator marginal cost
+% since mpc.gen and not mpc.order.ext.gen is used this is the maximum of
+% ONLINE generators.
+max_gen_cost = max(margcost(mpc.gencost, mpc.gen(:, PMAX)));
+
+%% set defaults for each element
+for prop = fieldnames(lims).'
+    mat  = lims.(prop{:});
+    if isfield(s, prop{:}) && ~isempty(s.(prop{:}))
+        s.(prop{:}) = softlims_element_defaults(s.(prop{:}), prop{:}, mpc.order.ext.(mat), max_gen_cost);
+    else
+        if use_default
+            %% pass an empty struct to assign defaults
+            s.(prop{:}) = softlims_element_defaults(struct(), prop{:}, mpc.order.ext.(mat), max_gen_cost);
+        else
+            s.(prop{:}).hl_mod = 'none';
+        end
+    end
+end
+
+
+%%-----  softlims_element_defaults  --------------------------------------------
+function s = softlims_element_defaults(s, prop, mat, max_gen_cost)
+%
+%   s = softlims_element_defaults(s, prop, mat, max_gen_cost)
 %
 % for each property we want
 %   idx: index of affected buses, branches, or generators
@@ -973,7 +1003,7 @@ if nargin < 4
 end
 
 if ~ismember(prop, {'VMAX', 'VMIN', 'RATE_A', 'PMAX', 'PMIN', 'QMAX', 'QMIN', 'ANGMAX', 'ANGMIN'})
-    error('softlims_defaults: Unknown limit type ''%s''', prop)
+    error('softlims_element_defaults: Unknown limit type ''%s''', prop)
 end
 
 %% ignore if hl_mod none specified
@@ -1052,7 +1082,7 @@ if isfield(s, 'cost') && ~isempty(s.cost)
         try
             s.cost = s.cost(idxmask);
         catch ME
-            warning('softlims_defaults: something went wrong when handling the cost for property %s. Perhaps the size of the ''cost'' vector didn''t match the size of the ''idx'' vector?', prop)
+            warning('softlims_element_defaults: something went wrong when handling the cost for property %s. Perhaps the size of the ''cost'' vector didn''t match the size of the ''idx'' vector?', prop)
             rethrow(ME)
         end
     end
@@ -1089,7 +1119,7 @@ if isfield(s, 'hl_mod')
             %                = (1 - hl_val)*original limit
             switch vectorcheck(s, idxmask)
                 case 0
-                    error('softlims_defaults: provided hl_val vector does not conform to idx vector. When specifying hl_val as a vector idx must also be explicitly given') 
+                    error('softlims_element_defaults: provided hl_val vector does not conform to idx vector. When specifying hl_val as a vector idx must also be explicitly given') 
                 case 1 % vector of values
                     s.ub = ubsign.(prop)*(s.hl_val(idxmask) - 1).*mat(s.idx, eval(prop));
                 case 2 % scalar value
@@ -1112,14 +1142,14 @@ if isfield(s, 'hl_mod')
             % s.ub is therefore simply hl_val
             switch vectorcheck(s, idxmask)
                 case 0
-                    error('softlims_defaults: provided hl_val vector does not conform to idx vector. When specifying hl_val as a vector idx must also be explicitely given')
+                    error('softlims_element_defaults: provided hl_val vector does not conform to idx vector. When specifying hl_val as a vector idx must also be explicitly given')
                 case 1 % vector of values
                     s.ub = s.hl_val(idxmask);
                 case 2 % scalar value
                     s.ub = s.hl_val*ones(size(s.idx));
                 case 3 % no hl_val specified use defaults in shift_defaults
                     s.hl_val = shift_defaults.(prop);
-                    s.ub = shift_defaults.(prop)*ones(size(s.idx));
+                    s.ub = s.hl_val*ones(size(s.idx));
             end
         case 'replace'
             % new hard limit is hl_val
@@ -1130,16 +1160,16 @@ if isfield(s, 'hl_mod')
             % Therefore s.ub = ubsign*(hl_val - original limit)
             switch vectorcheck(s, idxmask)
                 case 0
-                    error('softlims_defaults: provided hl_val vector does not conform to idx vector. When specifying hl_val as a vector idx must also be explicitely given')
+                    error('softlims_element_defaults: provided hl_val vector does not conform to idx vector. When specifying hl_val as a vector idx must also be explicitly given')
                 case 1 % vector of values
                     s.ub = ubsign.(prop)*(s.hl_val(idxmask) - mat(s.idx, eval(prop)));
                 case 2 % scalar value
                     s.ub = ubsign.(prop)*(s.hl_val - mat(s.idx, eval(prop)));
                 case 3 % non specified
-                    error('softlims_defaults: for hard limit modification ''replace'' replacement value hl_val must be specified')
+                    error('softlims_element_defaults: for hard limit ''replace'' modification, replacement value hl_val must be specified')
             end
         otherwise
-            error('softlims_defaults: unknown hard limit modification %s', s.hl_mod)
+            error('softlims_element_defaults: unknown hard limit modification %s', s.hl_mod)
     end
 else
     % defaults
@@ -1169,7 +1199,7 @@ end
 
 % check that all ub are non negative
 if any(s.ub < 0)
-    error('softlims_defaults: some soft limit for %s has a negative upper bound. There is most likely a problem in the specification of hl_val.', prop)
+    error('softlims_element_defaults: some soft limit for %s has a negative upper bound. There is most likely a problem in the specification of hl_val.', prop)
 end
 
 %% rval: replacement value to remove constraint in initial OPF formulation
@@ -1180,14 +1210,14 @@ elseif ismember(prop, {'VMAX', 'PMAX', 'QMAX'})
 elseif ismember(prop, {'QMIN', 'PMIN','VMIN'})
     s.rval = -Inf;
 else
-    error('softlims_defaults: woops! property %s does not have an ''rval'' assigned', prop)
+    error('softlims_element_defaults: woops! property %s does not have an ''rval'' assigned', prop)
 end
 
 %%----- vector check ---------------------------------------------------
 function out = vectorcheck(s, idx)
-% Utility function for softlims_defaults. Checks whether a field in the
-% softlims structure is a scalar or a vector. If it is a vector, makes sure
-% that it conforms with the idx vector
+% Utility function for softlims_element_defaults. Checks whether the hl_val
+% field in the softlims element struct is a scalar or a vector whose size
+% conforms with the idx vector
 % OUTPUT:
 %           out      0  hl_val is not scalar and does NOT conform to idx
 %                    1  hl_val is not scalar and DOES conform to idx
