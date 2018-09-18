@@ -19,12 +19,12 @@ Vm = abs(V);
 %% set up indexing for updating V
 npv = length(pv);
 npq = length(pq);
-j1 = 1;         j2 = npv;           %% j1:j2 - Vi of pv buses
-j3 = j2 + 1;    j4 = j2 + npq;      %% j3:j4 - Vi of pq buses
-j5 = j4 + 1;    j6 = j4 + npq;      %% j5:j6 - Vr of pq buses
+j1 = 1;         j2 = npq;           %% j1:j2 - Vr of pq buses
+j3 = j2 + 1;    j4 = j2 + npv;      %% j3:j4 - Vi of pv buses
+j5 = j4 + 1;    j6 = j4 + npq;      %% j5:j6 - Vi of pq buses
 %% evaluate F(x0)
 mis = V .* conj(Ybus * V) - Sbus(Vm);
-F = [   real(mis([pv; pq]));
+F = [   real(mis([pq; pv]));
         imag(mis(pq))   ];
 %% check tolerance
 normF = norm(F, inf);
@@ -60,10 +60,10 @@ while (~converged && i < max_it)
         dSbus_dVi(:,pv) = dSbus_dVi(:,pv) - dSbus_dVr(:,pv)*sparse(1:npv, 1:npv, imag(V(pv))./real(V(pv)), npv, npv);
 %    [dummy, neg_dSd_dVm] = Sbus(Vm);
 %    dSbus_dVm = dSbus_dVm - neg_dSd_dVm;
-    j11 = real(dSbus_dVi([pv; pq], [pv; pq]));
-    j12 = real(dSbus_dVr([pv; pq], pq));
-    j21 = imag(dSbus_dVi(pq, [pv; pq]));
-    j22 = imag(dSbus_dVr(pq, pq));
+    j11 = real(dSbus_dVr([pq; pv], pq));
+    j12 = real(dSbus_dVi([pq; pv], [pv; pq]));
+    j21 = imag(dSbus_dVr(pq, pq));    
+    j22 = imag(dSbus_dVi(pq, [pv; pq]));
     
     J = [   j11 j12;
             j21 j22;    ];
@@ -73,11 +73,11 @@ while (~converged && i < max_it)
 
     %% update voltage
     if npv
-        Va(pv) = Va(pv) + dx(j1:j2)./real(V(pv));
+        Va(pv) = Va(pv) + dx(j3:j4)./real(V(pv));
     end
     if npq
-        Vm(pq) = Vm(pq) + (real(V(pq))./Vm(pq)).*dx(j5:j6) + (imag(V(pq))./Vm(pq)).*dx(j3:j4);           
-        Va(pq) = Va(pq) + (real(V(pq))./(Vm(pq).^2)).*dx(j3:j4) - (imag(V(pq))./(Vm(pq).^2)).*dx(j5:j6);
+        Vm(pq) = Vm(pq) + (real(V(pq))./Vm(pq)).*dx(j1:j2) + (imag(V(pq))./Vm(pq)).*dx(j5:j6);           
+        Va(pq) = Va(pq) + (real(V(pq))./(Vm(pq).^2)).*dx(j5:j6) - (imag(V(pq))./(Vm(pq).^2)).*dx(j1:j2);
     end
     V = Vm .* exp(1j * Va);
     Vm = abs(V);            %% update Vm and Va again in case
@@ -85,7 +85,7 @@ while (~converged && i < max_it)
 
     %% evalute F(x)
     mis = V .* conj(Ybus * V) - Sbus(Vm);
-    F = [   real(mis([pv; pq]));
+    F = [   real(mis([pq; pv]));
             imag(mis(pq))   ];
 
     %% check for convergence
