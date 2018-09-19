@@ -12,6 +12,13 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 2/21/19
+  - Add three new variants of the standard Newton AC power flow, for a total
+    of four, including both nodal power and current balance equations and
+    both polar and cartesian representations of voltage. See the new
+    `pf.current_balance` and `pf.v_cartesian` options.
+    *Thanks to Baljinnyam Sereeter.*
+
 #### 2/15/19
   - Branches 86--87, 68--116 in `case118` changed from transmission lines
     (tap ratio = 0) to transformers (tap ratio = 1) for consistency with

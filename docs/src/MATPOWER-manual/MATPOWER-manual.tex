@@ -999,13 +999,71 @@ v_m^{\{j\}}
 
 This yields a system of nonlinear equations with $n_{pv} + 2n_{pq}$ equations and unknowns, where $n_{pv}$ and $n_{pq}$ are the number of PV and PQ buses, respectively. After solving for $x$, the remaining real power balance equation can be used to compute the generator real power injection at the slack bus. Similarly, the remaining $n_{pv} + 1$ reactive power balance equations yield the generator reactive power injections.
 
-\matpower{} includes four different algorithms for solving the general AC power flow problem.\footnote{Three more that are specific to radial networks typical of distribution systems are described in Section~\ref{sec:pfdist}.} The default solver is based on a standard Newton's method~\cite{tinney1967} using a polar form and a full Jacobian updated at each iteration. Each Newton step involves computing the mismatch $g(x)$, forming the Jacobian based on the sensitivities of these mismatches to changes in $x$ and solving for an updated value of $x$ by factorizing this Jacobian. This method is described in detail in many textbooks.
+\matpower{} includes four different algorithms for solving the general AC power flow problem.\footnote{Three more that are specific to radial networks typical of distribution systems are described in Section~\ref{sec:pfdist}.} The default solver is based on a standard Newton's method~\cite{tinney1967} using a polar form and a full Jacobian updated at each iteration. Each Newton step involves computing the mismatch $g(x)$, forming the Jacobian based on the sensitivities of these mismatches to changes in $x$ and solving for an updated value of $x$ by factorizing this Jacobian. This method is described in detail in many textbooks. As of version~7, \matpower{} also includes variants of the Newton method using nodal current balance equations and/or cartesian representations for voltage as described in~\cite{sereeter2019}.
 
 Also included are solvers based on variations of the fast-decoupled method~\cite{stott1974}, specifically, the XB and BX methods described in~\cite{amerongen1989}. These solvers greatly reduce the amount of computation per iteration, by updating the voltage magnitudes and angles separately based on constant approximate Jacobians which are factored only once at the beginning of the solution process. These per-iteration savings, however, come at the cost of more iterations.
 
 The fourth algorithm is the standard Gauss-Seidel method from Glimm and Stagg~\cite{glimm1957}. It has numerous disadvantages relative to the Newton method and is included primarily for academic interest.
 
 By default, the AC power flow solvers simply solve the problem described above, ignoring any generator limits, branch flow limits, voltage magnitude limits, etc. However, there is an option (\code{pf.enforce\_q\_lims}) that allows for the generator reactive power limits to be respected at the expense of the voltage setpoint. This is done in a rather brute force fashion by adding an outer loop around the AC power flow solution. If any generator has a violated reactive power limit, its reactive injection is fixed at the limit, the corresponding bus is converted to a PQ bus and the power flow is solved again. This procedure is repeated until there are no more violations. Note that this option is based solely on the \code{QMAX} and \code{QMIN} parameters for the generator, from columns 4 and 5 of the \gen{} matrix, and does not take into account the trapezoidal generator capability curves described in Section~\ref{sec:cap_curve} and specifed in columns \code{PC1}--\code{QC2MAX} (11--16). Note also that this option affects generators even if the bus they are attached to is already of type PQ.
+
+In all, there are 4 different formulations implemented for the Newton power flow, described briefly below, with the details found in reference~\cite{sereeter2019}.
+
+\subsubsection{Cartesian vs. Polar Coordinates for Voltage}
+
+Another variation of the standard AC power flow problem represents the bus voltages in cartesian, rather than polar, coordinates. That is, instead of $\Theta$ and $V_m$, the vector $x$ of unknowns includes the real and imaginary parts of the complex voltage, denoted respectively by $U$ and $W$, where $V = U + j W$. The active and reactive power balance equations from \eqref{eq:acpf_p}--\eqref{eq:acpf_q} are then expressed as functions of $U$ and $W$.
+\begin{alignat}{2}
+g_P(U, W, P_g) &= P_\mathrm{bus}(U, W) + P_d - C_g P_g &&= 0	\label{eq:acpf_p_SC} \\
+g_Q(U, W, Q_g) &= Q_\mathrm{bus}(U, W) + Q_d - C_g Q_g &&= 0.	\label{eq:acpf_q_SC}
+\end{alignat}
+
+The power flow problem of \eqref{eq:g_acpf} becomes
+\begin{equation}
+g(x) = \left[\begin{array}{c}
+g_P^{\{i\}}(U, W, P_g) \\
+g_Q^{\{j\}}(U, W, Q_g)
+\end{array}\right] \quad
+\begin{array}{l}
+\forall i \in \mathcal{I}_\mathrm{PV} \cup \mathcal{I}_\mathrm{PQ} \\
+\forall j \in \mathcal{I}_\mathrm{PQ}.
+\end{array}
+\label{eq:g_acpf_SC}
+\end{equation}
+where
+\begin{equation}
+x = \left[\begin{array}{c}
+u_{\{i\}} \\
+w^{\{j\}}
+\end{array}\right] \quad
+\begin{array}{l}
+\forall i \in \mathcal{I}_\mathrm{PQ} \\
+\forall j \notin \mathcal{I}_\mathrm{ref}.
+\end{array}
+\label{eq:x_acpf_SC}
+\end{equation}
+
+For PV buses, since the voltage magnitude is constant, $\Delta u$ can be expressed as a function of $\Delta w$, allowing $u$ to be eliminated for PV buses by modifying the Jacobian terms corresponding to $g_P$ and $w$. This results once again in a system of nonlinear equations with $n_{pv} + 2n_{pq}$ equations and unknowns.
+
+In \matpower{} setting the \code{pf.v\_cartesian} option to 1 (0 by default) selects the cartesian representation for voltages when running a Newton-Raphson AC power flow, that is, when the \code{pf.alg} option is set to \codeq{NR}.\footnote{Setting the \code{pf.alg} option to \codeq{NR-SC} is also a shortcut for selecting this version based on cartesian voltage representation.}
+
+\subsubsection{Current vs. Power for Nodal Balance Equations}
+
+Another variation of the standard AC power flow problem uses current balance equations in place of the power balance equations in \eqref{eq:g_acpf} and \eqref{eq:g_acpf_SC}. If we let $M$ and $N$ represent the real and imaginary parts, respectively, of the current, we can express the current balance functions for the polar form as
+\begin{alignat}{2}
+g_M(\Theta, V_m, P_g, Q_g) &= \Re\{I_\mathrm{bus}(\Theta, V_m) + [V^*]^{-1}(S_d - C_g S_g)^*\} &&= 0 \label{eq:polar_curbal_m} \\
+g_N(\Theta, V_m, P_g, Q_g) &= \Im\{I_\mathrm{bus}(\Theta, V_m) + [V^*]^{-1}(S_d - C_g S_g)^*\} &&= 0 \label{eq:polar_curbal_n}
+\end{alignat}
+and for the cartesian form as
+\begin{alignat}{2}
+g_M(U, W, P_g, Q_g) &= \Re\{I_\mathrm{bus}(U, W) + [V^*]^{-1}(S_d - C_g S_g)^*\} &&= 0 \label{eq:cart_curbal_m} \\
+g_N(U, W, P_g, Q_g) &= \Im\{I_\mathrm{bus}(U, W) + [V^*]^{-1}(S_d - C_g S_g)^*\} &&= 0 \label{eq:cart_curbal_n}
+\end{alignat}
+where $S_d = P_d + j Q_d$, $S_g = P_g + j Q_g$ and $[V^*]^{-1}$ is a diagonal matrix whose $i$-th diagonal entry is $1/v_i^*$, that is $\frac{1}{v_m^i}e^{j\theta_i}$ or $1/(u_i - j w_i)$.
+
+In order to handle PV buses, $g(x)$ is expanded to include the full set of mismatch equations for all PV and PQ buses, and the reactive power injections at PV buses are added to $x$ as independent variables, resulting in a system of nonlinear equations with $2n_{pv} + 2n_{pq}$ equations and unknowns.
+
+In \matpower{} setting the \code{pf.current\_balance} option to 1 (0 by default) selects the current balance version when running a Newton-Raphson AC power flow, that is, when the \code{pf.alg} option is set to \codeq{NR}. This option can be used in conjunction with either the polar or cartesian representation of bus voltages.\footnote{Setting the \code{pf.alg} option to \codeq{NR-IP} or \codeq{NR-IC} are also shortcuts for selecting the polar and cartesian versions, respectively, of the current balance formulation.}
+
 
 \subsection{DC Power Flow}
 
@@ -1305,7 +1363,7 @@ name & description \\
 \caption{Power Flow Options}
 \label{tab:pfoptions}
 \footnotesize
-\begin{tabular}{lcl}
+\begin{tabular}{lcp{0.62\textwidth}}
 \toprule
 name & default & description \\
 \midrule
@@ -1315,8 +1373,11 @@ name & default & description \\
 \codeq{DC} & use DC formulation and corresponding alg options \\
 \end{tabular}	\\
 \code{pf.alg}	& \codeq{NR}	& AC power flow algorithm: \\
-&& \begin{tabular}{c @{ -- } l}
-\codeq{NR} & Newtons's method \\
+&& \begin{tabular}{c @{ -- } p{0.5\textwidth}}
+\codeq{NR} & Newtons's method (formulation depends on values of \code{pf.current\_balance} and \code{pf.v\_cartesian} options) \\
+\codeq{NR-SC} & Newtons's method (power mismatch, cartesian)\tnote{\dag} \\
+\codeq{NR-IP} & Newtons's method (current mismatch, polar)\tnote{\dag} \\
+\codeq{NR-IC} & Newtons's method (current mismatch, cartesian)\tnote{\dag} \\
 \codeq{FDXB} & Fast-Decoupled (XB version) \\
 \codeq{FDBX} & Fast-Decouple (BX version) \\
 \codeq{GS} & Gauss-Seidel \\
@@ -1324,6 +1385,8 @@ name & default & description \\
 \codeq{ISUM} & Current Summation (radial networks only) \\
 \codeq{YSUM} & Admittance Summation (radial networks only) \\
 \end{tabular}	\\
+\code{pf.current\_balance}\tnote{\ddag}	& 0	& use current, as opposed to power, balance for AC PF, 0 or 1	\\
+\code{pf.v\_cartesian}\tnote{\ddag}	& 0	& use cartesian, as opposed to polar, representation for voltages for AC PF, 0 or 1	\\
 \code{pf.tol}	& $10^{-8}$	& termination tolerance on per unit P and Q dispatch	\\
 \code{pf.nr.max\_it}	& 10	& maximum number of iterations for Newton's method	\\
 \code{pf.nr.lin\_solver}	& \codeq{}	& linear solver option for \code{mplinsolve} for computing Newton update step \\
@@ -1352,6 +1415,11 @@ name & default & description \\
 \end{tabular}	\\
 \bottomrule
 \end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [\dag] {Automatically sets/overrides \code{pf.current\_balance} and \code{pf.v\_cartesian} options with corresponding values.}
+ \item [\ddag] {Only relevant for Newton power flow solver.}
+\end{tablenotes}
 \end{threeparttable}
 \end{table}
 
@@ -1984,7 +2052,7 @@ g_N(U, W, P_g, Q_g) &= \Im\{I_\mathrm{bus}(U, W) + [V^*]^{-1}(S_d - C_g S_g)^*\}
 \end{alignat}
 where $S_d = P_d + j Q_d$, $S_g = P_g + j Q_g$ and $[V^*]^{-1}$ is a diagonal matrix whose $i$-th diagonal entry is $1/v_i^*$, that is $\frac{1}{v_m^i}e^{j\theta_i}$ or $1/(u_i - j w_i)$.
 
-In this formulation, which can be selected by setting the \code{opf.current\_balance} option to 1,\footnote{This option only applies to solvers based on \mipslink{}, \code{fmincon}, \ipopt{} and \knitro{}.} the objective function and other constraints are not affected. This option can be used in conjuntion with either the polar or cartesian representation of bus voltages.
+In this formulation, which can be selected by setting the \code{opf.current\_balance} option to 1,\footnote{This option only applies to solvers based on \mipslink{}, \code{fmincon}, \ipopt{} and \knitro{}.} the objective function and other constraints are not affected. This option can be used in conjunction with either the polar or cartesian representation of bus voltages.
 
 \subsection{Standard DC OPF}
 
@@ -2368,8 +2436,8 @@ name & default & description \\
 \toprule
 name & default & description \\
 \midrule
-\code{opf.current\_balance}	& 0	& use current, as opposed to power, balance formulation for AC OPF, 0 or 1	\\
-\code{opf.v\_cartesian}	& 0	& use cartesian, as opposed to polar, representation for voltages for AC OPF, 0 or 1	\\
+\code{opf.current\_balance}\tnote{\ddag}	& 0	& use current, as opposed to power, balance formulation for AC OPF, 0 or 1	\\
+\code{opf.v\_cartesian}\tnote{\ddag}	& 0	& use cartesian, as opposed to polar, representation for voltages for AC OPF, 0 or 1	\\
 \code{opf.violation}	& $5 \times 10^{-6}$	& constraint violation tolerance	\\
 \code{opf.use\_vg}	& 0	& respect generator voltage setpoint, 0 or 1\tnote{\dag}	\\
 && \begin{tabular}{r @{ -- } p{0.5\textwidth}}
@@ -5017,13 +5085,16 @@ name & default & description \\
 \caption{Power Flow Options}
 \label{tab:pfoptions2}
 \footnotesize
-\begin{tabular}{lcl}
+\begin{tabular}{lcp{0.62\textwidth}}
 \toprule
 name & default & description \\
 \midrule
 \code{pf.alg}	& \codeq{NR}	& AC power flow algorithm: \\
-&& \begin{tabular}{c @{ -- } l}
-\codeq{NR} & Newtons's method \\
+&& \begin{tabular}{c @{ -- } p{0.5\textwidth}}
+\codeq{NR} & Newtons's method (formulation depends on values of \code{pf.current\_balance} and \code{pf.v\_cartesian} options) \\
+\codeq{NR-SC} & Newtons's method (power mismatch, cartesian)\tnote{\dag} \\
+\codeq{NR-IP} & Newtons's method (current mismatch, polar)\tnote{\dag} \\
+\codeq{NR-IC} & Newtons's method (current mismatch, cartesian)\tnote{\dag} \\
 \codeq{FDXB} & Fast-Decoupled (XB version) \\
 \codeq{FDBX} & Fast-Decouple (BX version) \\
 \codeq{GS} & Gauss-Seidel \\
@@ -5031,6 +5102,8 @@ name & default & description \\
 \codeq{ISUM} & Current Summation (radial networks only) \\
 \codeq{YSUM} & Admittance Summation (radial networks only) \\
 \end{tabular}	\\
+\code{pf.current\_balance}\tnote{\ddag}	& 0	& use current, as opposed to power, balance for AC PF, 0 or 1	\\
+\code{pf.v\_cartesian}\tnote{\ddag}	& 0	& use cartesian, as opposed to polar, representation for voltages for AC PF, 0 or 1	\\
 \code{pf.tol}	& $10^{-8}$	& termination tolerance on per unit P and Q dispatch	\\
 \code{pf.nr.max\_it}	& 10	& maximum number of iterations for Newton's method	\\
 \code{pf.nr.lin\_solver}	& \codeq{}	& linear solver option for \code{mplinsolve} for computing Newton update step \\
@@ -5059,6 +5132,11 @@ name & default & description \\
 \end{tabular}	\\
 \bottomrule
 \end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [\dag] {Automatically sets/overrides \code{pf.current\_balance} and \code{pf.v\_cartesian} options with corresponding values.}
+ \item [\ddag] {Only relevant for Newton power flow solver.}
+\end{tablenotes}
 \end{threeparttable}
 \end{table}
 
@@ -5182,8 +5260,8 @@ name & default & description \\
 \toprule
 name & default & description \\
 \midrule
-\code{opf.current\_balance}	& 0	& use current, as opposed to power, balance formulation for AC OPF, 0 or 1	\\
-\code{opf.v\_cartesian}	& 0	& use cartesian, as opposed to polar, representation for voltages for AC OPF, 0 or 1	\\
+\code{opf.current\_balance}\tnote{\ddag}	& 0	& use current, as opposed to power, balance formulation for AC OPF, 0 or 1	\\
+\code{opf.v\_cartesian}\tnote{\ddag}	& 0	& use cartesian, as opposed to polar, representation for voltages for AC OPF, 0 or 1	\\
 \code{opf.violation}	& $5 \times 10^{-6}$	& constraint violation tolerance	\\
 \code{opf.use\_vg}	& 0	& respect generator voltage setpoint, 0 or 1\tnote{\dag}	\\
 && \begin{tabular}{r @{ -- } p{0.5\textwidth}}
@@ -6026,7 +6104,7 @@ name & description \\
 \caption{Power Flow Functions}
 \label{tab:pf}
 \footnotesize
-\begin{tabular}{p{0.15\textwidth}p{0.75\textwidth}}
+\begin{tabular}{p{0.17\textwidth}p{0.73\textwidth}}
 \toprule
 name & description \\
 \midrule
@@ -6038,7 +6116,10 @@ name & description \\
 \code{gausspf}	& implementation of Gauss-Seidel power flow solver	\\
 \code{make\_vcorr}	& calculate voltage corrections for radial power flow\tnote{\dag}	\\
 \code{make\_zpv}	& form loop impedance for PV bus handling in radial power flow\tnote{\dag}	\\
-\code{newtonpf}	& implementation of Newton-method power flow solver	\\
+\code{newtonpf}	& implementation of Newton-method power flow solver (power, polar)	\\
+\code{newtonpf\_I\_cart}	& implementation of Newton-method power flow solver (current, cartesian)	\\
+\code{newtonpf\_I\_polar}	& implementation of Newton-method power flow solver (current, polar)	\\
+\code{newtonpf\_S\_cart}	& implementation of Newton-method power flow solver (power, cartesian)	\\
 \code{order\_radial}	& performs oriented ordering of buses and branches for radial power flow\tnote{\dag}	\\
 \code{pfsoln}	& computes branch flows, generator reactive power (and real power for slack bus), updates \bus{}, \gen{}, \branch{} matrices with solved values	\\
 \code{radial\_pf}	& wrapper for backward/forward sweep power flow solvers\tnote{\dag}	\\
@@ -7912,6 +7993,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-7.0b1.pdf}{
 \item New \matpower{} installer script \code{install\_matpower()} automatically updates \matlab{} or Octave paths or optionally provides the commands required to so.
 \item Support for additional user-defined general nonlinear constraints and costs in AC OPF.
 \item Support for exporting \matpower{} case to PSS/E RAW data format.
+\item Three new variants of the standard Newton AC power flow, for a total of four, including both nodal power and current balance constraints and both polar and cartesian representations of voltage. See the new \code{pf.current\_balance} and \code{pf.v\_cartesian} options. \emph{Thanks to Baljinnyam Sereeter.}
 \item Three new variants of the standard AC OPF formulation, for a total of four, including both nodal power and current balance constraints and both polar and cartesian representations of voltage. See the new \code{opf.current\_balance} and \code{opf.v\_cartesian} options. \emph{Thanks to Baljinnyam Sereeter.}
 \item Three new power flow algorithms for radial distribution systems selected via the three new options for \code{pf.alg}, namely \codeq{PQSUM}, \codeq{ISUM}, \codeq{YSUM}. Also includes new \matpower{} options \code{pf.radial.max\_it} and \code{pf.radial.vcorr}. See Section~\ref{sec:pfdist} on ``Distribution Power Flow'' for details. \emph{Thanks to Mirko Todorovski.}
 \item Major update to OPF soft limit functionality, supporting soft limits on all AC and DC OPF inequality constraints, including branch flow constraints, bus voltage bounds, generator active and reactive bounds, branch flow and branch angle difference limits. \emph{Thanks to Eran Schweitzer.}
@@ -7923,6 +8005,7 @@ with Octave, \matpower{}, and the \href{\matpowerextrasgithuburl}{\matpower{} Ex
     \item \code{pf.nr.lin\_solver} controls the linear solver used to compute the Newton update step in the Newton-Raphson power flow.
     \item \code{pf.radial.max\_it} and \code{pf.radial.vcorr} are options for the new radial power flow algorithms.  \emph{Thanks to Mirko Todorovski.}
     \item \code{cpf.enforce\_flow\_lims} and \code{cpf.enforce\_v\_lims} control enforcement of branch flow and bus voltage magnitude limits in the continuation power flow and \code{cpf.flow\_lims\_tol} and \code{cpf.v\_lims\_tol} control the respective detection tolerances. \emph{Thanks to Ahmad Sadiq Abubakar and Shrirang Abhyankar.}
+    \item \code{pf.current\_balance} and \code{pf.v\_cartesian} control formulation used for Newton AC power flow. \emph{Thanks to Baljinnyam Sereeter.}
     \item \code{opf.current\_balance} and \code{opf.v\_cartesian} control formulation used for AC OPF. \emph{Thanks to Baljinnyam Sereeter.}
     \item \code{opf.softlims.default} determines whether or not to include soft limits on constraints whose parameters are not specified explicitly in the \code{mpc.softlims} struct. For use with enhanced \code{toggle\_softlims()} functionality. \emph{Thanks to Eran Schweitzer.}
     \item \code{opf.start} replaces deprecated \code{opf.init\_from\_mpc} and adds a new possibility to automatically run a power flow to initialize the starting state for the OPF.
@@ -8134,6 +8217,9 @@ F.~Milano, ``An Open Source Power System Analysis Toolbox,'' \emph{Power
 W.~F. Tinney and C.~E. Hart, ``Power Flow Solution by Newton's Method,''
   \emph{IEEE Transactions on Power Apparatus and Systems}, vol. PAS-86, no.~11,
   pp.~1449--1460, November 1967.
+
+\bibitem{sereeter2019}
+B.~Sereeter, C.~Vuik, and C.~Wittenveen, ``On a Comparison of Newton-Raphson Solvers for Power Flow Problems'', \emph{submitted to Journal of Computational Applied Mathematics}.
 
 \bibitem{stott1974}
 B.~Stott and O.~Alsa{\c c}, ``Fast Decoupled Load Flow,'' \emph{IEEE
