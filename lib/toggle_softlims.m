@@ -596,12 +596,12 @@ if isOPF
 end
 %%----- swap bus idx vectors -----
 % set s.VMIN.idx and s.VMAX.idx to include external bus numbers (stored in
-% busidx. Store row indices in rowidx to be used by the print function.
+% busnum. Store row indices in rowidx to be used by the print function.
 for prop = {'VMAX', 'VMIN'}
     if ~strcmp(s.(prop{:}).hl_mod, 'none')
-        results.softlims.(prop{:}).idx = s.(prop{:}).busidx;
+        results.softlims.(prop{:}).idx = s.(prop{:}).busnum;
         results.softlims.(prop{:}).rowidx = s.(prop{:}).idx;
-        results.softlims.(prop{:}) = rmfield(results.softlims.(prop{:}), 'busidx');
+        results.softlims.(prop{:}) = rmfield(results.softlims.(prop{:}), 'busnum');
     end
 end
 
@@ -858,7 +858,7 @@ lims = softlims_lim2mat();
 % convenience structure for the different fields
 fields = struct('hl_mod', struct('desc','Hard limit modifcation', 'tok','%s'),...
     'hl_val', struct('desc', 'New hard limit value', 'tok', '%g'),...
-    'busidx', struct('desc','bus ids for where soft voltage limit is applied','tok', '%d'),...
+    'busnum', struct('desc','bus ids for where soft voltage limit is applied','tok', '%d'),...
     'rowidx', struct('desc','bus matrix row indices', 'tok', '%d'),...
     'idx', struct('desc','%s matrix indices','tok','%d'),...
     'cost', struct('desc','violation cost coefficient','tok','%g'),...
@@ -880,7 +880,7 @@ if isfield(mpc, 'softlims')
             if isfield(s.(prop{:}),f)
                 if strcmp(f, 'idx')
                     if ismember(prop{:}, {'VMIN', 'VMAX'})
-                        desc = fields.busidx.desc;
+                        desc = fields.busnum.desc;
                     else
                         desc = sprintf(fields.idx.desc, lims.(prop{:}));
                     end
@@ -1059,9 +1059,9 @@ end
 if ismember(prop, {'VMAX', 'VMIN'})
     % for consistency between all the different limits, we want s.idx for
     % buses to contain locations rather than external bus numbers.
-    % External bus numbers are stored in s.busidx and s.idx is rewritten to
+    % External bus numbers are stored in s.busnum and s.idx is rewritten to
     % include the locations (rows) of those buses.
-    s.busidx = s.idx;
+    s.busnum = s.idx;
     s.idx =  find(ismember(mat(:,BUS_I), s.idx));
 end
 
