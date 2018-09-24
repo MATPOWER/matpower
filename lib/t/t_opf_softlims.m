@@ -23,7 +23,7 @@ else
 end
 
 % t_begin(59+37*4, quiet);
-t_begin(877, quiet);
+t_begin(872, quiet);
 
 %% define constants
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
