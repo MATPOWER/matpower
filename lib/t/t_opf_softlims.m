@@ -23,7 +23,7 @@ else
 end
 
 % t_begin(59+37*4, quiet);
-t_begin(872, quiet);
+t_begin(874, quiet);
 
 %% define constants
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
@@ -333,6 +333,15 @@ t_is(r.branch(:, PF), [12.687; -30; -120; 240; 0; 120; 20; -62.3130; 82.3130; -4
 t_is(delta, [0.4187   -1.5814  -11.6883    8.0581         0    6.9305    0.8251   -2.2314    7.5931   -2.0789].', 4, [t 'delta'])
 t_is(r.branch(:, MU_SF)+r.branch(:, MU_ST), [0; 0; 35.6504; 0; 0; 7.9756; 0; 0; 0; 0], 4, [t 'mu Pf']);
 gen_order_check(mpc, r, t)
+
+t = 'DC - regression : ';
+mpc = mpc0;
+mpc = toggle_softlims(mpc,'on');
+t_ok(toggle_softlims(mpc, 'status'), [t 'toggle_softlims(mpc, ''status'') == 1']);
+mpc.softlims = struct();
+mpc.softlims.RATE_A.hl_mod = 'none';
+r = rundcopf(mpc, mpopt);
+t_ok(r.success, [t 'success']);
 
 %%% tighten limits to get violations
 t = 'DC - softlimits with overloads: ';
