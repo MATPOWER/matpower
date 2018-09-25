@@ -56,7 +56,7 @@ function mpc = toggle_softlims(mpc, on_off)
 %
 %       sav     original limits (handled in the defaults function).
 %
-%       rval    value to place in mpc structure to eliminate the original 
+%       rval    value to place in mpc structure to eliminate the original
 %               constraint (handled in the default function).
 %
 %   Defaults are assigned depending on the mpopt.opf.softlims.default
@@ -165,7 +165,7 @@ function mpc = userfcn_softlims_ext2int(mpc, mpopt, args)
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 
-% structures used to index into softlims in a loop
+%% structures used to index into softlims in a loop
 lims = softlims_lim2mat();
 mat2lims = struct(...
     'bus', {{'VMAX', 'VMIN'}}, ...
@@ -178,60 +178,56 @@ if ~isfield(mpc, 'softlims')
     mpc.softlims = struct();
 end
 mpc.softlims = softlims_defaults(mpc, mpopt);
-mpc.softlims = softlims_init(mpc, mpopt);
 
 %% initialize some things
-s = mpc.softlims;
+softlims = softlims_init(mpc, mpopt);
 o = mpc.order;
-%nl0 = size(o.ext.branch, 1);     %% original number of branches
-%nl  = size(mpc.branch, 1);       %% number of on-line branches
 
 %% save softlims struct with external indexing
-mpc.order.ext.softlims = s;
+mpc.order.ext.softlims = softlims;
 
 %%-----  convert stuff to internal indexing  -----
-for mat = {'bus', 'branch', 'gen'}
-    mat = mat{1};
-    n0  = size(o.ext.(mat), 1);  %% original number
-    n   = size(mpc.(mat), 1);    %% on-line number
-    e2i = zeros(n0, 1);
-    if strcmp(mat,'gen')
-        % for generators, the permutation of the generator matrix needs to
-        % be accounted for
+for m = {'bus', 'branch', 'gen'}
+    mat = m{:};
+    n0  = size(o.ext.(mat), 1);     %% original number
+    n   = size(mpc.(mat), 1);       %% on-line number
+    e2i = zeros(n0, 1);             %% ext->int index mapping
+    if strcmp(mat, 'gen')
+        %% for gens, account for permutation of gen matrix
         e2i(o.gen.status.on(o.gen.i2e)) = (1:n)';
     else
-        e2i(o.(mat).status.on) = (1:n)';  %% ext->int index mapping
+        e2i(o.(mat).status.on) = (1:n)';
     end
-    for prop = mat2lims.(mat)
-        if ~strcmp( s.(prop{:}).hl_mod, 'none')
-            s.(prop{:}).idx = e2i(s.(prop{:}).idx);
-            k = find(s.(prop{:}).idx == 0); %% find idxes corresponding to off-line elements
-            s.(prop{:}).idx(k)     = [];    %% delete them
-            s.(prop{:}).cost(k, :) = [];
-            s.(prop{:}).sav(k)     = [];
-            if ~isscalar(s.(prop{:}).ub)
-                s.(prop{:}).ub(k)  = [];
+    for p = mat2lims.(mat)
+        prop = p{:};
+        s = softlims.(prop);
+        if ~strcmp( s.hl_mod, 'none')
+            s.idx = e2i(s.idx);
+            k = find(s.idx == 0);    %% find idxs corresponding to off-line elements
+            s.idx(k)     = [];       %% delete them
+            s.cost(k, :) = [];
+            s.sav(k)     = [];
+            s.ub(k)      = [];
+            if isfield(s, 'hl_val') && ~isscalar(s.hl_val)
+                s.hl_val(k)  = [];
             end
-            if isfield(s.(prop{:}), 'hl_val') &&  ~isscalar(s.(prop{:}).hl_val)
-                s.(prop{:}).hl_val(k)  = [];
-            end
-            if isempty(s.(prop{:}).idx)
-                s.(prop{:}).hl_mod = 'none';
-            end
+            softlims.(prop) = s;
         end
     end
 end
 
-%%%%-------- remove hard limits on elements with soft limits
-for prop = fieldnames(lims).'
-    if ~strcmp(s.(prop{:}).hl_mod, 'none')
-        mat = lims.(prop{:});  %% mpc matrix
-        mpc.(mat)(s.(prop{:}).idx, eval(prop{:})) = s.(prop{:}).rval;
+%%-----  remove hard limits on elements with soft limits  -----
+for p = fieldnames(lims).'
+    prop = p{:};
+    s = softlims.(prop);
+    if ~strcmp(s.hl_mod, 'none')
+        mat = lims.(prop);      %% mpc sub matrix
+        mpc.(mat)(s.idx, eval(prop)) = s.rval;
     end
 end
 
-mpc.softlims = s;
-mpc.order.int.softlims = s;
+mpc.softlims = softlims;
+mpc.order.int.softlims = softlims;
 
 
 %%-----  formulation  --------------------------------------------------
@@ -252,154 +248,170 @@ function om = userfcn_softlims_formulation(om, mpopt, args)
 %% initialize some things
 mpc = om.get_mpc();
 [baseMVA, bus, branch] = deal(mpc.baseMVA, mpc.bus, mpc.branch);
-s = mpc.softlims;
+nb = size(bus, 1);
+ng = size(mpc.gen, 1);
 
-%% cheat by sticking mpopt in om temporarily for use by int2ext callback
+%% temporarily save mpopt in om for use by int2ext callback
 om.userdata.mpopt = mpopt;
 
-%% add variables, costs, and constraints
-
-%%%%-------- limits that are the same for DC and AC formulation -----
-for prop = fieldnames(s).'
-    if strcmp(s.(prop{:}).hl_mod, 'none')
-        continue
+%%-----  add variables, costs, and constraints  -----
+for p = fieldnames(mpc.softlims).'
+    prop = p{:};
+    s = mpc.softlims.(prop);
+    if strcmp(s.hl_mod, 'none')
+        continue;
     end
-    varname = ['s_', lower(prop{:})];
-    cstname = ['cs_', lower(prop{:})];
-    ns = length(s.(prop{:}).idx); % number of softlims
+    varname = ['s_', lower(prop)];
+    cstname = ['cs_', lower(prop)];
+    ns = length(s.idx);  %% number of softlims
 
-    %%%%%% variable and cost
-    if ismember(prop{:}, {'VMIN', 'VMAX'})
-        om.add_var(varname, ns, zeros(ns, 1), zeros(ns, 1), s.(prop{:}).ub ); %% add variable
-        Cw = s.(prop{:}).cost(:,1);  % cost in $/pu
-        om.add_quad_cost(cstname, [], Cw, 0, {varname});
-    elseif ismember(prop{:}, {'RATE_A', 'PMIN', 'PMAX', 'QMIN', 'QMAX'})
-        om.add_var(varname, ns, zeros(ns, 1), zeros(ns, 1), s.(prop{:}).ub / mpc.baseMVA ); %% add variable
-        Cw = s.(prop{:}).cost(:,1) * mpc.baseMVA;  % cost in $/MW -> $/pu
-        om.add_quad_cost(cstname, [], Cw, 0, {varname});
-    elseif ismember(prop{:}, {'ANGMIN', 'ANGMAX'})
-        om.add_var(varname, ns, zeros(ns, 1), zeros(ns, 1), s.(prop{:}).ub * pi/180 ); %% add variable
-        Cw = s.(prop{:}).cost(:,1) * 180/pi;  % cost in $/deg -> $/rad
-        om.add_quad_cost(cstname, [], Cw, 0, {varname});
-    else
-        error('userfcn_soflims_formulation: property %s is unknown ', prop{:})
+    %% variables and costs
+    switch prop
+        case {'VMIN', 'VMAX'}
+            ub = s.ub;                      %% bound already in pu
+            Cw = s.cost(:, 1);              %% cost already in $/pu
+        case {'RATE_A', 'PMIN', 'PMAX', 'QMIN', 'QMAX'}
+            ub = s.ub / baseMVA;            %% bound MVA -> pu
+            Cw = s.cost(:, 1) * baseMVA;    %% cost in $/MVA -> $/pu
+        case {'ANGMIN', 'ANGMAX'}
+            ub = s.ub * pi/180;             %% bound deg -> rad
+            Cw = s.cost(:, 1) * 180/pi;     %% cost in $/deg -> $/rad
+        otherwise
+            error('userfcn_soflims_formulation: property %s is unknown ', prop)
     end
+    om.add_var(varname, ns, zeros(ns, 1), zeros(ns, 1), ub);
+    om.add_quad_cost(cstname, [], Cw, 0, {varname});
 
-    %%%%%% constraints
-    if strcmp(prop{:}, 'ANGMIN')
-        %%% theta_f - theta_t + s_angmin >= s.ANGMIN.sav
-        ns = length(s.ANGMIN.idx);
-        Av = sparse([1:ns,1:ns].', [mpc.branch(s.ANGMIN.idx, F_BUS); mpc.branch(s.ANGMIN.idx, T_BUS)], [ones(ns,1);-ones(ns,1)], ns, size(mpc.bus,1));
-        As = speye(ns);
-        lb = s.ANGMIN.sav * pi/180;
-        ub = Inf(ns,1);
+    %% linear constraints that are identical for DC and AC formulations
+    switch prop
+        case 'ANGMIN'
+            %% theta_f - theta_t + s_angmin >= s.sav
+            ns = length(s.idx);
+            Av = sparse([1:ns,1:ns].', ...
+                    [branch(s.idx, F_BUS); branch(s.idx, T_BUS)], ...
+                    [ones(ns,1);-ones(ns,1)], ns, nb);
+            As = speye(ns);
+            lb = s.sav * pi/180;
+            ub = Inf(ns,1);
 
-        om.add_lin_constraint('soft_angmin', [Av As], lb, ub, {'Va', 's_angmin'});
-    end
-    if strcmp(prop{:}, 'ANGMAX')
-        %%% theta_f - theta_t - s_angmax <= s.ANGMAX.sav
-        ns = length(s.ANGMAX.idx);
-        Av = sparse([1:ns,1:ns].', [mpc.branch(s.ANGMAX.idx, F_BUS); mpc.branch(s.ANGMAX.idx, T_BUS)], [ones(ns,1);-ones(ns,1)], ns, size(mpc.bus,1));
-        As = speye(ns);
-        lb = -Inf(ns,1);
-        ub = s.ANGMAX.sav * pi/180;
+            om.add_lin_constraint('soft_angmin', [Av As], lb, ub, ...
+                {'Va', 's_angmin'});
+        case 'ANGMAX'
+            %% theta_f - theta_t - s_angmax <= s.sav
+            ns = length(s.idx);
+            Av = sparse([1:ns,1:ns].', ...
+                    [branch(s.idx, F_BUS); branch(s.idx, T_BUS)], ...
+                    [ones(ns,1);-ones(ns,1)], ns, nb);
+            As = speye(ns);
+            lb = -Inf(ns,1);
+            ub = s.sav * pi/180;
 
-        om.add_lin_constraint('soft_angmax', [Av -As], lb, ub, {'Va', 's_angmax'});
-    end
-    if strcmp(prop{:}, 'PMIN')
-        %%% Pg + s_pmin >= s.PMIN.sav
-        ns = length(s.PMIN.idx);
-        Av = sparse(1:ns, s.PMIN.idx, 1, ns, size(mpc.gen,1));
-        As = speye(ns);
-        lb = s.PMIN.sav / mpc.baseMVA;
-        ub = Inf(ns,1);
+            om.add_lin_constraint('soft_angmax', [Av -As], lb, ub, ...
+                {'Va', 's_angmax'});
+        case 'PMIN'
+            %% Pg + s_pmin >= s.sav
+            ns = length(s.idx);
+            Av = sparse(1:ns, s.idx, 1, ns, ng);
+            As = speye(ns);
+            lb = s.sav / baseMVA;
+            ub = Inf(ns,1);
 
-        om.add_lin_constraint('soft_pmin', [Av As], lb, ub, {'Pg', 's_pmin'});
-    end
-    if strcmp(prop{:}, 'PMAX')
-        %%% Pg - s_pmax <= s.PMAX.sav
-        ns = length(s.PMAX.idx);
-        Av = sparse(1:ns, s.PMAX.idx, 1, ns, size(mpc.gen,1));
-        As = speye(ns);
-        lb = -Inf(ns,1);
-        ub = s.PMAX.sav / mpc.baseMVA;
+            om.add_lin_constraint('soft_pmin', [Av As], lb, ub, ...
+                {'Pg', 's_pmin'});
+        case 'PMAX'
+            %% Pg - s_pmax <= s.sav
+            ns = length(s.idx);
+            Av = sparse(1:ns, s.idx, 1, ns, ng);
+            As = speye(ns);
+            lb = -Inf(ns,1);
+            ub = s.sav / baseMVA;
 
-        om.add_lin_constraint('soft_pmax', [Av -As], lb, ub, {'Pg', 's_pmax'});
+            om.add_lin_constraint('soft_pmax', [Av -As], lb, ub, ...
+                {'Pg', 's_pmax'});
     end
 end
 
-if strcmp(mpopt.model, 'DC')
-    if ~strcmp(s.RATE_A.hl_mod, 'none')
-        ns  = length(s.RATE_A.idx);
-        %%% fetch Bf matrix for DC model
-        Bf = om.get_userdata('Bf');
-        Pfinj = om.get_userdata('Pfinj');
-
-        %%% form constraints
-        %%%    Bf * Va - s_rate_a <= -Pfinj + Pfmax
-        %%%   -Bf * Va - s_rate_a <=  Pfinj + Pfmax
-        I = speye(ns, ns);
-        Asf = [ Bf(s.RATE_A.idx, :) -I];
-        Ast = [-Bf(s.RATE_A.idx, :) -I];
-        lsf = -Inf(ns, 1);
-        lst = lsf;
-        usf =  -Pfinj(s.RATE_A.idx) + s.RATE_A.sav/mpc.baseMVA ;
-        ust =   Pfinj(s.RATE_A.idx) + s.RATE_A.sav/mpc.baseMVA ;
-
-        om.add_lin_constraint('softPf',  Asf, lsf, usf, {'Va', 's_rate_a'});     %% ns
-        om.add_lin_constraint('softPt',  Ast, lst, ust, {'Va', 's_rate_a'});     %% ns
+%% RATE_A (different for DC and AC) and other AC-only constraints
+isDC = strcmp(mpopt.model, 'DC');
+props = {'RATE_A'};
+if ~isDC
+    props = {'VMIN', 'VMAX', 'QMIN', 'QMAX', props{:}};
+end
+for p = props
+    prop = p{:};
+    s = mpc.softlims.(prop);
+    if strcmp(s.hl_mod, 'none') %% skip
+        continue;
     end
-else
-    %% form AC constraints (see softlims_fcn() below)
-    %%%%% voltage limits
-    if ~strcmp(s.VMIN.hl_mod, 'none')
-        %%% Vm + s_vmin >= s.VMIN.sav
-        ns  = length(s.VMIN.idx);
-        Av  = sparse(1:ns, s.VMIN.idx, 1, ns, size(mpc.bus,1));
-        As  = speye(ns);
-        lb  = s.VMIN.sav;
-        ub  = Inf(ns,1);
+    ns = length(s.idx);         %% number of softlims
 
-        om.add_lin_constraint('soft_vmin', [Av As], lb, ub, {'Vm', 's_vmin'});
-    end
-    if ~strcmp(s.VMAX.hl_mod, 'none')
-        %%% Vm - s_vmax <= s.VMAX.sav
-        ns  = length(s.VMAX.idx);
-        Av  = sparse(1:ns, s.VMAX.idx, 1, ns, size(mpc.bus,1));
-        As  = speye(ns);
-        lb  = -Inf(ns,1);
-        ub  = s.VMAX.sav;
+    switch prop
+        case 'RATE_A'
+            if isDC
+                %% fetch Bf matrix for DC model
+                Bf = om.get_userdata('Bf');
+                Pfinj = om.get_userdata('Pfinj');
 
-        om.add_lin_constraint('soft_vmax', [Av -As], lb, ub, {'Vm', 's_vmax'});
-    end
-    if ~strcmp(s.QMIN.hl_mod, 'none')
-        %%% Qg + s_pmin >= s.QMIN.max
-        ns  = length(s.QMIN.idx);
-        Av  = sparse(1:ns, s.QMIN.idx, 1, ns, size(mpc.gen,1));
-        As  = speye(ns);
-        lb  = s.QMIN.sav / mpc.baseMVA;
-        ub  = Inf(ns,1);
+                %% form constraints
+                %%    Bf * Va - s_rate_a <= -Pfinj + Pfmax
+                %%   -Bf * Va - s_rate_a <=  Pfinj + Pfmax
+                I = speye(ns, ns);
+                Asf = [ Bf(s.idx, :) -I];
+                Ast = [-Bf(s.idx, :) -I];
+                lsf = -Inf(ns, 1);
+                lst = lsf;
+                usf = -Pfinj(s.idx) + s.sav/baseMVA;
+                ust =  Pfinj(s.idx) + s.sav/baseMVA;
+                vs = {'Va', 's_rate_a'};
 
-        om.add_lin_constraint('soft_qmin', [Av As], lb, ub, {'Qg', 's_qmin'});
-    end
-    if ~strcmp(s.QMAX.hl_mod, 'none')
-        %%% Qg - s_pmax <= s.QMAX.sav
-        ns  = length(s.QMAX.idx);
-        Av  = sparse(1:ns, s.QMAX.idx, 1, ns, size(mpc.gen,1));
-        As  = speye(ns);
-        lb  = -Inf(ns,1);
-        ub  = s.QMAX.sav / mpc.baseMVA;
+                om.add_lin_constraint('softPf', Asf, lsf, usf, vs);    %% ns
+                om.add_lin_constraint('softPt', Ast, lst, ust, vs);    %% ns
+            else
+                [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
 
-        om.add_lin_constraint('soft_qmax', [Av -As], lb, ub, {'Qg', 's_qmax'});
-    end
-    if ~strcmp(s.RATE_A.hl_mod, 'none')
-        %% build admittance matrices
-        ns  = length(s.RATE_A.idx);
-        [Ybus, Yf, Yt] = makeYbus(mpc.baseMVA, mpc.bus, mpc.branch);
+                fcn = @(x)softlims_fcn(x, mpc, Yf(s.idx, :), Yt(s.idx, :), ...
+                                       s.idx, mpopt, s.sav/baseMVA);
+                hess = @(x, lam)softlims_hess(x, lam, mpc, Yf(s.idx, :), ...
+                                              Yt(s.idx, :), s.idx, mpopt);
+                om.add_nln_constraint({'softSf', 'softSt'}, [ns;ns], 0, ...
+                                        fcn, hess, {'Va', 'Vm', 's_rate_a'});
+            end
+        case 'VMIN'
+            %% Vm + s_vmin >= s.sav
+            Av  = sparse(1:ns, s.idx, 1, ns, nb);
+            As  = speye(ns);
+            lb  = s.sav;
+            ub  = Inf(ns, 1);
 
-        fcn = @(x)softlims_fcn(x, mpc, Yf(s.RATE_A.idx, :), Yt(s.RATE_A.idx, :), s.RATE_A.idx, mpopt, s.RATE_A.sav/mpc.baseMVA);
-        hess = @(x, lam)softlims_hess(x, lam, mpc, Yf(s.RATE_A.idx, :), Yt(s.RATE_A.idx, :), s.RATE_A.idx, mpopt);
-        om.add_nln_constraint({'softSf', 'softSt'}, [ns;ns], 0, fcn, hess, {'Va', 'Vm', 's_rate_a'});
+            om.add_lin_constraint('soft_vmin', [Av As], lb, ub, ...
+                                    {'Vm', 's_vmin'});
+        case 'VMAX'
+            %% Vm - s_vmax <= s.sav
+            Av  = sparse(1:ns, s.idx, 1, ns, nb);
+            As  = speye(ns);
+            lb  = -Inf(ns, 1);
+            ub  = s.sav;
+
+            om.add_lin_constraint('soft_vmax', [Av -As], lb, ub, ...
+                                    {'Vm', 's_vmax'});
+        case 'QMIN'
+            %% Qg + s_pmin >= s.max
+            Av  = sparse(1:ns, s.idx, 1, ns, ng);
+            As  = speye(ns);
+            lb  = s.sav / baseMVA;
+            ub  = Inf(ns, 1);
+
+            om.add_lin_constraint('soft_qmin', [Av As], lb, ub, ...
+                                    {'Qg', 's_qmin'});
+        case 'QMAX'
+            %% Qg - s_pmax <= s.sav
+            Av  = sparse(1:ns, s.idx, 1, ns, ng);
+            As  = speye(ns);
+            lb  = -Inf(ns, 1);
+            ub  = s.sav / baseMVA;
+
+            om.add_lin_constraint('soft_qmax', [Av -As], lb, ub, ...
+                                    {'Qg', 's_qmax'});
     end
 end
 
@@ -449,7 +461,7 @@ results.softlims = results.order.ext.softlims;
 for prop = fieldnames(s).'
     mat  = lims.(prop{:});
     if strcmp(s.(prop{:}).hl_mod, 'none')
-        continue
+        continue;
     end
     results.(mat)(s.(prop{:}).idx, eval(prop{:})) = s.(prop{:}).sav;
 end
@@ -457,7 +469,7 @@ end
 %%-----  remove rval, and sav fields  -----
 for prop = fieldnames(s).'
     if strcmp(s.(prop{:}).hl_mod, 'none')
-        continue
+        continue;
     end
     results.softlims.(prop{:}) = rmfield(results.softlims.(prop{:}), 'sav');
     results.softlims.(prop{:}) = rmfield(results.softlims.(prop{:}), 'rval');
@@ -468,7 +480,7 @@ if isOPF
     for prop = fieldnames(s).'
         mat  = lims.(prop{:});
         if strcmp(s.(prop{:}).hl_mod, 'none')
-            continue
+            continue;
         end
         n0 = size(o.ext.(mat), 1);    %% original number
         n  = size(results.(mat), 1);  %% number on-line
@@ -477,7 +489,7 @@ if isOPF
         varname = ['s_', lower(prop{:})];  %% variable name
         if ismember(prop{:}, {'VMIN', 'VMAX'})
             if ~strcmp(mpopt.model, 'AC')
-                continue
+                continue;
             end
             var = results.var.val.(varname); %stays in p.u.
             var(var < 1e-8) = 0;
@@ -487,7 +499,7 @@ if isOPF
             var = var * results.baseMVA; % p.u. -> MW
         elseif ismember(prop{:}, {'QMIN', 'QMAX', })
             if ~strcmp(mpopt.model, 'AC')
-                continue
+                continue;
             end
             var = results.var.val.(varname);
             var(var < 1e-8) = 0;
@@ -938,7 +950,7 @@ if isempty(mpopt)
     use_default = 1;
 else
     use_default = mpopt.opf.softlims.default;
-end 
+end
 
 %% get maximum generator marginal cost
 % since mpc.gen and not mpc.order.ext.gen is used this is the maximum of
@@ -1152,11 +1164,7 @@ for p = fieldnames(lims).'
     %% idxmask is a boolean vector the size of s.idx, where
     %% idxmask(i) is 1 if s.idx(i) is in idxfull and 0 otherwise
     idxmask = ismember(s.idx, idxfull);
-    % if ~all(size(s.idx) == size(s.idx(idxmask))) || any(s.idx ~= s.idx(idxmask))
-    %     s_idx = s.idx
-    %     s_idx_masked = s.idx(idxmask)
-    % end
-    s.idx = s.idx(idxmask); %remove possibly irrelevant entries entered by user
+    s.idx = s.idx(idxmask); %% remove possibly irrelevant entries entered by user
 
     %% convert bus numbers to row indices for bus constraints
     if ismember(prop, {'VMAX', 'VMIN'})

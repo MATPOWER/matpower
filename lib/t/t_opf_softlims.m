@@ -82,10 +82,10 @@ mpc.branch(:, ANGMAX) = 60;
 
 nl = size(mpc.branch, 1);   %% number of branches
 
-% reorder generators so they are not consecutive
+%% reorder generators so they are not consecutive
 mpc.gen = mpc.gen([3,1,2],:);
 mpc.gencost = mpc.gencost([3,1,2],:);
-% duplicate 3rd genrator and make it off-line
+%% duplicate 3rd generator and make it off-line
 mpc.gen = [mpc.gen(1,:); mpc.gen(3,:); mpc.gen(2:end,:)];
 mpc.gencost = [mpc.gencost(1,:); mpc.gencost(3,:); mpc.gencost(2:end,:)];
 mpc.gen(2,GEN_STATUS) = 0;
@@ -98,7 +98,7 @@ for prop = {'VMIN', 'VMAX', 'ANGMIN', 'ANGMAX', 'PMIN', 'PMAX', 'QMIN', 'QMAX'}
 end
 mpc0 = mpc;     %% save to initialize later runs
 
-%% Mixed softlims structure: uses different types of limits
+%% mixed softlims structure: uses different types of limits
 sdefault = struct();
 for prop = {'RATE_A', 'VMIN', 'VMAX', 'ANGMIN', 'ANGMAX', 'PMIN', 'PMAX', 'QMIN', 'QMAX'}
     switch prop{:}
