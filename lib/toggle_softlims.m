@@ -908,9 +908,9 @@ lim2mat = struct(...
 );
 
 %%-----  softlims_defaults  --------------------------------------------
-function s = softlims_defaults(mpc, mpopt)
+function softlims = softlims_defaults(mpc, mpopt)
 %
-%   s = softlims_defaults(mpc, mpopt)
+%   softlims = softlims_defaults(mpc, mpopt)
 %
 %   Returns a softlims field for mpc in which any missing inputs have
 %   been filled in with defaults, so that each limit type has the all
@@ -925,7 +925,7 @@ function s = softlims_defaults(mpc, mpopt)
 
 %% initialization
 lims = softlims_lim2mat();
-s = mpc.softlims;
+softlims = mpc.softlims;
 if isempty(mpopt)
     warning('softlims_defaults: Assuming ''mpopt.opf.softlims.default'' = 1, since mpopt was not provided.');
     use_default = 1;
@@ -939,25 +939,27 @@ end
 max_gen_cost = max(margcost(mpc.gencost, mpc.gen(:, PMAX)));
 
 %% set defaults for each element
-for prop = fieldnames(lims).'
-    mat  = lims.(prop{:});
-    if isfield(s, prop{:}) && ~isempty(s.(prop{:}))
-        s.(prop{:}) = softlims_element_defaults(s.(prop{:}), prop{:}, mpc.order.ext.(mat), max_gen_cost);
+for p = fieldnames(lims).'
+    prop = p{:};
+    mat  = mpc.order.ext.(lims.(prop));
+    specified = isfield(softlims, prop) && ~isempty(softlims.(prop));
+    if ~specified && ~use_default
+        softlims.(prop).hl_mod = 'none';
     else
-        if use_default
-            %% pass an empty struct to assign defaults
-            s.(prop{:}) = softlims_element_defaults(struct(), prop{:}, mpc.order.ext.(mat), max_gen_cost);
+        if specified
+            s = softlims.(prop);
         else
-            s.(prop{:}).hl_mod = 'none';
+            s = struct();
         end
+        softlims.(prop) = softlims_element_defaults(s, prop, mat, max_gen_cost);
     end
 end
 
 
 %%-----  softlims_init  --------------------------------------------
-function s = softlims_init(mpc, mpopt)
+function softlims = softlims_init(mpc, mpopt)
 %
-%   s = softlims_init(mpc, mpopt)
+%   softlims = softlims_init(mpc, mpopt)
 %
 %   Returns a softlims field for mpc in which any missing inputs have
 %   been filled in with defaults, so that each limit type has the all
@@ -972,12 +974,14 @@ function s = softlims_init(mpc, mpopt)
 
 %% initialization
 lims = softlims_lim2mat();
-s = mpc.softlims;
+softlims = mpc.softlims;
 
 %% set defaults for each element
-for prop = fieldnames(lims).'
-    mat  = lims.(prop{:});
-    s.(prop{:}) = softlims_element_init(s.(prop{:}), prop{:}, mpc.order.ext.(mat));
+for p = fieldnames(lims).'
+    prop = p{:};
+    s = softlims.(prop);
+    mat  = mpc.order.ext.(lims.(prop));
+    softlims.(prop) = softlims_element_init(s, prop, mat);
 end
 
 
