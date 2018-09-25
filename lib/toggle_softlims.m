@@ -328,25 +328,27 @@ for prop = fieldnames(s).'
     end
 end
 
-if strcmp(mpopt.model, 'DC') && ~strcmp(s.RATE_A.hl_mod, 'none')
-    ns  = length(s.RATE_A.idx);
-    %%% fetch Bf matrix for DC model
-    Bf = om.get_userdata('Bf');
-    Pfinj = om.get_userdata('Pfinj');
+if strcmp(mpopt.model, 'DC')
+    if ~strcmp(s.RATE_A.hl_mod, 'none')
+        ns  = length(s.RATE_A.idx);
+        %%% fetch Bf matrix for DC model
+        Bf = om.get_userdata('Bf');
+        Pfinj = om.get_userdata('Pfinj');
 
-    %%% form constraints
-    %%%    Bf * Va - s_rate_a <= -Pfinj + Pfmax
-    %%%   -Bf * Va - s_rate_a <=  Pfinj + Pfmax
-    I = speye(ns, ns);
-    Asf = [ Bf(s.RATE_A.idx, :) -I];
-    Ast = [-Bf(s.RATE_A.idx, :) -I];
-    lsf = -Inf(ns, 1);
-    lst = lsf;
-    usf =  -Pfinj(s.RATE_A.idx) + s.RATE_A.sav/mpc.baseMVA ;
-    ust =   Pfinj(s.RATE_A.idx) + s.RATE_A.sav/mpc.baseMVA ;
+        %%% form constraints
+        %%%    Bf * Va - s_rate_a <= -Pfinj + Pfmax
+        %%%   -Bf * Va - s_rate_a <=  Pfinj + Pfmax
+        I = speye(ns, ns);
+        Asf = [ Bf(s.RATE_A.idx, :) -I];
+        Ast = [-Bf(s.RATE_A.idx, :) -I];
+        lsf = -Inf(ns, 1);
+        lst = lsf;
+        usf =  -Pfinj(s.RATE_A.idx) + s.RATE_A.sav/mpc.baseMVA ;
+        ust =   Pfinj(s.RATE_A.idx) + s.RATE_A.sav/mpc.baseMVA ;
 
-    om.add_lin_constraint('softPf',  Asf, lsf, usf, {'Va', 's_rate_a'});     %% ns
-    om.add_lin_constraint('softPt',  Ast, lst, ust, {'Va', 's_rate_a'});     %% ns
+        om.add_lin_constraint('softPf',  Asf, lsf, usf, {'Va', 's_rate_a'});     %% ns
+        om.add_lin_constraint('softPt',  Ast, lst, ust, {'Va', 's_rate_a'});     %% ns
+    end
 else
     %% form AC constraints (see softlims_fcn() below)
     %%%%% voltage limits
