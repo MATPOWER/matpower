@@ -919,9 +919,14 @@ function softlims = softlims_defaults(mpc, mpopt)
 %   not be present (and are, in any case, ignored).
 
 %% define named indices into data matrices
+[PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
+    VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
 [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
     MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
     QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
+[F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
+    TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
+    ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 
 %% initialization
 lims = softlims_lim2mat();
@@ -948,10 +953,135 @@ for p = fieldnames(lims).'
     else
         if specified
             s = softlims.(prop);
+
+            %% ignore if hl_mod = 'none'
+            if isfield(s, 'hl_mod') && strcmp(s.hl_mod, 'none')
+                continue;
+            end
         else
             s = struct();
         end
-        softlims.(prop) = softlims_element_defaults(s, prop, mat, max_gen_cost);
+%         softlims.(prop) = softlims_element_defaults(s, prop, mat, max_gen_cost);
+
+        %% default base cost is the maximum between a predefined value and
+        %% 2 times the maximum generation marginal cost. A scaling is applied
+        %% to account for the fact that we are essentially equating 1MW with
+        %% 0.01 p.u. voltage or 1 deg angle difference.
+        default_base_cost = max(1000, 2 * max_gen_cost);
+        cost_scale = struct( ...
+            'VMAX', 100, 'VMIN', 100, ...   %% $/pu
+            'ANGMAX', 1, 'ANGMIN', 1, ...   %% $/deg
+            'RATE_A', 1, ...                %% $/MW
+            'PMIN', 1, 'PMAX', 1, ...       %% $/MW
+            'QMIN', 1, 'QMAX', 1 );         %% $/MVar
+        default_cost = cost_scale.(prop) * default_base_cost;
+
+        %% idx: indices of bounds to relax
+        %% idxfull is the full list of candidate values for idx for given constraint
+        %% type, all are row indices into EXTERNAL matrix, except for bus matrix,
+        %% external bus numbers are used instead of row indices
+        switch prop
+            case {'VMAX', 'VMIN'}
+                %% all buses
+                idxfull = mat(:, BUS_I);
+            case {'ANGMAX', 'ANGMIN'}
+                %% all active branches with meaninful limit (not 0, +360 or -360)
+                idxfull = find(mat(:, BR_STATUS) > 0 & mat(:, eval(prop)) & abs(mat(:, eval(prop))) < 360 );
+            case 'RATE_A'
+                %% all active branches with flow limit (RATE_A not 0)
+                idxfull = find(mat(:, BR_STATUS) > 0 & mat(:, RATE_A) > 0);
+            case {'PMAX', 'QMAX', 'QMIN'}
+                %% all active generators (excluding dispatchable loads) w/finite limits
+                idxfull = find( (mat(:, GEN_STATUS) > 0) & ~isload(mat) & ~isinf(mat(:, eval(prop))) );
+            case 'PMIN'
+                %% all active generators (excluding dispatchable loads)
+                idxfull = find( (mat(:, GEN_STATUS) > 0) & ~isload(mat) );
+        end
+
+        %% check that idx is a scalar or vector
+        if isfield(s, 'idx')
+            if size(s.idx, 2) > 1
+                s.idx = s.idx.';        %% make row vector into column vector
+                if size(s.idx, 2) > 1
+                    error('softlim_defaults: mpc.softlims.%s.idx must be a scalar or vector', prop);
+                end
+            end
+        else    %% set default value for s.idx to full set of constraints
+            s.idx = idxfull;
+        end
+
+        %% get row indexes (as opposed to bus numbers) for bus constraints
+        if ismember(prop, {'VMAX', 'VMIN'})
+            s_idx = find(ismember(mat(:,BUS_I), s.idx));
+        else
+            s_idx = s.idx;
+        end
+
+        %% if there are no constraints to relax, set hl_mod to 'none' and skip
+        if isempty(s_idx)
+            s.hl_mod = 'none';
+            softlims.(prop) = s;
+            continue;
+        end
+
+        %% cost: cost of violating softlim
+        if isfield(s, 'cost') && ~isempty(s.cost)
+            if isscalar(s.cost)     %% expand to vector if specified as scalar
+                s.cost = s.cost * ones(size(s_idx));
+            end
+        else    %% not specified, use default cost
+            s.cost = default_cost * ones(size(s_idx));
+        end
+
+        %% type of limit
+        ubsign = struct('VMAX', 1 , 'VMIN', -1, 'RATE_A', 1, ...
+                        'PMAX', 1, 'PMIN', -1, 'QMAX', 1, 'QMIN', -1, ...
+                        'ANGMAX', 1, 'ANGMIN', -1);
+        shift_defaults = struct('VMAX', 0.25 , 'VMIN', 0.25, 'RATE_A', 10, ...
+                        'PMAX', 10, 'PMIN', 10, 'QMAX', 10, 'QMIN', 10, ...
+                        'ANGMAX', 10, 'ANGMIN', 10);
+        if isfield(s, 'hl_mod') %% use specified soft limits
+            switch s.hl_mod
+                case 'remove'   %% new hard limit is infinite (hl_val unused)
+                case 'scale'    %% new hard limit is original limit * hl_val
+                    if ~isfield(s, 'hl_val')
+                        % use 2 if ubsign and original constraint have same sign
+                        % otherwise use 1/2
+                        orig_lim = mat(s_idx, eval(prop));
+                        s.hl_val = 2 * ones(size(s_idx));   % scale up by 2
+                        k = find(ubsign.(prop) * orig_lim < 0); % unless opp. sign
+                        s.hl_val(k) = 1/2;                  % then scale down by 2
+                    end
+                case 'shift'    %% new hard limit is original limit + ubsign * hl_val
+                    if ~isfield(s, 'hl_val')
+                        s.hl_val = shift_defaults.(prop);
+                    end
+                case 'replace'  %% new hard limit is hl_val (no default value)
+                otherwise
+                    error('softlims_element_defaults: unknown hard limit modification %s', s.hl_mod);
+            end
+        else                    %% use default soft limits
+            switch prop
+                case 'PMIN'
+                    %% for normal gens (PMIN > 0) PMIN is relaxed to 0, not removed
+                    %% for gens with negative PMIN, it is relaxed to -Inf
+                    s.hl_mod = 'replace';
+                    s.hl_val = zeros(size(s_idx));
+                    s.hl_val(mat(s_idx, PMIN) < 0) = -Inf;
+                case 'VMIN'
+                    %% VMIN is relaxed to zero, not removed
+                    s.hl_mod = 'replace';
+                    s.hl_val = 0;
+                case {'QMIN', 'ANGMIN'}
+                    s.hl_mod = 'remove';
+                    s.hl_val = -Inf;
+                otherwise
+                    s.hl_mod = 'remove';
+                    s.hl_val = Inf;
+            end
+        end
+
+        softlims.(prop) = s;
     end
 end
 
@@ -968,9 +1098,14 @@ function softlims = softlims_init(mpc, mpopt)
 %   not be present (and are, in any case, ignored).
 
 %% define named indices into data matrices
+[PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
+    VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
 [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
     MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
     QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
+[F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
+    TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
+    ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 
 %% initialization
 lims = softlims_lim2mat();
@@ -980,323 +1115,451 @@ softlims = mpc.softlims;
 for p = fieldnames(lims).'
     prop = p{:};
     s = softlims.(prop);
+
+    %% ignore if hl_mod = 'none'
+    if isfield(s, 'hl_mod') && strcmp(s.hl_mod, 'none')
+        continue;
+    end
+
     mat  = mpc.order.ext.(lims.(prop));
-    softlims.(prop) = softlims_element_init(s, prop, mat);
-end
 
+%     softlims.(prop) = softlims_element_init(s, prop, mat);
 
-%%-----  softlims_element_defaults  --------------------------------------------
-function s = softlims_element_defaults(s, prop, mat, max_gen_cost)
-%
-%   s = softlims_element_defaults(s, prop, mat, max_gen_cost)
-%
-%   For each property, we fill in default values as needed for:
-%       idx: index of affected buses, branches, or generators (bus numbers
-%           rather than indexes for bus)
-%       cost: linear cost on corresponding violation variables
-%       hl_mod: string value specifying what to do with original hard limits
-%               for this property
-%           'none'    : leave hard limits unchanged, do not apply soft limits
-%           'remove'  : eliminate hard limits completely
-%           'replace' : replace hard limit with value specified in 'hl_val'
-%           'scale'   : multiply hard limit by value specified in 'hl_val'
-%           'shift'   : add value specified in 'hl_val' to hard limit limit
-%       hl_val: value used to set/modify hard limit as specified by 'hl_mod'
+    %% idx: indices of bounds to relax
+    %% idxfull is the full list of candidate values for idx for given constraint
+    %% type, all are row indices into EXTERNAL matrix, except for bus matrix,
+    %% external bus numbers are used instead of row indices
+    switch prop
+        case {'VMAX', 'VMIN'}
+            %% all buses
+            idxfull = mat(:, BUS_I);
+        case {'ANGMAX', 'ANGMIN'}
+            %% all active branches with meaninful limit (not 0, +360 or -360)
+            idxfull = find(mat(:, BR_STATUS) > 0 & mat(:, eval(prop)) & abs(mat(:, eval(prop))) < 360 );
+        case 'RATE_A'
+            %% all active branches with flow limit (RATE_A not 0)
+            idxfull = find(mat(:, BR_STATUS) > 0 & mat(:, RATE_A) > 0);
+        case {'PMAX', 'QMAX', 'QMIN'}
+            %% all active generators (excluding dispatchable loads) w/finite limits
+            idxfull = find( (mat(:, GEN_STATUS) > 0) & ~isload(mat) & ~isinf(mat(:, eval(prop))) );
+        case 'PMIN'
+            %% all active generators (excluding dispatchable loads)
+            idxfull = find( (mat(:, GEN_STATUS) > 0) & ~isload(mat) );
+    end
 
-%% ignore if hl_mod none specified
-if isfield(s, 'hl_mod') && strcmp(s.hl_mod, 'none')
-    return
-end
+    %% idxmask is a boolean vector the size of s.idx, where
+    %% idxmask(i) is 1 if s.idx(i) is in idxfull and 0 otherwise
+    idxmask = ismember(s.idx, idxfull);
+    % if ~all(size(s.idx) == size(s.idx(idxmask))) || any(s.idx ~= s.idx(idxmask))
+    %     s_idx = s.idx
+    %     s_idx_masked = s.idx(idxmask)
+    % end
+    s.idx = s.idx(idxmask); %remove possibly irrelevant entries entered by user
 
-%% define named indices into data matrices
-[PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
-    VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
-[GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
-    MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
-    QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
-[F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
-    TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
-    ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
+    %% convert bus numbers to row indices for bus constraints
+    if ismember(prop, {'VMAX', 'VMIN'})
+        % External bus numbers are stored in s.busnum and s.idx is rewritten to
+        % include the row indices of those buses.
+        s.busnum = s.idx;
+        s.idx =  find(ismember(mat(:,BUS_I), s.idx));
+    end
 
-if nargin < 4
-    max_gen_cost = 0;
-end
+    %% if there are no constraints to relax, skip
+    if isempty(s.idx)
+        softlims.(prop) = s;
+        continue;
+    end
 
-%% default base cost is the maximum between a predefined value and
-%% 2 times the maximum generation marginal cost. A scaling is applied
-%% to account for the fact that we are essentially equating 1MW with
-%% 0.01 p.u. voltage or 1 deg angle difference.
-default_base_cost = max(1000, 2 * max_gen_cost);
-cost_scale = struct( ...
-    'VMAX', 100, 'VMIN', 100, ...   %% $/pu
-    'ANGMAX', 1, 'ANGMIN', 1, ...   %% $/deg
-    'RATE_A', 1, ...                %% $/MW
-    'PMIN', 1, 'PMAX', 1, ...       %% $/MW
-    'QMIN', 1, 'QMAX', 1 );         %% $/MVar
-default_cost = cost_scale.(prop) * default_base_cost;
+    %% save original bounds in s.sav
+    s.sav = mat(s.idx, eval(prop));
 
-if ~ismember(prop, {'VMAX', 'VMIN', 'RATE_A', 'PMAX', 'PMIN', 'QMAX', 'QMIN', 'ANGMAX', 'ANGMIN'})
-    error('softlims_element_defaults: Unknown limit type ''%s''', prop)
-end
+    %% cost: cost of violating softlim
+    %% filter cost to include only valid constraints
+    try
+        s.cost = s.cost(idxmask);
+    catch ME
+        warning('softlims_init: something went wrong when handling the cost for property %s. Perhaps the size of the ''cost'' vector didn''t match the size of the ''idx'' vector?', prop);
+        rethrow(ME);
+    end
 
-%% idx: indices of bounds to relax
-%% idxfull is the full list of candidate values for idx for given constraint
-%% type, all are row indices into EXTERNAL matrix, except for bus matrix,
-%% external bus numbers are used instead of row indices
-switch prop
-    case {'VMAX', 'VMIN'}
-        %% all buses
-        idxfull = mat(:, BUS_I);
-    case {'ANGMAX', 'ANGMIN'}
-        %% all active branches with meaninful limit (not 0, +360 or -360)
-        idxfull = find(mat(:, BR_STATUS) > 0 & mat(:, eval(prop)) & abs(mat(:, eval(prop))) < 360 );
-    case 'RATE_A'
-        %% all active branches with flow limit (RATE_A not 0)
-        idxfull = find(mat(:, BR_STATUS) > 0 & mat(:, RATE_A) > 0);
-    case {'PMAX', 'QMAX', 'QMIN'}
-        %% all active generators (excluding dispatchable loads) w/finite limits
-        idxfull = find( (mat(:, GEN_STATUS) > 0) & ~isload(mat) & ~isinf(mat(:, eval(prop))) );
-    case 'PMIN'
-        %% all active generators (excluding dispatchable loads)
-        idxfull = find( (mat(:, GEN_STATUS) > 0) & ~isload(mat) );
-end
+    %% upper bound on constraint violation variable (always a vector)
+    %% ub = abs( new limit - original limit )
+    if isfield(s, 'hl_mod')
+        switch s.hl_mod
+            case 'remove'   %% upper bound is infinite
+                s.ub = Inf(size(s.idx));
+            case 'scale'
+                %% new limit = original limit * hl_val
+                %% ub = abs( original limit * (hl_val - 1) )
+                switch vectorcheck(s, idxmask)
+                    case 0
+                        error('softlims_init: provided hl_val vector does not conform to idx vector. When specifying hl_val as a vector idx must also be explicitly given');
+                    case 1          %% vector
+                        s.ub = abs( (s.hl_val(idxmask) - 1) .* s.sav );
+                    case 2          %% scalar
+                        s.ub = abs( (s.hl_val - 1)  * s.sav );
+                    case {1, 3}     %% default, which is a vector
+                        s.ub = abs( (s.hl_val - 1) .* s.sav );
+                end
+            case 'shift'
+                %% new limit = original limit + ubsign * hl_val
+                %% ub = hl_val
+                switch vectorcheck(s, idxmask)
+                    case 0
+                        error('softlims_init: provided hl_val vector does not conform to idx vector. When specifying hl_val as a vector idx must also be explicitly given');
+                    case 1          %% vector
+                        s.ub = s.hl_val(idxmask);
+                    case {2, 3}     %% scalar (including default which is a scalar)
+                        s.ub = s.hl_val * ones(size(s.idx));
+                end
 
-%% check that idx is a scalar or vector
-if isfield(s, 'idx')
-    if size(s.idx, 2) > 1
-        s.idx = s.idx.';        %% make row vector into column vector
-        if size(s.idx, 2) > 1
-            error('softlim_defaults: mpc.softlims.%s.idx must be a scalar or vector', prop)
+                %% check that all ub are non negative
+                if any(s.ub < 0)
+                    error('softlims_init: some soft limit for %s has a negative upper bound. There is most likely a problem in the specification of hl_val.', prop);
+                end
+            case 'replace'
+                %% new limit = hl_val
+                %% ub = abs( hl_val - original limit )
+                switch vectorcheck(s, idxmask)
+                    case 0
+                        error('softlims_init: provided hl_val vector does not conform to idx vector. When specifying hl_val as a vector idx must also be explicitly given');
+                    case 1          %% vector
+                        s.ub = abs( s.hl_val(idxmask) - s.sav );
+                    case 2          %% scalar
+                        s.ub = abs( s.hl_val - s.sav );
+                    case 3          %% no default for 'replace'
+                        error('softlims_init: for hard limit ''replace'' modification, replacement value hl_val must be specified');
+                end
         end
     end
-else    %% set default value for s.idx to full set of constraints
-    s.idx = idxfull;
-end
 
-%% get row indexes (as opposed to bus numbers) for bus constraints
-if ismember(prop, {'VMAX', 'VMIN'})
-    s_idx = find(ismember(mat(:,BUS_I), s.idx));
-else
-    s_idx = s.idx;
-end
-
-%% if there are no constraints to relax, set hl_mod to none and exit
-if isempty(s_idx)
-    s.hl_mod = 'none';
-    return;
-end
-
-%% cost: cost of violating softlim
-if isfield(s, 'cost') && ~isempty(s.cost)
-    if isscalar(s.cost)     %% expand to vector if specified as scalar
-        s.cost = s.cost * ones(size(s_idx));
-    end
-else    %% not specified, use default cost
-    s.cost = default_cost * ones(size(s_idx));
-end
-
-%% type of limit
-ubsign = struct('VMAX', 1 , 'VMIN', -1, 'RATE_A', 1, ...
-                'PMAX', 1, 'PMIN', -1, 'QMAX', 1, 'QMIN', -1, ...
-                'ANGMAX', 1, 'ANGMIN', -1);
-shift_defaults = struct('VMAX', 0.25 , 'VMIN', 0.25, 'RATE_A', 10, ...
-                'PMAX', 10, 'PMIN', 10, 'QMAX', 10, 'QMIN', 10, ...
-                'ANGMAX', 10, 'ANGMIN', 10);
-if isfield(s, 'hl_mod') %% use specified soft limits
-    switch s.hl_mod
-        case 'remove'   %% new hard limit is infinite (hl_val unused)
-        case 'scale'    %% new hard limit is original limit * hl_val
-            if ~isfield(s, 'hl_val')
-                % use 2 if ubsign and original constraint have same sign
-                % otherwise use 1/2
-                orig_lim = mat(s_idx, eval(prop));
-                s.hl_val = 2 * ones(size(s_idx));   % scale up by 2
-                k = find(ubsign.(prop) * orig_lim < 0); % unless opp. sign
-                s.hl_val(k) = 1/2;                  % then scale down by 2
-            end
-        case 'shift'    %% new hard limit is original limit + ubsign * hl_val
-            if ~isfield(s, 'hl_val')
-                s.hl_val = shift_defaults.(prop);
-            end
-        case 'replace'  %% new hard limit is hl_val (no default value)
-        otherwise
-            error('softlims_element_defaults: unknown hard limit modification %s', s.hl_mod)
-    end
-else                    %% use default soft limits
+    %% rval: replacement value used to eliminate original hard constraint
     switch prop
-        case 'PMIN'
-            %% for normal gens (PMIN > 0) PMIN is relaxed to 0, not removed
-            %% for gens with negative PMIN, it is relaxed to -Inf
-            s.hl_mod = 'replace';
-            s.hl_val = zeros(size(s_idx));
-            s.hl_val(mat(s_idx, PMIN) < 0) = -Inf;
-        case 'VMIN'
-            %% VMIN is relaxed to zero, not removed
-            s.hl_mod = 'replace';
-            s.hl_val = 0;
-        case {'QMIN', 'ANGMIN'}
-            s.hl_mod = 'remove';
-            s.hl_val = -Inf;
+        case {'ANGMAX', 'ANGMIN', 'RATE_A'}
+            s.rval = 0;
+        case {'VMAX', 'PMAX', 'QMAX'}
+            s.rval = Inf;
+        case {'QMIN', 'PMIN','VMIN'}
+            s.rval = -Inf;
         otherwise
-            s.hl_mod = 'remove';
-            s.hl_val = Inf;
+            error('softlims_init: property %s does not have an ''rval'' assigned', prop);
     end
+    softlims.(prop) = s;
 end
 
 
-%%-----  softlims_element_init  --------------------------------------------
-function s = softlims_element_init(s, prop, mat)
-%
-%   s = softlims_element_init(s, prop, mat)
-%
-%   For each property, do some additional pre-processing, including:
-%       - Determine upper bound on softlim violation variables (ub)
-%       - Save values of original limits (sav)
-%       - Convert bus numbers (busnum) with bus row indices (idx)
-%       - Determine replacement value (rval) to use in mpc data matrices to
-%         eliminate the constraint
-
-%% ignore if hl_mod none specified
-if isfield(s, 'hl_mod') && strcmp(s.hl_mod, 'none')
-    return
-end
-
-%% define named indices into data matrices
-[PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
-    VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
-[GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
-    MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
-    QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
-[F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
-    TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
-    ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
-
-if ~ismember(prop, {'VMAX', 'VMIN', 'RATE_A', 'PMAX', 'PMIN', 'QMAX', 'QMIN', 'ANGMAX', 'ANGMIN'})
-    error('softlims_element_init: Unknown limit type ''%s''', prop)
-end
-
-%% idx: indices of bounds to relax
-%% idxfull is the full list of candidate values for idx for given constraint
-%% type, all are row indices into EXTERNAL matrix, except for bus matrix,
-%% external bus numbers are used instead of row indices
-switch prop
-    case {'VMAX', 'VMIN'}
-        %% all buses
-        idxfull = mat(:, BUS_I);
-    case {'ANGMAX', 'ANGMIN'}
-        %% all active branches with meaninful limit (not 0, +360 or -360)
-        idxfull = find(mat(:, BR_STATUS) > 0 & mat(:, eval(prop)) & abs(mat(:, eval(prop))) < 360 );
-    case 'RATE_A'
-        %% all active branches with flow limit (RATE_A not 0)
-        idxfull = find(mat(:, BR_STATUS) > 0 & mat(:, RATE_A) > 0);
-    case {'PMAX', 'QMAX', 'QMIN'}
-        %% all active generators (excluding dispatchable loads) w/finite limits
-        idxfull = find( (mat(:, GEN_STATUS) > 0) & ~isload(mat) & ~isinf(mat(:, eval(prop))) );
-    case 'PMIN'
-        %% all active generators (excluding dispatchable loads)
-        idxfull = find( (mat(:, GEN_STATUS) > 0) & ~isload(mat) );
-end
-
-%% idxmask is a boolean vector the size of s.idx, where
-%% idxmask(i) is 1 if s.idx(i) is in idxfull and 0 otherwise
-idxmask = ismember(s.idx, idxfull);
-% if ~all(size(s.idx) == size(s.idx(idxmask))) || any(s.idx ~= s.idx(idxmask))
-%     s_idx = s.idx
-%     s_idx_masked = s.idx(idxmask)
+% %%-----  softlims_element_defaults  --------------------------------------------
+% function s = softlims_element_defaults(s, prop, mat, max_gen_cost)
+% %
+% %   s = softlims_element_defaults(s, prop, mat, max_gen_cost)
+% %
+% %   For each property, we fill in default values as needed for:
+% %       idx: index of affected buses, branches, or generators (bus numbers
+% %           rather than indexes for bus)
+% %       cost: linear cost on corresponding violation variables
+% %       hl_mod: string value specifying what to do with original hard limits
+% %               for this property
+% %           'none'    : leave hard limits unchanged, do not apply soft limits
+% %           'remove'  : eliminate hard limits completely
+% %           'replace' : replace hard limit with value specified in 'hl_val'
+% %           'scale'   : multiply hard limit by value specified in 'hl_val'
+% %           'shift'   : add value specified in 'hl_val' to hard limit limit
+% %       hl_val: value used to set/modify hard limit as specified by 'hl_mod'
+% 
+% %% ignore if hl_mod none specified
+% if isfield(s, 'hl_mod') && strcmp(s.hl_mod, 'none')
+%     return
 % end
-s.idx = s.idx(idxmask); %remove possibly irrelevant entries entered by user
+% 
+% %% define named indices into data matrices
+% [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
+%     VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
+% [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
+%     MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
+%     QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
+% [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
+%     TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
+%     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
+% 
+% if nargin < 4
+%     max_gen_cost = 0;
+% end
+% 
+% %% default base cost is the maximum between a predefined value and
+% %% 2 times the maximum generation marginal cost. A scaling is applied
+% %% to account for the fact that we are essentially equating 1MW with
+% %% 0.01 p.u. voltage or 1 deg angle difference.
+% default_base_cost = max(1000, 2 * max_gen_cost);
+% cost_scale = struct( ...
+%     'VMAX', 100, 'VMIN', 100, ...   %% $/pu
+%     'ANGMAX', 1, 'ANGMIN', 1, ...   %% $/deg
+%     'RATE_A', 1, ...                %% $/MW
+%     'PMIN', 1, 'PMAX', 1, ...       %% $/MW
+%     'QMIN', 1, 'QMAX', 1 );         %% $/MVar
+% default_cost = cost_scale.(prop) * default_base_cost;
+% 
+% if ~ismember(prop, {'VMAX', 'VMIN', 'RATE_A', 'PMAX', 'PMIN', 'QMAX', 'QMIN', 'ANGMAX', 'ANGMIN'})
+%     error('softlims_element_defaults: Unknown limit type ''%s''', prop);
+% end
+% 
+% %% idx: indices of bounds to relax
+% %% idxfull is the full list of candidate values for idx for given constraint
+% %% type, all are row indices into EXTERNAL matrix, except for bus matrix,
+% %% external bus numbers are used instead of row indices
+% switch prop
+%     case {'VMAX', 'VMIN'}
+%         %% all buses
+%         idxfull = mat(:, BUS_I);
+%     case {'ANGMAX', 'ANGMIN'}
+%         %% all active branches with meaninful limit (not 0, +360 or -360)
+%         idxfull = find(mat(:, BR_STATUS) > 0 & mat(:, eval(prop)) & abs(mat(:, eval(prop))) < 360 );
+%     case 'RATE_A'
+%         %% all active branches with flow limit (RATE_A not 0)
+%         idxfull = find(mat(:, BR_STATUS) > 0 & mat(:, RATE_A) > 0);
+%     case {'PMAX', 'QMAX', 'QMIN'}
+%         %% all active generators (excluding dispatchable loads) w/finite limits
+%         idxfull = find( (mat(:, GEN_STATUS) > 0) & ~isload(mat) & ~isinf(mat(:, eval(prop))) );
+%     case 'PMIN'
+%         %% all active generators (excluding dispatchable loads)
+%         idxfull = find( (mat(:, GEN_STATUS) > 0) & ~isload(mat) );
+% end
+% 
+% %% check that idx is a scalar or vector
+% if isfield(s, 'idx')
+%     if size(s.idx, 2) > 1
+%         s.idx = s.idx.';        %% make row vector into column vector
+%         if size(s.idx, 2) > 1
+%             error('softlim_defaults: mpc.softlims.%s.idx must be a scalar or vector', prop);
+%         end
+%     end
+% else    %% set default value for s.idx to full set of constraints
+%     s.idx = idxfull;
+% end
+% 
+% %% get row indexes (as opposed to bus numbers) for bus constraints
+% if ismember(prop, {'VMAX', 'VMIN'})
+%     s_idx = find(ismember(mat(:,BUS_I), s.idx));
+% else
+%     s_idx = s.idx;
+% end
+% 
+% %% if there are no constraints to relax, set hl_mod to none and exit
+% if isempty(s_idx)
+%     s.hl_mod = 'none';
+%     return;
+% end
+% 
+% %% cost: cost of violating softlim
+% if isfield(s, 'cost') && ~isempty(s.cost)
+%     if isscalar(s.cost)     %% expand to vector if specified as scalar
+%         s.cost = s.cost * ones(size(s_idx));
+%     end
+% else    %% not specified, use default cost
+%     s.cost = default_cost * ones(size(s_idx));
+% end
+% 
+% %% type of limit
+% ubsign = struct('VMAX', 1 , 'VMIN', -1, 'RATE_A', 1, ...
+%                 'PMAX', 1, 'PMIN', -1, 'QMAX', 1, 'QMIN', -1, ...
+%                 'ANGMAX', 1, 'ANGMIN', -1);
+% shift_defaults = struct('VMAX', 0.25 , 'VMIN', 0.25, 'RATE_A', 10, ...
+%                 'PMAX', 10, 'PMIN', 10, 'QMAX', 10, 'QMIN', 10, ...
+%                 'ANGMAX', 10, 'ANGMIN', 10);
+% if isfield(s, 'hl_mod') %% use specified soft limits
+%     switch s.hl_mod
+%         case 'remove'   %% new hard limit is infinite (hl_val unused)
+%         case 'scale'    %% new hard limit is original limit * hl_val
+%             if ~isfield(s, 'hl_val')
+%                 % use 2 if ubsign and original constraint have same sign
+%                 % otherwise use 1/2
+%                 orig_lim = mat(s_idx, eval(prop));
+%                 s.hl_val = 2 * ones(size(s_idx));   % scale up by 2
+%                 k = find(ubsign.(prop) * orig_lim < 0); % unless opp. sign
+%                 s.hl_val(k) = 1/2;                  % then scale down by 2
+%             end
+%         case 'shift'    %% new hard limit is original limit + ubsign * hl_val
+%             if ~isfield(s, 'hl_val')
+%                 s.hl_val = shift_defaults.(prop);
+%             end
+%         case 'replace'  %% new hard limit is hl_val (no default value)
+%         otherwise
+%             error('softlims_element_defaults: unknown hard limit modification %s', s.hl_mod);
+%     end
+% else                    %% use default soft limits
+%     switch prop
+%         case 'PMIN'
+%             %% for normal gens (PMIN > 0) PMIN is relaxed to 0, not removed
+%             %% for gens with negative PMIN, it is relaxed to -Inf
+%             s.hl_mod = 'replace';
+%             s.hl_val = zeros(size(s_idx));
+%             s.hl_val(mat(s_idx, PMIN) < 0) = -Inf;
+%         case 'VMIN'
+%             %% VMIN is relaxed to zero, not removed
+%             s.hl_mod = 'replace';
+%             s.hl_val = 0;
+%         case {'QMIN', 'ANGMIN'}
+%             s.hl_mod = 'remove';
+%             s.hl_val = -Inf;
+%         otherwise
+%             s.hl_mod = 'remove';
+%             s.hl_val = Inf;
+%     end
+% end
 
-%% convert bus numbers to row indices for bus constraints
-if ismember(prop, {'VMAX', 'VMIN'})
-    % External bus numbers are stored in s.busnum and s.idx is rewritten to
-    % include the row indices of those buses.
-    s.busnum = s.idx;
-    s.idx =  find(ismember(mat(:,BUS_I), s.idx));
-end
 
-%% if there are no constraints to relax, set hl_mod to none and exit
-if isempty(s.idx)
-    return;
-end
-
-%% save original bounds in s.sav
-s.sav = mat(s.idx, eval(prop));
-
-%% cost: cost of violating softlim
-%% filter cost to include only valid constraints
-try
-    s.cost = s.cost(idxmask);
-catch ME
-    warning('softlims_element_init: something went wrong when handling the cost for property %s. Perhaps the size of the ''cost'' vector didn''t match the size of the ''idx'' vector?', prop)
-    rethrow(ME)
-end
-
-%% upper bound on constraint violation variable
-%% ub = abs( new limit - original limit )
-if isfield(s, 'hl_mod')
-    switch s.hl_mod
-        case 'remove'   %% upper bound is infinite
-            s.ub = Inf(size(s.idx));
-        case 'scale'
-            %% new limit = original limit * hl_val
-            %% ub = abs( original limit * (hl_val - 1) )
-            switch vectorcheck(s, idxmask)
-                case 0
-                    error('softlims_element_init: provided hl_val vector does not conform to idx vector. When specifying hl_val as a vector idx must also be explicitly given') 
-                case 1          %% vector
-                    s.ub = abs( (s.hl_val(idxmask) - 1) .* s.sav );
-                case 2          %% scalar
-                    s.ub = abs( (s.hl_val - 1)  * s.sav );
-                case {1, 3}     %% default, which is a vector
-                    s.ub = abs( (s.hl_val - 1) .* s.sav );
-            end
-        case 'shift'
-            %% new limit = original limit + ubsign * hl_val
-            %% ub = hl_val
-            switch vectorcheck(s, idxmask)
-                case 0
-                    error('softlims_element_init: provided hl_val vector does not conform to idx vector. When specifying hl_val as a vector idx must also be explicitly given')
-                case 1          %% vector
-                    s.ub = s.hl_val(idxmask);
-                case {2, 3}     %% scalar (including default which is a scalar)
-                    s.ub = s.hl_val * ones(size(s.idx));
-            end
-
-            %% check that all ub are non negative
-            if any(s.ub < 0)
-                error('softlims_element_init: some soft limit for %s has a negative upper bound. There is most likely a problem in the specification of hl_val.', prop)
-            end
-        case 'replace'
-            %% new limit = hl_val
-            %% ub = abs( hl_val - original limit )
-            switch vectorcheck(s, idxmask)
-                case 0
-                    error('softlims_element_init: provided hl_val vector does not conform to idx vector. When specifying hl_val as a vector idx must also be explicitly given')
-                case 1          %% vector
-                    s.ub = abs( s.hl_val(idxmask) - s.sav );
-                case 2          %% scalar
-                    s.ub = abs( s.hl_val - s.sav );
-                case 3          %% no default for 'replace'
-                    error('softlims_element_init: for hard limit ''replace'' modification, replacement value hl_val must be specified')
-            end
-    end
-end
-
-%% rval: replacement value used to eliminate original hard constraint
-switch prop
-    case {'ANGMAX', 'ANGMIN', 'RATE_A'}
-        s.rval = 0;
-    case {'VMAX', 'PMAX', 'QMAX'}
-        s.rval = Inf;
-    case {'QMIN', 'PMIN','VMIN'}
-        s.rval = -Inf;
-    otherwise
-        error('softlims_element_init: property %s does not have an ''rval'' assigned', prop)
-end
+% %%-----  softlims_element_init  --------------------------------------------
+% function s = softlims_element_init(s, prop, mat)
+% %
+% %   s = softlims_element_init(s, prop, mat)
+% %
+% %   For each property, do some additional pre-processing, including:
+% %       - Determine upper bound on softlim violation variables (ub)
+% %       - Save values of original limits (sav)
+% %       - Convert bus numbers (busnum) with bus row indices (idx)
+% %       - Determine replacement value (rval) to use in mpc data matrices to
+% %         eliminate the constraint
+% 
+% %% ignore if hl_mod none specified
+% if isfield(s, 'hl_mod') && strcmp(s.hl_mod, 'none')
+%     return
+% end
+% 
+% %% define named indices into data matrices
+% [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
+%     VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
+% [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
+%     MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
+%     QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
+% [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
+%     TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
+%     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
+% 
+% if ~ismember(prop, {'VMAX', 'VMIN', 'RATE_A', 'PMAX', 'PMIN', 'QMAX', 'QMIN', 'ANGMAX', 'ANGMIN'})
+%     error('softlims_element_init: Unknown limit type ''%s''', prop);
+% end
+% 
+% %% idx: indices of bounds to relax
+% %% idxfull is the full list of candidate values for idx for given constraint
+% %% type, all are row indices into EXTERNAL matrix, except for bus matrix,
+% %% external bus numbers are used instead of row indices
+% switch prop
+%     case {'VMAX', 'VMIN'}
+%         %% all buses
+%         idxfull = mat(:, BUS_I);
+%     case {'ANGMAX', 'ANGMIN'}
+%         %% all active branches with meaninful limit (not 0, +360 or -360)
+%         idxfull = find(mat(:, BR_STATUS) > 0 & mat(:, eval(prop)) & abs(mat(:, eval(prop))) < 360 );
+%     case 'RATE_A'
+%         %% all active branches with flow limit (RATE_A not 0)
+%         idxfull = find(mat(:, BR_STATUS) > 0 & mat(:, RATE_A) > 0);
+%     case {'PMAX', 'QMAX', 'QMIN'}
+%         %% all active generators (excluding dispatchable loads) w/finite limits
+%         idxfull = find( (mat(:, GEN_STATUS) > 0) & ~isload(mat) & ~isinf(mat(:, eval(prop))) );
+%     case 'PMIN'
+%         %% all active generators (excluding dispatchable loads)
+%         idxfull = find( (mat(:, GEN_STATUS) > 0) & ~isload(mat) );
+% end
+% 
+% %% idxmask is a boolean vector the size of s.idx, where
+% %% idxmask(i) is 1 if s.idx(i) is in idxfull and 0 otherwise
+% idxmask = ismember(s.idx, idxfull);
+% % if ~all(size(s.idx) == size(s.idx(idxmask))) || any(s.idx ~= s.idx(idxmask))
+% %     s_idx = s.idx
+% %     s_idx_masked = s.idx(idxmask)
+% % end
+% s.idx = s.idx(idxmask); %remove possibly irrelevant entries entered by user
+% 
+% %% convert bus numbers to row indices for bus constraints
+% if ismember(prop, {'VMAX', 'VMIN'})
+%     % External bus numbers are stored in s.busnum and s.idx is rewritten to
+%     % include the row indices of those buses.
+%     s.busnum = s.idx;
+%     s.idx =  find(ismember(mat(:,BUS_I), s.idx));
+% end
+% 
+% %% if there are no constraints to relax, set hl_mod to none and exit
+% if isempty(s.idx)
+%     return;
+% end
+% 
+% %% save original bounds in s.sav
+% s.sav = mat(s.idx, eval(prop));
+% 
+% %% cost: cost of violating softlim
+% %% filter cost to include only valid constraints
+% try
+%     s.cost = s.cost(idxmask);
+% catch ME
+%     warning('softlims_element_init: something went wrong when handling the cost for property %s. Perhaps the size of the ''cost'' vector didn''t match the size of the ''idx'' vector?', prop);
+%     rethrow(ME);
+% end
+% 
+% %% upper bound on constraint violation variable
+% %% ub = abs( new limit - original limit )
+% if isfield(s, 'hl_mod')
+%     switch s.hl_mod
+%         case 'remove'   %% upper bound is infinite
+%             s.ub = Inf(size(s.idx));
+%         case 'scale'
+%             %% new limit = original limit * hl_val
+%             %% ub = abs( original limit * (hl_val - 1) )
+%             switch vectorcheck(s, idxmask)
+%                 case 0
+%                     error('softlims_element_init: provided hl_val vector does not conform to idx vector. When specifying hl_val as a vector idx must also be explicitly given');
+%                 case 1          %% vector
+%                     s.ub = abs( (s.hl_val(idxmask) - 1) .* s.sav );
+%                 case 2          %% scalar
+%                     s.ub = abs( (s.hl_val - 1)  * s.sav );
+%                 case {1, 3}     %% default, which is a vector
+%                     s.ub = abs( (s.hl_val - 1) .* s.sav );
+%             end
+%         case 'shift'
+%             %% new limit = original limit + ubsign * hl_val
+%             %% ub = hl_val
+%             switch vectorcheck(s, idxmask)
+%                 case 0
+%                     error('softlims_element_init: provided hl_val vector does not conform to idx vector. When specifying hl_val as a vector idx must also be explicitly given');
+%                 case 1          %% vector
+%                     s.ub = s.hl_val(idxmask);
+%                 case {2, 3}     %% scalar (including default which is a scalar)
+%                     s.ub = s.hl_val * ones(size(s.idx));
+%             end
+% 
+%             %% check that all ub are non negative
+%             if any(s.ub < 0)
+%                 error('softlims_element_init: some soft limit for %s has a negative upper bound. There is most likely a problem in the specification of hl_val.', prop);
+%             end
+%         case 'replace'
+%             %% new limit = hl_val
+%             %% ub = abs( hl_val - original limit )
+%             switch vectorcheck(s, idxmask)
+%                 case 0
+%                     error('softlims_element_init: provided hl_val vector does not conform to idx vector. When specifying hl_val as a vector idx must also be explicitly given');
+%                 case 1          %% vector
+%                     s.ub = abs( s.hl_val(idxmask) - s.sav );
+%                 case 2          %% scalar
+%                     s.ub = abs( s.hl_val - s.sav );
+%                 case 3          %% no default for 'replace'
+%                     error('softlims_element_init: for hard limit ''replace'' modification, replacement value hl_val must be specified')
+%             end
+%     end
+% end
+% 
+% %% rval: replacement value used to eliminate original hard constraint
+% switch prop
+%     case {'ANGMAX', 'ANGMIN', 'RATE_A'}
+%         s.rval = 0;
+%     case {'VMAX', 'PMAX', 'QMAX'}
+%         s.rval = Inf;
+%     case {'QMIN', 'PMIN','VMIN'}
+%         s.rval = -Inf;
+%     otherwise
+%         error('softlims_element_init: property %s does not have an ''rval'' assigned', prop);
+% end
 
 %%----- vector check ---------------------------------------------------
 function out = vectorcheck(s, idx)
-% Utility function for softlims_element_init(). Checks whether the hl_val
+% Utility function for softlims_init(). Checks whether the hl_val
 % field in the softlims element struct is a scalar or a vector whose size
 % conforms with the idx vector (prior to filtering with idxmask)
 % OUTPUT:
