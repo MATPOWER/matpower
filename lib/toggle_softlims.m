@@ -429,9 +429,20 @@ function results = userfcn_softlims_int2ext(results, mpopt, args)
 %   This is the 'int2ext' stage userfcn callback that converts everything
 %   back to external indexing and packages up the results. It expects to
 %   find a 'softlims' field in the results struct as described for mpc above.
-%   It also expects the results to contain solved branch flows and linear
-%   constraints named 'softlims' which are used to populate output fields
-%   in results.softlims. The optional args are not currently used.
+%   It also expects the results to contain values in bus, gen and branch
+%   and constraints for the specified softlims, with the following possible
+%   names, which are used to populate output fields in results.softlims:
+%       soft_Pf, softPt (DC only)
+%       soft_Sf, softSt (AC only)
+%       soft_angmin (both)
+%       soft_angmax (both)
+%       soft_pmin (both)
+%       soft_pmax (both)
+%       soft_vmin (AC only)
+%       soft_vmax (AC only)
+%       soft_qmin (AC only)
+%       soft_qmax (AC only)
+%   The optional args are not currently used.
 
 %% define named indices into data matrices
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
@@ -443,177 +454,150 @@ function results = userfcn_softlims_int2ext(results, mpopt, args)
     TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 
-% structures used to index into softlims in a loop
+%% structures used to index into softlims in a loop
 lims = softlims_lim2mat();
 
 %% get internal softlims struct and mpopt
-isOPF  = isfield(results, 'f') && ~isempty(results.f);
-
-s = results.softlims;
+softlims = results.softlims;
+isOPF = isfield(results, 'f') && ~isempty(results.f);
 if isOPF
     mpopt = results.om.get_userdata('mpopt');   %% extract and remove mpopt from om
     results.om.userdata = rmfield(results.om.userdata, 'mpopt');
+    isDC = strcmp(mpopt.model, 'DC');
 end
 
 %%-----  convert stuff back to external indexing  -----
 o = results.order;
-nl0 = size(o.ext.branch, 1);    %% original number of branches
-nl = size(results.branch, 1);   %% number of on-line branches
-o.branch.status.on;
-results.softlims = results.order.ext.softlims;
+results.softlims = o.ext.softlims;
 
 %%-----  restore hard limits  -----
-for prop = fieldnames(s).'
-    mat  = lims.(prop{:});
-    if strcmp(s.(prop{:}).hl_mod, 'none')
+for p = fieldnames(softlims).'
+    prop = p{:};
+    s = softlims.(prop);
+    if strcmp(s.hl_mod, 'none')
         continue;
     end
-    results.(mat)(s.(prop{:}).idx, eval(prop{:})) = s.(prop{:}).sav;
+    mat = lims.(prop);
+    results.(mat)(s.idx, eval(prop)) = s.sav;
 end
 
-%%-----  remove rval, and sav fields  -----
-for prop = fieldnames(s).'
-    if strcmp(s.(prop{:}).hl_mod, 'none')
+%%-----  remove rval and sav fields  -----
+for p = fieldnames(softlims).'
+    prop = p{:};
+    if strcmp(softlims.(prop).hl_mod, 'none')
         continue;
     end
-    results.softlims.(prop{:}) = rmfield(results.softlims.(prop{:}), 'sav');
-    results.softlims.(prop{:}) = rmfield(results.softlims.(prop{:}), 'rval');
+    results.softlims.(prop) = rmfield(results.softlims.(prop), 'sav');
+    results.softlims.(prop) = rmfield(results.softlims.(prop), 'rval');
 end
+
 %%-----  results post-processing  -----
 %% get overloads and overload costs
+tol = 1e-8;
 if isOPF
-    for prop = fieldnames(s).'
-        mat  = lims.(prop{:});
-        if strcmp(s.(prop{:}).hl_mod, 'none')
+    for p = fieldnames(softlims).'
+        prop = p{:};
+        s = softlims.(prop);
+        if strcmp(s.hl_mod, 'none')
             continue;
         end
-        n0 = size(o.ext.(mat), 1);    %% original number
-        n  = size(results.(mat), 1);  %% number on-line
-        results.softlims.(prop{:}).overload = zeros(n0, 1);
-        results.softlims.(prop{:}).ovl_cost = zeros(n0, 1);
-        varname = ['s_', lower(prop{:})];  %% variable name
-        if ismember(prop{:}, {'VMIN', 'VMAX'})
-            if ~strcmp(mpopt.model, 'AC')
-                continue;
-            end
-            var = results.var.val.(varname); %stays in p.u.
-            var(var < 1e-8) = 0;
-        elseif ismember(prop{:}, {'RATE_A', 'PMIN', 'PMAX', })
-            var = results.var.val.(varname);
-            var(var < 1e-8) = 0;
-            var = var * results.baseMVA; % p.u. -> MW
-        elseif ismember(prop{:}, {'QMIN', 'QMAX', })
-            if ~strcmp(mpopt.model, 'AC')
-                continue;
-            end
-            var = results.var.val.(varname);
-            var(var < 1e-8) = 0;
-            var = var * results.baseMVA; % p.u. -> MVAr
-        elseif ismember(prop{:}, {'ANGMIN', 'ANGMAX'})
-            var = results.var.val.(varname);
-            var(var < 1e-8) = 0;
-            var = var * 180/pi; % rad -> deg
-        else
-            error('userfcn_soflims_formulation: property %s is unknown ', prop{:})
+
+        mat  = lims.(prop);
+        n0 = size(o.ext.(mat), 1);      %% original number
+        n  = size(results.(mat), 1);    %% number on-line
+        results.softlims.(prop).overload = zeros(n0, 1);
+        results.softlims.(prop).ovl_cost = zeros(n0, 1);
+        varname = ['s_', lower(prop)];  %% variable name
+        if isfield(results.var.val, varname)
+            var = results.var.val.(varname);    %% violation in p.u.
+            var(var < tol) = 0;                 %% zero out violations < tol
         end
-    %     var(var < 1e-8) = 0;
-        % NOTE: o.(mat).status.on is a vector nx1 where n is the INTERNAL number of
-        % elements. The entries are the EXTERNAL locations (row numbers).
+        switch prop
+            case {'VMIN', 'VMAX'}               %% p.u. (no change)
+                if isDC
+                    continue;
+                end
+            case {'RATE_A', 'PMIN', 'PMAX'}     %% p.u. -> MVA|MW
+                var = var * results.baseMVA;
+            case {'QMIN', 'QMAX'}               %% p.u. -> MVAr
+                if isDC
+                    continue;
+                end
+                var = var * results.baseMVA;
+            case {'ANGMIN', 'ANGMAX'}           %% rad -> deg
+                var = var * 180/pi;
+            otherwise
+                error('userfcn_soflims_formulation: property %s is unknown ', prop)
+        end
+
+        %% NOTE: o.(mat).status.on is a vector nx1 where n is the INTERNAL number of
+        %% elements. The entries are the EXTERNAL locations (row numbers).
         if strcmp(mat, 'gen')
-            results.softlims.(prop{:}).overload(o.(mat).status.on(o.gen.i2e(s.(prop{:}).idx))) = var;
-            results.softlims.(prop{:}).ovl_cost(o.(mat).status.on(o.gen.i2e(s.(prop{:}).idx))) = var .* s.(prop{:}).cost(:,1);
+            results.softlims.(prop).overload(o.gen.status.on(o.gen.i2e(s.idx))) = var;
+            results.softlims.(prop).ovl_cost(o.gen.status.on(o.gen.i2e(s.idx))) = var .* s.cost(:, 1);
         else
-            results.softlims.(prop{:}).overload(o.(mat).status.on(s.(prop{:}).idx)) = var;
-            results.softlims.(prop{:}).ovl_cost(o.(mat).status.on(s.(prop{:}).idx)) = var .* s.(prop{:}).cost(:,1);
+            results.softlims.(prop).overload(o.(mat).status.on(s.idx)) = var;
+            results.softlims.(prop).ovl_cost(o.(mat).status.on(s.idx)) = var .* s.cost(:, 1);
         end
     end
 
     %% get shadow prices
-    if ~strcmp(s.ANGMAX.hl_mod, 'none')
-        results.branch(s.ANGMAX.idx, MU_ANGMAX) = results.lin.mu.u.soft_angmax * pi/180;
+    if ~strcmp(softlims.ANGMAX.hl_mod, 'none')
+        results.branch(softlims.ANGMAX.idx, MU_ANGMAX) = results.lin.mu.u.soft_angmax * pi/180;
     end
-    if ~strcmp(s.ANGMIN.hl_mod, 'none')
-        results.branch(s.ANGMIN.idx, MU_ANGMIN) = results.lin.mu.l.soft_angmin * pi/180;
+    if ~strcmp(softlims.ANGMIN.hl_mod, 'none')
+        results.branch(softlims.ANGMIN.idx, MU_ANGMIN) = results.lin.mu.l.soft_angmin * pi/180;
     end
-    if ~strcmp(s.PMAX.hl_mod, 'none')
-        results.gen(s.PMAX.idx, MU_PMAX) = results.lin.mu.u.soft_pmax / results.baseMVA;
+    if ~strcmp(softlims.PMAX.hl_mod, 'none')
+        results.gen(softlims.PMAX.idx, MU_PMAX) = results.lin.mu.u.soft_pmax / results.baseMVA;
     end
-    if ~strcmp(s.PMIN.hl_mod, 'none')
-        results.gen(s.PMIN.idx, MU_PMIN) = results.lin.mu.l.soft_pmin / results.baseMVA;
+    if ~strcmp(softlims.PMIN.hl_mod, 'none')
+        results.gen(softlims.PMIN.idx, MU_PMIN) = results.lin.mu.l.soft_pmin / results.baseMVA;
     end
-    if strcmp(mpopt.model, 'DC')
-        if ~strcmp(s.RATE_A.hl_mod, 'none')
-            results.branch(s.RATE_A.idx, MU_SF) = results.lin.mu.u.softPf / results.baseMVA;
-            results.branch(s.RATE_A.idx, MU_ST) = results.lin.mu.u.softPt / results.baseMVA;
-
-            %if results.success    %% double-check value of overloads being returned (if solution was successful)
-            %    vv = results.om.get_idx();
-            %    check1 = zeros(nl0, 1);
-            %    check1(o.branch.status.on(s.RATE_A.idx)) = results.x(vv.i1.s_rate_a:vv.iN.s_rate_a) * results.baseMVA;
-            %    check2 = zeros(nl0, 1);
-            %    k = find(results.branch(:, RATE_A) & ...
-            %             abs(results.branch(:, PF)) > results.branch(:, RATE_A) );
-            %    check2(o.branch.status.on(k)) = ...
-            %            abs(results.branch(k, PF)) - results.branch(k, RATE_A);
-            %    err1 = norm(results.softlims.RATE_A.overload-check1);
-            %    err2 = norm(results.softlims.RATE_A.overload-check2);
-            %    errtol = 1e-4;
-            %    if err1 > errtol || err2 > errtol
-            %        [ results.softlims.RATE_A.overload check1 results.softlims.RATE_A.overload-check1 ]
-            %        [ results.softlims.RATE_A.overload check2 results.softlims.RATE_A.overload-check2 ]
-            %        error('userfcn_softlims_int2ext: problem with consistency of overload values');
-            %    end
-            %end
+    if isDC
+        if ~strcmp(softlims.RATE_A.hl_mod, 'none')
+            results.branch(softlims.RATE_A.idx, MU_SF) = results.lin.mu.u.softPf / results.baseMVA;
+            results.branch(softlims.RATE_A.idx, MU_ST) = results.lin.mu.u.softPt / results.baseMVA;
         end
-    else %AC model
-        if ~strcmp(s.VMAX.hl_mod, 'none')
-            results.bus(s.VMAX.idx, MU_VMAX) = results.lin.mu.u.soft_vmax;
+    else        %% AC model
+        if ~strcmp(softlims.VMAX.hl_mod, 'none')
+            results.bus(softlims.VMAX.idx, MU_VMAX) = results.lin.mu.u.soft_vmax;
         end
-        if ~strcmp(s.VMIN.hl_mod, 'none')
-            results.bus(s.VMIN.idx, MU_VMIN) = results.lin.mu.l.soft_vmin;
+        if ~strcmp(softlims.VMIN.hl_mod, 'none')
+            results.bus(softlims.VMIN.idx, MU_VMIN) = results.lin.mu.l.soft_vmin;
         end
-        if ~strcmp(s.QMAX.hl_mod, 'none')
-            results.gen(s.QMAX.idx, MU_QMAX) = results.lin.mu.u.soft_qmax / results.baseMVA;
+        if ~strcmp(softlims.QMAX.hl_mod, 'none')
+            results.gen(softlims.QMAX.idx, MU_QMAX) = results.lin.mu.u.soft_qmax / results.baseMVA;
         end
-        if ~strcmp(s.QMIN.hl_mod, 'none')
-            results.gen(s.QMIN.idx, MU_QMIN) = results.lin.mu.l.soft_qmin / results.baseMVA;
+        if ~strcmp(softlims.QMIN.hl_mod, 'none')
+            results.gen(softlims.QMIN.idx, MU_QMIN) = results.lin.mu.l.soft_qmin / results.baseMVA;
         end
-        if ~strcmp(s.RATE_A.hl_mod, 'none')
+        if ~strcmp(softlims.RATE_A.hl_mod, 'none')
             if upper(mpopt.opf.flow_lim(1)) == 'P'
-                results.branch(s.RATE_A.idx, MU_ST) = results.nli.mu.softSf / results.baseMVA;
-                results.branch(s.RATE_A.idx, MU_SF) = results.nli.mu.softSt / results.baseMVA;
+                results.branch(softlims.RATE_A.idx, MU_ST) = results.nli.mu.softSf / results.baseMVA;
+                results.branch(softlims.RATE_A.idx, MU_SF) = results.nli.mu.softSt / results.baseMVA;
             else
-                        var = results.var.val.s_rate_a * results.baseMVA;
-                        var(var < 1e-8) = 0;
+                s = softlims.RATE_A;
+                var = results.softlims.RATE_A.overload(o.branch.status.on(s.idx));
                 %% conversion factor for squared constraints (2*F)
-                cf = 2 * (s.RATE_A.sav + var)/results.baseMVA;
-                %cf = 2 * (s.Pfmax + flv / results.baseMVA);
-                results.branch(s.RATE_A.idx, MU_ST) = results.nli.mu.softSf .* cf / results.baseMVA;
-                results.branch(s.RATE_A.idx, MU_SF) = results.nli.mu.softSt .* cf / results.baseMVA;
+                cf = 2 * (s.sav + var) / results.baseMVA;
+                results.branch(s.idx, MU_ST) = results.nli.mu.softSf .* cf / results.baseMVA;
+                results.branch(s.idx, MU_SF) = results.nli.mu.softSt .* cf / results.baseMVA;
             end
-
-            %if results.success    %% double-check value of overloads being returned (if solution was successful)
-            %    vv = results.om.get_idx();
-            %    check1 = zeros(nl0, 1);
-            %    check1(o.branch.status.on(s.RATE_A.idx)) = results.x(vv.i1.s_rate_a:vv.iN.s_rate_a) * results.baseMVA;
-            %    err1 = norm(results.softlims.RATE_A.overload-check1);
-            %    errtol = 1e-4;
-            %    if err1 > errtol
-            %        [ results.softlims.RATE_A.overload check1 results.softlims.RATE_A.overload-check1 ]
-            %        error('userfcn_softlims_int2ext: problem with consistency of overload values');
-            %    end
-            %end
         end
     end
 end
-%%----- swap bus idx vectors -----
-% set s.VMIN.idx and s.VMAX.idx to include external bus numbers (stored in
-% busnum. Store row indices in rowidx to be used by the print function.
-for prop = {'VMAX', 'VMIN'}
-    if ~strcmp(s.(prop{:}).hl_mod, 'none')
-        results.softlims.(prop{:}).idx = s.(prop{:}).busnum;
-        results.softlims.(prop{:}).rowidx = s.(prop{:}).idx;
-        results.softlims.(prop{:}) = rmfield(results.softlims.(prop{:}), 'busnum');
+
+%%-----  swap bus idx vectors  -----
+%% restore softlims.VMIN.idx and softlims.VMAX.idx to external bus numbers
+%% (stored in busnum). Store row indices in rowidx for use by printpf function.
+for p = {'VMAX', 'VMIN'}
+    prop = p{:};
+    s = softlims.(prop);
+    if ~strcmp(s.hl_mod, 'none')
+        results.softlims.(prop).idx = s.busnum;
+        results.softlims.(prop).rowidx = s.idx;
+        results.softlims.(prop) = rmfield(results.softlims.(prop), 'busnum');
     end
 end
 
