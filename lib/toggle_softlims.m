@@ -165,6 +165,11 @@ function mpc = userfcn_softlims_ext2int(mpc, mpopt, args)
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 
+%% check for cartesian voltage coordinates
+if ~isempty(mpopt) && isfield(mpopt, 'opf') && mpopt.opf.v_cartesian
+    error('userfcn_softlims_ext2int: TOGGLE_SOFTLIMS is not implemented for OPF with cartesian voltages. Please set the MPOPT.opf.v_cartesian option to 0 for use with TOGGLE_SOFTLIMS.');
+end
+
 %% structures used to index into softlims in a loop
 lims = softlims_lim2mat();
 mat2lims = struct(...
