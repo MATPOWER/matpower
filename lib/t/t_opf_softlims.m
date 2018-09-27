@@ -16,14 +16,20 @@ if nargin < 1
 end
 
 casefile = 'case9';
+fname_ac = 'pretty_print_softlims_ac.txt';
+fname_dc = 'pretty_print_softlims_dc.txt';
+fname = 'pretty_print_softlims';
+rn = fix(1e9*rand);
+tmp_fname_ac = sprintf('%s_ac_%d.txt', fname, rn);
+tmp_fname_dc = sprintf('%s_dc_%d.txt', fname, rn);
+
 if quiet
     verbose = 0;
 else
     verbose = 0;
 end
 
-% t_begin(59+37*4, quiet);
-t_begin(874, quiet);
+t_begin(876, quiet);
 
 %% define constants
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
@@ -55,6 +61,9 @@ mpopt = mpoption(mpopt, 'verbose', verbose);
 if have_fcn('octave')
     sing_matrix_warn_id = 'Octave:singular-matrix';
     sing_matrix_warn_id = 'Octave:nearly-singular-matrix';
+    file_in_path_warn_id = 'Octave:data-file-in-path';
+    s1 = warning('query', file_in_path_warn_id);
+    warning('off', file_in_path_warn_id);
 else
     sing_matrix_warn_id = 'MATLAB:singularMatrix';
     sing_matrix_warn_id = 'MATLAB:nearlySingularMatrix';
@@ -282,6 +291,23 @@ overload_loop(r, t, 1);
 mu_cost_test(r,t);
 gen_order_check(mpc, r, t)
 
+t = 'printpf - AC';
+[fd, msg] = fopen(tmp_fname_ac, 'at');
+if fd == -1
+    error(msg);
+else
+    mpopt1 = mpoption(mpopt, 'out.all', -1, 'out.bus', 0, 'out.branch', 0, 'out.sys_sum', 0);
+    printpf(r, fd, mpopt1);
+    fclose(fd);
+end
+got = fileread(tmp_fname_ac);
+got = strrep(got, char([13 10]), char(10));             %% Win to Unix EOL chars
+got = regexprep(got, 'Converged in (.*) seconds', 'Converged in 0.00 seconds');
+expected = fileread(fname_ac);
+expected = strrep(expected, char([13 10]), char(10));   %% Win to Unix EOL chars
+t_ok(strcmp(got, expected), t);
+delete(tmp_fname_ac);
+
 t = 'Repeat solve: ';
 r2 = runopf(r, mpopt);
 t_is(r2.bus, r.bus, 4, [t 'bus matrices are the same'])
@@ -372,6 +398,24 @@ overload_loop(r, t, 1);
 mu_cost_test(r,t);
 gen_order_check(mpc, r, t)
 %% voltage magnitude slack
+
+t = 'printpf - DC';
+[fd, msg] = fopen(tmp_fname_dc, 'at');
+if fd == -1
+    error(msg);
+else
+    mpopt1 = mpoption(mpopt1, 'model', 'DC');
+    printpf(r, fd, mpopt1);
+    fclose(fd);
+end
+got = fileread(tmp_fname_dc);
+got = strrep(got, char([13 10]), char(10));             %% Win to Unix EOL chars
+got = regexprep(got, 'Converged in (.*) seconds', 'Converged in 0.00 seconds');
+expected = fileread(fname_dc);
+expected = strrep(expected, char([13 10]), char(10));   %% Win to Unix EOL chars
+t_ok(strcmp(got, expected), t);
+delete(tmp_fname_dc);
+
 % unbounded limits
 mpc = mpc0;
 mpc.softlims.RATE_A.hl_mod = 'none';
@@ -838,6 +882,9 @@ t_is(r.softlims.RATE_A.overload, [0; 0; 4.07774; 0; 0; 0; 0; 0; 0; 0], 6, [t 'so
 t_is(r.softlims.RATE_A.ovl_cost, [0; 0; 81.554809; 0; 0; 0; 0; 0; 0; 0], 4, [t 'softlims.RATE_A.ovl_cost']);
 gen_order_check(mpc, r, t)
 
+if have_fcn('octave')
+    warning(s1.state, file_in_path_warn_id);
+end
 warning(s2.state, sing_matrix_warn_id);
 
 t_end;
