@@ -10,7 +10,7 @@ function mpc = toggle_softlims(mpc, on_off)
 %   These callbacks expect to find a 'softlims' field in the input MPC,
 %   where MPC.softlims is a struct with fields corresponding to the
 %   possible limits, namely:
-%       VMIN, VMAX, RATE_A, PMIN, PMAX, QMIN, QMAX, ANGMAX, ANGMIN,
+%       VMIN, VMAX, RATE_A, PMIN, PMAX, QMIN, QMAX, ANGMAX, ANGMIN
 %   Each of these is itself a struct with the following fields, all of which
 %   are optional:
 %       idx     index of affected buses, branches, or generators
@@ -20,58 +20,60 @@ function mpc = toggle_softlims(mpc, on_off)
 %               not unbounded, except for generators, which also exclude those
 %               used to model dispatchable loads (i.e. isload(gen) is true).
 %       cost    linear marginal cost of exceeding the original limit
-%               Defaults are:
-%                   $100,000 $/pu   for VMAX and VMIN
-%                      $1000 $/MW   for RATE_A, PMAX, and PMIN
-%                      $1000 $/MVAr for QMAX, QMIN
-%                      $1000 $/deg  for ANGMAX, ANGMIN
-%               The final cost is determined by taking the maximum between
-%               the cost above and 2*gen_max_cost, where gen_max_cost is
-%               the maximum generator marginal cost of online generators.
-%
+%               The defaults are set as:
+%                   base_cost x 100 $/pu    for VMAX and VMIN
+%                   base_cost $/MW          for RATE_A, PMAX, and PMIN
+%                   base_cost $/MVAr        for QMAX, QMIN
+%                   base_cost $/deg         for ANGMAX, ANGMIN
+%               where base_cost is the maximum of $1000 and twice the
+%               maximum generator cost of all online generators.
 %       hl_mod  type of modification to hard limit, hl, are:
-%                   'remove'  : unbounded limit
-%                   'replace' : new hard limit specified in hl_val
-%                   'scale'   : new hard limit is hl_val*hl
-%                   'shift'   : new hard limit is hl + sign*hl where sign
-%                               either 1 or -1 depending on the limit
-%                   'none'    : No soft limit for this property
-%       hl_val  Value used in conjuction with hl_mod to modify the
+%                   'none'    : no soft limit for this property (keep original)
+%                   'remove'  : remove hard limit (unbounded)
+%                   'replace' : use new hard limit specified in hl_val
+%                   'scale'   : set new hard limit to hl_val*original_hl
+%                   'shift'   : set hard limit is original_hl + sign*hl_val
+%                               where sign is 1 or -1 depending on limit
+%       hl_val  value used in conjuction with hl_mod to modify the
 %               constraint hard limit. It can be specified as either a
-%               scalar, or a vector that MUST be the same length as idx.
+%               scalar, or a vector that MUST be the same length as idx/busnum.
 %               when...
 %                    hl_mod = 'remove': hl_val is ALWAYS Inf
 %                    hl_mod = 'replace': hl_val MUST be specified.
-%                    hl_mod = 'scale': if hl_val is NOT specified positive
-%                                      limits (as well as QMIN and ANGMIN)
-%                                      are doubled (hl_val = 2) and negative
-%                                      limits are halved (hl_val = 0.5).
-%                    hl_mod = 'shift': If hl_val is NOT specified voltage
-%                                      limits are shifted by 0.25 pu (in
-%                                      appropriate direction) and the rest
-%                                      are shifted by 10.
+%                    hl_mod = 'scale': If hl_val is NOT specified, the
+%                                      default hl_val is set to 2 or 1/2,
+%                                      depending whether the constraint is a
+%                                      lower or an upper bound and whether
+%                                      the constraint value is positive or
+%                                      negative, choosing the one that
+%                                      actually relaxes the constraint.
+%                    hl_mod = 'shift': If hl_val is NOT specified, default
+%                                      is 10, except for voltage constraints
+%                                      for which default is 0.25 pu.
 %
 %       ub      Internally calculated upperbound on the slack variable that
 %               implements the sof limit (handled in the defaults function).
 %
-%       sav     original limits (handled in the defaults function).
-%
-%       rval    value to place in mpc structure to eliminate the original
-%               constraint (handled in the default function).
-%
-%   Defaults are assigned depending on the mpopt.opf.softlims.default
-%   option. If it is 0, any limit not specified in the softlims structrue
-%   is set to hl_mod = 'none' (i.e ignored). If
-%   mpopt.opf.softlims.default = 1 (the default) all limits not included in
-%   the softlims structure are set to hl_mod = 'remove' except:
-%   softlims
+%   For limits that are left unspecified in the structure, the default
+%   behavior is determined by the value of the mpopt.opf.softlims.default
+%   option. If mpopt.opf.softlims.default = 0, then the unspecified softlims
+%   are ignored (hl_mod = 'none', i.e. original hard limits left in place).
+%   If mpopt.opf.softlims.default = 1 (default), then the unspecified
+%   softlims are enabled with default values, which specify to 'remove'
+%   the hard limit, except in the case of VMIN and PMIN, whose defaults
+%   are set as follows:
 %         .VMIN
 %           .hl_mod = 'replace'
 %           .hl_val = 0
 %         .PMIN
 %           .hl_mod = 'replace'
-%           .hl_val = 0    for normal generators (PMIN > 0)
-%           .hl_val = -Inf for for generators with PMIN < 0 AND PMAX > 0
+%           .hl_val = 0     for normal generators (PMIN > 0)
+%           .hl_val = -Inf  for for generators with PMIN < 0 AND PMAX > 0
+%
+%   With mpopt.opf.softlims.default = 0, it is still possible to enable a
+%   softlim with default values by setting that specification to an empty
+%   struct. E.g. mpc.softlims.VMAX = struct() would enable a default
+%   softlim on VMAX.
 %
 %   The 'int2ext' callback also packages up results and stores them in
 %   the following output fields of results.softlims.(prop), where prop is
@@ -81,18 +83,12 @@ function mpc = toggle_softlims(mpc, on_off)
 %
 %   The shadow prices on the soft limit constraints are also returned in the
 %   relevant columns of the respective matrices (MU_SF, MU_ST for RATE_A,
-%   MU_VMAX for VMAX etc.)
+%   MU_VMAX for VMAX, etc.)
 %   Note: These shadow prices are equal to the corresponding hard limit
 %       shadow prices when the soft limits are not violated. When violated,
 %       the shadow price on a soft limit constraint is equal to the
-%       user-specified soft limit violation cost.
-%
-%   If mpopt.opf.softlims.default = 1 (default) the default softlimits are
-%   applied to unspecified limits in the softlims structure. If
-%   mpopt.opf.softlims.default = 0 the unspecified softlims are ignored.
-%   In this case, to initialize the default soft limit a blank structure
-%   should be created. For example, to use the default settings for VMAX
-%   the command, mpc.softlims.VMAX = struct(), should be issued.
+%       user-specified soft limit violation cost + the shadow price on any
+%       binding remaining hard limit.
 %
 %   See also ADD_USERFCN, REMOVE_USERFCN, RUN_USERFCN, T_OPF_SOFTLIMS.
 
