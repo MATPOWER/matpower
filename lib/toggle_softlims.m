@@ -999,7 +999,7 @@ max_gen_cost = max(margcost(mpc.gencost, mpc.gen(:, PMAX)));
 for p = fieldnames(lims).'
     prop = p{:};
     mat  = mpc.order.ext.(lims.(prop));
-    specified = isfield(softlims, prop) && ~isempty(softlims.(prop));
+    specified = isfield(softlims, prop);
     if ~specified && ~use_default
         softlims.(prop).hl_mod = 'none';
     else
