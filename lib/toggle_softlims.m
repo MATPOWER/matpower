@@ -1028,26 +1028,8 @@ for p = fieldnames(lims).'
         default_cost = cost_scale.(prop) * default_base_cost;
 
         %% idx: indices of bounds to relax
-        %% idxfull is the full list of candidate values for idx for given constraint
-        %% type, all are row indices into EXTERNAL matrix, except for bus matrix,
-        %% external bus numbers are used instead of row indices
-        switch prop
-            case {'VMAX', 'VMIN'}
-                %% all buses
-                idxfull = mat(:, BUS_I);
-            case {'ANGMAX', 'ANGMIN'}
-                %% all active branches with meaninful limit (not 0, +360 or -360)
-                idxfull = find(mat(:, BR_STATUS) > 0 & mat(:, eval(prop)) & abs(mat(:, eval(prop))) < 360 );
-            case 'RATE_A'
-                %% all active branches with flow limit (RATE_A not 0)
-                idxfull = find(mat(:, BR_STATUS) > 0 & mat(:, RATE_A) > 0);
-            case {'PMAX', 'QMAX', 'QMIN'}
-                %% all active generators (excluding dispatchable loads) w/finite limits
-                idxfull = find( (mat(:, GEN_STATUS) > 0) & ~isload(mat) & ~isinf(mat(:, eval(prop))) );
-            case 'PMIN'
-                %% all active generators (excluding dispatchable loads)
-                idxfull = find( (mat(:, GEN_STATUS) > 0) & ~isload(mat) );
-        end
+        %% idxfull is full list of candidate index values for given constraint
+        idxfull = softlims_default_idx(mat, prop);
 
         %% check that idx is a scalar or vector
         if isfield(s, 'idx')
@@ -1137,6 +1119,46 @@ for p = fieldnames(lims).'
 end
 
 
+%%-----  softlims_default_idx  --------------------------------------------
+function idx = softlims_default_idx(mat, prop)
+%
+%   idx = softlims_default_idx(mat, prop)
+%
+%   Returns the full IDX vector used as the default for the constraint
+%   specified by prop.
+
+%% define named indices into data matrices
+[PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
+    VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
+[GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
+    MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
+    QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
+[F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
+    TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
+    ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
+
+%% idxfull is the full list of candidate values for idx for given constraint
+%% type, all are row indices into EXTERNAL matrix, except for bus matrix,
+%% external bus numbers are used instead of row indices
+switch prop
+    case {'VMAX', 'VMIN'}
+        %% all buses
+        idx = mat(:, BUS_I);
+    case {'ANGMAX', 'ANGMIN'}
+        %% all active branches with meaninful limit (not 0, +360 or -360)
+        idx = find(mat(:, BR_STATUS) > 0 & mat(:, eval(prop)) & abs(mat(:, eval(prop))) < 360 );
+    case 'RATE_A'
+        %% all active branches with flow limit (RATE_A not 0)
+        idx = find(mat(:, BR_STATUS) > 0 & mat(:, RATE_A) > 0);
+    case {'PMAX', 'QMAX', 'QMIN'}
+        %% all active generators (excluding dispatchable loads) w/finite limits
+        idx = find( (mat(:, GEN_STATUS) > 0) & ~isload(mat) & ~isinf(mat(:, eval(prop))) );
+    case 'PMIN'
+        %% all active generators (excluding dispatchable loads)
+        idx = find( (mat(:, GEN_STATUS) > 0) & ~isload(mat) );
+end
+
+
 %%-----  softlims_init  --------------------------------------------
 function softlims = softlims_init(mpc, mpopt)
 %
@@ -1175,26 +1197,8 @@ for p = fieldnames(lims).'
     mat  = mpc.order.ext.(lims.(prop));
 
     %% idx: indices of bounds to relax
-    %% idxfull is the full list of candidate values for idx for given constraint
-    %% type, all are row indices into EXTERNAL matrix, except for bus matrix,
-    %% external bus numbers are used instead of row indices
-    switch prop
-        case {'VMAX', 'VMIN'}
-            %% all buses
-            idxfull = mat(:, BUS_I);
-        case {'ANGMAX', 'ANGMIN'}
-            %% all active branches with meaninful limit (not 0, +360 or -360)
-            idxfull = find(mat(:, BR_STATUS) > 0 & mat(:, eval(prop)) & abs(mat(:, eval(prop))) < 360 );
-        case 'RATE_A'
-            %% all active branches with flow limit (RATE_A not 0)
-            idxfull = find(mat(:, BR_STATUS) > 0 & mat(:, RATE_A) > 0);
-        case {'PMAX', 'QMAX', 'QMIN'}
-            %% all active generators (excluding dispatchable loads) w/finite limits
-            idxfull = find( (mat(:, GEN_STATUS) > 0) & ~isload(mat) & ~isinf(mat(:, eval(prop))) );
-        case 'PMIN'
-            %% all active generators (excluding dispatchable loads)
-            idxfull = find( (mat(:, GEN_STATUS) > 0) & ~isload(mat) );
-    end
+    %% idxfull is full list of candidate index values for given constraint
+    idxfull = softlims_default_idx(mat, prop);
 
     %% idxmask is a boolean vector the size of s.idx, where
     %% idxmask(i) is 1 if s.idx(i) is in idxfull and 0 otherwise
