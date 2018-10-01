@@ -13,12 +13,16 @@ function mpc = toggle_softlims(mpc, on_off)
 %       VMIN, VMAX, RATE_A, PMIN, PMAX, QMIN, QMAX, ANGMAX, ANGMIN
 %   Each of these is itself a struct with the following fields, all of which
 %   are optional:
-%       idx     index of affected buses, branches, or generators
-%               For buses these are bus numbers. For all others these are
-%               indexes into the respective matrix. The default is to include
-%               all online elements for which the constraint in question is
-%               not unbounded, except for generators, which also exclude those
-%               used to model dispatchable loads (i.e. isload(gen) is true).
+%       idx     index of affected buses, branches, or generators. These are
+%               row indexes into the respective matrices. The default is to
+%               include all online elements for which the constraint in
+%               question is not unbounded, except for generators, which also
+%               exclude those used to model dispatchable loads
+%               (i.e. those for which isload(gen) is true).
+%       busnum  for bus constraints, such as VMIN and VMAX, the affected
+%               buses can be specified by a vector of external bus numbers
+%               in the 'busnum' field instead of bus row indices in the 'idx'
+%               field. If both are present, 'idx' overrides 'busnum'.
 %       cost    linear marginal cost of exceeding the original limit
 %               The defaults are set as:
 %                   base_cost x 100 $/pu    for VMAX and VMIN
@@ -175,9 +179,6 @@ mat2lims = struct(...
 );
 
 %% set up softlims defaults
-if ~isfield(mpc, 'softlims')
-    mpc.softlims = struct();
-end
 mpc.softlims = softlims_defaults(mpc, mpopt);
 
 %% initialize some things
@@ -218,6 +219,8 @@ for m = {'bus', 'branch', 'gen'}
 end
 
 %%-----  remove hard limits on elements with soft limits  -----
+%% Note: any new hard limits will be implemented as upper bounds
+%%       on the soft limit violation variable
 for p = fieldnames(lims).'
     prop = p{:};
     s = softlims.(prop);
@@ -584,19 +587,6 @@ if isOPF
     end
 end
 
-%%-----  swap bus idx vectors  -----
-%% restore softlims.VMIN.idx and softlims.VMAX.idx to external bus numbers
-%% (stored in busnum). Store row indices in rowidx for use by printpf function.
-for p = {'VMAX', 'VMIN'}
-    prop = p{:};
-    s = softlims.(prop);
-    if ~strcmp(s.hl_mod, 'none')
-        results.softlims.(prop).idx = s.busnum;
-        results.softlims.(prop).rowidx = s.idx;
-        results.softlims.(prop) = rmfield(results.softlims.(prop), 'busnum');
-    end
-end
-
 
 %%-----  printpf  ------------------------------------------------------
 function results = userfcn_softlims_printpf(results, fd, mpopt, args)
@@ -643,7 +633,7 @@ if isOPF && (results.success || OUT_FORCE)
         fprintf(fd, '\n================================================================================');
         fprintf(fd, '\n|     Soft Voltage Upper Bounds                                                |');
         fprintf(fd, '\n================================================================================');
-        k = find(s.overload(s.rowidx) | bus(s.rowidx, MU_VMAX) > ptol);
+        k = find(s.overload(s.idx) | bus(s.idx, MU_VMAX) > ptol);
         if isempty(k)
             fprintf(fd,'\nNo violations.\n');
         else
@@ -651,13 +641,13 @@ if isOPF && (results.success || OUT_FORCE)
             fprintf(fd, '\n  #    Mag(pu)   (pu)     (pu)     ($/pu)');
             fprintf(fd, '\n-----  -------  -------  -------  ---------');
             fprintf(fd, '\n%5d%8.3f%9.3f%9.3f%11.3f',...
-                [ s.idx(k), bus(s.rowidx(k),[VM, VMAX]),...
-                  s.overload(s.rowidx(k)), ...
-                  bus(s.rowidx(k), MU_VMAX)...
+                [ bus(s.idx(k), BUS_I), bus(s.idx(k),[VM, VMAX]),...
+                  s.overload(s.idx(k)), ...
+                  bus(s.idx(k), MU_VMAX)...
                 ]');
             fprintf(fd, '\n                        --------');
             fprintf(fd, '\n               Total:%10.2f', ...
-                    sum(s.overload(s.rowidx(k))));
+                    sum(s.overload(s.idx(k))));
             fprintf(fd, '\n');
         end
     end
@@ -666,7 +656,7 @@ if isOPF && (results.success || OUT_FORCE)
         fprintf(fd, '\n================================================================================');
         fprintf(fd, '\n|     Soft Voltage Lower Bounds                                                |');
         fprintf(fd, '\n================================================================================');
-        k = find(s.overload(s.rowidx) | bus(s.rowidx, MU_VMIN) > ptol);
+        k = find(s.overload(s.idx) | bus(s.idx, MU_VMIN) > ptol);
         if isempty(k)
             fprintf(fd,'\nNo violations.\n');
         else
@@ -675,13 +665,13 @@ if isOPF && (results.success || OUT_FORCE)
             fprintf(fd, '\n  #    Mag(pu)   (pu)     (pu)     ($/pu)');
             fprintf(fd, '\n-----  -------  -------  -------  ---------');
             fprintf(fd, '\n%5d%8.3f%9.3f%9.3f%11.3f',...
-                [ s.idx(k), bus(s.rowidx(k),[VM, VMIN]),...
-                  s.overload(s.rowidx(k)), ...
-                  bus(s.rowidx(k), MU_VMIN)...
+                [ bus(s.idx(k), BUS_I), bus(s.idx(k),[VM, VMIN]),...
+                  s.overload(s.idx(k)), ...
+                  bus(s.idx(k), MU_VMIN)...
                 ]');
             fprintf(fd, '\n                        --------');
             fprintf(fd, '\n               Total:%10.2f', ...
-                    sum(s.overload(s.rowidx(k))));
+                    sum(s.overload(s.idx(k))));
             fprintf(fd, '\n');
         end
     end
@@ -891,13 +881,12 @@ function mpc = userfcn_softlims_savecase(mpc, fd, prefix, args)
 lims = softlims_lim2mat();
 
 %% convenience structure for the different fields
-slfieldnames = { 'hl_mod', 'hl_val', 'idx', 'rowidx', 'cost', ...
+slfieldnames = { 'hl_mod', 'hl_val', 'idx', 'busnum', 'cost', ...
     'overload', 'ovl_cost', 'ub' };
 fields = struct( ...
     'hl_mod',   struct('desc', 'type of hard limit modification', 'tok', '%s'),...
     'hl_val',   struct('desc', 'value(s) used to set new hard limit', 'tok', '%g'),...
     'busnum',   struct('desc', 'bus numbers for soft voltage limit', 'tok', '%d'),...
-    'rowidx',   struct('desc', 'bus matrix row indices', 'tok', '%d'),...
     'idx',      struct('desc', '%s matrix row indices', 'tok', '%d'),...
     'cost',     struct('desc', 'violation cost coefficient', 'tok', '%g'),...
     'ub',       struct('desc', 'slack variable upper bound', 'tok', '%g'),...
@@ -984,7 +973,11 @@ function softlims = softlims_defaults(mpc, mpopt)
 
 %% initialization
 lims = softlims_lim2mat();
-softlims = mpc.softlims;
+if isfield(mpc, 'softlims')
+    softlims = mpc.softlims();
+else
+    softlims = struct();
+end
 if isempty(mpopt)
     warning('softlims_defaults: Assuming ''mpopt.opf.softlims.default'' = 1, since mpopt was not provided.');
     use_default = 1;
@@ -1031,6 +1024,13 @@ for p = fieldnames(lims).'
         %% idxfull is full list of candidate index values for given constraint
         idxfull = softlims_default_idx(mat, prop);
 
+        %% convert bus numbers to bus row indexes, if necessary, for VMIN/VMAX
+        if ismember(prop, {'VMAX', 'VMIN'}) && ...
+                    (~isfield(s, 'idx') || isempty(s.idx)) && ...
+                    isfield(s, 'busnum') && ~isempty(s.busnum)
+            s.idx = find(ismember(mat(:, BUS_I), s.busnum));
+        end
+
         %% check that idx is a scalar or vector
         if isfield(s, 'idx')
             if size(s.idx, 2) > 1
@@ -1043,15 +1043,8 @@ for p = fieldnames(lims).'
             s.idx = idxfull;
         end
 
-        %% get row indexes (as opposed to bus numbers) for bus constraints
-        if ismember(prop, {'VMAX', 'VMIN'})
-            s_idx = find(ismember(mat(:,BUS_I), s.idx));
-        else
-            s_idx = s.idx;
-        end
-
         %% if there are no constraints to relax, set hl_mod to 'none' and skip
-        if isempty(s_idx)
+        if isempty(s.idx)
             s.hl_mod = 'none';
             softlims.(prop) = s;
             continue;
@@ -1060,10 +1053,10 @@ for p = fieldnames(lims).'
         %% cost: cost of violating softlim
         if isfield(s, 'cost') && ~isempty(s.cost)
             if isscalar(s.cost)     %% expand to vector if specified as scalar
-                s.cost = s.cost * ones(size(s_idx));
+                s.cost = s.cost * ones(size(s.idx));
             end
         else    %% not specified, use default cost
-            s.cost = default_cost * ones(size(s_idx));
+            s.cost = default_cost * ones(size(s.idx));
         end
 
         %% type of limit
@@ -1080,8 +1073,8 @@ for p = fieldnames(lims).'
                     if ~isfield(s, 'hl_val')
                         % use 2 if ubsign and original constraint have same sign
                         % otherwise use 1/2
-                        orig_lim = mat(s_idx, eval(prop));
-                        s.hl_val = 2 * ones(size(s_idx));   % scale up by 2
+                        orig_lim = mat(s.idx, eval(prop));
+                        s.hl_val = 2 * ones(size(s.idx));   % scale up by 2
                         k = find(ubsign.(prop) * orig_lim < 0); % unless opp. sign
                         s.hl_val(k) = 1/2;                  % then scale down by 2
                     end
@@ -1099,8 +1092,8 @@ for p = fieldnames(lims).'
                     %% for normal gens (PMIN > 0) PMIN is relaxed to 0, not removed
                     %% for gens with negative PMIN, it is relaxed to -Inf
                     s.hl_mod = 'replace';
-                    s.hl_val = zeros(size(s_idx));
-                    s.hl_val(mat(s_idx, PMIN) < 0) = -Inf;
+                    s.hl_val = zeros(size(s.idx));
+                    s.hl_val(mat(s.idx, PMIN) < 0) = -Inf;
                 case 'VMIN'
                     %% VMIN is relaxed to zero, not removed
                     s.hl_mod = 'replace';
@@ -1138,12 +1131,11 @@ function idx = softlims_default_idx(mat, prop)
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 
 %% idxfull is the full list of candidate values for idx for given constraint
-%% type, all are row indices into EXTERNAL matrix, except for bus matrix,
-%% external bus numbers are used instead of row indices
+%% type, all are row indices into EXTERNAL matrix
 switch prop
     case {'VMAX', 'VMIN'}
         %% all buses
-        idx = mat(:, BUS_I);
+        idx = [1:size(mat, 1)]';
     case {'ANGMAX', 'ANGMIN'}
         %% all active branches with meaninful limit (not 0, +360 or -360)
         idx = find(mat(:, BR_STATUS) > 0 & mat(:, eval(prop)) & abs(mat(:, eval(prop))) < 360 );
@@ -1204,14 +1196,6 @@ for p = fieldnames(lims).'
     %% idxmask(i) is 1 if s.idx(i) is in idxfull and 0 otherwise
     idxmask = ismember(s.idx, idxfull);
     s.idx = s.idx(idxmask); %% remove possibly irrelevant entries entered by user
-
-    %% convert bus numbers to row indices for bus constraints
-    if ismember(prop, {'VMAX', 'VMIN'})
-        % External bus numbers are stored in s.busnum and s.idx is rewritten to
-        % include the row indices of those buses.
-        s.busnum = s.idx;
-        s.idx =  find(ismember(mat(:,BUS_I), s.idx));
-    end
 
     %% if there are no constraints to relax, skip
     if isempty(s.idx)
