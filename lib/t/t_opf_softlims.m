@@ -29,7 +29,7 @@ else
     verbose = 0;
 end
 
-t_begin(875, quiet);
+t_begin(864, quiet);
 
 %% define constants
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
@@ -164,12 +164,16 @@ gen_order_check(mpc, r, t)
 t = 'mpopt - opf.softlims.default = 0 (w/RATE_A): ';
 mpc.softlims.RATE_A = struct('hl_mod', 'scale', 'hl_val', 1.5); %initializing an empty strucure results in default
 r = toggle_run_check(mpc, mpopt, t, 1);
+vv = r.om.get_idx();
+[x0, xmin, xmax] = r.om.params_var();
 for prop = fieldnames(r.softlims).'
     if ~strcmp(prop{:}, 'RATE_A')
         t_ok(strcmp(r.softlims.(prop{:}).hl_mod, 'none'), [t prop{:} '.hl_mod = ''none'''])
     else
         t_ok(strcmp(r.softlims.RATE_A.hl_mod,'scale'), [t prop{:} '.hl_mod = ''scale'''])
-        t_is(r.softlims.RATE_A.ub, 0.5*r.branch(r.softlims.RATE_A.idx,RATE_A), 5, [t '.hl_val = 0.5'])
+        varname = ['s_' lower(prop{:})];
+        ub = xmax(vv.i1.(varname):vv.iN.(varname)) * r.baseMVA;
+        t_is(ub, 0.5*r.branch(r.softlims.RATE_A.idx,RATE_A), 5, [t '.hl_val = 0.5'])
     end
 end
 gen_order_check(mpc, r, t)
@@ -181,28 +185,38 @@ mpc = rmfield(mpc,'softlims');
 t = 'mpopt - opf.softlims.default = 1 (all default): ';
 mpc = toggle_softlims(mpc,'on');
 r = toggle_run_check(mpc, mpopt, t, 1);
+vv = r.om.get_idx();
+[x0, xmin, xmax] = r.om.params_var();
 for prop = fieldnames(r.softlims).'
+    varname = ['s_' lower(prop{:})];
+    ub = xmax(vv.i1.(varname):vv.iN.(varname));
+    switch prop{:}
+        case {'RATE_A', 'PMAX', 'PMIN', 'QMAX', 'QMIN'}
+            ub = ub * r.baseMVA;
+        case {'ANGMAX', 'ANGMIN'}
+            ub = ub * 180/pi;
+    end
     switch prop{:}
         case {'PMAX', 'QMAX', 'RATE_A', 'ANGMAX', 'VMAX'}
             % defalt hl_mod = 'remove'
             t_ok(strcmp(r.softlims.(prop{:}).hl_mod,'remove'), [t prop{:} '.hl_mod = ''remove'''])
             t_ok(r.softlims.(prop{:}).hl_val == Inf, [t prop{:} '.hl_val = Inf'])
-            t_ok(all(isinf(r.softlims.(prop{:}).ub)), [t prop{:} ' ub = Inf'])
+            t_ok(all(isinf(ub)), [t prop{:} ' ub = Inf'])
         case {'QMIN', 'ANGMIN'}
             % defalt hl_mod = 'remove'
             t_ok(strcmp(r.softlims.(prop{:}).hl_mod,'remove'), [t prop{:} '.hl_mod = ''remove'''])
             t_ok(r.softlims.(prop{:}).hl_val == -Inf, [t prop{:} '.hl_val = -Inf'])
-            t_ok(all(isinf(r.softlims.(prop{:}).ub)), [t prop{:} ' ub = Inf'])
+            t_ok(all(isinf(ub)), [t prop{:} ' ub = Inf'])
         case 'VMIN'
             % defalt hl_mod = 'replace'
             t_ok(strcmp(r.softlims.(prop{:}).hl_mod,'replace'), [t prop{:} '.hl_mod = ''replace'''])
             t_ok(r.softlims.(prop{:}).hl_val == 0, [t prop{:} '.hl_val = 0'])
-            t_ok(all(r.softlims.(prop{:}).ub == r.bus(:,VMIN)), [t prop{:} ' ub = VMIN'])
+            t_ok(all(ub == r.bus(:,VMIN)), [t prop{:} ' ub = VMIN'])
         case 'PMIN'
             % defalt hl_mod = 'replace'
             t_ok(strcmp(r.softlims.(prop{:}).hl_mod,'replace'), [t prop{:} '.hl_mod = ''replace'''])
             t_ok(all(r.softlims.(prop{:}).hl_val(r.gen(r.softlims.PMIN.idx, PMIN) > 0) == 0), [t prop{:} '.hl_val = 0 (gens)'])
-            t_ok(all(r.softlims.(prop{:}).ub(r.gen(r.softlims.PMIN.idx, PMIN) > 0) == r.gen(r.softlims.PMIN.idx,PMIN)), [t prop{:} ' ub=PMIN (gens)'])
+            t_ok(all(ub(r.gen(r.softlims.PMIN.idx, PMIN) > 0) == r.gen(r.softlims.PMIN.idx,PMIN)), [t prop{:} ' ub=PMIN (gens)'])
     end
 end
 gen_order_check(mpc, r, t)
@@ -485,8 +499,12 @@ t = 'V lims (replace) - softlims w/overloads: ';
 r = toggle_run_check(mpc, mpopt, t, 1);
 overload_loop(r, t, 1, {'VMIN', 'VMAX'})
 overload_loop(r, t, 0, {'VMIN', 'VMAX'})
-t_ok(all(r.softlims.VMIN.ub == (r.bus(r.softlims.VMIN.idx,VMIN) - 0.7)), [t 'VMIN ub = VMIN - 0.7'])
-t_ok(all(r.softlims.VMAX.ub == (1.2 - r.bus(r.softlims.VMAX.idx,VMAX))), [t 'VMIN ub = 1.2 - VMAX'])
+vv = r.om.get_idx();
+[x0, xmin, xmax] = r.om.params_var();
+ub = xmax(vv.i1.s_vmin:vv.iN.s_vmin);
+t_ok(all(ub == (r.bus(r.softlims.VMIN.idx,VMIN) - 0.7)), [t 'VMIN ub = VMIN - 0.7'])
+ub = xmax(vv.i1.s_vmax:vv.iN.s_vmax);
+t_ok(all(ub == (1.2 - r.bus(r.softlims.VMAX.idx,VMAX))), [t 'VMIN ub = 1.2 - VMAX'])
 mu_cost_test(r,t);
 gen_order_check(mpc, r, t)
 
@@ -510,8 +528,12 @@ t = 'V lims (shift) - softlims w/overloads: ';
 r = toggle_run_check(mpc, mpopt, t, 1);
 overload_loop(r, t, 1, {'VMIN', 'VMAX'})
 overload_loop(r, t, 0, {'VMIN', 'VMAX'})
-t_ok(all(r.softlims.VMIN.ub == 0.2), [t 'VMIN ub = shift (0.2)'])
-t_ok(all(r.softlims.VMAX.ub == 0.2), [t 'VMAX ub = shift (0.2)'])
+vv = r.om.get_idx();
+[x0, xmin, xmax] = r.om.params_var();
+ub = xmax(vv.i1.s_vmin:vv.iN.s_vmin);
+t_ok(all(ub == 0.2), [t 'VMIN ub = shift (0.2)'])
+ub = xmax(vv.i1.s_vmax:vv.iN.s_vmax);
+t_ok(all(ub == 0.2), [t 'VMAX ub = shift (0.2)'])
 mu_cost_test(r,t);
 gen_order_check(mpc, r, t)
 %% Tests
@@ -970,6 +992,8 @@ lims = struct(...
     'QMAX', 'gen', ...
     'QMIN', 'gen' ...
 );
+vv = r.om.get_idx();
+[x0, xmin, xmax] = r.om.params_var();
 
 for prop = fieldnames(lims).'
     mat  = lims.(prop{:});
@@ -981,12 +1005,21 @@ for prop = fieldnames(lims).'
     end
     s = r.softlims.(prop{:});
 
+    varname = ['s_' lower(prop{:})];
+    ub = xmax(vv.i1.(varname):vv.iN.(varname));
+    switch prop{:}
+        case {'RATE_A', 'PMAX', 'PMIN', 'QMAX', 'QMIN'}
+            ub = ub * r.baseMVA;
+        case {'ANGMAX', 'ANGMIN'}
+            ub = ub * 180/pi;
+    end
+
     % slack variable is non zero
     mumask1 = s.overload > 1e-6;
     % ensure that overloads are not at the slack variable boundary since
     % then the shadow price can take on any value again.
     mumask2 = true(size(mumask1));
-    mumask2(s.idx) = s.overload(s.idx) < s.ub;
+    mumask2(s.idx) = s.overload(s.idx) < ub;
     
     mumask = mumask1 & mumask2;
     
