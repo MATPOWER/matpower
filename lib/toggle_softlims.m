@@ -182,11 +182,11 @@ mat2lims = struct(...
 mpc.softlims = softlims_defaults(mpc, mpopt);
 
 %% initialize some things
-softlims = softlims_init(mpc, mpopt);
+slims = softlims_init(mpc, mpopt);
 o = mpc.order;
 
 %% save softlims struct with external indexing
-mpc.order.ext.softlims = softlims;
+mpc.order.ext.softlims = slims;
 
 %%-----  convert stuff to internal indexing  -----
 for m = {'bus', 'branch', 'gen'}
@@ -202,7 +202,7 @@ for m = {'bus', 'branch', 'gen'}
     end
     for p = mat2lims.(mat)
         prop = p{:};
-        s = softlims.(prop);
+        s = slims.(prop);
         if ~strcmp( s.hl_mod, 'none')
             s.idx = e2i(s.idx);
             k = find(s.idx == 0);    %% find idxs corresponding to off-line elements
@@ -213,7 +213,7 @@ for m = {'bus', 'branch', 'gen'}
             if isfield(s, 'hl_val') && ~isscalar(s.hl_val)
                 s.hl_val(k)  = [];
             end
-            softlims.(prop) = s;
+            slims.(prop) = s;
         end
     end
 end
@@ -223,15 +223,15 @@ end
 %%       on the soft limit violation variable
 for p = fieldnames(lims).'
     prop = p{:};
-    s = softlims.(prop);
+    s = slims.(prop);
     if ~strcmp(s.hl_mod, 'none')
         mat = lims.(prop);      %% mpc sub matrix
         mpc.(mat)(s.idx, eval(prop)) = s.rval;
     end
 end
 
-mpc.softlims = softlims;
-mpc.order.int.softlims = softlims;
+mpc.softlims = slims;
+mpc.order.int.softlims = slims;
 
 
 %%-----  formulation  --------------------------------------------------
@@ -457,7 +457,7 @@ function results = userfcn_softlims_int2ext(results, mpopt, args)
 lims = softlims_lim2mat();
 
 %% get internal softlims struct and mpopt
-softlims = results.softlims;
+slims = results.softlims;
 isOPF = isfield(results, 'f') && ~isempty(results.f);
 if isOPF
     mpopt = results.om.get_userdata('mpopt');   %% extract and remove mpopt from om
@@ -470,9 +470,9 @@ o = results.order;
 results.softlims = o.ext.softlims;
 
 %%-----  restore hard limits  -----
-for p = fieldnames(softlims).'
+for p = fieldnames(slims).'
     prop = p{:};
-    s = softlims.(prop);
+    s = slims.(prop);
     if strcmp(s.hl_mod, 'none')
         continue;
     end
@@ -481,9 +481,9 @@ for p = fieldnames(softlims).'
 end
 
 %%-----  remove rval, sav and ub fields  -----
-for p = fieldnames(softlims).'
+for p = fieldnames(slims).'
     prop = p{:};
-    if strcmp(softlims.(prop).hl_mod, 'none')
+    if strcmp(slims.(prop).hl_mod, 'none')
         continue;
     end
     results.softlims.(prop) = rmfield(results.softlims.(prop), 'sav');
@@ -495,9 +495,9 @@ end
 %% get overloads and overload costs
 tol = 1e-8;
 if isOPF
-    for p = fieldnames(softlims).'
+    for p = fieldnames(slims).'
         prop = p{:};
-        s = softlims.(prop);
+        s = slims.(prop);
         if strcmp(s.hl_mod, 'none')
             continue;
         end
@@ -542,42 +542,42 @@ if isOPF
     end
 
     %% get shadow prices
-    if ~strcmp(softlims.ANGMAX.hl_mod, 'none')
-        results.branch(softlims.ANGMAX.idx, MU_ANGMAX) = results.lin.mu.u.soft_angmax * pi/180;
+    if ~strcmp(slims.ANGMAX.hl_mod, 'none')
+        results.branch(slims.ANGMAX.idx, MU_ANGMAX) = results.lin.mu.u.soft_angmax * pi/180;
     end
-    if ~strcmp(softlims.ANGMIN.hl_mod, 'none')
-        results.branch(softlims.ANGMIN.idx, MU_ANGMIN) = results.lin.mu.l.soft_angmin * pi/180;
+    if ~strcmp(slims.ANGMIN.hl_mod, 'none')
+        results.branch(slims.ANGMIN.idx, MU_ANGMIN) = results.lin.mu.l.soft_angmin * pi/180;
     end
-    if ~strcmp(softlims.PMAX.hl_mod, 'none')
-        results.gen(softlims.PMAX.idx, MU_PMAX) = results.lin.mu.u.soft_pmax / results.baseMVA;
+    if ~strcmp(slims.PMAX.hl_mod, 'none')
+        results.gen(slims.PMAX.idx, MU_PMAX) = results.lin.mu.u.soft_pmax / results.baseMVA;
     end
-    if ~strcmp(softlims.PMIN.hl_mod, 'none')
-        results.gen(softlims.PMIN.idx, MU_PMIN) = results.lin.mu.l.soft_pmin / results.baseMVA;
+    if ~strcmp(slims.PMIN.hl_mod, 'none')
+        results.gen(slims.PMIN.idx, MU_PMIN) = results.lin.mu.l.soft_pmin / results.baseMVA;
     end
     if isDC
-        if ~strcmp(softlims.RATE_A.hl_mod, 'none')
-            results.branch(softlims.RATE_A.idx, MU_SF) = results.lin.mu.u.softPf / results.baseMVA;
-            results.branch(softlims.RATE_A.idx, MU_ST) = results.lin.mu.u.softPt / results.baseMVA;
+        if ~strcmp(slims.RATE_A.hl_mod, 'none')
+            results.branch(slims.RATE_A.idx, MU_SF) = results.lin.mu.u.softPf / results.baseMVA;
+            results.branch(slims.RATE_A.idx, MU_ST) = results.lin.mu.u.softPt / results.baseMVA;
         end
     else        %% AC model
-        if ~strcmp(softlims.VMAX.hl_mod, 'none')
-            results.bus(softlims.VMAX.idx, MU_VMAX) = results.lin.mu.u.soft_vmax;
+        if ~strcmp(slims.VMAX.hl_mod, 'none')
+            results.bus(slims.VMAX.idx, MU_VMAX) = results.lin.mu.u.soft_vmax;
         end
-        if ~strcmp(softlims.VMIN.hl_mod, 'none')
-            results.bus(softlims.VMIN.idx, MU_VMIN) = results.lin.mu.l.soft_vmin;
+        if ~strcmp(slims.VMIN.hl_mod, 'none')
+            results.bus(slims.VMIN.idx, MU_VMIN) = results.lin.mu.l.soft_vmin;
         end
-        if ~strcmp(softlims.QMAX.hl_mod, 'none')
-            results.gen(softlims.QMAX.idx, MU_QMAX) = results.lin.mu.u.soft_qmax / results.baseMVA;
+        if ~strcmp(slims.QMAX.hl_mod, 'none')
+            results.gen(slims.QMAX.idx, MU_QMAX) = results.lin.mu.u.soft_qmax / results.baseMVA;
         end
-        if ~strcmp(softlims.QMIN.hl_mod, 'none')
-            results.gen(softlims.QMIN.idx, MU_QMIN) = results.lin.mu.l.soft_qmin / results.baseMVA;
+        if ~strcmp(slims.QMIN.hl_mod, 'none')
+            results.gen(slims.QMIN.idx, MU_QMIN) = results.lin.mu.l.soft_qmin / results.baseMVA;
         end
-        if ~strcmp(softlims.RATE_A.hl_mod, 'none')
+        if ~strcmp(slims.RATE_A.hl_mod, 'none')
             if upper(mpopt.opf.flow_lim(1)) == 'P'
-                results.branch(softlims.RATE_A.idx, MU_ST) = results.nli.mu.softSf / results.baseMVA;
-                results.branch(softlims.RATE_A.idx, MU_SF) = results.nli.mu.softSt / results.baseMVA;
+                results.branch(slims.RATE_A.idx, MU_ST) = results.nli.mu.softSf / results.baseMVA;
+                results.branch(slims.RATE_A.idx, MU_SF) = results.nli.mu.softSt / results.baseMVA;
             else
-                s = softlims.RATE_A;
+                s = slims.RATE_A;
                 var = results.softlims.RATE_A.overload(o.branch.status.on(s.idx));
                 %% conversion factor for squared constraints (2*F)
                 cf = 2 * (s.sav + var) / results.baseMVA;
@@ -949,9 +949,9 @@ lim2mat = struct(...
 
 
 %%-----  softlims_defaults  --------------------------------------------
-function softlims = softlims_defaults(mpc, mpopt)
+function slims = softlims_defaults(mpc, mpopt)
 %
-%   softlims = softlims_defaults(mpc, mpopt)
+%   slims = softlims_defaults(mpc, mpopt)
 %
 %   Returns a softlims field for mpc in which any missing inputs have
 %   been filled in with defaults, so that each limit type has the all
@@ -972,9 +972,9 @@ function softlims = softlims_defaults(mpc, mpopt)
 %% initialization
 lims = softlims_lim2mat();
 if isfield(mpc, 'softlims')
-    softlims = mpc.softlims();
+    slims = mpc.softlims();
 else
-    softlims = struct();
+    slims = struct();
 end
 if isempty(mpopt)
     warning('softlims_defaults: Assuming ''mpopt.opf.softlims.default'' = 1, since mpopt was not provided.');
@@ -990,12 +990,12 @@ max_gen_cost = max(margcost(mpc.gencost, mpc.gen(:, PMAX)));
 for p = fieldnames(lims).'
     prop = p{:};
     mat  = mpc.order.ext.(lims.(prop));
-    specified = isfield(softlims, prop);
+    specified = isfield(slims, prop);
     if ~specified && ~use_default
-        softlims.(prop).hl_mod = 'none';
+        slims.(prop).hl_mod = 'none';
     else
         if specified
-            s = softlims.(prop);
+            s = slims.(prop);
 
             %% ignore if hl_mod = 'none'
             if isfield(s, 'hl_mod') && strcmp(s.hl_mod, 'none')
@@ -1044,7 +1044,7 @@ for p = fieldnames(lims).'
         %% if there are no constraints to relax, set hl_mod to 'none' and skip
         if isempty(s.idx)
             s.hl_mod = 'none';
-            softlims.(prop) = s;
+            slims.(prop) = s;
             continue;
         end
 
@@ -1105,7 +1105,7 @@ for p = fieldnames(lims).'
             end
         end
 
-        softlims.(prop) = s;
+        slims.(prop) = s;
     end
 end
 
@@ -1150,9 +1150,9 @@ end
 
 
 %%-----  softlims_init  --------------------------------------------
-function softlims = softlims_init(mpc, mpopt)
+function slims = softlims_init(mpc, mpopt)
 %
-%   softlims = softlims_init(mpc, mpopt)
+%   slims = softlims_init(mpc, mpopt)
 %
 %   Returns a softlims field for mpc in which any missing inputs have
 %   been filled in with defaults, so that each limit type has the all
@@ -1172,12 +1172,12 @@ function softlims = softlims_init(mpc, mpopt)
 
 %% initialization
 lims = softlims_lim2mat();
-softlims = mpc.softlims;
+slims = mpc.softlims;
 
 %% set defaults for each element
 for p = fieldnames(lims).'
     prop = p{:};
-    s = softlims.(prop);
+    s = slims.(prop);
 
     %% ignore if hl_mod = 'none'
     if isfield(s, 'hl_mod') && strcmp(s.hl_mod, 'none')
@@ -1197,7 +1197,7 @@ for p = fieldnames(lims).'
 
     %% if there are no constraints to relax, skip
     if isempty(s.idx)
-        softlims.(prop) = s;
+        slims.(prop) = s;
         continue;
     end
 
@@ -1275,7 +1275,7 @@ for p = fieldnames(lims).'
         otherwise
             error('softlims_init: property %s does not have an ''rval'' assigned', prop);
     end
-    softlims.(prop) = s;
+    slims.(prop) = s;
 end
 
 
