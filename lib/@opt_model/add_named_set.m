@@ -85,7 +85,7 @@ else                %% indexed named set
     om_ff.N  = subsref(om_ff.idx.iN, sn);   %% number of elements of this type
     om_ff.NS = om_ff.NS + 1;                %% number of sets of this type
     om_ff.order(om_ff.NS).name = name;      %% add name to ordered list of sets
-    om_ff.order(om_ff.NS).idx  = idx;       %% add indexes to ordered list of sets
+    om_ff.order(om_ff.NS).idx  = idx;       %% add indices to ordered list of sets
 end
 
 %% add type-specific data for named set

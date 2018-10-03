@@ -76,7 +76,7 @@ fprintf(fd, '%6d, ''%c%c%c%c%c%c%c%c%c%c%c%c'', %9.7g, %d, %4d, %4d, %d, %11.9g,
 fprintf(fd, '0 / END OF BUS DATA, BEGIN LOAD DATA\n');
 
 %% Load Data
-ild = find(mpc.bus(:, PD) ~= 0 | mpc.bus(:, PD) ~= 0);  %% bus indexes of fixed loads
+ild = find(mpc.bus(:, PD) ~= 0 | mpc.bus(:, PD) ~= 0);  %% bus indices of fixed loads
 nld = length(ild);
 if nld
     %%             I, ID,STATUS,AREA,ZONE, PL,   QL,   IP,   IQ,   YP,   YQ,OWNER, SCALE, INTRPT
@@ -86,9 +86,9 @@ if nld
           zeros(nld, 4) ones(nld, 2) zeros(nld, 1) ...
         ]');
 end
-idl = find(isload(mpc.gen));        %% gen indexes of dispatchable loads
+idl = find(isload(mpc.gen));        %% gen indices of dispatchable loads
 ndl = length(idl);
-ib = e2i(mpc.gen(idl, GEN_BUS));    %% bus indexes corresponding to dispatchable loads
+ib = e2i(mpc.gen(idl, GEN_BUS));    %% bus indices corresponding to dispatchable loads
 if ndl
     %%             I, ID,STATUS,AREA,ZONE, PL,   QL,   IP,   IQ,   YP,   YQ,OWNER, SCALE, INTRPT
     fprintf(fd, '%6d, %2d, %d, %4d, %4d, %9.7g, %9.7g, %.9g, %.9g, %.9g, %.9g, %d, %d, %d\n', ...
@@ -111,7 +111,7 @@ end
 fprintf(fd, '0 / END OF FIXED SHUNT DATA, BEGIN GENERATOR DATA\n');
 
 %% Generator Data
-ig = find(~isload(mpc.gen));    %% gen indexes (of real generators)
+ig = find(~isload(mpc.gen));    %% gen indices (of real generators)
 ng = length(ig);
 wind = zeros(ng, 1);
 if isfield(mpc, 'gentype')
@@ -137,7 +137,7 @@ end
 fprintf(fd, '0 / END OF GENERATOR DATA, BEGIN BRANCH DATA\n');
 
 %% Non-Transformer Branch Data
-il = find(mpc.branch(:, TAP) == 0 & mpc.branch(:, SHIFT) == 0);    %% branch indexes (of non-transformers)
+il = find(mpc.branch(:, TAP) == 0 & mpc.branch(:, SHIFT) == 0);    %% branch indices (of non-transformers)
 nl = length(il);
 if nl
     %%             I,   J,CKT,     R,     X,     B,RATEA,RATEB,RATEC,GI,BI,GJ, BJ, ST,MET,LEN, O1, F1,...,             O4, F4
@@ -152,7 +152,7 @@ end
 fprintf(fd, '0 / END OF BRANCH DATA, BEGIN TRANSFORMER DATA\n');
 
 %% Transformer Data
-it = find(mpc.branch(:, TAP) ~= 0 | mpc.branch(:, SHIFT) ~= 0);    %% branch indexes (of transformers)
+it = find(mpc.branch(:, TAP) ~= 0 | mpc.branch(:, SHIFT) ~= 0);    %% branch indices (of transformers)
 nt = length(it);
 if nt
     %%                                                                                                                          R1-2,X1-2,SBASE1-2                                                          WINDV2,NOMV2

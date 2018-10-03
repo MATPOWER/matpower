@@ -11,7 +11,7 @@ function [data, warns] = psse_parse(records, sections, verbose, rev)
 %   Inputs:
 %       RECORDS : cell array of strings, corresponding to the lines
 %                 in the RAW file
-%       SECTIONS : struct array with indexes marking the beginning
+%       SECTIONS : struct array with indices marking the beginning
 %                  and end of each section, and the name of the
 %                  section, fields are:
 %           first   : index into RECORDS of first line of section
@@ -229,7 +229,7 @@ if rev > 27
     nt2 = round((sections(s).last - sections(s).first + 1) / 4);
     nt3 = round((sections(s).last - sections(s).first + 1) / 5);
 
-    %% initialize indexes for transformer types
+    %% initialize indices for transformer types
     idx2 = zeros(nt2, 1);
     idx3 = zeros(nt3, 1);
 

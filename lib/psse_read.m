@@ -5,7 +5,7 @@ function [records, sections] = psse_read(rawfile_name, verbose)
 %
 %   Reads the data from a PSS/E RAW data file into a cell array of
 %   strings, corresponding to the lines/records in the file. It
-%   detects the beginning and ending indexes of each section as well
+%   detects the beginning and ending indices of each section as well
 %   as any Q record used to indicate the end of the data.
 %
 %   Input:

@@ -10,7 +10,7 @@ function [f, df, d2f] = opf_gen_cost_fcn(x, baseMVA, gencost, ig, mpopt)
 %     BASEMVA : system per unit base
 %     GENCOST : standard gencost matrix corresponding to dispatch
 %               (active or reactive) provided in X
-%     IG : vector of generator indexes of interest
+%     IG : vector of generator indices of interest
 %     MPOPT : MATPOWER options struct
 %
 %   Outputs:

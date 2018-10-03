@@ -205,7 +205,7 @@ if nnz(C)
 
         %% handle custom fields
         orderings = {'bus', 'gen', 'branch', 'dcline'};
-        indexes = {b, ig, ibr, idc};
+        indices = {b, ig, ibr, idc};
 
         for n = 1:length(orderings)
             ord = orderings{n};
@@ -233,7 +233,7 @@ if nnz(C)
                             end
                         end
                         if ~skip
-                            mpck{kk} = subsasgn(mpck{kk}, s, get_reorder(subsref(mpck{kk}, s), indexes{n}, dim));
+                            mpck{kk} = subsasgn(mpck{kk}, s, get_reorder(subsref(mpck{kk}, s), indices{n}, dim));
                         end
                     end
                 end

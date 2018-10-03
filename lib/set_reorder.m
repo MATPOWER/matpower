@@ -49,9 +49,9 @@ for k = 1:ndim
         s.subs{k} = idx;
     else
         if sA(k) == sB(k)
-            s.subs{k} = ':';        %% indexes of all elements in this dimension
+            s.subs{k} = ':';        %% indices of all elements in this dimension
         else    %% sA(k) > sB(k)
-            s.subs{k} = (1:sB(k));  %% limit indexes to smaller size of B
+            s.subs{k} = (1:sB(k));  %% limit indices to smaller size of B
         end
     end
 end
