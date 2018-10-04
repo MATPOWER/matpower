@@ -574,15 +574,15 @@ if isOPF
         end
         if ~strcmp(slims.RATE_A.hl_mod, 'none')
             if upper(mpopt.opf.flow_lim(1)) == 'P'
-                results.branch(slims.RATE_A.idx, MU_ST) = results.nli.mu.softSf / results.baseMVA;
-                results.branch(slims.RATE_A.idx, MU_SF) = results.nli.mu.softSt / results.baseMVA;
+                results.branch(slims.RATE_A.idx, MU_SF) = results.nli.mu.softSf / results.baseMVA;
+                results.branch(slims.RATE_A.idx, MU_ST) = results.nli.mu.softSt / results.baseMVA;
             else
                 s = slims.RATE_A;
                 var = results.softlims.RATE_A.overload(o.branch.status.on(s.idx));
                 %% conversion factor for squared constraints (2*F)
                 cf = 2 * (s.sav + var) / results.baseMVA;
-                results.branch(s.idx, MU_ST) = results.nli.mu.softSf .* cf / results.baseMVA;
-                results.branch(s.idx, MU_SF) = results.nli.mu.softSt .* cf / results.baseMVA;
+                results.branch(s.idx, MU_SF) = results.nli.mu.softSf .* cf / results.baseMVA;
+                results.branch(s.idx, MU_ST) = results.nli.mu.softSt .* cf / results.baseMVA;
             end
         end
     end
