@@ -530,50 +530,56 @@ if isOPF
             results.softlims.(prop).overload(o.(mat).status.on(s.idx)) = var;
             results.softlims.(prop).ovl_cost(o.(mat).status.on(s.idx)) = var .* s.cost(:, 1);
         end
-    end
 
-    %% get shadow prices
-    if ~strcmp(slims.ANGMAX.hl_mod, 'none')
-        results.branch(slims.ANGMAX.idx, MU_ANGMAX) = results.lin.mu.u.soft_angmax * pi/180;
-    end
-    if ~strcmp(slims.ANGMIN.hl_mod, 'none')
-        results.branch(slims.ANGMIN.idx, MU_ANGMIN) = results.lin.mu.l.soft_angmin * pi/180;
-    end
-    if ~strcmp(slims.PMAX.hl_mod, 'none')
-        results.gen(slims.PMAX.idx, MU_PMAX) = results.lin.mu.u.soft_pmax / results.baseMVA;
-    end
-    if ~strcmp(slims.PMIN.hl_mod, 'none')
-        results.gen(slims.PMIN.idx, MU_PMIN) = results.lin.mu.l.soft_pmin / results.baseMVA;
-    end
-    if isDC
-        if ~strcmp(slims.RATE_A.hl_mod, 'none')
-            results.branch(slims.RATE_A.idx, MU_SF) = results.lin.mu.u.softPf / results.baseMVA;
-            results.branch(slims.RATE_A.idx, MU_ST) = results.lin.mu.u.softPt / results.baseMVA;
+        cname = ['soft_' lower(prop)];
+        switch prop
+            case {'ANGMAX', 'PMAX', 'VMAX', 'QMAX'}
+                mu = results.lin.mu.u.(cname);
+            case {'ANGMIN', 'PMIN', 'VMIN', 'QMIN'}
+                mu = results.lin.mu.l.(cname);
+            case 'RATE_A'
+                if isDC
+                    muF = results.lin.mu.u.softPf;
+                    muT = results.lin.mu.u.softPt;
+                else
+                    muF = results.nli.mu.softSf;
+                    muT = results.nli.mu.softSt;
+                end
         end
-    else        %% AC model
-        if ~strcmp(slims.VMAX.hl_mod, 'none')
-            results.bus(slims.VMAX.idx, MU_VMAX) = results.lin.mu.u.soft_vmax;
+        switch prop
+            case 'ANGMAX'
+                results.branch(slims.ANGMAX.idx, MU_ANGMAX) = mu * pi/180;
+            case 'ANGMIN'
+                results.branch(slims.ANGMIN.idx, MU_ANGMIN) = mu * pi/180;
+            case 'PMAX'
+                results.gen(slims.PMAX.idx, MU_PMAX) = mu / results.baseMVA;
+            case 'PMIN'
+                results.gen(slims.PMIN.idx, MU_PMIN) = mu / results.baseMVA;
+            case 'RATE_A'
+                results.branch(slims.RATE_A.idx, MU_SF) = muF / results.baseMVA;
+                results.branch(slims.RATE_A.idx, MU_ST) = muT / results.baseMVA;
         end
-        if ~strcmp(slims.VMIN.hl_mod, 'none')
-            results.bus(slims.VMIN.idx, MU_VMIN) = results.lin.mu.l.soft_vmin;
-        end
-        if ~strcmp(slims.QMAX.hl_mod, 'none')
-            results.gen(slims.QMAX.idx, MU_QMAX) = results.lin.mu.u.soft_qmax / results.baseMVA;
-        end
-        if ~strcmp(slims.QMIN.hl_mod, 'none')
-            results.gen(slims.QMIN.idx, MU_QMIN) = results.lin.mu.l.soft_qmin / results.baseMVA;
-        end
-        if ~strcmp(slims.RATE_A.hl_mod, 'none')
-            if upper(mpopt.opf.flow_lim(1)) == 'P'
-                results.branch(slims.RATE_A.idx, MU_SF) = results.nli.mu.softSf / results.baseMVA;
-                results.branch(slims.RATE_A.idx, MU_ST) = results.nli.mu.softSt / results.baseMVA;
-            else
-                s = slims.RATE_A;
-                var = results.softlims.RATE_A.overload(o.branch.status.on(s.idx));
-                %% conversion factor for squared constraints (2*F)
-                cf = 2 * (s.sav + var) / results.baseMVA;
-                results.branch(s.idx, MU_SF) = results.nli.mu.softSf .* cf / results.baseMVA;
-                results.branch(s.idx, MU_ST) = results.nli.mu.softSt .* cf / results.baseMVA;
+        if ~isDC    %% AC
+            switch prop
+                case 'RATE_A'
+                    if upper(mpopt.opf.flow_lim(1)) ~= 'P'
+                        s = slims.RATE_A;
+                        var = results.softlims.RATE_A.overload(o.branch.status.on(s.idx));
+                        %% conversion factor for squared constraints (2*F)
+                        cf = 2 * (s.sav + var) / results.baseMVA;
+                        results.branch(s.idx, MU_SF) = ...
+                            results.branch(s.idx, MU_SF) .* cf;
+                        results.branch(s.idx, MU_ST) = ...
+                            results.branch(s.idx, MU_ST) .* cf;
+                    end
+                case 'VMAX'
+                    results.bus(slims.VMAX.idx, MU_VMAX) = mu;
+                case 'VMIN'
+                    results.bus(slims.VMIN.idx, MU_VMIN) = mu;
+                case 'QMAX'
+                    results.gen(slims.QMAX.idx, MU_QMAX) = mu / results.baseMVA;
+                case 'QMIN'
+                    results.gen(slims.QMIN.idx, MU_QMIN) = mu / results.baseMVA;
             end
         end
     end
