@@ -71,7 +71,7 @@ function mpc = toggle_softlims(mpc, on_off)
 %   softlim on VMAX.
 %
 %   The 'int2ext' callback also packages up results and stores them in
-%   the following output fields of results.softlims.(prop), where prop is
+%   the following output fields of results.softlims.(lim), where lim is
 %   one of the above mentioned limits:
 %       overload - amount of overload, i.e. violation of hard-limit.
 %       ovl_cost - total cost of overload in $/hr
@@ -191,9 +191,9 @@ for m = {'bus', 'branch', 'gen'}
     else
         e2i(o.(mat).status.on) = (1:n)';
     end
-    for p = mat2lims.(mat)
-        prop = p{:};
-        s = slims.(prop);
+    for lm = mat2lims.(mat)
+        lim = lm{:};
+        s = slims.(lim);
         if ~strcmp( s.hl_mod, 'none')
             s.idx = e2i(s.idx);
             k = find(s.idx == 0);    %% find idxs corresponding to off-line elements
@@ -204,7 +204,7 @@ for m = {'bus', 'branch', 'gen'}
             if isfield(s, 'hl_val') && ~isscalar(s.hl_val)
                 s.hl_val(k)  = [];
             end
-            slims.(prop) = s;
+            slims.(lim) = s;
         end
     end
 end
@@ -212,12 +212,12 @@ end
 %%-----  remove hard limits on elements with soft limits  -----
 %% Note: any new hard limits will be implemented as upper bounds
 %%       on the soft limit violation variable
-for p = fieldnames(lims).'
-    prop = p{:};
-    s = slims.(prop);
+for lm = fieldnames(lims).'
+    lim = lm{:};
+    s = slims.(lim);
     if ~strcmp(s.hl_mod, 'none')
-        mat = lims.(prop);      %% mpc sub matrix
-        mpc.(mat)(s.idx, eval(prop)) = s.rval;
+        mat = lims.(lim);      %% mpc sub matrix
+        mpc.(mat)(s.idx, eval(lim)) = s.rval;
     end
 end
 
@@ -250,18 +250,18 @@ ng = size(mpc.gen, 1);
 om.userdata.mpopt = mpopt;
 
 %%-----  add variables, costs, and constraints  -----
-for p = fieldnames(mpc.softlims).'
-    prop = p{:};
-    s = mpc.softlims.(prop);
+for lm = fieldnames(mpc.softlims).'
+    lim = lm{:};
+    s = mpc.softlims.(lim);
     if strcmp(s.hl_mod, 'none')
         continue;
     end
-    varname = ['s_', lower(prop)];
-    cstname = ['cs_', lower(prop)];
+    varname = ['s_', lower(lim)];
+    cstname = ['cs_', lower(lim)];
     ns = length(s.idx);  %% number of softlims
 
     %% variables and costs
-    switch prop
+    switch lim
         case {'VMIN', 'VMAX'}
             ub = s.ub;                      %% bound already in pu
             Cw = s.cost(:, 1);              %% cost already in $/pu
@@ -272,13 +272,13 @@ for p = fieldnames(mpc.softlims).'
             ub = s.ub * pi/180;             %% bound deg -> rad
             Cw = s.cost(:, 1) * 180/pi;     %% cost in $/deg -> $/rad
         otherwise
-            error('userfcn_soflims_formulation: property %s is unknown ', prop)
+            error('userfcn_soflims_formulation: limit %s is unknown ', lim)
     end
     om.add_var(varname, ns, zeros(ns, 1), zeros(ns, 1), ub);
     om.add_quad_cost(cstname, [], Cw, 0, {varname});
 
     %% linear constraints that are identical for DC and AC formulations
-    switch prop
+    switch lim
         case 'ANGMIN'
             %% theta_f - theta_t + s_angmin >= s.sav
             ns = length(s.idx);
@@ -328,19 +328,19 @@ end
 
 %% RATE_A (different for DC and AC) and other AC-only constraints
 isDC = strcmp(mpopt.model, 'DC');
-props = {'RATE_A'};
+lims = {'RATE_A'};
 if ~isDC
-    props = {'VMIN', 'VMAX', 'QMIN', 'QMAX', props{:}};
+    lims = {'VMIN', 'VMAX', 'QMIN', 'QMAX', lims{:}};
 end
-for p = props
-    prop = p{:};
-    s = mpc.softlims.(prop);
+for lm = lims
+    lim = lm{:};
+    s = mpc.softlims.(lim);
     if strcmp(s.hl_mod, 'none') %% skip
         continue;
     end
     ns = length(s.idx);         %% number of softlims
 
-    switch prop
+    switch lim
         case 'RATE_A'
             if isDC
                 %% fetch Bf matrix for DC model
@@ -461,49 +461,49 @@ o = results.order;
 results.softlims = o.ext.softlims;
 
 %%-----  restore hard limits  -----
-for p = fieldnames(slims).'
-    prop = p{:};
-    s = slims.(prop);
+for lm = fieldnames(slims).'
+    lim = lm{:};
+    s = slims.(lim);
     if strcmp(s.hl_mod, 'none')
         continue;
     end
-    mat = lims.(prop);
-    results.(mat)(s.idx, eval(prop)) = s.sav;
+    mat = lims.(lim);
+    results.(mat)(s.idx, eval(lim)) = s.sav;
 end
 
 %%-----  remove rval, sav and ub fields  -----
-for p = fieldnames(slims).'
-    prop = p{:};
-    if strcmp(slims.(prop).hl_mod, 'none')
+for lm = fieldnames(slims).'
+    lim = lm{:};
+    if strcmp(slims.(lim).hl_mod, 'none')
         continue;
     end
-    results.softlims.(prop) = rmfield(results.softlims.(prop), 'sav');
-    results.softlims.(prop) = rmfield(results.softlims.(prop), 'rval');
-    results.softlims.(prop) = rmfield(results.softlims.(prop), 'ub');
+    results.softlims.(lim) = rmfield(results.softlims.(lim), 'sav');
+    results.softlims.(lim) = rmfield(results.softlims.(lim), 'rval');
+    results.softlims.(lim) = rmfield(results.softlims.(lim), 'ub');
 end
 
 %%-----  results post-processing  -----
 %% get overloads and overload costs
 tol = 1e-8;
 if isOPF
-    for p = fieldnames(slims).'
-        prop = p{:};
-        s = slims.(prop);
+    for lm = fieldnames(slims).'
+        lim = lm{:};
+        s = slims.(lim);
         if strcmp(s.hl_mod, 'none')
             continue;
         end
 
-        mat  = lims.(prop);
+        mat  = lims.(lim);
         n0 = size(o.ext.(mat), 1);      %% original number
         n  = size(results.(mat), 1);    %% number on-line
-        results.softlims.(prop).overload = zeros(n0, 1);
-        results.softlims.(prop).ovl_cost = zeros(n0, 1);
-        varname = ['s_', lower(prop)];  %% variable name
+        results.softlims.(lim).overload = zeros(n0, 1);
+        results.softlims.(lim).ovl_cost = zeros(n0, 1);
+        varname = ['s_', lower(lim)];  %% variable name
         if isfield(results.var.val, varname)
             var = results.var.val.(varname);    %% violation in p.u.
             var(var < tol) = 0;                 %% zero out violations < tol
         end
-        switch prop
+        switch lim
             case {'VMIN', 'VMAX'}               %% p.u. (no change)
                 if isDC
                     continue;
@@ -518,21 +518,21 @@ if isOPF
             case {'ANGMIN', 'ANGMAX'}           %% rad -> deg
                 var = var * 180/pi;
             otherwise
-                error('userfcn_soflims_formulation: property %s is unknown ', prop)
+                error('userfcn_soflims_formulation: limit %s is unknown ', lim)
         end
 
         %% NOTE: o.(mat).status.on is a vector nx1 where n is the INTERNAL number of
         %% elements. The entries are the EXTERNAL locations (row numbers).
         if strcmp(mat, 'gen')
-            results.softlims.(prop).overload(o.gen.status.on(o.gen.i2e(s.idx))) = var;
-            results.softlims.(prop).ovl_cost(o.gen.status.on(o.gen.i2e(s.idx))) = var .* s.cost(:, 1);
+            results.softlims.(lim).overload(o.gen.status.on(o.gen.i2e(s.idx))) = var;
+            results.softlims.(lim).ovl_cost(o.gen.status.on(o.gen.i2e(s.idx))) = var .* s.cost(:, 1);
         else
-            results.softlims.(prop).overload(o.(mat).status.on(s.idx)) = var;
-            results.softlims.(prop).ovl_cost(o.(mat).status.on(s.idx)) = var .* s.cost(:, 1);
+            results.softlims.(lim).overload(o.(mat).status.on(s.idx)) = var;
+            results.softlims.(lim).ovl_cost(o.(mat).status.on(s.idx)) = var .* s.cost(:, 1);
         end
 
-        cname = ['soft_' lower(prop)];
-        switch prop
+        cname = ['soft_' lower(lim)];
+        switch lim
             case {'ANGMAX', 'PMAX', 'VMAX', 'QMAX'}
                 mu = results.lin.mu.u.(cname);
             case {'ANGMIN', 'PMIN', 'VMIN', 'QMIN'}
@@ -546,7 +546,7 @@ if isOPF
                     muT = results.nli.mu.softSt;
                 end
         end
-        switch prop
+        switch lim
             case 'ANGMAX'
                 results.branch(slims.ANGMAX.idx, MU_ANGMAX) = mu * pi/180;
             case 'ANGMIN'
@@ -560,7 +560,7 @@ if isOPF
                 results.branch(slims.RATE_A.idx, MU_ST) = muT / results.baseMVA;
         end
         if ~isDC    %% AC
-            switch prop
+            switch lim
                 case 'RATE_A'
                     if upper(mpopt.opf.flow_lim(1)) ~= 'P'
                         s = slims.RATE_A;
@@ -893,32 +893,32 @@ fields = struct( ...
 
 if isfield(mpc, 'softlims')
     fprintf(fd, '\n%%%%-----  OPF Soft Limit Data  -----%%%%\n');
-    props = fieldnames(lims).';
-    for p = props
-        prop = p{:};
-        s = mpc.softlims.(prop);
-        if ~strcmp(prop, props{1})
+    limits = fieldnames(lims).';
+    for lm = limits
+        lim = lm{:};
+        s = mpc.softlims.(lim);
+        if ~strcmp(lim, limits{1})
             fprintf(fd, '\n');
         end
-        fprintf(fd,'%%%% %s soft limit data\n', prop);
+        fprintf(fd,'%%%% %s soft limit data\n', lim);
         for f = slfieldnames
             f = f{1};
             if isfield(s, f)
                 if strcmp(f, 'idx')
-                    if ismember(prop, {'VMIN', 'VMAX'})
+                    if ismember(lim, {'VMIN', 'VMAX'})
                         desc = fields.busnum.desc;
                     else
-                        desc = sprintf(fields.idx.desc, lims.(prop));
+                        desc = sprintf(fields.idx.desc, lims.(lim));
                     end
                 else
                     desc = fields.(f).desc;
                 end
                 if strcmp(f, 'hl_mod')
-                    str = sprintf('%ssoftlims.%s.hl_mod = ''%s'';', prefix, prop, s.hl_mod);
+                    str = sprintf('%ssoftlims.%s.hl_mod = ''%s'';', prefix, lim, s.hl_mod);
                     pad = repmat(' ', 1, 40-length(str));
                     fprintf(fd, '%s%s%%%% %s\n', str, pad, desc);
                 else
-                    str = sprintf('%ssoftlims.%s.%s = [', prefix, prop, f);
+                    str = sprintf('%ssoftlims.%s.%s = [', prefix, lim, f);
                     pad = repmat(' ', 1, 40-length(str));
                     fprintf(fd, '%s%s%%%% %s\n', str, pad, desc);
                     fprintf(fd, ['\t', fields.(f).tok, ';\n'], s.(f));
@@ -984,15 +984,15 @@ end
 max_gen_cost = max(margcost(mpc.gencost, mpc.gen(:, PMAX)));
 
 %% set defaults for each element
-for p = fieldnames(lims).'
-    prop = p{:};
-    mat  = mpc.order.ext.(lims.(prop));
-    specified = isfield(slims, prop);
+for lm = fieldnames(lims).'
+    lim = lm{:};
+    mat  = mpc.order.ext.(lims.(lim));
+    specified = isfield(slims, lim);
     if ~specified && ~use_default
-        slims.(prop).hl_mod = 'none';
+        slims.(lim).hl_mod = 'none';
     else
         if specified
-            s = slims.(prop);
+            s = slims.(lim);
 
             %% ignore if hl_mod = 'none'
             if isfield(s, 'hl_mod') && strcmp(s.hl_mod, 'none')
@@ -1013,14 +1013,14 @@ for p = fieldnames(lims).'
             'RATE_A', 1, ...                %% $/MW
             'PMIN', 1, 'PMAX', 1, ...       %% $/MW
             'QMIN', 1, 'QMAX', 1 );         %% $/MVar
-        default_cost = cost_scale.(prop) * default_base_cost;
+        default_cost = cost_scale.(lim) * default_base_cost;
 
         %% idx: indices of bounds to relax
         %% idxfull is full list of candidate index values for given constraint
-        idxfull = softlims_default_idx(mat, prop);
+        idxfull = softlims_default_idx(mat, lim);
 
         %% convert bus numbers to bus row indices, if necessary, for VMIN/VMAX
-        if ismember(prop, {'VMAX', 'VMIN'}) && ...
+        if ismember(lim, {'VMAX', 'VMIN'}) && ...
                     (~isfield(s, 'idx') || isempty(s.idx)) && ...
                     isfield(s, 'busnum') && ~isempty(s.busnum)
             s.idx = find(ismember(mat(:, BUS_I), s.busnum));
@@ -1031,7 +1031,7 @@ for p = fieldnames(lims).'
             if size(s.idx, 2) > 1
                 s.idx = s.idx.';        %% make row vector into column vector
                 if size(s.idx, 2) > 1
-                    error('softlim_defaults: mpc.softlims.%s.idx must be a scalar or vector', prop);
+                    error('softlim_defaults: mpc.softlims.%s.idx must be a scalar or vector', lim);
                 end
             end
         else    %% set default value for s.idx to full set of constraints
@@ -1041,7 +1041,7 @@ for p = fieldnames(lims).'
         %% if there are no constraints to relax, set hl_mod to 'none' and skip
         if isempty(s.idx)
             s.hl_mod = 'none';
-            slims.(prop) = s;
+            slims.(lim) = s;
             continue;
         end
 
@@ -1066,23 +1066,23 @@ for p = fieldnames(lims).'
                 case 'remove'   %% new hard limit is infinite (hl_val unused)
                 case 'scale'    %% new hard limit is original limit * hl_val
                     if ~isfield(s, 'hl_val')
-                        % use 2 if ubsign and original constraint have same sign
-                        % otherwise use 1/2
-                        orig_lim = mat(s.idx, eval(prop));
-                        s.hl_val = 2 * ones(size(s.idx));   % scale up by 2
-                        k = find(ubsign.(prop) * orig_lim < 0); % unless opp. sign
-                        s.hl_val(k) = 1/2;                  % then scale down by 2
+                        %% use 2 if ubsign and original constraint have
+                        %% same sign, otherwise use 1/2
+                        orig_lim = mat(s.idx, eval(lim));
+                        s.hl_val = 2 * ones(size(s.idx));   %% scale up by 2
+                        k = find(ubsign.(lim) * orig_lim < 0);  %% unless opp. sign
+                        s.hl_val(k) = 1/2;                  %% then scale down by 2
                     end
                 case 'shift'    %% new hard limit is original limit + ubsign * hl_val
                     if ~isfield(s, 'hl_val')
-                        s.hl_val = shift_defaults.(prop);
+                        s.hl_val = shift_defaults.(lim);
                     end
                 case 'replace'  %% new hard limit is hl_val (no default value)
                 otherwise
                     error('softlims_element_defaults: unknown hard limit modification %s', s.hl_mod);
             end
         else                    %% use default soft limits
-            switch prop
+            switch lim
                 case 'PMIN'
                     %% for normal gens (PMIN > 0) PMIN is relaxed to 0, not removed
                     %% for gens with negative PMIN, it is relaxed to -Inf
@@ -1102,18 +1102,18 @@ for p = fieldnames(lims).'
             end
         end
 
-        slims.(prop) = s;
+        slims.(lim) = s;
     end
 end
 
 
 %%-----  softlims_default_idx  --------------------------------------------
-function idx = softlims_default_idx(mat, prop)
+function idx = softlims_default_idx(mat, lim)
 %
-%   idx = softlims_default_idx(mat, prop)
+%   idx = softlims_default_idx(mat, lim)
 %
 %   Returns the full IDX vector used as the default for the constraint
-%   specified by prop.
+%   specified by lim.
 
 %% define named indices into data matrices
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
@@ -1127,19 +1127,19 @@ function idx = softlims_default_idx(mat, prop)
 
 %% idxfull is the full list of candidate values for idx for given constraint
 %% type, all are row indices into EXTERNAL matrix
-switch prop
+switch lim
     case {'VMAX', 'VMIN'}
         %% all buses
         idx = [1:size(mat, 1)]';
     case {'ANGMAX', 'ANGMIN'}
         %% all active branches with meaninful limit (not 0, +360 or -360)
-        idx = find(mat(:, BR_STATUS) > 0 & mat(:, eval(prop)) & abs(mat(:, eval(prop))) < 360 );
+        idx = find(mat(:, BR_STATUS) > 0 & mat(:, eval(lim)) & abs(mat(:, eval(lim))) < 360 );
     case 'RATE_A'
         %% all active branches with flow limit (RATE_A not 0)
         idx = find(mat(:, BR_STATUS) > 0 & mat(:, RATE_A) > 0);
     case {'PMAX', 'QMAX', 'QMIN'}
         %% all active generators (excluding dispatchable loads) w/finite limits
-        idx = find( (mat(:, GEN_STATUS) > 0) & ~isload(mat) & ~isinf(mat(:, eval(prop))) );
+        idx = find( (mat(:, GEN_STATUS) > 0) & ~isload(mat) & ~isinf(mat(:, eval(lim))) );
     case 'PMIN'
         %% all active generators (excluding dispatchable loads)
         idx = find( (mat(:, GEN_STATUS) > 0) & ~isload(mat) );
@@ -1172,20 +1172,20 @@ lims = softlims_lim2mat();
 slims = mpc.softlims;
 
 %% set defaults for each element
-for p = fieldnames(lims).'
-    prop = p{:};
-    s = slims.(prop);
+for lm = fieldnames(lims).'
+    lim = lm{:};
+    s = slims.(lim);
 
     %% ignore if hl_mod = 'none'
     if isfield(s, 'hl_mod') && strcmp(s.hl_mod, 'none')
         continue;
     end
 
-    mat  = mpc.order.ext.(lims.(prop));
+    mat  = mpc.order.ext.(lims.(lim));
 
     %% idx: indices of bounds to relax
     %% idxfull is full list of candidate index values for given constraint
-    idxfull = softlims_default_idx(mat, prop);
+    idxfull = softlims_default_idx(mat, lim);
 
     %% idxmask is a boolean vector the size of s.idx, where
     %% idxmask(i) is 1 if s.idx(i) is in idxfull and 0 otherwise
@@ -1194,19 +1194,19 @@ for p = fieldnames(lims).'
 
     %% if there are no constraints to relax, skip
     if isempty(s.idx)
-        slims.(prop) = s;
+        slims.(lim) = s;
         continue;
     end
 
     %% save original bounds in s.sav
-    s.sav = mat(s.idx, eval(prop));
+    s.sav = mat(s.idx, eval(lim));
 
     %% cost: cost of violating softlim
     %% filter cost to include only valid constraints
     try
         s.cost = s.cost(idxmask);
     catch ME
-        warning('softlims_init: something went wrong when handling the cost for property %s. Perhaps the size of the ''cost'' vector didn''t match the size of the ''idx'' vector?', prop);
+        warning('softlims_init: something went wrong when handling the cost for limit %s. Perhaps the size of the ''cost'' vector didn''t match the size of the ''idx'' vector?', lim);
         rethrow(ME);
     end
 
@@ -1243,7 +1243,7 @@ for p = fieldnames(lims).'
 
                 %% check that all ub are non negative
                 if any(s.ub < 0)
-                    error('softlims_init: some soft limit for %s has a negative upper bound. There is most likely a problem in the specification of hl_val.', prop);
+                    error('softlims_init: some soft limit for %s has a negative upper bound. There is most likely a problem in the specification of hl_val.', lim);
                 end
             case 'replace'
                 %% new limit = hl_val
@@ -1262,7 +1262,7 @@ for p = fieldnames(lims).'
     end
 
     %% rval: replacement value used to eliminate original hard constraint
-    switch prop
+    switch lim
         case {'ANGMAX', 'ANGMIN', 'RATE_A'}
             s.rval = 0;
         case {'VMAX', 'PMAX', 'QMAX'}
@@ -1270,9 +1270,9 @@ for p = fieldnames(lims).'
         case {'QMIN', 'PMIN','VMIN'}
             s.rval = -Inf;
         otherwise
-            error('softlims_init: property %s does not have an ''rval'' assigned', prop);
+            error('softlims_init: limit %s does not have an ''rval'' assigned', lim);
     end
-    slims.(prop) = s;
+    slims.(lim) = s;
 end
 
 
