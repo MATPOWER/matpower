@@ -2365,7 +2365,7 @@ name & default & description \\
 0 & include angle difference limits, if specified \\
 1 & ignore angle difference limits even if specified \\
 \end{tabular}	\\
-\code{opf.softlims.default}	& 1	& default behavior of implicit soft limits,  where parameters are not explicitly provided	\\
+\code{opf.softlims.default}	& 1	& behavior of OPF soft limits for which parameters are not explicitly provided	\\
 && \begin{tabular}{r @{ -- } p{0.48\textwidth}}
 0 & do \emph{not} include softlims if not explicitly specified  \\
 1 & include softlims with default values if not explicitly specified \\
@@ -3203,41 +3203,40 @@ results = runopf(mpc);
 \subsubsection{OPF Soft Limits}
 \label{sec:softlims}
 
-\matpower{} includes an extension that replaces different limits (such as branch flow limits, voltage magnitudes, generator limits, etc.)  in an optimal power flow with soft limits, that is, limits that can be violated with some linear penalty cost.
+\matpower{} includes an extension that replaces limits (such as branch flow limits, voltage magnitude bounds, generator limits, etc.)  in an optimal power flow with soft limits, that is, limits that can be violated with some linear penalty cost.
 This can be useful in identifying the cause of infeasibility in some optimal power flow problems.
-The extension is implemented in \code{toggle\_softlims}.
+The extension is implemented in \code{toggle\_softlims}. A limited version for branch flow constraints in a DC model only, was introduced in \matpower{}~5.0, with a generalization to all of the standard OPF limits added in \matpower{}~\hl{6.1}. The soft AC branch flow limit implemention provides an example of user-defined nonlinear constraints.
 
-In general, a soft limit takes a constraint of the form,
+In general, replacing a hard constraint of the form
 \begin{equation}
-	h^i(x) - h^{i,\text{max}} \leq 0,
+	h^i(x) \leq 0  \label{eq:softlims_hard} \\
 \end{equation}
-And ``relaxes'' it by adding a non-negative slack variable $s^i$ to the right hand side:
+with a soft limit involves introducing a new non-negative variable $s_i$ to represent the violation of the original constraint. The original hard constraint \eqref{eq:softlims_hard} is replaced by one in which this violation variable is used to ``relax'' the constraint by adding it to the right-hand.
 \begin{align}
-	s^i &\geq 0 && \forall{i}  \label{eq:softlims_infbound}\\
-	h^i(x) -  h^{i,\text{max}}&\leq s^i && \forall{i}.
+	s^i &\geq 0  \label{eq:softlims_infbound} \\
+	h^i(x) &\leq s^i.
 \end{align}
-Finally, a simple linear cost coefficient, $c^i$, is applied to each slack variable $s^i$, so that the additional user defined cost term from \eqref{eq:quad_cost} looks like
+Finally, a penalty cost on violations is implemented via a linear cost coefficient, $c_\mathrm{v}^i$, applied to each violation variable $s^i$, so that the additional user defined cost term from \eqref{eq:quad_cost} for the set of soft limits looks like
 \begin{equation}
-f_u(\hat{x}) = \trans{c} s.
+f_u(\hat{x}) = \trans{c_\mathrm{v}} s.
 \label{eq:softlims_cost}
 \end{equation}
 
-Take as an example branch flow limits.
-The flow constraints in \eqref{eq:acopf_ieqf} and \eqref{eq:acopf_ieqt} are rewritten by replacing the right hand side with a flow violation variable $s_{\code{rate\_a}}^i$:
+Take, as an example, branch flow limits.
+The flow constraints in \eqref{eq:acopf_ieqf} and \eqref{eq:acopf_ieqt} are rewritten by replacing the right hand side with a flow violation variable $s_{\code{rate\_a}}^i$
 \begin{align}
- s_{\code{rate\_a}}^i &\ge 0 && \forall{i}\\
-h_f^i(\Theta, V_m) = \left| f_f^i(\Theta, V_m) \right| - f_\mathrm{max}^i &\le s_{\code{rate\_a}}^i && \forall{i} \\
-h_t^i(\Theta, V_m) = \left| f_t^i(\Theta, V_m) \right| - f_\mathrm{max}^i &\le s_{\code{rate\_a}}^i && \forall{i}.
+ s_{\code{rate\_a}}^i &\ge 0 \qquad\qquad \forall{i}\\
+h_f^i(\Theta, V_m) = \left| f_f^i(\Theta, V_m) \right| - f^{i,\mathrm{max}} &\le s_{\code{rate\_a}}^i \qquad \forall{i} \\
+h_t^i(\Theta, V_m) = \left| f_t^i(\Theta, V_m) \right| - f^{i,\mathrm{max}} &\le s_{\code{rate\_a}}^i \qquad \forall{i}.
 \end{align}
 
-In the case of AC flow constraints, the flow functions $f_f^i$ and $f_t^i$ are nonlinear and can be either apparent power, active power, or current as shown in \eqref{eq:flowlimoptions}. In the case of DC flow constraints, where there are no losses, these flows can be implemented in terms of the flow at the \emph{from} end of the line and its negative, both linear functions of the bus voltage angles, based on \eqref{eq:dcopf_ieqf} and \eqref{eq:dcopf_ieqt}:
+In the case of AC flow constraints, the flow functions $f_f^i$ and $f_t^i$ are nonlinear and can be either apparent power, active power, or current as shown in \eqref{eq:flowlimoptions}. In the case of DC flow constraints, where there are no losses, these flows can be implemented in terms of the flow at the \emph{from} end of the line and its negative, both linear functions of the bus voltage angles, based on \eqref{eq:dcopf_ieqf} and \eqref{eq:dcopf_ieqt}.
 \begin{align}
-s_{\code{rate\_a}}^i &\ge 0 && \forall{i}\\
-B_f^i \Theta + p_{f,\mathrm{shift}}^i -  p_f^{i,\mathrm{max}} &\le s_{\code{rate\_a}}^i && \forall{i}  \\
--B_f^i \Theta - p_{f,\mathrm{shift}}^i -  p_f^{i,\mathrm{max}} &\le s_{\code{rate\_a}}^i && \forall{i}. \label{eq:softlimconstraint}
+s_{\code{rate\_a}}^i &\ge 0 \qquad\qquad \forall{i}\\
+B_f^i \Theta + p_{f,\mathrm{shift}}^i -  p_f^{i,\mathrm{max}} &\le s_{\code{rate\_a}}^i \qquad \forall{i}  \\
+-B_f^i \Theta - p_{f,\mathrm{shift}}^i -  p_f^{i,\mathrm{max}} &\le s_{\code{rate\_a}}^i \qquad \forall{i}. \label{eq:softlimconstraint}
 \end{align}
-The new feasible area is illustrated in \figurename~\ref{fig:softlims}.
-Formulations for each of the relaxations implemented are summarized in Table~\ref{tab:softlimsformulation}.
+The feasible area for the DC case is illustrated in \figurename~\ref{fig:softlims}.
 
 \begin{figure}[!th]
   \centering
@@ -3246,6 +3245,7 @@ Formulations for each of the relaxations implemented are summarized in Table~\re
   \label{fig:softlims}
 \end{figure}
 
+\matpower{} implements soft limits for each of the types of constraints listed in Table~\ref{tab:softlimsformulation}, where the formulation for each constraint type is shown.
 
 \begin{table}[!ht]
 \centering
@@ -3253,18 +3253,18 @@ Formulations for each of the relaxations implemented are summarized in Table~\re
 \caption{Soft Limit Formulation}
 \label{tab:softlimsformulation}
 \footnotesize
-\begin{tabular}{l p{0.35\textwidth} p{0.5\textwidth}}
+% \begin{tabular}{l p{0.3\textwidth} p{0.4\textwidth}}
+\begin{tabular}{lll}
 \toprule
 name & hard-limit formulation & soft-limit formulation \\ 
 \midrule
-\code{VMIN}\tnote{\dag}, \code{VMAX}\tnote{\dag} & $v^i_m \geq v^{i,\text{min}}_m $,\quad $v^i_m \leq v^{i,\text{max}}_m$ & $v^i_m + s^i_{\code{vmin}} \geq v^{i,\text{min}}_m$,\quad $v^i_m - s^i_{\code{vmax}} \leq v^{i,\text{max}}_m$ \\
+\code{VMIN}, \code{VMAX}\tnote{\dag} & $v^i_m \geq v^{i,\text{min}}_m $,\quad $v^i_m \leq v^{i,\text{max}}_m$ & $v^i_m + s^i_{\code{vmin}} \geq v^{i,\text{min}}_m$,\quad $v^i_m - s^i_{\code{vmax}} \leq v^{i,\text{max}}_m$ \\
 %\code{VMAX}\tnote{\dag} &$v^i_m \leq v^{i,\text{max}}_m$ & $v^i_m - s^i_{\code{vmax}} \leq v^{i,\text{max}}_m$ \\
-\code{RATE\_A}\tnote{\ddag} & %
-$\left| f_f^i(\Theta, V_m) \right|  \le f^i_{\text{max}}$ \newline $\left| f_t^i(\Theta, V_m) \right|  \le f^i_{\text{max}}$ &%
-$\left| f_f^i(\Theta, V_m) \right| - s_{\code{rate\_a}} \le f^i_{\text{max}}$ \newline $\left| f_t^i(\Theta, V_m) \right| - s_{\code{rate\_a}} \le f^i_{\text{max}}$ \\
+\code{RATE\_A}\tnote{\ddag} & $\left| f_f^i(\Theta, V_m) \right|  \le f^i_{\text{max}}$ & $\left| f_f^i(\Theta, V_m) \right| - s_{\code{rate\_a}} \le f^i_{\text{max}}$ \\
+& $\left| f_t^i(\Theta, V_m) \right|  \le f^i_{\text{max}}$ & $\left| f_t^i(\Theta, V_m) \right| - s_{\code{rate\_a}} \le f^i_{\text{max}}$ \\
 \code{PMIN}, \code{PMAX} & $p^i_g \geq p^{i,\text{min}}_g$,\quad $p^i_g \leq p^{i,\text{max}}_g$ & $p^i_g + s_{\code{pmin}} \geq p^{i,\text{min}}_g$,\quad $p^i_g - s_{\code{pmax}} \leq p^{i,\text{max}}_g$  \\
 %\code{PMAX} & $p^i_g \leq p^{i,\text{max}}_g$ &  $p^i_g - s_{\code{pmax}} \leq p^{i,\text{max}}_g$  \\
-\code{QMIN}\tnote{\dag}, \code{QMAX}\tnote{\dag} & $q^i_g \geq q^{i,\text{min}}_g$, \quad $q^i_g \leq q^{i,\text{max}}_g$ &  $q^i_g + s_{\code{qmin}} \geq q^{i,\text{min}}_g$, \quad $q^i_g - s_{\code{qmax}} \leq q^{i,\text{max}}_g$ \\
+\code{QMIN}, \code{QMAX}\tnote{\dag} & $q^i_g \geq q^{i,\text{min}}_g$, \quad $q^i_g \leq q^{i,\text{max}}_g$ &  $q^i_g + s_{\code{qmin}} \geq q^{i,\text{min}}_g$, \quad $q^i_g - s_{\code{qmax}} \leq q^{i,\text{max}}_g$ \\
 %\code{QMAX}\tnote{\dag} & $q^i_g \leq q^{i,\text{max}}_g$ &  $q^i_g - s_{\code{qmax}} \leq q^{i,\text{max}}_g$  \\
 \code{ANGMIN} & $\theta^i_f - \theta^i_t \geq \Delta\theta^{i,\text{min}}$ & $\theta^i_f - \theta^i_t + s_{\code{angmin}} \geq \Delta\theta^{i,\text{min}}$  \\
 \code{ANGMAX} & $\theta^i_f - \theta^i_t \leq \Delta\theta^{i,\text{max}}$ & $\theta^i_f - \theta^i_t - s_{\code{angmax}} \leq \Delta\theta^{i,\text{max}}$  \\
@@ -3278,103 +3278,51 @@ $\left| f_f^i(\Theta, V_m) \right| - s_{\code{rate\_a}} \le f^i_{\text{max}}$ \n
 \end{threeparttable}
 \end{table}
 
-The data for the problem is specified in an additional \code{softlims} field in the \matpower{} case struct \mpc{}.
-This field is itself a struct with fields corresponding to the names of the different limits listed in Table~\ref{tab:softlimsformulation}.
-Each limit is also a structure, with fields described in Table~\ref{tab:softlimsstruct}.
+The parameters for the problem are specified in an additional \code{softlims} field in the \matpower{} case struct \mpc{}.
+This field is itself a struct where each sub-field corresponds to the name of one of the limits listed in Table~\ref{tab:softlimsformulation}.
+For each of the limits, the input parameters are specified in the fields detailed in Table~\ref{tab:softlimsinput}, with defaults summarized in Table~\ref{tab:softlimsdefaults}.
 
 \begin{table}[!ht]
 \centering
 \begin{threeparttable}
-\caption{Fields for Each Soft Limit in the \code{softlims} Struct}
-\label{tab:softlimsstruct}
+\caption{Input Data Structures for OPF Soft Limits}
+\label{tab:softlimsinput}
 \footnotesize
 \begin{tabular}{lp{0.8\textwidth}}
 \toprule
 name & description \\
 \midrule
-\code{idx} & $n_{\text{sl}}\times 1$ vector of indices where soft limits are to be applied. For \branch{} and \gen{} matrix properties, these are row numbers. %
-		For \bus{} matrix properties, these are \emph{external bus numbers} on input.
-		If empty, a default set specified in Table~\ref{tab:softlimsdefaults} is used. \\
-\code{cost} & $n_{\text{sl}}\times 1$ vector of linear cost coefficients. Alternatively, the \code{cost} can be specified as a scalar. If not specified, default values in Table~\ref{tab:softlimsdefaults} are used, where the appropriate units can also be found. \\
-\code{hl\_mod} & Type of modification to hard limit. If \codeq{none}, no soft limit is applied. The other options are explained in Table~\ref{tab:hlmod}. If not specified, defaults in Table~\ref{tab:softlimsdefaults}  are used. \\%
-\code{hl\_val} & Value used to modify the hard limit according to \code{hl\_mod} (See Table~\ref{tab:hlmod}). The following defaults are used if \code{hl\_val} is not specified and \code{hl\_mod} is:
-\begin{tabular}{c @{ -- } l}
-\codeq{remove} & \code{hl\_val}  is \emph{always} $\infty$ \\
-\codeq{replace} & Error is thrown, \code{hl\_val} \emph{must} be provided \\
-\codeq{scale}     & $\code{hl\_val}= \begin{cases} 0.5 & \text{for limits \code{VMIN} and \code{PMIN}} \\  2 & \text{otherwise} \end{cases}$ \\
-\codeq{shift}	 &  $\code{hl\_val}=\begin{cases} 0.25& \text{for \code{VMAX} and \code{VMIN}} \\ 10 & \text{otherwise} \end{cases}$. \\
-\end{tabular}\\
-%\code{ub}\tnote{\dag}  & $n_{\text{sl}} \times 1$ vector of slack variable upper bounds (see Table~\ref{tab:hlmod}).\\
-%\code{sav}\tnote{\dag} &$n_{\text{sl}} \times 1$ saved hard limit value. \\
-%\code{rval}\tnote{\dag} & Value used to replace limit in the appropriate \bus{}, \branch{}, or \gen{} matrix, in order to ``deactivate'' the original constraint.
-%
-%\begin{tabular}{r  l}
-%\code{rval} & applied to limit\dots \\ \cmidrule(lr){1-1}  \cmidrule(lr){2-2}
-%$0$		& \code{RATE\_A}, \code{ANGMAX},  \code{ANGMIN} \\
-%$\infty$	& \code{VMAX}, \code{PMAX}, \code{QMAX} \\
-%$-\infty$	& \code{QMIN},  \code{VMIN}, \code{PMIN} \\
-%\end{tabular} \\
-\code{overload}\tnote{\ddag} & $n_{b,l,g} \times 1$ vector of overloads for each bus, branch, or generator depending on the property. \\
-\code{ov\_cost}\tnote{\ddag} & $n_{b,l,g} \times 1$ vector of overload penalty costs  for each bus, branch, or generator depending on the property. \\
+\mpc{} & \matpower{} case struct \\
+\code{~~softlims} & additional field in \mpc{} containing OPF soft limit input parameters for the possible limits, each of which is optional.\tnote{*} \\
+\code{~~~~<LIM>} & \code{<LIM>} refers to the name of the limit, i.e. one of the following: \code{ANGMIN}, \code{ANGMAX}, \code{RATE\_A}, \code{PMIN}, \code{PMAX}, \code{QMIN}, \code{QMAX}, \code{VMIN}, \code{VMAX}. Each of these is a struct with input parameters defining the soft limits for this type of constraint in the following optional fields (see Table~\ref{tab:softlimsdefaults} for defaults): \\
+\code{~~~~~~idx} & $n_\mathrm{sl} \times 1$ vector of row indices for \bus{}, \branch{} or \gen{} matrix, depending on \code{<LIM>}, specifying the elements for which corresponding soft limits are to be applied\tnote{\dag} \\
+\code{~~~~~~busnum}\tnote{\ddag} & $n_\mathrm{sl} \times 1$ vector of \emph{external} bus numbers specifying the buses to which soft limits are to be applied\tnote{\dag} \\
+\code{~~~~~~cost} & scalar or $n_\mathrm{sl} \times 1$ vector $c_\mathrm{v}$ of linear cost coefficients for limit violation costs \\
+\code{~~~~~~hl\_mod}\tnote{\S} & string indicating type of modification to original hard limit: \\
+& ~~\begin{tabular}{l @{ -- } p{0.65\textwidth}}
+\codeq{none} & do \emph{not} add soft limit, no change to original hard limit \\
+\codeq{remove} & add soft limit, relax hard limit by removing it completely \\
+\codeq{replace} & add soft limit, relax hard limit by replacing original with value specified in \code{hl\_val} \\
+\codeq{scale} & add soft limit, relax hard limit by scaling original by value specified in \code{hl\_val} \\
+\codeq{shift} & add soft limit, relax hard limit by shifting original by value specified in \code{hl\_val} \\
+\end{tabular} \\
+\code{~~~~~~hl\_val}\tnote{\S} & scalar or $n_\mathrm{sl} \times 1$ vector value used to modify hard limit according to \code{hl\_mod}. Ignored for \codeq{none} and \codeq{remove}, required for \codeq{replace}, and optional, with the following defaults, for \codeq{scale} and \codeq{shift}: \\
+& ~~\begin{tabular}{l @{ -- } p{0.65\textwidth}}
+\codeq{scale} & 2 for positive upper limits or negative lower limits, 0.5 otherwise \\
+\codeq{shift} &  0.25 for \code{VMAX} and \code{VMIN}, 10 otherwise \\
+\end{tabular} \\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
-% \item [\dag] {Not a user input. Created automatically in the \code{ext2int} callback.} 
- \item [\ddag] {Added to the \code{results} structure on the output of the OPF.}
+ \item [*] {For fields not present, the value of the \codeq{opf.softlims.defaults} option determines whether the corresponding limit is unchanged (= 0) or converted (= 1, default) to a soft limit using default values from Table~\ref{tab:softlimsdefaults}.} 
+ \item [\dag] {For bus constraints, \code{idx} overrides \code{busnum} if both are provided.} 
+ \item [\ddag] {Only applicable for bus constraints, i.e. \code{<LIM>} is \code{VMIN} or \code{VMAX}.} 
+ \item [\S] {Any new, relaxed hard limits are implemented via bounds on the violation variables. See Table~\ref{tab:hlmod} for details.}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
-The old hard limit, $h^{i,\text{max}}_{\text{old}}$, in \eqref{eq:softlims_infbound}  is removed and replaced with a new ``hard limit'', $h^{i,\text{max}}_{\text{new}}$, at infinity.
- A few different ways of modifying the old hard limit are implemented in the \code{toggle\_softlims} function.
-This behavior is based on fields \code{hl\_mod} (for `hard limit modification') and \code{hl\_val} (for `hard limit value') in the respective limit structures.
-The value of $h^{i,\text{max}}_{\text{new}}$ also determines an upper bound on slack variable $s$.
-This upper bound must be non-negative, and an error is returned if this is violated. 
-Table~\ref{tab:hlmod} summarized the possible modifications and the new limits they impose based on \code{hl\_val}.
-
-\begin{table}[!ht]
-\centering
-\begin{threeparttable}
-\caption{Possible Hard-Limit Modifications}
-\label{tab:hlmod}
-\footnotesize
-\begin{tabular}{l l l}
-\toprule
-\code{h\_mod} & new hard limit & upper bound on slack variable \\
-\midrule
-\codeq{remove} & $c\tnote{\dag}\cdot\infty$ 		& $\infty$ \\
-\codeq{replace} & $\code{hl\_val}$       							& $ c\tnote{\dag}\cdot(\code{hl\_val} -  f^{i,\text{max}}_{\text{old}} )$ \\
-\codeq{scale}    & $\code{hl\_val}\cdot f^{i,\text{max}}_{\text{old}}	$	& $ c\tnote{\dag}\cdot(\code{hl\_val} - 1)f^{i,\text{max}}_{\text{old}}$ \\
-\codeq{shift}	&$f^{i,\text{max}}_{\text{old}} +  c\tnote{\dag}\cdot\code{hl\_val}$ &  $\code{hl\_val}$ \\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
- \scriptsize
- \item [\dag] {For \code{VMIN}, \code{PMIN}, \code{QMIN}, and \code{ANGMIN}  $c=-1$. For all other limits $c=1$.} 
- \end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-
-
-The Kuhn-Tucker multipliers on the soft limit constraints are also added to the results structure's appropriate matrix, e.g. \code{bus(:, MU\_VMAX)} or \code{branch(:, MU\_SF)}.
-When there are no violations, these shadow prices are the same as if hard limits were imposed.
-When there is a violation, they are equal to the  cost associated with the slack variable.
-An exception can occur if \code{hl\_mode} enforces a new, non-infinite, hard limit (possible with \codeq{replace}, \codeq{scale} and \codeq{shift}).
-As shown in Table~\ref{tab:hlmod}, in these cases a non-infinite upper bound is placed on the slack variable.
-If this constraint becomes binding, the shadow-price is free and may not reflect the cost associated with the soft limit.
-
-Default values, listed in Table~\ref{tab:softlimsdefaults}, are accessed in a couple different ways, depending on the \matpower{} options structure, \code{mpopt}. 
-The \code{mpopt.opf.softlims.default} field (see Table~\ref{tab:opfoptions2}) indicates how to handle unspecified limits.
-\begin{itemize}
-	\item When \code{mpopt.opf.softlims.default = 1} (default), each limit not explicitly specified in the \code{softlims} struct will be initialized as in Table~\ref{tab:softlimsdefaults}. 
-	\item When \code{mpopt.opf.softlims.default = 0}, limits not explicitly specified are initialized with \code{type = }\codeq{none}. The default settings can still be accessed by initializing an empty structure for the desired soft limit.%
-	For example, to get the default \code{RATE\_A} soft limit, first issue the command:
-\begin{Code}
-mpc.softlims.RATE_A = struct();
-\end{Code}
-\end{itemize}
 
 \begin{table}[!ht]
 \centering
@@ -3386,56 +3334,140 @@ mpc.softlims.RATE_A = struct();
 \toprule
 name & description \\
 \midrule
-\code{VMIN}, & Soft limit on minimum voltage bound \\
-\code{~~~~idx}		& All buses \\
-\code{~~~~cost}\tnote{\dag}	&  \$100,000/p.u. \\
+\code{VMIN} & voltage magnitude lower bound \\
+\code{~~~~idx}		& all buses \\
+\code{~~~~cost}	&  \$100,000/p.u.\tnote{\dag} \\
 \code{~~~~hl\_mod}	& \codeq{replace} \\
 \code{~~~~hl\_val}	& 0 \\
 %
-\code{VMAX} 		& Soft limit on maximum voltage bound \\
-\code{~~~~idx}		& All buses \\
-\code{~~~~cost}\tnote{\dag}	&  \$100,000/p.u. \\
+\code{VMAX} 		& voltage magnitude upper bound \\
+\code{~~~~idx}		& all buses \\
+\code{~~~~cost}	&  \$100,000/p.u.\tnote{\dag} \\
 \code{~~~~hl\_mod}	& \codeq{remove} \\
 %
-\code{RATE\_A} 	& Soft limit on branch flow limit \\
-\code{~~~~idx}		& All on-line branches with bounded flow limits  \\
-\code{~~~~cost}\tnote{\dag}	&  \$1000/MVA. \\
+\code{RATE\_A} 	& branch flow limit \\
+\code{~~~~idx}		& all on-line branches with bounded flow limits  \\
+\code{~~~~cost}	&  \$1000/MVA, \$1000/MW, or \$1000/MA\tnote{\dag} ~depending on \codeq{opf.flow\_lim} \\
 \code{~~~~hl\_mod}	& \codeq{remove} \\
 %
-\code{PMIN} 	 	& Soft limit on generator minimum real power generation \\
-\code{~~~~idx}		& All on-line and non-dispachable load (\code{\~isload(gen)}) generators \\
-\code{~~~~cost}\tnote{\dag}	&  \$1000/MW. \\
+\code{PMIN} 	 	& generator active power lower bound \\
+\code{~~~~idx}		& all on-line generators, excluding dispatchable loads \\
+\code{~~~~cost}	&  \$1000/MW\tnote{\dag} \\
 \code{~~~~hl\_mod}	& \codeq{replace} \\
-\code{~~~~hl\_val}	& $\begin{cases} 0 & P^{i,\text{min}}_g \geq 0\\ -\infty & \text{otherwise} \end{cases}$ \\
+\code{~~~~hl\_val}	& 0 if $P^{i,\text{min}}_g \geq 0$, $-\infty$ otherwise \\
 %
-\code{PMAX}, \code{QMIN}, \code{QMAX} 	 	& Soft limit on generator maximum real power generation \\
-\code{~~~~idx}		& All on-line generators and non-dispachable load (\code{\~isload(gen)}) generators \\
-\code{~~~~cost}\tnote{\dag}	& \$1000/MW or \$1000/MVAr. \\
+\code{PMAX}, \code{QMIN}, \code{QMAX} 	 	& generator active power upper bound, reactive power lower/upper bounds \\
+\code{~~~~idx}		& all on-line generators, excluding dispatchable loads \\
+\code{~~~~cost}	& \$1000/MW or \$1000/MVAr\tnote{\dag} \\
 \code{~~~~hl\_mod}	& \codeq{remove} \\
 %
-\code{ANGMIN}, \code{ANGMAX}   	& Soft limit on branch minimum/maximum angle difference \\
-\code{~~~~idx}		& All on-line branches with angle limits, $\Delta\theta$, where $|\Delta\theta| < 360^{\circ}$  \\
-\code{~~~~cost}\tnote{\dag}	&  \$1000/deg. \\
+\code{ANGMIN}, \code{ANGMAX}   	& branch angle difference lower/upper bounds \\
+\code{~~~~idx}		& all on-line branches with angle difference limits, $\Delta\theta$, where $|\Delta\theta| < 360^{\circ}$  \\
+\code{~~~~cost}	&  \$1000/deg\tnote{\dag} \\
 \code{~~~~hl\_mod}	& \codeq{remove} \\
 %
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {The final default cost is \code{max(default\_cost, 2*scale*max\_gen\_cost)}, \\ where \code{max\_gen\_cost = max(margcost(mpc.gencost, mpc.gen(:, PMAX)))} and \code{scale} is 100 for \code{VMAX} and \code{VMIN} and 1 otherwise.}
+ \item [\dag] {Unless the maximum marginal cost at $P^\mathrm{max}$ across all online generators, which we call $c_g^\mathrm{max}$, exceeds \$1000/MWh, in which case the numerical value of the default cost is $c_g^\mathrm{max}$ instead of 1000 (or $100 \cdot c_g^\mathrm{max}$ instead of 100,000, for \code{VMIN} or \code{VMAX}).}
  \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
+Depending on whether the original constraint in \eqref{eq:softlims_infbound} is an upper bound or a lower bound, it can be written as one of the following
+\begin{equation}
+h^i(x) = \left\{
+\begin{aligned}
+\; \bar{h}^i(x) - h^{i,\mathrm{lim}} & \qquad \text{(upper bound)} \\
+\; h^{i,\mathrm{lim}} - \bar{h}^i(x) & \qquad \text{(lower bound)}
+\end{aligned}
+\right.
+\end{equation}
+where $h^{i,\mathrm{lim}}$ is the actual value of the hard limit.
+When introducing a soft limit, this original hard limit can be removed completely or modified to have a new value.
+\matpower{} provides a several ways of modifying the original hard limit based on fields \code{hl\_mod} (``hard limit modification'') and \code{hl\_val} (``hard limit value'') in the respective limit structures. This new hard limit is implemented via an upper bound on the corresponding violation variable $s^i$.
+Table~\ref{tab:hlmod} summarizes the new hard limits and the corresponding bounds on the violation variable as functions of the values of \code{hl\_mod} and \code{hl\_val}.
 
-See \code{help toggle\_softlims} for more information. Examples of using this extension can be found in \code{t\_opf\_softlims}.
-Running a case that includes the interface flow limits is as simple as loading the case, turning on the extension and running it. Unlike with the reserves extension, \matpower{} does not currently have a wrapper function to automate this.
+\begin{table}[!ht]
+\centering
+\begin{threeparttable}
+\caption{Possible Hard-Limit Modifications}
+\label{tab:hlmod}
+\footnotesize
+\begin{tabular}{l c c}
+\toprule
+\code{h\_mod} & new hard limit $h_\mathrm{new}^{i,\mathrm{lim}}$ & upper bound on violation variable $s^i$ \\
+\midrule
+\codeq{remove} & $\pm\infty$\tnote{\dag} & $\infty$ \\
+\codeq{replace} & $\code{hl\_val}$       & $ \left|\code{hl\_val} -  h_\mathrm{orig}^{i,\mathrm{lim}}\right|$ \\
+\codeq{scale}    & $\code{hl\_val}\cdot h_\mathrm{orig}^{i,\mathrm{lim}}$	& $\left|(\code{hl\_val} - 1) \cdot h_\mathrm{orig}^{i,\mathrm{lim}}\right|$ \\
+\codeq{shift}	&$h_\mathrm{orig}^{i,\mathrm{lim}} \pm \code{hl\_val}$\tnote{\dag} &  $\code{hl\_val}$ \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [\dag] {Plus sign for upper bounds and minus sign for lower bounds.}
+ \end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+Unspecified limits in the \code{mpc.softlims} input parameters are handled differently, depending on the value of the \matpower{} option \codeq{opf.softlims.default} (see Table~\ref{tab:opfoptions2}). 
+
+\begin{itemize}
+	\item If the \code{opf.softlims.default} option is 1 (default), each limit not explicitly specified, whether missing in \code{mpc.softlims} or present but empty, will be initialized as in Table~\ref{tab:softlimsdefaults}. 
+	\item If the \code{opf.softlims.default} option is 0, limits that are missing in \code{mpc.softlims} are treated as though specified with \code{hl\_mod} = \codeq{none}, that is, they are not converted to soft limits at all. On the other hand, the default soft limits of Table~\ref{tab:softlimsdefaults} are still applied to any limit that is present in \code{mpc.softlims} but empty.
+	For example, \code{mpc.softlims.RATE\_A = struct()} would result in the default soft branch limits being applied.
+\end{itemize}
+
+Soft limit outputs, summarized in Table~\ref{tab:softlimsoutput}, include the amount and cost of any overloads, that is, violations of the original hard limits. These can be found as additional fields, \code{overload} and \code{ov\_cost}, under each limit in \code{results.softlims}. The Kuhn-Tucker multipliers on the soft limit constraints are also included in the usual columns of the corresponding matrix in the \results{}, e.g. \code{bus(:, MU\_VMAX)}, \code{branch(:, MU\_SF)}, etc.
+When there are no violations, these shadow prices are the same as if hard limits were imposed.
+When there is a violation, they are equal to the cost $c_\mathrm{v}$ associated with the violation variable, except in the case where a modified hard limit is also binding, in which case it also reflects the shadow price on this modified hard constraint.
+
+\begin{table}[!ht]
+\centering
+\begin{threeparttable}
+\caption{Output Data Structures for OPF Soft Limits}
+\label{tab:softlimsoutput}
+\footnotesize
+\begin{tabular}{lp{0.68\textwidth}}
+\toprule
+name & description \\
+\midrule
+\results{} & \matpower{} case struct \\
+\code{~~softlims} & additional field in \results{} containing OPF soft limit outputs for each limit type \\
+\code{~~~~<LIM>} & \code{<LIM>} refers to the name of the limit, i.e. one of the following: \code{ANGMIN}, \code{ANGMAX}, \code{RATE\_A}, \code{PMIN}, \code{PMAX}, \code{QMIN}, \code{QMAX}, \code{VMIN}, \code{VMAX}. Each of these is a struct with the following output fields: \\
+\code{~~~~~~overload}\tnote{\dag} & $n_{b/l/g} \times 1$ vector of overload quantities for this limit (amount of original hard limit violation) \\
+\code{~~~~~~ov\_cost}\tnote{\dag} & $n_{b/l/g} \times 1$ vector of overload penalty costs for this limit \\
+\code{~~branch(:, MU\_ANGMIN)} & Kuhn-Tucker multipliers on angle difference lower bounds\tnote{\ddag} \\
+\code{~~branch(:, MU\_ANGMAX)} & Kuhn-Tucker multipliers on angle difference upper bounds\tnote{\ddag} \\
+\code{~~branch(:, MU\_SF)} & Kuhn-Tucker multipliers on branch flow limits (\emph{from} end)\tnote{\ddag} \\
+\code{~~branch(:, MU\_ST)} & Kuhn-Tucker multipliers on branch flow limits (\emph{to} end)\tnote{\ddag} \\
+\code{~~gen(:, MU\_PMIN)} & Kuhn-Tucker multipliers on active gen lower bounds\tnote{\ddag} \\
+\code{~~gen(:, MU\_PMAX)} & Kuhn-Tucker multipliers on active gen upper bounds\tnote{\ddag} \\
+\code{~~gen(:, MU\_QMIN)} & Kuhn-Tucker multipliers on reactive gen lower bounds\tnote{\ddag} \\
+\code{~~gen(:, MU\_QMAX)} & Kuhn-Tucker multipliers on reactive gen upper bounds\tnote{\ddag} \\
+\code{~~bus(:, MU\_VMIN)} & Kuhn-Tucker multipliers on voltage magnitude lower bounds\tnote{\ddag} \\
+\code{~~bus(:, MU\_VMAX)} & Kuhn-Tucker multipliers on voltage magnitude upper bounds\tnote{\ddag} \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [\dag] {The dimensions of \code{overload} and \code{ov\_cost} correspond to all buses, branches or generators (depending on \code{<LIM>}), not just those whose limits were converted to soft limits. Entries corresponding to those not included (implicitly or explicitly) in \code{idx} are set to zero.}
+ \item [\dag] {For limits that have been converted to soft limits, these are the shadow prices on the soft limit constraints. When there is no violation of the soft limit, this shadow price is the same as it would be for the original hard limit. When there is a violation, it is equal to the corresponding user-supplied violation cost $c_\mathrm{v}^i$, unless an updated hard constraint is also binding.}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\vbox{
+See \code{help toggle\_softlims} for more information on this extension. Examples of using this extension can be found in \code{t\_opf\_softlims}.
+Running a case that includes the default soft limits is as simple as loading the case, turning on the extension and running it. Unlike with the reserves extension, \matpower{} does not currently have a wrapper function to automate this.
 \begin{Code}
 mpc = loadcase('case2383wp');
 mpc = toggle_softlims(mpc, 'on');
-results = rundcopf(mpc, mpopt);
+results = runopf(mpc, mpopt);
 \end{Code}
-
+}
 
 %%------------------------------------------
 \clearpage

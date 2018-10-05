@@ -149,7 +149,7 @@ t = 'generator ordering: ';
 mpc = toggle_softlims(mpc,'on');
 r = toggle_run_check(mpc,mpopt, t, 1);
 gen_order_check(mpc, r, t)
-%% opf.softlims.default = 0
+% opf.softlims.default = 0
 mpopt.opf.softlims.default = 0;
 mpc = mpc0;
 mpc = rmfield(mpc,'softlims');
@@ -202,22 +202,22 @@ for p = fieldnames(r.softlims).'
     end
     switch prop
         case {'PMAX', 'QMAX', 'RATE_A', 'ANGMAX', 'VMAX'}
-            % defalt hl_mod = 'remove'
+            %% default hl_mod = 'remove'
             t_ok(strcmp(r.softlims.(prop).hl_mod,'remove'), [t prop '.hl_mod = ''remove'''])
             t_ok(r.softlims.(prop).hl_val == Inf, [t prop '.hl_val = Inf'])
             t_ok(all(isinf(ub)), [t prop ' ub = Inf'])
         case {'QMIN', 'ANGMIN'}
-            % defalt hl_mod = 'remove'
+            %% default hl_mod = 'remove'
             t_ok(strcmp(r.softlims.(prop).hl_mod,'remove'), [t prop '.hl_mod = ''remove'''])
             t_ok(r.softlims.(prop).hl_val == -Inf, [t prop '.hl_val = -Inf'])
             t_ok(all(isinf(ub)), [t prop ' ub = Inf'])
         case 'VMIN'
-            % defalt hl_mod = 'replace'
+            %% default hl_mod = 'replace'
             t_ok(strcmp(r.softlims.(prop).hl_mod,'replace'), [t prop '.hl_mod = ''replace'''])
             t_ok(r.softlims.(prop).hl_val == 0, [t prop '.hl_val = 0'])
             t_ok(all(ub == r.bus(:,VMIN)), [t prop ' ub = VMIN'])
         case 'PMIN'
-            % defalt hl_mod = 'replace'
+            %% default hl_mod = 'replace'
             t_ok(strcmp(r.softlims.(prop).hl_mod,'replace'), [t prop '.hl_mod = ''replace'''])
             t_ok(all(r.softlims.(prop).hl_val(r.gen(r.softlims.PMIN.idx, PMIN) > 0) == 0), [t prop '.hl_val = 0 (gens)'])
             t_ok(all(ub(r.gen(r.softlims.PMIN.idx, PMIN) > 0) == r.gen(r.softlims.PMIN.idx,PMIN)), [t prop ' ub=PMIN (gens)'])
@@ -275,7 +275,7 @@ t_is(r.gen(:,MU_QMAX), zeros(4,1), 4, [t 'mu QMAX'])
 t_is(r.gen(:,MU_QMIN), zeros(4,1), 4, [t 'mu QMIN'])
 gen_order_check(mpc, r, t)
 
-%%% tighten limits to get violations
+%% tighten limits to get violations
 t = 'Defaults - softlims w/overloads: ';
 mpc = mpc0;
 mpc.softlims = sdefault;
@@ -390,7 +390,7 @@ mpc.softlims.RATE_A.hl_mod = 'none';
 r = rundcopf(mpc, mpopt);
 t_ok(r.success, [t 'success']);
 
-%%% tighten limits to get violations
+%% tighten limits to get violations
 t = 'DC - softlims with overloads: ';
 mpc = mpc0;
 mpc.softlims = sdefault;
@@ -418,7 +418,6 @@ t_ok(r.success, [t 'success']);
 overload_loop(r, t, 1);
 mu_cost_test(r,t);
 gen_order_check(mpc, r, t)
-%% voltage magnitude slack
 
 t = 'printpf - DC';
 [fd, msg] = fopen(tmp_fname_dc, 'at');
@@ -546,7 +545,7 @@ t_ok(all(ub == 0.2), [t 'VMAX ub = shift (0.2)'])
 mu_cost_test(r,t);
 gen_order_check(mpc, r, t)
 %% Tests
-%% the following all all the test from the original softlims implementation
+%% the following are all the test from the original softlims implementation
 %% that only included RATE_A. The only changes are adaptations to the
 %% changed data structure.
 mpc = mpc0;
@@ -981,10 +980,10 @@ t_ok(r.success, [t 'success']);
 function mu_cost_test(r,t)
 %% Tests whether the shadow price on violations matches the respective
 %% softlim cost. The shadow price should equal the softlim cost when the
-%% slack variable is used but the constraint is not binding. i.e. there is
-%% a non-zero overload but the slack variable is not at its own limit.
+%% violation variable is used but the constraint is not binding. i.e. there is
+%% a non-zero overload but the violation variable is not at its own limit.
 %% the function therefore searches for any non-zero overload (mumask1)
-%% that is also below the slack variables upper bound stored in s.ub
+%% that is also below the violation variables upper bound stored in s.ub
 %% (mumask2). The cost of these variables is compared to the respective
 %% shadow prices.
 
@@ -1032,16 +1031,16 @@ for p = fieldnames(lims).'
             ub = ub * 180/pi;
     end
 
-    % slack variable is non zero
+    %% violation variable is non zero
     mumask1 = s.overload > 1e-6;
-    % ensure that overloads are not at the slack variable boundary since
-    % then the shadow price can take on any value again.
+    %% ensure that overloads are not at the violation variable boundary since
+    %% then the shadow price can take on any value again.
     mumask2 = true(size(mumask1));
     mumask2(s.idx) = s.overload(s.idx) < ub;
     
     mumask = mumask1 & mumask2;
     
-    % linear cost
+    %% linear cost
     cst = zeros(size(mumask1));
     cst(s.idx) = s.cost;
     cst = cst(mumask); %keep only relevant entries
@@ -1057,10 +1056,10 @@ for p = fieldnames(lims).'
 end
 
 function gen_order_check(mpc, r, t)
-%%% Make sure the ordering of generators in input case and result 
-%%% case is the same. Also make sure that any overloads are correctly
-%%% reflected in the difference between the generation value and
-%%% the respective limit
+%% Make sure the ordering of generators in input case and result 
+%% case is the same. Also make sure that any overloads are correctly
+%% reflected in the difference between the generation value and
+%% the respective limit
 
 [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
     MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...

@@ -14,7 +14,7 @@ function mpc = toggle_softlims(mpc, on_off)
 %   Each of these is itself a struct with the following fields, all of which
 %   are optional:
 %       idx     index of affected buses, branches, or generators. These are
-%               row indexes into the respective matrices. The default is to
+%               row indices into the respective matrices. The default is to
 %               include all online elements for which the constraint in
 %               question is not unbounded, except for generators, which also
 %               exclude those used to model dispatchable loads
@@ -31,32 +31,23 @@ function mpc = toggle_softlims(mpc, on_off)
 %                   base_cost $/deg         for ANGMAX, ANGMIN
 %               where base_cost is the maximum of $1000 and twice the
 %               maximum generator cost of all online generators.
-%       hl_mod  type of modification to hard limit, hl, are:
-%                   'none'    : no soft limit for this property (keep original)
-%                   'remove'  : remove hard limit (unbounded)
-%                   'replace' : use new hard limit specified in hl_val
-%                   'scale'   : set new hard limit to hl_val*original_hl
-%                   'shift'   : set hard limit is original_hl + sign*hl_val
-%                               where sign is 1 or -1 depending on limit
-%       hl_val  value used in conjuction with hl_mod to modify the
-%               constraint hard limit. It can be specified as either a
-%               scalar, or a vector that MUST be the same length as idx/busnum.
-%               when...
-%                    hl_mod = 'remove': hl_val is ALWAYS Inf
-%                    hl_mod = 'replace': hl_val MUST be specified.
-%                    hl_mod = 'scale': If hl_val is NOT specified, the
-%                                      default hl_val is set to 2 or 1/2,
-%                                      depending whether the constraint is a
-%                                      lower or an upper bound and whether
-%                                      the constraint value is positive or
-%                                      negative, choosing the one that
-%                                      actually relaxes the constraint.
-%                    hl_mod = 'shift': If hl_val is NOT specified, default
-%                                      is 10, except for voltage constraints
-%                                      for which default is 0.25 pu.
-%
-%       ub      Internally calculated upperbound on the slack variable that
-%               implements the sof limit (handled in the defaults function).
+%       hl_mod  type of modification to hard limit, hl:
+%                   'none'    : do *not* add soft limit, no change to original
+%                               hard limit
+%                   'remove'  : add soft limit, relax hard limit by removing
+%                               it completely
+%                   'replace' : add soft limit, relax hard limit by replacing
+%                               original with value specified in hl_val
+%                   'scale'   : add soft limit, relax hard limit by scaling
+%                               original by value specified in hl_val
+%                   'shift'   : add soft limit, relax hard limit by shifting
+%                               original by value specified in hl_val
+%       hl_val  value used to modify hard limit according to hl_mod. Ignored
+%               for 'none' and 'remove', required for 'replace', and optional,
+%               with the following defaults, for 'scale' and 'shift':
+%                   'scale' :   2 for positive upper limits or negative lower
+%                               limits, 0.5 otherwise
+%                   'shift' :   0.25 for VMAX and VMIN, 10 otherwise
 %
 %   For limits that are left unspecified in the structure, the default
 %   behavior is determined by the value of the mpopt.opf.softlims.default
@@ -1022,7 +1013,7 @@ for p = fieldnames(lims).'
         %% idxfull is full list of candidate index values for given constraint
         idxfull = softlims_default_idx(mat, prop);
 
-        %% convert bus numbers to bus row indexes, if necessary, for VMIN/VMAX
+        %% convert bus numbers to bus row indices, if necessary, for VMIN/VMAX
         if ismember(prop, {'VMAX', 'VMIN'}) && ...
                     (~isfield(s, 'idx') || isempty(s.idx)) && ...
                     isfield(s, 'busnum') && ~isempty(s.busnum)

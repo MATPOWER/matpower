@@ -38,8 +38,8 @@ nl  = size(mpc.branch, 1);
 nb  = size(mpc.bus, 1);
 max_bus_num = max(mpc.bus(:, BUS_I));
 e2i = sparse(mpc.bus(:, BUS_I), 1, 1:nb, max_bus_num, 1); %% ext to int bus number map
-bf  = full(e2i(mpc.branch(:, F_BUS)));              %% "from" bus indexes
-bt  = full(e2i(mpc.branch(:, T_BUS)));              %% "to" bus indexes
+bf  = full(e2i(mpc.branch(:, F_BUS)));              %% "from" bus indices
+bt  = full(e2i(mpc.branch(:, T_BUS)));              %% "to" bus indices
 
 A = sparse([1:nl,1:nl]', [bf; bt], [status; -status], nl, nb);
 delta = A * mpc.bus(:, VA);                         %% angle differences
