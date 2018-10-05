@@ -969,7 +969,7 @@ function slims = softlims_defaults(mpc, mpopt)
 %% initialization
 lims = softlims_lim2mat();
 if isfield(mpc, 'softlims')
-    slims = mpc.softlims();
+    slims = mpc.softlims;
 else
     slims = struct();
 end
