@@ -162,12 +162,8 @@ if ~isempty(mpopt) && isfield(mpopt, 'opf') && mpopt.opf.v_cartesian
 end
 
 %% structures used to index into softlims in a loop
-lims = softlims_lim2mat();
-mat2lims = struct(...
-    'bus', {{'VMAX', 'VMIN'}}, ...
-    'branch', {{'ANGMAX', 'ANGMIN', 'RATE_A'}}, ...
-    'gen', {{'PMAX', 'PMIN', 'QMAX', 'QMIN'}} ...
-);
+lims = softlims_lim2mat(mpopt);
+mat2lims = softlims_mat2lims(mpopt);
 
 %% set up softlims defaults
 mpc.softlims = softlims_defaults(mpc, mpopt);
@@ -180,7 +176,7 @@ o = mpc.order;
 mpc.order.ext.softlims = slims;
 
 %%-----  convert stuff to internal indexing  -----
-for m = {'bus', 'branch', 'gen'}
+for m = fieldnames(mat2lims).'
     mat = m{:};
     n0  = size(o.ext.(mat), 1);     %% original number
     n   = size(mpc.(mat), 1);       %% on-line number
@@ -246,11 +242,14 @@ mpc = om.get_mpc();
 nb = size(bus, 1);
 ng = size(mpc.gen, 1);
 
+%% structures used to index into softlims in a loop
+lims = softlims_lim2mat(mpopt);
+
 %% temporarily save mpopt in om for use by int2ext callback
 om.userdata.mpopt = mpopt;
 
 %%-----  add variables, costs, and constraints  -----
-for lm = fieldnames(mpc.softlims).'
+for lm = fieldnames(lims).'
     lim = lm{:};
     s = mpc.softlims.(lim);
     if strcmp(s.hl_mod, 'none')
@@ -444,9 +443,6 @@ function results = userfcn_softlims_int2ext(results, mpopt, args)
     TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 
-%% structures used to index into softlims in a loop
-lims = softlims_lim2mat();
-
 %% get internal softlims struct and mpopt
 slims = results.softlims;
 isOPF = isfield(results, 'f') && ~isempty(results.f);
@@ -456,12 +452,15 @@ if isOPF
     isDC = strcmp(mpopt.model, 'DC');
 end
 
+%% structures used to index into softlims in a loop
+lims = softlims_lim2mat(mpopt);
+
 %%-----  convert stuff back to external indexing  -----
 o = results.order;
 results.softlims = o.ext.softlims;
 
 %%-----  restore hard limits  -----
-for lm = fieldnames(slims).'
+for lm = fieldnames(lims).'
     lim = lm{:};
     s = slims.(lim);
     if strcmp(s.hl_mod, 'none')
@@ -472,7 +471,7 @@ for lm = fieldnames(slims).'
 end
 
 %%-----  remove rval, sav and ub fields  -----
-for lm = fieldnames(slims).'
+for lm = fieldnames(lims).'
     lim = lm{:};
     if strcmp(slims.(lim).hl_mod, 'none')
         continue;
@@ -486,7 +485,7 @@ end
 %% get overloads and overload costs
 tol = 1e-8;
 if isOPF
-    for lm = fieldnames(slims).'
+    for lm = fieldnames(lims).'
         lim = lm{:};
         s = slims.(lim);
         if strcmp(s.hl_mod, 'none')
@@ -626,51 +625,53 @@ OUT_QG_LIM      = OUT_ALL == 1 || (OUT_ALL == -1 && ~SUPPRESS && mpopt.out.lim.q
 if isOPF && (results.success || OUT_FORCE)
     [bus, gen, branch] = deal(results.bus, results.gen, results.branch);
     isAC = strcmp(mpopt.model, 'AC');
-    s = results.softlims.VMAX;
-    if isAC && OUT_V_LIM && ~strcmp(s.hl_mod,'none')
-        fprintf(fd, '\n================================================================================');
-        fprintf(fd, '\n|     Soft Voltage Upper Bounds                                                |');
-        fprintf(fd, '\n================================================================================');
-        k = find(s.overload(s.idx) | bus(s.idx, MU_VMAX) > ptol);
-        if isempty(k)
-            fprintf(fd,'\nNo violations.\n');
-        else
-            fprintf(fd, '\nBus    Voltage   Limit   Overload    mu');
-            fprintf(fd, '\n  #    Mag(pu)   (pu)     (pu)     ($/pu)');
-            fprintf(fd, '\n-----  -------  -------  -------  ---------');
-            fprintf(fd, '\n%5d%8.3f%9.3f%9.3f%11.3f',...
-                [ bus(s.idx(k), BUS_I), bus(s.idx(k),[VM, VMAX]),...
-                  s.overload(s.idx(k)), ...
-                  bus(s.idx(k), MU_VMAX)...
-                ]');
-            fprintf(fd, '\n                        --------');
-            fprintf(fd, '\n               Total:%10.2f', ...
-                    sum(s.overload(s.idx(k))));
-            fprintf(fd, '\n');
+    if isAC
+        s = results.softlims.VMAX;
+        if OUT_V_LIM && ~strcmp(s.hl_mod,'none')
+            fprintf(fd, '\n================================================================================');
+            fprintf(fd, '\n|     Soft Voltage Upper Bounds                                                |');
+            fprintf(fd, '\n================================================================================');
+            k = find(s.overload(s.idx) | bus(s.idx, MU_VMAX) > ptol);
+            if isempty(k)
+                fprintf(fd,'\nNo violations.\n');
+            else
+                fprintf(fd, '\nBus    Voltage   Limit   Overload    mu');
+                fprintf(fd, '\n  #    Mag(pu)   (pu)     (pu)     ($/pu)');
+                fprintf(fd, '\n-----  -------  -------  -------  ---------');
+                fprintf(fd, '\n%5d%8.3f%9.3f%9.3f%11.3f',...
+                    [ bus(s.idx(k), BUS_I), bus(s.idx(k),[VM, VMAX]),...
+                      s.overload(s.idx(k)), ...
+                      bus(s.idx(k), MU_VMAX)...
+                    ]');
+                fprintf(fd, '\n                        --------');
+                fprintf(fd, '\n               Total:%10.2f', ...
+                        sum(s.overload(s.idx(k))));
+                fprintf(fd, '\n');
+            end
         end
-    end
-    s = results.softlims.VMIN;
-    if isAC && OUT_V_LIM && ~strcmp(s.hl_mod,'none')
-        fprintf(fd, '\n================================================================================');
-        fprintf(fd, '\n|     Soft Voltage Lower Bounds                                                |');
-        fprintf(fd, '\n================================================================================');
-        k = find(s.overload(s.idx) | bus(s.idx, MU_VMIN) > ptol);
-        if isempty(k)
-            fprintf(fd,'\nNo violations.\n');
-        else
-            fprintf(fd, '\n----------------------------------------');
-            fprintf(fd, '\n Bus   Voltage   Limit   Overload    mu');
-            fprintf(fd, '\n  #    Mag(pu)   (pu)     (pu)     ($/pu)');
-            fprintf(fd, '\n-----  -------  -------  -------  ---------');
-            fprintf(fd, '\n%5d%8.3f%9.3f%9.3f%11.3f',...
-                [ bus(s.idx(k), BUS_I), bus(s.idx(k),[VM, VMIN]),...
-                  s.overload(s.idx(k)), ...
-                  bus(s.idx(k), MU_VMIN)...
-                ]');
-            fprintf(fd, '\n                        --------');
-            fprintf(fd, '\n               Total:%10.2f', ...
-                    sum(s.overload(s.idx(k))));
-            fprintf(fd, '\n');
+        s = results.softlims.VMIN;
+        if OUT_V_LIM && ~strcmp(s.hl_mod,'none')
+            fprintf(fd, '\n================================================================================');
+            fprintf(fd, '\n|     Soft Voltage Lower Bounds                                                |');
+            fprintf(fd, '\n================================================================================');
+            k = find(s.overload(s.idx) | bus(s.idx, MU_VMIN) > ptol);
+            if isempty(k)
+                fprintf(fd,'\nNo violations.\n');
+            else
+                fprintf(fd, '\n----------------------------------------');
+                fprintf(fd, '\n Bus   Voltage   Limit   Overload    mu');
+                fprintf(fd, '\n  #    Mag(pu)   (pu)     (pu)     ($/pu)');
+                fprintf(fd, '\n-----  -------  -------  -------  ---------');
+                fprintf(fd, '\n%5d%8.3f%9.3f%9.3f%11.3f',...
+                    [ bus(s.idx(k), BUS_I), bus(s.idx(k),[VM, VMIN]),...
+                      s.overload(s.idx(k)), ...
+                      bus(s.idx(k), MU_VMIN)...
+                    ]');
+                fprintf(fd, '\n                        --------');
+                fprintf(fd, '\n               Total:%10.2f', ...
+                        sum(s.overload(s.idx(k))));
+                fprintf(fd, '\n');
+            end
         end
     end
     s = results.softlims.PMAX;
@@ -719,50 +720,52 @@ if isOPF && (results.success || OUT_FORCE)
             fprintf(fd, '\n');
         end
     end
-    s = results.softlims.QMAX;
-    if isAC && OUT_QG_LIM && ~strcmp(s.hl_mod,'none')
-        k = find(s.overload(s.idx) | gen(s.idx, MU_QMAX) > ptol);
-        fprintf(fd, '\n================================================================================');
-        fprintf(fd, '\n|     Soft Generator Reactive Power Upper Bounds                               |');
-        fprintf(fd, '\n================================================================================');
-        if isempty(k)
-            fprintf(fd,'\nNo violations.\n');
-        else
-            fprintf(fd, '\nGen     Bus  Generation  Limit   Overload    mu');
-            fprintf(fd, '\n  #      #    Q (MVAr)  Q (MVAr)  (MVAr)   ($/MVAr)');
-            fprintf(fd, '\n-----  -----  --------  -------  -------  ---------');
-            fprintf(fd, '\n%5d%7d%9.2f%9.2f%9.2f%11.3f',...
-                [ s.idx(k), gen(s.idx(k),[GEN_BUS, QG, QMAX]),...
-                  s.overload(s.idx(k)), ...
-                  gen(s.idx(k), MU_QMAX)...
-                ]');
-            fprintf(fd, '\n                                --------');
-            fprintf(fd, '\n                       Total:%10.2f', ...
-                    sum(s.overload(s.idx(k))));
-            fprintf(fd, '\n');
+    if isAC
+        s = results.softlims.QMAX;
+        if OUT_QG_LIM && ~strcmp(s.hl_mod,'none')
+            k = find(s.overload(s.idx) | gen(s.idx, MU_QMAX) > ptol);
+            fprintf(fd, '\n================================================================================');
+            fprintf(fd, '\n|     Soft Generator Reactive Power Upper Bounds                               |');
+            fprintf(fd, '\n================================================================================');
+            if isempty(k)
+                fprintf(fd,'\nNo violations.\n');
+            else
+                fprintf(fd, '\nGen     Bus  Generation  Limit   Overload    mu');
+                fprintf(fd, '\n  #      #    Q (MVAr)  Q (MVAr)  (MVAr)   ($/MVAr)');
+                fprintf(fd, '\n-----  -----  --------  -------  -------  ---------');
+                fprintf(fd, '\n%5d%7d%9.2f%9.2f%9.2f%11.3f',...
+                    [ s.idx(k), gen(s.idx(k),[GEN_BUS, QG, QMAX]),...
+                      s.overload(s.idx(k)), ...
+                      gen(s.idx(k), MU_QMAX)...
+                    ]');
+                fprintf(fd, '\n                                --------');
+                fprintf(fd, '\n                       Total:%10.2f', ...
+                        sum(s.overload(s.idx(k))));
+                fprintf(fd, '\n');
+            end
         end
-    end
-    s = results.softlims.QMIN;
-    if isAC && OUT_QG_LIM && ~strcmp(s.hl_mod,'none')
-        k = find(s.overload(s.idx) | gen(s.idx, MU_QMIN) > ptol);
-        fprintf(fd, '\n================================================================================');
-        fprintf(fd, '\n|     Soft Generator Reactive Power Lower Bounds                               |');
-        fprintf(fd, '\n================================================================================');
-        if isempty(k)
-            fprintf(fd,'\nNo violations.\n');
-        else
-            fprintf(fd, '\nGen     Bus  Generation  Limit   Overload    mu');
-            fprintf(fd, '\n  #      #    Q (MVAr)  Q (MVAr)  (MVAr)   ($/MVAr)');
-            fprintf(fd, '\n-----  -----  --------  -------  -------  ---------');
-            fprintf(fd, '\n%5d%7d%9.2f%9.2f%9.2f%11.3f',...
-                [ s.idx(k), gen(s.idx(k),[GEN_BUS, QG, QMIN]),...
-                  s.overload(s.idx(k)), ...
-                  gen(s.idx(k), MU_QMIN)...
-                ]');
-            fprintf(fd, '\n                                --------');
-            fprintf(fd, '\n                       Total:%10.2f', ...
-                    sum(s.overload(s.idx(k))));
-            fprintf(fd, '\n');
+        s = results.softlims.QMIN;
+        if OUT_QG_LIM && ~strcmp(s.hl_mod,'none')
+            k = find(s.overload(s.idx) | gen(s.idx, MU_QMIN) > ptol);
+            fprintf(fd, '\n================================================================================');
+            fprintf(fd, '\n|     Soft Generator Reactive Power Lower Bounds                               |');
+            fprintf(fd, '\n================================================================================');
+            if isempty(k)
+                fprintf(fd,'\nNo violations.\n');
+            else
+                fprintf(fd, '\nGen     Bus  Generation  Limit   Overload    mu');
+                fprintf(fd, '\n  #      #    Q (MVAr)  Q (MVAr)  (MVAr)   ($/MVAr)');
+                fprintf(fd, '\n-----  -----  --------  -------  -------  ---------');
+                fprintf(fd, '\n%5d%7d%9.2f%9.2f%9.2f%11.3f',...
+                    [ s.idx(k), gen(s.idx(k),[GEN_BUS, QG, QMIN]),...
+                      s.overload(s.idx(k)), ...
+                      gen(s.idx(k), MU_QMIN)...
+                    ]');
+                fprintf(fd, '\n                                --------');
+                fprintf(fd, '\n                       Total:%10.2f', ...
+                        sum(s.overload(s.idx(k))));
+                fprintf(fd, '\n');
+            end
         end
     end
     s = results.softlims.RATE_A;
@@ -880,7 +883,7 @@ lims = softlims_lim2mat();
 
 %% convenience structure for the different fields
 slfieldnames = { 'hl_mod', 'hl_val', 'idx', 'busnum', 'cost', ...
-    'overload', 'ovl_cost', 'ub' };
+    'overload', 'ovl_cost' };
 fields = struct( ...
     'hl_mod',   struct('desc', 'type of hard limit modification', 'tok', '%s'),...
     'hl_val',   struct('desc', 'value(s) used to set new hard limit', 'tok', '%g'),...
@@ -931,18 +934,50 @@ end
 
 
 %%-----  softlims_lim2mat  --------------------------------------------
-function lim2mat = softlims_lim2mat()
-lim2mat = struct(...
-    'VMAX', 'bus', ...
-    'VMIN','bus', ...
-    'PMAX', 'gen', ...
-    'PMIN', 'gen', ...
-    'QMAX', 'gen', ...
-    'QMIN', 'gen', ...
-    'RATE_A', 'branch', ...
-    'ANGMAX', 'branch', ...
-    'ANGMIN', 'branch' ...
-);
+function lim2mat = softlims_lim2mat(mpopt)
+if nargin < 1
+    mpopt = [];
+end
+if ~isempty(mpopt) && isfield(mpopt, 'model') && strcmp(mpopt.model, 'DC')
+    lim2mat = struct(...
+        'PMAX',     'gen', ...
+        'PMIN',     'gen', ...
+        'RATE_A',   'branch', ...
+        'ANGMAX',   'branch', ...
+        'ANGMIN',   'branch' ...
+    );
+else
+    lim2mat = struct(...
+        'VMAX',     'bus', ...
+        'VMIN',     'bus', ...
+        'PMAX',     'gen', ...
+        'PMIN',     'gen', ...
+        'QMAX',     'gen', ...
+        'QMIN',     'gen', ...
+        'RATE_A',   'branch', ...
+        'ANGMAX',   'branch', ...
+        'ANGMIN',   'branch' ...
+    );
+end
+
+
+%%-----  softlims_mat2lims  --------------------------------------------
+function mat2lims = softlims_mat2lims(mpopt)
+if nargin < 1
+    mpopt = [];
+end
+if ~isempty(mpopt) && isfield(mpopt, 'model') && strcmp(mpopt.model, 'DC')
+    mat2lims = struct(...
+        'branch', {{'ANGMAX', 'ANGMIN', 'RATE_A'}}, ...
+        'gen', {{'PMAX', 'PMIN'}} ...
+    );
+else
+    mat2lims = struct(...
+        'bus', {{'VMAX', 'VMIN'}}, ...
+        'branch', {{'ANGMAX', 'ANGMIN', 'RATE_A'}}, ...
+        'gen', {{'PMAX', 'PMIN', 'QMAX', 'QMIN'}} ...
+    );
+end
 
 
 %%-----  softlims_defaults  --------------------------------------------
@@ -967,7 +1002,7 @@ function slims = softlims_defaults(mpc, mpopt)
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 
 %% initialization
-lims = softlims_lim2mat();
+lims = softlims_lim2mat(mpopt);
 if isfield(mpc, 'softlims')
     slims = mpc.softlims;
 else
@@ -1168,7 +1203,7 @@ function slims = softlims_init(mpc, mpopt)
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 
 %% initialization
-lims = softlims_lim2mat();
+lims = softlims_lim2mat(mpopt);
 slims = mpc.softlims;
 
 %% set defaults for each element

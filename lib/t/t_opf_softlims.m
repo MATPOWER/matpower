@@ -29,7 +29,7 @@ else
     verbose = 0;
 end
 
-t_begin(864, quiet);
+t_begin(842, quiet);
 
 %% define constants
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
@@ -148,8 +148,8 @@ mpc.softlims.QMAX.idx = [1,3];
 
 t = 'generator ordering: ';
 mpc = toggle_softlims(mpc,'on');
-r = toggle_run_check(mpc,mpopt, t, 1);
-gen_order_check(mpc, r, t)
+r = toggle_run_check(mpc, mpopt, t, 1);
+gen_order_check(mpc, r, t, mpopt);
 % opf.softlims.default = 0
 mpopt.opf.softlims.default = 0;
 mpc = mpc0;
@@ -162,7 +162,7 @@ for lm = fieldnames(r.softlims).'
     lim = lm{:};
     t_ok(strcmp(r.softlims.(lim).hl_mod, 'none'), [t lim '.hl_mod = ''none'''])
 end
-gen_order_check(mpc, r, t)
+gen_order_check(mpc, r, t, mpopt);
 
 t = 'mpopt - opf.softlims.default = 0 (w/RATE_A): ';
 mpc.softlims.RATE_A = struct('hl_mod', 'scale', 'hl_val', 1.5); %initializing an empty strucure results in default
@@ -180,13 +180,13 @@ for lm = fieldnames(r.softlims).'
         t_is(ub, 0.5*r.branch(r.softlims.RATE_A.idx,RATE_A), 5, [t '.hl_val = 0.5'])
     end
 end
-gen_order_check(mpc, r, t)
+gen_order_check(mpc, r, t, mpopt);
 
 mpopt.opf.softlims.default = 1;
 mpc = mpc0;
 mpc = rmfield(mpc,'softlims');
 % mpc.softlims = sdefault;
-t = 'mpopt - opf.softlims.default = 1 (all default): ';
+t = 'AC - opf.softlims.default = 1 (all default): ';
 mpc = toggle_softlims(mpc,'on');
 r = toggle_run_check(mpc, mpopt, t, 1);
 vv = r.om.get_idx();
@@ -224,7 +224,48 @@ for lm = fieldnames(r.softlims).'
             t_ok(all(ub(r.gen(r.softlims.PMIN.idx, PMIN) > 0) == r.gen(r.softlims.PMIN.idx,PMIN)), [t lim ' ub=PMIN (gens)'])
     end
 end
-gen_order_check(mpc, r, t)
+gen_order_check(mpc, r, t, mpopt);
+
+t = 'DC - opf.softlims.default = 1 (all default): ';
+mpopt1 = mpoption(mpopt, 'model', 'DC');
+r = toggle_run_check(mpc, mpopt1, t, 1);
+vv = r.om.get_idx();
+[x0, xmin, xmax] = r.om.params_var();
+for lm = fieldnames(r.softlims).'
+    lim = lm{:};
+    varname = ['s_' lower(lim)];
+    ub = xmax(vv.i1.(varname):vv.iN.(varname));
+    switch lim
+        case {'RATE_A', 'PMAX', 'PMIN', 'QMAX', 'QMIN'}
+            ub = ub * r.baseMVA;
+        case {'ANGMAX', 'ANGMIN'}
+            ub = ub * 180/pi;
+    end
+    switch lim
+        case {'PMAX', 'QMAX', 'RATE_A', 'ANGMAX', 'VMAX'}
+            %% default hl_mod = 'remove'
+            t_ok(strcmp(r.softlims.(lim).hl_mod,'remove'), [t lim '.hl_mod = ''remove'''])
+            t_ok(r.softlims.(lim).hl_val == Inf, [t lim '.hl_val = Inf'])
+            t_ok(all(isinf(ub)), [t lim ' ub = Inf'])
+        case {'QMIN', 'ANGMIN'}
+            %% default hl_mod = 'remove'
+            t_ok(strcmp(r.softlims.(lim).hl_mod,'remove'), [t lim '.hl_mod = ''remove'''])
+            t_ok(r.softlims.(lim).hl_val == -Inf, [t lim '.hl_val = -Inf'])
+            t_ok(all(isinf(ub)), [t lim ' ub = Inf'])
+        case 'VMIN'
+            %% default hl_mod = 'replace'
+            t_ok(strcmp(r.softlims.(lim).hl_mod,'replace'), [t lim '.hl_mod = ''replace'''])
+            t_ok(r.softlims.(lim).hl_val == 0, [t lim '.hl_val = 0'])
+            t_ok(all(ub == r.bus(:,VMIN)), [t lim ' ub = VMIN'])
+        case 'PMIN'
+            %% default hl_mod = 'replace'
+            t_ok(strcmp(r.softlims.(lim).hl_mod,'replace'), [t lim '.hl_mod = ''replace'''])
+            t_ok(all(r.softlims.(lim).hl_val(r.gen(r.softlims.PMIN.idx, PMIN) > 0) == 0), [t lim '.hl_val = 0 (gens)'])
+            t_ok(all(ub(r.gen(r.softlims.PMIN.idx, PMIN) > 0) == r.gen(r.softlims.PMIN.idx,PMIN)), [t lim ' ub=PMIN (gens)'])
+    end
+end
+gen_order_check(mpc, r, t, mpopt1);
+
 %% Default settings check
 mpc = mpc0;
 mpc.softlims = sdefault;
@@ -250,7 +291,7 @@ t_is(r.gen(:,MU_PMAX), zeros(4,1), 4, [t 'mu PMAX'])
 t_is(r.gen(:,MU_PMIN), zeros(4,1), 4, [t 'mu PMIN'])
 t_is(r.gen(:,MU_QMAX), zeros(4,1), 4, [t 'mu QMAX'])
 t_is(r.gen(:,MU_QMIN), zeros(4,1), 4, [t 'mu QMIN'])
-gen_order_check(mpc, r, t)
+gen_order_check(mpc, r, t, mpopt);
 
 t = 'Defaults - softlims on: ';
 mpc = toggle_softlims(mpc,'on');
@@ -274,7 +315,7 @@ t_is(r.gen(:,MU_PMAX), zeros(4,1), 4, [t 'mu PMAX'])
 t_is(r.gen(:,MU_PMIN), zeros(4,1), 4, [t 'mu PMIN'])
 t_is(r.gen(:,MU_QMAX), zeros(4,1), 4, [t 'mu QMAX'])
 t_is(r.gen(:,MU_QMIN), zeros(4,1), 4, [t 'mu QMIN'])
-gen_order_check(mpc, r, t)
+gen_order_check(mpc, r, t, mpopt);
 
 %% tighten limits to get violations
 t = 'Defaults - softlims w/overloads: ';
@@ -308,16 +349,16 @@ mpc.softlims.ANGMAX.cost(4) = 20;
 mpc = toggle_softlims(mpc,'on');
 r = toggle_run_check(mpc, mpopt, t, 1);
 overload_loop(r, t, 1);
-mu_cost_test(r,t);
-gen_order_check(mpc, r, t)
+mu_cost_test(r, t, mpopt);
+gen_order_check(mpc, r, t, mpopt);
 
 t = 'printpf - AC';
 [fd, msg] = fopen(tmp_fname_ac, 'at');
 if fd == -1
     error(msg);
 else
-    mpopt1 = mpoption(mpopt, 'out.all', -1, 'out.bus', 0, 'out.branch', 0, 'out.sys_sum', 0);
-    printpf(r, fd, mpopt1);
+    mpopt2 = mpoption(mpopt, 'out.all', -1, 'out.bus', 0, 'out.branch', 0, 'out.sys_sum', 0);
+    printpf(r, fd, mpopt2);
     fclose(fd);
 end
 got = fileread(tmp_fname_ac);
@@ -359,28 +400,29 @@ mpc = mpc0;
 mpc.softlims = sdefault;
 t = 'DC - hard limits : ';
 t_ok(~toggle_softlims(mpc, 'status'), 'toggle_softlims(mpc, ''status'') == 0');
-r = rundcopf(mpc, mpopt);
+mpopt1 = mpoption(mpopt, 'model', 'DC');
+r = rundcopf(mpc, mpopt1);
 t_ok(r.success, [t 'success']);
 delta = calc_branch_angle(r);
-overload_loop(r, t, 0);
+overload_loop(r, t, 0, {}, 1);
 t_is(r.gen(:, PG), [240.0000         0   12.6870   62.3130].', 4, [t 'Pg']);
 t_is(r.branch(:, PF), [12.687; -30; -120; 240; 0; 120; 20; -62.3130; 82.3130; -42.687], 4, [t 'Pf']);
 t_is(delta, [0.4187   -1.5814  -11.6883    8.0581         0    6.9305    0.8251   -2.2314    7.5931   -2.0789].', 4, [t 'delta'])
 t_is(r.branch(:, MU_SF)+r.branch(:, MU_ST), [0; 0; 35.6504; 0; 0; 7.9756; 0; 0; 0; 0], 4, [t 'mu Pf']);
-gen_order_check(mpc, r, t)
+gen_order_check(mpc, r, t, mpopt1);
 
 t = 'DC - softlims on: ';
 mpc = toggle_softlims(mpc,'on');
 t_ok(toggle_softlims(mpc, 'status'), 'toggle_softlims(mpc, ''status'') == 1');
-r = rundcopf(mpc, mpopt);
+r = rundcopf(mpc, mpopt1);
 t_ok(r.success, [t 'success']);
 delta = calc_branch_angle(r);
-overload_loop(r, t, 1);
+overload_loop(r, t, 1, {}, 1);
 t_is(r.gen(:, PG), [240.0000         0   12.6870   62.3130].', 4, [t 'Pg']);
 t_is(r.branch(:, PF), [12.687; -30; -120; 240; 0; 120; 20; -62.3130; 82.3130; -42.687], 4, [t 'Pf']);
 t_is(delta, [0.4187   -1.5814  -11.6883    8.0581         0    6.9305    0.8251   -2.2314    7.5931   -2.0789].', 4, [t 'delta'])
 t_is(r.branch(:, MU_SF)+r.branch(:, MU_ST), [0; 0; 35.6504; 0; 0; 7.9756; 0; 0; 0; 0], 4, [t 'mu Pf']);
-gen_order_check(mpc, r, t)
+gen_order_check(mpc, r, t, mpopt1);
 
 t = 'DC - regression : ';
 mpc = mpc0;
@@ -388,7 +430,7 @@ mpc = toggle_softlims(mpc,'on');
 t_ok(toggle_softlims(mpc, 'status'), [t 'toggle_softlims(mpc, ''status'') == 1']);
 mpc.softlims = struct();
 mpc.softlims.RATE_A.hl_mod = 'none';
-r = rundcopf(mpc, mpopt);
+r = rundcopf(mpc, mpopt1);
 t_ok(r.success, [t 'success']);
 
 %% tighten limits to get violations
@@ -414,19 +456,19 @@ mpc.softlims.ANGMAX.cost = 1000*ones(10,1);
 mpc.softlims.ANGMAX.cost(9) = 5;
 mpc = toggle_softlims(mpc,'on');
 t_ok(toggle_softlims(mpc, 'status'), 'toggle_softlims(mpc, ''status'') == 1');
-r = rundcopf(mpc, mpopt);
+r = rundcopf(mpc, mpopt1);
 t_ok(r.success, [t 'success']);
-overload_loop(r, t, 1);
-mu_cost_test(r,t);
-gen_order_check(mpc, r, t)
+overload_loop(r, t, 1, {}, 1);
+mu_cost_test(r, t, mpopt1);
+gen_order_check(mpc, r, t, mpopt1);
 
 t = 'printpf - DC';
 [fd, msg] = fopen(tmp_fname_dc, 'at');
 if fd == -1
     error(msg);
 else
-    mpopt1 = mpoption(mpopt1, 'model', 'DC');
-    printpf(r, fd, mpopt1);
+    mpopt2 = mpoption(mpopt1, 'out.all', -1, 'out.bus', 0, 'out.branch', 0, 'out.sys_sum', 0);
+    printpf(r, fd, mpopt2);
     fclose(fd);
 end
 got = fileread(tmp_fname_dc);
@@ -449,7 +491,7 @@ t_ok(r.success, [t 'success']);
 overload_loop(r, t, 0);
 t_is(r.bus(:,VM), [1.040963;1.1;1.1;1.042513;1.041787;1.096141;1.079794;1.089516;1.031234], 4, [t 'Vm']);
 t_is(r.bus(:,MU_VMAX), [0;526.455671;232.322240;0;0;0;0;0;0], 4, [t 'mu VM ub'])
-gen_order_check(mpc, r, t)
+gen_order_check(mpc, r, t, mpopt);
 
 mpc = toggle_softlims(mpc,'on');
 t = 'V lims (remove) - softlims (satisfied): ';
@@ -458,15 +500,15 @@ r = runopf(mpc, mpopt);
 t_ok(r.success, [t 'success']);
 t_is(r.bus(:,VM), [1.040963;1.1;1.1;1.042513;1.041787;1.096141;1.079794;1.089516;1.031234], 4, [t 'Vm']);
 t_is(r.bus(:,MU_VMAX), [0;526.455671;232.322240;0;0;0;0;0;0], 4, [t 'mu VM ub'])
-gen_order_check(mpc, r, t)
+gen_order_check(mpc, r, t, mpopt);
 
 mpc.bus(4:9, [VMIN, VMAX]) = 1;
 t = 'V lims (remove) - softlims w/overloads: ';
 r = toggle_run_check(mpc, mpopt, t, 1);
 overload_loop(r, t, 1, {'VMIN', 'VMAX'})
 overload_loop(r, t, 0, {'VMIN', 'VMAX'})
-mu_cost_test(r,t);
-gen_order_check(mpc, r, t)
+mu_cost_test(r, t, mpopt);
+gen_order_check(mpc, r, t, mpopt);
 
 %% scale modification
 mpc = mpc0;
@@ -483,8 +525,8 @@ t = 'V lims (scale) - softlims w/overloads: ';
 r = toggle_run_check(mpc, mpopt, t, 1);
 overload_loop(r, t, 1, {'VMIN', 'VMAX'})
 overload_loop(r, t, 0, {'VMIN', 'VMAX'})
-mu_cost_test(r,t);
-gen_order_check(mpc, r, t)
+mu_cost_test(r, t, mpopt);
+gen_order_check(mpc, r, t, mpopt);
 
 %% replace modification
 mpc = mpc0;
@@ -513,8 +555,8 @@ ub = xmax(vv.i1.s_vmin:vv.iN.s_vmin);
 t_ok(all(ub == (r.bus(r.softlims.VMIN.idx,VMIN) - 0.7)), [t 'VMIN ub = VMIN - 0.7'])
 ub = xmax(vv.i1.s_vmax:vv.iN.s_vmax);
 t_ok(all(ub == (1.2 - r.bus(r.softlims.VMAX.idx,VMAX))), [t 'VMIN ub = 1.2 - VMAX'])
-mu_cost_test(r,t);
-gen_order_check(mpc, r, t)
+mu_cost_test(r, t, mpopt);
+gen_order_check(mpc, r, t, mpopt);
 
 %% shift modification
 mpc = mpc0;
@@ -543,8 +585,8 @@ ub = xmax(vv.i1.s_vmin:vv.iN.s_vmin);
 t_ok(all(ub == 0.2), [t 'VMIN ub = shift (0.2)'])
 ub = xmax(vv.i1.s_vmax:vv.iN.s_vmax);
 t_ok(all(ub == 0.2), [t 'VMAX ub = shift (0.2)'])
-mu_cost_test(r,t);
-gen_order_check(mpc, r, t)
+mu_cost_test(r, t, mpopt);
+gen_order_check(mpc, r, t, mpopt);
 %% Tests
 %% the following are all the test from the original softlims implementation
 %% that only included RATE_A. The only changes are adaptations to the
@@ -552,7 +594,8 @@ gen_order_check(mpc, r, t)
 mpc = mpc0;
 t = 'DC - hard limits : ';
 t_ok(~toggle_softlims(mpc, 'status'), 'toggle_softlims(mpc, ''status'') == 0');
-r = rundcopf(mpc, mpopt);
+mpopt1 = mpoption(mpopt, 'model', 'DC');
+r = rundcopf(mpc, mpopt1);
 t_ok(r.success, [t 'success']);
 t_ok(~isfield(r.softlims.RATE_A, 'overload'), [t 'no softlims.RATE_A.overload']);
 t_ok(~isfield(r.softlims.RATE_A, 'ovl_cost'), [t 'no softlims.RATE_A.ovl_cost']);
@@ -560,12 +603,12 @@ t_is(r.f, 9126.87, 4, [t 'f']);
 t_is(r.gen(:, PG), [240.0000         0   12.6870   62.3130].', 4, [t 'Pg']);
 t_is(r.branch(:, PF), [12.687; -30; -120; 240; 0; 120; 20; -62.3130; 82.3130; -42.687], 4, [t 'Pf']);
 t_is(r.branch(:, MU_SF)+r.branch(:, MU_ST), [0; 0; 35.6504; 0; 0; 7.9756; 0; 0; 0; 0], 4, [t 'mu Pf']);
-gen_order_check(mpc, r, t)
+gen_order_check(mpc, r, t, mpopt1);
 
 t = 'DC - softlims (satisfied) : ';
 mpc = toggle_softlims(mpc, 'on');
 t_ok(toggle_softlims(mpc, 'status'), 'toggle_softlims(mpc, ''status'') == 1');
-r = rundcopf(mpc, mpopt);
+r = rundcopf(mpc, mpopt1);
 t_ok(r.success, [t 'success']);
 t_ok(isfield(r.softlims.RATE_A, 'overload'), [t 'softlims.RATE_A.overload exists']);
 t_ok(isfield(r.softlims.RATE_A, 'ovl_cost'), [t 'softlims.RATE_A.ovl_cost exists']);
@@ -576,7 +619,7 @@ t_is(r.branch(:, MU_SF)+r.branch(:, MU_ST), [0; 0; 35.6504; 0; 0; 7.9756; 0; 0; 
 t_is(r.softlims.RATE_A.overload, zeros(10, 1), 12, [t 'softlims.overload']);
 t_is(r.softlims.RATE_A.ovl_cost, zeros(10, 1), 12, [t 'softlims.ovl_cost']);
 t_is(r.order.branch.status.on(r.order.int.softlims.RATE_A.idx), [3; 6; 8; 9; 10], 12, [t 'mu Pf']);
-gen_order_check(mpc, r, t)
+gen_order_check(mpc, r, t, mpopt1);
 
 t = 'savecase(fname, mpc) : ';
 fn = sprintf('softlims_savecase_test_%d', fix(1e8*rand));
@@ -637,7 +680,7 @@ mpc.softlims.RATE_A.cost = 20;
 for lim = {'VMIN', 'VMAX', 'ANGMIN', 'ANGMAX', 'PMIN', 'PMAX', 'QMIN', 'QMAX'}
     mpc.softlims.(lim{:}).hl_mod = 'none';
 end
-r = rundcopf(mpc, mpopt);
+r = rundcopf(mpc, mpopt1);
 t_ok(r.success, [t 'success']);
 t_ok(isfield(r.softlims.RATE_A, 'overload'), [t 'softlims.RATE_A.overload exists']);
 t_ok(isfield(r.softlims.RATE_A, 'ovl_cost'), [t 'softlims.RATE_A.ovl_cost exists']);
@@ -647,7 +690,7 @@ t_is(r.branch(:, PF), [10; -31.3012; -121.3012; 241.3012; 0; 120; 20; -63.6988; 
 t_is(r.branch(:, MU_SF)+r.branch(:, MU_ST), [0; 0; 20; 0; 0; 13.2992; 0; 0; 0; 0], 4, [t 'mu Pf']);
 t_is(r.softlims.RATE_A.overload, [0; 0; 1.3011811; 0; 0; 0; 0; 0; 0; 0], 6, [t 'softlims.RATE_A.overload']);
 t_is(r.softlims.RATE_A.ovl_cost, [0; 0; 26.023622; 0; 0; 0; 0; 0; 0; 0], 6, [t 'softlims.RATE_A.ovl_cost']);
-gen_order_check(mpc, r, t)
+gen_order_check(mpc, r, t, mpopt1);
 
 t = 'savecase(fname, mpc) : ';
 fn = sprintf('softlims_savecase_test_%d', fix(1e8*rand));
@@ -702,7 +745,7 @@ t_is(r.branch(:, PT), [-17.312141; 25.166831; 119.936552; -239.901164; 0; -118.5
 t_is(r.branch(:, QF), [-2.721149; -2.842148; -16.241771; 21.275974; 0; -2.914100; -25.325409; -17.123405; 8.944864; -17.404939], 4, [t 'Qf']);
 t_is(r.branch(:, QT), [2.884399; -13.758229; -3.901717; 6.815818; 0; -9.674591; 8.178541; 19.603112; -32.595061; -0.042250], 4, [t 'Qt']);
 t_is(r.branch(:, MU_SF)+r.branch(:, MU_ST), [0; 0; 29.242772; 0; 0; 8.561015; 0; 0; 0; 0], 4, [t 'mu Sf+St']);
-gen_order_check(mpc, r, t)
+gen_order_check(mpc, r, t, mpopt);
 
 t = 'AC flow_lim=''S'' - softlims(satisfied) : ';
 mpc = toggle_softlims(mpc, 'on');
@@ -721,7 +764,7 @@ t_is(r.branch(:, MU_SF)+r.branch(:, MU_ST), [0; 0; 29.242772; 0; 0; 8.561015; 0;
 t_is(r.softlims.RATE_A.overload, zeros(10, 1), 12, [t 'softlims.overload']);
 t_is(r.softlims.RATE_A.ovl_cost, zeros(10, 1), 12, [t 'softlims.ovl_cost']);
 t_is(r.order.branch.status.on(r.order.int.softlims.RATE_A.idx), [3; 6; 8; 9; 10], 12, [t 'softlims.RATE_A.idx']);
-gen_order_check(mpc, r, t)
+gen_order_check(mpc, r, t, mpopt);
 
 t = 'AC flow_lim=''S'' - softlims (violated) : ';
 mpc = rmfield(mpc, 'softlims');
@@ -743,7 +786,7 @@ t_is(r.branch(:, QT), [-3.306136; -17.152445; -6.346356; 9.488779; 0; -9.535876;
 t_is(r.branch(:, MU_SF)+r.branch(:, MU_ST), [0; 0; 20; 0; 0; 11.575125; 0; 0; 0; 0], 4, [t 'mu Sf+St']);
 t_is(r.softlims.RATE_A.overload, [0; 0; 3.962643; 0; 0; 0; 0; 0; 0; 0], 6, [t 'softlims.RATE_A.overload']);
 t_is(r.softlims.RATE_A.ovl_cost, [0; 0; 79.252860; 0; 0; 0; 0; 0; 0; 0], 4, [t 'softlims.RATE_A.ovl_cost']);
-gen_order_check(mpc, r, t)
+gen_order_check(mpc, r, t, mpopt);
 
 %% -----  AC OPF (opf.flow_lim = 'I') -----
 mpopt = mpoption(mpopt, 'opf.flow_lim', 'I');
@@ -761,7 +804,7 @@ t_is(r.branch(:, PT), [-10; 32.910718; 128.209273; -260.040338; 0; -130.115930; 
 t_is(r.branch(:, QF), [27.824349; 14.237742; 1.341441; 7.733221; 0; -4.887428; -29.462755; -4.743706; -7.797128; -31.778587], 4, [t 'Qf']);
 t_is(r.branch(:, QT), [-27.408203; -31.341441; -20.438656; 25.326084; 0; -5.537245; 12.540834; 6.294583; -18.221413; 13.170461], 4, [t 'Qt']);
 t_is(r.branch(:, MU_SF)+r.branch(:, MU_ST), [0; 0; 0; 0; 0; 20.114712; 0; 0; 0; 0], 4, [t 'mu Sf+St']);
-gen_order_check(mpc, r, t)
+gen_order_check(mpc, r, t, mpopt);
 
 t = 'AC flow_lim=''I'' - softlims(satisfied) : ';
 mpc = toggle_softlims(mpc, 'on');
@@ -780,7 +823,7 @@ t_is(r.branch(:, MU_SF)+r.branch(:, MU_ST), [0; 0; 0; 0; 0; 20.114712; 0; 0; 0; 
 t_is(r.softlims.RATE_A.overload, zeros(10, 1), 12, [t 'softlims.RATE_A.overload']);
 t_is(r.softlims.RATE_A.ovl_cost, zeros(10, 1), 12, [t 'softlims.RATE_A.ovl_cost']);
 t_is(r.order.branch.status.on(r.order.int.softlims.RATE_A.idx), [3; 6; 8; 9; 10], 12, [t 'softlims.RATE_A.idx']);
-gen_order_check(mpc, r, t)
+gen_order_check(mpc, r, t, mpopt);
 
 t = 'AC flow_lim=''I'' - softlims (violated) : ';
 mpc = rmfield(mpc, 'softlims');
@@ -802,7 +845,7 @@ t_is(r.branch(:, QT), [-24.907470; -30.303801; -18.341454; 21.987363; 0; -5.0524
 t_is(r.branch(:, MU_SF)+r.branch(:, MU_ST), [0; 0; 6.260861; 0; 0; 15; 0; 0; 0; 0], 4, [t 'mu Sf+St']);
 t_is(r.softlims.RATE_A.overload, [0; 0; 0; 0; 0; 6.792934; 0; 0; 0; 0], 6, [t 'softlims.RATE_A.overload']);
 t_is(r.softlims.RATE_A.ovl_cost, [0; 0; 0; 0; 0; 101.894009; 0; 0; 0; 0], 4, [t 'softlims.RATE_A.ovl_cost']);
-gen_order_check(mpc, r, t)
+gen_order_check(mpc, r, t, mpopt);
 
 %%-----  AC OPF (opf.flow_lim = '2') -----
 mpopt = mpoption(mpopt, 'opf.flow_lim', '2');
@@ -820,7 +863,7 @@ t_is(r.branch(:, PT), [-17.759246; 25.346644; 120; -240; 0; -118.577311; -18.529
 t_is(r.branch(:, QF), [15.646152; 6.577259; -6.087866; 8.021258; 0; -4.520662; -26.623563; -6.687069; -2.629290; -27.085546], 4, [t 'Qf']);
 t_is(r.branch(:, QT), [-15.370220; -23.912134; -15.548682; 20.069344; 0; -8.376437; 9.316359; 8.954090; -22.914454; 8.792961], 4, [t 'Qt']);
 t_is(r.branch(:, MU_SF)+r.branch(:, MU_ST), [0; 0; 29.248033; 0; 0; 8.417115; 0; 0; 0; 0], 4, [t 'mu Sf+St']);
-gen_order_check(mpc, r, t)
+gen_order_check(mpc, r, t, mpopt);
 
 t = 'AC flow_lim=''2'' - softlims(satisfied) : ';
 mpc = toggle_softlims(mpc, 'on');
@@ -839,7 +882,7 @@ t_is(r.branch(:, MU_SF)+r.branch(:, MU_ST), [0; 0; 29.248033; 0; 0; 8.417115; 0;
 t_is(r.softlims.RATE_A.overload, zeros(10, 1), 12, [t 'softlims.RATE_A.overload']);
 t_is(r.softlims.RATE_A.ovl_cost, zeros(10, 1), 12, [t 'softlims.RATE_A.ovl_cost']);
 t_is(r.order.branch.status.on(r.order.int.softlims.RATE_A.idx), [3; 6; 8; 9; 10], 12, [t 'softlims.RATE_A.idx']);
-gen_order_check(mpc, r, t)
+gen_order_check(mpc, r, t, mpopt);
 
 t = 'AC flow_lim=''2'' - softlims (violated) : ';
 mpc = rmfield(mpc, 'softlims');
@@ -861,7 +904,7 @@ t_is(r.branch(:, QT), [-21.917920; -27.565103; -17.970864; 23.130558; 0; -7.7590
 t_is(r.branch(:, MU_SF)+r.branch(:, MU_ST), [0; 0; 20; 0; 0; 11.526783; 0; 0; 0; 0], 4, [t 'mu Sf+St']);
 t_is(r.softlims.RATE_A.overload, [0; 0; 4.07774; 0; 0; 0; 0; 0; 0; 0], 6, [t 'softlims.RATE_A.overload']);
 t_is(r.softlims.RATE_A.ovl_cost, [0; 0; 81.554809; 0; 0; 0; 0; 0; 0; 0], 4, [t 'softlims.RATE_A.ovl_cost']);
-gen_order_check(mpc, r, t)
+gen_order_check(mpc, r, t, mpopt);
 
 %%-----  AC OPF (opf.flow_lim = 'P') -----
 mpopt = mpoption(mpopt, 'opf.flow_lim', 'P');
@@ -879,7 +922,7 @@ t_is(r.branch(:, PT), [-17.759246; 25.346644; 120; -240; 0; -118.577311; -18.529
 t_is(r.branch(:, QF), [15.646152; 6.577259; -6.087866; 8.021258; 0; -4.520662; -26.623563; -6.687069; -2.629290; -27.085546], 4, [t 'Qf']);
 t_is(r.branch(:, QT), [-15.370220; -23.912134; -15.548682; 20.069344; 0; -8.376437; 9.316359; 8.954090; -22.914454; 8.792961], 4, [t 'Qt']);
 t_is(r.branch(:, MU_SF)+r.branch(:, MU_ST), [0; 0; 29.248033; 0; 0; 8.417115; 0; 0; 0; 0], 4, [t 'mu Sf+St']);
-gen_order_check(mpc, r, t)
+gen_order_check(mpc, r, t, mpopt);
 
 t = 'AC flow_lim=''P'' - softlims(satisfied) : ';
 mpc = toggle_softlims(mpc, 'on');
@@ -898,7 +941,7 @@ t_is(r.branch(:, MU_SF)+r.branch(:, MU_ST), [0; 0; 29.248033; 0; 0; 8.417115; 0;
 t_is(r.softlims.RATE_A.overload, zeros(10, 1), 12, [t 'softlims.RATE_A.overload']);
 t_is(r.softlims.RATE_A.ovl_cost, zeros(10, 1), 12, [t 'softlims.RATE_A.ovl_cost']);
 t_is(r.order.branch.status.on(r.order.int.softlims.RATE_A.idx), [3; 6; 8; 9; 10], 12, [t 'softlims.RATE_A.idx']);
-gen_order_check(mpc, r, t)
+gen_order_check(mpc, r, t, mpopt);
 
 t = 'AC flow_lim=''P'' - softlims (violated) : ';
 mpc = rmfield(mpc, 'softlims');
@@ -920,7 +963,7 @@ t_is(r.branch(:, QT), [-21.917920; -27.565103; -17.970864; 23.130558; 0; -7.7590
 t_is(r.branch(:, MU_SF)+r.branch(:, MU_ST), [0; 0; 20; 0; 0; 11.526783; 0; 0; 0; 0], 4, [t 'mu Sf+St']);
 t_is(r.softlims.RATE_A.overload, [0; 0; 4.07774; 0; 0; 0; 0; 0; 0; 0], 6, [t 'softlims.RATE_A.overload']);
 t_is(r.softlims.RATE_A.ovl_cost, [0; 0; 81.554809; 0; 0; 0; 0; 0; 0; 0], 4, [t 'softlims.RATE_A.ovl_cost']);
-gen_order_check(mpc, r, t)
+gen_order_check(mpc, r, t, mpopt);
 
 if have_fcn('octave')
     warning(s1.state, file_in_path_warn_id);
@@ -930,7 +973,7 @@ warning(s2.state, sing_matrix_warn_id);
 t_end;
 
 
-function overload_loop(r, t, yn, lst)
+function overload_loop(r, t, yn, lst, isDC)
 %% r is the result structure
 %% t is the test string
 %% yn is whether to check if it is (1) or is not (0) a field
@@ -940,11 +983,19 @@ function overload_loop(r, t, yn, lst)
 %%     if yn == 0 i.e. checking that the limits do not exist, this is
 %%     a list of limits to exclude
 
-if nargin == 3
-    lst = {};
+if nargin < 5
+    isDC = 0;
+    if nargin < 4
+        lst = {};
+    end
 end
 
-lims_default = {'RATE_A', 'VMAX', 'VMIN', 'PMAX', 'PMIN', 'QMAX', 'QMIN', 'ANGMAX', 'ANGMIN'};
+if isDC
+    mpopt = mpoption('model', 'DC');
+else
+    mpopt = mpoption('model', 'AC');
+end
+lims_default = fieldnames(softlims_lim2mat(mpopt)).';
 
 if ~yn
     lst = lims_default(~ismember(lims_default, lst));
@@ -978,7 +1029,7 @@ end
 r = runopf(mpc, mpopt);
 t_ok(r.success, [t 'success']);
 
-function mu_cost_test(r,t)
+function mu_cost_test(r, t, mpopt)
 %% Tests whether the shadow price on violations matches the respective
 %% softlim cost. The shadow price should equal the softlim cost when the
 %% violation variable is used but the constraint is not binding. i.e. there is
@@ -998,24 +1049,15 @@ function mu_cost_test(r,t)
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
 
 %% structures used to index into softlims in a loop
-lims = struct(...
-    'VMAX', 'bus', ...
-    'VMIN','bus', ...
-    'ANGMAX', 'branch', ...
-    'ANGMIN', 'branch', ...
-    'RATE_A', 'branch', ...
-    'PMAX', 'gen', ...
-    'PMIN', 'gen', ...
-    'QMAX', 'gen', ...
-    'QMIN', 'gen' ...
-);
+lims = softlims_lim2mat(mpopt);
+
 vv = r.om.get_idx();
 [x0, xmin, xmax] = r.om.params_var();
 
 for lm = fieldnames(lims).'
     lim = lm{:};
     mat  = lims.(lim);
-    if ~isfield(r.softlims,lim)
+    if ~isfield(r.softlims, lim)
         continue
     end
     if strcmp(r.softlims.(lim).hl_mod, 'none')
@@ -1056,24 +1098,34 @@ for lm = fieldnames(lims).'
     t_is(mu,cst,4,[t 'mu ' lim '=cost'])
 end
 
-function gen_order_check(mpc, r, t)
+function gen_order_check(mpc, r, t, mpopt)
 %% Make sure the ordering of generators in input case and result 
 %% case is the same. Also make sure that any overloads are correctly
 %% reflected in the difference between the generation value and
 %% the respective limit
 
+if nargin < 4
+    isAC = 1;
+else
+    isAC = ~(~isempty(mpopt) && isfield(mpopt, 'model') && strcmp(mpopt.model, 'DC'));
+end
+
 [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
     MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
     QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
 
-t_is(mpc.gen(:,QMAX), r.gen(:,QMAX), 6, [t 'matching QMAX'])
-t_is(mpc.gen(:,QMIN), r.gen(:,QMIN), 6, [t 'matching QMIN'])
+glist = {'P'};
+if isAC
+    t_is(mpc.gen(:,QMAX), r.gen(:,QMAX), 6, [t 'matching QMAX'])
+    t_is(mpc.gen(:,QMIN), r.gen(:,QMIN), 6, [t 'matching QMIN'])
+    glist = {glist{:}, 'Q'};
+end
 t_is(mpc.gen(:,PMAX), r.gen(:,PMAX), 6, [t 'matching PMAX'])
 t_is(mpc.gen(:,PMIN), r.gen(:,PMIN), 6, [t 'matching PMIN'])
 t_is(mpc.gen(:,GEN_STATUS), r.gen(:,GEN_STATUS), 6, [t 'matching gen status'])
 
 on = r.gen(:,GEN_STATUS) > 0;
-for gg = {'P','Q'}
+for gg = glist
     g = gg{:};
     if isfield(r, 'softlims')
         gidx = eval([g 'G']);
@@ -1088,4 +1140,32 @@ for gg = {'P','Q'}
             t_is(r.softlims.([g 'MIN']).overload(mask), r.gen(mask, gmin) - r.gen(mask,gidx), 4, [t g 'MIN-' g 'G= ' g 'MIN overload'])
         end
     end
+end
+
+
+%%-----  softlims_lim2mat  --------------------------------------------
+function lim2mat = softlims_lim2mat(mpopt)
+if nargin < 1
+    mpopt = [];
+end
+if ~isempty(mpopt) && isfield(mpopt, 'model') && strcmp(mpopt.model, 'DC')
+    lim2mat = struct(...
+        'PMAX',     'gen', ...
+        'PMIN',     'gen', ...
+        'RATE_A',   'branch', ...
+        'ANGMAX',   'branch', ...
+        'ANGMIN',   'branch' ...
+    );
+else
+    lim2mat = struct(...
+        'VMAX',     'bus', ...
+        'VMIN',     'bus', ...
+        'PMAX',     'gen', ...
+        'PMIN',     'gen', ...
+        'QMAX',     'gen', ...
+        'QMIN',     'gen', ...
+        'RATE_A',   'branch', ...
+        'ANGMAX',   'branch', ...
+        'ANGMIN',   'branch' ...
+    );
 end
