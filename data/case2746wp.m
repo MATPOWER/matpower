@@ -10,6 +10,13 @@ function mpc = case2746wp
 %
 %   This data was graciously provided by, and is distributed with the
 %   permission of, Roman Korab <roman.korab@polsl.pl>.
+%
+%   MODIFIED 2018-10-16 (RDZ): Corrected sign of phase shifter angles
+%           in this case to reflect correction of phase shifter sign
+%           convention in MATPOWER code made on 2007-06-21 and included
+%           in MATPOWER v3.2. Original version of this case was based
+%           on the old sign convention. (Thanks to Mikhail Khokhlov and
+%           Dr. Artjoms Obusevs for reporting.)
 
 %   MATPOWER
 
@@ -3299,7 +3306,7 @@ mpc.gen = [
 %% branch data
 %	fbus	tbus	r	x	b	rateA	rateB	rateC	ratio	angle	status	angmin	angmax	Pf	Qf	Pt	Qt	mu_Sf	mu_St	mu_angmin	mu_angmax
 mpc.branch = [
-	7	8	0.00064	0.0305	0	400	400	400	1.0435	-0.6	1	-360	360	-252.5909	-29.0796	252.9920	48.1971	0.0000	0.0000	0.0000	0.0000;
+	7	8	0.00064	0.0305	0	400	400	400	1.0435	0.6	1	-360	360	-252.5909	-29.0796	252.9920	48.1971	0.0000	0.0000	0.0000	0.0000;
 	26	28	0.00036	0.02519	0	500	500	500	1.0565	0	1	-360	360	-18.8306	19.5216	18.8330	-19.3537	0.0000	0.0000	0.0000	0.0000;
 	27	29	0.00036	0.02519	0	500	500	500	1.0566	0	1	-360	360	111.9773	18.2096	-111.9353	-15.2717	0.0000	0.0000	0.0000	0.0000;
 	40	42	0.00034	0.02097	0	500	500	500	1.068	0	1	-360	360	30.7556	-48.6741	-30.7451	49.3246	0.0000	0.0000	0.0000	0.0000;

@@ -13,6 +13,17 @@ Since last release
 ------------------
 
 #### 10/16/18
+  - **INCOMPATIBLE CHANGE:** Correct signs of phase shifter angles in
+    Polish system cases, since they were based on the old sign convention
+    used by MATPOWER prior to v3.2 (see change on 6/21/07). Affects the
+    following cases:
+    - `case2383wp`
+    - `case2736sp`
+    - `case2737sop`
+    - `case2746wop`
+    - `case2746wp`
+    - `case3375wp`
+    *Thanks to Mikhail Khokhlov and Dr. Artjoms Obusevs for reporting.*
   - Fix `runpf()` handling of case where individual power flow fails
     during Q limit enforcement.
 
@@ -1415,6 +1426,7 @@ Version 4.1 - *Dec 14, 2011*
 #### 10/31/11
   - Added three case files, all more recent variations of the
     Polish system: `case3012wp.m`, `case3120sp.m` and `case3375wp.m`.
+    *Thanks to Roman Korab <roman.korab@polsl.pl>.*
 
 #### 9/28/11
   - Increased threshold value used to filter constraint shadow

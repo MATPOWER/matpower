@@ -9,8 +9,15 @@ function mpc = case3375wp
 %   This data was graciously provided by, and is distributed with the
 %   permission of, Roman Korab <roman.korab@polsl.pl>.
 %
-%   Note: Bus 10287 is isolated, resulting in a singular power flow
-%         Jacobian, and has been commented out. (RDZ 4/24/2015)
+%   MODIFIED 2015-04-24 (RDZ): Commented out bus 10287, which was
+%           isolated, resulting in a singular power flow Jacobian.
+%
+%   MODIFIED 2018-10-16 (RDZ): Corrected sign of phase shifter angles
+%           in this case to reflect correction of phase shifter sign
+%           convention in MATPOWER code made on 2007-06-21 and included
+%           in MATPOWER v3.2. Original version of this case was based
+%           on the old sign convention. (Thanks to Mikhail Khokhlov and
+%           Dr. Artjoms Obusevs for reporting.)
 
 %   MATPOWER
 
@@ -4456,8 +4463,8 @@ mpc.branch = [
 	10131	10329	0.00095	0.06908	-0.00047	0	300	300	0.95238	0	1	-360	360;
 	10133	10297	0.00127	0.07646	-0.01267	0	250	250	0.94212	0	1	-360	360;
 	10133	10297	0.00127	0.07646	-0.01267	0	250	250	0.94212	0	1	-360	360;
-	10135	10134	0.00025	0.01342	-0.01747	0	800	800	0.99474	-3	1	-360	360;
-	10135	10134	0.00025	0.01342	-0.01747	0	800	800	0.99474	-3	1	-360	360;
+	10135	10134	0.00025	0.01342	-0.01747	0	800	800	0.99474	3	1	-360	360;
+	10135	10134	0.00025	0.01342	-0.01747	0	800	800	0.99474	3	1	-360	360;
 	10135	10332	0.00179	0.07291	-0.00139	0	200	200	0.99131	0	1	-360	360;
 	10135	10332	0.00179	0.07291	-0.00139	0	200	200	0.99131	0	1	-360	360;
 	10135	10332	0.0022	0.09782	-0.01007	0	160	160	1.0543	0	1	-360	360;
