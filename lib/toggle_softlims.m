@@ -953,23 +953,23 @@ if nargin < 1
 end
 if ~isempty(mpopt) && isfield(mpopt, 'model') && strcmp(mpopt.model, 'DC')
     lim2mat = struct(...
-        'PMAX',     struct('mat_name', 'gen',    'col', PMAX), ...
-        'PMIN',     struct('mat_name', 'gen',    'col', PMIN), ...
-        'RATE_A',   struct('mat_name', 'branch', 'col', RATE_A), ...
-        'ANGMAX',   struct('mat_name', 'branch', 'col', ANGMAX), ...
-        'ANGMIN',   struct('mat_name', 'branch', 'col', ANGMIN) ...
+        'PMAX',   struct('mat_name', 'gen',    'col', PMAX,   'dir',  1 ), ...
+        'PMIN',   struct('mat_name', 'gen',    'col', PMIN,   'dir', -1 ), ...
+        'RATE_A', struct('mat_name', 'branch', 'col', RATE_A, 'dir',  1 ), ...
+        'ANGMAX', struct('mat_name', 'branch', 'col', ANGMAX, 'dir',  1 ), ...
+        'ANGMIN', struct('mat_name', 'branch', 'col', ANGMIN, 'dir', -1 ) ...
     );
 else
     lim2mat = struct(...
-        'VMAX',     struct('mat_name', 'bus',    'col', VMAX), ...
-        'VMIN',     struct('mat_name', 'bus',    'col', VMIN), ...
-        'PMAX',     struct('mat_name', 'gen',    'col', PMAX), ...
-        'PMIN',     struct('mat_name', 'gen',    'col', PMIN), ...
-        'QMAX',     struct('mat_name', 'gen',    'col', QMAX), ...
-        'QMIN',     struct('mat_name', 'gen',    'col', QMIN), ...
-        'RATE_A',   struct('mat_name', 'branch', 'col', RATE_A), ...
-        'ANGMAX',   struct('mat_name', 'branch', 'col', ANGMAX), ...
-        'ANGMIN',   struct('mat_name', 'branch', 'col', ANGMIN) ...
+        'VMAX',   struct('mat_name', 'bus',    'col', VMAX,   'dir',  1 ), ...
+        'VMIN',   struct('mat_name', 'bus',    'col', VMIN,   'dir', -1 ), ...
+        'PMAX',   struct('mat_name', 'gen',    'col', PMAX,   'dir',  1 ), ...
+        'PMIN',   struct('mat_name', 'gen',    'col', PMIN,   'dir', -1 ), ...
+        'QMAX',   struct('mat_name', 'gen',    'col', QMAX,   'dir',  1 ), ...
+        'QMIN',   struct('mat_name', 'gen',    'col', QMIN,   'dir', -1 ), ...
+        'RATE_A', struct('mat_name', 'branch', 'col', RATE_A, 'dir',  1 ), ...
+        'ANGMAX', struct('mat_name', 'branch', 'col', ANGMAX, 'dir',  1 ), ...
+        'ANGMIN', struct('mat_name', 'branch', 'col', ANGMIN, 'dir', -1 ) ...
     );
 end
 
@@ -1232,6 +1232,7 @@ for lm = fieldnames(lims).'
 
     mat  = mpc.order.ext.(lims.(lim).mat_name); %% mpc sub-matrix
     col = lims.(lim).col;                       %% mpc sub-matrix column
+    d = lims.(lim).dir;                         %% constraint direction
 
     %% idx: indices of bounds to relax
     %% idxfull is full list of candidate index values for given constraint
@@ -1261,26 +1262,27 @@ for lm = fieldnames(lims).'
     end
 
     %% upper bound on constraint violation variable (always a vector)
-    %% ub = abs( new limit - original limit )
+    %% d = 1 for upper bounds, -1 for lower bounds
+    %% ub = d * ( new limit - original limit )
     if isfield(s, 'hl_mod')
         switch s.hl_mod
             case 'remove'   %% upper bound is infinite
                 s.ub = Inf(size(s.idx));
             case 'scale'
                 %% new limit = original limit * hl_val
-                %% ub = abs( original limit * (hl_val - 1) )
+                %% ub = d * original limit * (hl_val - 1)
                 switch vectorcheck(s, idxmask)
                     case 0
                         error('softlims_init: provided hl_val vector does not conform to idx vector. When specifying hl_val as a vector idx must also be explicitly given');
                     case 1          %% vector
-                        s.ub = abs( (s.hl_val(idxmask) - 1) .* s.sav );
+                        s.ub = d * s.sav .* (s.hl_val(idxmask) - 1);
                     case 2          %% scalar
-                        s.ub = abs( (s.hl_val - 1)  * s.sav );
+                        s.ub = d * s.sav  * (s.hl_val - 1);
                     case {1, 3}     %% default, which is a vector
-                        s.ub = abs( (s.hl_val - 1) .* s.sav );
+                        s.ub = d * s.sav .* (s.hl_val - 1);
                 end
             case 'shift'
-                %% new limit = original limit + ubsign * hl_val
+                %% new limit = original limit + d * hl_val
                 %% ub = hl_val
                 switch vectorcheck(s, idxmask)
                     case 0
@@ -1290,24 +1292,23 @@ for lm = fieldnames(lims).'
                     case {2, 3}     %% scalar (including default which is a scalar)
                         s.ub = s.hl_val * ones(size(s.idx));
                 end
-
-                %% check that all ub are non negative
-                if any(s.ub < 0)
-                    error('softlims_init: some soft limit for %s has a negative upper bound. There is most likely a problem in the specification of hl_val.', lim);
-                end
             case 'replace'
                 %% new limit = hl_val
-                %% ub = abs( hl_val - original limit )
+                %% ub = d * ( hl_val - original limit )
                 switch vectorcheck(s, idxmask)
                     case 0
                         error('softlims_init: provided hl_val vector does not conform to idx vector. When specifying hl_val as a vector idx must also be explicitly given');
                     case 1          %% vector
-                        s.ub = abs( s.hl_val(idxmask) - s.sav );
+                        s.ub = d * ( s.hl_val(idxmask) - s.sav );
                     case 2          %% scalar
-                        s.ub = abs( s.hl_val - s.sav );
+                        s.ub = d * ( s.hl_val - s.sav );
                     case 3          %% no default for 'replace'
                         error('softlims_init: for hard limit ''replace'' modification, replacement value hl_val must be specified');
                 end
+        end
+        %% check that all ub are non negative (all 'hl_val' were valid)
+        if any(s.ub < 0)
+            error('softlims_init: some hl_val for %s results in more restrictive, rather than relaxed, hard constraint.', lim);
         end
     end
 
