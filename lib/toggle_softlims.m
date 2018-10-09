@@ -177,17 +177,17 @@ mpc.order.ext.softlims = slims;
 
 %%-----  convert stuff to internal indexing  -----
 for m = fieldnames(mat2lims).'
-    mat = m{:};
-    n0  = size(o.ext.(mat), 1);     %% original number
-    n   = size(mpc.(mat), 1);       %% on-line number
-    e2i = zeros(n0, 1);             %% ext->int index mapping
-    if strcmp(mat, 'gen')
+    mat_name = m{:};
+    n0  = size(o.ext.(mat_name), 1);    %% original number
+    n   = size(mpc.(mat_name), 1);      %% on-line number
+    e2i = zeros(n0, 1);                 %% ext->int index mapping
+    if strcmp(mat_name, 'gen')
         %% for gens, account for permutation of gen matrix
         e2i(o.gen.status.on(o.gen.i2e)) = (1:n)';
     else
-        e2i(o.(mat).status.on) = (1:n)';
+        e2i(o.(mat_name).status.on) = (1:n)';
     end
-    for lm = mat2lims.(mat)
+    for lm = mat2lims.(mat_name)
         lim = lm{:};
         s = slims.(lim);
         if ~strcmp( s.hl_mod, 'none')
@@ -212,8 +212,9 @@ for lm = fieldnames(lims).'
     lim = lm{:};
     s = slims.(lim);
     if ~strcmp(s.hl_mod, 'none')
-        mat = lims.(lim);      %% mpc sub matrix
-        mpc.(mat)(s.idx, eval(lim)) = s.rval;
+        mat_name = lims.(lim).mat_name; %% mpc sub-matrix name
+        col = lims.(lim).col;           %% mpc sub-matrix column
+        mpc.(mat_name)(s.idx, col) = s.rval;
     end
 end
 
@@ -466,8 +467,9 @@ for lm = fieldnames(lims).'
     if strcmp(s.hl_mod, 'none')
         continue;
     end
-    mat = lims.(lim);
-    results.(mat)(s.idx, eval(lim)) = s.sav;
+    mat_name = lims.(lim).mat_name; %% mpc sub-matrix name
+    col = lims.(lim).col;           %% mpc sub-matrix column
+    results.(mat_name)(s.idx, col) = s.sav;
 end
 
 %%-----  remove rval, sav and ub fields  -----
@@ -492,9 +494,9 @@ if isOPF
             continue;
         end
 
-        mat  = lims.(lim);
-        n0 = size(o.ext.(mat), 1);      %% original number
-        n  = size(results.(mat), 1);    %% number on-line
+        mat_name  = lims.(lim).mat_name;    %% mpc sub-matrix name
+        n0 = size(o.ext.(mat_name), 1);     %% original number
+        n  = size(results.(mat_name), 1);   %% number on-line
         results.softlims.(lim).overload = zeros(n0, 1);
         results.softlims.(lim).ovl_cost = zeros(n0, 1);
         varname = ['s_', lower(lim)];  %% variable name
@@ -520,14 +522,14 @@ if isOPF
                 error('userfcn_soflims_formulation: limit %s is unknown ', lim)
         end
 
-        %% NOTE: o.(mat).status.on is a vector nx1 where n is the INTERNAL number of
-        %% elements. The entries are the EXTERNAL locations (row numbers).
-        if strcmp(mat, 'gen')
+        %% NOTE: o.(mat_name).status.on is an nx1 vector where n is the INTERNAL
+        %% number of elements. Entries are the EXTERNAL locations (row numbers).
+        if strcmp(mat_name, 'gen')
             results.softlims.(lim).overload(o.gen.status.on(o.gen.i2e(s.idx))) = var;
             results.softlims.(lim).ovl_cost(o.gen.status.on(o.gen.i2e(s.idx))) = var .* s.cost(:, 1);
         else
-            results.softlims.(lim).overload(o.(mat).status.on(s.idx)) = var;
-            results.softlims.(lim).ovl_cost(o.(mat).status.on(s.idx)) = var .* s.cost(:, 1);
+            results.softlims.(lim).overload(o.(mat_name).status.on(s.idx)) = var;
+            results.softlims.(lim).ovl_cost(o.(mat_name).status.on(s.idx)) = var .* s.cost(:, 1);
         end
 
         cname = ['soft_' lower(lim)];
@@ -911,7 +913,7 @@ if isfield(mpc, 'softlims')
                     if ismember(lim, {'VMIN', 'VMAX'})
                         desc = fields.busnum.desc;
                     else
-                        desc = sprintf(fields.idx.desc, lims.(lim));
+                        desc = sprintf(fields.idx.desc, lims.(lim).mat_name);
                     end
                 else
                     desc = fields.(f).desc;
@@ -935,28 +937,39 @@ end
 
 %%-----  softlims_lim2mat  --------------------------------------------
 function lim2mat = softlims_lim2mat(mpopt)
+
+%% define named indices into data matrices
+[PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
+    VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
+[GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
+    MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
+    QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
+[F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
+    TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
+    ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
+
 if nargin < 1
     mpopt = [];
 end
 if ~isempty(mpopt) && isfield(mpopt, 'model') && strcmp(mpopt.model, 'DC')
     lim2mat = struct(...
-        'PMAX',     'gen', ...
-        'PMIN',     'gen', ...
-        'RATE_A',   'branch', ...
-        'ANGMAX',   'branch', ...
-        'ANGMIN',   'branch' ...
+        'PMAX',     struct('mat_name', 'gen',    'col', PMAX), ...
+        'PMIN',     struct('mat_name', 'gen',    'col', PMIN), ...
+        'RATE_A',   struct('mat_name', 'branch', 'col', RATE_A), ...
+        'ANGMAX',   struct('mat_name', 'branch', 'col', ANGMAX), ...
+        'ANGMIN',   struct('mat_name', 'branch', 'col', ANGMIN) ...
     );
 else
     lim2mat = struct(...
-        'VMAX',     'bus', ...
-        'VMIN',     'bus', ...
-        'PMAX',     'gen', ...
-        'PMIN',     'gen', ...
-        'QMAX',     'gen', ...
-        'QMIN',     'gen', ...
-        'RATE_A',   'branch', ...
-        'ANGMAX',   'branch', ...
-        'ANGMIN',   'branch' ...
+        'VMAX',     struct('mat_name', 'bus',    'col', VMAX), ...
+        'VMIN',     struct('mat_name', 'bus',    'col', VMIN), ...
+        'PMAX',     struct('mat_name', 'gen',    'col', PMAX), ...
+        'PMIN',     struct('mat_name', 'gen',    'col', PMIN), ...
+        'QMAX',     struct('mat_name', 'gen',    'col', QMAX), ...
+        'QMIN',     struct('mat_name', 'gen',    'col', QMIN), ...
+        'RATE_A',   struct('mat_name', 'branch', 'col', RATE_A), ...
+        'ANGMAX',   struct('mat_name', 'branch', 'col', ANGMAX), ...
+        'ANGMIN',   struct('mat_name', 'branch', 'col', ANGMIN) ...
     );
 end
 
@@ -1021,7 +1034,8 @@ max_gen_cost = max(margcost(mpc.gencost, mpc.gen(:, PMAX)));
 %% set defaults for each element
 for lm = fieldnames(lims).'
     lim = lm{:};
-    mat  = mpc.order.ext.(lims.(lim));
+    mat  = mpc.order.ext.(lims.(lim).mat_name); %% mpc sub-matrix
+    col = lims.(lim).col;                       %% mpc sub-matrix column
     specified = isfield(slims, lim);
     if ~specified && ~use_default
         slims.(lim).hl_mod = 'none';
@@ -1052,7 +1066,7 @@ for lm = fieldnames(lims).'
 
         %% idx: indices of bounds to relax
         %% idxfull is full list of candidate index values for given constraint
-        idxfull = softlims_default_idx(mat, lim);
+        idxfull = softlims_default_idx(mat, lim, col);
 
         %% convert bus numbers to bus row indices, if necessary, for VMIN/VMAX
         if ismember(lim, {'VMAX', 'VMIN'}) && ...
@@ -1103,7 +1117,7 @@ for lm = fieldnames(lims).'
                     if ~isfield(s, 'hl_val')
                         %% use 2 if ubsign and original constraint have
                         %% same sign, otherwise use 1/2
-                        orig_lim = mat(s.idx, eval(lim));
+                        orig_lim = mat(s.idx, col);
                         s.hl_val = 2 * ones(size(s.idx));   %% scale up by 2
                         k = find(ubsign.(lim) * orig_lim < 0);  %% unless opp. sign
                         s.hl_val(k) = 1/2;                  %% then scale down by 2
@@ -1143,9 +1157,9 @@ end
 
 
 %%-----  softlims_default_idx  --------------------------------------------
-function idx = softlims_default_idx(mat, lim)
+function idx = softlims_default_idx(mat, lim, col)
 %
-%   idx = softlims_default_idx(mat, lim)
+%   idx = softlims_default_idx(mat, lim, col)
 %
 %   Returns the full IDX vector used as the default for the constraint
 %   specified by lim.
@@ -1168,13 +1182,13 @@ switch lim
         idx = [1:size(mat, 1)]';
     case {'ANGMAX', 'ANGMIN'}
         %% all active branches with meaninful limit (not 0, +360 or -360)
-        idx = find(mat(:, BR_STATUS) > 0 & mat(:, eval(lim)) & abs(mat(:, eval(lim))) < 360 );
+        idx = find(mat(:, BR_STATUS) > 0 & mat(:, col) & abs(mat(:, col)) < 360 );
     case 'RATE_A'
         %% all active branches with flow limit (RATE_A not 0)
         idx = find(mat(:, BR_STATUS) > 0 & mat(:, RATE_A) > 0);
     case {'PMAX', 'QMAX', 'QMIN'}
         %% all active generators (excluding dispatchable loads) w/finite limits
-        idx = find( (mat(:, GEN_STATUS) > 0) & ~isload(mat) & ~isinf(mat(:, eval(lim))) );
+        idx = find( (mat(:, GEN_STATUS) > 0) & ~isload(mat) & ~isinf(mat(:, col)) );
     case 'PMIN'
         %% all active generators (excluding dispatchable loads)
         idx = find( (mat(:, GEN_STATUS) > 0) & ~isload(mat) );
@@ -1216,11 +1230,12 @@ for lm = fieldnames(lims).'
         continue;
     end
 
-    mat  = mpc.order.ext.(lims.(lim));
+    mat  = mpc.order.ext.(lims.(lim).mat_name); %% mpc sub-matrix
+    col = lims.(lim).col;                       %% mpc sub-matrix column
 
     %% idx: indices of bounds to relax
     %% idxfull is full list of candidate index values for given constraint
-    idxfull = softlims_default_idx(mat, lim);
+    idxfull = softlims_default_idx(mat, lim, col);
 
     %% idxmask is a boolean vector the size of s.idx, where
     %% idxmask(i) is 1 if s.idx(i) is in idxfull and 0 otherwise
@@ -1234,7 +1249,7 @@ for lm = fieldnames(lims).'
     end
 
     %% save original bounds in s.sav
-    s.sav = mat(s.idx, eval(lim));
+    s.sav = mat(s.idx, col);
 
     %% cost: cost of violating softlim
     %% filter cost to include only valid constraints
