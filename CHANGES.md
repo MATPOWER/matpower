@@ -12,6 +12,24 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 10/9/18
+  - Add option `opf.softlims.default` for use with enhanced
+    `toggle_softlims()` to determine whether or not to include soft limits
+    on constraints whose parameters are not specified explicitly in the
+    `mpc.softlims` struct.
+  - Update `toggle_softlims()` to implement soft limits for all OPF inequality
+    constraints, i.e. bus voltage bounds, generator active & reactive bounds,
+    branch flow and branch angle difference limits.
+    *Thanks to Eran Schweitzer.*
+  - Add optional `mpopt` argument to calls to `ext2int()` and `int2ext()`.
+  - **INCOMPATIBLE CHANGE:** Add `mpopt` to input args for OPF `ext2int`
+    and `int2ext` callbacks.
+  - **INCOMPATIBLE CHANGE:** Turning soft limits on without specifying any
+    parameters explicitly in `mpc.softlims` now implements soft limits for
+    all constraints, by default, not just branch flow limits. And the
+    format of the input parameters in `mpc.softlims` has changed. See
+    `help toggle_softlims` for the details.
+
 #### 9/10/18
   - Add support for PARDISO v6.x.
 
@@ -48,26 +66,6 @@ Since last release
     `opf_vlim_hess()` that resulted in wrong sign in Hessian terms.
   - Fix bug #36 where Hessian structure for Ipopt and Knitro were
     incorrect. Re-enabled skipped tests that were previously failing.
-
-#### 4/30/18
-  - Add optional `mpopt` argument to calls to `ext2int()` and `int2ext()`.
-  - **INCOMPATIBLE CHANGE:** Add `mpopt` to input args for OPF `ext2int`
-    and `int2ext` callbacks.
-
-#### 4/27/18
-  - Add option `opf.softlims.default` for use with enhanced
-    `toggle_softlims()` to determine whether or not to include soft limits
-    on constraints whose parameters are not specified explicitly in the
-    `mpc.softlims` struct.
-  - Update `toggle_softlims()` to implement soft limits for all OPF inequality
-    constraints, i.e. bus voltage bounds, generator active & reactive bounds,
-    branch flow and branch angle difference limits.
-    *Thanks to Eran Schweitzer.*
-  - **INCOMPATIBLE CHANGE:** Turning soft limits on without specifying any
-    parameters explicitly in `mpc.softlims` now implements soft limits for
-    all constraints, by default, not just branch flow limits. And the
-    format of the input parameters in `mpc.softlims` has changed. See
-    `help toggle_softlims` for the details.
 
 #### 4/19/18
   - Add AC OPF tests for cases with ref bus ~= 1 and ref angle ~= 0.
