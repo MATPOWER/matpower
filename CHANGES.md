@@ -12,6 +12,10 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 10/16/18
+  - Fix `runpf()` handling of case where individual power flow fails
+    during Q limit enforcement.
+
 #### 10/9/18
   - Add option `opf.softlims.default` for use with enhanced
     `toggle_softlims()` to determine whether or not to include soft limits

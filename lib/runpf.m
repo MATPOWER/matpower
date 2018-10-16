@@ -239,7 +239,7 @@ if ~isempty(mpc.bus)
                     branch = mpc.branch;
             end
         
-            if qlim             %% enforce generator Q limits
+            if success && qlim      %% enforce generator Q limits
                 %% find gens with violated Q constraints
                 mx = find( gen(:, GEN_STATUS) > 0 ...
                         & gen(:, QG) > gen(:, QMAX) + mpopt.opf.violation );

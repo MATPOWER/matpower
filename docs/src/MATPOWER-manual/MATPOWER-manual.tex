@@ -7492,6 +7492,7 @@ Some of these cases also include contingency tables and/or hourly load scenarios
 \item Fix bug \#21 where a continuation power flow that failed the first corrector step would produce a fatal error. \emph{Thanks to Elis Nycander.}
 \item Fix bug \#23 where the continuation power flow could switch directions unexpectedly when the operating point switched from stable to unstable manifold or vice-versa after hitting a limit. \emph{Thanks to Elis Nycander and Shrirang Abhyankar.}
 \item Fix bug \#26 where, in a continuation power flow, a reactive limit at a bus could be detected in error if multiple generators at the bus had reactive ranges of very different sizes. \emph{Thanks to Elis Nycander and Shrirang Abhyankar.}
+\item Fix \code{runpf} handling of case where individual power flow fails during Q limit enforcement.
 \end{itemize}
 
 \subsubsection*{Incompatible Changes}
