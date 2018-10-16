@@ -761,10 +761,10 @@ A generator is modeled as a complex power injection at a specific bus. For gener
 s^i_g = p^i_g + j q^i_g.
 \end{equation}
 Let $S_g = P_g + j Q_g$ be the $n_g \times 1$ vector of these generator injections. The MW and MVAr equivalents (before conversion to p.u.) of $p^i_g$ and $q^i_g$ are specified in columns \code{PG} (2) and \code{QG} (3), respectively of row~$i$ of the \gen{} matrix. A sparse $n_b \times n_g$ generator connection matrix $C_g$ can be defined such that its $(i,j)^\mathrm{th}$ element is 1 if generator~$j$ is located at bus~$i$ and 0 otherwise. The $n_b \times 1$ vector of all bus injections from generators can then be expressed as
-
 \begin{equation}
 S_{g,\mathrm{bus}} = C_g \cdot S_g.
 \end{equation}
+A generator with a negative injection can also be used to model a dispatchable load.
 
 \subsection{Loads}
 
@@ -772,7 +772,7 @@ Constant power loads are modeled as a specified quantity of real and reactive po
 \begin{equation}
 s^i_d = p^i_d + j q^i_d
 \end{equation}
-and $S_d = P_d + j Q_d$ denotes the $n_b \times 1$ vector of complex loads at all buses. The MW and MVAr equivalents (before conversion to p.u.) of $p^i_d$ and $q^i_d$ are specified in columns \code{PD} (3) and \code{QD} (4), respectively of row~$i$ of the \bus{} matrix.
+and $S_d = P_d + j Q_d$ denotes the $n_b \times 1$ vector of complex loads at all buses. The MW and MVAr equivalents (before conversion to p.u.) of $p^i_d$ and $q^i_d$ are specified in columns \code{PD} (3) and \code{QD} (4), respectively of row~$i$ of the \bus{} matrix. These fields can also take on negative quantities to represent fixed (e.g. distributed) generation.
 
 Constant impedance and constant current loads are not implemented directly, but the constant impedance portions can be modeled as a shunt element described below. Dispatchable loads are modeled as negative generators and appear as negative values in $S_g$.
 
@@ -784,6 +784,8 @@ A shunt connected element such as a capacitor or inductor is modeled as a fixed 
 y^i_{sh} = g^i_{sh} + j b^i_{sh}
 \end{equation}
 and $Y_{sh} = G_{sh} + j B_{sh}$ denotes the $n_b \times 1$ vector of shunt admittances at all buses. The parameters $g^i_{sh}$ and $b^i_{sh}$ are specified in columns \code{GS} (5) and \code{BS} (6), respectively, of row~$i$ of the \bus{} matrix as equivalent MW (consumed) and MVAr (injected) at a nominal voltage magnitude of 1.0~p.u and angle of zero.
+
+A shunt element can also be used to model a constant impedance load and, though correctly, \matpower{} does not currently report these quantities as ``load''.
 
 
 \subsection{Network Equations}
