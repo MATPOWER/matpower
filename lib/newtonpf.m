@@ -1,24 +1,33 @@
 function [V, converged, i] = newtonpf(Ybus, Sbus, V0, ref, pv, pq, mpopt)
 %NEWTONPF  Solves the power flow using a full Newton's method.
 %   [V, CONVERGED, I] = NEWTONPF(YBUS, SBUS, V0, REF, PV, PQ, MPOPT)
-%   solves for bus voltages given the full system admittance matrix (for
-%   all buses), the complex bus power injection vector (for all buses),
-%   the initial vector of complex bus voltages, and column vectors with
-%   the lists of bus indices for the swing bus, PV buses, and PQ buses,
-%   respectively. The bus voltage vector contains the set point for
-%   generator (including ref bus) buses, and the reference angle of the
-%   swing bus, as well as an initial guess for remaining magnitudes and
-%   angles. MPOPT is a MATPOWER options struct which can be used to 
-%   set the termination tolerance, maximum number of iterations, and 
-%   output options (see MPOPTION for details). Uses default options if
-%   this parameter is not given. Returns the final complex voltages, a
-%   flag which indicates whether it converged or not, and the number of
-%   iterations performed.
+%
+%   Solves for bus voltages using a full Newton-Raphson method, given the
+%   following inputs:
+%       YBUS  - full system admittance matrix (for all buses)
+%       SBUS  - handle to function that returns the complex bus power
+%               injection vector (for all buses), given the bus voltage
+%               magnitude vector (for all buses)
+%       V0    - initial vector of complex bus voltages
+%       REF   - bus index of reference bus (voltage ang reference & gen slack)
+%       PV    - vector of bus indices for PV buses
+%       PQ    - vector of bus indices for PQ buses
+%       MPOPT - (optional) MATPOWER option struct, used to set the
+%               termination tolerance, maximum number of iterations, and
+%               output options (see MPOPTION for details).
+%
+%   The bus voltage vector contains the set point for generator
+%   (including ref bus) buses, and the reference angle of the swing
+%   bus, as well as an initial guess for remaining magnitudes and
+%   angles.
+%
+%   Returns the final complex voltages, a flag which indicates whether it
+%   converged or not, and the number of iterations performed.
 %
 %   See also RUNPF.
 
 %   MATPOWER
-%   Copyright (c) 1996-2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2018, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
