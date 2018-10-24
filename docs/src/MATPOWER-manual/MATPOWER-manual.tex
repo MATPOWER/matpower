@@ -3035,8 +3035,8 @@ name & description \\
 \midrule
 \mpc{}	& \matpower{} case struct \\
 \code{~~reserves}	& additional field in \mpc{} containing input parameters for zonal reserves in the following sub-fields: \\
-\code{~~~~cost}	& $n_g \times 1$ vector of reserve costs in \$/MW, $c$ from \eqref{eq:reserve_cost} \\
-\code{~~~~qty}	& $n_g \times 1$ vector of reserve quantity upper bounds in MW, $i^\mathrm{th}$ element is $r_i^\mathrm{max}$ \\
+\code{~~~~cost}	& ($n_g$ or $n_{gr}$\tnote{\dag}~) ${} \times 1$ vector of reserve costs in \$/MW, $c$ from \eqref{eq:reserve_cost} \\
+\code{~~~~qty}	& ($n_g$ or $n_{gr}$\tnote{\dag}~) ${} \times 1$ vector of reserve quantity upper bounds in MW, $i^\mathrm{th}$ element is $r_i^\mathrm{max}$ \\
 \code{~~~~zones}	& $n_{rz} \times n_g$ matrix of reserve zone definitions \\
 & \code{zones(k,j)} = $\left\{\begin{array}{cl}1 & \mathrm{if~gen}~j~\mathrm{belongs~to~reserve~zone}~k~~(j \in Z_k)\\
 0 & \mathrm{otherwise}~~(j \notin Z_k)
@@ -3044,6 +3044,10 @@ name & description \\
 \code{~~~~req}	& $n_{rz} \times 1$ vector of zonal reserve requirements in MW, $k^\mathrm{th}$ element is $R_k$ from \eqref{eq:reserve_req}\\
 \bottomrule
 \end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [\dag] {Here $n_{gr}$ is the number of generators belonging to at least one reserve zone.}
+\end{tablenotes}
 \end{threeparttable}
 \end{table}
 
@@ -3059,7 +3063,7 @@ name & description \\
 name & description \\
 \midrule
 \results{}	& OPF results struct, superset of \mpc{} with additional fields for output data \\
-\code{~~reserves}	& zonal reserve data, with results in the following sub-fields:\tnote{*} \\
+\code{~~reserves}	& zonal reserve data, with results in the following sub-fields:\tnote{\ddag} \\
 \code{~~~~R}	& reserve allocation $r_i$, in MW \\
 \code{~~~~Rmin}	& lower bound of $r_i$ in MW from \eqref{eq:reserve_var}, i.e. all zeros \\
 \code{~~~~Rmax}	& upper bound of $r_i$ in MW from \eqref{eq:reserve_var}, i.e. $\min(r_i^\mathrm{max}, \Delta_i)$ \\
@@ -3072,7 +3076,7 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [*] {All zonal reserve result sub-fields are $n_g \times 1$ vectors, where the values are set to zero for units not participating in the provision of reserves.}
+ \item [\ddag] {All zonal reserve result sub-fields are $n_g \times 1$ vectors, where the values are set to zero for units not participating in the provision of reserves.}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
