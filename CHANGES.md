@@ -12,6 +12,15 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 10/25/18
+  - Add another purely synthetic case from the ACTIVSg team (ASU, Cornell,
+    Texas A&M, U of IL, and VCU - Synthetic grids), resulting from work
+    supported by the ARPA-E GRID DATA program.
+    *Thanks to Adam Birchfield and the ACTIVSg team.*
+    - `case_SyntheticUSA` (82,000-bus continental USA synthetic model,
+      aggregation of `case_ACTIVSg2000`, `case_ACTIVSg10k`,
+      `case_ACTIVSg70k`, connected by 9 DC lines)
+
 #### 10/16/18
   - **INCOMPATIBLE CHANGE:** Correct signs of phase shifter angles in
     Polish system cases, since they were based on the old sign convention
