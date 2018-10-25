@@ -49,11 +49,11 @@ nlam = length(lambda) / 2;
 lamP = lambda(1:nlam);
 lamQ = lambda((1:nlam)+nlam);
 
+%%----- evaluate Hessian of power balance constraints -----
 %% compute 2nd derivatives
 [Gp11, Gp12, Gp21, Gp22] = d2Sbus_dV2(Ybus, V, lamP, mpopt.opf.v_cartesian);
 [Gq11, Gq12, Gq21, Gq22] = d2Sbus_dV2(Ybus, V, lamQ, mpopt.opf.v_cartesian);
 
-%%----- evaluate Hessian of power balance constraints -----
 if ~mpopt.opf.v_cartesian
     %% adjust for voltage dependent loads (constant impedance part of ZIP loads)
     diaglam = sparse(1:nb, 1:nb, lamP, nb, nb);
