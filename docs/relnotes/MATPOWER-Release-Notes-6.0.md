@@ -1,6 +1,3 @@
-MATPOWER Release Notes
-======================
-
 What's New in Version 6.0
 -------------------------
 
@@ -8,7 +5,7 @@ Below is a summary of the changes since version 5.1 of MATPOWER. See the
 [`CHANGES.md`][1] file for all the gory details. For release notes for
 previous versions, see Appendix H of the [MATPOWER User's Manual][2].
 
-* New Open Development Model
+#### New Open Development Model
   - MATPOWER development has moved to GitHub! The [code repository][4] is
     now publicly available to clone and submit pull requests.
   - [Public issue tracker][4] for reporting bugs, submitting patches, etc.
@@ -18,7 +15,7 @@ previous versions, see Appendix H of the [MATPOWER User's Manual][2].
   - New developer e-mail list ([MATPOWER-DEV-L][9]) to facilitate
     communication between those collaborating on MATPOWER development.
 
-* New Case Files:
+#### New Case Files:
   - Added 9 new case files, 8 cases ranging from 1888 to 6515 buses
     representing the French system, and a 13,659-bus case representing
     parts of the of the European high voltage transmission network,
@@ -31,7 +28,7 @@ previous versions, see Appendix H of the [MATPOWER User's Manual][2].
   - Added `case33bw.m`, a 33-bus radial distribution system from Baran
     and Wu.
 
-* New Features:
+#### New Features:
   - [MATPOWER Optimal Scheduling Tool (MOST)][5] is a major new feature,
     implementing a full range of optimal power scheduling problems, from a
     simple as a deterministic, single period economic dispatch problem
@@ -84,7 +81,7 @@ previous versions, see Appendix H of the [MATPOWER User's Manual][2].
       accepts the values `bus` and `area` as valid values for `load_zone`
       argument.
 
-* Other Improvements:
+#### Other Improvements:
   - Changed default solver order for LP, QP, MILP, MIQP problems to move
     Gurobi before CPLEX and BPMPD after OT and GLPK.
   - Added some caching to `mpoption()` and made minor changes to
@@ -105,7 +102,7 @@ previous versions, see Appendix H of the [MATPOWER User's Manual][2].
   - Added "Release History" section to Appendix of manual.
   - Many new tests.
 
-* Bugs fixed:
+#### Bugs fixed:
   - Fixed bug in `toggle_dclines()` that resulted in fatal error when used
     with OPF with reactive power costs. *Thanks to Irina Boiarchuk.*
   - Fixed fatal bug in `update_mupq()` affecting cases where `QMIN` is greater
@@ -133,7 +130,7 @@ previous versions, see Appendix H of the [MATPOWER User's Manual][2].
   - Bad bus numbers no longer cause a fatal error (after reporting the
     bad bus numbers) in `case_info()`.
 
-* Incompatible Changes:
+#### Incompatible Changes:
   - Removed `fairmax()` from the public interface by moving it inside `uopf()`,
     the only place it was used.
   - Removed `cpf.user_callback_args` option and modified
