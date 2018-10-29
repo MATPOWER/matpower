@@ -219,24 +219,31 @@ Publications and Tech Notes
      Dec. 2013.  
      DOI: [10.1109/TSG.2013.2281001][18].
 
-5.  R. D. Zimmerman, ["Uniform Price Auctions and Optimal
-    Power Flow"][19], *MATPOWER Technical Note 1*, February 2010.  
+5.  A. J. Lamadrid, D. Munoz-Alvarez, C. E. Murillo-Sanchez,
+    R. D. Zimmerman, H. D. Shin and R. J. Thomas, ["Using the MATPOWER
+    Optimal Scheduling Tool to Test Power System Operation Methodologies
+    Under Uncertainty,"][19] *Sustainable Energy, IEEE Transactions on*,
+    2018.
+    DOI: [10.1109/TSTE.2018.2865454][19].
+
+6.  R. D. Zimmerman, ["Uniform Price Auctions and Optimal
+    Power Flow"][20], *MATPOWER Technical Note 1*, February 2010.  
     Available: http://www.pserc.cornell.edu/matpower/TN1-OPF-Auctions.pdf
 
-6.  R. D. Zimmerman, ["AC Power Flows, Generalized OPF Costs
-    and their Derivatives using Complex Matrix Notation"][20],
+7.  R. D. Zimmerman, ["AC Power Flows, Generalized OPF Costs
+    and their Derivatives using Complex Matrix Notation"][21],
     *MATPOWER Technical Note 2*, February 2010.  
     Available:
     http://www.pserc.cornell.edu/matpower/TN2-OPF-Derivatives.pdf
 
-7.  B. Sereeter and R. D. Zimmerman, ["Addendum to AC Power Flows and
+8.  B. Sereeter and R. D. Zimmerman, ["Addendum to AC Power Flows and
     their Derivatives using Complex Matrix Notation: Nodal Current
-    Balance"][21], *MATPOWER Technical Note 3*, April 2018.  
+    Balance"][22], *MATPOWER Technical Note 3*, April 2018.  
     Available: http://www.pserc.cornell.edu/matpower/TN3-More-OPF-Derivatives.pdf
 
-8.  B. Sereeter and R. D. Zimmerman, ["AC Power Flows, Generalized
+9.  B. Sereeter and R. D. Zimmerman, ["AC Power Flows, Generalized
     OPF Costs and their Derivatives using Complex Matrix Notation
-    and Cartesian Coordinate Voltages"][22], *MATPOWER Technical
+    and Cartesian Coordinate Voltages"][23], *MATPOWER Technical
     Note 4*, April 2018.  
     Available:
     http://www.pserc.cornell.edu/matpower/TN4-OPF-Derivatives-Cartesian.pdf
@@ -254,7 +261,7 @@ acknowledge that fact by citing [reference \[1\]][13] above, namely:
     Transactions on*, vol. 26, no. 1, pp. 12–19, Feb. 2011.
 
 Additionally, we request that publications derived from the use of
-the [MATPOWER Optimal Scheduling Tool (MOST)][23], explicitly
+the [MATPOWER Optimal Scheduling Tool (MOST)][24], explicitly
 acknowledge that fact by citing [reference \[4\]][18] as well as [\[1\]][13].
 
 >   C. E. Murillo-Sanchez, R. D. Zimmerman, C. L. Anderson, and
@@ -269,23 +276,23 @@ E-mail Lists
 There are three MATPOWER e-mail lists available to serve the MATPOWER
 community:
 
-- [MATPOWER-ANNOUNCE-L][24] is a simple announcement list for those who
+- [MATPOWER-ANNOUNCE-L][25] is a simple announcement list for those who
   wish to be notified of the release of new versions of MATPOWER.
 
-- [MATPOWER-L][25] is for MATPOWER users, to facilitate discussion and
+- [MATPOWER-L][26] is for MATPOWER users, to facilitate discussion and
   provide a forum for help with MATPOWER related questions.
 
-- [MATPOWER-DEV-L][26] is for MATPOWER developers, to provide a forum for
+- [MATPOWER-DEV-L][27] is for MATPOWER developers, to provide a forum for
   discussion related to the development of the MATPOWER software or
   proposed contributions.
 
-For details see the [Mailing Lists section][27] of the
+For details see the [Mailing Lists section][28] of the
 [MATPOWER website][1].
 
 Please select the most appropriate list for your post and do *not*
 cross-post to both MATPOWER-L and MATPOWER-DEV-L. Bug reports,
 software patches, proposed enhancements, etc. should be submitted to
-the [issue tracker on GitHub][28].
+the [issue tracker on GitHub][29].
 
 
 Optional Packages
@@ -302,7 +309,7 @@ Manual][8] for details.
 License and Terms of Use
 ------------------------
 
-MATPOWER is distributed as open-source under the [3-clause BSD license][29].
+MATPOWER is distributed as open-source under the [3-clause BSD license][30].
 
 
 [1]: http://www.pserc.cornell.edu/matpower/
@@ -323,15 +330,17 @@ MATPOWER is distributed as open-source under the [3-clause BSD license][29].
 [16]: http://www.pserc.cornell.edu/matpower/MATPOWER-OPF-slides.pdf
 [17]: https://doi.org/10.1109/TPWRS.2007.901301
 [18]: https://doi.org/10.1109/TSG.2013.2281001
-[19]: http://www.pserc.cornell.edu/matpower/TN1-OPF-Auctions.pdf
-[20]: http://www.pserc.cornell.edu/matpower/TN2-OPF-Derivatives.pdf
-[21]: http://www.pserc.cornell.edu/matpower/TN3-More-OPF-Derivatives.pdf
-[22]: http://www.pserc.cornell.edu/matpower/TN4-OPF-Derivatives-Cartesian.pdf
-[23]: https://github.com/MATPOWER/most
-[24]: http://www.pserc.cornell.edu/matpower/mailinglists.html#announcelist
-[25]: http://www.pserc.cornell.edu/matpower/mailinglists.html#discusslist
-[26]: http://www.pserc.cornell.edu/matpower/mailinglists.html#devlist
-[27]: http://www.pserc.cornell.edu/matpower/mailinglists.html
-[28]: https://github.com/MATPOWER/matpower/issues
-[29]: LICENSE
+[19]: https://doi.org/10.1109/TSTE.2018.2865454
+[20]: http://www.pserc.cornell.edu/matpower/TN1-OPF-Auctions.pdf
+[21]: http://www.pserc.cornell.edu/matpower/TN2-OPF-Derivatives.pdf
+[22]: http://www.pserc.cornell.edu/matpower/TN3-More-OPF-Derivatives.pdf
+[23]: http://www.pserc.cornell.edu/matpower/TN4-OPF-Derivatives-Cartesian.pdf
+[24]: https://github.com/MATPOWER/most
+[25]: http://www.pserc.cornell.edu/matpower/mailinglists.html#announcelist
+[26]: http://www.pserc.cornell.edu/matpower/mailinglists.html#discusslist
+[27]: http://www.pserc.cornell.edu/matpower/mailinglists.html#devlist
+[28]: http://www.pserc.cornell.edu/matpower/mailinglists.html
+[29]: https://github.com/MATPOWER/matpower/issues
+[30]: LICENSE
+
 [logo]: docs/src/images/MATPOWER-md.png
