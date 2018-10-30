@@ -102,7 +102,7 @@ previous versions, see Appendix H of the [MATPOWER User's Manual][2].
   - Added "Release History" section to Appendix of manual.
   - Many new tests.
 
-#### Bugs fixed:
+#### Bugs Fixed:
   - Fixed bug in `toggle_dclines()` that resulted in fatal error when used
     with OPF with reactive power costs. *Thanks to Irina Boiarchuk.*
   - Fixed fatal bug in `update_mupq()` affecting cases where `QMIN` is greater

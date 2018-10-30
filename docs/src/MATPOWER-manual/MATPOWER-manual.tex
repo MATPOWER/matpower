@@ -7846,41 +7846,35 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.0.pdf}{\m
 \subsection{Version 6.1-dev -- not yet released}
 \label{app:v61}
 
-The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.1.pdf}{\matpower{} 6.1 User's Manual} is available online.\footnote{\url{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.1.pdf}}
+The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-7.0b1.pdf}{\matpower{} 7.0b1 User's Manual} is available online.\footnote{\url{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-7.0b1.pdf}}
 
 \subsubsection*{New Features}
 \begin{itemize}
-\item Three new power flow algorithms for radial distribution systems selected via the three new options for \code{pf.alg}, namely \codeq{PQSUM}, \codeq{ISUM}, \codeq{YSUM}. Also includes new \matpower{} options \code{pf.radial.max\_it} and \code{pf.radial.vcorr}. See Section~\ref{sec:pfdist} on ``Distribution Power Flow'' for details. \emph{Thanks to Mirko Todorovski.}
-\item Three new variants of the standard AC OPF formulation, for a total of four, including both nodal power and current balance constraints and both polar and cartesian representations of voltage. See the new \code{opf.current\_balance} and \code{opf.v\_cartesian} options. \emph{Thanks to Baljinnyam Sereeter.}
-\item Derivative functions now support cartesian coordinates for voltage in addition to polar coordinates.
-\item New \matpower{} installer \code{install\_matpower()} updates \matlab{} or Octave paths or provides the commands required to so.
-\item New \code{pf.nr.lin\_solver} option to control the linear solver used to compute the Newton update step in the Newton-Raphson power flow.
-\item Support plotting of multiple nose curves in CPF by allowing option \code{cpf.plot.bus} to take on vector values.
-\item Continuous integration via GitHub and Travis-CI integration.
-\item Include \LaTeX{} source code for \mum{} in \code{docs/src} and for \mostman{} in \code{most/docs/src}.
+\item New \matpower{} installer script \code{install\_matpower()} automatically updates \matlab{} or Octave paths or optionally provides the commands required to so.
+\item Support for additional user-defined general nonlinear constraints and costs in AC OPF.
 \item Support for exporting \matpower{} case to PSS/E RAW data format.
-\item Support for soft limits on all OPF inequality constraints, i.e. bus voltage bounds, generator active and reactive bounds, branch flow and branch angle difference limits. \emph{Thanks to Eran Schweitzer.}
-\item New option \codeq{opf.start} to replace deprecated \codeq{opf.init\_from\_mpc} and add a new possibility to automatically run a power flow to initialize the starting state for the OPF.
-\item New options \codeq{cpf.enforce\_v\_lims} and \codeq{cpf.enforce\_flow\_lims} to enforce bus voltage magnitude and branch flow limits in the continuation power flow, and \codeq{cpf.v\_lims\_tol} and \codeq{cpf.flow\_lims\_tol} to control the respective detection tolerances.  \emph{Thanks to Ahmad Sadiq Abubakar and Shrirang Abhyankar.}
-\item New option \codeq{opf.softlims.default} for use with enhanced \code{toggle\_softlims()} to determine whether or not to include soft limits on constraints whose parameters are not specified explicitly in the \code{mpc.softlims} struct.
-\item Support in core optimization model \code{opt\_model} for:
+\item Three new variants of the standard AC OPF formulation, for a total of four, including both nodal power and current balance constraints and both polar and cartesian representations of voltage. See the new \code{opf.current\_balance} and \code{opf.v\_cartesian} options. \emph{Thanks to Baljinnyam Sereeter.}
+\item Three new power flow algorithms for radial distribution systems selected via the three new options for \code{pf.alg}, namely \codeq{PQSUM}, \codeq{ISUM}, \codeq{YSUM}. Also includes new \matpower{} options \code{pf.radial.max\_it} and \code{pf.radial.vcorr}. See Section~\ref{sec:pfdist} on ``Distribution Power Flow'' for details. \emph{Thanks to Mirko Todorovski.}
+\item Major update to OPF soft limit functionality, supporting soft limits on all AC and DC OPF inequality constraints, including branch flow constraints, bus voltage bounds, generator active and reactive bounds, branch flow and branch angle difference limits. \emph{Thanks to Eran Schweitzer.}
+\item New options:
     \begin{itemize}
-    \item general nonlinear constraints
-    \item general nonlinear costs
-    \item quadratic costs
+    \item \code{pf.nr.lin\_solver} controls the linear solver used to compute the Newton update step in the Newton-Raphson power flow.
+    \item \code{pf.radial.max\_it} and \code{pf.radial.vcorr} are options for the new radial power flow algorithms.  \emph{Thanks to Mirko Todorovski.}
+    \item \code{cpf.enforce\_flow\_lims} and \code{cpf.enforce\_v\_lims} control enforcement of branch flow and bus voltage magnitude limits in the continuation power flow and \code{cpf.flow\_lims\_tol} and \code{cpf.v\_lims\_tol} control the respective detection tolerances. \emph{Thanks to Ahmad Sadiq Abubakar and Shrirang Abhyankar.}
+    \item \code{opf.current\_balance} and \code{opf.v\_cartesian} control formulation used for AC OPF. \emph{Thanks to Baljinnyam Sereeter.}
+    \item \code{opf.softlims.default} determines whether or not to include soft limits on constraints whose parameters are not specified explicitly in the \code{mpc.softlims} struct. For use with enhanced \code{toggle\_softlims()} functionality. \emph{Thanks to Eran Schweitzer.}
+    \item \code{opf.start} replaces deprecated \code{opf.init\_from\_mpc} and adds a new possibility to automatically run a power flow to initialize the starting state for the OPF.
     \end{itemize}
-\item Support for user-defined nonlinear constraints in AC OPF.
-\item Expanded support for soft branch flow limits to include AC OPF problems.
 \item New functions:
     \begin{itemize}
-    \item \code{install\_matpower()} installs \matpower{} modifying or showing needed modifications to \matlab{} or Octave path.
-    \item \code{loadshed()} computes MW curtailments of dispatchable loads.
-    \item \code{gentypes()} and \code{genfuels} provide list of standard generator unit types and fuel types, respectively.
     \item \code{calc\_branch\_angle} calcultes voltage angle differences for branches.
     \item \code{dImis\_dV()} evaluates the partial derivatives of nodal current balance with respect to bus voltages.
     \item \code{d2Imis\_dV2()} evaluates the 2\textsuperscript{nd} derivatives of nodal current balance with respect to bus voltages.
     \item \code{d2Imis\_dVdSg()} evaluates the 2\textsuperscript{nd} derivatives of nodal current balance with respect to bus voltages and generator injections.
     \item \code{d2Abr\_dV2()} evaluates the 2\textsuperscript{nd} derivatives of squared branch flows with respect to bus voltages.
+    \item \code{gentypes()} and \code{genfuels} provide list of standard generator unit types and fuel types, respectively.
+    \item \code{install\_matpower()} installs \matpower{} by automatically modifying or, alternatively, showing needed modifications to \matlab{} or Octave path.
+    \item \code{loadshed()} computes MW curtailments of dispatchable loads.
     \item \code{opf\_branch\_ang\_fcn()} evaluates AC branch flow limit constraints and gradients.
     \item \code{opf\_branch\_ang\_hess()} evaluates Hessian of AC branch flow limit constraints.
     \item \code{opf\_current\_balance\_fcn()} evaluates AC current balance constraints and gradients.
@@ -7891,22 +7885,11 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.1.pdf}{\m
     \item \code{opf\_vlim\_hess()} evaluates Hessian of voltage magnitude limit constraints.
     \item \code{opf\_vref\_fcn()} evaluates reference voltage angle equality constraints and gradients.
     \item \code{opf\_vref\_hess()} evaluates Hessian of reference voltage angle equality constraints.
-    \item \code{save2psse()} to export a \matpower{} case to PSS/E RAW data format.
-    \item \code{savechgtab()} to save change tables, such as those used
-    by \code{apply\_changes}, to a file.
     \item \code{opt\_model/add\_lin\_constraint()} to add linear constraints to an optimization model.
     \item \code{opt\_model/add\_nln\_constraint()} to add nonlinear constraints to an optimization model.
     \item \code{opt\_model/init\_indexed\_name()} to initialize the indices for an indexed name set of constraints, costs or variables.
-    \end{itemize}
-    \item Deprecated functions:
-    \begin{itemize}
-    \item \code{d2AIbr\_dV2()} -- use \code{dA2br\_dV2()} instead.
-    \item \code{d2ASbr\_dV2()} -- use \code{dA2br\_dV2()} instead.
-    \item \code{opt\_model/add\_constraints()} -- use the corresponding one of the following methods instead: \code{add\_lin\_constraint()}, \code{add\_nln\_constraint()}, or \code{init\_indexed\_name()}.
-    \item \code{opt\_model/add\_costs()} -- use the corresponding one of the following methods instead: \code{add\_quad\_cost()},  \code{add\_nln\_cost()}, \code{add\_legacy\_cost()}, or \code{init\_indexed\_name()}.
-    \item \code{opt\_model/linear\_constraints()} -- use \code{opt\_model/params\_lin\_constraint()} instead
-    \item \code{opt\_model/build\_cost\_params()} -- no longer needed, incorporated into \code{opt\_model/params\_legacy\_cost()}
-    \item \code{opt\_model/get\_cost\_params()} -- use \code{opt\_model/params\_legacy\_cost()} instead
+    \item \code{save2psse()} to export a \matpower{} case to PSS/E RAW data format.
+    \item \code{savechgtab()} to save change tables, such as those used by \code{apply\_changes}, to a file.
     \end{itemize}
 \end{itemize}
 
@@ -7967,19 +7950,43 @@ Some of these cases also include contingency tables and/or hourly load scenarios
         \item \TNthree{} ``Addendum to AC Power Flows and their Derivatives using Complex Matrix Notation: Nodal Current Balance''~\cite{sereeter2018a}
         \item \TNfour{} ``AC Power Flows and their Derivatives using Complex Matrix Notation and Cartesian Coordinate Voltages''~\cite{sereeter2018b}
         \end{itemize}
+    \item \LaTeX{} source code for \mum{} included in \code{docs/src}, for \mipsman{} in \code{mips/docs/src} and for \mostman{} in \code{most/docs/src}.
 \end{itemize}
 
 \subsubsection*{Other Improvements}
 \begin{itemize}
-\item Update MIPS to version 1.3.
-\item In the Newton power flow, for larger systems use explicit LU decomposition with AMD reordering and the 3 output argument form of \code{lu} (to select the Gilbert-Peierls algorithm), resulting in up to a 2x speedup in \matlab{}, 1.1x in Octave.
-\emph{Thanks to Jose Luis Mar\'in.}
+\item Update versions of included packages:
+    \begin{itemize}
+        \item MIPS 1.3.
+        \item MOST 1.0.1.
+        \item MP-Test 7.0b1.
+    \end{itemize}
+\item Continuous integration testing via GitHub and Travis-CI integration.
+\item Support added in core optimization model \code{opt\_model} for:
+    \begin{itemize}
+    \item general nonlinear constraints
+    \item general nonlinear costs
+    \item quadratic costs
+    \end{itemize}
+\item Refactor OPF code to take advantage of new \code{opt\_model} capabilities for nonlinear constraints and quadratic and nonlinear costs.
+\item Derivative functions now support cartesian coordinates for voltage in addition to polar coordinates.
+\item In the Newton power flow, for larger systems use explicit LU decomposition with AMD reordering and the 3 output argument form of \code{lu} (to select the Gilbert-Peierls algorithm), resulting in up to a 2x speedup in \matlab{}, 1.1x in Octave. \emph{Thanks to Jose Luis Mar\'in.}
+\item Support plotting of multiple nose curves in CPF by allowing option \code{cpf.plot.bus} to take on vector values.
 \item Add line for curtailed load to \code{case\_info()} output.
 \item Change default implementation of active power line flow constraints (\code{opf.flow\_lim = }\codeq{P}) to use flow directly, rather than square of flow, which is now a separate option, namely \code{opf.flow\_lim = }\codeq{2}. \emph{Thanks to Nico Meyer-Huebner}.
 \item Add \code{genfuels} and \code{gentypes} to establish standard set of values for optional \code{mpc.genfuel} and \code{mpc.gentype} fields for generator fuel type and generator unit type, respectively.
 \item Add support for \code{gentype} and \code{genfuel} fields of \matpower{} case struct in \code{extract\_islands}, \code{ext2int}, \code{int2ext}, \code{load2disp}  and \code{savecase}.
 \item Add support for \code{bus\_name} field of \matpower{} case struct to \code{extract\_islands}, \code{ext2int} and \code{int2ext}.
-\item Refactor OPF code to take advantage of new \code{opt\_model} capabilities for nonlinear constraints and quadratic and nonlinear costs.
+\item Deprecated functions:
+    \begin{itemize}
+    \item \code{d2AIbr\_dV2()} -- use \code{dA2br\_dV2()} instead.
+    \item \code{d2ASbr\_dV2()} -- use \code{dA2br\_dV2()} instead.
+    \item \code{opt\_model/add\_constraints()} -- use the corresponding one of the following methods instead: \code{add\_lin\_constraint()}, \code{add\_nln\_constraint()}, or \code{init\_indexed\_name()}.
+    \item \code{opt\_model/add\_costs()} -- use the corresponding one of the following methods instead: \code{add\_quad\_cost()},  \code{add\_nln\_cost()}, \code{add\_legacy\_cost()}, or\\ \code{init\_indexed\_name()}.
+    \item \code{opt\_model/linear\_constraints()} -- use \code{opt\_model/params\_lin\_constraint()} instead.
+    \item \code{opt\_model/build\_cost\_params()} -- no longer needed, incorporated into\\ \code{opt\_model/params\_legacy\_cost()}.
+    \item \code{opt\_model/get\_cost\_params()} -- use \code{opt\_model/params\_legacy\_cost()} instead.
+    \end{itemize}
 \end{itemize}
 
 \subsubsection*{Bugs Fixed}
@@ -7999,11 +8006,10 @@ Some of these cases also include contingency tables and/or hourly load scenarios
 
 \subsubsection*{Incompatible Changes}
 \begin{itemize}
+\item Move included \matpower{} case files to new \code{data} subdirectory.
 \item Turning soft limits on without specifying any parameters explicitly in \code{mpc.softlims} now implements soft limits for all constraints, by default, not just branch flow limits. And the format of the input parameters in \code{mpc.softlims} has changed. See \code{help toggle\_softlims} or Tables~\ref{tab:softlimsformulation}, \ref{tab:softlimsinput} and \ref{tab:softlimsdefaults} for the details.
 \item Swap the order of the output arguments of \code{dSbus\_dV()}) for polar coordinate voltages (angle before magnitude) for consistency.
-\item Move included \matpower{} case files to new \code{data} subdirectory.
-\item Correct signs of phase shifter angles in Polish system cases, since they were based on the old sign convention used by \matpower{} prior to v3.2 (see change on 6/21/07). Affects the
-    following cases:
+\item Correct signs of phase shifter angles in Polish system cases, since they were based on the old sign convention used by \matpower{} prior to v3.2 (see change on 6/21/07). Affects the following cases:
     \begin{itemize}
     \item \code{case2383wp}
     \item \code{case2736sp}
@@ -8017,7 +8023,6 @@ Some of these cases also include contingency tables and/or hourly load scenarios
 \item Modify order of default output arguments of \code{opt\_model/get\_idx()}.
 \item Add \code{mpopt} to input args for OPF \codeq{ext2int}, \codeq{formulation}, and \codeq{int2ext} callbacks.
 \end{itemize}
-
 
 
 \end{appendices}
