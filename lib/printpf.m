@@ -486,7 +486,7 @@ if OUT_BRANCH && (success || OUT_FORCE)
 end
 
 %%-----  constraint data  -----
-if isOPF && (success || OUT_FORCE)
+if OUT_ANY && isOPF && (success || OUT_FORCE)
     ctol = mpopt.opf.violation; %% constraint violation tolerance
     %% voltage constraints
     if ~isDC && (OUT_V_LIM == 2 || (OUT_V_LIM == 1 && ...
