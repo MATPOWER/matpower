@@ -9,8 +9,15 @@ For change history for [MIPS][2], see [mips/CHANGES.md](mips/CHANGES.md).
 For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 
 
-Since last release
-------------------
+Version 7.0b1 - *Oct 31, 2018*
+------------------------------
+
+#### 10/31/18
+  - Released 7.0b1.
+  - Update versions of included packages
+    - MIPS 1.3
+    - MOST 1.0.1
+    - MP-Test 7.0b1
 
 #### 10/25/18
   - Add another purely synthetic case from the ACTIVSg team (ASU, Cornell,

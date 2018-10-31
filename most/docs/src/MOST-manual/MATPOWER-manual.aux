@@ -17,11 +17,11 @@
 \providecommand\HyField@AuxAddToFields[1]{}
 \providecommand\HyField@AuxAddToCoFields[2]{}
 \citation{zimmerman2011}
-\citation{murillo-sanchez2013a}
+\citation{murillo-sanchez2013a,lamadrid2018}
 \@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{10}{section.1}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {1.1}Background}{10}{subsection.1.1}}
 \@writefile{brf}{\backcite{zimmerman2011}{{10}{1.1}{subsection.1.1}}}
-\@writefile{brf}{\backcite{murillo-sanchez2013a}{{10}{1.1}{subsection.1.1}}}
+\@writefile{brf}{\backcite{murillo-sanchez2013a,lamadrid2018}{{10}{1.1}{subsection.1.1}}}
 \citation{gpl}
 \citation{bsd}
 \@writefile{toc}{\contentsline {subsection}{\numberline {1.2}License and Terms of Use}{11}{subsection.1.2}}
@@ -38,183 +38,256 @@
 \@writefile{toc}{\contentsline {section}{\numberline {2}Getting Started}{13}{section.2}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.1}System Requirements}{13}{subsection.2.1}}
 \newlabel{sec:sysreq}{{2.1}{13}{System Requirements}{subsection.2.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Getting {\sc  Matpower}{}}{13}{subsection.2.2}}
-\newlabel{sec:gettingmatpower}{{2.2}{13}{Getting \matpower {}}{subsection.2.2}{}}
 \@writefile{brf}{\backcite{octave}{{13}{5}{subsection.2.1}}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Installation}{15}{subsection.2.3}}
-\newlabel{sec:installation}{{2.3}{15}{Installation}{subsection.2.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Running a Simulation}{17}{subsection.2.4}}
-\newlabel{sec:runsimulation}{{2.4}{17}{Running a Simulation}{subsection.2.4}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.4.1}Preparing Case Input Data}{17}{subsubsection.2.4.1}}
-\newlabel{sec:prepdata}{{2.4.1}{17}{Preparing Case Input Data}{subsubsection.2.4.1}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.4.2}Solving the Case}{17}{subsubsection.2.4.2}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.4.3}Accessing the Results}{18}{subsubsection.2.4.3}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.4.4}Setting Options}{19}{subsubsection.2.4.4}}
-\newlabel{sec:options}{{2.4.4}{19}{Setting Options}{subsubsection.2.4.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.5}Documentation}{19}{subsection.2.5}}
-\newlabel{sec:documentation}{{2.5}{19}{Documentation}{subsection.2.5}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {3}Modeling}{22}{section.3}}
-\newlabel{sec:modeling}{{3}{22}{Modeling}{section.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Data Formats}{22}{subsection.3.1}}
-\newlabel{sec:data}{{3.1}{22}{Data Formats}{subsection.3.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Branches}{22}{subsection.3.2}}
-\newlabel{sec:branch}{{3.2}{22}{Branches}{subsection.3.2}{}}
-\newlabel{eq:if_it}{{3.1}{23}{Branches}{equation.3.1}{}}
-\newlabel{eq:Ybr}{{3.2}{23}{Branches}{equation.3.2}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3\unhbox \voidb@x \hbox {-}1}{\ignorespaces Branch Model\relax }}{23}{figure.caption.4}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Getting {\sc  Matpower}{}}{14}{subsection.2.2}}
+\newlabel{sec:gettingmatpower}{{2.2}{14}{Getting \matpower {}}{subsection.2.2}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.1}Versioned Releases}{14}{subsubsection.2.2.1}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.2}Current Development Version}{14}{subsubsection.2.2.2}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Installation}{16}{subsection.2.3}}
+\newlabel{sec:installation}{{2.3}{16}{Installation}{subsection.2.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Running a Simulation}{18}{subsection.2.4}}
+\newlabel{sec:runsimulation}{{2.4}{18}{Running a Simulation}{subsection.2.4}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.4.1}Preparing Case Input Data}{18}{subsubsection.2.4.1}}
+\newlabel{sec:prepdata}{{2.4.1}{18}{Preparing Case Input Data}{subsubsection.2.4.1}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.4.2}Solving the Case}{18}{subsubsection.2.4.2}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.4.3}Accessing the Results}{19}{subsubsection.2.4.3}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.4.4}Setting Options}{20}{subsubsection.2.4.4}}
+\newlabel{sec:options}{{2.4.4}{20}{Setting Options}{subsubsection.2.4.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.5}Documentation}{20}{subsection.2.5}}
+\newlabel{sec:documentation}{{2.5}{20}{Documentation}{subsection.2.5}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Modeling}{23}{section.3}}
+\newlabel{sec:modeling}{{3}{23}{Modeling}{section.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Data Formats}{23}{subsection.3.1}}
+\newlabel{sec:data}{{3.1}{23}{Data Formats}{subsection.3.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Branches}{23}{subsection.3.2}}
+\newlabel{sec:branch}{{3.2}{23}{Branches}{subsection.3.2}{}}
+\newlabel{eq:if_it}{{3.1}{24}{Branches}{equation.3.1}{}}
+\newlabel{eq:Ybr}{{3.2}{24}{Branches}{equation.3.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3\unhbox \voidb@x \hbox {-}1}{\ignorespaces Branch Model\relax }}{24}{figure.caption.4}}
 \providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
-\newlabel{fig:branch_model}{{3\unhbox \voidb@x \hbox {-}1}{23}{Branch Model\relax }{figure.caption.4}{}}
-\newlabel{eq:Ybri}{{3.3}{23}{Branches}{equation.3.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Generators}{24}{subsection.3.3}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Loads}{24}{subsection.3.4}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Shunt Elements}{24}{subsection.3.5}}
+\newlabel{fig:branch_model}{{3\unhbox \voidb@x \hbox {-}1}{24}{Branch Model\relax }{figure.caption.4}{}}
+\newlabel{eq:Ybri}{{3.3}{24}{Branches}{equation.3.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Generators}{25}{subsection.3.3}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Loads}{25}{subsection.3.4}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Shunt Elements}{26}{subsection.3.5}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}Network Equations}{26}{subsection.3.6}}
+\newlabel{eq:Ibus}{{3.8}{26}{Network Equations}{equation.3.8}{}}
+\newlabel{eq:If}{{3.9}{26}{Network Equations}{equation.3.9}{}}
+\newlabel{eq:It}{{3.10}{26}{Network Equations}{equation.3.10}{}}
+\newlabel{eq:Yf}{{3.11}{26}{Network Equations}{equation.3.11}{}}
+\newlabel{eq:Yt}{{3.12}{26}{Network Equations}{equation.3.12}{}}
+\newlabel{eq:Ybus}{{3.13}{26}{Network Equations}{equation.3.13}{}}
 \citation{wood1996}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}Network Equations}{25}{subsection.3.6}}
-\newlabel{eq:Ibus}{{3.8}{25}{Network Equations}{equation.3.8}{}}
-\newlabel{eq:If}{{3.9}{25}{Network Equations}{equation.3.9}{}}
-\newlabel{eq:It}{{3.10}{25}{Network Equations}{equation.3.10}{}}
-\newlabel{eq:Yf}{{3.11}{25}{Network Equations}{equation.3.11}{}}
-\newlabel{eq:Yt}{{3.12}{25}{Network Equations}{equation.3.12}{}}
-\newlabel{eq:Ybus}{{3.13}{25}{Network Equations}{equation.3.13}{}}
-\newlabel{eq:Sbus}{{3.14}{25}{Network Equations}{equation.3.14}{}}
-\newlabel{eq:Sf}{{3.15}{25}{Network Equations}{equation.3.15}{}}
-\newlabel{eq:St}{{3.16}{25}{Network Equations}{equation.3.16}{}}
-\newlabel{eq:acpf}{{3.17}{25}{Network Equations}{equation.3.17}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.7}DC Modeling}{25}{subsection.3.7}}
-\@writefile{brf}{\backcite{wood1996}{{25}{3.7}{subsection.3.7}}}
-\newlabel{eq:lossless}{{3.18}{26}{DC Modeling}{equation.3.18}{}}
-\newlabel{eq:V1}{{3.19}{26}{DC Modeling}{equation.3.19}{}}
-\newlabel{eq:sin}{{3.20}{26}{DC Modeling}{equation.3.20}{}}
-\newlabel{eq:if}{{3.22}{26}{DC Modeling}{equation.3.22}{}}
-\newlabel{eq:Pf}{{3.29}{28}{DC Modeling}{equation.3.29}{}}
-\newlabel{eq:Bf}{{3.30}{28}{DC Modeling}{equation.3.30}{}}
-\newlabel{eq:Bbus}{{3.31}{28}{DC Modeling}{equation.3.31}{}}
-\newlabel{eq:dcpf}{{3.32}{28}{DC Modeling}{equation.3.32}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {4}Power Flow}{29}{section.4}}
-\newlabel{sec:pf}{{4}{29}{Power Flow}{section.4}{}}
-\newlabel{eq:gx0}{{4.1}{29}{Power Flow}{equation.4.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}AC Power Flow}{29}{subsection.4.1}}
-\newlabel{eq:acpf_p}{{4.2}{29}{AC Power Flow}{equation.4.2}{}}
-\newlabel{eq:acpf_q}{{4.3}{29}{AC Power Flow}{equation.4.3}{}}
+\newlabel{eq:Sbus}{{3.14}{27}{Network Equations}{equation.3.14}{}}
+\newlabel{eq:Sf}{{3.15}{27}{Network Equations}{equation.3.15}{}}
+\newlabel{eq:St}{{3.16}{27}{Network Equations}{equation.3.16}{}}
+\newlabel{eq:acpf}{{3.17}{27}{Network Equations}{equation.3.17}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.7}DC Modeling}{27}{subsection.3.7}}
+\@writefile{brf}{\backcite{wood1996}{{27}{3.7}{subsection.3.7}}}
+\newlabel{eq:lossless}{{3.18}{27}{DC Modeling}{equation.3.18}{}}
+\newlabel{eq:V1}{{3.19}{27}{DC Modeling}{equation.3.19}{}}
+\newlabel{eq:sin}{{3.20}{27}{DC Modeling}{equation.3.20}{}}
+\newlabel{eq:if}{{3.22}{27}{DC Modeling}{equation.3.22}{}}
+\newlabel{eq:Pf}{{3.29}{29}{DC Modeling}{equation.3.29}{}}
+\newlabel{eq:Bf}{{3.30}{29}{DC Modeling}{equation.3.30}{}}
+\newlabel{eq:Bbus}{{3.31}{29}{DC Modeling}{equation.3.31}{}}
+\newlabel{eq:dcpf}{{3.32}{29}{DC Modeling}{equation.3.32}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Power Flow}{30}{section.4}}
+\newlabel{sec:pf}{{4}{30}{Power Flow}{section.4}{}}
+\newlabel{eq:gx0}{{4.1}{30}{Power Flow}{equation.4.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}AC Power Flow}{30}{subsection.4.1}}
+\newlabel{eq:acpf_p}{{4.2}{30}{AC Power Flow}{equation.4.2}{}}
+\newlabel{eq:acpf_q}{{4.3}{30}{AC Power Flow}{equation.4.3}{}}
 \citation{tinney1967}
 \citation{stott1974}
 \citation{amerongen1989}
 \citation{glimm1957}
-\newlabel{eq:g_acpf}{{4.4}{30}{AC Power Flow}{equation.4.4}{}}
-\newlabel{eq:x_acpf}{{4.5}{30}{AC Power Flow}{equation.4.5}{}}
-\@writefile{brf}{\backcite{tinney1967}{{30}{4.1}{equation.4.5}}}
-\@writefile{brf}{\backcite{stott1974}{{30}{4.1}{equation.4.5}}}
-\@writefile{brf}{\backcite{amerongen1989}{{30}{4.1}{equation.4.5}}}
-\@writefile{brf}{\backcite{glimm1957}{{30}{4.1}{equation.4.5}}}
+\newlabel{eq:g_acpf}{{4.4}{31}{AC Power Flow}{equation.4.4}{}}
+\newlabel{eq:x_acpf}{{4.5}{31}{AC Power Flow}{equation.4.5}{}}
+\@writefile{brf}{\backcite{tinney1967}{{31}{4.1}{equation.4.5}}}
+\@writefile{brf}{\backcite{stott1974}{{31}{4.1}{equation.4.5}}}
+\@writefile{brf}{\backcite{amerongen1989}{{31}{4.1}{equation.4.5}}}
+\@writefile{brf}{\backcite{glimm1957}{{31}{4.1}{equation.4.5}}}
 \citation{wood1996}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}DC Power Flow}{31}{subsection.4.2}}
-\@writefile{brf}{\backcite{wood1996}{{31}{4.2}{subsection.4.2}}}
-\newlabel{eq:dcpf2}{{4.7}{31}{DC Power Flow}{equation.4.7}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}{\tt  runpf}}{31}{subsection.4.3}}
-\newlabel{sec:runpf}{{4.3}{31}{\tt runpf}{subsection.4.3}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {4\unhbox \voidb@x \hbox {-}1}{\ignorespaces Power Flow Results\relax }}{32}{table.caption.6}}
-\newlabel{tab:pfresults}{{4\unhbox \voidb@x \hbox {-}1}{32}{Power Flow Results\relax }{table.caption.6}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {4\unhbox \voidb@x \hbox {-}2}{\ignorespaces Power Flow Options\relax }}{32}{table.caption.8}}
-\newlabel{tab:pfoptions}{{4\unhbox \voidb@x \hbox {-}2}{32}{Power Flow Options\relax }{table.caption.8}{}}
+\citation{shirmohammadi1988,luo1990}
+\citation{rajicic1994}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}DC Power Flow}{32}{subsection.4.2}}
+\@writefile{brf}{\backcite{wood1996}{{32}{4.2}{subsection.4.2}}}
+\newlabel{eq:dcpf2}{{4.7}{32}{DC Power Flow}{equation.4.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Distribution Power Flow}{32}{subsection.4.3}}
+\newlabel{sec:pfdist}{{4.3}{32}{Distribution Power Flow}{subsection.4.3}{}}
+\@writefile{brf}{\backcite{shirmohammadi1988,luo1990}{{32}{4.3}{subsection.4.3}}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.1}Radial Power Flow}{33}{subsubsection.4.3.1}}
+\@writefile{brf}{\backcite{rajicic1994}{{33}{4.3.1}{subsubsection.4.3.1}}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4\unhbox \voidb@x \hbox {-}1}{\ignorespaces Oriented Ordering\relax }}{33}{figure.caption.5}}
+\newlabel{fig:ordering}{{4\unhbox \voidb@x \hbox {-}1}{33}{Oriented Ordering\relax }{figure.caption.5}{}}
+\citation{shirmohammadi1988,luo1990}
+\citation{rajicic1994}
+\@writefile{lof}{\contentsline {figure}{\numberline {4\unhbox \voidb@x \hbox {-}2}{\ignorespaces Branch Representation: branch $k$ between buses $i$ (sending) and $k$ (receiving) and load demand and shunt admittances at both buses\relax }}{34}{figure.caption.6}}
+\newlabel{fig:branch_rep}{{4\unhbox \voidb@x \hbox {-}2}{34}{Branch Representation: branch $k$ between buses $i$ (sending) and $k$ (receiving) and load demand and shunt admittances at both buses\relax }{figure.caption.6}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.2}Current Summation Method}{34}{subsubsection.4.3.2}}
+\@writefile{brf}{\backcite{shirmohammadi1988,luo1990}{{34}{4.3.2}{subsubsection.4.3.2}}}
+\newlabel{eq:j_branch}{{4.8}{34}{Current Summation Method}{equation.4.8}{}}
+\newlabel{step2i}{{2}{34}{Current Summation Method}{equation.4.8}{}}
+\newlabel{eq:back_i}{{4.9}{34}{Current Summation Method}{equation.4.9}{}}
+\newlabel{eq:for_i}{{4.10}{34}{Current Summation Method}{equation.4.10}{}}
+\newlabel{eq:tol_i}{{4.11}{34}{Current Summation Method}{equation.4.11}{}}
+\citation{rajicic1998}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.3}Power Summation Method}{35}{subsubsection.4.3.3}}
+\@writefile{brf}{\backcite{rajicic1994}{{35}{4.3.3}{subsubsection.4.3.3}}}
+\newlabel{eq:s_receiving}{{4.12}{35}{Power Summation Method}{equation.4.12}{}}
+\newlabel{step2pq}{{2}{35}{Power Summation Method}{equation.4.12}{}}
+\newlabel{eq:back_pq_1}{{4.13}{35}{Power Summation Method}{equation.4.13}{}}
+\newlabel{eq:back_pq_2}{{4.14}{35}{Power Summation Method}{equation.4.14}{}}
+\newlabel{eq:for_pq}{{4.15}{35}{Power Summation Method}{equation.4.15}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.4}Admittance Summation Method}{35}{subsubsection.4.3.4}}
+\citation{shirmohammadi1988,luo1990}
+\citation{rajicic1994}
+\@writefile{brf}{\backcite{rajicic1998}{{36}{4.3.4}{subsubsection.4.3.4}}}
+\newlabel{eq:back_y_1a}{{4.17}{36}{Admittance Summation Method}{equation.4.17}{}}
+\newlabel{eq:back_y_2a}{{4.18}{36}{Admittance Summation Method}{equation.4.18}{}}
+\newlabel{eq:back_y_1}{{4.19}{36}{Admittance Summation Method}{equation.4.19}{}}
+\newlabel{eq:back_y_2}{{4.20}{36}{Admittance Summation Method}{equation.4.20}{}}
+\newlabel{step3y}{{3}{36}{Admittance Summation Method}{equation.4.20}{}}
+\newlabel{eq:for_y}{{4.21}{36}{Admittance Summation Method}{equation.4.21}{}}
+\citation{luo1990}
+\citation{rajicic1994}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.5}Handling PV Buses}{37}{subsubsection.4.3.5}}
+\@writefile{brf}{\backcite{shirmohammadi1988,luo1990}{{37}{4.3.5}{subsubsection.4.3.5}}}
+\@writefile{brf}{\backcite{rajicic1994}{{37}{4.3.5}{subsubsection.4.3.5}}}
+\@writefile{brf}{\backcite{luo1990}{{37}{4.3.5}{subsubsection.4.3.5}}}
+\@writefile{brf}{\backcite{rajicic1994}{{37}{4.3.5}{subsubsection.4.3.5}}}
+\citation{Rajicic2001}
+\citation{rajicic1994}
+\@writefile{brf}{\backcite{Rajicic2001}{{38}{4.3.5}{equation.4.24}}}
+\@writefile{brf}{\backcite{rajicic1994}{{38}{4.3.5}{equation.4.25}}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}{\tt  runpf}}{38}{subsection.4.4}}
+\newlabel{sec:runpf}{{4.4}{38}{\tt runpf}{subsection.4.4}{}}
 \citation{wood1996}
-\@writefile{lot}{\contentsline {table}{\numberline {4\unhbox \voidb@x \hbox {-}3}{\ignorespaces Power Flow Output Options\relax }}{33}{table.caption.10}}
-\newlabel{tab:pfoutputoptions}{{4\unhbox \voidb@x \hbox {-}3}{33}{Power Flow Output Options\relax }{table.caption.10}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {4\unhbox \voidb@x \hbox {-}1}{\ignorespaces Power Flow Results\relax }}{39}{table.caption.8}}
+\newlabel{tab:pfresults}{{4\unhbox \voidb@x \hbox {-}1}{39}{Power Flow Results\relax }{table.caption.8}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Linear Shift Factors}{39}{subsection.4.5}}
+\newlabel{sec:lsf}{{4.5}{39}{Linear Shift Factors}{subsection.4.5}{}}
+\@writefile{brf}{\backcite{wood1996}{{39}{4.5}{subsection.4.5}}}
+\@writefile{lot}{\contentsline {table}{\numberline {4\unhbox \voidb@x \hbox {-}2}{\ignorespaces Power Flow Options\relax }}{40}{table.caption.10}}
+\newlabel{tab:pfoptions}{{4\unhbox \voidb@x \hbox {-}2}{40}{Power Flow Options\relax }{table.caption.10}{}}
 \citation{guler2007}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Linear Shift Factors}{34}{subsection.4.4}}
-\newlabel{sec:lsf}{{4.4}{34}{Linear Shift Factors}{subsection.4.4}{}}
-\@writefile{brf}{\backcite{wood1996}{{34}{4.4}{subsection.4.4}}}
-\@writefile{brf}{\backcite{guler2007}{{34}{4.4}{equation.4.10}}}
+\@writefile{lot}{\contentsline {table}{\numberline {4\unhbox \voidb@x \hbox {-}3}{\ignorespaces Power Flow Output Options\relax }}{41}{table.caption.12}}
+\newlabel{tab:pfoutputoptions}{{4\unhbox \voidb@x \hbox {-}3}{41}{Power Flow Output Options\relax }{table.caption.12}{}}
+\@writefile{brf}{\backcite{guler2007}{{41}{4.5}{equation.4.28}}}
 \citation{ajjarapu1992}
 \citation{chiang1995,li2008}
-\@writefile{toc}{\contentsline {section}{\numberline {5}Continuation Power Flow}{36}{section.5}}
-\newlabel{eq:cpf1}{{5.1}{36}{Continuation Power Flow}{equation.5.1}{}}
-\@writefile{brf}{\backcite{ajjarapu1992}{{36}{5}{equation.5.1}}}
-\newlabel{eq:pf}{{5.2}{36}{Continuation Power Flow}{equation.5.2}{}}
-\newlabel{eq:fxlam}{{5.3}{36}{Continuation Power Flow}{equation.5.3}{}}
-\newlabel{eq:Sxfr}{{5.4}{36}{Continuation Power Flow}{equation.5.4}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Continuation Power Flow}{43}{section.5}}
+\newlabel{eq:cpf1}{{5.1}{43}{Continuation Power Flow}{equation.5.1}{}}
+\@writefile{brf}{\backcite{ajjarapu1992}{{43}{5}{equation.5.1}}}
+\newlabel{eq:pf}{{5.2}{43}{Continuation Power Flow}{equation.5.2}{}}
+\newlabel{eq:fxlam}{{5.3}{43}{Continuation Power Flow}{equation.5.3}{}}
+\newlabel{eq:Sxfr}{{5.4}{43}{Continuation Power Flow}{equation.5.4}{}}
 \citation{mori2002}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Parameterization}{37}{subsection.5.1}}
-\@writefile{brf}{\backcite{chiang1995, li2008}{{37}{5.1}{subsection.5.1}}}
-\newlabel{eq:natural_parm}{{5.5}{37}{Parameterization}{equation.5.5}{}}
-\newlabel{eq:arc_parm}{{5.6}{37}{Parameterization}{equation.5.6}{}}
-\@writefile{brf}{\backcite{mori2002}{{37}{5.1}{equation.5.6}}}
-\newlabel{eq:psuedo_arc_parm}{{5.7}{37}{Parameterization}{equation.5.7}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Predictor}{37}{subsection.5.2}}
-\newlabel{eq:tangent_predictor}{{5.8}{37}{Predictor}{equation.5.8}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Corrector}{38}{subsection.5.3}}
-\newlabel{eq:corrector}{{5.11}{38}{Corrector}{equation.5.11}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Step Length Control}{38}{subsection.5.4}}
-\newlabel{eq:cpf_step_adapt1}{{5.12}{38}{Step Length Control}{equation.5.12}{}}
-\newlabel{eq:cpf_step_adapt2}{{5.13}{38}{Step Length Control}{equation.5.13}{}}
-\newlabel{eq:cpf_step_adapt3}{{5.14}{39}{Step Length Control}{equation.5.14}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.5}Event Detection and Location}{39}{subsection.5.5}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.6}\tt  {runcpf}}{40}{subsection.5.6}}
-\@writefile{lot}{\contentsline {table}{\numberline {5\unhbox \voidb@x \hbox {-}1}{\ignorespaces Continuation Power Flow Results\relax }}{41}{table.caption.12}}
-\newlabel{tab:cpfresults}{{5\unhbox \voidb@x \hbox {-}1}{41}{Continuation Power Flow Results\relax }{table.caption.12}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {5\unhbox \voidb@x \hbox {-}2}{\ignorespaces Continuation Power Flow Options\relax }}{42}{table.caption.14}}
-\newlabel{tab:cpfoptions}{{5\unhbox \voidb@x \hbox {-}2}{42}{Continuation Power Flow Options\relax }{table.caption.14}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.1}CPF Callback Functions}{43}{subsubsection.5.6.1}}
-\@writefile{lot}{\contentsline {table}{\numberline {5\unhbox \voidb@x \hbox {-}3}{\ignorespaces Continuation Power Flow Callback Input Arguments\relax }}{44}{table.caption.16}}
-\newlabel{tab:cpf_callback_in}{{5\unhbox \voidb@x \hbox {-}3}{44}{Continuation Power Flow Callback Input Arguments\relax }{table.caption.16}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {5\unhbox \voidb@x \hbox {-}4}{\ignorespaces Continuation Power Flow Callback Output Arguments\relax }}{45}{table.caption.18}}
-\newlabel{tab:cpf_callback_out}{{5\unhbox \voidb@x \hbox {-}4}{45}{Continuation Power Flow Callback Output Arguments\relax }{table.caption.18}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {5\unhbox \voidb@x \hbox {-}5}{\ignorespaces Continuation Power Flow State\relax }}{45}{table.caption.20}}
-\newlabel{tab:cpf_state}{{5\unhbox \voidb@x \hbox {-}5}{45}{Continuation Power Flow State\relax }{table.caption.20}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.2}CPF Example}{46}{subsubsection.5.6.2}}
-\@writefile{lof}{\contentsline {figure}{\numberline {5\unhbox \voidb@x \hbox {-}1}{\ignorespaces Nose Curve of Voltage Magnitude at Bus 9\relax }}{46}{figure.caption.21}}
-\newlabel{fig:nose_curve}{{5\unhbox \voidb@x \hbox {-}1}{46}{Nose Curve of Voltage Magnitude at Bus 9\relax }{figure.caption.21}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {6}Optimal Power Flow}{49}{section.6}}
-\newlabel{sec:opf}{{6}{49}{Optimal Power Flow}{section.6}{}}
-\newlabel{eq:minfx}{{6.1}{49}{Optimal Power Flow}{equation.6.1}{}}
-\newlabel{eq:gx_eq_0}{{6.2}{49}{Optimal Power Flow}{equation.6.2}{}}
-\newlabel{eq:hx_le_0}{{6.3}{49}{Optimal Power Flow}{equation.6.2}{}}
-\newlabel{eq:xlims}{{6.4}{49}{Optimal Power Flow}{equation.6.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Standard AC OPF}{49}{subsection.6.1}}
-\newlabel{eq:acopf_ieqf}{{6.7}{49}{Standard AC OPF}{equation.6.7}{}}
-\newlabel{eq:acopf_ieqt}{{6.8}{49}{Standard AC OPF}{equation.6.8}{}}
-\newlabel{eq:vlims}{{6.11}{50}{Standard AC OPF}{equation.6.10}{}}
-\newlabel{eq:qlims}{{6.13}{50}{Standard AC OPF}{equation.6.10}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Standard DC OPF}{50}{subsection.6.2}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Parameterization}{44}{subsection.5.1}}
+\@writefile{brf}{\backcite{chiang1995, li2008}{{44}{5.1}{subsection.5.1}}}
+\newlabel{eq:natural_parm}{{5.5}{44}{Parameterization}{equation.5.5}{}}
+\newlabel{eq:arc_parm}{{5.6}{44}{Parameterization}{equation.5.6}{}}
+\@writefile{brf}{\backcite{mori2002}{{44}{5.1}{equation.5.6}}}
+\newlabel{eq:psuedo_arc_parm}{{5.7}{44}{Parameterization}{equation.5.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Predictor}{44}{subsection.5.2}}
+\newlabel{eq:tangent_predictor}{{5.8}{44}{Predictor}{equation.5.8}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Corrector}{45}{subsection.5.3}}
+\newlabel{eq:corrector}{{5.11}{45}{Corrector}{equation.5.11}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Step Length Control}{45}{subsection.5.4}}
+\newlabel{eq:cpf_step_adapt1}{{5.12}{45}{Step Length Control}{equation.5.12}{}}
+\newlabel{eq:cpf_step_adapt2}{{5.13}{45}{Step Length Control}{equation.5.13}{}}
+\newlabel{eq:cpf_step_adapt3}{{5.14}{46}{Step Length Control}{equation.5.14}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.5}Event Detection and Location}{46}{subsection.5.5}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.6}\tt  {runcpf}}{47}{subsection.5.6}}
+\@writefile{lot}{\contentsline {table}{\numberline {5\unhbox \voidb@x \hbox {-}1}{\ignorespaces Continuation Power Flow Results\relax }}{48}{table.caption.14}}
+\newlabel{tab:cpfresults}{{5\unhbox \voidb@x \hbox {-}1}{48}{Continuation Power Flow Results\relax }{table.caption.14}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {5\unhbox \voidb@x \hbox {-}2}{\ignorespaces Continuation Power Flow Options\relax }}{49}{table.caption.16}}
+\newlabel{tab:cpfoptions}{{5\unhbox \voidb@x \hbox {-}2}{49}{Continuation Power Flow Options\relax }{table.caption.16}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.1}CPF Callback Functions}{50}{subsubsection.5.6.1}}
+\@writefile{lot}{\contentsline {table}{\numberline {5\unhbox \voidb@x \hbox {-}3}{\ignorespaces Continuation Power Flow Callback Input Arguments\relax }}{51}{table.caption.18}}
+\newlabel{tab:cpf_callback_in}{{5\unhbox \voidb@x \hbox {-}3}{51}{Continuation Power Flow Callback Input Arguments\relax }{table.caption.18}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {5\unhbox \voidb@x \hbox {-}4}{\ignorespaces Continuation Power Flow Callback Output Arguments\relax }}{52}{table.caption.20}}
+\newlabel{tab:cpf_callback_out}{{5\unhbox \voidb@x \hbox {-}4}{52}{Continuation Power Flow Callback Output Arguments\relax }{table.caption.20}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {5\unhbox \voidb@x \hbox {-}5}{\ignorespaces Continuation Power Flow State\relax }}{52}{table.caption.22}}
+\newlabel{tab:cpf_state}{{5\unhbox \voidb@x \hbox {-}5}{52}{Continuation Power Flow State\relax }{table.caption.22}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.2}CPF Example}{53}{subsubsection.5.6.2}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5\unhbox \voidb@x \hbox {-}1}{\ignorespaces Nose Curve of Voltage Magnitude at Bus 9\relax }}{53}{figure.caption.23}}
+\newlabel{fig:nose_curve}{{5\unhbox \voidb@x \hbox {-}1}{53}{Nose Curve of Voltage Magnitude at Bus 9\relax }{figure.caption.23}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Optimal Power Flow}{56}{section.6}}
+\newlabel{sec:opf}{{6}{56}{Optimal Power Flow}{section.6}{}}
+\newlabel{eq:minfx}{{6.1}{56}{Optimal Power Flow}{equation.6.1}{}}
+\newlabel{eq:gx_eq_0}{{6.2}{56}{Optimal Power Flow}{equation.6.2}{}}
+\newlabel{eq:hx_le_0}{{6.3}{56}{Optimal Power Flow}{equation.6.2}{}}
+\newlabel{eq:xlims}{{6.4}{56}{Optimal Power Flow}{equation.6.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Standard AC OPF}{56}{subsection.6.1}}
+\newlabel{eq:polar_pwrbal_p}{{6.7}{56}{Standard AC OPF}{equation.6.7}{}}
+\newlabel{eq:polar_pwrbal_q}{{6.8}{56}{Standard AC OPF}{equation.6.8}{}}
+\newlabel{eq:acopf_ieqf}{{6.9}{57}{Standard AC OPF}{equation.6.9}{}}
+\newlabel{eq:acopf_ieqt}{{6.10}{57}{Standard AC OPF}{equation.6.10}{}}
+\newlabel{eq:flowlimoptions}{{6.11}{57}{Standard AC OPF}{equation.6.11}{}}
+\newlabel{eq:vref}{{6.12}{57}{Standard AC OPF}{equation.6.12}{}}
+\newlabel{eq:vlims}{{6.13}{57}{Standard AC OPF}{equation.6.12}{}}
+\newlabel{eq:qlims}{{6.15}{57}{Standard AC OPF}{equation.6.12}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.1.1}Cartesian vs. Polar Coordinates for Voltage}{57}{subsubsection.6.1.1}}
+\newlabel{eq:cart_pwrbal_p}{{6.17}{58}{Cartesian vs. Polar Coordinates for Voltage}{equation.6.17}{}}
+\newlabel{eq:cart_pwrbal_q}{{6.18}{58}{Cartesian vs. Polar Coordinates for Voltage}{equation.6.18}{}}
+\newlabel{eq:acopf_ieqf_cart}{{6.19}{58}{Cartesian vs. Polar Coordinates for Voltage}{equation.6.19}{}}
+\newlabel{eq:acopf_ieqt_cart}{{6.20}{58}{Cartesian vs. Polar Coordinates for Voltage}{equation.6.20}{}}
+\newlabel{eq:vref_cart}{{6.21}{58}{Cartesian vs. Polar Coordinates for Voltage}{equation.6.21}{}}
+\newlabel{eq:vlims_cart}{{6.22}{58}{Cartesian vs. Polar Coordinates for Voltage}{equation.6.21}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.1.2}Current vs. Power for Nodal Balance Constraints}{58}{subsubsection.6.1.2}}
+\newlabel{eq:polar_curbal_m}{{6.23}{58}{Current vs. Power for Nodal Balance Constraints}{equation.6.23}{}}
+\newlabel{eq:polar_curbal_n}{{6.24}{58}{Current vs. Power for Nodal Balance Constraints}{equation.6.24}{}}
+\newlabel{eq:cart_curbal_m}{{6.25}{59}{Current vs. Power for Nodal Balance Constraints}{equation.6.25}{}}
+\newlabel{eq:cart_curbal_n}{{6.26}{59}{Current vs. Power for Nodal Balance Constraints}{equation.6.26}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Standard DC OPF}{59}{subsection.6.2}}
+\newlabel{eq:dcopf_eq}{{6.29}{59}{Standard DC OPF}{equation.6.29}{}}
+\newlabel{eq:dcopf_ieqf}{{6.30}{59}{Standard DC OPF}{equation.6.30}{}}
+\newlabel{eq:dcopf_ieqt}{{6.31}{59}{Standard DC OPF}{equation.6.31}{}}
 \citation{zimmerman2009}
-\newlabel{eq:dcopf_eq}{{6.16}{51}{Standard DC OPF}{equation.6.16}{}}
-\newlabel{eq:dcopf_ieqf}{{6.17}{51}{Standard DC OPF}{equation.6.17}{}}
-\newlabel{eq:dcopf_ieqt}{{6.18}{51}{Standard DC OPF}{equation.6.18}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Extended OPF Formulation}{51}{subsection.6.3}}
-\newlabel{sec:extended_opf}{{6.3}{51}{Extended OPF Formulation}{subsection.6.3}{}}
-\@writefile{brf}{\backcite{zimmerman2009}{{51}{6.3}{subsection.6.3}}}
-\newlabel{eq:minfxz}{{6.21}{51}{Extended OPF Formulation}{equation.6.21}{}}
-\newlabel{eq:A}{{6.25}{51}{Extended OPF Formulation}{equation.6.22}{}}
-\newlabel{eq:zlims}{{6.26}{51}{Extended OPF Formulation}{equation.6.22}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.3.1}User-defined Costs}{52}{subsubsection.6.3.1}}
-\newlabel{sec:user_costs}{{6.3.1}{52}{User-defined Costs}{subsubsection.6.3.1}{}}
-\newlabel{eq:fu}{{6.27}{52}{User-defined Costs}{equation.6.27}{}}
-\newlabel{eq:r}{{6.28}{52}{User-defined Costs}{equation.6.28}{}}
-\newlabel{eq:u}{{6.29}{52}{User-defined Costs}{equation.6.29}{}}
-\newlabel{eq:w}{{6.30}{52}{User-defined Costs}{equation.6.30}{}}
-\newlabel{eq:fdi}{{6.31}{52}{User-defined Costs}{equation.6.31}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6\unhbox \voidb@x \hbox {-}1}{\ignorespaces Relationship of $w_i$ to $r_i$ for $d_i = 1$ (linear option)\relax }}{53}{figure.caption.22}}
-\newlabel{fig:deadzone}{{6\unhbox \voidb@x \hbox {-}1}{53}{Relationship of $w_i$ to $r_i$ for $d_i = 1$ (linear option)\relax }{figure.caption.22}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6\unhbox \voidb@x \hbox {-}2}{\ignorespaces Relationship of $w_i$ to $r_i$ for $d_i = 2$ (quadratic option)\relax }}{53}{figure.caption.23}}
-\newlabel{fig:deadzone2}{{6\unhbox \voidb@x \hbox {-}2}{53}{Relationship of $w_i$ to $r_i$ for $d_i = 2$ (quadratic option)\relax }{figure.caption.23}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.3.2}User-defined Constraints}{54}{subsubsection.6.3.2}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.3.3}User-defined Variables}{54}{subsubsection.6.3.3}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.4}Standard Extensions}{54}{subsection.6.4}}
-\newlabel{sec:standard_extensions}{{6.4}{54}{Standard Extensions}{subsection.6.4}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.4.1}Piecewise Linear Costs}{54}{subsubsection.6.4.1}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Extended OPF Formulation}{60}{subsection.6.3}}
+\newlabel{sec:extended_opf}{{6.3}{60}{Extended OPF Formulation}{subsection.6.3}{}}
+\newlabel{eq:minfxhat}{{6.34}{60}{Extended OPF Formulation}{equation.6.34}{}}
+\newlabel{eq:A}{{6.38}{60}{Extended OPF Formulation}{equation.6.35}{}}
+\newlabel{eq:xhat}{{6.39}{60}{Extended OPF Formulation}{equation.6.39}{}}
+\newlabel{eq:f_u}{{6.40}{60}{Extended OPF Formulation}{equation.6.40}{}}
+\@writefile{brf}{\backcite{zimmerman2009}{{61}{6.3}{equation.6.41}}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.3.1}User-defined Variables}{61}{subsubsection.6.3.1}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.3.2}User-defined Constraints}{61}{subsubsection.6.3.2}}
+\newlabel{eq:usereq}{{6.42}{61}{User-defined Constraints}{equation.6.42}{}}
+\newlabel{eq:userieq}{{6.43}{61}{User-defined Constraints}{equation.6.42}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.3.3}User-defined Costs}{62}{subsubsection.6.3.3}}
+\newlabel{sec:user_costs}{{6.3.3}{62}{User-defined Costs}{subsubsection.6.3.3}{}}
+\newlabel{eq:fu}{{6.46}{62}{User-defined Costs}{equation.6.44}{}}
+\newlabel{eq:quad_cost}{{6.47}{62}{User-defined Costs}{equation.6.47}{}}
+\newlabel{eq:flegacy}{{6.48}{62}{User-defined Costs}{equation.6.48}{}}
+\newlabel{eq:u}{{6.49}{62}{User-defined Costs}{equation.6.49}{}}
+\newlabel{eq:w}{{6.50}{62}{User-defined Costs}{equation.6.50}{}}
+\newlabel{eq:fdi}{{6.51}{63}{User-defined Costs}{equation.6.51}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6\unhbox \voidb@x \hbox {-}1}{\ignorespaces Relationship of $w_i$ to $r_i$ for $d_i = 1$ (linear option)\relax }}{63}{figure.caption.24}}
+\newlabel{fig:deadzone}{{6\unhbox \voidb@x \hbox {-}1}{63}{Relationship of $w_i$ to $r_i$ for $d_i = 1$ (linear option)\relax }{figure.caption.24}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6\unhbox \voidb@x \hbox {-}2}{\ignorespaces Relationship of $w_i$ to $r_i$ for $d_i = 2$ (quadratic option)\relax }}{64}{figure.caption.25}}
+\newlabel{fig:deadzone2}{{6\unhbox \voidb@x \hbox {-}2}{64}{Relationship of $w_i$ to $r_i$ for $d_i = 2$ (quadratic option)\relax }{figure.caption.25}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4}Standard Extensions}{64}{subsection.6.4}}
+\newlabel{sec:standard_extensions}{{6.4}{64}{Standard Extensions}{subsection.6.4}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.4.1}Piecewise Linear Costs}{64}{subsubsection.6.4.1}}
 \citation{tspopf}
 \citation{wang2007a}
-\@writefile{lof}{\contentsline {figure}{\numberline {6\unhbox \voidb@x \hbox {-}3}{\ignorespaces Constrained Cost Variable\relax }}{55}{figure.caption.24}}
-\newlabel{fig:ccv}{{6\unhbox \voidb@x \hbox {-}3}{55}{Constrained Cost Variable\relax }{figure.caption.24}{}}
-\@writefile{brf}{\backcite{tspopf}{{55}{6.4.1}{equation.6.34}}}
-\@writefile{brf}{\backcite{wang2007a}{{55}{6.4.1}{equation.6.34}}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.4.2}Dispatchable Loads}{56}{subsubsection.6.4.2}}
-\newlabel{sec:dispatchable_loads}{{6.4.2}{56}{Dispatchable Loads}{subsubsection.6.4.2}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6\unhbox \voidb@x \hbox {-}4}{\ignorespaces Marginal Benefit or Bid Function\relax }}{56}{figure.caption.25}}
-\newlabel{fig:bid}{{6\unhbox \voidb@x \hbox {-}4}{56}{Marginal Benefit or Bid Function\relax }{figure.caption.25}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6\unhbox \voidb@x \hbox {-}5}{\ignorespaces Total Cost Function for Negative Injection\relax }}{57}{figure.caption.26}}
-\newlabel{fig:neg-cost}{{6\unhbox \voidb@x \hbox {-}5}{57}{Total Cost Function for Negative Injection\relax }{figure.caption.26}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.4.3}Generator Capability Curves}{57}{subsubsection.6.4.3}}
-\newlabel{sec:cap_curve}{{6.4.3}{57}{Generator Capability Curves}{subsubsection.6.4.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6\unhbox \voidb@x \hbox {-}3}{\ignorespaces Constrained Cost Variable\relax }}{65}{figure.caption.26}}
+\newlabel{fig:ccv}{{6\unhbox \voidb@x \hbox {-}3}{65}{Constrained Cost Variable\relax }{figure.caption.26}{}}
+\@writefile{brf}{\backcite{tspopf}{{65}{6.4.1}{equation.6.54}}}
+\@writefile{brf}{\backcite{wang2007a}{{65}{6.4.1}{equation.6.54}}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.4.2}Dispatchable Loads}{66}{subsubsection.6.4.2}}
+\newlabel{sec:dispatchable_loads}{{6.4.2}{66}{Dispatchable Loads}{subsubsection.6.4.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6\unhbox \voidb@x \hbox {-}4}{\ignorespaces Marginal Benefit or Bid Function\relax }}{66}{figure.caption.27}}
+\newlabel{fig:bid}{{6\unhbox \voidb@x \hbox {-}4}{66}{Marginal Benefit or Bid Function\relax }{figure.caption.27}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6\unhbox \voidb@x \hbox {-}5}{\ignorespaces Total Cost Function for Negative Injection\relax }}{67}{figure.caption.28}}
+\newlabel{fig:neg-cost}{{6\unhbox \voidb@x \hbox {-}5}{67}{Total Cost Function for Negative Injection\relax }{figure.caption.28}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.4.3}Generator Capability Curves}{68}{subsubsection.6.4.3}}
+\newlabel{sec:cap_curve}{{6.4.3}{68}{Generator Capability Curves}{subsubsection.6.4.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6\unhbox \voidb@x \hbox {-}6}{\ignorespaces Generator $P$-$Q$ Capability Curve\relax }}{68}{figure.caption.29}}
+\newlabel{fig:cap-curve}{{6\unhbox \voidb@x \hbox {-}6}{68}{Generator $P$-$Q$ Capability Curve\relax }{figure.caption.29}{}}
 \citation{ot}
 \citation{bpmpdmex}
 \citation{meszaros1996}
@@ -223,258 +296,285 @@
 \citation{murtagh}
 \citation{wang2007a}
 \citation{knitro}
-\@writefile{lof}{\contentsline {figure}{\numberline {6\unhbox \voidb@x \hbox {-}6}{\ignorespaces Generator $P$-$Q$ Capability Curve\relax }}{58}{figure.caption.27}}
-\newlabel{fig:cap-curve}{{6\unhbox \voidb@x \hbox {-}6}{58}{Generator $P$-$Q$ Capability Curve\relax }{figure.caption.27}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.4.4}Branch Angle Difference Limits}{58}{subsubsection.6.4.4}}
+\citation{gurobi}
+\citation{glpk}
+\citation{clp}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.4.4}Branch Angle Difference Limits}{69}{subsubsection.6.4.4}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.5}Solvers}{69}{subsection.6.5}}
+\newlabel{sec:solvers}{{6.5}{69}{Solvers}{subsection.6.5}{}}
+\@writefile{brf}{\backcite{ot}{{69}{6.5}{subsection.6.5}}}
+\@writefile{brf}{\backcite{bpmpdmex}{{69}{6.5}{subsection.6.5}}}
+\@writefile{brf}{\backcite{meszaros1996}{{69}{6.5}{subsection.6.5}}}
+\@writefile{brf}{\backcite{minopf}{{69}{6.5}{subsection.6.5}}}
+\@writefile{brf}{\backcite{tspopf}{{69}{6.5}{subsection.6.5}}}
+\@writefile{brf}{\backcite{murtagh}{{69}{6.5}{subsection.6.5}}}
+\@writefile{brf}{\backcite{wang2007a}{{69}{6.5}{subsection.6.5}}}
+\@writefile{brf}{\backcite{knitro}{{69}{6.5}{subsection.6.5}}}
 \citation{wang2007a}
-\citation{zimmerman2010b}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.5}Solvers}{59}{subsection.6.5}}
-\newlabel{sec:solvers}{{6.5}{59}{Solvers}{subsection.6.5}{}}
-\@writefile{brf}{\backcite{ot}{{59}{6.5}{subsection.6.5}}}
-\@writefile{brf}{\backcite{bpmpdmex}{{59}{6.5}{subsection.6.5}}}
-\@writefile{brf}{\backcite{meszaros1996}{{59}{6.5}{subsection.6.5}}}
-\@writefile{brf}{\backcite{minopf}{{59}{6.5}{subsection.6.5}}}
-\@writefile{brf}{\backcite{tspopf}{{59}{6.5}{subsection.6.5}}}
-\@writefile{brf}{\backcite{murtagh}{{59}{6.5}{subsection.6.5}}}
-\@writefile{brf}{\backcite{wang2007a}{{59}{6.5}{subsection.6.5}}}
-\@writefile{brf}{\backcite{knitro}{{59}{6.5}{subsection.6.5}}}
-\@writefile{brf}{\backcite{wang2007a}{{59}{6.5}{subsection.6.5}}}
-\@writefile{brf}{\backcite{zimmerman2010b}{{59}{6.5}{subsection.6.5}}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.6}{\tt  runopf}}{60}{subsection.6.6}}
-\newlabel{sec:runopf}{{6.6}{60}{\tt runopf}{subsection.6.6}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {6\unhbox \voidb@x \hbox {-}1}{\ignorespaces Optimal Power Flow Results\relax }}{60}{table.caption.29}}
-\newlabel{tab:opfresults}{{6\unhbox \voidb@x \hbox {-}1}{60}{Optimal Power Flow Results\relax }{table.caption.29}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {6\unhbox \voidb@x \hbox {-}2}{\ignorespaces Optimal Power Flow Solver Options\relax }}{62}{table.caption.31}}
-\newlabel{tab:opfsolveroptions}{{6\unhbox \voidb@x \hbox {-}2}{62}{Optimal Power Flow Solver Options\relax }{table.caption.31}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {6\unhbox \voidb@x \hbox {-}3}{\ignorespaces Other OPF Options\relax }}{63}{table.caption.33}}
-\newlabel{tab:opfoptions}{{6\unhbox \voidb@x \hbox {-}3}{63}{Other OPF Options\relax }{table.caption.33}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {6\unhbox \voidb@x \hbox {-}4}{\ignorespaces OPF Output Options\relax }}{64}{table.caption.35}}
-\newlabel{tab:opfoutputoptions}{{6\unhbox \voidb@x \hbox {-}4}{64}{OPF Output Options\relax }{table.caption.35}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {7}Extending the OPF}{65}{section.7}}
-\newlabel{sec:extending_opf}{{7}{65}{Extending the OPF}{section.7}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}Direct Specification}{65}{subsection.7.1}}
-\newlabel{sec:extend_direct}{{7.1}{65}{Direct Specification}{subsection.7.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.2}Callback Functions}{66}{subsection.7.2}}
-\newlabel{sec:extend_callbacks}{{7.2}{66}{Callback Functions}{subsection.7.2}{}}
-\newlabel{eq:reserve_var}{{7.2}{67}{Callback Functions}{equation.7.2}{}}
-\newlabel{eq:reserve_cost}{{7.3}{67}{Callback Functions}{equation.7.3}{}}
-\newlabel{eq:Pg_plus_R}{{7.4}{67}{Callback Functions}{equation.7.4}{}}
-\newlabel{eq:reserve_req}{{7.5}{67}{Callback Functions}{equation.7.5}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.2.1}{\tt  ext2int} Callback}{67}{subsubsection.7.2.1}}
-\newlabel{sec:ext2int_callback}{{7.2.1}{67}{{\tt ext2int} Callback}{subsubsection.7.2.1}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {7\unhbox \voidb@x \hbox {-}1}{\ignorespaces Names Used by Implementation of OPF with Reserves\relax }}{68}{table.caption.37}}
-\newlabel{tab:reserves}{{7\unhbox \voidb@x \hbox {-}1}{68}{Names Used by Implementation of OPF with Reserves\relax }{table.caption.37}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.2.2}{\tt  formulation} Callback}{69}{subsubsection.7.2.2}}
-\newlabel{sec:formulation_callback}{{7.2.2}{69}{{\tt formulation} Callback}{subsubsection.7.2.2}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {7\unhbox \voidb@x \hbox {-}1}{\ignorespaces Adding Constraints Across Subsets of Variables\relax }}{70}{figure.caption.38}}
-\newlabel{fig:varsets}{{7\unhbox \voidb@x \hbox {-}1}{70}{Adding Constraints Across Subsets of Variables\relax }{figure.caption.38}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.2.3}{\tt  int2ext} Callback}{71}{subsubsection.7.2.3}}
-\newlabel{sec:int2ext_callback}{{7.2.3}{71}{{\tt int2ext} Callback}{subsubsection.7.2.3}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {7\unhbox \voidb@x \hbox {-}2}{\ignorespaces Results for User-Defined Variables, Constraints and Costs\relax }}{72}{table.caption.40}}
-\newlabel{tab:extended_results}{{7\unhbox \voidb@x \hbox {-}2}{72}{Results for User-Defined Variables, Constraints and Costs\relax }{table.caption.40}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.2.4}{\tt  printpf} Callback}{73}{subsubsection.7.2.4}}
-\newlabel{sec:printpf_callback}{{7.2.4}{73}{{\tt printpf} Callback}{subsubsection.7.2.4}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.2.5}{\tt  savecase} Callback}{76}{subsubsection.7.2.5}}
-\newlabel{sec:savecase_callback}{{7.2.5}{76}{{\tt savecase} Callback}{subsubsection.7.2.5}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.3}Registering the Callbacks}{78}{subsection.7.3}}
-\newlabel{sec:registeringcallbacks}{{7.3}{78}{Registering the Callbacks}{subsection.7.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.4}Summary}{80}{subsection.7.4}}
-\@writefile{lot}{\contentsline {table}{\numberline {7\unhbox \voidb@x \hbox {-}3}{\ignorespaces Callback Functions\relax }}{80}{table.caption.42}}
-\newlabel{tab:callbacks}{{7\unhbox \voidb@x \hbox {-}3}{80}{Callback Functions\relax }{table.caption.42}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.5}Example Extensions}{80}{subsection.7.5}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.5.1}Fixed Zonal Reserves}{80}{subsubsection.7.5.1}}
-\newlabel{sec:reserves}{{7.5.1}{80}{Fixed Zonal Reserves}{subsubsection.7.5.1}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {7\unhbox \voidb@x \hbox {-}4}{\ignorespaces Input Data Structures for Fixed Zonal Reserves\relax }}{81}{table.caption.44}}
-\newlabel{tab:reservesinputs}{{7\unhbox \voidb@x \hbox {-}4}{81}{Input Data Structures for Fixed Zonal Reserves\relax }{table.caption.44}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {7\unhbox \voidb@x \hbox {-}5}{\ignorespaces Output Data Structures for Fixed Zonal Reserves\relax }}{81}{table.caption.46}}
-\newlabel{tab:reservesoutputs}{{7\unhbox \voidb@x \hbox {-}5}{81}{Output Data Structures for Fixed Zonal Reserves\relax }{table.caption.46}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.5.2}Interface Flow Limits}{82}{subsubsection.7.5.2}}
-\newlabel{sec:iflims}{{7.5.2}{82}{Interface Flow Limits}{subsubsection.7.5.2}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {7\unhbox \voidb@x \hbox {-}6}{\ignorespaces Input Data Structures for Interface Flow Limits\relax }}{82}{table.caption.48}}
-\newlabel{tab:ifliminputs}{{7\unhbox \voidb@x \hbox {-}6}{82}{Input Data Structures for Interface Flow Limits\relax }{table.caption.48}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {7\unhbox \voidb@x \hbox {-}7}{\ignorespaces Output Data Structures for Interface Flow Limits\relax }}{83}{table.caption.50}}
-\newlabel{tab:iflimoutputs}{{7\unhbox \voidb@x \hbox {-}7}{83}{Output Data Structures for Interface Flow Limits\relax }{table.caption.50}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.5.3}DC Transmission Lines}{83}{subsubsection.7.5.3}}
-\newlabel{sec:dclines}{{7.5.3}{83}{DC Transmission Lines}{subsubsection.7.5.3}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {7\unhbox \voidb@x \hbox {-}2}{\ignorespaces DC Line Model\relax }}{84}{figure.caption.51}}
-\newlabel{fig:dcline_model1}{{7\unhbox \voidb@x \hbox {-}2}{84}{DC Line Model\relax }{figure.caption.51}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {7\unhbox \voidb@x \hbox {-}3}{\ignorespaces Equivalent ``Dummy'' Generators\relax }}{84}{figure.caption.52}}
-\newlabel{fig:dcline_model2}{{7\unhbox \voidb@x \hbox {-}3}{84}{Equivalent ``Dummy'' Generators\relax }{figure.caption.52}{}}
-\newlabel{eq:dclineloss}{{7.8}{85}{DC Transmission Lines}{equation.7.8}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.5.4}DC OPF Branch Flow Soft Limits}{86}{subsubsection.7.5.4}}
-\newlabel{sec:softlims}{{7.5.4}{86}{DC OPF Branch Flow Soft Limits}{subsubsection.7.5.4}{}}
-\newlabel{eq:softlimconstraint}{{7.11}{86}{DC OPF Branch Flow Soft Limits}{equation.7.11}{}}
-\newlabel{eq:softlims_cost}{{7.12}{86}{DC OPF Branch Flow Soft Limits}{equation.7.12}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {7\unhbox \voidb@x \hbox {-}8}{\ignorespaces Input Data Structures for DC OPF Branch Flow Soft Limits\relax }}{87}{table.caption.55}}
-\newlabel{tab:softlimsinputs}{{7\unhbox \voidb@x \hbox {-}8}{87}{Input Data Structures for DC OPF Branch Flow Soft Limits\relax }{table.caption.55}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {7\unhbox \voidb@x \hbox {-}9}{\ignorespaces Output Data Structures for DC OPF Branch Flow Soft Limits\relax }}{87}{table.caption.57}}
-\newlabel{tab:softlimsoutputs}{{7\unhbox \voidb@x \hbox {-}9}{87}{Output Data Structures for DC OPF Branch Flow Soft Limits\relax }{table.caption.57}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {7\unhbox \voidb@x \hbox {-}4}{\ignorespaces Feasible Region for Branch Flow Violation Constraints\relax }}{88}{figure.caption.53}}
-\newlabel{fig:softlims}{{7\unhbox \voidb@x \hbox {-}4}{88}{Feasible Region for Branch Flow Violation Constraints\relax }{figure.caption.53}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {8}Unit De-commitment Algorithm}{90}{section.8}}
-\newlabel{sec:decommitment}{{8}{90}{Unit De-commitment Algorithm}{section.8}{}}
-\newlabel{step:pminfeasible}{{2}{90}{Unit De-commitment Algorithm}{Item.11}{}}
-\newlabel{step:firstopf}{{3}{90}{Unit De-commitment Algorithm}{Item.12}{}}
-\newlabel{step:next}{{4}{90}{Unit De-commitment Algorithm}{Item.13}{}}
-\newlabel{step:last}{{6}{90}{Unit De-commitment Algorithm}{Item.15}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {9}Miscellaneous {\sc  Matpower}{} Functions}{92}{section.9}}
-\newlabel{sec:miscfunctions}{{9}{92}{Miscellaneous \matpower {} Functions}{section.9}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {9.1}Input/Output Functions}{92}{subsection.9.1}}
-\newlabel{sec:io_funcs}{{9.1}{92}{Input/Output Functions}{subsection.9.1}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.1.1}\tt  loadcase}{92}{subsubsection.9.1.1}}
-\newlabel{sec:loadcase}{{9.1.1}{92}{\tt loadcase}{subsubsection.9.1.1}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.1.2}\tt  savecase}{92}{subsubsection.9.1.2}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.1.3}\tt  cdf2mpc}{93}{subsubsection.9.1.3}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.1.4}\tt  psse2mpc}{93}{subsubsection.9.1.4}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {9.2}System Information}{93}{subsection.9.2}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.2.1}\tt  case\_info}{93}{subsubsection.9.2.1}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.2.2}\tt  compare\_case}{94}{subsubsection.9.2.2}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.2.3}\tt  find\_islands}{94}{subsubsection.9.2.3}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.2.4}\tt  get\_losses}{94}{subsubsection.9.2.4}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.2.5}\tt  margcost}{95}{subsubsection.9.2.5}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.2.6}\tt  isload}{95}{subsubsection.9.2.6}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.2.7}\tt  printpf}{95}{subsubsection.9.2.7}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.2.8}\tt  total\_load}{96}{subsubsection.9.2.8}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.2.9}\tt  totcost}{96}{subsubsection.9.2.9}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {9.3}Modifying a Case}{96}{subsection.9.3}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.3.1}\tt  extract\_islands}{96}{subsubsection.9.3.1}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.3.2}\tt  load2disp}{97}{subsubsection.9.3.2}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.3.3}\tt  modcost}{97}{subsubsection.9.3.3}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.3.4}\tt  scale\_load}{97}{subsubsection.9.3.4}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.3.5}\tt  apply\_changes}{98}{subsubsection.9.3.5}}
-\newlabel{sec:apply_changes}{{9.3.5}{98}{\tt apply\_changes}{subsubsection.9.3.5}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {9\unhbox \voidb@x \hbox {-}1}{\ignorespaces Columns of {\relsize  {-0.5}{\tt  {{chgtab}}}}\relax }}{99}{table.caption.59}}
-\newlabel{tab:chgtab}{{9\unhbox \voidb@x \hbox {-}1}{99}{Columns of \code {chgtab}\relax }{table.caption.59}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {9\unhbox \voidb@x \hbox {-}2}{\ignorespaces Values for {\relsize  {-0.5}{\tt  {{CT\_TABLE}}}} Column\relax }}{99}{table.caption.61}}
-\newlabel{tab:cttable}{{9\unhbox \voidb@x \hbox {-}2}{99}{Values for \code {CT\_TABLE} Column\relax }{table.caption.61}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {9\unhbox \voidb@x \hbox {-}3}{\ignorespaces Values for {\relsize  {-0.5}{\tt  {{CT\_CHGTYPE}}}} Column\relax }}{100}{table.caption.63}}
-\newlabel{tab:ctchgtype}{{9\unhbox \voidb@x \hbox {-}3}{100}{Values for \code {CT\_CHGTYPE} Column\relax }{table.caption.63}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {9\unhbox \voidb@x \hbox {-}4}{\ignorespaces Values for {\relsize  {-0.5}{\tt  {{CT\_COL}}}} Column\relax }}{100}{table.caption.65}}
-\newlabel{tab:ctcol}{{9\unhbox \voidb@x \hbox {-}4}{100}{Values for \code {CT\_COL} Column\relax }{table.caption.65}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {9.4}Conversion between External and Internal Numbering}{101}{subsection.9.4}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.4.1}{\tt  ext2int}, {\tt  int2ext}}{101}{subsubsection.9.4.1}}
-\newlabel{sec:ext2int}{{9.4.1}{101}{{\tt ext2int}, {\tt int2ext}}{subsubsection.9.4.1}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.4.2}{\tt  e2i\_data}, {\tt  i2e\_data}}{102}{subsubsection.9.4.2}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.4.3}{\tt  e2i\_field}, {\tt  i2e\_field}}{102}{subsubsection.9.4.3}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {9.5}Forming Standard Power Systems Matrices}{103}{subsection.9.5}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.5.1}\tt  makeB}{103}{subsubsection.9.5.1}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.5.2}\tt  makeBdc}{103}{subsubsection.9.5.2}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.5.3}\tt  makeJac}{103}{subsubsection.9.5.3}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.5.4}\tt  makeLODF}{104}{subsubsection.9.5.4}}
-\newlabel{sec:makeLODF}{{9.5.4}{104}{\tt makeLODF}{subsubsection.9.5.4}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.5.5}\tt  makePTDF}{104}{subsubsection.9.5.5}}
-\newlabel{sec:makePTDF}{{9.5.5}{104}{\tt makePTDF}{subsubsection.9.5.5}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.5.6}\tt  makeYbus}{104}{subsubsection.9.5.6}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {9.6}Miscellaneous}{105}{subsection.9.6}}
-\newlabel{sec:othermiscfuncs}{{9.6}{105}{Miscellaneous}{subsection.9.6}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.6.1}\tt  define\_constants}{105}{subsubsection.9.6.1}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.6.2}\tt  feval\_w\_path}{105}{subsubsection.9.6.2}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.6.3}\tt  have\_fcn}{105}{subsubsection.9.6.3}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.6.4}\tt  mpopt2qpopt}{106}{subsubsection.9.6.4}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.6.5}\tt  mpver}{107}{subsubsection.9.6.5}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.6.6}\tt  nested\_struct\_copy}{107}{subsubsection.9.6.6}}
-\@writefile{toc}{\contentsline {section}{\numberline {10}Acknowledgments}{108}{section.10}}
+\citation{zimmerman2010b,sereeter2018a,sereeter2018b}
+\@writefile{brf}{\backcite{gurobi}{{70}{6.5}{subsection.6.5}}}
+\@writefile{brf}{\backcite{glpk}{{70}{6.5}{subsection.6.5}}}
+\@writefile{brf}{\backcite{clp}{{70}{6.5}{subsection.6.5}}}
+\@writefile{brf}{\backcite{wang2007a}{{70}{6.5}{subsection.6.5}}}
+\@writefile{brf}{\backcite{zimmerman2010b, sereeter2018a, sereeter2018b}{{70}{6.5}{subsection.6.5}}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.6}{\tt  runopf}}{70}{subsection.6.6}}
+\newlabel{sec:runopf}{{6.6}{70}{\tt runopf}{subsection.6.6}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {6\unhbox \voidb@x \hbox {-}1}{\ignorespaces Optimal Power Flow Results\relax }}{71}{table.caption.31}}
+\newlabel{tab:opfresults}{{6\unhbox \voidb@x \hbox {-}1}{71}{Optimal Power Flow Results\relax }{table.caption.31}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {6\unhbox \voidb@x \hbox {-}2}{\ignorespaces Optimal Power Flow Solver Options\relax }}{73}{table.caption.33}}
+\newlabel{tab:opfsolveroptions}{{6\unhbox \voidb@x \hbox {-}2}{73}{Optimal Power Flow Solver Options\relax }{table.caption.33}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {6\unhbox \voidb@x \hbox {-}3}{\ignorespaces Other OPF Options\relax }}{74}{table.caption.35}}
+\newlabel{tab:opfoptions}{{6\unhbox \voidb@x \hbox {-}3}{74}{Other OPF Options\relax }{table.caption.35}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {6\unhbox \voidb@x \hbox {-}4}{\ignorespaces OPF Output Options\relax }}{75}{table.caption.37}}
+\newlabel{tab:opfoutputoptions}{{6\unhbox \voidb@x \hbox {-}4}{75}{OPF Output Options\relax }{table.caption.37}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {7}Extending the OPF}{76}{section.7}}
+\newlabel{sec:extending_opf}{{7}{76}{Extending the OPF}{section.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}Direct Specification}{76}{subsection.7.1}}
+\newlabel{sec:extend_direct}{{7.1}{76}{Direct Specification}{subsection.7.1}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.1.1}User-defined Variables}{76}{subsubsection.7.1.1}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.1.2}User-defined Constraints}{76}{subsubsection.7.1.2}}
+\newlabel{sec:extend_direct_constraints}{{7.1.2}{76}{User-defined Constraints}{subsubsection.7.1.2}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {7\unhbox \voidb@x \hbox {-}1}{\ignorespaces User-defined Nonlinear Constraint Specification\relax }}{78}{table.caption.39}}
+\newlabel{tab:nl_constraints}{{7\unhbox \voidb@x \hbox {-}1}{78}{User-defined Nonlinear Constraint Specification\relax }{table.caption.39}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.1.3}User-defined Costs}{78}{subsubsection.7.1.3}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.1.4}Additional Comments}{79}{subsubsection.7.1.4}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.2}Callback Functions}{79}{subsection.7.2}}
+\newlabel{sec:extend_callbacks}{{7.2}{79}{Callback Functions}{subsection.7.2}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.2.1}User-defined Variables}{80}{subsubsection.7.2.1}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.2.2}User-defined Costs}{80}{subsubsection.7.2.2}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.2.3}User-defined Constraints}{81}{subsubsection.7.2.3}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.3}Callback Stages and Example}{82}{subsection.7.3}}
+\newlabel{sec:extend_callback_ex}{{7.3}{82}{Callback Stages and Example}{subsection.7.3}{}}
+\newlabel{eq:reserve_var}{{7.2}{82}{Callback Stages and Example}{equation.7.2}{}}
+\newlabel{eq:reserve_cost}{{7.3}{82}{Callback Stages and Example}{equation.7.3}{}}
+\newlabel{eq:Pg_plus_R}{{7.4}{82}{Callback Stages and Example}{equation.7.4}{}}
+\newlabel{eq:reserve_req}{{7.5}{82}{Callback Stages and Example}{equation.7.5}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {7\unhbox \voidb@x \hbox {-}2}{\ignorespaces Names Used by Implementation of OPF with Reserves\relax }}{83}{table.caption.41}}
+\newlabel{tab:reserves}{{7\unhbox \voidb@x \hbox {-}2}{83}{Names Used by Implementation of OPF with Reserves\relax }{table.caption.41}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.3.1}{\tt  ext2int} Callback}{83}{subsubsection.7.3.1}}
+\newlabel{sec:ext2int_callback}{{7.3.1}{83}{{\tt ext2int} Callback}{subsubsection.7.3.1}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.3.2}{\tt  formulation} Callback}{84}{subsubsection.7.3.2}}
+\newlabel{sec:formulation_callback}{{7.3.2}{84}{{\tt formulation} Callback}{subsubsection.7.3.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7\unhbox \voidb@x \hbox {-}1}{\ignorespaces Adding Constraints Across Subsets of Variables\relax }}{87}{figure.caption.42}}
+\newlabel{fig:varsets}{{7\unhbox \voidb@x \hbox {-}1}{87}{Adding Constraints Across Subsets of Variables\relax }{figure.caption.42}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.3.3}{\tt  int2ext} Callback}{88}{subsubsection.7.3.3}}
+\newlabel{sec:int2ext_callback}{{7.3.3}{88}{{\tt int2ext} Callback}{subsubsection.7.3.3}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {7\unhbox \voidb@x \hbox {-}3}{\ignorespaces Results for User-Defined Variables, Constraints and Costs\relax }}{89}{table.caption.44}}
+\newlabel{tab:extended_results}{{7\unhbox \voidb@x \hbox {-}3}{89}{Results for User-Defined Variables, Constraints and Costs\relax }{table.caption.44}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.3.4}{\tt  printpf} Callback}{91}{subsubsection.7.3.4}}
+\newlabel{sec:printpf_callback}{{7.3.4}{91}{{\tt printpf} Callback}{subsubsection.7.3.4}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.3.5}{\tt  savecase} Callback}{93}{subsubsection.7.3.5}}
+\newlabel{sec:savecase_callback}{{7.3.5}{93}{{\tt savecase} Callback}{subsubsection.7.3.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.4}Registering the Callbacks}{95}{subsection.7.4}}
+\newlabel{sec:registeringcallbacks}{{7.4}{95}{Registering the Callbacks}{subsection.7.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.5}Summary}{97}{subsection.7.5}}
+\@writefile{lot}{\contentsline {table}{\numberline {7\unhbox \voidb@x \hbox {-}4}{\ignorespaces Callback Functions\relax }}{97}{table.caption.46}}
+\newlabel{tab:callbacks}{{7\unhbox \voidb@x \hbox {-}4}{97}{Callback Functions\relax }{table.caption.46}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.6}Example Extensions}{97}{subsection.7.6}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.6.1}Fixed Zonal Reserves}{97}{subsubsection.7.6.1}}
+\newlabel{sec:reserves}{{7.6.1}{97}{Fixed Zonal Reserves}{subsubsection.7.6.1}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {7\unhbox \voidb@x \hbox {-}5}{\ignorespaces Input Data Structures for Fixed Zonal Reserves\relax }}{98}{table.caption.48}}
+\newlabel{tab:reservesinputs}{{7\unhbox \voidb@x \hbox {-}5}{98}{Input Data Structures for Fixed Zonal Reserves\relax }{table.caption.48}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {7\unhbox \voidb@x \hbox {-}6}{\ignorespaces Output Data Structures for Fixed Zonal Reserves\relax }}{98}{table.caption.50}}
+\newlabel{tab:reservesoutputs}{{7\unhbox \voidb@x \hbox {-}6}{98}{Output Data Structures for Fixed Zonal Reserves\relax }{table.caption.50}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.6.2}Interface Flow Limits}{99}{subsubsection.7.6.2}}
+\newlabel{sec:iflims}{{7.6.2}{99}{Interface Flow Limits}{subsubsection.7.6.2}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {7\unhbox \voidb@x \hbox {-}7}{\ignorespaces Input Data Structures for Interface Flow Limits\relax }}{99}{table.caption.52}}
+\newlabel{tab:ifliminputs}{{7\unhbox \voidb@x \hbox {-}7}{99}{Input Data Structures for Interface Flow Limits\relax }{table.caption.52}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {7\unhbox \voidb@x \hbox {-}8}{\ignorespaces Output Data Structures for Interface Flow Limits\relax }}{100}{table.caption.54}}
+\newlabel{tab:iflimoutputs}{{7\unhbox \voidb@x \hbox {-}8}{100}{Output Data Structures for Interface Flow Limits\relax }{table.caption.54}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.6.3}DC Transmission Lines}{100}{subsubsection.7.6.3}}
+\newlabel{sec:dclines}{{7.6.3}{100}{DC Transmission Lines}{subsubsection.7.6.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7\unhbox \voidb@x \hbox {-}2}{\ignorespaces DC Line Model\relax }}{101}{figure.caption.55}}
+\newlabel{fig:dcline_model1}{{7\unhbox \voidb@x \hbox {-}2}{101}{DC Line Model\relax }{figure.caption.55}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7\unhbox \voidb@x \hbox {-}3}{\ignorespaces Equivalent ``Dummy'' Generators\relax }}{101}{figure.caption.56}}
+\newlabel{fig:dcline_model2}{{7\unhbox \voidb@x \hbox {-}3}{101}{Equivalent ``Dummy'' Generators\relax }{figure.caption.56}{}}
+\newlabel{eq:dclineloss}{{7.8}{102}{DC Transmission Lines}{equation.7.8}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.6.4}OPF Soft Limits}{103}{subsubsection.7.6.4}}
+\newlabel{sec:softlims}{{7.6.4}{103}{OPF Soft Limits}{subsubsection.7.6.4}{}}
+\newlabel{eq:softlims_hard}{{7.9}{103}{OPF Soft Limits}{equation.7.9}{}}
+\newlabel{eq:softlims_infbound}{{7.10}{103}{OPF Soft Limits}{equation.7.10}{}}
+\newlabel{eq:softlims_cost}{{7.12}{103}{OPF Soft Limits}{equation.7.12}{}}
+\newlabel{eq:softlimconstraint}{{7.18}{104}{OPF Soft Limits}{equation.7.18}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7\unhbox \voidb@x \hbox {-}4}{\ignorespaces Feasible Region for Branch Flow Violation Constraints\relax }}{104}{figure.caption.57}}
+\newlabel{fig:softlims}{{7\unhbox \voidb@x \hbox {-}4}{104}{Feasible Region for Branch Flow Violation Constraints\relax }{figure.caption.57}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {7\unhbox \voidb@x \hbox {-}9}{\ignorespaces Soft Limit Formulation\relax }}{105}{table.caption.59}}
+\newlabel{tab:softlimsformulation}{{7\unhbox \voidb@x \hbox {-}9}{105}{Soft Limit Formulation\relax }{table.caption.59}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {7\unhbox \voidb@x \hbox {-}10}{\ignorespaces Input Data Structures for OPF Soft Limits\relax }}{106}{table.caption.61}}
+\newlabel{tab:softlimsinput}{{7\unhbox \voidb@x \hbox {-}10}{106}{Input Data Structures for OPF Soft Limits\relax }{table.caption.61}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {7\unhbox \voidb@x \hbox {-}11}{\ignorespaces Default Soft Limit Values\relax }}{107}{table.caption.63}}
+\newlabel{tab:softlimsdefaults}{{7\unhbox \voidb@x \hbox {-}11}{107}{Default Soft Limit Values\relax }{table.caption.63}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {7\unhbox \voidb@x \hbox {-}12}{\ignorespaces Possible Hard-Limit Modifications\relax }}{107}{table.caption.65}}
+\newlabel{tab:hlmod}{{7\unhbox \voidb@x \hbox {-}12}{107}{Possible Hard-Limit Modifications\relax }{table.caption.65}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {7\unhbox \voidb@x \hbox {-}13}{\ignorespaces Output Data Structures for OPF Soft Limits\relax }}{108}{table.caption.67}}
+\newlabel{tab:softlimsoutput}{{7\unhbox \voidb@x \hbox {-}13}{108}{Output Data Structures for OPF Soft Limits\relax }{table.caption.67}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {8}Unit De-commitment Algorithm}{110}{section.8}}
+\newlabel{sec:decommitment}{{8}{110}{Unit De-commitment Algorithm}{section.8}{}}
+\newlabel{step:pminfeasible}{{2}{110}{Unit De-commitment Algorithm}{Item.25}{}}
+\newlabel{step:firstopf}{{3}{110}{Unit De-commitment Algorithm}{Item.26}{}}
+\newlabel{step:next}{{4}{110}{Unit De-commitment Algorithm}{Item.27}{}}
+\newlabel{step:last}{{6}{110}{Unit De-commitment Algorithm}{Item.29}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {9}Miscellaneous {\sc  Matpower}{} Functions}{112}{section.9}}
+\newlabel{sec:miscfunctions}{{9}{112}{Miscellaneous \matpower {} Functions}{section.9}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.1}Input/Output Functions}{112}{subsection.9.1}}
+\newlabel{sec:io_funcs}{{9.1}{112}{Input/Output Functions}{subsection.9.1}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.1.1}\tt  loadcase}{112}{subsubsection.9.1.1}}
+\newlabel{sec:loadcase}{{9.1.1}{112}{\tt loadcase}{subsubsection.9.1.1}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.1.2}\tt  savecase}{112}{subsubsection.9.1.2}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.1.3}\tt  cdf2mpc}{113}{subsubsection.9.1.3}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.1.4}\tt  psse2mpc}{113}{subsubsection.9.1.4}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.1.5}\tt  save2psse}{114}{subsubsection.9.1.5}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.2}System Information}{114}{subsection.9.2}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.2.1}\tt  case\_info}{114}{subsubsection.9.2.1}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.2.2}\tt  compare\_case}{114}{subsubsection.9.2.2}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.2.3}\tt  find\_islands}{115}{subsubsection.9.2.3}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.2.4}\tt  get\_losses}{115}{subsubsection.9.2.4}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.2.5}\tt  margcost}{116}{subsubsection.9.2.5}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.2.6}\tt  isload}{116}{subsubsection.9.2.6}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.2.7}\tt  loadshed}{116}{subsubsection.9.2.7}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.2.8}\tt  printpf}{116}{subsubsection.9.2.8}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.2.9}\tt  total\_load}{117}{subsubsection.9.2.9}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.2.10}\tt  totcost}{117}{subsubsection.9.2.10}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.3}Modifying a Case}{117}{subsection.9.3}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.3.1}\tt  extract\_islands}{117}{subsubsection.9.3.1}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.3.2}\tt  load2disp}{118}{subsubsection.9.3.2}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.3.3}\tt  modcost}{118}{subsubsection.9.3.3}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.3.4}\tt  scale\_load}{118}{subsubsection.9.3.4}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.3.5}\tt  apply\_changes}{119}{subsubsection.9.3.5}}
+\newlabel{sec:apply_changes}{{9.3.5}{119}{\tt apply\_changes}{subsubsection.9.3.5}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {9\unhbox \voidb@x \hbox {-}1}{\ignorespaces Columns of {\relsize  {-0.5}{\tt  {{chgtab}}}}\relax }}{120}{table.caption.69}}
+\newlabel{tab:chgtab}{{9\unhbox \voidb@x \hbox {-}1}{120}{Columns of \code {chgtab}\relax }{table.caption.69}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {9\unhbox \voidb@x \hbox {-}2}{\ignorespaces Values for {\relsize  {-0.5}{\tt  {{CT\_TABLE}}}} Column\relax }}{120}{table.caption.71}}
+\newlabel{tab:cttable}{{9\unhbox \voidb@x \hbox {-}2}{120}{Values for \code {CT\_TABLE} Column\relax }{table.caption.71}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {9\unhbox \voidb@x \hbox {-}3}{\ignorespaces Values for {\relsize  {-0.5}{\tt  {{CT\_CHGTYPE}}}} Column\relax }}{121}{table.caption.73}}
+\newlabel{tab:ctchgtype}{{9\unhbox \voidb@x \hbox {-}3}{121}{Values for \code {CT\_CHGTYPE} Column\relax }{table.caption.73}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {9\unhbox \voidb@x \hbox {-}4}{\ignorespaces Values for {\relsize  {-0.5}{\tt  {{CT\_COL}}}} Column\relax }}{121}{table.caption.75}}
+\newlabel{tab:ctcol}{{9\unhbox \voidb@x \hbox {-}4}{121}{Values for \code {CT\_COL} Column\relax }{table.caption.75}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.3.6}\tt  savechgtab}{122}{subsubsection.9.3.6}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.4}Conversion between External and Internal Numbering}{123}{subsection.9.4}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.4.1}{\tt  ext2int}, {\tt  int2ext}}{123}{subsubsection.9.4.1}}
+\newlabel{sec:ext2int}{{9.4.1}{123}{{\tt ext2int}, {\tt int2ext}}{subsubsection.9.4.1}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.4.2}{\tt  e2i\_data}, {\tt  i2e\_data}}{123}{subsubsection.9.4.2}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.4.3}{\tt  e2i\_field}, {\tt  i2e\_field}}{124}{subsubsection.9.4.3}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.5}Forming Standard Power Systems Matrices}{125}{subsection.9.5}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.5.1}\tt  makeB}{125}{subsubsection.9.5.1}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.5.2}\tt  makeBdc}{125}{subsubsection.9.5.2}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.5.3}\tt  makeJac}{125}{subsubsection.9.5.3}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.5.4}\tt  makeLODF}{126}{subsubsection.9.5.4}}
+\newlabel{sec:makeLODF}{{9.5.4}{126}{\tt makeLODF}{subsubsection.9.5.4}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.5.5}\tt  makePTDF}{126}{subsubsection.9.5.5}}
+\newlabel{sec:makePTDF}{{9.5.5}{126}{\tt makePTDF}{subsubsection.9.5.5}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.5.6}\tt  makeYbus}{126}{subsubsection.9.5.6}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.6}Miscellaneous}{127}{subsection.9.6}}
+\newlabel{sec:othermiscfuncs}{{9.6}{127}{Miscellaneous}{subsection.9.6}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.6.1}\tt  define\_constants}{127}{subsubsection.9.6.1}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.6.2}\tt  feval\_w\_path}{127}{subsubsection.9.6.2}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.6.3}\tt  have\_fcn}{127}{subsubsection.9.6.3}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.6.4}\tt  mpopt2qpopt}{128}{subsubsection.9.6.4}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.6.5}\tt  mpver}{129}{subsubsection.9.6.5}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.6.6}\tt  nested\_struct\_copy}{129}{subsubsection.9.6.6}}
+\@writefile{toc}{\contentsline {section}{\numberline {10}Acknowledgments}{130}{section.10}}
 \citation{wang2007a,wang2007}
 \citation{wang2007a}
 \citation{wang2007a}
-\@writefile{toc}{\contentsline {section}{Appendix \numberline {A}{MIPS}{} -- {{\bf  M}{\sc  atpower} \textbf  {I}nterior \textbf  {P}oint \textbf  {S}olver}{}}{109}{Appendix.1.A}}
-\newlabel{app:mips}{{A}{109}{\mips {} -- \mipsname {}}{Appendix.1.A}{}}
-\@writefile{brf}{\backcite{wang2007a, wang2007}{{109}{A}{Appendix.1.A}}}
-\newlabel{eq:mips_prob_begin}{{A.1}{109}{\mips {} -- \mipsname {}}{equation.1.A.1}{}}
-\newlabel{eq:mips_g}{{A.2}{109}{\mips {} -- \mipsname {}}{equation.1.A.2}{}}
-\newlabel{eq:mips_h}{{A.3}{109}{\mips {} -- \mipsname {}}{equation.1.A.2}{}}
-\newlabel{eq:mips_linear_constraints}{{A.4}{109}{\mips {} -- \mipsname {}}{equation.1.A.2}{}}
-\newlabel{eq:mips_var_bounds}{{A.5}{109}{\mips {} -- \mipsname {}}{equation.1.A.2}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {A\unhbox \voidb@x \hbox {-}1}{\ignorespaces Input Arguments for {\relsize  {-0.5}{\tt  {{mips}}}}\TPToverlap {\textsuperscript  {\dag  }}\relax }}{110}{table.caption.67}}
-\newlabel{tab:mips_input}{{A\unhbox \voidb@x \hbox {-}1}{110}{Input Arguments for \code {mips}\tnote {\dag }\relax }{table.caption.67}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {A\unhbox \voidb@x \hbox {-}2}{\ignorespaces Output Arguments for {\relsize  {-0.5}{\tt  {{mips}}}}\relax }}{111}{table.caption.69}}
-\newlabel{tab:mips_output}{{A\unhbox \voidb@x \hbox {-}2}{111}{Output Arguments for \code {mips}\relax }{table.caption.69}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.1}Example 1}{111}{subsection.1.A.1}}
-\@writefile{lot}{\contentsline {table}{\numberline {A\unhbox \voidb@x \hbox {-}3}{\ignorespaces Options for {\relsize  {-0.5}{\tt  {{mips}}}}\TPToverlap {\textsuperscript  {\dag  }}\relax }}{112}{table.caption.71}}
-\newlabel{tab:mips_options}{{A\unhbox \voidb@x \hbox {-}3}{112}{Options for \code {mips}\tnote {\dag }\relax }{table.caption.71}{}}
-\@writefile{brf}{\backcite{wang2007a}{{112}{A\unhbox \voidb@x \hbox {-}3}{table.caption.71}}}
-\@writefile{brf}{\backcite{wang2007a}{{112}{A\unhbox \voidb@x \hbox {-}3}{table.caption.71}}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.2}Example 2}{113}{subsection.1.A.2}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.3}Quadratic Programming Solver}{115}{subsection.1.A.3}}
+\@writefile{toc}{\contentsline {section}{Appendix \numberline {A}{MIPS}{} -- {{\bf  M}{\sc  atpower} \textbf  {I}nterior \textbf  {P}oint \textbf  {S}olver}{}}{131}{Appendix.1.A}}
+\newlabel{app:mips}{{A}{131}{\mips {} -- \mipsname {}}{Appendix.1.A}{}}
+\@writefile{brf}{\backcite{wang2007a, wang2007}{{131}{A}{Appendix.1.A}}}
+\newlabel{eq:mips_prob_begin}{{A.1}{131}{\mips {} -- \mipsname {}}{equation.1.A.1}{}}
+\newlabel{eq:mips_g}{{A.2}{131}{\mips {} -- \mipsname {}}{equation.1.A.2}{}}
+\newlabel{eq:mips_h}{{A.3}{131}{\mips {} -- \mipsname {}}{equation.1.A.2}{}}
+\newlabel{eq:mips_linear_constraints}{{A.4}{131}{\mips {} -- \mipsname {}}{equation.1.A.2}{}}
+\newlabel{eq:mips_var_bounds}{{A.5}{131}{\mips {} -- \mipsname {}}{equation.1.A.2}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {A\unhbox \voidb@x \hbox {-}1}{\ignorespaces Input Arguments for {\relsize  {-0.5}{\tt  {{mips}}}}\TPToverlap {\textsuperscript  {\dag  }}\relax }}{132}{table.caption.77}}
+\newlabel{tab:mips_input}{{A\unhbox \voidb@x \hbox {-}1}{132}{Input Arguments for \code {mips}\tnote {\dag }\relax }{table.caption.77}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {A\unhbox \voidb@x \hbox {-}2}{\ignorespaces Output Arguments for {\relsize  {-0.5}{\tt  {{mips}}}}\relax }}{133}{table.caption.79}}
+\newlabel{tab:mips_output}{{A\unhbox \voidb@x \hbox {-}2}{133}{Output Arguments for \code {mips}\relax }{table.caption.79}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.1}Example 1}{133}{subsection.1.A.1}}
+\@writefile{lot}{\contentsline {table}{\numberline {A\unhbox \voidb@x \hbox {-}3}{\ignorespaces Options for {\relsize  {-0.5}{\tt  {{mips}}}}\TPToverlap {\textsuperscript  {\dag  }}\relax }}{134}{table.caption.81}}
+\newlabel{tab:mips_options}{{A\unhbox \voidb@x \hbox {-}3}{134}{Options for \code {mips}\tnote {\dag }\relax }{table.caption.81}{}}
+\@writefile{brf}{\backcite{wang2007a}{{134}{A\unhbox \voidb@x \hbox {-}3}{table.caption.81}}}
+\@writefile{brf}{\backcite{wang2007a}{{134}{A\unhbox \voidb@x \hbox {-}3}{table.caption.81}}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.2}Example 2}{135}{subsection.1.A.2}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.3}Quadratic Programming Solver}{137}{subsection.1.A.3}}
 \citation{wang2007a,wang2007}
-\@writefile{toc}{\contentsline {subsection}{\numberline {A.4}Primal-Dual Interior Point Algorithm}{116}{subsection.1.A.4}}
-\@writefile{brf}{\backcite{wang2007a, wang2007}{{116}{A.4}{subsection.1.A.4}}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {A.4.1}Notation}{116}{subsubsection.1.A.4.1}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {A.4.2}Problem Formulation and Lagrangian}{117}{subsubsection.1.A.4.2}}
-\newlabel{eq:L}{{A.26}{118}{Problem Formulation and Lagrangian}{equation.1.A.26}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {A.4.3}First Order Optimality Conditions}{118}{subsubsection.1.A.4.3}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {A.4.4}Newton Step}{119}{subsubsection.1.A.4.4}}
-\newlabel{eq:newton_step}{{A.37}{119}{Newton Step}{equation.1.A.37}{}}
-\newlabel{eq:2nd_row}{{A.38}{119}{Newton Step}{equation.1.A.38}{}}
-\newlabel{eq:4th_row}{{A.39}{119}{Newton Step}{equation.1.A.39}{}}
-\newlabel{eq:1st_row}{{A.40}{120}{Newton Step}{equation.1.A.40}{}}
-\newlabel{eq:ipm_reduced_system}{{A.45}{120}{Newton Step}{equation.1.A.45}{}}
-\newlabel{eq:alphap}{{A.46}{121}{Newton Step}{equation.1.A.46}{}}
-\newlabel{eq:alphad}{{A.47}{121}{Newton Step}{equation.1.A.47}{}}
-\newlabel{eq:gamma}{{A.52}{121}{Newton Step}{equation.1.A.52}{}}
-\@writefile{toc}{\contentsline {section}{Appendix \numberline {B}Data File Format}{122}{Appendix.1.B}}
-\newlabel{app:caseformat}{{B}{122}{Data File Format}{Appendix.1.B}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {B\unhbox \voidb@x \hbox {-}1}{\ignorespaces Bus Data ({\relsize  {-0.5}{\tt  {{mpc}}}}{}.{\relsize  {-0.5}{\tt  {{bus}}}}{})\relax }}{123}{table.caption.73}}
-\newlabel{tab:busdata}{{B\unhbox \voidb@x \hbox {-}1}{123}{Bus Data (\mpc {}.\bus {})\relax }{table.caption.73}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {B\unhbox \voidb@x \hbox {-}2}{\ignorespaces Generator Data ({\relsize  {-0.5}{\tt  {{mpc}}}}{}.{\relsize  {-0.5}{\tt  {{gen}}}}{})\relax }}{124}{table.caption.75}}
-\newlabel{tab:gendata}{{B\unhbox \voidb@x \hbox {-}2}{124}{Generator Data (\mpc {}.\gen {})\relax }{table.caption.75}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {B\unhbox \voidb@x \hbox {-}3}{\ignorespaces Branch Data ({\relsize  {-0.5}{\tt  {{mpc}}}}{}.{\relsize  {-0.5}{\tt  {{branch}}}}{})\relax }}{125}{table.caption.77}}
-\newlabel{tab:branchdata}{{B\unhbox \voidb@x \hbox {-}3}{125}{Branch Data (\mpc {}.\branch {})\relax }{table.caption.77}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {B\unhbox \voidb@x \hbox {-}4}{\ignorespaces Generator Cost Data\TPToverlap {\textsuperscript  {\dag  }} ({\relsize  {-0.5}{\tt  {{mpc}}}}{}.{\relsize  {-0.5}{\tt  {{gencost}}}}{})\relax }}{126}{table.caption.79}}
-\newlabel{tab:gencostdata}{{B\unhbox \voidb@x \hbox {-}4}{126}{Generator Cost Data\tnote {\dag } (\mpc {}.\gencost {})\relax }{table.caption.79}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {B\unhbox \voidb@x \hbox {-}5}{\ignorespaces DC Line Data\TPToverlap {\textsuperscript  {*}} ({\relsize  {-0.5}{\tt  {{mpc}}}}{}.{\relsize  {-0.5}{\tt  {{dcline}}}})\relax }}{127}{table.caption.81}}
-\newlabel{tab:dclinedata}{{B\unhbox \voidb@x \hbox {-}5}{127}{DC Line Data\tnote {*} (\mpc {}.\code {dcline})\relax }{table.caption.81}{}}
-\@writefile{toc}{\contentsline {section}{Appendix \numberline {C}{\sc  Matpower}{} Options}{128}{Appendix.1.C}}
-\newlabel{app:options}{{C}{128}{\matpower {} Options}{Appendix.1.C}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {A.4}Primal-Dual Interior Point Algorithm}{138}{subsection.1.A.4}}
+\@writefile{brf}{\backcite{wang2007a, wang2007}{{138}{A.4}{subsection.1.A.4}}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {A.4.1}Notation}{138}{subsubsection.1.A.4.1}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {A.4.2}Problem Formulation and Lagrangian}{139}{subsubsection.1.A.4.2}}
+\newlabel{eq:L}{{A.26}{140}{Problem Formulation and Lagrangian}{equation.1.A.26}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {A.4.3}First Order Optimality Conditions}{140}{subsubsection.1.A.4.3}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {A.4.4}Newton Step}{141}{subsubsection.1.A.4.4}}
+\newlabel{eq:newton_step}{{A.37}{141}{Newton Step}{equation.1.A.37}{}}
+\newlabel{eq:2nd_row}{{A.38}{141}{Newton Step}{equation.1.A.38}{}}
+\newlabel{eq:4th_row}{{A.39}{141}{Newton Step}{equation.1.A.39}{}}
+\newlabel{eq:1st_row}{{A.40}{142}{Newton Step}{equation.1.A.40}{}}
+\newlabel{eq:ipm_reduced_system}{{A.45}{142}{Newton Step}{equation.1.A.45}{}}
+\newlabel{eq:alphap}{{A.46}{143}{Newton Step}{equation.1.A.46}{}}
+\newlabel{eq:alphad}{{A.47}{143}{Newton Step}{equation.1.A.47}{}}
+\newlabel{eq:gamma}{{A.52}{143}{Newton Step}{equation.1.A.52}{}}
+\@writefile{toc}{\contentsline {section}{Appendix \numberline {B}Data File Format}{144}{Appendix.1.B}}
+\newlabel{app:caseformat}{{B}{144}{Data File Format}{Appendix.1.B}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {B\unhbox \voidb@x \hbox {-}1}{\ignorespaces Bus Data ({\relsize  {-0.5}{\tt  {{mpc}}}}{}.{\relsize  {-0.5}{\tt  {{bus}}}}{})\relax }}{145}{table.caption.83}}
+\newlabel{tab:busdata}{{B\unhbox \voidb@x \hbox {-}1}{145}{Bus Data (\mpc {}.\bus {})\relax }{table.caption.83}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {B\unhbox \voidb@x \hbox {-}2}{\ignorespaces Generator Data ({\relsize  {-0.5}{\tt  {{mpc}}}}{}.{\relsize  {-0.5}{\tt  {{gen}}}}{})\relax }}{146}{table.caption.85}}
+\newlabel{tab:gendata}{{B\unhbox \voidb@x \hbox {-}2}{146}{Generator Data (\mpc {}.\gen {})\relax }{table.caption.85}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {B\unhbox \voidb@x \hbox {-}3}{\ignorespaces Branch Data ({\relsize  {-0.5}{\tt  {{mpc}}}}{}.{\relsize  {-0.5}{\tt  {{branch}}}}{})\relax }}{147}{table.caption.87}}
+\newlabel{tab:branchdata}{{B\unhbox \voidb@x \hbox {-}3}{147}{Branch Data (\mpc {}.\branch {})\relax }{table.caption.87}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {B\unhbox \voidb@x \hbox {-}4}{\ignorespaces Generator Cost Data\TPToverlap {\textsuperscript  {\dag  }} ({\relsize  {-0.5}{\tt  {{mpc}}}}{}.{\relsize  {-0.5}{\tt  {{gencost}}}}{})\relax }}{148}{table.caption.89}}
+\newlabel{tab:gencostdata}{{B\unhbox \voidb@x \hbox {-}4}{148}{Generator Cost Data\tnote {\dag } (\mpc {}.\gencost {})\relax }{table.caption.89}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {B\unhbox \voidb@x \hbox {-}5}{\ignorespaces DC Line Data\TPToverlap {\textsuperscript  {*}} ({\relsize  {-0.5}{\tt  {{mpc}}}}{}.{\relsize  {-0.5}{\tt  {{dcline}}}})\relax }}{149}{table.caption.91}}
+\newlabel{tab:dclinedata}{{B\unhbox \voidb@x \hbox {-}5}{149}{DC Line Data\tnote {*} (\mpc {}.\code {dcline})\relax }{table.caption.91}{}}
+\@writefile{toc}{\contentsline {section}{Appendix \numberline {C}{\sc  Matpower}{} Options}{150}{Appendix.1.C}}
+\newlabel{app:options}{{C}{150}{\matpower {} Options}{Appendix.1.C}{}}
 \citation{ipopt}
 \citation{knitro}
 \citation{minopf}
 \citation{tspopf}
 \citation{tspopf}
-\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}1}{\ignorespaces Top-Level Options\relax }}{130}{table.caption.83}}
-\newlabel{tab:topoptions}{{C\unhbox \voidb@x \hbox {-}1}{130}{Top-Level Options\relax }{table.caption.83}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}2}{\ignorespaces Power Flow Options\relax }}{131}{table.caption.85}}
-\newlabel{tab:pfoptions2}{{C\unhbox \voidb@x \hbox {-}2}{131}{Power Flow Options\relax }{table.caption.85}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}3}{\ignorespaces Continuation Power Flow Options\relax }}{132}{table.caption.87}}
-\newlabel{tab:cpfoptions2}{{C\unhbox \voidb@x \hbox {-}3}{132}{Continuation Power Flow Options\relax }{table.caption.87}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}4}{\ignorespaces OPF Solver Options\relax }}{133}{table.caption.89}}
-\newlabel{tab:opfsolveroptions2}{{C\unhbox \voidb@x \hbox {-}4}{133}{OPF Solver Options\relax }{table.caption.89}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}5}{\ignorespaces General OPF Options\relax }}{134}{table.caption.91}}
-\newlabel{tab:opfoptions2}{{C\unhbox \voidb@x \hbox {-}5}{134}{General OPF Options\relax }{table.caption.91}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}6}{\ignorespaces Power Flow and OPF Output Options\relax }}{135}{table.caption.93}}
-\newlabel{tab:outputoptions}{{C\unhbox \voidb@x \hbox {-}6}{135}{Power Flow and OPF Output Options\relax }{table.caption.93}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}7}{\ignorespaces OPF Options for {MIPS}{}\relax }}{136}{table.caption.95}}
-\newlabel{tab:mipsoptions}{{C\unhbox \voidb@x \hbox {-}7}{136}{OPF Options for \mips {}\relax }{table.caption.95}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}8}{\ignorespaces OPF Options for {CLP}{}\TPToverlap {\textsuperscript  {\dag  }}\relax }}{136}{table.caption.97}}
-\newlabel{tab:clpoptions}{{C\unhbox \voidb@x \hbox {-}8}{136}{OPF Options for \clp {}\tnote {\dag }\relax }{table.caption.97}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}9}{\ignorespaces OPF Options for {CPLEX}{}\TPToverlap {\textsuperscript  {\dag  }}\relax }}{137}{table.caption.99}}
-\newlabel{tab:cplexoptions}{{C\unhbox \voidb@x \hbox {-}9}{137}{OPF Options for \cplex {}\tnote {\dag }\relax }{table.caption.99}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}10}{\ignorespaces OPF Options for {\relsize  {-0.5}{\tt  {{fmincon}}}}\TPToverlap {\textsuperscript  {\dag  }}\relax }}{138}{table.caption.101}}
-\newlabel{tab:fminconoptions}{{C\unhbox \voidb@x \hbox {-}10}{138}{OPF Options for \code {fmincon}\tnote {\dag }\relax }{table.caption.101}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}11}{\ignorespaces OPF Options for {GLPK}{}\TPToverlap {\textsuperscript  {\dag  }}\relax }}{138}{table.caption.103}}
-\newlabel{tab:glpkoptions}{{C\unhbox \voidb@x \hbox {-}11}{138}{OPF Options for \glpk {}\tnote {\dag }\relax }{table.caption.103}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}12}{\ignorespaces OPF Options for {Gurobi}{}\TPToverlap {\textsuperscript  {\dag  }}\relax }}{139}{table.caption.105}}
-\newlabel{tab:gurobioptions}{{C\unhbox \voidb@x \hbox {-}12}{139}{OPF Options for \gurobi {}\tnote {\dag }\relax }{table.caption.105}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}13}{\ignorespaces OPF Options for {\sc  Ipopt}{}\TPToverlap {\textsuperscript  {\dag  }}\relax }}{139}{table.caption.107}}
-\newlabel{tab:ipoptoptions}{{C\unhbox \voidb@x \hbox {-}13}{139}{OPF Options for \ipopt {}\tnote {\dag }\relax }{table.caption.107}{}}
-\@writefile{brf}{\backcite{ipopt}{{139}{C\unhbox \voidb@x \hbox {-}13}{table.caption.107}}}
-\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}14}{\ignorespaces OPF Options for {KNITRO}{}\TPToverlap {\textsuperscript  {\dag  }}\relax }}{140}{table.caption.109}}
-\newlabel{tab:knitrooptions}{{C\unhbox \voidb@x \hbox {-}14}{140}{OPF Options for \knitro {}\tnote {\dag }\relax }{table.caption.109}{}}
-\@writefile{brf}{\backcite{knitro}{{140}{C\unhbox \voidb@x \hbox {-}14}{table.caption.109}}}
-\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}15}{\ignorespaces OPF Options for MINOPF\TPToverlap {\textsuperscript  {\dag  }}\relax }}{140}{table.caption.111}}
-\newlabel{tab:minopfoptions}{{C\unhbox \voidb@x \hbox {-}15}{140}{OPF Options for MINOPF\tnote {\dag }\relax }{table.caption.111}{}}
-\@writefile{brf}{\backcite{minopf}{{140}{C\unhbox \voidb@x \hbox {-}15}{table.caption.111}}}
-\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}16}{\ignorespaces OPF Options for {MOSEK}{}\TPToverlap {\textsuperscript  {\dag  }}\relax }}{141}{table.caption.113}}
-\newlabel{tab:mosekoptions}{{C\unhbox \voidb@x \hbox {-}16}{141}{OPF Options for \mosek {}\tnote {\dag }\relax }{table.caption.113}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}17}{\ignorespaces OPF Options for PDIPM\TPToverlap {\textsuperscript  {\dag  }}\relax }}{142}{table.caption.115}}
-\newlabel{tab:pdipmoptions}{{C\unhbox \voidb@x \hbox {-}17}{142}{OPF Options for PDIPM\tnote {\dag }\relax }{table.caption.115}{}}
-\@writefile{brf}{\backcite{tspopf}{{142}{C\unhbox \voidb@x \hbox {-}17}{table.caption.115}}}
-\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}18}{\ignorespaces OPF Options for TRALM\TPToverlap {\textsuperscript  {\dag  }}\relax }}{142}{table.caption.117}}
-\newlabel{tab:tralmoptions}{{C\unhbox \voidb@x \hbox {-}18}{142}{OPF Options for TRALM\tnote {\dag }\relax }{table.caption.117}{}}
-\@writefile{brf}{\backcite{tspopf}{{142}{C\unhbox \voidb@x \hbox {-}18}{table.caption.117}}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {C.1}Mapping of Old-Style Options to New-Style Options}{143}{subsection.1.C.1}}
-\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}19}{\ignorespaces Old-Style to New-Style Option Mapping}}{143}{table.1.C.19}}
-\newlabel{tab:oldnewoptionmap}{{C\unhbox \voidb@x \hbox {-}19}{143}{Old-Style to New-Style Option Mapping}{table.1.C.19}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}1}{\ignorespaces Top-Level Options\relax }}{152}{table.caption.93}}
+\newlabel{tab:topoptions}{{C\unhbox \voidb@x \hbox {-}1}{152}{Top-Level Options\relax }{table.caption.93}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}2}{\ignorespaces Power Flow Options\relax }}{153}{table.caption.95}}
+\newlabel{tab:pfoptions2}{{C\unhbox \voidb@x \hbox {-}2}{153}{Power Flow Options\relax }{table.caption.95}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}3}{\ignorespaces Continuation Power Flow Options\relax }}{154}{table.caption.97}}
+\newlabel{tab:cpfoptions2}{{C\unhbox \voidb@x \hbox {-}3}{154}{Continuation Power Flow Options\relax }{table.caption.97}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}4}{\ignorespaces OPF Solver Options\relax }}{155}{table.caption.99}}
+\newlabel{tab:opfsolveroptions2}{{C\unhbox \voidb@x \hbox {-}4}{155}{OPF Solver Options\relax }{table.caption.99}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}5}{\ignorespaces General OPF Options\relax }}{156}{table.caption.101}}
+\newlabel{tab:opfoptions2}{{C\unhbox \voidb@x \hbox {-}5}{156}{General OPF Options\relax }{table.caption.101}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}6}{\ignorespaces Power Flow and OPF Output Options\relax }}{157}{table.caption.103}}
+\newlabel{tab:outputoptions}{{C\unhbox \voidb@x \hbox {-}6}{157}{Power Flow and OPF Output Options\relax }{table.caption.103}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}7}{\ignorespaces OPF Options for {MIPS}{}\relax }}{158}{table.caption.105}}
+\newlabel{tab:mipsoptions}{{C\unhbox \voidb@x \hbox {-}7}{158}{OPF Options for \mips {}\relax }{table.caption.105}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}8}{\ignorespaces OPF Options for {CLP}{}\TPToverlap {\textsuperscript  {\dag  }}\relax }}{158}{table.caption.107}}
+\newlabel{tab:clpoptions}{{C\unhbox \voidb@x \hbox {-}8}{158}{OPF Options for \clp {}\tnote {\dag }\relax }{table.caption.107}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}9}{\ignorespaces OPF Options for {CPLEX}{}\TPToverlap {\textsuperscript  {\dag  }}\relax }}{159}{table.caption.109}}
+\newlabel{tab:cplexoptions}{{C\unhbox \voidb@x \hbox {-}9}{159}{OPF Options for \cplex {}\tnote {\dag }\relax }{table.caption.109}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}10}{\ignorespaces OPF Options for {\relsize  {-0.5}{\tt  {{fmincon}}}}\TPToverlap {\textsuperscript  {\dag  }}\relax }}{160}{table.caption.111}}
+\newlabel{tab:fminconoptions}{{C\unhbox \voidb@x \hbox {-}10}{160}{OPF Options for \code {fmincon}\tnote {\dag }\relax }{table.caption.111}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}11}{\ignorespaces OPF Options for {GLPK}{}\TPToverlap {\textsuperscript  {\dag  }}\relax }}{160}{table.caption.113}}
+\newlabel{tab:glpkoptions}{{C\unhbox \voidb@x \hbox {-}11}{160}{OPF Options for \glpk {}\tnote {\dag }\relax }{table.caption.113}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}12}{\ignorespaces OPF Options for {Gurobi}{}\TPToverlap {\textsuperscript  {\dag  }}\relax }}{161}{table.caption.115}}
+\newlabel{tab:gurobioptions}{{C\unhbox \voidb@x \hbox {-}12}{161}{OPF Options for \gurobi {}\tnote {\dag }\relax }{table.caption.115}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}13}{\ignorespaces OPF Options for {\sc  Ipopt}{}\TPToverlap {\textsuperscript  {\dag  }}\relax }}{161}{table.caption.117}}
+\newlabel{tab:ipoptoptions}{{C\unhbox \voidb@x \hbox {-}13}{161}{OPF Options for \ipopt {}\tnote {\dag }\relax }{table.caption.117}{}}
+\@writefile{brf}{\backcite{ipopt}{{161}{C\unhbox \voidb@x \hbox {-}13}{table.caption.117}}}
+\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}14}{\ignorespaces OPF Options for {KNITRO}{}\TPToverlap {\textsuperscript  {\dag  }}\relax }}{162}{table.caption.119}}
+\newlabel{tab:knitrooptions}{{C\unhbox \voidb@x \hbox {-}14}{162}{OPF Options for \knitro {}\tnote {\dag }\relax }{table.caption.119}{}}
+\@writefile{brf}{\backcite{knitro}{{162}{C\unhbox \voidb@x \hbox {-}14}{table.caption.119}}}
+\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}15}{\ignorespaces OPF Options for MINOPF\TPToverlap {\textsuperscript  {\dag  }}\relax }}{163}{table.caption.121}}
+\newlabel{tab:minopfoptions}{{C\unhbox \voidb@x \hbox {-}15}{163}{OPF Options for MINOPF\tnote {\dag }\relax }{table.caption.121}{}}
+\@writefile{brf}{\backcite{minopf}{{163}{C\unhbox \voidb@x \hbox {-}15}{table.caption.121}}}
+\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}16}{\ignorespaces OPF Options for {MOSEK}{}\TPToverlap {\textsuperscript  {\dag  }}\relax }}{164}{table.caption.123}}
+\newlabel{tab:mosekoptions}{{C\unhbox \voidb@x \hbox {-}16}{164}{OPF Options for \mosek {}\tnote {\dag }\relax }{table.caption.123}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}17}{\ignorespaces OPF Options for PDIPM\TPToverlap {\textsuperscript  {\dag  }}\relax }}{165}{table.caption.125}}
+\newlabel{tab:pdipmoptions}{{C\unhbox \voidb@x \hbox {-}17}{165}{OPF Options for PDIPM\tnote {\dag }\relax }{table.caption.125}{}}
+\@writefile{brf}{\backcite{tspopf}{{165}{C\unhbox \voidb@x \hbox {-}17}{table.caption.125}}}
+\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}18}{\ignorespaces OPF Options for TRALM\TPToverlap {\textsuperscript  {\dag  }}\relax }}{165}{table.caption.127}}
+\newlabel{tab:tralmoptions}{{C\unhbox \voidb@x \hbox {-}18}{165}{OPF Options for TRALM\tnote {\dag }\relax }{table.caption.127}{}}
+\@writefile{brf}{\backcite{tspopf}{{165}{C\unhbox \voidb@x \hbox {-}18}{table.caption.127}}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {C.1}Mapping of Old-Style Options to New-Style Options}{166}{subsection.1.C.1}}
+\@writefile{lot}{\contentsline {table}{\numberline {C\unhbox \voidb@x \hbox {-}19}{\ignorespaces Old-Style to New-Style Option Mapping\relax }}{166}{table.1.C.19}}
+\newlabel{tab:oldnewoptionmap}{{C\unhbox \voidb@x \hbox {-}19}{166}{Old-Style to New-Style Option Mapping\relax }{table.1.C.19}{}}
 \gdef \LT@i {\LT@entry 
     {8}{27.00005pt}\LT@entry 
     {1}{102.30385pt}\LT@entry 
@@ -482,227 +582,262 @@
     {1}{175.40385pt}}
 \citation{zimmerman2010a}
 \citation{zimmerman2010b}
-\@writefile{toc}{\contentsline {section}{Appendix \numberline {D}{\sc  Matpower}{} Files and Functions}{147}{Appendix.1.D}}
-\newlabel{app:functions}{{D}{147}{\matpower {} Files and Functions}{Appendix.1.D}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {D.1}Directory Layout and Documentation Files}{147}{subsection.1.D.1}}
-\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}1}{\ignorespaces {\sc  Matpower}{} Directory Layout and Documentation Files\relax }}{147}{table.caption.119}}
-\newlabel{tab:docs}{{D\unhbox \voidb@x \hbox {-}1}{147}{\matpower {} Directory Layout and Documentation Files\relax }{table.caption.119}{}}
-\@writefile{brf}{\backcite{zimmerman2010a}{{147}{D\unhbox \voidb@x \hbox {-}1}{table.caption.119}}}
-\@writefile{brf}{\backcite{zimmerman2010b}{{147}{D\unhbox \voidb@x \hbox {-}1}{table.caption.119}}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {D.2}{\sc  Matpower}{} Functions}{148}{subsection.1.D.2}}
-\newlabel{sec:matpowersw}{{D.2}{148}{\matpower {} Functions}{subsection.1.D.2}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}2}{\ignorespaces Top-Level Simulation Functions\relax }}{148}{table.caption.121}}
-\newlabel{tab:run}{{D\unhbox \voidb@x \hbox {-}2}{148}{Top-Level Simulation Functions\relax }{table.caption.121}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}3}{\ignorespaces Input/Output Functions\relax }}{148}{table.caption.123}}
-\newlabel{tab:io}{{D\unhbox \voidb@x \hbox {-}3}{148}{Input/Output Functions\relax }{table.caption.123}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}4}{\ignorespaces Data Conversion Functions\relax }}{149}{table.caption.125}}
-\newlabel{tab:conversion}{{D\unhbox \voidb@x \hbox {-}4}{149}{Data Conversion Functions\relax }{table.caption.125}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}5}{\ignorespaces Power Flow Functions\relax }}{149}{table.caption.127}}
-\newlabel{tab:pf}{{D\unhbox \voidb@x \hbox {-}5}{149}{Power Flow Functions\relax }{table.caption.127}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}6}{\ignorespaces Continuation Power Flow Functions\relax }}{150}{table.caption.129}}
-\newlabel{tab:cpf}{{D\unhbox \voidb@x \hbox {-}6}{150}{Continuation Power Flow Functions\relax }{table.caption.129}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}7}{\ignorespaces OPF and Wrapper Functions\relax }}{150}{table.caption.131}}
-\newlabel{tab:opf}{{D\unhbox \voidb@x \hbox {-}7}{150}{OPF and Wrapper Functions\relax }{table.caption.131}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}8}{\ignorespaces OPF Model Objects\relax }}{151}{table.caption.133}}
-\newlabel{tab:opf_model}{{D\unhbox \voidb@x \hbox {-}8}{151}{OPF Model Objects\relax }{table.caption.133}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}9}{\ignorespaces OPF Solver Functions\relax }}{151}{table.caption.135}}
-\newlabel{tab:opf_solvers}{{D\unhbox \voidb@x \hbox {-}9}{151}{OPF Solver Functions\relax }{table.caption.135}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}10}{\ignorespaces Other OPF Functions\relax }}{152}{table.caption.137}}
-\newlabel{tab:other_opf}{{D\unhbox \voidb@x \hbox {-}10}{152}{Other OPF Functions\relax }{table.caption.137}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}11}{\ignorespaces OPF User Callback Functions\relax }}{152}{table.caption.139}}
-\newlabel{tab:callback}{{D\unhbox \voidb@x \hbox {-}11}{152}{OPF User Callback Functions\relax }{table.caption.139}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}12}{\ignorespaces Power Flow Derivative Functions\relax }}{153}{table.caption.141}}
-\newlabel{tab:pfderivatives}{{D\unhbox \voidb@x \hbox {-}12}{153}{Power Flow Derivative Functions\relax }{table.caption.141}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}13}{\ignorespaces NLP, LP \& QP Solver Functions\relax }}{154}{table.caption.143}}
-\newlabel{tab:solvers}{{D\unhbox \voidb@x \hbox {-}13}{154}{NLP, LP \& QP Solver Functions\relax }{table.caption.143}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}14}{\ignorespaces Matrix Building Functions\relax }}{155}{table.caption.145}}
-\newlabel{tab:matrix_building}{{D\unhbox \voidb@x \hbox {-}14}{155}{Matrix Building Functions\relax }{table.caption.145}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}15}{\ignorespaces Utility Functions\relax }}{156}{table.caption.147}}
-\newlabel{tab:utility}{{D\unhbox \voidb@x \hbox {-}15}{156}{Utility Functions\relax }{table.caption.147}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}16}{\ignorespaces Other Functions\relax }}{157}{table.caption.149}}
-\newlabel{tab:otherfcns}{{D\unhbox \voidb@x \hbox {-}16}{157}{Other Functions\relax }{table.caption.149}{}}
+\citation{sereeter2018a}
+\citation{sereeter2018b}
+\@writefile{toc}{\contentsline {section}{Appendix \numberline {D}{\sc  Matpower}{} Files and Functions}{170}{Appendix.1.D}}
+\newlabel{app:functions}{{D}{170}{\matpower {} Files and Functions}{Appendix.1.D}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {D.1}Directory Layout and Documentation Files}{170}{subsection.1.D.1}}
+\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}1}{\ignorespaces {\sc  Matpower}{} Directory Layout and Documentation Files\relax }}{171}{table.caption.129}}
+\newlabel{tab:docs}{{D\unhbox \voidb@x \hbox {-}1}{171}{\matpower {} Directory Layout and Documentation Files\relax }{table.caption.129}{}}
+\@writefile{brf}{\backcite{zimmerman2010a}{{171}{D\unhbox \voidb@x \hbox {-}1}{table.caption.129}}}
+\@writefile{brf}{\backcite{zimmerman2010b}{{171}{D\unhbox \voidb@x \hbox {-}1}{table.caption.129}}}
+\@writefile{brf}{\backcite{sereeter2018a}{{171}{D\unhbox \voidb@x \hbox {-}1}{table.caption.129}}}
+\@writefile{brf}{\backcite{sereeter2018b}{{171}{D\unhbox \voidb@x \hbox {-}1}{table.caption.129}}}
+\citation{zimmerman2010b}
+\citation{sereeter2018a}
+\citation{sereeter2018b}
+\@writefile{toc}{\contentsline {subsection}{\numberline {D.2}{\sc  Matpower}{} Functions}{172}{subsection.1.D.2}}
+\newlabel{sec:matpowersw}{{D.2}{172}{\matpower {} Functions}{subsection.1.D.2}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}2}{\ignorespaces Top-Level Simulation Functions\relax }}{172}{table.caption.131}}
+\newlabel{tab:run}{{D\unhbox \voidb@x \hbox {-}2}{172}{Top-Level Simulation Functions\relax }{table.caption.131}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}3}{\ignorespaces Input/Output Functions\relax }}{172}{table.caption.133}}
+\newlabel{tab:io}{{D\unhbox \voidb@x \hbox {-}3}{172}{Input/Output Functions\relax }{table.caption.133}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}4}{\ignorespaces Data Conversion Functions\relax }}{173}{table.caption.135}}
+\newlabel{tab:conversion}{{D\unhbox \voidb@x \hbox {-}4}{173}{Data Conversion Functions\relax }{table.caption.135}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}5}{\ignorespaces Power Flow Functions\relax }}{173}{table.caption.137}}
+\newlabel{tab:pf}{{D\unhbox \voidb@x \hbox {-}5}{173}{Power Flow Functions\relax }{table.caption.137}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}6}{\ignorespaces Continuation Power Flow Functions\relax }}{174}{table.caption.139}}
+\newlabel{tab:cpf}{{D\unhbox \voidb@x \hbox {-}6}{174}{Continuation Power Flow Functions\relax }{table.caption.139}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}7}{\ignorespaces OPF and Wrapper Functions\relax }}{175}{table.caption.141}}
+\newlabel{tab:opf}{{D\unhbox \voidb@x \hbox {-}7}{175}{OPF and Wrapper Functions\relax }{table.caption.141}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}8}{\ignorespaces OPF Model Objects\relax }}{176}{table.caption.143}}
+\newlabel{tab:opf_model}{{D\unhbox \voidb@x \hbox {-}8}{176}{OPF Model Objects\relax }{table.caption.143}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}9}{\ignorespaces Deprecated {\relsize  {-0.5}{\tt  {{@opt\_model}}}} Methods\relax }}{177}{table.caption.145}}
+\newlabel{tab:opf_model_dep}{{D\unhbox \voidb@x \hbox {-}9}{177}{Deprecated \code {@opt\_model} Methods\relax }{table.caption.145}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}10}{\ignorespaces OPF Solver Functions\relax }}{177}{table.caption.147}}
+\newlabel{tab:opf_solvers}{{D\unhbox \voidb@x \hbox {-}10}{177}{OPF Solver Functions\relax }{table.caption.147}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}11}{\ignorespaces Other OPF Functions\relax }}{178}{table.caption.149}}
+\newlabel{tab:other_opf}{{D\unhbox \voidb@x \hbox {-}11}{178}{Other OPF Functions\relax }{table.caption.149}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}12}{\ignorespaces OPF User Callback Functions\relax }}{179}{table.caption.151}}
+\newlabel{tab:callback}{{D\unhbox \voidb@x \hbox {-}12}{179}{OPF User Callback Functions\relax }{table.caption.151}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}13}{\ignorespaces Power Flow Derivative Functions\relax }}{179}{table.caption.153}}
+\newlabel{tab:pfderivatives}{{D\unhbox \voidb@x \hbox {-}13}{179}{Power Flow Derivative Functions\relax }{table.caption.153}{}}
+\@writefile{brf}{\backcite{zimmerman2010b}{{179}{D\unhbox \voidb@x \hbox {-}13}{table.caption.153}}}
+\@writefile{brf}{\backcite{sereeter2018a}{{179}{D\unhbox \voidb@x \hbox {-}13}{table.caption.153}}}
+\@writefile{brf}{\backcite{sereeter2018b}{{179}{D\unhbox \voidb@x \hbox {-}13}{table.caption.153}}}
+\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}14}{\ignorespaces NLP, LP \& QP Solver Functions\relax }}{180}{table.caption.155}}
+\newlabel{tab:solvers}{{D\unhbox \voidb@x \hbox {-}14}{180}{NLP, LP \& QP Solver Functions\relax }{table.caption.155}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}15}{\ignorespaces Matrix Building Functions\relax }}{181}{table.caption.157}}
+\newlabel{tab:matrix_building}{{D\unhbox \voidb@x \hbox {-}15}{181}{Matrix Building Functions\relax }{table.caption.157}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}16}{\ignorespaces Utility Functions\relax }}{182}{table.caption.159}}
+\newlabel{tab:utility}{{D\unhbox \voidb@x \hbox {-}16}{182}{Utility Functions\relax }{table.caption.159}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}17}{\ignorespaces Other Functions\relax }}{183}{table.caption.161}}
+\newlabel{tab:otherfcns}{{D\unhbox \voidb@x \hbox {-}17}{183}{Other Functions\relax }{table.caption.161}{}}
 \citation{birchfield2017}
 \citation{josz2016,fliscounakis2013}
 \citation{josz2016}
-\@writefile{toc}{\contentsline {subsection}{\numberline {D.3}Example {\sc  Matpower}{} Cases}{158}{subsection.1.D.3}}
-\newlabel{sec:matpowercases}{{D.3}{158}{Example \matpower {} Cases}{subsection.1.D.3}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}17}{\ignorespaces Small Test Cases\relax }}{158}{table.caption.151}}
-\newlabel{tab:casefiles}{{D\unhbox \voidb@x \hbox {-}17}{158}{Small Test Cases\relax }{table.caption.151}{}}
-\@writefile{brf}{\backcite{birchfield2017}{{158}{D\unhbox \voidb@x \hbox {-}17}{table.caption.151}}}
-\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}18}{\ignorespaces Polish System Test Cases\relax }}{158}{table.caption.153}}
-\newlabel{tab:polishcasefiles}{{D\unhbox \voidb@x \hbox {-}18}{158}{Polish System Test Cases\relax }{table.caption.153}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}19}{\ignorespaces PEGASE European System Test Cases\relax }}{159}{table.caption.155}}
-\newlabel{tab:pegasecasefiles}{{D\unhbox \voidb@x \hbox {-}19}{159}{PEGASE European System Test Cases\relax }{table.caption.155}{}}
-\@writefile{brf}{\backcite{josz2016,fliscounakis2013}{{159}{D\unhbox \voidb@x \hbox {-}19}{table.caption.155}}}
-\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}20}{\ignorespaces RTE French System Test Cases\relax }}{159}{table.caption.157}}
-\newlabel{tab:frenchcasefiles}{{D\unhbox \voidb@x \hbox {-}20}{159}{RTE French System Test Cases\relax }{table.caption.157}{}}
-\@writefile{brf}{\backcite{josz2016}{{159}{D\unhbox \voidb@x \hbox {-}20}{table.caption.157}}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {D.4}Automated Test Suite}{160}{subsection.1.D.4}}
-\newlabel{sec:matpowertests}{{D.4}{160}{Automated Test Suite}{subsection.1.D.4}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}21}{\ignorespaces Automated Test Functions from \href  {https://github.com/MATPOWER/mptest}{{MP-Test}{}}{}\TPToverlap {\textsuperscript  {\dag  }}\relax }}{160}{table.caption.159}}
-\newlabel{tab:mptest}{{D\unhbox \voidb@x \hbox {-}21}{160}{Automated Test Functions from \mptestlink {}\tnote {\dag }\relax }{table.caption.159}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}22}{\ignorespaces Test Data\relax }}{161}{table.caption.161}}
-\newlabel{tab:test_data}{{D\unhbox \voidb@x \hbox {-}22}{161}{Test Data\relax }{table.caption.161}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}23}{\ignorespaces Miscellaneous {\sc  Matpower}{} Tests\relax }}{162}{table.caption.163}}
-\newlabel{tab:misc_tests}{{D\unhbox \voidb@x \hbox {-}23}{162}{Miscellaneous \matpower {} Tests\relax }{table.caption.163}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}24}{\ignorespaces {\sc  Matpower}{} OPF Tests\relax }}{163}{table.caption.165}}
-\newlabel{tab:opf_tests}{{D\unhbox \voidb@x \hbox {-}24}{163}{\matpower {} OPF Tests\relax }{table.caption.165}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {D.3}Example {\sc  Matpower}{} Cases}{184}{subsection.1.D.3}}
+\newlabel{sec:matpowercases}{{D.3}{184}{Example \matpower {} Cases}{subsection.1.D.3}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}18}{\ignorespaces Small Transmission System Test Cases\relax }}{184}{table.caption.163}}
+\newlabel{tab:casefiles}{{D\unhbox \voidb@x \hbox {-}18}{184}{Small Transmission System Test Cases\relax }{table.caption.163}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}19}{\ignorespaces Small Radial Distribution System Test Cases\relax }}{184}{table.caption.165}}
+\newlabel{tab:distcasefiles}{{D\unhbox \voidb@x \hbox {-}19}{184}{Small Radial Distribution System Test Cases\relax }{table.caption.165}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}20}{\ignorespaces ACTIV Synthetic Grid Test Cases\relax }}{185}{table.caption.167}}
+\newlabel{tab:activcasefiles}{{D\unhbox \voidb@x \hbox {-}20}{185}{ACTIV Synthetic Grid Test Cases\relax }{table.caption.167}{}}
+\@writefile{brf}{\backcite{birchfield2017}{{185}{D\unhbox \voidb@x \hbox {-}20}{table.caption.167}}}
+\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}21}{\ignorespaces Polish System Test Cases\relax }}{185}{table.caption.169}}
+\newlabel{tab:polishcasefiles}{{D\unhbox \voidb@x \hbox {-}21}{185}{Polish System Test Cases\relax }{table.caption.169}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}22}{\ignorespaces PEGASE European System Test Cases\relax }}{186}{table.caption.171}}
+\newlabel{tab:pegasecasefiles}{{D\unhbox \voidb@x \hbox {-}22}{186}{PEGASE European System Test Cases\relax }{table.caption.171}{}}
+\@writefile{brf}{\backcite{josz2016,fliscounakis2013}{{186}{D\unhbox \voidb@x \hbox {-}22}{table.caption.171}}}
+\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}23}{\ignorespaces RTE French System Test Cases\relax }}{186}{table.caption.173}}
+\newlabel{tab:frenchcasefiles}{{D\unhbox \voidb@x \hbox {-}23}{186}{RTE French System Test Cases\relax }{table.caption.173}{}}
+\@writefile{brf}{\backcite{josz2016}{{186}{D\unhbox \voidb@x \hbox {-}23}{table.caption.173}}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {D.4}Automated Test Suite}{187}{subsection.1.D.4}}
+\newlabel{sec:matpowertests}{{D.4}{187}{Automated Test Suite}{subsection.1.D.4}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}24}{\ignorespaces Automated Test Functions from \href  {https://github.com/MATPOWER/mptest}{{MP-Test}{}}{}\TPToverlap {\textsuperscript  {\dag  }}\relax }}{187}{table.caption.175}}
+\newlabel{tab:mptest}{{D\unhbox \voidb@x \hbox {-}24}{187}{Automated Test Functions from \mptestlink {}\tnote {\dag }\relax }{table.caption.175}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}25}{\ignorespaces \href  {https://github.com/MATPOWER/mips}{{MIPS}{}}{} Tests\TPToverlap {\textsuperscript  {\dag  }}\relax }}{187}{table.caption.177}}
+\newlabel{tab:mips}{{D\unhbox \voidb@x \hbox {-}25}{187}{\mipslink {} Tests\tnote {\dag }\relax }{table.caption.177}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}26}{\ignorespaces Test Data\relax }}{188}{table.caption.179}}
+\newlabel{tab:test_data}{{D\unhbox \voidb@x \hbox {-}26}{188}{Test Data\relax }{table.caption.179}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}27}{\ignorespaces Miscellaneous {\sc  Matpower}{} Tests\relax }}{189}{table.caption.181}}
+\newlabel{tab:misc_tests}{{D\unhbox \voidb@x \hbox {-}27}{189}{Miscellaneous \matpower {} Tests\relax }{table.caption.181}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {D\unhbox \voidb@x \hbox {-}28}{\ignorespaces {\sc  Matpower}{} OPF Tests\relax }}{190}{table.caption.183}}
+\newlabel{tab:opf_tests}{{D\unhbox \voidb@x \hbox {-}28}{190}{\matpower {} OPF Tests\relax }{table.caption.183}{}}
 \citation{josz2016}
 \citation{cuffe2015}
-\@writefile{toc}{\contentsline {section}{Appendix \numberline {E}Extras Directory}{164}{Appendix.1.E}}
-\newlabel{app:extras}{{E}{164}{Extras Directory}{Appendix.1.E}{}}
-\@writefile{brf}{\backcite{josz2016}{{164}{36}{Appendix.1.E}}}
-\@writefile{brf}{\backcite{cuffe2015}{{164}{36}{Appendix.1.E}}}
+\@writefile{toc}{\contentsline {section}{Appendix \numberline {E}Extras Directory}{191}{Appendix.1.E}}
+\newlabel{app:extras}{{E}{191}{Extras Directory}{Appendix.1.E}{}}
+\@writefile{brf}{\backcite{josz2016}{{191}{49}{Appendix.1.E}}}
+\@writefile{brf}{\backcite{cuffe2015}{{191}{49}{Appendix.1.E}}}
 \citation{minopf}
-\@writefile{toc}{\contentsline {section}{Appendix \numberline {F}``Smart Market'' Code}{166}{Appendix.1.F}}
-\newlabel{app:smartmarket}{{F}{166}{``Smart Market'' Code}{Appendix.1.F}{}}
-\@writefile{brf}{\backcite{minopf}{{166}{F}{Appendix.1.F}}}
+\@writefile{toc}{\contentsline {section}{Appendix \numberline {F}``Smart Market'' Code}{193}{Appendix.1.F}}
+\newlabel{app:smartmarket}{{F}{193}{``Smart Market'' Code}{Appendix.1.F}{}}
+\@writefile{brf}{\backcite{minopf}{{193}{F}{Appendix.1.F}}}
 \citation{zimmerman2010a}
-\@writefile{lot}{\contentsline {table}{\numberline {F\unhbox \voidb@x \hbox {-}1}{\ignorespaces Auction Types\relax }}{167}{table.caption.167}}
-\newlabel{tab:auction_types}{{F\unhbox \voidb@x \hbox {-}1}{167}{Auction Types\relax }{table.caption.167}{}}
-\@writefile{brf}{\backcite{zimmerman2010a}{{168}{F}{table.caption.167}}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {F.1}Handling Supply Shortfall}{168}{subsection.1.F.1}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {F.2}Example}{168}{subsection.1.F.2}}
-\@writefile{lot}{\contentsline {table}{\numberline {F\unhbox \voidb@x \hbox {-}2}{\ignorespaces Generator Offers\relax }}{169}{table.caption.169}}
-\newlabel{tab:offers}{{F\unhbox \voidb@x \hbox {-}2}{169}{Generator Offers\relax }{table.caption.169}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {F\unhbox \voidb@x \hbox {-}3}{\ignorespaces Load Bids\relax }}{169}{table.caption.171}}
-\newlabel{tab:bids}{{F\unhbox \voidb@x \hbox {-}3}{169}{Load Bids\relax }{table.caption.171}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {F\unhbox \voidb@x \hbox {-}4}{\ignorespaces Generator Sales\relax }}{172}{table.caption.173}}
-\newlabel{tab:sales}{{F\unhbox \voidb@x \hbox {-}4}{172}{Generator Sales\relax }{table.caption.173}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {F\unhbox \voidb@x \hbox {-}5}{\ignorespaces Load Purchases\relax }}{172}{table.caption.175}}
-\newlabel{tab:purchases}{{F\unhbox \voidb@x \hbox {-}5}{172}{Load Purchases\relax }{table.caption.175}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {F.3}Smartmarket Files and Functions}{172}{subsection.1.F.3}}
-\@writefile{lot}{\contentsline {table}{\numberline {F\unhbox \voidb@x \hbox {-}6}{\ignorespaces Smartmarket Files and Functions\relax }}{173}{table.caption.177}}
-\newlabel{tab:opf}{{F\unhbox \voidb@x \hbox {-}6}{173}{Smartmarket Files and Functions\relax }{table.caption.177}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {F\unhbox \voidb@x \hbox {-}1}{\ignorespaces Auction Types\relax }}{194}{table.caption.185}}
+\newlabel{tab:auction_types}{{F\unhbox \voidb@x \hbox {-}1}{194}{Auction Types\relax }{table.caption.185}{}}
+\@writefile{brf}{\backcite{zimmerman2010a}{{195}{F}{table.caption.185}}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {F.1}Handling Supply Shortfall}{195}{subsection.1.F.1}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {F.2}Example}{195}{subsection.1.F.2}}
+\@writefile{lot}{\contentsline {table}{\numberline {F\unhbox \voidb@x \hbox {-}2}{\ignorespaces Generator Offers\relax }}{196}{table.caption.187}}
+\newlabel{tab:offers}{{F\unhbox \voidb@x \hbox {-}2}{196}{Generator Offers\relax }{table.caption.187}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {F\unhbox \voidb@x \hbox {-}3}{\ignorespaces Load Bids\relax }}{196}{table.caption.189}}
+\newlabel{tab:bids}{{F\unhbox \voidb@x \hbox {-}3}{196}{Load Bids\relax }{table.caption.189}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {F\unhbox \voidb@x \hbox {-}4}{\ignorespaces Generator Sales\relax }}{199}{table.caption.191}}
+\newlabel{tab:sales}{{F\unhbox \voidb@x \hbox {-}4}{199}{Generator Sales\relax }{table.caption.191}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {F\unhbox \voidb@x \hbox {-}5}{\ignorespaces Load Purchases\relax }}{199}{table.caption.193}}
+\newlabel{tab:purchases}{{F\unhbox \voidb@x \hbox {-}5}{199}{Load Purchases\relax }{table.caption.193}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {F.3}Smartmarket Files and Functions}{200}{subsection.1.F.3}}
+\@writefile{lot}{\contentsline {table}{\numberline {F\unhbox \voidb@x \hbox {-}6}{\ignorespaces Smartmarket Files and Functions\relax }}{200}{table.caption.195}}
+\newlabel{tab:opf}{{F\unhbox \voidb@x \hbox {-}6}{200}{Smartmarket Files and Functions\relax }{table.caption.195}{}}
 \citation{bpmpdmex,meszaros1996}
 \citation{clp}
 \citation{opti}
-\@writefile{toc}{\contentsline {section}{Appendix \numberline {G}Optional Packages}{174}{Appendix.1.G}}
-\newlabel{app:optional_packages}{{G}{174}{Optional Packages}{Appendix.1.G}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {G.1}BPMPD\_MEX -- MEX interface for BPMPD}{174}{subsection.1.G.1}}
-\newlabel{app:bpmpd}{{G.1}{174}{BPMPD\_MEX -- MEX interface for BPMPD}{subsection.1.G.1}{}}
-\@writefile{brf}{\backcite{bpmpdmex,meszaros1996}{{174}{G.1}{subsection.1.G.1}}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {G.2}{CLP}{} -- COIN-OR Linear Programming}{174}{subsection.1.G.2}}
-\newlabel{app:clp}{{G.2}{174}{\clp {} -- COIN-OR Linear Programming}{subsection.1.G.2}{}}
-\@writefile{brf}{\backcite{clp}{{174}{G.2}{subsection.1.G.2}}}
-\@writefile{brf}{\backcite{opti}{{175}{G.2}{subsection.1.G.2}}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {G.3}{CPLEX}{} -- High-performance LP and QP Solvers}{175}{subsection.1.G.3}}
-\newlabel{app:cplex}{{G.3}{175}{\cplex {} -- High-performance LP and QP Solvers}{subsection.1.G.3}{}}
+\@writefile{toc}{\contentsline {section}{Appendix \numberline {G}Optional Packages}{201}{Appendix.1.G}}
+\newlabel{app:optional_packages}{{G}{201}{Optional Packages}{Appendix.1.G}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {G.1}BPMPD\_MEX -- MEX interface for BPMPD}{201}{subsection.1.G.1}}
+\newlabel{app:bpmpd}{{G.1}{201}{BPMPD\_MEX -- MEX interface for BPMPD}{subsection.1.G.1}{}}
+\@writefile{brf}{\backcite{bpmpdmex,meszaros1996}{{201}{G.1}{subsection.1.G.1}}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {G.2}{CLP}{} -- COIN-OR Linear Programming}{201}{subsection.1.G.2}}
+\newlabel{app:clp}{{G.2}{201}{\clp {} -- COIN-OR Linear Programming}{subsection.1.G.2}{}}
+\@writefile{brf}{\backcite{clp}{{201}{G.2}{subsection.1.G.2}}}
+\@writefile{brf}{\backcite{opti}{{202}{G.2}{subsection.1.G.2}}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {G.3}{CPLEX}{} -- High-performance LP and QP Solvers}{202}{subsection.1.G.3}}
+\newlabel{app:cplex}{{G.3}{202}{\cplex {} -- High-performance LP and QP Solvers}{subsection.1.G.3}{}}
 \citation{glpk}
 \citation{opti}
-\@writefile{toc}{\contentsline {subsection}{\numberline {G.4}{GLPK}{} -- GNU Linear Programming Kit}{176}{subsection.1.G.4}}
-\newlabel{app:glpk}{{G.4}{176}{\glpk {} -- GNU Linear Programming Kit}{subsection.1.G.4}{}}
-\@writefile{brf}{\backcite{glpk}{{176}{G.4}{subsection.1.G.4}}}
-\@writefile{brf}{\backcite{opti}{{176}{G.4}{subsection.1.G.4}}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {G.5}{Gurobi}{} -- High-performance LP and QP Solvers}{176}{subsection.1.G.5}}
-\newlabel{app:gurobi}{{G.5}{176}{\gurobi {} -- High-performance LP and QP Solvers}{subsection.1.G.5}{}}
+\citation{gurobi}
+\@writefile{toc}{\contentsline {subsection}{\numberline {G.4}{GLPK}{} -- GNU Linear Programming Kit}{203}{subsection.1.G.4}}
+\newlabel{app:glpk}{{G.4}{203}{\glpk {} -- GNU Linear Programming Kit}{subsection.1.G.4}{}}
+\@writefile{brf}{\backcite{glpk}{{203}{G.4}{subsection.1.G.4}}}
+\@writefile{brf}{\backcite{opti}{{203}{G.4}{subsection.1.G.4}}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {G.5}{Gurobi}{} -- High-performance LP and QP Solvers}{203}{subsection.1.G.5}}
+\newlabel{app:gurobi}{{G.5}{203}{\gurobi {} -- High-performance LP and QP Solvers}{subsection.1.G.5}{}}
+\@writefile{brf}{\backcite{gurobi}{{203}{G.5}{subsection.1.G.5}}}
 \citation{gurobimex}
 \citation{ipopt}
 \citation{pardiso,pardiso2}
 \citation{opti}
-\@writefile{toc}{\contentsline {subsection}{\numberline {G.6}{\sc  Ipopt}{} -- Interior Point Optimizer}{177}{subsection.1.G.6}}
-\newlabel{app:ipopt}{{G.6}{177}{\ipopt {} -- Interior Point Optimizer}{subsection.1.G.6}{}}
-\@writefile{brf}{\backcite{ipopt}{{177}{G.6}{subsection.1.G.6}}}
-\@writefile{brf}{\backcite{gurobimex}{{177}{43}{subsection.1.G.5}}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {G.6}{\sc  Ipopt}{} -- Interior Point Optimizer}{204}{subsection.1.G.6}}
+\newlabel{app:ipopt}{{G.6}{204}{\ipopt {} -- Interior Point Optimizer}{subsection.1.G.6}{}}
+\@writefile{brf}{\backcite{ipopt}{{204}{G.6}{subsection.1.G.6}}}
+\@writefile{brf}{\backcite{gurobimex}{{204}{56}{subsection.1.G.5}}}
 \citation{knitro}
-\@writefile{brf}{\backcite{pardiso, pardiso2}{{178}{G.6}{subsection.1.G.6}}}
-\@writefile{brf}{\backcite{opti}{{178}{G.6}{subsection.1.G.6}}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {G.7}{KNITRO}{} -- Non-Linear Programming Solver}{178}{subsection.1.G.7}}
-\newlabel{app:knitro}{{G.7}{178}{\knitro {} -- Non-Linear Programming Solver}{subsection.1.G.7}{}}
-\@writefile{brf}{\backcite{knitro}{{178}{G.7}{subsection.1.G.7}}}
+\@writefile{brf}{\backcite{pardiso, pardiso2}{{205}{G.6}{subsection.1.G.6}}}
+\@writefile{brf}{\backcite{opti}{{205}{G.6}{subsection.1.G.6}}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {G.7}{KNITRO}{} -- Non-Linear Programming Solver}{205}{subsection.1.G.7}}
+\newlabel{app:knitro}{{G.7}{205}{\knitro {} -- Non-Linear Programming Solver}{subsection.1.G.7}{}}
+\@writefile{brf}{\backcite{knitro}{{205}{G.7}{subsection.1.G.7}}}
 \citation{minopf}
 \citation{murtagh}
-\@writefile{toc}{\contentsline {subsection}{\numberline {G.8}MINOPF -- AC OPF Solver Based on MINOS}{179}{subsection.1.G.8}}
-\newlabel{app:minopf}{{G.8}{179}{MINOPF -- AC OPF Solver Based on MINOS}{subsection.1.G.8}{}}
-\@writefile{brf}{\backcite{minopf}{{179}{G.8}{subsection.1.G.8}}}
-\@writefile{brf}{\backcite{murtagh}{{179}{G.8}{subsection.1.G.8}}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {G.9}{MOSEK}{} -- High-performance LP and QP Solvers}{179}{subsection.1.G.9}}
-\newlabel{app:mosek}{{G.9}{179}{\mosek {} -- High-performance LP and QP Solvers}{subsection.1.G.9}{}}
-\citation{ot}
-\citation{ot2015b}
+\@writefile{toc}{\contentsline {subsection}{\numberline {G.8}MINOPF -- AC OPF Solver Based on MINOS}{206}{subsection.1.G.8}}
+\newlabel{app:minopf}{{G.8}{206}{MINOPF -- AC OPF Solver Based on MINOS}{subsection.1.G.8}{}}
+\@writefile{brf}{\backcite{minopf}{{206}{G.8}{subsection.1.G.8}}}
+\@writefile{brf}{\backcite{murtagh}{{206}{G.8}{subsection.1.G.8}}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {G.9}{MOSEK}{} -- High-performance LP and QP Solvers}{206}{subsection.1.G.9}}
+\newlabel{app:mosek}{{G.9}{206}{\mosek {} -- High-performance LP and QP Solvers}{subsection.1.G.9}{}}
+\citation{ot,otug}
+\citation{otug}
 \citation{pardiso,pardiso2}
-\@writefile{toc}{\contentsline {subsection}{\numberline {G.10}{Optimization Toolbox}{} -- LP, QP, NLP and MILP Solvers}{180}{subsection.1.G.10}}
-\newlabel{app:ot}{{G.10}{180}{\ot {} -- LP, QP, NLP and MILP Solvers}{subsection.1.G.10}{}}
-\@writefile{brf}{\backcite{ot}{{180}{G.10}{subsection.1.G.10}}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {G.11}{PARDISO}{} -- Parallel Sparse Direct and Multi-Recursive Iterative Linear Solvers}{180}{subsection.1.G.11}}
-\newlabel{app:pardiso}{{G.11}{180}{\pardiso {} -- Parallel Sparse Direct and Multi-Recursive Iterative Linear Solvers}{subsection.1.G.11}{}}
-\@writefile{brf}{\backcite{pardiso, pardiso2}{{180}{G.11}{subsection.1.G.11}}}
-\@writefile{brf}{\backcite{ot2015b}{{180}{47}{subsection.1.G.10}}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {G.10}{Optimization Toolbox}{} -- LP, QP, NLP and MILP Solvers}{207}{subsection.1.G.10}}
+\newlabel{app:ot}{{G.10}{207}{\ot {} -- LP, QP, NLP and MILP Solvers}{subsection.1.G.10}{}}
+\@writefile{brf}{\backcite{ot, otug}{{207}{G.10}{subsection.1.G.10}}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {G.11}{PARDISO}{} -- Parallel Sparse Direct and Multi-Recursive Iterative Linear Solvers}{207}{subsection.1.G.11}}
+\newlabel{app:pardiso}{{G.11}{207}{\pardiso {} -- Parallel Sparse Direct and Multi-Recursive Iterative Linear Solvers}{subsection.1.G.11}{}}
+\@writefile{brf}{\backcite{pardiso, pardiso2}{{207}{G.11}{subsection.1.G.11}}}
+\@writefile{brf}{\backcite{otug}{{207}{60}{subsection.1.G.10}}}
 \citation{tspopf}
 \citation{wang2007a,wang2007}
-\@writefile{toc}{\contentsline {subsection}{\numberline {G.12}\texttt  {SDP\_PF}{} -- Applications of a Semidefinite Programming Relaxation of the Power Flow Equations}{181}{subsection.1.G.12}}
-\newlabel{app:sdppf}{{G.12}{181}{\sdppf {} -- Applications of a Semidefinite Programming Relaxation of the Power Flow Equations}{subsection.1.G.12}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {G.13}TSPOPF -- Three AC OPF Solvers by H. Wang}{181}{subsection.1.G.13}}
-\newlabel{app:tspopf}{{G.13}{181}{TSPOPF -- Three AC OPF Solvers by H. Wang}{subsection.1.G.13}{}}
-\@writefile{brf}{\backcite{tspopf}{{181}{G.13}{subsection.1.G.13}}}
-\@writefile{brf}{\backcite{wang2007a, wang2007}{{181}{G.13}{subsection.1.G.13}}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {G.12}\texttt  {SDP\_PF}{} -- Applications of a Semidefinite Programming Relaxation of the Power Flow Equations}{208}{subsection.1.G.12}}
+\newlabel{app:sdppf}{{G.12}{208}{\sdppf {} -- Applications of a Semidefinite Programming Relaxation of the Power Flow Equations}{subsection.1.G.12}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {G.13}TSPOPF -- Three AC OPF Solvers by H. Wang}{208}{subsection.1.G.13}}
+\newlabel{app:tspopf}{{G.13}{208}{TSPOPF -- Three AC OPF Solvers by H. Wang}{subsection.1.G.13}{}}
+\@writefile{brf}{\backcite{tspopf}{{208}{G.13}{subsection.1.G.13}}}
+\@writefile{brf}{\backcite{wang2007a, wang2007}{{208}{G.13}{subsection.1.G.13}}}
+\@writefile{toc}{\contentsline {section}{Appendix \numberline {H}Release History}{210}{Appendix.1.H}}
+\newlabel{app:release_history}{{H}{210}{Release History}{Appendix.1.H}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {H.1}Pre 1.0 -- released Jun 25, 1997}{210}{subsection.1.H.1}}
+\newlabel{app:p10}{{H.1}{210}{Pre 1.0 -- released Jun 25, 1997}{subsection.1.H.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {H.2}Version 1.0 -- released Sep 17, 1997}{210}{subsection.1.H.2}}
+\newlabel{app:v10}{{H.2}{210}{Version 1.0 -- released Sep 17, 1997}{subsection.1.H.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {H.3}Version 1.0.1 -- released Sep 19, 1997}{210}{subsection.1.H.3}}
+\newlabel{app:v101}{{H.3}{210}{Version 1.0.1 -- released Sep 19, 1997}{subsection.1.H.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {H.4}Version 2.0 -- released Dec 24, 1997}{211}{subsection.1.H.4}}
+\newlabel{app:v20}{{H.4}{211}{Version 2.0 -- released Dec 24, 1997}{subsection.1.H.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {H.5}Version 3.0 -- released Feb 14, 2005}{212}{subsection.1.H.5}}
+\newlabel{app:v30}{{H.5}{212}{Version 3.0 -- released Feb 14, 2005}{subsection.1.H.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {H.6}Version 3.2 -- released Sep 21, 2007}{213}{subsection.1.H.6}}
+\newlabel{app:v32}{{H.6}{213}{Version 3.2 -- released Sep 21, 2007}{subsection.1.H.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {H.7}Version 4.0 -- released Feb 7, 2011}{215}{subsection.1.H.7}}
+\newlabel{app:v40}{{H.7}{215}{Version 4.0 -- released Feb 7, 2011}{subsection.1.H.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {H.8}Version 4.1 -- released Dec 14, 2011}{218}{subsection.1.H.8}}
+\newlabel{app:v41}{{H.8}{218}{Version 4.1 -- released Dec 14, 2011}{subsection.1.H.8}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {H.9}Version 5.0 -- released Dec 17, 2014}{219}{subsection.1.H.9}}
+\newlabel{app:v50}{{H.9}{219}{Version 5.0 -- released Dec 17, 2014}{subsection.1.H.9}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {H.10}Version 5.1 -- released Mar 20, 2015}{224}{subsection.1.H.10}}
+\newlabel{app:v51}{{H.10}{224}{Version 5.1 -- released Mar 20, 2015}{subsection.1.H.10}{}}
 \citation{josz2016}
-\@writefile{toc}{\contentsline {section}{Appendix \numberline {H}Release History}{183}{Appendix.1.H}}
-\newlabel{app:release_history}{{H}{183}{Release History}{Appendix.1.H}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {H.1}Version 6.0 -- released Dec 16, 2016}{183}{subsection.1.H.1}}
-\newlabel{app:v60}{{H.1}{183}{Version 6.0 -- released Dec 16, 2016}{subsection.1.H.1}{}}
-\@writefile{brf}{\backcite{josz2016}{{183}{H.1}{section*.179}}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {H.2}Version 5.1 -- released Mar 20, 2015}{187}{subsection.1.H.2}}
-\newlabel{app:v51}{{H.2}{187}{Version 5.1 -- released Mar 20, 2015}{subsection.1.H.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {H.3}Version 5.0 -- released Dec 17, 2014}{190}{subsection.1.H.3}}
-\newlabel{app:v50}{{H.3}{190}{Version 5.0 -- released Dec 17, 2014}{subsection.1.H.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {H.4}Version 4.1 -- released Dec 14, 2011}{194}{subsection.1.H.4}}
-\newlabel{app:v41}{{H.4}{194}{Version 4.1 -- released Dec 14, 2011}{subsection.1.H.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {H.5}Version 4.0 -- released Feb 7, 2011}{195}{subsection.1.H.5}}
-\newlabel{app:v40}{{H.5}{195}{Version 4.0 -- released Feb 7, 2011}{subsection.1.H.5}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {H.6}Version 3.2 -- released Sep 21, 2007}{198}{subsection.1.H.6}}
-\newlabel{app:v32}{{H.6}{198}{Version 3.2 -- released Sep 21, 2007}{subsection.1.H.6}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {H.7}Version 3.0 -- released Feb 14, 2005}{199}{subsection.1.H.7}}
-\newlabel{app:v30}{{H.7}{199}{Version 3.0 -- released Feb 14, 2005}{subsection.1.H.7}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {H.8}Version 2.0 -- released Dec 24, 1997}{200}{subsection.1.H.8}}
-\newlabel{app:v20}{{H.8}{200}{Version 2.0 -- released Dec 24, 1997}{subsection.1.H.8}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {H.9}Version 1.0.1 -- released Sep 19, 1997}{201}{subsection.1.H.9}}
-\newlabel{app:v101}{{H.9}{201}{Version 1.0.1 -- released Sep 19, 1997}{subsection.1.H.9}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {H.10}Version 1.0 -- released Sep 17, 1997}{201}{subsection.1.H.10}}
-\newlabel{app:v10}{{H.10}{201}{Version 1.0 -- released Sep 17, 1997}{subsection.1.H.10}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {H.11}Pre 1.0 -- released Jun 25, 1997}{201}{subsection.1.H.11}}
-\newlabel{app:p10}{{H.11}{201}{Pre 1.0 -- released Jun 25, 1997}{subsection.1.H.11}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {H.11}Version 6.0 -- released Dec 16, 2016}{227}{subsection.1.H.11}}
+\newlabel{app:v60}{{H.11}{227}{Version 6.0 -- released Dec 16, 2016}{subsection.1.H.11}{}}
+\@writefile{brf}{\backcite{josz2016}{{227}{H.11}{section*.222}}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {H.12}Version 7.0 -- beta 1 released released Oct 31, 2018}{232}{subsection.1.H.12}}
+\newlabel{app:v70}{{H.12}{232}{Version 7.0 -- beta 1 released released Oct 31, 2018}{subsection.1.H.12}{}}
+\citation{sereeter2018a}
+\citation{sereeter2018b}
+\@writefile{brf}{\backcite{sereeter2018a}{{236}{H.12}{section*.229}}}
+\@writefile{brf}{\backcite{sereeter2018b}{{236}{H.12}{section*.229}}}
 \bibcite{zimmerman2011}{1}
 \bibcite{murillo-sanchez2013a}{2}
-\bibcite{octave}{3}
-\bibcite{bsd}{4}
-\bibcite{gpl}{5}
-\bibcite{milano2005}{6}
-\bibcite{tinney1967}{7}
-\bibcite{stott1974}{8}
-\bibcite{amerongen1989}{9}
-\bibcite{glimm1957}{10}
-\bibcite{wood1996}{11}
-\@writefile{toc}{\contentsline {section}{References}{202}{section*.209}}
-\bibcite{guler2007}{12}
-\bibcite{ajjarapu1992}{13}
-\bibcite{chiang1995}{14}
-\bibcite{li2008}{15}
-\bibcite{flueck1996}{16}
-\bibcite{mori2002}{17}
-\bibcite{zimmerman2009}{18}
-\bibcite{tspopf}{19}
-\bibcite{wang2007a}{20}
-\bibcite{ot}{21}
-\bibcite{ot2015b}{22}
-\bibcite{bpmpdmex}{23}
-\bibcite{meszaros1996}{24}
-\bibcite{minopf}{25}
-\bibcite{murtagh}{26}
-\bibcite{zimmerman2010b}{27}
-\bibcite{superopf2008}{28}
-\bibcite{murillo-sanchez2013}{29}
-\bibcite{wang2007}{30}
-\bibcite{birchfield2017}{31}
-\bibcite{josz2016}{32}
-\bibcite{fliscounakis2013}{33}
-\bibcite{cuffe2015}{34}
-\bibcite{zimmerman2010a}{35}
-\bibcite{clp}{36}
-\bibcite{opti}{37}
-\bibcite{glpk}{38}
-\bibcite{gurobimex}{39}
-\bibcite{ipopt}{40}
-\bibcite{pardiso}{41}
-\bibcite{pardiso2}{42}
-\bibcite{knitro}{43}
+\bibcite{lamadrid2018}{3}
+\bibcite{octave}{4}
+\bibcite{bsd}{5}
+\bibcite{gpl}{6}
+\bibcite{milano2005}{7}
+\bibcite{tinney1967}{8}
+\bibcite{stott1974}{9}
+\bibcite{amerongen1989}{10}
+\bibcite{glimm1957}{11}
+\@writefile{toc}{\contentsline {section}{References}{240}{section*.233}}
+\bibcite{shirmohammadi1988}{12}
+\bibcite{luo1990}{13}
+\bibcite{rajicic1994}{14}
+\bibcite{rajicic1998}{15}
+\bibcite{Rajicic2001}{16}
+\bibcite{wood1996}{17}
+\bibcite{guler2007}{18}
+\bibcite{ajjarapu1992}{19}
+\bibcite{chiang1995}{20}
+\bibcite{li2008}{21}
+\bibcite{flueck1996}{22}
+\bibcite{mori2002}{23}
+\bibcite{zimmerman2009}{24}
+\bibcite{tspopf}{25}
+\bibcite{wang2007a}{26}
+\bibcite{ot}{27}
+\bibcite{bpmpdmex}{28}
+\bibcite{meszaros1996}{29}
+\bibcite{minopf}{30}
+\bibcite{murtagh}{31}
+\bibcite{knitro}{32}
+\bibcite{gurobi}{33}
+\bibcite{glpk}{34}
+\bibcite{clp}{35}
+\bibcite{zimmerman2010b}{36}
+\bibcite{sereeter2018a}{37}
+\bibcite{sereeter2018b}{38}
+\bibcite{superopf2008}{39}
+\bibcite{murillo-sanchez2013}{40}
+\bibcite{wang2007}{41}
+\bibcite{birchfield2017}{42}
+\bibcite{josz2016}{43}
+\bibcite{fliscounakis2013}{44}
+\bibcite{cuffe2015}{45}
+\bibcite{zimmerman2010a}{46}
+\bibcite{opti}{47}
+\bibcite{gurobimex}{48}
+\bibcite{ipopt}{49}
+\bibcite{pardiso}{50}
+\bibcite{pardiso2}{51}
+\bibcite{otug}{52}

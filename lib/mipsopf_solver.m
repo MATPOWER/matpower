@@ -37,7 +37,7 @@ function [results, success, raw] = mipsopf_solver(om, mpopt)
 %   See also OPF, MIPS.
 
 %   MATPOWER
-%   Copyright (c) 2000-2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2000-2018, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %

@@ -123,7 +123,7 @@ previous versions, see Appendix H of the [MATPOWER User's Manual][2].
 - New RTS-GMLC case from
   [https://github.com/GridMod/RTS-GMLC][3].
   - `case4_RTS_GMLC`
-- Six new radial distribution system cases. *Thanks to Jose Luis Marín.*
+- Six new radial distribution system cases. *Thanks to Mirko Todorovski.*
   - `case4_dist`
   - `case18`
   - `case22`
@@ -132,16 +132,16 @@ previous versions, see Appendix H of the [MATPOWER User's Manual][2].
   - `case141`
 
 #### New Documentation:
-  - Two new Tech Notes, available from [MATPOWER home page][4].
-    - B. Sereeter and R. D. Zimmerman, "Addendum to AC Power Flows and
-      their Derivatives using Complex Matrix Notation: Nodal Current
-      Balance", [*MATPOWER Technical Note 3*][5], April 2018.
-    - B. Sereeter and R. D. Zimmerman, "AC Power Flows and their
-      Derivatives using Complex Matrix Notation and Cartesian
-      Coordinate Voltages", [*MATPOWER Technical Note 4*][6], April 2018.
-  - LaTeX source code for [MATPOWER User's Manual][7] included in
-    `docs/src`, for [MIPS User's Manual][8] in `mips/docs/src` and for
-    [MOST User's Manual][9] in `most/docs/src`.
+- Two new Tech Notes, available from [MATPOWER home page][4].
+  - B. Sereeter and R. D. Zimmerman, "Addendum to AC Power Flows and
+    their Derivatives using Complex Matrix Notation: Nodal Current
+    Balance", [*MATPOWER Technical Note 3*][5], April 2018.
+  - B. Sereeter and R. D. Zimmerman, "AC Power Flows and their
+    Derivatives using Complex Matrix Notation and Cartesian
+    Coordinate Voltages", [*MATPOWER Technical Note 4*][6], April 2018.
+- LaTeX source code for [MATPOWER User's Manual][7] included in
+  `docs/src`, for [MIPS User's Manual][8] in `mips/docs/src` and for
+  [MOST User's Manual][9] in `most/docs/src`.
 
 #### Other Improvements:
 - Update versions of included packages:

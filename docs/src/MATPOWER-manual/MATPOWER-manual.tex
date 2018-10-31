@@ -140,7 +140,7 @@
 
 %\hyphenation{matpower}
 
-\newcommand{\mpver}[0]{6.1-dev}
+\newcommand{\mpver}[0]{7.0b1}
 %\newcommand{\matlab}[0]{{Matlab}}
 %\newcommand{\matlab}[0]{{\sc Matlab}\textsuperscript{\tiny \textregistered}}
 \newcommand{\matlab}[0]{{\sc Matlab}}
@@ -155,12 +155,12 @@
 \newcommand{\mipsurl}[0]{https://github.com/MATPOWER/mips}
 \newcommand{\mipslink}[0]{\href{\mipsurl}{\mips{}}}
 \newcommand{\mipsname}[0]{{{\bf M}{\sc atpower} \textbf{I}nterior \textbf{P}oint \textbf{S}olver}}
-\newcommand{\mipsver}[0]{1.2.2}
+\newcommand{\mipsver}[0]{1.3}
 \newcommand{\most}[0]{{MOST}}
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
 \newcommand{\mostlink}[0]{\href{\mosturl}{\most{}}}
-\newcommand{\mostver}[0]{1.0}
+\newcommand{\mostver}[0]{1.0.1}
 \newcommand{\md}[0]{{\most{} Data struct}}
 \newcommand{\powerweb}[0]{{\sc PowerWeb}}
 \newcommand{\pserc}[0]{{\sc PSerc}}
@@ -238,7 +238,7 @@
 %\title{\hl{--- DRAFT  ---}\\\hl{\em do not distribute}\\~\\\matpower{} \mpver{}\\User's Manual}
 \title{User's Manual}
 \author{Ray~D.~Zimmerman \and Carlos~E.~Murillo-S\'anchez}
-%\date{December 16, 2016} % comment this line to display the current date
+\date{October 31, 2018} % comment this line to display the current date
 %\date{December 14, 2011\thanks{Second revision. First revision was December 13, 2011}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
@@ -262,7 +262,7 @@
             {\large \@date \par}%
 \vfill
 {\scriptsize
-\copyright~2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017~\PSERC\\
+\copyright~2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018~\PSERC\\
 All Rights Reserved}
         \end{center}
     \end{titlepage}
@@ -510,7 +510,7 @@ Installation and use of \matpower{} requires familiarity with the basic operatio
     The result should resemble the following, possibly including extra tests, depending on the availablility of optional packages, solvers and extras.
 
 
-\clearpage
+%\clearpage
 % UPDATE BEFORE RELEASE
 \begin{Code}
 >> test_matpower
@@ -526,16 +526,19 @@ t_margcost..............ok
 t_totcost...............ok
 t_modcost...............ok
 t_hasPQcap..............ok
-t_mplinsolve............ok (2 of 4 skipped)
+t_mplinsolve............ok (6 of 44 skipped)
 t_mips..................ok
+t_mips_pardiso..........ok (60 of 60 skipped)
 t_qps_matpower..........ok (288 of 360 skipped)
 t_miqps_matpower........ok (240 of 240 skipped)
 t_pf....................ok
+t_pf_radial.............ok
 t_cpf...................ok
 t_islands...............ok
 t_opf_model.............ok
-t_opf_mips..............ok (125 of 250 skipped)
-t_opf_mips_sc...........ok (125 of 250 skipped)
+t_opf_model_legacy......ok
+t_opf_default...........ok
+t_opf_mips..............ok (278 of 1296 skipped)
 t_opf_dc_mips...........ok
 t_opf_dc_mips_sc........ok
 t_opf_userfcns..........ok
@@ -543,6 +546,7 @@ t_opf_softlims..........ok
 t_runopf_w_res..........ok
 t_dcline................ok
 t_get_losses............ok
+t_load2disp.............ok
 t_makePTDF..............ok
 t_makeLODF..............ok
 t_printpf...............ok
@@ -554,8 +558,8 @@ t_psse..................ok
 t_off2case..............ok
 t_auction_mips..........ok
 t_runmarket.............ok
-All tests successful (4830 passed, 780 skipped of 5610)
-Elapsed time 17.56 seconds.
+All tests successful (7961 passed, 872 skipped of 8833)
+Elapsed time 29.39 seconds.
 \end{Code}
 \end{enumerate}
 
@@ -1826,7 +1830,7 @@ results = runcpf(mpcb, mpct, mpopt);
 \end{Code}
 This should result in something like the following output to the screen.
 \begin{Code}
-MATPOWER Version 6.0, 16-Dec-2016 -- AC Continuation Power Flow
+MATPOWER Version 7.0b1, 31-Oct-2018 -- AC Continuation Power Flow
 step   0  :                      lambda =  0.000,  4 Newton steps
 step   1  : stepsize = 0.2       lambda =  0.181   2 corrector Newton steps
 step   2  : stepsize = 0.2       lambda =  0.359   2 corrector Newton steps
@@ -2279,6 +2283,7 @@ name & description \\
 \end{threeparttable}
 \end{table}
 
+\clearpage
 Additional optional input arguments can be used to set options (\code{mpopt}) and provide file names for saving the pretty printed output (\code{fname}) or the solved case data (\code{solvedcase}).
 \begin{Code}
 >> results = runopf(casedata, mpopt, fname, solvedcase);
@@ -2773,6 +2778,7 @@ name & description \\
 
 In the example code below, the callback function begins by converting the reserves input data in the resulting case (\code{qty}, \code{cost} and \code{zones} fields of \code{results.reserves}) back to external indexing via calls to \code{i2e\_field}. See the help for \code{i2e\_field} and \code{i2e\_data} for more details on how they can be used.
 
+\clearpage
 Then the reserves results of interest are extracted from the appropriate sub-fields of \code{results.var}, \code{results.lin} and \code{results.cost}, converted from per unit to per MW where necessary, and stored with external indexing for the end user in the chosen fields of the \results{} struct.
 
 \begin{Code}
@@ -3211,7 +3217,7 @@ results = runopf(mpc);
 
 \matpower{} includes an extension that replaces limits (such as branch flow limits, voltage magnitude bounds, generator limits, etc.)  in an optimal power flow with soft limits, that is, limits that can be violated with some linear penalty cost.
 This can be useful in identifying the cause of infeasibility in some optimal power flow problems.
-The extension is implemented in \code{toggle\_softlims}. A limited version for branch flow constraints in a DC model only, was introduced in \matpower{}~5.0, with a generalization to all of the standard OPF limits added in \matpower{}~\hl{6.1}. The soft AC branch flow limit implemention provides an example of user-defined nonlinear constraints.
+The extension is implemented in \code{toggle\_softlims}. A limited version for branch flow constraints in a DC model only, was introduced in \matpower{}~5.0, with a generalization to all of the standard OPF limits added in \matpower{}~7.0. The soft AC branch flow limit implemention provides an example of user-defined nonlinear constraints.
 
 In general, replacing a hard constraint of the form
 \begin{equation}
@@ -3465,7 +3471,7 @@ name & description \\
 \end{threeparttable}
 \end{table}
 
-\vbox{
+\clearpage
 See \code{help toggle\_softlims} for more information on this extension. Examples of using this extension can be found in \code{t\_opf\_softlims}.
 Running a case that includes the default soft limits is as simple as loading the case, turning on the extension and running it. Unlike with the reserves extension, \matpower{} does not currently have a wrapper function to automate this.
 \begin{Code}
@@ -3473,7 +3479,6 @@ mpc = loadcase('case2383wp');
 mpc = toggle_softlims(mpc, 'on');
 results = runopf(mpc, mpopt);
 \end{Code}
-}
 
 %%------------------------------------------
 \clearpage
@@ -3565,6 +3570,7 @@ Since the IEEE CDF format does not contain all of the data needed to run an opti
 
 The \code{psse2mpc} function converts a PSS/E RAW data file into a \matpower{} case struct. Given an optional file name \code{mpc\_name}, it can save the converted case to a \matpower{} case file. Warnings generated during the conversion process can be optionally returned in the \code{warnings} argument. By default, \code{psse2mpc} attempts to determine the revision of the PSS/E RAW file from the contents, but the user can specify an explicit revision number to use in the optional \code{rev} argument.
 
+\clearpage
 \subsubsection{\tt save2psse}
 
 \begin{Code}
@@ -3595,6 +3601,7 @@ The \code{case\_info} function prints out detailed information about a \matpower
 
 Compares the \bus{}, \branch{} and \gen{} matrices of two \matpower{} cases and prints a summary of the differences. For each column of the matrix it prints the maximum of any non-zero differences.
 
+\clearpage
 \subsubsection{\tt find\_islands}
 
 \begin{Code}
@@ -3626,6 +3633,7 @@ t_{\rm chg} &= \left|v_t\right|^2 \frac{b_c}{2}
 
 It can also optionally compute the partial derivatives of the line losses and reactive charging injections with respect to voltage angles and magnitudes.
 
+\clearpage
 \subsubsection{\tt margcost}
 \begin{Code}
   marginalcost = margcost(gencost, Pg)
@@ -3855,6 +3863,7 @@ For load changes, the \code{CT\_COL} column is not a column index, but rather a 
 \end{threeparttable}
 \end{table}
 
+\clearpage
 For example, setting up a \code{chgtab} matrix for the following four scenarios could be done as shown below.
 
 \begin{enumerate}
@@ -3864,6 +3873,7 @@ For example, setting up a \code{chgtab} matrix for the following four scenarios 
        up by 10\% (\emph{0.1\% probability}).
 \item Decrease capacity of generator 3 \emph{and} shift its cost function to the left both by 10 MW (\emph{5\% probability}).
 \end{enumerate}
+
 \begin{Code}
 chgtab = [ ...
 	1   0.1   CT_TGEN       2  GEN_STATUS     CT_REP    0;
@@ -3936,6 +3946,7 @@ The third and optional fourth arguments (\code{ordering} and \code{dim}) are sim
 
 Similarly, \code{i2e\_field} performs the opposite conversion, from internal back to external indexing. It also assumes that \mpc{} is using internal indexing and utilizes the original data stored by \code{e2i\_field}, calling \code{i2e\_data} to do the conversion work.
 
+\clearpage
 \subsection{Forming Standard Power Systems Matrices}
 
 \subsubsection{\tt makeB}
@@ -3966,6 +3977,7 @@ Bus numbers must be consecutive beginning at 1 (i.e. internal ordering).
 
 The \code{makeJac} function forms the power flow Jacobian and, optionally, the system admittance matrices. Bus numbers in the input case must be consecutive beginning at 1 (i.e. internal indexing). If the \code{fullJac} argument is present and true, it returns the full Jacobian (sensitivities of all bus injections with respect to all voltage angles and magnitudes) as opposed to the reduced version used in the Newton power flow updates.
 
+\clearpage
 \subsubsection{\tt makeLODF}
 \label{sec:makeLODF}
 \begin{Code}
@@ -3976,6 +3988,7 @@ The \code{makeJac} function forms the power flow Jacobian and, optionally, the s
 The \code{makeLODF} function forms the DC line outage distribution factor matrix for a given PTDF.
 The matrix is $n_{br} \times n_{br}$, where $n_{br}$ is the number of branches.
 See Section~\ref{sec:lsf} on Linear Shift Factors for more details.
+
 
 \subsubsection{\tt makePTDF}
 \label{sec:makePTDF}
@@ -4002,6 +4015,7 @@ See Section~\ref{sec:lsf} on Linear Shift Factors for more details.
 The \code{makeYbus} function builds the bus admittance matrix and branch admittance matrices from \eqref{eq:Yf}--\eqref{eq:Ybus}. Bus numbers in the input case must be consecutive beginning at 1 (i.e. internal indexing).
 
 
+\clearpage
 \subsection{Miscellaneous}
 \label{sec:othermiscfuncs}
 \subsubsection{\tt define\_constants}
@@ -4341,7 +4355,7 @@ fprintf('   %g\n', lambda.ineqnonlin);
 \end{Code}
 \begin{Code}
 >> example2
-MATPOWER Interior Point Solver -- MIPS, Version 1.2.2, 16-Dec-2016
+MATPOWER Interior Point Solver -- MIPS, Version 1.3, 30-Oct-2018
  (using built-in linear solver)
  it    objective   step size   feascond     gradcond     compcond     costcond  
 ----  ------------ --------- ------------ ------------ ------------ ------------
@@ -7140,6 +7154,7 @@ Load & Quantity Bought & Purchase Price \\
 \end{threeparttable}
 \end{table}
 
+\clearpage
 \subsection{Smartmarket Files and Functions}
 
 \begin{table}[!ht]
@@ -7350,7 +7365,7 @@ The full release history can be found in \code{docs/CHANGES} or \href{http://www
 \subsection{Pre 1.0 -- released Jun 25, 1997}
 \label{app:p10}
 
-Work on \matpower{} begin in 1996, with an optimal power flow based on \matlab{}'s \code{constr} function.
+Work on \matpower{} began in 1996, with an optimal power flow based on \matlab{}'s \code{constr} function.
 
 \subsection{Version 1.0 -- released Sep 17, 1997}
 \label{app:v10}
@@ -7378,6 +7393,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-1.pdf}{\mat
 \item Bug fixes.
 \end{itemize}
 
+\clearpage
 \subsection{Version 2.0 -- released Dec 24, 1997}
 \label{app:v20}
 
@@ -7399,6 +7415,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-2.0.pdf}{\m
 \item various bug fixes
 \end{itemize}
 
+\clearpage
 \subsection{Version 3.0 -- released Feb 14, 2005}
 \label{app:v30}
 
@@ -7476,6 +7493,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-3.2.pdf}{\m
 \end{itemize}
 
 
+\clearpage
 \subsection{Version 4.0 -- released Feb 7, 2011}
 \label{app:v40}
 
@@ -7547,6 +7565,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-4.0.pdf}{\m
 \end{itemize}
 
 
+\clearpage
 \subsection{Version 4.1 -- released Dec 14, 2011}
 \label{app:v41}
 
@@ -7578,6 +7597,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-4.1.pdf}{\m
 \end{itemize}
 
 
+\clearpage
 \subsection{Version 5.0 -- released Dec 17, 2014}
 \label{app:v50}
 
@@ -7655,7 +7675,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-5.0.pdf}{\m
 \item Fixed fatal error when \code{uopf()} shuts down all gens attempting to satisfy $P_{\rm min}$ limits.
 \item Reactive power output of multiple generators at a PQ bus no longer get re-allocated when running a power flow.
 \item Fixed a bug in \code{savecase()} where a \gencost{} matrix with extra columns of zeros resulted in a corrupted \matpower{} case file.
-\item Fixed bug in \code{runpf()} that caused a crash for cases with \code{pf.enforce\_q\_lims} turned on and exactly two Q limit violations, one Qmax and one Qmin. \emph{Thanks to Jose Luis Marin.}
+\item Fixed bug in \code{runpf()} that caused a crash for cases with \code{pf.enforce\_q\_lims} turned on and exactly two Q limit violations, one Qmax and one Qmin. \emph{Thanks to Jose Luis Mar\'in.}
 \end{itemize}
 
 \subsubsection*{Incompatible Changes}
@@ -7667,6 +7687,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-5.0.pdf}{\m
 \item Removed \code{max\_it} option from \code{qps\_matpower()} (and friends) args. Use algorithm specific options to control iteration limits.
 \item Changed behavior of branch angle difference limits so that 0 is interpreted as unbounded only if both \code{ANGMIN} and \code{ANGMAX} are zero.
 \item In \code{results} struct returned by an OPF, the value of \code{results.raw.output.alg} is now a string, not an old-style numeric alg code.
+\clearpage
 \item Removed:
     \begin{itemize}
     \item Support for \matlab{} 6.x.
@@ -7678,6 +7699,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-5.0.pdf}{\m
 \end{itemize}
 
 
+\clearpage
 \subsection{Version 5.1 -- released Mar 20, 2015}
 \label{app:v51}
 
@@ -7753,6 +7775,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-5.1.pdf}{\m
 \end{itemize}
 
 
+\clearpage
 \subsection{Version 6.0 -- released Dec 16, 2016}
 \label{app:v60}
 
@@ -7775,6 +7798,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.0.pdf}{\m
 \item Added \code{case33bw.m}, a 33-bus radial distribution system from Baran and Wu.
 \end{itemize}
 
+\clearpage
 \subsubsection*{New Features}
 \begin{itemize}
 \item \mostname{} (\most{}) 1.0b1 is a {\bf major new feature}, implementing a full range of optimal power scheduling problems, from a simple as a deterministic, single period economic dispatch problem with no transmission constraints to as complex as a stochastic, security-constrained, combined unit-commitment and multiperiod OPF problem with locational contingency and load-following reserves, ramping costs and constraints, deferrable demands, lossy storage resources and uncertain renewable generation. See \code{docs/MOST-manual.pdf} for details.
@@ -7843,8 +7867,9 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.0.pdf}{\m
 \end{itemize}
 
 
-\subsection{Version 6.1-dev -- not yet released}
-\label{app:v61}
+\clearpage
+\subsection{Version 7.0 -- beta 1 released released Oct 31, 2018}
+\label{app:v70}
 
 The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-7.0b1.pdf}{\matpower{} 7.0b1 User's Manual} is available online.\footnote{\url{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-7.0b1.pdf}}
 
@@ -7893,6 +7918,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-7.0b1.pdf}{
     \end{itemize}
 \end{itemize}
 
+\clearpage
 \subsubsection*{New Case Files}
 \begin{itemize}
 \item Seven new purely synthetic cases from the ACTIVSg team ({\bf A}SU, {\bf C}ornell, {\bf T}exas A\&M, U of {\bf I}llinois, and {\bf V}CU - {\bf S}ynthetic {\bf g}rids), resulting from work supported by the ARPA-E GRID DATA program. \emph{Thanks to Adam Birchfield and the ACTIVSg team.}
@@ -7943,6 +7969,7 @@ Some of these cases also include contingency tables and/or hourly load scenarios
     \end{itemize}
 \end{itemize}
 
+\clearpage
 \subsubsection*{New Documentation}
 \begin{itemize}
     \item Two new Tech Notes, available from \href{\matpowerurl}{\matpower{} home page}.
@@ -7989,6 +8016,7 @@ Some of these cases also include contingency tables and/or hourly load scenarios
     \end{itemize}
 \end{itemize}
 
+\clearpage
 \subsubsection*{Bugs Fixed}
 \begin{itemize}
 \item Fix bug in conversion of older versions of \matpower{} options.
