@@ -13,9 +13,9 @@ if nargin < 1
     quiet = 0;
 end
 
-ntests = 1;
-npass = 8;
-nfail = 11;
+ntests = 5;
+npass = 9;
+nfail = 12;
 
 g = [];
 e = [];
@@ -145,8 +145,22 @@ expected = NaN;
 got = NaN(3,2);
 g(k) = t_is(got, expected, tol, t);
 
+k = k + 1; e(k) = 0;
+t = sprintf('%s : t_is(int32(0.6), 1.0, ...)', f(e(k)));
+expected = 0.6;
+got = int32(1.0);
+g(k) = t_is(got, expected, tol, t);
+
 %%-----  reset tests, if this test passes, everything is as expected  -----
 t_begin(ntests, quiet);
+
+t = 'number of tests as expected';
+t_is(length(g), npass+nfail, tol, t);
+t_is(length(e), npass+nfail, tol, t);
+
+t = 'verify test consistency';
+t_is(sum( e), npass, tol, t);
+t_is(sum(~e), nfail, tol, t);
 
 t = 'passes and fails all as expected';
 t_is(g, e, tol, t);

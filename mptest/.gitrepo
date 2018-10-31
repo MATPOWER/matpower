@@ -5,7 +5,7 @@
 ;
 [subrepo]
 	remote = git@github.com:MATPOWER/mptest
-	branch = master
-	commit = 57d7de59766bbe25948c1b512097a59bc3b3ea30
-	parent = f527f079caedff3c679823c576a231f41eb3d64f
+	branch = release
+	commit = 8c954cbd71882103e2b4187d1a0217139916b12e
+	parent = 8fa746198fad106609e5b5c0c480912f9bb6b349
 	cmdver = 0.3.1

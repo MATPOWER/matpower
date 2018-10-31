@@ -39,7 +39,7 @@ Usage
 *   Write test functions of the following form, where `t_ok` and `t_is` are
     used to test for specific conditions or matches, respectively.
 ```matlab
-  function mytest1(quiet)
+  function mptest_ex1(quiet)
   if nargin < 1
     quiet = 0;
   end
@@ -57,7 +57,7 @@ Usage
 
 *   Then run your test function:
 ```
-  >> mytest1
+  >> mptest_ex1
   1..4
   ok 1 - size of pi
   skipped tests 2..3 : not yet written
@@ -68,12 +68,12 @@ Usage
 
 *   If you have several test functions, create a function to run them all as follows:
 ```matlab
-  function test_everything(verbose)
+  function test_everything_ex1(verbose)
   if nargin < 1
     verbose = 0;
   end
   tests = {};
-  tests{end+1} = 'mytest1';
+  tests{end+1} = 'mptest_ex1';
   tests{end+1} = 't_test_fcns';
 
   t_run_tests( tests, verbose );
@@ -81,11 +81,11 @@ Usage
 
 *   Run all of your tests at once. The output may look something like:
 ```
-  >> test_everything
-  mytest1........ok (2 of 4 skipped)
+  >> test_everything_ex1
+  mptest_ex1.....ok (2 of 4 skipped)
   t_test_fcns....ok
   All tests successful (3 passed, 2 skipped of 5)
-  Elapsed time 0.02 seconds.
+  Elapsed time 0.00 seconds.
 ```
 
 Documentation

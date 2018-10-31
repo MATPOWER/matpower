@@ -41,6 +41,16 @@ end
 if nargin < 3 || isempty(prec)
     prec = 5;
 end
+
+%% make sure we don't try to compare a double with an int
+%% (difference can appear to be zero when it's actually not)
+if isinteger(got) && ~isinteger(expected)
+    got = double(got);
+end
+if ~isinteger(got) && isinteger(expected)
+    expected = double(expected);
+end
+
 edims = size(expected);
 gdims = size(got);
 if (length(edims) == length(gdims) && all(edims == gdims)) || ...
