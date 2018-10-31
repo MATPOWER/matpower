@@ -46,20 +46,39 @@ if have_fcn('cplex') || have_fcn('gurobi') || have_fcn('mosek') || ...
 
     mpopt = mpoption('verbose', 0);
 
+    %% choose solver
     if have_fcn('cplex')
         mpopt = mpoption(mpopt, 'most.solver', 'CPLEX');
-        mpopt = mpoption(mpopt, 'cplex.opts.threads', 2);   % set this manually here
     elseif have_fcn('gurobi')
+        mpopt = mpoption(mpopt, 'most.solver', 'GUROBI');
+    elseif have_fcn('quadprog_ls')
+        mpopt = mpoption(mpopt, 'most.solver', 'OT');
+    elseif have_fcn('mosek')
+        mpopt = mpoption(mpopt, 'most.solver', 'MOSEK');
+    else
+        mpopt = mpoption(mpopt, 'most.solver', 'MIPS');
+        if have_fcn('pardiso')
+            mpopt = mpoption(mpopt, 'mips.linsolver', 'PARDISO');
+        end
+    end
+
+    %% set options
+    if have_fcn('cplex')
+        mpopt = mpoption(mpopt, 'cplex.opts.threads', 2);   % set this manually here
+    end
+    if have_fcn('gurobi')
         mpopt = mpoption(mpopt, 'most.solver', 'GUROBI');
         mpopt = mpoption(mpopt, 'gurobi.method', 2);        %% barrier
         mpopt = mpoption(mpopt, 'gurobi.threads', 2);
-        mpopt = mpoption(mpopt, 'gurobi.opts.BarConvTol', 1e-7);        %% 1e-8
-        mpopt = mpoption(mpopt, 'gurobi.opts.FeasibilityTol', 1e-5);    %% 1e-6
+        mpopt = mpoption(mpopt, 'gurobi.opts.BarConvTol', 1e-6);        %% 1e-8
+        mpopt = mpoption(mpopt, 'gurobi.opts.FeasibilityTol', 1e-4);    %% 1e-6
         mpopt = mpoption(mpopt, 'gurobi.opts.OptimalityTol', 1e-5);     %% 1e-6
-    elseif have_fcn('quadprog_ls')
+    end
+    if have_fcn('quadprog_ls')
         mpopt = mpoption(mpopt, 'most.solver', 'OT');
         mpopt = mpoption(mpopt, 'quadprog.TolFun', 1e-13);
-    elseif have_fcn('mosek')
+    end
+    if have_fcn('mosek')
         mpopt = mpoption(mpopt, 'most.solver', 'MOSEK');
         mpopt = mpoption(mpopt, 'mosek.num_threads', 2);
     else
@@ -69,6 +88,7 @@ if have_fcn('cplex') || have_fcn('gurobi') || have_fcn('mosek') || ...
             mpopt = mpoption(mpopt, 'mips.linsolver', 'PARDISO');
         end
     end
+    % mpopt = mpoption(mpopt, 'most.solver', 'GUROBI');
     % mpopt = mpoption(mpopt, 'most.solver', 'CLP');
     % mpopt = mpoption(mpopt, 'most.solver', 'IPOPT');
     % mpopt = mpoption(mpopt, 'most.solver', 'MIPS');

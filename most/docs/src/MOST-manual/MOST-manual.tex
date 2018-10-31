@@ -129,7 +129,7 @@
 
 %\hyphenation{matpower}
 
-\newcommand{\mpver}[0]{6.1-dev}
+\newcommand{\mpver}[0]{7.0b1}
 %\newcommand{\matlab}[0]{{Matlab}}
 %\newcommand{\matlab}[0]{{\sc Matlab}\textsuperscript{\tiny \textregistered}}
 \newcommand{\matlab}[0]{{\sc Matlab}}
@@ -144,11 +144,11 @@
 \newcommand{\mipsurl}[0]{https://github.com/MATPOWER/mips}
 \newcommand{\mipslink}[0]{\href{\mipsurl}{\mips{}}}
 \newcommand{\mipsname}[0]{{{\bf M}{\sc atpower} \textbf{I}nterior \textbf{P}oint \textbf{S}olver}}
-\newcommand{\mipsver}[0]{1.2.2}
+\newcommand{\mipsver}[0]{1.3}
 \newcommand{\most}[0]{{MOST}}
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
-\newcommand{\mostver}[0]{1.0.1-dev}
+\newcommand{\mostver}[0]{1.0.1}
 \newcommand{\md}[0]{{\most{} Data struct}}
 \newcommand{\powerweb}[0]{{\sc PowerWeb}}
 \newcommand{\pserc}[0]{{\sc PSerc}}
@@ -191,7 +191,7 @@
 \newcommand{\mipsmanurl}[0]{http://www.pserc.cornell.edu/matpower/docs/MIPS-manual-\mipsver.pdf}
 \newcommand{\mostmanurl}[0]{http://www.pserc.cornell.edu/matpower/docs/MOST-manual-\mostver.pdf}
 \newcommand{\currentmumurl}[0]{http://www.pserc.cornell.edu/matpower/MATPOWER-manual.pdf}
-\newcommand{\currentmipsmanurl}[0]{\mipsurl/blob/master/MIPS-manual.pdf}
+\newcommand{\currentmipsmanurl}[0]{\mipsurl/blob/master/docs/MIPS-manual.pdf}
 \newcommand{\currentmostmanurl}[0]{http://www.pserc.cornell.edu/matpower/MOST-manual.pdf}
 \newcommand{\mipsman}[0]{\href{\mipsmanurl}{\mips{} User's Manual}}
 \newcommand{\mostman}[0]{\href{\mostmanurl}{\most{} User's Manual}}
@@ -222,7 +222,7 @@
 \title{\mostname{}\\\most{} \mostver{}\\
 User's Manual}
 \author{Ray~D.~Zimmerman \and Carlos~E.~Murillo-S\'anchez}
-%\date{December 16, 2016} % comment this line to display the current date
+\date{October 30, 2018} % comment this line to display the current date
 %\date{December 14, 2011\thanks{Second revision. First revision was December 13, 2011}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
@@ -232,7 +232,7 @@ User's Manual}
 \vfill
 \begin{center}
 {\scriptsize
-\copyright~2011, 2012, 2013, 2014, 2015, 2016~\PSERC{}\\
+\copyright~2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018~\PSERC{}\\
 All Rights Reserved}
 \end{center}
 
@@ -247,7 +247,7 @@ All Rights Reserved}
 \clearpage
 \section{Introduction}
 
-Beginning with version 6, \matpower{}~\cite{zimmerman2011} includes a framework for solving generalized steady-state electric power scheduling problems. This framework is known as \most{}, for \mostname{}~\cite{murillo-sanchez2013a}.
+Beginning with version 6, \matpower{}~\cite{zimmerman2011} includes a framework for solving generalized steady-state electric power scheduling problems. This framework is known as \most{}, for \mostname{}~\cite{murillo-sanchez2013a,lamadrid2018}.
 
 \most{} can be used to solve problems as simple as a deterministic, single period economic dispatch problem with no transmission constraints or as complex as a stochastic, security-constrained, combined unit-commitment and multiperiod optimal power flow problem with locational contingency and load-following reserves, ramping costs and constraints, deferrable demands, lossy storage resources and uncertain renewable generation.
 
@@ -334,7 +334,13 @@ The first step in beginning to use the \most{} is to get familiar with \matpower
 
 \subsection{System Requirements}
 \label{sec:sysreq}
-To use \most{} you will need a working installation of \matpower{}~\mpver{} or later. See the corresponding section in the \mum{} for more information on the system requirements.
+To use \most{}~\mostver{} you will need:
+\begin{itemize}
+\item \matpower{} version 7.x or later\footnote{\most{}~1.0 required \matpower{}~6.}
+\item \emph{(highly recommended)} a high-performance LP/MILP, QP/MIQP solver such as \gurobi{}, \cplex{}, \mosek{}, \matlab{}'s \ot{} or \glpk{} \emph{(included with Octave)}.
+\end{itemize}
+
+\most{} requires a working installation of \matpower{}. See the corresponding section in the \mum{} for more information on the system requirements for \matpower{}.
 \matpower{}~6 and later includes a full version of \most{} in the \mostpath{} directory.
 
 It is also highly recommended that you install a high-performance solver such as \gurobi{}, \cplex{}, \mosek{}, \matlab{}'s \ot{} or \glpk{}, described in Appendix~\ref{MUM-app:optional_packages} in the \mum{}.
@@ -361,14 +367,14 @@ t_most_30b_3_1_0.......ok
 t_most_30b_1_1_17......ok
 t_most_30b_3_1_17......ok
 t_most_fixed_res.......ok
-t_most_w_ds............ok
 t_most_30b_1_1_0_uc....ok
 t_most_sp..............ok
-t_most_spuc............ok (576 of 720 skipped)
-t_most_uc..............ok (208 of 260 skipped)
-t_most_suc.............ok (148 of 185 skipped)
-All tests successful (762 passed, 932 skipped of 1694)
-Elapsed time 93.13 seconds.
+t_most_spuc............ok (432 of 720 skipped)
+t_most_uc..............ok (156 of 260 skipped)
+t_most_suc.............ok (111 of 185 skipped)
+t_most_w_ds............ok
+All tests successful (995 passed, 699 skipped of 1694)
+Elapsed time 84.68 seconds.
 \end{Code}
 
 If, for some reason, you prefer to install your own copy of MOST directly
@@ -431,12 +437,12 @@ mdo = most(mdi, mpopt);
 
 \begin{Code}
 =============================================================================
-          MATPOWER Optimal Scheduling Tool  --  MOST Version 1.0
+          MATPOWER Optimal Scheduling Tool  --  MOST Version 1.0.1
           A multiperiod stochastic secure OPF with unit commitment
                        -----  Built on MATPOWER  -----
   by Carlos E. Murillo-Sanchez, Universidad Nacional de Colombia--Manizales
                   and Ray D. Zimmerman, Cornell University
-       (c) 2012-2016 Power Systems Engineering Research Center (PSERC)       
+       (c) 2012-2018 Power Systems Engineering Research Center (PSERC)       
 =============================================================================
 - Building indexing structures.
 - Building expected storage-tracking mechanism.
@@ -456,9 +462,9 @@ mdo = most(mdi, mpopt);
 
 ============================================================================
 
-Gurobi Version 7.0.1 -- automatic MILP solver
+Gurobi Version 8.1.0 -- automatic MILP solver
 --- Integer stage complete, starting price computation stage ---
-Gurobi Version 7.0.1 -- automatic LP solver
+Gurobi Version 8.1.0 -- automatic LP solver
 
 ============================================================================
 - MOST: MILP solved successfully.
@@ -496,7 +502,7 @@ The full set of \most{} options are detailed in Section~\ref{sec:mostoptions}.
 
 \subsection{Documentation}
 
-There are two primary sources of documentation for \most{}. The first is this manual, which gives an overview of the capabilities and structure and describes the problem formulation. The \most{} User's Manual can be found in your \matpower{} distribution at \mppath{/most/docs/MOST-manual.pdf}.
+There are two primary sources of documentation for \most{}. The first is \href{\mostmanurl}{this manual}, which gives an overview of the capabilities and structure and describes the problem formulation. The \mostman{} can be found in your \matpower{} distribution at \mppath{/most/docs/MOST-manual.pdf} and the \href{\currentmostmanurl}{latest version} is always available at: \url{\currentmostmanurl}.
 
 The second is the built-in \code{help} command. As with \matlab{}'s built-in functions and toolbox routines, you can type \code{help} followed by the name of a command or M-file to get help on that particular function. Many of the \most{} related M-files have such documentation and this should be considered the main reference for the calling options for each individual function. See Appendix~\ref{app:functions} for a list of \most{} functions.
 
@@ -712,7 +718,7 @@ This section summarizes the nomenclature for the full multi-period mixed-integer
 \item[$Q_{\rm min}^{tijk}, Q_{\rm max}^{tijk}$] Limits on reactive injection for unit~$i$ in post-contingency state~$k$ of scenario~$j$ at time~$t$.
 \item[$R_{\rm max+}^{ti}, R_{\rm max-}^{ti}$] Upward/downward contingency (or zonal) reserve capacity limits for unit~$i$ at time~$t$.
 \item[$R_l^{tjk}$] MW reserve requirement for zone~$l$ in post-contingency state~$k$ of scenario~$j$ at time~$t$.
-\item[$\delta^{i}_{\rm max+}, \delta^i_{\rm max-}$] Upward/downward load-following ramping reserve limits for unit~$i$.
+\item[$\delta^{ti}_{\rm max+}, \delta^{ti}_{\rm max-}$] Upward/downward load-following ramping reserve limits for unit~$i$ at time $t$ for transition to time $t+1$.
 \item[$\Delta_+^i, \Delta_-^i$] Upward/downward physical ramping limits for unit~$i$ for transitions from base ($k=0$) to contingency cases.
 \item[$\rho^{ti}$] Parameter for storage unit~$i$ at period $t$ that determines the weighting in storage constraints, where the storage dispatch bounds are computed relative to a weighted average of previous period endogenous bounds $s_+^{(t-1)i}$, $s_-^{(t-1)i}$ ($\rho^{ti} = 1$) and period- and scenario-specific initial expected stored energy ($\rho^{ti} = 0$).
 \item[$S^{ti}_{\rm max},S^{ti}_{\rm min}$] Stored energy (in MWh) max/min limits for storage unit~$i$ at time~$t$.
@@ -1979,6 +1985,7 @@ name & type\tnote{*} & description \\
 name & type\tnote{*} & description \\
 \midrule
 \code{f}	& O	& value of objective function $f(x)$ in \eqref{eq:mostobjective} at solution (same as \code{md.QP.f})	\\
+\code{success}	& O	& optimization success flag, 1 = succeeded, 0 = failed	\\
 \code{Pc(i,t)}	& O	& $n_g \times n_t$, active power contract quantity, $p_c^{ti}$	\\
 \code{Rpp(i,t)}	& O	& $n_g \times n_t$, upward active contingency reserve quantity $r_+^{ti}$	\\
 \code{Rpm(i,t)}	& O	& $n_g \times n_t$, downward active contingency reserve quantity $r_-^{ti}$	\\
@@ -3090,8 +3097,8 @@ This appendix lists all of the files and functions that \most{} provides. In mos
 name & description \\
 \midrule
 \code{docs/}	& \most{} documentation	\\
-\code{~~MOST-manual.pdf}	& \emph{\most{} User's Manual}	\\
-\code{~~src/}	& \LaTeX{} source for \emph{\most{} User's Manual}	\\
+\code{~~MOST-manual.pdf}	& \mostman{}	\\
+\code{~~src/}	& \LaTeX{} source for \mostman{}	\\
 \code{lib/}	& \most{} software (see Table~\ref{tab:mostsw})	\\
 \code{~~t/}	& \most{} tests and examples (see Tables~\ref{tab:mosttestdata} and \ref{tab:mosttests})	\\
 \code{AUTHORS}	& list of \most{} authors	\\
@@ -3236,24 +3243,6 @@ name & description \\
 
 The full release history can be found in \mostpath{/docs/CHANGES}.
 
-\subsection{Version 1.0.1-dev -- not yet released}
-\label{app:v101}
-
-The \href{http://www.pserc.cornell.edu/matpower/docs/MOST-manual-1.0.1.pdf}{\most{} 1.0.1 User's Manual} is available online.\footnote{\url{http://www.pserc.cornell.edu/matpower/docs/MOST-manual-1.0.1.pdf}}
-
-\subsubsection*{Bugs Fixed}
-\begin{itemize}
-\item Fix bugs in \code{plot\_uc\_data()} resulting in incorrect legends.
-\item Fix dimension of \code{RampWear} cost indexing if \code{mdi.OpenEnded} is true.
-\item Add missing constant term to objective function value reported by \code{most\_summary}.
-\end{itemize}
-
-\subsubsection*{Other Changes}
-\begin{itemize}
-\item Updated to use OOP notation for \code{opt\_model} object, and avoid calls to deprecated methods, using \code{init\_indexed\_name()} and \code{add\_lin\_constraint()} instead.
-\item Updated to use \matpower{}'s new quadratic costs in \code{opt\_model} in place of the legacy cost model.
-\end{itemize}
-
 \subsection{Version 1.0 -- released Dec 16, 2016}
 \label{app:v10}
 
@@ -3274,6 +3263,32 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MOST-manual-1.0.pdf}{\most{
 \item No significant changes since first public beta release.\footnote{Version 1.0b1 was released on Jun 1, 2016 and 1.0b2 on Nov 1, 2016}
 \end{itemize}
 
+\subsection{Version 1.0.1 -- released Oct 30, 2018}
+\label{app:v101}
+
+The \href{http://www.pserc.cornell.edu/matpower/docs/MOST-manual-1.0.1.pdf}{\most{} 1.0.1 User's Manual} is available online.\footnote{\url{http://www.pserc.cornell.edu/matpower/docs/MOST-manual-1.0.1.pdf}}
+
+\subsubsection*{Bugs Fixed}
+\begin{itemize}
+\item Fix bugs in \code{plot\_uc\_data()} resulting in incorrect legends.
+\item Fix dimension of \code{RampWear} cost indexing if \code{mdi.OpenEnded} is true.
+\item Add missing constant term to objective function value reported by \code{most\_summary}.
+\end{itemize}
+
+\subsubsection*{Other Changes}
+\begin{itemize}
+\item \LaTeX{} source code for \mostman{} included in \code{docs/src}.
+\item Updated to use OOP notation for \code{opt\_model} object, and avoid calls to deprecated methods, using \code{init\_indexed\_name()} and \code{add\_lin\_constraint()} instead.
+\item Updated to use \matpower{}'s new quadratic costs in \code{opt\_model} in place of the legacy cost model.
+\item Add \code{success} flag to \code{md.results} output \md{} to indicate success or failure of optimization.
+\end{itemize}
+
+\subsubsection*{Incompatible Changes}
+\begin{itemize}
+\item Failure of the optimization no longer halts execution and jumps to the debugger.
+\item Requires \matpower{} 7.x or later.
+\end{itemize}
+
 \end{appendices}
 
 
@@ -3289,6 +3304,10 @@ DOI:~\href{https://doi.org/10.1109/TPWRS.2010.2051168}{10.1109/TPWRS.2010.205116
 \bibitem{murillo-sanchez2013a}
 C.~E. Murillo-S{\'a}nchez, R.~D. Zimmerman, C.~L. Anderson, and R.~J. Thomas, ``Secure Planning and Operations of Systems with Stochastic Sources, Energy Storage and Active Demand,'' \emph{Smart Grid, IEEE Transactions on}, vol.~4, no.~4, pp.~2220--2229, Dec.~2013.
 DOI:~\href{https://doi.org/10.1109/TSG.2013.2281001}{10.1109/TSG.2013.2281001}
+
+\bibitem{lamadrid2018}
+A.~J. Lamadrid, D. Mu{\~n}oz-{\'A}lvarez, C.~E. Murillo-S{\'a}nchez, R.~D. Zimmerman, H.~D. Shin and R.~J. Thomas, ``Using the \matpower{} Optimal Scheduling Tool to Test Power System Operation Methodologies Under Uncertainty,'' \emph{Sustainable Energy, IEEE Transactions on}, 2018.
+DOI:~\href{https://doi.org/10.1109/TSTE.2018.2865454}{10.1109/TSTE.2018.2865454}
 
 \bibitem{zimmerman2009}
 R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez, and R.~J. Thomas, ``\matpower{}'s

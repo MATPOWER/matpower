@@ -2,8 +2,17 @@ Change history for MOST
 =======================
 
 
-Since last release
-------------------
+Version 1.0.1 - *Oct 30, 2016*
+------------------------------
+
+#### 10/30/18
+  - Release 1.0.1.
+
+#### 10/26/18
+  - **INCOMPATIBLE CHANGE**: Failure of the optimization no longer
+    halts execution and jumps to the debugger.
+  - Add `success` flag to `md.results` output MOST Data struct to
+    indicate success or failure of optimization.
 
 #### 3/19/18
   - Fix bugs in `plot_uc_data()` resulting in incorrect legends.

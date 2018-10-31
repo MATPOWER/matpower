@@ -30,6 +30,9 @@ mpopt = mpoption(mpopt, 'most.solver', 'DEFAULT');
 if have_fcn('gurobi')
     mpopt = mpoption(mpopt, 'gurobi.method', 1);    %% dual-simplex
 end
+if have_fcn('cplex')
+    mpopt = mpoption(mpopt, 'cplex.qpmethod', 2);   %% dual-simplex
+end
 % if have_fcn('mosek')
 %     sc = mosek_symbcon;
 %     mpopt = mpoption(mpopt, 'mosek.lp_alg', sc.MSK_OPTIMIZER_DUAL_SIMPLEX);     %% dual simplex

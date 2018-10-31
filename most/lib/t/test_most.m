@@ -44,7 +44,6 @@ if have_c3sopf
     tests{end+1} = 't_most_30b_3_1_17';
 end
 tests{end+1} = 't_most_fixed_res';
-tests{end+1} = 't_most_w_ds';
 tests{end+1} = 't_most_30b_1_1_0_uc';
 if have_c3sopf
     tests{end+1} = 't_most_sp';
@@ -52,6 +51,7 @@ if have_c3sopf
 end
 tests{end+1} = 't_most_uc';
 tests{end+1} = 't_most_suc';
+tests{end+1} = 't_most_w_ds';
 
 %% run the tests
 all_ok = t_run_tests( tests, verbose );
