@@ -129,7 +129,7 @@
 
 %\hyphenation{matpower}
 
-\newcommand{\mpver}[0]{6.0}
+\newcommand{\mpver}[0]{7.0b1}
 %\newcommand{\matlab}[0]{{Matlab}}
 %\newcommand{\matlab}[0]{{\sc Matlab}\textsuperscript{\tiny \textregistered}}
 \newcommand{\matlab}[0]{{\sc Matlab}}
@@ -144,11 +144,11 @@
 \newcommand{\mipsurl}[0]{https://github.com/MATPOWER/mips}
 \newcommand{\mipslink}[0]{\href{\mipsurl}{\mips{}}}
 \newcommand{\mipsname}[0]{{{\bf M}{\sc atpower} \textbf{I}nterior \textbf{P}oint \textbf{S}olver}}
-\newcommand{\mipsver}[0]{1.3-dev}
+\newcommand{\mipsver}[0]{1.3}
 \newcommand{\most}[0]{{MOST}}
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
-\newcommand{\mostver}[0]{1.0}
+\newcommand{\mostver}[0]{1.0.1}
 \newcommand{\md}[0]{{\most{} Data struct}}
 \newcommand{\powerweb}[0]{{\sc PowerWeb}}
 \newcommand{\pserc}[0]{{\sc PSerc}}
@@ -186,7 +186,7 @@
 \newcommand{\mipsmanurl}[0]{http://www.pserc.cornell.edu/matpower/docs/MIPS-manual-\mipsver.pdf}
 \newcommand{\mostmanurl}[0]{http://www.pserc.cornell.edu/matpower/docs/MOST-manual-\mostver.pdf}
 \newcommand{\currentmumurl}[0]{http://www.pserc.cornell.edu/matpower/MATPOWER-manual.pdf}
-\newcommand{\currentmipsmanurl}[0]{\mipsurl/blob/master/MIPS-manual.pdf}
+\newcommand{\currentmipsmanurl}[0]{\mipsurl/blob/master/docs/MIPS-manual.pdf}
 \newcommand{\currentmostmanurl}[0]{http://www.pserc.cornell.edu/matpower/MOST-manual.pdf}
 \newcommand{\mipsman}[0]{\href{\mipsmanurl}{\mips{} User's Manual}}
 \newcommand{\mostman}[0]{\href{\mostmanurl}{\most{} User's Manual}}
@@ -218,7 +218,7 @@
 \title{\mipsname{}\\\mips{} \mipsver{}\\
 User's Manual}
 \author{Ray~D.~Zimmerman \and Hongye~Wang}
-%\date{December 16, 2016} % comment this line to display the current date
+\date{October 30, 2018} % comment this line to display the current date
 %\date{December 14, 2011\thanks{Second revision. First revision was December 13, 2011}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
@@ -228,7 +228,7 @@ User's Manual}
 \vfill
 \begin{center}
 {\scriptsize
-\copyright~2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017~\PSERC{}\\
+\copyright~2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018~\PSERC{}\\
 All Rights Reserved}
 \end{center}
 
@@ -361,11 +361,12 @@ We will use \mipspath{} to denote the path to this directory.
 %\\\hl{re-do before release (run on fastest machine available)}
 \begin{Code}
 >> test_mips
-t_mplinsolve....ok
-t_mips..........ok
-t_qps_mips......ok
-All tests successful (136 of 136)
-Elapsed time 0.11 seconds.
+t_mplinsolve......ok (6 of 44 skipped)
+t_mips............ok
+t_mips_pardiso....ok (60 of 60 skipped)
+t_qps_mips........ok
+All tests successful (170 passed, 66 skipped of 236)
+Elapsed time 0.09 seconds.
 \end{Code}
 \end{enumerate}
 
@@ -628,7 +629,7 @@ fprintf('   %g\n', lambda.ineqnonlin);
 \end{Code}
 \begin{Code}
 >> mips_example2
-MATPOWER Interior Point Solver -- MIPS, Version 1.2.2, 16-Dec-2016
+MATPOWER Interior Point Solver -- MIPS, Version 1.3, 30-Oct-2018
  (using built-in linear solver)
  it    objective   step size   feascond     gradcond     compcond     costcond  
 ----  ------------ --------- ------------ ------------ ------------ ------------
@@ -996,62 +997,55 @@ When the \matlab{} interface to \pardiso{} is installed, \pardiso{}'s solvers ca
 The full release history can be found in \code{CHANGES.md} or \href{https://github.com/MATPOWER/mips/blob/master/CHANGES.md}{online} at \url{https://github.com/MATPOWER/mips/blob/master/CHANGES.md}.
 
 
-\subsection{Version 1.3-dev -- not yet released}
-\label{app:v13}
+\subsection{Version 1.0 -- released Feb 7, 2011}
+\label{app:v10}
 
-The \href{http://www.pserc.cornell.edu/matpower/docs/MIPS-manual-1.3.pdf}{\mips{} 1.3 User's Manual} is available online.\footnote{\url{http://www.pserc.cornell.edu/matpower/docs/MIPS-manual-1.3.pdf}}
+Documentation found in Appendix A of the \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-4.0.pdf}{\matpower{} 4.0 User's Manual}, available online.\footnote{\url{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-4.0.pdf}}
 
-\subsubsection*{New Features}
+\subsubsection*{Changes}
 \begin{itemize}
-\item Add support for PARDISO 6.x.
-\item Add \code{mplinsolve} solver option \codeq{LU} for explicit LU decomposition with back substitution, with options in \code{opt.lu} for specifying the number of output arguments in call to \code{lu} (\code{opt.lu.nout}), whether to use permutation vectors or matrices (\code{opt.lu.vec}) and pivot threshold options (\code{opt.lu.thresh}). The following values for the \code{solver} argument act as shortcuts for specifying various combinations of options: \codeq{LU3} \codeq{LU3a} \codeq{LU4} \codeq{LU5} \codeq{LU3m} \codeq{LU3am} \codeq{LU4m} \codeq{LU5m}.
-    See \code{help mplinsolve} for details.
-    \emph{Thanks to Jose Luis Mar\'in.}
-\end{itemize}
-
-\subsubsection*{Bugs Fixed}
-\begin{itemize}
-\item Fix bug preventing \code{pardiso.dparm} options from being set.
-\end{itemize}
-
-\subsubsection*{Other Changes}
-\begin{itemize}
-\item Move \code{mplinsolve} PARDISO options to \code{opt.pardiso} in preparation for adding options for other solvers.
+\item Licensed under the GNU General Public License (GPL).
+\item Added compatibility with GNU Octave, a free, open-source \matlab{} clone.
+\item \mips{} (\mipsname{}), a new a pure-\matlab{} implementation of the primal-dual interior point methods from the optional package TSPOPF.
 \end{itemize}
 
 
+\subsection{Version 1.0.1 -- released Apr 30, 2012}
+\label{app:v101}
 
-\subsection{Version 1.2.2 -- released Dec 16, 2016}
-\label{app:v122}
-
-Documentation found in the \href{http://www.pserc.cornell.edu/matpower/docs/MIPS-manual-1.2.2.pdf}{\mips{} 1.2.2 User's Manual}\footnote{\url{http://www.pserc.cornell.edu/matpower/docs/MIPS-manual-1.2.2.pdf}} or in Appendix A of the \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.0.pdf}{\matpower{} 6.0 User's Manual}, available online.\footnote{\url{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.0.pdf}}
-
-\subsubsection*{New Open Development Model}
-\begin{itemize}
-% \item \hl{Fill in details from announcement or ``What's New'' section of index.html or README.}
-\item \mips{} development has moved to GitHub! The code repository is now publicly available to clone and submit pull requests.\footnote{\url{https://github.com/MATPOWER/mips}}
-\item Public issue tracker for reporting bugs, submitting patches, etc.\footnote{\url{https://github.com/MATPOWER/mips/issues}}
-\end{itemize}
-
-\subsubsection*{Other Changes}
-\begin{itemize}
-\item Renamed from \matlab{} Interior Point Solver to \mipsname{}.
-\item Remove dependence of \code{t\_mpsolve()} on presence of \code{have\_fcn()} (from \matpower{}) to detect PARDISO installation.
-\end{itemize}
-
-
-
-\subsection{Version 1.2.1 -- released Jun 1, 2016}
-\label{app:v121}
-
-Documentation found in Appendix A of the \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.0b1.pdf}{\matpower{} 6.0b1 User's Manual}, available online.\footnote{\url{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.0b1.pdf}}
-
+Documentation found in Appendix A of the \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-4.0.pdf}{\matpower{} 4.0 User's Manual}, available online.\footnote{\url{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-4.0.pdf}}
 
 \subsubsection*{Bug Fixed}
 \begin{itemize}
-\item Fixed issue where default value of \codeq{feastol} option was not being set correctly in \code{mips()} when called directly (or via \code{qps\_mips()}) with \codeq{feastol}\code{ = 0}.
+\item Fixed fatal bug in \mips{} for unconstrained, scalar problems. \emph{Thanks to Han Na Gwon.}
 \end{itemize}
 
+
+\subsection{Version 1.0.2 -- released Nov 5, 2013}
+\label{app:v102}
+
+Documentation found in Appendix A of the \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-4.0.pdf}{\matpower{} 4.0 User's Manual}, available online.\footnote{\url{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-4.0.pdf}}
+
+\subsubsection*{Bug Fixed}
+\begin{itemize}
+\item Fixed a bug in \mips{} where a near-singular matrix could produce an extremely large Newton step, resulting in incorrectly satisfying the relative feasibility criterion for successful termination.
+\end{itemize}
+
+
+\subsection{Version 1.1 -- released Dec 17, 2014}
+\label{app:v11}
+
+Documentation found in Appendix A of the \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-5.0.pdf}{\matpower{} 5.0 User's Manual}, available online.\footnote{\url{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-5.0.pdf}}
+
+\subsubsection*{New Features}
+\begin{itemize}
+\item Many new user-settable options.
+\end{itemize}
+
+\subsubsection*{Incompatible Changes}
+\begin{itemize}
+\item The name of the \code{mips()} option used to specify the maximum number of step-size reductions with \code{step\_control} on was changed from \code{max\_red} to \code{sc.red\_it} for consistency with other \matpower{} options.
+\end{itemize}
 
 
 \subsection{Version 1.2 -- released Mar 20, 2015}
@@ -1079,55 +1073,62 @@ Documentation found in Appendix A of the \href{http://www.pserc.cornell.edu/matp
 \end{itemize}
 
 
-\subsection{Version 1.1 -- released Dec 17, 2014}
-\label{app:v11}
+\subsection{Version 1.2.1 -- released Jun 1, 2016}
+\label{app:v121}
 
-Documentation found in Appendix A of the \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-5.0.pdf}{\matpower{} 5.0 User's Manual}, available online.\footnote{\url{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-5.0.pdf}}
+Documentation found in Appendix A of the \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.0b1.pdf}{\matpower{} 6.0b1 User's Manual}, available online.\footnote{\url{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.0b1.pdf}}
+
+
+\subsubsection*{Bug Fixed}
+\begin{itemize}
+\item Fixed issue where default value of \codeq{feastol} option was not being set correctly in \code{mips()} when called directly (or via \code{qps\_mips()}) with \codeq{feastol}\code{ = 0}.
+\end{itemize}
+
+
+\subsection{Version 1.2.2 -- released Dec 16, 2016}
+\label{app:v122}
+
+Documentation found in the \href{http://www.pserc.cornell.edu/matpower/docs/MIPS-manual-1.2.2.pdf}{\mips{} 1.2.2 User's Manual}\footnote{\url{http://www.pserc.cornell.edu/matpower/docs/MIPS-manual-1.2.2.pdf}} or in Appendix A of the \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.0.pdf}{\matpower{} 6.0 User's Manual}, available online.\footnote{\url{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.0.pdf}}
+
+\subsubsection*{New Open Development Model}
+\begin{itemize}
+% \item \hl{Fill in details from announcement or ``What's New'' section of index.html or README.}
+\item \mips{} development has moved to GitHub! The code repository is now publicly available to clone and submit pull requests.\footnote{\url{https://github.com/MATPOWER/mips}}
+\item Public issue tracker for reporting bugs, submitting patches, etc.\footnote{\url{https://github.com/MATPOWER/mips/issues}}
+\end{itemize}
+
+\subsubsection*{Other Changes}
+\begin{itemize}
+\item Renamed from \matlab{} Interior Point Solver to \mipsname{}.
+\item Remove dependence of \code{t\_mpsolve()} on presence of \code{have\_fcn()} (from \matpower{}) to detect PARDISO installation.
+\end{itemize}
+
+
+\subsection{Version 1.3 -- released Oct 30, 2018}
+\label{app:v13}
+
+The \href{http://www.pserc.cornell.edu/matpower/docs/MIPS-manual-1.3.pdf}{\mips{} 1.3 User's Manual} is available online.\footnote{\url{http://www.pserc.cornell.edu/matpower/docs/MIPS-manual-1.3.pdf}}
 
 \subsubsection*{New Features}
 \begin{itemize}
-\item Many new user-settable options.
+\item Support for PARDISO 6.x.
+\item New \code{mplinsolve} solver option \codeq{LU} for explicit LU decomposition with back substitution, with options in \code{opt.lu} for specifying the number of output arguments in call to \code{lu} (\code{opt.lu.nout}), whether to use permutation vectors or matrices (\code{opt.lu.vec}) and pivot threshold options (\code{opt.lu.thresh}). The following values for the \code{solver} argument act as shortcuts for specifying various combinations of options: \codeq{LU3}, \codeq{LU3a}, \codeq{LU4}, \codeq{LU5}, \codeq{LU3m}, \codeq{LU3am}, \codeq{LU4m}, \codeq{LU5m}.
+    See \code{help mplinsolve} for details.
+    \emph{Thanks to Jose Luis Mar\'in.}
 \end{itemize}
 
-\subsubsection*{Incompatible Changes}
+\subsubsection*{Bugs Fixed}
 \begin{itemize}
-\item The name of the \code{mips()} option used to specify the maximum number of step-size reductions with \code{step\_control} on was changed from \code{max\_red} to \code{sc.red\_it} for consistency with other \matpower{} options.
+\item Fix bug preventing \code{pardiso.dparm} options from being set.
 \end{itemize}
 
-
-\subsection{Version 1.0.2 -- released Nov 5, 2013}
-\label{app:v102}
-
-Documentation found in Appendix A of the \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-4.0.pdf}{\matpower{} 4.0 User's Manual}, available online.\footnote{\url{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-4.0.pdf}}
-
-\subsubsection*{Bug Fixed}
+\subsubsection*{Other Changes}
 \begin{itemize}
-\item Fixed a bug in \mips{} where a near-singular matrix could produce an extremely large Newton step, resulting in incorrectly satisfying the relative feasibility criterion for successful termination.
+\item \LaTeX{} source code for \mipsman{} included in \code{docs/src}.
+\item Move \code{mplinsolve} PARDISO options to \code{opt.pardiso} in preparation for adding options for other solvers.
 \end{itemize}
 
 
-\subsection{Version 1.0.1 -- released Apr 30, 2012}
-\label{app:v101}
-
-Documentation found in Appendix A of the \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-4.0.pdf}{\matpower{} 4.0 User's Manual}, available online.\footnote{\url{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-4.0.pdf}}
-
-\subsubsection*{Bug Fixed}
-\begin{itemize}
-\item Fixed fatal bug in \mips{} for unconstrained, scalar problems. \emph{Thanks to Han Na Gwon.}
-\end{itemize}
-
-
-\subsection{Version 1.0 -- released Feb 7, 2011}
-\label{app:v10}
-
-Documentation found in Appendix A of the \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-4.0.pdf}{\matpower{} 4.0 User's Manual}, available online.\footnote{\url{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-4.0.pdf}}
-
-\subsubsection*{Changes}
-\begin{itemize}
-\item Licensed under the GNU General Public License (GPL).
-\item Added compatibility with GNU Octave, a free, open-source \matlab{} clone.
-\item \mips{} (\mipsname{}), a new a pure-\matlab{} implementation of the primal-dual interior point methods from the optional package TSPOPF.
-\end{itemize}
 
 \end{appendices}
 
@@ -1168,7 +1169,7 @@ GNU General Public License. [Online]. Available: \url{http://www.gnu.org/license
 O.~Shenk and K.~G\"artner, ``Solving unsymmetric sparse systems of linear equations with PARDISO,'' \emph{Journal of Future Generation Computer Systems}, 20(3):475--487,~2004.
 
 \bibitem{pardiso2}
-A.~Kuzmin, M.~Luisier and O.~Shenk, ``Fast methods for computing selected elements of the Greens function in massively parallel nanoelectronic device simulations,'' in F.~Wolf, B.~Mohr and D.~Mey, editors, \emph{Euro-Par 2013 Parallel Processing}, Vol.~8097, \emph{Lecture Notes in Computer Science}, pp.~533Ð-544, Springer Berlin Heidelberg, 2013.
+A.~Kuzmin, M.~Luisier and O.~Shenk, ``Fast methods for computing selected elements of the Greens function in massively parallel nanoelectronic device simulations,'' in F.~Wolf, B.~Mohr and D.~Mey, editors, \emph{Euro-Par 2013 Parallel Processing}, Vol.~8097, \emph{Lecture Notes in Computer Science}, pp.~533--544, Springer Berlin Heidelberg, 2013.
 
 \end{thebibliography}
 
