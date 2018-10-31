@@ -1,5 +1,7 @@
-What's New in Version 6.0
--------------------------
+What's New in MATPOWER 6.0
+--------------------------
+
+#### Released Dec 16, 2018
 
 Below is a summary of the changes since version 5.1 of MATPOWER. See the
 [`CHANGES.md`][1] file for all the gory details. For release notes for
@@ -138,8 +140,8 @@ previous versions, see Appendix H of the [MATPOWER User's Manual][2].
   - Changed name of `cpf.error_tol` option to `cpf.adapt_step_tol`.
 
 
-[1]: ../../CHANGES.md
-[2]: ../MATPOWER-manual.pdf
+[1]: https://github.com/MATPOWER/matpower/blob/master/CHANGES.md
+[2]: https://github.com/MATPOWER/matpower/blob/master/docs/MATPOWER-manual.pdf
 [3]: https://github.com/MATPOWER/matpower
 [4]: https://github.com/MATPOWER/matpower/issues
 [5]: https://github.com/MATPOWER/most
@@ -147,4 +149,4 @@ previous versions, see Appendix H of the [MATPOWER User's Manual][2].
 [7]: https://github.com/MATPOWER/mptest
 [8]: https://github.com/MATPOWER/
 [9]: http://www.pserc.cornell.edu/matpower/mailinglists.html#devlist
-[10]: ../MOST-manual.pdf
+[10]: https://github.com/MATPOWER/most/blob/master/docs/MOST-manual.pdf
