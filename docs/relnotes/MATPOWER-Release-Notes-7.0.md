@@ -1,5 +1,5 @@
-What's New in MATPOWER 7.0
---------------------------
+What's New in MATPOWER 7.0b1
+----------------------------
 
 #### Released Oct 31, 2018
 
