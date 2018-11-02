@@ -6,7 +6,32 @@ language: generic
 install:
 - sudo apt-add-repository -y ppa:octave/stable
 - sudo apt-get update -qq
-- sudo apt-get install -qq octave liboctave-dev
+- sudo apt-get install -qq octave liboctave-dev git make coinor-libipopt-dev
+
+- git clone https://github.com/yalmip/YALMIP.git yalmip
+- export YALMIP_PATH=$TRAVIS_BUILD_DIR/yalmip
+- export YALMIP_PATH=$YALMIP_PATH:$TRAVIS_BUILD_DIR/yalmip/extras
+- export YALMIP_PATH=$YALMIP_PATH:$TRAVIS_BUILD_DIR/yalmip/solvers
+- export YALMIP_PATH=$YALMIP_PATH:$TRAVIS_BUILD_DIR/yalmip/modules
+- export YALMIP_PATH=$YALMIP_PATH:$TRAVIS_BUILD_DIR/yalmip/modules/parametric
+- export YALMIP_PATH=$YALMIP_PATH:$TRAVIS_BUILD_DIR/yalmip/modules/moment
+- export YALMIP_PATH=$YALMIP_PATH:$TRAVIS_BUILD_DIR/yalmip/modules/global
+- export YALMIP_PATH=$YALMIP_PATH:$TRAVIS_BUILD_DIR/yalmip/modules/sos
+- export YALMIP_PATH=$YALMIP_PATH:$TRAVIS_BUILD_DIR/yalmip/operators
+- octave-cli --no-gui --eval "add_path('$YALMIP_PATH');save_path"
+
+- git clone https://github.com/sqlp/sdpt3.git sdpt3
+- find ./sdpt3/Solver/Mexfun -type f ! -name '*.c' -delete
+- (cd sdpt3 && octave-cli --no-gui --eval install_sdpt3)
+
+- git clone https://github.com/sqlp/sedumi.git sedumi
+- find ./sedumi -type f -name '*.mexa64' -name '*.mexglx' -delete
+- find ./sedumi -type f -name '*.mexmaci64' -delete
+- find ./sedumi -type f -name '*.mexw32' -name '*.mexw64' -delete
+- (cd sedumi && octave-cli --no-gui --eval install_sedumi)
+
+- git clone https://github.com/rwl/ipopt.git ipopt
+- make -C ipopt
 
 script:
 - octave-cli --no-gui --eval ver
@@ -16,3 +41,18 @@ script:
 - octave-cli --no-gui --eval "test_mips(0,1)"
 - octave-cli --no-gui --eval "test_matpower(0,1)"
 - octave-cli --no-gui --eval "test_most(0,1)"
+
+- octave-cli --no-gui --eval "t_opf_dc_glpk;t_opf_dc_ipopt;t_opf_ipopt"
+
+- octave-cli --no-gui --eval "yalmiptest('sdpt3', 1)"
+- octave-cli --no-gui --eval "yalmiptest('sedumi', 1)"
+
+- octave-cli --no-gui --eval t_opf_sdpopf
+- octave-cli --no-gui --eval t_insolvablepf_limitQ
+- octave-cli --no-gui --eval t_insolvablepf
+#- octave-cli --no-gui --eval t_insolvablepfsos_limitQ
+- octave-cli --no-gui --eval t_insolvablepfsos
+- octave-cli --no-gui --eval t_testglobalopt
+
+- octave-cli --no-gui --eval "runsdpopf('case9', mpoption('yalmip.opts.solver', 'sdpt3', 'out.bus', 0, 'out.branch', 0))"
+- octave-cli --no-gui --eval "runsdpopf('case9', mpoption('yalmip.opts.solver', 'sedumi', 'out.bus', 0, 'out.branch', 0))"
