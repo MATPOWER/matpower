@@ -4,11 +4,20 @@ dist: xenial
 language: generic
 
 install:
+# https://github.com/travis-ci/travis-ci/issues/9080
+- sudo systemctl disable apt-daily.timer
+- sudo killall apt.systemd.daily || true
+
 - sudo apt-add-repository -y ppa:octave/stable
 - sudo apt-get update -qq
 - sudo apt-get install -qq octave liboctave-dev
+- sudo apt-get install -qq ca-certificates make pkg-config git coinor-libipopt-dev
 
 script:
+- git clone https://github.com/rwl/ipopt.git $TRAVIS_BUILD_DIR/build/ipopt
+- make -C $TRAVIS_BUILD_DIR/build/ipopt
+- octave-cli --no-gui --eval "addpath('$TRAVIS_BUILD_DIR/build/ipopt'); savepath"
+
 - octave-cli --no-gui --eval ver
 - octave-cli --no-gui --eval "install_matpower(1,1,1)";
 - octave-cli --no-gui --eval mpver
