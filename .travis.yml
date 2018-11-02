@@ -18,7 +18,8 @@ install:
 - export YALMIP_PATH=$YALMIP_PATH:$TRAVIS_BUILD_DIR/yalmip/modules/global
 - export YALMIP_PATH=$YALMIP_PATH:$TRAVIS_BUILD_DIR/yalmip/modules/sos
 - export YALMIP_PATH=$YALMIP_PATH:$TRAVIS_BUILD_DIR/yalmip/operators
-- octave-cli --no-gui --eval "add_path('$YALMIP_PATH');save_path"
+- octave-cli --no-gui --eval "addpath('$YALMIP_PATH');savepath"
+- octave-cli --no-gui --eval "path"
 
 - git clone https://github.com/sqlp/sdpt3.git sdpt3
 - find ./sdpt3/Solver/Mexfun -type f ! -name '*.c' -delete
