@@ -9,30 +9,19 @@ install:
 - sudo apt-get install -qq octave liboctave-dev git make coinor-libipopt-dev
 
 - git clone https://github.com/yalmip/YALMIP.git yalmip
-- export YALMIP_PATH=$TRAVIS_BUILD_DIR/yalmip
-- export YALMIP_PATH=$YALMIP_PATH:$TRAVIS_BUILD_DIR/yalmip/extras
-- export YALMIP_PATH=$YALMIP_PATH:$TRAVIS_BUILD_DIR/yalmip/solvers
-- export YALMIP_PATH=$YALMIP_PATH:$TRAVIS_BUILD_DIR/yalmip/modules
-- export YALMIP_PATH=$YALMIP_PATH:$TRAVIS_BUILD_DIR/yalmip/modules/parametric
-- export YALMIP_PATH=$YALMIP_PATH:$TRAVIS_BUILD_DIR/yalmip/modules/moment
-- export YALMIP_PATH=$YALMIP_PATH:$TRAVIS_BUILD_DIR/yalmip/modules/global
-- export YALMIP_PATH=$YALMIP_PATH:$TRAVIS_BUILD_DIR/yalmip/modules/sos
-- export YALMIP_PATH=$YALMIP_PATH:$TRAVIS_BUILD_DIR/yalmip/operators
-- octave-cli --no-gui --eval "addpath('$YALMIP_PATH');savepath"
+- octave-cli --no-gui --eval "addpath(genpath('$TRAVIS_BUILD_DIR/yalmip'));savepath"
 - octave-cli --no-gui --eval "path"
 
 - git clone https://github.com/sqlp/sdpt3.git sdpt3
-- find ./sdpt3/Solver/Mexfun -type f ! -name '*.c' -delete
-- (cd sdpt3 && octave-cli --no-gui --eval install_sdpt3)
+- (cd sdpt3 && octave-cli --no-gui --eval "install_sdpt3('-rebuild')")
 
 - git clone https://github.com/sqlp/sedumi.git sedumi
-- find ./sedumi -type f -name '*.mexa64' -name '*.mexglx' -delete
-- find ./sedumi -type f -name '*.mexmaci64' -delete
-- find ./sedumi -type f -name '*.mexw32' -name '*.mexw64' -delete
-- (cd sedumi && octave-cli --no-gui --eval install_sedumi)
+- (cd sedumi && octave-cli --no-gui --eval "install_sedumi('-rebuild')")
 
 - git clone https://github.com/rwl/ipopt.git ipopt
 - make -C ipopt
+- octave-cli --no-gui --eval "addpath(genpath('$TRAVIS_BUILD_DIR/ipopt'));savepath"
+- octave-cli --no-gui --eval "path"
 
 script:
 - octave-cli --no-gui --eval ver
