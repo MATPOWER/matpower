@@ -5,7 +5,6 @@ language: generic
 
 install:
 # https://github.com/travis-ci/travis-ci/issues/9080
-#- ps ax | grep apt
 - sudo systemctl disable apt-daily.timer
 - sudo killall apt.systemd.daily || true
 
@@ -21,44 +20,29 @@ script:
 - git clone https://github.com/sqlp/sedumi.git $TRAVIS_BUILD_DIR/build/sedumi
 - git clone https://github.com/rwl/ipopt.git $TRAVIS_BUILD_DIR/build/ipopt
 
-#- git clone https://github.com/MATPOWER/matpower-extras.git $TRAVIS_BUILD_DIR/extras
-- git clone https://github.com/rwl/matpower-extras.git $TRAVIS_BUILD_DIR/extras
+- git clone https://github.com/MATPOWER/matpower-extras.git $TRAVIS_BUILD_DIR/extras
 - (cd $TRAVIS_BUILD_DIR/extras && git checkout sdpopf-oct)
 
+# GNU Octave 4.2.2 does not include ismembc function.
 - printf 'function varargout = ismembc(varargin)\n  varargout = cell(nargout, 1);\n  [varargout{:}] = ismember(varargin{:});\nendfunction' >> $TRAVIS_BUILD_DIR/extras/sdp_pf/ismembc.m
 
 - export CFLAGS=-I/usr/include/openblas
 
-- (cd $TRAVIS_BUILD_DIR/build/sdpt3 && octave-cli --no-gui --eval "install_sdpt3('-rebuild')")
-- (cd $TRAVIS_BUILD_DIR/build/sedumi && octave-cli --no-gui --eval "install_sedumi('-rebuild')")
+- octave-cli --no-gui --eval "addpath(genpath('$TRAVIS_BUILD_DIR/build/yalmip', '.git', 'dev'));savepath"
+
+- (cd $TRAVIS_BUILD_DIR/build/sdpt3 && octave-cli --no-gui --eval "install_sdpt3('-rebuild');savepath")
+- (cd $TRAVIS_BUILD_DIR/build/sedumi && octave-cli --no-gui --eval "install_sedumi('-rebuild');savepath")
 - make -C $TRAVIS_BUILD_DIR/build/ipopt
 
-#- octave-cli --no-gui --eval "addpath(genpath('$TRAVIS_BUILD_DIR/build', '.git', 'o_win', 'dev'), '-end');savepath"
-#- octave-cli --no-gui --eval "path"
+- octave-cli --no-gui --eval "addpath(genpath('$TRAVIS_BUILD_DIR/build/ipopt', '.git'));savepath"
 
 
 - octave-cli --no-gui --eval ver
 - octave-cli --no-gui --eval "install_matpower(1,1,1)";
+- octave-cli --no-gui --eval path
 - octave-cli --no-gui --eval mpver
-#- octave-cli --no-gui --eval "test_mptest(0,1)"
-#- octave-cli --no-gui --eval "test_mips(0,1)"
-#- octave-cli --no-gui --eval "test_matpower(0,1)"
-#- octave-cli --no-gui --eval "test_most(0,1)"
-- octave-cli --no-gui --eval "path"
-
-
-- octave-cli --no-gui --eval "t_opf_dc_glpk;t_opf_dc_ipopt;t_opf_ipopt"
-
-- octave-cli --no-gui --eval "yalmiptest('sdpt3', 1)"
-- octave-cli --no-gui --eval "yalmiptest('sedumi', 1)"
-
-- octave-cli --no-gui --eval t_opf_sdpopf
-#- octave-cli --no-gui --eval t_insolvablepf_limitQ
-- octave-cli --no-gui --eval t_insolvablepf
-#- octave-cli --no-gui --eval t_insolvablepfsos_limitQ
-- octave-cli --no-gui --eval t_insolvablepfsos
-- octave-cli --no-gui --eval t_testglobalopt
-
-- octave-cli --no-gui --eval "runsdpopf('case9', mpoption('yalmip.opts.solver', 'sdpt3', 'out.bus', 0, 'out.branch', 0))"
-- octave-cli --no-gui --eval "runsdpopf('case9', mpoption('yalmip.opts.solver', 'sedumi', 'out.bus', 0, 'out.branch', 0))"
+- octave-cli --no-gui --eval "test_mptest(0,1)"
+- octave-cli --no-gui --eval "test_mips(0,1)"
+- octave-cli --no-gui --eval "test_matpower(0,1)"
+- octave-cli --no-gui --eval "test_most(0,1)"
 
