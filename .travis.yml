@@ -4,11 +4,6 @@ dist: xenial
 language: generic
 
 install:
-# https://github.com/travis-ci/travis-ci/issues/9080
-#- ps ax | grep apt
-- sudo systemctl disable apt-daily.timer
-- sudo killall apt.systemd.daily
-
 - sudo apt-add-repository -y ppa:octave/stable
 - sudo apt-get update -qq
 - sudo apt-get install -qq octave octave-optim liboctave-dev
