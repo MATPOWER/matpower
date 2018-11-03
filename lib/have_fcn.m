@@ -308,15 +308,27 @@ else        %% detect availability
             case 'ipopt'
                 TorF = exist('ipopt', 'file') == 3;
                 if TorF
-                    str = evalc('qps_ipopt([],[1; 1],[1 1],[2],[2],[1; 1],[1; 1],[1; 1],struct(''verbose'', 2))');
-                    pat = 'Ipopt version ([^\s,]+)';
-                    [s,e,tE,m,t] = regexp(str, pat);
-                    if ~isempty(t)
-                        vstr = t{1}{1};
-                        if vstr2num(vstr) >= 3.011 && ...
-                                ~exist('ipopt_auxdata', 'file')
+                    if have_fcn('evalc')
+                        str = evalc('qps_ipopt([],[1; 1],[1 1],[2],[2],[1; 1],[1; 1],[1; 1],struct(''verbose'', 2))');
+                        pat = 'Ipopt version ([^\s,]+)';
+                        [s,e,tE,m,t] = regexp(str, pat);
+                        if ~isempty(t)
+                            vstr = t{1}{1};
+                            if vstr2num(vstr) >= 3.011 && ...
+                                    ~exist('ipopt_auxdata', 'file')
+                                TorF = 0;
+                                warning('Improper installation of IPOPT. Version %s detected, but IPOPT_AUXDATA.M is missing.', vstr);
+                            end
+                        end
+                    else
+                        try
+%                             x = feval('qps_ipopt', [],[1; 1],[1 1],[2],[2],[1; 1],[1; 1],[1; 1],struct('verbose', 2));
+                            x = feval('qps_ipopt', [],[1; 1],[1 1],[2],[2],[1; 1],[1; 1],[1; 1],struct('verbose', 0));
+                            if ~isequal(x, [1;1])
+                                TorF = 0;
+                            end
+                        catch
                             TorF = 0;
-                            warning('Improper installation of IPOPT. Version %s detected, but IPOPT_AUXDATA.M is missing.', vstr);
                         end
                     end
                 end
@@ -497,9 +509,21 @@ else        %% detect availability
             case 'ipopt_auxdata'
                 if have_fcn('ipopt')
                     vn = have_fcn('ipopt', 'vnum');
-                    if ~isempty(vn) && vn >= 3.011
+                    if ~isempty(vn)
+                        if vn >= 3.011  %% have_fcn('ipopt') already checked
+                            TorF = 1;   %% for existence of 'ipopt_auxdata'
+                        else
+                            TorF = 0;   %% don't use it, even if it exists
+                        end
+                    %% no version info, decide based on presence
+                    %% or absence of 'ipopt_auxdata'
+                    elseif exist('ipopt_auxdata', 'file')
                         TorF = 1;
+                    else
+                        TorF = 0;
                     end
+                else
+                    TorF = 0;
                 end
             case 'lu_vec'       %% lu(..., 'vector') syntax supported?
                 if have_fcn('matlab') && have_fcn('matlab', 'vnum') < 7.003
