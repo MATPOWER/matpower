@@ -13,10 +13,14 @@ install:
 - git clone https://github.com/sqlp/sdpt3.git $TRAVIS_BUILD_DIR/build/sdpt3
 - git clone https://github.com/sqlp/sedumi.git $TRAVIS_BUILD_DIR/build/sedumi
 - git clone https://github.com/rwl/ipopt.git $TRAVIS_BUILD_DIR/build/ipopt
-- git clone https://github.com/MATPOWER/matpower-extras.git $TRAVIS_BUILD_DIR/build/extras
+#- git clone https://github.com/MATPOWER/matpower-extras.git $TRAVIS_BUILD_DIR/build/extras
+- git clone https://github.com/rwl/matpower-extras.git $TRAVIS_BUILD_DIR/build/extras
+- (cd $TRAVIS_BUILD_DIR/build/extras && git checkout sdpopf-oct)
 
-- (cd sdpt3 && octave-cli --no-gui --eval "install_sdpt3('-rebuild')")
-- (cd sedumi && octave-cli --no-gui --eval "install_sedumi('-rebuild')")
+- printf 'function varargout = ismembc(varargin)\n  varargout = cell(nargout, 1);\n  [varargout{:}] = ismember(varargin{:});\nendfunction' >> $TRAVIS_BUILD_DIR/build/extras/sdp_pf/ismembc.m
+
+- (cd $TRAVIS_BUILD_DIR/build/sdpt3 && octave-cli --no-gui --eval "install_sdpt3('-rebuild')")
+- (cd $TRAVIS_BUILD_DIR/build/sedumi && octave-cli --no-gui --eval "install_sedumi('-rebuild')")
 - make -C $TRAVIS_BUILD_DIR/build/ipopt
 
 - octave-cli --no-gui --eval "addpath(genpath('$TRAVIS_BUILD_DIR/build', '.git', 'o_win', 'dev'), '-end');savepath"
