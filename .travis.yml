@@ -6,8 +6,11 @@ language: generic
 install:
 - sudo apt-add-repository -y ppa:octave/stable
 - sudo apt-get update -qq
-- sudo apt-get install -qq octave liboctave-dev
-- sudo apt-get install -qq ca-certificates make pkg-config git make coinor-libipopt-dev
+- sudo apt-get install -qq octave octave-optim liboctave-dev
+- sudo apt-get install -qq ca-certificates make pkg-config git make
+- sudo apt-get install -qq libopenblas-dev coinor-libipopt-dev
+
+- export CFLAGS=-I/usr/include/openblas
 
 - git clone https://github.com/yalmip/YALMIP.git $TRAVIS_BUILD_DIR/build/yalmip
 - git clone https://github.com/sqlp/sdpt3.git $TRAVIS_BUILD_DIR/build/sdpt3
