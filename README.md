@@ -101,6 +101,29 @@ was simplified with an install script following version 6.0.
 
             test_matpower
 
+#### Docker container image
+
+MATPOWER is now available to run in a [Docker][31] container. [Install][32]
+Docker and the image can be downloaded from [Docker Hub][33] and run
+with a single command:
+
+    docker run -it matpower/matpower
+
+This will start an Octave interpreter with latest development version of
+MATPOWER installed. To run a specific version a [tag][34] may be specified:
+
+    docker run -it matpower/matpower:7.0b1
+
+The default working directory is `/workspace`. A host directory can be
+mounted as a volume and the content accessed from within the container:
+
+    docker run -it -v `pwd`:/workspace matpower/matpower --eval "myscript()"
+
+The image is based on `debian:stable` and may be used in a [Dockerfile][35]
+to build other container images:
+
+    FROM matpower/matpower:latest
+
 
 Running MATPOWER
 ----------------
@@ -343,5 +366,10 @@ MATPOWER is distributed as open-source under the [3-clause BSD license][30].
 [28]: http://www.pserc.cornell.edu/matpower/mailinglists.html
 [29]: https://github.com/MATPOWER/matpower/issues
 [30]: LICENSE
+[31]: https://docs.docker.com/engine/docker-overview/
+[32]: https://docs.docker.com/install/
+[33]: https://hub.docker.com/r/matpower/matpower/
+[34]: https://hub.docker.com/r/matpower/matpower/tags/
+[35]: https://docs.docker.com/engine/reference/builder/
 
 [logo]: docs/src/images/MATPOWER-md.png
