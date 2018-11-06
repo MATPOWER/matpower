@@ -11,35 +11,15 @@ install:
 - sudo apt-add-repository -y ppa:octave/stable
 - sudo apt-get update -qq
 - sudo apt-get install -qq octave liboctave-dev
-- sudo apt-get install -qq ca-certificates make pkg-config git make
-- sudo apt-get install -qq libopenblas-dev coinor-libipopt-dev
+- sudo apt-get install -qq ca-certificates make pkg-config git coinor-libipopt-dev
 
 script:
-- git clone https://github.com/yalmip/YALMIP.git $TRAVIS_BUILD_DIR/build/yalmip
-- git clone https://github.com/sqlp/sdpt3.git $TRAVIS_BUILD_DIR/build/sdpt3
-- git clone https://github.com/sqlp/sedumi.git $TRAVIS_BUILD_DIR/build/sedumi
 - git clone https://github.com/rwl/ipopt.git $TRAVIS_BUILD_DIR/build/ipopt
-
-- git clone https://github.com/MATPOWER/matpower-extras.git $TRAVIS_BUILD_DIR/extras
-- (cd $TRAVIS_BUILD_DIR/extras && git checkout sdpopf-oct)
-
-# GNU Octave 4.2.2 does not include ismembc function.
-- printf 'function varargout = ismembc(varargin)\n  varargout = cell(nargout, 1);\n  [varargout{:}] = ismember(varargin{:});\nendfunction' >> $TRAVIS_BUILD_DIR/extras/sdp_pf/ismembc.m
-
-- export CFLAGS=-I/usr/include/openblas
-
-- octave-cli --no-gui --eval "addpath(genpath('$TRAVIS_BUILD_DIR/build/yalmip', '.git', 'dev'));savepath"
-
-- (cd $TRAVIS_BUILD_DIR/build/sdpt3 && octave-cli --no-gui --eval "install_sdpt3('-rebuild');savepath")
-- (cd $TRAVIS_BUILD_DIR/build/sedumi && octave-cli --no-gui --eval "install_sedumi('-rebuild');savepath")
 - make -C $TRAVIS_BUILD_DIR/build/ipopt
-
 - octave-cli --no-gui --eval "addpath(genpath('$TRAVIS_BUILD_DIR/build/ipopt', '.git'));savepath"
-
 
 - octave-cli --no-gui --eval ver
 - octave-cli --no-gui --eval "install_matpower(1,1,1)";
-- octave-cli --no-gui --eval path
 - octave-cli --no-gui --eval mpver
 - octave-cli --no-gui --eval "test_mptest(0,1)"
 - octave-cli --no-gui --eval "test_mips(0,1)"
