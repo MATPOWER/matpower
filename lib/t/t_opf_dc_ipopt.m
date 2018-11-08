@@ -1,4 +1,4 @@
-function t_opf_dc_mips(quiet)
+function t_opf_dc_ipopt(quiet)
 %T_OPF_DC_MIPS  Tests for DC optimal power flow using MIPS solver.
 
 %   MATPOWER
