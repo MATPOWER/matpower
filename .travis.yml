@@ -3,25 +3,45 @@ dist: xenial
 
 language: generic
 
-install:
-# https://github.com/travis-ci/travis-ci/issues/9080
-- sudo systemctl disable apt-daily.timer
-- sudo killall apt.systemd.daily || true
+addons:
+  apt:
+    sources:
+    - sourceline: 'ppa:octave/stable'   ## without this, it's octave 4.0.0
+    packages:
+    - coinor-libipopt-dev
+    - liboctave-dev
+    - octave        # octave 4.2.2
+    update: true
 
-- sudo apt-add-repository -y ppa:octave/stable
-- sudo apt-get update -qq
-- sudo apt-get install -qq octave liboctave-dev
-- sudo apt-get install -qq ca-certificates make pkg-config git coinor-libipopt-dev
+# install:
+# # https://github.com/travis-ci/travis-ci/issues/9080
+# - sudo systemctl disable apt-daily.timer
+# - sudo killall apt.systemd.daily || true
+# 
+# - sudo apt-add-repository -y ppa:octave/stable
+# - sudo apt-get update -qq
+# - sudo apt-get install -qq coinor-libipopt-dev octave liboctave-dev
+
+env:
+  global:
+  - IPOPT_VER=3.11.9
 
 script:
-- git clone https://github.com/rwl/ipopt.git $TRAVIS_BUILD_DIR/build/ipopt
-- make -C $TRAVIS_BUILD_DIR/build/ipopt
-- octave-cli --no-gui --eval "addpath('$TRAVIS_BUILD_DIR/build/ipopt'); savepath"
+# build and install IPOPT MEX file
+- mkdir $TRAVIS_BUILD_DIR/build
+- curl -SL https://www.coin-or.org/download/source/Ipopt/Ipopt-${IPOPT_VER}.tgz | tar -xzC $TRAVIS_BUILD_DIR/build
+- mv $TRAVIS_BUILD_DIR/build/Ipopt-${IPOPT_VER}/Ipopt/contrib/MatlabInterface $TRAVIS_BUILD_DIR/build/ipopt
+- mv $TRAVIS_BUILD_DIR/.travis/Makefile $TRAVIS_BUILD_DIR/build/ipopt/src
+- make -C $TRAVIS_BUILD_DIR/build/ipopt/src
+- mv $TRAVIS_BUILD_DIR/build/ipopt/src/*.mex $TRAVIS_BUILD_DIR/build/ipopt/
 
 - octave-cli --no-gui --eval ver
-- octave-cli --no-gui --eval "install_matpower(1,1,1)";
+- octave-cli --no-gui --eval "addpath('$TRAVIS_BUILD_DIR/build/ipopt'); savepath"
+- octave-cli --no-gui --eval "install_matpower(1,1,1)"
 - octave-cli --no-gui --eval mpver
 - octave-cli --no-gui --eval "test_mptest(0,1)"
 - octave-cli --no-gui --eval "test_mips(0,1)"
 - octave-cli --no-gui --eval "test_matpower(0,1)"
 - octave-cli --no-gui --eval "test_most(0,1)"
+# print IPOPT version number
+- octave-cli --no-gui --eval "feval('qps_ipopt', [],[1; 1],[1 1],[2],[2],[1; 1],[1; 1],[1; 1],struct('verbose', 2));"
