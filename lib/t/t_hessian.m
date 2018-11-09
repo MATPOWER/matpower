@@ -276,15 +276,15 @@ for vcart = 0:1
         num_Gt22(:, i) = (dAt_dV2_2p - dAt_dV2).' * lam / pert;
     end
 
-    t_is(full(Gf11), num_Gf11, 3, sprintf('%s - Gf%s%s', coord, vv{1}, t));
-    t_is(full(Gf12), num_Gf12, 3, sprintf('%s - Gf%s%s', coord, vv{2}, t));
-    t_is(full(Gf21), num_Gf21, 3, sprintf('%s - Gf%s%s', coord, vv{3}, t));
-    t_is(full(Gf22), num_Gf22, 3, sprintf('%s - Gf%s%s', coord, vv{4}, t));
+    t_is(full(Gf11), num_Gf11, 2.5, sprintf('%s - Gf%s%s', coord, vv{1}, t));
+    t_is(full(Gf12), num_Gf12, 2.5, sprintf('%s - Gf%s%s', coord, vv{2}, t));
+    t_is(full(Gf21), num_Gf21, 2.5, sprintf('%s - Gf%s%s', coord, vv{3}, t));
+    t_is(full(Gf22), num_Gf22, 2.5, sprintf('%s - Gf%s%s', coord, vv{4}, t));
 
-    t_is(full(Gt11), num_Gt11, 3, sprintf('%s - Gt%s%s', coord, vv{1}, t));
-    t_is(full(Gt12), num_Gt12, 3, sprintf('%s - Gt%s%s', coord, vv{2}, t));
-    t_is(full(Gt21), num_Gt21, 3, sprintf('%s - Gt%s%s', coord, vv{3}, t));
-    t_is(full(Gt22), num_Gt22, 3, sprintf('%s - Gt%s%s', coord, vv{4}, t));
+    t_is(full(Gt11), num_Gt11, 2.5, sprintf('%s - Gt%s%s', coord, vv{1}, t));
+    t_is(full(Gt12), num_Gt12, 2.5, sprintf('%s - Gt%s%s', coord, vv{2}, t));
+    t_is(full(Gt21), num_Gt21, 2.5, sprintf('%s - Gt%s%s', coord, vv{3}, t));
+    t_is(full(Gt22), num_Gt22, 2.5, sprintf('%s - Gt%s%s', coord, vv{4}, t));
 
     %%-----  check d2Abr_dV2 code  -----
     t = ' - d2Abr_dV2 (squared apparent power flows)';
@@ -334,15 +334,15 @@ for vcart = 0:1
         num_Gt22(:, i) = (dAt_dV2_2p - dAt_dV2).' * lam / pert;
     end
 
-    t_is(full(Gf11), num_Gf11, 2, sprintf('%s - Gf%s%s', coord, vv{1}, t));
-    t_is(full(Gf12), num_Gf12, 2, sprintf('%s - Gf%s%s', coord, vv{2}, t));
-    t_is(full(Gf21), num_Gf21, 2, sprintf('%s - Gf%s%s', coord, vv{3}, t));
-    t_is(full(Gf22), num_Gf22, 2, sprintf('%s - Gf%s%s', coord, vv{4}, t));
+    t_is(full(Gf11), num_Gf11, 2.5, sprintf('%s - Gf%s%s', coord, vv{1}, t));
+    t_is(full(Gf12), num_Gf12, 2.5, sprintf('%s - Gf%s%s', coord, vv{2}, t));
+    t_is(full(Gf21), num_Gf21, 2.5, sprintf('%s - Gf%s%s', coord, vv{3}, t));
+    t_is(full(Gf22), num_Gf22, 2.5, sprintf('%s - Gf%s%s', coord, vv{4}, t));
 
-    t_is(full(Gt11), num_Gt11, 2, sprintf('%s - Gt%s%s', coord, vv{1}, t));
-    t_is(full(Gt12), num_Gt12, 2, sprintf('%s - Gt%s%s', coord, vv{2}, t));
-    t_is(full(Gt21), num_Gt21, 2, sprintf('%s - Gt%s%s', coord, vv{3}, t));
-    t_is(full(Gt22), num_Gt22, 2, sprintf('%s - Gt%s%s', coord, vv{4}, t));
+    t_is(full(Gt11), num_Gt11, 2.5, sprintf('%s - Gt%s%s', coord, vv{1}, t));
+    t_is(full(Gt12), num_Gt12, 2.5, sprintf('%s - Gt%s%s', coord, vv{2}, t));
+    t_is(full(Gt21), num_Gt21, 2.5, sprintf('%s - Gt%s%s', coord, vv{3}, t));
+    t_is(full(Gt22), num_Gt22, 2.5, sprintf('%s - Gt%s%s', coord, vv{4}, t));
 
     %%-----  check d2Abr_dV2 code  -----
     t = ' - d2Abr_dV2 (squared real power flows)';
@@ -392,15 +392,15 @@ for vcart = 0:1
         num_Gt22(:, i) = (dAt_dV2_2p - dAt_dV2).' * lam / pert;
     end
 
-    t_is(full(Gf11), num_Gf11, 2, sprintf('%s - Gf%s%s', coord, vv{1}, t));
-    t_is(full(Gf12), num_Gf12, 2, sprintf('%s - Gf%s%s', coord, vv{2}, t));
-    t_is(full(Gf21), num_Gf21, 2, sprintf('%s - Gf%s%s', coord, vv{3}, t));
-    t_is(full(Gf22), num_Gf22, 2, sprintf('%s - Gf%s%s', coord, vv{4}, t));
+    t_is(full(Gf11), num_Gf11, 2.5, sprintf('%s - Gf%s%s', coord, vv{1}, t));
+    t_is(full(Gf12), num_Gf12, 2.5, sprintf('%s - Gf%s%s', coord, vv{2}, t));
+    t_is(full(Gf21), num_Gf21, 2.5, sprintf('%s - Gf%s%s', coord, vv{3}, t));
+    t_is(full(Gf22), num_Gf22, 2.5, sprintf('%s - Gf%s%s', coord, vv{4}, t));
 
-    t_is(full(Gt11), num_Gt11, 2, sprintf('%s - Gt%s%s', coord, vv{1}, t));
-    t_is(full(Gt12), num_Gt12, 2, sprintf('%s - Gt%s%s', coord, vv{2}, t));
-    t_is(full(Gt21), num_Gt21, 2, sprintf('%s - Gt%s%s', coord, vv{3}, t));
-    t_is(full(Gt22), num_Gt22, 2, sprintf('%s - Gt%s%s', coord, vv{4}, t));
+    t_is(full(Gt11), num_Gt11, 2.5, sprintf('%s - Gt%s%s', coord, vv{1}, t));
+    t_is(full(Gt12), num_Gt12, 2.5, sprintf('%s - Gt%s%s', coord, vv{2}, t));
+    t_is(full(Gt21), num_Gt21, 2.5, sprintf('%s - Gt%s%s', coord, vv{3}, t));
+    t_is(full(Gt22), num_Gt22, 2.5, sprintf('%s - Gt%s%s', coord, vv{4}, t));
 end
 
 t_end;
