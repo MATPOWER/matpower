@@ -176,6 +176,9 @@ previous versions, see Appendix H of the [MATPOWER User's Manual][2].
   `savecase`.
 - Add support for `bus_name` field of MATPOWER case struct to
   `extract_islands`, `ext2int` and `int2ext`.
+- Add support for IPOPT solver under Octave, including in the Travis-CI
+  testing.
+  *Thanks to Richard Lincoln.*
 - Deprecated functions:
     - `d2AIbr_dV2()` -- use `dA2br_dV2()` instead.
     - `d2ASbr_dV2()` -- use `dA2br_dV2()` instead.

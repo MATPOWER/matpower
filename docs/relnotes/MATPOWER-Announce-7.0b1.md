@@ -32,6 +32,7 @@ Appendix H of the [MATPOWER User's Manual][3].
   - MOST 1.0.1.
   - MP-Test 7.0b1.
 - Continuous integration testing via GitHub and Travis-CI integration.
+- Support for IPOPT solver under Octave.
 - Support in core optimization model for:
   - general nonlinear constraints
   - general nonlinear costs

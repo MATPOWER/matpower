@@ -8004,6 +8004,7 @@ Some of these cases also include contingency tables and/or hourly load scenarios
 \item Add \code{genfuels} and \code{gentypes} to establish standard set of values for optional \code{mpc.genfuel} and \code{mpc.gentype} fields for generator fuel type and generator unit type, respectively.
 \item Add support for \code{gentype} and \code{genfuel} fields of \matpower{} case struct in \code{extract\_islands}, \code{ext2int}, \code{int2ext}, \code{load2disp}  and \code{savecase}.
 \item Add support for \code{bus\_name} field of \matpower{} case struct to \code{extract\_islands}, \code{ext2int} and \code{int2ext}.
+\item Add support for \ipopt{} solver under Octave, including in the Travis-CI testing. \emph{Thanks to Richard Lincoln.}
 \item Deprecated functions:
     \begin{itemize}
     \item \code{d2AIbr\_dV2()} -- use \code{dA2br\_dV2()} instead.

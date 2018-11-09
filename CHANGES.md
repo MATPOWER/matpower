@@ -9,6 +9,15 @@ For change history for [MIPS][2], see [mips/CHANGES.md](mips/CHANGES.md).
 For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 
 
+Since last release
+------------------
+
+#### 11/9/18
+  - Add support for IPOPT solver under Octave, including in the
+    Travis-CI testing.
+    *Thanks to Richard Lincoln.*
+
+
 Version 7.0b1 - *Oct 31, 2018*
 ------------------------------
 
