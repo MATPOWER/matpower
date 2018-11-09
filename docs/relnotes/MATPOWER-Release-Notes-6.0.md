@@ -138,6 +138,8 @@ previous versions, see Appendix H of the [MATPOWER User's Manual][2].
   - Removed `cpf.user_callback_args` option and modified
     `cpf.user_callback`.
   - Changed name of `cpf.error_tol` option to `cpf.adapt_step_tol`.
+  - Changed the `Sbus` argument in `newtonpf()` from a vector to a
+    function handle to a function that returns a vector.
 
 
 [1]: https://github.com/MATPOWER/matpower/blob/master/CHANGES.md

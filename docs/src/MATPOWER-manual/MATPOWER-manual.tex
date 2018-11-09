@@ -7864,6 +7864,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.0.pdf}{\m
 \item Removed \code{fairmax()} from the public interface by moving it inside \code{uopf()}, the only place it was used.
 \item Removed \codeq{cpf.user\_callback\_args} option and modified \codeq{cpf.user\_callback}.
 \item Changed name of \codeq{cpf.error\_tol} option to \codeq{cpf.adapt\_step\_tol}.
+\item Changed the \code{Sbus} argument in \code{newtonpf()} from a vector to a function handle to a function that returns a vector.
 \end{itemize}
 
 

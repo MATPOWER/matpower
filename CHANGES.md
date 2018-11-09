@@ -731,6 +731,9 @@ Version 6.0b1 - *Jun 1, 2016*
     system-wide basis using the experimental options
     `exp.sys_wide_zip_loads.pw` and `exp.sys_wide_zip_loads.qw`.
     Tests in `t/t_vdep_load()`.
+  - **INCOMPATIBLE CHANGE:** Changed the `Sbus` argument in `newtonpf()`
+    from a vector to a function handle to a function that returns a
+    vector.
   - Added `bus` and `area` as possible values for `load_zone` argument
     to `total_load()`, which is now used to compute voltage dependent
     load values.
