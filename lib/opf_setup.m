@@ -209,9 +209,13 @@ if ~isempty(ip2) || ~isempty(ip1) || ~isempty(ip0)
     else
         Qpg = [];   %% no quadratic terms
     end
-    cpg(ip1) = cpg(ip1) + pcost(ip1, COST) * baseMVA;
-    kpg(ip1) = kpg(ip1) + pcost(ip1, COST+1);
-    kpg(ip0) = kpg(ip0) + pcost(ip0, COST);
+    if ~isempty(ip1)
+        cpg(ip1) = cpg(ip1) + pcost(ip1, COST) * baseMVA;
+        kpg(ip1) = kpg(ip1) + pcost(ip1, COST+1);
+    end
+    if ~isempty(ip0)
+        kpg(ip0) = kpg(ip0) + pcost(ip0, COST);
+    end
 end
 if ~isempty(qcost)
     iq0 = find(qcost(:, MODEL) == POLYNOMIAL & qcost(:, NCOST) == 1);   %% constant
@@ -229,9 +233,13 @@ if ~isempty(qcost)
         else
             Qqg = [];   %% no quadratic terms
         end
-        cqg(iq1) = cqg(iq1) + qcost(iq1, COST) * baseMVA;
-        kqg(iq1) = kqg(iq1) + qcost(iq1, COST+1);
-        kqg(iq0) = kqg(iq0) + qcost(iq0, COST);
+        if ~isempty(iq1)
+            cqg(iq1) = cqg(iq1) + qcost(iq1, COST) * baseMVA;
+            kqg(iq1) = kqg(iq1) + qcost(iq1, COST+1);
+        end
+        if ~isempty(iq0)
+            kqg(iq0) = kqg(iq0) + qcost(iq0, COST);
+        end
     end
 end
 
