@@ -13,7 +13,7 @@ Since last release
 ------------------
 
 #### 11/26/18
-  - Fix bug #53 where certain OPF cases (e.g. `case33bw`) resulted in
+  - Fix [bug #53][13] where certain OPF cases (e.g. `case33bw`) resulted in
     a fatal error under versions of MATLAB prior to R2016b (v9.1).
 
 #### 11/9/18
@@ -108,7 +108,7 @@ Version 7.0b1 - *Oct 31, 2018*
 #### 5/10/18
   - Fix bug in order of lambdas used in `opf_branch_ang_hess()` and
     `opf_vlim_hess()` that resulted in wrong sign in Hessian terms.
-  - Fix bug #36 where Hessian structure for Ipopt and Knitro were
+  - Fix [bug #36][12] where Hessian structure for Ipopt and Knitro were
     incorrect. Re-enabled skipped tests that were previously failing.
 
 #### 4/19/18
@@ -167,14 +167,14 @@ Version 7.0b1 - *Oct 31, 2018*
        model)
 
 #### 12/6/17
-  - Fix bug #21 where a continuation power flow that failed the first
+  - Fix [bug #21][9] where a continuation power flow that failed the first
     corrector step would produce a fatal error.
     *Thanks to Elis Nycander.*
-  - Fix bug #23 where the continuation power flow could switch
+  - Fix [bug #23][10] where the continuation power flow could switch
     directions unexpectedly when the operating point switched from
     stable to unstable manifold or vice-versa after hitting a limit.
     *Thanks to Elis Nycander and Shrirang Abhyankar.*
-  - Fix bug #26 where, in a continuation power flow, a reactive limit
+  - Fix [bug #26][11] where, in a continuation power flow, a reactive limit
     at a bus could be detected in error if multiple generators at the bus
     had reactive ranges of very different sizes.
     *Thanks to Elis Nycander and Shrirang Abhyankar.*
@@ -361,7 +361,7 @@ Version 7.0b1 - *Oct 31, 2018*
   - Add `genfuels` and `gentypes` to establish standard set of values for
     optional `mpc.genfuel` and `mpc.gentype` fields for generator fuel
     type and generator unit type, respectively.
-  - Fix bug #13 where setting all buses to type `NONE` (isolated) resulted
+  - Fix [bug #13][8] where setting all buses to type `NONE` (isolated) resulted
     in a fatal error for `ext2int`, `runpf`, `runcpf` and `runopf`.
     *Thanks to SNPerkin.*
 
@@ -375,13 +375,13 @@ Version 7.0b1 - *Oct 31, 2018*
     - `case_ACTIVSg2000` (2000-bus Texas synthetic model)
 
 #### 5/11/17
-  - Fix bug #12 where the CPF could terminate early when requesting
+  - Fix [bug #12][7] where the CPF could terminate early when requesting
     trace of the full curve with P or Q limits enforced, if a limit
     becomes binding at the base case.
     *Thanks to Felix.*
 
 #### 5/3/17
-  - Fix #11 fatal error encountered when running `test_matpower` with
+  - Fix [#11][6] fatal error encountered when running `test_matpower` with
     SDP_PF and YALMIP installed, but no SDP solver. Now checks for
     availability of SeDuMi, SDP3 or MOSEK before attempting to run
     SDP_PF tests that require solving an SDP.
@@ -393,8 +393,8 @@ Version 7.0b1 - *Oct 31, 2018*
     setpoint even for PQ buses.
 
 #### 4/7/17
-  - Fix fatal bug #8 when calling `runcpf` with base and target cases with
-    identical load and generation.
+  - Fix fatal [bug #8][5] when calling `runcpf` with base and target cases
+    with identical load and generation.
     *Thanks to Felix.*
 
 #### 3/17/17
@@ -448,7 +448,7 @@ Version 7.0b1 - *Oct 31, 2018*
   - Add line for curtailed load to `case_info()` output.
 
 #### 1/5/17
-  - Fix bug #4 where some Q limits were not being respected by CPF
+  - Fix [bug #4][4] where some Q limits were not being respected by CPF
     when buses were converted to PQ by initial power flow run.
     *Thanks to Shruti Rao.*
 
@@ -2771,3 +2771,13 @@ First Public Release – *Jun 25, 1997*
 [1]: https://github.com/MATPOWER/mptest
 [2]: https://github.com/MATPOWER/mips
 [3]: https://github.com/MATPOWER/most
+[4]: https://github.com/MATPOWER/matpower/issues/4
+[5]: https://github.com/MATPOWER/matpower/issues/8
+[6]: https://github.com/MATPOWER/matpower/issues/11
+[7]: https://github.com/MATPOWER/matpower/issues/12
+[8]: https://github.com/MATPOWER/matpower/issues/13
+[9]: https://github.com/MATPOWER/matpower/issues/21
+[10]: https://github.com/MATPOWER/matpower/issues/23
+[11]: https://github.com/MATPOWER/matpower/issues/26
+[12]: https://github.com/MATPOWER/matpower/issues/36
+[13]: https://github.com/MATPOWER/matpower/issues/53
