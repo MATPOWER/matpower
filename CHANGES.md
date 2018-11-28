@@ -12,6 +12,10 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 11/29/18
+  - Improve performance of `makeYbus()` based on [issue #52][14].
+  *Thanks to Binbin Chen.*
+
 #### 11/26/18
   - Fix [bug #53][13] where certain OPF cases (e.g. `case33bw`) resulted in
     a fatal error under versions of MATLAB prior to R2016b (v9.1).
@@ -2781,3 +2785,4 @@ First Public Release – *Jun 25, 1997*
 [11]: https://github.com/MATPOWER/matpower/issues/26
 [12]: https://github.com/MATPOWER/matpower/issues/36
 [13]: https://github.com/MATPOWER/matpower/issues/53
+[14]: https://github.com/MATPOWER/matpower/issues/52

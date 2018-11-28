@@ -70,20 +70,32 @@ Ytf = - Ys ./ tap;
 %% i.e. Ysh = Psh + j Qsh, so ...
 Ysh = (bus(:, GS) + 1j * bus(:, BS)) / baseMVA; %% vector of shunt admittances
 
-%% build connection matrices
+%% bus indices
 f = branch(:, F_BUS);                           %% list of "from" buses
 t = branch(:, T_BUS);                           %% list of "to" buses
-Cf = sparse(1:nl, f, ones(nl, 1), nl, nb);      %% connection matrix for line & from buses
-Ct = sparse(1:nl, t, ones(nl, 1), nl, nb);      %% connection matrix for line & to buses
 
-%% build Yf and Yt such that Yf * V is the vector of complex branch currents injected
-%% at each branch's "from" bus, and Yt is the same for the "to" bus end
-i = [1:nl; 1:nl]';                              %% double set of row indices
-Yf = sparse(i, [f; t], [Yff; Yft], nl, nb);
-Yt = sparse(i, [f; t], [Ytf; Ytt], nl, nb);
-% Yf = spdiags(Yff, 0, nl, nl) * Cf + spdiags(Yft, 0, nl, nl) * Ct;
-% Yt = spdiags(Ytf, 0, nl, nl) * Cf + spdiags(Ytt, 0, nl, nl) * Ct;
+%% for best performance, choose method based on MATLAB vs Octave and size
+if nb < 300 || have_fcn('octave')   %% small case OR running on Octave
+    %% build Yf and Yt such that Yf * V is the vector of complex branch currents injected
+    %% at each branch's "from" bus, and Yt is the same for the "to" bus end
+    i = [1:nl 1:nl]';                           %% double set of row indices
+    Yf = sparse(i, [f; t], [Yff; Yft], nl, nb);
+    Yt = sparse(i, [f; t], [Ytf; Ytt], nl, nb);
 
-%% build Ybus
-Ybus = Cf' * Yf + Ct' * Yt + ...                %% branch admittances
-        sparse(1:nb, 1:nb, Ysh, nb, nb);        %% shunt admittance
+    %% build Ybus
+    Ybus = sparse([f;f;t;t], [f;t;f;t], [Yff;Yft;Ytf;Ytt], nb, nb) + ... %% branch admittances
+            sparse(1:nb, 1:nb, Ysh, nb, nb);        %% shunt admittance
+else                                %% large case running on MATLAB
+    %% build connection matrices
+    Cf = sparse(1:nl, f, ones(nl, 1), nl, nb);      %% connection matrix for line & from buses
+    Ct = sparse(1:nl, t, ones(nl, 1), nl, nb);      %% connection matrix for line & to buses
+
+    %% build Yf and Yt such that Yf * V is the vector of complex branch currents injected
+    %% at each branch's "from" bus, and Yt is the same for the "to" bus end
+    Yf = sparse(1:nl, 1:nl, Yff, nl, nl) * Cf + sparse(1:nl, 1:nl, Yft, nl, nl) * Ct;
+    Yt = sparse(1:nl, 1:nl, Ytf, nl, nl) * Cf + sparse(1:nl, 1:nl, Ytt, nl, nl) * Ct;
+
+    %% build Ybus
+    Ybus = Cf' * Yf + Ct' * Yt + ...            %% branch admittances
+            sparse(1:nb, 1:nb, Ysh, nb, nb);    %% shunt admittance
+end

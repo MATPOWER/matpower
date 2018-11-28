@@ -161,6 +161,7 @@ previous versions, see Appendix H of the [MATPOWER User's Manual][2].
   decomposition with AMD reordering and the 3 output argument form of
   `lu` (to select the Gilbert-Peierls algorithm), resulting in up to a
   2x speedup in MATLAB, 1.1x in Octave. *Thanks to Jose Luis Marín.*
+- Improve performance of `makeYbus()`. *Thanks to Binbin Chen.*
 - Support plotting of multiple nose curves in CPF by allowing option
   `cpf.plot.bus` to take on vector values.
 - Add line for curtailed load to `case_info()` output.

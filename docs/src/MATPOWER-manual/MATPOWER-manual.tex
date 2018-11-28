@@ -7844,11 +7844,11 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.0.pdf}{\m
 
 \subsubsection*{Bugs Fixed}
 \begin{itemize}
-\item Fixed bug in \code{toggle\_dclines()} that resulted in fatal error when used with OPF with reactive power costs. Thanks to Irina Boiarchuk.
-\item Fixed fatal bug in \code{update\_mupq()} affecting cases where \code{QMIN} is greater than or equal to \code{QC1MIN} and \code{QC2MIN} (or \code{QMAX} is less than or equal to \code{QC1MAX} and \code{QC2MAX}) for all generators. Thanks Jose Miguel.
+\item Fixed bug in \code{toggle\_dclines()} that resulted in fatal error when used with OPF with reactive power costs. \emph{Thanks to Irina Boiarchuk.}
+\item Fixed fatal bug in \code{update\_mupq()} affecting cases where \code{QMIN} is greater than or equal to \code{QC1MIN} and \code{QC2MIN} (or \code{QMAX} is less than or equal to \code{QC1MAX} and \code{QC2MAX}) for all generators. \emph{Thanks Jose Miguel.}
 \item Copying a field containing a struct to a non-struct field with \code{nested\_struct\_copy()} now overwrites rather than causing a fatal error.
-\item Fixed a bug in \code{psse\_convert\_xfmr()} where conversion of data for transformers with CZ=3 was done incorrectly. Thanks to Jose Marin and Yujia Zhu.
-\item Fixed a fatal bug in \code{psse\_convert\_xfmr()} affecting transformers with CW and/or CZ equal to 1. Thanks to Matthias Resch.
+\item Fixed a bug in \code{psse\_convert\_xfmr()} where conversion of data for transformers with CZ=3 was done incorrectly. \emph{Thanks to Jose Luis Mar\'in and Yujia Zhu.}
+\item Fixed a fatal bug in \code{psse\_convert\_xfmr()} affecting transformers with CW and/or CZ equal to 1. \emph{Thanks to Matthias Resch.}
 \item Fixed a crash in \code{have\_fcn()} caused by changes in OPTI Toolbox v2.15 (or possibly v2.12)
 \item Commented out isolated bus 10287 in \code{case3375wp.m}.
 \item Added code to DC OPF to return \code{success = 0} for cases where the matrix is singular (e.g. islanded system without slack).
@@ -7999,6 +7999,7 @@ Some of these cases also include contingency tables and/or hourly load scenarios
 \item Refactor OPF code to take advantage of new \code{opt\_model} capabilities for nonlinear constraints and quadratic and nonlinear costs.
 \item Derivative functions now support cartesian coordinates for voltage in addition to polar coordinates.
 \item In the Newton power flow, for larger systems use explicit LU decomposition with AMD reordering and the 3 output argument form of \code{lu} (to select the Gilbert-Peierls algorithm), resulting in up to a 2x speedup in \matlab{}, 1.1x in Octave. \emph{Thanks to Jose Luis Mar\'in.}
+\item Improve performance of \code{makeYbus()}. \emph{Thanks to Binbin Chen.}
 \item Support plotting of multiple nose curves in CPF by allowing option \code{cpf.plot.bus} to take on vector values.
 \item Add line for curtailed load to \code{case\_info()} output.
 \item Change default implementation of active power line flow constraints (\code{opf.flow\_lim = }\codeq{P}) to use flow directly, rather than square of flow, which is now a separate option, namely \code{opf.flow\_lim = }\codeq{2}. \emph{Thanks to Nico Meyer-Huebner}.
