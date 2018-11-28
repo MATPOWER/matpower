@@ -228,23 +228,23 @@ Publications and Tech Notes
     DOI: [10.1109/TSTE.2018.2865454][19].
 
 6.  R. D. Zimmerman, ["Uniform Price Auctions and Optimal
-    Power Flow"][20], *MATPOWER Technical Note 1*, February 2010.  
+    Power Flow,"][20] *MATPOWER Technical Note 1*, February 2010.  
     Available: http://www.pserc.cornell.edu/matpower/TN1-OPF-Auctions.pdf
 
 7.  R. D. Zimmerman, ["AC Power Flows, Generalized OPF Costs
-    and their Derivatives using Complex Matrix Notation"][21],
+    and their Derivatives using Complex Matrix Notation,"][21]
     *MATPOWER Technical Note 2*, February 2010.  
     Available:
     http://www.pserc.cornell.edu/matpower/TN2-OPF-Derivatives.pdf
 
 8.  B. Sereeter and R. D. Zimmerman, ["Addendum to AC Power Flows and
     their Derivatives using Complex Matrix Notation: Nodal Current
-    Balance"][22], *MATPOWER Technical Note 3*, April 2018.  
+    Balance,"][22] *MATPOWER Technical Note 3*, April 2018.  
     Available: http://www.pserc.cornell.edu/matpower/TN3-More-OPF-Derivatives.pdf
 
 9.  B. Sereeter and R. D. Zimmerman, ["AC Power Flows, Generalized
     OPF Costs and their Derivatives using Complex Matrix Notation
-    and Cartesian Coordinate Voltages"][23], *MATPOWER Technical
+    and Cartesian Coordinate Voltages,"][23] *MATPOWER Technical
     Note 4*, April 2018.  
     Available:
     http://www.pserc.cornell.edu/matpower/TN4-OPF-Derivatives-Cartesian.pdf
