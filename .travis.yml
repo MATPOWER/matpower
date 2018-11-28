@@ -43,5 +43,6 @@ script:
 - octave-cli --no-gui --eval "test_mips(0,1)"
 - octave-cli --no-gui --eval "test_matpower(0,1)"
 - octave-cli --no-gui --eval "test_most(0,1)"
-# print IPOPT version number
-- octave-cli --no-gui --eval "feval('qps_ipopt', [],[1; 1],[1 1],[2],[2],[1; 1],[1; 1],[1; 1],struct('verbose', 2));"
+# print GLPK and IPOPT version numbers
+- octave-cli --no-gui --eval "qps_glpk( [],[1; 1],[1 1],[2],[2],[1; 1],[1; 1],[1; 1],struct('verbose', 3));"
+- octave-cli --no-gui --eval "qps_ipopt([],[1; 1],[1 1],[2],[2],[1; 1],[1; 1],[1; 1],struct('verbose', 2));"
