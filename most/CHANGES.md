@@ -2,7 +2,15 @@ Change history for MOST
 =======================
 
 
-Version 1.0.1 - *Oct 30, 2016*
+Since last release
+------------------
+
+#### 11/20/18
+  - Fix selection of default solver for `t_most_w_ds` and add option
+    to specify solver directly in optional input arg.
+
+
+Version 1.0.1 - *Oct 30, 2018*
 ------------------------------
 
 #### 10/30/18
@@ -21,8 +29,8 @@ Version 1.0.1 - *Oct 30, 2016*
   - Replace `clock()`/`etime()` with `tic()`/`toc()` for timing.
 
 #### 9/27/17
-  - Fix bug #1 in `loadmd()` where profiles that modify xGenData or
-    StorageData resulted in a fatal error.
+  - Fix [bug #1][1] in `loadmd()` where profiles that modify xGenData
+    or StorageData resulted in a fatal error.
 
 #### 9/12/17
   - Update for `@opt_model` API cleanup.
@@ -56,6 +64,27 @@ Version 1.0 - *Dec 16, 2016*
 #### 12/16/16
   - Released 1.0.
   - Moved development to GitHub: <https://github.com/MATPOWER/most>.
+  - no changes from v1.0b2
+
+#### 11/17/16
+  - Silence some warnings during tests on Octave 4.2.
+
+
+Version 1.0b2 - *Nov 1, 2016*
+-----------------------------
+
+#### 11/1/16
+  - Released 1.0b2.
+  
+#### 10/27/16
+  - Fixed some MOSEK related issues in tests and tutorial examples.
+
+
+Version 1.0 - *Jun 1, 2016*
+---------------------------
+
+#### 6/1/16
+  - Released 1.0b1.
 
 #### 3/1/16
   - Put checks in `loadmd()` and `most()` to require internal bus ordering
@@ -144,3 +173,7 @@ Version 1.0 - *Dec 16, 2016*
 #### 5/21/15
   - Forked development from `mpsopfl_fixed_res()`, which is currently
     identical except for function names in error messages.
+
+--
+
+[1]: https://github.com/MATPOWER/most/issues/1

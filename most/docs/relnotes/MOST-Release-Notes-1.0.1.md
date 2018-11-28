@@ -27,5 +27,5 @@ previous versions, see Appendix B of the [MOST User's Manual][2].
   - Requires MATPOWER 7.x or later.
 
 
-[1]: ../../CHANGES.md
-[2]: ../MOST-manual.pdf
+[1]: https://github.com/MATPOWER/most/blob/master/CHANGES.md
+[2]: https://github.com/MATPOWER/most/blob/master/docs/MOST-manual.pdf
