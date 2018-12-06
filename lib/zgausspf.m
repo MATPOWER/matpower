@@ -87,32 +87,20 @@ end
 if npv
     Vmpv0 = Vm(pv);     %% voltage setpoints for PV buses
 
-    Ipv = conj(Sbus(pv) ./ V(pv));
-    Ipq = conj(Sbus(pq) ./ V(pq));
-    I2 = [real(Ipv); imag(Ipv); real(Ipq); imag(Ipq)];
-
-    %% compute sensitivities for PV buses
-    dVdI = zeros(npv, npv);
-    ptb = 0.01;
-    for k = 1:npv
-        if lu_vec
-            V2b = U \  (L \ (I2(p) - Y21_V1(p)));
-            V2b = V2b(iq);
-        else
-            V2b = U \  (L \ (P * (I2 - Y21_V1)));
-        end
-        % V2b = Y22 \ (I2 - Y21_V1);
-        I2a = I2;
-        I2a(npv+k) = I2a(npv+k) + ptb;
-        if lu_vec
-            V2a = U \  (L \ (I2a(p) - Y21_V1(p)));
-            V2a = V2a(iq);
-        else
-            V2a = U \  (L \ (P * (I2 - Y21_V1)));
-        end
-        % V2a = Y22 \ (I2a - Y21_V1);
-        dVdI(:,k) = (V2a(1:npv) - V2b(1:npv)) / ptb;
+    %% compute sensitivities for PV buses of real(V) to imag(I)
+    %% Essentially, the following, only more efficiently ...
+    %%  Y22_inv = inv(Y22);
+    %%  dVdI = Y22_inv(1:npv, npv+(1:npv));
+    rhs = sparse(npv+(1:npv), 1:npv, 1, 2*(npv+npq), npv);
+    if lu_vec
+        cols_of_Y22_inv = U \ (L \ rhs(p, :));
+        cols_of_Y22_inv = cols_of_Y22_inv(iq, :);
+    else
+        cols_of_Y22_inv = U \ (L \ P * rhs);
     end
+    % cols_of_Y22_inv = Y22 \ rhs;
+    dVdI = cols_of_Y22_inv(1:npv, :);
+
     [LL, UU, PP] = lu(dVdI);    %% not sparse, so don't use 'vector' version
 end
 
@@ -131,26 +119,25 @@ while (~converged && i < max_it)
     Vp = V;
 
     if npv
-% (using full Jacobian does not seem to improve convergence)
-%         dVdQ = zeros(npv, npv);
-%         for k = 1:npv
-%             %% evaluate Jacobian
-%             [dSbus_dVm, dSbus_dVa] = dSbus_dV(Ybus, V);
-%     
-%             j11 = real(dSbus_dVa([pv; pq], [pv; pq]));
-%             j12 = real(dSbus_dVm([pv; pq], [pv; pq]));
-%             j21 = imag(dSbus_dVa([pv; pq], [pv; pq]));
-%             j22 = imag(dSbus_dVm([pv; pq], [pv; pq]));
-%     
-%             J = [   j11 j12;
-%                     j21 j22;    ];
-%             
-%             Sb = zeros(2*npv+2*npq, 1);
-%             Sb(npv+npq+k) = ptb;
-%             dV = J \ Sb;
-%             
-%             dVdQ(:,k) = dV(npv+npq+(1:npv)) / ptb;
-%         end
+% % (using full Jacobian does not seem to improve convergence)
+%         %% evaluate Jacobian
+%         [dSbus_dVm, dSbus_dVa] = dSbus_dV(Ybus, V);
+% 
+%         j11 = real(dSbus_dVa([pv; pq], [pv; pq]));
+%         j12 = real(dSbus_dVm([pv; pq], [pv; pq]));
+%         j21 = imag(dSbus_dVa([pv; pq], [pv; pq]));
+%         j22 = imag(dSbus_dVm([pv; pq], [pv; pq]));
+% 
+%         J = [   j11 j12;
+%                 j21 j22;    ];
+% 
+%         %% compute sensitivities for PV buses of Vm to Q
+%         %% Essentially, the following, only more efficiently ...
+%         %%  J_inv = inv(J);
+%         %%  dVdQ = J_inv(npv+npq+(1:npv), npv+npq+(1:npv));
+%         rhs = sparse(npv+npq+(1:npv), 1:npv, 1, 2*(npv+npq), npv);
+%         cols_of_J_inv = J \ rhs;
+%         dVdQ = cols_of_J_inv(npv+npq+(1:npv), :);
 
         %% update Q injections @ PV buses based on V mismatch
         %% compute Q injection at current V (seems to help convergence)
@@ -164,8 +151,7 @@ while (~converged && i < max_it)
 %        dV([1:k-1 k+1:end]) = 0;   %% one at a time?
 
         %% estimate corresponding change in Q injection
-        dI = UU \  (LL \ (PP * dV));
-%         dI = dVdI \ dV;
+        dI = UU \  (LL \ (PP * dV));    %% dI = dVdI \ dV;
 %         dQ = dVdQ \ dV;
 
         %% update Sbus
