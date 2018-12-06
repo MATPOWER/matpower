@@ -131,32 +131,6 @@ while (~converged && i < max_it)
     Vp = V;
 
     if npv
-% (doing these every period does not seem to improve convergence)
-%         %% compute sensitivities for PV buses
-% %        dVdI0 = dVdI;
-%         dVdI = zeros(npv, npv);
-%         ptb = 0.01;
-%         for k = 1:npv
-%             if lu_vec
-%                 V2b = U \  (L \ (I2(p) - Y21_V1(p)));
-%                 V2b = V2b(iq);
-%             else
-%                 V2b = U \  (L \ (P * (I2 - Y21_V1)));
-%             end
-%             % V2b = Y22 \ (I2 - Y21_V1);
-%             I2a = I2;
-%             I2a(npv+k) = I2a(npv+k) + ptb;
-%             if lu_vec
-%                 V2a = U \  (L \ (I2a(p) - Y21_V1(p)));
-%                 V2a = V2a(iq);
-%             else
-%                 V2a = U \  (L \ (P * (I2 - Y21_V1)));
-%             end
-%             % V2a = Y22 \ (I2a - Y21_V1);
-%             dVdI(:,k) = (V2a(1:npv) - V2b(1:npv)) / ptb;
-%         end
-% %       norm(dVdI - dVdI0)
-
 % (using full Jacobian does not seem to improve convergence)
 %         dVdQ = zeros(npv, npv);
 %         for k = 1:npv
