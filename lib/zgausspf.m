@@ -118,29 +118,8 @@ while (~converged && i < max_it)
     %% save voltage from previous iteration
     Vp = V;
 
-    if npv
-% % (using full Jacobian does not seem to improve convergence)
-%         %% evaluate Jacobian
-%         [dSbus_dVm, dSbus_dVa] = dSbus_dV(Ybus, V);
-% 
-%         j11 = real(dSbus_dVa([pv; pq], [pv; pq]));
-%         j12 = real(dSbus_dVm([pv; pq], [pv; pq]));
-%         j21 = imag(dSbus_dVa([pv; pq], [pv; pq]));
-%         j22 = imag(dSbus_dVm([pv; pq], [pv; pq]));
-% 
-%         J = [   j11 j12;
-%                 j21 j22;    ];
-% 
-%         %% compute sensitivities for PV buses of Vm to Q
-%         %% Essentially, the following, only more efficiently ...
-%         %%  J_inv = inv(J);
-%         %%  dVdQ = J_inv(npv+npq+(1:npv), npv+npq+(1:npv));
-%         rhs = sparse(npv+npq+(1:npv), 1:npv, 1, 2*(npv+npq), npv);
-%         cols_of_J_inv = J \ rhs;
-%         dVdQ = cols_of_J_inv(npv+npq+(1:npv), :);
-
-        %% update Q injections @ PV buses based on V mismatch
-        %% compute Q injection at current V (seems to help convergence)
+    if npv      %% update Q injections @ PV buses based on V mismatch
+        %% compute Q injection at current V (sometimes improves convergence)
         Qpv = imag( V(pv) .* conj(Ybus(pv, :) * V) );
         Sbus(pv) = Sbus(pv) + j * (Qpv - imag(Sbus(pv)));
 
@@ -150,13 +129,42 @@ while (~converged && i < max_it)
         [max_dV, k] = max(abs(dV));
 %        dV([1:k-1 k+1:end]) = 0;   %% one at a time?
 
-        %% estimate corresponding change in Q injection
+% Two alternate approaches:
+%   1 - use precomputed sensitivity of real(V) to imag(I)
+%   0 - use sensitivity of Vm to Q evaluated at current V
+if 1        %% precomputed sensitivity of real(V) to imag(I)
+        %% estimate corresponding change in imag(I) injection
         dI = UU \  (LL \ (PP * dV));    %% dI = dVdI \ dV;
-%         dQ = dVdQ \ dV;
 
         %% update Sbus
         Sbus(pv) = Sbus(pv) - j * dI;
-%         Sbus(pv) = Sbus(pv) + j * dQ;
+else        %% sensitivity of Vm to Q evaluated at current V
+% (using full Jacobian does not seem to work, at the moment, not sure why)
+        %% evaluate Jacobian
+        [dSbus_dVm, dSbus_dVa] = dSbus_dV(Ybus, V);
+
+        j11 = real(dSbus_dVa([pv; pq], [pv; pq]));
+        j12 = real(dSbus_dVm([pv; pq], [pv; pq]));
+        j21 = imag(dSbus_dVa([pv; pq], [pv; pq]));
+        j22 = imag(dSbus_dVm([pv; pq], [pv; pq]));
+
+        J = [   j11 j12;
+                j21 j22;    ];
+
+        %% compute sensitivities for PV buses of Vm to Q
+        %% Essentially, the following, only more efficiently ...
+        %%  J_inv = inv(J);
+        %%  dVdQ = J_inv(npv+npq+(1:npv), npv+npq+(1:npv));
+        rhs = sparse(npv+npq+(1:npv), 1:npv, 1, 2*(npv+npq), npv);
+        cols_of_J_inv = J \ rhs;
+        dVdQ = cols_of_J_inv(npv+npq+(1:npv), :);
+
+        %% estimate corresponding change in Q injection
+        dQ = dVdQ \ dV;
+
+        %% update Sbus
+        Sbus(pv) = Sbus(pv) + j * dQ;
+end
     end
 
     %% set voltage magnitude at PV buses
