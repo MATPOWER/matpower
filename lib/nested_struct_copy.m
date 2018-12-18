@@ -26,8 +26,9 @@ function d = nested_struct_copy(d, s, opt, parent)
 %               @<function> - pointer to a function to be called with field
 %                             from S, returning field to assign to D
 %                             D.<field> = <function>(S.<field>)
-%           valid_fields - struct containing, the heirarchy of all of (and
-%                       only) the valid field names (field values are ignored)
+%           valid_fields - (default = D) struct containing the heirarchy
+%                             of all of (and only) the valid field names
+%                             (field values are ignored)
 %           exceptions - a struct array, with the following fields, defining
 %                       exceptions to the top-level options
 %               name        - name (can be multi-level) of field to which
