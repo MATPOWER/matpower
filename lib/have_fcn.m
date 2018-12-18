@@ -64,6 +64,7 @@ function rv = have_fcn(tag, rtype)
 %       pdipmopf    - PDIPMOPF, primal-dual interior point method OPF solver
 %       scpdipmopf  - SCPDIPMOPF, step-controlled PDIPM OPF solver
 %       smartmarket - RUNMARKET and friends, for running an auction
+%       syngrid     - SynGrid, Synthetic Grid Creation for MATPOWER
 %       tralmopf    - TRALMOPF, trust region based augmented Langrangian
 %                     OPF solver
 %       octave      - code is running under Octave, as opposed to MATLAB
@@ -410,6 +411,13 @@ else        %% detect availability
                 TorF = exist('runmarket', 'file') == 2;
                 if TorF
                     v = mpver('all');
+                    vstr = v.Version;
+                    rdate = v.Date;
+                end
+            case 'syngrid'
+                TorF = exist('syngrid', 'file') == 2;
+                if TorF
+                    v = sgver('all');
                     vstr = v.Version;
                     rdate = v.Date;
                 end

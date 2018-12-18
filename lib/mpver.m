@@ -87,6 +87,11 @@ else
     else
         fprintf('%-22s -- not installed --\n', 'SDP_PF');
     end
+    if have_fcn('syngrid')
+        sgver;
+    else
+        fprintf('%-22s -- not installed --\n', 'SynGrid');
+    end
     if have_fcn('yalmip')
         s = have_fcn('yalmip', 'all');
         fprintf('%-22s Version %-10s %-11s\n', 'YALMIP', s.vstr, s.date);
