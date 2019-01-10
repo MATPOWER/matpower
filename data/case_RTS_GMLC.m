@@ -10,10 +10,13 @@ function mpc = case_RTS_GMLC
 %   Please see https://github.com/GridMod/RTS-GMLC for more details and/or
 %   updated versions.
 %
-%   This version created via SAVECASE on Oct 19, 2018 from:
+%   This version created via SAVECASE on Jan 10, 2019 from:
 %     https://github.com/GridMod/RTS-GMLC/blob/master/RTS_Data/FormattedData/MATPOWER/RTS_GMLC.m
-%   In mpc.dcline data, manually deleted output columns MU_PMIN-MU_QMAXT
-%   and changed values of 9999 to Inf (RDZ).
+%       >> mpc = loadcase('RTS_GMLC');
+%       >> mpc = toggle_dcline(mpc, 'on');
+%       >> savecase('case_RTS_GMLC', mpc);
+%   Manually added this help text and, in mpc.dcline data, manually deleted
+%   output columns MU_PMIN-MU_QMAXT and changed values of 9999 to Inf (RDZ).
 
 %   DATA USE DISCLAIMER AGREEMENT
 %   ("Agreement")
@@ -553,7 +556,7 @@ mpc.gencost = [
 	1	0	0	4	0	0	8.63333	0	17.26667	0	25.9	0;
 	1	0	0	4	0	0	8.43333	0	16.86667	0	25.3	0;
 	1	0	0	4	0	0	8.93333	0	17.86667	0	26.8	0;
-	1	2000	0	4	0	0	66.66667	0	133.33333	0	200	0;
+	1	10000	0	4	30	0	66	0	120	0	160	0;
 	1	0	0	4	0	0	8.9	0	17.8	0	26.7	0;
 	1	0	0	4	0	0	8.73333	0	17.46667	0	26.2	0;
 	1	0	0	4	0	0	8.6	0	17.2	0	25.8	0;
