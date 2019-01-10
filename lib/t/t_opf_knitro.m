@@ -42,7 +42,7 @@ else
     verbose = 0;
 end
 
-mpopt = mpoption('opf.violation', 1e-8);
+mpopt = mpoption('opf.violation', 1e-9);
 mpopt = mpoption(mpopt, 'out.all', 0, 'verbose', verbose, 'opf.ac.solver', 'KNITRO');
 mpopt = mpoption(mpopt, 'knitro.tol_x', 1e-8, 'knitro.tol_f', 1e-8);
 
