@@ -1511,6 +1511,7 @@ Version 4.1 - *Dec 14, 2011*
     scale non-linear problems. Use `OPF_ALG = 600` for AC OPF.
     Requires the Optimization Toolbox from The MathWorks and
     the KNITRO libraries, available from http://www.ziena.com/.
+    (Subsequently acquired by Artelys, http://www.artelys.com/.)
 
 #### 6/16/11
   - Complete rewrite of `update_mupq.m`. Should fix problems

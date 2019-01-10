@@ -64,8 +64,8 @@ function [options, names] = mpoption_old(varargin)
 %           [        primal/dual interior point method (pure MATLAB)        ]
 %           [  580 - IPOPT, requires MEX interface to IPOPT solver          ]
 %           [        available from: https://projects.coin-or.org/Ipopt/    ]
-%           [  600 - KNITRO, requires MATLAB Optimization Toolbox and       ]
-%           [        KNITRO libraries available from: http://www.ziena.com/ ]
+%           [  600 - Artelys Knitro, requires Knitro solver, available from:]
+%           [        http://www.artelys.com/                                ]
 %       16 - OPF_VIOLATION, 5e-6    constraint violation tolerance
 %       17 - CONSTR_TOL_X, 1e-4     termination tol on x for fmincon/Knitro
 %       18 - CONSTR_TOL_F, 1e-4     termination tol on f for fmincon/Knitro
@@ -137,10 +137,10 @@ function [options, names] = mpoption_old(varargin)
 %            [  4 - interior-point, w/exact user-supplied Hessian           ]
 %            [  5 - interior-point, w/Hessian via finite differences        ]
 %
-%   KNITRO options
+%   Artelys Knitro options
 %       58 - KNITRO_OPT, 0          a non-zero integer N indicates that all
-%                                   KNITRO options should be handled by a
-%                                   KNITRO options file named
+%                                   Knitro options should be handled by a
+%                                   Knitro options file named
 %                                   'knitro_user_options_N.txt'
 %
 %   IPOPT options

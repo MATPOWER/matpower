@@ -117,7 +117,7 @@ else
       [results, success, raw] = fmincopf_solver(om, mpopt);
     case 'KNITRO'
       if ~have_fcn('knitro')
-        error('opf_execute: MPOPT.opf.ac.solver = ''%s'' requires KNITRO (see http://www.ziena.com/)', alg);
+        error('opf_execute: MPOPT.opf.ac.solver = ''%s'' requires Artelys Knitro (see http://www.artelys.com/)', alg);
       end
       [results, success, raw] = ktropf_solver(om, mpopt);
     case 'SDPOPF'

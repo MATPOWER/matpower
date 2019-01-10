@@ -1,11 +1,11 @@
 function opt = mpoption_info_knitro(selector)
-%MPOPTION_INFO_KNITRO  Returns MATPOWER option info for KNITRO.
+%MPOPTION_INFO_KNITRO  Returns MATPOWER option info for Artelys Knitro.
 %
 %   DEFAULT_OPTS = MPOPTION_INFO_KNITRO('D')
 %   VALID_OPTS   = MPOPTION_INFO_KNITRO('V')
 %   EXCEPTIONS   = MPOPTION_INFO_KNITRO('E')
 %
-%   Returns a structure for KNITRO options for MATPOWER containing ...
+%   Returns a structure for Knitro options for MATPOWER containing ...
 %   (1) default options,
 %   (2) valid options, or
 %   (3) NESTED_STRUCT_COPY exceptions for setting options
@@ -51,5 +51,5 @@ if have_fcn('knitro')
             error('mpoption_info_knitro: ''%s'' is not a valid input argument', selector);
     end
 else
-    opt = struct([]);       %% KNITRO is not available
+    opt = struct([]);       %% Artelys Knitro is not available
 end

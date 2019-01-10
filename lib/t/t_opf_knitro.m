@@ -52,7 +52,7 @@ for k = 1:length(options)
     t0 = sprintf('Knitro OPF (%s,%s) : ', bal, crd);
 
     if ~have_fcn('knitro')
-        t_skip(num_tests, 'KNITRO not available');
+        t_skip(num_tests, 'Artelys Knitro not available');
         continue;
     end
 

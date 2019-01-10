@@ -1,5 +1,5 @@
 function [results, success, raw] = ktropf_solver(om, mpopt)
-%KTROPF_SOLVER  Solves AC optimal power flow using KNITRO.
+%KTROPF_SOLVER  Solves AC optimal power flow using Artelys Knitro.
 %
 %   [RESULTS, SUCCESS, RAW] = KTROPF_SOLVER(OM, MPOPT)
 %
@@ -58,8 +58,8 @@ function [results, success, raw] = ktropf_solver(om, mpopt)
 [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 
 %% options
-use_ktropts_file = 1;       %% use a KNITRO options file to pass options
-create_ktropts_file = 0;    %% generate a KNITRO options file on the fly
+use_ktropts_file = 1;       %% use a Knitro options file to pass options
+create_ktropts_file = 0;    %% generate a Knitro options file on the fly
 
 %% unpack data
 mpc = om.get_mpc();

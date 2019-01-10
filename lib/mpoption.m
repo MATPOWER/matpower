@@ -157,9 +157,9 @@ function opt = mpoption(varargin)
 %       [ 'FMINCON' - MATLAB Optimization Toolbox, FMINCON                  ]
 %       [ 'IPOPT'   - IPOPT, requires MEX interface to IPOPT solver         ]
 %       [             available from:                                       ]
-%       [                 http://www.coin-or.org/projects/Ipopt.xml         ]
-%       [ 'KNITRO'  - KNITRO, requires MATLAB Optimization Toolbox and      ]
-%       [             KNITRO libraries available from: http://www.ziena.com/]
+%       [                   http://www.coin-or.org/projects/Ipopt.xml       ]
+%       [ 'KNITRO'  - Artelys Knitro, requires Artelys Knitro solver,       ]
+%       [             available from:  http://www.artelys.com/              ]
 %       [ 'MINOPF'  - MINOPF, MINOS-based solver, requires optional         ]
 %       [             MEX-based MINOPF package, available from:             ]
 %       [                   http://www.pserc.cornell.edu/minopf/            ]
@@ -377,7 +377,7 @@ function opt = mpoption(varargin)
 %       knitro.maxit            0           maximum number of iterations
 %                                                           [  0 => default ]
 %       knitro.opt_fname        <empty>     name of user-supplied native
-%                                           KNITRO options file that overrides
+%                                           Knitro options file that overrides
 %                                           all other options
 %       knitro.opt              0           if knitro.opt_fname is empty and
 %                                           knitro.opt is a non-zero integer N

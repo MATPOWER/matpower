@@ -98,6 +98,17 @@ else
     else
         fprintf('%-22s -- not installed --\n', 'YALMIP');
     end
+    if have_fcn('knitro')
+        s = have_fcn('knitro', 'all');
+        if isempty(s.vstr)
+            vn = '<unknown>';
+        else
+            vn = s.vstr;
+        end
+        fprintf('%-22s Version %-10s %-11s\n', 'Artelys Knitro', vn, s.date);
+    else
+        fprintf('%-22s -- not installed --\n', 'Artelys Knitro');
+    end
     if have_fcn('bpmpd')
         if exist('bpver', 'file') == 2
             bpver;
@@ -146,17 +157,6 @@ else
         fprintf('%-22s Version %-10s %-11s\n', 'IPOPT', vn, s.date);
     else
         fprintf('%-22s -- not installed --\n', 'IPOPT');
-    end
-    if have_fcn('knitro')
-        s = have_fcn('knitro', 'all');
-        if isempty(s.vstr)
-            vn = '<unknown>';
-        else
-            vn = s.vstr;
-        end
-        fprintf('%-22s Version %-10s %-11s\n', 'KNITRO', vn, s.date);
-    else
-        fprintf('%-22s -- not installed --\n', 'KNITRO');
     end
     if have_fcn('minopf')
         if exist('minopfver', 'file') == 2
