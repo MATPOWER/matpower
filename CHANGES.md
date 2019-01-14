@@ -12,6 +12,11 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 1/14/19
+  - Enable YALMIP, SeDuMi and SDPT3 to be properly recognized under
+    Octave.
+  *Thanks to Richard Lincoln.*
+
 #### 11/29/18
   - Improve performance of `makeYbus()` based on [issue #52][14].
   *Thanks to Binbin Chen.*

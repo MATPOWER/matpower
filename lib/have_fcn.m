@@ -464,8 +464,7 @@ else        %% detect availability
                     rdate = v.Date;
                 end
             case 'yalmip'
-                TorF = ~have_fcn('octave') && exist('yalmip','file') == 2;
-                %% YALMIP does not yet work with Octave, rdz 1/6/14
+                TorF = exist('yalmip','file') == 2;
                 if TorF
                     vstr = yalmip('version');
                     if length(vstr) == 8
@@ -477,7 +476,7 @@ else        %% detect availability
                 end
             case 'sdpt3'
                 TorF = exist('sdpt3','file') == 2;
-                if TorF
+                if TorF && have_fcn('evalc')
                     str = evalc('help sdpt3');
                     pat = 'version\s+([^\s]+).*Last Modified: ([^\n]+)\n';
                     [s,e,tE,m,t] = regexp(str, pat);
@@ -488,7 +487,7 @@ else        %% detect availability
                 end
             case 'sedumi'
                 TorF = exist('sedumi','file') == 2;
-                if TorF
+                if TorF && have_fcn('evalc')
                     warn_state = warning;  %% sedumi turns (and leaves!) off all warnings
                     str = evalc('x = sedumi([1 1], 1, [1;2])');
                     warning(warn_state);
