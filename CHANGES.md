@@ -13,6 +13,10 @@ Since last release
 ------------------
 
 #### 1/14/19
+  - Add option for `install_matpower()` (non-interactively) uninstall
+    MATPOWER, i.e. remove MATPOWER directories from MATLAB/Octave path.
+
+#### 1/14/19
   - Enable YALMIP, SeDuMi and SDPT3 to be properly recognized under
     Octave.
   *Thanks to Richard Lincoln.*

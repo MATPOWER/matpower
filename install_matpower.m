@@ -1,9 +1,10 @@
-function succ = install_matpower(modify, save_it, verbose)
+function succ = install_matpower(modify, save_it, verbose, rm_oldpaths)
 %INSTALL_MATPOWER  Assist the user in setting their path.
 %   INSTALL_MATPOWER
 %   INSTALL_MATPOWER(MODIFY)
 %   INSTALL_MATPOWER(MODIFY, SAVE_IT)
 %   INSTALL_MATPOWER(MODIFY, SAVE_IT, VERBOSE)
+%   INSTALL_MATPOWER(MODIFY, SAVE_IT, VERBOSE, RM_OLDPATHS)
 %   SUCCESS = INSTALL_MATPOWER(...)
 %
 %   Assists the user in setting up the proper MATLAB/Octave path to
@@ -31,6 +32,9 @@ function succ = install_matpower(modify, save_it, verbose)
 %               otherwise : the path will be modified but not saved
 %       VERBOSE : prints the relevant ADDPATH commands if true (default),
 %               silent otherwise
+%       RM_OLDPATHS : remove existing installation
+%           0 (default) - do NOT remove existing MATPOWER from path
+%           1 - remove existing MATPOWER paths first
 %
 %   Outputs (all are optional):
 %       SUCCESS : 1 if all commands succeeded, 0 otherwise
@@ -41,6 +45,9 @@ function succ = install_matpower(modify, save_it, verbose)
 %       install_matpower(1, 1);     %% modify my path and save
 %       install_matpower(1, 0, 0);  %% modify my path temporarily and silently
 %       install_matpower(0, 'matpower6');   %% save the commands to matpower6.m
+%       install_matpower(0, 0, 1, 1);   %% uninstall MATPOWER from path
+%                                   %% (must call SAVEPATH separately
+%                                   %%  to make permanent)
 %
 %   See also ADDPATH, SAVEPATH.
 
@@ -101,13 +108,16 @@ ni = length(install);   %% number of components
 
 %% default arguments
 interactive = 0;
-if nargin < 3
-    verbose = 1;
-    if nargin < 2
-        save_it = 0;
-        if nargin < 1
-            modify = [];
-            interactive = 1;
+if nargin < 4
+    rm_oldpaths = 0;
+    if nargin < 3
+        verbose = 1;
+        if nargin < 2
+            save_it = 0;
+            if nargin < 1
+                modify = [];
+                interactive = 1;
+            end
         end
     end
 end
@@ -197,7 +207,6 @@ for i = 1:ni
     end
 end
 
-rm_oldpaths = 0;
 if ~isempty(oldpaths)
     if exist('mpver', 'file')
         v = mpver;
@@ -225,7 +234,7 @@ if ~isempty(oldpaths)
         if s(1) == 'Y'
             rm_oldpaths = 1;
         end
-    else    
+    elseif ~rm_oldpaths
         error('install_matpower: %s%s\nPlease remove the old installation first, or re-run\nINSTALL_MATPOWER in interactive mode (no arguments).', str, rm_path_str);
     end
 end
