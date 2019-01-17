@@ -6770,6 +6770,7 @@ name & description \\
 \code{t\_case9\_pf.m}	& sample case file with only power flow data, version 1 format	\\
 \code{t\_case9\_pfv2.m}	& sample case file with only power flow data, version 2 format	\\
 \code{t\_case9\_save2psse.m}	& sample 9-bus case file used by \code{t\_psse} for testing \code{save2psse}	\\
+\code{t\_case9\_save2psse.raw}	& result of saving \code{t\_case9\_save2psse.m} with \code{save2psse}	\\
 \code{t\_case30\_userfcns.m}	& sample case file with OPF, reserves and interface flow limit data	\\
 \code{t\_chgtab.m}	& sample \emph{change table} data, used by \code{t\_apply\_changes}	\\
 \code{t\_psse\_case.raw}	& sample PSS/E format RAW file used to test conversion code	\\
@@ -7869,7 +7870,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.0.pdf}{\m
 
 
 \clearpage
-\subsection{Version 7.0 -- beta 1 released released Oct 31, 2018}
+\subsection{Version 7.0 -- beta 1 released Oct 31, 2018}
 \label{app:v70}
 
 The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-7.0b1.pdf}{\matpower{} 7.0b1 User's Manual} is available online.\footnote{\url{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-7.0b1.pdf}}
@@ -8007,6 +8008,7 @@ Some of these cases also include contingency tables and/or hourly load scenarios
 \item Add support for \code{gentype} and \code{genfuel} fields of \matpower{} case struct in \code{extract\_islands}, \code{ext2int}, \code{int2ext}, \code{load2disp}  and \code{savecase}.
 \item Add support for \code{bus\_name} field of \matpower{} case struct to \code{extract\_islands}, \code{ext2int} and \code{int2ext}.
 \item Add support for \ipopt{} solver under Octave, including in the Travis-CI testing. \emph{Thanks to Richard Lincoln.}
+\item Add support for YALMIP, SeDuMi and SDPT3 to be recognized under Octave.
 \item Deprecated functions:
     \begin{itemize}
     \item \code{d2AIbr\_dV2()} -- use \code{dA2br\_dV2()} instead.
@@ -8033,6 +8035,7 @@ Some of these cases also include contingency tables and/or hourly load scenarios
 \item Fix bug \#23 where the continuation power flow could switch directions unexpectedly when the operating point switched from stable to unstable manifold or vice-versa after hitting a limit. \emph{Thanks to Elis Nycander and Shrirang Abhyankar.}
 \item Fix bug \#26 where, in a continuation power flow, a reactive limit at a bus could be detected in error if multiple generators at the bus had reactive ranges of very different sizes. \emph{Thanks to Elis Nycander and Shrirang Abhyankar.}
 \item Fix \code{runpf} handling of case where individual power flow fails during Q limit enforcement.
+\item Fix bug \#56 where \code{save2psse} was missing entries for two transformer columns, namely, \code{VMA1} and \code{VMI1}). \emph{Thanks to Amin Gholami.}
 \end{itemize}
 
 \subsubsection*{Incompatible Changes}

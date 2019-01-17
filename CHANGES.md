@@ -12,18 +12,23 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
-#### 1/14/19
+#### 1/17/19
+  - Fix [bug #56][15] where `save2psse()` was missing entries for two
+    transformer columns (`VMA1` and `VMI1`).
+    *Thanks to Amin Gholami.*
+
+#### 1/16/19
   - Add option for `install_matpower()` (non-interactively) uninstall
     MATPOWER, i.e. remove MATPOWER directories from MATLAB/Octave path.
 
 #### 1/14/19
   - Enable YALMIP, SeDuMi and SDPT3 to be properly recognized under
     Octave.
-  *Thanks to Richard Lincoln.*
+    *Thanks to Richard Lincoln.*
 
 #### 11/29/18
   - Improve performance of `makeYbus()` based on [issue #52][14].
-  *Thanks to Binbin Chen.*
+    *Thanks to Binbin Chen.*
 
 #### 11/26/18
   - Fix [bug #53][13] where certain OPF cases (e.g. `case33bw`) resulted in
@@ -2796,3 +2801,4 @@ First Public Release – *Jun 25, 1997*
 [12]: https://github.com/MATPOWER/matpower/issues/36
 [13]: https://github.com/MATPOWER/matpower/issues/53
 [14]: https://github.com/MATPOWER/matpower/issues/52
+[15]: https://github.com/MATPOWER/matpower/issues/56

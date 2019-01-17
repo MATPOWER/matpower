@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 142;
+num_tests = 143;
 
 t_begin(num_tests, quiet);
 
@@ -124,12 +124,21 @@ else
     tmpfname = sprintf('t_save2psse_%d', fix(1e9*rand));
     tmpfname = save2psse(tmpfname, mpc0);
     mpc = psse2mpc(tmpfname, 0);
-    delete(tmpfname);
     t_is(mpc.bus, mpc0.bus, 12, [t 'bus']);
     t_is(mpc.branch, mpc0.branch, 12, [t 'branch']);
     t_is(mpc.gen, mpc0.gen, 12, [t 'gen']);
     t_is(mpc.dcline, mpc0.dcline, 4, [t 'dcline']);
     t_ok(isequal(mpc.bus_name, mpc0.bus_name), [t 'bus_name']);
+
+    got = fileread(tmpfname);
+    got = strrep(got, char([13 10]), char(10));             %% Win to Unix EOL chars
+    got = regexprep(got, '/ ..-...-.... ..:..:.. - MATPOWER ([^\n]*)', '/ 17-Jan-2019 15:30:41 - MATPOWER 7.0');
+    expected = fileread([casefile '.raw']);
+    expected = strrep(expected, char([13 10]), char(10));   %% Win to Unix EOL chars
+
+    t_ok(strcmp(got, expected), 'save2psse: RAW file match');
+
+    delete(tmpfname);
 end
 
 if have_fcn('octave')
