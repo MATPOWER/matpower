@@ -238,7 +238,7 @@
 %\title{\hl{--- DRAFT  ---}\\\hl{\em do not distribute}\\~\\\matpower{} \mpver{}\\User's Manual}
 \title{User's Manual}
 \author{Ray~D.~Zimmerman \and Carlos~E.~Murillo-S\'anchez}
-\date{October 31, 2018} % comment this line to display the current date
+%\date{October 31, 2018} % comment this line to display the current date
 %\date{December 14, 2011\thanks{Second revision. First revision was December 13, 2011}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
@@ -8036,6 +8036,7 @@ Some of these cases also include contingency tables and/or hourly load scenarios
 \item Fix bug \#26 where, in a continuation power flow, a reactive limit at a bus could be detected in error if multiple generators at the bus had reactive ranges of very different sizes. \emph{Thanks to Elis Nycander and Shrirang Abhyankar.}
 \item Fix \code{runpf} handling of case where individual power flow fails during Q limit enforcement.
 \item Fix bug \#56 where \code{save2psse} was missing entries for two transformer columns, namely, \code{VMA1} and \code{VMI1}). \emph{Thanks to Amin Gholami.}
+\item Fix bug \#57 where \code{save2psse} always used 1 for the \code{CKT} number, even for parallel branches or transformers. \emph{Thanks to Amin Gholami.}
 \end{itemize}
 
 \subsubsection*{Incompatible Changes}

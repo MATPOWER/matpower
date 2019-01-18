@@ -13,6 +13,11 @@ Since last release
 ------------------
 
 #### 1/17/19
+  - Fix [bug #57][16] where `save2psse()` always used 1 for the CKT
+    number, even for parallel branches or transformers.
+    *Thanks to Amin Gholami.*
+
+#### 1/17/19
   - Fix [bug #56][15] where `save2psse()` was missing entries for two
     transformer columns (`VMA1` and `VMI1`).
     *Thanks to Amin Gholami.*
@@ -2802,3 +2807,4 @@ First Public Release – *Jun 25, 1997*
 [13]: https://github.com/MATPOWER/matpower/issues/53
 [14]: https://github.com/MATPOWER/matpower/issues/52
 [15]: https://github.com/MATPOWER/matpower/issues/56
+[16]: https://github.com/MATPOWER/matpower/issues/57
