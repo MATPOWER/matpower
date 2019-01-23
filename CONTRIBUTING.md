@@ -308,7 +308,7 @@ We would like to express our appreciation to everyone who has contributed to
 the MATPOWER project and community for helping to make it a useful tool for
 the power systems community. **Thank you!**
 
---
+---
 
 [1]: https://github.com/MATPOWER/mips
 [2]: https://github.com/MATPOWER/most

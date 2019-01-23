@@ -148,6 +148,8 @@
 \newcommand{\matpowerurl}[0]{http://www.pserc.cornell.edu/matpower/}
 \newcommand{\matpowerlink}[0]{\href{\matpowerurl}{\matpower{}}}
 \newcommand{\matpowergithuburl}[0]{https://github.com/MATPOWER/matpower}
+\newcommand{\matpowerextrasgithuburl}[0]{https://github.com/MATPOWER/matpower-extras}
+\newcommand{\matpowerdockerpage}[0]{https://github.com/MATPOWER/matpower/blob/master/docs/MATPOWER-Docker.md}
 \newcommand{\mptest}[0]{{MP-Test}}
 \newcommand{\mptesturl}[0]{https://github.com/MATPOWER/mptest}
 \newcommand{\mptestlink}[0]{\href{\mptesturl}{\mptest{}}}
@@ -463,6 +465,14 @@ See \code{CONTRIBUTING.md} for information on how to get a local copy
 of your own \matpower{} fork, if you are interesting in contributing
 your own code or modifications.
 
+\subsubsection{\matpower{} Docker Image}
+
+\matpower{} is also available on \href{https://hub.docker.com/}{Docker Hub}\footnote{\url{https://hub.docker.com/}} as the pre-packaged \href{https://www.docker.com/}{Docker}\footnote{\url{https://www.docker.com/}} image tagged \href{https://hub.docker.com/r/matpower/matpower-desktop}{\code{matpower/matpower-desktop}},\footnote{\url{https://hub.docker.com/r/matpower/matpower-desktop}} providing an Ubuntu desktop environment
+with Octave, \matpower{}, and the \href{\matpowerextrasgithuburl}{\matpower{} Extras}\footnote{For details on the \matpower{} Extras, see Appendix~\ref{app:extras} and the corresponding GitHub repository at \url{\matpowerextrasgithuburl}.} pre-installed.
+See the \href{\matpowerdockerpage}{\matpower{} Docker page}\footnote{\url{\matpowerdockerpage}} for more details.
+
+Docker images are provided for both versioned releases and
+development versions.
 
 \clearpage
 \subsection{Installation}
@@ -7883,6 +7893,9 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-7.0b1.pdf}{
 \item Three new variants of the standard AC OPF formulation, for a total of four, including both nodal power and current balance constraints and both polar and cartesian representations of voltage. See the new \code{opf.current\_balance} and \code{opf.v\_cartesian} options. \emph{Thanks to Baljinnyam Sereeter.}
 \item Three new power flow algorithms for radial distribution systems selected via the three new options for \code{pf.alg}, namely \codeq{PQSUM}, \codeq{ISUM}, \codeq{YSUM}. Also includes new \matpower{} options \code{pf.radial.max\_it} and \code{pf.radial.vcorr}. See Section~\ref{sec:pfdist} on ``Distribution Power Flow'' for details. \emph{Thanks to Mirko Todorovski.}
 \item Major update to OPF soft limit functionality, supporting soft limits on all AC and DC OPF inequality constraints, including branch flow constraints, bus voltage bounds, generator active and reactive bounds, branch flow and branch angle difference limits. \emph{Thanks to Eran Schweitzer.}
+\item Docker image tagged \href{https://hub.docker.com/r/matpower/matpower-desktop}{\code{matpower/matpower-desktop}}, providing a pre-packaged Ubuntu desktop environment
+with Octave, \matpower{}, and the \href{\matpowerextrasgithuburl}{\matpower{} Extras} all pre-installed. See the \href{https://github.com/MATPOWER/matpower/blob/master/docs/MATPOWER-Docker.md}{\code{docs/MATPOWER-Docker.md}} page for more details.
+\emph{Thanks to Richard Lincoln.}
 \item New options:
     \begin{itemize}
     \item \code{pf.nr.lin\_solver} controls the linear solver used to compute the Newton update step in the Newton-Raphson power flow.

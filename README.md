@@ -69,6 +69,17 @@ See [CONTRIBUTING.md][7] for information on how to get a local copy
 of your own MATPOWER fork, if you are interesting in contributing
 your own code or modifications.
 
+#### MATPOWER Docker Image
+
+MATPOWER is also available on [Docker Hub][7a] as the pre-packaged
+[Docker][7b] image tagged [matpower/matpower-desktop][7c], providing an
+Ubuntu desktop environment with Octave, MATPOWER, and the
+[MATPOWER Extras][7d] pre-installed. See the [MATPOWER-Docker page][7e]
+for more details.
+
+Docker images are provided for both versioned releases and
+development versions.
+
 
 Installation
 ------------
@@ -208,17 +219,17 @@ Publications and Tech Notes
      - [slides of presentation][16]
 
 3.  H. Wang, C. E. Murillo-Sánchez, R. D. Zimmerman, R. J. Thomas,
-     ["On Computational Issues of Market-Based Optimal Power Flow,"][17]
-     *Power Systems, IEEE Transactions on*, vol. 22, no. 3,
-     pp. 1185-1193, Aug. 2007.  
-     DOI: [10.1109/TPWRS.2007.901301][17].
+    ["On Computational Issues of Market-Based Optimal Power Flow,"][17]
+    *Power Systems, IEEE Transactions on*, vol. 22, no. 3,
+    pp. 1185-1193, Aug. 2007.  
+    DOI: [10.1109/TPWRS.2007.901301][17].
 
 4.  C. E. Murillo-Sanchez, R. D. Zimmerman, C. L. Anderson, and
-     R. J. Thomas, ["Secure Planning and Operations of Systems with
-     Stochastic Sources, Energy Storage and Active Demand,"][18]
-     *Smart Grid, IEEE Transactions on*, vol. 4, no. 4, pp. 2220–2229,
-     Dec. 2013.  
-     DOI: [10.1109/TSG.2013.2281001][18].
+    R. J. Thomas, ["Secure Planning and Operations of Systems with
+    Stochastic Sources, Energy Storage and Active Demand,"][18]
+    *Smart Grid, IEEE Transactions on*, vol. 4, no. 4, pp. 2220–2229,
+    Dec. 2013.  
+    DOI: [10.1109/TSG.2013.2281001][18].
 
 5.  A. J. Lamadrid, D. Munoz-Alvarez, C. E. Murillo-Sanchez,
     R. D. Zimmerman, H. D. Shin and R. J. Thomas, ["Using the MATPOWER
@@ -312,6 +323,7 @@ License and Terms of Use
 
 MATPOWER is distributed as open-source under the [3-clause BSD license][30].
 
+---
 
 [1]: http://www.pserc.cornell.edu/matpower/
 [2]: https://github.com/MATPOWER/matpower
@@ -320,6 +332,11 @@ MATPOWER is distributed as open-source under the [3-clause BSD license][30].
 [5]: https://git-scm.com/downloads
 [6]: https://git-scm.com
 [7]: CONTRIBUTING.md
+[7a]: https://hub.docker.com/
+[7b]: https://www.docker.com
+[7c]: https://hub.docker.com/r/matpower/matpower-desktop
+[7d]: https://github.com/MATPOWER/matpower-extras
+[7e]: docs/MATPOWER-Docker.md
 [8]: docs/MATPOWER-manual.pdf
 [9]: http://www.pserc.cornell.edu/matpower/docs/ref/
 [10]: most/docs/MOST-manual.pdf

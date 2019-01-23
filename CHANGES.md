@@ -12,6 +12,14 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 2/1/19
+  - Add a `Dockerfile` used to auto-build the Docker image tagged
+    [`matpower/matpower-desktop`][17] on Docker Hub. This image provides
+    a pre-packaged Ubuntu desktop environment with Octave, MATPOWER
+    and the MATPOWER Extras all pre-installed. See the
+    [`docs/MATPOWER-Docker.md`][18] page for more details.
+    *Thanks to Richard Lincoln.*
+
 #### 1/17/19
   - Fix [bug #57][16] where `save2psse()` always used 1 for the CKT
     number, even for parallel branches or transformers.
@@ -2790,7 +2798,7 @@ First Public Release – *Jun 25, 1997*
   - fixed bug in `ucopf.m`, assumed all generators are initially
     available
 
---
+---
 
 [1]: https://github.com/MATPOWER/mptest
 [2]: https://github.com/MATPOWER/mips
@@ -2808,3 +2816,5 @@ First Public Release – *Jun 25, 1997*
 [14]: https://github.com/MATPOWER/matpower/issues/52
 [15]: https://github.com/MATPOWER/matpower/issues/56
 [16]: https://github.com/MATPOWER/matpower/issues/57
+[17]: https://hub.docker.com/r/matpower/matpower-desktop
+[18]: https://github.com/MATPOWER/matpower/blob/master/docs/MATPOWER-Docker.md
