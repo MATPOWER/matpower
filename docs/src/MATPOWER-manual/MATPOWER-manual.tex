@@ -149,7 +149,7 @@
 \newcommand{\matpowerlink}[0]{\href{\matpowerurl}{\matpower{}}}
 \newcommand{\matpowergithuburl}[0]{https://github.com/MATPOWER/matpower}
 \newcommand{\matpowerextrasgithuburl}[0]{https://github.com/MATPOWER/matpower-extras}
-\newcommand{\matpowerdockerpage}[0]{https://github.com/MATPOWER/matpower/blob/master/docs/MATPOWER-Docker.md}
+\newcommand{\matpowerdockerpage}[0]{https://github.com/MATPOWER/matpower/blob/master/docker/MATPOWER-Docker.md}
 \newcommand{\mptest}[0]{{MP-Test}}
 \newcommand{\mptesturl}[0]{https://github.com/MATPOWER/mptest}
 \newcommand{\mptestlink}[0]{\href{\mptesturl}{\mptest{}}}
@@ -5889,6 +5889,12 @@ in the \code{docs} directory.
 name & description \\
 \midrule
 \code{data/}	& \matpower{} cases (see Section~\ref{sec:matpowercases})	\\
+\code{docker/}	& files related to \href{\matpowerdockerpage}{\matpower{} Docker} image	\\
+\code{~~Dockerfile}	& commands for building Docker image	\\
+\code{~~MATPOWER-Docker.md}	& documentation for \href{\matpowerdockerpage}{\matpower{} Docker} image	\\
+\code{~~docker-compose.test.yml}	& configuration for Docker Hub auto test	\\
+\code{~~matpower\_desktop.py}	& Python script for use with \href{\matpowerdockerpage}{\matpower{} Docker}	\\
+\code{~~matpower\_docker\_tests.sh}	& script for Docker Hub auto test	\\
 \code{docs/}	& \matpower{} documentation	\\
 \code{~~MATPOWER-dev-guide.md}	& \matpower{} Developer's Guide	\\
 \code{~~MATPOWER-manual.pdf}	& \mum{}\tnote{\dag}	\\
@@ -5909,6 +5915,7 @@ name & description \\
 \code{CONTRIBUTING.md}	& \matpower{} Contributors Guide	\\
 \code{LICENSE}	& license file	\\
 \code{README.md}	& basic introduction to \matpower{}	\\
+\code{install\_matpower.m}	& \matpower{} installer script	\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -7894,7 +7901,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-7.0b1.pdf}{
 \item Three new power flow algorithms for radial distribution systems selected via the three new options for \code{pf.alg}, namely \codeq{PQSUM}, \codeq{ISUM}, \codeq{YSUM}. Also includes new \matpower{} options \code{pf.radial.max\_it} and \code{pf.radial.vcorr}. See Section~\ref{sec:pfdist} on ``Distribution Power Flow'' for details. \emph{Thanks to Mirko Todorovski.}
 \item Major update to OPF soft limit functionality, supporting soft limits on all AC and DC OPF inequality constraints, including branch flow constraints, bus voltage bounds, generator active and reactive bounds, branch flow and branch angle difference limits. \emph{Thanks to Eran Schweitzer.}
 \item Docker image tagged \href{https://hub.docker.com/r/matpower/matpower-desktop}{\code{matpower/matpower-desktop}}, providing a pre-packaged Ubuntu desktop environment
-with Octave, \matpower{}, and the \href{\matpowerextrasgithuburl}{\matpower{} Extras} all pre-installed. See the \href{https://github.com/MATPOWER/matpower/blob/master/docs/MATPOWER-Docker.md}{\code{docs/MATPOWER-Docker.md}} page for more details.
+with Octave, \matpower{}, and the \href{\matpowerextrasgithuburl}{\matpower{} Extras} all pre-installed. See the \href{\matpowerdockerpage}{\code{docker/MATPOWER-Docker.md}} page for more details.
 \emph{Thanks to Richard Lincoln.}
 \item New options:
     \begin{itemize}

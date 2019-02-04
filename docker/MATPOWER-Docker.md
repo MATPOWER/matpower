@@ -29,7 +29,7 @@ with the following minor difference:
 
 - The Python script is called [`matpower_desktop.py`][12] instead of
   `octave_desktop.py` and is found at
-  [`https://raw.githubusercontent.com/MATPOWER/matpower/master/matpower_desktop.py`][12]
+  [`https://raw.githubusercontent.com/MATPOWER/matpower/master/docker/matpower_desktop.py`][12]
   (not at `https://raw.githubusercontent.com/compdatasci/octave-desktop/master/octave_desktop.py`).
 
 
@@ -100,4 +100,4 @@ installed in the Octave path.
 [9]: https://www.docker.com/products/docker-desktop
 [10]: https://www.python.org
 [11]: https://github.com/compdatasci/octave-desktop/blob/master/README.md
-[12]: https://raw.githubusercontent.com/MATPOWER/matpower/master/matpower_desktop.py
+[12]: https://raw.githubusercontent.com/MATPOWER/matpower/master/docker/matpower_desktop.py

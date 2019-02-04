@@ -1,0 +1,7 @@
+version: '3'
+services:
+  sut:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    command: matpower_docker_tests.sh

@@ -17,7 +17,7 @@ Since last release
     [`matpower/matpower-desktop`][17] on Docker Hub. This image provides
     a pre-packaged Ubuntu desktop environment with Octave, MATPOWER
     and the MATPOWER Extras all pre-installed. See the
-    [`docs/MATPOWER-Docker.md`][18] page for more details.
+    [`docker/MATPOWER-Docker.md`][18] page for more details.
     *Thanks to Richard Lincoln.*
 
 #### 1/17/19
@@ -2817,4 +2817,4 @@ First Public Release – *Jun 25, 1997*
 [15]: https://github.com/MATPOWER/matpower/issues/56
 [16]: https://github.com/MATPOWER/matpower/issues/57
 [17]: https://hub.docker.com/r/matpower/matpower-desktop
-[18]: https://github.com/MATPOWER/matpower/blob/master/docs/MATPOWER-Docker.md
+[18]: https://github.com/MATPOWER/matpower/blob/master/docker/MATPOWER-Docker.md

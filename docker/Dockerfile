@@ -56,6 +56,9 @@ RUN curl -SL https://www.coin-or.org/download/source/Ipopt/Ipopt-${IPOPT_VER}.tg
     rm -rf /opt/ipopt/src/*.o && \
     octave-cli --no-gui --eval "addpath('/opt/ipopt', '-end'); savepath"
 
+# Install test script
+COPY ./docker/matpower_docker_tests.sh /usr/local/bin
+
 # Install MATPOWER
 COPY . /opt/matpower
 RUN git clone https://github.com/MATPOWER/matpower-extras.git /opt/matpower/extras && \

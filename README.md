@@ -336,7 +336,7 @@ MATPOWER is distributed as open-source under the [3-clause BSD license][30].
 [7b]: https://www.docker.com
 [7c]: https://hub.docker.com/r/matpower/matpower-desktop
 [7d]: https://github.com/MATPOWER/matpower-extras
-[7e]: docs/MATPOWER-Docker.md
+[7e]: docker/MATPOWER-Docker.md
 [8]: docs/MATPOWER-manual.pdf
 [9]: http://www.pserc.cornell.edu/matpower/docs/ref/
 [10]: most/docs/MOST-manual.pdf
