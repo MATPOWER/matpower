@@ -164,6 +164,9 @@
 \newcommand{\mostlink}[0]{\href{\mosturl}{\most{}}}
 \newcommand{\mostver}[0]{1.0.1}
 \newcommand{\md}[0]{{\most{} Data struct}}
+\newcommand{\syngrid}[0]{{SynGrid}}
+\newcommand{\syngridurl}[0]{https://github.com/MATPOWER/mx-syngrid}
+\newcommand{\syngridlink}[0]{\href{\syngridurl}{\syngrid{}}}
 \newcommand{\powerweb}[0]{{\sc PowerWeb}}
 \newcommand{\pserc}[0]{{\sc PSerc}}
 \newcommand{\PSERC}[0]{{Power Systems Engineering Research Center (\pserc{})}}
@@ -206,6 +209,9 @@
 \newcommand{\currentmostmanurl}[0]{http://www.pserc.cornell.edu/matpower/MOST-manual.pdf}
 \newcommand{\mipsman}[0]{\href{\mipsmanurl}{\mips{} User's Manual}}
 \newcommand{\mostman}[0]{\href{\mostmanurl}{\most{} User's Manual}}
+\newcommand{\syngridmanurl}[0]{http://www.pserc.cornell.edu/matpower/docs/SynGrid-manual-\syngridver.pdf}
+\newcommand{\syngridman}[0]{\href{\syngridmanurl}{\syngrid{} User's Manual}}
+\newcommand{\currentsyngridmanurl}[0]{\syngridurl/blob/master/docs/SynGrid-manual.pdf}
 \newcommand{\dg}[0]{\sp\dagger}                         % hermitian conjugate
 \newcommand{\trans}[1]{{#1}^{\ensuremath{\mathsf{T}}}}  % transpose
 %\newcommand{\trans}[1]{#1^{\ensuremath{\mathsf{T}}}}    % transpose
@@ -6908,25 +6914,34 @@ name & description \\
 
 %%------------------------------------------
 \clearpage
-\section{Extras Directory}
+\section{\matpower{} Extras}
 \label{app:extras}
 
-For a \matpower{} installation in \mppath{}, the contents of \mppath{/extras} contains additional \matpower{} related code, some contributed by others. Some of these could be moved into the main \matpower{} distribution in the future with a bit of polishing and additional documentation. Please contact the developers if you are interested in helping make this happen.
+There are a number of \matpower{}-related ``extras'' that are not part of the core \matpower{} code, but are nevertheless potentially useful to \matpower{} users. Some of these packages and functions were developed and contributed by others. While these extras are not included in the main \href{\matpowergithuburl}{\matpower{} GitHub repository}, they are included in an \code{extras} subdirectory in the distribution ZIP files for versioned releases availabe from the \matpowerlink{} website.
+
+Unless indicated otherwise in the list below, the \href{\matpowerextrasgithuburl}{\matpower{} Extras} GitHub repository at \url{\matpowerextrasgithuburl} serves as the master repository and should be used for submitting issues or pull requests. Some have their own master repository and are included in \href{\matpowerextrasgithuburl}{\matpower{} Extras} as a subrepo using \code{git-subrepo}.\footnote{See \url{https://github.com/ingydotnet/git-subrepo}.}
+
+Some of these could be moved into the main \matpower{} distribution in the future with a bit of polishing and additional documentation. Please contact the developers if you are interested in helping make this happen.
 
 \begin{namelist}{XXXXXXXXXX}
-\item [\code{maxloadlim}] An optimal power flow extension, contributed by Camille Hamon, for computing maximum loadability limits.\footnote{Camille Hamon maintains a GitHub repository of this code at:\\\url{https://github.com/CamilleH/Max-Load-Lim-matpower}} Please see \code{extras/maxloadlim/manual/maxloadlim\_manual.pdf} for details on the formulation and implementation.
+\item [\code{maxloadlim}] An optimal power flow extension, contributed by Camille Hamon, for computing maximum loadability limits. Please see \\
+\code{extras/maxloadlim/manual/maxloadlim\_manual.pdf} \\
+for details on the formulation and implementation. The master repository for this code is at \url{https://github.com/MATPOWER/mx-maxloadlim}\footnote{This is a fork of Camille Hamon's GitHub repository of this code at:\\\url{https://github.com/CamilleH/Max-Load-Lim-matpower}} and is included in \matpower{} Extras as a subrepo.
 
 \item [\code{misc}] A number of potentially useful functions that are either not yet fully implemented, tested, documented and/or supported. See the help (and the code) in each individual file to understand what it does.\footnote{For more information on \code{qcqp\_opf}, see \cite{josz2016}. For more information on \code{plot\_mpc}, see \cite{cuffe2015}.}
 
-\item [\code{reduction}] A network reduction toolbox that performs a modifed Ward reduction and can be used to produce a smaller approximate equivalent from a larger original system. Code contributed by Yujia Zhu and Daniel Tylavsky. For more details, please see the \code{Network\_Reduction\_Toolbox.pdf} file.
+\item [\code{reduction}] A network reduction toolbox that performs a modifed Ward reduction and can be used to produce a smaller approximate equivalent from a larger original system. Code contributed by Yujia Zhu and Daniel Tylavsky. For more details, please see the \code{Network\_Reduction\_Toolbox.pdf} file. The master repository for this code is at \url{https://github.com/MATPOWER/mx-reduction} and is included in \matpower{} Extras as a subrepo.
 
-\item [\code{sdp\_pf}] Applications of a semidefinite programming programming relaxation of the power flow equations. Code contributed by Dan Molzahn. See Appendix~\ref{app:sdppf} and the documentation in the \mppath{/extras/sdp\_pf/documentation} directory, especially the file \code{sdp\_pf\_documentation.pdf}, for a full description of the functions in this package.
+\item [\code{sdp\_pf}] Applications of a semidefinite programming programming relaxation of the power flow equations. Code contributed by Dan Molzahn. See Appendix~\ref{app:sdppf} and the documentation in the \mppath{/extras/sdp\_pf/documentation} directory, especially the file \code{sdp\_pf\_documentation.pdf}, for a full description of the functions in this package. The master repository for this code is at \url{https://github.com/MATPOWER/mx-sdp_pf} and is included in \matpower{} Extras as a subrepo.
 
-\item [\code{se}] State-estimation code contributed by Rui Bo. Type \code{test\_se}, \code{test\_se\_14bus} or \code{test\_se\_14bus\_err} to run some examples. See \code{se\_intro.pdf} for a brief introduction to this code.
+\item [\code{se}] State-estimation code contributed by Rui Bo. Type \code{test\_se}, \code{test\_se\_14bus} or \code{test\_se\_14bus\_err} to run some examples. See \code{se\_intro.pdf} for a brief introduction to this code. The master repository for this code is at \url{https://github.com/MATPOWER/mx-se} and is included in \matpower{} Extras as a subrepo.
 
 \item [\code{smartmarket}] Code that implements a ``smart market'' auction clearing mechanism based on \matpower{}'s optimal power flow solver. See Appendix~\ref{app:smartmarket} for details.
 
 \item [\code{state\_estimator}] Older state estimation example, based on code by James~S.~Thorp.
+
+\item [\code{syngrid}] \syngridlink{} is a synthetic grid creation tool for \matpower{}. See the {\href{\currentsyngridmanurl}{\syngrid{} User's Manual}} for details.
+The master repository for this code is at \url{https://github.com/MATPOWER/mx-syngrid} and is included in \matpower{} Extras as a subrepo.
 \end{namelist}
 
 
