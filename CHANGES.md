@@ -12,6 +12,9 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 2/11/19
+  - Clean up and reorganize power flow tests in `t_pf`.
+
 #### 2/1/19
   - Add a `Dockerfile` used to auto-build the Docker image tagged
     [`matpower/matpower-desktop`][17] on Docker Hub. This image provides
