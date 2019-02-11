@@ -1,21 +1,21 @@
-function [Sbus, dSbus_dVm, dSbus_dVr, dSbus_dVi] = makeSbus(baseMVA, bus, gen, mpopt, V, Sg)
+function [Sbus, dSbus_dVm] = makeSbus(baseMVA, bus, gen, mpopt, Vm, Sg)
 %MAKESBUS   Builds the vector of complex bus power injections.
 %   SBUS = MAKESBUS(BASEMVA, BUS, GEN)
-%   SBUS = MAKESBUS(BASEMVA, BUS, GEN, MPOPT, V)
-%   SBUS = MAKESBUS(BASEMVA, BUS, GEN, MPOPT, V, SG)
+%   SBUS = MAKESBUS(BASEMVA, BUS, GEN, MPOPT, VM)
+%   SBUS = MAKESBUS(BASEMVA, BUS, GEN, MPOPT, VM, SG)
 %   returns the vector of complex bus power injections, that is, generation
-%   minus load. Power is expressed in per unit. If the MPOPT and V arguments
+%   minus load. Power is expressed in per unit. If the MPOPT and VM arguments
 %   are present it evaluates any ZIP loads based on the provided voltage
-%   magnitude vector. If V is empty, it assumes nominal voltage. If SG is
+%   magnitude vector. If VM is empty, it assumes nominal voltage. If SG is
 %   provided, it is a complex ng x 1 vector of generator power injections in
 %   p.u., and overrides the PG and QG columns in GEN, using GEN only for
 %   connectivity information.
 %
-%   [SBUS, DSBUS_DVM] = MAKESBUS(BASEMVA, BUS, GEN, MPOPT, V)
+%   [SBUS, DSBUS_DVM] = MAKESBUS(BASEMVA, BUS, GEN, MPOPT, VM)
 %   With two output arguments, it computes the partial derivative of the
-%   bus injections with respect to voltage magnitude, real and imaginary parts
-%   of complex voltage, leaving the first return value SBUS empty. 
-%   If V is empty, it assumes no voltage dependence and returns a sparse zero matrix.
+%   bus injections with respect to voltage magnitude, leaving the first
+%   return value SBUS empty. If VM is empty, it assumes no voltage dependence
+%   and returns a sparse zero matrix.
 %
 %   See also MAKEYBUS.
 
@@ -36,54 +36,22 @@ function [Sbus, dSbus_dVm, dSbus_dVr, dSbus_dVi] = makeSbus(baseMVA, bus, gen, m
 
 %% default inputs
 if nargin < 5
-    V = [];
+    Vm = [];
     if nargin < 4
         mpopt = [];
     end
 end
 nb = size(bus, 1);
-Vm = abs(V);
-Vr = real(V);
-Vi = imag(V);
-v_cartesian = pf.v_cartesian;            
-current_balance = pf.current_balance;
+
 %% get load parameters
 Sd = makeSdzip(baseMVA, bus, mpopt);
 
 if nargout == 2
     Sbus = [];
-    if current_balance 
-        if isempty(Vr) && isempty(Vi)
-            dSbus_dVm = sparse(nb, nb);                     %% Here Sbus = Ibus
-            dSbus_dVr = sparse(nb, nb);                     %% Here Sbus = Ibus
-            dSbus_dVi = sparse(nb, nb);                     %% Here Sbus = Ibus    
-        else
-            if v_cartesian
-                dSbus_dVr = -(spdiags(conj(((Vr./Vm).*Sd.i + 2 * Vr .* Sd.z)./V), 0, nb, nb));
-                dSbus_dVi = -(spdiags(conj(((Vi./Vm).*Sd.i + 2 * Vi .* Sd.z)./V), 0, nb, nb));
-                dSbus_dVm = [];
-            else
-                dSbus_dVm = -(spdiags((conj(Sd.i + 2 * Vm .* Sd.z)./V), 0, nb, nb));
-                dSbus_dVr = [];
-                dSbus_dVi = [];
-            end
-        end        
+    if isempty(Vm)
+        dSbus_dVm = sparse(nb, nb);
     else
-        if isempty(Vm)
-            dSbus_dVm = sparse(nb, nb);
-            dSbus_dVr = sparse(nb, nb);
-            dSbus_dVi = sparse(nb, nb);
-        else
-            if v_cartesian
-                dSbus_dVr = -(spdiags((Vr./Vm).*Sd.i + 2 * Vr .* Sd.z, 0, nb, nb));
-                dSbus_dVi = -(spdiags((Vi./Vm).*Sd.i + 2 * Vi .* Sd.z, 0, nb, nb));            
-                dSbus_dVm = [];
-            else
-                dSbus_dVm = -(spdiags(Sd.i + 2 * Vm .* Sd.z, 0, nb, nb));
-                dSbus_dVi = [];
-                dSbus_dVr = [];
-            end
-        end        
+        dSbus_dVm = -(spdiags(Sd.i + 2 * Vm .* Sd.z, 0, nb, nb));
     end
 else
     %% compute per-bus generation in p.u.
