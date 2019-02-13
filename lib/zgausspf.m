@@ -37,8 +37,7 @@ end
 
 %% options
 complex = 0;    %% use 1 = complex formulation, 0 = use real formulation
-pv_method = 4;  %% 1 = sens real(V) to imag(I), 2 = dVm/dQ (full Jac)
-                %% 3 = dVm/dQ (decoupled Jac), 4 = dVm/dQ (fast-decoupled Jac)
+pv_method = 2;  %% 1 = sens real(V) to imag(I), 2 = dVm/dQ (fast-decoupled Jac)
 tol     = mpopt.pf.tol;
 max_it  = mpopt.pf.zg.max_it;
 if have_fcn('matlab') && have_fcn('matlab', 'vnum') < 7.3
@@ -129,7 +128,7 @@ if npv
             end
 
             [LL, UU, PP] = lu(dVdI);    %% not sparse, so don't use 'vector' version
-        case 4
+        case 2
             if lu_vec
                 [LBpp, UBpp, pBpp, qBpp] = lu(Bpp(pq, pq), 'vector');
                 [junk, iqBpp] = sort(qBpp);
@@ -164,87 +163,23 @@ while (~converged && i < max_it)
         [max_dV, k] = max(abs(dV));
 %        dV([1:k-1 k+1:end]) = 0;   %% one at a time?
 
-% Four alternate approaches:
-% (It seems that 1 and 4 work about equally well, 2 and 3, not so much)
-%   1 - use precomputed sensitivity of real(V) to imag(I)
-%   2 - use sensitivity of Vm to Q evaluated at current V (full Jacobian)
-%   3 - use sensitivity of Vm to Q evaluated at current V (decoupled)
-%   4 - use sensitivity of Vm to Q evaluated at current V (fast-decoupled)
-switch pv_method
-    case 1      %% precomputed sensitivity of real(V) to imag(I)
-        %% estimate corresponding change in imag(I) injection
-        dQ = -UU \  (LL \ (PP * dV));    %% dQ = -dI = -dVdI \ dV;
-    case 2      %% sensitivity of Vm to Q evaluated at current V (full Jacobian)
-        %% evaluate Jacobian
-        [dSbus_dVm, dSbus_dVa] = dSbus_dV(Ybus, V);
-
-        j11 = real(dSbus_dVa([pq; pv], [pq; pv]));
-        j12 = real(dSbus_dVm([pq; pv], pq));
-        j13 = real(dSbus_dVm([pq; pv], pv));
-
-        j21 = imag(dSbus_dVa(pq, [pq; pv]));
-        j22 = imag(dSbus_dVa(pq, pq));
-        j23 = imag(dSbus_dVa(pq, pv));
-
-        j31 = imag(dSbus_dVm(pv, [pq; pv]));
-        j32 = imag(dSbus_dVm(pv, pq));
-        j33 = imag(dSbus_dVm(pv, pv));
-
-        J1 = [  j11  j12;
-                j21  j22;   ];
-        J2 = [  j13; j23;   ];
-        J3 = [  j31  j32    ];
-
-        x1 = J1 \ (J2 * dV);
-        dQ = J3 * x1 + j33 * dV;
-    case 3      %% sensitivity of Vm to Q evaluated at current V (decoupled Jacobian)
-        %% evaluate Jacobian
-        [dSbus_dVm, dSbus_dVa] = dSbus_dV(Ybus, V);
-
-        j11 = imag(dSbus_dVm(pq, pq));
-        j12 = imag(dSbus_dVm(pq, pv));
-
-        j21 = imag(dSbus_dVm(pv, pq));
-        j22 = imag(dSbus_dVm(pv, pv));
-
-        dVpq = j11 \ (-j12 * dV);
-        dQ = j21 * dVpq + j22 * dV;
-    case 4      %% sensitivity of Vm to Q evaluated at current V (fast-decoupled Jacobian)
-        % dVpq = Bpp(pq, pq) \ (-Bpp(pq, pv) * dV);
-        if lu_vec
-            dVpq = UBpp \  (LBpp \ (-Bpp(pq(pBpp), pv) * dV));
-            dVpq = dVpq(iqBpp);
-        else
-            dVpq = UBpp \  (LBpp \ (PBpp * (-Bpp(pq, pv) * dV)));
+        % Two alternate approaches (that seem to work about equally well):
+        %   1 - use precomputed sensitivity of real(V) to imag(I)
+        %   2 - use sensitivity of Vm to Q evaluated at current V (fast-decoupled)
+        switch pv_method
+            case 1      %% precomputed sensitivity of real(V) to imag(I)
+                %% estimate corresponding change in imag(I) injection
+                dQ = -UU \  (LL \ (PP * dV));    %% dQ = -dI = -dVdI \ dV;
+            case 2      %% sensitivity of Vm to Q evaluated at current V (fast-decoupled Jacobian)
+                % dVpq = Bpp(pq, pq) \ (-Bpp(pq, pv) * dV);
+                if lu_vec
+                    dVpq = UBpp \  (LBpp \ (-Bpp(pq(pBpp), pv) * dV));
+                    dVpq = dVpq(iqBpp);
+                else
+                    dVpq = UBpp \  (LBpp \ (PBpp * (-Bpp(pq, pv) * dV)));
+                end
+                dQ = Bpp(pv, pq) * dVpq + Bpp(pv, pv) * dV;
         end
-        dQ = Bpp(pv, pq) * dVpq + Bpp(pv, pv) * dV;
-%   case 0      %% sensitivity of Vm to Q evaluated at current V
-% % (using full Jacobian does not seem to work, at the moment, not sure why)
-%         %% evaluate Jacobian
-%         [dSbus_dVm, dSbus_dVa] = dSbus_dV(Ybus, V);
-% 
-%         j11 = real(dSbus_dVa([pv; pq], [pv; pq]));
-%         j12 = real(dSbus_dVm([pv; pq], [pv; pq]));
-%         j21 = imag(dSbus_dVa([pv; pq], [pv; pq]));
-%         j22 = imag(dSbus_dVm([pv; pq], [pv; pq]));
-% 
-%         J = [   j11 j12;
-%                 j21 j22;    ];
-% 
-%         %% compute sensitivities for PV buses of Vm to Q
-%         %% Essentially, the following, only more efficiently ...
-%         %%  J_inv = inv(J);
-%         %%  dVdQ = J_inv(npv+npq+(1:npv), npv+npq+(1:npv));
-%         rhs = sparse(npv+npq+(1:npv), 1:npv, 1, 2*(npv+npq), npv);
-%         cols_of_J_inv = J \ rhs;
-%         dVdQ = cols_of_J_inv(npv+npq+(1:npv), :);
-% 
-%         %% estimate corresponding change in Q injection
-%         dQ = dVdQ \ dV;
-% 
-%         %% update Sbus
-%         Sbus(pv) = Sbus(pv) + j * dQ;
-end
 
         %% update Sbus
         Sbus(pv) = Sbus(pv) + j * dQ;
