@@ -284,7 +284,13 @@ if ~isempty(mpc.bus)
                 case 'GS'
                     [V, success, iterations] = gausspf(Ybus, Sbus([]), V0, ref, pv, pq, mpopt);
                 case 'ZG'
-                    [V, success, iterations] = zgausspf(Ybus, Sbus([]), V0, ref, pv, pq, mpopt);
+                    %% get B matrix for updating Q at PV buses
+                    if isempty(pv)
+                        Bpp = [];
+                    else
+                        [Bp, Bpp] = makeB(baseMVA, bus, branch, 'FDBX');
+                    end
+                    [V, success, iterations] = zgausspf(Ybus, Sbus([]), V0, ref, pv, pq, Bpp, mpopt);
                 case {'PQSUM', 'ISUM', 'YSUM'}
                     [mpc, success, iterations] = radial_pf(mpc, mpopt);
                 otherwise
