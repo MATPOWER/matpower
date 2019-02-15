@@ -28,9 +28,8 @@ function [i2e, bus, gen, branch, areas] = ext2int(bus, gen, branch, areas)
 %   by a MATOWER options struct, then all isolated buses, off-line
 %   generators and branches are removed along with any generators or
 %   branches connected to isolated buses. Then the buses are renumbered
-%   consecutively, beginning at 1, and the generators are sorted by
-%   increasing bus number. Any 'ext2int' callback routines registered in
-%   the case are also invoked automatically. All of the related indexing
+%   consecutively, beginning at 1. Any 'ext2int' callback routines registered
+%   in the case are also invoked automatically. All of the related indexing
 %   information and the original data matrices are stored in an 'order'
 %   field in the struct to be used by INT2EXT to perform the reverse
 %   conversions. If the case is already using internal numbering it is
@@ -72,8 +71,14 @@ function [i2e, bus, gen, branch, areas] = ext2int(bus, gen, branch, areas)
 %
 %   See also INT2EXT, E2I_FIELD, E2I_DATA.
 
+%   UNDOCUMENTED OPTION:
+%       MPC = EXT2INT(MPC, MPOPT, 1)
+%       Calling EXT2INT in the second form with a 3rd argument of 1 will
+%       cause it to sort the generators by increasing bus index as in
+%       MATPOWER v4 through v7.0b1.
+
 %   MATPOWER
-%   Copyright (c) 1996-2018, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2019, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -82,7 +87,7 @@ function [i2e, bus, gen, branch, areas] = ext2int(bus, gen, branch, areas)
 
 if isstruct(bus)
     mpc = bus;
-    if nargin < 3
+    if nargin < 3 || isscalar(gen)
         first = ~isfield(mpc, 'order');
         if first || mpc.order.state == 'e'
             %% define names for columns to data matrices
@@ -126,6 +131,11 @@ if isstruct(bus)
             else
                 dc = 0;
             end
+            if nargin == 3
+                reorder_gens = gen;
+            else
+                reorder_gens = 0;
+            end
 
             %% save data matrices with external ordering
             o.ext.bus    = mpc.bus;
@@ -165,8 +175,9 @@ if isstruct(bus)
                 mpc.gen(o.gen.status.off, :) = [];
             end
 
-            %% update size
+            %% update sizes
             nb = size(mpc.bus, 1);
+            ng = size(mpc.gen, 1);
 
             %% apply consecutive bus numbering
             o.bus.i2e = mpc.bus(:, BUS_I);
@@ -178,10 +189,17 @@ if isstruct(bus)
                 mpc.branch(:, T_BUS)    = o.bus.e2i( mpc.branch(:, T_BUS)   );
             end
 
-            %% reorder gens in order of increasing bus number
-            [tmp, o.gen.i2e] = sort(mpc.gen(:, GEN_BUS));
-            [tmp, o.gen.e2i] = sort(o.gen.i2e);
-            mpc.gen = mpc.gen(o.gen.i2e, :);
+            if reorder_gens
+                %% reorder gens in order of increasing bus number
+                [tmp, o.gen.i2e] = sort(mpc.gen(:, GEN_BUS));
+                [tmp, o.gen.e2i] = sort(o.gen.i2e);
+                mpc.gen = mpc.gen(o.gen.i2e, :);
+            else
+                %% don't reorder gens in order of increasing bus number, but
+                %% keep the mappings in place for backward compatibility
+                o.gen.i2e = (1:ng)';
+                o.gen.e2i = o.gen.i2e;
+            end
 
             if isfield(o, 'int')
                 o = rmfield(o, 'int');
@@ -241,10 +259,10 @@ if isstruct(bus)
         end
         if ischar(gen) || iscell(gen)   %% field
             warning('Calls of the form MPC = EXT2INT(MPC, ''FIELD_NAME'', ...) have been deprecated. Please replace EXT2INT with E2I_FIELD.');
-            i2e = e2i_field(mpc, gen, branch, dim);
+            i2e = e2i_field(mpc, gen, ordering, dim);
         else                            %% value
             warning('Calls of the form VAL = EXT2INT(MPC, VAL, ...) have been deprecated. Please replace EXT2INT with E2I_DATA.');
-            i2e = e2i_data(mpc, gen, branch, dim);
+            i2e = e2i_data(mpc, gen, ordering, dim);
         end
     end
 else            %% old form

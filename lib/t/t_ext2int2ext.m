@@ -32,6 +32,8 @@ if have_fcn('matlab', 'vnum') < 7.001
 else
     mpce = loadcase('t_case_ext');
     mpci = loadcase('t_case_int');
+    
+    gen_i2e = [1 2 4];
 
     An = mpce.xbus;
     As = mpce.strbus;
@@ -266,7 +268,7 @@ else
 
     t = 'val = e2i_data(mpc, val, ''gen'')';
     got = e2i_data(mpc, mpce.xgen, 'gen');
-    ex = mpce.xgen([4 2 1], :);
+    ex = mpce.xgen(gen_i2e, :);
     t_is(got, ex, 12, t);
     t = 'val = i2e_data(mpc, val, oldval, ''gen'')';
     tmp = ones(size(mpce.xgen));
@@ -276,7 +278,7 @@ else
 
     t = 'val = e2i_data(mpc, val, ''gen'', 2)';
     got = e2i_data(mpc, mpce.xgen, 'gen', 2);
-    ex = mpce.xgen(:, [4 2 1]);
+    ex = mpce.xgen(:, gen_i2e);
     t_is(got, ex, 12, t);
     t = 'val = i2e_data(mpc, val, oldval, ''gen'', 2)';
     tmp = ones(size(mpce.xgen));
@@ -308,7 +310,7 @@ else
 
     t = 'val = e2i_data(mpc, val, {''branch'', ''gen'', ''bus''})';
     got = e2i_data(mpc, mpce.xrows, {'branch', 'gen', 'bus'});
-    ex = [mpce.xbranch([1:6, 8:10], 1:4); mpce.xgen([4 2 1], :); mpce.xbus([1:5, 7:10], 1:4); -ones(2, 4)];
+    ex = [mpce.xbranch([1:6, 8:10], 1:4); mpce.xgen(gen_i2e, :); mpce.xbus([1:5, 7:10], 1:4); -ones(2, 4)];
     t_is(got, ex, 12, t);
     t = 'val = i2e_data(mpc, val, oldval, {''branch'', ''gen'', ''bus''})';
     tmp1 = ones(size(mpce.xbranch(:, 1:4)));
@@ -323,7 +325,7 @@ else
 
     t = 'val = e2i_data(mpc, val, {''branch'', ''gen'', ''bus''}, 2)';
     got = e2i_data(mpc, mpce.xcols, {'branch', 'gen', 'bus'}, 2);
-    ex = [mpce.xbranch([1:6, 8:10], 1:4); mpce.xgen([4 2 1], :); mpce.xbus([1:5, 7:10], 1:4); -ones(2, 4)]';
+    ex = [mpce.xbranch([1:6, 8:10], 1:4); mpce.xgen(gen_i2e, :); mpce.xbus([1:5, 7:10], 1:4); -ones(2, 4)]';
     t_is(got, ex, 12, t);
     t = 'val = i2e_data(mpc, val, oldval, {''branch'', ''gen'', ''bus''}, 2)';
     tmp1 = ones(size(mpce.xbranch(:, 1:4)));
@@ -362,7 +364,7 @@ else
 
     t = 'val = e2i_data(mpc, cell, ''gen'')';
     got = e2i_data(mpc, mpce.strgen, 'gen');
-    ex = mpce.strgen([4 2 1], :);
+    ex = mpce.strgen(gen_i2e, :);
     t_is(cellfun(@str2num, got), cellfun(@str2num, ex), 12, t);
     t = 'val = i2e_data(mpc, cell, oldval, ''gen'')';
     tmp = cell(size(mpce.strgen));
@@ -372,7 +374,7 @@ else
 
     t = 'val = e2i_data(mpc, cell, ''gen'', 2)';
     got = e2i_data(mpc, mpce.strgen, 'gen', 2);
-    ex = mpce.strgen(:, [4 2 1]);
+    ex = mpce.strgen(:, gen_i2e);
     t_is(cellfun(@str2num, got), cellfun(@str2num, ex), 12, t);
     t = 'val = i2e_data(mpc, cell, oldval, ''gen'', 2)';
     tmp = cell(size(mpce.strgen));
@@ -404,7 +406,7 @@ else
 
     t = 'val = e2i_data(mpc, cell, {''branch'', ''gen'', ''bus''})';
     got = e2i_data(mpc, mpce.strrows, {'branch', 'gen', 'bus'});
-    ex = [mpce.strbranch([1:6, 8:10], 1:4); mpce.strgen([4 2 1], :); mpce.strbus([1:5, 7:10], 1:4); cellfun(@num2str, num2cell(-ones(2, 4)), 'UniformOutput', 0)];
+    ex = [mpce.strbranch([1:6, 8:10], 1:4); mpce.strgen(gen_i2e, :); mpce.strbus([1:5, 7:10], 1:4); cellfun(@num2str, num2cell(-ones(2, 4)), 'UniformOutput', 0)];
     t_is(cellfun(@str2num, got), cellfun(@str2num, ex), 12, t);
     t = 'val = i2e_data(mpc, cell, oldval, {''branch'', ''gen'', ''bus''})';
     tmp1 = cell(size(mpce.strbranch(:, 1:4)));
@@ -419,7 +421,7 @@ else
 
     t = 'val = e2i_data(mpc, cell, {''branch'', ''gen'', ''bus''}, 2)';
     got = e2i_data(mpc, mpce.strcols, {'branch', 'gen', 'bus'}, 2);
-    ex = [mpce.strbranch([1:6, 8:10], 1:4); mpce.strgen([4 2 1], :); mpce.strbus([1:5, 7:10], 1:4); cellfun(@num2str, num2cell(-ones(2, 4)), 'UniformOutput', 0)]';
+    ex = [mpce.strbranch([1:6, 8:10], 1:4); mpce.strgen(gen_i2e, :); mpce.strbus([1:5, 7:10], 1:4); cellfun(@num2str, num2cell(-ones(2, 4)), 'UniformOutput', 0)]';
     t_is(cellfun(@str2num, got), cellfun(@str2num, ex), 12, t);
     t = 'val = i2e_data(mpc, cell, oldval, {''branch'', ''gen'', ''bus''}, 2)';
     tmp1 = cell(size(mpce.strbranch(:, 1:4)));
@@ -453,7 +455,7 @@ else
     t_is(got.xbus, mpce.xbus, 12, t);
 
     t = 'mpc = e2i_field(mpc, field, ''gen'')';
-    ex = mpce.xgen([4 2 1], :);
+    ex = mpce.xgen(gen_i2e, :);
     got = e2i_field(mpc, 'xgen', 'gen');
     t_is(got.xgen, ex, 12, t);
     t = 'mpc = i2e_field(mpc, field, ''gen'')';
@@ -461,7 +463,7 @@ else
     t_is(got.xgen, mpce.xgen, 12, t);
 
     t = 'mpc = e2i_field(mpc, field, ''gen'', 2)';
-    ex = mpce.xgen(:, [4 2 1]);
+    ex = mpce.xgen(:, gen_i2e);
     got = e2i_field(mpc, 'xgen', 'gen', 2);
     t_is(got.xgen, ex, 12, t);
     t = 'mpc = i2e_field(mpc, field, ''gen'', 2)';
@@ -487,7 +489,7 @@ else
     t_is(got.xbranch, mpce.xbranch, 12, t);
 
     t = 'mpc = e2i_field(mpc, field, {''branch'', ''gen'', ''bus''})';
-    ex = [mpce.xbranch([1:6, 8:10], 1:4); mpce.xgen([4 2 1], :); mpce.xbus([1:5, 7:10], 1:4); -ones(2, 4)];
+    ex = [mpce.xbranch([1:6, 8:10], 1:4); mpce.xgen(gen_i2e, :); mpce.xbus([1:5, 7:10], 1:4); -ones(2, 4)];
     got = e2i_field(mpc, 'xrows', {'branch', 'gen', 'bus'});
     t_is(got.xrows, ex, 12, t);
     t = 'mpc = i2e_field(mpc, field, {''branch'', ''gen'', ''bus''})';
@@ -495,7 +497,7 @@ else
     t_is(got.xrows, mpce.xrows, 12, t);
 
     t = 'mpc = e2i_field(mpc, field, {''branch'', ''gen'', ''bus''}, 2)';
-    ex = [mpce.xbranch([1:6, 8:10], 1:4); mpce.xgen([4 2 1], :); mpce.xbus([1:5, 7:10], 1:4); -ones(2, 4)]';
+    ex = [mpce.xbranch([1:6, 8:10], 1:4); mpce.xgen(gen_i2e, :); mpce.xbus([1:5, 7:10], 1:4); -ones(2, 4)]';
     got = e2i_field(mpc, 'xcols', {'branch', 'gen', 'bus'}, 2);
     t_is(got.xcols, ex, 12, t);
     t = 'mpc = i2e_field(mpc, field, {''branch'', ''gen'', ''bus''})';
@@ -503,7 +505,7 @@ else
     t_is(got.xcols, mpce.xcols, 12, t);
 
     t = 'mpc = e2i_field(mpc, {''field1'', ''field2''}, ordering)';
-    ex = mpce.x.more([4 2 1], :);
+    ex = mpce.x.more(gen_i2e, :);
     got = e2i_field(mpc, {'x', 'more'}, 'gen');
     t_is(got.x.more, ex, 12, t);
     t = 'mpc = i2e_field(mpc, {''field1'', ''field2''}, ordering)';
@@ -511,7 +513,7 @@ else
     t_is(got.x.more, mpce.x.more, 12, t);
 
     t = 'mpc = e2i_field(mpc, {''field1'', ''field2''}, ordering, 2)';
-    ex = mpce.x.more(:, [4 2 1]);
+    ex = mpce.x.more(:, gen_i2e);
     got = e2i_field(mpc, {'x', 'more'}, 'gen', 2);
     t_is(got.x.more, ex, 12, t);
     t = 'mpc = i2e_field(mpc, {''field1'', ''field2''}, ordering, 2)';
@@ -539,7 +541,7 @@ else
     t_is(cellfun(@str2num, got.strbus), cellfun(@str2num, mpce.strbus), 12, t);
 
     t = 'mpc = e2i_field(mpc, cellfield, ''gen'')';
-    ex = mpce.strgen([4 2 1], :);
+    ex = mpce.strgen(gen_i2e, :);
     got = e2i_field(mpc, 'strgen', 'gen');
     t_is(cellfun(@str2num, got.strgen), cellfun(@str2num, ex), 12, t);
     t = 'mpc = i2e_field(mpc, cellfield, ''gen'')';
@@ -547,7 +549,7 @@ else
     t_is(cellfun(@str2num, got.strgen), cellfun(@str2num, mpce.strgen), 12, t);
 
     t = 'mpc = e2i_field(mpc, cellfield, ''gen'', 2)';
-    ex = mpce.strgen(:, [4 2 1]);
+    ex = mpce.strgen(:, gen_i2e);
     got = e2i_field(mpc, 'strgen', 'gen', 2);
     t_is(cellfun(@str2num, got.strgen), cellfun(@str2num, ex), 12, t);
     t = 'mpc = i2e_field(mpc, cellfield, ''gen'', 2)';
@@ -573,7 +575,7 @@ else
     t_is(cellfun(@str2num, got.strbranch), cellfun(@str2num, mpce.strbranch), 12, t);
 
     t = 'mpc = e2i_field(mpc, cellfield, {''branch'', ''gen'', ''bus''})';
-    ex = [mpce.strbranch([1:6, 8:10], 1:4); mpce.strgen([4 2 1], :); mpce.strbus([1:5, 7:10], 1:4); cellfun(@num2str, num2cell(-ones(2, 4)), 'UniformOutput', 0)];
+    ex = [mpce.strbranch([1:6, 8:10], 1:4); mpce.strgen(gen_i2e, :); mpce.strbus([1:5, 7:10], 1:4); cellfun(@num2str, num2cell(-ones(2, 4)), 'UniformOutput', 0)];
     got = e2i_field(mpc, 'strrows', {'branch', 'gen', 'bus'});
     t_is(cellfun(@str2num, got.strrows), cellfun(@str2num, ex), 12, t);
     t = 'mpc = i2e_field(mpc, cellfield, {''branch'', ''gen'', ''bus''})';
@@ -581,7 +583,7 @@ else
     t_is(cellfun(@str2num, got.strrows), cellfun(@str2num, mpce.strrows), 12, t);
 
     t = 'mpc = e2i_field(mpc, cellfield, {''branch'', ''gen'', ''bus''}, 2)';
-    ex = [mpce.strbranch([1:6, 8:10], 1:4); mpce.strgen([4 2 1], :); mpce.strbus([1:5, 7:10], 1:4); cellfun(@num2str, num2cell(-ones(2, 4)), 'UniformOutput', 0)]';
+    ex = [mpce.strbranch([1:6, 8:10], 1:4); mpce.strgen(gen_i2e, :); mpce.strbus([1:5, 7:10], 1:4); cellfun(@num2str, num2cell(-ones(2, 4)), 'UniformOutput', 0)]';
     got = e2i_field(mpc, 'strcols', {'branch', 'gen', 'bus'}, 2);
     t_is(cellfun(@str2num, got.strcols), cellfun(@str2num, ex), 12, t);
     t = 'mpc = i2e_field(mpc, cellfield, {''branch'', ''gen'', ''bus''})';

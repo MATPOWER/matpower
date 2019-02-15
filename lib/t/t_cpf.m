@@ -206,7 +206,7 @@ else
     t_is(size(r.cpf.lam), [1 iterations+1], 12, [t 'size(lam)']);
     t_ok(strcmp(r.cpf.done_msg, 'All generators at Pmax'), [t 'done_msg']);
     ek = [7 13 iterations];
-    eidx = [2 1 3];
+    eidx = [3 1 2];
     ename = {'PLIM', 'PLIM', 'PLIM'};
     ne = length(ek);
     t_is(length(r.cpf.events), ne, 12, sprintf('%ssize(events) == %d', t, ne));
@@ -318,7 +318,7 @@ else
     t_is(size(r.cpf.lam), [1 iterations+1], 12, [t 'size(lam)']);
     t_ok(strfind(r.cpf.done_msg, 'Reached steady state loading limit'), [t 'done_msg']);
     ek = [7 14 iterations];
-    eidx = [2 1 1];
+    eidx = [3 1 1];
     ename = {'PLIM', 'QLIM', 'NOSE'};
     ne = length(ek);
     t_is(length(r.cpf.events), ne, 12, sprintf('%ssize(events) == %d', t, ne));
@@ -376,7 +376,7 @@ else
     t_is(size(r.cpf.lam), [1 iterations+1], 12, [t 'size(lam)']);
     t_ok(strcmp(r.cpf.done_msg, 'No REF or PV buses remaining.'), [t 'done_msg']);
     ek = [12 22 iterations];
-    eidx = [1 2 3];
+    eidx = [1 3 2];
     ename = {'QLIM', 'QLIM', 'QLIM'};
     ne = length(ek);
     t_is(length(r.cpf.events), ne, 12, sprintf('%ssize(events) == %d', t, ne));

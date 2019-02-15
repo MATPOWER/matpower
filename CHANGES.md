@@ -12,6 +12,13 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 2/26/19
+  - **INCOMPATIBLE CHANGE:** Eliminate unnecessary reordering of on-line
+    generators (sorted by increasing bus index) from `ext2int`. The
+    order is now left unmodified by `ext2int`. This change should only
+    affect user code that explicitly depends on the order of generators with
+    internal numbering (hopefully quite rare).
+
 #### 2/22/19
   - Clarify in manual and `printpf` output that units on branch current
     limits and outputs (i.e. when `opf.flow_lim` is `'I'`) are kA * basekV.
