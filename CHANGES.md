@@ -12,6 +12,12 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 2/15/19
+  - Branches 86--87, 68--116 in `case118` changed from transmission lines
+    (tap ratio = 0) to transformers (tap ratio = 1) for consistency with
+    bus base voltages.
+    *Thanks to Drosos Kourounis.*
+
 #### 2/11/19
   - Clean up and reorganize power flow tests in `t_pf`.
 
