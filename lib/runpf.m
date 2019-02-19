@@ -190,6 +190,15 @@ if ~isempty(mpc.bus)
             end
             fprintf(' -- AC Power Flow (%s)\n', solver);
         end
+
+        switch alg
+            case {'NR', 'NR-SC', 'NR-IP', 'NR-IC'}  %% all 4 variants supported
+            otherwise                   %% only power balance, polar is valid
+                if mpopt.pf.current_balance || mpopt.pf.v_cartesian
+                    error('runpf: power flow algorithm ''%s'' only supports power balance, polar version\nI.e. both ''pf.current_balance'' and ''pf.v_cartesian'' must be set to 0.');
+                end
+        end
+
         %% initial state
         % V0    = ones(size(bus, 1), 1);            %% flat start
         V0  = bus(:, VM) .* exp(sqrt(-1) * pi/180 * bus(:, VA));
