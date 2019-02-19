@@ -1,4 +1,41 @@
 function [V, converged, i] = newtonpf_I_polar(Ybus, Sbus, V0, ref, pv, pq, mpopt)
+%NEWTONPF_I_POLAR  Solves power flow using full Newton's method (power/cartesian)
+%   [V, CONVERGED, I] = NEWTONPF_I_POLAR(YBUS, SBUS, V0, REF, PV, PQ, MPOPT)
+%
+%   Solves for bus voltages using a full Newton-Raphson method, using nodal
+%   current balance equations and polar coordinate representation of
+%   voltages, given the following inputs:
+%       YBUS  - full system admittance matrix (for all buses)
+%       SBUS  - handle to function that returns the complex bus power
+%               injection vector (for all buses), given the bus voltage
+%               magnitude vector (for all buses)
+%       V0    - initial vector of complex bus voltages
+%       REF   - bus index of reference bus (voltage ang reference & gen slack)
+%       PV    - vector of bus indices for PV buses
+%       PQ    - vector of bus indices for PQ buses
+%       MPOPT - (optional) MATPOWER option struct, used to set the
+%               termination tolerance, maximum number of iterations, and
+%               output options (see MPOPTION for details).
+%
+%   The bus voltage vector contains the set point for generator
+%   (including ref bus) buses, and the reference angle of the swing
+%   bus, as well as an initial guess for remaining magnitudes and
+%   angles.
+%
+%   Returns the final complex voltages, a flag which indicates whether it
+%   converged or not, and the number of iterations performed.
+%
+%   See also RUNPF, NEWTONPF, NEWTONPF_S_CART, NEWTONPF_I_CART.
+
+%   MATPOWER
+%   Copyright (c) 1996-2019, Power Systems Engineering Research Center (PSERC)
+%   by Ray Zimmerman, PSERC Cornell
+%   and Baljinnyam Sereeter, Delft University of Technology
+%
+%   This file is part of MATPOWER.
+%   Covered by the 3-clause BSD License (see LICENSE file for details).
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
+
 %% default arguments
 if nargin < 7
     mpopt = mpoption;
@@ -24,16 +61,18 @@ j1 = 1;         j2 = npv;           %% j1:j2 - V angle of pv buses
 j3 = j2 + 1;    j4 = j2 + npq;      %% j3:j4 - V angle of pq buses
 j5 = j4 + 1;    j6 = j4 + npv;      %% j5:j6 - Q of pv buses
 j7 = j6 + 1;    j8 = j6 + npq;      %% j7:j8 - V mag of pq buses
+
 %% evaluate F(x0)
-Sbus1 = Sbus(Vm);
-Sbus1(pv) = real(Sbus1(pv)) + 1j*imag(V(pv).* conj(Ybus(pv,:)*V));
-mis = Ybus*V - conj(Sbus1./V);
+Sb = Sbus(Vm);
+Sb(pv) = real(Sb(pv)) + 1j * imag(V(pv) .* conj(Ybus(pv, :) * V));
+mis = Ybus * V - conj(Sb ./ V);
 F = [   real(mis([pv; pq]));
         imag(mis([pv; pq]))   ];
+
 %% check tolerance
 normF = norm(F, inf);
 if mpopt.verbose > 1
-    fprintf('\n it    max Ir & Im mismatch (p.u.)');
+    fprintf('\n it   max Ir & Ii mismatch (p.u.)');
     fprintf('\n----  ---------------------------');
     fprintf('\n%3d        %10.3e', i, normF);
 end
@@ -58,28 +97,30 @@ end
 while (~converged && i < max_it)
     %% update iteration counter
     i = i + 1;
-    
+
     %% evaluate Jacobian
-    dImis_dQ  = sparse(1:n, 1:n, 1j./conj(V), n, n); 
-    [dImis_dVa, dImis_dVm] = dImis_dV(Sbus1, Ybus, V);
-     dImis_dVm(:,pv) = dImis_dQ(:,pv);    
-%    [dummy, neg_dSd_dVm] = Sbus(Vm);
-%    dSbus_dVm = dSbus_dVm - neg_dSd_dVm;
+    dImis_dQ = sparse(1:n, 1:n, 1j./conj(V), n, n);
+    [dImis_dVa, dImis_dVm] = dImis_dV(Sb, Ybus, V);
+    dImis_dVm(:, pv) = dImis_dQ(:, pv);
+
+    %% handling of derivatives for voltage dependent loads
+    %% (not yet implemented) goes here
+
     j11 = real(dImis_dVa([pv; pq], [pv; pq]));
     j12 = real(dImis_dVm([pv; pq], [pv; pq]));
     j21 = imag(dImis_dVa([pv; pq], [pv; pq]));
     j22 = imag(dImis_dVm([pv; pq], [pv; pq]));
-    
+
     J = [   j11 j12;
             j21 j22;    ];
-        
+
     %% compute update step
     dx = mplinsolve(J, -F, lin_solver);
 
     %% update voltage
     if npv
         Va(pv) = Va(pv) + dx(j1:j2);
-        Sbus1(pv) = real(Sbus1(pv)) + 1j*(imag(Sbus1(pv)) + dx(j5:j6));
+        Sb(pv) = real(Sb(pv)) + 1j * (imag(Sb(pv)) + dx(j5:j6));
     end
     if npq
         Va(pq) = Va(pq) + dx(j3:j4);
@@ -90,7 +131,7 @@ while (~converged && i < max_it)
     Va = angle(V);          %% we wrapped around with a negative Vm
 
     %% evalute F(x)
-    mis = Ybus*V - conj(Sbus1./V);
+    mis = Ybus * V - conj(Sb ./ V);
     F = [   real(mis([pv; pq]));
             imag(mis([pv; pq]))   ];
 
@@ -102,13 +143,13 @@ while (~converged && i < max_it)
     if normF < tol
         converged = 1;
         if mpopt.verbose
-            fprintf('\nNewton''s method power flow using current balance in polar coordinates converged in %d iterations.\n', i);
+            fprintf('\nNewton''s method power flow (current balance, polar) converged in %d iterations.\n', i);
         end
     end
 end
 
 if mpopt.verbose
     if ~converged
-        fprintf('\nNewton''s method power flow using current balance in polar coordinates did not converge in %d iterations.\n', i);
+        fprintf('\nNewton''s method power flow (current balance, polar) did not converge in %d iterations.\n', i);
     end
 end

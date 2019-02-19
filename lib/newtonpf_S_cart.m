@@ -1,4 +1,41 @@
 function [V, converged, i] = newtonpf_S_cart(Ybus, Sbus, V0, ref, pv, pq, mpopt)
+%NEWTONPF_S_CART  Solves power flow using full Newton's method (power/cartesian)
+%   [V, CONVERGED, I] = NEWTONPF_S_CART(YBUS, SBUS, V0, REF, PV, PQ, MPOPT)
+%
+%   Solves for bus voltages using a full Newton-Raphson method, using nodal
+%   power balance equations and cartesian coordinate representation of
+%   voltages, given the following inputs:
+%       YBUS  - full system admittance matrix (for all buses)
+%       SBUS  - handle to function that returns the complex bus power
+%               injection vector (for all buses), given the bus voltage
+%               magnitude vector (for all buses)
+%       V0    - initial vector of complex bus voltages
+%       REF   - bus index of reference bus (voltage ang reference & gen slack)
+%       PV    - vector of bus indices for PV buses
+%       PQ    - vector of bus indices for PQ buses
+%       MPOPT - (optional) MATPOWER option struct, used to set the
+%               termination tolerance, maximum number of iterations, and
+%               output options (see MPOPTION for details).
+%
+%   The bus voltage vector contains the set point for generator
+%   (including ref bus) buses, and the reference angle of the swing
+%   bus, as well as an initial guess for remaining magnitudes and
+%   angles.
+%
+%   Returns the final complex voltages, a flag which indicates whether it
+%   converged or not, and the number of iterations performed.
+%
+%   See also RUNPF, NEWTONPF, NEWTONPF_I_POLAR, NEWTONPF_I_CART.
+
+%   MATPOWER
+%   Copyright (c) 1996-2019, Power Systems Engineering Research Center (PSERC)
+%   by Ray Zimmerman, PSERC Cornell
+%   and Baljinnyam Sereeter, Delft University of Technology
+%
+%   This file is part of MATPOWER.
+%   Covered by the 3-clause BSD License (see LICENSE file for details).
+%   See http://www.pserc.cornell.edu/matpower/ for more info.
+
 %% default arguments
 if nargin < 7
     mpopt = mpoption;
@@ -22,10 +59,12 @@ npq = length(pq);
 j1 = 1;         j2 = npq;           %% j1:j2 - Vr of pq buses
 j3 = j2 + 1;    j4 = j2 + npv;      %% j3:j4 - Vi of pv buses
 j5 = j4 + 1;    j6 = j4 + npq;      %% j5:j6 - Vi of pq buses
+
 %% evaluate F(x0)
 mis = V .* conj(Ybus * V) - Sbus(Vm);
 F = [   real(mis([pq; pv]));
         imag(mis(pq))   ];
+
 %% check tolerance
 normF = norm(F, inf);
 if mpopt.verbose > 1
@@ -54,30 +93,35 @@ end
 while (~converged && i < max_it)
     %% update iteration counter
     i = i + 1;
-    
+
     %% evaluate Jacobian
     [dSbus_dVr, dSbus_dVi] = dSbus_dV(Ybus, V, 1);
-        dSbus_dVi(:,pv) = dSbus_dVi(:,pv) - dSbus_dVr(:,pv)*sparse(1:npv, 1:npv, imag(V(pv))./real(V(pv)), npv, npv);
-%    [dummy, neg_dSd_dVm] = Sbus(Vm);
-%    dSbus_dVm = dSbus_dVm - neg_dSd_dVm;
+    dSbus_dVi(:, pv) = dSbus_dVi(:, pv) - ...
+        dSbus_dVr(:, pv) * sparse(1:npv, 1:npv, imag(V(pv))./real(V(pv)), npv, npv);
+
+    %% handling of derivatives for voltage dependent loads
+    %% (not yet implemented) goes here
+
     j11 = real(dSbus_dVr([pq; pv], pq));
     j12 = real(dSbus_dVi([pq; pv], [pv; pq]));
-    j21 = imag(dSbus_dVr(pq, pq));    
+    j21 = imag(dSbus_dVr(pq, pq));
     j22 = imag(dSbus_dVi(pq, [pv; pq]));
-    
+
     J = [   j11 j12;
             j21 j22;    ];
-        
+
     %% compute update step
     dx = mplinsolve(J, -F, lin_solver);
 
     %% update voltage
     if npv
-        Va(pv) = Va(pv) + dx(j3:j4)./real(V(pv));
+        Va(pv) = Va(pv) + dx(j3:j4) ./ real(V(pv));
     end
     if npq
-        Vm(pq) = Vm(pq) + (real(V(pq))./Vm(pq)).*dx(j1:j2) + (imag(V(pq))./Vm(pq)).*dx(j5:j6);           
-        Va(pq) = Va(pq) + (real(V(pq))./(Vm(pq).^2)).*dx(j5:j6) - (imag(V(pq))./(Vm(pq).^2)).*dx(j1:j2);
+        Vm(pq) = Vm(pq) + (real(V(pq))./Vm(pq)) .* dx(j1:j2) ...
+                        + (imag(V(pq))./Vm(pq)) .* dx(j5:j6);
+        Va(pq) = Va(pq) + (real(V(pq))./(Vm(pq).^2)) .* dx(j5:j6) ...
+                        - (imag(V(pq))./(Vm(pq).^2)) .* dx(j1:j2);
     end
     V = Vm .* exp(1j * Va);
     Vm = abs(V);            %% update Vm and Va again in case
@@ -96,13 +140,13 @@ while (~converged && i < max_it)
     if normF < tol
         converged = 1;
         if mpopt.verbose
-            fprintf('\nNewton''s method power flow using power balance in Cartesian coordinates converged in %d iterations.\n', i);
+            fprintf('\nNewton''s method power flow (power balance, cartesian) converged in %d iterations.\n', i);
         end
     end
 end
 
 if mpopt.verbose
     if ~converged
-        fprintf('\nNewton''s method power flow using power balance in Cartesian coordinates did not converge in %d iterations.\n', i);
+        fprintf('\nNewton''s method power flow (power balance, cartesian) did not converge in %d iterations.\n', i);
     end
 end

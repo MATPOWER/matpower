@@ -1,9 +1,10 @@
 function [V, converged, i] = newtonpf(Ybus, Sbus, V0, ref, pv, pq, mpopt)
-%NEWTONPF  Solves the power flow using a full Newton's method.
+%NEWTONPF  Solves power flow using full Newton's method (power/polar)
 %   [V, CONVERGED, I] = NEWTONPF(YBUS, SBUS, V0, REF, PV, PQ, MPOPT)
 %
-%   Solves for bus voltages using a full Newton-Raphson method, given the
-%   following inputs:
+%   Solves for bus voltages using a full Newton-Raphson method, using nodal
+%   power balance equations and polar coordinate representation of
+%   voltages, given the following inputs:
 %       YBUS  - full system admittance matrix (for all buses)
 %       SBUS  - handle to function that returns the complex bus power
 %               injection vector (for all buses), given the bus voltage
@@ -24,10 +25,10 @@ function [V, converged, i] = newtonpf(Ybus, Sbus, V0, ref, pv, pq, mpopt)
 %   Returns the final complex voltages, a flag which indicates whether it
 %   converged or not, and the number of iterations performed.
 %
-%   See also RUNPF.
+%   See also RUNPF, NEWTONPF_S_CART, NEWTONPF_I_POLAR, NEWTONPF_I_CART.
 
 %   MATPOWER
-%   Copyright (c) 1996-2018, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2019, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -91,17 +92,17 @@ end
 while (~converged && i < max_it)
     %% update iteration counter
     i = i + 1;
-    
+
     %% evaluate Jacobian
     [dSbus_dVa, dSbus_dVm] = dSbus_dV(Ybus, V);
     [dummy, neg_dSd_dVm] = Sbus(Vm);
     dSbus_dVm = dSbus_dVm - neg_dSd_dVm;
-    
+
     j11 = real(dSbus_dVa([pv; pq], [pv; pq]));
     j12 = real(dSbus_dVm([pv; pq], pq));
     j21 = imag(dSbus_dVa(pq, [pv; pq]));
     j22 = imag(dSbus_dVm(pq, pq));
-    
+
     J = [   j11 j12;
             j21 j22;    ];
 
@@ -122,8 +123,7 @@ while (~converged && i < max_it)
 
     %% evalute F(x)
     mis = V .* conj(Ybus * V) - Sbus(Vm);
-    F = [   real(mis(pv));
-            real(mis(pq));
+    F = [   real(mis([pv; pq]));
             imag(mis(pq))   ];
 
     %% check for convergence
@@ -134,13 +134,13 @@ while (~converged && i < max_it)
     if normF < tol
         converged = 1;
         if mpopt.verbose
-            fprintf('\nNewton''s method power flow using power balance in polar coordinates converged in %d iterations.\n', i);
+            fprintf('\nNewton''s method power flow (power balance, polar) converged in %d iterations.\n', i);
         end
     end
 end
 
 if mpopt.verbose
     if ~converged
-        fprintf('\nNewton''s method power flow using power balance in polar coordinates did not converge in %d iterations.\n', i);
+        fprintf('\nNewton''s method power flow (power balance, polar) did not converge in %d iterations.\n', i);
     end
 end
