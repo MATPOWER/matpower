@@ -245,6 +245,9 @@ while (~converged && i < max_it)
             fprintf('\nImplicit Z-bus Gauss power flow converged in %d iterations.\n', i);
         end
     end
+    if normV > 1    %% diverging, time to bail out
+        break;
+    end
 end
 
 %% shift voltage angles back if necessary
@@ -254,6 +257,10 @@ end
 
 if mpopt.verbose
     if ~converged
-        fprintf('\nImplicit Z-bus Gauss power flow did not converge in %d iterations.\n', i);
+        if i == max_it
+            fprintf('\nImplicit Z-bus Gauss power flow did not converge in %d iterations.\n', i);
+        else
+            fprintf('\nImplicit Z-bus Gauss power flow diverged in %d iterations.\n', i);
+        end
     end
 end
