@@ -202,6 +202,20 @@ if ~isempty(mpc.bus)
                     error('runpf: power flow algorithm ''%s'' only supports power balance, polar version\nI.e. both ''pf.current_balance'' and ''pf.v_cartesian'' must be set to 0.');
                 end
         end
+        if have_zip_loads(mpopt)
+            if mpopt.pf.current_balance || mpopt.pf.v_cartesian
+                warnstr = 'Newton algorithm (current or cartesian versions) do';
+            elseif strcmp(alg, 'GS')
+                warnstr = 'Gauss-Seidel algorithm does';
+            else
+                warnstr = '';
+            end
+            if warnstr
+                warning('runpf: %s not support ZIP load model. Converting to constant power loads.', warnstr);
+                mpopt = mpoption(mpopt, 'exp.sys_wide_zip_loads', ...
+                                struct('pw', [], 'qw', []));
+            end
+        end
 
         %% initial state
         % V0    = ones(size(bus, 1), 1);            %% flat start
@@ -248,17 +262,9 @@ if ~isempty(mpc.bus)
                     [Bp, Bpp] = makeB(baseMVA, bus, branch, alg);
                     [V, success, iterations] = fdpf(Ybus, Sbus, V0, Bp, Bpp, ref, pv, pq, mpopt);
                 case 'GS'
-                    if (~isempty(mpopt.exp.sys_wide_zip_loads.pw) && ...
-                            any(mpopt.exp.sys_wide_zip_loads.pw(2:3))) || ...
-                            (~isempty(mpopt.exp.sys_wide_zip_loads.qw) && ...
-                            any(mpopt.exp.sys_wide_zip_loads.qw(2:3)))
-                        warning('runpf: Gauss-Seidel algorithm does not support ZIP load model. Converting to constant power loads.')
-                        mpopt = mpoption(mpopt, 'exp.sys_wide_zip_loads', ...
-                                        struct('pw', [], 'qw', []));
-                    end
                     [V, success, iterations] = gausspf(Ybus, Sbus([]), V0, ref, pv, pq, mpopt);
                 case {'PQSUM', 'ISUM', 'YSUM'}
-                    [mpc, success, iterations] = radial_pf(mpc,mpopt);
+                    [mpc, success, iterations] = radial_pf(mpc, mpopt);
                 otherwise
                     error('runpf: ''%s'' is not a valid power flow algorithm. See ''pf.alg'' details in MPOPTION help.', alg);
             end
@@ -425,4 +431,14 @@ elseif nargout > 2
     [MVAbase, bus, gen, branch, et] = ...
         deal(results.baseMVA, results.bus, results.gen, results.branch, results.et);
 % else  %% don't define MVAbase, so it doesn't print anything
+end
+
+function TorF = have_zip_loads(mpopt)
+if (~isempty(mpopt.exp.sys_wide_zip_loads.pw) && ...
+        any(mpopt.exp.sys_wide_zip_loads.pw(2:3))) || ...
+        (~isempty(mpopt.exp.sys_wide_zip_loads.qw) && ...
+        any(mpopt.exp.sys_wide_zip_loads.qw(2:3)))
+    TorF = 1;
+else
+    TorF = 0;
 end
