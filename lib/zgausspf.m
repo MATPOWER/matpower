@@ -37,7 +37,9 @@ end
 
 %% options
 complex = 0;    %% use 1 = complex formulation, 0 = use real formulation
-pv_method = 2;  %% 1 = sens real(V) to imag(I), 2 = dVm/dQ (fast-decoupled Jac)
+pv_method = 2;  %% 0 = simple voltage magnitude reset
+                %% 1 = sens real(V) to imag(I)
+                %% 2 = dVm/dQ (fast-decoupled Jac)
 tol     = mpopt.pf.tol;
 max_it  = mpopt.pf.zg.max_it;
 if have_fcn('matlab') && have_fcn('matlab', 'vnum') < 7.3
@@ -153,41 +155,56 @@ while (~converged && i < max_it)
     Vp = V;
 
     if npv      %% update Q injections @ PV buses based on V mismatch
-        %% compute Q injection at current V (sometimes improves convergence)
-        Qpv = imag( V(pv) .* conj(Ybus(pv, :) * V) );
-        Sbus(pv) = Sbus(pv) + j * (Qpv - imag(Sbus(pv)));
+        if pv_method    %% 1 or 2
+            %% compute Q injection at current V
+            %% (sometimes improves convergence for pv_method=1,2)
+            Qpv = imag( V(pv) .* conj(Ybus(pv, :) * V) );
+            Sbus(pv) = Sbus(pv) + j * (Qpv - imag(Sbus(pv)));
 
-        %% compute voltage mismatch at PV buses
-        Vmpv = abs(V(pv));
-        dV = Vmpv0 - Vmpv;
-        [max_dV, k] = max(abs(dV));
-%        dV([1:k-1 k+1:end]) = 0;   %% one at a time?
+            %% compute voltage mismatch at PV buses
+            Vmpv = abs(V(pv));
+            dV = Vmpv0 - Vmpv;
+            [max_dV, k] = max(abs(dV));
+%            dV([1:k-1 k+1:end]) = 0;   %% one at a time?
 
-        % Two alternate approaches (that seem to work about equally well):
-        %   1 - use precomputed sensitivity of real(V) to imag(I)
-        %   2 - use sensitivity of Vm to Q evaluated at current V (fast-decoupled)
-        switch pv_method
-            case 1      %% precomputed sensitivity of real(V) to imag(I)
-                %% estimate corresponding change in imag(I) injection
-                dQ = -UU \  (LL \ (PP * dV));    %% dQ = -dI = -dVdI \ dV;
-            case 2      %% sensitivity of Vm to Q evaluated at current V (fast-decoupled Jacobian)
-                % dVpq = Bpp(pq, pq) \ (-Bpp(pq, pv) * dV);
-                if lu_vec
-                    dVpq = UBpp \  (LBpp \ (-Bpp(pq(pBpp), pv) * dV));
-                    dVpq = dVpq(iqBpp);
-                else
-                    dVpq = UBpp \  (LBpp \ (PBpp * (-Bpp(pq, pv) * dV)));
-                end
-                dQ = Bpp(pv, pq) * dVpq + Bpp(pv, pv) * dV;
+            % Two alternate approaches (that seem to work about equally well):
+            %   1 - use precomputed sensitivity of real(V) to imag(I)
+            %   2 - use sensitivity of Vm to Q evaluated at current V (fast-decoupled)
+            switch pv_method
+                case 1      %% precomputed sensitivity of real(V) to imag(I)
+                    %% estimate corresponding change in imag(I) injection
+                    dQ = -UU \  (LL \ (PP * dV));    %% dQ = -dI = -dVdI \ dV;
+                case 2      %% sensitivity of Vm to Q evaluated at current V (fast-decoupled Jacobian)
+                    % dVpq = Bpp(pq, pq) \ (-Bpp(pq, pv) * dV);
+                    if lu_vec
+                        dVpq = UBpp \  (LBpp \ (-Bpp(pq(pBpp), pv) * dV));
+                        dVpq = dVpq(iqBpp);
+                    else
+                        dVpq = UBpp \  (LBpp \ (PBpp * (-Bpp(pq, pv) * dV)));
+                    end
+                    dQ = Bpp(pv, pq) * dVpq + Bpp(pv, pv) * dV;
+            end
+
+            %% update Sbus
+            Sbus(pv) = Sbus(pv) + j * dQ;
+
+            %% set voltage magnitude at PV buses
+            %% doesn't consistently improve convergence for pv_method=1,2
+%            V(pv) = V(pv) ./ abs(V(pv)) .* abs(V0(pv));
+        else    %% pv_method = 0
+            %% compute Q injection at current V
+            %% (updating Q before V converges more consistently)
+            Qpv = imag( V(pv) .* conj(Ybus(pv, :) * V) );
+            Sbus(pv) = Sbus(pv) + j * (Qpv - imag(Sbus(pv)));
+
+            %% set voltage magnitude at PV buses
+            V(pv) = V(pv) ./ abs(V(pv)) .* abs(V0(pv));
+
+%             %% compute Q injection at current V
+%             Qpv = imag( V(pv) .* conj(Ybus(pv, :) * V) );
+%             Sbus(pv) = Sbus(pv) + j * (Qpv - imag(Sbus(pv)));
         end
-
-        %% update Sbus
-        Sbus(pv) = Sbus(pv) + j * dQ;
     end
-
-    %% set voltage magnitude at PV buses
-% (this line does not seem to consistently improve convergence)
-%     V(pv) = V(pv) ./ abs(V(pv)) .* abs(V0(pv));
 
     %% update currents
     Ipv = conj(Sbus(pv) ./ V(pv));
