@@ -1277,7 +1277,7 @@ of $n_{pv}$ fictitious links, corresponding to the PV nodes. Each of these links
 
 A loop impedance matrix $Z_l$ is formed for the loops made by the fictitious links and it has the following properties
 \begin{itemize}
-\item Element $z_l^{mm}$ is equal to the sum of branch impedances off all branches related to loop $m$,
+\item Element $z_l^{mm}$ is equal to the sum of branch impedances of all branches related to loop $m$,
 \item Element $z_l^{mk}$ is equal to the sum of branch impedances of mutual branches of loops $m$ and $k$.
 \end{itemize}
 
@@ -1292,7 +1292,7 @@ z_b^2 + z_b^3 & z_b^2 + z_b^3 + z_b^4 + z_b^7
 
 First column elements are equal to PV bus voltages when the current injection at bus~5 is 1~p.u. and $v_1 = 0$. Bus voltages can be calculated with the current summation method in a single iteration. By repeating the procedure for bus~7 one can calculate the elements of second column.
 
-By breaking all links the network becomes radial \cite{luo1990} and the three backward/forward sweep methods are applicable. Since all link are fictitious, only the injected reactive power at their receiving bus $m$ is determined \cite{rajicic1994} by the following equation
+By breaking all links the network becomes radial \cite{luo1990} and the three backward/forward sweep methods are applicable. Since all links are fictitious, only the injected reactive power at their receiving bus $m$ is determined \cite{rajicic1994} by the following equation
 \begin{equation}
 \Delta q_{pv}^m = \Delta d_{pv}^m \frac{v_m^2}{\Re \left\{ v_m \right\} },
 \end{equation}
