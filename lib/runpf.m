@@ -160,19 +160,24 @@ if ~isempty(mpc.bus)
         gen(refgen, PG) = gen(refgen, PG) + (B(ref, :) * Va - Pbus(ref)) * baseMVA;
     else                                %% AC formulation
         alg = upper(mpopt.pf.alg);
+        switch alg
+            case 'NR-SC'
+                mpopt = mpoption(mpopt, 'pf.current_balance', 0, 'pf.v_cartesian', 1);
+            case 'NR-IP'
+                mpopt = mpoption(mpopt, 'pf.current_balance', 1, 'pf.v_cartesian', 0);
+            case 'NR-IC'
+                mpopt = mpoption(mpopt, 'pf.current_balance', 1, 'pf.v_cartesian', 1);
+        end
         if mpopt.verbose > 0
             switch alg
                 case 'NR'
                     solver = 'Newton';
                 case 'NR-SC'
                     solver = 'Newton-SC';
-                    mpopt = mpoption(mpopt, 'pf.current_balance', 0, 'pf.v_cartesian', 1);
                 case 'NR-IP'
                     solver = 'Newton-IP';
-                    mpopt = mpoption(mpopt, 'pf.current_balance', 1, 'pf.v_cartesian', 0);
                 case 'NR-IC'
                     solver = 'Newton-IC';
-                    mpopt = mpoption(mpopt, 'pf.current_balance', 1, 'pf.v_cartesian', 1);
                 case 'FDXB'
                     solver = 'fast-decoupled, XB';
                 case 'FDBX'
@@ -190,7 +195,6 @@ if ~isempty(mpc.bus)
             end
             fprintf(' -- AC Power Flow (%s)\n', solver);
         end
-
         switch alg
             case {'NR', 'NR-SC', 'NR-IP', 'NR-IC'}  %% all 4 variants supported
             otherwise                   %% only power balance, polar is valid
