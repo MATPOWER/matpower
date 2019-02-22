@@ -1,4 +1,4 @@
-function [V, converged, i] = zgausspf(Ybus, Sbus, V0, ref, pv, pq, Bpp, mpopt)
+function [V, converged, i, Sbus] = zgausspf(Ybus, Sbus, V0, ref, pv, pq, Bpp, mpopt, stage, VPQ, SPQ)
 %ZGAUSSPF  Solves the power flow using an Implicit Z-bus Gauss method.
 %   [V, CONVERGED, I] = ZGAUSSPF(YBUS, SBUS, V0, REF, PV, PQ, BPP, MPOPT)
 %   solves for bus voltages given the full system admittance matrix (for
@@ -31,33 +31,60 @@ function [V, converged, i] = zgausspf(Ybus, Sbus, V0, ref, pv, pq, Bpp, mpopt)
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
 %% default arguments
-if nargin < 8
-    mpopt = mpoption;
+if nargin < 9
+    stage = 1;
+    if nargin < 8
+        mpopt = mpoption;
+    end
 end
 
 %% options
-complex = 0;    %% use 1 = complex formulation, 0 = use real formulation
-pv_method = 2;  %% 0 = simple voltage magnitude reset
-                %% 1 = sens real(V) to imag(I)
-                %% 2 = dVm/dQ (fast-decoupled Jac)
-                %% 3 = voltage correction PF by Rajicic, Ackovski, Taleski
 tol     = mpopt.pf.tol;
 max_it  = mpopt.pf.zg.max_it;
+complex = 0;    %% use 1 = complex formulation, 0 = use real formulation
+switch stage
+    case 1
+        pv_method = 2;  %% 0 = simple voltage magnitude reset
+                        %% 1 = sens real(V) to imag(I)
+                        %% 2 = dVm/dQ (fast-decoupled Jac)
+                        %% 3 = voltage correction PF by Rajicic, Ackovski, Taleski
+                        %% 4 = homotopy method
+    case 2
+        pv_method = 0;
+    case 3
+        pv_method = 4;
+end
 if have_fcn('matlab') && have_fcn('matlab', 'vnum') < 7.3
     lu_vec = 0;     %% lu(..., 'vector') syntax not supported
 else
     lu_vec = 1;
 end
+if mpopt.verbose
+    str = sprintf('Implicit Z-bus Gauss power flow (stage %d)', stage);
+end
 
 %% initialize
-converged = 0;
+converged_htpy = 0;
 i = 0;
-V = V0;
-Vm = abs(V);
 npv = length(pv);
 npq = length(pq);
-nb = length(V);
 max_dV = 0;
+lambda = 0;
+if stage == 3
+    V = VPQ;
+    dl = 0.01;
+    lambda = -dl;           %-----  TESTING  -----
+
+    %% compute PV current injections from stage 2
+    Spq = real(Sbus(pv)) + 1j * imag(SPQ(pv));
+    I2PQ = conj(Spq ./ VPQ(pv));
+else
+    V = V0;
+    dl = 0.9;       %% terminate after single outer iteration
+end
+if stage == 1
+    Sbus0 = Sbus;
+end
 
 %% shift voltage angles if necessary
 % Varef = angle(V(ref));
@@ -160,11 +187,36 @@ if npv
     end
 end
 
+%% compute initial power mismatch
+if npv      %% compute Q injection at PV buses for current V
+    Qpv = imag( V(pv) .* conj(Ybus(pv, :) * V) );
+    Sbus(pv) = Sbus(pv) + 1j * (Qpv - imag(Sbus(pv)));
+end
+misS = Sbus - V .* conj(Ybus * V);
+normS = norm(misS([pv; pq]), Inf);
+
 %% check tolerance
 if mpopt.verbose > 1
-    fprintf('\n it      ∆V (p.u.)    max abs(S) mismatch (p.u.)    max V mismatch (PV) (p.u.) ');
-    fprintf('\n----    -----------  ----------------------------  ----------------------------');
+    if stage == 3
+        fprintf('\n it   it2     ∆V (p.u.)    max abs(S) mis (p.u.)    max V mis (PV) (p.u.)\n');
+        fprintf('---- ----    -----------  -----------------------  -----------------------\n');
+        fprintf('  0    0                           %10.3e\n', normS);
+    else
+        fprintf('\n it      ∆V (p.u.)    max abs(S) mismatch (p.u.)    max V mismatch (PV) (p.u.)\n');
+        fprintf('----    -----------  ----------------------------  ----------------------------\n');
+        fprintf('  0                            %10.3e\n', normS);
+    end
 end
+
+%% do homotopy iterations
+ii = 0;
+while (~converged_htpy && lambda + dl < 1)      %% outer loop
+    %% update iteration counter & lambda
+    ii = ii + 1;
+    lambda = lambda + dl;
+
+    i = 0;
+    converged = 0;
 
 %% do implicit Zbus Gauss iterations
 while (~converged && i < max_it)
@@ -252,11 +304,27 @@ while (~converged && i < max_it)
 %                 %% compute Q injection at current V
 %                 Qpv = imag( V(pv) .* conj(Ybus(pv, :) * V) );
 %                 Sbus(pv) = Sbus(pv) + 1j * (Qpv - imag(Sbus(pv)));
+            case 4
+                %% compute Q injection at current V
+                Qpv = imag( V(pv) .* conj(Ybus(pv, :) * V) );
+                Sbus(pv) = Sbus(pv) + 1j * (Qpv - imag(Sbus(pv)));
+
+                %% set voltage magnitude at PV buses
+%                 Vs = V;
+%                 Vs(pv) = Vs(pv) .* Vmpv0 ./ abs(Vs(pv));
         end
     end
 
     %% update currents
-    Ipv = conj(Sbus(pv) ./ V(pv));
+    if stage == 3
+        Vspec = V(pv) .* Vmpv0 ./ abs(V(pv));
+        Ispec = conj(Sbus(pv) ./ Vspec);
+%         Ispec = conj(Sbus(pv) ./ Vs(pv));
+%         I2PQ = conj(SPQ(pv) ./ V(pv));
+        Ipv = lambda * Ispec + (1-lambda) * I2PQ;
+    else
+        Ipv = conj(Sbus(pv) ./ V(pv));
+    end
     Ipq = conj(Sbus(pq) ./ V(pq));
     if complex
         I2 = [Ipv; Ipq];
@@ -282,20 +350,52 @@ while (~converged && i < max_it)
 
     %% check for convergence
     normV = norm(V-Vp, Inf);
-    normS = norm(Sbus([pv; pq]) - V([pv; pq]) .* conj([Ipv; Ipq]), Inf);
+    misS = Sbus - V .* conj(Ybus * V);
+    normS = norm(misS([pv; pq]), Inf);
+% if stage ~= 2
+%     P1 = real(Sbus);
+%     P2 = real(V .* conj(Ybus * V));
+%     Q1 = imag(Sbus);
+%     Q2 = imag(V .* conj(Ybus * V));
+% %     normS2 = norm(Sbus([pv; pq]) - SPQ([pv; pq]), Inf)
+% %     P = [P1(pv) P2(pv)]
+% %     Q = [Q1(pv) Q2(pv)]
+% %     Sbus([pv; pq]) - SPQ([pv; pq])
+% %     [imag(Sbus(pv)) imag(SPQ(pv))]
+% end
+
+    %% print progress
     if mpopt.verbose > 1
-%        fprintf('\n%3d        %10.3e %10.6g %10.6g %10.6g %10.6g', i, normV, V(pv(1)), V(pv(2)), imag(Sbus(pv(1))), imag(Sbus(pv(2))));
-%        fprintf('\n%3d        %10.3e %10.6g %10.6g', i, normV, V(pv(1)), imag(Sbus(pv(1))));
-        fprintf('\n%3d     %10.3e             %10.3e                  %10.3e', i, normV, normS, max_dV);
-    end
-    if normV < tol
-        converged = 1;
-        if mpopt.verbose
-            fprintf('\nImplicit Z-bus Gauss power flow converged in %d iterations.\n', i);
+        if stage == 3
+            fprintf('%3d %4d     %10.3e            %10.3e             %10.3e\n', ii, i, normV, normS, max_dV);
+        else
+            fprintf('%3d     %10.3e             %10.3e                  %10.3e\n', i, normV, normS, max_dV);
         end
     end
-    if normV > 1    %% diverging, time to bail out
-        break;
+
+    %% check Z-Gauss convergence
+    ttol = tol; if stage == 3, ttol = tol / 10; end %-----  TESTING  -----
+    if normV < ttol                                 %-----  TESTING  -----
+%     if normV < tol
+        converged = 1;
+    elseif normV > 10   %% diverging, time to bail out
+        converged = -1;
+    elseif stage == 3
+        %% homotopy voltage update
+        Vspec = V(pv) .* Vmpv0 ./ abs(V(pv));
+        V(pv) = lambda * Vspec + (1-lambda) * V(pv);
+%         V(pv) = lambda * Vs(pv) + (1-lambda) * V(pv);
+    end
+end     %% end Z-Gauss iterations
+
+    %% check for homotopy convergence
+    if stage == 3
+        normV = norm(abs(V(pv)) - Vmpv0);
+        if normV < tol
+            converged_htpy = 1;
+        elseif normV > 10   %% diverging, time to bail out
+            converged_htpy = -1;
+        end
     end
 end
 
@@ -305,11 +405,25 @@ end
 % end
 
 if mpopt.verbose
-    if ~converged
-        if i == max_it
-            fprintf('\nImplicit Z-bus Gauss power flow did not converge in %d iterations.\n', i);
-        else
-            fprintf('\nImplicit Z-bus Gauss power flow diverged in %d iterations.\n', i);
-        end
+    switch converged
+        case 1
+            fprintf('%s converged in %d iterations.\n', str, i);
+        case 0
+            fprintf('%s did not converge in %d iterations.\n', str, i);
+        case -1
+            fprintf('%s diverged in %d iterations.\n', str, i);
     end
+end
+
+%% use homotopy method
+if stage == 1 && converged ~= 1
+    %% call stage 2
+    [VPQ, converged, iterations, SPQ] = zgausspf(Ybus, Sbus0, V0, ref, [], sort([pq; pv]), Bpp, mpopt, 2);
+
+    %% call homotopy
+    [V, converged, i] = zgausspf(Ybus, Sbus0, V0, ref, pv, pq, Bpp, mpopt, 3, VPQ, SPQ);
+end
+
+if converged == -1
+    converged = 0;
 end
