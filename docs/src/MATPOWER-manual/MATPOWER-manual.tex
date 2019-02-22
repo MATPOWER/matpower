@@ -1991,7 +1991,7 @@ The inequality constraints \eqref{eq:hx_le_0} consist of two sets of $n_l$ branc
 h_f(\Theta, V_m) &=\;& \left| F_f(\Theta, V_m) \right| - F_\mathrm{max} &\le 0 \label{eq:acopf_ieqf} \\
 h_t(\Theta, V_m) &= & \left| F_t(\Theta, V_m) \right| - F_\mathrm{max} &\le 0. \label{eq:acopf_ieqt}
 \end{alignat}
-The flows are typically apparent power flows expressed in MVA, but can be real power or current flows, yielding the following three possible forms for the flow constraints:
+The flows are typically apparent power flows expressed in MVA, but can be real power flows (in MW) or currents,\footnote{For current constraints, the limit is expressed as an apparent power (MVA) value at a 1 p.u. voltage. This means the units of the specified limit and corresponding currents displayed in the output is in kiloamps~$\times V_\mathrm{basekV})$. To put it another way, the corresponding current in kiloamps can be found by dividing  by the per unit voltage base in kV.} yielding the following three possible forms for the flow constraints:
 \begin{equation}
 F_f(\Theta, V_m) = \left\{
 \begin{aligned}
@@ -2448,7 +2448,7 @@ name & default & description \\
 && \begin{tabular}{r @{ -- } p{0.45\textwidth}}
 \codeq{S} & apparent power flow (limit in MVA) \\
 \codeq{P} & active power flow (limit in MW) \\
-\codeq{I} & current magnitude (limit in MVA at 1~p.u. voltage) \\
+\codeq{I} & current magnitude (limit in MVA at 1~p.u. voltage, i.e. kA$\cdot V_\mathrm{basekV}$) \\
 \codeq{2} & same as \codeq{P}, but implemented using square of active flow, rather than simple max \\
 \end{tabular}	\\
 \code{opf.ignore\_angle\_lim}	& 0	& ignore angle difference limits for branches	\\
@@ -3443,7 +3443,7 @@ name & description \\
 %
 \code{RATE\_A} 	& branch flow limit \\
 \code{~~~~idx}		& all on-line branches with bounded flow limits  \\
-\code{~~~~cost}	&  \$1000/MVA, \$1000/MW, or \$1000/MA\tnote{\dag} ~depending on \codeq{opf.flow\_lim} \\
+\code{~~~~cost}	&  \$1000/MVA, \$1000/MW, or \$1000/(kA$\cdot V_\mathrm{basekV})$\tnote{\dag} ~where the units depend on \codeq{opf.flow\_lim} \\
 \code{~~~~hl\_mod}	& \codeq{remove} \\
 %
 \code{PMIN} 	 	& generator active power lower bound \\
@@ -4859,29 +4859,30 @@ name & column & description \\
 \code{BR\_R}	& 3	& resistance (p.u.)	\\
 \code{BR\_X}	& 4	& reactance (p.u.)	\\
 \code{BR\_B}	& 5	& total line charging susceptance (p.u.)	\\
-\code{RATE\_A}	& 6	& MVA rating A (long term rating), set to 0 for unlimited	\\
-\code{RATE\_B}	& 7	& MVA rating B (short term rating), set to 0 for unlimited	\\
-\code{RATE\_C}	& 8	& MVA rating C (emergency rating), set to 0 for unlimited	\\
+\code{RATE\_A}\tnote{*}	& 6	& MVA rating A (long term rating), set to 0 for unlimited	\\
+\code{RATE\_B}\tnote{*}	& 7	& MVA rating B (short term rating), set to 0 for unlimited	\\
+\code{RATE\_C}\tnote{*}	& 8	& MVA rating C (emergency rating), set to 0 for unlimited	\\
 \code{TAP}	& 9	& transformer off nominal turns ratio, if non-zero (taps at ``from'' bus, impedance at ``to'' bus, i.e. if $r = x = b = 0$, $tap = \frac{|V_f|}{|V_t|}$; $tap = 0$ used to indicate transmission line rather than transformer, i.e. mathematically equivalent to transformer with $tap = 1$)	\\
 \code{SHIFT}	& 10	& transformer phase shift angle (degrees), positive $\Rightarrow$ delay	\\
 \code{BR\_STATUS}	& 11	& initial branch status, 1 = in-service, 0 = out-of-service	\\
-\code{ANGMIN}\tnote{*}	& 12	& minimum angle difference, $\theta_f - \theta_t$ (degrees)	\\
-\code{ANGMAX}\tnote{*}	& 13	& maximum angle difference, $\theta_f - \theta_t$ (degrees)	\\
-\code{PF}\tnote{\dag}	& 14	& real power injected at ``from'' bus end (MW)	\\
-\code{QF}\tnote{\dag}	& 15	& reactive power injected at ``from'' bus end (MVAr)	\\
-\code{PT}\tnote{\dag}	& 16	& real power injected at ``to'' bus end (MW)	\\
-\code{QT}\tnote{\dag}	& 17	& reactive power injected at ``to'' bus end (MVAr)	\\
-\code{MU\_SF}\tnote{\ddag}	& 18	& Kuhn-Tucker multiplier on MVA limit at ``from'' bus ($u$/MVA)	\\
-\code{MU\_ST}\tnote{\ddag}	& 19	& Kuhn-Tucker multiplier on MVA limit at ``to'' bus ($u$/MVA)	\\
-\code{MU\_ANGMIN}\tnote{\ddag}	& 20	& Kuhn-Tucker multiplier lower angle difference limit ($u$/degree)	\\
-\code{MU\_ANGMAX}\tnote{\ddag}	& 21	& Kuhn-Tucker multiplier upper angle difference limit ($u$/degree)	\\
+\code{ANGMIN}\tnote{\dag}	& 12	& minimum angle difference, $\theta_f - \theta_t$ (degrees)	\\
+\code{ANGMAX}\tnote{\dag}	& 13	& maximum angle difference, $\theta_f - \theta_t$ (degrees)	\\
+\code{PF}\tnote{\ddag}	& 14	& real power injected at ``from'' bus end (MW)	\\
+\code{QF}\tnote{\ddag}	& 15	& reactive power injected at ``from'' bus end (MVAr)	\\
+\code{PT}\tnote{\ddag}	& 16	& real power injected at ``to'' bus end (MW)	\\
+\code{QT}\tnote{\ddag}	& 17	& reactive power injected at ``to'' bus end (MVAr)	\\
+\code{MU\_SF}\tnote{\S}	& 18	& Kuhn-Tucker multiplier on MVA limit at ``from'' bus ($u$/MVA)	\\
+\code{MU\_ST}\tnote{\S}	& 19	& Kuhn-Tucker multiplier on MVA limit at ``to'' bus ($u$/MVA)	\\
+\code{MU\_ANGMIN}\tnote{\S}	& 20	& Kuhn-Tucker multiplier lower angle difference limit ($u$/degree)	\\
+\code{MU\_ANGMAX}\tnote{\S}	& 21	& Kuhn-Tucker multiplier upper angle difference limit ($u$/degree)	\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [*] {Not included in version~1 case format. The voltage angle difference is taken to be unbounded below if \code{ANGMIN} $\le -360$ and unbounded above if \code{ANGMAX} $\ge 360$. If both parameters are zero, the voltage angle difference is unconstrained.}
- \item [\dag] {Included in power flow and OPF output, ignored on input.}
- \item [\ddag] {Included in OPF output, typically not included (or ignored) in input matrix. Here we assume the objective function has units $u$.}
+ \item [*] {Used to specify branch flow limits. By default these are limits on apparent power with units in MVA. However, the \codeq{opf.flow\_lim} option can be used to specify that the limits are active power or current, in which case the ratings are specified in MW or (kA$\cdot V_\mathrm{basekV})$, respectively. For current this is equivalent to an MVA value at a 1 p.u. voltage.}
+ \item [\dag] {Not included in version~1 case format. The voltage angle difference is taken to be unbounded below if \code{ANGMIN} $\le -360$ and unbounded above if \code{ANGMAX} $\ge 360$. If both parameters are zero, the voltage angle difference is unconstrained.}
+ \item [\ddag] {Included in power flow and OPF output, ignored on input.}
+ \item [\S] {Included in OPF output, typically not included (or ignored) in input matrix. Here we assume the objective function has units $u$.}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -5272,7 +5273,7 @@ name & default & description \\
 && \begin{tabular}{r @{ -- } p{0.45\textwidth}}
 \codeq{S} & apparent power flow (limit in MVA) \\
 \codeq{P} & active power flow (limit in MW) \\
-\codeq{I} & current magnitude (limit in MVA at 1~p.u. voltage) \\
+\codeq{I} & current magnitude (limit in MVA at 1~p.u. voltage, i.e kA$\cdot V_\mathrm{basekV}$) \\
 \codeq{2} & same as \codeq{P}, but implemented using square of active flow, rather than simple max \\
 \end{tabular}	\\
 \code{opf.ignore\_angle\_lim}	& 0	& ignore angle difference limits for branches	\\

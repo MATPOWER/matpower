@@ -12,6 +12,11 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 2/22/19
+  - Clarify in manual and `printpf` output that units on branch current
+    limits and outputs (i.e. when `opf.flow_lim` is `'I'`) are kA * basekV.
+    *Thanks to Maurice.*
+
 #### 2/21/19
   - Add three new variants of the standard Newton AC power flow, for a total
     of four, including both nodal power and current balance equations and

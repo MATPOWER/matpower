@@ -205,7 +205,7 @@ Brnch   From   To    From Bus Injection   To Bus Injection     Loss (I^2 * Z)
    9    30     47.776    -30.00    -30.00      0.00      -   
 
 ================================================================================
-|     Branch Flow Constraints                                                  |
+|     Branch Flow Constraints            (P in MW)                             |
 ================================================================================
 Brnch   From     "From" End        Limit       "To" End        To
   #     Bus    Pf  mu     Pf      |Pmax|      Pt      Pt  mu   Bus

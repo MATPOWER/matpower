@@ -260,7 +260,7 @@ Bus #  Vmin mu    Vmin    |V|   Vmax    Vmax mu
    9    30     80.085     -7.50     -7.50      0.00      -   
 
 ================================================================================
-|     Branch Flow Constraints                                                  |
+|     Branch Flow Constraints            (S in MVA)                            |
 ================================================================================
 Brnch   From     "From" End        Limit       "To" End        To
   #     Bus   |Sf| mu    |Sf|     |Smax|     |St|    |St| mu   Bus

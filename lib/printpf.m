@@ -698,14 +698,17 @@ if OUT_ANY && isOPF && (success || OUT_FORCE)
     if isDC || lim_type == 'P' || lim_type == '2'   %% |P| limit
         Ff = branch(:, PF);
         Ft = branch(:, PT);
+        unit_str = 'P in MW)       ';
         str = '\n  #     Bus    Pf  mu     Pf      |Pmax|      Pt      Pt  mu   Bus';
     elseif lim_type == 'I'                          %% |I| limit
         Ff = abs( (branch(:, PF) + 1j * branch(:, QF)) ./ V(e2i(branch(:, F_BUS))) );
         Ft = abs( (branch(:, PT) + 1j * branch(:, QT)) ./ V(e2i(branch(:, T_BUS))) );
+        unit_str = 'I in kA*basekV)';
         str = '\n  #     Bus   |If| mu    |If|     |Imax|     |It|    |It| mu   Bus';
     else                                            %% |S| limit
         Ff = abs(branch(:, PF) + 1j * branch(:, QF));
         Ft = abs(branch(:, PT) + 1j * branch(:, QT));
+        unit_str = 'S in MVA)      ';
         str = '\n  #     Bus   |Sf| mu    |Sf|     |Smax|     |St|    |St| mu   Bus';
     end
     if any(branch(:, RATE_A) ~= 0) && (OUT_LINE_LIM == 2 || (OUT_LINE_LIM == 1 && ...
@@ -714,7 +717,7 @@ if OUT_ANY && isOPF && (success || OUT_FORCE)
                          any(branch(:, MU_SF) > ptol) || ...
                          any(branch(:, MU_ST) > ptol))))
         fprintf(fd, '\n================================================================================');
-        fprintf(fd, '\n|     Branch Flow Constraints                                                  |');
+        fprintf(fd, '\n|     Branch Flow Constraints            (%s                      |', unit_str);
         fprintf(fd, '\n================================================================================');
         fprintf(fd, '\nBrnch   From     "From" End        Limit       "To" End        To');
         fprintf(fd, str);

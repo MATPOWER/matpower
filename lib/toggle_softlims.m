@@ -781,10 +781,11 @@ if isOPF && (results.success || OUT_FORCE)
         else
             %% line flow constraints
             lim_type = upper(mpopt.opf.flow_lim(1));
-            if ~isAC || lim_type == 'P' || lim_type == '2'   %% |P| limit
+            if ~isAC || lim_type == 'P' || lim_type == '2'  %% |P| limit
                 Ff = branch(s.idx(k), PF);
                 Ft = branch(s.idx(k), PT);
-                str = '\n  #     Bus    Bus     (MW)      (MW)      (MW)     ($/MW)';
+%               str = '\n  #     Bus    Bus     (MW)      (MW)      (MW)     ($/MW)';
+                str = '\n  #     Bus    Bus        (MW)         (MW)         (MW)        ($/MW)';
             elseif lim_type == 'I'                          %% |I| limit
                 %% create map of external bus numbers to bus indices
                 i2e = bus(:, BUS_I);
@@ -794,25 +795,30 @@ if isOPF && (results.success || OUT_FORCE)
                 V = bus(:, VM) .* exp(sqrt(-1) * pi/180 * bus(:, VA));
                 Ff = abs( (branch(s.idx(k), PF) + 1j * branch(s.idx(k), QF)) ./ V(e2i(branch(s.idx(k), F_BUS))) );
                 Ft = abs( (branch(s.idx(k), PT) + 1j * branch(s.idx(k), QT)) ./ V(e2i(branch(s.idx(k), T_BUS))) );
-                str = '\n  #     Bus    Bus     (MA)      (MA)      (MA)     ($/MA)';
+%               str = '\n  #     Bus    Bus     (MA)      (MA)      (MA)     ($/MA)';
+                str = '\n  #     Bus    Bus   (kA*basekV)  (kA*basekV)  (kA*basekV)  ($/kA/basekV)';
             else                                            %% |S| limit
                 Ff = abs(branch(s.idx(k), PF) + 1j * branch(s.idx(k), QF));
                 Ft = abs(branch(s.idx(k), PT) + 1j * branch(s.idx(k), QT));
-                str = '\n  #     Bus    Bus     (MVA)     (MVA)     (MVA)    ($/MVA)';
+%               str = '\n  #     Bus    Bus     (MVA)     (MVA)     (MVA)    ($/MVA)';
+                str = '\n  #     Bus    Bus        (MVA)       (MVA)        (MVA)        ($/MVA)';
             end
             flow = max(abs(Ff), abs(Ft));
 
-            fprintf(fd, '\nBrnch   From   To      Flow      Limit   Overload     mu');
+%           fprintf(fd, '\nBrnch   From   To      Flow      Limit   Overload     mu');
+            fprintf(fd, '\nBrnch   From   To         Flow        Limit      Overload         mu');
             fprintf(fd, str);
-            fprintf(fd, '\n-----  -----  -----  --------  --------  --------  ---------');
-            fprintf(fd, '\n%4d%7d%7d%10.2f%10.2f%10.2f%11.3f', ...
+%           fprintf(fd, '\n-----  -----  -----  --------  --------  --------  ---------');
+            fprintf(fd, '\n-----  -----  -----  -----------  -----------  -----------  -------------');
+%           fprintf(fd, '\n%4d%7d%7d%10.2f%10.2f%10.2f%11.3f', ...
+            fprintf(fd, '\n%4d%7d%7d%13.2f%13.2f%13.2f%14.3f', ...
                     [   s.idx(k), branch(s.idx(k), [F_BUS, T_BUS]), ...
                         flow, branch(s.idx(k), RATE_A), ...
                         s.overload(s.idx(k)), ...
                         sum(branch(s.idx(k), MU_SF:MU_ST), 2) ...
                     ]');
-            fprintf(fd, '\n                                         --------');
-            fprintf(fd, '\n                                Total:%10.2f', ...
+            fprintf(fd, '\n                                               -----------');
+            fprintf(fd, '\n                                      Total:   %10.2f', ...
                     sum(s.overload(s.idx(k))));
             fprintf(fd, '\n');
         end
