@@ -154,9 +154,8 @@ if have_fcn('scpdipmopf')
     fparm = [ 1    0   0 1;
               1 -100 100 1;
               1  -10  10 1 ];
-    [junk, ix] = sort(mpc.gen(:, 1));
-    H = 2 * spdiags(mpc.gencost(ix, 5), 0, ng, ng);
-    Cw = mpc.gencost(ix, 6);
+    H = 2 * spdiags(mpc.gencost(:, 5), 0, ng, ng);
+    Cw = mpc.gencost(:, 6);
     mpc.gencost(:, 5:7) = 0;
 
     %% run OPF with quadratic gen costs moved to generalized costs
