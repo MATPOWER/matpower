@@ -28,8 +28,8 @@ bus = [
 %	bus	Pg	Qg	Qmax	Qmin	Vg	mBase	status	Pmax	Pmin
 gen = [
 	1	0	0	300	-300	1	100	1	250	90;
-	2	163	0	300	-300	1	100	1	300	10;
 	30	85	0	300	-300	1	100	1	270	10;
+	2	163	0	300	-300	1	100	1	300	10;
 ];
 
 %% branch data

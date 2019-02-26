@@ -141,11 +141,11 @@ if s.av     %% if have_fcn('mosek')
 
     %%-----  run OPF with extra linear user constraints & costs  -----
     %% two new z variables
-    %%      0 <= z1, P2 - P1 <= z1
-    %%      0 <= z2, P2 - P3 <= z2
+    %%      0 <= z1, P3 - P1 <= z1
+    %%      0 <= z2, P3 - P2 <= z2
     %% with A and N sized for DC opf
     mpc = loadcase(casefile);
-    mpc.A = sparse([1;1;1;2;2;2],[10;11;13;11;12;14],[-1;1;-1;1;-1;-1],2,14);
+    mpc.A = sparse([1;1;1;2;2;2],[10;12;13;12;11;14],[-1;1;-1;1;-1;-1],2,14);
     mpc.u = [0; 0];
     mpc.l = [-Inf; -Inf];
     mpc.zl = [0; 0];
@@ -159,13 +159,13 @@ if s.av     %% if have_fcn('mosek')
     [r, success] = rundcopf(mpc, mpopt);
     t_ok(success, [t 'success']);
     t_is(r.gen(1, PG), 116.15974, 5, [t 'Pg1 = 116.15974']);
-    t_is(r.gen(2, PG), 116.15974, 5, [t 'Pg2 = 116.15974']);
+    t_is(r.gen(3, PG), 116.15974, 5, [t 'Pg3 = 116.15974']);
     t_is(r.var.val.z, [0; 0.3348], 4, [t 'user vars']);
     t_is(r.cost.usr, 0.3348, 4, [t 'user costs']);
 
     %% with A and N sized for AC opf
     mpc = loadcase(casefile);
-    mpc.A = sparse([1;1;1;2;2;2],[19;20;25;20;21;26],[-1;1;-1;1;-1;-1],2,26);
+    mpc.A = sparse([1;1;1;2;2;2],[19;21;25;21;20;26],[-1;1;-1;1;-1;-1],2,26);
     mpc.u = [0; 0];
     mpc.l = [-Inf; -Inf];
     mpc.zl = [0; 0];
@@ -179,7 +179,7 @@ if s.av     %% if have_fcn('mosek')
     [r, success] = rundcopf(mpc, mpopt);
     t_ok(success, [t 'success']);
     t_is(r.gen(1, PG), 116.15974, 5, [t 'Pg1 = 116.15974']);
-    t_is(r.gen(2, PG), 116.15974, 5, [t 'Pg2 = 116.15974']);
+    t_is(r.gen(3, PG), 116.15974, 5, [t 'Pg3 = 116.15974']);
     t_is(r.var.val.z, [0; 0.3348], 4, [t 'user vars']);
     t_is(r.cost.usr, 0.3348, 4, [t 'user costs']);
 

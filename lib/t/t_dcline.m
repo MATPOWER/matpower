@@ -135,9 +135,9 @@ mpc1.bus(:, VA) = 0;
 t_ok(success, [t 'success']);
 t_is(   rp.bus(:,ib_voltage),    r.bus(:,ib_voltage), 3, [t 'bus voltage']);
 %t_is(   rp.gen(:,ig_disp   ),    r.gen(:,ig_disp   ), 3, [t 'gen dispatch']);
-t_is(   rp.gen(1:2,ig_disp ),    r.gen(1:2,ig_disp ), 3, [t 'gen dispatch']);
-t_is(   rp.gen(3,PG        ),    r.gen(3,PG        ), 3, [t 'gen dispatch']);
-t_is(   rp.gen(3,QG)+rp.dcline(1,c.QF), r.gen(3,QG)+r.dcline(1,c.QF), 3, [t 'gen dispatch']);
+t_is(   rp.gen([1;3],ig_disp ),  r.gen([1;3],ig_disp ), 3, [t 'gen dispatch']);
+t_is(   rp.gen(2,PG        ),    r.gen(2,PG        ), 3, [t 'gen dispatch']);
+t_is(   rp.gen(2,QG)+rp.dcline(1,c.QF), r.gen(2,QG)+r.dcline(1,c.QF), 3, [t 'gen dispatch']);
 t_is(rp.branch(:,ibr_flow  ), r.branch(:,ibr_flow  ), 3, [t 'branch flow']);
 
 %% add appropriate P and Q injections and check angles and generation when running PF

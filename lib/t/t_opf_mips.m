@@ -123,7 +123,7 @@ for k = 1:length(options)
     %% run with automatic conversion of single-block pwl to linear costs
     t = [t0 '(single-block PWL) : '];
     mpc = loadcase(casefile);
-    mpc.gencost(3, NCOST) = 2;
+    mpc.gencost(2, NCOST) = 2;
     [r, success] = runopf(mpc, mpopt);
     [f, bus, gen, branch] = deal(r.f, r.bus, r.gen, r.branch);
     t_ok(success, [t 'success']);
@@ -457,14 +457,14 @@ for k = 1:length(options)
     mpc = loadcase(casefile);
     mpc.gencost = [
         2   1500    0   6   1e-6/5  0   0   0   0   0;
-        2   2000    0   3   1/2     0   0   0   0   0;
         2   3000    0   5   1e-4/4  0   0   0   0   0;
+        2   2000    0   3   1/2     0   0   0   0   0;
     ];
     r = runopf(mpc, mpopt);
     [f, bus, gen, branch] = deal(r.f, r.bus, r.gen, r.branch);
     t_ok(r.success, [t 'success']);
     t_is(f, 11899.4652, 4, [t 'f']);
-    t_is(gen(:, PG), [100.703628; 128.679485; 88.719864], 5, [t 'f']);
+    t_is(gen(:, PG), [100.703628; 88.719864; 128.679485], 5, [t 'Pg']);
     t_is([min(bus(:, VM)) mean(bus(:, VM)) max(bus(:, VM))], ...
         [1.059191 1.079404 1.1], 5, [t 'bus voltage']);
 
@@ -496,7 +496,7 @@ for k = 1:length(options)
     r = runopf(mpc, mpopt);
     t_ok(r.success, [t 'success']);
     t_is(r.f, 5496.128635, 4, [t 'f']);
-    t_is(r.gen(:, PG), [90; 10; 220.463932], 5, [t 'Pg']);
+    t_is(r.gen(:, PG), [90; 220.463932; 10], 5, [t 'Pg']);
     t_is([min(r.bus(:, VM)) mean(r.bus(:, VM)) max(r.bus(:, VM))], ...
         [1.070692 1.090449 1.1], 4, [t 'bus voltage']);
 end
