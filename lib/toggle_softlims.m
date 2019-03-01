@@ -792,7 +792,7 @@ if isOPF && (results.success || OUT_FORCE)
                 e2i = sparse(max(i2e), 1);
                 e2i(i2e) = (1:size(bus, 1))';
 
-                V = bus(:, VM) .* exp(sqrt(-1) * pi/180 * bus(:, VA));
+                V = bus(:, VM) .* exp(1j * pi/180 * bus(:, VA));
                 Ff = abs( (branch(s.idx(k), PF) + 1j * branch(s.idx(k), QF)) ./ V(e2i(branch(s.idx(k), F_BUS))) );
                 Ft = abs( (branch(s.idx(k), PT) + 1j * branch(s.idx(k), QT)) ./ V(e2i(branch(s.idx(k), T_BUS))) );
 %               str = '\n  #     Bus    Bus     (MA)      (MA)      (MA)     ($/MA)';

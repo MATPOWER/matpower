@@ -55,7 +55,7 @@ end
 [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
 
 %% extract voltage
-V = bus(:, VM) .* exp(sqrt(-1) * pi/180 * bus(:, VA));
+V = bus(:, VM) .* exp(1j * pi/180 * bus(:, VA));
 
 %% make sure we use generator setpoint voltage for PV and slack buses
 on = find(gen(:, GEN_STATUS) > 0);      %% which generators are on?

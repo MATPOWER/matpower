@@ -83,7 +83,7 @@ nb = size(bus, 1);      %% number of buses
 nl = size(branch, 1);   %% number of branches
 
 %% construct complex bus voltage vector
-V = bus(:, VM) .* exp(sqrt(-1) * pi/180 * bus(:, VA));
+V = bus(:, VM) .* exp(1j * pi/180 * bus(:, VA));
 
 %% parameters
 Cf = sparse(1:nl, e2i(branch(:, F_BUS)), branch(:, BR_STATUS), nl, nb);

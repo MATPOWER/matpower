@@ -219,7 +219,7 @@ if ~isempty(mpc.bus)
 
         %% initial state
         % V0    = ones(size(bus, 1), 1);            %% flat start
-        V0  = bus(:, VM) .* exp(sqrt(-1) * pi/180 * bus(:, VA));
+        V0  = bus(:, VM) .* exp(1j * pi/180 * bus(:, VA));
         vcb = ones(size(V0));           %% create mask of voltage-controlled buses
         vcb(pq) = 0;                    %% exclude PQ buses
         k = find(vcb(gbus));            %% in-service gens at v-c buses

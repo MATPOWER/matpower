@@ -178,7 +178,7 @@ if OUT_ANY
     alld = find(  isload(gen) );
     ong  = find( gen(:, GEN_STATUS) > 0 & ~isload(gen) );
     onld = find( gen(:, GEN_STATUS) > 0 &  isload(gen) );
-    V = bus(:, VM) .* exp(sqrt(-1) * pi/180 * bus(:, VA));
+    V = bus(:, VM) .* exp(1j * pi/180 * bus(:, VA));
     opt = struct('type', 'FIXED');
     [Pdf, Qdf] = total_load(bus, gen, 'bus', struct('type', 'FIXED'), mpopt);
     [Pdd, Qdd] = total_load(bus, gen, 'bus', struct('type', 'DISPATCHABLE'), mpopt);

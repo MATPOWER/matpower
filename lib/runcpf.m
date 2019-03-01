@@ -367,7 +367,7 @@ if ~done.flag
     %% initialize variables
     cont_steps = 0;
     lam = 0;
-    V   = mpcb.bus(:, VM) .* exp(sqrt(-1) * pi/180 * mpcb.bus(:, VA));
+    V   = mpcb.bus(:, VM) .* exp(1j * pi/180 * mpcb.bus(:, VA));
     rollback = 0;   %% flag to indicate that a step must be rolled back
     locating = 0;   %% flag to indicate that an event interval was detected,
                     %% but the event has not yet been located
