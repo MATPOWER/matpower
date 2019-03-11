@@ -65,13 +65,15 @@ if length(on) > 1
     ngg = Cg * sum(Cg)';    %% ngon x 1, number of gens at this gen's bus
     gen(on, QG) = gen(on, QG) ./ ngg;
 
-    %% prep 
+    %% set finite proxy M for infinite limits (for ~ proportional splitting)
+    %% equal to sum over all gens at bus of abs(Qg) plus any finite Q limits
     Qmin = gen(on, QMIN);
     Qmax = gen(on, QMAX);
     M = abs(gen(on, QG));
     M(~isinf(Qmax)) = M(~isinf(Qmax)) + abs(Qmax(~isinf(Qmax)));
     M(~isinf(Qmin)) = M(~isinf(Qmin)) + abs(Qmin(~isinf(Qmin)));
-    M = Cg * Cg' * M;
+    M = Cg * Cg' * M;   %% each gen gets sum over all gens at same bus
+    %% replace +/- Inf limits with proxy +/- M
     Qmin(Qmin ==  Inf) =  M(Qmin ==  Inf);
     Qmin(Qmin == -Inf) = -M(Qmin == -Inf);
     Qmax(Qmax ==  Inf) =  M(Qmax ==  Inf);
