@@ -2669,13 +2669,13 @@ Here \code{myLegacyCost} is the name of the cost set, \code{cp} is a struct cont
 \begin{itemize}
 \item {\bf Linear Constraints} are added using the \code{add\_lin\_constraint} method.
 \begin{Code}
-om.lin_constraint('myLinCons', A, l, u, varsets);
+om.add_lin_constraint('myLinCons', A, l, u, varsets);
 \end{Code}
 Here \code{myLinCons} is the name of the constraint set, \code{A}, \code{l} and \code{u} correspond to additional rows to add to the $A$, $l$ and $u$ parameters in \eqref{eq:A}, respectively, and \code{var\_sets} is an optional cell array of variable set names. If \code{var\_sets} is provided, the number of columns in \code{A} will correspond, not to the full optimization vector $\hat{x}$, but to the subvector formed by stacking only the variable sets specified in \code{var\_sets}.
 
 \item {\bf Nonlinear Constraints} are added using the \code{add\_nln\_constraint} method.
 \begin{Code}
-om.nln_constraint('myNonlinCons', N, iseq, fcn, hess, varsets);
+om.add_nln_constraint('myNonlinCons', N, iseq, fcn, hess, varsets);
 \end{Code}
 Here \code{myNonlinCons} is the name of the constraint set, \code{N} is the number of constraints being added, \code{iseq} is a true or false value indicating whether this is a set of equality (or else inequality) constraints, \code{fcn} and \code{hess} are function handles and \code{var\_sets} is an optional cell array of variable set names. The function handle \code{fcn} must point to a function that implements the corresponding constraint function $g_u^j(x)$ or $h_u^j(x)$ and its gradients, and \code{hess} to one that evaluates the corresponding term in the Hessian of the Lagrangian function. This function has a format similar to that required by \mipslink{} for its cost function. See more details in Section~\ref{sec:extend_direct_constraints}.
 
