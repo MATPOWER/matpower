@@ -367,6 +367,7 @@ if ~isempty(mpc.bus)
                         end
                     end
                     limited = [limited; mx];
+                    V0 = V;     %% start next solve with current solution
                 else
                     repeat = 0; %% no more generator Q limits violated
                 end

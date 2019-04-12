@@ -13,6 +13,11 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.1
 -----------------
 
+#### 2/2/21
+  - Initialize each power flow with the solved voltages of the previous
+    one when changing PV buses to PQ during Q limit enforcement.
+    *Thanks to Tostado-Véliz, Kamel, Jurado.*
+
 #### 1/5/21
   - Add DC OPF tests for case with branch angle difference limits.
 
