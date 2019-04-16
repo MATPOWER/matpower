@@ -125,16 +125,17 @@
 %       1   model, 1 - piecewise linear, 2 - polynomial
 %       2   startup, startup cost in US dollars
 %       3   shutdown, shutdown cost in US dollars
-%       4   N, number of cost coefficients to follow for polynomial
-%           cost function, or number of data points for piecewise linear
+%       4   N (= n+1), number of data points to follow defining an n-segment
+%           piecewise linear cost function, or of cost coefficients defining
+%           an n-th order polynomial cost function
 %       5 and following, parameters defining total cost function f(p),
 %           units of f and p are $/hr and MW (or MVAr), respectively.
-%           (MODEL = 1) : p0, f0, p1, f1, ..., pn, fn
-%               where p0 < p1 < ... < pn and the cost f(p) is defined by
-%               the coordinates (p0,f0), (p1,f1), ..., (pn,fn) of the
+%           (MODEL = 1) : p1, f1, p2, f2, ..., pN, fN
+%               where p1 < p2 < ... < pN and the cost f(p) is defined by
+%               the coordinates (p1,f1), (p2,f2), ..., (pN,fN) of the
 %               end/break-points of the piecewise linear cost function
 %           (MODEL = 2) : cn, ..., c1, c0
-%               n+1 coefficients of an n-th order polynomial cost function,
+%               N coefficients of an n-th order polynomial cost function,
 %               starting with highest order, where cost is
 %               f(p) = cn*p^n + ... + c1*p + c0
 % 
@@ -148,7 +149,7 @@
 %   and IDX_COST.
 
 %   MATPOWER
-%   Copyright (c) 1996-2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2019, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

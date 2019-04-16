@@ -1906,7 +1906,7 @@ define_constants;
 mpopt = mpoption('out.all', 0, 'verbose', 2);
 mpopt = mpoption(mpopt, 'cpf.stop_at', 'FULL', 'cpf.step', 0.2);
 mpopt = mpoption(mpopt, 'cpf.plot.level', 2);
-mpcb = loadcase(t_case9_pfv2);                      % load base case
+mpcb = loadcase('t_case9_pfv2');                    % load base case
 mpct = mpcb;                                        % set up target case with
 mpct.gen(:, [PG QG]) = mpcb.gen(:, [PG QG]) * 2.5;  % increased generation
 mpct.bus(:, [PD QD]) = mpcb.bus(:, [PD QD]) * 2.5;  % and increased load
@@ -4902,17 +4902,17 @@ name & column & description \\
 \code{MODEL}	& 1	& cost model, 1 = piecewise linear, 2 = polynomial	\\
 \code{STARTUP}	& 2	& startup cost in US dollars\tnote{*}	\\
 \code{SHUTDOWN}	& 3	& shutdown cost in US dollars\tnote{*}	\\
-\code{NCOST}	& 4	& number of cost coefficients for polynomial cost function,	\\
-&& or number of data points for piecewise linear	\\
+\code{NCOST}	& 4	& number $N = n+1$ of data points defining an $n$-segment piecewise linear cost	\\
+&& function, or of coefficients defining an $n$-th order polynomial cost function	\\
 \code{COST}	& 5	& parameters defining total cost function $f(p)$ begin in this column,	\\
 && units of $f$ and $p$ are \$/hr and MW (or MVAr), respectively	\\
-&& (\code{MODEL}~=~1) $\Rightarrow~~~p_0, f_0, p_1, f_1, \dots, p_n, f_n$	\\
-&& ~~~~where $p_0 < p_1 < \dots < p_n$ and the cost $f(p)$ is defined by	\\
-&& ~~~~the coordinates $(p_0,f_0)$, $(p_1,f_1)$, \dots, $(p_n,f_n)$	\\
+&& (\code{MODEL}~=~1) $\Rightarrow~~~p_1, f_1, p_2, f_2, \dots, p_N, f_N$	\\
+&& ~~~~where $p_1 < p_2 < \dots < p_N$ and the cost $f(p)$ is defined by	\\
+&& ~~~~the coordinates $(p_1,f_1)$, $(p_2,f_2)$, \dots, $(p_N,f_N)$	\\
 && ~~~~of the end/break-points of the piecewise linear cost	\\
 && (\code{MODEL}~=~2) $\Rightarrow~~~c_n, \dots, c_1, c_0$	\\
-&& ~~~~$n+1$ coefficients of $n$-th order polynomial cost, starting with	\\
-&& ~~~~highest order, where cost is $f(p) = c_n p^n + \dots + c_1 p + c_0$	\\
+&& ~~~~$N$ coefficients of $n$-th order polynomial cost function, starting	\\
+&& ~~~~with highest order, where cost is $f(p) = c_n p^n + \dots + c_1 p + c_0$	\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
