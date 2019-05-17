@@ -1655,7 +1655,7 @@ Version 4.0b5 - *Dec 13, 2010*
     for the DC OPF, set `OPF_ALG_DC = 500` and choose the specific
     CPLEX solver using options `CPLEX_LPMETHOD` and `CPLEX_QPMETHOD`.
     Requires the MATLAB interface for CPLEX, available from
-    http://www.ibm.com/software/integration/optimization/cplex-optimizer/.
+    https://www.ibm.com/analytics/cplex-optimizer.
   - Added function `qps_cplex()` for using CPLEX to solve QP and LP
     problems using the common QP solver interface used in MATPOWER. The
     `qps_matpower()` function also includes the option to use CPLEX.
