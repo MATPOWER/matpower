@@ -6,7 +6,7 @@ function mpc = case118
 %   See end of file for warnings generated during conversion.
 %
 %   Converted from IEEE CDF file from:
-%       http://www.ee.washington.edu/research/pstca/
+%       https://labs.ece.uw.edu/pstca/
 %   With baseKV data take from the PSAP format file from the same site,
 %   added manually on 10-Mar-2006.
 %   Branches 86--87, 68--116 changed from transmission lines (tap ratio = 0)

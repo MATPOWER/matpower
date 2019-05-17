@@ -6,7 +6,7 @@ function mpc = case57
 %   See end of file for warnings generated during conversion.
 %
 %   Converted from IEEE CDF file from:
-%       http://www.ee.washington.edu/research/pstca/
+%       https://labs.ece.uw.edu/pstca/
 %
 %   Manually modified Qmax, Qmin on generator 1 to 200, -140, respectively.
 % 

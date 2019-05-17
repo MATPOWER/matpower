@@ -6,7 +6,7 @@ function mpc = case14
 %   See end of file for warnings generated during conversion.
 %
 %   Converted from IEEE CDF file from:
-%       http://www.ee.washington.edu/research/pstca/
+%       https://labs.ece.uw.edu/pstca/
 % 
 %  08/19/93 UW ARCHIVE           100.0  1962 W IEEE 14 Bus Test Case
 

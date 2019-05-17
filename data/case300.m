@@ -6,7 +6,7 @@ function mpc = case300
 %   See end of file for warnings generated during conversion.
 %
 %   Converted from IEEE CDF file from:
-%       http://www.ee.washington.edu/research/pstca/
+%       https://labs.ece.uw.edu/pstca/
 % 
 %  13/05/91 CYME INTERNATIONAL    100.0 1991 S IEEE 300-BUS TEST SYSTEM
 

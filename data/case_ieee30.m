@@ -6,7 +6,7 @@ function mpc = case_ieee30
 %   See end of file for warnings generated during conversion.
 %
 %   Converted from IEEE CDF file from:
-%       http://www.ee.washington.edu/research/pstca/
+%       https://labs.ece.uw.edu/pstca/
 % 
 %  08/20/93 UW ARCHIVE           100.0  1961 W IEEE 30 Bus Test Case
 

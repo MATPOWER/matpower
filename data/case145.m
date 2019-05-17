@@ -6,8 +6,8 @@ function mpc = case145
 %   See end of file for warnings generated during conversion.
 %
 %   Converted from IEEE CDF file from:
-%       http://www.ee.washington.edu/research/pstca/, namely
-%       http://www.ee.washington.edu/research/pstca/dyn50/dd50cdf.txt
+%       https://labs.ece.uw.edu/pstca/, namely
+%       https://labs.ece.uw.edu/pstca/dyn50/dd50cdf.txt
 %
 %   This is a solved power flow case. MATPOWER requires that the
 %   'pf.enforce_q_lims' option be on to obtain the same solution.

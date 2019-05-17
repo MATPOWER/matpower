@@ -5,7 +5,7 @@
 %   the exception of baseMVA, a scalar, each data variable is a matrix, where
 %   a row corresponds to a single bus, branch, gen, etc. The format of the
 %   data is similar to the PTI format described in
-%       http://www.ee.washington.edu/research/pstca/formats/pti.txt
+%       https://labs.ece.uw.edu/pstca/formats/pti.txt
 %   except where noted. An item marked with (+) indicates that it is included
 %   in this data but is not part of the PTI format. An item marked with (-) is
 %   one that is in the PTI format but is not included here. Those marked with
