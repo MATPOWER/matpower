@@ -92,7 +92,7 @@ function [x, f, eflag, output, lambda] = qps_ipopt(H, c, A, l, u, xmin, xmax, x0
 %       [x, f, s, out, lambda] = qps_ipopt(H, c, A, l, u, xmin, [], x0, opt);
 %
 %   See also IPOPT, IPOPT_OPTIONS.
-%   http://www.coin-or.org/projects/Ipopt.xml.
+%   https://github.com/coin-or/Ipopt.
 
 %   MATPOWER
 %   Copyright (c) 2010-2016, Power Systems Engineering Research Center (PSERC)
@@ -104,7 +104,7 @@ function [x, f, eflag, output, lambda] = qps_ipopt(H, c, A, l, u, xmin, xmax, x0
 
 %% check for IPOPT
 % if ~have_fcn('ipopt')
-%     error('qps_ipopt: requires IPOPT (http://www.coin-or.org/projects/Ipopt.xml)');
+%     error('qps_ipopt: requires IPOPT (https://github.com/coin-or/Ipopt)');
 % end
 
 %%----- input argument handling  -----

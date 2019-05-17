@@ -86,7 +86,7 @@ else
       [results, success, raw] = mipsopf_solver(om, mpopt);
     case 'IPOPT'
       if ~have_fcn('ipopt')
-        error('opf_execute: MPOPT.opf.ac.solver = ''%s'' requires IPOPT (see http://www.coin-or.org/projects/Ipopt.xml)', alg);
+        error('opf_execute: MPOPT.opf.ac.solver = ''%s'' requires IPOPT (see https://github.com/coin-or/Ipopt)', alg);
       end
       [results, success, raw] = ipoptopf_solver(om, mpopt);
     case 'PDIPM'

@@ -32,7 +32,7 @@ function rv = have_fcn(tag, rtype)
 %
 %   Possible values for input TAG and their meanings:
 %       bpmpd       - BP, BPMPD interior point solver
-%       clp         - CLP, LP/QP solver(http://www.coin-or.org/projects/Clp.xml)
+%       clp         - CLP, LP/QP solver(https://github.com/coin-or/Clp)
 %        opti_clp   -   version of CLP distributed with OPTI Toolbox
 %                       (http://www.i2c2.aut.ac.nz/Wiki/OPTI/)
 %       cplex       - CPLEX, IBM ILOG CPLEX Optimizer
@@ -44,7 +44,7 @@ function rv = have_fcn(tag, rtype)
 %       intlinprog  - INTLINPROG, MILP solver from Optimization
 %                     Toolbox 7.0 (R2014a)+
 %       ipopt       - IPOPT, NLP solver
-%                       (http://www.coin-or.org/projects/Ipopt.xml)
+%                       (https://github.com/coin-or/Ipopt)
 %       linprog     - LINPROG, LP solver from Optimization Toolbox 2.x +
 %       linprog_ds  - LINPROG with dual-simplex solver
 %                       from Optimization Toolbox 7.1 (R2014b) +

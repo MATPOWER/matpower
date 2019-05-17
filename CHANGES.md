@@ -1702,7 +1702,7 @@ Version 4.0b4 - *May 21, 2010*
     large scale non-linear optimization. Use `OPF_ALG = 580`
     and `OPF_ALG_DC = 400` for AC and DC OPF, respectively. Requires
     the MATLAB MEX interface for IPOPT, available from
-    http://www.coin-or.org/projects/Ipopt.xml.
+    https://github.com/coin-or/Ipopt.
 
 #### 5/13/10
   - Modified input args for Hessian evaluation function for MIPS.
