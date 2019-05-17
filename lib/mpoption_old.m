@@ -65,7 +65,7 @@ function [options, names] = mpoption_old(varargin)
 %           [  580 - IPOPT, requires MEX interface to IPOPT solver          ]
 %           [        available from: https://projects.coin-or.org/Ipopt/    ]
 %           [  600 - Artelys Knitro, requires Knitro solver, available from:]
-%           [        http://www.artelys.com/                                ]
+%           [        https://www.artelys.com/solvers/knitro/                ]
 %       16 - OPF_VIOLATION, 5e-6    constraint violation tolerance
 %       17 - CONSTR_TOL_X, 1e-4     termination tol on x for fmincon/Knitro
 %       18 - CONSTR_TOL_F, 1e-4     termination tol on f for fmincon/Knitro

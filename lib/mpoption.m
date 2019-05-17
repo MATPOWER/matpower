@@ -169,7 +169,7 @@ function opt = mpoption(varargin)
 %       [             available from:                                       ]
 %       [                   https://github.com/coin-or/Ipopt                ]
 %       [ 'KNITRO'  - Artelys Knitro, requires Artelys Knitro solver,       ]
-%       [             available from:  http://www.artelys.com/              ]
+%       [             available from:https://www.artelys.com/solvers/knitro/]
 %       [ 'MINOPF'  - MINOPF, MINOS-based solver, requires optional         ]
 %       [             MEX-based MINOPF package, available from:             ]
 %       [                   http://www.pserc.cornell.edu/minopf/            ]

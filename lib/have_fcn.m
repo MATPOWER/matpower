@@ -48,7 +48,8 @@ function rv = have_fcn(tag, rtype)
 %       linprog     - LINPROG, LP solver from Optimization Toolbox 2.x +
 %       linprog_ds  - LINPROG with dual-simplex solver
 %                       from Optimization Toolbox 7.1 (R2014b) +
-%       knitro      - Artelys Knitro, NLP solver (http://www.artelys.com/)
+%       knitro      - Artelys Knitro, NLP solver
+%                     (https://www.artelys.com/solvers/knitro/)
 %         knitromatlab - Artelys Knitro, version 9.0.0+
 %         ktrlink      - KNITRO, version < 9.0.0 (requires Opt Tbx)
 %       matlab      - code is running under MATLAB, as opposed to Octave
