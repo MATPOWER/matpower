@@ -51,7 +51,7 @@ function opt = glpk_options(overrides, mpopt)
 %
 %   See the documentation for the PARAM argument at
 %
-%       http://www.gnu.org/software/octave/doc/interpreter/Linear-Programming.html
+%       https://www.gnu.org/software/octave/doc/interpreter/Linear-Programming.html
 %
 %   or by typing 'help glpk'.
 %

@@ -7,7 +7,7 @@ function mpc = case33bw
 %       systems for loss reduction and load balancing," in IEEE Transactions
 %       on Power Delivery, vol. 4, no. 2, pp. 1401-1407, Apr 1989.
 %       doi: 10.1109/61.25627
-%       URL: http://doi.org/10.1109/61.25627
+%       URL: https://doi.org/10.1109/61.25627
 
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';

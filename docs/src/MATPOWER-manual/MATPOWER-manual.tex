@@ -320,7 +320,7 @@ Beginning with version 6, \matpower{} includes a framework for solving generaliz
 \clearpage
 \subsection{License and Terms of Use}
 
-Beginning with version 5.1, the code in \matpower{} is distributed under the 3-clause BSD license\footnote{Versions 4.0 through 5.0 of \matpower{} were distributed under version 3.0 of the GNU General Public License (GPL)~\cite{gpl} with an exception added to clarify our intention to allow \matpower{} to interface with \matlab{} as well as any other \matlab{} code or MEX-files a user may have installed, regardless of their licensing terms. The full text of the GPL can be found at \url{http://www.gnu.org/licenses/gpl-3.0.txt}. \matpower{} versions prior to version 4 had their \href{http://www.pserc.cornell.edu/matpower/oldlicense.html}{own license}.}
+Beginning with version 5.1, the code in \matpower{} is distributed under the 3-clause BSD license\footnote{Versions 4.0 through 5.0 of \matpower{} were distributed under version 3.0 of the GNU General Public License (GPL)~\cite{gpl} with an exception added to clarify our intention to allow \matpower{} to interface with \matlab{} as well as any other \matlab{} code or MEX-files a user may have installed, regardless of their licensing terms. The full text of the GPL can be found at \url{https://www.gnu.org/licenses/gpl-3.0.txt}. \matpower{} versions prior to version 4 had their \href{http://www.pserc.cornell.edu/matpower/oldlicense.html}{own license}.}
 ~\cite{bsd}. The full text of the license can be found in the \code{LICENSE} file at the top level of the distribution or at \url{http://www.pserc.cornell.edu/matpower/LICENSE.txt} and reads as follows.
 
 \begin{Notice}
@@ -398,13 +398,13 @@ The \matpower{} GitHub project hosts the public Git code repository as well as a
 \label{sec:sysreq}
 To use \matpower{} \mpver{} you will need:
 \begin{itemize}
-\item \matlab{}\textsuperscript{\tiny \textregistered} version 7.3 (R2006b) or later\footnote{\matlab{} is available from The MathWorks, Inc. (\url{http://www.mathworks.com/}). \matpower{}~5 and \matpower{}~6 required \matlab{}~7 (R14), \matpower{}~4 required \matlab{}~6.5 (R13), \matpower{}~3.2 required \matlab{}~6 (R12), \matpower{}~3.0 required \matlab{}~5 and \matpower{}~2.0 and earlier required only \matlab{}~4. \matlab{} is a registered trademark of The MathWorks, Inc.}, or
-\item GNU Octave version 4 or later\footnote{GNU Octave \cite{octave} is free software, available online at \url{http://www.gnu.org/software/octave/}. \matpower{}~5 and \matpower{}~6 required Octave~3.4, \matpower{}~4 required Octave~3.2.}
+\item \matlab{}\textsuperscript{\tiny \textregistered} version 7.3 (R2006b) or later\footnote{\matlab{} is available from The MathWorks, Inc. (\url{https://www.mathworks.com/}). \matpower{}~5 and \matpower{}~6 required \matlab{}~7 (R14), \matpower{}~4 required \matlab{}~6.5 (R13), \matpower{}~3.2 required \matlab{}~6 (R12), \matpower{}~3.0 required \matlab{}~5 and \matpower{}~2.0 and earlier required only \matlab{}~4. \matlab{} is a registered trademark of The MathWorks, Inc.}, or
+\item GNU Octave version 4 or later\footnote{GNU Octave \cite{octave} is free software, available online at \url{https://www.gnu.org/software/octave/}. \matpower{}~5 and \matpower{}~6 required Octave~3.4, \matpower{}~4 required Octave~3.2.}
 \end{itemize}
 
 See Section~\ref{MOSTMAN-sec:sysreq} in the \mostman{} for any requirements specific to \most{}.
 
-For the hardware requirements, please refer to the system requirements for the version of \matlab{}\footnote{\url{http://www.mathworks.com/support/sysreq/previous_releases.html}} or Octave that you are using. If the \matlab{} \ot{} is installed as well, \matpower{} enables an option to use it to solve optimal power flow problems.
+For the hardware requirements, please refer to the system requirements for the version of \matlab{}\footnote{\url{https://www.mathworks.com/support/sysreq/previous_releases.html}} or Octave that you are using. If the \matlab{} \ot{} is installed as well, \matpower{} enables an option to use it to solve optimal power flow problems.
 
 In this manual, references to \matlab{} usually apply to Octave as well. At the time of writing, none of the optional MEX-based \matpower{} packages have been built for Octave, but Octave does typically include \glpk{}.
 
@@ -2309,7 +2309,7 @@ The difference between the bus voltage angle $\theta_f$ at the \emph{from} end o
 \subsection{Solvers}
 \label{sec:solvers}
 
-Early versions of \matpower{} relied on \matlab{}'s \ot{}~\cite{ot} to provide the NLP and QP solvers needed to solve the AC and DC OPF problems, respectively. While they worked reasonably well for very small systems, they did not scale well to larger networks. Eventually, optional packages with additional solvers were added to improve performance, typically relying on \matlab{} extension (MEX) files implemented in Fortran or C and pre-compiled for each machine architecture. Some of these MEX files are distributed as optional packages due to differences in terms of use. For DC optimal power flow, there is a MEX build~\cite{bpmpdmex} of the high performance interior point BPMPD solver~\cite{meszaros1996} for LP/QP problems. For the AC OPF problem, the MINOPF~\cite{minopf} and TSPOPF~\cite{tspopf} packages provide solvers suitable for much larger systems. The former is based on MINOS~\cite{murtagh} and the latter includes the primal-dual interior point and trust region based augmented Lagrangian methods described in~\cite{wang2007a}. \matpower{} version~4 and later also includes the option to use the open-source \ipopt{} solver\footnote{Available from \url{https://github.com/coin-or/Ipopt}.} for solving both AC and DC OPFs, based on the \matlab{} MEX interface to \ipopt{}\footnote{See \url{https://projects.coin-or.org/Ipopt/wiki/MatlabInterface}.}. It also includes the option to use \cplex{}\footnote{See \url{https://www.ibm.com/analytics/cplex-optimizer}.} or \mosek{}\footnote{See \url{http://www.mosek.com/}.} for DC OPFs. \matpower{}~4.1 added the option to use \knitro{}~\cite{knitro}\footnote{See \url{https://www.artelys.com/solvers/knitro/}.} for AC OPFs and the \gurobi{} Optimizer~\cite{gurobi}\footnote{See \url{http://www.gurobi.com/}.} for DC OPFs and \matpower{}~5 added \glpk{}~\cite{glpk} and 5.1 added \clp{}~\cite{clp}. See Appendix~\ref{app:optional_packages} for more details on these optional packages.
+Early versions of \matpower{} relied on \matlab{}'s \ot{}~\cite{ot} to provide the NLP and QP solvers needed to solve the AC and DC OPF problems, respectively. While they worked reasonably well for very small systems, they did not scale well to larger networks. Eventually, optional packages with additional solvers were added to improve performance, typically relying on \matlab{} extension (MEX) files implemented in Fortran or C and pre-compiled for each machine architecture. Some of these MEX files are distributed as optional packages due to differences in terms of use. For DC optimal power flow, there is a MEX build~\cite{bpmpdmex} of the high performance interior point BPMPD solver~\cite{meszaros1996} for LP/QP problems. For the AC OPF problem, the MINOPF~\cite{minopf} and TSPOPF~\cite{tspopf} packages provide solvers suitable for much larger systems. The former is based on MINOS~\cite{murtagh} and the latter includes the primal-dual interior point and trust region based augmented Lagrangian methods described in~\cite{wang2007a}. \matpower{} version~4 and later also includes the option to use the open-source \ipopt{} solver\footnote{Available from \url{https://github.com/coin-or/Ipopt}.} for solving both AC and DC OPFs, based on the \matlab{} MEX interface to \ipopt{}\footnote{See \url{https://projects.coin-or.org/Ipopt/wiki/MatlabInterface}.}. It also includes the option to use \cplex{}\footnote{See \url{https://www.ibm.com/analytics/cplex-optimizer}.} or \mosek{}\footnote{See \url{https://www.mosek.com/}.} for DC OPFs. \matpower{}~4.1 added the option to use \knitro{}~\cite{knitro}\footnote{See \url{https://www.artelys.com/solvers/knitro/}.} for AC OPFs and the \gurobi{} Optimizer~\cite{gurobi}\footnote{See \url{https://www.gurobi.com/}.} for DC OPFs and \matpower{}~5 added \glpk{}~\cite{glpk} and 5.1 added \clp{}~\cite{clp}. See Appendix~\ref{app:optional_packages} for more details on these optional packages.
 
 Beginnning with version~4, \matpower{} also includes its own primal-dual interior point method implemented in pure-\matlab{} code, derived from the MEX implementation of the algorithms described in~\cite{wang2007a}. This solver is called \mips{} (\mipsname{}) and is described in more detail in Appendix~\ref{app:mips}. If no optional packages are installed, \mips{} will be used by default for both the AC OPF and as the QP solver used by the DC OPF. The AC OPF solver also employs a unique technique for efficiently forming the required Hessians via a few simple matrix operations~\cite{zimmerman2010b, sereeter2018a, sereeter2018b}. This solver has application to general nonlinear optimization problems outside of \matpower{} and can be called directly as \code{mips}. There is also a convenience wrapper function called \code{qps\_mips} making it trivial to set up and solve LP and QP problems, with an interface similar to \code{quadprog} from the \matlab{} \ot{}.
 
@@ -2965,7 +2965,7 @@ end
 
 The \code{savecase} is used to save a \matpower{} case struct to an M-file, for example, to save the results of an OPF run. The \code{savecase} callback is invoked from \code{savecase} after printing all of the other data to the file. Inputs are the case struct, the file descriptor to write to, the variable prefix (typically \codeq{mpc.}) and any (optional) \code{args} supplied via \code{add\_userfcn}. Output is the case struct. The purpose of this callback is to write any non-standard case struct fields to the case file.
 
-In this example, the \code{zones}, \code{req}, \code{cost} and \code{qty} fields of \code{mpc.reserves} are written to the M-file. This ensures that a case with reserve data, if it is loaded via \code{loadcase}, possibly run, then saved via \code{savecase}, will not lose the data in the \code{reserves} field. This callback could also include the saving of the output fields if present. The contributed \code{serialize} function\footnote{\url{http://www.mathworks.com/matlabcentral/fileexchange/1206}} can be very useful for this purpose.
+In this example, the \code{zones}, \code{req}, \code{cost} and \code{qty} fields of \code{mpc.reserves} are written to the M-file. This ensures that a case with reserve data, if it is loaded via \code{loadcase}, possibly run, then saved via \code{savecase}, will not lose the data in the \code{reserves} field. This callback could also include the saving of the output fields if present. The contributed \code{serialize} function\footnote{\url{https://www.mathworks.com/matlabcentral/fileexchange/12063-serialize}} can be very useful for this purpose.
 
 \begin{Code}
 function mpc = userfcn_reserves_savecase(mpc, fd, prefix, args)
@@ -4345,7 +4345,7 @@ The use of \code{nargout} in \code{f\_fcn} and \code{gh\_fcn} is recommended so 
 
 \subsection{Example 1}
 
-The following code shows a simple example of using \code{mips} to solve a 2-dimensional unconstrained optimization of Rosenbrock's ``banana'' function\footnote{\url{http://en.wikipedia.org/wiki/Rosenbrock_function}}
+The following code shows a simple example of using \code{mips} to solve a 2-dimensional unconstrained optimization of Rosenbrock's ``banana'' function\footnote{\url{https://en.wikipedia.org/wiki/Rosenbrock_function}}
 \begin{equation}
 f(x) = 100 (x_2-x_1^2)^2+(1-x_1)^2.
 \end{equation}
@@ -4384,7 +4384,7 @@ f =
 
 \subsection{Example 2}
 
-The second example\footnote{From \url{http://en.wikipedia.org/wiki/Nonlinear\_programming\#3-dimensional\_example}.} solves the following 3-dimensional constrained optimization, printing the details of the solver's progress:
+The second example\footnote{From \url{https://en.wikipedia.org/wiki/Nonlinear\_programming\#3-dimensional\_example}.} solves the following 3-dimensional constrained optimization, printing the details of the solver's progress:
 \begin{equation}
 \min_x f(x) = -x_1 x_2 - x_2 x_3
 \end{equation}
@@ -5073,7 +5073,7 @@ name & default & description \\
 \begin{tablenotes}
  \scriptsize
  \item [*] {Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.}
- \item [\dag] {Requires \matlab{}'s \ot{}, available from The MathWorks, Inc (\url{http://www.mathworks.com/}).}
+ \item [\dag] {Requires \matlab{}'s \ot{}, available from The MathWorks, Inc (\url{https://www.mathworks.com/}).}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -5507,7 +5507,7 @@ name & default & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {Requires \matlab{}'s \ot{}, available from The MathWorks, Inc (\url{http://www.mathworks.com/}).}
+ \item [\dag] {Requires \matlab{}'s \ot{}, available from The MathWorks, Inc (\url{https://www.mathworks.com/}).}
  \item [\ddag] {Does not use sparse matrices, so not applicable for large-scale systems.}
 %  \item [\ddag] {Used only if \code{fmincon.opts} is empty.}
  \item [*] {\code{Display} is set by \code{verbose}, \code{TolCon} by \code{opf.violation}, \code{TolX} by \code{fmincon.tol\_x}, \code{TolFun} by \code{fmincon.tol\_f}, and \code{MaxIter} and \code{MaxFunEvals} by \code{fmincon.max\_it}.}
@@ -5534,7 +5534,7 @@ name & default\tnote{\S} & description \\
 \begin{tablenotes}
  \scriptsize
  \item [\dag] {For \code{opf.dc.solver} option set to \codeq{GLPK} only. Requires the installation of the optional \glpk{} package. See Appendix~\ref{app:glpk} for details.}
- \item [\ddag] {For details, see \code{help glpk\_options} or the ``param'' section of the \glpk{} documentation at  \url{http://www.gnu.org/software/octave/doc/interpreter/Linear-Programming.html}.}
+ \item [\ddag] {For details, see \code{help glpk\_options} or the ``param'' section of the \glpk{} documentation at  \url{https://www.gnu.org/software/octave/doc/interpreter/Linear-Programming.html}.}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -5570,7 +5570,7 @@ name & default\tnote{\S} & description \\
  \scriptsize
  \item [\dag] {For \code{opf.dc.solver} option set to \codeq{GUROBI} only. Requires the installation of the optional \gurobi{} package. See Appendix~\ref{app:gurobi} for details.}
  \item [\S] {Default values in parenthesis refer to defaults assigned by \gurobi{} if called with option equal to 0.}
- \item [\ddag] {For details, see \code{help gurobi\_options} and the ``Parameters'' section of the ``Gurobi Optimizer Reference Manual'' at \url{http://www.gurobi.com/documentation/6.0/refman/parameters.html}.}
+ \item [\ddag] {For details, see \code{help gurobi\_options} and the ``Parameters'' section of the ``Gurobi Optimizer Reference Manual'' at \url{https://www.gurobi.com/documentation/}.}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -7330,7 +7330,7 @@ When installed BPMPD\_MEX can be selected as the solver for DC OPFs by setting t
 The \clp{}~\cite{clp} ({\bf C}OIN-OR {\bf L}inear {\bf P}rogramming) solver is an open-source linear programming solver written in C++ by John Forrest. It can solve both linear programming (LP) and quadratic programming (QP) problems. It is primarily meant to be used as a callable library, but a basic, stand-alone executable version exists as well. It is available from the COIN-OR initiative at \url{https://github.com/coin-or/Clp}.
 
 To use \clp{} with \matpower{}, a MEX interface is required\footnote{According to David Gleich at \url{http://web.stanford.edu/~dgleich/notebook/2009/03/coinor_clop_for_matlab.html}, there was a \matlab{} MEX interface to \clp{} written by Johan Lofberg and available (at some point in the past) at \url{http://control.ee.ethz.ch/~joloef/mexclp.zip}. Unfortunately, at the time of this writing, it seems it is no longer available there, but Davide Barcelli makes some precompiled MEX files for some platforms available here \url{http://www.dii.unisi.it/~barcelli/software.php}, and the ZIP file linked as Clp 1.14.3 contains the MEX source as well as a \code{clp.m} wrapper function with some rudimentary documentation.}. For Microsoft Windows users, a pre-compiled MEX version of \clp{} (and numerous other solvers, such as \glpk{} and \ipopt{}) are easily installable as part of the OPTI Toolbox\footnote{The OPTI Toolbox is available from 
-\url{http://www.i2c2.aut.ac.nz/Wiki/OPTI/}.}~\cite{opti}
+\url{https://www.inverseproblem.co.nz/OPTI/}.}~\cite{opti}
 
 With the \matlab{} interface to \clp{} installed, it can be used to solve DC OPF problems by setting the \code{opf.dc.solver} option equal to \codeq{CLP}. The solution algorithms and other \clp{} parameters can be set directly via \matpower{}'s \code{clp.opts} option. A ``\clp{} user options'' function can also be specified via \code{clp.opt\_fname} to override the defaults for any of the many \clp{} parameters. See \code{help clp} for details. See Table~\ref{tab:clpoptions} for a summary of the \clp{}-related \matpower{} options.
 
@@ -7353,22 +7353,22 @@ It can also be used to solve general LP and QP problems via \matpower{}'s common
 The \glpk{}~\cite{glpk} ({\bf G}NU {\bf L}inear {\bf P}rogramming {\bf K}it) package is intended for solving large-scale linear programming (LP), mixed integer programming (MIP), and other related problems. It is a set of routines written in ANSI C and organized in the form of a callable library. 
 
 To use \glpk{} with \matpower{}, a MEX interface is required\footnote{The \url{http://glpkmex.sourceforge.net} site and Davide Barcelli's page \url{http://www.dii.unisi.it/~barcelli/software.php} may be useful in obtaining the MEX source or pre-compiled binaries for Mac or Linux platforms.}. For Microsoft Windows users, a pre-compiled MEX version of \glpk{} (and numerous other solvers, such as \clp{} and \ipopt{}) are easily installable as part of the OPTI Toolbox\footnote{The OPTI Toolbox is available from 
-\url{http://www.i2c2.aut.ac.nz/Wiki/OPTI/}.}~\cite{opti}.
+\url{https://www.inverseproblem.co.nz/OPTI/}.}~\cite{opti}.
 
-When \glpk{} is installed, either as part of Octave or with a MEX interface for \matlab{}, it can be used to solve DC OPF problems that do not include any quadratic costs by setting the \code{opf.dc.solver} option equal to \codeq{GLPK}. The solution algorithms and other \glpk{} parameters can be set directly via \matpower{}'s \code{glpk.opts} option. A ``\glpk{} user options'' function can also be specified via \code{glpk.opt\_fname} to override the defaults for any of the many \glpk{} parameters. See \code{help glpk\_options} and the parameters section the \glpk{} documentation at \url{http://www.gnu.org/software/octave/doc/interpreter/Linear-Programming.html} for details. See Table~\ref{tab:glpkoptions} for a summary of the \glpk{}-related \matpower{} options. 
+When \glpk{} is installed, either as part of Octave or with a MEX interface for \matlab{}, it can be used to solve DC OPF problems that do not include any quadratic costs by setting the \code{opf.dc.solver} option equal to \codeq{GLPK}. The solution algorithms and other \glpk{} parameters can be set directly via \matpower{}'s \code{glpk.opts} option. A ``\glpk{} user options'' function can also be specified via \code{glpk.opt\_fname} to override the defaults for any of the many \glpk{} parameters. See \code{help glpk\_options} and the parameters section the \glpk{} documentation at \url{https://www.gnu.org/software/octave/doc/interpreter/Linear-Programming.html} for details. See Table~\ref{tab:glpkoptions} for a summary of the \glpk{}-related \matpower{} options. 
 
 \glpk{} can also be used to solve general LP problems via \matpower{}'s common QP solver interface \code{qps\_matpower}, or MILP problems via \code{miqps\_matpower}, with the algorithm option set to \codeq{GLPK}, or by calling \code{qps\_glpk} or \code{miqps\_glpk} directly.
 
 \subsection{\gurobi{} -- High-performance LP and QP Solvers}
 \label{app:gurobi}
 
-\gurobi{}~\cite{gurobi} is a collection of optimization tools that includes high-performance solvers for large-scale linear programming (LP) and quadratic programming (QP) problems, among others. The project was started by some former \cplex{} developers. More information is available at \url{http://www.gurobi.com/}.
+\gurobi{}~\cite{gurobi} is a collection of optimization tools that includes high-performance solvers for large-scale linear programming (LP) and quadratic programming (QP) problems, among others. The project was started by some former \cplex{} developers. More information is available at \url{https://www.gurobi.com/}.
 
-Although \gurobi{} is a commercial package, at the time of this writing their is a free academic license available. See \url{http://www.gurobi.com/html/academic.html} for more details.
+Although \gurobi{} is a commercial package, at the time of this writing their is a free academic license available. See \url{https://www.gurobi.com/academia/for-universities} for more details.
 
 Beginning with version~5.0.0, \gurobi{} includes a native \matlab{} interface, which is supported in \matpower{} version~4.2 and above.\footnote{\matpower{} version~4.1 supported \gurobi{} version 4.x, which required a free third-party \matlab{} MEX interface \cite{gurobimex}, available at \url{http://www.convexoptimization.com/wikimization/index.php/Gurobi_mex}.}
 
-When \gurobi{} is installed, it can be used to solve DC OPF problems by setting the \code{opf.dc.solver} option equal to \codeq{GUROBI}. The solution algorithms can be controlled by \matpower{}'s \code{gurobi.method} option. See Table~\ref{tab:gurobioptions} for a summary of the \gurobi{}-related \matpower{} options. A ``\gurobi{} user options'' function can also be specified via \code{gurobi.opt\_fname} to override the defaults for any of the many \gurobi{} parameters. See \code{help gurobi\_options} and the ``Parameters'' section of the ``Gurobi Optimizer Reference Manual'' at \url{http://www.gurobi.com/documentation/6.0/refman/parameters.html} for details.
+When \gurobi{} is installed, it can be used to solve DC OPF problems by setting the \code{opf.dc.solver} option equal to \codeq{GUROBI}. The solution algorithms can be controlled by \matpower{}'s \code{gurobi.method} option. See Table~\ref{tab:gurobioptions} for a summary of the \gurobi{}-related \matpower{} options. A ``\gurobi{} user options'' function can also be specified via \code{gurobi.opt\_fname} to override the defaults for any of the many \gurobi{} parameters. See \code{help gurobi\_options} and the ``Parameters'' section of the ``Gurobi Optimizer Reference Manual'' at \url{https://www.gurobi.com/documentation/} for details.
 
 It can also be used to solve general LP and QP problems via \matpower{}'s common QP solver interface \code{qps\_matpower}, or MILP and MIQP problems via \code{miqps\_matpower}, with the algorithm option set to \codeq{GUROBI} (or 700 for backward compatibility), or by calling \code{qps\_gurobi} or \code{miqps\_gurobi} directly.
 
@@ -7379,8 +7379,8 @@ It can also be used to solve general LP and QP problems via \matpower{}'s common
 
 \matpower{} requires the \matlab{} MEX interface to \ipopt{}, which is included in the \ipopt{} source distribution, but must be built separately. Additional information on the MEX interface is available at \url{https://projects.coin-or.org/Ipopt/wiki/MatlabInterface}. Please consult the \ipopt{} documentation, web-site and mailing lists for help in building and installing the \ipopt{} \matlab{} interface. This interface uses callbacks to \matlab{} functions to evaluate the objective function and its gradient, the constraint values and Jacobian, and the Hessian of the Lagrangian.
 
-Precompiled MEX binaries for a high-performance version of \ipopt{}, using the \pardiso{} linear solver~\cite{pardiso, pardiso2}, are available from the \pardiso{} project\footnote{See \url{http://www.pardiso-project.org/} for the download links.}. At the time of this writing, these are the highest performing solvers available to \matpower{} for very large scale AC OPF problems. For Microsoft Windows users, a pre-compiled MEX version of \ipopt{} (and numerous other solvers, such as \clp{} and \glpk{}) are easily installable as part of the OPTI Toolbox\footnote{The OPTI Toolbox is available from 
-\url{http://www.i2c2.aut.ac.nz/Wiki/OPTI/}.}~\cite{opti}.
+Precompiled MEX binaries for a high-performance version of \ipopt{}, using the \pardiso{} linear solver~\cite{pardiso, pardiso2}, are available from the \pardiso{} project\footnote{See \url{https://pardiso-project.org/} for the download links.}. At the time of this writing, these are the highest performing solvers available to \matpower{} for very large scale AC OPF problems. For Microsoft Windows users, a pre-compiled MEX version of \ipopt{} (and numerous other solvers, such as \clp{} and \glpk{}) are easily installable as part of the OPTI Toolbox\footnote{The OPTI Toolbox is available from 
+\url{https://www.inverseproblem.co.nz/OPTI/}.}~\cite{opti}.
 
 When installed, \ipopt{} can be used by \matpower{} to solve both AC and DC OPF problems by setting the \code{opf.ac.solver} or \code{opf.dc.solver} options, respectively, equal to \codeq{IPOPT}. See Table~\ref{tab:ipoptoptions} for a summary of the \ipopt{}-related \matpower{} options. The many algorithm options can be set by creating an ``\ipopt{} user options'' function and specifying it via \code{ipopt.opt\_fname} to override the defaults set by \code{ipopt\_options}. See \code{help ipopt\_options} and the options reference section of the \ipopt{} documentation at \url{http://www.coin-or.org/Ipopt/documentation/} for details.
 
@@ -7409,9 +7409,9 @@ Builds are available for Linux (32-bit), Mac OS X (PPC, Intel 32-bit) and Window
 \subsection{\mosek{} -- High-performance LP and QP Solvers}
 \label{app:mosek}
 
-\mosek{} is a collection of optimization tools that includes high-performance solvers for large-scale linear programming (LP) and quadratic programming (QP) problems, among others. More information is available at \url{http://www.mosek.com/}.
+\mosek{} is a collection of optimization tools that includes high-performance solvers for large-scale linear programming (LP) and quadratic programming (QP) problems, among others. More information is available at \url{https://www.mosek.com/}.
 
-Although \mosek{} is a commercial package, at the time of this writing there is a free academic license available. See \url{http://mosek.com/resources/academic-license/} for more details.
+Although \mosek{} is a commercial package, at the time of this writing there is a free academic license available. See \url{https://www.mosek.com/products/academic-licenses/} for more details.
 
 When the \matlab{} interface to \mosek{} is installed, the \mosek{} LP and QP solvers can be used to solve DC OPF problems by setting the \code{opf.dc.solver} option equal to \codeq{MOSEK}. The solution algorithm for LP problems can be controlled by \matpower{}'s \code{mosek.lp\_alg} option. See Table~\ref{tab:mosekoptions} for other \mosek{}-related \matpower{} options. A ``\mosek{} user options'' function can also be specified via \code{mosek.opt\_fname} to override the defaults for any of the many \mosek{} parameters. For details see \code{help mosek\_options} and the ``Parameters'' reference in ``The MOSEK optimization toolbox for MATLAB manual'' at \url{http://docs.mosek.com/7.1/toolbox/Parameters.html}. You may also find it helpful to use the symbolic constants defined by \code{mosek\_symbcon}.
 
@@ -7425,7 +7425,7 @@ It can also be used to solve general LP and QP problems via \matpower{}'s common
 It includes \code{fmincon} for nonlinear programming problems (NLP), and \code{linprog} and \code{quadprog} for linear programming (LP) and quadratic programming (QP) problems, respectively.
 For mixed-integer linear programs (MILP), it provides \code{intlingprog}.
 Each solver implements a number of different solution algorithms.
-More information is available from The MathWorks, Inc. at \url{http://www.mathworks.com/}.
+More information is available from The MathWorks, Inc. at \url{https://www.mathworks.com/}.
 
 When available, the \ot{} solvers can be used to solve AC or DC OPF problems by setting the \code{opf.ac.solver} or \code{opf.dc.solver} options, respectively, equal to \codeq{OT}.
 
@@ -7433,7 +7433,7 @@ The solution algorithm used by \code{fmincon} for NLP problems can be controlled
 See Table~\ref{tab:fminconoptions} for other \matpower{} options related to \code{fmincon}.
 For \code{linprog}, \code{quadprog} and \code{intlingprog}, the corresponding \matpower{} option can be used to pass in native \ot{} options directly to the solver.
 For example, to set the LP solver to use a dual simplex method, simply set \matpower{}'s \codeq{linprog.Algorithm} option to \codeq{dual-simplex}.
-For details on the full set of \ot{} options, please refer to their documentation.\footnote{See \url{http://www.mathworks.com/help/optim/} and \cite{otug}.}
+For details on the full set of \ot{} options, please refer to their documentation.\footnote{See \url{https://www.mathworks.com/help/optim/} and \cite{otug}.}
 
 The \ot{} can also be used to solve general LP and QP problems via \matpower{}'s common QP solver interface \code{qps\_matpower}, or MILP problems via \code{miqps\_matpower}, with the algorithm option set to \codeq{OT}, or by calling \code{qps\_ot} or \code{miqps\_ot} directly.
 
@@ -7441,9 +7441,9 @@ The \ot{} can also be used to solve general LP and QP problems via \matpower{}'s
 \subsection{\pardiso{} -- Parallel Sparse Direct and Multi-Recursive Iterative Linear Solvers}
 \label{app:pardiso}
 
-The \pardiso{} package is a thread-safe, high-performance, robust, memory efficient and easy to use software for solving large sparse symmetric and non-symmetric linear systems of equations on shared-memory and distributed-memory multiprocessor systems~\cite{pardiso, pardiso2}. More information is available at \url{http://www.pardiso-project.org}.
+The \pardiso{} package is a thread-safe, high-performance, robust, memory efficient and easy to use software for solving large sparse symmetric and non-symmetric linear systems of equations on shared-memory and distributed-memory multiprocessor systems~\cite{pardiso, pardiso2}. More information is available at \url{https://pardiso-project.org}.
 
-When the \matlab{} interface to \pardiso{} is installed, \pardiso{}'s solvers can be used to replace the built-in \code{\textbackslash{}} operator for solving for the Newton update step in \matpower{}'s default primal-dual interior point solver (\mips{}) by setting the \code{mips.linsolver} option equal to \codeq{PARDISO}. The \code{mplinsolve} function can also be called directly to solve $A x = b$ problems via \pardiso{} or the built-in solver, depending on the arguments supplied. This interface also gives access to the full range of \pardiso{}'s options. For details, see \code{help mplinsolve} and the \pardiso{} User's Manual at \url{http://www.pardiso-project.org/manual/manual.pdf}.
+When the \matlab{} interface to \pardiso{} is installed, \pardiso{}'s solvers can be used to replace the built-in \code{\textbackslash{}} operator for solving for the Newton update step in \matpower{}'s default primal-dual interior point solver (\mips{}) by setting the \code{mips.linsolver} option equal to \codeq{PARDISO}. The \code{mplinsolve} function can also be called directly to solve $A x = b$ problems via \pardiso{} or the built-in solver, depending on the arguments supplied. This interface also gives access to the full range of \pardiso{}'s options. For details, see \code{help mplinsolve} and the \pardiso{} User's Manual at \url{https://pardiso-project.org/manual/manual.pdf}.
 
 When solving very large AC optimal power flow problems with \mips{}, selecting \pardiso{} as the linear solver can often dramtically improve both computation time and memory use.
 
@@ -7630,7 +7630,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-4.0.pdf}{\m
     \item \mips{} (\mipsname{}), a new a pure-\matlab{} implementation of the primal-dual interior point methods from the optional package TSPOPF. \mips{} is suitable for large systems and is used as \matpower{}'s default solver for AC and DC OPF problems if no other optional solvers are installed. To select \mips{} explicitly, use \code{OPF\_ALG}~=~560/565 and \code{OPF\_ALG\_DC}~=~200/250 for AC and DC OPF, respectively. \mips{} can also be used independently of \matpower{} as a solver for general nonlinear constrained optimization problems.
     \item Support for the \ipopt{} interior point optimizer for large scale nonlinear optimization. Use \code{OPF\_ALG}~=~580 and \code{OPF\_ALG\_DC}~=~400 for AC and DC OPF, respectively. Requires the \matlab{} MEX interface for \ipopt{}, available from \url{https://projects.coin-or.org/Ipopt/}.
     \item Support for \cplex{} to solve LP and QP problems. Set option \code{OPF\_ALG\_DC}~=~500 to use \cplex{} to solve the DC OPF. Requires the \matlab{} interface to \cplex{}, available from \url{https://www.ibm.com/analytics/cplex-optimizer}. See \code{help mpoption} for more \cplex{} options.
-    \item Support for \mosek{} to solve LP and QP problems. Set option \code{OPF\_ALG\_DC}~=~600 to use \mosek{} to solve the DC OPF. Requires the \matlab{} interface to \mosek{}, available from \url{http://www.mosek.com/}. See \code{help mpoption} for more \mosek{} options.
+    \item Support for \mosek{} to solve LP and QP problems. Set option \code{OPF\_ALG\_DC}~=~600 to use \mosek{} to solve the DC OPF. Requires the \matlab{} interface to \mosek{}, available from \url{https://www.mosek.com/}. See \code{help mpoption} for more \mosek{} options.
     \item Updated support for MathWorks' \ot{} solvers, \code{fmincon()}, \code{linprog()} and \code{quadprog()}.
     \end{itemize}
 \item Improved documentation:
@@ -7691,7 +7691,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-4.1.pdf}{\m
 \item More new high performance OPF solvers:
     \begin{itemize}
     \item Support for the KNITRO interior point optimizer for large scale nonlinear optimization. Use \code{OPF\_ALG}~=~600 for to select KNITRO to solve the AC OPF. Requires the \matlab{} \ot{} and a license for KNITRO, available from \url{http://www.ziena.com/}.\footnote{Subsequently acquired by Artelys, \url{http://www.artelys.com/}.} See \code{help mpoption} for more KNITRO options.
-    \item Support for \gurobi{} to solve LP and QP problems. Set option \code{OPF\_ALG\_DC}~=~700 to use \gurobi{} to solve the DC OPF. Requires \gurobi{} (\url{http://www.gurobi.com/}) and the \gurobi{} MEX interface (\url{http://www.convexoptimization.com/wikimization/index.php/Gurobi_mex}). See \code{help mpoption} for more \gurobi{} options.
+    \item Support for \gurobi{} to solve LP and QP problems. Set option \code{OPF\_ALG\_DC}~=~700 to use \gurobi{} to solve the DC OPF. Requires \gurobi{} (\url{https://www.gurobi.com/}) and the \gurobi{} MEX interface (\url{http://www.convexoptimization.com/wikimization/index.php/Gurobi_mex}). See \code{help mpoption} for more \gurobi{} options.
     \item Updated for compatibility with \cplex{} 12.3.
     \item Changed options so that \code{fmincon} uses its interior-point solver by default. Much faster on larger systems.
     \end{itemize}
@@ -7837,15 +7837,15 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-5.1.pdf}{\m
 
 \subsubsection*{New Features}
 \begin{itemize}
-\item Added support for using \pardiso{} (\url{http://www.pardiso-project.org/}) as linear solver for computing interior-point update steps in \mips{}, resulting in dramatic improvements in computation time and memory use for very large-scale problems.
+\item Added support for using \pardiso{} (\url{https://pardiso-project.org/}) as linear solver for computing interior-point update steps in \mips{}, resulting in dramatic improvements in computation time and memory use for very large-scale problems.
 \item Added support for LP/QP solver \clp{} (COIN\_OR Linear Programming, \url{https://github.com/coin-or/Clp}). Use \code{opf.dc.solver} option \codeq{CLP} or \code{qps\_clp()}.
-\item Added support for OPTI Toolbox (\url{http://www.i2c2.aut.ac.nz/Wiki/OPTI/}) versions of \clp{}, \glpk{} and \ipopt{} solvers, providing a very simple installation path for some free high-performance solvers on Windows platforms.
+\item Added support for OPTI Toolbox (\url{https://www.inverseproblem.co.nz/OPTI/}) versions of \clp{}, \glpk{} and \ipopt{} solvers, providing a very simple installation path for some free high-performance solvers on Windows platforms.
 \item Network reduction toolbox for creating smaller approximate network equivalents from a larger original case file. \emph{Contributed by Yujia Zhu and Daniel Tylavsky.}
 \item Added unified interface to various solvers for mixed-integer linear and quadratic programming (MILP/MIQP) problems.
 \item Major update to \code{have\_fcn()}, which now determines and caches version numbers and release dates for optional packages, and includes ability to toggle the availability of optional functionality.
 \item New and updated support for 3rd party solvers:
     \begin{itemize}
-    \item High-performance \ipopt{}-PARDISO solver builds from the \pardiso{} Project \url{http://www.pardiso-project.org} (at time of release this is \matpower{}'s highest performing solver for very large scale AC OPF problems)
+    \item High-performance \ipopt{}-PARDISO solver builds from the \pardiso{} Project \url{https://pardiso-project.org} (at time of release this is \matpower{}'s highest performing solver for very large scale AC OPF problems)
     \item OPTI Toolbox versions of \clp{}, \glpk{}, \ipopt{}
     \item \clp{}
     \item \gurobi{} 6.x
@@ -7909,7 +7909,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-6.0.pdf}{\m
 \subsubsection*{New Case Files}
 \begin{itemize}
 \item Added 9 new case files, 8 cases ranging from 1888 to 6515 buses representing the French system, and a 13,659-bus case representing parts of the of the European high voltage transmission network, stemming from the Pan European Grid Advanced Simulation and State Estimation (PEGASE) project. \emph{Thanks again to C\'edric Josz and colleagues from the French Transmission System Operator.} Please cite reference \cite{josz2016} when publishing results based on these cases.
-\item Added \code{case145.m}, IEEE 145 bus, 50 generator dynamic test case from the U of WA Power Systems Test Case Archive\footnote{\url{http://www.ee.washington.edu/research/pstca/dyn50/pg_tcadd50.htm}}.
+\item Added \code{case145.m}, IEEE 145 bus, 50 generator dynamic test case from the U of WA Power Systems Test Case Archive\footnote{\url{https://labs.ece.uw.edu/pstca/dyn50/pg_tcadd50.htm}}.
 \item Added \code{case33bw.m}, a 33-bus radial distribution system from Baran and Wu.
 \end{itemize}
 
@@ -8203,13 +8203,13 @@ A.~J. Lamadrid, D. Mu{\~n}oz-{\'A}lvarez, C.~E. Murillo-S{\'a}nchez, R.~D. Zimme
 DOI:~\href{https://doi.org/10.1109/TSTE.2018.2865454}{10.1109/TSTE.2018.2865454}
 
 \bibitem{octave}
-John~W.~Eaton, David~Bateman, S{\o}ren~Hauberg, Rik~Wehbring (2015). \emph{GNU Octave version 4.0.0 manual: a high-level interactive language for numerical computations.} Available: \url{http://www.gnu.org/software/octave/doc/interpreter/}.
+John~W.~Eaton, David~Bateman, S{\o}ren~Hauberg, Rik~Wehbring (2015). \emph{GNU Octave version 4.0.0 manual: a high-level interactive language for numerical computations.} Available: \url{https://www.gnu.org/software/octave/doc/interpreter/}.
 
 \bibitem{bsd}
-The BSD 3-Clause License. [Online]. Available: \url{http://opensource.org/licenses/BSD-3-Clause}.
+The BSD 3-Clause License. [Online]. Available: \url{https://opensource.org/licenses/BSD-3-Clause}.
 
 \bibitem{gpl}
-GNU General Public License. [Online]. Available: \url{http://www.gnu.org/licenses/}.
+GNU General Public License. [Online]. Available: \url{https://www.gnu.org/licenses/}.
 
 \bibitem{milano2005}
 F.~Milano, ``An Open Source Power System Analysis Toolbox,'' \emph{Power
@@ -8309,7 +8309,7 @@ H.~Wang, C.~E. Murillo-S{\'a}nchez, R.~D. Zimmerman, and R.~J. Thomas, ``On
 
 \bibitem{ot}
 \emph{Optimization Toolbox}, The MathWorks, Inc.
-  [Online]. Available: \url{http://www.mathworks.com/products/optimization/}.
+  [Online]. Available: \url{https://www.mathworks.com/products/optimization/}.
 
 \bibitem{bpmpdmex}
 BPMPD\_MEX. [Online]. Available:
@@ -8333,11 +8333,11 @@ DOI:~\href{https://doi.org/10.1007/0-387-30065-1_4}{10.1007/0-387-30065-1\_4}
 
 \bibitem{gurobi}
 Gurobi Optimization, Inc., ``Gurobi Optimizer Reference Manual,'' 2016. [Online]. Available:
-  \url{http://www.gurobi.com/}.
+  \url{https://www.gurobi.com/}.
 
 \bibitem{glpk}
 GLPK. [Online]. Available:
-  \url{http://www.gnu.org/software/glpk/}.
+  \url{https://www.gnu.org/software/glpk/}.
 
 \bibitem{clp}
 COIN-OR Linear Programming (CLP) Solver. [Online]. Available:
@@ -8353,7 +8353,7 @@ B. Sereeter and R.~D. Zimmerman, \emph{Addendum to AC Power Flows and their Deri
 B. Sereeter and R.~D. Zimmerman, \emph{AC Power Flows and their Derivatives using Complex Matrix Notation and Cartesian Coordinate Voltages}, \TNfour, April 2018. [Online]. Available: \url{\TNfoururl}
 
 \bibitem{superopf2008}
-A.~J.~Lamadrid, S.~Maneevitjit, T.~D.~Mount, C.~E.~Murillo-S{\'a}nchez, R.~J.~Thomas, R.~D.~Zimmerman, ``A `SuperOPF' Framework'', \emph{CERTS Report}, December 2008. [Online]. Available: \url{http://certs.lbl.gov/pdf/superopf-framework.pdf}
+A.~J.~Lamadrid, S.~Maneevitjit, T.~D.~Mount, C.~E.~Murillo-S{\'a}nchez, R.~J.~Thomas, R.~D.~Zimmerman, ``A `SuperOPF' Framework'', \emph{CERTS Report}, December 2008. [Online]. Available: \url{https://certs.lbl.gov/publications/superopf-framework}
 
 \bibitem{murillo-sanchez2013}
 C.~E. Murillo-S{\'a}nchez, R.~D. Zimmerman, C.~L. Anderson, and R.~J. Thomas, ``A Stochastic, Contingency-Based Security-Constrained Optimal Power Flow for the Procurement of Energy and Distributed Reserve,'' \emph{Decision Support Systems}, Vol.~56, Dec.~2013, pp.~1--10.
@@ -8370,7 +8370,7 @@ DOI:~\href{https://doi.org/10.1109/TPWRS.2016.2616385}{10.1109/TPWRS.2016.261638
 \bibitem{josz2016}
 C.~Josz, S.~Fliscounakis, J.~Maeght, and P.~Panciatici, ``AC Power
 Flow Data in \matpower{} and QCQP Format: iTesla, RTE Snapshots, and PEGASE.''
-Available: \url{http://arxiv.org/abs/1603.01533}.
+Available: \url{https://arxiv.org/abs/1603.01533}.
 
 \bibitem{fliscounakis2013}
 S.~Fliscounakis, P.~Panciatici, F.~Capitanescu, and L.~Wehenkel, ``Contingency Ranking With Respect to Overloads in Very Large Power Systems Taking Into Account Uncertainty, Preventive, and Corrective Actions,'' \emph{Power Systems, IEEE Transactions on}, vol.~28, no.~4, pp.~4909--4917, Nov.~2013.
@@ -8399,7 +8399,7 @@ A.~Kuzmin, M.~Luisier and O.~Shenk, ``Fast methods for computing selected elemen
 
 \bibitem{otug}
 \emph{Optimization Toolbox Users's Guide}, The MathWorks, Inc., 2016.
-  [Online]. Available: \url{http://www.mathworks.com/help/releases/R2016b/pdf_doc/optim/optim_tb.pdf}.
+  [Online]. Available: \url{https://www.mathworks.com/help/releases/R2016b/pdf_doc/optim/optim_tb.pdf}.
 
 \end{thebibliography}
 

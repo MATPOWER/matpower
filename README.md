@@ -327,7 +327,7 @@ MATPOWER is distributed as open-source under the [3-clause BSD license][30].
 
 [1]: http://www.pserc.cornell.edu/matpower/
 [2]: https://github.com/MATPOWER/matpower
-[3]: http://www.mathworks.com/
+[3]: https://www.mathworks.com/
 [4]: https://www.gnu.org/software/octave/
 [5]: https://git-scm.com/downloads
 [6]: https://git-scm.com

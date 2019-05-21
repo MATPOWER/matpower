@@ -16,7 +16,7 @@ function chgtab = contab_ACTIVSg10k
 %   Copyright (c) 2017 by A.B. Birchfield, T. Xu, K.M. Gegner, K.S. Shetye,
 %   and T.J. Overbye
 %   Licensed under the Creative Commons Attribution 4.0 International license,
-%   http://creativecommons.org/licenses/by/4.0/
+%   https://creativecommons.org/licenses/by/4.0/
 
 define_constants;
 

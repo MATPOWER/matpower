@@ -34,13 +34,13 @@ function rv = have_fcn(tag, rtype)
 %       bpmpd       - BP, BPMPD interior point solver
 %       clp         - CLP, LP/QP solver(https://github.com/coin-or/Clp)
 %        opti_clp   -   version of CLP distributed with OPTI Toolbox
-%                       (http://www.i2c2.aut.ac.nz/Wiki/OPTI/)
+%                       (https://www.inverseproblem.co.nz/OPTI/)
 %       cplex       - CPLEX, IBM ILOG CPLEX Optimizer
-%       e4st        - E4ST (http://e4st.com/)
+%       e4st        - E4ST (https://e4st.com/)
 %       fmincon     - FMINCON, solver from Optimization Toolbox 2.x +
 %       fmincon_ipm - FMINCON with Interior Point solver, from Opt Tbx 4.x +
 %       glpk        - GLPK, GNU Linear Programming Kit
-%       gurobi      - GUROBI, Gurobi solver (http://www.gurobi.com/), 5.x +
+%       gurobi      - GUROBI, Gurobi solver (https://www.gurobi.com/), 5.x +
 %       intlinprog  - INTLINPROG, MILP solver from Optimization
 %                     Toolbox 7.0 (R2014a)+
 %       ipopt       - IPOPT, NLP solver
@@ -55,10 +55,10 @@ function rv = have_fcn(tag, rtype)
 %       matlab      - code is running under MATLAB, as opposed to Octave
 %       minopf      - MINOPF, MINOPF, MINOS-based OPF solver
 %       most        - MOST, MATPOWER Optimal Scheduling Tool
-%       mosek       - MOSEK, LP/QP solver (http://www.mosek.com/)
+%       mosek       - MOSEK, LP/QP solver (https://www.mosek.com/)
 %       optimoptions - OPTIMOPTIONS, option setting funciton for Optim Tbx 6.3+
 %       pardiso     - PARDISO, Parallel Sparse Direct & Iterative Linear Solver
-%                       (http://www.pardiso-project.org)
+%                       (https://pardiso-project.org)
 %       quadprog    - QUADPROG, QP solver from Optimization Toolbox 2.x +
 %       quadprog_ls - QUADPROG with large-scale interior point convex solver
 %                       from Optimization Toolbox 6.x +

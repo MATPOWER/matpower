@@ -280,7 +280,7 @@ Version 7.0b1 - *Oct 31, 2018*
   - Make AC OPF solver always default to MIPS, even if TSPOPF is installed.
     i.e. `opf.ac.solver = 'DEFAULT'` is now identical to
     `opf.ac.solver = 'MIPS'`.
-  - Add [E4ST](http://e4st.com/) to `have_fcn()` and `mpver` output.
+  - Add [E4ST](https://e4st.com/) to `have_fcn()` and `mpver` output.
 
 #### 10/27/17
   - Add contingencies and scenarios for ACTIVSg cases, contingencies for
@@ -667,7 +667,7 @@ Version 6.0b1 - *Jun 1, 2016*
   - Add `plot_mpc()`, contributed by Paul Cuffe, to `extras/misc`. Plots
     an electrically meaningful drawing of a MATPOWER case.
   - Add `case145.m`, IEEE 145 bus, 50 generator dynamic test case from
-    http://www.ee.washington.edu/research/pstca/dyn50/pg_tcadd50.htm.
+    https://labs.ece.uw.edu/pstca/dyn50/pg_tcadd50.htm.
 
 #### 5/17/16
   - Add 9 new case files, 8 cases ranging from 1888 to 6515 buses
@@ -955,7 +955,7 @@ Version 5.1 - *Mar 20, 2015*
 #### 1/7/15
   - Improved detection of GLPK version in `mpver()` and GLPK
     availability in `have_fcn()`, now compatible with GLPK installed
-    by OPTI Toolbox (http://www.i2c2.aut.ac.nz/Wiki/OPTI/).
+    by OPTI Toolbox (https://www.inverseproblem.co.nz/OPTI/).
 
 #### 12/22/14
   - Fixed fatal bug in `toggle_dcline()` when pretty-printing results.
@@ -1546,7 +1546,7 @@ Version 4.1 - *Dec 14, 2011*
     and quadratic programming. To use Gurobi for the DC OPF, set
     `OPF_ALG_DC` = 700. Gurobi's various solvers can be selected via
     MATPOWER's `GRB_METHOD` option. Requires the Gurobi libraries
-    available from http://www.gurobi.com/ and the Gurobi MEX
+    available from https://www.gurobi.com/ and the Gurobi MEX
     interface available from http://www.convexoptimization.com/
     wikimization/index.php/Gurobi_mex.
   - Added function `qps_gurobi()` for solving QP and LP problems using
@@ -1566,7 +1566,7 @@ Version 4.1 - *Dec 14, 2011*
     scale non-linear problems. Use `OPF_ALG = 600` for AC OPF.
     Requires the Optimization Toolbox from The MathWorks and
     the KNITRO libraries, available from http://www.ziena.com/.
-    (Subsequently acquired by Artelys, http://www.artelys.com/.)
+    (Subsequently acquired by Artelys, https://www.artelys.com/.)
 
 #### 6/16/11
   - Complete rewrite of `update_mupq.m`. Should fix problems
@@ -1642,7 +1642,7 @@ Version 4.0b5 - *Dec 13, 2010*
     quadratic programming. To use MOSEK for the DC OPF, set
     `OPF_ALG_DC = 600`. Specific LP algorithms can be selected by
     the `MOSEK_LP_ALG` option. Requires the MATLAB interface for MOSEK,
-    available from http://www.mosek.com/.
+    available from https://www.mosek.com/.
   - Added function `qps_mosek()` for solving QP and LP problems using
     the common QP solver interface used in MATPOWER. The `qps_matpower()`
     function also includes the option to use MOSEK.
@@ -2128,7 +2128,7 @@ Version 3.1b1 - *Aug 1, 2006*
 
 #### 3/10/06
   - Added baseKV data to `case118.m` from PSAP file 
-    <http://www.ee.washington.edu/research/pstca/pf118/ieee118psp.txt>.
+    <https://labs.ece.uw.edu/pstca/pf118/ieee118psp.txt>.
 
 #### 3/8/06
  - Renamed col 5 of `gencost` from `N` to `NCOST` everywhere.

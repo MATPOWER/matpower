@@ -13,7 +13,7 @@ function mpc = case6515rte
 %
 %     C. Josz, S. Fliscounakis, J. Maeght, and P. Panciatici, "AC Power Flow
 %     Data in MATPOWER and QCQP Format: iTesla, RTE Snapshots, and PEGASE"
-%     http://arxiv.org/abs/1603.01533
+%     https://arxiv.org/abs/1603.01533
 %
 %   Contacts:
 %     Cédric Josz, Stéphane Fliscounakis, Jean Maeght, Patrick Panciatici
@@ -28,7 +28,7 @@ function mpc = case6515rte
 %   Copyright (c) 2016 by Cédric Josz, Stéphane Fliscounakis, Jean Maeght,
 %   and Patrick Panciatici
 %   Licensed under the Creative Commons Attribution 4.0 International license,
-%   http://creativecommons.org/licenses/by/4.0/
+%   https://creativecommons.org/licenses/by/4.0/
 
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';

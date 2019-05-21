@@ -289,7 +289,7 @@ if isfield(mpc.if, 'P')
         fprintf(fd, '%sif.mu.l = %s\n', prefix, serialize(mpc.if.mu.l));
         fprintf(fd, '%sif.mu.u = %s\n', prefix, serialize(mpc.if.mu.u));
     else
-        url = 'http://www.mathworks.com/matlabcentral/fileexchange/12063';
+        url = 'https://www.mathworks.com/matlabcentral/fileexchange/12063-serialize';
         warning('MATPOWER:serialize', ...
             'userfcn_iflims_savecase: Cannot save the ''iflims'' output fields without the ''serialize'' function, which is available as a free download from:\n<%s>\n\n', url);
     end

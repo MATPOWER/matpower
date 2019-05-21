@@ -122,7 +122,7 @@ else
       [results, success, raw] = ktropf_solver(om, mpopt);
     case 'SDPOPF'
       if ~have_fcn('yalmip')
-        error('opf_execute: MPOPT.opf.ac.solver = ''%s'' requires YALMIP (see http://users.isy.liu.se/johanl/yalmip/)', alg);
+        error('opf_execute: MPOPT.opf.ac.solver = ''%s'' requires YALMIP (see https://yalmip.github.io)', alg);
       end
       [results, success, raw] = sdpopf_solver(om, mpopt);
     otherwise

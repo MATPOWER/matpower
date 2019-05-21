@@ -210,7 +210,7 @@ look something like:
   - Use a hanging indent
 
   Fixes: https://github.com/MATPOWER/matpower/issues/4
-  Refs: http://www.mail-archive.com/matpower-l@cornell.edu/msg05557.html
+  Refs: https://www.mail-archive.com/matpower-l@cornell.edu/msg05557.html
   Refs: https://github.com/MATPOWER/matpower/pull/5
   ```
 
@@ -317,7 +317,7 @@ the power systems community. **Thank you!**
 [5]: http://www.pserc.cornell.edu/matpower/mailinglists.html#discusslist
 [6]: http://www.pserc.cornell.edu/matpower/mailinglists.html#devlist
 [7]: https://github.com/MATPOWER/matpower/issues
-[8]: http://www.mail-archive.com/matpower-l@cornell.edu/
+[8]: https://www.mail-archive.com/matpower-l@cornell.edu/
 [9]: docs/MATPOWER-dev-guide.md
 [10]: https://help.github.com/articles/set-up-git/
 [11]: https://help.github.com/articles/fork-a-repo/
@@ -327,4 +327,4 @@ the power systems community. **Thank you!**
 [15]: https://help.github.com/articles/about-pull-requests/
 [16]: LICENSE
 [17]: https://travis-ci.org/MATPOWER/matpower
-[18]: http://scottchacon.com/2011/08/31/github-flow.html
+[18]: https://scottchacon.com/2011/08/31/github-flow.html

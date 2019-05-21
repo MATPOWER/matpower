@@ -119,7 +119,7 @@ for k = 1:length(algs)
             t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 
             t = sprintf('%s - constrained 4-d QP : ', names{k});
-            %% from http://www.jmu.edu/docs/sasdoc/sashtml/iml/chap8/sect12.htm
+            %% from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm
             H = [   1003.1  4.3     6.3     5.9;
                     4.3     2.2     2.1     3.9;
                     6.3     2.1     3.5     4.8;
@@ -161,7 +161,7 @@ for k = 1:length(algs)
 
 % opt.verbose = 3;
         t = sprintf('%s - 2-d MILP : ', names{k});
-        %% from MOSEK 6.0 Guided Tour, section  7.13.1, http://docs.mosek.com/6.0/toolbox/node009.html#283040944
+        %% from MOSEK 6.0 Guided Tour, section  7.13.1, https://docs.mosek.com/6.0/toolbox/node009.html#283040944
         c = [-2; -3];
         A = sparse([195 273; 4 40]);
         u = [1365; 140];

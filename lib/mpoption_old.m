@@ -90,9 +90,9 @@ function [options, names] = mpoption_old(varargin)
 %           [        available from: https://projects.coin-or.org/Ipopt/    ]
 %           [  500 - CPLEX, requires MATLAB interface to CPLEX solver       ]
 %           [  600 - MOSEK, requires MATLAB interface to MOSEK solver       ]
-%           [        available from: http://www.mosek.com/                  ]
+%           [        available from: https://www.mosek.com/                  ]
 %           [  700 - GUROBI, requires Gurobi optimizer (v. 5+)              ]
-%           [        available from: http://www.gurobi.com/                 ]
+%           [        available from: https://www.gurobi.com                 ]
 %   output options
 %       31 - VERBOSE, 1             amount of progress info printed
 %           [   0 - print no progress info                                  ]

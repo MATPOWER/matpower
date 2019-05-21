@@ -70,7 +70,7 @@ function [x, f, eflag, output, lambda] = qps_glpk(H, c, A, l, u, xmin, xmax, x0,
 %       [x, f, exitflag, output, lambda] = qps_glpk(...)
 %
 %
-%   Example: (problem from from http://www.jmu.edu/docs/sasdoc/sashtml/iml/chap8/sect12.htm)
+%   Example: (problem from from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm)
 %       H = [   1003.1  4.3     6.3     5.9;
 %               4.3     2.2     2.1     3.9;
 %               6.3     2.1     3.5     4.8;

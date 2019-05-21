@@ -63,7 +63,7 @@ function mpc = case39
 %   [3] Athay, T.; Podmore, R.; Virmani, S., "A Practical Method for the
 %       Direct Analysis of Transient Stability," IEEE Transactions on Power
 %       Apparatus and Systems , vol.PAS-98, no.2, pp.573-584, March 1979.
-%       URL: http://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=4113518&isnumber=4113486
+%       URL: https://doi.org/10.1109/TPAS.1979.319407
 %       (references [1] as source of data)
 %   [4] Data included with TC Calculator at http://www.pserc.cornell.edu/tcc/
 %       for 39-bus system.
