@@ -132,7 +132,7 @@ function [x, f, eflag, output, lambda] = mips(f_fcn, x0, A, l, u, xmin, xmax, gh
 %       [x, f, exitflag, output] = mips(...);
 %       [x, f, exitflag, output, lambda] = mips(...);
 %
-%   Example: (problem from http://en.wikipedia.org/wiki/Nonlinear_programming)
+%   Example: (problem from https://en.wikipedia.org/wiki/Nonlinear_programming)
 %       function [f, df, d2f] = f2(x)
 %       f = -x(1)*x(2) - x(2)*x(3);
 %       if nargout > 1           %% gradient is required

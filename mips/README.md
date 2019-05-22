@@ -106,7 +106,7 @@ MIPS is distributed under the [3-clause BSD license][9].
 [1]: https://github.com/MATPOWER/mips
 [2]: http://www.pserc.cornell.edu/tspopf/
 [3]: https://github.com/MATPOWER/matpower
-[4]: http://www.mathworks.com/
+[4]: https://www.mathworks.com/
 [5]: https://www.gnu.org/software/octave/
 [6]: https://github.com/MATPOWER/mptest
 [7]: https://github.com/MATPOWER/mips/blob/master/docs/MIPS-manual.pdf

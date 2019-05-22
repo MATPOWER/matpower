@@ -29,5 +29,5 @@ previous versions, see Appendix C of the [MIPS User's Manual][2].
     for adding options for other solvers.
 
 
-[1]: ../../CHANGES.md
-[2]: ../MIPS-manual.pdf
+[1]: https://github.com/MATPOWER/mips/blob/master/CHANGES.md
+[2]: https://github.com/MATPOWER/mips/blob/master/docs/MIPS-manual.pdf

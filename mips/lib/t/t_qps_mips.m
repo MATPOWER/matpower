@@ -91,7 +91,7 @@ for k = 1:length(algs)
     end
 
     t = sprintf('%s - constrained 4-d QP : ', names{k});
-    %% from http://www.jmu.edu/docs/sasdoc/sashtml/iml/chap8/sect12.htm
+    %% from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm
     H = [   1003.1  4.3     6.3     5.9;
             4.3     2.2     2.1     3.9;
             6.3     2.1     3.5     4.8;

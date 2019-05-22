@@ -203,7 +203,7 @@ look something like:
   - Use a hanging indent
 
   Fixes: https://github.com/MATPOWER/mips/issues/4
-  Refs: http://www.mail-archive.com/matpower-l@cornell.edu/msg05557.html
+  Refs: https://www.mail-archive.com/matpower-l@cornell.edu/msg05557.html
   Refs: https://github.com/MATPOWER/mips/pull/5
   ```
 
@@ -301,7 +301,7 @@ We would like to express our appreciation to everyone who has contributed to
 the MIPS project and community for helping to make it a useful tool for
 the optimization and power systems communities. **Thank you!**
 
---
+---
 
 [1]: https://github.com/MATPOWER/mips
 [2]: https://github.com/MATPOWER/matpower
@@ -310,7 +310,7 @@ the optimization and power systems communities. **Thank you!**
 [5]: http://www.pserc.cornell.edu/matpower/mailinglists.html#discusslist
 [6]: http://www.pserc.cornell.edu/matpower/mailinglists.html#devlist
 [7]: https://github.com/MATPOWER/mips/issues
-[8]: http://www.mail-archive.com/matpower-l@cornell.edu/
+[8]: https://www.mail-archive.com/matpower-l@cornell.edu/
 [9]: https://github.com/MATPOWER/matpower/issues
 [10]: https://github.com/MATPOWER/matpower/blob/master/docs/MATPOWER-dev-guide.md
 [11]: https://help.github.com/articles/set-up-git/
@@ -320,4 +320,4 @@ the optimization and power systems communities. **Thank you!**
 [15]: https://help.github.com/articles/about-pull-requests/
 [16]: LICENSE
 [17]: https://travis-ci.org/MATPOWER/mips
-[18]: http://scottchacon.com/2011/08/31/github-flow.html
+[18]: https://scottchacon.com/2011/08/31/github-flow.html

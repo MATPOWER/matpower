@@ -52,7 +52,7 @@ t_is(lam.lower, zeros(size(x)), 13, [t 'lam.lower']);
 t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 
 t = 'constrained 4-d QP : ';
-%% from http://www.jmu.edu/docs/sasdoc/sashtml/iml/chap8/sect12.htm
+%% from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm
 f_fcn = @(x)f4(x);
 x0 = [1; 0; 0; 1];
 A = [   1       1       1       1;
@@ -87,7 +87,7 @@ c = zeros(4,1);
 % t_is(lam.upper, [0;0;0;0], 13, [t 'lam.upper']);
 
 t = 'constrained 2-d nonlinear : ';
-%% from http://en.wikipedia.org/wiki/Nonlinear_programming#2-dimensional_example
+%% from https://en.wikipedia.org/wiki/Nonlinear_programming#2-dimensional_example
 f_fcn = @(x)f5(x);
 gh_fcn = @(x)gh5(x);
 hess_fcn = @(x, lam, cost_mult)hess5(x, lam, cost_mult);
@@ -115,7 +115,7 @@ t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 % t_is(lam.ineqnonlin, [0;0.5], 6, [t 'lam.ineqnonlin']);
 
 t = 'constrained 3-d nonlinear : ';
-%% from http://en.wikipedia.org/wiki/Nonlinear_programming#3-dimensional_example
+%% from https://en.wikipedia.org/wiki/Nonlinear_programming#3-dimensional_example
 f_fcn = @(x)f6(x);
 gh_fcn = @(x)gh6(x);
 hess_fcn = @(x, lam, cost_mult)hess6(x, lam, cost_mult);
@@ -216,7 +216,7 @@ function [f, df, d2f] = f3(x)
 
 
 %% constrained 4-d QP
-%% from http://www.jmu.edu/docs/sasdoc/sashtml/iml/chap8/sect12.htm
+%% from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm
 function [f, df, d2f] = f4(x)
     H = [   1003.1  4.3     6.3     5.9;
             4.3     2.2     2.1     3.9;
@@ -229,7 +229,7 @@ function [f, df, d2f] = f4(x)
 
 
 %% constrained 2-d nonlinear
-%% from http://en.wikipedia.org/wiki/Nonlinear_programming#2-dimensional_example
+%% from https://en.wikipedia.org/wiki/Nonlinear_programming#2-dimensional_example
 function [f, df, d2f] = f5(x)
     c = -[1; 1];
     f = c'*x;
@@ -247,7 +247,7 @@ function Lxx = hess5(x, lam, cost_mult)
 
 
 %% constrained 3-d nonlinear
-%% from http://en.wikipedia.org/wiki/Nonlinear_programming#3-dimensional_example
+%% from https://en.wikipedia.org/wiki/Nonlinear_programming#3-dimensional_example
 function [f, df, d2f] = f6(x)
     f = -x(1)*x(2) - x(2)*x(3);
     df = -[x(2); x(1)+x(3); x(2)];

@@ -154,7 +154,7 @@
 \newcommand{\pserc}[0]{{\sc PSerc}}
 \newcommand{\PSERC}[0]{{Power Systems Engineering Research Center (\pserc{})}}
 \newcommand{\ipopt}[0]{{\sc Ipopt}}
-\newcommand{\knitro}[0]{{KNITRO}}
+\newcommand{\knitro}[0]{{Artelys Knitro}}
 \newcommand{\clp}[0]{{CLP}}
 \newcommand{\cplex}[0]{{CPLEX}}
 \newcommand{\glpk}[0]{{GLPK}}
@@ -211,7 +211,7 @@
 \numberwithin{figure}{section}
 \renewcommand{\thefigure}{\thesection\mbox{-}\arabic{figure}}
 
-\externaldocument[MOSTMAN-]{MOST-manual}[\mostmanurl]
+% \externaldocument[MOSTMAN-]{MOST-manual}[\mostmanurl]
 
 
 %\title{\hl{--- DRAFT  ---}\\\hl{\em do not distribute}\\~\\\mipsname{}\\\mips{} \mipsver{}\\
@@ -261,7 +261,7 @@ Up until version 6 of \matpower{}, \mips{} was distributed only as an integrated
 \clearpage
 \subsection{License and Terms of Use}
 
-The code in \mips{} is distributed under the 3-clause BSD license\footnote{Versions 1.0 through 1.1 of \mips{} were distributed under version 3.0 of the GNU General Public License (GPL)~\cite{gpl} with an exception added to clarify our intention to allow \mips{} to interface with \matlab{} as well as any other \matlab{} code or MEX-files a user may have installed, regardless of their licensing terms. The full text of the GPL can be found at \url{http://www.gnu.org/licenses/gpl-3.0.txt}.}
+The code in \mips{} is distributed under the 3-clause BSD license\footnote{Versions 1.0 through 1.1 of \mips{} were distributed under version 3.0 of the GNU General Public License (GPL)~\cite{gpl} with an exception added to clarify our intention to allow \mips{} to interface with \matlab{} as well as any other \matlab{} code or MEX-files a user may have installed, regardless of their licensing terms. The full text of the GPL can be found at \url{https://www.gnu.org/licenses/gpl-3.0.txt}.}
 ~\cite{bsd}. The full text of the license can be found in the \code{LICENSE} file at the top level of the distribution or at \url{https://github.com/MATPOWER/mips/blob/master/LICENSE} and reads as follows.
 
 \begin{Notice}
@@ -332,12 +332,12 @@ The \mips{} GitHub project hosts the public Git code repository as well as a pub
 \label{sec:sysreq}
 To use \mips{} \mipsver{} you will need:
 \begin{itemize}
-\item \matlab{}\textsuperscript{\tiny \textregistered} version 7 (R14) or later\footnote{\matlab{} is available from The MathWorks, Inc. (\url{http://www.mathworks.com/}). \matlab{} is a registered trademark of The MathWorks, Inc.}, or
-\item GNU Octave version 3.4 or later\footnote{GNU Octave \cite{octave} is free software, available online at \url{http://www.gnu.org/software/octave/}. \mips{} \mipsver{} may work on earlier versions of Octave, but it has not been tested on versions prior to 3.4.}
+\item \matlab{}\textsuperscript{\tiny \textregistered} version 7 (R14) or later\footnote{\matlab{} is available from The MathWorks, Inc. (\url{https://www.mathworks.com/}). \matlab{} is a registered trademark of The MathWorks, Inc.}, or
+\item GNU Octave version 3.4 or later\footnote{GNU Octave \cite{octave} is free software, available online at \url{https://www.gnu.org/software/octave/}. \mips{} \mipsver{} may work on earlier versions of Octave, but it has not been tested on versions prior to 3.4.}
 \item \mptestlink{}, for running the \mips{} test suite.\footnote{\mptest{} is available at \url{\mptesturl}.}
 \end{itemize}
 
-For the hardware requirements, please refer to the system requirements for the version of \matlab{}\footnote{\url{http://www.mathworks.com/support/sysreq/previous_releases.html}} or Octave that you are using.
+For the hardware requirements, please refer to the system requirements for the version of \matlab{}\footnote{\url{https://www.mathworks.com/support/sysreq/previous_releases.html}} or Octave that you are using.
 
 In this manual, references to \matlab{} usually apply to Octave as well.
 
@@ -535,7 +535,7 @@ The use of \code{nargout} in \code{f\_fcn} and \code{gh\_fcn} is recommended so 
 
 \subsection{Example 1}
 
-The following code, included as \code{mips\_example1.m} in \mipspath{lib/t}, shows a simple example of using \code{mips} to solve a 2-dimensional unconstrained optimization of Rosenbrock's ``banana'' function\footnote{\url{http://en.wikipedia.org/wiki/Rosenbrock_function}}
+The following code, included as \code{mips\_example1.m} in \mipspath{lib/t}, shows a simple example of using \code{mips} to solve a 2-dimensional unconstrained optimization of Rosenbrock's ``banana'' function\footnote{\url{https://en.wikipedia.org/wiki/Rosenbrock_function}}
 \begin{equation}
 f(x) = 100 (x_2-x_1^2)^2+(1-x_1)^2.
 \end{equation}
@@ -574,7 +574,7 @@ f =
 
 \subsection{Example 2}
 
-The second example\footnote{From \url{http://en.wikipedia.org/wiki/Nonlinear\_programming\#3-dimensional\_example}.} solves the following 3-dimensional constrained optimization, printing the details of the solver's progress:
+The second example\footnote{From \url{https://en.wikipedia.org/wiki/Nonlinear\_programming\#3-dimensional\_example}.} solves the following 3-dimensional constrained optimization, printing the details of the solver's progress:
 \begin{equation}
 \min_x f(x) = -x_1 x_2 - x_2 x_3
 \end{equation}
@@ -984,9 +984,9 @@ name & description \\
 \section{\pardiso{} -- Parallel Sparse Direct and Multi-Recursive Iterative Linear Solvers}
 \label{app:pardiso}
 
-The \pardiso{} package is a thread-safe, high-performance, robust, memory efficient and easy to use software for solving large sparse symmetric and non-symmetric linear systems of equations on shared-memory and distributed-memory multiprocessor systems~\cite{pardiso, pardiso2}. More information is available at \url{http://www.pardiso-project.org}.
+The \pardiso{} package is a thread-safe, high-performance, robust, memory efficient and easy to use software for solving large sparse symmetric and non-symmetric linear systems of equations on shared-memory and distributed-memory multiprocessor systems~\cite{pardiso, pardiso2}. More information is available at \url{https://pardiso-project.org}.
 
-When the \matlab{} interface to \pardiso{} is installed, \pardiso{}'s solvers can be used to replace the built-in \code{\textbackslash{}} operator for solving for the Newton update step in \mips{} by setting the \code{linsolver} option equal to \codeq{PARDISO}. The \code{mplinsolve} function can also be called directly to solve $A x = b$ problems via \pardiso{} or the built-in solver, depending on the arguments supplied. This interface also gives access to the full range of \pardiso{}'s options. For details, see \code{help mplinsolve} and the \pardiso{} User's Manual at \url{http://www.pardiso-project.org/manual/manual.pdf}.
+When the \matlab{} interface to \pardiso{} is installed, \pardiso{}'s solvers can be used to replace the built-in \code{\textbackslash{}} operator for solving for the Newton update step in \mips{} by setting the \code{linsolver} option equal to \codeq{PARDISO}. The \code{mplinsolve} function can also be called directly to solve $A x = b$ problems via \pardiso{} or the built-in solver, depending on the arguments supplied. This interface also gives access to the full range of \pardiso{}'s options. For details, see \code{help mplinsolve} and the \pardiso{} User's Manual at \url{https://pardiso-project.org/manual/manual.pdf}.
 
 
 %%------------------------------------------
@@ -1065,7 +1065,7 @@ Documentation found in Appendix A of the \href{http://www.pserc.cornell.edu/matp
 
 \subsubsection*{New Features}
 \begin{itemize}
-\item Added support for using \pardiso{} (\url{http://www.pardiso-project.org/}) as linear solver for computing interior-point update steps in \mips{}, resulting in dramatic improvements in computation time and memory use for very large-scale problems.
+\item Added support for using \pardiso{} (\url{https://pardiso-project.org/}) as linear solver for computing interior-point update steps in \mips{}, resulting in dramatic improvements in computation time and memory use for very large-scale problems.
 \item New functions:
     \begin{itemize}
     \item \code{mplinsolve()} provides unified interface for linear system solvers, including \pardiso{} and built-in backslash operator
@@ -1157,13 +1157,13 @@ R.~D. Zimmerman and C.~Murillo-S{\'a}nchez. \matpower{} User's Manual,
 R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez, and R.~J. Thomas, ``\matpower{}: Steady-State Operations, Planning and Analysis Tools for Power Systems Research and Education,'' \emph{Power Systems, IEEE Transactions on}, vol.~26, no.~1, pp.~12--19, Feb.~2011. DOI:~\href{https://doi.org/10.1109/TPWRS.2010.2051168}{10.1109/TPWRS.2010.2051168}
 
 \bibitem{octave}
-John~W.~Eaton, David~Bateman, S{\o}ren~Hauberg, Rik~Wehbring (2015). \emph{GNU Octave version 4.0.0 manual: a high-level interactive language for numerical computations.} Available: \url{http://www.gnu.org/software/octave/doc/interpreter/}.
+John~W.~Eaton, David~Bateman, S{\o}ren~Hauberg, Rik~Wehbring (2015). \emph{GNU Octave version 4.0.0 manual: a high-level interactive language for numerical computations.} Available: \url{https://www.gnu.org/software/octave/doc/interpreter/}.
 
 \bibitem{bsd}
-The BSD 3-Clause License. [Online]. Available: \url{http://opensource.org/licenses/BSD-3-Clause}.
+The BSD 3-Clause License. [Online]. Available: \url{https://opensource.org/licenses/BSD-3-Clause}.
 
 \bibitem{gpl}
-GNU General Public License. [Online]. Available: \url{http://www.gnu.org/licenses/}.
+GNU General Public License. [Online]. Available: \url{https://www.gnu.org/licenses/}.
 
 \bibitem{pardiso}
 O.~Shenk and K.~G\"artner, ``Solving unsymmetric sparse systems of linear equations with PARDISO,'' \emph{Journal of Future Generation Computer Systems}, 20(3):475--487,~2004.
