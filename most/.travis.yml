@@ -3,13 +3,22 @@ dist: xenial
 
 language: generic
 
+addons:
+  apt:
+    sources:
+    - sourceline: 'ppa:octave/stable'   ## without this, it's octave 4.0.0
+    packages:
+    - liboctave-dev
+    - octave        # octave 4.2.2
+    update: true
+
 install:
-- sudo apt-add-repository -y ppa:octave/stable
-- sudo apt-get update -qq
-- sudo apt-get install -qq octave liboctave-dev
-- sudo git clone --depth=50 https://github.com/MATPOWER/mptest.git $TRAVIS_BUILD_DIR/mptest
-- sudo git clone --depth=50 https://github.com/MATPOWER/mips.git $TRAVIS_BUILD_DIR/mips
-- sudo git clone --depth=50 https://github.com/MATPOWER/matpower.git $TRAVIS_BUILD_DIR/matpower
+# - sudo apt-add-repository -y ppa:octave/stable
+# - sudo apt-get update -qq
+# - sudo apt-get install -qq octave liboctave-dev
+- git clone --depth=50 https://github.com/MATPOWER/mptest.git $TRAVIS_BUILD_DIR/mptest
+- git clone --depth=50 https://github.com/MATPOWER/mips.git $TRAVIS_BUILD_DIR/mips
+- git clone --depth=50 https://github.com/MATPOWER/matpower.git $TRAVIS_BUILD_DIR/matpower
 
 env:
   global:

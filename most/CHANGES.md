@@ -174,6 +174,6 @@ Version 1.0 - *Jun 1, 2016*
   - Forked development from `mpsopfl_fixed_res()`, which is currently
     identical except for function names in error messages.
 
---
+---
 
 [1]: https://github.com/MATPOWER/most/issues/1
