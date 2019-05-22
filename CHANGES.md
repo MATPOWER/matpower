@@ -12,6 +12,11 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 5/22/19
+  - Fix bug in `have_fcn()` where it would incorrectly mark Gurobi as
+    available even if it had an expired license or failed for some other
+    reason.
+
 #### 2/26/19
   - **INCOMPATIBLE CHANGE:** Eliminate unnecessary reordering of on-line
     generators (sorted by increasing bus index) from `ext2int`. The

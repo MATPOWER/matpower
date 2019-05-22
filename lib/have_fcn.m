@@ -303,6 +303,7 @@ else        %% detect availability
                         result = gurobi(model, params);
                         vstr = sprintf('%d.%d.%d', result.versioninfo.major, result.versioninfo.minor, result.versioninfo.technical);
                     catch % gurobiError
+                        TorF = 0;
                         fprintf('Gurobi Error!\n');
 %                         disp(gurobiError.message);
                     end
