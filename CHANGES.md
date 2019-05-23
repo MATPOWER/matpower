@@ -12,6 +12,10 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 5/23/19
+  - Treat MOSEK `'OPTIMAL'` solution as successful even if return code is
+    `MSK_RES_TRM_STALL` in `qps_mosek()` and `miqps_mosek()`.
+
 #### 5/22/19
   - Fix bug in `have_fcn()` where it would incorrectly mark Gurobi as
     available even if it had an expired license or failed for some other

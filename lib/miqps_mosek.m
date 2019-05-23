@@ -355,6 +355,13 @@ switch (r)
                 end
             end
         end
+    case sc.MSK_RES_TRM_STALL
+        if strcmp(sol.solsta, 'OPTIMAL') || strcmp(sol.solsta, 'INTEGER_OPTIMAL')
+            msg = 'Stalled at or near optimal solution.';
+            eflag = 1;
+        else
+            msg = 'Stalled.';
+        end
     case sc.MSK_RES_TRM_MAX_ITERATIONS
         eflag = 0;
         msg = 'The optimizer terminated at the maximum number of iterations.';
