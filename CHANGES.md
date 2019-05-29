@@ -12,6 +12,10 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 5/29/19
+  - Fix errors caused by running `test_matpower` with YALMIP present
+    but not MOSEK, SeDuMi or SDPT3.
+
 #### 5/23/19
   - Treat MOSEK `'OPTIMAL'` solution as successful even if return code is
     `MSK_RES_TRM_STALL` in `qps_mosek()` and `miqps_mosek()`.
