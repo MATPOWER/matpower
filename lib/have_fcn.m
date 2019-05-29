@@ -211,8 +211,8 @@ else        %% detect availability
                     otver = vstr2num(vstr);
                     switch tag
                         case 'fmincon'
-                            TorF = (exist('fmincon', 'file') == 2 || ...
-                                exist('fmincon', 'file') == 6) & matlab;
+                            TorF = (exist('fmincon', 'file') == 2) || ...
+                                (exist('fmincon', 'file') == 6) & matlab;
                         case 'intlinprog'
                             TorF = exist('intlinprog', 'file') == 2 & matlab;
                         case 'linprog'
