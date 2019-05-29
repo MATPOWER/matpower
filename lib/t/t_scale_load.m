@@ -494,7 +494,7 @@ try
 catch
     [msg, id] = lasterr;
     expected = 'scale_load: impossible to make zone 2 load equal 80 by scaling non-existent dispatchable load';
-    if ~isempty(findstr(expected, msg))
+    if ~isempty(strfind(msg, expected))
         err = 1;
     end
 end
@@ -984,7 +984,7 @@ try
 catch
     [msg, id] = lasterr;
     expected = 'scale_load: impossible to make zone 2 load equal 80 by scaling non-existent dispatchable load';
-    if ~isempty(findstr(expected, msg))
+    if ~isempty(strfind(msg, expected))
         err = 1;
     end
 end

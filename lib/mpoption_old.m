@@ -565,7 +565,7 @@ while i <= nargin
     namestr = names';
     namestr = namestr(:)';
     namelen = size(names, 2);
-    pidx = ceil(findstr([pname blanks(namelen-length(pname))], namestr) / namelen);
+    pidx = ceil(strfind(namestr, [pname blanks(namelen-length(pname))]) / namelen);
     if isempty(pidx)
         error('"%s" is not a valid named option', pname);
     end

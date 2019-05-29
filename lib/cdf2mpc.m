@@ -106,7 +106,7 @@ warnings = {};
 title_cdf = fgetl(fid);
 if isnumeric(str2num(title_cdf(32:37))) && not(isempty(str2num(title_cdf(32:37))))
     baseMVA = str2num(title_cdf(32:37));
-    if length(findstr(title_cdf(2:9), '/')) == 2    %% date in the file 
+    if length(strfind(title_cdf(2:9), '/')) == 2    %% date in the file 
         warnings{end+1} = sprintf('check the title format in the first line of the cdf file.');
     end
 else
