@@ -6905,13 +6905,11 @@ name & description \\
 \code{t\_apply\_changes}	& runs tests for \code{apply\_changes}	\\ \code{t\_auction\_minopf}	& runs tests for \code{auction} using MINOPF\tnote{\dag}	\\
 \code{t\_auction\_mips}	& runs tests for \code{auction} using \mips{}	\\
 \code{t\_auction\_tspopf\_pdipm}	& runs tests for \code{auction} using PDIPM\tnote{\dag}	\\
-\code{t\_cpf}	& runs tests for AC continuation power flow	\\
-\code{t\_cpf\_cb1}	& example CPF callback function for \code{t\_cpf}	\\
-\code{t\_cpf\_cb2}	& example CPF callback function with \code{cb\_args} for \code{t\_cpf}	\\
-\code{t\_dcline}	& runs tests for DC line implementation in \code{toggle\_dcline}	\\
 \code{t\_ext2int2ext}	& runs tests for \code{ext2int} and \code{int2ext}	\\
+\code{t\_feval\_w\_path}	& runs tests for \code{feval\_w\_path}	\\
 \code{t\_get\_losses}	& runs tests for \code{get\_losses}	\\
 \code{t\_hasPQcap}	& runs tests for \code{hasPQcap}	\\
+\code{t\_have\_fcn}	& runs tests for \code{have\_fcn}	\\
 \code{t\_hessian}	& runs tests for 2\textsuperscript{nd} derivative code	\\
 \code{t\_islands}	& runs test for \code{find\_islands} and \code{extract\_islands}	\\
 \code{t\_jacobian}	& runs test for partial derivative code	\\
@@ -6930,12 +6928,9 @@ name & description \\
 \code{t\_printpf}	& runs tests for \code{printpf}	\\
 \code{t\_psse}	& runs tests for \code{psse2mpc} and related functions	\\
 \code{t\_qps\_matpower}	& runs tests for \code{qps\_matpower}	\\
-\code{t\_pf}	& runs tests for AC and DC power flow	\\
-\code{t\_pf\_radial}	& runs tests for AC power flow for radial distribution systems	\\
 \code{t\_runmarket}	& runs tests for \code{runmarket}	\\
 \code{t\_scale\_load}	& runs tests for \code{scale\_load}	\\
 \code{t\_total\_load}	& runs tests for \code{total\_load}	\\
-\code{t\_vdep\_load}	& runs PF, CPF and OPF tests for voltage dependent (ZIP) loads	\\
 \code{t\_totcost}	& runs tests for \code{totcost}	\\
 \bottomrule
 \end{tabular}
@@ -6953,13 +6948,18 @@ name & description \\
 %\renewcommand{\arraystretch}{1.2}
 \centering
 \begin{threeparttable}
-\caption{\matpower{} OPF Tests}
+\caption{\matpower{} Power Flow, CPF and OPF Tests}
 \label{tab:opf_tests}
 \footnotesize
 \begin{tabular}{lp{0.67\textwidth}}
 \toprule
 name & description \\
 \midrule
+\code{t\_pf}	& runs tests for AC and DC power flow	\\
+\code{t\_pf\_radial}	& runs tests for AC power flow for radial distribution systems	\\
+\code{t\_cpf}	& runs tests for AC continuation power flow	\\
+\code{t\_cpf\_cb1}	& example CPF callback function for \code{t\_cpf}	\\
+\code{t\_cpf\_cb2}	& example CPF callback function with \code{cb\_args} for \code{t\_cpf}	\\
 \code{t\_opf\_dc\_bpmpd}	& runs tests for DC OPF solver using BPMPD\_MEX\tnote{\dag}	\\
 \code{t\_opf\_dc\_clp}	& runs tests for DC OPF solver using \clp{}\tnote{\dag}	\\
 \code{t\_opf\_dc\_cplex}	& runs tests for DC OPF solver using \cplex{}\tnote{\dag}	\\
@@ -6983,6 +6983,8 @@ name & description \\
 \code{t\_opf\_tspopf\_tralm}	& runs tests for AC OPF solver using TRALM\tnote{\dag}	\\
 \code{t\_opf\_userfcns}	& runs tests for AC OPF with user callback functions for reserves and interface flow limits	\\
 \code{t\_runopf\_w\_res}	& runs tests for AC OPF with fixed reserve requirements	\\
+\code{t\_dcline}	& runs tests for DC line implementation in \code{toggle\_dcline}	\\
+\code{t\_vdep\_load}	& runs PF, CPF and OPF tests for voltage dependent (ZIP) loads	\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}

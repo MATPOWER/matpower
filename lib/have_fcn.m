@@ -6,6 +6,8 @@ function rv = have_fcn(tag, rtype)
 %   VER_NUM = HAVE_FCN(TAG, 'vnum')
 %   DATE    = HAVE_FCN(TAG, 'date')
 %   INFO    = HAVE_FCN(TAG, 'all')
+%   HAVE_FCN(TAG, 'clear_cache')
+%   HAVE_FCN('all', 'clear_cache')
 %
 %   Returns availability, version and release information for optional
 %   MATPOWER functionality. All information is cached, and the cached values
@@ -29,6 +31,11 @@ function rv = have_fcn(tag, rtype)
 %       0 - turn OFF the optional functionality
 %       1 - turn ON the optional functionality (if available)
 %      -1 - toggle the ON/OFF state of the optional functionality
+%
+%   Finally, passing 'clear_cache' as the second argument will cause the
+%   cached information to be cleared for the specified TAG or, if the first
+%   argument is 'all', for all optional functionality. When calling with
+%   'clear_cache' no return value is defined.
 %
 %   Possible values for input TAG and their meanings:
 %       bpmpd       - BP, BPMPD interior point solver
@@ -79,11 +86,6 @@ function rv = have_fcn(tag, rtype)
 %       if have_fcn('minopf')
 %           results = runopf(mpc, mpoption('opf.ac.solver', 'MINOPF'));
 %       end
-%
-%   Optional functionality can also be toggled OFF and ON by calling HAVE_FCN
-%   with the following syntax,
-%       TORF = HAVE_FCN(TAG, TOGGLE)
-%   where TOGGLE takes a numeric value as follows:
 
 %   Private tags for internal use only:
 %       catchme         - support for 'catch me' syntax in try/catch constructs
@@ -93,39 +95,63 @@ function rv = have_fcn(tag, rtype)
 %       pardiso_legacy  - PARDISO v5, individual MEX files for factor, solve, etc
 %       pardiso_object  - PARDISO v6 and later, object interface
 %       regexp_split    - support for 'split' argument to regexp()
+%       rithmaticker    - used for testing HAVE_FCN
+%
+%   The following calling syntaxes are also implemented to set and get the
+%   entire cache struct and are used during testing only.
+%       CACHE = HAVE_FCN('all', 'get_cache')
+%       HAVE_FCN(CACHE, 'set_cache')
 
 %   MATPOWER
-%   Copyright (c) 2004-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2019, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See http://www.pserc.cornell.edu/matpower/ for more info.
 
-if nargin > 1 && isnumeric(rtype)
-    toggle = 1;
-    on_off = rtype;
-    if on_off < 0
-        TorF = have_fcn(tag);
-        on_off = ~TorF;
-    end
-else
-    toggle = 0;
-end
-
 persistent fcns;
 
-if toggle   %% change availability
-    if on_off       %% turn on if available
+action = 'D';                   %% detecting functionality (default)
+if nargin > 1
+    if isnumeric(rtype)
+        action = 'T';           %% toggling functionality
+        on_off = rtype;
+        if on_off < 0                   %% flip the toggle
+            TorF = have_fcn(tag);
+            on_off = ~TorF;
+        end
+    else
+        switch lower(rtype)
+            case 'get_cache'
+                action = 'C';   %% getting cache
+                rv = fcns;
+            case 'set_cache'
+                action = 'C';   %% setting cache
+                fcns = tag;
+            case 'clear_cache'
+                action = 'C';   %% clearing cache
+                if strcmpi(tag, 'all')
+                    fcns = struct();            %% delete all fields
+                else
+                    fcns = rmfield(fcns, tag);  %% delete field to force re-check
+                end
+        end
+    end
+end
+
+if action == 'T'            %% change availability
+    if on_off                   %% turn on if available
         fcns = rmfield(fcns, tag);  %% delete field to force re-check
-    else            %% turn off
+    else                        %% turn off
         if ~isfield(fcns, tag)      %% not yet been checked
             TorF = have_fcn(tag);   %% cache result first
         end
         fcns.(tag).av = 0;          %% then turn off
     end
-    TorF = have_fcn(tag);           %% return cached value
-else        %% detect availability
+    TorF = have_fcn(tag);           %% return availability
+                                    %% (recheck if ON, cached 0 if OFF)
+elseif action == 'D'        %% detect availability
     %% info not yet cached?
     if ~isfield(fcns, tag)
         %%-----  determine installation status, version number, etc.  -----
@@ -593,6 +619,12 @@ else        %% detect availability
                 elseif have_fcn('octave', 'vnum') >= 3.008
                     TorF = 1;
                 end
+            case 'rithmaticker'     %% used for testing HAVE_FCN
+                TorF = exist('rithmaticker', 'file') == 2;
+                if TorF
+                    vstr = '3.1.4';
+                    rdate = datestr([2019 5 30 0 0 0], 'dd-mmm-yyyy');
+                end
 
         %%-----  unknown tag  -----
             otherwise
@@ -613,18 +645,20 @@ else        %% detect availability
 end
 
 %% extract desired values from cache
-if nargin < 2 || toggle
-    rv = fcns.(tag).av;
-else
-    switch lower(rtype)
-        case 'vstr'
-            rv = fcns.(tag).vstr;
-        case 'vnum'
-            rv = fcns.(tag).vnum;
-        case 'date'
-            rv = fcns.(tag).date;
-        case 'all'
-            rv = fcns.(tag);
+if action ~= 'C' || nargout
+    if nargin < 2 || action == 'T'
+        rv = fcns.(tag).av;
+    else
+        switch lower(rtype)
+            case 'vstr'
+                rv = fcns.(tag).vstr;
+            case 'vnum'
+                rv = fcns.(tag).vnum;
+            case 'date'
+                rv = fcns.(tag).date;
+            case 'all'
+                rv = fcns.(tag);
+        end
     end
 end
 

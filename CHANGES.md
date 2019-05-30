@@ -12,6 +12,12 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 5/30/19
+  - Add `'clear_cache'` options to `have_fcn()` to facilitate re-checking
+    for optional functionality after changes to the MATLAB/Octave path.
+    See [issue #65][19].
+  - Add tests for `have_fcn()`.
+
 #### 5/29/19
   - Fix errors caused by running `test_matpower` with YALMIP present
     but not MOSEK, SeDuMi or SDPT3.
@@ -2859,3 +2865,4 @@ First Public Release – *Jun 25, 1997*
 [16]: https://github.com/MATPOWER/matpower/issues/57
 [17]: https://hub.docker.com/r/matpower/matpower-desktop
 [18]: https://github.com/MATPOWER/matpower/blob/master/docker/MATPOWER-Docker.md
+[19]: https://github.com/MATPOWER/matpower/issues/65
