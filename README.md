@@ -281,6 +281,13 @@ acknowledge that fact by citing [reference \[4\]][18] as well as [\[1\]][13].
     Stochastic Sources, Energy Storage and Active Demand," *Smart Grid,
     IEEE Transactions on*, vol. 4, no. 4, pp. 2220–2229, Dec. 2013.
 
+In the interest of facilitating research reproducibility and thereby
+increasing the value of your MATPOWER-related research publications, we
+strongly encourage you to also publish, whenever possible, all of the code
+and data required to generate the results you are publishing.
+[Zenodo/GitHub][31] and [IEEE DataPort][32] are two of [many available
+options][33]. Please also mention the specific version of MATPOWER used.
+
 
 E-mail Lists
 ------------
@@ -360,5 +367,8 @@ MATPOWER is distributed as open-source under the [3-clause BSD license][30].
 [28]: http://www.pserc.cornell.edu/matpower/mailinglists.html
 [29]: https://github.com/MATPOWER/matpower/issues
 [30]: LICENSE
+[31]: https://guides.github.com/activities/citable-code/
+[32]: https://ieee-dataport.org
+[33]: https://www.re3data.org
 
 [logo]: docs/src/images/MATPOWER-md.png
