@@ -240,25 +240,29 @@ Publications and Tech Notes
 
 6.  R. D. Zimmerman, ["Uniform Price Auctions and Optimal
     Power Flow,"][20] *MATPOWER Technical Note 1*, February 2010.  
-    Available: http://www.pserc.cornell.edu/matpower/TN1-OPF-Auctions.pdf
+    Available: http://www.pserc.cornell.edu/matpower/TN1-OPF-Auctions.pdf  
+    DOI: [10.1109/TSTE.2018.2865454](https://doi.org/10.5281/zenodo.3237850).
 
 7.  R. D. Zimmerman, ["AC Power Flows, Generalized OPF Costs
     and their Derivatives using Complex Matrix Notation,"][21]
     *MATPOWER Technical Note 2*, February 2010.  
     Available:
-    http://www.pserc.cornell.edu/matpower/TN2-OPF-Derivatives.pdf
+    http://www.pserc.cornell.edu/matpower/TN2-OPF-Derivatives.pdf  
+    DOI: [10.5281/zenodo.3237866](https://doi.org/10.5281/zenodo.3237866).
 
 8.  B. Sereeter and R. D. Zimmerman, ["Addendum to AC Power Flows and
     their Derivatives using Complex Matrix Notation: Nodal Current
     Balance,"][22] *MATPOWER Technical Note 3*, April 2018.  
-    Available: http://www.pserc.cornell.edu/matpower/TN3-More-OPF-Derivatives.pdf
+    Available: http://www.pserc.cornell.edu/matpower/TN3-More-OPF-Derivatives.pdf  
+    DOI: [10.5281/zenodo.3237900](https://doi.org/10.5281/zenodo.3237900).
 
 9.  B. Sereeter and R. D. Zimmerman, ["AC Power Flows, Generalized
     OPF Costs and their Derivatives using Complex Matrix Notation
     and Cartesian Coordinate Voltages,"][23] *MATPOWER Technical
     Note 4*, April 2018.  
     Available:
-    http://www.pserc.cornell.edu/matpower/TN4-OPF-Derivatives-Cartesian.pdf
+    http://www.pserc.cornell.edu/matpower/TN4-OPF-Derivatives-Cartesian.pdf  
+    DOI: [10.5281/zenodo.3237909](https://doi.org/10.5281/zenodo.3237909).
 
 
 Citing MATPOWER
@@ -270,7 +274,8 @@ acknowledge that fact by citing [reference \[1\]][13] above, namely:
 >   R. D. Zimmerman, C. E. Murillo-Sanchez, and R. J. Thomas,
     "MATPOWER: Steady-State Operations, Planning and Analysis Tools
     for Power Systems Research and Education," *Power Systems, IEEE
-    Transactions on*, vol. 26, no. 1, pp. 12–19, Feb. 2011.
+    Transactions on*, vol. 26, no. 1, pp. 12–19, Feb. 2011.  
+    DOI: [10.1109/TPWRS.2010.2051168][13]
 
 Additionally, we request that publications derived from the use of
 the [MATPOWER Optimal Scheduling Tool (MOST)][24], explicitly
@@ -279,7 +284,8 @@ acknowledge that fact by citing [reference \[4\]][18] as well as [\[1\]][13].
 >   C. E. Murillo-Sanchez, R. D. Zimmerman, C. L. Anderson, and
     R. J. Thomas, "Secure Planning and Operations of Systems with
     Stochastic Sources, Energy Storage and Active Demand," *Smart Grid,
-    IEEE Transactions on*, vol. 4, no. 4, pp. 2220–2229, Dec. 2013.
+    IEEE Transactions on*, vol. 4, no. 4, pp. 2220–2229, Dec. 2013.  
+    DOI: [10.1109/TSG.2013.2281001][18]
 
 In the interest of facilitating research reproducibility and thereby
 increasing the value of your MATPOWER-related research publications, we

@@ -48,16 +48,17 @@ function [H11, H12, H21, H22] = d2Sbr_dV2(Cbr, Ybr, V, mu, vcart)
 %
 %   [TN2]  R. D. Zimmerman, "AC Power Flows, Generalized OPF Costs and
 %          their Derivatives using Complex Matrix Notation", MATPOWER
-%          Technical Note 2, February 2010.
-%             http://www.pserc.cornell.edu/matpower/TN2-OPF-Derivatives.pdf
+%          Technical Note 2, February 2010. [Online]. Available:
+%          http://www.pserc.cornell.edu/matpower/TN2-OPF-Derivatives.pdf
+%          DOI: 10.5281/zenodo.3237866
 %   [TN4]  B. Sereeter and R. D. Zimmerman, "AC Power Flows and their
 %          Derivatives using Complex Matrix Notation and Cartesian
 %          Coordinate Voltages," MATPOWER Technical Note 4, April 2018.
-%             http://www.pserc.cornell.edu/matpower/
-%                                           TN4-OPF-Derivatives-Cartesian.pdf
+%          [Online]. Available: http://www.pserc.cornell.edu/matpower/TN4-OPF-Derivatives-Cartesian.pdf
+%          DOI: 10.5281/zenodo.3237909
 
 %   MATPOWER
-%   Copyright (c) 2008-2018, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2019, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Baljinnyam Sereeter, Delft University of Technology
 %
