@@ -52,7 +52,7 @@ function [H11, H12, H21, H22] = ...
 %          their Derivatives using Complex Matrix Notation", MATPOWER
 %          Technical Note 2, February 2010. [Online]. Available:
 %          http://www.pserc.cornell.edu/matpower/TN2-OPF-Derivatives.pdf
-%          DOI: 10.5281/zenodo.3237866
+%          doi: 10.5281/zenodo.3237866
 
 %   MATPOWER
 %   Copyright (c) 2008-2019, Power Systems Engineering Research Center (PSERC)
