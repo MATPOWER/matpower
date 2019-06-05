@@ -8158,6 +8158,18 @@ Some of these cases also include contingency tables and/or hourly load scenarios
 \item Fix \code{runpf} handling of case where individual power flow fails during Q limit enforcement.
 \item Fix bug \#56 where \code{save2psse} was missing entries for two transformer columns, namely, \code{VMA1} and \code{VMI1}). \emph{Thanks to Amin Gholami.}
 \item Fix bug \#57 where \code{save2psse} always used 1 for the \code{CKT} number, even for parallel branches or transformers. \emph{Thanks to Amin Gholami.}
+\item Fix issue \#60 by adding missing generator at slack bus in RTE cases. Affects the following cases:
+    \begin{itemize}
+    \item \code{case1888rte}
+    \item \code{case1951rte}
+    \item \code{case2848rte}
+    \item \code{case2868rte}
+    \item \code{case6468rte}
+    \item \code{case6470rte}
+    \item \code{case6495rte}
+    \item \code{case6515rte}
+    \end{itemize}
+    \emph{Thanks to Jean Maeght.}
 \end{itemize}
 
 \subsubsection*{Incompatible Changes}

@@ -12,6 +12,19 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Since last release
 ------------------
 
+#### 6/5/19
+  - **INCOMPATIBLE CHANGE:** Fix [issue #60][20] by adding missing
+    generator at slack bus in RTE cases. Affects the following cases:
+    - `case1888rte`
+    - `case1951rte`
+    - `case2848rte`
+    - `case2868rte`
+    - `case6468rte`
+    - `case6470rte`
+    - `case6495rte`
+    - `case6515rte`
+    *Thanks to Jean Maeght.*
+
 #### 5/30/19
   - Add `'clear_cache'` options to `have_fcn()` to facilitate re-checking
     for optional functionality after changes to the MATLAB/Octave path.
@@ -2866,3 +2879,4 @@ First Public Release – *Jun 25, 1997*
 [17]: https://hub.docker.com/r/matpower/matpower-desktop
 [18]: https://github.com/MATPOWER/matpower/blob/master/docker/MATPOWER-Docker.md
 [19]: https://github.com/MATPOWER/matpower/issues/65
+[20]: https://github.com/MATPOWER/matpower/issues/60

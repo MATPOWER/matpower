@@ -16,16 +16,19 @@ function mpc = case6495rte
 %     https://arxiv.org/abs/1603.01533
 %
 %   Contacts:
-%     Cédric Josz, Stéphane Fliscounakis, Jean Maeght, Patrick Panciatici
+%     Cedric Josz, Stephane Fliscounakis, Jean Maeght, Patrick Panciatici
+%     Primary contact for this file: Jean Maeght
 %     firstname.lastname@rte-france.com
-%     Réseau de Transport d'Electricité (French Transmission System Operator)
-%     Département Expertise Système, Immeuble "Le Colbert"
-%     9 rue de la Porte de Buc, 78000 Versailles Cedex, France
+%     Reseau de Transport d'Electricite (French Transmission System Operator)
+%     R&D Division, Paris La Defense
 %
-%   March 3rd, 2016
+%   Modifications:
+%     v2 - 2019-06-05 - Generator has been added at slack bus.
+%
+%   June 5th, 2019
 
 %   MATPOWER
-%   Copyright (c) 2016 by Cédric Josz, Stéphane Fliscounakis, Jean Maeght,
+%   Copyright (c) 2016, 2019 by Cedric Josz, Stephane Fliscounakis, Jean Maeght,
 %   and Patrick Panciatici
 %   Licensed under the Creative Commons Attribution 4.0 International license,
 %   https://creativecommons.org/licenses/by/4.0/
@@ -7912,6 +7915,7 @@ mpc.gen = [
 	6497	149.8	29.05	97.8	-42.2	1.055	100	1	180	0	0	0	0	0	0	0	0	0	0	0	0;
 	6498	46.06	17.79	133.88	-46.12	1.032	100	1	136	0	0	0	0	0	0	0	0	0	0	0	0;
 	6499	46.05	17.78	123.95	-46.05	1.032	100	1	128	0	0	0	0	0	0	0	0	0	0	0	0;
+	4706	0	0	1	-1	1.0688	100	1	1000	0	0	0	0	0	0	0	0	0	0	0	0;
 ];
 
 %% branch data
@@ -18315,4 +18319,5 @@ mpc.gencost = [
 	2	0	0	3	0	1	0;
 	2	0	0	3	0	1	0;
 	2	0	0	3	0	1	0;
+	2	0	0	3	0	10	0;
 ];

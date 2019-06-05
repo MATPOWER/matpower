@@ -4,7 +4,7 @@ function mpc = case2848rte
 %
 %   This case accurately represents the size and complexity of French
 %   very high voltage transmission network.
-%   Part of this data was sampled in the offline platform of iTesla.
+%   Part of this data was sampled in the offline platform of iTesla project.
 %   These data can be used to validate mathematical methods and tools.
 %   These data should NOT be used for operation
 %   nor planning of the French or European grids.
@@ -16,16 +16,19 @@ function mpc = case2848rte
 %     https://arxiv.org/abs/1603.01533
 %
 %   Contacts:
-%     Cédric Josz, Stéphane Fliscounakis, Jean Maeght, Patrick Panciatici
+%     Cedric Josz, Stephane Fliscounakis, Jean Maeght, Patrick Panciatici
+%     Primary contact for this file: Jean Maeght
 %     firstname.lastname@rte-france.com
-%     Réseau de Transport d'Electricité (French Transmission System Operator)
-%     Département Expertise Système, Immeuble "Le Colbert"
-%     9 rue de la Porte de Buc, 78000 Versailles Cedex, France
+%     Reseau de Transport d'Electricite (French Transmission System Operator)
+%     R&D Division, Paris La Defense
 %
-%   March 3rd, 2016
+%   Modifications:
+%     v2 - 2019-06-05 - Generator has been added at slack bus.
+%
+%   June 5th, 2019
 
 %   MATPOWER
-%   Copyright (c) 2016 by Cédric Josz, Stéphane Fliscounakis, Jean Maeght,
+%   Copyright (c) 2016, 2019 by Cedric Josz, Stephane Fliscounakis, Jean Maeght,
 %   and Patrick Panciatici
 %   Licensed under the Creative Commons Attribution 4.0 International license,
 %   https://creativecommons.org/licenses/by/4.0/
@@ -3440,6 +3443,7 @@ mpc.gen = [
 	2535	138	-7.55	148.09	-87.36	0.943	100	1	268	138	0	0	0	0	0	0	0	0	0	0	0;
 	2537	130	-25.87	133.88	-46.12	0.947	100	1	136	27.2	0	0	0	0	0	0	0	0	0	0	0;
 	2538	123	-22.52	123.95	-46.05	0.955	100	1	128	25.6	0	0	0	0	0	0	0	0	0	0	0;
+	1759	0	0	1	-1	1.0578	100	1	1000	0	0	0	0	0	0	0	0	0	0	0	0;
 ];
 
 %% branch data
@@ -7775,4 +7779,5 @@ mpc.gencost = [
 	2	0	0	3	0	1	0;
 	2	0	0	3	0	1	0;
 	2	0	0	3	0	1	0;
+	2	0	0	3	0	10	0;
 ];
