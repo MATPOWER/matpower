@@ -145,6 +145,7 @@
 %\newcommand{\matlab}[0]{{\sc Matlab}\textsuperscript{\tiny \textregistered}}
 \newcommand{\matlab}[0]{{\sc Matlab}}
 \newcommand{\matpower}[0]{{\sc Matpower}}
+% newcommand{\matpoweremph}[0]{\textit{\normalsize{M}\scriptsize{ATPOWER}}}
 \newcommand{\matpowerurl}[0]{http://www.pserc.cornell.edu/matpower/}
 \newcommand{\matpowerlink}[0]{\href{\matpowerurl}{\matpower{}}}
 \newcommand{\matpowergithuburl}[0]{https://github.com/MATPOWER/matpower}
@@ -361,7 +362,13 @@ Please note that the \matpower{} case files distributed with \matpower{} are not
 
 \subsection{Citing \matpower{}}
 
-While not required by the terms of the license, we do request that publications derived from the use of \matpower{} explicitly acknowledge that fact by citing reference~\cite{zimmerman2011}.
+We request that publications derived from the use of \matpower{}, or the
+included data files, explicitly acknowledge that fact by citing the
+appropriate paper(s) and the software itself.\footnote{This information is also available in the \code{CITATION} file at the top level of the \matpower{} distribution.}
+
+\subsubsection*{Papers}
+
+All publications derived from the use of \matpower{}, or the included data files, should cite the 2011 \matpower{} paper~\cite{zimmerman2011}:
 
 \begin{quote}
 \footnotesize
@@ -369,18 +376,90 @@ R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez, and R.~J. Thomas, ``\matpower{}: Ste
 doi:~\href{https://doi.org/10.1109/TPWRS.2010.2051168}{10.1109/TPWRS.2010.2051168}
 \end{quote}
 
-Similarly, we request that publications derived from the use of \most{} explicitly acknowledge that fact by citing both the main \matpower{} reference above and reference~\cite{murillo-sanchez2013a}:
+Publications derived from the use of the \mostname{} (\most{}) should cite the 2013 MOST paper~\cite{murillo-sanchez2013a}, in addition to the 2011 \matpower{} paper~\cite{zimmerman2011} above.
 
 \begin{quote}
 \footnotesize
 C.~E. Murillo-S{\'a}nchez, R.~D. Zimmerman, C.~L. Anderson, and R.~J. Thomas, ``Secure Planning and Operations of Systems with Stochastic Sources, Energy Storage and Active Demand,'' \emph{Smart Grid, IEEE Transactions on}, vol.~4, no.~4, pp.~2220--2229, Dec.~2013.\\ doi:~\href{https://doi.org/10.1109/TSG.2013.2281001}{10.1109/TSG.2013.2281001}
 \end{quote}
 
+Work making specific reference to the \mipsname{} (\mips{}) should also cite~\cite{wang2007a}:
+
+\begin{quote}
+\footnotesize
+H.~Wang, C.~E. Murillo-S{\'a}nchez, R.~D. Zimmerman, and R.~J. Thomas, ``On
+Computational Issues of Market-Based Optimal Power Flow,'' \emph{Power
+Systems, IEEE Transactions on}, vol.~22, no.~3, pp.~1185--1193, August 2007.\\
+doi:~\href{https://doi.org/10.1109/TPWRS.2007.901301}{10.1109/TPWRS.2007.901301}
+\end{quote}
+
+\textbf{Note:} Some of the case files included with \matpower{} request the citation
+of additional publications. This includes the ACTIVSg, PEGASE, and
+RTE cases. Details are available in the help text at the top of the
+corresponding case files.
+
+\subsubsection*{Software}
+
+For the sake of reproducibility of research results, it is best to cite
+the specific version of the software used, with the version-specfic DOI.
+For example, for version 6.0 of \matpower{}:
+
+\begin{quote}
+\footnotesize
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2016). \matpower{} (Version 6.0)\\~
+[Software]. Available: \url{http://www.pserc.cornell.edu/matpower/}\\
+doi:~\href{https://doi.org/10.5281/zenodo.3237810}{10.5281/zenodo.3237810}
+\end{quote}
+
+To cite the \matpower{} software generally, without reference to a specific
+version, use the following citation and DOI, with \emph{\textless{}YEAR\textgreater{}} replaced by the
+year of the most recent release:
+
+\begin{quote}
+\footnotesize
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (\emph{\textless{}YEAR\textgreater{}}). \matpower{}\\~
+[Software]. Available: \url{http://www.pserc.cornell.edu/matpower/}\\
+doi:~\href{https://doi.org/10.5281/zenodo.3236535}{10.5281/zenodo.3236535}
+\end{quote}
+
+A list of versions with release dates and version-specific DOI's can be
+found via the general DOI at \url{https://doi.org/10.5281/zenodo.3236535}.
+
+\subsubsection*{User's Manuals}
+
+The \matpower{}, \mips{} and \most{} User's Manuals should also be cited
+explicitly in work that refers to or is derived from their content.\footnote{For information on citing the \mips{} or \most{} User's Manuals, please see the \code{mips/CITATION} and \code{most/CITATION} files, respectively.} As
+with the software, the citation and DOI can be version-specific or
+general, as appropriate. For version 6.0 of the \mum{}, use:
+
+\begin{quote}
+\footnotesize
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez. \matpower{} User's Manual, Version 6.0. 2016.
+[Online]. Available: \url{https://matpower.org/docs/MATPOWER-manual-6.0.pdf}\\
+doi:~\href{https://doi.org/10.5281/zenodo.3236526}{10.5281/zenodo.3236526}
+\end{quote}
+
+For a version non-specific citation, use the following citation and DOI,
+with \emph{\textless{}YEAR\textgreater{}} replaced by the year of the most recent release:
+
+\begin{quote}
+\footnotesize
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez. \matpower{} User's Manual. \emph{\textless{}YEAR\textgreater{}}.\\~
+[Online]. Available: \url{https://matpower.org/docs/MATPOWER-manual.pdf}\\
+doi:~\href{https://doi.org/10.5281/zenodo.3236519}{10.5281/zenodo.3236519}
+\end{quote}
+
+A list of versions of the User's Manual with release dates and
+version-specific DOI's can be found via the general DOI at
+\url{https://doi.org/10.5281/zenodo.3236519}.
+
+\subsubsection*{Recommendation}
+
 In the interest of facilitating research reproducibility and thereby
-increasing the value of your \matpower{}-related research publications, we
-strongly encourage you to also publish, whenever possible, all of the code
-and data required to generate the results you are publishing.
-\href{https://about.zenodo.org}{Zenodo}/\href{https://github.com}{GitHub}\footnote{See the GitHub Guide on \href{https://guides.github.com/activities/citable-code/}{"Making Your Code Citable"} at \url{https://guides.github.com/activities/citable-code/}.} and \href{https://ieee-dataport.org}{IEEE DataPort}\footnote{\url{https://ieee-dataport.org}} are two of many available options\footnote{See the Registry of Research Data Repositories at \url{https://www.re3data.org}.}. Please also mention the specific version of \matpower{} used in your work.
+increasing the value of your \matpower{}-related research publications,
+we strongly encourage you to also publish, whenever possible, all of the
+code and data required to generate the results you are publishing.
+\href{https://about.zenodo.org}{Zenodo}/\href{https://github.com}{GitHub}\footnote{See the GitHub Guide on \href{https://guides.github.com/activities/citable-code/}{"Making Your Code Citable"} at \url{https://guides.github.com/activities/citable-code/}.} and \href{https://ieee-dataport.org}{IEEE DataPort}\footnote{\url{https://ieee-dataport.org}} are two of many available options\footnote{See the Registry of Research Data Repositories at \url{https://www.re3data.org}.}.
 
 
 \subsection{\matpower{} Development}
@@ -6004,6 +6083,7 @@ name & description \\
 \code{mptest/}	& integrated \mptestlink{} distribution (see Table~\ref{tab:mptest})	\\
 \code{AUTHORS}	& list of \matpower{} authors	\\
 \code{CHANGES.md}	& \matpower{} change history	\\
+\code{CITATION}	& info on how to cite \matpower{}	\\
 \code{CONTRIBUTING.md}	& \matpower{} Contributors Guide	\\
 \code{LICENSE}	& license file	\\
 \code{README.md}	& basic introduction to \matpower{}	\\
@@ -8232,6 +8312,12 @@ The BSD 3-Clause License. [Online]. Available: \url{https://opensource.org/licen
 \bibitem{gpl}
 GNU General Public License. [Online]. Available: \url{https://www.gnu.org/licenses/}.
 
+\bibitem{wang2007a}
+H.~Wang, C.~E. Murillo-S{\'a}nchez, R.~D. Zimmerman, and R.~J. Thomas, ``On
+Computational Issues of Market-Based Optimal Power Flow,'' \emph{Power
+Systems, IEEE Transactions on}, vol.~22, no.~3, pp.~1185--1193, August 2007.
+doi:~\href{https://doi.org/10.1109/TPWRS.2007.901301}{10.1109/TPWRS.2007.901301}
+
 \bibitem{milano2005}
 F.~Milano, ``An Open Source Power System Analysis Toolbox,'' \emph{Power
   Systems, IEEE Transactions on}, vol.~20, no.~3, pp.~1199--1206, Aug. 2005.
@@ -8322,11 +8408,6 @@ R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez, and R.~J. Thomas, ``\matpower{}'s
 
 \bibitem{tspopf}
 TSPOPF. [Online]. Available: \url{http://www.pserc.cornell.edu/tspopf/}.
-
-\bibitem{wang2007a}
-H.~Wang, C.~E. Murillo-S{\'a}nchez, R.~D. Zimmerman, and R.~J. Thomas, ``On
-  Computational Issues of Market-Based Optimal Power Flow,'' \emph{Power
-  Systems, IEEE Transactions on}, vol.~22, no.~3, pp.~1185--1193, August 2007.
 
 \bibitem{ot}
 \emph{Optimization Toolbox}, The MathWorks, Inc.

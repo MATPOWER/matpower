@@ -265,34 +265,103 @@ Publications and Tech Notes
     doi: [10.5281/zenodo.3237909](https://doi.org/10.5281/zenodo.3237909).
 
 
-Citing MATPOWER
----------------
+[Citing MATPOWER][31]
+---------------------
 
-We request that publications derived from the use of MATPOWER explicitly
-acknowledge that fact by citing [reference \[1\]][13] above, namely:
+We request that publications derived from the use of MATPOWER, or the
+included data files, explicitly acknowledge that fact by citing the
+appropriate paper(s) and the software itself.
 
->   R. D. Zimmerman, C. E. Murillo-Sanchez, and R. J. Thomas,
-    "MATPOWER: Steady-State Operations, Planning and Analysis Tools
-    for Power Systems Research and Education," *Power Systems, IEEE
-    Transactions on*, vol. 26, no. 1, pp. 12–19, Feb. 2011.  
+#### Papers
+
+All publications derived from the use of MATPOWER, or the included data
+files, should cite the 2011 MATPOWER paper:
+
+>   R. D. Zimmerman, C. E. Murillo-Sanchez, and R. J. Thomas, "MATPOWER:
+    Steady-State Operations, Planning and Analysis Tools for Power Systems
+    Research and Education," *Power Systems, IEEE Transactions on*, vol. 26,
+    no. 1, pp. 12-19, Feb. 2011.  
     doi: [10.1109/TPWRS.2010.2051168][13]
 
-Additionally, we request that publications derived from the use of
-the [MATPOWER Optimal Scheduling Tool (MOST)][24], explicitly
-acknowledge that fact by citing [reference \[4\]][18] as well as [\[1\]][13].
+Publications derived from the use of the [MATPOWER Optimal Scheduling
+Tool (MOST)][24] should cite the 2013 MOST paper, in addition to the
+2011 MATPOWER paper above.
 
->   C. E. Murillo-Sanchez, R. D. Zimmerman, C. L. Anderson, and
-    R. J. Thomas, "Secure Planning and Operations of Systems with
-    Stochastic Sources, Energy Storage and Active Demand," *Smart Grid,
-    IEEE Transactions on*, vol. 4, no. 4, pp. 2220–2229, Dec. 2013.  
+>   C. E. Murillo-Sanchez, R. D. Zimmerman, C. L. Anderson, and R. J. Thomas,
+    "Secure Planning and Operations of Systems with Stochastic Sources,
+    Energy Storage and Active Demand," *Smart Grid, IEEE Transactions on*,
+    vol. 4, no. 4, pp. 2220-2229, Dec. 2013.  
     doi: [10.1109/TSG.2013.2281001][18]
+
+Work making specific reference to the [MATPOWER Interior Point Solver
+(MIPS)][32] should also cite:
+
+>   H. Wang, C. E. Murillo-Sánchez, R. D. Zimmerman, R. J. Thomas, "On
+    Computational Issues of Market-Based Optimal Power Flow," *Power Systems,
+    IEEE Transactions on*, vol. 22, no. 3, pp. 1185-1193, Aug. 2007.  
+    doi: [10.1109/TPWRS.2007.901301][17]
+
+NOTE: Some of the case files included with MATPOWER request the citation
+of additional publications. This includes the ACTIVSg, PEGASE, and RTE
+cases. Details are available in the help text at the top of the
+corresponding case files.
+
+#### Software
+
+For the sake of reproducibility of research results, it is best to cite
+the specific version of the software used, with the version-specfic DOI.
+For example, for version 6.0 of MATPOWER, use:
+
+>   R. D. Zimmerman, C. E. Murillo-Sanchez (2016). *MATPOWER (Version 6.0)*
+    [Software]. Available: http://www.pserc.cornell.edu/matpower/  
+    doi: [10.5281/zenodo.3237810](https://doi.org/10.5281/zenodo.3237810)
+
+To cite the MATPOWER software generally, without reference to a specific
+version, use the following citation and DOI, with *\<YEAR\>* replaced by the
+year of the most recent release:
+
+>   R. D. Zimmerman, C. E. Murillo-Sanchez (*\<YEAR\>*). *MATPOWER*
+    [Software]. Available: http://www.pserc.cornell.edu/matpower/  
+    doi: [10.5281/zenodo.3236535][33]
+
+A list of versions with release dates and version-specific DOI's can be
+found via the general DOI at https://doi.org/10.5281/zenodo.3236535.
+
+#### User's Manuals
+
+The MATPOWER, MIPS and MOST User's Manuals should also be cited
+explicitly in work that refers to or is derived from their content. As
+with the software, the citation and DOI can be version-specific or
+general, as appropriate. For version 6.0 of the [MATPOWER User's Manual][8],
+use:
+
+>   R. D. Zimmerman, C. E. Murillo-Sanchez. *MATPOWER User's Manual,
+    Version 6.0.* 2016.  
+    [Online]. Available: https://matpower.org/docs/MATPOWER-manual-6.0.pdf  
+    doi: [10.5281/zenodo.3236526](https://doi.org/10.5281/zenodo.3236526)
+
+For a version non-specific citation, use the following citation and DOI,
+with *\<YEAR\>* replaced by the year of the most recent release:
+
+>   R. D. Zimmerman, C. E. Murillo-Sanchez. *MATPOWER User's Manual.* *\<YEAR\>*.  
+    [Online]. Available: https://matpower.org/docs/MATPOWER-manual.pdf  
+    doi: [10.5281/zenodo.3236519][34]
+
+A list of versions of the User's Manual with release dates and
+version-specific DOI's can be found via the general DOI at
+https://doi.org/10.5281/zenodo.3236519.
+
+For information on citing the MIPS or MOST User's Manuals, please see
+the [`mips/CITATION`][35] and [`most/CITATION`][36] files, respectively.
+
+#### Recommendation
 
 In the interest of facilitating research reproducibility and thereby
 increasing the value of your MATPOWER-related research publications, we
-strongly encourage you to also publish, whenever possible, all of the code
-and data required to generate the results you are publishing.
-[Zenodo/GitHub][31] and [IEEE DataPort][32] are two of [many available
-options][33]. Please also mention the specific version of MATPOWER used.
+strongly encourage you to also publish, whenever possible, all of the
+code and data required to generate the results you are publishing.
+[Zenodo/GitHub][37] and [IEEE DataPort][38] are two of [many available
+options][39].
 
 
 E-mail Lists
@@ -373,8 +442,14 @@ MATPOWER is distributed as open-source under the [3-clause BSD license][30].
 [28]: http://www.pserc.cornell.edu/matpower/mailinglists.html
 [29]: https://github.com/MATPOWER/matpower/issues
 [30]: LICENSE
-[31]: https://guides.github.com/activities/citable-code/
-[32]: https://ieee-dataport.org
-[33]: https://www.re3data.org
+[31]: CITATION
+[32]: https://github.com/MATPOWER/mips
+[33]: https://doi.org/10.5281/zenodo.3236535
+[34]: https://doi.org/10.5281/zenodo.3236519
+[35]: mips/CITATION
+[36]: most/CITATION
+[37]: https://guides.github.com/activities/citable-code/
+[38]: https://ieee-dataport.org
+[39]: https://www.re3data.org
 
 [logo]: docs/src/images/MATPOWER-md.png
