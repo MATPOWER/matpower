@@ -57,7 +57,7 @@ function succ = install_matpower(modify, save_it, verbose, rm_oldpaths)
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See http://www.pserc.cornell.edu/matpower/ for more info.
+%   See https://matpower.org for more info.
 
 %% installation data for each component
 min_ver.Octave = '4.0.0';

@@ -44,7 +44,7 @@ function [H11, H12, H21, H22] = d2Abr_dV2(d2F_dV2, dF_dV1, dF_dV2, F, V, mu)
 %   [TN2]  R. D. Zimmerman, "AC Power Flows, Generalized OPF Costs and
 %          their Derivatives using Complex Matrix Notation", MATPOWER
 %          Technical Note 2, February 2010. [Online]. Available:
-%          http://www.pserc.cornell.edu/matpower/TN2-OPF-Derivatives.pdf
+%          https://matpower.org/docs/TN2-OPF-Derivatives.pdf
 %          doi: 10.5281/zenodo.3237866
 
 %   MATPOWER
@@ -53,7 +53,7 @@ function [H11, H12, H21, H22] = d2Abr_dV2(d2F_dV2, dF_dV1, dF_dV2, F, V, mu)
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See http://www.pserc.cornell.edu/matpower/ for more info.
+%   See https://matpower.org for more info.
 
 %% define
 nl = length(mu);

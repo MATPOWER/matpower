@@ -37,7 +37,7 @@ function om = add_named_set(om, set_type, name, idx, N, varargin)
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See http://www.pserc.cornell.edu/matpower/ for more info.
+%   See https://matpower.org for more info.
 
 %% check for valid type for named set
 st_label = om.valid_named_set_type(set_type);

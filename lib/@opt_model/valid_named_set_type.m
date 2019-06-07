@@ -23,7 +23,7 @@ function str = valid_named_set_type(om, set_type)
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See http://www.pserc.cornell.edu/matpower/ for more info.
+%   See https://matpower.org for more info.
 
 persistent named_set_types;
 if isempty(named_set_types)

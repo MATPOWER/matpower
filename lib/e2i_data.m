@@ -47,7 +47,7 @@ function newval = e2i_data(mpc, val, ordering, dim)
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See http://www.pserc.cornell.edu/matpower/ for more info.
+%   See https://matpower.org for more info.
 
 if ~isfield(mpc, 'order')
     error('e2i_data: mpc does not have the ''order'' field required to convert from external to internal numbering.');

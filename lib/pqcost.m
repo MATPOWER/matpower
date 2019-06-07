@@ -13,7 +13,7 @@ function [pcost, qcost] = pqcost(gencost, ng, on)
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See http://www.pserc.cornell.edu/matpower/ for more info.
+%   See https://matpower.org for more info.
 
 if nargin < 3
     on = (1:ng)';

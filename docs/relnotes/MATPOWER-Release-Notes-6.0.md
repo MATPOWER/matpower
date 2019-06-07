@@ -150,5 +150,5 @@ previous versions, see Appendix H of the [MATPOWER User's Manual][2].
 [6]: https://github.com/MATPOWER/mips
 [7]: https://github.com/MATPOWER/mptest
 [8]: https://github.com/MATPOWER/
-[9]: http://www.pserc.cornell.edu/matpower/mailinglists.html#devlist
+[9]: https://matpower.org/mailing-lists/#devlist
 [10]: https://github.com/MATPOWER/most/blob/master/docs/MOST-manual.pdf

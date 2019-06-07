@@ -102,7 +102,7 @@ function mpc = toggle_softlims(mpc, on_off)
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See http://www.pserc.cornell.edu/matpower/ for more info.
+%   See https://matpower.org for more info.
 
 if strcmp(upper(on_off), 'ON')
     %% check for proper softlims inputs

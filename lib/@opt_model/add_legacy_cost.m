@@ -72,7 +72,7 @@ function om = add_legacy_cost(om, name, idx, varargin)
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See http://www.pserc.cornell.edu/matpower/ for more info.
+%   See https://matpower.org for more info.
 
 if iscell(idx)
     cp = varargin{1};

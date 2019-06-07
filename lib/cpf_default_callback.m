@@ -115,7 +115,7 @@ function [nx, cx, done, rollback, evnts, cb_data, results] = ...
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See http://www.pserc.cornell.edu/matpower/ for more info.
+%   See https://matpower.org for more info.
 
 %% skip if rollback, except if it is a FINAL call
 if rollback && k > 0

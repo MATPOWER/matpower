@@ -24,7 +24,7 @@ function [V_hat, lam_hat] = cpf_predictor(V, lam, z, step, pv, pq)
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See http://www.pserc.cornell.edu/matpower/ for more info.
+%   See https://matpower.org for more info.
 
 %% sizes
 nb = length(V);

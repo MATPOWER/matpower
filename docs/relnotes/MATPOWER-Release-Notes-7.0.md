@@ -260,9 +260,9 @@ previous versions, see Appendix H of the [MATPOWER User's Manual][2].
 [1]: https://github.com/MATPOWER/matpower/blob/master/CHANGES.md
 [2]: https://github.com/MATPOWER/matpower/blob/master/docs/MATPOWER-manual.pdf
 [3]: https://github.com/GridMod/RTS-GMLC
-[4]: http://www.pserc.cornell.edu/matpower/
-[5]: http://www.pserc.cornell.edu/matpower/TN3-More-OPF-Derivatives.pdf
-[6]: http://www.pserc.cornell.edu/matpower/TN4-OPF-Derivatives-Cartesian.pdf
-[7]: http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-7.0b1.pdf
-[8]: http://www.pserc.cornell.edu/matpower/docs/MIPS-manual-1.3.pdf
-[9]: http://www.pserc.cornell.edu/matpower/docs/MOST-manual-1.0.1.pdf
+[4]: https://matpower.org
+[5]: https://matpower.org/docs/TN3-More-OPF-Derivatives.pdf
+[6]: https://matpower.org/docs/TN4-OPF-Derivatives-Cartesian.pdf
+[7]: https://matpower.org/docs/MATPOWER-manual-7.0b1.pdf
+[8]: https://matpower.org/docs/MIPS-manual-1.3.pdf
+[9]: https://matpower.org/docs/MOST-manual-1.0.1.pdf

@@ -3,7 +3,7 @@
 A Power System Simulation Package for MATLAB and Octave
 -------------------------------------------------------
 
-- **MATPOWER Website**          - http://www.pserc.cornell.edu/matpower/
+- **MATPOWER Website**          - https://matpower.org
 - **MATPOWER GitHub Project**   - https://github.com/MATPOWER/matpower
 
 MATPOWER is a package of M-files for solving power flow, continuation
@@ -166,11 +166,11 @@ There are four primary sources of documentation for MATPOWER.
 The MATPOWER and MOST User's Manuals are included in the distribution
 ([`docs/MATPOWER-manual.pdf`][8] and [`most/docs/MOST-manual.pdf`][10]) and
 the latest released versions are always available online, respectively, at:
-  - http://www.pserc.cornell.edu/matpower/MATPOWER-manual.pdf
-  - http://www.pserc.cornell.edu/matpower/MOST-manual.pdf.
+  - https://matpower.org/MATPOWER-manual.pdf
+  - https://matpower.org/MOST-manual.pdf.
 
 Previous versions are also available at
-  - http://www.pserc.cornell.edu/matpower/docs/.
+  - https://matpower.org/doc/manuals
 
 #### Built-in Help
 
@@ -240,20 +240,20 @@ Publications and Tech Notes
 
 6.  R. D. Zimmerman, ["Uniform Price Auctions and Optimal
     Power Flow,"][20] *MATPOWER Technical Note 1*, February 2010.  
-    Available: http://www.pserc.cornell.edu/matpower/TN1-OPF-Auctions.pdf  
+    Available: https://matpower.org/docs/TN1-OPF-Auctions.pdf  
     doi: [10.1109/TSTE.2018.2865454](https://doi.org/10.5281/zenodo.3237850).
 
 7.  R. D. Zimmerman, ["AC Power Flows, Generalized OPF Costs
     and their Derivatives using Complex Matrix Notation,"][21]
     *MATPOWER Technical Note 2*, February 2010.  
     Available:
-    http://www.pserc.cornell.edu/matpower/TN2-OPF-Derivatives.pdf  
+    https://matpower.org/docs/TN2-OPF-Derivatives.pdf  
     doi: [10.5281/zenodo.3237866](https://doi.org/10.5281/zenodo.3237866).
 
 8.  B. Sereeter and R. D. Zimmerman, ["Addendum to AC Power Flows and
     their Derivatives using Complex Matrix Notation: Nodal Current
     Balance,"][22] *MATPOWER Technical Note 3*, April 2018.  
-    Available: http://www.pserc.cornell.edu/matpower/TN3-More-OPF-Derivatives.pdf  
+    Available: https://matpower.org/docs/TN3-More-OPF-Derivatives.pdf  
     doi: [10.5281/zenodo.3237900](https://doi.org/10.5281/zenodo.3237900).
 
 9.  B. Sereeter and R. D. Zimmerman, ["AC Power Flows, Generalized
@@ -261,7 +261,7 @@ Publications and Tech Notes
     and Cartesian Coordinate Voltages,"][23] *MATPOWER Technical
     Note 4*, April 2018.  
     Available:
-    http://www.pserc.cornell.edu/matpower/TN4-OPF-Derivatives-Cartesian.pdf  
+    https://matpower.org/docs/TN4-OPF-Derivatives-Cartesian.pdf  
     doi: [10.5281/zenodo.3237909](https://doi.org/10.5281/zenodo.3237909).
 
 
@@ -313,7 +313,7 @@ the specific version of the software used, with the version-specfic DOI.
 For example, for version 6.0 of MATPOWER, use:
 
 >   R. D. Zimmerman, C. E. Murillo-Sanchez (2016). *MATPOWER (Version 6.0)*
-    [Software]. Available: http://www.pserc.cornell.edu/matpower/  
+    [Software]. Available: https://matpower.org  
     doi: [10.5281/zenodo.3237810](https://doi.org/10.5281/zenodo.3237810)
 
 To cite the MATPOWER software generally, without reference to a specific
@@ -321,7 +321,7 @@ version, use the following citation and DOI, with *\<YEAR\>* replaced by the
 year of the most recent release:
 
 >   R. D. Zimmerman, C. E. Murillo-Sanchez (*\<YEAR\>*). *MATPOWER*
-    [Software]. Available: http://www.pserc.cornell.edu/matpower/  
+    [Software]. Available: https://matpower.org  
     doi: [10.5281/zenodo.3236535][33]
 
 A list of versions with release dates and version-specific DOI's can be
@@ -407,7 +407,7 @@ MATPOWER is distributed as open-source under the [3-clause BSD license][30].
 
 ---
 
-[1]: http://www.pserc.cornell.edu/matpower/
+[1]: https://matpower.org
 [2]: https://github.com/MATPOWER/matpower
 [3]: https://www.mathworks.com/
 [4]: https://www.gnu.org/software/octave/
@@ -420,26 +420,26 @@ MATPOWER is distributed as open-source under the [3-clause BSD license][30].
 [7d]: https://github.com/MATPOWER/matpower-extras
 [7e]: docker/MATPOWER-Docker.md
 [8]: docs/MATPOWER-manual.pdf
-[9]: http://www.pserc.cornell.edu/matpower/docs/ref/
+[9]: https://matpower.org/docs/ref/
 [10]: most/docs/MOST-manual.pdf
 [11]: CHANGES.md
-[12]: http://www.pserc.cornell.edu/matpower/MATPOWER-paper.pdf
+[12]: https://matpower.org/docs/MATPOWER-paper.pdf
 [13]: https://doi.org/10.1109/TPWRS.2010.2051168
-[14]: http://www.pserc.cornell.edu/matpower/MATPOWER-OPF.pdf
+[14]: https://matpower.org/docs/MATPOWER-OPF.pdf
 [15]: https://doi.org/10.1109/PES.2009.5275967
-[16]: http://www.pserc.cornell.edu/matpower/MATPOWER-OPF-slides.pdf
+[16]: https://matpower.org/docs/MATPOWER-OPF-slides.pdf
 [17]: https://doi.org/10.1109/TPWRS.2007.901301
 [18]: https://doi.org/10.1109/TSG.2013.2281001
 [19]: https://doi.org/10.1109/TSTE.2018.2865454
-[20]: http://www.pserc.cornell.edu/matpower/TN1-OPF-Auctions.pdf
-[21]: http://www.pserc.cornell.edu/matpower/TN2-OPF-Derivatives.pdf
-[22]: http://www.pserc.cornell.edu/matpower/TN3-More-OPF-Derivatives.pdf
-[23]: http://www.pserc.cornell.edu/matpower/TN4-OPF-Derivatives-Cartesian.pdf
+[20]: https://matpower.org/docs/TN1-OPF-Auctions.pdf
+[21]: https://matpower.org/docs/TN2-OPF-Derivatives.pdf
+[22]: https://matpower.org/docs/TN3-More-OPF-Derivatives.pdf
+[23]: https://matpower.org/docs/TN4-OPF-Derivatives-Cartesian.pdf
 [24]: https://github.com/MATPOWER/most
-[25]: http://www.pserc.cornell.edu/matpower/mailinglists.html#announcelist
-[26]: http://www.pserc.cornell.edu/matpower/mailinglists.html#discusslist
-[27]: http://www.pserc.cornell.edu/matpower/mailinglists.html#devlist
-[28]: http://www.pserc.cornell.edu/matpower/mailinglists.html
+[25]: https://matpower.org/mailing-lists/#announcelist
+[26]: https://matpower.org/mailing-lists/#discusslist
+[27]: https://matpower.org/mailing-lists/#devlist
+[28]: https://matpower.org/mailing-lists
 [29]: https://github.com/MATPOWER/matpower/issues
 [30]: LICENSE
 [31]: CITATION

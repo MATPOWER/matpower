@@ -248,7 +248,7 @@ function [options, names] = mpoption_old(varargin)
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See http://www.pserc.cornell.edu/matpower/ for more info.
+%   See https://matpower.org for more info.
 
 %%-----  set up default option values  -----
 i = 1;

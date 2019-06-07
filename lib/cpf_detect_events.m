@@ -38,7 +38,7 @@ function [rollback, evnts, cef] = cpf_detect_events(cpf_events, cef, pef, step, 
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See http://www.pserc.cornell.edu/matpower/ for more info.
+%   See https://matpower.org for more info.
 
 %% initialize result variables
 rollback = 0;

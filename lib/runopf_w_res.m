@@ -51,7 +51,7 @@ function [varargout] = runopf_w_res(varargin)
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See http://www.pserc.cornell.edu/matpower/ for more info.
+%   See https://matpower.org for more info.
 
 mpc = loadcase(varargin{1});
 mpc = toggle_reserves(mpc, 'on');

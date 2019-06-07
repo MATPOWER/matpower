@@ -22,7 +22,7 @@ function label = describe_idx(om, set_type, idxs)
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See http://www.pserc.cornell.edu/matpower/ for more info.
+%   See https://matpower.org for more info.
 
 label = cell(size(idxs));       %% pre-allocate return cell array
 for i = 1:length(idxs(:))

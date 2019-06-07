@@ -26,7 +26,7 @@ function [f, df, d2f] = opf_legacy_user_cost_fcn(x, cp)
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See http://www.pserc.cornell.edu/matpower/ for more info.
+%   See https://matpower.org for more info.
 
 %%----- initialize -----
 %% unpack data

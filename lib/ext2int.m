@@ -83,7 +83,7 @@ function [i2e, bus, gen, branch, areas] = ext2int(bus, gen, branch, areas)
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See http://www.pserc.cornell.edu/matpower/ for more info.
+%   See https://matpower.org for more info.
 
 if isstruct(bus)
     mpc = bus;

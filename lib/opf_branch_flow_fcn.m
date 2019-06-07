@@ -38,7 +38,7 @@ function [h, dh] = opf_branch_flow_fcn(x, mpc, Yf, Yt, il, mpopt)
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See http://www.pserc.cornell.edu/matpower/ for more info.
+%   See https://matpower.org for more info.
 
 %%----- initialize -----
 %% define named indices into data matrices

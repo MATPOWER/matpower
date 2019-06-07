@@ -10,7 +10,7 @@
 %
 %   MATPOWER releases can be downloaded from the MATPOWER website:
 %
-%       http://www.pserc.cornell.edu/matpower/
+%       https://matpower.org
 %
 %   and the latest stable and work-in-progress versions can always be
 %   downloaded or cloned from the MATPOWER GitHub project, whose
@@ -26,4 +26,4 @@
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See http://www.pserc.cornell.edu/matpower/ for more info.
+%   See https://matpower.org for more info.

@@ -16,7 +16,7 @@ function [Va, success] = dcpf(B, Pbus, Va0, ref, pv, pq)
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See http://www.pserc.cornell.edu/matpower/ for more info.
+%   See https://matpower.org for more info.
 
 %% constant
 Va_threshold = 1e5;     %% arbitrary threshold on |Va| for declaring failure

@@ -19,7 +19,7 @@ function ef = cpf_nose_event(cb_data, cx)
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See http://www.pserc.cornell.edu/matpower/ for more info.
+%   See https://matpower.org for more info.
 
 %% event function value is dlam, the last element of the
 %% normalized tangent vector at the current soln

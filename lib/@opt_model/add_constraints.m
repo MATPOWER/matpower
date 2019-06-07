@@ -125,7 +125,7 @@ function om = add_constraints(om, name, varargin)
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See http://www.pserc.cornell.edu/matpower/ for more info.
+%   See https://matpower.org for more info.
 
 %% determine whether it's linear or nonlinear, simple or indexed
 %% and if indexed, just setting dimensions or actually adding constraints

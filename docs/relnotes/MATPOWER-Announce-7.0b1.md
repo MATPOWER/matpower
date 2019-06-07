@@ -55,5 +55,5 @@ Appendix H of the [MATPOWER User's Manual][3].
 [2]: https://github.com/MATPOWER/matpower/blob/master/CHANGES.md
 [3]: https://github.com/MATPOWER/matpower/blob/master/docs/MATPOWER-manual.pdf
 [4]: https://github.com/GridMod/RTS-GMLC
-[5]: http://www.pserc.cornell.edu/matpower/TN3-More-OPF-Derivatives.pdf
-[6]: http://www.pserc.cornell.edu/matpower/TN4-OPF-Derivatives-Cartesian.pdf
+[5]: https://matpower.org/docs/TN3-More-OPF-Derivatives.pdf
+[6]: https://matpower.org/docs/TN4-OPF-Derivatives-Cartesian.pdf

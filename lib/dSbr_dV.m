@@ -84,12 +84,12 @@ function [dSf_dV1, dSf_dV2, dSt_dV1, dSt_dV2, Sf, St] = dSbr_dV(branch, Yf, Yt, 
 %   [TN2]  R. D. Zimmerman, "AC Power Flows, Generalized OPF Costs and
 %          their Derivatives using Complex Matrix Notation", MATPOWER
 %          Technical Note 2, February 2010. [Online]. Available:
-%          http://www.pserc.cornell.edu/matpower/TN2-OPF-Derivatives.pdf
+%          https://matpower.org/docs/TN2-OPF-Derivatives.pdf
 %          doi: 10.5281/zenodo.3237866
 %   [TN4]  B. Sereeter and R. D. Zimmerman, "AC Power Flows and their
 %          Derivatives using Complex Matrix Notation and Cartesian
 %          Coordinate Voltages," MATPOWER Technical Note 4, April 2018.
-%          [Online]. Available: http://www.pserc.cornell.edu/matpower/TN4-OPF-Derivatives-Cartesian.pdf
+%          [Online]. Available: https://matpower.org/docs/TN4-OPF-Derivatives-Cartesian.pdf
 %          doi: 10.5281/zenodo.3237909
 
 %   MATPOWER
@@ -99,7 +99,7 @@ function [dSf_dV1, dSf_dV2, dSt_dV1, dSt_dV2, Sf, St] = dSbr_dV(branch, Yf, Yt, 
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See http://www.pserc.cornell.edu/matpower/ for more info.
+%   See https://matpower.org for more info.
 
 %% define named indices into bus, gen, branch matrices
 [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...

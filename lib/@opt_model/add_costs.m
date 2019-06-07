@@ -74,7 +74,7 @@ function om = add_costs(om, name, idx, varargin)
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See http://www.pserc.cornell.edu/matpower/ for more info.
+%   See https://matpower.org for more info.
 
 if iscell(idx) && isempty(varargin) %% just setting dimensions for indexed set
     om.init_indexed_name('cost', name, idx);

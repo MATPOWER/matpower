@@ -241,8 +241,8 @@ Version 7.0b1 - *Oct 31, 2018*
     - `opf_vref_fcn`, `opf_vref_hess`
   - Add two new Technical Notes (TN3, TN4) and updated revision of TN2.
     *Thanks to Baljinnyam Sereeter.*
-    - [MATPOWER Technical Note 3](http://www.pserc.cornell.edu/matpower/TN3-More-OPF-Derivatives.pdf)
-    - [MATPOWER Technical Note 4](http://www.pserc.cornell.edu/matpower/TN4-OPF-Derivatives-Cartesian.pdf)
+    - [MATPOWER Technical Note 3](https://matpower.org/docs/TN3-More-OPF-Derivatives.pdf)
+    - [MATPOWER Technical Note 4](https://matpower.org/docs/TN4-OPF-Derivatives-Cartesian.pdf)
   - Add `d2Abr_dV2()` to replace the (now deprecated) separate functions
     `d2AIbr_dV2()` and `d2ASbr_dV2()`.
 

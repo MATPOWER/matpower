@@ -26,7 +26,7 @@ The following are some guidelines, in no particular order.
      %
      %   This file is part of MATPOWER.
      %   Covered by the 3-clause BSD License (see LICENSE file for details).
-     %   See http://www.pserc.cornell.edu/matpower/ for more info.
+     %   See https://matpower.org for more info.
      ```
 
 - Write tests to cover all functionality.
@@ -72,4 +72,4 @@ The following are some guidelines, in no particular order.
   misuse of a function.
 
 
-[1]: http://www.pserc.cornell.edu/matpower/mailinglists.html#devlist
+[1]: https://matpower.org/mailing-lists/#devlist

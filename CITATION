@@ -43,7 +43,7 @@ the specific version of the software used with the version-specfic DOI.
 For example, for version 6.0 of MATPOWER, use:
 
   R. D. Zimmerman, C. E. Murillo-Sanchez (2016). MATPOWER (Version 6.0)
-  [Software]. Available: http://www.pserc.cornell.edu/matpower/
+  [Software]. Available: https://matpower.org
   doi: 10.5281/zenodo.3237810
 
 To cite the MATPOWER software generally, without reference to a specific
@@ -51,7 +51,7 @@ version, use the following citation and DOI, with <YEAR> replaced by the
 year of the most recent release:
 
   R. D. Zimmerman, C. E. Murillo-Sanchez (<YEAR>). MATPOWER
-  [Software]. Available: http://www.pserc.cornell.edu/matpower/
+  [Software]. Available: https://matpower.org
   doi: 10.5281/zenodo.3236535
 
 A list of versions with release dates and version-specific DOI's can be
@@ -91,42 +91,3 @@ increasing the value of your MATPOWER-related research publications, we
 strongly encourage you to also publish, whenever possible, all of the
 code and data required to generate the results you are publishing.
 Zenodo/GitHub and IEEE DataPort are two of many available options.
-
-
-
-
-
-
-
-
-
-
-version specific software
-
-  R. D. Zimmerman, C. E. Murillo-Sanchez (2019). MATPOWER (Version 7.0)
-  [Software]. Available: http://www.pserc.cornell.edu/matpower/
-  doi: VERSION-SPECIFIC-DOI
-
-non-version software
-
-  R. D. Zimmerman, C. E. Murillo-Sanchez (2019). MATPOWER
-  [Software]. Available: http://www.pserc.cornell.edu/matpower/
-  doi: GENERAL-DOI
-
-
-manual
-
-  R. D. Zimmerman, C. E. Murillo-Sanchez. MATPOWER User's Manual, Version 7.0b1.
-  2019. [Online]. Available: https://matpower.org/docs/MATPOWER-manual-7.0b1.pdf
-  doi: VERSION-SPECIFIC-DOI
-
-  R. D. Zimmerman, C. E. Murillo-Sanchez. MATPOWER User's Manual. (2019).
-  [Online]. Available: https://matpower.org/docs/MATPOWER-manual.pdf
-  doi: GENERAL-DOI
-
-
-
-
-with each release:
-    update version number and version specific DOI for software and manual
-    update pub year in all citations
