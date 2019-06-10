@@ -166,6 +166,7 @@
 \newcommand{\mostver}[0]{1.0.1}
 \newcommand{\md}[0]{{\most{} Data struct}}
 \newcommand{\syngrid}[0]{{SynGrid}}
+\newcommand{\syngridver}[0]{1.0}
 \newcommand{\syngridurl}[0]{https://github.com/MATPOWER/mx-syngrid}
 \newcommand{\syngridlink}[0]{\href{\syngridurl}{\syngrid{}}}
 \newcommand{\powerweb}[0]{{\sc PowerWeb}}
@@ -1138,13 +1139,13 @@ In \matpower{} setting the \code{pf.v\_cartesian} option to 1 (0 by default) sel
 
 Another variation of the standard AC power flow problem uses current balance equations in place of the power balance equations in \eqref{eq:g_acpf} and \eqref{eq:g_acpf_SC}. If we let $M$ and $N$ represent the real and imaginary parts, respectively, of the current, we can express the current balance functions for the polar form as
 \begin{alignat}{2}
-g_M(\Theta, V_m, P_g, Q_g) &= \Re\{I_\mathrm{bus}(\Theta, V_m) + [V^*]^{-1}(S_d - C_g S_g)^*\} &&= 0 \label{eq:polar_curbal_m} \\
-g_N(\Theta, V_m, P_g, Q_g) &= \Im\{I_\mathrm{bus}(\Theta, V_m) + [V^*]^{-1}(S_d - C_g S_g)^*\} &&= 0 \label{eq:polar_curbal_n}
+g_M(\Theta, V_m, P_g, Q_g) &= \Re\{I_\mathrm{bus}(\Theta, V_m) + [V^*]^{-1}(S_d - C_g S_g)^*\} &&= 0 \label{eq:polar_curbal_m_pf} \\
+g_N(\Theta, V_m, P_g, Q_g) &= \Im\{I_\mathrm{bus}(\Theta, V_m) + [V^*]^{-1}(S_d - C_g S_g)^*\} &&= 0 \label{eq:polar_curbal_n_pf}
 \end{alignat}
 and for the cartesian form as
 \begin{alignat}{2}
-g_M(U, W, P_g, Q_g) &= \Re\{I_\mathrm{bus}(U, W) + [V^*]^{-1}(S_d - C_g S_g)^*\} &&= 0 \label{eq:cart_curbal_m} \\
-g_N(U, W, P_g, Q_g) &= \Im\{I_\mathrm{bus}(U, W) + [V^*]^{-1}(S_d - C_g S_g)^*\} &&= 0 \label{eq:cart_curbal_n}
+g_M(U, W, P_g, Q_g) &= \Re\{I_\mathrm{bus}(U, W) + [V^*]^{-1}(S_d - C_g S_g)^*\} &&= 0 \label{eq:cart_curbal_m_pf} \\
+g_N(U, W, P_g, Q_g) &= \Im\{I_\mathrm{bus}(U, W) + [V^*]^{-1}(S_d - C_g S_g)^*\} &&= 0 \label{eq:cart_curbal_n_pf}
 \end{alignat}
 where $S_d = P_d + j Q_d$, $S_g = P_g + j Q_g$ and $[V^*]^{-1}$ is a diagonal matrix whose $i$-th diagonal entry is $1/v_i^*$, that is $\frac{1}{v_m^i}e^{j\theta_i}$ or $1/(u_i - j w_i)$.
 
@@ -2130,13 +2131,13 @@ In \matpower{} setting the \code{opf.v\_cartesian} option to 1 (0 by default) se
 
 Another variation of the standard AC OPF problem uses current balance constraints in place of the power balance constraints~\eqref{eq:polar_pwrbal_p}--\eqref{eq:polar_pwrbal_q} or \eqref{eq:cart_pwrbal_p}--\eqref{eq:cart_pwrbal_q}. If we let $M$ and $N$ represent the real and imaginary parts, respectively, of the current, we can express the current balance functions for the polar form as
 \begin{alignat}{2}
-g_M(\Theta, V_m, P_g, Q_g) &= \Re\{I_\mathrm{bus}(\Theta, V_m) + [V^*]^{-1}(S_d - C_g S_g)^*\} &&= 0 \label{eq:polar_curbal_m} \\
-g_N(\Theta, V_m, P_g, Q_g) &= \Im\{I_\mathrm{bus}(\Theta, V_m) + [V^*]^{-1}(S_d - C_g S_g)^*\} &&= 0 \label{eq:polar_curbal_n}
+g_M(\Theta, V_m, P_g, Q_g) &= \Re\{I_\mathrm{bus}(\Theta, V_m) + [V^*]^{-1}(S_d - C_g S_g)^*\} &&= 0 \label{eq:polar_curbal_m_opf} \\
+g_N(\Theta, V_m, P_g, Q_g) &= \Im\{I_\mathrm{bus}(\Theta, V_m) + [V^*]^{-1}(S_d - C_g S_g)^*\} &&= 0 \label{eq:polar_curbal_n_opf}
 \end{alignat}
 and for the cartesian form as
 \begin{alignat}{2}
-g_M(U, W, P_g, Q_g) &= \Re\{I_\mathrm{bus}(U, W) + [V^*]^{-1}(S_d - C_g S_g)^*\} &&= 0 \label{eq:cart_curbal_m} \\
-g_N(U, W, P_g, Q_g) &= \Im\{I_\mathrm{bus}(U, W) + [V^*]^{-1}(S_d - C_g S_g)^*\} &&= 0 \label{eq:cart_curbal_n}
+g_M(U, W, P_g, Q_g) &= \Re\{I_\mathrm{bus}(U, W) + [V^*]^{-1}(S_d - C_g S_g)^*\} &&= 0 \label{eq:cart_curbal_m_opf} \\
+g_N(U, W, P_g, Q_g) &= \Im\{I_\mathrm{bus}(U, W) + [V^*]^{-1}(S_d - C_g S_g)^*\} &&= 0 \label{eq:cart_curbal_n_opf}
 \end{alignat}
 where $S_d = P_d + j Q_d$, $S_g = P_g + j Q_g$ and $[V^*]^{-1}$ is a diagonal matrix whose $i$-th diagonal entry is $1/v_i^*$, that is $\frac{1}{v_m^i}e^{j\theta_i}$ or $1/(u_i - j w_i)$.
 
@@ -3407,18 +3408,18 @@ f_u(\hat{x}) = \trans{c_\mathrm{v}} s.
 \end{equation}
 
 Take, as an example, branch flow limits.
-The flow constraints in \eqref{eq:acopf_ieqf} and \eqref{eq:acopf_ieqt} are rewritten by replacing the right hand side with a flow violation variable $s_{\code{rate\_a}}^i$
+The flow constraints in \eqref{eq:acopf_ieqf} and \eqref{eq:acopf_ieqt} are rewritten by replacing the right hand side with a flow violation variable $s_{\tt{rate\_a}}^i$
 \begin{align}
- s_{\code{rate\_a}}^i &\ge 0 \qquad\qquad \forall{i}\\
-h_f^i(\Theta, V_m) = \left| f_f^i(\Theta, V_m) \right| - f^{i,\mathrm{max}} &\le s_{\code{rate\_a}}^i \qquad \forall{i} \\
-h_t^i(\Theta, V_m) = \left| f_t^i(\Theta, V_m) \right| - f^{i,\mathrm{max}} &\le s_{\code{rate\_a}}^i \qquad \forall{i}.
+ s_{\tt{rate\_a}}^i &\ge 0 \qquad\qquad \forall{i}\\
+h_f^i(\Theta, V_m) = \left| f_f^i(\Theta, V_m) \right| - f^{i,\mathrm{max}} &\le s_{\tt{rate\_a}}^i \qquad \forall{i} \\
+h_t^i(\Theta, V_m) = \left| f_t^i(\Theta, V_m) \right| - f^{i,\mathrm{max}} &\le s_{\tt{rate\_a}}^i \qquad \forall{i}.
 \end{align}
 
 In the case of AC flow constraints, the flow functions $f_f^i$ and $f_t^i$ are nonlinear and can be either apparent power, active power, or current as shown in \eqref{eq:flowlimoptions}. In the case of DC flow constraints, where there are no losses, these flows can be implemented in terms of the flow at the \emph{from} end of the line and its negative, both linear functions of the bus voltage angles, based on \eqref{eq:dcopf_ieqf} and \eqref{eq:dcopf_ieqt}.
 \begin{align}
-s_{\code{rate\_a}}^i &\ge 0 \qquad\qquad \forall{i}\\
-B_f^i \Theta + p_{f,\mathrm{shift}}^i -  p_f^{i,\mathrm{max}} &\le s_{\code{rate\_a}}^i \qquad \forall{i}  \\
--B_f^i \Theta - p_{f,\mathrm{shift}}^i -  p_f^{i,\mathrm{max}} &\le s_{\code{rate\_a}}^i \qquad \forall{i}. \label{eq:softlimconstraint}
+s_{\tt{rate\_a}}^i &\ge 0 \qquad\qquad \forall{i}\\
+B_f^i \Theta + p_{f,\mathrm{shift}}^i -  p_f^{i,\mathrm{max}} &\le s_{\tt{rate\_a}}^i \qquad \forall{i}  \\
+-B_f^i \Theta - p_{f,\mathrm{shift}}^i -  p_f^{i,\mathrm{max}} &\le s_{\tt{rate\_a}}^i \qquad \forall{i}. \label{eq:softlimconstraint}
 \end{align}
 The feasible area for the DC case is illustrated in \figurename~\ref{fig:softlims}.
 
@@ -3442,16 +3443,16 @@ The feasible area for the DC case is illustrated in \figurename~\ref{fig:softlim
 \toprule
 name & hard-limit formulation & soft-limit formulation \\ 
 \midrule
-\code{VMIN}, \code{VMAX}\tnote{\dag} & $v^i_m \geq v^{i,\text{min}}_m $,\quad $v^i_m \leq v^{i,\text{max}}_m$ & $v^i_m + s^i_{\code{vmin}} \geq v^{i,\text{min}}_m$,\quad $v^i_m - s^i_{\code{vmax}} \leq v^{i,\text{max}}_m$ \\
-%\code{VMAX}\tnote{\dag} &$v^i_m \leq v^{i,\text{max}}_m$ & $v^i_m - s^i_{\code{vmax}} \leq v^{i,\text{max}}_m$ \\
-\code{RATE\_A}\tnote{\ddag} & $\left| f_f^i(\Theta, V_m) \right|  \le f^i_{\text{max}}$ & $\left| f_f^i(\Theta, V_m) \right| - s_{\code{rate\_a}} \le f^i_{\text{max}}$ \\
-& $\left| f_t^i(\Theta, V_m) \right|  \le f^i_{\text{max}}$ & $\left| f_t^i(\Theta, V_m) \right| - s_{\code{rate\_a}} \le f^i_{\text{max}}$ \\
-\code{PMIN}, \code{PMAX} & $p^i_g \geq p^{i,\text{min}}_g$,\quad $p^i_g \leq p^{i,\text{max}}_g$ & $p^i_g + s_{\code{pmin}} \geq p^{i,\text{min}}_g$,\quad $p^i_g - s_{\code{pmax}} \leq p^{i,\text{max}}_g$  \\
-%\code{PMAX} & $p^i_g \leq p^{i,\text{max}}_g$ &  $p^i_g - s_{\code{pmax}} \leq p^{i,\text{max}}_g$  \\
-\code{QMIN}, \code{QMAX}\tnote{\dag} & $q^i_g \geq q^{i,\text{min}}_g$, \quad $q^i_g \leq q^{i,\text{max}}_g$ &  $q^i_g + s_{\code{qmin}} \geq q^{i,\text{min}}_g$, \quad $q^i_g - s_{\code{qmax}} \leq q^{i,\text{max}}_g$ \\
-%\code{QMAX}\tnote{\dag} & $q^i_g \leq q^{i,\text{max}}_g$ &  $q^i_g - s_{\code{qmax}} \leq q^{i,\text{max}}_g$  \\
-\code{ANGMIN} & $\theta^i_f - \theta^i_t \geq \Delta\theta^{i,\text{min}}$ & $\theta^i_f - \theta^i_t + s_{\code{angmin}} \geq \Delta\theta^{i,\text{min}}$  \\
-\code{ANGMAX} & $\theta^i_f - \theta^i_t \leq \Delta\theta^{i,\text{max}}$ & $\theta^i_f - \theta^i_t - s_{\code{angmax}} \leq \Delta\theta^{i,\text{max}}$  \\
+\code{VMIN}, \code{VMAX}\tnote{\dag} & $v^i_m \geq v^{i,\text{min}}_m $,\quad $v^i_m \leq v^{i,\text{max}}_m$ & $v^i_m + s^i_{\tt{vmin}} \geq v^{i,\text{min}}_m$,\quad $v^i_m - s^i_{\tt{vmax}} \leq v^{i,\text{max}}_m$ \\
+%\code{VMAX}\tnote{\dag} &$v^i_m \leq v^{i,\text{max}}_m$ & $v^i_m - s^i_{\tt{vmax}} \leq v^{i,\text{max}}_m$ \\
+\code{RATE\_A}\tnote{\ddag} & $\left| f_f^i(\Theta, V_m) \right|  \le f^i_{\text{max}}$ & $\left| f_f^i(\Theta, V_m) \right| - s_{\tt{rate\_a}} \le f^i_{\text{max}}$ \\
+& $\left| f_t^i(\Theta, V_m) \right|  \le f^i_{\text{max}}$ & $\left| f_t^i(\Theta, V_m) \right| - s_{\tt{rate\_a}} \le f^i_{\text{max}}$ \\
+\code{PMIN}, \code{PMAX} & $p^i_g \geq p^{i,\text{min}}_g$,\quad $p^i_g \leq p^{i,\text{max}}_g$ & $p^i_g + s_{\tt{pmin}} \geq p^{i,\text{min}}_g$,\quad $p^i_g - s_{\tt{pmax}} \leq p^{i,\text{max}}_g$  \\
+%\code{PMAX} & $p^i_g \leq p^{i,\text{max}}_g$ &  $p^i_g - s_{\tt{pmax}} \leq p^{i,\text{max}}_g$  \\
+\code{QMIN}, \code{QMAX}\tnote{\dag} & $q^i_g \geq q^{i,\text{min}}_g$, \quad $q^i_g \leq q^{i,\text{max}}_g$ &  $q^i_g + s_{\tt{qmin}} \geq q^{i,\text{min}}_g$, \quad $q^i_g - s_{\tt{qmax}} \leq q^{i,\text{max}}_g$ \\
+%\code{QMAX}\tnote{\dag} & $q^i_g \leq q^{i,\text{max}}_g$ &  $q^i_g - s_{\tt{qmax}} \leq q^{i,\text{max}}_g$  \\
+\code{ANGMIN} & $\theta^i_f - \theta^i_t \geq \Delta\theta^{i,\text{min}}$ & $\theta^i_f - \theta^i_t + s_{\tt{angmin}} \geq \Delta\theta^{i,\text{min}}$  \\
+\code{ANGMAX} & $\theta^i_f - \theta^i_t \leq \Delta\theta^{i,\text{max}}$ & $\theta^i_f - \theta^i_t - s_{\tt{angmax}} \leq \Delta\theta^{i,\text{max}}$  \\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -3584,9 +3585,9 @@ Table~\ref{tab:hlmod} summarizes the new hard limits and the corresponding bound
 \code{h\_mod} & new hard limit $h_\mathrm{new}^{i,\mathrm{lim}}$ & upper bound on violation variable $s^i$ \\
 \midrule
 \codeq{remove} & $\pm\infty$\tnote{\dag} & $\infty$ \\
-\codeq{replace} & $\code{hl\_val}$       & $ \left|\code{hl\_val} -  h_\mathrm{orig}^{i,\mathrm{lim}}\right|$ \\
-\codeq{scale}    & $\code{hl\_val}\cdot h_\mathrm{orig}^{i,\mathrm{lim}}$	& $\left|(\code{hl\_val} - 1) \cdot h_\mathrm{orig}^{i,\mathrm{lim}}\right|$ \\
-\codeq{shift}	&$h_\mathrm{orig}^{i,\mathrm{lim}} \pm \code{hl\_val}$\tnote{\dag} &  $\code{hl\_val}$ \\
+\codeq{replace} & $\tt{hl\_val}$       & $ \left|\tt{hl\_val} -  h_\mathrm{orig}^{i,\mathrm{lim}}\right|$ \\
+\codeq{scale}    & $\tt{hl\_val}\cdot h_\mathrm{orig}^{i,\mathrm{lim}}$	& $\left|(\tt{hl\_val} - 1) \cdot h_\mathrm{orig}^{i,\mathrm{lim}}\right|$ \\
+\codeq{shift}	&$h_\mathrm{orig}^{i,\mathrm{lim}} \pm \tt{hl\_val}$\tnote{\dag} &  $\code{hl\_val}$ \\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -7368,7 +7369,7 @@ Load & Quantity Bought & Purchase Price \\
 \centering
 \begin{threeparttable}
 \caption{Smartmarket Files and Functions}
-\label{tab:opf}
+\label{tab:smartmkt}
 \footnotesize
 \begin{tabular}{ll}
 \toprule
