@@ -245,13 +245,13 @@ Publications and Tech Notes
     R. D. Zimmerman, H. D. Shin and R. J. Thomas, ["Using the MATPOWER
     Optimal Scheduling Tool to Test Power System Operation Methodologies
     Under Uncertainty,"][19] *Sustainable Energy, IEEE Transactions on*,
-    2018.
+    vol. 10, no. 3, pp. 1280-1289, July 2019.
     doi: [10.1109/TSTE.2018.2865454][19].
 
 6.  R. D. Zimmerman, ["Uniform Price Auctions and Optimal
     Power Flow,"][20] *MATPOWER Technical Note 1*, February 2010.  
     Available: https://matpower.org/docs/TN1-OPF-Auctions.pdf  
-    doi: [10.1109/TSTE.2018.2865454](https://doi.org/10.5281/zenodo.3237850).
+    doi: [10.5281/zenodo.3237850](https://doi.org/10.5281/zenodo.3237850).
 
 7.  R. D. Zimmerman, ["AC Power Flows, Generalized OPF Costs
     and their Derivatives using Complex Matrix Notation,"][21]
