@@ -2,6 +2,16 @@ Change history for MIPS
 =======================
 
 
+Version 1.3.1 - *Jun 20, 2019*
+------------------------------
+
+#### 6/20/19
+  - Release 1.3.1.
+  - Add CITATION file.
+  - Other miscellaneous documentation updates, e.g. MATPOWER website
+    links updated to https://matpower.org.
+
+
 Version 1.3 - *Oct 30, 2018*
 ----------------------------
 

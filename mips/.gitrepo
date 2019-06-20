@@ -6,7 +6,7 @@
 [subrepo]
 	remote = git@github.com:MATPOWER/mips
 	branch = master
-	commit = d56d44b18e615c5934937fe5112000c4aad8dc59
-	parent = c58dd59a1b85363fe055bb08e1c2d661de96d56e
+	commit = 16a57345f81a25b7342008afa2a08283592cc9a3
+	parent = 5ad055475ee1209c29d3c8ff3710c0cfe18e1219
 	cmdver = 0.4.0
 	method = merge

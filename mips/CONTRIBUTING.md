@@ -307,8 +307,8 @@ the optimization and power systems communities. **Thank you!**
 [2]: https://github.com/MATPOWER/matpower
 [3]: https://github.com/MATPOWER/mptest
 [4]: https://github.com/ingydotnet/git-subrepo
-[5]: http://www.pserc.cornell.edu/matpower/mailinglists.html#discusslist
-[6]: http://www.pserc.cornell.edu/matpower/mailinglists.html#devlist
+[5]: https://matpower.org/mailing-lists/#discusslist
+[6]: https://matpower.org/mailing-lists/#devlist
 [7]: https://github.com/MATPOWER/mips/issues
 [8]: https://www.mail-archive.com/matpower-l@cornell.edu/
 [9]: https://github.com/MATPOWER/matpower/issues

@@ -38,12 +38,13 @@ of MATLAB or Octave, including setting up your MATLAB path.
     tests require a functioning installation of [MP-Test][6]) The result
     should resemble the following:
 ```matlab
-  >> test_mips
-  t_mplinsolve....ok
-  t_mips..........ok
-  t_qps_mips......ok
-  All tests successful (136 of 136)
-  Elapsed time 0.11 seconds.
+>> test_mips
+  t_mplinsolve......ok (6 of 44 skipped)
+  t_mips............ok
+  t_mips_pardiso....ok (60 of 60 skipped)
+  t_qps_mips........ok
+  All tests successful (170 passed, 66 skipped of 236)
+  Elapsed time 0.09 seconds.
 ```
 
 Documentation
@@ -71,7 +72,7 @@ Publications
      ["On Computational Issues of Market-Based Optimal Power Flow,"][10]
      *Power Systems, IEEE Transactions on*, vol. 22, no. 3,
      pp. 1185-1193, Aug. 2007.  
-     DOI: [10.1109/TPWRS.2007.901301][10].
+     doi: [10.1109/TPWRS.2007.901301][10].
 
 2.  H. Wang, *On the Computation and Application of Multi-period
     Security-constrained Optimal Power Flow for Real-time Electricity
@@ -79,16 +80,39 @@ Publications
     Engineering, Cornell University, May 2007.
 
 
-Citing MIPS
------------
+[Citing MIPS][11]
+-----------------
 
-We request that publications derived from the use of MIPS explicitly
-acknowledge that fact by citing [reference \[1\]][10] above, namely:
+We request that publications derived from the use of the MATPOWER
+Interior Point Solver (MIPS) explicitly acknowledge that fact by citing
+the following 2007 paper.
 
->   H. Wang, C. E. Murillo-Sánchez, R. D. Zimmerman, R. J. Thomas,
-    "On Computational Issues of Market-Based Optimal Power Flow,"
-     *Power Systems, IEEE Transactions on*, vol. 22, no. 3,
-     pp. 1185-1193, Aug. 2007.
+>   H. Wang, C. E. Murillo-Sánchez, R. D. Zimmerman, R. J. Thomas, "On
+    Computational Issues of Market-Based Optimal Power Flow," *Power Systems,
+    IEEE Transactions on*, vol. 22, no. 3, pp. 1185-1193, Aug. 2007.  
+    doi: [10.1109/TPWRS.2007.901301][10]
+
+The [MATPOWER Interior Point Solver (MIPS) User's Manual][7] should also be
+cited explicitly in work that refers to or is derived from its content.
+The citation and DOI can be version-specific or general, as appropriate.
+For version 1.3.1, use:
+
+>   R. D. Zimmerman, H. Wang. *MATPOWER Interior Point Solver (MIPS)
+    User's Manual, Version 1.3.1*. 2019. [Online].
+    Available: https://matpower.org/docs/MIPS-manual-1.3.1.pdf  
+    doi: [10.5281/zenodo.3251014](https://doi.org/10.5281/zenodo.3251014)
+
+For a version non-specific citation, use the following citation and DOI,
+with *\<YEAR\>* replaced by the year of the most recent release:
+
+>   R. D. Zimmerman, H. Wang. *MATPOWER Interior Point Solver (MIPS)
+    User's Manual*. *\<YEAR\>*. [Online].
+    Available: https://matpower.org/docs/MIPS-manual.pdf  
+    doi: [10.5281/zenodo.3236506][12]
+
+A list of versions of the User's Manual with release dates and
+version-specific DOI's can be found via the general DOI at
+https://doi.org/10.5281/zenodo.3236506.
 
 
 Contributing
@@ -109,7 +133,9 @@ MIPS is distributed under the [3-clause BSD license][9].
 [4]: https://www.mathworks.com/
 [5]: https://www.gnu.org/software/octave/
 [6]: https://github.com/MATPOWER/mptest
-[7]: https://github.com/MATPOWER/mips/blob/master/docs/MIPS-manual.pdf
+[7]: docs/MIPS-manual.pdf
 [8]: CONTRIBUTING.md
 [9]: LICENSE
 [10]: https://doi.org/10.1109/TPWRS.2007.901301
+[11]: CITATION
+[12]: https://doi.org/10.5281/zenodo.3236506
