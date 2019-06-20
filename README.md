@@ -36,15 +36,15 @@ versioned release.
 
 #### Versioned Releases
 
-- Download the ZIP file of the latest official versioned release from the
+Download the ZIP file of the latest official versioned release from the
 [MATPOWER website][1].
-    - Go to the [MATPOWER website][1].
-    - Click the **Download Now** button.
+**Note:** This _does_ include the [MATPOWER Extras][7d].
 
 #### Current Development Version
 
 There are also two options for obtaining the most recent development version
 of MATPOWER from the `master` branch on GitHub.
+**Note:** This does _not_ include the [MATPOWER Extras][7d].
 
 1. Clone the [MATPOWER repository from GitHub][2].
    *Use this option if you want to be able to easily update to the current
@@ -200,6 +200,16 @@ Contributing
 
 Please see our [contributing guidelines][7] for details on how to
 contribute to the project or report issues.
+
+
+Sponsoring the MATPOWER Project
+-------------------------------
+
+If you have found MATPOWER to be valuable, please consider supporting
+the project by [becoming a sponsor](https://matpower.org/sponsor).
+MATPOWER development and support require significant resources. Any
+contributions from the community or other sponsors free us to focus on
+that support and the development of valuable new features.
 
 
 Publications and Tech Notes
@@ -367,24 +377,21 @@ options][39].
 E-mail Lists
 ------------
 
-There are three MATPOWER e-mail lists available to serve the MATPOWER
-community:
+There are two e-mail lists available to serve the MATPOWER community:
 
-- [MATPOWER-ANNOUNCE-L][25] is a simple announcement list for those who
-  wish to be notified of the release of new versions of MATPOWER.
+- [**Discussion List**][26] ([MATPOWER-L][26]) – to facilitate discussion
+  among MATPOWER users and provide a forum for help with MATPOWER
+  related questions
 
-- [MATPOWER-L][26] is for MATPOWER users, to facilitate discussion and
-  provide a forum for help with MATPOWER related questions.
-
-- [MATPOWER-DEV-L][27] is for MATPOWER developers, to provide a forum for
-  discussion related to the development of the MATPOWER software or
-  proposed contributions.
+- [**Developer List**][27] ([MATPOWER-DEV-L][27]) – to provide a forum
+  for discussion among MATPOWER users and developers related to the
+  development of the MATPOWER software or proposed contributions
 
 For details see the [Mailing Lists section][28] of the
 [MATPOWER website][1].
 
 Please select the most appropriate list for your post and do *not*
-cross-post to both MATPOWER-L and MATPOWER-DEV-L. Bug reports,
+cross-post to both Discussion and Developer lists. Bug reports,
 software patches, proposed enhancements, etc. should be submitted to
 the [issue tracker on GitHub][29].
 
@@ -436,7 +443,6 @@ MATPOWER is distributed as open-source under the [3-clause BSD license][30].
 [22]: https://matpower.org/docs/TN3-More-OPF-Derivatives.pdf
 [23]: https://matpower.org/docs/TN4-OPF-Derivatives-Cartesian.pdf
 [24]: https://github.com/MATPOWER/most
-[25]: https://matpower.org/mailing-lists/#announcelist
 [26]: https://matpower.org/mailing-lists/#discusslist
 [27]: https://matpower.org/mailing-lists/#devlist
 [28]: https://matpower.org/mailing-lists
