@@ -3,10 +3,19 @@ dist: xenial
 
 language: generic
 
-install:
-- sudo apt-add-repository -y ppa:octave/stable
-- sudo apt-get update -qq
-- sudo apt-get install -qq octave liboctave-dev
+addons:
+  apt:
+    sources:
+    - sourceline: 'ppa:octave/stable'   ## without this, it's octave 4.0.0
+    packages:
+    - liboctave-dev
+    - octave        # octave 4.2.2
+    update: true
+
+# install:
+# - sudo apt-add-repository -y ppa:octave/stable
+# - sudo apt-get update -qq
+# - sudo apt-get install -qq octave liboctave-dev
 
 env:
   global:

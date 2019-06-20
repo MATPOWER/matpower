@@ -30,7 +30,7 @@ of MATLAB or Octave, including setting up your MATLAB path.
   >> test_mptest
   t_test_fcns....ok
   All tests successful (1 of 1)
-  Elapsed time 0.01 seconds.
+  Elapsed time 0.00 seconds.
 ```
 
 Usage
@@ -84,7 +84,7 @@ Usage
   >> test_everything_ex1
   mptest_ex1.....ok (2 of 4 skipped)
   t_test_fcns....ok
-  All tests successful (3 passed, 2 skipped of 5)
+  All tests successful (7 passed, 2 skipped of 9)
   Elapsed time 0.00 seconds.
 ```
 
