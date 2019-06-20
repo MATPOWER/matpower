@@ -1,5 +1,5 @@
 % MATPOWER
-%   Version 7.0b1       31-Oct-2018
+%   Version 7.0         20-Jun-2019
 %
 %   MATPOWER is a package of M-files for solving power flow,
 %   continuation power flow and optimal power flow problems using
@@ -21,7 +21,7 @@
 %   MATPOWER is covered by the 3-clause BSD License (see LICENSE for details).
 
 %   MATPOWER
-%   Copyright (c) 2004-2018, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2019, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

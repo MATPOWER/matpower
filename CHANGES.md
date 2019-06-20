@@ -9,8 +9,15 @@ For change history for [MIPS][2], see [mips/CHANGES.md](mips/CHANGES.md).
 For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 
 
-Since last release
-------------------
+Version 7.0 - *Jun 20, 2019*
+----------------------------
+
+#### 6/20/19
+  - Release 7.0.
+  - Add `CITATION` file.
+  - Other miscellaneous documentation updates, e.g. MATPOWER website
+    links updated to https://matpower.org, separate references for
+    MATPOWER software and User's Manual, with DOIs.
 
 #### 6/5/19
   - **INCOMPATIBLE CHANGE:** Fix [issue #60][20] by adding missing
@@ -91,7 +98,7 @@ Since last release
     *Thanks to Amin Gholami.*
 
 #### 1/16/19
-  - Add option for `install_matpower()` (non-interactively) uninstall
+  - Add option for `install_matpower()` to (non-interactively) uninstall
     MATPOWER, i.e. remove MATPOWER directories from MATLAB/Octave path.
 
 #### 1/14/19
@@ -106,6 +113,7 @@ Since last release
 #### 11/26/18
   - Fix [bug #53][13] where certain OPF cases (e.g. `case33bw`) resulted in
     a fatal error under versions of MATLAB prior to R2016b (v9.1).
+    *Thanks to Jane Cheung.*
 
 #### 11/9/18
   - Add support for IPOPT solver under Octave, including in the
