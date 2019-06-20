@@ -198,7 +198,7 @@ if ~isempty(gen)
 
     %% create map of external bus numbers to bus indices
     i2e = bus(:, BUS_I);
-    e2i = sparse(max(i2e), 1);
+    e2i = zeros(max(i2e), 1);
     e2i(i2e) = (1:nb)';
 
     Cld = sparse(e2i(gen(:, GEN_BUS)), (1:ng)', is_ld, nb, ng);
