@@ -83,7 +83,7 @@ end
 
 %% create map of external bus numbers to bus indices
 i2e = mpc.bus(:, BUS_I);
-e2i = sparse(max(i2e), 1);
+e2i = zeros(max(i2e), 1);
 e2i(i2e) = (1:size(mpc.bus, 1))';
 
 for c = 1:length(kk)
