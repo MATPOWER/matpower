@@ -1,5 +1,5 @@
 % MOST
-%   Version 1.0.1       30-Oct-2018
+%   Version 1.0.2       20-Jun-2018
 %
 %   The MATPOWER Optimal Scheduling Tool (MOST) is framework for solving
 %   generalized steady-state electric power scheduling problems.

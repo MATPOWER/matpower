@@ -2,8 +2,15 @@ Change history for MOST
 =======================
 
 
-Since last release
-------------------
+Version 1.0.2 - *Jun 20, 2019*
+------------------------------
+
+#### 6/20/19
+  - Release 1.0.2.
+  - Add `CITATION` file.
+  - Other miscellaneous documentation updates, e.g. MATPOWER website
+    links updated to https://matpower.org, separate references for
+    MATPOWER software and User's Manual, with DOIs.
 
 #### 11/20/18
   - Fix selection of default solver for `t_most_w_ds` and add option

@@ -1,0 +1,37 @@
+We request that publications derived from the use of the MATPOWER Optimal
+Scheduling Tool (MOST) explicitly acknowledge that fact by citing both the
+2011 MATPOWER paper and the 2013 MOST paper.
+
+  R. D. Zimmerman, C. E. Murillo-Sanchez, and R. J. Thomas, "MATPOWER:
+  Steady-State Operations, Planning and Analysis Tools for Power Systems
+  Research and Education," Power Systems, IEEE Transactions on, vol. 26,
+  no. 1, pp. 12-19, Feb. 2011.
+  doi: 10.1109/TPWRS.2010.2051168
+
+  C. E. Murillo-Sanchez, R. D. Zimmerman, C. L. Anderson, and R. J. Thomas,
+  "Secure Planning and Operations of Systems with Stochastic Sources,
+  Energy Storage and Active Demand," Smart Grid, IEEE Transactions on,
+  vol. 4, no. 4, pp. 2220-2229, Dec. 2013.
+  doi: 10.1109/TSG.2013.2281001
+
+The MATPOWER Optimal Scheduling Tool (MOST) User's Manual should also be
+cited explicitly in work that refers to or is derived from its content.
+The citation and DOI can be version-specific or general, as appropriate.
+For version 1.0.2, use:
+
+  R. D. Zimmerman, C. E. Murillo-Sanchez. MATPOWER Optimal Scheduling
+  Tool (MOST) User's Manual, Version 1.0.2. 2019. [Online].
+  Available: https://matpower.org/docs/MOST-manual-1.0.2.pdf
+  doi: 10.5281/zenodo.3251047
+
+For a version non-specific citation, use the following citation and DOI,
+with <YEAR> replaced by the year of the most recent release:
+
+  R. D. Zimmerman, C. E. Murillo-Sanchez. MATPOWER Optimal Scheduling
+  Tool (MOST) User's Manual. <YEAR>. [Online].
+  Available: https://matpower.org/docs/MOST-manual.pdf
+  doi: 10.5281/zenodo.3236531
+
+A list of versions of the User's Manual with release dates and
+version-specific DOI's can be found via the general DOI at
+https://doi.org/10.5281/zenodo.3236531.

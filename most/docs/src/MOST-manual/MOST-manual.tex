@@ -129,12 +129,12 @@
 
 %\hyphenation{matpower}
 
-\newcommand{\mpver}[0]{7.0b1}
+\newcommand{\mpver}[0]{7.0}
 %\newcommand{\matlab}[0]{{Matlab}}
 %\newcommand{\matlab}[0]{{\sc Matlab}\textsuperscript{\tiny \textregistered}}
 \newcommand{\matlab}[0]{{\sc Matlab}}
 \newcommand{\matpower}[0]{{\sc Matpower}}
-\newcommand{\matpowerurl}[0]{http://www.pserc.cornell.edu/matpower/}
+\newcommand{\matpowerurl}[0]{https://matpower.org}
 \newcommand{\matpowerlink}[0]{\href{\matpowerurl}{\matpower{}}}
 \newcommand{\matpowergithuburl}[0]{https://github.com/MATPOWER/matpower}
 \newcommand{\mptest}[0]{{MP-Test}}
@@ -144,11 +144,11 @@
 \newcommand{\mipsurl}[0]{https://github.com/MATPOWER/mips}
 \newcommand{\mipslink}[0]{\href{\mipsurl}{\mips{}}}
 \newcommand{\mipsname}[0]{{{\bf M}{\sc atpower} \textbf{I}nterior \textbf{P}oint \textbf{S}olver}}
-\newcommand{\mipsver}[0]{1.3}
+\newcommand{\mipsver}[0]{1.3.1}
 \newcommand{\most}[0]{{MOST}}
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
-\newcommand{\mostver}[0]{1.0.1}
+\newcommand{\mostver}[0]{1.0.2}
 \newcommand{\md}[0]{{\most{} Data struct}}
 \newcommand{\powerweb}[0]{{\sc PowerWeb}}
 \newcommand{\pserc}[0]{{\sc PSerc}}
@@ -186,13 +186,13 @@
 \newcommand{\results}[0]{\code{results}}
 %\newcommand{\distname}[0]{\code{mostNNN}}
 %\newcommand{\zipname}[0]{\code{mostNNN.zip}}
-\newcommand{\mumurl}[0]{http://www.pserc.cornell.edu/matpower/docs/MATPOWER-manual-\mpver.pdf}
+\newcommand{\mumurl}[0]{https://matpower.org/docs/MATPOWER-manual-\mpver.pdf}
 \newcommand{\mum}[0]{\href{\mumurl}{\matpower{} User's Manual}}
-\newcommand{\mipsmanurl}[0]{http://www.pserc.cornell.edu/matpower/docs/MIPS-manual-\mipsver.pdf}
-\newcommand{\mostmanurl}[0]{http://www.pserc.cornell.edu/matpower/docs/MOST-manual-\mostver.pdf}
-\newcommand{\currentmumurl}[0]{http://www.pserc.cornell.edu/matpower/MATPOWER-manual.pdf}
-\newcommand{\currentmipsmanurl}[0]{\mipsurl/blob/master/docs/MIPS-manual.pdf}
-\newcommand{\currentmostmanurl}[0]{http://www.pserc.cornell.edu/matpower/MOST-manual.pdf}
+\newcommand{\mipsmanurl}[0]{https://matpower.org/docs/MIPS-manual-\mipsver.pdf}
+\newcommand{\mostmanurl}[0]{https://matpower.org/docs/MOST-manual-\mostver.pdf}
+\newcommand{\currentmumurl}[0]{https://matpower.org/docs/MATPOWER-manual.pdf}
+\newcommand{\currentmipsmanurl}[0]{https://matpower.org/docs/MIPS-manual.pdf}
+\newcommand{\currentmostmanurl}[0]{https://matpower.org/docs/MOST-manual.pdf}
 \newcommand{\mipsman}[0]{\href{\mipsmanurl}{\mips{} User's Manual}}
 \newcommand{\mostman}[0]{\href{\mostmanurl}{\most{} User's Manual}}
 \newcommand{\dg}[0]{\sp\dagger}                         % hermitian conjugate
@@ -204,6 +204,7 @@
 \newcommand{\diag}[1]{\left[{#1}\right]}                % diagonal
 \newcommand{\R}{\mathbb{R}}          % requires \usepackage{amsfonts|bbold}
 \newcommand{\der}[2]{\frac{\partial{#1}}{\partial{#2}}} % partial derivative
+\newcommand{\doi}[1]{doi:~\href{https://doi.org/#1}{#1}}
 
 \def\sectionautorefname{Chapter}
 \def\subsectionautorefname{Section}
@@ -222,7 +223,10 @@
 \title{\mostname{}\\\most{} \mostver{}\\
 User's Manual}
 \author{Ray~D.~Zimmerman \and Carlos~E.~Murillo-S\'anchez}
-\date{October 30, 2018} % comment this line to display the current date
+%%% BEFORE PUBLISHING A NEW VERSION:
+%%%   Update the publication year for \bibitem{matpower} and
+%%%   \bibitem{matpower_manual} to the year of the latest release
+\date{June 20, 2019} % comment this line to display the current date
 %\date{December 14, 2011\thanks{Second revision. First revision was December 13, 2011}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
@@ -232,7 +236,7 @@ User's Manual}
 \vfill
 \begin{center}
 {\scriptsize
-\copyright~2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018~\PSERC{}\\
+\copyright~2011--2019~\PSERC{}\\
 All Rights Reserved}
 \end{center}
 
@@ -247,18 +251,18 @@ All Rights Reserved}
 \clearpage
 \section{Introduction}
 
-Beginning with version 6, \matpower{}~\cite{zimmerman2011} includes a framework for solving generalized steady-state electric power scheduling problems. This framework is known as \most{}, for \mostname{}~\cite{murillo-sanchez2013a,lamadrid2018}.
+Beginning with version 6, \matpower{}~\cite{zimmerman2011,matpower,matpower_manual} includes a framework for solving generalized steady-state electric power scheduling problems. This framework is known as \most{}, for \mostname{}~\cite{murillo-sanchez2013a,lamadrid2018}.
 
 \most{} can be used to solve problems as simple as a deterministic, single period economic dispatch problem with no transmission constraints or as complex as a stochastic, security-constrained, combined unit-commitment and multiperiod optimal power flow problem with locational contingency and load-following reserves, ramping costs and constraints, deferrable demands, lossy storage resources and uncertain renewable generation.
 
 While the problem formulation is general and incorporates a full nonlinear AC network model, the current implementation is limited to DC power flow modeling of the network. Some work has been done on an AC implementation, but it is not yet ready for release.
 
-The primary developers of \most{} are Carlos~E.~Murillo-S\'anchez\footnote{Universidad Nacional de Colombia, Manizales, Colombia} and Ray~D.~Zimmerman\footnote{Cornell University, Ithaca, NY, USA} of \pserc{}\footnote{\url{http://pserc.org/}}, with significant contributions from Daniel Mu\~noz-\'Alvarez and Alberto~J.~Lamadrid. It is built on top of \matpowerlink{}\footnote{See \url{\matpowerurl} for more information on \matpowerlink{}.}, a package of \matlab{}\textsuperscript{\tiny \textregistered} M-files for solving power flow and optimal power flow problems~\cite{zimmerman2011, zimmerman2009}. This manual assumes that the user is familiar with using \matpowerlink{}, especially for solving optimal power flow problems, and makes numerious references to version \mpver{} of the \mum{}~\cite{matpower}.
+The primary developers of \most{} are Carlos~E.~Murillo-S\'anchez\footnote{Universidad Nacional de Colombia, Manizales, Colombia} and Ray~D.~Zimmerman\footnote{Cornell University, Ithaca, NY, USA} of \pserc{}\footnote{\url{http://pserc.org/}}, with significant contributions from Daniel Mu\~noz-\'Alvarez and Alberto~J.~Lamadrid. It is built on top of \matpowerlink{}\footnote{See \url{\matpowerurl} for more information on \matpowerlink{}.}, a package of \matlab{}\textsuperscript{\tiny \textregistered} M-files for solving power flow and optimal power flow problems~\cite{zimmerman2011, zimmerman2009}. This manual assumes that the user is familiar with using \matpowerlink{}, especially for solving optimal power flow problems, and makes numerious references to version \mpver{} of the \mum{}~\cite{matpower_manual}.
 
 %\clearpage
 \subsection{License and Terms of Use}
 
-The code in \most{} is distributed along with \matpower{} under the 3-clause BSD license~\cite{bsd}. The full text of the license can be found in the \code{LICENSE} file at the top level of the distribution or at \url{http://www.pserc.cornell.edu/matpower/LICENSE.txt} and reads as follows.
+The code in \most{} is distributed along with \matpower{} under the 3-clause BSD license~\cite{bsd}. The full text of the license can be found in the \code{LICENSE} file at the top level of the distribution or at \url{https://matpower.org/license/} and reads as follows.
 
 \begin{Notice}
 Copyright (c) 1996-2016, Power Systems Engineering Research Center
@@ -296,21 +300,43 @@ POSSIBILITY OF SUCH DAMAGE.
 
 \subsection{Citing \most{}}
 
-While not required by the terms of the license, we do request that publications derived from the use of \most{} explicitly acknowledge that fact by citing both the main \matpower{} reference~\cite{zimmerman2011}:
+We request that publications derived from the use of the \mostname{} (\most{}) explicitly acknowledge that fact by citing both the 2011 MATPOWER paper~\cite{zimmerman2011} and the 2013 MOST paper~\cite{murillo-sanchez2013a}.
 
 \begin{quote}
 \footnotesize
 R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez, and R.~J. Thomas, ``\matpower{}: Steady-State Operations, Planning and Analysis Tools for Power Systems Research and Education,'' \emph{Power Systems, IEEE Transactions on}, vol.~26, no.~1, pp.~12--19, Feb.~2011.\\
-DOI:~\href{https://doi.org/10.1109/TPWRS.2010.2051168}{10.1109/TPWRS.2010.2051168}
+\doi{10.1109/TPWRS.2010.2051168}
 \end{quote}
-
-and reference~\cite{murillo-sanchez2013a}:
 
 \begin{quote}
 \footnotesize
 C.~E. Murillo-S{\'a}nchez, R.~D. Zimmerman, C.~L. Anderson, and R.~J. Thomas, ``Secure Planning and Operations of Systems with Stochastic Sources, Energy Storage and Active Demand,'' \emph{Smart Grid, IEEE Transactions on}, vol.~4, no.~4, pp.~2220--2229, Dec.~2013.\\
-DOI:~\href{https://doi.org/10.1109/TSG.2013.2281001}{10.1109/TSG.2013.2281001}
+\doi{10.1109/TSG.2013.2281001}
 \end{quote}
+
+The \mostname{} (\most) User's Manual~\cite{most_manual} should also be
+cited explicitly in work that refers to or is derived from its content.
+The citation and DOI can be version-specific or general, as appropriate.
+For version 1.0.2, use:
+
+\begin{quote}
+\footnotesize
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez. \mostname{} (\most{}) User's Manual, Verision 1.0.2. 2019. [Online]. Available: \url{https://matpower.org/docs/MOST-manual-1.0.2.pdf}\\
+\doi{10.5281/zenodo.3251047}
+\end{quote}
+For a version non-specific citation, use the following citation and DOI,
+with \emph{\textless{}YEAR\textgreater{}} replaced by the year of the most recent release:
+
+\begin{quote}
+\footnotesize
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez. \mostname{} (\most{}) User's Manual. \emph{\textless{}YEAR\textgreater{}}.
+[Online]. Available: \url{https://matpower.org/docs/MOST-manual.pdf}\\
+\doi{10.5281/zenodo.3236531}
+\end{quote}
+A list of versions of the User's Manual with release dates and
+version-specific DOI's can be found via the general DOI at
+\url{https://doi.org/10.5281/zenodo.3236531}.
+
 
 \subsection{\most{} Development}
 \label{sec:development}
@@ -358,22 +384,17 @@ To run the test suite and verify that \most{} is properly installed and function
 % UPDATE BEFORE RELEASE
 \begin{Code}
 >> test_most
+>> test_most
 t_most_3b_1_1_0........ok
 t_most_3b_3_1_0........ok
-t_most_3b_1_1_2........ok
-t_most_3b_3_1_2........ok
 t_most_30b_1_1_0.......ok
 t_most_30b_3_1_0.......ok
-t_most_30b_1_1_17......ok
-t_most_30b_3_1_17......ok
 t_most_fixed_res.......ok
 t_most_30b_1_1_0_uc....ok
-t_most_sp..............ok
-t_most_spuc............ok (432 of 720 skipped)
-t_most_uc..............ok (156 of 260 skipped)
-t_most_suc.............ok (111 of 185 skipped)
+t_most_uc..............ok
+t_most_suc.............ok
 t_most_w_ds............ok
-All tests successful (995 passed, 699 skipped of 1694)
+All tests successful (615 of 615)
 Elapsed time 84.68 seconds.
 \end{Code}
 
@@ -437,12 +458,12 @@ mdo = most(mdi, mpopt);
 
 \begin{Code}
 =============================================================================
-          MATPOWER Optimal Scheduling Tool  --  MOST Version 1.0.1
+          MATPOWER Optimal Scheduling Tool  --  MOST Version 1.0.2
           A multiperiod stochastic secure OPF with unit commitment
                        -----  Built on MATPOWER  -----
   by Carlos E. Murillo-Sanchez, Universidad Nacional de Colombia--Manizales
                   and Ray D. Zimmerman, Cornell University
-       (c) 2012-2018 Power Systems Engineering Research Center (PSERC)       
+       (c) 2012-2019 Power Systems Engineering Research Center (PSERC)       
 =============================================================================
 - Building indexing structures.
 - Building expected storage-tracking mechanism.
@@ -462,9 +483,9 @@ mdo = most(mdi, mpopt);
 
 ============================================================================
 
-Gurobi Version 8.1.0 -- automatic MILP solver
+Gurobi Version 8.1.1 -- automatic MILP solver
 --- Integer stage complete, starting price computation stage ---
-Gurobi Version 8.1.0 -- automatic LP solver
+Gurobi Version 8.1.1 -- automatic LP solver
 
 ============================================================================
 - MOST: MILP solved successfully.
@@ -515,7 +536,7 @@ There is one other important source of related documentation and that is the \mu
 
 \most{} grew out of research at Cornell University on the development and testing of new tools for the power industry, funded by the U.S. Department of Energy through the CERTS Reliability and Markets program.\footnote{This work was supported by the Consortium for Electric Reliability Technology Solutions and the Office of Electricity Delivery and Energy Reliability, Transmission Reliability Program of the U.S. Department of Energy under the National Energy Technology Laboratory Cooperative Agreement No. DE-FC26-09NT43321. \url{https://certs.lbl.gov/research-areas/reliability-markets-rm}} Initially the work was focused on extending the AC optimal power flow problem to include co-optimization of locational reserves for security defined in terms of explicitly included contingencies \cite{superopf2008,murillo-sanchez2013}. This work was then extended to include multiple base scenarios to represent stochastic load and renewable generation availability, a multiperiod planning horizon, energy storage resources, ramping considerations and binary unit commitment decisions \cite{murillo-sanchez2013a}.
 
-The formulation implemented in \most{} and described in the next section further generalizes the problem by including the facility to define zonal reserve requirements like those from Section~\ref{MUM-sec:reserves} in the \mum{}~\cite{matpower}, and to constrain the solutions via a general linear time-varying dynamical system. The initial prototype was implemented by Carlos~E.~Murillo-S\'anchez with subsequent development by Ray~D.~Zimmerman along with contributions by Daniel Mu\~noz-\'Alvarez and Alberto~J.~Lamadrid.
+The formulation implemented in \most{} and described in the next section further generalizes the problem by including the facility to define zonal reserve requirements like those from Section~\ref{MUM-sec:reserves} in the \mum{}~\cite{matpower_manual}, and to constrain the solutions via a general linear time-varying dynamical system. The initial prototype was implemented by Carlos~E.~Murillo-S\'anchez with subsequent development by Ray~D.~Zimmerman along with contributions by Daniel Mu\~noz-\'Alvarez and Alberto~J.~Lamadrid.
 
 The description of the problem formulation will begin with a conceptual overview of the approach, beginning with the simplest single period problem that \most{} handles and extending and expanding the problem one step at a time to illustrate how each additional aspect of the full problem is handled.
 
@@ -3246,7 +3267,7 @@ The full release history can be found in \mostpath{/docs/CHANGES}.
 \subsection{Version 1.0 -- released Dec 16, 2016}
 \label{app:v10}
 
-The \href{http://www.pserc.cornell.edu/matpower/docs/MOST-manual-1.0.pdf}{\most{} 1.0 User's Manual} is available online.\footnote{\url{http://www.pserc.cornell.edu/matpower/docs/MOST-manual-1.0.pdf}}
+The \href{https://matpower.org/docs/MOST-manual-1.0.pdf}{\most{} 1.0 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MOST-manual-1.0.pdf}}
 
 \subsubsection*{New Open Development Model}
 \begin{itemize}
@@ -3255,7 +3276,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MOST-manual-1.0.pdf}{\most{
 \item Public issue tracker for reporting bugs, submitting patches, etc.\footnote{\url{https://github.com/MATPOWER/most/issues}}
 \item Separate repositories for \matpower{}, \most{}, \mips{}, \mptest{}, all available from \url{https://github.com/MATPOWER/}.
 \item New developer e-mail list (MATPOWER-DEV-L) to facilitate communication between those collaborating on \matpower{}-related development. Sign up at:\\
-\url{http://www.pserc.cornell.edu/matpower/mailinglists.html#devlist}.
+\url{https://matpower.org/mailing-lists/#devlist}.
 \end{itemize}
 
 \subsubsection*{Other Changes}
@@ -3266,7 +3287,7 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MOST-manual-1.0.pdf}{\most{
 \subsection{Version 1.0.1 -- released Oct 30, 2018}
 \label{app:v101}
 
-The \href{http://www.pserc.cornell.edu/matpower/docs/MOST-manual-1.0.1.pdf}{\most{} 1.0.1 User's Manual} is available online.\footnote{\url{http://www.pserc.cornell.edu/matpower/docs/MOST-manual-1.0.1.pdf}}
+The \href{https://matpower.org/docs/MOST-manual-1.0.1.pdf}{\most{} 1.0.1 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MOST-manual-1.0.1.pdf}}
 
 \subsubsection*{Bugs Fixed}
 \begin{itemize}
@@ -3289,6 +3310,22 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MOST-manual-1.0.1.pdf}{\mos
 \item Requires \matpower{} 7.x or later.
 \end{itemize}
 
+\subsection{Version 1.0.2 -- released Jun 20, 2019}
+\label{app:v102}
+
+The \href{https://matpower.org/docs/MOST-manual-1.0.2.pdf}{\most{} 1.0.2 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MOST-manual-1.0.2.pdf}}
+
+\subsubsection*{Bugs Fixed}
+\begin{itemize}
+\item Fix default solver selection issue in \code{t\_most\_w\_ds} test.
+\end{itemize}
+
+\subsubsection*{Other Changes}
+\begin{itemize}
+\item Add \code{CITATION} file.
+\item Other miscellaneous documentation updates, e.g. \matpower{} website links updated to \url{https://matpower.org}, separate references for \matpower{} software and User's Manual, with DOIs.
+\end{itemize}
+
 \end{appendices}
 
 
@@ -3299,28 +3336,38 @@ The \href{http://www.pserc.cornell.edu/matpower/docs/MOST-manual-1.0.1.pdf}{\mos
 \bibitem{zimmerman2011}
 R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez, and R.~J. Thomas,
   ``\matpower{}: Steady-State Operations, Planning and Analysis Tools for Power Systems Research and Education,'' \emph{Power Systems, IEEE Transactions on}, vol.~26, no.~1, pp.~12--19, Feb.~2011.
-DOI:~\href{https://doi.org/10.1109/TPWRS.2010.2051168}{10.1109/TPWRS.2010.2051168}
+\doi{10.1109/TPWRS.2010.2051168}
+
+\bibitem{matpower}
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2019). \matpower{}\\~
+[Software]. Available: \url{https://matpower.org}\\
+\doi{10.5281/zenodo.3236535}
+
+\bibitem{matpower_manual}
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez. \matpower{} User's Manual. 2019.\\~
+[Online]. Available: \url{https://matpower.org/docs/MATPOWER-manual.pdf}\\
+\doi{10.5281/zenodo.3236519}
 
 \bibitem{murillo-sanchez2013a}
 C.~E. Murillo-S{\'a}nchez, R.~D. Zimmerman, C.~L. Anderson, and R.~J. Thomas, ``Secure Planning and Operations of Systems with Stochastic Sources, Energy Storage and Active Demand,'' \emph{Smart Grid, IEEE Transactions on}, vol.~4, no.~4, pp.~2220--2229, Dec.~2013.
-DOI:~\href{https://doi.org/10.1109/TSG.2013.2281001}{10.1109/TSG.2013.2281001}
+\doi{10.1109/TSG.2013.2281001}
 
 \bibitem{lamadrid2018}
-A.~J. Lamadrid, D. Mu{\~n}oz-{\'A}lvarez, C.~E. Murillo-S{\'a}nchez, R.~D. Zimmerman, H.~D. Shin and R.~J. Thomas, ``Using the \matpower{} Optimal Scheduling Tool to Test Power System Operation Methodologies Under Uncertainty,'' \emph{Sustainable Energy, IEEE Transactions on}, 2018.
-DOI:~\href{https://doi.org/10.1109/TSTE.2018.2865454}{10.1109/TSTE.2018.2865454}
+A.~J. Lamadrid, D. Mu{\~n}oz-{\'A}lvarez, C.~E. Murillo-S{\'a}nchez, R.~D. Zimmerman, H.~D. Shin and R.~J. Thomas, ``Using the \matpower{} Optimal Scheduling Tool to Test Power System Operation Methodologies Under Uncertainty,'' \emph{Sustainable Energy, IEEE Transactions on}, vol.~10, no.~3, pp.~1280--1289, July 2019.
+\doi{10.1109/TSTE.2018.2865454}
 
 \bibitem{zimmerman2009}
 R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez, and R.~J. Thomas, ``\matpower{}'s
 Extensible Optimal Power Flow Architecture,'' \emph{Power and Energy Society
 General Meeting, 2009 IEEE}, pp. 1--7, July 26--30 2009.
-DOI:~\href{https://doi.org/10.1109/PES.2009.5275967}{10.1109/PES.2009.5275967}
-
-\bibitem{matpower}
-R.~D. Zimmerman and C.~E. Murillo-S{\'a}nchez, \mum{},
-  [Online]. Available: \url{\matpowerurl}
+\doi{10.1109/PES.2009.5275967}
 
 \bibitem{bsd}
 The BSD 3-Clause License. [Online]. Available: \url{https://opensource.org/licenses/BSD-3-Clause}.
+
+\bibitem{most_manual}
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez. \mostname{} (\most{}) User's Manual. 2019. [Online]. Available: \url{https://matpower.org/docs/MOST-manual.pdf}\\
+\doi{10.5281/zenodo.3236531}
 
 \bibitem{superopf2008}
 A.~J.~Lamadrid, S.~Maneevitjit, T.~D.~Mount, C.~E.~Murillo-S{\'a}nchez,
@@ -3330,7 +3377,7 @@ A.~J.~Lamadrid, S.~Maneevitjit, T.~D.~Mount, C.~E.~Murillo-S{\'a}nchez,
 
 \bibitem{murillo-sanchez2013}
 C.~E. Murillo-S{\'a}nchez, R.~D. Zimmerman, C.~L. Anderson, and R.~J. Thomas, ``A Stochastic, Contingency-Based Security-Constrained Optimal Power Flow for the Procurement of Energy and Distributed Reserve,'' \emph{Decision Support Systems}, Vol.~56, pp.~1-10, Dec.~2013, ISSN 0167-9236.
-DOI:~\href{https://doi.org/10.1016/j.dss.2013.04.006}{10.1016/j.dss.2013.04.006}
+\doi{10.1016/j.dss.2013.04.006}
 
 \end{thebibliography}
 
