@@ -20,6 +20,13 @@ since 7.0
 Version 7.0 - *Jun 20, 2019*
 ----------------------------
 
+#### 7/10/19
+  - Refactor code in `@opt_model/params_lin_constraint()` and
+    `@opt_model/params_quad_cost()` to speed up sparse matrix construction.
+    Results in significant speedups for some problems during problem setup
+    in MOST.
+    *Thanks to Daniel Muldrew.*
+
 #### 6/20/19
   - Release 7.0.
   - Add `CITATION` file.

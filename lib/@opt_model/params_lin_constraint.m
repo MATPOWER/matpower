@@ -79,7 +79,7 @@ else                %% aggregate
     if isempty(cache)       %% build the aggregate
         nx = om.var.N;          %% number of variables
         nlin = om.lin.N;        %% number of linear constraints
-        At = sparse(nx, nlin);  %% transpose of constraint matrix
+        A_ijv = cell(om.lin.NS, 3); %% indices/values to construct A
         u = Inf(nlin, 1);       %% upper bound
         l = -u;                 %% lower bound
 
@@ -90,27 +90,25 @@ else                %% aggregate
             [Ak, lk, uk, vs, i1, iN] = om.params_lin_constraint(name, idx);
             [mk, nk] = size(Ak);        %% size of Ak
             if mk
-                Akt_full = sparse(nx, nlin);
-                if isempty(vs)
-                    if nk == nx     %% full size
-                        Akt_full(:, i1:iN) = Ak';
-                    else            %% vars added since adding this cost set
-                        Ak_all_cols = sparse(mk, nx);
-                        Ak_all_cols(:, 1:nk) = Ak;
-                        Akt_full(:, i1:iN) = Ak_all_cols';
-                    end
-                else
-                    jj = om.varsets_idx(vs);    %% indices for var set
-                    Ak_all_cols = sparse(mk, nx);
-                    Ak_all_cols(:, jj) = Ak;
-                    Akt_full(:, i1:iN) = Ak_all_cols';
+                % find nonzero sub indices and values
+                [i, j, v] = find(Ak);
+                if mk == 1  %% force col vectors for single row Ak
+                    i = i'; j = j'; v = v';
                 end
-                At = At + Akt_full;
+
+                if isempty(vs)
+                    A_ijv(k,:) = {i+(i1-1), j, v};
+                else
+                    jj = om.varsets_idx(vs)';    %% indices for var set
+                    A_ijv(k,:) = {i+(i1-1), jj(j), v};
+                end
                 l(i1:iN) = lk;
                 u(i1:iN) = uk;
             end
         end
-        A = At';
+        A = sparse( vertcat(A_ijv{:,1}), ...
+                    vertcat(A_ijv{:,2}), ...
+                    vertcat(A_ijv{:,3}), nlin, nx);
 
         %% cache aggregated parameters
         om.lin.params = struct('A', A, 'l', l, 'u', u);

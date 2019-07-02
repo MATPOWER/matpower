@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 591;
+num_tests = 593;
 
 t_begin(num_tests, quiet);
 
@@ -416,6 +416,13 @@ for i = 1:2
         t_ok(om.get('lin', 'NS') == lNS, sprintf('%s : lin.NS = %d', t, lNS));
     end
 end
+
+t = 'om.add_lin_constraint(''onerow'', A, l, u)';
+A = sparse([1 1 1]', [1:3]', [-1 -2 -3]', 1, vN);
+om.add_lin_constraint('onerow', A, 0, Inf);
+lNS = lNS + 1; lN = lN + 1;
+t_ok(om.getN('lin') == lN, sprintf('%s : lin.N  = %d', t, lN));
+t_ok(om.get('lin', 'NS') == lNS, sprintf('%s : lin.NS = %d', t, lNS));
 
 %%-----  add_nln_constraint (equality)  -----
 t = 'add_nln_constraint (equality)';
