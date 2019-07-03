@@ -1,5 +1,5 @@
 function [V, Qpv, Sf, St, Sslack, iter, success] = calc_v_i_sum(Vslack,nb,nl,f,Zb,Ybf,Ybt,Yd,Sd,pv,Pg,Vg,mpopt)
-%CALC_V_PQ_SUM  Solves the power flow using the current summation method.
+%CALC_V_I_SUM  Solves the power flow using the current summation method.
 %
 %   [V, Qpv, Sf, St, Sslack, iter, success] = calc_v_i_sum(Vslack,nb,nl,f,Zb,Ybf,Ybt,Yd,Sd,pv,Pg,Vg,tol,iter_max)
 %
@@ -58,7 +58,7 @@ if ~isempty(pv)
 end
 npv = length(pv);
 Qpv = zeros(npv,1);
-%% do brackward-forward iterations
+%% do backward-forward iterations
 if mpopt.verbose > 1
     fprintf('\n it    max V mismatch (p.u.)');
     fprintf('\n----  ----------------------');
@@ -91,8 +91,8 @@ while success == 0 && iter < iter_max
         if ~isempty(pv)
             DE = (Vg./abs(V(pv))-1).*real(V(pv)); % Rajicic (VCPF)
             DD = Bpv * DE;
-            DC = DD .* imag(V(pv))./real(V(pv));
             if vcorr
+                DC = DD .* imag(V(pv))./real(V(pv));
                 V_corr = make_vcorr(DC+1j*DD,pv,nb,nl,f,Zb);
                 V = V + V_corr;
             end
