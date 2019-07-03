@@ -51,7 +51,6 @@ end
 %% initialize
 converged = 0;
 i = 0;
-j = sqrt(-1);
 V = V0;
 Vm = abs(V);
 npv = length(pv);
@@ -62,7 +61,7 @@ max_dV = 0;
 %% shift voltage angles if necessary
 % Varef = angle(V(ref));
 % if Varef ~= 0
-%     V = V * exp(-j * Varef);
+%     V = V * exp(-1j * Varef);
 % end
 if complex
     V1 = V(ref);
@@ -112,7 +111,7 @@ if npv
             % dVdI = -imag(Y22_inv(1:npv, 1:npv));      % complex
             % dVdI = Y22_inv(1:npv, npv+(1:npv));       % real
             if complex
-                rhs = sparse(1:npv, 1:npv, j, npv+npq, npv);
+                rhs = sparse(1:npv, 1:npv, 1j, npv+npq, npv);
             else
                 rhs = sparse(npv+(1:npv), 1:npv, 1, 2*(npv+npq), npv);
             end
@@ -159,7 +158,7 @@ while (~converged && i < max_it)
             %% compute Q injection at current V
             %% (sometimes improves convergence for pv_method=1,2)
             Qpv = imag( V(pv) .* conj(Ybus(pv, :) * V) );
-            Sbus(pv) = Sbus(pv) + j * (Qpv - imag(Sbus(pv)));
+            Sbus(pv) = Sbus(pv) + 1j * (Qpv - imag(Sbus(pv)));
 
             %% compute voltage mismatch at PV buses
             Vmpv = abs(V(pv));
@@ -186,7 +185,7 @@ while (~converged && i < max_it)
             end
 
             %% update Sbus
-            Sbus(pv) = Sbus(pv) + j * dQ;
+            Sbus(pv) = Sbus(pv) + 1j * dQ;
 
             %% set voltage magnitude at PV buses
             %% doesn't consistently improve convergence for pv_method=1,2
@@ -195,14 +194,14 @@ while (~converged && i < max_it)
             %% compute Q injection at current V
             %% (updating Q before V converges more consistently)
             Qpv = imag( V(pv) .* conj(Ybus(pv, :) * V) );
-            Sbus(pv) = Sbus(pv) + j * (Qpv - imag(Sbus(pv)));
+            Sbus(pv) = Sbus(pv) + 1j * (Qpv - imag(Sbus(pv)));
 
             %% set voltage magnitude at PV buses
             V(pv) = V(pv) ./ abs(V(pv)) .* abs(V0(pv));
 
 %             %% compute Q injection at current V
 %             Qpv = imag( V(pv) .* conj(Ybus(pv, :) * V) );
-%             Sbus(pv) = Sbus(pv) + j * (Qpv - imag(Sbus(pv)));
+%             Sbus(pv) = Sbus(pv) + 1j * (Qpv - imag(Sbus(pv)));
         end
     end
 
@@ -227,8 +226,8 @@ while (~converged && i < max_it)
         V(pv) = V2(1:npv);
         V(pq) = V2(npv+1:npv+npq);
     else
-        V(pv) = V2(1:npv) + j * V2(npv+1:2*npv);
-        V(pq) = V2(2*npv+1:2*npv+npq) + j * V2(2*npv+npq+1:2*npv+2*npq);
+        V(pv) = V2(1:npv) + 1j * V2(npv+1:2*npv);
+        V(pq) = V2(2*npv+1:2*npv+npq) + 1j * V2(2*npv+npq+1:2*npv+2*npq);
     end
 
     %% check for convergence
@@ -252,7 +251,7 @@ end
 
 %% shift voltage angles back if necessary
 % if Varef ~= 0
-%     V = V * exp(j * Varef);
+%     V = V * exp(1j * Varef);
 % end
 
 if mpopt.verbose
