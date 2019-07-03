@@ -40,6 +40,7 @@ complex = 0;    %% use 1 = complex formulation, 0 = use real formulation
 pv_method = 2;  %% 0 = simple voltage magnitude reset
                 %% 1 = sens real(V) to imag(I)
                 %% 2 = dVm/dQ (fast-decoupled Jac)
+                %% 3 = voltage correction PF by Rajicic, Ackovski, Taleski
 tol     = mpopt.pf.tol;
 max_it  = mpopt.pf.zg.max_it;
 if have_fcn('matlab') && have_fcn('matlab', 'vnum') < 7.3
@@ -136,6 +137,26 @@ if npv
             else
                 [LBpp, UBpp, PBpp] = lu(Bpp(pq, pq));
             end
+        case 3
+            %% compute "breakpoint" impedance matrix Zpv
+            npvq = npv + npq;
+            if complex
+                Z = zeros(npvq, npv);
+                II = zeros(npvq, 1);
+            else
+                Z = zeros(2*npvq, npv);
+                II = zeros(2*npvq, 1);
+            end
+            for k = 1:npv
+                II(k) = 1;
+                Z(:, k) = Y22 \ II;
+                II(k) = 0;
+            end
+            if complex
+                Zpv = Z(1:npv, :);
+            else
+                Zpv = Z(1:2*npv, :);
+            end
     end
 end
 
@@ -153,27 +174,31 @@ while (~converged && i < max_it)
     %% save voltage from previous iteration
     Vp = V;
 
-    if npv      %% update Q injections @ PV buses based on V mismatch
-        if pv_method    %% 1 or 2
-            %% compute Q injection at current V
-            %% (sometimes improves convergence for pv_method=1,2)
-            Qpv = imag( V(pv) .* conj(Ybus(pv, :) * V) );
-            Sbus(pv) = Sbus(pv) + 1j * (Qpv - imag(Sbus(pv)));
-
+    if npv && (i > 1 || pv_method ~= 3) %% update Q injections @ PV buses based on V mismatch
+        %% for compatibility with voltage correction PF by Rajicic, Ackovski, Taleski
+        %% we skip updating Q injections @ PV buses on first iteration
+        if pv_method    %% 1, 2 or 3
             %% compute voltage mismatch at PV buses
             Vmpv = abs(V(pv));
             dV = Vmpv0 - Vmpv;
             [max_dV, k] = max(abs(dV));
-%            dV([1:k-1 k+1:end]) = 0;   %% one at a time?
 
-            % Two alternate approaches (that seem to work about equally well):
+            %% compute Q injection at current V
+            %% (sometimes improves convergence for pv_method=1,2)
+            if pv_method ~= 3   %% 1 or 2
+                Qpv = imag( V(pv) .* conj(Ybus(pv, :) * V) );
+                Sbus(pv) = Sbus(pv) + 1j * (Qpv - imag(Sbus(pv)));
+            end
+
+            % Three alternate approaches (that seem to work about equally well):
             %   1 - use precomputed sensitivity of real(V) to imag(I)
             %   2 - use sensitivity of Vm to Q evaluated at current V (fast-decoupled)
+            %   3 - use method equivalent to Voltage Correction PF by Rajicic, Ackovski, Taleski
             switch pv_method
                 case 1      %% precomputed sensitivity of real(V) to imag(I)
                     %% estimate corresponding change in imag(I) injection
                     dQ = -UU \  (LL \ (PP * dV));    %% dQ = -dI = -dVdI \ dV;
-                case 2      %% sensitivity of Vm to Q evaluated at current V (fast-decoupled Jacobian)
+                case 2      %% sensitivity of Vm to Q (fast-decoupled Jacobian)
                     % dVpq = Bpp(pq, pq) \ (-Bpp(pq, pv) * dV);
                     if lu_vec
                         dVpq = UBpp \  (LBpp \ (-Bpp(pq(pBpp), pv) * dV));
@@ -182,6 +207,30 @@ while (~converged && i < max_it)
                         dVpq = UBpp \  (LBpp \ (PBpp * (-Bpp(pq, pv) * dV)));
                     end
                     dQ = Bpp(pv, pq) * dVpq + Bpp(pv, pv) * dV;
+                case 3
+                    dE = (Vmpv0 ./ Vmpv - 1) .* real(V(pv));
+                    if complex
+                        dD = imag(Zpv) \ dE;
+                    else
+                        dD = Zpv(npv+(1:npv), :) \ dE;
+                    end
+                    if mpopt.pf.radial.vcorr    %% do voltage correction step?
+                        dC = dD .* imag(V(pv)) ./ real(V(pv));
+                        if complex
+                            dI = -[dC + 1j * dD; zeros(npq, 1)];
+                        else
+                            dI = -[dC; dD; zeros(2*npq, 1)];
+                        end
+                        dVV = Y22 \ dI;
+                        if complex
+                            V([pv; pq]) = V([pv; pq]) + dVV;
+                        else
+                            V(pv) = V(pv) + (dVV(1:npv) + 1j * dVV(npv+(1:npv)));
+                            V(pq) = V(pq) + (dVV(2*npv+(1:npq)) + 1j * dVV(2*npv+npq+(1:npq)));
+                        end
+                        Vmpv = abs(V(pv));
+                    end
+                    dQ = dD .* Vmpv.^2 ./ real(V(pv));
             end
 
             %% update Sbus
