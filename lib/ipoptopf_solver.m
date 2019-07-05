@@ -154,9 +154,12 @@ nA = size(A, 1);                %% number of original linear constraints
 % ]);
 randx = rand(size(x0));
 [h, g, dh, dg] = opf_consfcn(randx, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
+dh(dh ~= 0) = 1e-32;    %% set non-zero entries to tiny value (for adding later)
+dg(dg ~= 0) = 1e-32;    %% set non-zero entries to tiny value (for adding later)
 Js = [dg'; dh'; A];
-lam = struct('eqnonlin', rand(size(dg,2),1), 'ineqnonlin', rand(size(dh,2),1) );
-Hs = tril(opf_hessfcn(randx, lam, 1, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il));
+lam = struct('eqnonlin', rand(size(dg,2),1), 'ineqnonlin', rand(size(dh,2),1));
+Hs = opf_hessfcn(randx, lam, 1, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
+Hs(Hs ~= 0) = 1e-32;    %% set non-zero entries to tiny value (for adding later)
 neq = length(g);
 niq = length(h);
 
@@ -175,7 +178,8 @@ options.auxdata = struct( ...
     'nA',       nA, ...
     'neqnln',   neq, ...
     'niqnln',   niq, ...
-    'Js',       Js, ...
+    'dgs',      dg, ...
+    'dhs',      dh, ...
     'Hs',       Hs    );
 
 % %% check Jacobian and Hessian structure
@@ -210,7 +214,7 @@ funcs.constraints       = @constraints;
 funcs.jacobian          = @jacobian;
 funcs.hessian           = @hessian;
 funcs.jacobianstructure = @(d) Js;
-funcs.hessianstructure  = @(d) Hs;
+funcs.hessianstructure  = @(d) tril(Hs);
 %funcs.jacobianstructure = @jacobianstructure;
 %funcs.hessianstructure  = @hessianstructure;
 
@@ -391,13 +395,13 @@ else
 end
 
 function J = jacobian(x, d)
-[hn, gn, dhn, dgn] = opf_consfcn(x, d.om, d.Ybus, d.Yf, d.Yt, d.mpopt, d.il);
+[hn, gn, dhn, dgn] = opf_consfcn(x, d.om, d.Ybus, d.Yf, d.Yt, d.mpopt, d.il, d.dhs, d.dgs);
 J = [dgn'; dhn'; d.A];
 
 function H = hessian(x, sigma, lambda, d)
 lam.eqnonlin   = lambda(1:d.neqnln);
 lam.ineqnonlin = lambda(d.neqnln+(1:d.niqnln));
-H = tril(opf_hessfcn(x, lam, sigma, d.om, d.Ybus, d.Yf, d.Yt, d.mpopt, d.il));
+H = tril(opf_hessfcn(x, lam, sigma, d.om, d.Ybus, d.Yf, d.Yt, d.mpopt, d.il, d.Hs));
 
 % function Js = jacobianstructure(d)
 % Js = d.Js;

@@ -1,4 +1,4 @@
-function Lxx = opf_hessfcn(x, lambda, cost_mult, om, Ybus, Yf, Yt, mpopt, il)
+function Lxx = opf_hessfcn(x, lambda, cost_mult, om, Ybus, Yf, Yt, mpopt, il, Hs)
 %OPF_HESSFCN  Evaluates Hessian of Lagrangian for AC OPF.
 %   LXX = OPF_HESSFCN(X, LAMBDA, COST_MULT, OM, YBUS, YF, YT, MPOPT, IL)
 %
@@ -21,6 +21,8 @@ function Lxx = opf_hessfcn(x, lambda, cost_mult, om, Ybus, Yf, Yt, mpopt, il)
 %          branches with flow limits (all others are assumed to be
 %          unconstrained). The default is [1:nl] (all branches).
 %          YF and YT contain only the rows corresponding to IL.
+%     HS : (optional) sparse matrix with tiny non-zero values specifying
+%          the fixed sparsity structure that the resulting LXX should match
 %
 %   Outputs:
 %     LXX : Hessian of the Lagrangian.
@@ -93,3 +95,22 @@ if 0
 end
 
 Lxx = d2f + d2G + d2H;
+
+
+%% force specified sparsity structure
+if nargin > 9
+    %% add sparse structure (with tiny values) to current matrices to
+    %% ensure that sparsity structure matches that supplied
+    Lxx = Lxx + Hs;
+
+%     %% check sparsity structure against that supplied
+%     if nnz(Lxx) ~= nnz(Hs)
+%         fprintf('=====> nnz(Lxx) is %d, expected %d <=====\n', nnz(Lxx), nnz(Hs));
+%     else
+%         [iHs, jHs] = find(Hs);
+%         [iH, jH] = find(Lxx);
+%         if any(iH ~= iHs) || any(jH ~= jHs)
+%             fprintf('=====> structure of Lxx is not as expected <=====\n');
+%         end
+%     end
+end

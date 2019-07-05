@@ -158,14 +158,17 @@ nl2 = length(il);           %% number of constrained lines
 % ];
 randx = rand(size(x0));
 [h, g, dh, dg] = opf_consfcn(randx, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
+dh(dh ~= 0) = 1e-32;    %% set non-zero entries to tiny value (for adding later)
+dg(dg ~= 0) = 1e-32;    %% set non-zero entries to tiny value (for adding later)
 Js = [dh'; dg'];
 lam = struct('eqnonlin', rand(size(dg,2),1), 'ineqnonlin', rand(size(dh,2),1) );
 Hs = opf_hessfcn(randx, lam, 1, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
+Hs(Hs ~= 0) = 1e-32;    %% set non-zero entries to tiny value (for adding later)
 neq = length(g);
 niq = length(h);
 
 %% basic optimset options needed for ktrlink
-hess_fcn = @(x, lambda)opf_hessfcn(x, lambda, 1, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
+hess_fcn = @(x, lambda)opf_hessfcn(x, lambda, 1, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il, Hs);
 fmoptions = optimset('GradObj', 'on', 'GradConstr', 'on', ...
                 'Hessian', 'user-supplied', 'HessFcn', hess_fcn, ...
                 'JacobPattern', Js, 'HessPattern', Hs );
@@ -208,7 +211,7 @@ end
 
 %%-----  run opf  -----
 f_fcn = @(x)opf_costfcn(x, om);
-gh_fcn = @(x)opf_consfcn(x, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
+gh_fcn = @(x)opf_consfcn(x, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il, dh, dg);
 if have_fcn('knitromatlab')
     [x, f, info, Output, Lambda] = knitromatlab(f_fcn, x0, Af, bf, Afeq, bfeq, ...
                                     xmin, xmax, gh_fcn, [], fmoptions, opt_fname);

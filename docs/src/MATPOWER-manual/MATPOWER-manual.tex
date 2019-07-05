@@ -8353,6 +8353,10 @@ The \href{https://matpower.org/docs/MATPOWER-manual-7.1.pdf}{\matpower{} 7.1 Use
 \begin{itemize}
 \item Fix bug \#77 where incorrect indexing could cause fatal error
 in OPF with additional nonlinear constraints. \emph{Thanks to Sergio Garcia.}
+\item Fix OPF issue \#71 for \ipopt{} and \knitro{} where structure of
+Jacobian and/or Hessian could change from the structure provided
+(i.e. elements with value of zero were being eliminated from the
+sparsity structure). \emph{Thanks to Drosos Kourounis.}
 \end{itemize}
 
 \subsubsection*{Incompatible Changes}

@@ -12,6 +12,13 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.0
 -----------------
 
+#### 8/21/19
+  - Fix OPF [issue #71][24] for IPOPT and Knitro where structure of
+    Jacobian and/or Hessian could change from the structure provided
+    (i.e. elements with value of zero were being eliminated from the
+    sparsity structure).
+    *Thanks to Drosos Kourounis.*
+
 #### 8/16/19
   - Fix [issue #77][23] where incorrect indexing could cause fatal error
     in OPF with additional nonlinear constraints.
@@ -2913,3 +2920,4 @@ First Public Release – *Jun 25, 1997*
 [21]: https://github.com/MATPOWER/matpower/pull/70
 [22]: https://github.com/MATPOWER/matpower/issues/79
 [23]: https://github.com/MATPOWER/matpower/issues/77
+[24]: https://github.com/MATPOWER/matpower/issues/71

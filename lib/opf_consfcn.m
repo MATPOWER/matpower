@@ -1,4 +1,4 @@
-function [h, g, dh, dg] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt, il, varargin)
+function [h, g, dh, dg] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt, il, dhs, dgs)
 %OPF_CONSFCN  Evaluates nonlinear constraints and their Jacobian for OPF.
 %   [H, G, DH, DG] = OPF_CONSFCN(X, OM, YBUS, YF, YT, MPOPT, IL)
 %
@@ -17,6 +17,10 @@ function [h, g, dh, dg] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt, il, varargin)
 %          branches with flow limits (all others are assumed to be
 %          unconstrained). The default is [1:nl] (all branches).
 %          YF and YT contain only the rows corresponding to IL.
+%     DHS : (optional) sparse matrix with tiny non-zero values specifying
+%          the fixed sparsity structure that the resulting DH should match
+%     DGS : (optional) sparse matrix with tiny non-zero values specifying
+%          the fixed sparsity structure that the resulting DG should match
 %
 %   Outputs:
 %     H  : vector of inequality constraint values (flow limits)
@@ -54,4 +58,32 @@ else                %% constraints and derivatives
     [h, dh] = om.eval_nln_constraint(x, 0); %% inequalities (branch flow limits)
     dg = dg';
     dh = dh';
+
+    %% force specified sparsity structure
+    if nargin > 7
+        %% add sparse structure (with tiny values) to current matrices to
+        %% ensure that sparsity structure matches that supplied
+        dg = dg + dgs;
+        dh = dh + dhs;
+
+%         %% check sparsity structure against that supplied
+%         if nnz(dg) ~= nnz(dgs)
+%             fprintf('=====> nnz(dg) is %d, expected %d <=====\n', nnz(dg), nnz(dgs));
+%         else
+%             [idgs, jdgs] = find(dgs);
+%             [idg, jdg] = find(dg);
+%             if any(idg ~= idgs) || any(jdg ~= jdgs)
+%                 fprintf('=====> structure of dg is not as expected <=====\n');
+%             end
+%         end
+%         if nnz(dh) ~= nnz(dhs)
+%             fprintf('=====> nnz(dh) is %d, expected %d <=====\n', nnz(dh), nnz(dhs));
+%         else
+%             [idhs, jdhs] = find(dhs);
+%             [idh, jdh] = find(dh);
+%             if any(idh ~= idhs) || any(jdh ~= jdhs)
+%                 fprintf('=====> structure of dh is not as expected <=====\n');
+%             end
+%         end
+    end
 end
