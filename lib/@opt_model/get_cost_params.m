@@ -34,10 +34,10 @@ cp = om.params_legacy_cost();
 if nargin > 1
     if getN(om, 'cost', name)
         if nargin < 3 || isempty(idx)
-            if prod(size(om.cost.idx.i1.(name))) == 1
+            if numel(om.cost.idx.i1.(name)) == 1    %% simple named set
                 i1 = om.cost.idx.i1.(name);
                 iN = om.cost.idx.iN.(name);
-            else
+            else                                    %% indexing required
                 error('@opt_model/get_cost_params: cost set ''%s'' requires an idx arg', name);
             end
         else

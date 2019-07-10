@@ -73,7 +73,7 @@ if nargin > 1       %% individual set
         idx = {};
     end
     if isempty(idx)                 %% name, no index provided
-        if prod(size(om.cost.idx.i1.(name))) == 1   %% simple named set
+        if numel(om.cost.idx.i1.(name)) == 1    %% simple named set
             N  = om.cost.data.N.( name);
             Cw = om.cost.data.Cw.(name);
             [nw, nx] = size(N);
@@ -109,7 +109,7 @@ if nargin > 1       %% individual set
                     iN = om.cost.idx.iN.(name);     %% ending row index
                 end
             end
-        else                                        %% indexing required
+        else                                    %% indexing required
             error('@opt_model/params_legacy_cost: legacy cost set ''%s'' requires an IDX arg', name);
         end
     else                            %% indexed named set

@@ -43,7 +43,7 @@ if nargin > 1       %% individual set
         idx = {};
     end
     if isempty(idx)
-        if prod(size(om.lin.idx.i1.(name))) == 1
+        if numel(om.lin.idx.i1.(name)) == 1     %% simple named set
             A = om.lin.data.A.(name);
             l = om.lin.data.l.(name);
             u = om.lin.data.u.(name);
@@ -54,7 +54,7 @@ if nargin > 1       %% individual set
                     iN = om.lin.idx.iN.(name);      %% ending row index
                 end
             end
-        else
+        else                                    %% indexing required
             error('@opt_model/params_lin_constraint: linear constraint set ''%s'' requires an IDX arg', name);
         end
     else

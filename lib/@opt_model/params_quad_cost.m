@@ -37,14 +37,14 @@ if nargin > 1       %% individual set
         idx = {};
     end
     if isempty(idx)                 %% name, no index provided
-        if prod(size(om.qdc.idx.i1.(name))) == 1    %% simple named set
+        if numel(om.qdc.idx.i1.(name)) == 1     %% simple named set
             Q = om.qdc.data.Q.(name);
             c = om.qdc.data.c.(name);
             k = om.qdc.data.k.(name);
             if nargout > 3
                 vs = om.qdc.data.vs.(name);
             end
-        else                                        %% indexing required
+        else                                    %% indexing required
             error('@opt_model/params_quad_cost: quadratic cost set ''%s'' requires an IDX arg', name);
         end
     else                            %% indexed named set
