@@ -9,23 +9,21 @@ For change history for [MIPS][2], see [mips/CHANGES.md](mips/CHANGES.md).
 For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 
 
-since 7.0
----------
+Changes since 7.0
+-----------------
 
 #### 8/15/19
+  - Refactor code in `@opt_model/params_lin_constraint()` and
+    `@opt_model/params_quad_cost()` to speed up sparse matrix construction
+    when there are lots of constraint or cost sets. Results in significant
+    speedups for some problems during problem setup in MOST.
+    *Thanks to Daniel Muldrew.*
   - Remove `active-set` algorithm in `t_opf_dc_ot` for certain versions
     of MATLAB (e.g. R2013b on Mac) to avoid triggering fatal MATLAB bug.
 
 
 Version 7.0 - *Jun 20, 2019*
 ----------------------------
-
-#### 7/10/19
-  - Refactor code in `@opt_model/params_lin_constraint()` and
-    `@opt_model/params_quad_cost()` to speed up sparse matrix construction.
-    Results in significant speedups for some problems during problem setup
-    in MOST.
-    *Thanks to Daniel Muldrew.*
 
 #### 6/20/19
   - Release 7.0.
