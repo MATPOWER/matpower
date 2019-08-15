@@ -24,7 +24,7 @@ if matlab
                     algs  = {'interior-point', 'active-set', 'simplex', 'dual-simplex'};
                 end
             else
-                algs  = {'interior-point', 'active-set', 'simplex'};
+                algs  = {'interior-point', 'simplex'};
             end
         else
             algs  = {'interior-point', 'active-set'};

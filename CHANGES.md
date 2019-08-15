@@ -9,6 +9,14 @@ For change history for [MIPS][2], see [mips/CHANGES.md](mips/CHANGES.md).
 For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 
 
+since 7.0
+---------
+
+#### 8/15/19
+  - Remove `active-set` algorithm in `t_opf_dc_ot` for certain versions
+    of MATLAB (e.g. R2013b on Mac) to avoid triggering fatal MATLAB bug.
+
+
 Version 7.0 - *Jun 20, 2019*
 ----------------------------
 
