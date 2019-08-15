@@ -44,6 +44,7 @@ st_label = om.valid_named_set_type(set_type);
 if st_label
     ff = set_type;
     om_ff = om.(ff);
+    om.(ff) = [];
 else
     error('@opt_model/add_named_set: ''%s'' is not a valid SET_TYPE, must be one of ''var'', ''lin'', ''nle'', ''nli'', ''qdc'', ''nlc'', ''cost''', set_type);
 end
