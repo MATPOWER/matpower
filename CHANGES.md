@@ -12,15 +12,20 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.0
 -----------------
 
+#### 8/16/19
+  - Fix [issue #77][23] where incorrect indexing could cause fatal error
+    in OPF with additional nonlinear constraints.
+    *Thanks to Sergio Garcia.*
+
 #### 8/15/19
   - Improve performance of `@opt_model/add_named_set()`.
-    (See [issue #79][21].)
+    (See [issue #79][22].)
     *Thanks to Baraa Mohandes.*
   - Refactor code in `@opt_model/params_lin_constraint()` and
     `@opt_model/params_quad_cost()` to speed up sparse matrix construction
     when there are lots of constraint or cost sets. Results in significant
     speedups for some problems during problem setup in MOST.
-    (See [pull request #70][20].)
+    (See [pull request #70][21].)
     *Thanks to Daniel Muldrew.*
   - Remove `active-set` algorithm in `t_opf_dc_ot` for certain versions
     of MATLAB (e.g. R2013b on Mac) to avoid triggering fatal MATLAB bug.
@@ -2907,3 +2912,4 @@ First Public Release – *Jun 25, 1997*
 [20]: https://github.com/MATPOWER/matpower/issues/60
 [21]: https://github.com/MATPOWER/matpower/pull/70
 [22]: https://github.com/MATPOWER/matpower/issues/79
+[23]: https://github.com/MATPOWER/matpower/issues/77

@@ -281,8 +281,8 @@ ngt = length(igt);
 nbx = length(ibx);
 
 %% extract multipliers for nonlinear constraints
-kl = find(Lambda.eqnonlin < 0);
-ku = find(Lambda.eqnonlin > 0);
+kl = find(Lambda.eqnonlin(1:2*nb) < 0);
+ku = find(Lambda.eqnonlin(1:2*nb) > 0);
 nl_mu_l = zeros(nlnN, 1);
 nl_mu_u = [zeros(2*nb, 1); muSf; muSt];
 nl_mu_l(kl) = -Lambda.eqnonlin(kl);

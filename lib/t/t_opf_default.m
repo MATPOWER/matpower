@@ -435,6 +435,9 @@ end
 %     t_ok(r.success, [t 'success']);
 %     t_is(r.gen(1, PG) * r.gen(2, PG) / 100, r.gen(6, PG), 8, t);
 %     t_is(r.gen(6, PG), 20.751163, 5, t);
+%     %% check for indexing error, issue #77
+%     t_is(r.raw.pimul(61), 0, 10, [t 'issue #77']);
+%     t_is(r.mu.nln.u(61), 0, 10, [t 'issue #77']);
 
     %% OPF with all buses isolated
     t = [t0 'all buses isolated : '];
