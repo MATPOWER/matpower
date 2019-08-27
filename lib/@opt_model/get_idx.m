@@ -5,6 +5,8 @@ function varargout = get_idx(om, varargin)
 %   [VV, LL, NNE] = OM.GET_IDX()
 %   [VV, LL, NNE, NNI] = OM.GET_IDX()
 %   [VV, LL, NNE, NNI, CC] = OM.GET_IDX()
+%   [VV, LL, NNE, NNI, CC, QDC] = OM.GET_IDX()
+%   [VV, LL, NNE, NNI, CC, QDC, NLC] = OM.GET_IDX()
 %
 %   Returns a structure for each with the beginning and ending
 %   index value and the number of elements for each named block.
@@ -26,7 +28,9 @@ function varargout = get_idx(om, varargin)
 %       SET_TYPE = 'lin'   => linear constraint set
 %       SET_TYPE = 'nle'   => nonlinear equality constraint set
 %       SET_TYPE = 'nli'   => nonlinear inequality constraint set
-%       SET_TYPE = 'cost'  => cost set
+%       SET_TYPE = 'nlc'   => nonlinear cost set
+%       SET_TYPE = 'qdc'   => quadratic cost set
+%       SET_TYPE = 'cost'  => legacy cost set
 %
 %   Examples:
 %       [vv, ll, nne] = om.get_idx();
@@ -60,7 +64,7 @@ function varargout = get_idx(om, varargin)
 %            ADD_QUAD_COST, ADD_NLN_COST and ADD_LEGACY_COST.
 
 %   MATPOWER
-%   Copyright (c) 2008-2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2019, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -77,6 +81,12 @@ if nargin == 1
                 varargout{4} = om.nli.idx;
                 if nargout > 4
                     varargout{5} = om.cost.idx;
+                    if nargout > 5
+                        varargout{6} = om.qdc.idx;
+                        if nargout > 6
+                            varargout{7} = om.nlc.idx;
+                        end
+                    end
                 end
             end
         end
