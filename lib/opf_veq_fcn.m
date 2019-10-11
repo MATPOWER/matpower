@@ -42,12 +42,12 @@ nb = length(Vi);            %% number of buses
 n = length(idx);            %% number of buses with fixed voltage magnitudes
 
 %% compute voltage magnitude
-Vm = sqrt(Vr(idx).^2 + Vi(idx).^2);
-Veq = Vm - mpc.bus(idx, VMAX);
+Vm2 = Vr(idx).^2 + Vi(idx).^2;
+Veq = Vm2 - mpc.bus(idx, VMAX).^2;
 
 if nargout > 1
     %% compute partials of voltage magnitude w.r.t Vr and Vi
-    dVm_dVr = sparse(1:n, idx, Vr(idx)./Vm, n, nb);
-    dVm_dVi = sparse(1:n, idx, Vi(idx)./Vm, n, nb);
-    dVeq = [ dVm_dVr dVm_dVi ];     %% Vm w.r.t Vr, Vi
+    dVm_dVr = sparse(1:n, idx, 2 * Vr(idx), n, nb);
+    dVm_dVi = sparse(1:n, idx, 2 * Vi(idx), n, nb);
+    dVeq = [ dVm_dVr dVm_dVi ];     %% Vm2 w.r.t Vr, Vi
 end

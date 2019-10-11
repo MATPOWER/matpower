@@ -36,12 +36,6 @@ function d2Vlims = opf_vlim_hess(x, lambda, mpc, idx, mpopt)
 nb = length(Vi);            %% number of buses
 n = length(idx);            %% number of buses with voltage limits
 
-%% compute voltage magnitude cubed
-Vr2 = Vr(idx).^2;
-Vi2 = Vi(idx).^2;
-VrVi = Vr(idx) .* Vi(idx);
-Vm3 = (Vr2 + Vi2).^(3/2);   %% Vm.^3;
-
 %%----- evaluate Hessian of voltage limit constraints -----
 nlam = length(lambda) / 2;
 if nlam
@@ -52,19 +46,10 @@ else    %% keep dimensions of empty matrices/vectors compatible
     lamVmax = zeros(0,1);
 end
 
-lamVmin_over_Vm3 = lamVmin ./ Vm3;
-lamVmax_over_Vm3 = lamVmax ./ Vm3;
-
-Vmin_rr = sparse(idx, idx,  Vi2  .* lamVmin_over_Vm3, nb, nb);
-Vmin_ri = sparse(idx, idx, -VrVi .* lamVmin_over_Vm3, nb, nb);
-Vmin_ir = Vmin_ri;
-Vmin_ii = sparse(idx, idx,  Vr2  .* lamVmin_over_Vm3, nb, nb);
-
-Vmax_rr = sparse(idx, idx,  Vi2  .* lamVmax_over_Vm3, nb, nb);
-Vmax_ri = sparse(idx, idx, -VrVi .* lamVmax_over_Vm3, nb, nb);
-Vmax_ir = Vmax_ri;
-Vmax_ii = sparse(idx, idx,  Vr2  .* lamVmax_over_Vm3, nb, nb);
+dlamVmin = sparse(idx, idx, 2*lamVmin, nb, nb);
+dlamVmax = sparse(idx, idx, 2*lamVmax, nb, nb);
+zz = sparse(nb, nb);
 
 %% construct Hessian
-d2Vlims =  -[Vmin_rr Vmin_ri; Vmin_ir Vmin_ii] + ...
-            [Vmax_rr Vmax_ri; Vmax_ir Vmax_ii];
+d2Vlims =  -[dlamVmin zz; zz dlamVmin] + ...
+            [dlamVmax zz; zz dlamVmax];

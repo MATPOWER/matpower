@@ -42,14 +42,14 @@ nb = length(Vi);            %% number of buses
 n = length(idx);            %% number of buses with voltage limits
 
 %% compute voltage magnitude
-Vm = sqrt(Vr(idx).^2 + Vi(idx).^2);
-Vlims = [ mpc.bus(idx, VMIN) - Vm;
-          Vm - mpc.bus(idx, VMAX) ];
+Vm2 = Vr(idx).^2 + Vi(idx).^2;
+Vlims = [ mpc.bus(idx, VMIN).^2 - Vm2;
+          Vm2 - mpc.bus(idx, VMAX).^2 ];
 
 if nargout > 1
     %% compute partials of voltage magnitude w.r.t Vr and Vi
-    dVm_dVr = sparse(1:n, idx, Vr(idx)./Vm, n, nb);
-    dVm_dVi = sparse(1:n, idx, Vi(idx)./Vm, n, nb);
+    dVm_dVr = sparse(1:n, idx, 2 * Vr(idx), n, nb);
+    dVm_dVi = sparse(1:n, idx, 2 * Vi(idx), n, nb);
     dVlims = [ -dVm_dVr -dVm_dVi;   %% Vlims w.r.t Vr, Vi
                 dVm_dVr  dVm_dVi  ];
 end

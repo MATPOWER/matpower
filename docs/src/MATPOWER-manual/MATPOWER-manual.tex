@@ -8385,6 +8385,8 @@ voltage magnitude constraints at PV buses. This method is slower
 reliable in some cases than the original implementation, which was
 a hybrid approach by Sereeter that used a modified Newton method
 to compute polar voltage updates using a modified cartesian Jacobian.
+\item Modify voltage limit constraints for cartesian AC OPF formulation
+to use voltage squared, resulting in simpler derivatives.
 \item Deprecated functions:
     \begin{itemize}
     \item \code{foo()} -- use \code{bar()} instead.

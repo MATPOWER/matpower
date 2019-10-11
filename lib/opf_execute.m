@@ -138,6 +138,12 @@ if success
     %% copy bus voltages back to gen matrix
     results.gen(:, VG) = results.bus(results.gen(:, GEN_BUS), VM);
 
+    %% cartesian voltage magnitude multipliers
+    if vcart
+        results.bus(:, MU_VMIN) = results.bus(:, MU_VMIN) .* results.bus(:, VM) * 2;
+        results.bus(:, MU_VMAX) = results.bus(:, MU_VMAX) .* results.bus(:, VM) * 2;
+    end
+
     %% gen PQ capability curve multipliers
     if ll.N.PQh > 0 || ll.N.PQl > 0
       mu_PQh = results.mu.lin.l(ll.i1.PQh:ll.iN.PQh) - results.mu.lin.u(ll.i1.PQh:ll.iN.PQh);

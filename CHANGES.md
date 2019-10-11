@@ -31,6 +31,10 @@ Changes since 7.0
     a hybrid approach by Sereeter that used a modified Newton method
     to compute polar voltage updates using a modified cartesian Jacobian.
 
+#### 10/11/19
+  - Modify voltage limit constraints for cartesian AC OPF formulation
+    to use voltage squared, resulting in simpler derivatives.
+
 #### 8/21/19
   - Fix OPF [issue #71][24] for IPOPT and Knitro where structure of
     Jacobian and/or Hessian could change from the structure provided

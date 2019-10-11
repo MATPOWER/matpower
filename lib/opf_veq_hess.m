@@ -36,19 +36,9 @@ function d2Veq = opf_veq_hess(x, lambda, mpc, idx, mpopt)
 nb = length(Vi);            %% number of buses
 n = length(idx);            %% number of buses with fixed voltage magnitudes
 
-%% compute voltage magnitude cubed
-Vr2 = Vr(idx).^2;
-Vi2 = Vi(idx).^2;
-VrVi = Vr(idx) .* Vi(idx);
-Vm3 = (Vr2 + Vi2).^(3/2);   %% Vm.^3;
-
 %%----- evaluate Hessian of voltage magnitude constraints -----
-lamVm_over_Vm3 = lambda ./ Vm3;
-
-Vm_rr = sparse(idx, idx,  Vi2  .* lamVm_over_Vm3, nb, nb);
-Vm_ri = sparse(idx, idx, -VrVi .* lamVm_over_Vm3, nb, nb);
-Vm_ir = Vm_ri;
-Vm_ii = sparse(idx, idx,  Vr2  .* lamVm_over_Vm3, nb, nb);
+dlam = sparse(idx, idx, 2*lambda, nb, nb);
+zz = sparse(nb, nb);
 
 %% construct Hessian
-d2Veq = [Vm_rr Vm_ri; Vm_ir Vm_ii];
+d2Veq =  [dlam zz; zz dlam];
