@@ -1465,10 +1465,13 @@ name & default & description \\
 \end{tabular}	\\
 \code{pf.alg}	& \codeq{NR}	& AC power flow algorithm: \\
 && \begin{tabular}{c @{ -- } p{0.5\textwidth}}
-\codeq{NR} & Newtons's method (formulation depends on values of \code{pf.current\_balance} and \code{pf.v\_cartesian} options) \\
-\codeq{NR-SC} & Newtons's method (power mismatch, cartesian)\tnote{\dag} \\
-\codeq{NR-IP} & Newtons's method (current mismatch, polar)\tnote{\dag} \\
-\codeq{NR-IC} & Newtons's method (current mismatch, cartesian)\tnote{\dag} \\
+\codeq{NR} & Newtons's method (formulation depends on options \code{pf.current\_balance} and \code{pf.v\_cartesian})\tnote{\dag} \\
+% \codeq{NR-SP} & Newtons's method (power mismatch, polar)\tnote{\dag} \\
+% \codeq{NR-SC} & Newtons's method (power mismatch, cartesian)\tnote{\dag} \\
+% \codeq{NR-SH} & Newtons's method (power mismatch, hybrid)\tnote{\dag} \\
+% \codeq{NR-IP} & Newtons's method (current mismatch, polar)\tnote{\dag} \\
+% \codeq{NR-IC} & Newtons's method (current mismatch, cartesian)\tnote{\dag} \\
+% \codeq{NR-IH} & Newtons's method (current mismatch, hybrid)\tnote{\dag} \\
 \codeq{FDXB} & Fast-Decoupled (XB version) \\
 \codeq{FDBX} & Fast-Decouple (BX version) \\
 \codeq{GS} & Gauss-Seidel \\
@@ -1477,7 +1480,12 @@ name & default & description \\
 \codeq{YSUM} & Admittance Summation (radial networks only) \\
 \end{tabular}	\\
 \code{pf.current\_balance}\tnote{\ddag}	& 0	& use current, as opposed to power, balance for AC PF, 0 or 1	\\
-\code{pf.v\_cartesian}\tnote{\ddag}	& 0	& use cartesian, as opposed to polar, representation for voltages for AC PF, 0 or 1	\\
+\code{pf.v\_cartesian}\tnote{\ddag}	& 0	& voltage representation	\\
+&& \begin{tabular}{r @{ -- } l}
+0 & bus voltage variables represented in polar coordinates \\
+1 & bus voltage variables represented in cartesian coordinates \\
+2 & hybrid, polar updates computed via modified cartesian Jacobian \\
+\end{tabular}	\\
 \code{pf.tol}	& $10^{-8}$	& termination tolerance on per unit P and Q dispatch	\\
 \code{pf.nr.max\_it}	& 10	& maximum number of iterations for Newton's method	\\
 \code{pf.nr.lin\_solver}	& \codeq{}	& linear solver option for \code{mplinsolve} for computing Newton update step \\
@@ -1508,8 +1516,9 @@ name & default & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {Automatically sets/overrides \code{pf.current\_balance} and \code{pf.v\_cartesian} options with corresponding values.}
- \item [\ddag] {Only relevant for Newton power flow solver.}
+%  \item [\dag] {Automatically sets/overrides \code{pf.current\_balance} and \code{pf.v\_cartesian} options with corresponding values.}
+ \item [\dag] {The values \codeq{NR-SP}, \codeq{NR-SC}, \codeq{NR-SH}, \codeq{NR-IP}, \codeq{NR-IC}, \codeq{NR-IH} can also be used as shortcuts to simultaneously select Newton's method and set/override the \code{pf.current\_balance} and \code{pf.v\_cartesian} options with corresponding values, where \codeq{S} and \codeq{I} are for power and current balance, respectively, and \codeq{P}, \codeq{C} and \codeq{H} are for polar, cartesian and hybrid, respectively.}
+ \item [\ddag] {Only relevant for Newton AC power flow solver.}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -5183,10 +5192,13 @@ name & default & description \\
 \midrule
 \code{pf.alg}	& \codeq{NR}	& AC power flow algorithm: \\
 && \begin{tabular}{c @{ -- } p{0.5\textwidth}}
-\codeq{NR} & Newtons's method (formulation depends on values of \code{pf.current\_balance} and \code{pf.v\_cartesian} options) \\
-\codeq{NR-SC} & Newtons's method (power mismatch, cartesian)\tnote{\dag} \\
-\codeq{NR-IP} & Newtons's method (current mismatch, polar)\tnote{\dag} \\
-\codeq{NR-IC} & Newtons's method (current mismatch, cartesian)\tnote{\dag} \\
+\codeq{NR} & Newtons's method (formulation depends on options \code{pf.current\_balance} and \code{pf.v\_cartesian})\tnote{\dag} \\
+% \codeq{NR-SP} & Newtons's method (power mismatch, polar)\tnote{\dag} \\
+% \codeq{NR-SC} & Newtons's method (power mismatch, cartesian)\tnote{\dag} \\
+% \codeq{NR-SH} & Newtons's method (power mismatch, hybrid)\tnote{\dag} \\
+% \codeq{NR-IP} & Newtons's method (current mismatch, polar)\tnote{\dag} \\
+% \codeq{NR-IC} & Newtons's method (current mismatch, cartesian)\tnote{\dag} \\
+% \codeq{NR-IH} & Newtons's method (current mismatch, hybrid)\tnote{\dag} \\
 \codeq{FDXB} & Fast-Decoupled (XB version) \\
 \codeq{FDBX} & Fast-Decouple (BX version) \\
 \codeq{GS} & Gauss-Seidel \\
@@ -5195,7 +5207,12 @@ name & default & description \\
 \codeq{YSUM} & Admittance Summation (radial networks only) \\
 \end{tabular}	\\
 \code{pf.current\_balance}\tnote{\ddag}	& 0	& use current, as opposed to power, balance for AC PF, 0 or 1	\\
-\code{pf.v\_cartesian}\tnote{\ddag}	& 0	& use cartesian, as opposed to polar, representation for voltages for AC PF, 0 or 1	\\
+\code{pf.v\_cartesian}\tnote{\ddag}	& 0	& voltage representation	\\
+&& \begin{tabular}{r @{ -- } l}
+0 & bus voltage variables represented in polar coordinates \\
+1 & bus voltage variables represented in cartesian coordinates \\
+2 & hybrid, polar updates computed via modified cartesian Jacobian \\
+\end{tabular}	\\
 \code{pf.tol}	& $10^{-8}$	& termination tolerance on per unit P and Q dispatch	\\
 \code{pf.nr.max\_it}	& 10	& maximum number of iterations for Newton's method	\\
 \code{pf.nr.lin\_solver}	& \codeq{}	& linear solver option for \code{mplinsolve} for computing Newton update step \\
@@ -5226,8 +5243,9 @@ name & default & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {Automatically sets/overrides \code{pf.current\_balance} and \code{pf.v\_cartesian} options with corresponding values.}
- \item [\ddag] {Only relevant for Newton power flow solver.}
+%  \item [\dag] {Automatically sets/overrides \code{pf.current\_balance} and \code{pf.v\_cartesian} options with corresponding values.}
+ \item [\dag] {The values \codeq{NR-SP}, \codeq{NR-SC}, \codeq{NR-SH}, \codeq{NR-IP}, \codeq{NR-IC}, \codeq{NR-IH} can also be used as shortcuts to simultaneously select Newton's method and set/override the \code{pf.current\_balance} and \code{pf.v\_cartesian} options with corresponding values, where \codeq{S} and \codeq{I} are for power and current balance, respectively, and \codeq{P}, \codeq{C} and \codeq{H} are for polar, cartesian and hybrid, respectively.}
+ \item [\ddag] {Only relevant for Newton AC power flow solver.}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -6197,7 +6215,7 @@ name & description \\
 \caption{Power Flow Functions}
 \label{tab:pf}
 \footnotesize
-\begin{tabular}{p{0.17\textwidth}p{0.73\textwidth}}
+\begin{tabular}{p{0.18\textwidth}p{0.73\textwidth}}
 \toprule
 name & description \\
 \midrule
@@ -6211,8 +6229,10 @@ name & description \\
 \code{make\_zpv}	& form loop impedance for PV bus handling in radial power flow\tnote{\dag}	\\
 \code{newtonpf}	& implementation of Newton-method power flow solver (power, polar)	\\
 \code{newtonpf\_I\_cart}	& implementation of Newton-method power flow solver (current, cartesian)	\\
+\code{newtonpf\_I\_hybrid}	& implementation of Newton-method power flow solver (current, hybrid)	\\
 \code{newtonpf\_I\_polar}	& implementation of Newton-method power flow solver (current, polar)	\\
 \code{newtonpf\_S\_cart}	& implementation of Newton-method power flow solver (power, cartesian)	\\
+\code{newtonpf\_S\_hybrid}	& implementation of Newton-method power flow solver (power, hybrid)	\\
 \code{order\_radial}	& performs oriented ordering of buses and branches for radial power flow\tnote{\dag}	\\
 \code{pfsoln}	& computes branch flows, generator reactive power (and real power for slack bus), updates \bus{}, \gen{}, \branch{} matrices with solved values	\\
 \code{radial\_pf}	& wrapper for backward/forward sweep power flow solvers\tnote{\dag}	\\
@@ -8344,6 +8364,11 @@ The \href{https://matpower.org/docs/MATPOWER-manual-7.0.1.pdf}{\matpower{} 7.0.1
 \begin{itemize}
 \item Significant speedup for some problems when constructing sparse matrices for linear constraints or quadratic costs (e.g. during problem setup in \most{}).
 \emph{Thanks to Daniel Muldrew.}
+\item Move original implementation of Newton power flow for cartesian
+voltage representations to \code{newtonpf\_S\_hybrid()} and     \code{newtonpf\_I\_hybrid()}, accessible by setting the \code{pf.v\_cartesian}
+option to 2. The \code{pf.alg} option can also be set to \codeq{NR-SH} or
+\codeq{NR-IH}, respectively, as shortcuts to select these formulations.
+\item The \code{pf.alg} option now accepts \codeq{NR-SP} as a shortcut for Newton's method with the default power/polar formulation.
 \item Deprecated functions:
     \begin{itemize}
     \item \code{foo()} -- use \code{bar()} instead.

@@ -1,10 +1,11 @@
-function [V, converged, i] = newtonpf_S_cart(Ybus, Sbus, V0, ref, pv, pq, mpopt)
-%NEWTONPF_S_CART  Solves power flow using full Newton's method (power/cartesian)
-%   [V, CONVERGED, I] = NEWTONPF_S_CART(YBUS, SBUS, V0, REF, PV, PQ, MPOPT)
+function [V, converged, i] = newtonpf_S_hybrid(Ybus, Sbus, V0, ref, pv, pq, mpopt)
+%NEWTONPF_S_HYBRID  Solves power flow using full Newton's method (power/hybrid)
+%   [V, CONVERGED, I] = NEWTONPF_S_HYBRID(YBUS, SBUS, V0, REF, PV, PQ, MPOPT)
 %
 %   Solves for bus voltages using a full Newton-Raphson method, using nodal
-%   power balance equations and cartesian coordinate representation of
-%   voltages, given the following inputs:
+%   power balance equations and a hybrid representation of voltages, where
+%   a polar update is computed using a cartesian Jacobian, given the
+%   following inputs:
 %       YBUS  - full system admittance matrix (for all buses)
 %       SBUS  - handle to function that returns the complex bus power
 %               injection vector (for all buses), given the bus voltage
@@ -140,13 +141,13 @@ while (~converged && i < max_it)
     if normF < tol
         converged = 1;
         if mpopt.verbose
-            fprintf('\nNewton''s method power flow (power balance, cartesian) converged in %d iterations.\n', i);
+            fprintf('\nNewton''s method power flow (power balance, hybrid) converged in %d iterations.\n', i);
         end
     end
 end
 
 if mpopt.verbose
     if ~converged
-        fprintf('\nNewton''s method power flow (power balance, cartesian) did not converge in %d iterations.\n', i);
+        fprintf('\nNewton''s method power flow (power balance, hybrid) did not converge in %d iterations.\n', i);
     end
 end

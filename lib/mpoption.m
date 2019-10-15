@@ -57,9 +57,12 @@ function opt = mpoption(varargin)
 %   pf.alg                  'NR'        AC power flow algorithm
 %       [ 'NR'    - Newton's method (formulation depends on values of       ]
 %       [           pf.current_balance and pf.v_cartesian options)          ]
+%       [ 'NR-SP' - Newton's method (power mismatch, polar)                 ]
 %       [ 'NR-SC' - Newton's method (power mismatch, cartesian)             ]
+%       [ 'NR-SH' - Newton's method (power mismatch, hybrid)                ]
 %       [ 'NR-IP' - Newton's method (current mismatch, polar)               ]
 %       [ 'NR-IC' - Newton's method (current mismatch, cartesian)           ]
+%       [ 'NR-IH' - Newton's method (current mismatch, hybrid)              ]
 %       [ 'FDXB'  - Fast-Decoupled (XB version)                             ]
 %       [ 'FDBX'  - Fast-Decoupled (BX version)                             ]
 %       [ 'GS'    - Gauss-Seidel                                            ]
@@ -71,7 +74,8 @@ function opt = mpoption(varargin)
 %       [ 1 - use complex current balance equations                         ]
 %   pf.v_cartesian         0           voltage representation
 %       [ 0 - bus voltage variables represented in polar coordinates        ]
-%       [ 1 - bus voltage variables represented in Cartesian coordinates    ]
+%       [ 1 - bus voltage variables represented in cartesian coordinates    ]
+%       [ 2 - hybrid, polar updates computed via modified cartesian Jacobian]
 %   pf.tol                  1e-8        termination tolerance on per unit
 %                                       P & Q mismatch
 %   pf.nr.max_it            10          maximum number of iterations for
@@ -213,7 +217,7 @@ function opt = mpoption(varargin)
 %       [ 1 - use complex current balance equations                         ]
 %   opf.v_cartesian         0           voltage representation
 %       [ 0 - bus voltage variables represented in polar coordinates        ]
-%       [ 1 - bus voltage variables represented in Cartesian coordinates    ]
+%       [ 1 - bus voltage variables represented in cartesian coordinates    ]
 %   opf.violation           5e-6        constraint violation tolerance
 %   opf.use_vg              0           respect gen voltage setpt     [ 0-1 ]
 %       [ 0 - use specified bus Vmin & Vmax, and ignore gen Vg              ]

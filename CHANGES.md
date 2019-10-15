@@ -12,6 +12,15 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.0
 -----------------
 
+#### 10/15/19
+  - Move original implementation of Newton power flow for cartesian
+    voltage representations to `newtonpf_S_hybrid()` and
+    `newtonpf_I_hybrid()`, accessible by setting the `pf.v_cartesian`
+    option to 2. The `pf.alg` option can also be set to `'NR-SH'` or
+    `'NR-IH'`, respectively, as shortcuts to select these formulations.
+  - The `pf.alg` option now accepts `'NR-SP'` as a shortcut for Newton's
+    method with with the default power/polar formulation.
+
 #### 8/21/19
   - Fix OPF [issue #71][24] for IPOPT and Knitro where structure of
     Jacobian and/or Hessian could change from the structure provided

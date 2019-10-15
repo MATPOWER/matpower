@@ -161,23 +161,33 @@ if ~isempty(mpc.bus)
     else                                %% AC formulation
         alg = upper(mpopt.pf.alg);
         switch alg
+            case 'NR-SP'
+                mpopt = mpoption(mpopt, 'pf.current_balance', 0, 'pf.v_cartesian', 0);
             case 'NR-SC'
                 mpopt = mpoption(mpopt, 'pf.current_balance', 0, 'pf.v_cartesian', 1);
+            case 'NR-SH'
+                mpopt = mpoption(mpopt, 'pf.current_balance', 0, 'pf.v_cartesian', 2);
             case 'NR-IP'
                 mpopt = mpoption(mpopt, 'pf.current_balance', 1, 'pf.v_cartesian', 0);
             case 'NR-IC'
                 mpopt = mpoption(mpopt, 'pf.current_balance', 1, 'pf.v_cartesian', 1);
+            case 'NR-IH'
+                mpopt = mpoption(mpopt, 'pf.current_balance', 1, 'pf.v_cartesian', 2);
         end
         if mpopt.verbose > 0
             switch alg
-                case 'NR'
+                case {'NR', 'NR-SP'}
                     solver = 'Newton';
                 case 'NR-SC'
                     solver = 'Newton-SC';
+                case 'NR-SH'
+                    solver = 'Newton-SH';
                 case 'NR-IP'
                     solver = 'Newton-IP';
                 case 'NR-IC'
                     solver = 'Newton-IC';
+                case 'NR-IH'
+                    solver = 'Newton-IH';
                 case 'FDXB'
                     solver = 'fast-decoupled, XB';
                 case 'FDBX'
@@ -196,7 +206,7 @@ if ~isempty(mpc.bus)
             fprintf(' -- AC Power Flow (%s)\n', solver);
         end
         switch alg
-            case {'NR', 'NR-SC', 'NR-IP', 'NR-IC'}  %% all 4 variants supported
+            case {'NR', 'NR-SP', 'NR-SC', 'NR-SH', 'NR-IP', 'NR-IC', 'NR-IH'}  %% all 6 variants supported
             otherwise                   %% only power balance, polar is valid
                 if mpopt.pf.current_balance || mpopt.pf.v_cartesian
                     error('runpf: power flow algorithm ''%s'' only supports power balance, polar version\nI.e. both ''pf.current_balance'' and ''pf.v_cartesian'' must be set to 0.');
@@ -204,7 +214,7 @@ if ~isempty(mpc.bus)
         end
         if have_zip_loads(mpopt)
             if mpopt.pf.current_balance || mpopt.pf.v_cartesian
-                warnstr = 'Newton algorithm (current or cartesian versions) do';
+                warnstr = 'Newton algorithm (current or cartesian/hybrid versions) do';
             elseif strcmp(alg, 'GS')
                 warnstr = 'Gauss-Seidel algorithm does';
             else
@@ -243,18 +253,24 @@ if ~isempty(mpc.bus)
 
             %% run the power flow
             switch alg
-                case {'NR', 'NR-SC', 'NR-IP', 'NR-IC'}
+                case {'NR', 'NR-SP', 'NR-SC', 'NR-SH', 'NR-IP', 'NR-IC', 'NR-IH'}
                     if mpopt.pf.current_balance
-                        if mpopt.pf.v_cartesian     %% current, cartesian
-                            newtonpf_fcn = @newtonpf_I_cart;
-                        else                        %% current, polar
-                            newtonpf_fcn = @newtonpf_I_polar;
+                        switch mpopt.pf.v_cartesian
+                            case 0                  %% current, polar
+                                newtonpf_fcn = @newtonpf_I_polar;
+                            case 1                  %% current, cartesian
+                                newtonpf_fcn = @newtonpf_I_cart;
+                            case 2                  %% current, hybrid
+                                newtonpf_fcn = @newtonpf_I_hybrid;
                         end
                     else
-                        if mpopt.pf.v_cartesian     %% power, cartesian
-                            newtonpf_fcn = @newtonpf_S_cart;
-                        else                        %% default - power, polar
-                            newtonpf_fcn = @newtonpf;
+                        switch mpopt.pf.v_cartesian
+                            case 0                  %% default - power, polar
+                                newtonpf_fcn = @newtonpf;
+                            case 1                  %% power, cartesian
+                                newtonpf_fcn = @newtonpf_S_cart;
+                            case 2                  %% power, hybrid
+                                newtonpf_fcn = @newtonpf_S_hybrid;
                         end
                     end
                     [V, success, iterations] = newtonpf_fcn(Ybus, Sbus, V0, ref, pv, pq, mpopt);
@@ -272,7 +288,7 @@ if ~isempty(mpc.bus)
 
             %% update data matrices with solution
             switch alg
-                case {'NR', 'NR-SC', 'NR-IP', 'NR-IC', 'FDXB', 'FDBX', 'GS'}
+                case {'NR', 'NR-SP', 'NR-SC', 'NR-SH', 'NR-IP', 'NR-IC', 'NR-IH', 'FDXB', 'FDBX', 'GS'}
                     [bus, gen, branch] = pfsoln(baseMVA, bus, gen, branch, Ybus, Yf, Yt, V, ref, pv, pq, mpopt);
                 case {'PQSUM', 'ISUM', 'YSUM'}
                     bus = mpc.bus;
