@@ -1,5 +1,5 @@
 function [V, converged, i] = newtonpf_I_cart(Ybus, Sbus, V0, ref, pv, pq, mpopt)
-%NEWTONPF_I_CART  Solves power flow using full Newton's method (power/cartesian)
+%NEWTONPF_I_CART  Solves power flow using full Newton's method (current/cartesian)
 %   [V, CONVERGED, I] = NEWTONPF_I_CART(YBUS, SBUS, V0, REF, PV, PQ, MPOPT)
 %
 %   Solves for bus voltages using a full Newton-Raphson method, using nodal
