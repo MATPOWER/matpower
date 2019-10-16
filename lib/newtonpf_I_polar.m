@@ -99,7 +99,7 @@ while (~converged && i < max_it)
     i = i + 1;
 
     %% evaluate Jacobian
-    dImis_dQ = sparse(1:n, 1:n, 1j./conj(V), n, n);
+    dImis_dQ = sparse(pv, pv, 1j./conj(V(pv)), n, n);
     [dImis_dVa, dImis_dVm] = dImis_dV(Sb, Ybus, V);
     dImis_dVm(:, pv) = dImis_dQ(:, pv);
 
@@ -113,6 +113,23 @@ while (~converged && i < max_it)
 
     J = [   j11 j12;
             j21 j22;    ];
+
+%     %% evaluate Jacobian
+%     dImis_dQ = sparse(pv, pv, 1j./conj(V(pv)), n, n);
+%     [dImis_dVa, dImis_dVm] = dImis_dV(Sb, Ybus, V);
+% 
+%     %% handling of derivatives for voltage dependent loads
+%     %% (not yet implemented) goes here
+% 
+%     j11 = real(dImis_dVa([pv; pq], [pv; pq]));
+%     j12 = real(dImis_dQ([pv; pq], pv));
+%     j13 = real(dImis_dVm([pv; pq], pq));
+%     j21 = imag(dImis_dVa([pv; pq], [pv; pq]));
+%     j22 = imag(dImis_dQ([pv; pq], pv));
+%     j23 = imag(dImis_dVm([pv; pq], pq));
+% 
+%     J = [   j11 j12 j13;
+%             j21 j22 j23;    ];
 
     %% compute update step
     dx = mplinsolve(J, -F, lin_solver);

@@ -50,8 +50,8 @@ lin_solver  = mpopt.pf.nr.lin_solver;
 converged = 0;
 i = 0;
 V = V0;
-Va = angle(V);
 Vm = abs(V);
+Vmpv = Vm(pv);
 n = length(V0);
 
 %% set up indexing for updating V
@@ -59,15 +59,17 @@ npv = length(pv);
 npq = length(pq);
 j1 = 1;         j2 = npv;           %% j1:j2 - Q of pv buses
 j3 = j2 + 1;    j4 = j2 + npq;      %% j3:j4 - Vr of pq buses
-j5 = j4 + 1;    j6 = j4 + npv;      %% j5:j6 - Vi of pv buses
-j7 = j6 + 1;    j8 = j6 + npq;      %% j7:j9 - Vi of pq buses
+j5 = j4 + 1;    j6 = j4 + npv;      %% j5:j6 - Vr of pv buses
+j7 = j6 + 1;    j8 = j6 + npq;      %% j7:j8 - Vi of pq buses
+j9 = j8 + 1;    j10= j8 + npv;      %% j9:j10- Vi of pv buses
 
 %% evaluate F(x0)
 Sb = Sbus(Vm);
 Sb(pv) = real(Sb(pv)) + 1j * imag(V(pv) .* conj(Ybus(pv, :) * V));
 mis = Ybus * V - conj(Sb ./ V);
 F = [   real(mis([pv; pq]));
-        imag(mis([pv; pq]))   ];
+        imag(mis([pv; pq]));
+        V(pv) .* conj(V(pv)) - Vmpv.^2  ];
 
 %% check tolerance
 normF = norm(F, inf);
@@ -99,45 +101,45 @@ while (~converged && i < max_it)
     i = i + 1;
 
     %% evaluate Jacobian
-    dImis_dQ = sparse(1:n, 1:n, 1j./conj(V), n, n);
+    dImis_dQ = sparse(pv, pv, 1j./conj(V(pv)), n, n);
+    dV2_dVr = sparse(1:npv, npq+(1:npv), 2*real(V(pv)), npv, npv+npq);
+    dV2_dVi = sparse(1:npv, npq+(1:npv), 2*imag(V(pv)), npv, npv+npq);
     [dImis_dVr, dImis_dVi] = dImis_dV(Sb, Ybus, V, 1);
-    dImis_dVi(:, pv) = dImis_dVi(:, pv) - ...
-        dImis_dVr(:, pv) * sparse(1:npv, 1:npv, imag(V(pv))./real(V(pv)), npv, npv);
-    dImis_dVr(:, pv) = dImis_dQ(:, pv);
 
     %% handling of derivatives for voltage dependent loads
     %% (not yet implemented) goes here
 
-    j11 = real(dImis_dVr([pv; pq], [pv; pq]));
-    j12 = real(dImis_dVi([pv; pq], [pv; pq]));
-    j21 = imag(dImis_dVr([pv; pq], [pv; pq]));
-    j22 = imag(dImis_dVi([pv; pq], [pv; pq]));
+    j11 = real(dImis_dQ([pv; pq], pv));
+    j12 = real(dImis_dVr([pv; pq], [pq; pv]));
+    j13 = real(dImis_dVi([pv; pq], [pq; pv]));
+    j21 = imag(dImis_dQ([pv; pq], pv));
+    j22 = imag(dImis_dVr([pv; pq], [pq; pv]));
+    j23 = imag(dImis_dVi([pv; pq], [pq; pv]));
+    j31 = sparse(npv, npv);
+    j32 = dV2_dVr;
+    j33 = dV2_dVi;
 
-    J = [   j11 j12;
-            j21 j22;    ];
+    J = [   j11 j12 j13;
+            j21 j22 j23;
+            j31 j32 j33;    ];
 
     %% compute update step
     dx = mplinsolve(J, -F, lin_solver);
 
     %% update voltage
     if npv
-        Va(pv) = Va(pv) + dx(j5:j6) ./ real(V(pv));
+        V(pv) = V(pv) + dx(j5:j6) + 1j * dx(j9:j10);
         Sb(pv) = real(Sb(pv)) + 1j * (imag(Sb(pv)) + dx(j1:j2));
     end
     if npq
-        Vm(pq) = Vm(pq) + (real(V(pq))./Vm(pq)) .* dx(j3:j4) ...
-                        + (imag(V(pq))./Vm(pq)) .* dx(j7:j8);
-        Va(pq) = Va(pq) + (real(V(pq))./(Vm(pq).^2)) .* dx(j7:j8) ...
-                        - (imag(V(pq))./(Vm(pq).^2)) .* dx(j3:j4);
+        V(pq) = V(pq) + dx(j3:j4) + 1j * dx(j7:j8);
     end
-    V = Vm .* exp(1j * Va);
-    Vm = abs(V);            %% update Vm and Va again in case
-    Va = angle(V);          %% we wrapped around with a negative Vm
 
     %% evalute F(x)
     mis = Ybus * V - conj(Sb ./ V);
     F = [   real(mis([pv; pq]));
-            imag(mis([pv; pq]))   ];
+            imag(mis([pv; pq]));
+            V(pv) .* conj(V(pv)) - Vmpv.^2  ];
 
     %% check for convergence
     normF = norm(F, inf);

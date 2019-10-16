@@ -23,6 +23,13 @@ Changes since 7.0
     zero.
   - The `pf.alg` option now accepts `'NR-SP'` as a shortcut for Newton's
     method with with the default power/polar formulation.
+  - Redesign implementation of Newton power flow for cartesian
+    voltage representations to use standard Newton method with explicit
+    voltage magnitude constraints at PV buses. This method is slower
+    (larger number of equations and unknowns) but appears to be more
+    reliable in some cases than the original implementation, which was
+    a hybrid approach by Sereeter that used a modified Newton method
+    to compute polar voltage updates using a modified cartesian Jacobian.
 
 #### 8/21/19
   - Fix OPF [issue #71][24] for IPOPT and Knitro where structure of

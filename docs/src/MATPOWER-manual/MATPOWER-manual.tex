@@ -1090,7 +1090,7 @@ v_m^{\{j\}}
 
 This yields a system of nonlinear equations with $n_{pv} + 2n_{pq}$ equations and unknowns, where $n_{pv}$ and $n_{pq}$ are the number of PV and PQ buses, respectively. After solving for $x$, the remaining real power balance equation can be used to compute the generator real power injection at the slack bus. Similarly, the remaining $n_{pv} + 1$ reactive power balance equations yield the generator reactive power injections.
 
-\matpower{} includes four different algorithms for solving the general AC power flow problem.\footnote{Three more that are specific to radial networks typical of distribution systems are described in Section~\ref{sec:pfdist}.} The default solver is based on a standard Newton's method~\cite{tinney1967} using a polar form and a full Jacobian updated at each iteration. Each Newton step involves computing the mismatch $g(x)$, forming the Jacobian based on the sensitivities of these mismatches to changes in $x$ and solving for an updated value of $x$ by factorizing this Jacobian. This method is described in detail in many textbooks. As of version~7, \matpower{} also includes variants of the Newton method using nodal current balance equations and/or cartesian representations for voltage as described in~\cite{sereeter2019}.
+\matpower{} includes four different algorithms for solving the general AC power flow problem.\footnote{Three more that are specific to radial networks typical of distribution systems are described in Section~\ref{sec:pfdist}.} The default solver is based on a standard Newton's method~\cite{tinney1967} using a polar form and a full Jacobian updated at each iteration. Each Newton step involves computing the mismatch $g(x)$, forming the Jacobian based on the sensitivities of these mismatches to changes in $x$ and solving for an updated value of $x$ by factorizing this Jacobian. This method is described in detail in many textbooks. As of version~7, \matpower{} also includes variants of the Newton method using nodal current balance equations and/or cartesian/hybrid representations for voltage as described in~\cite{sereeter2019}.
 
 Also included are solvers based on variations of the fast-decoupled method~\cite{stott1974}, specifically, the XB and BX methods described in~\cite{amerongen1989}. These solvers greatly reduce the amount of computation per iteration, by updating the voltage magnitudes and angles separately based on constant approximate Jacobians which are factored only once at the beginning of the solution process. These per-iteration savings, however, come at the cost of more iterations.
 
@@ -1105,18 +1105,24 @@ In all, there are 4 different formulations implemented for the Newton power flow
 Another variation of the standard AC power flow problem represents the bus voltages in cartesian, rather than polar, coordinates. That is, instead of $\Theta$ and $V_m$, the vector $x$ of unknowns includes the real and imaginary parts of the complex voltage, denoted respectively by $U$ and $W$, where $V = U + j W$. The active and reactive power balance equations from \eqref{eq:acpf_p}--\eqref{eq:acpf_q} are then expressed as functions of $U$ and $W$.
 \begin{alignat}{2}
 g_P(U, W, P_g) &= P_\mathrm{bus}(U, W) + P_d - C_g P_g &&= 0	\label{eq:acpf_p_SC} \\
-g_Q(U, W, Q_g) &= Q_\mathrm{bus}(U, W) + Q_d - C_g Q_g &&= 0.	\label{eq:acpf_q_SC}
+g_Q(U, W, Q_g) &= Q_\mathrm{bus}(U, W) + Q_d - C_g Q_g &&= 0	\label{eq:acpf_q_SC}
+\end{alignat}
+An additional equation must be added to constrain the voltage magnitudes at PV buses to their specified values.
+\begin{alignat}{2}
+g_V(U, W) &= U^2 + W^2 - V_\mathrm{sp}^2 &&= 0	\label{eq:acpf_v_SC}
 \end{alignat}
 
 The power flow problem of \eqref{eq:g_acpf} becomes
 \begin{equation}
 g(x) = \left[\begin{array}{c}
 g_P^{\{i\}}(U, W, P_g) \\
-g_Q^{\{j\}}(U, W, Q_g)
+g_Q^{\{j\}}(U, W, Q_g) \\
+g_V^{\{k\}}(U, W)
 \end{array}\right] \quad
 \begin{array}{l}
 \forall i \in \mathcal{I}_\mathrm{PV} \cup \mathcal{I}_\mathrm{PQ} \\
-\forall j \in \mathcal{I}_\mathrm{PQ}.
+\forall j \in \mathcal{I}_\mathrm{PQ} \\
+\forall k \in \mathcal{I}_\mathrm{PV}
 \end{array}
 \label{eq:g_acpf_SC}
 \end{equation}
@@ -1124,18 +1130,20 @@ where
 \begin{equation}
 x = \left[\begin{array}{c}
 u_{\{i\}} \\
-w^{\{j\}}
+w_{\{i\}}
 \end{array}\right] \quad
 \begin{array}{l}
-\forall i \in \mathcal{I}_\mathrm{PQ} \\
-\forall j \notin \mathcal{I}_\mathrm{ref}.
+\forall i \notin \mathcal{I}_\mathrm{ref}.
 \end{array}
 \label{eq:x_acpf_SC}
 \end{equation}
+This results in a system of nonlinear equations with $2 n_{pv} + 2 n_{pq}$ equations and unknowns.
 
-For PV buses, since the voltage magnitude is constant, $\Delta u$ can be expressed as a function of $\Delta w$, allowing $u$ to be eliminated for PV buses by modifying the Jacobian terms corresponding to $g_P$ and $w$. This results once again in a system of nonlinear equations with $n_{pv} + 2n_{pq}$ equations and unknowns.
+In \matpower{}, setting the \code{pf.v\_cartesian} option to 1 (0 by default) selects the cartesian representation for voltages when running a Newton-Raphson AC power flow, that is, when the \code{pf.alg} option is set to \codeq{NR}.\footnote{Setting the \code{pf.alg} option to \codeq{NR-SC} is also a shortcut for selecting this version based on cartesian voltage representation.}
 
-In \matpower{} setting the \code{pf.v\_cartesian} option to 1 (0 by default) selects the cartesian representation for voltages when running a Newton-Raphson AC power flow, that is, when the \code{pf.alg} option is set to \codeq{NR}.\footnote{Setting the \code{pf.alg} option to \codeq{NR-SC} is also a shortcut for selecting this version based on cartesian voltage representation.}
+\matpower{} also includes a hybrid method based on what is described in~\cite{sereeter2019} as a ``cartesian'' formulation. It uses a modified Newton method to compute polar voltage updates using a modified Jacobian from the cartesian formuation. In this case, $\Delta u$ and $\Delta w$ updates are converted to corresponding updates to voltage angles and magnitudes at PQ buses. And for PV buses, since the voltage magnitude is constant, the updates $\Delta u$ and $\Delta w$ are linearly dependent and can be collapsed to a single update step along the direction perpendicular to the voltage phasor. This is done by combining the corresponding columns of the Jacobian into a single column via the appropriate linear combination. This turns out to be identical to the standard voltage angle update in polar coordinates.
+
+This allows the elimination of $g_Q$ for PV buses (as in the polar case) and results once again in a system of nonlinear equations with $n_{pv} + 2n_{pq}$ equations and unknowns. This hybrid method can be selected by setting the \code{pf.v\_cartesian} option to 2.\footnote{Setting the \code{pf.alg} option to \codeq{NR-SH} is also a shortcut for selecting this hybrid version based on polar updates computed via a modified cartesian Jacobian.}
 
 \subsubsection{Current vs. Power for Nodal Balance Equations}
 
@@ -1151,9 +1159,9 @@ g_N(U, W, P_g, Q_g) &= \Im\{I_\mathrm{bus}(U, W) + [V^*]^{-1}(S_d - C_g S_g)^*\}
 \end{alignat}
 where $S_d = P_d + j Q_d$, $S_g = P_g + j Q_g$ and $[V^*]^{-1}$ is a diagonal matrix whose $i$-th diagonal entry is $1/v_i^*$, that is $\frac{1}{v_m^i}e^{j\theta_i}$ or $1/(u_i - j w_i)$.
 
-In order to handle PV buses, $g(x)$ is expanded to include the full set of mismatch equations for all PV and PQ buses, and the reactive power injections at PV buses are added to $x$ as independent variables, resulting in a system of nonlinear equations with $2n_{pv} + 2n_{pq}$ equations and unknowns.
+In order to handle PV buses, $g(x)$ is expanded to include the full set of mismatch equations for all PV and PQ buses, and the reactive power injections at PV buses are added to $x$ as independent variables, resulting in a system of nonlinear equations with $2 n_{pv} + 2 n_{pq}$ equations and unknowns for the polar and hybrid formulations and $3 n_{pv} + 2 n_{pq}$ equations and unknowns for the cartesian formulation.
 
-In \matpower{} setting the \code{pf.current\_balance} option to 1 (0 by default) selects the current balance version when running a Newton-Raphson AC power flow, that is, when the \code{pf.alg} option is set to \codeq{NR}. This option can be used in conjunction with either the polar or cartesian representation of bus voltages.\footnote{Setting the \code{pf.alg} option to \codeq{NR-IP} or \codeq{NR-IC} are also shortcuts for selecting the polar and cartesian versions, respectively, of the current balance formulation.}
+In \matpower{} setting the \code{pf.current\_balance} option to 1 (0 by default) selects the current balance version when running a Newton-Raphson AC power flow, i.e., when the \code{pf.alg} option is set to \codeq{NR}. This option can be used in conjunction with any of the polar, cartesian or hybrid representations of bus voltages.\footnote{Setting the \code{pf.alg} option to \codeq{NR-IP}, \codeq{NR-IC} or \codeq{NR-IH}, are also shortcuts for selecting the polar, cartesian and hybrid versions, respectively, of the current balance formulation.}
 
 
 \subsection{DC Power Flow}
@@ -8370,6 +8378,13 @@ option to 2. The \code{pf.alg} option can also be set to \codeq{NR-SH} or
 \codeq{NR-IH}, respectively, as shortcuts to select these formulations.
 \item Improve robustness of these hybrid Newton power flow formulations to avoid ill-conditioning when the real part of the voltage approaches zero.
 \item The \code{pf.alg} option now accepts \codeq{NR-SP} as a shortcut for Newton's method with the default power/polar formulation.
+\item Redesign implementation of Newton power flow for cartesian
+voltage representations to use standard Newton method with explicit
+voltage magnitude constraints at PV buses. This method is slower
+(larger number of equations and unknowns) but appears to be more
+reliable in some cases than the original implementation, which was
+a hybrid approach by Sereeter that used a modified Newton method
+to compute polar voltage updates using a modified cartesian Jacobian.
 \item Deprecated functions:
     \begin{itemize}
     \item \code{foo()} -- use \code{bar()} instead.
