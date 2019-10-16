@@ -8368,6 +8368,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-7.0.1.pdf}{\matpower{} 7.0.1
 voltage representations to \code{newtonpf\_S\_hybrid()} and     \code{newtonpf\_I\_hybrid()}, accessible by setting the \code{pf.v\_cartesian}
 option to 2. The \code{pf.alg} option can also be set to \codeq{NR-SH} or
 \codeq{NR-IH}, respectively, as shortcuts to select these formulations.
+\item Improve robustness of these hybrid Newton power flow formulations to avoid ill-conditioning when the real part of the voltage approaches zero.
 \item The \code{pf.alg} option now accepts \codeq{NR-SP} as a shortcut for Newton's method with the default power/polar formulation.
 \item Deprecated functions:
     \begin{itemize}

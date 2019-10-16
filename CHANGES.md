@@ -18,6 +18,9 @@ Changes since 7.0
     `newtonpf_I_hybrid()`, accessible by setting the `pf.v_cartesian`
     option to 2. The `pf.alg` option can also be set to `'NR-SH'` or
     `'NR-IH'`, respectively, as shortcuts to select these formulations.
+  - Improve robustness of these hybrid Newton power flow formulations to
+    avoid ill-conditioning when the real part of the voltage approaches
+    zero.
   - The `pf.alg` option now accepts `'NR-SP'` as a shortcut for Newton's
     method with with the default power/polar formulation.
 

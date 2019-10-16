@@ -97,8 +97,9 @@ while (~converged && i < max_it)
 
     %% evaluate Jacobian
     [dSbus_dVr, dSbus_dVi] = dSbus_dV(Ybus, V, 1);
-    dSbus_dVi(:, pv) = dSbus_dVi(:, pv) - ...
-        dSbus_dVr(:, pv) * sparse(1:npv, 1:npv, imag(V(pv))./real(V(pv)), npv, npv);
+    dSbus_dVi(:, pv) = ...
+        dSbus_dVi(:, pv) * sparse(1:npv, 1:npv, real(V(pv)), npv, npv) - ...
+        dSbus_dVr(:, pv) * sparse(1:npv, 1:npv, imag(V(pv)), npv, npv);
 
     %% handling of derivatives for voltage dependent loads
     %% (not yet implemented) goes here
@@ -116,7 +117,7 @@ while (~converged && i < max_it)
 
     %% update voltage
     if npv
-        Va(pv) = Va(pv) + dx(j3:j4) ./ real(V(pv));
+        Va(pv) = Va(pv) + dx(j3:j4);
     end
     if npq
         Vm(pq) = Vm(pq) + (real(V(pq))./Vm(pq)) .* dx(j1:j2) ...
