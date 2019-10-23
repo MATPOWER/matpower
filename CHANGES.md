@@ -12,6 +12,10 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.0
 -----------------
 
+#### 4/30/20
+  - Update `@opf_model` for MP-Opt-Model's refactored `@opt_model` class
+    based on the new `@mp_idx_manager` base class.
+
 #### 4/29/20
   - **INCOMPATIBLE CHANGE:** MP-Opt-Model has renamed the following
     functions and modified the order of their input args so that the
@@ -25,7 +29,7 @@ Changes since 7.0
   - Move code related to solver interfaces, `@opt_model` and a
     few other functions like `have_fcn()` and `nested_struct_copy()`
     into a separate package called [MP-Opt-Model][27], now included
-    in a separate `mp-opt-model` sub-directory.
+    (v0.8) in a separate `mp-opt-model` sub-directory.
 
 #### 4/28/20
   - Move deprecated `@opt_model` methods and code related to legacy
