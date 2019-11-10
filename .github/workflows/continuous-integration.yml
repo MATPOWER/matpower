@@ -1,0 +1,26 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-16.04
+
+    steps:
+    - env:
+        IPOPT_VER: 3.11.9 
+    - uses: actions/checkout@v1
+    - name: Install GNU Octave
+      run: |
+        sudo add-apt-repository ppa:octave/stable
+        sudo apt-get update -q
+        sudo apt-get install -yq coinor-libipopt-dev liboctave-dev octave
+    - name: Build and install IPOPT MEX interface
+      run: |
+        mkdir $HOME/build
+        curl -SL https://www.coin-or.org/download/source/Ipopt/Ipopt-${IPOPT_VER}.tgz | tar -xzC $HOME/build
+        mv $HOME/build/Ipopt-${IPOPT_VER}/Ipopt/contrib/MatlabInterface $HOME/build/ipopt
+        mv $GITHUB_WORKSPACE/.travis/Makefile $HOME/build/ipopt/src
+        make -C $HOME/build/ipopt/src
+        mv $HOME/build/ipopt/src/*.mex $HOME/build/ipopt/
