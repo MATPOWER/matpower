@@ -4,17 +4,28 @@ on: [push]
 
 jobs:
   build:
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-16.04]
 
-    runs-on: ubuntu-16.04
+    runs-on: ${{ matrix.os }}
 
     steps: 
     - uses: actions/checkout@v1
-    - name: Install GNU Octave
+    - name: Install GNU Octave (Linux)
+      if: startsWith(matrix.os, 'ubuntu')
       run: |
         sudo add-apt-repository ppa:octave/stable
         sudo apt-get update -qq
         sudo apt-get install -y -qq coinor-libipopt-dev liboctave-dev octave
-    - name: Install IPOPT MEX interface
+    - name: Install GNU Octave (Mac)
+      if: startsWith(matrix.os, 'macos')
+      run: |
+        brew update
+        brew install pkg-config
+        brew install ipopt
+        brew install octave
+    - name: Build IPOPT MEX interface
       env:
         IPOPT_VER: 3.11.9
       run: |
@@ -24,16 +35,21 @@ jobs:
         mv $GITHUB_WORKSPACE/.travis/Makefile $HOME/build/ipopt/src
         make -C $HOME/build/ipopt/src
         mv $HOME/build/ipopt/src/*.mex $HOME/build/ipopt/
-    - name: Install MATPOWER
+    - name: Install IPOPT MEX interface
+      if: startsWith(matrix.os, 'ubuntu')
       run: |
         octave-cli --no-gui --eval ver
         octave-cli --no-gui --eval "addpath('$HOME/build/ipopt'); savepath"
+    - name: Install MATPOWER
+      run: |
+        octave-cli --no-gui --eval ver
         octave-cli --no-gui --eval "install_matpower(1,1,1)"
         octave-cli --no-gui --eval mpver
-    - name: Print GLPK and IPOPT version numbers
-      run: |
-        octave-cli --no-gui --eval "qps_glpk( [],[1; 1],[1 1],[2],[2],[1; 1],[1; 1],[1; 1],struct('verbose', 3));"
-        octave-cli --no-gui --eval "qps_ipopt([],[1; 1],[1 1],[2],[2],[1; 1],[1; 1],[1; 1],struct('verbose', 2));"
+    - name: Print GLPK version number
+      run: octave-cli --no-gui --eval "qps_glpk( [],[1; 1],[1 1],[2],[2],[1; 1],[1; 1],[1; 1],struct('verbose', 3));"
+    - name: Print IPOPT version number
+      if: startsWith(matrix.os, 'ubuntu')
+      run: octave-cli --no-gui --eval "qps_ipopt([],[1; 1],[1 1],[2],[2],[1; 1],[1; 1],[1; 1],struct('verbose', 2));"
     - name: Test MP-Test
       run: octave-cli --no-gui --eval "test_mptest(0,1)"
     - name: Test MIPS
