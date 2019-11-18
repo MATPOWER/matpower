@@ -12,6 +12,12 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.0
 -----------------
 
+#### 11/18/19
+  - Add GitHub Actions CI workflow with testing under Octave 4.2.2
+    on Linux (with IPOPT) and Octave 5.1.0 on macOS (w/o IPOPT). Expand
+    Travis CI to include testing under macOS. Travis CI and GitHub Actions
+    CI are redudant and one will eventually be removed.
+
 #### 10/15/19
   - Move original implementation of Newton power flow for cartesian
     voltage representations to `newtonpf_S_hybrid()` and
