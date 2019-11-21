@@ -12,23 +12,40 @@ jobs:
 
     steps: 
     - uses: actions/checkout@v1
-    - name: Install GNU Octave (Linux)
+    - name: Initialize Package Manager (Linux)
       if: startsWith(matrix.os, 'ubuntu')
       run: |
         sudo add-apt-repository ppa:octave/stable
         sudo apt-get update -qq
-        sudo apt-get install -y -qq coinor-libipopt-dev liboctave-dev octave
-    - name: Install GNU Octave (Mac)
+    - name: Initialize Package Manager (Mac)
       if: startsWith(matrix.os, 'macos')
       run: |
         brew update
+        brew install bash
         brew install pkg-config
-        brew install ipopt
+    - name: Install GNU Octave / IPOPT (Linux)
+      if: startsWith(matrix.os, 'ubuntu')
+      run: |
+        sudo apt-get install -y -qq coinor-libipopt-dev liboctave-dev octave
+        octave-cli --no-gui --eval ver
+    - name: Install GNU Octave (Mac)
+      if: startsWith(matrix.os, 'macos')
+      run: |
         brew install octave
+        octave-cli --no-gui --eval ver
+    - name: Build IPOPT from source (Mac)
+      if: startsWith(matrix.os, 'macos')
+      run: |
+        git clone https://www.github.com/coin-or/coinbrew
+        cd coinbrew
+        ./coinbrew fetch Ipopt --no-prompt
+        ./coinbrew build Ipopt --prefix=$HOME/install --test --no-prompt
+        ./coinbrew install Ipopt
     - name: Build IPOPT MEX interface
       env:
         IPOPT_VER: 3.11.9
       run: |
+        export PKG_CONFIG_PATH=$HOME/install/lib/pkgconfig
         mkdir $HOME/build
         curl -SL https://www.coin-or.org/download/source/Ipopt/Ipopt-${IPOPT_VER}.tgz | tar -xzC $HOME/build
         mv $HOME/build/Ipopt-${IPOPT_VER}/Ipopt/contrib/MatlabInterface $HOME/build/ipopt
@@ -36,7 +53,6 @@ jobs:
         make -C $HOME/build/ipopt/src
         mv $HOME/build/ipopt/src/*.mex $HOME/build/ipopt/
     - name: Install IPOPT MEX interface
-      if: startsWith(matrix.os, 'ubuntu')
       run: |
         octave-cli --no-gui --eval ver
         octave-cli --no-gui --eval "addpath('$HOME/build/ipopt'); savepath"
@@ -45,11 +61,10 @@ jobs:
         octave-cli --no-gui --eval ver
         octave-cli --no-gui --eval "install_matpower(1,1,1)"
         octave-cli --no-gui --eval mpver
-    - name: Print GLPK version number
-      run: octave-cli --no-gui --eval "qps_glpk( [],[1; 1],[1 1],[2],[2],[1; 1],[1; 1],[1; 1],struct('verbose', 3));"
-    - name: Print IPOPT version number
-      if: startsWith(matrix.os, 'ubuntu')
-      run: octave-cli --no-gui --eval "qps_ipopt([],[1; 1],[1 1],[2],[2],[1; 1],[1; 1],[1; 1],struct('verbose', 2));"
+    - name: Print GLPK/IPOPT version numbers
+      run: |
+        octave-cli --no-gui --eval "qps_glpk( [],[1; 1],[1 1],[2],[2],[1; 1],[1; 1],[1; 1],struct('verbose', 3));"
+        octave-cli --no-gui --eval "qps_ipopt([],[1; 1],[1 1],[2],[2],[1; 1],[1; 1],[1; 1],struct('verbose', 2));"
     - name: Test MP-Test
       run: octave-cli --no-gui --eval "test_mptest(0,1)"
     - name: Test MIPS
