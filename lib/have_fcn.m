@@ -378,7 +378,7 @@ elseif action == 'D'        %% detect availability
             case {'knitromatlab', 'ktrlink'}
                 %% knitromatlab for Knitro 9.0 or greater
                 %% ktrlink for pre-Knitro 9.0, requires Optim Toolbox
-                TorF = exist(tag, 'file') == 2;
+                TorF = exist(tag, 'file');
                 if TorF
                     try
                         str = evalc(['[x fval] = ' tag '(@(x)1,1);']);

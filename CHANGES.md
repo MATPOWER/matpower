@@ -12,6 +12,9 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.0
 -----------------
 
+#### 2/18/20
+  - Artelys Knitro 12.1 compatibility fix.
+
 #### 11/18/19
   - Add GitHub Actions CI workflow with testing under Octave 4.2.2
     on Linux (with IPOPT) and Octave 5.1.0 on macOS (w/o IPOPT). Expand
