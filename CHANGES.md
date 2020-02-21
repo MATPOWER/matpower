@@ -12,6 +12,12 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.0
 -----------------
 
+#### 2/20/20
+  - Add to `makePTDF()` the option to compute shift factors very
+    efficiently for specific transfers or specific buses only.
+  - Performance improvement for  `makePTDF()` for large cases, 
+    e.g. 70%+ improvement on `case9241pegase`.
+
 #### 2/18/20
   - Artelys Knitro 12.1 compatibility fix.
 

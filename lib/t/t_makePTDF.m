@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-ntests = 24;
+ntests = 65;
 t_begin(ntests, quiet);
 
 casefile = 't_case9_opf';
@@ -34,9 +34,12 @@ end
 
 %% load case
 mpopt = mpoption('out.all', 0, 'verbose', verbose);
-[baseMVA, bus, gen, gencost, branch, f, success, et] = ...
-    rundcopf(casefile, mpopt);
-[i2e, bus, gen, branch] = ext2int(bus, gen, branch);
+r = rundcopf(casefile, mpopt);
+mpc = ext2int(r);
+[baseMVA, bus, gen, branch] = deal(mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch);
+% [baseMVA, bus, gen, gencost, branch, f, success, et] = ...
+%     rundcopf(casefile, mpopt);
+% [i2e, bus, gen, branch] = ext2int(bus, gen, branch);
 nb  = size(bus, 1);
 nbr = size(branch, 1);
 ng  = size(gen, 1);
@@ -56,44 +59,93 @@ e4 = zeros(nb, 1);  e4(4) = 1;
 D1  = eye(nb, nb) - e1 * ones(1, nb);
 D4  = eye(nb, nb) - e4 * ones(1, nb);
 Deq = eye(nb, nb) - ones(nb, 1) / nb * ones(1, nb);
-Dg  = eye(nb) - Pd/sum(Pd) * ones(1, nb);
-Dd  = eye(nb) - Pg/sum(Pg) * ones(1, nb);
+Dd  = eye(nb) - Pd/sum(Pd) * ones(1, nb);
+Dg  = eye(nb) - Pg/sum(Pg) * ones(1, nb);
 
 %% create some PTDF matrices
+H   = makePTDF(baseMVA, bus, branch);
 H1  = makePTDF(baseMVA, bus, branch, 1);
 H4  = makePTDF(baseMVA, bus, branch, 4);
 Heq = makePTDF(baseMVA, bus, branch, ones(nb, 1));
-Hg  = makePTDF(baseMVA, bus, branch, Pd);
-Hd  = makePTDF(baseMVA, bus, branch, Pg);
+Hd  = makePTDF(baseMVA, bus, branch, Pd);
+Hg  = makePTDF(baseMVA, bus, branch, Pg);
+
+%% default slack
+t_is(H, H1, 12, 'default slack');
+
+%% using mpc
+t_is(makePTDF(mpc), H, 12, 'MPC : default slack');
+t_is(makePTDF(mpc, 1), H1, 12, 'H1 (from MPC)');
+t_is(makePTDF(mpc, 4), H4, 12, 'H4 (from MPC)');
+t_is(makePTDF(mpc, ones(nb,1)), Heq, 12, 'Heq (from MPC)');
+t_is(makePTDF(mpc, Pd), Hd, 12, 'Hd (from MPC)');
+t_is(makePTDF(mpc, Pg), Hg, 12, 'Hg (from MPC)');
+
+%% vector slack same as scalar, using mpc
+t_is(H1, makePTDF(mpc, e1), 12, 'H1 (scalar slack) = H1 (vector slack)');
+t_is(H4, makePTDF(mpc, e4), 12, 'H4 (scalar slack) = H4 (vector slack)');
 
 %% matrices get properly transformed by slack dist matrices
 t_is(H1,  H1 * D1, 8,  'H1  == H1 * D1');
 t_is(H4,  H1 * D4, 8,  'H4  == H1 * D4');
 t_is(Heq, H1 * Deq, 8, 'Heq == H1 * Deq');
-t_is(Hg,  H1 * Dg, 8,  'Hg  == H1 * Dg');
 t_is(Hd,  H1 * Dd, 8,  'Hd  == H1 * Dd');
+t_is(Hg,  H1 * Dg, 8,  'Hg  == H1 * Dg');
 t_is(H1,  Heq * D1, 8,  'H1  == Heq * D1');
 t_is(H4,  Heq * D4, 8,  'H4  == Heq * D4');
 t_is(Heq, Heq * Deq, 8, 'Heq == Heq * Deq');
-t_is(Hg,  Heq * Dg, 8,  'Hg  == Heq * Dg');
 t_is(Hd,  Heq * Dd, 8,  'Hd  == Heq * Dd');
-t_is(H1,  Hg * D1, 8,  'H1  == Hg * D1');
-t_is(H4,  Hg * D4, 8,  'H4  == Hg * D4');
-t_is(Heq, Hg * Deq, 8, 'Heq == Hg * Deq');
-t_is(Hg,  Hg * Dg, 8,  'Hg  == Hg * Dg');
-t_is(Hd,  Hg * Dd, 8,  'Hd  == Hg * Dd');
+t_is(Hg,  Heq * Dg, 8,  'Hg  == Heq * Dg');
+t_is(H1,  Hd * D1, 8,  'H1  == Hd * D1');
+t_is(H4,  Hd * D4, 8,  'H4  == Hd * D4');
+t_is(Heq, Hd * Deq, 8, 'Heq == Hd * Deq');
+t_is(Hd,  Hd * Dd, 8,  'Hd  == Hd * Dd');
+t_is(Hg,  Hd * Dg, 8,  'Hg  == Hd * Dg');
 
 %% PTDFs can reconstruct flows
 t_is(F,  H1 * P,  3,  'Flow == H1  * P');
 t_is(F,  H4 * P,  3,  'Flow == H4  * P');
 t_is(F,  Heq * P, 3,  'Flow == Heq * P');
-t_is(F,  Hg * P,  3,  'Flow == Hg  * P');
 t_is(F,  Hd * P,  3,  'Flow == Hd  * P');
+t_is(F,  Hg * P,  3,  'Flow == Hg  * P');
 
 %% other
-t_is(F,  Hg * Pg,  3,  'Flow == Hg  * Pg');
-t_is(F,  Hd * (-Pd),  3,  'Flow == Hd  * (-Pd)');
-t_is(zeros(nbr,1),  Hg * (-Pd),  3,  'zeros == Hg  * (-Pd)');
-t_is(zeros(nbr,1),  Hd * Pg,  3,  'zeros == Hd  * Pg');
+t_is(F,  Hd * Pg,  3,  'Flow == Hd  * Pg');
+t_is(F,  Hg * (-Pd),  3,  'Flow == Hg  * (-Pd)');
+t_is(zeros(nbr,1),  Hd * (-Pd),  3,  'zeros == Hd  * (-Pd)');
+t_is(zeros(nbr,1),  Hg * Pg,  3,  'zeros == Hg  * Pg');
+
+%% single column, single slack
+for k = 1:nb
+    Hk = makePTDF(baseMVA, bus, branch, 1, k);
+    t_is(Hk, H1(:, k), 12, sprintf('H1 : column %d', k));
+end
+for k = 1:nb
+    Hk = makePTDF(mpc, 4, k);
+    t_is(Hk, H4(:, k), 12, sprintf('H4 : column %d', k));
+end
+
+%% multiple columns, distributed slack
+Hk = makePTDF(baseMVA, bus, branch, ones(nb, 1), (1:nb)');
+t_is(Hk, Heq, 12, 'Heq : all columns');
+
+Hk = makePTDF(mpc, Pd, find(Pd));
+t_is(Hk, Hd(:, find(Pd)), 12, 'Hd : Pd columns');
+
+Hk = makePTDF(baseMVA, bus, branch, Pg, find(Pg));
+t_is(Hk, Hg(:, find(Pg)), 12, 'Hg : Pg columns');
+
+%% specific transfers
+for k = 1:nb
+    txfr = zeros(nb, 1);    txfr(4) = -1;   txfr(k) = txfr(k) + 1;
+    H = makePTDF(mpc, 4, txfr);
+    t_is(H, H4(:, k), 12, sprintf('H4 (txfr) : column %d', k));
+end
+txfr = eye(9,9); txfr(1, :) = txfr(1, :) - 1;
+H = makePTDF(mpc, 1, txfr);
+t_is(H, H1, 12, sprintf('H1 (txfr) : full', k));
+txfr = eye(9,9); txfr(4, :) = txfr(4, :) - 1;
+H = makePTDF(mpc, 4, txfr);
+t_is(H, H4, 12, sprintf('H4 (txfr) : full', k));
 
 t_end;

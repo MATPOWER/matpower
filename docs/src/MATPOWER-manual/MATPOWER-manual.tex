@@ -320,7 +320,7 @@ Beginning with version 6, \matpower{} includes a framework for solving generaliz
 
 \most{} is documented separately from the main \matpower{} package in its own manual, the \mostman{}.
 
-\clearpage
+\pagebreak
 \subsection{License and Terms of Use}
 
 Beginning with version 5.1, the code in \matpower{} is distributed under the 3-clause BSD license\footnote{Versions 4.0 through 5.0 of \matpower{} were distributed under version 3.0 of the GNU General Public License (GPL)~\cite{gpl} with an exception added to clarify our intention to allow \matpower{} to interface with \matlab{} as well as any other \matlab{} code or MEX-files a user may have installed, regardless of their licensing terms. The full text of the GPL can be found at \url{https://www.gnu.org/licenses/gpl-3.0.txt}. \matpower{} versions prior to version 4 had their \href{https://matpower.org/license/old}{own license}.}
@@ -503,7 +503,7 @@ For the hardware requirements, please refer to the system requirements for the v
 
 In this manual, references to \matlab{} usually apply to Octave as well. At the time of writing, none of the optional MEX-based \matpower{} packages have been built for Octave, but Octave does typically include \glpk{}.
 
-\clearpage
+\pagebreak
 \subsection{Getting \matpower{}}
 \label{sec:gettingmatpower}
 
@@ -571,7 +571,7 @@ See the \href{\matpowerdockerpage}{\matpower{} Docker page}\footnote{\url{\matpo
 Docker images are provided for both versioned releases and
 development versions.
 
-\clearpage
+\pagebreak
 \subsection{Installation}
 \label{sec:installation}
 
@@ -617,7 +617,7 @@ Installation and use of \matpower{} requires familiarity with the basic operatio
     The result should resemble the following, possibly including extra tests, depending on the availablility of optional packages, solvers and extras.
 
 
-%\clearpage
+%\pagebreak
 % UPDATE BEFORE RELEASE
 \begin{Code}
 >> test_matpower
@@ -760,7 +760,7 @@ The \href{https://matpower.org/docs/ref}{\matpower{} Online Function Reference} 
 
 Last, but certainly not least, is the built-in \code{help} command. As with \matlab{}'s built-in functions and toolbox routines, you can type \code{help} followed by the name of a command or M-file to get help on that particular function. Nearly all of \matpower{}'s M-files have such documentation and this should be considered the main reference for the calling options for each individual function. See Appendix~\ref{app:functions} for a list of \matpower{} functions.
 
-%\clearpage
+%\pagebreak
 As an example, the help for \code{runopf} looks like:
 % UPDATE BEFORE RELEASE
 \begin{Code}
@@ -1620,7 +1620,8 @@ l_{ij} = \left\{\begin{array}{cc}
 \right.
 \end{equation}
 
-\matpower{} includes functions for computing both the DC PTDF matrix and the corresponding LODF matrix for either a single slack bus~$k$ or a general slack distribution vector $w$. See the help for \code{makePTDF} and \code{makeLODF} and Sections~\ref{sec:makePTDF} and \ref{sec:makeLODF}, respectively, for details.
+\matpower{} includes functions for computing both the DC PTDF matrix and the corresponding LODF matrix for either a single slack bus~$k$ or a general slack distribution vector $w$. In the case of \code{makePTDF}, options are available to very efficiently compute the shift factors for specific transfers or specific buses only, since computing the full, dense PTDF matrix can be computationally expensive for large systems.
+See the help for \code{makePTDF} and \code{makeLODF} and Sections~\ref{sec:makePTDF} and \ref{sec:makeLODF}, respectively, for details.
 
 
 %%------------------------------------------
@@ -1862,7 +1863,7 @@ name & default & description \\
 \end{threeparttable}
 \end{table}
 
-\clearpage
+\pagebreak
 \subsubsection{CPF Callback Functions}
 
 \matpower{}'s continuation power flow provides a callback mechanism to give the user access to the iteration process for executing custom code at each iteration, for example, to implement custom incremental plotting of a PV nose curve or to handle a detected event. This callback mechanism is used internally to handle default plotting functionality as well as to handle the standard CPF events. The \code{cpf\_default\_callback} function, for example, is used to collect the $\lambda$ and $V$ results from each predictor and corrector iteration and optionally plot the PV nose curve.
@@ -1998,7 +1999,7 @@ The user can define their own callback functions which take the same form and ar
 \end{itemize}
 Multiple user callbacks can be registered by assigning a cell array of such strings and/or structs to the \code{cpf.user\_callback} option.
 
-\clearpage
+\pagebreak
 \subsubsection{CPF Example}
 
 The following is an example of running a continuation power flow using a version of the 9-bus system, looking at increasing all loads by a factor of 2.5. This example plots the nose curve shown in \figurename~\ref{fig:nose_curve}.
@@ -2475,7 +2476,7 @@ name & description \\
 \end{threeparttable}
 \end{table}
 
-\clearpage
+\pagebreak
 Additional optional input arguments can be used to set options (\code{mpopt}) and provide file names for saving the pretty printed output (\code{fname}) or the solved case data (\code{solvedcase}).
 \begin{Code}
 >> results = runopf(casedata, mpopt, fname, solvedcase);
@@ -2970,7 +2971,7 @@ name & description \\
 
 In the example code below, the callback function begins by converting the reserves input data in the resulting case (\code{qty}, \code{cost} and \code{zones} fields of \code{results.reserves}) back to external indexing via calls to \code{i2e\_field}. See the help for \code{i2e\_field} and \code{i2e\_data} for more details on how they can be used.
 
-\clearpage
+\pagebreak
 Then the reserves results of interest are extracted from the appropriate sub-fields of \code{results.var}, \code{results.lin} and \code{results.cost}, converted from per unit to per MW where necessary, and stored with external indexing for the end user in the chosen fields of the \results{} struct.
 
 \begin{Code}
@@ -3663,7 +3664,7 @@ name & description \\
 \end{threeparttable}
 \end{table}
 
-\clearpage
+\pagebreak
 See \code{help toggle\_softlims} for more information on this extension. Examples of using this extension can be found in \code{t\_opf\_softlims}.
 Running a case that includes the default soft limits is as simple as loading the case, turning on the extension and running it. Unlike with the reserves extension, \matpower{} does not currently have a wrapper function to automate this.
 \begin{Code}
@@ -3762,7 +3763,7 @@ Since the IEEE CDF format does not contain all of the data needed to run an opti
 
 The \code{psse2mpc} function converts a PSS/E RAW data file into a \matpower{} case struct. Given an optional file name \code{mpc\_name}, it can save the converted case to a \matpower{} case file. Warnings generated during the conversion process can be optionally returned in the \code{warnings} argument. By default, \code{psse2mpc} attempts to determine the revision of the PSS/E RAW file from the contents, but the user can specify an explicit revision number to use in the optional \code{rev} argument.
 
-\clearpage
+\pagebreak
 \subsubsection{\tt save2psse}
 
 \begin{Code}
@@ -3793,7 +3794,7 @@ The \code{case\_info} function prints out detailed information about a \matpower
 
 Compares the \bus{}, \branch{} and \gen{} matrices of two \matpower{} cases and prints a summary of the differences. For each column of the matrix it prints the maximum of any non-zero differences.
 
-\clearpage
+\pagebreak
 \subsubsection{\tt find\_islands}
 
 \begin{Code}
@@ -3825,7 +3826,7 @@ t_{\rm chg} &= \left|v_t\right|^2 \frac{b_c}{2}
 
 It can also optionally compute the partial derivatives of the line losses and reactive charging injections with respect to voltage angles and magnitudes.
 
-\clearpage
+\pagebreak
 \subsubsection{\tt margcost}
 \begin{Code}
   marginalcost = margcost(gencost, Pg)
@@ -4055,7 +4056,7 @@ For load changes, the \code{CT\_COL} column is not a column index, but rather a 
 \end{threeparttable}
 \end{table}
 
-\clearpage
+\pagebreak
 For example, setting up a \code{chgtab} matrix for the following four scenarios could be done as shown below.
 
 \begin{enumerate}
@@ -4138,7 +4139,7 @@ The third and optional fourth arguments (\code{ordering} and \code{dim}) are sim
 
 Similarly, \code{i2e\_field} performs the opposite conversion, from internal back to external indexing. It also assumes that \mpc{} is using internal indexing and utilizes the original data stored by \code{e2i\_field}, calling \code{i2e\_data} to do the conversion work.
 
-\clearpage
+\pagebreak
 \subsection{Forming Standard Power Systems Matrices}
 
 \subsubsection{\tt makeB}
@@ -4169,7 +4170,7 @@ Bus numbers must be consecutive beginning at 1 (i.e. internal ordering).
 
 The \code{makeJac} function forms the power flow Jacobian and, optionally, the system admittance matrices. Bus numbers in the input case must be consecutive beginning at 1 (i.e. internal indexing). If the \code{fullJac} argument is present and true, it returns the full Jacobian (sensitivities of all bus injections with respect to all voltage angles and magnitudes) as opposed to the reduced version used in the Newton power flow updates.
 
-\clearpage
+\pagebreak
 \subsubsection{\tt makeLODF}
 \label{sec:makeLODF}
 \begin{Code}
@@ -4187,8 +4188,12 @@ See Section~\ref{sec:lsf} on Linear Shift Factors for more details.
 \begin{Code}
   H = makePTDF(mpc)
   H = makePTDF(mpc, slack)
+  H = makePTDF(mpc, slack, txfr)
+  H = makePTDF(mpc, slack, bus_idx)
   H = makePTDF(baseMVA, bus, branch)
   H = makePTDF(baseMVA, bus, branch, slack)
+  H = makePTDF(baseMVA, bus, branch, slack, txfr)
+  H = makePTDF(baseMVA, bus, branch, slack, bus_idx)
 \end{Code}
 
 The \code{makePTDF} function returns the DC PTDF matrix for a given choice of slack.
@@ -4196,8 +4201,21 @@ The matrix is $n_{br} \times n_b$, where $n_{br}$ is the number of branches and 
 The \code{slack} can be a scalar (single slack bus) or an $n_b \times 1$ column vector of weights specifying the proportion of the slack taken up at each bus.
 If the \code{slack} is not specified, the reference bus is used by default.
 Bus numbers must be consecutive beginning at 1 (i.e. internal ordering).
+
+If \code{txfr} is supplied it must be a matrix (or vector) with $n_b$ rows
+whose columns each sum to zero, where each column defines a specific
+(slack independent) transfer. E.g. if the $k$-th transfer is from bus $i$ to bus $j$,
+\code{txfr(i, k)}~$=1$ and \code{txfr(j, k)}~$=-1$. In this case \code{H} has the
+same number of columns as \code{txfr}.
+
+If \code{bus\_idx} is supplied, it contains a column vector of bus indices.
+The columns of \code{H} correspond to these indices, but they are computed
+individually rather than computing the full PTDF matrix and selecting
+the desired columns.
+
 See Section~\ref{sec:lsf} on Linear Shift Factors for more details.
 
+\pagebreak
 \subsubsection{\tt makeYbus}
 \begin{Code}
   [Ybus, Yf, Yt] = makeYbus(mpc)
@@ -4207,7 +4225,6 @@ See Section~\ref{sec:lsf} on Linear Shift Factors for more details.
 The \code{makeYbus} function builds the bus admittance matrix and branch admittance matrices from \eqref{eq:Yf}--\eqref{eq:Ybus}. Bus numbers in the input case must be consecutive beginning at 1 (i.e. internal indexing).
 
 
-\clearpage
 \subsection{Miscellaneous}
 \label{sec:othermiscfuncs}
 \subsubsection{\tt define\_constants}
@@ -4858,7 +4875,7 @@ Numerous examples can be found in the case files listed in Table~\ref{tab:casefi
 
 The details of the \matpower{} case format are given in the tables below and can also be accessed by typing \code{help caseformat} at the \matlab{} prompt. First, the \baseMVA{} field is a simple scalar value specifying the system MVA base used for converting power into per unit quantities. For convenience and code portability, \code{idx\_bus} defines a set of constants to be used as named indices into the columns of the \bus{} matrix. Similarly, \code{idx\_brch}, \code{idx\_gen} and \code{idx\_cost} define names for the columns of \branch{}, \gen{} and \gencost{}, respectively. The script \code{define\_constants} provides a simple way to define all the usual constants at one shot. These are the names that appear in the first column of the tables below.
 
-\clearpage
+\pagebreak
 The \matpower{} case format also allows for additional fields to be included in the structure. The OPF is designed to recognize fields named \code{A}, \code{l}, \code{u}, \code{H}, \code{Cw}, \code{N}, \code{fparm}, \code{z0}, \code{zl} and \code{zu} as parameters used to directly extend the OPF formulation as described in Section~\ref{sec:extend_direct}. Additional standard optional fields include \code{bus\_name}, \code{gentype} and \code{genfuel}.\footnote{All three of these are cell arrays of strings. See \code{gentypes} and \code{genfuels} for more information on the corresponding fields.} Other user-defined fields may also be included, such as the \code{reserves} field used in the example code throughout Section~\ref{sec:extend_callback_ex}. The \code{loadcase} function will automatically load any extra fields from a case file and, if the appropriate \codeq{savecase} callback function (see Section~\ref{sec:savecase_callback}) is added via \code{add\_userfcn}, \code{savecase} will also save them back to a case file.
 
 \begin{table}[!ht]
@@ -5902,7 +5919,7 @@ name & default & description \\
 \end{table}
 
 
-\clearpage
+\pagebreak
 \subsection{Mapping of Old-Style Options to New-Style Options}
 
 A \matpower{} options struct can be created from an old-style options vector simply by passing it to \code{mpoption}. The mapping of old-style options into the fields in the option struct are summarized in Table~\ref{tab:oldnewoptionmap}. An old-style options vector can also be created from an options struct by calling \code{mpoption} with the struct and an empty second argument.
@@ -5967,7 +5984,7 @@ idx & old option & new option & notes \\
 17	& \code{CONSTR\_TOL\_X}	& \code{fmincon.tol\_x}, \code{knitro.tol\_x} & support for \code{constr} has been removed  \\
 18	& \code{CONSTR\_TOL\_F}	& \code{fmincon.tol\_f}, \code{knitro.tol\_f} 	& support for \code{constr} has been removed	\\
 19	& \code{CONSTR\_MAX\_IT}	& \code{fmincon.max\_it} 	& support for \code{constr} has been removed	\\
-\clearpage
+\pagebreak
 24	& \code{OPF\_FLOW\_LIM}	& \code{opf.flow\_lim}	& 	new option has string values \\
 & \multicolumn{3}{l}{\scriptsize~~~~\begin{tabular}{|>{\raggedleft}m{2cm} @{ ~~~$\rightarrow$~~~ } m{0.5\textwidth}}
 0 & \codeq{S} \\
@@ -6128,7 +6145,7 @@ name & description \\
 \end{threeparttable}
 \end{table}
 
-\clearpage
+\pagebreak
 \subsection{\matpower{} Functions}
 \label{sec:matpowersw}
 
@@ -6621,7 +6638,7 @@ name & description \\
 \end{table}
 
 
-%\clearpage
+%\pagebreak
 %\noindent Here is a full line of text that should wrap to the next line and give us an idea of just what the \code{textwidth} is on this page, so we can see if the table is too wide.
 
 
@@ -6709,7 +6726,7 @@ name & description \\
 \end{threeparttable}
 \end{table}
 
-\clearpage
+\pagebreak
 \subsection{Example \matpower{} Cases}
 \label{sec:matpowercases}
 
@@ -6895,7 +6912,7 @@ name & description \\
 \end{table}
 
 
-\clearpage
+\pagebreak
 \subsection{Automated Test Suite}
 \label{sec:matpowertests}
 
@@ -7269,7 +7286,7 @@ To solve this case using an AC optimal power flow and a last accepted offer (LAO
 mkt.OPF = 'AC';
 mkt.auction_type = 1;
 \end{Code}
-\clearpage
+\pagebreak
 \noindent
 and set up the problem as follows:
 \begin{Code}
@@ -7302,7 +7319,7 @@ bids.P.prc = [ ...
 
 [mpc_out, co, cb, f, dispatch, success, et] = runmarket(mpc, offers, bids, mkt);
 \end{Code}
-\clearpage
+\pagebreak
 \noindent
 The resulting cleared offers and bids are:
 \begin{Code}
@@ -7345,7 +7362,7 @@ ans =
    55.6208   55.6208   55.6208
 \end{Code}
 
-\clearpage
+\pagebreak
 In other words, the sales by generators and purchases by loads are as shown summarized in Tables~\ref{tab:sales} and Tables~\ref{tab:purchases}, respectively.
 
 \begin{table}[!ht]
@@ -7391,7 +7408,7 @@ Load & Quantity Bought & Purchase Price \\
 \end{threeparttable}
 \end{table}
 
-\clearpage
+\pagebreak
 \subsection{Smartmarket Files and Functions}
 
 \begin{table}[!ht]
@@ -7630,7 +7647,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-1.pdf}{\matpower{} 1.0 User'
 \item Bug fixes.
 \end{itemize}
 
-\clearpage
+\pagebreak
 \subsection{Version 2.0 -- released Dec 24, 1997}
 \label{app:v20}
 
@@ -7652,7 +7669,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-2.0.pdf}{\matpower{} 2.0 Use
 \item various bug fixes
 \end{itemize}
 
-\clearpage
+\pagebreak
 \subsection{Version 3.0 -- released Feb 14, 2005}
 \label{app:v30}
 
@@ -7730,7 +7747,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-3.2.pdf}{\matpower{} 3.2 Use
 \end{itemize}
 
 
-\clearpage
+\pagebreak
 \subsection{Version 4.0 -- released Feb 7, 2011}
 \label{app:v40}
 
@@ -7802,7 +7819,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-4.0.pdf}{\matpower{} 4.0 Use
 \end{itemize}
 
 
-\clearpage
+\pagebreak
 \subsection{Version 4.1 -- released Dec 14, 2011}
 \label{app:v41}
 
@@ -7834,7 +7851,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-4.1.pdf}{\matpower{} 4.1 Use
 \end{itemize}
 
 
-\clearpage
+\pagebreak
 \subsection{Version 5.0 -- released Dec 17, 2014}
 \label{app:v50}
 
@@ -7924,7 +7941,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-5.0.pdf}{\matpower{} 5.0 Use
 \item Removed \code{max\_it} option from \code{qps\_matpower()} (and friends) args. Use algorithm specific options to control iteration limits.
 \item Changed behavior of branch angle difference limits so that 0 is interpreted as unbounded only if both \code{ANGMIN} and \code{ANGMAX} are zero.
 \item In \code{results} struct returned by an OPF, the value of \code{results.raw.output.alg} is now a string, not an old-style numeric alg code.
-\clearpage
+\pagebreak
 \item Removed:
     \begin{itemize}
     \item Support for \matlab{} 6.x.
@@ -7936,7 +7953,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-5.0.pdf}{\matpower{} 5.0 Use
 \end{itemize}
 
 
-\clearpage
+\pagebreak
 \subsection{Version 5.1 -- released Mar 20, 2015}
 \label{app:v51}
 
@@ -8012,7 +8029,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-5.1.pdf}{\matpower{} 5.1 Use
 \end{itemize}
 
 
-\clearpage
+\pagebreak
 \subsection{Version 6.0 -- released Dec 16, 2016}
 \label{app:v60}
 
@@ -8035,7 +8052,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-6.0.pdf}{\matpower{} 6.0 Use
 \item Added \code{case33bw.m}, a 33-bus radial distribution system from Baran and Wu.
 \end{itemize}
 
-\clearpage
+\pagebreak
 \subsubsection*{New Features}
 \begin{itemize}
 \item \mostname{} (\most{}) 1.0b1 is a {\bf major new feature}, implementing a full range of optimal power scheduling problems, from a simple as a deterministic, single period economic dispatch problem with no transmission constraints to as complex as a stochastic, security-constrained, combined unit-commitment and multiperiod OPF problem with locational contingency and load-following reserves, ramping costs and constraints, deferrable demands, lossy storage resources and uncertain renewable generation. See \code{docs/MOST-manual.pdf} for details.
@@ -8105,7 +8122,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-6.0.pdf}{\matpower{} 6.0 Use
 \end{itemize}
 
 
-\clearpage
+\pagebreak
 \subsection{Version 7.0 -- released Jun 20, 2019}
 \label{app:v70}
 
@@ -8161,7 +8178,7 @@ with Octave, \matpower{}, and the \href{\matpowerextrasgithuburl}{\matpower{} Ex
     \end{itemize}
 \end{itemize}
 
-\clearpage
+\pagebreak
 \subsubsection*{New Case Files}
 \begin{itemize}
 \item Seven new purely synthetic cases from the ACTIVSg team ({\bf A}SU, {\bf C}ornell, {\bf T}exas A\&M, U of {\bf I}llinois, and {\bf V}CU - {\bf S}ynthetic {\bf g}rids), resulting from work supported by the ARPA-E GRID DATA program. \emph{Thanks to Adam Birchfield and the ACTIVSg team.}
@@ -8212,7 +8229,7 @@ Some of these cases also include contingency tables and/or hourly load scenarios
     \end{itemize}
 \end{itemize}
 
-\clearpage
+\pagebreak
 \subsubsection*{New Documentation}
 \begin{itemize}
     \item Two new Tech Notes, available from \href{\matpowerurl}{\matpower{} home page}.
@@ -8273,7 +8290,7 @@ MATLAB/Octave path.
     \end{itemize}
 \end{itemize}
 
-% \clearpage
+% \pagebreak
 \subsubsection*{Bugs Fixed}
 \begin{itemize}
 \item Fix bug in conversion of older versions of \matpower{} options.
@@ -8329,7 +8346,7 @@ available even if it had an expired license or failed for some other reason.
 \end{itemize}
 
 
-\clearpage
+\pagebreak
 \subsection{Version 7.0.1? -- released ??? ??, 20??}
 \label{app:v701}
 
@@ -8339,7 +8356,8 @@ The \href{https://matpower.org/docs/MATPOWER-manual-7.0.1.pdf}{\matpower{} 7.0.1
 
 \subsubsection*{New Features}
 \begin{itemize}
-\item Something cool. \emph{Thanks to Fulano.}
+\item Add to \code{makePTDF()} the option to compute shift factors very efficiently for specific transfers or specific buses only.
+\item \emph{Thanks to Fulano.}
 \item New options:
     \begin{itemize}
     \item 
@@ -8350,7 +8368,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-7.0.1.pdf}{\matpower{} 7.0.1
     \end{itemize}
 \end{itemize}
 
-% \clearpage
+% \pagebreak
 \subsubsection*{New Case Files}
 \begin{itemize}
 \item 
@@ -8362,7 +8380,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-7.0.1.pdf}{\matpower{} 7.0.1
     \end{itemize}
 \end{itemize}
 
-% \clearpage
+% \pagebreak
 \subsubsection*{New Documentation}
 \begin{itemize}
     \item 
@@ -8370,7 +8388,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-7.0.1.pdf}{\matpower{} 7.0.1
 
 \subsubsection*{Other Improvements}
 \begin{itemize}
-\item Significant speedup for some problems when constructing sparse matrices for linear constraints or quadratic costs (e.g. during problem setup in \most{}).
+\item Significant performance improvement for some problems when constructing sparse matrices for linear constraints or quadratic costs (e.g. during problem setup in \most{}).
 \emph{Thanks to Daniel Muldrew.}
 \item Move original implementation of Newton power flow for cartesian
 voltage representations to \code{newtonpf\_S\_hybrid()} and     \code{newtonpf\_I\_hybrid()}, accessible by setting the \code{pf.v\_cartesian}
@@ -8387,13 +8405,14 @@ a hybrid approach by Sereeter that used a modified Newton method
 to compute polar voltage updates using a modified cartesian Jacobian.
 \item Modify voltage limit constraints for cartesian AC OPF formulation
 to use voltage squared, resulting in simpler derivatives.
+\item Performance improvement for \code{makePTDF()} for large cases, e.g. more than 70\% improvement for \code{case9241pegase}.
 \item Deprecated functions:
     \begin{itemize}
     \item \code{foo()} -- use \code{bar()} instead.
     \end{itemize}
 \end{itemize}
 
-% \clearpage
+% \pagebreak
 \subsubsection*{Bugs Fixed}
 \begin{itemize}
 \item Fix bug \#77 where incorrect indexing could cause fatal error
