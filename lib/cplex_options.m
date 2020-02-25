@@ -115,19 +115,12 @@ opt.simplex.tolerances.feasibility = feastol;
 opt.output.clonelog = -1;
 
 %% printing
-vrb = max([0 verbose-1]);
-opt.barrier.display   = vrb;
-opt.conflict.display  = vrb;
-opt.mip.display       = vrb;
-opt.sifting.display   = vrb;
-opt.simplex.display   = vrb;
-opt.tune.display      = vrb;
 if verbose > 2
-    opt.Display = 'iter';
+    opt.display = 'iter';
 elseif verbose > 1
-    opt.Display = 'on';
+    opt.display = 'on';
 elseif verbose > 0
-    opt.Display = 'off';
+    opt.display = 'off';
 end
 
 %% solution algorithm

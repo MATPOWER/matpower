@@ -103,7 +103,7 @@ function [x, f, eflag, output, lambda] = miqps_cplex(H, c, A, l, u, xmin, xmax, 
 %   See also CPLEXMIQP, CPLEXMILP, CPLEXQP, CPLEXLP, CPLEX_OPTIONS.
 
 %   MATPOWER
-%   Copyright (c) 2010-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -219,21 +219,15 @@ end
 vstr = have_fcn('cplex', 'vstr');
 vnum = have_fcn('cplex', 'vnum');
 vrb = max([0 verbose-1]);
-cplex_opt.barrier.display   = vrb;
-cplex_opt.conflict.display  = vrb;
-cplex_opt.mip.display       = vrb;
-cplex_opt.sifting.display   = vrb;
-cplex_opt.simplex.display   = vrb;
-cplex_opt.tune.display      = vrb;
-if vrb && vnum > 12.002
+if vrb && vnum > 12.002 && vnum < 12.007
     cplex_opt.diagnostics   = 'on';
 end
 if verbose > 2
-    cplex_opt.Display = 'iter';
+    cplex_opt.display = 'iter';
 elseif verbose > 1
-    cplex_opt.Display = 'on';
+    cplex_opt.display = 'on';
 elseif verbose > 0
-    cplex_opt.Display = 'off';
+    cplex_opt.display = 'off';
 end
 
 if isempty(Ai) && isempty(Ae)

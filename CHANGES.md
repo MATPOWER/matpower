@@ -12,6 +12,9 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.0
 -----------------
 
+#### 2/26/20
+  - Fix CPLEX 12.10 compatibility [issue #90][25].
+
 #### 2/20/20
   - Add to `makePTDF()` the option to compute shift factors very
     efficiently for specific transfers or specific buses only.
@@ -2959,3 +2962,4 @@ First Public Release – *Jun 25, 1997*
 [22]: https://github.com/MATPOWER/matpower/issues/79
 [23]: https://github.com/MATPOWER/matpower/issues/77
 [24]: https://github.com/MATPOWER/matpower/issues/71
+[25]: https://github.com/MATPOWER/matpower/issues/90
