@@ -69,7 +69,7 @@ function opt = cplex_options(overrides, mpopt)
 %   See also CPLEXLP, CPLEXQP, MPOPTION.
 
 %   MATPOWER
-%   Copyright (c) 2010-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -103,16 +103,10 @@ else
 end
 
 %%-----  set default options for CPLEX  -----
-if have_fcn('matlab', 'vnum') >= 8.006 && have_fcn('cplex', 'vnum') <= 12.006003
-    s = warning('QUERY', 'MATLAB:lang:badlyScopedReturnValue');
-    warning('OFF', 'MATLAB:lang:badlyScopedReturnValue');
-    opt = cplexoptimset('cplex');
-    warning(s.state, 'MATLAB:lang:badlyScopedReturnValue');
-else
-    opt = cplexoptimset('cplex');
-end
-opt.simplex.tolerances.feasibility = feastol;
-opt.output.clonelog = -1;
+opt = struct( ...
+    'simplex', struct('tolerances', struct('feasibility', feastol)), ...
+    'output', struct('clonelog', -1) ...
+);
 
 %% printing
 if verbose > 2

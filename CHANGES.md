@@ -13,6 +13,8 @@ Changes since 7.0
 -----------------
 
 #### 2/26/20
+  - Significant performance improvement for CPLEX on small problems by
+    eliminating call to `cplexoptimset()`, which was a huge bottleneck.
   - Fix CPLEX 12.10 compatibility [issue #90][25].
 
 #### 2/20/20

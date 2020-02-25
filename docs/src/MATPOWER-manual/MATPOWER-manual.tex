@@ -8406,6 +8406,7 @@ to compute polar voltage updates using a modified cartesian Jacobian.
 \item Modify voltage limit constraints for cartesian AC OPF formulation
 to use voltage squared, resulting in simpler derivatives.
 \item Performance improvement for \code{makePTDF()} for large cases, e.g. more than 70\% improvement for \code{case9241pegase}.
+\item Significant performance improvement for CPLEX on small problems by     eliminating call to \code{cplexoptimset()}, which was a huge bottleneck.
 \item Deprecated functions:
     \begin{itemize}
     \item \code{foo()} -- use \code{bar()} instead.
