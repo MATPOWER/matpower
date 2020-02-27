@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 593;
+num_tests = 594;
 
 t_begin(num_tests, quiet);
 
@@ -1185,6 +1185,12 @@ t_is(d2f, ed2f, 14, [t 'd2f']);
 t = 'om.eval_nln_cost(''wc'') : ';
 f = om.eval_nln_cost(x, 'wc');
 t_is(f, 239, 14, [t 'f']);
+
+%%-----  copy constructor  -----
+t = 'copy constructor';
+om1 = opf_model(om);
+om1.add_var('test', 10);
+t_is(om1.var.N, om.var.N+10, 12, t);
 
 % om
 % om = struct(om);
