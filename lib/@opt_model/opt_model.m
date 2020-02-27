@@ -65,6 +65,9 @@ classdef opt_model < handle
 %   Indentify variable, constraint or cost row indices:
 %       describe_idx
 %
+%   Make a shallow copy of the object:
+%       copy
+%
 %   The following is the structure of the data in the OPF model object.
 %   Each field of .idx or .data is a struct whose field names are the names
 %   of the corresponding blocks of vars, constraints or costs (found in
@@ -205,7 +208,7 @@ classdef opt_model < handle
 %           .(user defined fields)
 
 %   MATPOWER
-%   Copyright (c) 2008-2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -326,13 +329,16 @@ classdef opt_model < handle
                 'vs', struct() ), ...
             'params', [] );
         userdata = struct();
-    end
+    end     %% properties
     
     methods
         %% constructor
         function om = opt_model(s)
             if nargin > 0
                 if isa(s, 'opt_model')
+                    %% this copy constructor will not be inheritable under
+                    %% Octave until the fix has been included for:
+                    %%      https://savannah.gnu.org/bugs/?52614
                     if have_fcn('octave')
                         s1 = warning('query', 'Octave:classdef-to-struct');
                         warning('off', 'Octave:classdef-to-struct');
@@ -356,5 +362,21 @@ classdef opt_model < handle
                 end
             end
         end
-    end
+
+        function new_om = copy(om)
+            %% make shallow copy of object
+            new_om = eval(class(om));  %% create new object
+            if have_fcn('octave')
+                s1 = warning('query', 'Octave:classdef-to-struct');
+                warning('off', 'Octave:classdef-to-struct');
+            end
+            props = fieldnames(om);
+            if have_fcn('octave')
+                warning(s1.state, 'Octave:classdef-to-struct');
+            end
+            for k = 1:length(props)
+                new_om.(props{k}) = om.(props{k});
+            end
+        end
+    end     %% methods
 end

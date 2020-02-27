@@ -2,7 +2,7 @@ function t_opf_model(quiet)
 %T_OPF_MODEL Tests for OPF_MODEL.
 
 %   MATPOWER
-%   Copyright (c) 2012-2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2012-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 594;
+num_tests = 595;
 
 t_begin(num_tests, quiet);
 
@@ -1186,11 +1186,20 @@ t = 'om.eval_nln_cost(''wc'') : ';
 f = om.eval_nln_cost(x, 'wc');
 t_is(f, 239, 14, [t 'f']);
 
-%%-----  copy constructor  -----
+%%-----  copy  -----
 t = 'copy constructor';
-om1 = opf_model(om);
-om1.add_var('test', 10);
-t_is(om1.var.N, om.var.N+10, 12, t);
+if have_fcn('octave') && have_fcn('octave', 'vnum') < 5.003
+    t_skip(1, [t ' - https://savannah.gnu.org/bugs/?52614']);
+else
+    om1 = opf_model(om);
+    om1.add_var('test', 10);
+    t_is(om1.var.N, om.var.N+10, 12, t);
+end
+
+t = 'copy';
+om2 = om.copy();
+om2.add_var('test', 10);
+t_is(om2.var.N, om.var.N+10, 12, t);
 
 % om
 % om = struct(om);

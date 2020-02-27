@@ -12,6 +12,12 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.0
 -----------------
 
+#### 2/27/20
+  - Add `copy()` method to `@opt_model` class to get around issues
+    with inheritance in constructors that was preventing copy constructor
+    from working in Octave 5.2 and earlier (see also [Octave bug
+    52614](https://savannah.gnu.org/bugs/?52614).
+
 #### 2/26/20
   - Significant performance improvement for CPLEX on small problems by
     eliminating call to `cplexoptimset()`, which was a huge bottleneck.
