@@ -333,7 +333,14 @@ classdef opt_model < handle
         function om = opt_model(s)
             if nargin > 0
                 if isa(s, 'opt_model')
+                    if have_fcn('octave')
+                        s1 = warning('query', 'Octave:classdef-to-struct');
+                        warning('off', 'Octave:classdef-to-struct');
+                    end
                     props = fieldnames(s);
+                    if have_fcn('octave')
+                        warning(s1.state, 'Octave:classdef-to-struct');
+                    end
                     for k = 1:length(props)
                         om.(props{k}) = s.(props{k});
                     end
