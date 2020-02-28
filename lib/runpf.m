@@ -59,7 +59,7 @@ function [MVAbase, bus, gen, branch, success, et] = ...
 %   See also RUNDCPF.
 
 %   MATPOWER
-%   Copyright (c) 1996-2019, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   Enforcing of generator Q limits inspired by contributions
 %   from Mu Lin, Lincoln University, New Zealand (1/14/05).
@@ -348,12 +348,6 @@ if ~isempty(mpc.bus)
 
                     %% convert to PQ bus
                     gen(mx, QG) = fixedQg(mx);      %% set Qg to binding limit
-                    gen(mx, GEN_STATUS) = 0;        %% temporarily turn off gen,
-                    for i = 1:length(mx)            %% (one at a time, since
-                        bi = gen(mx(i), GEN_BUS);   %%  they may be at same bus)
-                        bus(bi, [PD,QD]) = ...      %% adjust load accordingly,
-                            bus(bi, [PD,QD]) - gen(mx(i), [PG,QG]);
-                    end
                     if length(ref) > 1 && any(bus(gen(mx, GEN_BUS), BUS_TYPE) == REF)
                         error('runpf: Sorry, MATPOWER cannot enforce Q limits for slack buses in systems with multiple slacks.');
                     end
@@ -381,14 +375,6 @@ if ~isempty(mpc.bus)
             end
         end
         if qlim && ~isempty(limited)
-            %% restore injections from limited gens (those at Q limits)
-            gen(limited, QG) = fixedQg(limited);    %% restore Qg value,
-            for i = 1:length(limited)               %% (one at a time, since
-                bi = gen(limited(i), GEN_BUS);      %%  they may be at same bus)
-                bus(bi, [PD,QD]) = ...              %% re-adjust load,
-                    bus(bi, [PD,QD]) + gen(limited(i), [PG,QG]);
-            end
-            gen(limited, GEN_STATUS) = 1;               %% and turn gen back on
             if ref ~= ref0
                 %% adjust voltage angles to make original ref bus correct
                 bus(:, VA) = bus(:, VA) - bus(ref0, VA) + Varef0;

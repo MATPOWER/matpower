@@ -12,6 +12,11 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.0
 -----------------
 
+#### 2/28/20
+  - Fix [bug #89][26] where running a power flow with `pf.enforce_q_lims`
+    enabled and voltage dependent ZIP loads produced incorrect results.
+    *Thanks to Florian.*
+
 #### 2/27/20
   - Add `copy()` method to `@opt_model` class to get around issues
     with inheritance in constructors that was preventing copy constructor
@@ -2971,3 +2976,4 @@ First Public Release – *Jun 25, 1997*
 [23]: https://github.com/MATPOWER/matpower/issues/77
 [24]: https://github.com/MATPOWER/matpower/issues/71
 [25]: https://github.com/MATPOWER/matpower/issues/90
+[26]: https://github.com/MATPOWER/matpower/issues/89
