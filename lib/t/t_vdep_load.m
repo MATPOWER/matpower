@@ -2,7 +2,7 @@ function t_vdep_load(quiet)
 %T_VDEP_LOAD    Test voltage dependent ZIP load model for PF, CPF, OPF.
 
 %   MATPOWER
-%   Copyright (c) 2009-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -16,7 +16,7 @@ end
 pfalgs = {'NR', 'FDXB', 'FDBX'};
 cpfparm = {'natural', 'arc-len', 'pseudo arc-len'};
 
-t_begin(33+27*length(pfalgs)+39*2*length(cpfparm), quiet);
+t_begin(33+39*length(pfalgs)+39*2*length(cpfparm), quiet);
 
 if quiet
     verbose = 0;
@@ -124,6 +124,38 @@ for k = 1:length(pfalgs)
     t_is(tPd, [0; 0; 0; 0; 87.205063; 0; 98.205247; 0; 118.314510], 6, [t 'bus P loads']);
     t_is(tQd, r1.bus(:, QD), 6, [t 'bus Q loads']);
     t_is(tQd, [0; 0; 0; 0; 29.068354; 0; 34.371836; 0; 47.325804], 6, [t 'bus Q loads']);
+    t_is(r.gen(:, [PG QG]), r1.gen(:, [PG QG]), 6, [t 'gen dispatches']);
+    t_is(r.branch, r1.branch, 6, [t 'branch']);
+
+    t = sprintf('PF (%s) - combo ZIP loads + Q lims : ', pfalgs{k});
+    zip_w = [0.1 0.4 0.5];
+    mpopt = mpoption(mpopt, 'exp.sys_wide_zip_loads.pw', zip_w);
+
+%     mpopt2 = mpoption(mpopt, 'pf.enforce_q_lims', 1, 'verbose', 2, 'out.all', -1, 'out.gen', 1);
+    mpopt2 = mpoption(mpopt, 'pf.enforce_q_lims', 1);
+    mpc2 = mpc;
+    mpc2.gen(2:3, QMAX) = 1;
+    mpc2.gen(2:3, QMIN) = -1;
+    r = runpf(mpc2, mpopt2);
+    [tPd, tQd] = total_load(r, 'bus', [], mpopt2);
+    mpc1 = mpc2;
+    Vm = r.bus(:, VM);
+    scale = [Vm.^0 Vm Vm.^2] * zip_w';
+    mpc1.bus(:, PD) = mpc1.bus(:, PD) .* scale;
+    mpc1.bus(:, QD) = mpc1.bus(:, QD) .* scale;
+    mpopt1 = mpoption(mpopt0, 'pf.enforce_q_lims', 1);
+    r1 = runpf(mpc1, mpopt1);
+    t_ok(r1.success, [t 'success']);
+
+    t_ok(r.success, [t 'success']);
+    t_is(r.gen(2:3, QG), [-1; 1], 12, [t 'Qg(2:3)']);
+    t_is(r.branch(4, QF), -1, 6, [t 'Qf(4)']);
+    t_is(r.branch(7, QT), 1, 6, [t 'Qt(7)']);
+    t_is(r.bus(:, [VM VA]), r1.bus(:, [VM VA]), 6, [t 'bus voltages']);
+    t_is(tPd, r1.bus(:, PD), 6, [t 'bus P loads']);
+    t_is(tPd, [0; 0; 0; 0; 85.9288588; 0; 95.2041458; 0; 115.8912983], 6, [t 'bus P loads']);
+    t_is(tQd, r1.bus(:, QD), 6, [t 'bus Q loads']);
+    t_is(tQd, [0; 0; 0; 0; 28.6429529; 0; 33.321451; 0; 46.3565193], 6, [t 'bus Q loads']);
     t_is(r.gen(:, [PG QG]), r1.gen(:, [PG QG]), 6, [t 'gen dispatches']);
     t_is(r.branch, r1.branch, 6, [t 'branch']);
 end
