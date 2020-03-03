@@ -1863,7 +1863,7 @@ name & default & description \\
 \end{threeparttable}
 \end{table}
 
-\pagebreak
+\clearpage
 \subsubsection{CPF Callback Functions}
 
 \matpower{}'s continuation power flow provides a callback mechanism to give the user access to the iteration process for executing custom code at each iteration, for example, to implement custom incremental plotting of a PV nose curve or to handle a detected event. This callback mechanism is used internally to handle default plotting functionality as well as to handle the standard CPF events. The \code{cpf\_default\_callback} function, for example, is used to collect the $\lambda$ and $V$ results from each predictor and corrector iteration and optionally plot the PV nose curve.
@@ -1999,7 +1999,7 @@ The user can define their own callback functions which take the same form and ar
 \end{itemize}
 Multiple user callbacks can be registered by assigning a cell array of such strings and/or structs to the \code{cpf.user\_callback} option.
 
-\pagebreak
+\clearpage
 \subsubsection{CPF Example}
 
 The following is an example of running a continuation power flow using a version of the 9-bus system, looking at increasing all loads by a factor of 2.5. This example plots the nose curve shown in \figurename~\ref{fig:nose_curve}.
@@ -2476,7 +2476,7 @@ name & description \\
 \end{threeparttable}
 \end{table}
 
-\pagebreak
+\clearpage
 Additional optional input arguments can be used to set options (\code{mpopt}) and provide file names for saving the pretty printed output (\code{fname}) or the solved case data (\code{solvedcase}).
 \begin{Code}
 >> results = runopf(casedata, mpopt, fname, solvedcase);
@@ -2971,7 +2971,7 @@ name & description \\
 
 In the example code below, the callback function begins by converting the reserves input data in the resulting case (\code{qty}, \code{cost} and \code{zones} fields of \code{results.reserves}) back to external indexing via calls to \code{i2e\_field}. See the help for \code{i2e\_field} and \code{i2e\_data} for more details on how they can be used.
 
-\pagebreak
+\clearpage
 Then the reserves results of interest are extracted from the appropriate sub-fields of \code{results.var}, \code{results.lin} and \code{results.cost}, converted from per unit to per MW where necessary, and stored with external indexing for the end user in the chosen fields of the \results{} struct.
 
 \begin{Code}
@@ -3664,7 +3664,7 @@ name & description \\
 \end{threeparttable}
 \end{table}
 
-\pagebreak
+\clearpage
 See \code{help toggle\_softlims} for more information on this extension. Examples of using this extension can be found in \code{t\_opf\_softlims}.
 Running a case that includes the default soft limits is as simple as loading the case, turning on the extension and running it. Unlike with the reserves extension, \matpower{} does not currently have a wrapper function to automate this.
 \begin{Code}
@@ -4056,7 +4056,7 @@ For load changes, the \code{CT\_COL} column is not a column index, but rather a 
 \end{threeparttable}
 \end{table}
 
-\pagebreak
+\clearpage
 For example, setting up a \code{chgtab} matrix for the following four scenarios could be done as shown below.
 
 \begin{enumerate}
@@ -5919,7 +5919,7 @@ name & default & description \\
 \end{table}
 
 
-\pagebreak
+\clearpage
 \subsection{Mapping of Old-Style Options to New-Style Options}
 
 A \matpower{} options struct can be created from an old-style options vector simply by passing it to \code{mpoption}. The mapping of old-style options into the fields in the option struct are summarized in Table~\ref{tab:oldnewoptionmap}. An old-style options vector can also be created from an options struct by calling \code{mpoption} with the struct and an empty second argument.
@@ -6145,7 +6145,7 @@ name & description \\
 \end{threeparttable}
 \end{table}
 
-\pagebreak
+\clearpage
 \subsection{\matpower{} Functions}
 \label{sec:matpowersw}
 
@@ -6638,7 +6638,7 @@ name & description \\
 \end{table}
 
 
-%\pagebreak
+%\clearpage
 %\noindent Here is a full line of text that should wrap to the next line and give us an idea of just what the \code{textwidth} is on this page, so we can see if the table is too wide.
 
 
@@ -6726,7 +6726,7 @@ name & description \\
 \end{threeparttable}
 \end{table}
 
-\pagebreak
+\clearpage
 \subsection{Example \matpower{} Cases}
 \label{sec:matpowercases}
 
@@ -6912,7 +6912,7 @@ name & description \\
 \end{table}
 
 
-\pagebreak
+\clearpage
 \subsection{Automated Test Suite}
 \label{sec:matpowertests}
 
@@ -7408,7 +7408,7 @@ Load & Quantity Bought & Purchase Price \\
 \end{threeparttable}
 \end{table}
 
-\pagebreak
+\clearpage
 \subsection{Smartmarket Files and Functions}
 
 \begin{table}[!ht]
@@ -7647,7 +7647,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-1.pdf}{\matpower{} 1.0 User'
 \item Bug fixes.
 \end{itemize}
 
-\pagebreak
+\clearpage
 \subsection{Version 2.0 -- released Dec 24, 1997}
 \label{app:v20}
 
@@ -7669,7 +7669,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-2.0.pdf}{\matpower{} 2.0 Use
 \item various bug fixes
 \end{itemize}
 
-\pagebreak
+\clearpage
 \subsection{Version 3.0 -- released Feb 14, 2005}
 \label{app:v30}
 
@@ -7747,7 +7747,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-3.2.pdf}{\matpower{} 3.2 Use
 \end{itemize}
 
 
-\pagebreak
+\clearpage
 \subsection{Version 4.0 -- released Feb 7, 2011}
 \label{app:v40}
 
@@ -7819,7 +7819,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-4.0.pdf}{\matpower{} 4.0 Use
 \end{itemize}
 
 
-\pagebreak
+\clearpage
 \subsection{Version 4.1 -- released Dec 14, 2011}
 \label{app:v41}
 
@@ -7851,7 +7851,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-4.1.pdf}{\matpower{} 4.1 Use
 \end{itemize}
 
 
-\pagebreak
+\clearpage
 \subsection{Version 5.0 -- released Dec 17, 2014}
 \label{app:v50}
 
@@ -7953,7 +7953,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-5.0.pdf}{\matpower{} 5.0 Use
 \end{itemize}
 
 
-\pagebreak
+\clearpage
 \subsection{Version 5.1 -- released Mar 20, 2015}
 \label{app:v51}
 
@@ -8029,7 +8029,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-5.1.pdf}{\matpower{} 5.1 Use
 \end{itemize}
 
 
-\pagebreak
+\clearpage
 \subsection{Version 6.0 -- released Dec 16, 2016}
 \label{app:v60}
 
@@ -8052,7 +8052,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-6.0.pdf}{\matpower{} 6.0 Use
 \item Added \code{case33bw.m}, a 33-bus radial distribution system from Baran and Wu.
 \end{itemize}
 
-\pagebreak
+\clearpage
 \subsubsection*{New Features}
 \begin{itemize}
 \item \mostname{} (\most{}) 1.0b1 is a {\bf major new feature}, implementing a full range of optimal power scheduling problems, from a simple as a deterministic, single period economic dispatch problem with no transmission constraints to as complex as a stochastic, security-constrained, combined unit-commitment and multiperiod OPF problem with locational contingency and load-following reserves, ramping costs and constraints, deferrable demands, lossy storage resources and uncertain renewable generation. See \code{docs/MOST-manual.pdf} for details.
@@ -8122,7 +8122,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-6.0.pdf}{\matpower{} 6.0 Use
 \end{itemize}
 
 
-\pagebreak
+\clearpage
 \subsection{Version 7.0 -- released Jun 20, 2019}
 \label{app:v70}
 
@@ -8346,7 +8346,7 @@ available even if it had an expired license or failed for some other reason.
 \end{itemize}
 
 
-\pagebreak
+\clearpage
 \subsection{Version 7.0.1? -- released ??? ??, 20??}
 \label{app:v701}
 
