@@ -8,7 +8,7 @@ function [results, success, raw] = opf_execute(om, mpopt)
 %   See also OPF, OPF_SETUP.
 
 %   MATPOWER
-%   Copyright (c) 2009-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -163,7 +163,7 @@ if success
       if ~isfield(raw, 'dg')
         mpc = om.get_mpc();
         [Ybus, Yf, Yt] = makeYbus(mpc.baseMVA, mpc.bus, mpc.branch);
-        [g, geq, dg, dgeq] = opf_consfcn(results.x, om, Ybus, Yf, Yt, mpopt);
+        [g, geq, dg, dgeq] = opf_consfcn(results.x, om);
         raw.g = [ geq; g];
         raw.dg = [ dgeq'; dg'];   %% true Jacobian organization
       end

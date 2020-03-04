@@ -1,6 +1,8 @@
-function [h, g, dh, dg] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt, il, dhs, dgs)
+function [h, g, dh, dg] = opf_consfcn(x, om, dhs, dgs)
 %OPF_CONSFCN  Evaluates nonlinear constraints and their Jacobian for OPF.
-%   [H, G, DH, DG] = OPF_CONSFCN(X, OM, YBUS, YF, YT, MPOPT, IL)
+%   [H, G] = OPF_CONSFCN(X, OM)
+%   [H, G, DH, DG] = OPF_CONSFCN(X, OM)
+%   [H, G, DH, DG] = OPF_CONSFCN(X, OM, DHS, DGS)
 %
 %   Constraint evaluation function for AC optimal power flow, suitable
 %   for use with MIPS or FMINCON. Computes constraint vectors and their
@@ -9,14 +11,6 @@ function [h, g, dh, dg] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt, il, dhs, dgs)
 %   Inputs:
 %     X : optimization vector
 %     OM : OPF model object
-%     YBUS : bus admittance matrix
-%     YF : admittance matrix for "from" end of constrained branches
-%     YT : admittance matrix for "to" end of constrained branches
-%     MPOPT : MATPOWER options struct
-%     IL : (optional) vector of branch indices corresponding to
-%          branches with flow limits (all others are assumed to be
-%          unconstrained). The default is [1:nl] (all branches).
-%          YF and YT contain only the rows corresponding to IL.
 %     DHS : (optional) sparse matrix with tiny non-zero values specifying
 %          the fixed sparsity structure that the resulting DH should match
 %     DGS : (optional) sparse matrix with tiny non-zero values specifying
@@ -35,14 +29,14 @@ function [h, g, dh, dg] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt, il, dhs, dgs)
 %     DG : (optional) equality constraint gradients
 %
 %   Examples:
-%       [h, g] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt);
-%       [h, g, dh, dg] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt);
-%       [h, g, dh, dg] = opf_consfcn(x, om, Ybus, Yf, Yt, mpopt, il);
+%       [h, g] = opf_consfcn(x, om);
+%       [h, g, dh, dg] = opf_consfcn(x, om);
+%       [...] = opf_consfcn(x, om, dhs, dgs);
 %
 %   See also OPF_COSTFCN, OPF_HESSFCN.
 
 %   MATPOWER
-%   Copyright (c) 1996-2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2020, Power Systems Engineering Research Center (PSERC)
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %   and Ray Zimmerman, PSERC Cornell
 %
@@ -60,7 +54,7 @@ else                %% constraints and derivatives
     dh = dh';
 
     %% force specified sparsity structure
-    if nargin > 7
+    if nargin > 2
         %% add sparse structure (with tiny values) to current matrices to
         %% ensure that sparsity structure matches that supplied
         dg = dg + dgs;

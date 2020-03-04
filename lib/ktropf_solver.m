@@ -37,7 +37,7 @@ function [results, success, raw] = ktropf_solver(om, mpopt)
 %   See also OPF, KTRLINK.
 
 %   MATPOWER
-%   Copyright (c) 2000-2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2000-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %
@@ -140,7 +140,7 @@ nl2 = length(il);           %% number of constrained lines
 % Cg = sparse(gen(:, GEN_BUS), (1:ng)', 1, nb, ng);
 % nz = nx - 2*(nb+ng);
 % nxtra = nx - 2*nb;
-% [h, g, dh, dg] = opf_consfcn(x0, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
+% [h, g, dh, dg] = opf_consfcn(x0, om);
 % Js = [dh'; dg'];
 % Js = [
 %     Cl2     Cl2     sparse(nl2, 2*ng)               sparse(nl2,nz);
@@ -149,7 +149,7 @@ nl2 = length(il);           %% number of constrained lines
 %     Cb      Cb      sparse(nb,ng)   Cg              sparse(nb,nz);
 % ];
 % lam = struct('eqnonlin', ones(size(dg,2),1), 'ineqnonlin', ones(size(dh,2),1) );
-% Hs = opf_hessfcn(x0, lam, 1, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
+% Hs = opf_hessfcn(x0, lam, 1, om);
 % [f, df, d2f] = opf_costfcn(x0, om);
 % Hs = d2f + [
 %     Cb  Cb  sparse(nb,nxtra);
@@ -157,18 +157,18 @@ nl2 = length(il);           %% number of constrained lines
 %     sparse(nxtra,nx);
 % ];
 randx = rand(size(x0));
-[h, g, dh, dg] = opf_consfcn(randx, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
+[h, g, dh, dg] = opf_consfcn(randx, om);
 dh(dh ~= 0) = 1e-20;    %% set non-zero entries to tiny value (for adding later)
 dg(dg ~= 0) = 1e-20;    %% set non-zero entries to tiny value (for adding later)
 Js = [dh'; dg'];
 lam = struct('eqnonlin', rand(size(dg,2),1), 'ineqnonlin', rand(size(dh,2),1) );
-Hs = opf_hessfcn(randx, lam, 1, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
+Hs = opf_hessfcn(randx, lam, 1, om);
 Hs(Hs ~= 0) = 1e-20;    %% set non-zero entries to tiny value (for adding later)
 neq = length(g);
 niq = length(h);
 
 %% basic optimset options needed for ktrlink
-hess_fcn = @(x, lambda)opf_hessfcn(x, lambda, 1, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il, Hs);
+hess_fcn = @(x, lambda)opf_hessfcn(x, lambda, 1, om, Hs);
 fmoptions = optimset('GradObj', 'on', 'GradConstr', 'on', ...
                 'Hessian', 'user-supplied', 'HessFcn', hess_fcn, ...
                 'JacobPattern', Js, 'HessPattern', Hs );
@@ -211,7 +211,7 @@ end
 
 %%-----  run opf  -----
 f_fcn = @(x)opf_costfcn(x, om);
-gh_fcn = @(x)opf_consfcn(x, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il, dh, dg);
+gh_fcn = @(x)opf_consfcn(x, om, dh, dg);
 if have_fcn('knitromatlab')
     [x, f, info, Output, Lambda] = knitromatlab(f_fcn, x0, Af, bf, Afeq, bfeq, ...
                                     xmin, xmax, gh_fcn, [], fmoptions, opt_fname);
@@ -250,8 +250,8 @@ gen(:, QG) = Qg * baseMVA;
 gen(:, VG) = Vm(gen(:, GEN_BUS));
 
 %% compute branch flows
-Sf = V(branch(:, F_BUS)) .* conj(Yf * V);  %% cplx pwr at "from" bus, p.u.
-St = V(branch(:, T_BUS)) .* conj(Yt * V);  %% cplx pwr at "to" bus, p.u.
+Sf = V(branch(:, F_BUS)) .* conj(Yf * V);   %% cplx pwr at "from" bus, p.u.
+St = V(branch(:, T_BUS)) .* conj(Yt * V);   %% cplx pwr at "to" bus, p.u.
 branch(:, PF) = real(Sf) * baseMVA;
 branch(:, QF) = imag(Sf) * baseMVA;
 branch(:, PT) = real(St) * baseMVA;

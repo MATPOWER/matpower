@@ -37,7 +37,7 @@ function [results, success, raw] = ipoptopf_solver(om, mpopt)
 %   See also OPF, IPOPT.
 
 %   MATPOWER
-%   Copyright (c) 2000-2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2000-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %
@@ -153,12 +153,12 @@ nA = size(A, 1);                %% number of original linear constraints
 %     sparse(nxtra,nx);
 % ]);
 randx = rand(size(x0));
-[h, g, dh, dg] = opf_consfcn(randx, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
+[h, g, dh, dg] = opf_consfcn(randx, om);
 dh(dh ~= 0) = 1e-20;    %% set non-zero entries to tiny value (for adding later)
 dg(dg ~= 0) = 1e-20;    %% set non-zero entries to tiny value (for adding later)
 Js = [dg'; dh'; A];
 lam = struct('eqnonlin', rand(size(dg,2),1), 'ineqnonlin', rand(size(dh,2),1));
-Hs = opf_hessfcn(randx, lam, 1, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
+Hs = opf_hessfcn(randx, lam, 1, om);
 Hs(Hs ~= 0) = 1e-20;    %% set non-zero entries to tiny value (for adding later)
 neq = length(g);
 niq = length(h);
@@ -169,11 +169,6 @@ options.ipopt = ipopt_options([], mpopt);
 %% extra data to pass to functions
 options.auxdata = struct( ...
     'om',       om, ...
-    'Ybus',     Ybus, ...
-    'Yf',       Yf(il,:), ...
-    'Yt',       Yt(il,:), ...
-    'mpopt',    mpopt, ...
-    'il',       il, ...
     'A',        A, ...
     'nA',       nA, ...
     'neqnln',   neq, ...
@@ -261,8 +256,8 @@ gen(:, QG) = Qg * baseMVA;
 gen(:, VG) = Vm(gen(:, GEN_BUS));
 
 %% compute branch flows
-Sf = V(branch(:, F_BUS)) .* conj(Yf * V);  %% cplx pwr at "from" bus, p.u.
-St = V(branch(:, T_BUS)) .* conj(Yt * V);  %% cplx pwr at "to" bus, p.u.
+Sf = V(branch(:, F_BUS)) .* conj(Yf * V);   %% cplx pwr at "from" bus, p.u.
+St = V(branch(:, T_BUS)) .* conj(Yt * V);   %% cplx pwr at "to" bus, p.u.
 branch(:, PF) = real(Sf) * baseMVA;
 branch(:, QF) = imag(Sf) * baseMVA;
 branch(:, PT) = real(St) * baseMVA;
@@ -387,7 +382,7 @@ function df = gradient(x, d)
 [f, df] = opf_costfcn(x, d.om);
 
 function c = constraints(x, d)
-[hn, gn] = opf_consfcn(x, d.om, d.Ybus, d.Yf, d.Yt, d.mpopt, d.il);
+[hn, gn] = opf_consfcn(x, d.om);
 if isempty(d.A)
     c = [gn; hn];
 else
@@ -395,13 +390,13 @@ else
 end
 
 function J = jacobian(x, d)
-[hn, gn, dhn, dgn] = opf_consfcn(x, d.om, d.Ybus, d.Yf, d.Yt, d.mpopt, d.il, d.dhs, d.dgs);
+[hn, gn, dhn, dgn] = opf_consfcn(x, d.om, d.dhs, d.dgs);
 J = [dgn'; dhn'; d.A];
 
 function H = hessian(x, sigma, lambda, d)
 lam.eqnonlin   = lambda(1:d.neqnln);
 lam.ineqnonlin = lambda(d.neqnln+(1:d.niqnln));
-H = tril(opf_hessfcn(x, lam, sigma, d.om, d.Ybus, d.Yf, d.Yt, d.mpopt, d.il, d.Hs));
+H = tril(opf_hessfcn(x, lam, sigma, d.om, d.Hs));
 
 % function Js = jacobianstructure(d)
 % Js = d.Js;

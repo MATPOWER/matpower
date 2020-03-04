@@ -37,7 +37,7 @@ function [results, success, raw] = mipsopf_solver(om, mpopt)
 %   See also OPF, MIPS.
 
 %   MATPOWER
-%   Copyright (c) 2000-2018, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2000-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %
@@ -123,8 +123,8 @@ nl2 = length(il);           %% number of constrained lines
 
 %%-----  run opf  -----
 f_fcn = @(x)opf_costfcn(x, om);
-gh_fcn = @(x)opf_consfcn(x, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
-hess_fcn = @(x, lambda, cost_mult)opf_hessfcn(x, lambda, cost_mult, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
+gh_fcn = @(x)opf_consfcn(x, om);
+hess_fcn = @(x, lambda, cost_mult)opf_hessfcn(x, lambda, cost_mult, om);
 [x, f, info, Output, Lambda] = ...
   mips(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt);
 success = (info > 0);
@@ -153,8 +153,8 @@ gen(:, QG) = Qg * baseMVA;
 gen(:, VG) = Vm(gen(:, GEN_BUS));
 
 %% compute branch flows
-Sf = V(branch(:, F_BUS)) .* conj(Yf * V);  %% cplx pwr at "from" bus, p.u.
-St = V(branch(:, T_BUS)) .* conj(Yt * V);  %% cplx pwr at "to" bus, p.u.
+Sf = V(branch(:, F_BUS)) .* conj(Yf * V);   %% cplx pwr at "from" bus, p.u.
+St = V(branch(:, T_BUS)) .* conj(Yt * V);   %% cplx pwr at "to" bus, p.u.
 branch(:, PF) = real(Sf) * baseMVA;
 branch(:, QF) = imag(Sf) * baseMVA;
 branch(:, PT) = real(St) * baseMVA;

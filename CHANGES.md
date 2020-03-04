@@ -12,6 +12,9 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.0
 -----------------
 
+#### 3/4/20
+  - Remove unused input arguments from `opf_consfcn()` and `opf_hessfcn()`.
+
 #### 2/28/20
   - Fix [bug #89][26] where running a power flow with `pf.enforce_q_lims`
     enabled and voltage dependent ZIP loads produced incorrect results.

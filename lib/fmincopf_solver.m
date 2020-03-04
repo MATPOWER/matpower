@@ -37,7 +37,7 @@ function [results, success, raw] = fmincopf_solver(om, mpopt)
 %   See also OPF, FMINCON.
 
 %   MATPOWER
-%   Copyright (c) 2000-2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2000-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %
@@ -151,7 +151,7 @@ if have_fcn('fmincon_ipm')
     case 3              %% interior-point, w/ 'lbfgs' Hessian approx
       fmoptions = optimset(fmoptions, 'Algorithm', 'interior-point', 'Hessian','lbfgs');
     case 4              %% interior-point, w/ exact user-supplied Hessian
-      fmc_hessian = @(x, lambda)opf_hessfcn(x, lambda, 1, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
+      fmc_hessian = @(x, lambda)opf_hessfcn(x, lambda, 1, om);
       fmoptions = optimset(fmoptions, 'Algorithm', 'interior-point', ...
           'Hessian', 'user-supplied', 'HessFcn', fmc_hessian);
     case 5              %% interior-point, w/ finite-diff Hessian
@@ -173,7 +173,7 @@ end
 
 %%-----  run opf  -----
 f_fcn = @(x)opf_costfcn(x, om);
-gh_fcn = @(x)opf_consfcn(x, om, Ybus, Yf(il,:), Yt(il,:), mpopt, il);
+gh_fcn = @(x)opf_consfcn(x, om);
 [x, f, info, Output, Lambda] = ...
   fmincon(f_fcn, x0, Af, bf, Afeq, bfeq, xmin, xmax, gh_fcn, fmoptions);
 success = (info > 0);
@@ -202,8 +202,8 @@ gen(:, QG) = Qg * baseMVA;
 gen(:, VG) = Vm(gen(:, GEN_BUS));
 
 %% compute branch flows
-Sf = V(branch(:, F_BUS)) .* conj(Yf * V);  %% cplx pwr at "from" bus, p.u.
-St = V(branch(:, T_BUS)) .* conj(Yt * V);  %% cplx pwr at "to" bus, p.u.
+Sf = V(branch(:, F_BUS)) .* conj(Yf * V);   %% cplx pwr at "from" bus, p.u.
+St = V(branch(:, T_BUS)) .* conj(Yt * V);   %% cplx pwr at "to" bus, p.u.
 branch(:, PF) = real(Sf) * baseMVA;
 branch(:, QF) = imag(Sf) * baseMVA;
 branch(:, PT) = real(St) * baseMVA;

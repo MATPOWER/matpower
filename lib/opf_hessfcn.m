@@ -1,6 +1,7 @@
-function Lxx = opf_hessfcn(x, lambda, cost_mult, om, Ybus, Yf, Yt, mpopt, il, Hs)
+function Lxx = opf_hessfcn(x, lambda, cost_mult, om, Hs)
 %OPF_HESSFCN  Evaluates Hessian of Lagrangian for AC OPF.
-%   LXX = OPF_HESSFCN(X, LAMBDA, COST_MULT, OM, YBUS, YF, YT, MPOPT, IL)
+%   LXX = OPF_HESSFCN(X, LAMBDA, COST_MULT, OM)
+%   LXX = OPF_HESSFCN(X, LAMBDA, COST_MULT, OM, HS)
 %
 %   Hessian evaluation function for AC optimal power flow, suitable
 %   for use with MIPS or FMINCON's interior-point algorithm.
@@ -13,14 +14,6 @@ function Lxx = opf_hessfcn(x, lambda, cost_mult, om, Ybus, Yf, Yt, mpopt, il, Hs
 %     COST_MULT : (optional) Scale factor to be applied to the cost
 %          (default = 1).
 %     OM : OPF model object
-%     YBUS : bus admittance matrix
-%     YF : admittance matrix for "from" end of constrained branches
-%     YT : admittance matrix for "to" end of constrained branches
-%     MPOPT : MATPOWER options struct
-%     IL : (optional) vector of branch indices corresponding to
-%          branches with flow limits (all others are assumed to be
-%          unconstrained). The default is [1:nl] (all branches).
-%          YF and YT contain only the rows corresponding to IL.
 %     HS : (optional) sparse matrix with tiny non-zero values specifying
 %          the fixed sparsity structure that the resulting LXX should match
 %
@@ -28,13 +21,13 @@ function Lxx = opf_hessfcn(x, lambda, cost_mult, om, Ybus, Yf, Yt, mpopt, il, Hs
 %     LXX : Hessian of the Lagrangian.
 %
 %   Examples:
-%       Lxx = opf_hessfcn(x, lambda, cost_mult, om, Ybus, Yf, Yt, mpopt);
-%       Lxx = opf_hessfcn(x, lambda, cost_mult, om, Ybus, Yf, Yt, mpopt, il);
+%       Lxx = opf_hessfcn(x, lambda, cost_mult, om);
+%       Lxx = opf_hessfcn(x, lambda, cost_mult, om, Hs);
 %
 %   See also OPF_COSTFCN, OPF_CONSFCN.
 
 %   MATPOWER
-%   Copyright (c) 1996-2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %
@@ -74,8 +67,8 @@ if 0
         [fp, dfp] = opf_costfcn(xp, om);
         [fm, dfm] = opf_costfcn(xm, om);
         % evaluate constraints & gradients
-        [Hp, Gp, dHp, dGp] = opf_consfcn(xp, om, Ybus, Yf, Yt, mpopt, il);
-        [Hm, Gm, dHm, dGm] = opf_consfcn(xm, om, Ybus, Yf, Yt, mpopt, il);
+        [Hp, Gp, dHp, dGp] = opf_consfcn(xp, om);
+        [Hm, Gm, dHm, dGm] = opf_consfcn(xm, om);
         num_d2f(:, i) = cost_mult * (dfp - dfm) / step;
         num_d2G(:, i) = (dGp - dGm) * lambda.eqnonlin   / step;
         num_d2H(:, i) = (dHp - dHm) * lambda.ineqnonlin / step;
@@ -98,7 +91,7 @@ Lxx = d2f + d2G + d2H;
 
 
 %% force specified sparsity structure
-if nargin > 9
+if nargin > 4
     %% add sparse structure (with tiny values) to current matrices to
     %% ensure that sparsity structure matches that supplied
     Lxx = Lxx + Hs;
