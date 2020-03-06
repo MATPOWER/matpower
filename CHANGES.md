@@ -23,6 +23,20 @@ Changes since 7.0
     for `fmincon`, IPOPT, and Artelys Knitro solvers, respectively.
   - Add `mpopt2nlpopt()` to set up an options struct for
     `nlps_matpower()` based on a MATPOWER options struct.
+  - Add three new methods to `@opt_model` class:
+    - `is_mixed_integer()` - returns true if the model includes any binary
+      or integer variables
+    - `problem_type()` - returns one of the following strings, based on
+      the characteristics of the variables, costs and constraints in the
+      model:
+      - `'NLP'` - nonlinear program
+      - `'LP'` - linear program
+      - `'QP'` - quadratic program
+      - `'MILP'` - mixed-integer linear program
+      - `'MIQP'` - mixed-integer quadratic program
+    - `solve()` - solves the model using `qps_matpower()`,
+      `miqps_matpower()`, or `nlps_matpower()`, depending on the problem
+      type (`'MINLP'` problems are not yet implemented)
 
 #### 3/12/20
   - Fix bug in `ktropf_solver()` where Artelys Knitro was still using
