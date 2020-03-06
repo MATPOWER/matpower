@@ -333,7 +333,7 @@ end
 
 %%-----  repackage results  -----
 if nargout > 1
-    if r == 0
+    if eflag == 1
         f = p.c' * x;
         if ~isempty(p.H)
             f = 0.5 * x' * p.H * x + f;
