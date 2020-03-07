@@ -66,24 +66,14 @@ nb = size(bus, 1);          %% number of buses
 nl = size(branch, 1);       %% number of branches
 ny = om.getN('var', 'y');   %% number of piece-wise linear costs
 
-%% linear constraints & variable bounds
-[A, l, u] = om.params_lin_constraint();
-[x0, xmin, xmax] = om.params_var();
-
-%% get cost parameters
-[HH, CC, C0] = om.params_quad_cost();
-
 %% options
-if isempty(HH) || ~any(any(HH))
-    model = 'LP';
-else
-    model = 'QP';
-end
+model = om.problem_type();
 opt = mpopt2qpopt(mpopt, model);
 
 %% try to select an interior initial point, unless requested not to
 if mpopt.opf.start < 2 && ...
         (strcmp(opt.alg, 'MIPS') || strcmp(opt.alg, 'IPOPT'))
+    [x0, xmin, xmax] = om.params_var();     %% init var & bounds
     s = 1;                      %% set init point inside bounds by s
     lb = xmin; ub = xmax;
     lb(xmin == -Inf) = -1e10;   %% replace Inf with numerical proxies
@@ -100,18 +90,18 @@ if mpopt.opf.start < 2 && ...
         c = gencost(sub2ind(size(gencost), ipwl, NCOST+2*gencost(ipwl, NCOST)));    %% largest y-value in CCV data
         x0(vv.i1.y:vv.iN.y) = max(c) + 0.1 * abs(max(c));
     end
+    opt.x0 = x0;
 end
 
 %%-----  run opf  -----
-[x, f, info, output, lambda] = qps_matpower(HH, CC, A, l, u, xmin, xmax, x0, opt);
-success = (info == 1);
+[x, f, eflag, output, lambda] = om.solve(opt);
+success = (eflag == 1);
 
 %%-----  calculate return values  -----
 if ~any(isnan(x))
     %% update solution data
     Va = x(vv.i1.Va:vv.iN.Va);
     Pg = x(vv.i1.Pg:vv.iN.Pg);
-    f = f + C0;
 
     %% update voltages & generator outputs
     bus(:, VM) = ones(nb, 1);
@@ -155,4 +145,4 @@ results = mpc;
     results.om, results.x, results.mu, results.f] = ...
         deal(bus, branch, gen, om, x, mu, f);
 
-raw = struct('xr', x, 'pimul', pimul, 'info', info, 'output', output);
+raw = struct('xr', x, 'pimul', pimul, 'info', eflag, 'output', output);

@@ -13,6 +13,8 @@ Changes since 7.0
 -----------------
 
 #### 3/18/20
+  - Convert `dcopf_solver()` to use the new `solver()` method of
+    `@opt_model` instead of calling `qps_matpower()` manually.
   - Add new top-level wrapper function `nlps_matpower()` to provide
     a standard interface for MATPOWER's nonlinear program (NLP)
     solvers (`fmincon`, IPOPT, Artelys Knitro, and MIPS), with

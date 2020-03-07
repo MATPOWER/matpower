@@ -8434,6 +8434,7 @@ to use voltage squared, resulting in simpler derivatives.
       \end{itemize}
     \item \code{solve()} - solves the model using \code{qps\_matpower()}, \code{miqps\_matpower()}, or \code{nlps\_matpower()}, depending on the problem type (\codeq{MINLP} problems are not yet implemented)
     \end{itemize}
+\item Convert \code{dcopf\_solver()} to use the new \code{solver()} method of \code{@opt\_model} instead of calling \code{qps\_matpower()} manually.
 \item Deprecated functions:
     \begin{itemize}
     \item \code{foo()} -- use \code{bar()} instead.
