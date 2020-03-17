@@ -230,6 +230,12 @@ if isfield(info, 'iter')
 else
     output.iterations = [];
 end
+if isfield(info, 'cpu')
+    output.cpu = info.cpu;
+end
+if isfield(info, 'eval')
+    output.eval = info.eval;
+end
 f = opf_costfcn(x, om);
 
 %% update solution data
