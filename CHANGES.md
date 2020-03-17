@@ -12,6 +12,10 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.0
 -----------------
 
+#### 3/12/20
+  - Fix bug in `ktropf_solver()` where Artelys Knitro was still using
+    `fmincon` options.
+
 #### 3/6/20
   - Fix issue with missing objective function value from `miqps_mosek()`
     and `qps_mosek()` when return status is "Stalled at or near optimal

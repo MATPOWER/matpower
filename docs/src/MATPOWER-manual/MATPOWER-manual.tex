@@ -8427,6 +8427,7 @@ sparsity structure). \emph{Thanks to Drosos Kourounis.}
 \item Fix CPLEX 12.10 compatibility issue \#90.
 \item Fix bug \#89 where running a power flow with \code{pf.enforce\_q\_lims} enabled and voltage dependent ZIP loads produced incorrect results. \emph{Thanks to Florian.}
 \item Fix issue with missing objective function value from \code{miqps\_mosek()} and \code{qps\_mosek()} when return status is ``Stalled at or near optimal solution.''
+\item Fix bug in \code{ktropf\_solver()} where Artelys Knitro was still using \code{fmincon} options.
 \end{itemize}
 
 \subsubsection*{Incompatible Changes}
