@@ -2,6 +2,7 @@ function [x, f, eflag, output, lambda] = miqps_matpower(H, c, A, l, u, xmin, xma
 %MIQPS_MATPOWER  Mixed Integer Quadratic Program Solver for MATPOWER.
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
 %       MIQPS_MATPOWER(H, C, A, L, U, XMIN, XMAX, X0, VTYPE, OPT)
+%   [X, F, EXITFLAG, OUTPUT, LAMBDA] = MIQPS_MATPOWER(PROBLEM)
 %   A common wrapper function for various QP solvers. 
 %   Solves the following QP (quadratic programming) problem:
 %
@@ -66,7 +67,7 @@ function [x, f, eflag, output, lambda] = miqps_matpower(H, c, A, l, u, xmin, xma
 %       F : final objective function value
 %       EXITFLAG : exit flag
 %           1 = converged
-%           0 or negative values = algorithm specific failure codes
+%           0 or negative values = solver specific failure codes
 %       OUTPUT : output struct with the following fields:
 %           alg - algorithm code of solver used
 %           (others) - algorithm specific fields
@@ -116,7 +117,7 @@ function [x, f, eflag, output, lambda] = miqps_matpower(H, c, A, l, u, xmin, xma
 %       [x, f, s, out, lambda] = miqps_matpower(H, c, A, l, u, xmin, [], x0, vtype, opt);
 
 %   MATPOWER
-%   Copyright (c) 2010-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

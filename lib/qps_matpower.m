@@ -2,7 +2,8 @@ function [x, f, eflag, output, lambda] = qps_matpower(H, c, A, l, u, xmin, xmax,
 %QPS_MATPOWER  Quadratic Program Solver for MATPOWER.
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
 %       QPS_MATPOWER(H, C, A, L, U, XMIN, XMAX, X0, OPT)
-%   A common wrapper function for various QP solvers. 
+%   [X, F, EXITFLAG, OUTPUT, LAMBDA] = QPS_MATPOWER(PROBLEM)
+%   A common wrapper function for various QP solvers.
 %   Solves the following QP (quadratic programming) problem:
 %
 %       min 1/2 X'*H*X + C'*X
@@ -65,7 +66,7 @@ function [x, f, eflag, output, lambda] = qps_matpower(H, c, A, l, u, xmin, xmax,
 %       F : final objective function value
 %       EXITFLAG : exit flag
 %           1 = converged
-%           0 or negative values = algorithm specific failure codes
+%           0 or negative values = solver specific failure codes
 %       OUTPUT : output struct with the following fields:
 %           alg - algorithm code of solver used
 %           (others) - algorithm specific fields
@@ -114,7 +115,7 @@ function [x, f, eflag, output, lambda] = qps_matpower(H, c, A, l, u, xmin, xmax,
 %       [x, f, s, out, lambda] = qps_matpower(H, c, A, l, u, xmin, [], x0, opt);
 
 %   MATPOWER
-%   Copyright (c) 2010-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

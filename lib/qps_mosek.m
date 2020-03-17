@@ -2,6 +2,7 @@ function [x, f, eflag, output, lambda] = qps_mosek(H, c, A, l, u, xmin, xmax, x0
 %QPS_MOSEK  Quadratic Program Solver based on MOSEK.
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
 %       QPS_MOSEK(H, C, A, L, U, XMIN, XMAX, X0, OPT)
+%   [X, F, EXITFLAG, OUTPUT, LAMBDA] = QPS_MOSEK(PROBLEM)
 %   A wrapper function providing a MATPOWER standardized interface for using
 %   MOSEKOPT to solve the following QP (quadratic programming) problem:
 %
@@ -30,7 +31,7 @@ function [x, f, eflag, output, lambda] = qps_mosek(H, c, A, l, u, xmin, xmax, x0
 %               1 = some progress output
 %               2 = verbose progress output
 %           mosek_opt - options struct for MOSEK, value in verbose
-%               overrides these options
+%                   overrides these options
 %       PROBLEM : The inputs can alternatively be supplied in a single
 %           PROBLEM struct with fields corresponding to the input arguments
 %           described above: H, c, A, l, u, xmin, xmax, x0, opt
@@ -90,10 +91,10 @@ function [x, f, eflag, output, lambda] = qps_mosek(H, c, A, l, u, xmin, xmax, x0
 %       opt = struct('verbose', 2);
 %       [x, f, s, out, lambda] = qps_mosek(H, c, A, l, u, xmin, [], x0, opt);
 %
-%   See also MOSEKOPT.
+%   See also QPS_MATPOWER, MOSEKOPT.
 
 %   MATPOWER
-%   Copyright (c) 2010-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

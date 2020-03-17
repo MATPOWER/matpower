@@ -2,6 +2,7 @@ function [x, f, eflag, output, lambda] = qps_ot(H, c, A, l, u, xmin, xmax, x0, o
 %QPS_OT  Quadratic Program Solver based on QUADPROG/LINPROG.
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
 %       QPS_OT(H, C, A, L, U, XMIN, XMAX, X0, OPT)
+%   [X, F, EXITFLAG, OUTPUT, LAMBDA] = QPS_OT(PROBLEM)
 %   A wrapper function providing a MATPOWER standardized interface for using
 %   QUADPROG or LINPROG from the Optimization Toolbox to solve the
 %   following QP (quadratic programming) problem:
@@ -30,10 +31,10 @@ function [x, f, eflag, output, lambda] = qps_ot(H, c, A, l, u, xmin, xmax, x0, o
 %               0 = no progress output
 %               1 = some progress output
 %               2 = verbose progress output
-%           linprog_opt - options struct for LINPROG, value in
-%               verbose overrides these options
-%           quadprog_opt - options struct for QUADPROG, value in
-%               verbose overrides these options
+%           linprog_opt - options struct for LINPROG, value in verbose
+%                   overrides these options
+%           quadprog_opt - options struct for QUADPROG, value in verbose
+%                   overrides these options
 %       PROBLEM : The inputs can alternatively be supplied in a single
 %           PROBLEM struct with fields corresponding to the input arguments
 %           described above: H, c, A, l, u, xmin, xmax, x0, opt
@@ -90,10 +91,10 @@ function [x, f, eflag, output, lambda] = qps_ot(H, c, A, l, u, xmin, xmax, x0, o
 %       opt = struct('verbose', 2);
 %       [x, f, s, out, lambda] = qps_ot(H, c, A, l, u, xmin, [], x0, opt);
 %
-%   See also QUADPROG, LINPROG.
+%   See also QPS_MATPOWER, QUADPROG, LINPROG.
 
 %   MATPOWER
-%   Copyright (c) 2010-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

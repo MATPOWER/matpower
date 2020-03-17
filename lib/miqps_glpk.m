@@ -1,7 +1,8 @@
 function [x, f, eflag, output, lambda] = miqps_glpk(H, c, A, l, u, xmin, xmax, x0, vtype, opt)
 %MIQPS_GLPK  Mixed Integer Linear Program Solver based on GLPK - GNU Linear Programming Kit.
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
-%       MIQPS_GLPK(H, C, A, L, U, XMIN, XMAX, X0, OPT)
+%       MIQPS_GLPK(H, C, A, L, U, XMIN, XMAX, X0, VTYPE, OPT)
+%   [X, F, EXITFLAG, OUTPUT, LAMBDA] = MIQPS_GLPK(PROBLEM)
 %   A wrapper function providing a MATPOWER standardized interface for using
 %   GLKP to solve the following LP (linear programming) problem:
 %
@@ -41,8 +42,8 @@ function [x, f, eflag, output, lambda] = miqps_glpk(H, c, A, l, u, xmin, xmax, x
 %           price_stage_warn_tol (1e-7) - tolerance on the objective fcn
 %               value and primal variable relative match required to avoid
 %               mis-match warning message
-%           glpk_opt - options struct for GLPK, value in
-%               verbose overrides these options
+%           glpk_opt - options struct for GLPK, value in verbose
+%                   overrides these options
 %       PROBLEM : The inputs can alternatively be supplied in a single
 %           PROBLEM struct with fields corresponding to the input arguments
 %           described above: H, c, A, l, u, xmin, xmax, x0, vtype, opt
@@ -97,10 +98,10 @@ function [x, f, eflag, output, lambda] = miqps_glpk(H, c, A, l, u, xmin, xmax, x
 %       opt = struct('verbose', 2);
 %       [x, f, s, out, lambda] = miqps_glpk(H, c, A, l, u, xmin, [], x0, vtype, opt);
 %
-%   See also GLPK.
+%   See also MIQPS_MATPOWER, GLPK.
 
 %   MATPOWER
-%   Copyright (c) 2010-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

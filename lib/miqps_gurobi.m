@@ -1,7 +1,8 @@
 function [x, f, eflag, output, lambda] = miqps_gurobi(H, c, A, l, u, xmin, xmax, x0, vtype, opt)
 %MIQPS_GUROBI  Mixed Integer Quadratic Program Solver based on GUROBI.
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
-%       MIQPS_GUROBI(H, C, A, L, U, XMIN, XMAX, X0, OPT)
+%       MIQPS_GUROBI(H, C, A, L, U, XMIN, XMAX, X0, VTYPE, OPT)
+%   [X, F, EXITFLAG, OUTPUT, LAMBDA] = MIQPS_GUROBI(PROBLEM)
 %   A wrapper function providing a MATPOWER standardized interface for using
 %   GUROBI to solve the following QP (quadratic programming)
 %   problem:
@@ -42,8 +43,8 @@ function [x, f, eflag, output, lambda] = miqps_gurobi(H, c, A, l, u, xmin, xmax,
 %           price_stage_warn_tol (1e-7) - tolerance on the objective fcn
 %               value and primal variable relative match required to avoid
 %               mis-match warning message
-%           grb_opt - options struct for GUROBI, value in
-%               verbose overrides these options
+%           grb_opt - options struct for GUROBI, value in verbose
+%                   overrides these options
 %       PROBLEM : The inputs can alternatively be supplied in a single
 %           PROBLEM struct with fields corresponding to the input arguments
 %           described above: H, c, A, l, u, xmin, xmax, x0, vtype, opt
@@ -103,10 +104,10 @@ function [x, f, eflag, output, lambda] = miqps_gurobi(H, c, A, l, u, xmin, xmax,
 %       opt = struct('verbose', 2);
 %       [x, f, s, out, lambda] = miqps_gurobi(H, c, A, l, u, xmin, [], x0, vtype, opt);
 %
-%   See also GUROBI.
+%   See also MIQPS_MATPOWER, GUROBI.
 
 %   MATPOWER
-%   Copyright (c) 2010-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

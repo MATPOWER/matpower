@@ -2,7 +2,9 @@ function [x, f, eflag, output, lambda] = qps_ipopt(H, c, A, l, u, xmin, xmax, x0
 %QPS_IPOPT  Quadratic Program Solver based on IPOPT.
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
 %       QPS_IPOPT(H, C, A, L, U, XMIN, XMAX, X0, OPT)
-%   Uses IPOPT to solve the following QP (quadratic programming) problem:
+%   [X, F, EXITFLAG, OUTPUT, LAMBDA] = QPS_IPOPT(PROBLEM)
+%   A wrapper function providing a MATPOWER standardized interface for using
+%   IPOPT to solve the following QP (quadratic programming) problem:
 %
 %       min 1/2 X'*H*X + C'*X
 %        X
@@ -29,7 +31,7 @@ function [x, f, eflag, output, lambda] = qps_ipopt(H, c, A, l, u, xmin, xmax, x0
 %               1 = some progress output
 %               2 = verbose progress output
 %           ipopt_opt - options struct for IPOPT, value in verbose
-%               overrides these options
+%                   overrides these options
 %       PROBLEM : The inputs can alternatively be supplied in a single
 %           PROBLEM struct with fields corresponding to the input arguments
 %           described above: H, c, A, l, u, xmin, xmax, x0, opt
@@ -38,15 +40,14 @@ function [x, f, eflag, output, lambda] = qps_ipopt(H, c, A, l, u, xmin, xmax, x0
 %       X : solution vector
 %       F : final objective function value
 %       EXITFLAG : exit flag
-%           1 = first order optimality conditions satisfied
-%           0 = maximum number of iterations reached
-%           -1 = numerically failed
+%           1 = converged
+%           0 = failed to converge
 %       OUTPUT : output struct with the following fields:
-%           iterations - number of iterations performed
-%           hist - struct array with trajectories of the following:
-%                   feascond, gradcond, compcond, costcond, gamma,
-%                   stepsize, obj, alphap, alphad
-%           message - exit message
+%           status - see IPOPT documentation for INFO.status
+%             https://coin-or.github.io/Ipopt/IpReturnCodes__inc_8h_source.html
+%           iterations - number of iterations performed (INFO.iter)
+%           cpu - see IPOPT documentation for INFO.cpu
+%           eval - see IPOPT documentation for INFO.eval
 %       LAMBDA : struct containing the Langrange and Kuhn-Tucker
 %           multipliers on the constraints, with fields:
 %           mu_l - lower (left-hand) limit on linear constraints
@@ -91,11 +92,11 @@ function [x, f, eflag, output, lambda] = qps_ipopt(H, c, A, l, u, xmin, xmax, x0
 %       opt = struct('verbose', 2);
 %       [x, f, s, out, lambda] = qps_ipopt(H, c, A, l, u, xmin, [], x0, opt);
 %
-%   See also IPOPT, IPOPT_OPTIONS.
+%   See also QPS_MATPOWER, IPOPT, IPOPT_OPTIONS.
 %   https://github.com/coin-or/Ipopt.
 
 %   MATPOWER
-%   Copyright (c) 2010-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -238,27 +239,35 @@ if info.status == 0 || info.status == 1
 else
     eflag = 0;
 end
+output = struct('status', info.status);
 if isfield(info, 'iter')
     output.iterations = info.iter;
+else
+    output.iterations = [];
 end
-output.info       = info.status;
+if isfield(info, 'cpu')
+    output.cpu = info.cpu;
+end
+if isfield(info, 'eval')
+    output.eval = info.eval;
+end
 f = funcs.objective(x);
 
 %% check for empty results (in case optimization failed)
 if isempty(info.lambda)
-	lam = NaN(nA, 1);
+    lam = NaN(nA, 1);
 else
-	lam = info.lambda;
+    lam = info.lambda;
 end
 if isempty(info.zl) && ~isempty(xmin)
-	zl = NaN(nx, 1);
+    zl = NaN(nx, 1);
 else
-	zl = info.zl;
+    zl = info.zl;
 end
 if isempty(info.zu) && ~isempty(xmax)
-	zu = NaN(nx, 1);
+    zu = NaN(nx, 1);
 else
-	zu = info.zu;
+    zu = info.zu;
 end
 
 %% repackage lambdas

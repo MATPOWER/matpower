@@ -2,6 +2,7 @@ function [x, f, eflag, output, lambda] = qps_gurobi(H, c, A, l, u, xmin, xmax, x
 %QPS_GUROBI  Quadratic Program Solver based on GUROBI.
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
 %       QPS_GUROBI(H, C, A, L, U, XMIN, XMAX, X0, OPT)
+%   [X, F, EXITFLAG, OUTPUT, LAMBDA] = QPS_GUROBI(PROBLEM)
 %   A wrapper function providing a MATPOWER standardized interface for using
 %   GUROBI to solve the following QP (quadratic programming)
 %   problem:
@@ -31,8 +32,8 @@ function [x, f, eflag, output, lambda] = qps_gurobi(H, c, A, l, u, xmin, xmax, x
 %               1 = some progress output
 %               2 = verbose progress output
 %               3 = even more verbose progress output
-%           grb_opt - options struct for GUROBI, value in
-%               verbose overrides these options
+%           grb_opt - options struct for GUROBI, value in verbose
+%                   overrides these options
 %       PROBLEM : The inputs can alternatively be supplied in a single
 %           PROBLEM struct with fields corresponding to the input arguments
 %           described above: H, c, A, l, u, xmin, xmax, x0, opt
@@ -91,10 +92,10 @@ function [x, f, eflag, output, lambda] = qps_gurobi(H, c, A, l, u, xmin, xmax, x
 %       opt = struct('verbose', 2);
 %       [x, f, s, out, lambda] = qps_gurobi(H, c, A, l, u, xmin, [], x0, opt);
 %
-%   See also GUROBI.
+%   See also QPS_MATPOWER, GUROBI.
 
 %   MATPOWER
-%   Copyright (c) 2010-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

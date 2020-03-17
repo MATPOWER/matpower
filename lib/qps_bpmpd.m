@@ -2,6 +2,7 @@ function [x, f, eflag, output, lambda] = qps_bpmpd(H, c, A, l, u, xmin, xmax, x0
 %QPS_BPMPD  Quadratic Program Solver based on BPMPD_MEX.
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
 %       QPS_BPMPD(H, C, A, L, U, XMIN, XMAX, X0, OPT)
+%   [X, F, EXITFLAG, OUTPUT, LAMBDA] = QPS_BPMPD(PROBLEM)
 %   A wrapper function providing a MATPOWER standardized interface for using
 %   BPMPD_MEX (http://www.pserc.cornell.edu/bpmpd/) to solve the
 %   following QP (quadratic programming) problem:
@@ -31,7 +32,7 @@ function [x, f, eflag, output, lambda] = qps_bpmpd(H, c, A, l, u, xmin, xmax, x0
 %               1 = some progress output
 %               2 = verbose progress output
 %           bp_opt - options vector for BP, value in verbose
-%               overrides these options
+%                   overrides these options
 %       PROBLEM : The inputs can alternatively be supplied in a single
 %           PROBLEM struct with fields corresponding to the input arguments
 %           described above: H, c, A, l, u, xmin, xmax, x0, opt
@@ -92,10 +93,10 @@ function [x, f, eflag, output, lambda] = qps_bpmpd(H, c, A, l, u, xmin, xmax, x0
 %       opt = struct('verbose', 2);
 %       [x, f, s, out, lambda] = qps_bpmpd(H, c, A, l, u, xmin, [], x0, opt);
 %
-%   See also BPMPD_MEX, http://www.pserc.cornell.edu/bpmpd/.
+%   See also QPS_MATPOWER, BPMPD_MEX, http://www.pserc.cornell.edu/bpmpd/.
 
 %   MATPOWER
-%   Copyright (c) 2010-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

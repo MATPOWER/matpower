@@ -2,6 +2,7 @@ function [x, f, eflag, output, lambda] = qps_clp(H, c, A, l, u, xmin, xmax, x0, 
 %QPS_CLP  Quadratic Program Solver based on CLP - COIN-OR Linear Programming.
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
 %       QPS_CLP(H, C, A, L, U, XMIN, XMAX, X0, OPT)
+%   [X, F, EXITFLAG, OUTPUT, LAMBDA] = QPS_CLP(PROBLEM)
 %   A wrapper function providing a MATPOWER standardized interface for using
 %   CLP to solve the following QP (quadratic programming) problem:
 %
@@ -29,8 +30,8 @@ function [x, f, eflag, output, lambda] = qps_clp(H, c, A, l, u, xmin, xmax, x0, 
 %               0 = no progress output
 %               1 = some progress output
 %               2 = verbose progress output
-%           clp_opt - options struct for CLP, value in
-%               verbose overrides these options
+%           clp_opt - options struct for CLP, value in verbose
+%                   overrides these options
 %       PROBLEM : The inputs can alternatively be supplied in a single
 %           PROBLEM struct with fields corresponding to the input arguments
 %           described above: H, c, A, l, u, xmin, xmax, x0, opt
@@ -90,10 +91,10 @@ function [x, f, eflag, output, lambda] = qps_clp(H, c, A, l, u, xmin, xmax, x0, 
 %       opt = struct('verbose', 2);
 %       [x, f, s, out, lambda] = qps_clp(H, c, A, l, u, xmin, [], x0, opt);
 %
-%   See also CLP.
+%   See also QPS_MATPOWER, CLP.
 
 %   MATPOWER
-%   Copyright (c) 2010-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

@@ -14,8 +14,8 @@ Changes since 7.0
 
 #### 3/6/20
   - Fix issue with missing objective function value from `miqps_mosek()`
-    and `qps_mosek()` when return status is 'Stalled at or near optimal
-    solution.'
+    and `qps_mosek()` when return status is "Stalled at or near optimal
+    solution."
 
 #### 3/4/20
   - Remove unused input arguments from `opf_consfcn()` and `opf_hessfcn()`.
