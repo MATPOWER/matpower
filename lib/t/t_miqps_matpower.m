@@ -13,10 +13,10 @@ if nargin < 1
     quiet = 0;
 end
 
-algs = {'CPLEX', 'MOSEK', 'GUROBI', 'GLPK', 'OT'};
-names = {'CPLEX', 'MOSEK', 'Gurobi', 'glpk', 'intlin/lin/quadprog'};
-check = {'cplex', 'mosek', 'gurobi', 'glpk', 'intlinprog'};
-does_qp = [1 1 1 0 0];
+algs = {'DEFAULT', 'CPLEX', 'MOSEK', 'GUROBI', 'GLPK', 'OT'};
+names = {'DEFAULT', 'CPLEX', 'MOSEK', 'Gurobi', 'glpk', 'intlin/lin/quadprog'};
+check = {[], 'cplex', 'mosek', 'gurobi', 'glpk', 'intlinprog'};
+does_qp = [0 1 1 1 0 0];
 
 n = 48;
 nqp = 28;

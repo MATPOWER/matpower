@@ -13,10 +13,10 @@ if nargin < 1
     quiet = 0;
 end
 
-algs = {'BPMPD', 'MIPS', 250, 'IPOPT', 'OT', 'CPLEX', 'MOSEK', 'GUROBI', 'CLP', 'GLPK'};
-names = {'BPMPD_MEX', 'MIPS', 'sc-MIPS', 'IPOPT', 'linprog/quadprog', 'CPLEX', 'MOSEK', 'Gurobi', 'CLP', 'glpk'};
-check = {'bpmpd', [], [], 'ipopt', 'quadprog', 'cplex', 'mosek', 'gurobi', 'clp', 'glpk'};
-does_qp = [1 1 1 1 1 1 1 1 1 0];
+algs = {'DEFAULT', 'BPMPD', 'MIPS', 250, 'IPOPT', 'OT', 'CPLEX', 'MOSEK', 'GUROBI', 'CLP', 'GLPK'};
+names = {'DEFAULT', 'BPMPD_MEX', 'MIPS', 'sc-MIPS', 'IPOPT', 'linprog/quadprog', 'CPLEX', 'MOSEK', 'Gurobi', 'CLP', 'glpk'};
+check = {[], 'bpmpd', [], [], 'ipopt', 'quadprog', 'cplex', 'mosek', 'gurobi', 'clp', 'glpk'};
+does_qp = [1 1 1 1 1 1 1 1 1 1 0];
 
 n = 36;
 nqp = 28;
