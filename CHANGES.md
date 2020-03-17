@@ -12,6 +12,18 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.0
 -----------------
 
+#### 3/18/20
+  - Add new top-level wrapper function `nlps_matpower()` to provide
+    a standard interface for MATPOWER's nonlinear program (NLP)
+    solvers (`fmincon`, IPOPT, Artelys Knitro, and MIPS), with
+    calling syntax similar to `mips()`. It includes the ability to
+    pass in solver-specific input options.
+  - Add `nlps_fmincon()`, `nlps_ipopt()` and `nlps_knitro()`, with
+    interface that matches `nlps_matpower()` to handle implementation
+    for `fmincon`, IPOPT, and Artelys Knitro solvers, respectively.
+  - Add `mpopt2nlpopt()` to set up an options struct for
+    `nlps_matpower()` based on a MATPOWER options struct.
+
 #### 3/12/20
   - Fix bug in `ktropf_solver()` where Artelys Knitro was still using
     `fmincon` options.

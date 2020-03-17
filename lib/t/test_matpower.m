@@ -48,6 +48,7 @@ tests{end+1} = 't_mips';
 tests{end+1} = 't_mips_pardiso';
 tests{end+1} = 't_qps_matpower';
 tests{end+1} = 't_miqps_matpower';
+tests{end+1} = 't_nlps_matpower';
 tests{end+1} = 't_pf';
 tests{end+1} = 't_pf_radial';
 tests{end+1} = 't_cpf';

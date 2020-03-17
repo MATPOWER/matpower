@@ -6581,28 +6581,31 @@ name & description \\
 \code{ipopt\_options}	& default options for \ipopt{} solver\tnote{\dag}	\\
 \code{mips}	& \mipsname{} -- primal/dual interior point solver for NLP	\\
 \code{mipsver}	& prints version information for \mips{}	\\
-\code{miqps\_matpower}	& Mixed-Integer Quadratic Program Solver for \matpower{}, wrapper function	\\
-& provides a common MIQP solver interface for various MIQP/MILP solvers	\\
-\code{miqps\_cplex}	& common MIQP/MILP solver interface to CPLEX (\code{cplexmiqp} and \code{cplexmilp})\tnote{\dag}	\\
-\code{miqps\_glpk}	& common MILP solver interface to \glpk{}\tnote{\dag}	\\
-\code{miqps\_gurobi}	& common MIQP/MILP solver interface to \gurobi{}\tnote{\dag}	\\
-\code{miqps\_mosek}	& common MIQP/MILP solver interface to \mosek{} (\code{mosekopt})\tnote{\dag}	\\
-\code{miqps\_ot}	& common QP/MILP solver interface to \matlab{} Opt Toolbox's \code{intlinprog}, \code{quadprog}, \code{linprog}	\\
+\code{miqps\_matpower}	& Mixed-Integer Quadratic Program Solver for \matpower{}, wrapper function provides a unified interface for various MIQP/MILP solvers	\\
+\code{miqps\_cplex}	& MIQP/MILP solver API implementation for CPLEX (\code{cplexmiqp} and \code{cplexmilp})\tnote{\dag}	\\
+\code{miqps\_glpk}	& MILP solver API implementation for \glpk{}\tnote{\dag}	\\
+\code{miqps\_gurobi}	& MIQP/MILP solver API implementation for \gurobi{}\tnote{\dag}	\\
+\code{miqps\_mosek}	& MIQP/MILP solver API implementation for \mosek{} (\code{mosekopt})\tnote{\dag}	\\
+\code{miqps\_ot}	& QP/MILP solver API implementation for \matlab{} Opt Toolbox's \code{intlinprog}, \code{quadprog}, \code{linprog}	\\
 \code{mosek\_options}	& default options for \mosek{} solver\tnote{\dag}	\\
 \code{mosek\_symbcon}	& symbolic constants to use for \mosek{} solver options\tnote{\dag}	\\
-\code{mplinsolve}	& common linear system solver interface, used by \mips{}	\\
+\code{mplinsolve}	& unified linear system solver interface, used by \mips{}	\\
+\code{mpopt2nlopt}	& create \code{nlps\_matpower} options struct from \matpower{} options struct	\\
 \code{mpopt2qpopt}	& create \code{mi/qps\_matpower} options struct from \matpower{} options struct	\\
-\code{qps\_matpower}	& Quadratic Program Solver for \matpower{}, wrapper function	\\
-& provides a common QP solver interface for various QP/LP solvers	\\
-\code{qps\_bpmpd}	& common QP/LP solver interface to BPMPD\_MEX\tnote{\dag}	\\
-\code{qps\_clp}	& common QP/LP solver interface to \clp{}\tnote{\dag}	\\
-\code{qps\_cplex}	& common QP/LP solver interface to CPLEX (\code{cplexqp} and \code{cplexlp})\tnote{\dag}	\\
-\code{qps\_glpk}	& common QP/LP solver interface to \glpk{}\tnote{\dag}	\\
-\code{qps\_gurobi}	& common QP/LP solver interface to \gurobi{}\tnote{\dag}	\\
-\code{qps\_ipopt}	& common QP/LP solver interface to \ipopt{}-based solver\tnote{\dag}	\\
-\code{qps\_mips}	& common QP/LP solver interface to \mips{}-based solver	\\
-\code{qps\_mosek}	& common QP/LP solver interface to \mosek{} (\code{mosekopt})\tnote{\dag}	\\
-\code{qps\_ot}	& common QP/LP solver interface to \matlab{} Opt Toolbox's \code{quadprog}, \code{linprog}	\\
+\code{nlps\_matpower}	& Nonlinear Program Solver for \matpower{}, wrapper function provides a unified interface for various NLP solvers	\\
+\code{nlps\_fmincon}	& NLP solver API implementation for \matlab{} Opt Toolbox's \code{fmincon}	\\
+\code{nlps\_ipopt}	& NLP solver API implementation for \ipopt{}-based solver\tnote{\dag}	\\
+\code{nlps\_knitro}	& NLP solver API implementation for \knitro{}-based solver\tnote{\dag}	\\
+\code{qps\_matpower}	& Quadratic Program Solver for \matpower{}, wrapper function provides a unified interface for various QP/LP solvers	\\
+\code{qps\_bpmpd}	& QP/LP solver API implementation for BPMPD\_MEX\tnote{\dag}	\\
+\code{qps\_clp}	& QP/LP solver API implementation for \clp{}\tnote{\dag}	\\
+\code{qps\_cplex}	& QP/LP solver API implementation for CPLEX (\code{cplexqp} and \code{cplexlp})\tnote{\dag}	\\
+\code{qps\_glpk}	& QP/LP solver API implementation for \glpk{}\tnote{\dag}	\\
+\code{qps\_gurobi}	& QP/LP solver API implementation for \gurobi{}\tnote{\dag}	\\
+\code{qps\_ipopt}	& QP/LP solver API implementation for \ipopt{}-based solver\tnote{\dag}	\\
+\code{qps\_mips}	& QP/LP solver API implementation for \mips{}-based solver	\\
+\code{qps\_mosek}	& QP/LP solver API implementation for \mosek{} (\code{mosekopt})\tnote{\dag}	\\
+\code{qps\_ot}	& QP/LP solver API implementation for \matlab{} Opt Toolbox's \code{quadprog}, \code{linprog}	\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -7059,6 +7062,7 @@ name & description \\
 \code{t\_modcost}	& runs tests for \code{modcost}	\\
 \code{t\_mpoption}	& runs tests for \code{mpoption}	\\
 \code{t\_nested\_struct\_copy}	& runs tests for \code{nested\_struct\_copy}	\\
+\code{t\_nlps\_matpower}	& runs tests for \code{nlps\_matpower}	\\
 \code{t\_off2case}	& runs tests for \code{off2case}	\\
 \code{t\_opf\_model}	& runs tests for \code{opf\_model} and \code{opt\_model} objects	\\
 \code{t\_opf\_model\_legacy}	& runs tests for \code{opf\_model} and \code{opt\_model} objects using legacy (deprecated) \code{add\_constraints} method \\
@@ -8153,7 +8157,7 @@ with Octave, \matpower{}, and the \href{\matpowerextrasgithuburl}{\matpower{} Ex
     \end{itemize}
 \item New functions:
     \begin{itemize}
-    \item \code{calc\_branch\_angle} calcultes voltage angle differences for branches.
+    \item \code{calc\_branch\_angle()} calcultes voltage angle differences for branches.
     \item \code{dImis\_dV()} evaluates the partial derivatives of nodal current balance with respect to bus voltages.
     \item \code{d2Imis\_dV2()} evaluates the 2\textsuperscript{nd} derivatives of nodal current balance with respect to bus voltages.
     \item \code{d2Imis\_dVdSg()} evaluates the 2\textsuperscript{nd} derivatives of nodal current balance with respect to bus voltages and generator injections.
@@ -8357,7 +8361,8 @@ The \href{https://matpower.org/docs/MATPOWER-manual-7.0.1.pdf}{\matpower{} 7.0.1
 
 \subsubsection*{New Features}
 \begin{itemize}
-\item Add to \code{makePTDF()} the option to compute shift factors very efficiently for specific transfers or specific buses only.
+\item New unified interface for nonlinear programming solvers \mipslink{}, \code{fmincon}, \ipopt{} and \knitro{}.
+\item Option for \code{makePTDF()} to compute shift factors very efficiently for specific transfers or specific buses only.
 \item \emph{Thanks to Fulano.}
 \item New options:
     \begin{itemize}
@@ -8365,7 +8370,11 @@ The \href{https://matpower.org/docs/MATPOWER-manual-7.0.1.pdf}{\matpower{} 7.0.1
     \end{itemize}
 \item New functions:
     \begin{itemize}
-    \item 
+    \item \code{mpopt2nlpopt()} creates an options struct for \code{nlps\_matpower()} from at \matpower{} options struct.
+    \item \code{nlps\_fmincon()} provides implementation of unified nonlinear programming solver interface for \code{fmincon}.
+    \item \code{nlps\_ipopt()} provides implementation of unified nonlinear programming solver interface interface for \ipopt{}.
+    \item \code{nlps\_knitro()} provides implementation of unified nonlinear programming solver interface interface for \ipopt{}.
+    \item \code{nlps\_matpower()} provides a single wrapper function for calling any of \matpower{}'s nonlinear programming solvers.
     \end{itemize}
 \end{itemize}
 
