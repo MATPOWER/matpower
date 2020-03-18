@@ -77,6 +77,7 @@ end
 if have_fcn('knitro')
     tests{end+1} = 't_opf_knitro';
 end
+tests{end+1} = 't_opf_dc_default';
 if have_fcn('bpmpd')
     tests{end+1} = 't_opf_dc_bpmpd';
 end
