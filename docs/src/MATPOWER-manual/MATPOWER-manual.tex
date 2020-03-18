@@ -6435,18 +6435,20 @@ name & description \\
 \toprule
 name & description \\
 \midrule
-\code{dcopf\_solver}	& sets up and solves DC OPF problem	\\
+\code{dcopf\_solver}	& sets up and solves DC OPF problem using \code{@opt\_model/solve()}\tnote{\dag}	\\
 \code{fmincopf\_solver}	& sets up and solves OPF problem using \code{fmincon}, \matlab{} Opt Toolbox	\\
-\code{ipoptopf\_solver}	& sets up and solves OPF problem using \ipopt{}\tnote{\dag}	\\
-\code{ktropf\_solver}	& sets up and solves OPF problem using \knitro{}\tnote{\dag}	\\
+\code{ipoptopf\_solver}	& sets up and solves OPF problem using \ipopt{}\tnote{\ddag}	\\
+\code{ktropf\_solver}	& sets up and solves OPF problem using \knitro{}\tnote{\ddag}	\\
 \code{mipsopf\_solver}	& sets up and solves OPF problem using \mips{}	\\
-\code{mopf\_solver}	& sets up and solves OPF problem using MINOPF\tnote{\dag}	\\
-\code{tspopf\_solver}	& sets up and solves OPF problem using PDIPM, SC-PDIPM or TRALM\tnote{\dag}	\\
+\code{mopf\_solver}	& sets up and solves OPF problem using MINOPF\tnote{\ddag}	\\
+\code{nlpopf\_solver}	& sets up and solves AC OPF problem using \code{@opt\_model/solve()}\tnote{\dag}	\\
+\code{tspopf\_solver}	& sets up and solves OPF problem using PDIPM, SC-PDIPM or TRALM\tnote{\ddag}	\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.}
+ \item [\dag] {Handles multiple solvers, depending on which are available.}
+ \item [\ddag] {Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}

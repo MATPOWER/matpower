@@ -13,6 +13,9 @@ Changes since 7.0
 -----------------
 
 #### 3/18/20
+  - Add `nlpopf_solver()` based on the new `solver()` method of
+    `@opt_model`. This single function replaces `mipsopf_solver()`,
+    `fmincopf_solver()`, `ipoptopf_solver()`, and `ktropf_solver()`.
   - Convert `dcopf_solver()` to use the new `solver()` method of
     `@opt_model` instead of calling `qps_matpower()` manually.
   - Add new top-level wrapper function `nlps_matpower()` to provide
