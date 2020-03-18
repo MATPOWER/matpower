@@ -33,8 +33,8 @@ function [x, f, eflag, output, lambda] = miqps_matpower(H, c, A, l, u, xmin, xma
 %           parentheses)
 %           alg ('DEFAULT') : determines which solver to use, can be either
 %                   a string (new-style) or a numerical alg code (old-style)
-%               'DEFAULT' : (or 0) automatic, first available of CPLEX,
-%                       Gurobi, MOSEK, Opt Tbx (MILPs only), GLPK (MILPs only)
+%               'DEFAULT' : (or 0) automatic, first available of Gurobi,
+%                       CPLEX, MOSEK, Opt Tbx (MILPs only), GLPK (MILPs only)
 %               'CPLEX'   : (or 500) CPLEX
 %               'GLPK'    : GLPK, (MILP problems only, i.e. empty H matrix)
 %               'GUROBI'  : (or 700) Gurobi
@@ -54,7 +54,7 @@ function [x, f, eflag, output, lambda] = miqps_matpower(H, c, A, l, u, xmin, xma
 %               mis-match warning message
 %           cplex_opt - options struct for CPLEX
 %           glpk_opt    - options struct for GLPK
-%           grb_opt   - options struct for GBUROBI_MEX
+%           grb_opt   - options struct for GUROBI
 %           intlinprog_opt - options struct for INTLINPROG
 %           linprog_opt - options struct for LINPROG
 %           mosek_opt - options struct for MOSEK

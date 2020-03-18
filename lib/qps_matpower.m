@@ -28,8 +28,8 @@ function [x, f, eflag, output, lambda] = qps_matpower(H, c, A, l, u, xmin, xmax,
 %           parentheses)
 %           alg ('DEFAULT') : determines which solver to use, can be either
 %                   a string (new-style) or a numerical alg code (old-style)
-%               'DEFAULT' : (or 0) automatic, first available of CPLEX,
-%                       Gurobi, MOSEK, Opt Tbx (if MATLAB), GLPK (LPs only),
+%               'DEFAULT' : (or 0) automatic, first available of Gurobi,
+%                       CPLEX, MOSEK, Opt Tbx (if MATLAB), GLPK (LPs only),
 %                       BPMPD, MIPS
 %               'MIPS'    : (or 200) MIPS, MATPOWER Interior Point Solver
 %                        pure MATLAB implementation of a primal-dual
@@ -41,7 +41,8 @@ function [x, f, eflag, output, lambda] = qps_matpower(H, c, A, l, u, xmin, xmax,
 %               'CPLEX'   : (or 500) CPLEX
 %               'GLPK'    : GLPK, (LP problems only, i.e. empty H matrix)
 %               'GUROBI'  : (or 700) Gurobi
-%               'IPOPT'   : (or 400) IPOPT
+%               'IPOPT'   : (or 400) IPOPT, requires MEX interface to IPOPT
+%                           solver, https://github.com/coin-or/Ipopt
 %               'MOSEK'   : (or 600) MOSEK
 %               'OT'      : (or 300) Optimization Toolbox, QUADPROG or LINPROG
 %           verbose (0) - controls level of progress output displayed
@@ -49,9 +50,10 @@ function [x, f, eflag, output, lambda] = qps_matpower(H, c, A, l, u, xmin, xmax,
 %               1 = some progress output
 %               2 = verbose progress output
 %           bp_opt      - options vector for BP
+%           clp_opt     - options vector for CLP
 %           cplex_opt   - options struct for CPLEX
 %           glpk_opt    - options struct for GLPK
-%           grb_opt     - options struct for GBUROBI_MEX
+%           grb_opt     - options struct for GUROBI
 %           ipopt_opt   - options struct for IPOPT
 %           linprog_opt - options struct for LINPROG
 %           mips_opt    - options struct for QPS_MIPS
