@@ -13,6 +13,8 @@ Changes since 7.0
 -----------------
 
 #### 3/18/20
+  - Convert `opf_execute()` to use `nlpopf_solver()` for AC OPF when
+    using `fmincon`, IPOPT, Artelys Knitro, or MIPS.
   - Add `nlpopf_solver()` based on the new `solver()` method of
     `@opt_model`. This single function replaces `mipsopf_solver()`,
     `fmincopf_solver()`, `ipoptopf_solver()`, and `ktropf_solver()`.
