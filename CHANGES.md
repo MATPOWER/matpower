@@ -46,6 +46,21 @@ Changes since 7.1
   - Fix fatal bug in `int2ext()` when called with `mpopt` and an `int2ext`
     user callback function.
 
+#### 10/22/20
+- Add experimental support for [MP-Element][30], a new, generalized
+  network and element modeling layer for MATPOWER. See also [MATPOWER
+  Technical Note 5][31]. Documentation not yet included in User's Manual.
+  - If MP-Element is installed, its modeling is used by default for the
+    following (can be turned off with `have_feature('mp_element', 0)`):
+    - DC power flow
+    - DC optimal power flow
+    - AC power flow for all except radial and hybrid Newton-Raphson
+      formulations/solvers, including a new `'FSOLVE'` option based on
+      `fsolve()` function
+    - AC OPF for solvers MIPS, `fmincon`, IPOPT, and Artelys Knitro, for
+      all formulations
+  - MP-Opt-Model object is used for power flow as well as OPF and is
+    added as `om` field to power flow `results` struct.
 
 Version 7.1 - *Oct 8, 2020*
 ---------------------------
@@ -3185,3 +3200,5 @@ First Public Release – *Jun 25, 1997*
 [27]: https://github.com/MATPOWER/mp-opt-model
 [28]: http://www.convexoptimization.com/wikimization/index.php/Gurobi_mex
 [29]: https://osqp.org
+[30]: https://github.com/MATPOWER/mp-element
+[31]: https://doi.org/10.5281/zenodo.4110676

@@ -222,7 +222,24 @@ end
 mpc = ext2int(mpc, mpopt);
 
 %%-----  construct OPF model object  -----
-om = opf_setup(mpc, mpopt);
+default_to_mpe = have_feature('mp_element');
+    %% if 0, requires mpopt.exp.mpe = 1 to enable mp_element version
+    %% if 1; requires mpopt.exp.mpe = 0 to disable mp_element version
+use_mpe = 0;
+if (  default_to_mpe && ~(isfield(mpopt.exp, 'mpe') && mpopt.exp.mpe == 0) ) || ...
+   ( ~default_to_mpe &&   isfield(mpopt.exp, 'mpe') && mpopt.exp.mpe == 1  )
+    dc  = strcmp(upper(mpopt.model), 'DC');
+    alg = upper(mpopt.opf.ac.solver);
+    if dc || ~(strcmp(alg, 'MINOPF') || strcmp(alg, 'PDIPM') || ...
+                strcmp(alg, 'TRALM') || strcmp(alg, 'SDPOPF'))
+        use_mpe = 1;
+    end
+end
+if use_mpe
+    om = opf_setup_mpe(mpc, mpopt);
+else
+    om = opf_setup(mpc, mpopt);
+end
 
 %%-----  execute the OPF  -----
 if nargout > 7

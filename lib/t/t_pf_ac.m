@@ -13,23 +13,32 @@ if nargin < 1
     quiet = 0;
 end
 
-AC_alg = {'NR', 'NR-SP', 'NR-SC', 'NR-SH', 'NR-IP', 'NR-IC', 'NR-IH', 'FDXB', 'FDBX', 'GS'};
-AC_name = {
-    'Newton (default, power-polar)',
-    'Newton (power-polar)',
-    'Newton (power-cartesian)',
-    'Newton (power-hybrid)',
-    'Newton (current-polar)',
-    'Newton (current-cartesian)',
-    'Newton (current-hybrid)',
-    'Fast Decoupled (XB)',
-    'Fast Decoupled (BX)',
-    'Gauss-Seidel'
+%%  alg         name                            check       opts
+cfg = {
+    {'NR',      'Newton (default, power-polar)',[]          []  },
+    {'NR-SP',   'Newton (power-polar)',         [],         []  },
+    {'NR-SC',   'Newton (power-cartesian)',     [],         []  },
+    {'NR-SH',   'Newton (power-hybrid)',        [],         []  },
+    {'NR-IP',   'Newton (current-polar)',       [],         []  },
+    {'NR-IC',   'Newton (current-cartesian)',   [],         []  },
+    {'NR-IH',   'Newton (current-hybrid)',      [],         []  },
+    {'FDXB',    'Fast Decoupled (XB)',          [],         []  },
+    {'FDBX',    'Fast Decoupled (BX)',          [],         []  },
+    {'GS',      'Gauss-Seidel',                 [],         []  },
 };
-% AC_alg = {'NR'};
-% AC_name = {'Newton (default, power-polar)'};
+if have_feature('mp_element')
+    cfg{end+1} = {'FSOLVE',  'fsolve (power-polar)',         'fsolve',   []  };
+%     cfg{end+1} = {'FSOLVE',  'fsolve (power-polar)',         'fsolve',   struct('Algorithm', 'trust-region-dogleg')  },
+%     cfg{end+1} = {'FSOLVE',  'fsolve (power-polar)',         'fsolve',   struct('Algorithm', 'trust-region-reflective')  },
+%     cfg{end+1} = {'FSOLVE',  'fsolve (power-polar)',         'fsolve',   struct('Algorithm', 'levenberg-marquardt', 'TolX', 1e-11) },
+end
+% %%  alg         name                            check       opts
+% cfg = {
+%     {'NR',      'Newton (default, power-polar)',[]          []  },
+% };
 
-t_begin(length(AC_alg)*48, quiet);
+ntests = 48;
+t_begin(length(cfg)*ntests, quiet);
 
 casefile = 't_case9_pf';
 if quiet
@@ -82,9 +91,12 @@ load soln9_pf;      %% defines bus_soln, gen_soln, branch_soln
 soln_vg = load('soln9_pf_vg');
 
 %% run AC PF
-for k = 1:length(AC_alg)
-    t = sprintf('AC PF - %s : ', AC_name{k});
-    mpopt = mpoption(mpopt0, 'pf.alg', AC_alg{k});
+for k = 1:length(cfg)
+  if ~isempty(cfg{k}{3}) && ~have_fcn(cfg{k}{3})
+    t_skip(ntests, sprintf('%s not available', cfg{k}{3}));
+  else
+    t = sprintf('AC PF - %s : ', cfg{k}{2});
+    mpopt = mpoption(mpopt0, 'pf.alg', cfg{k}{1});
     [baseMVA, bus, gen, branch, success, et] = runpf(casefile, mpopt);
     t_ok(success, [t 'success']);
     t_is(bus, bus_soln, 6, [t 'bus']);
@@ -98,7 +110,7 @@ for k = 1:length(AC_alg)
     t_is(r.branch, branch_soln, 6, [t 'branch']);
 
     %% check when Vg ~= 1
-    t = sprintf('%s - Vg ~= 1 : ', AC_alg{k});
+    t = sprintf('%s - Vg ~= 1 : ', cfg{k}{1});
     mpopt = mpoption(mpopt, 'verbose', 0);
     mpc = loadcase(casefile);
     mpc.gen(:, VG) = [1.04; 1.025; 1.025];
@@ -109,7 +121,7 @@ for k = 1:length(AC_alg)
     t_is(r.branch, soln_vg.branch_soln, 6, [t 'branch']);
 
     %% check Qg distribution, when Qmin = Qmax
-    t = sprintf('%s - check Qg : ', AC_alg{k});
+    t = sprintf('%s - check Qg : ', cfg{k}{1});
     mpc = loadcase(casefile);
     mpc.gen(1, [QMIN QMAX]) = [20 20];
     r = runpf(mpc, mpopt);
@@ -165,7 +177,7 @@ for k = 1:length(AC_alg)
     t_ok(r.success, [t 'success']);
     t_is(r.gen(1:2, QG), [12.03; 12.03], 2, [t '2 gens, both infinite range']);
 
-    t = sprintf('%s - reactive generation allocation : ', AC_alg{k});
+    t = sprintf('%s - reactive generation allocation : ', cfg{k}{1});
     mpc = loadcase(casefile);
     %% generator data
     %	bus	Pg	Qg	Qmax	Qmin	Vg	mBase	status	Pmax	Pmin	Pc1	Pc2	Qc1min	Qc1max	Qc2min	Qc2max	ramp_agc	ramp_10	ramp_30	ramp_q	apf
@@ -185,7 +197,7 @@ for k = 1:length(AC_alg)
     t_is(r.gen(5:7, QG), [1; 2; -3], 8, [t 'PQ bus']);
 
     %% network with islands
-    t = sprintf('%s - network w/islands : AC PF : ', AC_alg{k});
+    t = sprintf('%s - network w/islands : AC PF : ', cfg{k}{1});
     mpc = mpc1;
     r = runpf(mpc, mpopt);
     t_ok(r.success, [t 'success']);
@@ -195,7 +207,7 @@ for k = 1:length(AC_alg)
     t_is(r.gen(1:4, PG), Pg, 6, [t 'active power generation 1']);
     t_is(r.gen(5:8, PG), Pg, 6, [t 'active power generation 2']);
 
-    t = sprintf('%s - all buses isolated : ', AC_alg{k});
+    t = sprintf('%s - all buses isolated : ', cfg{k}{1});
     mpc.bus(:, BUS_TYPE) = NONE;
     try
         r = runpf(mpc, mpopt);
@@ -205,7 +217,7 @@ for k = 1:length(AC_alg)
     end
 
     %% case 14 with Q limits
-    t = sprintf('%s - pf.enforce_q_lims == 0 : ', AC_alg{k});
+    t = sprintf('%s - pf.enforce_q_lims == 0 : ', cfg{k}{1});
     mpc = loadcase('case14');
     mpc.gen(1, QMIN) = -10;
     mpc.gen(:, QMAX) = [10; 30; 29; 15; 15];
@@ -217,7 +229,7 @@ for k = 1:length(AC_alg)
     t_is(r.bus(:, BUS_TYPE), bt, 12, [t 'bus type']);
     t_is(r.gen(:, QG), [-16.549300542; 43.557100134; 25.075348495; 12.730944405; 17.623451366], 6, [t 'Qg']);
 
-    t = sprintf('%s - pf.enforce_q_lims == 1 : ', AC_alg{k});
+    t = sprintf('%s - pf.enforce_q_lims == 1 : ', cfg{k}{1});
     mpopt = mpoption(mpopt, 'pf.enforce_q_lims', 1);
     r = runpf(mpc, mpopt);
     bt = bt0;
@@ -226,14 +238,15 @@ for k = 1:length(AC_alg)
     t_is(r.bus(:, BUS_TYPE), bt, 12, [t 'bus type']);
     t_is(r.gen(:, QG), [-10; 30; 31.608422873; 16.420423190; 15], 4, [t 'Qg']);
 
-    t = sprintf('%s - pf.enforce_q_lims == 2 : ', AC_alg{k});
+    t = sprintf('%s - pf.enforce_q_lims == 2 : ', cfg{k}{1});
     mpopt = mpoption(mpopt, 'pf.enforce_q_lims', 2);
     r = runpf(mpc, mpopt);
     bt = bt0;
     bt([1 2 3 6 8]) = [REF PQ PQ PQ PQ];
     t_ok(r.success, [t 'success']);
     t_is(r.bus(:, BUS_TYPE), bt, 12, [t 'bus type']);
-    t_is(r.gen(:, QG), [-6.30936644; 30; 29; 15; 15], 6, [t 'Qg']);
+    t_is(r.gen(:, QG), [-6.30936644; 30; 29; 15; 15], 5, [t 'Qg']);
+  end
 end
 
 t_end;

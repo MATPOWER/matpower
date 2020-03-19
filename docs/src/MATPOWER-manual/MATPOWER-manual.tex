@@ -167,6 +167,9 @@
 \newcommand{\mpomname}[0]{\mpom{}}
 % \newcommand{\mpomname}[0]{{{\bf M}{\sc at}{\bf P}{\sc ower} \textbf{Opt}imization \textbf{Model}}}
 \newcommand{\mpomver}[0]{3.0}
+\newcommand{\mpe}{{MP-Element}}
+\newcommand{\mpeurl}[0]{https://github.com/MATPOWER/mp-element}
+\newcommand{\mpelink}[0]{\href{\mpeurl}{\mpe{}}}
 \newcommand{\most}[0]{{MOST}}
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
@@ -245,13 +248,15 @@
 \newcommand{\R}{\mathbb{R}}          % requires \usepackage{amsfonts|bbold}
 \newcommand{\der}[2]{\frac{\partial{#1}}{\partial{#2}}} % partial derivative
 \newcommand{\TNoneurl}[0]{https://matpower.org/docs/TN1-OPF-Auctions.pdf}
-\newcommand{\TNone}[0]{\href{\TNoneurl}{\it \matpower{} Technical Note 1}}
+\newcommand{\TNone}[0]{\href{\TNoneurl}{\it \matpower{} Technical Note~1}}
 \newcommand{\TNtwourl}[0]{https://matpower.org/docs/TN2-OPF-Derivatives.pdf}
-\newcommand{\TNtwo}[0]{\href{\TNtwourl}{\it \matpower{} Technical Note 2}}
+\newcommand{\TNtwo}[0]{\href{\TNtwourl}{\it \matpower{} Technical Note~2}}
 \newcommand{\TNthreeurl}[0]{https://matpower.org/docs/TN3-More-OPF-Derivatives.pdf}
-\newcommand{\TNthree}[0]{\href{\TNthreeurl}{\it \matpower{} Technical Note 3}}
+\newcommand{\TNthree}[0]{\href{\TNthreeurl}{\it \matpower{} Technical Note~3}}
 \newcommand{\TNfoururl}[0]{https://matpower.org/docs/TN4-OPF-Derivatives-Cartesian.pdf}
-\newcommand{\TNfour}[0]{\href{\TNfoururl}{\it \matpower{} Technical Note 4}}
+\newcommand{\TNfour}[0]{\href{\TNfoururl}{\it \matpower{} Technical Note~4}}
+\newcommand{\TNfiveurl}[0]{https://matpower.org/docs/TN5-MP-Element.pdf}
+\newcommand{\TNfive}[0]{\href{\TNfiveurl}{\it \matpower{} Technical Note~5}}
 \newcommand{\doi}[1]{doi:~\href{https://doi.org/#1}{#1}}
 
 \def\sectionautorefname{Chapter}
@@ -1529,6 +1534,7 @@ name & default & description \\
 % \codeq{NR-IH} & Newtons's method (current mismatch, hybrid)\tnote{\dag} \\
 \codeq{FDXB} & Fast-Decoupled (XB version) \\
 \codeq{FDBX} & Fast-Decouple (BX version) \\
+\codeq{FSOLVE} & based on \code{fsolve()} \\
 \codeq{GS} & Gauss-Seidel \\
 \codeq{PQSUM} & Power Summation (radial networks only) \\
 \codeq{ISUM} & Current Summation (radial networks only) \\
@@ -4334,6 +4340,11 @@ This function implements the \codeq{minopf} tag for \code{have\_feature} to dete
 
 This function implements the \codeq{most} tag for \code{have\_feature} to detect availability/version of \mostlink{}, \mostname{}.
 
+\subsubsection{\tt have\_feature\_mp\_element}
+\label{sec:have_feature_mp_element}
+
+This function implements the \codeq{mp\_element} tag for \code{have\_feature} to detect availability/version of \mpelink{}.\footnote{\url{\mpeurl}}
+
 \subsubsection{\tt have\_feature\_pdipmopf}
 \label{sec:have_feature_pdipmopf}
 
@@ -4769,6 +4780,7 @@ name & default & description \\
 % \codeq{NR-IH} & Newtons's method (current mismatch, hybrid)\tnote{\dag} \\
 \codeq{FDXB} & Fast-Decoupled (XB version) \\
 \codeq{FDBX} & Fast-Decouple (BX version) \\
+\codeq{FSOLVE} & based on \code{fsolve()} \\
 \codeq{GS} & Gauss-Seidel \\
 \codeq{PQSUM} & Power Summation (radial networks only) \\
 \codeq{ISUM} & Current Summation (radial networks only) \\
@@ -6257,6 +6269,7 @@ name & description \\
 \code{have\_feature\_e4st}	& \eastlink{}, \url{\easturl}	\\
 \code{have\_feature\_minopf}	& MINOPF, MINOS-based optimal power flow (OPF) solver	\\
 \code{have\_feature\_most}	& \mostlink{}, \mostname{}\tnote{\dag}	\\
+\code{have\_feature\_mp\_element}	& \mpelink{}	\\
 \code{have\_feature\_pdipmopf}	& PDIPMOPF, primal-dual interior point method OPF solver\tnote{\ddag}	\\
 \code{have\_feature\_regexp\_split}	& support for \codeq{split} argument to \code{regexp()}	\\
 \code{have\_feature\_scpdipmopf}	& SCPDIPMOPF, step-controlled PDIPM OPF solver\tnote{\ddag}	\\
@@ -8181,14 +8194,23 @@ The \href{https://matpower.org/docs/MATPOWER-manual-8.0.pdf}{\matpower{} 8.0 Use
 
 \subsubsection*{New Features}
 \begin{itemize}
-\item 
+\item Experimental support for \mpelink{}\footnote{\url{\mpeurl}}, a new, generalized network and element modeling layer for \matpower{}. See also \TNfive{}. Documentation not yet included in User's Manual. If \mpelink{} is installed, its modeling is used by default for the following (can be turned off with \code{have\_feature(\textquotesingle{}mp\_element\textquotesingle{}, 0)}):
+\begin{itemize}
+    \item DC power flow
+    \item DC optimal power flow
+    \item AC power flow for all except radial and hybrid Newton-Raphson
+    formulations/solvers, including a new \codeq{FSOLVE} option based on
+    \code{fsolve()} function
+    \item AC OPF for solvers MIPS, \code{fmincon}, \ipopt{}, and \knitro{}, for
+    all formulations
+\end{itemize}
 \item New options:
 \begin{itemize}
-    \item 
+    \item \code{pf.alg} now accepts \codeq{FSOLVE} to select the \code{fsolve()} function\footnote{Part of the \matlab{} \ot{} and included in Octave. Supported via \mpelink{} only.} as the AC power flow solver
 \end{itemize}
 \item New functions/methods:
     \begin{itemize}
-        \item 
+        \item \code{have\_feature\_mp\_element}
     \end{itemize}
 \end{itemize}
 
@@ -8206,11 +8228,12 @@ The \href{https://matpower.org/docs/MATPOWER-manual-8.0.pdf}{\matpower{} 8.0 Use
 
 \subsubsection*{New Documentation}
 \begin{itemize}
-    \item 
+    \item \TNfive{} ``\mpe{}: A Unified \matpower{} Element Model, with Corresponding Functions and Derivatives''~\cite{zimmerman2020}
 \end{itemize}
 
 \subsubsection*{Other Improvements}
 \begin{itemize}
+\item \mpom{} object is now used for power flow as well as OPF and is added as \code{om} field to power flow \code{results} struct.
 \item Each power flow is initialized with the solved voltages of the previous one when changing PV buses to PQ during Q limit enforcement. \emph{Thanks to Tostado-Véliz, Kamel, Jurado.}
 
 \item \emph{Thanks to ...}
@@ -8544,6 +8567,11 @@ A.~Kuzmin, M.~Luisier and O.~Shenk, ``Fast methods for computing selected elemen
 \bibitem{osqp}
 B.~Stellato, G.~Banjac, P.~Goulart, A.~Bemporad, and S.~Boyd, S., ``{OSQP}: An Operator Splitting Solver for Quadratic Programs'', \emph{Mathematical Programming Computation}, 2020.
 doi:~\href{https://doi.org/10.1007/s12532-020-00179-2}{10.1007/s12532-020-00179-2}
+
+\bibitem{zimmerman2020}
+R.~D. Zimmerman, \emph{\mpe{}: A Unified \matpower{} Element Model, with Corresponding Functions and Derivatives}, \TNfive, October 2020. [Online]. Available: \url{\TNfiveurl}
+\doi{10.5281/zenodo.4110676}
+
 
 \end{thebibliography}
 

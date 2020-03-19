@@ -124,23 +124,50 @@ if ~isempty(mpc.bus)
         v = mpver('all');
         fprintf('\nMATPOWER Version %s, %s', v.Version, v.Date);
     end
+
+    default_to_mpe = have_feature('mp_element');
+        %% if 0, requires mpopt.exp.mpe = 1 to enable mp_element version
+        %% if 1; requires mpopt.exp.mpe = 0 to disable mp_element version
+    use_mpe = 0;
+    if (  default_to_mpe && ~(isfield(mpopt.exp, 'mpe') && mpopt.exp.mpe == 0) ) || ...
+       ( ~default_to_mpe &&   isfield(mpopt.exp, 'mpe') && mpopt.exp.mpe == 1  )
+        dc  = strcmp(upper(mpopt.model), 'DC');
+        alg = upper(mpopt.pf.alg);
+        if dc || (strcmp(alg, 'DEFAULT') || strcmp(alg, 'NR') || ...
+                  strcmp(alg, 'NR-SP') || strcmp(alg, 'NR-SC') || ...
+                  strcmp(alg, 'NR-IP') || strcmp(alg, 'NR-IC') || ...
+                  strcmp(alg, 'FDXB') || strcmp(alg, 'FDBX') || ...
+                  strcmp(alg, 'FSOLVE') || strcmp(alg, 'GS')) && ...
+                  mpopt.pf.v_cartesian ~= 2
+            use_mpe = 1;
+        end
+    end
+
     if dc                               %% DC formulation
         if mpopt.verbose > 0
           fprintf(' -- DC Power Flow\n');
         end
-        %% initial state
-        Va0 = bus(:, VA) * (pi/180);
+        if use_mpe
+            netmodel = @mpe_network_dc;
+            nm = netmodel().create_model(mpc, mpopt);
+            [Va, success, its, om] = nm.solve_power_flow(mpc, mpopt);
+            ad = om.get_userdata('power_flow_aux_data');
+            [B, Bf, Pbus, Pfinj] = deal(ad.B, ad.Bf, ad.Pbus, ad.Pfinj);
+        else
+            %% initial state
+            Va0 = bus(:, VA) * (pi/180);
 
-        %% build B matrices and phase shift injections
-        [B, Bf, Pbusinj, Pfinj] = makeBdc(baseMVA, bus, branch);
+            %% build B matrices and phase shift injections
+            [B, Bf, Pbusinj, Pfinj] = makeBdc(baseMVA, bus, branch);
 
-        %% compute complex bus power injections (generation - load)
-        %% adjusted for phase shifters and real shunts
-        Pbus = real(makeSbus(baseMVA, bus, gen)) - Pbusinj - bus(:, GS) / baseMVA;
+            %% compute complex bus power injections (generation - load)
+            %% adjusted for phase shifters and real shunts
+            Pbus = real(makeSbus(baseMVA, bus, gen)) - Pbusinj - bus(:, GS) / baseMVA;
 
-        %% "run" the power flow
-        [Va, success] = dcpf(B, Pbus, Va0, ref, pv, pq);
-        its = 1;
+            %% "run" the power flow
+            [Va, success] = dcpf(B, Pbus, Va0, ref, pv, pq);
+            its = 1;
+        end
 
         %% update data matrices with solution
         branch(:, [QF, QT]) = zeros(size(branch, 1), 2);
@@ -192,6 +219,8 @@ if ~isempty(mpc.bus)
                     solver = 'fast-decoupled, XB';
                 case 'FDBX'
                     solver = 'fast-decoupled, BX';
+                case 'FSOLVE'
+                    solver = 'fsolve';
                 case 'GS'
                     solver = 'Gauss-Seidel';
                 case 'PQSUM'
@@ -206,7 +235,7 @@ if ~isempty(mpc.bus)
             fprintf(' -- AC Power Flow (%s)\n', solver);
         end
         switch alg
-            case {'NR', 'NR-SP', 'NR-SC', 'NR-SH', 'NR-IP', 'NR-IC', 'NR-IH'}  %% all 6 variants supported
+            case {'NR', 'NR-SP', 'NR-SC', 'NR-SH', 'NR-IP', 'NR-IC', 'NR-IH', 'FSOLVE'}  %% all 6 variants supported
             otherwise                   %% only power balance, polar is valid
                 if mpopt.pf.current_balance || mpopt.pf.v_cartesian
                     error('runpf: power flow algorithm ''%s'' only supports power balance, polar version\nI.e. both ''pf.current_balance'' and ''pf.v_cartesian'' must be set to 0.', alg);
@@ -242,53 +271,80 @@ if ~isempty(mpc.bus)
             fixedQg = zeros(size(gen, 1), 1);   %% Qg of gens at Q limits
         end
 
+        if use_mpe
+            if mpopt.pf.v_cartesian
+                if mpopt.pf.current_balance
+                    netmodel = @mpe_network_acci;
+                else
+                    netmodel = @mpe_network_accs;
+%                    netmodel = @mpe_network_accs_test_nln;
+                end
+            else
+                if mpopt.pf.current_balance
+                    netmodel = @mpe_network_acpi;
+                else
+                    netmodel = @mpe_network_acps;
+%                    netmodel = @mpe_network_acps_test_nln;
+                end
+            end
+        end
+
         %% build admittance matrices
         [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
 
         repeat = 1;
         while (repeat)
-            %% function for computing V dependent complex bus power injections
-            %% (generation - load)
-            Sbus = @(Vm)makeSbus(baseMVA, bus, gen, mpopt, Vm);
-
             %% run the power flow
-            switch alg
-                case {'NR', 'NR-SP', 'NR-SC', 'NR-SH', 'NR-IP', 'NR-IC', 'NR-IH'}
-                    if mpopt.pf.current_balance
-                        switch mpopt.pf.v_cartesian
-                            case 0                  %% current, polar
-                                newtonpf_fcn = @newtonpf_I_polar;
-                            case 1                  %% current, cartesian
-                                newtonpf_fcn = @newtonpf_I_cart;
-                            case 2                  %% current, hybrid
-                                newtonpf_fcn = @newtonpf_I_hybrid;
+            if use_mpe
+                mpc.bus = bus;
+                mpc.gen = gen;
+                mpc.bus(:, VM) = abs(V0);
+                mpc.bus(:, VA) = angle(V0) * 180/pi;
+                nm = netmodel().create_model(mpc, mpopt);
+                [V, success, iterations, om] = nm.solve_power_flow(mpc, mpopt);
+            else
+                %% function for computing V dependent complex bus power injections
+                %% (generation - load)
+                Sbus = @(Vm)makeSbus(baseMVA, bus, gen, mpopt, Vm);
+
+                switch alg
+                    case {'NR', 'NR-SP', 'NR-SC', 'NR-SH', 'NR-IP', 'NR-IC', 'NR-IH'}
+                        if mpopt.pf.current_balance
+                            switch mpopt.pf.v_cartesian
+                                case 0                  %% current, polar
+                                    newtonpf_fcn = @newtonpf_I_polar;
+                                case 1                  %% current, cartesian
+                                    newtonpf_fcn = @newtonpf_I_cart;
+                                case 2                  %% current, hybrid
+                                    newtonpf_fcn = @newtonpf_I_hybrid;
+                            end
+                        else
+                            switch mpopt.pf.v_cartesian
+                                case 0                  %% default - power, polar
+                                    newtonpf_fcn = @newtonpf;
+                                case 1                  %% power, cartesian
+                                    newtonpf_fcn = @newtonpf_S_cart;
+                                case 2                  %% power, hybrid
+                                    newtonpf_fcn = @newtonpf_S_hybrid;
+                            end
                         end
-                    else
-                        switch mpopt.pf.v_cartesian
-                            case 0                  %% default - power, polar
-                                newtonpf_fcn = @newtonpf;
-                            case 1                  %% power, cartesian
-                                newtonpf_fcn = @newtonpf_S_cart;
-                            case 2                  %% power, hybrid
-                                newtonpf_fcn = @newtonpf_S_hybrid;
-                        end
-                    end
-                    [V, success, iterations] = newtonpf_fcn(Ybus, Sbus, V0, ref, pv, pq, mpopt);
-                case {'FDXB', 'FDBX'}
-                    [Bp, Bpp] = makeB(baseMVA, bus, branch, alg);
-                    [V, success, iterations] = fdpf(Ybus, Sbus, V0, Bp, Bpp, ref, pv, pq, mpopt);
-                case 'GS'
-                    [V, success, iterations] = gausspf(Ybus, Sbus([]), V0, ref, pv, pq, mpopt);
-                case {'PQSUM', 'ISUM', 'YSUM'}
-                    [mpc, success, iterations] = radial_pf(mpc, mpopt);
-                otherwise
-                    error('runpf: ''%s'' is not a valid power flow algorithm. See ''pf.alg'' details in MPOPTION help.', alg);
+                        [V, success, iterations] = newtonpf_fcn(Ybus, Sbus, V0, ref, pv, pq, mpopt);
+                    case {'FDXB', 'FDBX'}
+                        [Bp, Bpp] = makeB(baseMVA, bus, branch, alg);
+                        [V, success, iterations] = fdpf(Ybus, Sbus, V0, Bp, Bpp, ref, pv, pq, mpopt);
+                    case 'GS'
+                        [V, success, iterations] = gausspf(Ybus, Sbus([]), V0, ref, pv, pq, mpopt);
+                    case {'PQSUM', 'ISUM', 'YSUM'}
+                        [mpc, success, iterations] = radial_pf(mpc, mpopt);
+                    otherwise
+                        error('runpf: ''%s'' is not a valid power flow algorithm. See ''pf.alg'' details in MPOPTION help.', alg);
+                end
             end
             its = its + iterations;
 
             %% update data matrices with solution
             switch alg
-                case {'NR', 'NR-SP', 'NR-SC', 'NR-SH', 'NR-IP', 'NR-IC', 'NR-IH', 'FDXB', 'FDBX', 'GS'}
+                case {'NR', 'NR-SP', 'NR-SC', 'NR-SH', 'NR-IP', 'NR-IC', 'NR-IH', 'FDXB', 'FDBX', 'FSOLVE', 'GS'}
                     [bus, gen, branch] = pfsoln(baseMVA, bus, gen, branch, Ybus, Yf, Yt, V, ref, pv, pq, mpopt);
                 case {'PQSUM', 'ISUM', 'YSUM'}
                     bus = mpc.bus;
@@ -399,6 +455,10 @@ mpc.iterations = its;
 %% convert back to original bus numbering & print results
 [mpc.bus, mpc.gen, mpc.branch] = deal(bus, gen, branch);
 results = int2ext(mpc);
+
+if success && use_mpe
+    results.om = om;
+end
 
 %% zero out result fields of out-of-service gens & branches
 if ~isempty(results.order.gen.status.off)

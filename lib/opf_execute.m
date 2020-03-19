@@ -177,7 +177,7 @@ if success
     end
   end
 
-  %% delete g and dg fieldsfrom results if using v4.0 of MINOPF or TSPOPF
+  %% delete g and dg fields from results if using v4.0 of MINOPF or TSPOPF
   if isfield(results, 'dg')
     rmfield(results, 'dg');
     rmfield(results, 'g');
