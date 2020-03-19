@@ -49,6 +49,7 @@ if have_c3sopf
     tests{end+1} = 't_most_sp';
     tests{end+1} = 't_most_spuc';
 end
+tests{end+1} = 't_most_mpopf';
 tests{end+1} = 't_most_uc';
 tests{end+1} = 't_most_suc';
 tests{end+1} = 't_most_w_ds';

@@ -41,7 +41,7 @@ fcn = {'cplex', 'glpk', 'gurobi', 'mosek', 'intlinprog'};
 % fcn = {'intlinprog'};
 % solvers = {'GUROBI'};
 % fcn = {'gurobi'};
-ntests = 52;
+ntests = 66;
 t_begin(ntests*length(solvers), quiet);
 
 if quiet
@@ -276,8 +276,8 @@ for s = 1:length(solvers)
         t_ok(mdo.QP.exitflag > 0, [t 'success']);
         ex = soln.wminup;
         t_is(ms.f, ex.f, 6, [t 'f']);
-        t_is(ms.Pg, ex.Pg, 8, [t 'Pg']);
-        t_is(ms.Rup, ex.Rup, 8, [t 'Rup']);
+        t_is(ms.Pg, ex.Pg, 7, [t 'Pg']);
+        t_is(ms.Rup, ex.Rup, 7, [t 'Rup']);
         t_is(ms.Rdn, ex.Rdn, 8, [t 'Rdn']);
         t_is(ms.Pf, ex.Pf, 8, [t 'Pf']);
         t_is(ms.u, ex.u, 8, [t 'u']);
@@ -340,6 +340,57 @@ for s = 1:length(solvers)
             create_plots = 0;   %% don't do them again
         end
         % keyboard;
+
+        t = sprintf('%s : + storage2 : ', solvers{s});
+        if mpopt.out.all
+            fprintf('Add storage\n');
+        end
+        mpopt = mpoption(mpopt, 'most.storage.cyclic', 0);
+        mdi.Storage.rho = 1;
+        mdo = most(mdi, mpopt);
+        ms = most_summary(mdo);
+        t_ok(mdo.QP.exitflag > 0, [t 'success']);
+        ex = soln.wstorage2;
+        t_is(ms.f, ex.f, 8, [t 'f']);
+        t_is(ms.Pg, ex.Pg, 8, [t 'Pg']);
+        t_is(ms.Rup, ex.Rup, 8, [t 'Rup']);
+        t_is(ms.Rdn, ex.Rdn, 8, [t 'Rdn']);
+        t_is(ms.Pf, ex.Pf, 8, [t 'Pf']);
+        t_is(ms.u, ex.u, 8, [t 'u']);
+        % t_is(ms.lamP, ex.lamP, 5, [t 'lamP']);
+        % t_is(ms.muF, ex.muF, 5, [t 'muF']);
+        % wstorage2 = most_summary(mdo);
+        if create_plots
+            pp = pp + 1;
+            plot_case('+ Storage2', mdo, ms, 500, 100, savedir, pp, fname);
+            create_plots = 0;   %% don't do them again
+        end
+        % keyboard;
+
+        t = sprintf('%s : + storage3 : ', solvers{s});
+        if mpopt.out.all
+            fprintf('Add storage\n');
+        end
+        mdi.Storage.rho = 0;
+        mdo = most(mdi, mpopt);
+        ms = most_summary(mdo);
+        t_ok(mdo.QP.exitflag > 0, [t 'success']);
+        ex = soln.wstorage3;
+        t_is(ms.f, ex.f, 8, [t 'f']);
+        t_is(ms.Pg, ex.Pg, 8, [t 'Pg']);
+        t_is(ms.Rup, ex.Rup, 8, [t 'Rup']);
+        t_is(ms.Rdn, ex.Rdn, 8, [t 'Rdn']);
+        t_is(ms.Pf, ex.Pf, 8, [t 'Pf']);
+        t_is(ms.u, ex.u, 8, [t 'u']);
+        % t_is(ms.lamP, ex.lamP, 5, [t 'lamP']);
+        % t_is(ms.muF, ex.muF, 5, [t 'muF']);
+        % wstorage3 = most_summary(mdo);
+        if create_plots
+            pp = pp + 1;
+            plot_case('+ Storage3', mdo, ms, 500, 100, savedir, pp, fname);
+            create_plots = 0;   %% don't do them again
+        end
+        % keyboard;
     end
 end
 
@@ -349,7 +400,7 @@ end
 
 t_end;
 
-% save t_most_uc_soln ed dcopf wstart wminup wramp wstorage
+% save t_most_uc_soln ed dcopf wstart wminup wramp wstorage wstorage2 wstorage3
 
 function h = plot_case(label, md, ms, maxq, maxp, mypath, pp, fname)
 

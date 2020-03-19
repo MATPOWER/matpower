@@ -148,7 +148,7 @@
 \newcommand{\most}[0]{{MOST}}
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
-\newcommand{\mostver}[0]{1.0.2}
+\newcommand{\mostver}[0]{1.0.3-dev}
 \newcommand{\md}[0]{{\most{} Data struct}}
 \newcommand{\powerweb}[0]{{\sc PowerWeb}}
 \newcommand{\pserc}[0]{{\sc PSerc}}
@@ -165,7 +165,7 @@
 \newcommand{\ot}[0]{{Optimization Toolbox}}
 \newcommand{\pardiso}[0]{{PARDISO}}
 \newcommand{\sdppf}[0]{\texttt{SDP\_PF}}
-\newcommand{\sdppfver}[0]{1.0}
+\newcommand{\sdppfver}[0]{1.0.1}
 \newcommand{\sdpopf}[0]{SDPOPF}
 \newcommand{\code}[1]{{\relsize{-0.5}{\tt{{#1}}}}}  % requires package relsize
 % Note: to get straight single quotes in \code you have to use one of the
@@ -226,7 +226,7 @@ User's Manual}
 %%% BEFORE PUBLISHING A NEW VERSION:
 %%%   Update the publication year for \bibitem{matpower} and
 %%%   \bibitem{matpower_manual} to the year of the latest release
-\date{June 20, 2019} % comment this line to display the current date
+%\date{June 20, 2019} % comment this line to display the current date
 %\date{December 14, 2011\thanks{Second revision. First revision was December 13, 2011}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
@@ -362,7 +362,7 @@ The first step in beginning to use the \most{} is to get familiar with \matpower
 \label{sec:sysreq}
 To use \most{}~\mostver{} you will need:
 \begin{itemize}
-\item \matpower{} version 7.x or later\footnote{\most{}~1.0 required \matpower{}~6.}
+\item \matpower{} version \hl{7.1} or later\footnote{\most{}~1.0.1 required \matpower{}~7 and \most{}~1.0 required \matpower{}~6.}
 \item \emph{(highly recommended)} a high-performance LP/MILP, QP/MIQP solver such as \gurobi{}, \cplex{}, \mosek{}, \matlab{}'s \ot{} or \glpk{} \emph{(included with Octave)}.
 \end{itemize}
 
@@ -2464,12 +2464,16 @@ name & description \\
 \code{nb}	& $n_b$, number of buses	\\
 \code{ng}	& $n_g$, number of generators (incl. storage, disp. load, etc.)	\\
 \code{nl}	& $n_l$, number of branches	\\
+\code{ns}	& $n_s$, number of storage units	\\
 \code{nt}	& $n_t$, number of periods in planning horizon	\\
 \code{nj\_max}	& $n_j^{\rm max}$, max number of scenarios per period	\\
 \code{nc\_max}	& $n_c^{\rm max}$, max number of contingencies per scenario in any period	\\
+\code{psi}	& $n_t \times n_j^{\rm max} \times (n_c^{\rm max}+1)$, adjusted cost weights, $\psi_\alpha^{tjk}$, see \eqref{eq:psialpha}	\\
 \code{Pg}	& $n_g \times n_t \times n_j^{\rm max} \times (n_c^{\rm max}+1)$, real power generation	\\
+\code{Pd}	& $n_b \times n_t \times n_j^{\rm max} \times (n_c^{\rm max}+1)$, fixed real power demand	\\
 \code{Rup}	& $n_g \times n_t$, upward ramping reserve quantities	\\
 \code{Rdn}	& $n_g \times n_t$, downward ramping reserve quantities	\\
+\code{SoC}	& $n_s \times n_t$, expected stored energy (state-of-charge)	\\
 \code{Pf}	& $n_g \times n_t \times n_j^{\rm max} \times (n_c^{\rm max}+1)$, real power generation	\\
 \code{u}	& $n_g \times n_t \times n_j^{\rm max} \times (n_c^{\rm max}+1)$, generator commitment status	\\
 \code{lamP}	& $n_b \times n_t \times n_j^{\rm max} \times (n_c^{\rm max}+1)$, shadow price on power balance	\\
@@ -2479,6 +2483,7 @@ name & description \\
 \end{threeparttable}
 \end{table}
 
+\clearpage
 \subsection{\tt mostver}
 \label{sec:mostver}
 
@@ -3160,6 +3165,7 @@ name & description \\
 \code{~~loadxgendata}	& loads extra generator data, see Section~\ref{sec:loadxgendata}	\\
 \code{~~md\_init}	& data structure initialization	\\
 \code{~~most}	& top-level solver, see Chapter~\ref{sec:mostfcn}	\\
+\code{~~most\_summary}	& summarizes some output data, returned in a struct and optionally prints to console, see Section~\ref{sec:most_summary}	\\
 \code{~~mostver}	& prints/returns version info for \most{}, see Section~\ref{sec:mostver}	\\
 \code{~~mpoption\_info\_most}	& option information for \most{}	\\
 \code{~~plot\_gen}	& create plots of generator results	\\
@@ -3214,6 +3220,7 @@ name & description \\
 \code{~~most\_ex7\_suc}	& Tutorial Example 7, see Section~\ref{sec:tutex7} 	\\
 \code{~~t\_case3\_most}	& 3-bus \matpower{} test case	\\
 \code{~~t\_case30\_most}	& 30-bus \matpower{} test case	\\
+\code{~~t\_most\_mpopf\_soln.mat}	& solution data for \code{t\_most\_mpopf}	\\
 \code{~~t\_most\_suc\_soln.mat}	& solution data for \code{t\_most\_suc}	\\
 \code{~~t\_most\_uc\_soln.mat}	& solution data for \code{t\_most\_uc}	\\
 \code{~~t\_most\_w\_ds\_z.mat}	& solution data for \code{t\_most\_w\_ds}	\\
@@ -3246,6 +3253,7 @@ name & description \\
 \code{~~t\_most\_30b\_3\_1\_0}	& 30-bus, 3 periods, no contingencies	\\
 \code{~~t\_most\_30b\_3\_1\_17}	& 30-bus, 3 periods, 17 contingencies	\\
 \code{~~t\_most\_fixed\_res}	& with fixed zonal reserve requirements	\\
+\code{~~t\_most\_mpopf}	& multiperiod DC OPF problems \& build/solve options	\\
 \code{~~t\_most\_sp}	& single period continuous problems	\\
 \code{~~t\_most\_spuc}	& single period mixed-integer problems, i.e. w/UC	\\
 \code{~~t\_most\_suc}	& multiperiod with stochastic unit commitment	\\
@@ -3292,6 +3300,7 @@ The \href{https://matpower.org/docs/MOST-manual-1.0.1.pdf}{\most{} 1.0.1 User's 
 \subsubsection*{Bugs Fixed}
 \begin{itemize}
 \item Fix bugs in \code{plot\_uc\_data()} resulting in incorrect legends.
+\item Fix bug \#1 in \code{loadmd()} where profiles that modify xGenData or StorageData resulted in a fatal error.
 \item Fix dimension of \code{RampWear} cost indexing if \code{mdi.OpenEnded} is true.
 \item Add missing constant term to objective function value reported by \code{most\_summary}.
 \end{itemize}
@@ -3324,6 +3333,31 @@ The \href{https://matpower.org/docs/MOST-manual-1.0.2.pdf}{\most{} 1.0.2 User's 
 \begin{itemize}
 \item Add \code{CITATION} file.
 \item Other miscellaneous documentation updates, e.g. \matpower{} website links updated to \url{https://matpower.org}, separate references for \matpower{} software and User's Manual, with DOIs.
+\end{itemize}
+
+\subsection{Version 1.0.3 -- released ??? ??, 20??}
+\label{app:v103}
+
+The \href{https://matpower.org/docs/MOST-manual-1.0.3.pdf}{\most{} 1.0.3 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MOST-manual-1.0.3.pdf}}
+
+\subsubsection*{Bugs Fixed}
+\begin{itemize}
+\item Fix bug \#6 where building a model without solving it, or solving a
+previously built model resulted in a fatal error. \emph{Thanks to Baraa Mohandes.}
+\item Fix bug \#11 where storage constraints were not correct for $t=1$ and \code{rho} not equal to 1. \emph{Thanks to Baraa Mohandes.}
+\item Fix issue \#16, where the \code{om} field of the output MOST data struct (\code{mdo}) was a handle to the same object as as the \code{om} field of the input MOST data struct (\code{mdi}), meaning that changing one would modify the other. \emph{Thanks to Baraa Mohandes.}
+\end{itemize}
+
+\subsubsection*{Other Changes}
+\begin{itemize}
+\item Update \code{most\_summary()} to include sections for fixed loads
+and storage expected stored energy.
+\item Convert to using \code{@opt\_model/solve()} method rather than calling \code{miqps\_matpower()} or \code{qps\_matpower()} directly. Requires \matpower{} \hl{7.1} or later.
+\end{itemize}
+
+\subsubsection*{Incompatible Changes}
+\begin{itemize}
+\item Objective function value returned in \code{mdo.QP.f} updated to include the previously missing constant term.
 \end{itemize}
 
 \end{appendices}

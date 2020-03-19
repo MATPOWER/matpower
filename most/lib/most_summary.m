@@ -52,10 +52,12 @@ ng = size(mpc.gen, 1);
 nt = mdo.idx.nt;
 nj_max = max(mdo.idx.nj);
 nc_max = max(max(mdo.idx.nc));
+ns = mdo.idx.ns;
 
 %% summarize results
 psi = zeros(nt, nj_max, nc_max+1);
 Pg = zeros(ng, nt, nj_max, nc_max+1);
+Pd = zeros(nb, nt, nj_max, nc_max+1);
 if mdo.idx.ntramp
     Rup = [zeros(ng, 1) mdo.results.Rrp];
     Rdn = [zeros(ng, 1) mdo.results.Rrm];
@@ -74,11 +76,17 @@ for t = 1:nt
       psi(t, j, k) = mdo.CostWeightsAdj(k, j, t);
       u(:, t) = rr.gen(:, GEN_STATUS);
       Pg(:, t, j, k) = rr.gen(:, PG);
+      Pd(:, t, j, k) = rr.bus(:, PD);
       lamP(:, t, j, k) = rr.bus(:, LAM_P);
       Pf(:, t, j, k) = rr.branch(:, PF);
       muF(:, t, j, k) = rr.branch(:, MU_SF) + rr.branch(:, MU_ST);
     end
   end
+end
+if ns
+    SoC = mdo.Storage.ExpectedStorageState;
+else
+    SoC = [];
 end
 
 ms = struct(...
@@ -86,13 +94,16 @@ ms = struct(...
     'nb',   nb, ...
     'ng',   ng, ...
     'nl',   nl, ...
+    'ns',   ns, ...
     'nt',   nt, ...
     'nj_max', nj_max, ...
     'nc_max', nc_max, ...
     'psi',  psi, ...
     'Pg',   Pg, ...
+    'Pd',   Pd, ...
     'Rup',  Rup, ...
     'Rdn',  Rdn, ...
+    'SoC',  SoC, ...
     'Pf',   Pf, ...
     'u',    u, ...
     'lamP', lamP, ...
@@ -135,9 +146,15 @@ if verbose
         print_most_summary_section('RAMP UP', 'Gen', nt, 1, 0, Rup);
         print_most_summary_section('RAMP DOWN', 'Gen', nt, 1, 0, Rdn);
     end
-    print_most_summary_section('LAM_P', 'Bus', nt, nj_max, nc_max, lamP);
-    print_most_summary_section('PF',   'Brch', nt, nj_max, nc_max, Pf);
-    print_most_summary_section('MU_F', 'Brch', nt, nj_max, nc_max, muF);
+    print_most_summary_section('FIXED LOAD', 'Bus', nt, nj_max, nc_max, Pd);
+    if ns
+        print_most_summary_section('ESS E[SoC]', 'ESS', nt, 1, 0, SoC);
+    end
+    if mdo.DCMODEL
+        print_most_summary_section('LAM_P', 'Bus', nt, nj_max, nc_max, lamP);
+        print_most_summary_section('PF',   'Brch', nt, nj_max, nc_max, Pf);
+        print_most_summary_section('MU_F', 'Brch', nt, nj_max, nc_max, muF);
+    end
 end
 
 if nargout
@@ -152,40 +169,44 @@ end
 n = size(data, 1);
 bl = blanks(fix((12-length(label)) / 2));
 fprintf('\n==========%-12s==========\n', sprintf('%s%s', bl, label));
-for j = 1:nj_max
-    for k = 1:nc_max+1
-        if nj_max > 1 || nc_max > 0
-            fprintf('\nSCENARIO %d', j);
-            if nc_max == 0
-                fprintf('\n');
-            elseif k == 1
-                fprintf(', base case\n');
-            else
-                fprintf(', contingency %d\n', k-1);
-            end
-        end
-        fprintf('%4s ', section_type);
-        for t = 1:nt
-            fprintf('   t =%2d ', t);
-        end
-        fprintf('\n');
-        fprintf('----');
-        for t = 1:nt
-            fprintf('  -------');
-        end
-        fprintf('\n');
-        for i = 1:n
-            fprintf('%4d', i);
-            for t = 1:nt
-                qty = data(i, t, j, k);
-                if abs(qty) > tol
-                    fprintf('%9.2f', qty);
+if any(data(:))
+    for j = 1:nj_max
+        for k = 1:nc_max+1
+            if nj_max > 1 || nc_max > 0
+                fprintf('\nSCENARIO %d', j);
+                if nc_max == 0
+                    fprintf('\n');
+                elseif k == 1
+                    fprintf(', base case\n');
                 else
-                    fprintf('      -  ');
+                    fprintf(', contingency %d\n', k-1);
                 end
             end
+            fprintf('%4s ', section_type);
+            for t = 1:nt
+                fprintf('   t =%2d ', t);
+            end
             fprintf('\n');
+            fprintf('----');
+            for t = 1:nt
+                fprintf('  -------');
+            end
+            fprintf('\n');
+            for i = 1:n
+                fprintf('%4d', i);
+                for t = 1:nt
+                    qty = data(i, t, j, k);
+                    if abs(qty) > tol
+                        fprintf('%9.2f', qty);
+                    else
+                        fprintf('      -  ');
+                    end
+                end
+                fprintf('\n');
+            end
         end
     end
+else
+    fprintf('All zeros.\n');
 end
 fprintf('\n');

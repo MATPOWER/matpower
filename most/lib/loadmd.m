@@ -178,13 +178,13 @@ catch exception
         fields = {'wind', 'load'};
         centroids = loadgenericdata(profilesi, type, fields);
         if size(centroids.load,3) > 1 % if 3rd-dim = several zones
-            table = PR_TAREALOAD;
+            table = CT_TAREALOAD;
             rows = (1:size(centroids.load,3))';
         else
-            table = PR_TLOAD;
+            table = CT_TLOAD;
             rows = 0;
         end
-        profiles = [ centroids2profile(centroids.wind, PR_TGEN, mpc.iwind, PMAX, PR_REL) ;...
+        profiles = [ centroids2profile(centroids.wind, CT_TGEN, mpc.iwind, PMAX, PR_REL) ;...
                      centroids2profile(centroids.load, table, rows, CT_LOAD_ALL_P, PR_REL) ;
                    ];
     else
@@ -206,13 +206,13 @@ catch exception
         fields = {'wind', 'load'};
         trajdatacentroids = loadgenericdata(trajdatai, type, fields);
         if size(trajdatacentroids.load,3) > 1 % if 3rd-dim = several zones
-            table = PR_TAREALOAD;
+            table = CT_TAREALOAD;
             rows = (1:size(trajdatacentroids.load,3))';
         else
-            table = PR_TLOAD;
+            table = CT_TLOAD;
             rows = 0;
         end
-        trajdata = [ centroids2profile(trajdatacentroids.wind, PR_TGEN, mpc.iwind, PMAX, PR_REL) ;...
+        trajdata = [ centroids2profile(trajdatacentroids.wind, CT_TGEN, mpc.iwind, PMAX, PR_REL) ;...
                      centroids2profile(trajdatacentroids.load, table, rows, CT_LOAD_ALL_P, PR_REL) ;
                    ];
     else

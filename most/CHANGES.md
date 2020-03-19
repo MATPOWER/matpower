@@ -2,6 +2,41 @@ Change history for MOST
 =======================
 
 
+Changes since 1.0.2
+-------------------
+
+#### 3/19/20
+  - Convert to using `@opt_model/solve()` method rather than calling
+    `miqps_matpower()` or `qps_matpower()` directly. Requires MATPOWER
+    7.1 or later.
+  - **INCOMPATIBLE CHANGE**: Update objective function value returned in
+    `mdo.QP.f` to include the previously missing constant term.
+
+#### 2/27/20
+  - Fix [issue #16][4], where the `om` field of the output MOST data
+    struct (`mdo`) was a handle to the same object as as the `om`
+    field of the input MOST data struct (`mdi`), meaning that changing
+    one would modify the other.
+    *Thanks to Baraa Mohandes.*
+
+#### 8/27/19
+  - Update `most_summary` to include sections for fixed loads and
+    storage expected stored energy.
+    *Thanks to Baraa Mohandes.*
+  - Move assembly of constraints and variable bounds inside the
+    `build_model` conditional.
+    *Thanks to Baraa Mohandes.*
+
+#### 8/21/19
+  - Fix [bug #6][3] where building a model without solving it, or
+    solving a previously built model resulted in a fatal error.
+    *Thanks to Baraa Mohandes.*
+
+#### 8/20/19
+  - Fix [bug #11][2] where storage constraints were not correct for
+    t=1 and `rho ~= 1`. *Thanks to Baraa Mohandes.*
+
+
 Version 1.0.2 - *Jun 20, 2019*
 ------------------------------
 
@@ -184,3 +219,6 @@ Version 1.0 - *Jun 1, 2016*
 ---
 
 [1]: https://github.com/MATPOWER/most/issues/1
+[2]: https://github.com/MATPOWER/most/issues/11
+[3]: https://github.com/MATPOWER/most/issues/6
+[4]: https://github.com/MATPOWER/most/issues/16

@@ -22,7 +22,7 @@ end
 
 include_MIPS = 0;   %% set to 1, to attempt even if MIPS is the best solver
                     %% available (takes a LONG time and currently fails)
-n_tests = 1;
+n_tests = 2;
 
 t_begin(n_tests, quiet);
 
@@ -251,10 +251,17 @@ if have_fcn('cplex') || have_fcn('gurobi') || have_fcn('mosek') || ...
 
     s = load(solnfile);
 
+    t = 'objective function value (f)';
+    t_is(mdo.QP.f, 1575531.9, -0.5, t);
+% 1575531.87 % CPLEX
+% 1575532.66 % GUROBI
+% 1575534.08 % MOSEK
+% 1575531.87 % OT
+
     t = 'dynamical system state (Z)';
     t_is(mdo.results.Z, s.Z, 3.7, t);
 else
-    t_skip(1, 'requires MOSEK, CPLEX, Gurobi or quadprog');
+    t_skip(2, 'requires MOSEK, CPLEX, Gurobi or quadprog');
 end
 
 % YorN = input('Play movie? (y/n) : ', 's');

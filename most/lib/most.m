@@ -708,16 +708,14 @@ if mpopt.most.build_model
   % injections
   om.init_indexed_name('var', 'Psc', {nt, nj_max, nc_max+1});
   om.init_indexed_name('var', 'Psd', {nt, nj_max, nc_max+1});
-  for t = 1:nt
-    for j = 1:mdi.idx.nj(t)
-      for k = 1:mdi.idx.nc(t,j)+1
-        if ns
+  if ns
+    for t = 1:nt
+      for j = 1:mdi.idx.nj(t)
+        for k = 1:mdi.idx.nc(t,j)+1
           om.add_var('Psc', {t,j,k}, ns, [], [], zeros(ns,1));
         end
       end
     end
-  end
-  if ns
     for t = 1:nt
       for j = 1:mdi.idx.nj(t)
         for k = 1:mdi.idx.nc(t,j)+1
@@ -823,6 +821,9 @@ if mpopt.most.build_model
       end
     end
   end
+
+  %% handing of user-defined variables would go here
+
   nvars = om.getN('var');
   mdi.idx.nvars = nvars;
 
@@ -1040,7 +1041,7 @@ if mpopt.most.build_model
     fprintf('  - Building CCV constraints for piecewise-linear costs.\n');
   end
   om.init_indexed_name('lin', 'ycon', {nt, nj_max, nc_max+1});
-  for t = 1:nt,
+  for t = 1:nt
     for j = 1:mdi.idx.nj(t)
       for k = 1:mdi.idx.nc(t,j)+1
         mpc = mdi.flow(t,j,k).mpc;
@@ -1116,7 +1117,7 @@ if mpopt.most.build_model
   % Include all units that are potentially committed.
   om.init_indexed_name('lin', 'dPdef', {nt, nj_max, nc_max+1});
   for t = 1:nt
-    for j = 1:mdi.idx.nj(t);
+    for j = 1:mdi.idx.nj(t)
       for k = 1:mdi.idx.nc(t,j)+1
         ii = find(mdi.flow(t,j,k).mpc.gen(:, GEN_STATUS) > 0);
         ngtmp = length(ii);
@@ -1228,10 +1229,11 @@ if mpopt.most.build_model
         om.add_lin_constraint('Sm', {1,j}, A, [], u, vs);
       end
     else
-      % sm(1) + beta2*Delta_T*[eta_c*psc(1,j,0) + (1/eta_d)*psd(1,j,0)] <= beta1*Initial/baseMVA
+      % sm(1) + beta2*Delta_T*[eta_c*psc(1,j,0) + (1/eta_d)*psd(1,j,0)] <= beta1*(rho*InitialLB+(1-rho)*Initial)/baseMVA
       for j = 1:mdi.idx.nj(1)
         A = [ diagBeta2EtaIn1 diagBeta2overEtaOut1 Ins ];
-        u = beta1(:,1).*mdi.Storage.InitialStorageLowerBound/baseMVA;
+        u = beta1(:,1) .* ( rho(:,t).*mdi.Storage.InitialStorageLowerBound + ...
+                            (1-rho(:,t)).*mdi.Storage.InitialStorage ) / baseMVA;
         vs = struct('name', {'Psc', 'Psd', 'Sm'}, 'idx', {{1,j,1}, {1,j,1}, {1}});
         om.add_lin_constraint('Sm', {1,j}, A, [], u, vs);
       end
@@ -1272,10 +1274,11 @@ if mpopt.most.build_model
         om.add_lin_constraint('Sp', {1,j}, A, [], u, vs);
       end
     else
-      % -sp(1) - beta2*Delta_T*[eta_c*psc(1,j,0) + (1/eta_d)*psd(1,j,0)] <= -beta1*Initial/baseMVA
+      % -sp(1) - beta2*Delta_T*[eta_c*psc(1,j,0) + (1/eta_d)*psd(1,j,0)] <= -beta1*(rho*InitialUB+(1-rho)*Initial)/baseMVA
       for j = 1:mdi.idx.nj(1)
         A = [ -diagBeta2EtaIn1 -diagBeta2overEtaOut1 -Ins ];
-        u = -beta1(:,1).*mdi.Storage.InitialStorageUpperBound/baseMVA;
+        u = -beta1(:,1) .* ( rho(:,t).*mdi.Storage.InitialStorageUpperBound + ...
+                            (1-rho(:,t)).*mdi.Storage.InitialStorage ) / baseMVA;
         vs = struct('name', {'Psc', 'Psd', 'Sp'}, 'idx', {{1,j,1}, {1,j,1}, {1}});
         om.add_lin_constraint('Sp', {1,j}, A, [], u, vs);
       end
@@ -1931,57 +1934,53 @@ if mpopt.most.build_model
     Cfstor = sparse(1, nvars);
   end
 
-  % Plug into struct
+  %% handing of user-defined constraints and costs would go here
+
+  % Asssemble contraints, variable bounds and costs
+  if verbose
+    fprintf('- Assembling full set of constraints.\n');
+  end
+  [mdi.QP.A, mdi.QP.l, mdi.QP.u] = om.params_lin_constraint();
+  if verbose
+    fprintf('- Assembling full set of variable bounds.\n');
+  end
+  [mdi.QP.x0, mdi.QP.xmin, mdi.QP.xmax, mdi.QP.vtype] = om.params_var();
   if verbose
     fprintf('- Assembling full set of costs.\n');
   end
-  [Q, c, k0] = om.params_quad_cost();
+  [mdi.QP.H1, mdi.QP.C1, mdi.QP.c1] = om.params_quad_cost();
+
+  % Plug into struct
   mdi.QP.Cfstor = Cfstor;
-  mdi.QP.H1 = Q;
-  mdi.QP.C1 = c;
-  mdi.QP.c1 = k0;
+  mdi.om = om;
+else
+  om = mdi.om;
 end     % if mpopt.most.build_model
 
 % With all pieces of the cost in place, can proceed to build the total
 % cost now.
-mdi.QP.H = mdi.QP.H1;
-mdi.QP.C = mdi.QP.C1;
-mdi.QP.c = mdi.QP.c1;
 if isfield(mdi, 'CoordCost') && ...
         (~isempty(mdi.CoordCost.Cuser) || ~isempty(mdi.CoordCost.Huser))
   if verbose
     fprintf('- Adding coordination cost to standard cost.\n');
   end
   nvuser = length(mdi.CoordCost.Cuser);
-  nvars = mdi.idx.nvars;
-  mdi.QP.H = mdi.QP.H + ...
-            [ mdi.CoordCost.Huser       sparse(nvuser,nvars-nvuser) ;
-            sparse(nvars-nvuser,nvuser)  sparse(nvars-nvuser,nvars-nvuser) ];
-  mdi.QP.C(1:nvuser) = mdi.QP.C(1:nvuser) +  mdi.CoordCost.Cuser(:);
-  mdi.QP.c = mdi.QP.c + mdi.CoordCost.cuser;
-  
-%   cp = struct('Cw', mdi.CoordCost.Cuser(:), ...
-%         'H', [ mdi.CoordCost.Huser     sparse(nvuser,nvars-nvuser) ;
-%             sparse(nvars-nvuser,nvuser) sparse(nvars-nvuser,nvars-nvuser) ]);
-%   om.add_legacy_cost('CoordCost', cp);
+  nvdiff = mdi.idx.nvars - nvuser;
+  om.add_quad_cost( 'CoordCost', ...
+                    [ mdi.CoordCost.Huser    sparse(nvuser,nvdiff);
+                      sparse(nvdiff,nvuser)  sparse(nvdiff,nvdiff) ], ...
+                    mdi.CoordCost.Cuser(:), mdi.CoordCost.cuser);
 end
-
-mdi.om = om;
-[vv, ll] = om.get_idx();
-if verbose
-  fprintf('- Assembling full set of constraints.\n');
-end
-[mdi.QP.A, mdi.QP.l, mdi.QP.u] = om.params_lin_constraint();
-if verbose
-  fprintf('- Assembling full set of variable bounds.\n');
-end
-[mdi.QP.x0, mdi.QP.xmin, mdi.QP.xmax, mdi.QP.vtype] = om.params_var();
+[mdi.QP.H, mdi.QP.C, mdi.QP.c] = om.params_quad_cost();
 
 et_setup = toc(t0);
 t0 = tic;
 
 % Call solver!
-mdo = mdi;
+mdo = mdi;              %% initialize output
+mdo.om = om.copy();     %% make copy of opt_model object, so changes to
+                        %% output obj (mdo) don't modify input obj (mdi)
+[vv, ll] = mdo.om.get_idx();
 if mpopt.most.solve_model
   %% check consistency of model options (in case mdi was built in previous call)
   if mdi.DCMODEL ~= mo.DCMODEL
@@ -2006,30 +2005,15 @@ if mpopt.most.solve_model
     error('MDI.UC.run inconsistent with MPOPT.most.uc.run (and possible presence of MDI.UC.CommitKey)');
   end
   %% set options
-  if any(any(mdi.QP.H))
-    model = 'QP';
-  else
-    model = 'LP';
-  end
-  if UC
-    model = ['MI' model];
-  end
+  model = om.problem_type();
   mdo.QP.opt = mpopt2qpopt(mpopt, model, 'most');
+  mdo.QP.opt.x0 = [];
   if verbose
     fprintf('- Calling %s solver.\n\n', model);
     fprintf('============================================================================\n\n');
   end
-  if UC
-    [mdo.QP.x, mdo.QP.f, mdo.QP.exitflag, mdo.QP.output, ...
-            mdo.QP.lambda ] = miqps_matpower( mdi.QP.H, mdi.QP.C, ...
-                mdi.QP.A, mdi.QP.l, mdi.QP.u, mdi.QP.xmin, mdi.QP.xmax, ...
-                [], mdi.QP.vtype, mdo.QP.opt);
-  else
-    [mdo.QP.x, mdo.QP.f, mdo.QP.exitflag, mdo.QP.output, ...
-            mdo.QP.lambda ] = qps_matpower( mdi.QP.H, mdi.QP.C, ...
-                mdi.QP.A, mdi.QP.l, mdi.QP.u, mdi.QP.xmin, mdi.QP.xmax, ...
-                [], mdo.QP.opt);
-  end
+  [mdo.QP.x, mdo.QP.f, mdo.QP.exitflag, mdo.QP.output, mdo.QP.lambda ] = ...
+        mdo.om.solve(mdo.QP.opt);
   if mdo.QP.exitflag > 0
     success = 1;
     if verbose
@@ -2141,7 +2125,7 @@ if mpopt.most.solve_model
             r.R   = z;
             r.prc = z;
             r.mu = struct('l', z, 'u', z, 'Pmax', z);
-            r.totalcost = sum(om.eval_quad_cost(mdo.QP.x, 'Rcost', {t,j,k}));
+            r.totalcost = sum(mdo.om.eval_quad_cost(mdo.QP.x, 'Rcost', {t,j,k}));
             r.R(r.igr) = mdo.QP.x(vv.i1.R(t,j,k):vv.iN.R(t,j,k)) * baseMVA;
             for gg = r.igr
               iz = find(r.zones(:, gg));
@@ -2296,11 +2280,11 @@ if mpopt.most.solve_model
     end
     mdo.results.f = mdo.QP.f;
   end   % if success
+  mdo.results.success = success;
+  mdo.results.SolveTime = toc(t0);
 end     % if mpopt.most.solve_model
 
-mdo.results.success = success;
 mdo.results.SetupTime = et_setup;
-mdo.results.SolveTime = toc(t0);
 
 if verbose
   fprintf('- MOST: Done.\n\n');
