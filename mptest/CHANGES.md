@@ -2,6 +2,15 @@ Change history for MP-Test
 ==========================
 
 
+Changes since 7.0
+-----------------
+
+#### 12/6/19
+  - Improve handling of complex quantities in `t_is()`. Now displays
+    differences in imaginary parts as well when there is a mismatch.
+    Previously, it would show only the real parts which could be identical.
+
+
 Version 7.0 - *Jun 20, 2019*
 ----------------------------
 

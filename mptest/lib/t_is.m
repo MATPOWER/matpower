@@ -81,6 +81,12 @@ else
     max_diff = 0;
 end
 
+if isreal(got) && isreal(expected)
+    cplx = 0;
+else
+    cplx = 1;
+end
+
 t_ok(condition, msg);
 if ~condition && ~t_quiet
     if max_diff > 0
@@ -102,8 +108,14 @@ if ~condition && ~t_quiet
                 idxstr = sprintf('%d,', idx{1:end-1});
                 idxstr = sprintf('(%s%d)', idxstr, idx{end});
             end
-            fprintf('\n%14s  %16g  %16g  %16g', ...
-                idxstr, full(got(k(u))), full(ex), full(abs(got_minus_expected(k(u)))));
+            if cplx
+                fprintf('\n%14s  %16s  %16s  %16g', ...
+                    idxstr, format_complex(full(got(k(u))), '%g'), ...
+                            format_complex(full(ex), '%g'), full(abs(got_minus_expected(k(u)))));
+            else
+                fprintf('\n%14s  %16g  %16g  %16g', ...
+                    idxstr, full(got(k(u))), full(ex), full(abs(got_minus_expected(k(u)))));
+            end
             if u == kk
                 fprintf('  *');
                 idxstrkk = idxstr;
@@ -126,3 +138,11 @@ end
 if nargout
     ok = condition;
 end
+
+function s = format_complex(v, fmt)
+if imag(v) < 0
+    sgn = ' - ';
+else
+    sgn = ' + ';
+end
+s = sprintf([fmt sgn fmt 'i'], real(v), abs(imag(v)));

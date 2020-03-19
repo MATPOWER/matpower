@@ -31,11 +31,15 @@ global t_skip_cnt;
 if nargin < 2 || strcmp(msg, '')
     msg = '';
 else
-    msg = [' : ', msg];
+    msg = [' - ', msg];
 end
 
 t_skip_cnt = t_skip_cnt + cnt;
 if ~t_quiet
-    fprintf('skipped tests %d..%d%s\n', t_counter, t_counter+cnt-1, msg);
+    if cnt == 1
+        fprintf('skipped %d%s\n', t_counter, msg);
+    else
+        fprintf('skipped %d..%d%s\n', t_counter, t_counter+cnt-1, msg);
+    end
 end
 t_counter = t_counter + cnt;
