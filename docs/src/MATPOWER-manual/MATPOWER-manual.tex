@@ -6436,13 +6436,9 @@ name & description \\
 name & description \\
 \midrule
 \code{dcopf\_solver}	& sets up and solves DC OPF problem using \code{@opt\_model/solve()}\tnote{\dag}	\\
-\code{fmincopf\_solver}	& sets up and solves OPF problem using \code{fmincon}, \matlab{} Opt Toolbox	\\
-\code{ipoptopf\_solver}	& sets up and solves OPF problem using \ipopt{}\tnote{\ddag}	\\
-\code{ktropf\_solver}	& sets up and solves OPF problem using \knitro{}\tnote{\ddag}	\\
-\code{mipsopf\_solver}	& sets up and solves OPF problem using \mips{}	\\
-\code{mopf\_solver}	& sets up and solves OPF problem using MINOPF\tnote{\ddag}	\\
+\code{mopf\_solver}	& sets up and solves AC OPF problem using MINOPF\tnote{\ddag}	\\
 \code{nlpopf\_solver}	& sets up and solves AC OPF problem using \code{@opt\_model/solve()}\tnote{\dag}	\\
-\code{tspopf\_solver}	& sets up and solves OPF problem using PDIPM, SC-PDIPM or TRALM\tnote{\ddag}	\\
+\code{tspopf\_solver}	& sets up and solves AC OPF problem using PDIPM, SC-PDIPM or TRALM\tnote{\ddag}	\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -8442,6 +8438,13 @@ to use voltage squared, resulting in simpler derivatives.
     \begin{itemize}
     \item \code{foo()} -- use \code{bar()} instead.
     \end{itemize}
+\item Removed functions:
+    \begin{itemize}
+    \item \code{fmincopf\_solver()} -- functionality now covered by \code{nlpopf\_solver()}.
+    \item \code{ipoptopf\_solver()} -- functionality now covered by \code{nlpopf\_solver()}.
+    \item \code{ktropf\_solver()} -- functionality now covered by \code{nlpopf\_solver()}.
+    \item \code{mipsopf\_solver()} -- functionality now covered by \code{nlpopf\_solver()}.
+    \end{itemize}
 \end{itemize}
 
 % \pagebreak
@@ -8457,7 +8460,7 @@ sparsity structure). \emph{Thanks to Drosos Kourounis.}
 \item Fix CPLEX 12.10 compatibility issue \#90.
 \item Fix bug \#89 where running a power flow with \code{pf.enforce\_q\_lims} enabled and voltage dependent ZIP loads produced incorrect results. \emph{Thanks to Florian.}
 \item Fix issue with missing objective function value from \code{miqps\_mosek()} and \code{qps\_mosek()} when return status is ``Stalled at or near optimal solution.''
-\item Fix bug in \code{ktropf\_solver()} where Artelys Knitro was still using \code{fmincon} options.
+\item Fix bug orginally in \code{ktropf\_solver()} (code now moved to \code{nlps\_knitro()}) where Artelys Knitro was still using \code{fmincon} options.
 \end{itemize}
 
 \subsubsection*{Incompatible Changes}
