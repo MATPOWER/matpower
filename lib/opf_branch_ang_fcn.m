@@ -1,6 +1,6 @@
-function [VaDif, dVaDif] = opf_branch_ang_fcn(x, Aang, lang, uang, iang, mpopt);
+function [VaDif, dVaDif] = opf_branch_ang_fcn(x, Aang, lang, uang);
 %OPF_BRANCH_ANG_FCN  Evaluates branch angle difference constraints and gradients.
-%   [VADIF, DVADIF] = OPF_BRANCH_ANG_FCN(X, AANG, LANG, UANG, IANG, MPOPT);
+%   [VADIF, DVADIF] = OPF_BRANCH_ANG_FCN(X, AANG, LANG, UANG);
 %
 %   Computes the lower and upper constraints on branch angle differences
 %   for voltages in cartesian coordinates. Computes constraint vectors and
@@ -14,21 +14,19 @@ function [VaDif, dVaDif] = opf_branch_ang_fcn(x, Aang, lang, uang, iang, mpopt);
 %     AANG : constraint matrix, see MAKEAANG
 %     LANG : lower bound vector, see MAKEAANG
 %     UANG : upper bound vector, see MAKEAANG
-%     IANG : index vector of branches corresponding to rows of AANG, LANG, UANG
-%     MPOPT : MATPOWER options struct
 %
 %   Outputs:
 %     VADIF  : constraint vector [ lang - Aang * Va; Aang * Va - uang ]
 %     DVADIF : (optional) constraint gradients
 %
 %   Examples:
-%       VaDif = opf_branch_ang_fcn(x, Aang, lang, uang, iang, mpopt);
-%       [VaDif, dVaDif] = opf_branch_ang_fcn(x, Aang, lang, uang, iang, mpopt);
+%       VaDif = opf_branch_ang_fcn(x, Aang, lang, uang);
+%       [VaDif, dVaDif] = opf_branch_ang_fcn(x, Aang, lang, uang);
 %
 %   See also OPF_BRANCH_ANG_HESS
 
 %   MATPOWER
-%   Copyright (c) 2018, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2018-2020, Power Systems Engineering Research Center (PSERC)
 %   by Baljinnyam Sereeter, Delft University of Technology
 %   and Ray Zimmerman, PSERC Cornell
 %

@@ -39,17 +39,13 @@ n = length(idx);            %% number of buses with voltage limits
 %%----- evaluate Hessian of voltage limit constraints -----
 nlam = length(lambda) / 2;
 if nlam
-    lamVmin = lambda(1:nlam);
-    lamVmax = lambda((1:nlam)+nlam);
+    lam = lambda(nlam+1:2*nlam) - lambda(1:nlam);   %% lamVmax - lamVmin
 else    %% keep dimensions of empty matrices/vectors compatible
-    lamVmin = zeros(0,1);
-    lamVmax = zeros(0,1);
+    lam = zeros(0,1);
 end
 
-dlamVmin = sparse(idx, idx, 2*lamVmin, nb, nb);
-dlamVmax = sparse(idx, idx, 2*lamVmax, nb, nb);
+dlam = sparse(idx, idx, 2*lam, nb, nb);
 zz = sparse(nb, nb);
 
 %% construct Hessian
-d2Vlims =  -[dlamVmin zz; zz dlamVmin] + ...
-            [dlamVmax zz; zz dlamVmax];
+d2Vlims = [dlam zz; zz dlam];

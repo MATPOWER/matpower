@@ -332,8 +332,8 @@ else                %% AC model
     end
     fcn_vlim = @(x)opf_vlim_fcn(x, mpc, viq, mpopt);
     hess_vlim = @(x, lam)opf_vlim_hess(x, lam, mpc, viq, mpopt);
-    fcn_ang = @(x)opf_branch_ang_fcn(x, Aang, lang, uang, iang, mpopt);
-    hess_ang = @(x, lam)opf_branch_ang_hess(x, lam, Aang, lang, uang, iang, mpopt);
+    fcn_ang = @(x)opf_branch_ang_fcn(x, Aang, lang, uang);
+    hess_ang = @(x, lam)opf_branch_ang_hess(x, lam, Aang, lang, uang);
   end
   
   %% nonlinear cost functions
@@ -381,11 +381,11 @@ om = opf_model(mpc);
 if ~isempty(pwl1)
   om.userdata.pwl1 = pwl1;
 end
+om.userdata.iang = iang;
 if dc
   %% user data
   om.userdata.Bf = Bf;
   om.userdata.Pfinj = Pfinj;
-  om.userdata.iang = iang;
 
   %% optimization variables
   om.add_var('Va', nb, Va, Val, Vau);
@@ -403,7 +403,6 @@ if dc
 else
   %% user data
   om.userdata.Apqdata = Apqdata;
-  om.userdata.iang = iang;
 
   %% optimization variables
   if vcart
