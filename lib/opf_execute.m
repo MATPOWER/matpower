@@ -167,7 +167,6 @@ if success
       %% compute g, dg, unless already done by post-v4.0 MINOPF or TSPOPF
       if ~isfield(raw, 'dg')
         mpc = om.get_mpc();
-        [Ybus, Yf, Yt] = makeYbus(mpc.baseMVA, mpc.bus, mpc.branch);
         [g, geq, dg, dgeq] = opf_consfcn(results.x, om);
         raw.g = [ geq; g];
         raw.dg = [ dgeq'; dg'];   %% true Jacobian organization

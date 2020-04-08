@@ -235,7 +235,7 @@ else
     success = 0;
     raw.output.message = 'MATPOWER case contains no connected buses';
     if mpopt.verbose
-        fprintf('OPF not valid : %s', raw.output.message);
+        fprintf('OPF not valid : %s\n', raw.output.message);
     end
 end
 results.success = success;  %% make success available to subsequent callbacks

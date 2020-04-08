@@ -386,7 +386,7 @@ else
     success = 0;
     its = 0;
     if mpopt.verbose
-        fprintf('Power flow not valid : MATPOWER case contains no connected buses');
+        fprintf('Power flow not valid : MATPOWER case contains no connected buses\n');
     end
 end
 mpc.et = toc(t0);
