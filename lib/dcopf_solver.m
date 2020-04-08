@@ -126,8 +126,10 @@ bus(:, [LAM_P, LAM_Q, MU_VMIN, MU_VMAX]) = zeros(nb, 4);
 gen(:, [MU_PMIN, MU_PMAX, MU_QMIN, MU_QMAX]) = zeros(size(gen, 1), 4);
 branch(:, [MU_SF, MU_ST]) = zeros(nl, 2);
 bus(:, LAM_P)       = (mu_u(ll.i1.Pmis:ll.iN.Pmis) - mu_l(ll.i1.Pmis:ll.iN.Pmis)) / baseMVA;
-branch(il, MU_SF)   = mu_u(ll.i1.Pf:ll.iN.Pf) / baseMVA;
-branch(il, MU_ST)   = mu_l(ll.i1.Pf:ll.iN.Pf) / baseMVA;
+if ~isempty(il)
+    branch(il, MU_SF)   = mu_u(ll.i1.Pf:ll.iN.Pf) / baseMVA;
+    branch(il, MU_ST)   = mu_l(ll.i1.Pf:ll.iN.Pf) / baseMVA;
+end
 gen(:, MU_PMIN)     = muLB(vv.i1.Pg:vv.iN.Pg) / baseMVA;
 gen(:, MU_PMAX)     = muUB(vv.i1.Pg:vv.iN.Pg) / baseMVA;
 pimul = [
