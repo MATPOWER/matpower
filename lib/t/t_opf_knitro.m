@@ -451,8 +451,8 @@ for k = 1:length(options)
     };
     r = runopf(mpc, mpopt);
     t_ok(r.success, [t 'success']);
-    t_is(r.gen(1, PG) * r.gen(2, PG) / 100, r.gen(6, PG), 8, t);
-    t_is(r.gen(6, PG), 20.751163, 5, t);
+    t_is(r.gen(1, PG) * r.gen(2, PG) / 100, r.gen(6, PG), 8, [t 'Pg(1)*Pg(2)=Pg(6)']);
+    t_is(r.gen(6, PG), 20.751163, 5, [t 'Pg(6)']);
     %% check for indexing error, issue #77
     t_is(r.raw.pimul(61), 0, 6, [t 'issue #77']);
     t_is(r.mu.nln.u(61), 0, 6, [t 'issue #77']);
