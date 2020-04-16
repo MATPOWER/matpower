@@ -26,8 +26,10 @@ AC_name = {
     'Fast Decoupled (BX)',
     'Gauss-Seidel'
 };
+% AC_alg = {'NR'};
+% AC_name = {'Newton (default, power-polar)'};
 
-t_begin(length(AC_alg)*44, quiet);
+t_begin(length(AC_alg)*48, quiet);
 
 casefile = 't_case9_pf';
 if quiet
@@ -77,6 +79,7 @@ mpc1 = mpc;
 %%-----  AC power flow  -----
 %% get solved AC power flow case from MAT-file
 load soln9_pf;      %% defines bus_soln, gen_soln, branch_soln
+soln_vg = load('soln9_pf_vg');
 
 %% run AC PF
 for k = 1:length(AC_alg)
@@ -94,9 +97,19 @@ for k = 1:length(AC_alg)
     t_is(r.gen, gen_soln, 6, [t 'gen']);
     t_is(r.branch, branch_soln, 6, [t 'branch']);
 
+    %% check when Vg ~= 1
+    t = sprintf('%s - Vg ~= 1 : ', AC_alg{k});
+    mpopt = mpoption(mpopt, 'verbose', 0);
+    mpc = loadcase(casefile);
+    mpc.gen(:, VG) = [1.04; 1.025; 1.025];
+    r = runpf(mpc, mpopt);
+    t_ok(r.success, [t 'success']);
+    t_is(r.bus, soln_vg.bus_soln, 6, [t 'bus']);
+    t_is(r.gen, soln_vg.gen_soln, 6, [t 'gen']);
+    t_is(r.branch, soln_vg.branch_soln, 6, [t 'branch']);
+
     %% check Qg distribution, when Qmin = Qmax
     t = sprintf('%s - check Qg : ', AC_alg{k});
-    mpopt = mpoption(mpopt, 'pf.alg', AC_alg{k}, 'verbose', 0);
     mpc = loadcase(casefile);
     mpc.gen(1, [QMIN QMAX]) = [20 20];
     r = runpf(mpc, mpopt);

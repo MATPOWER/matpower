@@ -13,6 +13,8 @@ Changes since 7.0
 -----------------
 
 #### 4/16/20
+  - Add test for AC power flow for case with generator voltage setpoint
+    not equal to 1 p.u.
   - Split power flow tests (`t_pf`) into separate ones for AC (`t_pf_ac`)
     and DC (`t_pf_dc`) power flow.
 
