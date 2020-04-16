@@ -1,8 +1,8 @@
-function t_pf(quiet)
-%T_PF  Tests for power flow solvers.
+function t_pf_ac(quiet)
+%T_PF_AC  Tests for AC power flow solvers.
 
 %   MATPOWER
-%   Copyright (c) 2004-2019, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -27,7 +27,7 @@ AC_name = {
     'Gauss-Seidel'
 };
 
-t_begin(length(AC_alg)*44 + 14, quiet);
+t_begin(length(AC_alg)*44, quiet);
 
 casefile = 't_case9_pf';
 if quiet
@@ -222,46 +222,6 @@ for k = 1:length(AC_alg)
     t_is(r.bus(:, BUS_TYPE), bt, 12, [t 'bus type']);
     t_is(r.gen(:, QG), [-6.30936644; 30; 29; 15; 15], 6, [t 'Qg']);
 end
-
-%%-----  DC power flow  -----
-mpopt = mpoption(mpopt, 'verbose', verbose);
-%% get solved AC power flow case from MAT-file
-load soln9_dcpf;        %% defines bus_soln, gen_soln, branch_soln
-
-%% run DC PF
-t = 'DC PF : ';
-[baseMVA, bus, gen, branch, success, et] = rundcpf(casefile, mpopt);
-t_ok(success, [t 'success']);
-t_is(bus, bus_soln, 6, [t 'bus']);
-t_is(gen, gen_soln, 6, [t 'gen']);
-t_is(branch, branch_soln, 6, [t 'branch']);
-r = rundcpf(casefile, mpopt);
-t_ok(r.success, [t 'success']);
-t_is(r.bus, bus_soln, 6, [t 'bus']);
-t_is(r.gen, gen_soln, 6, [t 'gen']);
-t_is(r.branch, branch_soln, 6, [t 'branch']);
-
-%% network with islands
-t = sprintf('DC PF - network w/islands : ');
-mpc  = mpc1;
-%mpopt = mpoption(mpopt, 'out.bus', 1, 'out.gen', 1, 'out.all', -1, 'verbose', 2);
-r = rundcpf(mpc, mpopt);
-t_ok(r.success, [t 'success']);
-t_is(r.bus( 1:9,  VA), bus_soln(:, VA), 8, [t 'voltage angles 1']);
-t_is(r.bus(10:18, VA), bus_soln(:, VA), 8, [t 'voltage angles 2']);
-Pg = [gen_soln(1, PG)-30; 30; gen_soln(2:3, PG)];
-t_is(r.gen(1:4, PG), Pg, 8, [t 'active power generation 1']);
-t_is(r.gen(5:8, PG), Pg, 8, [t 'active power generation 1']);
-
-%% island without slack bus (catch singluar matrix?)
-t = sprintf('DC PF - network w/islands w/o slack : ');
-k = find(mpc.bus(:, BUS_TYPE) == REF);
-mpc.bus(k(2), BUS_TYPE) = PV;
-warn_state = warning;
-warning('off', 'all');  %% turn of (near-)singular matrix warnings
-r = rundcpf(mpc, mpopt);
-warning(warn_state);
-t_is(r.success, 0, 12, [t 'success = 0']);
 
 t_end;
 

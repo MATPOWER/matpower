@@ -12,6 +12,10 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.0
 -----------------
 
+#### 4/16/20
+  - Split power flow tests (`t_pf`) into separate ones for AC (`t_pf_ac`)
+    and DC (`t_pf_dc`) power flow.
+
 #### 3/19/20
   - Remove obsolete functions whose functionality is now covered by
     `nlpopf_solver()`:

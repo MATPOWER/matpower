@@ -220,7 +220,7 @@ Bug fixes and features **should come with tests**, either added to the
 appropriate existing test function in `lib/t`, or in a new test function
 with a descriptive name beginning with `t_`, in which case it should also
 be added to `test_matpower.m`. See the documentation for [MP-Test][3] and
-the existing MATPOWER test files (e.g. [`t_pf`](lib/t/t_pf.m)) for
+the existing MATPOWER test files (e.g. [`t_pf_dc`](lib/t/t_pf_dc_.m)) for
 examples of how to write tests.
 
 You can run your tests by typing the name of your test function at the
