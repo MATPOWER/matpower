@@ -502,6 +502,9 @@ N40 = 116;              %% dimension of MATPOWER 4.0 options vector
 N32 = 93;               %% dimension of MATPOWER 3.2 options vector
 v = mpoption_version;   %% version number of MATPOWER options struct
 
+%% cache nested_struct_copy options to speed things up
+persistent nsc_opt;
+
 %% initialize flags and arg counter
 have_opt0 = 0;          %% existing options struct or vector provided?
 have_old_style_ov = 0;  %% override options using old-style names?
@@ -698,8 +701,7 @@ if ~isempty(ov)
     if have_old_style_ov
         opt = apply_old_mpoption_overrides(opt, ov);
     else
-        persistent nsc_opt;     %% cache this to speed things up
-        if ~isstruct(nsc_opt)
+        if ~isstruct(nsc_opt)   %% nsc_opt is cached to speed things up
             vf = nested_struct_copy(mpoption_default(), mpoption_info_mips('V'));
             vf = nested_struct_copy(vf, mpoption_optional_fields());
             ex = struct(...
