@@ -545,9 +545,7 @@ if nw
             %%          (Cw'*MN - 1/2 * MR'*(H+H')*MN)*x +
             %%          1/2 * MR'*H*MR - Cw'*MR
             %%   = 1/2 * x'*Q*w + c'*x + k
-    
-            [N, H, Cw, rh, mm] = deal(cp.N, cp.H, cp.Cw, cp.rh, cp.mm);
-            nw = size(N, 1);            %% number of general cost vars, w
+            
             M    = sparse(1:nw, 1:nw, mm, nw, nw);
             MN   = M * N;
             MR   = M * rh;
