@@ -114,11 +114,12 @@ classdef opf_model < opt_model
                 end
             end
 
+            %% call parent constructor
             om@opt_model(args{:});
             
             if have_mpc
                 om.mpc = mpc;
             end
         end
-    end
-end
+    end     %% methods
+end         %% classdef

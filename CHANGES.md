@@ -12,6 +12,12 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.0
 -----------------
 
+#### 4/29/20
+  - Move code related to solver interfaces, `@opt_model` and a
+    few other functions like `have_fcn()` and `nested_struct_copy()`
+    into a separate package called [MP-Opt-Model][27], now included
+    in a separate `mp-opt-model` sub-directory.
+
 #### 4/28/20
   - Move deprecated `@opt_model` methods and code related to legacy
     user-defined OPF costs from `@opt_model` to `@opf_model`.
@@ -3043,3 +3049,4 @@ First Public Release – *Jun 25, 1997*
 [24]: https://github.com/MATPOWER/matpower/issues/71
 [25]: https://github.com/MATPOWER/matpower/issues/90
 [26]: https://github.com/MATPOWER/matpower/issues/89
+[27]: https://github.com/MATPOWER/mp-opt-model

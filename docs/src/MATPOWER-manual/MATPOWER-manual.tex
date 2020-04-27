@@ -159,6 +159,12 @@
 \newcommand{\mipslink}[0]{\href{\mipsurl}{\mips{}}}
 \newcommand{\mipsname}[0]{{{\bf M}{\sc atpower} \textbf{I}nterior \textbf{P}oint \textbf{S}olver}}
 \newcommand{\mipsver}[0]{1.3.1}
+\newcommand{\mpom}[0]{{MP-Opt-Model}}
+\newcommand{\mpomurl}[0]{https://github.com/MATPOWER/mp-opt-model}
+\newcommand{\mpomlink}[0]{\href{\mpomurl}{\mpom{}}}
+\newcommand{\mpomname}[0]{\mpom{}}
+% \newcommand{\mpomname}[0]{{{\bf M}{\sc at}{\bf P}{\sc ower} \textbf{Opt}imization \textbf{Model}}}
+\newcommand{\mpomver}[0]{0.8}
 \newcommand{\most}[0]{{MOST}}
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
@@ -193,6 +199,7 @@
 %\newcommand{\mipspath}[1]{\textsf{\textsl{{\relsize{-1.0}\textless{}\mbox{MIPS}\textgreater{}}}}\code{{#1}}}  % requires package relsize
 \newcommand{\mptestpath}[1]{\mppath{}\code{/mptest{#1}}}
 \newcommand{\mipspath}[1]{\mppath{}\code{/mips{#1}}}
+\newcommand{\mpompath}[1]{\mppath{}\code{/mp-opt-model{#1}}}
 \newcommand{\mostpath}[1]{\mppath{}\code{/most{#1}}}
 \newcommand{\baseMVA}[0]{\code{baseMVA}}
 \newcommand{\bus}[0]{\code{bus}}
@@ -4227,6 +4234,7 @@ The \code{makeYbus} function builds the bus admittance matrix and branch admitta
 
 \subsection{Miscellaneous}
 \label{sec:othermiscfuncs}
+
 \subsubsection{\tt define\_constants}
 \begin{Code}
   define_constants
@@ -4244,43 +4252,12 @@ Specifically, it includes all of the constants defined by \code{idx\_bus},  \cod
 The \code{feval\_w\_path} function is identical to \matlab{}'s own \code{feval}, except that the function \code{f} need not be in the \matlab{} path if it is defined in a file in the path specified by \code{fpath}. Assumes that the current working directory is always first in the \matlab{} path.
 
 \subsubsection{\tt have\_fcn}
-\begin{Code}
-  TorF = have_fcn(tag)
-  TorF = have_fcn(tag, toggle)
-  ver_str = have_fcn(tag, 'vstr')
-  ver_num = have_fcn(tag, 'vnum')
-  rdate   = have_fcn(tag, 'date')
-  info    = have_fcn(tag, 'all')
-\end{Code}
 
-The \code{have\_fcn} function provides a unified mechanism for testing for optional functionality, such as the presence of certain solvers, or to detect whether the code is running under \matlab{} or Octave. Since its results are cached they allow for a very quick way to check frequently for functionality that may initially be a bit more costly to determine. For installed functionality, \code{have\_fcn} also determines the installed version and
-release date, if possible. The optional second argument, when it is a string, defines which value
-is returned, as follows:
-\begin{itemize}
-\item{\em{empty}} -- 1 if optional functionality is available, 0 if not available
-\item{\codeq{vstr}} -- version number as a string (e.g. \codeq{3.11.4})
-\item{\codeq{vnum}} -- version number as numeric value (e.g. 3.011004)
-\item{\codeq{date}} -- release date as a string (e.g. \codeq{20-Jan-2015})
-\item{\codeq{all}} -- struct with fields named \code{av} (for ``availability''), \code{vstr}, \code{vnum} and \code{date}, and values corresponding to each of the above, respectively.
-\end{itemize}
-
-Alternatively, the optional functionality specified by \code{tag} can be toggled OFF or ON by calling \code{have\_fcn} with a numeric second argument \code{toggle} with one of the following values:
-\begin{itemize}
-\item{0} -- turn OFF the optional functionality
-\item{1} -- turn ON the optional functionality (if available)
-\item{$-1$} -- toggle the ON/OFF state of the optional functionality
-\end{itemize}
+Now included as part of \mpomlink{} (see \mpompath{}).
 
 \subsubsection{\tt mpopt2qpopt}
-\begin{Code}
-  qpopt = mpopt2qpopt(mpopt)
-  qpopt = mpopt2qpopt(mpopt, model)
-  qpopt = mpopt2qpopt(mpopt, model, alg)
-\end{Code}
 
-The \code{mpopt2qpopt} function returns an options struct suitable for \code{qps\_matpower}, \code{miqps\_matpower} or one of the solver specific equivalents. It is constructed from the relevant portions of \code{mpopt}, a \matpower{} options struct. The \code{model} argument specifies whether the problem to be solved is an LP, QP, MILP or MIQP problem to allow for the selection of a suitable default solver. The final \code{alg} argument allows the solver to be set explicitly (in \code{qpopt.alg}). By default this value is taken from \code{mpopt.opf.dc.solver}.
-
-When the solver is set to \codeq{DEFAULT}, this function also selects the best available solver that is applicable\footnote{\glpk{} is not available for problems with quadratic costs (QP and MIQP), BPMPD and \mips{} are not available for mixed integer problems (MILP and MIQP), and the \ot{} is not an option for problems that combine the two (MIQP).} to the specific problem class, based on the following precedence: \gurobi{}, \cplex{}, \mosek{}, \ot{}, \glpk{}, BPMPD, \mips{}.
+Now included as part of \mpomlink{} (see \mpompath{}).
 
 \subsubsection{\tt mpver}
 \begin{Code}
@@ -4292,12 +4269,8 @@ When the solver is set to \codeq{DEFAULT}, this function also selects the best a
 The \code{mpver} function returns the current \matpower{} version number. With the optional \codeq{all} argument, it returns a struct with the fields \codeq{Name}, \codeq{Version}, \codeq{Release} and \codeq{Date} (all strings). Calling \code{mpver} without assigning the return value prints the version and release date of the current installation of \matpower{}, \matlab{} (or Octave), the \ot{}, \mips{} and any optional \matpower{} packages.
 
 \subsubsection{\tt nested\_struct\_copy}
-\begin{Code}
-  ds = nested_struct_copy(d, s)
-  ds = nested_struct_copy(d, s, opt)
-\end{Code}
 
-The \code{nested\_struct\_copy} function copies values from a source struct \code{s} to a destination struct \code{d} in a nested, recursive manner. That is, the value of each field in \code{s} is copied directly to the corresponding field in \code{d}, unless that value is itself a struct, in which case the copy is done via a recursive call to \code{nested\_struct\_copy}. Certain aspects of the copy behavior can be controled via the optional options struct \code{opt}, including the possible checking of valid field names.
+Now included as part of \mpomlink{} (see \mpompath{}).
 
 
 %%------------------------------------------
@@ -6341,14 +6314,14 @@ name & description \\
 %\renewcommand{\arraystretch}{1.2}
 \centering
 \begin{threeparttable}
-\caption{OPF Model Objects}
+\caption{OPF Model Class}
 \label{tab:opf_model}
 \footnotesize
 \begin{tabular}{lp{0.66\textwidth}}
 \toprule
 name & description \\
 \midrule
-\code{@opf\_model/}	& OPF model object used to encapsulate OPF problem formulation	\\
+\code{@opf\_model/}	& OPF model class used to encapsulate OPF problem formulation (subclass of \code{@opt\_model}, now included as part of \mpomlink{}, see \mpompath{}.)	\\
 \code{~~add\_named\_set}\tnote{\dag}	& adds a named subset of costs, constraints or variables to the model	\\
 \code{~~add\_legacy\_cost}	& adds a named subset of legacy user-defined costs to the model	\\
 \code{~~display}	& called to display object when statement not ended with semicolon	\\
@@ -6358,60 +6331,11 @@ name & description \\
 \code{~~opf\_model}	& constructor for the \code{opf\_model} class	\\
 \code{~~params\_legacy\_cost}	& returns individual or full set of legacy user cost coefficients	\\
 \code{~~valid\_named\_set\_type}\tnote{\dag}	& returns label for given named set type if valid, empty otherwise	\\
-\code{@opt\_model/}	& optimization model object (\code{@opf\_model} base class)	\\
-\code{~~add\_lin\_constraint}	& adds a named subset of linear constraints to the model	\\
-\code{~~add\_named\_set}\tnote{\dag}	& adds a named subset of costs, constraints or variables to the model	\\
-\code{~~add\_nln\_constraint}	& adds a named subset of nonlinear constraints to the model	\\
-\code{~~add\_nln\_cost}	& adds a named subset of general nonlinear costs to the model	\\
-\code{~~add\_quad\_cost}	& adds a named subset of quadratic costs to the model	\\
-\code{~~add\_var}	& adds a named subset of optimization variables to the model	\\
-\code{~~describe\_idx}	& identifies variable, constraint or cost row indices	\\
-\code{~~display}	& called to display object when statement not ended with semicolon	\\
-\code{~~eval\_nln\_constraint}	& returns full set of nonlinear equality or inequality constraints and their gradients	\\
-\code{~~eval\_nln\_constraint\_hess}	& returns Hessian for full set of nonlinear equality or inequality constraints	\\
-\code{~~eval\_nln\_cost}	& evaluates general nonlinear costs and derivatives	\\
-\code{~~eval\_quad\_cost}	& evaluates quadratic costs and derivatives	\\
-\code{~~get\_idx}	& returns the idx struct for vars, lin/nln constraints, costs	\\
-\code{~~get\_userdata}	& returns values of user data stored in the model	\\
-\code{~~getN}	& returns the number of variables, constraints or cost rows\tnote{\ddag}	\\
-\code{~~get}	& returns the value of a field of the object	\\
-\code{~~init\_indexed\_name}	& initializes dimensions for indexed named set of costs, constraints or variables	\\
-\code{~~opt\_model}	& constructor for the \code{opt\_model} class	\\
-\code{~~params\_lin\_constraint}	& returns individual or full set of linear constraint parameters	\\
-\code{~~params\_nln\_cost}	& returns individual general nonlinear cost parameters	\\
-\code{~~params\_quad\_cost}	& returns individual or full set of quadratic cost coefficients	\\
-\code{~~params\_var}	& returns initial values, bounds and variable type for optimimization vector~$\hat{x}$\tnote{\ddag}	\\
-\code{~~valid\_named\_set\_type}\tnote{\dag}	& returns label for given named set type if valid, empty otherwise	\\
-\code{~~varsets\_cell2struct}\tnote{\dag}	& converts variable set list from cell array to struct array	\\
-\code{~~varsets\_idx}	& returns vector of indices into opt vector~$\hat{x}$ for variable set list	\\
-\code{~~varsets\_len}	& returns total number of optimization variables for variable set list	\\
-\code{~~varsets\_x}	& assembles cell array of sub-vectors of opt vector~$\hat{x}$ specified by variable set list	\\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
- \scriptsize
- \item [\dag] {Private method for internal use only.}
- \item [\ddag] {For all, or alternatively, only for a named (and possibly indexed) subset.}
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-
-\begin{table}[!ht]
-%\renewcommand{\arraystretch}{1.2}
-\centering
-\begin{threeparttable}
-\caption{Deprecated \code{@opt\_model} Methods}
-\label{tab:opf_model_dep}
-\footnotesize
-\begin{tabular}{lp{0.66\textwidth}}
-\toprule
-name & description \\
-\midrule
-\code{@opt\_model/}	& optimization model object (\code{@opf\_model} base class)	\\
-\code{~~add\_constraints}	& use \code{add\_lin\_constraint} or \code{add\_nln\_constraint} instead\tnote{\dag}	\\
-\code{~~add\_costs}	& use \code{add\_legacy\_cost}, \code{add\_nln\_cost} or \code{add\_quad\_cost} instead\tnote{\dag}	\\
-\code{~~add\_vars}	& use \code{add\_var} instead\tnote{\dag}	\\
+& \\
+\multicolumn{2}{c}{\emph{deprecated methods -- replaced by methods from \mpomlink{}}} \\
+\code{~~add\_constraints}	& use \code{add\_lin\_constraint} or \code{add\_nln\_constraint} instead\tnote{\ddag}	\\
+\code{~~add\_costs}	& use \code{add\_legacy\_cost}, \code{add\_nln\_cost} or \code{add\_quad\_cost} instead\tnote{\ddag}	\\
+\code{~~add\_vars}	& use \code{add\_var} instead\tnote{\ddag}	\\
 \code{~~build\_cost\_params}	& \emph{no longer needed}	\\
 \code{~~compute\_cost}	& use \code{eval\_legacy\_cost} instead	\\
 \code{~~get\_cost\_params}	& use \code{params\_legacy\_cost} instead	\\
@@ -6421,7 +6345,8 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {Or \code{init\_indexed\_name} if simply initializing the dimensions for an indexed named set.}
+ \item [\dag] {Private method for internal use only.}
+ \item [\ddag] {Or \code{init\_indexed\_name} if simply initializing the dimensions for an indexed named set.}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -6476,12 +6401,9 @@ name & description \\
 \code{opf\_branch\_ang\_hess}\tnote{\dag}	& evaluates Hessian of AC branch angle difference limit constraints\tnote{\ddag}	\\
 \code{opf\_branch\_flow\_fcn}\tnote{\dag}	& evaluates AC branch flow limit constraints and gradients	\\
 \code{opf\_branch\_flow\_hess}\tnote{\dag}	& evaluates Hessian of AC branch flow limit constraints	\\
-\code{opf\_consfcn}\tnote{\dag}	& evaluates function and gradients for AC OPF nonlinear constraints	\\
-\code{opf\_costfcn}\tnote{\dag}	& evaluates function, gradients and Hessian for AC OPF objective function	\\
 \code{opf\_current\_balance\_fcn}\tnote{\dag}	& evaluates AC current balance constraints and gradients	\\
 \code{opf\_current\_balance\_hess}\tnote{\dag}	& evaluates Hessian of AC current balance constraints	\\
 \code{opf\_gen\_cost\_fcn}\tnote{\dag}	& evaluates polynomial generator costs and derivatives	\\
-\code{opf\_hessfcn}\tnote{\dag}	& evaluates the Hessian of the Lagrangian for AC OPF	\\
 \code{opf\_legacy\_user\_cost\_fcn}\tnote{\dag}	& evaluates legacy user-defined costs and derivatives	\\
 \code{opf\_power\_balance\_fcn}\tnote{\dag}	& evaluates AC power balance constraints and gradients	\\
 \code{opf\_power\_balance\_hess}\tnote{\dag}	& evaluates Hessian of AC power balance constraints	\\
@@ -6567,7 +6489,7 @@ name & description\tnote{\dag} \\
 %\renewcommand{\arraystretch}{1.2}
 \centering
 \begin{threeparttable}
-\caption{NLP, LP \& QP Solver Functions}
+\caption{NLP, LP \& QP Solver Functions\tnote{\P}}
 \label{tab:solvers}
 \footnotesize
 \begin{tabular}{p{0.15\textwidth}p{0.78\textwidth}}
@@ -6611,6 +6533,7 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
+ \item [\P] {The functions in this table are now included as part of separate packages, namely \mipslink{} (see \mipspath{}) and \mpomlink{} (see \mpompath{}).}
  \item [\dag] {Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.}
 \end{tablenotes}
 \end{threeparttable}
@@ -6670,7 +6593,7 @@ name & description \\
 \code{gentypes}	& list of standard values for generator unit types, for \code{mpc.gentype}	\\
 \code{get\_losses}	& compute branch losses (and derivatives) as functions of bus voltage	\\
 \code{hasPQcap}	& checks for generator P-Q capability curve constraints	\\
-\code{have\_fcn}	& checks for availability of optional functionality	\\
+\code{have\_fcn}\tnote{\dag}	& checks for availability of optional functionality	\\
 \code{idx\_brch}	& named column index definitions for \branch{} matrix	\\
 \code{idx\_bus}	& named column index definitions for \bus{} matrix	\\
 \code{idx\_cost}	& named column index definitions for \gencost{} matrix	\\
@@ -6682,7 +6605,7 @@ name & description \\
 \code{loadshed}	& computes MW curtailments of dispatchable loads	\\
 \code{mpver}	& prints version information for \matpower{} and optional packages	\\
 \code{modcost}	& modifies \gencost{} by horizontal or vertical scaling or shifting	\\
-\code{nested\_struct\_copy}	& copies the contents of nested structs	\\
+\code{nested\_struct\_copy}\tnote{\dag}	& copies the contents of nested structs	\\
 \code{poly2pwl}	& creates piecewise linear approximation to polynomial cost function	\\
 \code{polycost}	& evaluates polynomial generator cost and its derivatives	\\
 \code{pqcost}	& splits \gencost{} into real and reactive power costs	\\
@@ -6691,6 +6614,10 @@ name & description \\
 \code{total\_load}	& returns vector of total load in each load zone	\\
 \bottomrule
 \end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [\dag] {Now included as part of \mpomlink{} (see \mpompath{}).}
+\end{tablenotes}
 \end{threeparttable}
 \end{table}
 
@@ -6986,6 +6913,36 @@ name & description \\
 %\renewcommand{\arraystretch}{1.2}
 \centering
 \begin{threeparttable}
+\caption{\mpomlink{} Tests\tnote{\dag}}
+\label{tab:mpom}
+\footnotesize
+\begin{tabular}{p{0.28\textwidth}p{0.67\textwidth}}
+\toprule
+name & description \\
+\midrule
+\code{mp-opt-model/lib/}	& 	\\
+\code{~~t/}	& \mpom{} tests	\\
+\code{~~~~test\_mp\_opt\_model}	& runs full \mpom{} test suite	\\
+\code{~~~~t\_have\_fcn}	& runs tests for \code{have\_fcn}	\\
+\code{~~~~t\_miqps\_matpower}	& runs tests for \code{miqps\_matpower}	\\
+\code{~~~~t\_nested\_struct\_copy}	& runs tests for \code{nested\_struct\_copy}	\\
+\code{~~~~t\_nlps\_matpower}	& runs tests for \code{nlps\_matpower}	\\
+\code{~~~~t\_opt\_model}	& runs tests for \code{opt\_model} objects	\\
+\code{~~~~t\_qps\_matpower}	& runs tests for \code{qps\_matpower}	\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [\dag] {These tests are part of \mpomlink{} and are found in \mpompath{/lib/t}.}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
 \caption{Test Data}
 \label{tab:test_data}
 \footnotesize
@@ -7051,7 +7008,6 @@ name & description \\
 \code{t\_feval\_w\_path}	& runs tests for \code{feval\_w\_path}	\\
 \code{t\_get\_losses}	& runs tests for \code{get\_losses}	\\
 \code{t\_hasPQcap}	& runs tests for \code{hasPQcap}	\\
-\code{t\_have\_fcn}	& runs tests for \code{have\_fcn}	\\
 \code{t\_hessian}	& runs tests for 2\textsuperscript{nd} derivative code	\\
 \code{t\_islands}	& runs test for \code{find\_islands} and \code{extract\_islands}	\\
 \code{t\_jacobian}	& runs test for partial derivative code	\\
@@ -7060,17 +7016,13 @@ name & description \\
 \code{t\_makeLODF}	& runs tests for \code{makeLODF}	\\
 \code{t\_makePTDF}	& runs tests for \code{makePTDF}	\\
 \code{t\_margcost}	& runs tests for \code{margcost}	\\
-\code{t\_miqps\_matpower}	& runs tests for \code{miqps\_matpower}	\\
 \code{t\_modcost}	& runs tests for \code{modcost}	\\
 \code{t\_mpoption}	& runs tests for \code{mpoption}	\\
-\code{t\_nested\_struct\_copy}	& runs tests for \code{nested\_struct\_copy}	\\
-\code{t\_nlps\_matpower}	& runs tests for \code{nlps\_matpower}	\\
 \code{t\_off2case}	& runs tests for \code{off2case}	\\
 \code{t\_opf\_model}	& runs tests for \code{opf\_model} and \code{opt\_model} objects	\\
-\code{t\_opf\_model\_legacy}	& runs tests for \code{opf\_model} and \code{opt\_model} objects using legacy (deprecated) \code{add\_constraints} method \\
+\code{t\_opf\_model\_legacy}	& runs tests for \code{opf\_model} and \code{opt\_model} objects using legacy (deprecated) methods \\
 \code{t\_printpf}	& runs tests for \code{printpf}	\\
 \code{t\_psse}	& runs tests for \code{psse2mpc} and related functions	\\
-\code{t\_qps\_matpower}	& runs tests for \code{qps\_matpower}	\\
 \code{t\_runmarket}	& runs tests for \code{runmarket}	\\
 \code{t\_scale\_load}	& runs tests for \code{scale\_load}	\\
 \code{t\_total\_load}	& runs tests for \code{total\_load}	\\
