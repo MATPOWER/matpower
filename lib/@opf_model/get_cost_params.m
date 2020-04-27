@@ -32,7 +32,7 @@ function cp = get_cost_params(om, name, idx)
 cp = om.params_legacy_cost();
 
 if nargin > 1
-    if getN(om, 'cost', name)
+    if om.getN('cost', name)
         if nargin < 3 || isempty(idx)
             if numel(om.cost.idx.i1.(name)) == 1    %% simple named set
                 i1 = om.cost.idx.i1.(name);

@@ -12,6 +12,13 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.0
 -----------------
 
+#### 4/28/20
+  - Move deprecated `@opt_model` methods and code related to legacy
+    user-defined OPF costs from `@opt_model` to `@opf_model`.
+  - **INCOMPATIBLE CHANGE:** Modify order of default output arguments of
+    `opt_model/get_idx()` (again), removing the one related to legacy
+    costs.
+
 #### 4/16/20
   - Add test for AC power flow for case with generator voltage setpoint
     not equal to 1 p.u.

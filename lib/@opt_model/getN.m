@@ -14,20 +14,18 @@ function N = getN(om, set_type, name, idx)
 %       N = om.getN('nli')      : total number of nonlin inequality constraints
 %       N = om.getN('qdc')      : total number of quadratic cost rows
 %       N = om.getN('nlc')      : total number of general nonlinear cost rows
-%       N = om.getN('cost')     : total number of legacy cost rows (in N)
 %       N = om.getN('var', name)    : # of variables in named set
 %       N = om.getN('lin', name)    : # of linear constraints in named set
 %       N = om.getN('nle', name)    : # of nonlin eq cons. in named set
 %       N = om.getN('nli', name)    : # of nonlin ineq cons. in named set
 %       N = om.getN('qdc', name)    : # of quadratic cost rows in named set
 %       N = om.getN('nlc', name)    : # of gen nonlin cost rows in named set
-%       N = om.getN('cost', name)   : # of legacy cost rows (in N) in named set
 %       N = om.getN('var', name, idx) : # of variables in indexed named set
 %
 %   See also OPT_MODEL.
 
 %   MATPOWER
-%   Copyright (c) 2008-2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

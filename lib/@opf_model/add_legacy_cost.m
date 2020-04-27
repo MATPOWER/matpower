@@ -1,9 +1,6 @@
 function om = add_legacy_cost(om, name, idx, varargin)
 %ADD_LEGACY_COST  Adds a set of user costs to the model.
 %
-%   -----  DEPRECATED - Please use one of the following instead:        -----
-%   -----  ADD_QUAD_COST, ADD_NLN_COST, INIT_INDEXED_NAME  -----
-%
 %   OM.ADD_LEGACY_COST(NAME, CP);
 %   OM.ADD_LEGACY_COST(NAME, CP, VARSETS);
 %   OM.ADD_LEGACY_COST(NAME, IDX_LIST, CP);
@@ -67,7 +64,7 @@ function om = add_legacy_cost(om, name, idx, varargin)
 %   See also OPT_MODEL, PARAMS_LEGACY_COST, EVAL_LEGACY_COST.
 
 %   MATPOWER
-%   Copyright (c) 2008-2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

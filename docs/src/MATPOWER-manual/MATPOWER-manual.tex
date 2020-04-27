@@ -6349,11 +6349,16 @@ name & description \\
 name & description \\
 \midrule
 \code{@opf\_model/}	& OPF model object used to encapsulate OPF problem formulation	\\
-\code{~~display}	& called to display object when statement not ended with semicolon	\\
-\code{~~get\_mpc}	& returns the \matpower{} case struct	\\
-\code{~~opf\_model}	& constructor for the \code{opf\_model} class	\\
-\code{@opt\_model/}	& optimization model object (\code{@opf\_model} base class)	\\
+\code{~~add\_named\_set}\tnote{\dag}	& adds a named subset of costs, constraints or variables to the model	\\
 \code{~~add\_legacy\_cost}	& adds a named subset of legacy user-defined costs to the model	\\
+\code{~~display}	& called to display object when statement not ended with semicolon	\\
+\code{~~eval\_legacy\_cost}	& evaluates legacy user costs and derivatives	\\
+\code{~~get\_mpc}	& returns the \matpower{} case struct	\\
+\code{~~init\_indexed\_name}	& initializes dimensions for indexed named set of costs, constraints or variables	\\
+\code{~~opf\_model}	& constructor for the \code{opf\_model} class	\\
+\code{~~params\_legacy\_cost}	& returns individual or full set of legacy user cost coefficients	\\
+\code{~~valid\_named\_set\_type}\tnote{\dag}	& returns label for given named set type if valid, empty otherwise	\\
+\code{@opt\_model/}	& optimization model object (\code{@opf\_model} base class)	\\
 \code{~~add\_lin\_constraint}	& adds a named subset of linear constraints to the model	\\
 \code{~~add\_named\_set}\tnote{\dag}	& adds a named subset of costs, constraints or variables to the model	\\
 \code{~~add\_nln\_constraint}	& adds a named subset of nonlinear constraints to the model	\\
@@ -6362,7 +6367,6 @@ name & description \\
 \code{~~add\_var}	& adds a named subset of optimization variables to the model	\\
 \code{~~describe\_idx}	& identifies variable, constraint or cost row indices	\\
 \code{~~display}	& called to display object when statement not ended with semicolon	\\
-\code{~~eval\_legacy\_cost}	& evaluates legacy user costs and derivatives	\\
 \code{~~eval\_nln\_constraint}	& returns full set of nonlinear equality or inequality constraints and their gradients	\\
 \code{~~eval\_nln\_constraint\_hess}	& returns Hessian for full set of nonlinear equality or inequality constraints	\\
 \code{~~eval\_nln\_cost}	& evaluates general nonlinear costs and derivatives	\\
@@ -6374,7 +6378,6 @@ name & description \\
 \code{~~init\_indexed\_name}	& initializes dimensions for indexed named set of costs, constraints or variables	\\
 \code{~~opt\_model}	& constructor for the \code{opt\_model} class	\\
 \code{~~params\_lin\_constraint}	& returns individual or full set of linear constraint parameters	\\
-\code{~~params\_legacy\_cost}	& returns individual or full set of legacy user cost coefficients	\\
 \code{~~params\_nln\_cost}	& returns individual general nonlinear cost parameters	\\
 \code{~~params\_quad\_cost}	& returns individual or full set of quadratic cost coefficients	\\
 \code{~~params\_var}	& returns initial values, bounds and variable type for optimimization vector~$\hat{x}$\tnote{\ddag}	\\
@@ -7003,7 +7006,7 @@ name & description \\
 \code{soln9\_opf\_vg.mat}	& solution data, AC OPF of \code{t\_case9\_opf} with option \code{opf.use\_vg}	\\
 \code{soln9\_opf.mat}	& solution data, AC OPF of \code{t\_case9\_opf}	\\
 \code{soln9\_pf.mat}	& solution data, AC power flow of \code{t\_case9\_pf}	\\
-\code{soln9\_pf_vg.mat}	& solution data, AC power flow of \code{t\_case9\_pf}	\\
+\code{soln9\_pf\_vg.mat}	& solution data, AC power flow of \code{t\_case9\_pf}	\\
 \code{t\_auction\_case.m}	& case data used to test auction code	\\
 \code{t\_case\_ext.m}	& case data used to test \code{ext2int} and \code{int2ext}, external indexing	\\
 \code{t\_case\_info\_eg.txt}	& example output from \code{case\_info}, used by \code{t\_islands}	\\

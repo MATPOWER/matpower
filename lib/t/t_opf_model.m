@@ -918,7 +918,7 @@ t_ok(isfield(cp, 'N'), t);
 
 %%-----  get_idx  -----
 t = 'get_idx : cost';
-[vv, ll, nne, nni, cc] = om.get_idx();
+cc = om.get_idx('cost');
 t_is([cc.i1.vcost cc.iN.vcost cc.N.vcost], [3 4 2], 14, [t ' : vcost']);
 t_is(size(cc.i1.wc), [2, 2], 14, [t ' : size(cc.i1.wc)']);
 t_is([cc.i1.wc(2,1) cc.iN.wc(2,1) cc.N.wc(2,1)], [10 12 3], 14, [t ' : wc(2,1)']);
@@ -1255,13 +1255,9 @@ end
 if ~isfield(cp, 'mm') || isempty(cp.mm)
     cp.mm = ones(nw, 1);
 end
-if nargin < 4
-    vs = {};
-end
 if iscell(x)
     xx = vertcat(x{:});
 else
     xx = x;
 end
-vs = om.varsets_cell2struct(vs);
 [varargout{1:nargout}] = opf_legacy_user_cost_fcn(xx, cp);

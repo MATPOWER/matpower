@@ -15,9 +15,10 @@ function str = valid_named_set_type(om, set_type)
 %       'lin'     'linear constraint'
 %       'nle'     'nonlinear equality constraint'
 %       'nli'     'nonlinear inequality constraint'
+%       'cost'    'cost'
 
 %   MATPOWER
-%   Copyright (c) 2017-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2017, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -32,7 +33,8 @@ if isempty(named_set_types)
         'nle', 'nonlinear equality constraint', ...
         'nli', 'nonlinear inequality constraint', ...
         'qdc', 'quadratic cost', ...
-        'nlc', 'general nonlinear cost' ...
+        'nlc', 'general nonlinear cost', ...
+        'cost', 'legacy cost' ...
     );
 end
 if isfield(named_set_types, set_type)

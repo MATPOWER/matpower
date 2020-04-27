@@ -14,28 +14,22 @@ classdef opt_model < handle
 %
 %   Modify the OPF formulation by adding named blocks of costs, constraints
 %   or variables:
-%       add_legacy_cost
 %       add_quad_cost
 %       add_nln_cost
 %       add_lin_constraint
 %       add_nln_constraint
 %       add_var
 %       init_indexed_name
-%       add_costs (deprecated)
-%       add_constraints (deprecated)
-%       add_vars (deprecated)
 %
-%   Return the number of linear constraints, nonlinear constraints,
-%   variables or cost rows, optionally for a single named block:
+%   Return the number of linear constraints, nonlinear constraints or
+%   variables, optionally for a single named block:
 %       getN
 %
 %   Return the intial values, bounds and type for optimization variables:
 %       params_var
-%       getv (deprecated)
 %
 %   Build and return full set of linear constraints:
 %       params_lin_constraint
-%       linear_constraints (deprecated)
 %
 %   Return index structure for variables, linear and nonlinear constraints
 %   and costs:
@@ -44,13 +38,9 @@ classdef opt_model < handle
 %   Build and return cost parameters and evaluate user-defined costs:
 %       params_nln_cost
 %       params_quad_cost
-%       params_legacy_cost
-%       eval_legacy_cost
 %       eval_nln_cost
 %       eval_quad_cost
 %       get_cost_params
-%       compute_cost (deprecated)
-%       build_cost_params (deprecated)
 %
 %   Retreive user data in the model object:
 %       get_userdata
@@ -183,27 +173,6 @@ classdef opt_model < handle
 %                     in the order they were added
 %               .name   - name of the block, e.g. R
 %               .idx    - indices for name, {2,3} => R(2,3)
-%       .cost       - data for legacy user-defined costs
-%           .idx
-%               .i1 - starting row index within full N matrix
-%               .iN - ending row index within full N matrix
-%               .N  - number of rows in this cost block in full N matrix
-%           .N      - total number of rows in full N matrix
-%           .NS     - number of cost blocks
-%           .data   - data for each user-defined cost block
-%               .N  - see help for ADD_LEGACY_COST for details
-%               .H  -               "
-%               .Cw -               "
-%               .dd -               "
-%               .rr -               "
-%               .kk -               "
-%               .mm -               "
-%               .vs - cell array of variable sets that define xx for this
-%                     cost block, where the N for this block multiplies xx
-%           .order  - struct array of names/indices for cost blocks in the
-%                     order they appear in the rows of the full N matrix
-%               .name   - name of the block, e.g. R
-%               .idx    - indices for name, {2,3} => R(2,3)
 %       .userdata   - any user defined data
 %           .(user defined fields)
 
@@ -308,26 +277,6 @@ classdef opt_model < handle
             'data', struct( ...
                 'fcn', struct(), ...
                 'vs', struct() ) );
-        cost = struct( ...
-            'idx', struct( ...
-                'i1', struct(), ...
-                'iN', struct(), ...
-                'N', struct() ), ...
-            'N', 0, ...
-            'NS', 0, ...
-            'order', struct( ...
-                'name', [], ...
-                'idx', [] ), ...
-            'data', struct( ...
-                'N', struct(), ...
-                'H', struct(), ...
-                'Cw', struct(), ...
-                'dd', struct(), ...
-                'rh', struct(), ...
-                'kk', struct(), ...
-                'mm', struct(), ...
-                'vs', struct() ), ...
-            'params', [] );
         userdata = struct();
     end     %% properties
     

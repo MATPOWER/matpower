@@ -4,9 +4,8 @@ function varargout = get_idx(om, varargin)
 %   [VV, LL] = OM.GET_IDX()
 %   [VV, LL, NNE] = OM.GET_IDX()
 %   [VV, LL, NNE, NNI] = OM.GET_IDX()
-%   [VV, LL, NNE, NNI, CC] = OM.GET_IDX()
-%   [VV, LL, NNE, NNI, CC, QDC] = OM.GET_IDX()
-%   [VV, LL, NNE, NNI, CC, QDC, NLC] = OM.GET_IDX()
+%   [VV, LL, NNE, NNI, QDC] = OM.GET_IDX()
+%   [VV, LL, NNE, NNI, QDC, NLC] = OM.GET_IDX()
 %
 %   Returns a structure for each with the beginning and ending
 %   index value and the number of elements for each named block.
@@ -19,7 +18,7 @@ function varargout = get_idx(om, varargin)
 %   as inputs ...
 %
 %   [IDX1, IDX2, ...] = OM.GET_IDX(SET_TYPE1, SET_TYPE2, ...);
-%   [CC, VV] = OM.GET_IDX('cost', 'var');
+%   VV = OM.GET_IDX('var');
 %   [LL, NNE, NNI] = OM.GET_IDX('lin', 'nle', 'nli');
 %
 %   The specific type of named set being referenced is
@@ -30,11 +29,10 @@ function varargout = get_idx(om, varargin)
 %       SET_TYPE = 'nli'   => nonlinear inequality constraint set
 %       SET_TYPE = 'nlc'   => nonlinear cost set
 %       SET_TYPE = 'qdc'   => quadratic cost set
-%       SET_TYPE = 'cost'  => legacy cost set
 %
 %   Examples:
 %       [vv, ll, nne] = om.get_idx();
-%       [vv, ll, cc] = om.get_idx('var', 'lin', 'cost');
+%       [vv, ll, qdc] = om.get_idx('var', 'lin', 'qdc');
 %
 %       For a variable block named 'z' we have ...
 %           vv.i1.z - starting index for 'z' in optimization vector x
@@ -61,10 +59,10 @@ function varargout = get_idx(om, varargin)
 %       or 'bar(i)' in the examples above.
 %
 %   See also OPT_MODEL, ADD_VAR, ADD_LIN_CONSTRAINT, ADD_NLN_CONSTRAINT,
-%            ADD_QUAD_COST, ADD_NLN_COST and ADD_LEGACY_COST.
+%            ADD_QUAD_COST, and ADD_NLN_COST.
 
 %   MATPOWER
-%   Copyright (c) 2008-2019, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -80,12 +78,9 @@ if nargin == 1
             if nargout > 3
                 varargout{4} = om.nli.idx;
                 if nargout > 4
-                    varargout{5} = om.cost.idx;
+                    varargout{5} = om.qdc.idx;
                     if nargout > 5
-                        varargout{6} = om.qdc.idx;
-                        if nargout > 6
-                            varargout{7} = om.nlc.idx;
-                        end
+                        varargout{6} = om.nlc.idx;
                     end
                 end
             end

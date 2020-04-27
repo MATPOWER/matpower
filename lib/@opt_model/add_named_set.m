@@ -5,7 +5,7 @@ function om = add_named_set(om, set_type, name, idx, N, varargin)
 %
 %   This method is intended to be a private method, used internally by
 %   the public methods ADD_VAR, ADD_LIN_CONSTRAINT, ADD_NLN_CONSTRAINT
-%   ADD_QUAD_COST, ADD_NLN_COST and ADD_LEGACY_COST.
+%   ADD_QUAD_COST and ADD_NLN_COST.
 %
 %   Variable Set
 %       OM.ADD_NAMED_SET('var', NAME, IDX_LIST, N, V0, VL, VU, VT);
@@ -25,14 +25,11 @@ function om = add_named_set(om, set_type, name, idx, N, varargin)
 %   General Nonlinear Cost Set
 %       OM.ADD_NAMED_SET('nlc', NAME, IDX_LIST, N, FCN, VARSETS);
 %
-%   Legacy Cost Set
-%       OM.ADD_NAMED_SET('cost', NAME, IDX_LIST, N, CP, VARSETS);
-%
 %   See also OPT_MODEL, ADD_VAR, ADD_LIN_CONSTRAINT, ADD_NLN_CONSTRAINT
 %            ADD_QUAD_COST and ADD_NLN_COST.
 
 %   MATPOWER
-%   Copyright (c) 2008-2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -170,50 +167,6 @@ switch ff
         else
             om_ff.data.fcn  = subsasgn(om_ff.data.fcn, sc, fcn);
             om_ff.data.vs   = subsasgn(om_ff.data.vs, sc, varsets);
-        end
-    case 'cost'         %% cost set
-        [cp, varsets] = deal(varargin{:});
-        if isempty(idx)
-            om_ff.data.N.(name)  = cp.N;
-            om_ff.data.Cw.(name) = cp.Cw;
-            om_ff.data.vs.(name) = varsets;
-            if isfield(cp, 'H')
-                om_ff.data.H.(name)  = cp.H;
-            end
-            if isfield(cp, 'dd')
-                om_ff.data.dd.(name) = cp.dd;
-            end
-            if isfield(cp, 'rh')
-                om_ff.data.rh.(name) = cp.rh;
-            end
-            if isfield(cp, 'kk')
-                om_ff.data.kk.(name) = cp.kk;
-            end
-            if isfield(cp, 'mm')
-                om_ff.data.mm.(name) = cp.mm;
-            end
-        else
-            om_ff.data.N  = subsasgn(om_ff.data.N,  sc, cp.N);
-            om_ff.data.Cw = subsasgn(om_ff.data.Cw, sc, cp.Cw);
-            om_ff.data.vs = subsasgn(om_ff.data.vs, sc, varsets);
-            if isfield(cp, 'H')
-                om_ff.data.H = subsasgn(om_ff.data.H, sc, cp.H);
-            end
-            if isfield(cp, 'dd')
-                om_ff.data.dd = subsasgn(om_ff.data.dd, sc, cp.dd);
-            end
-            if isfield(cp, 'rh')
-                om_ff.data.rh = subsasgn(om_ff.data.rh, sc, cp.rh);
-            end
-            if isfield(cp, 'kk')
-                om_ff.data.kk = subsasgn(om_ff.data.kk, sc, cp.kk);
-            end
-            if isfield(cp, 'mm')
-                om_ff.data.mm = subsasgn(om_ff.data.mm, sc, cp.mm);
-            end
-        end
-        if ~isempty(om_ff.params)       %% clear cache of aggregated params
-            om_ff.params = [];
         end
 end
 om.(ff) = om_ff;
