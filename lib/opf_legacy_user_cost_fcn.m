@@ -75,7 +75,7 @@ else
             for k = 1:length(x)
                 xx = x;
                 xx(k) = xx(k) + step;
-                ddff(k) = (opf_costfcn(xx, om) - f) / step;
+                ddff(k) = (nlp_costfcn(om, xx) - f) / step;
             end
             if max(abs(ddff - df)) > tol
                 idx = find(abs(ddff - df) == max(abs(ddff - df)));

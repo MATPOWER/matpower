@@ -8422,7 +8422,12 @@ sparsity structure). \emph{Thanks to Drosos Kourounis.}
 
 \subsubsection*{Incompatible Changes}
 \begin{itemize}
-\item 
+\item \mpom{} has renamed the following functions and modified the order of their input args so that the \mpom{} object appears first. Ideally, these would be defined as methods of the \code{@opt\_model} class, but Octave 4.2 and earlier is not able to find them via a function handle (as used in the \code{solve()} method) if they are inherited by a sub-class.
+    \begin{itemize}
+    \item \code{opf\_consfcn()} $\rightarrow$ \code{nlp\_consfcn()}
+    \item \code{opf\_costfcn()} $\rightarrow$ \code{nlp\_costfcn()}
+    \item \code{opf\_hessfcn()} $\rightarrow$ \code{nlp\_hessfcn()}
+    \end{itemize}
 \end{itemize}
 
 

@@ -13,6 +13,15 @@ Changes since 7.0
 -----------------
 
 #### 4/29/20
+  - **INCOMPATIBLE CHANGE:** MP-Opt-Model has renamed the following
+    functions and modified the order of their input args so that the
+    MP-Opt-Model object appears first. Ideally, these would be defined
+    as methods of the `@opt_model` class, but Octave 4.2 and earlier is
+    not able to find them via a function handle (as used in the
+    `solve()` method) if they are inherited by a sub-class.
+    - `opf_consfcn()` --> `nlp_consfcn()`
+    - `opf_costfcn()` --> `nlp_costfcn()`
+    - `opf_hessfcn()` --> `nlp_hessfcn()`
   - Move code related to solver interfaces, `@opt_model` and a
     few other functions like `have_fcn()` and `nested_struct_copy()`
     into a separate package called [MP-Opt-Model][27], now included
