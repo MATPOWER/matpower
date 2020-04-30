@@ -1,0 +1,80 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-16.04]
+
+    runs-on: ${{ matrix.os }}
+
+    steps: 
+    - uses: actions/checkout@v1
+    - name: Initialize Package Manager (Linux)
+      if: startsWith(matrix.os, 'ubuntu')
+      run: |
+        sudo add-apt-repository ppa:octave/stable
+        sudo apt-get update -qq
+    - name: Initialize Package Manager (Mac)
+      if: startsWith(matrix.os, 'macos')
+      run: |
+        brew update
+        brew install bash
+        brew install pkg-config
+    - name: Install GNU Octave / IPOPT (Linux)
+      if: startsWith(matrix.os, 'ubuntu')
+      run: |
+        sudo apt-get install -y -qq coinor-libipopt-dev liboctave-dev octave
+        octave-cli --no-gui --eval ver
+    - name: Install GNU Octave (Mac)
+      if: startsWith(matrix.os, 'macos')
+      run: |
+        brew install octave
+        octave-cli --no-gui --eval ver
+    - name: Build IPOPT from source (Mac)
+      if: startsWith(matrix.os, 'macos')
+      run: |
+        git clone https://www.github.com/coin-or/coinbrew
+        cd coinbrew
+        ./coinbrew fetch Ipopt --no-prompt
+        ./coinbrew build Ipopt --prefix=$HOME/install --test --no-prompt
+        ./coinbrew install Ipopt
+    - name: Build IPOPT MEX interface
+      env:
+        IPOPT_VER: 3.11.9
+      run: |
+        export PKG_CONFIG_PATH=$HOME/install/lib/pkgconfig
+        mkdir $HOME/build
+        curl -SL https://www.coin-or.org/download/source/Ipopt/Ipopt-${IPOPT_VER}.tgz | tar -xzC $HOME/build
+        mv $HOME/build/Ipopt-${IPOPT_VER}/Ipopt/contrib/MatlabInterface $HOME/build/ipopt
+        mv $GITHUB_WORKSPACE/.travis/Makefile $HOME/build/ipopt/src
+        make -C $HOME/build/ipopt/src
+        mv $HOME/build/ipopt/src/*.mex $HOME/build/ipopt/
+    - name: Install IPOPT MEX interface
+      run: |
+        octave-cli --no-gui --eval "addpath('$HOME/build/ipopt'); savepath"
+    - name: Install MP-Test, Set MPTEST_PATH
+      run: |
+        git clone --depth=50 https://github.com/MATPOWER/mptest.git $HOME/mptest
+        echo "::set-env name=MPTEST_PATH::$HOME/mptest/lib:$HOME/mptest/lib/t"
+    - name: Install MIPS, Set MIPS_PATH
+      run: |
+        git clone --depth=50 https://github.com/MATPOWER/mips.git $HOME/mips
+        echo "::set-env name=MIPS_PATH::$HOME/mips/lib:$HOME/mips/lib/t:${MPTEST_PATH}"
+    - name: Set MP_OPT_MODEL_PATH
+      run: echo "::set-env name=MP_OPT_MODEL_PATH::${GITHUB_WORKSPACE}/lib:${GITHUB_WORKSPACE}/lib/t:${MIPS_PATH}"
+    - name: Print GLPK/IPOPT/MIPS/MP-Opt-Model version numbers
+      run: |
+        octave-cli --no-gui --eval ver
+        octave-cli --no-gui -p $MIPS_PATH --eval mipsver
+        octave-cli --no-gui -p $MP_OPT_MODEL_PATH --eval mpomver
+        octave-cli --no-gui -p $MP_OPT_MODEL_PATH --eval "qps_glpk( [],[1; 1],[1 1],[2],[2],[1; 1],[1; 1],[1; 1],struct('verbose', 3));"
+        octave-cli --no-gui -p $MP_OPT_MODEL_PATH --eval "qps_ipopt([],[1; 1],[1 1],[2],[2],[1; 1],[1; 1],[1; 1],struct('verbose', 2));"
+    - name: Test MP-Test
+      run: octave-cli --no-gui -p $MPTEST_PATH --eval "test_mptest(0,1)"
+    - name: Test MIPS
+      run: octave-cli --no-gui -p $MIPS_PATH --eval "test_mips(0,1)"
+    - name: Test MP-Opt-Model
+      run: octave-cli --no-gui -p $MP_OPT_MODEL_PATH --eval "test_mp_opt_model(0,1)"
