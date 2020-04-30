@@ -69,6 +69,8 @@ jobs:
       run: octave-cli --no-gui --eval "test_mptest(0,1)"
     - name: Test MIPS
       run: octave-cli --no-gui --eval "test_mips(0,1)"
+    - name: Test MP-Opt-Model
+      run: octave-cli --no-gui --eval "test_mp_opt_model(0,1)"
     - name: Test MATPOWER
       run: octave-cli --no-gui --eval "test_matpower(0,1)"
     - name: Test MOST

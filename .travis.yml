@@ -74,5 +74,6 @@ script:
 # test MP-Test, MIPS, MATPOWER, MOST
 - octave-cli --no-gui --eval "test_mptest(0,1)"
 - octave-cli --no-gui --eval "test_mips(0,1)"
+- octave-cli --no-gui --eval "test_mp_opt_model(0,1)"
 - octave-cli --no-gui --eval "test_matpower(0,1)"
 - octave-cli --no-gui --eval "test_most(0,1)"

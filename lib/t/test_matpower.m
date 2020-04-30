@@ -29,10 +29,24 @@ end
 
 tests = {};
 
-%% MATPOWER base test
+%% MP-Test
 tests{end+1} = 't_test_fcns';
+
+%% MIPS
+tests{end+1} = 't_mplinsolve';
+tests{end+1} = 't_mips';
+tests{end+1} = 't_mips_pardiso';
+tests{end+1} = 't_qps_mips';
+
+%% MP-Opt-Model
 tests{end+1} = 't_nested_struct_copy';
 tests{end+1} = 't_have_fcn';
+tests{end+1} = 't_qps_matpower';
+tests{end+1} = 't_miqps_matpower';
+tests{end+1} = 't_nlps_matpower';
+tests{end+1} = 't_opt_model';
+
+%% MATPOWER
 tests{end+1} = 't_feval_w_path';
 tests{end+1} = 't_mpoption';
 tests{end+1} = 't_loadcase';
@@ -43,12 +57,7 @@ tests{end+1} = 't_margcost';
 tests{end+1} = 't_totcost';
 tests{end+1} = 't_modcost';
 tests{end+1} = 't_hasPQcap';
-tests{end+1} = 't_mplinsolve';
-tests{end+1} = 't_mips';
-tests{end+1} = 't_mips_pardiso';
-tests{end+1} = 't_qps_matpower';
-tests{end+1} = 't_miqps_matpower';
-tests{end+1} = 't_nlps_matpower';
+
 tests{end+1} = 't_pf_ac';
 tests{end+1} = 't_pf_dc';
 tests{end+1} = 't_pf_radial';
@@ -106,6 +115,8 @@ end
 if have_fcn('quadprog')
     tests{end+1} = 't_opf_dc_ot';
 end
+
+%% SDP_PF
 if have_fcn('sdp_pf')
     if have_fcn('mosek') || have_fcn('sdpt3') || have_fcn('sedumi')
         tests{end+1} = 't_opf_sdpopf';
