@@ -28,7 +28,7 @@ function rv = mpver(varargin)
 v{1} = struct(  'Name',     'MATPOWER', ... 
                 'Version',  '7.0.1-dev', ...
                 'Release',  '', ...
-                'Date',     '29-Apr-2020' );
+                'Date',     '30-Apr-2020' );
 if nargout > 0
     if nargin > 0
         rv = v{1};
@@ -77,6 +77,7 @@ else
         e4st_ver;
     end
     mipsver;
+    mpomver;
     if have_fcn('most')
         mostver;
     else
