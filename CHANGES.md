@@ -12,6 +12,11 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.0
 -----------------
 
+#### 5/1/20
+  - Rename `miqps_matpower()`, `nlps_matpower()`, and `qps_matpower()`
+    to `miqps_master()`, `nlps_master()`, and `qps_master()`, respectively,
+    and deprecate the original function names.
+
 #### 4/30/20
   - Update `@opf_model` for MP-Opt-Model's refactored `@opt_model` class
     based on the new `@mp_idx_manager` base class.

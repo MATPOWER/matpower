@@ -212,11 +212,13 @@
 \newcommand{\mumurl}[0]{https://matpower.org/docs/MATPOWER-manual-\mpver.pdf}
 \newcommand{\mum}[0]{\href{\mumurl}{\matpower{} User's Manual}}
 \newcommand{\mipsmanurl}[0]{https://matpower.org/docs/MIPS-manual-\mipsver.pdf}
+\newcommand{\mpommanurl}[0]{https://matpower.org/docs/MP-Opt-Model-manual-\mpomver.pdf}
 \newcommand{\mostmanurl}[0]{https://matpower.org/docs/MOST-manual-\mostver.pdf}
 \newcommand{\currentmumurl}[0]{https://matpower.org/docs/MATPOWER-manual.pdf}
 \newcommand{\currentmipsmanurl}[0]{\mipsurl/blob/master/docs/MIPS-manual.pdf}
 \newcommand{\currentmostmanurl}[0]{https://matpower.org/docs/MOST-manual.pdf}
 \newcommand{\mipsman}[0]{\href{\mipsmanurl}{\mips{} User's Manual}}
+\newcommand{\mpomman}[0]{\href{\mpommanurl}{\mpom{} User's Manual}}
 \newcommand{\mostman}[0]{\href{\mostmanurl}{\most{} User's Manual}}
 \newcommand{\syngridmanurl}[0]{https://matpower.org/docs/SynGrid-manual-\syngridver.pdf}
 \newcommand{\syngridman}[0]{\href{\syngridmanurl}{\syngrid{} User's Manual}}
@@ -251,6 +253,8 @@
 \numberwithin{figure}{section}
 \renewcommand{\thefigure}{\thesection\mbox{-}\arabic{figure}}
 
+\externaldocument[MIPSMAN-]{MIPS-manual}[\mipsmanurl]
+\externaldocument[MPOMMAN-]{MP-Opt-Model-manual}[\mpommanurl]
 \externaldocument[MOSTMAN-]{MOST-manual}[\mostmanurl]
 
 %\title{\hl{--- DRAFT  ---}\\\hl{\em do not distribute}\\~\\\matpower{} \mpver{}\\User's Manual}
@@ -643,8 +647,8 @@ t_hasPQcap..............ok
 t_mplinsolve............ok (6 of 44 skipped)
 t_mips..................ok
 t_mips_pardiso..........ok (60 of 60 skipped)
-t_qps_matpower..........ok (288 of 360 skipped)
-t_miqps_matpower........ok (240 of 240 skipped)
+t_qps_master............ok (288 of 360 skipped)
+t_miqps_master..........ok (240 of 240 skipped)
 t_pf....................ok
 t_pf_radial.............ok
 t_cpf...................ok
@@ -4590,9 +4594,9 @@ Aside from \code{H} and \code{c}, all input and output arguments correspond exac
 
 As with \code{mips} and \code{fmincon}, the primary difference between the calling syntax for \code{qps\_mips} and \code{quadprog} is that the linear constraints are specified in terms of a single doubly-bounded linear function ($l \le A x \le u$) as opposed to separate equality constrained ($A_{eq} x = b_{eq}$) and upper bounded ($A x \le b$) functions.
 
-\matpower{} also includes another wrapper function \code{qps\_matpower} that provides a consistent interface for all of the QP and LP solvers it has available. This interface is identical to that used by \code{qps\_mips} with the exception of the structure of the \code{opt} input argument. The solver is chosen according to the value of \code{opt.alg}. See the help for \code{qps\_matpower} for details.
+\matpower{} also includes another wrapper function \code{qps\_master} that provides a consistent interface for all of the QP and LP solvers it has available. This interface is identical to that used by \code{qps\_mips} with the exception of the structure of the \code{opt} input argument. The solver is chosen according to the value of \code{opt.alg}. See the help for \code{qps\_master} for details.
 
-Several examples of using \code{qps\_matpower} to solve LP and QP problems can be found in \code{t\_qps\_matpower.m}.
+Several examples of using \code{qps\_master} to solve LP and QP problems can be found in \code{t\_qps\_master.m}.
 
 \subsection{Primal-Dual Interior Point Algorithm}
 
@@ -6484,6 +6488,65 @@ name & description\tnote{\dag} \\
 \end{table}
 
 
+% \begin{table}[!ht]
+% %\renewcommand{\arraystretch}{1.2}
+% \centering
+% \begin{threeparttable}
+% \caption{NLP, LP \& QP Solver Functions\tnote{\P}}
+% \label{tab:solvers}
+% \footnotesize
+% \begin{tabular}{p{0.15\textwidth}p{0.78\textwidth}}
+% \toprule
+% name & description \\
+% \midrule
+% \code{clp\_options}	& default options for \clp{} solver\tnote{\dag}	\\
+% \code{cplex\_options}	& default options for \cplex{} solver\tnote{\dag}	\\
+% \code{glpk\_options}	& default options for \glpk{} solver\tnote{\dag}	\\
+% \code{gurobi\_options}	& default options for \gurobi{} solver\tnote{\dag}	\\
+% \code{gurobiver}	& prints version information for \gurobi{}/Gurobi\_MEX	\\
+% \code{ipopt\_options}	& default options for \ipopt{} solver\tnote{\dag}	\\
+% \code{mips}	& \mipsname{} -- primal/dual interior point solver for NLP	\\
+% \code{mipsver}	& prints version information for \mips{}	\\
+% \code{miqps\_master}	& Mixed-Integer Quadratic Program Solver wrapper function, provides a unified interface for various MIQP/MILP solvers	\\
+% \code{miqps\_cplex}	& MIQP/MILP solver API implementation for CPLEX (\code{cplexmiqp} and \code{cplexmilp})\tnote{\dag}	\\
+% \code{miqps\_glpk}	& MILP solver API implementation for \glpk{}\tnote{\dag}	\\
+% \code{miqps\_gurobi}	& MIQP/MILP solver API implementation for \gurobi{}\tnote{\dag}	\\
+% \code{miqps\_mosek}	& MIQP/MILP solver API implementation for \mosek{} (\code{mosekopt})\tnote{\dag}	\\
+% \code{miqps\_ot}	& QP/MILP solver API implementation for \matlab{} Opt Toolbox's \code{intlinprog}, \code{quadprog}, \code{linprog}	\\
+% \code{mosek\_options}	& default options for \mosek{} solver\tnote{\dag}	\\
+% \code{mosek\_symbcon}	& symbolic constants to use for \mosek{} solver options\tnote{\dag}	\\
+% \code{mplinsolve}	& unified linear system solver interface, used by \mips{}	\\
+% \code{mpopt2nlopt}	& create \code{nlps\_master} options struct from \matpower{} options struct	\\
+% \code{mpopt2qpopt}	& create \code{mi/qps\_master} options struct from \matpower{} options struct	\\
+% \code{nlps\_master}	& Nonlinear Program Solver wrapper function, provides a unified interface for various NLP solvers	\\
+% \code{nlps\_fmincon}	& NLP solver API implementation for \matlab{} Opt Toolbox's \code{fmincon}	\\
+% \code{nlps\_ipopt}	& NLP solver API implementation for \ipopt{}-based solver\tnote{\dag}	\\
+% \code{nlps\_knitro}	& NLP solver API implementation for \knitro{}-based solver\tnote{\dag}	\\
+% \code{qps\_master}	& Quadratic Program Solver wrapper function, provides a unified interface for various QP/LP solvers	\\
+% \code{qps\_bpmpd}	& QP/LP solver API implementation for BPMPD\_MEX\tnote{\dag}	\\
+% \code{qps\_clp}	& QP/LP solver API implementation for \clp{}\tnote{\dag}	\\
+% \code{qps\_cplex}	& QP/LP solver API implementation for CPLEX (\code{cplexqp} and \code{cplexlp})\tnote{\dag}	\\
+% \code{qps\_glpk}	& QP/LP solver API implementation for \glpk{}\tnote{\dag}	\\
+% \code{qps\_gurobi}	& QP/LP solver API implementation for \gurobi{}\tnote{\dag}	\\
+% \code{qps\_ipopt}	& QP/LP solver API implementation for \ipopt{}-based solver\tnote{\dag}	\\
+% \code{qps\_mips}	& QP/LP solver API implementation for \mips{}-based solver	\\
+% \code{qps\_mosek}	& QP/LP solver API implementation for \mosek{} (\code{mosekopt})\tnote{\dag}	\\
+% \code{qps\_ot}	& QP/LP solver API implementation for \matlab{} Opt Toolbox's \code{quadprog}, \code{linprog}	\\
+% & \\
+% \multicolumn{2}{c}{\emph{deprecated functions}} \\
+% \code{miqps\_matpower}	& use \code{miqps\_master} instead	\\
+% \code{qps\_matpower}	& use \code{qps\_master} instead	\\
+% \bottomrule
+% \end{tabular}
+% \begin{tablenotes}
+%  \scriptsize
+%  \item [\P] {The functions in this table are now included as part of separate packages, namely \mipslink{} (see \mipspath{}) and \mpomlink{} (see \mpompath{}).}
+%  \item [\dag] {Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.}
+% \end{tablenotes}
+% \end{threeparttable}
+% \end{table}
+
+
 \begin{table}[!ht]
 %\renewcommand{\arraystretch}{1.2}
 \centering
@@ -6495,45 +6558,13 @@ name & description\tnote{\dag} \\
 \toprule
 name & description \\
 \midrule
-\code{clp\_options}	& default options for \clp{} solver\tnote{\dag}	\\
-\code{cplex\_options}	& default options for \cplex{} solver\tnote{\dag}	\\
-\code{glpk\_options}	& default options for \glpk{} solver\tnote{\dag}	\\
-\code{gurobi\_options}	& default options for \gurobi{} solver\tnote{\dag}	\\
-\code{gurobiver}	& prints version information for \gurobi{}/Gurobi\_MEX	\\
-\code{ipopt\_options}	& default options for \ipopt{} solver\tnote{\dag}	\\
-\code{mips}	& \mipsname{} -- primal/dual interior point solver for NLP	\\
-\code{mipsver}	& prints version information for \mips{}	\\
-\code{miqps\_matpower}	& Mixed-Integer Quadratic Program Solver for \matpower{}, wrapper function provides a unified interface for various MIQP/MILP solvers	\\
-\code{miqps\_cplex}	& MIQP/MILP solver API implementation for CPLEX (\code{cplexmiqp} and \code{cplexmilp})\tnote{\dag}	\\
-\code{miqps\_glpk}	& MILP solver API implementation for \glpk{}\tnote{\dag}	\\
-\code{miqps\_gurobi}	& MIQP/MILP solver API implementation for \gurobi{}\tnote{\dag}	\\
-\code{miqps\_mosek}	& MIQP/MILP solver API implementation for \mosek{} (\code{mosekopt})\tnote{\dag}	\\
-\code{miqps\_ot}	& QP/MILP solver API implementation for \matlab{} Opt Toolbox's \code{intlinprog}, \code{quadprog}, \code{linprog}	\\
-\code{mosek\_options}	& default options for \mosek{} solver\tnote{\dag}	\\
-\code{mosek\_symbcon}	& symbolic constants to use for \mosek{} solver options\tnote{\dag}	\\
-\code{mplinsolve}	& unified linear system solver interface, used by \mips{}	\\
-\code{mpopt2nlopt}	& create \code{nlps\_matpower} options struct from \matpower{} options struct	\\
-\code{mpopt2qpopt}	& create \code{mi/qps\_matpower} options struct from \matpower{} options struct	\\
-\code{nlps\_matpower}	& Nonlinear Program Solver for \matpower{}, wrapper function provides a unified interface for various NLP solvers	\\
-\code{nlps\_fmincon}	& NLP solver API implementation for \matlab{} Opt Toolbox's \code{fmincon}	\\
-\code{nlps\_ipopt}	& NLP solver API implementation for \ipopt{}-based solver\tnote{\dag}	\\
-\code{nlps\_knitro}	& NLP solver API implementation for \knitro{}-based solver\tnote{\dag}	\\
-\code{qps\_matpower}	& Quadratic Program Solver for \matpower{}, wrapper function provides a unified interface for various QP/LP solvers	\\
-\code{qps\_bpmpd}	& QP/LP solver API implementation for BPMPD\_MEX\tnote{\dag}	\\
-\code{qps\_clp}	& QP/LP solver API implementation for \clp{}\tnote{\dag}	\\
-\code{qps\_cplex}	& QP/LP solver API implementation for CPLEX (\code{cplexqp} and \code{cplexlp})\tnote{\dag}	\\
-\code{qps\_glpk}	& QP/LP solver API implementation for \glpk{}\tnote{\dag}	\\
-\code{qps\_gurobi}	& QP/LP solver API implementation for \gurobi{}\tnote{\dag}	\\
-\code{qps\_ipopt}	& QP/LP solver API implementation for \ipopt{}-based solver\tnote{\dag}	\\
-\code{qps\_mips}	& QP/LP solver API implementation for \mips{}-based solver	\\
-\code{qps\_mosek}	& QP/LP solver API implementation for \mosek{} (\code{mosekopt})\tnote{\dag}	\\
-\code{qps\_ot}	& QP/LP solver API implementation for \matlab{} Opt Toolbox's \code{quadprog}, \code{linprog}	\\
+\code{miqps\_matpower}	& \emph{deprecated}, use \code{miqps\_master} instead	\\
+\code{qps\_matpower}	& \emph{deprecated}, use \code{qps\_master} instead	\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\P] {The functions in this table are now included as part of separate packages, namely \mipslink{} (see \mipspath{}) and \mpomlink{} (see \mpompath{}).}
- \item [\dag] {Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.}
+ \item [\P] {The other functions previously listed in this table are now included as part of separate packages, namely \mipslink{} and \mpomlink{}, located in \mipspath{} and \mpompath{}, respectively. They are now listed in Table~\ref{MIPSMAN-tab:files} in the \mipsman{} and Table~\ref{MPOMMAN-tab:solvers} in the \mpomman{}.}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -6923,11 +6954,11 @@ name & description \\
 \code{~~t/}	& \mpom{} tests	\\
 \code{~~~~test\_mp\_opt\_model}	& runs full \mpom{} test suite	\\
 \code{~~~~t\_have\_fcn}	& runs tests for \code{have\_fcn}	\\
-\code{~~~~t\_miqps\_matpower}	& runs tests for \code{miqps\_matpower}	\\
+\code{~~~~t\_miqps\_master}	& runs tests for \code{miqps\_master}	\\
 \code{~~~~t\_nested\_struct\_copy}	& runs tests for \code{nested\_struct\_copy}	\\
-\code{~~~~t\_nlps\_matpower}	& runs tests for \code{nlps\_matpower}	\\
+\code{~~~~t\_nlps\_master}	& runs tests for \code{nlps\_master}	\\
 \code{~~~~t\_opt\_model}	& runs tests for \code{opt\_model} objects	\\
-\code{~~~~t\_qps\_matpower}	& runs tests for \code{qps\_matpower}	\\
+\code{~~~~t\_qps\_master}	& runs tests for \code{qps\_master}	\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -7015,13 +7046,15 @@ name & description \\
 \code{t\_makeLODF}	& runs tests for \code{makeLODF}	\\
 \code{t\_makePTDF}	& runs tests for \code{makePTDF}	\\
 \code{t\_margcost}	& runs tests for \code{margcost}	\\
+\code{t\_miqps\_matpower}	& runs tests for \emph{deprecated} \code{miqps\_matpower}	\\
 \code{t\_modcost}	& runs tests for \code{modcost}	\\
 \code{t\_mpoption}	& runs tests for \code{mpoption}	\\
 \code{t\_off2case}	& runs tests for \code{off2case}	\\
 \code{t\_opf\_model}	& runs tests for \code{opf\_model} and \code{opt\_model} objects	\\
-\code{t\_opf\_model\_legacy}	& runs tests for \code{opf\_model} and \code{opt\_model} objects using legacy (deprecated) methods \\
+\code{t\_opf\_model\_legacy}	& runs tests for \code{opf\_model} and \code{opt\_model} objects using \emph{deprecated} legacy methods \\
 \code{t\_printpf}	& runs tests for \code{printpf}	\\
 \code{t\_psse}	& runs tests for \code{psse2mpc} and related functions	\\
+\code{t\_qps\_matpower}	& runs tests for \emph{deprecated} \code{qps\_matpower}	\\
 \code{t\_runmarket}	& runs tests for \code{runmarket}	\\
 \code{t\_scale\_load}	& runs tests for \code{scale\_load}	\\
 \code{t\_total\_load}	& runs tests for \code{total\_load}	\\
@@ -7420,7 +7453,7 @@ The current version of the MEX interface is based on version 2.21 of the BPMPD s
 
 Builds are available for Linux (32-bit), Mac OS X (PPC, Intel 32-bit) and Windows (32-bit) at \url{http://www.pserc.cornell.edu/bpmpd/}.
 
-When installed BPMPD\_MEX can be selected as the solver for DC OPFs by setting the \code{opf.dc.solver} option to \codeq{BPMPD}. It can also be used to solve general LP and QP problems via \matpower{}'s common QP solver interface \code{qps\_matpower} with the algorithm option set to \codeq{BPMPD} (or 100 for backward compatibility), or by calling \code{qps\_bpmpd} directly.
+When installed BPMPD\_MEX can be selected as the solver for DC OPFs by setting the \code{opf.dc.solver} option to \codeq{BPMPD}. It can also be used to solve general LP and QP problems via \matpower{}'s common QP solver interface \code{qps\_master} with the algorithm option set to \codeq{BPMPD} (or 100 for backward compatibility), or by calling \code{qps\_bpmpd} directly.
 
 \subsection{\clp{} -- COIN-OR Linear Programming}
 \label{app:clp}
@@ -7432,9 +7465,9 @@ To use \clp{} with \matpower{}, a MEX interface is required\footnote{According t
 
 With the \matlab{} interface to \clp{} installed, it can be used to solve DC OPF problems by setting the \code{opf.dc.solver} option equal to \codeq{CLP}. The solution algorithms and other \clp{} parameters can be set directly via \matpower{}'s \code{clp.opts} option. A ``\clp{} user options'' function can also be specified via \code{clp.opt\_fname} to override the defaults for any of the many \clp{} parameters. See \code{help clp} for details. See Table~\ref{tab:clpoptions} for a summary of the \clp{}-related \matpower{} options.
 
-\clp{} can also be used to solve general LP and QP problems via \matpower{}'s common QP solver interface \code{qps\_matpower} with the algorithm option set to \codeq{CLP}, or by calling \code{qps\_clp} directly.
+\clp{} can also be used to solve general LP and QP problems via \matpower{}'s common QP solver interface \code{qps\_master} with the algorithm option set to \codeq{CLP}, or by calling \code{qps\_clp} directly.
 
-\subsection{\cplex{} -- High-performance LP and QP Solvers}
+\subsection{\cplex{} -- High-performance LP, QP, MILP and MIQP Solvers}
 \label{app:cplex}
 
 The IBM ILOG \cplex{} Optimizer, or simply \cplex{}, is a collection of optimization tools that includes high-performance solvers for large-scale linear programming (LP) and quadratic programming (QP) problems, among others. More information is available at \url{https://www.ibm.com/analytics/cplex-optimizer}.
@@ -7443,21 +7476,21 @@ Although \cplex{} is a commercial package, at the time of this writing the full 
 
 When the \matlab{} interface to \cplex{} is installed, the \cplex{} LP and QP solvers, \code{cplexlp} and \code{cplexqp}, can be used to solve DC OPF problems by setting the \code{opf.dc.solver} option equal to \codeq{CPLEX}. The solution algorithms can be controlled by \matpower{}'s \code{cplex.lpmethod} and  \code{cplex.qpmethod} options. See Table~\ref{tab:cplexoptions} for a summary of the \cplex{}-related \matpower{} options. A ``\cplex{} user options'' function can also be specified via \code{cplex.opt\_fname} to override the defaults for any of the many \cplex{} parameters. See \code{help cplex\_options} and the ``Parameters of \cplex{}'' section of the \cplex{} documentation at \url{http://www.ibm.com/support/knowledgecenter/SSSA5P} for details.
 
-It can also be used to solve general LP and QP problems via \matpower{}'s common QP solver interface \code{qps\_matpower}, or MILP and MIQP problems via \code{miqps\_matpower}, with the algorithm option set to \codeq{CPLEX} (or 500 for backward compatibility), or by calling \code{qps\_cplex} or \code{miqps\_cplex} directly.
+It can also be used to solve general LP and QP problems via \matpower{}'s common QP solver interface \code{qps\_master}, or MILP and MIQP problems via \code{miqps\_master}, with the algorithm option set to \codeq{CPLEX} (or 500 for backward compatibility), or by calling \code{qps\_cplex} or \code{miqps\_cplex} directly.
 
 \subsection{\glpk{} -- GNU Linear Programming Kit}
 \label{app:glpk}
 
-The \glpk{}~\cite{glpk} ({\bf G}NU {\bf L}inear {\bf P}rogramming {\bf K}it) package is intended for solving large-scale linear programming (LP), mixed integer programming (MIP), and other related problems. It is a set of routines written in ANSI C and organized in the form of a callable library. 
+The \glpk{}~\cite{glpk} ({\bf G}NU {\bf L}inear {\bf P}rogramming {\bf K}it) package is intended for solving large-scale linear programming (LP), mixed-integer programming (MIP), and other related problems. It is a set of routines written in ANSI C and organized in the form of a callable library. 
 
 To use \glpk{} with \matpower{}, a MEX interface is required\footnote{The \url{http://glpkmex.sourceforge.net} site and Davide Barcelli's page \url{http://www.dii.unisi.it/~barcelli/software.php} may be useful in obtaining the MEX source or pre-compiled binaries for Mac or Linux platforms.}. For Microsoft Windows users, a pre-compiled MEX version of \glpk{} (and numerous other solvers, such as \clp{} and \ipopt{}) are easily installable as part of the OPTI Toolbox\footnote{The OPTI Toolbox is available from 
 \url{https://www.inverseproblem.co.nz/OPTI/}.}~\cite{opti}.
 
 When \glpk{} is installed, either as part of Octave or with a MEX interface for \matlab{}, it can be used to solve DC OPF problems that do not include any quadratic costs by setting the \code{opf.dc.solver} option equal to \codeq{GLPK}. The solution algorithms and other \glpk{} parameters can be set directly via \matpower{}'s \code{glpk.opts} option. A ``\glpk{} user options'' function can also be specified via \code{glpk.opt\_fname} to override the defaults for any of the many \glpk{} parameters. See \code{help glpk\_options} and the parameters section the \glpk{} documentation at \url{https://www.gnu.org/software/octave/doc/interpreter/Linear-Programming.html} for details. See Table~\ref{tab:glpkoptions} for a summary of the \glpk{}-related \matpower{} options. 
 
-\glpk{} can also be used to solve general LP problems via \matpower{}'s common QP solver interface \code{qps\_matpower}, or MILP problems via \code{miqps\_matpower}, with the algorithm option set to \codeq{GLPK}, or by calling \code{qps\_glpk} or \code{miqps\_glpk} directly.
+\glpk{} can also be used to solve general LP problems via \matpower{}'s common QP solver interface \code{qps\_master}, or MILP problems via \code{miqps\_master}, with the algorithm option set to \codeq{GLPK}, or by calling \code{qps\_glpk} or \code{miqps\_glpk} directly.
 
-\subsection{\gurobi{} -- High-performance LP and QP Solvers}
+\subsection{\gurobi{} -- High-performance LP, QP, MILP and MIQP Solvers}
 \label{app:gurobi}
 
 \gurobi{}~\cite{gurobi} is a collection of optimization tools that includes high-performance solvers for large-scale linear programming (LP) and quadratic programming (QP) problems, among others. The project was started by some former \cplex{} developers. More information is available at \url{https://www.gurobi.com/}.
@@ -7468,21 +7501,21 @@ Beginning with version~5.0.0, \gurobi{} includes a native \matlab{} interface, w
 
 When \gurobi{} is installed, it can be used to solve DC OPF problems by setting the \code{opf.dc.solver} option equal to \codeq{GUROBI}. The solution algorithms can be controlled by \matpower{}'s \code{gurobi.method} option. See Table~\ref{tab:gurobioptions} for a summary of the \gurobi{}-related \matpower{} options. A ``\gurobi{} user options'' function can also be specified via \code{gurobi.opt\_fname} to override the defaults for any of the many \gurobi{} parameters. See \code{help gurobi\_options} and the ``Parameters'' section of the ``Gurobi Optimizer Reference Manual'' at \url{https://www.gurobi.com/documentation/} for details.
 
-It can also be used to solve general LP and QP problems via \matpower{}'s common QP solver interface \code{qps\_matpower}, or MILP and MIQP problems via \code{miqps\_matpower}, with the algorithm option set to \codeq{GUROBI} (or 700 for backward compatibility), or by calling \code{qps\_gurobi} or \code{miqps\_gurobi} directly.
+It can also be used to solve general LP and QP problems via \matpower{}'s common QP solver interface \code{qps\_master}, or MILP and MIQP problems via \code{miqps\_master}, with the algorithm option set to \codeq{GUROBI} (or 700 for backward compatibility), or by calling \code{qps\_gurobi} or \code{miqps\_gurobi} directly.
 
 \subsection{\ipopt{} -- Interior Point Optimizer}
 \label{app:ipopt}
 
 \ipopt{}~\cite{ipopt} ({\bf I}nterior {\bf P}oint {\bf OPT}imizer, pronounced I-P-Opt) is a software package for large-scale nonlinear optimization. It is is written in C++ and is released as open source code under the Common Public License (CPL). It is available from the COIN-OR initiative at \url{https://github.com/coin-or/Ipopt}. The code has been written by Carl Laird and Andreas W\"achter, who is the COIN project leader for \ipopt{}.
 
-\matpower{} requires the \matlab{} MEX interface to \ipopt{}, which is included in the \ipopt{} source distribution, but must be built separately. Additional information on the MEX interface is available at \url{https://projects.coin-or.org/Ipopt/wiki/MatlabInterface}. Please consult the \ipopt{} documentation, web-site and mailing lists for help in building and installing the \ipopt{} \matlab{} interface. This interface uses callbacks to \matlab{} functions to evaluate the objective function and its gradient, the constraint values and Jacobian, and the Hessian of the Lagrangian.
+\matpower{} requires the \matlab{} MEX interface to \ipopt{}, which is included in some versions of the \ipopt{} source distribution, but must be built separately. Additional information on the MEX interface is available at \url{https://projects.coin-or.org/Ipopt/wiki/MatlabInterface}. Please consult the \ipopt{} documentation, web-site and mailing lists for help in building and installing the \ipopt{} \matlab{} interface. This interface uses callbacks to \matlab{} functions to evaluate the objective function and its gradient, the constraint values and Jacobian, and the Hessian of the Lagrangian.
 
 Precompiled MEX binaries for a high-performance version of \ipopt{}, using the \pardiso{} linear solver~\cite{pardiso, pardiso2}, are available from the \pardiso{} project\footnote{See \url{https://pardiso-project.org/} for the download links.}. At the time of this writing, these are the highest performing solvers available to \matpower{} for very large scale AC OPF problems. For Microsoft Windows users, a pre-compiled MEX version of \ipopt{} (and numerous other solvers, such as \clp{} and \glpk{}) are easily installable as part of the OPTI Toolbox\footnote{The OPTI Toolbox is available from 
 \url{https://www.inverseproblem.co.nz/OPTI/}.}~\cite{opti}.
 
 When installed, \ipopt{} can be used by \matpower{} to solve both AC and DC OPF problems by setting the \code{opf.ac.solver} or \code{opf.dc.solver} options, respectively, equal to \codeq{IPOPT}. See Table~\ref{tab:ipoptoptions} for a summary of the \ipopt{}-related \matpower{} options. The many algorithm options can be set by creating an ``\ipopt{} user options'' function and specifying it via \code{ipopt.opt\_fname} to override the defaults set by \code{ipopt\_options}. See \code{help ipopt\_options} and the options reference section of the \ipopt{} documentation at \url{http://www.coin-or.org/Ipopt/documentation/} for details.
 
-It can also be used to solve general LP and QP problems via \matpower{}'s common QP solver interface \code{qps\_matpower} with the algorithm option set to \codeq{IPOPT} (or 400 for backward compatibility), or by calling \code{qps\_ipopt} directly.
+It can also be used to solve general LP, QP and NLP problems via \mpom{}'s common QP and NLP solver interfaces \code{qps\_master} and \code{nlps\_master} with the algorithm option set to \codeq{IPOPT} (or 400 for backward compatibility), or by calling \code{qps\_ipopt} or \code{nlps\_ipopt} directly.
 
 \subsection{\knitro{} -- Non-Linear Programming Solver}
 \label{app:knitro}
@@ -7495,6 +7528,8 @@ When installed, Knitro's \matlab{} interface function, \code{knitromatlab} or \c
 
 Knitro options can be controlled directly by creating a standard Knitro options file in your working directory and specifying it via the \code{knitro.opt\_fname} (or, for backward compatibility, naming it \code{knitro\_user\_options\_$n$.txt} and setting \matpower{}'s \code{knitro.opt} option to $n$, where $n$ is some positive integer value). See the \knitro{} user manuals at \url{https://www.artelys.com/docs/knitro/} for details on the available options.
 
+It can also be used to solve general NLP problems via \matpower{}'s common NLP solver interface \code{nlps\_master} with the algorithm option set to \codeq{KNITRO}, or by calling \code{nlps\_knitro} directly.
+
 \subsection{MINOPF -- AC OPF Solver Based on MINOS}
 \label{app:minopf}
 
@@ -7504,7 +7539,7 @@ While MINOPF is often \matpower{}'s fastest AC OPF solver on small problems, as 
 
 Builds are available for Linux (32-bit), Mac OS X (PPC, Intel 32-bit) and Windows (32-bit) at \url{http://www.pserc.cornell.edu/minopf/}.
 
-\subsection{\mosek{} -- High-performance LP and QP Solvers}
+\subsection{\mosek{} -- High-performance LP, QP, MILP and MIQP Solvers}
 \label{app:mosek}
 
 \mosek{} is a collection of optimization tools that includes high-performance solvers for large-scale linear programming (LP) and quadratic programming (QP) problems, among others. More information is available at \url{https://www.mosek.com/}.
@@ -7513,7 +7548,7 @@ Although \mosek{} is a commercial package, at the time of this writing there is 
 
 When the \matlab{} interface to \mosek{} is installed, the \mosek{} LP and QP solvers can be used to solve DC OPF problems by setting the \code{opf.dc.solver} option equal to \codeq{MOSEK}. The solution algorithm for LP problems can be controlled by \matpower{}'s \code{mosek.lp\_alg} option. See Table~\ref{tab:mosekoptions} for other \mosek{}-related \matpower{} options. A ``\mosek{} user options'' function can also be specified via \code{mosek.opt\_fname} to override the defaults for any of the many \mosek{} parameters. For details see \code{help mosek\_options} and the ``Parameters'' reference in ``The MOSEK optimization toolbox for MATLAB manual'' at \url{http://docs.mosek.com/7.1/toolbox/Parameters.html}. You may also find it helpful to use the symbolic constants defined by \code{mosek\_symbcon}.
 
-It can also be used to solve general LP and QP problems via \matpower{}'s common QP solver interface \code{qps\_matpower}, or MILP and MIQP problems via \code{miqps\_matpower}, with the algorithm option set to \codeq{MOSEK} (or 600 for backward compatibility), or by calling \code{qps\_mosek} or \code{miqps\_mosek} directly.
+It can also be used to solve general LP and QP problems via \matpower{}'s common QP solver interface \code{qps\_master}, or MILP and MIQP problems via \code{miqps\_master}, with the algorithm option set to \codeq{MOSEK} (or 600 for backward compatibility), or by calling \code{qps\_mosek} or \code{miqps\_mosek} directly.
 
 \subsection{\ot{} -- LP, QP, NLP and MILP Solvers}
 \label{app:ot}
@@ -7533,7 +7568,7 @@ For \code{linprog}, \code{quadprog} and \code{intlingprog}, the corresponding \m
 For example, to set the LP solver to use a dual simplex method, simply set \matpower{}'s \codeq{linprog.Algorithm} option to \codeq{dual-simplex}.
 For details on the full set of \ot{} options, please refer to their documentation.\footnote{See \url{https://www.mathworks.com/help/optim/} and \cite{otug}.}
 
-The \ot{} can also be used to solve general LP and QP problems via \matpower{}'s common QP solver interface \code{qps\_matpower}, or MILP problems via \code{miqps\_matpower}, with the algorithm option set to \codeq{OT}, or by calling \code{qps\_ot} or \code{miqps\_ot} directly.
+The \ot{} can also be used to solve general LP and QP problems via \matpower{}'s common QP solver interface \code{qps\_master}, or MILP problems via \code{miqps\_master}, with the algorithm option set to \codeq{OT}, or by calling \code{qps\_ot} or \code{miqps\_ot} directly. It can also be used to solve general NLP problems via \matpower{}'s common NLP solver interface \code{nlps\_master} with the algorithm option set to \codeq{FMINCON}, or by calling \code{nlps\_fmincon} directly.
 
 
 \subsection{\pardiso{} -- Parallel Sparse Direct and Multi-Recursive Iterative Linear Solvers}
@@ -8324,11 +8359,11 @@ The \href{https://matpower.org/docs/MATPOWER-manual-7.0.1.pdf}{\matpower{} 7.0.1
     \end{itemize}
 \item New functions:
     \begin{itemize}
-    \item \code{mpopt2nlpopt()} creates an options struct for \code{nlps\_matpower()} from at \matpower{} options struct.
+    \item \code{mpopt2nlpopt()} creates an options struct for \code{nlps\_master()} from at \matpower{} options struct.
     \item \code{nlps\_fmincon()} provides implementation of unified nonlinear programming solver interface for \code{fmincon}.
     \item \code{nlps\_ipopt()} provides implementation of unified nonlinear programming solver interface interface for \ipopt{}.
     \item \code{nlps\_knitro()} provides implementation of unified nonlinear programming solver interface interface for \ipopt{}.
-    \item \code{nlps\_matpower()} provides a single wrapper function for calling any of \matpower{}'s nonlinear programming solvers.
+    \item \code{nlps\_master()} provides a single wrapper function for calling any of \matpower{}'s nonlinear programming solvers.
     \end{itemize}
 \end{itemize}
 
@@ -8386,10 +8421,10 @@ to use voltage squared, resulting in simpler derivatives.
       \item{\codeq{MIQP}} -- mixed-integer quadratic program
       \item{\codeq{MINLP}} -- mixed-integer nonlinear program
       \end{itemize}
-    \item \code{solve()} - solves the model using \code{qps\_matpower()}, \code{miqps\_matpower()}, or \code{nlps\_matpower()}, depending on the problem type (\codeq{MINLP} problems are not yet implemented)
+    \item \code{solve()} - solves the model using \code{qps\_master()}, \code{miqps\_master()}, or \code{nlps\_master()}, depending on the problem type (\codeq{MINLP} problems are not yet implemented)
     \end{itemize}
 \item Convert \code{dcopf\_solver()} to use the new \code{solver()} method of \code{@opt\_model} instead of calling \code{qps\_matpower()} manually.
-\item Convert \code{opf\_execute()} to use \code{nlps\_matpower()}, based on the new \code{solver()} method of \code{@opt\_model}, for AC OPF when using \code{fmincon}, \ipopt{}, \knitro{}, or \mipslink{}.
+\item Convert \code{opf\_execute()} to use \code{nlps\_master()}, based on the new \code{solver()} method of \code{@opt\_model}, for AC OPF when using \code{fmincon}, \ipopt{}, \knitro{}, or \mipslink{}.
 \item Deprecated functions:
     \begin{itemize}
     \item \code{foo()} -- use \code{bar()} instead.

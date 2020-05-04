@@ -41,10 +41,14 @@ tests{end+1} = 't_qps_mips';
 %% MP-Opt-Model
 tests{end+1} = 't_nested_struct_copy';
 tests{end+1} = 't_have_fcn';
+tests{end+1} = 't_qps_master';
+tests{end+1} = 't_miqps_master';
+tests{end+1} = 't_nlps_master';
+tests{end+1} = 't_opt_model';
+
+%% deprecated wrappers
 tests{end+1} = 't_qps_matpower';
 tests{end+1} = 't_miqps_matpower';
-tests{end+1} = 't_nlps_matpower';
-tests{end+1} = 't_opt_model';
 
 %% MATPOWER
 tests{end+1} = 't_feval_w_path';

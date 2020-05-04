@@ -29,10 +29,10 @@ function [results, success, raw] = dcopf_solver(om, mpopt)
 %       .info   solver specific termination code
 %       .output solver specific output information
 %
-%   See also OPF, QPS_MATPOWER.
+%   See also OPF, OPT_MODEL/SOLVE.
 
 %   MATPOWER
-%   Copyright (c) 2000-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2000-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %

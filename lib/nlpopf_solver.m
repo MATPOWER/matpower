@@ -1,5 +1,5 @@
 function [results, success, raw] = nlpopf_solver(om, mpopt)
-%NLPOPF_SOLVER  Solves AC optimal power flow using NLPS_MATPOWER.
+%NLPOPF_SOLVER  Solves AC optimal power flow using MP-Opt-Model.
 %
 %   [RESULTS, SUCCESS, RAW] = NLPOPF_SOLVER(OM, MPOPT)
 %
