@@ -5,7 +5,7 @@ function cp = get_cost_params(om, name, idx)
 %
 %   CP = OM.GET_COST_PARAMS()
 %   CP = OM.GET_COST_PARAMS(NAME)
-%   CP = OM.GET_COST_PARAMS(NAME, IDX)
+%   CP = OM.GET_COST_PARAMS(NAME, IDX_LIST)
 %
 %   Returns the full cost parameter struct for all user-defined
 %   costs that incorporates all of the named cost sets added via ADD_COSTS,

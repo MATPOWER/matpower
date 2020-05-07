@@ -5,13 +5,13 @@ function f = compute_cost(om, x, varargin)
 %
 %   F_U = OM.COMPUTE_COST(X)
 %   F_U = OM.COMPUTE_COST(X, NAME)
-%   F_U = OM.COMPUTE_COST(X, NAME, IDX)
+%   F_U = OM.COMPUTE_COST(X, NAME, IDX_LIST)
 %
 %   Computes the value of a user defined cost, either for all user
 %   defined costs or for a named set of costs. When specifying a named set,
-%   if NAME refers to an indexed name but IDX is not provided, then
+%   if NAME refers to an indexed name but IDX_LIST is not provided, then
 %   COMPUTE_COST will be called recursively for all corresponding values
-%   of IDX and the costs summed.
+%   of IDX_LIST and the costs summed.
 %
 %   Let X be the full set of optimization variables and F_U(X, CP) be the
 %   user-defined cost at X, corresponding to the set of cost parameters in

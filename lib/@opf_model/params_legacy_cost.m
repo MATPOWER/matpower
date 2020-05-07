@@ -2,7 +2,7 @@ function [cp, vs, i1, iN] = params_legacy_cost(om, name, idx)
 %PARAMS_LEGACY_COST  Returns cost parameters for legacy user-defined costs.
 %   CP = OM.PARAMS_LEGACY_COST()
 %   CP = OM.PARAMS_LEGACY_COST(NAME)
-%   CP = OM.PARAMS_LEGACY_COST(NAME, IDX)
+%   CP = OM.PARAMS_LEGACY_COST(NAME, IDX_LIST)
 %   [CP, VS] = OM.PARAMS_LEGACY_COST(...)
 %   [CP, VS, I1, IN] = OM.PARAMS_LEGACY_COST(...)
 %
@@ -14,7 +14,7 @@ function [cp, vs, i1, iN] = params_legacy_cost(om, name, idx)
 %
 %   If a NAME is provided then it simply returns parameter struct CP for the
 %   corresponding named set. Likewise for indexed named sets specified
-%   by NAME and IDX.
+%   by NAME and IDX_LIST.
 %
 %   An optional 2nd output argument VS indicates the variable sets used by
 %   this cost set. The size of CP.N will be consistent with VS.
@@ -110,7 +110,7 @@ if nargin > 1       %% individual set
                 end
             end
         else                                    %% indexing required
-            error('@opt_model/params_legacy_cost: legacy cost set ''%s'' requires an IDX arg', name);
+            error('@opt_model/params_legacy_cost: legacy cost set ''%s'' requires an IDX_LIST arg', name);
         end
     else                            %% indexed named set
         % (calls to substruct() are relatively expensive ...

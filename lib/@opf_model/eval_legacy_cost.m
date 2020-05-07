@@ -4,7 +4,7 @@ function [f, df, d2f] = eval_legacy_cost(om, x, name, idx)
 %   [F, DF] = OM.EVAL_LEGACY_COST(X ...)
 %   [F, DF, D2F] = OM.EVAL_LEGACY_COST(X ...)
 %   [F, DF, D2F] = OM.EVAL_LEGACY_COST(X, NAME)
-%   [F, DF, D2F] = OM.EVAL_LEGACY_COST(X, NAME, IDX)
+%   [F, DF, D2F] = OM.EVAL_LEGACY_COST(X, NAME, IDX_LIST)
 %   Evaluates an individual named set or the full set of legacy user
 %   costs and their derivatives for a given value of the optimization vector
 %   X, based on costs added by ADD_LEGACY_COST.
@@ -54,7 +54,7 @@ if om.cost.N
                 end
             end
         else
-            error('@opt_model/eval_legacy_cost: legacy cost set ''%s'' requires an IDX arg when requesting DF output', name)
+            error('@opt_model/eval_legacy_cost: legacy cost set ''%s'' requires an IDX_LIST arg when requesting DF output', name)
         end
     else                                %% indexed named set
         [cp, vs] = om.params_legacy_cost(name, idx);

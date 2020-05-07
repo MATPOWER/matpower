@@ -5,7 +5,7 @@ function varargout = getv(om, varargin)
 %
 %   [V0, VL, VU] = OM.GETV()
 %   [V0, VL, VU] = OM.GETV(NAME)
-%   [V0, VL, VU] = OM.GETV(NAME, IDX)
+%   [V0, VL, VU] = OM.GETV(NAME, IDX_LIST)
 %   [V0, VL, VU, VT] = GETV(...)
 %   Returns the initial value V0, lower bound VL and upper bound VU for
 %   the full optimization variable vector, or for a specific named or named
