@@ -177,7 +177,7 @@ for k = 1:length(algs)
 
 % opt.verbose = 3;
         t = sprintf('%s - 2-d MILP : ', names{k});
-        %% from MOSEK 6.0 Guided Tour, section  7.13.1, https://docs.mosek.com/6.0/toolbox/node009.html#283040944
+        %% from MOSEK 6.0 Guided Tour, section  7.13.1, https://docs.mosek.com/6.0/toolbox/node009.html
         c = [-2; -3];
         A = sparse([195 273; 4 40]);
         u = [1365; 140];
