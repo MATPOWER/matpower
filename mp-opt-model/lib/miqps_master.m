@@ -1,10 +1,10 @@
-function [x, f, eflag, output, lambda] = miqps_matpower(H, c, A, l, u, xmin, xmax, x0, vtype, opt)
-%MIQPS_MATPOWER  Mixed Integer Quadratic Program Solver for MATPOWER.
+function [x, f, eflag, output, lambda] = miqps_master(H, c, A, l, u, xmin, xmax, x0, vtype, opt)
+%MIQPS_MASTER  Mixed Integer Quadratic Program Solver for MATPOWER.
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
-%       MIQPS_MATPOWER(H, C, A, L, U, XMIN, XMAX, X0, VTYPE, OPT)
-%   [X, F, EXITFLAG, OUTPUT, LAMBDA] = MIQPS_MATPOWER(PROBLEM)
+%       MIQPS_MASTER(H, C, A, L, U, XMIN, XMAX, X0, VTYPE, OPT)
+%   [X, F, EXITFLAG, OUTPUT, LAMBDA] = MIQPS_MASTER(PROBLEM)
 %   A common wrapper function for various QP solvers. 
-%   Solves the following QP (quadratic programming) problem:
+%   Solves the following MIQP (quadratic programming) problem:
 %
 %       min 1/2 X'*H*X + C'*X
 %        X
@@ -13,6 +13,8 @@ function [x, f, eflag, output, lambda] = miqps_matpower(H, c, A, l, u, xmin, xma
 %
 %       L <= A*X <= U       (linear constraints)
 %       XMIN <= X <= XMAX   (variable bounds)
+%       X(i) is integer, for i in I (integer variable constraints)
+%       X(b) is binary, for b in B (binary variable constraints)
 %
 %   Inputs (all optional except H, C, A and L):
 %       H : matrix (possibly sparse) of quadratic cost coefficients
@@ -85,44 +87,40 @@ function [x, f, eflag, output, lambda] = miqps_matpower(H, c, A, l, u, xmin, xma
 %
 %   Calling syntax options:
 %       [x, f, exitflag, output, lambda] = ...
-%           miqps_matpower(H, c, A, l, u, xmin, xmax, x0, vtype, opt)
+%           miqps_master(H, c, A, l, u, xmin, xmax, x0, vtype, opt)
 %
-%       x = miqps_matpower(H, c, A, l, u)
-%       x = miqps_matpower(H, c, A, l, u, xmin, xmax)
-%       x = miqps_matpower(H, c, A, l, u, xmin, xmax, x0)
-%       x = miqps_matpower(H, c, A, l, u, xmin, xmax, x0, vtype)
-%       x = miqps_matpower(H, c, A, l, u, xmin, xmax, x0, vtype, opt)
-%       x = miqps_matpower(problem), where problem is a struct with fields:
+%       x = miqps_master(H, c, A, l, u)
+%       x = miqps_master(H, c, A, l, u, xmin, xmax)
+%       x = miqps_master(H, c, A, l, u, xmin, xmax, x0)
+%       x = miqps_master(H, c, A, l, u, xmin, xmax, x0, vtype)
+%       x = miqps_master(H, c, A, l, u, xmin, xmax, x0, vtype, opt)
+%       x = miqps_master(problem), where problem is a struct with fields:
 %                       H, c, A, l, u, xmin, xmax, x0, vtype, opt
 %                       all fields except 'c', 'A' and 'l' or 'u' are optional
-%       x = miqps_matpower(...)
-%       [x, f] = miqps_matpower(...)
-%       [x, f, exitflag] = miqps_matpower(...)
-%       [x, f, exitflag, output] = miqps_matpower(...)
-%       [x, f, exitflag, output, lambda] = miqps_matpower(...)
+%       x = miqps_master(...)
+%       [x, f] = miqps_master(...)
+%       [x, f, exitflag] = miqps_master(...)
+%       [x, f, exitflag, output] = miqps_master(...)
+%       [x, f, exitflag, output, lambda] = miqps_master(...)
 %
-%   Example: (problem from from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm)
-%       H = [   1003.1  4.3     6.3     5.9;
-%               4.3     2.2     2.1     3.9;
-%               6.3     2.1     3.5     4.8;
-%               5.9     3.9     4.8     10  ];
-%       c = zeros(4,1);
-%       A = [   1       1       1       1;
-%               0.17    0.11    0.10    0.18    ];
-%       l = [1; 0.10];
-%       u = [1; Inf];
-%       xmin = zeros(4,1);
-%       x0 = [1; 0; 0; 1];
+%   Example: (problem from from %% from MOSEK 6.0 Guided Tour, section  7.13.1
+%             https://docs.mosek.com/6.0/toolbox/node009.html)
+%       c = [-2; -3];
+%       A = sparse([195 273; 4 40]);
+%       u = [1365; 140];
+%       xmax = [4; Inf];
+%       vtype = 'I';
 %       opt = struct('verbose', 2);
-%       [x, f, s, out, lambda] = miqps_matpower(H, c, A, l, u, xmin, [], x0, vtype, opt);
+%       p = struct('c', c, 'A', A, 'u', u, 'xmax', xmax, 'vtype', vtype, 'opt', opt);
+%       [x, f, s, out, lam] = miqps_master(p);
 
-%   MATPOWER
+%   MP-Opt-Model
 %   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
-%   This file is part of MATPOWER.
+%   This file is part of MP-Opt-Model.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See https://matpower.org for more info.
+%   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 %%----- input argument handling  -----
 %% gather inputs
@@ -173,7 +171,7 @@ if ~isempty(opt) && isfield(opt, 'alg') && ~isempty(opt.alg)
             case 700
                 alg = 'GUROBI';
             otherwise
-                error('miqps_matpower: %d is not a valid algorithm code', alg);
+                error('miqps_master: %d is not a valid algorithm code', alg);
         end
     end
 else
@@ -198,7 +196,7 @@ if strcmp(alg, 'DEFAULT')
             alg = 'GLPK';
         end
     else
-        error('miqps_matpower: no solvers available - requires CPLEX, Gurobi, MOSEK, INTLINPROG or GLPK');
+        error('miqps_master: no solvers available - requires CPLEX, Gurobi, MOSEK, INTLINPROG or GLPK');
     end
 end
 
@@ -220,7 +218,7 @@ switch alg
         [x, f, eflag, output, lambda] = ...
             miqps_ot(H, c, A, l, u, xmin, xmax, x0, vtype, opt);
     otherwise
-        error('miqps_matpower: ''%s'' is not a valid algorithm code', alg);
+        error('miqps_master: ''%s'' is not a valid algorithm code', alg);
 end
 if ~isfield(output, 'alg') || isempty(output.alg)
     output.alg = alg;

@@ -68,13 +68,13 @@ function opt = mosek_options(overrides, mpopt)
 %
 %   See also MOSEK_SYMBCON, MOSEKOPT, MPOPTION.
 
-%   MATPOWER
-%   Copyright (c) 2010-2016, Power Systems Engineering Research Center (PSERC)
+%   MP-Opt-Model
+%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
-%   This file is part of MATPOWER.
+%   This file is part of MP-Opt-Model.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See https://matpower.org for more info.
+%   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 %%-----  initialization and arg handling  -----
 %% defaults
@@ -134,7 +134,7 @@ if have_mpopt
         otherwise
             if alg == 0     %% MATPOWER still interprets this to be 'default'
                             %% even for MOSEK 8, since the conic optimizer is
-                            %% not directly supported by mi/qps_matpower()
+                            %% not directly supported by mi/qps_master()
                 opt.MSK_IPAR_OPTIMIZER = sc.MSK_OPTIMIZER_FREE;
             else
                 error('mosek_options: %d is not a valid value for MSK_IPAR_OPTIMIZER', alg);

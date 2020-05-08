@@ -1,11 +1,11 @@
 function qpopt = mpopt2qpopt(mpopt, model, alg)
-%MPOPT2QPOPT   Create/modify MI/QPS_MATPOWER options struct from MPOPT.
+%MPOPT2QPOPT   Create/modify MI/QPS_MASTER options struct from MPOPT.
 %
 %   QPOPT = MPOPT2QPOPT(MPOPT, MODEL)
 %   QPOPT = MPOPT2QPOPT(MPOPT, MODEL, ALG)
 %
 %   Uses a MATPOWER options struct, MPOPT, to create or modify an
-%   MIQPS_MATPOWER or QPS_MATPOWER options struct.
+%   MIQPS_MASTER or QPS_MASTER options struct.
 %
 %   Inputs (default values in parentheses):
 %       MPOPT : MATPOWER options struct
@@ -22,21 +22,21 @@ function qpopt = mpopt2qpopt(mpopt, model, alg)
 %           'MIQP' - (default) QP with mixed integer/continuous variables
 %                   (GUROBI, CPLEX, MOSEK)
 %       ALG ('opf.dc') : (optional) 'opf.dc', 'most', or any valid value of
-%               OPT.alg for QPS_MATPOWER or MIQPS_MATPOWER. The first two
+%               OPT.alg for QPS_MASTER or MIQPS_MASTER. The first two
 %               options indicate that it should be taken from
 %               MPOPT.opf.dc.solver or MPOPT.most.solver, respectively.
 %
 %   Output:
-%       QPOPT : an options struct for use by QPS_MATPOWER or MIQPS_MATPOWER
+%       QPOPT : an options struct for use by QPS_MASTER or MIQPS_MASTER
 %               and friends
 
-%   MATPOWER
-%   Copyright (c) 2015-2016, Power Systems Engineering Research Center (PSERC)
+%   MP-Opt-Model
+%   Copyright (c) 2015-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
-%   This file is part of MATPOWER.
+%   This file is part of MP-Opt-Model.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See https://matpower.org for more info.
+%   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 %% set default args
 if nargin < 3
@@ -96,7 +96,7 @@ switch alg
         end
 end
 
-%% create MI/QPS_MATPOWER options struct
+%% create MI/QPS_MASTER options struct
 qpopt = struct('alg', alg, 'verbose', mpopt.verbose);
 switch alg
     case {'MIPS', 200, 250}

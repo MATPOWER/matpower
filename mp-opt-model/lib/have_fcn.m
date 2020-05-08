@@ -102,13 +102,13 @@ function rv = have_fcn(tag, rtype)
 %       CACHE = HAVE_FCN('all', 'get_cache')
 %       HAVE_FCN(CACHE, 'set_cache')
 
-%   MATPOWER
-%   Copyright (c) 2004-2019, Power Systems Engineering Research Center (PSERC)
+%   MP-Opt-Model
+%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
-%   This file is part of MATPOWER.
+%   This file is part of MP-Opt-Model.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See https://matpower.org for more info.
+%   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 persistent fcns;
 

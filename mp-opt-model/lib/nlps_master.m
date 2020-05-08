@@ -1,8 +1,8 @@
-function [x, f, eflag, output, lambda] = nlps_matpower(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt)
-%NLPS_MATPOWER  Nonlinear programming (NLP) Solver for MATPOWER.
+function [x, f, eflag, output, lambda] = nlps_master(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt)
+%NLPS_MASTER  Nonlinear programming (NLP) Solver for MATPOWER.
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
-%       NLPS_MATPOWER(F_FCN, X0, A, L, U, XMIN, XMAX, GH_FCN, HESS_FCN, OPT)
-%   [X, F, EXITFLAG, OUTPUT, LAMBDA] = NLPS_MATPOWER(PROBLEM)
+%       NLPS_MASTER(F_FCN, X0, A, L, U, XMIN, XMAX, GH_FCN, HESS_FCN, OPT)
+%   [X, F, EXITFLAG, OUTPUT, LAMBDA] = NLPS_MASTER(PROBLEM)
 %   A common wrapper function for various NLP solvers.
 %   Solves the following NLP (nonlinear programming) problem:
 %
@@ -96,25 +96,25 @@ function [x, f, eflag, output, lambda] = nlps_matpower(f_fcn, x0, A, l, u, xmin,
 %
 %   Calling syntax options:
 %       [x, f, exitflag, output, lambda] = ...
-%           nlps_matpower(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt);
+%           nlps_master(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt);
 %
-%       x = nlps_matpower(f_fcn, x0);
-%       x = nlps_matpower(f_fcn, x0, A, l);
-%       x = nlps_matpower(f_fcn, x0, A, l, u);
-%       x = nlps_matpower(f_fcn, x0, A, l, u, xmin);
-%       x = nlps_matpower(f_fcn, x0, A, l, u, xmin, xmax);
-%       x = nlps_matpower(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn);
-%       x = nlps_matpower(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn);
-%       x = nlps_matpower(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt);
-%       x = nlps_matpower(problem);
+%       x = nlps_master(f_fcn, x0);
+%       x = nlps_master(f_fcn, x0, A, l);
+%       x = nlps_master(f_fcn, x0, A, l, u);
+%       x = nlps_master(f_fcn, x0, A, l, u, xmin);
+%       x = nlps_master(f_fcn, x0, A, l, u, xmin, xmax);
+%       x = nlps_master(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn);
+%       x = nlps_master(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn);
+%       x = nlps_master(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt);
+%       x = nlps_master(problem);
 %               where problem is a struct with fields:
 %                   f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt
 %                   all fields except 'f_fcn' and 'x0' are optional
-%       x = nlps_matpower(...);
-%       [x, f] = nlps_matpower(...);
-%       [x, f, exitflag] = nlps_matpower(...);
-%       [x, f, exitflag, output] = nlps_matpower(...);
-%       [x, f, exitflag, output, lambda] = nlps_matpower(...);
+%       x = nlps_master(...);
+%       [x, f] = nlps_master(...);
+%       [x, f, exitflag] = nlps_master(...);
+%       [x, f, exitflag, output] = nlps_master(...);
+%       [x, f, exitflag, output, lambda] = nlps_master(...);
 %
 %   Example: (problem from https://en.wikipedia.org/wiki/Nonlinear_programming)
 %       function [f, df, d2f] = f2(x)
@@ -144,15 +144,15 @@ function [x, f, eflag, output, lambda] = nlps_matpower(f_fcn, x0, A, l, u, xmin,
 %           'x0',       [1; 1; 0], ...
 %           'opt',      struct('verbose', 2) ...
 %       );
-%       [x, f, exitflag, output, lambda] = nlps_matpower(problem);
+%       [x, f, exitflag, output, lambda] = nlps_master(problem);
 
-%   MATPOWER
+%   MP-Opt-Model
 %   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
-%   This file is part of MATPOWER.
+%   This file is part of MP-Opt-Model.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See https://matpower.org for more info.
+%   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 %%----- input argument handling  -----
 %% gather inputs
@@ -234,7 +234,7 @@ switch alg
         [x, f, eflag, output, lambda] = ...
             nlps_knitro(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt);
     otherwise
-        error('nlps_matpower: ''%s'' is not a valid algorithm code', alg);
+        error('nlps_master: ''%s'' is not a valid algorithm code', alg);
 end
 if ~isfield(output, 'alg') || isempty(output.alg)
     output.alg = alg;

@@ -52,13 +52,13 @@ function d = nested_struct_copy(d, s, opt, parent)
 %           Implement an error that passes back the full field string of
 %           an invalid field so that mpoption can refer to it as option foo.
 
-%   MATPOWER
-%   Copyright (c) 2013-2018, Power Systems Engineering Research Center (PSERC)
+%   MP-Opt-Model
+%   Copyright (c) 2013-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
-%   This file is part of MATPOWER.
+%   This file is part of MP-Opt-Model.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See https://matpower.org for more info.
+%   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 DEBUG = 0;
 

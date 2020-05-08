@@ -1,13 +1,13 @@
 function t_opt_model(quiet)
 %T_OPT_MODEL Tests for OPT_MODEL.
 
-%   MATPOWER
+%   MP-Opt-Model
 %   Copyright (c) 2012-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
-%   This file is part of MATPOWER.
+%   This file is part of MP-Opt-Model.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See https://matpower.org for more info.
+%   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 if nargin < 1
     quiet = 0;
@@ -931,7 +931,7 @@ try
     [N, fcn] = om.params_nln_cost('wc')
     t_ok(0, t);
 catch
-    t_ok(strfind(lasterr, '@opt_model/params_nln_cost: general nonlinear cost set ''wc'' requires an IDX arg'), t);
+    t_ok(strfind(lasterr, '@opt_model/params_nln_cost: general nonlinear cost set ''wc'' requires an IDX_LIST arg'), t);
 end
 
 t = 'om.params_nln_cost(''wc'', {1,2})';

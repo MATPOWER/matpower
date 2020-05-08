@@ -18,7 +18,7 @@ function om = add_nln_cost(om, name, idx, N, fcn, varsets)
 %       F = FCN(X)
 %       [F, DF] = FCN(X)
 %       [F, DF, D2F] = FCN(X)
-%   where F is a scalar with the value of the function, DG is the 1 x NX
+%   where F is a scalar with the value of the function, DF is the 1 x NX
 %   gradient, and D2F is the NX x NX Hessian and NX is the number of
 %   elements in X.
 %
@@ -57,13 +57,13 @@ function om = add_nln_cost(om, name, idx, N, fcn, varsets)
 %
 %   See also OPT_MODEL, EVAL_NLN_COST.
 
-%   MATPOWER
-%   Copyright (c) 2008-2017, Power Systems Engineering Research Center (PSERC)
+%   MP-Opt-Model
+%   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
-%   This file is part of MATPOWER.
+%   This file is part of MP-Opt-Model.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See https://matpower.org for more info.
+%   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 %% initialize input arguments
 if iscell(idx)          %% indexed named set

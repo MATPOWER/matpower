@@ -2,7 +2,7 @@ function [A, l, u, vs, i1, iN] = params_lin_constraint(om, name, idx)
 %PARAMS_LIN_CONSTRAINT  Builds and returns linear constraint parameters.
 %   [A, L, U] = OM.PARAMS_LIN_CONSTRAINT()
 %   [A, L, U] = OM.PARAMS_LIN_CONSTRAINT(NAME)
-%   [A, L, U] = OM.PARAMS_LIN_CONSTRAINT(NAME, IDX)
+%   [A, L, U] = OM.PARAMS_LIN_CONSTRAINT(NAME, IDX_LIST)
 %   [A, L, U, VS] = OM.PARAMS_LIN_CONSTRAINT(...)
 %   [A, L, U, VS, I1, IN] = OM.PARAMS_LIN_CONSTRAINT(...)
 %
@@ -15,28 +15,25 @@ function [A, l, u, vs, i1, iN] = params_lin_constraint(om, name, idx)
 %
 %   If a NAME is provided then it simply returns the parameters for the
 %   corresponding named set. Likewise for indexed named sets specified
-%   by NAME and IDX. 
-%
-%   An optional 4th output argument VS indicates the variable sets used by
-%   this cost set. The size of A will be consistent with VS.
-%
-%   If NAME is provided, optional 5th and 6th output arguments I1 and IN
+%   by NAME and IDX_LIST. An optional 4th output argument VS indicates the
+%   variable sets used by this constraint set. The size of A will be
+%   consistent with VS. Optional 5th and 6th output arguments I1 and IN
 %   indicate the starting and ending row indices of the corresponding
 %   constraint set in the full aggregate constraint matrix.
 %
 %   Examples:
 %       [A, l, u] = om.params_lin_constraint();
-%       [A, l, u, vs, i1, i2] = om.params_lin_constraint('Pmis');
+%       [A, l, u, vs, i1, iN] = om.params_lin_constraint('Pmis');
 %
 %   See also OPT_MODEL, ADD_LIN_CONSTRAINT.
 
-%   MATPOWER
-%   Copyright (c) 2008-2019, Power Systems Engineering Research Center (PSERC)
+%   MP-Opt-Model
+%   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
-%   This file is part of MATPOWER.
+%   This file is part of MP-Opt-Model.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See https://matpower.org for more info.
+%   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 if nargin > 1       %% individual set
     if nargin < 3
@@ -55,7 +52,7 @@ if nargin > 1       %% individual set
                 end
             end
         else                                    %% indexing required
-            error('@opt_model/params_lin_constraint: linear constraint set ''%s'' requires an IDX arg', name);
+            error('@opt_model/params_lin_constraint: linear constraint set ''%s'' requires an IDX_LIST arg', name);
         end
     else
         % (calls to substruct() are relatively expensive ...
@@ -96,7 +93,7 @@ else                %% aggregate
                     if isempty(vs)
                         if nk == nx     %% full size
                             Akt_full(:, i1:iN) = Ak';
-                        else            %% vars added since adding this cost set
+                        else            %% vars added since adding this constraint set
                             Ak_all_cols = sparse(mk, nx);
                             Ak_all_cols(:, 1:nk) = Ak;
                             Akt_full(:, i1:iN) = Ak_all_cols';

@@ -1,11 +1,11 @@
 function nlpopt = mpopt2nlpopt(mpopt, model, alg)
-%MPOPT2NLPOPT   Create/modify NLPS_MATPOWER options struct from MPOPT.
+%MPOPT2NLPOPT   Create/modify NLPS_MASTER options struct from MPOPT.
 %
 %   NLPOPT = MPOPT2NLPOPT(MPOPT, MODEL)
 %   NLPOPT = MPOPT2NLPOPT(MPOPT, MODEL, ALG)
 %
 %   Uses a MATPOWER options struct, MPOPT, to create or modify an
-%   NLPS_MATPOWER options struct.
+%   NLPS_MASTER options struct.
 %
 %   Inputs (default values in parentheses):
 %       MPOPT : MATPOWER options struct
@@ -21,15 +21,15 @@ function nlpopt = mpopt2nlpopt(mpopt, model, alg)
 %               it should be taken from MPOPT.opf.ac.solver.
 %
 %   Output:
-%       NLPOPT : an options struct for use by NLPS_MATPOWER and friends
+%       NLPOPT : an options struct for use by NLPS_MASTER and friends
 
-%   MATPOWER
+%   MP-Opt-Model
 %   Copyright (c) 2015-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
-%   This file is part of MATPOWER.
+%   This file is part of MP-Opt-Model.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See https://matpower.org for more info.
+%   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 %% set default args
 if nargin < 3
@@ -64,7 +64,7 @@ if strcmp(alg, 'DEFAULT')
     end
 end
 
-%% create NLPS_MATPOWER options struct
+%% create NLPS_MASTER options struct
 nlpopt = struct('alg', alg, 'verbose', mpopt.verbose);
 switch alg
     case 'MIPS'

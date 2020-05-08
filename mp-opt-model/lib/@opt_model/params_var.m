@@ -2,7 +2,7 @@ function [v0, vl, vu, vt] = params_var(om, name, idx)
 %PARAMS_VAR  Returns initial value, lower bound and upper bound for opt variables.
 %   [V0, VL, VU] = OM.PARAMS_VAR()
 %   [V0, VL, VU] = OM.PARAMS_VAR(NAME)
-%   [V0, VL, VU] = OM.PARAMS_VAR(NAME, IDX)
+%   [V0, VL, VU] = OM.PARAMS_VAR(NAME, IDX_LIST)
 %   [V0, VL, VU, VT] = PARAMS_VAR(...)
 %   Returns the initial value V0, lower bound VL and upper bound VU for
 %   the full optimization variable vector, or for a specific named or named
@@ -11,19 +11,19 @@ function [v0, vl, vu, vt] = params_var(om, name, idx)
 %   integer and binary variables, respectively.
 %
 %   Examples:
-%       [x, xmin, xmax] = om.params_var();
-%       [Pg, Pmin, Pmax] = om.params_var('Pg');
+%       [x0, xmin, xmax] = om.params_var();
+%       [Pg0, Pmin, Pmax] = om.params_var('Pg');
 %       [zij0, zijmin, zijmax, ztype] = om.params_var('z', {i, j});
 %   
 %   See also OPT_MODEL.
 
-%   MATPOWER
-%   Copyright (c) 2008-2017, Power Systems Engineering Research Center (PSERC)
+%   MP-Opt-Model
+%   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
-%   This file is part of MATPOWER.
+%   This file is part of MP-Opt-Model.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See https://matpower.org for more info.
+%   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 if nargout > 3
     have_vt = 1;

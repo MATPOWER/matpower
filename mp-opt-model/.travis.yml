@@ -69,7 +69,7 @@ script:
 # print version numbers
 - octave-cli --no-gui --eval ver
 - octave-cli --no-gui -p $MIPS_PATH --eval mipsver
-- octave-cli --no-gui -p $MIPS_PATH --eval mpomver
+- octave-cli --no-gui -p $MP_OPT_MODEL_PATH --eval mpomver
 - octave-cli --no-gui -p $MP_OPT_MODEL_PATH --eval "qps_glpk( [],[1; 1],[1 1],[2],[2],[1; 1],[1; 1],[1; 1],struct('verbose', 3));"
 - octave-cli --no-gui -p $MP_OPT_MODEL_PATH --eval "qps_ipopt([],[1; 1],[1 1],[2],[2],[1; 1],[1; 1],[1; 1],struct('verbose', 2));"
 

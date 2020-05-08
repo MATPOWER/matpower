@@ -4,25 +4,25 @@ function [f, df, d2f] = eval_quad_cost(om, x, name, idx)
 %   [F, DF] = OM.EVAL_QUAD_COST(X ...)
 %   [F, DF, D2F] = OM.EVAL_QUAD_COST(X ...)
 %   [F, DF, D2F] = OM.EVAL_QUAD_COST(X, NAME)
-%   [F, DF, D2F] = OM.EVAL_QUAD_COST(X, NAME, IDX)
-%   Evaluates an individual named set or the full set of quadratic
-%   costs and their derivatives for a given value of the optimization vector
-%   X, based on costs added by ADD_QUAD_COST.
+%   [F, DF, D2F] = OM.EVAL_QUAD_COST(X, NAME, IDX_LIST)
+%   Evaluates the cost function and its derivatives for an individual named
+%   set or the full set of quadratic costs for a given value of the
+%   optimization vector X, based on costs added by ADD_QUAD_COST.
 %
 %   Example:
 %       [f, df, d2f] = om.eval_quad_cost(x)
 %       [f, df, d2f] = om.eval_quad_cost(x, name)
-%       [f, df, d2f] = om.eval_quad_cost(x, name, idx)
+%       [f, df, d2f] = om.eval_quad_cost(x, name, idx_list)
 %
 %   See also OPT_MODEL, ADD_QUAD_COST, PARAMS_QUAD_COST.
 
-%   MATPOWER
-%   Copyright (c) 2008-2017, Power Systems Engineering Research Center (PSERC)
+%   MP-Opt-Model
+%   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
-%   This file is part of MATPOWER.
+%   This file is part of MP-Opt-Model.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See https://matpower.org for more info.
+%   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 if om.qdc.N
     done = 0;
@@ -56,7 +56,7 @@ if om.qdc.N
                 end
             end
         else
-            error('@opt_model/eval_quad_cost: quadratic cost set ''%s'' requires an IDX arg when requesting DF output', name)
+            error('@opt_model/eval_quad_cost: quadratic cost set ''%s'' requires an IDX_LIST arg when requesting DF output', name)
         end
     else                                %% indexed named set
         [Q, c, k, vs] = om.params_quad_cost(name, idx);

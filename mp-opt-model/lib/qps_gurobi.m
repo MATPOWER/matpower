@@ -92,15 +92,15 @@ function [x, f, eflag, output, lambda] = qps_gurobi(H, c, A, l, u, xmin, xmax, x
 %       opt = struct('verbose', 2);
 %       [x, f, s, out, lambda] = qps_gurobi(H, c, A, l, u, xmin, [], x0, opt);
 %
-%   See also QPS_MATPOWER, GUROBI.
+%   See also QPS_MASTER, GUROBI.
 
-%   MATPOWER
+%   MP-Opt-Model
 %   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
-%   This file is part of MATPOWER.
+%   This file is part of MP-Opt-Model.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See https://matpower.org for more info.
+%   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 %%----- input argument handling  -----
 %% gather inputs

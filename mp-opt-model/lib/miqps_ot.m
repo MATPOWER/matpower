@@ -103,15 +103,15 @@ function [x, f, eflag, output, lambda] = miqps_ot(H, c, A, l, u, xmin, xmax, x0,
 %       opt = struct('verbose', 2);
 %       [x, f, s, out, lambda] = miqps_ot(H, c, A, l, u, xmin, [], x0, vtype, opt);
 %
-%   See also MIQPS_MATPOWER, INTLINPROG, QUADPROG, LINPROG.
+%   See also MIQPS_MASTER, INTLINPROG, QUADPROG, LINPROG.
 
-%   MATPOWER
+%   MP-Opt-Model
 %   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
-%   This file is part of MATPOWER.
+%   This file is part of MP-Opt-Model.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See https://matpower.org for more info.
+%   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 %% check for Optimization Toolbox
 % if ~have_fcn('quadprog')

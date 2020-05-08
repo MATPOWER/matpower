@@ -1,13 +1,13 @@
-function t_miqps_matpower(quiet)
-%T_MIQPS_MATPOWER  Tests of MIQPS_MATPOWER MIQP solvers.
+function t_miqps_master(quiet)
+%T_MIQPS_MASTER  Tests of MIQPS_MASTER MIQP solvers.
 
-%   MATPOWER
-%   Copyright (c) 2010-2016, Power Systems Engineering Research Center (PSERC)
+%   MP-Opt-Model
+%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
-%   This file is part of MATPOWER.
+%   This file is part of MP-Opt-Model.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See https://matpower.org for more info.
+%   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 if nargin < 1
     quiet = 0;
@@ -89,7 +89,7 @@ for k = 1:length(algs)
         u = [20; Inf; 30];
         xmin = [0; 0; 0];
         x0 = [];
-        [x, f, s, out, lam] = miqps_matpower([], c, A, l, u, xmin, [], [], [], opt);
+        [x, f, s, out, lam] = miqps_master([], c, A, l, u, xmin, [], [], [], opt);
         t_is(s, 1, 12, [t 'success']);
         t_is(x, [0; 15; 3], 6, [t 'x']);
         t_is(f, -78, 6, [t 'f']);
@@ -104,7 +104,7 @@ for k = 1:length(algs)
             H = [5 -2 -1; -2 4 3; -1 3 5];
             c = [2; -35; -47];
             x0 = [0; 0; 0];
-            [x, f, s, out, lam] = miqps_matpower(H, c, [], [], [], [], [], [], [], opt);
+            [x, f, s, out, lam] = miqps_master(H, c, [], [], [], [], [], [], [], opt);
             t_is(s, 1, 12, [t 'success']);
             t_is(x, [3; 5; 7], 8, [t 'x']);
             t_is(f, -249, 13, [t 'f']);
@@ -125,7 +125,7 @@ for k = 1:length(algs)
             u = [2; 2; 3];
             xmin = [0; 0];
             x0 = [];
-            [x, f, s, out, lam] = miqps_matpower(H, c, A, l, u, xmin, [], x0, [], opt);
+            [x, f, s, out, lam] = miqps_master(H, c, A, l, u, xmin, [], x0, [], opt);
             t_is(s, 1, 12, [t 'success']);
             t_is(x, [2; 4]/3, 7, [t 'x']);
             t_is(f, -74/9, 6, [t 'f']);
@@ -147,7 +147,7 @@ for k = 1:length(algs)
             u = [1; Inf];
             xmin = zeros(4,1);
             x0 = [1; 0; 0; 1];
-            [x, f, s, out, lam] = miqps_matpower(H, c, A, l, u, xmin, [], x0, [], opt);
+            [x, f, s, out, lam] = miqps_master(H, c, A, l, u, xmin, [], x0, [], opt);
             t_is(s, 1, 12, [t 'success']);
             t_is(x, [0; 2.8; 0.2; 0]/3, 5, [t 'x']);
             t_is(f, 3.29/3, 6, [t 'f']);
@@ -158,7 +158,7 @@ for k = 1:length(algs)
 
             t = sprintf('%s - (struct) constrained 4-d QP : ', names{k});
             p = struct('H', H, 'A', A, 'l', l, 'u', u, 'xmin', xmin, 'x0', x0, 'opt', opt);
-            [x, f, s, out, lam] = miqps_matpower(p);
+            [x, f, s, out, lam] = miqps_master(p);
             t_is(s, 1, 12, [t 'success']);
             t_is(x, [0; 2.8; 0.2; 0]/3, 5, [t 'x']);
             t_is(f, 3.29/3, 6, [t 'f']);
@@ -172,7 +172,7 @@ for k = 1:length(algs)
 
         t = sprintf('%s - infeasible LP : ', names{k});
         p = struct('A', sparse([1 1]), 'c', [1;1], 'u', -1, 'xmin', [0;0], 'opt', opt);
-        [x, f, s, out, lam] = miqps_matpower(p);
+        [x, f, s, out, lam] = miqps_master(p);
         t_ok(s <= 0, [t 'no success']);
 
 % opt.verbose = 3;
@@ -184,7 +184,7 @@ for k = 1:length(algs)
         xmax = [4; Inf];
         vtype = 'I';
         p = struct('c', c, 'A', A, 'u', u, 'xmax', xmax, 'vtype', vtype, 'opt', opt);
-        [x, f, s, out, lam] = miqps_matpower(p);
+        [x, f, s, out, lam] = miqps_master(p);
         t_is(s, 1, 12, [t 'success']);
         t_is(x, [4; 2], 12, [t 'x']);
         t_is(lam.mu_l, [0; 0], 12, [t 'lam.mu_l']);
@@ -213,7 +213,7 @@ for k = 1:length(algs)
             vtype = 'CCCI';
             p = struct('H', H, 'c', c, 'A', A, 'l', l, 'u', u, ...
                 'xmin', xmin, 'xmax', xmax, 'vtype', vtype, 'opt', opt);
-            [x, f, s, out, lam] = miqps_matpower(p);
+            [x, f, s, out, lam] = miqps_master(p);
             t_is(s, 1, 12, [t 'success']);
             t_is(x, [7; 7; 0; 2], 7, [t 'x']);
             t_is(lam.mu_l, [466; 0; 0], 6, [t 'lam.mu_l']);

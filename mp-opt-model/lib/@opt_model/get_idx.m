@@ -4,8 +4,8 @@ function varargout = get_idx(om, varargin)
 %   [VV, LL] = OM.GET_IDX()
 %   [VV, LL, NNE] = OM.GET_IDX()
 %   [VV, LL, NNE, NNI] = OM.GET_IDX()
-%   [VV, LL, NNE, NNI, QDC] = OM.GET_IDX()
-%   [VV, LL, NNE, NNI, QDC, NLC] = OM.GET_IDX()
+%   [VV, LL, NNE, NNI, QQ] = OM.GET_IDX()
+%   [VV, LL, NNE, NNI, QQ, NNC] = OM.GET_IDX()
 %
 %   Returns a structure for each with the beginning and ending
 %   index value and the number of elements for each named block.
@@ -27,12 +27,12 @@ function varargout = get_idx(om, varargin)
 %       SET_TYPE = 'lin'   => linear constraint set
 %       SET_TYPE = 'nle'   => nonlinear equality constraint set
 %       SET_TYPE = 'nli'   => nonlinear inequality constraint set
-%       SET_TYPE = 'nlc'   => nonlinear cost set
 %       SET_TYPE = 'qdc'   => quadratic cost set
+%       SET_TYPE = 'nnc'   => nonlinear cost set
 %
 %   Examples:
 %       [vv, ll, nne] = om.get_idx();
-%       [vv, ll, qdc] = om.get_idx('var', 'lin', 'qdc');
+%       [vv, ll, qq] = om.get_idx('var', 'lin', 'qdc');
 %
 %       For a variable block named 'z' we have ...
 %           vv.i1.z - starting index for 'z' in optimization vector x
@@ -61,13 +61,13 @@ function varargout = get_idx(om, varargin)
 %   See also OPT_MODEL, ADD_VAR, ADD_LIN_CONSTRAINT, ADD_NLN_CONSTRAINT,
 %            ADD_QUAD_COST, and ADD_NLN_COST.
 
-%   MATPOWER
+%   MP-Opt-Model
 %   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
-%   This file is part of MATPOWER.
+%   This file is part of MP-Opt-Model.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See https://matpower.org for more info.
+%   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 if nargin == 1
     varargout{1} = om.var.idx;
@@ -87,7 +87,6 @@ if nargin == 1
         end
     end
 else
-    for k = nargout:-1:1
-        varargout{k} = om.(varargin{k}).idx;
-    end
+    %% call parent method (also checks for valid type for named set)
+    [varargout{1:nargout}] = get_idx@mp_idx_manager(om, varargin{:});
 end

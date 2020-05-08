@@ -32,12 +32,13 @@ function om = add_nln_constraint(om, name, idx, N, iseq, fcn, hess, varsets)
 %
 %   For simple (not indexed) named sets, NAME can be a cell array of
 %   constraint set names, in which case N is a vector, specifying the number
-%   of constraints in each corresponding set. FCN and HESS are still single
-%   function handles for functions that compute the values for the entire
-%   collection of constraint sets together.
+%   of constraints in each corresponding set. FCN and HESS are each still
+%   a single function handle, but the values computed by each correspond
+%   to the entire stacked collection of constraint sets together, as if
+%   they were a single set.
 %
 %   Likewise, if FCN or HESS are empty, it also indicates a placeholder in
-%   the indexing for a constraint set whose implmentation is included in
+%   the indexing for a constraint set whose implementation is included in
 %   another constraint set. This functionality is only intended to be used
 %   internally to handle constraint/gradient and Hessian functions that
 %   compute the values for more than one constraint set simultaneously.
@@ -71,13 +72,13 @@ function om = add_nln_constraint(om, name, idx, N, iseq, fcn, hess, varsets)
 %
 %   See also OPT_MODEL, EVAL_NLN_CONSTRAINT.
 
-%   MATPOWER
-%   Copyright (c) 2008-2017, Power Systems Engineering Research Center (PSERC)
+%   MP-Opt-Model
+%   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
-%   This file is part of MATPOWER.
+%   This file is part of MP-Opt-Model.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See https://matpower.org for more info.
+%   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 %% initialize input arguments
 if iscell(idx)          %% indexed named set

@@ -22,72 +22,31 @@ function om = add_named_set(om, set_type, name, idx, N, varargin)
 %   Quadratic Cost Set
 %       OM.ADD_NAMED_SET('qdc', NAME, IDX_LIST, N, CP, VARSETS);
 %
-%   General Nonlinear Cost Set
-%       OM.ADD_NAMED_SET('nlc', NAME, IDX_LIST, N, FCN, VARSETS);
-%
 %   See also OPT_MODEL, ADD_VAR, ADD_LIN_CONSTRAINT, ADD_NLN_CONSTRAINT
 %            ADD_QUAD_COST and ADD_NLN_COST.
 
-%   MATPOWER
+%   MP-Opt-Model
 %   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
-%   This file is part of MATPOWER.
+%   This file is part of MP-Opt-Model.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See https://matpower.org for more info.
+%   See https://github.com/MATPOWER/mp-opt-model for more info.
 
-%% check for valid type for named set
-st_label = om.valid_named_set_type(set_type);
-if st_label
-    ff = set_type;
-    om_ff = om.(ff);
-    om.(ff) = [];
-else
-    error('@opt_model/add_named_set: ''%s'' is not a valid SET_TYPE, must be one of ''var'', ''lin'', ''nle'', ''nli'', ''qdc'', ''nlc'', ''cost''', set_type);
-end
+%% call parent method (also checks for valid type for named set)
+om = add_named_set@mp_idx_manager(om, set_type, name, idx, N, varargin{:});
 
-%% add general indexing info about this named set
-if isempty(idx)     %% simple named set
-    %% prevent duplicate name in set of specified type
-    if isfield(om_ff.idx.N, name)
-        error('@opt_model/add_named_set: %s set named ''%s'' already exists', st_label, name);
-    end
-
-    %% add indexing info about this set
-    om_ff.idx.i1.(name)  = om_ff.N + 1; %% starting index
-    om_ff.idx.iN.(name)  = om_ff.N + N; %% ending index
-    om_ff.idx.N.(name)   = N;           %% number in set
-    om_ff.N  = om_ff.idx.iN.(name);     %% number of elements of this type
-    om_ff.NS = om_ff.NS + 1;            %% number of sets of this type
-    om_ff.order(om_ff.NS).name = name;  %% add name to ordered list of sets
-    om_ff.order(om_ff.NS).idx  = {};
-else                %% indexed named set
+if ~isempty(idx)
     %% calls to substruct() are relatively expensive, so we pre-build the
-    %% structs for addressing cell and numeric array fields
-    %% sn = substruct('.', name, '()', idx);
+    %% struct for addressing cell array fields
     %% sc = substruct('.', name, '{}', idx);
     sc = struct('type', {'.', '{}'}, 'subs', {name, idx});  %% cell array field
-    sn = sc; sn(2).type = '()';                             %% num array field
-
-    %% prevent duplicate name in set of specified type
-    if subsref(om_ff.idx.i1, sn) ~= 0
-        str = '%d'; for m = 2:length(idx), str = [str ',%d']; end
-        nname = sprintf(['%s(' str, ')'], name, idx{:});
-        error('@opt_model/add_named_set: %s set named ''%s'' already exists', st_label, nname);
-    end
-
-    %% add indexing info about this set
-    om_ff.idx.i1  = subsasgn(om_ff.idx.i1, sn, om_ff.N + 1);    %% starting index
-    om_ff.idx.iN  = subsasgn(om_ff.idx.iN, sn, om_ff.N + N);    %% ending index
-    om_ff.idx.N   = subsasgn(om_ff.idx.N,  sn, N);              %% number in set
-    om_ff.N  = subsref(om_ff.idx.iN, sn);   %% number of elements of this type
-    om_ff.NS = om_ff.NS + 1;                %% number of sets of this type
-    om_ff.order(om_ff.NS).name = name;      %% add name to ordered list of sets
-    om_ff.order(om_ff.NS).idx  = idx;       %% add indices to ordered list of sets
 end
 
 %% add type-specific data for named set
-switch ff
+om_ff = om.(set_type);
+om.(set_type) = [];
+switch set_type
     case 'var'          %% variable set
         [v0, vl, vu, vt] = deal(varargin{:});
         if isempty(idx)
@@ -169,4 +128,4 @@ switch ff
             om_ff.data.vs   = subsasgn(om_ff.data.vs, sc, varsets);
         end
 end
-om.(ff) = om_ff;
+om.(set_type) = om_ff;

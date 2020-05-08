@@ -1,21 +1,21 @@
-function val = get(om, varargin)
+function val = get(obj, varargin)
 %GET  Returns the value of a field.
-%   VAL = OM.GET(FIELD1, FIELD2, ...)
+%   VAL = OBJ.GET(FIELD1, FIELD2, ...)
 %
 %   Example:
-%       var_order = om.get('var', 'order');
+%       var_order = obj.get('var', 'order');
 %
 %   See also OPT_MODEL.
 
-%   MATPOWER
-%   Copyright (c) 2008-2016, Power Systems Engineering Research Center (PSERC)
+%   MP-Opt-Model
+%   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
-%   This file is part of MATPOWER.
+%   This file is part of MP-Opt-Model.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See https://matpower.org for more info.
+%   See https://github.com/MATPOWER/mp-opt-model for more info.
 
-val = om;
+val = obj;
 for k = 1:length(varargin)
     if ischar(varargin{k})
         val = val.(varargin{k});

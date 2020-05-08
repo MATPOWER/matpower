@@ -1,0 +1,2657 @@
+%! program = pdflatex
+
+\documentclass[12pt]{article}
+
+%%% PACKAGES
+\usepackage{ifpdf}
+\usepackage{booktabs}   % for much better looking tables
+\usepackage{array}      % for better arrays (eg matrices) in maths
+\usepackage{paralist}   % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+%\usepackage{verbatim}   % adds environment for commenting out blocks of text & for better verbatim
+\usepackage{subfigure}  % make it possible to include more than one captioned figure/table in a single float
+% These packages are all incorporated in the memoir class to one degree or another...
+\ifpdf
+\usepackage[pdftex]{graphicx}
+\else
+\usepackage[dvips]{graphicx}
+\fi
+\usepackage{epstopdf}
+\usepackage[cmex10]{amsmath}
+\interdisplaylinepenalty=2500
+
+%%% PAGE DIMENSIONS
+\usepackage{geometry} % to change the page dimensions
+\geometry{letterpaper}
+%\geometry{margins=2in} % for example, change the margins to 2 inches all round
+%\geometry{landscape} % set up the page for landscape
+% read geometry.pdf for detailed page layout information
+
+%% HEADERS & FOOTERS
+\usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
+\pagestyle{fancy} % options: empty , plain , fancy
+\renewcommand{\headrulewidth}{0pt} % customise the layout...
+%\lhead{}\chead{}\rhead{\hl{--- DRAFT ---}}
+\lhead{}\chead{}\rhead{}
+\lfoot{}\cfoot{\thepage}\rfoot{}
+
+% *** MY ADDITIONAL PACKAGES ***
+\usepackage{amsfonts}
+\usepackage{amstext}
+%\usepackage{ctable}        % messes up table captions among other things
+\usepackage{booktabs}       % defines \toprule, \midrule, \bottomrule
+\usepackage{threeparttable} % needed for table notes
+\usepackage{longtable}      % for multi-page tables
+\usepackage[font=normalsize]{caption}   % to keep caption for multi-page
+                            % table normal size after using \footnotesize
+                            % to reduce rest of table
+%\usepackage{multirow}
+%\usepackage{mathenv}
+\usepackage{textcomp}      % improves \textregistered, provides \textquotesingle
+\usepackage[usenames]{color}
+\usepackage{soul}
+\usepackage{fancyvrb}
+\usepackage{relsize}
+\usepackage[noadjust]{cite} % prevent adding a space
+%\usepackage{url}
+\usepackage{xr-hyper}
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor} % additional named colors
+\usepackage[colorlinks=true,urlcolor=blue,hyperfootnotes=false,backref=section,citecolor=LimeGreen]{hyperref}
+%\usepackage[colorlinks=true,urlcolor=blue,hyperfootnotes=false]{hyperref}
+% These are (supposedly) the defaults
+% \hypersetup{
+%     bookmarks=true,         % show bookmarks bar?
+%     unicode=false,          % non-Latin characters in Acrobat's bookmarks
+%     pdftoolbar=true,        % show Acrobat's toolbar?
+%     pdfmenubar=true,        % show Acrobat's menu?
+%     pdffitwindow=true,      % page fit to window when opened
+%     pdftitle={My title},    % title
+%     pdfauthor={Author},     % author
+%     pdfsubject={Subject},   % subject of the document
+%     pdfcreator={Creator},   % creator of the document
+%     pdfproducer={Producer}, % producer of the document
+%     pdfkeywords={keywords}, % list of keywords
+%     pdfnewwindow=true,      % links in new window
+%     colorlinks=false,       % false: boxed links; true: colored links
+%     linkcolor=red,          % color of internal links
+%     citecolor=green,        % color of links to bibliography
+%     filecolor=magenta,      % color of file links
+%     urlcolor=cyan           % color of external links
+% }
+\usepackage{upquote}        % single quotes in verbatim environments
+\usepackage[title,titletoc]{appendix}
+
+%%% SECTION TITLE APPEARANCE
+% \usepackage{sectsty}
+% \allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
+% (This matches ConTeXt defaults)
+
+%%% ToC APPEARANCE
+\usepackage[nottoc,notlof,notlot]{tocbibind} % Put the bibliography in the ToC
+% \usepackage[titles]{tocloft} % Alter the style of the Table of Contents
+% \renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
+% \renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
+
+% Namelist environment generates a list with an item width of your choice.
+% Syntax:  \begin{namelist}{widthstring} .  From Buerger's book.
+\newcommand{\namelistlabel}[1]{\mbox{#1}\hfil}
+\newenvironment{namelist}[1]{%
+\begin{list}{}
+  {
+    \let\makelabel\namelistlabel
+    \settowidth{\labelwidth}{#1}
+    \setlength{\leftmargin}{1.1\labelwidth}
+  }
+ }{%
+\end{list}}
+
+% define my verbatim environment, requires packages fancyvrb & relsize
+\renewcommand{\FancyVerbFormatLine}[1]{\makebox[2mm][l]{}#1}
+\DefineVerbatimEnvironment%
+  {Code}{Verbatim}
+  {fontsize=\relsize{-1.5},
+  samepage=true,
+  frame=single}
+
+% define my verbatim environment, requires packages fancyvrb & relsize
+\renewcommand{\FancyVerbFormatLine}[1]{\makebox[2mm][l]{}#1}
+\DefineVerbatimEnvironment%
+  {Notice}{Verbatim}
+  {fontsize=\relsize{-1.5},
+  samepage=true,
+  xleftmargin=15mm,
+  framesep=5mm,
+  frame=single}
+
+%% makes verbatim text 'small' (using verbatim package)
+%\makeatletter
+%\g@addto@macro\@verbatim\small
+%\makeatother
+
+%\hyphenation{matpower_manual}
+
+\newcommand{\mpver}[0]{7.0}
+%\newcommand{\matlab}[0]{{Matlab}}
+%\newcommand{\matlab}[0]{{\sc Matlab}\textsuperscript{\tiny \textregistered}}
+\newcommand{\matlab}[0]{{\sc Matlab}}
+\newcommand{\matpower}[0]{{\sc Matpower}}
+\newcommand{\matpowerurl}[0]{https://matpower.org}
+\newcommand{\matpowerlink}[0]{\href{\matpowerurl}{\matpower{}}}
+\newcommand{\matpowergithuburl}[0]{https://github.com/MATPOWER/matpower}
+\newcommand{\mptest}[0]{{MP-Test}}
+\newcommand{\mptesturl}[0]{https://github.com/MATPOWER/mptest}
+\newcommand{\mptestlink}[0]{\href{\mptesturl}{\mptest{}}}
+\newcommand{\mips}[0]{{MIPS}}
+\newcommand{\mipsurl}[0]{https://github.com/MATPOWER/mips}
+\newcommand{\mipslink}[0]{\href{\mipsurl}{\mips{}}}
+\newcommand{\mipsname}[0]{{{\bf M}{\sc atpower} \textbf{I}nterior \textbf{P}oint \textbf{S}olver}}
+\newcommand{\mipsver}[0]{1.3.1+}
+\newcommand{\mpom}[0]{\mbox{MP-Opt-Model}}
+\newcommand{\mpomurl}[0]{https://github.com/MATPOWER/mp-opt-model}
+\newcommand{\mpomlink}[0]{\href{\mpomurl}{\mpom{}}}
+\newcommand{\mpomname}[0]{\mpom{}}
+% \newcommand{\mpomname}[0]{{{\bf M}{\sc at}{\bf P}{\sc ower} \textbf{Opt}imization \textbf{Model}}}
+\newcommand{\mpomver}[0]{1.0}
+\newcommand{\most}[0]{{MOST}}
+\newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
+\newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
+\newcommand{\mostver}[0]{1.0.2}
+\newcommand{\md}[0]{{\most{} Data struct}}
+\newcommand{\powerweb}[0]{{\sc PowerWeb}}
+\newcommand{\pserc}[0]{{\sc PSerc}}
+\newcommand{\PSERC}[0]{{Power Systems Engineering Research Center (\pserc{})}}
+\newcommand{\ipopt}[0]{{\sc Ipopt}}
+\newcommand{\knitro}[0]{{Artelys Knitro}}
+\newcommand{\clp}[0]{{CLP}}
+\newcommand{\cplex}[0]{{CPLEX}}
+\newcommand{\glpk}[0]{{GLPK}}
+\newcommand{\gurobi}[0]{{Gurobi}}
+\newcommand{\mosek}[0]{{MOSEK}}
+\newcommand{\ot}[0]{{Optimization Toolbox}}
+\newcommand{\pardiso}[0]{{PARDISO}}
+\newcommand{\sdppf}[0]{\texttt{SDP\_PF}}
+\newcommand{\sdppfver}[0]{1.0.1}
+\newcommand{\sdpopf}[0]{SDPOPF}
+\newcommand{\code}[1]{{\relsize{-0.5}{\tt{{#1}}}}}  % requires package relsize
+% Note: to get straight single quotes in \code you have to use one of the
+%       following: \char13 \char'15 \char"0D \textquotesingle
+\newcommand{\codeq}[1]{\code{\textquotesingle{}#1\textquotesingle}}  % requires package textcomp
+\newcommand{\mppath}[1]{\textsf{\textsl{{\relsize{-1.0}\textless{}\mbox{MATPOWER}\textgreater{}}}}\code{{#1}}}  % requires package relsize
+%\newcommand{\mostpath}[1]{\code{\$MOST{#1}}}
+\newcommand{\mipspath}[1]{\textsf{\textsl{{\relsize{-1.0}\textless{}\mbox{MIPS}\textgreater{}}}}\code{{#1}}}  % requires package relsize
+\newcommand{\mpompath}[1]{\textsf{\textsl{{\relsize{-1.0}\textless{}\mbox{MPOM}\textgreater{}}}}\code{{#1}}}  % requires package relsize
+\newcommand{\mostpath}[1]{\mppath{}\code{/most{#1}}}
+\newcommand{\baseMVA}[0]{\code{baseMVA}}
+\newcommand{\bus}[0]{\code{bus}}
+\newcommand{\branch}[0]{\code{branch}}
+\newcommand{\gen}[0]{\code{gen}}
+\newcommand{\gencost}[0]{\code{gencost}}
+\newcommand{\areas}[0]{\code{areas}}
+\newcommand{\mpc}[0]{\code{mpc}}
+\newcommand{\results}[0]{\code{results}}
+\newcommand{\mumurl}[0]{https://matpower.org/docs/MATPOWER-manual-\mpver.pdf}
+\newcommand{\mum}[0]{\href{\mumurl}{\matpower{} User's Manual}}
+\newcommand{\mipsmanurl}[0]{https://matpower.org/docs/MIPS-manual-\mipsver.pdf}
+\newcommand{\mpommanurl}[0]{https://matpower.org/docs/MP-Opt-Model-manual-\mpomver.pdf}
+\newcommand{\mostmanurl}[0]{https://matpower.org/docs/MOST-manual-\mostver.pdf}
+\newcommand{\currentmumurl}[0]{https://matpower.org/docs/MATPOWER-manual.pdf}
+\newcommand{\currentmipsmanurl}[0]{https://matpower.org/docs/MIPS-manual.pdf}
+\newcommand{\currentmpommanurl}[0]{https://matpower.org/docs/MP-Opt-Model-manual.pdf}
+\newcommand{\currentmostmanurl}[0]{https://matpower.org/docs/MOST-manual.pdf}
+\newcommand{\mipsman}[0]{\href{\mipsmanurl}{\mips{} User's Manual}}
+\newcommand{\mpomman}[0]{\href{\mpommanurl}{\mpom{} User's Manual}}
+\newcommand{\mostman}[0]{\href{\mostmanurl}{\most{} User's Manual}}
+\newcommand{\dg}[0]{\sp\dagger}                         % hermitian conjugate
+\newcommand{\trans}[1]{{#1}^{\ensuremath{\mathsf{T}}}}  % transpose
+%\newcommand{\trans}[1]{#1^{\ensuremath{\mathsf{T}}}}    % transpose
+\newcommand{\cc}[1]{{#1}^{\ast}}                        % complex conjugate
+\newcommand{\hc}[1]{{#1}^{\dg}}                         % hermitian conjugate
+\newcommand{\conj}[1]{{#1}^{+}}                         % hermitian conjugate
+\newcommand{\diag}[1]{\left[{#1}\right]}                % diagonal
+\newcommand{\R}{\mathbb{R}}          % requires \usepackage{amsfonts|bbold}
+\newcommand{\der}[2]{\frac{\partial{#1}}{\partial{#2}}} % partial derivative
+\newcommand{\doi}[1]{doi:~\href{https://doi.org/#1}{#1}}
+
+\def\sectionautorefname{Chapter}
+\def\subsectionautorefname{Section}
+\def\subsubsectionautorefname{Section}
+\newcommand{\secref}[1]{\autoref{#1} \nameref{#1}}
+
+\numberwithin{equation}{section}
+\numberwithin{table}{section}
+\renewcommand{\thetable}{\thesection\mbox{-}\arabic{table}}
+\numberwithin{figure}{section}
+\renewcommand{\thefigure}{\thesection\mbox{-}\arabic{figure}}
+
+% \externaldocument[MIPSMAN-]{MIPS-manual}[\mipsmanurl]
+% \externaldocument[MOSTMAN-]{MOST-manual}[\mostmanurl]
+
+
+%\title{\hl{--- DRAFT  ---}\\\hl{\em do not distribute}\\~\\{\huge \bfseries \mpomname{} User's Manual } \\ ~ \\ \LARGE Version \mpomver{}\\
+\title{{\huge \bfseries \mpomname{} User's Manual } \\ ~ \\ \LARGE Version \mpomver{}}
+\author{Ray~D.~Zimmerman}
+\date{May 8, 2020} % comment this line to display the current date
+%\date{May 8, 2020\thanks{Second revision. First revision was April 29, 2020}} % comment this line to display the current date
+
+%%% BEGIN DOCUMENT
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+\vfill
+\begin{center}
+{\scriptsize
+\copyright~2020~\PSERC{}\\
+All Rights Reserved}
+\end{center}
+
+\clearpage
+%\setcounter{page}{2}
+\tableofcontents
+\clearpage
+%\listoffigures
+\listoftables
+
+%%------------------------------------------
+\clearpage
+\section{Introduction}
+
+\subsection{Background}
+
+\mpomlink{} is a package of \matlab{} language M-files\footnote{Also compatible with GNU Octave~\cite{octave}.} for constructing and solving mathematical optimization problems. It provides an easy-to-use, object-oriented interface for building and solving your optimization model. It also includes a unified interface for calling numerous LP, QP, mixed-integer and nonlinear solvers, with the ability to switch solvers by simply changing an input option.
+The \mpom{} project page can be found at:
+
+\bigskip
+
+~~~~~~~~\url{\mpomurl}
+
+\bigskip
+
+\mpomlink{} is based on code that was developed, primarily by Ray~D.~Zimmerman of \pserc{}\footnote{\url{http://pserc.org/}} at Cornell University as part of the \matpowerlink{}~\cite{zimmerman2011,matpower} project.
+
+Up until version 7 of \matpower{}, the code now included in \mpom{} was distributed only as an integrated part of \matpower{}. After the release of \matpower{} 7, \mpom{} was split out into a separate project, though it is still included with \matpower{}.
+
+\clearpage
+\subsection{License and Terms of Use}
+
+The code in \mpom{} is distributed under the 3-clause BSD license
+~\cite{bsd}. The full text of the license can be found in the \code{LICENSE} file at the top level of the distribution or at \url{https://github.com/MATPOWER/mp-opt-model/blob/master/LICENSE} and reads as follows.
+
+\begin{Notice}
+Copyright (c) 2004-2020, Power Systems Engineering Research Center
+(PSERC) and individual contributors (see AUTHORS file for details).
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+1. Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright
+notice, this list of conditions and the following disclaimer in the
+documentation and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+\end{Notice}
+
+\clearpage
+\subsection{Citing \mpom{}}
+
+We request that publications derived from the use of \mpom{} explicitly acknowledge that fact by citing the \mpomname{} User's Manual~\cite{mpom_manual}.
+The citation and DOI can be version-specific or general, as appropriate. For version 1.0, use:
+
+\begin{quote}
+\footnotesize
+R.~D. Zimmerman. \mpomname{} User's Manual, Verision 1.0. 2020. [Online]. Available: \url{https://matpower.org/docs/MP-Opt-Model-manual-1.0.pdf}\\
+\doi{10.5281/zenodo.3818003}
+\end{quote}
+For a version non-specific citation, use the following citation and DOI,
+with \emph{\textless{}YEAR\textgreater{}} replaced by the year of the most recent release:
+
+\begin{quote}
+\footnotesize
+R.~D. Zimmerman. \mpomname{} User's Manual. \emph{\textless{}YEAR\textgreater{}}.
+[Online]. Available: \url{https://matpower.org/docs/MP-Opt-Model-manual.pdf}\\
+\doi{10.5281/zenodo.3818002}
+\end{quote}
+A list of versions of the User's Manual with release dates and
+version-specific DOI's can be found via the general DOI at
+\url{https://doi.org/10.5281/zenodo.3818002}.
+
+\subsection{\mpom{} Development}
+\label{sec:development}
+
+The \mpom{} project uses an open development paradigm, hosted on the \mpom{} GitHub project page:
+
+\bigskip
+
+~~~~~~~~\url{\mpomurl}
+
+\bigskip
+
+The \mpom{} GitHub project hosts the public Git code repository as well as a public issue tracker for handling bug reports, patches, and other issues and contributions. There are separate GitHub hosted repositories and issue trackers for \mptest{}, \mips{}, \matpower{}, etc., all available from \url{https://github.com/MATPOWER/}.
+
+
+%%------------------------------------------
+\clearpage
+\section{Getting Started}
+
+\subsection{System Requirements}
+\label{sec:sysreq}
+To use \mpom{} \mpomver{} you will need:
+\begin{itemize}
+\item \matlab{}\textsuperscript{\tiny \textregistered} version 8.6 (R2015b) or later\footnote{\matlab{} is available from The MathWorks, Inc. (\url{https://www.mathworks.com/}). \matlab{} is a registered trademark of The MathWorks, Inc.}, or
+\item GNU Octave version 4.2 or later\footnote{GNU Octave \cite{octave} is free software, available online at \url{https://www.gnu.org/software/octave/}.}
+\item \mipslink{}, \mipsname{}~\cite{wang2007a, mips_manual}\footnote{\mips{} is available at \url{\mipsurl}.}
+\item \mptestlink{}, for running the \mpom{} test suite.\footnote{\mptest{} is available at \url{\mptesturl}.}
+\end{itemize}
+
+For the hardware requirements, please refer to the system requirements for the version of \matlab{}\footnote{\url{https://www.mathworks.com/support/sysreq/previous_releases.html}} or Octave that you are using.
+
+In this manual, references to \matlab{} usually apply to Octave as well.
+
+%\clearpage
+\subsection{Installation}
+\label{sec:installation}
+
+{\bf Note to \matpower{} users:} \emph{\mpom{} and its prerequisites, \mips{} and \mptest{}, are included when you install \matpower{}. There is generally no need to install them separately. You can skip directly to step 3 to verify.}
+
+~
+
+Installation and use of \mpom{} requires familiarity with the basic operation of \matlab{} or Octave, including setting up your \matlab{} path.
+
+\begin{enumerate}[\bfseries Step 1:] % requires package paralist
+\item Clone the repository or download and extract the zip file of the \mpom{} distribution from the \href{\mpomurl{}}{\mpom{} project page}\footnote{\url{\mpomurl}} to the location of your choice. The files in the resulting \code{mp-opt-model} or \code{mp-opt-modelXXX} directory, where \code{XXX} depends on the version of \mpom{}, should not need to be modified, so it is recommended that they be kept separate from your own code.
+We will use \mpompath{} to denote the path to this directory.
+\clearpage
+\item Add the following directories to your \matlab{} or Octave path:
+\begin{itemize}
+\item \mpompath{/lib} -- core \mpom{} functions
+\item \mpompath{/lib/t} -- test scripts for \mpom{}
+\end{itemize}
+\item At the \matlab{} prompt, type \code{test\_mp\_opt\_model} to run the test suite and verify that \mpom{} is properly installed and functioning.\footnote{The tests require functioning installations of \mptestlink{} and \mipslink{}.} The result should resemble the following:
+%\clearpage
+%--LATER--
+%\\\hl{re-do before release (run on fastest machine available)}
+\begin{Code}
+>> test_mp_opt_model
+t_nested_struct_copy....ok
+t_have_fcn..............ok
+t_mips..................ok
+t_mips_pardiso..........ok (60 of 60 skipped)
+t_qps_mips..............ok
+t_qps_master............ok (100 of 396 skipped)
+t_miqps_master..........ok (102 of 288 skipped)
+t_nlps_master...........ok
+t_opt_model.............ok
+All tests successful (1699 passed, 262 skipped of 1961)
+Elapsed time 1.51 seconds.
+\end{Code}
+\end{enumerate}
+
+
+\subsection{Sample Usage}
+\label{sec:usage}
+
+Suppose we have the following constrained 4-dimensional quadratic programming (QP) problem\footnote{Based on the one from  \url{https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm}.} with two 2-dimensional variables, $y$ and $z$, and two constraints, one equality and the other inequality, along with lower bounds on all of the variables.
+
+\begin{equation}
+\min_{y, z} \frac{1}{2} \left[\begin{array}{cc}\trans{y} & \trans{z} \end{array}\right] Q \left[\begin{array}{c}y \\ z \end{array}\right]
+\end{equation}
+subject to
+\begin{align}
+ &A_1 \left[\begin{array}{c}y \\ z \end{array}\right] = b_1 \\
+l_2 \le &A_2 \left[\begin{array}{c}y \\ z \end{array}\right] \\
+y_\mathrm{min} \le &y \\
+z_\mathrm{min} \le &z
+\end{align}
+
+And suppose the data for the problem is provided as follows.
+
+\begin{Code}
+%% variable initial values
+y0 = [1; 0];
+z0 = [0; 1];
+
+%% variable lower bounds
+ymin = [0; 0];
+zmin = [0; 0];
+
+%% constraint data
+A1 = [ 1 1 1 1 ];               b1 = 1;
+A2 = [ 0.17 0.11 0.10 0.18 ];   l2 = 0.1;
+
+%% quadratic cost coefficients
+Q = [   1003.1 4.3 6.3 5.9;
+        4.3 2.2 2.1 3.9;
+        6.3 2.1 3.5 4.8;
+        5.9 3.9 4.8 10  ];
+\end{Code}
+
+Below, we will show two approaches to construct and solve the problem. The first method, based on the the Optimization Model class \code{opt\_model}, allows you to add variables, constraints and costs to the model individually. Then \code{opt\_model} automatically assembles and solves the full model automatically.
+
+\begin{Code}
+%%-----  METHOD 1  -----
+%% build model
+om = opt_model;
+om.add_var('y', 2, y0, ymin);
+om.add_var('z', 2, z0, zmin);
+om.add_lin_constraint('lincon1', A1, b1, b1, {'y', 'z'});
+om.add_lin_constraint('lincon2', A2, l2, [], {'y', 'z'});
+om.add_quad_cost('cost', Q, [], [], {'y', 'z'});
+
+%% solve model
+[x, f, exitflag, output, lambda] = om.solve();
+\end{Code}
+
+The second method requires you to construct the parameters for the full problem manually, then call the solver function directly.
+
+\begin{Code}
+%%-----  METHOD 2  -----
+%% assemble model parameters manually
+xmin = [ymin; zmin];
+x0 = [y0; z0];
+A = [ A1; A2 ];
+l = [ b1; l2 ];
+u = [ b1; Inf ];
+
+%% solve model
+[x, f, exitflag, output, lambda] = qps_master(Q, [], A, l, u, xmin, [], x0);
+\end{Code}
+
+The above examples are included in \mpompath{lib/t/qp\_ex1.m} along with some commands to print the results, yielding the output below for each approach:
+
+\begin{Code}
+f = 1.09667   exitflag = 1
+
+x = 
+   0.0000
+   0.9333
+   0.0667
+   0.0000
+
+lambda.lower (var bound shadow price) =
+   2.2400
+   0.0000
+   0.0000
+   1.7667
+
+lambda.mu_l (constraint shadow price) =
+   2.1933
+   0.0000
+\end{Code}
+
+Both approaches can be applied to each of the types of problems the \mpom{} handles, namely, LP, QP, MILP, MIQP and NLP.
+
+An options struct can be passed to the \code{solve} method or the \code{qps\_master} function to select a specific solver, control the level of
+progress output, or modify a solver's default parameters.
+
+\clearpage
+\subsection{Documentation}
+\label{sec:documentation}
+
+There are two primary sources of documentation for \mpom{}. The first is \href{\mpommanurl}{this manual}, which gives an overview of the capabilities and structure of \mpom{} and describes the formulations behind the code. It can be found in your \mpom{} distribution at \mpompath{/docs/MP-Opt-Model-manual.pdf} and the \href{\currentmpommanurl}{latest version} is always available at: \url{\currentmpommanurl}.
+
+And second is the built-in \code{help} command. As with the built-in functions and toolbox routines in \matlab{} and Octave, you can type \code{help} followed by the name of a command or M-file to get help on that particular function. Many of the M-files in \mpom{} have such documentation and this should be considered the main reference for the calling options for each function. See Appendix~\ref{app:functions} for a list of \mpom{} functions.
+
+%%------------------------------------------
+\clearpage
+\section{\mpom{} -- Overview}
+\label{sec:mpom}
+
+\mpom{}\footnote{The name \mpom{} is derived from ``\matpower{} Optimization Model,'' referring to the object used to encapsulate the optimization problem formed by \matpower{} when solving an optimal power flow (OPF) problem.} and its functionality can be divided into two main parts, plus a few additional utility functions.
+
+The first part consists of interfaces to various numerical optimization solvers and the wrapper functions that provide a single common interface to all supported solvers for a particular class of problems. There is currently a common interface provided for each of the following:
+\begin{itemize}
+\item linear (LP) and quadratic (QP) programming problems
+\item mixed-integer linear (MILP) and quadratic (MIQP) programming problems
+\item nonlinear programming problems (NLP)
+\end{itemize}
+
+The second part consists of an optimization model class designed to help the user construct an optimization problem by adding variables, constraints and costs, then solve the problem and extract the solution in terms of the individual sets of variables, constraints and costs provided.
+
+Finally, \mpom{} includes a utlity function that can be used to get information about the availability of optional functionality, another to help with copying nested struct data, and a function that provides version information on the current \mpom{} installation.
+
+
+%%------------------------------------------
+\clearpage
+\section{Solver Interface Functions}
+\label{sec:master_solvers}
+
+\subsection{LP/QP Solvers -- {\tt qps\_master}}
+\label{sec:qps_master}
+
+The \code{qps\_master} function provides a common \textbf{\underline{q}}uadratic \textbf{\underline{p}}rogramming \textbf{\underline{s}}olver interface for linear programming (LP) and quadratic (QP) programming problems, that is, problems of the form:
+\begin{equation}
+\min_x \frac{1}{2} \trans{x} H x + \trans{c} x \label{eq:LPobj}
+\end{equation}
+subject to
+\begin{eqnarray}
+& l \le A x \le u  & \\
+& x_\mathrm{min} \le x \le x_\mathrm{max}. & \label{eq:LPvarbounds}
+\end{eqnarray}
+
+This function can be used to solve the problem with any of the available solvers by calling it as follows,
+\begin{Code}
+[x, f, exitflag, output, lambda] = ...
+    qps_master(H, c, A, l, u, xmin, xmax, x0, opt);
+\end{Code}
+where the input and output arguments are described in Tables~\ref{tab:qps_master_input} and \ref{tab:qps_master_output}, respectively, and the options in Table~\ref{tab:qps_master_options}.
+Alternatively, the input arguments can be packaged as fields in a \code{problem} struct and passed in as a single argument, where all fields are (individually) optional.
+\begin{Code}
+[x, f, exitflag, output, lambda] = qps_master(problem);
+\end{Code}
+
+The calling syntax is very similar to that used by \code{quadprog} from the \matlab{} \ot{}, with the primary difference that the linear constraints are specified in terms of a single doubly-bounded linear function ($l \le A x \le u$) as opposed to separate equality constrained ($A_{eq} x = b_{eq}$) and upper bounded ($A x \le b$) functions.
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{Input Arguments for \code{qps\_master}\tnote{\dag}}
+\label{tab:qps_master_input}
+\footnotesize
+% \begin{tabular}{p{0.17\textwidth}p{0.76\textwidth}}
+\begin{tabular}{ll}
+\toprule
+name & description \\
+\midrule
+\code{H}	& (possibly sparse) matrix $H$ of quadratic cost coefficients	\\
+\code{c}	& column vector $c$ of linear cost coefficients	\\
+\code{A}	& (possibly sparse) matrix $A$ of linear constraint coefficients	\\
+\code{l}	& column vector $l$ of lower bounds on $A x$, defaults to $-\infty$	\\
+\code{u}	& column vector $u$ of upper bounds on $A x$, defaults to $+\infty$	\\
+\code{xmin}	& column vector $x_\mathrm{min}$ of lower bounds on $x$, defaults to $-\infty$	\\
+\code{xmax}	& 	column vector $x_\mathrm{max}$ of upper bounds on $x$, defaults to $+\infty$	\\
+\code{x0}	& optional starting value of optimization vector $x$ \emph{(ignored by some solvers)}	\\
+\code{opt}	& optional options struct, all fields (shown in Table~\ref{tab:qps_master_options}) optional	\\
+\code{opt}	& optional options struct (all fields optional), see Table~\ref{tab:qps_master_options} for details	\\
+\code{problem}	& alternative, single argument input struct with fields corresponding to arguments above	\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [\dag] {All arguments are individually optional, though enough must be supplied to define a meaningful problem.}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{Output Arguments for \code{qps\_master}\tnote{\dag}}
+\label{tab:qps_master_output}
+\footnotesize
+% \begin{tabular}{p{0.17\textwidth}p{0.76\textwidth}}
+\begin{tabular}{ll}
+\toprule
+name & description \\
+\midrule
+\code{x}	& solution vector $x$	\\
+\code{f}	& final objective function value $f(x) = \frac{1}{2} \trans{x} H x + \trans{c} x$	\\
+\code{exitflag}	& exit flag	\\
+& \begin{tabular}{r @{ -- } l}
+1 & converged successfully \\
+$\le 0$ & solver-specific failure code \\
+\end{tabular}	\\
+\code{output}	& output struct with the following fields:	\\
+& \begin{tabular}{r @{ -- } l}
+alg & algorithm code of solver used \\
+\emph{(others)} & solver-specific fields \\
+\end{tabular}	\\
+\code{lambda}	& struct containing the Langrange and Kuhn-Tucker multipliers on the constraints, with fields:	\\
+& \begin{tabular}{r @{ -- } l}
+\code{mu\_l} & lower (left-hand) limit on linear constraints \\
+\code{mu\_u} & upper (right-hand) limit on linear constraints \\
+\code{lower} & lower bound on optimization variables \\
+\code{upper} & upper bound on optimization variables \\
+\end{tabular}	\\
+\bottomrule
+\end{tabular}
+% \begin{tablenotes}
+%  \scriptsize
+%  \item [\dag] {Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.}
+% \end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{Options for \code{qps\_master}}
+\label{tab:qps_master_options}
+\footnotesize
+\begin{tabular}{lcp{0.62\textwidth}}
+\toprule
+name & default & description \\
+\midrule
+\code{alg}	& \codeq{DEFAULT}	& determines which solver to use \\
+&& \begin{tabular}{c @{ -- } p{0.5\textwidth}}
+\codeq{DEFAULT} & automatic, first available of \gurobi{}, \cplex{}, \mosek{}, \ot{} (if \matlab{}), \glpk{} (LP only), BPMPD, \mips{} \\
+\codeq{BPMPD} & BPMPD\tnote{*} \\
+\codeq{CLP} & \clp{}\tnote{*} \\
+\codeq{CPLEX} & \cplex{}\tnote{*} \\
+\codeq{GLPK} & \glpk{}\tnote{*} \emph{(LP only)} \\
+\codeq{GUROBI} & \gurobi{}\tnote{*} \\
+\codeq{IPOPT} & \ipopt{}\tnote{*} \\
+\codeq{MIPS} & \mips{}, \mipsname{}, primal/dual interior point method \\
+\codeq{MOSEK} & \mosek{}\tnote{*} \\
+\codeq{OT} & \matlab{} Opt Toolbox, \code{quadprog}, \code{linprog} \\
+\end{tabular}	\\
+\code{verbose}	& 1	& amount of progress info to be printed \\
+&& \begin{tabular}{r @{ -- } l}
+0 & print no progress info \\
+1 & print a little progress info \\
+2 & print a lot of progress info \\
+3 & print all progress info \\
+\end{tabular}	\\
+\code{bp\_opt}	& \emph{empty}	& options vector for \code{bp}\tnote{*} \\
+\code{clp\_opt}	& \emph{empty}	& options vector for \clp{}\tnote{*} \\
+\code{cplex\_opt}	& \emph{empty}	& options struct for \cplex{}\tnote{*} \\
+\code{glpk\_opt}	& \emph{empty}	& options struct for \glpk{}\tnote{*} \\
+\code{grb\_opt}	& \emph{empty}	& options struct for \gurobi{}\tnote{*} \\
+\code{ipopt\_opt}	& \emph{empty}	& options struct for \ipopt{}\tnote{*} \\
+\code{linprog\_opt}	& \emph{empty}	& options struct for \code{linprog}\tnote{*} \\
+\code{mips\_opt}	& \emph{empty}	& options struct for \mips{} \\
+\code{mosek\_opt}	& \emph{empty}	& options struct for \mosek{}\tnote{*} \\
+\code{quadprog\_opt}	& \emph{empty}	& options struct for \code{quadprog}\tnote{*} \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [*] {Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+The \code{qps\_master} function is simply a master wrapper around corresponding functions specific to each solver, namely, \code{qps\_bpmpd}, \code{qps\_clp}, \code{qps\_cplex}, \code{qps\_glpk}, \code{qps\_gurobi}, \code{qps\_ipopt}, \code{qps\_mips}, \code{qps\_mosek}, and \code{qps\_ot}. Each of these functions has an interface identical to that of \code{qps\_master}, with the exception of the options struct for \code{qps\_mips}, which is a simple \mips{} options struct.
+
+\clearpage
+\subsubsection{QP Example}
+\label{sec:qp_ex}
+
+The following code shows an example of using \code{qps\_master} to solve a simple 4-dimensional QP problem\footnote{From \url{https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm}.} using the default solver.
+
+\begin{Code}
+H = [   1003.1  4.3     6.3     5.9;
+        4.3     2.2     2.1     3.9;
+        6.3     2.1     3.5     4.8;
+        5.9     3.9     4.8     10  ];
+c = zeros(4,1);
+A = [   1       1       1       1;
+        0.17    0.11    0.10    0.18    ];
+l = [1; 0.10];
+u = [1; Inf];
+xmin = zeros(4,1);
+x0 = [1; 0; 0; 1];
+opt = struct('verbose', 2);
+[x, f, s, out, lambda] = qps_master(H, c, A, l, u, xmin, [], x0, opt);
+\end{Code}
+
+Other examples of using \code{qps\_master} to solve LP and QP problems can be found in \code{t\_qps\_master.m}.
+
+
+\clearpage
+\subsection{MILP/MIQP Solvers -- {\tt miqps\_master}}
+\label{sec:miqps_master}
+
+The \code{miqps\_master} function provides a common \textbf{\underline{m}}ixed-\textbf{\underline{i}}nteger \textbf{\underline{q}}uadratic \textbf{\underline{p}}rogramming \textbf{\underline{s}}olver interface for mixed-integer linear programming (MILP) and mixed-integer quadratic programming (MIQP) problems. The form of the problem is identical to \eqref{eq:LPobj}--\eqref{eq:LPvarbounds}, with the addition of two possible additional constraints, namely,
+\begin{align}
+x_i \in \mathbb{Z}, \qquad\quad \forall i &\in \mathcal{I} \label{eq:mi_integer}\\
+x_j \in \{0, 1\}, \quad \forall j &\in \mathcal{B}, \label{eq:mi_binary}
+\end{align}
+where $\mathcal{I}$ and $\mathcal{B}$ are the sets of indices of variables that are restricted to integer or binary values, respectively.
+
+This function can be used to solve the problem with any of the available solvers by calling it as follows,
+\begin{Code}
+[x, f, exitflag, output, lambda] = ...
+    miqps_master(H, c, A, l, u, xmin, xmax, x0, vtype, opt);
+[x, f, exitflag, output, lambda] = miqps_master(problem);
+\end{Code}
+The calling syntax for \code{miqps\_master} is identical to that used by \code{qps\_master} with the exception of a single new input argument, \code{vtype}, to specify the variable type, just before the options struct. The input arguments and options for \code{miqps\_master} are described in Tables~\ref{tab:miqps_master_input} and \ref{tab:miqps_master_options}, respectively. The outputs are identical to those shown in Table~\ref{tab:qps_master_output} for \code{qps\_master}.
+
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{Input Arguments for \code{miqps\_master}}
+\label{tab:miqps_master_input}
+\footnotesize
+\begin{tabular}{p{0.15\textwidth}p{0.78\textwidth}}
+\toprule
+name & description \\
+\midrule
+\multicolumn{2}{l}{\emph{all \code{qps\_master} input args from Table~\ref{tab:qps_master_input}, with the following additions/modifications}} \\
+& \\
+\code{vtype}	& character string of length $n_x$ (number of elements in $x$), or 1 (value applies to all variables in $x$), specifying variable type; allowed values are:\tnote{\dag}	\\
+& \begin{tabular}{r @{ -- } l}
+\codeq{C} & continuous (default) \\
+\codeq{B} & binary \\
+\codeq{I} & integer \\
+\end{tabular}	\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [\dag] {\cplex{} and \gurobi{} also include \codeq{S} for semi-continuous and \codeq{N} for semi-integer, but these have not been tested.}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+% \begin{table}[!ht]
+% %\renewcommand{\arraystretch}{1.2}
+% \centering
+% \begin{threeparttable}
+% \caption{Output Arguments for \code{miqps\_master}\tnote{\dag}}
+% \label{tab:miqps_master_output}
+% \footnotesize
+% \begin{tabular}{p{0.15\textwidth}p{0.78\textwidth}}
+% \toprule
+% name & description \\
+% \midrule
+% \multicolumn{2}{l}{\emph{all \code{qps\_master} output args from Table~\ref{tab:qps_master_output}, with the following additions/modifications}} \\
+% & \\
+% \code{x}	& solution vector $x$	\\
+% \code{f}	& final objective function value $f(x) = \frac{1}{2} \trans{x} H x + \trans{c} x$	\\
+% \code{exitflag}	& exit flag	\\
+% & \begin{tabular}{r @{ -- } l}
+% 1 & converged successfully \\
+% $\le 0$ & solver-specific failure code \\
+% \end{tabular}	\\
+% \code{output}	& output struct with the following fields:	\\
+% & \begin{tabular}{r @{ -- } l}
+% alg & algorithm code of solver used \\
+% \emph{(others)} & solver-specific fields \\
+% \end{tabular}	\\
+% \code{lambda}	& struct containing the Langrange and Kuhn-Tucker multipliers on the constraints, with fields:	\\
+% & \begin{tabular}{r @{ -- } l}
+% \code{mu\_l} & lower (left-hand) limit on linear constraints \\
+% \code{mu\_u} & upper (right-hand) limit on linear constraints \\
+% \code{lower} & lower bound on optimization variables \\
+% \code{upper} & upper bound on optimization variables \\
+% \end{tabular}	\\
+% \bottomrule
+% \end{tabular}
+% % \begin{tablenotes}
+% %  \scriptsize
+% %  \item [\dag] {Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.}
+% % \end{tablenotes}
+% \end{threeparttable}
+% \end{table}
+
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{Options for \code{miqps\_master}}
+\label{tab:miqps_master_options}
+\footnotesize
+\begin{tabular}{lcp{0.62\textwidth}}
+\toprule
+name & default & description \\
+\midrule
+% \multicolumn{3}{l}{\emph{all \code{qps\_master} options from Table~\ref{tab:qps_master_options}, with the following additions/modifications}} \\
+% & \\
+\code{alg}	& \codeq{DEFAULT}	& determines which solver to use \\
+&& \begin{tabular}{c @{ -- } p{0.5\textwidth}}
+\codeq{DEFAULT} & automatic, first available of \gurobi{}, \cplex{}, \mosek{}, \ot{} (if \matlab{}, MILP only), \glpk{} (MILP only) \\
+\codeq{CPLEX} & \cplex{}\tnote{*} \\
+\codeq{GLPK} & \glpk{}\tnote{*} \emph{(LP only)} \\
+\codeq{GUROBI} & \gurobi{}\tnote{*} \\
+\codeq{MOSEK} & \mosek{}\tnote{*} \\
+\codeq{OT} & \matlab{} Opt Toolbox, \code{intlinprog} \\
+\end{tabular}	\\
+\code{verbose}	& 1	& amount of progress info to be printed \\
+&& \begin{tabular}{r @{ -- } l}
+0 & print no progress info \\
+1 & print a little progress info \\
+2 & print a lot of progress info \\
+3 & print all progress info \\
+\end{tabular}	\\
+\code{skip\_prices}	& 0	& flag that specifies whether or not to skip the price computation stage, in which the problem is re-solved for only the continuous variables, with all others being constrained to their solved values \\
+\code{price\_stage\_warn\_tol}	& \emph{$10^-7$}	& tolerance on the objective function value and primal variable relative mismatch required to avoid mismatch warning message \\
+\code{cplex\_opt}	& \emph{empty}	& options struct for \cplex{}\tnote{*} \\
+\code{glpk\_opt}	& \emph{empty}	& options struct for \glpk{}\tnote{*} \\
+\code{grb\_opt}	& \emph{empty}	& options struct for \gurobi{}\tnote{*} \\
+\code{intlinprog\_opt}	& \emph{empty}	& options struct for \code{intlinprog}\tnote{*} \\
+\code{mosek\_opt}	& \emph{empty}	& options struct for \mosek{}\tnote{*} \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [*] {Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+By default, unless the \code{skip\_prices} option is set to 1, once \code{miqps\_master} has found the integer solution, it constrain the integer variables to their solved values and call \code{qps\_matpower} on the resulting problem to determine the shadow prices in \code{lambda}.
+
+The \code{miqps\_master} function is simply a master wrapper around corresponding functions specific to each solver, namely, \code{miqps\_cplex}, \code{miqps\_glpk}, \code{miqps\_gurobi}, \code{miqps\_mosek}, and \code{miqps\_ot}. Each of these functions has an interface identical to that of \code{miqps\_master}.
+
+\clearpage
+\subsubsection{MILP Example}
+\label{sec:milp_ex}
+
+The following code shows an example of using \code{miqps\_master} to solve a simple 2-dimensional MILP problem\footnote{From MOSEK 6.0 Guided Tour, section 7.13.1, \url{https://docs.mosek.com/6.0/toolbox/node009.html}.} using the default solver.
+
+\begin{Code}
+c = [-2; -3];
+A = sparse([195 273; 4 40]);
+u = [1365; 140];
+xmax = [4; Inf];
+vtype = 'I';
+opt = struct('verbose', 2);
+p = struct('c', c, 'A', A, 'u', u, 'xmax', xmax, 'vtype', vtype, 'opt', opt);
+[x, f, s, out, lam] = miqps_master(p);
+\end{Code}
+
+Other examples of using \code{miqps\_master} to solve MILP and MIQP problems can be found in \code{t\_miqps\_master.m}.
+
+
+% \clearpage
+\subsection{NLP Solvers -- {\tt nlps\_master}}
+\label{sec:nlps_master}
+
+The \code{nlps\_master} function provides a common \textbf{\underline{n}}on\textbf{\underline{l}}inear \textbf{\underline{p}}rogramming \textbf{\underline{s}}olver interface for general nonlinear programming (NLP) problems, that is, problems of the form:
+\begin{equation}
+\min_x f(x) \label{eq:nlp_obj}
+\end{equation}
+subject to
+\begin{eqnarray}
+& g(x) = 0 & \label{eq:nlp_g}  \\
+& h(x) \le 0 & \label{eq:nlp_h}  \\
+& l \le A x \le u  & \label{eq:nlp_linear_constraints}  \\
+& x_\mathrm{min} \le x \le x_\mathrm{max} & \label{eq:nlp_var_bounds}
+\end{eqnarray}
+where $f \colon \R^n \to \R$, $g \colon \R^n \to \R^m$ and $h \colon \R^n \to \R^p$.
+
+This function can be used to solve the problem with any of the available solvers by calling it as follows,
+\begin{Code}
+[x, f, exitflag, output, lambda] = ...
+    nlps_master(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt);
+\end{Code}
+where the input and output arguments are described in Tables~\ref{tab:nlps_master_input} and \ref{tab:nlps_master_output}, respectively. Alternatively, the input arguments can be packaged as fields in a \code{problem} struct and passed in as a single argument, where all fields except \code{f\_fcn} and \code{x0} are optional.
+\begin{Code}
+[x, f, exitflag, output, lambda] = nlps_master(problem);
+\end{Code}
+The calling syntax for \code{nlps\_master} is nearly identical to that of \mipslink{} and very similar to that used by \code{fmincon} from the \matlab{} \ot{}. The primary difference from \code{fmincon} is that the linear constraints are specified in terms of a single doubly-bounded linear function ($l \le A x \le u$) as opposed to separate equality constrained ($A_{eq} x = b_{eq}$) and upper bounded ($A x \le b$) functions. The functions for evaluating the objective function, constraints and Hessian are identical.
+
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{Input Arguments for \code{nlps\_master}\tnote{\dag}}
+\label{tab:nlps_master_input}
+\footnotesize
+\begin{tabular}{lp{0.85\textwidth}}
+\toprule
+name & description \\
+\midrule
+\code{f\_fcn}	& Handle to a function that evaluates the objective function, its gradients and Hessian\tnote{\ddag} for a given value of $x$. Calling syntax for this function:	\\
+&~~~~\code{[f, df, d2f] = f\_fcn(x)}	\\
+\code{x0}	& Starting value of optimization vector $x$.	\\
+\code{A}, \code{l}, \code{u}	& Define the optional linear constraints $l \le A x \le u$. Default values for the elements of \code{l} and \code{u} are \code{-Inf} and \code{Inf}, respectively.	\\
+\code{xmin}, \code{xmax}	& Optional lower and upper bounds on the $x$ variables, defaults are \code{-Inf} and \code{Inf}, respectively.	\\
+\code{gh\_fcn}	& Handle to function that evaluates the optional nonlinear constraints and their gradients for a given value of $x$. Calling syntax for this function is:	\\
+&~~~~\code{[h, g, dh, dg] = gh\_fcn(x)}	\\
+\code{hess\_fcn}	& Handle to function that computes the Hessian\tnote{\ddag} of the Lagrangian for given values of $x$, $\lambda$ and $\mu$, where $\lambda$ and $\mu$ are the multipliers on the equality and inequality constraints, $g$ and $h$, respectively. The calling syntax for this function is:	\\
+&~~~~\code{Lxx = hess\_fcn(x, lam, cost\_mult)},	\\
+&where $\lambda$ = \code{lam.eqnonlin}, $\mu$ = \code{lam.ineqnonlin} and \code{cost\_mult} is a parameter used to scale the objective function	\\
+\code{opt}	& Optional options structure with fields, all of which are also optional, described in Table~\ref{tab:nlps_master_options}. \\
+\code{problem}	& Alternative, single argument input struct with fields corresponding to arguments above.	\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [\dag] {All inputs are optional except \code{f\_fcn} and \code{x0}.}
+ \item [\ddag] {If \code{gh\_fcn} is provided then \code{hess\_fcn} is also required. Specifically, if there are nonlinear constraints, the Hessian information must be provided by the \code{hess\_fcn} function and it need not be computed in \code{f\_fcn}.}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{Output Arguments for \code{nlps\_master}}
+\label{tab:nlps_master_output}
+\footnotesize
+\begin{tabular}{lp{0.8\textwidth}}
+\toprule
+name & description \\
+\midrule
+\code{x}	& solution vector	\\
+\code{f}	& final objective function value, $f(x)$	\\
+\code{exitflag}	& exit flag	\\
+& \begin{tabular}{r @{ -- } l}
+1 & converged successfully \\
+$\le 0$ & solver-specific failure code \\
+\end{tabular}	\\
+\code{output}	& output struct with the following fields:	\\
+& \begin{tabular}{r @{ -- } l}
+alg & algorithm code of solver used \\
+\emph{(others)} & solver-specific fields \\
+\end{tabular}	\\
+\code{lambda}	& struct containing the Langrange and Kuhn-Tucker multipliers on the constraints, with fields:	\\
+&\begin{tabular}{lp{0.65\textwidth}}
+\code{eqnonlin} & nonlinear equality constraints	\\
+\code{ineqnonlin} & nonlinear inequality constraints	\\
+\code{mu\_l} & lower (left-hand) limit on linear constraints	\\
+\code{mu\_u} & upper (right-hand) limit on linear constraints	\\
+\code{lower} & lower bound on optimization variables	\\
+\code{upper} & upper bound on optimization variables	\\
+\end{tabular} 	\\
+\bottomrule
+\end{tabular}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{Options for \code{nlps\_master}}
+\label{tab:nlps_master_options}
+\footnotesize
+\begin{tabular}{lcp{0.62\textwidth}}
+\toprule
+name & default & description \\
+\midrule
+\code{alg}	& \codeq{DEFAULT}	& determines which solver to use \\
+&& \begin{tabular}{c @{ -- } p{0.5\textwidth}}
+\codeq{DEFAULT} & automatic, current default is \mips{} \\
+\codeq{MIPS} & \mips{} \\
+\codeq{FMINCON} & \matlab{} Opt Toolbox, \code{fmincon}\tnote{*} \\
+\codeq{IPOPT} & \ipopt{}\tnote{*} \\
+\codeq{KNITRO} & \knitro{}\tnote{*} \\
+\end{tabular}	\\
+\code{verbose}	& 1	& amount of progress info to be printed \\
+&& \begin{tabular}{r @{ -- } l}
+0 & print no progress info \\
+1 & print a little progress info \\
+2 & print a lot of progress info \\
+\end{tabular}	\\
+\code{mips\_opt}	& \emph{empty}	& options struct for \mips{} \\
+\code{fmincon\_opt}	& \emph{empty}	& options struct for \code{fmincon}\tnote{*} \\
+\code{ipopt\_opt}	& \emph{empty}	& options struct for \ipopt{}\tnote{*} \\
+\code{knitro\_opt}	& \emph{empty}	& options struct for \knitro{}\tnote{*} \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [*] {Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+The \code{nlps\_master} function is simply a master wrapper around corresponding functions specific to each solver, namely, \code{mips}, \code{nlps\_fmincon}, \code{nlps\_ipopt}, and \code{nlps\_knitro}. Each of these functions has an interface identical to that of \code{qps\_master}, with the exception of the options struct for \code{mips}, which is a simple \mips{} options struct.
+
+\subsubsection{NLP Example 1}
+\label{sec:nlp_ex1}
+
+The following code, included as \code{nlps\_master\_ex1.m} in \mpompath{lib/t}, shows a simple example of using \code{nlps\_master} to solve a 2-dimensional unconstrained optimization of Rosenbrock's ``banana'' function\footnote{\url{https://en.wikipedia.org/wiki/Rosenbrock_function}}
+\begin{equation}
+f(x) = 100 (x_2-x_1^2)^2+(1-x_1)^2.
+\end{equation}
+
+First, create a function that will evaluate the objective function, its gradients and Hessian, for a given value of $x$. In this case, the coefficient of the first term is defined as a paramter \code{a}.
+\begin{Code}
+function [f, df, d2f] = banana(x, a)
+f = a*(x(2)-x(1)^2)^2+(1-x(1))^2;
+if nargout > 1          %% gradient is required
+    df = [  4*a*(x(1)^3 - x(1)*x(2)) + 2*x(1)-2;
+            2*a*(x(2) - x(1)^2)                     ];
+    if nargout > 2      %% Hessian is required
+        d2f = 4*a*[ 3*x(1)^2 - x(2) + 1/(2*a),  -x(1);
+                    -x(1)                       1/2 ];
+    end
+end
+\end{Code}
+Then, create a handle to the function, defining the value of the paramter \code{a} to be 100, set up the starting value of $x$, and call the \code{nlps\_master} function to solve it.
+\begin{Code}
+>> f_fcn = @(x)banana(x, 100);
+>> x0 = [-1.9; 2];
+>> [x, f] = nlps_master(f_fcn, x0)
+
+x =
+
+     1
+     1
+
+
+f =
+
+     0
+\end{Code}
+
+% \clearpage
+\subsubsection{NLP Example 2}
+\label{sec:nlp_ex2}
+
+The second example\footnote{From \url{https://en.wikipedia.org/wiki/Nonlinear\_programming\#3-dimensional\_example}.} solves the following 3-dimensional constrained optimization, printing the details of the solver's progress:
+\begin{equation}
+\min_x f(x) = -x_1 x_2 - x_2 x_3
+\end{equation}
+subject to
+\begin{eqnarray}
+x_1^2 - x_2^2 + x_3^2 - 2 & \le & 0 \\
+x_1^2 + x_2^2 + x_3^2 - 10 & \le & 0.
+\end{eqnarray}
+
+First, create a function to evaluate the objective function and its gradients,\footnote{Since the problem has nonlinear constraints and the Hessian is provided by \code{hess\_fcn}, this function will never be called with three output arguments, so the code to compute \code{d2f} is actually not necessary.}
+\begin{Code}
+function [f, df, d2f] = f2(x)
+f = -x(1)*x(2) - x(2)*x(3);
+if nargout > 1           %% gradient is required
+    df = -[x(2); x(1)+x(3); x(2)];
+    if nargout > 2       %% Hessian is required
+        d2f = -[0 1 0; 1 0 1; 0 1 0];   %% actually not used since
+    end                                 %% 'hess_fcn' is provided
+end
+\end{Code}
+one to evaluate the constraints, in this case inequalities only, and their gradients,
+\begin{Code}
+function [h, g, dh, dg] = gh2(x)
+h = [ 1 -1 1; 1 1 1] * x.^2 + [-2; -10];
+dh = 2 * [x(1) x(1); -x(2) x(2); x(3) x(3)];
+g = []; dg = [];
+\end{Code}
+and another to evaluate the Hessian of the Lagrangian.
+\begin{Code}
+function Lxx = hess2(x, lam, cost_mult)
+if nargin < 3, cost_mult = 1; end   %% allows to be used with 'fmincon'
+mu = lam.ineqnonlin;
+Lxx = cost_mult * [0 -1 0; -1 0 -1; 0 -1 0] + ...
+        [2*[1 1]*mu 0 0; 0 2*[-1 1]*mu 0; 0 0 2*[1 1]*mu];
+\end{Code}
+Then create a \code{problem} struct with handles to these functions, a starting value for $x$ and an option to print the solver's progress. Finally, pass this struct to \code{nlps\_master} to solve the problem and print some of the return values to get the output below.
+\begin{Code}
+function nlps_master_ex2(alg)
+if nargin < 1
+    alg = 'DEFAULT';
+end
+problem = struct( ...
+    'f_fcn',    @(x)f2(x), ...
+    'gh_fcn',   @(x)gh2(x), ...
+    'hess_fcn', @(x, lam, cost_mult)hess2(x, lam, cost_mult), ...
+    'x0',       [1; 1; 0], ...
+    'opt',      struct('verbose', 2, 'alg', alg) ...
+);
+[x, f, exitflag, output, lambda] = nlps_master(problem);
+fprintf('\nf = %g   exitflag = %d\n', f, exitflag);
+fprintf('\nx = \n');
+fprintf('   %g\n', x);
+fprintf('\nlambda.ineqnonlin =\n');
+fprintf('   %g\n', lambda.ineqnonlin);
+\end{Code}
+\begin{Code}
+>> nlps_master_ex2
+MATPOWER Interior Point Solver -- MIPS, Version 1.3.1, 20-Jun-2019
+ (using built-in linear solver)
+ it    objective   step size   feascond     gradcond     compcond     costcond  
+----  ------------ --------- ------------ ------------ ------------ ------------
+  0            -1                       0          1.5            5            0
+  1    -5.3250167     1.6875            0     0.894235     0.850653      2.16251
+  2    -7.4708991    0.97413     0.129183   0.00936418     0.117278     0.339269
+  3    -7.0553031    0.10406            0   0.00174933    0.0196518    0.0490616
+  4    -7.0686267   0.034574            0   0.00041301    0.0030084   0.00165402
+  5    -7.0706104  0.0065191            0  1.53531e-05  0.000337971  0.000245844
+  6    -7.0710134 0.00062152            0  1.22094e-07  3.41308e-05  4.99387e-05
+  7    -7.0710623 5.7217e-05            0  9.84879e-10  3.41587e-06  6.05875e-06
+  8    -7.0710673 5.6761e-06            0  9.73527e-12  3.41615e-07  6.15483e-07
+Converged!
+
+f = -7.07107   exitflag = 1
+
+x = 
+   1.58114
+   2.23607
+   1.58114
+
+lambda.ineqnonlin =
+   0
+   0.707107
+\end{Code}
+To use a different solver such as \code{fmincon}, assuming it is available, simply specify it in the \code{alg} option.
+\begin{Code}
+>> nlps_master_ex2('FMINCON')
+                                            First-order      Norm of
+ Iter F-count            f(x)  Feasibility   optimality         step
+    0       1   -1.000000e+00    0.000e+00    1.000e+00
+    1       2   -5.718566e+00    0.000e+00    1.230e+00    1.669e+00
+    2       3   -8.395115e+00    1.875e+00    8.080e-01    8.259e-01
+    3       4   -7.034187e+00    0.000e+00    3.752e-02    2.965e-01
+    4       5   -7.050896e+00    0.000e+00    1.890e-02    5.339e-02
+    5       6   -7.071406e+00    4.921e-04    1.133e-03    2.770e-02
+    6       7   -7.070872e+00    0.000e+00    1.962e-04    2.332e-03
+    7       8   -7.071066e+00    0.000e+00    1.958e-06    2.418e-04
+
+Local minimum found that satisfies the constraints.
+
+Optimization completed because the objective function is non-decreasing in 
+feasible directions, to within the value of the optimality tolerance,
+and constraints are satisfied to within the value of the constraint tolerance.
+
+
+f = -7.07107   exitflag = 1
+
+x = 
+   1.58114
+   2.23607
+   1.58114
+
+lambda.ineqnonlin =
+   1.08013e-06
+   0.707107
+\end{Code}
+
+
+This example can be found in \code{nlps\_master\_ex2.m}. More example problems for \code{nlps\_master} can be found in \code{t\_nlps\_master.m}, both in \mpompath{lib/t}.
+
+
+%%------------------------------------------
+\clearpage
+\section{Optimization Model Class -- {\tt opt\_model}}
+\label{sec:opt_model}
+
+The \code{opt\_model} class provides facilities for constructing an optimization problem by adding and managing the indexing of sets of variables, constraints and costs. The model can then be solved by simply calling the \code{solve} method which automatically selects and calls the appropriate master solver function, i.e. \code{qps\_master}, \code{miqps\_master} or  \code{nlps\_master}, depending on the type of problem.
+
+In this manual, and in the code, \code{om} is the name of the variable used by convention for the optimization model object, which is typically created by calling the constructor \code{opt\_model} with no arguments.
+
+\begin{Code}
+om = opt_model;
+\end{Code}
+
+Variables, constraints and costs can then be added to the model using named sets. For variables and constraints, each set represents a column vector, and the sets are stacked in the order they are added to construct the full optimization variable or full constraint vector. For costs, each set represents a component of a scalar cost, and the components are summed together to construct the full objective function value.
+
+\subsection{Adding Variables}
+\label{sec:add_var}
+
+\begin{Code}
+om.add_var(name, N);
+om.add_var(name, N, v0);
+om.add_var(name, N, v0, vl);
+om.add_var(name, N, v0, vl, vu);
+om.add_var(name, N, v0, vl, vu, vt);
+om.add_var(name, idx_list, N ...);
+\end{Code}
+
+A named set of variables is added to the model using the \code{add\_var} method, where \code{name} is a string containing the name of the set\footnote{A set name must be a valid field name for a struct.}, \code{N} is the number $n$ of variables in the set, \code{v0} is the initial value of the variables, \code{vl} and \code{vu} are the upper and lower bounds on the variables, and \code{vt} is the variable type. The accepted values for \code{vt} are:
+\begin{itemize}
+\setlength{\parskip}{-6pt}%
+\item \codeq{C} – continuous
+\item \codeq{I} – integer
+\item \codeq{B} – binary, i.e. 0 or 1
+\end{itemize}
+The inputs \code{v0}, \code{vl} and \code{vu} are $n \times 1$ column vectors, \code{vt} is a scalar or a $1 \times n$ row vector. The defaults for the last four arguments, which are all optional, are for all to be continuous, unbounded and initialized to zero. That is, \code{v0}, \code{vl}, \code{vu}, and \code{vt} default to 0, $-\infty$, $+\infty$, and \codeq{C}, respectively.
+
+For example, suppose our problem has variables $u$, $v$ and $w$, which are vectors of length $n_u$, $n_v$, and $n_w$, respectively, where $u$ is unbounded, $v$ is non-negative and the lower and upper bounds on $w$ are given in the vectors \code{wlb} and \code{wub}. Let us further suppose that the initial value of $w$ is provided in \code{w0} and the first 3 elements of $w$ are binary variables. And we will assume that the values of $n_u$, $n_v$, and $n_w$ are available in the variables \code{nu}, \code{nv} and \code{nw}, respectively.
+
+We can then add these variable sets to the model with the names \textbf{u}, \textbf{v}, and \textbf{w}, as follows:
+\begin{Code}
+wtype = repmat('C', 1, nw);  wt(1:3) = 'B';
+om.add_var('u', nu);
+om.add_var('v', nv, [], 0);
+om.add_var('w', nw, w0, wlb, wub, wtype);
+\end{Code}
+In this case, then, the full optimization vector is the $(n_u+n_v+n_w) \times 1$ vector
+\begin{equation}
+x = \left[\begin{array}{c}u \\ v \\ w \end{array}\right]. \label{eq:x}
+\end{equation}
+
+See Section~\ref{sec:indexed_sets} for details on indexed named sets and the \code{idx\_list} argument.
+
+\subsubsection{Variable Subsets}
+\label{sec:varsets}
+
+A key feature of \mpom{} is that each set of constraints or costs can be defined in terms of the relevant variables only, as opposed to the entire optimization vector~$x$. This is done by specifying a variable subset, a cell array of the variable names of interest, in the \code{varsets} argument. Besides simplifying the constraint and cost definitions, another benefit of this approach is that it allows a model to be modified with new variables after some constraints and costs have already been added.
+
+In the sections to follow, we will use the following two variable subsets for illustration purposes:
+\begin{itemize}
+\setlength{\parskip}{-6pt}%
+\item \code{\{}\codeq{v}\code{\}} corresponding to $x_1 \equiv v$, and
+\item \code{\{}\codeq{u}\code{, }\codeq{w}\code{\}} corresponding to $x_2 \equiv \left[\begin{array}{c}u \\ w \end{array}\right]$.
+\end{itemize}
+
+\subsection{Adding Constraints}
+\label{sec:constraint}
+
+A named set of constraints can be added to the model as soon as the variables on which it depends have been added. \mpom{} currently supports three types of constraints, doubly-bounded linear constraints, general nonlinear equality constraints, and general nonlinear inequality constraints.
+
+\subsubsection{Linear Constraints}
+\label{sec:add_lin_constraint}
+
+\begin{Code}
+om.add_lin_constraint(name, A, l, u);
+om.add_lin_constraint(name, A, l, u, varsets);
+om.add_lin_constraint(name, idx_list, A ...);
+\end{Code}
+
+In \mpom{}, linear constraints take the form
+\begin{equation}
+l \le A x \le u,    \label{eq:linear_constraints}
+\end{equation}
+where $x$ here refers to either the full optimization vector \emph{(default)}, or the vector obtained by stacking the subset of variables specified in \code{varsets}. Here \code{A} contains the $n_A \times n_x$ matrix $A$ and \code{l} and \code{u} are the $n_A \times 1$ vectors $l$ and $u$.\footnote{The \code{A} matrix can be sparse.}
+
+For example, suppose our problem has the following three sets of linear constraints,
+\begin{align}
+l_1 \le &A_1 x_1 \le u_1 \\
+l_2 \le &A_2 x_2 \\
+&A_3 x \le u_3,
+\end{align}
+where $x_1$ and $x_2$ are as defined in Section~\ref{sec:varsets} and $x$ is the full optimization vector from \eqref{eq:x}. Notice that the number of columns in $A_1$ and $A_2$ correspond to $n_v$ and $n_u+n_w$, respectively, whereas $A_3$ has the full set of columns corresponding to $x$.
+
+These three linear constraint sets can be added to the model with the names \textbf{lincon1}, \textbf{lincon2}, and \textbf{lincon3}, using the \code{add\_lin\_constraint} method as follows:
+\begin{Code}
+om.add_lin_constraint('lincon1', A1, l1, u1, {'v'});
+om.add_lin_constraint('lincon2', A2, l2, [], {'u', 'w'});
+om.add_lin_constraint('lincon3', A3, [], u3);
+\end{Code}
+
+See Section~\ref{sec:indexed_sets} for details on indexed named sets and the \code{idx\_list} argument.
+
+\subsubsection{General Nonlinear Constraints}
+\label{sec:add_nln_constraint}
+
+\begin{Code}
+om.add_nln_constraint(name, N, iseq, fcn, hess);
+om.add_nln_constraint(name, N, iseq, fcn, hess, varsets);
+om.add_nln_constraint(name, idx_list, N ...);
+\end{Code}
+
+\mpom{} allows the user to implement general nonlinear constraints of the form
+\begin{align}
+g(x) &= 0, \textrm{~or} \\
+g(x) &\le 0
+\end{align}
+by providing the handle \code{fcn} of a function that evaluates the constraint and its Jacobian and another handle \code{hess} of a function that evaluates the Hessian. The number of constraints in the set is given by \code{N}, and \code{iseq} is set to 1 to specify an equality constraint or 0 for an inequality.
+
+The calling syntax for \code{fcn} is:
+\begin{Code}
+g = fcn(x);
+[g, dg] = fcn(x);
+\end{Code}
+Here \code{g} is the $n_g \times 1$ vector $g(x)$ and \code{dg} is the $n_g \times n_x$ Jacobian matrix $J(x)$, where $J_{ij} = \der{g_i}{x_j}$.
+
+Rather than computing the full three-dimensional Hessian, the \code{hess} function actually evaluates the Jacobian of the vector $\trans{J}(x) \lambda$ for a specified value of the vector $\lambda$. The calling syntax for \code{hess} is:
+\begin{Code}
+d2g = hess(x, lambda);
+\end{Code}
+
+For both functions, the first input argument \code{x} takes one of two forms. If the constraint set is added with \code{varsets} empty or missing, then \code{x} will be the full optimization vector. Otherwise it will be a cell array of vectors corresponding to the variable sets specified in \code{varsets}.
+
+There is also the option for \code{name} to be a cell array of constraint set names, in which case \code{N} is a vector, specifying the number of constraints in each corresponding set. In this case, \code{fcn} and \code{hess} are each still a single function handle, but the values computed by each correspond to the entire stacked collection of constraint sets together, as if they were a
+single set.
+
+For example, suppose our problem has the following three sets of nonlinear constraints,
+\begin{align}
+g_1(x_1) \le 0 \\
+g_2(x_2) = 0 \\
+g_3(x) \le 0,
+\end{align}
+where $x_1$ and $x_2$ are as defined in Section~\ref{sec:varsets} and $x$ is the full optimization vector from \eqref{eq:x}. Let \code{my\_cons\_fcn1}, \code{my\_cons\_fcn2}, and \code{my\_cons\_fcn3} be functions that evaluate $g_1(x_1)$, $g_2(x_2)$, and $g_3(x)$ and their gradients, respectively. Similarly, let \code{my\_cons\_hess1}, \code{my\_cons\_hess2}, and \code{my\_cons\_hess3} be Hessian evaluation functions for the same. The variables \code{ng1}, \code{ng2}, and \code{ng3} contain the number of constraints in the respective constraint sets.
+
+These three nonlinear constraint sets can be added to the model with the names \textbf{nlncon1}, \textbf{nlncon2}, and \textbf{nlncon3}, using the \code{add\_nln\_constraint} method as follows:
+\begin{Code}
+fcn1 = @(x)my_cons_fcn1(x, <other_args>);
+fcn2 = @(x)my_cons_fcn2(x, <other_args>);
+fcn3 = @(x)my_cons_fcn3(x, <other_args>);
+hess1 = @(x, lambda)my_cons_hess1(x, lambda, <other_args>);
+hess2 = @(x, lambda)my_cons_hess2(x, lambda, <other_args>);
+hess3 = @(x, lambda)my_cons_hess3(x, lambda, <other_args>);
+om.add_nln_constraint('nlncon1', ng1, 0, fcn1, hess1 {'v'});
+om.add_nln_constraint('nlncon2', ng2, 1, fcn2, hess2, {'u', 'w'});
+om.add_nln_constraint('nlncon3', ng3, 0, fcn3, hess3);
+\end{Code}
+In this case, the \code{x} variable passed to the \code{my\_cons\_fcn} and \code{my\_cons\_hess} functions will be as follows:
+\begin{itemize}
+\setlength{\parskip}{-6pt}%
+\item \code{my\_cons\_fcn1}, \code{my\_cons\_hess1} $\longrightarrow$ \code{x} = \code{\{}$v$\code{\}}
+\item \code{my\_cons\_fcn2}, \code{my\_cons\_hess2} $\longrightarrow$ \code{x} = \code{\{}$u, w$\code{\}}
+\item \code{my\_cons\_fcn3}, \code{my\_cons\_hess3} $\longrightarrow$ \code{x} = \code{[}$u; v; w$\code{]}
+\end{itemize}
+
+See Section~\ref{sec:indexed_sets} for details on indexed named sets and the \code{idx\_list} argument.
+
+\subsection{Adding Costs}
+\label{sec:add_cost}
+
+The objective of an \mpom{} optimization problem is to \emph{minimize} the sum of all costs added to the model. As with constraints, a named set of costs can be added to the model as soon as the variables on which it depends have been added. \mpom{} currently supports two types of costs, quadratic costs and general nonlinear costs.
+
+\subsubsection{Quadratic Costs}
+\label{sec:add_quad_cost}
+
+\begin{Code}
+om.add_quad_cost(name, Q, c);
+om.add_quad_cost(name, Q, c, k);
+om.add_quad_cost(name, Q, c, k, varsets);
+om.add_quad_cost(name, idx_list, Q ...);
+\end{Code}
+
+A quadratic cost set takes the form:
+\begin{equation}
+f(x) = \frac{1}{2} \trans{x} Q x + \trans{c} x + k \label{eq:quad_cost}
+\end{equation}
+where $x$ here refers to either the full optimization vector \emph{(default)}, or the vector obtained by stacking the subset of variables specified in \code{varsets}. Here \code{Q} contains the $n_x \times n_x$ matrix $Q$, \code{c} the $n_x \times 1$ vector $c$, and \code{k} the scalar $k$.\footnote{The \code{Q} matrix can be sparse.}
+
+Alternatively, \code{Q} can be an $n_x \times 1$ vector, in which case $f(x)$ and $k$ are also $n_x \times 1$ vectors and the $i$-th element of $f(x)$ is given by
+\begin{equation}
+f_i(x) = \frac{1}{2} Q_i x_i^2 + c_i x_i + k_i. \label{eq:quad_cost2}
+\end{equation}
+If \code{Q} is empty, then $f(x)$ is also an $n_x \times 1$ vector, unless \code{k} is scalar and non-zero.
+
+For example, suppose our problem has the following three sets of quadratic costs,
+\begin{align}
+q_1(x_1) &= \frac{1}{2} \trans{x_1} Q_1 x_1 + \trans{c_1} x_1 + k_1 \\
+q_2(x_2) &= \frac{1}{2} \trans{x_2} Q_2 x_2 + \trans{c_2} x_2 + k_2 \\
+q_3(x) &= \frac{1}{2} \trans{x} Q_3 x + \trans{c_3} x + k_3,
+\end{align}
+where $x_1$ and $x_2$ are as defined in Section~\ref{sec:varsets} and $x$ is the full optimization vector from \eqref{eq:x}. Notice that the dimensions of $Q_1$ and $Q_2$ (and $c_1$ and $c_2$) correspond to $n_v$ and $n_u+n_w$, respectively, whereas $Q_3$ (and $c_3$) correspond to the full $x$.
+
+These three quadratic cost sets can be added to the model with the names \textbf{qcost1}, \textbf{qcost2}, and \textbf{qcost3}, using the \code{add\_quad\_cost} method as follows:
+\begin{Code}
+om.add_quad_cost('qcost1', Q1, c1, k1, {'v'});
+om.add_quad_cost('qcost2', Q2, c2, k2, {'u', 'w'});
+om.add_quad_cost('qcost3', Q3, c3, k3);
+\end{Code}
+
+See Section~\ref{sec:indexed_sets} for details on indexed named sets and the \code{idx\_list} argument.
+
+\subsubsection{General Nonlinear Costs}
+\label{sec:add_nln_cost}
+
+\begin{Code}
+om.add_nln_cost(name, N, fcn);
+om.add_nln_cost(name, N, fcn, varsets);
+om.add_nln_cost(name, idx_list, N ...);
+\end{Code}
+
+\mpom{} allows the user to implement a general nonlinear cost by providing the handle \code{fcn} of a function that evaluates the cost $f(x)$, its gradient and Hessian $H$, as described below. The \code{N} parameter specifies the dimension for vector valued cost functions, which are not yet implemented. Currently \code{N} must equal 1 or it will throw an error.
+
+For a cost function $f(x)$, \code{fcn} should point to a function with the
+following interface:
+\begin{Code}
+f = fcn(x)
+[f, df] = fcn(x)
+[f, df, d2f] = fcn(x)
+\end{Code}
+where \code{f} is a scalar with the value of the function $f(x)$, \code{df} is the $1 \times n_x$ gradient of $f$, and \code{d2f} is the $n_x \times n_x$ Hessian $H$, where $n_x$ is the number of elements in $x$.
+
+The first input argument \code{x} takes one of two forms. If the constraint set is added with \code{varsets} empty or missing, then \code{x} will be the full optimization vector. Otherwise it will be a cell array of vectors corresponding to the variable sets specified in \code{varsets}.
+
+For example, suppose our problem has three sets of nonlinear costs, $f_1(x_1)$, $f_2(x_2)$, $f_3(x)$, where $x_1$ and $x_2$ are as defined in Section~\ref{sec:varsets} and $x$ is the full optimization vector from \eqref{eq:x}. Let \code{my\_cost\_fcn1}, \code{my\_cost\_fcn2}, and \code{my\_cost\_fcn3} functions that evaluate $f_1(x)$, $f_2(x)$, and $f_3(x)$ and their gradients and Hessians, respectively. 
+
+These three nonlinear cost sets can be added to the model with the names \textbf{nlncost1}, \textbf{nlncost2}, and \textbf{nlncost3}, using the \code{add\_nln\_cost} method as follows:
+\begin{Code}
+fcn1 = @(x)my_cost_fcn1(x, <other_args>);
+fcn2 = @(x)my_cost_fcn2(x, <other_args>);
+fcn3 = @(x)my_cost_fcn3(x, <other_args>);
+om.add_nln_cost('nlncost1', 1, fcn1 {'v'});
+om.add_nln_cost('nlncost2', 1, fcn2, {'u', 'w'});
+om.add_nln_cost('nlncost3', 1, fcn3);
+\end{Code}
+In this case, the \code{x} variable passed to the \code{my\_cost\_fcn} functions will be as follows:
+\begin{itemize}
+\setlength{\parskip}{-6pt}%
+\item \code{my\_cost\_fcn1} $\longrightarrow$ \code{x} = \code{\{}$v$\code{\}}
+\item \code{my\_cost\_fcn2} $\longrightarrow$ \code{x} = \code{\{}$u, w$\code{\}}
+\item \code{my\_cost\_fcn3} $\longrightarrow$ \code{x} = \code{[}$u; v; w$\code{]}
+\end{itemize}
+
+See Section~\ref{sec:indexed_sets} for details on indexed named sets and the \code{idx\_list} argument.
+
+\clearpage
+\subsection{Solving the Model}
+\label{sec:solve}
+
+\begin{Code}
+[x, f, exitflag, output, lambda] = om.solve()
+[x, f, exitflag, output, lambda] = om.solve(opt)
+\end{Code}
+
+After all variables, constraints and costs have been added to the model, the optimization problem can be solved simply by calling the \code{solve} method. This method automatically selects and calls, depending on the problem type, one of the master solver interface functions from Section~\ref{sec:master_solvers}, namely \code{qps\_master}, \code{miqps\_master}, or \code{nlps\_master}.
+
+For details on the return values and the input options struct \code{opt}, see the descriptions of the individual solver functions in Sections~\ref{sec:qps_master}, \ref{sec:miqps_master}, and \ref{sec:nlps_master}.
+
+\subsection{Accessing the Model}
+
+\subsubsection{Indexing}
+
+For each type of variable, constraint or cost, \mpom{} maintains indexing information for each named set that is added, including the number of elements and the starting and ending indices. For each set type, this information is stored in a struct \code{idx} with fields \code{N}, \code{i1}, and \code{iN}, for storing number of elements, starting index and ending index, respectively. Each of these fields is also a struct with field names corresponding to the named sets.
+
+For example, if \code{vv} is the struct of indexing information for variables, and we have added the \textbf{u}, \textbf{v}, and \textbf{w} variables as in Section~\ref{sec:add_var}, then the contents of \code{vv} will be as shown in Table~\ref{tab:vv}.
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{Example Indexing Data}
+\label{tab:vv}
+\footnotesize
+\begin{tabular}{lcl}
+\toprule
+field & value & description \\
+\midrule
+% \code{vv}	& 	& indexing information for all variables \\
+% \code{~~.N}	& 	& number of elements for each variable \\
+% \code{~~~~.u}	& $n_u$	& number of $u$ variables \\
+% \code{~~~~.v}	& $n_v$	& number of $v$ variables \\
+% \code{~~~~.w}	& $n_w$	& number of $w$ variables \\
+% \code{~~.i1}	& 	& starting index in $x$ for each variable \\
+% \code{~~~~.u}	& 1	& starting index of $u$ in full $x$ \\
+% \code{~~~~.v}	& $n_u + 1$	& starting index of $v$ in full $x$ \\
+% \code{~~~~.w}	& $n_u + n_v + 1$	& starting index of $w$ in full $x$ \\
+% \code{~~.iN}	& 	& ending index in $x$ for each variable \\
+% \code{~~~~.u}	& $n_u$	& ending index of $u$ in full $x$ \\
+% \code{~~~~.v}	& $n_u + n_v$	& ending index of $v$ in full $x$ \\
+% \code{~~~~.w}	& $n_u + n_v + n_w$	& ending index of $w$ in full $x$ \\
+% \\
+\code{vv.N.u}	& $n_u$	& number of $u$ variables \\
+\code{vv.N.v}	& $n_v$	& number of $v$ variables \\
+\code{vv.N.w}	& $n_w$	& number of $w$ variables \\
+\code{vv.i1.u}	& 1	& starting index of $u$ in full $x$ \\
+\code{vv.i1.v}	& $n_u + 1$	& starting index of $v$ in full $x$ \\
+\code{vv.i1.w}	& $n_u + n_v + 1$	& starting index of $w$ in full $x$ \\
+\code{vv.iN.u}	& $n_u$	& ending index of $u$ in full $x$ \\
+\code{vv.iN.v}	& $n_u + n_v$	& ending index of $v$ in full $x$ \\
+\code{vv.iN.w}	& $n_u + n_v + n_w$	& ending index of $w$ in full $x$ \\
+\bottomrule
+\end{tabular}
+\end{threeparttable}
+\end{table}
+
+\subsubsection*{\code{get\_idx}}
+\label{sec:get_idx}
+\begin{Code}
+[idx1, idx2, ...] = om.get_idx(set_type1, set_type2, ...);
+vv = om.get_idx('var');
+[ll, nne, nni] = om.get_idx('lin', 'nle', 'nli');
+
+vv = om.get_idx()
+[vv, ll] = om.get_idx()
+[vv, ll, nne] = om.get_idx()
+[vv, ll, nne, nni] = om.get_idx()
+[vv, ll, nne, nni, qq] = om.get_idx()
+[vv, ll, nne, nni, qq, nnc] = om.get_idx()
+\end{Code}
+
+The \code{idx} struct of indexing information for each set type is available via the \code{get\_idx} method. When called with one or more set type strings as inputs, it returns the corresponding indexing structs. The list of valid set type strings is shown in Table~\ref{tab:set_types}. When called without input arguments, the indexing structs are simply returned in the order listed in the table.
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{Example Indexing Data}
+\label{tab:set_types}
+\footnotesize
+\begin{tabular}{ccl}
+\toprule
+set type string & var name\tnote{*} & description \\
+\midrule
+\codeq{var}	& \code{vv}	& variables	\\
+\codeq{lin}	& \code{ll}	& linear constraints	\\
+\codeq{nle}	& \code{nne}	& nonlinear equality constraints	\\
+\codeq{nli}	& \code{nni}	& nonlinear inequality constraints	\\
+\codeq{qdc}	& \code{qq}	& quadratic costs	\\
+\codeq{nlc}	& \code{nnc}	& general nonlinear costs	\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [*] {The name of the variable used by convention for this indexing struct.}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+For the example model built in Sections~\ref{sec:add_var}--\ref{sec:add_cost}, where \code{x} and \code{lambda} are return values from the \code{solve} method, we can, for example, access the solved value of $v$ and the shadow prices on the \textbf{nlncon3} constraints with the following code.
+\begin{Code}
+[vv, nne] = om.get_idx('var', 'nle');
+v = x(vv.i1.v:vv.iN.v);
+lam_nln3 = lambda.ineqnonlin(nni.i1.nlncon3:nni.iN.nlncon3);
+\end{Code}
+
+\subsubsection*{\code{getN}}
+\begin{Code}
+N = om.getN(set_type)
+N = om.getN(set_type, name)
+N = om.getN(set_type, name, idx_list)
+\end{Code}
+
+The \code{getN} method can be used to get the number of elements in a particular named set, or the total for the set type. For example, the number $n_v$ of elements in variable $v$ and total number of elements in the full optimization variable $x$ can be obtained as follows.
+
+\begin{Code}
+nx = om.getN('var');
+nv = om.getN('var', 'v');
+\end{Code}
+
+See Section~\ref{sec:indexed_sets} for details on indexed named sets and the \code{idx\_list} argument.
+
+\subsubsection*{\code{describe\_idx}}
+\label{sec:describe_idx}
+\begin{Code}
+label = om.describe_idx(set_type, idxs)
+\end{Code}
+
+Given a particular index (or set of indices) for the full set of variables or constraints of a particular type, the \code{describe\_idx} method can be used to show which element of which particular named set the index corresponds to. This can be useful when a solver reports an issue with a particular variable or constraint and you want to map it back to the named sets you have added to your model.
+
+Consider an example in which element 38 of the linear constraints corresponds to the 11th row of \textbf{lincon3} and elements 15 and 23 of the optimization vector $x$ correspond to element 7 of $v$ and element 4 of $w$, respectively. The \code{describe\_idx} method can be used to return this information as follows:
+
+\begin{Code}
+>> lin38 = om.describe_idx('lin', 38)
+
+lin38 =
+
+    'lincon3(11)'
+
+
+>> vars15_23 = om.describe_idx('var', [15; 23])
+
+vars15_23 = 
+
+  2x1 cell array
+
+    {'v(7)'}
+    {'w(4)'}
+\end{Code}
+
+
+\subsubsection{Variables}
+
+\subsubsection*{\code{params\_var}}
+\label{sec:params_var}
+\begin{Code}
+[v0, vl, vu] = om.params_var()
+[v0, vl, vu] = om.params_var(name)
+[v0, vl, vu] = om.params_var(name, idx_list)
+[v0, vl, vu, vt] = params_var(...)
+\end{Code}
+
+The \code{params\_var} method returns the initial value \code{v0}, lower bound \code{vl} and upper bound \code{vu} for the full optimization variable vector $x$, or for a specific named variable set. Optionally also returns a corresponding char vector \code{vt} of variable types, where \codeq{C}, \codeq{I} and \codeq{B} represent continuous integer and binary variables, respectively.
+
+\noindent \\Examples:
+\begin{Code}
+[x0, xmin, xmax] = om.params_var();
+[w0, wlb, wub, wtype] = om.params_var('w');
+\end{Code}
+
+See Section~\ref{sec:indexed_sets} for details on indexed named sets and the \code{idx\_list} argument.
+
+\subsubsection{Constraints}
+
+\subsubsection*{\code{params\_lin\_constraint}}
+\begin{Code}
+[A, l, u] = om.params_lin_constraint()
+[A, l, u] = om.params_lin_constraint(name)
+[A, l, u] = om.params_lin_constraint(name, idx_list)
+[A, l, u, vs] = om.params_lin_constraint(...)
+[A, l, u, vs, i1, in] = om.params_lin_constraint(...)
+\end{Code}
+
+With no input parameters, the \code{params\_lin\_constraint} method assembles and returns the parameters for the aggregate linear constraints from all linear constraint sets added using \code{add\_lin\_constraint}. The values of these parameters are cached for subsequent calls. The parameters are $A$, $l$, and $u$, where the linear constraint is of the form
+\begin{equation}
+l \le A x \le u.
+\end{equation}
+
+If a \code{name} is provided then it simply returns the parameters for the corresponding named set. An optional 4th output argument \code{vs} indicates the variable sets used by this constraint set. The size of \code{A} will be consistent with \code{vs}. Optional 5th and 6th output arguments \code{i1} and \code{iN} indicate the starting and ending row indices of the corresponding constraint set in the full aggregate constraint matrix.
+
+\noindent \\Examples:
+\begin{Code}
+[A, l, u] = om.params_lin_constraint();
+[A, l, u, vs, i1, iN] = om.params_lin_constraint('lincon2');
+\end{Code}
+
+See Section~\ref{sec:indexed_sets} for details on indexed named sets and the \code{idx\_list} argument.
+
+\subsubsection*{\code{eval\_nln\_constraint}}
+\label{sec:eval_nln_constraint}
+\begin{Code}
+[g, dg] = om.eval_nln_constraint(x, iseq)
+\end{Code}
+Builds a full set of nonlinear equality constraints $g(x)$ or inequality constraints $h(x)$ and their gradients for a given value of the optimization vector $x$, based on constraints added by \code{add\_nln\_constraint}, where $g(x) = 0$ and $h(x) \le 0$.
+
+\noindent \\Examples:
+\begin{Code}
+[g, dg] = om.eval_nln_constraint(x, 1);
+[h, dh] = om.eval_nln_constraint(x, 0);
+\end{Code}
+
+\subsubsection*{\code{eval\_nln\_constraint\_hess}}
+\label{sec:eval_nln_constraint_hess}
+\begin{Code}
+d2G = om.eval_nln_constraint_hess(x, lam, iseq)
+\end{Code}
+Builds the Hessian of the full set of nonlinear equality constraints $g(x)$ or inequality constraints $h(x)$ for given values of the optimization vector $x$ and dual variables \code{lam}, based on constraints added by \code{add\_nln\_constraint}, where $g(x) = 0$ and $h(x) \le 0$.
+
+\noindent \\Examples:
+\begin{Code}
+d2G = om.eval_nln_constraint_hess(x, lam, 1)
+d2H = om.eval_nln_constraint_hess(x, lam, 0)
+\end{Code}
+
+\subsubsection{Costs}
+
+\subsubsection*{\code{params\_quad\_cost}}
+\begin{Code}
+[Q, c] = om.params_quad_cost()
+[Q, c] = om.params_quad_cost(name)
+[Q, c] = om.params_quad_cost(name, idx_list)
+[Q, c, k] = om.params_quad_cost(...)
+[Q, c, k, vs] = om.params_quad_cost(...)
+\end{Code}
+
+With no input parameters, the \code{params\_quad\_cost} method assembles and returns the parameters for the aggregate quadratic cost from all quadratic cost sets added using \code{add\_quad\_cost}. The values of these parameters are cached for subsequent calls. The parameters are $Q$, $c$, and optionally $k$, where the quadratic cost is of the form
+\begin{equation}
+f(x) = \frac{1}{2} \trans{x} Q x + \trans{c} x + k.
+\end{equation}
+
+If a \code{name} is provided then it simply returns the parameters for the corresponding named set. In this case, \code{Q} and \code{k} may be vectors, corresponding to a cost function $f(x)$ where the $i$-th element takes the form
+\begin{equation}
+f_i(x) = \frac{1}{2} Q_i x_i^2 + c_i x_i + k_i,
+\end{equation}
+depending on how the constraint set was initially specified.
+
+An optional 4th output argument \code{vs} indicates the variable sets used by this cost set. The size of \code{Q} and \code{c} will be consistent with \code{vs}.
+
+\noindent \\Examples:
+\begin{Code}
+[Q, c, k] = om.params_quad_cost();
+[Q, c, k, vs, i1, iN] = om.params_quad_cost('qcost2');
+\end{Code}
+
+See Section~\ref{sec:indexed_sets} for details on indexed named sets and the \code{idx\_list} argument.
+
+% \subsubsection*{\code{params\_nln\_cost}}
+% Do not add this to the documentation until we have added params_nln_constraint() to the code, then add both to documentation
+
+\subsubsection*{\code{eval\_quad\_cost}}
+\label{sec:eval_quad_cost}
+\begin{Code}
+f = om.eval_quad_cost(x ...)
+[f, df] = om.eval_quad_cost(x ...)
+[f, df, d2f] = om.eval_quad_cost(x ...)
+[f, df, d2f] = om.eval_quad_cost(x, name)
+[f, df, d2f] = om.eval_quad_cost(x, name, idx_list)
+\end{Code}
+
+The \code{eval\_quad\_cost} method evaluates the cost function and its derivatives for an individual named set or the full set of quadratic costs for a given value of the optimization vector $x$, based on costs added by \code{add\_quad\_cost}.
+
+\noindent \\Examples:
+\begin{Code}
+[f, df, d2f] = om.eval_quad_cost(x);
+[f, df, d2f] = om.eval_quad_cost(x, 'qcost3');
+\end{Code}
+
+See Section~\ref{sec:indexed_sets} for details on indexed named sets and the \code{idx\_list} argument.
+
+\subsubsection*{\code{eval\_nln\_cost}}
+\label{sec:eval_nln_cost}
+\begin{Code}
+f = om.eval_nln_cost(x)
+[f, df] = om.eval_nln_cost(x)
+[f, df, d2f] = om.eval_nln_cost(x)
+[f, df, d2f] = om.eval_nln_cost(x, name)
+[f, df, d2f] = om.eval_nln_cost(x, name, idx_list)
+\end{Code}
+
+The \code{eval\_nln\_cost} method evaluates the cost function and its derivatives for an individual named set or the full set of general nonlinear costs for a given value of the optimization vector $x$, based on costs added by \code{add\_nln\_cost}.
+
+\noindent \\Examples:
+\begin{Code}
+[f, df, d2f] = om.eval_quad_cost(x);
+[f, df, d2f] = om.eval_quad_cost(x, 'nlncost2');
+\end{Code}
+
+See Section~\ref{sec:indexed_sets} for details on indexed named sets and the \code{idx\_list} argument.
+
+\subsection{Indexed Sets}
+\label{sec:indexed_sets}
+
+A variable, constraint or cost set is typically identified simply by a \code{name}, but it is also possible to used indexed names. For example, an optimal scheduling problem with a one week horizon might include a vector variable \textbf{y} for each day, indexed from 1 to 7, and another vector variable \textbf{z} for each hour of each day, indexed from (1, 1) to (7, 24).
+
+In this case, we case use a single indexed named set for \textbf{y} and another for \textbf{z}. The dimensions are initialized via the \code{init\_indexed\_name} method before adding the variables to the model.\footnote{The same is true for indexed named sets of constraints or costs.}
+
+\subsubsection*{\code{init\_indexed\_name}}
+\begin{Code}
+om.init_indexed_name(set_type, name, dim_list)
+\end{Code}
+
+\noindent Examples:
+\begin{Code}
+[f, df, d2f] = om.init_indexed_name('var', 'y', {7});
+[f, df, d2f] = om.init_indexed_name('var', 'z', {7, 24});
+\end{Code}
+
+After initializing the dimensions, indexed named sets of variables, constraints or costs can be added by supplying the indices in the \code{idx\_list} argument following the \code{name} argument in call to the corresponding \code{add\_var}, \code{add\_lin\_constraint}, \code{add\_nln\_constraint}, \code{add\_quad\_cost}, or \code{add\_nln\_cost} method. The \code{idx\_list} argument is simply a cell array containing the indices of interest.
+
+\noindent \\Examples:
+\begin{Code}
+for d = 1:7
+    om.add_var('y', {d}, ny(d), y0{d}, yl{d}, yu{d}, yt{d});
+end
+for d = 1:7
+    for h = 1:24
+        om.add_var('z', {d, h}, nz(d), z0{d}, zl{d}, zu{d});
+    end
+end
+\end{Code}
+
+\subsubsection*{Other Methods}
+
+All of the methods that take a \code{name} argument to specify a simple named set, can also take an \code{idx\_list} argument immediately following \code{name} to handle the equivalent indexed named set. The \code{idx\_list} argument is simply a cell array containing the indices of interest.
+This includes \code{getN} and the methods that begin with \code{add\_}, \code{params\_}, and \code{eval\_}.\footnote{Currently, \code{eval\_nln\_constraint} and \code{eval\_nln\_constraint\_hess} are only implemented for the full aggregate set of constraints and do not yet support evaluation of individual constraint sets.}
+
+For an indexed named set, the fields under the \code{N}, \code{i1} and \code{iN} fields in the index information struct returned by \code{get\_idx} are now arrays of the appropriate dimension, not just scalars as in Table~\ref{tab:vv}. For example, to find the starting index of the $z$ variable for day 2, hour 13 in our example you would use \code{vv.i1.z(2, 13)}. Similarly for the values returned by \code{getN} when specifying only the \code{set\_type} and \code{name}.
+
+\subsubsection*{Variable Subsets}
+A variable subset for a simple named set, usually specified by the variable \code{varsets} or else \code{vs}, is a cell array of variable set names. For indexed named sets of variables, on the other hand, it is a struct array with two fields \code{name} and \code{idx}. For each element of the struct array the \code{name} field contains the name of the variable set and the \code{idx} field contains a cell array of indices of interest.
+
+For example, to specify a variable subset consisting of the \textbf{y} variable for day 3 and the \textbf{z} variable for day 3, hour 7, the variable subset could be defined as follows.
+\begin{Code}
+vs = struct('name', {'y', 'z'}, 'idx', {{3}, {3,7}});
+\end{Code}
+
+\subsection{Miscellaneous Methods}
+
+\subsubsection{Public Methods}
+
+\subsubsection*{\code{copy}}
+\begin{Code}
+om2 = om.copy()
+\end{Code}
+The \code{copy} method can be used to make a copy of an \mpom{} object.
+
+\subsubsection*{\code{display}}
+\label{sec:display}
+\begin{Code}
+om
+\end{Code}
+The \code{display} method displays the variable, constraint and cost sets that make up the model, along with their indexing data.
+
+% \subsubsection*{\code{display\_set}}
+
+\subsubsection*{\code{get\_userdata}}
+\begin{Code}
+data = om.get_userdata(name)
+\end{Code}
+\mpom{} allows the user to store arbitrary data in fields of the \code{userdata} property, which is a simple struct. The \code{get\_userdata} method returns the value of the field specified by \code{name}, or an empty matrix if the field does not exist in \code{om.userdata}.
+
+% \subsubsection*{\code{get}}
+% % \begin{Code}
+% % val = om.get(field1, field2, ...)
+% % \end{Code}
+
+\subsubsection*{\code{is\_mixed\_integer}}
+\begin{Code}
+TorF = om.is_mixed_integer()
+\end{Code}
+Returns 1 if any of the variables are binary or integer, 0 otherwise.
+
+\subsubsection*{\code{problem\_type}}
+\begin{Code}
+prob_type = om.problem_type()
+\end{Code}
+Returns a string identifying the type of mathematical program represented by the current model. The string is one of the following:
+\begin{itemize}
+\setlength{\parskip}{-6pt}%
+\item \codeq{LP} – linear program
+\item \codeq{QP} – quadratic program
+\item \codeq{NLP} – nonlinear program
+\item \codeq{MILP} – mixed-integer linear program
+\item \codeq{MIQP} – mixed-integer quadratic program
+\item \codeq{MINLP} – mixed-integer nonlinear program\footnote{\mpom{} does not yet implement solving MINLP problems.}
+\end{itemize}
+
+\subsubsection*{\code{varsets\_cell2struct}}
+\begin{Code}
+varsets = om.varsets_cell2struct(varsets)
+\end{Code}
+Converts variable subset \code{varsets} from a cell array to a struct array, if necessary.
+
+\subsubsection*{\code{varsets\_idx}}
+\begin{Code}
+k = om.varsets_idx(varsets)
+\end{Code}
+Returns a vector of indices into the full optimization vector $x$ corresponding to the variable sets specified by \code{varsets}.
+
+\subsubsection*{\code{varsets\_len}}
+\begin{Code}
+nv = om.varsets_len(varsets)
+\end{Code}
+Returns the total number of elements in the optimization sub-vector specified by \code{varsets}.
+
+\subsubsection*{\code{varsets\_x}}
+\begin{Code}
+x = om.varsets_x(x, varsets)
+x = om.varsets_x(x, varsets, 'vector')
+\end{Code}
+Returns a cell array of sub-vectors of $x$ specified by \code{varsets}, or the full optimization vector $x$, if \code{varsets} is empty.
+
+If a 3rd argument is present (value is ignored) the returned value is a single numeric vector with the individual components stacked vertically.
+
+\subsubsection{Private Methods}
+
+% \subsubsection*{\code{add\_named\_set}}
+
+\subsubsection*{\code{def\_set\_types}}
+\begin{Code}
+om.def_set_types()
+\end{Code}
+The \code{def\_set\_types} method is a \emph{private} method that assigns a struct to the \code{set\_types} property of the object. The fields of the struct correspond to the valid set types listed in Table~\ref{tab:set_types}.
+
+\subsubsection*{\code{init\_set\_types}}
+\begin{Code}
+om.init_set_types()
+\end{Code}
+Initializes the base data structures for each set type.
+
+\subsection{\matpower{} Index Manager Base Class -- {\tt mp\_idx\_manager}}
+
+Most of the functionality of the \code{opt\_model} class related to managing the indexing of the various set types is inherited from the \matpower{} Index Manager base class named \code{mp\_idx\_manager}. The properties and methods implemented in this base class and inherited or overridden by \code{opt\_model} are listed in Table~\ref{tab:mp_idx_manager2}.
+
+The \matpower{} Index Manager base class initializes and manages the data that is common across all set types. Table~\ref{tab:obj_structure} illustrates for an example \codeq{var} set type, such as defined in \code{opt\_model}, what the data structure looks like, but it is the same for any other set types defined by child classes, such as \code{opt\_model}.
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{\matpower{} Index Manager (\code{mp\_idx\_manager}) Properties and Methods}
+\label{tab:mp_idx_manager2}
+\footnotesize
+\begin{tabular}{lp{0.66\textwidth}}
+\toprule
+name & description \\
+\midrule
+\multicolumn{2}{l}{\emph{Properties}} \\
+\code{~~set\_types}	& struct whose fields define the valid set types\tnote{*}	\\
+\code{~~userdata}	& struct for storing arbitrary user-defined data	\\
+\\
+\multicolumn{2}{l}{\emph{Public Methods}} \\
+\code{~~mp\_idx\_manager}	& constructor for \code{mp\_idx\_manager} class	\\
+\code{~~copy}	& makes a copy of an existing \code{mp\_idx\_manager} object	\\
+\code{~~describe\_idx}	& identifies indices of a given set type	\\
+& E.g. variable 361 corresponds to \code{w(68)} \\
+\code{~~display\_set}	& displays indexing for a particular set type	\\
+\code{~~get}	& access (possibly nested) fields of the object	\\
+\code{~~get\_idx}	& returns index structure(s) for specified set type(s), with starting/ending indices and number of elements for each named (and optionally indexed) block	\\
+\code{~~get\_userdata}	& retreives values of user data stored in the object	\\
+\code{~~getN}	& returns the number of elements of any given set type\tnote{\dag}	\\
+\code{~~init\_indexed\_name}	& initializes dimensions for a particular indexed named set	\\
+\\
+\multicolumn{2}{l}{\emph{Private Methods}\tnote{\ddag}} \\
+\code{~~add\_named\_set}	& adds indexing information for new instance of a given set type	\\
+\code{~~init\_set\_types}	& initializes the data structures for each set type	\\
+\code{~~valid\_named\_set\_type}	& returns label for given named set type if valid, empty otherwise	\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [*] {This value is initialized automatically by the \code{def\_set\_types} method of the sub-class.}
+ \item [\dag] {For all, or alternatively, only for a named (and possibly indexed) subset.}
+ \item [\ddag] {For internal use only.}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{\matpower{} Index Manager (\code{mp\_idx\_manager}) Object Structure}
+\label{tab:obj_structure}
+\footnotesize
+\begin{tabular}{lp{0.66\textwidth}}
+\toprule
+name & description \\
+\midrule
+\code{obj}	& 	\\
+\code{~~.set\_types}	& struct whose fields define the valid set types	\\
+\code{~~.var}	& data for \codeq{var} set type, e.g. variable sets that make up the full optimization variable $x$	\\
+\code{~~~~.idx}	& 	\\
+\code{~~~~~~.i1}	& starting index within $x$	\\
+\code{~~~~~~.iN}	& ending index within $x$	\\
+\code{~~~~~~.N}	& number of elements in this variable set	\\
+\code{~~~~.N}	& total number of elements in $x$	\\
+\code{~~~~.NS}	& number of variable sets or named blocks	\\
+\code{~~~~.data}	& additional set-type-specific data for each block\tnote{\dag}	\\
+\code{~~~~.order}	& struct array of names/indices for variable blocks in the order they appear in $x$	\\
+\code{~~~~~~.name}	& name of the block, e.g. \code{z}	\\
+\code{~~~~~~.idx}	& indices for name, \code{\{2,3\}} $\rightarrow$ \code{z(2,3)}	\\
+\code{~~.<other-set-types>}	& with structure identical to \code{var}	\\
+\code{~~.userdata}	& struct for storing arbitrary user-defined data	\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [\dag] {For the \codeq{var} set type in \code{opt\_model}, this is a struct with fields  \code{v0}, \code{vl}, \code{vu}, and \code{vt} for storing initial value, lower and upper bounds, and variable type. For other set types }
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\clearpage
+\subsection{Reference}
+
+\subsubsection{Properties}
+
+The properties in \code{opt\_model} consist of those inherited from the base class, plus one corresponding to each set type.
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{\code{opt\_model} Properties}
+\label{tab:properties}
+\footnotesize
+% \begin{tabular}{p{0.17\textwidth}p{0.76\textwidth}}
+\begin{tabular}{ll}
+\toprule
+name & description \\
+\midrule
+\code{set\_types}\tnote{\dag}	& struct whose fields define the valid set types\tnote{*}	\\
+\code{var}\tnote{\ddag}	& data for \codeq{var} set type, variables	\\
+\code{lin}\tnote{\ddag}	& data for \codeq{lin} set type, linear constraints	\\
+\code{nle}\tnote{\ddag}	& data for \codeq{nle} set type, nonlinear equality constraints	\\
+\code{nli}\tnote{\ddag}	& data for \codeq{nli} set type, nonlinear inequality constraints	\\
+\code{qdc}\tnote{\ddag}	& data for \codeq{qdc} set type, quadratic costs	\\
+\code{nlc}\tnote{\ddag}	& data for \codeq{nlc} set type, general nonlinear costs	\\
+\code{userdata}\tnote{\dag}	& struct for storing arbitrary user-defined data	\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [*] {This value is initialized automatically by the \code{def\_set\_types} method of the sub-class.}
+ \item [\dag] {Inherited from \matpower{} Index Manager base class, \code{mp\_idx\_manager}.}
+ \item [\ddag] {See \code{var} field in Table~\ref{tab:obj_structure} for details of the structure of this field. The only difference between set types is the structure of the \code{data} sub-field.}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+
+
+\subsubsection{Methods}
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{\code{opt\_model} Methods}
+\label{tab:methods}
+\footnotesize
+\begin{tabular}{lp{0.66\textwidth}}
+\toprule
+name & description \\
+\midrule
+\multicolumn{2}{l}{\emph{Public Methods}} \\
+\code{~~add\_lin\_constraint}	& add linear constraint set, see Section~\ref{sec:add_lin_constraint}	\\
+\code{~~add\_nln\_constraint}	& add general nonlinear constraint set, see Section~\ref{sec:add_nln_constraint}	\\
+\code{~~add\_nln\_cost}	& add general nonlinear cost set, see Section~\ref{sec:add_nln_cost}	\\
+\code{~~add\_quad\_cost}	& add quadratic cost set, see Section~\ref{sec:add_quad_cost}	\\
+\code{~~add\_var}	& add variable set, see Section~\ref{sec:add_var}	\\
+\code{~~copy}\tnote{\dag}	& makes a copy of an existing \code{opt\_model} object	\\
+\code{~~describe\_idx}\tnote{\dag}	& identifies indices of a given set type, see Section~\ref{sec:describe_idx}	\\
+\code{~~display}	& displays variable, constraint and cost sets, see Section~\ref{sec:display}	\\
+\code{~~display\_set}\tnote{\dag}	& displays indexing for a particular set type, called by \code{display}	\\
+\code{~~eval\_nln\_constraint}	& builds full set of nonlinear equality or inequality constraints and their gradients for given value of $x$, see Section~\ref{sec:eval_nln_constraint}	\\
+\code{~~eval\_nln\_constraint\_hess}	& builds Hessian for full set of nonlinear equality or inequality constraints for given value of $x$, see Section~\ref{sec:eval_nln_constraint_hess}	\\
+\code{~~eval\_nln\_cost}	& evaluates nonlinear cost function and its derivatives\tnote{\ddag} for given value of $x$, see Section~\ref{sec:eval_nln_cost}	\\
+\code{~~eval\_quad\_cost}	& evaluates quadratic cost function and its derivatives\tnote{\ddag} for given value of $x$, see Section~\ref{sec:eval_quad_cost}	\\
+\code{~~get}\tnote{\dag}	& access (possibly nested) fields of the object	\\
+\code{~~get\_idx}\tnote{\dag}	& returns index structures for specified set types, see Section~\ref{sec:get_idx}	\\
+\code{~~get\_userdata}\tnote{\dag}	& retreives values of user data stored in the object	\\
+\code{~~getN}\tnote{\dag}	& returns the number of elements of any given set type\tnote{\ddag}	\\
+\code{~~init\_indexed\_name}\tnote{\dag}	& initializes dimensions for a particular indexed named set	\\
+\code{~~is\_mixed\_integer}	& returns 1 if any of the variables are binary or integer, 0 otherwise	\\
+\code{~~params\_lin\_constraint}	& assembles and returns parameters for linear constraints\tnote{\ddag}	\\
+% \code{~~params\_nln\_cost}	& returns parameters for general nonlinear costs\tnote{\ddag}	\\
+\code{~~params\_quad\_cost}	& assembles and returns parameters for quadratic costs\tnote{\ddag}		\\
+\code{~~params\_var}	& assembles and returns inital values, bounds, types for variables\tnote{\ddag}	\\
+\code{~~problem\_type}	& type of mathematical program represented by current model	\\
+\code{~~solve}	& solves the model, see Section~\ref{sec:solve}	\\
+\code{~~varsets\_cell2struct}	& converts variable subset \code{varsets} from cell array to struct array	\\
+\code{~~varsets\_idx}	& returns vector of indices into $x$ corresponding to \code{varsets}	\\
+\code{~~varsets\_len}	& returns number of elements in sub-vector specified by \code{varsets}	\\
+\code{~~varsets\_x}	& returns cell array of sub-vectors of $x$ specified by \code{varsets}	\\
+\\
+\multicolumn{2}{l}{\emph{Private Methods}\tnote{*}} \\
+\code{~~add\_named\_set}\tnote{\S}	& adds information for new instance of a given set type	\\
+\code{~~def\_set\_types}	& initializes the \code{set\_types} property	\\
+\code{~~init\_set\_types}\tnote{\S}	& initializes the data structures for each set type	\\
+\code{~~valid\_named\_set\_type}\tnote{\dag}	& returns label for given named set type if valid, empty otherwise	\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [*] {For internal use only.}
+ \item [\dag] {Inherited from \matpower{} Index Manager base class, \code{mp\_idx\_manager}.}
+ \item [\ddag] {For all, or alternatively, only for a named (and possibly indexed) subset.}
+ \item [\S] {Overrides and augments method inherited from \matpower{} Index Manager base class, \code{mp\_idx\_manager}.}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+%%------------------------------------------
+\clearpage
+\section{Utility Functions}
+
+\subsection{\tt have\_fcn}
+\begin{Code}
+  TorF = have_fcn(tag)
+  TorF = have_fcn(tag, toggle)
+  ver_str = have_fcn(tag, 'vstr')
+  ver_num = have_fcn(tag, 'vnum')
+  rdate   = have_fcn(tag, 'date')
+  info    = have_fcn(tag, 'all')
+\end{Code}
+
+The \code{have\_fcn} function provides a unified mechanism for testing for optional functionality, such as the presence of certain solvers, or to detect whether the code is running under \matlab{} or Octave. Since its results are cached they allow for a very quick way to check frequently for functionality that may initially be a bit more costly to determine. For installed functionality, \code{have\_fcn} also determines the installed version and
+release date, if possible. The optional second argument, when it is a string, defines which value
+is returned, as follows:
+\begin{itemize}
+\item{\em{empty}} -- 1 if optional functionality is available, 0 if not available
+\item{\codeq{vstr}} -- version number as a string (e.g. \codeq{3.11.4})
+\item{\codeq{vnum}} -- version number as numeric value (e.g. 3.011004)
+\item{\codeq{date}} -- release date as a string (e.g. \codeq{20-Jan-2015})
+\item{\codeq{all}} -- struct with fields named \code{av} (for ``availability''), \code{vstr}, \code{vnum} and \code{date}, and values corresponding to each of the above, respectively.
+\end{itemize}
+
+Alternatively, the optional functionality specified by \code{tag} can be toggled OFF or ON by calling \code{have\_fcn} with a numeric second argument \code{toggle} with one of the following values:
+\begin{itemize}
+\item{0} -- turn OFF the optional functionality
+\item{1} -- turn ON the optional functionality (if available)
+\item{$-1$} -- toggle the ON/OFF state of the optional functionality
+\end{itemize}
+
+\subsection{\tt mpomver}
+\begin{Code}
+  mpomver
+  v = mpomver
+  v = mpomver('all')
+\end{Code}
+
+Prints or returns \mpom{} version information for the current installation. When called without an input argument, it returns a string with the version number. Without an input argument it returns a struct with fields \code{Name}, \code{Version}, \code{Release}, and \code{Date}, all of which are strings. Calling \code{mpomver} without assigning the return value prints the version and release date of the current installation of \mpom{}.
+
+
+\subsection{\tt nested\_struct\_copy}
+\begin{Code}
+  ds = nested_struct_copy(d, s)
+  ds = nested_struct_copy(d, s, opt)
+\end{Code}
+
+The \code{nested\_struct\_copy} function copies values from a source struct \code{s} to a destination struct \code{d} in a nested, recursive manner. That is, the value of each field in \code{s} is copied directly to the corresponding field in \code{d}, unless that value is itself a struct, in which case the copy is done via a recursive call to \code{nested\_struct\_copy}. Certain aspects of the copy behavior can be controled via the optional options struct \code{opt}, including the possible checking of valid field names.
+
+
+\subsection{\matpower{}-related Functions}
+
+The following two functions are related specifically to \matpowerlink{}, and are used for extracting relevant solver options from a \matpower{} options struct.
+
+\subsubsection{\tt mpopt2nlpopt}
+\begin{Code}
+  nlpopt = mpopt2nlpopt(mpopt)
+  nlpopt = mpopt2nlpopt(mpopt, model)
+  nlpopt = mpopt2nlpopt(mpopt, model, alg)
+\end{Code}
+
+The \code{mpopt2nlpopt} function returns an options struct suitable for \code{nlps\_master} or one of the solver specific equivalents. It is constructed from the relevant portions of \code{mpopt}, a \matpower{} options struct. The final \code{alg} argument allows the solver to be set explicitly (in \code{nlpopt.alg}). By default this value is taken from \code{mpopt.opf.ac.solver}.
+
+When the solver is set to \codeq{DEFAULT}, this function currently defaults to  \mips{}.
+
+
+\subsubsection{\tt mpopt2qpopt}
+\begin{Code}
+  qpopt = mpopt2qpopt(mpopt)
+  qpopt = mpopt2qpopt(mpopt, model)
+  qpopt = mpopt2qpopt(mpopt, model, alg)
+\end{Code}
+
+The \code{mpopt2qpopt} function returns an options struct suitable for \code{qps\_master}, \code{miqps\_master} or one of the solver specific equivalents. It is constructed from the relevant portions of \code{mpopt}, a \matpower{} options struct. The \code{model} argument specifies whether the problem to be solved is an LP, QP, MILP or MIQP problem to allow for the selection of a suitable default solver. The final \code{alg} argument allows the solver to be set explicitly (in \code{qpopt.alg}). By default this value is taken from \code{mpopt.opf.dc.solver}.
+
+When the solver is set to \codeq{DEFAULT}, this function also selects the best available solver that is applicable\footnote{\glpk{} is not available for problems with quadratic costs (QP and MIQP), BPMPD and \mips{} are not available for mixed-integer problems (MILP and MIQP), and the \ot{} is not an option for problems that combine the two (MIQP).} to the specific problem class, based on the following precedence: \gurobi{}, \cplex{}, \mosek{}, \ot{}, \glpk{}, BPMPD, \mips{}.
+
+
+\begin{appendices}
+
+%%------------------------------------------
+\clearpage
+\section{\mpom{} Files, Functions and Classes}
+\label{app:functions}
+
+This appendix lists all of the files, functions and classes that \mpom{} provides. In most cases, the function is found in a \matlab{} M-file in the \code{lib} directory of the distribution, where the \code{.m} extension is omitted from this listing. For more information on each, at the \matlab{}/Octave prompt, simply type \code{help} followed by the name of the function. For documentation and other files, the filename extensions are included.
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{\mpom{} Files and Functions}
+\label{tab:files}
+\footnotesize
+\begin{tabular}{p{0.32\textwidth}p{0.61\textwidth}}
+\toprule
+name & description \\
+\midrule
+\code{AUTHORS}	& list of authors and contributors	\\
+\code{CHANGES}	& \mpom{} change history	\\
+\code{CITATION}	& info on how to cite \mpom{}	\\
+\code{CONTRIBUTING.md}	& notes on how to contribute to the \mpom{} project	\\
+\code{LICENSE}	& \mpom{} license (3-clause BSD license)	\\
+\code{README.md}	& basic introduction to \mpom{}	\\
+\code{docs/}	& 	\\
+\code{~~MP-Opt-Model-manual.pdf}	& \mpomman{}	\\
+\code{~~src/MP-Opt-Model-manual/}	&	\\
+\code{~~~~MP-Opt-Model-manual.tex}	& LaTeX source for \mpom{} User's Manual	\\
+\code{lib/}	& \mpom{} software (see Tables~\ref{tab:solvers}, \ref{tab:opt_model}, \ref{tab:mp_idx_manager} and \ref{tab:utility})	\\
+\code{~~t/}	& \mpom{} tests (see Table~\ref{tab:tests})	\\
+\bottomrule
+\end{tabular}
+% \begin{tablenotes}
+%  \scriptsize
+%  \item [\dag] {Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.}
+% \end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{LP, QP \& NLP Solver Functions}
+\label{tab:solvers}
+\footnotesize
+\begin{tabular}{p{0.15\textwidth}p{0.78\textwidth}}
+\toprule
+name & description \\
+\midrule
+\code{clp\_options}	& default options for \clp{} solver\tnote{\dag}	\\
+\code{cplex\_options}	& default options for \cplex{} solver\tnote{\dag}	\\
+\code{glpk\_options}	& default options for \glpk{} solver\tnote{\dag}	\\
+\code{gurobi\_options}	& default options for \gurobi{} solver\tnote{\dag}	\\
+\code{gurobiver}	& prints version information for \gurobi{}/Gurobi\_MEX	\\
+\code{ipopt\_options}	& default options for \ipopt{} solver\tnote{\dag}	\\
+\code{miqps\_master}	& Mixed-Integer Quadratic Program Solver wrapper function, provides a unified interface for various MIQP/MILP solvers	\\
+\code{miqps\_cplex}	& MIQP/MILP solver API implementation for CPLEX (\code{cplexmiqp} and \code{cplexmilp})\tnote{\dag}	\\
+\code{miqps\_glpk}	& MILP solver API implementation for \glpk{}\tnote{\dag}	\\
+\code{miqps\_gurobi}	& MIQP/MILP solver API implementation for \gurobi{}\tnote{\dag}	\\
+\code{miqps\_mosek}	& MIQP/MILP solver API implementation for \mosek{} (\code{mosekopt})\tnote{\dag}	\\
+\code{miqps\_ot}	& QP/MILP solver API implementation for \matlab{} Opt Toolbox's \code{intlinprog}, \code{quadprog}, \code{linprog}	\\
+\code{mosek\_options}	& default options for \mosek{} solver\tnote{\dag}	\\
+\code{mosek\_symbcon}	& symbolic constants to use for \mosek{} solver options\tnote{\dag}	\\
+\code{mpopt2nlopt}	& create \code{nlps\_master} options struct from \matpower{} options struct	\\
+\code{mpopt2qpopt}	& create \code{mi/qps\_master} options struct from \matpower{} options struct	\\
+\code{nlps\_master}	& Nonlinear Program Solver wrapper function, provides a unified interface for various NLP solvers	\\
+\code{nlps\_fmincon}	& NLP solver API implementation for \matlab{} Opt Toolbox's \code{fmincon}	\\
+\code{nlps\_ipopt}	& NLP solver API implementation for \ipopt{}-based solver\tnote{\dag}	\\
+\code{nlps\_knitro}	& NLP solver API implementation for \knitro{}-based solver\tnote{\dag}	\\
+\code{qps\_master}	& Quadratic Program Solver wrapper function, provides a unified interface for various QP/LP solvers	\\
+\code{qps\_bpmpd}	& QP/LP solver API implementation for BPMPD\_MEX\tnote{\dag}	\\
+\code{qps\_clp}	& QP/LP solver API implementation for \clp{}\tnote{\dag}	\\
+\code{qps\_cplex}	& QP/LP solver API implementation for CPLEX (\code{cplexqp} and \code{cplexlp})\tnote{\dag}	\\
+\code{qps\_glpk}	& QP/LP solver API implementation for \glpk{}\tnote{\dag}	\\
+\code{qps\_gurobi}	& QP/LP solver API implementation for \gurobi{}\tnote{\dag}	\\
+\code{qps\_ipopt}	& QP/LP solver API implementation for \ipopt{}-based solver\tnote{\dag}	\\
+\code{qps\_mosek}	& QP/LP solver API implementation for \mosek{} (\code{mosekopt})\tnote{\dag}	\\
+\code{qps\_ot}	& QP/LP solver API implementation for \matlab{} Opt Toolbox's \code{quadprog}, \code{linprog}	\\
+& \\
+\multicolumn{2}{c}{\emph{deprecated functions}} \\
+\code{miqps\_matpower}	& use \code{miqps\_master} instead	\\
+\code{qps\_matpower}	& use \code{qps\_master} instead	\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [\dag] {Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{Optimization Model Class}
+\label{tab:opt_model}
+\footnotesize
+\begin{tabular}{lp{0.66\textwidth}}
+\toprule
+name & description \\
+\midrule
+\code{@opt\_model/}	& optimization model class (subclass of \code{mp\_idx\_manager})	\\
+\code{~~opt\_model}	& constructor for the \code{opt\_model} class	\\
+\code{~~add\_lin\_constraint}	& adds a named subset of linear constraints to the model	\\
+\code{~~add\_named\_set}\tnote{\dag}	& adds a named subset of costs, constraints or variables to the model	\\
+\code{~~add\_nln\_constraint}	& adds a named subset of nonlinear constraints to the model	\\
+\code{~~add\_nln\_cost}	& adds a named subset of general nonlinear costs to the model	\\
+\code{~~add\_quad\_cost}	& adds a named subset of quadratic costs to the model	\\
+\code{~~add\_var}	& adds a named subset of optimization variables to the model	\\
+\code{~~display}	& called to display object when statement not ended with semicolon	\\
+\code{~~eval\_nln\_constraint}	& returns full set of nonlinear equality or inequality constraints and their gradients	\\
+\code{~~eval\_nln\_constraint\_hess}	& returns Hessian for full set of nonlinear equality or inequality constraints	\\
+\code{~~eval\_nln\_cost}	& evaluates general nonlinear costs and derivatives	\\
+\code{~~eval\_quad\_cost}	& evaluates quadratic costs and derivatives	\\
+\code{~~get\_idx}	& returns the idx struct for vars, lin/nln constraints, costs	\\
+\code{~~init\_indexed\_name}	& initializes dimensions for indexed named set of costs, constraints or variables	\\
+\code{~~is\_mixed\_integer}	& indicates whether any of the variables are binary or integer 	\\
+\code{~~params\_lin\_constraint}	& returns individual or full set of linear constraint parameters	\\
+\code{~~params\_nln\_cost}	& returns individual general nonlinear cost parameters	\\
+\code{~~params\_quad\_cost}	& returns individual or full set of quadratic cost coefficients	\\
+\code{~~params\_var}	& returns initial values, bounds and variable type for optimimization vector~$\hat{x}$\tnote{\ddag}	\\
+\code{~~problem\_type}	& indicates type of mathematical program (e.g. LP, QP, MILP, MIQP, or NLP)	\\
+\code{~~solve}	& solves the optimization model	\\
+\code{~~varsets\_cell2struct}\tnote{\dag}	& converts variable set list from cell array to struct array	\\
+\code{~~varsets\_idx}	& returns vector of indices into opt vector~$\hat{x}$ for variable set list	\\
+\code{~~varsets\_len}	& returns total number of optimization variables for variable set list	\\
+\code{~~varsets\_x}	& assembles cell array of sub-vectors of opt vector~$\hat{x}$ specified by variable set list	\\
+\code{nlp\_consfcn\tnote{\S}}	& evaluates nonlinear constraints and gradients for \code{opt\_model}	\\
+\code{nlp\_costfcn\tnote{\S}}	& evaluates nonlinear costs, gradients, Hessian for \code{opt\_model}	\\
+\code{nlp\_hessfcn\tnote{\S}}	& evaluates nonlinear constraint Hessians for \code{opt\_model}	\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [\dag] {Private method for internal use only.}
+ \item [\ddag] {For all, or alternatively, only for a named (and possibly indexed) subset.}
+ \item [\S] {Ideally should be implemented as a method of the \code{opt\_model} class, but a bug in Octave 4.2.x and earlier prevents it from finding an inherited method via a function handle, which \mpom{} requires.}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{\matpower{} Index Manager Class}
+\label{tab:mp_idx_manager}
+\footnotesize
+\begin{tabular}{lp{0.66\textwidth}}
+\toprule
+name & description \\
+\midrule
+\code{@mp\_idx\_manager/}	& \matpower{} Index Manager abstract class used to manage indexing and ordering of various sets of parameters, etc. (e.g. variables, constraints, costs for OPF Model objects).	\\
+\code{~~mp\_idx\_manager}	& constructor for the \code{mp\_idx\_manager} class	\\
+\code{~~add\_named\_set}\tnote{\dag}	& add named subset of a particular type to the object	\\
+\code{~~describe\_idx}	& identifies indices of a given set type	\\
+& E.g. variable 361 corresponds to \code{Pg(68)} \\
+\code{~~get\_idx}	& returns index structure(s) for specified set type(s), with starting/ending indices and number of elements for each named (and optionally indexed) block	\\
+\code{~~get\_userdata}	& retreives values of user data stored in the object	\\
+\code{~~get}	& returns the value of a field of the object	\\
+\code{~~getN}	& returns the number of elements of any given set type\tnote{\ddag}	\\
+\code{~~init\_indexed\_name}	& initializes dimensions for a particular indexed named set	\\
+\code{~~valid\_named\_set\_type}\tnote{\dag}	& returns label for given named set type if valid, empty otherwise	\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [\dag] {Private method for internal use only.}
+ \item [\ddag] {For all, or alternatively, only for a named (and possibly indexed) subset.}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{Utility Functions}
+\label{tab:utility}
+\footnotesize
+\begin{tabular}{p{0.25\textwidth}p{0.67\textwidth}}
+\toprule
+name & description \\
+\midrule
+\code{have\_fcn}	& checks for availability of optional functionality	\\
+\code{mpomver}	& prints version information for \mpom{}	\\
+\code{nested\_struct\_copy}	& copies the contents of nested structs	\\
+\bottomrule
+\end{tabular}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{\mpom{} Examples \& Tests}
+\label{tab:tests}
+\footnotesize
+\begin{tabular}{p{0.28\textwidth}p{0.67\textwidth}}
+\toprule
+name & description \\
+\midrule
+\code{lib/t/}	& \mpom{} examples \& tests	\\
+\code{~~nlps\_master\_ex1}	& code for NLP Example 1 (see Section~\ref{sec:nlp_ex1}) for \code{nlps\_master}	\\
+\code{~~nlps\_master\_ex2}	& code for NLP Example 2 (see Section~\ref{sec:nlp_ex2}) for \code{nlps\_master}	\\
+\code{~~qp\_ex1}	& code for QP example from Section~\ref{sec:usage}	\\
+\code{~~test\_mp\_opt\_model}	& runs full \mpom{} test suite	\\
+\code{~~t\_have\_fcn}	& runs tests for \code{have\_fcn}	\\
+\code{~~t\_miqps\_master}	& runs tests for \code{miqps\_master}	\\
+\code{~~t\_nested\_struct\_copy}	& runs tests for \code{nested\_struct\_copy}	\\
+\code{~~t\_nlps\_master}	& runs tests for \code{nlps\_master}	\\
+\code{~~t\_opt\_model}	& runs tests for \code{opt\_model} objects	\\
+\code{~~t\_qps\_master}	& runs tests for \code{qps\_master}	\\
+\bottomrule
+\end{tabular}
+% \begin{tablenotes}
+%  \scriptsize
+%  \item [\dag] {These tests are part of \mpomlink{} and are found in \mpompath{/lib/t}.}
+% \end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+%%------------------------------------------
+\clearpage
+\section{Optional Packages}
+\label{app:optional_packages}
+
+There are a number of optional packages, not included in the \mpom{} distribution, that \mpom{} can utilize if they are installed in your \matlab{} path.
+
+\subsection{BPMPD\_MEX -- MEX interface for BPMPD}
+\label{app:bpmpd}
+
+BPMPD\_MEX~\cite{bpmpdmex,meszaros1996} is a \matlab{} MEX interface to BPMPD, an interior point solver for quadratic programming developed by Csaba M{\'e}sz{\'a}ros at the MTA SZTAKI, Computer and Automation Research Institute, Hungarian Academy of Sciences, Budapest, Hungary. It can be used by \mpom{}'s QP/LP solver interface.
+
+This MEX interface for BPMPD was coded by Carlos E. Murillo-S{\'a}nchez, while he was at Cornell University. It does not provide all of the functionality of BPMPD, however. In particular, the stand-alone BPMPD program is designed to read and write results and data from MPS and QPS format files, but this MEX version does not implement reading data from these files into \matlab{}.
+
+The current version of the MEX interface is based on version 2.21 of the BPMPD solver, implemented in Fortran. Builds are available for Linux (32-bit), Mac OS X (PPC, Intel 32-bit) and Windows (32-bit) at \url{http://www.pserc.cornell.edu/bpmpd/}.
+
+When installed BPMPD\_MEX can be used to solve general LP and QP problems via \mpom{}'s common QP solver interface \code{qps\_master} with the algorithm option set to \codeq{BPMPD}, or by calling \code{qps\_bpmpd} directly.
+
+\subsection{\clp{} -- COIN-OR Linear Programming}
+\label{app:clp}
+
+The \clp{}~\cite{clp} ({\bf C}OIN-OR {\bf L}inear {\bf P}rogramming) solver is an open-source linear programming solver written in C++ by John Forrest. It can solve both linear programming (LP) and quadratic programming (QP) problems. It is primarily meant to be used as a callable library, but a basic, stand-alone executable version exists as well. It is available from the COIN-OR initiative at \url{https://github.com/coin-or/Clp}.
+
+To use \clp{} with \mpom{}, a MEX interface is required\footnote{According to David Gleich at \url{http://web.stanford.edu/~dgleich/notebook/2009/03/coinor_clop_for_matlab.html}, there was a \matlab{} MEX interface to \clp{} written by Johan Lofberg and available (at some point in the past) at \url{http://control.ee.ethz.ch/~joloef/mexclp.zip}. Unfortunately, at the time of this writing, it seems it is no longer available there, but Davide Barcelli makes some precompiled MEX files for some platforms available here \url{http://www.dii.unisi.it/~barcelli/software.php}, and the ZIP file linked as Clp 1.14.3 contains the MEX source as well as a \code{clp.m} wrapper function with some rudimentary documentation.}. For Microsoft Windows users, a pre-compiled MEX version of \clp{} (and numerous other solvers, such as \glpk{} and \ipopt{}) are easily installable as part of the OPTI Toolbox\footnote{The OPTI Toolbox is available from 
+\url{https://www.inverseproblem.co.nz/OPTI/}.}~\cite{opti}
+
+With the \matlab{} interface to \clp{} installed, it can be used to solve general LP and QP problems via \mpom{}'s common QP solver interface \code{qps\_master} with the algorithm option set to \codeq{CLP}, or by calling \code{qps\_clp} directly.
+
+\subsection{\cplex{} -- High-performance LP, QP, MILP and MIQP Solvers}
+\label{app:cplex}
+
+The IBM ILOG \cplex{} Optimizer, or simply \cplex{}, is a collection of optimization tools that includes high-performance solvers for large-scale linear programming (LP) and quadratic programming (QP) problems, among others. More information is available at \url{https://www.ibm.com/analytics/cplex-optimizer}.
+
+Although \cplex{} is a commercial package, at the time of this writing the full version is available to academics at no charge through the IBM Academic Initiative program for teaching and non-commercial research. See \url{http://www.ibm.com/support/docview.wss?uid=swg21419058} for more details.
+
+When the \matlab{} interface to \cplex{} is installed, it can also be used to solve general LP, QP problems via \mpom{}'s common QP solver interface \code{qps\_master}, or MILP and MIQP problems via \code{miqps\_master}, with the algorithm option set to \codeq{CPLEX}, or by calling \code{qps\_cplex} or \code{miqps\_cplex} directly.
+
+\subsection{\glpk{} -- GNU Linear Programming Kit}
+\label{app:glpk}
+
+The \glpk{}~\cite{glpk} ({\bf G}NU {\bf L}inear {\bf P}rogramming {\bf K}it) package is intended for solving large-scale linear programming (LP), mixed-integer programming (MIP), and other related problems. It is a set of routines written in ANSI C and organized in the form of a callable library. 
+
+To use \glpk{} with \mpom{}, a MEX interface is required\footnote{The \url{http://glpkmex.sourceforge.net} site and Davide Barcelli's page \url{http://www.dii.unisi.it/~barcelli/software.php} may be useful in obtaining the MEX source or pre-compiled binaries for Mac or Linux platforms.}. For Microsoft Windows users, a pre-compiled MEX version of \glpk{} (and numerous other solvers, such as \clp{} and \ipopt{}) are easily installable as part of the OPTI Toolbox\footnote{The OPTI Toolbox is available from 
+\url{https://www.inverseproblem.co.nz/OPTI/}.}~\cite{opti}.
+
+When \glpk{} is installed, either as part of Octave or with a MEX interface for \matlab{}, it can be used to solve general LP problems via \mpom{}'s common QP solver interface \code{qps\_master}, or MILP problems via \code{miqps\_master}, with the algorithm option set to \codeq{GLPK}, or by calling \code{qps\_glpk} or \code{miqps\_glpk} directly.
+
+\subsection{\gurobi{} -- High-performance LP, QP, MILP and MIQP Solvers}
+\label{app:gurobi}
+
+\gurobi{}~\cite{gurobi} is a collection of optimization tools that includes high-performance solvers for large-scale linear programming (LP) and quadratic programming (QP) problems, among others. The project was started by some former \cplex{} developers. More information is available at \url{https://www.gurobi.com/}.
+
+Although \gurobi{} is a commercial package, at the time of this writing their is a free academic license available. See \url{https://www.gurobi.com/academia/for-universities} for more details.
+
+When \gurobi{} is installed, it can be used to solve general LP and QP problems via \mpom{}'s common QP solver interface \code{qps\_master}, or MILP and MIQP problems via \code{miqps\_master}, with the algorithm option set to \codeq{GUROBI}, or by calling \code{qps\_gurobi} or \code{miqps\_gurobi} directly.
+
+\subsection{\ipopt{} -- Interior Point Optimizer}
+\label{app:ipopt}
+
+\ipopt{}~\cite{ipopt} ({\bf I}nterior {\bf P}oint {\bf OPT}imizer, pronounced I-P-Opt) is a software package for large-scale nonlinear optimization. It is is written in C++ and is released as open source code under the Common Public License (CPL). It is available from the COIN-OR initiative at \url{https://github.com/coin-or/Ipopt}. The code has been written by Carl Laird and Andreas W\"achter, who is the COIN project leader for \ipopt{}.
+
+\mpom{} requires the \matlab{} MEX interface to \ipopt{}, which is included in some versions of the \ipopt{} source distribution, but must be built separately. Additional information on the MEX interface is available at \url{https://projects.coin-or.org/Ipopt/wiki/MatlabInterface}. Please consult the \ipopt{} documentation, web-site and mailing lists for help in building and installing the \ipopt{} \matlab{} interface. This interface uses callbacks to \matlab{} functions to evaluate the objective function and its gradient, the constraint values and Jacobian, and the Hessian of the Lagrangian.
+
+Precompiled MEX binaries for a high-performance version of \ipopt{}, using the \pardiso{} linear solver~\cite{pardiso, pardiso2}, are available from the \pardiso{} project\footnote{See \url{https://pardiso-project.org/} for the download links.}. For Microsoft Windows users, a pre-compiled MEX version of \ipopt{} (and numerous other solvers, such as \clp{} and \glpk{}) are easily installable as part of the OPTI Toolbox\footnote{The OPTI Toolbox is available from 
+\url{https://www.inverseproblem.co.nz/OPTI/}.}~\cite{opti}.
+
+When installed, \ipopt{} can be used by \mpom{} to solve general LP, QP and NLP problems via \mpom{}'s common QP and NLP solver interfaces \code{qps\_master} and \code{nlps\_master} with the algorithm option set to \codeq{IPOPT}, or by calling \code{qps\_ipopt} or \code{nlps\_ipopt} directly.
+
+\subsection{\knitro{} -- Non-Linear Programming Solver}
+\label{app:knitro}
+
+\knitro{}~\cite{knitro} is a general purpose optimization solver specializing in nonlinear problems, available from Artelys. As of version 9, Knitro includes a native \matlab{} interface, \code{knitromatlab}\footnote{Earlier versions required the \matlab{} \ot{} from The MathWorks, which included an interface to the Knitro libraries called \code{ktrlink}, but the libraries themselves still had to be acquired directly from Ziena Optimization, LLC (subsequently acquired by Artelys).}. More information is available at \url{https://www.artelys.com/solvers/knitro/} and \url{https://www.artelys.com/docs/knitro/}.
+
+Although \knitro{} is a commercial package, at the time of this writing there is a free academic license available, with details on their download page.
+
+When installed, Knitro's \matlab{} interface function, \code{knitromatlab} or \code{ktrlink}, can be used by \mpom{} to solve general NLP problems via \mpom{}'s common NLP solver interface \code{nlps\_master} with the algorithm option set to \codeq{KNITRO}, or by calling \code{nlps\_knitro} directly.
+
+\subsection{\mosek{} -- High-performance LP, QP, MILP and MIQP Solvers}
+\label{app:mosek}
+
+\mosek{} is a collection of optimization tools that includes high-performance solvers for large-scale linear programming (LP) and quadratic programming (QP) problems, among others. More information is available at \url{https://www.mosek.com/}.
+
+Although \mosek{} is a commercial package, at the time of this writing there is a free academic license available. See \url{https://www.mosek.com/products/academic-licenses/} for more details.
+
+When the \matlab{} interface to \mosek{} is installed, it can be used to solve general LP and QP problems via \matpower{}'s common QP solver interface \code{qps\_master}, or MILP and MIQP problems via \code{miqps\_master}, with the algorithm option set to \codeq{MOSEK}, or by calling \code{qps\_mosek} or \code{miqps\_mosek} directly.
+
+\subsection{\ot{} -- LP, QP, NLP and MILP Solvers}
+\label{app:ot}
+
+\matlab{}'s \ot{}~\cite{ot, otug}, available from The MathWorks, provides a number of high-performance solvers that \matpower{} can take advantage of.
+
+It includes \code{fmincon} for nonlinear programming problems (NLP), and \code{linprog} and \code{quadprog} for linear programming (LP) and quadratic programming (QP) problems, respectively.
+For mixed-integer linear programs (MILP), it provides \code{intlingprog}.
+Each solver implements a number of different solution algorithms.
+More information is available from The MathWorks, Inc. at \url{https://www.mathworks.com/}.
+
+When available, the \ot{} solvers can be used to solve general LP and QP problems via \matpower{}'s common QP solver interface \code{qps\_master}, or MILP problems via \code{miqps\_master}, with the algorithm option set to \codeq{OT}, or by calling \code{qps\_ot} or \code{miqps\_ot} directly. It can also be used to solve general NLP problems via \mpom{}'s common NLP solver interface \code{nlps\_master} with the algorithm option set to \codeq{FMINCON}, or by calling \code{nlps\_fmincon} directly.
+
+
+%%------------------------------------------
+\clearpage
+\section{Release History}
+\label{app:release_history}
+
+The full release history can be found in \code{CHANGES.md} or \href{https://github.com/MATPOWER/mp-opt-model/blob/master/CHANGES.md}{online} at \url{https://github.com/MATPOWER/mp-opt-model/blob/master/CHANGES.md}.
+
+
+\subsection{Version 0.7 -- Jun 20, 2019}
+\label{app:v07}
+
+This release history begins with the code that was part of the \matpower{} 7.0 release.
+
+\subsection{Version 0.8 -- Apr 29, 2020 \emph{(not released publicly)}}
+\label{app:v08}
+
+This version consists of functionality moved directly from \matpowerlink{}.\footnote{From the current \code{master} branch in the \href{\matpowergithuburl}{\matpower{} GitHub repository} at the time.}
+There is no User's Manual yet.
+
+\subsubsection*{New Features}
+\begin{itemize}
+\item New unified interface \code{nlps\_master()} for nonlinear programming solvers \mipslink{}, \code{fmincon}, \ipopt{} and \knitro{}.
+\item New functions:
+    \begin{itemize}
+    \item \code{mpopt2nlpopt()} creates an options struct for \code{nlps\_master()} from at \matpower{} options struct.
+    \item \code{nlps\_fmincon()} provides implementation of unified nonlinear programming solver interface for \code{fmincon}.
+    \item \code{nlps\_ipopt()} provides implementation of unified nonlinear programming solver interface interface for \ipopt{}.
+    \item \code{nlps\_knitro()} provides implementation of unified nonlinear programming solver interface interface for \ipopt{}.
+    \item \code{nlps\_master()} provides a single wrapper function for calling any of \matpower{}'s nonlinear programming solvers.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection*{Other Improvements}
+\begin{itemize}
+\item Significant performance improvement for some problems when constructing sparse matrices for linear constraints or quadratic costs.
+\emph{Thanks to Daniel Muldrew.}
+\item Significant performance improvement for CPLEX on small problems by     eliminating call to \code{cplexoptimset()}, which was a huge bottleneck.
+\item Add four new methods to \code{opt\_model} class:
+    \begin{itemize}
+    \item \code{copy()} -- works around issues with inheritance in constructors that was preventing copy constructor from working in Octave 5.2 and earlier (see also \url{https://savannah.gnu.org/bugs/?52614})
+    \item \code{is\_mixed\_integer()} -- returns true if the model includes any binary or integer variables
+    \item \code{problem\_type()} -- returns one of the following strings, based on
+      the characteristics of the variables, costs and constraints in the
+      model:
+      \begin{itemize}
+      \item{\codeq{LP}} -- linear program
+      \item{\codeq{QP}} -- quadratic program
+      \item{\codeq{NLP}} -- nonlinear program
+      \item{\codeq{MILP}} -- mixed-integer linear program
+      \item{\codeq{MIQP}} -- mixed-integer quadratic program
+      \item{\codeq{MINLP}} -- mixed-integer nonlinear program
+      \end{itemize}
+    \item \code{solve()} - solves the model using \code{qps\_master()}, \code{miqps\_master()}, or \code{nlps\_master()}, depending on the problem type (\codeq{MINLP} problems are not yet implemented)
+    \end{itemize}
+\end{itemize}
+
+% \pagebreak
+\subsubsection*{Bugs Fixed}
+\begin{itemize}
+\item Artelys Knitro 12.1 compatibility fix.
+\item Fix CPLEX 12.10 compatibility issue \#90.
+\item Fix issue with missing objective function value from \code{miqps\_mosek()} and \code{qps\_mosek()} when return status is ``Stalled at or near optimal solution.''
+\item Fix bug orginally in \code{ktropf\_solver()} (code now moved to \code{nlps\_knitro()}) where Artelys Knitro was still using \code{fmincon} options.
+\end{itemize}
+
+\subsubsection*{Incompatible Changes}
+\begin{itemize}
+\item \mpom{} has renamed the following functions and modified the order of their input args so that the \mpom{} object appears first. Ideally, these would be defined as methods of the \code{opt\_model} class, but Octave 4.2 and earlier is not able to find them via a function handle (as used in the \code{solve()} method) if they are inherited by a sub-class.
+    \begin{itemize}
+    \item \code{opf\_consfcn()} $\rightarrow$ \code{nlp\_consfcn()}
+    \item \code{opf\_costfcn()} $\rightarrow$ \code{nlp\_costfcn()}
+    \item \code{opf\_hessfcn()} $\rightarrow$ \code{nlp\_hessfcn()}
+    \end{itemize}
+\end{itemize}
+
+
+\subsection{Version 1.0 -- released May 8, 2020}
+\label{app:v10}
+
+This is the first public release of \mpom{} as its own package.
+The \href{https://matpower.org/docs/MP-Opt-Model-manual-1.0.pdf}{\mpom{} 1.0 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MP-Opt-Model-manual-1.0.pdf}}
+
+\subsubsection*{New Documentation}
+\begin{itemize}
+\item Add \mpomman{} with \LaTeX{} source code included in \code{docs/src}.
+\end{itemize}
+
+\subsubsection*{Other Improvements}
+\begin{itemize}
+\item Refactor \code{opt\_model} class to inherit from new abstract base class \code{mp\_idx\_manager} which can be used to manage the indexing of other sets of parameters, etc. in other contexts.
+\end{itemize}
+
+
+% \subsubsection*{New Features}
+% \begin{itemize}
+% \item 
+%     \emph{Thanks to Fulano.}
+% \end{itemize}
+% 
+% \subsubsection*{Bugs Fixed}
+% \begin{itemize}
+% \item 
+% \end{itemize}
+% 
+% \subsubsection*{Other Changes}
+% \begin{itemize}
+% \item 
+% \end{itemize}
+
+\end{appendices}
+
+
+%%------------------------------------------
+\clearpage
+%\addcontentsline{toc}{section}{References}
+\begin{thebibliography}{99}
+\bibitem{zimmerman2011}
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez, and R.~J. Thomas, ``\matpower{}: Steady-State Operations, Planning and Analysis Tools for Power Systems Research and Education,'' \emph{Power Systems, IEEE Transactions on}, vol.~26, no.~1, pp.~12--19, Feb.~2011.
+\doi{10.1109/TPWRS.2010.2051168}
+
+\bibitem{matpower}
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2019). \matpower{}\\~
+[Software]. Available: \url{https://matpower.org}\\
+\doi{10.5281/zenodo.3236535}
+
+\bibitem{octave}
+John~W.~Eaton, David~Bateman, S{\o}ren~Hauberg, Rik~Wehbring (2015). \emph{GNU Octave version 4.0.0 manual: a high-level interactive language for numerical computations.} Available: \url{https://www.gnu.org/software/octave/doc/interpreter/}.
+
+\bibitem{bsd}
+The BSD 3-Clause License. [Online]. Available: \url{https://opensource.org/licenses/BSD-3-Clause}.
+
+\bibitem{mpom_manual}
+R.~D. Zimmerman. \mpomname{} User's Manual. 2020.
+[Online]. Available: \url{https://matpower.org/docs/MP-Opt-Model-manual.pdf}\\
+\doi{10.5281/zenodo.3818002}
+
+\bibitem{wang2007a}
+H.~Wang, C.~E. Murillo-S{\'a}nchez, R.~D. Zimmerman, and R.~J. Thomas, ``On
+Computational Issues of Market-Based Optimal Power Flow,'' \emph{Power
+Systems, IEEE Transactions on}, vol.~22, no.~3, pp. 1185--1193, August 2007.
+\doi{10.1109/TPWRS.2007.901301}
+
+\bibitem{mips_manual}
+R.~D. Zimmerman, H.~Wang. \mipsname{} (\mips{}) User's Manual. 2019.
+[Online]. Available: \url{https://matpower.org/docs/MIPS-manual.pdf}\\
+\doi{10.5281/zenodo.3236506}
+
+\bibitem{bpmpdmex}
+BPMPD\_MEX. [Online]. Available:
+  \url{http://www.pserc.cornell.edu/bpmpd/}.
+
+\bibitem{meszaros1996}
+C.~M{\'e}sz{\'a}ros, \emph{The Efficient Implementation of Interior Point Methods for Linear Programming and their Applications}, Ph.D. thesis,
+  E{\"o}tv{\"o}s Lor{\'a}nd University of Sciences, Budapest, Hungary, 1996.
+
+\bibitem{clp}
+COIN-OR Linear Programming (CLP) Solver. [Online]. Available:
+  \url{https://github.com/coin-or/Clp}.
+
+\bibitem{opti}
+J.~Currie and D.~I.~Wilson,``OPTI: Lowering the Barrier Between Open Source Optimizers and the Industrial MATLAB User,'' \emph{Foundations of Computer-Aided Process Operations}, Georgia, USA, 2012.
+
+\bibitem{glpk}
+GLPK. [Online]. Available:
+  \url{https://www.gnu.org/software/glpk/}.
+
+\bibitem{gurobi}
+Gurobi Optimization, Inc., ``Gurobi Optimizer Reference Manual,'' 2016. [Online]. Available:
+  \url{https://www.gurobi.com/}.
+
+\bibitem{ipopt}
+A.~W\"achter and L.~T.~Biegler, ``On the implementation of a primal-dual interior point filter line search algorithm for large-scale nonlinear programming,'' \emph{Mathematical Programming}, 106(1):25–-57,~2006.
+
+\bibitem{pardiso}
+O.~Shenk and K.~G\"artner, ``Solving unsymmetric sparse systems of linear equations with PARDISO,'' \emph{Journal of Future Generation Computer Systems}, 20(3):475--487,~2004.
+
+\bibitem{pardiso2}
+A.~Kuzmin, M.~Luisier and O.~Shenk, ``Fast methods for computing selected elements of the Greens function in massively parallel nanoelectronic device simulations,'' in F.~Wolf, B.~Mohr and D.~Mey, editors, \emph{Euro-Par 2013 Parallel Processing}, Vol.~8097, \emph{Lecture Notes in Computer Science}, pp.~533--544, Springer Berlin Heidelberg, 2013.
+
+\bibitem{knitro}
+R.~H.~Byrd, J.~Nocedal, and R.~A.~Waltz, ``KNITRO: An Integrated Package for Nonlinear Optimization'', \emph{Large-Scale Nonlinear Optimization}, G. di Pillo and M. Roma, eds, pp.~35--59 (2006), Springer-Verlag.
+doi:~\href{https://doi.org/10.1007/0-387-30065-1_4}{10.1007/0-387-30065-1\_4}
+
+\bibitem{ot}
+\emph{Optimization Toolbox}, The MathWorks, Inc.
+  [Online]. Available: \url{https://www.mathworks.com/products/optimization/}.
+
+\bibitem{otug}
+\emph{Optimization Toolbox Users's Guide}, The MathWorks, Inc., 2016.
+  [Online]. Available: \url{https://www.mathworks.com/help/releases/R2016b/pdf_doc/optim/optim_tb.pdf}.
+
+\end{thebibliography}
+
+
+\end{document}

@@ -2,7 +2,7 @@ function [Q, c, K, vs] = params_quad_cost(om, name, idx)
 %PARAMS_QUAD_COST  Returns the cost parameters for quadratic costs.
 %   [Q, C] = OM.PARAMS_QUAD_COST()
 %   [Q, C] = OM.PARAMS_QUAD_COST(NAME)
-%   [Q, C] = OM.PARAMS_QUAD_COST(NAME, IDX)
+%   [Q, C] = OM.PARAMS_QUAD_COST(NAME, IDX_LIST)
 %   [Q, C, K] = OM.PARAMS_QUAD_COST(...)
 %   [Q, C, K, VS] = OM.PARAMS_QUAD_COST(...)
 %
@@ -15,7 +15,7 @@ function [Q, c, K, vs] = params_quad_cost(om, name, idx)
 %
 %   If a NAME is provided then it simply returns the parameters for the
 %   corresponding named set. Likewise for indexed named sets specified
-%   by NAME and IDX. In this case, Q and K may be vectors, corresponding
+%   by NAME and IDX_LIST. In this case, Q and K may be vectors, corresponding
 %   to a cost function of the form
 %       F(X) = 1/2 * Q .* X.^2 + C .* X + K
 %
@@ -24,13 +24,13 @@ function [Q, c, K, vs] = params_quad_cost(om, name, idx)
 %
 %   See also OPT_MODEL, ADD_QUAD_COST.
 
-%   MATPOWER
-%   Copyright (c) 2017-2019, Power Systems Engineering Research Center (PSERC)
+%   MP-Opt-Model
+%   Copyright (c) 2017-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
-%   This file is part of MATPOWER.
+%   This file is part of MP-Opt-Model.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See https://matpower.org for more info.
+%   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 if nargin > 1       %% individual set
     if nargin < 3
@@ -45,7 +45,7 @@ if nargin > 1       %% individual set
                 vs = om.qdc.data.vs.(name);
             end
         else                                    %% indexing required
-            error('@opt_model/params_quad_cost: quadratic cost set ''%s'' requires an IDX arg', name);
+            error('@opt_model/params_quad_cost: quadratic cost set ''%s'' requires an IDX_LIST arg', name);
         end
     else                            %% indexed named set
         % (calls to substruct() are relatively expensive ...

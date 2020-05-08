@@ -1,25 +1,25 @@
 function [N, fcn, vs] = params_nln_cost(om, name, idx)
 %PARAMS_NLN_COST  Returns cost parameters for general nonlinear costs.
 %   [N, FCN] = OM.PARAMS_NLN_COST(NAME)
-%   [N, FCN] = OM.PARAMS_NLN_COST(NAME, IDX)
+%   [N, FCN] = OM.PARAMS_NLN_COST(NAME, IDX_LIST)
 %   [N, FCN, VS] = OM.PARAMS_NLN_COST(...)
 %
 %   Returns the parameters N and FCN for the corresponding named general
 %   nonlinear cost set. Likewise for indexed named sets specified
-%   by NAME and IDX.
+%   by NAME and IDX_LIST.
 %
 %   An optional 3rd output argument VS indicates the variable sets used by
 %   this cost set.
 %
 %   See also OPT_MODEL, ADD_NLN_COST, EVAL_NLN_COST.
 
-%   MATPOWER
-%   Copyright (c) 2017, Power Systems Engineering Research Center (PSERC)
+%   MP-Opt-Model
+%   Copyright (c) 2017-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
-%   This file is part of MATPOWER.
+%   This file is part of MP-Opt-Model.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See https://matpower.org for more info.
+%   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 nlc = om.nlc;
 if nargin < 3
@@ -44,5 +44,5 @@ if ~isempty(idx) || prod(dims) == 1 %% indexed, or simple named set
         vs = subsref(nlc.data.vs, sc);
     end
 else
-    error('@opt_model/params_nln_cost: general nonlinear cost set ''%s'' requires an IDX arg', name)
+    error('@opt_model/params_nln_cost: general nonlinear cost set ''%s'' requires an IDX_LIST arg', name)
 end

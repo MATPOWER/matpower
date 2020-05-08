@@ -37,42 +37,25 @@ function om = init_indexed_name(om, set_type, name, dim_list)
 %   See also OPT_MODEL, ADD_VAR, ADD_LIN_CONSTRAINT, ADD_NLN_CONSTRAINT,
 %            ADD_QUAD_COST and ADD_NLN_COST.
 
-%   MATPOWER
+%   MP-Opt-Model
 %   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
-%   This file is part of MATPOWER.
+%   This file is part of MP-Opt-Model.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See https://matpower.org for more info.
-
-%% check for valid type for named set
-st_label = om.valid_named_set_type(set_type);
-if st_label
-    ff = set_type;
-else
-    error('@opt_model/init_indexed_name: ''%s'' is not a valid SET_TYPE, must be one of ''var'', ''lin'', ''nle'', ''nli'', ''cost''', set_type);
-end
-
-%% prevent duplicate name in set of specified type
-if isfield(om.(ff).idx.N, name)
-    error('@opt_model/init_indexed_name: %s set named ''%s'' already exists', ...
-        st_label, name);
-end
+%   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 %% use column vector if single dimension
 if length(dim_list) == 1
     dim_list = {dim_list{:}, 1};
 end
 
-%% add general info about this named set
-zero_vector = zeros(dim_list{:});
-empty_cell  = cell(dim_list{:});
-om.(ff).idx.i1.(name)    = zero_vector; %% starting index
-om.(ff).idx.iN.(name)    = zero_vector; %% ending index
-om.(ff).idx.N.(name)     = zero_vector; %% number of vars/constraints/costs
+%% call parent method (also checks for valid type for named set)
+om = init_indexed_name@mp_idx_manager(om, set_type, name, dim_list);
 
 %% add type-specific info about this named set
-switch ff
+empty_cell  = cell(dim_list{:});
+switch set_type
     case 'var'          %% variable set
         om.var.data.v0.(name)   = empty_cell;   %% initial value
         om.var.data.vl.(name)   = empty_cell;   %% lower bound
@@ -84,7 +67,7 @@ switch ff
         om.lin.data.u.(name)   = empty_cell;
         om.lin.data.vs.(name)  = empty_cell;
     case {'nle', 'nli'} %% nonlinear constraint set
-        om.(ff).data.fcn.(name) = empty_cell;
-        om.(ff).data.hess.(name)= empty_cell;
-        om.(ff).data.vs.(name)  = empty_cell;
+        om.(set_type).data.fcn.(name) = empty_cell;
+        om.(set_type).data.hess.(name)= empty_cell;
+        om.(set_type).data.vs.(name)  = empty_cell;
 end

@@ -1,8 +1,8 @@
-function [x, f, eflag, output, lambda] = qps_matpower(H, c, A, l, u, xmin, xmax, x0, opt)
-%QPS_MATPOWER  Quadratic Program Solver for MATPOWER.
+function [x, f, eflag, output, lambda] = qps_master(H, c, A, l, u, xmin, xmax, x0, opt)
+%QPS_MASTER  Quadratic Program Solver for MATPOWER.
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
-%       QPS_MATPOWER(H, C, A, L, U, XMIN, XMAX, X0, OPT)
-%   [X, F, EXITFLAG, OUTPUT, LAMBDA] = QPS_MATPOWER(PROBLEM)
+%       QPS_MASTER(H, C, A, L, U, XMIN, XMAX, X0, OPT)
+%   [X, F, EXITFLAG, OUTPUT, LAMBDA] = QPS_MASTER(PROBLEM)
 %   A common wrapper function for various QP solvers.
 %   Solves the following QP (quadratic programming) problem:
 %
@@ -86,20 +86,20 @@ function [x, f, eflag, output, lambda] = qps_matpower(H, c, A, l, u, xmin, xmax,
 %
 %   Calling syntax options:
 %       [x, f, exitflag, output, lambda] = ...
-%           qps_matpower(H, c, A, l, u, xmin, xmax, x0, opt)
+%           qps_master(H, c, A, l, u, xmin, xmax, x0, opt)
 %
-%       x = qps_matpower(H, c, A, l, u)
-%       x = qps_matpower(H, c, A, l, u, xmin, xmax)
-%       x = qps_matpower(H, c, A, l, u, xmin, xmax, x0)
-%       x = qps_matpower(H, c, A, l, u, xmin, xmax, x0, opt)
-%       x = qps_matpower(problem), where problem is a struct with fields:
+%       x = qps_master(H, c, A, l, u)
+%       x = qps_master(H, c, A, l, u, xmin, xmax)
+%       x = qps_master(H, c, A, l, u, xmin, xmax, x0)
+%       x = qps_master(H, c, A, l, u, xmin, xmax, x0, opt)
+%       x = qps_master(problem), where problem is a struct with fields:
 %                       H, c, A, l, u, xmin, xmax, x0, opt
 %                       all fields except 'c', 'A' and 'l' or 'u' are optional
-%       x = qps_matpower(...)
-%       [x, f] = qps_matpower(...)
-%       [x, f, exitflag] = qps_matpower(...)
-%       [x, f, exitflag, output] = qps_matpower(...)
-%       [x, f, exitflag, output, lambda] = qps_matpower(...)
+%       x = qps_master(...)
+%       [x, f] = qps_master(...)
+%       [x, f, exitflag] = qps_master(...)
+%       [x, f, exitflag, output] = qps_master(...)
+%       [x, f, exitflag, output, lambda] = qps_master(...)
 %
 %   Example: (problem from from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm)
 %       H = [   1003.1  4.3     6.3     5.9;
@@ -114,15 +114,15 @@ function [x, f, eflag, output, lambda] = qps_matpower(H, c, A, l, u, xmin, xmax,
 %       xmin = zeros(4,1);
 %       x0 = [1; 0; 0; 1];
 %       opt = struct('verbose', 2);
-%       [x, f, s, out, lambda] = qps_matpower(H, c, A, l, u, xmin, [], x0, opt);
+%       [x, f, s, out, lambda] = qps_master(H, c, A, l, u, xmin, [], x0, opt);
 
-%   MATPOWER
+%   MP-Opt-Model
 %   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
-%   This file is part of MATPOWER.
+%   This file is part of MP-Opt-Model.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See https://matpower.org for more info.
+%   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 %%----- input argument handling  -----
 %% gather inputs
@@ -179,7 +179,7 @@ if ~isempty(opt) && isfield(opt, 'alg') && ~isempty(opt.alg)
             case 700
                 alg = 'GUROBI';
             otherwise
-                error('qps_matpower: %d is not a valid algorithm code', alg);
+                error('qps_master: %d is not a valid algorithm code', alg);
         end
     end
 else
@@ -223,7 +223,7 @@ switch alg
                             'output', output, 'lambda', lambda);
             opt.alg = 'MIPS';
             [x, f, eflag, output, lambda] = ...
-                qps_matpower(H, c, A, l, u, xmin, xmax, x0, opt);
+                qps_master(H, c, A, l, u, xmin, xmax, x0, opt);
             output.bpmpd = bpmpd;
         end
     case 'CLP'
@@ -260,7 +260,7 @@ switch alg
         [x, f, eflag, output, lambda] = ...
             qps_ot(H, c, A, l, u, xmin, xmax, x0, opt);
     otherwise
-        error('qps_matpower: ''%s'' is not a valid algorithm code', alg);
+        error('qps_master: ''%s'' is not a valid algorithm code', alg);
 end
 if ~isfield(output, 'alg') || isempty(output.alg)
     output.alg = alg;

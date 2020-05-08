@@ -136,15 +136,15 @@ function [x, f, eflag, output, lambda] = nlps_ipopt(f_fcn, x0, A, l, u, xmin, xm
 %       );
 %       [x, f, exitflag, output, lambda] = nlps_ipopt(problem);
 %
-%   See also NLPS_MATPOWER, IPOPT.
+%   See also NLPS_MASTER, IPOPT.
 
-%   MATPOWER
+%   MP-Opt-Model
 %   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
-%   This file is part of MATPOWER.
+%   This file is part of MP-Opt-Model.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See https://matpower.org for more info.
+%   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 %%----- input argument handling  -----
 %% gather inputs

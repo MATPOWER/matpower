@@ -1,13 +1,13 @@
-function t_nlps_matpower(quiet)
-%T_NLPS_MATPOWER  Tests of MIPS NLP solver.
+function t_nlps_master(quiet)
+%T_NLPS_MASTER  Tests of NLP solvers.
 
-%   MATPOWER
+%   MP-Opt-Model
 %   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
-%   This file is part of MATPOWER.
+%   This file is part of MP-Opt-Model.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See https://matpower.org for more info.
+%   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 if nargin < 1
     quiet = 0;
@@ -71,7 +71,7 @@ t = sprintf('%s - unconstrained banana function : ', name);
 %% from MATLAB Optimization Toolbox's bandem.m
 f_fcn = @(x)f2(x);
 x0 = [-1.9; 2];
-[x, f, s, out, lam] = nlps_matpower(f_fcn, x0, [], [], [], [], [], [], [], opt);
+[x, f, s, out, lam] = nlps_master(f_fcn, x0, [], [], [], [], [], [], [], opt);
 t_ok(s > 0, [t 'success']);
 t_is(x, [1; 1], 8, [t 'x']);
 t_is(f, 0, 13, [t 'f']);
@@ -84,7 +84,7 @@ t = sprintf('%s - unconstrained 3-d quadratic : ', name);
 %% from http://www.akiti.ca/QuadProgEx0Constr.html
 f_fcn = @(x)f3(x);
 x0 = [0; 0; 0];
-[x, f, s, out, lam] = nlps_matpower(f_fcn, x0, [], [], [], [], [], [], [], opt);
+[x, f, s, out, lam] = nlps_master(f_fcn, x0, [], [], [], [], [], [], [], opt);
 t_ok(s > 0, [t 'success']);
 t_is(x, [3; 5; 7], 6, [t 'x']);
 t_is(f, -244, 12, [t 'f']);
@@ -102,7 +102,7 @@ A = [   1       1       1       1;
 l = [1; 0.10];
 u = [1; Inf];
 xmin = zeros(4,1);
-[x, f, s, out, lam] = nlps_matpower(f_fcn, x0, A, l, u, xmin, [], [], [], opt);
+[x, f, s, out, lam] = nlps_master(f_fcn, x0, A, l, u, xmin, [], [], [], opt);
 t_ok(s > 0, [t 'success']);
 t_is(x, [0; 2.8; 0.2; 0]/3, 6, [t 'x']);
 t_is(f, 3.29/3, 6, [t 'f']);
@@ -119,7 +119,7 @@ hess_fcn = @(x, lam, cost_mult)hess5(x, lam, cost_mult);
 x0 = [1.1; 0];
 xmin = zeros(2, 1);
 % xmax = 3 * ones(2, 1);
-[x, f, s, out, lam] = nlps_matpower(f_fcn, x0, [], [], [], xmin, [], gh_fcn, hess_fcn, opt);
+[x, f, s, out, lam] = nlps_master(f_fcn, x0, [], [], [], xmin, [], gh_fcn, hess_fcn, opt);
 t_ok(s > 0, [t 'success']);
 t_is(x, [1; 1], 6, [t 'x']);
 t_is(f, -2, 6, [t 'f']);
@@ -135,7 +135,7 @@ f_fcn = @(x)f6(x);
 gh_fcn = @(x)gh6(x);
 hess_fcn = @(x, lam, cost_mult)hess6(x, lam, cost_mult);
 x0 = [1; 1; 0];
-[x, f, s, out, lam] = nlps_matpower(f_fcn, x0, [], [], [], [], [], gh_fcn, hess_fcn, opt);
+[x, f, s, out, lam] = nlps_master(f_fcn, x0, [], [], [], [], [], gh_fcn, hess_fcn, opt);
 t_ok(s > 0, [t 'success']);
 t_is(x, [1.58113883; 2.23606798; 1.58113883], 6, [t 'x']);
 t_is(f, -5*sqrt(2), 6, [t 'f']);
@@ -147,7 +147,7 @@ t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 
 t = sprintf('%s - constrained 3-d nonlinear (struct) : ', name);
 p = struct('f_fcn', f_fcn, 'x0', x0, 'gh_fcn', gh_fcn, 'hess_fcn', hess_fcn, 'opt', opt);
-[x, f, s, out, lam] = nlps_matpower(p);
+[x, f, s, out, lam] = nlps_master(p);
 t_ok(s > 0, [t 'success']);
 t_is(x, [1.58113883; 2.23606798; 1.58113883], 6, [t 'x']);
 t_is(f, -5*sqrt(2), 6, [t 'f']);
@@ -165,7 +165,7 @@ hess_fcn = @(x, lam, sigma)hess7(x, lam, sigma);
 x0 = [1; 5; 5; 1];
 xmin = ones(4, 1);
 xmax = 5 * xmin;
-[x, f, s, out, lam] = nlps_matpower(f_fcn, x0, [], [], [], xmin, xmax, gh_fcn, hess_fcn, opt);
+[x, f, s, out, lam] = nlps_master(f_fcn, x0, [], [], [], xmin, xmax, gh_fcn, hess_fcn, opt);
 t_ok(s > 0, [t 'success']);
 t_is(x, [1; 4.7429994; 3.8211503; 1.3794082], 6, [t 'x']);
 t_is(f, 17.0140173, 6, [t 'f']);

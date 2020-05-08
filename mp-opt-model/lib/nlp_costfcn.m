@@ -21,13 +21,13 @@ function [f, df, d2f] = nlp_costfcn(om, x)
 %
 %   See also NLP_CONSFCN, NLP_HESSFCN.
 
-%   MATPOWER
+%   MP-Opt-Model
 %   Copyright (c) 1996-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
-%   This file is part of MATPOWER.
+%   This file is part of MP-Opt-Model.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See https://matpower.org for more info.
+%   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 %%----- evaluate objective function -----
 %% general nonlinear costs

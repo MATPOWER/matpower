@@ -4,7 +4,7 @@ function [x, f, eflag, output, lambda] = solve(om, opt)
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = OM.SOLVE(OPT)
 %
 %   Solves the optimization model using one of the following, depending
-%   on the problem type: QPS_MATPOWER, MIQPS_MATPOWER, NLPS_MATPOWER.
+%   on the problem type: QPS_MASTER, MIQPS_MASTER, NLPS_MASTER.
 %
 %   Inputs:
 %       OPT : optional options structure with the following fields,
@@ -88,15 +88,15 @@ function [x, f, eflag, output, lambda] = solve(om, opt)
 %           lower - lower bound on optimization variables
 %           upper - upper bound on optimization variables
 %
-%   See also OPT_MODEL, QPS_MATPOWER, MIQPS_MATPOWER, NLPS_MATPOWER
+%   See also OPT_MODEL, QPS_MASTER, MIQPS_MASTER, NLPS_MASTER
 
-%   MATPOWER
+%   MP-Opt-Model
 %   Copyright (c) 2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
-%   This file is part of MATPOWER.
+%   This file is part of MP-Opt-Model.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
-%   See https://matpower.org for more info.
+%   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 if nargin < 2
     opt = struct();
@@ -120,7 +120,7 @@ elseif strcmp(pt, 'NLP')        %% NLP - non-linear program
     gh_fcn = @(x)nlp_consfcn(om, x);
     hess_fcn = @(x, lambda, cost_mult)nlp_hessfcn(om, x, lambda, cost_mult);
     [x, f, eflag, output, lambda] = ...
-        nlps_matpower(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt);
+        nlps_master(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt);
     success = (eflag > 0);
 else                            %% LP, QP, MILP or MIQP
     %% get cost parameters
@@ -135,7 +135,7 @@ else                            %% LP, QP, MILP or MIQP
 
         %% run solver
         [x, f, eflag, output, lambda] = ...
-            miqps_matpower(HH, CC, A, l, u, xmin, xmax, x0, vtype, opt);
+            miqps_master(HH, CC, A, l, u, xmin, xmax, x0, vtype, opt);
     else                        %% LP, QP - linear/quadratic program
         %% optimization vars, bounds, types
         [x0, xmin, xmax] = om.params_var();
@@ -145,7 +145,7 @@ else                            %% LP, QP, MILP or MIQP
 
         %% run solver
         [x, f, eflag, output, lambda] = ...
-            qps_matpower(HH, CC, A, l, u, xmin, xmax, x0, opt);
+            qps_master(HH, CC, A, l, u, xmin, xmax, x0, opt);
     end
     f = f + C0;
     success = (eflag == 1);
