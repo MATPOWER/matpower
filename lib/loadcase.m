@@ -50,6 +50,9 @@ else
 end
 
 %%-----  read data into struct  -----
+if isstring(casefile)
+    casefile = char(casefile)
+end
 if ischar(casefile)
     [pathstr, fname, ext] = fileparts(casefile);
     if isempty(ext)
