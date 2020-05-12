@@ -50,6 +50,9 @@ else
 end
 
 %%-----  read data into struct  -----
+if isa(casefile, 'string')
+    casefile = char(casefile);
+end
 if ischar(casefile)
     [pathstr, fname, ext] = fileparts(casefile);
     if isempty(ext)
@@ -185,7 +188,7 @@ if info == 0    %% no errors
 else            %% we have a problem captain
     switch info
         case 1,
-            error('loadcase: input arg should be a struct or a string containing a filename');
+            error('loadcase: input arg should be a struct or a char array/string containing a filename');
         case 2,
             error('loadcase: specified case not in MATLAB''s search path');
         case 3,
