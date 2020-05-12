@@ -50,7 +50,7 @@ else
 end
 
 %%-----  read data into struct  -----
-if isstring(casefile)
+if isa(casefile, 'string')
     casefile = char(casefile);
 end
 if ischar(casefile)
