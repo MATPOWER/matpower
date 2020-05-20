@@ -52,8 +52,15 @@ if ng ~= 0
 
     switch modtype
         case 'SCALE_F',
-            gencost(ipol, COST:m)       = diag(alpha(ipol)) * c;
-            gencost(ipwl, COST+1:2:m)   = diag(alpha(ipwl)) * gencost(ipwl, COST+1:2:m);
+            npol = length(ipol);
+            npwl = length(ipwl);
+            if npol ~=0
+                gencost(ipol, COST:m) = spdiags(alpha(ipol), 0, npol, npol) * c;
+            end
+            if npwl ~= 0
+                gencost(ipwl, COST+1:2:m) = spdiags(alpha(ipwl), 0, npwl, npwl) * ...
+                    gencost(ipwl, COST+1:2:m);
+            end
         case 'SCALE_X',
             for k = 1:length(ipol)
                 n = gencost(ipol(k), NCOST);
@@ -61,23 +68,31 @@ if ng ~= 0
                     gencost(ipol(k), COST+i-1) = c(k, i) / alpha(ipol(k))^(n-i);
                 end
             end
-            gencost(ipwl, COST:2:m-1)   = diag(alpha(ipwl)) * gencost(ipwl, COST:2:m-1);
+            npwl = length(ipwl);
+            if npwl ~= 0
+                gencost(ipwl, COST:2:m-1)= spdiags(alpha(ipwl), 0, npwl, npwl) *...
+                    gencost(ipwl, COST:2:m-1);
+            end
         case 'SHIFT_F',
             for k = 1:length(ipol)
                 n = gencost(ipol(k), NCOST);
                 gencost(ipol(k), COST+n-1) = alpha(ipol(k)) + c(k, n);
             end
-            gencost(ipwl, COST+1:2:m)   = ...
-                diag(alpha(ipwl)) * ones(length(ipwl), (m+1-COST)/2) + ...
-                    gencost(ipwl, COST+1:2:m);
+            npwl = length(ipwl);
+            if npwl ~= 0
+                gencost(ipwl, COST+1:2:m)   = spdiags(alpha(ipwl), 0, npwl, npwl) * ...
+                    ones(length(ipwl), (m+1-COST)/2) + gencost(ipwl, COST+1:2:m);
+            end
         case 'SHIFT_X',
             for k = 1:length(ipol)
                 n = gencost(ipol(k), NCOST);
                 gencost(ipol(k), COST:COST+n-1) = polyshift(c(k, 1:n)', alpha(ipol(k)))';
             end
-            gencost(ipwl, COST:2:m-1)   = ...
-                diag(alpha(ipwl)) * ones(length(ipwl), (m+1-COST)/2) + ...
-                    gencost(ipwl, COST:2:m-1);
+            npwl = length(ipwl);
+            if npwl ~= 0
+                gencost(ipwl, COST:2:m-1)= spdiags(alpha(ipwl), 0, npwl, npwl) * ...
+                    ones(length(ipwl), (m+1-COST)/2) + gencost(ipwl, COST:2:m-1);
+            end
         otherwise
             error('modcost: ''%s'' is not a valid modtype\n', modtype);
     end
