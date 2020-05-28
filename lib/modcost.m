@@ -19,7 +19,7 @@ function gencost = modcost(gencost, alpha, modtype)
 %       'SHIFT_X'           : F_alpha(X + ALPHA) == F(X)
 
 %   MATPOWER
-%   Copyright (c) 2010-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -48,16 +48,16 @@ if ng ~= 0
 
     ipwl = find(gencost(:, MODEL) == PW_LINEAR);
     ipol = find(gencost(:, MODEL) == POLYNOMIAL);
+    npwl = length(ipwl);
+    npol = length(ipol);
     c = gencost(ipol, COST:m);
 
     switch modtype
         case 'SCALE_F',
-            npol = length(ipol);
-            npwl = length(ipwl);
-            if npol ~=0
+            if npol
                 gencost(ipol, COST:m) = spdiags(alpha(ipol), 0, npol, npol) * c;
             end
-            if npwl ~= 0
+            if npwl
                 gencost(ipwl, COST+1:2:m) = spdiags(alpha(ipwl), 0, npwl, npwl) * ...
                     gencost(ipwl, COST+1:2:m);
             end
@@ -68,9 +68,8 @@ if ng ~= 0
                     gencost(ipol(k), COST+i-1) = c(k, i) / alpha(ipol(k))^(n-i);
                 end
             end
-            npwl = length(ipwl);
-            if npwl ~= 0
-                gencost(ipwl, COST:2:m-1)= spdiags(alpha(ipwl), 0, npwl, npwl) *...
+            if npwl
+                gencost(ipwl, COST:2:m-1) = spdiags(alpha(ipwl), 0, npwl, npwl) * ...
                     gencost(ipwl, COST:2:m-1);
             end
         case 'SHIFT_F',
@@ -78,9 +77,8 @@ if ng ~= 0
                 n = gencost(ipol(k), NCOST);
                 gencost(ipol(k), COST+n-1) = alpha(ipol(k)) + c(k, n);
             end
-            npwl = length(ipwl);
-            if npwl ~= 0
-                gencost(ipwl, COST+1:2:m)   = spdiags(alpha(ipwl), 0, npwl, npwl) * ...
+            if npwl
+                gencost(ipwl, COST+1:2:m) = spdiags(alpha(ipwl), 0, npwl, npwl) * ...
                     ones(length(ipwl), (m+1-COST)/2) + gencost(ipwl, COST+1:2:m);
             end
         case 'SHIFT_X',
@@ -88,9 +86,8 @@ if ng ~= 0
                 n = gencost(ipol(k), NCOST);
                 gencost(ipol(k), COST:COST+n-1) = polyshift(c(k, 1:n)', alpha(ipol(k)))';
             end
-            npwl = length(ipwl);
-            if npwl ~= 0
-                gencost(ipwl, COST:2:m-1)= spdiags(alpha(ipwl), 0, npwl, npwl) * ...
+            if npwl
+                gencost(ipwl, COST:2:m-1) = spdiags(alpha(ipwl), 0, npwl, npwl) * ...
                     ones(length(ipwl), (m+1-COST)/2) + gencost(ipwl, COST:2:m-1);
             end
         otherwise

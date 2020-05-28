@@ -8425,6 +8425,7 @@ to use voltage squared, resulting in simpler derivatives.
     \end{itemize}
 \item Convert \code{dcopf\_solver()} to use the new \code{solver()} method of \code{@opt\_model} instead of calling \code{qps\_matpower()} manually.
 \item Convert \code{opf\_execute()} to use \code{nlps\_master()}, based on the new \code{solver()} method of \code{@opt\_model}, for AC OPF when using \code{fmincon}, \ipopt{}, \knitro{}, or \mipslink{}.
+\item Reduce memory usage in \code{modcost()} for very large systems. \emph{Thanks to Christoph Funke.}
 \item Deprecated functions:
     \begin{itemize}
     \item \code{foo()} -- use \code{bar()} instead.
