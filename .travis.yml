@@ -21,7 +21,7 @@ addons:
     update: true
 os:
 - linux
-- osx
+#- osx
 
 install:
 # build and install IPOPT from source on Mac
