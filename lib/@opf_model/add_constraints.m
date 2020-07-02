@@ -41,11 +41,10 @@ function om = add_constraints(om, name, varargin)
 %       OM.ADD_CONSTRAINTS(NAME, N, ISEQ, FCN, HESS, VARSETS);
 %
 %       For nonlinear constraints, N specifies the number of constraints
-%       in the set, ISEQ is a one character string specifying whether it
-%       is an equality or inequality constraint set ('=' or '<' respectively),
-%       FCN is the handle of a function that evaluates the constraint
-%       and its gradients, and HESS is the handle of a function that
-%       evaluates the Hessian of the constraints.
+%       in the set, ISEQ is a 1 for an equality constraint set, 0 for
+%       inequality, FCN is the handle of a function that evaluates the
+%       constraint and its gradients, and HESS is the handle of a function
+%       that evaluates the Hessian of the constraints.
 %
 %       For a constraint G(x) = 0, FCN should point to a function with the
 %       following interface:
