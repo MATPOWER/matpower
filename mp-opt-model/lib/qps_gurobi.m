@@ -3,7 +3,7 @@ function [x, f, eflag, output, lambda] = qps_gurobi(H, c, A, l, u, xmin, xmax, x
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
 %       QPS_GUROBI(H, C, A, L, U, XMIN, XMAX, X0, OPT)
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = QPS_GUROBI(PROBLEM)
-%   A wrapper function providing a MATPOWER standardized interface for using
+%   A wrapper function providing a standardized interface for using
 %   GUROBI to solve the following QP (quadratic programming)
 %   problem:
 %

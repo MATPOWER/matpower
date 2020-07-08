@@ -2,8 +2,9 @@ function d2G = eval_nln_constraint_hess(om, x, lam, iseq)
 %EVAL_NLN_CONSTRAINT_HESS  Builds and returns Hessian of nonlinear constraints.
 %   D2G = OM.EVAL_NLN_CONSTRAINT_HESS(X, LAM, ISEQ)
 %   Builds the Hessian of the full set of nonlinear equality or inequality
-%   constraints for given values of the optimization vector X and dual
-%   variables LAM, based on constraints added by ADD_NLN_CONSTRAINT.
+%   constraints (ISEQ equal to 1 or 0, respectively) for given values of
+%   the optimization vector X and dual variables LAM, based on constraints
+%   added by ADD_NLN_CONSTRAINT.
 %
 %       g(X) = 0
 %       h(X) <= 0

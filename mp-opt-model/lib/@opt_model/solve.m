@@ -1,10 +1,15 @@
 function [x, f, eflag, output, lambda] = solve(om, opt)
 %SOLVE  Solve the optimization model.
-%   [X, F, EXITFLAG, OUTPUT, LAMBDA] = OM.SOLVE()
-%   [X, F, EXITFLAG, OUTPUT, LAMBDA] = OM.SOLVE(OPT)
+%   X = OM.SOLVE()
+%   [X, F] = OM.SOLVE()
+%   [X, F, EXITFLAG] = OM.SOLVE()
+%   [X, F, EXITFLAG, OUTPUT] = OM.SOLVE()
+%   [X, F, EXITFLAG, OUTPUT, JAC] = OM.SOLVE()      (NLEQ problems)
+%   [X, F, EXITFLAG, OUTPUT, LAMBDA] = OM.SOLVE()   (other problem types)
+%   [X ...] = OM.SOLVE(OPT)
 %
 %   Solves the optimization model using one of the following, depending
-%   on the problem type: QPS_MASTER, MIQPS_MASTER, NLPS_MASTER.
+%   on the problem type: QPS_MASTER, MIQPS_MASTER, NLPS_MASTER, NLEQS_MASTER.
 %
 %   Inputs:
 %       OPT : optional options structure with the following fields,
@@ -46,6 +51,7 @@ function [x, f, eflag, output, lambda] = solve(om, opt)
 %           clp_opt     - options vector for CLP
 %           cplex_opt   - options struct for CPLEX
 %           fmincon_opt - options struct for FMINCON
+%           fsolve_opt  - options struct for FSOLVE
 %           glpk_opt    - options struct for GLPK
 %           grb_opt     - options struct for GUROBI
 %           intlinprog_opt - options struct for INTLINPROG
@@ -54,6 +60,7 @@ function [x, f, eflag, output, lambda] = solve(om, opt)
 %           linprog_opt - options struct for LINPROG
 %           mips_opt    - options struct for MIPS
 %           mosek_opt   - options struct for MOSEK
+%           newton_opt  - options struct for Newton method, NLEQS_NEWTON
 %           quadprog_opt - options struct for QUADPROG
 %           x0 (empty)  - initial value of x, overrides value stored in model
 %           skip_prices (0) - flag that specifies whether or not to skip the
@@ -67,26 +74,23 @@ function [x, f, eflag, output, lambda] = solve(om, opt)
 %
 %   Outputs:
 %       X : solution vector
-%       F : final objective function value
+%       F : final (objective) function value
 %       EXITFLAG : exit flag
 %           1 = converged
 %           0 or negative values = solver specific failure codes
 %       OUTPUT : output struct with the following fields:
 %           alg - algorithm code of solver used
 %           (others) - algorithm specific fields
-%               iterations - number of iterations performed
-%               hist - struct array with trajectories of the following:
-%                       feascond, gradcond, compcond, costcond, gamma,
-%                       stepsize, obj, alphap, alphad
-%               message - exit message
-%       LAMBDA : struct containing the Langrange and Kuhn-Tucker
-%           multipliers on the constraints, with fields:
+%       LAMBDA : (for all non-NLEQ problem types) struct containing the
+%           Langrange and Kuhn-Tucker multiplierson the constraints, with
+%           fields:
 %           eqnonlin - nonlinear equality constraints
 %           ineqnonlin - nonlinear inequality constraints
 %           mu_l - lower (left-hand) limit on linear constraints
 %           mu_u - upper (right-hand) limit on linear constraints
 %           lower - lower bound on optimization variables
 %           upper - upper bound on optimization variables
+%       JAC : (for NLEQ problems) final Jacobian matrix
 %
 %   See also OPT_MODEL, QPS_MASTER, MIQPS_MASTER, NLPS_MASTER
 
@@ -108,7 +112,12 @@ end
 pt = om.problem_type();
 if strcmp(pt, 'MINLP')          %% MINLP - mixed integer non-linear program
     error('@opt_model/solve: not yet implemented for ''MINLP'' problems.')
-elseif strcmp(pt, 'NLP')        %% NLP - non-linear program
+elseif strcmp(pt, 'NLEQ')       %% NLEQ - nonlinear equation
+    x0 = om.params_var();
+    fcn = @(x)eval_nln_constraint(om, x, 1);
+    [x, f, eflag, output, lambda] = nleqs_master(fcn, x0, opt);
+    success = (eflag > 0);
+elseif strcmp(pt, 'NLP')        %% NLP  - nonlinear program
     %% optimization vars, bounds, types
     [x0, xmin, xmax] = om.params_var();
     if isfield(opt, 'x0')

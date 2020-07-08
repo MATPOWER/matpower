@@ -1,5 +1,5 @@
 function t_qps_master(quiet)
-%T_QPS_MASTER  Tests of QPS_MASTER QP solvers.
+%T_QPS_MASTER  Tests of LP/QP solvers via QPS_MASTER().
 
 %   MP-Opt-Model
 %   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)

@@ -2,6 +2,49 @@ Change history for MP-Opt-Model
 ===============================
 
 
+Version 2.0 - *Jul 8, 2020*
+---------------------------
+
+#### 7/8/20
+  - Release 2.0.
+
+#### 7/3/20
+  - Add to `eval_nln_constraint()` method the ability to compute
+    constraints for a single named set.
+
+#### 7/2/20
+  - Skip evaluation of gradient if `eval_nln_constraint()` is called
+    with a single output argument.
+  - Add `params_nln_constraint()` method, and add documentation to the
+    manual for it and `params_nln_cost()`.
+
+#### 7/1/20
+  - Add `mpopt2nleqopt()` to create or modify an `nleqs_master()`
+    options struct from a MATPOWER options struct.
+  - Add table of valid `have_fcn()` input tags to User's Manual.
+
+#### 6/24/20
+  - Add support for nonlinear equations (NLEQ) to `opt_model`. For
+    problems with only nonlinear equality constraints and no costs, the
+    `problem_type()` method returns `'NLEQ'` and the `solve()` method
+    calls `nleqs_master()` to solve the problem.
+  - Add tests for solving LP/QP, MILP/MIQP, NLP and NLEQ problems via
+    `opt_model/solve()`.
+
+#### 6/17/20
+  - Add `nleqs_master()` function as unified interface for solving
+    nonlinear equations, including implementations for `fsolve` and
+    Newton's method in functions `nleqs_fsolve()` and `nleqs_newton()`,
+    respectively.
+
+#### 6/16/20
+  - Add new `'fsolve'` tag to `have_fcn()` to check for availability of
+    `fsolve()` function.
+
+#### 5/11/20
+  - Remove redundant MIPS tests from `test_mp_opt_model`.
+
+
 Version 1.0 - *May 8, 2020*
 ---------------------------
 

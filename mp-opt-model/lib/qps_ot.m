@@ -3,7 +3,7 @@ function [x, f, eflag, output, lambda] = qps_ot(H, c, A, l, u, xmin, xmax, x0, o
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
 %       QPS_OT(H, C, A, L, U, XMIN, XMAX, X0, OPT)
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = QPS_OT(PROBLEM)
-%   A wrapper function providing a MATPOWER standardized interface for using
+%   A wrapper function providing a standardized interface for using
 %   QUADPROG or LINPROG from the Optimization Toolbox to solve the
 %   following QP (quadratic programming) problem:
 %

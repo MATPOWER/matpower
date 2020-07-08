@@ -21,8 +21,15 @@ function prob = problem_type(om)
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See https://github.com/MATPOWER/mp-opt-model for more info.
 
-if om.getN('nle') || om.getN('nli') || om.getN('nlc')
-    prob = 'NLP';
+nleN = om.getN('nle');
+nliN = om.getN('nli');
+nlcN = om.getN('nlc');
+if nleN || nliN || nlcN
+    if nliN || nlcN || om.getN('qdc') || om.getN('lin')
+        prob = 'NLP';
+    else        %% only nonlin equality, no cost
+        prob = 'NLEQ';
+    end
 else
     %% get cost parameters
     [H, C] = om.params_quad_cost();
@@ -32,6 +39,6 @@ else
         prob = 'QP';
     end
 end
-if om.is_mixed_integer()
+if om.is_mixed_integer() && ~strcmp(prob, 'NLEQ')
     prob = ['MI' prob];
 end

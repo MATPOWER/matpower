@@ -2,11 +2,11 @@ MP-Opt-Model
 ============
 
 [MP-Opt-Model][1] is a package of MATLAB/Octave M-files for constructing
-and solving mathematical optimization problems. It provides an
-easy-to-use, object-oriented interface for building and solving your
-optimization model. It also includes a unified interface for calling
-numerous LP, QP, mixed-integer and nonlinear solvers, with the ability
-to switch solvers by simply changing an input option.
+and solving mathematical programming and optimization problems. It provides
+an easy-to-use, object-oriented interface for building and solving your
+model. It also includes a unified interface for calling numerous LP, QP,
+mixed-integer and nonlinear solvers, with the ability to switch solvers
+simply by changing an input option.
 
 It is based on code that was originally developed by Ray D. Zimmerman of
 Cornell University as part of [MATPOWER][2].
@@ -46,27 +46,25 @@ of MATLAB or Octave, including setting up your MATLAB path.
     verify that MP-Opt-Model is properly installed and functioning. (Note: The
     tests require functioning installations of both [MP-Test][5] and
     [MIPS][6]) The result should resemble the following:
-```matlab
+```
   >> test_mp_opt_model
   t_nested_struct_copy....ok
   t_have_fcn..............ok
-  t_mips..................ok
-  t_mips_pardiso..........ok (60 of 60 skipped)
-  t_qps_mips..............ok
+  t_nleqs_master..........ok
   t_qps_master............ok (100 of 396 skipped)
-  t_miqps_master..........ok (102 of 288 skipped)
+  t_miqps_master..........ok (68 of 288 skipped)
   t_nlps_master...........ok
   t_opt_model.............ok
-  All tests successful (1699 passed, 262 skipped of 1961)
-  Elapsed time 1.51 seconds.
+  t_om_solve_nleqs........ok
+  t_om_solve_qps..........ok (79 of 319 skipped)
+  t_om_solve_miqps........ok (12 of 72 skipped)
+  t_om_solve_nlps.........ok
+  All tests successful (2519 passed, 259 skipped of 2778)
+  Elapsed time 2.52 seconds.
 ```
 
 Sample Usage
 ------------
-
-Until we get some time to write some documentation, there are examples in the
-test files in `<MPOM>/lib/t`, as well as in the [`opf_setup()`][12] and
-[`opf_execute()`][13] functions in [MATPOWER][2].
 
 Suppose we have the following constrained 4-dimensional quadratic
 programming (QP) problem with two 2-dimensional variables, _y_ and _z_,
@@ -172,8 +170,11 @@ An options struct can be passed to the `solve` method or the
 `qps_master` function to select a specific solver, control the level of
 progress output, or modify a solver's default parameters.
 
-Both approaches can be applied to each of the types of problems the
-MP-Opt-Model handles, namely, LP, QP, MILP, MIQP and NLP.
+Both approaches can be applied to each of the types of problems that
+MP-Opt-Model handles, namely, LP, QP, MILP, MIQP, NLP and nonlinear equations.
+
+There are also examples in the test files in `<MPOM>/lib/t`, as well as in
+the [`opf_setup()`][12] and [`opf_execute()`][13] functions in [MATPOWER][2].
 
 
 Documentation
@@ -200,22 +201,22 @@ function, e.g.: `qps_master`, `miqps_master`, and `nlps_master`.
 We request that publications derived from the use of MP-Opt-Model
 explicitly acknowledge that fact by citing the [MP-Opt-Model User's Manual][7].
 The citation and DOI can be version-specific or general, as appropriate.
-For version 1.0, use:
+For version 2.0, use:
 
->   R. D. Zimmerman. *MP-Opt-Model User's Manual, Version 1.0*. 2020.
-    [Online]. Available: https://matpower.org/docs/MP-Opt-Model-manual-1.0.pdf  
-    doi: [10.5281/zenodo.3818003](https://doi.org/10.5281/zenodo.3818003)
+>   R. D. Zimmerman. *MP-Opt-Model User's Manual, Version 2.0*. 2020.
+    [Online]. Available: https://matpower.org/docs/MP-Opt-Model-manual-2.0.pdf  
+    doi: [10.5281/zenodo.3935928](https://doi.org/10.5281/zenodo.3935928)
 
 For a version non-specific citation, use the following citation and DOI,
 with *\<YEAR\>* replaced by the year of the most recent release:
 
 >   R. D. Zimmerman. *MP-Opt-Model User's Manual*. *\<YEAR\>*.
     [Online]. Available: https://matpower.org/docs/MP-Opt-Model-manual.pdf  
-    doi: [10.5281/zenodo.3818003][11]
+    doi: [10.5281/zenodo.3818002][11]
 
 A list of versions of the User's Manual with release dates and
 version-specific DOI's can be found via the general DOI at
-https://doi.org/10.5281/zenodo.3818003.
+https://doi.org/10.5281/zenodo.3818002.
 
 
 Contributing
@@ -241,6 +242,6 @@ MP-Opt-Model is distributed under the [3-clause BSD license][9].
 [8]: CONTRIBUTING.md
 [9]: LICENSE
 [10]: CITATION
-[11]: https://doi.org/10.5281/zenodo.3818003
+[11]: https://doi.org/10.5281/zenodo.3818002
 [12]: https://github.com/MATPOWER/matpower/blob/master/lib/opf_setup.m
 [13]: https://github.com/MATPOWER/matpower/blob/master/lib/opf_execute.m

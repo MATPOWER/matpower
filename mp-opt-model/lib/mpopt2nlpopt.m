@@ -17,11 +17,13 @@ function nlpopt = mpopt2nlpopt(mpopt, model, alg)
 %           'MINLP' - NLP with mixed integer/continuous variables
 %                   (Artelys Knitro) -- not yet implemented
 %       ALG ('opf.ac') : (optional) 'opf.ac' or any valid value of
-%               OPT.alg for NLP_MATPOWER. The first option indicates that
+%               OPT.alg for NLPS_MASTER. The first option indicates that
 %               it should be taken from MPOPT.opf.ac.solver.
 %
 %   Output:
 %       NLPOPT : an options struct for use by NLPS_MASTER and friends
+%
+%   See NLPS_MASTER, MPOPTION.
 
 %   MP-Opt-Model
 %   Copyright (c) 2015-2020, Power Systems Engineering Research Center (PSERC)

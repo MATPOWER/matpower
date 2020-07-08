@@ -3,7 +3,7 @@ function [x, f, eflag, output, lambda] = qps_mosek(H, c, A, l, u, xmin, xmax, x0
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
 %       QPS_MOSEK(H, C, A, L, U, XMIN, XMAX, X0, OPT)
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = QPS_MOSEK(PROBLEM)
-%   A wrapper function providing a MATPOWER standardized interface for using
+%   A wrapper function providing a standardized interface for using
 %   MOSEKOPT to solve the following QP (quadratic programming) problem:
 %
 %       min 1/2 X'*H*X + C'*X

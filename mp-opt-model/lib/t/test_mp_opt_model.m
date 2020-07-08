@@ -1,5 +1,5 @@
 function success = test_mp_opt_model(verbose, exit_on_fail)
-%TEST_MP_OPT_MODEL  Run all MATPOWER tests.
+%TEST_MP_OPT_MODEL  Run all MP-Opt-Model tests.
 %   TEST_MP_OPT_MODEL
 %   TEST_MP_OPT_MODEL(VERBOSE)
 %   TEST_MP_OPT_MODEL(VERBOSE, EXIT_ON_FAIL)
@@ -29,16 +29,18 @@ end
 
 tests = {};
 
-%% MATPOWER base test
+%% MP-Opt-Model tests
 tests{end+1} = 't_nested_struct_copy';
 tests{end+1} = 't_have_fcn';
-tests{end+1} = 't_mips';
-tests{end+1} = 't_mips_pardiso';
-tests{end+1} = 't_qps_mips';
+tests{end+1} = 't_nleqs_master';
 tests{end+1} = 't_qps_master';
 tests{end+1} = 't_miqps_master';
 tests{end+1} = 't_nlps_master';
 tests{end+1} = 't_opt_model';
+tests{end+1} = 't_om_solve_nleqs';
+tests{end+1} = 't_om_solve_qps';
+tests{end+1} = 't_om_solve_miqps';
+tests{end+1} = 't_om_solve_nlps';
 
 %% run the tests
 all_ok = t_run_tests( tests, verbose );

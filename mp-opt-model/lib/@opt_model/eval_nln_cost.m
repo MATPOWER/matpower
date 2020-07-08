@@ -101,7 +101,7 @@ else                                %% individual named set
         else
             f = fcn(xx);                %% evaluate kth cost
         end
-    elseif nargout == 1             %% indexing required, recurse
+    elseif nargout == 1             %% sum over all indices for name
         done = 0;
         f = 0;          %% initialize cumulative cost
         idx = num2cell(ones(size(dims))); %% initialize idx

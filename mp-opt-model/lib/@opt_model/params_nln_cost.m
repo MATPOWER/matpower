@@ -4,9 +4,9 @@ function [N, fcn, vs] = params_nln_cost(om, name, idx)
 %   [N, FCN] = OM.PARAMS_NLN_COST(NAME, IDX_LIST)
 %   [N, FCN, VS] = OM.PARAMS_NLN_COST(...)
 %
-%   Returns the parameters N and FCN for the corresponding named general
-%   nonlinear cost set. Likewise for indexed named sets specified
-%   by NAME and IDX_LIST.
+%   Returns the parameters N and FCN provided when the corresponding
+%   named general nonlinear cost set was added to the model. Likewise
+%   for indexed named sets specified by NAME and IDX_LIST.
 %
 %   An optional 3rd output argument VS indicates the variable sets used by
 %   this cost set.
@@ -25,8 +25,16 @@ nlc = om.nlc;
 if nargin < 3
     idx = {};
 end
-dims = size(nlc.idx.i1.(name));
-if ~isempty(idx) || prod(dims) == 1 %% indexed, or simple named set
+
+if isempty(idx)
+    dims = size(nlc.idx.i1.(name));
+    if prod(dims) ~= 1
+        error('@opt_model/params_nln_cost: general nonlinear cost set ''%s'' requires an IDX_LIST arg', name)
+    end
+    N = nlc.idx.N.(name);
+    fcn = nlc.data.fcn.(name);
+    vs = nlc.data.vs.(name);
+else
     %% calls to substruct() are relatively expensive, so we pre-build the
     %% structs for addressing cell and numeric array fields
     %% sn = substruct('.', name, '()', idx);
@@ -34,15 +42,7 @@ if ~isempty(idx) || prod(dims) == 1 %% indexed, or simple named set
     sc = struct('type', {'.', '{}'}, 'subs', {name, idx});  %% cell array field
     sn = sc; sn(2).type = '()';                             %% num array field
 
-    if isempty(idx)
-        N = nlc.idx.N.(name);
-        fcn = nlc.data.fcn.(name);
-        vs = nlc.data.vs.(name);
-    else
-        N = subsref(nlc.idx.N, sn);
-        fcn = subsref(nlc.data.fcn, sc);
-        vs = subsref(nlc.data.vs, sc);
-    end
-else
-    error('@opt_model/params_nln_cost: general nonlinear cost set ''%s'' requires an IDX_LIST arg', name)
+    N = subsref(nlc.idx.N, sn);
+    fcn = subsref(nlc.data.fcn, sc);
+    vs = subsref(nlc.data.vs, sc);
 end

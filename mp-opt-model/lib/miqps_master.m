@@ -1,5 +1,5 @@
 function [x, f, eflag, output, lambda] = miqps_master(H, c, A, l, u, xmin, xmax, x0, vtype, opt)
-%MIQPS_MASTER  Mixed Integer Quadratic Program Solver for MATPOWER.
+%MIQPS_MASTER  Mixed Integer Quadratic Program Solver wrapper function.
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
 %       MIQPS_MASTER(H, C, A, L, U, XMIN, XMAX, X0, VTYPE, OPT)
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = MIQPS_MASTER(PROBLEM)

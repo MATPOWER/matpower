@@ -1,5 +1,5 @@
-function t_nlps_master(quiet)
-%T_NLPS_MASTER  Tests of NLP solvers via NLPS_MASTER().
+function t_om_solve_nlps(quiet)
+%T_OM_SOLVE_NLPS  Tests of NLP solvers via OM.SOLVE().
 
 %   MP-Opt-Model
 %   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
@@ -30,7 +30,7 @@ cfg = {
 %     {'KNITRO',  'Knitro',   'knitro',       []                          },
 % };
 
-n = 54;
+n = 46;
 
 t_begin(n*length(cfg), quiet);
 
@@ -71,7 +71,10 @@ t = sprintf('%s - unconstrained banana function : ', name);
 %% from MATLAB Optimization Toolbox's bandem.m
 f_fcn = @(x)f2(x);
 x0 = [-1.9; 2];
-[x, f, s, out, lam] = nlps_master(f_fcn, x0, [], [], [], [], [], [], [], opt);
+om = opt_model;
+om.add_var('x', 2, x0);
+om.add_nln_cost('f', 1, f_fcn);
+[x, f, s, out, lam] = om.solve(opt);
 t_ok(s > 0, [t 'success']);
 t_is(x, [1; 1], 8, [t 'x']);
 t_is(f, 0, 13, [t 'f']);
@@ -84,7 +87,10 @@ t = sprintf('%s - unconstrained 3-d quadratic : ', name);
 %% from http://www.akiti.ca/QuadProgEx0Constr.html
 f_fcn = @(x)f3(x);
 x0 = [0; 0; 0];
-[x, f, s, out, lam] = nlps_master(f_fcn, x0, [], [], [], [], [], [], [], opt);
+om = opt_model;
+om.add_var('x', 3, x0);
+om.add_nln_cost('f', 1, f_fcn);
+[x, f, s, out, lam] = om.solve(opt);
 t_ok(s > 0, [t 'success']);
 t_is(x, [3; 5; 7], 6, [t 'x']);
 t_is(f, -244, 12, [t 'f']);
@@ -102,7 +108,11 @@ A = [   1       1       1       1;
 l = [1; 0.10];
 u = [1; Inf];
 xmin = zeros(4,1);
-[x, f, s, out, lam] = nlps_master(f_fcn, x0, A, l, u, xmin, [], [], [], opt);
+om = opt_model;
+om.add_var('x', 4, x0, xmin);
+om.add_nln_cost('f', 1, f_fcn);
+om.add_lin_constraint('Ax_b', A, l, u);
+[x, f, s, out, lam] = om.solve(opt);
 t_ok(s > 0, [t 'success']);
 t_is(x, [0; 2.8; 0.2; 0]/3, 6, [t 'x']);
 t_is(f, 3.29/3, 6, [t 'f']);
@@ -114,12 +124,16 @@ t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 t = sprintf('%s - constrained 2-d nonlinear : ', name);
 %% from https://en.wikipedia.org/wiki/Nonlinear_programming#2-dimensional_example
 f_fcn = @(x)f5(x);
-gh_fcn = @(x)gh5(x);
-hess_fcn = @(x, lam, cost_mult)hess5(x, lam, cost_mult);
+h_fcn = @(x)h5(x);
+d2h_fcn = @(x, lam)hess5a(x, lam);
 x0 = [1.1; 0];
 xmin = zeros(2, 1);
 % xmax = 3 * ones(2, 1);
-[x, f, s, out, lam] = nlps_master(f_fcn, x0, [], [], [], xmin, [], gh_fcn, hess_fcn, opt);
+om = opt_model;
+om.add_var('x', 2, x0, xmin);
+om.add_nln_cost('f', 1, f_fcn);
+om.add_nln_constraint('h', 2, 0, h_fcn, d2h_fcn);
+[x, f, s, out, lam] = om.solve(opt);
 t_ok(s > 0, [t 'success']);
 t_is(x, [1; 1], 6, [t 'x']);
 t_is(f, -2, 6, [t 'f']);
@@ -132,22 +146,14 @@ t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 t = sprintf('%s - constrained 3-d nonlinear : ', name);
 %% from https://en.wikipedia.org/wiki/Nonlinear_programming#3-dimensional_example
 f_fcn = @(x)f6(x);
-gh_fcn = @(x)gh6(x);
-hess_fcn = @(x, lam, cost_mult)hess6(x, lam, cost_mult);
+h_fcn = @(x)h6(x);
+d2h_fcn = @(x, lam)hess6a(x, lam);
 x0 = [1; 1; 0];
-[x, f, s, out, lam] = nlps_master(f_fcn, x0, [], [], [], [], [], gh_fcn, hess_fcn, opt);
-t_ok(s > 0, [t 'success']);
-t_is(x, [1.58113883; 2.23606798; 1.58113883], 6, [t 'x']);
-t_is(f, -5*sqrt(2), 6, [t 'f']);
-t_is(lam.ineqnonlin, [0;sqrt(2)/2], 7, [t 'lam.ineqnonlin']);
-t_ok(isempty(lam.mu_l), [t 'lam.mu_l']);
-t_ok(isempty(lam.mu_u), [t 'lam.mu_u']);
-t_is(lam.lower, zeros(size(x)), 13, [t 'lam.lower']);
-t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
-
-t = sprintf('%s - constrained 3-d nonlinear (struct) : ', name);
-p = struct('f_fcn', f_fcn, 'x0', x0, 'gh_fcn', gh_fcn, 'hess_fcn', hess_fcn, 'opt', opt);
-[x, f, s, out, lam] = nlps_master(p);
+om = opt_model;
+om.add_var('x', 3, x0);
+om.add_nln_cost('f', 1, f_fcn);
+om.add_nln_constraint('h', 2, 0, h_fcn, d2h_fcn);
+[x, f, s, out, lam] = om.solve(opt);
 t_ok(s > 0, [t 'success']);
 t_is(x, [1.58113883; 2.23606798; 1.58113883], 6, [t 'x']);
 t_is(f, -5*sqrt(2), 6, [t 'f']);
@@ -160,12 +166,19 @@ t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 t = sprintf('%s - constrained 4-d nonlinear : ', name);
 %% Hock & Schittkowski test problem #71
 f_fcn = @(x)f7(x);
-gh_fcn = @(x)gh7(x);
-hess_fcn = @(x, lam, sigma)hess7(x, lam, sigma);
+g_fcn = @(x)g7(x);
+h_fcn = @(x)h7(x);
+d2g_fcn = @(x, lam)hess7g(x, lam);
+d2h_fcn = @(x, lam)hess7h(x, lam);
 x0 = [1; 5; 5; 1];
 xmin = ones(4, 1);
 xmax = 5 * xmin;
-[x, f, s, out, lam] = nlps_master(f_fcn, x0, [], [], [], xmin, xmax, gh_fcn, hess_fcn, opt);
+om = opt_model;
+om.add_var('x', 4, x0, xmin, xmax);
+om.add_nln_cost('f', 1, f_fcn);
+om.add_nln_constraint('g', 1, 1, g_fcn, d2g_fcn);
+om.add_nln_constraint('h', 1, 0, h_fcn, d2h_fcn);
+[x, f, s, out, lam] = om.solve(opt);
 t_ok(s > 0, [t 'success']);
 t_is(x, [1; 4.7429994; 3.8211503; 1.3794082], 6, [t 'x']);
 t_is(f, 17.0140173, 6, [t 'f']);

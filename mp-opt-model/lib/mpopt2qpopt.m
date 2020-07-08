@@ -29,6 +29,8 @@ function qpopt = mpopt2qpopt(mpopt, model, alg)
 %   Output:
 %       QPOPT : an options struct for use by QPS_MASTER or MIQPS_MASTER
 %               and friends
+%
+%   See QPS_MASTER, MIQPS_MASTER, MPOPTION.
 
 %   MP-Opt-Model
 %   Copyright (c) 2015-2020, Power Systems Engineering Research Center (PSERC)

@@ -1,5 +1,5 @@
-function t_miqps_master(quiet)
-%T_MIQPS_MASTER  Tests of MILP/MIQP solvers via MIQPS_MASTER().
+function t_om_solve_qps(quiet)
+%T_OM_SOLVE_QPS  Tests of QP solvers via OM.SOLVE().
 
 %   MP-Opt-Model
 %   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
@@ -13,17 +13,13 @@ if nargin < 1
     quiet = 0;
 end
 
-algs = {'DEFAULT', 'CPLEX', 'MOSEK', 'GUROBI', 'GLPK', 'OT'};
-names = {'DEFAULT', 'CPLEX', 'MOSEK', 'Gurobi', 'glpk', 'intlin/lin/quadprog'};
-check = {[], 'cplex', 'mosek', 'gurobi', 'glpk', 'intlinprog'};
-does_qp = [0 1 1 1 0 0];
-if have_fcn('gurobi') || have_fcn('cplex') || have_fcn('mosek')
-    does_qp(1) = 1;
-end
+algs = {'DEFAULT', 'BPMPD', 'MIPS', 250, 'IPOPT', 'OT', 'CPLEX', 'MOSEK', 'GUROBI', 'CLP', 'GLPK'};
+names = {'DEFAULT', 'BPMPD_MEX', 'MIPS', 'sc-MIPS', 'IPOPT', 'linprog/quadprog', 'CPLEX', 'MOSEK', 'Gurobi', 'CLP', 'glpk'};
+check = {[], 'bpmpd', [], [], 'ipopt', 'quadprog', 'cplex', 'mosek', 'gurobi', 'clp', 'glpk'};
+does_qp = [1 1 1 1 1 1 1 1 1 1 0];
 
-n = 48;
-nqp = 28;
-nmiqp = 6;
+n = 29;
+nqp = 21;
 t_begin(n*length(algs), quiet);
 
 diff_alg_warn_id = 'optim:linprog:WillRunDiffAlg';
@@ -53,6 +49,16 @@ for k = 1:length(algs)
                 'num_threads', 0, ...
                 'opt', 0 ) ...
         );
+        if strcmp(names{k}, 'MIPS') || strcmp(names{k}, 'sc-MIPS')
+            opt.mips_opt.comptol = 1e-8;
+        end
+%         if strcmp(names{k}, 'linprog/quadprog')
+%             opt.verbose = 2;
+%             opt.linprog_opt.Algorithm = 'interior-point';
+%             opt.linprog_opt.Algorithm = 'active-set';
+%             opt.linprog_opt.Algorithm = 'simplex';
+%             opt.linprog_opt.Algorithm = 'dual-simplex';
+%         end
         if strcmp(names{k}, 'CPLEX')
 %           alg = 0;        %% default uses barrier method with NaN bug in lower lim multipliers
             alg = 2;        %% use dual simplex
@@ -92,14 +98,22 @@ for k = 1:length(algs)
         u = [20; Inf; 30];
         xmin = [0; 0; 0];
         x0 = [];
-        [x, f, s, out, lam] = miqps_master([], c, A, l, u, xmin, [], [], [], opt);
+        om = opt_model;
+        om.add_var('x', 3, x0, xmin);
+        om.add_quad_cost('c', [], c);
+        om.add_lin_constraint('Ax', A, l, u);
+        [x, f, s, out, lam] = om.solve(opt);
         t_is(s, 1, 12, [t 'success']);
         t_is(x, [0; 15; 3], 6, [t 'x']);
         t_is(f, -78, 6, [t 'f']);
         t_is(lam.mu_l, [0;1.5;0], 9, [t 'lam.mu_l']);
         t_is(lam.mu_u, [0;0;0.5], 9, [t 'lam.mu_u']);
-        t_is(lam.lower, [1;0;0], 9, [t 'lam.lower']);
-        t_is(lam.upper, zeros(size(x)), 9, [t 'lam.upper']);
+        if strcmp(algs{k}, 'CLP') && ~have_fcn('opti_clp')
+            t_skip(2, [t 'lam.lower/upper : MEXCLP does not return multipliers on var bounds']);
+        else
+            t_is(lam.lower, [1;0;0], 9, [t 'lam.lower']);
+            t_is(lam.upper, zeros(size(x)), 9, [t 'lam.upper']);
+        end
 
         if does_qp(k)
             t = sprintf('%s - unconstrained 3-d quadratic : ', names{k});
@@ -107,7 +121,10 @@ for k = 1:length(algs)
             H = [5 -2 -1; -2 4 3; -1 3 5];
             c = [2; -35; -47];
             x0 = [0; 0; 0];
-            [x, f, s, out, lam] = miqps_master(H, c, [], [], [], [], [], [], [], opt);
+            om = opt_model;
+            om.add_var('x', 3, x0);
+            om.add_quad_cost('c', H, c);
+            [x, f, s, out, lam] = om.solve(opt);
             t_is(s, 1, 12, [t 'success']);
             t_is(x, [3; 5; 7], 8, [t 'x']);
             t_is(f, -249, 13, [t 'f']);
@@ -128,14 +145,22 @@ for k = 1:length(algs)
             u = [2; 2; 3];
             xmin = [0; 0];
             x0 = [];
-            [x, f, s, out, lam] = miqps_master(H, c, A, l, u, xmin, [], x0, [], opt);
+            om = opt_model;
+            om.add_var('x', 2, x0, xmin);
+            om.add_quad_cost('c', H, c);
+            om.add_lin_constraint('Ax', A, l, u);
+            [x, f, s, out, lam] = om.solve(opt);
             t_is(s, 1, 12, [t 'success']);
             t_is(x, [2; 4]/3, 7, [t 'x']);
             t_is(f, -74/9, 6, [t 'f']);
             t_is(lam.mu_l, [0;0;0], 13, [t 'lam.mu_l']);
             t_is(lam.mu_u, [28;4;0]/9, 4, [t 'lam.mu_u']);
-            t_is(lam.lower, zeros(size(x)), 7, [t 'lam.lower']);
-            t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
+            if strcmp(algs{k}, 'CLP') && ~have_fcn('opti_clp')
+                t_skip(2, [t 'lam.lower/upper : MEXCLP does not return multipliers on var bounds']);
+            else
+                t_is(lam.lower, zeros(size(x)), 7, [t 'lam.lower']);
+                t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
+            end
 
             t = sprintf('%s - constrained 4-d QP : ', names{k});
             %% from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm
@@ -150,83 +175,30 @@ for k = 1:length(algs)
             u = [1; Inf];
             xmin = zeros(4,1);
             x0 = [1; 0; 0; 1];
-            [x, f, s, out, lam] = miqps_master(H, c, A, l, u, xmin, [], x0, [], opt);
+            om = opt_model;
+            om.add_var('x', 4, x0, xmin);
+            om.add_quad_cost('c', H, c);
+            om.add_lin_constraint('Ax', A, l, u);
+            [x, f, s, out, lam] = om.solve(opt);
             t_is(s, 1, 12, [t 'success']);
             t_is(x, [0; 2.8; 0.2; 0]/3, 5, [t 'x']);
             t_is(f, 3.29/3, 6, [t 'f']);
             t_is(lam.mu_l, [6.58;0]/3, 6, [t 'lam.mu_l']);
             t_is(lam.mu_u, [0;0], 13, [t 'lam.mu_u']);
-            t_is(lam.lower, [2.24;0;0;1.7667], 4, [t 'lam.lower']);
-            t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
-
-            t = sprintf('%s - (struct) constrained 4-d QP : ', names{k});
-            p = struct('H', H, 'A', A, 'l', l, 'u', u, 'xmin', xmin, 'x0', x0, 'opt', opt);
-            [x, f, s, out, lam] = miqps_master(p);
-            t_is(s, 1, 12, [t 'success']);
-            t_is(x, [0; 2.8; 0.2; 0]/3, 5, [t 'x']);
-            t_is(f, 3.29/3, 6, [t 'f']);
-            t_is(lam.mu_l, [6.58;0]/3, 6, [t 'lam.mu_l']);
-            t_is(lam.mu_u, [0;0], 13, [t 'lam.mu_u']);
-            t_is(lam.lower, [2.24;0;0;1.7667], 4, [t 'lam.lower']);
-            t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
+            if strcmp(algs{k}, 'CLP') && ~have_fcn('opti_clp')
+                t_skip(2, [t 'lam.lower/upper : MEXCLP does not return multipliers on var bounds']);
+            else
+                t_is(lam.lower, [2.24;0;0;1.7667], 4, [t 'lam.lower']);
+                t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
+            end
         else
             t_skip(nqp, sprintf('%s does not handle QP problems', names{k}));
         end
 
         t = sprintf('%s - infeasible LP : ', names{k});
         p = struct('A', sparse([1 1]), 'c', [1;1], 'u', -1, 'xmin', [0;0], 'opt', opt);
-        [x, f, s, out, lam] = miqps_master(p);
+        [x, f, s, out, lam] = qps_master(p);
         t_ok(s <= 0, [t 'no success']);
-
-% opt.verbose = 3;
-        t = sprintf('%s - 2-d MILP : ', names{k});
-        %% from MOSEK 6.0 Guided Tour, section  7.13.1, https://docs.mosek.com/6.0/toolbox/node009.html
-        c = [-2; -3];
-        A = sparse([195 273; 4 40]);
-        u = [1365; 140];
-        xmax = [4; Inf];
-        vtype = 'I';
-        p = struct('c', c, 'A', A, 'u', u, 'xmax', xmax, 'vtype', vtype, 'opt', opt);
-        [x, f, s, out, lam] = miqps_master(p);
-        t_is(s, 1, 12, [t 'success']);
-        t_is(x, [4; 2], 12, [t 'x']);
-        t_is(lam.mu_l, [0; 0], 12, [t 'lam.mu_l']);
-        t_is(lam.mu_u, [0; 0], 12, [t 'lam.mu_u']);
-        t_is(lam.lower, [0; 0], 12, [t 'lam.lower']);
-        t_is(lam.upper, [2; 3], 12, [t 'lam.upper']);
-
-        if does_qp(k)
-            t = sprintf('%s - 4-d MIQP : ', names{k});
-            %% from cplexmiqpex.m, CPLEX_Studio_Academic124/cplex/examples/src/matlab/cplexmiqpex.m
-            H = sparse([ 33   6    0    0;
-                          6  22   11.5  0;
-                          0  11.5 11    0;
-                          0   0    0    0]);
-            c = [-1 -2 -3 -1]';
-            Aineq = [-1  1  1 10;
-               1 -3  1  0];
-            bineq = [20  30]';
-            Aeq   = [0  1  0 -3.5];
-            beq   =  0;
-            xmin    = [ 0;   0;   0; 2];
-            xmax    = [40; Inf; Inf; 3];
-            A = sparse([Aeq; Aineq]);
-            l = [beq; -Inf; -Inf];
-            u = [beq; bineq];
-            vtype = 'CCCI';
-            p = struct('H', H, 'c', c, 'A', A, 'l', l, 'u', u, ...
-                'xmin', xmin, 'xmax', xmax, 'vtype', vtype, 'opt', opt);
-            [x, f, s, out, lam] = miqps_master(p);
-            t_is(s, 1, 12, [t 'success']);
-            t_is(x, [7; 7; 0; 2], 7, [t 'x']);
-            t_is(lam.mu_l, [466; 0; 0], 6, [t 'lam.mu_l']);
-            t_is(lam.mu_u, [0; 272; 0], 6, [t 'lam.mu_u']);
-            t_is(lam.lower, [0; 0; 349.5; 4350], 5, [t 'lam.lower']);
-            t_is(lam.upper, [0; 0; 0; 0], 7, [t 'lam.upper']);
-        else
-            t_skip(nmiqp, sprintf('%s does not handle MIQP problems', names{k}));
-        end
-% opt.verbose = 0;
     end
 end
 

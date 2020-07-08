@@ -1,5 +1,5 @@
 function [x, f, eflag, output, lambda] = qps_master(H, c, A, l, u, xmin, xmax, x0, opt)
-%QPS_MASTER  Quadratic Program Solver for MATPOWER.
+%QPS_MASTER  Quadratic Program Solver wrapper function.
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
 %       QPS_MASTER(H, C, A, L, U, XMIN, XMAX, X0, OPT)
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = QPS_MASTER(PROBLEM)

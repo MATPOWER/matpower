@@ -7,9 +7,8 @@ function om = add_nln_constraint(om, name, idx, N, iseq, fcn, hess, varsets)
 %   OM.ADD_NLN_CONSTRAINT(NAME, IDX_LIST, N, ISEQ, FCN, HESS);
 %   OM.ADD_NLN_CONSTRAINT(NAME, IDX_LIST, N, ISEQ, FCN, HESS, VARSETS);
 %
-%   N specifies the number of constraints in the set, ISEQ is a one
-%   character string specifying whether it is an equality or inequality
-%   constraint set ('=' or '<' respectively), FCN is the handle of a
+%   N specifies the number of constraints in the set, ISEQ is a 1 for
+%   an equality constraint set, 0 for inequality, FCN is the handle of a
 %   function that evaluates the constraint and its gradients, and HESS is
 %   the handle of a function that evaluates the Hessian of the constraints.
 %

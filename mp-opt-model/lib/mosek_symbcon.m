@@ -6,7 +6,7 @@ function sc = mosek_symbcon
 %   as those used to select the optimizer algorithm. Since the values
 %   of these constants are not necessarily the same from one version of
 %   MOSEK to the next, it is safer to use the symbolic constant rather
-%   than the value in your MATPOWER code. For example, the following code
+%   than the value in your code. For example, the following code
 %
 %       mpopt = mpoption('opf.dc.solver', 'MOSEK', 'mosek_lp_alg', 4);
 %

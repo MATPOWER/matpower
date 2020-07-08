@@ -40,7 +40,7 @@ else
     t_ok(have_fcn('matlab'), 'Matlab');
 end
 
-t = '$MATPOWER/t/t_have_fcn must not be in path';
+t = '<MPOM>/lib/t/t_have_fcn must not be in path';
 t_ok(exist('rithmaticker') ~= 2, t);
 
 %% find path to this test file
@@ -55,7 +55,7 @@ t_ok(have_fcn('rithmaticker') == 0, [t ' : not available']);
 cd(fullfile(p, 't_have_fcn'));
 cwd2 = pwd;
 
-t = '$MATPOWER/t/t_have_fcn must be in path';
+t = '<MPOM>/lib/t/t_have_fcn must be in path';
 t_ok(exist('rithmaticker') == 2, t);
 
 %% still not available (cached)

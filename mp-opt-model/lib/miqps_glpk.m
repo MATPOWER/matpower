@@ -3,7 +3,7 @@ function [x, f, eflag, output, lambda] = miqps_glpk(H, c, A, l, u, xmin, xmax, x
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
 %       MIQPS_GLPK(H, C, A, L, U, XMIN, XMAX, X0, VTYPE, OPT)
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = MIQPS_GLPK(PROBLEM)
-%   A wrapper function providing a MATPOWER standardized interface for using
+%   A wrapper function providing a standardized interface for using
 %   GLKP to solve the following LP (linear programming) problem:
 %
 %       min C'*X

@@ -1,5 +1,5 @@
 function [x, f, eflag, output, lambda] = nlps_master(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt)
-%NLPS_MASTER  Nonlinear programming (NLP) Solver for MATPOWER.
+%NLPS_MASTER  Nonlinear programming (NLP) Solver wrapper function.
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
 %       NLPS_MASTER(F_FCN, X0, A, L, U, XMIN, XMAX, GH_FCN, HESS_FCN, OPT)
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = NLPS_MASTER(PROBLEM)
@@ -36,6 +36,9 @@ function [x, f, eflag, output, lambda] = nlps_master(f_fcn, x0, A, l, u, xmin, x
 %           nonlinear constraints and their gradients for a given
 %           value of X. Calling syntax for this function is:
 %               [H, G, DH, DG] = GH_FCN(X)
+%           where the columns of DH and DG are the gradients of the
+%           corresponding elements of H and G, i.e. DH and DG are
+%           transposes of the Jacobians of H and G, respectively.
 %       HESS_FCN : handle to function that computes the Hessian of the
 %           Lagrangian for given values of X, lambda and mu, where
 %           lambda and mu are the multipliers on the equality and
@@ -145,6 +148,8 @@ function [x, f, eflag, output, lambda] = nlps_master(f_fcn, x0, A, l, u, xmin, x
 %           'opt',      struct('verbose', 2) ...
 %       );
 %       [x, f, exitflag, output, lambda] = nlps_master(problem);
+%
+%   See also MIPS, NLPS_FMINCON, NLPS_IPOPT, NLPS_KNITRO.
 
 %   MP-Opt-Model
 %   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)

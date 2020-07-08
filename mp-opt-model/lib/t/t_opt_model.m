@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 514;
+num_tests = 594;
 
 t_begin(num_tests, quiet);
 
@@ -537,21 +537,118 @@ t_is(full(A(ll.i1.mylin(2,1):ll.iN.mylin(2,1), vv.i1.x(2,1):vv.iN.x(2,1))), [0 -
 
 %om
 
+%%-----  params_nln_constraint  -----
+t = 'om.params_nln_constraint(1, ''Pmise'')';
+N = om.params_nln_constraint(1, 'Pmise');
+t_is(N, 4, 14, [t, ' : N']);
+[N, fcn] = om.params_nln_constraint(1, 'Pmise');
+t_is(N, 4, 14, [t, ' : N']);
+t_ok(isa(fcn, 'function_handle'), [t, ' : fcn']);
+[N, fcn, hess] = om.params_nln_constraint(1, 'Pmise');
+t_is(N, 4, 14, [t, ' : N']);
+t_ok(isa(fcn, 'function_handle'), [t, ' : fcn']);
+t_ok(isa(hess, 'function_handle'), [t, ' : hess']);
+[N, fcn, hess, vs] = om.params_nln_constraint(1, 'Pmise');
+t_is(N, 4, 14, [t, ' : N']);
+t_ok(isa(fcn, 'function_handle'), [t, ' : fcn']);
+t_ok(isa(hess, 'function_handle'), [t, ' : hess']);
+t_ok(isstruct(vs), [t, ' : isstruct(vs)']);
+t_is(length(vs), 2, 14, [t, ' : length(vs)']);
+t_ok(strcmp(vs(1).name, 'Pg'), [t, ' : vs(1).name']);
+t_ok(strcmp(vs(2).name, 'Va'), [t, ' : vs(2).name']);
+t_ok(isempty(vs(1).idx), [t, ' : vs(1).idx']);
+t_ok(isempty(vs(2).idx), [t, ' : vs(2).idx']);
+[N, fcn, hess, vs, include] = om.params_nln_constraint(1, 'Pmise');
+t_ok(strcmp(include, ''), [t, ' : include']);
+
+t = 'om.params_nln_constraint(1, ''P'')';
+[N, fcn, hess, vs, include] = om.params_nln_constraint(1, 'P');
+t_is(N, 3, 14, [t, ' : N']);
+t_ok(isa(fcn, 'function_handle'), [t, ' : fcn']);
+t_ok(isa(hess, 'function_handle'), [t, ' : hess']);
+t_ok(isstruct(vs), [t, ' : isstruct(vs)']);
+t_is(length(vs), 2, 14, [t, ' : length(vs)']);
+t_ok(strcmp(vs(1).name, 'Pg'), [t, ' : vs(1).name']);
+t_ok(strcmp(vs(2).name, 'Va'), [t, ' : vs(2).name']);
+t_ok(isempty(vs(1).idx), [t, ' : vs(1).idx']);
+t_ok(isempty(vs(2).idx), [t, ' : vs(2).idx']);
+t_ok(isstruct(include), [t, ' : istruct(include)']);
+t_is(length(include.name), 2, 14, [t, ' : length(include.name)']);
+t_is(length(include.N), 2, 14, [t, ' : length(include.N)']);
+t_ok(strcmp(include.name{1}, 'Q'), [t, ' : include.name{1}']);
+t_ok(strcmp(include.name{2}, 'R'), [t, ' : include.name{2}']);
+t_is(include.N, [2 1], 14, [t, ' : include.N']);
+
+t = 'om.params_nln_constraint(1, ''mynle'') : error';
+try
+    [N, fcn] = om.params_nln_constraint(1, 'mynle')
+    t_ok(0, t);
+catch
+    t_ok(strfind(lasterr, '@opt_model/params_nln_constraint: nonlinear constraint set ''mynle'' requires an IDX_LIST arg'), t);
+end
+
+t = 'om.params_nln_constraint(0, ''mynli'', {1,2})';
+[N, fcn, hess, vs] = om.params_nln_constraint(0, 'mynli', {1,2});
+t_is(N, 2, 14, [t, ' : N']);
+t_ok(isa(fcn, 'function_handle'), [t, ' : fcn']);
+t_ok(isa(hess, 'function_handle'), [t, ' : hess']);
+t_ok(isstruct(vs), [t, ' : isstruct(vs)']);
+t_is(length(vs), 2, 14, [t, ' : length(vs)']);
+t_ok(strcmp(vs(1).name, 'Pg'), [t, ' : vs(1).name']);
+t_ok(strcmp(vs(2).name, 'x'), [t, ' : vs(2).name']);
+t_ok(isempty(vs(1).idx), [t, ' : vs(1).idx']);
+t_is(length(vs(2).idx), 2, 14, [t, ' : length(vs(2).idx)']);
+t_is(vs(2).idx{1}, 1, 14, [t, ' : vs(2).idx{1}']);
+t_is(vs(2).idx{2}, 2, 14, [t, ' : vs(2).idx{2}']);
+
+t = 'om.params_nln_constraint(0, ''mynli'', {2,2})';
+[N, fcn, hess, vs] = om.params_nln_constraint(0, 'mynli', {2,2});
+t_is(N, 3, 14, [t, ' : N']);
+t_ok(isa(fcn, 'function_handle'), [t, ' : fcn']);
+t_ok(isa(hess, 'function_handle'), [t, ' : hess']);
+t_ok(isstruct(vs), [t, ' : isstruct(vs)']);
+t_is(length(vs), 2, 14, [t, ' : length(vs)']);
+t_ok(strcmp(vs(1).name, 'Pg'), [t, ' : vs(1).name']);
+t_ok(strcmp(vs(2).name, 'x'), [t, ' : vs(2).name']);
+t_ok(isempty(vs(1).idx), [t, ' : vs(1).idx']);
+t_is(length(vs(2).idx), 2, 14, [t, ' : length(vs(2).idx)']);
+t_is(vs(2).idx{1}, 2, 14, [t, ' : vs(2).idx{1}']);
+t_is(vs(2).idx{2}, 2, 14, [t, ' : vs(2).idx{2}']);
+
 %%-----  eval_nln_constraint  -----
-t = 'eval_nln_constraint';
+t = 'g = om.eval_nln_constraint';
+x = (1:om.var.N)';
+[g, dg] = om.eval_nln_constraint(x, 1);
+t_is(length(g), neN, 14, [t ' : length(g)']);
+eg = [7 8 9 3 3 4 5 7 8 9 3 4 5 6 7 6 7 8 7 8 9 7 8 9 27]';
+t_is(g, eg, 14, [t ' : g']);
+
+t = 'g = om.eval_nln_constraint(x, 1, ''Qmise'')';
+x = (1:om.var.N)';
+[g, dg] = om.eval_nln_constraint(x, 1, 'Qmise');
+t_is(length(g), 3, 14, [t ' : length(g)']);
+t_is(g, eg([5:7]), 14, [t ' : g']);
+
+t = 'g = om.eval_nln_constraint(x, 1, ''mynle'', {1,2})';
+x = (1:om.var.N)';
+[g, dg] = om.eval_nln_constraint(x, 1, 'mynle', {1,2});
+t_is(length(g), 3, 14, [t ' : length(g)']);
+t_is(g, eg(16:18), 14, [t ' : g']);
+
+t = '[g, dg] = om.eval_nln_constraint';
 x = (1:om.var.N)';
 [g, dg] = om.eval_nln_constraint(x, 1);
 t_is(length(g), neN, 14, [t ' : length(g)']);
 t_ok(issparse(dg), [t ' : issparse(dg)']);
 t_is(size(dg), [neN, vN], 14, [t ' : size(dg)']);
-t_is(g, [7 8 9 3 3 4 5 7 8 9 3 4 5 6 7 6 7 8 7 8 9 7 8 9 27]', 14, [t ' : g']);
-e = [[  1 2 3 4 7 6 7;
-        0 0 0 0 0 2 0;
-        0 0 0 0 0 0 2;
-        2 0 0 0 0 0 0 ] zeros(4, vN-7) ];
-t_is(full(dg(1:4, :)), e, 14, [t ' : dg(1:4, :)   [Pmise]']);
-e = [[3 2:vN]; [0 2 0 zeros(1, vN-3)]; [0 0 2 zeros(1, vN-3)]];
-t_is(full(dg(5:7, :)), e, 14, [t ' : dg(5:7, :)   [Qmise]']);
+t_is(g, eg, 14, [t ' : g']);
+ePmise = [[ 1 2 3 4 7 6 7;
+            0 0 0 0 0 2 0;
+            0 0 0 0 0 0 2;
+            2 0 0 0 0 0 0 ] zeros(4, vN-7) ];
+t_is(full(dg(1:4, :)), ePmise, 14, [t ' : dg(1:4, :)   [Pmise]']);
+eQmise = [[3 2:vN]; [0 2 0 zeros(1, vN-3)]; [0 0 2 zeros(1, vN-3)]];
+t_is(full(dg(5:7, :)), eQmise, 14, [t ' : dg(5:7, :)   [Qmise]']);
 e = [[  1 2 3 4 7 6 7;
         0 0 0 0 0 2 0;
         0 0 0 0 0 0 2;
@@ -561,37 +658,88 @@ e = [[  1 2 3 4 7 6 7;
 t_is(full(dg(8:13, :)), e, 14, [t ' : dg(8:13, :)  [mynle(1,1)]']);
 e = [[0 0 0 0 6 6 7; 0 0 0 0 0 1 0] zeros(2, 10) [18 19; 0 0] zeros(2, vN-19)];
 t_is(full(dg(14:15, :)), e, 14, [t ' : dg(14:15, :) [mynle(1,1)]']);
-e = [[0 0 0 0 6 6 7; 0 0 0 0 0 1 0; 0 0 0 0 0 0 1] zeros(3, 12) [20 21; 0 0; 0 0] zeros(3, vN-21)];
-t_is(full(dg(16:18, :)), e, 14, [t ' : dg(16:18, :) [mynle(1,2)]']);
+emynle12 = [[0 0 0 0 6 6 7; 0 0 0 0 0 1 0; 0 0 0 0 0 0 1] zeros(3, 12) [20 21; 0 0; 0 0] zeros(3, vN-21)];
+t_is(full(dg(16:18, :)), emynle12, 14, [t ' : dg(16:18, :) [mynle(1,2)]']);
 e = [[0 0 0 0 7 6 7; 0 0 0 0 0 2 0; 0 0 0 0 0 0 2] zeros(3, 14) [22 23 24; 0 0 0; 0 0 0] zeros(3, vN-24)];
 t_is(full(dg(19:21, :)), e, 14, [t ' : dg(19:21, :) [mynle(2,1)]']);
 e = [[0 0 0 0 7 6 7; 0 0 0 0 0 2 0; 0 0 0 0 0 0 2; 0 0 0 0 0 0 0] zeros(4, 17) [25 26; 0 0; 0 0; 2 0] zeros(4, vN-26)];
 t_is(full(dg(22:25, :)), e, 14, [t ' : dg(22:25, :) [mynle(2,2)]']);
+
+t = '[g, dg] = om.eval_nln_constraint(x, 1, ''Pmise'')';
+x = (1:om.var.N)';
+[g, dg] = om.eval_nln_constraint(x, 1, 'Pmise');
+t_is(length(g), 4, 14, [t ' : length(g)']);
+t_is(g, eg([1:4]), 14, [t ' : g']);
+t_is(full(dg), ePmise(:, [5:7 1:4]), 14, [t ' : dg']);
+
+t = '[g, dg] = om.eval_nln_constraint(x, 1, ''Qmise'')';
+x = (1:om.var.N)';
+[g, dg] = om.eval_nln_constraint(x, 1, 'Qmise');
+t_is(length(g), 3, 14, [t ' : length(g)']);
+t_is(g, eg([5:7]), 14, [t ' : g']);
+t_is(full(dg), eQmise, 14, [t ' : dg']);
+
+t = '[g, dg] = om.eval_nln_constraint(x, 1, ''mynle'', {1,2})';
+x = (1:om.var.N)';
+[g, dg] = om.eval_nln_constraint(x, 1, 'mynle', {1,2});
+t_is(length(g), 3, 14, [t ' : length(g)']);
+t_is(g, eg(16:18), 14, [t ' : g']);
+t_is(full(dg), emynle12(:, [5:7 20:21]), 14, [t ' : dg']);
+
 % g
 % full(dg)
 % full(dg)'
 
+t = 'h = om.eval_nln_constraint';
+h = om.eval_nln_constraint(x, 0);
+t_is(length(h), niN, 14, [t ' : length(h)']);
+t_is(h, [3 4 5 -1 0 6 6 7 7 8 7 8 9]', 14, [t ' : h']);
+
+t = '[h, dh] = om.eval_nln_constraint';
 [h, dh] = om.eval_nln_constraint(x, 0);
 t_is(length(h), niN, 14, [t ' : length(h)']);
 t_ok(issparse(dh), [t ' : issparse(dh)']);
 t_is(size(dh), [niN, vN], 14, [t ' : size(dh)']);
-t_is(h, [3 4 5 -1 0 6 6 7 7 8 7 8 9]', 14, [t ' : h']);
-e = [[  1 2 3 4 3 6 7;
+eh = [3 4 5 -1 0 6 6 7 7 8 7 8 9]';
+t_is(h, eh, 14, [t ' : h']);
+ePmisi = [[  1 2 3 4 3 6 7;
         0 0 0 0 0 -2 0;
         0 0 0 0 0 0 -2 ] zeros(3, vN-7) ];
-t_is(full(dh(1:3, :)), e, 14, [t ' : dh(1:3, :)   [Pmisi]']);
-e = [[-1 2:vN]; [0 -2 zeros(1, vN-2)]];
-t_is(full(dh(4:5, :)), e, 14, [t ' : dh(5:7, :)   [Qmisi]']);
+t_is(full(dh(1:3, :)), ePmisi, 14, [t ' : dh(1:3, :)   [Pmisi]']);
+eQmisi = [[-1 2:vN]; [0 -2 zeros(1, vN-2)]];
+t_is(full(dh(4:5, :)), eQmisi, 14, [t ' : dh(5:7, :)   [Qmisi]']);
 e = [[0 0 0 0 6 6 7] zeros(1, 10) [18 19] zeros(1, vN-19)];
 t_is(full(dh(6, :)), e, 14, [t ' : dh(6, :)     [mynli(1,1)]']);
 e = [[0 0 0 0 6 6 7; 0 0 0 0 0 1 0] zeros(2, 12) [20 21; 0 0] zeros(2, vN-21)];
 t_is(full(dh(7:8, :)), e, 14, [t ' : dh(7:8, :)   [mynli(1,2)]']);
 e = [[0 0 0 0 7 6 7; 0 0 0 0 0 2 0] zeros(2, 14) [22 23 24; 0 0 0] zeros(2, vN-24)];
 t_is(full(dh(9:10, :)), e, 14, [t ' : dh(9:10, :)  [mynli(2,1)]']);
-e = [[0 0 0 0 7 6 7; 0 0 0 0 0 2 0; 0 0 0 0 0 0 2] zeros(3, 17) [25 26; 0 0; 0 0] zeros(3, vN-26)];
-t_is(full(dh(11:13, :)), e, 14, [t ' : dh(11:13, :) [mynli(2,2)]']);
+emynli22 = [[0 0 0 0 7 6 7; 0 0 0 0 0 2 0; 0 0 0 0 0 0 2] zeros(3, 17) [25 26; 0 0; 0 0] zeros(3, vN-26)];
+t_is(full(dh(11:13, :)), emynli22, 14, [t ' : dh(11:13, :) [mynli(2,2)]']);
+
+t = '[h, dh] = om.eval_nln_constraint(x, 0, ''Pmisi'')';
+x = (1:om.var.N)';
+[h, dh] = om.eval_nln_constraint(x, 0, 'Pmisi');
+t_is(length(h), 3, 14, [t ' : length(h)']);
+t_is(h, eh([1:3]), 14, [t ' : h']);
+t_is(full(dh), ePmisi(:, [5:7 1:4]), 14, [t ' : dh']);
+
+t = '[h, dh] = om.eval_nln_constraint(x, 0, ''Qmisi'')';
+x = (1:om.var.N)';
+[h, dh] = om.eval_nln_constraint(x, 0, 'Qmisi');
+t_is(length(h), 2, 14, [t ' : length(h)']);
+t_is(h, eh([4:5]), 14, [t ' : h']);
+t_is(full(dh), eQmisi, 14, [t ' : dh']);
+
+t = '[h, dh] = om.eval_nln_constraint(x, 0, ''mynli'', {2,2})';
+x = (1:om.var.N)';
+[h, dh] = om.eval_nln_constraint(x, 0, 'mynli', {2,2});
+t_is(length(h), 3, 14, [t ' : length(h)']);
+t_is(h, eh(11:13), 14, [t ' : h']);
+t_is(full(dh), emynli22(:, [5:7 25:26]), 14, [t ' : dh']);
+
 % h
-%full(dh)'
+% full(dh)'
 
 t = 'eval_nln_constraint_hess';
 lam = (1:neN)'/100;

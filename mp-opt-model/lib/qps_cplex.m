@@ -3,7 +3,7 @@ function [x, f, eflag, output, lambda] = qps_cplex(H, c, A, l, u, xmin, xmax, x0
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
 %       QPS_CPLEX(H, C, A, L, U, XMIN, XMAX, X0, OPT)
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = QPS_CPLEX(PROBLEM)
-%   A wrapper function providing a MATPOWER standardized interface for using
+%   A wrapper function providing a standardized interface for using
 %   CPLEXQP or CPLEXLP to solve the following QP (quadratic programming)
 %   problem:
 %

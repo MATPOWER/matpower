@@ -10,7 +10,7 @@ function rv = have_fcn(tag, rtype)
 %   HAVE_FCN('all', 'clear_cache')
 %
 %   Returns availability, version and release information for optional
-%   MATPOWER functionality. All information is cached, and the cached values
+%   functionality. All information is cached, and the cached values
 %   returned on subsequent calls. If the functionality exists, an attempt is
 %   made to determine the release date and version number. The second
 %   argument defines which value is returned, as follows:
@@ -38,49 +38,52 @@ function rv = have_fcn(tag, rtype)
 %   'clear_cache' no return value is defined.
 %
 %   Possible values for input TAG and their meanings:
-%       bpmpd       - BP, BPMPD interior point solver
+%       bpmpd       - BP, BPMPD interior point LP/QP solver
 %       clp         - CLP, LP/QP solver(https://github.com/coin-or/Clp)
-%        opti_clp   -   version of CLP distributed with OPTI Toolbox
+%         opti_clp  - version of CLP distributed with OPTI Toolbox
 %                       (https://www.inverseproblem.co.nz/OPTI/)
 %       cplex       - CPLEX, IBM ILOG CPLEX Optimizer
-%       e4st        - E4ST (https://e4st.com/)
-%       fmincon     - FMINCON, solver from Optimization Toolbox 2.x +
-%       fmincon_ipm - FMINCON with Interior Point solver, from Opt Tbx 4.x +
+%       fmincon     - FMINCON, solver from Optimization Toolbox
+%         fmincon_ipm - FMINCON with Interior Point solver, from Opt Tbx 4.x+
+%       fsolve      - FSOLVE, nonlinear equation solver from Opt Toolbox
 %       glpk        - GLPK, GNU Linear Programming Kit
-%       gurobi      - GUROBI, Gurobi solver (https://www.gurobi.com/), 5.x +
+%       gurobi      - GUROBI, Gurobi solver (https://www.gurobi.com/)
 %       intlinprog  - INTLINPROG, MILP solver from Optimization
 %                     Toolbox 7.0 (R2014a)+
 %       ipopt       - IPOPT, NLP solver
 %                       (https://github.com/coin-or/Ipopt)
-%       linprog     - LINPROG, LP solver from Optimization Toolbox 2.x +
-%       linprog_ds  - LINPROG with dual-simplex solver
-%                       from Optimization Toolbox 7.1 (R2014b) +
 %       knitro      - Artelys Knitro, NLP solver
 %                     (https://www.artelys.com/solvers/knitro/)
 %         knitromatlab - Artelys Knitro, version 9.0.0+
 %         ktrlink      - KNITRO, version < 9.0.0 (requires Opt Tbx)
+%       linprog     - LINPROG, LP solver from Optimization Toolbox
+%         linprog_ds - LINPROG with dual-simplex solver
+%                       from Optimization Toolbox 7.1 (R2014b) +
 %       matlab      - code is running under MATLAB, as opposed to Octave
-%       minopf      - MINOPF, MINOPF, MINOS-based OPF solver
-%       most        - MOST, MATPOWER Optimal Scheduling Tool
 %       mosek       - MOSEK, LP/QP solver (https://www.mosek.com/)
+%       octave      - code is running under GNU Octave, as opposed to MATLAB
 %       optimoptions - OPTIMOPTIONS, option setting funciton for Optim Tbx 6.3+
 %       pardiso     - PARDISO, Parallel Sparse Direct & Iterative Linear Solver
 %                       (https://pardiso-project.org)
 %       quadprog    - QUADPROG, QP solver from Optimization Toolbox 2.x +
-%       quadprog_ls - QUADPROG with large-scale interior point convex solver
+%         quadprog_ls - QUADPROG with large-scale interior point convex solver
 %                       from Optimization Toolbox 6.x +
+%       sdpt3       - SDPT3 SDP solver (https://github.com/sqlp/sdpt3)
+%       sedumi      - SeDuMi SDP solver (http://sedumi.ie.lehigh.edu)
+%       yalmip      - YALMIP SDP modeling platform (https://yalmip.github.io)
+%
+%     Functionality related to MATPOWER
+%       e4st        - E4ST (https://e4st.com/)
+%       minopf      - MINOPF, MINOPF, MINOS-based OPF solver
+%       most        - MOST, MATPOWER Optimal Scheduling Tool
 %       pdipmopf    - PDIPMOPF, primal-dual interior point method OPF solver
 %       scpdipmopf  - SCPDIPMOPF, step-controlled PDIPM OPF solver
-%       smartmarket - RUNMARKET and friends, for running an auction
+%       sdp_pf      - SDP_PF applications of semi-definite programming
+%                     relaxation of power flow equations
+%       smartmarket - RUNMARKET and friends, for running an energy auction
 %       syngrid     - SynGrid, Synthetic Grid Creation for MATPOWER
 %       tralmopf    - TRALMOPF, trust region based augmented Langrangian
 %                     OPF solver
-%       octave      - code is running under Octave, as opposed to MATLAB
-%       sdp_pf      - SDP_PF applications of semi-definite programming
-%                     relaxation of power flow equations
-%       yalmip      - YALMIP SDP modeling platform
-%       sedumi      - SeDuMi SDP solver
-%       sdpt3       - SDPT3 SDP solver
 %
 %   Examples:
 %       if have_fcn('minopf')
@@ -276,6 +279,8 @@ elseif action == 'D'        %% detect availability
                             end
                     end
                 end
+            case 'fsolve'
+                TorF = exist('fsolve', 'file') == 2;
             case 'glpk'
                 if exist('glpk','file') == 3    %% Windows OPTI install (no glpk.m)
                     TorF = 1;

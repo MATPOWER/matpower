@@ -1,4 +1,3 @@
-sudo: required
 dist: xenial
 
 language: generic
@@ -57,8 +56,8 @@ script:
 # build IPOPT MEX file
 - export PKG_CONFIG_PATH=$TRAVIS_BUILD_DIR/install/lib/pkgconfig
 - mkdir $TRAVIS_BUILD_DIR/build
-- curl -SL https://www.coin-or.org/download/source/Ipopt/Ipopt-${IPOPT_VER}.tgz | tar -xzC $TRAVIS_BUILD_DIR/build
-- mv $TRAVIS_BUILD_DIR/build/Ipopt-${IPOPT_VER}/Ipopt/contrib/MatlabInterface $TRAVIS_BUILD_DIR/build/ipopt
+- curl -SL https://github.com/coin-or/Ipopt/archive/releases/${IPOPT_VER}.tar.gz | tar -xzC $TRAVIS_BUILD_DIR/build
+- mv $TRAVIS_BUILD_DIR/build/Ipopt-releases-${IPOPT_VER}/Ipopt/contrib/MatlabInterface $TRAVIS_BUILD_DIR/build/ipopt
 - mv $TRAVIS_BUILD_DIR/.travis/Makefile $TRAVIS_BUILD_DIR/build/ipopt/src
 - make -C $TRAVIS_BUILD_DIR/build/ipopt/src
 - mv $TRAVIS_BUILD_DIR/build/ipopt/src/*.mex $TRAVIS_BUILD_DIR/build/ipopt/
