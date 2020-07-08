@@ -41,10 +41,15 @@ tests{end+1} = 't_qps_mips';
 %% MP-Opt-Model
 tests{end+1} = 't_nested_struct_copy';
 tests{end+1} = 't_have_fcn';
+tests{end+1} = 't_nleqs_master';
 tests{end+1} = 't_qps_master';
 tests{end+1} = 't_miqps_master';
 tests{end+1} = 't_nlps_master';
 tests{end+1} = 't_opt_model';
+tests{end+1} = 't_om_solve_nleqs';
+tests{end+1} = 't_om_solve_qps';
+tests{end+1} = 't_om_solve_miqps';
+tests{end+1} = 't_om_solve_nlps';
 
 %% deprecated wrappers
 tests{end+1} = 't_qps_matpower';
