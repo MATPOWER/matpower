@@ -215,7 +215,8 @@
 \newcommand{\mpommanurl}[0]{https://matpower.org/docs/MP-Opt-Model-manual-\mpomver.pdf}
 \newcommand{\mostmanurl}[0]{https://matpower.org/docs/MOST-manual-\mostver.pdf}
 \newcommand{\currentmumurl}[0]{https://matpower.org/docs/MATPOWER-manual.pdf}
-\newcommand{\currentmipsmanurl}[0]{\mipsurl/blob/master/docs/MIPS-manual.pdf}
+\newcommand{\currentmipsmanurl}[0]{https://matpower.org/docs/MIPS-manual.pdf}
+\newcommand{\currentmpommanurl}[0]{https://matpower.org/docs/MP-Opt-Model-manual.pdf}
 \newcommand{\currentmostmanurl}[0]{https://matpower.org/docs/MOST-manual.pdf}
 \newcommand{\mipsman}[0]{\href{\mipsmanurl}{\mips{} User's Manual}}
 \newcommand{\mpomman}[0]{\href{\mpommanurl}{\mpom{} User's Manual}}
@@ -2431,7 +2432,7 @@ The difference between the bus voltage angle $\theta_f$ at the \emph{from} end o
 
 Early versions of \matpower{} relied on \matlab{}'s \ot{}~\cite{ot} to provide the NLP and QP solvers needed to solve the AC and DC OPF problems, respectively. While they worked reasonably well for very small systems, they did not scale well to larger networks. Eventually, optional packages with additional solvers were added to improve performance, typically relying on \matlab{} extension (MEX) files implemented in Fortran or C and pre-compiled for each machine architecture. Some of these MEX files are distributed as optional packages due to differences in terms of use. For DC optimal power flow, there is a MEX build~\cite{bpmpdmex} of the high performance interior point BPMPD solver~\cite{meszaros1996} for LP/QP problems. For the AC OPF problem, the MINOPF~\cite{minopf} and TSPOPF~\cite{tspopf} packages provide solvers suitable for much larger systems. The former is based on MINOS~\cite{murtagh} and the latter includes the primal-dual interior point and trust region based augmented Lagrangian methods described in~\cite{wang2007a}. \matpower{} version~4 and later also includes the option to use the open-source \ipopt{} solver\footnote{Available from \url{https://github.com/coin-or/Ipopt}.} for solving both AC and DC OPFs, based on the \matlab{} MEX interface to \ipopt{}\footnote{See \url{https://projects.coin-or.org/Ipopt/wiki/MatlabInterface}.}. It also includes the option to use \cplex{}\footnote{See \url{https://www.ibm.com/analytics/cplex-optimizer}.} or \mosek{}\footnote{See \url{https://www.mosek.com/}.} for DC OPFs. \matpower{}~4.1 added the option to use \knitro{}~\cite{knitro}\footnote{See \url{https://www.artelys.com/solvers/knitro/}.} for AC OPFs and the \gurobi{} Optimizer~\cite{gurobi}\footnote{See \url{https://www.gurobi.com/}.} for DC OPFs and \matpower{}~5 added \glpk{}~\cite{glpk} and 5.1 added \clp{}~\cite{clp}. See Appendix~\ref{app:optional_packages} for more details on these optional packages.
 
-Beginnning with version~4, \matpower{} also includes its own primal-dual interior point method implemented in pure-\matlab{} code, derived from the MEX implementation of the algorithms described in~\cite{wang2007a}. This solver is called \mips{} (\mipsname{}) and is described in more detail in Appendix~\ref{app:mips}. If no optional packages are installed, \mips{} will be used by default for both the AC OPF and as the QP solver used by the DC OPF. The AC OPF solver also employs a unique technique for efficiently forming the required Hessians via a few simple matrix operations~\cite{zimmerman2010b, sereeter2018a, sereeter2018b}. This solver has application to general nonlinear optimization problems outside of \matpower{} and can be called directly as \code{mips}. There is also a convenience wrapper function called \code{qps\_mips} making it trivial to set up and solve LP and QP problems, with an interface similar to \code{quadprog} from the \matlab{} \ot{}.
+Beginnning with version~4, \matpower{} also includes its own primal-dual interior point method implemented in pure-\matlab{} code, derived from the MEX implementation of the algorithms described in~\cite{wang2007a}. This solver is called \mips{} (\mipsname{})~\cite{mips} and is described in more detail in Appendix~\ref{app:mips}. If no optional packages are installed, \mips{} will be used by default for both the AC OPF and as the QP solver used by the DC OPF. The AC OPF solver also employs a unique technique for efficiently forming the required Hessians via a few simple matrix operations~\cite{zimmerman2010b, sereeter2018a, sereeter2018b}. This solver has application to general nonlinear optimization problems outside of \matpower{} and can be called directly as \code{mips}. There is also a convenience wrapper function called \code{qps\_mips} making it trivial to set up and solve LP and QP problems, with an interface similar to \code{quadprog} from the \matlab{} \ot{}.
 
 
 \subsection{{\tt runopf}}
@@ -4257,11 +4258,11 @@ The \code{feval\_w\_path} function is identical to \matlab{}'s own \code{feval},
 
 \subsubsection{\tt have\_fcn}
 
-Now included as part of \mpomlink{} (see \mpompath{}).
+Now included as part of \mpomlink{}~\cite{mpom} (see \mpompath{}).
 
 \subsubsection{\tt mpopt2qpopt}
 
-Now included as part of \mpomlink{} (see \mpompath{}).
+Now included as part of \mpomlink{}~\cite{mpom} (see \mpompath{}).
 
 \subsubsection{\tt mpver}
 \begin{Code}
@@ -4274,7 +4275,7 @@ The \code{mpver} function returns the current \matpower{} version number. With t
 
 \subsubsection{\tt nested\_struct\_copy}
 
-Now included as part of \mpomlink{} (see \mpompath{}).
+Now included as part of \mpomlink{}~\cite{mpom} (see \mpompath{}).
 
 
 %%------------------------------------------
@@ -8480,7 +8481,7 @@ R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez, and R.~J. Thomas, ``\matpower{}: Ste
 
 \bibitem{matpower}
 R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2019). \matpower{}\\~
-[Software]. Available: \url{https://matpower.org}\\
+[Software]. Available: \url{https://matpower.org}
 \doi{10.5281/zenodo.3236535}
 
 \bibitem{murillo-sanchez2013a}
@@ -8562,7 +8563,7 @@ D.~Raji\v{c}i\'{c} and R.~Taleski, ``Two novel methods for radial and weakly
 D.~Raji\v{c}i\'{c} and A.~Dimitrovski, ``A new method for handling pv nodes in
 backward/forward power flow for radial and weakly meshed networks,'' in
 \emph{2001 IEEE Porto Power Tech Proceedings (Cat. No.01EX502)}, vol.~3,
-2001, 6 pp.\\
+2001, 6 pp.
 \doi{10.1109/PTC.2001.964896}
 
 \bibitem{wood1996}
@@ -8635,6 +8636,10 @@ GLPK. [Online]. Available:
 COIN-OR Linear Programming (CLP) Solver. [Online]. Available:
   \url{https://github.com/coin-or/Clp}.
 
+\bibitem{mips}
+R.~D. Zimmerman, H. Wang. \mipsname{} (\mips{}) User's Manual. 2019. [Online]. Available: \url{\currentmipsmanurl}
+\doi{10.5281/zenodo.3236506}
+
 \bibitem{zimmerman2010b}
 R.~D. Zimmerman, \emph{AC Power Flows, Generalized OPF Costs and their Derivatives using Complex Matrix Notation}, \TNtwo, February 2010. [Online]. Available: \url{\TNtwourl}
 \doi{10.5281/zenodo.3237866}
@@ -8653,6 +8658,10 @@ A.~J.~Lamadrid, S.~Maneevitjit, T.~D.~Mount, C.~E.~Murillo-S{\'a}nchez, R.~J.~Th
 \bibitem{murillo-sanchez2013}
 C.~E. Murillo-S{\'a}nchez, R.~D. Zimmerman, C.~L. Anderson, and R.~J. Thomas, ``A Stochastic, Contingency-Based Security-Constrained Optimal Power Flow for the Procurement of Energy and Distributed Reserve,'' \emph{Decision Support Systems}, Vol.~56, Dec.~2013, pp.~1--10.
 \doi{10.1016/j.dss.2013.04.006}
+
+\bibitem{mpom}
+R.~D. Zimmerman. \mpomname{} User's Manual. 2020. [Online]. Available: \url{\currentmpommanurl}
+\doi{10.5281/zenodo.3818002}
 
 \bibitem{wang2007}
 H.~Wang, \emph{On the Computation and Application of Multi-period Security-constrained Optimal Power Flow for Real-time Electricity Market Operations}, Ph.D. thesis, Electrical and Computer Engineering, Cornell University, May 2007.
