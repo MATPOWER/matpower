@@ -47,8 +47,8 @@ RUN git clone -b ${YALMIP_VER} https://github.com/yalmip/YALMIP.git /opt/yalmip 
 ENV IPOPT_VER=3.11.9
 COPY ./.travis/Makefile /opt
 # RUN curl -SL https://raw.githubusercontent.com/MATPOWER/matpower/master/.travis/Makefile -o /opt/Makefile
-RUN curl -SL https://www.coin-or.org/download/source/Ipopt/Ipopt-${IPOPT_VER}.tgz | tar -xzC /opt && \
-    mv /opt/Ipopt-${IPOPT_VER}/Ipopt/contrib/MatlabInterface /opt/ipopt && \
+RUN curl -SL https://github.com/coin-or/Ipopt/archive/releases/${IPOPT_VER}.tar.gz | tar -xzC /opt && \
+    mv /opt/Ipopt-releases-${IPOPT_VER}/Ipopt/contrib/MatlabInterface /opt/ipopt && \
     mv /opt/Makefile /opt/ipopt/src && \
     make -C /opt/ipopt/src && \
     rm -rf /opt/Ipopt-${IPOPT_VER} && \
