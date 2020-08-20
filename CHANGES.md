@@ -12,6 +12,10 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.0
 -----------------
 
+#### 8/20/20
+  - Replace content of Appendix A (MIPS) in User's Manual with
+    reference to MIPS User's Manual.
+
 #### 7/8/20
   - Update to [MP-Opt-Model][27] 2.0.
 
