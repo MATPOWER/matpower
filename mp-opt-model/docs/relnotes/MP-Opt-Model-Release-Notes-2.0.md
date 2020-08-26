@@ -42,8 +42,7 @@ Manual][2].
   - Remove redundant MIPS tests from `test_mp_opt_model.m`.
   - Add tests for solving LP/QP, MILP/MIQP, NLP and NLEQ problems via
     `opt_model/solve()`.
-  - Add Table~\ref{tab:have_fcn_tags} of valid `have_fcn()` input tags
-    to User's Manual.
+  - Add Table 6.1 of valid `have_fcn()` input tags to User's Manual.
 
 
 [1]: https://github.com/MATPOWER/mp-opt-model/blob/master/CHANGES.md

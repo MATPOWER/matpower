@@ -144,13 +144,13 @@
 \newcommand{\mipsurl}[0]{https://github.com/MATPOWER/mips}
 \newcommand{\mipslink}[0]{\href{\mipsurl}{\mips{}}}
 \newcommand{\mipsname}[0]{{{\bf M}{\sc atpower} \textbf{I}nterior \textbf{P}oint \textbf{S}olver}}
-\newcommand{\mipsver}[0]{1.3.1+}
+\newcommand{\mipsver}[0]{1.3.1}
 \newcommand{\mpom}[0]{\mbox{MP-Opt-Model}}
 \newcommand{\mpomurl}[0]{https://github.com/MATPOWER/mp-opt-model}
 \newcommand{\mpomlink}[0]{\href{\mpomurl}{\mpom{}}}
 \newcommand{\mpomname}[0]{\mpom{}}
 % \newcommand{\mpomname}[0]{{{\bf M}{\sc at}{\bf P}{\sc ower} \textbf{Opt}imization \textbf{Model}}}
-\newcommand{\mpomver}[0]{2.0}
+\newcommand{\mpomver}[0]{2.1}
 \newcommand{\most}[0]{{MOST}}
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
@@ -230,14 +230,14 @@
 \numberwithin{figure}{section}
 \renewcommand{\thefigure}{\thesection\mbox{-}\arabic{figure}}
 
-% \externaldocument[MIPSMAN-]{MIPS-manual}[\mipsmanurl]
+\externaldocument[MIPSMAN-]{MIPS-manual}[\mipsmanurl]
 % \externaldocument[MOSTMAN-]{MOST-manual}[\mostmanurl]
 
 
 %\title{\hl{--- DRAFT  ---}\\\hl{\em do not distribute}\\~\\{\huge \bfseries \mpomname{} User's Manual } \\ ~ \\ \LARGE Version \mpomver{}\\
 \title{{\huge \bfseries \mpomname{} User's Manual } \\ ~ \\ \LARGE Version \mpomver{}}
 \author{Ray~D.~Zimmerman}
-\date{July 8, 2020} % comment this line to display the current date
+\date{August 25, 2020} % comment this line to display the current date
 %\date{May 8, 2020\thanks{Second revision. First revision was April 29, 2020}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
@@ -322,12 +322,12 @@ POSSIBILITY OF SUCH DAMAGE.
 \subsection{Citing \mpom{}}
 
 We request that publications derived from the use of \mpom{} explicitly acknowledge that fact by citing the \mpomname{} User's Manual~\cite{mpom_manual}.
-The citation and DOI can be version-specific or general, as appropriate. For version 2.0, use:
+The citation and DOI can be version-specific or general, as appropriate. For version 2.1, use:
 
 \begin{quote}
 \footnotesize
-R.~D. Zimmerman. \mpomname{} User's Manual, Verision 2.0. 2020. [Online]. Available: \url{https://matpower.org/docs/MP-Opt-Model-manual-2.0.pdf}\\
-\doi{10.5281/zenodo.3935928}
+R.~D. Zimmerman. \mpomname{} User's Manual, Verision 2.1. 2020. [Online]. Available: \url{https://matpower.org/docs/MP-Opt-Model-manual-2.1.pdf}\\
+\doi{10.5281/zenodo.4001106}
 \end{quote}
 For a version non-specific citation, use the following citation and DOI,
 with \emph{\textless{}YEAR\textgreater{}} replaced by the year of the most recent release:
@@ -401,17 +401,18 @@ We will use \mpompath{} to denote the path to this directory.
 >> test_mp_opt_model
 t_nested_struct_copy....ok
 t_have_fcn..............ok
-t_nleqs_master..........ok
+t_nleqs_master..........ok (30 of 150 skipped)
 t_qps_master............ok (100 of 396 skipped)
 t_miqps_master..........ok (68 of 288 skipped)
 t_nlps_master...........ok
 t_opt_model.............ok
-t_om_solve_nleqs........ok
+t_om_solve_leqs.........ok
+t_om_solve_nleqs........ok (36 of 170 skipped)
 t_om_solve_qps..........ok (79 of 319 skipped)
 t_om_solve_miqps........ok (12 of 72 skipped)
 t_om_solve_nlps.........ok
-All tests successful (2519 passed, 259 skipped of 2778)
-Elapsed time 2.52 seconds.
+All tests successful (2713 passed, 325 skipped of 3038)
+Elapsed time 3.29 seconds.
 \end{Code}
 \end{enumerate}
 
@@ -532,7 +533,7 @@ The first part consists of interfaces to various numerical optimization solvers 
 \item linear (LP) and quadratic (QP) programming problems
 \item mixed-integer linear (MILP) and quadratic (MIQP) programming problems
 \item nonlinear programming problems (NLP)
-\item nonlinear nonlinear equations (NLEQ)
+\item nonlinear equations (NLEQ)
 \end{itemize}
 
 The second part consists of an optimization model class designed to help the user construct an optimization problem by adding variables, constraints and costs, then solve the problem and extract the solution in terms of the individual sets of variables, constraints and costs provided.
@@ -973,7 +974,7 @@ alg & algorithm code of solver used \\
 \code{mu\_u} & upper (right-hand) limit on linear constraints	\\
 \code{lower} & lower bound on optimization variables	\\
 \code{upper} & upper bound on optimization variables	\\
-\end{tabular} 	\\
+\end{tabular}	\\
 \bottomrule
 \end{tabular}
 \end{threeparttable}
@@ -1224,8 +1225,10 @@ The calling syntax for \code{nleqs\_master} is identical to that used by \code{f
 \toprule
 name & description \\
 \midrule
-\code{fcn}	& Handle to a function that evaluates the function $f(x)$ and its Jacobian $J(x)$ for a given value of $x$. Calling syntax for this function:	\\
+\code{fcn}	& Handle to a function that evaluates the function $f(x)$ and optionally its Jacobian $J(x)$ for a given value of $x$. Calling syntax for this function is:	\\
+&~~~~\code{f = fcn(x)}, or	\\
 &~~~~\code{[f, J] = fcn(x)}	\\
+& Whether \code{fcn} is required to return the Jacobian or not depends on the selected solver algorithm. \\
 \code{x0}	& Starting value of vector $x$.	\\
 \code{opt}\tnote{\dag}	& Options structure with fields, all of which are also optional, described in Table~\ref{tab:nleqs_master_options}. \\
 \code{problem}	& Alternative, single argument input struct with fields corresponding to arguments above.	\\
@@ -1287,7 +1290,10 @@ name & default & description \\
 && \begin{tabular}{c @{ -- } p{0.5\textwidth}}
 \codeq{DEFAULT} & automatic, current default is \codeq{NEWTON} \\
 \codeq{NEWTON} & Newton's method \\
+\codeq{CORE} & core algorithm, with arbitrary update function\tnote{\P} \\
+\codeq{FD} & fast-decoupled Newton's method\tnote{\dag} \\
 \codeq{FSOLVE} & \matlab{} Opt Toolbox, \code{fsolve}\tnote{*} \\
+\codeq{GS} & Gauss-Seidel method\tnote{\ddag} \\
 \end{tabular}	\\
 \code{verbose}	& 1	& amount of progress info to be printed \\
 && \begin{tabular}{r @{ -- } l}
@@ -1295,23 +1301,32 @@ name & default & description \\
 1 & print a little progress info \\
 2 & print a lot of progress info \\
 \end{tabular}	\\
-\code{mips\_opt}	& \emph{empty}	& options struct for \mips{} \\
-\code{fmincon\_opt}	& \emph{empty}	& options struct for \code{fmincon}\tnote{*} \\
-\code{ipopt\_opt}	& \emph{empty}	& options struct for \ipopt{}\tnote{*} \\
-\code{knitro\_opt}	& \emph{empty}	& options struct for \knitro{}\tnote{*} \\
+\code{max\_it}	& 0	& maximum number of iterations\tnote{\S} \\
+\code{tol}	& 0	& termination tolerance on $f(x)$\tnote{\S} \\
+\code{core\_sp}	& \emph{empty}	& solver parameters struct for \code{nleqs\_core}\tnote{\P} \\
+\code{fd\_opt}	& \emph{empty}	& options struct for fast-decoupled Newton's method, \code{nleqs\_fd\_newton}\tnote{\dag} \\
+\code{fsolve\_opt}	& \emph{empty}	& options struct for \code{fsolve}\tnote{*} \\
+\code{gs\_opt}	& \emph{empty}	& options struct for Gauss-Seidel method, \code{nleqs\_gauss\_seidel}\tnote{\ddag} \\
+\code{newton\_opt}	& \emph{empty}	& options struct for Newton's method, \code{nleqs\_newton} \\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
  \item [*] {The \code{fsolve()} function is included with GNU Octave, but on \matlab{} it is part of the \matlab{} \ot{}. See Appendix~\ref{app:optional_packages} for more information on the \matlab{} \ot{}.}
+ \item [\dag] {Fast-decoupled Newton requires setting \code{fd\_opt.jac\_approx\_fcn} to a function handle that returns Jacobian approximations. See \code{help nleqs\_fd\_newton} for more details.}
+ \item [\ddag] {Gauss-Seidel requires setting \code{gs\_opt.x\_update\_fcn} to a function handle that updates $x$. See \code{help nleqs\_gauss\_seidel} for more details.}
+ \item [\S] {A value of 0 indicates to use the solver's own default.}
+ \item [\P] {The \code{opt.core\_sp} field is required when \code{alg} is set to \codeq{CORE}. See \code{help nleqs\_core} for details.}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
-The \code{nleqs\_master} function is simply a master wrapper around corresponding functions specific to each solver, namely, \code{nleqs\_fsolve} and \code{nleqs\_newton}. Each of these functions has an interface identical to that of \code{nleqs\_master}.
+The \code{nleqs\_master} function is simply a master wrapper around corresponding solver-specific functions, namely, \code{nleqs\_newton}, \code{nleqs\_fd\_newton}, \code{nleqs\_gauss\_seidel} and \code{nleqs\_fsolve}. Each of these functions has an interface identical to that of \code{nleqs\_master}.
 
-\subsubsection{NLEQ Example}
-\label{sec:nleq_ex}
+There is also a more general function named \code{nleqs\_core} which takes an arbitrary, user-defined update function. In fact, \code{nleqs\_core} provides the core implementation for both \code{nleqs\_newton} and \code{nleqs\_gauss\_seidel}. See \code{help nleqs\_core} for details.
+
+\subsubsection{NLEQ Example 1}
+\label{sec:nleq_ex1}
 
 The following code, included as \code{nleqs\_master\_ex1.m} in \mpompath{lib/t}, shows a simple example of using \code{nleqs\_master} to solve a 2-dimensional nonlinear function\footnote{\url{https://www.chilimath.com/lessons/advanced-algebra/systems-non-linear-equations/}}
 \begin{equation}
@@ -1420,13 +1435,153 @@ jac =
    -4   1
 \end{Code}
 
+\subsubsection{NLEQ Example 2}
+\label{sec:nleq_ex2}
+
+The following code, included as \code{nleqs\_master\_ex2.m} in \mpompath{lib/t}, shows another simple example of using \code{nleqs\_master} to solve a 2-dimensional nonlinear function.\footnote{From Christi Patton Luks, \url{https://www.youtube.com/watch?v=pJG4yhtgerg}} This example includes the update function required for Gauss-Seidel and the Jacobian approximation function required for the fast-decoupled Newton's method.
+\begin{equation}
+f(x) = \left[\begin{array}{c}x_1^2 + x_1 x_2 - 10 \\
+x_2 + 3 x_1 x_2^2  - 57\end{array}\right]
+\end{equation}
+
+\begin{Code}
+function [f, J] = f2(x)
+f = [  x(1)^2 +   x(1)*x(2)   - 10;
+       x(2)   + 3*x(1)*x(2)^2 - 57  ];
+if nargout > 1
+    J = [   2*x(1)+x(2)    x(1);
+            3*x(2)^2       6*x(1)*x(2)+1    ];
+end
+\end{Code}
+
+\begin{Code}
+function JJ = jac_approx_fcn2()
+J = [7 2; 27 37];
+JJ = {J(1,1), J(2,2)};
+\end{Code}
+
+\begin{Code}
+function x = x_update_fcn2(x, f)
+x(1) = sqrt(10 - x(1)*x(2));
+x(2) = sqrt((57-x(2))/3/x(1));
+\end{Code}
+
+\begin{Code}
+function nleqs_master_ex2(alg)
+if nargin < 1
+    alg = 'DEFAULT';
+end
+x0 = [1; 2];
+opt = struct( ...
+    'verbose', 2, ...
+    'alg', alg, ...
+    'fd_opt', struct( ...
+        'jac_approx_fcn', @jac_approx_fcn2, ...
+        'labels', {{'P','Q'}}), ...
+    'gs_opt', struct('x_update_fcn', @x_update_fcn2) );
+[x, f, exitflag, output] = nleqs_master(@f2, x0, opt);
+fprintf('\nexitflag = %d\n', exitflag);
+fprintf('\nx = \n');
+fprintf('   %2g\n', x);
+fprintf('\nf = \n');
+fprintf('   %12g\n', f);
+\end{Code}
+
+\clearpage
+\noindent Fast-decoupled Newton example results:
+\begin{Code}
+>> nleqs_master_ex2('FD')    
+
+ iteration    max residual    max residual 
+block    #        f[P]            f[Q]     
+------ ----  --------------  --------------
+  -      0       7.000e+00       4.300e+01
+  P      1       2.000e+00       3.100e+01
+  Q      1       3.243e-01       5.842e+00
+  P      2       5.367e-03       4.723e+00
+  Q      2       2.558e-01       4.767e-02
+  P      3       7.894e-04       1.012e+00
+  Q      3       5.417e-02       2.058e-03
+  P      4       3.606e-05       2.100e-01
+  Q      4       1.133e-02       8.642e-05
+  P      5       1.583e-06       4.374e-02
+  Q      5       2.363e-03       3.727e-06
+  P      6       6.892e-08       9.116e-03
+  Q      6       4.927e-04       1.617e-07
+  P      7       2.997e-09       1.901e-03
+  Q      7       1.027e-04       7.028e-09
+  P      8       1.303e-10       3.963e-04
+  Q      8       2.142e-05       3.055e-10
+  P      9       5.665e-12       8.262e-05
+  Q      9       4.466e-06       1.327e-11
+  P     10       2.451e-13       1.723e-05
+  Q     10       9.311e-07       5.969e-13
+  P     11       1.066e-14       3.591e-06
+  Q     11       1.941e-07       1.421e-14
+  P     12       0.000e+00       7.488e-07
+  Q     12       4.048e-08       7.105e-15
+  P     13       0.000e+00       1.561e-07
+  Q     13       8.439e-09       7.105e-15
+Fast-decoupled Newton's method converged in 13 P- and 13 Q-iterations.
+
+exitflag = 1
+
+x = 
+    2
+    3
+
+f = 
+    8.43887e-09
+   -7.10543e-15
+\end{Code}
+
+\clearpage
+\noindent Gauss-Seidel example results:
+\begin{Code}
+>> nleqs_master_ex2('GS')
+
+ it     max residual
+----  ----------------
+  0      4.300e+01
+  1      5.201e+00
+  2      1.690e+00
+  3      6.481e-01
+  4      2.141e-01
+  5      7.413e-02
+  6      2.523e-02
+  7      8.638e-03
+  8      2.951e-03
+  9      1.009e-03
+ 10      3.449e-04
+ 11      1.179e-04
+ 12      4.030e-05
+ 13      1.378e-05
+ 14      4.709e-06
+ 15      1.610e-06
+ 16      5.503e-07
+ 17      1.881e-07
+ 18      6.430e-08
+ 19      2.198e-08
+ 20      7.513e-09
+Gauss-Seidel method converged in 20 iterations.
+
+exitflag = 1
+
+x = 
+    2
+    3
+
+f = 
+   -7.51313e-09
+    4.48558e-09
+\end{Code}
 
 %%------------------------------------------
 \clearpage
 \section{Optimization Model Class -- {\tt opt\_model}}
 \label{sec:opt_model}
 
-The \code{opt\_model} class provides facilities for constructing an optimization problem by adding and managing the indexing of sets of variables, constraints and costs. The model can then be solved by simply calling the \code{solve} method which automatically selects and calls the appropriate master solver function, i.e. \code{qps\_master}, \code{miqps\_master}, \code{nlps\_master}, or \code{nleqs\_master}, depending on the type of problem.
+The \code{opt\_model} class provides facilities for constructing an optimization problem by adding and managing the indexing of sets of variables, constraints and costs. The model can then be solved by simply calling the \code{solve} method which automatically selects and calls the appropriate master solver function, i.e. \code{qps\_master}, \code{miqps\_master}, \code{nlps\_master}, \code{nleqs\_master} or \code{mplinsolve}, depending on the type of problem.
 
 In this manual, and in the code, \code{om} is the name of the variable used by convention for the optimization model object, which is typically created by calling the constructor \code{opt\_model} with no arguments.
 
@@ -1681,9 +1836,9 @@ See Section~\ref{sec:indexed_sets} for details on indexed named sets and the \co
 [x, f, exitflag, output, lambda] = om.solve(opt)
 \end{Code}
 
-After all variables, constraints and costs have been added to the model, the optimization problem can be solved simply by calling the \code{solve} method. This method automatically selects and calls, depending on the problem type, one of the master solver interface functions from Section~\ref{sec:master_solvers}, namely \code{qps\_master}, \code{miqps\_master}, \code{nlps\_master}, or \code{nleqs\_master}. Note, the nonlinear equation solver \code{nleqs\_master} is chosen, rather than the NLP solver \code{nlps\_master} if the problem is nonlinear, but has only equality constraints, with no costs or inequality constraints defined.
+After all variables, constraints and costs have been added to the model, the optimization problem can be solved simply by calling the \code{solve} method. This method automatically selects and calls, depending on the problem type, \code{mplinsolve} or one of the master solver interface functions from Section~\ref{sec:master_solvers}, namely \code{qps\_master}, \code{miqps\_master}, \code{nlps\_master}, or \code{nleqs\_master}. Note that one of the equation solvers, \code{mplinsolve} or \code{nleqs\_master} is chosen if the model has only equality constraints, with no costs and no inequality constraints.
 
-For details on the return values and the input options struct \code{opt}, see the descriptions of the individual solver functions in Sections~\ref{sec:qps_master}, \ref{sec:miqps_master}, and \ref{sec:nlps_master}.
+For details on the return values and the input options struct \code{opt}, see the descriptions of the individual solver functions in Sections~\ref{sec:qps_master}, \ref{sec:miqps_master}, \ref{sec:nlps_master}, and \ref{sec:nleqs_master}. For linear equations, the \code{solver} and \code{opt} arguments for \code{mplinsolve}, described in Section~\ref{MIPSMAN-sec:mplinsolve} of the \mipsman{}, can be provided in \code{opt.leq\_opt.solver} and \code{opt.leq\_opt.opt}, respectively.
 
 \subsection{Accessing the Model}
 
@@ -2087,13 +2242,18 @@ Returns 1 if any of the variables are binary or integer, 0 otherwise.
 \begin{Code}
 prob_type = om.problem_type()
 \end{Code}
-Returns a string identifying the type of mathematical program represented by the current model. The string is one of the following:
+Returns a string identifying the type of mathematical program represented by the current model, based on the variables, costs,and constraints that have been added to the model. Used to automatically select an appropriate solver. 
+
+Linear and nonlinear equations are models with no costs, no inequality constraints, and an equal number of continuous variables and equality constraints.
+
+The \code{prob\_type} string is one of the following:
 \begin{itemize}
 \setlength{\parskip}{-6pt}%
+\item \codeq{LEQ} – linear equation
+\item \codeq{NLEQ} – nonlinear equation
 \item \codeq{LP} – linear program
 \item \codeq{QP} – quadratic program
 \item \codeq{NLP} – nonlinear program
-\item \codeq{NLEQ} – nonlinear equation
 \item \codeq{MILP} – mixed-integer linear program
 \item \codeq{MIQP} – mixed-integer quadratic program
 \item \codeq{MINLP} – mixed-integer nonlinear program\footnote{\mpom{} does not yet implement solving MINLP problems.}
@@ -2531,31 +2691,29 @@ name & description \\
 \caption{Solver Functions}
 \label{tab:solvers}
 \footnotesize
-\begin{tabular}{p{0.15\textwidth}p{0.78\textwidth}}
+\begin{tabular}{p{0.19\textwidth}p{0.74\textwidth}}
 \toprule
 name & description \\
 \midrule
-\code{clp\_options}	& default options for \clp{} solver\tnote{\dag}	\\
-\code{cplex\_options}	& default options for \cplex{} solver\tnote{\dag}	\\
-\code{glpk\_options}	& default options for \glpk{} solver\tnote{\dag}	\\
-\code{gurobi\_options}	& default options for \gurobi{} solver\tnote{\dag}	\\
-\code{gurobiver}	& prints version information for \gurobi{}/Gurobi\_MEX	\\
-\code{ipopt\_options}	& default options for \ipopt{} solver\tnote{\dag}	\\
 \code{miqps\_master}	& Mixed-Integer Quadratic Program Solver wrapper function, provides a unified interface for various MIQP/MILP solvers	\\
 \code{miqps\_cplex}	& MIQP/MILP solver API implementation for CPLEX (\code{cplexmiqp} and \code{cplexmilp})\tnote{\dag}	\\
 \code{miqps\_glpk}	& MILP solver API implementation for \glpk{}\tnote{\dag}	\\
 \code{miqps\_gurobi}	& MIQP/MILP solver API implementation for \gurobi{}\tnote{\dag}	\\
 \code{miqps\_mosek}	& MIQP/MILP solver API implementation for \mosek{} (\code{mosekopt})\tnote{\dag}	\\
 \code{miqps\_ot}	& QP/MILP solver API implementation for \matlab{} Opt Toolbox's \code{intlinprog}, \code{quadprog}, \code{linprog}	\\
-\code{mosek\_options}	& default options for \mosek{} solver\tnote{\dag}	\\
-\code{mosek\_symbcon}	& symbolic constants to use for \mosek{} solver options\tnote{\dag}	\\
+\midrule
 \code{nleqs\_master}	& Nonlinear Equation Solver wrapper function, provides a unified interface for various nonlinear equation (NLEQ) solvers	\\
+\code{nleqs\_core}	& core NLEQ solver API implementation with arbitrary update function, used to implement \code{nleqs\_gauss\_seidel} and \code{nleqs\_newton}	\\
+\code{nleqs\_fd\_newton}	& NLEQ solver API implementation for fast-decoupled Newton's method solver	\\
 \code{nleqs\_fsolve}	& NLEQ solver API implementation for \code{fsolve}	\\
+\code{nleqs\_gauss\_seidel}	& NLEQ solver API implementation for Gauss-Seidel method solver	\\
 \code{nleqs\_newton}	& NLEQ solver API implementation for Newton's method solver	\\
+\midrule
 \code{nlps\_master}	& Nonlinear Program Solver wrapper function, provides a unified interface for various NLP solvers	\\
 \code{nlps\_fmincon}	& NLP solver API implementation for \matlab{} Opt Toolbox's \code{fmincon}	\\
 \code{nlps\_ipopt}	& NLP solver API implementation for \ipopt{}-based solver\tnote{\dag}	\\
 \code{nlps\_knitro}	& NLP solver API implementation for \knitro{}-based solver\tnote{\dag}	\\
+\midrule
 \code{qps\_master}	& Quadratic Program Solver wrapper function, provides a unified interface for various QP/LP solvers	\\
 \code{qps\_bpmpd}	& QP/LP solver API implementation for BPMPD\_MEX\tnote{\dag}	\\
 \code{qps\_clp}	& QP/LP solver API implementation for \clp{}\tnote{\dag}	\\
@@ -2565,10 +2723,38 @@ name & description \\
 \code{qps\_ipopt}	& QP/LP solver API implementation for \ipopt{}-based solver\tnote{\dag}	\\
 \code{qps\_mosek}	& QP/LP solver API implementation for \mosek{} (\code{mosekopt})\tnote{\dag}	\\
 \code{qps\_ot}	& QP/LP solver API implementation for \matlab{} Opt Toolbox's \code{quadprog}, \code{linprog}	\\
-& \\
+\midrule
 \multicolumn{2}{c}{\emph{deprecated functions}} \\
 \code{miqps\_matpower}	& use \code{miqps\_master} instead	\\
 \code{qps\_matpower}	& use \code{qps\_master} instead	\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [\dag] {Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{Solver Options, etc.}
+\label{tab:solver_options}
+\footnotesize
+\begin{tabular}{p{0.19\textwidth}p{0.74\textwidth}}
+\toprule
+name & description \\
+\midrule
+\code{clp\_options}	& default options for \clp{} solver\tnote{\dag}	\\
+\code{cplex\_options}	& default options for \cplex{} solver\tnote{\dag}	\\
+\code{glpk\_options}	& default options for \glpk{} solver\tnote{\dag}	\\
+\code{gurobi\_options}	& default options for \gurobi{} solver\tnote{\dag}	\\
+\code{gurobiver}	& prints version information for \gurobi{}/Gurobi\_MEX	\\
+\code{ipopt\_options}	& default options for \ipopt{} solver\tnote{\dag}	\\
+\code{mosek\_options}	& default options for \mosek{} solver\tnote{\dag}	\\
+\code{mosek\_symbcon}	& symbolic constants to use for \mosek{} solver options\tnote{\dag}	\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -2698,16 +2884,18 @@ name & description \\
 name & description \\
 \midrule
 \code{lib/t/}	& \mpom{} examples \& tests	\\
-\code{~~nleqs\_master\_ex1}	& code for NLEQ Example (see Section~\ref{sec:nleq_ex}) for \code{nleqs\_master}	\\
+\code{~~nleqs\_master\_ex1}	& code for NLEQ Example 1 (see Section~\ref{sec:nleq_ex1}) for \code{nleqs\_master}	\\
+\code{~~nleqs\_master\_ex2}	& code for NLEQ Example 2 (see Section~\ref{sec:nleq_ex2}) for \code{nleqs\_master}	\\
 \code{~~nlps\_master\_ex1}	& code for NLP Example 1 (see Section~\ref{sec:nlp_ex1}) for \code{nlps\_master}	\\
 \code{~~nlps\_master\_ex2}	& code for NLP Example 2 (see Section~\ref{sec:nlp_ex2}) for \code{nlps\_master}	\\
-\code{~~qp\_ex1}	& code for QP example from Section~\ref{sec:usage}	\\
+\code{~~qp\_ex1}	& code for QP Example from Section~\ref{sec:usage}	\\
 \code{~~test\_mp\_opt\_model}	& runs full \mpom{} test suite	\\
 \code{~~t\_have\_fcn}	& runs tests for \code{have\_fcn}	\\
 \code{~~t\_miqps\_master}	& runs tests of MILP/MIQP solvers via \code{miqps\_master}	\\
 \code{~~t\_nested\_struct\_copy}	& runs tests for \code{nested\_struct\_copy}	\\
 \code{~~t\_nleqs\_master}	& runs tests of NLEQ solvers via \code{nleqs\_master}	\\
 \code{~~t\_nlps\_master}	& runs tests of NLP solvers via\code{nlps\_master}	\\
+\code{~~t\_om\_solve\_leqs}	& runs tests of LEQ solvers via \code{om.solve()}	\\
 \code{~~t\_om\_solve\_miqps}	& runs tests of MILP/MIQP solvers via \code{om.solve()}	\\
 \code{~~t\_om\_solve\_nleqs}	& runs tests of NLEQ solvers via \code{om.solve()}	\\
 \code{~~t\_om\_solve\_nlps}	& runs tests of NLP solvers via \code{om.solve()}	\\
@@ -2937,12 +3125,6 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-2.0.pdf}{\mpom{} 2.0 Use
     \end{itemize}
 \end{itemize}
 
-% \subsubsection*{Bugs Fixed}
-% \begin{itemize}
-% \item 
-%     \emph{Thanks to Fulano.}
-% \end{itemize}
-
 \subsubsection*{Other Changes}
 \begin{itemize}
 \item Add to \code{eval\_nln\_constraint()} method the ability to compute constraints for a single named set.
@@ -2952,6 +3134,70 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-2.0.pdf}{\mpom{} 2.0 Use
 \item Add Table~\ref{tab:have_fcn_tags} of valid \code{have\_fcn()} input tags to User's Manual.
 
 \end{itemize}
+
+\clearpage
+\subsection{Version 2.1 -- released Aug 25, 2020}
+\label{app:v21}
+
+The \href{https://matpower.org/docs/MP-Opt-Model-manual-2.1.pdf}{\mpom{} 2.1 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MP-Opt-Model-manual-2.1.pdf}}
+
+\subsubsection*{New Features}
+\begin{itemize}
+\item Fast-decoupled Newton's and Gauss-Seidel solvers for nonlinear equations.
+\item New linear equation (\codeq{LEQ}) problem type for models with equal number of variables and linear equality constraints, no costs, and no inequality or nonlinear equality constraints. Solved via \code{mplinsolve()}.
+\item The \code{solve()} method of \code{opt\_model} can now automatically handle mixed systems of equations, with both linear and nonlinear equality constraints.
+\item New core nonlinear equation solver function with arbitrary, user-defined update function, used to implement Gauss-Seidel and Newton solvers.
+\item New functions:
+    \begin{itemize}
+    \item \code{nleqs\_fd\_newton()} solves a nonlinear set of equations via a fast-decoupled Newton's method.
+    \item \code{nleqs\_gauss\_seidel()} solves a nonlinear set of equations via a Gauss-Seidel method.
+    \item \code{nleqs\_core()} implements core nonlinear equation solver with arbitrary update function.
+    \end{itemize}
+\end{itemize}
+
+% \subsubsection*{Bugs Fixed}
+% \begin{itemize}
+% \item 
+%     \emph{Thanks to Fulano.}
+% \end{itemize}
+
+\subsubsection*{Incompatible Changes}
+\begin{itemize}
+\item In \code{output} return value from \code{nleqs\_newton()}, changed the \code{normF} field of \code{output.hist} to \code{normf}, for consistency in using lowercase \code{f} everywhere.
+\end{itemize}
+
+% \subsubsection*{Other Changes}
+% \begin{itemize}
+% \item 
+% 
+% \end{itemize}
+
+
+% \subsection{Version 3.0 -- released ??? ?, 202?}
+% \label{app:v30}
+% 
+% The \href{https://matpower.org/docs/MP-Opt-Model-manual-3.0.pdf}{\mpom{} 3.0 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MP-Opt-Model-manual-3.0.pdf}}
+% 
+% \subsubsection*{New Features}
+% \begin{itemize}
+% \item 
+% \item New functions:
+%     \begin{itemize}
+%     \item \code{foobar()} does whizbang.
+%     \end{itemize}
+% \end{itemize}
+% 
+% \subsubsection*{Bugs Fixed}
+% \begin{itemize}
+% \item 
+%     \emph{Thanks to Fulano.}
+% \end{itemize}
+% 
+% \subsubsection*{Other Changes}
+% \begin{itemize}
+% \item 
+% 
+% \end{itemize}
 
 \end{appendices}
 

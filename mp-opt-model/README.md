@@ -50,17 +50,18 @@ of MATLAB or Octave, including setting up your MATLAB path.
   >> test_mp_opt_model
   t_nested_struct_copy....ok
   t_have_fcn..............ok
-  t_nleqs_master..........ok
+  t_nleqs_master..........ok (30 of 150 skipped)
   t_qps_master............ok (100 of 396 skipped)
   t_miqps_master..........ok (68 of 288 skipped)
   t_nlps_master...........ok
   t_opt_model.............ok
-  t_om_solve_nleqs........ok
+  t_om_solve_leqs.........ok
+  t_om_solve_nleqs........ok (36 of 170 skipped)
   t_om_solve_qps..........ok (79 of 319 skipped)
   t_om_solve_miqps........ok (12 of 72 skipped)
   t_om_solve_nlps.........ok
-  All tests successful (2519 passed, 259 skipped of 2778)
-  Elapsed time 2.52 seconds.
+  All tests successful (2713 passed, 325 skipped of 3038)
+  Elapsed time 3.37 seconds.
 ```
 
 Sample Usage
@@ -201,11 +202,11 @@ function, e.g.: `qps_master`, `miqps_master`, and `nlps_master`.
 We request that publications derived from the use of MP-Opt-Model
 explicitly acknowledge that fact by citing the [MP-Opt-Model User's Manual][7].
 The citation and DOI can be version-specific or general, as appropriate.
-For version 2.0, use:
+For version 2.1, use:
 
->   R. D. Zimmerman. *MP-Opt-Model User's Manual, Version 2.0*. 2020.
-    [Online]. Available: https://matpower.org/docs/MP-Opt-Model-manual-2.0.pdf  
-    doi: [10.5281/zenodo.3935928](https://doi.org/10.5281/zenodo.3935928)
+>   R. D. Zimmerman. *MP-Opt-Model User's Manual, Version 2.1*. 2020.
+    [Online]. Available: https://matpower.org/docs/MP-Opt-Model-manual-2.1.pdf  
+    doi: [10.5281/zenodo.4001106](https://doi.org/10.5281/zenodo.4001106)
 
 For a version non-specific citation, use the following citation and DOI,
 with *\<YEAR\>* replaced by the year of the most recent release:

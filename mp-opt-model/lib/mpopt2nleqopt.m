@@ -44,7 +44,7 @@ else
     model = upper(model);
 end
 
-%% get ALG from mpopt, if necessary
+%% get ALG, MAX_IT from mpopt, if necessary
 switch alg
     case {'pf.ac', ''}
         alg = upper(mpopt.pf.alg);
@@ -55,12 +55,19 @@ end
 %% create NLEQS_MASTER options struct
 nleqopt = struct(   'verbose',  mpopt.verbose, ...
                     'alg',      alg, ...
-                    'tol',      mpopt.pf.tol, ...
-                    'max_it',   mpopt.pf.nr.max_it  );
+                    'tol',      mpopt.pf.tol  );
 switch alg
     case {'DEFAULT', 'NEWTON'}
         %% set up options
         nleqopt.newton_opt.lin_solver = mpopt.pf.nr.lin_solver;
+        nleqopt.max_it = mpopt.pf.nr.max_it;
+    case 'FD'
+        nleqopt.max_it = mpopt.pf.fd.max_it;
+    case 'GS'
+        nleqopt.max_it = mpopt.pf.gs.max_it;
+    case 'ZG'
+        nleqopt.max_it = mpopt.pf.zg.max_it;
+        nleqopt.alg = 'CORE';
     case 'FSOLVE'
         %% basic optimset options needed for fmincon
 %         nleqopt.fsolve_opt.Algorithm = '';
@@ -68,4 +75,5 @@ switch alg
 %         nleqopt.fsolve_opt.Algorithm = 'trust-region';              %% for optimoptions
 %         nleqopt.fsolve_opt.Algorithm = 'trust-region-reflective';   %% for optimset
 %         nleqopt.fsolve_opt.Algorithm = 'levenberg-marquardt';
+        nleqopt.max_it = 0;      %% use fsolve default
 end
