@@ -164,7 +164,7 @@
 \newcommand{\mpomlink}[0]{\href{\mpomurl}{\mpom{}}}
 \newcommand{\mpomname}[0]{\mpom{}}
 % \newcommand{\mpomname}[0]{{{\bf M}{\sc at}{\bf P}{\sc ower} \textbf{Opt}imization \textbf{Model}}}
-\newcommand{\mpomver}[0]{0.8}
+\newcommand{\mpomver}[0]{2.1}
 \newcommand{\most}[0]{{MOST}}
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
@@ -185,6 +185,7 @@
 \newcommand{\glpk}[0]{{GLPK}}
 \newcommand{\gurobi}[0]{{Gurobi}}
 \newcommand{\mosek}[0]{{MOSEK}}
+\newcommand{\osqp}[0]{{OSQP}}
 \newcommand{\ot}[0]{{Optimization Toolbox}}
 \newcommand{\pardiso}[0]{{PARDISO}}
 \newcommand{\sdppf}[0]{\texttt{SDP\_PF}}
@@ -2430,7 +2431,7 @@ The difference between the bus voltage angle $\theta_f$ at the \emph{from} end o
 \subsection{Solvers}
 \label{sec:solvers}
 
-Early versions of \matpower{} relied on \matlab{}'s \ot{}~\cite{ot} to provide the NLP and QP solvers needed to solve the AC and DC OPF problems, respectively. While they worked reasonably well for very small systems, they did not scale well to larger networks. Eventually, optional packages with additional solvers were added to improve performance, typically relying on \matlab{} extension (MEX) files implemented in Fortran or C and pre-compiled for each machine architecture. Some of these MEX files are distributed as optional packages due to differences in terms of use. For DC optimal power flow, there is a MEX build~\cite{bpmpdmex} of the high performance interior point BPMPD solver~\cite{meszaros1996} for LP/QP problems. For the AC OPF problem, the MINOPF~\cite{minopf} and TSPOPF~\cite{tspopf} packages provide solvers suitable for much larger systems. The former is based on MINOS~\cite{murtagh} and the latter includes the primal-dual interior point and trust region based augmented Lagrangian methods described in~\cite{wang2007a}. \matpower{} version~4 and later also includes the option to use the open-source \ipopt{} solver\footnote{Available from \url{https://github.com/coin-or/Ipopt}.} for solving both AC and DC OPFs, based on the \matlab{} MEX interface to \ipopt{}\footnote{See \url{https://projects.coin-or.org/Ipopt/wiki/MatlabInterface}.}. It also includes the option to use \cplex{}\footnote{See \url{https://www.ibm.com/analytics/cplex-optimizer}.} or \mosek{}\footnote{See \url{https://www.mosek.com/}.} for DC OPFs. \matpower{}~4.1 added the option to use \knitro{}~\cite{knitro}\footnote{See \url{https://www.artelys.com/solvers/knitro/}.} for AC OPFs and the \gurobi{} Optimizer~\cite{gurobi}\footnote{See \url{https://www.gurobi.com/}.} for DC OPFs and \matpower{}~5 added \glpk{}~\cite{glpk} and 5.1 added \clp{}~\cite{clp}. See Appendix~\ref{app:optional_packages} for more details on these optional packages.
+Early versions of \matpower{} relied on \matlab{}'s \ot{}~\cite{ot} to provide the NLP and QP solvers needed to solve the AC and DC OPF problems, respectively. While they worked reasonably well for very small systems, they did not scale well to larger networks. Eventually, optional packages with additional solvers were added to improve performance, typically relying on \matlab{} extension (MEX) files implemented in Fortran or C and pre-compiled for each machine architecture. Some of these MEX files are distributed as optional packages due to differences in terms of use. For DC optimal power flow, there is a MEX build~\cite{bpmpdmex} of the high performance interior point BPMPD solver~\cite{meszaros1996} for LP/QP problems. For the AC OPF problem, the MINOPF~\cite{minopf} and TSPOPF~\cite{tspopf} packages provide solvers suitable for much larger systems. The former is based on MINOS~\cite{murtagh} and the latter includes the primal-dual interior point and trust region based augmented Lagrangian methods described in~\cite{wang2007a}. \matpower{} version~4 and later also includes the option to use the open-source \ipopt{} solver\footnote{Available from \url{https://github.com/coin-or/Ipopt}.} for solving both AC and DC OPFs, based on the \matlab{} MEX interface to \ipopt{}\footnote{See \url{https://projects.coin-or.org/Ipopt/wiki/MatlabInterface}.}. It also includes the option to use \cplex{}\footnote{See \url{https://www.ibm.com/analytics/cplex-optimizer}.} or \mosek{}\footnote{See \url{https://www.mosek.com/}.} for DC OPFs. \matpower{}~4.1 added the option to use \knitro{}~\cite{knitro}\footnote{See \url{https://www.artelys.com/solvers/knitro/}.} for AC OPFs and the \gurobi{} Optimizer~\cite{gurobi}\footnote{See \url{https://www.gurobi.com/}.} for DC OPFs and \matpower{}~5 added \glpk{}~\cite{glpk} and 5.1 added \clp{}~\cite{clp}. The current version relies on \mpomlink{} and the solvers it provides. See Appendix~\ref{app:optional_packages} for more details on these optional packages.
 
 Beginnning with version~4, \matpower{} also includes its own primal-dual interior point method implemented in pure-\matlab{} code, derived from the MEX implementation of the algorithms described in~\cite{wang2007a}. This solver is called \mips{} (\mipsname{})~\cite{mips} and is described in more detail in Appendix~\ref{app:mips}. If no optional packages are installed, \mips{} will be used by default for both the AC OPF and as the QP solver used by the DC OPF. The AC OPF solver also employs a unique technique for efficiently forming the required Hessians via a few simple matrix operations~\cite{zimmerman2010b, sereeter2018a, sereeter2018b}. This solver has application to general nonlinear optimization problems outside of \matpower{} and can be called directly as \code{mips}. There is also a convenience wrapper function called \code{qps\_mips} making it trivial to set up and solve LP and QP problems, with an interface similar to \code{quadprog} from the \matlab{} \ot{}.
 
@@ -2533,6 +2534,7 @@ name & default & description \\
 \codeq{GUROBI} & \gurobi{}\tnote{*} \\
 \codeq{IPOPT} & \ipopt{}\tnote{*} \\
 \codeq{MOSEK} & \mosek{}\tnote{*} \\
+\codeq{OSQP} & \osqp{}\tnote{*} \\
 \codeq{OT} & \matlab{} Opt Toolbox, \code{quadprog}, \code{linprog} \\
 \end{tabular}	\\
 \bottomrule
@@ -4636,6 +4638,7 @@ name & default & description \\
 \code{knitro}	& \emph{see Table~\ref{tab:knitrooptions}}	& \knitro{} options\tnote{*} \\
 \code{minopf}	& \emph{see Table~\ref{tab:minopfoptions}}	& MINOPF options\tnote{*} \\
 \code{mosek}	& \emph{see Table~\ref{tab:mosekoptions}}	& \mosek{} options\tnote{*} \\
+\code{osqp}	& \emph{see Table~\ref{tab:osqpoptions}}	& \osqp{} options\tnote{*} \\
 \code{pdipm}	& \emph{see Table~\ref{tab:pdipmoptions}}	& PDIPM options\tnote{*} \\
 \code{tralm}	& \emph{see Table~\ref{tab:tralmoptions}}	& TRALM options\tnote{*} \\
 \bottomrule
@@ -4816,6 +4819,7 @@ name & default & description \\
 \codeq{GUROBI} & \gurobi{}\tnote{*} \\
 \codeq{IPOPT} & \ipopt{}\tnote{*} \\
 \codeq{MOSEK} & \mosek{}\tnote{*} \\
+\codeq{OSQP} & \osqp{}\tnote{*} \\
 \codeq{OT} & \matlab{} Opt Toolbox, \code{quadprog}, \code{linprog} \\
 \end{tabular}	\\
 \bottomrule
@@ -4998,7 +5002,7 @@ name & default & description \\
 \footnotesize
 \begin{tabular}{lcp{0.65\textwidth}}
 \toprule
-name & default\tnote{\S} & description \\
+name & default & description \\
 \midrule
 \code{clp.opts}	& \emph{empty}	& struct of native \clp{} options passed to \code{clp\_options} to override defaults, applied after overrides from \code{clp.opt\_fname}\tnote{\ddag} \\
 \code{clp.opt\_fname}	& \emph{empty}	& name of user-supplied function passed as \code{FNAME} argument to \code{clp\_options} to override defaults\tnote{\ddag} \\
@@ -5104,7 +5108,7 @@ name & default & description \\
 \footnotesize
 \begin{tabular}{lcp{0.65\textwidth}}
 \toprule
-name & default\tnote{\S} & description \\
+name & default & description \\
 \midrule
 \code{glpk.opts}	& \emph{empty}	& struct of native \glpk{} options passed to \code{glpk\_options} to override defaults, applied after overrides from \code{glpk.opt\_fname}\tnote{\ddag} \\
 \code{glpk.opt\_fname}	& \emph{empty}	& name of user-supplied function passed as \code{FNAME} argument to \code{glpk\_options} to override defaults\tnote{\ddag} \\
@@ -5128,7 +5132,7 @@ name & default\tnote{\S} & description \\
 \footnotesize
 \begin{tabular}{lcp{0.65\textwidth}}
 \toprule
-name & default\tnote{\S} & description \\
+name & default & description \\
 \midrule
 \code{gurobi.method}	& 0	& algorithm used by \gurobi{} for LP/QP problems	\\
 && \begin{tabular}{r @{ -- } l}
@@ -5299,6 +5303,30 @@ name & default\tnote{\S} & description \\
  \item [\S] {Default values in parenthesis refer to defaults assigned by \mosek{} if called with option equal to 0.}
  \item [*] {The values listed here correspond to those used by MOSEK version 7.x. Version 6.x was different. It is probably safer to write your code using the symbolic constants defined by \code{mosek\_symbcon} rather than using explicit numerical values.}
  \item [\ddag] {For details, see \code{help mosek\_options} and the ``Parameters'' reference in ``The MOSEK optimization toolbox for MATLAB manual'' at \url{http://docs.mosek.com/7.1/toolbox/Parameters.html}.}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{OPF Options for \osqp{}\tnote{\dag}}
+\label{tab:osqpoptions}
+\footnotesize
+\begin{tabular}{lcp{0.65\textwidth}}
+\toprule
+name & default & description \\
+\midrule
+\code{osqp.opts}	& \emph{empty}	& struct of native \osqp{} options passed to \code{osqp\_options} to override defaults, applied after overrides from \code{osqp.opt\_fname}\tnote{\ddag} \\
+\code{osqp.opt\_fname}	& \emph{empty}	& name of user-supplied function passed as \code{FNAME} argument to \code{osqp\_options} to override defaults\tnote{\ddag} \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [\dag] {For \code{opf.dc.solver} option set to \codeq{OSQP} only. Requires the installation of the optional \osqp{} package. See Appendix~\ref{app:osqp} for details.}
+ \item [\ddag] {For details, see \code{help osqp\_options} or the ``Solver settings'' page of the \osqp{} documentation at  \url{https://osqp.org/docs/interfaces/solver_settings.html}.}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -6142,6 +6170,7 @@ name & description \\
 \code{mpoption\_info\_linprog}	& option information for LINPROG	\\
 \code{mpoption\_info\_mips}	& option information for \mips{}	\\
 \code{mpoption\_info\_mosek}	& option information for \mosek{}	\\
+\code{mpoption\_info\_osqp}	& option information for \osqp{}	\\
 \code{mpoption\_info\_quadprog}	& option information for QUADPROG	\\
 \code{psse\_convert}	& converts data read from PSS/E RAW file to \matpower{} format	\\
 \code{psse\_convert\_hvdc}	& called by \code{psse\_convert} to handle HVDC data	\\
@@ -6447,11 +6476,17 @@ name & description \\
 \code{~~t/}	& \mpom{} tests	\\
 \code{~~~~test\_mp\_opt\_model}	& runs full \mpom{} test suite	\\
 \code{~~~~t\_have\_fcn}	& runs tests for \code{have\_fcn}	\\
-\code{~~~~t\_miqps\_master}	& runs tests for \code{miqps\_master}	\\
+\code{~~~~t\_miqps\_master}	& runs tests of MILP/MIQP solvers via \code{miqps\_master}	\\
 \code{~~~~t\_nested\_struct\_copy}	& runs tests for \code{nested\_struct\_copy}	\\
-\code{~~~~t\_nlps\_master}	& runs tests for \code{nlps\_master}	\\
+\code{~~~~t\_nleqs\_master}	& runs tests of NLEQ solvers via \code{nleqs\_master}	\\
+\code{~~~~t\_nlps\_master}	& runs tests of NLP solvers via \code{nlps\_master}	\\
+\code{~~~~t\_om\_solve\_leqs}	& runs tests of LEQ solvers via \code{om.solve()}	\\
+\code{~~~~t\_om\_solve\_miqps}	& runs tests of MILP/MIQP solvers via \code{om.solve()}	\\
+\code{~~~~t\_om\_solve\_nleqs}	& runs tests of NLEQ solvers via \code{om.solve()}	\\
+\code{~~~~t\_om\_solve\_nlps}	& runs tests of NLP solvers via \code{om.solve()}	\\
+\code{~~~~t\_om\_solve\_qps}	& runs tests of LP/QP solvers via \code{om.solve()}	\\
 \code{~~~~t\_opt\_model}	& runs tests for \code{opt\_model} objects	\\
-\code{~~~~t\_qps\_master}	& runs tests for \code{qps\_master}	\\
+\code{~~~~t\_qps\_master}	& runs tests of LP/QP solvers via \code{qps\_master}	\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -6589,6 +6624,7 @@ name & description \\
 \code{t\_opf\_dc\_gurobi}	& runs DC OPF tests using \gurobi{}\tnote{\dag}	\\
 \code{t\_opf\_dc\_ipopt}	& runs DC OPF tests using \ipopt{}\tnote{\dag}	\\
 \code{t\_opf\_dc\_mosek}	& runs DC OPF tests using \mosek{}\tnote{\dag}	\\
+\code{t\_opf\_dc\_osqp}	& runs DC OPF tests using \osqp{}\tnote{\dag}	\\
 \code{t\_opf\_dc\_ot}	& runs DC OPF tests using \matlab{} Opt Toolbox	\\
 \code{t\_opf\_dc\_mips}	& runs DC OPF tests using \mips{}	\\
 \code{t\_opf\_dc\_mips\_sc}	& runs DC OPF tests using MIPS-sc	\\
@@ -7063,6 +7099,14 @@ For details on the full set of \ot{} options, please refer to their documentatio
 
 The \ot{} can also be used to solve general LP and QP problems via \matpower{}'s common QP solver interface \code{qps\_master}, or MILP problems via \code{miqps\_master}, with the algorithm option set to \codeq{OT}, or by calling \code{qps\_ot} or \code{miqps\_ot} directly. It can also be used to solve general NLP problems via \matpower{}'s common NLP solver interface \code{nlps\_master} with the algorithm option set to \codeq{FMINCON}, or by calling \code{nlps\_fmincon} directly.
 
+\subsection{\osqp{} -- Operator Splitting Quadratic Program Solver}
+\label{app:osqp}
+
+\osqp{}~\cite{osqp} is a numerical optimization package for solving convex quadratic programming problems. It uses a custom ADMM-based first-order method requiring only a single matrix factorization in the setup phase. More information is available at \url{https://osqp.org}.
+
+\osqp{} is a free, open-source package distributed under the Apache 2.0 License.
+
+When the \matlab{} interface to \osqp{} is installed, it can be used to solve general LP and QP problems via \mpom{}'s common QP solver interface \code{qps\_master} with the algorithm option set to \codeq{OSQP}, or by calling \code{qps\_osqp} directly.
 
 \subsection{\pardiso{} -- Parallel Sparse Direct and Multi-Recursive Iterative Linear Solvers}
 \label{app:pardiso}
@@ -7847,6 +7891,11 @@ The \href{https://matpower.org/docs/MATPOWER-manual-7.1.pdf}{\matpower{} 7.1 Use
 
 \subsubsection*{New Features}
 \begin{itemize}
+\item \mpomlink{} \hl{2.x brings many new enhancements, including ...}
+    \begin{itemize}
+    \item 
+    \end{itemize}
+\item Support for \osqp{} to solve LP and QP problems. Set option \code{opf.dc.solver} to \codeq{OSQP} to use \osqp{} to solve the DC OPF. Requires the \matlab{} interface to \osqp{}, available from \url{https://osqp.org}. See \code{help mpoption} for more \osqp{} options.
 \item New unified interface \code{nlps\_master()} for nonlinear programming solvers \mipslink{}, \code{fmincon}, \ipopt{} and \knitro{}.
 \item Option for \code{makePTDF()} to compute shift factors very efficiently for specific transfers or specific buses only.
 \item \emph{Thanks to Fulano.}
@@ -8228,6 +8277,10 @@ A.~Kuzmin, M.~Luisier and O.~Shenk, ``Fast methods for computing selected elemen
 \bibitem{otug}
 \emph{Optimization Toolbox Users's Guide}, The MathWorks, Inc., 2016.
   [Online]. Available: \url{https://www.mathworks.com/help/releases/R2016b/pdf_doc/optim/optim_tb.pdf}.
+
+\bibitem{osqp}
+B.~Stellato, G.~Banjac, P.~Goulart, A.~Bemporad, and S.~Boyd, S., ``{OSQP}: An Operator Splitting Solver for Quadratic Programs'', \emph{Mathematical Programming Computation}, 2020.
+doi:~\href{https://doi.org/10.1007/s12532-020-00179-2}{10.1007/s12532-020-00179-2}
 
 \end{thebibliography}
 

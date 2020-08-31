@@ -211,6 +211,8 @@ function opt = mpoption(varargin)
 %       [                 https://github.com/coin-or/Ipopt                  ]
 %       [ 'MOSEK'   - MOSEK, requires MATLAB interface to MOSEK solver      ]
 %       [             available from: https://www.mosek.com/                ]
+%       [ 'OSQP'    - OSQP, requires MATLAB interface to OSQP solver        ]
+%       [             available from: https://osqp.org/                     ]
 %       [ 'OT'      - MATLAB Optimization Toolbox, QUADPROG, LINPROG        ]
 %   opf.current_balance     0           type of nodal balance equation
 %       [ 0 - use complex power balance equations                           ]
@@ -447,6 +449,9 @@ function opt = mpoption(varargin)
 %       mosek.opt_fname         <empty>     see MOSEK_OPTIONS for details
 %       mosek.opt               0           see MOSEK_OPTIONS for details
 %
+%   OSQP:
+%       osqp.opts               <empty>     see OSQP_OPTIONS for details
+%
 %   QUADPROG:
 %       quadprog                <empty>     QUADPROG options passed to
 %                                           OPTIMOPTIONS or OPTIMSET.
@@ -622,6 +627,9 @@ if have_opt0
             if opt0.v <= 19         %% convert version 19 to 20
                 opt0.pf.current_balance = opt_d.pf.current_balance;
                 opt0.pf.v_cartesian     = opt_d.pf.v_cartesian;
+            end
+            if opt0.v <= 20         %% convert version 20 to 21
+                opt0.osqp = opt_d.osqp;
             end
             opt0.v = v;
         end
@@ -1652,7 +1660,7 @@ optt = opt;
 %% globals
 %%-------------------------------------------------------------------
 function v = mpoption_version
-v = 20;     %% version number of MATPOWER options struct
+v = 21;     %% version number of MATPOWER options struct
             %% (must be incremented every time structure is updated)
             %% v1   - first version based on struct (MATPOWER 5.0b1)
             %% v2   - added 'linprog' and 'quadprog' fields
@@ -1684,6 +1692,7 @@ v = 20;     %% version number of MATPOWER options struct
             %% v18  - added 'opf.current_balance' and 'opf.v_cartesian'
             %% v19  - added 'opf.softlims.default'
             %% v20  - added 'pf.current_balance' and 'pf.v_cartesian'
+            %% v21  - added 'osqp' field
 
 %%-------------------------------------------------------------------
 function db_level = DEBUG
@@ -1693,6 +1702,6 @@ db_level = 0;
 function pkgs = mpoption_optional_pkgs()
 pkgs = {...
     'clp', 'cplex', 'fmincon', 'gurobi', 'glpk', 'intlinprog', 'ipopt', ...
-    'knitro', 'linprog', 'minopf', 'most', 'mosek', 'quadprog', 'sdp_pf', ...
-    'sopf', 'tspopf', 'yalmip' ...
+    'knitro', 'linprog', 'minopf', 'most', 'mosek', 'osqp', 'quadprog', ...
+    'sdp_pf', 'sopf', 'tspopf', 'yalmip' ...
 };

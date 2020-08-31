@@ -191,6 +191,7 @@ else
     else
         fprintf('%-22s -- not installed --\n', 'MOSEK');
     end
+    osqpver;
     if have_fcn('pardiso')
         s = have_fcn('pardiso', 'all');
         if isempty(s.vstr)

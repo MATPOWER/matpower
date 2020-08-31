@@ -122,6 +122,9 @@ tests{end+1} = 't_opf_dc_mips_sc';
 if have_fcn('mosek')
     tests{end+1} = 't_opf_dc_mosek';
 end
+if have_fcn('osqp')
+    tests{end+1} = 't_opf_dc_osqp';
+end
 if have_fcn('quadprog')
     tests{end+1} = 't_opf_dc_ot';
 end

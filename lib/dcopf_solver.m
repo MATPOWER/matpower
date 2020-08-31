@@ -69,6 +69,9 @@ ny = om.getN('var', 'y');   %% number of piece-wise linear costs
 %% options
 model = om.problem_type();
 opt = mpopt2qpopt(mpopt, model);
+if strcmp(opt.alg, 'OSQP')
+    opt.x0 = [];    %% disable provided starting point for OSQP
+end
 
 %% try to select an interior initial point, unless requested not to
 if mpopt.opf.start < 2 && ...
