@@ -47,9 +47,34 @@ env:
   - IPOPT_VER=3.11.9
 
 script:
+# build/install OSQP
+- mkdir $TRAVIS_BUILD_DIR/build
+- cd $TRAVIS_BUILD_DIR/build
+- git clone --recursive https://github.com/oxfordcontrol/osqp
+- git clone --recurse-submodules https://github.com/oxfordcontrol/osqp-matlab
+- mkdir $TRAVIS_BUILD_DIR/build/osqp/build
+# - mkdir $TRAVIS_BUILD_DIR/install
+- export OCTAVE_VER=`octave-cli --no-gui --eval "fprintf('%s', ver('octave').Version)"`
+- ln -s "/usr/include/octave-$OCTAVE_VER/octave/Matrix.h" $TRAVIS_BUILD_DIR/build/matrix.h
+- cd $TRAVIS_BUILD_DIR/build/osqp/build
+- cmake -DCMAKE_INSTALL_PREFIX=$TRAVIS_BUILD_DIR/install -G "Unix Makefiles" ..
+- cmake --build .
+- cmake --install .
+- cd $TRAVIS_BUILD_DIR/build/osqp-matlab
+## for some strange reason 'cmake -- install' is not working on Linux ...
+# - ln -s /usr/include/octave-$OCTAVE_VER/octave/Matrix.h $TRAVIS_BUILD_DIR/install/include/osqp/matrix.h
+# - octave-cli --no-gui --eval "mex -I$TRAVIS_BUILD_DIR/install/include/osqp  -I$TRAVIS_BUILD_DIR/install/include/qdldl -I$TRAVIS_BUILD_DIR/build/osqp/lin_sys/direct/qdldl osqp_mex.cpp $TRAVIS_BUILD_DIR/install/lib/libosqp.a"
+## ... so we build the MEX files straight from the lib and includes in the build and source directories
+- octave-cli --no-gui --eval "mex -I$TRAVIS_BUILD_DIR/build  -I$TRAVIS_BUILD_DIR/build/osqp/include -I$TRAVIS_BUILD_DIR/build/osqp/lin_sys/direct/qdldl -I$TRAVIS_BUILD_DIR/build/osqp/lin_sys/direct/qdldl/qdldl_sources/include osqp_mex.cpp $TRAVIS_BUILD_DIR/build/osqp/build/out/libosqp.a"
+# - ls -al
+- if [[ "$TRAVIS_OS_NAME" == "osx" ]];   then export OSQP_PATH=$TRAVIS_BUILD_DIR/build/osqp-matlab;                                fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export OSQP_PATH=$TRAVIS_BUILD_DIR/mp-opt-model/.github/osqp:$TRAVIS_BUILD_DIR/build/osqp-matlab; fi
+## for some reason Octave 4.2.2 on linux still picks up the wrong osqp.m, unless we remove it
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then mv $TRAVIS_BUILD_DIR/build/osqp-matlab/osqp.m $TRAVIS_BUILD_DIR/build/osqp-matlab/osqp_disabled.m ; fi
+- cd $TRAVIS_BUILD_DIR
+
 # build IPOPT MEX file
 - export PKG_CONFIG_PATH=$TRAVIS_BUILD_DIR/install/lib/pkgconfig
-- mkdir $TRAVIS_BUILD_DIR/build
 - curl -SL https://github.com/coin-or/Ipopt/archive/releases/${IPOPT_VER}.tar.gz | tar -xzC $TRAVIS_BUILD_DIR/build
 - mv $TRAVIS_BUILD_DIR/build/Ipopt-releases-${IPOPT_VER}/Ipopt/contrib/MatlabInterface $TRAVIS_BUILD_DIR/build/ipopt
 - mv $TRAVIS_BUILD_DIR/.travis/Makefile $TRAVIS_BUILD_DIR/build/ipopt/src
@@ -59,11 +84,18 @@ script:
 # print Octave version number
 - octave-cli --no-gui --eval ver
 
-# install IPOPT MEX file
+# install IPOPT Octave interface
 - octave-cli --no-gui --eval "addpath('$TRAVIS_BUILD_DIR/build/ipopt'); savepath"
+
+# install OSQP Octave interface
+- octave-cli --no-gui --eval "addpath('${OSQP_PATH}'); savepath"
 
 # install MATPOWER
 - octave-cli --no-gui --eval "install_matpower(1,1,1)"
+
+## fail if either Ipopt or OSQP are not successfully installed
+- octave-cli --no-gui --eval "if ~have_fcn('ipopt'), exit(1); end"
+- octave-cli --no-gui --eval "if ~have_fcn('osqp'), exit(1); end"
 
 # print version numbers
 - octave-cli --no-gui --eval "qps_glpk( [],[1; 1],[1 1],[2],[2],[1; 1],[1; 1],[1; 1],struct('verbose', 3));"

@@ -1,4 +1,4 @@
-# Builds a Docker image for Octave 4.2.1 and MATPOWER
+# Builds a Docker image for Octave 4.2.2 and MATPOWER
 #
 # Authors:
 # Xiangmin Jiao <xmjiao@gmail.com>
@@ -55,6 +55,23 @@ RUN curl -SL https://github.com/coin-or/Ipopt/archive/releases/${IPOPT_VER}.tar.
     mv /opt/ipopt/src/*.mex /opt/ipopt/ && \
     rm -rf /opt/ipopt/src/*.o && \
     octave-cli --no-gui --eval "addpath('/opt/ipopt', '-end'); savepath"
+
+# Install OSQP
+RUN export OCTAVE_VER=`octave-cli --no-gui --eval "fprintf('%s', ver('octave').Version)"` && \
+    git clone --recursive https://github.com/oxfordcontrol/osqp /opt/osqp && \
+    git clone --recurse-submodules https://github.com/oxfordcontrol/osqp-matlab /opt/osqp-matlab && \
+    mkdir /opt/osqp/build && \
+    cd /opt/osqp/build && \
+    cmake -G "Unix Makefiles" .. && \
+    cmake --build . && \
+    ln -s /usr/include/octave-$OCTAVE_VER/octave/Matrix.h /opt/matrix.h && \
+    ls -al /opt && \
+    cd /opt/osqp-matlab && \
+    octave-cli --no-gui --eval "mex -I/opt  -I/opt/osqp/include -I/opt/osqp/lin_sys/direct/qdldl -I/opt/osqp/lin_sys/direct/qdldl/qdldl_sources/include osqp_mex.cpp /opt/osqp/build/out/libosqp.a" && \
+    ls -al && \
+    octave-cli --no-gui --eval "addpath('/opt/osqp-matlab', '-end'); savepath" && \
+    rm -rf /opt/osqp /opt/osqp-matlab/.git
+COPY ./mp-opt-model/.github/osqp/*.m /opt/osqp-matlab/
 
 # Install test script
 COPY ./docker/matpower_docker_tests.sh /usr/local/bin
