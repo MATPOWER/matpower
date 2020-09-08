@@ -161,9 +161,11 @@ if nargin < 5
         if nargin < 3
             mpopt = mpoption;       %% use default options
             if nargin < 2
-                targetcasedata = 'case9target';
                 if nargin < 1
                     basecasedata = 'case9'; %% default data file is 'case9.m'
+                    targetcasedata = 'case9target';
+                else
+                    error('runcpf: Two input case files, a base and target case with different load/generation patterns are required for RUNCPF.');
                 end
             end
         end
