@@ -31,14 +31,17 @@ mpc.gen(8, [QG QMIN QMAX]) = [ 3 0 3 ];
 mpc.gencost(7, COST:end) = [-30 -600 -20 -300 -10 -100 0 0];    % 10, 20, 30
 mpc.gencost(8, COST:end) = [-30  -60 -20  -30 -10  -10 0 0];    % 1, 2, 3
 mpc.gencost(9, COST:end) = [-30 -850 -10 -250  -5  -50 0 0];    % 10, 20, 30
-%% put a load before gen in matrix
-mpc.gen = [mpc.gen(8, :); mpc.gen(1:7, :); mpc.gen(9, :)];
-mpc.gencost = [mpc.gencost(8, :); mpc.gencost(1:7, :); mpc.gencost(9, :)];
+%% split a load in 2 half-size duplicates at same bus ...
+mpc.gen(8, [PG PMIN PMAX QG QMIN QMAX]) = mpc.gen(8, [PG PMIN PMAX QG QMIN QMAX]) / 2;
+mpc.gencost(8, COST:end) = mpc.gencost(8, COST:end) / 2;
+%% ... with one before gens in matrix
+mpc.gen = [mpc.gen(8, :); mpc.gen];
+mpc.gencost = [mpc.gencost(8, :); mpc.gencost];
 gg = find(~isload(mpc.gen));
 ld = find( isload(mpc.gen));
 for k = 1:3
     a{k} = find(mpc.bus(:, BUS_AREA) == k); %% buses in area k
-    [junk, tmp, junk2] = intersect(mpc.gen(ld, GEN_BUS), a{k});
+    tmp = find(ismember(mpc.gen(ld, GEN_BUS), a{k}));
     lda{k} = ld(tmp);                       %% disp loads in area k
 end
 for k = 1:3

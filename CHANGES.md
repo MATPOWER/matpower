@@ -12,6 +12,11 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.0
 -----------------
 
+#### 9/11/20
+  - Fix bug in `scale_load()` where only one of multiple dispatchable
+    loads at a bus would be scaled.
+    *Thanks to Christoph Funke.*
+
 #### 8/20/20
   - Replace content of Appendix A (MIPS) in User's Manual with
     reference to MIPS User's Manual.

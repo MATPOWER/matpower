@@ -7910,6 +7910,7 @@ to use voltage squared, resulting in simpler derivatives.
 % \pagebreak
 \subsubsection*{Bugs Fixed}
 \begin{itemize}
+\item Fix bug in \code{scale\_load()} where only one of multiple dispatchable loads at a bus would be scaled. \emph{Thanks to Christoph Funke.}
 \item Fix bug \#77 where incorrect indexing could cause fatal error
 in OPF with additional nonlinear constraints. \emph{Thanks to Sergio Garcia.}
 \item Fix OPF issue \#71 for \ipopt{} and \knitro{} where structure of

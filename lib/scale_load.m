@@ -283,7 +283,7 @@ end
 if opt.which(1) ~= 'F'      %% includes 'DISPATCHABLE', not 'FIXED' only
     for k = 1:length(scale)
         idx = find( load_zone == k );
-        [junk, i, junk2] = intersect(e2i(gen(ld, GEN_BUS)), idx);
+        i = find(ismember(e2i(gen(ld, GEN_BUS)), idx));
         ig = ld(i);
 
         gen(ig, [PG PMIN]) = gen(ig, [PG PMIN]) * scale(k);
