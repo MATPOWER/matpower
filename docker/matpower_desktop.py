@@ -307,7 +307,7 @@ if __name__ == "__main__":
             try:
                 if args.verbose:
                     stdout_write(
-                        "Removing old docker volume " +  + ".\n")
+                        "Removing old docker volume " + config + ".\n")
                 output = subprocess.check_output(["docker", "volume",
                                                   "rm", "-f", args.volume])
             except subprocess.CalledProcessError as e:
