@@ -28,7 +28,7 @@ function rv = mpver(varargin)
 v{1} = struct(  'Name',     'MATPOWER', ... 
                 'Version',  '7.1-dev', ...
                 'Release',  '', ...
-                'Date',     '11-Sep-2020' );
+                'Date',     '21-Sep-2020' );
 if nargout > 0
     if nargin > 0
         rv = v{1};
@@ -37,7 +37,19 @@ if nargout > 0
     end
 else
     if have_fcn('octave')
-        v{2} = ver('octave');
+        % v{2} = ver('octave');
+        %% workaround for https://savannah.gnu.org/bugs/index.php?59125
+        vv = ver;
+        for k = 1:length(vv)
+            if strcmp(vv(k).Name, 'Octave')
+                v{2} = vv(k);
+                break;
+            end
+        end
+        %% convert to consistent format
+        if ~isempty(v{2}.Date)
+            v{2}.Date = datestr(v{2}.Date, 'dd-mmm-yyyy');
+        end
     else
         v{2} = ver('matlab');
         if length(v{2}) > 1
