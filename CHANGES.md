@@ -1168,7 +1168,7 @@ Version 5.1 - *Mar 20, 2015*
     to check for this.
 
 #### 1/14/15
-  - Added support for LP/QP solver CLP (COIN_OR Linear Programming).
+  - Added support for LP/QP solver CLP (COIN-OR Linear Programming).
     Use `opf.dc.solver` option `CLP` or `qps_clp()`.
   - Added note to README and home page about OPTI Toolbox by
     Jonathan Currie being an easy way to install some good solvers
@@ -1779,8 +1779,8 @@ Version 4.1 - *Dec 14, 2011*
     `OPF_ALG_DC` = 700. Gurobi's various solvers can be selected via
     MATPOWER's `GRB_METHOD` option. Requires the Gurobi libraries
     available from https://www.gurobi.com/ and the Gurobi MEX
-    interface available from http://www.convexoptimization.com/
-    wikimization/index.php/Gurobi_mex.
+    interface available from [http://www.convexoptimization.com/
+    wikimization/index.php/Gurobi_mex][28].
   - Added function `qps_gurobi()` for solving QP and LP problems using
     the common QP solver interface used in MATPOWER. The `qps_matpower()`
     function also includes the option to use Gurobi.
@@ -3087,3 +3087,4 @@ First Public Release – *Jun 25, 1997*
 [25]: https://github.com/MATPOWER/matpower/issues/90
 [26]: https://github.com/MATPOWER/matpower/issues/89
 [27]: https://github.com/MATPOWER/mp-opt-model
+[28]: http://www.convexoptimization.com/wikimization/index.php/Gurobi_mex
