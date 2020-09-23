@@ -28,7 +28,7 @@ function rv = mpver(varargin)
 v{1} = struct(  'Name',     'MATPOWER', ... 
                 'Version',  '7.1-dev', ...
                 'Release',  '', ...
-                'Date',     '21-Sep-2020' );
+                'Date',     '23-Sep-2020' );
 if nargout > 0
     if nargin > 0
         rv = v{1};
@@ -85,15 +85,16 @@ else
         end
     end
     fprintf('\n');
-    if have_fcn('e4st')
-        e4st_ver;
-    end
+    mptestver;
     mipsver;
     mpomver;
     if have_fcn('most')
         mostver;
     else
         fprintf('%-22s -- not installed --\n', 'MOST');
+    end
+    if have_fcn('e4st')
+        e4st_ver;
     end
     if have_fcn('sdp_pf')
         sdp_pf_ver;
@@ -104,12 +105,6 @@ else
         sgver;
     else
         fprintf('%-22s -- not installed --\n', 'SynGrid');
-    end
-    if have_fcn('yalmip')
-        s = have_fcn('yalmip', 'all');
-        fprintf('%-22s Version %-10s %-11s\n', 'YALMIP', s.vstr, s.date);
-    else
-        fprintf('%-22s -- not installed --\n', 'YALMIP');
     end
     if have_fcn('knitro')
         s = have_fcn('knitro', 'all');
@@ -239,6 +234,12 @@ else
         tralmopfver;
     else
         fprintf('%-22s -- not installed --\n', 'TRALMOPF');
+    end
+    if have_fcn('yalmip')
+        s = have_fcn('yalmip', 'all');
+        fprintf('%-22s Version %-10s %-11s\n', 'YALMIP', s.vstr, s.date);
+    else
+        fprintf('%-22s -- not installed --\n', 'YALMIP');
     end
 
     fprintf('%-22s %s\n\n', 'Architecture:', computer);

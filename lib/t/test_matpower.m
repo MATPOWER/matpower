@@ -31,6 +31,7 @@ tests = {};
 
 %% MP-Test
 tests{end+1} = 't_test_fcns';
+tests{end+1} = 't_have_feature';
 
 %% MIPS
 tests{end+1} = 't_mplinsolve';
@@ -39,8 +40,8 @@ tests{end+1} = 't_mips_pardiso';
 tests{end+1} = 't_qps_mips';
 
 %% MP-Opt-Model
-tests{end+1} = 't_nested_struct_copy';
 tests{end+1} = 't_have_fcn';
+tests{end+1} = 't_nested_struct_copy';
 tests{end+1} = 't_nleqs_master';
 tests{end+1} = 't_qps_master';
 tests{end+1} = 't_miqps_master';

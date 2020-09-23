@@ -150,10 +150,12 @@
 \newcommand{\matpowerlink}[0]{\href{\matpowerurl}{\matpower{}}}
 \newcommand{\matpowergithuburl}[0]{https://github.com/MATPOWER/matpower}
 \newcommand{\matpowerextrasgithuburl}[0]{https://github.com/MATPOWER/matpower-extras}
+\newcommand{\matpowerextraslink}[0]{\href{\matpowerextrasgithuburl}{\matpower{} Extras}}
 \newcommand{\matpowerdockerpage}[0]{https://github.com/MATPOWER/matpower/blob/master/docker/MATPOWER-Docker.md}
 \newcommand{\mptest}[0]{{MP-Test}}
 \newcommand{\mptesturl}[0]{https://github.com/MATPOWER/mptest}
 \newcommand{\mptestlink}[0]{\href{\mptesturl}{\mptest{}}}
+\newcommand{\mptestver}[0]{7.1}
 \newcommand{\mips}[0]{{MIPS}}
 \newcommand{\mipsurl}[0]{https://github.com/MATPOWER/mips}
 \newcommand{\mipslink}[0]{\href{\mipsurl}{\mips{}}}
@@ -171,6 +173,10 @@
 \newcommand{\mostlink}[0]{\href{\mosturl}{\most{}}}
 \newcommand{\mostver}[0]{1.0.2}
 \newcommand{\md}[0]{{\most{} Data struct}}
+\newcommand{\east}[0]{E4ST}
+\newcommand{\eastver}[0]{1.0b2}
+\newcommand{\easturl}[0]{https://e4st.com}
+\newcommand{\eastlink}[0]{\href{\easturl}{\east}}
 \newcommand{\syngrid}[0]{{SynGrid}}
 \newcommand{\syngridver}[0]{1.0.1}
 \newcommand{\syngridurl}[0]{https://github.com/MATPOWER/mx-syngrid}
@@ -198,10 +204,10 @@
 \newcommand{\mppath}[1]{\textsf{\textsl{{\relsize{-1.0}\textless{}\mbox{MATPOWER}\textgreater{}}}}\code{{#1}}}  % requires package relsize
 %\newcommand{\mostpath}[1]{\code{\$MOST{#1}}}
 %\newcommand{\mipspath}[1]{\textsf{\textsl{{\relsize{-1.0}\textless{}\mbox{MIPS}\textgreater{}}}}\code{{#1}}}  % requires package relsize
-\newcommand{\mptestpath}[1]{\mppath{}\code{/mptest{#1}}}
-\newcommand{\mipspath}[1]{\mppath{}\code{/mips{#1}}}
-\newcommand{\mpompath}[1]{\mppath{}\code{/mp-opt-model{#1}}}
-\newcommand{\mostpath}[1]{\mppath{}\code{/most{#1}}}
+\newcommand{\mptestpath}[1]{\mppath{/mptest{#1}}}
+\newcommand{\mipspath}[1]{\mppath{/mips{#1}}}
+\newcommand{\mpompath}[1]{\mppath{/mp-opt-model{#1}}}
+\newcommand{\mostpath}[1]{\mppath{/most{#1}}}
 \newcommand{\baseMVA}[0]{\code{baseMVA}}
 \newcommand{\bus}[0]{\code{bus}}
 \newcommand{\branch}[0]{\code{branch}}
@@ -525,13 +531,13 @@ You can either download an official \emph{versioned release} or you can obtain t
 \subsubsection{Versioned Releases}
 
 Download the ZIP file of the latest official versioned release from the \href{\matpowerurl}{\matpower{} website}.\footnote{\url{\matpowerurl}}
-{\bf Note:} This \emph{does} include the \href{\matpowerextrasgithuburl}{\matpower{} Extras}.\footnote{For details on the \matpower{} Extras, see Appendix~\ref{app:extras} and the corresponding GitHub repository at \url{\matpowerextrasgithuburl}.}
+{\bf Note:} This \emph{does} include the \matpowerextraslink{}.\footnote{For details on the \matpower{} Extras, see Appendix~\ref{app:extras} and the corresponding GitHub repository at \url{\matpowerextrasgithuburl}.}
 
 \subsubsection{Current Development Version}
 
 There are also two options for obtaining the most recent development version
 of \matpower{} from the \code{master} branch on GitHub.
-{\bf Note:} This does \emph{not} include the \href{\matpowerextrasgithuburl}{\matpower{} Extras}.
+{\bf Note:} This does \emph{not} include the \matpowerextraslink{}.
 
 \begin{enumerate}
 \item Clone the \matpower{} repository from GitHub.
@@ -578,7 +584,7 @@ your own code or modifications.
 \subsubsection{\matpower{} Docker Image}
 
 \matpower{} is also available on \href{https://hub.docker.com/}{Docker Hub}\footnote{\url{https://hub.docker.com/}} as the pre-packaged \href{https://www.docker.com/}{Docker}\footnote{\url{https://www.docker.com/}} image tagged \href{https://hub.docker.com/r/matpower/matpower-desktop}{\code{matpower/matpower-desktop}},\footnote{\url{https://hub.docker.com/r/matpower/matpower-desktop}} providing an Ubuntu desktop environment
-with Octave, \matpower{}, and the \href{\matpowerextrasgithuburl}{\matpower{} Extras} pre-installed.
+with Octave, \matpower{}, and the \matpowerextraslink{} pre-installed.
 See the \href{\matpowerdockerpage}{\matpower{} Docker page}\footnote{\url{\matpowerdockerpage}} for more details.
 
 Docker images are provided for both versioned releases and
@@ -4260,7 +4266,7 @@ The \code{feval\_w\_path} function is identical to \matlab{}'s own \code{feval},
 
 \subsubsection{\tt have\_fcn}
 
-Now included as part of \mpomlink{}~\cite{mpom} (see \mpompath{}).
+Now deprecated, but included as part of \mpomlink{}~\cite{mpom} (see \mpompath{}). Instead, please use \code{have\_feature}, a modular, extensible replacement for \code{have\_fcn} that is now included as part of \mptestlink{} (see \mptestpath{}).
 
 \subsubsection{\tt mpopt2qpopt}
 
@@ -6131,7 +6137,7 @@ name & description \\
 \code{loadshed}	& computes MW curtailments of dispatchable loads	\\
 \code{mpver}	& prints version information for \matpower{} and optional packages	\\
 \code{modcost}	& modifies \gencost{} by horizontal or vertical scaling or shifting	\\
-\code{nested\_struct\_copy}\tnote{\dag}	& copies the contents of nested structs	\\
+\code{nested\_struct\_copy}\tnote{\ddag}	& copies the contents of nested structs	\\
 \code{poly2pwl}	& creates piecewise linear approximation to polynomial cost function	\\
 \code{polycost}	& evaluates polynomial generator cost and its derivatives	\\
 \code{pqcost}	& splits \gencost{} into real and reactive power costs	\\
@@ -6142,7 +6148,41 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {Now included as part of \mpomlink{} (see \mpompath{}).}
+ \item [\dag] {Now deprecated, but included as part of \mpomlink{} (see \mpompath{}). Instead, please use \code{have\_feature}, included as part of \mptestlink{} (see \mptestpath{}).}
+ \item [\ddag] {Now included as part of \mpomlink{} (see \mpompath{}).}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{Feature Detection Functions\tnote{*}}
+\label{tab:featuredetectionfcns}
+\footnotesize
+\begin{tabular}{p{0.28\textwidth}p{0.64\textwidth}}
+\toprule
+name & description \\
+\midrule
+\code{have\_feature\_e4st}	& \eastlink{}, \url{\easturl}	\\
+\code{have\_feature\_minopf}	& MINOPF, MINOS-based optimal power flow (OPF) solver	\\
+\code{have\_feature\_most}	& \mostlink{}, \mostname{}\tnote{\dag}	\\
+\code{have\_feature\_pdipmopf}	& PDIPMOPF, primal-dual interior point method OPF solver\tnote{\ddag}	\\
+\code{have\_feature\_regexp\_split}	& support for \codeq{split} argument to \code{regexp()}	\\
+\code{have\_feature\_scpdipmopf}	& SCPDIPMOPF, step-controlled PDIPM OPF solver\tnote{\ddag}	\\
+\code{have\_feature\_sdp\_pf}	& \sdppf{}, applications of SDP relaxation of power flow equations\tnote{\S}	\\
+\code{have\_feature\_smartmarket}	& \code{runmarket} and friends, for running an energy auction\tnote{\S}	\\
+\code{have\_feature\_syngrid}	& \syngridlink{}, Synthetic Grid Creation for \matpower{}\tnote{\S}	\\
+\code{have\_feature\_tralmopf}	& TRALMOPF, trust region based augmented Langrangian OPF solver\tnote{\ddag}	\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [*] {These functions implement new tags and the detection of the corresponding features for \code{have\_feature}, included as part of \mptestlink{} (see \mptestpath{}).}
+ \item [\dag] {See \mostpath{}.}
+ \item [\ddag] {Part of TSPOPF~\cite{tspopf}.}
+ \item [\S] {Part of \matpowerextraslink{}, included in \matpower{} ZIP distributions in \mppath{/extras}.}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -6414,6 +6454,9 @@ All of the functions and files listed in this section are found in
 name & description \\
 \midrule
 \code{mptest/lib/}	& 	\\
+\code{~~have\_feature}	& test for optional functionality / version info	\\
+\code{~~have\_feature\_matlab}\tnote{\ddag}	& detect if code is running under \matlab{}	\\
+\code{~~have\_feature\_octave}\tnote{\ddag}	& detect if code is running under GNU Octave	\\
 \code{~~t\_begin}	& begin running tests	\\
 \code{~~t\_end}	& finish running tests and print statistics	\\
 \code{~~t\_is}	& tests if two matrices are identical to with a specified tolerance	\\
@@ -6422,12 +6465,14 @@ name & description \\
 \code{~~t\_skip}	& skips a number of tests, with explanatory message	\\
 \code{~~t/}	& \mptest{} tests	\\
 \code{~~~~test\_mptest}	& runs full \mptest{} test suite	\\
+\code{~~~~t\_have\_feature}	& test \code{have\_feature}	\\
 \code{~~~~t\_test\_fcns}	& test \code{t\_ok} and \code{t\_is}	\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
  \item [\dag] {These functions are part of \mptestlink{} and are found in \mptestpath{/lib}.}
+ \item [\ddag] {Feature detection functions used to define tags for  \code{have\_feature}.}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -6475,7 +6520,7 @@ name & description \\
 \code{mp-opt-model/lib/}	& 	\\
 \code{~~t/}	& \mpom{} tests	\\
 \code{~~~~test\_mp\_opt\_model}	& runs full \mpom{} test suite	\\
-\code{~~~~t\_have\_fcn}	& runs tests for \code{have\_fcn}	\\
+\code{~~~~t\_have\_fcn}	& runs tests for (deprecated) \code{have\_fcn}	\\
 \code{~~~~t\_miqps\_master}	& runs tests of MILP/MIQP solvers via \code{miqps\_master}	\\
 \code{~~~~t\_nested\_struct\_copy}	& runs tests for \code{nested\_struct\_copy}	\\
 \code{~~~~t\_nleqs\_master}	& runs tests of NLEQ solvers via \code{nleqs\_master}	\\
@@ -6661,7 +6706,7 @@ name & description \\
 
 There are a number of \matpower{}-related ``extras'' that are not part of the core \matpower{} code, but are nevertheless potentially useful to \matpower{} users. Some of these packages and functions were developed and contributed by others. While these extras are not included in the main \href{\matpowergithuburl}{\matpower{} GitHub repository}, they are included in an \code{extras} subdirectory in the distribution ZIP files for versioned releases availabe from the \matpowerlink{} website.
 
-Unless indicated otherwise in the list below, the \href{\matpowerextrasgithuburl}{\matpower{} Extras} GitHub repository at \url{\matpowerextrasgithuburl} serves as the master repository and should be used for submitting issues or pull requests. Some have their own master repository and are included in \href{\matpowerextrasgithuburl}{\matpower{} Extras} as a subrepo using \code{git-subrepo}.\footnote{See \url{https://github.com/ingydotnet/git-subrepo}.}
+Unless indicated otherwise in the list below, the \matpowerextraslink{} GitHub repository at \url{\matpowerextrasgithuburl} serves as the master repository and should be used for submitting issues or pull requests. Some have their own master repository and are included in \matpowerextraslink{} as a subrepo using \code{git-subrepo}.\footnote{See \url{https://github.com/ingydotnet/git-subrepo}.}
 
 Some of these could be moved into the main \matpower{} distribution in the future with a bit of polishing and additional documentation. Please contact the developers if you are interested in helping make this happen.
 
@@ -7669,7 +7714,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-7.0.pdf}{\matpower{} 7.0 Use
 \item Three new power flow algorithms for radial distribution systems selected via the three new options for \code{pf.alg}, namely \codeq{PQSUM}, \codeq{ISUM}, \codeq{YSUM}. Also includes new \matpower{} options \code{pf.radial.max\_it} and \code{pf.radial.vcorr}. See Section~\ref{sec:pfdist} on ``Distribution Power Flow'' for details. \emph{Thanks to Mirko Todorovski.}
 \item Major upgrade to OPF soft limit functionality, supporting soft limits on all AC and DC OPF inequality constraints, including branch flow constraints, bus voltage bounds, generator active and reactive bounds, branch flow and branch angle difference limits. \emph{Thanks to Eran Schweitzer.}
 \item Docker image tagged \href{https://hub.docker.com/r/matpower/matpower-desktop}{\code{matpower/matpower-desktop}}, providing a pre-packaged Ubuntu desktop environment
-with Octave, \matpower{}, and the \href{\matpowerextrasgithuburl}{\matpower{} Extras} all pre-installed. See the \href{\matpowerdockerpage}{\code{docker/MATPOWER-Docker.md}} page for more details.
+with Octave, \matpower{}, and the \matpowerextraslink{} all pre-installed. See the \href{\matpowerdockerpage}{\code{docker/MATPOWER-Docker.md}} page for more details.
 \emph{Thanks to Richard Lincoln.}
 \item New options:
     \begin{itemize}
@@ -7910,6 +7955,16 @@ The \href{https://matpower.org/docs/MATPOWER-manual-7.1.pdf}{\matpower{} 7.1 Use
     \item \code{nlps\_ipopt()} provides implementation of unified nonlinear programming solver interface interface for \ipopt{}.
     \item \code{nlps\_knitro()} provides implementation of unified nonlinear programming solver interface interface for \ipopt{}.
     \item \code{nlps\_master()} provides a single wrapper function for calling any of \matpower{}'s nonlinear programming solvers.
+    \item \code{have\_feature\_e4st} detects availability/version of \eastlink{}.\footnote{See \url{https://e4st.com}.}
+    \item \code{have\_feature\_minopf} detects availability/version of MINOPF, a MINOS-based Optimal Power Flow solver.
+    \item \code{have\_feature\_most} detects availability/version of \most{} (\mostname{}).
+    \item \code{have\_feature\_pdipmopf} detects availability/version of PDIPMOPF, a primal-dual interior point method Optimal Power Flow solver included in TSPOPF~\cite{tspopf}.
+    \item \code{have\_feature\_regexp\_split} detects support for the \codeq{split} argument to \code{regexp}.
+    \item \code{have\_feature\_scpdipmopf} detects availability/version of SCPDIPMOPF, a step-controlled primal-dual interior point method Optimal Power Flow solver included in TSPOPF~\cite{tspopf}.
+    \item \code{have\_feature\_sdp\_pf} detects availability/version of \sdppf{}\footnote{See \url{https://github.com/MATPOWER/mx-sdp_pf/}.}, a \matpower{} extension for applications of semi-definite programming relaxations of power flow equations.
+    \item \code{have\_feature\_smartmarket} detects availability/version of \code{runmarket} and related files for running an energy auction, found under \code{smartmarket} in \matpowerextraslink{}.\footnote{See \url{\matpowerextrasgithuburl}.}
+    \item \code{have\_feature\_syngrid} detects availability/version of \syngridlink{},\footnote{See \url{\syngridurl}.} Synthetic Grid Creation for \matpower{}.
+    \item \code{have\_feature\_tralmopf} detects availability/version of TRALMOPF, a trust region based augmented Langrangian Optimal Power Flow solver included in TSPOPF~\cite{tspopf}.
     \end{itemize}
 \end{itemize}
 
