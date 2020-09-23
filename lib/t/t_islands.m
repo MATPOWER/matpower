@@ -32,8 +32,8 @@ if quiet
 else
     verbose = 0;
 end
-if have_fcn('octave')
-    if have_fcn('octave', 'vnum') >= 4
+if have_feature('octave')
+    if have_feature('octave', 'vnum') >= 4
         file_in_path_warn_id = 'Octave:data-file-in-path';
     else
         file_in_path_warn_id = 'Octave:fopen-file-in-path';
@@ -422,7 +422,7 @@ t_is(mpc1.gen,     mpc2.gen,     10, sprintf('%smpc.gen', t));
 t_is(mpc1.branch,  mpc2.branch,  10, sprintf('%smpc.branch', t));
 t_is(mpc1.gencost, mpc2.gencost, 10, sprintf('%smpc.gencost', t));
 
-if have_fcn('octave')
+if have_feature('octave')
     warning(s1.state, file_in_path_warn_id);
 end
 

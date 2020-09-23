@@ -28,7 +28,7 @@ function opt = mpoption_info_gurobi(selector)
 if nargin < 1
     selector = 'D';
 end
-if have_fcn('gurobi')
+if have_feature('gurobi')
     switch upper(selector)
         case {'D', 'V'}     %% default and valid options
             opt = struct(...

@@ -43,7 +43,7 @@ gencost0 = [
 	1	0	50	4	-30	0	-20	1000	-10	2000	0	3000;
 ];
 
-if ~have_fcn('smartmarket')
+if ~have_feature('smartmarket')
     t_skip(n_tests, 'smartmarket code not available');
 else
 	t = 'isload()';

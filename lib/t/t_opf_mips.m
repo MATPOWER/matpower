@@ -53,8 +53,8 @@ if quiet
 else
     verbose = 0;
 end
-if have_fcn('octave')
-    if have_fcn('octave', 'vnum') >= 4
+if have_feature('octave')
+    if have_feature('octave', 'vnum') >= 4
         file_in_path_warn_id = 'Octave:data-file-in-path';
     else
         file_in_path_warn_id = 'Octave:load-file-in-path';
@@ -74,7 +74,7 @@ for k = 1:length(options)
     if options{k}{3}, sc = '-sc'; else, sc  = '';  end  %% step control
     t0 = sprintf('MIPS%s (%s,%s,%s) : ', sc, bal, crd, options{k}{4});
 
-    if strcmp(options{k}{4}, 'PARDISO') && ~have_fcn('pardiso')
+    if strcmp(options{k}{4}, 'PARDISO') && ~have_feature('pardiso')
         t_skip(num_tests, [t0 'PARDISO not available']);
         continue;
     end
@@ -504,7 +504,7 @@ for k = 1:length(options)
         [1.070692 1.090449 1.1], 4, [t 'bus voltage']);
 end
 
-if have_fcn('octave')
+if have_feature('octave')
     warning(s1.state, file_in_path_warn_id);
 end
 

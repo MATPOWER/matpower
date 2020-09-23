@@ -28,7 +28,7 @@ function opt = mpoption_info_osqp(selector)
 if nargin < 1
     selector = 'D';
 end
-if have_fcn('osqp')
+if have_feature('osqp')
     switch upper(selector)
         case {'D', 'V'}     %% default and valid options
             opt = struct(...

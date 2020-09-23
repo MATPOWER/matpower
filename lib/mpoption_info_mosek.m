@@ -28,7 +28,7 @@ function opt = mpoption_info_mosek(selector)
 if nargin < 1
     selector = 'D';
 end
-if have_fcn('mosek')
+if have_feature('mosek')
     switch upper(selector)
         case {'D', 'V'}     %% default and valid options
             opt = struct(...

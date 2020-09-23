@@ -58,7 +58,7 @@ if verbose <= 1
 end
 mpopt = mpoption(mpopt, 'verbose', verbose);
 
-if have_fcn('octave')
+if have_feature('octave')
     sing_matrix_warn_id = 'Octave:singular-matrix';
     sing_matrix_warn_id = 'Octave:nearly-singular-matrix';
     file_in_path_warn_id = 'Octave:data-file-in-path';
@@ -965,7 +965,7 @@ t_is(r.softlims.RATE_A.overload, [0; 0; 4.07774; 0; 0; 0; 0; 0; 0; 0], 6, [t 'so
 t_is(r.softlims.RATE_A.ovl_cost, [0; 0; 81.554809; 0; 0; 0; 0; 0; 0; 0], 4, [t 'softlims.RATE_A.ovl_cost']);
 gen_order_check(mpc, r, t, mpopt);
 
-if have_fcn('octave')
+if have_feature('octave')
     warning(s1.state, file_in_path_warn_id);
 end
 warning(s2.state, sing_matrix_warn_id);

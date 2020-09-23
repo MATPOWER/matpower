@@ -20,7 +20,7 @@ function mpc = remove_userfcn(mpc, stage, fcn)
 
 n = length(mpc.userfcn.(stage));
 
-if have_fcn('octave')
+if have_feature('octave')
     fcn_info = functions(fcn);
     for k = n:-1:1
         cb_info = functions(mpc.userfcn.(stage)(k).fcn);

@@ -39,7 +39,7 @@ mpopt = mpoption('opf.violation', 1e-6, 'pdipm.max_it', 100, 'pdipm.gradtol', 1e
         'pdipm.comptol', 5e-8, 'pdipm.costtol', 1e-8, 'pdipm.sc.smooth_ratio', 0.03);
 mpopt = mpoption(mpopt, 'out.all', 0, 'verbose', verbose, 'opf.ac.solver', 'PDIPM', 'pdipm.step_control', 1);
         
-if have_fcn('scpdipmopf')
+if have_feature('scpdipmopf')
     %% set up indices
     ib_data     = [1:BUS_AREA BASE_KV:VMIN];
     ib_voltage  = [VM VA];

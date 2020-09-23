@@ -75,7 +75,7 @@ f = branch(:, F_BUS);                           %% list of "from" buses
 t = branch(:, T_BUS);                           %% list of "to" buses
 
 %% for best performance, choose method based on MATLAB vs Octave and size
-if nb < 300 || have_fcn('octave')   %% small case OR running on Octave
+if nb < 300 || have_feature('octave')   %% small case OR running on Octave
     %% build Yf and Yt such that Yf * V is the vector of complex branch currents injected
     %% at each branch's "from" bus, and Yt is the same for the "to" bus end
     i = [1:nl 1:nl]';                           %% double set of row indices

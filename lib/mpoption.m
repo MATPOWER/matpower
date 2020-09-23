@@ -750,7 +750,7 @@ if ~isempty(ov)
             end
             nsc_opt = struct('check', 1, 'valid_fields', vf, 'exceptions', ex);
         end
-%         if have_fcn('catchme')
+%         if have_feature('catchme')
 %             try
 %                 opt = nested_struct_copy(opt, ov, nsc_opt);
 %             catch me

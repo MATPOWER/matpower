@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-if have_fcn('opti_clp')
+if have_feature('opti_clp')
     algs = [0; 1; 2; 3; 4; 5];
     alg_names = {
         'dual simplex',
@@ -49,8 +49,8 @@ if quiet
 else
     verbose = 0;
 end
-if have_fcn('octave')
-    if have_fcn('octave', 'vnum') >= 4
+if have_feature('octave')
+    if have_feature('octave', 'vnum') >= 4
         file_in_path_warn_id = 'Octave:data-file-in-path';
     else
         file_in_path_warn_id = 'Octave:load-file-in-path';
@@ -63,9 +63,9 @@ mpopt = mpoption('out.all', 0, 'verbose', verbose);
 mpopt = mpoption(mpopt, 'opf.dc.solver', 'CLP');
 
 %% run DC OPF
-if have_fcn('clp')
+if have_feature('clp')
     for k = 1:length(algs)
-        if have_fcn('opti_clp')
+        if have_feature('opti_clp')
             mpopt = mpoption(mpopt, 'clp.opts.algorithm', algs(k));
         else
             mpopt = mpoption(mpopt, 'clp.opts.solver', algs(k));
@@ -96,21 +96,21 @@ if have_fcn('clp')
     t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
     t_is(   bus(:,ib_voltage),    bus_soln(:,ib_voltage),  3, [t 'bus voltage']);
     t_is(   bus(:,ib_lam    ),    bus_soln(:,ib_lam    ),  3, [t 'bus lambda']);
-    if have_fcn('opti_clp')
+    if have_feature('opti_clp')
         t_is(   bus(:,ib_mu     ),    bus_soln(:,ib_mu     ),  2, [t 'bus mu']);
     else
         t_skip(1, [t 'bus mu - MEXCLP does not return multipliers on var bounds']);
     end
     t_is(   gen(:,ig_data   ),    gen_soln(:,ig_data   ), 10, [t 'gen data']);
     t_is(   gen(:,ig_disp   ),    gen_soln(:,ig_disp   ),  3, [t 'gen dispatch']);
-    if have_fcn('opti_clp')
+    if have_feature('opti_clp')
         t_is(   gen(:,ig_mu     ),    gen_soln(:,ig_mu     ),  3, [t 'gen mu']);
     else
         t_skip(1, [t 'gen mu - MEXCLP does not return multipliers on var bounds']);
     end
     t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
     t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
-    if have_fcn('opti_clp')
+    if have_feature('opti_clp')
         t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
     else
         t_skip(1, [t 'branch mu - MEXCLP does not return multipliers on var bounds']);
@@ -185,7 +185,7 @@ else
     t_skip(num_tests, 'CLP not available');
 end
 
-if have_fcn('octave')
+if have_feature('octave')
     warning(s1.state, file_in_path_warn_id);
 end
 

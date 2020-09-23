@@ -77,62 +77,62 @@ tests{end+1} = 't_islands';
 tests{end+1} = 't_opf_model';
 tests{end+1} = 't_opf_model_legacy';
 tests{end+1} = 't_opf_default';
-if have_fcn('fmincon')
+if have_feature('fmincon')
     tests{end+1} = 't_opf_fmincon';
 end
-if have_fcn('minopf')
+if have_feature('minopf')
     tests{end+1} = 't_opf_minopf';
 end
 tests{end+1} = 't_opf_mips';
-if have_fcn('pdipmopf')
+if have_feature('pdipmopf')
     tests{end+1} = 't_opf_tspopf_pdipm';
 end
-if have_fcn('scpdipmopf')
+if have_feature('scpdipmopf')
     tests{end+1} = 't_opf_tspopf_scpdipm';
 end
-if have_fcn('tralmopf')
+if have_feature('tralmopf')
     tests{end+1} = 't_opf_tspopf_tralm';
 end
-if have_fcn('ipopt')
+if have_feature('ipopt')
     tests{end+1} = 't_opf_ipopt';
 end
-if have_fcn('knitro')
+if have_feature('knitro')
     tests{end+1} = 't_opf_knitro';
 end
 tests{end+1} = 't_opf_dc_default';
-if have_fcn('bpmpd')
+if have_feature('bpmpd')
     tests{end+1} = 't_opf_dc_bpmpd';
 end
-if have_fcn('clp')
+if have_feature('clp')
     tests{end+1} = 't_opf_dc_clp';
 end
-if have_fcn('cplex')
+if have_feature('cplex')
     tests{end+1} = 't_opf_dc_cplex';
 end
-if have_fcn('glpk')
+if have_feature('glpk')
     tests{end+1} = 't_opf_dc_glpk';
 end
-if have_fcn('gurobi')
+if have_feature('gurobi')
     tests{end+1} = 't_opf_dc_gurobi';
 end
-if have_fcn('ipopt')
+if have_feature('ipopt')
     tests{end+1} = 't_opf_dc_ipopt';
 end
 tests{end+1} = 't_opf_dc_mips';
 tests{end+1} = 't_opf_dc_mips_sc';
-if have_fcn('mosek')
+if have_feature('mosek')
     tests{end+1} = 't_opf_dc_mosek';
 end
-if have_fcn('osqp')
+if have_feature('osqp')
     tests{end+1} = 't_opf_dc_osqp';
 end
-if have_fcn('quadprog')
+if have_feature('quadprog')
     tests{end+1} = 't_opf_dc_ot';
 end
 
 %% SDP_PF
-if have_fcn('sdp_pf')
-    if have_fcn('mosek') || have_fcn('sdpt3') || have_fcn('sedumi')
+if have_feature('sdp_pf')
+    if have_feature('mosek') || have_feature('sdpt3') || have_feature('sedumi')
         tests{end+1} = 't_opf_sdpopf';
         tests{end+1} = 't_insolvablepf';
         tests{end+1} = 't_insolvablepf_limitQ';
@@ -157,13 +157,13 @@ tests{end+1} = 't_apply_changes';
 tests{end+1} = 't_psse';
 
 %% smartmarket tests
-if have_fcn('smartmarket')
+if have_feature('smartmarket')
     tests{end+1} = 't_off2case';
-    if have_fcn('minopf')
+    if have_feature('minopf')
         tests{end+1} = 't_auction_minopf';
     end
     tests{end+1} = 't_auction_mips';
-    if have_fcn('pdipmopf')
+    if have_feature('pdipmopf')
         tests{end+1} = 't_auction_tspopf_pdipm';
     end
     tests{end+1} = 't_runmarket';

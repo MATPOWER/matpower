@@ -27,7 +27,7 @@ if ~exist('isequaln')
     eval('isequaln = @isequalwithequalnans;');
 end
 
-if have_fcn('matlab', 'vnum') < 7.001
+if have_feature('matlab', 'vnum') < 7.001
     t_skip(num_tests, 'test requires cellfun() construct not available before MATLAB 7.1');
 else
     mpce = loadcase('t_case_ext');

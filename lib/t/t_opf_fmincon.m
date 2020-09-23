@@ -47,7 +47,7 @@ mpopt = mpoption(mpopt, 'out.all', 0, 'verbose', verbose, 'opf.ac.solver', 'FMIN
 mpopt = mpoption(mpopt, 'fmincon.tol_x', 1e-7, 'fmincon.tol_f', 1e-9);
 
 %% use active-set method for MATLAB 7.6-7.9 (R2008a-R2009b)
-vstr = have_fcn('matlab', 'vstr');
+vstr = have_feature('matlab', 'vstr');
 if strcmp(vstr, '7.6') || strcmp(vstr, '7.7') || ...
         strcmp(vstr, '7.8') || strcmp(vstr, '7.9')
     mpopt = mpoption(mpopt, 'fmincon.alg', 1);
@@ -58,7 +58,7 @@ for k = 1:length(options)
     if options{k}{2}, crd = 'c';  else, crd = 'p'; end  %% V coordinates
     t0 = sprintf('fmincon OPF (%s,%s) : ', bal, crd);
 
-    if ~have_fcn('fmincon')
+    if ~have_feature('fmincon')
         t_skip(num_tests, 'fmincon not available');
         continue;
     end

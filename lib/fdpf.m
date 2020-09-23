@@ -33,7 +33,7 @@ end
 %% options
 tol     = mpopt.pf.tol;
 max_it  = mpopt.pf.fd.max_it;
-lu_vec  = have_fcn('lu_vec');
+lu_vec  = have_feature('lu_vec');
 
 %% initialize
 converged = 0;

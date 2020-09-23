@@ -91,8 +91,8 @@ jobs:
         octave-cli --no-gui --eval "qps_ipopt([],[1; 1],[1 1],[2],[2],[1; 1],[1; 1],[1; 1],struct('verbose', 2));"
     - name: Test for successful Ipopt/OSQP installs
       run: |
-        octave-cli --no-gui --eval "if ~have_fcn('ipopt'), exit(1); end"
-        octave-cli --no-gui --eval "if ~have_fcn('osqp'), exit(1); end"
+        octave-cli --no-gui --eval "if ~have_feature('ipopt'), exit(1); end"
+        octave-cli --no-gui --eval "if ~have_feature('osqp'), exit(1); end"
     - name: Test MP-Test
       run: octave-cli --no-gui --eval "test_mptest(0,1)"
     - name: Test MIPS

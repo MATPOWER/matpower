@@ -16,15 +16,15 @@ end
 num_tests = 366;
 t_begin(num_tests, quiet);
 
-if have_fcn('matlab', 'vnum') < 7.001
+if have_feature('matlab', 'vnum') < 7.001
     t_skip(num_tests, 'RUNCPF requires cellfun() construct not available before MATLAB 7.1');
 else
     plot_nose_curve = 0;
     verbose = 0;
 
     casefile = 't_case9_pfv2';
-    if have_fcn('octave')
-        if have_fcn('octave', 'vnum') >= 4
+    if have_feature('octave')
+        if have_feature('octave', 'vnum') >= 4
             file_in_path_warn_id = 'Octave:data-file-in-path';
         else
             file_in_path_warn_id = 'Octave:load-file-in-path';
@@ -578,7 +578,7 @@ else
     t_ok(strfind(r.cpf.done_msg, 'Corrector did not converge in'), [t 'done_msg']);
     t_is(length(r.cpf.events), 0, 12, [t 'length(events) == 0']);
 
-    if have_fcn('octave')
+    if have_feature('octave')
         warning(s1.state, file_in_path_warn_id);
     end
 end

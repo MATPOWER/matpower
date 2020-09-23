@@ -94,8 +94,8 @@ script:
 - octave-cli --no-gui --eval "install_matpower(1,1,1)"
 
 ## fail if either Ipopt or OSQP are not successfully installed
-- octave-cli --no-gui --eval "if ~have_fcn('ipopt'), exit(1); end"
-- octave-cli --no-gui --eval "if ~have_fcn('osqp'), exit(1); end"
+- octave-cli --no-gui --eval "if ~have_feature('ipopt'), exit(1); end"
+- octave-cli --no-gui --eval "if ~have_feature('osqp'), exit(1); end"
 
 # print version numbers
 - octave-cli --no-gui --eval "qps_glpk( [],[1; 1],[1 1],[2],[2],[1; 1],[1; 1],[1; 1],struct('verbose', 3));"

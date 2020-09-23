@@ -129,7 +129,7 @@ if nr
     % pat = '(?<col>[^''",\s/]+|''([^'']|'''')*''|"([^"]|"")*")\s*(,|\s)\s*|\s*,\s*|\t|(?<col>[^''",\s/]+|''([^'']|'''')*''|"([^"]|"")*")|(?<comment>/.*)?';
 
     %% set up functions for use with cellfun
-    if have_fcn('octave') && have_fcn('octave', 'vnum') < 4.003
+    if have_feature('octave') && have_feature('octave', 'vnum') < 4.003
         parser  = @(ln){{regexp(ln, pat, 'names')}};  %% parse cols, comments of each rec
         numcols = @(ss)length(ss{1}.col);   %% number of columns in each record
     else
@@ -143,7 +143,7 @@ if nr
 %     %% extract possible comments
 %     if nargout > 2
 %     %   extract_comment = @(n){n(end).comment};
-%         if have_fcn('octave') && have_fcn('octave', 'vnum') < 4.003
+%         if have_feature('octave') && have_feature('octave', 'vnum') < 4.003
 %             comment = cellfun(@(n){n{1}.comment(end)}, dd);
 %         else
 %             comment = cellfun(@(n){n(end).comment}, dd);
@@ -169,7 +169,7 @@ if nr
         else
             t = '';
         end
-        if have_fcn('octave') && have_fcn('octave', 'vnum') < 4.003 %% running under Octave
+        if have_feature('octave') && have_feature('octave', 'vnum') < 4.003 %% running under Octave
             switch t
                 case {'d', 'f', 'g', 'D', 'F', 'G'} %% numeric data
                     if t == upper(t)                %% possibly quoted

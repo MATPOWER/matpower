@@ -23,13 +23,13 @@ nqp = 28;
 t_begin(n*length(algs), quiet);
 
 diff_alg_warn_id = 'optim:linprog:WillRunDiffAlg';
-if have_fcn('quadprog') && have_fcn('quadprog', 'vnum') == 7.005
+if have_feature('quadprog') && have_feature('quadprog', 'vnum') == 7.005
     s1 = warning('query', diff_alg_warn_id);
     warning('off', diff_alg_warn_id);
 end
 
 for k = 1:length(algs)
-    if ~isempty(check{k}) && ~have_fcn(check{k})
+    if ~isempty(check{k}) && ~have_feature(check{k})
         t_skip(n, sprintf('%s not installed', names{k}));
     else
         opt = struct('verbose', 0, 'alg', algs{k});
@@ -76,7 +76,7 @@ for k = 1:length(algs)
 %             mpopt.mosek.opts.MSK_DPAR_INTPNT_TOL_DFEAS = 1e-10;
 %             mpopt.mosek.opts.MSK_DPAR_INTPNT_TOL_INFEAS = 1e-10;
 %             mpopt.mosek.opts.MSK_DPAR_INTPNT_TOL_REL_GAP = 1e-10;
-            vnum = have_fcn('mosek', 'vnum');
+            vnum = have_feature('mosek', 'vnum');
             if vnum >= 8
 %                 mpopt.mosek.opts.MSK_DPAR_INTPNT_QO_TOL_PFEAS = 1e-10;
 %                 mpopt.mosek.opts.MSK_DPAR_INTPNT_QO_TOL_DFEAS = 1e-10;
@@ -104,7 +104,7 @@ for k = 1:length(algs)
         t_is(f, -78, 6, [t 'f']);
         t_is(lam.mu_l, [0;1.5;0], 9, [t 'lam.mu_l']);
         t_is(lam.mu_u, [0;0;0.5], 9, [t 'lam.mu_u']);
-        if strcmp(algs{k}, 'CLP') && ~have_fcn('opti_clp')
+        if strcmp(algs{k}, 'CLP') && ~have_feature('opti_clp')
             t_skip(2, [t 'lam.lower/upper : MEXCLP does not return multipliers on var bounds']);
         else
             t_is(lam.lower, [1;0;0], 9, [t 'lam.lower']);
@@ -144,7 +144,7 @@ for k = 1:length(algs)
             t_is(f, -74/9, 6, [t 'f']);
             t_is(lam.mu_l, [0;0;0], 13, [t 'lam.mu_l']);
             t_is(lam.mu_u, [28;4;0]/9, 4, [t 'lam.mu_u']);
-            if strcmp(algs{k}, 'CLP') && ~have_fcn('opti_clp')
+            if strcmp(algs{k}, 'CLP') && ~have_feature('opti_clp')
                 t_skip(2, [t 'lam.lower/upper : MEXCLP does not return multipliers on var bounds']);
             else
                 t_is(lam.lower, zeros(size(x)), 7, [t 'lam.lower']);
@@ -170,7 +170,7 @@ for k = 1:length(algs)
             t_is(f, 3.29/3, 6, [t 'f']);
             t_is(lam.mu_l, [6.58;0]/3, 6, [t 'lam.mu_l']);
             t_is(lam.mu_u, [0;0], 13, [t 'lam.mu_u']);
-            if strcmp(algs{k}, 'CLP') && ~have_fcn('opti_clp')
+            if strcmp(algs{k}, 'CLP') && ~have_feature('opti_clp')
                 t_skip(2, [t 'lam.lower/upper : MEXCLP does not return multipliers on var bounds']);
             else
                 t_is(lam.lower, [2.24;0;0;1.7667], 4, [t 'lam.lower']);
@@ -185,7 +185,7 @@ for k = 1:length(algs)
             t_is(f, 3.29/3, 6, [t 'f']);
             t_is(lam.mu_l, [6.58;0]/3, 6, [t 'lam.mu_l']);
             t_is(lam.mu_u, [0;0], 13, [t 'lam.mu_u']);
-            if strcmp(algs{k}, 'CLP') && ~have_fcn('opti_clp')
+            if strcmp(algs{k}, 'CLP') && ~have_feature('opti_clp')
                 t_skip(2, [t 'lam.lower/upper : MEXCLP does not return multipliers on var bounds']);
             else
                 t_is(lam.lower, [2.24;0;0;1.7667], 4, [t 'lam.lower']);
@@ -202,7 +202,7 @@ for k = 1:length(algs)
     end
 end
 
-if have_fcn('quadprog') && have_fcn('quadprog', 'vnum') == 7.005
+if have_feature('quadprog') && have_feature('quadprog', 'vnum') == 7.005
     warning(s1.state, diff_alg_warn_id);
 end
 

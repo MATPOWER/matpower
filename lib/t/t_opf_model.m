@@ -1420,7 +1420,7 @@ t_is(f, 239, 14, [t 'f']);
 
 %%-----  copy  -----
 t = 'copy constructor';
-if have_fcn('octave') && have_fcn('octave', 'vnum') < 5.003
+if have_feature('octave') && have_feature('octave', 'vnum') < 5.003
     t_skip(1, [t ' - https://savannah.gnu.org/bugs/?52614']);
 else
     om1 = opf_model(om);

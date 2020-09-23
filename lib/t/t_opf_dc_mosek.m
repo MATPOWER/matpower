@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-s = have_fcn('mosek', 'all');
+s = have_feature('mosek', 'all');
 
 if s.av
     sc = mosek_symbcon;
@@ -102,7 +102,7 @@ mpopt = mpoption('out.all', 0, 'verbose', verbose);
 mpopt = mpoption(mpopt, 'opf.dc.solver', 'MOSEK');
 
 %% run DC OPF
-if s.av     %% if have_fcn('mosek')
+if s.av     %% if have_feature('mosek')
     for k = 1:length(algs)
         mpopt = mpoption(mpopt, 'mosek.lp_alg', algs(k));
     t0 = sprintf('DC OPF (MOSEK %s): ', alg_names{algs(k)+1});

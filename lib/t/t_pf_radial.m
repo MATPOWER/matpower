@@ -12,8 +12,8 @@ if quiet
 else
     verbose = 1;
 end
-if have_fcn('octave')
-    if have_fcn('octave', 'vnum') >= 4
+if have_feature('octave')
+    if have_feature('octave', 'vnum') >= 4
         file_in_path_warn_id = 'Octave:data-file-in-path';
     else
         file_in_path_warn_id = 'Octave:load-file-in-path';
@@ -173,7 +173,7 @@ if verbose > 0
     print_iterations(casefile,method,iter_pv(:,:,2))
 end
 
-if have_fcn('octave')
+if have_feature('octave')
     warning(s1.state, file_in_path_warn_id);
 end
 

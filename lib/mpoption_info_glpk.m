@@ -28,7 +28,7 @@ function opt = mpoption_info_glpk(selector)
 if nargin < 1
     selector = 'D';
 end
-if have_fcn('glpk')
+if have_feature('glpk')
     switch upper(selector)
         case {'D', 'V'}     %% default and valid options
             opt = struct(...

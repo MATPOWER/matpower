@@ -38,7 +38,7 @@ mpopt = mpoption('out.all', 0, 'verbose', verbose);
 mpopt = mpoption(mpopt, 'opf.dc.solver', 'BPMPD');
 
 %% run DC OPF
-if have_fcn('bpmpd')
+if have_feature('bpmpd')
     %% set up indices
     ib_data     = [1:BUS_AREA BASE_KV:VMIN];
     ib_voltage  = [VM VA];

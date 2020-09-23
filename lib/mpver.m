@@ -36,7 +36,7 @@ if nargout > 0
         rv = v{1}.Version;
     end
 else
-    if have_fcn('octave')
+    if have_feature('octave')
         % v{2} = ver('octave');
         %% workaround for https://savannah.gnu.org/bugs/index.php?59125
         vv = ver;
@@ -65,13 +65,13 @@ else
     for n = 1:3
         if n == 3
             if isempty(v{3}) || isempty(v{3}.Version)
-                if have_fcn('matlab')
+                if have_feature('matlab')
                     fprintf('\n%-22s -- not installed --', 'Optimization Toolbox');
                 else    %% Octave
                     fprintf('\n%-22s -- not installed --', 'optim');
                 end
                 continue;
-            elseif have_fcn('matlab') && ~license('test', 'optimization_toolbox')
+            elseif have_feature('matlab') && ~license('test', 'optimization_toolbox')
                 fprintf('\n%-22s -- no license --', 'Optimization Toolbox');
                 continue;
             end
@@ -88,26 +88,26 @@ else
     mptestver;
     mipsver;
     mpomver;
-    if have_fcn('most')
+    if have_feature('most')
         mostver;
     else
         fprintf('%-22s -- not installed --\n', 'MOST');
     end
-    if have_fcn('e4st')
+    if have_feature('e4st')
         e4st_ver;
     end
-    if have_fcn('sdp_pf')
+    if have_feature('sdp_pf')
         sdp_pf_ver;
     else
         fprintf('%-22s -- not installed --\n', 'SDP_PF');
     end
-    if have_fcn('syngrid')
+    if have_feature('syngrid')
         sgver;
     else
         fprintf('%-22s -- not installed --\n', 'SynGrid');
     end
-    if have_fcn('knitro')
-        s = have_fcn('knitro', 'all');
+    if have_feature('knitro')
+        s = have_feature('knitro', 'all');
         if isempty(s.vstr)
             vn = '<unknown>';
         else
@@ -117,7 +117,7 @@ else
     else
         fprintf('%-22s -- not installed --\n', 'Artelys Knitro');
     end
-    if have_fcn('bpmpd')
+    if have_feature('bpmpd')
         if exist('bpver', 'file') == 2
             bpver;
         else
@@ -126,8 +126,8 @@ else
     else
         fprintf('%-22s -- not installed --\n', 'BPMPD_MEX');
     end
-    if have_fcn('clp')
-        s = have_fcn('clp', 'all');
+    if have_feature('clp')
+        s = have_feature('clp', 'all');
         if isempty(s.vstr)
             vn = '<unknown>';
         else
@@ -137,14 +137,14 @@ else
     else
         fprintf('%-22s -- not installed --\n', 'CLP');
     end
-    if have_fcn('cplex')
-        s = have_fcn('cplex', 'all');
+    if have_feature('cplex')
+        s = have_feature('cplex', 'all');
         fprintf('%-22s Version %-10s %-11s\n', 'CPLEX', s.vstr, s.date);
     else
         fprintf('%-22s -- not installed --\n', 'CPLEX');
     end
-    if have_fcn('glpk')
-        s = have_fcn('glpk', 'all');
+    if have_feature('glpk')
+        s = have_feature('glpk', 'all');
         if isempty(s.vstr)
             vn = '<unknown>';
         else
@@ -155,8 +155,8 @@ else
         fprintf('%-22s -- not installed --\n', 'GLPK');
     end
     gurobiver;
-    if have_fcn('ipopt')
-        s = have_fcn('ipopt', 'all');
+    if have_feature('ipopt')
+        s = have_feature('ipopt', 'all');
         if isempty(s.vstr)
             vn = '<unknown>';
         else
@@ -166,7 +166,7 @@ else
     else
         fprintf('%-22s -- not installed --\n', 'IPOPT');
     end
-    if have_fcn('minopf')
+    if have_feature('minopf')
         if exist('minopfver', 'file') == 2
             minopfver;
         else
@@ -175,8 +175,8 @@ else
     else
         fprintf('%-22s -- not installed --\n', 'MINOPF');
     end
-    if have_fcn('mosek')
-        s = have_fcn('mosek', 'all');
+    if have_feature('mosek')
+        s = have_feature('mosek', 'all');
         if isempty(s.vstr)
             vn = '<unknown>';
         else
@@ -187,8 +187,8 @@ else
         fprintf('%-22s -- not installed --\n', 'MOSEK');
     end
     osqpver;
-    if have_fcn('pardiso')
-        s = have_fcn('pardiso', 'all');
+    if have_feature('pardiso')
+        s = have_feature('pardiso', 'all');
         if isempty(s.vstr)
             vn = '<unknown>';
         else
@@ -198,18 +198,18 @@ else
     else
         fprintf('%-22s -- not installed --\n', 'PARDISO');
     end
-    if have_fcn('pdipmopf')
+    if have_feature('pdipmopf')
         pdipmopfver;
     else
         fprintf('%-22s -- not installed --\n', 'PDIPMOPF');
     end
-    if have_fcn('scpdipmopf')
+    if have_feature('scpdipmopf')
         scpdipmopfver;
     else
         fprintf('%-22s -- not installed --\n', 'SCPDIPMOPF');
     end
-    if have_fcn('sdpt3')
-        s = have_fcn('sdpt3', 'all');
+    if have_feature('sdpt3')
+        s = have_feature('sdpt3', 'all');
         if isempty(s.vstr)
             vn = '<unknown>';
         else
@@ -219,8 +219,8 @@ else
     else
         fprintf('%-22s -- not installed --\n', 'SDPT3');
     end
-    if have_fcn('sedumi')
-        s = have_fcn('sedumi', 'all');
+    if have_feature('sedumi')
+        s = have_feature('sedumi', 'all');
         if isempty(s.vstr)
             vn = '<unknown>';
         else
@@ -230,13 +230,13 @@ else
     else
         fprintf('%-22s -- not installed --\n', 'SeDuMi');
     end
-    if have_fcn('tralmopf')
+    if have_feature('tralmopf')
         tralmopfver;
     else
         fprintf('%-22s -- not installed --\n', 'TRALMOPF');
     end
-    if have_fcn('yalmip')
-        s = have_fcn('yalmip', 'all');
+    if have_feature('yalmip')
+        s = have_feature('yalmip', 'all');
         fprintf('%-22s Version %-10s %-11s\n', 'YALMIP', s.vstr, s.date);
     else
         fprintf('%-22s -- not installed --\n', 'YALMIP');

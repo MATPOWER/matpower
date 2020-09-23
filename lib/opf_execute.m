@@ -89,27 +89,27 @@ else
         switch alg
             case 'PDIPM'
                 if mpopt.pdipm.step_control
-                    if ~have_fcn('scpdipmopf')
+                    if ~have_feature('scpdipmopf')
                         error('opf_execute: MPOPT.opf.ac.solver = ''%s'' requires SCPDIPMOPF (see http://www.pserc.cornell.edu/tspopf/)', alg);
                     end
                 else
-                    if ~have_fcn('pdipmopf')
+                    if ~have_feature('pdipmopf')
                         error('opf_execute: MPOPT.opf.ac.solver = ''%s'' requires PDIPMOPF (see http://www.pserc.cornell.edu/tspopf/)', alg);
                     end
                 end
                 [results, success, raw] = tspopf_solver(om, mpopt);
             case 'TRALM'
-                if ~have_fcn('tralmopf')
+                if ~have_feature('tralmopf')
                     error('opf_execute: MPOPT.opf.ac.solver = ''%s'' requires TRALM (see http://www.pserc.cornell.edu/tspopf/)', alg);
                 end
                 [results, success, raw] = tspopf_solver(om, mpopt);
             case 'MINOPF'
-                if ~have_fcn('minopf')
+                if ~have_feature('minopf')
                     error('opf_execute: MPOPT.opf.ac.solver = ''%s'' requires MINOPF (see http://www.pserc.cornell.edu/minopf/)', alg);
                 end
                 [results, success, raw] = mopf_solver(om, mpopt);
             case 'SDPOPF'
-                if ~have_fcn('yalmip')
+                if ~have_feature('yalmip')
                     error('opf_execute: MPOPT.opf.ac.solver = ''%s'' requires YALMIP (see https://yalmip.github.io)', alg);
                 end
                 [results, success, raw] = sdpopf_solver(om, mpopt);
@@ -119,15 +119,15 @@ else
     else    %% not legacy solver
         switch alg
             case 'IPOPT'
-                if ~have_fcn('ipopt')
+                if ~have_feature('ipopt')
                     error('opf_execute: MPOPT.opf.ac.solver = ''%s'' requires IPOPT (see https://github.com/coin-or/Ipopt)', alg);
                 end
             case 'FMINCON'
-                if ~have_fcn('fmincon')
+                if ~have_feature('fmincon')
                     error('opf_execute: MPOPT.opf.ac.solver = ''%s'' requires FMINCON (Optimization Toolbox 2.x or later)', alg);
                 end
             case 'KNITRO'
-                if ~have_fcn('knitro')
+                if ~have_feature('knitro')
                     error('opf_execute: MPOPT.opf.ac.solver = ''%s'' requires Artelys Knitro (see https://www.artelys.com/solvers/knitro/)', alg);
                 end
         end

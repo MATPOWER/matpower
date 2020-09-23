@@ -25,8 +25,8 @@ if quiet
 else
     verbose = 0;
 end
-if have_fcn('octave')
-    if have_fcn('octave', 'vnum') >= 4
+if have_feature('octave')
+    if have_feature('octave', 'vnum') >= 4
         file_in_path_warn_id = 'Octave:data-file-in-path';
     else
         file_in_path_warn_id = 'Octave:fopen-file-in-path';
@@ -35,7 +35,7 @@ if have_fcn('octave')
     warning('off', file_in_path_warn_id);
 end
 
-if ~have_fcn('regexp_split')
+if ~have_feature('regexp_split')
     t_skip(num_tests, 'PSSE2MPC requires newer MATLAB/Octave with regexp split support');
 else
     t = '[records, sections] = psse_read() : length(records)';
@@ -141,7 +141,7 @@ else
     delete(tmpfname);
 end
 
-if have_fcn('octave')
+if have_feature('octave')
     warning(s1.state, file_in_path_warn_id);
 end
 

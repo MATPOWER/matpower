@@ -88,7 +88,7 @@ end
 %% attempt to pick fastest linear solver, if not specified
 if isempty(lin_solver)
     nx = length(F);
-    if nx <= 10 || have_fcn('octave')
+    if nx <= 10 || have_feature('octave')
         lin_solver = '\';       %% default \ operator
     else    %% MATLAB and nx > 10 or Octave and nx > 2000
         lin_solver = 'LU3';     %% LU decomp with 3 output args, AMD ordering

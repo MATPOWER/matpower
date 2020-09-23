@@ -13,12 +13,12 @@ if nargin < 1
     quiet = 0;
 end
 
-matlab = have_fcn('matlab');
+matlab = have_feature('matlab');
 if matlab
-    if have_fcn('quadprog_ls')
-        if have_fcn('optimoptions')
-            if have_fcn('linprog_ds')
-                if have_fcn('quadprog', 'vnum') >= 7.005  %% R2016b and later
+    if have_feature('quadprog_ls')
+        if have_feature('optimoptions')
+            if have_feature('linprog_ds')
+                if have_feature('quadprog', 'vnum') >= 7.005  %% R2016b and later
                     algs  = {'interior-point', 'dual-simplex'};
                 else
                     algs  = {'interior-point', 'active-set', 'simplex', 'dual-simplex'};
@@ -55,8 +55,8 @@ if quiet
 else
     verbose = 0;
 end
-if have_fcn('octave')
-    if have_fcn('octave', 'vnum') >= 4
+if have_feature('octave')
+    if have_feature('octave', 'vnum') >= 4
         file_in_path_warn_id = 'Octave:data-file-in-path';
     else
         file_in_path_warn_id = 'Octave:load-file-in-path';
@@ -72,7 +72,7 @@ warning off optim:linprog:IgnoreStartPoint;
 warning off optim:linprog:AlgOptsWillError;
 
 %% run DC OPF
-if have_fcn('quadprog')
+if have_feature('quadprog')
     for k = 1:length(algs)
         if matlab
             if ~isempty(algs)
@@ -81,7 +81,7 @@ if have_fcn('quadprog')
                 mpopt = mpoption(mpopt, 'linprog', []);
             end
         end
-        if strcmp(algs{k}, 'dual-simplex') && strcmp(have_fcn('fmincon', 'vstr'), '7.1')
+        if strcmp(algs{k}, 'dual-simplex') && strcmp(have_feature('fmincon', 'vstr'), '7.1')
             have_prices = 0;    %% dual-simplex did not return prices in MATLAB R2014b!?!
         else
             have_prices = 1;
@@ -209,7 +209,7 @@ else
     t_skip(num_tests, 'Optimization Toolbox not available');
 end
 
-if have_fcn('octave')
+if have_feature('octave')
     warning(s1.state, file_in_path_warn_id);
 end
 

@@ -33,8 +33,8 @@ if quiet
 else
     verbose = 0;
 end
-if have_fcn('octave')
-    if have_fcn('octave', 'vnum') >= 4
+if have_feature('octave')
+    if have_feature('octave', 'vnum') >= 4
         file_in_path_warn_id = 'Octave:data-file-in-path';
     else
         file_in_path_warn_id = 'Octave:load-file-in-path';
@@ -47,7 +47,7 @@ t0 = 'DEFAULT : ';
 mpopt = mpoption('opf.violation', 1e-6, 'mips.gradtol', 1e-8, ...
         'mips.comptol', 1e-8, 'mips.costtol', 1e-9);
 mpopt = mpoption(mpopt, 'out.all', 0, 'verbose', verbose);
-if have_fcn('pdipmopf')
+if have_feature('pdipmopf')
     mpopt = mpoption(mpopt, 'pdipm.gradtol', 1e-8, ...
             'pdipm.comptol', 1e-8, 'pdipm.costtol', 1e-9);
 end
@@ -460,7 +460,7 @@ end
     t_is([min(r.bus(:, VM)) mean(r.bus(:, VM)) max(r.bus(:, VM))], ...
         [1.070692 1.090449 1.1], 5, [t 'bus voltage']);
 
-if have_fcn('octave')
+if have_feature('octave')
     warning(s1.state, file_in_path_warn_id);
 end
 

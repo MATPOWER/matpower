@@ -39,7 +39,7 @@ mpopt = mpoption('opf.violation', 1e-6, 'tralm.primaltol', 1e-6, ...
         'tralm.dualtol', 5e-6, 'tralm.costtol', 1e-7, 'tralm.smooth_ratio', 0.04);
 mpopt = mpoption(mpopt, 'out.all', 0, 'verbose', verbose, 'opf.ac.solver', 'TRALM');
         
-if have_fcn('tralmopf')
+if have_feature('tralmopf')
     %% set up indices
     ib_data     = [1:BUS_AREA BASE_KV:VMIN];
     ib_voltage  = [VM VA];

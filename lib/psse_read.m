@@ -44,7 +44,7 @@ q_record        = @(s)~isempty(regexp(s, '^Q', 'once'));
 section_name    = @(s)regexp(s, '/\s*END OF (.*)\s', 'tokens');
 
 %% check for regexp split support
-if ~have_fcn('regexp_split')
+if ~have_feature('regexp_split')
     error('psse_read: Sorry, but PSSE2MPC requires support for the ''split'' argument to regexp(), so it does not work on versions of MATLAB prior to 7.3 or Octave prior to 3.8.');
 end
 

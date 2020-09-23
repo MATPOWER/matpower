@@ -46,7 +46,7 @@ mpopt = mpoption('out.all', 0, 'verbose', verbose);
 mpopt = mpoption(mpopt, 'opf.dc.solver', 'GUROBI');
 
 %% run DC OPF
-if have_fcn('gurobi')
+if have_feature('gurobi')
     for k = 1:length(algs)
         mpopt = mpoption(mpopt, 'gurobi.method', algs(k));
     t0 = sprintf('DC OPF (Gurobi %s): ', alg_names{k});

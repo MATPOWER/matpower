@@ -23,9 +23,9 @@ t_begin(n_tests, quiet);
     MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
     QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
 
-if ~have_fcn('smartmarket')
+if ~have_feature('smartmarket')
     t_skip(n_tests, 'smartmarket code not available');
-elseif ~have_fcn('pdipmopf')
+elseif ~have_feature('pdipmopf')
     t_skip(n_tests, 't_auction_pdipm requires PDIPMOPF');
 else
     mpopt = mpoption('opf.violation', 1e-7, 'pdipm.gradtol', 1e-6, ...

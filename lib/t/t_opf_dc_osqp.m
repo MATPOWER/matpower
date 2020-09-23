@@ -32,8 +32,8 @@ if quiet
 else
     verbose = 0;
 end
-if have_fcn('octave')
-    if have_fcn('octave', 'vnum') >= 4
+if have_feature('octave')
+    if have_feature('octave', 'vnum') >= 4
         file_in_path_warn_id = 'Octave:data-file-in-path';
     else
         file_in_path_warn_id = 'Octave:load-file-in-path';
@@ -54,7 +54,7 @@ osqp_opts = struct( ...
     );
 mpopt = mpoption(mpopt, 'osqp.opts', osqp_opts);
 
-if have_fcn('octave')
+if have_feature('octave')
     sing_matrix_warn_id = 'Octave:singular-matrix';
 else
     sing_matrix_warn_id = 'MATLAB:singularMatrix';
@@ -158,7 +158,7 @@ catch
     t_ok(0, [t 'unexpected fatal error']);
 end
 
-if have_fcn('octave')
+if have_feature('octave')
     warning(s1.state, file_in_path_warn_id);
 end
 warning(s2.state, sing_matrix_warn_id);

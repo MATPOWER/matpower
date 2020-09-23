@@ -28,7 +28,7 @@ function opt = mpoption_info_ipopt(selector)
 if nargin < 1
     selector = 'D';
 end
-if have_fcn('ipopt')
+if have_feature('ipopt')
     switch upper(selector)
         case {'D', 'V'}     %% default and valid options
             opt = struct(...

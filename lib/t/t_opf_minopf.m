@@ -38,7 +38,7 @@ t0 = 'MINOPF : ';
 mpopt = mpoption('opf.violation', 1e-6, 'minopf.xtol', 1e-6);
 mpopt = mpoption(mpopt, 'out.all', 0, 'verbose', verbose, 'opf.ac.solver', 'MINOPF');
 
-if have_fcn('minopf')
+if have_feature('minopf')
     %% set up indices
     ib_data     = [1:BUS_AREA BASE_KV:VMIN];
     ib_voltage  = [VM VA];

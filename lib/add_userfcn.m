@@ -105,7 +105,7 @@ if isfield(mpc, 'userfcn')
     if isfield(mpc.userfcn, stage)
         n = length(mpc.userfcn.(stage)) + 1;
         if ~allow_multiple
-            if have_fcn('octave')
+            if have_feature('octave')
                 fcn_info = functions(fcn);
                 for k = 1:n-1
                     cb_info = functions(mpc.userfcn.(stage)(k).fcn);

@@ -51,7 +51,7 @@ for k = 1:length(options)
     if options{k}{2}, crd = 'c';  else, crd = 'p'; end  %% V coordinates
     t0 = sprintf('Knitro OPF (%s,%s) : ', bal, crd);
 
-    if ~have_fcn('knitro')
+    if ~have_feature('knitro')
         t_skip(num_tests, 'Artelys Knitro not available');
         continue;
     end
@@ -479,7 +479,7 @@ for k = 1:length(options)
         [1.070692 1.090449 1.1], 5, [t 'bus voltage']);
 end
 
-if have_fcn('octave')
+if have_feature('octave')
     warning(s1.state, file_in_path_warn_id);
 end
 

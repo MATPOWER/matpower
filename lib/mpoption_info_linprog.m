@@ -28,7 +28,7 @@ function opt = mpoption_info_linprog(selector)
 if nargin < 1
     selector = 'D';
 end
-if have_fcn('linprog')
+if have_feature('linprog')
     switch upper(selector)
         case {'D', 'V'}     %% default and valid options
             opt = struct(...

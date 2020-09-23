@@ -41,8 +41,8 @@ if quiet
 else
     verbose = 0;
 end
-if have_fcn('octave')
-    if have_fcn('octave', 'vnum') >= 4
+if have_feature('octave')
+    if have_feature('octave', 'vnum') >= 4
         file_in_path_warn_id = 'Octave:data-file-in-path';
     else
         file_in_path_warn_id = 'Octave:load-file-in-path';
@@ -59,7 +59,7 @@ for k = 1:length(options)
     if options{k}{2}, crd = 'c';  else, crd = 'p'; end  %% V coordinates
     t0 = sprintf('Ipopt OPF (%s,%s) : ', bal, crd);
 
-    if ~have_fcn('ipopt')
+    if ~have_feature('ipopt')
         t_skip(num_tests, 'IPOPT not available');
         continue;
     end
@@ -487,7 +487,7 @@ for k = 1:length(options)
         [1.070692 1.090449 1.1], 5, [t 'bus voltage']);
 end
 
-if have_fcn('octave')
+if have_feature('octave')
     warning(s1.state, file_in_path_warn_id);
 end
 

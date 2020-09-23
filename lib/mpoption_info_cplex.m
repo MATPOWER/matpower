@@ -28,7 +28,7 @@ function opt = mpoption_info_cplex(selector)
 if nargin < 1
     selector = 'D';
 end
-if have_fcn('cplex')
+if have_feature('cplex')
     switch upper(selector)
         case {'D', 'V'}     %% default and valid options
             opt = struct(...

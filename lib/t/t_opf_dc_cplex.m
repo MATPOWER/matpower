@@ -46,7 +46,7 @@ mpopt = mpoption('out.all', 0, 'verbose', verbose);
 mpopt = mpoption(mpopt, 'opf.dc.solver', 'CPLEX');
 
 %% run DC OPF
-if have_fcn('cplex')
+if have_feature('cplex')
     for k = 1:length(algs)
         mpopt = mpoption(mpopt, 'cplex.lpmethod', algs(k), 'cplex.qpmethod', algs(k));
     t0 = sprintf('DC OPF (CPLEX %s): ', alg_names{k});

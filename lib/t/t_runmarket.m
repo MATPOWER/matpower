@@ -23,7 +23,7 @@ t_begin(n_tests, quiet);
     MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
     QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
 
-if ~have_fcn('smartmarket')
+if ~have_feature('smartmarket')
     t_skip(n_tests, 'smartmarket code not available');
 else
     mpc = loadcase('t_auction_case');

@@ -19,8 +19,8 @@ alg_names = {
     'dual simplex',
     'interior',
 };
-if have_fcn('octave')
-    if have_fcn('octave', 'vnum') < 3.007
+if have_feature('octave')
+    if have_feature('octave', 'vnum') < 3.007
         dual = [0; 1; 1];
     else
         dual = [1; 2; 1];
@@ -47,8 +47,8 @@ if quiet
 else
     verbose = 0;
 end
-if have_fcn('octave')
-    if have_fcn('octave', 'vnum') >= 4
+if have_feature('octave')
+    if have_feature('octave', 'vnum') >= 4
         file_in_path_warn_id = 'Octave:data-file-in-path';
     else
         file_in_path_warn_id = 'Octave:load-file-in-path';
@@ -61,7 +61,7 @@ mpopt = mpoption('out.all', 0, 'verbose', verbose);
 mpopt = mpoption(mpopt, 'opf.dc.solver', 'GLPK');
 
 %% run DC OPF
-if have_fcn('glpk')
+if have_feature('glpk')
     for k = 1:length(algs)
         mpopt = mpoption(mpopt, 'glpk.opts.lpsolver', algs(k), 'glpk.opts.dual', dual(k));
     t0 = sprintf('DC OPF (GLPK %s): ', alg_names{k});
@@ -167,7 +167,7 @@ else
     t_skip(num_tests, 'GLPK not available');
 end
 
-if have_fcn('octave')
+if have_feature('octave')
     warning(s1.state, file_in_path_warn_id);
 end
 
