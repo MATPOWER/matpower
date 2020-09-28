@@ -6,11 +6,11 @@ function mpc = case16ci
 %    Data from ...
 %    Civanlar S, Grainger JJ, Yin H, Lee SSH (1988) Distribution Feeder
 %    Reconfiguration for Loss Reduction. IEEE Trans Power Deliv
-%    3:1217–1223. doi: 10.1109/61.193906
+%    3:1217Ã±1223. doi: 10.1109/61.193906
 %    and 
 %    Zhu JZ (2002) Optimal reconfiguration of electrical distribution
 %    network using the refined genetic algorithm, Electr Power Syst Res
-%    62:37–42. doi: 10.1016/S0378-7796(02)00041-X
+%    62:37Ã±42. doi: 10.1016/S0378-7796(02)00041-X
 
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';

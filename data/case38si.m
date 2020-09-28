@@ -5,7 +5,7 @@ function mpc = case38si
 %
 %    Data from ...
 %    Singh D, Misra RK (2007) Effect of Load Models in Distributed
-%    Generation Planning. Power Syst IEEE Trans 22:2204–2212. doi:
+%    Generation Planning. Power Syst IEEE Trans 22:2204Ã±2212. doi:
 %    10.1109/TPWRS.2007.907582
 
 %% MATPOWER Case Format : Version 2

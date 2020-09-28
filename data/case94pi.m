@@ -5,7 +5,7 @@ function mpc = case94pi
 %    Data from ...
 %    Pires DF, Antunes CH, Martins AG (2012) NSGA-II with local search for
 %    a multi-objective reactive power compensation problem. Int J Electr
-%    Power Energy Syst 43:313–324. doi: 10.1016/j.ijepes.2012.05.024
+%    Power Energy Syst 43:313Ã±324. doi: 10.1016/j.ijepes.2012.05.024
 
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';

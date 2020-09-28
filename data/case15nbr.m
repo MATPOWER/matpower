@@ -5,7 +5,7 @@ function mpc = case15nbr
 %    Data from ...
 %    Battu NR, Abhyankar AR, Senroy N (2016) DG Planning with Amalgamation
 %    of Operational and Reliability Considerations. Int J Emerg Electr
-%    Power Syst 17:131–141. doi: 10.1515/ijeeps-2015-0142
+%    Power Syst 17:131Ã±141. doi: 10.1515/ijeeps-2015-0142
 
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';

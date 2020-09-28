@@ -4,7 +4,7 @@ function mpc = case70da
 %
 %    Data from ...
 %    Das D (2006) Reconfiguration of distribution system using fuzzy
-%    multi-objective approach. Int J Electr Power Energy Syst 28:331–338.
+%    multi-objective approach. Int J Electr Power Energy Syst 28:331Ã±338.
 %    doi: 10.1016/j.ijepes.2005.08.018
 
 %% MATPOWER Case Format : Version 2

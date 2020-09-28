@@ -6,7 +6,7 @@ function mpc = case34sa
 %    Data from ...
 %    Salama MMA, Chikhani AY (1993) Simplified network approach to the var
 %    control problem for radial distribution systems. IEEE Trans Power
-%    Deliv 8:1529–1535. doi: 10.1109/61.252679
+%    Deliv 8:1529Ã±1535. doi: 10.1109/61.252679
 
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';

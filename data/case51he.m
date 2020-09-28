@@ -7,7 +7,7 @@ function mpc = case51he
 %    Hengsritawat V, Tayjasanant T, Nimpitiwan N (2012) Optimal sizing of
 %    photovoltaic distributed generators in a distribution system with
 %    consideration of solar radiation and harmonic distortion. Int J Electr
-%    Power Energy Syst 39:36–47. doi: 10.1016/j.ijepes.2012.01.002
+%    Power Energy Syst 39:36Ã±47. doi: 10.1016/j.ijepes.2012.01.002
 
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';

@@ -4,8 +4,8 @@ function mpc = case10ba
 %    Please see CASEFORMAT for details on the case file format.
 %
 %    Data from ...
-%    Baghzouz Y, Ertem S., “Shunt capacitor sizing for radial
-%    distribution feeders with distorted substation voltages”,
+%    Baghzouz Y, Ertem S., Ã¬Shunt capacitor sizing for radial
+%    distribution feeders with distorted substation voltagesÃ®,
 %    IEEE Trans. Power Deliv., vol.5, 1990, pp. 650-657.
 
 %% MATPOWER Case Format : Version 2

@@ -6,7 +6,7 @@ function mpc = case118zh
 %    Data from ... 
 %    Zhang D, Fu Z, Zhang L (2007) An improved TS algorithm for
 %    loss-minimum reconfiguration in large-scale distribution systems.
-%    77:685–694. doi: 10.1016/j.epsr.2006.06.005
+%    77:685Ã±694. doi: 10.1016/j.epsr.2006.06.005
 
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';

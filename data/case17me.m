@@ -5,7 +5,7 @@ function mpc = case17me
 %    Data from ...
 %    Mendoza J, Morales D, L?pez R, et al (2007) Multi-objective Location
 %    of Automatic Voltage Regulators in a Radial Distribution Network Using
-%    a Micro Genetic Algorithm. IEEE Trans Power Syst 22:404–411.
+%    a Micro Genetic Algorithm. IEEE Trans Power Syst 22:404Ã±411.
 
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';

@@ -5,7 +5,7 @@ function mpc = case22ra
 %    Data from ... 
 %    Ramalinga Raju M, Ramachandra Murthy KVS, Ravindra K (2012) Direct
 %    search algorithm for capacitive compensation in radial distribution
-%    systems. Int J Electr Power Energy Syst 42:24–30. 
+%    systems. Int J Electr Power Energy Syst 42:24Ã±30. 
 %    doi:10.1016/j.ijepes.2012.03.006
 
 %% MATPOWER Case Format : Version 2

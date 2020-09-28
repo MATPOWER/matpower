@@ -5,7 +5,7 @@ function mpc = case16am
 %    Data from ...
 %    Das D, Kothari DP, Kalam A (1995) Simple and efficient method for load
 %    flow solution of radial distribution networks. Int J Electr Power
-%    Energy Syst 17:335–346. doi: 10.1016/0142-0615(95)00050-0
+%    Energy Syst 17:335Ã±346. doi: 10.1016/0142-0615(95)00050-0
 
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';

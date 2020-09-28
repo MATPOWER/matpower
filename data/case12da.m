@@ -3,8 +3,8 @@ function mpc = case12da
 %    Please see CASEFORMAT for details on the case file format.
 %
 %    Data from ...
-%    D. Das, H.S. Nagi, D.P. Kothari, “Novel method for solving radial
-%    distribution networks”, 
+%    D. Das, H.S. Nagi, D.P. Kothari, Ã¬Novel method for solving radial
+%    distribution networksÃ®, 
 %    IEE Proc. C, Vol. 141, No. 4, pp. 291-298, 1994.
 
 %% MATPOWER Case Format : Version 2

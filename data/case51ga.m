@@ -6,7 +6,7 @@ function mpc = case51ga
 %    Data from ...
 %    Gampa SR, Das D (2015) Optimum placement and sizing of DGs considering
 %    average hourly variations of load. Int J Electr Power Energy Syst
-%    66:25–40. doi: 10.1016/j.ijepes.2014.10.047
+%    66:25Ã±40. doi: 10.1016/j.ijepes.2014.10.047
 
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';
