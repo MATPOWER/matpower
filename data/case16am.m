@@ -44,7 +44,7 @@ mpc.gen = [
 %% branch data
 %	fbus	tbus	r	x	b	rateA	rateB	rateC	ratio	angle	status	angmin	angmax
 mpc.branch = [  %% (r and x specified in ohms here, converted to p.u. below)
-	1	2	1e-10	1e-10	0	0	0	0	0	0	1	-360	360;
+	1	2	0	1e-8	0	0	0	0	0	0	1	-360	360;    %% original reactance of 0 set to 1e-8
 	2	3	0.1202	0.1603	0	0	0	0	0	0	1	-360	360;
 	3	4	0.1282	0.1763	0	0	0	0	0	0	1	-360	360;
 	3	5	0.1442	0.2885	0	0	0	0	0	0	1	-360	360;
