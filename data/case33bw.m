@@ -1,8 +1,8 @@
 function mpc = case33bw
 %CASE33BW  Power flow data for 33 bus distribution system from Baran & Wu
-%    Please see CASEFORMAT for details on the case file format.
+%   Please see CASEFORMAT for details on the case file format.
 %
-%    Data from ...
+%   Data from ...
 %       M. E. Baran and F. F. Wu, "Network reconfiguration in distribution
 %       systems for loss reduction and load balancing," in IEEE Transactions
 %       on Power Delivery, vol. 4, no. 2, pp. 1401-1407, Apr 1989.
@@ -18,7 +18,7 @@ mpc.baseMVA = 100;
 
 %% bus data
 %	bus_i	type	Pd	Qd	Gs	Bs	area	Vm	Va	baseKV	zone	Vmax	Vmin
-mpc.bus = [  %% (Pd and Qd are specified in kW & kVAr here, converted to MW & MVAr below)
+mpc.bus = [ %% (Pd and Qd are specified in kW & kVAr here, converted to MW & MVAr below)
 	1	3	0	0	0	0	1	1	0	12.66	1	1	1;
 	2	1	100	60	0	0	1	1	0	12.66	1	1.1	0.9;
 	3	1	90	40	0	0	1	1	0	12.66	1	1.1	0.9;

@@ -1,12 +1,12 @@
 function mpc = case38si
-%CASE38si  Power flow data for 38 bus distribution system from Singh and
-%    Misra
-%    Please see CASEFORMAT for details on the case file format.
+%CASE38SI  Power flow data for 38 bus distribution system from Singh & Misra
+%   Please see CASEFORMAT for details on the case file format.
 %
-%    Data from ...
-%    Singh D, Misra RK (2007) Effect of Load Models in Distributed
-%    Generation Planning. Power Syst IEEE Trans 22:2204ñ2212. doi:
-%    10.1109/TPWRS.2007.907582
+%   Data from ...
+%       Singh D, Misra RK (2007) Effect of Load Models in Distributed
+%       Generation Planning. Power Syst IEEE Trans 22:2204-2212.
+%       doi: 10.1109/TPWRS.2007.907582
+%       URL: https://doi.org/10.1109/TPWRS.2007.907582
 
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';
@@ -17,7 +17,7 @@ mpc.baseMVA = 100;
 
 %% bus data
 %	bus_i	type	Pd	Qd	Gs	Bs	area	Vm	Va	baseKV	zone	Vmax	Vmin
-mpc.bus = [  %% (Pd and Qd are specified in kW & kVAr here, converted to MW & MVAr below)
+mpc.bus = [ %% (Pd and Qd are specified in kW & kVAr here, converted to MW & MVAr below)
 	1	3	0	0	0	0	1	1	0	12.66	1	1	1;
 	2	1	100	60	0	0	1	1	0	12.66	1	1.1	0.9;
 	3	1	90	40	0	0	1	1	0	12.66	1	1.1	0.9;
@@ -51,11 +51,11 @@ mpc.bus = [  %% (Pd and Qd are specified in kW & kVAr here, converted to MW & MV
 	31	1	150	70	0	0	1	1	0	12.66	1	1.1	0.9;
 	32	1	210	100	0	0	1	1	0	12.66	1	1.1	0.9;
 	33	1	60	40	0	0	1	1	0	12.66	1	1.1	0.9;
-    34	1	0	0	0	0	1	1	0	12.66	1	1.1	0.9;
-    35	1	0	0	0	0	1	1	0	12.66	1	1.1	0.9;
-    36	1	0	0	0	0	1	1	0	12.66	1	1.1	0.9;
-    37	1	0	0	0	0	1	1	0	12.66	1	1.1	0.9;
-    38	1	0	0	0	0	1	1	0	12.66	1	1.1	0.9;
+	34	1	0	0	0	0	1	1	0	12.66	1	1.1	0.9;
+	35	1	0	0	0	0	1	1	0	12.66	1	1.1	0.9;
+	36	1	0	0	0	0	1	1	0	12.66	1	1.1	0.9;
+	37	1	0	0	0	0	1	1	0	12.66	1	1.1	0.9;
+	38	1	0	0	0	0	1	1	0	12.66	1	1.1	0.9;
 ];
 
 %% generator data

@@ -1,8 +1,8 @@
 function mpc = case141
 %CASE141  Power flow data for 141 bus distribution system
-%    Please see CASEFORMAT for details on the case file format.
+%   Please see CASEFORMAT for details on the case file format.
 %
-%    Data from ...
+%   Data from ...
 %       H.M. Khodr, F.G. Olsina, P.M. De Oliveira-De Jesus, J.M. Yusta,
 %       Maximum savings approach for location and sizing of capacitors in
 %       distribution systems, Electric Power Systems Research, Volume 78,
