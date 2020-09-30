@@ -125,12 +125,12 @@ for i = 1:length(casefile)
         r = runpf(mpc, mpopt);
         % Find the last N buses with lowest voltage
         [Vm, B] = sort(r.bus(:,VM));
-         B = B(1:N);
+        B = B(1:N);
         Vm = Vm(1:N);
         % add PV generators at buses in B
         % set VG 0.05 pu bigger then voltage at buses in B
         mpc.gen = repmat(mpc.gen,N+1,1);
-        mpc.gen(2:end,GEN_BUS) = B;
+        mpc.gen(2:end,GEN_BUS) = mpc.bus(B, BUS_I);
         mpc.gen(2:end,VG) = Vm + 0.05;
         mpc.bus(B,BUS_TYPE) = 2;
         if isfield(mpc,'gencost')
