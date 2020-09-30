@@ -6204,22 +6204,47 @@ name & description \\
 %\renewcommand{\arraystretch}{1.2}
 \centering
 \begin{threeparttable}
-\caption{Small Radial Distribution System Test Cases}
+\caption{Small Distribution System Test Cases\tnote{*}}
 \label{tab:distcasefiles}
 \footnotesize
 \begin{tabular}{ll}
 \toprule
 name & description \\
 \midrule
-\code{case4\_dist}	& 4-bus example radial distribution system case	\\
-\code{case18}	& 18-bus radial distribution system from Grady, Samotyj and Noyola	\\
-\code{case22}	& 22-bus radial distribution system from Raju, Murthy and Ravindra	\\
+\code{case4\_dist}\tnote{\dag}	& 4-bus example radial distribution system case	\\
+\code{case10ba}\tnote{\ddag}	& 10-bus radial distribution system from Baghzouz and Ertem	\\
+\code{case12da}\tnote{\ddag}	& 12-bus radial distribution system from Das, Nagi, and Kothari	\\
+\code{case15da}\tnote{\ddag}	& 15-bus radial distribution system from Das, Kothari, and Kalam	\\
+\code{case15nbr}\tnote{\ddag}	& 15-bus radial distribution system from Battu, Abhyankar, Senroy	\\
+\code{case16am}\tnote{\ddag}	& 16-bus radial distribution system from Das, Kothari, and Kalam	\\
+\code{case16ci}\tnote{\ddag}	& 16-bus distribution system from Civanlar, Grainger, Yin, and Lee	\\
+\code{case17me}\tnote{\ddag}	& 17-bus radial distribution system from Mendoza, Morales, Lopez, et. al.	\\
+\code{case18}\tnote{\dag}	& 18-bus radial distribution system from Grady, Samotyj and Noyola	\\
+\code{case18nbr}\tnote{\ddag}	& 18-bus radial distribution system from Battu, Abhyankar, Senroy	\\
+\code{case22}\tnote{\dag}	& 22-bus radial distribution system from Raju, Murthy and Ravindra	\\
+\code{case28da}\tnote{\ddag}	& 28-bus radial distribution system from Das, Nagi, and Kothari	\\
 \code{case33bw}	& 33-bus radial distribution system from Baran and Wu	\\
-\code{case69}	& 69-bus radial distribution system from Das	\\
-\code{case85}	& 85-bus radial distribution system from Das, Kothari and Kalam	\\
-\code{case141}	& 141-bus radial distribution system from Khodr, Olsina, De Jesus and Yusta	\\
+\code{case33mg}\tnote{\ddag}	& 33-bus radial distribution system from Kashem, Ganapathy, Jasmon and Buhari	\\
+\code{case34sa}\tnote{\ddag}	& 34-bus radial distribution system from Salama and Chikhani	\\
+\code{case38si}\tnote{\ddag}	& 38-bus radial distribution system from Singh and Misra	\\
+\code{case51ga}\tnote{\ddag}	& 51-bus radial distribution system from Gampa and Das	\\
+\code{case51he}\tnote{\ddag}	& 51-bus radial distribution system from Hengsritawat, Tayjasanant and Nimpitiwan	\\
+\code{case69}\tnote{\dag}	& 69-bus radial distribution system from Das	\\
+\code{case70da}\tnote{\ddag}	& 70-bus distribution system from Das	\\
+\code{case74ds}\tnote{\ddag}	& 74-bus radial distribution system from Myint and Naing	\\
+\code{case85}\tnote{\dag}	& 85-bus radial distribution system from Das, Kothari and Kalam	\\
+\code{case94pi}\tnote{\ddag}	& 94-bus radial distribution system from Pires, Antunes and Martins	\\
+\code{case118zh}\tnote{\ddag}	& 118-bus radial distribution system from Zhang, Fu and Zhang	\\
+\code{case136ma}\tnote{\ddag}	& 136-bus radial distribution system from Mantovani, Casari and Romero	\\
+\code{case141}\tnote{\dag}	& 141-bus radial distribution system from Khodr, Olsina, De Jesus and Yusta	\\
 \bottomrule
 \end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [*] {All have radial topology, except \code{case16ci} and \code{case70da}.}
+  \item [\dag] {Contributed by Mirko Todorovski.}
+  \item [\ddag] {Contributed by Houssem Bouchekara, et. al.~\cite{bouchekara2019, latreche2020}}
+\end{tablenotes}
 \end{threeparttable}
 \end{table}
 
@@ -7646,7 +7671,7 @@ with Octave, \matpower{}, and the \href{\matpowerextrasgithuburl}{\matpower{} Ex
 \item Seven new purely synthetic cases from the ACTIVSg team ({\bf A}SU, {\bf C}ornell, {\bf T}exas A\&M, U of {\bf I}llinois, and {\bf V}CU - {\bf S}ynthetic {\bf g}rids), resulting from work supported by the ARPA-E GRID DATA program. \emph{Thanks to Adam Birchfield and the ACTIVSg team.}
     \begin{itemize}
         \setlength{\itemsep}{6pt}
-        \setlength{\parskip}{-9pt}
+        \setlength{\parskip}{-6pt}
 %        \setlength{\parsep}{-3pt}
         \item \code{case\_ACTIVSg200} -- 200-bus Illinois synthetic model
         \item \code{case\_ACTIVSg500} -- 500-bus South Carolina synthetic model
@@ -7660,7 +7685,7 @@ with Octave, \matpower{}, and the \href{\matpowerextrasgithuburl}{\matpower{} Ex
 Some of these cases also include contingency tables and/or hourly load scenarios for 1 year.
     \begin{itemize}
         \setlength{\itemsep}{6pt}
-        \setlength{\parskip}{-9pt}
+        \setlength{\parskip}{-6pt}
 %        \setlength{\parsep}{-3pt}
         \item \code{contab\_ACTIVSg200}
         \item \code{contab\_ACTIVSg500}
@@ -7673,14 +7698,14 @@ Some of these cases also include contingency tables and/or hourly load scenarios
 \item New RTS-GMLC case from \url{https://github.com/GridMod/RTS-GMLC}.
     \begin{itemize}
         \setlength{\itemsep}{6pt}
-        \setlength{\parskip}{-9pt}
+        \setlength{\parskip}{-6pt}
 %        \setlength{\parsep}{-3pt}
         \item \code{case4\_RTS\_GMLC}
     \end{itemize}
 \item Six new radial distribution system cases. \emph{Thanks to Mirko Todorovski.}
     \begin{itemize}
         \setlength{\itemsep}{6pt}
-        \setlength{\parskip}{-9pt}
+        \setlength{\parskip}{-6pt}
 %        \setlength{\parsep}{-3pt}
         \item \code{case4\_dist}
         \item \code{case18}
@@ -7774,6 +7799,8 @@ a fatal error under versions of \matlab{} prior to R2016b (v9.1). \emph{Thanks t
 available even if it had an expired license or failed for some other reason.
 \item Fix issue \#60 by adding missing generator at slack bus in RTE cases. Affects the following cases:
     \begin{itemize}
+    \setlength{\itemsep}{6pt}
+    \setlength{\parskip}{-6pt}
     \item \code{case1888rte}
     \item \code{case1951rte}
     \item \code{case2848rte}
@@ -7793,6 +7820,8 @@ available even if it had an expired license or failed for some other reason.
 \item Swap the order of the output arguments of \code{dSbus\_dV()}) for polar coordinate voltages (angle before magnitude) for consistency.
 \item Correct signs of phase shifter angles in Polish system cases, since they were based on the old sign convention used by \matpower{} prior to v3.2 (see change on 6/21/07). Affects the following cases:
     \begin{itemize}
+    \setlength{\itemsep}{6pt}
+    \setlength{\parskip}{-6pt}
     \item \code{case2383wp}
     \item \code{case2736sp}
     \item \code{case2737sop}
@@ -7838,12 +7867,30 @@ The \href{https://matpower.org/docs/MATPOWER-manual-7.1.pdf}{\matpower{} 7.1 Use
 % \pagebreak
 \subsubsection*{New Case Files}
 \begin{itemize}
-\item 
+\item Nineteen new distribution system cases~\cite{bouchekara2019, latreche2020}. \emph{Thanks to Houssem Bouchekara, et. al.}
     \begin{itemize}
         \setlength{\itemsep}{6pt}
-        \setlength{\parskip}{-9pt}
+        \setlength{\parskip}{-6pt}
 %        \setlength{\parsep}{-3pt}
-        \item \code{case\_????} -- description
+        \item \code{case10ba} -- 10-bus radial system from Baghzouz and Ertem
+        \item \code{case12da} -- 12-bus radial system from Das, Nagi, and Kothari
+        \item \code{case15da} -- 15-bus radial system from Das, Kothari, and Kalam
+        \item \code{case15nbr} -- 15-bus radial system from Battu, Abhyankar, Senroy
+        \item \code{case16am} -- 16-bus radial system from Das, Kothari, and Kalam
+        \item \code{case16ci} -- 16-bus system from Civanlar, Grainger, Yin, and Lee
+        \item \code{case17me} -- 17-bus radial system from Mendoza, Morales, Lopez, et. al.
+        \item \code{case18nbr} -- 18-bus radial system from Battu, Abhyankar, Senroy
+        \item \code{case28da} -- 28-bus radial system from Das, Nagi, and Kothari
+        \item \code{case33mg} -- 33-bus radial system from Kashem, et. al.
+        \item \code{case34sa} -- 34-bus radial system from Salama and Chikhani
+        \item \code{case38si} -- 38-bus radial system from Singh and Misra
+        \item \code{case51ga} -- 51-bus radial system from Gampa and Das
+        \item \code{case51he} -- 51-bus radial system from Hengsritawat, et. al.
+        \item \code{case70da} -- 70-bus system from Das
+        \item \code{case74ds} -- 74-bus radial system from Myint and Naing
+        \item \code{case94pi} -- 94-bus radial system from Pires, Antunes and Martins
+        \item \code{case118zh} -- 118-bus radial system from Zhang, Fu and Zhang
+        \item \code{case136ma} -- 136-bus radial system from Mantovani, Casari and Romero
     \end{itemize}
 \end{itemize}
 
@@ -8133,6 +8180,13 @@ R.~D. Zimmerman. \mpomname{} User's Manual. 2020. [Online]. Available: \url{\cur
 
 \bibitem{wang2007}
 H.~Wang, \emph{On the Computation and Application of Multi-period Security-constrained Optimal Power Flow for Real-time Electricity Market Operations}, Ph.D. thesis, Electrical and Computer Engineering, Cornell University, May 2007.
+
+\bibitem{bouchekara2019}
+H.~R.~E.~H.~Bouchekara, Y.~Latreche, K.~Naidu, H.~Mokhlis, W.~M.~Dahalan, M.~S.~Javaid, ``Comprehensive Review of Radial Distribution Test Systems for Power System Distribution Education and Research'', \emph{Resource-Efficient Technologies}, 3(3), pp. 1–-12, 2019.
+\doi{10.18799/24056537/2019/3/196}
+
+\bibitem{latreche2020}
+Y.~Latreche, H.~R.~E.~H.~Bouchekara, K.~Naidu, H.~Mokhlis, W.~M.~Dahalan, \emph{Comprehensive Review of Radial Distribution Test Systems}, 2020. TechRxiv. Preprint. \doi{10.36227/techrxiv.12578648.v1}
 
 \bibitem{birchfield2017}
 A.B.~Birchfield, T.~Xu, K.M.~Gegner, K.S.~Shetye, T.J.~Overbye,

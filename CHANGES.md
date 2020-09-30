@@ -12,6 +12,28 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.0
 -----------------
 
+#### 9/30/20
+  - Add 19 new distribution system cases. *Thanks to Houssem Bouchekara, et al.*
+    - `case10ba`
+    - `case12da`
+    - `case15da`
+    - `case15nbr`
+    - `case16am`
+    - `case16ci`
+    - `case17me`
+    - `case18nbr`
+    - `case28da`
+    - `case33mg`
+    - `case34sa`
+    - `case38si`
+    - `case51ga`
+    - `case51he`
+    - `case70da`
+    - `case74ds`
+    - `case94pi`
+    - `case118zh`
+    - `case136ma`
+
 #### 9/11/20
   - Fix bug in `scale_load()` where only one of multiple dispatchable
     loads at a bus would be scaled.
@@ -766,6 +788,10 @@ Version 6.0 - *Dec 16, 2016*
 #### 12/16/16
   - Released 6.0.
   - Moved development to GitHub: <https://github.com/MATPOWER/matpower>.
+
+#### 12/15/16
+  - Added `case33bw.m`, a 33-bus radial distribution system from Baran and Wu
+    based on case originally provided by Haneen Aburub.
 
 #### 12/9/16
   - Bumped MIPS version to 1.2.2.
