@@ -12,6 +12,13 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.0
 -----------------
 
+#### 10/1/20
+  - **INCOMPATIBLE CHANGE:**  Update `case18`, `case22`, `case69`, `case85`
+    and `case141` to more closely match data from original papers, thanks
+    in part to case files contributed by Houssem Bouchekara, et al.
+    Solutions for updated cases may not match exactly. See help text in
+    case files for details.
+
 #### 9/30/20
   - Add 19 new distribution system cases. *Thanks to Houssem Bouchekara, et al.*
     - `case10ba`

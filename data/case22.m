@@ -9,8 +9,11 @@ function mpc = case22
 %       Energy Systems, Volume 42, Issue 1, November 2012, Pages 24-30
 %       https://doi.org/10.1016/j.ijepes.2012.03.006
 %
+%   Represents "a small portion of agricultural distribution of Eastern
+%   Power Distribution system in India."
+%
 %   Modifications:
-%     v2 - 2020-09-29 (RDZ, based on contrib by Houssem Bouchekara, et al)
+%     v2 - 2020-09-30 (RDZ, based on contrib by Houssem Bouchekara, et al)
 %         - Move branch 4--9 from row 8 to row 5 to match original order.
 %         - Added code for explicit conversion of loads from kW to MW and
 %           branch parameters from Ohms to p.u.
@@ -18,13 +21,14 @@ function mpc = case22
 %         - Gen Qmin, Qmax, Pmax magnitudes set to 10 (instead of 999)
 %         - Branch flow limits disabled, i.e. set to 0 (instead of 999)
 %         - Add gen cost.
+%         - Change baseMVA to 1 MVA.
 
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';
 
 %%-----  Power Flow Data  -----%%
 %% system MVA base
-mpc.baseMVA = 10;
+mpc.baseMVA = 1;
 
 %% bus data
 %	bus_i	type	Pd	Qd	Gs	Bs	area	Vm	Va	baseKV	zone	Vmax	Vmin

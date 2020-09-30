@@ -10,7 +10,7 @@ function mpc = case85
 %       URL: https://doi.org/10.1016/0142-0615(95)00050-0
 %
 %   Modifications:
-%     v2 - 2020-09-29 (RDZ)
+%     v2 - 2020-09-30 (RDZ)
 %         - Removed load at bus 60. There appears to be a typo in the paper,
 %           with the load for bus 61 repeated. The original case85.m assumed
 %           a typo in the bus number, and put the first instance at bus 60.
@@ -23,13 +23,14 @@ function mpc = case85
 %         - Gen Qmin, Qmax, Pmax magnitudes set to 10 (instead of 999)
 %         - Branch flow limits disabled, i.e. set to 0 (instead of 999)
 %         - Add gen cost.
+%         - Change baseMVA to 1 MVA.
 
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';
 
 %%-----  Power Flow Data  -----%%
 %% system MVA base
-mpc.baseMVA = 10;
+mpc.baseMVA = 1;
 
 %% bus data
 %	bus_i	type	Pd	Qd	Gs	Bs	area	Vm	Va	baseKV	zone	Vmax	Vmin
