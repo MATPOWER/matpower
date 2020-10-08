@@ -4286,6 +4286,63 @@ The \code{mpver} function returns the current \matpower{} version number. With t
 Now included as part of \mpomlink{}~\cite{mpom} (see \mpompath{}).
 
 
+\subsection{Private Feature Detection Functions}
+\label{sec:featuredetection}
+
+The following are private functions that implement detection of specific optional functionality. They are not intended to be called directly, but rather are used to extend the capabilities of \code{have\_feature}, a function included in \mptestlink{} (see \mptestpath{}) and described in the \mptest{} \href{\mptesturl/blob/master/README.md}{\code{README}} file.
+
+\subsubsection{\tt have\_feature\_e4st}
+\label{sec:have_feature_e4st}
+
+This function implements the \codeq{e4st} tag for \code{have\_feature} to detect availability/version of \eastlink{}, the {\bf E}ngineering, {\bf E}conomic, and {\bf E}nvironmental {\bf E}lectricity {\bf S}imulation {\bf T}ool. \url{\easturl}.
+
+\subsubsection{\tt have\_feature\_minopf}
+\label{sec:have_feature_minopf}
+
+This function implements the \codeq{minopf} tag for \code{have\_feature} to detect availability/version of MINOPF, MINOS-based optimal power flow (OPF) solver. See also Appendix~\ref{app:minopf}.
+
+\subsubsection{\tt have\_feature\_most}
+\label{sec:have_feature_most}
+
+This function implements the \codeq{most} tag for \code{have\_feature} to detect availability/version of \mostlink{}, \mostname{}.
+
+\subsubsection{\tt have\_feature\_pdipmopf}
+\label{sec:have_feature_pdipmopf}
+
+This function implements the \codeq{pdipmopf} tag for \code{have\_feature} to detect availability/version of PDIPMOPF, primal-dual interior point method optimal power flow (OPF) solver included in TSPOPF. See also Appendix~\ref{app:tspopf}.
+
+\subsubsection{\tt have\_feature\_regexp\_split}
+\label{sec:have_feature_regexp_split}
+
+This function implements the \codeq{regexp\_split} tag for \code{have\_feature} to detect support for the \codeq{split} argument to \code{regexp()}.
+
+\subsubsection{\tt have\_feature\_scpdipmopf}
+\label{sec:have_feature_scpdipmopf}
+
+This function implements the \codeq{scpdipmopf} tag for \code{have\_feature} to detect availability/version of SCPDIPMOPF, step-controlled primal-dual interior point method optimal power flow (OPF) solver included in TSPOPF. See also Appendix~\ref{app:tspopf}.
+
+\subsubsection{\tt have\_feature\_sdp\_pf}
+\label{sec:have_feature_sdp_pf}
+
+This function implements the \codeq{sdp\_pf} tag for \code{have\_feature} to detect detect availability/version of \sdppf{}, 
+a \matpower{} extension for applications of semi-definite programming relaxations of power flow equations. See also Appendix~\ref{app:sdppf}.
+
+\subsubsection{\tt have\_feature\_smartmarket}
+\label{sec:have_feature_smartmarket}
+
+This function implements the \codeq{smartmarket} tag for \code{have\_feature} to detect availability/version of \code{runmarket} and related files for running an energy auction, found under \code{smartmarket} in \matpowerextraslink{}, the \code{extras} subdirectory in \matpower{} ZIP distributions. See also Appendix~\ref{app:smartmarket}.
+
+\subsubsection{\tt have\_feature\_syngrid}
+\label{sec:have_feature_syngrid}
+
+This function implements the \codeq{syngrid} tag for \code{have\_feature} to detect availability/version of \syngridlink{}, Synthetic Grid Creation for \matpower{}, found under \code{syngrid} in \matpowerextraslink{}, the \code{extras} subdirectory in \matpower{} ZIP distributions.
+
+\subsubsection{\tt have\_feature\_tralmopf}
+\label{sec:have_feature_tralmopf}
+
+This function implements the \codeq{tralmopf} tag for \code{have\_feature} to detect availability/version of TRALMOPF, trust region based augmented Langrangian optimal power flow (OPF) solver included in TSPOPF. See also Appendix~\ref{app:tspopf}.
+
+
 %%------------------------------------------
 \clearpage
 \section{Acknowledgments}
@@ -6455,8 +6512,8 @@ name & description \\
 \midrule
 \code{mptest/lib/}	& 	\\
 \code{~~have\_feature}	& test for optional functionality / version info	\\
-\code{~~have\_feature\_matlab}\tnote{\ddag}	& detect if code is running under \matlab{}	\\
-\code{~~have\_feature\_octave}\tnote{\ddag}	& detect if code is running under GNU Octave	\\
+\code{~~have\_feature\_matlab}\tnote{\ddag}	& detect whether code is running under \matlab{}	\\
+\code{~~have\_feature\_octave}\tnote{\ddag}	& detect whether code is running under GNU Octave	\\
 \code{~~t\_begin}	& begin running tests	\\
 \code{~~t\_end}	& finish running tests and print statistics	\\
 \code{~~t\_is}	& tests if two matrices are identical to with a specified tolerance	\\

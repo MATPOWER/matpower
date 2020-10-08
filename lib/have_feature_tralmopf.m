@@ -2,8 +2,9 @@ function [TorF, vstr, rdate] = have_feature_tralmopf()
 %HAVE_FEATURE_TRALMOPF  Detect availability/version info for TRALMOPF
 %
 %   Feature detection function implementing 'tralmopf' tag for HAVE_FEATURE
-%   to detect availability/version of TRALMOPF, a trust region based
-%   augmented Langrangian Optimal Power Flow solver.
+%   to detect availability/version of TRALMOPF, trust region based
+%   augmented Langrangian optimal power flow (OPF) solver included in TSPOPF.
+%   (https://www.pserc.cornell.edu/tspopf)
 %
 %   See also HAVE_FEATURE, TRALMOPF.
 

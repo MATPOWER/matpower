@@ -2,7 +2,8 @@ function [TorF, vstr, rdate] = have_feature_e4st()
 %HAVE_FEATURE_E4ST  Detect availability/version info for E4ST
 %
 %   Feature detection function implementing 'e4st' tag for HAVE_FEATURE
-%   to detect availability/version of E4ST (https://e4st.com).
+%   to detect availability/version of E4ST, the Engineering, Economic, and
+%   Environmental Electricity Simulation Tool (https://e4st.com).
 %
 %   See also HAVE_FEATURE.
 

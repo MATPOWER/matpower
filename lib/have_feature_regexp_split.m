@@ -2,7 +2,7 @@ function [TorF, vstr, rdate] = have_feature_regexp_split()
 %HAVE_FEATURE_REGEXP_SPLIT  Detect availability/version info for REGEXP 'split'
 %
 %   Feature detection function implementing 'regexp_split' tag for HAVE_FEATURE
-%   to detect support for 'split' argument to REGEXP.
+%   to detect support for the 'split' argument to REGEXP.
 %
 %   See also HAVE_FEATURE, REGEXP.
 

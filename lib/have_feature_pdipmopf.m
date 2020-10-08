@@ -3,7 +3,8 @@ function [TorF, vstr, rdate] = have_feature_pdipmopf()
 %
 %   Feature detection function implementing 'pdipmopf' tag for HAVE_FEATURE
 %   to detect availability/version of PDIPMOPF, a primal-dual interior point
-%   method Optimal Power Flow solver.
+%   method optimal power flow (OPF) solver included in TSPOPF.
+%   (https://www.pserc.cornell.edu/tspopf)
 %
 %   See also HAVE_FEATURE, PDIPMOPF.
 

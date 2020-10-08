@@ -2,8 +2,8 @@ function [TorF, vstr, rdate] = have_feature_minopf()
 %HAVE_FEATURE_MINOPF  Detect availability/version info for MINOPF
 %
 %   Feature detection function implementing 'minopf' tag for HAVE_FEATURE
-%   to detect availability/version of MINOPF, a MINOS-based Optimal Power
-%   Flow solver.
+%   to detect availability/version of MINOPF, a MINOS-based optimal power
+%   flow (OPF) solver.
 %
 %   See also HAVE_FEATURE, MINOPF.
 

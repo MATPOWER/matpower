@@ -2,8 +2,9 @@ function [TorF, vstr, rdate] = have_feature_scpdipmopf()
 %HAVE_FEATURE_SCPDIPMOPF  Detect availability/version info for SCPDIPMOPF
 %
 %   Feature detection function implementing 'scpdipmopf' tag for HAVE_FEATURE
-%   to detect availability/version of SCPDIPMOPF, a step-controlled
-%   primal-dual interior point method Optimal Power Flow solver.
+%   to detect availability/version of SCPDIPMOPF, step-controlled
+%   primal-dual interior point method optimal power flow (OPF) solver
+%   included in TSPOPF. (https://www.pserc.cornell.edu/tspopf)
 %
 %   See also HAVE_FEATURE, SCPDIPMOPF.
 
