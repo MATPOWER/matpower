@@ -184,6 +184,8 @@
 \newcommand{\powerweb}[0]{{\sc PowerWeb}}
 \newcommand{\pserc}[0]{{\sc PSerc}}
 \newcommand{\PSERC}[0]{{Power Systems Engineering Research Center (\pserc{})}}
+\newcommand{\certs}[0]{{\sc Certs}}
+\newcommand{\CERTS}[0]{{Consortium for Electric Reliability Technology Solutions (\certs{})}}
 \newcommand{\ipopt}[0]{{\sc Ipopt}}
 \newcommand{\knitro}[0]{{Artelys Knitro}}
 \newcommand{\clp}[0]{{CLP}}
@@ -4346,9 +4348,13 @@ This function implements the \codeq{tralmopf} tag for \code{have\_feature} to de
 %%------------------------------------------
 \clearpage
 \section{Acknowledgments}
-The authors would like to acknowledge contributions from others who have helped make \matpower{} what it is today. First we would like to acknowledge the input and support of Bob Thomas throughout the development of \matpower{}. Thanks to Chris DeMarco, one of our \pserc{} associates at the University of Wisconsin, for the technique for building the Jacobian matrix. Our appreciation to Bruce Wollenberg for all of his suggestions for improvements to version 1. The enhanced output functionality in version 2.0 is primarily due to his input. Thanks also to Andrew Ward for code which helped us verify and test the ability of the OPF to optimize reactive power costs. Thanks to Alberto Borghetti for contributing code for the Gauss-Seidel power flow solver and to Mu Lin for contributions related to power flow reactive power limits. Real power line limits were suggested by Pan Wei. Thanks to Roman Korab for data for the Polish system. Some state estimation code was contributed by James S. Thorp and Rui Bo contributed additional code for state estimation and continuation power flow.  \matpower{} was improved in various ways in response to Doug Mitarotonda's contributions and suggestions.
+The \matpower{} team would like to acknowledge the support of the numerous research grants and contracts that have contributed directly and indirectly to the development of \matpower{} over the years. This includes funding from the \PSERC{}, the U.S. Department of Energy,\footnote{Supported in part by the \CERTS{} and the Office of Electricity Delivery and Energy Reliability, Transmission Reliability Program of the U.S. Department of Energy under the National Energy Technology Laboratory Cooperative Agreement No.~DE-FC26-09NT43321.} the National Science Foundation,\footnote{This material is based upon work supported in part by the National Science Foundation under Grant Nos. 0532744, 1642341 and 1931421. Any opinions, findings, and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the National Science Foundation.} ARPA-E\footnote{Supported in part by the \href{https://arpa-e.energy.gov/?q=slick-sheet-project/synthetic-data-power-grid-rd}{``Synthetic Data for Power Grid R~\&~D''} project under the \href{https://arpa-e.energy.gov/?q=arpa-e-programs/grid-data}{ARPA-E GRID DATA} program.} and others.
 
-Thanks also to many others who have contributed code, testing time, bug reports and suggestions over the years. And, last but not least, thanks to all of the many users who, by using \matpower{} in their own work, have helped to extend the contribution of \matpower{} to the field of power systems far beyond what we could do on our own.
+We would also like to acknowledge contributions from the many individuals who have helped make \matpower{} what it is today. First we want to acknowledge the valuable input and support of Bob Thomas, especially throughout the early development of \matpower{}. We thank other early contributors to \matpower{} including Chris DeMarco, one of our \pserc{} associates, for the technique for building derivatives of complex matrix expressions and Bruce Wollenberg for all of his suggestions for improvements to version 1. The enhanced output functionality introduced in version 2.0 is primarily due to his input.
+
+Over the years, many others have made large and small contributions to \matpower{}, with code for new features, bug fixes, new data files, testing time, bug reports and suggestions. We are grateful to all of you, and want to highlight two significant contributors. Thanks to Roman Korab for data for the Polish system case file which became one of the first widely available large-scale transmission system cases to be easily accessible to the public. And thanks to Shrirang Abhyankar for all of his work on the continuation power flow implementation.
+
+Last but not least, thanks to all of the many users who, by using \matpower{} in their own work, have helped to extend the contribution of \matpower{} to the field of power systems far beyond what we could do on our own.
 
 %\appendix
 %\appendixpage
