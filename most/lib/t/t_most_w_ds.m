@@ -2,7 +2,7 @@ function t_most_w_ds(quiet, solver, verbose)
 %T_MOST_W_DS  Test for MOST with dynamical system constraints.
 
 %   MOST
-%   Copyright (c) 2015-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2020, Power Systems Engineering Research Center (PSERC)
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %   and Ray Zimmerman, PSERC Cornell
 %
@@ -46,19 +46,19 @@ solnfile = 't_most_w_ds_z';
     CT_LOAD_DIS_P, CT_TGENCOST, CT_TAREAGENCOST, CT_MODCOST_F, ...
     CT_MODCOST_X] = idx_ct;
 
-if have_fcn('cplex') || have_fcn('gurobi') || have_fcn('mosek') || ...
-        have_fcn('quadprog_ls') || include_MIPS
+if have_feature('cplex') || have_feature('gurobi') || ...
+        have_feature('mosek') || have_feature('quadprog_ls') || include_MIPS
     mdi = md_init;
 
     %% choose solver
     if isempty(solver) || strcmp(upper(solver), 'DEFAULT')
-        if have_fcn('mosek')
+        if have_feature('mosek')
             solver = 'MOSEK';
-        elseif have_fcn('cplex')
+        elseif have_feature('cplex')
             solver = 'CPLEX';
-        elseif have_fcn('gurobi')
+        elseif have_feature('gurobi')
             solver = 'GUROBI';
-        elseif have_fcn('quadprog_ls')
+        elseif have_feature('quadprog_ls')
             solver = 'OT';
         else
             solver = 'MIPS';
@@ -67,24 +67,24 @@ if have_fcn('cplex') || have_fcn('gurobi') || have_fcn('mosek') || ...
     mpopt = mpoption('most.solver', solver, 'verbose', verbose);
 
     %% set options
-    if have_fcn('cplex')
+    if have_feature('cplex')
         mpopt = mpoption(mpopt, 'cplex.opts.threads', 2);   % set this manually here
     end
-    if have_fcn('gurobi')
+    if have_feature('gurobi')
         mpopt = mpoption(mpopt, 'gurobi.method', 2);        %% barrier
         mpopt = mpoption(mpopt, 'gurobi.threads', 2);
         mpopt = mpoption(mpopt, 'gurobi.opts.BarConvTol', 1e-6);        %% 1e-8
         mpopt = mpoption(mpopt, 'gurobi.opts.FeasibilityTol', 1e-4);    %% 1e-6
         mpopt = mpoption(mpopt, 'gurobi.opts.OptimalityTol', 1e-5);     %% 1e-6
     end
-    if have_fcn('quadprog_ls')
+    if have_feature('quadprog_ls')
         mpopt = mpoption(mpopt, 'quadprog.TolFun', 1e-13);
     end
-    if have_fcn('mosek')
+    if have_feature('mosek')
         mpopt = mpoption(mpopt, 'mosek.num_threads', 2);
     else
         mpopt = mpoption(mpopt, 'mips.max_it', 500);
-        if have_fcn('pardiso')
+        if have_feature('pardiso')
             mpopt = mpoption(mpopt, 'mips.linsolver', 'PARDISO');
         end
     end

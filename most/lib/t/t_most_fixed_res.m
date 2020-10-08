@@ -2,7 +2,7 @@ function t_most_fixed_res(quiet)
 %T_MOST_FIXED_RES  Tests MOST with fixed reserve requirements.
 
 %   MOST
-%   Copyright (c) 2012-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2012-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.
@@ -27,18 +27,18 @@ mpopt = mpoption('opf.violation', 1e-6, 'mips.gradtol', 1e-8, ...
 mpopt = mpoption(mpopt, 'out.all', 0, 'verbose', verbose, 'opf.ac.solver', 'MIPS');
 mpopt = mpoption(mpopt, 'model', 'DC');
 mpopt = mpoption(mpopt, 'most.solver', 'DEFAULT');
-if have_fcn('gurobi')
+if have_feature('gurobi')
     mpopt = mpoption(mpopt, 'gurobi.method', 1);    %% dual-simplex
 end
-if have_fcn('cplex')
+if have_feature('cplex')
     mpopt = mpoption(mpopt, 'cplex.qpmethod', 2);   %% dual-simplex
 end
-% if have_fcn('mosek')
+% if have_feature('mosek')
 %     sc = mosek_symbcon;
 %     mpopt = mpoption(mpopt, 'mosek.lp_alg', sc.MSK_OPTIMIZER_DUAL_SIMPLEX);     %% dual simplex
 % end
-if have_fcn('linprog')
-    if have_fcn('linprog_ds')
+if have_feature('linprog')
+    if have_feature('linprog_ds')
         mpopt = mpoption(mpopt, 'linprog.Algorithm', 'dual-simplex');
     else
         mpopt = mpoption(mpopt, 'linprog.Algorithm', 'simplex');

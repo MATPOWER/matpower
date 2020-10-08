@@ -2,7 +2,7 @@ function t_most_30b_3_1_0(quiet)
 %T_MOST_30B_3_1_0  Tests for MOST.
 
 %   MOST
-%   Copyright (c) 2009-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.
@@ -27,8 +27,8 @@ fudging = struct( ...       %% paramters for fudging reserve contract for sopf2
 %% options
 mpopt = mpoption('verbose', 0, 'out.all', 0);
 mpopt = mpoption(mpopt, 'opf.violation', 5e-7, 'mips.comptol', 5e-8);
-if have_fcn('linprog')
-    if have_fcn('linprog_ds')
+if have_feature('linprog')
+    if have_feature('linprog_ds')
         mpopt = mpoption(mpopt, 'linprog.Algorithm', 'dual-simplex');
     else
         mpopt = mpoption(mpopt, 'linprog.Algorithm', 'simplex');
@@ -193,7 +193,7 @@ t = sprintf('(t=%d) downward contingency reserve prices', tt);
 t_is(r.results.RpmPrices(:,tt), xgd.NegativeActiveReservePrice, 6, t);
 
 t = sprintf('(t=%d) Rpmax_pos', tt);
-vv = get_idx(r.om);
+vv = r.om.get_idx();
 Rpmax_pos = (r.QP.lambda.upper(vv.i1.Rpp(tt):vv.iN.Rpp(tt)) - r.QP.lambda.lower(vv.i1.Rpp(tt):vv.iN.Rpp(tt))) / mpc.baseMVA;
 t_is(Rpmax_pos, zeros(ng, 1), 6, t);
 

@@ -18,7 +18,7 @@ function opt = mpoption_info_most(selector)
 %   See also MPOPTION.
 
 %   MOST
-%   Copyright (c) 2014-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2014-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.
@@ -28,7 +28,7 @@ function opt = mpoption_info_most(selector)
 if nargin < 1
     selector = 'D';
 end
-if have_fcn('most')
+if have_feature('most')
     switch upper(selector)
         case {'D', 'V'}     %% default and valid options
             opt = struct(...

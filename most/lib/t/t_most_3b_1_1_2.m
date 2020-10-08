@@ -147,7 +147,7 @@ t = 'downward contingency reserve prices';
 t_is(r.results.RpmPrices, s.rdc.reserve.prc.Rp_neg, 6, t);
 
 t = 'contingency physical ramp price';
-[vv, ll] = get_idx(r.om);
+[vv, ll] = r.om.get_idx();
 Ramp_P_max = zeros(ng, nc);
 sum_muPmax = zeros(ng, 1);
 sum_muPmin = zeros(ng, 1);

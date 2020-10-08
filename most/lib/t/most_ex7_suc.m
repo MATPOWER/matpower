@@ -2,7 +2,7 @@ function most_ex7_suc(quiet)
 %MOST_EX7_SUC  Examples of secure and stochastic unit commitment problems.
 
 %   MOST
-%   Copyright (c) 2015-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.
@@ -22,7 +22,7 @@ end
 mpopt = mpoption(mpopt, 'most.price_stage_warn_tol', 10);
 
 %% solver options
-if have_fcn('cplex')
+if have_feature('cplex')
     %mpopt = mpoption(mpopt, 'cplex.lpmethod', 0);       %% automatic
     %mpopt = mpoption(mpopt, 'cplex.lpmethod', 1);       %% primal simplex
     mpopt = mpoption(mpopt, 'cplex.lpmethod', 2);       %% dual simplex
@@ -32,12 +32,12 @@ if have_fcn('cplex')
     mpopt = mpoption(mpopt, 'cplex.opts.mip.tolerances.absmipgap', 0);
     mpopt = mpoption(mpopt, 'cplex.opts.threads', 2);
 end
-if have_fcn('glpk')
+if have_feature('glpk')
     mpopt = mpoption(mpopt, 'glpk.opts.mipgap', 0);
     mpopt = mpoption(mpopt, 'glpk.opts.tolint', 1e-10);
     mpopt = mpoption(mpopt, 'glpk.opts.tolobj', 1e-10);
 end
-if have_fcn('gurobi')
+if have_feature('gurobi')
     %mpopt = mpoption(mpopt, 'gurobi.method', -1);       %% automatic
     %mpopt = mpoption(mpopt, 'gurobi.method', 0);        %% primal simplex
     mpopt = mpoption(mpopt, 'gurobi.method', 1);        %% dual simplex
@@ -46,7 +46,7 @@ if have_fcn('gurobi')
     mpopt = mpoption(mpopt, 'gurobi.opts.MIPGap', 0);
     mpopt = mpoption(mpopt, 'gurobi.opts.MIPGapAbs', 0);
 end
-if have_fcn('mosek')
+if have_feature('mosek')
     sc = mosek_symbcon;
     %mpopt = mpoption(mpopt, 'mosek.lp_alg', sc.MSK_OPTIMIZER_FREE);            %% default
     %mpopt = mpoption(mpopt, 'mosek.lp_alg', sc.MSK_OPTIMIZER_INTPNT);          %% interior point
@@ -61,7 +61,7 @@ if have_fcn('mosek')
     mpopt = mpoption(mpopt, 'mosek.opts.MSK_DPAR_MIO_TOL_REL_GAP', 0);
     mpopt = mpoption(mpopt, 'mosek.opts.MSK_DPAR_MIO_TOL_ABS_GAP', 0);
 end
-if have_fcn('intlinprog')
+if have_feature('intlinprog')
     %mpopt = mpoption(mpopt, 'linprog.Algorithm', 'interior-point');
     %mpopt = mpoption(mpopt, 'linprog.Algorithm', 'active-set');
     %mpopt = mpoption(mpopt, 'linprog.Algorithm', 'simplex');

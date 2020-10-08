@@ -2,13 +2,21 @@ Change history for MOST
 =======================
 
 
-Changes since 1.0.2
--------------------
+Version 1.1 - *Oct 8, 2020*
+---------------------------
+
+*Requires MATPOWER with 7.1 or later (for MP-Opt-Model 3.0 or later).*
+
+#### 10/8/20
+  - Release 1.1.
+
+#### 9/9/20
+  - Use `@opt_model/get_soln()` to extract variable and shadow price
+    results, rather than doing the indexing manually.
 
 #### 3/19/20
   - Convert to using `@opt_model/solve()` method rather than calling
-    `miqps_matpower()` or `qps_matpower()` directly. Requires MATPOWER
-    7.1 or later.
+    `miqps_matpower()` or `qps_matpower()` directly.
   - **INCOMPATIBLE CHANGE**: Update objective function value returned in
     `mdo.QP.f` to include the previously missing constant term.
 

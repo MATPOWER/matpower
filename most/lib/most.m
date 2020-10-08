@@ -44,13 +44,13 @@ function mdo = most(mdi, mpopt)
 %                   times) roll over from end of horizon back to beginning
 %           most.alpha (0) - 0 = contingencies happen at beginning of period,
 %                   1 = at end of period
-%           most.solver ('DEFAULT') - see ALG argument to MIQPS_MATPOWER or
-%                   QPS_MATPOWER for details
+%           most.solver ('DEFAULT') - see ALG argument to OPT_MODEL/SOLVE
+%                   (i.e. MIQPS_MASTER or QPS_MASTER) for details
 %           most.skip_prices (0) - skip price computation stage for mixed
-%                   integer problems, see 'help miqps_matpower' for details
+%                   integer problems, see MIQPS_MASTER for details
 %           most.price_stage_warn_tol (1e-7) - tolerance on the objective fcn
 %               value and primal variable relative match required to avoid
-%               mis-match warning message, see 'help miqps_matpower' for details
+%               mis-match warning message, see MIQPS_MASTER for details
 %
 %   Outputs:
 %       MDO   MOST data structure, output
@@ -58,7 +58,7 @@ function mdo = most(mdi, mpopt)
 
 
 %   MOST
-%   Copyright (c) 2010-2018, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %   and Ray Zimmerman, PSERC Cornell
 %
@@ -82,7 +82,7 @@ if verbose
     fprintf(  '                       -----  Built on MATPOWER  -----\n');
     fprintf(  '  by Carlos E. Murillo-Sanchez, Universidad Nacional de Colombia--Manizales\n');
     fprintf(  '                  and Ray D. Zimmerman, Cornell University\n');
-    fprintf(  '       (c) 2012-2019 Power Systems Engineering Research Center (PSERC)       \n');
+    fprintf(  '       (c) 2012-2020 Power Systems Engineering Research Center (PSERC)       \n');
     fprintf(  '=============================================================================\n');
 end
 
@@ -1980,7 +1980,6 @@ t0 = tic;
 mdo = mdi;              %% initialize output
 mdo.om = om.copy();     %% make copy of opt_model object, so changes to
                         %% output obj (mdo) don't modify input obj (mdi)
-[vv, ll] = mdo.om.get_idx();
 if mpopt.most.solve_model
   %% check consistency of model options (in case mdi was built in previous call)
   if mdi.DCMODEL ~= mo.DCMODEL
@@ -2037,9 +2036,10 @@ if mpopt.most.solve_model
     fprintf('- Post-processing results.\n');
   end
   if success
+    om = mdo.om;
     for t = 1:nt
       if UC
-        mdo.UC.CommitSched(:, t) = mdo.QP.x(vv.i1.u(t):vv.iN.u(t));
+        mdo.UC.CommitSched(:, t) = om.get_soln('var', 'u', {t});
       end
       for j = 1:mdi.idx.nj(t)
         for k = 1:mdi.idx.nc(t,j)+1
@@ -2049,7 +2049,7 @@ if mpopt.most.solve_model
             mpc.bus(:, VM) = 1;
           end
           % Injections and shadow prices
-          mpc.gen(:, PG) = baseMVA * mdo.QP.x(vv.i1.Pg(t,j,k):vv.iN.Pg(t,j,k));
+          mpc.gen(:, PG) = baseMVA * om.get_soln('var', 'Pg', {t,j,k});
           %% need to update Qg for loads consistent w/constant power factor
           Pmin = mpc.gen(:, PMIN);
           Qmin = mpc.gen(:, QMIN);
@@ -2059,10 +2059,11 @@ if mpopt.most.solve_model
           mpc.gen(ivl, QG) = mpc.gen(ivl, PG) .* Qlim ./ Pmin(ivl);
           if mdo.DCMODEL
             %% bus angles
-            mpc.bus(:, VA) = (180/pi) * mdo.QP.x(vv.i1.Va(t,j,k):vv.iN.Va(t,j,k));
+            Va = om.get_soln('var', 'Va', {t,j,k});
+            mpc.bus(:, VA) = (180/pi) * Va;
           
             %% nodal prices
-            price = (mdo.QP.lambda.mu_u(ll.i1.Pmis(t,j,k):ll.iN.Pmis(t,j,k))-mdo.QP.lambda.mu_l(ll.i1.Pmis(t,j,k):ll.iN.Pmis(t,j,k))) / baseMVA;
+            price = (om.get_soln('lin', 'mu_u', 'Pmis', {t,j,k})-om.get_soln('lin', 'mu_l', 'Pmis', {t,j,k})) / baseMVA;
             mpc.bus(:, LAM_P) = price;
           
             %% line flows and line limit shadow prices
@@ -2073,50 +2074,48 @@ if mpopt.most.solve_model
             mpc.branch(:, MU_SF) = 0;
             mpc.branch(:, MU_ST) = 0;
             ion = find(mpc.branch(:, BR_STATUS));
-            rows = ll.i1.Pf(t,j,k):ll.iN.Pf(t,j,k);
-            cols = vv.i1.Va(t,j,k):vv.iN.Va(t,j,k);
-            lf = baseMVA * (mdo.QP.A(rows,cols) * mdo.QP.x(cols) + mdo.flow(t,j,k).PLsh);
+            AA = om.params_lin_constraint('Pf', {t,j,k});
+            lf = baseMVA * (AA * Va + mdo.flow(t,j,k).PLsh);
             mpc.branch(ion, PF) = lf;
             mpc.branch(ion, PT) = -lf;
-            mpc.branch(ion, MU_SF) = mdo.QP.lambda.mu_u(rows) / baseMVA;
-            mpc.branch(ion, MU_ST) = mdo.QP.lambda.mu_l(rows) / baseMVA;
+            mpc.branch(ion, MU_SF) = om.get_soln('lin', 'mu_u', 'Pf', {t,j,k}) / baseMVA;
+            mpc.branch(ion, MU_ST) = om.get_soln('lin', 'mu_l', 'Pf', {t,j,k}) / baseMVA;
           else
             %% system price
-            price = (mdo.QP.lambda.mu_l(ll.i1.Pmis(t,j,k):ll.iN.Pmis(t,j,k))-mdo.QP.lambda.mu_u(ll.i1.Pmis(t,j,k):ll.iN.Pmis(t,j,k))) / baseMVA;
+            price = (om.get_soln('lin', 'mu_l', 'Pmis', {t,j,k})-om.get_soln('lin', 'mu_u', 'Pmis', {t,j,k})) / baseMVA;
             mpc.bus(:, LAM_P) = price;
           end
           if UC
             % igenon does not contain gens ousted because of a contingency or
             % a forced-off UC.CommitKey
             igenon = find(mpc.gen(:, GEN_STATUS));
-            u = mdo.QP.x(vv.i1.u(t):vv.iN.u(t));
-            mpc.gen(igenon, GEN_STATUS) = u(igenon);
+            mpc.gen(igenon, GEN_STATUS) = mdo.UC.CommitSched(igenon, t);
             gs = mpc.gen(igenon, GEN_STATUS) > 0; % gen status
             mpc.gen(:, MU_PMAX) = 0;
             mpc.gen(:, MU_PMIN) = 0;
             mpc.gen(igenon, MU_PMAX) = gs .* ...
-                    mdo.QP.lambda.mu_u(ll.i1.uPmax(t,j,k):ll.iN.uPmax(t,j,k)) / baseMVA;
+                    om.get_soln('lin', 'mu_u', 'uPmax', {t,j,k}) / baseMVA;
             mpc.gen(igenon, MU_PMIN) = gs .* ...
-                    mdo.QP.lambda.mu_u(ll.i1.uPmin(t,j,k):ll.iN.uPmin(t,j,k)) / baseMVA;
+                    om.get_soln('lin', 'mu_u', 'uPmin', {t,j,k}) / baseMVA;
             if mdo.QCoordination
               mpc.gen(:, MU_QMAX) = 0;
               mpc.gen(:, MU_QMIN) = 0;
               mpc.gen(igenon, MU_QMAX) = gs .* ...
-                      mdo.QP.lambda.mu_u(ll.i1.uQmax(t,j,k):ll.iN.uQmax(t,j,k)) / baseMVA;
+                      om.get_soln('lin', 'mu_u', 'uQmax', {t,j,k}) / baseMVA;
               mpc.gen(igenon, MU_QMIN) = gs .* ...
-                      mdo.QP.lambda.mu_u(ll.i1.uQmin(t,j,k):ll.iN.uQmin(t,j,k)) / baseMVA;
+                      om.get_soln('lin', 'mu_u', 'uQmin', {t,j,k}) / baseMVA;
             end
           else
             gs = mpc.gen(:, GEN_STATUS) > 0;      % gen status
             mpc.gen(:, MU_PMAX) = gs .* ...
-                    mdo.QP.lambda.upper(vv.i1.Pg(t,j,k):vv.iN.Pg(t,j,k)) / baseMVA;
+                    om.get_soln('var', 'mu_u', 'Pg', {t,j,k}) / baseMVA;
             mpc.gen(:, MU_PMIN) = gs .* ...
-                    mdo.QP.lambda.lower(vv.i1.Pg(t,j,k):vv.iN.Pg(t,j,k)) / baseMVA;
+                    om.get_soln('var', 'mu_l', 'Pg', {t,j,k}) / baseMVA;
             if mdo.QCoordination
               mpc.gen(:, MU_QMAX) = gs .* ...
-                      mdo.QP.lambda.upper(vv.i1.Qg(t,j,k):vv.iN.Qg(t,j,k)) / baseMVA;
+                      om.get_soln('var', 'mu_u', 'Qg', {t,j,k}) / baseMVA;
               mpc.gen(:, MU_QMIN) = gs .* ...
-                      mdo.QP.lambda.lower(vv.i1.Qg(t,j,k):vv.iN.Qg(t,j,k)) / baseMVA;
+                      om.get_soln('var', 'mu_l', 'Qg', {t,j,k}) / baseMVA;
             end
           end
           if mdi.IncludeFixedReserves
@@ -2125,34 +2124,34 @@ if mpopt.most.solve_model
             r.R   = z;
             r.prc = z;
             r.mu = struct('l', z, 'u', z, 'Pmax', z);
-            r.totalcost = sum(mdo.om.eval_quad_cost(mdo.QP.x, 'Rcost', {t,j,k}));
-            r.R(r.igr) = mdo.QP.x(vv.i1.R(t,j,k):vv.iN.R(t,j,k)) * baseMVA;
+            r.totalcost = sum(om.get_soln('qdc', 'Rcost', {t,j,k}));
+            r.R(r.igr) = om.get_soln('var', 'R', {t,j,k}) * baseMVA;
+            R_mu_l = om.get_soln('lin', 'mu_l', 'Rreq', {t,j,k});
             for gg = r.igr
               iz = find(r.zones(:, gg));
-              kk = ll.i1.Rreq(t,j,k):ll.iN.Rreq(t,j,k);
-              r.prc(gg) = sum(mdo.QP.lambda.mu_l(kk(iz))) / baseMVA;
+              r.prc(gg) = sum(R_mu_l(iz)) / baseMVA;
             end
-            r.mu.l(r.igr)    = mdo.QP.lambda.lower(vv.i1.R(t,j,k):vv.iN.R(t,j,k)) / baseMVA;
-            r.mu.u(r.igr)    = mdo.QP.lambda.upper(vv.i1.R(t,j,k):vv.iN.R(t,j,k)) / baseMVA;
-            r.mu.Pmax(r.igr) = mdo.QP.lambda.mu_u(ll.i1.Pg_plus_R(t,j,k):ll.iN.Pg_plus_R(t,j,k)) / baseMVA;
+            r.mu.l(r.igr) = om.get_soln('var', 'mu_l', 'R', {t,j,k}) / baseMVA;
+            r.mu.u(r.igr) = om.get_soln('var', 'mu_u', 'R', {t,j,k}) / baseMVA;
+            r.mu.Pmax(r.igr) = om.get_soln('lin', 'mu_u', 'Pg_plus_R', {t,j,k}) / baseMVA;
             mpc.reserves = r;
           end
           mdo.flow(t,j,k).mpc = mpc;     %% stash modified mpc in output struct
         end
       end
       % Contract, contingency reserves, energy limits
-      mdo.results.Pc(:,t)  = baseMVA * mdo.QP.x(vv.i1.Pc(t):vv.iN.Pc(t));
-      mdo.results.Rpp(:,t) = baseMVA * mdo.QP.x(vv.i1.Rpp(t):vv.iN.Rpp(t));
-      mdo.results.Rpm(:,t) = baseMVA * mdo.QP.x(vv.i1.Rpm(t):vv.iN.Rpm(t));
+      mdo.results.Pc(:,t)  = baseMVA * om.get_soln('var', 'Pc', {t});
+      mdo.results.Rpp(:,t) = baseMVA * om.get_soln('var', 'Rpp', {t});
+      mdo.results.Rpm(:,t) = baseMVA * om.get_soln('var', 'Rpm', {t});
       if ns
-        mdo.results.Sm(:,t)  = baseMVA * mdo.QP.x(vv.i1.Sm(t):vv.iN.Sm(t));
-        mdo.results.Sp(:,t)  = baseMVA * mdo.QP.x(vv.i1.Sp(t):vv.iN.Sp(t));
+        mdo.results.Sm(:,t)  = baseMVA * om.get_soln('var', 'Sm', {t});
+        mdo.results.Sp(:,t)  = baseMVA * om.get_soln('var', 'Sp', {t});
       end
     end
     % Ramping reserves
     for t = 1:mdo.idx.ntramp
-      mdo.results.Rrp(:,t) = baseMVA * mdo.QP.x(vv.i1.Rrp(t):vv.iN.Rrp(t));
-      mdo.results.Rrm(:,t) = baseMVA * mdo.QP.x(vv.i1.Rrm(t):vv.iN.Rrm(t));
+      mdo.results.Rrp(:,t) = baseMVA * om.get_soln('var', 'Rrp', {t});
+      mdo.results.Rrm(:,t) = baseMVA * om.get_soln('var', 'Rrm', {t});
     end
     % Expected energy prices for generators, per generator and per period,
     % both absolute and conditional on making it to that period
@@ -2172,13 +2171,13 @@ if mpopt.most.solve_model
     mdo.results.RppPrices = zeros(ng, nt);
     mdo.results.RpmPrices = zeros(ng, nt);
     for t = 1:nt
-      mdo.results.RppPrices(:, t) = mdo.QP.lambda.lower(vv.i1.Rpp(t):vv.iN.Rpp(t)) / baseMVA;
-      mdo.results.RpmPrices(:, t) = mdo.QP.lambda.lower(vv.i1.Rpm(t):vv.iN.Rpm(t)) / baseMVA;
+      mdo.results.RppPrices(:, t) = om.get_soln('var', 'mu_l', 'Rpp', {t}) / baseMVA;
+      mdo.results.RpmPrices(:, t) = om.get_soln('var', 'mu_l', 'Rpm', {t}) / baseMVA;
       for j = 1:mdi.idx.nj(t);
         for k = 1:mdi.idx.nc(t,j)+1
           ii = find(mdi.flow(t,j,k).mpc.gen(:, GEN_STATUS) > 0);
-          mdo.results.RppPrices(ii, t) = mdo.results.RppPrices(ii, t) + mdo.QP.lambda.mu_l(ll.i1.dPpRp(t,j,k):ll.iN.dPpRp(t,j,k)) / baseMVA;
-          mdo.results.RpmPrices(ii, t) = mdo.results.RpmPrices(ii, t) + mdo.QP.lambda.mu_l(ll.i1.dPmRm(t,j,k):ll.iN.dPmRm(t,j,k)) / baseMVA;
+          mdo.results.RppPrices(ii, t) = mdo.results.RppPrices(ii, t) + om.get_soln('lin', 'mu_l', 'dPpRp', {t,j,k}) / baseMVA;
+          mdo.results.RpmPrices(ii, t) = mdo.results.RpmPrices(ii, t) + om.get_soln('lin', 'mu_l', 'dPmRm', {t,j,k}) / baseMVA;
         end
       end
     end
@@ -2190,8 +2189,8 @@ if mpopt.most.solve_model
       for j1 = 1:mdo.idx.nj(t)
         for j2 = 1:mdo.idx.nj(t+1)
           if mdi.tstep(t+1).TransMask(j2,j1)
-            mdo.results.RrpPrices(:, t) = mdo.results.RrpPrices(:, t) + mdo.QP.lambda.mu_l(ll.i1.Rrp(t,j1,j2):ll.iN.Rrp(t,j1,j2)) / baseMVA;
-            mdo.results.RrmPrices(:, t) = mdo.results.RrmPrices(:, t) + mdo.QP.lambda.mu_l(ll.i1.Rrm(t,j1,j2):ll.iN.Rrm(t,j1,j2)) / baseMVA;
+            mdo.results.RrpPrices(:, t) = mdo.results.RrpPrices(:, t) + om.get_soln('lin', 'mu_l', 'Rrp', {t,j1,j2}) / baseMVA;
+            mdo.results.RrmPrices(:, t) = mdo.results.RrmPrices(:, t) + om.get_soln('lin', 'mu_l', 'Rrm', {t,j1,j2}) / baseMVA;
           end
         end
       end
@@ -2199,8 +2198,8 @@ if mpopt.most.solve_model
     % then last period only if specified for with terminal state
     if ~mdo.OpenEnded
       for j1 = 1:mdo.idx.nj(nt)
-        mdo.results.RrpPrices(:, nt) = mdo.results.RrpPrices(:, nt) + mdo.QP.lambda.mu_l(ll.i1.Rrp(nt,j1,1):ll.iN.Rrp(nt,j1,1)) / baseMVA;
-        mdo.results.RrmPrices(:, nt) = mdo.results.RrmPrices(:, nt) + mdo.QP.lambda.mu_l(ll.i1.Rrm(nt,j1,1):ll.iN.Rrm(nt,j1,1)) / baseMVA;
+        mdo.results.RrpPrices(:, nt) = mdo.results.RrpPrices(:, nt) + om.get_soln('lin', 'mu_l', 'Rrp', {nt,j1,1}) / baseMVA;
+        mdo.results.RrmPrices(:, nt) = mdo.results.RrmPrices(:, nt) + om.get_soln('lin', 'mu_l', 'Rrm', {nt,j1,1}) / baseMVA;
       end
     end
     % Expected wear and tear costs per gen and period
@@ -2240,7 +2239,7 @@ if mpopt.most.solve_model
     end
     % If Cyclic storage, pull InitialStorage value out of x
     if ns && mdo.Storage.ForceCyclicStorage
-      mdo.Storage.InitialStorage = baseMVA * mdo.QP.x(vv.i1.S0:vv.iN.S0);
+      mdo.Storage.InitialStorage = baseMVA * om.get_soln('var', 'S0');
     end
     % Compute expected storage state trajectory
     mdo.Storage.ExpectedStorageState = zeros(ns,nt);
@@ -2267,14 +2266,14 @@ if mpopt.most.solve_model
       if nzds
         mdo.results.Z = zeros(nzds, ntds);
         for t = 1:ntds
-          mdo.results.Z(:,t) = mdo.QP.x(vv.i1.Z(t):vv.iN.Z(t));
+          mdo.results.Z(:,t) = om.get_soln('var', 'Z', {t});
         end
       end
       mdo.results.Y = zeros(nyds, ntds);
       if nyds
         for t = 1:ntds
-          mdo.results.Y(:, t) = ...
-                  mdo.QP.A(ll.i1.DSy(t):ll.iN.DSy(t), :) * mdo.QP.x;
+          AA = om.params_lin_constraint('DSy', {t});
+          mdo.results.Y(:, t) = AA * mdo.QP.x;
         end
       end
     end

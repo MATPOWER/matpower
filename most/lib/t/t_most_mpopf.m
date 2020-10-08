@@ -4,7 +4,7 @@ function t_most_mpopf(quiet)
 %   Cases taken from most_ex5_mpopf.m.
 
 %   MOST
-%   Copyright (c) 2015-2019, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.
@@ -25,8 +25,8 @@ else
 end
 % verbose = 2;
 
-if have_fcn('octave')
-    if have_fcn('octave', 'vnum') >= 4
+if have_feature('octave')
+    if have_feature('octave', 'vnum') >= 4
         file_in_path_warn_id = 'Octave:data-file-in-path';
     else
         file_in_path_warn_id = 'Octave:load-file-in-path';
@@ -156,7 +156,7 @@ t = 'output model is copy of input model';
 mdo.om.add_var('test', 10);
 t_is(mdo.om.var.N, mdi1.om.var.N+10, 12, t);
 
-if have_fcn('octave')
+if have_feature('octave')
     warning(s1.state, file_in_path_warn_id);
     warning(s.state, 'Octave:nearly-singular-matrix');
 end

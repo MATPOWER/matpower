@@ -50,7 +50,7 @@ function md = loadmd(mpci, transmati, xgdi, storagei, contabi, profilesi, trajda
 % Created by Daniel Munoz-Alvarez (2/28/2013)
 
 %   MOST
-%   Copyright (c) 2013-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2013-2020, Power Systems Engineering Research Center (PSERC)
 %   by Daniel Munoz-Alvarez and Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

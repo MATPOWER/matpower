@@ -2,7 +2,7 @@ function t_most_30b_3_1_17(quiet)
 %T_MOST_30B_3_1_17  Tests for MOST.
 
 %   MOST
-%   Copyright (c) 2009-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.
@@ -30,15 +30,15 @@ algs.ac     = {'DEFAULT'};  %% opf.ac.solver sequence to try for c3sopf (AC run)
 mpopt = mpoption('verbose', 0, 'out.all', 0);
 mpopt = mpoption(mpopt, 'opf.violation', 5e-7, 'mips.comptol', 5e-8);
 mpopt = mpoption(mpopt, 'sopf.force_Pc_eq_P0', 0);  %% don't constrain contracted == base case dispatch
-if have_fcn('gurobi')
+if have_feature('gurobi')
     mpopt = mpoption(mpopt, 'gurobi.method', 1);    %% dual-simplex
 end
-if have_fcn('mosek')
+if have_feature('mosek')
     sc = mosek_symbcon;
     mpopt = mpoption(mpopt, 'mosek.lp_alg', sc.MSK_OPTIMIZER_DUAL_SIMPLEX);     %% dual simplex
 end
-if have_fcn('linprog')
-    if have_fcn('linprog_ds')
+if have_feature('linprog')
+    if have_feature('linprog_ds')
         mpopt = mpoption(mpopt, 'linprog.Algorithm', 'dual-simplex');
     else
         mpopt = mpoption(mpopt, 'linprog.Algorithm', 'simplex');
@@ -209,7 +209,7 @@ t = sprintf('(t=%d) downward contingency reserve prices', tt);
 t_is(r.results.RpmPrices(:,tt)/r.StepProb(tt), s.rdc.reserve.prc.Rp_neg, 6, t);
 
 t = sprintf('(t=%d) contingency physical ramp price', tt);
-[vv, ll] = get_idx(r.om);
+[vv, ll] = r.om.get_idx();
 Ramp_P_max = zeros(ng, nc);
 sum_muPmax = zeros(ng, 1);
 sum_muPmin = zeros(ng, 1);

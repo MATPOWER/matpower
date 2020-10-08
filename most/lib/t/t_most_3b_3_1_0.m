@@ -141,7 +141,7 @@ t = sprintf('(t=%d) downward contingency reserve prices', tt);
 t_is(r.results.RpmPrices(:,tt), xgd.NegativeActiveReservePrice, 6, t);
 
 t = sprintf('(t=%d) Rpmax_pos', tt);
-vv = get_idx(r.om);
+vv = r.om.get_idx();
 Rpmax_pos = (r.QP.lambda.upper(vv.i1.Rpp(tt):vv.iN.Rpp(tt)) - r.QP.lambda.lower(vv.i1.Rpp(tt):vv.iN.Rpp(tt))) / mpc.baseMVA;
 t_is(Rpmax_pos, zeros(ng, 1), 6, t);
 

@@ -7,7 +7,7 @@ function t_most_sp(quiet, create_plots, create_pdfs, savedir)
 %   E.g. t_most_sp(0, 1, 1, '~/Downloads/sp_plots')
 
 %   MOST
-%   Copyright (c) 2015-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.
@@ -52,7 +52,7 @@ end
 % mpopt = mpoption(mpopt, 'out.all', -1);
 
 %% turn off warnings
-if have_fcn('octave')
+if have_feature('octave')
     s = warning('query', 'Octave:nearly-singular-matrix');
     warning('off', 'Octave:nearly-singular-matrix');
 end
@@ -685,7 +685,7 @@ if create_plots
 end
 
 %% turn warnings back on
-if have_fcn('octave')
+if have_feature('octave')
     warning(s.state, 'Octave:nearly-singular-matrix');
 end
 

@@ -2,7 +2,7 @@ function result = t_most_3b_3_1_2(quiet)
 %T_MOST_3B_1_1_2  Tests for MOST.
 
 %   MOST
-%   Copyright (c) 2009-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.
@@ -35,7 +35,7 @@ mpoptdc = mpoption(mpopt, 'model', 'DC');
 mpopt = mpoption(mpopt, 'most.solver', algs.dc{1});
 
 %% turn off warnings
-if have_fcn('octave')
+if have_feature('octave')
     s = warning('query', 'Octave:nearly-singular-matrix');
     warning('off', 'Octave:nearly-singular-matrix');
 else
@@ -155,7 +155,7 @@ t = sprintf('(t=%d) downward contingency reserve prices', tt);
 t_is(r.results.RpmPrices(:,tt)/r.StepProb(tt), s.rdc.reserve.prc.Rp_neg, 6, t);
 
 t = sprintf('(t=%d) contingency physical ramp price', tt);
-[vv, ll] = get_idx(r.om);
+[vv, ll] = r.om.get_idx();
 Ramp_P_max = zeros(ng, nc);
 sum_muPmax = zeros(ng, 1);
 sum_muPmin = zeros(ng, 1);
@@ -204,7 +204,7 @@ end
 
 
 %% turn warnings back on
-if have_fcn('octave')
+if have_feature('octave')
     warning(s.state, 'Octave:nearly-singular-matrix');
 else
     warning(s7.state, 'MATLAB:nearlySingularMatrix');

@@ -129,7 +129,7 @@
 
 %\hyphenation{matpower}
 
-\newcommand{\mpver}[0]{7.0}
+\newcommand{\mpver}[0]{7.1}
 %\newcommand{\matlab}[0]{{Matlab}}
 %\newcommand{\matlab}[0]{{\sc Matlab}\textsuperscript{\tiny \textregistered}}
 \newcommand{\matlab}[0]{{\sc Matlab}}
@@ -137,18 +137,29 @@
 \newcommand{\matpowerurl}[0]{https://matpower.org}
 \newcommand{\matpowerlink}[0]{\href{\matpowerurl}{\matpower{}}}
 \newcommand{\matpowergithuburl}[0]{https://github.com/MATPOWER/matpower}
+\newcommand{\matpowerextrasgithuburl}[0]{https://github.com/MATPOWER/matpower-extras}
+\newcommand{\matpowerextraslink}[0]{\href{\matpowerextrasgithuburl}{\matpower{} Extras}}
+\newcommand{\matpowerdockerpage}[0]{https://github.com/MATPOWER/matpower/blob/master/docker/MATPOWER-Docker.md}
 \newcommand{\mptest}[0]{{MP-Test}}
 \newcommand{\mptesturl}[0]{https://github.com/MATPOWER/mptest}
 \newcommand{\mptestlink}[0]{\href{\mptesturl}{\mptest{}}}
+\newcommand{\mptestver}[0]{7.1}
 \newcommand{\mips}[0]{{MIPS}}
 \newcommand{\mipsurl}[0]{https://github.com/MATPOWER/mips}
 \newcommand{\mipslink}[0]{\href{\mipsurl}{\mips{}}}
 \newcommand{\mipsname}[0]{{{\bf M}{\sc atpower} \textbf{I}nterior \textbf{P}oint \textbf{S}olver}}
-\newcommand{\mipsver}[0]{1.3.1}
+\newcommand{\mipsver}[0]{1.4}
+\newcommand{\mpom}[0]{\mbox{MP-Opt-Model}}
+\newcommand{\mpomurl}[0]{https://github.com/MATPOWER/mp-opt-model}
+\newcommand{\mpomlink}[0]{\href{\mpomurl}{\mpom{}}}
+\newcommand{\mpomname}[0]{\mpom{}}
+% \newcommand{\mpomname}[0]{{{\bf M}{\sc at}{\bf P}{\sc ower} \textbf{Opt}imization \textbf{Model}}}
+\newcommand{\mpomver}[0]{3.0}
 \newcommand{\most}[0]{{MOST}}
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
-\newcommand{\mostver}[0]{1.0.3-dev}
+\newcommand{\mostlink}[0]{\href{\mosturl}{\most{}}}
+\newcommand{\mostver}[0]{1.1}
 \newcommand{\md}[0]{{\most{} Data struct}}
 \newcommand{\powerweb}[0]{{\sc PowerWeb}}
 \newcommand{\pserc}[0]{{\sc PSerc}}
@@ -162,6 +173,8 @@
 \newcommand{\glpk}[0]{{GLPK}}
 \newcommand{\gurobi}[0]{{Gurobi}}
 \newcommand{\mosek}[0]{{MOSEK}}
+\newcommand{\osqp}[0]{{OSQP}}
+\newcommand{\osqplink}[0]{{\href{https://osqp.org}{\osqp}}}
 \newcommand{\ot}[0]{{Optimization Toolbox}}
 \newcommand{\pardiso}[0]{{PARDISO}}
 \newcommand{\sdppf}[0]{\texttt{SDP\_PF}}
@@ -172,8 +185,8 @@
 %       following: \char13 \char'15 \char"0D \textquotesingle
 \newcommand{\codeq}[1]{\code{\textquotesingle{}#1\textquotesingle}}  % requires package textcomp
 \newcommand{\mppath}[1]{\textsf{\textsl{{\relsize{-1.0}\textless{}\mbox{MATPOWER}\textgreater{}}}}\code{{#1}}}  % requires package relsize
-%\newcommand{\mostpath}[1]{\code{\$MOST{#1}}}
 \newcommand{\mipspath}[1]{\textsf{\textsl{{\relsize{-1.0}\textless{}\mbox{MIPS}\textgreater{}}}}\code{{#1}}}  % requires package relsize
+\newcommand{\mpompath}[1]{\textsf{\textsl{{\relsize{-1.0}\textless{}\mbox{MPOM}\textgreater{}}}}\code{{#1}}}  % requires package relsize
 \newcommand{\mostpath}[1]{\mppath{}\code{/most{#1}}}
 \newcommand{\mostpathb}[1]{\textsf{\textsl{{\relsize{-1.0}\textless{}\mbox{MOST}\textgreater{}}}}\code{{#1}}}  % requires package relsize
 \newcommand{\baseMVA}[0]{\code{baseMVA}}
@@ -184,16 +197,17 @@
 \newcommand{\areas}[0]{\code{areas}}
 \newcommand{\mpc}[0]{\code{mpc}}
 \newcommand{\results}[0]{\code{results}}
-%\newcommand{\distname}[0]{\code{mostNNN}}
-%\newcommand{\zipname}[0]{\code{mostNNN.zip}}
 \newcommand{\mumurl}[0]{https://matpower.org/docs/MATPOWER-manual-\mpver.pdf}
 \newcommand{\mum}[0]{\href{\mumurl}{\matpower{} User's Manual}}
 \newcommand{\mipsmanurl}[0]{https://matpower.org/docs/MIPS-manual-\mipsver.pdf}
+\newcommand{\mpommanurl}[0]{https://matpower.org/docs/MP-Opt-Model-manual-\mpomver.pdf}
 \newcommand{\mostmanurl}[0]{https://matpower.org/docs/MOST-manual-\mostver.pdf}
 \newcommand{\currentmumurl}[0]{https://matpower.org/docs/MATPOWER-manual.pdf}
 \newcommand{\currentmipsmanurl}[0]{https://matpower.org/docs/MIPS-manual.pdf}
+\newcommand{\currentmpommanurl}[0]{https://matpower.org/docs/MP-Opt-Model-manual.pdf}
 \newcommand{\currentmostmanurl}[0]{https://matpower.org/docs/MOST-manual.pdf}
 \newcommand{\mipsman}[0]{\href{\mipsmanurl}{\mips{} User's Manual}}
+\newcommand{\mpomman}[0]{\href{\mpommanurl}{\mpom{} User's Manual}}
 \newcommand{\mostman}[0]{\href{\mostmanurl}{\most{} User's Manual}}
 \newcommand{\dg}[0]{\sp\dagger}                         % hermitian conjugate
 %\newcommand{\trans}[1]{{#1}^{\ensuremath{\mathsf{T}}}}  % transpose
@@ -226,7 +240,7 @@ User's Manual}
 %%% BEFORE PUBLISHING A NEW VERSION:
 %%%   Update the publication year for \bibitem{matpower} and
 %%%   \bibitem{matpower_manual} to the year of the latest release
-%\date{June 20, 2019} % comment this line to display the current date
+\date{October 8, 2020} % comment this line to display the current date
 %\date{December 14, 2011\thanks{Second revision. First revision was December 13, 2011}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
@@ -236,7 +250,7 @@ User's Manual}
 \vfill
 \begin{center}
 {\scriptsize
-\copyright~2011--2019~\PSERC{}\\
+\copyright~2011--2020~\PSERC{}\\
 All Rights Reserved}
 \end{center}
 
@@ -317,12 +331,12 @@ C.~E. Murillo-S{\'a}nchez, R.~D. Zimmerman, C.~L. Anderson, and R.~J. Thomas, ``
 The \mostname{} (\most) User's Manual~\cite{most_manual} should also be
 cited explicitly in work that refers to or is derived from its content.
 The citation and DOI can be version-specific or general, as appropriate.
-For version 1.0.2, use:
+For version 1.1, use:
 
 \begin{quote}
 \footnotesize
-R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez. \mostname{} (\most{}) User's Manual, Verision 1.0.2. 2019. [Online]. Available: \url{https://matpower.org/docs/MOST-manual-1.0.2.pdf}\\
-\doi{10.5281/zenodo.3251047}
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez. \mostname{} (\most{}) User's Manual, Verision 1.1. 2020. [Online]. Available: \url{https://matpower.org/docs/MOST-manual-1.1.pdf}\\
+\doi{10.5281/zenodo.4073878}
 \end{quote}
 For a version non-specific citation, use the following citation and DOI,
 with \emph{\textless{}YEAR\textgreater{}} replaced by the year of the most recent release:
@@ -362,7 +376,7 @@ The first step in beginning to use the \most{} is to get familiar with \matpower
 \label{sec:sysreq}
 To use \most{}~\mostver{} you will need:
 \begin{itemize}
-\item \matpower{} version \hl{7.1} or later\footnote{\most{}~1.0.1 required \matpower{}~7 and \most{}~1.0 required \matpower{}~6.}
+\item \matpower{} version 7.1 or later\footnote{\most{}~1.0.1 and 1.0.2 required \matpower{}~7 and \most{}~1.0 required \matpower{}~6.}
 \item \emph{(highly recommended)} a high-performance LP/MILP, QP/MIQP solver such as \gurobi{}, \cplex{}, \mosek{}, \matlab{}'s \ot{} or \glpk{} \emph{(included with Octave)}.
 \end{itemize}
 
@@ -384,18 +398,18 @@ To run the test suite and verify that \most{} is properly installed and function
 % UPDATE BEFORE RELEASE
 \begin{Code}
 >> test_most
->> test_most
 t_most_3b_1_1_0........ok
 t_most_3b_3_1_0........ok
 t_most_30b_1_1_0.......ok
 t_most_30b_3_1_0.......ok
 t_most_fixed_res.......ok
 t_most_30b_1_1_0_uc....ok
-t_most_uc..............ok
-t_most_suc.............ok
+t_most_mpopf...........ok
+t_most_uc..............ok (264 of 330 skipped)
+t_most_suc.............ok (148 of 185 skipped)
 t_most_w_ds............ok
-All tests successful (615 of 615)
-Elapsed time 84.68 seconds.
+All tests successful (310 passed, 412 skipped of 722)
+Elapsed time 46.18 seconds.
 \end{Code}
 
 If, for some reason, you prefer to install your own copy of MOST directly
@@ -458,12 +472,12 @@ mdo = most(mdi, mpopt);
 
 \begin{Code}
 =============================================================================
-          MATPOWER Optimal Scheduling Tool  --  MOST Version 1.0.2
+          MATPOWER Optimal Scheduling Tool  --  MOST Version 1.1
           A multiperiod stochastic secure OPF with unit commitment
                        -----  Built on MATPOWER  -----
   by Carlos E. Murillo-Sanchez, Universidad Nacional de Colombia--Manizales
                   and Ray D. Zimmerman, Cornell University
-       (c) 2012-2019 Power Systems Engineering Research Center (PSERC)       
+       (c) 2012-2020 Power Systems Engineering Research Center (PSERC)       
 =============================================================================
 - Building indexing structures.
 - Building expected storage-tracking mechanism.
@@ -476,16 +490,16 @@ mdo = most(mdi, mpopt);
   - Building storage constraints.
   - Building unit commitment constraints.
 - Building cost structures.
-- Assembling full set of costs.
 - Assembling full set of constraints.
 - Assembling full set of variable bounds.
+- Assembling full set of costs.
 - Calling MILP solver.
 
 ============================================================================
 
-Gurobi Version 8.1.1 -- automatic MILP solver
+Gurobi Version 9.0.3 -- automatic MILP solver
 --- Integer stage complete, starting price computation stage ---
-Gurobi Version 8.1.1 -- automatic LP solver
+Gurobi Version 9.0.3 -- automatic LP solver
 
 ============================================================================
 - MOST: MILP solved successfully.
@@ -1592,9 +1606,9 @@ In addition to making use of the \code{verbose} option and the solver-specific o
 \toprule
 name & default & description \\
 \midrule
-\code{most.solver}	& \codeq{DEFAULT}	& solver option passed in \code{opt.alg} to \code{miqps\_matpower} or \code{qps\_matpower}, see \code{miqps\_matpower} or \code{qps\_matpower} for details	\\
-\code{most.skip\_prices}	& 0	& skip price computation stage for mixed integer problems, see \code{miqps\_matpower} for details	\\
-\code{most.price\_stage\_warn\_tol}	& $10^{-7}$	& tolerance on the objective function value and primal variable relative match required to avoid mis-match warning message, see \code{miqps\_matpower} for details	\\
+\code{most.solver}	& \codeq{DEFAULT}	& solver option passed to \code{@opt\_model/solve()} in \code{opt.alg} , see \code{@opt\_model/solve} for details	\\
+\code{most.skip\_prices}	& 0	& skip price computation stage for mixed integer problems, see \code{miqps\_master} for details	\\
+\code{most.price\_stage\_warn\_tol}	& $10^{-7}$	& tolerance on the objective function value and primal variable relative match required to avoid mis-match warning message, see \code{miqps\_master} for details	\\
 \code{most.build\_model}	&  1	& toggle building of MIQP model \\
 && \begin{tabular}{r @{ -- } p{0.5\textwidth}}
 0 & do \emph{not} build MIQP, assume it has already been built \\
@@ -1973,7 +1987,7 @@ name & type\tnote{*} & description \\
 \code{C1}	& B	 & linear cost coefficient vector\tnote{\ddag}	\\
 \code{c1}	& B	 & constant cost term\tnote{\ddag}	\\
 \code{Cfstor}	& B	 & linear cost coefficients of full $x$ to reflect expected value of storage in terminal states	\\
-\code{opt}\tnote{\S}	& B	 & options struct for \code{qps\_matpower} or \code{miqps\_matpower}, set by \most{} run options and solver-specific \matpower{} options via \code{mpopt2qpopt}	\\
+\code{opt}\tnote{\S}	& B	 & options struct for \code{@opt\_model/solver}, set by \most{} run options and solver-specific \matpower{} options via \code{mpopt2qpopt}	\\
 \code{exitflag}\tnote{\S}	& O	 & 1 = converged successfully, 0 or negative value = solver specific failure code	\\
 \code{output}\tnote{\S}	& O	 & struct with solver-specific fields and \code{alg} field specifying solver that was used	\\
 \code{lambda}\tnote{\S}	& O	 & Lagrange and Kuhn-Tucker multipliers on constraints \\
@@ -1988,7 +2002,7 @@ name & type\tnote{*} & description \\
  \item [*] {I = input, O = output, B = both, opt = taken from \matpower{} options. The \code{QP} struct and its fields are either contructed by \code{most} or taken as an input, based on the value of the \code{most.build\_model} option described in Table~\ref{tab:mostrunoptions}.}
  \item [\dag] {Including user defined coordination costs from \code{md.CoordCost}.}
  \item [\ddag] {Excluding user defined coordination costs from \code{md.CoordCost}.}
- \item [\S] {See input and output arguments for \code{qps\_matpower} or \code{miqps\_matpower} for details.}
+ \item [\S] {See input and output arguments for \code{opt\_model/solve()} (i.e. \code{qps\_master} or \code{miqps\_master}) for details.}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -3335,24 +3349,29 @@ The \href{https://matpower.org/docs/MOST-manual-1.0.2.pdf}{\most{} 1.0.2 User's 
 \item Other miscellaneous documentation updates, e.g. \matpower{} website links updated to \url{https://matpower.org}, separate references for \matpower{} software and User's Manual, with DOIs.
 \end{itemize}
 
-\subsection{Version 1.0.3 -- released ??? ??, 20??}
-\label{app:v103}
+\subsection{Version 1.1 -- released Oct 8, 2020}
+\label{app:v11}
 
-The \href{https://matpower.org/docs/MOST-manual-1.0.3.pdf}{\most{} 1.0.3 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MOST-manual-1.0.3.pdf}}
+The \href{https://matpower.org/docs/MOST-manual-1.1.pdf}{\most{} 1.1 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MOST-manual-1.1.pdf}}
+
+\subsubsection*{Changes}
+\begin{itemize}
+\item Requires \matpower{} 7.1 or later.
+\item Output of \code{most\_summary()} includes sections for fixed loads and for expected stored energy for storage units.
+\item Relies on \mpomlink{} 3.0.\footnote{\mpomlink{} 3.0 can be found at \url{\mpomurl} and is included in \matpower{} 7.1.}
+    \begin{itemize}
+    \item Significant performance improvement for some problems when constructing sparse matrices for linear constraints or quadratic costs (e.g. during problem setup).
+    \emph{Thanks to Daniel Muldrew.}
+    \item Uses the \code{@opt\_model/solve()} method rather than calling \code{miqps\_matpower()} or \code{qps\_matpower()} directly.
+    \item Uses \code{@opt\_model/get\_soln()} to extract variable and shadow price results, rather than doing the indexing manually.
+    \end{itemize}
+\end{itemize}
 
 \subsubsection*{Bugs Fixed}
 \begin{itemize}
-\item Fix bug \#6 where building a model without solving it, or solving a
-previously built model resulted in a fatal error. \emph{Thanks to Baraa Mohandes.}
+\item Fix bug \#6 where building a model without solving it, or solving a previously built model resulted in a fatal error. \emph{Thanks to Baraa Mohandes.}
 \item Fix bug \#11 where storage constraints were not correct for $t=1$ and \code{rho} not equal to 1. \emph{Thanks to Baraa Mohandes.}
 \item Fix issue \#16, where the \code{om} field of the output MOST data struct (\code{mdo}) was a handle to the same object as as the \code{om} field of the input MOST data struct (\code{mdi}), meaning that changing one would modify the other. \emph{Thanks to Baraa Mohandes.}
-\end{itemize}
-
-\subsubsection*{Other Changes}
-\begin{itemize}
-\item Update \code{most\_summary()} to include sections for fixed loads
-and storage expected stored energy.
-\item Convert to using \code{@opt\_model/solve()} method rather than calling \code{miqps\_matpower()} or \code{qps\_matpower()} directly. Requires \matpower{} \hl{7.1} or later.
 \end{itemize}
 
 \subsubsection*{Incompatible Changes}
@@ -3400,7 +3419,7 @@ General Meeting, 2009 IEEE}, pp. 1--7, July 26--30 2009.
 The BSD 3-Clause License. [Online]. Available: \url{https://opensource.org/licenses/BSD-3-Clause}.
 
 \bibitem{most_manual}
-R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez. \mostname{} (\most{}) User's Manual. 2019. [Online]. Available: \url{https://matpower.org/docs/MOST-manual.pdf}\\
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez. \mostname{} (\most{}) User's Manual. 2020. [Online]. Available: \url{https://matpower.org/docs/MOST-manual.pdf}\\
 \doi{10.5281/zenodo.3236531}
 
 \bibitem{superopf2008}

@@ -7,7 +7,7 @@ function t_most_uc(quiet, create_plots, create_pdfs, savedir)
 %   E.g. t_most_uc(0, 1, 1, '~/Downloads/uc_plots')
 
 %   MOST
-%   Copyright (c) 2015-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.
@@ -51,8 +51,8 @@ else
 end
 % verbose = 2;
 
-if have_fcn('octave')
-    if have_fcn('octave', 'vnum') >= 4
+if have_feature('octave')
+    if have_feature('octave', 'vnum') >= 4
         file_in_path_warn_id = 'Octave:data-file-in-path';
     else
         file_in_path_warn_id = 'Octave:load-file-in-path';
@@ -73,7 +73,7 @@ mpopt = mpoption(mpopt, 'model', 'DC');
 mpopt = mpoption(mpopt, 'most.price_stage_warn_tol', 1e1);
 
 %% solver options
-if have_fcn('cplex')
+if have_feature('cplex')
     %mpopt = mpoption(mpopt, 'cplex.lpmethod', 0);       %% automatic
     %mpopt = mpoption(mpopt, 'cplex.lpmethod', 1);       %% primal simplex
     mpopt = mpoption(mpopt, 'cplex.lpmethod', 2);       %% dual simplex
@@ -86,12 +86,12 @@ if have_fcn('cplex')
     mpopt = mpoption(mpopt, 'cplex.opts.emphasis.numerical', 1);
     mpopt = mpoption(mpopt, 'cplex.opts.threads', 2);
 end
-if have_fcn('glpk')
+if have_feature('glpk')
     mpopt = mpoption(mpopt, 'glpk.opts.mipgap', 0);
     mpopt = mpoption(mpopt, 'glpk.opts.tolint', 1e-10);
     mpopt = mpoption(mpopt, 'glpk.opts.tolobj', 1e-10);
 end
-if have_fcn('gurobi')
+if have_feature('gurobi')
     %mpopt = mpoption(mpopt, 'gurobi.method', -1);       %% automatic
     %mpopt = mpoption(mpopt, 'gurobi.method', 0);        %% primal simplex
     mpopt = mpoption(mpopt, 'gurobi.method', 1);        %% dual simplex
@@ -100,7 +100,7 @@ if have_fcn('gurobi')
     mpopt = mpoption(mpopt, 'gurobi.opts.MIPGap', 0);
     mpopt = mpoption(mpopt, 'gurobi.opts.MIPGapAbs', 0);
 end
-if have_fcn('mosek')
+if have_feature('mosek')
     sc = mosek_symbcon;
     %mpopt = mpoption(mpopt, 'mosek.lp_alg', sc.MSK_OPTIMIZER_FREE);            %% default
     %mpopt = mpoption(mpopt, 'mosek.lp_alg', sc.MSK_OPTIMIZER_INTPNT);          %% interior point
@@ -115,7 +115,7 @@ if have_fcn('mosek')
     mpopt = mpoption(mpopt, 'mosek.opts.MSK_DPAR_MIO_TOL_REL_GAP', 0);
     mpopt = mpoption(mpopt, 'mosek.opts.MSK_DPAR_MIO_TOL_ABS_GAP', 0);
 end
-if have_fcn('intlinprog')
+if have_feature('intlinprog')
     %mpopt = mpoption(mpopt, 'linprog.Algorithm', 'interior-point');
     %mpopt = mpoption(mpopt, 'linprog.Algorithm', 'active-set');
     %mpopt = mpoption(mpopt, 'linprog.Algorithm', 'simplex');
@@ -179,7 +179,7 @@ mpc0 = mpc;
 xgd0 = xgd;
 
 for s = 1:length(solvers)
-    if ~have_fcn(fcn{s})     %% check if we have the solver
+    if ~have_feature(fcn{s})    %% check if we have the solver
         t_skip(ntests, sprintf('%s not installed', solvers{s}));
     else
         mpopt = mpoption(mpopt, 'opf.dc.solver', solvers{s});
@@ -394,7 +394,7 @@ for s = 1:length(solvers)
     end
 end
 
-if have_fcn('octave')
+if have_feature('octave')
     warning(s1.state, file_in_path_warn_id);
 end
 
