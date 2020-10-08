@@ -9,10 +9,11 @@ For change history for [MIPS][2], see [mips/CHANGES.md](mips/CHANGES.md).
 For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 
 
-Changes since 7.0
------------------
+Version 7.1 - *Oct 8, 2020*
+---------------------------
 
 #### 10/8/20
+  - Release 7.1.
   - Update to [MP-Test][1] 7.1.
   - Update to [MIPS][2] 1.4.
   - Update to [MP-Opt-Model][27] 3.0.
@@ -30,6 +31,8 @@ Changes since 7.0
     - `'smartmarket'`
     - `'syngrid'`
     - `'tralmopf'`
+  - Add support for [OSQP][29], if installed, to solve the DC OPF, by setting
+    `opf.dc.solver` to `'OSQP'`.
 
 #### 10/1/20
   - **INCOMPATIBLE CHANGE:**  Update `case18`, `case22`, `case69`, `case85`
@@ -3143,3 +3146,4 @@ First Public Release – *Jun 25, 1997*
 [26]: https://github.com/MATPOWER/matpower/issues/89
 [27]: https://github.com/MATPOWER/mp-opt-model
 [28]: http://www.convexoptimization.com/wikimization/index.php/Gurobi_mex
+[29]: https://osqp.org

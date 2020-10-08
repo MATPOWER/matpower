@@ -140,7 +140,7 @@
 
 %\hyphenation{matpower}
 
-\newcommand{\mpver}[0]{7.1-dev}
+\newcommand{\mpver}[0]{7.1}
 %\newcommand{\matlab}[0]{{Matlab}}
 %\newcommand{\matlab}[0]{{\sc Matlab}\textsuperscript{\tiny \textregistered}}
 \newcommand{\matlab}[0]{{\sc Matlab}}
@@ -160,18 +160,18 @@
 \newcommand{\mipsurl}[0]{https://github.com/MATPOWER/mips}
 \newcommand{\mipslink}[0]{\href{\mipsurl}{\mips{}}}
 \newcommand{\mipsname}[0]{{{\bf M}{\sc atpower} \textbf{I}nterior \textbf{P}oint \textbf{S}olver}}
-\newcommand{\mipsver}[0]{1.3.1}
-\newcommand{\mpom}[0]{{MP-Opt-Model}}
+\newcommand{\mipsver}[0]{1.4}
+\newcommand{\mpom}[0]{\mbox{MP-Opt-Model}}
 \newcommand{\mpomurl}[0]{https://github.com/MATPOWER/mp-opt-model}
 \newcommand{\mpomlink}[0]{\href{\mpomurl}{\mpom{}}}
 \newcommand{\mpomname}[0]{\mpom{}}
 % \newcommand{\mpomname}[0]{{{\bf M}{\sc at}{\bf P}{\sc ower} \textbf{Opt}imization \textbf{Model}}}
-\newcommand{\mpomver}[0]{2.1}
+\newcommand{\mpomver}[0]{3.0}
 \newcommand{\most}[0]{{MOST}}
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
 \newcommand{\mostlink}[0]{\href{\mosturl}{\most{}}}
-\newcommand{\mostver}[0]{1.0.2}
+\newcommand{\mostver}[0]{1.1}
 \newcommand{\md}[0]{{\most{} Data struct}}
 \newcommand{\east}[0]{E4ST}
 \newcommand{\eastver}[0]{1.0b2}
@@ -194,22 +194,24 @@
 \newcommand{\gurobi}[0]{{Gurobi}}
 \newcommand{\mosek}[0]{{MOSEK}}
 \newcommand{\osqp}[0]{{OSQP}}
+\newcommand{\osqplink}[0]{{\href{https://osqp.org}{\osqp}}}
 \newcommand{\ot}[0]{{Optimization Toolbox}}
 \newcommand{\pardiso}[0]{{PARDISO}}
 \newcommand{\sdppf}[0]{\texttt{SDP\_PF}}
-\newcommand{\sdppfver}[0]{1.0.1}
+\newcommand{\sdppfver}[0]{1.0.2}
 \newcommand{\sdpopf}[0]{SDPOPF}
 \newcommand{\code}[1]{{\relsize{-0.5}{\tt{{#1}}}}}  % requires package relsize
 % Note: to get straight single quotes in \code you have to use one of the
 %       following: \char13 \char'15 \char"0D \textquotesingle
 \newcommand{\codeq}[1]{\code{\textquotesingle{}#1\textquotesingle}}  % requires package textcomp
 \newcommand{\mppath}[1]{\textsf{\textsl{{\relsize{-1.0}\textless{}\mbox{MATPOWER}\textgreater{}}}}\code{{#1}}}  % requires package relsize
-%\newcommand{\mostpath}[1]{\code{\$MOST{#1}}}
 %\newcommand{\mipspath}[1]{\textsf{\textsl{{\relsize{-1.0}\textless{}\mbox{MIPS}\textgreater{}}}}\code{{#1}}}  % requires package relsize
-\newcommand{\mptestpath}[1]{\mppath{/mptest{#1}}}
-\newcommand{\mipspath}[1]{\mppath{/mips{#1}}}
-\newcommand{\mpompath}[1]{\mppath{/mp-opt-model{#1}}}
-\newcommand{\mostpath}[1]{\mppath{/most{#1}}}
+%\newcommand{\mpompath}[1]{\textsf{\textsl{{\relsize{-1.0}\textless{}\mbox{MPOM}\textgreater{}}}}\code{{#1}}}  % requires package relsize
+\newcommand{\mptestpath}[1]{\mppath{}\code{/mptest{#1}}}
+\newcommand{\mipspath}[1]{\mppath{}\code{/mips{#1}}}
+\newcommand{\mpompath}[1]{\mppath{}\code{/mp-opt-model{#1}}}
+\newcommand{\mostpath}[1]{\mppath{}\code{/most{#1}}}
+\newcommand{\mostpathb}[1]{\textsf{\textsl{{\relsize{-1.0}\textless{}\mbox{MOST}\textgreater{}}}}\code{{#1}}}  % requires package relsize
 \newcommand{\baseMVA}[0]{\code{baseMVA}}
 \newcommand{\bus}[0]{\code{bus}}
 \newcommand{\branch}[0]{\code{branch}}
@@ -270,7 +272,7 @@
 %\title{\hl{--- DRAFT  ---}\\\hl{\em do not distribute}\\~\\\matpower{} \mpver{}\\User's Manual}
 \title{User's Manual}
 \author{Ray~D.~Zimmerman \and Carlos~E.~Murillo-S\'anchez}
-%\date{June 20, 2019} % comment this line to display the current date
+\date{October 8, 2020} % comment this line to display the current date
 %\date{December 14, 2011\thanks{Second revision. First revision was December 13, 2011}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
@@ -294,7 +296,7 @@
             {\large \@date \par}%
 \vfill
 {\scriptsize
-\copyright~2010--2019~\PSERC\\
+\copyright~2010--2020~\PSERC\\
 All Rights Reserved}
         \end{center}
     \end{titlepage}
@@ -426,13 +428,13 @@ corresponding case files.
 
 For the sake of reproducibility of research results, it is best to cite
 the specific version of the software used, with the version-specfic DOI.
-For example, for version 7.0 of \matpower{}:
+For example, for version 7.1 of \matpower{}:
 
 \begin{quote}
 \footnotesize
-R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2019). \matpower{} (Version 7.0)\\~
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2020). \matpower{} (Version 7.1)\\~
 [Software]. Available: \url{https://matpower.org}\\
-\doi{10.5281/zenodo.3251119}
+\doi{10.5281/zenodo.4074135}
 \end{quote}
 
 To cite the \matpower{} software generally, without reference to a specific
@@ -454,13 +456,13 @@ found via the general DOI at \url{https://doi.org/10.5281/zenodo.3236535}.
 The \matpower{}, \mips{} and \most{} User's Manuals should also be cited
 explicitly in work that refers to or is derived from their content.\footnote{For information on citing the \mips{} or \most{} User's Manuals, please see the \code{mips/CITATION} and \code{most/CITATION} files, respectively.} As
 with the software, the citation and DOI can be version-specific or
-general, as appropriate. For version 7.0 of the \mum{}, use:
+general, as appropriate. For version 7.1 of the \mum{}, use:
 
 \begin{quote}
 \footnotesize
-R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez. \matpower{} User's Manual, Version 7.0. 2019.
-[Online]. Available: \url{https://matpower.org/docs/MATPOWER-manual-7.0.pdf}\\
-\doi{10.5281/zenodo.3251118}
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez. \matpower{} User's Manual, Version 7.1. 2020.
+[Online]. Available: \url{https://matpower.org/docs/MATPOWER-manual-7.1.pdf}\\
+\doi{10.5281/zenodo.4074122}
 \end{quote}
 
 For a version non-specific citation, use the following citation and DOI,
@@ -648,8 +650,26 @@ Installation and use of \matpower{} requires familiarity with the basic operatio
 % UPDATE BEFORE RELEASE
 \begin{Code}
 >> test_matpower
-t_nested_struct_copy....ok
+t_test_fcns.............ok
+t_have_feature..........ok
+t_mplinsolve............ok (6 of 66 skipped)
+t_mips..................ok
+t_mips_pardiso..........ok (60 of 60 skipped)
+t_qps_mips..............ok
 t_have_fcn..............ok
+t_nested_struct_copy....ok
+t_nleqs_master..........ok (30 of 150 skipped)
+t_qps_master............ok (324 of 432 skipped)
+t_miqps_master..........ok (288 of 288 skipped)
+t_nlps_master...........ok (378 of 540 skipped)
+t_opt_model.............ok
+t_om_solve_leqs.........ok
+t_om_solve_nleqs........ok (36 of 194 skipped)
+t_om_solve_qps..........ok (270 of 387 skipped)
+t_om_solve_miqps........ok (118 of 118 skipped)
+t_om_solve_nlps.........ok (329 of 504 skipped)
+t_qps_matpower..........ok (288 of 396 skipped)
+t_miqps_matpower........ok (288 of 288 skipped)
 t_feval_w_path..........ok
 t_mpoption..............ok
 t_loadcase..............ok
@@ -660,21 +680,21 @@ t_margcost..............ok
 t_totcost...............ok
 t_modcost...............ok
 t_hasPQcap..............ok
-t_mplinsolve............ok (6 of 44 skipped)
-t_mips..................ok
-t_mips_pardiso..........ok (60 of 60 skipped)
-t_qps_master............ok (288 of 360 skipped)
-t_miqps_master..........ok (240 of 240 skipped)
-t_pf....................ok
+t_pf_ac.................ok
+t_pf_dc.................ok
 t_pf_radial.............ok
 t_cpf...................ok
 t_islands...............ok
 t_opf_model.............ok
 t_opf_model_legacy......ok
 t_opf_default...........ok
-t_opf_mips..............ok (278 of 1296 skipped)
+t_opf_mips..............ok (280 of 1308 skipped)
+t_opf_dc_default........ok
 t_opf_dc_mips...........ok
 t_opf_dc_mips_sc........ok
+\end{Code}
+\emph{continued from previous page}
+\begin{Code}
 t_opf_userfcns..........ok
 t_opf_softlims..........ok
 t_runopf_w_res..........ok
@@ -692,8 +712,8 @@ t_psse..................ok
 t_off2case..............ok
 t_auction_mips..........ok
 t_runmarket.............ok
-All tests successful (8242 passed, 872 skipped of 9114)
-Elapsed time 40.35 seconds.
+All tests successful (10368 passed, 2695 skipped of 13063)
+Elapsed time 23.98 seconds.
 \end{Code}
 \end{enumerate}
 
@@ -2050,7 +2070,7 @@ results = runcpf(mpcb, mpct, mpopt);
 \end{Code}
 This should result in something like the following output to the screen.
 \begin{Code}
-MATPOWER Version 7.0, 20-Jun-2019 -- AC Continuation Power Flow
+MATPOWER Version 7.1, 08-Oct-2020 -- AC Continuation Power Flow
 step   0  :                      lambda =  0.000,  4 Newton steps
 step   1  : stepsize = 0.2       lambda =  0.181   2 corrector Newton steps
 step   2  : stepsize = 0.2       lambda =  0.359   2 corrector Newton steps
@@ -4274,7 +4294,7 @@ The \code{feval\_w\_path} function is identical to \matlab{}'s own \code{feval},
 
 \subsubsection{\tt have\_fcn}
 
-Now deprecated, but included as part of \mpomlink{}~\cite{mpom} (see \mpompath{}). Instead, please use \code{have\_feature}, a modular, extensible replacement for \code{have\_fcn} that is now included as part of \mptestlink{} (see \mptestpath{}).
+Now deprecated, but included as part of \mpomlink{}~\cite{mpom} (see \mpompath{}). Instead, please use \code{have\_feature}, a modular, extensible replacement for \code{have\_fcn} that is now included as part of \mptestlink{} (see \mptestpath{}) and described in the \mptest{} \href{\mptesturl/blob/master/README.md}{\code{README}} file.
 
 \subsubsection{\tt mpopt2qpopt}
 
@@ -6251,7 +6271,7 @@ name & description \\
  \item [*] {These functions implement new tags and the detection of the corresponding features for \code{have\_feature}, included as part of \mptestlink{} (see \mptestpath{}).}
  \item [\dag] {See \mostpath{}.}
  \item [\ddag] {Part of TSPOPF~\cite{tspopf}.}
- \item [\S] {Part of \matpowerextraslink{}, included in \matpower{} ZIP distributions in \mppath{/extras}.}
+ \item [\S] {Part of \matpowerextraslink{}, the \code{extras} subdirectory in \matpower{} ZIP distributions.}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -7996,48 +8016,66 @@ available even if it had an expired license or failed for some other reason.
 
 
 \clearpage
-\subsection{Version 7.1? -- released ??? ??, 20??}
+\subsection{Version 7.1 -- released Oct 8, 2020}
 \label{app:v71}
-
-\hl{Note: Next version may be changed to something other than 7.1 before release.}
 
 The \href{https://matpower.org/docs/MATPOWER-manual-7.1.pdf}{\matpower{} 7.1 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MATPOWER-manual-7.1.pdf}}
 
 \subsubsection*{New Features}
 \begin{itemize}
-\item \mpomlink{} \hl{2.x brings many new enhancements, including ...}
+\item \mpomlink{} 3.0 brings many new enhancements to the \code{opt\_model} class and the various optimization solver interfaces, including:
     \begin{itemize}
-    \item 
+    \item New unified interface \code{nlps\_master()} for nonlinear programming problems, including implementations for \mipslink{}, \code{fmincon}, \ipopt{} and \knitro{}.
+    \item New unified interface \code{nleqs\_master()} for solving nonlinear equations, including implementations for \code{fsolve}, Newton's method, fast-decoupled Newton and Gauss-Seidel.
+    \item Automatic determination of explicit model type from characteristics of variables, costs and constraints.
+    \item New \code{solve()} method for \code{opt\_model} to call appropriate solver for the respective problem type, including for linear and nonlinear equations.
+    \item Performance improvements.
+    \item Support for new solvers (\osqplink{}, \code{fsolve}, Newton, fast-decoupled Newton, Gauss-Seidel) and new versions of \cplex{} and \knitro{}.
+    \item Support for modifying parameters of an existing model.
+    \item Support for extracting specific variables, costs, constraint values and shadow prices, etc. from a solved model.
     \end{itemize}
-\item Support for \osqp{} to solve LP and QP problems. Set option \code{opf.dc.solver} to \codeq{OSQP} to use \osqp{} to solve the DC OPF. Requires the \matlab{} interface to \osqp{}, available from \url{https://osqp.org}. See \code{help mpoption} for more \osqp{} options.
-\item New unified interface \code{nlps\_master()} for nonlinear programming solvers \mipslink{}, \code{fmincon}, \ipopt{} and \knitro{}.
+     For more details on improvements related to \mpomlink{}, see the \href{\mpomurl/blob/master/docs/relnotes/}{release notes}\footnote{See Appendix~\ref{MPOMMAN-app:release_history} in the \mpomman{}.} for \mpom{} 0.8, \href{\mpomurl/blob/master/docs/relnotes/MP-Opt-Model-Release-Notes-1.0.md}{1.0}, \href{\mpomurl/blob/master/docs/relnotes/MP-Opt-Model-Release-Notes-2.0.md}{2.0}, \href{\mpomurl/blob/master/docs/relnotes/MP-Opt-Model-Release-Notes-2.1.md}{2.1}, and \href{\mpomurl/blob/master/docs/relnotes/MP-Opt-Model-Release-Notes-3.0.md}{3.0}.
+\item \mptestlink{} 7.1, with new modular, extensible \code{have\_feature()} function for detecting optional functionality. For more details, see the \href{\mptesturl/blob/master/docs/relnotes/MP-Test-Release-Notes-7.1.md}{\mptest{} 7.1 release notes}.
+\item \mipslink{} 1.4. For details, see the \href{\mipsurl/blob/master/docs/relnotes/MIPS-Release-Notes-1.4.md}{\mips{} 1.4 release notes}.\footnote{See Appendix~\ref{MIPSMAN-app:release_history} in the \mipsman{}.}
+\item Support for \osqplink{} to solve LP and QP problems. Set option \code{opf.dc.solver} to \codeq{OSQP} to use \osqp{} to solve the DC OPF. Requires the \matlab{} interface to \osqp{}, available from \url{https://osqp.org}. See \code{help mpoption} for more \osqp{} options.
 \item Option for \code{makePTDF()} to compute shift factors very efficiently for specific transfers or specific buses only.
-\item \emph{Thanks to Fulano.}
 \item New options:
+\begin{itemize}
+    \item \code{pf.alg} now accepts \codeq{NR-SP} as a shortcut for Newton's method with the default power/polar formulation, and \codeq{NR-SH} and \codeq{NR-IH} for those with the hybrid voltage updates.
+    \item \code{pf.v\_cartesian} now accepts \code{2} as a valid value to select the Newton power flow with hybrid voltage update.
+    \item \code{opf.dc.solver} now accepts \codeq{OSQP} as a valid value if \osqplink{} is installed, to select \osqplink{} to solve the DC OPF.
+    \item \code{osqp.opts} overrides default \osqplink{} options.
+\end{itemize}
+\item New functions/methods:
     \begin{itemize}
-    \item 
-    \end{itemize}
-\item New functions:
-    \begin{itemize}
-    \item \code{mpopt2nlpopt()} creates an options struct for \code{nlps\_master()} from at \matpower{} options struct.
-    \item \code{nlps\_fmincon()} provides implementation of unified nonlinear programming solver interface for \code{fmincon}.
-    \item \code{nlps\_ipopt()} provides implementation of unified nonlinear programming solver interface interface for \ipopt{}.
-    \item \code{nlps\_knitro()} provides implementation of unified nonlinear programming solver interface interface for \ipopt{}.
-    \item \code{nlps\_master()} provides a single wrapper function for calling any of \matpower{}'s nonlinear programming solvers.
-    \item \code{have\_feature\_e4st} detects availability/version of \eastlink{}.\footnote{See \url{https://e4st.com}.}
-    \item \code{have\_feature\_minopf} detects availability/version of MINOPF, a MINOS-based Optimal Power Flow solver.
-    \item \code{have\_feature\_most} detects availability/version of \most{} (\mostname{}).
-    \item \code{have\_feature\_pdipmopf} detects availability/version of PDIPMOPF, a primal-dual interior point method Optimal Power Flow solver included in TSPOPF~\cite{tspopf}.
-    \item \code{have\_feature\_regexp\_split} detects support for the \codeq{split} argument to \code{regexp}.
-    \item \code{have\_feature\_scpdipmopf} detects availability/version of SCPDIPMOPF, a step-controlled primal-dual interior point method Optimal Power Flow solver included in TSPOPF~\cite{tspopf}.
-    \item \code{have\_feature\_sdp\_pf} detects availability/version of \sdppf{}\footnote{See \url{https://github.com/MATPOWER/mx-sdp_pf/}.}, a \matpower{} extension for applications of semi-definite programming relaxations of power flow equations.
-    \item \code{have\_feature\_smartmarket} detects availability/version of \code{runmarket} and related files for running an energy auction, found under \code{smartmarket} in \matpowerextraslink{}.\footnote{See \url{\matpowerextrasgithuburl}.}
-    \item \code{have\_feature\_syngrid} detects availability/version of \syngridlink{},\footnote{See \url{\syngridurl}.} Synthetic Grid Creation for \matpower{}.
-    \item \code{have\_feature\_tralmopf} detects availability/version of TRALMOPF, a trust region based augmented Langrangian Optimal Power Flow solver included in TSPOPF~\cite{tspopf}.
+        \item \mptest{} 7.1
+        \begin{itemize}
+            \item \code{have\_feature()} detects availability and version information for optional functionality. This is a modular, extensible replacement for \code{have\_fcn()} where the detection of a feature named \code{<tag>} is implemented by the function \code{have\_feature\_<tag>()}.
+        \end{itemize}
+        \item \mpom{} 3.0
+        \begin{itemize}
+            \item \code{mpopt2nleqopt()} creates or modifies an options struct for \code{nleqs\_master()} from a \matpower{} options struct.
+            \item \code{mpopt2nlpopt()} creates or modifies an options struct for \code{nlps\_master()} from a \matpower{} options struct.
+            \item \code{nleqs\_master()} provides a single wrapper function for calling any of \mpom{}'s nonlinear equation solvers.
+            \item \code{nlps\_master()} provides a single wrapper function for calling any of \mpom{}'s nonlinear programming solvers.
+            \item \code{opt\_model/eval\_lin\_constraint()} method computes the constraint values for the full set or an individual named subset of linear constraints.
+            \item \code{opt\_model/get\_soln()} method extracts solved results for a given named set of variables, constraints or costs.
+            \item \code{opt\_model/params\_nln\_constraint()} method returns parameters for a named (and optionally indexed) set of nonlinear constraints.
+            \item \code{opt\_model/params\_nln\_cost()} method returns parameters for a named (and optionally indexed) set of general nonlinear costs.
+            \item \code{opt\_model/parse\_soln()} method returns a complete set of solution vector and shadow price values for a solved model.
+            \item \code{opt\_model/problem\_type()} determines the type of problem based on the characteristics of the variables, costs and constraints in the model.
+            \item \code{opt\_model/set\_params()} method modifies parameters for a given named set of existing variables, costs, or constraints of an \mpom{} object.
+            \item \code{opt\_model/solve()} solves the model using \code{mplinsolve()}, \code{qps\_master()}, \code{miqps\_master()}, \code{nleqs\_master()} or \code{nlps\_master()}, depending on the problem type.
+            \item \code{osqp\_options()} initializes options for \osqplink{} solver.
+            \item \code{osqpver()} returns/displays version information for \osqplink{}.
+            \item \dots plus \code{nleqs\_core()}, \code{nleqs\_fd\_newton()}, \code{nleqs\_fsolve()},\\ \code{nleqs\_gauss\_seidel()}, \code{nleqs\_newton()}, \code{nlps\_fmincon()}, \code{nlps\_ipopt()}, \code{nlps\_knitro()}, \code{opt\_model/copy()}, \code{opt\_model/is\_mixed\_integer()}, and \code{qps\_osqp()}.
+        \end{itemize}
+\item \code{nlpopf\_solver()} implements the AC OPF solver based on \code{opt\_model}'s new \code{solve()} method, and replaces the individual solver-specific functions \code{fmincopf\_solver()}, \code{ipoptopf\_solver()}, \code{ktropf\_solver()}, \code{mipsopf\_solver()}.
+\item \dots plus 45 individual feature detection functions for \code{have\_feature()} \\ \emph{(10 in \matpower{} proper, plus 2 in \mptest{}, 4 in \mips{}, and 29 in \mpom{}~\footnote{See Table~\ref{MPOMMAN-tab:have_feature_fcns} in the  \mpomman{} for details.})}.
     \end{itemize}
 \end{itemize}
 
-% \pagebreak
+\clearpage
 \subsubsection*{New Case Files}
 \begin{itemize}
 \item Nineteen new distribution system cases~\cite{bouchekara2019, latreche2020}. \emph{Thanks to Houssem Bouchekara, et. al.}
@@ -8070,53 +8108,29 @@ The \href{https://matpower.org/docs/MATPOWER-manual-7.1.pdf}{\matpower{} 7.1 Use
 % \pagebreak
 \subsubsection*{New Documentation}
 \begin{itemize}
-    \item 
+    \item New \mpomman{}, included in \code{mp-opt-model/docs}.
 \end{itemize}
 
 \subsubsection*{Other Improvements}
 \begin{itemize}
+\item Refactor \code{opt\_model} class to inherit from new abstract base class \code{mp\_idx\_manager} which can be used to manage the indexing of other sets of parameters, etc. in other contexts.
+\item Add to \code{opt\_model/eval\_nln\_constraint()} method the ability to compute constraints for a single named set.
 \item Significant performance improvement for some problems when constructing sparse matrices for linear constraints or quadratic costs (e.g. during problem setup in \most{}).
 \emph{Thanks to Daniel Muldrew.}
-\item Move original implementation of Newton power flow for cartesian
-voltage representations to \code{newtonpf\_S\_hybrid()} and     \code{newtonpf\_I\_hybrid()}, accessible by setting the \code{pf.v\_cartesian}
-option to 2. The \code{pf.alg} option can also be set to \codeq{NR-SH} or
-\codeq{NR-IH}, respectively, as shortcuts to select these formulations.
+\item Move original implementation of Newton power flow for cartesian voltage representations to \code{newtonpf\_S\_hybrid()} and \code{newtonpf\_I\_hybrid()}, accessible by setting the \code{pf.v\_cartesian} option to 2. The \code{pf.alg} option can also be set to \codeq{NR-SH} or \codeq{NR-IH}, respectively, as shortcuts to select these formulations.
 \item Improve robustness of these hybrid Newton power flow formulations to avoid ill-conditioning when the real part of the voltage approaches zero.
-\item The \code{pf.alg} option now accepts \codeq{NR-SP} as a shortcut for Newton's method with the default power/polar formulation.
-\item Redesign implementation of Newton power flow for cartesian
-voltage representations to use standard Newton method with explicit
-voltage magnitude constraints at PV buses. This method is slower
-(larger number of equations and unknowns) but appears to be more
-reliable in some cases than the original implementation, which was
-a hybrid approach by Sereeter that used a modified Newton method
-to compute polar voltage updates using a modified cartesian Jacobian.
-\item Modify voltage limit constraints for cartesian AC OPF formulation
-to use voltage squared, resulting in simpler derivatives.
+\item Redesign implementation of Newton power flow for cartesian voltage representations to use standard Newton method with explicit voltage magnitude constraints at PV buses. This method is slower (larger number of equations and unknowns) but appears to be more reliable in some cases than the original implementation, which was a hybrid approach by Sereeter that used a modified Newton method to compute polar voltage updates using a modified cartesian Jacobian.
+\item Modify voltage limit constraints for cartesian AC OPF formulation to use voltage squared, resulting in simpler derivatives.
 \item Performance improvement for \code{makePTDF()} for large cases, e.g. more than 70\% improvement for \code{case9241pegase}.
-\item Significant performance improvement for CPLEX on small problems by     eliminating call to \code{cplexoptimset()}, which was a huge bottleneck.
-\item Add four new methods to \code{@opt\_model} class:
-    \begin{itemize}
-    \item \code{copy()} -- works around issues with inheritance in constructors that was preventing copy constructor from working in Octave 5.2 and earlier (see also \url{https://savannah.gnu.org/bugs/?52614})
-    \item \code{is\_mixed\_integer()} -- returns true if the model includes any binary or integer variables
-    \item \code{problem\_type()} -- returns one of the following strings, based on
-      the characteristics of the variables, costs and constraints in the
-      model:
-      \begin{itemize}
-      \item{\codeq{LP}} -- linear program
-      \item{\codeq{QP}} -- quadratic program
-      \item{\codeq{NLP}} -- nonlinear program
-      \item{\codeq{MILP}} -- mixed-integer linear program
-      \item{\codeq{MIQP}} -- mixed-integer quadratic program
-      \item{\codeq{MINLP}} -- mixed-integer nonlinear program
-      \end{itemize}
-    \item \code{solve()} - solves the model using \code{qps\_master()}, \code{miqps\_master()}, or \code{nlps\_master()}, depending on the problem type (\codeq{MINLP} problems are not yet implemented)
-    \end{itemize}
-\item Convert \code{dcopf\_solver()} to use the new \code{solver()} method of \code{@opt\_model} instead of calling \code{qps\_matpower()} manually.
-\item Convert \code{opf\_execute()} to use \code{nlps\_master()}, based on the new \code{solver()} method of \code{@opt\_model}, for AC OPF when using \code{fmincon}, \ipopt{}, \knitro{}, or \mipslink{}.
+\item Significant performance improvement for CPLEX on small problems by eliminating call to \code{cplexoptimset()}, which was a huge bottleneck.
+\item Convert \code{dcopf\_solver()} to use the new \code{solver()} method of \code{opt\_model} instead of calling \code{qps\_matpower()} manually.
+\item Convert \code{opf\_execute()} to use \code{nlpopf\_solver()}, based on the new \code{solver()} method of \code{opt\_model}, for AC OPF when using \code{fmincon}, \ipopt{}, \knitro{}, or \mipslink{}.
 \item Reduce memory usage in \code{modcost()} for very large systems. \emph{Thanks to Christoph Funke.}
 \item Deprecated functions:
     \begin{itemize}
-    \item \code{foo()} -- use \code{bar()} instead.
+    \item \code{have\_fcn()} -- use \code{have\_feature()} from \mptestlink{} instead.
+    \item \code{qps\_matpower()} -- use \code{qps\_master()} from \mpomlink{} instead.
+    \item \code{miqps\_matpower()} -- use \code{miqps\_master()} from \mpomlink{} instead.
     \end{itemize}
 \item Removed functions:
     \begin{itemize}
@@ -8130,13 +8144,11 @@ to use voltage squared, resulting in simpler derivatives.
 % \pagebreak
 \subsubsection*{Bugs Fixed}
 \begin{itemize}
+\item For \code{opt\_model}, incorrect evaluation of constant term has been fixed for vector valued quadratic costs with constant term supplied as a vector.
+\item Calling \code{opt\_model/params\_var()} method with empty \code{idx} no longer results in fatal error.
 \item Fix bug in \code{scale\_load()} where only one of multiple dispatchable loads at a bus would be scaled. \emph{Thanks to Christoph Funke.}
-\item Fix bug \#77 where incorrect indexing could cause fatal error
-in OPF with additional nonlinear constraints. \emph{Thanks to Sergio Garcia.}
-\item Fix OPF issue \#71 for \ipopt{} and \knitro{} where structure of
-Jacobian and/or Hessian could change from the structure provided
-(i.e. elements with value of zero were being eliminated from the
-sparsity structure). \emph{Thanks to Drosos Kourounis.}
+\item Fix bug \#77 where incorrect indexing could cause fatal error in OPF with additional nonlinear constraints. \emph{Thanks to Sergio Garcia.}
+\item Fix OPF issue \#71 for \ipopt{} and \knitro{} where structure of Jacobian and/or Hessian could change from the structure provided (i.e. elements with value of zero were being eliminated from the sparsity structure). \emph{Thanks to Drosos Kourounis.}
 \item Artelys Knitro 12.1 compatibility fix.
 \item Fix CPLEX 12.10 compatibility issue \#90.
 \item Fix bug \#89 where running a power flow with \code{pf.enforce\_q\_lims} enabled and voltage dependent ZIP loads produced incorrect results. \emph{Thanks to Florian.}
@@ -8146,7 +8158,8 @@ sparsity structure). \emph{Thanks to Drosos Kourounis.}
 
 \subsubsection*{Incompatible Changes}
 \begin{itemize}
-\item \mpom{} has renamed the following functions and modified the order of their input args so that the \mpom{} object appears first. Ideally, these would be defined as methods of the \code{@opt\_model} class, but Octave 4.2 and earlier is not able to find them via a function handle (as used in the \code{solve()} method) if they are inherited by a sub-class.
+\item Modify order of default output arguments of \code{opt\_model/get\_idx()} (again), removing the one related to legacy costs.
+\item \mpom{} has renamed the following functions and modified the order of their input args so that the \mpom{} object appears first. Ideally, these would be defined as methods of the \code{opt\_model} class, but Octave 4.2 and earlier is not able to find them via a function handle (as used in the \code{solve()} method) if they are inherited by a sub-class.
     \begin{itemize}
     \item \code{opf\_consfcn()} $\rightarrow$ \code{nlp\_consfcn()}
     \item \code{opf\_costfcn()} $\rightarrow$ \code{nlp\_costfcn()}
@@ -8169,7 +8182,7 @@ R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez, and R.~J. Thomas, ``\matpower{}: Ste
 \doi{10.1109/TPWRS.2010.2051168}
 
 \bibitem{matpower}
-R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2019). \matpower{}\\~
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2020). \matpower{}\\~
 [Software]. Available: \url{https://matpower.org}
 \doi{10.5281/zenodo.3236535}
 
@@ -8326,7 +8339,7 @@ COIN-OR Linear Programming (CLP) Solver. [Online]. Available:
   \url{https://github.com/coin-or/Clp}.
 
 \bibitem{mips}
-R.~D. Zimmerman, H. Wang. \mipsname{} (\mips{}) User's Manual. 2019. [Online]. Available: \url{\currentmipsmanurl}
+R.~D. Zimmerman, H. Wang. \mipsname{} (\mips{}) User's Manual. 2020. [Online]. Available: \url{\currentmipsmanurl}
 \doi{10.5281/zenodo.3236506}
 
 \bibitem{zimmerman2010b}

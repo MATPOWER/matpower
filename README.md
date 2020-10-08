@@ -326,11 +326,11 @@ corresponding case files.
 
 For the sake of reproducibility of research results, it is best to cite
 the specific version of the software used, with the version-specfic DOI.
-For example, for version 7.0 of MATPOWER, use:
+For example, for version 7.1 of MATPOWER, use:
 
->   R. D. Zimmerman, C. E. Murillo-Sanchez (2019). *MATPOWER (Version 7.0)*
+>   R. D. Zimmerman, C. E. Murillo-Sanchez (2020). *MATPOWER (Version 7.1)*
     [Software]. Available: https://matpower.org  
-    doi: [10.5281/zenodo.3251119](https://doi.org/10.5281/zenodo.3251119)
+    doi: [10.5281/zenodo.4074135](https://doi.org/10.5281/zenodo.4074135)
 
 To cite the MATPOWER software generally, without reference to a specific
 version, use the following citation and DOI, with *\<YEAR\>* replaced by the
@@ -348,13 +348,13 @@ found via the general DOI at https://doi.org/10.5281/zenodo.3236535.
 The MATPOWER, MIPS and MOST User's Manuals should also be cited
 explicitly in work that refers to or is derived from their content. As
 with the software, the citation and DOI can be version-specific or
-general, as appropriate. For version 7.0 of the [MATPOWER User's Manual][8],
+general, as appropriate. For version 7.1 of the [MATPOWER User's Manual][8],
 use:
 
 >   R. D. Zimmerman, C. E. Murillo-Sanchez. *MATPOWER User's Manual,
-    Version 7.0.* 2019.  
-    [Online]. Available: https://matpower.org/docs/MATPOWER-manual-7.0.pdf  
-    doi: [10.5281/zenodo.3251118](https://doi.org/10.5281/zenodo.3251118)
+    Version 7.1.* 2020.  
+    [Online]. Available: https://matpower.org/docs/MATPOWER-manual-7.1.pdf  
+    doi: [10.5281/zenodo.4074122](https://doi.org/10.5281/zenodo.4074122)
 
 For a version non-specific citation, use the following citation and DOI,
 with *\<YEAR\>* replaced by the year of the most recent release:
