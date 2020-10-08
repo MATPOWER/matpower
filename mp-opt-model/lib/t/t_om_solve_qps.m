@@ -50,7 +50,7 @@ for k = 1:length(algs)
                 'opt', 0 ) ...
         );
         switch names{k}
-            case {'MIPS', 'sc-MIPS'}
+            case {'DEFAULT', 'MIPS', 'sc-MIPS'}
                 opt.mips_opt.comptol = 1e-8;
 %             case 'linprog/quadprog'
 %                 opt.verbose = 2;
