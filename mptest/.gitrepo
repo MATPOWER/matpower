@@ -6,7 +6,7 @@
 [subrepo]
 	remote = git@github.com:MATPOWER/mptest
 	branch = master
-	commit = fd2d509fce446d771338ec7d2641a54bfbb3ba05
-	parent = 8f5c059aef8bb24e2e88d234fb036ea8c6b927db
+	commit = 7811e6351a11741952b9312de65522306c9f857e
+	parent = 160b75740fc454e9691db10eb68fd1caccabbcf4
 	cmdver = 0.4.1
 	method = merge

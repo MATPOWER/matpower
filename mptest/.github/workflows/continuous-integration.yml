@@ -1,0 +1,43 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-16.04]
+
+    runs-on: ${{ matrix.os }}
+
+    steps: 
+    - uses: actions/checkout@v1
+    - name: Initialize Package Manager (Linux)
+      if: startsWith(matrix.os, 'ubuntu')
+      run: |
+        sudo add-apt-repository ppa:octave/stable
+        sudo apt-get update -qq
+    - name: Initialize Package Manager (Mac)
+      if: startsWith(matrix.os, 'macos')
+      run: |
+        brew update
+        brew install bash
+        brew install pkg-config
+    - name: Install GNU Octave (Linux)
+      if: startsWith(matrix.os, 'ubuntu')
+      run: |
+        sudo apt-get install -y -qq liboctave-dev octave
+        octave-cli --no-gui --eval ver
+        echo "::set-env name=OCTAVE_VER::`octave-cli --no-gui --eval "fprintf('%s', ver('octave').Version)"`"
+    - name: Install GNU Octave (Mac)
+      if: startsWith(matrix.os, 'macos')
+      run: |
+        brew install octave
+        octave-cli --no-gui --eval ver
+        echo "::set-env name=OCTAVE_VER::`octave-cli --no-gui --eval "fprintf('%s', ver('octave').Version)"`"
+    - name: Set MPTEST_PATH
+      run: echo "::set-env name=MPTEST_PATH::${GITHUB_WORKSPACE}/lib:${GITHUB_WORKSPACE}/lib/t"
+    - name: Test MP-Test
+      run: |
+        octave-cli --no-gui -p $MPTEST_PATH --eval mptestver
+        octave-cli --no-gui -p $MPTEST_PATH --eval "test_mptest(0,1)"

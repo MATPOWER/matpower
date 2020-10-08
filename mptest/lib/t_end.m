@@ -1,7 +1,7 @@
 function t_end
 %T_END  Finish running tests and print statistics.
 %   T_END checks the global counters that were updated by calls to
-%   T_OK and T_IS and prints out a summary of the test results.
+%   T_OK, T_IS and T_SKIP and prints out a summary of the test results.
 %
 %   Example:
 %       quiet = 0;
@@ -14,7 +14,7 @@ function t_end
 %   See also T_BEGIN, T_OK, T_IS, T_SKIP, T_RUN_TESTS.
 
 %   MP-Test
-%   Copyright (c) 2004-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Test.

@@ -4,16 +4,16 @@ function ok = t_is(got, expected, prec, msg)
 %   and if the maximum difference between corresponding elements of
 %   GOT and EXPECTED is less than 10^(-PREC) then it increments the
 %   passed tests count, otherwise increments the failed tests count.
-%   Prints 'ok' or 'not ok' followed by the MSG, unless the global
-%   variable t_quiet is true. The input values can be real or complex,
-%   and they can be scalar, vector, or 2-d or higher matrices. If GOT
-%   is a vector or matrix and EXPECTED is a scalar or NaN, all elements
-%   must match the scalar. Intended to be called between calls to
-%   T_BEGIN and T_END.
+%   Prints 'ok' or 'not ok' followed by the MSG, unless T_BEGIN was
+%   called with input QUIET equal true. The input values can be real or
+%   complex, and they can be scalar, vector, or 2-d or higher matrices.
+%   If GOT is a vector or matrix and EXPECTED is a scalar or NaN, all
+%   elements must match the scalar. Intended to be called between calls
+%   to T_BEGIN and T_END.
 %
 %   Optionally returns a true or false value indicating whether or
-%   not the test succeeded. NaN's are considered to be equal to each
-%   other.
+%   not the test succeeded. NaN values are considered to be equal to
+%   each other.
 %
 %   Example:
 %       quiet = 0;
@@ -26,7 +26,7 @@ function ok = t_is(got, expected, prec, msg)
 %   See also T_OK, T_SKIP, T_BEGIN, T_END, T_RUN_TESTS.
 
 %   MP-Test
-%   Copyright (c) 2004-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Test.

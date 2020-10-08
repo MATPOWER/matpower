@@ -16,7 +16,7 @@ function t_begin(num_of_tests, quiet)
 %   See also T_END, T_OK, T_IS, T_SKIP, T_RUN_TESTS.
 
 %   MP-Test
-%   Copyright (c) 2004-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Test.

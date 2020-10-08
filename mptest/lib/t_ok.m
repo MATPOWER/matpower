@@ -1,10 +1,10 @@
 function ok = t_ok(cond, msg)
-%T_OK  Tests if a condition is true.
+%T_OK  Tests whether a condition is true.
 %   T_OK(EXPR, MSG) increments the global test count and if the EXPR
 %   is true it increments the passed tests count, otherwise increments
 %   the failed tests count. Prints 'ok' or 'not ok' followed by the
-%   MSG, unless the global variable t_quiet is true. Intended to be
-%   called between calls to T_BEGIN and T_END.
+%   MSG, unless T_BEGIN was called with input QUIET equal true. Intended
+%   to be called between calls to T_BEGIN and T_END.
 %
 %   Optionally returns a true or false value indicating whether or
 %   not the test succeeded.
@@ -20,7 +20,7 @@ function ok = t_ok(cond, msg)
 %   See also T_IS, T_SKIP, T_BEGIN, T_END, T_RUN_TESTS.
 
 %   MP-Test
-%   Copyright (c) 2004-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Test.

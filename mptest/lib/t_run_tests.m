@@ -5,7 +5,7 @@ function all_ok_ = t_run_tests(test_names, verbose)
 %   Runs a set of tests whose names are given in the cell array TEST_NAMES.
 %   If the optional parameter VERBOSE is true, it prints the details of the
 %   individual tests. Optionally returns an ALL_OK flag, equal to 1 if all
-%   tests pass (and the number matches the expected number), 0 otherwise.s
+%   tests pass (and the number matches the expected number), 0 otherwise.
 %
 %   Example:
 %       tests{end+1} = 't_loadcase';
@@ -16,7 +16,7 @@ function all_ok_ = t_run_tests(test_names, verbose)
 %   See also T_BEGIN, T_END.
 
 %   MP-Test
-%   Copyright (c) 2004-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Test.
