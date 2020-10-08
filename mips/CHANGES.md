@@ -2,12 +2,50 @@ Change history for MIPS
 =======================
 
 
+Version 1.4 - *Oct 8, 2020*
+---------------------------
+
+#### 10/8/20
+  - Release 1.4.
+
+#### 9/23/20
+  - Add feature detection functions for LU and PARDISO, defining tags
+    `'lu_vec'`, `'pardiso_legacy'`, `'pardiso_object'` and `'pardiso'`
+    for `have_feature()`. Requires MP-Test 7.1 or later.
+  - Remove custom LU and PARDISO detection code from `mplinsolve` and
+    test functions, and switch to using `have_feature()`.
+
+#### 8/20/20
+  - In User's Manual, add missing `linsolver` option in Table 3-3.
+  - In User's Manual, add Sections 4 Other Functions, 4.1 Linear System
+    Solvers - mplinsolve, and move Section 3.3 Quadratic Programming
+    Solver to 4.2.
+
+#### 8/18/20
+  - Silence inadvertent output from `mplinsolve()` when called without
+    `solver` input argument.
+  - Fix fatal errors when `mplinsolve()` is called with `LU` solver and
+    dense `A` matrix.
+
+#### 4/23/20
+  - Remove additional `have_fcn()` dependencies in `mips()`,
+    `t_mips_pardiso()` and `t_qps_mips()`.
+  - **INCOMPATIBLE CHANGE**: Calling `mips()` with `opt.linsolver`
+    set to `'PARDISO'` now results in a fatal error if PARDISO is not
+    installed, rather than warning and continuing with the default
+    linear solver.
+
+#### 8/15/19
+  - Fix bug in initialization of `mu` that resulted in fatal error
+    in `t_mips` for some versions of MATLAB (e.g. R2013b on Mac).
+
+
 Version 1.3.1 - *Jun 20, 2019*
 ------------------------------
 
 #### 6/20/19
   - Release 1.3.1.
-  - Add CITATION file.
+  - Add `CITATION` file.
   - Other miscellaneous documentation updates, e.g. MATPOWER website
     links updated to https://matpower.org.
 

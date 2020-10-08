@@ -1,5 +1,5 @@
 % MIPS
-%   Version 1.3.1       20-Jun-2019
+%   Version 1.4         08-Oct-2020
 %
 %   The MATPOWER Interior Point Solver (MIPS) is a package of MATLAB/Octave
 %   M-files for solving non-linear programming problems (NLPs) using a

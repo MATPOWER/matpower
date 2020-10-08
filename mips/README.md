@@ -13,11 +13,15 @@ System Requirements
 
 *   [MATLAB][4] version 7 (R14) or later, or
 *   [GNU Octave][5] version 3.4 or later
-*   [MP-Test][6], for running the MIPS test suite
+*   [MP-Test][6] version 7.1 or later
 
 
 Installation
 ------------
+
+**Note to [MATPOWER][3] users:** _MIPS and its prerequiste, MP-Test, are
+included when you install [MATPOWER][3]. There is generally no need to
+install them separately. You can skip directly to step 3 to verify._
 
 Installation and use of MIPS requires familiarity with the basic operation
 of MATLAB or Octave, including setting up your MATLAB path.
@@ -33,18 +37,17 @@ of MATLAB or Octave, including setting up your MATLAB path.
     *   `<MIPS>/lib`
     *   `<MIPS>/lib/t`
 
-3.  At the MATLAB prompt, type `test_mips` to run the test suite and
-    verify that MIPS is properly installed and functioning. (Note: The
-    tests require a functioning installation of [MP-Test][6]) The result
+3.  At the MATLAB/Octave prompt, type `test_mips` to run the test suite and
+    verify that MIPS is properly installed and functioning. The result
     should resemble the following:
-```matlab
->> test_mips
-  t_mplinsolve......ok (6 of 44 skipped)
+```
+  >> test_mips
+  t_mplinsolve......ok (6 of 66 skipped)
   t_mips............ok
   t_mips_pardiso....ok (60 of 60 skipped)
   t_qps_mips........ok
-  All tests successful (170 passed, 66 skipped of 236)
-  Elapsed time 0.09 seconds.
+  All tests successful (192 passed, 66 skipped of 258)
+  Elapsed time 0.05 seconds.
 ```
 
 Documentation
@@ -95,12 +98,12 @@ the following 2007 paper.
 The [MATPOWER Interior Point Solver (MIPS) User's Manual][7] should also be
 cited explicitly in work that refers to or is derived from its content.
 The citation and DOI can be version-specific or general, as appropriate.
-For version 1.3.1, use:
+For version 1.4, use:
 
 >   R. D. Zimmerman, H. Wang. *MATPOWER Interior Point Solver (MIPS)
-    User's Manual, Version 1.3.1*. 2019. [Online].
-    Available: https://matpower.org/docs/MIPS-manual-1.3.1.pdf  
-    doi: [10.5281/zenodo.3251014](https://doi.org/10.5281/zenodo.3251014)
+    User's Manual, Version 1.4*. 2020. [Online].
+    Available: https://matpower.org/docs/MIPS-manual-1.4.pdf  
+    doi: [10.5281/zenodo.4073324](https://doi.org/10.5281/zenodo.4073324)
 
 For a version non-specific citation, use the following citation and DOI,
 with *\<YEAR\>* replaced by the year of the most recent release:

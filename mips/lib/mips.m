@@ -33,6 +33,9 @@ function [x, f, eflag, output, lambda] = mips(f_fcn, x0, A, l, u, xmin, xmax, gh
 %           nonlinear constraints and their gradients for a given
 %           value of X. Calling syntax for this function is:
 %               [H, G, DH, DG] = GH_FCN(X)
+%           where the columns of DH and DG are the gradients of the
+%           corresponding elements of H and G, i.e. DH and DG are
+%           transposes of the Jacobians of H and G, respectively.
 %       HESS_FCN : handle to function that computes the Hessian of the
 %           Lagrangian for given values of X, lambda and mu, where
 %           lambda and mu are the multipliers on the equality and
@@ -44,6 +47,9 @@ function [x, f, eflag, output, lambda] = mips(f_fcn, x0, A, l, u, xmin, xmax, gh
 %           all of which are also optional (default values shown in
 %           parentheses)
 %           verbose (0) - controls level of progress output displayed
+%               0 = no progress output
+%               1 = some progress output
+%               2 = verbose progress output
 %           linsolver ('') - linear system solver for solving update steps
 %               ''          = default solver (currently same as '\')
 %               '\'         = built-in \ operator
@@ -175,7 +181,7 @@ function [x, f, eflag, output, lambda] = mips(f_fcn, x0, A, l, u, xmin, xmax, gh
 %     pp. 1185-1193.
 
 %   MIPS
-%   Copyright (c) 2009-2018, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MIPS.
@@ -378,7 +384,7 @@ z   = z0 * ones(niq, 1);
 mu  = z;
 k = find(h < -z0);
 z(k) = -h(k);
-k = find(gamma / z > z0);   %% (seems k is always empty if gamma = z0 = 1)
+k = find(gamma ./ z > z0);  %% (seems k is always empty if gamma = z0 = 1)
 if ~isempty(k)
     mu(k) = gamma / z(k);
 end
@@ -414,11 +420,6 @@ if strcmp(upper(opt.linsolver), 'PARDISO')
                                              18, 0; %% do not determine nnz in LU
                                              21, 3; %% ? undocumented pivoting
                                              ] ));
-    if ~have_fcn('pardiso')
-        warning('mips: PARDISO linear solver not available, using default');
-        opt.linsolver = '';
-        ls = 'built-in';
-    end
 else
     ls = 'built-in';
     mplinsolve_opt = [];

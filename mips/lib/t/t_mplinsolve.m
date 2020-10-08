@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-t_begin(44, quiet);
+t_begin(66, quiet);
 
 isoctave = exist('OCTAVE_VERSION', 'builtin') == 5;
 if isoctave
@@ -21,6 +21,12 @@ if isoctave
     s = warning('query', lu_warning_id);
     warning('off', lu_warning_id);
 end
+
+%% non-sparse A matrix crashes some MATLAB lu() calls on certain
+%% combinations of MATLAB and macOS versions
+mlv = have_feature('matlab', 'vnum');
+skipcrash = ~isempty(mlv) && mlv < 8.003 && mlv > 7.013 && ...
+    strcmp(computer, 'MACI64');
 
 ijs = [
     1 1 1205.63;
@@ -410,36 +416,77 @@ t = ''''' : ';
 x = mplinsolve(A, b, '');
 t_is(x, ex, 12, [t 'x']);
 t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+x = mplinsolve(full(A), b, '');
+t_is(x, ex, 12, [t 'x (full A)']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x|| (full A)']);
 
 t = '\ : ';
 x = mplinsolve(A, b, '\');
 t_is(x, ex, 12, [t 'x']);
 t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+x = mplinsolve(full(A), b, '\');
+t_is(x, ex, 12, [t 'x (full A)']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x|| (full A)']);
 
 t = 'LU : ';
 x = mplinsolve(A, b, 'LU');
 t_is(x, ex, 12, [t 'x']);
 t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+if skipcrash
+    t_skip(2, [t 'potential MATLAB crash with non-sparse A']);
+else
+    x = mplinsolve(full(A), b, 'LU');
+    t_is(x, ex, 12, [t 'x (full A)']);
+    t_is(norm(b - A*x), 0, 12, [t '||b - A*x|| (full A)']);
+end
 
 t = 'LU3 : ';
 x = mplinsolve(A, b, 'LU3');
 t_is(x, ex, 12, [t 'x']);
 t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+if skipcrash
+    t_skip(2, [t 'potential MATLAB crash with non-sparse A']);
+else
+    x = mplinsolve(full(A), b, 'LU3');
+    t_is(x, ex, 12, [t 'x (full A)']);
+    t_is(norm(b - A*x), 0, 12, [t '||b - A*x|| (full A)']);
+end
 t = 'LU, nout = 3, vec = 1, thresh = 1 : ';
 opt = struct('nout', 3, 'vec', 1, 'thresh', 1);
 x = mplinsolve(A, b, 'LU', opt);
 t_is(x, ex, 12, [t 'x']);
 t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+if skipcrash
+    t_skip(2, [t 'potential MATLAB crash with non-sparse A']);
+else
+    x = mplinsolve(full(A), b, 'LU', opt);
+    t_is(x, ex, 12, [t 'x (full A)']);
+    t_is(norm(b - A*x), 0, 12, [t '||b - A*x|| (full A)']);
+end
 
 t = 'LU3a : ';
 x = mplinsolve(A, b, 'LU3a');
 t_is(x, ex, 12, [t 'x']);
 t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+if skipcrash
+    t_skip(2, [t 'potential MATLAB crash with non-sparse A']);
+else
+    x = mplinsolve(full(A), b, 'LU3a');
+    t_is(x, ex, 12, [t 'x (full A)']);
+    t_is(norm(b - A*x), 0, 12, [t '||b - A*x|| (full A)']);
+end
 t = 'LU, nout = 3, vec = 1 : ';
 opt = struct('nout', 3, 'vec', 1);
 x = mplinsolve(A, b, 'LU', opt);
 t_is(x, ex, 12, [t 'x']);
 t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+if skipcrash
+    t_skip(2, [t 'potential MATLAB crash with non-sparse A']);
+else
+    x = mplinsolve(full(A), b, 'LU', opt);
+    t_is(x, ex, 12, [t 'x (full A)']);
+    t_is(norm(b - A*x), 0, 12, [t '||b - A*x|| (full A)']);
+end
 
 t = 'LU4 : ';
 x = mplinsolve(A, b, 'LU4');
@@ -465,21 +512,49 @@ t = 'LU3m : ';
 x = mplinsolve(A, b, 'LU3m');
 t_is(x, ex, 12, [t 'x']);
 t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+if skipcrash
+    t_skip(2, [t 'potential MATLAB crash with non-sparse A']);
+else
+    x = mplinsolve(full(A), b, 'LU3m');
+    t_is(x, ex, 12, [t 'x (full A)']);
+    t_is(norm(b - A*x), 0, 12, [t '||b - A*x|| (full A)']);
+end
 t = 'LU, nout = 3, vec = 0, thresh = 1 : ';
 opt = struct('nout', 3, 'vec', 0, 'thresh', 1);
 x = mplinsolve(A, b, 'LU', opt);
 t_is(x, ex, 12, [t 'x']);
 t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+if skipcrash
+    t_skip(2, [t 'potential MATLAB crash with non-sparse A']);
+else
+    x = mplinsolve(full(A), b, 'LU', opt);
+    t_is(x, ex, 12, [t 'x (full A)']);
+    t_is(norm(b - A*x), 0, 12, [t '||b - A*x|| (full A)']);
+end
 
 t = 'LU3am : ';
 x = mplinsolve(A, b, 'LU3am');
 t_is(x, ex, 12, [t 'x']);
 t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+if skipcrash
+    t_skip(2, [t 'potential MATLAB crash with non-sparse A']);
+else
+    x = mplinsolve(full(A), b, 'LU3am');
+    t_is(x, ex, 12, [t 'x (full A)']);
+    t_is(norm(b - A*x), 0, 12, [t '||b - A*x|| (full A)']);
+end
 t = 'LU, nout = 3, vec = 0 : ';
 opt = struct('nout', 3, 'vec', 0);
 x = mplinsolve(A, b, 'LU', opt);
 t_is(x, ex, 12, [t 'x']);
 t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+if skipcrash
+    t_skip(2, [t 'potential MATLAB crash with non-sparse A']);
+else
+    x = mplinsolve(full(A), b, 'LU', opt);
+    t_is(x, ex, 12, [t 'x (full A)']);
+    t_is(norm(b - A*x), 0, 12, [t '||b - A*x|| (full A)']);
+end
 
 t = 'LU4m : ';
 x = mplinsolve(A, b, 'LU4m');
@@ -502,8 +577,8 @@ t_is(x, ex, 12, [t 'x']);
 t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
 
 %% PARDISO
-if exist('have_fcn', 'file') && have_fcn('pardiso') || have_pardiso()
-    if have_pardiso_object()
+if have_feature('pardiso')
+    if have_feature('pardiso_object')
         tols = [6 5 12 12 6 5];     %% tolerances for PARDISO v6
     else
         tols = [13 13 12 12 1 2];   %% tolerances for PARDISO v5
@@ -536,50 +611,3 @@ if isoctave
 end
 
 t_end;
-
-
-function TorF = have_pardiso()
-TorF = have_pardiso_object() || have_pardiso_legacy();
-
-function TorF = have_pardiso_object()
-TorF = exist('pardiso', 'file') == 2;
-if TorF
-    try
-        id = 1;
-        A = sparse([1 2; 3 4]);
-        b = [1;1];
-        p = pardiso(id, 1, 0);
-        p.factorize(id, A);
-        x = p.solve(id, A, b);
-        p.free(id);
-        p.clear();
-        if any(x ~= [-1; 1])
-            TorF = 0;
-        end
-    catch
-        TorF = 0;
-    end
-end
-
-function TorF = have_pardiso_legacy()
-TorF = exist('pardisoinit', 'file') == 3 && ...
-        exist('pardisoreorder', 'file') == 3 && ...
-        exist('pardisofactor', 'file') == 3 && ...
-        exist('pardisosolve', 'file') == 3 && ...
-        exist('pardisofree', 'file') == 3;
-if TorF
-    try
-        A = sparse([1 2; 3 4]);
-        b = [1;1];
-        info = pardisoinit(11, 0);
-        info = pardisoreorder(A, info, false);
-        info = pardisofactor(A, info, false);
-        [x, info] = pardisosolve(A, b, info, false);
-        pardisofree(info);
-        if any(x ~= [-1; 1])
-            TorF = 0;
-        end
-    catch
-        TorF = 0;
-    end
-end

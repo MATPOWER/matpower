@@ -13,7 +13,7 @@ enhancing existing functionality and implementing new features that fit
 within the general scope of the project.
 
 Please take a moment to review this document before contributing, as it
-helps to communicate your respect for the time and efforts of the MATPOWER
+helps to communicate your respect for the time and efforts of the MIPS
 developer community managing and developing this open source project.
 
 
@@ -64,8 +64,8 @@ easily reproduce it. The simpler the case the better.
 4. **Submit an issue that includes a detailed report.** A good bug report
 will avoid the need for the developers to track you down for more information.
     - Use an accurate, descriptive title for your issue.
-    - Describe your environment - better yet, include the output of `mpver`
-      on your system.
+    - Describe your environment - better yet, include the output of `ver`
+      and `mipsver` on your system.
     - Include a few lines of code or attach a script file that reproduces
       the bug.
     - Describe the result you got and what you expected.

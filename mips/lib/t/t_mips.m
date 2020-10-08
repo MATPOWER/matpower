@@ -67,12 +67,12 @@ t_is(lam.mu_u, [0;0], 13, [t 'lam.mu_u']);
 t_is(lam.lower, [2.24;0;0;1.7667], 4, [t 'lam.lower']);
 t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 
-H = [   1003.1  4.3     6.3     5.9;
-        4.3     2.2     2.1     3.9;
-        6.3     2.1     3.5     4.8;
-        5.9     3.9     4.8     10  ];
-c = zeros(4,1);
 % %% check with quadprog (for dev testing only)
+% H = [   1003.1  4.3     6.3     5.9;
+%         4.3     2.2     2.1     3.9;
+%         6.3     2.1     3.5     4.8;
+%         5.9     3.9     4.8     10  ];
+% c = zeros(4,1);
 % [x, f, s, out, lam] = quadprog(H,c,-A(2,:), -0.10, A(1,:), 1, xmin);
 % t_is(s, 1, 13, [t 'success']);
 % t_is(x, [0; 2.8; 0.2; 0]/3, 6, [t 'x']);

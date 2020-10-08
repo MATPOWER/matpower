@@ -17,7 +17,7 @@ num_tests = 60;
 
 t_begin(num_tests, quiet);
 
-if have_pardiso()
+if have_feature('pardiso')
 
 opt = struct('linsolver', 'PARDISO');
 
@@ -71,12 +71,12 @@ t_is(lam.mu_u, [0;0], 13, [t 'lam.mu_u']);
 t_is(lam.lower, [2.24;0;0;1.7667], 4, [t 'lam.lower']);
 t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 
-H = [   1003.1  4.3     6.3     5.9;
-        4.3     2.2     2.1     3.9;
-        6.3     2.1     3.5     4.8;
-        5.9     3.9     4.8     10  ];
-c = zeros(4,1);
 % %% check with quadprog (for dev testing only)
+% H = [   1003.1  4.3     6.3     5.9;
+%         4.3     2.2     2.1     3.9;
+%         6.3     2.1     3.5     4.8;
+%         5.9     3.9     4.8     10  ];
+% c = zeros(4,1);
 % [x, f, s, out, lam] = quadprog(H,c,-A(2,:), -0.10, A(1,:), 1, xmin);
 % t_is(s, 1, 13, [t 'success']);
 % t_is(x, [0; 2.8; 0.2; 0]/3, 6, [t 'x']);
@@ -295,51 +295,3 @@ function Lxx = hess7(x, lam, sigma)
                     x(3)*x(4)     0     x(1)*x(4) x(1)*x(3);
                     x(2)*x(4) x(1)*x(4)     0     x(1)*x(2);
                     x(2)*x(3) x(1)*x(3) x(1)*x(2)     0  ]);
-
-
-function TorF = have_pardiso()
-TorF = have_pardiso_object() || have_pardiso_legacy();
-
-function TorF = have_pardiso_object()
-TorF = exist('pardiso', 'file') == 2;
-if TorF
-    try
-        id = 1;
-        A = sparse([1 2; 3 4]);
-        b = [1;1];
-        p = pardiso(id, 1, 0);
-        p.factorize(id, A);
-        x = p.solve(id, A, b);
-        p.free(id);
-        p.clear();
-        if any(x ~= [-1; 1])
-            TorF = 0;
-        end
-    catch
-        TorF = 0;
-    end
-end
-
-function TorF = have_pardiso_legacy()
-TorF = exist('pardisoinit', 'file') == 3 && ...
-        exist('pardisoreorder', 'file') == 3 && ...
-        exist('pardisofactor', 'file') == 3 && ...
-        exist('pardisosolve', 'file') == 3 && ...
-        exist('pardisofree', 'file') == 3;
-if TorF
-    try
-        A = sparse([1 2; 3 4]);
-        b = [1;1];
-        info = pardisoinit(11, 0);
-        info = pardisoreorder(A, info, false);
-        info = pardisofactor(A, info, false);
-        [x, info] = pardisosolve(A, b, info, false);
-        pardisofree(info);
-        if any(x ~= [-1; 1])
-            TorF = 0;
-        end
-    catch
-        info
-        TorF = 0;
-    end
-end

@@ -2,7 +2,7 @@ function t_qps_mips(quiet)
 %T_QPS_MIPS  Tests of QPS_MIPS QP solver.
 
 %   MIPS
-%   Copyright (c) 2010-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MIPS.
@@ -44,12 +44,8 @@ for k = 1:length(algs)
     t_is(f, -78, 6, [t 'f']);
     t_is(lam.mu_l, [0;1.5;0], 9, [t 'lam.mu_l']);
     t_is(lam.mu_u, [0;0;0.5], 9, [t 'lam.mu_u']);
-    if strcmp(algs{k}, 'CLP') && ~have_fcn('opti_clp')
-        t_skip(2, [t 'lam.lower/upper : MEXCLP does not return multipliers on var bounds']);
-    else
-        t_is(lam.lower, [1;0;0], 9, [t 'lam.lower']);
-        t_is(lam.upper, zeros(size(x)), 9, [t 'lam.upper']);
-    end
+    t_is(lam.lower, [1;0;0], 9, [t 'lam.lower']);
+    t_is(lam.upper, zeros(size(x)), 9, [t 'lam.upper']);
 
     t = sprintf('%s - unconstrained 3-d quadratic : ', names{k});
     %% from http://www.akiti.ca/QuadProgEx0Constr.html
@@ -83,12 +79,8 @@ for k = 1:length(algs)
     t_is(f, -74/9, 6, [t 'f']);
     t_is(lam.mu_l, [0;0;0], 13, [t 'lam.mu_l']);
     t_is(lam.mu_u, [28;4;0]/9, 4, [t 'lam.mu_u']);
-    if strcmp(algs{k}, 'CLP') && ~have_fcn('opti_clp')
-        t_skip(2, [t 'lam.lower/upper : MEXCLP does not return multipliers on var bounds']);
-    else
-        t_is(lam.lower, zeros(size(x)), 7, [t 'lam.lower']);
-        t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
-    end
+    t_is(lam.lower, zeros(size(x)), 7, [t 'lam.lower']);
+    t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 
     t = sprintf('%s - constrained 4-d QP : ', names{k});
     %% from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm
@@ -109,12 +101,8 @@ for k = 1:length(algs)
     t_is(f, 3.29/3, 6, [t 'f']);
     t_is(lam.mu_l, [6.58;0]/3, 6, [t 'lam.mu_l']);
     t_is(lam.mu_u, [0;0], 13, [t 'lam.mu_u']);
-    if strcmp(algs{k}, 'CLP') && ~have_fcn('opti_clp')
-        t_skip(2, [t 'lam.lower/upper : MEXCLP does not return multipliers on var bounds']);
-    else
-        t_is(lam.lower, [2.24;0;0;1.7667], 4, [t 'lam.lower']);
-        t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
-    end
+    t_is(lam.lower, [2.24;0;0;1.7667], 4, [t 'lam.lower']);
+    t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 
     t = sprintf('%s - (struct) constrained 4-d QP : ', names{k});
     p = struct('H', H, 'A', A, 'l', l, 'u', u, 'xmin', xmin, 'x0', x0, 'opt', opt);
@@ -124,12 +112,8 @@ for k = 1:length(algs)
     t_is(f, 3.29/3, 6, [t 'f']);
     t_is(lam.mu_l, [6.58;0]/3, 6, [t 'lam.mu_l']);
     t_is(lam.mu_u, [0;0], 13, [t 'lam.mu_u']);
-    if strcmp(algs{k}, 'CLP') && ~have_fcn('opti_clp')
-        t_skip(2, [t 'lam.lower/upper : MEXCLP does not return multipliers on var bounds']);
-    else
-        t_is(lam.lower, [2.24;0;0;1.7667], 4, [t 'lam.lower']);
-        t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
-    end
+    t_is(lam.lower, [2.24;0;0;1.7667], 4, [t 'lam.lower']);
+    t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 
     t = sprintf('%s - infeasible LP : ', names{k});
     p = struct('A', sparse([1 1]), 'c', [1;1], 'u', -1, 'xmin', [0;0], 'opt', opt);

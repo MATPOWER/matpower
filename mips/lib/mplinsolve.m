@@ -59,7 +59,7 @@ function [x, info] = mplinsolve(A, b, solver, opt)
 if nargin < 4
     opt = [];
     if nargin < 3
-        solver = ''
+        solver = '';
     end
 end
 
@@ -70,7 +70,11 @@ switch solver
         x = A \ b;
     case 'LU3'      %% 3 output LU: Gilbert-Peierls alg, perm vec, 1.0 piv thresh
         q = amd(A);     %% permutation vector for AMD reordering
-        [L, U, p] = lu(A(q,q), 1.0, 'vector');
+        if issparse(A)
+            [L, U, p] = lu(A(q,q), 1.0, 'vector');
+        else
+            [L, U, p] = lu(A(q,q), 'vector');
+        end
         x = zeros(size(A, 1), 1);
         x(q) = U \ ( L \ b(q(p)) );
     case 'LU3a'     %% 3 output LU: Gilbert-Peierls alg, permutation vectors
@@ -88,7 +92,11 @@ switch solver
         x(q) = U \ ( L \ (R(:, p) \ b));
     case 'LU3m'     %% 3 output LU: Gilbert-Peierls alg, perm mat, 1.0 piv thresh
         Q = sparse(amd(A), 1:size(A, 1), 1);    %% permutation matrix for AMD reordering
-        [L, U, P] = lu(Q'*A*Q, 1.0);
+        if issparse(A)
+            [L, U, P] = lu(Q'*A*Q, 1.0);
+        else
+            [L, U, P] = lu(Q'*A*Q);
+        end
         x = Q * ( U \ ( L \ (P * Q' * b)) );
     case 'LU3am'    %% 3 output LU: Gilbert-Peierls alg, permutation matrices
         Q = sparse(amd(A), 1:size(A, 1), 1);  %% permutation matrix for AMD reordering
@@ -103,8 +111,11 @@ switch solver
     case 'LU'       %% explicit LU, with options struct
         %% default options
         nout = 4;               %% 4 output args, UMFPACK
-        vec = have_lu_vec();    %% use permulation vectors, if available
-        thresh = [];            %% use default pivot threshold
+        if ~issparse(A)
+            nout = 3;
+        end
+        vec = have_feature('lu_vec');   %% use permulation vectors, if available
+        thresh = [];                    %% use default pivot threshold
         if isfield(opt, 'lu')
             opt_lu = opt.lu;
             if isfield(opt_lu, 'nout')
@@ -178,7 +189,7 @@ switch solver
         end
 
         %% begin setup and solve
-        v6 = have_pardiso_object();
+        v6 = have_feature('pardiso_object');
         if v6               %% PARDISO v6+
             id = 1;
             p = pardiso(id, mtype, pardiso_solver);
@@ -221,35 +232,6 @@ switch solver
         warning('mplinsolve: ''%s'' is not a valid value for SOLVER, using default.', solver);
         x = A \ b;
 end
-
-
-function TorF = have_lu_vec()
-% Checks whether or not LU supports lu(..., 'vector') syntax
-persistent lu_vec;      %% cache the result for performance reasons
-if isempty(lu_vec)
-    lu_vec = 1;         %% assume it does, unless this is MATLAB ver < 7.3
-    v = ver('matlab');
-    if length(v) > 1
-        warning('The built-in VER command is behaving strangely, probably as a result of installing a 3rd party toolbox in a directory named ''matlab'' on your path. Check each element of the output of ver(''matlab'') to find the offending toolbox, then move the toolbox to a more appropriately named directory.');
-        v = v(1);
-    end
-    if ~isempty(v) && isfield(v, 'Version') && ~isempty(v.Version)
-        vstr = v.Version;
-        if ~isempty(vstr) && vstr2num_(vstr) < 7.003
-            lu_vec = 0;
-        end
-    end
-end
-TorF = lu_vec;
-
-
-function TorF = have_pardiso_object()
-% Checks for availability of PARDISO 6
-persistent pardiso_object;    %% cache the result for performance reasons
-if isempty(pardiso_object)
-    pardiso_object = exist('pardiso', 'file') == 2;
-end
-TorF = pardiso_object;
 
 
 function num = vstr2num_(vstr)

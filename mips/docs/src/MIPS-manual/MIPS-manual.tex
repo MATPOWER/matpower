@@ -129,7 +129,7 @@
 
 %\hyphenation{matpower_manual}
 
-\newcommand{\mpver}[0]{7.0}
+\newcommand{\mpver}[0]{7.1}
 %\newcommand{\matlab}[0]{{Matlab}}
 %\newcommand{\matlab}[0]{{\sc Matlab}\textsuperscript{\tiny \textregistered}}
 \newcommand{\matlab}[0]{{\sc Matlab}}
@@ -140,19 +140,28 @@
 \newcommand{\mptest}[0]{{MP-Test}}
 \newcommand{\mptesturl}[0]{https://github.com/MATPOWER/mptest}
 \newcommand{\mptestlink}[0]{\href{\mptesturl}{\mptest{}}}
+\newcommand{\mptestver}[0]{7.1}
 \newcommand{\mips}[0]{{MIPS}}
 \newcommand{\mipsurl}[0]{https://github.com/MATPOWER/mips}
 \newcommand{\mipslink}[0]{\href{\mipsurl}{\mips{}}}
 \newcommand{\mipsname}[0]{{{\bf M}{\sc atpower} \textbf{I}nterior \textbf{P}oint \textbf{S}olver}}
-\newcommand{\mipsver}[0]{1.3.1}
+\newcommand{\mipsver}[0]{1.4}
+\newcommand{\mpom}[0]{\mbox{MP-Opt-Model}}
+\newcommand{\mpomurl}[0]{https://github.com/MATPOWER/mp-opt-model}
+\newcommand{\mpomlink}[0]{\href{\mpomurl}{\mpom{}}}
+\newcommand{\mpomname}[0]{\mpom{}}
+% \newcommand{\mpomname}[0]{{{\bf M}{\sc at}{\bf P}{\sc ower} \textbf{Opt}imization \textbf{Model}}}
+\newcommand{\mpomver}[0]{3.0}
 \newcommand{\most}[0]{{MOST}}
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
-\newcommand{\mostver}[0]{1.0.2}
+\newcommand{\mostver}[0]{1.1}
 \newcommand{\md}[0]{{\most{} Data struct}}
 \newcommand{\powerweb}[0]{{\sc PowerWeb}}
 \newcommand{\pserc}[0]{{\sc PSerc}}
 \newcommand{\PSERC}[0]{{Power Systems Engineering Research Center (\pserc{})}}
+\newcommand{\certs}[0]{{\sc Certs}}
+\newcommand{\CERTS}[0]{{Consortium for Electric Reliability Technology Solutions (\certs{})}}
 \newcommand{\ipopt}[0]{{\sc Ipopt}}
 \newcommand{\knitro}[0]{{Artelys Knitro}}
 \newcommand{\clp}[0]{{CLP}}
@@ -163,7 +172,7 @@
 \newcommand{\ot}[0]{{Optimization Toolbox}}
 \newcommand{\pardiso}[0]{{PARDISO}}
 \newcommand{\sdppf}[0]{\texttt{SDP\_PF}}
-\newcommand{\sdppfver}[0]{1.0}
+\newcommand{\sdppfver}[0]{1.0.2}
 \newcommand{\sdpopf}[0]{SDPOPF}
 \newcommand{\code}[1]{{\relsize{-0.5}{\tt{{#1}}}}}  % requires package relsize
 % Note: to get straight single quotes in \code you have to use one of the
@@ -219,7 +228,7 @@
 \title{\mipsname{}\\\mips{} \mipsver{}\\
 User's Manual}
 \author{Ray~D.~Zimmerman \and Hongye~Wang}
-\date{June 20, 2019} % comment this line to display the current date
+\date{October 8, 2020} % comment this line to display the current date
 %\date{December 14, 2011\thanks{Second revision. First revision was December 13, 2011}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
@@ -229,7 +238,7 @@ User's Manual}
 \vfill
 \begin{center}
 {\scriptsize
-\copyright~2009--2019~\PSERC{}\\
+\copyright~2009--2020~\PSERC{}\\
 All Rights Reserved}
 \end{center}
 
@@ -308,18 +317,18 @@ We request that publications derived from the use of \mips{} explicitly acknowle
 H.~Wang, C.~E. Murillo-S{\'a}nchez, R.~D. Zimmerman, and R.~J. Thomas, ``On
 Computational Issues of Market-Based Optimal Power Flow,'' \emph{Power
 Systems, IEEE Transactions on}, vol.~22, no.~3, pp. 1185--1193, August 2007.\\
-\doi{10.1109/TPWRS.2010.2051168}
+\doi{10.1109/TPWRS.2007.901301}
 \end{quote}
 
 The \mipsname{} (\mips{}) User's Manual~\cite{mips_manual} should also be cited explicitly
 in work that refers to or is derived from its content. The citation and
-DOI can be version-specific or general, as appropriate. For version 1.3.1,
+DOI can be version-specific or general, as appropriate. For version 1.4,
 use:
 
 \begin{quote}
 \footnotesize
-R.~D. Zimmerman, H.~Wang. \mipsname{} (\mips{}) User's Manual, Verision 1.3.1. 2019. [Online]. Available: \url{https://matpower.org/docs/MIPS-manual-1.3.1.pdf}\\
-\doi{10.5281/zenodo.3251014}
+R.~D. Zimmerman, H.~Wang. \mipsname{} (\mips{}) User's Manual, Verision 1.4. 2020. [Online]. Available: \url{https://matpower.org/docs/MIPS-manual-1.4.pdf}\\
+\doi{10.5281/zenodo.4073324}
 \end{quote}
 For a version non-specific citation, use the following citation and DOI,
 with \emph{\textless{}YEAR\textgreater{}} replaced by the year of the most recent release:
@@ -345,7 +354,7 @@ Following the release of \mips{} 1.2.2 (with \matpower{} 6.0), the \mips{} proje
 
 \bigskip
 
-The \mips{} GitHub project hosts the public Git code repository as well as a public issue tracker for handling bug reports, patches, and other issues and contributions. There are separate GitHub hosted repositories and issue trackers for \matpower{}, \most{}, \mips{} and the testing framework used by all of them, \mptest{}, all available from \url{https://github.com/MATPOWER/}.
+The \mips{} GitHub project hosts the public Git code repository as well as a public issue tracker for handling bug reports, patches, and other issues and contributions. There are separate GitHub hosted repositories and issue trackers for \matpower{}, \most{}, \mpom{} and the testing framework used by all of them, \mptest{}, all available from \url{https://github.com/MATPOWER/}.
 
 
 %%------------------------------------------
@@ -358,7 +367,7 @@ To use \mips{} \mipsver{} you will need:
 \begin{itemize}
 \item \matlab{}\textsuperscript{\tiny \textregistered} version 7 (R14) or later\footnote{\matlab{} is available from The MathWorks, Inc. (\url{https://www.mathworks.com/}). \matlab{} is a registered trademark of The MathWorks, Inc.}, or
 \item GNU Octave version 3.4 or later\footnote{GNU Octave \cite{octave} is free software, available online at \url{https://www.gnu.org/software/octave/}. \mips{} \mipsver{} may work on earlier versions of Octave, but it has not been tested on versions prior to 3.4.}
-\item \mptestlink{}, for running the \mips{} test suite.\footnote{\mptest{} is available at \url{\mptesturl}.}
+\item \mptestlink{} version 7.1 or later.\footnote{\mptest{} is available at \url{\mptesturl}.}
 \end{itemize}
 
 For the hardware requirements, please refer to the system requirements for the version of \matlab{}\footnote{\url{https://www.mathworks.com/support/sysreq/previous_releases.html}} or Octave that you are using.
@@ -369,11 +378,16 @@ In this manual, references to \matlab{} usually apply to Octave as well.
 \subsection{Installation}
 \label{sec:installation}
 
+{\bf Note to \matpower{} users:} \emph{\mips{} and its prerequisite, \mptest{}, are included when you install \matpower{}. There is generally no need to install them separately. You can skip directly to step 3 to verify.}
+
+~
+
 Installation and use of \mips{} requires familiarity with the basic operation of \matlab{} or Octave, including setting up your \matlab{} path.
 
 \begin{enumerate}[\bfseries Step 1:] % requires package paralist
 \item Clone the repository or download and extract the zip file of the \mips{} distribution from the \href{\mipsurl{}}{\mips{} project page}\footnote{\url{\mipsurl}} to the location of your choice. The files in the resulting \code{mips} or \code{mipsXXX} directory, where \code{XXX} depends on the version of \mips{}, should not need to be modified, so it is recommended that they be kept separate from your own code.
 We will use \mipspath{} to denote the path to this directory.
+\clearpage
 \item Add the following directories to your \matlab{} or Octave path:
 \begin{itemize}
 \item \mipspath{/lib} -- core \mips{} functions
@@ -385,12 +399,12 @@ We will use \mipspath{} to denote the path to this directory.
 %\\\hl{re-do before release (run on fastest machine available)}
 \begin{Code}
 >> test_mips
-t_mplinsolve......ok (6 of 44 skipped)
+t_mplinsolve......ok (6 of 66 skipped)
 t_mips............ok
 t_mips_pardiso....ok (60 of 60 skipped)
 t_qps_mips........ok
-All tests successful (170 passed, 66 skipped of 236)
-Elapsed time 0.09 seconds.
+All tests successful (192 passed, 66 skipped of 258)
+Elapsed time 0.05 seconds.
 \end{Code}
 \end{enumerate}
 
@@ -451,6 +465,7 @@ name & description \\
 \code{xmin}, \code{xmax}	& Optional lower and upper bounds on the $x$ variables, defaults are \code{-Inf} and \code{Inf}, respectively.	\\
 \code{gh\_fcn}	& Handle to function that evaluates the optional nonlinear constraints and their gradients for a given value of $x$. Calling syntax for this function is:	\\
 &~~~~\code{[h, g, dh, dg] = gh\_fcn(x)}	\\
+& where the columns of \code{dh} and \code{dg} are the gradients of the corresponding elements of \code{h} and \code{g}, i.e. \code{dh} and \code{dg} are transposes of the Jacobians of \code{h} and \code{g}, respectively.	\\
 \code{hess\_fcn}	& Handle to function that computes the Hessian\tnote{\ddag} of the Lagrangian for given values of $x$, $\lambda$ and $\mu$, where $\lambda$ and $\mu$ are the multipliers on the equality and inequality constraints, $g$ and $h$, respectively. The calling syntax for this function is:	\\
 &~~~~\code{Lxx = hess\_fcn(x, lam, cost\_mult)},	\\
 &where $\lambda$ = \code{lam.eqnonlin}, $\mu$ = \code{lam.ineqnonlin} and \code{cost\_mult} is a parameter used to scale the objective function	\\
@@ -461,7 +476,7 @@ name & description \\
 \begin{tablenotes}
  \scriptsize
  \item [\dag] {All inputs are optional except \code{f\_fcn} and \code{x0}.}
- \item [\ddag] {If \code{gh\_fcn} is provided then \code{hess\_fcn} is also required. Specifically, if there are nonlinear constraints, the Hessian information must provided by the \code{hess\_fcn} function and it need not be computed in \code{f\_fcn}.}
+ \item [\ddag] {If \code{gh\_fcn} is provided then \code{hess\_fcn} is also required. Specifically, if there are nonlinear constraints, the Hessian information must be provided by the \code{hess\_fcn} function and it need not be computed in \code{f\_fcn}.}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -485,13 +500,13 @@ name & description \\
 1 & first order optimality conditions satisfied \\
 0 & maximum number of iterations reached \\
 -1 & numerically failed \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{output}	& output struct with fields	\\
 &\begin{tabular}{lp{0.65\textwidth}}
 \code{iterations} & number of iterations performed \\
 \code{hist} & struct array with trajectories of the following: \code{feascond}, \code{gradcond}, \code{compcond}, \code{costcond}, \code{gamma}, \code{stepsize}, \code{obj}, \code{alphap}, \code{alphad} \\
 \code{message} & exit message \\
-\end{tabular} 	\\
+\end{tabular}	\\
 \code{lambda}	& struct containing the Langrange and Kuhn-Tucker multipliers on the constraints, with fields:	\\
 &\begin{tabular}{lp{0.65\textwidth}}
 \code{eqnonlin} & nonlinear equality constraints	\\
@@ -500,7 +515,7 @@ name & description \\
 \code{mu\_u} & upper (right-hand) limit on linear constraints	\\
 \code{lower} & lower bound on optimization variables	\\
 \code{upper} & upper bound on optimization variables	\\
-\end{tabular} 	\\
+\end{tabular}	\\
 \bottomrule
 \end{tabular}
 \end{threeparttable}
@@ -510,7 +525,7 @@ name & description \\
 %\renewcommand{\arraystretch}{1.2}
 \centering
 \begin{threeparttable}
-\caption{Options for \code{mips}\tnote{\dag}}
+\caption{Options for \code{mips}}
 \label{tab:mips_options}
 \footnotesize
 \begin{tabular}{lcp{0.65\textwidth}}
@@ -523,7 +538,14 @@ name & default & description \\
 1 & print a little progress info \\
 2 & print a lot of progress info \\
 3 & print all progress info \\
-\end{tabular} 	\\
+\end{tabular}	\\
+\code{opt.linsolver} & \codeq{} & linear system solver for solving update steps \eqref{eq:ipm_reduced_system}, i.e. \code{solver} input to \code{mplinsolve} \\
+&& \begin{tabular}{r @{ -- } p{0.5\textwidth}}
+\codeq{} & default, same as \codeq{\symbol{92}} \\
+\codeq{\symbol{92}} & use built-in \code{\symbol{92}} operator \\
+\codeq{LU} & use \code{lu} to explicitly factor matrix, followed by back-substitution \\
+\codeq{PARDISO} & use optional third-party \pardiso{} solver\tnote{\dag} \\
+\end{tabular}	\\
 \code{opt.feastol} & $10^{-6}$ & termination tolerance for feasibility condition \\
 \code{opt.gradtol} & $10^{-6}$ & termination tolerance for gradient condition \\
 \code{opt.comptol} & $10^{-6}$ & termination tolerance for complementarity condition \\
@@ -542,6 +564,10 @@ name & default & description \\
 \code{opt.max\_stepsize} & $10^{10}$ & algorithm returns ``Numerically Failed'' if the 2-norm of the Newton step $\left[\begin{array}{c}\Delta X \\ \Delta \lambda \\ \end{array}\right]$ from \eqref{eq:ipm_reduced_system} exceeds this value \\
 \bottomrule
 \end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [\dag] {Requires the installation of an optional package. See Appendix~\ref{app:pardiso} for details.}
+\end{tablenotes}
 \end{threeparttable}
 \end{table}
 
@@ -552,12 +578,13 @@ The user-defined functions for evaluating the objective function, constraints an
 \begin{equation}
 \mathcal{L}(x, \lambda, \mu, \sigma) = \sigma f(x) + \trans{\lambda} g(x) + \trans{\mu} h(x)
 \end{equation}
-for given values of the multipliers $\lambda$ and $\mu$, where $\sigma$ is the \code{cost\_mult} scale factor for the objective function. Unlike \code{fmincon}, \code{mips} passes this scale factor to the Hessian evaluation function in the 3\textsuperscript{rd} argument.
+for given values of the multipliers $\lambda$ and $\mu$, where $\sigma$ is the \code{cost\_mult} scale factor for the objective function. Unlike \code{fmincon}, \code{mips} passes this scale factor to the Hessian evaluation function in the 3\textsuperscript{rd} input argument.
 
 The use of \code{nargout} in \code{f\_fcn} and \code{gh\_fcn} is recommended so that the gradients and Hessian are only computed when required.
 
-
+\clearpage
 \subsection{Example 1}
+\label{sec:ex1}
 
 The following code, included as \code{mips\_example1.m} in \mipspath{lib/t}, shows a simple example of using \code{mips} to solve a 2-dimensional unconstrained optimization of Rosenbrock's ``banana'' function\footnote{\url{https://en.wikipedia.org/wiki/Rosenbrock_function}}
 \begin{equation}
@@ -597,6 +624,7 @@ f =
 
 
 \subsection{Example 2}
+\label{sec:ex2}
 
 The second example\footnote{From \url{https://en.wikipedia.org/wiki/Nonlinear\_programming\#3-dimensional\_example}.} solves the following 3-dimensional constrained optimization, printing the details of the solver's progress:
 \begin{equation}
@@ -653,7 +681,7 @@ fprintf('   %g\n', lambda.ineqnonlin);
 \end{Code}
 \begin{Code}
 >> mips_example2
-MATPOWER Interior Point Solver -- MIPS, Version 1.3.1, 20-Jun-2019
+MATPOWER Interior Point Solver -- MIPS, Version 1.4, 08-Oct-2020
  (using built-in linear solver)
  it    objective   step size   feascond     gradcond     compcond     costcond  
 ----  ------------ --------- ------------ ------------ ------------ ------------
@@ -680,35 +708,6 @@ lambda.ineqnonlin =
    0.707107
 \end{Code}
 This example can be found in \code{mips\_example2.m}. More example problems for \code{mips} can be found in \code{t\_mips.m}, both in \mipspath{lib/t}.
-
-\subsection{Quadratic Programming Solver}
-
-A convenience wrapper function called \code{qps\_mips} is provided to make it trivial to set up and solve linear programming (LP) and quadratic programming (QP) problems of the following form:
-\begin{equation}
-\min_x \frac{1}{2} \trans{x} H x + \trans{c} x
-\end{equation}
-subject to
-\begin{eqnarray}
-& l \le A x \le u  & \\
-& x_\mathrm{min} \le x \le x_\mathrm{max}. &
-\end{eqnarray}
-Instead of a function handle, the objective function is specified in terms of the paramters $H$ and $c$ of quadratic cost coefficients. Internally, \code{qps\_mips} passes \code{mips} the handle of a function that uses these paramters to evaluate the objective function, gradients and Hessian.
-
-The calling syntax for \code{qps\_mips} is similar to that used by \code{quadprog} from the \matlab{} \ot{}.
-\begin{Code}
-[x, f, exitflag, output, lambda] = qps_mips(H, c, A, l, u, xmin, xmax, x0, opt);
-\end{Code}
-Alternatively, the input arguments can be packaged as fields in a \code{problem} struct and passed in as a single argument, where all fields except \code{H}, \code{c}, \code{A} and \code{l} are optional.
-\begin{Code}
-[x, f, exitflag, output, lambda] = qps_mips(problem);
-\end{Code}
-Aside from \code{H} and \code{c}, all input and output arguments correspond exactly to the same arguments for \code{mips} as described in Tables~\ref{tab:mips_input} and \ref{tab:mips_output}.
-
-As with \code{mips} and \code{fmincon}, the primary difference between the calling syntax for \code{qps\_mips} and \code{quadprog} is that the linear constraints are specified in terms of a single doubly-bounded linear function ($l \le A x \le u$) as opposed to separate equality constrained ($A_{eq} x = b_{eq}$) and upper bounded ($A x \le b$) functions.
-
-\mips{} also includes another wrapper function \code{qps\_matpower} that provides a consistent interface for all of the QP and LP solvers it has available. This interface is identical to that used by \code{qps\_mips} with the exception of the structure of the \code{opt} input argument. The solver is chosen according to the value of \code{opt.alg}. See the help for \code{qps\_matpower} for details.
-
-Several examples of using \code{qps\_matpower} to solve LP and QP problems can be found in \code{t\_qps\_matpower.m}.
 
 \subsection{Primal-Dual Interior Point Algorithm}
 
@@ -950,6 +949,91 @@ In this method, during the Newton-like iterations, the perturbation parameter $\
 \end{equation}
 where $\sigma$ is a scalar constant between 0 and 1. In \mips{}, $\sigma$ is set to 0.1.
 
+%%------------------------------------------
+\clearpage
+\section{Other Functions}
+
+\subsection{Linear System Solver - {\tt mplinsolve}}
+\label{sec:mplinsolve}
+
+The \code{mplinsolve} function provides a common interface to several different methods for solving a system of linear equations of the form $Ax = b$.
+\begin{Code}
+x = mplinsolve(A, b);
+x = mplinsolve(A, b, solver);
+x = mplinsolve(A, b, solver, opt);
+\end{Code}
+
+The \code{solver} argument can be one of the following:
+\begin{itemize}
+\setlength{\parskip}{-6pt}%
+\item \codeq{} -- default, same as \codeq{\symbol{92}}
+\item \codeq{\symbol{92}} -- use built-in \code{\symbol{92}} operator, i.e. \code{x = A \symbol{92} b}
+\item \codeq{LU} -- use built-in \code{lu} function to explicitly factor $A$, then solve for $x$ via back-substitution
+\item \codeq{PARDISO} -- use optional third-party \pardiso{} solver\footnote{Requires the installation of an optional package. See Appendix~\ref{app:pardiso} for details.}
+\end{itemize}
+See \code{help mplinsolve} for more details.
+
+Note that \mips{} uses \code{mplinsolve} to solve the Newton update step in \eqref{eq:ipm_reduced_system}.
+
+\subsection{Quadratic Programming Solver - {\tt qps\_mips}}
+\label{sec:qps_mips}
+
+A convenience wrapper function called \code{qps\_mips} is provided to make it trivial to set up and solve linear programming (LP) and quadratic programming (QP) problems of the following form:
+\begin{equation}
+\min_x \frac{1}{2} \trans{x} H x + \trans{c} x
+\end{equation}
+subject to
+\begin{eqnarray}
+& l \le A x \le u  & \\
+& x_\mathrm{min} \le x \le x_\mathrm{max}. &
+\end{eqnarray}
+Instead of a function handle, the objective function is specified in terms of the paramters $H$ and $c$ of quadratic cost coefficients. Internally, \code{qps\_mips} passes \code{mips} the handle of a function that uses these paramters to evaluate the objective function, gradients and Hessian.
+
+The calling syntax for \code{qps\_mips} is similar to that used by \code{quadprog} from the \matlab{} \ot{}.
+\begin{Code}
+[x, f, exitflag, output, lambda] = qps_mips(H, c, A, l, u, xmin, xmax, x0, opt);
+\end{Code}
+Alternatively, the input arguments can be packaged as fields in a \code{problem} struct and passed in as a single argument, where all fields except \code{H}, \code{c}, \code{A} and \code{l} are optional.
+\begin{Code}
+[x, f, exitflag, output, lambda] = qps_mips(problem);
+\end{Code}
+Aside from \code{H} and \code{c}, all input and output arguments correspond exactly to the same arguments for \code{mips} as described in Tables~\ref{tab:mips_input} and \ref{tab:mips_output}.
+
+As with \code{mips} and \code{fmincon}, the primary difference between the calling syntax for \code{qps\_mips} and \code{quadprog} is that the linear constraints are specified in terms of a single doubly-bounded linear function ($l \le A x \le u$) as opposed to separate equality constrained ($A_{eq} x = b_{eq}$) and upper bounded ($A x \le b$) functions.
+
+Several examples of using \code{qps\_mips} to solve LP and QP problems can be found in \code{t\_qps\_mips.m}.
+
+\subsection{Private Feature Detection Functions}
+\label{sec:featuredetection}
+
+The following are private functions that implement detection of specific optional functionality. They are not intended to be called directly, but rather are used to extend the capabilities of \code{have\_feature}, a function included in \mptestlink{} and described in the \mptest{} \href{\mptesturl/blob/master/README.md}{\code{README}} file.
+
+\subsubsection{\tt have\_feature\_lu\_vec}
+\label{sec:have_feature_lu_vec}
+
+This function implements the \codeq{lu\_vec} tag for \code{have\_feature} to detect support for the \code{lu(..., \textquotesingle{}vector\textquotesingle{})} syntax.
+
+\subsubsection{\tt have\_feature\_pardiso\_legacy}
+\label{sec:have_feature_pardiso_legacy}
+
+This function implements the \codeq{pardiso\_legacy} tag for \code{have\_feature} to detect support for the legacy (v5.x) \pardiso{} interface, with individual MEX files for factor, solve, etc.
+
+\subsubsection{\tt have\_feature\_pardiso\_object}
+\label{sec:have_feature_pardiso_object}
+
+This function implements the \codeq{pardiso\_object} tag for \code{have\_feature} to detect support for the object-oriented (v6.x and later) \pardiso{} interface.
+
+\subsubsection{\tt have\_feature\_pardiso}
+\label{sec:have_feature_pardiso}
+
+This function implements the \codeq{pardiso} tag for \code{have\_feature} to detect availability/version of \pardiso{}, Parallel Sparse Direct and Multi-Recursive Iterative Linear Solvers, available from \url{https://pardiso-project.org}. See also Appendix~\ref{app:pardiso}.
+
+
+%%------------------------------------------
+\clearpage
+\section{Acknowledgments}
+The authors would like to acknowledge the support of the research grants and contracts that have contributed directly and indirectly to the development of \mips{}. This includes funding from the \PSERC{}, the U.S. Department of Energy,\footnote{Supported in part by the \CERTS{} and the Office of Electricity Delivery and Energy Reliability, Transmission Reliability Program of the U.S. Department of Energy under the National Energy Technology Laboratory Cooperative Agreement No.~DE-FC26-09NT43321.} and the National Science Foundation.\footnote{This material is based upon work supported in part by the National Science Foundation under Grant Nos. 0532744, 1642341 and 1931421. Any opinions, findings, and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the National Science Foundation.}
+
 
 \begin{appendices}
 
@@ -965,21 +1049,27 @@ This appendix lists all of the files and functions that \mips{} provides. In mos
 \centering
 \begin{threeparttable}
 \caption{\mips{} Files and Functions}
-\label{tab:solvers}
+\label{tab:files}
 \footnotesize
-\begin{tabular}{p{0.25\textwidth}p{0.68\textwidth}}
+\begin{tabular}{p{0.34\textwidth}p{0.59\textwidth}}
 \toprule
 name & description \\
 \midrule
 \code{AUTHORS}	& list of authors and contributors	\\
 \code{CHANGES}	& \mips{} change history	\\
+\code{CITATION}	& info on how to cite \mips{}	\\
 \code{CONTRIBUTING.md}	& notes on how to contribute to the \mips{} project	\\
 \code{LICENSE}	& \mips{} license (3-clause BSD license)	\\
 \code{README.md}	& basic introduction to \mips{}	\\
 \code{docs/}	& 	\\
 \code{~~MIPS-manual.pdf}	& \mipsman{}	\\
-\code{~~MIPS-manual.tex}	& LaTeX source for \mips{} User's Manual	\\
+\code{~~src/MIPS-manual/}	&	\\
+\code{~~~~MIPS-manual.tex}	& LaTeX source for \mips{} User's Manual	\\
 \code{lib/}	& 	\\
+\code{~~have\_feature\_lu\_vec}\tnote{*}	& support for \code{lu(..., \textquotesingle{}vector\textquotesingle{})} syntax	\\
+\code{~~have\_feature\_pardiso\_legacy}\tnote{*}	& \pardiso{} v5, individual MEX files for factor, solve, etc.	\\
+\code{~~have\_feature\_pardiso\_object}\tnote{*}	& \pardiso{} v6 and later, object interface	\\
+\code{~~have\_feature\_pardiso}\tnote{*}	& \pardiso{}, {\bf Par}allel Sparse {\bf D}irect \& {\bf I}terative Linear {\bf So}lver, \url{https://pardiso-project.org}	\\
 \code{~~mips}	& \mipsname{} -- primal/dual interior point solver for NLP	\\
 \code{~~mipsver}	& prints version information for \mips{}	\\
 \code{~~mplinsolve}	& common linear system solver interface, used by \mips{}	\\
@@ -989,15 +1079,16 @@ name & description \\
 \code{~~~~mips\_example2}	& implements example 2 from \mips{} User's Manual	\\
 \code{~~~~test\_mips}	& runs full \mips{} test suite	\\
 \code{~~~~t\_mips}	& runs tests for \mips{} NLP solver	\\
-\code{~~~~t\_mips\_pardiso}	& runs tests for \mips{} NLP solver, using PARDISO as linear solver	\\
+\code{~~~~t\_mips\_pardiso}	& runs tests for \mips{} NLP solver, using PARDISO as linear solver\tnote{\dag}	\\
 \code{~~~~t\_mplinsolve}	& tests for \code{mplinsolve}	\\
 \code{~~~~t\_qps\_mips}	& runs tests for \code{qps\_mips}	\\
 \bottomrule
 \end{tabular}
-% \begin{tablenotes}
-%  \scriptsize
-%  \item [\dag] {Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.}
-% \end{tablenotes}
+\begin{tablenotes}
+ \scriptsize
+ \item [*] {These functions implement new tags and the detection of the corresponding features for \code{have\_feature} which is part of \mptestlink{}.}
+ \item [\dag] {Requires the installation of an optional package. See Appendix~\ref{app:pardiso} for details.}
+\end{tablenotes}
 \end{threeparttable}
 \end{table}
 
@@ -1163,9 +1254,43 @@ The \href{https://matpower.org/docs/MIPS-manual-1.3.1.pdf}{\mips{} 1.3.1 User's 
 \begin{itemize}
 \item Add \code{CITATION} file.
 \item Other miscellaneous documentation updates, e.g. \matpower{} website links updated to \url{https://matpower.org}.
-
 \end{itemize}
 
+
+\subsection{Version 1.4 -- released Oct 8, 2020}
+\label{app:v14}
+
+The \href{https://matpower.org/docs/MIPS-manual-1.3.2.pdf}{\mips{} 1.4 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MIPS-manual-1.4.pdf}}
+
+\subsubsection*{New Features}
+\begin{itemize}
+\item Support for \code{have\_feature()} from \mptestlink{} to detect availability and version information for optional functionality. This is a modular, extensible replacement for \code{have\_fcn()} from \matpowerlink{} and \mpomlink{}.
+\item Feature detection functions for \code{lu()} and \pardiso{}, defining tags \codeq{lu\_vec}, \codeq{pardiso\_legacy}, \codeq{pardiso\_object} and \codeq{pardiso} for \code{have\_feature()}.
+\item New functions:
+    \begin{itemize}
+    \item \code{have\_feature\_lu\_vec} detects support for the \code{lu(..., \textquotesingle{}vector\textquotesingle{})} syntax.
+    \item \code{have\_feature\_pardiso\_legacy} detects support for the legacy (v5.x) \pardiso{} interface, with individual MEX files for factor, solve, etc.
+    \item \code{have\_feature\_pardiso\_object} detects support for the object-oriented (v6.x and later) \pardiso{} interface.
+    \item \code{have\_feature\_pardiso} detects availability/version of \pardiso{}.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection*{Bugs Fixed}
+\begin{itemize}
+\item Silence inadvertent output from \code{mplinsolve()} when called without \code{solver} input argument.
+\item Fix fatal errors when \code{mplinsolve()} is called with \codeq{LU} solver and dense \code{A} matrix.
+\end{itemize}
+
+\subsubsection*{Other Changes}
+\begin{itemize}
+\item Requires \mptest{} 7.1 or later.
+\item Remove \code{have\_fcn()} dependencies in \code{mips()}, \code{t\_mips\_pardiso()} and \code{t\_qps\_mips()}.
+\end{itemize}
+
+\subsubsection*{Incompatible Changes}
+\begin{itemize}
+\item Calling \code{mips()} with \code{opt.linsolver} set to \codeq{PARDISO} now results in a fatal error if \pardiso{} is not installed, rather than warning and continuing with the default linear solver.
+\end{itemize}
 
 
 \end{appendices}
@@ -1182,7 +1307,7 @@ TSPOPF. [Online]. Available: \url{http://www.pserc.cornell.edu/tspopf/}.
 H.~Wang, C.~E. Murillo-S{\'a}nchez, R.~D. Zimmerman, and R.~J. Thomas, ``On
 Computational Issues of Market-Based Optimal Power Flow,'' \emph{Power
 Systems, IEEE Transactions on}, vol.~22, no.~3, pp. 1185--1193, August 2007.
-\doi{10.1109/TPWRS.2010.2051168}
+\doi{10.1109/TPWRS.2007.901301}
 
 \bibitem{wang2007}
 H.~Wang, \emph{On the Computation and Application of Multi-period Security-constrained Optimal Power Flow for Real-time Electricity Market Operations}, Ph.D. thesis, Electrical and Computer Engineering, Cornell University, May 2007.
@@ -1197,7 +1322,7 @@ R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2019). \matpower{}\\~
 \doi{10.5281/zenodo.3236535}
 
 \bibitem{mips_manual}
-R.~D. Zimmerman, H.~Wang. \mipsname{} (\mips{}) User's Manual. 2019.
+R.~D. Zimmerman, H.~Wang. \mipsname{} (\mips{}) User's Manual. 2020.
 [Online]. Available: \url{https://matpower.org/docs/MIPS-manual.pdf}\\
 \doi{10.5281/zenodo.3236506}
 
