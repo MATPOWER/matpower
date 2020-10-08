@@ -49,7 +49,7 @@ for k = 1:length(algs)
                 'num_threads', 0, ...
                 'opt', 0 ) ...
         );
-        if strcmp(names{k}, 'MIPS') || strcmp(names{k}, 'sc-MIPS')
+        if strcmp(names{k}, 'DEFAULT') || strcmp(names{k}, 'MIPS') || strcmp(names{k}, 'sc-MIPS')
             opt.mips_opt.comptol = 1e-8;
         end
 %         if strcmp(names{k}, 'linprog/quadprog')
