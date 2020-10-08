@@ -26,20 +26,23 @@ cfg = {
     {'IPOPT',   'IPOPT',    'ipopt',        []                          },
     {'KNITRO',  'Knitro',   'knitro',       []                          },
 };
+if have_feature('matlab') && have_feature('matlab', 'vnum') <= 8.003
+    cfg([5;8]) = [];    %% Mac MATLAB 7.14-8.2 crash w/ fmincon alg 3, fails w/6
+end
 % cfg = {
 %     {'KNITRO',  'Knitro',   'knitro',       []                          },
 % };
 
-n = 46;
+n = 47;
 
-t_begin(n*length(cfg), quiet);
+t_begin(34+n*length(cfg), quiet);
 
 for k = 1:length(cfg)
     alg   = cfg{k}{1};
     name  = cfg{k}{2};
     check = cfg{k}{3};
     opts  = cfg{k}{4};
-    if ~isempty(check) && ~have_fcn(check)
+    if ~isempty(check) && ~have_feature(check)
         t_skip(n, sprintf('%s not installed', name));
     else
         opt = struct('verbose', 0, 'alg', alg);
@@ -67,129 +70,196 @@ for k = 1:length(cfg)
                 opt.knitro_opt.tol_f = 1e-8;
         end
 
-t = sprintf('%s - unconstrained banana function : ', name);
-%% from MATLAB Optimization Toolbox's bandem.m
-f_fcn = @(x)f2(x);
-x0 = [-1.9; 2];
-om = opt_model;
-om.add_var('x', 2, x0);
-om.add_nln_cost('f', 1, f_fcn);
-[x, f, s, out, lam] = om.solve(opt);
-t_ok(s > 0, [t 'success']);
-t_is(x, [1; 1], 8, [t 'x']);
-t_is(f, 0, 13, [t 'f']);
-t_ok(isempty(lam.mu_l), [t 'lam.mu_l']);
-t_ok(isempty(lam.mu_u), [t 'lam.mu_u']);
-t_is(lam.lower, zeros(size(x)), 13, [t 'lam.lower']);
-t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
+        t = sprintf('%s - unconstrained banana function : ', name);
+        %% from MATLAB Optimization Toolbox's bandem.m
+        f_fcn = @(x)f2(x);
+        x0 = [-1.9; 2];
+        om = opt_model;
+        om.add_var('x', 2, x0);
+        om.add_nln_cost('f', 1, f_fcn);
+        [x, f, s, out, lam] = om.solve(opt);
+        t_ok(s > 0, [t 'success']);
+        t_is(x, [1; 1], 8, [t 'x']);
+        t_is(f, 0, 13, [t 'f']);
+        t_ok(isempty(lam.mu_l), [t 'lam.mu_l']);
+        t_ok(isempty(lam.mu_u), [t 'lam.mu_u']);
+        t_is(lam.lower, zeros(size(x)), 13, [t 'lam.lower']);
+        t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 
-t = sprintf('%s - unconstrained 3-d quadratic : ', name);
-%% from http://www.akiti.ca/QuadProgEx0Constr.html
-f_fcn = @(x)f3(x);
-x0 = [0; 0; 0];
-om = opt_model;
-om.add_var('x', 3, x0);
-om.add_nln_cost('f', 1, f_fcn);
-[x, f, s, out, lam] = om.solve(opt);
-t_ok(s > 0, [t 'success']);
-t_is(x, [3; 5; 7], 6, [t 'x']);
-t_is(f, -244, 12, [t 'f']);
-t_ok(isempty(lam.mu_l), [t 'lam.mu_l']);
-t_ok(isempty(lam.mu_u), [t 'lam.mu_u']);
-t_is(lam.lower, zeros(size(x)), 13, [t 'lam.lower']);
-t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
+        t = sprintf('%s - unconstrained 3-d quadratic : ', name);
+        %% from http://www.akiti.ca/QuadProgEx0Constr.html
+        f_fcn = @(x)f3(x);
+        x0 = [0; 0; 0];
+        om = opt_model;
+        om.add_var('x', 3, x0);
+        om.add_nln_cost('f', 1, f_fcn);
+        [x, f, s, out, lam] = om.solve(opt);
+        t_ok(s > 0, [t 'success']);
+        t_is(x, [3; 5; 7], 6, [t 'x']);
+        t_is(f, -244, 12, [t 'f']);
+        t_ok(isempty(lam.mu_l), [t 'lam.mu_l']);
+        t_ok(isempty(lam.mu_u), [t 'lam.mu_u']);
+        t_is(lam.lower, zeros(size(x)), 13, [t 'lam.lower']);
+        t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 
-t = sprintf('%s - constrained 4-d QP : ', name);
-%% from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm
-f_fcn = @(x)f4(x);
-x0 = [1; 0; 0; 1];
-A = [   1       1       1       1;
-        0.17    0.11    0.10    0.18    ];
-l = [1; 0.10];
-u = [1; Inf];
-xmin = zeros(4,1);
-om = opt_model;
-om.add_var('x', 4, x0, xmin);
-om.add_nln_cost('f', 1, f_fcn);
-om.add_lin_constraint('Ax_b', A, l, u);
-[x, f, s, out, lam] = om.solve(opt);
-t_ok(s > 0, [t 'success']);
-t_is(x, [0; 2.8; 0.2; 0]/3, 6, [t 'x']);
-t_is(f, 3.29/3, 6, [t 'f']);
-t_is(lam.mu_l, [6.58;0]/3, 5, [t 'lam.mu_l']);
-t_is(lam.mu_u, [0;0], 13, [t 'lam.mu_u']);
-t_is(lam.lower, [2.24;0;0;1.7667], 4, [t 'lam.lower']);
-t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
+        t = sprintf('%s - constrained 4-d QP : ', name);
+        %% from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm
+        f_fcn = @(x)f4(x);
+        x0 = [1; 0; 0; 1];
+        A = [   1       1       1       1;
+                0.17    0.11    0.10    0.18    ];
+        l = [1; 0.10];
+        u = [1; Inf];
+        xmin = zeros(4,1);
+        om = opt_model;
+        om.add_var('x', 4, x0, xmin);
+        om.add_nln_cost('f', 1, f_fcn);
+        om.add_lin_constraint('Ax_b', A, l, u);
+        [x, f, s, out, lam] = om.solve(opt);
+        t_ok(s > 0, [t 'success']);
+        t_is(x, [0; 2.8; 0.2; 0]/3, 6, [t 'x']);
+        t_is(f, 3.29/3, 6, [t 'f']);
+        t_is(lam.mu_l, [6.58;0]/3, 5, [t 'lam.mu_l']);
+        t_is(lam.mu_u, [0;0], 13, [t 'lam.mu_u']);
+        t_is(lam.lower, [2.24;0;0;1.7667], 4, [t 'lam.lower']);
+        t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 
-t = sprintf('%s - constrained 2-d nonlinear : ', name);
-%% from https://en.wikipedia.org/wiki/Nonlinear_programming#2-dimensional_example
-f_fcn = @(x)f5(x);
-h_fcn = @(x)h5(x);
-d2h_fcn = @(x, lam)hess5a(x, lam);
-x0 = [1.1; 0];
-xmin = zeros(2, 1);
-% xmax = 3 * ones(2, 1);
-om = opt_model;
-om.add_var('x', 2, x0, xmin);
-om.add_nln_cost('f', 1, f_fcn);
-om.add_nln_constraint('h', 2, 0, h_fcn, d2h_fcn);
-[x, f, s, out, lam] = om.solve(opt);
-t_ok(s > 0, [t 'success']);
-t_is(x, [1; 1], 6, [t 'x']);
-t_is(f, -2, 6, [t 'f']);
-t_is(lam.ineqnonlin, [0;0.5], 6, [t 'lam.ineqnonlin']);
-t_ok(isempty(lam.mu_l), [t 'lam.mu_l']);
-t_ok(isempty(lam.mu_u), [t 'lam.mu_u']);
-t_is(lam.lower, zeros(size(x)), 9, [t 'lam.lower']);
-t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
+        t = sprintf('%s - constrained 2-d nonlinear : ', name);
+        %% from https://en.wikipedia.org/wiki/Nonlinear_programming#2-dimensional_example
+        f_fcn = @(x)f5(x);
+        h_fcn = @(x)h5(x);
+        d2h_fcn = @(x, lam)hess5a(x, lam);
+        x0 = [1.1; 0];
+        xmin = zeros(2, 1);
+        % xmax = 3 * ones(2, 1);
+        om = opt_model;
+        om.add_var('x', 2, x0, xmin);
+        om.add_nln_cost('f', 1, f_fcn);
+        om.add_nln_constraint('h', 2, 0, h_fcn, d2h_fcn);
+        [x, f, s, out, lam] = om.solve(opt);
+        t_ok(s > 0, [t 'success']);
+        t_is(x, [1; 1], 6, [t 'x']);
+        t_is(f, -2, 6, [t 'f']);
+        t_is(lam.ineqnonlin, [0;0.5], 6, [t 'lam.ineqnonlin']);
+        t_ok(isempty(lam.mu_l), [t 'lam.mu_l']);
+        t_ok(isempty(lam.mu_u), [t 'lam.mu_u']);
+        t_is(lam.lower, zeros(size(x)), 9, [t 'lam.lower']);
+        t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 
-t = sprintf('%s - constrained 3-d nonlinear : ', name);
-%% from https://en.wikipedia.org/wiki/Nonlinear_programming#3-dimensional_example
-f_fcn = @(x)f6(x);
-h_fcn = @(x)h6(x);
-d2h_fcn = @(x, lam)hess6a(x, lam);
-x0 = [1; 1; 0];
-om = opt_model;
-om.add_var('x', 3, x0);
-om.add_nln_cost('f', 1, f_fcn);
-om.add_nln_constraint('h', 2, 0, h_fcn, d2h_fcn);
-[x, f, s, out, lam] = om.solve(opt);
-t_ok(s > 0, [t 'success']);
-t_is(x, [1.58113883; 2.23606798; 1.58113883], 6, [t 'x']);
-t_is(f, -5*sqrt(2), 6, [t 'f']);
-t_is(lam.ineqnonlin, [0;sqrt(2)/2], 7, [t 'lam.ineqnonlin']);
-t_ok(isempty(lam.mu_l), [t 'lam.mu_l']);
-t_ok(isempty(lam.mu_u), [t 'lam.mu_u']);
-t_is(lam.lower, zeros(size(x)), 13, [t 'lam.lower']);
-t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
+        t = sprintf('%s - constrained 3-d nonlinear : ', name);
+        %% from https://en.wikipedia.org/wiki/Nonlinear_programming#3-dimensional_example
+        f_fcn = @(x)f6(x);
+        h_fcn = @(x)h6(x);
+        d2h_fcn = @(x, lam)hess6a(x, lam);
+        x0 = [1; 1; 0];
+        om = opt_model;
+        om.add_var('x', 3, x0);
+        om.add_nln_cost('f', 1, f_fcn);
+        om.add_nln_constraint('h', 2, 0, h_fcn, d2h_fcn);
+        [x, f, s, out, lam] = om.solve(opt);
+        t_ok(s > 0, [t 'success']);
+        t_is(x, [1.58113883; 2.23606798; 1.58113883], 6, [t 'x']);
+        t_is(f, -5*sqrt(2), 6, [t 'f']);
+        t_is(lam.ineqnonlin, [0;sqrt(2)/2], 7, [t 'lam.ineqnonlin']);
+        t_ok(isempty(lam.mu_l), [t 'lam.mu_l']);
+        t_ok(isempty(lam.mu_u), [t 'lam.mu_u']);
+        t_is(lam.lower, zeros(size(x)), 13, [t 'lam.lower']);
+        t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
+        t_ok(~isfield(om.soln, 'var'), [t 'no parse_soln() outputs']);
 
-t = sprintf('%s - constrained 4-d nonlinear : ', name);
-%% Hock & Schittkowski test problem #71
-f_fcn = @(x)f7(x);
-g_fcn = @(x)g7(x);
-h_fcn = @(x)h7(x);
-d2g_fcn = @(x, lam)hess7g(x, lam);
-d2h_fcn = @(x, lam)hess7h(x, lam);
-x0 = [1; 5; 5; 1];
-xmin = ones(4, 1);
-xmax = 5 * xmin;
-om = opt_model;
-om.add_var('x', 4, x0, xmin, xmax);
-om.add_nln_cost('f', 1, f_fcn);
-om.add_nln_constraint('g', 1, 1, g_fcn, d2g_fcn);
-om.add_nln_constraint('h', 1, 0, h_fcn, d2h_fcn);
-[x, f, s, out, lam] = om.solve(opt);
-t_ok(s > 0, [t 'success']);
-t_is(x, [1; 4.7429994; 3.8211503; 1.3794082], 6, [t 'x']);
-t_is(f, 17.0140173, 6, [t 'f']);
-t_is(lam.eqnonlin, 0.1614686, 5, [t 'lam.eqnonlin']);
-t_is(lam.ineqnonlin, 0.55229366, 5, [t 'lam.ineqnonlin']);
-t_ok(isempty(lam.mu_l), [t 'lam.mu_l']);
-t_ok(isempty(lam.mu_u), [t 'lam.mu_u']);
-t_is(lam.lower, [1.08787121024; 0; 0; 0], 5, [t 'lam.lower']);
-t_is(lam.upper, zeros(size(x)), 7, [t 'lam.upper']);
+        t = sprintf('%s - constrained 4-d nonlinear : ', name);
+        opt.parse_soln = 1;
+        %% Hock & Schittkowski test problem #71
+        f_fcn = @(x)f7(x);
+        g_fcn = @(x)g7(x);
+        h_fcn = @(x)h7(x);
+        d2g_fcn = @(x, lam)hess7g(x, lam);
+        d2h_fcn = @(x, lam)hess7h(x, lam);
+        x0 = [1; 5; 5; 1];
+        xmin = ones(4, 1);
+        xmax = 5 * xmin;
+        om = opt_model;
+        om.add_var('x', 4, x0, xmin, xmax);
+        om.add_nln_cost('f', 1, f_fcn);
+        om.add_nln_constraint('g', 1, 1, g_fcn, d2g_fcn);
+        om.add_nln_constraint('h', 1, 0, h_fcn, d2h_fcn);
+        [x, f, s, out, lam] = om.solve(opt);
+        t_ok(s > 0, [t 'success']);
+        t_is(x, [1; 4.7429994; 3.8211503; 1.3794082], 6, [t 'x']);
+        t_is(f, 17.0140173, 6, [t 'f']);
+        t_is(lam.eqnonlin, 0.1614686, 5, [t 'lam.eqnonlin']);
+        t_is(lam.ineqnonlin, 0.55229366, 5, [t 'lam.ineqnonlin']);
+        t_ok(isempty(lam.mu_l), [t 'lam.mu_l']);
+        t_ok(isempty(lam.mu_u), [t 'lam.mu_u']);
+        t_is(lam.lower, [1.08787121024; 0; 0; 0], 5, [t 'lam.lower']);
+        t_is(lam.upper, zeros(size(x)), 7, [t 'lam.upper']);
+        opt.parse_soln = 0;
     end
 end
+
+t = 'om.soln.';
+t_is(om.soln.x, x, 14, [t 'x']);
+t_is(om.soln.f, f, 14, [t 'f']);
+t_is(om.soln.eflag, s, 14, [t 'eflag']);
+t_ok(strcmp(om.soln.output.alg, out.alg), [t 'output.alg']);
+t_is(om.soln.lambda.lower, lam.lower, 14, [t 'om.soln.lambda.lower']);
+t_is(om.soln.lambda.upper, lam.upper, 14, [t 'om.soln.lambda.upper']);
+t_is(om.soln.lambda.mu_l, lam.mu_l, 14, [t 'om.soln.lambda.mu_l']);
+t_is(om.soln.lambda.mu_u, lam.mu_u, 14, [t 'om.soln.lambda.mu_u']);
+t_is(om.soln.lambda.eqnonlin, lam.eqnonlin, 14, [t 'om.soln.lambda.eqnonlin']);
+t_is(om.soln.lambda.ineqnonlin, lam.ineqnonlin, 14, [t 'om.soln.lambda.ineqnonlin']);
+
+t = 'om.get_soln(''var'', ''x'') : ';
+[x1, mu_l, mu_u] = om.get_soln('var', 'x');
+t_is(x1, x, 14, [t 'x']);
+t_is(mu_l, lam.lower, 14, [t 'mu_l']);
+t_is(mu_u, lam.upper, 14, [t 'mu_u']);
+
+t = 'om.get_soln(''var'', ''mu_l'', ''x'') : ';
+t_is(om.get_soln('var', 'mu_l', 'x'), lam.lower, 14, [t 'mu_l']);
+
+t = 'om.get_soln(''nle'', ''g'') : ';
+[g, lm, dg] = om.get_soln('nle', 'g');
+[eg, edg] = g_fcn(x);
+t_is(g, eg, 14, [t 'g']);
+t_is(dg, edg, 14, [t 'dg']);
+t_is(lm, lam.eqnonlin, 14, [t 'lam']);
+
+t = 'om.get_soln(''nle'', {''lam'', ''g''}, ''g'') : ';
+[lm, g] = om.get_soln('nle', {'lam', 'g'}, 'g');
+t_is(g, eg, 14, [t 'g']);
+t_is(dg, edg, 14, [t 'dg']);
+t_is(lm, lam.eqnonlin, 14, [t 'lam']);
+
+t = 'om.get_soln(''nli'', ''h'') : ';
+[h, mu, dh] = om.get_soln('nli', 'h');
+[eh, edh] = h_fcn(x);
+t_is(h, eh, 14, [t 'h']);
+t_is(dh, edh, 14, [t 'dh']);
+t_is(mu, lam.ineqnonlin, 14, [t 'mu']);
+
+t = 'om.get_soln(''nli'', {''dh'', ''mu''}, ''h'') : ';
+[dh, mu] = om.get_soln('nli', {'dh', 'mu'}, 'h');
+t_is(dh, edh, 14, [t 'dh']);
+t_is(mu, lam.ineqnonlin, 14, [t 'mu']);
+
+t = 'om.get_soln(''nlc'', ''f'') : ';
+[f1, df, d2f] = om.get_soln('nlc', 'f');
+[ef, edf, ed2f] = f_fcn(x);
+t_is(f1, f, 14, [t 'f']);
+t_is(df, edf, 14, [t 'df']);
+t_is(d2f, ed2f, 14, [t 'd2f']);
+
+t = 'om.get_soln(''nlc'',  ''df'', ''f'') : ';
+df = om.get_soln('nlc', 'df', 'f');
+t_is(df, edf, 14, [t 'df']);
+
+t = 'parse_soln : ';
+t_is(om.soln.var.val.x, om.get_soln('var', 'x'), 14, [t 'var.val.x']);
+t_is(om.soln.var.mu_l.x, om.get_soln('var', 'mu_l', 'x'), 14, [t 'var.mu_l.x']);
+t_is(om.soln.var.mu_u.x, om.get_soln('var', 'mu_u', 'x'), 14, [t 'var.mu_u.x']);
+t_is(om.soln.nle.lam.g, om.get_soln('nle', 'lam', 'g'), 14, [t 'nle.lam.g']);
+t_is(om.soln.nli.mu.h, om.get_soln('nli', 'mu', 'h'), 14, [t 'nli.mu.h']);
 
 t_end;
 

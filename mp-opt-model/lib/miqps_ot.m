@@ -114,7 +114,7 @@ function [x, f, eflag, output, lambda] = miqps_ot(H, c, A, l, u, xmin, xmax, x0,
 %   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 %% check for Optimization Toolbox
-% if ~have_fcn('quadprog')
+% if ~have_feature('quadprog')
 %     error('miqps_ot: requires the Optimization Toolbox');
 % end
 
@@ -264,7 +264,7 @@ else
         error('miqps_ot: MIQP problems not supported.');
     end
     ot_opt = optimoptions('quadprog');
-    if have_fcn('quadprog_ls')
+    if have_feature('quadprog_ls')
         ot_opt.Algorithm = 'interior-point-convex';
     else
         ot_opt.LargeScale = 'off';

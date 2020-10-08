@@ -104,7 +104,7 @@ function [x, f, eflag, output, lambda] = qps_bpmpd(H, c, A, l, u, xmin, xmax, x0
 %   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 %% check for BPMPD_MEX
-% if ~have_fcn('bpmpd')
+% if ~have_feature('bpmpd')
 %     error('qps_bpmpd: requires BPMPD_MEX (http://www.pserc.cornell.edu/bpmpd/)');
 % end
 

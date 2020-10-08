@@ -58,7 +58,7 @@ end
 if strcmp(alg, 'DEFAULT')
     alg = 'MIPS';
     if model(1) == 'M'  %% mixed integer
-        if have_fcn('knitromatlab')
+        if have_feature('knitromatlab')
             alg = 'KNITRO';
         else
             error('mpopt2nlpopt: Sorry, no solver available for %s models', model);

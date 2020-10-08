@@ -71,6 +71,7 @@ else                %% aggregate
             for k = 1:om.qdc.NS
                 name = om.qdc.order(k).name;
                 idx  = om.qdc.order(k).idx;
+                N = om.getN('qdc', name, idx);
                 [Qk, ck, kk, vs] = om.params_quad_cost(name, idx);
                 haveQ = ~isempty(Qk);
                 havec = ~isempty(ck);
@@ -119,7 +120,11 @@ else                %% aggregate
                 if havec
                     c = c + ck_full;
                 end
-                K = K + sum(kk);
+                if length(kk) == 1
+                    K = K + N * kk;     %% N handles case where k is expanded to vector cost
+                else
+                    K = K + sum(kk);
+                end
             end
             Q = Qt';
        else
@@ -130,6 +135,7 @@ else                %% aggregate
             for k = 1:om.qdc.NS
                 name = om.qdc.order(k).name;
                 idx  = om.qdc.order(k).idx;
+                N = om.getN('qdc', name, idx);
                 [Qk, ck, kk, vs] = om.params_quad_cost(name, idx);
                 haveQ = ~isempty(Qk);
                 havec = ~isempty(ck);
@@ -159,7 +165,11 @@ else                %% aggregate
                         c_ijv(k, :) = {jj(ic), jc, vc};
                     end
                 end
-                K = K + sum(kk);
+                if length(kk) == 1
+                    K = K + N * kk;     %% N handles case where k is expanded to vector cost
+                else
+                    K = K + sum(kk);
+                end
             end
             Q = sparse( vertcat(Q_ijv{:,1}), ...
                         vertcat(Q_ijv{:,2}), ...

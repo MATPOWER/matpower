@@ -111,10 +111,10 @@ classdef mp_idx_manager < handle
 %    es = struct();
 
     properties
-        userdata = [];
-        set_types = [];
+        userdata;
+        set_types;
     end     %% properties
-    
+
     methods
         %% constructor
         function obj = mp_idx_manager(s)
@@ -123,12 +123,12 @@ classdef mp_idx_manager < handle
                     %% this copy constructor will not be inheritable under
                     %% Octave until the fix has been included for:
                     %%      https://savannah.gnu.org/bugs/?52614
-                    if have_fcn('octave')
+                    if have_feature('octave')
                         s1 = warning('query', 'Octave:classdef-to-struct');
                         warning('off', 'Octave:classdef-to-struct');
                     end
                     props = fieldnames(s);
-                    if have_fcn('octave')
+                    if have_feature('octave')
                         warning(s1.state, 'Octave:classdef-to-struct');
                     end
                     for k = 1:length(props)
@@ -159,17 +159,18 @@ classdef mp_idx_manager < handle
 
         function obj = init_set_types(obj)
             %% base data struct for each type
+            es = struct();
             ds = struct( ...
                 'idx', struct( ...
-                    'i1', struct(), ...
-                    'iN', struct(), ...
-                    'N', struct() ), ...
+                    'i1', es, ...
+                    'iN', es, ...
+                    'N', es ), ...
                 'N', 0, ...
                 'NS', 0, ...
                 'order', struct( ...
                     'name', [], ...
                     'idx', [] ), ...
-                'data', struct() );
+                'data', es );
 
             %% initialize each (set_type) field with base data structure
             for f = fieldnames(obj.set_types)'
@@ -180,12 +181,12 @@ classdef mp_idx_manager < handle
         function new_obj = copy(obj)
             %% make shallow copy of object
             new_obj = eval(class(obj));  %% create new object
-            if have_fcn('octave')
+            if have_feature('octave')
                 s1 = warning('query', 'Octave:classdef-to-struct');
                 warning('off', 'Octave:classdef-to-struct');
             end
             props = fieldnames(obj);
-            if have_fcn('octave')
+            if have_feature('octave')
                 warning(s1.state, 'Octave:classdef-to-struct');
             end
             for k = 1:length(props)

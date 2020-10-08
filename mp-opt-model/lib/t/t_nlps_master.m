@@ -26,6 +26,9 @@ cfg = {
     {'IPOPT',   'IPOPT',    'ipopt',        []                          },
     {'KNITRO',  'Knitro',   'knitro',       []                          },
 };
+if have_feature('matlab') && have_feature('matlab', 'vnum') <= 8.003
+    cfg([5;8]) = [];    %% Mac MATLAB 7.14-8.2 crash w/ fmincon alg 3, fails w/6
+end
 % cfg = {
 %     {'KNITRO',  'Knitro',   'knitro',       []                          },
 % };
@@ -39,7 +42,7 @@ for k = 1:length(cfg)
     name  = cfg{k}{2};
     check = cfg{k}{3};
     opts  = cfg{k}{4};
-    if ~isempty(check) && ~have_fcn(check)
+    if ~isempty(check) && ~have_feature(check)
         t_skip(n, sprintf('%s not installed', name));
     else
         opt = struct('verbose', 0, 'alg', alg);

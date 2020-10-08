@@ -97,7 +97,7 @@ function [x, f, eflag, output, lambda] = qps_glpk(H, c, A, l, u, xmin, xmax, x0,
 %   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 %% check for Optimization Toolbox
-% if ~have_fcn('quadprog')
+% if ~have_feature('quadprog')
 %     error('qps_glpk: requires the MEX interface to GLPK');
 % end
 
@@ -218,7 +218,7 @@ if isfield(extra, 'status')             %% status found in extra.status
 else                                    %% status found in errnum
     output.errnum = [];
     output.status = errnum;
-    if have_fcn('octave')
+    if have_feature('octave')
         if errnum == 180 || errnum == 151 || errnum == 171
             eflag = 1;
         else

@@ -71,9 +71,13 @@ end
 [N, M] = size(A);
 if isempty(l)                   %% default l is -Inf
     l = -Inf(N, 1);
+elseif N > 1 && length(l) == 1  %% expand from scalar as needed
+    l = l * ones(N, 1);
 end
 if isempty(u)                   %% default u is Inf
     u = Inf(N, 1);
+elseif N > 1 && length(u) == 1  %% expand from scalar as needed
+    u = u * ones(N, 1);
 end
 
 %% check sizes

@@ -1,4 +1,3 @@
-%function [x, f, eflag, output, jac] = nleqs_master(fcn, x0, opt)
 function varargout = nleqs_master(fcn, x0, opt)
 %NLEQS_MASTER  Nonlinear Equation Solver wrapper function.
 %   [X, F, EXITFLAG, OUTPUT, JAC] = NLEQS_MASTER(FCN, X0, OPT)

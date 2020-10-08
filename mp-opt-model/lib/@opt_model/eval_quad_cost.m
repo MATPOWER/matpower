@@ -41,7 +41,7 @@ if om.qdc.N
             idx = num2cell(ones(size(dims))); %% initialize idx
             while ~done     %% call eval_quad_cost() recursively
                 f = f + sum(om.eval_quad_cost(x, name, idx));
-            
+
                 %% increment idx
                 D = length(dims);
                 idx{D} = idx{D} + 1;    %% increment last dimension
@@ -66,7 +66,7 @@ if om.qdc.N
     if ~done
         %% assemble appropriately-sized x vector
         xx = om.varsets_x(x, vs, 'vector');
-    
+
         %% compute/assemble f
         if N == 1               %% f is scalar (Q is matrix, k is scalar)
             f = k;                  %% start with k term
@@ -76,7 +76,7 @@ if om.qdc.N
             if ~isempty(Q)          %% add Q term
                 f = f + (xx'*Q*xx)/2;
             end
-        else                    %% f is vector (Q is vector, k is vector or 0)
+        else                    %% f is vector (Q is vector or empty, k is vector or scalar)
             if isempty(c)           %% Q, k terms only
                 f = (Q .* xx.^2)/2 + k;
             else
@@ -96,9 +96,9 @@ if om.qdc.N
                 df = 0;             %% start with nothing
             end
             if ~isempty(Q)
-                if N == 1           %% f is scalar (Q is matrix, k is scalar)
+                if N == 1       %% f is scalar (Q is matrix, k is scalar)
                     df = df + Q*xx;     %% add Q term
-                else                %% f is vector (Q is vector, k is vector or 0)
+                else            %% f is vector (Q is vector or empty, k is vector or scalar)
                     df = df + Q.*xx;    %% add Q term
                 end
             end
@@ -109,7 +109,7 @@ if om.qdc.N
                     nx = length(xx);
                     if N == 1   %% f is scalar (Q is matrix, k is scalar)
                         d2f = sparse(nx, nx);
-                    else        %% f is vector (Q is vector, k is vector or 0)
+                    else        %% f is vector (Q is vector or empty, k is vector or scalar)
                         d2f = sparse(nx, 1);
                     end
                 else

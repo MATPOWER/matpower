@@ -306,7 +306,7 @@ funcs.hessianstructure  = @(d) tril(Hs);
 
 %%-----  run solver  -----
 %% run the optimization
-if have_fcn('ipopt_auxdata')
+if have_feature('ipopt_auxdata')
     [x, info] = ipopt_auxdata(x0,funcs,options);
 else
     [x, info] = ipopt(x0,funcs,options);

@@ -274,7 +274,7 @@ else
 end
 
 %% select algorithm
-if have_fcn('fmincon_ipm')
+if have_feature('fmincon_ipm')
     %% set default algorithm, if not specified
     if ~isfield(fmincon_opt, 'alg') || fmincon_opt.alg == 0
         fmincon_opt.alg = 4;  %% interior-point, w/ exact user-supplied Hessian
@@ -315,7 +315,7 @@ else
     Af = full(Af);
     Afeq = full(Afeq);
 end
-if have_fcn('optimoptions')
+if have_feature('optimoptions')
     fmoptions = optimoptions('fmincon');
     fmoptions = nested_struct_copy(fmoptions, fopts);
 else

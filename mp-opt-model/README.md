@@ -15,8 +15,8 @@ Cornell University as part of [MATPOWER][2].
 System Requirements
 -------------------
 
-*   [MATLAB][3] version 8.6 (R2015b) or later, or
-*   [GNU Octave][4] version 4.2 or later
+*   [MATLAB][3] version 7.5 (R2007b) or later, or
+*   [GNU Octave][4] version 4 or later
 *   [MP-Test][5], for running the MP-Opt-Model test suite
 *   [MATPOWER Interior Point Solver (MIPS)][6]
 
@@ -48,20 +48,20 @@ of MATLAB or Octave, including setting up your MATLAB path.
     [MIPS][6]) The result should resemble the following:
 ```
   >> test_mp_opt_model
-  t_nested_struct_copy....ok
   t_have_fcn..............ok
+  t_nested_struct_copy....ok
   t_nleqs_master..........ok (30 of 150 skipped)
-  t_qps_master............ok (100 of 396 skipped)
+  t_qps_master............ok (100 of 432 skipped)
   t_miqps_master..........ok (68 of 288 skipped)
   t_nlps_master...........ok
   t_opt_model.............ok
   t_om_solve_leqs.........ok
-  t_om_solve_nleqs........ok (36 of 170 skipped)
-  t_om_solve_qps..........ok (79 of 319 skipped)
-  t_om_solve_miqps........ok (12 of 72 skipped)
+  t_om_solve_nleqs........ok (36 of 194 skipped)
+  t_om_solve_qps..........ok (81 of 387 skipped)
+  t_om_solve_miqps........ok (14 of 118 skipped)
   t_om_solve_nlps.........ok
-  All tests successful (2713 passed, 325 skipped of 3038)
-  Elapsed time 3.37 seconds.
+  All tests successful (3032 passed, 329 skipped of 3361)
+  Elapsed time 3.11 seconds.
 ```
 
 Sample Usage
@@ -73,14 +73,14 @@ and two constraints, one equality and the other inequality, along with
 lower bounds on all of the variables.
 
 ```
-  min  1/2 [y' z'] * Q * [y; z]
-  x,y
+  min  1/2 [y; z]' * Q * [y; z]
+  y,z
   
 subject to:
-            A1 * [y; z] = b1
-      l2 <= A2 * [y; z]
-    ymin <= y
-    zmin <= z
+  A1 * [y; z] =  b1
+       A2 * y <= u2
+            y >= ymin
+            z <= zmax
 ```
 
 And suppose the data for the problem is provided as follows.
@@ -92,17 +92,17 @@ z0 = [0; 1];
 
 %% variable lower bounds
 ymin = [0; 0];
-zmin = [0; 0];
+zmax = [0; 2];
 
 %% constraint data
-A1 = [ 1 1 1 1 ];               b1 = 1;
-A2 = [ 0.17 0.11 0.10 0.18 ];   l2 = 0.1;
+A1 = [ 6 1 5 -4 ];  b1 = 4;
+A2 = [ 4 9 ];       u2 = 2;
 
 %% quadratic cost coefficients
-Q = [   1003.1 4.3 6.3 5.9;
-        4.3 2.2 2.1 3.9;
-        6.3 2.1 3.5 4.8;
-        5.9 3.9 4.8 10  ];
+Q = [ 8  1 -3 -4;
+      1  4 -2 -1;
+     -3 -2  5  4;
+     -4 -1  4  12  ];
 ```
 
 Below, we will show two approaches to construct and solve the problem.
@@ -117,10 +117,10 @@ full model automatically.
 %% build model
 om = opt_model;
 om.add_var('y', 2, y0, ymin);
-om.add_var('z', 2, z0, zmin);
-om.add_lin_constraint('lincon1', A1, b1, b1, {'y', 'z'});
-om.add_lin_constraint('lincon2', A2, l2, [], {'y', 'z'});
-om.add_quad_cost('cost', Q, [], [], {'y', 'z'});
+om.add_var('z', 2, z0, [], zmax);
+om.add_lin_constraint('lincon1', A1, b1, b1);
+om.add_lin_constraint('lincon2', A2, [], u2, {'y'});
+om.add_quad_cost('cost', Q, []);
 
 %% solve model
 [x, f, exitflag, output, lambda] = om.solve();
@@ -132,14 +132,15 @@ problem manually, then call the solver function directly.
 ```matlab
 %%-----  METHOD 2  -----
 %% assemble model parameters manually
-xmin = [ymin; zmin];
+xmin = [ymin; -Inf(2,1)];
+xmax = [ Inf(2,1); zmax];
 x0 = [y0; z0];
-A = [ A1; A2 ];
-l = [ b1; l2 ];
-u = [ b1; Inf ];
+A = [ A1; A2 0 0];
+l = [ b1; -Inf ];
+u = [ b1;  u2  ];
 
 %% solve model
-[x, f, exitflag, output, lambda] = qps_master(Q, [], A, l, u, xmin, [], x0);
+[x, f, exitflag, output, lambda] = qps_master(Q, [], A, l, u, xmin, xmax, x0);
 ```
 
 The above examples are included in `<MPOM>/lib/t/qp_ex1.m` along with
@@ -148,23 +149,19 @@ each approach:
 
 
 ```
-f = 1.09667   exitflag = 1
+f = 1.875      exitflag = 1
 
-x = 
-   0.0000
-   0.9333
-   0.0667
-   0.0000
+             var bound shadow prices
+     x     lambda.lower  lambda.upper
+  0.5000      0.0000        0.0000
+  0.0000      5.1250        0.0000
+ -0.0000      0.0000        8.7500
+ -0.2500      0.0000        0.0000
 
-lambda.lower (var bound shadow price) =
-   2.2400
-   0.0000
-   0.0000
-   1.7667
-
-lambda.mu_l (constraint shadow price) =
-   2.1933
-   0.0000
+constraint shadow prices
+lambda.mu_l  lambda.mu_u
+  1.2500       0.0000
+  0.0000       0.6250
 ```
 
 An options struct can be passed to the `solve` method or the
@@ -202,11 +199,11 @@ function, e.g.: `qps_master`, `miqps_master`, and `nlps_master`.
 We request that publications derived from the use of MP-Opt-Model
 explicitly acknowledge that fact by citing the [MP-Opt-Model User's Manual][7].
 The citation and DOI can be version-specific or general, as appropriate.
-For version 2.1, use:
+For version 3.0, use:
 
->   R. D. Zimmerman. *MP-Opt-Model User's Manual, Version 2.1*. 2020.
-    [Online]. Available: https://matpower.org/docs/MP-Opt-Model-manual-2.1.pdf  
-    doi: [10.5281/zenodo.4001106](https://doi.org/10.5281/zenodo.4001106)
+>   R. D. Zimmerman. *MP-Opt-Model User's Manual, Version 3.0*. 2020.
+    [Online]. Available: https://matpower.org/docs/MP-Opt-Model-manual-3.0.pdf  
+    doi: [10.5281/zenodo.4073361](https://doi.org/10.5281/zenodo.4073361)
 
 For a version non-specific citation, use the following citation and DOI,
 with *\<YEAR\>* replaced by the year of the most recent release:

@@ -183,16 +183,16 @@ else
     verbose = 0;
 end
 if strcmp(alg, 'DEFAULT')
-    if have_fcn('gurobi')       %% use Gurobi by default, if available
+    if have_feature('gurobi')       %% use Gurobi by default, if available
         alg = 'GUROBI';
-    elseif have_fcn('cplex')    %% if not, then CPLEX, if available
+    elseif have_feature('cplex')    %% if not, then CPLEX, if available
         alg = 'CPLEX';
-    elseif have_fcn('mosek')    %% if not, then MOSEK, if available
+    elseif have_feature('mosek')    %% if not, then MOSEK, if available
         alg = 'MOSEK';
     elseif isempty(H) || ~any(any(H))   %% if not, and linear objective
-        if have_fcn('intlinprog')       %% then Optimization Tbx, if available
+        if have_feature('intlinprog')   %% then Optimization Tbx, if available
             alg = 'OT';
-        elseif have_fcn('glpk')         %% if not, and then GLPK, if available
+        elseif have_feature('glpk')     %% if not, and then GLPK, if available
             alg = 'GLPK';
         end
     else

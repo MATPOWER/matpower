@@ -106,7 +106,7 @@ end
 %%-----  set default options for MOSEK  -----
 %% solution algorithm
 if have_mpopt
-    vnum = have_fcn('mosek', 'vnum');
+    vnum = have_feature('mosek', 'vnum');
     valid_alg = {                                   %% v6.x v7.x v8.x
             sc.MSK_OPTIMIZER_FREE,                  %%  0    0    2
             sc.MSK_OPTIMIZER_INTPNT,                %%  1    1    4
@@ -153,7 +153,7 @@ if have_mpopt
         opt.MSK_DPAR_OPTIMIZER_MAX_TIME = mpopt.mosek.max_time;
     end
     if mpopt.mosek.num_threads
-        if have_fcn('mosek', 'vnum') < 7
+        if have_feature('mosek', 'vnum') < 7
             opt.MSK_IPAR_INTPNT_NUM_THREADS = mpopt.mosek.num_threads;
         else
             opt.MSK_IPAR_NUM_THREADS = mpopt.mosek.num_threads;

@@ -62,12 +62,24 @@ switch set_type
         om.var.data.vu.(name)   = empty_cell;   %% upper bound
         om.var.data.vt.(name)   = empty_cell;   %% variable type
     case 'lin'          %% linear constraint set
-        om.lin.data.A.(name)   = empty_cell;
-        om.lin.data.l.(name)   = empty_cell;
-        om.lin.data.u.(name)   = empty_cell;
-        om.lin.data.vs.(name)  = empty_cell;
-    case {'nle', 'nli'} %% nonlinear constraint set
-        om.(set_type).data.fcn.(name) = empty_cell;
-        om.(set_type).data.hess.(name)= empty_cell;
-        om.(set_type).data.vs.(name)  = empty_cell;
+        om.lin.data.A.(name)    = empty_cell;
+        om.lin.data.l.(name)    = empty_cell;
+        om.lin.data.u.(name)    = empty_cell;
+        om.lin.data.vs.(name)   = empty_cell;
+    case 'nle'          %% nonlinear equality constraint set
+        om.nle.data.fcn.(name)  = empty_cell;
+        om.nle.data.hess.(name) = empty_cell;
+        om.nle.data.vs.(name)   = empty_cell;
+    case 'nli'          %% nonlinear inequality constraint set
+        om.nli.data.fcn.(name)  = empty_cell;
+        om.nli.data.hess.(name) = empty_cell;
+        om.nli.data.vs.(name)   = empty_cell;
+    case 'nlc'          %% nonlinear cost set
+        om.nlc.data.fcn.(name)  = empty_cell;
+        om.nlc.data.vs.(name)   = empty_cell;
+    case 'qdc'          %% quadratic cost set
+        om.qdc.data.Q.(name)    = empty_cell;
+        om.qdc.data.c.(name)    = empty_cell;
+        om.qdc.data.k.(name)    = empty_cell;
+        om.qdc.data.vs.(name)   = empty_cell;
 end

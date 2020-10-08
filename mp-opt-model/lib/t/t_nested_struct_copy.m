@@ -76,7 +76,7 @@ t_ok(isequal(DS, E), t);
 
 t = 'check = 1 ==> error';
 opt = struct('check', 1);
-% if have_fcn('catchme')
+% if have_feature('catchme')
 %     try
 %         DS = nested_struct_copy(D, S, opt);
 %         t_ok(0, t);

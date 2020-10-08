@@ -84,7 +84,7 @@ end
 
 %%-----  set default options for CLP  -----
 %% printing
-if have_fcn('opti_clp')
+if have_feature('opti_clp')
     opt.display = verbose;
 else
     opt.verbose = verbose;

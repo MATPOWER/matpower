@@ -29,12 +29,17 @@ else
     end
 
     for v = 1:length(vs)
-        % (calls to substruct() are relatively expensive ...
-        % sn = substruct('.', vs(v).name, '()', vs(v).idx);
-        % ... so replace it with these more efficient lines)
-        sn(1).subs = vs(v).name;
-        sn(2).subs = vs(v).idx;
-        N = subsref(om.var.idx.N, sn);
+        idx = vs(v).idx;
+        if isempty(idx)
+            N = om.var.idx.N.(vs(v).name);
+        else
+            % (calls to substruct() are relatively expensive ...
+            % sn = substruct('.', vs(v).name, '()', vs(v).idx);
+            % ... so replace it with these more efficient lines)
+            sn(1).subs = vs(v).name;
+            sn(2).subs = idx;
+            N = subsref(om.var.idx.N, sn);
+        end
         nv = nv + sum(N(:));
     end
 end

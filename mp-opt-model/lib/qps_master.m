@@ -44,6 +44,7 @@ function [x, f, eflag, output, lambda] = qps_master(H, c, A, l, u, xmin, xmax, x
 %               'IPOPT'   : (or 400) IPOPT, requires MEX interface to IPOPT
 %                           solver, https://github.com/coin-or/Ipopt
 %               'MOSEK'   : (or 600) MOSEK
+%               'OSQP'    : OSQP, https://osqp.org
 %               'OT'      : (or 300) Optimization Toolbox, QUADPROG or LINPROG
 %           verbose (0) - controls level of progress output displayed
 %               0 = no progress output
@@ -58,6 +59,7 @@ function [x, f, eflag, output, lambda] = qps_master(H, c, A, l, u, xmin, xmax, x
 %           linprog_opt - options struct for LINPROG
 %           mips_opt    - options struct for QPS_MIPS
 %           mosek_opt   - options struct for MOSEK
+%           osqp_opt    - options struct for OSQP
 %           quadprog_opt - options struct for QUADPROG
 %       PROBLEM : The inputs can alternatively be supplied in a single
 %           PROBLEM struct with fields corresponding to the input arguments
@@ -191,19 +193,19 @@ else
     verbose = 0;
 end
 if strcmp(alg, 'DEFAULT')
-    if have_fcn('gurobi')       %% use Gurobi by default, if available
+    if have_feature('gurobi')       %% use Gurobi by default, if available
         alg = 'GUROBI';
-    elseif have_fcn('cplex')    %% if not, then CPLEX, if available
+    elseif have_feature('cplex')    %% if not, then CPLEX, if available
         alg = 'CPLEX';
-    elseif have_fcn('mosek')    %% if not, then MOSEK, if available
+    elseif have_feature('mosek')    %% if not, then MOSEK, if available
         alg = 'MOSEK';
-    elseif have_fcn('quadprog') && have_fcn('matlab')   %% if not, then Opt Tbx, if available in MATLAB
+    elseif have_feature('quadprog') && have_feature('matlab')   %% if not, then Opt Tbx, if available in MATLAB
         alg = 'OT';
-    elseif (isempty(H) || ~any(any(H))) && have_fcn('glpk') %% if not, and
-        alg = 'GLPK';           %% prob is LP (not QP), then GLPK, if available
-    elseif have_fcn('bpmpd')    %% if not, then BPMPD_MEX, if available
+    elseif (isempty(H) || ~any(any(H))) && have_feature('glpk') %% if not, and
+        alg = 'GLPK';               %% prob is LP (not QP), then GLPK, if available
+    elseif have_feature('bpmpd')    %% if not, then BPMPD_MEX, if available
         alg = 'BPMPD';
-    else                        %% otherwise MIPS
+    else                            %% otherwise MIPS
         alg = 'MIPS';
     end
 end
@@ -256,6 +258,9 @@ switch alg
     case 'MOSEK'
         [x, f, eflag, output, lambda] = ...
             qps_mosek(H, c, A, l, u, xmin, xmax, x0, opt);
+    case 'OSQP'
+        [x, f, eflag, output, lambda] = ...
+            qps_osqp(H, c, A, l, u, xmin, xmax, x0, opt);
     case 'OT'                   %% use QUADPROG or LINPROG from Opt Tbx ver 2.x+
         [x, f, eflag, output, lambda] = ...
             qps_ot(H, c, A, l, u, xmin, xmax, x0, opt);

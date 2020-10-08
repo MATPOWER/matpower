@@ -2,8 +2,91 @@ Change history for MP-Opt-Model
 ===============================
 
 
-Version 2.0 - *Aug 25, 2020*
+Version 3.0 - *Oct 8, 2020*
 ---------------------------
+
+#### 10/8/20
+  - Release 3.0.
+
+#### 9/23/20
+  - Move `have_feature()` to [MP-Test][8] and respective feature detection
+    functions to [MP-Test][8], [MIPS][9], and [MATPOWER][1].
+    - MP-Test
+      - `have_feature()`
+      - `have_feature_matlab()`
+      - `have_feature_octave()`
+    - MIPS
+      - `have_feature_lu_vec()`
+      - `have_feature_pardiso_legacy()`
+      - `have_feature_pardiso_object()`
+      - `have_feature_pardiso()`
+    - MATPOWER
+      - `have_feature_e4st()`
+      - `have_feature_minopf()`
+      - `have_feature_most()`
+      - `have_feature_pdipmopf()`
+      - `have_feature_regexp_split()`
+      - `have_feature_scpdipmopf()`
+      - `have_feature_sdp_pf()`
+      - `have_feature_smartmarket()`
+      - `have_feature_syngrid()`
+      - `have_feature_tralmopf()`
+
+#### 9/18/20
+  - Add `have_feature()` as a modular, extensible alternative
+    to `have_fcn()`, where the detection of a feature named
+    `<tag>` is implemented by the function `have_feature_<tag>()`.
+  - Make `have_fcn()` a simple wrapper around the new `have_feature()`.
+
+#### 9/16/20
+  - Add `set_params()` method to modify parameters of existing
+    variables, costs and constraints of an MP-Opt-Model object.
+  - Calling `params_var()` method with empty `idx` no longer results
+    in fatal error.
+  - For `opt_model`, fixed incorrect evaluation of constant term in
+    vector valued quadratic costs with constant term supplied as a
+    vector.
+  - Simplified logic to determine whether a quadratic cost for an
+    MP-Opt-Model object is vector vs. scalar valued. If the quadratic
+    coefficient is supplied as a matrix, the cost is scalar varied,
+    otherwise it is vector valued.
+
+#### 9/14/20
+  - Allow `v0`, `vl`, and `vu` inputs to `opt_model/add_var()` method,
+    and `l` and `u` inputs to `opt_model/add_lin_constraint()` to
+    be scalars that get expanded automatically to the appropriate
+    vector dimension.
+
+#### 9/11/20
+  - Add `get_soln()` method to `opt_model` for extracting solved
+    results for a given named set of variables, constraints or costs.
+  - Add `parse_soln()` method which returns a struct with a complete
+    set of solution vector and shadow price values for a solved model.
+
+#### 9/10/20
+  - Add caching of problem_type() return value.
+
+#### 9/1/20
+  - Add support for OSQP solver from [https://osqp.org][7] for LP
+    and QP problems, including functions `qps_osqp()`, `osqpver()`,
+    and `osqp_options()`.
+
+#### 8/31/20
+  - Save the results of `solve()` method to the `soln` field of the
+    MP-Opt-Model object.
+
+#### 8/28/20
+  - Add `eval_lin_constraint()` method to evaluate the constraint
+    values for the full set or an individual named subset of linear
+    constraints.
+
+#### 8/27/20
+  - Starting point supplied to `solve()` via `opt.x0` is no longer
+    ignored for nonlinear equations.
+
+
+Version 2.1 - *Aug 25, 2020*
+----------------------------
 
 #### 8/25/20
   - Release 2.1.
@@ -216,3 +299,6 @@ Version 0.7.0 - *Jun 20, 2019*
 [4]: https://github.com/MATPOWER/matpower/pull/70
 [5]: https://github.com/MATPOWER/matpower/issues/79
 [6]: https://github.com/MATPOWER/matpower/issues/90
+[7]: https://osqp.org
+[8]: https://github.com/MATPOWER/mptest
+[9]: https://github.com/MATPOWER/mips

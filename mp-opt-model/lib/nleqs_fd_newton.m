@@ -142,7 +142,7 @@ else
 end
 
 %% initialize
-lu_vec = have_fcn('lu_vec');
+lu_vec = have_feature('lu_vec');
 eflag = 0;
 i = 0;
 x = x0;
@@ -169,7 +169,7 @@ end
 %% block labels
 if isempty(labels)  %% create default labels 'A', 'B', ...
     for j = 1:nj
-        labels{j} = sprintf('%s', 'A'+j-1);
+        labels{j} = sprintf('%s', char('A'+j-1));
     end
 elseif length(labels) ~= nj
     error('nleqs_fd_newton: size of labels must be consistent with jac_approx_fcn');

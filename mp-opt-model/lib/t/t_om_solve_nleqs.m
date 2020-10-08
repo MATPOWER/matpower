@@ -26,7 +26,7 @@ core_sp_gs = struct( ...
     'need_jac',         0, ...
     'update_fcn',       @(x, f)x_update_fcn2(x, f)  );
 
-if have_fcn('matlab')
+if have_feature('matlab')
     %%  alg         name        check       opts
     cfg = {
         {'DEFAULT', 'default',  []          []  },
@@ -40,6 +40,9 @@ if have_fcn('matlab')
         {'CORE-N',  'Newton-CORE',   [],    core_sp_newton  },
         {'CORE-GS', 'Gauss-Seidel-CORE',[], core_sp_gs  },
     };
+    if have_feature('matlab', 'vnum') <= 7.010
+        cfg([6]) = [];  %% MATLAB 7.10 does not work w/ fsolve alg 3
+    end
 else    %% octave
     %%  alg         name        check       opts
     cfg = {
@@ -53,16 +56,16 @@ else    %% octave
     };
 end
 
-n = 17;
+n = 18;
 
-t_begin(n*length(cfg), quiet);
+t_begin(14+n*length(cfg), quiet);
 
 for k = 1:length(cfg)
     alg   = cfg{k}{1};
     name  = cfg{k}{2};
     check = cfg{k}{3};
     opts  = cfg{k}{4};
-    if ~isempty(check) && ~have_fcn(check)
+    if ~isempty(check) && ~have_feature(check)
         t_skip(n, sprintf('%s not installed', name));
     else
         opt = struct('verbose', 0, 'alg', alg, 'tol', 1e-11);
@@ -86,7 +89,7 @@ for k = 1:length(cfg)
                 om = opt_model;
                 om.add_var('x', 2, x0);
                 om.add_nln_constraint('f', 2, 1, @f1, []);
-                [x, f, e, out, J] = om.solve(opt);
+                [x, f, e, out, jac] = om.solve(opt);
                 t_is(e, 1, 12, [t 'success']);
                 t_is(x, [-3; 4], 8, [t 'x']);
                 t_is(f, 0, 10, [t 'f']);
@@ -98,7 +101,7 @@ for k = 1:length(cfg)
                 end
                 t_ok(strcmp(out.alg, out_alg), [t 'out.alg']);
                 eJ = [1 1; 6 1];
-                t_is(J, eJ, 5.8, [t 'J']);
+                t_is(jac, eJ, 5.8, [t 'jac']);
 
                 t = sprintf('%s - 2-d function (max_it) : ', name);
                 opt.max_it = 3;
@@ -118,14 +121,14 @@ for k = 1:length(cfg)
                 om.add_var('x2', 3, x0_2);
                 om.add_nln_constraint('f', 2, 1, @f1, [], {'x1'});
                 om.add_lin_constraint('Ax_b', A2, b2, b2, {'x2'});
-                [x, f, e, out, J] = om.solve(opt);
+                [x, f, e, out, jac] = om.solve(opt);
                 t_is(e, 1, 12, [t 'success']);
                 t_is(x, [-3; 4; -2; 1; 3], 8, [t 'x']);
                 t_is(f, 0, 10, [t 'f']);
                 t_ok(strcmp(out.alg, out_alg), [t 'out.alg']);
                 eJ = [[1 1; 6 1] zeros(2, 3);
                       zeros(3, 2) A2 ];
-                t_is(J, eJ, 5.8, [t 'J']);
+                t_is(jac, eJ, 5.8, [t 'jac']);
             otherwise
                 t_skip(12, sprintf('not implemented for solver ''%s''', alg));
         end
@@ -139,6 +142,7 @@ for k = 1:length(cfg)
         t_is(e, 1, 12, [t 'success']);
         t_is(x, [2; 3], 8, [t 'x']);
         t_is(f, 0, 10, [t 'f']);
+        t_ok(~isfield(om.soln, 'var'), [t 'no parse_soln() outputs']);
 
         opt.max_it = 3;
         t = sprintf('%s - 2-d function2 (max_it) : ', name);
@@ -148,6 +152,50 @@ for k = 1:length(cfg)
         opt = rmfield(opt, 'max_it');
     end
 end
+
+t = 'om.soln.';
+opt.alg = 'DEFAULT';
+x0_1 = [-1;0];
+x0_2 = [0;0;0];
+A2 = sparse([2 -1 0; -3 1 -2; 0 5 -4]);
+b2 = [-5; 1; -7];
+x2 = [-2; 1; 3];
+om = opt_model;
+om.add_var('x1', 2, x0_1);
+om.add_var('x2', 3, x0_2);
+om.add_nln_constraint('f', 2, 1, @f1, [], {'x1'});
+om.add_lin_constraint('Ax_b', A2, b2, b2, {'x2'});
+opt.parse_soln = 1;
+[x, f, e, out, jac] = om.solve(opt);
+t_is(om.soln.x, x, 14, [t 'x']);
+t_is(om.soln.f, f, 14, [t 'f']);
+t_is(om.soln.eflag, e, 14, [t 'eflag']);
+t_ok(strcmp(om.soln.output.alg, out.alg), [t 'output.alg']);
+t_is(om.soln.jac, jac, 14, [t 'jac']);
+
+t = 'om.get_soln(''var'', ''x1'') : ';
+t_is(om.get_soln('var', 'x1'), x(1:2), 14, [t 'x1']);
+
+t = 'om.get_soln(''var'', ''x'', ''x2'') : ';
+t_is(om.get_soln('var', 'x', 'x2'), x(3:5), 14, [t 'x2']);
+
+t = 'om.get_soln(''lin'', ''g'', ''Ax_b'') : ';
+g = om.get_soln('lin', 'g', 'Ax_b');
+t_is(g{1}, f(3:5), 14, [t 'A * x - u']);
+t_is(g{2}, f(3:5), 14, [t 'l - A * x']);
+
+t = 'om.get_soln(''nle'', ''f'') : ';
+g = om.get_soln('nle', 'f');
+t_is(g, f(1:2), 14, [t 'f']);
+
+t = 'om.get_soln(''nle'', {''g'', ''dg''}, ''f'') : ';
+[g, dg] = om.get_soln('nle', {'g', 'dg'}, 'f');
+t_is(g, f(1:2), 14, [t 'f']);
+t_is(dg, jac(1:2, 1:2), 14, [t 'jac']);
+
+t = 'parse_soln : ';
+t_is(om.soln.var.val.x1, om.get_soln('var', 'x1'), 14, [t 'var.val.x1']);
+t_is(om.soln.var.val.x2, om.get_soln('var', 'x2'), 14, [t 'var.val.x2']);
 
 t_end;
 

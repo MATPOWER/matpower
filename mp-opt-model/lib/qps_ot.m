@@ -102,7 +102,7 @@ function [x, f, eflag, output, lambda] = qps_ot(H, c, A, l, u, xmin, xmax, x0, o
 %   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 %% check for Optimization Toolbox
-% if ~have_fcn('quadprog')
+% if ~have_feature('quadprog')
 %     error('qps_ot: requires the Optimization Toolbox');
 % end
 
@@ -186,8 +186,8 @@ else
     verbose = 0;
 end
 %% MATLAB or Octave
-matlab = have_fcn('matlab');
-otver = have_fcn('quadprog', 'vnum');
+matlab = have_feature('matlab');
+otver = have_feature('quadprog', 'vnum');
 
 %% split up linear constraints
 ieq = find( abs(u-l) <= eps );          %% equality
@@ -212,7 +212,7 @@ elseif verbose == 1
 else
     vrb = 'off';
 end
-if have_fcn('optimoptions')     %% Optimization Tbx 6.3 + (R2013a +)
+if have_feature('optimoptions')     %% Optimization Tbx 6.3 + (R2013a +)
     %% could use optimset for everything, except some options are not
     %% recognized by optimset, only optimoptions, such as
     %% ot_opt.Algorithm = 'dual-simplex'
@@ -223,7 +223,7 @@ if have_fcn('optimoptions')     %% Optimization Tbx 6.3 + (R2013a +)
         end
     else
         ot_opt = optimoptions('quadprog');
-        if have_fcn('quadprog_ls')
+        if have_feature('quadprog_ls')
             ot_opt.Algorithm = 'interior-point-convex';
         else
             ot_opt.LargeScale = 'off';
@@ -246,7 +246,7 @@ else                            %% need to use optimset()
     else
         if matlab
             ot_opt = optimset('quadprog');
-            if have_fcn('quadprog_ls')
+            if have_feature('quadprog_ls')
                 ot_opt = optimset(ot_opt, 'Algorithm', 'interior-point-convex');
             else
                 ot_opt = optimset(ot_opt, 'LargeScale', 'off');

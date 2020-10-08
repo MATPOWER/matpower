@@ -104,7 +104,7 @@ function [x, f, eflag, output, lambda] = qps_ipopt(H, c, A, l, u, xmin, xmax, x0
 %   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 %% check for IPOPT
-% if ~have_fcn('ipopt')
+% if ~have_feature('ipopt')
 %     error('qps_ipopt: requires IPOPT (https://github.com/coin-or/Ipopt)');
 % end
 

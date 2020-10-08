@@ -70,24 +70,24 @@ end
 %% default solver
 switch alg
     case {'DEFAULT', 0}
-        if have_fcn('gurobi')
+        if have_feature('gurobi')
             alg = 'GUROBI';     %% use Gurobi by default, if available
-        elseif have_fcn('cplex')
+        elseif have_feature('cplex')
             alg = 'CPLEX';      %% if not, then CPLEX, if available
-        elseif have_fcn('mosek')
+        elseif have_feature('mosek')
             alg = 'MOSEK';      %% if not, then MOSEK, if available
-        elseif have_fcn('linprog_ds') && strcmp(model, 'LP') && have_fcn('matlab') || ...
-                have_fcn('quadprog_ls') && strcmp(model, 'QP') || ...
-                have_fcn('intlinprog') && strcmp(model, 'MILP')
+        elseif have_feature('linprog_ds') && strcmp(model, 'LP') && have_feature('matlab') || ...
+                have_feature('quadprog_ls') && strcmp(model, 'QP') || ...
+                have_feature('intlinprog') && strcmp(model, 'MILP')
             alg = 'OT';         %% if not, then newer Optimization Tbx, if
                                 %% available and applicable
-        elseif have_fcn('glpk') && model(end-1) == 'L'  %% LP or MILP
+        elseif have_feature('glpk') && model(end-1) == 'L'  %% LP or MILP
             alg = 'GLPK';       %% if not, then GLPK, if available & applicable
-        elseif have_fcn('linprog') && strcmp(model, 'LP') && have_fcn('matlab')
+        elseif have_feature('linprog') && strcmp(model, 'LP') && have_feature('matlab')
             alg = 'OT';         %% if not, then older Optimization Tbx, if
                                 %% available and applicable
         elseif model(1) ~= 'M'  %% LP or QP
-            if have_fcn('bpmpd')
+            if have_feature('bpmpd')
                 alg = 'BPMPD';  %% if not, then BPMPD_MEX, if available
                                 %% and applicable
             else
@@ -123,6 +123,8 @@ switch alg
         qpopt.grb_opt = gurobi_options([], mpopt);
     case {'MOSEK', 600}
         qpopt.mosek_opt = mosek_options([], mpopt);
+    case 'OSQP'
+        qpopt.osqp_opt = osqp_options([], mpopt);
     case {'OT', 300}
         if isfield(mpopt, 'linprog') && ~isempty(mpopt.linprog)
             qpopt.linprog_opt = mpopt.linprog;

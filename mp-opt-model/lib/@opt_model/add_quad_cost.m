@@ -13,12 +13,9 @@ function om = add_quad_cost(om, name, idx, Q, c, k, varsets)
 %   where Q is an NX x NX matrix (possibly sparse), C is an NX x 1 vector,
 %   K is a scalar and NX is the number of elements in X. Here X is the vector
 %   formed by combining the specified VARSETS (the full optimization vector
-%   by default). Alternatively, if Q is an NX x 1 vector, then K and F(X)
-%   are also NX x 1 vectors
+%   by default). Alternatively, if Q is an NX x 1 vector or empty, then F(X)
+%   is also NX x 1, and K can be either NX + 1 or scalar.
 %       F(X) = 1/2 * Q .* X.^2 + C .* X + K
-%
-%   If Q is empty, then F(X) is also an NX x 1 vector, unless K is scalar
-%   and non-zero.
 %
 %   Indexed Named Sets
 %       A cost set can be identified by a single NAME, as described
@@ -107,12 +104,10 @@ if nx ~= nv
 end
 
 %% size of named cost set
-if NQ == 1 || (isempty(Q) && (length(k) > 1 || k == 0))
-    %% Q is a column vector (cost is element-wise, i.e. a vector)
-    %% OR Q is empty and k is either a vector or zero
-    N = nx;
-else            %% Q is a square matrix (cost is a scalar)
-    N = 1;
+if NQ == 1 || isempty(Q)    %% if Q is a column vector or empty
+    N = nx;                 %%   cost is element-wise, i.e. a vector
+else                        %% otherwise Q is a square matrix
+    N = 1;                  %%   cost is scalar
 end
 
 %% add the named quadratic cost set

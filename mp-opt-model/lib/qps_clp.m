@@ -102,7 +102,7 @@ function [x, f, eflag, output, lambda] = qps_clp(H, c, A, l, u, xmin, xmax, x0, 
 %   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 %% check for Optimization Toolbox
-% if ~have_fcn('quadprog')
+% if ~have_feature('quadprog')
 %     error('qps_clp: requires the MEX interface to CLP');
 % end
 
@@ -195,7 +195,7 @@ else
     clp_opt = clp_options;
 end
 
-if have_fcn('opti_clp')     %% use OPTI Toolbox verision's MEX interface
+if have_feature('opti_clp')     %% use OPTI Toolbox verision's MEX interface
     clp_opt.display = verbose;
 
     [x, f, exitflag, iter, lam] = clp(tril(H), c, A, l, u, xmin, xmax, clp_opt);

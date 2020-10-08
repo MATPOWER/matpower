@@ -351,7 +351,7 @@ end
 fmoptions = optimset(kopts);
 
 %%-----  run solver  -----
-if have_fcn('knitromatlab')
+if have_feature('knitromatlab')
     [x, f, eflag, output, Lambda] = knitromatlab(f_fcn, x0, Af, bf, Afeq, bfeq, ...
                                     xmin, xmax, ktr_gh_fcn, [], fmoptions, opt_fname);
 else

@@ -109,7 +109,7 @@ function [x, f, eflag, output, lambda] = miqps_glpk(H, c, A, l, u, xmin, xmax, x
 %   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 %% check for Optimization Toolbox
-% if ~have_fcn('quadprog')
+% if ~have_feature('quadprog')
 %     error('miqps_glpk: requires the MEX interface to GLPK');
 % end
 
@@ -255,7 +255,7 @@ if isfield(extra, 'status')             %% status found in extra.status
 else                                    %% status found in errnum
     output.errnum = [];
     output.status = errnum;
-    if have_fcn('octave')
+    if have_feature('octave')
         if errnum == 180 || errnum == 151 || errnum == 171
             eflag = 1;
         else
@@ -322,7 +322,7 @@ if mi && eflag == 1 && (~isfield(opt, 'skip_prices') || ~opt.skip_prices)
     x0 = x;
     opt.glpk_opt.lpsolver = 1;      %% simplex
     opt.glpk_opt.dual = 0;          %% primal simplex
-    if have_fcn('octave') && have_fcn('octave', 'vnum') >= 3.007
+    if have_feature('octave') && have_feature('octave', 'vnum') >= 3.007
         opt.glpk_opt.dual = 1;      %% primal simplex
     end
     

@@ -114,7 +114,7 @@ function [x, f, eflag, output, lambda] = miqps_mosek(H, c, A, l, u, xmin, xmax, 
 %   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 %% check for Optimization Toolbox
-% if ~have_fcn('mosek')
+% if ~have_feature('mosek')
 %     error('miqps_mosek: requires MOSEK');
 % end
 
@@ -246,7 +246,7 @@ else
     unconstrained = 0;
 end
 sc = mosek_symbcon;
-s = have_fcn('mosek', 'all');
+s = have_feature('mosek', 'all');
 if isfield(prob, 'ints') && isfield(prob.ints, 'sub') && ~isempty(prob.ints.sub)
     mi = 1;
     if s.vnum >= 8
@@ -308,7 +308,7 @@ if verbose
     if mi
         lpqp = ['MI' lpqp];
     end
-    vn = have_fcn('mosek', 'vstr');
+    vn = have_feature('mosek', 'vstr');
     if isempty(vn)
         vn = '<unknown>';
     end

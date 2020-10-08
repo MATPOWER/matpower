@@ -29,11 +29,13 @@ if nargin < 3
     N = obj.(set_type).N;
 else
     if isfield(obj.(set_type).idx.N, name)
-        if nargin < 4
-            idx = {};
+        if nargin < 4 || isempty(idx)
+            N = obj.(set_type).idx.N.(name);
+        else
+            % s1 = substruct('.', name, '()', idx);
+            sn = struct('type', {'.', '()'}, 'subs', {name, idx});  %% num array field
+            N = subsref(obj.(set_type).idx.N, sn);
         end
-        s1 = substruct('.', name, '()', idx);
-        N = subsref(obj.(set_type).idx.N, s1);
     else
         N = 0;
     end

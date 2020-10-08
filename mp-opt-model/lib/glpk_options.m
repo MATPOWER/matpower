@@ -55,7 +55,6 @@ function opt = glpk_options(overrides, mpopt)
 %
 %   or by typing 'help glpk'.
 %
-%
 %   See also GLPK, MPOPTION.
 
 %   MP-Opt-Model

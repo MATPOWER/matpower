@@ -61,10 +61,19 @@ else
     v0 = []; vl = []; vu = []; vt = [];
     if nargs >= 1
         v0 = args{1};
+        if N > 1 && length(v0) == 1         %% expand from scalar as needed
+            v0 = v0 * ones(N, 1);
+        end
         if nargs >= 2
             vl = args{2};
+            if N > 1 && length(vl) == 1     %% expand from scalar as needed
+                vl = vl * ones(N, 1);
+            end
             if nargs >= 3
                 vu = args{3};
+                if N > 1 && length(vu) == 1 %% expand from scalar as needed
+                    vu = vu * ones(N, 1);
+                end
                 if nargs >= 4
                     vt = args{4};
                 end

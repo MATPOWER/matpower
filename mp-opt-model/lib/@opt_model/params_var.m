@@ -80,7 +80,7 @@ if nargin < 2
     end
 else
     if isfield(om.var.idx.N, name)
-        if nargin < 3
+        if nargin < 3 || isempty(idx)
             v0 = om.var.data.v0.(name);
             vl = om.var.data.vl.(name);
             vu = om.var.data.vu.(name);

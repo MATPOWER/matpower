@@ -32,7 +32,7 @@ fprintf('  userdata = ');
 if ~isempty(om.userdata)
     fprintf('\n');
 end
-if have_fcn('octave')
+if have_feature('octave')
     fprintf('    <scalar struct>\n');
 else
     display(om.userdata);

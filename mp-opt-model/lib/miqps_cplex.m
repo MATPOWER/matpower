@@ -113,7 +113,7 @@ function [x, f, eflag, output, lambda] = miqps_cplex(H, c, A, l, u, xmin, xmax, 
 %   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 %% check for CPLEX
-% if ~have_fcn('cplexqp')
+% if ~have_feature('cplexqp')
 %     error('miqps_cplex: requires the MATLAB interface for CPLEX');
 % end
 
@@ -218,8 +218,8 @@ else
     cplex_opt = cplex_options;
 end
 
-vstr = have_fcn('cplex', 'vstr');
-vnum = have_fcn('cplex', 'vnum');
+vstr = have_feature('cplex', 'vstr');
+vnum = have_feature('cplex', 'vnum');
 vrb = max([0 verbose-1]);
 if vrb && vnum > 12.002 && vnum < 12.007
     cplex_opt.diagnostics   = 'on';

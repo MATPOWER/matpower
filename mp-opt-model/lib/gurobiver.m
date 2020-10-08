@@ -6,7 +6,7 @@ function rv = gurobiver(varargin)
 %   return value prints the version and release date of the current
 %   installation of GUROBI.
 %
-%   See also MPVER.
+%   See also MPVER, GUROBI.
 
 %   MP-Opt-Model
 %   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
@@ -16,7 +16,7 @@ function rv = gurobiver(varargin)
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See https://github.com/MATPOWER/mp-opt-model for more info.
 
-g = have_fcn('gurobi', 'all');
+g = have_feature('gurobi', 'all');
 if ~g.av
     g.vstr = '<unknown>';
 end
