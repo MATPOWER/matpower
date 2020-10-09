@@ -6,6 +6,7 @@ contain summaries of the primary changes in each versioned release.
 
 For change history for [MP-Test][1], see [mptest/CHANGES.md](mptest/CHANGES.md).  
 For change history for [MIPS][2], see [mips/CHANGES.md](mips/CHANGES.md).  
+For change history for [MP-Opt-Model][27], see [mp-opt-model/CHANGES.md](mp-opt-model/CHANGES.md).  
 For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 
 
