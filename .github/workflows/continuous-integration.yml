@@ -28,13 +28,13 @@ jobs:
       run: |
         sudo apt-get install -y -qq coinor-libipopt-dev liboctave-dev octave
         octave-cli --no-gui --eval ver
-        echo "::set-env name=OCTAVE_VER::`octave-cli --no-gui --eval "fprintf('%s', ver('octave').Version)"`"
+        echo "OCTAVE_VER=`octave-cli --no-gui --eval "fprintf('%s', ver('octave').Version)"`" >> $GITHUB_ENV
     - name: Install GNU Octave (Mac)
       if: startsWith(matrix.os, 'macos')
       run: |
         brew install octave
         octave-cli --no-gui --eval ver
-        echo "::set-env name=OCTAVE_VER::`octave-cli --no-gui --eval "fprintf('%s', ver('octave').Version)"`"
+        echo "OCTAVE_VER=`octave-cli --no-gui --eval "fprintf('%s', ver('octave').Version)"`" >> $GITHUB_ENV
     - name: Build OSQP
       run: |
         mkdir $HOME/build
@@ -52,7 +52,7 @@ jobs:
         cd $HOME/build/osqp-matlab
         octave-cli --no-gui --eval "mex -I$HOME/install/include/osqp  -I$HOME/install/include/qdldl -I$HOME/build/osqp/lin_sys/direct/qdldl osqp_mex.cpp $HOME/install/lib/libosqp.a"
         ls -al
-        echo "::set-env name=OSQP_PATH::$HOME/build/osqp-matlab"
+        echo "OSQP_PATH=$HOME/build/osqp-matlab" >> $GITHUB_ENV
     - name: Build IPOPT from source (Mac)
       if: startsWith(matrix.os, 'macos')
       run: |
@@ -77,7 +77,7 @@ jobs:
         octave-cli --no-gui --eval "addpath('$HOME/build/ipopt'); savepath"
     - name: Fix OSQP for Octave < 5.x (Linux)
       if: startsWith(matrix.os, 'ubuntu')
-      run: echo "::set-env name=OSQP_PATH::${GITHUB_WORKSPACE}/mp-opt-model/.github/osqp:${HOME}/build/osqp-matlab"
+      run: echo "OSQP_PATH=${GITHUB_WORKSPACE}/mp-opt-model/.github/osqp:${HOME}/build/osqp-matlab" >> $GITHUB_ENV
     - name: Install OSQP Octave interface
       run: octave-cli --no-gui --eval "addpath('${OSQP_PATH}'); savepath"
     - name: Install MATPOWER
