@@ -272,7 +272,7 @@
 %\title{\hl{--- DRAFT  ---}\\\hl{\em do not distribute}\\~\\\matpower{} \mpver{}\\User's Manual}
 \title{User's Manual}
 \author{Ray~D.~Zimmerman \and Carlos~E.~Murillo-S\'anchez}
-\date{October 8, 2020} % comment this line to display the current date
+%\date{October 8, 2020} % comment this line to display the current date
 %\date{December 14, 2011\thanks{Second revision. First revision was December 13, 2011}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
@@ -619,7 +619,7 @@ Installation and use of \matpower{} requires familiarity with the basic operatio
     directory (the one containing \code{install\_matpower.m}).
     The files in \mppath{} should not need to be modified, so it
     is recommended that they be kept separate from your own code.
-% \item Add the following directories to your \matlab{} path:
+% \item Add the following directories to your \matlab{}/Octave path:
 % \begin{itemize}
 % \item \mppath{/lib} -- core \matpower{} functions
 % \item \mppath{/lib/t} -- test scripts for \matpower{}
@@ -737,7 +737,7 @@ The structure of the \matpower{} case data is described a bit further in Section
 
 \subsubsection{Solving the Case}
 
-The solver is invoked by calling one of the main simulation functions, such as \code{runpf} or \code{runopf}, passing in a case file name or a case struct as the first argument. For example, to run a simple Newton power flow with default options on the 9-bus system defined in \code{case9.m}, at the \matlab{} prompt, type:
+The solver is invoked by calling one of the main simulation functions, such as \code{runpf} or \code{runopf}, passing in a case file name or a case struct as the first argument. For example, to run a simple Newton power flow with default options on the 9-bus system defined in \code{case9.m}, at the \matlab{}/Octave prompt, type:
 
 \begin{Code}
 >> runpf('case9');
@@ -3769,7 +3769,7 @@ This section describes a number of additional \matpower{} functions that users m
   mpc = loadcase(casefile)
 \end{Code}
 
-The \code{loadcase} function provides the canonical way of loading a \matpower{} case from a file or struct. It takes as input either a struct or the name of an M-file or MAT-file in the \matlab{} path (\code{casefile}) and returns a standard \matpower{} case struct (\mpc{}). It can also convert from the older version 1 case file format to the current format. This function allows a case to be loaded, and potentially modified, before calling one of the main simulation functions such as \code{runpf} or \code{runopf}.
+The \code{loadcase} function provides the canonical way of loading a \matpower{} case from a file or struct. It takes as input either a struct or the name of an M-file or MAT-file in the \matlab{}/Octave path (\code{casefile}) and returns a standard \matpower{} case struct (\mpc{}). It can also convert from the older version 1 case file format to the current format. This function allows a case to be loaded, and potentially modified, before calling one of the main simulation functions such as \code{runpf} or \code{runopf}.
 
 \subsubsection{\tt savecase}
 
@@ -3979,7 +3979,7 @@ The \code{apply\_changes} function implements a general mechanism to apply a set
 
 The \emph{change table} matrix, \code{chgtab}, specifies modifications to be applied to an existing case. These modifications are grouped into sets, designated \emph{change sets}, that are always applied as a group. A change set consists of one or more changes, each specified in a separate row in the \code{chgtab}, where the rows share a common \code{label} (integer ID).
 
-For example, $n_c$ change sets can be used to define $n_c$ contingencies via a single \code{chgtab} with many rows, but only $n_c$ unique labels. The \code{chgtab} also optionally specifies a probability $\pi_k$ of occurance associated with change set $k$. Table~\ref{tab:chgtab} summarizes the meaning of the data in each column of \code{chgtab}. All of the names referenced in Tables~\ref{tab:chgtab} through \ref{tab:ctcol} are defined as constants by the \code{idx\_ct} function. Type \code{help idx\_ct} at the \matlab{} prompt for more details. Use of the named constants when constructing a \code{chgtab} matrix is encouraged to improve readability.
+For example, $n_c$ change sets can be used to define $n_c$ contingencies via a single \code{chgtab} with many rows, but only $n_c$ unique labels. The \code{chgtab} also optionally specifies a probability $\pi_k$ of occurance associated with change set $k$. Table~\ref{tab:chgtab} summarizes the meaning of the data in each column of \code{chgtab}. All of the names referenced in Tables~\ref{tab:chgtab} through \ref{tab:ctcol} are defined as constants by the \code{idx\_ct} function. Type \code{help idx\_ct} at the \matlab{}/Octave prompt for more details. Use of the named constants when constructing a \code{chgtab} matrix is encouraged to improve readability.
 
 \begin{table}[!ht]
 %\renewcommand{\arraystretch}{1.2}
@@ -4290,7 +4290,7 @@ Specifically, it includes all of the constants defined by \code{idx\_bus},  \cod
   [y1, ..., yn] = feval_w_path(fpath, f, x1, ..., xn)
 \end{Code}
 
-The \code{feval\_w\_path} function is identical to \matlab{}'s own \code{feval}, except that the function \code{f} need not be in the \matlab{} path if it is defined in a file in the path specified by \code{fpath}. Assumes that the current working directory is always first in the \matlab{} path.
+The \code{feval\_w\_path} function is identical to \matlab{}'s own \code{feval}, except that the function \code{f} need not be in the \matlab{}/Octave path if it is defined in a file in the path specified by \code{fpath}. Assumes that the current working directory is always first in the \matlab{}/Octave path.
 
 \subsubsection{\tt have\_fcn}
 
@@ -4415,7 +4415,7 @@ In the version~2 format, the input data for \matpower{} are specified in a set o
 
 Numerous examples can be found in the case files listed in Table~\ref{tab:casefiles} in Appendix~\ref{app:functions}. The case files created by \code{savecase} use a tab-delimited format for the data matrices to make it simple to transfer data seamlessly back and forth between a text editor and a spreadsheet via simple copy and paste.
 
-The details of the \matpower{} case format are given in the tables below and can also be accessed by typing \code{help caseformat} at the \matlab{} prompt. First, the \baseMVA{} field is a simple scalar value specifying the system MVA base used for converting power into per unit quantities. For convenience and code portability, \code{idx\_bus} defines a set of constants to be used as named indices into the columns of the \bus{} matrix. Similarly, \code{idx\_brch}, \code{idx\_gen} and \code{idx\_cost} define names for the columns of \branch{}, \gen{} and \gencost{}, respectively. The script \code{define\_constants} provides a simple way to define all the usual constants at one shot. These are the names that appear in the first column of the tables below.
+The details of the \matpower{} case format are given in the tables below and can also be accessed by typing \code{help caseformat} at the \matlab{}/Octave prompt. First, the \baseMVA{} field is a simple scalar value specifying the system MVA base used for converting power into per unit quantities. For convenience and code portability, \code{idx\_bus} defines a set of constants to be used as named indices into the columns of the \bus{} matrix. Similarly, \code{idx\_brch}, \code{idx\_gen} and \code{idx\_cost} define names for the columns of \branch{}, \gen{} and \gencost{}, respectively. The script \code{define\_constants} provides a simple way to define all the usual constants at one shot. These are the names that appear in the first column of the tables below.
 
 \pagebreak
 The \matpower{} case format also allows for additional fields to be included in the structure. The OPF is designed to recognize fields named \code{A}, \code{l}, \code{u}, \code{H}, \code{Cw}, \code{N}, \code{fparm}, \code{z0}, \code{zl} and \code{zu} as parameters used to directly extend the OPF formulation as described in Section~\ref{sec:extend_direct}. Additional standard optional fields include \code{bus\_name}, \code{gentype} and \code{genfuel}.\footnote{All three of these are cell arrays of strings. See \code{gentypes} and \code{genfuels} for more information on the corresponding fields.} Other user-defined fields may also be included, such as the \code{reserves} field used in the example code throughout Section~\ref{sec:extend_callback_ex}. The \code{loadcase} function will automatically load any extra fields from a case file and, if the appropriate \codeq{savecase} callback function (see Section~\ref{sec:savecase_callback}) is added via \code{add\_userfcn}, \code{savecase} will also save them back to a case file.
@@ -5655,7 +5655,7 @@ provides, with the exception of those in the \code{extras} directory
 found in a \matlab{} M-file of the same name in the \code{lib}
 directory of the distribution, where the \code{.m} extension is
 omitted from this listing. For more information on each, at the
-\matlab{} prompt, simply type \code{help} followed by the name of
+\matlab{}/Octave prompt, simply type \code{help} followed by the name of
 the function. For documentation and data files, the filename
 extensions are included.
 
@@ -6208,7 +6208,7 @@ name & description \\
 \code{compare\_case}	& prints summary of differences between two \matpower{} cases	\\
 \code{define\_constants}	& convenience script defines constants for named column indices to data matrices (calls \code{idx\_bus}, \code{idx\_brch}, \code{idx\_gen} and \code{idx\_cost})	\\
 \code{extract\_islands}	& extracts islands in a network into their own \matpower{} case struct	\\
-\code{feval\_w\_path}	& same as \matlab{}'s \code{feval} function, except the function being evaluated need not be in the \matlab{} path	\\
+\code{feval\_w\_path}	& same as \matlab{}'s \code{feval} function, except the function being evaluated need not be in the \matlab{}/Octave path	\\
 \code{find\_islands}	& finds islands and isolated buses in a network	\\
 \code{genfuels}	& list of standard values for generator fuel types, for \code{mpc.genfuel}	\\
 \code{gentypes}	& list of standard values for generator unit types, for \code{mpc.gentype}	\\
@@ -7103,7 +7103,7 @@ name & description \\
 \section{Optional Packages}
 \label{app:optional_packages}
 
-There are a number of optional packages, not included in the \matpower{} distribution, that \matpower{} can utilize if they are installed in your \matlab{} path. Each of them is based on one or more MEX files pre-compiled for various platforms, some distributed by \pserc{}, others available from third parties, and each with their own terms of use.
+There are a number of optional packages, not included in the \matpower{} distribution, that \matpower{} can utilize if they are installed in your \matlab{}/Octave path. Each of them is based on one or more MEX files pre-compiled for various platforms, some distributed by \pserc{}, others available from third parties, and each with their own terms of use.
 
 \subsection{BPMPD\_MEX -- MEX interface for BPMPD}
 \label{app:bpmpd}
@@ -7736,7 +7736,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-6.0.pdf}{\matpower{} 6.0 Use
 \item New functions:
     \begin{itemize}
     \item \code{apply\_changes()} and \code{idx\_ct()} provide a general mechanism for applying modifications to an existing \matpower{} case.
-    \item \code{feval\_w\_path()} evaluates a function located at a specified path, outside of the \matlab{} path.
+    \item \code{feval\_w\_path()} evaluates a function located at a specified path, outside of the \matlab{}/Octave path.
     \item \code{mpopt2qpopt()} provides a common interface for creating options struct for \code{mi/qps\_matpower()} from a \matpower{} options struct.
     \end{itemize}
 \item New function options:

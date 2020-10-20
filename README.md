@@ -181,7 +181,7 @@ Previous versions are also available at
 #### Built-in Help
 
 Each M-file has its own documentation which can be accessed by typing at
-the MATLAB prompt:
+the MATLAB/Octave prompt:
 
     help <name of M-file>
 
