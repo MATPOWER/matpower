@@ -9,13 +9,13 @@ addons:
     packages:
     - coinor-libipopt-dev
     - liboctave-dev
-    - octave        # octave 4.2.2
+    - octave        # xenial=octave 4.0.0 (4.2.2 w/ppa), focal=octave 5.2.0
     update: true
   homebrew:
     packages:
     - bash
     - gcc
-    - octave        # octave 5.1.0
+    - octave        # octave 5.2.0
     - wget
     update: true
 os:

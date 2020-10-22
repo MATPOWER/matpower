@@ -6,7 +6,8 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-16.04]
+#        os: [macos-10.15, macos-11.0, ubuntu-16.04, ubuntu-18.04, ubuntu-20.04]
+        os: [macos-latest, ubuntu-16.04, ubuntu-18.04, ubuntu-20.04]
 
     runs-on: ${{ matrix.os }}
 
@@ -14,9 +15,7 @@ jobs:
     - uses: actions/checkout@v1
     - name: Initialize Package Manager (Linux)
       if: startsWith(matrix.os, 'ubuntu')
-      run: |
-        sudo add-apt-repository ppa:octave/stable
-        sudo apt-get update -qq
+      run: sudo apt-get update -qq
     - name: Initialize Package Manager (Mac)
       if: startsWith(matrix.os, 'macos')
       run: |
@@ -37,7 +36,14 @@ jobs:
         brew install octave
         octave-cli --no-gui --eval ver
         echo "OCTAVE_VER=`octave-cli --no-gui --eval "fprintf('%s', ver('octave').Version)"`" >> $GITHUB_ENV
+    - name: Include IPOPT?
+      if: startsWith(env.OCTAVE_VER, '4.0') != 1
+      run: echo "INCLUDE_IPOPT=1" >> $GITHUB_ENV
+    - name: Include OSQP?
+      if: startsWith(env.OCTAVE_VER, '4.0') != 1
+      run: echo "INCLUDE_OSQP=1" >> $GITHUB_ENV
     - name: Build OSQP
+      if: env.INCLUDE_OSQP
       run: |
         mkdir $HOME/build
         cd $HOME/build
@@ -56,7 +62,7 @@ jobs:
         ls -al
         echo "OSQP_PATH=$HOME/build/osqp-matlab" >> $GITHUB_ENV
     - name: Build IPOPT from source (Mac)
-      if: startsWith(matrix.os, 'macos')
+      if: startsWith(matrix.os, 'macos') && env.INCLUDE_IPOPT
       run: |
         git clone https://www.github.com/coin-or/coinbrew
         cd coinbrew
@@ -64,6 +70,7 @@ jobs:
         ./coinbrew build Ipopt --prefix=$HOME/install --test --no-prompt
         ./coinbrew install Ipopt
     - name: Build IPOPT MEX interface
+      if: env.INCLUDE_IPOPT
       env:
         IPOPT_VER: 3.11.9
       run: |
@@ -74,27 +81,33 @@ jobs:
         make -C $HOME/build/ipopt/src
         mv $HOME/build/ipopt/src/*.mex $HOME/build/ipopt/
     - name: Install IPOPT Octave interface
-      run: |
-        octave-cli --no-gui --eval ver
-        octave-cli --no-gui --eval "addpath('$HOME/build/ipopt'); savepath"
+      if: env.INCLUDE_IPOPT
+      run: octave-cli --no-gui --eval "addpath('$HOME/build/ipopt'); savepath"
     - name: Fix OSQP for Octave < 5.x (Linux)
-      if: startsWith(matrix.os, 'ubuntu')
+      if: startsWith(matrix.os, 'ubuntu') && env.INCLUDE_OSQP
       run: echo "OSQP_PATH=${GITHUB_WORKSPACE}/mp-opt-model/.github/osqp:${HOME}/build/osqp-matlab" >> $GITHUB_ENV
     - name: Install OSQP Octave interface
+      if: env.INCLUDE_OSQP
       run: octave-cli --no-gui --eval "addpath('${OSQP_PATH}'); savepath"
     - name: Install MATPOWER
       run: |
         octave-cli --no-gui --eval ver
         octave-cli --no-gui --eval "install_matpower(1,1,1)"
         octave-cli --no-gui --eval mpver
-    - name: Print GLPK/IPOPT version numbers
-      run: |
+    - name: Test GLPK availability, print version number
+      run:  |
+        octave-cli --no-gui --eval "if ~have_feature('glpk'), exit(1); end"
         octave-cli --no-gui --eval "qps_glpk( [],[1; 1],[1 1],[2],[2],[1; 1],[1; 1],[1; 1],struct('verbose', 3));"
-        octave-cli --no-gui --eval "qps_ipopt([],[1; 1],[1 1],[2],[2],[1; 1],[1; 1],[1; 1],struct('verbose', 2));"
-    - name: Test for successful Ipopt/OSQP installs
-      run: |
+    - name: Test IPOPT availability, print version number
+      if: env.INCLUDE_IPOPT
+      run:  |
         octave-cli --no-gui --eval "if ~have_feature('ipopt'), exit(1); end"
+        octave-cli --no-gui --eval "qps_ipopt([],[1; 1],[1 1],[2],[2],[1; 1],[1; 1],[1; 1],struct('verbose', 2));"
+    - name: Test OSQP availability, print version number
+      if: env.INCLUDE_OSQP
+      run:  |
         octave-cli --no-gui --eval "if ~have_feature('osqp'), exit(1); end"
+        octave-cli --no-gui --eval osqpver
     - name: Test MP-Test
       run: octave-cli --no-gui --eval "test_mptest(0,1)"
     - name: Test MIPS
