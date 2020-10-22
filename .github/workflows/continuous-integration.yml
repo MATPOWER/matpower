@@ -20,6 +20,8 @@ jobs:
     - name: Initialize Package Manager (Mac)
       if: startsWith(matrix.os, 'macos')
       run: |
+        brew untap local/homebrew-openssl  # workaround for https://github.com/actions/virtual-environments/issues/1811
+        brew untap local/homebrew-python2  # workaround for https://github.com/actions/virtual-environments/issues/1811
         brew update
         brew install bash
         brew install pkg-config
