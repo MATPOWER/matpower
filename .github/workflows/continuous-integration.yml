@@ -16,13 +16,14 @@ jobs:
     - name: Initialize Package Manager (Linux)
       if: startsWith(matrix.os, 'ubuntu')
       run: sudo apt-get update -qq
-    - name: Initialize Package Manager (Mac)
+#     - name: Initialize Package Manager (Mac)
+#       if: startsWith(matrix.os, 'macos')
+#       # As of 10/28/20 'brew update' is causing 'brew install octave' to fail,
+#       # see https://github.com/actions/virtual-environments/issues/1926
+#       run: brew update
+    - name: Install bash (Mac)
       if: startsWith(matrix.os, 'macos')
-      # As of 10/28/20 'brew update' is causing 'brew install octave' to fail,
-      # see https://github.com/actions/virtual-environments/issues/1926
-      run: |
-        brew install bash
-        brew install pkg-config
+      run: brew install bash
     - name: Install GNU Octave / IPOPT (Linux)
       if: startsWith(matrix.os, 'ubuntu')
       run: |
