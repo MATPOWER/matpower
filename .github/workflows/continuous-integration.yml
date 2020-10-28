@@ -18,10 +18,9 @@ jobs:
       run: sudo apt-get update -qq
     - name: Initialize Package Manager (Mac)
       if: startsWith(matrix.os, 'macos')
+      # As of 10/28/20 'brew update' is causing 'brew install octave' to fail,
+      # see https://github.com/actions/virtual-environments/issues/1926
       run: |
-        brew untap local/homebrew-openssl  # workaround for https://github.com/actions/virtual-environments/issues/1811
-        brew untap local/homebrew-python2  # workaround for https://github.com/actions/virtual-environments/issues/1811
-        brew update
         brew install bash
         brew install pkg-config
     - name: Install GNU Octave / IPOPT (Linux)
