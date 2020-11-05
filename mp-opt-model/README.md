@@ -29,7 +29,7 @@ and MP-Test, are included when you install [MATPOWER][2]. There is generally
 no need to install it separately. You can skip directly to step 3 to verify._
 
 Installation and use of MP-Opt-Model requires familiarity with the basic operation
-of MATLAB or Octave, including setting up your MATLAB path.
+of MATLAB or Octave, including setting up your MATLAB/Octave path.
 
 1.  Clone the repository or download and extract the zip file of the MP-Opt-Model
     distribution from the [MP-Opt-Model project page][1] to the location of your

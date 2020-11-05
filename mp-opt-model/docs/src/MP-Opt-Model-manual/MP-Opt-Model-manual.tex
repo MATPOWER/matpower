@@ -242,7 +242,7 @@
 %\title{\hl{--- DRAFT  ---}\\\hl{\em do not distribute}\\~\\{\huge \bfseries \mpomname{} User's Manual } \\ ~ \\ \LARGE Version \mpomver{}\\
 \title{{\huge \bfseries \mpomname{} User's Manual } \\ ~ \\ \LARGE Version \mpomver{}}
 \author{Ray~D.~Zimmerman}
-\date{October 8, 2020} % comment this line to display the current date
+%\date{October 8, 2020} % comment this line to display the current date
 %\date{May 8, 2020\thanks{Second revision. First revision was April 29, 2020}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
@@ -391,7 +391,7 @@ In this manual, references to \matlab{} usually apply to Octave as well.
 
 ~
 
-Installation and use of \mpom{} requires familiarity with the basic operation of \matlab{} or Octave, including setting up your \matlab{} path.
+Installation and use of \mpom{} requires familiarity with the basic operation of \matlab{} or Octave, including setting up your \matlab{}/Octave path.
 
 \begin{enumerate}[\bfseries Step 1:] % requires package paralist
 \item Clone the repository or download and extract the zip file of the \mpom{} distribution from the \href{\mpomurl{}}{\mpom{} project page}\footnote{\url{\mpomurl}} to the location of your choice. The files in the resulting \code{mp-opt-model} or \code{mp-opt-modelXXX} directory, where \code{XXX} depends on the version of \mpom{}, should not need to be modified, so it is recommended that they be kept separate from your own code.
@@ -402,7 +402,7 @@ We will use \mpompath{} to denote the path to this directory.
 \item \mpompath{/lib} -- core \mpom{} functions
 \item \mpompath{/lib/t} -- test scripts for \mpom{}
 \end{itemize}
-\item At the \matlab{} prompt, type \code{test\_mp\_opt\_model} to run the test suite and verify that \mpom{} is properly installed and functioning.\footnote{The tests require functioning installations of \mptestlink{} and \mipslink{}.} The result should resemble the following:
+\item At the \matlab{}/Octave prompt, type \code{test\_mp\_opt\_model} to run the test suite and verify that \mpom{} is properly installed and functioning.\footnote{The tests require functioning installations of \mptestlink{} and \mipslink{}.} The result should resemble the following:
 %\clearpage
 %--LATER--
 %\\\hl{re-do before release (run on fastest machine available)}
@@ -3430,7 +3430,7 @@ name & description \\
 \section{Optional Packages}
 \label{app:optional_packages}
 
-There are a number of optional packages, not included in the \mpom{} distribution, that \mpom{} can utilize if they are installed in your \matlab{} path.
+There are a number of optional packages, not included in the \mpom{} distribution, that \mpom{} can utilize if they are installed in your \matlab{}/Octave path.
 
 \subsection{BPMPD\_MEX -- MEX interface for BPMPD}
 \label{app:bpmpd}
@@ -3762,7 +3762,7 @@ R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez, and R.~J. Thomas, ``\matpower{}: Ste
 \doi{10.1109/TPWRS.2010.2051168}
 
 \bibitem{matpower}
-R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2019). \matpower{}\\~
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2020). \matpower{}\\~
 [Software]. Available: \url{https://matpower.org}\\
 \doi{10.5281/zenodo.3236535}
 
