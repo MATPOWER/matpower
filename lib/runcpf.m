@@ -462,7 +462,7 @@ if ~done.flag
         end
         nx.z = cpf_tangent(nx.V, nx.lam, Ybus, cb_data.Sbusb, cb_data.Sbust, ...
                             cb_data.pv, cb_data.pq, ...
-                            cx.z, tx.V, tx.lam, nx.parm, direction);
+                            tx.z, tx.V, tx.lam, nx.parm, direction);
 
         %% detect events
         for k = 1:nef
@@ -532,7 +532,7 @@ if ~done.flag
                 mpce = cpf_current_mpc(cb_data.mpc_base, cb_data.mpc_target, Ybus, Yf, Yt, cb_data.ref, cb_data.pv, cb_data.pq, nx.V, nx.lam, mpopt);
                 J = makeJac(mpce);
                 opts.tol = 1e-3;
-                opts.it = 2*nb;
+                opts.maxit = 2*nb;
                 %% retain original direction for buses with negative V-Q
                 %% sensitivity, otherwise change direction based on tangent
                 %% direction and manifold (eigenvalue)
