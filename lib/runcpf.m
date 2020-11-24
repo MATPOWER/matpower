@@ -181,6 +181,15 @@ plim        = mpopt.cpf.enforce_p_lims;    %% enforce active limits
 vlim        = mpopt.cpf.enforce_v_lims;    %% enforce voltage magnitude limits
 flim        = mpopt.cpf.enforce_flow_lims; %% enforce branch flow limits
 
+default_to_mpe = have_feature('mp_element');
+    %% if 0, requires mpopt.exp.mpe = 1 to enable mp_element version
+    %% if 1; requires mpopt.exp.mpe = 0 to disable mp_element version
+use_mpe = 0;
+if (  default_to_mpe && ~(isfield(mpopt.exp, 'mpe') && mpopt.exp.mpe == 0) ) || ...
+   ( ~default_to_mpe &&   isfield(mpopt.exp, 'mpe') && mpopt.exp.mpe == 1  )
+    use_mpe = 1;
+end
+
 %% register event functions (for event detection)
 %% and CPF callback functions (for event handling and other tasks)
 cpf_events = [];
@@ -362,6 +371,50 @@ if ~done.flag
 
     %% build admittance matrices
     [Ybus, Yf, Yt] = makeYbus(mpcb.baseMVA, mpcb.bus, mpcb.branch);
+
+    if use_mpe
+        nm = mpe_network_acps().create_model(mpcb, mpopt);
+        [v_, success, i, om, out] = nm.solve_cpf(mpcb, mpct, mpopt);
+        lam = out.cont.x(end, end);
+
+        %% update bus and gen matrices to reflect the loading and generation
+        mpc = mpcb;
+        mpc.bus(:, PD) = mpc.bus(:, PD) + lam * (mpct.bus(:, PD) - mpc.bus(:, PD));
+        mpc.bus(:, QD) = mpc.bus(:, QD) + lam * (mpct.bus(:, QD) - mpc.bus(:, QD));
+        mpc.gen(:, PG) = mpc.gen(:, PG) + lam * (mpct.gen(:, PG) - mpc.gen(:, PG));
+
+        %% update data matrices with solution
+        [mpc.bus, mpc.gen, mpc.branch] = pfsoln(mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch, Ybus, Yf, Yt, v_, ref, pv, pq, mpopt);
+        mpct = mpc;
+        mpct.et = toc(t0);
+        mpct.success = success;
+
+        % convert x_hat, x to V_hat, lam_hat, V, lam
+        n = size(out.cont.x, 2);
+        cpf_results = out.cont;
+        V = v_ * ones(1, n);
+        Va = angle(V);
+        Vm = abs(V);
+        Va_hat = Va;
+        Vm_hat = Vm;
+        npv = length(pv);
+        npq = length(pq);
+        Va([pv;pq], :)  = out.cont.x(1:npv+npq, :);
+        Vm(pq, :)       = out.cont.x(npv+npq+1:end-1, :);
+        Va_hat([pv;pq], :)  = out.cont.x_hat(1:npv+npq, :);
+        Vm_hat(pq, :)       = out.cont.x_hat(npv+npq+1:end-1, :);
+        cpf_results.V       = Vm .* exp(1j * Va);
+        cpf_results.V_hat   = Vm_hat .* exp(1j * Va_hat);
+        cpf_results.lam     = out.cont.x(end, :);
+        cpf_results.lam_hat = out.cont.x_hat(end, :);
+        done.msg = out.cont.done_msg;
+        if regexp(done.msg, 'base and target functions are identical')
+            done.msg = 'Base case and target case have identical load and generation';
+        elseif regexp(done.msg, 'Reached limit in \d+ continuation steps, lambda = .*\.')
+            n = regexp(done.msg, 'Reached limit in (?<steps>\d+) continuation steps, lambda = (?<lam>.*)\.', 'names');
+            done.msg = sprintf('Reached steady state loading limit in %s continuation steps, lambda = %s.', n.steps, n.lam);
+        end
+    else
 
     %% functions for computing base and target case V-dependent complex bus
     %% power injections: (generation - load)
@@ -648,6 +701,7 @@ if ~done.flag
     mpct = cpf_current_mpc(cb_data.mpc_base, cb_data.mpc_target, Ybus, Yf, Yt, cb_data.ref, cb_data.pv, cb_data.pq, cx.V, cx.lam, mpopt);
     mpct.et = toc(t0);
     mpct.success = success;
+    end     %% if use_mpe
 
     %%-----  output results  -----
     %% convert back to original bus numbering & print results
