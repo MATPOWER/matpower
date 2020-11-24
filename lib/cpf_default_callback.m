@@ -140,7 +140,7 @@ if k == 0       %% INITIAL call
                     'iterations', 0     );
     nxx = cxx;
     cx.cb.default = cxx;    %% update current callback state
-    nx.cb.default = nxx;    %% updatenext callback state
+    nx.cb.default = nxx;    %% update next callback state
 else
     nxx = nx.cb.default;    %% get next callback state
     if k > 0    %% ITERATION call

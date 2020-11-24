@@ -87,7 +87,7 @@ if ~event_detected && ~rollback
             nx.this_step = nx.lam;
             nx.this_parm = 1;       %% change to natural parameterization
             if verbose > 2
-                fprintf('  step %d expected to overshoot full trace, reduce step size and set natural param\n', k+1);
+                fprintf('  step %d prediction to overshoot full trace, set next step to natural param w/reduced size\n', k+1);
             end
         end
     elseif stop_at > 0      %% target lambda value
@@ -95,7 +95,7 @@ if ~event_detected && ~rollback
             nx.this_step = stop_at - nx.lam;
             nx.this_parm = 1;       %% change to natural parameterization
             if verbose > 2
-                fprintf('  step %d expected to overshoot target lambda, reduce step size and set natural param\n', k+1);
+                fprintf('  step %d prediction to overshoot target lambda, set next step to natural param w/reduced size\n', k+1);
             end
         end
     end
