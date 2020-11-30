@@ -61,7 +61,7 @@ if isstruct(i2e)
                 if nargin < 2
                     mpopt = struct();
                 else
-                    mpopt = gen;
+                    mpopt = bus;
                 end
                 mpc = run_userfcn(mpc.userfcn, 'int2ext', mpc, mpopt);
             end

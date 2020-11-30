@@ -10,6 +10,14 @@ For change history for [MP-Opt-Model][27], see [mp-opt-model/CHANGES.md](mp-opt-
 For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 
 
+Changes since 7.1
+-----------------
+
+#### 11/30/20
+  - Fix fatal bug in `int2ext()` when called with `mpopt` and an `int2ext`
+    user callback function.
+
+
 Version 7.1 - *Oct 8, 2020*
 ---------------------------
 
