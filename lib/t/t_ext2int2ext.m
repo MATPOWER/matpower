@@ -31,6 +31,8 @@ if have_feature('matlab', 'vnum') < 7.001
     t_skip(num_tests, 'test requires cellfun() construct not available before MATLAB 7.1');
 else
     mpce = loadcase('t_case_ext');
+    mpce = add_userfcn(mpce, 'ext2int', @userfcn_test_ext2int);
+    mpce = add_userfcn(mpce, 'int2ext', @userfcn_test_int2ext);
     mpci = loadcase('t_case_int');
     
     gen_i2e = [1 2 4];
@@ -671,3 +673,7 @@ else
 end
 
 t_end;
+
+function mpc = userfcn_test_ext2int(mpc, mpopt, args)
+
+function results = userfcn_test_int2ext(results, mpopt, args)
