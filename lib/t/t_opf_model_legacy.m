@@ -37,10 +37,12 @@ t_ok(isa(om, 'opt_model'), t);
 t = 'add_vars';
 vN = 0;
 vNS = 0;
+om.init_set_types();
 t_ok(om.getN('var') == vN, sprintf('%s : var.N  = %d', t, vN));
 t_ok(om.get('var', 'NS') == vNS, sprintf('%s : var.NS = %d', t, vNS));
 
 t = 'om.add_vars(''Va'', 4)';
+om = opf_model;
 om.add_vars('Va', 4);
 vNS = vNS + 1; vN = vN + 4;
 t_ok(om.getN('var') == vN, sprintf('%s : var.N  = %d', t, vN));
