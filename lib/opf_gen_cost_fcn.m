@@ -1,6 +1,6 @@
-function [f, df, d2f] = opf_gen_cost_fcn(x, baseMVA, gencost, ig, mpopt)
+function [f, df, d2f] = opf_gen_cost_fcn(x, baseMVA, gencost, ig)
 %OPF_GEN_COST_FCN  Evaluates polynomial generator costs and derivatives.
-%   [F, DF, D2F] = OPF_GEN_COST_FCN(X, BASEMVA, COST, MPOPT)
+%   [F, DF, D2F] = OPF_GEN_COST_FCN(X, BASEMVA, COST)
 %
 %   Evaluates the polynomial generator costs and derivatives.
 %
@@ -19,9 +19,9 @@ function [f, df, d2f] = opf_gen_cost_fcn(x, baseMVA, gencost, ig, mpopt)
 %     D2F : (optional) Hessian of polynomial costs
 %
 %   Examples:
-%       f = opf_gen_cost_fcn(x, baseMVA, gencost, ig, mpopt);
-%       [f, df] = opf_gen_cost_fcn(x, baseMVA, gencost, ig, mpopt);
-%       [f, df, d2f] = opf_gen_cost_fcn(x, baseMVA, gencost, ig, mpopt);
+%       f = opf_gen_cost_fcn(x, baseMVA, gencost, ig);
+%       [f, df] = opf_gen_cost_fcn(x, baseMVA, gencost, ig);
+%       [f, df, d2f] = opf_gen_cost_fcn(x, baseMVA, gencost, ig);
 
 %   MATPOWER
 %   Copyright (c) 1996-2017, Power Systems Engineering Research Center (PSERC)

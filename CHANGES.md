@@ -13,6 +13,10 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.1
 -----------------
 
+#### 12/9/20
+  - **INCOMPATIBLE CHANGE:**  Remove unused `mpopt` argument from
+    `opf_gen_cost_fcn()` inputs.
+
 #### 11/30/20
   - Fix fatal bug in `int2ext()` when called with `mpopt` and an `int2ext`
     user callback function.

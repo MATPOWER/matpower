@@ -338,10 +338,10 @@ else                %% AC model
   
   %% nonlinear cost functions
   if ~isempty(ip3)
-    cost_Pg = @(x)opf_gen_cost_fcn(x, baseMVA, pcost, ip3, mpopt);
+    cost_Pg = @(x)opf_gen_cost_fcn(x, baseMVA, pcost, ip3);
   end
   if ~isempty(qcost) && ~isempty(iq3)
-    cost_Qg = @(x)opf_gen_cost_fcn(x, baseMVA, qcost, iq3, mpopt);
+    cost_Qg = @(x)opf_gen_cost_fcn(x, baseMVA, qcost, iq3);
   end
 end
 
