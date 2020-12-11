@@ -14,7 +14,7 @@ function [TorF, vstr, rdate] = have_feature_mp_element()
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See https://matpower.org for more info.
 
-TorF = exist('mp_element') ~= 0;
+TorF = exist('nm_element') ~= 0;
 v = mpver('all');
 vstr = v.Version;
 rdate = v.Date;
