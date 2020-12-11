@@ -45,8 +45,8 @@ RUN git clone -b ${YALMIP_VER} https://github.com/yalmip/YALMIP.git /opt/yalmip 
 
 # Install Ipopt
 ENV IPOPT_VER=3.11.9
-COPY ./.travis/Makefile /opt
-# RUN curl -SL https://raw.githubusercontent.com/MATPOWER/matpower/master/.travis/Makefile -o /opt/Makefile
+COPY ./mp-opt-model/.github/ipopt/Makefile /opt
+# RUN curl -SL https://raw.githubusercontent.com/MATPOWER/matpower/master/mp-opt-model/.github/ipopt/Makefile -o /opt/Makefile
 RUN curl -SL https://github.com/coin-or/Ipopt/archive/releases/${IPOPT_VER}.tar.gz | tar -xzC /opt && \
     mv /opt/Ipopt-releases-${IPOPT_VER}/Ipopt/contrib/MatlabInterface /opt/ipopt && \
     mv /opt/Makefile /opt/ipopt/src && \
