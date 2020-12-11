@@ -2,6 +2,27 @@ Change history for MP-Opt-Model
 ===============================
 
 
+since last release
+------------------
+
+#### 12/1/20
+  - Move `init_set_types()` call out of `opt_model` constructor to avoid
+    complexity of other workarounds for [bug in Octave 5.2 and earlier][10]
+    related to inheritance of methods called during construction.
+    Now `init_set_types()` is called automatically as needed after
+    object construction and before object use in `add_var()`, `display()`
+    and `init_indexed_name()`.
+
+#### 11/24/20
+  - Add optional threshold for detecting failure of LEQ solve, by setting
+    the `leq_opt.thresh` option. If the absolute value of any element of
+    the solution vector exceeds the threshold, `exitflag` is set to 0,
+    indicating failure.
+
+#### 11/17/20
+  - Fix examples of `om.set_params()` usage in manual and help text.
+
+
 Version 3.0 - *Oct 8, 2020*
 ---------------------------
 
@@ -302,3 +323,4 @@ Version 0.7.0 - *Jun 20, 2019*
 [7]: https://osqp.org
 [8]: https://github.com/MATPOWER/mptest
 [9]: https://github.com/MATPOWER/mips
+[10]: https://savannah.gnu.org/bugs/?52614

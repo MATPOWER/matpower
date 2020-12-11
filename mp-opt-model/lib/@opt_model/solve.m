@@ -4,7 +4,7 @@ function [x, f, eflag, output, lambda] = solve(om, opt)
 %   [X, F] = OM.SOLVE()
 %   [X, F, EXITFLAG] = OM.SOLVE()
 %   [X, F, EXITFLAG, OUTPUT] = OM.SOLVE()
-%   [X, F, EXITFLAG, OUTPUT, JAC] = OM.SOLVE()      (NLEQ problems)
+%   [X, F, EXITFLAG, OUTPUT, JAC] = OM.SOLVE()      (LEQ/NLEQ problems)
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = OM.SOLVE()   (other problem types)
 %   [X ...] = OM.SOLVE(OPT)
 %
@@ -27,6 +27,7 @@ function [x, f, eflag, output, lambda] = solve(om, opt)
 %                   MIQP - Gurobi, CPLEX, MOSEK
 %                   NLP - MIPS
 %                   MINLP - Artelys Knitro (not yet implemented)
+%                   LEQ - built-in backslash operator
 %                   NLEQ - Newton's method
 %               'BPMPD'   : (LP, QP) BPMPD_MEX
 %               'CLP'     : (LP, QP) CLP
@@ -68,8 +69,10 @@ function [x, f, eflag, output, lambda] = solve(om, opt)
 %           intlinprog_opt - options struct for INTLINPROG
 %           ipopt_opt   - options struct for IPOPT
 %           knitro_opt  - options struct for Artelys Knitro
-%           leq_opt     - options struct for MPLINSOLVE, with 'solver' and
-%               'opt' fields corresponding to respective MPLINSOLVE args
+%           leq_opt     - options struct for MPLINSOLVE, with optional fields
+%               'solver' and 'opt' corresponding to respective MPLINSOLVE args,
+%               and 'thresh' specifying a threshold on the absolute value of
+%               any element X, above which EXITFLAG will be set to 0
 %           linprog_opt - options struct for LINPROG
 %           mips_opt    - options struct for MIPS
 %           mosek_opt   - options struct for MOSEK
@@ -130,20 +133,49 @@ switch pt
     case 'MINLP'        %% MINLP - mixed integer non-linear program
         error('@opt_model/solve: not yet implemented for ''MINLP'' problems.')
     case 'LEQ'          %% LEQ   - linear equations
-        if isfield(opt, 'leq_opt') && isfield(opt.leq_opt, 'solver')
-            leq_solver = opt.leq_opt.solver;
+        if isfield(opt, 'leq_opt')
+            if isfield(opt.leq_opt, 'solver')
+                leq_solver = opt.leq_opt.solver;
+            else
+                leq_solver = '';
+            end
+            if isfield(opt.leq_opt, 'opt')
+                leq_opt = opt.leq_opt.opt;
+            else
+                leq_opt = struct();
+            end
+            if isfield(opt.leq_opt, 'thresh')
+                leq_thresh = opt.leq_opt.thresh;
+            else
+                leq_thresh = 0;
+            end
         else
             leq_solver = '';
-        end
-        if isfield(opt, 'leq_opt') && isfield(opt.leq_opt, 'opt')
-            leq_opt = opt.leq_opt.opt;
-        else
             leq_opt = struct();
+            leq_thresh = 0;
         end
+        
         [A, b] = om.params_lin_constraint();
-        x = mplinsolve(A, b, leq_solver, leq_opt);
+        if leq_thresh           %% check for failure
+            %% set up to trap non-singular matrix warnings
+            [lastmsg, lastid] = lastwarn;
+            lastwarn('');
+
+            x = mplinsolve(A, b, leq_solver, leq_opt);
+
+            [msg, id] = lastwarn;
+            %% Octave is not consistent in assigning proper warning id,
+            %% so we just check for presence of *any* warning
+            if ~isempty(msg) || max(abs(x)) > leq_thresh
+                eflag = 0;
+            else
+                eflag = 1;
+            end
+        else                    %% no failure check
+            x = mplinsolve(A, b, leq_solver, leq_opt);
+            eflag = 1;
+        end
         f = A*x - b;
-        eflag = 1;
         output = struct('alg', leq_solver);
         lambda = A;     %% jac
     case 'NLEQ'         %% NLEQ  - nonlinear equations

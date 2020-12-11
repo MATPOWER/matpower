@@ -45,6 +45,17 @@ function om = init_indexed_name(om, set_type, name, dim_list)
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See https://github.com/MATPOWER/mp-opt-model for more info.
 
+%% Due to a bug related to inheritance in constructors in
+%% Octave 5.2 and earlier (https://savannah.gnu.org/bugs/?52614),
+%% INIT_SET_TYPES() cannot be called directly in the
+%% MP_IDX_MANAGER constructor, as desired.
+%%
+%% WORKAROUND:  Initialize MP_IDX_MANAGER fields here, if needed,
+%%              after object construction, but before object use.
+if isempty(om.var)          %% only if not already initialized
+    om.init_set_types();
+end
+
 %% use column vector if single dimension
 if length(dim_list) == 1
     dim_list = {dim_list{:}, 1};

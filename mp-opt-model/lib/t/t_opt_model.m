@@ -26,11 +26,13 @@ t_ok(isa(om, 'opt_model'), t);
 t = 'add_var';
 vN = 0;
 vNS = 0;
+om.init_set_types();
 t_ok(om.getN('var') == vN, sprintf('%s : var.N  = %d', t, vN));
 t_ok(om.get('var', 'NS') == vNS, sprintf('%s : var.NS = %d', t, vNS));
 
 t = 'om.add_var(''Va'', 4)';
 nVa = 4;
+om = opt_model;
 om.add_var('Va', nVa);
 vNS = vNS + 1; vN = vN + nVa;
 t_ok(om.getN('var') == vN, sprintf('%s : var.N  = %d', t, vN));

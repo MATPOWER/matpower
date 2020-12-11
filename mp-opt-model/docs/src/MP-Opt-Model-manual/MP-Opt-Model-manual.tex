@@ -1880,7 +1880,7 @@ name & default & description \\
 \code{intlinprog\_opt}	& \emph{empty}	& options struct for \code{intlinprog}\tnote{*} \\
 \code{ipopt\_opt}	& \emph{empty}	& options struct for \ipopt{}\tnote{*} \\
 \code{knitro\_opt}	& \emph{empty}	& options struct for \knitro{}\tnote{*} \\
-\code{leq\_opt}	& \emph{empty}	& options struct for \code{mplinsolve}, with \code{solver} and \code{opt} fields corresponding to respective \code{mplinsolve} args \\
+\code{leq\_opt}	& \emph{empty}	& options struct for \code{mplinsolve}, with optional fields \code{solver} and \code{opt} corresponding to respective \code{mplinsolve} args, and \code{thresh} specifying a threshold on the absolute value of any element of \code{x}, above which \code{exitflag} will be set to 0 \\
 \code{linprog\_opt}	& \emph{empty}	& options struct for \code{linprog}\tnote{*} \\
 \code{mips\_opt}	& \emph{empty}	& options struct for \mips{} \\
 \code{mosek\_opt}	& \emph{empty}	& options struct for \mosek{}\tnote{*} \\
@@ -1923,6 +1923,7 @@ name & default & description \\
 & MIQP & \gurobi{}, \cplex{}, \mosek{} \\
 & NLP & \mips{} \\
 & MINLP & \knitro{} (not yet implemented) \\
+& LEQ & built-in backslash operator \\
 & NLEQ & Newton's method \\
 \codeq{BPMPD} & LP, QP & BPMPD\tnote{*} \\
 \codeq{CLP} & LP, QP & \clp{}\tnote{*} \\
@@ -2484,9 +2485,9 @@ The \code{set\_params} method, inputs summarized in Table~\ref{tab:set_params}, 
 
 \subsubsection*{Examples:}
 \begin{Code}
-om.set_params('var', 'v0', v0, 'Pg');
-om.set_params('lin', {'l', 'u'}, {l, u}, 'y', {2,3});
-om.set_params('nle', 'all', {N, @fcn, @hess, vs}, 'Pmis');
+om.set_params('var', 'Pg', 'v0', Pg0);
+om.set_params('lin', 'y', {2,3}, {'l', 'u'}, {l, u});
+om.set_params('nle', 'Pmis', 'all', {N, @fcn, @hess, vs});
 \end{Code}
 
 
@@ -2523,7 +2524,7 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\ddag] {Optional when \code{params} = \codeq{all}.}
+ \item [\dag] {Optional when \code{params} = \codeq{all}.}
  \item [\ddag] {The \code{idx} argument is optional.}
 \end{tablenotes}
 \end{threeparttable}
@@ -3724,10 +3725,37 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-3.0.pdf}{\mpom{} 3.0 Use
 \end{itemize}
 
 
-% \subsection{Version 3.0 -- released ??? ?, 202?}
-% \label{app:v30}
+\subsection{Version 3.1 -- released ??? ?, 202?}
+\label{app:v31}
+
+The \href{https://matpower.org/docs/MP-Opt-Model-manual-3.1.pdf}{\mpom{} 3.1 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MP-Opt-Model-manual-3.1.pdf}}
+
+\subsubsection*{New Features}
+\begin{itemize}
+\item Optional threshold for detecting failure of LEQ solve, by setting the \code{leq\_opt.thresh} option. If the absolute value of any element of the solution vector exceeds the threshold, \code{exitflag} is set to 0, indicating failure.
+\item New functions:
+    \begin{itemize}
+    \item \code{foobar()} does whizbang.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection*{Bugs Fixed}
+\begin{itemize}
+\item 
+    \emph{Thanks to Fulano.}
+\end{itemize}
+
+\subsubsection*{Other Changes}
+\begin{itemize}
+\item 
+
+\end{itemize}
+
+
+% \subsection{Version 4.0 -- released ??? ?, 202?}
+% \label{app:v40}
 % 
-% The \href{https://matpower.org/docs/MP-Opt-Model-manual-3.0.pdf}{\mpom{} 3.0 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MP-Opt-Model-manual-3.0.pdf}}
+% The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.0.pdf}{\mpom{} 4.0 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MP-Opt-Model-manual-4.0.pdf}}
 % 
 % \subsubsection*{New Features}
 % \begin{itemize}

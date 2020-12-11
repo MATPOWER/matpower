@@ -225,12 +225,15 @@ classdef opt_model < mp_idx_manager
             %% call parent constructor
             om@mp_idx_manager(varargin{:});
 
-            if isempty(om.var) && strcmp(class(om), 'opt_model')
-                %% skip if it's a sub-class or being constructed from existing object
-                om.init_set_types();    %% Should be called in mp_idx_manager
-                                        %% constructor, if not for:
-                                        %% https://savannah.gnu.org/bugs/?52614
-            end
+            %% Due to a bug related to inheritance in constructors in
+            %% Octave 5.2 and earlier (https://savannah.gnu.org/bugs/?52614),
+            %% INIT_SET_TYPES() cannot be called directly in the
+            %% MP_IDX_MANAGER constructor, as desired.
+            %%
+            %% WORKAROUND:  INIT_SET_TYPES() is called explicitly as needed
+            %%              (if om.var is empty) in ADD_VAR(), DISPLAY() and
+            %%              INIT_INDEXED_NAME(), after object construction,
+            %%              but before object use.
         end
 
         function om = def_set_types(om)

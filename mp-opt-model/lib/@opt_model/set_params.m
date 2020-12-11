@@ -34,9 +34,9 @@ function om = set_params(om, st, name, idx, params, vals)
 %       qdc - Q, c, k, vs
 %
 %   Examples:
-%       om.set_params('var', 'v0', v0, 'Pg');
-%       om.set_params('lin', {'l', 'u'}, {l, u}, 'y', {2,3});
-%       om.set_params('nle', 'all', {N, @fcn, @hess, vs}, 'Pmis');
+%       om.set_params('var', 'Pg', 'v0', Pg0);
+%       om.set_params('lin', 'y', {2,3}, {'l', 'u'}, {l, u});
+%       om.set_params('nle', 'Pmis', 'all', {N, @fcn, @hess, vs});
 %
 %   See also OPT_MODEL, ADD_VAR, ADD_LIN_CONSTRAINT, ADD_NLN_CONSTRAINT
 %            ADD_QUAD_COST and ADD_NLN_COST.

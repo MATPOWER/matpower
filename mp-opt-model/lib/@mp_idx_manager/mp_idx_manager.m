@@ -31,10 +31,17 @@ classdef mp_idx_manager < handle
 %                       );
 %               end
 %
-%       init_set_types - Used by object constructor to initializes the
-%           structures needed to track the ordering and indexing of each
-%           set type and can be overridden to initialize any additional
-%           data to be stored with each block of each set type.
+%       init_set_types - Initializes the structures needed to track the
+%           ordering and indexing of each set type and can be overridden
+%           to initialize any additional data to be stored with each block
+%           of each set type. Ideally, this would be called at the end
+%           of the MP_IDX_MANAGER constructor, but this is not possible
+%           in Octave 5.2 and earlier due to a bug related to altering
+%           fields of an object not yet fully constructed.
+%           Fixed in Octave v6.x: https://savannah.gnu.org/bugs/?52614
+%           The workaround is to be sure that this method is called by
+%           some sub-class method(s) after object construction, but before
+%           any other use (e.g. in display() and add_*() methods).
 %
 %       valid_named_set_type - Returns a label for the given named set
 %           type if valid, empty otherwise.
@@ -147,13 +154,19 @@ classdef mp_idx_manager < handle
             end
             
             obj.def_set_types();
-%             if isempty(obj.????) %% skip if constructed from existing object
-%                 obj.init_set_types();%% Octave 5.2 and earlier requires this
-%                                     %% be called from the sub-class
-%                                     %% constructor, since it alters fields of
-%                                     %% an object not yet fully constructed.
-%                                     %% Since been fixed:
-%                                     %%   https://savannah.gnu.org/bugs/?52614
+            
+            %% The INIT_SET_TYPES() method should ideally be (1) called here
+            %% in the MP_IDX_MANAGER constructor and (2) skipped if constructed
+            %% from an existing object, neither of which work in Octave 5.2
+            %% and earlier due to inheritance issues in constructors:
+            %%   https://savannah.gnu.org/bugs/?52614
+            %%
+            %% WORKAROUND: In some sub-class method(s), call INIT_SET_TYPES()
+            %%             automatically as needed after construction, but
+            %%             before use, checking first to ensure that it
+            %%             hasn't already been called.
+%             if isempty(obj.????)        %% skip if already initialized (e.g.
+%                 obj.init_set_types();   %% constructed from existing object)
 %             end
         end
 
