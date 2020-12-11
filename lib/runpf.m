@@ -149,10 +149,10 @@ if ~isempty(mpc.bus)
           fprintf(' -- DC Power Flow\n');
         end
         if use_mpe
-            netmodel = @mpe_network_dc;
-            nm = netmodel().create_model(mpc, mpopt);
-            [Va, success, its, om] = nm.solve_power_flow(mpc, mpopt);
-            ad = om.get_userdata('power_flow_aux_data');
+            pf = mp_task_pf();
+            success = pf.run(mpc, mpopt).success;
+            Va = pf.nm.soln.v;
+            ad = pf.mm.get_userdata('power_flow_aux_data');
             [B, Bf, Pbus, Pfinj] = deal(ad.B, ad.Bf, ad.Pbus, ad.Pfinj);
         else
             %% initial state
@@ -167,8 +167,8 @@ if ~isempty(mpc.bus)
 
             %% "run" the power flow
             [Va, success] = dcpf(B, Pbus, Va0, ref, pv, pq);
-            its = 1;
         end
+        its = 1;
 
         %% update data matrices with solution
         branch(:, [QF, QT]) = zeros(size(branch, 1), 2);
@@ -276,24 +276,6 @@ if ~isempty(mpc.bus)
             fixedQg = zeros(size(gen, 1), 1);   %% Qg of gens at Q limits
         end
 
-        if use_mpe
-            if mpopt.pf.v_cartesian
-                if mpopt.pf.current_balance
-                    netmodel = @mpe_network_acci;
-                else
-                    netmodel = @mpe_network_accs;
-%                    netmodel = @mpe_network_accs_test_nln;
-                end
-            else
-                if mpopt.pf.current_balance
-                    netmodel = @mpe_network_acpi;
-                else
-                    netmodel = @mpe_network_acps;
-%                    netmodel = @mpe_network_acps_test_nln;
-                end
-            end
-        end
-
         %% build admittance matrices
         [Ybus, Yf, Yt] = makeYbus(baseMVA, bus, branch);
 
@@ -305,8 +287,10 @@ if ~isempty(mpc.bus)
                 mpc.gen = gen;
                 mpc.bus(:, VM) = abs(V0);
                 mpc.bus(:, VA) = angle(V0) * 180/pi;
-                nm = netmodel().create_model(mpc, mpopt);
-                [V, success, iterations, om] = nm.solve_power_flow(mpc, mpopt);
+                pf = mp_task_pf();
+                success = pf.run(mpc, mpopt).success;
+                V = pf.nm.soln.v;
+                iterations = pf.mm.soln.output.iterations;
             else
                 %% function for computing V dependent complex bus power injections
                 %% (generation - load)
@@ -470,7 +454,7 @@ mpc.iterations = its;
 results = int2ext(mpc);
 
 if success && use_mpe
-    results.om = om;
+    results.om = pf.mm;
 end
 
 %% zero out result fields of out-of-service gens & branches
