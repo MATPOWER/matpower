@@ -236,7 +236,19 @@ if (  default_to_mpe && ~(isfield(mpopt.exp, 'mpe') && mpopt.exp.mpe == 0) ) || 
     end
 end
 if use_mpe
-    om = opf_setup_mpe(mpc, mpopt);
+    opf = mp_task_opf();
+    %% from opf.run()
+    mpc = opf.run_pre(mpc, mpopt);
+    dm = opf.data_model_build(mpc, mpopt);
+    nm = opf.network_model_build(dm, mpopt);
+    om = opf.math_model_build(nm, dm, mpopt);
+
+    %% store indices of costs that were converted
+    %% (so OPF_EXECUTE can properly construct X)
+    gen_dme = dm.elm_by_name('gen');
+    if ~isempty(gen_dme) && ~isempty(gen_dme.pwl1)
+      om.userdata.pwl1 = gen_dme.pwl1;
+    end
 else
     om = opf_setup(mpc, mpopt);
 end
