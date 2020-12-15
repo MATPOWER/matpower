@@ -106,11 +106,11 @@ if mpopt.opf.start < 2
     else
         x0(vv.i1.Va:vv.iN.Va) = Varefs(1);  %% angles set to first reference angle
         x0(vv.i1.Vm:vv.iN.Vm) = Vm;         %% voltage magnitudes
-        if ny > 0
-            ipwl = find(gencost(:, MODEL) == PW_LINEAR);
-            c = gencost(sub2ind(size(gencost), ipwl, NCOST+2*gencost(ipwl, NCOST)));    %% largest y-value in CCV data
-            x0(vv.i1.y:vv.iN.y) = max(c) + 0.1 * abs(max(c));
-        end
+    end
+    if ny > 0
+        ipwl = find(gencost(:, MODEL) == PW_LINEAR);
+        c = gencost(sub2ind(size(gencost), ipwl, NCOST+2*gencost(ipwl, NCOST)));    %% largest y-value in CCV data
+        x0(vv.i1.y:vv.iN.y) = max(c) + 0.1 * abs(max(c));
     end
     opt.x0 = x0;
 end

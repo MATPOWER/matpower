@@ -8213,6 +8213,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-8.0.pdf}{\matpower{} 8.0 Use
 \subsubsection*{Bugs Fixed}
 \begin{itemize}
 \item Fatal bug in \code{int2ext()} when called with \code{mpopt} and an \code{int2ext} user callback function.
+\item Bug affecting AC OPF initialization for cases with piecewise linear costs and cartesian voltage representations resulting in improved convergence for affected cases.
 \end{itemize}
 
 \subsubsection*{Incompatible Changes}

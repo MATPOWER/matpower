@@ -13,6 +13,11 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.1
 -----------------
 
+#### 12/15/20
+  - Fixed bug affecting AC OPF initialization for cases with piecewise
+    linear costs and cartesian voltage representations resulting in
+    improved convergence for affected cases.
+
 #### 12/9/20
   - **INCOMPATIBLE CHANGE:**  Remove unused `mpopt` argument from
     `opf_gen_cost_fcn()` inputs.
