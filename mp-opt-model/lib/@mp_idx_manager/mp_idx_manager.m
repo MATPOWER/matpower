@@ -209,7 +209,7 @@ classdef mp_idx_manager < handle
 
         function display_set(obj, stype, sname)
             if nargin < 3
-                sname = stype;
+                sname = obj.set_types.(stype);
             end
             st = obj.(stype);    %% data for set type of interest
             if st.NS

@@ -5,6 +5,11 @@ Change history for MP-Opt-Model
 since last release
 ------------------
 
+#### 12/16/20
+  - Update to use labels from `set_types` property as headers for
+    `opt_model/display()` to simplify things and facilitate use by
+    sub-classes.
+
 #### 12/1/20
   - Move `init_set_types()` call out of `opt_model` constructor to avoid
     complexity of other workarounds for [bug in Octave 5.2 and earlier][10]

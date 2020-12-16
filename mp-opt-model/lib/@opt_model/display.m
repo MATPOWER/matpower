@@ -1,4 +1,4 @@
-function display(om)
+function display(om, more_set_types)
 %DISPLAY  Displays the object.
 %   Called when semicolon is omitted at the command-line. Displays the details
 %   of the variables, constraints, costs included in the model.
@@ -24,18 +24,15 @@ if isempty(om.var)          %% only if not already initialized
     om.init_set_types();
 end
 
+if nargin < 2
+    more_set_types = {};
+end
+
 %% display details of each set type
-set_types = {'var', 'nle', 'nli', 'lin', 'qdc', 'nlc'};
-set_names = struct(...
-    'var',  'VARIABLES', ...
-    'nle',  'NONLIN EQ CONSTRAINTS', ...
-    'nli',  'NONLIN INEQ CONSTRAINTS', ...
-    'lin',  'LINEAR CONSTRAINTS', ...
-    'qdc',  'QUADRATIC COSTS', ...
-    'nlc',  'GEN NONLIN COSTS'  );
+set_types = {'var', 'nle', 'nli', 'lin', 'qdc', 'nlc', more_set_types{:}};
 fprintf('\n');
 for k = 1:length(set_types)
-    om.display_set(set_types{k}, set_names.(set_types{k}));
+    om.display_set(set_types{k});
 end
 
 %% user data

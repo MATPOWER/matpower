@@ -2023,7 +2023,7 @@ The \code{idx} struct of indexing information for each set type is available via
 %\renewcommand{\arraystretch}{1.2}
 \centering
 \begin{threeparttable}
-\caption{Example Indexing Data}
+\caption{Valid Set Types}
 \label{tab:set_types}
 \footnotesize
 \begin{tabular}{ccl}
@@ -2674,7 +2674,7 @@ If a 3rd argument is present (value is ignored) the returned value is a single n
 \begin{Code}
 om.def_set_types()
 \end{Code}
-The \code{def\_set\_types} method is a \emph{private} method that assigns a struct to the \code{set\_types} property of the object. The fields of the struct correspond to the valid set types listed in Table~\ref{tab:set_types}.
+The \code{def\_set\_types} method is a \emph{private} method that assigns a struct to the \code{set\_types} property of the object. The fields of the struct correspond to the valid set types listed in Table~\ref{tab:set_types} and the values are labels used by the \code{display} method.
 
 \subsubsection*{\code{init\_set\_types}}
 \begin{Code}
@@ -3747,7 +3747,7 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-3.1.pdf}{\mpom{} 3.1 Use
 
 \subsubsection*{Other Changes}
 \begin{itemize}
-\item 
+\item Labels from the \code{set\_types} property are now used as headers for \code{opt\_model/display()} to simplify things facilitate use by sub-classes.
 
 \end{itemize}
 
