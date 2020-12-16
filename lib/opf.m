@@ -249,6 +249,9 @@ if use_mpe
     if ~isempty(gen_dme) && ~isempty(gen_dme.pwl1)
       om.userdata.pwl1 = gen_dme.pwl1;
     end
+    opf.dm = dm;
+    opf.nm = nm;
+    opf.mm = om;
 else
     om = opf_setup(mpc, mpopt);
 end
@@ -258,7 +261,11 @@ if nargout > 7
     mpopt.opf.return_raw_der = 1;
 end
 if ~isempty(mpc.bus)
-    [results, success, raw] = opf_execute(om, mpopt);
+    if use_mpe
+        [results, success, raw] = opf_execute_mpe(opf, mpopt);
+    else
+        [results, success, raw] = opf_execute(om, mpopt);
+    end
 else
     results = mpc;
     success = 0;
