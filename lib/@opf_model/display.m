@@ -13,31 +13,8 @@ function display(om)
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See https://matpower.org for more info.
 
-%% display details of each set type
-set_types = {'var', 'nle', 'nli', 'lin', 'qdc', 'nlc', 'cost'};
-set_names = struct(...
-    'var',  'VARIABLES', ...
-    'nle',  'NONLIN EQ CONSTRAINTS', ...
-    'nli',  'NONLIN INEQ CONSTRAINTS', ...
-    'lin',  'LINEAR CONSTRAINTS', ...
-    'qdc',  'QUADRATIC COSTS', ...
-    'nlc',  'GEN NONLIN COSTS', ...
-    'cost', 'LEGACY COSTS'  );
-fprintf('\n');
-for k = 1:length(set_types)
-    om.display_set(set_types{k}, set_names.(set_types{k}));
-end
-
-%% user data
-fprintf('  userdata = ');
-if ~isempty(om.userdata)
-    fprintf('\n');
-end
-if have_feature('octave')
-    fprintf('    <scalar struct>\n');
-else
-    display(om.userdata);
-end
+%% call parent with added set type
+display@opt_model(om, {'cost'});
 
 fprintf('  mpc = ');
 if ~isempty(fieldnames(om.mpc))
