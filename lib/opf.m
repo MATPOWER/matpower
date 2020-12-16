@@ -236,22 +236,17 @@ if (  default_to_mpe && ~(isfield(mpopt.exp, 'mpe') && mpopt.exp.mpe == 0) ) || 
     end
 end
 if use_mpe
+    %% setup and run the OPF
     opf = mp_task_opf();
-    %% from opf.run()
-    mpc = opf.run_pre(mpc, mpopt);
-    dm = opf.data_model_build(mpc, mpopt);
-    nm = opf.network_model_build(dm, mpopt);
-    om = opf.math_model_build(nm, dm, mpopt);
+    opf.run(mpc, mpopt);
 
+    om = opf.mm;
     %% store indices of costs that were converted
     %% (so OPF_EXECUTE can properly construct X)
-    gen_dme = dm.elm_by_name('gen');
+    gen_dme = opf.dm.elm_by_name('gen');
     if ~isempty(gen_dme) && ~isempty(gen_dme.pwl1)
       om.userdata.pwl1 = gen_dme.pwl1;
     end
-    opf.dm = dm;
-    opf.nm = nm;
-    opf.mm = om;
 else
     om = opf_setup(mpc, mpopt);
 end
@@ -262,6 +257,7 @@ if nargout > 7
 end
 if ~isempty(mpc.bus)
     if use_mpe
+        %% post-process the results
         [results, success, raw] = opf_execute_mpe(opf, mpopt);
     else
         [results, success, raw] = opf_execute(om, mpopt);
