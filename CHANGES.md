@@ -13,6 +13,9 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.1
 -----------------
 
+#### 1/5/21
+  - Add DC OPF tests for case with branch angle difference limits.
+
 #### 12/15/20
   - Fixed bug affecting AC OPF initialization for cases with piecewise
     linear costs and cartesian voltage representations resulting in

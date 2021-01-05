@@ -2,7 +2,7 @@ function t_opf_dc_glpk(quiet)
 %T_OPF_DC_GLPK  Tests for DC optimal power flow using GLPK solver.
 
 %   MATPOWER
-%   Copyright (c) 2004-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2021, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -28,7 +28,7 @@ if have_feature('octave')
 else
     dual = [0; 2; 1];
 end
-num_tests = 24 * length(algs);
+num_tests = 43 * length(algs);
 
 t_begin(num_tests, quiet);
 
@@ -62,8 +62,11 @@ mpopt = mpoption(mpopt, 'opf.dc.solver', 'GLPK');
 
 %% run DC OPF
 if have_feature('glpk')
-    for k = 1:length(algs)
-        mpopt = mpoption(mpopt, 'glpk.opts.lpsolver', algs(k), 'glpk.opts.dual', dual(k));
+  for k = 1:length(algs)
+    mpopt = mpoption(mpopt, 'glpk.opts.lpsolver', algs(k), 'glpk.opts.dual', dual(k));
+    if algs(k) == 2     %% interior point sometimes fails on GLPK 4.6x w/o this
+        mpopt = mpoption(mpopt, 'glpk.opts.scale', 1);
+    end
     t0 = sprintf('DC OPF (GLPK %s): ', alg_names{k});
 
     %% set up indices
@@ -95,6 +98,41 @@ if have_feature('glpk')
     t_is(   gen(:,ig_disp   ),    gen_soln(:,ig_disp   ),  3, [t 'gen dispatch']);
     t_is(   gen(:,ig_mu     ),    gen_soln(:,ig_mu     ),  3, [t 'gen mu']);
     t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
+    t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
+    t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
+
+    %%-----  test OPF with angle difference limits  -----
+    t = [t0 'w/angle diff lims : '];
+    mpc = loadcase(casefile);
+    mpc.branch(4, ANGMAX) = 3;
+    mpc.branch(7, ANGMIN) = -4.5;
+    r = rundcopf(mpc, mpopt);
+    [bus, gen, branch, f, success] = deal(r.bus, r.gen, r.branch, r.f, r.success);
+    t_ok(success, [t 'success']);
+    t_is(   f, 6456.7213, 3, [t 'f']);
+    t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
+    t_is(   gen(:,ig_data   ),    gen_soln(:,ig_data   ), 10, [t 'gen data']);
+    t_is(   gen(:,PG        ),    [99.98497;89.35133;125.66371], 4, [t 'gen dispatch']);
+    t_is(branch(:,ibr_data  ), mpc.branch(:,ibr_data   ), 10, [t 'branch data']);
+    e = zeros(size(branch, 1), 1);
+    e(4) = 297.83776;
+    e(7) = -26.94788;
+    t_is(branch(:,MU_ANGMAX )-branch(:,MU_ANGMIN ), e, 4, [t 'branch ang diff mu']);
+
+    t = [t0 'w/ignored angle diff lims : '];
+    mpopt1 = mpoption(mpopt, 'opf.ignore_angle_lim', 1);
+    r = rundcopf(mpc, mpopt1);
+    [bus, gen, branch, f, success] = deal(r.bus, r.gen, r.branch, r.f, r.success);
+    t_ok(success, [t 'success']);
+    t_is(f, f_soln, 3, [t 'f']);
+    t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
+    t_is(   bus(:,ib_voltage),    bus_soln(:,ib_voltage),  3, [t 'bus voltage']);
+    t_is(   bus(:,ib_lam    ),    bus_soln(:,ib_lam    ),  3, [t 'bus lambda']);
+    t_is(   bus(:,ib_mu     ),    bus_soln(:,ib_mu     ),  2, [t 'bus mu']);
+    t_is(   gen(:,ig_data   ),    gen_soln(:,ig_data   ), 10, [t 'gen data']);
+    t_is(   gen(:,ig_disp   ),    gen_soln(:,ig_disp   ),  3, [t 'gen dispatch']);
+    t_is(   gen(:,ig_mu     ),    gen_soln(:,ig_mu     ),  3, [t 'gen mu']);
+    t_is(branch(:,ibr_data  ), mpc.branch(:,ibr_data   ), 10, [t 'branch data']);
     t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
     t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
 
@@ -161,8 +199,7 @@ if have_feature('glpk')
     catch
         t_ok(0, [t 'unexpected fatal error']);
     end
-
-    end
+  end
 else
     t_skip(num_tests, 'GLPK not available');
 end
