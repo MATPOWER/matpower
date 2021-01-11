@@ -93,6 +93,26 @@ if nargin < 4
     end
 end
 
+%% use MP-Element based version?
+default_to_mpe = have_feature('mp_element');
+    %% if 0, requires mpopt.exp.mpe = 1 to enable MP-Element version
+    %% if 1; requires mpopt.exp.mpe = 0 to disable MP-Element version
+use_mpe = 0;
+if (  default_to_mpe && ~(isfield(mpopt.exp, 'mpe') && mpopt.exp.mpe == 0) ) || ...
+   ( ~default_to_mpe &&   isfield(mpopt.exp, 'mpe') && mpopt.exp.mpe == 1  )
+    dc  = strcmp(upper(mpopt.model), 'DC');
+    alg = upper(mpopt.pf.alg);
+    if dc || (strcmp(alg, 'DEFAULT') || strcmp(alg, 'NR') || ...
+              strcmp(alg, 'NR-SP') || strcmp(alg, 'NR-SC') || ...
+              strcmp(alg, 'NR-IP') || strcmp(alg, 'NR-IC') || ...
+              strcmp(alg, 'FDXB') || strcmp(alg, 'FDBX') || ...
+              strcmp(alg, 'FSOLVE') || strcmp(alg, 'GS') || ...
+              strcmp(alg, 'ZG')) && ...
+              mpopt.pf.v_cartesian ~= 2
+        use_mpe = 1;
+    end
+end
+
 %% options
 qlim = mpopt.pf.enforce_q_lims;         %% enforce Q limits on gens?
 dc = strcmp(upper(mpopt.model), 'DC');  %% use DC formulation?
@@ -120,39 +140,20 @@ if ~isempty(mpc.bus)
     %%-----  run the power flow  -----
     t0 = tic;
     its = 0;            %% total iterations
-    if mpopt.verbose > 0
+    if mpopt.verbose > 0 && ~use_mpe
         v = mpver('all');
         fprintf('\nMATPOWER Version %s, %s', v.Version, v.Date);
     end
 
-    default_to_mpe = have_feature('mp_element');
-        %% if 0, requires mpopt.exp.mpe = 1 to enable mp_element version
-        %% if 1; requires mpopt.exp.mpe = 0 to disable mp_element version
-    use_mpe = 0;
-    if (  default_to_mpe && ~(isfield(mpopt.exp, 'mpe') && mpopt.exp.mpe == 0) ) || ...
-       ( ~default_to_mpe &&   isfield(mpopt.exp, 'mpe') && mpopt.exp.mpe == 1  )
-        dc  = strcmp(upper(mpopt.model), 'DC');
-        alg = upper(mpopt.pf.alg);
-        if dc || (strcmp(alg, 'DEFAULT') || strcmp(alg, 'NR') || ...
-                  strcmp(alg, 'NR-SP') || strcmp(alg, 'NR-SC') || ...
-                  strcmp(alg, 'NR-IP') || strcmp(alg, 'NR-IC') || ...
-                  strcmp(alg, 'FDXB') || strcmp(alg, 'FDBX') || ...
-                  strcmp(alg, 'FSOLVE') || strcmp(alg, 'GS') || ...
-                  strcmp(alg, 'ZG')) && ...
-                  mpopt.pf.v_cartesian ~= 2
-            use_mpe = 1;
-        end
-    end
-
     if dc                               %% DC formulation
-        if mpopt.verbose > 0
+        if mpopt.verbose > 0 && ~use_mpe
           fprintf(' -- DC Power Flow\n');
         end
         if use_mpe
             pf = mp_task_pf();
             success = pf.run(mpc, mpopt).success;
             Va = pf.nm.soln.v;
-            ad = pf.mm.get_userdata('power_flow_aux_data');
+            ad = pf.mm.get_userdata('aux_data');
             [B, Bf, Pbus, Pfinj] = deal(ad.B, ad.Bf, ad.Pbus, ad.Pfinj);
         else
             %% initial state
@@ -202,7 +203,7 @@ if ~isempty(mpc.bus)
             case 'NR-IH'
                 mpopt = mpoption(mpopt, 'pf.current_balance', 1, 'pf.v_cartesian', 2);
         end
-        if mpopt.verbose > 0
+        if mpopt.verbose > 0 && ~use_mpe
             switch alg
                 case {'NR', 'NR-SP'}
                     solver = 'Newton';

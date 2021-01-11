@@ -235,19 +235,7 @@ if (  default_to_mpe && ~(isfield(mpopt.exp, 'mpe') && mpopt.exp.mpe == 0) ) || 
         use_mpe = 1;
     end
 end
-if use_mpe
-    %% setup and run the OPF
-    opf = mp_task_opf();
-    opf.run(mpc, mpopt);
-
-    om = opf.mm;
-    %% store indices of costs that were converted
-    %% (so OPF_EXECUTE can properly construct X)
-    gen_dme = opf.dm.elm_by_name('gen');
-    if ~isempty(gen_dme) && ~isempty(gen_dme.pwl1)
-      om.userdata.pwl1 = gen_dme.pwl1;
-    end
-else
+if ~use_mpe
     om = opf_setup(mpc, mpopt);
 end
 
@@ -255,22 +243,24 @@ end
 if nargout > 7
     mpopt.opf.return_raw_der = 1;
 end
-if ~isempty(mpc.bus)
-    if use_mpe
-        %% post-process the results
-        [results, success, raw] = opf_execute_mpe(opf, mpopt);
-    else
-        [results, success, raw] = opf_execute(om, mpopt);
-    end
+if use_mpe
+    %% setup and run the OPF
+    opf = mp_task_opf();
+    opf.run(mpc, mpopt);
+    [results, success, raw] = opf.legacy_post_run(mpopt);
 else
-    results = mpc;
-    success = 0;
-    raw.output.message = 'MATPOWER case contains no connected buses';
-    if mpopt.verbose
-        fprintf('OPF not valid : %s\n', raw.output.message);
+    if ~isempty(mpc.bus)
+        [results, success, raw] = opf_execute(om, mpopt);
+    else
+        results = mpc;
+        success = 0;
+        raw.output.message = 'MATPOWER case contains no connected buses';
+        if mpopt.verbose
+            fprintf('OPF not valid : %s\n', raw.output.message);
+        end
     end
+    results.success = success;  %% make success available to subsequent callbacks
 end
-results.success = success;  %% make success available to subsequent callbacks
 
 %%-----  revert to original ordering, including out-of-service stuff  -----
 results = int2ext(results);
