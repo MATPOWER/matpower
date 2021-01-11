@@ -166,7 +166,6 @@ if success
       end
       %% compute g, dg, unless already done by post-v4.0 MINOPF or TSPOPF
       if ~isfield(raw, 'dg')
-        mpc = om.get_mpc();
         [g, geq, dg, dgeq] = nlp_consfcn(om, results.x);
         raw.g = [ geq; g];
         raw.dg = [ dgeq'; dg'];   %% true Jacobian organization
