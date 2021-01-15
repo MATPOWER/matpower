@@ -29,6 +29,9 @@ cfg = {
 };
 if have_feature('mp_element')
     cfg{end+1} = {'FSOLVE',  'fsolve (power-polar)',         'fsolve',   []  };
+    cfg{end+1} = {'FSOLVE',  'fsolve (power-cartesian)',     'fsolve',   {'pf.v_cartesian', 1}  };
+    cfg{end+1} = {'FSOLVE',  'fsolve (current-polar)',       'fsolve',   {'pf.current_balance', 1, 'pf.tol', 1e-10}  };
+    cfg{end+1} = {'FSOLVE',  'fsolve (current-cartesian)',   'fsolve',   {'pf.v_cartesian', 1, 'pf.current_balance', 1, 'pf.tol', 1e-10}  };
 %     cfg{end+1} = {'FSOLVE',  'fsolve (power-polar)',         'fsolve',   struct('Algorithm', 'trust-region-dogleg')  },
 %     cfg{end+1} = {'FSOLVE',  'fsolve (power-polar)',         'fsolve',   struct('Algorithm', 'trust-region-reflective')  },
 %     cfg{end+1} = {'FSOLVE',  'fsolve (power-polar)',         'fsolve',   struct('Algorithm', 'levenberg-marquardt', 'TolX', 1e-11) },
@@ -72,6 +75,7 @@ mpopt0 = mpoption(mpopt0, 'verbose', verbose);
 %% network with islands
 mpc0 = loadcase(casefile);
 mpc0.gen(1, PG) = 60;
+mpc0.gen(1, QG) = 10;
 mpc0.gen(1, [PMIN PMAX QMIN QMAX PG QG]) = mpc0.gen(1, [PMIN PMAX QMIN QMAX PG QG]) / 2;
 mpc0.gen = [mpc0.gen(1, :); mpc0.gen];
 mpc1 = mpc0;
@@ -98,6 +102,9 @@ for k = 1:length(cfg)
   else
     t = sprintf('AC PF - %s : ', cfg{k}{2});
     mpopt = mpoption(mpopt0, 'pf.alg', cfg{k}{1});
+    if ~isempty(cfg{k}{4}) && iscell(cfg{k}{4})
+        mpopt = mpoption(mpopt, cfg{k}{4}{:});
+    end
     [baseMVA, bus, gen, branch, success, et] = runpf(casefile, mpopt);
     t_ok(success, [t 'success']);
     t_is(bus, bus_soln, 6, [t 'bus']);
@@ -124,7 +131,7 @@ for k = 1:length(cfg)
     %% check Qg distribution, when Qmin = Qmax
     t = sprintf('%s - check Qg : ', cfg{k}{1});
     mpc = loadcase(casefile);
-    mpc.gen(1, [QMIN QMAX]) = [20 20];
+    mpc.gen(1, [QG QMIN QMAX]) = [10 20 20];
     r = runpf(mpc, mpopt);
     t_ok(r.success, [t 'success']);
     t_is(r.gen(1, QG), 24.07, 2, [t 'single gen, Qmin = Qmax']);
