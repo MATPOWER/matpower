@@ -149,12 +149,12 @@ if ~isempty(mpc.bus)
         if mpopt.verbose > 0 && ~use_mpe
           fprintf(' -- DC Power Flow\n');
         end
+        its = 1;
         if use_mpe
             pf = mp_task_pf();
             success = pf.run(mpc, mpopt).success;
-            Va = pf.nm.soln.v;
-            ad = pf.mm.get_userdata('aux_data');
-            [B, Bf, Pbus, Pfinj] = deal(ad.B, ad.Bf, ad.Pbus, ad.Pfinj);
+            r = pf.dm.mpc;
+            [bus, gen, branch] = deal(r.bus, r.gen, r.branch);
         else
             %% initial state
             Va0 = bus(:, VA) * (pi/180);
@@ -168,25 +168,25 @@ if ~isempty(mpc.bus)
 
             %% "run" the power flow
             [Va, success] = dcpf(B, Pbus, Va0, ref, pv, pq);
-        end
-        its = 1;
 
-        %% update data matrices with solution
-        branch(:, [QF, QT]) = zeros(size(branch, 1), 2);
-        branch(:, PF) = (Bf * Va + Pfinj) * baseMVA;
-        branch(:, PT) = -branch(:, PF);
-        bus(:, VM) = ones(size(bus, 1), 1);
-        bus(:, VA) = Va * (180/pi);
-        %% update Pg for slack generator (1st gen at ref bus)
-        %% (note: other gens at ref bus are accounted for in Pbus)
-        %%      Pg = Pinj + Pload + Gs
-        %%      newPg = oldPg + newPinj - oldPinj
-        refgen = zeros(size(ref));
-        for k = 1:length(ref)
-            temp = find(gbus == ref(k));
-            refgen(k) = on(temp(1));
+            %% update data matrices with solution
+            branch(:, [QF, QT]) = zeros(size(branch, 1), 2);
+            branch(:, PF) = (Bf * Va + Pfinj) * baseMVA;
+            branch(:, PT) = -branch(:, PF);
+            bus(:, VM) = ones(size(bus, 1), 1);
+            bus(:, VA) = Va * (180/pi);
+
+            %% update Pg for slack generator (1st gen at ref bus)
+            %% (note: other gens at ref bus are accounted for in Pbus)
+            %%      Pg = Pinj + Pload + Gs
+            %%      newPg = oldPg + newPinj - oldPinj
+            refgen = zeros(size(ref));
+            for k = 1:length(ref)
+                temp = find(gbus == ref(k));
+                refgen(k) = on(temp(1));
+            end
+            gen(refgen, PG) = gen(refgen, PG) + (B(ref, :) * Va - Pbus(ref)) * baseMVA;
         end
-        gen(refgen, PG) = gen(refgen, PG) + (B(ref, :) * Va - Pbus(ref)) * baseMVA;
     else                                %% AC formulation
         alg = upper(mpopt.pf.alg);
         switch alg
@@ -290,7 +290,9 @@ if ~isempty(mpc.bus)
                 mpc.bus(:, VA) = angle(V0) * 180/pi;
                 pf = mp_task_pf();
                 success = pf.run(mpc, mpopt).success;
-                V = pf.nm.soln.v;
+                V = pf.nm.soln.v;   %% only needed to initialize V0 if iterating
+                r = pf.dm.mpc;
+                [bus, gen, branch] = deal(r.bus, r.gen, r.branch);
                 iterations = pf.mm.soln.output.iterations;
             else
                 %% function for computing V dependent complex bus power injections
@@ -337,18 +339,16 @@ if ~isempty(mpc.bus)
                     otherwise
                         error('runpf: ''%s'' is not a valid power flow algorithm. See ''pf.alg'' details in MPOPTION help.', alg);
                 end
+
+                %% update data matrices with solution
+                switch alg
+                    case {'NR', 'NR-SP', 'NR-SC', 'NR-SH', 'NR-IP', 'NR-IC', 'NR-IH', 'FDXB', 'FDBX', 'FSOLVE', 'GS', 'ZG'}
+                        [bus, gen, branch] = pfsoln(baseMVA, bus, gen, branch, Ybus, Yf, Yt, V, ref, pv, pq, mpopt);
+                    case {'PQSUM', 'ISUM', 'YSUM'}
+                        [bus, gen, branch] = deal(mpc.bus, mpc.gen, mpc.branch);
+                end
             end
             its = its + iterations;
-
-            %% update data matrices with solution
-            switch alg
-                case {'NR', 'NR-SP', 'NR-SC', 'NR-SH', 'NR-IP', 'NR-IC', 'NR-IH', 'FDXB', 'FDBX', 'FSOLVE', 'GS', 'ZG'}
-                    [bus, gen, branch] = pfsoln(baseMVA, bus, gen, branch, Ybus, Yf, Yt, V, ref, pv, pq, mpopt);
-                case {'PQSUM', 'ISUM', 'YSUM'}
-                    bus = mpc.bus;
-                    gen = mpc.gen;
-                    branch = mpc.branch;
-            end
 
             if success && qlim      %% enforce generator Q limits
                 %% find gens with violated Q constraints
