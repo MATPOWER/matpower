@@ -209,7 +209,7 @@ if ~isempty(mpc.bus)
             case {'NR', 'NR-SP', 'NR-SC', 'NR-SH', 'NR-IP', 'NR-IC', 'NR-IH'}  %% all 6 variants supported
             otherwise                   %% only power balance, polar is valid
                 if mpopt.pf.current_balance || mpopt.pf.v_cartesian
-                    error('runpf: power flow algorithm ''%s'' only supports power balance, polar version\nI.e. both ''pf.current_balance'' and ''pf.v_cartesian'' must be set to 0.');
+                    error('runpf: power flow algorithm ''%s'' only supports power balance, polar version\nI.e. both ''pf.current_balance'' and ''pf.v_cartesian'' must be set to 0.', alg);
                 end
         end
         if have_zip_loads(mpopt)
