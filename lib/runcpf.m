@@ -373,21 +373,13 @@ if ~done.flag
     [Ybus, Yf, Yt] = makeYbus(mpcb.baseMVA, mpcb.bus, mpcb.branch);
 
     if use_mpe
-        nm = mpe_network_acps().create_model(mpcb, mpopt);
-        [v_, success, i, om, out] = nm.solve_cpf(mpcb, mpct, mpopt);
-        lam = out.cont.x(end, end);
-
-        %% update bus and gen matrices to reflect the loading and generation
-        mpc = mpcb;
-        mpc.bus(:, PD) = mpc.bus(:, PD) + lam * (mpct.bus(:, PD) - mpc.bus(:, PD));
-        mpc.bus(:, QD) = mpc.bus(:, QD) + lam * (mpct.bus(:, QD) - mpc.bus(:, QD));
-        mpc.gen(:, PG) = mpc.gen(:, PG) + lam * (mpct.gen(:, PG) - mpc.gen(:, PG));
-
-        %% update data matrices with solution
-        [mpc.bus, mpc.gen, mpc.branch] = pfsoln(mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch, Ybus, Yf, Yt, v_, ref, pv, pq, mpopt);
-        mpct = mpc;
+        cpf = mp_task_cpf();
+        success = cpf.run({mpcb, mpct}, mpopt).success;
+        mpct = cpf.dm.mpc;
         mpct.et = toc(t0);
         mpct.success = success;
+        out = cpf.mm.soln.output;
+        v_ = cpf.nm.soln.v;
 
         % convert x_hat, x to V_hat, lam_hat, V, lam
         n = size(out.cont.x, 2);
