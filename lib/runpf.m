@@ -93,6 +93,10 @@ if nargin < 4
     end
 end
 
+%% options
+qlim = mpopt.pf.enforce_q_lims;         %% enforce Q limits on gens?
+dc = strcmp(upper(mpopt.model), 'DC');  %% use DC formulation?
+
 %% use MP-Element based version?
 default_to_mpe = have_feature('mp_element');
     %% if 0, requires mpopt.exp.mpe = 1 to enable MP-Element version
@@ -100,7 +104,6 @@ default_to_mpe = have_feature('mp_element');
 use_mpe = 0;
 if (  default_to_mpe && ~(isfield(mpopt.exp, 'mpe') && mpopt.exp.mpe == 0) ) || ...
    ( ~default_to_mpe &&   isfield(mpopt.exp, 'mpe') && mpopt.exp.mpe == 1  )
-    dc  = strcmp(upper(mpopt.model), 'DC');
     alg = upper(mpopt.pf.alg);
     if dc || (strcmp(alg, 'DEFAULT') || strcmp(alg, 'NR') || ...
               strcmp(alg, 'NR-SP') || strcmp(alg, 'NR-SC') || ...
@@ -113,10 +116,6 @@ if (  default_to_mpe && ~(isfield(mpopt.exp, 'mpe') && mpopt.exp.mpe == 0) ) || 
     end
 end
 
-%% options
-qlim = mpopt.pf.enforce_q_lims;         %% enforce Q limits on gens?
-dc = strcmp(upper(mpopt.model), 'DC');  %% use DC formulation?
-
 %% read data
 mpc = loadcase(casedata);
 
@@ -127,6 +126,21 @@ end
 
 %% convert to internal indexing
 mpc = ext2int(mpc, mpopt);
+t0 = tic;
+if use_mpe
+    pf = mp_task_pf();
+    success = pf.run(mpc, mpopt).success;
+    r = pf.dm.mpc;
+    [bus, gen, branch] = deal(r.bus, r.gen, r.branch);
+    if dc
+        its = 1;
+    elseif pf.nm.np ~= 0
+        its = pf.mm.soln.output.iterations;
+    else
+        its = 0;
+    end
+else
+
 [baseMVA, bus, gen, branch] = deal(mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch);
 
 if ~isempty(mpc.bus)
@@ -138,55 +152,48 @@ if ~isempty(mpc.bus)
     gbus = gen(on, GEN_BUS);                %% what buses are they at?
 
     %%-----  run the power flow  -----
-    t0 = tic;
     its = 0;            %% total iterations
-    if mpopt.verbose > 0 && ~use_mpe
+    if mpopt.verbose > 0
         v = mpver('all');
         fprintf('\nMATPOWER Version %s, %s', v.Version, v.Date);
     end
 
     if dc                               %% DC formulation
-        if mpopt.verbose > 0 && ~use_mpe
+        if mpopt.verbose > 0
           fprintf(' -- DC Power Flow\n');
         end
         its = 1;
-        if use_mpe
-            pf = mp_task_pf();
-            success = pf.run(mpc, mpopt).success;
-            r = pf.dm.mpc;
-            [bus, gen, branch] = deal(r.bus, r.gen, r.branch);
-        else
-            %% initial state
-            Va0 = bus(:, VA) * (pi/180);
 
-            %% build B matrices and phase shift injections
-            [B, Bf, Pbusinj, Pfinj] = makeBdc(baseMVA, bus, branch);
+        %% initial state
+        Va0 = bus(:, VA) * (pi/180);
 
-            %% compute complex bus power injections (generation - load)
-            %% adjusted for phase shifters and real shunts
-            Pbus = real(makeSbus(baseMVA, bus, gen)) - Pbusinj - bus(:, GS) / baseMVA;
+        %% build B matrices and phase shift injections
+        [B, Bf, Pbusinj, Pfinj] = makeBdc(baseMVA, bus, branch);
 
-            %% "run" the power flow
-            [Va, success] = dcpf(B, Pbus, Va0, ref, pv, pq);
+        %% compute complex bus power injections (generation - load)
+        %% adjusted for phase shifters and real shunts
+        Pbus = real(makeSbus(baseMVA, bus, gen)) - Pbusinj - bus(:, GS) / baseMVA;
 
-            %% update data matrices with solution
-            branch(:, [QF, QT]) = zeros(size(branch, 1), 2);
-            branch(:, PF) = (Bf * Va + Pfinj) * baseMVA;
-            branch(:, PT) = -branch(:, PF);
-            bus(:, VM) = ones(size(bus, 1), 1);
-            bus(:, VA) = Va * (180/pi);
+        %% "run" the power flow
+        [Va, success] = dcpf(B, Pbus, Va0, ref, pv, pq);
 
-            %% update Pg for slack generator (1st gen at ref bus)
-            %% (note: other gens at ref bus are accounted for in Pbus)
-            %%      Pg = Pinj + Pload + Gs
-            %%      newPg = oldPg + newPinj - oldPinj
-            refgen = zeros(size(ref));
-            for k = 1:length(ref)
-                temp = find(gbus == ref(k));
-                refgen(k) = on(temp(1));
-            end
-            gen(refgen, PG) = gen(refgen, PG) + (B(ref, :) * Va - Pbus(ref)) * baseMVA;
+        %% update data matrices with solution
+        branch(:, [QF, QT]) = zeros(size(branch, 1), 2);
+        branch(:, PF) = (Bf * Va + Pfinj) * baseMVA;
+        branch(:, PT) = -branch(:, PF);
+        bus(:, VM) = ones(size(bus, 1), 1);
+        bus(:, VA) = Va * (180/pi);
+
+        %% update Pg for slack generator (1st gen at ref bus)
+        %% (note: other gens at ref bus are accounted for in Pbus)
+        %%      Pg = Pinj + Pload + Gs
+        %%      newPg = oldPg + newPinj - oldPinj
+        refgen = zeros(size(ref));
+        for k = 1:length(ref)
+            temp = find(gbus == ref(k));
+            refgen(k) = on(temp(1));
         end
+        gen(refgen, PG) = gen(refgen, PG) + (B(ref, :) * Va - Pbus(ref)) * baseMVA;
     else                                %% AC formulation
         alg = upper(mpopt.pf.alg);
         switch alg
@@ -203,7 +210,7 @@ if ~isempty(mpc.bus)
             case 'NR-IH'
                 mpopt = mpoption(mpopt, 'pf.current_balance', 1, 'pf.v_cartesian', 2);
         end
-        if mpopt.verbose > 0 && ~use_mpe
+        if mpopt.verbose > 0
             switch alg
                 case {'NR', 'NR-SP'}
                     solver = 'Newton';
@@ -283,70 +290,57 @@ if ~isempty(mpc.bus)
         repeat = 1;
         while (repeat)
             %% run the power flow
-            if use_mpe
-                mpc.bus = bus;
-                mpc.gen = gen;
-                mpc.bus(:, VM) = abs(V0);
-                mpc.bus(:, VA) = angle(V0) * 180/pi;
-                pf = mp_task_pf();
-                success = pf.run(mpc, mpopt).success;
-                V = pf.nm.soln.v;   %% only needed to initialize V0 if iterating
-                r = pf.dm.mpc;
-                [bus, gen, branch] = deal(r.bus, r.gen, r.branch);
-                iterations = pf.mm.soln.output.iterations;
-            else
-                %% function for computing V dependent complex bus power injections
-                %% (generation - load)
-                Sbus = @(Vm)makeSbus(baseMVA, bus, gen, mpopt, Vm);
+            %% function for computing V dependent complex bus power injections
+            %% (generation - load)
+            Sbus = @(Vm)makeSbus(baseMVA, bus, gen, mpopt, Vm);
 
-                switch alg
-                    case {'NR', 'NR-SP', 'NR-SC', 'NR-SH', 'NR-IP', 'NR-IC', 'NR-IH'}
-                        if mpopt.pf.current_balance
-                            switch mpopt.pf.v_cartesian
-                                case 0                  %% current, polar
-                                    newtonpf_fcn = @newtonpf_I_polar;
-                                case 1                  %% current, cartesian
-                                    newtonpf_fcn = @newtonpf_I_cart;
-                                case 2                  %% current, hybrid
-                                    newtonpf_fcn = @newtonpf_I_hybrid;
-                            end
-                        else
-                            switch mpopt.pf.v_cartesian
-                                case 0                  %% default - power, polar
-                                    newtonpf_fcn = @newtonpf;
-                                case 1                  %% power, cartesian
-                                    newtonpf_fcn = @newtonpf_S_cart;
-                                case 2                  %% power, hybrid
-                                    newtonpf_fcn = @newtonpf_S_hybrid;
-                            end
+            switch alg
+                case {'NR', 'NR-SP', 'NR-SC', 'NR-SH', 'NR-IP', 'NR-IC', 'NR-IH'}
+                    if mpopt.pf.current_balance
+                        switch mpopt.pf.v_cartesian
+                            case 0                  %% current, polar
+                                newtonpf_fcn = @newtonpf_I_polar;
+                            case 1                  %% current, cartesian
+                                newtonpf_fcn = @newtonpf_I_cart;
+                            case 2                  %% current, hybrid
+                                newtonpf_fcn = @newtonpf_I_hybrid;
                         end
-                        [V, success, iterations] = newtonpf_fcn(Ybus, Sbus, V0, ref, pv, pq, mpopt);
-                    case {'FDXB', 'FDBX'}
-                        [Bp, Bpp] = makeB(baseMVA, bus, branch, alg);
-                        [V, success, iterations] = fdpf(Ybus, Sbus, V0, Bp, Bpp, ref, pv, pq, mpopt);
-                    case 'GS'
-                        [V, success, iterations] = gausspf(Ybus, Sbus([]), V0, ref, pv, pq, mpopt);
-                    case 'ZG'
-                        %% get B matrix for updating Q at PV buses
-                        if isempty(pv)
-                            Bpp = [];
-                        else
-                            [Bp, Bpp] = makeB(baseMVA, bus, branch, 'FDBX');
+                    else
+                        switch mpopt.pf.v_cartesian
+                            case 0                  %% default - power, polar
+                                newtonpf_fcn = @newtonpf;
+                            case 1                  %% power, cartesian
+                                newtonpf_fcn = @newtonpf_S_cart;
+                            case 2                  %% power, hybrid
+                                newtonpf_fcn = @newtonpf_S_hybrid;
                         end
-                        [V, success, iterations] = zgausspf(Ybus, Sbus([]), V0, ref, pv, pq, Bpp, mpopt);
-                    case {'PQSUM', 'ISUM', 'YSUM'}
-                        [mpc, success, iterations] = radial_pf(mpc, mpopt);
-                    otherwise
-                        error('runpf: ''%s'' is not a valid power flow algorithm. See ''pf.alg'' details in MPOPTION help.', alg);
-                end
+                    end
+                    [V, success, iterations] = newtonpf_fcn(Ybus, Sbus, V0, ref, pv, pq, mpopt);
+                case {'FDXB', 'FDBX'}
+                    [Bp, Bpp] = makeB(baseMVA, bus, branch, alg);
+                    [V, success, iterations] = fdpf(Ybus, Sbus, V0, Bp, Bpp, ref, pv, pq, mpopt);
+                case 'GS'
+                    [V, success, iterations] = gausspf(Ybus, Sbus([]), V0, ref, pv, pq, mpopt);
+                case 'ZG'
+                    %% get B matrix for updating Q at PV buses
+                    if isempty(pv)
+                        Bpp = [];
+                    else
+                        [Bp, Bpp] = makeB(baseMVA, bus, branch, 'FDBX');
+                    end
+                    [V, success, iterations] = zgausspf(Ybus, Sbus([]), V0, ref, pv, pq, Bpp, mpopt);
+                case {'PQSUM', 'ISUM', 'YSUM'}
+                    [mpc, success, iterations] = radial_pf(mpc, mpopt);
+                otherwise
+                    error('runpf: ''%s'' is not a valid power flow algorithm. See ''pf.alg'' details in MPOPTION help.', alg);
+            end
 
-                %% update data matrices with solution
-                switch alg
-                    case {'NR', 'NR-SP', 'NR-SC', 'NR-SH', 'NR-IP', 'NR-IC', 'NR-IH', 'FDXB', 'FDBX', 'FSOLVE', 'GS', 'ZG'}
-                        [bus, gen, branch] = pfsoln(baseMVA, bus, gen, branch, Ybus, Yf, Yt, V, ref, pv, pq, mpopt);
-                    case {'PQSUM', 'ISUM', 'YSUM'}
-                        [bus, gen, branch] = deal(mpc.bus, mpc.gen, mpc.branch);
-                end
+            %% update data matrices with solution
+            switch alg
+                case {'NR', 'NR-SP', 'NR-SC', 'NR-SH', 'NR-IP', 'NR-IC', 'NR-IH', 'FDXB', 'FDBX', 'FSOLVE', 'GS', 'ZG'}
+                    [bus, gen, branch] = pfsoln(baseMVA, bus, gen, branch, Ybus, Yf, Yt, V, ref, pv, pq, mpopt);
+                case {'PQSUM', 'ISUM', 'YSUM'}
+                    [bus, gen, branch] = deal(mpc.bus, mpc.gen, mpc.branch);
             end
             its = its + iterations;
 
@@ -438,13 +432,15 @@ if ~isempty(mpc.bus)
         end
     end
 else
-    t0 = tic;
     success = 0;
     its = 0;
     if mpopt.verbose
         fprintf('Power flow not valid : MATPOWER case contains no connected buses\n');
     end
 end
+
+end %% if use_mpe
+
 mpc.et = toc(t0);
 mpc.success = success;
 mpc.iterations = its;
