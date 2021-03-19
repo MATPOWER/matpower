@@ -6345,7 +6345,8 @@ name & description \\
 \code{case30Q}	& \code{case30} with reactive power costs	\\
 \code{case39}	& 39-bus New England case	\\
 \code{case57}	& IEEE 57-bus case	\\
-\code{case\_RTS\_GMLC}	& 96-machine, 73-bus Reliability Test System\tnote{*} \\
+\code{case60nordic}	& 60-bus Nordic case\tnote{*}	\\
+\code{case\_RTS\_GMLC}	& 96-machine, 73-bus Reliability Test System\tnote{\dag} \\
 \code{case118}	& IEEE 118-bus case	\\
 \code{case145}	& IEEE 145-bus case, 50 generator dynamic test case	\\
 \code{case300}	& IEEE 300-bus case	\\
@@ -6353,7 +6354,8 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [*] {Reliability Test System Grid Modernization Lab Consortium data from\\ \url{https://github.com/GridMod/RTS-GMLC}.}
+ \item [*] {Contributed by Florin Capitanescu. Please cite reference \cite{capitanescu2020} when publishing results based on this data.}
+ \item [\dag] {Reliability Test System Grid Modernization Lab Consortium data from\\ \url{https://github.com/GridMod/RTS-GMLC}.}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -6483,6 +6485,7 @@ name & description \\
 \code{case89pegase}	& 89-bus portion of European transmission system from PEGASE project\tnote{*}	\\
 \code{case1354pegase}	& 1354-bus portion of European transmission system from PEGASE project\tnote{*}	\\
 \code{case2869pegase}	& 2869-bus portion of European transmission system from PEGASE project\tnote{*}	\\
+\code{case8387pegase}	& 8387-bus case based on data from PEGASE project\tnote{\dag}	\\
 \code{case9241pegase}	& 9241-bus portion of European transmission system from PEGASE project\tnote{*}	\\
 \code{case13659pegase}	& 13659-bus portion of European transmission system from PEGASE project\tnote{*}	\\
 \bottomrule
@@ -6490,6 +6493,7 @@ name & description \\
 \begin{tablenotes}
  \scriptsize
  \item [*] {Contributed by C\'edric Josz and colleagues from the French Transmission System Operator. Please cite references \cite{josz2016,fliscounakis2013} when publishing results based on this data.}
+ \item [\dag] {Contributed by Florin Capitanescu. Please cite references \cite{villella2012,capitanescu2013} when publishing results based on this data.}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -8190,7 +8194,14 @@ The \href{https://matpower.org/docs/MATPOWER-manual-8.0.pdf}{\matpower{} 8.0 Use
 
 \subsubsection*{New Case Files}
 \begin{itemize}
-\item 
+\item Two new European case files. \emph{Thanks to Florin Capitanescu.}
+    \begin{itemize}
+        \setlength{\itemsep}{6pt}
+        \setlength{\parskip}{-6pt}
+%        \setlength{\parsep}{-3pt}
+        \item \code{case60nordic} -- 60-bus Nordic case
+        \item \code{case8387pegase} -- 8387-bus PEGASE case
+    \end{itemize}
 \end{itemize}
 
 \subsubsection*{New Documentation}
@@ -8471,8 +8482,12 @@ R.~D. Zimmerman. \mpomname{} User's Manual. 2020. [Online]. Available: \url{\cur
 \bibitem{wang2007}
 H.~Wang, \emph{On the Computation and Application of Multi-period Security-constrained Optimal Power Flow for Real-time Electricity Market Operations}, Ph.D. thesis, Electrical and Computer Engineering, Cornell University, May 2007.
 
+\bibitem{capitanescu2020}
+F.~Capitanescu, ``Suppressing ineffective control actions in optimal power flow problems,'' \emph{IET Generation, Transmission \& Distribution}, 14 (13), pp.~2520--2527, 2020.
+\doi{10.1049/iet-gtd.2019.1783}
+
 \bibitem{bouchekara2019}
-H.~R.~E.~H.~Bouchekara, Y.~Latreche, K.~Naidu, H.~Mokhlis, W.~M.~Dahalan, M.~S.~Javaid, ``Comprehensive Review of Radial Distribution Test Systems for Power System Distribution Education and Research'', \emph{Resource-Efficient Technologies}, 3(3), pp. 1–-12, 2019.
+H.~R.~E.~H.~Bouchekara, Y.~Latreche, K.~Naidu, H.~Mokhlis, W.~M.~Dahalan, M.~S.~Javaid, ``Comprehensive Review of Radial Distribution Test Systems for Power System Distribution Education and Research'', \emph{Resource-Efficient Technologies}, 3(3), pp.~1–-12, 2019.
 \doi{10.18799/24056537/2019/3/196}
 
 \bibitem{latreche2020}
@@ -8490,6 +8505,14 @@ Available: \url{https://arxiv.org/abs/1603.01533}.
 
 \bibitem{fliscounakis2013}
 S.~Fliscounakis, P.~Panciatici, F.~Capitanescu, and L.~Wehenkel, ``Contingency Ranking With Respect to Overloads in Very Large Power Systems Taking Into Account Uncertainty, Preventive, and Corrective Actions,'' \emph{Power Systems, IEEE Transactions on}, vol.~28, no.~4, pp.~4909--4917, Nov.~2013.
+
+\bibitem{villella2012}
+F.~Villella, S.~Leclerc, I.~Erlich, S.~Rapoport, ``PEGASE pan-European test-beds for testing of algorithms on very large scale power systems,'' \emph{IEEE PES Innovative Smart Grid Technologies Europe (ISGT Europe)}, Berlin (Germany), 2012.
+\doi{10.1109/ISGTEurope.2012.6465783}
+
+\bibitem{capitanescu2013}
+F.~Capitanescu, L.~Wehenkel, ``Experiments with the interior-point method for solving large scale optimal power flow problems,'' \emph{Electric Power Systems Research}, vol. 95, pp.~276--283, 2013.
+\doi{10.1016/j.epsr.2012.10.001}
 
 \bibitem{cuffe2015}
 P.~Cuffe and A.~Keane, ``Visualizing the Electrical Structure of Power Systems,'' \emph{IEEE Systems Journal}, vol.~11, no.~3, pp.~1810--1821, Sept. 2017.

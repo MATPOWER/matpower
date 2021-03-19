@@ -13,6 +13,12 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.1
 -----------------
 
+#### 3/19/21
+  - Add two new European cases.
+    *Thanks to Florin Capitanescu.*
+    - `case60nordic` (60-bus Nordic case)
+    - `case8387pegase` (8387-bus PEGASE case)
+
 #### 2/2/21
   - Initialize each power flow with the solved voltages of the previous
     one when changing PV buses to PQ during Q limit enforcement.
