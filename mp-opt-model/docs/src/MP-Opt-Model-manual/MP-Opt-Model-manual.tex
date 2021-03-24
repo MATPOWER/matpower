@@ -151,7 +151,7 @@
 \newcommand{\mpomlink}[0]{\href{\mpomurl}{\mpom{}}}
 \newcommand{\mpomname}[0]{\mpom{}}
 % \newcommand{\mpomname}[0]{{{\bf M}{\sc at}{\bf P}{\sc ower} \textbf{Opt}imization \textbf{Model}}}
-\newcommand{\mpomver}[0]{3.0}
+\newcommand{\mpomver}[0]{3.1-dev}
 \newcommand{\most}[0]{{MOST}}
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
@@ -2068,13 +2068,57 @@ nv = om.getN('var', 'v');
 
 See Section~\ref{sec:indexed_sets} for details on indexed named sets and the \code{idx\_list} argument.
 
+\subsubsection*{\code{set\_type\_idx\_map}}
+\label{sec:set_type_idx_map}
+\begin{Code}
+s = om.set_type_idx_map(set_type, idxs)
+\end{Code}
+
+Given a particular index (or set of indices) for the full set of elements (e.g. variables or constraints) of a particular set type, the \code{set\_type\_idx\_map} method can be used to determine which element of which particular named set the index corresponds to. Results are returned in a struct \code{s} of the same dimensions as the input \code{idxs}, where each element specifies the details of the corresponding named set. The fields of \code{s} are (1) \code{name}, with the name of the corresponding set, (2) \code{idx}, a cell array of indices for the name, if the named set is indexed and, (3) \code{i}, the index of the element within the set.
+
+This can be useful, for example, when a solver reports an issue with a particular variable or constraint and you want to map it back to the named sets you have added to your model. Consider an example in which element 38 of the linear constraints corresponds to the 11th row of \textbf{lincon3} and elements 15 and 23 of the optimization vector $x$ correspond to element 7 of $v$ and element 4 of $w$, respectively. The \code{set\_type\_idx\_map} method can be used to return this information as follows:
+
+\begin{Code}
+>> lin38 = om.set_type_idx_map('lin', 38)
+
+lin38 =
+
+  struct with fields:
+
+    name: 'lincon3'
+     idx: []
+       i: 11
+
+
+>> s = om.set_type_idx_map('var', [15; 23]);
+>> var15 = s(1)
+
+var15 =
+
+  struct with fields:
+
+    name: 'v'
+     idx: []
+       i: 7
+
+>> var23 = s(2)
+
+var23 =
+
+  struct with fields:
+
+    name: 'w'
+     idx: []
+       i: 4
+\end{Code}
+
 \subsubsection*{\code{describe\_idx}}
 \label{sec:describe_idx}
 \begin{Code}
 label = om.describe_idx(set_type, idxs)
 \end{Code}
 
-Given a particular index (or set of indices) for the full set of variables or constraints of a particular type, the \code{describe\_idx} method can be used to show which element of which particular named set the index corresponds to. This can be useful when a solver reports an issue with a particular variable or constraint and you want to map it back to the named sets you have added to your model.
+Calls \code{set\_type\_idx\_map} and formats each element of the return data as character array, returning a cell array of the same dimensions as \code{idxs}, except in the case where \code{idxs} is scalar, in which case it returns a scalar.
 
 Consider an example in which element 38 of the linear constraints corresponds to the 11th row of \textbf{lincon3} and elements 15 and 23 of the optimization vector $x$ correspond to element 7 of $v$ and element 4 of $w$, respectively. The \code{describe\_idx} method can be used to return this information as follows:
 
@@ -2158,6 +2202,22 @@ Returns the parameters \code{N}, and optionally \code{fcn}, and \code{hess} prov
 An optional 4th output argument \code{vs} indicates the variable sets used by this constraint set.
 
 And, for constraint sets whose functions compute the constraints for another set, an optional 5th output argument returns a struct with a cell array of set names in the \codeq{name} field and an array of corresponding dimensions in the \codeq{N} field.
+
+\subsubsection*{\code{eval\_lin\_constraint}}
+\label{sec:eval_lin_constraint}
+\begin{Code}
+Ax_u = om.eval_lin_constraint(x)
+Ax_u = om.eval_lin_constraint(x, name)
+Ax_u = om.eval_lin_constraint(x, name, idx_list)
+[Ax_u, l_Ax] = om.eval_lin_constraint(...)
+[Ax_u, l_Ax, A] = om.eval_lin_constraint(...)
+\end{Code}
+Builds and evaluates the linear constraints $Ax - u$ and, optionally $l - Ax$ for the full set of constraints or an individual named subset for a given value of the optimization vector $x$, based on constraints added by \code{add\_lin\_constraint}.
+
+\noindent \\Examples:
+\begin{Code}
+[Ax_u, l_Ax, A] = om.eval_lin_constraint(x);
+\end{Code}
 
 \subsubsection*{\code{eval\_nln\_constraint}}
 \label{sec:eval_nln_constraint}
@@ -2706,14 +2766,14 @@ name & description \\
 \multicolumn{2}{l}{\emph{Public Methods}} \\
 \code{~~mp\_idx\_manager}	& constructor for \code{mp\_idx\_manager} class	\\
 \code{~~copy}	& makes a copy of an existing \code{mp\_idx\_manager} object	\\
-\code{~~describe\_idx}	& identifies indices of a given set type	\\
-& E.g. variable 361 corresponds to \code{w(68)} \\
-\code{~~display\_set}	& displays indexing for a particular set type	\\
+\code{~~describe\_idx}	& describes indices of a given set type, e.g.~variable 361 corresponds to \code{w(68)}, see Section~\ref{sec:describe_idx} \\
+\code{~~display\_set}	& displays indexing for a particular set type, typically called by \code{display}	\\
 \code{~~get}	& access (possibly nested) fields of the object	\\
 \code{~~get\_idx}	& returns index structure(s) for specified set type(s), with starting/ending indices and number of elements for each named (and optionally indexed) block	\\
 \code{~~get\_userdata}	& retreives values of user data stored in the object	\\
 \code{~~getN}	& returns the number of elements of any given set type\tnote{\dag}	\\
 \code{~~init\_indexed\_name}	& initializes dimensions for a particular indexed named set	\\
+\code{~~set\_type\_idx\_map}	& maps indices of a given set type, e.g.~variable 361 corresponds to \code{w(68)}, see Section~\ref{sec:set_type_idx_map} \\
 \\
 \multicolumn{2}{l}{\emph{Private Methods}\tnote{\ddag}} \\
 \code{~~add\_named\_set}	& adds indexing information for new instance of a given set type	\\
@@ -2826,23 +2886,17 @@ name & description \\
 \code{~~add\_nln\_cost}	& add general nonlinear cost set, see Section~\ref{sec:add_nln_cost}	\\
 \code{~~add\_quad\_cost}	& add quadratic cost set, see Section~\ref{sec:add_quad_cost}	\\
 \code{~~add\_var}	& add variable set, see Section~\ref{sec:add_var}	\\
-\code{~~copy}\tnote{\dag}	& makes a copy of an existing \code{opt\_model} object	\\
-\code{~~describe\_idx}\tnote{\dag}	& identifies indices of a given set type, see Section~\ref{sec:describe_idx}	\\
 \code{~~display}	& displays variable, constraint and cost sets, see Section~\ref{sec:display}	\\
-\code{~~display\_set}\tnote{\dag}	& displays indexing for a particular set type, called by \code{display}	\\
-\code{~~eval\_nln\_constraint}	& builds full set of nonlinear equality or inequality constraints and their gradients for given value of $x$, see Section~\ref{sec:eval_nln_constraint}	\\
-\code{~~eval\_nln\_constraint\_hess}	& builds Hessian for full set of nonlinear equality or inequality constraints for given value of $x$, see Section~\ref{sec:eval_nln_constraint_hess}	\\
-\code{~~eval\_nln\_cost}	& evaluates nonlinear cost function and its derivatives\tnote{\ddag} for given value of $x$, see Section~\ref{sec:eval_nln_cost}	\\
-\code{~~eval\_quad\_cost}	& evaluates quadratic cost function and its derivatives\tnote{\ddag} for given value of $x$, see Section~\ref{sec:eval_quad_cost}	\\
-\code{~~get}\tnote{\dag}	& access (possibly nested) fields of the object	\\
-\code{~~get\_idx}\tnote{\dag}	& returns index structures for specified set types, see Section~\ref{sec:get_idx}	\\
+\code{~~eval\_lin\_constraint}	& computes linear constraint values, see Section~\ref{sec:eval_lin_constraint}	\\
+\code{~~eval\_nln\_constraint}	& builds full set of nonlinear equality or inequality constraints and their gradients, see Section~\ref{sec:eval_nln_constraint}	\\
+\code{~~eval\_nln\_constraint\_hess}	& builds Hessian for full set of nonlinear equality or inequality constraints, see Section~\ref{sec:eval_nln_constraint_hess}	\\
+\code{~~eval\_nln\_cost}	& evaluates nonlinear cost function and its derivatives\tnote{\ddag}, see Section~\ref{sec:eval_nln_cost}	\\
+\code{~~eval\_quad\_cost}	& evaluates quadratic cost function and its derivatives\tnote{\ddag}, see Section~\ref{sec:eval_quad_cost}	\\
 \code{~~get\_soln}	& returns named/indexed results for solved model	\\
-\code{~~get\_userdata}\tnote{\dag}	& retreives values of user data stored in the object	\\
-\code{~~getN}\tnote{\dag}	& returns the number of elements of any given set type\tnote{\ddag}	\\
-\code{~~init\_indexed\_name}\tnote{\dag}	& initializes dimensions for a particular indexed named set	\\
 \code{~~is\_mixed\_integer}	& returns 1 if any of the variables are binary or integer, 0 otherwise	\\
 \code{~~params\_lin\_constraint}	& assembles and returns parameters for linear constraints\tnote{\ddag}	\\
-% \code{~~params\_nln\_cost}	& returns parameters for general nonlinear costs\tnote{\ddag}	\\
+\code{~~params\_nln\_constraint}	& assembles and returns parameters for nonlinear constraints\tnote{\ddag}	\\
+\code{~~params\_nln\_cost}	& assembles and returns parameters for general nonlinear costs\tnote{\ddag}	\\
 \code{~~params\_quad\_cost}	& assembles and returns parameters for quadratic costs\tnote{\ddag}		\\
 \code{~~params\_var}	& assembles and returns inital values, bounds, types for variables\tnote{\ddag}	\\
 \code{~~parse\_soln}	& returns struct of all named solution vectors and shadow prices	\\
@@ -2852,6 +2906,10 @@ name & description \\
 \code{~~varsets\_idx}	& returns vector of indices into $x$ corresponding to \code{varsets}	\\
 \code{~~varsets\_len}	& returns number of elements in sub-vector specified by \code{varsets}	\\
 \code{~~varsets\_x}	& returns cell array of sub-vectors of $x$ specified by \code{varsets}	\\
+\\
+\multicolumn{2}{l}{\emph{Inherited Public Methods}\tnote{\dag}} \\
+\multicolumn{2}{l}{\code{~~copy}, \code{describe\_idx}, \code{display\_set}, \code{get}, \code{get\_idx}, \code{get\_userdata}, \code{getN},} \\
+\multicolumn{2}{l}{\code{~~\code{init\_indexed\_name}, set\_type\_idx\_map}} \\
 \\
 \multicolumn{2}{l}{\emph{Private Methods}\tnote{*}} \\
 \code{~~add\_named\_set}\tnote{\S}	& adds information for new instance of a given set type	\\
@@ -2863,7 +2921,7 @@ name & description \\
 \begin{tablenotes}
  \scriptsize
  \item [*] {For internal use only.}
- \item [\dag] {Inherited from \matpower{} Index Manager base class, \code{mp\_idx\_manager}.}
+ \item [\dag] {Inherited from \matpower{} Index Manager base class, \code{mp\_idx\_manager}, see Table~\ref{tab:mp_idx_manager2}.}
  \item [\ddag] {For all, or alternatively, only for a named (and possibly indexed) subset.}
  \item [\S] {Overrides and augments method inherited from \matpower{} Index Manager base class, \code{mp\_idx\_manager}.}
 \end{tablenotes}
@@ -3289,13 +3347,13 @@ name & description \\
 \code{@mp\_idx\_manager/}	& \matpower{} Index Manager abstract class used to manage indexing and ordering of various sets of parameters, etc. (e.g. variables, constraints, costs for OPF Model objects).	\\
 \code{~~mp\_idx\_manager}	& constructor for the \code{mp\_idx\_manager} class	\\
 \code{~~add\_named\_set}\tnote{\dag}	& add named subset of a particular type to the object	\\
-\code{~~describe\_idx}	& identifies indices of a given set type	\\
-& E.g. variable 361 corresponds to \code{Pg(68)} \\
+\code{~~describe\_idx}	& describes indices of a given set type, e.g.~variable 361 corresponds to \code{w(68)} \\
 \code{~~get\_idx}	& returns index structure(s) for specified set type(s), with starting/ending indices and number of elements for each named (and optionally indexed) block	\\
 \code{~~get\_userdata}	& retreives values of user data stored in the object	\\
 \code{~~get}	& returns the value of a field of the object	\\
 \code{~~getN}	& returns the number of elements of any given set type\tnote{\ddag}	\\
 \code{~~init\_indexed\_name}	& initializes dimensions for a particular indexed named set	\\
+\code{~~set\_type\_idx\_map}	& maps indices of a given set type, e.g.~variable 361 corresponds to \code{w(68)} \\
 \code{~~valid\_named\_set\_type}\tnote{\dag}	& returns label for given named set type if valid, empty otherwise	\\
 \bottomrule
 \end{tabular}
@@ -3735,12 +3793,13 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-3.1.pdf}{\mpom{} 3.1 Use
 \item Optional threshold for detecting failure of LEQ solve, by setting the \code{leq\_opt.thresh} option. If the absolute value of any element of the solution vector exceeds the threshold, \code{exitflag} is set to 0, indicating failure.
 \item New functions:
     \begin{itemize}
-    \item \code{foobar()} does whizbang.
+    \item \code{mp\_idx\_manager/set\_type\_idx\_map()} method returns information about mapping of indices for a given set type back to the corresponding named (and possibly indexed) sets.
     \end{itemize}
 \end{itemize}
 
 \subsubsection*{Bugs Fixed}
 \begin{itemize}
+\item Calling the \code{problem\_type()} or \code{is\_mixed\_integer()} method on an empty model no longer cause a fatal error.
 \item 
     \emph{Thanks to Fulano.}
 \end{itemize}
@@ -3748,6 +3807,7 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-3.1.pdf}{\mpom{} 3.1 Use
 \subsubsection*{Other Changes}
 \begin{itemize}
 \item Labels from the \code{set\_types} property are now used as headers for \code{opt\_model/display()} to simplify things facilitate use by sub-classes.
+\item Refactored \code{describe\_idx} into a new method, \code{set\_type\_idx\_map}, that returns in information in a programmatically usable form, and an updated \code{describe\_idx} that calls the new method, then formats the results in the expected char array(s).
 
 \end{itemize}
 

@@ -20,19 +20,21 @@ function TorF = is_mixed_integer(om)
 %          integer vars are added to the problem.
 
 TorF = 0;
-for k = 1:length(om.var.order)
-    t = om.var.data.vt.(om.var.order(k).name);
-    if iscell(t)
-        for j = 1:length(t(:))
-            if any(t{j} ~= 'C')
+if om.getN('var')
+    for k = 1:length(om.var.order)
+        t = om.var.data.vt.(om.var.order(k).name);
+        if iscell(t)
+            for j = 1:length(t(:))
+                if any(t{j} ~= 'C')
+                    TorF = 1;
+                    break;
+                end
+            end
+        else
+            if any(t ~= 'C')
                 TorF = 1;
                 break;
             end
-        end
-    else
-        if any(t ~= 'C')
-            TorF = 1;
-            break;
         end
     end
 end

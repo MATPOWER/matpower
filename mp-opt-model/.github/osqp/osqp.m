@@ -1,5 +1,5 @@
 classdef osqp < handle
-    % osqp interface class for OSQP solver v0.6.0
+    % osqp interface class for OSQP solver v0.6.2
     % This class provides a complete interface to the C implementation
     % of the OSQP solver.
     %
@@ -26,6 +26,31 @@ classdef osqp < handle
 
     properties (SetAccess = private, Hidden = true)
         objectHandle % Handle to underlying C instance
+    end
+    methods(Static)
+        %%
+        function out = default_settings()
+            % DEFAULT_SETTINGS get the default solver settings structure
+            out = osqp_mex('default_settings', 'static');
+
+	        % Convert linsys solver to string
+	        out.linsys_solver = linsys_solver_to_string(out.linsys_solver);
+
+        end
+        
+        %%
+        function out = constant(constant_name)
+            % CONSTANT Return solver constant
+            %   C = CONSTANT(CONSTANT_NAME) return constant called CONSTANT_NAME
+            out = osqp_mex('constant', 'static', constant_name);
+        end
+        
+        %%
+        function out = version()
+            % Return OSQP version
+            out = osqp_mex('version', 'static');
+        end
+        
     end
     methods
         %% Constructor - Create a new solver instance
@@ -180,6 +205,7 @@ classdef osqp < handle
                 m = 0;
             else
                 m = size(A, 1);
+                assert(size(A, 2) == n, 'Incorrect dimension of A');
             end
 
             %
@@ -532,30 +558,5 @@ classdef osqp < handle
 
         end
 
-    end
-    methods(Static)
-        %%
-        function out = default_settings()
-            % DEFAULT_SETTINGS get the default solver settings structure
-            out = osqp_mex('default_settings', 'static');
-
-	        % Convert linsys solver to string
-	        out.linsys_solver = linsys_solver_to_string(out.linsys_solver);
-
-        end
-        
-        %%
-        function out = constant(constant_name)
-            % CONSTANT Return solver constant
-            %   C = CONSTANT(CONSTANT_NAME) return constant called CONSTANT_NAME
-            out = osqp_mex('constant', 'static', constant_name);
-        end
-        
-        %%
-        function out = version()
-            % Return OSQP version
-            out = osqp_mex('version', 'static');
-        end
-        
     end
 end

@@ -5,6 +5,16 @@ Change history for MP-Opt-Model
 since last release
 ------------------
 
+#### 1/21/21
+  - Refactor `describe_idx()` into a new method, `set_type_idx_map()`,
+    that returns in information in a programmatically usable form, and
+    an updated `describe_idx()` that calls the new method, then formats
+    the results in the expected char array(s).
+
+#### 1/5/21
+  - Calling the `problem_type()` or `is_mixed_integer()` method on an
+    empty model no longer cause a fatal error.
+
 #### 12/16/20
   - Update to use labels from `set_types` property as headers for
     `opt_model/display()` to simplify things and facilitate use by

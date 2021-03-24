@@ -45,7 +45,9 @@ if isempty(om.prob_type) || nargin > 1 && recheck
     qdcN = om.getN('qdc');      %% quadratic costs
     linN = om.getN('lin');      %% linear constraints
     varN = om.getN('var');      %% variables
-    if nlcN || qdcN         %% problem has costs
+    if varN == 0
+        prob = '';
+    elseif nlcN || qdcN         %% problem has costs
         if nliN || nleN || nlcN %% nonlinear
             prob = 'NLP';           %% nonlinear program
         else                    %% linear constraints, no general nonlinear costs

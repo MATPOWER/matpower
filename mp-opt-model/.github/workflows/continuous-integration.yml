@@ -36,6 +36,8 @@ jobs:
     - name: Install GNU Octave (Mac)
       if: startsWith(matrix.os, 'macos')
       run: |
+        rm -rf /usr/local/bin/2to3
+        ln -s /usr/local/bin/gfortran-10 /usr/local/bin/gfortran
         brew install octave
         octave-cli --no-gui --eval ver
         echo "OCTAVE_VER=`octave-cli --no-gui --eval "fprintf('%s', ver('octave').Version)"`" >> $GITHUB_ENV

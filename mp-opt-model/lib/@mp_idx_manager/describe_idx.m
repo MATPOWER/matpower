@@ -11,7 +11,7 @@ function label = describe_idx(obj, set_type, idxs)
 %       label = obj.describe_idx('var', 87));
 %       labels = obj.describe_idx('lin', [38; 49; 93]));
 %
-%   See also OPT_MODEL.
+%   See also SET_TYPE_IDX_MAP, OPT_MODEL.
 
 %   MP-Opt-Model
 %   Copyright (c) 2012-2020, Power Systems Engineering Research Center (PSERC)
@@ -22,34 +22,19 @@ function label = describe_idx(obj, set_type, idxs)
 %   See https://github.com/MATPOWER/mp-opt-model for more info.
 
 label = cell(size(idxs));       %% pre-allocate return cell array
+
+s = obj.set_type_idx_map(set_type, idxs);
 for i = 1:length(idxs(:))
-    ii = idxs(i);
-    if ii > obj.(set_type).N
-        error('@mp_idx_manager/describe_idx: index exceeds maximum %s index (%d)', set_type, obj.(set_type).N);
-    end
-    if ii < 1
-        error('@mp_idx_manager/describe_idx: index must be positive');
-    end
-    for k = obj.(set_type).NS:-1:1
-        name = obj.(set_type).order(k).name;
-        idx = obj.(set_type).order(k).idx;
-        if isempty(idx)
-            if ii >= obj.(set_type).idx.i1.(name)
-                label{i} = sprintf('%s(%d)', name, ii - obj.(set_type).idx.i1.(name) + 1);
-                break;
-            end
+    idx = s(i).idx;
+    if isempty(idx)
+        label{i} = sprintf('%s(%d)', s(i).name, s(i).i);
+    else
+        if length(idx) <= 1
+            idxstr = sprintf('%d', idx{1});
         else
-            s = substruct('.', name, '()', idx);
-            if ii >= subsref(obj.(set_type).idx.i1, s)
-                idxstr = sprintf('%d', idx{1});
-                for j = 2:length(idx)
-                    idxstr = sprintf('%s,%d', idxstr, idx{j});
-                end
-                label{i} = sprintf('%s(%s)(%d)', name, idxstr, ...
-                            ii - subsref(obj.(set_type).idx.i1, s) + 1);
-                break;
-            end
+            idxstr = [sprintf('%d', idx{1}) sprintf(',%d', idx{2:end})];
         end
+        label{i} = sprintf('%s(%s)(%d)', s(i).name, idxstr, s(i).i);
     end
 end
 if isscalar(idxs)               %% return scalar

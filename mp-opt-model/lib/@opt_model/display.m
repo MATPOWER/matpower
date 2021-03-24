@@ -1,4 +1,4 @@
-function display(om, more_set_types)
+function display(om, varargin)
 %DISPLAY  Displays the object.
 %   Called when semicolon is omitted at the command-line. Displays the details
 %   of the variables, constraints, costs included in the model.
@@ -26,6 +26,8 @@ end
 
 if nargin < 2
     more_set_types = {};
+else
+    more_set_types = varargin{1};
 end
 
 %% display details of each set type
