@@ -380,25 +380,7 @@ if ~done.flag
         mpct.success = success;
         out = cpf.mm.soln.output;
         v_ = cpf.nm.soln.v;
-
-        % convert x_hat, x to V_hat, lam_hat, V, lam
-        n = size(out.cont.x, 2);
         cpf_results = out.cont;
-        V = v_ * ones(1, n);
-        Va = angle(V);
-        Vm = abs(V);
-        Va_hat = Va;
-        Vm_hat = Vm;
-        npv = length(pv);
-        npq = length(pq);
-        Va([pv;pq], :)  = out.cont.x(1:npv+npq, :);
-        Vm(pq, :)       = out.cont.x(npv+npq+1:end-1, :);
-        Va_hat([pv;pq], :)  = out.cont.x_hat(1:npv+npq, :);
-        Vm_hat(pq, :)       = out.cont.x_hat(npv+npq+1:end-1, :);
-        cpf_results.V       = Vm .* exp(1j * Va);
-        cpf_results.V_hat   = Vm_hat .* exp(1j * Va_hat);
-        cpf_results.lam     = out.cont.x(end, :);
-        cpf_results.lam_hat = out.cont.x_hat(end, :);
         done.msg = out.cont.done_msg;
         if regexp(done.msg, 'base and target functions are identical')
             done.msg = 'Base case and target case have identical load and generation';
