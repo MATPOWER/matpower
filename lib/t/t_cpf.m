@@ -196,7 +196,7 @@ else
     mpopt_plim = mpoption(mpopt, 'cpf.stop_at', 'NOSE', 'cpf.parameterization', 3,'cpf.enforce_p_lims',1);
     mpopt_plim = mpoption(mpopt_plim, 'cpf.adapt_step', 1);
     r = runcpf(mpcb, mpct, mpopt_plim);
-    iterations = 21;
+    iterations = 19;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0.97975, 4, [t 'max_lam']);
@@ -331,7 +331,7 @@ else
     t = 'CPF (full trace) (arc length) : ';
     mpopt = mpoption(mpopt, 'cpf.stop_at', 'FULL', 'cpf.parameterization', 2);
     r = runcpf(mpcb, mpct, mpopt);
-    iterations = 47;
+    iterations = 48;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0.99025, 3, [t 'max_lam']);
@@ -348,7 +348,7 @@ else
     t = 'CPF (full trace) (pseudo arc length) : ';
     mpopt = mpoption(mpopt, 'cpf.stop_at', 'FULL', 'cpf.parameterization', 3);
     r = runcpf(mpcb, mpct, mpopt);
-    iterations = 47;
+    iterations = 48;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0.99025, 3, [t 'max_lam']);
@@ -369,12 +369,12 @@ else
     iterations = 43;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
-    t_is(r.cpf.max_lam, 0.795759, 6, [t 'max_lam']);
+    t_is(r.cpf.max_lam, 0.795628, 6, [t 'max_lam']);
     t_is(size(r.cpf.V_hat), [10 iterations+1], 12, [t 'size(V_hat)']);
     t_is(size(r.cpf.V), [10 iterations+1], 12, [t 'size(V)']);
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
     t_is(size(r.cpf.lam), [1 iterations+1], 12, [t 'size(lam)']);
-    t_ok(strcmp(r.cpf.done_msg, 'No REF or PV buses remaining.'), [t 'done_msg']);
+    t_ok(regexp(r.cpf.done_msg, 'No REF or PV (buses|nodes) remaining.'), [t 'done_msg']);
     ek = [12 22 iterations];
     eidx = [1 3 2];
     ename = {'QLIM', 'QLIM', 'QLIM'};
@@ -392,7 +392,7 @@ else
     mpcbx.gen(1, QMAX) = 24.07;
     mpctx.gen(1, QMAX) = 24.07;
     r = runcpf(mpcbx, mpctx, mpopt_qlim);
-    iterations = 38;
+    iterations = 40;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
 

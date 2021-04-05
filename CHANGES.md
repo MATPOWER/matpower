@@ -13,6 +13,12 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.1
 -----------------
 
+#### 4/5/21
+  - Fix typo in computation of CPF prediction error that had very minor
+    effect on adaptive step size.
+  - Fix incorrect initialization of CPF tangent vector that had minor
+    effect on tangent normalization, also effecting step size.
+
 #### 3/19/21
   - Add two new European cases.
     *Thanks to Florin Capitanescu.*

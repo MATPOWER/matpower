@@ -336,7 +336,7 @@ if ~done.flag
     %% zero transfers for gens that exceed PMAX limits, if necessary
     if plim
         idx_pmax = find( mpcb.gen(:, GEN_STATUS) > 0 & ...
-            mpcb.gen(:, PG)   - mpcb.gen(:, PMAX)   > -mpopt.cpf.p_lims_tol & ...
+            mpcb.gen(:, PG) - mpcb.gen(:, PMAX) > -mpopt.cpf.p_lims_tol & ...
             mpct.gen(:, PG) - mpct.gen(:, PMAX) > -mpopt.cpf.p_lims_tol);
         if ~isempty(idx_pmax)
             if mpopt.verbose
@@ -590,8 +590,8 @@ if ~done.flag
         %% adapt stepsize if requested and not terminating, locating a zero
         %% or re-doing a step after changing the problem data
         if adapt_step && ~done.flag && ~locating && ~evnts(1).zero && nx.step ~= 0
-            cpf_error = norm([angle(nx.V(    cb_data.pq)); abs(nx.V(    [cb_data.pv;cb_data.pq])); nx.lam] - ...
-                             [angle(nx.V_hat(cb_data.pq)); abs(nx.V_hat([cb_data.pv;cb_data.pq])); nx.lam_hat], inf);
+            cpf_error = norm([angle(nx.V(    [cb_data.pv;cb_data.pq])); abs(nx.V(    cb_data.pq)); nx.lam] - ...
+                             [angle(nx.V_hat([cb_data.pv;cb_data.pq])); abs(nx.V_hat(cb_data.pq)); nx.lam_hat], inf);
 
             %% new nominal step size is current size * tol/err, but we reduce
             %% the change from the current size by a damping factor and limit

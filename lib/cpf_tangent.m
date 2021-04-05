@@ -68,7 +68,7 @@ J = [   J   dF_dlam;
 %       z([pv; pq; nb+pq; 2*nb+1])'];
 
 %% compute normalized tangent predictor
-z = zprv;
+z = zeros(size(zprv));
 s = zeros(npv+2*npq+1, 1);
 s(end,1) = sign(direction);
 z([pv; pq; nb+pq; 2*nb+1]) = J\s;   %% tangent vector
