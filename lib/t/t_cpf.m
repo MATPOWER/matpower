@@ -263,7 +263,7 @@ else
     t_is(size(r.cpf.V), [10 iterations+1], 12, [t 'size(V)']);
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
     t_is(size(r.cpf.lam), [1 iterations+1], 12, [t 'size(lam)']);
-    t_ok(strfind(r.cpf.done_msg, 'bus voltage magnitude limit reached'), [t 'done_msg']);
+    t_ok(strfind(r.cpf.done_msg, 'voltage magnitude limit reached'), [t 'done_msg']);
     t_is(length(r.cpf.events), 1, 12, [t 'length(events) == 1']);
     t_is(r.cpf.events(1).k, iterations, 12, [t 'events(1).k']);
     t_is(r.cpf.events(1).idx, 9, 12, [t 'events(1).idx']);
@@ -283,7 +283,7 @@ else
     t_is(size(r.cpf.V), [10 iterations], 12, [t 'size(V)']);
     t_is(size(r.cpf.lam_hat), [1 iterations], 12, [t 'size(lam_hat)']);
     t_is(size(r.cpf.lam), [1 iterations], 12, [t 'size(lam)']);
-    t_ok(strfind(r.cpf.done_msg, 'bus voltage magnitude limit violated in base case'), [t 'done_msg']);
+    t_ok(strfind(r.cpf.done_msg, 'voltage magnitude limit violated in base case'), [t 'done_msg']);
     t_is(length(r.cpf.events), 0, 12, [t 'length(events) == 0']);
     
     t = 'CPF to nose pt (pseudo arc length) w/V+flow lims: ';
@@ -405,6 +405,9 @@ else
         t_ok(0, [t 'unexpected fatal error']);
     end
 
+    if have_feature('mp_element')
+        t_skip(88, 'user callbacks')
+    else
     t = '1 user callback : ';
     mpopt = mpoption(mpopt, 'cpf.stop_at', 0.7, 'cpf.parameterization', 3);
     mpopt = mpoption(mpopt, 'cpf.adapt_step', 1);
@@ -521,6 +524,7 @@ else
     t_is(r.cpf.cb2.iteration, 2*iterations, 12, [t 'r.cpf.cb2.iterations']);
     t_is(r.cpf.cb2.final, 200, 12, [t 'r.cpf.cb2.final']);
     t_ok(strcmp(r.cpf.shared, '21212121212121212121'), [t 'r.cpf.shared']);
+    end  %% if mp_element
 
     t = 'case300 w/Q lims : ';
     mpopt = mpoption('out.all', 0, 'verbose', verbose);
@@ -559,6 +563,9 @@ else
     end
 
     t = 'case14 (unsuccessful) : ';
+    if have_feature('mp_element')
+        t_skip(9, [t 'mp_element not affected by angle wrap-around failure']);
+    else
     mpopt = mpoption(mpopt, 'cpf.adapt_step', 1);
     mpopt = mpoption(mpopt, 'cpf.enforce_q_lims', 0);
     mpcb = loadcase('case14');                          % load base case
@@ -577,6 +584,7 @@ else
     t_is(size(r.cpf.lam), [1 iterations+1], 12, [t 'size(lam)']);
     t_ok(strfind(r.cpf.done_msg, 'Corrector did not converge in'), [t 'done_msg']);
     t_is(length(r.cpf.events), 0, 12, [t 'length(events) == 0']);
+    end
 
     if have_feature('octave')
         warning(s1.state, file_in_path_warn_id);
