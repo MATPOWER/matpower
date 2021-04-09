@@ -58,9 +58,8 @@ if k == 0
             L = iL(j);
             msg = sprintf('branch flow limit violated in base case: branch %d -- %d exceeds limit of %g MVA\n',...
                 i2e_bus(f(L)), i2e_bus(t(L)), SrateA(L));
-            
+
             %% prepare to terminate
-            done.flag = 1;
             done.msg = msg;
         end
     end
