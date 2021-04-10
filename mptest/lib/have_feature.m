@@ -76,7 +76,7 @@ persistent h_f_cache;
 
 action = 'D';                   %% detecting functionality (default)
 if nargin > 1
-    if isnumeric(rtype) && ~isempty(rtype)
+    if ~ischar(rtype) && ~isempty(rtype)
         action = 'T';           %% toggling functionality
         on_off = rtype;
         if on_off < 0                   %% flip the toggle

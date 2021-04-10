@@ -15,7 +15,7 @@ Installation
 can skip directly to step 3 to verify._
 
 Installation and use of MP-Test requires familiarity with the basic operation
-of MATLAB or Octave, including setting up your MATLAB path.
+of MATLAB or Octave, including setting up your MATLAB/Octave path.
 
 1.  Clone the repository or download and extract the zip file of the MP-Test
     distribution from the [MP-Test project page][4] to the location of your
@@ -28,7 +28,7 @@ of MATLAB or Octave, including setting up your MATLAB path.
     *   `<MPTEST>/lib`
     *   `<MPTEST>/lib/t`
 
-3.  At the MATLAB prompt, type `test_mptest` to run the test suite and
+3.  At the MATLAB/Octave prompt, type `test_mptest` to run the test suite and
     verify that MP-Test is properly installed and functioning. The result
     should resemble the following:
 ```matlab

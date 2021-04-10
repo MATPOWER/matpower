@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-n_tests = 20;
+n_tests = 24;
 
 t_begin(n_tests, quiet);
 
@@ -65,6 +65,18 @@ t_ok(have_feature('rithmaticker') == 0, [t ' : still not available (cached)']);
 %% clear cache, check again
 have_feature('rithmaticker', 'clear_cache');
 t_ok(have_feature('rithmaticker') == 1, [t ' : available (cache cleared)']);
+
+t = 'have_feature(''rithmaticker'', 0)';
+t_ok(have_feature('rithmaticker', 0) == 0, [t ' : disabled']);
+
+t = 'have_feature(''rithmaticker'', 1)';
+t_ok(have_feature('rithmaticker', 1) == 1, [t ' : enabled']);
+
+t = 'have_feature(''rithmaticker'', false)';
+t_ok(have_feature('rithmaticker', false) == 0, [t ' : disabled']);
+
+t = 'have_feature(''rithmaticker'', true)';
+t_ok(have_feature('rithmaticker', true) == 1, [t ' : enabled']);
 
 cd(cwd);
 t = 'successful switch to original working directory';

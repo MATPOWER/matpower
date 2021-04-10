@@ -2,6 +2,15 @@ Change history for MP-Test
 ==========================
 
 
+Changes since 7.1
+-----------------
+
+#### 4/10/21
+  - Allow `logical` type (i.e. `true` and `false`) as second input to
+    `have_feature()`, as well as `numeric` type (1 and 0), to facilitate
+    using (`logical`) output of prior call as toggle input.
+
+
 Version 7.1 - *Oct 8, 2020*
 ---------------------------
 
