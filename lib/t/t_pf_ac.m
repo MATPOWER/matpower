@@ -42,7 +42,7 @@ end
 % };
 
 ntests = 48;
-t_begin(length(cfg)*ntests, quiet);
+t_begin(length(cfg)*ntests + 6, quiet);
 
 casefile = 't_case9_pf';
 if quiet
@@ -256,6 +256,22 @@ for k = 1:length(cfg)
     t_is(r.gen(:, QG), [-6.30936644; 30; 29; 15; 15], 5, [t 'Qg']);
   end
 end
+
+t = sprintf('%s - pf.enforce_q_lims == 1 : ', 'NR-SP');
+mpopt = mpoption(mpopt, 'pf.alg', 'NR-SP', 'pf.tol', 1e-9);
+mpopt = mpoption(mpopt, 'pf.enforce_q_lims', 1);
+r = runpf('case14', mpopt);
+t_ok(r.success, [t 'success']);
+t_is(r.iterations, 5, 12, [t 'iterations']);
+t_is(r.bus(1, VA), 0, 12, [t 'ref bus Va = 0']);
+
+t = sprintf('%s - pf.enforce_q_lims == 1 : ', 'NR-IC');
+mpopt = mpoption(mpopt, 'pf.alg', 'NR-SP', 'pf.tol', 1e-9);
+mpopt = mpoption(mpopt, 'pf.enforce_q_lims', 1);
+r = runpf('case14', mpopt);
+t_ok(r.success, [t 'success']);
+t_is(r.iterations, 5, 12, [t 'iterations']);
+t_is(r.bus(1, VA), 0, 12, [t 'ref bus Va = 0']);
 
 t_end;
 

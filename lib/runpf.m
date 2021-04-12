@@ -116,6 +116,25 @@ if (  default_to_mpe && ~(isfield(mpopt.exp, 'mpe') && mpopt.exp.mpe == 0) ) || 
     end
 end
 
+%% shortcut formulation options via Newton solver name
+if ~dc
+    alg = upper(mpopt.pf.alg);
+    switch alg
+        case 'NR-SP'
+            mpopt = mpoption(mpopt, 'pf.current_balance', 0, 'pf.v_cartesian', 0);
+        case 'NR-SC'
+            mpopt = mpoption(mpopt, 'pf.current_balance', 0, 'pf.v_cartesian', 1);
+        case 'NR-SH'
+            mpopt = mpoption(mpopt, 'pf.current_balance', 0, 'pf.v_cartesian', 2);
+        case 'NR-IP'
+            mpopt = mpoption(mpopt, 'pf.current_balance', 1, 'pf.v_cartesian', 0);
+        case 'NR-IC'
+            mpopt = mpoption(mpopt, 'pf.current_balance', 1, 'pf.v_cartesian', 1);
+        case 'NR-IH'
+            mpopt = mpoption(mpopt, 'pf.current_balance', 1, 'pf.v_cartesian', 2);
+    end
+end
+
 %% read data
 mpc = loadcase(casedata);
 
@@ -195,21 +214,6 @@ if ~isempty(mpc.bus)
         end
         gen(refgen, PG) = gen(refgen, PG) + (B(ref, :) * Va - Pbus(ref)) * baseMVA;
     else                                %% AC formulation
-        alg = upper(mpopt.pf.alg);
-        switch alg
-            case 'NR-SP'
-                mpopt = mpoption(mpopt, 'pf.current_balance', 0, 'pf.v_cartesian', 0);
-            case 'NR-SC'
-                mpopt = mpoption(mpopt, 'pf.current_balance', 0, 'pf.v_cartesian', 1);
-            case 'NR-SH'
-                mpopt = mpoption(mpopt, 'pf.current_balance', 0, 'pf.v_cartesian', 2);
-            case 'NR-IP'
-                mpopt = mpoption(mpopt, 'pf.current_balance', 1, 'pf.v_cartesian', 0);
-            case 'NR-IC'
-                mpopt = mpoption(mpopt, 'pf.current_balance', 1, 'pf.v_cartesian', 1);
-            case 'NR-IH'
-                mpopt = mpoption(mpopt, 'pf.current_balance', 1, 'pf.v_cartesian', 2);
-        end
         if mpopt.verbose > 0
             switch alg
                 case {'NR', 'NR-SP'}
