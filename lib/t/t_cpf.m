@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 366;
+num_tests = 376;
 t_begin(num_tests, quiet);
 
 if have_feature('matlab', 'vnum') < 7.001
@@ -404,6 +404,26 @@ else
     catch
         t_ok(0, [t 'unexpected fatal error']);
     end
+
+    t = 'issues #23,25 : direction switching : ';
+    mpcbx = loadcase('case4gs');
+    mpcbx.bus(4, [PD QD]) = [-1820 -1307.2];
+    mpcbx.gen(1, [PG QMAX QMIN PMAX]) = [300 200 -1e9 250];
+    mpcbx.gen(2, [QMAX PMAX]) = [1e9 500];
+    mpctx = mpcbx;
+    mpctx.bus(3, [PD QD]) = 2 * mpcbx.bus(3, [PD QD]);
+    r = runcpf(mpcbx, mpctx, mpopt_qlim);
+    iterations = 46;
+    t_ok(r.success, [t 'success']);
+    t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
+    t_is(r.cpf.max_lam, 2.98036879, 8, [t 'max_lam']);
+    t_is(length(r.cpf.events), 2, 12, [t 'length(events) == 2']);
+    t_is(r.cpf.events(1).k, 25, 12, [t 'events(1).k']);
+    t_is(r.cpf.events(1).idx, 1, 12, [t 'events(1).idx']);
+    t_ok(strcmp(r.cpf.events(1).name, 'QLIM'), [t 'events(1).name']);
+    t_is(r.cpf.events(2).k, iterations, 12, [t 'events(2).k']);
+    t_is(r.cpf.events(2).idx, 1, 12, [t 'events(1=2).idx']);
+    t_ok(strcmp(r.cpf.events(2).name, 'TARGET_LAM'), [t 'events(2).name']);
 
     if have_feature('mp_element')
         t_skip(88, 'user callbacks')
