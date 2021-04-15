@@ -363,7 +363,8 @@ if ~isempty(mpc.bus)
                         bus(ref, BUS_TYPE) = REF;
                         bus( pv, BUS_TYPE) = PV;
                         if mpopt.verbose
-                            fprintf('Bus %d is new slack bus\n', ref);
+                            fprintf('Bus %d is new slack bus\n', ...
+                                mpc.order.bus.i2e(ref));
                         end
                     end
                     limited = [limited; mx];
