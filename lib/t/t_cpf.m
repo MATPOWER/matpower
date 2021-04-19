@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 376;
+num_tests = 410;
 t_begin(num_tests, quiet);
 
 if have_feature('matlab', 'vnum') < 7.001
@@ -66,12 +66,21 @@ else
     factor = 2.5;
     mpct.gen(:, [PG QG]) = mpct.gen(:, [PG QG]) * factor;
     mpct.bus(:, [PD QD]) = mpct.bus(:, [PD QD]) * factor;
+    Pdb = mpcb.bus(:, PD);
+    Pdt = mpct.bus(:, PD);
+    Pd_lam = @(lam)(Pdb + lam * (Pdt - Pdb));
+    pvg = [2;3];
+    Pgb = mpcb.gen(pvg, PG);
+    Pgt = mpct.gen(pvg, PG);
+    Pg_lam = @(lam)(Pgb + lam * (Pgt - Pgb));
 
     %% run CPF
     t = 'base == target : ';
     r = runcpf(mpcb, mpcb, mpopt);
     iterations = 1;
     t_ok(r.success, [t 'success']);
+    t_is(r.gen(pvg, PG), Pg_lam(0), 12, [t, 'Pg']);
+    t_is(r.bus(:, PD), Pd_lam(0), 12, [t, 'Pd']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0, 12, [t 'max_lam']);
     t_is(size(r.cpf.V_hat), [10 1], 12, [t 'size(V_hat)']);
@@ -88,6 +97,8 @@ else
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0.7, 12, [t 'max_lam']);
+    t_is(r.gen(pvg, PG), Pg_lam(0.7), 12, [t, 'Pg']);
+    t_is(r.bus(:, PD), Pd_lam(0.7), 12, [t, 'Pd']);
     t_is(size(r.cpf.V_hat), [10 iterations+1], 12, [t 'size(V_hat)']);
     t_is(size(r.cpf.V), [10 iterations+1], 12, [t 'size(V)']);
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
@@ -105,6 +116,8 @@ else
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0.7, 12, [t 'max_lam']);
+    t_is(r.gen(pvg, PG), Pg_lam(0.7), 12, [t, 'Pg']);
+    t_is(r.bus(:, PD), Pd_lam(0.7), 12, [t, 'Pd']);
     t_is(size(r.cpf.V_hat), [10 iterations+1], 12, [t 'size(V_hat)']);
     t_is(size(r.cpf.V), [10 iterations+1], 12, [t 'size(V)']);
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
@@ -122,6 +135,8 @@ else
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0.7, 12, [t 'max_lam']);
+    t_is(r.gen(pvg, PG), Pg_lam(0.7), 12, [t, 'Pg']);
+    t_is(r.bus(:, PD), Pd_lam(0.7), 12, [t, 'Pd']);
     t_is(size(r.cpf.V_hat), [10 iterations+1], 12, [t 'size(V_hat)']);
     t_is(size(r.cpf.V), [10 iterations+1], 12, [t 'size(V)']);
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
@@ -140,6 +155,8 @@ else
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0.99025, 3, [t 'max_lam']);
+    t_is(r.gen(pvg, PG), Pg_lam(r.cpf.max_lam), 12, [t, 'Pg']);
+    t_is(r.bus(:, PD), Pd_lam(r.cpf.max_lam), 12, [t, 'Pd']);
     t_is(size(r.cpf.V_hat), [10 iterations+1], 12, [t 'size(V_hat)']);
     t_is(size(r.cpf.V), [10 iterations+1], 12, [t 'size(V)']);
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
@@ -158,6 +175,8 @@ else
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0.99025, 3, [t 'max_lam']);
+    t_is(r.gen(pvg, PG), Pg_lam(r.cpf.max_lam), 12, [t, 'Pg']);
+    t_is(r.bus(:, PD), Pd_lam(r.cpf.max_lam), 12, [t, 'Pd']);
     t_is(size(r.cpf.V_hat), [10 iterations+1], 12, [t 'size(V_hat)']);
     t_is(size(r.cpf.V), [10 iterations+1], 12, [t 'size(V)']);
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
@@ -176,6 +195,9 @@ else
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0.795809, 6, [t 'max_lam']);
+    ePg = Pg_lam(r.cpf.max_lam);
+    t_is(r.gen(pvg(1), PG), ePg(1), 12, [t, 'Pg']);
+    t_is(r.bus(:, PD), Pd_lam(r.cpf.max_lam), 12, [t, 'Pd']);
     t_is(size(r.cpf.V_hat), [10 iterations+1], 12, [t 'size(V_hat)']);
     t_is(size(r.cpf.V), [10 iterations+1], 12, [t 'size(V)']);
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
@@ -200,6 +222,8 @@ else
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0.97975, 4, [t 'max_lam']);
+    t_is(r.gen(pvg(2), PG), 300, 12, [t, 'Pg']);
+    t_is(r.bus(:, PD), Pd_lam(r.cpf.max_lam), 12, [t, 'Pd']);
     t_is(size(r.cpf.V_hat), [10 iterations+1], 12, [t 'size(V_hat)']);
     t_is(size(r.cpf.V), [10 iterations+1], 12, [t 'size(V)']);
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
@@ -224,6 +248,8 @@ else
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0.110684, 6, [t 'max_lam']);
+    t_is(r.gen(pvg, PG), Pg_lam(r.cpf.max_lam), 12, [t, 'Pg']);
+    t_is(r.bus(:, PD), Pd_lam(r.cpf.max_lam), 12, [t, 'Pd']);
     t_is(size(r.cpf.V_hat), [10 iterations+1], 12, [t 'size(V_hat)']);
     t_is(size(r.cpf.V), [10 iterations+1], 12, [t 'size(V)']);
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
@@ -244,6 +270,8 @@ else
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0, 6, [t 'max_lam']);
+    t_is(r.gen(pvg, PG), Pg_lam(r.cpf.max_lam), 12, [t, 'Pg']);
+    t_is(r.bus(:, PD), Pd_lam(r.cpf.max_lam), 12, [t, 'Pd']);
     t_is(size(r.cpf.V_hat), [10 iterations], 12, [t 'size(V_hat)']);
     t_is(size(r.cpf.V), [10 iterations], 12, [t 'size(V)']);
     t_is(size(r.cpf.lam_hat), [1 iterations], 12, [t 'size(lam_hat)']);
@@ -259,6 +287,8 @@ else
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0.316932, 6, [t 'max_lam']);
+    t_is(r.gen(pvg, PG), Pg_lam(r.cpf.max_lam), 12, [t, 'Pg']);
+    t_is(r.bus(:, PD), Pd_lam(r.cpf.max_lam), 12, [t, 'Pd']);
     t_is(size(r.cpf.V_hat), [10 iterations+1], 12, [t 'size(V_hat)']);
     t_is(size(r.cpf.V), [10 iterations+1], 12, [t 'size(V)']);
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
@@ -279,6 +309,8 @@ else
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0, 6, [t 'max_lam']);
+    t_is(r.gen(pvg, PG), Pg_lam(r.cpf.max_lam), 12, [t, 'Pg']);
+    t_is(r.bus(:, PD), Pd_lam(r.cpf.max_lam), 12, [t, 'Pd']);
     t_is(size(r.cpf.V_hat), [10 iterations], 12, [t 'size(V_hat)']);
     t_is(size(r.cpf.V), [10 iterations], 12, [t 'size(V)']);
     t_is(size(r.cpf.lam_hat), [1 iterations], 12, [t 'size(lam_hat)']);
@@ -294,6 +326,8 @@ else
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0.110684, 6, [t 'max_lam']);
+    t_is(r.gen(pvg, PG), Pg_lam(r.cpf.max_lam), 12, [t, 'Pg']);
+    t_is(r.bus(:, PD), Pd_lam(r.cpf.max_lam), 12, [t, 'Pd']);
     t_is(size(r.cpf.V_hat), [10 iterations+1], 12, [t 'size(V_hat)']);
     t_is(size(r.cpf.V), [10 iterations+1], 12, [t 'size(V)']);
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
@@ -312,6 +346,9 @@ else
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0.833343, 3, [t 'max_lam']);
+    ePg = Pg_lam(r.cpf.max_lam);
+    t_is(r.gen(pvg(1), PG), ePg(1), 12, [t, 'Pg']);
+    t_is(r.bus(:, PD), Pd_lam(r.cpf.max_lam), 12, [t, 'Pd']);
     t_is(size(r.cpf.V_hat), [10 iterations+1], 12, [t 'size(V_hat)']);
     t_is(size(r.cpf.V), [10 iterations+1], 12, [t 'size(V)']);
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
@@ -335,6 +372,8 @@ else
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0.99025, 3, [t 'max_lam']);
+    t_is(r.gen(pvg, PG), Pg_lam(0), 12, [t, 'Pg']);
+    t_is(r.bus(:, PD), Pd_lam(0), 12, [t, 'Pd']);
     t_is(size(r.cpf.V_hat), [10 iterations+1], 12, [t 'size(V_hat)']);
     t_is(size(r.cpf.V), [10 iterations+1], 12, [t 'size(V)']);
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
@@ -352,6 +391,8 @@ else
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0.99025, 3, [t 'max_lam']);
+    t_is(r.gen(pvg, PG), Pg_lam(0), 12, [t, 'Pg']);
+    t_is(r.bus(:, PD), Pd_lam(0), 12, [t, 'Pd']);
     t_is(size(r.cpf.V_hat), [10 iterations+1], 12, [t 'size(V_hat)']);
     t_is(size(r.cpf.V), [10 iterations+1], 12, [t 'size(V)']);
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
@@ -370,6 +411,10 @@ else
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
     t_is(r.cpf.max_lam, 0.795628, 6, [t 'max_lam']);
+    ePg = Pg_lam(r.cpf.lam(end));
+    t_is(r.gen(:, PG), [178.8688949; -64.7387022; 366.2496127], 6, [t, 'Pg']);
+%r.gen(pvg, PG), Pg_lam(r.cpf.lam(end))
+    t_is(r.bus(:, PD), Pd_lam(r.cpf.lam(end)), 12, [t, 'Pd']);
     t_is(size(r.cpf.V_hat), [10 iterations+1], 12, [t 'size(V_hat)']);
     t_is(size(r.cpf.V), [10 iterations+1], 12, [t 'size(V)']);
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
@@ -566,7 +611,7 @@ else
     iterations = 43;
     t_ok(r.success, [t 'success']);
     t_is(r.cpf.iterations, iterations, 12, [t 'iterations']);
-    t_is(r.cpf.max_lam, 0.03830560, 6, [t 'max_lam']);
+    t_is(r.cpf.max_lam, 0.038307, 5, [t 'max_lam']);
     t_is(size(r.cpf.V_hat), [300 iterations+1], 12, [t 'size(V_hat)']);
     t_is(size(r.cpf.V), [300 iterations+1], 12, [t 'size(V)']);
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
