@@ -310,7 +310,9 @@ if ~done.flag
     gbus = mpcb.gen(ong, GEN_BUS);   %% what buses are they at?
 
     %% make sure target case is same as base case w.r.t
-    %% bus types, GEN_STATUS, Qg and slack Pg
+    %% bus voltages, types, GEN_STATUS, Qg and slack Pg
+    mpct.bus(:, VA) = mpcb.bus(:, VA);
+    mpct.bus(:, VM) = mpcb.bus(:, VM);
     if qlim
         bb = find(b2ref | b2pq);
         mpct.bus(bb, BUS_TYPE) = mpcb.bus(bb, BUS_TYPE);
