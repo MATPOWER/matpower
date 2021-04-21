@@ -380,8 +380,8 @@ if ~done.flag
         mpct.success = success;
         out = cpf.mm.soln.output;
         v_ = cpf.nm.soln.v;
-        cpf_results = out.cont;
-        done.msg = out.cont.done_msg;
+        cpf_results = out;
+        done.msg = out.done_msg;
         if regexp(done.msg, 'base and target functions are identical')
             done.msg = 'Base case and target case have identical load and generation';
         elseif regexp(done.msg, 'Reached limit in \d+ continuation steps, lambda = .*\.')
