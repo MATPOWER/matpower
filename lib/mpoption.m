@@ -111,7 +111,7 @@ function opt = mpoption(varargin)
 %       [  1 - natural                                                      ]
 %       [  2 - arc length                                                   ]
 %       [  3 - pseudo arc length                                            ]
-%   cpf.stop_at             'NOSE'      determins stopping criterion
+%   cpf.stop_at             'NOSE'      determines stopping criterion
 %       [ 'NOSE'     - stop when nose point is reached                      ]
 %       [ 'FULL'     - trace full nose curve                                ]
 %       [ <lam_stop> - stop upon reaching specified target lambda value     ]
@@ -147,7 +147,7 @@ function opt = mpoption(varargin)
 %                                       magnitude enforcement (p.u)
 %   cpf.flow_lims_tol       0.01        tolerance for line MVA flow
 %                                       enforcement (MVA)
-%   cpf.plot.level          0           control plotting of noze curve
+%   cpf.plot.level          0           control plotting of nose curve
 %       [  0 - do not plot nose curve                                       ]
 %       [  1 - plot when completed                                          ]
 %       [  2 - plot incrementally at each iteration                         ]
