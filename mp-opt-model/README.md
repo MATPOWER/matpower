@@ -26,7 +26,8 @@ Installation
 
 **Note to [MATPOWER][2] users:** _MP-Opt-Model and its prerequisites, MIPS
 and MP-Test, are included when you install [MATPOWER][2]. There is generally
-no need to install it separately. You can skip directly to step 3 to verify._
+no need to install MP-Opt-Model separately. You can skip directly to step 3
+to verify._
 
 Installation and use of MP-Opt-Model requires familiarity with the basic operation
 of MATLAB or Octave, including setting up your MATLAB/Octave path.

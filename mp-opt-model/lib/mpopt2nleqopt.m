@@ -14,7 +14,7 @@ function nleqopt = mpopt2nleqopt(mpopt, model, alg)
 %               precedence for each model type list in parentheses):
 %           'NLEQ' - nonlinear equation with all continuous variables
 %                   (NEWTON, FSOLVE)
-%       ALG ('opf.ac') : (optional) 'pf.alg' or any valid value of
+%       ALG ('pf.alg') : (optional) 'pf.alg' or any valid value of
 %               OPT.alg for NLEQS_MASTER. The first option indicates that
 %               it should be taken from MPOPT.pf.alg.
 %
@@ -46,7 +46,7 @@ end
 
 %% get ALG, MAX_IT from mpopt, if necessary
 switch alg
-    case {'pf.ac', ''}
+    case {'pf.alg', ''}
         alg = upper(mpopt.pf.alg);
     otherwise
         alg = upper(alg);

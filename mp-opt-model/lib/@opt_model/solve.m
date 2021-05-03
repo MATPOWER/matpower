@@ -178,10 +178,11 @@ switch pt
         f = A*x - b;
         output = struct('alg', leq_solver);
         lambda = A;     %% jac
-    case 'NLEQ'         %% NLEQ  - nonlinear equations
-        x0 = om.params_var();
+    case {'NLEQ', 'PNE'}    %% NLEQ, PNE - nonlinear equations
         if isfield(opt, 'x0')
             x0 = opt.x0;
+        else
+            x0 = om.params_var();
         end
 
         if om.getN('lin')
@@ -190,8 +191,13 @@ switch pt
         else
             fcn = @(x)om.eval_nln_constraint(x, 1);
         end
-        [x, f, eflag, output, lambda] = nleqs_master(fcn, x0, opt);
-    case 'NLP'          %% NLP  - nonlinear program
+        switch pt
+            case 'NLEQ' %% NLEQ - nonlinear equation
+                [x, f, eflag, output, lambda] = nleqs_master(fcn, x0, opt);
+            case 'PNE'  %% PNE - parameterized nonlinear equation
+                [x, f, eflag, output, lambda] = pnes_master(fcn, x0, opt);
+        end
+    case 'NLP'          %% NLP   - nonlinear program
         %% optimization vars, bounds, types
         [x0, xmin, xmax] = om.params_var();
         if isfield(opt, 'x0')

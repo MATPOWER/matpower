@@ -151,7 +151,7 @@
 \newcommand{\mpomlink}[0]{\href{\mpomurl}{\mpom{}}}
 \newcommand{\mpomname}[0]{\mpom{}}
 % \newcommand{\mpomname}[0]{{{\bf M}{\sc at}{\bf P}{\sc ower} \textbf{Opt}imization \textbf{Model}}}
-\newcommand{\mpomver}[0]{3.1-dev}
+\newcommand{\mpomver}[0]{4.0-dev}
 \newcommand{\most}[0]{{MOST}}
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
@@ -279,7 +279,7 @@ The \mpom{} project page can be found at:
 
 \bigskip
 
-\mpomlink{} is based on code that was developed, primarily by Ray~D.~Zimmerman of \pserc{}\footnote{\url{http://pserc.org/}} at Cornell University as part of the \matpowerlink{}~\cite{zimmerman2011,matpower} project.
+\mpomlink{} is based on code that was developed primarily by Ray~D.~Zimmerman of \pserc{}\footnote{\url{http://pserc.org/}} at Cornell University, along with significant contributions from others, as part of the \matpowerlink{}~\cite{zimmerman2011,matpower} project.
 
 Up until version 7 of \matpower{}, the code now included in \mpom{} was distributed only as an integrated part of \matpower{}. After the release of \matpower{} 7, \mpom{} was split out into a separate project, though it is still included with \matpower{}.
 
@@ -290,7 +290,7 @@ The code in \mpom{} is distributed under the 3-clause BSD license
 ~\cite{bsd}. The full text of the license can be found in the \code{LICENSE} file at the top level of the distribution or at \url{https://github.com/MATPOWER/mp-opt-model/blob/master/LICENSE} and reads as follows.
 
 \begin{Notice}
-Copyright (c) 2004-2020, Power Systems Engineering Research Center
+Copyright (c) 2004-2021, Power Systems Engineering Research Center
 (PSERC) and individual contributors (see AUTHORS file for details).
 All rights reserved.
 
@@ -387,7 +387,7 @@ In this manual, references to \matlab{} usually apply to Octave as well.
 \subsection{Installation}
 \label{sec:installation}
 
-{\bf Note to \matpower{} users:} \emph{\mpom{} and its prerequisites, \mips{} and \mptest{}, are included when you install \matpower{}. There is generally no need to install them separately. You can skip directly to step 3 to verify.}
+{\bf Note to \matpower{} users:} \emph{\mpom{} and its prerequisites, \mips{} and \mptest{}, are included when you install \matpower{}. There is generally no need to install \mpom{} separately. You can skip directly to step 3 to verify.}
 
 ~
 
@@ -514,7 +514,7 @@ lambda.mu_l  lambda.mu_u
   0.0000       0.6250
 \end{Code}
 
-Both approaches can be applied to each of the types of problems that \mpom{} handles, namely, LP, QP, MILP, MIQP, NLP and linear and nonlinear equations.
+Both approaches can be applied to each of the types of problems that \mpom{} handles, namely, LP, QP, MILP, MIQP, NLP and linear and nonlinear equations, including families of parameterized nonlinear equations.
 
 An options struct can be passed to the \code{solve} method or the \code{qps\_master} function to select a specific solver, control the level of
 progress output, or modify a solver's default parameters.
@@ -541,9 +541,10 @@ The first part consists of interfaces to various numerical optimization solvers 
 \item nonlinear programming problems (NLP)
 \item linear equations (LEQ)
 \item nonlinear equations (NLEQ)
+\item parameterized nonlinear equations (PNE)
 \end{itemize}
 
-The second part consists of an optimization model class designed to help the user construct an optimization problem by adding variables, constraints and costs, then solve the problem and extract the solution in terms of the individual sets of variables, constraints and costs provided.
+The second part consists of an optimization model class designed to help the user construct an optimization or zero-finding problem by adding variables, constraints and/or costs, then solve the problem and extract the solution in terms of the individual sets of variables, constraints and/or costs provided.
 
 Finally, \mpom{} includes a utlity function that can be used to get information about the availability of optional functionality, another to help with copying nested struct data, and a function that provides version information on the current \mpom{} installation.
 
@@ -614,11 +615,10 @@ name & description \\
 %\renewcommand{\arraystretch}{1.2}
 \centering
 \begin{threeparttable}
-\caption{Output Arguments for \code{qps\_master}\tnote{\dag}}
+\caption{Output Arguments for \code{qps\_master}}
 \label{tab:qps_master_output}
 \footnotesize
-% \begin{tabular}{p{0.17\textwidth}p{0.76\textwidth}}
-\begin{tabular}{ll}
+\begin{tabular}{p{0.12\textwidth}p{0.82\textwidth}}
 \toprule
 name & description \\
 \midrule
@@ -631,7 +631,7 @@ $\le 0$ & solver-specific failure code \\
 \end{tabular}	\\
 \code{output}	& output struct with the following fields:	\\
 & \begin{tabular}{r @{ -- } l}
-alg & algorithm code of solver used \\
+\code{alg} & algorithm code of solver used \\
 \emph{(others)} & solver-specific fields \\
 \end{tabular}	\\
 \code{lambda}	& struct containing the Langrange and Kuhn-Tucker multipliers on the constraints, with fields:	\\
@@ -674,7 +674,7 @@ name & default & description \\
 \codeq{MOSEK} & \mosek{}\tnote{*} \\
 \codeq{OT} & \matlab{} Opt Toolbox, \code{quadprog}, \code{linprog} \\
 \end{tabular}	\\
-\code{verbose}	& 1	& amount of progress info to be printed \\
+\code{verbose}	& 0	& amount of progress info to be printed \\
 && \begin{tabular}{r @{ -- } l}
 0 & print no progress info \\
 1 & print a little progress info \\
@@ -797,7 +797,7 @@ name & description \\
 % \end{tabular}	\\
 % \code{output}	& output struct with the following fields:	\\
 % & \begin{tabular}{r @{ -- } l}
-% alg & algorithm code of solver used \\
+% \code{alg} & algorithm code of solver used \\
 % \emph{(others)} & solver-specific fields \\
 % \end{tabular}	\\
 % \code{lambda}	& struct containing the Langrange and Kuhn-Tucker multipliers on the constraints, with fields:	\\
@@ -839,7 +839,7 @@ name & default & description \\
 \codeq{MOSEK} & \mosek{}\tnote{*} \\
 \codeq{OT} & \matlab{} Opt Toolbox, \code{intlinprog} \\
 \end{tabular}	\\
-\code{verbose}	& 1	& amount of progress info to be printed \\
+\code{verbose}	& 0	& amount of progress info to be printed \\
 && \begin{tabular}{r @{ -- } l}
 0 & print no progress info \\
 1 & print a little progress info \\
@@ -969,7 +969,7 @@ $\le 0$ & solver-specific failure code \\
 \end{tabular}	\\
 \code{output}	& output struct with the following fields:	\\
 & \begin{tabular}{r @{ -- } l}
-alg & algorithm code of solver used \\
+\code{alg} & algorithm code of solver used \\
 \emph{(others)} & solver-specific fields \\
 \end{tabular}	\\
 \code{lambda}	& struct containing the Langrange and Kuhn-Tucker multipliers on the constraints, with fields:	\\
@@ -1005,7 +1005,7 @@ name & default & description \\
 \codeq{IPOPT} & \ipopt{}\tnote{*} \\
 \codeq{KNITRO} & \knitro{}\tnote{*} \\
 \end{tabular}	\\
-\code{verbose}	& 1	& amount of progress info to be printed \\
+\code{verbose}	& 0	& amount of progress info to be printed \\
 && \begin{tabular}{r @{ -- } l}
 0 & print no progress info \\
 1 & print a little progress info \\
@@ -1240,10 +1240,10 @@ name & description \\
 \code{problem}	& alternative, single argument input struct with fields corresponding to arguments above	\\
 \bottomrule
 \end{tabular}
-\begin{tablenotes}
- \scriptsize
- \item [\dag] {Optional.}
-\end{tablenotes}
+% \begin{tablenotes}
+%  \scriptsize
+%  \item [\dag] {Optional.}
+% \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
@@ -1268,7 +1268,7 @@ $\le 0$ & solver-specific failure code \\
 \end{tabular}	\\
 \code{output}	& output struct with the following fields:	\\
 & \begin{tabular}{r @{ -- } l}
-alg & algorithm code of solver used \\
+\code{alg} & algorithm code of solver used \\
 \emph{(others)} & solver-specific fields \\
 \end{tabular}	\\
 \code{jac}	& final value of Jacobian matrix	\\
@@ -1301,7 +1301,7 @@ name & default & description \\
 \codeq{FSOLVE} & \matlab{} Opt Toolbox, \code{fsolve}\tnote{*} \\
 \codeq{GS} & Gauss-Seidel method\tnote{\ddag} \\
 \end{tabular}	\\
-\code{verbose}	& 1	& amount of progress info to be printed \\
+\code{verbose}	& 0	& amount of progress info to be printed \\
 && \begin{tabular}{r @{ -- } l}
 0 & print no progress info \\
 1 & print a little progress info \\
@@ -1339,7 +1339,7 @@ The following code, included as \code{nleqs\_master\_ex1.m} in \mpompath{lib/t},
 f(x) = \left[\begin{array}{c}x_1 + x_2 -1 \\ -x_1^2 + x_2 + 5\end{array}\right]
 \end{equation}
 
-First, create a function that will evaluate the function and its Jacobian for a given value of $x$.
+First, create a function that will evaluate the $f(x)$ and its Jacobian $J(x)$ for a given value of $x$.
 \begin{Code}
 function [f, J] = f1(x)
 f = [  x(1)   + x(2) - 1;
@@ -1581,6 +1581,579 @@ f =
    -7.51313e-09
     4.48558e-09
 \end{Code}
+
+
+
+\clearpage
+\subsection{Parameterized Nonlinear Equation Solver -- {\tt pnes\_master}}
+\label{sec:pnes_master}
+
+Continuation methods or branch tracing methods can be used to trace, beginning from an initial solution point, a curve of solutions to a parameterized system of nonlinear equations of the form
+\begin{equation}
+f(x) = 0, \label{eq:pne}
+\end{equation}
+where $f \colon \R^{n+1} \to \R^n$.
+
+The \code{pnes\_master} function provides a common \textbf{\underline{p}}arameterized \textbf{\underline{n}}onlinear \textbf{\underline{e}}quation \textbf{\underline{s}}olver interface for general parameterized nonlinear equations (PNE). The current implementation assumes that the function $f(x)$ arises from a parameterization, such as a homotopy, where the scalar parameter $\lambda$ is by convention the last element of $x$. If we denote the first $n$ elements of $x$ as $y$, we have
+\begin{equation}
+x = \left[\begin{array}{c}y \\ \lambda\end{array}\right] \label{eq:pne_x}
+\end{equation}
+
+In a typical application, we may have nonlinear functions $g_0, g \colon \R^n \to \R^n$, where we have a known solution $y_0$ to the equation $g_0(y) = 0$, but a good starting point for finding the solution to $g(y) = 0$ is not available. In this case, we can define $f(x)$ as a homotopy with parameter $\lambda$,
+\begin{equation}
+f(x) = (1 - \lambda) g_0(y) + \lambda g(y), \label{eq:pne_fx}
+\end{equation}
+and use a continuation method to trace a solution curve from $y_0$ and $\lambda = 0$ to $y^*$ and $\lambda = 1$, where $y^*$ is the desired solution to $g(y) = 0$.
+
+Currently \mpom{} includes only a single solver implementation for PNE problems based on a numerical continuation method commonly known as a predictor-corrector method~\cite{allgower2003}. This method involves adding another equation to the system which identifies the location of the current solution with respect to the previous or next solution. The continuation process can be diagrammatically shown by \eqref{eq:pccm}.
+\begin{equation}
+x^j \quad \xrightarrow{Predictor} \quad \hat{x}^{j+1} \quad \xrightarrow{Corrector} \quad {x}^{j+1}
+\label{eq:pccm}
+\end{equation}
+where, $x^j$ represents the current solution at step~$j$, $\hat{x}^{j+1}$ is the predicted solution for the next step, and ${x}^{j+1}$ is the next solution on the curve.
+
+\subsubsection{Parameterization}
+
+The values of $x$ along the solution curve can parameterized in a number of ways \cite{chiang1995, li2008}. Parameterization is a mathematical way of identifying each solution so that the \emph{next} solution or \emph{previous} solution can be quantified. \mpom{} includes three parameterization scheme options to quantify this relationship, detailed below, where $\sigma$ is the continuation step size parameter and $\lambda$ is the last element of $x$.
+
+\begin{itemize}
+
+\item{\bf Natural parameterization} simply uses $\lambda$ directly as the parameter, so the new $\lambda$ is simply the previous value plus the step size.
+\begin{equation}
+p^j(x) = \lambda - \lambda^j - \sigma^j = 0
+\label{eq:natural_parm}
+\end{equation}
+\item {\bf Arc length parameterization} results in the following relationship, where the step size is equal to the 2-norm of the distance from one solution to the next.
+\begin{equation}
+p^j(x) = \sum\limits_i(x_i - x_i^j)^2 - (\sigma^j)^2 = 0
+\label{eq:arc_parm}
+\end{equation}
+\item {\bf Pseudo arc length parameterization} \cite{mori2002} is \mpom{}'s default parameterization scheme, where the next point $x$ on the solution curve is constrained to lie in the hyperplane running through the predicted solution $\hat{x}^{j+1}$ orthogonal to the tangent line from the previous corrected solution $x^j$. This relationship can be quantified by the function
+\begin{equation}
+p^j(x) = \trans{ \left(x - x^{j} \right) } \bar{z}^j -\sigma^j = 0,
+\label{eq:psuedo_arc_parm}
+\end{equation}
+where $\bar{z}^j$ is the normalized tangent vector at $x^j$ and $\sigma^j$ is the continuation step size parameter.
+
+\end{itemize}
+
+\subsubsection{Predictor}
+The predictor is used to produce an estimate for the next solution. The better the prediction, the faster is the convergence to the solution point. \mpom{} uses a tangent predictor for estimating the curve to the next solution. At step~$j$, the tangent vector $z^j$ at the current solution $x^j$ is found by solving the linear system
+\begin{equation}
+\left[ \begin{array}{c}
+  \der{f}{x} \\[\medskipamount]
+  \der{p^{j-1}}{x}
+\end{array} \right] z^j =
+\left[ \begin{array}{c}
+  0 \\
+  1  \end{array} \right].
+\label{eq:tangent_predictor}
+\end{equation}
+The matrix on the left-hand side is simply the Jacobian of $f(x)$ with an additional row added. The extra row, required to make the system non-singular and define the magnitude of $z^j$, is the derivative of $p^{j-1}(x)$, the parameterization function from the previous step.
+
+The resulting tangent vector is then normalized
+\begin{equation}
+\bar{z}^j = \frac{z^j}{|| z^j ||_2}
+\end{equation}
+and used to compute the predicted approximation $\hat{x}^{j+1}$ to the next solution ${x}^{j+1}$ using
+\begin{equation}
+\hat{x}^{j+1} = x^j + \sigma^j \bar{z}^j,
+\end{equation}
+where $\sigma^j$ is the continuation step size.
+
+\subsubsection{Corrector}
+The corrector stage at step~$j$ finds the next solution $x^{j+1}$ by correcting the approximation $\hat{x}^{j+1}$ estimated by the predictor. A method such as Newton's method is used to find the next solution by solving the $n+1$ dimensional system in \eqref{eq:corrector}, where one of \eqref{eq:natural_parm}--\eqref{eq:psuedo_arc_parm} has been added as an additional constraint to the parameterized nonlinear equations of \eqref{eq:pne}.
+\begin{equation} \left[\begin{array}{c}
+ f(x) \\
+ p^j(x)
+ \end{array} \right] = 0
+ \label{eq:corrector}
+\end{equation}
+
+The corrector in \mpom{} uses \code{nleqs\_master} with its variety of avaiable solvers to solve \eqref{eq:corrector} for each new solution point on the curve.
+
+\subsubsection{Step Length Control}
+Step length control is a key element affecting the computational efficiency of a continuation method. It affects the continuation method with two issues: (1) speed -- how fast the corrector converges to a specified accuracy, and (2) robustness -- whether the corrector converges to a true solution given a predicted point. \mpom{}'s numerical continuation can optionally use adaptive steps, where the step size $\sigma$ is adjusted by a scaling factor $\alpha$ within specified limits.
+\begin{equation}
+ \sigma^{j+1} = \alpha^j \sigma^j, \qquad \sigma_\mathrm{min} \le \sigma^{j+1} \le \sigma_\mathrm{max}
+ \label{eq:step_adapt1}
+\end{equation}
+This scaling factor $\alpha^j$ for step~$j$ is limited to a maximum of 2 and is calculated from an error estimation between the predicted and corrected solutions $\gamma^j$ as follows,
+\begin{equation}
+ \alpha^j = 1 + \beta \left(\dfrac{\epsilon}{\gamma^j} - 1\right), \qquad \alpha^j \le 2,
+ \label{eq:step_adapt2}
+\end{equation}
+where $\beta$ is a damping factor, $\epsilon$ is a specified tolerance, and $\gamma^j$ is given by
+\begin{equation}
+ \gamma^j = \left\Vert x^{j+1} - \hat{x}^{j+1}\right\Vert_\infty.
+ \label{eq:step_adapt3}
+\end{equation}
+
+\subsubsection{Event Detection and Location}
+A numerical continuation \emph{event} is triggered when the value of one of the elements of an event function changes sign from one continuation step to the next. The event occurs at the point where the corresponding value of the event function passes through zero. \mpom{} provides event functions to detect the location at which the continuation curve reaches the following:
+\begin{itemize}
+%    \setlength{\itemsep}{-3pt}
+    \setlength{\parskip}{-3pt}
+    \item a specified target $\lambda$ value
+    \item a limit or nose point
+    \item the end of a full trace
+\end{itemize}
+
+Each event function is registered with an event name, a flag indicating whether or not the location of the event should be pinpointed, and if so, to within what tolerance. For events that are to be located, when an event interval is detected, that is, when an element of the event function value changes sign, \mpom{} adjusts the continuation step size via a False Position or Regula Falsi method until it locates the point of the zero-crossing to within the specified tolerance.
+
+The detection of an event zero, or even an event interval, can be used to trigger further actions. \mpom{} includes a callback functionality that can be used to handle events. For example, the numerical continuation termination for nose point, target $\lambda$ or full trace modes are all based on callback functions in conjunction with event detection.
+
+User-defined event detection functions for \code{pnes\_master} can be provided via the \code{events} option.
+
+\subsubsection{Callback Functions}
+\mpom{}'s continuation method provides a callback mechanism to give the user access to the iteration process for executing custom code at each iteration, for example, to implement custom incremental plotting of a solution curve or to handle a detected event. This callback mechanism is used internally to handle default plotting functionality as well as to handle termination events. The \code{pne\_callback\_default} function, for example, is collects the $\lambda$ and $x$ results from each predictor and corrector iteration and optionally plots the continuation curve.
+
+The prototype for a \code{pnes\_master} callback function is
+\begin{Code}
+function [nx, cx, s] = pne_callback_user(k, nx, cx, px, s, opt)
+\end{Code}
+and the input and output arguments are described in Tables~\ref{tab:pne_callback_in} through \ref{tab:pne_state} and in the help for \code{pne\_callback\_default}. Each registered callback function is called in three different contexts, distinguished by the value of the first argument \code{k} as follows:
+\begin{enumerate}
+\item{\em initial} -- called with \code{k} = 0, after initial solution, before first continuation step
+\item{\em iterations} -- called with \code{k} $> 0$, at each iteration, after predictor-corrector step
+\item{\em final} -- called with \code{k} $< 0$, after exiting predictor-corrector loop, inputs identical to last iteration call, except \code{k} negated
+\end{enumerate}
+
+\begin{table}[!ht]
+\centering
+\begin{threeparttable}
+\caption{Callback Input Arguments}
+\label{tab:pne_callback_in}
+\footnotesize
+\begin{tabular}{p{0.18\textwidth}p{0.75\textwidth}}
+\toprule
+name & description \\
+\midrule
+\code{k}	& continuation step iteration count \\
+\code{cx}	& current continuation state\tnote{*}, corresponding to most recent successful step \\
+\code{nx}	&  next continuation state\tnote{*}, corresponding to proposed next step \\
+\code{px}	& previous continuation state\tnote{*}, corresponding to last step prior to \code{cx} \\
+\code{s}	& container struct with various flags, etc, with fields: \\
+\code{~~.done}	& termination flag, 1 $\rightarrow$ terminate, 0 $\rightarrow$ continue \\
+\code{~~.done\_msg}	& char array containing reason for termination \\
+\code{~~.warmstart}	& struct with information needed for warm-starting a continuation problem\tnote{\ddag} \\
+\code{~~.rollback}	&  scalar flag to indicate that the current step should be rolled back and retried with a different step size, etc. \\
+\code{~~.events}	&  struct array listing any events detected for this step\tnote{\ddag} \\
+\code{~~.results}	&  current value of results struct whose fields are to be included in the \code{output} struct returned by \code{pnes\_master} \\
+\code{opt}	& \code{pnes\_master} options struct \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [*] {See Table~\ref{tab:pne_state} for details of the continuation state.}
+ \item [\dag] {See Table~\ref{tab:pnes_master_warmstart} for details.}
+ \item [\ddag] {See \code{pne\_detect\_events} for details of the \code{events} field.}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[!ht]
+\centering
+\begin{threeparttable}
+\caption{Callback Output Arguments}
+\label{tab:pne_callback_out}
+\footnotesize
+\begin{tabular}{p{0.18\textwidth}p{0.75\textwidth}}
+\toprule
+name & description \\
+\midrule
+\multicolumn{2}{c}{\emph{All are updated versions of the corresponding input arguments, see Table~\ref{tab:pne_callback_in} for more details.}} \\
+\code{cx}	&  current continuation state\tnote{*}, update values in \code{cx} such as \code{this\_step} or \code{this\_parm} if \code{s.rollback} is true \\
+\code{nx}	&  next continuation state\tnote{*}, update values in this state if \code{s.rollback} is false \\
+\code{s}	& container struct with various flags, etc, with fields: \\
+\code{~~.done}	& callback may set this to request termination \\
+\code{~~.done\_msg}	& callback may assign the reason for termination \\
+\code{~~.warmstart}	& callback may create this field to prepare for a subsequent warm-started call to \code{pnes\_master}\tnote{\dag} \\
+\code{~~.rollback}	&  callback can request a rollback step, even if it was not indicated by an event function\tnote{\ddag} \\
+\code{~~.events}	&  \code{msg} field for a given event may be updated\tnote{\S} \\
+\code{~~.results}	&  updated version of results struct whose fields are to be included in the \code{output} struct returned by \code{pnes\_master} \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [*] {See Table~\ref{tab:pne_state} for details of the continuation state.}
+ \item [\dag] {See Table~\ref{tab:pnes_master_warmstart} for details.}
+ \item [\ddag] {In this case, the callback should also modify the step size or parameterization to be used for the re-try, by setting the \code{this\_step} or \code{this\_parm} fields in \code{cx}.}
+ \item [\S] {See \code{pne\_detect\_events} for details of the \code{events} field.}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[!ht]
+\centering
+\begin{threeparttable}
+\caption{Fields of Continuation State Struct}
+\label{tab:pne_state}
+\footnotesize
+\begin{tabular}{p{0.18\textwidth}p{0.75\textwidth}}
+\toprule
+name & description \\
+\midrule
+\code{x\_hat}	& solution vector from predictor \\
+\code{x}	& solution vector from corrector \\
+\code{z}	& normalized tangent vector, $\bar{z}$ \\
+\code{default\_step}	& default step size \\
+\code{default\_parm}	& handle to function implementing parameterization used by default\tnote{*} \\
+\code{this\_step}	& step size for this step only \\
+\code{this\_parm}	& handle to function implementing parameterization used for this step only\tnote{*} \\
+\code{step}	& current step size \\
+\code{parm}	& handle to function implementing current parameterization\tnote{*} \\
+\code{events}	& event log, struct array, see \code{pne\_detect\_events} for details \\
+\code{cbs}	& callback state, callback functions may add fields containing any information the function would like to pass from one invokation to the next, taking care not to step on fields being used by other callbacks, such as the \codeq{default} field used by \code{pne\_callback\_default}. \\
+\code{efv}	& cell array of event function values \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [*] {Typically a handle to one of \code{pne\_pfcn\_natural}, \code{pne\_pfcn\_arc\_len}, or \code{pne\_pfcn\_pseudo\_arc\_len}.}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\clearpage
+The user can define their own callback functions which take the same form and are called in the same contexts as \code{pne\_callback\_default}. User callback functions are included via the \code{callbacks} option to \code{pnes\_master}. This option takes a single \emph{callback specification} or a cell array of them if defining multiple callbacks, where a \emph{callback specification} takes one of the following forms: \code{fcn}, \code{\{fcn\}}, or \code{\{fcn, priority\}}.
+\begin{itemize}
+\item \code{fcn}       - function handle to the callback function
+\item \code{priority}  - numerical value specifying callback priority,\footnote{See \code{pne\_register\_callbacks} for details.} default = 20
+\end{itemize}
+
+User-defined callback functions for \code{pnes\_master} can be provided via the \code{callbacks} option.
+
+\clearpage
+\subsubsection{\tt pnes\_master}
+
+This function can be used to trace the parameterized solution curve with any of the available solvers\footnote{The current implementation includes only a single solver based on a predictor-corrector continuation method.} by calling it as follows,
+\begin{Code}
+[x, f, exitflag, output, jac] = pnes_master(fcn, x0, opt);
+\end{Code}
+where the input and output arguments are described in Tables~\ref{tab:pnes_master_input} and \ref{tab:pnes_master_output}, respectively. Alternatively, the input arguments can be packaged as fields in a \code{problem} struct and passed in as a single argument, where the \code{opt} field is optional.
+\begin{Code}
+[x, f, exitflag, output, jac] = pnes_master(problem);
+\end{Code}
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{Input Arguments for \code{pnes\_master}}
+\label{tab:pnes_master_input}
+\footnotesize
+\begin{tabular}{lp{0.85\textwidth}}
+\toprule
+name & description \\
+\midrule
+\code{fcn}	& handle to function that evaluates the function $f(x)$ and its Jacobian $J(x)$ for a given value of $x$, with calling syntax:	\\
+&~~~~\code{f = fcn(x)}, or	\\
+&~~~~\code{[f, J] = fcn(x)}	\\
+& where $f$ is $n \times 1$, $x$ is $(n+1) \times 1$, and $J$ is $n \times (n+1)$. \\
+\code{x0}	& starting value of vector $x$	\\
+\code{opt}	& optional options struct (all fields also optional), see Table~\ref{tab:pnes_master_options} for details	\\
+\code{problem}	& alternative, single argument input struct with fields corresponding to arguments above	\\
+\bottomrule
+\end{tabular}
+% \begin{tablenotes}
+%  \scriptsize
+%  \item [\dag] {Optional.}
+% \end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{Output Arguments for \code{pnes\_master}\tnote{\dag}}
+\label{tab:pnes_master_output}
+\footnotesize
+\begin{tabular}{lp{0.8\textwidth}}
+\toprule
+name & description \\
+\midrule
+\code{x}	& solution vector	\\
+\code{f}	& final function value, $f(x)$	\\
+\code{exitflag}	& exit flag	\\
+& \begin{tabular}{r @{ -- } l}
+1 & converged successfully \\
+$\le 0$ & solver-specific failure code \\
+\end{tabular}	\\
+\code{output}	& output struct with the following fields:	\\
+\code{~~~corrector} & \code{output} return value from \code{nleqs\_master} from final corrector run, see Table~\ref{tab:nleqs_master_output} for details \\
+\code{~~~iterations} & $N$, total number of continuation steps performed \\
+\code{~~~events} & struct array of size $n_e$ of events detected, with the following fields: \\
+\code{~~~~~~k} & continuation step at which event was located \\
+\code{~~~~~~name} & name of detected event \\
+\code{~~~~~~idx} & index(es) of critical element(s) in corresponding event function \\
+\code{~~~~~~msg} & descriptive text detailing the event \\
+\code{~~~done\_msg} & message describing cause of continuation termination \\
+\code{~~~steps} & $(N+1)$ row vector of stepsizes taken at each continuation step \\
+\code{~~~lam\_hat} & $(N+1)$ row vector of $\hat{\lambda}$ values from prediction steps \\
+\code{~~~lam} & $(N+1)$ row vector of $\lambda$ values from correction steps \\
+\code{~~~max\_lam} & maximum value of parameter $\lambda$ (from \code{output.lam}) \\
+\code{~~~warmstart} & optional output with information needed for warm-starting an updated continuation problem, see Table~\ref{tab:pnes_master_warmstart} for details \\
+\code{~~~x\_hat}\tnote{\ddag} & $n \times (N+1)$ matrix of solution values from prediction steps \\
+\code{~~~x}\tnote{\ddag} &  $n \times (N+1)$ matrix of solution values from correction steps \\
+\emph{~~~(others)} & depends on \code{opt.output\_fcn}, a custom output function can add arbitrary fields to \code{output} \\
+\code{jac}	& final value of Jacobian matrix	\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [\dag] {All output arguments are optional.}
+ \item [\ddag] {This field is created by the default output function and may not be present if using a custom output function defined by \code{opt.output\_fcn}.}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{Options for \code{pnes\_master}}
+\label{tab:pnes_master_options}
+\footnotesize
+\begin{tabular}{lcp{0.62\textwidth}}
+\toprule
+name & default & description \\
+\midrule
+\code{alg}	& \codeq{DEFAULT}	& determines which solver to use\tnote{*} \\
+\code{verbose}	& 0	& amount of progress info to be printed \\
+&& \begin{tabular}{r @{ -- } l}
+0 & print no progress info \\
+1--5 & print increasing level of progress info \\
+\end{tabular}	\\
+\code{nleqs\_opt}	& \emph{empty}	& options struct for \code{nleqs\_master} used for corrector stage, see Table~\ref{tab:nleqs_master_options} for details \\
+\code{solve\_base}	& 1	& 0/1 flag that determines whether or not to run a corrector stage for initial solution point, \code{x0}\\
+\code{parameterization}	& 3	& choice of parameterization \\
+&& \begin{tabular}{r @{ -- } l}
+1 & natural \\
+2 & arc length \\
+3 & pseudo arc length \\
+\end{tabular}	\\
+\code{stop\_at}	& \codeq{NOSE}	& determines stopping criterion \\
+&& \begin{tabular}{r @{ -- } l}
+\codeq{NOSE} & stop when limit or nose point is reached \\
+\codeq{FULL} & trace full continuation curve \\
+$\lambda_\mathrm{stop}$ & numeric, stop upon reaching target $\lambda$ value $\lambda_\mathrm{stop}$  \\
+\end{tabular}	\\
+\code{max\_it}	& 2000	& maximum number of continuation steps \\
+\code{step}	& 0.05	& continuation step size \\
+\code{adapt\_step}	& 0	& toggle adaptive step size feature \\
+&& \begin{tabular}{r @{ -- } l}
+0 & adaptive step size disabled \\
+1 & adaptive step size enabled \\
+\end{tabular}	\\
+\code{adapt\_step\_damping}	& 0.7	& damping factor $\beta$ from \eqref{eq:step_adapt2} for adaptive step sizing \\
+\code{adapt\_step\_tol}	& $10^{-3}$	& tolerance $\epsilon$ from \eqref{eq:step_adapt2} for adaptive step sizing \\
+\code{adapt\_step\_ws}	& 1	& scale factor for default initial step size when warm-starting with adaptive step size enabled \\
+\code{step\_min}	& $10^{-4}$	& minimum allowed continuation step size, $\sigma_\mathrm{min}$ from \eqref{eq:step_adapt1} \\
+\code{step\_max}	& $0.2$	& maximum allowed continuation step size, $\sigma_\mathrm{max}$ from \eqref{eq:step_adapt1} \\
+\code{default\_event\_tol}	& $10^{-3}$	& default tolerance for event functions \\
+\code{target\_lam\_tol}	& 0	& tolerance for target $\lambda$ detection\tnote{\dag}  \\
+\code{nose\_tol}	& 0	& tolerance for nose point detection\tnote{\dag}  \\
+\code{events}	& \emph{empty}	& cell array of specs for user-defined event functions\tnote{\ddag} \\
+\code{callbacks}	& \emph{empty}	& cell array of specs for user-defined callback functions\tnote{\S} \\
+\code{output\_fcn}	& \emph{empty}	& custom output function called by \code{pne\_callback\_default()} \\
+\code{plot}	&  --	& struct of options to contol plotting of continuation curve by \code{pne\_callback\_default()}, see Table~\ref{tab:pnes_master_plot_opts} for details \\
+\code{warmstart}	& \emph{empty}	& struct with information needed for warm-starting a continuation problem, see Table~\ref{tab:pnes_master_warmstart} for details \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [*] {Currently \codeq{DEFAULT} is the only option.}
+ \item [\dag] {A value of 0 means use the value of \code{default\_event\_tol}.}
+ \item [\ddag] {Passed as \code{my\_events} arg to \code{pne\_register\_events()}. For details see \code{help pne\_register\_events}.}
+ \item [\S] {Passed as \code{my\_cbacks} arg to \code{pne\_register\_callbacks()}. For details see \code{help pne\_register\_callbacks} and \code{help pne\_callback\_default}.}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{Plot Options for \code{pnes\_master}\tnote{*}}
+\label{tab:pnes_master_plot_opts}
+\footnotesize
+\begin{tabular}{lcp{0.48\textwidth}}
+\toprule
+name & default & description \\
+\midrule
+\code{level} & 0 & control plotting of continuation curve \\
+&& \begin{tabular}{r @{ -- } l}
+0 & do not plot continuation curve \\
+1 & plot when completed \\
+2 & plot incrementally at each continuation step \\
+3 & same as 2, with \code{pause} at each step \\
+\end{tabular}	\\
+\code{idx} & \emph{empty} & index of quantity to plot, passed to \code{yfcn()} \\
+\code{idx\_default} & \emph{empty} & function to provide default value for \code{idx}, if none provided \\
+\code{xname} & \codeq{lam} & name of field in \code{output} holding values that determine horizontal coordinates of plot \\
+\code{yname} & \codeq{x} & name of field in \code{output} holding values that determine vertical coordinates of plot \\
+\code{xfcn} & \code{@(x)x} & handle to function that maps a value from the indicated field of \code{output} to a horizontal coordinate for plotting\tnote{\dag} \\
+\code{yfcn} & \code{@(y,idx)y(idx, :)} & handle to function that maps a value from the indicated field of \code{output} and an index to be applied to that value to a vertical coordinate for plotting\tnote{\dag} \\
+\code{xlabel} & \codeq{\textbackslash lambda} & label for horizontal axis \\
+\code{ylabel} & \codeq{Variable Value} & label for vertical axis \\
+\code{title} & \codeq{Value of Variable \%d} & plot title used for plot of single variable\tnote{\S} \\
+\code{title2} & \codeq{Value of Multiple Variables} & plot title used for plot of multiple variables \\
+\code{legend} & \codeq{Variable \%d} & legend label\tnote{\S} \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [*] {Defines the fields for optional input \code{opt.plot}.}
+ \item [\dag] {Relevant field is indicated by the value of \code{opt.plot.xname}.}
+ \item [\ddag] {Relevant field is indicated by the value of \code{opt.plot.yname}.}
+ \item [\S] {Can use \code{\%d} as placeholder for index \code{idx} of quantity to plot.}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{Warm-start Data for \code{pnes\_master}\tnote{*}}
+\label{tab:pnes_master_warmstart}
+\footnotesize
+\begin{tabular}{lp{0.62\textwidth}}
+\toprule
+name & description \\
+\midrule
+\code{cont\_steps} & current value of continuation step counter \\
+\code{direction} & $+1$ or $-1$, for tracing of curve in same or opposite direction, respectively \\
+\code{dir\_from\_jac\_eigs} & 0/1 flag to indicate whether to use the sign of the smallest eigenvalue of the Jacobian to determine the initial direction \\
+\code{x} & current solution vector \\
+\code{z} & current tangent vector \\
+\code{xp} & previous step solution vector \\
+\code{zp} & previous step tangent vector \\
+\code{parm} & function handle for current parameterization function \\
+\code{default\_parm} & function handle for default parameterization fcn \\
+\code{default\_step} & default step size \\
+\code{events} & current event log, same as \code{output.events} \\
+\code{cbs} & struct containing user-defined callback state \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [*] {Defines the fields for optional input \code{opt.warmstart} and optional output \code{output.warmstart}.}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+\clearpage
+\subsubsection{PNE Example}
+\label{sec:pne_ex}
+
+The following code is a simplified version of the example included as \code{pne\_ex1.m} in \mpompath{lib/t}. It illustrates the use of \code{pnes\_master} to solve a 2-dimensional parameterized nonlinear function of 3 variables.\footnote{Based on a similar problem from \url{https://www.chilimath.com/lessons/advanced-algebra/systems-non-linear-equations/}.} Recall that $x_3$, the last element of $x$, corresponds to the parameter $\lambda$.
+\begin{equation}
+f(x) = \left[\begin{array}{c}x_1 + x_2 + 6 x_3 - 1 \\ -x_1^2 + x_2 + 5\end{array}\right]
+\end{equation}
+
+First, create a function that will evaluate the $f(x)$ and its Jacobian $J(x)$ for a given value of $x$.
+\begin{Code}
+function [f, J] = f1p(x)
+f = [  x(1)   + x(2) + 6*x(3) - 1;
+      -x(1)^2 + x(2) + 5    ];
+if nargout > 1
+    J = [1 1 6; -2*x(1) 1 0];
+end
+\end{Code}
+Then, call the \code{pnes\_master} function with a handle to that function, a starting value for $x$, and an option to make it trace the full continuation curve.
+\begin{Code}
+>> x = pnes_master(@f1p, [-1;0;0], struct('stop_at', 'FULL'))
+>> pne_ex1
+
+x =
+
+    2.0000
+   -1.0000
+         0
+
+\end{Code}
+
+Or, alternatively, create a \code{problem} struct to encapsulate the 3 inputs. Here we include additional options for verbose output and some plot options to make it plot the continuation curves for the first 2 variables. Then, pass this struct to \code{pnes\_master} to solve the problem and print some of the return values to produce the output below and the plot shown in \figurename~\ref{fig:pne_ex1}.
+\begin{Code}
+function pne_ex1
+opt = struct( 'verbose', 2, 'stop_at', 'FULL', 'step', 0.6);
+opt.plot = struct( 'level', 2, 'idx', 1:2, ...
+    'title2', 'PNE Continuation Example', 'legend', 'x_%d');
+problem = struct('fcn', @f1p, 'x0', [-1;0;0], 'opt',  opt);
+[x, f, exitflag, output, jac] = pnes_master(problem);
+fprintf('\nexitflag = %d\n', exitflag);
+fprintf('output.max_lam = %g\n', output.max_lam);
+fprintf('\nx = \n');
+fprintf('%4g\n', x);
+fprintf('\nf = \n');
+fprintf('%13g\n', f);
+fprintf('\njac =\n');
+fprintf('%4g%4g%4g\n', jac');
+\end{Code}
+
+\begin{figure}[!htp]
+  \centering
+  \includegraphics[width=\textwidth]{./figures/pne_ex1}
+  \caption{Continuation Curve for PNE Example}
+  \label{fig:pne_ex1}
+\end{figure}
+
+\begin{Code}
+>> pne_ex1
+
+MP-Opt-Model Version 4.0, 03-May-2021 -- Predictor/Corrector Continuation Method
+step   0  :                          lambda =  0.000,  6 corrector steps
+step   1  : PAL stepsize = 0.6       lambda =  0.081   2 corrector steps
+step   2  : PAL stepsize = 0.6       lambda =  0.162   2 corrector steps
+step   3  : PAL stepsize = 0.6       lambda =  0.241   2 corrector steps
+step   4  : PAL stepsize = 0.6       lambda =  0.320   2 corrector steps
+step   5  : PAL stepsize = 0.6       lambda =  0.398   2 corrector steps
+step   6  : PAL stepsize = 0.6       lambda =  0.475   2 corrector steps
+step   7  : PAL stepsize = 0.6       lambda =  0.551   2 corrector steps
+step   8  : PAL stepsize = 0.6       lambda =  0.625   2 corrector steps
+step   9  : PAL stepsize = 0.6       lambda =  0.697   2 corrector steps
+step  10  : PAL stepsize = 0.6       lambda =  0.767   2 corrector steps
+step  11  : PAL stepsize = 0.6       lambda =  0.835   2 corrector steps
+step  12  : PAL stepsize = 0.6       lambda =  0.898   2 corrector steps
+step  13  : PAL stepsize = 0.6       lambda =  0.956   2 corrector steps
+step  14  : PAL stepsize = 0.6       lambda =  1.005   3 corrector steps
+step  15  : PAL stepsize = 0.6       lambda =  1.038   3 corrector steps
+step  16  : PAL stepsize = 0.6       lambda =  1.024   3 corrector steps
+step  17  : PAL stepsize = 0.6       lambda =  0.863   3 corrector steps
+step  18  : PAL stepsize = 0.6       lambda =  0.726   3 corrector steps
+step  19  : PAL stepsize = 0.6       lambda =  0.595   3 corrector steps
+step  20  : PAL stepsize = 0.6       lambda =  0.468   2 corrector steps
+step  21  : PAL stepsize = 0.6       lambda =  0.343   2 corrector steps
+step  22  : PAL stepsize = 0.6       lambda =  0.221   2 corrector steps
+step  23  : PAL stepsize = 0.6       lambda =  0.100   2 corrector steps
+step  24a : PAL stepsize = 0.6       lambda = -0.019   2 corrector steps ^ ROLLBACK
+step  24  : NAT stepsize = 0.1       lambda =  0.000   3 corrector steps
+CONTINUATION TERMINATION: Traced full continuation curve in 24 continuation steps
+
+exitflag = 1
+output.max_lam = 1.03783
+
+x = 
+   2
+  -1
+   0
+
+f = 
+             0
+   -6.4837e-13
+
+jac =
+   1   1   6
+  -4   1   0
+\end{Code}
+
 
 %%------------------------------------------
 \clearpage
@@ -1844,9 +2417,9 @@ om.solve()
 [...] = om.solve(opt)
 \end{Code}
 
-After all variables, constraints and costs have been added to the model, the optimization problem can be solved simply by calling the \code{solve} method. This method automatically selects and calls, depending on the problem type, \code{mplinsolve} or one of the master solver interface functions from Section~\ref{sec:master_solvers}, namely \code{qps\_master}, \code{miqps\_master}, \code{nlps\_master}, or \code{nleqs\_master}. Note that one of the equation solvers, \code{mplinsolve} or \code{nleqs\_master} is chosen if the model has only equality constraints, with no costs and no inequality constraints.
+After all variables, constraints and costs have been added to the model, the optimization problem can be solved simply by calling the \code{solve} method. This method automatically selects and calls, depending on the problem type, \code{mplinsolve} or one of the master solver interface functions from Section~\ref{sec:master_solvers}, namely \code{qps\_master}, \code{miqps\_master}, \code{nlps\_master}, \code{nleqs\_master}, or \code{pnes\_master}. Note that one of the equation solvers is chosen if the model has no costs and no inequality constraints. In this case, if the number of variables is equal to the number of equality constraints, \code{mplinsolve} or \code{nleqs\_master} is selected. If the number of variables is one more than the number of constraints \code{pnes\_master} is chosen.
 
-The results are stored in the \code{soln} field (see Section~\ref{sec:soln}) of the \mpom{} object and can be returned in the optional output arguments. The input options struct \code{opt}, summarized in Tables~\ref{tab:solve_options} and \ref{tab:solve_alg_option}, is optional, as are all of its fields. For details on the return values see the descriptions of the individual solver functions in Sections~\ref{sec:qps_master}, \ref{sec:miqps_master}, \ref{sec:nlps_master}, and \ref{sec:nleqs_master}. For linear equations, the \code{solver} and \code{opt} arguments for \code{mplinsolve}, described in Section~\ref{MIPSMAN-sec:mplinsolve} of the \mipsman{}, can be provided in the respective fields of \code{opt.leq\_opt}.
+The results are stored in the \code{soln} field (see Section~\ref{sec:soln}) of the \mpom{} object and can be returned in the optional output arguments. The input options struct \code{opt}, summarized in Tables~\ref{tab:solve_options} and \ref{tab:solve_alg_option}, is optional, as are all of its fields. For details on the return values see the descriptions of the individual solver functions in Sections~\ref{sec:qps_master}, \ref{sec:miqps_master}, \ref{sec:nlps_master}, \ref{sec:nleqs_master}, and \ref{sec:pnes_master}. For linear equations, the \code{solver} and \code{opt} arguments for \code{mplinsolve}, described in Section~\ref{MIPSMAN-sec:mplinsolve} of the \mipsman{}, can be provided in the respective fields of \code{opt.leq\_opt}.
 
 
 \begin{table}[!ht]
@@ -1860,46 +2433,32 @@ The results are stored in the \code{soln} field (see Section~\ref{sec:soln}) of 
 \toprule
 name & default & description \\
 \midrule
-\code{alg}	& \codeq{DEFAULT}	& determines which solver to use, see Table~\ref{tab:solve_alg_option} \\
-\code{verbose}	& 1	& amount of progress info to be printed \\
+% \multicolumn{3}{l}{\emph{General Options}} \\
+\code{~~alg}	& \codeq{DEFAULT}	& determines which solver to use, see Table~\ref{tab:solve_alg_option} \\
+\code{~~verbose}	& 1	& amount of progress info to be printed \\
 && \begin{tabular}{r @{ -- } l}
 0 & print no progress info \\
-1 & print a little progress info \\
-2 & print a lot of progress info \\
-3 & print all progress info \\
+1--5 & print increasing level of progress info \\
 \end{tabular}	\\
-\code{bp\_opt}	& \emph{empty}	& options vector for \code{bp} (BPMPD)\tnote{*} \\
-\code{clp\_opt}	& \emph{empty}	& options vector for \clp{}\tnote{*} \\
-\code{cplex\_opt}	& \emph{empty}	& options struct for \cplex{}\tnote{*} \\
-\code{fd\_opt}	& \emph{empty}	& options struct for fast-decoupled Newton's method, \code{nleqs\_fd\_newton}\tnote{\dag} \\
-\code{fmincon\_opt}	& \emph{empty}	& options struct for \code{fmincon}\tnote{*} \\
-\code{fsolve\_opt}	& \emph{empty}	& options struct for \code{fsolve}\tnote{\S} \\
-\code{glpk\_opt}	& \emph{empty}	& options struct for \glpk{}\tnote{*} \\
-\code{grb\_opt}	& \emph{empty}	& options struct for \gurobi{}\tnote{*} \\
-\code{gs\_opt}	& \emph{empty}	& options struct for Gauss-Seidel method, \code{nleqs\_gauss\_seidel}\tnote{\ddag} \\
-\code{intlinprog\_opt}	& \emph{empty}	& options struct for \code{intlinprog}\tnote{*} \\
-\code{ipopt\_opt}	& \emph{empty}	& options struct for \ipopt{}\tnote{*} \\
-\code{knitro\_opt}	& \emph{empty}	& options struct for \knitro{}\tnote{*} \\
-\code{leq\_opt}	& \emph{empty}	& options struct for \code{mplinsolve}, with optional fields \code{solver} and \code{opt} corresponding to respective \code{mplinsolve} args, and \code{thresh} specifying a threshold on the absolute value of any element of \code{x}, above which \code{exitflag} will be set to 0 \\
-\code{linprog\_opt}	& \emph{empty}	& options struct for \code{linprog}\tnote{*} \\
-\code{mips\_opt}	& \emph{empty}	& options struct for \mips{} \\
-\code{mosek\_opt}	& \emph{empty}	& options struct for \mosek{}\tnote{*} \\
-\code{newton\_opt}	& \emph{empty}	& options struct for Newton's method, \code{nleqs\_newton} \\
-\code{osqp\_opt}	& \emph{empty}	& options struct for \osqp{}\tnote{*} \\
-\code{quadprog\_opt}	& \emph{empty}	& options struct for \code{quadprog}\tnote{*} \\
-\code{parse\_soln}	& 0	& flag that specifies whether or not to call the \code{parse\_soln} method and place the return values in \code{om.soln}	\\
-\code{price\_stage\_warn\_tol}	& \emph{$10^{-7}$}	& tolerance on the objective function value and primal variable relative mismatch required to avoid mismatch warning message \\
-\code{skip\_prices}	& 0	& flag that specifies whether or not to skip the price computation stage, in which the problem is re-solved for only the continuous variables, with all others being constrained to their solved values \\
-\code{x0}	& \emph{empty}	& optional initial value of $x$, overrides value stored in model, \emph{(ignored by some solvers)}	\\
+\code{~~parse\_soln}	& 0	& flag that specifies whether or not to call the \code{parse\_soln} method and place the return values in \code{om.soln}	\\
+\code{~~x0}	& \emph{empty}	& optional initial value of $x$, overrides value stored in model, \emph{(ignored by some solvers)}	\\
+\midrule
+\multicolumn{3}{l}{\emph{Additional Options for Specific Problem Types}} \\
+% \emph{problem type} & & \emph{for details see ...} \\
+~~LP/QP & & see Table~\ref{tab:qps_master_options} \\
+~~MILP/MIQP & & see Table~\ref{tab:miqps_master_options} \\
+~~NLP & & see Table~\ref{tab:nlps_master_options} \\
+~~LEQ & & see Section~\ref{MIPSMAN-sec:mplinsolve} of the \mipsman{} \\
+~~~~\code{leq\_opt.solver} & \codeq{} & see \code{help mplinsolve}, input argument \code{solver} \\
+~~~~\code{leq\_opt.opt} & \emph{empty} & see \code{help mplinsolve}, input argument \code{opt} \\
+~~NLEQ & & see Table~\ref{tab:nleqs_master_options} \\
+~~PNE & & see Table~\ref{tab:pnes_master_options} \\
 \bottomrule
 \end{tabular}
-\begin{tablenotes}
- \scriptsize
- \item [*] {Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.}
- \item [\dag] {Fast-decoupled Newton requires setting \code{fd\_opt.jac\_approx\_fcn} to a function handle that returns Jacobian approximations. See \code{help nleqs\_fd\_newton} for more details.}
- \item [\ddag] {Gauss-Seidel requires setting \code{gs\_opt.x\_update\_fcn} to a function handle that updates $x$. See \code{help nleqs\_gauss\_seidel} for more details.}
- \item [\S] {The \code{fsolve} function is included with GNU Octave, but on \matlab{} it is part of the \matlab{} \ot{}. See Appendix~\ref{app:optional_packages} for more information on the \matlab{} \ot{}.}
-\end{tablenotes}
+% \begin{tablenotes}
+%  \scriptsize
+%  \item [*] {}
+% \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
@@ -1925,6 +2484,7 @@ name & default & description \\
 & MINLP & \knitro{} (not yet implemented) \\
 & LEQ & built-in backslash operator \\
 & NLEQ & Newton's method \\
+& PNE & predictor/corrector continuation method \\
 \codeq{BPMPD} & LP, QP & BPMPD\tnote{*} \\
 \codeq{CLP} & LP, QP & \clp{}\tnote{*} \\
 \codeq{CPLEX} & LP, QP, MILP, MIQP & \cplex{}\tnote{*} \\
@@ -3111,7 +3671,7 @@ This function implements the \codeq{yalmip} tag for \code{have\_feature} to dete
 % \clearpage
 \subsection{\matpower{}-related Functions}
 
-The following three functions are related specifically to \matpowerlink{}, and are used for extracting relevant solver options from a \matpower{} options struct.
+The following four functions are related specifically to \matpowerlink{}, and are used for extracting relevant solver options from a \matpower{} options struct.
 
 \subsubsection{\tt mpopt2nleqopt}
 \begin{Code}
@@ -3146,12 +3706,22 @@ The \code{mpopt2qpopt} function returns an options struct suitable for \code{qps
 
 When the solver is set to \codeq{DEFAULT}, this function also selects the best available solver that is applicable\footnote{\glpk{} is not available for problems with quadratic costs (QP and MIQP), BPMPD and \mips{} are not available for mixed-integer problems (MILP and MIQP), and the \ot{} is not an option for problems that combine the two (MIQP).} to the specific problem class, based on the following precedence: \gurobi{}, \cplex{}, \mosek{}, \ot{}, \glpk{}, BPMPD, \mips{}.
 
+\subsubsection{\tt mpopt2pneopt}
+\begin{Code}
+  pneopt = mpopt2pneopt(mpopt)
+  pneopt = mpopt2pneopt(mpopt, model)
+  pneopt = mpopt2pneopt(mpopt, model, alg)
+\end{Code}
+
+The \code{mpopt2pneopt} function returns an options struct suitable for \code{pnes\_master}. It is constructed from the relevant portions of \code{mpopt}, a \matpower{} options struct. The final \code{alg} argument allows the solver to be set explicitly (in \code{pneopt.alg}). By default this value is set to \codeq{DEFAULT}, which is currently the only available method.
+
 
 %%------------------------------------------
 \clearpage
 \section{Acknowledgments}
 The authors would like to acknowledge the support of the research grants and contracts that have contributed directly and indirectly to the development of \mpom{}. This includes funding from the \PSERC{}, the U.S. Department of Energy,\footnote{Supported in part by the \CERTS{} and the Office of Electricity Delivery and Energy Reliability, Transmission Reliability Program of the U.S. Department of Energy under the National Energy Technology Laboratory Cooperative Agreement No.~DE-FC26-09NT43321.} and the National Science Foundation.\footnote{This material is based upon work supported in part by the National Science Foundation under Grant Nos. 0532744, 1642341 and 1931421. Any opinions, findings, and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the National Science Foundation.}
 
+The authors would also like to explicitly thank and acknowledge Shrirang Abhyankar and Alexander Flueck for their contributions to the continuation power flow code and documentation in \matpowerlink{} upon which the predictor-corrector continuation method for parameterized nonlinear equations in \mpom{} is based.
 
 \begin{appendices}
 
@@ -3235,6 +3805,8 @@ name & description \\
 \code{qps\_osqp}	& QP/LP solver API implementation for \osqp{}\tnote{\dag}	\\
 \code{qps\_ot}	& QP/LP solver API implementation for \matlab{} Opt Toolbox's \code{quadprog}, \code{linprog}	\\
 \midrule
+\code{pnes\_master}	& Parameterized Nonlinear Equation Solver wrapper function, provides a unified interface for parameterized nonlinear equation (PNE) solvers	\\
+\midrule
 \multicolumn{2}{c}{\emph{deprecated functions}} \\
 \code{miqps\_matpower}	& use \code{miqps\_master} instead	\\
 \code{qps\_matpower}	& use \code{qps\_master} instead	\\
@@ -3251,10 +3823,44 @@ name & description \\
 %\renewcommand{\arraystretch}{1.2}
 \centering
 \begin{threeparttable}
+\caption{PNE Implementation Functions\tnote{*}}
+\label{tab:pne_functions}
+\footnotesize
+\begin{tabular}{ll}
+% \begin{tabular}{p{0.26\textwidth}p{0.66\textwidth}}
+\toprule
+name & description \\
+\midrule
+\code{pne\_callback\_default}	& default callback function	\\
+\code{pne\_callback\_nose}	& callback function for handling nose point detection events	\\
+\code{pne\_callback\_target\_lam}	& callback function for handling target $\lambda$ events	\\
+\code{pne\_detect\_events}	& detect events from event function values	\\
+\code{pne\_detected\_event}	& returns detected event of a particular name	\\
+\code{pne\_event\_nose}	& event function to detect the limit or nose point	\\
+\code{pne\_event\_target\_lam}	& event function to detect a target $\lambda$ value	\\
+\code{pne\_pfcn\_arc\_len}	& arc length parameterization function	\\
+\code{pne\_pfcn\_natural}	& natural parameterization function	\\
+\code{pne\_pfcn\_pseudo\_arc\_len}	& pseudo arc length parameterization function	\\
+\code{pne\_register\_callbacks}	& registers callback functions	\\
+\code{pne\_register\_events}	& registers event functions	\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [*] {Used to implement the predictor/corrector continuation method in \code{pnes\_master}.}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
 \caption{Solver Options, etc.}
 \label{tab:solver_options}
 \footnotesize
-\begin{tabular}{p{0.19\textwidth}p{0.74\textwidth}}
+\begin{tabular}{ll}
+% \begin{tabular}{p{0.19\textwidth}p{0.74\textwidth}}
 \toprule
 name & description \\
 \midrule
@@ -3382,6 +3988,7 @@ name & description \\
 \code{mpopt2nleqopt}	& create/modify \code{nleqs\_master} options struct from \matpower{} options struct	\\
 \code{mpopt2nlpopt}	& create/modify \code{nlps\_master} options struct from \matpower{} options struct	\\
 \code{mpopt2qpopt}	& create/modify \code{mi/qps\_master} options struct from \matpower{} options struct	\\
+\code{mpopt2pneopt}	& create/modify \code{pnes\_master} options struct from \matpower{} options struct	\\
 \code{nested\_struct\_copy}	& copies the contents of nested structs	\\
 \bottomrule
 \end{tabular}
@@ -3451,7 +4058,8 @@ name & description \\
 \caption{\mpom{} Examples \& Tests}
 \label{tab:tests}
 \footnotesize
-\begin{tabular}{p{0.31\textwidth}p{0.64\textwidth}}
+\begin{tabular}{ll}
+% \begin{tabular}{p{0.31\textwidth}p{0.64\textwidth}}
 \toprule
 name & description \\
 \midrule
@@ -3461,6 +4069,7 @@ name & description \\
 \code{~~nlps\_master\_ex1}	& code for NLP Example 1 (see Section~\ref{sec:nlp_ex1}) for \code{nlps\_master}	\\
 \code{~~nlps\_master\_ex2}	& code for NLP Example 2 (see Section~\ref{sec:nlp_ex2}) for \code{nlps\_master}	\\
 \code{~~qp\_ex1}	& code for QP Example from Section~\ref{sec:usage}	\\
+\code{~~pne\_ex1}	& code for PNE Example (see Section~\ref{sec:pne_ex}) for \code{pnes\_master}	\\
 \code{~~test\_mp\_opt\_model}	& runs full \mpom{} test suite	\\
 \code{~~t\_have\_fcn}	& runs tests for (deprecated) \code{have\_fcn}	\\
 \code{~~t\_miqps\_master}	& runs tests of MILP/MIQP solvers via \code{miqps\_master}	\\
@@ -3471,8 +4080,10 @@ name & description \\
 \code{~~t\_om\_solve\_miqps}	& runs tests of MILP/MIQP solvers via \code{om.solve()}	\\
 \code{~~t\_om\_solve\_nleqs}	& runs tests of NLEQ solvers via \code{om.solve()}	\\
 \code{~~t\_om\_solve\_nlps}	& runs tests of NLP solvers via \code{om.solve()}	\\
+\code{~~t\_om\_solve\_pne}	& runs tests of PNE solvers via \code{om.solve()}	\\
 \code{~~t\_om\_solve\_qps}	& runs tests of LP/QP solvers via \code{om.solve()}	\\
 \code{~~t\_opt\_model}	& runs tests for \code{opt\_model} objects	\\
+\code{~~t\_pnes\_master}	& runs tests of PNE solvers via \code{pnes\_master}	\\
 \code{~~t\_qps\_master}	& runs tests of LP/QP solvers via \code{qps\_master}	\\
 \bottomrule
 \end{tabular}
@@ -3783,23 +4394,46 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-3.0.pdf}{\mpom{} 3.0 Use
 \end{itemize}
 
 
-\subsection{Version 3.1 -- released ??? ?, 202?}
-\label{app:v31}
+\subsection{Version 4.0 -- released ??? ?, 2021}
+\label{app:v40}
 
-The \href{https://matpower.org/docs/MP-Opt-Model-manual-3.1.pdf}{\mpom{} 3.1 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MP-Opt-Model-manual-3.1.pdf}}
+The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.0.pdf}{\mpom{} 4.0 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MP-Opt-Model-manual-4.0.pdf}}
 
 \subsubsection*{New Features}
 \begin{itemize}
+\item Support for new class of problems -- parameterized nonlinear equations (PNE). Either create a model with only equality constraints (no inequalities or costs) and with number of variables equal to 1 more than number of constraints, \emph{or} call \code{pnes\_master()} directly. See Section \ref{sec:pnes_master} of User's Manual for details.
+  \begin{itemize}
+  \item Predictor/corrector numerical continuation method for tracing solution curves for PNE problems.
+  \item Plotting of solution curves.
+  \item User-defined event functions and callback functions.
+  \item Warm-start capabilities.
+  \end{itemize}
+  \emph{Thanks to Shrirang Abhyankar and Alexander Flueck for contributions to this feature.}
 \item Optional threshold for detecting failure of LEQ solve, by setting the \code{leq\_opt.thresh} option. If the absolute value of any element of the solution vector exceeds the threshold, \code{exitflag} is set to 0, indicating failure.
 \item New functions:
     \begin{itemize}
+    \item \code{pnes\_master()} provides unified interface for parameterized nonlinear equation (PNE) solvers.
+    \item \code{pne\_callback\_default()} collects PNE results and optionally plots solution curve.
+    \item \code{pne\_callback\_nose()} handles event signaling a nose point or limit has been reached.
+    \item \code{pne\_callback\_target\_lam()} handles event signaling a target value of parameter $\lambda$ has been reached.
+    \item \code{pne\_detect\_events()} detects events from event function values.
+    \item \code{pne\_detected\_event()} returns detected event details for events with a particular name.
+    \item \code{pne\_event\_nose()} detects the limit or nose point.
+    \item \code{pne\_event\_target\_lam()} detects a target $\lambda$ value.
+    \item \code{pne\_pfcn\_arc\_length()} implements arc length parameterization.
+    \item \code{pne\_pfcn\_natural()} implements natural parameterization.
+    \item \code{pne\_pfcn\_pseudo\_arc\_length()} implements pseudo arc length parameterization.
+    \item \code{pne\_register\_callbacks()} registers callback functions.
+    \item \code{pne\_register\_events()} registers event functions.
     \item \code{mp\_idx\_manager/set\_type\_idx\_map()} method returns information about mapping of indices for a given set type back to the corresponding named (and possibly indexed) sets.
+    \item \code{mpopt2pneopt()} creates or modifies an options struct for \code{pnes\_master()} from a \matpower{} options struct.
     \end{itemize}
 \end{itemize}
 
 \subsubsection*{Bugs Fixed}
 \begin{itemize}
-\item Calling the \code{problem\_type()} or \code{is\_mixed\_integer()} method on an empty model no longer cause a fatal error.
+\item Calling the \code{problem\_type()} or \code{is\_mixed\_integer()} method on an empty model no longer causes a fatal error.
+\item Fixed typo in 
 \item 
     \emph{Thanks to Fulano.}
 \end{itemize}
@@ -3875,6 +4509,20 @@ Systems, IEEE Transactions on}, vol.~22, no.~3, pp. 1185--1193, August 2007.
 R.~D. Zimmerman, H.~Wang. \mipsname{} (\mips{}) User's Manual. 2020.
 [Online]. Available: \url{https://matpower.org/docs/MIPS-manual.pdf}\\
 \doi{10.5281/zenodo.3236506}
+
+\bibitem{allgower2003}
+E.~L. Allgower, K. Georg, \emph{Introduction to Numerical Continuation Methods}, Society for Industrial and Applied Mathematics, 2003.
+\doi{10.1137/1.9780898719154}
+
+\bibitem{chiang1995}
+H.-D. Chiang, A.~Flueck, K.~Shah, and N.~Balu, ``CPFLOW:  A Practical Tool for Tracing Power System Steady-State Stationary Behavior Due to Load and Generation Variations,'' \emph{Power Systems, IEEE Transactions on}, vol.~10, no.~2, pp.~623--634, May~1995.
+
+\bibitem{li2008}
+S.~H. Li and H.~D. Chiang, ``Nonlinear Predictors and Hybrid Corrector for Fast Continuation Power Flow'', {\em Generation, Transmission Distribution, IET}, 2(3):341--354, 2008.
+
+\bibitem{mori2002}
+H.~Mori and S.~Yamada, ``Continuation Power Flow with the Nonlinear Predictor of the Lagrange's Polynomial Interpolation Formula, '' In {\em Transmission and Distribution Conference and Exhibition 2002:
+  Asia Pacific. IEEE/PES}, vol.~2, pp.~1133--1138, Oct 6--10,~2002.
 
 \bibitem{bpmpdmex}
 BPMPD\_MEX. [Online]. Available:

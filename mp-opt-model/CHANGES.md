@@ -5,6 +5,36 @@ Change history for MP-Opt-Model
 since last release
 ------------------
 
+#### 5/3/21
+  - Add support for new class of problems - parameterized nonlinear
+    equations (PNE). Either create a model with only equality constraints
+    (no inequalities or costs) and with number of variables equal to 1 more
+    than number of constraints, _or_ call `pnes_master()` directly.
+    See Section 4.5 of User's Manual for details.
+    - Predictor/corrector numerical continuation method for tracing
+      solution curves for PNE problems.
+    - Plotting of solution curves.
+    - User-defined event functions and callback functions.
+    - Warm-start capabilities.
+
+    *Thanks to Shrirang Abhyankar and Alexander Flueck for contributions to
+    this feature.*
+  - Add functions:
+    - `pnes_master()`
+    - `pne_callback_default()`
+    - `pne_callback_nose()`
+    - `pne_callback_target_lam()`
+    - `pne_detect_events()`
+    - `pne_detected_event()`
+    - `pne_event_nose()`
+    - `pne_event_target_lam()`
+    - `pne_pfcn_arc_length()`
+    - `pne_pfcn_natural()`
+    - `pne_pfcn_pseudo_arc_length()`
+    - `pne_register_callbacks()`
+    - `pne_register_events()`
+    - `mpopt2pneopt()`
+
 #### 1/21/21
   - Refactor `describe_idx()` into a new method, `set_type_idx_map()`,
     that returns in information in a programmatically usable form, and

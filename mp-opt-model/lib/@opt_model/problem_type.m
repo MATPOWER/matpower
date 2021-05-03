@@ -10,12 +10,15 @@ function prob = problem_type(om, recheck)
 %
 %   Linear and nonlinear equations are models with no costs, no inequality
 %   constraints, and an equal number of continuous variables and equality
-%   constraints.
+%   constraints. If the number of variables in a nonlinear equation model
+%   is one more than the number of constraints, it is a parameterized
+%   nonlinear equation.
 %
 %   Outputs:
 %       PROB_TYPE : problem type, one of the following strings:
 %           'LEQ'   - linear equations
 %           'NLEQ'  - nonlinear equations
+%           'PNE'   - parameterized nonlinear equations
 %           'LP'    - linear program
 %           'QP'    - quadratic program
 %           'NLP'   - nonlinear program
@@ -63,7 +66,7 @@ if isempty(om.prob_type) || nargin > 1 && recheck
         if nliN
             error('@opt_model/problem_type: invalid problem - nonlinear inequality constraints with no costs');
         end
-        if nleN + linN == varN  %% square system
+        if nleN + linN == varN || nleN + linN == varN - 1   %% square (or almost) system
             if linN > 0
                 %% get lower & upper bounds
                 [A, l, u] = om.params_lin_constraint();
@@ -71,10 +74,21 @@ if isempty(om.prob_type) || nargin > 1 && recheck
                     error('@opt_model/problem_type: invalid problem - linear inequality constraints with no costs');
                 end
             end
-            if nleN
-                prob = 'NLEQ';      %% square nonlinear set of equations
+            if nleN + linN == varN  %% square system
+                if nleN
+                    prob = 'NLEQ';      %% square nonlinear set of equations
+                else
+                    prob = 'LEQ';       %% square linear set of equations
+                end
+            elseif nleN + linN + 1 == varN  %% square + 1 extra (parameterization) variable
+                if nleN
+                    prob = 'PNE';       %% parameterized nonlinear set of equations
+                else
+                    prob = 'PLEQ';      %% parameterized linear set of equations
+                    error('@opt_model/problem_type: invalid problem - PNE not implemented for for linear constraints only');
+                end
             else
-                prob = 'LEQ';       %% square linear set of equations
+                error('@opt_model/problem_type: invalid problem - PNE must have num of vars = num of constraints + 1');
             end
         else
             error('@opt_model/problem_type: invalid problem - non-square system with no costs');
