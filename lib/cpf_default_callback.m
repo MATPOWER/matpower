@@ -6,7 +6,7 @@ function [nx, cx, done, rollback, evnts, cb_data, results] = ...
 %       CPF_DEFAULT_CALLBACK(K, NX, CX, PX, DONE, ROLLBACK, EVNTS, ...
 %                               CB_DATA, CB_ARGS, RESULTS)
 %
-%   Default callback function used by RUNCPF that collects the resulst and
+%   Default callback function used by RUNCPF that collects the results and
 %   optionally, plots the nose curve. Inputs and outputs are defined below,
 %   with the RESULTS argument being optional, used only for the final call
 %   when K is negative.
