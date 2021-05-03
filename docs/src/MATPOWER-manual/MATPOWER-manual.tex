@@ -1743,7 +1743,7 @@ The predictor is used to produce an estimate for the next solution. The better t
   1  \end{array} \right].
 \label{eq:tangent_predictor}
 \end{equation}
-The matrix on the left-hand side is simply the standard power flow Jacobian with an additional column and row added. The extra column $f_\lambda$ is simply the negative of the power transfer vector $b$ and the extra row, required to make the system non-singular and define the magnitude of $z^j$, is the derivative of the the parameterization function at the previous solution point $p^{j-1}$.
+The matrix on the left-hand side is simply the standard power flow Jacobian with an additional column and row added. The extra column $f_\lambda$ is simply the negative of the power transfer vector $b$ and the extra row, required to make the system non-singular and define the magnitude of $z^j$, is the derivative of the parameterization function at the previous solution point $p^{j-1})$.
 
 The resulting tangent vector is then normalized
 \begin{equation}
@@ -1923,7 +1923,7 @@ function [nx, cx, done, rollback, evnts, cb_data, results] = ...
 \end{Code}
 and the input and output arguments are described in Tables~\ref{tab:cpf_callback_in} through \ref{tab:cpf_state} and in the help for \code{cpf\_default\_callback}. Each registered CPF callback function is called in three different contexts, distinguished by the value of the first argument \code{k} as follows:
 \begin{enumerate}
-\item{\em initial} -- called with \code{k} = 0, without \results{} input/output arguments, after base power flow, before first CPF step.
+\item{\em initial} -- called with \code{k} = 0, without \results{} input/output arguments, after base power flow, before first CPF step
 \item{\em iterations} -- called with \code{k} $> 0$, without \results{} input/output arguments, at each iteration, after predictor-corrector step
 \item{\em final} -- called with \code{k} $< 0$, with \results{} input/output arguments, after exiting predictor-corrector loop, inputs identical to last iteration call, except \code{k} negated
 \end{enumerate}
