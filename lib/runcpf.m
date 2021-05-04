@@ -566,7 +566,7 @@ if ~done.flag
                 %% sensitivity, otherwise change direction based on tangent
                 %% direction and manifold (eigenvalue)
                 if isempty(find(nx.z(nb+pq) > 0, 1))
-                    direction = sign(nx.z(end)*min(real(eigs(J,1,'SR',opts))));
+                    direction = sign(nx.z(end)*min(real(eigs(J,1,'sr',opts))));
                 end
             end
             rb_cnt_cb = 0;              %% reset rollback counter for callbacks
