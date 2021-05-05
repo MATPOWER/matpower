@@ -694,6 +694,10 @@ if ~done.flag
     end
 end
 
+if success && use_mpe
+    results.om = cpf.mm;
+end
+
 results.cpf.done_msg = done.msg;
 if mpopt.verbose
     fprintf('CPF TERMINATION: %s\n', done.msg);
