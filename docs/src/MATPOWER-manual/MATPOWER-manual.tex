@@ -140,7 +140,7 @@
 
 %\hyphenation{matpower}
 
-\newcommand{\mpver}[0]{7.1}
+\newcommand{\mpver}[0]{8.0-dev}
 %\newcommand{\matlab}[0]{{Matlab}}
 %\newcommand{\matlab}[0]{{\sc Matlab}\textsuperscript{\tiny \textregistered}}
 \newcommand{\matlab}[0]{{\sc Matlab}}
@@ -8206,9 +8206,12 @@ The \href{https://matpower.org/docs/MATPOWER-manual-8.0.pdf}{\matpower{} 8.0 Use
     \item AC power flow for all except radial and hybrid Newton-Raphson
     formulations/solvers, including a new \codeq{FSOLVE} option based on
     \code{fsolve()} function
+    \item AC continuation power flow
     \item AC OPF for solvers MIPS, \code{fmincon}, \ipopt{}, and \knitro{}, for
     all formulations
 \end{itemize}
+MP-Opt-Model object is used for power flow and continuation power flow as well as OPF and is added as \code{om} field to power flow and CPF \code{results} struct.
+
 \item New Implicit Z-bus Gauss method power flow for distribution systems.
 \item New options:
 \begin{itemize}

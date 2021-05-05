@@ -13,6 +13,24 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.1
 -----------------
 
+#### 5/5/21
+- Add experimental support for [MP-Element][30], a new, generalized
+  network and element modeling layer for MATPOWER. See also [MATPOWER
+  Technical Note 5][31]. Documentation not yet included in User's Manual.
+  - If MP-Element is installed, its modeling is used by default for the
+    following (can be turned off with `have_feature('mp_element', 0)`):
+    - DC power flow
+    - DC optimal power flow
+    - AC power flow for all except radial and hybrid Newton-Raphson
+      formulations/solvers, including a new `'FSOLVE'` option based on
+      `fsolve()` function
+    - AC continuation power flow
+    - AC OPF for solvers MIPS, `fmincon`, IPOPT, and Artelys Knitro, for
+      all formulations
+  - MP-Opt-Model object is used for power flow and continuation power flow
+    as well as OPF and is added as `om` field to power flow and CPF
+    `results` struct.
+
 #### 4/5/21
   - Fix typo in computation of CPF prediction error that had very minor
     effect on adaptive step size.
@@ -50,21 +68,6 @@ Changes since 7.1
 - Add Implicit Z-bus Gauss power flow solver for distribution systems.
   Select by setting `pf.alg` to `'ZG'`.
 
-#### 10/22/20
-- Add experimental support for [MP-Element][30], a new, generalized
-  network and element modeling layer for MATPOWER. See also [MATPOWER
-  Technical Note 5][31]. Documentation not yet included in User's Manual.
-  - If MP-Element is installed, its modeling is used by default for the
-    following (can be turned off with `have_feature('mp_element', 0)`):
-    - DC power flow
-    - DC optimal power flow
-    - AC power flow for all except radial and hybrid Newton-Raphson
-      formulations/solvers, including a new `'FSOLVE'` option based on
-      `fsolve()` function
-    - AC OPF for solvers MIPS, `fmincon`, IPOPT, and Artelys Knitro, for
-      all formulations
-  - MP-Opt-Model object is used for power flow as well as OPF and is
-    added as `om` field to power flow `results` struct.
 
 Version 7.1 - *Oct 8, 2020*
 ---------------------------
