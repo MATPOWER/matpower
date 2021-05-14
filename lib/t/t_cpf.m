@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 410;
+num_tests = 415;
 t_begin(num_tests, quiet);
 
 if have_feature('matlab', 'vnum') < 7.001
@@ -203,6 +203,7 @@ else
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
     t_is(size(r.cpf.lam), [1 iterations+1], 12, [t 'size(lam)']);
     t_ok(strfind(r.cpf.done_msg, 'Reached steady state loading limit'), [t 'done_msg']);
+    t_is(r.bus(:, BUS_TYPE), [1;3;2;4;1;1;1;1;1;1], 12, [t 'bus type']);
     ek = [12 iterations];
     eidx = [1 1];
     ename = {'QLIM', 'NOSE'};
@@ -229,6 +230,7 @@ else
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
     t_is(size(r.cpf.lam), [1 iterations+1], 12, [t 'size(lam)']);
     t_ok(strcmp(r.cpf.done_msg, 'All generators at Pmax'), [t 'done_msg']);
+    t_is(r.bus(:, BUS_TYPE), [2;2;3;4;1;1;1;1;1;1], 12, [t 'bus type']);
     ek = [7 13 iterations];
     eidx = [3 1 2];
     ename = {'PLIM', 'PLIM', 'PLIM'};
@@ -354,6 +356,7 @@ else
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
     t_is(size(r.cpf.lam), [1 iterations+1], 12, [t 'size(lam)']);
     t_ok(strfind(r.cpf.done_msg, 'Reached steady state loading limit'), [t 'done_msg']);
+    t_is(r.bus(:, BUS_TYPE), [1;3;2;4;1;1;1;1;1;1], 12, [t 'bus type']);
     ek = [7 14 iterations];
     eidx = [3 1 1];
     ename = {'PLIM', 'QLIM', 'NOSE'};
@@ -420,6 +423,7 @@ else
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
     t_is(size(r.cpf.lam), [1 iterations+1], 12, [t 'size(lam)']);
     t_ok(regexp(r.cpf.done_msg, 'No REF or PV (buses|nodes) remaining.'), [t 'done_msg']);
+    t_is(r.bus(:, BUS_TYPE), [1;1;3;4;1;1;1;1;1;1], 12, [t 'bus type']);
     ek = [12 22 iterations];
     eidx = [1 3 2];
     ename = {'QLIM', 'QLIM', 'QLIM'};
@@ -617,6 +621,10 @@ else
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
     t_is(size(r.cpf.lam), [1 iterations+1], 12, [t 'size(lam)']);
     t_ok(strfind(r.cpf.done_msg, 'Traced full continuation curve in'), [t 'done_msg']);
+    ebt = ones(size(r.bus(:, BUS_TYPE)));
+    ebt([69 76 77 80 88 98 117 122 132 155 164:166 169 170 177 192 199:201 206 209 212 217 218 220:222 247 248 250 253 254 263:265]) = 2;
+    ebt(69) = 3;
+    t_is(r.bus(:, BUS_TYPE), ebt, 12, [t 'bus type']);
     qmin_violation = max(0, r.gen(:, QMIN) - r.gen(:, QG));
     qmax_violation = max(0, r.gen(:, QG) - r.gen(:, QMAX));
     t_is(qmin_violation, 0, 12, [t 'Qmin violation']);
