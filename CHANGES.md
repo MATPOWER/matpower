@@ -13,6 +13,9 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.1
 -----------------
 
+#### 5/17/21
+- Fix generator voltage set points in `case9target` to match `case9`.
+
 #### 5/5/21
 - Add experimental support for [MP-Element][30], a new, generalized
   network and element modeling layer for MATPOWER. See also [MATPOWER
