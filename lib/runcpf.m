@@ -374,8 +374,8 @@ if ~done.flag
 
     if use_mpe
         cpf = mp_task_cpf();
-        success = cpf.run({mpcb, mpct}, mpopt).success;
-        mpct = cpf.dm.mpc;
+        cpf.run({mpcb, mpct}, mpopt);
+        [mpct, success] = cpf.legacy_post_run(mpopt);
         mpct.et = toc(t0);
         mpct.success = success;
         out = cpf.mm.soln.output;
