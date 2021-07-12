@@ -8258,6 +8258,7 @@ MP-Opt-Model object is used for power flow and continuation power flow as well a
 \item Fatal bug in \code{int2ext()} when called with \code{mpopt} and an \code{int2ext} user callback function.
 \item Bug affecting AC OPF initialization for cases with piecewise linear costs and cartesian voltage representations resulting in improved convergence for affected cases.
 \item Fix generator voltage set points in \code{case9target} to match \code{case9}.
+\item A vector-valued \code{label} passed to \code{apply\_changes()} now throws a useful error.
 \end{itemize}
 
 \subsubsection*{Incompatible Changes}

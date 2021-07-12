@@ -13,6 +13,10 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.1
 -----------------
 
+#### 7/12/21
+- A vector-valued `label` passed to `apply_changes()` now throws a useful
+  error.
+
 #### 5/17/21
 - Fix generator voltage set points in `case9target` to match `case9`.
 

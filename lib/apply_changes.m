@@ -76,6 +76,9 @@ function mpc = apply_changes(label, mpc, chgtab)
     CT_MODCOST_X] = idx_ct;
 
 %% find the change set to be applied
+if numel(label) > 1
+    error('apply_changes: LABEL must be a scalar');
+end
 kk = find(label == chgtab(:, CT_LABEL));
 if isempty(kk)
     error('apply_changes: LABEL %d not found in CHGTAB', label);
