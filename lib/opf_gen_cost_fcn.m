@@ -42,7 +42,7 @@ ng = length(PQg);           %% number of dispatchable injections
 
 %%----- evaluate objective function -----
 xx = PQg(ig) * baseMVA;     %% active or reactive dispatch in MW/MVAr
-f = sum( totcost(gencost(ig, :), xx) ); %% cost of poly P or Q
+f = sum( polycost(gencost(ig, :), xx) );    %% cost of poly P or Q
 
 %%----- evaluate cost gradient -----
 if nargout > 1
