@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 129;
+num_tests = 130;
 
 t_begin(num_tests, quiet);
 
@@ -394,7 +394,7 @@ if have_feature('tralmopf')
 %     t_is(r.branch(:,ibr_flow  ), branch_soln1(:,ibr_flow  ),  3, [t 'branch flow']);
 %     t_is(r.branch(:,ibr_mu    ), branch_soln1(:,ibr_mu    ),  2, [t 'branch mu']);
 
-    t = [t0 'hi-deg polynomial costs : '];
+    t = [t0 'hi-deg polynomial Pg costs : '];
     mpc = loadcase(casefile);
     mpc.gencost = [
         2   1500    0   6   1e-6/5  0   0   0   0   0;
@@ -406,9 +406,29 @@ if have_feature('tralmopf')
     t_ok(r.success, [t 'success']);
     t_is(f, 11899.4652, 4, [t 'f']);
     t_is(gen(:, PG), [100.703628; 88.719864; 128.679485], 5, [t 'Pg']);
+    t_is(gen(:, QG), [8.151114; -27.105856; 12.471647], 4, [t 'Qg']);
     t_is([min(bus(:, VM)) mean(bus(:, VM)) max(bus(:, VM))], ...
         [1.059191 1.079404 1.1], 5, [t 'bus voltage']);
 
+%     t = [t0 'hi-deg polynomial Qg costs : '];
+%     mpc = loadcase(casefile);
+%     mpc.gencost = [
+%         2   1500    0   6   1e-6/5  0   0   0   0   0;
+%         2   3000    0   5   1e-4/4  0   0   0   0   0;
+%         2   2000    0   3   1/2     0   0   0   0   0;
+%         2   0       0   6   1e-6/5  0   0   0   0   0;
+%         2   0       0   3   1/2     0   0   0   0   0;
+%         2   0       0   5   1e-4/4  0   0   0   0   0;
+%     ];
+%     r = runopf(mpc, mpopt);
+%     [f, bus, gen, branch] = deal(r.f, r.bus, r.gen, r.branch);
+%     t_ok(r.success, [t 'success']);
+%     t_is(f, 11998.8345, 4, [t 'f']);
+%     t_is(gen(:, PG), [100.853092; 89.258007; 128.518423], 5, [t 'Pg']);
+%     t_is(gen(:, QG), [-20.834352; -7.966093; 34.591995], 5, [t 'Qg']);
+%     t_is([min(bus(:, VM)) mean(bus(:, VM)) max(bus(:, VM))], ...
+%         [1.007729 1.050776 1.1], 5, [t 'bus voltage']);
+% 
 %     %% OPF with user-defined nonlinear constraints
 %     t = [t0 'w/nonlin eq constraint : '];
 %     mpc = loadcase('case30');
