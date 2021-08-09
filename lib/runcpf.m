@@ -373,7 +373,7 @@ if ~done.flag
     [Ybus, Yf, Yt] = makeYbus(mpcb.baseMVA, mpcb.bus, mpcb.branch);
 
     if use_mpe
-        cpf = mp_task_cpf();
+        cpf = mp_task_cpf_legacy();
         cpf.run({mpcb, mpct}, mpopt);
         [mpct, success] = cpf.legacy_post_run(mpopt);
         mpct.et = toc(t0);

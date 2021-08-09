@@ -147,7 +147,7 @@ end
 mpc = ext2int(mpc, mpopt);
 t0 = tic;
 if use_mpe
-    pf = mp_task_pf();
+    pf = mp_task_pf_legacy();
     pf.run(mpc, mpopt);
     [r, success] = pf.legacy_post_run(mpopt);
     [bus, gen, branch] = deal(r.bus, r.gen, r.branch);

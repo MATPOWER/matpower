@@ -245,7 +245,7 @@ if nargout > 7
 end
 if use_mpe
     %% setup and run the OPF
-    opf = mp_task_opf();
+    opf = mp_task_opf_legacy();
     opf.run(mpc, mpopt);
     [results, success, raw] = opf.legacy_post_run(mpopt);
 else
