@@ -43,7 +43,7 @@ jobs:
         echo "OCTAVE_VER=`octave-cli --no-gui --eval "fprintf('%s', ver('octave').Version)"`" >> $GITHUB_ENV
 
     - name: Include IPOPT?
-      if: startsWith(env.OCTAVE_VER, '4.0') != 1
+      if: startsWith(env.OCTAVE_VER, '4.0') != 1 && startsWith(matrix.os, 'ubuntu')
       run: echo "INCLUDE_IPOPT=1" >> $GITHUB_ENV
 
     - name: Include OSQP?
