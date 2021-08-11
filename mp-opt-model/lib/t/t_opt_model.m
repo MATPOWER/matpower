@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 694;
+num_tests = 699;
 
 t_begin(num_tests, quiet);
 
@@ -1672,6 +1672,38 @@ t_ok(isequal(g, e), [t '''qdc'', [5;192;20]']);
 g = om.set_type_idx_map('lin', [12 3;2 10]);
 e = struct('name', {'mylin', 'Qmis';'Pmis' 'mylin'}, 'idx', {{2,1}, []; [], {1,2}}, 'i', {2, 1;2, 3});
 t_ok(isequal(g, e), [t '''lin'', [12 3;2 10]']);
+
+mm = opt_model();
+mm.add_var('a', 3);
+mm.init_indexed_name('var', 'b', {2});
+mm.add_var('b', {1}, 2);
+mm.add_var('b', {2}, 1);
+mm.add_var('c', 2);
+g = mm.set_type_idx_map('var');
+e = struct( 'name', {'a','a','a','b','b','b','c','c'}, ...
+            'idx',  { [], [], [],{1},{1},{2}, [], []}, ...
+            'i',    { 1,  2,  3,  1,  2,  1,  1,  2 })';
+t_ok(isequal(g, e), [t '''var''']);
+g = mm.set_type_idx_map('var', []);
+t_ok(isequal(g, e), [t '''var'', []']);
+
+g = om.set_type_idx_map('lin', [12 3;5 10]);
+e = struct('name', {'mylin', 'Qmis';'Qmis' 'mylin'}, 'idx', {{2,1}, []; [], {1,2}}, 'i', {2, 1;3, 3});
+t_ok(isequal(g, e), [t '''lin'', [12 3;2 10]']);
+
+g = om.set_type_idx_map('lin', [12 3;5 10], 1);
+e = struct( 'name', {'Qmis', 'mylin', 'mylin' }, ...
+            'idx',  {    [],   {1,2},   {2,1} }, ...
+            'i',    { [3;1],       3,       2 }, ...
+            'j',    { [5;3]       10,      12 })';
+t_ok(isequal(g, e), [t '''lin'', [12 3;2 10], 1']);
+
+g = mm.set_type_idx_map('var', [], 1);
+e = struct( 'name', {'a',     'b',  'b','c'}, ...
+            'idx',  { [],     {1},  {2}, []}, ...
+            'i',    { [1:3]', [1;2], 1,  [1;2] }, ...
+            'j',    { [1:3]', [4;5], 6,  [7;8] })';
+t_ok(isequal(g, e), [t '''var'', [], 1']);
 
 %%-----  describe_idx  -----
 t = 'describe_idx : ';

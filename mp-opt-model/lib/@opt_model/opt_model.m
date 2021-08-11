@@ -203,12 +203,12 @@ classdef opt_model < mp_idx_manager
 %   See https://github.com/MATPOWER/mp-opt-model for more info.
 
     properties
-        var;            %% variables
-        lin;            %% linear constraints
-        nle;            %% nonlinear equality constraints
-        nli;            %% nonlinear inequality constraints
-        qdc;            %% quadratic costs
-        nlc;            %% general nonlinear costs
+        var             %% variables
+        lin             %% linear constraints
+        nle             %% nonlinear equality constraints
+        nli             %% nonlinear inequality constraints
+        qdc             %% quadratic costs
+        nlc             %% general nonlinear costs
         prob_type = ''; %% problem type
         soln = struct( ...  %% results of solve()
             'eflag', [], ...    %% exit flag

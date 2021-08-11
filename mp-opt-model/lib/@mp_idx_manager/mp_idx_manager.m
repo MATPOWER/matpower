@@ -118,8 +118,8 @@ classdef mp_idx_manager < handle
 %    es = struct();
 
     properties
-        userdata;
-        set_types;
+        userdata = struct();
+        set_types
     end     %% properties
 
     methods

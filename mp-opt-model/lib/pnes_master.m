@@ -8,8 +8,7 @@ function varargout = pnes_master(fcn, x0, opt)
 %   point x0, where f(x) has dimension n and x has dimension n+1.
 %
 %   In the current implementation, the last element of x is taken to be
-%   the continuation parameter lambda, where lambda = 0 corresponds to
-%   the base solution.
+%   the parameter lambda, where lambda = 0 corresponds to the base solution.
 %
 %   Inputs:
 %       FCN : handle to function that evaluates the function f(x) to
@@ -308,8 +307,8 @@ end
 
 %% solve corrector step for base point
 if opt.solve_base && ~warmstarted
-    pfcn = @(xx)pne_pfcn_natural(xx, x0, 0);
-    [x, f, exitflag, out] = nleqs_master(@(xx)pne_corrector_fcn(xx, fcn, pfcn), x0, opt.nleqs_opt);
+    cfcn = @(xx)pne_corrector_fcn(xx, fcn, @pne_pfcn_natural, x0, 0, []);
+    [x, f, exitflag, out] = nleqs_master(cfcn, x0, opt.nleqs_opt);
     if exitflag
         if opt.verbose > 1
             fprintf('step %3d  :                          lambda = %6.3f, %2d corrector steps\n', cont_steps, x0(end), out.iterations);
@@ -357,7 +356,7 @@ if ~s.done
             eigs_opt.tol = 1e-3;
             eigs_opt.maxit = 2*length(x);
             direction = sign(z(end) * ...
-                        min(real(eigs(J(:,1:end-1), 1, 'SR', eigs_opt))));
+                        min(real(eigs(J(:,1:end-1), 1, 'sr', eigs_opt))));
         end
 
         if opt.adapt_step   %% hey, maybe slow down, things might have changed
@@ -454,8 +453,8 @@ while ~s.done
     nx.x_hat = cx.x + cx.step * cx.z;
 
     %% corrector step
-    pfcn = @(xx)cx.parm(xx, cx.x, cx.step, cx.z);
-    [nx.x, f, exitflag, out] = nleqs_master(@(xx)pne_corrector_fcn(xx, fcn, pfcn), nx.x_hat, opt.nleqs_opt);
+    cfcn = @(xx)pne_corrector_fcn(xx, fcn, cx.parm, cx.x, cx.step, cx.z);
+    [nx.x, f, exitflag, out] = nleqs_master(cfcn, nx.x_hat, opt.nleqs_opt);
     if ~exitflag        %% corrector failed
         s.done = 1;
         s.done_msg = sprintf('Corrector did not converge in %d iterations.', out.iterations);
@@ -699,12 +698,12 @@ end
 
 %%-----  pne_corrector_fcn  -----
 %% fcn(x) combined with parameterization constraint
-function [fp, dfp] = pne_corrector_fcn(x, fcn, pfcn)
+function [fp, dfp] = pne_corrector_fcn(x, fcn, parm, cx_x, step, z)
 if nargout < 2
-    fp = [ fcn(x); pfcn(x) ];
+    fp = [ fcn(x); parm(x, cx_x, step, z) ];
 else
     [f, df] = fcn(x);
-    [p, dp] = pfcn(x);
+    [p, dp] = parm(x, cx_x, step, z);
     fp = [f; p];
     dfp = [df; dp];
 end
@@ -713,9 +712,8 @@ end
 %%-----  pne_tangent  -----
 %% find normalized tangent vector
 function z = pne_tangent(x, xp, zp, fcn, parm, direction)
-pfcn = @(xx)parm(xx, xp, 0, zp);
 [f, df] = fcn(x);
-[p, dp] = pfcn(x);
+[p, dp] = parm(x, xp, 0, zp);
 rhs = [ zeros(length(f), 1); direction ];
 z = [df; dp] \ rhs;
 z = z / norm(z);    %% normalize it

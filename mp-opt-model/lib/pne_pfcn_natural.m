@@ -5,10 +5,10 @@ function [p, dp] = pne_pfcn_natural(x, xp, step, zp)
 %
 %   This function defines a "natural" parameterization for a PNE, where the
 %   step size is the difference between current and previous values of the
-%   continuation parameter lambda.
+%   parameter lambda.
 %
 %   Inputs:
-%       X    : solution vector x (last element is continuation parameter lambda)
+%       X    : solution vector x (last element is parameter lambda)
 %       XP   : previous solution vector
 %       STEP : continuation parameter step size
 %       ZP   : normalized tangent vector at XP (not used by this

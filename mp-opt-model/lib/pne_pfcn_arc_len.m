@@ -4,7 +4,7 @@ function [p, dp] = pne_pfcn_arc_len(x, xp, step, zp)
 %   [P, DP] = PNE_PFCN_ARC_LEN(X, XP, STEP, ZP)
 %
 %   Inputs:
-%       X    : solution vector x (last element is continuation parameter lambda)
+%       X    : solution vector x (last element is parameter lambda)
 %       XP   : previous solution vector
 %       STEP : continuation parameter step size
 %       ZP   : normalized tangent vector at XP (not used by this

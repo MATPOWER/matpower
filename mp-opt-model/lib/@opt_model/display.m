@@ -38,12 +38,17 @@ for k = 1:length(set_types)
 end
 
 %% user data
-fprintf('  userdata = ');
-if ~isempty(om.userdata)
-    fprintf('\n');
-end
-if have_feature('octave')
-    fprintf('    <scalar struct>\n');
+fields = fieldnames(om.userdata);
+if ~isempty(fields)
+    fprintf('\nUSER DATA\n')
+    fprintf('=========\n')
+    fprintf('  name                               size       class\n');
+    fprintf(' ------------------------------   -----------  --------------------\n');
+    for k = 1:length(fields)
+        f = om.userdata.(fields{k});
+        [m, n] = size(f);
+        fprintf('  %-31s %5dx%-5d   %s\n', fields{k}, m, n, class(f));
+    end
 else
-    display(om.userdata);
+    fprintf('USER DATA                   :  <none>\n');
 end

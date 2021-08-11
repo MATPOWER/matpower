@@ -43,7 +43,7 @@ jobs:
         echo "OCTAVE_VER=`octave-cli --no-gui --eval "fprintf('%s', ver('octave').Version)"`" >> $GITHUB_ENV
 
     - name: Include IPOPT?
-      if: startsWith(env.OCTAVE_VER, '4.0') != 1
+      if: startsWith(env.OCTAVE_VER, '4.0') != 1 && startsWith(matrix.os, 'ubuntu')
       run: echo "INCLUDE_IPOPT=1" >> $GITHUB_ENV
 
     - name: Include OSQP?
@@ -98,7 +98,7 @@ jobs:
     - name: Build IPOPT from source (Mac)
       if: startsWith(matrix.os, 'macos') && env.INCLUDE_IPOPT && steps.cache-ipopt-libs.outputs.cache-hit != 'true'
       run: |
-        git clone https://www.github.com/coin-or/coinbrew
+        git clone https://github.com/coin-or/coinbrew
         cd coinbrew
         ./coinbrew fetch Ipopt --no-prompt
         ./coinbrew build Ipopt --prefix=$HOME/install --test --no-prompt
