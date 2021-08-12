@@ -43,7 +43,7 @@ jobs:
         echo "OCTAVE_VER=`octave-cli --no-gui --eval "fprintf('%s', ver('octave').Version)"`" >> $GITHUB_ENV
 
     - name: Include IPOPT?
-      if: startsWith(env.OCTAVE_VER, '4.0') != 1 && startsWith(matrix.os, 'ubuntu')
+      if: startsWith(env.OCTAVE_VER, '4.0') != 1
       run: echo "INCLUDE_IPOPT=1" >> $GITHUB_ENV
 
     - name: Include OSQP?
@@ -104,6 +104,9 @@ jobs:
     - name: Build IPOPT from source (Mac)
       if: startsWith(matrix.os, 'macos') && env.INCLUDE_IPOPT && steps.cache-ipopt-libs.outputs.cache-hit != 'true'
       run: |
+        export METIS_VER=`ls /usr/local/Cellar/metis`
+        export with_metis_cflags=-I/usr/local/Cellar/metis/${METIS_VER}/include
+        export with_metis_lflags="-L/usr/local/Cellar/metis/${METIS_VER}/lib -lmetis"
         git clone https://github.com/coin-or/coinbrew
         cd coinbrew
         ./coinbrew fetch Ipopt --no-prompt
