@@ -12,8 +12,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        platform: [octave]
 #        os: [macos-10.15, macos-11.0, ubuntu-16.04, ubuntu-18.04, ubuntu-20.04]
         os: [macos-latest, ubuntu-16.04, ubuntu-18.04, ubuntu-20.04]
+        include:
+        - platform: matlab
+          os: ubuntu-latest
 
     runs-on: ${{ matrix.os }}
 
@@ -21,21 +25,29 @@ jobs:
     - name: Check out repository
       uses: actions/checkout@v2
 
+    - name: Install MATLAB
+      if: matrix.platform == 'matlab'
+      uses: matlab-actions/setup-matlab@v1
+
     - name: Install Octave (Linux)
-      if: startsWith(matrix.os, 'ubuntu')
+      if: matrix.platform == 'octave' && startsWith(matrix.os, 'ubuntu')
       uses: MATPOWER/action-install-octave-linux@v1
       with:
         ipopt-libs: true
 
     - name: Install Octave (macOS)
-      if: startsWith(matrix.os, 'macos')
+      if: matrix.platform == 'octave' && startsWith(matrix.os, 'macos')
       uses: MATPOWER/action-install-octave-macos@v1
+
+    - name: Configure MATLAB
+      if: matrix.platform == 'matlab'
+      uses: MATPOWER/action-configure-matlab@v1
 
     - name: ${{ env.ML_NAME }} ${{ env.ML_VER }} Installed
       run: $ML_CMD ver
 
     - name: Include IPOPT?
-      if: startsWith(env.OCTAVE_VER, '4.0') != 1
+      if: matrix.platform == 'octave' && startsWith(env.OCTAVE_VER, '4.0') != 1
       run: echo "INCLUDE_IPOPT=1" >> $GITHUB_ENV
 
     - name: Cache IPOPT Libs (macOS)
@@ -69,7 +81,7 @@ jobs:
         cached: ${{ steps.cache-ipopt.outputs.cache-hit == 'true' }}
 
     - name: Include OSQP?
-      if: startsWith(env.OCTAVE_VER, '4') != 1
+      if: matrix.platform == 'octave' && startsWith(env.OCTAVE_VER, '4') != 1
       run: echo "INCLUDE_OSQP=1" >> $GITHUB_ENV
 
     - name: Cache OSQP interface for Octave
@@ -97,10 +109,12 @@ jobs:
     - name: Install MATPOWER
       run: |
         $ML_CMD ver
-        $ML_CMD "install_matpower(1,1,1)"
+        $ML_CMD "install_matpower(0,1,1)"
+        ln -s ./startup.m .octaverc
         $ML_CMD mpver
 
     - name: Test GLPK availability, print version number
+      if: matrix.platform == 'octave'
       run:  |
         $ML_CMD "if ~have_feature('glpk'), exit(1); end"
         $ML_CMD "qps_glpk( [],[1; 1],[1 1],[2],[2],[1; 1],[1; 1],[1; 1],struct('verbose', 3));"
@@ -136,7 +150,8 @@ jobs:
       if: env.INCLUDE_MP_ELEMENT
       run: |
         git clone --branch ${MP_ELEMENT_TAG} --depth=1 https://github.com/MATPOWER/mp-element.git ${GITHUB_WORKSPACE}/mp-element
-        $ML_CMD "install_matpower(1,1,1,1)"
+        rm -rf ./startup.m
+        $ML_CMD "install_matpower(0,1,1)"
         $ML_CMD "if ~have_feature('mp_element'), exit(1); end"
 
     - name: Test MP-Element
