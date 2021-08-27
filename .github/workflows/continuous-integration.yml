@@ -121,21 +121,15 @@ jobs:
 
     - name: Test GLPK availability, print version number
       if: matrix.platform == 'octave'
-      run:  |
-        $ML_CMD "if ~have_feature('glpk'), exit(1); end"
-        $ML_CMD "qps_glpk( [],[1; 1],[1 1],[2],[2],[1; 1],[1; 1],[1; 1],struct('verbose', 3));"
+      run: env $ML_PATHVAR=$MP_OPT_MODEL_PATH $ML_CMD "qps_glpk( [],[1; 1],[1 1],[2],[2],[1; 1],[1; 1],[1; 1],struct('verbose', 3)); if ~have_feature('glpk'), exit(1); end"
 
     - name: Test IPOPT availability, print version number
       if: env.INCLUDE_IPOPT
-      run:  |
-        $ML_CMD "if ~have_feature('ipopt'), exit(1); end"
-        $ML_CMD "qps_ipopt([],[1; 1],[1 1],[2],[2],[1; 1],[1; 1],[1; 1],struct('verbose', 2));"
+      run: env $ML_PATHVAR=$MP_OPT_MODEL_PATH $ML_CMD "qps_ipopt([],[1; 1],[1 1],[2],[2],[1; 1],[1; 1],[1; 1],struct('verbose', 2)); if ~have_feature('ipopt'), exit(1); end"
 
     - name: Test OSQP availability, print version number
       if: env.INCLUDE_OSQP
-      run:  |
-        $ML_CMD "if ~have_feature('osqp'), exit(1); end"
-        $ML_CMD osqpver
+      run: env $ML_PATHVAR=$MP_OPT_MODEL_PATH $ML_CMD "osqpver; if ~have_feature('osqp'), exit(1); end"
 
     - name: Test MP-Test
       run: $ML_CMD "test_mptest(0,1)"
