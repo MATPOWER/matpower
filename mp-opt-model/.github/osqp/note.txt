@@ -1,4 +1,0 @@
-Octave 4.2.2 used for CI testing on Linux, apparently does not allow private
-functions to be defined in the same file as a classdef. The files here are
-simply the result of splitting out the private functions in osqp.m (see
-https://github.com/oxfordcontrol/osqp-matlab) as of 1/5/21 (i.e. v 0.6.2).

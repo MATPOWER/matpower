@@ -1,11 +1,11 @@
 We request that publications derived from the use of MP-Opt-Model
 explicitly acknowledge that fact by citing the MP-Opt-Model User's
 Manual. The citation and DOI can be version-specific or general, as
-appropriate. For version 3.0, use:
+appropriate. For version 4.0, use:
 
-  R. D. Zimmerman. MP-Opt-Model User's Manual, Version 3.0. 2020.
-  [Online]. Available: https://matpower.org/docs/MP-Opt-Model-manual-3.0.pdf
-  doi: 10.5281/zenodo.4073361
+  R. D. Zimmerman. MP-Opt-Model User's Manual, Version 4.0. 2021.
+  [Online]. Available: https://matpower.org/docs/MP-Opt-Model-manual-4.0.pdf
+  doi: 10.5281/zenodo.5576755
 
 For a version non-specific citation, use the following citation and DOI,
 with *\<YEAR\>* replaced by the year of the most recent release:

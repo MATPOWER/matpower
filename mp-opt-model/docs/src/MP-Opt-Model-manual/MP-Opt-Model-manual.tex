@@ -151,7 +151,7 @@
 \newcommand{\mpomlink}[0]{\href{\mpomurl}{\mpom{}}}
 \newcommand{\mpomname}[0]{\mpom{}}
 % \newcommand{\mpomname}[0]{{{\bf M}{\sc at}{\bf P}{\sc ower} \textbf{Opt}imization \textbf{Model}}}
-\newcommand{\mpomver}[0]{4.0-dev}
+\newcommand{\mpomver}[0]{4.0}
 \newcommand{\most}[0]{{MOST}}
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
@@ -242,7 +242,7 @@
 %\title{\hl{--- DRAFT  ---}\\\hl{\em do not distribute}\\~\\{\huge \bfseries \mpomname{} User's Manual } \\ ~ \\ \LARGE Version \mpomver{}\\
 \title{{\huge \bfseries \mpomname{} User's Manual } \\ ~ \\ \LARGE Version \mpomver{}}
 \author{Ray~D.~Zimmerman}
-%\date{October 8, 2020} % comment this line to display the current date
+\date{October 18, 2021} % comment this line to display the current date
 %\date{May 8, 2020\thanks{Second revision. First revision was April 29, 2020}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
@@ -253,7 +253,7 @@
 \vfill
 \begin{center}
 {\scriptsize
-\copyright~2020~\PSERC{}\\
+\copyright~2020, 2021~\PSERC{}\\
 All Rights Reserved}
 \end{center}
 
@@ -327,12 +327,12 @@ POSSIBILITY OF SUCH DAMAGE.
 \subsection{Citing \mpom{}}
 
 We request that publications derived from the use of \mpom{} explicitly acknowledge that fact by citing the \mpomname{} User's Manual~\cite{mpom_manual}.
-The citation and DOI can be version-specific or general, as appropriate. For version 3.0, use:
+The citation and DOI can be version-specific or general, as appropriate. For version 4.0, use:
 
 \begin{quote}
 \footnotesize
-R.~D. Zimmerman. \mpomname{} User's Manual, Verision 3.0. 2020. [Online]. Available: \url{https://matpower.org/docs/MP-Opt-Model-manual-3.0.pdf}\\
-\doi{10.5281/zenodo.4073361}
+R.~D. Zimmerman. \mpomname{} User's Manual, Verision 4.0. 2021. [Online]. Available: \url{https://matpower.org/docs/MP-Opt-Model-manual-4.0.pdf}\\
+\doi{10.5281/zenodo.5576755}
 \end{quote}
 For a version non-specific citation, use the following citation and DOI,
 with \emph{\textless{}YEAR\textgreater{}} replaced by the year of the most recent release:
@@ -411,17 +411,19 @@ We will use \mpompath{} to denote the path to this directory.
 t_have_fcn..............ok
 t_nested_struct_copy....ok
 t_nleqs_master..........ok (30 of 150 skipped)
+t_pnes_master...........ok
 t_qps_master............ok (100 of 432 skipped)
 t_miqps_master..........ok (68 of 288 skipped)
 t_nlps_master...........ok
 t_opt_model.............ok
 t_om_solve_leqs.........ok
 t_om_solve_nleqs........ok (36 of 194 skipped)
+t_om_solve_pne..........ok
 t_om_solve_qps..........ok (81 of 387 skipped)
 t_om_solve_miqps........ok (14 of 118 skipped)
 t_om_solve_nlps.........ok
-All tests successful (3032 passed, 329 skipped of 3361)
-Elapsed time 3.11 seconds.
+All tests successful (3430 passed, 329 skipped of 3759)
+Elapsed time 7.75 seconds.
 \end{Code}
 \end{enumerate}
 
@@ -2070,7 +2072,6 @@ end
 Then, call the \code{pnes\_master} function with a handle to that function, a starting value for $x$, and an option to make it trace the full continuation curve.
 \begin{Code}
 >> x = pnes_master(@f1p, [-1;0;0], struct('stop_at', 'FULL'))
->> pne_ex1
 
 x =
 
@@ -2108,7 +2109,7 @@ fprintf('%4g%4g%4g\n', jac');
 \begin{Code}
 >> pne_ex1
 
-MP-Opt-Model Version 4.0, 03-May-2021 -- Predictor/Corrector Continuation Method
+MP-Opt-Model Version 4.0, 18-Oct-2021 -- Predictor/Corrector Continuation Method
 step   0  :                          lambda =  0.000,  6 corrector steps
 step   1  : PAL stepsize = 0.6       lambda =  0.081   2 corrector steps
 step   2  : PAL stepsize = 0.6       lambda =  0.162   2 corrector steps
@@ -2146,8 +2147,8 @@ x =
    0
 
 f = 
-             0
-   -6.4837e-13
+            0
+  -6.4837e-13
 
 jac =
    1   1   6
@@ -2632,11 +2633,15 @@ See Section~\ref{sec:indexed_sets} for details on indexed named sets and the \co
 \label{sec:set_type_idx_map}
 \begin{Code}
 s = om.set_type_idx_map(set_type, idxs)
+s = om.set_type_idx_map(set_type)
+s = om.set_type_idx_map(set_type, idxs)
 \end{Code}
 
-Given a particular index (or set of indices) for the full set of elements (e.g. variables or constraints) of a particular set type, the \code{set\_type\_idx\_map} method can be used to determine which element of which particular named set the index corresponds to. Results are returned in a struct \code{s} of the same dimensions as the input \code{idxs}, where each element specifies the details of the corresponding named set. The fields of \code{s} are (1) \code{name}, with the name of the corresponding set, (2) \code{idx}, a cell array of indices for the name, if the named set is indexed and, (3) \code{i}, the index of the element within the set.
+Given a particular index (or set of indices) for the full set of elements (e.g. variables or constraints) of a particular set type, the \code{set\_type\_idx\_map} method can be used to determine which element of which particular named set the index corresponds to. If \code{idxs} is empty or not provided it defaults to \code{[1:ns]\textquotesingle}, where \code{ns} is the full dimension of the set corresponding to the all elements for the specified set type. Results are returned in a struct \code{s} of the same dimensions as the input \code{idxs}, where each element specifies the details of the corresponding named set. The fields of \code{s} are (1) \code{name}, with the name of the corresponding set, (2) \code{idx}, a cell array of indices for the name, if the named set is indexed and, (3) \code{i}, the index of the element within the set.
 
-This can be useful, for example, when a solver reports an issue with a particular variable or constraint and you want to map it back to the named sets you have added to your model. Consider an example in which element 38 of the linear constraints corresponds to the 11th row of \textbf{lincon3} and elements 15 and 23 of the optimization vector $x$ correspond to element 7 of $v$ and element 4 of $w$, respectively. The \code{set\_type\_idx\_map} method can be used to return this information as follows:
+If \code{group\_by\_name} is true, then the results are consolidated, with a single entry in \code{s} for each unique name index pair, where \code{i} field is a vector and there is an additional field named \code{j} that is a vector with the corresponding index of the set type, equal to a particular element of \code{idxs}. In this case \code{s} is 1 dimensional.
+
+This method can be useful, for example, when a solver reports an issue with a particular variable or constraint and you want to map it back to the named sets you have added to your model. Consider an example in which element 38 of the linear constraints corresponds to the 11th row of \textbf{lincon3} and elements 15 and 23 of the optimization vector $x$ correspond to element 7 of $v$ and element 4 of $w$, respectively. The \code{set\_type\_idx\_map} method can be used to return this information as follows:
 
 \begin{Code}
 >> lin38 = om.set_type_idx_map('lin', 38)
@@ -4394,7 +4399,7 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-3.0.pdf}{\mpom{} 3.0 Use
 \end{itemize}
 
 
-\subsection{Version 4.0 -- released ??? ?, 2021}
+\subsection{Version 4.0 -- released Oct 18, 2021}
 \label{app:v40}
 
 The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.0.pdf}{\mpom{} 4.0 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MP-Opt-Model-manual-4.0.pdf}}
@@ -4408,7 +4413,7 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.0.pdf}{\mpom{} 4.0 Use
   \item User-defined event functions and callback functions.
   \item Warm-start capabilities.
   \end{itemize}
-  \emph{Thanks to Shrirang Abhyankar and Alexander Flueck for contributions to this feature.}
+  \emph{Thanks to Shrirang Abhyankar and Alexander Flueck for contributions to this feature, which is based on the continuation power flow code in \matpower{} 7.1.}
 \item Optional threshold for detecting failure of LEQ solve, by setting the \code{leq\_opt.thresh} option. If the absolute value of any element of the solution vector exceeds the threshold, \code{exitflag} is set to 0, indicating failure.
 \item New functions:
     \begin{itemize}
@@ -4433,16 +4438,12 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.0.pdf}{\mpom{} 4.0 Use
 \subsubsection*{Bugs Fixed}
 \begin{itemize}
 \item Calling the \code{problem\_type()} or \code{is\_mixed\_integer()} method on an empty model no longer causes a fatal error.
-\item Fixed typo in 
-\item 
-    \emph{Thanks to Fulano.}
 \end{itemize}
 
 \subsubsection*{Other Changes}
 \begin{itemize}
 \item Labels from the \code{set\_types} property are now used as headers for \code{opt\_model/display()} to simplify things facilitate use by sub-classes.
 \item Refactored \code{describe\_idx} into a new method, \code{set\_type\_idx\_map}, that returns in information in a programmatically usable form, and an updated \code{describe\_idx} that calls the new method, then formats the results in the expected char array(s).
-
 \end{itemize}
 
 
@@ -4495,7 +4496,7 @@ John~W.~Eaton, David~Bateman, S{\o}ren~Hauberg, Rik~Wehbring (2015). \emph{GNU O
 The BSD 3-Clause License. [Online]. Available: \url{https://opensource.org/licenses/BSD-3-Clause}.
 
 \bibitem{mpom_manual}
-R.~D. Zimmerman. \mpomname{} User's Manual. 2020.
+R.~D. Zimmerman. \mpomname{} User's Manual. 2021.
 [Online]. Available: \url{https://matpower.org/docs/MP-Opt-Model-manual.pdf}\\
 \doi{10.5281/zenodo.3818002}
 
