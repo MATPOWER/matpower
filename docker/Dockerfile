@@ -1,93 +1,69 @@
-# Builds a Docker image for Octave 4.2.2 and MATPOWER
+# Builds a Docker image for Octave and MATPOWER (7+)
+# Use the following --build-arg values:
+#   BASE_IMAGE=<image> (default is matpower/octave)
+#   BASE_TAG=<tag> e.g. for a specific version of Octave (default is latest)
+#   MP_SRC=local - to copy the local files to install MATPOWER, pulls
+#                  matpower-extras from GitHub
+#          github - (default) to clone matpower and matpower-extras from GitHub
+#          github_mpe - to clone matpower, matpower-extras, and mp_element
+#                       from GitHub
+#   BRANCH=<branch or tag> to specify the branch or tag for GitHub checkouts
+#
+# docker build -f docker/Dockerfile-matpower -t matpower/matpower:latest .
+# docker build --build-arg BRANCH=7.1 --build-arg BASE_TAG=5.2.0 -f docker/Dockerfile-matpower -t matpower/matpower:7.1-oct-5.2.0 .
 #
 # Authors:
 # Xiangmin Jiao <xmjiao@gmail.com>
 # Ray Zimmerman <rz10@cornell.edu>
 
-FROM compdatasci/octave-desktop:latest
+ARG BASE_IMAGE=matpower/octave
+ARG BASE_TAG=latest
+ARG MP_SRC=local
+ARG BRANCH=master
+FROM ${BASE_IMAGE}:${BASE_TAG} AS base
 LABEL maintainer "Ray Zimmerman <rz10@cornell.edu>"
+ARG BRANCH
+ARG MP_SRC
 
 USER root
 WORKDIR /tmp
 
-# Install system packages and Octave
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        coinor-libipopt-dev \
-        pkg-config && \
-    apt-get clean && \
-    apt-get autoremove && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+# Install local MATPOWER files
+FROM base AS matpower_local
+ONBUILD ARG MP_SRC
+ONBUILD ARG BRANCH
+ONBUILD COPY ./docker/matpower_docker_tests/matpower_docker_tests_7.sh /usr/local/bin/matpower_docker_tests.sh
+ONBUILD COPY . $HOME/packages/matpower
+ONBUILD RUN git clone -b ${BRANCH} --depth=1 https://github.com/MATPOWER/matpower-extras.git $HOME/packages/matpower/extras && \
+    rm -rf $HOME/packages/matpower/extras/.git && \
+    octave-cli --no-gui -p $HOME/packages/matpower --eval "install_matpower(1,1,1)"
 
-# Install SDPT3
-RUN git clone https://github.com/sqlp/sdpt3.git /opt/sdpt3 && \
-    rm -rf /opt/sdpt3/.git && \
-    rm -rf /opt/sdpt3/Solvers/Mexfun/*.mex* && \
-    rm -rf /opt/sdpt3/Solvers/Mexfun/o_win && \
-    octave-cli --no-gui --eval "addpath('/opt/sdpt3', '-end'); savepath" && \
-    octave-cli --no-gui --eval "install_sdpt3('-rebuild'); savepath" && \
-    rm -rf /opt/sdpt3/Solvers/Mexfun/*.o
+# Install MATPOWER files from GitHub
+FROM base AS matpower_github
+ONBUILD ARG MP_SRC
+ONBUILD ARG BRANCH
+ONBUILD COPY ./docker/matpower_docker_tests/matpower_docker_tests_7.sh /usr/local/bin/matpower_docker_tests.sh
+ONBUILD RUN git clone -b ${BRANCH} --depth=1 https://github.com/MATPOWER/matpower.git $HOME/packages/matpower && \
+    git clone -b ${BRANCH} --depth=1 https://github.com/MATPOWER/matpower-extras.git $HOME/packages/matpower/extras && \
+    rm -rf $HOME/packages/matpower/.git && \
+    rm -rf $HOME/packages/matpower/extras/.git && \
+    octave-cli --no-gui -p $HOME/packages/matpower --eval "install_matpower(1,1,1)"
 
-# Install SeDuMi
-RUN git clone https://github.com/sqlp/sedumi.git /opt/sedumi && \
-    rm -rf /opt/sedumi/.git && \
-    rm -rf /opt/sedumi/*.mex* && \
-    mv /opt/sedumi/vec.m /opt/sedumi/vec.m.disabled && \
-    octave-cli --no-gui --eval "addpath('/opt/sedumi', '-end'); savepath" && \
-    octave-cli --no-gui --eval "install_sedumi('-rebuild'); savepath" && \
-    rm -rf /opt/sedumi/*.o
+# Install MATPOWER files (plus mp-element) from GitHub
+FROM base AS matpower_github_mpe
+ONBUILD ARG MP_SRC
+ONBUILD ARG BRANCH
+ONBUILD COPY ./docker/matpower_docker_tests/matpower_docker_tests_7mpe.sh /usr/local/bin/matpower_docker_tests.sh
+ONBUILD RUN git clone -b ${BRANCH} --depth=1 https://github.com/MATPOWER/matpower.git $HOME/packages/matpower && \
+    git clone -b ${BRANCH} --depth=1 https://github.com/MATPOWER/matpower-extras.git $HOME/packages/matpower/extras && \
+    git clone -b ${BRANCH} --depth=1 https://github.com/MATPOWER/mp-element.git $HOME/packages/matpower/mp-element && \
+    rm -rf $HOME/packages/matpower/.git && \
+    rm -rf $HOME/packages/matpower/extras/.git && \
+    rm -rf $HOME/packages/matpower/mp-element/.git && \
+    octave-cli --no-gui -p $HOME/packages/matpower --eval "install_matpower(1,1,1)"
 
-# Install YALMIP
-ENV YALMIP_VER=R20180817
-RUN git clone -b ${YALMIP_VER} https://github.com/yalmip/YALMIP.git /opt/yalmip && \
-    rm -rf /opt/yalmip/.git && \
-    octave-cli --no-gui --eval "addpath(genpath('/opt/yalmip', '.git', 'o_win', 'dev'), '-end'); savepath"
+# Select source for MATPOWER files
+FROM matpower_${MP_SRC}
 
-# Install Ipopt
-ENV IPOPT_VER=3.11.9
-COPY ./mp-opt-model/.github/ipopt/Makefile /opt
-# RUN curl -SL https://raw.githubusercontent.com/MATPOWER/matpower/master/mp-opt-model/.github/ipopt/Makefile -o /opt/Makefile
-RUN curl -SL https://github.com/coin-or/Ipopt/archive/releases/${IPOPT_VER}.tar.gz | tar -xzC /opt && \
-    mv /opt/Ipopt-releases-${IPOPT_VER}/Ipopt/contrib/MatlabInterface /opt/ipopt && \
-    mv /opt/Makefile /opt/ipopt/src && \
-    make -C /opt/ipopt/src && \
-    rm -rf /opt/Ipopt-${IPOPT_VER} && \
-    mv /opt/ipopt/src/*.mex /opt/ipopt/ && \
-    rm -rf /opt/ipopt/src/*.o && \
-    octave-cli --no-gui --eval "addpath('/opt/ipopt', '-end'); savepath"
-
-# Install OSQP
-RUN export OCTAVE_VER=`octave-cli --no-gui --eval "fprintf('%s', ver('octave').Version)"` && \
-    git clone --recursive https://github.com/oxfordcontrol/osqp /opt/osqp && \
-    git clone --recurse-submodules https://github.com/oxfordcontrol/osqp-matlab /opt/osqp-matlab && \
-    mkdir /opt/osqp/build && \
-    cd /opt/osqp/build && \
-    cmake -G "Unix Makefiles" .. && \
-    cmake --build . && \
-    ln -s /usr/include/octave-$OCTAVE_VER/octave/Matrix.h /opt/matrix.h && \
-    ls -al /opt && \
-    cd /opt/osqp-matlab && \
-    octave-cli --no-gui --eval "mex -I/opt  -I/opt/osqp/include -I/opt/osqp/lin_sys/direct/qdldl -I/opt/osqp/lin_sys/direct/qdldl/qdldl_sources/include osqp_mex.cpp /opt/osqp/build/out/libosqp.a" && \
-    ls -al && \
-    octave-cli --no-gui --eval "addpath('/opt/osqp-matlab', '-end'); savepath" && \
-    rm -rf /opt/osqp /opt/osqp-matlab/.git
-COPY ./mp-opt-model/.github/osqp/*.m /opt/osqp-matlab/
-
-# Install test script
-COPY ./docker/matpower_docker_tests.sh /usr/local/bin
-
-# Install MATPOWER
-COPY . /opt/matpower
-RUN git clone https://github.com/MATPOWER/matpower-extras.git /opt/matpower/extras && \
-    rm -rf /opt/matpower/extras/.git && \
-    octave-cli --no-gui -p /opt/matpower --eval "install_matpower(1,1,1)"
-
-# RUN git clone --depth=5 https://github.com/MATPOWER/matpower.git /opt/matpower && \
-#     git clone --depth=5 https://github.com/MATPOWER/matpower-extras.git /opt/matpower/extras && \
-#     rm -rf /opt/matpower/.git && \
-#     rm -rf /opt/matpower/extras/.git && \
-#     octave-cli --no-gui -p /opt/matpower --eval "install_matpower(1,1,1)"
-
-RUN cp ~/.octaverc $DOCKER_HOME
-
-WORKDIR $DOCKER_HOME
+RUN chown -R ${NB_UID} ${HOME}
+WORKDIR "${HOME}"

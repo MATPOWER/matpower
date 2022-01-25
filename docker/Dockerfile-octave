@@ -1,0 +1,133 @@
+# Builds a Docker image for Octave with IPOPT, OSQP, SDTP3, SeDuMi and
+# YALMIP pre-installed. Use --build-arg VER=x.y.z for a
+# specific version of Octave (default is 6.4.0).
+#
+# docker build -f docker/Dockerfile-octave -t matpower/matpower:latest .
+# docker build --build-arg VER=6.4.0 -f docker/Dockerfile-octave -t matpower/octave:6.4.0 .
+#
+# Authors:
+# Xiangmin Jiao <xmjiao@gmail.com>
+# Ray Zimmerman <rz10@cornell.edu>
+
+ARG VER=6.4.0
+ARG SKIP_IPOPT=0
+ARG SKIP_OSQP=0
+FROM gnuoctave/octave:${VER} AS base
+LABEL maintainer "Ray Zimmerman <rz10@cornell.edu>"
+
+ARG SKIP_IPOPT
+ARG SKIP_OSQP
+
+USER root
+WORKDIR /tmp
+
+# # Install system packages and Octave
+# RUN apt-get update && \
+#     apt-get install -y --no-install-recommends \
+#         coinor-libipopt-dev \
+#         pkg-config
+#     apt-get clean && \
+#     apt-get autoremove && \
+#     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# # Install a missing Ubuntu package
+# RUN apt-get --yes update  && \
+#     DEBIAN_FRONTEND="noninteractive" \
+#     apt-get --no-install-recommends --yes install \
+#         liblapack-dev \
+#         coinor-libipopt-dev \
+#         pkg-config
+
+RUN mkdir -p $HOME/packages
+
+# Install SDPT3
+RUN git clone --depth=1 https://github.com/sqlp/sdpt3.git $HOME/packages/sdpt3 && \
+    rm -rf $HOME/packages/sdpt3/.git && \
+    rm -rf $HOME/packages/sdpt3/Solvers/Mexfun/*.mex* && \
+    rm -rf $HOME/packages/sdpt3/Solvers/Mexfun/o_win && \
+    octave-cli --no-gui --eval "addpath('$HOME/packages/sdpt3', '-end'); savepath" && \
+    octave-cli --no-gui --eval "install_sdpt3('-rebuild'); savepath" && \
+    rm -rf $HOME/packages/sdpt3/Solvers/Mexfun/*.o
+
+# Install SeDuMi
+RUN git clone --depth=1 https://github.com/sqlp/sedumi.git $HOME/packages/sedumi && \
+    rm -rf $HOME/packages/sedumi/.git && \
+    rm -rf $HOME/packages/sedumi/*.mex* && \
+    mv $HOME/packages/sedumi/vec.m $HOME/packages/sedumi/vec.m.disabled && \
+    octave-cli --no-gui --eval "addpath('$HOME/packages/sedumi', '-end'); savepath" && \
+    octave-cli --no-gui --eval "install_sedumi('-rebuild'); savepath" && \
+    rm -rf $HOME/packages/sedumi/*.o
+
+# Install YALMIP
+ENV YALMIP_VER=R20180817
+RUN git clone -b ${YALMIP_VER} --depth=1 https://github.com/yalmip/YALMIP.git $HOME/packages/yalmip && \
+    rm -rf $HOME/packages/yalmip/.git && \
+    octave-cli --no-gui --eval "addpath(genpath('$HOME/packages/yalmip', '.git', 'o_win', 'dev'), '-end'); savepath"
+
+# SKIP_IPOPT=1
+FROM base AS ipopt_1
+ONBUILD ARG SKIP_IPOPT
+ONBUILD ARG SKIP_OSQP
+
+# SKIP_IPOPT=0
+FROM base AS ipopt_0
+ONBUILD ARG SKIP_IPOPT
+ONBUILD ARG SKIP_OSQP
+# Install latest Ipopt from source
+ONBUILD RUN git clone --depth=1 https://github.com/coin-or/coinbrew && \
+    cd coinbrew && \
+    export with_lapack_lflags="-lopenblas" && \
+    ./coinbrew fetch Ipopt --no-prompt && \
+    ./coinbrew build Ipopt --prefix /usr --tests all --with-intsize=64 --no-prompt && \
+    cd .. && \
+    rm -rf coinbrew
+# Install mexIPOPT
+ONBUILD RUN mkdir -p $HOME/build && \
+    git clone -b no-bin --depth=1 https://github.com/rdzman/mexIPOPT.git $HOME/build/mexIPOPT && \
+    cd $HOME/build/mexIPOPT/toolbox && \
+    mkdir -p $HOME/build/mexIPOPT/toolbox/bin && \
+    octave-cli --no-gui --eval "CompileIpoptMexLib" && \
+    mkdir -p $HOME/packages/ipopt && \
+    mv $HOME/build/mexIPOPT/toolbox/lib/ipopt_auxdata.m $HOME/packages/ipopt/ && \
+    mv $HOME/build/mexIPOPT/toolbox/bin/ipopt_oct.mex $HOME/packages/ipopt/ipopt.mex && \
+    octave-cli --no-gui --eval "addpath('$HOME/packages/ipopt', '-end'); savepath" && \
+    rm -rf $HOME/build/mexIPOPT
+
+FROM ipopt_${SKIP_IPOPT} AS ipopt
+
+# SKIP_OSQP=1
+FROM ipopt AS osqp_1
+ONBUILD ARG SKIP_IPOPT
+ONBUILD ARG SKIP_OSQP
+
+# SKIP_OSQP=0
+FROM ipopt AS osqp_0
+ONBUILD ARG SKIP_IPOPT
+ONBUILD ARG SKIP_OSQP
+# Install OSQP
+ONBUILD RUN mkdir -p $HOME/build && \
+    export OCTAVE_VER=`octave-cli --no-gui --eval "fprintf('%s', ver('octave').Version)"` && \
+    git clone --depth=1 --recursive https://github.com/oxfordcontrol/osqp $HOME/build/osqp && \
+    git clone --depth=1 --recurse-submodules https://github.com/oxfordcontrol/osqp-matlab $HOME/packages/osqp-matlab && \
+    mkdir $HOME/build/osqp/build && \
+    cd $HOME/build/osqp/build && \
+    cmake -G "Unix Makefiles" .. && \
+    cmake --build . && \
+    ln -s /usr/include/octave-$OCTAVE_VER/octave/Matrix.h $HOME/build/matrix.h && \
+    cd $HOME/packages/osqp-matlab && \
+    octave-cli --no-gui --eval "mex -I$HOME/build -I$HOME/build/osqp/include -I$HOME/build/osqp/lin_sys/direct/qdldl -I$HOME/build/osqp/lin_sys/direct/qdldl/qdldl_sources/include osqp_mex.cpp $HOME/build/osqp/build/out/libosqp.a" && \
+    ls -al && \
+    octave-cli --no-gui --eval "addpath('$HOME/packages/osqp-matlab', '-end'); savepath" && \
+    rm -rf $HOME/build/osqp $HOME/packages/osqp-matlab/.git && \
+    curl -SL https://raw.githubusercontent.com/MATPOWER/action-install-osqp-octave/main/.github/osqp/osqpver.m -o $HOME/packages/osqp-matlab/osqpver.m && \
+    curl -SL https://raw.githubusercontent.com/MATPOWER/action-install-osqp-octave/main/.github/osqp/have_feature_osqp.m -o $HOME/packages/osqp-matlab/have_feature_osqp.m
+
+FROM osqp_${SKIP_OSQP} AS osqp
+
+# Remove build directory
+RUN rm -rf $HOME/build
+
+RUN echo "alias ot='octave-cli'" >> ${HOME}/.bash_aliases && \
+    echo "alias otg='octave --force-gui &'" >> ${HOME}/.bash_aliases && \
+    chown -R ${NB_UID} ${HOME}
+WORKDIR "${HOME}"

@@ -1,0 +1,48 @@
+--- orig/psse_parse_line.m	2014-05-06 14:58:12.000000000 -0500
++++ psse_parse_line.m	2022-01-19 15:32:41.000000000 -0600
+@@ -82,21 +82,21 @@
+     n = regexp(ln, pat, 'names');
+ 
+     %% extract data
+-    if have_fcn('octave')
+-        nc = length(n.col);
+-        if nc && isempty(n.col{nc})
+-            data = n.col(1:nc-1);
+-            if ~isempty(n.comment{nc})
+-                comment = strtrim(n.comment{nc}(2:end));
+-            else
+-                comment = '';
+-            end
+-            nc = nc - 1;
+-        else
+-            data = n.col;
+-            comment = '';
+-        end
+-    else
++%     if have_fcn('octave')
++%         nc = length(n.col);
++%         if nc && isempty(n.col{nc})
++%             data = n.col(1:nc-1);
++%             if ~isempty(n.comment{nc})
++%                 comment = strtrim(n.comment{nc}(2:end));
++%             else
++%                 comment = '';
++%             end
++%             nc = nc - 1;
++%         else
++%             data = n.col;
++%             comment = '';
++%         end
++%     else
+         nc = length(n);
+         if nc && isempty(n(nc).col)
+             [data{1:nc-1}] = deal(n(1:nc-1).col);
+@@ -110,7 +110,7 @@
+             [data{1:nc}] = deal(n.col);
+             comment = '';
+         end
+-    end
++%     end
+ 
+     %% check for section end and Q record
+     if length(data) == 1 && length(data{1}) == 1

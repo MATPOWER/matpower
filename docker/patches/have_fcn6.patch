@@ -1,0 +1,18 @@
+--- orig/have_fcn.m	2016-12-16 12:26:27.000000000 -0600
++++ have_fcn.m	2022-01-19 15:02:21.000000000 -0600
+@@ -188,8 +188,13 @@
+                         warning('The built-in VER command is behaving strangely, probably as a result of installing a 3rd party toolbox in a directory named ''optim'' on your path. Check each element of the output of ver(''optim'') to find the offending toolbox, then move the toolbox to a more appropriately named directory.');
+                         v = v(1);
+                     end
+-                    vstr = v.Version;
+-                    rdate = v.Date;
++                    if isempty(v) || isempty(v.Version)
++                        vstr = '';      %% make sure it's a string
++                        rdate = [];
++                    else
++                        vstr = v.Version;
++                        rdate = v.Date;
++                    end
+                     otver = vstr2num(vstr);
+                     switch tag
+                         case 'fmincon'

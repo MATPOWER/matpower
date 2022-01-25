@@ -1,0 +1,109 @@
+# Builds a Docker image for Octave and MATPOWER 4.0-6.0 (from MATPOWER zip file)
+# Use the following --build-arg values:
+#   BASE_IMAGE=<image> (default is matpower/octave)
+#   BASE_TAG=<tag> e.g. for a specific version of Octave (default is latest)
+#   VER=<MATPOWER version>
+#
+# docker build --build-arg VER=6.0 --build-arg BASE_TAG=4.2.0 -f docker/Dockerfile-matpower-zip -t matpower/matpower:6.0-oct-4.2.0 .
+#
+# Authors:
+# Xiangmin Jiao <xmjiao@gmail.com>
+# Ray Zimmerman <rz10@cornell.edu>
+
+ARG BASE_IMAGE=matpower/octave
+ARG BASE_TAG=latest
+ARG VER=6.0
+ARG PATCH_PSSE=0    # set to 1 for VER=5.0, 5.1, 6.0 with Octave 4.4+
+ARG MORE=0          # set to 1 for Octave < 4.4
+ARG WARN=0          # set to 1 for Octave 6.x+
+ARG PATCH_PSSE=0    # only works for VER=5.0, 5.1, 6.0, required for Octave 4.4+
+FROM ${BASE_IMAGE}:${BASE_TAG} AS base
+LABEL maintainer "Ray Zimmerman <rz10@cornell.edu>"
+
+ARG VER
+ARG PATCH_PSSE
+ARG MORE
+ARG WARN
+
+USER root
+WORKDIR "${HOME}"
+
+# Install MATPOWER files from ZIP file
+RUN curl -SL https://matpower.org/matpower/downloads/${VER}/matpower${VER}.zip -o $HOME/packages/matpower.zip && \
+    unzip $HOME/packages/matpower.zip -d $HOME/packages/temp && \
+    mv $HOME/packages/temp/matpower${VER} $HOME/packages/matpower && \
+    rm -rf $HOME/packages/matpower.zip $HOME/packages/temp && \
+    ls -l $HOME/packages/matpower/extras && \
+    octave-cli --no-gui --eval "addpath('$HOME/packages/matpower'); savepath;" && \
+    octave-cli --no-gui --eval "addpath('$HOME/packages/matpower/t'); savepath;" && \
+    octave-cli --no-gui --eval "addpath('$HOME/packages/matpower/extras/smartmarket'); savepath;" && \
+    octave-cli --no-gui --eval "addpath('$HOME/packages/matpower/extras/state_estimator'); savepath;" && \
+    octave-cli --no-gui --eval "addpath('$HOME/packages/matpower/extras/se'); savepath;"
+
+# Octave version specific setup
+FROM base AS matpower_4.0
+ONBUILD ARG VER
+ONBUILD COPY ./docker/matpower_docker_tests/matpower_docker_tests_4.sh /usr/local/bin/matpower_docker_tests.sh
+ONBUILD RUN octave-cli --no-gui --eval "addpath('$HOME/packages/matpower/extras/cpf'); savepath;" && \
+    octave-cli --no-gui --eval "if exist('ipopt'), rmpath('$HOME/packages/ipopt'); end, savepath;" && \
+    echo "warning('off', 'Octave:data-file-in-path');" >> $HOME/.octaverc
+
+FROM base AS matpower_4.1
+ONBUILD ARG VER
+ONBUILD COPY ./docker/matpower_docker_tests/matpower_docker_tests_4.sh /usr/local/bin/matpower_docker_tests.sh
+ONBUILD RUN octave-cli --no-gui --eval "addpath('$HOME/packages/matpower/extras/cpf'); savepath;" && \
+    octave-cli --no-gui --eval "if exist('ipopt'), rmpath('$HOME/packages/ipopt'); end, savepath;" && \
+    echo "warning('off', 'Octave:data-file-in-path');" >> $HOME/.octaverc
+
+FROM base AS matpower_5.0
+ONBUILD ARG VER
+ONBUILD COPY ./docker/matpower_docker_tests/matpower_docker_tests_4.sh /usr/local/bin/matpower_docker_tests.sh
+ONBUILD RUN octave-cli --no-gui --eval "addpath('$HOME/packages/matpower/extras/misc'); savepath;" && \
+    octave-cli --no-gui --eval "addpath('$HOME/packages/matpower/extras/sdp_pf'); savepath;" && \
+    echo "warning('off', 'Octave:num-to-str');" >> $HOME/.octaverc && \
+    echo "warning('off', 'Octave:data-file-in-path');" >> $HOME/.octaverc
+
+FROM base AS matpower_5.1
+ONBUILD ARG VER
+ONBUILD COPY ./docker/matpower_docker_tests/matpower_docker_tests_4.sh /usr/local/bin/matpower_docker_tests.sh
+ONBUILD RUN octave-cli --no-gui --eval "addpath('$HOME/packages/matpower/extras/misc'); savepath;" && \
+    octave-cli --no-gui --eval "addpath('$HOME/packages/matpower/extras/reduction'); savepath;" && \
+    octave-cli --no-gui --eval "addpath('$HOME/packages/matpower/extras/sdp_pf'); savepath;"
+
+FROM base AS matpower_6.0
+ONBUILD ARG VER
+ONBUILD COPY ./docker/matpower_docker_tests/matpower_docker_tests_6.sh /usr/local/bin/matpower_docker_tests.sh
+ONBUILD RUN octave-cli --no-gui --eval "addpath('$HOME/packages/matpower/extras/misc'); savepath;" && \
+    octave-cli --no-gui --eval "addpath('$HOME/packages/matpower/extras/maxloadlim'); savepath;" && \
+    octave-cli --no-gui --eval "addpath('$HOME/packages/matpower/extras/reduction'); savepath;" && \
+    octave-cli --no-gui --eval "addpath('$HOME/packages/matpower/extras/sdp_pf'); savepath;" && \
+    octave-cli --no-gui --eval "addpath('$HOME/packages/matpower/most'); savepath;" && \
+    octave-cli --no-gui --eval "addpath('$HOME/packages/matpower/most/t'); savepath;"
+ONBUILD COPY ./docker/patches/have_fcn6.patch $HOME/packages
+ONBUILD RUN patch -u -b $HOME/packages/matpower/have_fcn.m -i $HOME/packages/have_fcn6.patch
+
+FROM matpower_${VER} AS matpower
+RUN octave-cli --no-gui --eval "path"
+RUN octave-cli --no-gui --eval "mpver"
+
+# conditionally add 'more' to .octaverc (for Octave < 4.4)
+FROM matpower AS more_0
+FROM matpower AS more_1
+ONBUILD RUN echo "more" >> $HOME/.octaverc
+FROM more_${MORE} AS more
+
+# conditionally disable a warning in .octaverc (for Octave 6.x+)
+FROM more AS warn_0
+FROM more AS warn_1
+ONBUILD RUN echo "warning('off', 'Octave:empty-index');" >> $HOME/.octaverc
+FROM warn_${WARN} AS warn
+
+# conditionally patch some PSS/E files (for VER=5.0, 5.1, 6.0 with Octave 4.4+)
+FROM warn AS patch_0
+FROM warn AS patch_1
+ONBUILD COPY ./docker/patches/psse_parse_*.patch $HOME/packages
+ONBUILD RUN patch -u -b $HOME/packages/matpower/psse_parse_line.m -i $HOME/packages/psse_parse_line.patch && \
+    patch -u -b $HOME/packages/matpower/psse_parse_section.m -i $HOME/packages/psse_parse_section.patch
+FROM patch_${PATCH_PSSE}
+
+RUN chown -R ${NB_UID} ${HOME}

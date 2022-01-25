@@ -13,6 +13,11 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.1
 -----------------
 
+#### 1/25/22
+- New MATPOWER Docker image (now named [`matpower/matpower`][32]) is based
+  on the official GNU Octave image ([`gnuoctave/octave`][33]) and is
+  available for multiple MATPOWER and Octave versions.
+
 #### 7/12/21
 - A vector-valued `label` passed to `apply_changes()` now throws a useful
   error.
@@ -3216,3 +3221,5 @@ First Public Release – *Jun 25, 1997*
 [29]: https://osqp.org
 [30]: https://github.com/MATPOWER/mp-element
 [31]: https://doi.org/10.5281/zenodo.4110676
+[32]: https://hub.docker.com/r/matpower/matpower
+[33]: https://hub.docker.com/r/gnuoctave/octave

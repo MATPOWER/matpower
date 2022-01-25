@@ -152,6 +152,8 @@
 \newcommand{\matpowerextrasgithuburl}[0]{https://github.com/MATPOWER/matpower-extras}
 \newcommand{\matpowerextraslink}[0]{\href{\matpowerextrasgithuburl}{\matpower{} Extras}}
 \newcommand{\matpowerdockerpage}[0]{https://github.com/MATPOWER/matpower/blob/master/docker/MATPOWER-Docker.md}
+\newcommand{\matpowerdockerhub}[0]{https://hub.docker.com/r/matpower/matpower}
+\newcommand{\octavedockerhub}[0]{https://hub.docker.com/r/matpower/octave}
 \newcommand{\mptest}[0]{{MP-Test}}
 \newcommand{\mptesturl}[0]{https://github.com/MATPOWER/mptest}
 \newcommand{\mptestlink}[0]{\href{\mptesturl}{\mptest{}}}
@@ -598,7 +600,7 @@ your own code or modifications.
 
 \subsubsection{\matpower{} Docker Image}
 
-\matpower{} is also available on \href{https://hub.docker.com/}{Docker Hub}\footnote{\url{https://hub.docker.com/}} as the pre-packaged \href{https://www.docker.com/}{Docker}\footnote{\url{https://www.docker.com/}} image tagged \href{https://hub.docker.com/r/matpower/matpower-desktop}{\code{matpower/matpower-desktop}},\footnote{\url{https://hub.docker.com/r/matpower/matpower-desktop}} providing an Ubuntu desktop environment
+\matpower{} is also available on \href{https://hub.docker.com/}{Docker Hub}\footnote{\url{https://hub.docker.com/}} as the pre-packaged \href{https://www.docker.com/}{Docker}\footnote{\url{https://www.docker.com/}} image tagged \href{https://hub.docker.com/r/matpower/matpower}{\code{matpower/matpower}},\footnote{\url{https://hub.docker.com/r/matpower/matpower}} providing a Linux environment
 with Octave, \matpower{}, and the \matpowerextraslink{} pre-installed.
 See the \href{\matpowerdockerpage}{\matpower{} Docker page}\footnote{\url{\matpowerdockerpage}} for more details.
 
@@ -5694,11 +5696,16 @@ name & description \\
 \midrule
 \code{data/}	& \matpower{} cases (see Section~\ref{sec:matpowercases})	\\
 \code{docker/}	& files related to \href{\matpowerdockerpage}{\matpower{} Docker} image	\\
-\code{~~Dockerfile}	& commands for building Docker image	\\
-\code{~~MATPOWER-Docker.md}	& documentation for \href{\matpowerdockerpage}{\matpower{} Docker} image	\\
+\code{~~build\_matpower\_images.sh}	& shell script for building all \matpower{} images	\\
+\code{~~build\_octave\_images.sh}	& shell script for building all Octave base images	\\
+\code{~~Dockerfile}	& for building \matpower{} v7+ Docker images	\\
+\code{~~Dockerfile-octave}	& for building Octave base Docker images	\\
+\code{~~Dockerfile-legacy}	& for building \matpower{} v4-6 Docker images	\\
+\code{~~MATPOWER-Docker.md}	& docs for \href{\matpowerdockerpage}{\matpower{} Docker} image	\\
+\code{~~Octave-Docker.md}	& docs for \href{\octavedockerhub}{\matpower{}'s Octave Docker} image	\\
 \code{~~docker-compose.test.yml}	& configuration for Docker Hub auto test	\\
-\code{~~matpower\_desktop.py}	& Python script for use with \href{\matpowerdockerpage}{\matpower{} Docker}	\\
-\code{~~matpower\_docker\_tests.sh}	& script for Docker Hub auto test	\\
+\code{~~patches/}	& patches for some older \matpower{} versions\\
+\code{~~matpower\_docker\_tests/}	& scripts for running \matpower{} tests in container	\\
 \code{docs/}	& \matpower{} documentation	\\
 \code{~~MATPOWER-dev-guide.md}	& \matpower{} Developer's Guide	\\
 \code{~~MATPOWER-manual.pdf}	& \mum{}\tnote{\dag}	\\
@@ -8243,6 +8250,7 @@ MP-Opt-Model object is used for power flow and continuation power flow as well a
 \subsubsection*{Other Improvements}
 \begin{itemize}
 \item \mpom{} object is now used for power flow as well as OPF and is added as \code{om} field to power flow \code{results} struct.
+\item New MATPOWER Docker image (named \href{https://hub.docker.com/r/matpower/matpower}{\code{matpower/matpower}}) is based on the official GNU Octave image (\href{https://hub.docker.com/r/gnuoctave/octave}{\code{gnuoctave/octave}}) and is available for multiple \matpower{} and Octave versions.
 \item Each power flow is initialized with the solved voltages of the previous one when changing PV buses to PQ during Q limit enforcement. \emph{Thanks to Tostado-Véliz, Kamel, Jurado.}
 
 \item \emph{Thanks to ...}

@@ -1,0 +1,73 @@
+--- orig/psse_parse_section.m	2014-05-06 14:58:12.000000000 -0500
++++ psse_parse_section.m	2022-01-19 15:36:33.000000000 -0600
+@@ -150,13 +150,13 @@
+     % pat = '(?<col>[^''",\s/]+|''([^'']|'''')*''|"([^"]|"")*")\s*(,|\s)\s*|\s*,\s*|\t|(?<col>[^''",\s/]+|''([^'']|'''')*''|"([^"]|"")*")|(?<comment>/.*)?';
+ 
+     %% set up functions for use with cellfun
+-    if have_fcn('octave')
+-        parser  = @(ln){{regexp(ln, pat, 'names')}};  %% parse cols, comments of each rec
+-        numcols = @(ss)length(ss{1}.col);   %% number of columns in each record
+-    else
++%     if have_fcn('octave')
++%         parser  = @(ln){{regexp(ln, pat, 'names')}};  %% parse cols, comments of each rec
++%         numcols = @(ss)length(ss{1}.col);   %% number of columns in each record
++%     else
+         parser  = @(ln){regexp(ln, pat, 'names')};  %% parse cols, comments of each rec
+         numcols = @(ss)length(ss);      %% number of columns in each record
+-    end
++%    end
+ 
+     %% parse the table into cell array of structs (with col, comment fields)
+     dd = cellfun(parser, recs);
+@@ -190,24 +190,24 @@
+         else
+             t = '';
+         end
+-        if have_fcn('octave')   %% running under Octave
+-            switch t
+-                case {'d', 'f', 'g', 'D', 'F', 'G'} %% numeric data
+-                    if t == upper(t)                %% possibly quoted
+-                        xc_fcn  = @(n)extract_col_qnum_octave(n, c, lower(t));
+-                    else                            %% not quoted (more efficient)
+-                        xc_fcn  = @(n)extract_col_num_octave(n, c, t);
+-                    end
+-                case {'s', 'c'}
+-                    xc_fcn  = @(n){extract_col_dequote_octave(n, c)};
+-                otherwise
+-                    if c <= ncmin
+-                        xc_fcn  = @(n)n{1}.col(c);
+-                    else
+-                        xc_fcn  = @(n){extract_col_octave(n, c)};
+-                    end
+-            end
+-        else                    %% running under Matlab
++%         if have_fcn('octave')   %% running under Octave
++%             switch t
++%                 case {'d', 'f', 'g', 'D', 'F', 'G'} %% numeric data
++%                     if t == upper(t)                %% possibly quoted
++%                         xc_fcn  = @(n)extract_col_qnum_octave(n, c, lower(t));
++%                     else                            %% not quoted (more efficient)
++%                         xc_fcn  = @(n)extract_col_num_octave(n, c, t);
++%                     end
++%                 case {'s', 'c'}
++%                     xc_fcn  = @(n){extract_col_dequote_octave(n, c)};
++%                 otherwise
++%                     if c <= ncmin
++%                         xc_fcn  = @(n)n{1}.col(c);
++%                     else
++%                         xc_fcn  = @(n){extract_col_octave(n, c)};
++%                     end
++%             end
++%         else                    %% running under Matlab
+             switch t
+                 case {'d', 'f', 'g', 'D', 'F', 'G'} %% numeric data
+                     if t == upper(t)                %% possibly quoted
+@@ -224,7 +224,7 @@
+                         xc_fcn  = @(n){extract_col(n, c)};
+                     end
+             end
+-        end
++%         end
+         switch upper(t)
+             case {'D', 'F', 'G'}
+                 data.num(:, c) = cellfun(xc_fcn, dd);

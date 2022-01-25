@@ -72,10 +72,9 @@ your own code or modifications.
 #### MATPOWER Docker Image
 
 MATPOWER is also available on [Docker Hub][7a] as the pre-packaged
-[Docker][7b] image tagged [matpower/matpower-desktop][7c], providing an
-Ubuntu desktop environment with Octave, MATPOWER, and the
-[MATPOWER Extras][7d] pre-installed. See the [MATPOWER-Docker page][7e]
-for more details.
+[Docker][7b] image tagged [matpower/matpower][7c], providing a Linux
+environment with Octave, MATPOWER, and the [MATPOWER Extras][7d]
+pre-installed. See the [MATPOWER-Docker page][7e] for more details.
 
 Docker images are provided for both versioned releases and
 development versions.
@@ -429,7 +428,7 @@ MATPOWER is distributed as open-source under the [3-clause BSD license][30].
 [7]: CONTRIBUTING.md
 [7a]: https://hub.docker.com/
 [7b]: https://www.docker.com
-[7c]: https://hub.docker.com/r/matpower/matpower-desktop
+[7c]: https://hub.docker.com/r/matpower/matpower
 [7d]: https://github.com/MATPOWER/matpower-extras
 [7e]: docker/MATPOWER-Docker.md
 [8]: docs/MATPOWER-manual.pdf
