@@ -11,13 +11,13 @@ optimization packages pre-installed.
 Specifically, the following packages are included, depending on the
 version of the Octave image being used.
 
-| Octave Version |  IPOPT  | OSQP | SeDuMi | SDP3 | YALMIP |
-| :------------: | :-----: | :--: | :----: | :--: | :----: |
-|     6.x.x      |    x    |  x   |   x    |  x   |   x    |
-|     5.x.x      |    x    |  x   |   x    |  x   |   x    |
-|     4.4.x      |    x    |  x   |   x    |  x   |   x    |
-|     4.2.x      |    x    |      |   x    |  x   |   x    |
-|     4.0.x      |         |      |   x    |  x   |   x    |
+| Octave Version | [IPOPT][8] | [OSQP][9] | [SeDuMi][10] | [SDP3][11] | [YALMIP][12] |
+| :------------: | :--------: | :-------: | :----------: | :--------: | :----------: |
+|     6.x.x      |  &check;   |  &check;  |   &check;    |  &check;   |   &check;    |
+|     5.x.x      |  &check;   |  &check;  |   &check;    |  &check;   |   &check;    |
+|     4.4.x      |  &check;   |  &check;  |   &check;    |  &check;   |   &check;    |
+|     4.2.x      |  &check;   |           |   &check;    |  &check;   |   &check;    |
+|     4.0.x      |            |           |   &check;    |  &check;   |   &check;    |
 
 All packages are built from the latest versions of the source from GitHub,
 except YALMIP, which uses R20180817.
@@ -30,7 +30,7 @@ System Requirements
 -------------------
 
 You will need working installations of:
-- [Docker][8], and
+- [Docker][13], and
 - an X11 server _(optional, required for use of the GUI)_
 
 
@@ -100,4 +100,9 @@ Additional Notes
 [5]: https://matpower.org
 [6]: https://hub.docker.com/r/matpower/matpower
 [7]: https://hub.docker.com/r/gnuoctave/octave
-[8]: https://www.docker.com/products/docker-desktop
+[8]: https://coin-or.github.io/Ipopt/
+[9]: https://osqp.org
+[10]: https://github.com/sqlp/sedumi
+[11]: https://github.com/sqlp/sdpt3
+[12]: https://yalmip.github.io
+[13]: https://www.docker.com/products/docker-desktop
