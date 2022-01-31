@@ -74,8 +74,10 @@ FROM base AS ipopt_0
 ONBUILD ARG SKIP_IPOPT
 ONBUILD ARG SKIP_OSQP
 # Install latest Ipopt from source
-ONBUILD RUN git clone --depth=1 https://github.com/coin-or/coinbrew && \
+ONBUILD RUN mkdir -p coinbrew && \
     cd coinbrew && \
+    wget https://raw.githubusercontent.com/coin-or/coinbrew/v1.0/coinbrew && \
+    chmod a+x coinbrew && \
     export with_lapack_lflags="-lopenblas" && \
     ./coinbrew fetch Ipopt --no-prompt && \
     ./coinbrew build Ipopt --prefix /usr --tests all --with-intsize=64 --no-prompt && \
