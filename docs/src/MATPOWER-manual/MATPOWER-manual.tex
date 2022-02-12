@@ -1150,7 +1150,7 @@ Also included are solvers based on variations of the fast-decoupled method~\cite
 
 The fourth algorithm is the standard Gauss-Seidel method from Glimm and Stagg~\cite{glimm1957}. It has numerous disadvantages relative to the Newton method and is included primarily for academic interest.
 
-By default, the AC power flow solvers simply solve the problem described above, ignoring any generator limits, branch flow limits, voltage magnitude limits, etc. However, there is an option (\code{pf.enforce\_q\_lims}) that allows for the generator reactive power limits to be respected at the expense of the voltage setpoint. This is done in a rather brute force fashion by adding an outer loop around the AC power flow solution. If any generator has a violated reactive power limit, its reactive injection is fixed at the limit, the corresponding bus is converted to a PQ bus and the power flow is solved again. This procedure is repeated until there are no more violations. Note that this option is based solely on the \code{QMAX} and \code{QMIN} parameters for the generator, from columns 4 and 5 of the \gen{} matrix, and does not take into account the trapezoidal generator capability curves described in Section~\ref{sec:cap_curve} and specifed in columns \code{PC1}--\code{QC2MAX} (11--16). Note also that this option affects generators even if the bus they are attached to is already of type PQ.
+By default, the AC power flow solvers simply solve the problem described above, ignoring any generator limits, branch flow limits, voltage magnitude limits, etc. However, there is an option (\code{pf.enforce\_q\_lims}) that allows for the generator reactive power limits to be respected at the expense of the voltage setpoint. This is done in a rather brute force fashion by adding an outer loop around the AC power flow solution. If any generator has a violated reactive power limit, its reactive injection is fixed at the limit, the corresponding bus is converted to a PQ bus and the power flow is solved again. This procedure is repeated until there are no more violations. Note that this option is based solely on the \code{QMAX} and \code{QMIN} parameters for the generator, from columns 4 and 5 of the \gen{} matrix, and does not take into account the trapezoidal generator capability curves described in Section~\ref{sec:cap_curve} and specified in columns \code{PC1}--\code{QC2MAX} (11--16). Note also that this option affects generators even if the bus they are attached to is already of type PQ.
 
 In all, there are 4 different formulations implemented for the Newton power flow, described briefly below, with the details found in reference~\cite{sereeter2019}.
 
@@ -4261,6 +4261,11 @@ The matrix is $n_{br} \times n_b$, where $n_{br}$ is the number of branches and 
 The \code{slack} can be a scalar (single slack bus) or an $n_b \times 1$ column vector of weights specifying the proportion of the slack taken up at each bus.
 If the \code{slack} is not specified, the reference bus is used by default.
 Bus numbers must be consecutive beginning at 1 (i.e. internal ordering).
+
+For convenience, \code{slack} can also be an $n_b \times n_b$ matrix, where each
+column specifies how the slack should be handled for injections
+at that bus. This option only applies when computing the full
+PTDF matrix (i.e. when \code{txfr} and \code{bus\_idx} are not provided.)
 
 If \code{txfr} is supplied it must be a matrix (or vector) with $n_b$ rows
 whose columns each sum to zero, where each column defines a specific
@@ -8252,6 +8257,7 @@ MP-Opt-Model object is used for power flow and continuation power flow as well a
 \item \mpom{} object is now used for power flow as well as OPF and is added as \code{om} field to power flow \code{results} struct.
 \item New MATPOWER Docker image (named \href{https://hub.docker.com/r/matpower/matpower}{\code{matpower/matpower}}) is based on the official GNU Octave image (\href{https://hub.docker.com/r/gnuoctave/octave}{\code{gnuoctave/octave}}) and is available for multiple \matpower{} and Octave versions.
 \item Each power flow is initialized with the solved voltages of the previous one when changing PV buses to PQ during Q limit enforcement. \emph{Thanks to Tostado-Véliz, Kamel, Jurado.}
+\item The \code{makePTDF()} function can now optionally use a different slack distribution for each bus by specifying the \code{slack} input as a matrix. \emph{Thanks to Jon Martinez Corral.}
 
 \item \emph{Thanks to ...}
 \item Deprecated functions:
@@ -8267,6 +8273,7 @@ MP-Opt-Model object is used for power flow and continuation power flow as well a
 \item Bug affecting AC OPF initialization for cases with piecewise linear costs and cartesian voltage representations resulting in improved convergence for affected cases.
 \item Fix generator voltage set points in \code{case9target} to match \code{case9}.
 \item A vector-valued \code{label} passed to \code{apply\_changes()} now throws a useful error.
+\item Fix bug in previously undocumented feature of \code{makePTDF()} where the \code{slack} input is a matrix. \emph{Thanks to Jon Martinez Corral.}
 \end{itemize}
 
 \subsubsection*{Incompatible Changes}

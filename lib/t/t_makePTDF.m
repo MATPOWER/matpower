@@ -2,7 +2,7 @@ function t_makePTDF(quiet)
 %T_MAKEPTDF  Tests for MAKEPTDF.
 
 %   MATPOWER
-%   Copyright (c) 2006-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2006-2022, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-ntests = 65;
+ntests = 67;
 t_begin(ntests, quiet);
 
 casefile = 't_case9_opf';
@@ -147,5 +147,14 @@ t_is(H, H1, 12, sprintf('H1 (txfr) : full', k));
 txfr = eye(9,9); txfr(4, :) = txfr(4, :) - 1;
 H = makePTDF(mpc, 4, txfr);
 t_is(H, H4, 12, sprintf('H4 (txfr) : full', k));
+
+%% matrix of slacks (all cols)
+Dm = [e4 e1 ones(nb, 1) Pd Pg e4 ones(nb, 1) Pd Pg];
+eHm = [H4(:,1) H1(:,2) Heq(:,3) Hd(:,4) Hg(:,5) H4(:,6) Heq(:,7) Hd(:,8) Hg(:,9)];
+Hm = makePTDF(mpc, Dm);
+t_is(Hm, eHm, 12, 'H (matrix slack) = H (vector slacks) - all cols');
+txfr = eye(nb, nb) - Dm ./ sum(Dm);
+Ht = makePTDF(mpc, [], txfr);
+t_is(Hm, Ht, 12, 'H (matrix slack) = H (equiv transfers) - all cols');
 
 t_end;

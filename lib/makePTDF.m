@@ -16,6 +16,11 @@ function H = makePTDF(baseMVA, bus, branch, slack, bus_idx)
 %   bus. If the SLACK is not specified the reference bus is used by default.
 %   Bus numbers must be consecutive beginning at 1 (i.e. internal ordering).
 %
+%   For convenience, SLACK can also be an nb x nb matrix, where each
+%   column specifies how the slack should be handled for injections
+%   at that bus. This option only applies when computing the full
+%   PTDF matrix (i.e. when TXFR and BUS_IDX are not provided.)
+%
 %   If TXFR is supplied it must be a matrix (or vector) with nb rows whose
 %   columns each sum to zero, where each column defines a specific (slack
 %   independent) transfer. E.g. if k-th transfer is from bus i to bus j,
@@ -42,13 +47,8 @@ function H = makePTDF(baseMVA, bus, branch, slack, bus_idx)
 %
 %   See also MAKELODF.
 
-%   For convenience, SLACK can also be an nb x nb matrix, where each
-%   column specifies how the slack should be handled for injections
-%   at that bus. This option only applies when computing the full
-%   PTDF matrix (i.e. when TXFR and BUS_IDX are not provided.)
-
 %   MATPOWER
-%   Copyright (c) 2006-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2006-2022, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -97,7 +97,7 @@ nbr = size(branch, 1);
 txfr = 0;               %% default assumes not just for specific transfers
 if ~isempty(bus_idx)
     compute_full_H = 0;
-    if size(bus_idx, 1) == nb && sum(sum(bus_idx)) == 0
+    if size(bus_idx, 1) == nb && sum(sum(bus_idx)) < 1e-12
         txfr = 1;       %% cols of H for specific (slack independent) transfers
         dP = bus_idx;
     end
@@ -161,8 +161,8 @@ H = Bf * dTheta;
 
 %%-----  distribute slack, if requested  -----
 if length(slack) ~= 1 && ~txfr
+    slack = slack ./ sum(slack);   %% normalize weights
     if size(slack, 2) == 1  %% slack is a vector of weights
-        slack = slack/sum(slack);   %% normalize weights
         
         %% conceptually, we want to do ...
         %%    H = H * (eye(nb,nb) - slack * ones(1, nb));
@@ -180,6 +180,6 @@ if length(slack) ~= 1 && ~txfr
             H = H(:, 1:nbi0);   %% remove temp cols added for missing slacks
         end
     else
-        H = H * slack;
+        H = H - H * slack;
     end
 end

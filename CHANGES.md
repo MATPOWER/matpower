@@ -13,6 +13,12 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.1
 -----------------
 
+#### 2/11/22
+- Add option for `makePTDF()` function to use a different slack distribution
+  for each bus by specifying the `slack` input as a matrix. Fix bug in
+  existing code for this previously undocumented feature.
+  *Thanks to Jon Martinez Corral.*
+
 #### 1/25/22
 - New MATPOWER Docker image (now named [`matpower/matpower`][32]) is based
   on the official GNU Octave image ([`gnuoctave/octave`][33]) and is
