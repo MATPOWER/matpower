@@ -47,7 +47,9 @@ function [loss, fchg, tchg, dloss_dV, dchg_dVm] = get_losses(baseMVA, bus, branc
 %
 %   Example:
 %       results = runpf(mycase);
-%       total_system_real_losses = sum(real(get_losses(results)));
+%       [loss, chg] = get_losses(results);
+%       total_system_real_losses = sum(real(loss));
+%       total_system_reac_losses = sum(imag(loss)) - sum(chg);
 %
 %       [loss, fchg, tchg, dloss_dV] = get_losses(results);
 
