@@ -2,7 +2,7 @@ function t_om_solve_nlps(quiet)
 %T_OM_SOLVE_NLPS  Tests of NLP solvers via OM.SOLVE().
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2022, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.
@@ -55,7 +55,9 @@ for k = 1:length(cfg)
 %                 opt.fmincon_opt.opts.OptimalityTolerance = 1e-10;
 %                 opt.fmincon_opt.opts.TolCon = 1e-8;
 %                 opt.fmincon_opt.tol_x = 1e-8;
-                 opt.fmincon_opt.tol_f = 1e-9;
+%                 opt.fmincon_opt.opts.MaxFunctionEvaluations = 10000;
+%                 opt.fmincon_opt.opts.FiniteDifferenceType = 'central';
+                opt.fmincon_opt.tol_f = 1e-9;
             case 'IPOPT'
                 opt.ipopt_opt = opts;
 %                 opt.ipopt_opt.acceptable_tol = 1e-11;
@@ -148,24 +150,28 @@ for k = 1:length(cfg)
 
         t = sprintf('%s - constrained 3-d nonlinear : ', name);
         %% from https://en.wikipedia.org/wiki/Nonlinear_programming#3-dimensional_example
-        f_fcn = @(x)f6(x);
-        h_fcn = @(x)h6(x);
-        d2h_fcn = @(x, lam)hess6a(x, lam);
-        x0 = [1; 1; 0];
-        om = opt_model;
-        om.add_var('x', 3, x0);
-        om.add_nln_cost('f', 1, f_fcn);
-        om.add_nln_constraint('h', 2, 0, h_fcn, d2h_fcn);
-        [x, f, s, out, lam] = om.solve(opt);
-        t_ok(s > 0, [t 'success']);
-        t_is(x, [1.58113883; 2.23606798; 1.58113883], 6, [t 'x']);
-        t_is(f, -5*sqrt(2), 6, [t 'f']);
-        t_is(lam.ineqnonlin, [0;sqrt(2)/2], 7, [t 'lam.ineqnonlin']);
-        t_ok(isempty(lam.mu_l), [t 'lam.mu_l']);
-        t_ok(isempty(lam.mu_u), [t 'lam.mu_u']);
-        t_is(lam.lower, zeros(size(x)), 13, [t 'lam.lower']);
-        t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
-        t_ok(~isfield(om.soln, 'var'), [t 'no parse_soln() outputs']);
+        if strcmp(name, 'fmincon-5') && have_feature('matlab', 'vnum') == 9.011
+            t_skip(9, [t 'known issue w/R2021b']);
+        else
+            f_fcn = @(x)f6(x);
+            h_fcn = @(x)h6(x);
+            d2h_fcn = @(x, lam)hess6a(x, lam);
+            x0 = [1; 1; 0];
+            om = opt_model;
+            om.add_var('x', 3, x0);
+            om.add_nln_cost('f', 1, f_fcn);
+            om.add_nln_constraint('h', 2, 0, h_fcn, d2h_fcn);
+            [x, f, s, out, lam] = om.solve(opt);
+            t_ok(s > 0, [t 'success']);
+            t_is(x, [1.58113883; 2.23606798; 1.58113883], 6, [t 'x']);
+            t_is(f, -5*sqrt(2), 6, [t 'f']);
+            t_is(lam.ineqnonlin, [0;sqrt(2)/2], 7, [t 'lam.ineqnonlin']);
+            t_ok(isempty(lam.mu_l), [t 'lam.mu_l']);
+            t_ok(isempty(lam.mu_u), [t 'lam.mu_u']);
+            t_is(lam.lower, zeros(size(x)), 13, [t 'lam.lower']);
+            t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
+            t_ok(~isfield(om.soln, 'var'), [t 'no parse_soln() outputs']);
+        end
 
         t = sprintf('%s - constrained 4-d nonlinear : ', name);
         opt.parse_soln = 1;

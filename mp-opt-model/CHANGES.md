@@ -2,6 +2,18 @@ Change history for MP-Opt-Model
 ===============================
 
 
+Changes since 4.0
+-----------------
+
+#### 3/3/22
+  - Add elapsed time in seconds to results of the `solve()` method of
+  `opt_model`, returned in `om.soln.output.et`.
+
+#### 2/14/22
+  - Skip some `fmincon` tests using interior point algorithm with finite
+    difference Hessian that began failing in MATLAB R2021b.
+
+
 Version 4.0 - *Oct 18, 2021*
 ----------------------------
 

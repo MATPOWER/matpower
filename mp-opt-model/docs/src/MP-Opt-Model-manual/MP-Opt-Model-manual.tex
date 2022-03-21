@@ -151,7 +151,7 @@
 \newcommand{\mpomlink}[0]{\href{\mpomurl}{\mpom{}}}
 \newcommand{\mpomname}[0]{\mpom{}}
 % \newcommand{\mpomname}[0]{{{\bf M}{\sc at}{\bf P}{\sc ower} \textbf{Opt}imization \textbf{Model}}}
-\newcommand{\mpomver}[0]{4.0}
+\newcommand{\mpomver}[0]{4.1-dev}
 \newcommand{\most}[0]{{MOST}}
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
@@ -331,7 +331,7 @@ The citation and DOI can be version-specific or general, as appropriate. For ver
 
 \begin{quote}
 \footnotesize
-R.~D. Zimmerman. \mpomname{} User's Manual, Verision 4.0. 2021. [Online]. Available: \url{https://matpower.org/docs/MP-Opt-Model-manual-4.0.pdf}\\
+R.~D. Zimmerman. \mpomname{} User's Manual, Version 4.0. 2021. [Online]. Available: \url{https://matpower.org/docs/MP-Opt-Model-manual-4.0.pdf}\\
 \doi{10.5281/zenodo.5576755}
 \end{quote}
 For a version non-specific citation, use the following citation and DOI,
@@ -2921,7 +2921,8 @@ $\le 0$ & solver-specific failure code \\
 \end{tabular}	\\
 \code{~~~~.output} & output struct with the following fields:	\\
 & \begin{tabular}{r @{ -- } l}
-alg & algorithm code of solver used \\
+\code{alg} & algorithm code of solver used \\
+\code{et} & solution elapsed time in seconds \\
 \emph{(others)} & solver-specific fields \\
 \end{tabular}	\\
 \code{~~~~.jac} & final value of Jacobian matrix (for LEQ/NLEQ)	\\
@@ -4446,6 +4447,31 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.0.pdf}{\mpom{} 4.0 Use
 \item Refactored \code{describe\_idx} into a new method, \code{set\_type\_idx\_map}, that returns in information in a programmatically usable form, and an updated \code{describe\_idx} that calls the new method, then formats the results in the expected char array(s).
 \end{itemize}
 
+
+\subsection{Version 4.1-dev -- released ??? ?, 202?}
+\label{app:v41}
+
+The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.1.pdf}{\mpom{} 4.1 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MP-Opt-Model-manual-4.0.pdf}}
+
+\subsubsection*{New Features}
+\begin{itemize}
+\item 
+\item New functions:
+    \begin{itemize}
+    \item \code{foobar()} does whizbang.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection*{Bugs Fixed}
+\begin{itemize}
+\item 
+    \emph{Thanks to Fulano.}
+\end{itemize}
+
+\subsubsection*{Other Changes}
+\begin{itemize}
+\item Add elapsed time in seconds to results of the \code{solve()} method of \code{opt\_model}, returned in \code{om.soln.output.et}.
+\end{itemize}
 
 % \subsection{Version 4.0 -- released ??? ?, 202?}
 % \label{app:v40}

@@ -195,7 +195,7 @@ else
     clp_opt = clp_options;
 end
 
-if have_feature('opti_clp')     %% use OPTI Toolbox verision's MEX interface
+if have_feature('opti_clp')     %% use OPTI Toolbox version's MEX interface
     clp_opt.display = verbose;
 
     [x, f, exitflag, iter, lam] = clp(tril(H), c, A, l, u, xmin, xmax, clp_opt);

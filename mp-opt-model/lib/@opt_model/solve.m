@@ -122,6 +122,7 @@ function [x, f, eflag, output, lambda] = solve(om, opt)
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See https://github.com/MATPOWER/mp-opt-model for more info.
 
+t0 = tic;       %% start timer
 if nargin < 2
     opt = struct();
 end
@@ -256,6 +257,7 @@ if isfield(opt, 'parse_soln') && opt.parse_soln
     ps = om.parse_soln();
     om.soln = nested_struct_copy(om.soln, ps, struct('copy_mode', '='));
 end
+om.soln.output.et = toc(t0);    %% stop timer
 
 %% system of nonlinear and linear equations
 function [f, J] = nleq_fcn_(om, x, A, b)
