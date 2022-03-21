@@ -56,8 +56,6 @@ mpc.gencost(1:5, 1:7) = ones(5, 1) * [2 0 0 3 0.1 45 0];
 mpc.branch(18, RATE_A) = 25;
 
 %% set up file names
-[pathstr, name, ext] = fileparts(which('t_printpf'));
-
 fnameac = 'pretty_print_acopf.txt';
 fnamedc = 'pretty_print_dcopf.txt';
 fname = 'pretty_print';
