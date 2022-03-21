@@ -45,6 +45,8 @@ function mpc = apply_changes(label, mpc, chgtab)
 %   3. Take branch 2 out of service, 20% probability.
 %   4. Scale all loads in area 2 (real & reactive, fixed and dispatchable)
 %      by a factor of 1.1, 10% probability.
+%
+%   See IDX_CT.
 
 %   To do:
 %       - check for valid row number
