@@ -147,8 +147,24 @@ end
 mpc = ext2int(mpc, mpopt);
 t0 = tic;
 if use_mpe
-    pf = mp_task_pf_legacy();
-    pf.run(mpc, mpopt);
+    task_class = @mp_task_pf_legacy;    %% set default task class
+
+    %% get and apply extensions
+    if isfield(mpopt.exp, 'mpx') && ~isempty(mpopt.exp.mpx)
+        mpx = mpopt.exp.mpx;
+        if ~iscell(mpx)
+            mpx = { mpx };
+        end
+    else
+        mpx = {};
+    end
+    for k = 1:length(mpx)
+        task_class = mpx{k}.task_class(task_class, mpopt);
+    end
+
+    %% create and run task
+    pf = task_class();
+    pf.run(mpc, mpopt, mpx);
     [r, success] = pf.legacy_post_run(mpopt);
     [bus, gen, branch] = deal(r.bus, r.gen, r.branch);
     if dc

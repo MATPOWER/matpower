@@ -373,8 +373,24 @@ if ~done.flag
     [Ybus, Yf, Yt] = makeYbus(mpcb.baseMVA, mpcb.bus, mpcb.branch);
 
     if use_mpe
-        cpf = mp_task_cpf_legacy();
-        cpf.run({mpcb, mpct}, mpopt);
+        task_class = @mp_task_cpf_legacy;   %% set default task class
+
+        %% get and apply extensions
+        if isfield(mpopt.exp, 'mpx') && ~isempty(mpopt.exp.mpx)
+            mpx = mpopt.exp.mpx;
+            if ~iscell(mpx)
+                mpx = { mpx };
+            end
+        else
+            mpx = {};
+        end
+        for k = 1:length(mpx)
+            task_class = mpx{k}.task_class(task_class, mpopt);
+        end
+
+        %% create and run task
+        cpf = task_class();
+        cpf.run({mpcb, mpct}, mpopt, mpx);
         [mpct, success] = cpf.legacy_post_run(mpopt);
         mpct.et = toc(t0);
         mpct.success = success;

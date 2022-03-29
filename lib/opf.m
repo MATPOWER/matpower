@@ -244,9 +244,24 @@ if nargout > 7
     mpopt.opf.return_raw_der = 1;
 end
 if use_mpe
-    %% setup and run the OPF
-    opf = mp_task_opf_legacy();
-    opf.run(mpc, mpopt);
+    task_class = @mp_task_opf_legacy;   %% set default task class
+
+    %% get and apply extensions
+    if isfield(mpopt.exp, 'mpx') && ~isempty(mpopt.exp.mpx)
+        mpx = mpopt.exp.mpx;
+        if ~iscell(mpx)
+            mpx = { mpx };
+        end
+    else
+        mpx = {};
+    end
+    for k = 1:length(mpx)
+        task_class = mpx{k}.task_class(task_class, mpopt);
+    end
+
+    %% create and run task
+    opf = task_class();
+    opf.run(mpc, mpopt, mpx);
     [results, success, raw] = opf.legacy_post_run(mpopt);
 else
     if ~isempty(mpc.bus)
