@@ -1,5 +1,5 @@
 function succ = install_matpower(modify, save_it, verbose, rm_oldpaths)
-%INSTALL_MATPOWER  Assist the user in setting their path.
+%INSTALL_MATPOWER  Assist user in setting path to install MATPOWER.
 %   INSTALL_MATPOWER
 %   INSTALL_MATPOWER(MODIFY)
 %   INSTALL_MATPOWER(MODIFY, SAVE_IT)
@@ -52,7 +52,7 @@ function succ = install_matpower(modify, save_it, verbose, rm_oldpaths)
 %   See also ADDPATH, SAVEPATH.
 
 %   MATPOWER
-%   Copyright (c) 2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2017-2022, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -243,17 +243,19 @@ if ~isempty(oldpaths)
     elseif ~rm_oldpaths
         error('install_matpower: %s%s\nPlease remove the old installation first, or re-run\nINSTALL_MATPOWER in interactive mode (no arguments).', str, rm_path_str);
     end
-end
 
-%% remove old paths
-if rm_oldpaths
-    rmpath(oldpaths{:});
-    if verbose
-        fprintf(div_line);
-        fprintf('The following directories were removed from your %s path:\n\n%s\n', sw, rm_path_str);
-        if ~modify
-            fprintf('You will need to manually use SAVEPATH to make the changes permanent.\n');
-            s = input('Hit any key to continue ...', 's');
+    %% remove old paths
+    if rm_oldpaths
+        rmpath(oldpaths{:});
+        if verbose
+            fprintf(div_line);
+            fprintf('The following directories were removed from your %s path:\n\n%s\n', sw, rm_path_str);
+            if ~modify
+                fprintf('You will need to manually use SAVEPATH to make the changes permanent.\n');
+                if interactive
+                    s = input('Hit any key to continue ...', 's');
+                end
+            end
         end
     end
 end
