@@ -110,7 +110,7 @@ jobs:
       if: startsWith(env.OCTAVE_VER, '4') != 1 && startsWith(env.OCTAVE_VER, '6.1') != 1
       run: |
         echo "INCLUDE_MP_ELEMENT=1" >> $GITHUB_ENV
-        echo "MP_ELEMENT_TAG=0.6" >> $GITHUB_ENV
+        echo "MP_ELEMENT_TAG=0.7" >> $GITHUB_ENV
 
     - name: Install MATPOWER
       run: |
