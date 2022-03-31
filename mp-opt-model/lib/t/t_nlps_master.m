@@ -135,7 +135,7 @@ t_is(lam.lower, zeros(size(x)), 9, [t 'lam.lower']);
 t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
 
 t = sprintf('%s - constrained 3-d nonlinear : ', name);
-if strcmp(name, 'fmincon-5') && have_feature('matlab', 'vnum') == 9.011
+if strcmp(name, 'fmincon-5') && have_feature('matlab', 'vnum') >= 9.011
     t_skip(16, [t 'known issue w/R2021b']);
 else
     %% from https://en.wikipedia.org/wiki/Nonlinear_programming#3-dimensional_example

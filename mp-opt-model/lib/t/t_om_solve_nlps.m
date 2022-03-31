@@ -150,7 +150,7 @@ for k = 1:length(cfg)
 
         t = sprintf('%s - constrained 3-d nonlinear : ', name);
         %% from https://en.wikipedia.org/wiki/Nonlinear_programming#3-dimensional_example
-        if strcmp(name, 'fmincon-5') && have_feature('matlab', 'vnum') == 9.011
+        if strcmp(name, 'fmincon-5') && have_feature('matlab', 'vnum') >= 9.011
             t_skip(9, [t 'known issue w/R2021b']);
         else
             f_fcn = @(x)f6(x);
