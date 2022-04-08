@@ -13,6 +13,12 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.1
 -----------------
 
+#### 4/8/22
+- Relax some test tolerances to prevent failure with Gurobi 9.5.
+
+#### 3/31/22
+- Add support for MATPOWER extensions in MP-Element 0.7+.
+
 #### 2/11/22
 - Add option for `makePTDF()` function to use a different slack distribution
   for each bus by specifying the `slack` input as a matrix. Fix bug in
