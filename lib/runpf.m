@@ -165,8 +165,7 @@ if use_mpe
     %% create and run task
     pf = task_class();
     pf.run(mpc, mpopt, mpx);
-    [r, success] = pf.legacy_post_run(mpopt);
-    [bus, gen, branch] = deal(r.bus, r.gen, r.branch);
+    [mpc, success] = pf.legacy_post_run(mpopt);
     if dc
         its = 1;
     elseif pf.nm.np ~= 0
@@ -458,6 +457,7 @@ else
         fprintf('Power flow not valid : MATPOWER case contains no connected buses\n');
     end
 end
+[mpc.bus, mpc.gen, mpc.branch] = deal(bus, gen, branch);
 
 end %% if use_mpe
 
@@ -467,7 +467,6 @@ mpc.iterations = its;
 
 %%-----  output results  -----
 %% convert back to original bus numbering & print results
-[mpc.bus, mpc.gen, mpc.branch] = deal(bus, gen, branch);
 results = int2ext(mpc);
 
 if success && use_mpe
