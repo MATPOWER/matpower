@@ -240,7 +240,7 @@ User's Manual}
 %%% BEFORE PUBLISHING A NEW VERSION:
 %%%   Update the publication year for \bibitem{matpower} and
 %%%   \bibitem{matpower_manual} to the year of the latest release
-\date{October 8, 2020} % comment this line to display the current date
+%\date{October 8, 2020} % comment this line to display the current date
 %\date{December 14, 2011\thanks{Second revision. First revision was December 13, 2011}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
@@ -335,7 +335,7 @@ For version 1.1, use:
 
 \begin{quote}
 \footnotesize
-R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez. \mostname{} (\most{}) User's Manual, Verision 1.1. 2020. [Online]. Available: \url{https://matpower.org/docs/MOST-manual-1.1.pdf}\\
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez. \mostname{} (\most{}) User's Manual, Version 1.1. 2020. [Online]. Available: \url{https://matpower.org/docs/MOST-manual-1.1.pdf}\\
 \doi{10.5281/zenodo.4073878}
 \end{quote}
 For a version non-specific citation, use the following citation and DOI,
@@ -392,9 +392,9 @@ But even for continuous LP and QP problems, these solvers will offer much better
 The preferred method of installation is simply to install \matpower{}, which
 is a prerequisite for \most{} and also includes its own copy of \most{}.
 
-If you have followed the directions for installing \matpower{} found in Section~\ref{MUM-sec:installation} of the \mum{}, then \most{} should already be installed in the \mostpath{} directory and the appropriate paths\footnote{To use \most{} your \matlab{} path must include \mostpath{/lib} and, to run the tests, \mostpath{/lib/t}.} added to your \matlab{} path.
+If you have followed the directions for installing \matpower{} found in Section~\ref{MUM-sec:installation} of the \mum{}, then \most{} should already be installed in the \mostpath{} directory and the appropriate paths\footnote{To use \most{} your \matlab{}/Octave path must include \mostpath{/lib} and, to run the tests, \mostpath{/lib/t}.} added to your \matlab{}/Octave path.
 
-To run the test suite and verify that \most{} is properly installed and functioning, at the \matlab{} prompt, type \code{test\_most} . The result should resemble the following, possibly including extra tests, depending on the availablility of optional packages.
+To run the test suite and verify that \most{} is properly installed and functioning, at the \matlab{}/Octave prompt, type \code{test\_most} . The result should resemble the following, possibly including extra tests, depending on the availablility of optional packages.
 % UPDATE BEFORE RELEASE
 \begin{Code}
 >> test_most
@@ -1762,7 +1762,7 @@ name & type\tnote{*} & default & description \\
 \code{~~~.ymax}	& I	 & 	 & $y_{\rm max}^t$, upper bound on output from \eqref{eq:dynout1}--\eqref{eq:dynout2} \\
 \code{~~~.zmin}	& I	 & 	 & $z_{\rm min}^t$, lower bound on $z^t$ from \eqref{eq:dynbounds} \\
 \code{~~~.zmax}	& I	 & 	 & $z_{\rm max}^t$, upper bound on $z^t$ from \eqref{eq:dynbounds} \\
-\code{FixedReserves(t,j,k)}	& I	 & \emph{empty}	 & zonal reserve input parameters for  period~$t$, scenario~$j$, contingency~$k$, in form of \code{reserves} field of \mpc{} from Table~\ref{MUM-tab:reserves} in the \mum{}, with \code{cost}, \code{qty}, \code{zones}, \code{req} sub-fields. \\
+\code{FixedReserves(t,j,k)}	& I\tnote{\dag}	 & \emph{empty}	 & zonal reserve input parameters for  period~$t$, scenario~$j$, contingency~$k$, in form of \code{reserves} field of \mpc{} from Table~\ref{MUM-tab:reserves} in the \mum{}, with \code{cost}, \code{qty}, \code{zones}, \code{req} sub-fields. \\
 \code{UC}	& B	 & 	 & struct with unit commitment parameters \\
 \code{~~~.CommitKey(i,t)}	& I	 & \emph{empty}	 & optional $n_g \times n_t$ vector specifying availability of unit~$i$ for commitment at time~$t$ \\
 &&& \begin{tabular}{r @{ -- } p{0.35\textwidth}}
@@ -1771,17 +1771,18 @@ name & type\tnote{*} & default & description \\
 2 & must run, unit forced \emph{on} \\
 \end{tabular}	\\
 \code{~~~.CommitSched(i,t)}	& B	 & 	 & $n_g \times n_t$ matrix UC status (0 or 1) of unit~$i$ at time~$t$, input for non-UC runs, result for UC runs \\
-\code{~~~.InitialState(i)}\tnote{\dag}	& I	 & \emph{empty}	 & $n_g \times 1$ vector of initial states,
+\code{~~~.InitialState(i)}\tnote{\ddag}	& I	 & \emph{empty}	 & $n_g \times 1$ vector of initial states,
 if positive (negative), number of uptime (downtime) periods at time t = 0 \\
-\code{~~~.MinUp(i)}\tnote{\dag}	& I	 & \emph{empty}	 & $n_g \times 1$ vector, minimum up time in number of periods \\
-\code{~~~.MinDown(i)}\tnote{\dag}	& I	 & \emph{empty}	 & $n_g \times 1$ vector, minimum down time in number of periods \\
+\code{~~~.MinUp(i)}\tnote{\ddag}	& I	 & \emph{empty}	 & $n_g \times 1$ vector, minimum up time in number of periods \\
+\code{~~~.MinDown(i)}\tnote{\ddag}	& I	 & \emph{empty}	 & $n_g \times 1$ vector, minimum down time in number of periods \\
 \code{z1}	& I	 & \emph{empty}	 & initial state $z^1$ of optional dynamical system model \\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
  \item [*] {I = input, O = output, B = both, opt = taken from \matpower{} options.}
- \item [\dag] {Requires that \code{CommitKey} be present and non-empty.}
+ \item [\dag] {Output for fixed reserves is found in \code{md.flow(t,j,k).mpc.reserves}, for compatibility with \matpower{}.}
+ \item [\ddag] {Requires that \code{CommitKey} be present and non-empty.}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -2288,7 +2289,7 @@ name & value & description \\
 \end{Code}
 
 The \code{loadgenericdata} function loads data from a variable, M-file or MAT-file and checks that it matches a specified type.
-The first argument, \code{varfile}, is a variable containing the data structure or a string containing the name of a function M-file or a MAT-file on the \matlab{} path.
+The first argument, \code{varfile}, is a variable containing the data structure or a string containing the name of a function M-file or a MAT-file on the \matlab{}/Octave path.
 If no file extension is provided, it will attempt to load a MAT-file with the specified name and, if not found, will call a function by that name to get the data.
 The function M-file should return a single argument containing the data.
 A MAT-file should either contain a single variable with the desired data or provide the variable name in \code{varname}.
@@ -3120,7 +3121,7 @@ The authors would like to thank the following people, in no particular order, fo
 \section{\most{} Files and Functions}
 \label{app:functions}
 
-This appendix lists all of the files and functions that \most{} provides. In most cases, the function is found in a \matlab{} M-file of the same name in the \code{lib} directory of the \most{} distribution\footnote{That is, in the \mostpath{/lib} directory.}, where the \code{.m} extension is omitted from this listing. For more information on each, at the \matlab{} prompt, simply type \code{help} followed by the name of the function. For documentation and data files, the filename extensions are included.
+This appendix lists all of the files and functions that \most{} provides. In most cases, the function is found in a \matlab{} M-file of the same name in the \code{lib} directory of the \most{} distribution\footnote{That is, in the \mostpath{/lib} directory.}, where the \code{.m} extension is omitted from this listing. For more information on each, at the \matlab{}/Octave prompt, simply type \code{help} followed by the name of the function. For documentation and data files, the filename extensions are included.
 
 
 \subsection{\most{} Documentation Files}
@@ -3379,6 +3380,30 @@ The \href{https://matpower.org/docs/MOST-manual-1.1.pdf}{\most{} 1.1 User's Manu
 \item Objective function value returned in \code{mdo.QP.f} updated to include the previously missing constant term.
 \end{itemize}
 
+
+\subsection{Version 1.1.1 -- released Oct ?, 20??}
+\label{app:v111}
+
+The \href{https://matpower.org/docs/MOST-manual-1.1.1.pdf}{\most{} 1.1 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MOST-manual-1.1.1.pdf}}
+
+\subsubsection*{Changes}
+\begin{itemize}
+\item 
+\item 
+\item 
+\end{itemize}
+
+\subsubsection*{Bugs Fixed}
+\begin{itemize}
+\item Plotting of commitment schedule using \code{plot\_uc()} did not work properly in a subplot, such as in \code{t\_most\_uc()}. \emph{Thanks to Lim Han.}
+\item Fix tests that were failing under Octave 7.x.
+\end{itemize}
+
+\subsubsection*{Incompatible Changes}
+\begin{itemize}
+\item 
+\end{itemize}
+
 \end{appendices}
 
 
@@ -3392,12 +3417,12 @@ R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez, and R.~J. Thomas,
 \doi{10.1109/TPWRS.2010.2051168}
 
 \bibitem{matpower}
-R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2019). \matpower{}\\~
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2020). \matpower{}\\~
 [Software]. Available: \url{https://matpower.org}\\
 \doi{10.5281/zenodo.3236535}
 
 \bibitem{matpower_manual}
-R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez. \matpower{} User's Manual. 2019.\\~
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez. \matpower{} User's Manual. 2020.\\~
 [Online]. Available: \url{https://matpower.org/docs/MATPOWER-manual.pdf}\\
 \doi{10.5281/zenodo.3236519}
 

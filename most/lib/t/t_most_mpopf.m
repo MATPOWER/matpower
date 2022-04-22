@@ -47,6 +47,9 @@ mpopt = mpoption(mpopt, 'most.solver', 'MIPS');
 mpopt = mpoption(mpopt, 'most.dc_model', 1);
 % mpopt = mpoption(mpopt, 'opf.violation', 1e-6, 'mips.gradtol', 1e-8, ...
 %         'mips.comptol', 1e-8, 'mips.costtol', 1e-8);
+if have_feature('octave') && have_feature('octave', 'vnum') > 7
+    mpopt = mpoption(mpopt, 'mips.linsolver', 'LU');
+end
 if ~verbose
     mpopt = mpoption(mpopt, 'out.all', 0);
 end

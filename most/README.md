@@ -42,10 +42,10 @@ which is a prerequisite for MOST and also includes its own copy of MOST.
 
 If you have followed the directions for installing MATPOWER found in 
 the [MATPOWER User's Manual][6], then MOST should already be installed and
-the appropriate paths added to your MATLAB path.
+the appropriate paths added to your MATLAB/Octave path.
 
 To run the test suite and verify that MOST is properly installed and
-functioning, at the MATLAB prompt, type `test_most`. The result
+functioning, at the MATLAB/Octave prompt, type `test_most`. The result
 should resemble the following, possibly including extra tests,
 depending on the availablility of optional packages:
 ```

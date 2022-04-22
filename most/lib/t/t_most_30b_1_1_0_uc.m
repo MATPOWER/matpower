@@ -184,7 +184,7 @@ r = most(md, mpopt);
 t = 'success1';
 t_ok(s.rdc.success, t);
 t = 'success2';
-t_ok(r.QP.exitflag, t);
+t_is(r.QP.exitflag, 1, 12, t);
 
 t = 'f';
 t_is(r.results.f, s.rdc.f, 4, t);

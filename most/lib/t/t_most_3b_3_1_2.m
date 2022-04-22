@@ -33,6 +33,9 @@ mpopt = mpoption(mpopt, 'sopf.force_Pc_eq_P0', 0);  %% don't constrain contracte
 mpoptac = mpoption(mpopt, 'model', 'AC');
 mpoptdc = mpoption(mpopt, 'model', 'DC');
 mpopt = mpoption(mpopt, 'most.solver', algs.dc{1});
+if have_feature('octave') && have_feature('octave', 'vnum') > 7
+    mpopt = mpoption(mpopt, 'mips.linsolver', 'LU');
+end
 
 %% turn off warnings
 if have_feature('octave')
@@ -109,7 +112,7 @@ r = most(md, mpopt);
 t = 'success1';
 t_ok(s.rdc.opf_results.success, t);
 t = 'success2';
-t_ok(r.QP.exitflag, t);
+t_is(r.QP.exitflag, 1, 12, t);
 
 t = 'f';
 t_is(r.results.f/sum(r.StepProb), s.rdc.opf_results.f, 4, t);

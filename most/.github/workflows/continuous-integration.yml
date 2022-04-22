@@ -1,0 +1,70 @@
+name: CI
+
+# controls when action will run
+on:
+  # triggers workflow on push events
+  push:
+  # allows workflow to be triggered manually from Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [octave]
+#        os: [macos-10.15, macos-11.0, ubuntu-16.04, ubuntu-18.04, ubuntu-20.04]
+        os: [macos-latest, ubuntu-18.04, ubuntu-20.04]
+        include:
+        - platform: matlab
+          os: ubuntu-latest
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v2
+
+    - name: Install Octave (Linux)
+      if: matrix.platform == 'octave' && startsWith(matrix.os, 'ubuntu')
+      uses: MATPOWER/action-install-octave-linux@v1
+
+    - name: Install Octave (macOS)
+      if: matrix.platform == 'octave' && startsWith(matrix.os, 'macos')
+      uses: MATPOWER/action-install-octave-macos@v1
+
+    - name: Install MATLAB
+      if: matrix.platform == 'matlab'
+      uses: matlab-actions/setup-matlab@v1
+
+    - name: Configure MATLAB
+      if: matrix.platform == 'matlab'
+      uses: MATPOWER/action-configure-matlab@v1
+
+    - name: ${{ env.ML_NAME }} ${{ env.ML_VER }} Installed
+      run: $ML_CMD ver
+
+    - name: Install MP-Test, Set MPTEST_PATH
+      run: |
+        git clone --depth=1 https://github.com/MATPOWER/mptest.git $HOME/mptest
+        echo "MPTEST_PATH=$HOME/mptest/lib:$HOME/mptest/lib/t" >> $GITHUB_ENV
+
+    - name: Install MIPS, Set MIPS_PATH
+      run: |
+        git clone --depth=1 https://github.com/MATPOWER/mips.git $HOME/mips
+        echo "MIPS_PATH=$HOME/mips/lib:$HOME/mips/lib/t:${MPTEST_PATH}" >> $GITHUB_ENV
+
+    - name: Install MP-Opt-Model, Set MP_OPT_MODEL_PATH
+      run: |
+        git clone --depth=1 https://github.com/MATPOWER/mp-opt-model.git $HOME/mp-opt-model
+        echo "MP_OPT_MODEL_PATH=$HOME/mp-opt-model/lib:$HOME/mp-opt-model/lib/t:${MIPS_PATH}" >> $GITHUB_ENV
+
+    - name: Install MATPOWER
+      run: |
+        git clone --depth=1 https://github.com/MATPOWER/matpower.git $HOME/matpower
+        env $ML_PATHVAR=$HOME/matpower $ML_CMD "install_matpower(0,1,1)"
+        ln -s ./startup.m .octaverc
+        echo "TEST_PATH=${GITHUB_WORKSPACE}/lib:${GITHUB_WORKSPACE}/lib/t:${MP_OPT_MODEL_PATH}" >> $GITHUB_ENV
+
+    - name: Test MOST
+      run: env $ML_PATHVAR=$TEST_PATH $ML_CMD "mpver; test_most(0,1)"

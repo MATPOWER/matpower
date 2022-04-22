@@ -6,7 +6,7 @@
 [subrepo]
 	remote = git@github.com:MATPOWER/most
 	branch = master
-	commit = f526335ed11cd56cc8e308f4d6cde6d4016f9c4f
-	parent = 068afd51468194a67abf3174c01cd9e8768614a6
-	cmdver = 0.4.1
+	commit = cf776ad1dad97282356da20b7381b3140c8407e3
+	parent = 7df473068588b00da9300ab38960aea7453f67dc
+	cmdver = 0.4.3
 	method = merge
