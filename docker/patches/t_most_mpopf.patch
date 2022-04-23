@@ -1,0 +1,10 @@
+--- t_most_mpopf-orig.m	2022-04-23 17:35:15.000000000 -0500
++++ t_most_mpopf.m	2022-04-23 17:35:26.000000000 -0500
+@@ -44,6 +44,7 @@
+ mpopt = mpoption(mpopt, 'out.gen', 1);
+ mpopt = mpoption(mpopt, 'model', 'DC');
+ mpopt = mpoption(mpopt, 'most.solver', 'MIPS');
++mpopt = mpoption(mpopt, 'mips.linsolver', 'LU');
+ mpopt = mpoption(mpopt, 'most.dc_model', 1);
+ % mpopt = mpoption(mpopt, 'opf.violation', 1e-6, 'mips.gradtol', 1e-8, ...
+ %         'mips.comptol', 1e-8, 'mips.costtol', 1e-8);

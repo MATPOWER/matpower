@@ -18,6 +18,7 @@ docker build --build-arg VER=5.2.0 -f docker/Dockerfile-octave -t matpower/octav
 # docker build --build-arg VER=6.2.0 -f docker/Dockerfile-octave -t matpower/octave:6.2.0 .
 # docker build --build-arg VER=6.3.0 -f docker/Dockerfile-octave -t matpower/octave:6.3.0 .
 docker build --build-arg VER=6.4.0 -f docker/Dockerfile-octave -t matpower/octave:6.4.0 .
+docker build --build-arg VER=7.1.0 -f docker/Dockerfile-octave -t matpower/octave:7.1.0 .
 docker build -f docker/Dockerfile-octave -t matpower/octave:latest .
 
 # for debugging, may want to try:
