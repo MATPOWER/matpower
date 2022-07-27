@@ -1,45 +1,51 @@
 name: CI
 
-on: [push]
+# controls when action will run
+on:
+  # triggers workflow on push events
+  push:
+  # allows workflow to be triggered manually from Actions tab
+  workflow_dispatch:
 
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
+        platform: [octave]
 #        os: [macos-10.15, macos-11.0, ubuntu-16.04, ubuntu-18.04, ubuntu-20.04]
-        os: [macos-latest, ubuntu-16.04, ubuntu-18.04, ubuntu-20.04]
+        os: [macos-latest, ubuntu-18.04, ubuntu-20.04]
+        include:
+        - platform: matlab
+          os: ubuntu-latest
 
     runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Check out repository
+      uses: actions/checkout@v2
 
-    - name: Initialize Package Manager (Linux)
-      if: startsWith(matrix.os, 'ubuntu')
-      run: sudo apt-get update -qq
+    - name: Install Octave (Linux)
+      if: matrix.platform == 'octave' && startsWith(matrix.os, 'ubuntu')
+      uses: MATPOWER/action-install-octave-linux@v1
 
-    - name: Initialize Package Manager (Mac)
-      if: startsWith(matrix.os, 'macos')
-      run: brew update
+    - name: Install Octave (macOS)
+      if: matrix.platform == 'octave' && startsWith(matrix.os, 'macos')
+      uses: MATPOWER/action-install-octave-macos@v1
 
-    - name: Install GNU Octave (Linux)
-      if: startsWith(matrix.os, 'ubuntu')
-      run: |
-        sudo apt-get install -y -qq liboctave-dev octave
-        octave-cli --no-gui --eval ver
-        echo "OCTAVE_VER=`octave-cli --no-gui --eval "fprintf('%s', ver('octave').Version)"`" >> $GITHUB_ENV
+    - name: Install MATLAB
+      if: matrix.platform == 'matlab'
+      uses: matlab-actions/setup-matlab@v1
 
-    - name: Install GNU Octave (Mac)
-      if: startsWith(matrix.os, 'macos')
-      run: |
-        brew install octave
-        octave-cli --no-gui --eval ver
-        echo "OCTAVE_VER=`octave-cli --no-gui --eval "fprintf('%s', ver('octave').Version)"`" >> $GITHUB_ENV
+    - name: Configure MATLAB
+      if: matrix.platform == 'matlab'
+      uses: MATPOWER/action-configure-matlab@v1
+
+    - name: ${{ env.ML_NAME }} ${{ env.ML_VER }} Installed
+      run: $ML_CMD ver
 
     - name: Set MPTEST_PATH
       run: echo "MPTEST_PATH=${GITHUB_WORKSPACE}/lib:${GITHUB_WORKSPACE}/lib/t" >> $GITHUB_ENV
 
     - name: Test MP-Test
-      run: |
-        octave-cli --no-gui -p $MPTEST_PATH --eval mptestver
-        octave-cli --no-gui -p $MPTEST_PATH --eval "test_mptest(0,1)"
+      run: env $ML_PATHVAR=$MPTEST_PATH $ML_CMD "mptestver; test_mptest(0,1)"
