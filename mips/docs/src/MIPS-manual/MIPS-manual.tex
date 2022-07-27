@@ -228,7 +228,7 @@
 \title{\mipsname{}\\\mips{} \mipsver{}\\
 User's Manual}
 \author{Ray~D.~Zimmerman \and Hongye~Wang}
-\date{October 8, 2020} % comment this line to display the current date
+%\date{October 8, 2020} % comment this line to display the current date
 %\date{December 14, 2011\thanks{Second revision. First revision was December 13, 2011}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
@@ -327,7 +327,7 @@ use:
 
 \begin{quote}
 \footnotesize
-R.~D. Zimmerman, H.~Wang. \mipsname{} (\mips{}) User's Manual, Verision 1.4. 2020. [Online]. Available: \url{https://matpower.org/docs/MIPS-manual-1.4.pdf}\\
+R.~D. Zimmerman, H.~Wang. \mipsname{} (\mips{}) User's Manual, Version 1.4. 2020. [Online]. Available: \url{https://matpower.org/docs/MIPS-manual-1.4.pdf}\\
 \doi{10.5281/zenodo.4073324}
 \end{quote}
 For a version non-specific citation, use the following citation and DOI,
@@ -382,7 +382,7 @@ In this manual, references to \matlab{} usually apply to Octave as well.
 
 ~
 
-Installation and use of \mips{} requires familiarity with the basic operation of \matlab{} or Octave, including setting up your \matlab{} path.
+Installation and use of \mips{} requires familiarity with the basic operation of \matlab{} or Octave, including setting up your \matlab{}/Octave path.
 
 \begin{enumerate}[\bfseries Step 1:] % requires package paralist
 \item Clone the repository or download and extract the zip file of the \mips{} distribution from the \href{\mipsurl{}}{\mips{} project page}\footnote{\url{\mipsurl}} to the location of your choice. The files in the resulting \code{mips} or \code{mipsXXX} directory, where \code{XXX} depends on the version of \mips{}, should not need to be modified, so it is recommended that they be kept separate from your own code.
@@ -393,7 +393,7 @@ We will use \mipspath{} to denote the path to this directory.
 \item \mipspath{/lib} -- core \mips{} functions
 \item \mipspath{/lib/t} -- test scripts for \mips{}
 \end{itemize}
-\item At the \matlab{} prompt, type \code{test\_mips} to run the test suite and verify that \mips{} is properly installed and functioning.\footnote{The tests require a functioning installation of \mptestlink{}.} The result should resemble the following:
+\item At the \matlab{}/Octave prompt, type \code{test\_mips} to run the test suite and verify that \mips{} is properly installed and functioning.\footnote{The tests require a functioning installation of \mptestlink{}.} The result should resemble the following:
 %\clearpage
 %--LATER--
 %\\\hl{re-do before release (run on fastest machine available)}
@@ -1042,7 +1042,7 @@ The authors would like to acknowledge the support of the research grants and con
 \section{\mips{} Files and Functions}
 \label{app:functions}
 
-This appendix lists all of the files and functions that \mips{} provides. In most cases, the function is found in a \matlab{} M-file in the \code{lib} directory of the distribution, where the \code{.m} extension is omitted from this listing. For more information on each, at the \matlab{} prompt, simply type \code{help} followed by the name of the function. For documentation and other files, the filename extensions are included.
+This appendix lists all of the files and functions that \mips{} provides. In most cases, the function is found in a \matlab{} M-file in the \code{lib} directory of the distribution, where the \code{.m} extension is omitted from this listing. For more information on each, at the \matlab{}/Octave prompt, simply type \code{help} followed by the name of the function. For documentation and other files, the filename extensions are included.
 
 \begin{table}[!ht]
 %\renewcommand{\arraystretch}{1.2}
@@ -1317,7 +1317,7 @@ R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez, and R.~J. Thomas, ``\matpower{}: Ste
 \doi{10.1109/TPWRS.2010.2051168}
 
 \bibitem{matpower}
-R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2019). \matpower{}\\~
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2020). \matpower{}\\~
 [Software]. Available: \url{https://matpower.org}\\
 \doi{10.5281/zenodo.3236535}
 

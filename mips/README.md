@@ -24,7 +24,7 @@ included when you install [MATPOWER][3]. There is generally no need to
 install them separately. You can skip directly to step 3 to verify._
 
 Installation and use of MIPS requires familiarity with the basic operation
-of MATLAB or Octave, including setting up your MATLAB path.
+of MATLAB or Octave, including setting up your MATLAB/Octave path.
 
 1.  Clone the repository or download and extract the zip file of the MIPS
     distribution from the [MIPS project page][1] to the location of your

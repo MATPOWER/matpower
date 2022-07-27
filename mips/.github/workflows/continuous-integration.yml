@@ -1,46 +1,59 @@
 name: CI
 
-on: [push]
+# controls when action will run
+on:
+  # triggers workflow on push events
+  push:
+  # allows workflow to be triggered manually from Actions tab
+  workflow_dispatch:
 
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
-        os: [macos-latest, ubuntu-16.04]
+        platform: [octave]
+#        os: [macos-10.15, macos-11.0, ubuntu-16.04, ubuntu-18.04, ubuntu-20.04]
+        os: [macos-latest, ubuntu-18.04, ubuntu-20.04]
+        include:
+        - platform: matlab
+          os: ubuntu-latest
 
     runs-on: ${{ matrix.os }}
 
-    steps: 
-    - uses: actions/checkout@v1
-    - name: Initialize Package Manager (Linux)
-      if: startsWith(matrix.os, 'ubuntu')
-      run: |
-        sudo add-apt-repository ppa:octave/stable
-        sudo apt-get update -qq
-    - name: Initialize Package Manager (Mac)
-      if: startsWith(matrix.os, 'macos')
-      run: brew update
-    - name: Install GNU Octave (Linux)
-      if: startsWith(matrix.os, 'ubuntu')
-      run: |
-        sudo apt-get install -y -qq liboctave-dev octave
-        octave-cli --no-gui --eval ver
-    - name: Install GNU Octave (Mac)
-      if: startsWith(matrix.os, 'macos')
-      run: |
-        brew install octave
-        octave-cli --no-gui --eval ver
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v2
+
+    - name: Install Octave (Linux)
+      if: matrix.platform == 'octave' && startsWith(matrix.os, 'ubuntu')
+      uses: MATPOWER/action-install-octave-linux@v1
+
+    - name: Install Octave (macOS)
+      if: matrix.platform == 'octave' && startsWith(matrix.os, 'macos')
+      uses: MATPOWER/action-install-octave-macos@v1
+
+    - name: Install MATLAB
+      if: matrix.platform == 'matlab'
+      uses: matlab-actions/setup-matlab@v1
+
+    - name: Configure MATLAB
+      if: matrix.platform == 'matlab'
+      uses: MATPOWER/action-configure-matlab@v1
+
+    - name: ${{ env.ML_NAME }} ${{ env.ML_VER }} Installed
+      run: $ML_CMD ver
+
     - name: Install MP-Test, Set MPTEST_PATH
       run: |
-        git clone --depth=50 https://github.com/MATPOWER/mptest.git $HOME/mptest
-        echo "::set-env name=MPTEST_PATH::$HOME/mptest/lib:$HOME/mptest/lib/t"
+        git clone --depth=1 https://github.com/MATPOWER/mptest.git $HOME/mptest
+        echo "MPTEST_PATH=$HOME/mptest/lib:$HOME/mptest/lib/t" >> $GITHUB_ENV
+
     - name: Set MIPS_PATH
-      run: echo "::set-env name=MIPS_PATH::${GITHUB_WORKSPACE}/lib:${GITHUB_WORKSPACE}/lib/t:${MPTEST_PATH}"
+      run: echo "MIPS_PATH=${GITHUB_WORKSPACE}/lib:${GITHUB_WORKSPACE}/lib/t:${MPTEST_PATH}" >> $GITHUB_ENV
+
     - name: Test MP-Test
-      run: |
-        octave-cli --no-gui -p $MPTEST_PATH --eval mptestver
-        octave-cli --no-gui -p $MPTEST_PATH --eval "test_mptest(0,1)"
+      run: env $ML_PATHVAR=$MPTEST_PATH $ML_CMD "mptestver; test_mptest(0,1)"
+
     - name: Test MIPS
-      run: |
-        octave-cli --no-gui -p $MIPS_PATH --eval mipsver
-        octave-cli --no-gui -p $MIPS_PATH --eval "test_mips(0,1)"
+      run: env $ML_PATHVAR=$MIPS_PATH $ML_CMD "mipsver; test_mips(0,1)"

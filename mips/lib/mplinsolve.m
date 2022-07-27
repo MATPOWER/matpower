@@ -232,16 +232,3 @@ switch solver
         warning('mplinsolve: ''%s'' is not a valid value for SOLVER, using default.', solver);
         x = A \ b;
 end
-
-
-function num = vstr2num_(vstr)
-% Converts version string to numerical value suitable for < or > comparisons
-% E.g. '3.11.4' -->  3.011004
-pat = '\.?(\d+)';
-[s,e,tE,m,t] = regexp(vstr, pat);
-b = 1;
-num = 0;
-for k = 1:length(t)
-    num = num + b * str2num(t{k}{1});
-    b = b / 1000;
-end

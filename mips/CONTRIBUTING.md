@@ -263,8 +263,8 @@ discouraged.
 
 To make changes to an existing pull request, make the changes to your branch.
 When you push that branch to your fork, GitHub will automatically update the
-pull request. Each time the pull request is updated it triggers a [CI
-(continuous integration) test run][17] which results in a check mark or an
+pull request. Each time the pull request is updated it triggers a CI
+(continuous integration) test run which results in a check mark or an
 X next to the commit on the pull request page and next to the pull request
 name in the issue tracker, indicating whether or not all tests passed.
 
@@ -319,5 +319,4 @@ the optimization and power systems communities. **Thank you!**
 [14]: https://medium.com/@porteneuve/getting-solid-at-git-rebase-vs-merge-4fa1a48c53aa#.7gmldhj6m
 [15]: https://help.github.com/articles/about-pull-requests/
 [16]: LICENSE
-[17]: https://travis-ci.org/MATPOWER/mips
 [18]: https://scottchacon.com/2011/08/31/github-flow.html
