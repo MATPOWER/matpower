@@ -13,6 +13,13 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.1
 -----------------
 
+#### 7/27/22
+- Update MP-Opt-Model to latest for compatibility with Artelys
+  Knitro 13.1 and later.
+- Update MOST to latest to add TLMP capabilities and include ramping reserves
+  and constraints for the transition from the initial state into period 1.
+  See `most/CHANGES.md` for details.
+
 #### 4/8/22
 - Relax some test tolerances to prevent failure with Gurobi 9.5.
 
