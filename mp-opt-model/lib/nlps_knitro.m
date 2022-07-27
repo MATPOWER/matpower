@@ -147,10 +147,10 @@ function [x, f, eflag, output, lambda] = nlps_knitro(f_fcn, x0, A, l, u, xmin, x
 %       );
 %       [x, f, exitflag, output, lambda] = nlps_knitro(problem);
 %
-%   See also NLPS_MASTER, KNITROMATLAB.
+%   See also NLPS_MASTER, KNITRO_NLP, KNITROMATLAB.
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2022, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.
@@ -352,8 +352,13 @@ fmoptions = optimset(kopts);
 
 %%-----  run solver  -----
 if have_feature('knitromatlab')
-    [x, f, eflag, output, Lambda] = knitromatlab(f_fcn, x0, Af, bf, Afeq, bfeq, ...
-                                    xmin, xmax, ktr_gh_fcn, [], fmoptions, opt_fname);
+    if have_feature('knitromatlab', 'vnum') < 12.001
+        [x, f, eflag, output, Lambda] = knitromatlab(f_fcn, x0, Af, bf, Afeq, bfeq, ...
+                                        xmin, xmax, ktr_gh_fcn, [], fmoptions, opt_fname);
+    else
+        [x, f, eflag, output, Lambda] = knitro_nlp(f_fcn, x0, Af, bf, Afeq, bfeq, ...
+                                        xmin, xmax, ktr_gh_fcn, [], fmoptions, opt_fname);
+    end
 else
     [x, f, eflag, output, Lambda] = ktrlink(f_fcn, x0, Af, bf, Afeq, bfeq, ...
                                     xmin, xmax, ktr_gh_fcn, fmoptions, opt_fname);

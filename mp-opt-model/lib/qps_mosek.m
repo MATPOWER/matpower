@@ -236,7 +236,7 @@ if verbose
             '<nonconvex>'           %% 11 : MSK_OPTIMIZER_NONCONVEX
         };
     else
-        alg_names = {           %% version 8.x
+        alg_names = {           %% version 8.x, 9.x
             '<conic>',              %%  0 : MSK_OPTIMIZER_CONIC
             'dual simplex',         %%  1 : MSK_OPTIMIZER_DUAL_SIMPLEX
             'default',              %%  2 : MSK_OPTIMIZER_FREE

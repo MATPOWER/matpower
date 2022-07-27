@@ -134,7 +134,7 @@ for k = 1:length(algs)
             [x, f, s, out, lam] = om.solve(opt);
             t_is(s, 1, 12, [t 'success']);
             t_is(x, [3; 5; 7], 7, [t 'x']);
-            t_is(f, -249, 13, [t 'f']);
+            t_is(f, -249, 11, [t 'f']);
             t_ok(isempty(lam.mu_l), [t 'lam.mu_l']);
             t_ok(isempty(lam.mu_u), [t 'lam.mu_u']);
             t_is(lam.lower, zeros(size(x)), 13, [t 'lam.lower']);
