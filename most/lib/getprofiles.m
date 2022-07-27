@@ -48,7 +48,7 @@ function profiles = getprofiles(profilesi, profiles0, idx)
 if nargin < 2
     profiles0 = [];
     idx = [];
-elseif nargin < 3 
+elseif nargin < 3
     if ~isstruct(profiles0) && ~isempty(profiles0)
         idx = profiles0;
         profiles0 = [];

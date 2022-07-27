@@ -22,7 +22,7 @@ end
 
 include_MIPS = 0;   %% set to 1, to attempt even if MIPS is the best solver
                     %% available (takes a LONG time and currently fails)
-n_tests = 2;
+n_tests = 3;
 
 t_begin(n_tests, quiet);
 
@@ -169,17 +169,17 @@ if have_feature('cplex') || have_feature('gurobi') || ...
     mdi.UC.CommitSched = ones(ng,nt);
 
     mdi.Delta_T = 1;
-    %            0:0  1:00 2:00 3:00 4:00  5:00  6:00  7:00 8:00 9:00 10:00 11:00 12:00 13:00 14:00 15:00 16:00 17:00 18:00 19:00 20:00 21:00 22:00 23:00 
+    %            0:0  1:00 2:00 3:00 4:00  5:00  6:00  7:00 8:00 9:00 10:00 11:00 12:00 13:00 14:00 15:00 16:00 17:00 18:00 19:00 20:00 21:00 22:00 23:00
     loadprof = [ 0.6  0.6   0.6 0.7  0.75  0.8   0.9   1.1  1.2  1.3   1.4  1.4   1.3   1.4    1.4   1.4   1.4   1.3   1.1   1.1   1.0   0.9   0.8   0.7  ];
 
 
     %                label  probability   type      row     column      chg type  newvalue
     partialcontabrow =[ 1       0        CT_TBUS     0        PD         CT_REL ];
-    %mdi.tstep(1).OpCondSched(1).tab= [ 
+    %mdi.tstep(1).OpCondSched(1).tab= [
     %                   1        0        CT_TBUS     0        PD         CT_REL     0.8  ];
-    %mdi.tstep(2).OpCondSched(1).tab= [ 
+    %mdi.tstep(2).OpCondSched(1).tab= [
     %                   1        0        CT_TBUS     0        PD         CT_REL     1.0  ];
-    %mdi.tstep(3).OpCondSched(1).tab= [ 
+    %mdi.tstep(3).OpCondSched(1).tab= [
     %                   1        0        CT_TBUS     0        PD         CT_REL     1.2  ];
     %mdi.tstep(4).OpCondSched(1).tab= [
     %                   1        0        CT_TBUS     0        PD         CT_REL     0.9 ];
@@ -251,17 +251,23 @@ if have_feature('cplex') || have_feature('gurobi') || ...
 
     s = load(solnfile);
 
+    t = 'success';
+    t_is(mdo.results.success, 1, 12, t);
+
     t = 'objective function value (f)';
-    t_is(mdo.QP.f, 1575531.9, -0.5, t);
-% 1575531.87 % CPLEX
-% 1575532.66 % GUROBI
-% 1575534.08 % MOSEK
-% 1575531.87 % OT
+    t_is(mdo.QP.f, 1593399.5, -0.5, t);
+% 1593399.487 % CPLEX ~25 sec
+% 1594112.218 % GUROBI ~183 sec (fails)
+% 1593400.863 % MOSEK ~10 sec
+% 1593399.481 % OT ~88 sec
 
     t = 'dynamical system state (Z)';
-    t_is(mdo.results.Z, s.Z, 3.7, t);
+    t_is(mdo.results.Z, s.Z, 4, t);
+
+    % Z = mdo.results.Z;
+    % save t_most_w_ds_z Z
 else
-    t_skip(2, 'requires MOSEK, CPLEX, Gurobi or quadprog');
+    t_skip(3, 'requires MOSEK, CPLEX, Gurobi or quadprog');
 end
 
 % YorN = input('Play movie? (y/n) : ', 's');
@@ -275,7 +281,7 @@ function A = mkdif(m1, m2, alpha, r, w)
 % A = mkdif(m1, m2, r, w)
 %
 % computes an A matrix for the difussion equations in an m1 x m2 grid,
-% using a difussion speed factor alpha <= 1, a dissipation factor r < 1 and 
+% using a difussion speed factor alpha <= 1, a dissipation factor r < 1 and
 % a "wind" vector w = [wx wy] that roughly tells where the pollutants go.
 
 % Carlos Murillo.  As naive as can be.

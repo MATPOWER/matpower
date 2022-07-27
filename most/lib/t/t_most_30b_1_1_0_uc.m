@@ -74,10 +74,10 @@ xgd_table.colnames = {
 };
 xgd_table.data = [
     1   1   10.1    15      10.0    15      0.1     0.0;
-    1   1   10.3    30      10.2    30      0.3     0.2;  
-    1   1   10.5    20      10.4    20      0.5     0.4;  
+    1   1   10.3    30      10.2    30      0.3     0.2;
+    1   1   10.5    20      10.4    20      0.5     0.4;
     1   1   10.7    25      10.6    25      0.7     0.6;
-    1   1   20.1    25      20.0    25      60.1    60.0; 
+    1   1   20.1    25      20.0    25      60.1    60.0;
     1   1   20.3    15      20.2    15      15.1    15.0;
     1   1   20.5    30      20.4    30      60.3    60.2;
     1   1   20.7    15      20.6    15      15.3    15.2;
@@ -121,7 +121,7 @@ contab = [
 %     9   0.002   CT_TBRCH    14  BR_STATUS   CT_REP  0;      %% line 9-10, tie line between areas 1 & 3
 %     10  0.002   CT_TGEN     1   GEN_STATUS  CT_REP  0;      %% gen 1 at bus 1
 %     11  0.002   CT_TGEN     2   GEN_STATUS  CT_REP  0;      %% gen 2 at bus 2
-%     12  0.002   CT_TGEN     3   GEN_STATUS  CT_REP  0;      %% gen 3 at bus 22 
+%     12  0.002   CT_TGEN     3   GEN_STATUS  CT_REP  0;      %% gen 3 at bus 22
 %     13  0.002   CT_TGEN     4   GEN_STATUS  CT_REP  0;      %% gen 4 at bus 27
 %     14  0.002   CT_TGEN     5   GEN_STATUS  CT_REP  0;      %% gen 5 at bus 23
 %     15  0.002   CT_TGEN     6   GEN_STATUS  CT_REP  0;      %% gen 6 at bus 13

@@ -22,7 +22,7 @@ function mso = most_summary(mdo)
 %       lamP    - nb x nt x nj_max x (nc_max+1), shadow price on power balance
 %       muF     - nl x nt x nj_max x (nc_max+1), shadow price on flow limits
 %
-%   Printing to the console is currently controlled by the MDO.QP.verbose
+%   Printing to the console is currently controlled by the MDO.QP.opt.verbose
 %   flag.
 
 %   MOST
@@ -59,8 +59,8 @@ psi = zeros(nt, nj_max, nc_max+1);
 Pg = zeros(ng, nt, nj_max, nc_max+1);
 Pd = zeros(nb, nt, nj_max, nc_max+1);
 if mdo.idx.ntramp
-    Rup = [zeros(ng, 1) mdo.results.Rrp];
-    Rdn = [zeros(ng, 1) mdo.results.Rrm];
+    Rup = mdo.results.Rrp;
+    Rdn = mdo.results.Rrm;
 else
     Rup = [];
     Rdn = [];
@@ -108,7 +108,7 @@ ms = struct(...
     'u',    u, ...
     'lamP', lamP, ...
     'muF',  muF ...
-);    
+);
 
 %% print results
 if verbose

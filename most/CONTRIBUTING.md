@@ -185,7 +185,7 @@ look something like:
 
   ```text
   Fix issue #4, Q limit violations in CPF.
-  
+
   More detailed explanatory text, if necessary.  Wrap it to about 72
   characters or so.  In some contexts, the first line is treated as the
   subject of an email and the rest of the text as the body.  The blank

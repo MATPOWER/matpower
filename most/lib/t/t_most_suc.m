@@ -264,7 +264,7 @@ for s = 1:length(solvers)
         ms = most_summary(mdo);
         t_ok(mdo.QP.exitflag > 0, [t 'success']);
         ex = soln.transprobcont;
-        t_is(ms.f, ex.f, 4, [t 'f']);
+        t_is(ms.f, ex.f, 3.5, [t 'f']);
         t_is(ms.Pg, ex.Pg, 6, [t 'Pg']);
         t_is(ms.Rup, ex.Rup, 6, [t 'Rup']);
         t_is(ms.Rdn, ex.Rdn, 6, [t 'Rdn']);
@@ -292,7 +292,7 @@ for s = 1:length(solvers)
         t_is(ms.f, ex.f, 3, [t 'f']);
         t_is(ms.Pg, ex.Pg, 3, [t 'Pg']);
         t_is(ms.Rup, ex.Rup, 3, [t 'Rup']);
-        t_is(ms.Rdn, ex.Rdn, 8, [t 'Rdn']);
+        t_is(ms.Rdn, ex.Rdn, 4, [t 'Rdn']);
         t_is(ms.Pf, ex.Pf, 3, [t 'Pf']);
         t_is(ms.u, ex.u, 8, [t 'u']);
         % t_is(ms.lamP, ex.lamP, 5, [t 'lamP']);

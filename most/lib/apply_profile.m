@@ -5,7 +5,7 @@ function argout = apply_profile(profile, argin, dim)
 %   XGD     = APPLY_PROFILE( PROFILE, XGDI, DIM )
 %   SD      = APPLY_PROFILE( PROFILE, SDI, DIM )
 %   CTSETS  = APPLY_PROFILE( PROFILE, CTSETS, DIM ) (not yet implemented)
-%   
+%
 %   Applies a single profile of the given type to the given ARGIN. There are
 %   4 different types of profiles, and each one affects differently the
 %   input to produce the output. Profile input must contain the following
@@ -128,7 +128,7 @@ end
 if length(rows) > 1 && any(rows == 0)
     error('apply_profile: rows field of a profile must not contain zero unless it is the only entry')
 end
-    
+
 
 switch typ
 % (B) Type mpcData profile
@@ -154,11 +154,11 @@ switch typ
 
 
         % (C) Generate contingency-like rows to add to CHGTABI
-        
+
 %       At this point, val can only have dimensions (1 or nt) by
 %       (1 or nj_max) by (1 or length(rows)), so before transforming into a
 %       chgtab, val needs to be expanded to full dimensions [nt nj_max length(rows)]
-        
+
         if size(val,1) == 1 && nt > 1
             val = repmat(val, [nt 1 1]);
         end
@@ -168,7 +168,7 @@ switch typ
         if size(val,3) == 1 && length(rows) > 1
             val = repmat(val, [1 1 length(rows)]);
         end
-        
+
         if any(tbl == PR_TMPCD)
             for t = 1:nt
                 for j = 1:nj_max
@@ -184,12 +184,12 @@ switch typ
         end
 
         argout = chgtabs;
-    
+
     case 'xGenData'
 % (C) Type xGenData profile
         xgd = argin;
         ng = dim;
-        
+
         nt_adhoc = max( size(val,1), size(xgd.(tbl),2) ); % nt_adhoc equals 1 or nt
         nj_adhoc = max( size(val,2), size(xgd.(tbl),3) ); % nj_adhoc equals 1 or nj_max
 
@@ -212,8 +212,8 @@ switch typ
         if ~(size(xgd.(tbl),3) == 1 || size(xgd.(tbl),3) == nj_adhoc)
             error('apply_profile: scenario dimension mismatch between xgd.%s and profile.values',tbl)
         end
-        
-        
+
+
         if ~(size(val,1) == 1 || size(val,1) == nt_adhoc)
             error('apply_profile: time dimension mismatch between xgd.%s and profile.values',tbl)
         end
@@ -230,13 +230,13 @@ switch typ
             end
         end
 
-        
+
 % (C.3) Verify validity of changes and expand field in question to full dimensions if required
-%       Important: Notice the permutation of values dimensions from 
+%       Important: Notice the permutation of values dimensions from
 %       [1 2 3] to [3 1 2].
 
           val = permute(val,[3 1 2]);
-          
+
           % From here and on, val dimensions are
           % (1 or legnth(rows)) by (1 or nt) by (1 or nj)
           % Also, xgd.(tbl) dimensions are
@@ -247,17 +247,17 @@ switch typ
           % if val has a time dimension and xgd.(tbl) does not (only necessary if nt_adhoc > 1)
           if size(val,2) > size(xgd.(tbl),2)
               xgd.(tbl) = repmat( xgd.(tbl), [1 size(val,2) 1]);
-          
+
           % Expands cols (time) of val to match xgd.(tbl) time dimension
           elseif size(xgd.(tbl),2) > size(val,2)
               val = repmat( val, [ 1 nt_adhoc 1]);
           end
-          
+
           % Expand 3rd dim (scenarios) of xgd.(tbl)
           % if val has a scenario dimension and xgd.(tbl) does not (only necessary if nj_adhoc > 1)
           if size(val,3) > size(xgd.(tbl),3)
               xgd.(tbl) = repmat( xgd.(tbl), [ 1 1 size(val,3)] ) ;
-          
+
           % Expands 3rd dim (scenarios) of val to match xgd.(tbl) scenarios dimension
           elseif size(xgd.(tbl),3) > size(val,3)
               val = repmat(val, [ 1 1 size(xgd.(tbl),3)]);
@@ -304,7 +304,7 @@ switch typ
             end
           end
 
-        
+
         argout = xgd;
 
     case 'ContingencyData'
@@ -328,7 +328,7 @@ switch typ
         end
 
 % (E.2) Check consistency of ROWS, VALUES and affected field of STORAGE
-        
+
         if ~(size(storage.(tbl),1) == 1 || size(storage.(tbl),1) == ns)
              error('apply_profile: first dimension of field %s of storage struct must equal 1 or ns',tbl)
         end
@@ -338,8 +338,8 @@ switch typ
         if size(storage.(tbl),3) ~= 1
             error('apply_profile: no scenario dimension (3rd) allowed for storage.%s field',tbl)
         end
-        
-        
+
+
         if ~(size(val,1) == 1 || size(val,1) == nt_adhoc)
             error('apply_profile: time dimension mismatch between storage.%s and profile.values',tbl)
         end
@@ -356,9 +356,9 @@ switch typ
             end
         end
 
-        
+
 % (E.3) Verify validity of changes and expand field in question to full dimensions if required
-%       Important: Notice the permutation of values dimensions from 
+%       Important: Notice the permutation of values dimensions from
 %       [1 2 3] to [3 1 2]. No scenario dimension allowed.
 
           val = permute(val,[3 1 2]); % Squeeze not use to avoid problems when nt=1

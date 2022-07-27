@@ -52,6 +52,7 @@ end
 tests{end+1} = 't_most_mpopf';
 tests{end+1} = 't_most_uc';
 tests{end+1} = 't_most_suc';
+tests{end+1} = 't_most_tlmp';
 tests{end+1} = 't_most_w_ds';
 
 %% run the tests

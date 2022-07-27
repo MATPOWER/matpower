@@ -515,7 +515,7 @@ for t = 1:nt
         md.tstep(t).OpCondSched(j).tab = optab{t,j};
     end
 end
-    
+
 % (C.7.2.3) store profiles into md perhaps for results
 % md.profiles = profiles;   % For ploting purposes only (need wind profile in mpsopf_plots1)
 
@@ -650,7 +650,7 @@ end
 
 % (C.7.6) contab: assign contingency tables per period per scenario to md struct
 ct_subset = ones(nt, nj_max, size(contab,1)); % subset of contingencies
-%                                               in contab to be apply 
+%                                               in contab to be apply
 %                                               per scenario per time
 %                                               period.
 for p = 1:nprof

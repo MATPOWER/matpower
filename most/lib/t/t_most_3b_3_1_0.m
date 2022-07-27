@@ -30,7 +30,7 @@ mpopt = mpoption(mpopt, 'opf.violation', 5e-7, 'mips.comptol', 5e-8);
 mpoptac = mpoption(mpopt, 'model', 'AC');
 mpoptdc = mpoption(mpopt, 'model', 'DC');
 mpopt = mpoption(mpopt, 'most.solver', 'DEFAULT');
-    
+
 %% turn off warnings
 s7 = warning('query', 'MATLAB:nearlySingularMatrix');
 s6 = warning('query', 'MATLAB:nearlySingularMatrixUMFPACK');

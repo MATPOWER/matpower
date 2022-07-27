@@ -173,22 +173,22 @@ for tt = 1:nt
 
     t = 'Pg';
     t_is(mdo.flow(tt,1,1).mpc.gen(:, PG), r(tt).gen(:, PG), 4, sprintf('(t=%d) : %s', tt, t));
-    
+
     t = 'R';
     t_is(mdo.flow(tt,1,1).mpc.reserves.R, r(tt).reserves.R, 4, sprintf('(t=%d) : %s', tt, t));
-    
+
     t = 'prc';
     t_is(mdo.flow(tt,1,1).mpc.reserves.prc, r(tt).reserves.prc, 5, sprintf('(t=%d) : %s', tt, t));
-    
+
     t = 'totalcost';
     t_is(mdo.flow(tt,1,1).mpc.reserves.totalcost, r(tt).reserves.totalcost, 4, sprintf('(t=%d) : %s', tt, t));
-    
+
     t = 'mu.l';
     t_is(mdo.flow(tt,1,1).mpc.reserves.mu.l, r(tt).reserves.mu.l, 5, sprintf('(t=%d) : %s', tt, t));
-    
+
     t = 'mu.u';
     t_is(mdo.flow(tt,1,1).mpc.reserves.mu.u, r(tt).reserves.mu.u, 6, sprintf('(t=%d) : %s', tt, t));
-    
+
     t = 'mu.Pmax';
     t_is(mdo.flow(tt,1,1).mpc.reserves.mu.Pmax, r(tt).reserves.mu.Pmax, 5, sprintf('(t=%d) : %s', tt, t));
 end

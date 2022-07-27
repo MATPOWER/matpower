@@ -5,6 +5,41 @@ Change history for MOST
 since version 1.1
 -----------------
 
+#### 6/15/22
+  - Add TLMP (temporal locational marginal price) for storage units
+    based on work by Chen, Tong in [[Chen2022]][7] and returned in
+    `mdo.results.StorageTLMPc`, `mdo.results.StorageTLMPd`, 
+    `mdo.results.CondStorageTLMPc`, `mdo.results.CondStorageTLMPd`.
+    See Table 5-13 in the User's Manual.
+  - Add tests for TLMP in `t_most_tlmp` based on toy examples from Cong Chen,
+    including both ramping and storage.
+
+#### 6/14/22
+  - For deterministic cases with storage where `ForceCyclicStorage` is 0,
+    ensure that initial storage bounds are equal to initial storage and
+    output a warning if they are modified. Fix deterministic UC tests
+    where this was causing results to change depending on value of `rho`.
+
+#### 5/12/22
+  - Add calculation of expected TLMP (temporal locational marginal price)
+    based on work by Guo, Chen, Tong in [[Guo2021]][5] and [[Chen2021]][6]
+    and returned in `mdo.results.GenTLMP` and `mdo.results.CondGenTLMP`.
+    See Table 5-13 in the User's Manual.
+
+#### 5/4/22
+  - Ramping reserves and constraints are now included for the transition
+    from the initial state into period 1, except for single-period problems.
+  - **INCOMPATIBLE CHANGE**: Modified definition of ramping reserves for
+    period _t_ (and all corresponding input and output parameters) to refer
+    to the transition from _t-1_ to _t_, not _t_ to _t+1_. This means that
+    the ramping reserves for the transition into the first period are now
+    optimization variables and the corresponding constraints are explicit.
+    This is for multiperiod problems only. Ramping reserves and contraints
+    are explicitly excluded for single-period problems.  
+    _Note:_ This change also corrects an error in (4.11) in the manual. The
+    superscript _t_ on gamma is now correct. Previously it should have been
+    _t+1_, as it was in the code.
+
 #### 4/22/22
   - Fix tests that were failing under Octave 7.x.
 
@@ -137,7 +172,7 @@ Version 1.0b2 - *Nov 1, 2016*
 
 #### 11/1/16
   - Released 1.0b2.
-  
+
 #### 10/27/16
   - Fixed some MOSEK related issues in tests and tutorial examples.
 
@@ -242,3 +277,6 @@ Version 1.0 - *Jun 1, 2016*
 [2]: https://github.com/MATPOWER/most/issues/11
 [3]: https://github.com/MATPOWER/most/issues/6
 [4]: https://github.com/MATPOWER/most/issues/16
+[5]: https://doi.org/10.1109/TPWRS.2021.3055730
+[6]: https://doi.org/10.1109/TPWRS.2020.3045162
+[7]: https://arxiv.org/abs/2204.08140

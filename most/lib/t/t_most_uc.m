@@ -41,7 +41,9 @@ fcn = {'cplex', 'glpk', 'gurobi', 'mosek', 'intlinprog'};
 % fcn = {'intlinprog'};
 % solvers = {'GUROBI'};
 % fcn = {'gurobi'};
-ntests = 66;
+% solvers = {'MOSEK'};
+% fcn = {'mosek'};
+ntests = 68;
 t_begin(ntests*length(solvers), quiet);
 
 if quiet
@@ -93,8 +95,8 @@ if have_feature('glpk')
 end
 if have_feature('gurobi')
     %mpopt = mpoption(mpopt, 'gurobi.method', -1);       %% automatic
-    %mpopt = mpoption(mpopt, 'gurobi.method', 0);        %% primal simplex
-    mpopt = mpoption(mpopt, 'gurobi.method', 1);        %% dual simplex
+    mpopt = mpoption(mpopt, 'gurobi.method', 0);        %% primal simplex
+    %mpopt = mpoption(mpopt, 'gurobi.method', 1);        %% dual simplex
     %mpopt = mpoption(mpopt, 'gurobi.method', 2);        %% barrier
     mpopt = mpoption(mpopt, 'gurobi.threads', 2);
     mpopt = mpoption(mpopt, 'gurobi.opts.MIPGap', 0);
@@ -308,6 +310,10 @@ for s = 1:length(solvers)
         t_is(ms.u, ex.u, 8, [t 'u']);
         t_is(ms.lamP, ex.lamP, 8, [t 'lamP']);
         t_is(ms.muF, ex.muF, 8, [t 'muF']);
+        ex = soln.rramp;
+        t_is(mdo.results.GenPrices, ex.GenPrices, 8, [t 'GenPrices']);
+        t_is(mdo.results.GenTLMP, ex.GenTLMP, 5, [t 'TLMP']);
+        % rramp = mdo.results;
         % wramp = most_summary(mdo);
         if create_plots
             pp = pp + 1;
@@ -347,10 +353,11 @@ for s = 1:length(solvers)
         end
         mpopt = mpoption(mpopt, 'most.storage.cyclic', 0);
         mdi.Storage.rho = 1;
+        mdi.Storage.InitialStorageUpperBound = 0;
         mdo = most(mdi, mpopt);
         ms = most_summary(mdo);
         t_ok(mdo.QP.exitflag > 0, [t 'success']);
-        ex = soln.wstorage2;
+        ex = soln.wstorage3;
         t_is(ms.f, ex.f, 8, [t 'f']);
         t_is(ms.Pg, ex.Pg, 8, [t 'Pg']);
         t_is(ms.Rup, ex.Rup, 8, [t 'Rup']);
@@ -378,8 +385,8 @@ for s = 1:length(solvers)
         ex = soln.wstorage3;
         t_is(ms.f, ex.f, 8, [t 'f']);
         t_is(ms.Pg, ex.Pg, 8, [t 'Pg']);
-        t_is(ms.Rup, ex.Rup, 8, [t 'Rup']);
-        t_is(ms.Rdn, ex.Rdn, 8, [t 'Rdn']);
+        t_is(ms.Rup, ex.Rup, 3.5, [t 'Rup']);
+        t_is(ms.Rdn, ex.Rdn, 3.5, [t 'Rdn']);
         t_is(ms.Pf, ex.Pf, 8, [t 'Pf']);
         t_is(ms.u, ex.u, 8, [t 'u']);
         % t_is(ms.lamP, ex.lamP, 5, [t 'lamP']);
@@ -400,7 +407,7 @@ end
 
 t_end;
 
-% save t_most_uc_soln ed dcopf wstart wminup wramp wstorage wstorage2 wstorage3
+% save t_most_uc_soln ed dcopf wstart wminup wramp wstorage wstorage2 wstorage3 rramp
 
 function h = plot_case(label, md, ms, maxq, maxp, mypath, pp, fname)
 

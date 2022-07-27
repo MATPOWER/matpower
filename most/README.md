@@ -40,7 +40,7 @@ Installation
 The preferred method of installation is simply to install [MATPOWER][3],
 which is a prerequisite for MOST and also includes its own copy of MOST.
 
-If you have followed the directions for installing MATPOWER found in 
+If you have followed the directions for installing MATPOWER found in
 the [MATPOWER User's Manual][6], then MOST should already be installed and
 the appropriate paths added to your MATLAB/Octave path.
 

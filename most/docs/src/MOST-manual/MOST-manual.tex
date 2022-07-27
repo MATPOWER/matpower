@@ -159,7 +159,7 @@
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
 \newcommand{\mostlink}[0]{\href{\mosturl}{\most{}}}
-\newcommand{\mostver}[0]{1.1}
+\newcommand{\mostver}[0]{1.2-dev}
 \newcommand{\md}[0]{{\most{} Data struct}}
 \newcommand{\powerweb}[0]{{\sc PowerWeb}}
 \newcommand{\pserc}[0]{{\sc PSerc}}
@@ -250,7 +250,7 @@ User's Manual}
 \vfill
 \begin{center}
 {\scriptsize
-\copyright~2011--2020~\PSERC{}\\
+\copyright~2011--2022~\PSERC{}\\
 All Rights Reserved}
 \end{center}
 
@@ -662,7 +662,7 @@ For this reason \most{} defines decision variables representing the upper and lo
 The formulation also includes the option to relax the restrictions on the stored energy bounds in some or all periods to base them on the range of \emph{expected} stored energy quantities in the previous period, rather than on the worst case ranges.
 
 An important aspect of modeling storage is to include some way of either valuing or constraining both the initial amount of stored energy in each unit and the amount of leftover storage in terminal states, both end-of-horizon states and contingency states. \most{} includes several options. First, for each unit there is a cost assigned to any initial stored energy at the beginning of the horizon. Similarly, there are a number of parameters used to specify the value of leftover stored energy in terminal states. Furthermore, the initial stored energy amount can be specified and the final expected stored energy amount can be constrained to equal a target quantity. Finally, there is also the option to simply constrain the initial amount and the final expected amount to be equal while letting that level be determined as an output of the optimization.
- 
+
 \subsection{Linear Time-Varying Dynamical System}
 
 The main decision variables in the problem are the dispatches, and they in turn can affect subsequent systems of different kinds.
@@ -686,7 +686,7 @@ So far, the discussion has been restricted to problems with continuous optimizat
 
 For stochastic problems modeling multiple scenarios and/or contingency states there is a single commitment schedule shared by all states. That is, in the current formulation, a single binary variable is used to model the commitment for a given unit across all scenarios and contingencies in a given period.\footnote{To correctly model the commitment of fast start units with non-zero minimum generation constraints requires individual commitment variables for each scenario.}
 
-Figure~\ref{fig:most_multi_period} illustrates the ways in which any one of the single period continuous variable problems of Figure~\ref{fig:most_single_period} can be extended to include combinations of multiple periods, ramping, storage, integer commitment, startup and shutdown costs and minimum up and down times. 
+Figure~\ref{fig:most_multi_period} illustrates the ways in which any one of the single period continuous variable problems of Figure~\ref{fig:most_single_period} can be extended to include combinations of multiple periods, ramping, storage, integer commitment, startup and shutdown costs and minimum up and down times.
 
 \begin{figure}[hbtp]
   \centering
@@ -735,7 +735,7 @@ This section summarizes the nomenclature for the full multi-period mixed-integer
 \item[$p_+^{tijk}, p_-^{tijk}$] Upward/downward deviation from active power contract quantity for unit~$i$ in post-contingency state~$k$ of scenario~$j$ at time~$t$.
 \item[$r_z^{tijk}$] Zonal reserve quantity provided by unit~$i$ in post-contingency state~$k$ of scenario~$j$ at time~$t$.
 \item[$r_+^{ti}, r_-^{ti}$] Upward/downward active contingency reserve quantity provided by unit~$i$ at time~$t$.
-\item[$\delta_+^{ti}, \delta_-^{ti}$] Upward/downward load-following ramping reserves needed from unit~$i$ at time $t$ for transition to time $t+1$.
+\item[$\delta_+^{ti}, \delta_-^{ti}$] Upward/downward load-following ramping reserves needed from unit~$i$ at time $t-1$ for transition to time $t$.
 \item[$\theta^{tjk}, V^{tjk}, p^{tjk}, q^{tjk}$] Voltage angles and magnitudes, active and reactive injections for power flow in post-contingency state~$k$ of scenario~$j$ at time~$t$.
 \item[$p_{\rm sc}^{tijk}, p_{\rm sd}^{tijk}$] Charge/discharge power injections of storage unit~$i$ in post-contingency state~$k$ of scenario~$j$ at time~$t$.
 \item[$s_+^{ti}, s_-^{ti}$] Endogenously computed upper/lower bounds on the energy stored in storage unit~$i$ at the end of period~$t$. For $t = 0$ this is a fixed input parameter representing the bounds at the beginning of the first period.
@@ -753,7 +753,7 @@ This section summarizes the nomenclature for the full multi-period mixed-integer
 \item[$Q_{\rm min}^{tijk}, Q_{\rm max}^{tijk}$] Limits on reactive injection for unit~$i$ in post-contingency state~$k$ of scenario~$j$ at time~$t$.
 \item[$R_{\rm max+}^{ti}, R_{\rm max-}^{ti}$] Upward/downward contingency (or zonal) reserve capacity limits for unit~$i$ at time~$t$.
 \item[$R_l^{tjk}$] MW reserve requirement for zone~$l$ in post-contingency state~$k$ of scenario~$j$ at time~$t$.
-\item[$\delta^{ti}_{\rm max+}, \delta^{ti}_{\rm max-}$] Upward/downward load-following ramping reserve limits for unit~$i$ at time $t$ for transition to time $t+1$.
+\item[$\delta^{ti}_{\rm max+}, \delta^{ti}_{\rm max-}$] Upward/downward load-following ramping reserve limits for unit~$i$ at time $t-1$ for transition to time $t$.
 \item[$\Delta_+^i, \Delta_-^i$] Upward/downward physical ramping limits for unit~$i$ for transitions from base ($k=0$) to contingency cases.
 \item[$\rho^{ti}$] Parameter for storage unit~$i$ at period $t$ that determines the weighting in storage constraints, where the storage dispatch bounds are computed relative to a weighted average of previous period endogenous bounds $s_+^{(t-1)i}$, $s_-^{(t-1)i}$ ($\rho^{ti} = 1$) and period- and scenario-specific initial expected stored energy ($\rho^{ti} = 0$).
 \item[$S^{ti}_{\rm max},S^{ti}_{\rm min}$] Stored energy (in MWh) max/min limits for storage unit~$i$ at time~$t$.
@@ -771,7 +771,7 @@ This section summarizes the nomenclature for the full multi-period mixed-integer
 \item[$C_{P+}^{ti}(\cdot), C_{P-}^{ti}(\cdot)$] Cost for upward/downward deviation from active power contract quantity for unit~$i$ at time~$t$.
 \item[$C_z^{ti}(\cdot)$] Cost function for zonal reserve purchased from unit~$i$ at time~$t$.
 \item[$C_{R+}^{ti}(\cdot), C_{R-}^{ti}(\cdot)$] Cost function for upward/downward contingency reserve purchased from unit~$i$ at time~$t$.
-\item[$C_{\delta+}^{ti}(\cdot),C_{\delta-}^{ti}(\cdot)$] Cost of upward/downward load-following ramp reserve for unit~$i$ at time~$t$ for transition to time $t+1$.
+\item[$C_{\delta+}^{ti}(\cdot),C_{\delta-}^{ti}(\cdot)$] Cost of upward/downward load-following ramp reserve for unit~$i$ at time~$t-1$ for transition to time $t$.
 \item[$C_\delta^i(\cdot)$] Quadratic, symmetric ramping cost on the difference between the dispatches for unit~$i$ in adjacent periods.
 \item[$C_{s0}$] Vector of costs by storage unit associated with starting out with a given level of stored energy $s_0$ in the storage units at time $t=0$.
 \item[$C_{s}$] Vector of prices by storage unit for contributions to terminal storage\footnote{That is, expected leftover stored energy in terminal states.}  from charging or discharging in non-terminal states.
@@ -960,8 +960,8 @@ The remaining sets of constraints include intertemporal restrictions and typical
 \item[--] load-following ramp reserve definition
 \begin{align}
 \forall \{t \in T, i \in I^{tjk}, j_1 \in J^{t-1}, j_2 &\in J^t \mid \zeta^{tj_2j_1} = 1 \}: \label{eq:rampconstrdef} \\
-p^{tij_20} - p^{(t-1)ij_10} &\leq \delta_+^{(t-1)i} \label{eq:inter1} \\
-p^{(t-1)ij_10} - p^{tij_20} &\leq \delta_-^{(t-1)i} \label{eq:rampconstr}
+p^{tij_20} - p^{(t-1)ij_10} &\leq \delta_+^{ti} \label{eq:inter1} \\
+p^{(t-1)ij_10} - p^{tij_20} &\leq \delta_-^{ti} \label{eq:rampconstr}
 \end{align}
 \end{itemize}
 %Here, the $j_1$ and $j_2$ indices address the need to limit the ramping rate, for example, from a high wind output base case at time~$t$ to a low wind output case at time $t+1$.
@@ -984,7 +984,7 @@ s^{ti}_+ &\leq S^{ti}_{\rm max}
 \item[--] storage dispatch vs. base scenario energy bounds
 \begin{align}
 s^{ti}_- &\leq \beta_1^{ti} \left[\rho^{ti} s^{(t-1)i}_- + \left(1-\rho^{ti}\right) \bar{s}_I^{tij0}\right] + \beta_2^{ti} s_\Delta^{tij0} \label{eq:storage1st} \\
-s^{ti}_+ &\geq \beta_1^{ti} \left[\rho^{ti} s^{(t-1)i}_+ + \left(1-\rho^{ti}\right) \bar{s}_I^{tij0}\right] + \beta_2^{ti} s_\Delta^{tij0}
+s^{ti}_+ &\geq \beta_1^{ti} \left[\rho^{ti} s^{(t-1)i}_+ + \left(1-\rho^{ti}\right) \bar{s}_I^{tij0}\right] + \beta_2^{ti} s_\Delta^{tij0} \label{eq:storage2nd}
 \end{align}
 
 \item[--] storage dispatch vs. contingency scenario energy limits
@@ -1142,7 +1142,7 @@ where
 \begin{equation}
 \beta_1^{ti} \equiv \frac{1 - \Delta \frac{\eta^{ti}_{\rm loss}}{2}}{1 + \Delta \frac{\eta^{ti}_{\rm loss}}{2}}, \quad
 \beta_2^{ti} \equiv \frac{1}{1 + \Delta \frac{\eta^{ti}_{\rm loss}}{2}}.
-\label{eq:beta1and2} 
+\label{eq:beta1and2}
 \end{equation}
 
 For a period where a contingency occurs at a fraction $\alpha$ of the way through the period, the losses are more tricky to compute. Let us call the expected stored energy at the moment the contingency occurs $s_\alpha^{tijk}$, expressed as
@@ -1382,7 +1382,7 @@ The following sections describe the input data, the \most{} options, the \md{} i
 \subsection{Input Data}
 \label{sec:inputdata}
 
-The \md{}, containing all of the data needed for the problem, is sufficiently complex that it is not typically created directly, but rather is assembled from numerous other files or data structures by the \code{loadmd} function as illustrated in Figure~\ref{fig:loadmd}. 
+The \md{}, containing all of the data needed for the problem, is sufficiently complex that it is not typically created directly, but rather is assembled from numerous other files or data structures by the \code{loadmd} function as illustrated in Figure~\ref{fig:loadmd}.
 \begin{Code}
 mdi = loadmd(mpc, transmat, xgd, sd, contab, profiles);
 \end{Code}
@@ -1439,19 +1439,19 @@ In this context, all fields are optional and \code{loadxgendata} will provide de
 name & default\tnote{\dag} & description \\
 \midrule
 \code{CommitSched}	&	\code{C} &  0 or 1, UC status to use for non-UC runs	\\
-\code{InitialPg}	&	\code{P} &  active power dispatch at time~$t=0$	\\
+\code{InitialPg}\tnote{\dag\dag}	&	\code{P} &  active power dispatch at time~$t=0$	\\
 \code{TerminalPg}	&	&  active power dispatch at time~$t=n_t+1$ \emph{(only included if explicitly specified)}	\\
-\code{RampWearCostCoeff}	&	0 &  quadratic coefficient for $C_\delta^i(\cdot)$\tnote{\ddag}~ in \eqref{eq:rampcost} 	\\
+\code{RampWearCostCoeff}\tnote{\dag\dag}	&	0 &  quadratic coefficient for $C_\delta^i(\cdot)$\tnote{\ddag}~ in \eqref{eq:rampcost} 	\\
 \code{PositiveActiveReservePrice}	&	0 & linear coefficient for $C_{R+}^{ti}(\cdot)$\tnote{\ddag}~ in \eqref{eq:most_cres_cost} 	\\
 \code{PositiveActiveReserveQuantity}	&	\code{R} & max upward reserve quantity $R_{{\rm max}+}^{ti}$ in \eqref{eq:maxresp}	\\
 \code{NegativeActiveReservePrice}	&	0 & linear coefficient for $C_{R-}^{ti}(\cdot)$\tnote{\ddag}~ in \eqref{eq:most_cres_cost}	\\
 \code{NegativeActiveReserveQuantity}	&	\code{R} & max downward reserve quantity $R_{{\rm max}-}^{ti}$ in \eqref{eq:maxresm}	\\
 \code{PositiveActiveDeltaPrice}	&	0 & linear coefficient for $C_{P+}^{ti}(\cdot)$\tnote{\ddag}~ in \eqref{eq:most_energy_cost}	\\
 \code{NegativeActiveDeltaPrice}	&	0 & linear coefficient for $C_{P-}^{ti}(\cdot)$\tnote{\ddag}~ in \eqref{eq:most_energy_cost}	\\
-\code{PositiveLoadFollowReservePrice}	&	0 & linear coefficient for $C_{\delta+}^{ti}(\cdot)$\tnote{\ddag}~ in \eqref{eq:most_rampres_cost}	\\
-\code{PositiveLoadFollowReserveQuantity}	&	\code{R} & max upward ramp reserve $\delta^{ti}_{\rm max+}$ in \eqref{eq:deltapbounds}	\\
-\code{NegativeLoadFollowReservePrice}	&	0 & linear coefficient for $C_{\delta-}^{ti}(\cdot)$\tnote{\ddag}~ in \eqref{eq:most_rampres_cost}	\\
-\code{NegativeLoadFollowReserveQuantity}	&	\code{R} & max downward ramp reserve $\delta^{ti}_{\rm max-}$ in \eqref{eq:deltambounds}	\\
+\code{PositiveLoadFollowReservePrice}\tnote{\dag\dag}	&	0 & linear coefficient for $C_{\delta+}^{ti}(\cdot)$\tnote{\ddag}~ in \eqref{eq:most_rampres_cost}	\\
+\code{PositiveLoadFollowReserveQuantity}\tnote{\dag\dag}	&	\code{R} & max upward ramp reserve $\delta^{ti}_{\rm max+}$ in \eqref{eq:deltapbounds}	\\
+\code{NegativeLoadFollowReservePrice}\tnote{\dag\dag}	&	0 & linear coefficient for $C_{\delta-}^{ti}(\cdot)$\tnote{\ddag}~ in \eqref{eq:most_rampres_cost}	\\
+\code{NegativeLoadFollowReserveQuantity}\tnote{\dag\dag}	&	\code{R} & max downward ramp reserve $\delta^{ti}_{\rm max-}$ in \eqref{eq:deltambounds}	\\
 \code{CommitKey}	&	&  required for problems with UC	\\
 && \begin{tabular}{r @{ -- } p{0.35\textwidth}}
 -1 & offline, unit forced \emph{off} \\
@@ -1467,6 +1467,7 @@ name & default\tnote{\dag} & description \\
  \scriptsize
  \item [*] {All fields are $n_g \times 1$ vectors of per-generator values.}
  \item [\dag] {These are defaults provided by \code{loadxgendata}. If \code{gen} is provided, either directly or as the \code{gen} field of \mpc{}, then \code{P = gen(:, PG)}, \code{C = gen(:, GEN\_STATUS)} and \code{R = 2*(gen(:, PMAX) - MIN(0, gen(:, PMIN)))}, otherwise $\code{C}~=~1$, $\code{R}~=~0$ and no default is provided for \code{P} (corresponding field is not optional).}
+ \item [\dag\dag] {Ramping costs/restrictions from the initial dispatch at $t=0$ are ignored for single-period problems.}
  \item [\ddag] {Each of these costs $C(\cdot)$ is presented in the formulation as a general function, but is implmented as a simple linear function of the form $C(x) = a x$, where the linear coefficient being supplied is $a$. The only exception is the ramping cost, which has the quadratic form $C_\delta^i(x) = a x^2$.}
  \item [\S] {Requires that \code{CommitKey} be present and non-empty.}
  \item [\P] {Sign is based on \code{C}\tnote{\dag}, i.e. $+\infty$ for \code{C} = 1, $-\infty$ for \code{C} = 0.}
@@ -1894,7 +1895,7 @@ name & type\tnote{*} & description \\
 \code{results}	& O	 & results, see Table~\ref{tab:md_results} \\
 \code{SecurityConstrained}	& opt	 & copy of \code{most.security\_constraints} option \\
 \code{StepProb(t)}	& O	 & $\gamma^t$, probability of making it to period~$t$ \\
-\code{Storage}	& B	 & $\gamma^t$, probability of making it to period~$t$ \\
+\code{Storage}	& B	 & struct of storage parameters \\
 \code{~~~.ExpectedStorageDispatch(i,t)}	& O 	& $n_s \times n_t$, expected dispatch of storage unit~$i$	\\
 \code{~~~.ExpectedStorageState(i,t)}	& O 	& $n_s \times n_t$, expected stored energy in storage unit~$i$ at end period~$t$	\\
 \code{~~~.ForceCyclicStorage}	& opt 	& copy of \code{most.storage.cyclic} option	\\
@@ -2030,7 +2031,13 @@ name & type\tnote{*} & description \\
 \code{Sp}	& O	& $n_s \times n_t$, endogenously computed upper stored energy bounds $s_+^{ti}$	\\
 \code{Sm}	& O	& $n_s \times n_t$, endogenously computed lower stored energy bounds $s_-^{ti}$	\\
 \code{GenPrices(i,t)}	& O	& $n_g \times n_t$, expected energy price	\\
+\code{GenTLMP(i,t)}	& O	& $n_g \times n_t$, expected TLMP\tnote{\dag}	\\
+\code{StorageTLMPc(i,t)}	& O	& $n_s \times n_t$, expected charging TLMP for storage units\tnote{\dag}	\\
+\code{StorageTLMPd(i,t)}	& O	& $n_s \times n_t$, expected discharging TLMP for storage units\tnote{\dag}	\\
 \code{CondGenPrices(i,t)}	& O	& $n_g \times n_t$, expected energy price, conditional on making it to time~$t$	\\
+\code{CondGenTLPM(i,t)}	& O	& $n_g \times n_t$, expected TLMP\tnote{\dag}, conditional on making it to time~$t$	\\
+\code{CondStorageTLPMc(i,t)}	& O	& $n_s \times n_t$, expected chargingTLMP for storage units\tnote{\dag}, conditional on making it to time~$t$	\\
+\code{CondStorageTLPMd(i,t)}	& O	& $n_s \times n_t$, expected discharging TLMP for storage units\tnote{\dag}, conditional on making it to time~$t$	\\
 \code{RppPrices(i,t)}	& O	& $n_g \times n_t$, price on upward active contingency reserve	\\
 \code{RpmPrices(i,t)}	& O	& $n_g \times n_t$, price on downward active contingency reserve	\\
 \code{RrpPrices(i,t)}	& O	& $n_g \times n_t$, price on upward load-following ramping reserve	\\
@@ -2046,6 +2053,7 @@ name & type\tnote{*} & description \\
 \begin{tablenotes}
  \scriptsize
  \item [*] {I = input, O = output, B = both, opt = taken from \matpower{} options.}
+ \item [\dag] {The TLMP (temporal locational marginal price) is adjusted from the standard expected energy price (LMP) using shadow prices on ramping consistent with the methodology outlined in \cite{guo2021, chen2021, chen2022}. Currently, for generators, this involves the ramping reserve constraints from  \eqref{eq:inter1}--\eqref{eq:rampconstr}, but not ramping wear and tear costs. For storage units, it also involves the constraints \eqref{eq:storage1st}--\eqref{eq:storage2nd}, but requires that all $\rho^{ti}$ be set to 1.}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -2434,8 +2442,8 @@ name & default & description \\
 \end{threeparttable}
 \end{table}
 
- An example \code{xGenDataTable} struct is created by the following code.
- 
+An example \code{xGenDataTable} struct is created by the following code.
+
 \begin{Code}
 xgd_table.colnames = {  % indented to align with data cols
     'CommitSched', ...
@@ -2891,7 +2899,7 @@ xgd.PositiveLoadFollowReserveQuantity(3) = 250; % remove ramp reserve
 xgd.PositiveLoadFollowReservePrice(3) = 1e-6;   % constraint and costs
 xgd.NegativeLoadFollowReservePrice(3) = 1e-6;
 \end{Code}
-This model can then be run after turning off the DC network modeling. 
+This model can then be run after turning off the DC network modeling.
 \begin{Code}
 mpopt = mpoption(mpopt, 'most.dc_model', 0);    % use model with no network
 mdi = loadmd(mpc, nt, xgd, [], [], profiles);
@@ -3381,16 +3389,20 @@ The \href{https://matpower.org/docs/MOST-manual-1.1.pdf}{\most{} 1.1 User's Manu
 \end{itemize}
 
 
-\subsection{Version 1.1.1 -- released Oct ?, 20??}
-\label{app:v111}
+\subsection{Version 1.2 -- released ??? ?, 2022}
+\label{app:v12}
 
-The \href{https://matpower.org/docs/MOST-manual-1.1.1.pdf}{\most{} 1.1 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MOST-manual-1.1.1.pdf}}
+The \href{https://matpower.org/docs/MOST-manual-1.2.pdf}{\most{} 1.2 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MOST-manual-1.2.pdf}}
 
 \subsubsection*{Changes}
 \begin{itemize}
-\item 
-\item 
-\item 
+\item Ramping reserves and constraints are now included for the
+transition from the initial state into period~1, except for single-period
+problems.
+\item Added calculation of expected TLMP (temporal locational marginal price) based on work by Guo, Chen, Tong in \cite{guo2021,chen2021,chen2022}. For generators, these are returned in \code{mdo.results.GenTLMP} and \code{mdo.results.CondGenTLMP}. For storage units they are returned in  \code{mdo.results.StorageTLMPc}, \code{mdo.results.StorageTLMPd}, \code{mdo.results.CondStorageTLMPc}, and \code{mdo.results.CondStorageTLMPd}.
+See Table~\ref{tab:md_results} in the \mostman{}.
+\item For deterministic cases with storage where \code{ForceCyclicStorage} is 0, ensure that initial storage bounds are equal to initial storage and output a warning if they are modified. Fix deterministic UC tests where this was causing results to change depending on value of \code{rho}.
+
 \end{itemize}
 
 \subsubsection*{Bugs Fixed}
@@ -3401,7 +3413,16 @@ The \href{https://matpower.org/docs/MOST-manual-1.1.1.pdf}{\most{} 1.1 User's Ma
 
 \subsubsection*{Incompatible Changes}
 \begin{itemize}
-\item 
+\item Modified definition of ramping reserves for period $t$ (and all
+corresponding input and output parameters) to refer to the transition
+from $t-1$ to $t$, not $t$ to $t+1$. This means that the ramping
+reserves for the transition into the first period are now optimization
+variables and the corresponding constraints are explicit. This is for
+multiperiod problems only. Ramping reserves and contraints are explicitly
+excluded for single-period problems.\\
+\emph{Note:} This change also corrects an error in
+\eqref{eq:most_rampres_cost}, where $\gamma^t$ is now correct.
+Previously it should have been $\gamma^{t+1}$, as it was in the code.
 \end{itemize}
 
 \end{appendices}
@@ -3456,6 +3477,15 @@ A.~J.~Lamadrid, S.~Maneevitjit, T.~D.~Mount, C.~E.~Murillo-S{\'a}nchez,
 \bibitem{murillo-sanchez2013}
 C.~E. Murillo-S{\'a}nchez, R.~D. Zimmerman, C.~L. Anderson, and R.~J. Thomas, ``A Stochastic, Contingency-Based Security-Constrained Optimal Power Flow for the Procurement of Energy and Distributed Reserve,'' \emph{Decision Support Systems}, Vol.~56, pp.~1-10, Dec.~2013, ISSN 0167-9236.
 \doi{10.1016/j.dss.2013.04.006}
+
+\bibitem{guo2021}
+Y.~Guo, C.~Chen and L.~Tong,``Pricing Multi-Interval Dispatch Under Uncertainty Part I: Dispatch-Following Incentives,'' \emph{IEEE Transactions on Power Systems}, vol.~36, no.~5, pp.~3865--3877, Sept. 2021, \doi{10.1109/TPWRS.2021.3055730}
+
+\bibitem{chen2021}
+C.~Chen, Y.~Guo and L.~Tong, ``Pricing Multi-Interval Dispatch Under Uncertainty Part II: Generalization and Performance,'' \emph{IEEE Transactions on Power Systems}, vol.~36, no.~5, pp.~3878--3886, Sept. 2021, \doi{10.1109/TPWRS.2020.3045162}
+
+\bibitem{chen2022}
+C.~Chen and L.~Tong, ``Pricing Real-time Stochastic Storage Operations,'' \emph{2022 Power Systems Computation Conference (PSCC)}, June 27--July 1, 2022, \doi{10.48550/arXiv.2204.08140}
 
 \end{thebibliography}
 

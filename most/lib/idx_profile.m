@@ -22,9 +22,9 @@ function [PR_REP, PR_REL, PR_ADD, PR_TCONT, PR_TYPES, PR_TMPCD,...
 %               string 'xGenData' indicates changes on xgd fields
 %                   (e.g. offers or commitment vars)
 %               string 'ContingencyData' indicates changes on the set of
-%                   contingencies to be applied 
+%                   contingencies to be applied
 %               string 'StorageData' indicates changes on the storage struct
-% 
+%
 %   table:  scalar or string field of each profile struct where the id/name
 %           of the table/field that needs to be modified is stored.
 %           Possible values are:
@@ -60,7 +60,7 @@ function [PR_REP, PR_REL, PR_ADD, PR_TCONT, PR_TYPES, PR_TMPCD,...
 %               contingencies (of the master table of contingencies) to be
 %               applied at each time period and/or scenario.
 %           - if type is 'StorageData' you may modify the following fields:
-%               string 'MinStorageLevel' 
+%               string 'MinStorageLevel'
 %               string 'MaxStorageLevel'
 %               string 'OutEff'
 %               string 'InEff'
@@ -90,7 +90,7 @@ function [PR_REP, PR_REL, PR_ADD, PR_TCONT, PR_TYPES, PR_TMPCD,...
 %               scalar PR_REP replaces old values by new 'values'
 %               scalar PR_REL multiplies old value by factors in 'vales'
 %               scalar PR_ADD adds entries in 'values' field to old value
-% 
+%
 %   values: numeric array field of each profile struct where the new
 %           values/factors, i.e., the profile itself, is stored. This array
 %           must have 3 dimensions in a pre-defined order: [nt nj_max n]
@@ -125,7 +125,7 @@ PR_TYPES        = {...                      %% cell array of types
                     'xGenData',...          %% changes to xgd
                     'ContingencyData',...   %% changes to ct_subset
                     'StorageData',...       %% changes to Storage
-                    }; 
+                    };
 
 %% labels for modifiable tables
 % - tables for type 'mpcData'
