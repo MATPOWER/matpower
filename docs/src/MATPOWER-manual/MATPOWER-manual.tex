@@ -7606,7 +7606,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-5.0.pdf}{\matpower{} 5.0 Use
     \item \code{opf.init\_from\_mpc} option forces some solvers to use user-supplied starting point.
     \item \mips{} 1.1 includes many new user-settable options.
     \end{itemize}
-\item Reimplementated \code{@opf\_model} class as sub-class of the new
+\item Reimplementated \code{@opf\_model} class as subclass of the new
     \code{@opt\_model} class, which supports indexed named sets of
     variables, constraints and costs.
 \item Many new tests in test suite.
@@ -8193,7 +8193,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-7.1.pdf}{\matpower{} 7.1 Use
 \subsubsection*{Incompatible Changes}
 \begin{itemize}
 \item Modify order of default output arguments of \code{opt\_model/get\_idx()} (again), removing the one related to legacy costs.
-\item \mpom{} has renamed the following functions and modified the order of their input args so that the \mpom{} object appears first. Ideally, these would be defined as methods of the \code{opt\_model} class, but Octave 4.2 and earlier is not able to find them via a function handle (as used in the \code{solve()} method) if they are inherited by a sub-class.
+\item \mpom{} has renamed the following functions and modified the order of their input args so that the \mpom{} object appears first. Ideally, these would be defined as methods of the \code{opt\_model} class, but Octave 4.2 and earlier is not able to find them via a function handle (as used in the \code{solve()} method) if they are inherited by a subclass.
     \begin{itemize}
     \item \code{opf\_consfcn()} $\rightarrow$ \code{nlp\_consfcn()}
     \item \code{opf\_costfcn()} $\rightarrow$ \code{nlp\_costfcn()}

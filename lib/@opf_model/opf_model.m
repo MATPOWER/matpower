@@ -8,7 +8,7 @@ classdef opf_model < opt_model
 %   ordering and indexing of the blocks as variables, constraints and costs
 %   are added to the problem.
 %
-%   This class is a sub-class of OPT_MODEL that adds the 'mpc'
+%   This class is a subclass of OPT_MODEL that adds the 'mpc'
 %   field for storing the MATPOWER case struct used to build the object
 %   along with the get_mpc() method.
 %

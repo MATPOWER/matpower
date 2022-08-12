@@ -191,7 +191,7 @@ Version 7.1 - *Oct 8, 2020*
     MP-Opt-Model object appears first. Ideally, these would be defined
     as methods of the `@opt_model` class, but Octave 4.2 and earlier is
     not able to find them via a function handle (as used in the
-    `solve()` method) if they are inherited by a sub-class.
+    `solve()` method) if they are inherited by a subclass.
     - `opf_consfcn()` --> `nlp_consfcn()`
     - `opf_costfcn()` --> `nlp_costfcn()`
     - `opf_hessfcn()` --> `nlp_hessfcn()`
@@ -1799,7 +1799,7 @@ Version 5.0b1 - *Jul 1, 2014*
     `gurobi_mex()` interface.
   
 #### 5/3/12
-  - Reimplementated `@opf_model` class as sub-class of the new
+  - Reimplementated `@opf_model` class as subclass of the new
     `@opt_model` class, which supports indexed named sets of
     variables, constraints and costs.
 

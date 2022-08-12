@@ -201,7 +201,7 @@ previous versions, see Appendix H of the [MATPOWER User's Manual][2].
   their input args so that the MP-Opt-Model object appears first. Ideally,
   these would be defined as methods of the `opt_model` class, but Octave 4.2
   and earlier is not able to find them via a function handle (as used in the
-  `solve()` method) if they are inherited by a sub-class.
+  `solve()` method) if they are inherited by a subclass.
   - `opf_consfcn()` ––> `nlp_consfcn()`
   - `opf_costfcn()` ––> `nlp_costfcn()`
   - `opf_hessfcn()` ––> `nlp_hessfcn()`
