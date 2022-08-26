@@ -26,8 +26,9 @@ When a new version _x.y.z_ of the GNU Octave Docker image
 - Update value listed for _current release_ of Octave in **Versions** section
   of [MATPOWER-Docker.md][5].
 - Possibly add row to table in [Octave-Docker.md][6].
-- Update README files for [`matpower/octave`][1] and [`matpower/matpower`][7]
-  from [Octave-Docker.md][6] and [MATPOWER-Docker.md][5], respectively.
+- Manually update README files for [`matpower/octave`][1] and
+  [`matpower/matpower`][7] on DockerHub from [Octave-Docker.md][6] and
+  [MATPOWER-Docker.md][5], respectively.
 
 
 MATPOWER Images ([`matpower/matpower`][7]) (v7.0+)
