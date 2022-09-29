@@ -44,6 +44,10 @@ if have_feature('octave')
     end
     s1 = warning('query', file_in_path_warn_id);
     warning('off', file_in_path_warn_id);
+else
+    sing_matrix_warn_id = 'MATLAB:nearlySingularMatrix';
+    s2 = warning('query', sing_matrix_warn_id);
+    warning('off', sing_matrix_warn_id);
 end
 
 mpopt = mpoption('opf.violation', 1e-6, 'mips.gradtol', 1e-8, ...
@@ -309,6 +313,8 @@ t_is(r.dcline(:, c.PF:c.VT), [-163 -163 0 0 1.025 1.025], 4, [t 'P Q V']);
 
 if have_feature('octave')
     warning(s1.state, file_in_path_warn_id);
+else
+    warning(s2.state, sing_matrix_warn_id);
 end
 
 t_end;

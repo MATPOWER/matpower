@@ -28,6 +28,13 @@ if ~have_feature('smartmarket')
 elseif ~have_feature('pdipmopf')
     t_skip(n_tests, 't_auction_pdipm requires PDIPMOPF');
 else
+    %% turn off some warnings
+    if have_feature('matlab')
+        sing_matrix_warn_id = 'MATLAB:nearlySingularMatrix';
+        s2 = warning('query', sing_matrix_warn_id);
+        warning('off', sing_matrix_warn_id);
+    end
+
     mpopt = mpoption('opf.violation', 1e-7, 'pdipm.gradtol', 1e-6, ...
         'pdipm.comptol', 1e-7, 'pdipm.costtol', 5e-9);
     mpopt = mpoption(mpopt, 'opf.ac.solver', 'PDIPM', 'out.lim.all', 1, ...
@@ -619,6 +626,10 @@ else
     Qfudge =  zeros(size(p));
     Qfudge(L,:) = diag(gen(L,QG) ./ gen(L,PG) .* bus(Lbus, LAM_Q)) * ones(size(p(L,:)));
     t_is( cp(L), bus(Lbus, LAM_P) + Qfudge(L,1), 8, [t ' : load prices'] );
+
+    if have_feature('matlab')
+        warning(s2.state, sing_matrix_warn_id);
+    end
 end
 
 t_end;

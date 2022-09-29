@@ -13,6 +13,10 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.1
 -----------------
 
+#### 9/29/22
+- Silence near singular matrix warnings in some tests that began with
+  MATLAB R2022b.
+
 #### 7/27/22
 - Update MP-Opt-Model to latest for compatibility with Artelys
   Knitro 13.1 and later.

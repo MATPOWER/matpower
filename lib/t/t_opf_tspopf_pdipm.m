@@ -39,6 +39,13 @@ mpopt = mpoption('opf.violation', 1e-6, 'pdipm.gradtol', 1e-8, ...
         'pdipm.comptol', 1e-8, 'pdipm.costtol', 1e-9);
 mpopt = mpoption(mpopt, 'out.all', 0, 'verbose', verbose, 'opf.ac.solver', 'PDIPM');
 
+%% turn off some warnings
+if have_feature('matlab')
+    sing_matrix_warn_id = 'MATLAB:nearlySingularMatrix';
+    s2 = warning('query', sing_matrix_warn_id);
+    warning('off', sing_matrix_warn_id);
+end
+
 if have_feature('pdipmopf')
     %% set up indices
     ib_data     = [1:BUS_AREA BASE_KV:VMIN];
@@ -465,6 +472,10 @@ if have_feature('pdipmopf')
         [1.070692 1.090449 1.1], 5, [t 'bus voltage']);
 else
     t_skip(num_tests, [t0 'not available']);
+end
+
+if have_feature('matlab')
+    warning(s2.state, sing_matrix_warn_id);
 end
 
 t_end;

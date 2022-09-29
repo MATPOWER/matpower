@@ -40,18 +40,18 @@ if have_feature('octave')
     end
     s1 = warning('query', file_in_path_warn_id);
     warning('off', file_in_path_warn_id);
+    sing_matrix_warn_id = 'Octave:singular-matrix';
+else
+    sing_matrix_warn_id = 'MATLAB:singularMatrix';
+    near_sing_matrix_warn_id = 'MATLAB:nearlySingularMatrix';
+    s3 = warning('query', near_sing_matrix_warn_id);
+    warning('off', near_sing_matrix_warn_id);
 end
+s2 = warning('query', sing_matrix_warn_id);
 
 t0 = 'DC OPF (MIPS-sc): ';
 mpopt = mpoption('out.all', 0, 'verbose', verbose);
 mpopt = mpoption(mpopt, 'opf.dc.solver', 'MIPS', 'mips.step_control', 1, 'mips.comptol', 1e-9);
-
-if have_feature('octave')
-    sing_matrix_warn_id = 'Octave:singular-matrix';
-else
-    sing_matrix_warn_id = 'MATLAB:singularMatrix';
-end
-s2 = warning('query', sing_matrix_warn_id);
 
     %% set up indices
     ib_data     = [1:BUS_AREA BASE_KV:VMIN];
@@ -187,6 +187,8 @@ s2 = warning('query', sing_matrix_warn_id);
 
 if have_feature('octave')
     warning(s1.state, file_in_path_warn_id);
+else
+    warning(s3.state, near_sing_matrix_warn_id);
 end
 warning(s2.state, sing_matrix_warn_id);
 
