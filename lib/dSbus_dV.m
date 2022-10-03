@@ -1,7 +1,7 @@
 function [dSbus_dV1, dSbus_dV2] = dSbus_dV(Ybus, V, vcart)
 %DSBUS_DV   Computes partial derivatives of power injection w.r.t. voltage.
 %
-%   The derivatives can be take with respect to polar or cartesian coordinates
+%   The derivatives can be taken with respect to polar or cartesian coordinates
 %   of voltage, depending on the 3rd argument.
 %
 %   [DSBUS_DVA, DSBUS_DVM] = DSBUS_DV(YBUS, V)
