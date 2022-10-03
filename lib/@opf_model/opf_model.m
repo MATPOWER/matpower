@@ -12,14 +12,14 @@ classdef opf_model < opt_model
 %   field for storing the MATPOWER case struct used to build the object
 %   along with the get_mpc() method.
 %
-%   It also add the 'cost' field and the following three methods for
+%   It also adds the 'cost' field and the following three methods for
 %   implementing the legacy user-defined OPF costs:
 %       add_legacy_cost
 %       params_legacy_cost
 %       eval_legacy_cost
 %
 %   The following deprecated OPT_MODEL methods, from an older OPF_MODEL
-%   implementation have also been moved back to OPF_MODEL:
+%   implementation, have also been moved back to OPF_MODEL:
 %       add_costs (use add_quad_cost, add_nln_cost or add_legacy_cost)
 %       add_constraints (use add_lin_constraint or add_nln_constraint)
 %       add_vars (use add_var)
