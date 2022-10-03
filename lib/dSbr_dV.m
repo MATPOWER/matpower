@@ -1,7 +1,7 @@
 function [dSf_dV1, dSf_dV2, dSt_dV1, dSt_dV2, Sf, St] = dSbr_dV(branch, Yf, Yt, V, vcart)
 %DSBR_DV   Computes partial derivatives of branch power flows w.r.t. voltage.
 %
-%   The derivatives can be take with respect to polar or cartesian coordinates
+%   The derivatives can be taken with respect to polar or cartesian coordinates
 %   of voltage, depending on the 5th argument.
 %
 %   [DSF_DVA, DSF_DVM, DST_DVA, DST_DVM, SF, ST] = DSBR_DV(BRANCH, YF, YT, V)
@@ -79,7 +79,7 @@ function [dSf_dV1, dSf_dV2, dSt_dV1, dSt_dV2, Sf, St] = dSbr_dV(branch, Yf, Yt, 
 %           dSbr_dV(branch, Yf, Yt, V, 1);
 %
 %   For more details on the derivations behind the derivative code used
-%   in MATPOWER information, see:
+%   in MATPOWER, see:
 %
 %   [TN2]  R. D. Zimmerman, "AC Power Flows, Generalized OPF Costs and
 %          their Derivatives using Complex Matrix Notation", MATPOWER
