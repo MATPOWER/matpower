@@ -917,8 +917,7 @@ consisting of a standard $\pi$ transmission line model
 in series with an ideal phase-shifting transformer.
 The transmission line component has series impedance $z_s = r_s + j x_s$ and total charging susceptance $b_c$.
 The transformer component, whose tap ratio has magnitude $\tau$ and phase shift angle $\theta_\mathrm{shift}$,
-is located at the \emph{from} end of the branch
-(see \figurename~\ref{fig:branch_model}).
+is located at the \emph{from} end of the branch, as shown in \figurename~\ref{fig:branch_model}.
 The parameters $r_s$, $x_s$, $b_c$, $\tau$, and $\theta_\mathrm{shift}$ are specified directly
 in columns
 \code{BR\_R} (3), \code{BR\_X} (4), \code{BR\_B} (5), \code{TAP} (9), and \code{SHIFT} (10), respectively,
@@ -930,7 +929,7 @@ of the corresponding row of the \branch{} matrix.%
 \begin{figure}[t!]
   \centering
   \includegraphics[width=0.7\textwidth]{./figures/pi-model}
-  \caption{The branch model used in \matpower{}.}
+  \caption{Branch Model}
   \label{fig:branch_model}
 \end{figure}
 
@@ -938,12 +937,12 @@ The respective complex current injections $i_f$ and $i_t$ at the \emph{from} and
 can be expressed in terms of the $2 \times 2$ branch admittance matrix $Y_{br}$
 and the corresponding terminal voltages $v_f$ and $v_t$:
 \begin{equation}
-  \begin{bmatrix} i_f \\ i_t \\[0.1em] \end{bmatrix}
+  \begin{bmatrix} i_f \\ i_t \end{bmatrix}
   = Y_{br}
-  \begin{bmatrix} v_f \\ v_t  \\[0.1em] \end{bmatrix}.
+  \begin{bmatrix} v_f \\ v_t \end{bmatrix}.
   \label{eq:if_it}
 \end{equation}
-Denoting the series admittance element (in the $\pi$ model) by $y_s = 1 / z_s$,
+Denoting the series admittance element in the $\pi$ model by $y_s = 1 / z_s$,
 the branch admittance matrix can be written as
 \begin{equation}
 Y_{br} =
@@ -989,7 +988,7 @@ s^i_g = p^i_g + j q^i_g.
 \end{equation}
 Let $S_g = P_g + j Q_g$ be the $n_g \times 1$ vector of these generator injections.
 The MW and MVAr equivalents (before conversion to p.u.) of $p^i_g$ and $q^i_g$
-are respectively specified in columns \code{PG} (2) and \code{QG} (3) of row~$i$ of the \gen{} matrix.
+are specified respectively in columns \code{PG} (2) and \code{QG} (3) of row~$i$ of the \gen{} matrix.
 A sparse $n_b \times n_g$ generator connection matrix $C_g$ can be defined such that
 its $(i,j)^\mathrm{th}$ element is 1 if generator~$j$ is located at bus~$i$ and 0 otherwise.
 The $n_b \times 1$ vector of all bus injections contributed by the generators is then expressed as
@@ -1007,23 +1006,23 @@ s^i_d = p^i_d + j q^i_d .
 \end{equation}
 Let $S_d = P_d + j Q_d$ be the $n_b \times 1$ vector of complex load consumptions at the buses.
 The MW and MVAr equivalents (before conversion to p.u.) of $p^i_d$ and $q^i_d$
-are respectively specified in columns \code{PD} (3) and \code{QD} (4) of row~$i$ of the \bus{} matrix.
+are specified respectively in columns \code{PD} (3) and \code{QD} (4) of row~$i$ of the \bus{} matrix.
 These fields can also take on negative quantities to represent fixed (e.g., distributed) generation.
 
 Dispatchable loads are modeled as negative generators and appear as negative values in $S_g$.
 Constant-impedance and constant-current loads are not implemented directly,
-the constant-impedance portions can be modeled as a shunt element as described below.
+however, the constant-impedance portions can be modeled as shunt elements, as described below.
 
 
 \subsection{Shunt Elements}
 
-A shunt-connected element (such as a capacitor or an inductor) is modeled as a fixed impedance to ground at a bus.
+A shunt-connected element, such as a capacitor or an inductor, is modeled as a fixed impedance to ground at a bus.
 The admittance of the shunt element at bus~$i$ is written as
 \begin{equation}
 y^i_{sh} = g^i_{sh} + j b^i_{sh}.
 \end{equation}
 Let $Y_{sh} = G_{sh} + j B_{sh}$ denote the $n_b \times 1$ vector of shunt admittances at all buses.
-The parameters $g^i_{sh}$ and $b^i_{sh}$ are respectively specified
+The parameters $g^i_{sh}$ and $b^i_{sh}$ are specified respectively
 in columns \code{GS} (5) and \code{BS} (6) of row~$i$ of the \bus{} matrix
 as equivalent MW (consumed) and MVAr (injected) at a nominal voltage magnitude of 1.0~p.u and angle of zero.
 
@@ -1059,26 +1058,26 @@ Y_\mathrm{bus} &= \trans{C_f \!} Y_f + \trans{C_t \!} Y_t + \diag{ Y_{sh} }. \la
 Using the current injections expressed in \eqref{eq:Ibus}--\eqref{eq:It},
 the corresponding complex power injections can be computed as functions of the complex bus voltages $V$:
 \begin{alignat}{2}
-  S_\mathrm{bus} \!\left( V \right)
+  S_\mathrm{bus}(V)
   &= \diag{V}I_\mathrm{bus}^*
   &&= \diag{V}Y_\mathrm{bus}^* V^*, \label{eq:Sbus} \\
-  S_f \!\left( V \right)
+  S_f(V)
   &= \diag{C_f V}I_f^*
   &&= \diag{C_f V}Y_f^* V^*, \label{eq:Sf} \\
-  S_t \!\left( V \right)
+  S_t(V)
   &= \diag{C_t V}I_t^*
   &&= \diag{C_t V}Y_t^* V^*.  \label{eq:St}
 \end{alignat}
 The nodal bus injections are then matched to the injections due to the generators and loads,
 forming the AC nodal power balance equations.
-Expressed as a function of the complex bus voltages and generator injections
-and written in complex matrix form,
+Expressed as a function of the complex bus voltages and generator injections,
+they are written in complex matrix form as
 % \begin{equation}
 % \diag{V}Y_\mathrm{bus}^* V^* + S_d - C_g S_g = 0
 % \label{eq:acpf}
 % \end{equation}
 \begin{equation}
-  g_S \!\left( V, S_g \right) = S_\mathrm{bus} \!\left( V \right) + S_d - C_g S_g = 0.
+  g_S( V, S_g) = S_\mathrm{bus}(V) + S_d - C_g S_g = 0.
   \label{eq:acpf}
 \end{equation}
 % \begin{alignat}{3}
@@ -1111,7 +1110,7 @@ v_i \approx e^{j \theta_i}.
 \end{equation}
 \item Voltage-angle differences across branches are small enough that
 \begin{equation}
-\sin \! \left( \theta_f - \theta_t - \theta_\mathrm{shift} \right)
+\sin( \theta_f - \theta_t - \theta_\mathrm{shift} )
 \approx \theta_f - \theta_t - \theta_\mathrm{shift}.
 \label{eq:sin}
 \end{equation}
@@ -1121,20 +1120,12 @@ Invoking the assumptions regarding the branch parameters in \eqref{eq:lossless},
 the branch admittance matrix in \eqref{eq:Ybr} approximates to
 \begin{equation}
   Y_{br} \approx \frac{1}{j x_s} \begin{bmatrix}
-  \\[-1em]
   \dfrac{1}{\tau^2} &
   - \dfrac{1}{\tau e^{-j\theta_\mathrm{shift}}} \\[0.5em]
   - \dfrac{1}{\tau e^{ j\theta_\mathrm{shift}}}
   & 1
-  \\[0.7em]
   \label{eq:Ybr-dc}
 \end{bmatrix}.
-% \left[\begin{array}{cc}
-% \frac{1}{\tau^2} &
-% - \frac{1}{\tau e^{-j\theta_\mathrm{shift}}} \\
-% - \frac{1}{\tau e^{ j\theta_\mathrm{shift}}} &
-% 1
-% \end{array}\right].
 \end{equation}
 Combining \eqref{eq:Ybr-dc} and the second assumption \eqref{eq:V1} with \eqref{eq:if_it}
 yields the following approximation for $i_f$:
@@ -1160,19 +1151,19 @@ and applying \eqref{eq:sin}, i.e.,
   & = \Re \left\{ v_f \cdot i_f^* \right\} \nonumber\\
   & \approx \Re \left\{
     e^{j \theta_f} \cdot \frac{j}{x_s \tau}
-    \left( \frac{1}{\tau} e^{-j \theta_f} - e^{-j \left( \theta_t + \theta_\mathrm{shift} \right)} \right)
+    \left( \frac{1}{\tau} e^{-j \theta_f} - e^{-j (\theta_t + \theta_\mathrm{shift})} \right)
   \right\} \nonumber\\
   & = \Re \left\{
     \frac{j}{x_s \tau}
-    \left( \frac{1}{\tau} - e^{j \left( \theta_f - \theta_t - \theta_\mathrm{shift} \right)} \right)
+    \left( \frac{1}{\tau} - e^{j (\theta_f - \theta_t - \theta_\mathrm{shift})} \right)
   \right\} \nonumber\\
   & = \Re \left\{
     \frac{1}{x_s \tau} \bigg[
-        \sin\!\left( \theta_f - \theta_t - \theta_\mathrm{shift} \right)
-        + j \left( \frac{1}{\tau} - \cos\!\left( \theta_f - \theta_t - \theta_\mathrm{shift} \right) \right)
+        \sin( \theta_f - \theta_t - \theta_\mathrm{shift} )
+        + j \left( \frac{1}{\tau} - \cos( \theta_f - \theta_t - \theta_\mathrm{shift} ) \right)
       \bigg]
     \right\} \nonumber\\
-  & \approx \frac{1}{x_s \tau} \left( \theta_f - \theta_t - \theta_\mathrm{shift} \right).
+  & \approx \frac{1}{x_s \tau} ( \theta_f - \theta_t - \theta_\mathrm{shift} ).
 \end{align}
 As expected from the lossless assumption,
 a similar derivation for the active power flow at the \emph{to} end of the branch leads to $p_t = -p_f$.
@@ -1180,10 +1171,10 @@ a similar derivation for the active power flow at the \emph{to} end of the branc
 The relationship between the active power flows and the terminal voltage angles
 of a branch~$i$ under the DC model can be summarized as
 \begin{equation}
-  \begin{bmatrix} p_f \\ p_t \\[0.1em] \end{bmatrix}
+  \begin{bmatrix} p_f \\ p_t \end{bmatrix}
   =
   B_{br}^i
-  \begin{bmatrix} \theta_f \\ \theta_t \\[0.1em] \end{bmatrix}
+  \begin{bmatrix} \theta_f \\ \theta_t \end{bmatrix}
   +
   P_\mathrm{shift}^i ,
 \end{equation}
@@ -1199,12 +1190,12 @@ where
 with $x_s^i$ and $\tau^i$ being the respective series reactance and tap ratio parameters of branch~$i$.
 
 The complex power consumed by a shunt element at bus~$i$ is
-\begin{equation}
+\begin{align}
   s^i_{sh}
-  = v_i (y^i_{sh} v_i)^*
-  \approx e^{j \theta_i} \left( g^i_{sh} - j b^i_{sh} \right) e^{-j \theta_i}
-  = g^i_{sh} - j b^i_{sh}.
-\end{equation}
+  & = v_i (y^i_{sh} v_i)^* \\ \nonumber
+  & \approx e^{j \theta_i} \left( g^i_{sh} - j b^i_{sh} \right) e^{-j \theta_i} \\ \nonumber
+  & = g^i_{sh} - j b^i_{sh}.
+\end{align}
 Hence, the vector of active power consumptions by shunt elements at all buses is approximated as
 \begin{equation}
 P_{sh} \approx G_{sh}.
@@ -1215,34 +1206,34 @@ With a DC model, the linear network equations relate active power injections to 
 Let $B_{f\!f}$ be the $n_l \times 1$ vector constructed similar to $Y_{f\!f}$,
 i.e., where the $i$-th element is $b_i$.
 Let $P_{f,\mathrm{shift}}$ be the $n_l \times 1$ vector whose $i$-th element is $- \theta_\mathrm{shift}^i b_i$.
-Then the nodal active power injections are approximately a linear function of the bus voltage angles
-(collected into the $n_b \times 1$ vector $\Theta$):
+Then the nodal active power injections are approximately a linear function of the bus voltage angles,
+collected into the $n_b \times 1$ vector $\Theta$:
 \begin{equation}
-P_\mathrm{bus} \!\left(\Theta\right) = B_\mathrm{bus} \Theta + P_\mathrm{bus,shift},
+P_\mathrm{bus}(\Theta) = B_\mathrm{bus} \Theta + P_\mathrm{bus,shift},
 \end{equation}
 where
 \begin{equation}
-P_\mathrm{bus,shift} = \trans{\left( C_f - C_t \right)} P_{f,\mathrm{shift}}.
+P_\mathrm{bus,shift} = \trans{(C_f - C_t)} P_{f,\mathrm{shift}}.
 \end{equation}
 Similarly, the active power flows at the \emph{from} ends of the branches
 are approximated as a linear function of the bus voltage angles:
 \begin{equation}
-P_f \!\left(\Theta\right) = B_f \Theta + P_{f,\mathrm{shift}}.
+P_f(\Theta) = B_f \Theta + P_{f,\mathrm{shift}}.
 \label{eq:Pf}
 \end{equation}
 Due to the lossless assumption, the active power flows at the \emph{to} ends of the branches are given by $P_t = -P_f$.
-Constructing the DC-model system matrices
-($B_f$ and $B_\mathrm{bus}$)
-is analogous to that of the AC-model system matrices
-($Y_f$ and $Y_\mathrm{bus}$):
+Constructing the DC-model system matrices,
+$B_f$ and $B_\mathrm{bus}$,
+is analogous to that of the AC-model system matrices,
+$Y_f$ and $Y_\mathrm{bus}$:
 \begin{align}
-B_f &= \diag{ B_{f\!f} }\left(C_f - C_t  \right), \label{eq:Bf} \\
-B_\mathrm{bus} &= \trans{\left( C_f - C_t \right)} B_f. \label{eq:Bbus}
+B_f &= \diag{ B_{f\!f} }( C_f - C_t ), \label{eq:Bf} \\
+B_\mathrm{bus} &= \trans{( C_f - C_t )} B_f. \label{eq:Bbus}
 \end{align}
 
 Finally, the nodal power balance equations for a DC-modelled system are written in matrix form as
 \begin{equation}
-g_P \!\left(\Theta, P_g\right) = B_\mathrm{bus} \Theta + P_\mathrm{bus,shift} + P_d + G_{sh} - C_g P_g = 0
+g_P(\Theta, P_g) = B_\mathrm{bus} \Theta + P_\mathrm{bus,shift} + P_d + G_{sh} - C_g P_g = 0
 \label{eq:dcpf}
 \end{equation}
 
