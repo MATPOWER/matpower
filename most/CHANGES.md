@@ -5,6 +5,15 @@ Change history for MOST
 since version 1.1
 -----------------
 
+#### 9/29/22
+- Silence near singular matrix warnings in some tests that began with
+  MATLAB R2022b.
+
+#### 8/30/22
+  - Fix [issue #29][8], where a type caused  a check on `md.UC.MinDown`
+    >= 1 to be skipped.
+    *Thanks to Talha Iqbal.*
+
 #### 6/15/22
   - Add TLMP (temporal locational marginal price) for storage units
     based on work by Chen, Tong in [[Chen2022]][7] and returned in
@@ -280,3 +289,4 @@ Version 1.0 - *Jun 1, 2016*
 [5]: https://doi.org/10.1109/TPWRS.2021.3055730
 [6]: https://doi.org/10.1109/TPWRS.2020.3045162
 [7]: https://arxiv.org/abs/2204.08140
+[8]: https://github.com/MATPOWER/most/issues/29

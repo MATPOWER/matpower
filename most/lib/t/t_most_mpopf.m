@@ -33,9 +33,12 @@ if have_feature('octave')
     end
     s1 = warning('query', file_in_path_warn_id);
     warning('off', file_in_path_warn_id);
-    s = warning('query', 'Octave:nearly-singular-matrix');
-    warning('off', 'Octave:nearly-singular-matrix');
+    near_sing_matrix_warn_id = 'Octave:nearly-singular-matrix';
+else
+    near_sing_matrix_warn_id = 'MATLAB:nearlySingularMatrix';
 end
+s = warning('query', near_sing_matrix_warn_id);
+warning('off', near_sing_matrix_warn_id);
 
 casefile = 'ex_case3b';
 solnfile =  't_most_mpopf_soln';
@@ -163,8 +166,9 @@ t_is(mdo.om.var.N, mdi1.om.var.N+10, 12, t);
 
 if have_feature('octave')
     warning(s1.state, file_in_path_warn_id);
-    warning(s.state, 'Octave:nearly-singular-matrix');
 end
+warning(s.state, near_sing_matrix_warn_id);
+
 
 t_end;
 

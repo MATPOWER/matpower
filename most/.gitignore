@@ -9,3 +9,6 @@ docs/src/MOST-manual/MOST-manual.pdf
 docs/src/MOST-manual/MOST-manual.synctex.gz
 docs/src/MOST-manual/MOST-manual.synctex.gz(busy)
 docs/src/MOST-manual/MOST-manual.toc
+docs/sphinx/build
+docs/sphinx/source/mp-docs-shared
+.vs

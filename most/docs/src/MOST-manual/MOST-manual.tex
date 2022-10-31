@@ -3409,6 +3409,7 @@ See Table~\ref{tab:md_results} in the \mostman{}.
 \begin{itemize}
 \item Plotting of commitment schedule using \code{plot\_uc()} did not work properly in a subplot, such as in \code{t\_most\_uc()}. \emph{Thanks to Lim Han.}
 \item Fix tests that were failing under Octave 7.x.
+\item Fix issue \#29 where a typo caused a check on \code{md.UC.MinDown} $ge 1$ to be skipped. \emph{Thanks to Talha Iqbal.}
 \end{itemize}
 
 \subsubsection*{Incompatible Changes}

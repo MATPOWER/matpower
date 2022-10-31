@@ -56,9 +56,12 @@ end
 
 %% turn off warnings
 if have_feature('octave')
-    s = warning('query', 'Octave:nearly-singular-matrix');
-    warning('off', 'Octave:nearly-singular-matrix');
+    near_sing_matrix_warn_id = 'Octave:nearly-singular-matrix';
+else
+    near_sing_matrix_warn_id = 'MATLAB:nearlySingularMatrix';
 end
+s = warning('query', near_sing_matrix_warn_id);
+warning('off', near_sing_matrix_warn_id);
 
 %% define named indices into data matrices
 [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
@@ -689,9 +692,7 @@ if create_plots
 end
 
 %% turn warnings back on
-if have_feature('octave')
-    warning(s.state, 'Octave:nearly-singular-matrix');
-end
+warning(s.state, near_sing_matrix_warn_id);
 
 t_end;
 

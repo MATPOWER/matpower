@@ -374,7 +374,7 @@ if mpopt.most.build_model
 
   if UC
     % Make sure MinUp and MinDown are all >= 1
-    if any(mdi.UC.MinUp < 1) && any(mdi.UC.MinUp < 1)
+    if any(mdi.UC.MinUp < 1) && any(mdi.UC.MinDown < 1)
         error('most: UC.MinUp and UC.MinDown must all be >= 1');
     end
     % Unless something is forced off in mdi.CommitKey, or as a result of

@@ -21,6 +21,14 @@ else
     verbose = 0;
 end
 
+if have_feature('octave')
+    near_sing_matrix_warn_id = 'Octave:nearly-singular-matrix';
+else
+    near_sing_matrix_warn_id = 'MATLAB:nearlySingularMatrix';
+end
+s = warning('query', near_sing_matrix_warn_id);
+warning('off', near_sing_matrix_warn_id);
+
 casefile = 't_case30_userfcns';
 mpopt = mpoption('opf.violation', 1e-6, 'mips.gradtol', 1e-8, ...
         'mips.comptol', 1e-8, 'mips.costtol', 1e-9);
@@ -192,5 +200,7 @@ for tt = 1:nt
     t = 'mu.Pmax';
     t_is(mdo.flow(tt,1,1).mpc.reserves.mu.Pmax, r(tt).reserves.mu.Pmax, 5, sprintf('(t=%d) : %s', tt, t));
 end
+
+warning(s.state, near_sing_matrix_warn_id);
 
 t_end;
