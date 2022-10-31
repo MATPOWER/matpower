@@ -265,7 +265,14 @@ switch alg
         [x, f, eflag, output, lambda] = ...
             qps_ot(H, c, A, l, u, xmin, xmax, x0, opt);
     otherwise
-        error('qps_master: ''%s'' is not a valid algorithm code', alg);
+        fcn = ['qps_' lower(alg)];
+        s = which(fcn);
+        if length(s > 2) && all(s(end-1:end) == '.m')
+            [x, f, eflag, output, lambda] = ...
+                feval(fcn, H, c, A, l, u, xmin, xmax, x0, opt);
+        else
+            error('qps_master: ''%s'' is not a valid algorithm code', alg);
+        end
 end
 if ~isfield(output, 'alg') || isempty(output.alg)
     output.alg = alg;

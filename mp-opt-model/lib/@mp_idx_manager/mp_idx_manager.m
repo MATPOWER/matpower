@@ -40,7 +40,7 @@ classdef mp_idx_manager < handle
 %           fields of an object not yet fully constructed.
 %           Fixed in Octave v6.x: https://savannah.gnu.org/bugs/?52614
 %           The workaround is to be sure that this method is called by
-%           some sub-class method(s) after object construction, but before
+%           some subclass method(s) after object construction, but before
 %           any other use (e.g. in display() and add_*() methods).
 %
 %       valid_named_set_type - Returns a label for the given named set
@@ -161,7 +161,7 @@ classdef mp_idx_manager < handle
             %% and earlier due to inheritance issues in constructors:
             %%   https://savannah.gnu.org/bugs/?52614
             %%
-            %% WORKAROUND: In some sub-class method(s), call INIT_SET_TYPES()
+            %% WORKAROUND: In some subclass method(s), call INIT_SET_TYPES()
             %%             automatically as needed after construction, but
             %%             before use, checking first to ensure that it
             %%             hasn't already been called.

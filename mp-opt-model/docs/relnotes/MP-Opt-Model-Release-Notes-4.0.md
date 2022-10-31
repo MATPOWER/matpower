@@ -58,7 +58,7 @@ Manual][2].
 
 #### Other Changes
   - Labels from the `set_types` property are now used as headers for
-    `opt_model/display()` to simplify things facilitate use by sub-classes.
+    `opt_model/display()` to simplify things facilitate use by subclasses.
   - Refactored `describe_idx` into a new method, `set_type_idx_map`, that
     returns in information in a programmatically usable form, and an updated
     `describe_idx` that calls the new method, then formats the results in

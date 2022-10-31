@@ -4,7 +4,7 @@ function [x, f, eflag, output, lambda] = qps_glpk(H, c, A, l, u, xmin, xmax, x0,
 %       QPS_GLPK(H, C, A, L, U, XMIN, XMAX, X0, OPT)
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = QPS_GLPK(PROBLEM)
 %   A wrapper function providing a standardized interface for using
-%   GLKP to solve the following LP (linear programming) problem:
+%   GLPK to solve the following LP (linear programming) problem:
 %
 %       min C'*X
 %        X
@@ -15,7 +15,7 @@ function [x, f, eflag, output, lambda] = qps_glpk(H, c, A, l, u, xmin, xmax, x0,
 %       XMIN <= X <= XMAX   (variable bounds)
 %
 %   Inputs (all optional except H, C, A and L):
-%       H : dummy matrix (possibly sparse) of quadratic cost coefficients
+%       H : IGNORED dummy matrix of quadratic cost coefficients
 %           for QP problems, which GLPK does not handle
 %       C : vector of linear cost coefficients
 %       A, L, U : define the optional linear constraints. Default
@@ -41,7 +41,10 @@ function [x, f, eflag, output, lambda] = qps_glpk(H, c, A, l, u, xmin, xmax, x0,
 %       X : solution vector
 %       F : final objective function value
 %       EXITFLAG : exit flag, 1 - optimal, <= 0 - infeasible, unbounded or other
-%       OUTPUT : struct with errnum and status fields from GLPK output args
+%       OUTPUT : output struct with the following fields:
+%           errnum - GLPK errnum output arg
+%           status - GKPK status output arg
+%           runtime - solver run time in seconds
 %       LAMBDA : struct containing the Langrange and Kuhn-Tucker
 %           multipliers on the constraints, with fields:
 %           mu_l - lower (left-hand) limit on linear constraints
@@ -55,12 +58,12 @@ function [x, f, eflag, output, lambda] = qps_glpk(H, c, A, l, u, xmin, xmax, x0,
 %
 %   Calling syntax options:
 %       [x, f, exitflag, output, lambda] = ...
-%           qps_glpk(H, c, A, l, u, xmin, xmax, x0, opt)
+%           qps_glpk([], c, A, l, u, xmin, xmax, x0, opt)
 %
-%       x = qps_glpk(H, c, A, l, u)
-%       x = qps_glpk(H, c, A, l, u, xmin, xmax)
-%       x = qps_glpk(H, c, A, l, u, xmin, xmax, x0)
-%       x = qps_glpk(H, c, A, l, u, xmin, xmax, x0, opt)
+%       x = qps_glpk([], c, A, l, u)
+%       x = qps_glpk([], c, A, l, u, xmin, xmax)
+%       x = qps_glpk([], c, A, l, u, xmin, xmax, x0)
+%       x = qps_glpk([], c, A, l, u, xmin, xmax, x0, opt)
 %       x = qps_glpk(problem), where problem is a struct with fields:
 %                       H, c, A, l, u, xmin, xmax, x0, opt
 %                       all fields except 'c', 'A' and 'l' or 'u' are optional
@@ -70,21 +73,16 @@ function [x, f, eflag, output, lambda] = qps_glpk(H, c, A, l, u, xmin, xmax, x0,
 %       [x, f, exitflag, output] = qps_glpk(...)
 %       [x, f, exitflag, output, lambda] = qps_glpk(...)
 %
-%
-%   Example: (problem from from https://v8doc.sas.com/sashtml/iml/chap8/sect12.htm)
-%       H = [   1003.1  4.3     6.3     5.9;
-%               4.3     2.2     2.1     3.9;
-%               6.3     2.1     3.5     4.8;
-%               5.9     3.9     4.8     10  ];
-%       c = zeros(4,1);
-%       A = [   1       1       1       1;
-%               0.17    0.11    0.10    0.18    ];
-%       l = [1; 0.10];
-%       u = [1; Inf];
-%       xmin = zeros(4,1);
-%       x0 = [1; 0; 0; 1];
+%   Example: (based on example from 'doc linprog')
+%       c = [-5; -4; -6];
+%       A = [ 1  -1   1;
+%            -3  -2  -4;
+%             3   2   0];
+%       l = [-Inf; -42; -Inf];
+%       u = [20; Inf; 30];
+%       xmin = [0; 0; 0];
 %       opt = struct('verbose', 2);
-%       [x, f, s, out, lambda] = qps_glpk(H, c, A, l, u, xmin, [], x0, opt);
+%       [x, f, s, out, lambda] = qps_glpk([], c, A, l, u, xmin, [], [], opt);
 %
 %   See also QPS_MASTER, GLPK.
 
@@ -204,8 +202,10 @@ end
 glpk_opt.msglev = verbose;
 
 %% call the solver
+t0 = tic;
 [x, f, errnum, extra] = ...
     glpk(c, AA, bb, xmin, xmax, ctype, vtype, 1, glpk_opt);
+output.runtime = toc(t0);
 
 %% set exit flag
 if isfield(extra, 'status')             %% status found in extra.status

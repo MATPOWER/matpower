@@ -47,6 +47,7 @@ function [x, f, eflag, output, lambda] = qps_mosek(H, c, A, l, u, xmin, xmax, x0
 %       OUTPUT : output struct with the following fields:
 %           r - MOSEK return code
 %           res - MOSEK result struct
+%           runtime - solver run time in seconds
 %       LAMBDA : struct containing the Langrange and Kuhn-Tucker
 %           multipliers on the constraints, with fields:
 %           mu_l - lower (left-hand) limit on linear constraints
@@ -259,7 +260,9 @@ if verbose
             vn, alg_names{mosek_opt.MSK_IPAR_OPTIMIZER+1}, lpqp);
 end
 cmd = sprintf('minimize echo(%d)', verbose);
+t0 = tic;
 [r, res] = mosekopt(cmd, prob, mosek_opt);
+output.runtime = toc(t0);
 
 %%-----  repackage results  -----
 if isfield(res, 'sol')

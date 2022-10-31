@@ -9,3 +9,6 @@ docs/src/MP-Opt-Model-manual/MP-Opt-Model-manual.pdf
 docs/src/MP-Opt-Model-manual/MP-Opt-Model-manual.synctex.gz
 docs/src/MP-Opt-Model-manual/MP-Opt-Model-manual.synctex.gz(busy)
 docs/src/MP-Opt-Model-manual/MP-Opt-Model-manual.toc
+docs/sphinx/build
+docs/sphinx/source/mp-docs-shared
+.vs
