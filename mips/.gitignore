@@ -9,3 +9,6 @@ docs/src/MIPS-manual/MIPS-manual.pdf
 docs/src/MIPS-manual/MIPS-manual.synctex.gz
 docs/src/MIPS-manual/MIPS-manual.synctex.gz (busy)
 docs/src/MIPS-manual/MIPS-manual.toc
+docs/sphinx/build
+docs/sphinx/source/mp-docs-shared
+.vs

@@ -2,7 +2,7 @@ function t_mplinsolve(quiet)
 %T_MPLINSOLVE  Tests of MIPS/MATPOWER linear solvers.
 
 %   MIPS
-%   Copyright (c) 2015-2018, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2022, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MIPS.
@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-t_begin(66, quiet);
+t_begin(180, quiet);
 
 isoctave = exist('OCTAVE_VERSION', 'builtin') == 5;
 if isoctave
@@ -366,50 +366,96 @@ b = [
     -0.259;
     0;
 ];
+% ex = [      %% for original symmetrical system
+% 0;
+% 0.04612219791119214;
+% 0.0509334351882598;
+% -0.05953571031927305;
+% -0.09461814898578046;
+% -0.008909854578010561;
+% -0.05785829019394401;
+% -0.02232729212460287;
+% -0.1137760871247425;
+% -0.03062777824802364;
+% -0.01013282572376477;
+% -0.005330939680091628;
+% -0.02914165388753019;
+% -0.03376073204420303;
+% 4.021341450281111e-05;
+% -0.01727289094763518;
+% -0.008382063634320435;
+% -0.04854008812629265;
+% -0.2663945795760685;
+% -0.4548081594272799;
+% -0.3787862287965494;
+% -0.02580075363496279;
+% -0.02801219343110931;
+% -0.09165765332863518;
+% -0.1665986614487812;
+% -0.4291388294822789;
+% -0.3225500876094941;
+% 3.967864472606993;
+% 5.577372159790927;
+% 3.762341481664236;
+% 5.858342308599034;
+% 3.951628532808602;
+% 6.471657726723339;
+% -0.01720051102355974;
+% -0.01867480495813735;
+% -0.06110513277164123;
+% -0.1239317474796463;
+% -0.1848327901217308;
+% -0.4283638085291988;
+% 0.07640167050820651;
+% -0.1319901818980452;
+% 0.4366406661538687;
+% 0.0007894844305239289;
+% ];
+A(8, 2) = -500;     %% make non-symmetrical
 ex = [
-0;
-0.04612219791119214;
-0.0509334351882598;
--0.05953571031927305;
--0.09461814898578046;
--0.008909854578010561;
--0.05785829019394401;
--0.02232729212460287;
--0.1137760871247425;
--0.03062777824802364;
--0.01013282572376477;
--0.005330939680091628;
--0.02914165388753019;
--0.03376073204420303;
-4.021341450281111e-05;
--0.01727289094763518;
--0.008382063634320435;
--0.04854008812629265;
--0.2663945795760685;
--0.4548081594272799;
--0.3787862287965494;
--0.02580075363496279;
--0.02801219343110931;
--0.09165765332863518;
--0.1665986614487812;
--0.4291388294822789;
--0.3225500876094941;
-3.967864472606993;
-5.577372159790927;
-3.762341481664236;
-5.858342308599034;
-3.951628532808602;
-6.471657726723339;
--0.01720051102355974;
--0.01867480495813735;
--0.06110513277164123;
--0.1239317474796463;
--0.1848327901217308;
--0.4283638085291988;
-0.07640167050820651;
--0.1319901818980452;
-0.4366406661538687;
-0.0007894844305239289;
+   0.000000000000000
+   0.015818764480650
+   0.028627515055857
+  -0.066470494209706
+  -0.106338553472755
+  -0.029556247483918
+  -0.080778493974592
+  -0.046876059940052
+  -0.126748712178182
+  -0.032582479109501
+  -0.010646589107665
+  -0.006489850319503
+  -0.030082640379903
+  -0.034809123585434
+  -0.001497869375252
+  -0.018761742104354
+  -0.009797350675461
+  -0.049351378784847
+  -0.145999102975876
+  -0.546882809268771
+  -0.407105729011254
+  -0.043399950168419
+  -0.013587814915265
+  -0.085187156417456
+   0.060547872388504
+  -0.571791005228199
+  -0.373056783462411
+   4.199136375632448
+   5.730774734397821
+   3.598555773194044
+   5.477255481510613
+   3.440677757696717
+   6.533433414753445
+  -0.028933314578930
+  -0.009058547806115
+  -0.056791466007356
+  -0.206286450370091
+  -0.246526980342321
+  -0.398303747647950
+   0.132430861414235
+  -0.064740631105635
+   0.368923140091142
+  -8.288373070379230
 ];
 
 t = ''''' : ';
@@ -428,6 +474,15 @@ x = mplinsolve(full(A), b, '\');
 t_is(x, ex, 12, [t 'x (full A)']);
 t_is(norm(b - A*x), 0, 12, [t '||b - A*x|| (full A)']);
 
+t = '\ (transpose) : ';
+opt = struct('tr', 1);
+x = mplinsolve(A', b, '\', opt);
+t_is(x, ex, 12, [t 'x']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+x = mplinsolve(full(A'), b, '\', opt);
+t_is(x, ex, 12, [t 'x (full A)']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x|| (full A)']);
+
 t = 'LU : ';
 x = mplinsolve(A, b, 'LU');
 t_is(x, ex, 12, [t 'x']);
@@ -436,6 +491,19 @@ if skipcrash
     t_skip(2, [t 'potential MATLAB crash with non-sparse A']);
 else
     x = mplinsolve(full(A), b, 'LU');
+    t_is(x, ex, 12, [t 'x (full A)']);
+    t_is(norm(b - A*x), 0, 12, [t '||b - A*x|| (full A)']);
+end
+
+t = 'LU (transpose) : ';
+opt = struct('tr', 1);
+x = mplinsolve(A', b, 'LU', opt);
+t_is(x, ex, 12, [t 'x']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+if skipcrash
+    t_skip(2, [t 'potential MATLAB crash with non-sparse A']);
+else
+    x = mplinsolve(full(A'), b, 'LU', opt);
     t_is(x, ex, 12, [t 'x (full A)']);
     t_is(norm(b - A*x), 0, 12, [t '||b - A*x|| (full A)']);
 end
@@ -576,6 +644,376 @@ x = mplinsolve(A, b, 'LU', opt);
 t_is(x, ex, 12, [t 'x']);
 t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
 
+%%-----  repeat all LU tests with saved factors  -----
+t = 'pre-factored LU : ';
+f = mplinsolve(A);
+x = mplinsolve(f, b);
+t_is(x, ex, 12, [t 'x']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+if skipcrash
+    t_skip(2, [t 'potential MATLAB crash with non-sparse A']);
+else
+    f = mplinsolve(full(A));
+    x = mplinsolve(f, b);
+    t_is(x, ex, 12, [t 'x (full A)']);
+    t_is(norm(b - A*x), 0, 12, [t '||b - A*x|| (full A)']);
+end
+
+t = 'pre-factored LU3 : ';
+f = mplinsolve(A, [], 'LU3');
+x = mplinsolve(f, b, 'LU3');
+t_is(x, ex, 12, [t 'x']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+if skipcrash
+    t_skip(2, [t 'potential MATLAB crash with non-sparse A']);
+else
+    f = mplinsolve(full(A), [], 'LU3');
+    x = mplinsolve(f, b, 'LU3');
+    t_is(x, ex, 12, [t 'x (full A)']);
+    t_is(norm(b - A*x), 0, 12, [t '||b - A*x|| (full A)']);
+end
+t = 'pre-factored LU, nout = 3, vec = 1, thresh = 1 : ';
+opt = struct('nout', 3, 'vec', 1, 'thresh', 1);
+[x, f] = mplinsolve(A, b, 'LU', opt);
+x = mplinsolve(f, b, 'LU', opt);
+t_is(x, ex, 12, [t 'x']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+if skipcrash
+    t_skip(2, [t 'potential MATLAB crash with non-sparse A']);
+else
+    opt = struct('nout', 3, 'vec', 1, 'thresh', 1);
+    [x, f] = mplinsolve(full(A), b, 'LU', opt);
+    x = mplinsolve(f, b, 'LU', opt);
+    t_is(x, ex, 12, [t 'x (full A)']);
+    t_is(norm(b - A*x), 0, 12, [t '||b - A*x|| (full A)']);
+end
+
+t = 'pre-factored LU3a : ';
+[x1, f] = mplinsolve(A, b, 'LU3a');
+x = mplinsolve(f, b, 'LU3a');
+t_is(x, ex, 12, [t 'x']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+if skipcrash
+    t_skip(2, [t 'potential MATLAB crash with non-sparse A']);
+else
+    [x1, f] = mplinsolve(full(A), b, 'LU3a');
+    x = mplinsolve(f, b, 'LU3a');
+    t_is(x, ex, 12, [t 'x (full A)']);
+    t_is(norm(b - A*x), 0, 12, [t '||b - A*x|| (full A)']);
+end
+t = 'pre-factored LU, nout = 3, vec = 1 : ';
+opt = struct('nout', 3, 'vec', 1);
+f = mplinsolve(A, [], 'LU', opt);
+x = mplinsolve(f, b, 'LU', opt);
+t_is(x, ex, 12, [t 'x']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+if skipcrash
+    t_skip(2, [t 'potential MATLAB crash with non-sparse A']);
+else
+    opt = struct('nout', 3, 'vec', 1);
+    f = mplinsolve(full(A), [], 'LU', opt);
+    x = mplinsolve(f, b, 'LU', opt);
+    t_is(x, ex, 12, [t 'x (full A)']);
+    t_is(norm(b - A*x), 0, 12, [t '||b - A*x|| (full A)']);
+end
+
+t = 'pre-factored LU4 : ';
+[x, f] = mplinsolve(A, b, 'LU4');
+x = mplinsolve(f, b, 'LU4');
+t_is(x, ex, 12, [t 'x']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+t = 'pre-factored LU, nout = 4, vec = 1 : ';
+opt = struct('nout', 4, 'vec', 1);
+f = mplinsolve(A, [], 'LU', opt);
+x = mplinsolve(f, b, 'LU', opt);
+t_is(x, ex, 12, [t 'x']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+
+t = 'pre-factored LU5 : ';
+f = mplinsolve(A, [], 'LU5');
+x = mplinsolve(f, b, 'LU5');
+t_is(x, ex, 12, [t 'x']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+t = 'pre-factored LU, nout = 5, vec = 1 : ';
+opt = struct('nout', 5, 'vec', 1);
+[x, f] = mplinsolve(A, b, 'LU', opt);
+x = mplinsolve(f, b, 'LU', opt);
+t_is(x, ex, 12, [t 'x']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+
+t = 'pre-factored LU3m : ';
+f = mplinsolve(A, [], 'LU3m');
+x = mplinsolve(f, b, 'LU3m');
+t_is(x, ex, 12, [t 'x']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+if skipcrash
+    t_skip(2, [t 'potential MATLAB crash with non-sparse A']);
+else
+    f = mplinsolve(full(A), [], 'LU3m');
+    x = mplinsolve(f, b, 'LU3m');
+    t_is(x, ex, 12, [t 'x (full A)']);
+    t_is(norm(b - A*x), 0, 12, [t '||b - A*x|| (full A)']);
+end
+t = 'pre-factored LU, nout = 3, vec = 0, thresh = 1 : ';
+opt = struct('nout', 3, 'vec', 0, 'thresh', 1);
+[x, f] = mplinsolve(A, b, 'LU', opt);
+x = mplinsolve(f, b, 'LU', opt);
+t_is(x, ex, 12, [t 'x']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+if skipcrash
+    t_skip(2, [t 'potential MATLAB crash with non-sparse A']);
+else
+    opt = struct('nout', 3, 'vec', 0, 'thresh', 1);
+    f = mplinsolve(full(A), [], 'LU', opt);
+    x = mplinsolve(f, b, 'LU', opt);
+    t_is(x, ex, 12, [t 'x (full A)']);
+    t_is(norm(b - A*x), 0, 12, [t '||b - A*x|| (full A)']);
+end
+
+t = 'pre-factored LU3am : ';
+f = mplinsolve(A, [], 'LU3am');
+x = mplinsolve(f, b, 'LU3am');
+t_is(x, ex, 12, [t 'x']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+if skipcrash
+    t_skip(2, [t 'potential MATLAB crash with non-sparse A']);
+else
+    f = mplinsolve(full(A), [], 'LU3am');
+    x = mplinsolve(f, b, 'LU3am');
+    t_is(x, ex, 12, [t 'x (full A)']);
+    t_is(norm(b - A*x), 0, 12, [t '||b - A*x|| (full A)']);
+end
+t = 'pre-factored LU, nout = 3, vec = 0 : ';
+opt = struct('nout', 3, 'vec', 0);
+f = mplinsolve(A, [], 'LU', opt);
+x = mplinsolve(f, b, 'LU', opt);
+t_is(x, ex, 12, [t 'x']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+if skipcrash
+    t_skip(2, [t 'potential MATLAB crash with non-sparse A']);
+else
+    opt = struct('nout', 3, 'vec', 0);
+    [x, f] = mplinsolve(full(A), b, 'LU', opt);
+    x = mplinsolve(f, b, 'LU', opt);
+    t_is(x, ex, 12, [t 'x (full A)']);
+    t_is(norm(b - A*x), 0, 12, [t '||b - A*x|| (full A)']);
+end
+
+t = 'pre-factored LU4m : ';
+[x1, f] = mplinsolve(A, b, 'LU4m');
+x = mplinsolve(f, b, 'LU4m');
+t_is(x, ex, 12, [t 'x']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+t = 'pre-factored LU, nout = 4, vec = 0 : ';
+opt = struct('nout', 4, 'vec', 0);
+f = mplinsolve(A, [], 'LU', opt);
+x = mplinsolve(f, b, 'LU', opt);
+t_is(x, ex, 12, [t 'x']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+
+t = 'pre-factored LU5m : ';
+f = mplinsolve(A, [], 'LU5m');
+x = mplinsolve(f, b, 'LU5m');
+t_is(x, ex, 12, [t 'x']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+t = 'pre-factored LU, nout = 5, vec = 0 : ';
+opt = struct('nout', 5, 'vec', 0);
+[x, f] = mplinsolve(A, b, 'LU', opt);
+x = mplinsolve(f, b, 'LU', opt);
+t_is(x, ex, 12, [t 'x']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+
+%%-----  repeat all LU tests with saved factors AND transpose  -----
+t = 'transposed LU : ';
+f = mplinsolve(A');
+x = mplinsolve(f, b, 'LU', struct('tr', 1));
+t_is(x, ex, 12, [t 'x']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+if skipcrash
+    t_skip(2, [t 'potential MATLAB crash with non-sparse A']);
+else
+    f = mplinsolve(full(A'));
+    x = mplinsolve(f, b, 'LU', struct('tr', 1));
+    t_is(x, ex, 12, [t 'x (full A)']);
+    t_is(norm(b - A*x), 0, 12, [t '||b - A*x|| (full A)']);
+end
+
+t = 'transposed LU3 : ';
+f = mplinsolve(A', [], 'LU3');
+x = mplinsolve(f, b, 'LU3', struct('tr', 1));
+t_is(x, ex, 12, [t 'x']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+if skipcrash
+    t_skip(2, [t 'potential MATLAB crash with non-sparse A']);
+else
+    [x1, f] = mplinsolve(full(A'), b, 'LU3');
+    x = mplinsolve(f, b, 'LU3', struct('tr', 1));
+    t_is(x, ex, 12, [t 'x (full A)']);
+    t_is(norm(b - A*x), 0, 12, [t '||b - A*x|| (full A)']);
+end
+t = 'transposed LU, nout = 3, vec = 1, thresh = 1 : ';
+opt = struct('nout', 3, 'vec', 1, 'thresh', 1);
+[x, f] = mplinsolve(A', b, 'LU', opt);
+opt.tr = 1;
+x = mplinsolve(f, b, 'LU', opt);
+t_is(x, ex, 12, [t 'x']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+if skipcrash
+    t_skip(2, [t 'potential MATLAB crash with non-sparse A']);
+else
+    opt = struct('nout', 3, 'vec', 1, 'thresh', 1);
+    [x, f] = mplinsolve(full(A'), b, 'LU', opt);
+    opt.tr = 1;
+    x = mplinsolve(f, b, 'LU', opt);
+    t_is(x, ex, 12, [t 'x (full A)']);
+    t_is(norm(b - A*x), 0, 12, [t '||b - A*x|| (full A)']);
+end
+
+t = 'transposed LU3a : ';
+f = mplinsolve(A', [], 'LU3a');
+x = mplinsolve(f, b, 'LU3a', struct('tr', 1));
+t_is(x, ex, 12, [t 'x']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+if skipcrash
+    t_skip(2, [t 'potential MATLAB crash with non-sparse A']);
+else
+    f = mplinsolve(full(A'), [], 'LU3a');
+    x = mplinsolve(f, b, 'LU3a', struct('tr', 1));
+    t_is(x, ex, 12, [t 'x (full A)']);
+    t_is(norm(b - A*x), 0, 12, [t '||b - A*x|| (full A)']);
+end
+t = 'transposed LU, nout = 3, vec = 1 : ';
+opt = struct('nout', 3, 'vec', 1);
+f = mplinsolve(A', [], 'LU', opt);
+opt.tr = 1;
+x = mplinsolve(f, b, 'LU', opt);
+t_is(x, ex, 12, [t 'x']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+if skipcrash
+    t_skip(2, [t 'potential MATLAB crash with non-sparse A']);
+else
+    opt = struct('nout', 3, 'vec', 1);
+    [x, f] = mplinsolve(full(A'), b, 'LU', opt);
+    opt.tr = 1;
+    x = mplinsolve(f, b, 'LU', opt);
+    t_is(x, ex, 12, [t 'x (full A)']);
+    t_is(norm(b - A*x), 0, 12, [t '||b - A*x|| (full A)']);
+end
+
+t = 'transposed LU4 : ';
+[x1, f] = mplinsolve(A', b, 'LU4');
+x = mplinsolve(f, b, 'LU4', struct('tr', 1));
+t_is(x, ex, 12, [t 'x']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+t = 'transposed LU, nout = 4, vec = 1 : ';
+opt = struct('nout', 4, 'vec', 1);
+f = mplinsolve(A', [], 'LU', opt);
+opt.tr = 1;
+x = mplinsolve(f, b, 'LU', opt);
+t_is(x, ex, 12, [t 'x']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+
+t = 'transposed LU5 : ';
+f = mplinsolve(A', [], 'LU5');
+x = mplinsolve(f, b, 'LU5', struct('tr', 1));
+t_is(x, ex, 12, [t 'x']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+t = 'transposed LU, nout = 5, vec = 1 : ';
+opt = struct('nout', 5, 'vec', 1);
+f = mplinsolve(A', [], 'LU', opt);
+opt.tr = 1;
+x = mplinsolve(f, b, 'LU', opt);
+t_is(x, ex, 12, [t 'x']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+
+t = 'transposed LU3m : ';
+[x1, f] = mplinsolve(A', b, 'LU3m');
+x = mplinsolve(f, b, 'LU3m', struct('tr', 1));
+t_is(x, ex, 12, [t 'x']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+if skipcrash
+    t_skip(2, [t 'potential MATLAB crash with non-sparse A']);
+else
+    f = mplinsolve(full(A'), [], 'LU3m');
+    x = mplinsolve(f, b, 'LU3m', struct('tr', 1));
+    t_is(x, ex, 12, [t 'x (full A)']);
+    t_is(norm(b - A*x), 0, 12, [t '||b - A*x|| (full A)']);
+end
+t = 'transposed LU, nout = 3, vec = 0, thresh = 1 : ';
+opt = struct('nout', 3, 'vec', 0, 'thresh', 1);
+f = mplinsolve(A', [], 'LU', opt);
+opt.tr = 1;
+x = mplinsolve(f, b, 'LU', opt);
+t_is(x, ex, 12, [t 'x']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+if skipcrash
+    t_skip(2, [t 'potential MATLAB crash with non-sparse A']);
+else
+    opt = struct('nout', 3, 'vec', 0, 'thresh', 1);
+    [x, f] = mplinsolve(full(A'), b, 'LU', opt);
+    opt.tr = 1;
+    x = mplinsolve(f, b, 'LU', opt);
+    t_is(x, ex, 12, [t 'x (full A)']);
+    t_is(norm(b - A*x), 0, 12, [t '||b - A*x|| (full A)']);
+end
+
+t = 'transposed LU3am : ';
+[x1, f] = mplinsolve(A', b, 'LU3am');
+x = mplinsolve(f, b, 'LU3am', struct('tr', 1));
+t_is(x, ex, 12, [t 'x']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+if skipcrash
+    t_skip(2, [t 'potential MATLAB crash with non-sparse A']);
+else
+    f = mplinsolve(full(A'), [], 'LU3am');
+    x = mplinsolve(f, b, 'LU3am', struct('tr', 1));
+    t_is(x, ex, 12, [t 'x (full A)']);
+    t_is(norm(b - A*x), 0, 12, [t '||b - A*x|| (full A)']);
+end
+t = 'transposed LU, nout = 3, vec = 0 : ';
+opt = struct('nout', 3, 'vec', 0);
+f = mplinsolve(A', [], 'LU', opt);
+opt.tr = 1;
+x = mplinsolve(f, b, 'LU', opt);
+t_is(x, ex, 12, [t 'x']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+if skipcrash
+    t_skip(2, [t 'potential MATLAB crash with non-sparse A']);
+else
+    opt = struct('nout', 3, 'vec', 0);
+    f = mplinsolve(full(A'), [], 'LU', opt);
+    opt.tr = 1;
+    x = mplinsolve(f, b, 'LU', opt);
+    t_is(x, ex, 12, [t 'x (full A)']);
+    t_is(norm(b - A*x), 0, 12, [t '||b - A*x|| (full A)']);
+end
+
+t = 'transposed LU4m : ';
+f = mplinsolve(A', [], 'LU4m');
+x = mplinsolve(f, b, 'LU4m', struct('tr', 1));
+t_is(x, ex, 12, [t 'x']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+t = 'transposed LU, nout = 4, vec = 0 : ';
+opt = struct('nout', 4, 'vec', 0);
+f = mplinsolve(A', [], 'LU', opt);
+opt.tr = 1;
+x = mplinsolve(f, b, 'LU', opt);
+t_is(x, ex, 12, [t 'x']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+
+t = 'transposed LU5m : ';
+[x1, f] = mplinsolve(A', b, 'LU5m');
+x = mplinsolve(f, b, 'LU5m', struct('tr', 1));
+t_is(x, ex, 12, [t 'x']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+t = 'transposed LU, nout = 5, vec = 0 : ';
+opt = struct('nout', 5, 'vec', 0);
+[x, f] = mplinsolve(A', b, 'LU', opt);
+opt.tr = 1;
+x = mplinsolve(f, b, 'LU', opt);
+t_is(x, ex, 12, [t 'x']);
+t_is(norm(b - A*x), 0, 12, [t '||b - A*x||']);
+
 %% PARDISO
 if have_feature('pardiso')
     if have_feature('pardiso_object')
@@ -591,6 +1029,12 @@ if have_feature('pardiso')
     t_is(x, ex, tols(1), [t 'x']);
     t_is(norm(b - A*x), 0, tols(2), [t '||b - A*x||']);
 
+    t = 'PARDISO (direct, transpose) : ';
+    opt = struct('pardiso', struct('solver', 0, 'tr', 1, 'verbose', vb));
+    x = mplinsolve(A', b, 'PARDISO', opt);
+    t_is(x, ex, tols(1), [t 'x']);
+    t_is(norm(b - A*x), 0, tols(2), [t '||b - A*x||']);
+
     t = 'PARDISO (direct, symmetric indefinite) : ';
     opt = struct('pardiso', struct('solver', 0, 'mtype', -2, 'verbose', vb));
     x = mplinsolve(A, b, 'PARDISO', opt);
@@ -603,7 +1047,7 @@ if have_feature('pardiso')
     t_is(x, ex, tols(5), [t 'x']);
     t_is(norm(b - A*x), 0, tols(6), [t '||b - A*x||']);
 else
-    t_skip(6, [t ' not available']);
+    t_skip(8, ['PARDISO not available']);
 end
 
 if isoctave

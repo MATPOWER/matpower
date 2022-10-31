@@ -145,7 +145,7 @@
 \newcommand{\mipsurl}[0]{https://github.com/MATPOWER/mips}
 \newcommand{\mipslink}[0]{\href{\mipsurl}{\mips{}}}
 \newcommand{\mipsname}[0]{{{\bf M}{\sc atpower} \textbf{I}nterior \textbf{P}oint \textbf{S}olver}}
-\newcommand{\mipsver}[0]{1.4}
+\newcommand{\mipsver}[0]{1.5-dev}
 \newcommand{\mpom}[0]{\mbox{MP-Opt-Model}}
 \newcommand{\mpomurl}[0]{https://github.com/MATPOWER/mp-opt-model}
 \newcommand{\mpomlink}[0]{\href{\mpomurl}{\mpom{}}}
@@ -238,7 +238,7 @@ User's Manual}
 \vfill
 \begin{center}
 {\scriptsize
-\copyright~2009--2020~\PSERC{}\\
+\copyright~2009--2022~\PSERC{}\\
 All Rights Reserved}
 \end{center}
 
@@ -961,6 +961,10 @@ The \code{mplinsolve} function provides a common interface to several different 
 x = mplinsolve(A, b);
 x = mplinsolve(A, b, solver);
 x = mplinsolve(A, b, solver, opt);
+x = mplinsolve(factors, b, ...);
+factors = mplinsolve(A);
+factors = mplinsolve(A, [], ...);
+[x, factors] = mplinsolve(A, b, 'LU' ...);
 \end{Code}
 
 The \code{solver} argument can be one of the following:
@@ -972,6 +976,25 @@ The \code{solver} argument can be one of the following:
 \item \codeq{PARDISO} -- use optional third-party \pardiso{} solver\footnote{Requires the installation of an optional package. See Appendix~\ref{app:pardiso} for details.}
 \end{itemize}
 See \code{help mplinsolve} for more details.
+
+As of version 1.5, \code{mplinsolve{}} can optionally return a struct containing the matrix LU factorization. It can then use these matrix factors to solve systems with different right-hand-sides by passing the struct in place of the $A$ matrix to subsequent calls. Transposed systems can be solved by setting \code{opt.tr} to 1, including when providing the matrix factors for the original, non-transposed system.
+
+For example, to solve $A x_i = b_i$ for $x_i$ for various values of $b_i$, use the following.
+\begin{Code}
+factors = mplinsolve(A);
+x1 = mplinsolve(factors, b1);
+x2 = mplinsolve(factors, b2);
+x3 = mplinsolve(factors, b3);
+...
+\end{Code}
+Similarly, to solve $\trans{A} y_i = c_i$ for $y_i$ for various values of $c_i$, from the previously computed factors of the original $A$, use the following.
+\begin{Code}
+opt = struct('tr', 1);
+y1 = mplinsolve(factors, c1, 'LU', opt);
+y2 = mplinsolve(factors, c2, 'LU', opt);
+y3 = mplinsolve(factors, c3, 'LU', opt);
+...
+\end{Code}
 
 Note that \mips{} uses \code{mplinsolve} to solve the Newton update step in \eqref{eq:ipm_reduced_system}.
 
@@ -1260,7 +1283,7 @@ The \href{https://matpower.org/docs/MIPS-manual-1.3.1.pdf}{\mips{} 1.3.1 User's 
 \subsection{Version 1.4 -- released Oct 8, 2020}
 \label{app:v14}
 
-The \href{https://matpower.org/docs/MIPS-manual-1.3.2.pdf}{\mips{} 1.4 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MIPS-manual-1.4.pdf}}
+The \href{https://matpower.org/docs/MIPS-manual-1.4.pdf}{\mips{} 1.4 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MIPS-manual-1.4.pdf}}
 
 \subsubsection*{New Features}
 \begin{itemize}
@@ -1290,6 +1313,37 @@ The \href{https://matpower.org/docs/MIPS-manual-1.3.2.pdf}{\mips{} 1.4 User's Ma
 \subsubsection*{Incompatible Changes}
 \begin{itemize}
 \item Calling \code{mips()} with \code{opt.linsolver} set to \codeq{PARDISO} now results in a fatal error if \pardiso{} is not installed, rather than warning and continuing with the default linear solver.
+\end{itemize}
+
+
+\subsection{Version 1.5 -- released ??? ?, 2022}
+\label{app:v15}
+
+The \href{https://matpower.org/docs/MIPS-manual-1.5.pdf}{\mips{} 1.5 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MIPS-manual-1.5.pdf}}
+
+\subsubsection*{New Features}
+\begin{itemize}
+\item Add to \code{mplinsolve()} the ability to return a struct containing the matrix LU factorization, and to reuse this pre-factored matrix to solve additional systems with different right-hand-sides by passing the struct in place of the A matrix to subsequent calls.
+\item Add option to \code{mplinsolve()} to solve transposed systems by setting \code{opt.tr} to 1, including when providing the pre-factored matrix for the original, non-transposed system.
+\item New functions:
+    \begin{itemize}
+    \item \code{foo} does bar ...
+    \end{itemize}
+\end{itemize}
+
+\subsubsection*{Bugs Fixed}
+\begin{itemize}
+\item 
+\end{itemize}
+
+\subsubsection*{Other Changes}
+\begin{itemize}
+\item 
+\end{itemize}
+
+\subsubsection*{Incompatible Changes}
+\begin{itemize}
+\item 
 \end{itemize}
 
 
