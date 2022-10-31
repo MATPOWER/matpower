@@ -1,0 +1,297 @@
+% macros for use in math, both for sphinx latex and HTML MathJax
+\newcommand{\dg}{\sp\dagger}                            % hermitian conjugate
+\newcommand{\trans}[1]{{#1}^{\mathsf{T}}}               % transpose
+\newcommand{\conj}[1]{{#1}^{\ast}}                      % complex conjugate
+\newcommand{\hc}[1]{{#1}^{\dg}}                         % hermitian conjugate
+\newcommand{\hconj}[1]{{#1}^{+}}                        % hermitian conjugate
+\newcommand{\diag}[1]{\left[^\smallsetminus{#1}_\smallsetminus\right]}  % diagonal
+%\-newcommand{\diag}[1]{\left[{#1}\right]}                % diagonal
+\newcommand{\diagg}[1]{\left[\smash{#1}\right]}         % diagonal (smashed)
+\newcommand{\cdiag}[1]{\conj{\diag{#1}}}                % conjugate diagonal
+\newcommand{\der}[2]{\frac{\partial{#1}}{\partial{#2}}} % partial derivative
+\newcommand{\dersx}[2]{\frac{\partial^2{#1}}{\partial{#2}^2}} % 2nd partial derivative
+\newcommand{\dersxy}[3]{\frac{\partial^2{#1}}{\partial{#2}\partial{#3}}} % 2nd partial derivative
+
+\newcommand{\cscal}[1]{\mathrm{#1}}         % complex scalar
+\newcommand{\rvec}[1]{{\boldsymbol{#1}}}    % real vector (lower case)
+\newcommand{\cvec}[1]{\mathbf{#1}}          % complex vector (lower case)
+\newcommand{\rmat}[1]{{\boldsymbol{#1}}}    % real matrix (upper case)
+\newcommand{\cmat}[1]{\mathbf{#1}}          % complex matrix (upper case)
+\newcommand{\rvecG}[1]{{\boldsymbol{#1}}}   % real vector (lower case)
+\newcommand{\cvecG}[1]{\boldsymbol{#1}}     % complex vector (lower case, use \uptheta, etc.)
+\newcommand{\rmatG}[1]{\boldsymbol{\mathit{#1}}}    % real vector (Greek)
+\newcommand{\cmatG}[1]{\mathbf{#1}}         % complex vector (Greek)
+\newcommand{\param}[1]{\underline{#1}}      % parameter (vs var, fcn, etc)
+\newcommand{\ov}[1]{{\overline{#1}}}
+
+\newcommand{\zeros}[0]{\rvec{0}}
+\newcommand{\ones}[1]{\rvec{1}_{#1}}
+\newcommand{\onest}[1]{\trans{\rvec{1}}_{#1}}
+\newcommand{\Id}[1]{\diag{\ones{#1}}}
+%\-newcommand{\R}{\mathbf{R}}
+\newcommand{\R}{\mathbb{R}}         % requires \usepackage{amsfonts|bbold}
+%\-newcommand{\R}{\varmathbb{R}}      % requires \usepackage{txfonts}
+%\-newcommand{\R}{\mathds{R}}         % requires \usepackage{dsfont}
+%\-newcommand{\R}{\mathbbm{R}}        % requires \usepackage{bbm}
+\newcommand{\C}{\mathbb{C}}         % requires \usepackage{amsfonts}
+
+\newcommand{\av}{\cvec{a}}
+\newcommand{\bv}{\cvec{b}}
+\newcommand{\cv}{\cvec{c}}
+
+\newcommand{\f}{\cscal{f}}
+\newcommand{\F}{\cvec{f}}
+\newcommand{\g}{\rvec{g}}
+\newcommand{\G}{\cvec{g}}
+\newcommand{\h}{\rvec{h}}
+\newcommand{\HH}{\cvec{h}}      % \H already defined
+
+\newcommand{\x}{\rvec{x}}
+\newcommand{\y}{\rvec{y}}
+\newcommand{\z}{\rvec{z}}
+
+\newcommand{\X}{\cvec{x}}
+\newcommand{\Z}{\cvec{z}}
+\newcommand{\A}{\cmat{A}}
+\newcommand{\B}{\cmat{B}}
+\newcommand{\alphav}{\rvecG{\alpha}}
+\newcommand{\lam}{\rvecG{\lambda}}
+\newcommand{\lamh}{\hat{\lam}}
+\newcommand{\muv}{\rvecG{\mu}}
+\newcommand{\muhv}{\hat{\muv}}
+
+\newcommand{\vv}{\rvec{v}}
+\newcommand{\vvi}[1]{\cscal{v}_{#1}}
+\newcommand{\V}{\cvec{v}}
+\newcommand{\Vh}{\hat{\V}}
+\newcommand{\Vc}{\conj{\V}}
+\newcommand{\Vhc}{\conj{\Vh}}
+\newcommand{\dV}{\diag{\V}}
+\newcommand{\dVh}{\diag{\Vh}}
+\newcommand{\dVc}{\diag{\Vc}}
+\newcommand{\dVhc}{\diag{\Vhc}}
+
+\newcommand{\inV}{\cvec{\Lambda}}
+\newcommand{\inVh}{\hat{\inV}}
+\newcommand{\inVc}{\conj{\inV}}
+\newcommand{\inVhc}{\conj{\inVh}}
+\newcommand{\dinV}{\diagg{\inV}}
+\newcommand{\dinVh}{\diagg{\inVh}}
+\newcommand{\dinVc}{\diagg{\inVc}}
+\newcommand{\dinVhc}{\diagg{\inVhc}}
+
+\newcommand{\va}[0]{\theta}
+\newcommand{\vai}[1]{\va_{#1}}
+\newcommand{\Va}[0]{\rvec{\va}}
+\newcommand{\Vah}[0]{\hat{\Va}}
+
+\newcommand{\vm}[0]{\nu}
+\newcommand{\vmi}[1]{\nu_{#1}}
+\newcommand{\Vm}[0]{\rvecG{\nu}}
+\newcommand{\dVm}{\diag{\Vm}}
+\newcommand{\dVmi}{\dVm^{-1}}
+
+\newcommand{\Vmh}{\hat{\Vm}}
+\newcommand{\dVmh}{\diag{\Vmh}}
+\newcommand{\dVmhi}{\dVmh^{-1}}
+
+\newcommand{\vr}{u}
+\newcommand{\vri}[1]{u_{#1}}
+\newcommand{\vi}{w}
+\newcommand{\vii}[1]{w_{#1}}
+\newcommand{\Vr}{\rvec{u}}
+\newcommand{\Vi}{\rvec{w}}
+\newcommand{\dVr}{\diag{\Vr}}
+\newcommand{\dVi}{\diag{\Vi}}
+\newcommand{\Vrh}{\hat{\Vr}}
+\newcommand{\Vih}{\hat{\Vi}}
+\newcommand{\dVrh}{\diag{\Vrh}}
+\newcommand{\dVih}{\diag{\Vih}}
+
+\newcommand{\E}{\cvec{e}}
+\newcommand{\Eh}{\hat{\E}}
+\newcommand{\Ec}{\conj{\E}}
+\newcommand{\Ehc}{\conj{\Eh}}
+\newcommand{\dE}{\diag{\E}}
+\newcommand{\dEh}{\diag{\Eh}}
+\newcommand{\dEc}{\diag{\Ec}}
+\newcommand{\dEhc}{\diag{\Ehc}}
+
+\newcommand{\zr}{{z_r}}
+\newcommand{\zi}{{z_i}}
+\newcommand{\Zr}{{\rvec{z}_r}}
+\newcommand{\Zi}{{\rvec{z}_i}}
+
+\newcommand{\dlam}{\diagg{\lam}}
+\newcommand{\dlamh}{\diagg{\lamh}}
+\newcommand{\dlamva}{\diagg{\lam_\va}}
+\newcommand{\dlamvm}{\diagg{\lam_\vm}}
+\newcommand{\dlamvr}{\diagg{\lam_\vr}}
+\newcommand{\dlamvi}{\diagg{\lam_\vi}}
+\newcommand{\dlamzr}{\diagg{\lam_\zr}}
+\newcommand{\dlamzi}{\diagg{\lam_\zi}}
+\newcommand{\dlamhva}{\diagg{\lamh_\va}}
+\newcommand{\dlamhvm}{\diagg{\lamh_\vm}}
+\newcommand{\dlamhvr}{\diagg{\lamh_\vr}}
+\newcommand{\dlamhvi}{\diagg{\lamh_\vi}}
+\newcommand{\dlamhzr}{\diagg{\lamh_\zr}}
+\newcommand{\dlamhzi}{\diagg{\lamh_\zi}}
+\newcommand{\dmu}{\diag{\muv}}
+\newcommand{\dmuh}{\diag{\muhv}}
+
+\newcommand{\kk}{\rvec{k}}
+\newcommand{\J}{\param{\rmat{J}}}
+\newcommand{\Jt}{\trans{\J}}
+\newcommand{\Jk}[1]{\J_{\kk_#1}}
+\newcommand{\Ah}{\hat{\A}}
+\newcommand{\Fh}{\hat{\F}}
+\newcommand{\Gh}{\hat{\G}}
+\newcommand{\gh}{\hat{\g}}
+
+\newcommand{\fmax}{\param{\rvec{f}}_\mathrm{max}}
+% \-newcommand{\gS}{\g^S}
+% \-newcommand{\gI}{\g^I}
+\newcommand{\gP}{\g^P}
+% \-newcommand{\gSk}[1]{\g^{S,#1}}
+% \-newcommand{\gIk}[1]{\g^{I,#1}}
+\newcommand{\gPk}[1]{\g^{P,#1}}
+
+\newcommand{\fhmax}{\hat{\param{\rvec{f}}}_\mathrm{max}}
+\newcommand{\ghP}{\gh^P}
+\newcommand{\ghPk}[1]{\gh^{P,#1}}
+
+\newcommand{\GS}{\G^S}
+\newcommand{\GI}{\G^I}
+\newcommand{\GSk}[1]{\G^{S,#1}}
+\newcommand{\GIk}[1]{\G^{I,#1}}
+\newcommand{\GSsys}{\GSk{\mathrm{sys}}}
+\newcommand{\GIsys}{\GIk{\mathrm{sys}}}
+\newcommand{\gPsys}{\gPk{\mathrm{sys}}}
+
+\newcommand{\GhS}{\Gh^S}
+\newcommand{\GhI}{\Gh^I}
+\newcommand{\GhSk}[1]{\Gh^{S,#1}}
+\newcommand{\GhIk}[1]{\Gh^{I,#1}}
+\newcommand{\GhSsys}{\GhSk{\mathrm{sys}}}
+\newcommand{\GhIsys}{\GhIk{\mathrm{sys}}}
+\newcommand{\ghPsys}{\ghPk{\mathrm{sys}}}
+
+\newcommand{\Ilin}{\cvec{i}^{lin}}
+\newcommand{\Ilink}{\cvec{i}^{lin, k}}
+\newcommand{\Ilinc}{\conj{\Ilin}}
+\newcommand{\dIlin}{\diag{\Ilin}}
+\newcommand{\dIlinc}{\diag{\Ilinc}}
+% \-newcommand{\dIlinc}{\conj{\dIlin}}
+
+\newcommand{\Ilinh}{\hat{{\cvec{i}}}^{lin}}
+\newcommand{\Ilinhk}{\hat{\cvec{i}}^{lin, k}}
+\newcommand{\Ilinhc}{\conj{\Ilinh}}
+\newcommand{\dIlinh}{\diag{\Ilinh}}
+\newcommand{\dIlinhc}{\diag{\Ilinhc}}
+% \-newcommand{\dIlinc}{\conj{\dIlin}}
+
+\newcommand{\Slin}{\cvec{s}^{lin}}
+\newcommand{\Slink}{\cvec{s}^{lin, k}}
+\newcommand{\Slinc}{\conj{\Slin}}
+\newcommand{\dSlin}{\diag{\Slin}}
+\newcommand{\dSlinc}{\diag{\Slinc}}
+% \-newcommand{\dSlinc}{\conj{\dSlin}}
+
+\newcommand{\Slinh}{\hat{\cvec{s}}^{lin}}
+\newcommand{\Slinhk}{\hat{\cvec{s}}^{lin, k}}
+\newcommand{\Slinhc}{\conj{\Slinh}}
+\newcommand{\dSlinh}{\diag{\Slinh}}
+\newcommand{\dSlinhc}{\diag{\Slinhc}}
+% \-newcommand{\dSlinc}{\conj{\dSlin}}
+
+\newcommand{\Inln}{\cvec{i}^{nln}}
+\newcommand{\Inlnk}{\cvec{i}^{nln, k}}
+
+\newcommand{\Snln}{\cvec{s}^{nln}}
+\newcommand{\Snlnk}{\cvec{s}^{nln, k}}
+
+\newcommand{\Inlnh}{\hat{\cvec{i}}^{nln}}
+\newcommand{\Inlnhk}{\hat{\cvec{i}}^{nln, k}}
+
+\newcommand{\Snlnh}{\hat{\cvec{s}}^{nln}}
+\newcommand{\Snlnhk}{\hat{\cvec{s}}^{nln, k}}
+
+\newcommand{\Aa}{\param{\rmat{A}}}
+\newcommand{\BB}{\param{\rmat{B}}}
+\newcommand{\CC}{\param{\rmat{C}}}
+\newcommand{\DD}{\param{\rmat{D}}}
+\newcommand{\YY}{\param{\cmat{Y}}}
+\newcommand{\iv}{\param{\cvec{i}}}
+\newcommand{\pv}{\param{\rvec{p}}}
+\newcommand{\sv}{\param{\cvec{s}}}
+\newcommand{\KK}{\param{\rmat{K}}}
+\newcommand{\LL}{\param{\cmat{L}}}
+\newcommand{\MM}{\param{\cmat{M}}}
+\newcommand{\NN}{\param{\cmat{N}}}
+
+\newcommand{\BBh}{\hat{\BB}}
+\newcommand{\YYh}{\hat{\YY}}
+\newcommand{\ivh}{\hat{\iv}}
+\newcommand{\pvh}{\hat{\pv}}
+\newcommand{\svh}{\hat{\sv}}
+\newcommand{\CCh}{\hat{\CC}}
+\newcommand{\KKh}{\hat{\KK}}
+\newcommand{\LLh}{\hat{\LL}}
+\newcommand{\MMh}{\hat{\MM}}
+\newcommand{\NNh}{\hat{\NN}}
+
+\newcommand{\AT}{\trans{\Aa}}
+\newcommand{\CT}{\trans{\CC}}
+\newcommand{\DT}{\trans{\DD}}
+
+\newcommand{\Ap}{\Aa'}
+\newcommand{\Cp}{\CC\:\!'}
+\newcommand{\Dp}{\DD'}
+\newcommand{\ApT}{\trans{\Ap}}
+\newcommand{\CpT}{\trans{\Cp}}
+\newcommand{\DpT}{\trans{\Dp}}
+
+\newcommand{\ChT}{\trans{\CCh}}
+
+\newcommand{\Lc}{\conj{\LL}}
+\newcommand{\LcT}{\trans{\Lc}}
+\newcommand{\Lhc}{\conj{\LLh}}
+\newcommand{\LhcT}{\trans{\Lhc}}
+
+\newcommand{\MT}{\trans{\MM}}
+\newcommand{\Mc}{\conj{\MM}}
+\newcommand{\McT}{\trans{\Mc}}
+\newcommand{\dMTlam}{\diag{\MT \lam}}
+
+\newcommand{\MhT}{\trans{\MMh}}
+\newcommand{\Mhc}{\conj{\MMh}}
+\newcommand{\MhcT}{\trans{\Mhc}}
+\newcommand{\dMhTlam}{\diag{\MhT \lamh}}
+
+\newcommand{\Nc}{\conj{\NN}}
+\newcommand{\NcT}{\trans{\Nc}}
+\newcommand{\Nhc}{\conj{\NNh}}
+\newcommand{\NhcT}{\trans{\Nhc}}
+
+\newcommand{\YT}{\trans{\YY}}
+\newcommand{\Yc}{\conj{\YY}}
+\newcommand{\YcT}{\trans{\Yc}}
+\newcommand{\dYTlam}{\diag{\YT \lam}}
+
+\newcommand{\YhT}{\trans{\YYh}}
+\newcommand{\Yhc}{\conj{\YYh}}
+\newcommand{\YhcT}{\trans{\Yhc}}
+\newcommand{\dYhTlam}{\diag{\YhT \lamh}}
+
+\newcommand{\I}{\cvec{i}^S}
+\newcommand{\s}{\cvec{s}^I}
+\newcommand{\Ih}{\hat{\cvec{i}}^S}
+\newcommand{\Sh}{\hat{\cvec{s}}^I}
+
+\newcommand{\AtX}{\AT \X}
+\newcommand{\CtV}{\CT \V}
+\newcommand{\dCtV}{\diag{\CtV}}
+\newcommand{\DtZ}{\DT \Z}
+\newcommand{\ApTx}{\ApT \x}
+\newcommand{\CpTv}{\CpT \vv}
+\newcommand{\DpTz}{\DpT \z}

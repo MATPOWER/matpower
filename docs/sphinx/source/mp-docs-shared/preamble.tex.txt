@@ -1,0 +1,60 @@
+% \usepackage[titles]{tocloft}
+% \cftsetpnumwidth {1.25cm}\cftsetrmarg{1.5cm}
+% \setlength{\cftchapnumwidth}{0.75cm}
+% \setlength{\cftsecindent}{\cftchapnumwidth}
+% \setlength{\cftsecnumwidth}{1.25cm}
+\usepackage{bm}     %% bold math, for bold italics uppercase Greek characters
+\usepackage{upgreek}
+\usepackage{amsfonts}
+\usepackage{amstext}
+\usepackage{soul}
+\usepackage{relsize}
+\newcommand{\matpower}[0]{{M{\smaller{ATPOWER}}}}
+\newcommand{\matpoweri}[0]{{\emph{M{\smaller{ATPOWER}}}}}
+\newcommand{\matpowerb}[0]{{\textbf{M{\smaller{ATPOWER}}}}}
+% \newcommand{\matpoweri}[0]{{\emph{M}{\smaller{\emph{ATPOWER}}}}}
+% \newcommand{\matpower}[0]{{\sc Matpower}}
+\newcommand{\matlab}[0]{{\sc Matlab}}
+\newcommand{\matlabr}[0]{{\matlab{} \textsuperscript{\tiny \textregistered}}}
+\newcommand{\pserc}[0]{{\sc PSerc}}
+\newcommand{\mpver}[0]{8.0-dev}
+\newcommand{\mumurl}[0]{https://matpower.org/docs/MATPOWER-manual-\mpver.pdf}
+\newcommand{\mum}[0]{\href{\mumurl}{\matpower{} User's Manual}}
+
+\newcommand{\mptest}[0]{{MP-Test}}
+\newcommand{\mptesturl}[0]{{https://github.com/MATPOWER/mptest}}
+\newcommand{\mptestlink}[0]{\href{\mptesturl}{\mptest{}}}
+\newcommand{\mptestname}[0]{{{\bf M}{\sc atpower} \textbf{I}nterior \textbf{P}oint \textbf{S}olver}}
+\newcommand{\mptestver}[0]{1.4}
+\newcommand{\mptestmanurl}[0]{https://matpower.org/docs/MIPS-manual-\mptestver.pdf}
+\newcommand{\mptestman}[0]{\href{\mptestmanurl}{\mptest{} User's Manual}}
+
+\newcommand{\mips}[0]{{MIPS}}
+\newcommand{\mipsurl}[0]{https://github.com/MATPOWER/mips}
+\newcommand{\mipslink}[0]{\href{\mipsurl}{\mips{}}}
+\newcommand{\mipsname}[0]{{{\bf M}{\sc atpower} \textbf{I}nterior \textbf{P}oint \textbf{S}olver}}
+\newcommand{\mipsver}[0]{1.4}
+\newcommand{\mipsmanurl}[0]{https://matpower.org/docs/MIPS-manual-\mipsver.pdf}
+\newcommand{\mipsman}[0]{\href{\mipsmanurl}{\mips{} User's Manual}}
+
+\newcommand{\mpom}[0]{\mbox{MP-Opt-Model}}
+\newcommand{\mpomurl}[0]{https://github.com/MATPOWER/mp-opt-model}
+\newcommand{\mpomlink}[0]{\href{\mpomurl}{\mpom{}}}
+\newcommand{\mpomname}[0]{\mpom{}}
+\newcommand{\mpomver}[0]{3.0}
+\newcommand{\mpommanurl}[0]{https://matpower.org/docs/MP-Opt-Model-manual-\mpomver.pdf}
+\newcommand{\currentmpommanurl}[0]{https://matpower.org/docs/MP-Opt-Model-manual.pdf}
+\newcommand{\mpomman}[0]{\href{\mpommanurl}{\mpom{} User's Manual}}
+
+\newcommand{\most}[0]{{MOST}}
+\newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
+\newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
+\newcommand{\mostlink}[0]{\href{\mosturl}{\most{}}}
+\newcommand{\mostver}[0]{1.1}
+\newcommand{\mostmanurl}[0]{https://matpower.org/docs/MOST-manual-\mostver.pdf}
+\newcommand{\mostman}[0]{\href{\mostmanurl}{\most{} User's Manual}}
+
+% used by sphinx role hl to highlight text
+\newcommand{\DUrolehl}{\hl}
+
+\input{mathCmds.tex.txt}

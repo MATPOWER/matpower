@@ -1,0 +1,145 @@
+/* matpower.css */
+/* 
+MathJax {
+    vertical-align: middle;
+}
+div.math {
+    vertical-align: middle;
+}
+.eqno {
+    float: right;
+}
+ */
+
+/* From https://github.com/readthedocs/sphinx_rtd_theme/pull/383#issuecomment-348803509 */
+div.math {
+    position: relative;
+    padding-right: 2.5em;
+}
+.eqno {
+    height: 100%;
+    position: absolute;
+    right: 0;
+    padding-left: 5px;
+    padding-bottom: 5px;
+    padding-right: 1px;
+}
+.eqno:before {
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+    content: "";
+}
+.eqno .headerlink {
+    display: none;
+    visibility: hidden;
+    font-size: 14px;
+    padding-left: .3em;
+}
+.eqno:hover .headerlink {
+    display: inline-block;
+    visibility: hidden;
+    margin-right: -1.05em;
+}
+.eqno .headerlink:after {
+    visibility: visible;
+    content: "\f0c1";
+    font-family: FontAwesome;
+    display: inline-block;
+    margin-left: -.9em;
+}
+.MathJax_Display {
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+/*
+..eqno {
+    margin-left: 5px;
+    float: right;
+}
+.math .headerlink {
+    display: none;
+    visibility: hidden;
+}
+.math:hover .headerlink {
+    display: inline-block;
+    visibility: visible;
+    margin-right: -0.7em;
+}
+*/
+
+/* admonition title */
+.rst-content .note .admonition-title, .rst-content .note .wy-alert-title, .rst-content .seealso .admonition-title, .rst-content .seealso .wy-alert-title, .rst-content .wy-alert-info.admonition-todo .admonition-title, .rst-content .wy-alert-info.admonition-todo .wy-alert-title, .rst-content .wy-alert-info.admonition .admonition-title, .rst-content .wy-alert-info.admonition .wy-alert-title, .rst-content .wy-alert-info.attention .admonition-title, .rst-content .wy-alert-info.attention .wy-alert-title, .rst-content .wy-alert-info.caution .admonition-title, .rst-content .wy-alert-info.caution .wy-alert-title, .rst-content .wy-alert-info.danger .admonition-title, .rst-content .wy-alert-info.danger .wy-alert-title, .rst-content .wy-alert-info.error .admonition-title, .rst-content .wy-alert-info.error .wy-alert-title, .rst-content .wy-alert-info.hint .admonition-title, .rst-content .wy-alert-info.hint .wy-alert-title, .rst-content .wy-alert-info.important .admonition-title, .rst-content .wy-alert-info.important .wy-alert-title, .rst-content .wy-alert-info.tip .admonition-title, .rst-content .wy-alert-info.tip .wy-alert-title, .rst-content .wy-alert-info.warning .admonition-title, .rst-content .wy-alert-info.warning .wy-alert-title, .rst-content .wy-alert.wy-alert-info .admonition-title, .wy-alert.wy-alert-info .rst-content .admonition-title, .wy-alert.wy-alert-info .wy-alert-title {
+    background: #568085;
+    /*background: #e5ba40;*/        /* yellow */
+}
+/* admonition body */
+.rst-content .note, .rst-content .seealso, .rst-content .wy-alert-info.admonition, .rst-content .wy-alert-info.admonition-todo, .rst-content .wy-alert-info.attention, .rst-content .wy-alert-info.caution, .rst-content .wy-alert-info.danger, .rst-content .wy-alert-info.error, .rst-content .wy-alert-info.hint, .rst-content .wy-alert-info.important, .rst-content .wy-alert-info.tip, .rst-content .wy-alert-info.warning, .wy-alert.wy-alert-info {
+    background-color: #e9f4f0;
+    /*background-color: #faf1d9;*/    /* yellow */
+}
+/* class */
+html.writer-html4 .rst-content dl:not(.docutils)>dt, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.glossary):not(.simple)>dt {
+    /* teal */
+    background-color: #d2e9e1;
+    border-top-color: #8eaca6;
+    color: #568085;
+    /*background-color: #faf1d9;*/    /* yellow */
+}
+html.writer-html4 .rst-content dl:not(.docutils) dl:not(.field-list)>dt, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.glossary):not(.simple) dl:not(.field-list):not(.attribute):not(.method):not(.staticmethod)>dt {
+    padding-left: 6px;
+    /* teal */
+    background-color: #e7f3ef;
+    border-left-color: #8eaca6;
+    
+    /* yellow */
+/*    background-color: #faf1d9;
+    border-left-color: #e5ba40;*/
+}
+
+
+/* standard links */
+a {
+    color: #568085;
+}
+a:visited {
+    color: #8eaca6; /* or #568085 */
+}
+a:hover {
+    color: #8eaca6;
+}
+
+/* menu */
+.wy-menu-vertical a {
+    color: #8eaca6;
+}
+.wy-menu-vertical a:visited {
+    color: #8eaca6;
+}
+.wy-menu-vertical a:hover {
+    color: #8eaca6;
+}
+.wy-menu-vertical a:active {
+    color: #013f53;
+    background-color: #d2e9e1;
+}
+
+/* menu header */
+.wy-menu-vertical header, .wy-menu-vertical p.caption {
+    color: #e5ba40;
+}
+
+.wy-side-nav-search .wy-dropdown>a, .wy-side-nav-search>a {
+    color: #faf1d9;
+}
+
+/* allow text wrapping in table cells */
+.wy-table-responsive table td {
+    white-space: normal;
+}
+
+.hl {
+    background-color: #fd0;
+}

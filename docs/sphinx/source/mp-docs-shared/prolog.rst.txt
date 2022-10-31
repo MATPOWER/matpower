@@ -1,0 +1,45 @@
+.. role:: ml(code)
+   :language: matlab
+
+.. role:: raw-html(raw)
+   :format: html
+
+.. role:: raw-latex(raw)
+   :format: latex
+
+.. role:: hl
+
+..
+    -------------------------------------------------------------------
+    Be sure to update version numbers in xxx-manual-x.x.pdf URLs below
+    They should match the corresponding version in premable.tex.txt
+    -------------------------------------------------------------------
+
+.. |MATPOWER| replace:: :raw-html:`M<span style="font-size:smaller">ATPOWER</span>`:raw-latex:`\matpower{}`
+.. |/MATPOWER/| replace:: :raw-html:`<em>M<span style="font-size:smaller">ATPOWER</span></em>`:raw-latex:`\matpoweri{}`
+.. |*MATPOWER*| replace:: :raw-html:`<strong>M<span style="font-size:smaller">ATPOWER</span></strong>`:raw-latex:`\matpowerb{}`
+.. |MATPOWER GitHub URL| replace:: https://github.com/MATPOWER/matpower
+.. |MUM| replace:: :raw-html:`<a href="https://matpower.org/docs/MATPOWER-manual-7.1.pdf">M<span style="font-size:smaller">ATPOWER</span> User's Manual</a>`:raw-latex:`\mum{}`
+
+.. |MATLAB| replace:: :raw-html:`M<span style="font-size:smaller">ATLAB</span>`:raw-latex:`\matlab{}`
+.. |MATLAB(R)| replace:: :raw-html:`M<span style="font-size:smaller">ATLAB&reg;</span>`:raw-latex:`\matlabr{}`
+
+.. |PSERC| replace:: :raw-html:`PS<span style="font-size:smaller">ERC</span>`:raw-latex:`\pserc{}`
+
+.. |MIPS| replace:: :raw-html:`MIPS`:raw-latex:`\mips{}`
+.. |MIPS>| replace:: :raw-html:`<a href="https://github.com/MATPOWER/mips">MIPS</a>`:raw-latex:`\mipslink{}`
+.. |MIPSname| replace:: :raw-html:`<b>M</b><span style="font-size:smaller">ATPOWER</span> <b>I</b>nterior <b>P</b>oint <b>S</b>olver`:raw-latex:`\mipsname{}`
+.. |MIPSman| replace:: :raw-html:`<a href="https://matpower.org/docs/MIPS-manual-1.4.pdf">MIPS User's Manual</a>`:raw-latex:`\mipsman{}`
+
+.. |MPTEST| replace:: :raw-html:`MP-Test`:raw-latex:`\mptest{}`
+.. |MPTEST>| replace:: :raw-html:`<a href="https://github.com/MATPOWER/mptest">MP-Test</a>`:raw-latex:`\mptestlink{}`
+.. |MPTESTman| replace:: :raw-html:`<a href="https://github.com/MATPOWER/mptest">MP-Test README</a>`:raw-latex:`\mptestman{}`
+
+.. |MPOM| replace:: :raw-html:`MP-Opt-Model`:raw-latex:`\mpom{}`
+.. |MPOM>| replace:: :raw-html:`<a href="https://github.com/MATPOWER/mp-opt-model">MP-Opt-Model</a>`:raw-latex:`\mpomlink{}`
+.. |MPOMman| replace:: :raw-html:`<a href="https://matpower.org/docs/MP-Opt-Model-manual-4.0.pdf">MP-Opt-Model User's Manual</a>`:raw-latex:`\mpomman{}`
+
+.. |MOST| replace:: :raw-html:`MOST`:raw-latex:`\most{}`
+.. |MOST>| replace:: :raw-html:`<a href="https://github.com/MATPOWER/most">MOST</a>`:raw-latex:`\mostlink{}`
+.. |MOSTname| replace:: :raw-html:`<b>M</b><span style="font-size:smaller">ATPOWER</span> <b>O</b>ptimal <b>S</b>cheduling <b>T</b>ool`:raw-latex:`\mostname{}`
+.. |MOSTman| replace:: :raw-html:`<a href="https://matpower.org/docs/MOST-manual-1.1.pdf">MOST User's Manual</a>`:raw-latex:`\mostman{}`
