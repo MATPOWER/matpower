@@ -1,1 +1,4 @@
 untracked
+docs/sphinx/build
+docs/sphinx/source/mp-docs-shared
+.vs
