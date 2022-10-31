@@ -7,6 +7,6 @@
 	remote = git@github.com:MATPOWER/most
 	branch = master
 	commit = 6824693cf7dc23701f370c4d0d071b8a159b71b5
-	parent = 8ad9e6dc13e3ec9cefb097e14d1ee7b7ef7e922b
+	parent = 41169ff846d71d673ef4a1c7c2157ccf81e3a5f0
 	method = merge
 	cmdver = 0.4.3
