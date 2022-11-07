@@ -12,7 +12,7 @@ The data model is essentially the internal representation of the input data prov
 Data Models
 -----------
 
-A data model object is primarily a container for data model element objects. All data model classes inherit from :class:`mp_data` and therefore also from :class:`mp_element_container`, and may be task-specific, as shown in :numref:`fig_data_model_classes`. For a simple power flow problem, :class:`mp_data` is used directly as a concrete class. For CPF and OPF problems, subclasses are used. In the case of CPF, :class:`mp_data_cpf` encapsulates both the base and the target cases. In the case of the OPF, :class:`mp_data_opf` includes additional input data, such as generator costs, and output data, such as nodal prices and shadow prices on line flow contraints.
+A data model object is primarily a container for data model element objects. All data model classes inherit from :class:`mp.data_model` and therefore also from :class:`mp_element_container`, and may be task-specific, as shown in :numref:`fig_data_model_classes`. For a simple power flow problem, :class:`mp.data_model` is used directly as a concrete class. For CPF and OPF problems, subclasses are used. In the case of CPF, :class:`mp.data_model_cpf` encapsulates both the base and the target cases. In the case of the OPF, :class:`mp.data_model_opf` includes additional input data, such as generator costs, and output data, such as nodal prices and shadow prices on line flow contraints.
 
 .. _fig_data_model_classes:
 .. figure:: figures/data-model-classes.*
@@ -22,7 +22,7 @@ A data model object is primarily a container for data model element objects. All
 
    Data Model Classes
 
-By convention, data model variables are named :ml:`dm` and data model classes begin with :ml:`mp_data`.
+By convention, data model variables are named :ml:`dm` and data model classes begin with :ml:`mp.data_model`.
 
 
 Building a Data Model
@@ -34,7 +34,7 @@ There are two steps to building a data model. The first is to call the construct
 .. code-block::
 
    dmc = mp_dm_converter_mpc2().build();
-   dm = mp_data();
+   dm = mp.data_model();
    dm.build('case9', dmc);
 
 The :meth:`build` method proceeds through the following stages sequentially, looping through each element at every stage.
@@ -56,7 +56,7 @@ There are a few system level parameters such as the system per-unit power base t
 Printing a Data Model
 ^^^^^^^^^^^^^^^^^^^^^
 
-The :class:`mp_data` provides a :meth:`pretty_print` method for displaying the model parameters to a pretty-printed text format. The result can be output either to the console or to a file.
+The :class:`mp.data_model` provides a :meth:`pretty_print` method for displaying the model parameters to a pretty-printed text format. The result can be output either to the console or to a file.
 
 The output is organized into sections and each element type controls its own output for each section. The default sections are:
 
