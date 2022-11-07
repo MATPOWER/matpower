@@ -57,7 +57,7 @@ The task then creates the data model converter object that corresponds to the da
    dmc_class = @mp_dm_converter_mpc2;  % data model convert class, MATPOWER case format v2
    dm_class = @mp.data_model_opf;      % data model class for OPF
    nm_class = @mp.net_model_acp;       % network model class for AC polar
-   mm_class = @mp_math_opf_acps;       % math model class for AC polar power OPF
+   mm_class = @mp.math_model_opf_acps; % math model class for AC polar power OPF
 
    % create objects
    dmc = dmc_class().build();              % create data model converter
