@@ -244,7 +244,7 @@ if nargout > 7
     mpopt.opf.return_raw_der = 1;
 end
 if use_mpe
-    task_class = @mp_task_opf_legacy;   %% set default task class
+    task_class = @mp.task_opf_legacy;   %% set default task class
 
     %% get and apply extensions
     if isfield(mpopt.exp, 'mpx') && ~isempty(mpopt.exp.mpx)

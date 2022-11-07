@@ -373,7 +373,7 @@ if ~done.flag
     [Ybus, Yf, Yt] = makeYbus(mpcb.baseMVA, mpcb.bus, mpcb.branch);
 
     if use_mpe
-        task_class = @mp_task_cpf_legacy;   %% set default task class
+        task_class = @mp.task_cpf_legacy;   %% set default task class
 
         %% get and apply extensions
         if isfield(mpopt.exp, 'mpx') && ~isempty(mpopt.exp.mpx)

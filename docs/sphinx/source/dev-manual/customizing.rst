@@ -62,7 +62,7 @@ The task class has methods that determine the classes used to create the data mo
    * - :meth:`math_model_class_default`
      - Returns the *default* class for the math model for this task.
 
-:numref:`tab_task_methods` shows the methods that determine the classes for each of the 4 objects. Each method returns a handle to a class constructor. In general, the *main* methods (the first 4 in the table) are inherited from :class:`mp_task` and only the *default* methods (the last 4) would be overridden to customize a task with new model or data model converter classes.
+:numref:`tab_task_methods` shows the methods that determine the classes for each of the 4 objects. Each method returns a handle to a class constructor. In general, the *main* methods (the first 4 in the table) are inherited from :class:`mp.task` and only the *default* methods (the last 4) would be overridden to customize a task with new model or data model converter classes.
 
 
 Element Classes

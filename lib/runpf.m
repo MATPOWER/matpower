@@ -147,7 +147,7 @@ end
 mpc = ext2int(mpc, mpopt);
 t0 = tic;
 if use_mpe
-    task_class = @mp_task_pf_legacy;    %% set default task class
+    task_class = @mp.task_pf_legacy;    %% set default task class
 
     %% get and apply extensions
     if isfield(mpopt.exp, 'mpx') && ~isempty(mpopt.exp.mpx)

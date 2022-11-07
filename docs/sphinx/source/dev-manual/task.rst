@@ -6,7 +6,7 @@ Task Object
 .. toctree::
    :maxdepth: 2
 
-The task object is the one that builds and manages the model objects in order to solve the problem of interest. The :class:`mp_task` base class implements much of the functionality, with PF, CPF and OPF subclasses, namely :class:`mp_task_pf`, :class:`mp_task_cpf`, and :class:`mp_task_opf`, respectively, specifying the model classes to use and implementing other problem-specific functionality. The typical usage pattern is simply to construct the task object for the problem of interest, then call its :meth:`run` method, passing in a struct of input data, a |MATPOWER| options struct, and an optional cell array of |MATPOWER| extensions.
+The task object is the one that builds and manages the model objects in order to solve the problem of interest. The :class:`mp.task` base class implements much of the functionality, with PF, CPF and OPF subclasses, namely :class:`mp.task_pf`, :class:`mp.task_cpf`, and :class:`mp.task_opf`, respectively, specifying the model classes to use and implementing other problem-specific functionality. The typical usage pattern is simply to construct the task object for the problem of interest, then call its :meth:`run` method, passing in a struct of input data, a |MATPOWER| options struct, and an optional cell array of |MATPOWER| extensions.
 
 Running a Task
 --------------

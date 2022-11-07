@@ -41,7 +41,7 @@ A single **task** object is created to manage the overall process. The task is s
 .. code-block::
 
    mpopt = mpoption('verbose', 2);     % set MATPOWER options
-   task = mp_task_opf();               % create task object for OPF
+   task = mp.task_opf();               % create task object for OPF
    task.run('case9', mpopt);           % create and run task for 'case9'
 
 The steps shown in :numref:`code_task_run_eg` are roughly equivalent to those performed when the task is run. It defines the classes used to construct each of the model objects, as well as the data model converter. In this example, the classes are defined explicitly, but in the actual code they are returned by calls to corresponding methods, allowing them to be overridden by subclasses.
