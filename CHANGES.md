@@ -13,6 +13,13 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.1
 -----------------
 
+#### 11/8/22
+- Automatically reduce order of polynomial generator costs with higher
+  order coefficients equal to zero. Allows the DC OPF to solve cases,
+  e.g. with cubic costs where the 3rd order term is 0, such as cases
+  exported by PowerWorld.
+  *Thanks to Rajesh Mookerjee.*
+
 #### 9/29/22
 - Silence near singular matrix warnings in some tests that began with
   MATLAB R2022b.

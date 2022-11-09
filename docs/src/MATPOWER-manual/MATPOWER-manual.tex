@@ -8402,7 +8402,7 @@ MP-Opt-Model object is used for power flow and continuation power flow as well a
 \item New MATPOWER Docker image (named \href{https://hub.docker.com/r/matpower/matpower}{\code{matpower/matpower}}) is based on the official GNU Octave image (\href{https://hub.docker.com/r/gnuoctave/octave}{\code{gnuoctave/octave}}) and is available for multiple \matpower{} and Octave versions.
 \item Each power flow is initialized with the solved voltages of the previous one when changing PV buses to PQ during Q limit enforcement. \emph{Thanks to Tostado-Véliz, Kamel, Jurado.}
 \item The \code{makePTDF()} function can now optionally use a different slack distribution for each bus by specifying the \code{slack} input as a matrix. \emph{Thanks to Jon Martinez Corral.}
-
+\item Automatically reduce order of polynomial generator costs with higher order coefficients equal to zero. Allows the DC OPF to solve cases, e.g. with cubic costs where the 3rd order term is 0, such as cases exported by PowerWorld. \emph{Thanks to Rajesh Mookerjee.}
 \item \emph{Thanks to ...}
 \item Deprecated functions:
     \begin{itemize}

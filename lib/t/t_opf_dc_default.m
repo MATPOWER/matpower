@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 43;
+num_tests = 54;
 
 t_begin(num_tests, quiet);
 
@@ -25,6 +25,7 @@ t_begin(num_tests, quiet);
 [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
     TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
     ANGMIN, ANGMAX, MU_ANGMIN, MU_ANGMAX] = idx_brch;
+[PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 
 casefile = 't_case9_opf';
 if quiet
@@ -73,6 +74,26 @@ s2 = warning('query', sing_matrix_warn_id);
     t = t0;
     [baseMVA, bus, gen, gencost, branch, f, success, et] = rundcopf(casefile, mpopt);
     t_ok(success, [t 'success']);
+    t_is(f, f_soln, 3, [t 'f']);
+    t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
+    t_is(   bus(:,ib_voltage),    bus_soln(:,ib_voltage),  3, [t 'bus voltage']);
+    t_is(   bus(:,ib_lam    ),    bus_soln(:,ib_lam    ),  3, [t 'bus lambda']);
+    t_is(   bus(:,ib_mu     ),    bus_soln(:,ib_mu     ),  2, [t 'bus mu']);
+    t_is(   gen(:,ig_data   ),    gen_soln(:,ig_data   ), 10, [t 'gen data']);
+    t_is(   gen(:,ig_disp   ),    gen_soln(:,ig_disp   ),  3, [t 'gen dispatch']);
+    t_is(   gen(:,ig_mu     ),    gen_soln(:,ig_mu     ),  3, [t 'gen mu']);
+    t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
+    t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
+    t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
+
+    %% with generator cost functions with higher order zero coefficients
+    t = [t0 'w/cubic zero costs : '];
+    mpc = loadcase(casefile);
+    mpc.gencost(3, NCOST) = mpc.gencost(3, NCOST) + 2;
+    mpc.gencost(3, COST+[2:3]) = mpc.gencost(3, COST+[0:1]);
+    mpc.gencost(3, COST+[0:1]) = 0;
+    r = rundcopf(mpc, mpopt);
+    [bus, gen, branch, f, success] = deal(r.bus, r.gen, r.branch, r.f, r.success);
     t_is(f, f_soln, 3, [t 'f']);
     t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
     t_is(   bus(:,ib_voltage),    bus_soln(:,ib_voltage),  3, [t 'bus voltage']);

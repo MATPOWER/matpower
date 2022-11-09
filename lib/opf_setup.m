@@ -193,7 +193,18 @@ end
 %% find/prepare polynomial generator costs
 cpg = [];
 cqg = [];
-[pcost qcost] = pqcost(mpc.gencost, ng);
+%% reduce order where highest order has zero coefficient
+gc = mpc.gencost;
+while 1
+    ii = find(  gc(:, MODEL) == POLYNOMIAL & ...
+                gc(:, NCOST) > 2 & ...
+                gc(:, COST) == 0    );
+    if isempty(ii), break; end  %% exit loop if there are none
+    gc(ii, NCOST) = gc(ii, NCOST) - 1;          %% reduce order
+    gc(ii, COST:end-1) = gc(ii, COST+1:end);    %% shift coefficients
+    gc(ii, end) = 0;
+end
+[pcost qcost] = pqcost(gc, ng);
 ip0 = find(pcost(:, MODEL) == POLYNOMIAL & pcost(:, NCOST) == 1);   %% constant
 ip1 = find(pcost(:, MODEL) == POLYNOMIAL & pcost(:, NCOST) == 2);   %% linear
 ip2 = find(pcost(:, MODEL) == POLYNOMIAL & pcost(:, NCOST) == 3);   %% quadratic
