@@ -33,7 +33,7 @@ There are two steps to building a data model. The first is to call the construct
 .. _code_data_model_build:
 .. code-block::
 
-   dmc = mp_dm_converter_mpc2().build();
+   dmc = mp.dm_converter_mpc2().build();
    dm = mp.data_model();
    dm.build('case9', dmc);
 
