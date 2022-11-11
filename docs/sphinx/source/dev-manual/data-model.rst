@@ -69,7 +69,7 @@ The output is organized into sections and each element type controls its own out
 Data Model Elements
 -------------------
 
-A data model element object encapsulates all of the input and output data for a particular element type. All data model element classes inherit from :class:`dm_element` and each element type typically implements its own subclass. A given data model element object contains the data for all instances of that element type, stored in one or more *table* data structures. [#]_ So, for example, the data model element for generators contains a table with the generator data for all generators in the system, where each table row corresponds to an individual generator.
+A data model element object encapsulates all of the input and output data for a particular element type. All data model element classes inherit from :class:`mp.dm_element` and each element type typically implements its own subclass. A given data model element object contains the data for all instances of that element type, stored in one or more *table* data structures. [#]_ So, for example, the data model element for generators contains a table with the generator data for all generators in the system, where each table row corresponds to an individual generator.
 
 By convention, data model element variables are named :ml:`dme` and data model element classes begin with :ml:`dme`. :numref:`fig_data_model_element_classes` shows the inheritance relationships between a few example data model element classes. Here the :class:`dme_bus`, :class:`dme_gen` and :class:`dme_load` classes are used for PF and CPF runs, while the OPF requires task-specific subclasses of each.
 

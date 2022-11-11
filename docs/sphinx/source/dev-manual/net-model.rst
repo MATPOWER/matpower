@@ -153,7 +153,7 @@ The derivatives of :math:`\Snln` and :math:`\Inln` are assumed to be provided ex
 Network Models
 --------------
 
-A network model object is primarily a container for network model element objects and *is itself* a network model element. All network model classes inherit from :class:`mp.net_model` and therefore also from :class:`mp.element_container`, :class:`mp_idx_manager`, and :class:`nm_element`. Concrete network model classes are also formulation-specific, inheriting from a corresponding subclass of :class:`mp.form` as shown in :numref:`fig_net_model_classes`.
+A network model object is primarily a container for network model element objects and *is itself* a network model element. All network model classes inherit from :class:`mp.net_model` and therefore also from :class:`mp.element_container`, :class:`mp_idx_manager`, and :class:`mp.nm_element`. Concrete network model classes are also formulation-specific, inheriting from a corresponding subclass of :class:`mp.form` as shown in :numref:`fig_net_model_classes`.
 
 .. _fig_net_model_classes:
 .. figure:: figures/net-model-classes.*
@@ -197,7 +197,7 @@ In the current design, each node-creating network model element class implements
 Network Model Elements
 ----------------------
 
-A network model element object encapsulates all of the network model parameters for a particular element type. All network model element classes inherit from :class:`nm_element` and also, like the container, from a formulation-specific subclass of :class:`mp.form`. Each element type typically implements its own subclasses, which are further subclassed per formulation. A given network model element object contains the aggregate network model parameters for *all* online instances of that element type, stored in the set of matrices and vectors that correspond to the formulation, e.g. :math:`\BB`, :math:`\KK` and :math:`\pv` from :eq:`eq_GkPx` for DC and :math:`\YY`, :math:`\LL`, :math:`\MM`, :math:`\NN`, :math:`\iv`, and :math:`\sv` from :eq:`eq_Ilin` and :eq:`eq_Slin` for AC.
+A network model element object encapsulates all of the network model parameters for a particular element type. All network model element classes inherit from :class:`mp.nm_element` and also, like the container, from a formulation-specific subclass of :class:`mp.form`. Each element type typically implements its own subclasses, which are further subclassed per formulation. A given network model element object contains the aggregate network model parameters for *all* online instances of that element type, stored in the set of matrices and vectors that correspond to the formulation, e.g. :math:`\BB`, :math:`\KK` and :math:`\pv` from :eq:`eq_GkPx` for DC and :math:`\YY`, :math:`\LL`, :math:`\MM`, :math:`\NN`, :math:`\iv`, and :math:`\sv` from :eq:`eq_Ilin` and :eq:`eq_Slin` for AC.
 
 So, for example, in a system with 1000 in-service transmission lines, the :math:`\YY` parameter in the corresponding AC network model element object would be a 2000 :math:`\times` 2000 matrix for an aggregate 2000-port element, representing the 1000 two-port transmission lines.
 

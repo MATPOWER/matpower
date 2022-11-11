@@ -123,7 +123,7 @@ Mathematical Model Elements
 
 A math model element object typically does not contain any data, but only the methods that are used to build the math model and update the corresponding data model element once the math model has been solved.
 
-All math model element classes inherit from :class:`mm_element`. Each element type typically implements its own subclasses, which are further subclassed where necessary per task and formulation, as with the container class.
+All math model element classes inherit from :class:`mp.mm_element`. Each element type typically implements its own subclasses, which are further subclassed where necessary per task and formulation, as with the container class.
 
 By convention, math model element variables are named :ml:`mme` and math model element classes begin with :ml:`mme`. :numref:`fig_math_model_element_classes` shows the inheritance relationships between a few example math model element classes. Here the :class:`nme_bus_pf_acp` and :class:`nme_bus_opf_acp` classes are used for PF and OPF problems, respectively, with an AC polar formulation. AC cartesian and DC formulations use their own respective task-specific subclasses. And each element type, has a similar set of task and formulation-specific subclasses, such as those for :class:`mme_gen`.
 

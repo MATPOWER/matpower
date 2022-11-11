@@ -66,7 +66,7 @@ Calling :meth:`export` without passing in a data source will initialize one from
 Data Model Converter Elements
 -----------------------------
 
-A data model converter element object implements the functionality need to import and export a particular element type from and to the corresponding data format. All data model converter element classes inherit from :class:`dmc_element` and each element type typically implements its own subclass.
+A data model converter element object implements the functionality need to import and export a particular element type from and to the corresponding data format. All data model converter element classes inherit from :class:`mp.dmc_element` and each element type typically implements its own subclass.
 
 By convention, data model converter element variables are named :ml:`dmce` and data model converter element classes begin with :ml:`dmce`. :numref:`fig_dm_converter_classes` shows the inheritance relationships between a few example data model converter element classes. Here the PSS/E classes have not yet been implemented, but are shown here for illustration.
 
