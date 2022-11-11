@@ -93,7 +93,7 @@ A summary of the class inheritance structure in the OOP core is represented in :
 
 Subclasses in these hierarchies are distinguished from one another by various attributes. For example, task classes are distinguished by the type of *task* or problem being solved (e.g. PF, CPF, OPF), data model converters by the *data format* (e.g. |MATPOWER| case v2, PSS/E RAW), data models by the *task*, network models by the *formulation* (e.g. DC, AC polar, AC cartesian), mathematical models by the *task* and *formulation*. That goes for both the container classes and their respective element classes, which are also distinguished by the corresponding *element type* (e.g. bus, generator, transmission line).
 
-The :class:`mp_element_container` is a mixin class providing shared functionality for the four container types mentioned above, implementing a set of elements, which can be addressed by both index and name and supplying the properties :attr:`elements` and :attr:`element_classes`.
+The :class:`mp.element_container` is a mixin class providing shared functionality for the four container types mentioned above, implementing a set of elements, which can be addressed by both index and name and supplying the properties :attr:`elements` and :attr:`element_classes`.
 
 Other mixin classes are also sometimes used when certain functionality and implementation is shared across classes in ways that do not match the primary inheritance paths.
 

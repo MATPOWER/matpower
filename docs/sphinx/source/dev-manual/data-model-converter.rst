@@ -11,7 +11,7 @@ A data model converter provides the ability to convert data between a data model
 Data Model Converters
 ---------------------
 
-A data model converter object is primarily a container for data model converter element objects. All data model converter classes inherit from :class:`mp.dm_converter` and therefore also from :class:`mp_element_container` and they are specific to the type or format of the data source, as shown in :numref:`fig_dm_converter_classes`. In this example, the PSS/E RAW format converter has not yet been implemented, but is shown here for illustration.
+A data model converter object is primarily a container for data model converter element objects. All data model converter classes inherit from :class:`mp.dm_converter` and therefore also from :class:`mp.element_container` and they are specific to the type or format of the data source, as shown in :numref:`fig_dm_converter_classes`. In this example, the PSS/E RAW format converter has not yet been implemented, but is shown here for illustration.
 
 .. _fig_dm_converter_classes:
 .. figure:: figures/dm-converter-classes.*

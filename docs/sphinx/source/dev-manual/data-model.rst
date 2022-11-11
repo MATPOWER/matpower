@@ -12,7 +12,7 @@ The data model is essentially the internal representation of the input data prov
 Data Models
 -----------
 
-A data model object is primarily a container for data model element objects. All data model classes inherit from :class:`mp.data_model` and therefore also from :class:`mp_element_container`, and may be task-specific, as shown in :numref:`fig_data_model_classes`. For a simple power flow problem, :class:`mp.data_model` is used directly as a concrete class. For CPF and OPF problems, subclasses are used. In the case of CPF, :class:`mp.data_model_cpf` encapsulates both the base and the target cases. In the case of the OPF, :class:`mp.data_model_opf` includes additional input data, such as generator costs, and output data, such as nodal prices and shadow prices on line flow contraints.
+A data model object is primarily a container for data model element objects. All data model classes inherit from :class:`mp.data_model` and therefore also from :class:`mp.element_container`, and may be task-specific, as shown in :numref:`fig_data_model_classes`. For a simple power flow problem, :class:`mp.data_model` is used directly as a concrete class. For CPF and OPF problems, subclasses are used. In the case of CPF, :class:`mp.data_model_cpf` encapsulates both the base and the target cases. In the case of the OPF, :class:`mp.data_model_opf` includes additional input data, such as generator costs, and output data, such as nodal prices and shadow prices on line flow contraints.
 
 .. _fig_data_model_classes:
 .. figure:: figures/data-model-classes.*

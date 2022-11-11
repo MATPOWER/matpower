@@ -153,7 +153,7 @@ The derivatives of :math:`\Snln` and :math:`\Inln` are assumed to be provided ex
 Network Models
 --------------
 
-A network model object is primarily a container for network model element objects and *is itself* a network model element. All network model classes inherit from :class:`mp.net_model` and therefore also from :class:`mp_element_container`, :class:`mp_idx_manager`, and :class:`nm_element`. Concrete network model classes are also formulation-specific, inheriting from a corresponding subclass of :class:`mp.form` as shown in :numref:`fig_net_model_classes`.
+A network model object is primarily a container for network model element objects and *is itself* a network model element. All network model classes inherit from :class:`mp.net_model` and therefore also from :class:`mp.element_container`, :class:`mp_idx_manager`, and :class:`nm_element`. Concrete network model classes are also formulation-specific, inheriting from a corresponding subclass of :class:`mp.form` as shown in :numref:`fig_net_model_classes`.
 
 .. _fig_net_model_classes:
 .. figure:: figures/net-model-classes.*

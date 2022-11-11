@@ -55,7 +55,7 @@ Optimal Power Flow
 Mathematical Models
 -------------------
 
-A math model object is a container for math model element objects and it is also an |MPOM>| object. All math model classes inherit from :class:`mp.math_model` and therefore also from :class:`mp_element_container`, :class:`opt_model`, and  :class:`mp_idx_manager`. Concrete math model classes are task and formulation specific as illustrated in :numref:`fig_math_model_classes`, and sometimes inherit from abstract mix-in classes that are shared across tasks or formulations. These shared classes are described further in :numref:`sec_math_model_shared`.
+A math model object is a container for math model element objects and it is also an |MPOM>| object. All math model classes inherit from :class:`mp.math_model` and therefore also from :class:`mp.element_container`, :class:`opt_model`, and  :class:`mp_idx_manager`. Concrete math model classes are task and formulation specific as illustrated in :numref:`fig_math_model_classes`, and sometimes inherit from abstract mix-in classes that are shared across tasks or formulations. These shared classes are described further in :numref:`sec_math_model_shared`.
 
 .. _fig_math_model_classes:
 .. figure:: figures/math-model-classes.*
