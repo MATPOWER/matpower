@@ -134,7 +134,7 @@ The :meth:`main_table_var_names` method returns a cell array of variable names d
 
 There are also methods that correspond to the build steps for the data model container object, :meth:`count`, :meth:`initialize`, :meth:`init_status`, :meth:`update_status`, and :meth:`build_params`, as well as those for pretty printing output, :meth:`pretty_print`, etc.
 
-.. [#] Implemented using the built-in :class:`table` and included :class:`mp_table` classes, respectively, under |MATLAB| and GNU Octave. See also :func:`mp_table_class`.
+.. [#] Implemented using the built-in :class:`table` and included :class:`mp_table` classes, respectively, under |MATLAB| and GNU Octave. See also :func:`mp.table_class`.
 
 .. [CTM] Carleton Coffrin, et. al., "The Common Electric Power Transmission System Model," *work in progress*. Available at: https://www.overleaf.com/project/5d94e3765cb3ba000129df3c.
 
