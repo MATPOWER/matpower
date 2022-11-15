@@ -72,7 +72,7 @@ if have_feature('cplex') || have_feature('gurobi') || ...
     end
     if have_feature('gurobi')
         mpopt = mpoption(mpopt, 'gurobi.method', 2);        %% barrier
-        mpopt = mpoption(mpopt, 'gurobi.threads', 2);
+        mpopt = mpoption(mpopt, 'gurobi.threads', 4);
         mpopt = mpoption(mpopt, 'gurobi.opts.BarConvTol', 1e-6);        %% 1e-8
         mpopt = mpoption(mpopt, 'gurobi.opts.FeasibilityTol', 1e-4);    %% 1e-6
         mpopt = mpoption(mpopt, 'gurobi.opts.OptimalityTol', 1e-5);     %% 1e-6

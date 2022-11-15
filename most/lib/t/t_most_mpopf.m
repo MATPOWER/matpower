@@ -118,7 +118,7 @@ t_is(ms.lamP, ex.lamP, 2.5, [t 'lamP']);
 t_is(ms.muF, ex.muF, 2, [t 'muF']);
 ex = soln.rwear;
 t_is(mdo.results.GenPrices, ex.GenPrices, 2.8, [t 'GenPrices']);
-t_is(mdo.results.GenTLMP, ex.GenTLMP, 2, [t 'TLMP']);
+t_is(mdo.results.GenTLMP, ex.GenTLMP, 1, [t 'TLMP']);
 % rwear = mdo.results;
 % wwear = most_summary(mdo);
 % keyboard;
@@ -156,7 +156,7 @@ t_is(ms.lamP, ex.lamP, 2.5, [t 'lamP']);
 t_is(ms.muF, ex.muF, 2, [t 'muF']);
 ex = soln.rwear;
 t_is(mdo.results.GenPrices, ex.GenPrices, 2.8, [t 'GenPrices']);
-t_is(mdo.results.GenTLMP, ex.GenTLMP, 2, [t 'TLMP']);
+t_is(mdo.results.GenTLMP, ex.GenTLMP, 1, [t 'TLMP']);
 % wwear = most_summary(mdo);
 % keyboard;
 

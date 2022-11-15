@@ -88,4 +88,17 @@ else
     error('addgen2mpc: GEN_TYPE must be a string (or cell array of strings) indicating the fuel type of the new generators');
 end
 
+%% expand reserves parameters, if present
+if isfield(mpco, 'reserves')
+    ngr = size(mpco.reserves.cost, 1);
+    %% expand zones
+    mpco.reserves.zones(end, ng+nr) = 0;
+    if ngr == ng    %% expand cost and qty
+        mpco.reserves.cost(ng+nr, 1) = 0;
+        if isfield(mpco.reserves, 'qty')
+            mpco.reserves.qty(ng+nr, 1) = 0;
+        end
+    end
+end
+
 NewGenIdx = ( ng + 1 : size(mpco.gen,1) )';

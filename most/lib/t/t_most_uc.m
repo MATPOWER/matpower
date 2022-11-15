@@ -95,10 +95,10 @@ if have_feature('glpk')
 end
 if have_feature('gurobi')
     %mpopt = mpoption(mpopt, 'gurobi.method', -1);       %% automatic
-    mpopt = mpoption(mpopt, 'gurobi.method', 0);        %% primal simplex
-    %mpopt = mpoption(mpopt, 'gurobi.method', 1);        %% dual simplex
+    %mpopt = mpoption(mpopt, 'gurobi.method', 0);        %% primal simplex
+    mpopt = mpoption(mpopt, 'gurobi.method', 1);        %% dual simplex
     %mpopt = mpoption(mpopt, 'gurobi.method', 2);        %% barrier
-    mpopt = mpoption(mpopt, 'gurobi.threads', 2);
+    mpopt = mpoption(mpopt, 'gurobi.threads', 4);
     mpopt = mpoption(mpopt, 'gurobi.opts.MIPGap', 0);
     mpopt = mpoption(mpopt, 'gurobi.opts.MIPGapAbs', 0);
 end

@@ -5,6 +5,10 @@ Change history for MOST
 since version 1.1
 -----------------
 
+#### 11/10/22
+- Update `addgen2mpc()` to expand fixed reserve parameters to keep sizes
+  compatible.
+
 #### 9/29/22
 - Silence near singular matrix warnings in some tests that began with
   MATLAB R2022b.
