@@ -109,7 +109,7 @@ t_is(full(imag(dloss_dV.a)), full(imag(dloss_dVa)), 4, [t 'dQloss/dVa']);
 t_is(full(real(dloss_dV.m)), full(real(dloss_dVm)), 5, [t 'dPloss/dVm']);
 t_is(full(imag(dloss_dV.m)), full(imag(dloss_dVm)), 4, [t 'dQloss/dVm']);
 t_is(full(dchg_dVm.f), full(dfchg_dVm), 5, [t 'dfchg/dVm']);
-t_is(full(dchg_dVm.t), full(dtchg_dVm), 6, [t 'dtchg/dVm']);
+t_is(full(dchg_dVm.t), full(dtchg_dVm), 5, [t 'dtchg/dVm']);
 
 t = 'Loss Sensitivity Factors (LSF)';
 %% convert to internal indexing to use makeJac()
