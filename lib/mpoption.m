@@ -378,6 +378,7 @@ function opt = mpoption(varargin)
 %           [   2 - barrier                                                 ]
 %           [   3 - concurrent (LP only)                                    ]
 %           [   4 - deterministic concurrent (LP only)                      ]
+%           [   5 - deterministic concurrent simplex (LP only)              ]
 %       gurobi.timelimit        Inf         maximum time allowed (TimeLimit)
 %       gurobi.threads          0           max number of threads (Threads)
 %       gurobi.opts             <empty>     see GUROBI_OPTIONS for details
@@ -496,7 +497,7 @@ function opt = mpoption(varargin)
 %                                           for 'pw'
 
 %   MATPOWER
-%   Copyright (c) 2013-2017, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2013-2022, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Shrirang Abhyankar, Argonne National Laboratory
 %

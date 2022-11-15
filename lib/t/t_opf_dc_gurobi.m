@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-algs = [0; 1; 2; 3; 4];
+algs = [-1; 0; 1; 2; 3; 4; 5];
 alg_names = {
     'automatic',
     'primal simplex',
@@ -21,6 +21,7 @@ alg_names = {
     'barrier',
     'concurrent',
     'deterministic concurrent',
+    'deterministic concurrent simplex',
 };
 num_tests = 43 * length(algs);
 
