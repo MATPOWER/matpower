@@ -13,7 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         platform: [octave]
-        os: [macos-latest, ubuntu-20.04, ubuntu-22.04]
+        os: [macos-latest, ubuntu-22.04]
         include:
         - platform: matlab
           os: ubuntu-latest
@@ -106,7 +106,7 @@ jobs:
         cached: ${{ steps.cache-osqp.outputs.cache-hit == 'true' }}
 
     - name: Include MP-Element?
-      if: startsWith(env.OCTAVE_VER, '4') != 1 && startsWith(env.OCTAVE_VER, '6.1') != 1
+      if: startsWith(env.OCTAVE_VER, '4') != 1 && startsWith(env.OCTAVE_VER, '5') != 1 && startsWith(env.OCTAVE_VER, '6.1') != 1
       run: |
         echo "INCLUDE_MP_ELEMENT=1" >> $GITHUB_ENV
         echo "MP_ELEMENT_TAG=0.8" >> $GITHUB_ENV
