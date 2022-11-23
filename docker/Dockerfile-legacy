@@ -26,6 +26,7 @@ ARG MORE
 ARG WARN
 
 USER root
+ENV HOME /root
 WORKDIR "${HOME}"
 
 # Install MATPOWER files from ZIP file
@@ -101,9 +102,7 @@ FROM warn_${WARN} AS warn
 # conditionally patch some PSS/E files (for VER=5.0, 5.1, 6.0 with Octave 4.4+)
 FROM warn AS patch_0
 FROM warn AS patch_1
-ONBUILD COPY ./docker/patches/psse_parse_*.patch $HOME/packages
+ONBUILD COPY ./docker/patches/psse_parse_*.patch $HOME/packages/
 ONBUILD RUN patch -u -b $HOME/packages/matpower/psse_parse_line.m -i $HOME/packages/psse_parse_line.patch && \
     patch -u -b $HOME/packages/matpower/psse_parse_section.m -i $HOME/packages/psse_parse_section.patch
 FROM patch_${PATCH_PSSE}
-
-RUN chown -R ${NB_UID} ${HOME}

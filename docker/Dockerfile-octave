@@ -9,7 +9,7 @@
 # Xiangmin Jiao <xmjiao@gmail.com>
 # Ray Zimmerman <rz10@cornell.edu>
 
-ARG VER=7.2.0
+ARG VER=7.3.0
 ARG SKIP_IPOPT=0
 ARG SKIP_OSQP=0
 FROM gnuoctave/octave:${VER} AS base
@@ -19,6 +19,7 @@ ARG SKIP_IPOPT
 ARG SKIP_OSQP
 
 USER root
+ENV HOME /root
 WORKDIR /tmp
 
 # # Install system packages and Octave
@@ -130,6 +131,5 @@ FROM osqp_${SKIP_OSQP} AS osqp
 RUN rm -rf $HOME/build
 
 RUN echo "alias ot='octave-cli'" >> ${HOME}/.bash_aliases && \
-    echo "alias otg='octave --force-gui &'" >> ${HOME}/.bash_aliases && \
-    chown -R ${NB_UID} ${HOME}
+    echo "alias otg='octave --force-gui &'" >> ${HOME}/.bash_aliases
 WORKDIR "${HOME}"

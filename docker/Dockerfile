@@ -30,6 +30,7 @@ ARG WARN
 ARG PATCH_MOST_TEST
 
 USER root
+ENV HOME /root
 WORKDIR /tmp
 
 # Install local MATPOWER files
@@ -77,9 +78,8 @@ FROM warn_${WARN} as warn
 
 FROM warn AS patch_0
 FROM warn AS patch_1
-ONBUILD COPY ./docker/patches/t_most_mpopf.patch $HOME/packages
+ONBUILD COPY ./docker/patches/t_most_mpopf.patch $HOME/packages/
 ONBUILD RUN patch -u -b $HOME/packages/matpower/most/lib/t/t_most_mpopf.m -i $HOME/packages/t_most_mpopf.patch
 FROM patch_${PATCH_MOST_TEST}
 
-RUN chown -R ${NB_UID} ${HOME}
 WORKDIR "${HOME}"

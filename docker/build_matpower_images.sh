@@ -37,7 +37,8 @@ docker build --build-arg MP_SRC=github --build-arg BRANCH=7.1 --build-arg BASE_T
 ## with current (latest) Octave version
 docker build --build-arg MP_SRC=github --build-arg BRANCH=7.0 --build-arg WARN=1 -f docker/Dockerfile -t matpower/matpower:7.0c .
 docker build --build-arg MP_SRC=github --build-arg BRANCH=7.1 --build-arg PATCH_MOST_TEST=1 -f docker/Dockerfile -t matpower/matpower:7.1c .
-docker build --build-arg MP_SRC=github --build-arg BRANCH=7.1 --build-arg PATCH_MOST_TEST=1 -f docker/Dockerfile -t matpower/matpower:latest .
+# docker build --build-arg MP_SRC=github --build-arg BRANCH=7.1 --build-arg PATCH_MOST_TEST=1 -f docker/Dockerfile -t matpower/matpower:latest .
+docker tag matpower/matpower:7.1c matpower/matpower:latest
 
 ## dev versions from current master branch
 docker build --build-arg MP_SRC=github_mpe --build-arg BASE_TAG=4.4.1 -f docker/Dockerfile -t matpower/matpower:dev-latest-4.4.1 .
