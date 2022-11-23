@@ -201,7 +201,7 @@ A network model element object encapsulates all of the network model parameters 
 
 So, for example, in a system with 1000 in-service transmission lines, the :math:`\YY` parameter in the corresponding AC network model element object would be a 2000 :math:`\times` 2000 matrix for an aggregate 2000-port element, representing the 1000 two-port transmission lines.
 
-By convention, network model element variables are named :ml:`nme` and network model element classes begin with :ml:`nme`. :numref:`fig_net_model_element_classes` shows the inheritance relationships between a few example network model element classes. Here the :class:`nme_bus_acp` and :class:`nme_gen_acp` classes are used for all problems with an AC polar formulation, while the AC cartesian and DC formulations use their own respective subclasses.
+By convention, network model element variables are named :ml:`nme` and network model element classes begin with :ml:`nme`. :numref:`fig_net_model_element_classes` shows the inheritance relationships between a few example network model element classes. Here the :class:`mp.nme_bus_acp` and :class:`mp.nme_gen_acp` classes are used for all problems with an AC polar formulation, while the AC cartesian and DC formulations use their own respective subclasses.
 
 .. _fig_net_model_element_classes:
 .. figure:: figures/net-model-element-classes.*
@@ -219,25 +219,25 @@ Here are brief descriptions of the network models for a few simple element types
 Bus
 '''
 
-A **bus** element inherits from :class:`nme_bus` and defines a single node per in-service bus, with no ports or non-voltage states. So it has no model parameters.
+A **bus** element inherits from :class:`mp.nme_bus` and defines a single node per in-service bus, with no ports or non-voltage states. So it has no model parameters.
 
 
 Generator
 '''''''''
 
-A **gen** element is a 1-port element that inherits from :class:`nme_gen` and defines a single non-voltage state per in-service generator to represent the power injection. It connects to the node corresponding to a particular bus. The only non-zero parameters are :math:`\KK` (DC) or :math:`\NN` (AC), which are negative identity matrices, since the power injections (into the element) are the negative of the generated power.
+A **gen** element is a 1-port element that inherits from :class:`mp.nme_gen` and defines a single non-voltage state per in-service generator to represent the power injection. It connects to the node corresponding to a particular bus. The only non-zero parameters are :math:`\KK` (DC) or :math:`\NN` (AC), which are negative identity matrices, since the power injections (into the element) are the negative of the generated power.
 
 
 Branch
 ''''''
 
-A **branch** element is a 2-port element that inherits from :class:`nme_branch` with no nodes or non-voltage states. It connects to nodes corresponding to two  particular buses. The only non-zero parameters are :math:`\BB` and :math:`\pv` (DC), or :math:`\YY` (AC).
+A **branch** element is a 2-port element that inherits from :class:`mp.nme_branch` with no nodes or non-voltage states. It connects to nodes corresponding to two  particular buses. The only non-zero parameters are :math:`\BB` and :math:`\pv` (DC), or :math:`\YY` (AC).
 
 
 Load
 ''''
 
-A **load** element is a 1-port element that inherits from :class:`nme_load` with no ports or states. It connects to the node corresponding to a particular bus. For a simple constant power load, the only non-zero parameters are :math:`\pv` (DC) or :math:`\sv` (AC), equal to the power consumed by the load.
+A **load** element is a 1-port element that inherits from :class:`mp.nme_load` with no ports or states. It connects to the node corresponding to a particular bus. For a simple constant power load, the only non-zero parameters are :math:`\pv` (DC) or :math:`\sv` (AC), equal to the power consumed by the load.
 
 
 Building Element Parameters

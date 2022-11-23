@@ -71,7 +71,7 @@ Data Model Elements
 
 A data model element object encapsulates all of the input and output data for a particular element type. All data model element classes inherit from :class:`mp.dm_element` and each element type typically implements its own subclass. A given data model element object contains the data for all instances of that element type, stored in one or more *table* data structures. [#]_ So, for example, the data model element for generators contains a table with the generator data for all generators in the system, where each table row corresponds to an individual generator.
 
-By convention, data model element variables are named :ml:`dme` and data model element classes begin with :ml:`dme`. :numref:`fig_data_model_element_classes` shows the inheritance relationships between a few example data model element classes. Here the :class:`dme_bus`, :class:`dme_gen` and :class:`dme_load` classes are used for PF and CPF runs, while the OPF requires task-specific subclasses of each.
+By convention, data model element variables are named :ml:`dme` and data model element classes begin with :ml:`dme`. :numref:`fig_data_model_element_classes` shows the inheritance relationships between a few example data model element classes. Here the :class:`mp.dme_bus`, :class:`mp.dme_gen` and :class:`mp.dme_load` classes are used for PF and CPF runs, while the OPF requires task-specific subclasses of each.
 
 .. _fig_data_model_element_classes:
 .. figure:: figures/data-model-element-classes.*
@@ -122,9 +122,9 @@ The table below includes additional properties, besides the main table :attr:`ta
 Methods
 ^^^^^^^
 
-A data model element also has a :meth:`name` method that returns the name of the element type under which it is entered in the data model (container) object. For example, the name returned for the :class:`dme_gen` class is :ml:`'gen'`, which means the corresponding data model element object is found in :ml:`dm.elements.gen`.
+A data model element also has a :meth:`name` method that returns the name of the element type under which it is entered in the data model (container) object. For example, the name returned for the :class:`mp.dme_gen` class is :ml:`'gen'`, which means the corresponding data model element object is found in :ml:`dm.elements.gen`.
 
-There are also methods named :meth:`label` and :meth:`labels` which return user visible names for singular and plural instances of the element used when pretty-printing. For :class:`dme_gen`, for example, these return :ml:`'Generator'` and :ml:`'Generators'`, respectively.
+There are also methods named :meth:`label` and :meth:`labels` which return user visible names for singular and plural instances of the element used when pretty-printing. For :class:`mp.dme_gen`, for example, these return :ml:`'Generator'` and :ml:`'Generators'`, respectively.
 
 .. note::
 

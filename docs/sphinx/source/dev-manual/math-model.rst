@@ -125,7 +125,7 @@ A math model element object typically does not contain any data, but only the me
 
 All math model element classes inherit from :class:`mp.mm_element`. Each element type typically implements its own subclasses, which are further subclassed where necessary per task and formulation, as with the container class.
 
-By convention, math model element variables are named :ml:`mme` and math model element classes begin with :ml:`mme`. :numref:`fig_math_model_element_classes` shows the inheritance relationships between a few example math model element classes. Here the :class:`nme_bus_pf_acp` and :class:`nme_bus_opf_acp` classes are used for PF and OPF problems, respectively, with an AC polar formulation. AC cartesian and DC formulations use their own respective task-specific subclasses. And each element type, has a similar set of task and formulation-specific subclasses, such as those for :class:`mme_gen`.
+By convention, math model element variables are named :ml:`mme` and math model element classes begin with :ml:`mme`. :numref:`fig_math_model_element_classes` shows the inheritance relationships between a few example math model element classes. Here the :class:`mp.nme_bus_pf_acp` and :class:`mp.nme_bus_opf_acp` classes are used for PF and OPF problems, respectively, with an AC polar formulation. AC cartesian and DC formulations use their own respective task-specific subclasses. And each element type, has a similar set of task and formulation-specific subclasses, such as those for :class:`mp.mme_gen`.
 
 .. _fig_math_model_element_classes:
 .. figure:: figures/math-model-element-classes.*
@@ -143,7 +143,7 @@ Both the :ml:`mm` container object and the :ml:`mme` element objects can add the
 
 For a standard optimal power flow, for example, the optimization variables are added by the container object, since they are determined directly from state variables of the *(container)* network model object. Similarly, the nodal power or current balance constraints are added by the container since they are built directly from the port injection functions of the aggregate network model.
 
-However, generator cost functions and any variables and constraints associated with piecewise linear generator costs are added by the appropriate subclass of :class:`mme_gen`, since they relate only to generator model parameters. Similarly, branch flow and branch angle difference constraints are added by the appropriate subclass of :class:`mme_branch`, since they are specific to branches and are completely independent of other element types.
+However, generator cost functions and any variables and constraints associated with piecewise linear generator costs are added by the appropriate subclass of :class:`mp.mme_gen`, since they relate only to generator model parameters. Similarly, branch flow and branch angle difference constraints are added by the appropriate subclass of :class:`mp.mme_branch`, since they are specific to branches and are completely independent of other element types.
 
 
 Updating Data Model Elements
@@ -151,7 +151,7 @@ Updating Data Model Elements
 
 The data in the data model is stored primarily in its individual element objects, so it makes sense that the individual math model element objects would be responsible for extracting the math model solution data relevant to a given element and updating the corresponding data model element. This updating is performed by the :meth:`data_model_update` method.
 
-For example, updating the branch power flows and shadow prices on the flow and angle difference limits in the branch data model element is done by :meth:`data_model_update` in the appropriate subclass of :class:`mme_branch`.
+For example, updating the branch power flows and shadow prices on the flow and angle difference limits in the branch data model element is done by :meth:`data_model_update` in the appropriate subclass of :class:`mp.mme_branch`.
 
 
 .. _sec_math_model_shared:
@@ -160,6 +160,6 @@ For example, updating the branch power flows and shadow prices on the flow and a
 Shared Classes
 --------------
 
-In some cases, there is code shared between math model classes across differnt tasks, e.g. PF and CPF. In order to avoid code duplication, another hierarchy of abstract mix-in classes is used to implement methods for this shared functionality. By convention, the names of these classes begin with :ml:`mm_shared_`.
+In some cases, there is code shared between math model classes across differnt tasks, e.g. PF and CPF. In order to avoid code duplication, another hierarchy of abstract mix-in classes is used to implement methods for this shared functionality. By convention, the names of these classes begin with :ml:`mp.mm_shared_`.
 
 For example, a method to evaluate the node balance equations and corresponding Jacobian are used by both the PF and CPF. Putting this method in a shared class, allows its functionality to be inherited by concrete math model classes for both PF and CPF.
