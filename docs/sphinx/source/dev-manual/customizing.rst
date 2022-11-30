@@ -138,13 +138,13 @@ In addition to the |MATPOWER| options previously available that affect the formu
 
 The *flexible* |/MATPOWER/| *framework* summarized in :numref:`sec_two_frameworks` introduces a |*MATPOWER*| **extension** API as a way to bundle a set of class additions and modifications together into a single named package.
 
-For example, the :class:`mpx_reserves` class and those it references, adds co-optimization of fixed zonal reserves to the standard OPF problem, as previously implemented by :ml:`toggle_reserves()` and :ml:`run_opf_w_res()` in |MATPOWER| 7.1 and earlier using its legacy OPF callback functions. To invoke an OPF with the :class:`mpx_reserves` extension, you simply pass the extension object as an optional argument into the :func:`run_opf` function.
+For example, the :class:`mp.xt_reserves` class and those it references, adds co-optimization of fixed zonal reserves to the standard OPF problem, as previously implemented by :ml:`toggle_reserves()` and :ml:`run_opf_w_res()` in |MATPOWER| 7.1 and earlier using its legacy OPF callback functions. To invoke an OPF with the :class:`mp.xt_reserves` extension, you simply pass the extension object as an optional argument into the :func:`run_opf` function.
 
 .. code-block::
 
-   run_opf(mpc, mpopt, 'mpx', mpx_reserves);
+   run_opf(mpc, mpopt, 'mpx', mp.xt_reserves);
 
-A |MATPOWER| extension is a subclass of :class:`mp_extension`, which implements a very simple interface consisting of nine methods. Five of them return a single class constructor handle, and the other four return a cell array of element class modifiers, described above in :numref:`tab_element_class_modifiers`.
+A |MATPOWER| extension is a subclass of :class:`mp.extension`, which implements a very simple interface consisting of nine methods. Five of them return a single class constructor handle, and the other four return a cell array of element class modifiers, described above in :numref:`tab_element_class_modifiers`.
 
 The methods are summarized in :numref:`tab_ext_methods`
 
@@ -175,7 +175,7 @@ The methods are summarized in :numref:`tab_ext_methods`
    * - :meth:`mm_element_classes`
      - Returns a cell array of element class modifiers for math model elements.
 
-Even something as complex as adding three-phase unbalanced buses, lines, loads and generators for multiple formulations of PF, CPF, and OPF problems can be implemented in terms of a single |MATPOWER| extension. Please see :class:`mpx_3p` for an example.
+Even something as complex as adding three-phase unbalanced buses, lines, loads and generators for multiple formulations of PF, CPF, and OPF problems can be implemented in terms of a single |MATPOWER| extension. Please see :class:`mp.xt_3p` for an example.
 
 
 .. [#] Either a single element class modifier or a cell array of element class modifiers.
