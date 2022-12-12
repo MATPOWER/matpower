@@ -107,16 +107,11 @@ else
         tmpfname = sprintf('%s_%d', fname, fix(1e9*rand));
         tmpcasename = sprintf('%s.m', tmpfname);
         mpc = psse2mpc(rawname, tmpfname, 0);
-        str = fileread(casename);
-        str2 = fileread(tmpcasename);
-        str = strrep(str, char([13 10]), char(10));     %% Win to Unix EOL chars
-        str2 = strrep(str2, char([13 10]), char(10));   %% Win to Unix EOL chars
-        str2 = strrep(str2, 'e-005', 'e-05');           %% needed on Windoze, who knows why?
-        str2 = strrep(str2, tmpfname, fname);
-        str2 = strrep(str2, upper(tmpfname), upper(fname));
-        str2 = regexprep(str2, 'MATPOWER (.*) using PSSE2MPC on \d\d-...-\d\d\d\d', txt);
-        delete(tmpcasename);
-        t_ok(strcmp(str, str2), sprintf('%s : %s', t, fname));
+        reps = {{'e-005', 'e-05', 0}, ...   %% needed on Windoze, who knows why?
+                {tmpfname, fname, 0}, ...
+                {upper(tmpfname), upper(fname), 0}, ...
+                {'MATPOWER (.*) using PSSE2MPC on \d\d-...-\d\d\d\d', txt, 1}};
+        t_file_match(tmpcasename, casename, sprintf('%s : %s', t, fname), reps, 1);
     end
 
     t = 'save2psse -> psse2mpc : ';
@@ -130,15 +125,9 @@ else
     t_is(mpc.dcline, mpc0.dcline, 4, [t 'dcline']);
     t_ok(isequal(mpc.bus_name, mpc0.bus_name), [t 'bus_name']);
 
-    got = fileread(tmpfname);
-    got = strrep(got, char([13 10]), char(10));             %% Win to Unix EOL chars
-    got = regexprep(got, '/ ..-...-.... ..:..:.. - MATPOWER ([^\n]*)', '/ 17-Jan-2019 15:30:41 - MATPOWER 7.0');
-    expected = fileread([casefile '.raw']);
-    expected = strrep(expected, char([13 10]), char(10));   %% Win to Unix EOL chars
-
-    t_ok(strcmp(got, expected), 'save2psse: RAW file match');
-
-    delete(tmpfname);
+    reps = { {'/ ..-...-.... ..:..:.. - MATPOWER ([^\n]*)', ...
+              '/ 17-Jan-2019 15:30:41 - MATPOWER 7.0', 1} };
+    t_file_match(tmpfname, [casefile '.raw'], 'save2psse: RAW file match', reps, 1);
 end
 
 if have_feature('octave')

@@ -68,52 +68,30 @@ tmpfnameac = sprintf('%s_acopf_%d.txt', fname, rn);
 tmpfnamedc = sprintf('%s_dcopf_%d.txt', fname, rn);
 
 r = runopf(mpc, mpopt, tmpfnameac);
-got = fileread(tmpfnameac);
-if size(got, 1) ~= 1    %% transpose if needed for Octave 3.4
-    got = got';
-end
-got = strrep(got, char([13 10]), char(10));             %% Win to Unix EOL chars
-got = regexprep(got, 'Converged in (.*) seconds', 'Converged in 0.00 seconds');
-got = strrep(got, ' -0.0 ', '  0.0 ');
-got = strrep(got, sprintf(' -0.0\n'), sprintf('  0.0\n'));
-got = strrep(got, ' -0.00 ', '  0.00 ');
-got = strrep(got, sprintf(' -0.00\n'), sprintf('  0.00\n'));
-got = strrep(got, ' -0.000 ', '  0.000 ');
-got = strrep(got, ' -0.000*', '  0.000*');
-expected = fileread(fnameac);
-expected = strrep(expected, char([13 10]), char(10));   %% Win to Unix EOL chars
-if size(expected, 1) ~= 1   %% transpose if needed for Octave 3.4
-    expected = expected';
-end
-t_ok(strcmp(got, expected), [t 'standard AC OPF']);
-delete(tmpfnameac);
+reps = {{'Converged in (.*) seconds', 'Converged in 0.00 seconds'}, ...
+        {' -0.0 ', '  0.0 ', 0}, ...
+        {sprintf(' -0.0\n'), sprintf('  0.0\n'), 0}, ...
+        {' -0.00 ', '  0.00 ', 0}, ...
+        {sprintf(' -0.00\n'), sprintf('  0.00\n'), 0}, ...
+        {' -0.000 ', '  0.000 ', 0}, ...
+        {' -0.000*', '  0.000*', 0}};
+t_file_match(tmpfnameac, fnameac, [t 'standard AC OPF'], reps, 1);
 
 r = rundcopf(mpc, mpopt, tmpfnamedc);
-got = fileread(tmpfnamedc);
-if size(got, 1) ~= 1    %% transpose if needed for Octave 3.4
-    got = got';
-end
-got = strrep(got, char([13 10]), char(10));             %% Win to Unix EOL chars
-got = regexprep(got, 'Converged in (.*) seconds', 'Converged in 0.00 seconds');
-got = strrep(got, ' -0.0 ', '  0.0 ');
-got = strrep(got, sprintf(' -0.0\n'), sprintf('  0.0\n'));
-got = strrep(got, ' -0.00 ', '  0.00 ');
-got = strrep(got, sprintf(' -0.00\n'), sprintf('  0.00\n'));
-got = strrep(got, ' -0.000 ', '  0.000 ');
-got = strrep(got, ' -0.000*', '  0.000*');
-got = strrep(got, '51.66 $/MWh @ bus 12', '51.66 $/MWh @ bus 13');
-got = strrep(got, '51.66 $/MWh @ bus 16', '51.66 $/MWh @ bus 13');
-got = strrep(got, '51.66 $/MWh @ bus 17', '51.66 $/MWh @ bus 13');
-got = strrep(got, '53.05 $/MWh @ bus 18', '53.05 $/MWh @ bus 15');
-got = strrep(got, '53.05 $/MWh @ bus 19', '53.05 $/MWh @ bus 15');
-got = strrep(got, '53.05 $/MWh @ bus 20', '53.05 $/MWh @ bus 15');
-expected = fileread(fnamedc);
-expected = strrep(expected, char([13 10]), char(10));   %% Win to Unix EOL chars
-if size(expected, 1) ~= 1   %% transpose if needed for Octave 3.4
-    expected = expected';
-end
-t_ok(strcmp(got, expected), [t 'standard DC OPF']);
-delete(tmpfnamedc);
+reps = {{'Converged in (.*) seconds', 'Converged in 0.00 seconds'}, ...
+        {' -0.0 ', '  0.0 ', 0}, ...
+        {sprintf(' -0.0\n'), sprintf('  0.0\n'), 0}, ...
+        {' -0.00 ', '  0.00 ', 0}, ...
+        {sprintf(' -0.00\n'), sprintf('  0.00\n'), 0}, ...
+        {' -0.000 ', '  0.000 ', 0}, ...
+        {' -0.000*', '  0.000*', 0}, ...
+        {'51.66 $/MWh @ bus 12', '51.66 $/MWh @ bus 13', 0}, ...
+        {'51.66 $/MWh @ bus 16', '51.66 $/MWh @ bus 13', 0}, ...
+        {'51.66 $/MWh @ bus 17', '51.66 $/MWh @ bus 13', 0}, ...
+        {'53.05 $/MWh @ bus 18', '53.05 $/MWh @ bus 15', 0}, ...
+        {'53.05 $/MWh @ bus 19', '53.05 $/MWh @ bus 15', 0}, ...
+        {'53.05 $/MWh @ bus 20', '53.05 $/MWh @ bus 15', 0}};
+t_file_match(tmpfnamedc, fnamedc, [t 'standard DC OPF'], reps, 1);
 
 if have_feature('octave')
     warning(s1.state, file_in_path_warn_id);

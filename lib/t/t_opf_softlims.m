@@ -361,13 +361,8 @@ else
     printpf(r, fd, mpopt2);
     fclose(fd);
 end
-got = fileread(tmp_fname_ac);
-got = strrep(got, char([13 10]), char(10));             %% Win to Unix EOL chars
-got = regexprep(got, 'Converged in (.*) seconds', 'Converged in 0.00 seconds');
-expected = fileread(fname_ac);
-expected = strrep(expected, char([13 10]), char(10));   %% Win to Unix EOL chars
-t_ok(strcmp(got, expected), t);
-delete(tmp_fname_ac);
+reps = {{'Converged in (.*) seconds', 'Converged in 0.00 seconds', 1, 1}};
+t_file_match(tmp_fname_ac, fname_ac, t, reps, 1);
 
 t = 'Repeat solve: ';
 r2 = runopf(r, mpopt);
@@ -471,13 +466,8 @@ else
     printpf(r, fd, mpopt2);
     fclose(fd);
 end
-got = fileread(tmp_fname_dc);
-got = strrep(got, char([13 10]), char(10));             %% Win to Unix EOL chars
-got = regexprep(got, 'Converged in (.*) seconds', 'Converged in 0.00 seconds');
-expected = fileread(fname_dc);
-expected = strrep(expected, char([13 10]), char(10));   %% Win to Unix EOL chars
-t_ok(strcmp(got, expected), t);
-delete(tmp_fname_dc);
+reps = {{'Converged in (.*) seconds', 'Converged in 0.00 seconds', 1, 1}};
+t_file_match(tmp_fname_dc, fname_dc, t, reps, 1);
 
 %% unbounded limits
 mpc = mpc0;

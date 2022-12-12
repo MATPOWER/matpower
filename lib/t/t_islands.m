@@ -372,19 +372,8 @@ for k = 1:n
     t_is(groups{k}, base+(1:nbk), 10, [t num2str(k)]);
     base = base + nbk;
 end
-got = fileread(got_fname);
-expected = fileread(exp_fname);
-if size(got, 1) ~= 1    %% transpose if needed for Octave 3.4
-    got = got';
-end
-if size(expected, 1) ~= 1   %% transpose if needed for Octave 3.4
-    expected = expected';
-end
-delete(got_fname);
-got = strrep(got, char([13 10]), char(10));             %% Win to Unix EOL chars
-got = regexprep(got, 'Elapsed time is (.*) seconds', 'Elapsed time is 0.00 seconds');
-expected = strrep(expected, char([13 10]), char(10));   %% Win to Unix EOL chars
-t_ok(strcmp(got, expected), [t 'text output']);
+reps = {{'Elapsed time is (.*) seconds', 'Elapsed time is 0.00 seconds', 1, 1}};
+t_file_match(got_fname, exp_fname, [t 'text output'], reps, 1);
 
 t = '[groups, isolated] = find_islands(mpc) : ';
 mpc = loadcase('case30');
