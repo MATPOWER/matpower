@@ -27,28 +27,28 @@ cwd = pwd;
 %% test with empty path (do NOT cd anywhere)
 t = 'ab = feval_w_path(<empty path>, fname, a, b)';
 rv = feval_w_path('', 't_ok', 1, 'true');
-t_ok(strcmp(cwd, pwd), [t ' : cwd unchanged']);
+t_str_match(cwd, pwd, [t ' : cwd unchanged']);
 t_is(rv, 1, 15, t);
 
 %% test with absolute path
 t = 'ab = feval_w_path(<absolute path>, fname, a, b)';
 rv = feval_w_path(fullfile(p, 't_feval_w_path'), 'rithmaticker', 3, 4);
-t_ok(strcmp(cwd, pwd), [t ' : cwd unchanged']);
+t_str_match(cwd, pwd, [t ' : cwd unchanged']);
 t_is(rv, 12, 15, t);
 
 t = 'abc = feval_w_path(<absolute path>, fname, a, b, c)';
 rv = feval_w_path(fullfile(p, 't_feval_w_path'), 'rithmaticker', 3, 4, 5);
-t_ok(strcmp(cwd, pwd), [t ' : cwd unchanged']);
+t_str_match(cwd, pwd, [t ' : cwd unchanged']);
 t_is(rv, 60, 15, t);
 
 t = 'abcd = feval_w_path(<absolute path>, fname, a, b, c, d)';
 rv = feval_w_path(fullfile(p, 't_feval_w_path'), 'rithmaticker', 3, 4, 5, 6);
-t_ok(strcmp(cwd, pwd), [t ' : cwd unchanged']);
+t_str_match(cwd, pwd, [t ' : cwd unchanged']);
 t_is(rv, 360, 15, t);
 
 t = '[ab, a_b] = feval_w_path(<absolute path>, fname, a, b)';
 [rv, rv2] = feval_w_path(fullfile(p, 't_feval_w_path'), 'rithmaticker', 3, 4);
-t_ok(strcmp(cwd, pwd), [t ' : cwd unchanged']);
+t_str_match(cwd, pwd, [t ' : cwd unchanged']);
 t_is(rv, 12, 15, t);
 t_is(rv2, 7, 15, t);
 
@@ -59,27 +59,27 @@ cwd2 = pwd;
 %% test with relative path
 t = 'ab = feval_w_path(<relative path>, fname, a, b)';
 rv = feval_w_path('t_feval_w_path', 'rithmaticker', 3, 4);
-t_ok(strcmp(cwd2, pwd), [t ' : cwd unchanged']);
+t_str_match(cwd2, pwd, [t ' : cwd unchanged']);
 t_is(rv, 12, 15, t);
 
 t = 'abc = feval_w_path(<relative path>, fname, a, b, c)';
 rv = feval_w_path('t_feval_w_path', 'rithmaticker', 3, 4, 5);
-t_ok(strcmp(cwd2, pwd), [t ' : cwd unchanged']);
+t_str_match(cwd2, pwd, [t ' : cwd unchanged']);
 t_is(rv, 60, 15, t);
 
 t = 'abcd = feval_w_path(<relative path>, fname, a, b, c, d)';
 rv = feval_w_path('t_feval_w_path', 'rithmaticker', 3, 4, 5, 6);
-t_ok(strcmp(cwd2, pwd), [t ' : cwd unchanged']);
+t_str_match(cwd2, pwd, [t ' : cwd unchanged']);
 t_is(rv, 360, 15, t);
 
 t = '[ab, a_b] = feval_w_path(<relative path>, fname, a, b)';
 [rv, rv2] = feval_w_path('t_feval_w_path', 'rithmaticker', 3, 4);
-t_ok(strcmp(cwd2, pwd), [t ' : cwd unchanged']);
+t_str_match(cwd2, pwd, [t ' : cwd unchanged']);
 t_is(rv, 12, 15, t);
 t_is(rv2, 7, 15, t);
 
 cd(cwd);
 t = 'successful switch to original working directory';
-t_ok(strcmp(cwd, pwd), t);
+t_str_match(cwd, pwd, t);
 
 t_end;

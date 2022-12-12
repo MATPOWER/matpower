@@ -318,7 +318,7 @@ t_is(mpc2.bus,      bus,        12, [t 'bus']);
 t_is(mpc2.gen,      gen,        12, [t 'gen']);
 t_is(mpc2.branch,   branch,     12, [t 'branch']);
 t_is(mpc2.gencost,  gencost,    12, [t 'gencost']);
-t_ok(strcmp(mpc2.version, '2'), [t 'version']);  
+t_str_match(mpc2.version, '2', [t 'version']);
 
 t = 'mpc = loadcase(opf_struct_v2) (version=''2''): ';
 clear c;
@@ -567,7 +567,7 @@ cwd = pwd;
 [p, n, e] = fileparts(which('t_loadcase'));
 offpathcase = [p filesep 't_loadcase' filesep 'case_for_off_path_test'];
 mpc = loadcase(offpathcase);
-t_ok(strcmp(mpc.version, '2'), [t 'version']);
+t_str_match(mpc.version, '2', [t 'version']);
 t_is(mpc.baseMVA, 100, 15, [t 'baseMVA']);
 t_is(size(mpc.bus), [2 VMIN], 15, [t 'bus']);
 t_is(size(mpc.gen), [1 APF], 15, [t 'gen']);

@@ -160,7 +160,7 @@ mpc = toggle_softlims(mpc,'on');
 r = toggle_run_check(mpc, mpopt, t, 1);
 for lm = fieldnames(r.softlims).'
     lim = lm{:};
-    t_ok(strcmp(r.softlims.(lim).hl_mod, 'none'), [t lim '.hl_mod = ''none'''])
+    t_str_match(r.softlims.(lim).hl_mod, 'none', [t lim '.hl_mod = ''none'''])
 end
 gen_order_check(mpc, r, t, mpopt);
 
@@ -172,9 +172,9 @@ vv = r.om.get_idx();
 for lm = fieldnames(r.softlims).'
     lim = lm{:};
     if ~strcmp(lim, 'RATE_A')
-        t_ok(strcmp(r.softlims.(lim).hl_mod, 'none'), [t lim '.hl_mod = ''none'''])
+        t_str_match(r.softlims.(lim).hl_mod, 'none', [t lim '.hl_mod = ''none'''])
     else
-        t_ok(strcmp(r.softlims.RATE_A.hl_mod,'scale'), [t lim '.hl_mod = ''scale'''])
+        t_str_match(r.softlims.RATE_A.hl_mod, 'scale', [t lim '.hl_mod = ''scale'''])
         varname = ['s_' lower(lim)];
         ub = xmax(vv.i1.(varname):vv.iN.(varname)) * r.baseMVA;
         t_is(ub, 0.5*r.branch(r.softlims.RATE_A.idx,RATE_A), 5, [t '.hl_val = 0.5'])
@@ -204,22 +204,22 @@ for lm = fieldnames(r.softlims).'
     switch lim
         case {'PMAX', 'QMAX', 'RATE_A', 'ANGMAX', 'VMAX'}
             %% default hl_mod = 'remove'
-            t_ok(strcmp(r.softlims.(lim).hl_mod,'remove'), [t lim '.hl_mod = ''remove'''])
+            t_str_match(r.softlims.(lim).hl_mod, 'remove', [t lim '.hl_mod = ''remove'''])
             t_ok(r.softlims.(lim).hl_val == Inf, [t lim '.hl_val = Inf'])
             t_ok(all(isinf(ub)), [t lim ' ub = Inf'])
         case {'QMIN', 'ANGMIN'}
             %% default hl_mod = 'remove'
-            t_ok(strcmp(r.softlims.(lim).hl_mod,'remove'), [t lim '.hl_mod = ''remove'''])
+            t_str_match(r.softlims.(lim).hl_mod, 'remove', [t lim '.hl_mod = ''remove'''])
             t_ok(r.softlims.(lim).hl_val == -Inf, [t lim '.hl_val = -Inf'])
             t_ok(all(isinf(ub)), [t lim ' ub = Inf'])
         case 'VMIN'
             %% default hl_mod = 'replace'
-            t_ok(strcmp(r.softlims.(lim).hl_mod,'replace'), [t lim '.hl_mod = ''replace'''])
+            t_str_match(r.softlims.(lim).hl_mod, 'replace', [t lim '.hl_mod = ''replace'''])
             t_ok(r.softlims.(lim).hl_val == 0, [t lim '.hl_val = 0'])
             t_ok(all(ub == r.bus(:,VMIN)), [t lim ' ub = VMIN'])
         case 'PMIN'
             %% default hl_mod = 'replace'
-            t_ok(strcmp(r.softlims.(lim).hl_mod,'replace'), [t lim '.hl_mod = ''replace'''])
+            t_str_match(r.softlims.(lim).hl_mod, 'replace', [t lim '.hl_mod = ''replace'''])
             t_ok(all(r.softlims.(lim).hl_val(r.gen(r.softlims.PMIN.idx, PMIN) > 0) == 0), [t lim '.hl_val = 0 (gens)'])
             t_ok(all(ub(r.gen(r.softlims.PMIN.idx, PMIN) > 0) == r.gen(r.softlims.PMIN.idx,PMIN)), [t lim ' ub=PMIN (gens)'])
     end
@@ -244,22 +244,22 @@ for lm = fieldnames(r.softlims).'
     switch lim
         case {'PMAX', 'QMAX', 'RATE_A', 'ANGMAX', 'VMAX'}
             %% default hl_mod = 'remove'
-            t_ok(strcmp(r.softlims.(lim).hl_mod,'remove'), [t lim '.hl_mod = ''remove'''])
+            t_str_match(r.softlims.(lim).hl_mod, 'remove', [t lim '.hl_mod = ''remove'''])
             t_ok(r.softlims.(lim).hl_val == Inf, [t lim '.hl_val = Inf'])
             t_ok(all(isinf(ub)), [t lim ' ub = Inf'])
         case {'QMIN', 'ANGMIN'}
             %% default hl_mod = 'remove'
-            t_ok(strcmp(r.softlims.(lim).hl_mod,'remove'), [t lim '.hl_mod = ''remove'''])
+            t_str_match(r.softlims.(lim).hl_mod, 'remove', [t lim '.hl_mod = ''remove'''])
             t_ok(r.softlims.(lim).hl_val == -Inf, [t lim '.hl_val = -Inf'])
             t_ok(all(isinf(ub)), [t lim ' ub = Inf'])
         case 'VMIN'
             %% default hl_mod = 'replace'
-            t_ok(strcmp(r.softlims.(lim).hl_mod,'replace'), [t lim '.hl_mod = ''replace'''])
+            t_str_match(r.softlims.(lim).hl_mod, 'replace', [t lim '.hl_mod = ''replace'''])
             t_ok(r.softlims.(lim).hl_val == 0, [t lim '.hl_val = 0'])
             t_ok(all(ub == r.bus(:,VMIN)), [t lim ' ub = VMIN'])
         case 'PMIN'
             %% default hl_mod = 'replace'
-            t_ok(strcmp(r.softlims.(lim).hl_mod,'replace'), [t lim '.hl_mod = ''replace'''])
+            t_str_match(r.softlims.(lim).hl_mod, 'replace', [t lim '.hl_mod = ''replace'''])
             t_ok(all(r.softlims.(lim).hl_val(r.gen(r.softlims.PMIN.idx, PMIN) > 0) == 0), [t lim '.hl_val = 0 (gens)'])
             t_ok(all(ub(r.gen(r.softlims.PMIN.idx, PMIN) > 0) == r.gen(r.softlims.PMIN.idx,PMIN)), [t lim ' ub=PMIN (gens)'])
     end

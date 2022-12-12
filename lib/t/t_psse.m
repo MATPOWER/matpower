@@ -67,10 +67,10 @@ else
             elseif isempty(expected{i}{k})
                 t_ok(isempty(d{k}), sprintf('%s col %d', t, k));
             else
-                t_ok(strcmp(d{k}, expected{i}{k}), sprintf('%s col %d', t, k));
+                t_str_match(d{k}, expected{i}{k}, sprintf('%s col %d', t, k));
             end
         end
-        t_ok(strcmp(c, ec{i}), sprintf('%s comment', t));
+        t_str_match(c, ec{i}, sprintf('%s comment', t));
     end
 
     t = 'psse_parse_line : missing optional columns : ';
@@ -93,7 +93,7 @@ else
                 t_ok(isempty(d.txt{i,k}), sprintf('%s txt{%d,%d}', t, i, k));
             else
                 t_ok(isnan(d.num(i,k)), sprintf('%s num(%d,%d)', t, i, k));
-                t_ok(strcmp(d.txt{i,k}, expected{i}{k}), sprintf('%s txt{%d,%d}', t, i, k));
+                t_str_match(d.txt{i,k}, expected{i}{k}, sprintf('%s txt{%d,%d}', t, i, k));
             end
         end
     end

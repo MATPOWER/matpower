@@ -107,7 +107,7 @@ else
     t_is(length(r.cpf.events), 1, 12, [t 'length(events) == 1']);
     t_is(r.cpf.events(1).k, iterations, 12, [t 'events(1).k']);
     t_is(r.cpf.events(1).idx, 1, 12, [t 'events(1).idx']);
-    t_ok(strcmp(r.cpf.events(1).name, 'TARGET_LAM'), [t 'events(1).name']);
+    t_str_match(r.cpf.events(1).name, 'TARGET_LAM', [t 'events(1).name']);
 
     t = 'CPF to lambda = 0.7 (arc length) : ';
     mpopt = mpoption(mpopt, 'cpf.stop_at', 0.7, 'cpf.parameterization', 2);
@@ -126,7 +126,7 @@ else
     t_is(length(r.cpf.events), 1, 12, [t 'length(events) == 1']);
     t_is(r.cpf.events(1).k, iterations, 12, [t 'events(1).k']);
     t_is(r.cpf.events(1).idx, 1, 12, [t 'events(1).idx']);
-    t_ok(strcmp(r.cpf.events(1).name, 'TARGET_LAM'), [t 'events(1).name']);
+    t_str_match(r.cpf.events(1).name, 'TARGET_LAM', [t 'events(1).name']);
 
     t = 'CPF to lambda = 0.7 (pseudo arc length) : ';
     mpopt = mpoption(mpopt, 'cpf.stop_at', 0.7, 'cpf.parameterization', 3);
@@ -145,7 +145,7 @@ else
     t_is(length(r.cpf.events), 1, 12, [t 'length(events) == 1']);
     t_is(r.cpf.events(1).k, iterations, 12, [t 'events(1).k']);
     t_is(r.cpf.events(1).idx, 1, 12, [t 'events(1).idx']);
-    t_ok(strcmp(r.cpf.events(1).name, 'TARGET_LAM'), [t 'events(1).name']);
+    t_str_match(r.cpf.events(1).name, 'TARGET_LAM', [t 'events(1).name']);
 
     t = 'CPF to nose pt (arc length) : ';
     mpopt = mpoption(mpopt, 'cpf.stop_at', 'NOSE', 'cpf.parameterization', 2);
@@ -165,7 +165,7 @@ else
     t_is(length(r.cpf.events), 1, 12, [t 'length(events) == 1']);
     t_is(r.cpf.events(1).k, iterations, 12, [t 'events(1).k']);
     t_is(r.cpf.events(1).idx, 1, 12, [t 'events(1).idx']);
-    t_ok(strcmp(r.cpf.events(1).name, 'NOSE'), [t 'events(1).name']);
+    t_str_match(r.cpf.events(1).name, 'NOSE', [t 'events(1).name']);
 
     t = 'CPF to nose pt (pseudo arc length) : ';
     mpopt = mpoption(mpopt, 'cpf.stop_at', 'NOSE', 'cpf.parameterization', 3);
@@ -185,7 +185,7 @@ else
     t_is(length(r.cpf.events), 1, 12, [t 'length(events) == 1']);
     t_is(r.cpf.events(1).k, iterations, 12, [t 'events(1).k']);
     t_is(r.cpf.events(1).idx, 1, 12, [t 'events(1).idx']);
-    t_ok(strcmp(r.cpf.events(1).name, 'NOSE'), [t 'events(1).name']);
+    t_str_match(r.cpf.events(1).name, 'NOSE', [t 'events(1).name']);
 
     t = 'CPF to nose pt (pseudo arc length) w/Q lims: ';
     mpopt_qlim = mpoption(mpopt, 'cpf.stop_at', 'NOSE', 'cpf.parameterization', 3,'cpf.enforce_q_lims',1);
@@ -212,7 +212,7 @@ else
     for j = 1:ne
         t_is(r.cpf.events(j).k, ek(j), 12, sprintf('%sevents(%d).k == %d', t, j, ek(j)));
         t_is(r.cpf.events(j).idx, eidx(j), 12, sprintf('%sevents(%d).idx == %d', t, j, eidx(j)));
-        t_ok(strcmp(r.cpf.events(j).name, ename{j}), sprintf('%sevents(%d).name = ''%s''', t, j, ename{j}));
+        t_str_match(r.cpf.events(j).name, ename{j}, sprintf('%sevents(%d).name = ''%s''', t, j, ename{j}));
     end
     
     t = 'CPF to nose pt (pseudo arc length) w/P lims: ';
@@ -229,7 +229,7 @@ else
     t_is(size(r.cpf.V), [10 iterations+1], 12, [t 'size(V)']);
     t_is(size(r.cpf.lam_hat), [1 iterations+1], 12, [t 'size(lam_hat)']);
     t_is(size(r.cpf.lam), [1 iterations+1], 12, [t 'size(lam)']);
-    t_ok(strcmp(r.cpf.done_msg, 'All generators at Pmax'), [t 'done_msg']);
+    t_str_match(r.cpf.done_msg, 'All generators at Pmax', [t 'done_msg']);
     t_is(r.bus(:, BUS_TYPE), [2;2;3;4;1;1;1;1;1;1], 12, [t 'bus type']);
     ek = [7 13 iterations];
     eidx = [3 1 2];
@@ -239,7 +239,7 @@ else
     for j = 1:ne
         t_is(r.cpf.events(j).k, ek(j), 12, sprintf('%sevents(%d).k == %d', t, j, ek(j)));
         t_is(r.cpf.events(j).idx, eidx(j), 12, sprintf('%sevents(%d).idx == %d', t, j, eidx(j)));
-        t_ok(strcmp(r.cpf.events(j).name, ename{j}), sprintf('%sevents(%d).name = ''%s''', t, j, ename{j}));
+        t_str_match(r.cpf.events(j).name, ename{j}, sprintf('%sevents(%d).name = ''%s''', t, j, ename{j}));
     end
     
     t = 'CPF to nose pt (pseudo arc length) w/flow lims: ';
@@ -260,7 +260,7 @@ else
     t_is(length(r.cpf.events), 1, 12, [t 'length(events) == 1']);
     t_is(r.cpf.events(1).k, iterations, 12, [t 'events(1).k']);
     t_is(r.cpf.events(1).idx, 5, 12, [t 'events(1).idx']);
-    t_ok(strcmp(r.cpf.events(1).name, 'FLIM'), [t 'events(1).name']);
+    t_str_match(r.cpf.events(1).name, 'FLIM', [t 'events(1).name']);
     
     t = 'CPF to nose pt (pseudo arc length) w/violated flow lims: ';
     mpopt_flowlim = mpoption(mpopt, 'cpf.stop_at', 'NOSE', 'cpf.parameterization', 3,'cpf.enforce_flow_lims',1);
@@ -299,7 +299,7 @@ else
     t_is(length(r.cpf.events), 1, 12, [t 'length(events) == 1']);
     t_is(r.cpf.events(1).k, iterations, 12, [t 'events(1).k']);
     t_is(r.cpf.events(1).idx, 9, 12, [t 'events(1).idx']);
-    t_ok(strcmp(r.cpf.events(1).name, 'VLIM'), [t 'events(1).name']);
+    t_str_match(r.cpf.events(1).name, 'VLIM', [t 'events(1).name']);
     
     t = 'CPF to nose pt (pseudo arc length) w/violated V lims: ';
     mpopt_vlim = mpoption(mpopt, 'cpf.stop_at', 'NOSE', 'cpf.parameterization', 3,'cpf.enforce_v_lims',1);
@@ -338,7 +338,7 @@ else
     t_is(length(r.cpf.events), 1, 12, [t 'length(events) == 1']);
     t_is(r.cpf.events(1).k, iterations, 12, [t 'events(1).k']);
     t_is(r.cpf.events(1).idx, 5, 12, [t 'events(1).idx']);
-    t_ok(strcmp(r.cpf.events(1).name, 'FLIM'), [t 'events(1).name']);
+    t_str_match(r.cpf.events(1).name, 'FLIM', [t 'events(1).name']);
     
     t = 'CPF to nose pt (pseudo arc length) w/PQ lims: ';
     mpopt_pqlim = mpoption(mpopt, 'cpf.stop_at', 'NOSE', 'cpf.parameterization', 3,'cpf.enforce_q_lims',1,'cpf.enforce_p_lims',1);
@@ -365,7 +365,7 @@ else
     for j = 1:ne
         t_is(r.cpf.events(j).k, ek(j), 12, sprintf('%sevents(%d).k == %d', t, j, ek(j)));
         t_is(r.cpf.events(j).idx, eidx(j), 12, sprintf('%sevents(%d).idx == %d', t, j, eidx(j)));
-        t_ok(strcmp(r.cpf.events(j).name, ename{j}), sprintf('%sevents(%d).name = ''%s''', t, j, ename{j}));
+        t_str_match(r.cpf.events(j).name, ename{j}, sprintf('%sevents(%d).name = ''%s''', t, j, ename{j}));
     end
 
     t = 'CPF (full trace) (arc length) : ';
@@ -385,7 +385,7 @@ else
     t_is(length(r.cpf.events), 1, 12, [t 'length(events) == 1']);
     t_is(r.cpf.events(1).k, iterations, 12, [t 'events(1).k']);
     t_is(r.cpf.events(1).idx, 1, 12, [t 'events(1).idx']);
-    t_ok(strcmp(r.cpf.events(1).name, 'TARGET_LAM'), [t 'events(1).name']);
+    t_str_match(r.cpf.events(1).name, 'TARGET_LAM', [t 'events(1).name']);
 
     t = 'CPF (full trace) (pseudo arc length) : ';
     mpopt = mpoption(mpopt, 'cpf.stop_at', 'FULL', 'cpf.parameterization', 3);
@@ -404,7 +404,7 @@ else
     t_is(length(r.cpf.events), 1, 12, [t 'length(events) == 1']);
     t_is(r.cpf.events(1).k, iterations, 12, [t 'events(1).k']);
     t_is(r.cpf.events(1).idx, 1, 12, [t 'events(1).idx']);
-    t_ok(strcmp(r.cpf.events(1).name, 'TARGET_LAM'), [t 'events(1).name']);
+    t_str_match(r.cpf.events(1).name, 'TARGET_LAM', [t 'events(1).name']);
 
     t = 'CPF (full trace) (pseudo arc length) w/Q lims: ';
     mpopt_qlim = mpoption(mpopt, 'cpf.stop_at', 'FULL', 'cpf.parameterization', 3,'cpf.enforce_q_lims',1);
@@ -432,7 +432,7 @@ else
     for j = 1:ne
         t_is(r.cpf.events(j).k, ek(j), 12, sprintf('%sevents(%d).k == %d', t, j, ek(j)));
         t_is(r.cpf.events(j).idx, eidx(j), 12, sprintf('%sevents(%d).idx == %d', t, j, eidx(j)));
-        t_ok(strcmp(r.cpf.events(j).name, ename{j}), sprintf('%sevents(%d).name = ''%s''', t, j, ename{j}));
+        t_str_match(r.cpf.events(j).name, ename{j}, sprintf('%sevents(%d).name = ''%s''', t, j, ename{j}));
     end
 
     t = 'bug #12 : early termination : ';
@@ -473,10 +473,10 @@ else
         t_is(length(r.cpf.events), 2, 12, [t 'length(events) == 2']);
         t_is(r.cpf.events(1).k, 25, 12, [t 'events(1).k']);
         t_is(r.cpf.events(1).idx, 1, 12, [t 'events(1).idx']);
-        t_ok(strcmp(r.cpf.events(1).name, 'QLIM'), [t 'events(1).name']);
+        t_str_match(r.cpf.events(1).name, 'QLIM', [t 'events(1).name']);
         t_is(r.cpf.events(2).k, iterations, 12, [t 'events(2).k']);
         t_is(r.cpf.events(2).idx, 1, 12, [t 'events(1=2).idx']);
-        t_ok(strcmp(r.cpf.events(2).name, 'TARGET_LAM'), [t 'events(2).name']);
+        t_str_match(r.cpf.events(2).name, 'TARGET_LAM', [t 'events(2).name']);
     end
 
     if have_feature('mp_element')
@@ -496,7 +496,7 @@ else
     t_is(length(r.cpf.events), 1, 12, [t 'length(events) == 1']);
     t_is(r.cpf.events(1).k, iterations, 12, [t 'events(1).k']);
     t_is(r.cpf.events(1).idx, 1, 12, [t 'events(1).idx']);
-    t_ok(strcmp(r.cpf.events(1).name, 'TARGET_LAM'), [t 'events(1).name']);
+    t_str_match(r.cpf.events(1).name, 'TARGET_LAM', [t 'events(1).name']);
     t_ok(isfield(r.cpf, 'cb1'), [t 'isfield cpf.cb1']);
     t_ok(isstruct(r.cpf.cb1), [t 'isstruct cpf.cb1']);
     t_ok(isfield(r.cpf.cb1, 'initial'), [t 'isfield cpf.cb1.initial']);
@@ -505,7 +505,7 @@ else
     t_is(r.cpf.cb1.initial, 1, 12, [t 'r.cpf.cb1.initial']);
     t_is(r.cpf.cb1.iteration, iterations, 12, [t 'r.cpf.cb1.iterations']);
     t_is(r.cpf.cb1.final, 1, 12, [t 'r.cpf.cb1.final']);
-    t_ok(strcmp(r.cpf.shared, '1111111111'), [t 'r.cpf.shared']);
+    t_str_match(r.cpf.shared, '1111111111', [t 'r.cpf.shared']);
 
     t = '1 user callback : ';
     cb1 = struct('fcn', 't_cpf_cb1', 'priority', 10);
@@ -522,7 +522,7 @@ else
     t_is(length(r.cpf.events), 1, 12, [t 'length(events) == 1']);
     t_is(r.cpf.events(1).k, iterations, 12, [t 'events(1).k']);
     t_is(r.cpf.events(1).idx, 1, 12, [t 'events(1).idx']);
-    t_ok(strcmp(r.cpf.events(1).name, 'TARGET_LAM'), [t 'events(1).name']);
+    t_str_match(r.cpf.events(1).name, 'TARGET_LAM', [t 'events(1).name']);
     t_ok(isfield(r.cpf, 'cb1'), [t 'isfield cpf.cb1']);
     t_ok(isstruct(r.cpf.cb1), [t 'isstruct cpf.cb1']);
     t_ok(isfield(r.cpf.cb1, 'initial'), [t 'isfield cpf.cb1.initial']);
@@ -531,7 +531,7 @@ else
     t_is(r.cpf.cb1.initial, 1, 12, [t 'r.cpf.cb1.initial']);
     t_is(r.cpf.cb1.iteration, iterations, 12, [t 'r.cpf.cb1.iterations']);
     t_is(r.cpf.cb1.final, 1, 12, [t 'r.cpf.cb1.final']);
-    t_ok(strcmp(r.cpf.shared, '1111111111'), [t 'r.cpf.shared']);
+    t_str_match(r.cpf.shared, '1111111111', [t 'r.cpf.shared']);
 
     t = '2 user callbacks (with args) : ';
     cb_args = struct('initial', 20, 'iteration', 2, 'final', 200);
@@ -547,7 +547,7 @@ else
     t_is(length(r.cpf.events), 1, 12, [t 'length(events) == 1']);
     t_is(r.cpf.events(1).k, iterations, 12, [t 'events(1).k']);
     t_is(r.cpf.events(1).idx, 1, 12, [t 'events(1).idx']);
-    t_ok(strcmp(r.cpf.events(1).name, 'TARGET_LAM'), [t 'events(1).name']);
+    t_str_match(r.cpf.events(1).name, 'TARGET_LAM', [t 'events(1).name']);
     t_ok(isfield(r.cpf, 'cb1'), [t 'isfield cpf.cb1']);
     t_ok(isstruct(r.cpf.cb1), [t 'isstruct cpf.cb1']);
     t_ok(isfield(r.cpf.cb1, 'initial'), [t 'isfield cpf.cb1.initial']);
@@ -564,7 +564,7 @@ else
     t_is(r.cpf.cb2.initial, 20, 12, [t 'r.cpf.cb2.initial']);
     t_is(r.cpf.cb2.iteration, 2*iterations, 12, [t 'r.cpf.cb2.iterations']);
     t_is(r.cpf.cb2.final, 200, 12, [t 'r.cpf.cb2.final']);
-    t_ok(strcmp(r.cpf.shared, '12121212121212121212'), [t 'r.cpf.shared']);
+    t_str_match(r.cpf.shared, '12121212121212121212', [t 'r.cpf.shared']);
 
     t = '2 user callbacks (with priority & args) : ';
     cb_args = struct('initial', 20, 'iteration', 2, 'final', 200);
@@ -580,7 +580,7 @@ else
     t_is(length(r.cpf.events), 1, 12, [t 'length(events) == 1']);
     t_is(r.cpf.events(1).k, iterations, 12, [t 'events(1).k']);
     t_is(r.cpf.events(1).idx, 1, 12, [t 'events(1).idx']);
-    t_ok(strcmp(r.cpf.events(1).name, 'TARGET_LAM'), [t 'events(1).name']);
+    t_str_match(r.cpf.events(1).name, 'TARGET_LAM', [t 'events(1).name']);
     t_ok(isfield(r.cpf, 'cb1'), [t 'isfield cpf.cb1']);
     t_ok(isstruct(r.cpf.cb1), [t 'isstruct cpf.cb1']);
     t_ok(isfield(r.cpf.cb1, 'initial'), [t 'isfield cpf.cb1.initial']);
@@ -597,7 +597,7 @@ else
     t_is(r.cpf.cb2.initial, 20, 12, [t 'r.cpf.cb2.initial']);
     t_is(r.cpf.cb2.iteration, 2*iterations, 12, [t 'r.cpf.cb2.iterations']);
     t_is(r.cpf.cb2.final, 200, 12, [t 'r.cpf.cb2.final']);
-    t_ok(strcmp(r.cpf.shared, '21212121212121212121'), [t 'r.cpf.shared']);
+    t_str_match(r.cpf.shared, '21212121212121212121', [t 'r.cpf.shared']);
     end  %% if mp_element
 
     t = 'case300 w/Q lims : ';
@@ -637,7 +637,7 @@ else
     for j = 1:ne
         t_is(r.cpf.events(j).k, ek(j), 12, sprintf('%sevents(%d).k == %d', t, j, ek(j)));
         t_is(r.cpf.events(j).idx, eidx(j), 12, sprintf('%sevents(%d).idx == %d', t, j, eidx(j)));
-        t_ok(strcmp(r.cpf.events(j).name, ename{j}), sprintf('%sevents(%d).name = ''%s''', t, j, ename{j}));
+        t_str_match(r.cpf.events(j).name, ename{j}, sprintf('%sevents(%d).name = ''%s''', t, j, ename{j}));
     end
 
     t = 'case14 (unsuccessful) : ';
