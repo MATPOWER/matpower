@@ -5,6 +5,15 @@ Change history for MP-Test
 Changes since 7.1
 -----------------
 
+#### 11/10/22
+  - Add `t_str_match()` to test that a string/char array matches an
+    expected value. Includes the option to apply a set of regular expression
+    or simple string replacements before comparing.
+  - Add `t_file_match()` to test that the contents of two text files
+    match, with the option to delete one if they do match. Includes
+    the option to apply a set of string or regular expresssion replacements
+    before comparing.
+
 #### 4/10/21
   - Allow `logical` type (i.e. `true` and `false`) as second input to
     `have_feature()`, as well as `numeric` type (1 and 0), to facilitate

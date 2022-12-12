@@ -135,7 +135,7 @@ particular function.
 - __t_is__ — test if two (scalar, vector, matrix) values are identical,
   to some tolerance
   ```
-  t_is(got, expected, prec, msg)
+  ok = t_is(got, expected, prec, msg)
   ```
   Increments the global test count and if the maximum difference between
   corresponding elements of `got` and `expected` is less than
@@ -150,6 +150,45 @@ particular function.
 
   Optionally returns a true or false value indicating whether or not the
   test succeeded. `NaN` values are considered to be equal to each other.
+
+- __t_str_match__ — test if two strings match, with optional replacements
+  ```
+  ok = t_str_match(got, expected, msg)
+  ok = t_str_match(got, expected, msg, reps)
+  ```
+  This is equivalent to `t_ok(strcmp(got, expected), msg)`, with the
+  option to apply replacements to `got`, and optionally to `expected`,
+  as specified by `reps` before comparing.
+
+  The `reps` argument is a cell array of replacement specs, applied
+  sequentially, where each replacement spec is a cell array of the
+  following form:  
+      `{original, replacement}`  
+      `{original, replacement, re}`  
+      `{original, replacement, re, both}`  
+  The `original` and `replacement` arguments are passed directly as the
+  2nd and 3rd arguments to `regexprep` (or to `strrep` if `re` is present
+  and false). The replacement applies to `got` only, unless `both` is
+  present and true, in which case it also applies to `expected`.
+
+- __t_files_match__ — test if the contents of two text files match
+  ```
+  ok = t_file_match(got_fname, exp_fname, msg)
+  ok = t_file_match(got_fname, exp_fname, msg, reps)
+  ok = t_file_match(got_fname, exp_fname, msg, reps, del_got_fname)
+  ```
+  Uses `t_str_match()` on the contents of two text files whose names/paths
+  are given in `got_fname` and `exp_fname`. If both files exist and the
+  contents match, the test passes.
+
+  It ignores any differences in line ending characters and, like
+  `t_str_match()`, can apply replacements to the contents of `got_fname`,
+  and optionally `exp_fname`, as specified by `reps` before comparing.
+
+  See __t_str_match__ above for a description of the `reps` argument.
+
+  If `del_got_fname` is present and true it will delete the file named
+  in `got_fname` if the test passes.
 
 - __t_skip__ — skip a number of tests
   ```
