@@ -1,0 +1,102 @@
+
+PF succeeded in 0.36 seconds (0.35 setup + 0.01 solve)
+================================================================================
+|     System Summary                                                           |
+================================================================================
+  elements                on     off    total
+ --------------------- ------- ------- -------
+  3-ph Buses                4       -       4
+  3-ph Generators           1       -       1
+  3-ph Loads                1       -       1
+  3-ph Lines                2       -       2
+  3-ph Transformers         1       -       1
+
+  Total 3-ph generation               6109.9 kW       4206.5 kVAr
+  Total 3-ph load                     5450.0 kW       2442.6 kVAr
+  Total 3-ph line loss                 561.5 kW       1173.8 kVAr
+  Total 3-ph transformer loss           98.4 kW        590.2 kVAr
+
+================================================================================
+|     3-ph Bus Data                                                            |
+================================================================================
+  3-ph            Phase A Voltage    Phase B Voltage    Phase C Voltage
+ Bus ID   Status   (kV)     (deg)     (kV)     (deg)     (kV)     (deg)
+--------  ------  -------  -------   -------  -------   -------  -------
+      1      1     7.1996     0.00    7.1996  -120.00    7.1996   120.00
+      2      1     7.1637    -0.14    7.1105  -120.18    7.0821   119.26
+      3      1     2.3055    -2.26    2.2547  -123.62    2.2028   114.79
+      4      1     2.1750    -4.12    1.9298  -126.80    1.8327   102.85
+
+================================================================================
+|     3-ph Generator Data                                                      |
+================================================================================
+  3-ph      3-ph             Phase A Power     Phase B Power     Phase C Power
+ Gen ID    Bus ID   Status   (kW)    (KVAr)    (kW)    (kVAr)    (kW)    (kVAr)
+--------  --------  ------  -------  ------   -------  ------   -------  ------
+      1         1      1    1341.42  970.52   2096.10 1341.41   2672.34 1894.59
+
+================================================================================
+|     3-ph Load Data                                                           |
+================================================================================
+  3-ph      3-ph             Phase A Power     Phase B Power     Phase C Power
+Load ID    Bus ID   Status   (kW)     (PF)     (kW)     (PF)     (kW)     (PF)
+--------  --------  ------  -------  ------   -------  ------   -------  ------
+      1         4      1    1275.00  0.8500   1800.00  0.9000   2375.00  0.9500
+
+================================================================================
+|     3-ph Line Data                                                           |
+================================================================================
+-->  Current Injections at "From" Bus
+  3-ph    3-ph Bus  3-ph Bus          Phase A Current  Phase B Current  Phase C Current
+Line ID    From ID   To ID    Status   (A)    (deg)     (A)    (deg)     (A)    (deg)
+--------  --------  --------  ------  ------  ------   ------  ------   ------  ------
+      1         1         2      1    229.97   -35.9   345.66  -152.6   455.00    84.7
+      2         3         4      1    689.64   -35.9  1036.34  -152.6  1364.10    84.7
+
+<--  Current Injections at "To" Bus
+  3-ph    3-ph Bus  3-ph Bus          Phase A Current  Phase B Current  Phase C Current
+Line ID    From ID   To ID    Status   (A)    (deg)     (A)    (deg)     (A)    (deg)
+--------  --------  --------  ------  ------  ------   ------  ------   ------  ------
+      1         1         2      1    230.06   144.1   345.72    27.4   455.06   -95.3
+      2         3         4      1    689.66   144.1  1036.35    27.4  1364.11   -95.3
+
+-->  Power Injections at "From" Bus
+  3-ph    3-ph Bus  3-ph Bus          Phase A Power    Phase B Power    Phase C Power
+Line ID    From ID   To ID    Status   (kW)   (kVAr)    (kW)   (kVAr)    (kW)   (kVAr)
+--------  --------  --------  ------  ------  ------   ------  ------   ------  ------
+      1         1         2      1    1341.4   970.5   2096.1  1341.4   2672.3  1894.6
+      2         3         4      1    1323.5   881.1   2043.4  1133.3   2598.7  1508.6
+
+<--  Power Injections at "To" Bus
+  3-ph    3-ph Bus  3-ph Bus          Phase A Power    Phase B Power    Phase C Power
+Line ID    From ID   To ID    Status   (kW)   (kVAr)    (kW)   (kVAr)    (kW)   (kVAr)
+--------  --------  --------  ------  ------  ------   ------  ------   ------  ------
+      1         1         2      1   -1337.2  -963.4  -2074.4 -1319.1  -2652.4 -1830.6
+      2         3         4      1   -1275.0  -790.2  -1800.0  -871.8  -2375.0  -780.6
+
+================================================================================
+|     3-ph Transformer Data                                                    |
+================================================================================
+-->  Current Injections at "From" Bus
+  3-ph    3-ph Bus  3-ph Bus          Phase A Current  Phase B Current  Phase C Current
+Xfrm ID    From ID   To ID    Status   (A)    (deg)     (A)    (deg)     (A)    (deg)
+--------  --------  --------  ------  ------  ------   ------  ------   ------  ------
+      1         2         3      1    230.06   -35.9   345.72  -152.6   455.06    84.7
+
+<--  Current Injections at "To" Bus
+  3-ph    3-ph Bus  3-ph Bus          Phase A Current  Phase B Current  Phase C Current
+Xfrm ID    From ID   To ID    Status   (A)    (deg)     (A)    (deg)     (A)    (deg)
+--------  --------  --------  ------  ------  ------   ------  ------   ------  ------
+      1         2         3      1    689.64   144.1  1036.34    27.4  1364.10   -95.3
+
+-->  Power Injections at "From" Bus
+  3-ph    3-ph Bus  3-ph Bus          Phase A Power    Phase B Power    Phase C Power
+Xfmr ID    From ID   To ID    Status   (kW)   (kVAr)    (kW)   (kVAr)    (kW)   (kVAr)
+--------  --------  --------  ------  ------  ------   ------  ------   ------  ------
+      1         2         3      1    1337.2   963.4   2074.4  1319.1   2652.4  1830.6
+
+<--  Power Injections at "To" Bus
+  3-ph    3-ph Bus  3-ph Bus          Phase A Power    Phase B Power    Phase C Power
+Xfmr ID    From ID   To ID    Status   (kW)   (kVAr)    (kW)   (kVAr)    (kW)   (kVAr)
+--------  --------  --------  ------  ------  ------   ------  ------   ------  ------
+      1         2         3      1   -1323.5  -881.1  -2043.4 -1133.3  -2598.7 -1508.6
