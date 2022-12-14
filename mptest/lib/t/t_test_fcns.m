@@ -225,7 +225,7 @@ ex3 = regexprep(ex2, '\d', 'N');
 
 k = k + 1; e(k) = 1;
 t = sprintf('%s : fileread', f(e(k)));
-g(k) = t_ok(strcmp(ex(1:8), 'function'), t);
+g(k) = t_str_match(ex(1:8), 'function', t);
 
 %% write files
 filewrite(fname1, ex);

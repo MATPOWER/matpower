@@ -2,8 +2,11 @@ Change history for MP-Test
 ==========================
 
 
-Changes since 7.1
------------------
+Version 8.0b1 - *Dec 12, 2022*
+------------------------------
+
+#### 12/12/22
+  - Release 8.0b1.
 
 #### 11/10/22
   - Add `t_str_match()` to test that a string/char array matches an
