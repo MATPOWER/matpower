@@ -57,11 +57,12 @@ t_most_30b_3_1_0.......ok
 t_most_fixed_res.......ok
 t_most_30b_1_1_0_uc....ok
 t_most_mpopf...........ok
-t_most_uc..............ok (264 of 330 skipped)
+t_most_uc..............ok (272 of 340 skipped)
 t_most_suc.............ok (148 of 185 skipped)
+t_most_tlmp............ok
 t_most_w_ds............ok
-All tests successful (310 passed, 412 skipped of 722)
-Elapsed time 46.18 seconds.
+All tests successful (359 passed, 420 skipped of 779)
+Elapsed time 39.45 seconds.
 ```
 
 If, for some reason, you prefer to install your own copy of MOST directly
@@ -113,8 +114,8 @@ Publications
 3.  A. J. Lamadrid, D. Munoz-Alvarez, C. E. Murillo-Sanchez,
     R. D. Zimmerman, H. D. Shin and R. J. Thomas, ["Using the MATPOWER
     Optimal Scheduling Tool to Test Power System Operation Methodologies
-    Under Uncertainty,"][19] *Sustainable Energy, IEEE Transactions on*,
-    vol. 10, no. 3, pp. 1280-1289, July 2019.
+    Under Uncertainty,"][11] *Sustainable Energy, IEEE Transactions on*,
+    vol. 10, no. 3, pp. 1280-1289, July 2019.  
     doi: [10.1109/TSTE.2018.2865454][11].
 
 
@@ -140,12 +141,12 @@ citing both the 2011 MATPOWER paper and the 2013 MOST paper.
 The [MATPOWER Optimal Scheduling Tool (MOST) User's Manual][7] should
 also be cited explicitly in work that refers to or is derived from its
 content. The citation and DOI can be version-specific or general, as
-appropriate. For version 1.1, use:
+appropriate. For version 1.2, use:
 
 >   R. D. Zimmerman, C. E. Murillo-Sanchez. *MATPOWER Optimal Scheduling
-    Tool (MOST) User's Manual, Version 1.1*. 2020. [Online].
-    Available: https://matpower.org/docs/MOST-manual-1.1.pdf  
-    doi: [10.5281/zenodo.4073878](https://doi.org/10.5281/zenodo.4073878)
+    Tool (MOST) User's Manual, Version 1.2*. 2022. [Online].
+    Available: https://matpower.org/docs/MOST-manual-1.2.pdf  
+    doi: [10.5281/zenodo.7434827](https://doi.org/10.5281/zenodo.7434827)
 
 For a version non-specific citation, use the following citation and DOI,
 with *\<YEAR\>* replaced by the year of the most recent release:

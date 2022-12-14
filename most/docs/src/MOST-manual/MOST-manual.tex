@@ -143,23 +143,23 @@
 \newcommand{\mptest}[0]{{MP-Test}}
 \newcommand{\mptesturl}[0]{https://github.com/MATPOWER/mptest}
 \newcommand{\mptestlink}[0]{\href{\mptesturl}{\mptest{}}}
-\newcommand{\mptestver}[0]{7.1}
+\newcommand{\mptestver}[0]{8.0b1}
 \newcommand{\mips}[0]{{MIPS}}
 \newcommand{\mipsurl}[0]{https://github.com/MATPOWER/mips}
 \newcommand{\mipslink}[0]{\href{\mipsurl}{\mips{}}}
 \newcommand{\mipsname}[0]{{{\bf M}{\sc atpower} \textbf{I}nterior \textbf{P}oint \textbf{S}olver}}
-\newcommand{\mipsver}[0]{1.4}
+\newcommand{\mipsver}[0]{1.5}
 \newcommand{\mpom}[0]{\mbox{MP-Opt-Model}}
 \newcommand{\mpomurl}[0]{https://github.com/MATPOWER/mp-opt-model}
 \newcommand{\mpomlink}[0]{\href{\mpomurl}{\mpom{}}}
 \newcommand{\mpomname}[0]{\mpom{}}
 % \newcommand{\mpomname}[0]{{{\bf M}{\sc at}{\bf P}{\sc ower} \textbf{Opt}imization \textbf{Model}}}
-\newcommand{\mpomver}[0]{3.0}
+\newcommand{\mpomver}[0]{4.1}
 \newcommand{\most}[0]{{MOST}}
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
 \newcommand{\mostlink}[0]{\href{\mosturl}{\most{}}}
-\newcommand{\mostver}[0]{1.2-dev}
+\newcommand{\mostver}[0]{1.2}
 \newcommand{\md}[0]{{\most{} Data struct}}
 \newcommand{\powerweb}[0]{{\sc PowerWeb}}
 \newcommand{\pserc}[0]{{\sc PSerc}}
@@ -178,7 +178,7 @@
 \newcommand{\ot}[0]{{Optimization Toolbox}}
 \newcommand{\pardiso}[0]{{PARDISO}}
 \newcommand{\sdppf}[0]{\texttt{SDP\_PF}}
-\newcommand{\sdppfver}[0]{1.0.1}
+\newcommand{\sdppfver}[0]{1.0.2}
 \newcommand{\sdpopf}[0]{SDPOPF}
 \newcommand{\code}[1]{{\relsize{-0.5}{\tt{{#1}}}}}  % requires package relsize
 % Note: to get straight single quotes in \code you have to use one of the
@@ -240,7 +240,7 @@ User's Manual}
 %%% BEFORE PUBLISHING A NEW VERSION:
 %%%   Update the publication year for \bibitem{matpower} and
 %%%   \bibitem{matpower_manual} to the year of the latest release
-%\date{October 8, 2020} % comment this line to display the current date
+\date{December 13, 2022} % comment this line to display the current date
 %\date{December 14, 2011\thanks{Second revision. First revision was December 13, 2011}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
@@ -331,12 +331,12 @@ C.~E. Murillo-S{\'a}nchez, R.~D. Zimmerman, C.~L. Anderson, and R.~J. Thomas, ``
 The \mostname{} (\most) User's Manual~\cite{most_manual} should also be
 cited explicitly in work that refers to or is derived from its content.
 The citation and DOI can be version-specific or general, as appropriate.
-For version 1.1, use:
+For version 1.2, use:
 
 \begin{quote}
 \footnotesize
-R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez. \mostname{} (\most{}) User's Manual, Version 1.1. 2020. [Online]. Available: \url{https://matpower.org/docs/MOST-manual-1.1.pdf}\\
-\doi{10.5281/zenodo.4073878}
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez. \mostname{} (\most{}) User's Manual, Version 1.2. 2022. [Online]. Available: \url{https://matpower.org/docs/MOST-manual-1.2.pdf}\\
+\doi{10.5281/zenodo.7434827}
 \end{quote}
 For a version non-specific citation, use the following citation and DOI,
 with \emph{\textless{}YEAR\textgreater{}} replaced by the year of the most recent release:
@@ -405,11 +405,12 @@ t_most_30b_3_1_0.......ok
 t_most_fixed_res.......ok
 t_most_30b_1_1_0_uc....ok
 t_most_mpopf...........ok
-t_most_uc..............ok (264 of 330 skipped)
+t_most_uc..............ok (272 of 340 skipped)
 t_most_suc.............ok (148 of 185 skipped)
+t_most_tlmp............ok
 t_most_w_ds............ok
-All tests successful (310 passed, 412 skipped of 722)
-Elapsed time 46.18 seconds.
+All tests successful (359 passed, 420 skipped of 779)
+Elapsed time 39.45 seconds.
 \end{Code}
 
 If, for some reason, you prefer to install your own copy of MOST directly
@@ -472,12 +473,12 @@ mdo = most(mdi, mpopt);
 
 \begin{Code}
 =============================================================================
-          MATPOWER Optimal Scheduling Tool  --  MOST Version 1.1
+          MATPOWER Optimal Scheduling Tool  --  MOST Version 1.2
           A multiperiod stochastic secure OPF with unit commitment
                        -----  Built on MATPOWER  -----
   by Carlos E. Murillo-Sanchez, Universidad Nacional de Colombia--Manizales
                   and Ray D. Zimmerman, Cornell University
-       (c) 2012-2020 Power Systems Engineering Research Center (PSERC)       
+       (c) 2012-2022 Power Systems Engineering Research Center (PSERC)       
 =============================================================================
 - Building indexing structures.
 - Building expected storage-tracking mechanism.
@@ -497,9 +498,9 @@ mdo = most(mdi, mpopt);
 
 ============================================================================
 
-Gurobi Version 9.0.3 -- automatic MILP solver
+Gurobi Version 10.0.0 -- automatic MILP solver
 --- Integer stage complete, starting price computation stage ---
-Gurobi Version 9.0.3 -- automatic LP solver
+Gurobi Version 10.0.0 -- automatic LP solver
 
 ============================================================================
 - MOST: MILP solved successfully.
@@ -3389,7 +3390,7 @@ The \href{https://matpower.org/docs/MOST-manual-1.1.pdf}{\most{} 1.1 User's Manu
 \end{itemize}
 
 
-\subsection{Version 1.2 -- released ??? ?, 2022}
+\subsection{Version 1.2 -- released Dec 13, 2022}
 \label{app:v12}
 
 The \href{https://matpower.org/docs/MOST-manual-1.2.pdf}{\most{} 1.2 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MOST-manual-1.2.pdf}}
@@ -3425,6 +3426,29 @@ excluded for single-period problems.\\
 \eqref{eq:most_rampres_cost}, where $\gamma^t$ is now correct.
 Previously it should have been $\gamma^{t+1}$, as it was in the code.
 \end{itemize}
+
+% \subsection{Version 1.2 -- released ??? ?, 2022}
+% \label{app:v12}
+% 
+% The \href{https://matpower.org/docs/MOST-manual-1.2.pdf}{\most{} 1.2 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MOST-manual-1.2.pdf}}
+% 
+% \subsubsection*{Changes}
+% \begin{itemize}
+% \item 
+% \item 
+% 
+% \end{itemize}
+% 
+% \subsubsection*{Bugs Fixed}
+% \begin{itemize}
+% \item \emph{Thanks to Fulano.}
+% \item 
+% \end{itemize}
+% 
+% \subsubsection*{Incompatible Changes}
+% \begin{itemize}
+% \item 
+% \end{itemize}
 
 \end{appendices}
 
@@ -3466,7 +3490,7 @@ General Meeting, 2009 IEEE}, pp. 1--7, July 26--30 2009.
 The BSD 3-Clause License. [Online]. Available: \url{https://opensource.org/licenses/BSD-3-Clause}.
 
 \bibitem{most_manual}
-R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez. \mostname{} (\most{}) User's Manual. 2020. [Online]. Available: \url{https://matpower.org/docs/MOST-manual.pdf}\\
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez. \mostname{} (\most{}) User's Manual. 2022. [Online]. Available: \url{https://matpower.org/docs/MOST-manual.pdf}\\
 \doi{10.5281/zenodo.3236531}
 
 \bibitem{superopf2008}

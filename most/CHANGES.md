@@ -2,8 +2,11 @@ Change history for MOST
 =======================
 
 
-since version 1.1
------------------
+Version 1.2 - *Dec 13, 2022*
+----------------------------
+
+#### 12/13/22
+  - Release 1.2.
 
 #### 11/10/22
 - Update `addgen2mpc()` to expand fixed reserve parameters to keep sizes
