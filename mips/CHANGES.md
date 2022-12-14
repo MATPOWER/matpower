@@ -2,8 +2,11 @@ Change history for MIPS
 =======================
 
 
-Changes since 1.4
------------------
+Version 1.5 - *Dec 12, 2022*
+----------------------------
+
+#### 12/12/22
+  - Release 1.5.
 
 #### 10/28/22
   - Add to `mplinsolve()` the ability to return a struct containing the matrix

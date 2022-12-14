@@ -140,22 +140,22 @@
 \newcommand{\mptest}[0]{{MP-Test}}
 \newcommand{\mptesturl}[0]{https://github.com/MATPOWER/mptest}
 \newcommand{\mptestlink}[0]{\href{\mptesturl}{\mptest{}}}
-\newcommand{\mptestver}[0]{7.1}
+\newcommand{\mptestver}[0]{8.0b1}
 \newcommand{\mips}[0]{{MIPS}}
 \newcommand{\mipsurl}[0]{https://github.com/MATPOWER/mips}
 \newcommand{\mipslink}[0]{\href{\mipsurl}{\mips{}}}
 \newcommand{\mipsname}[0]{{{\bf M}{\sc atpower} \textbf{I}nterior \textbf{P}oint \textbf{S}olver}}
-\newcommand{\mipsver}[0]{1.5-dev}
+\newcommand{\mipsver}[0]{1.5}
 \newcommand{\mpom}[0]{\mbox{MP-Opt-Model}}
 \newcommand{\mpomurl}[0]{https://github.com/MATPOWER/mp-opt-model}
 \newcommand{\mpomlink}[0]{\href{\mpomurl}{\mpom{}}}
 \newcommand{\mpomname}[0]{\mpom{}}
 % \newcommand{\mpomname}[0]{{{\bf M}{\sc at}{\bf P}{\sc ower} \textbf{Opt}imization \textbf{Model}}}
-\newcommand{\mpomver}[0]{3.0}
+\newcommand{\mpomver}[0]{4.1}
 \newcommand{\most}[0]{{MOST}}
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
-\newcommand{\mostver}[0]{1.1}
+\newcommand{\mostver}[0]{1.2}
 \newcommand{\md}[0]{{\most{} Data struct}}
 \newcommand{\powerweb}[0]{{\sc PowerWeb}}
 \newcommand{\pserc}[0]{{\sc PSerc}}
@@ -228,7 +228,7 @@
 \title{\mipsname{}\\\mips{} \mipsver{}\\
 User's Manual}
 \author{Ray~D.~Zimmerman \and Hongye~Wang}
-%\date{October 8, 2020} % comment this line to display the current date
+\date{December 12, 2022} % comment this line to display the current date
 %\date{December 14, 2011\thanks{Second revision. First revision was December 13, 2011}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
@@ -322,13 +322,13 @@ Systems, IEEE Transactions on}, vol.~22, no.~3, pp. 1185--1193, August 2007.\\
 
 The \mipsname{} (\mips{}) User's Manual~\cite{mips_manual} should also be cited explicitly
 in work that refers to or is derived from its content. The citation and
-DOI can be version-specific or general, as appropriate. For version 1.4,
+DOI can be version-specific or general, as appropriate. For version 1.5,
 use:
 
 \begin{quote}
 \footnotesize
-R.~D. Zimmerman, H.~Wang. \mipsname{} (\mips{}) User's Manual, Version 1.4. 2020. [Online]. Available: \url{https://matpower.org/docs/MIPS-manual-1.4.pdf}\\
-\doi{10.5281/zenodo.4073324}
+R.~D. Zimmerman, H.~Wang. \mipsname{} (\mips{}) User's Manual, Version 1.5. 2022. [Online]. Available: \url{https://matpower.org/docs/MIPS-manual-1.5.pdf}\\
+\doi{10.5281/zenodo.7430306}
 \end{quote}
 For a version non-specific citation, use the following citation and DOI,
 with \emph{\textless{}YEAR\textgreater{}} replaced by the year of the most recent release:
@@ -399,12 +399,12 @@ We will use \mipspath{} to denote the path to this directory.
 %\\\hl{re-do before release (run on fastest machine available)}
 \begin{Code}
 >> test_mips
-t_mplinsolve......ok (6 of 66 skipped)
+t_mplinsolve......ok (8 of 180 skipped)
 t_mips............ok
 t_mips_pardiso....ok (60 of 60 skipped)
 t_qps_mips........ok
-All tests successful (192 passed, 66 skipped of 258)
-Elapsed time 0.05 seconds.
+All tests successful (304 passed, 68 skipped of 372)
+Elapsed time 0.08 seconds.
 \end{Code}
 \end{enumerate}
 
@@ -681,7 +681,7 @@ fprintf('   %g\n', lambda.ineqnonlin);
 \end{Code}
 \begin{Code}
 >> mips_example2
-MATPOWER Interior Point Solver -- MIPS, Version 1.4, 08-Oct-2020
+MATPOWER Interior Point Solver -- MIPS, Version 1.5, 12-Dec-2022
  (using built-in linear solver)
  it    objective   step size   feascond     gradcond     compcond     costcond  
 ----  ------------ --------- ------------ ------------ ------------ ------------
@@ -1316,7 +1316,7 @@ The \href{https://matpower.org/docs/MIPS-manual-1.4.pdf}{\mips{} 1.4 User's Manu
 \end{itemize}
 
 
-\subsection{Version 1.5 -- released ??? ?, 2022}
+\subsection{Version 1.5 -- released Dec 12, 2022}
 \label{app:v15}
 
 The \href{https://matpower.org/docs/MIPS-manual-1.5.pdf}{\mips{} 1.5 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MIPS-manual-1.5.pdf}}
@@ -1325,26 +1325,38 @@ The \href{https://matpower.org/docs/MIPS-manual-1.5.pdf}{\mips{} 1.5 User's Manu
 \begin{itemize}
 \item Add to \code{mplinsolve()} the ability to return a struct containing the matrix LU factorization, and to reuse this pre-factored matrix to solve additional systems with different right-hand-sides by passing the struct in place of the A matrix to subsequent calls.
 \item Add option to \code{mplinsolve()} to solve transposed systems by setting \code{opt.tr} to 1, including when providing the pre-factored matrix for the original, non-transposed system.
-\item New functions:
-    \begin{itemize}
-    \item \code{foo} does bar ...
-    \end{itemize}
 \end{itemize}
 
-\subsubsection*{Bugs Fixed}
-\begin{itemize}
-\item 
-\end{itemize}
 
-\subsubsection*{Other Changes}
-\begin{itemize}
-\item 
-\end{itemize}
-
-\subsubsection*{Incompatible Changes}
-\begin{itemize}
-\item 
-\end{itemize}
+% \subsection{Version 1.6 -- released ??? ?, 2023}
+% \label{app:v16}
+% 
+% The \href{https://matpower.org/docs/MIPS-manual-1.6.pdf}{\mips{} 1.6 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MIPS-manual-1.6.pdf}}
+% 
+% \subsubsection*{New Features}
+% \begin{itemize}
+% \item 
+% \item 
+% \item New functions:
+%     \begin{itemize}
+%     \item \code{foo} does bar ...
+%     \end{itemize}
+% \end{itemize}
+% 
+% \subsubsection*{Bugs Fixed}
+% \begin{itemize}
+% \item 
+% \end{itemize}
+% 
+% \subsubsection*{Other Changes}
+% \begin{itemize}
+% \item 
+% \end{itemize}
+% 
+% \subsubsection*{Incompatible Changes}
+% \begin{itemize}
+% \item 
+% \end{itemize}
 
 
 \end{appendices}
@@ -1376,7 +1388,7 @@ R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2020). \matpower{}\\~
 \doi{10.5281/zenodo.3236535}
 
 \bibitem{mips_manual}
-R.~D. Zimmerman, H.~Wang. \mipsname{} (\mips{}) User's Manual. 2020.
+R.~D. Zimmerman, H.~Wang. \mipsname{} (\mips{}) User's Manual. 2022.
 [Online]. Available: \url{https://matpower.org/docs/MIPS-manual.pdf}\\
 \doi{10.5281/zenodo.3236506}
 

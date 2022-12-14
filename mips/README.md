@@ -42,12 +42,12 @@ of MATLAB or Octave, including setting up your MATLAB/Octave path.
     should resemble the following:
 ```
   >> test_mips
-  t_mplinsolve......ok (6 of 66 skipped)
+  t_mplinsolve......ok (8 of 180 skipped)
   t_mips............ok
   t_mips_pardiso....ok (60 of 60 skipped)
   t_qps_mips........ok
-  All tests successful (192 passed, 66 skipped of 258)
-  Elapsed time 0.05 seconds.
+  All tests successful (304 passed, 68 skipped of 372)
+  Elapsed time 0.08 seconds.
 ```
 
 Documentation
@@ -98,12 +98,12 @@ the following 2007 paper.
 The [MATPOWER Interior Point Solver (MIPS) User's Manual][7] should also be
 cited explicitly in work that refers to or is derived from its content.
 The citation and DOI can be version-specific or general, as appropriate.
-For version 1.4, use:
+For version 1.5, use:
 
 >   R. D. Zimmerman, H. Wang. *MATPOWER Interior Point Solver (MIPS)
-    User's Manual, Version 1.4*. 2020. [Online].
-    Available: https://matpower.org/docs/MIPS-manual-1.4.pdf  
-    doi: [10.5281/zenodo.4073324](https://doi.org/10.5281/zenodo.4073324)
+    User's Manual, Version 1.5*. 2020. [Online].
+    Available: https://matpower.org/docs/MIPS-manual-1.5.pdf  
+    doi: [10.5281/zenodo.7430306](https://doi.org/10.5281/zenodo.7430306)
 
 For a version non-specific citation, use the following citation and DOI,
 with *\<YEAR\>* replaced by the year of the most recent release:
