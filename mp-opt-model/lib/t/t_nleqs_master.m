@@ -96,7 +96,7 @@ for k = 1:length(cfg)
                     otherwise
                         out_alg = alg;
                 end
-                t_ok(strcmp(out.alg, out_alg), [t 'out.alg']);
+                t_str_match(out.alg, out_alg, [t 'out.alg']);
                 eJ = [1 1; 6 1];
                 t_is(jac, eJ, 5.8, [t 'jac']);
 

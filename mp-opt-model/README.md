@@ -64,7 +64,7 @@ of MATLAB or Octave, including setting up your MATLAB/Octave path.
   t_om_solve_miqps........ok (14 of 118 skipped)
   t_om_solve_nlps.........ok
   All tests successful (3430 passed, 329 skipped of 3759)
-  Elapsed time 7.75 seconds.
+  Elapsed time 4.22 seconds.
 ```
 
 Sample Usage
@@ -202,11 +202,11 @@ function, e.g.: `qps_master`, `miqps_master`, and `nlps_master`.
 We request that publications derived from the use of MP-Opt-Model
 explicitly acknowledge that fact by citing the [MP-Opt-Model User's Manual][7].
 The citation and DOI can be version-specific or general, as appropriate.
-For version 4.0, use:
+For version 4.1, use:
 
->   R. D. Zimmerman. *MP-Opt-Model User's Manual, Version 4.0*. 2021.
-    [Online]. Available: https://matpower.org/docs/MP-Opt-Model-manual-4.0.pdf  
-    doi: [10.5281/zenodo.5576755](https://doi.org/10.5281/zenodo.5576755)
+>   R. D. Zimmerman. *MP-Opt-Model User's Manual, Version 4.1*. 2022.
+    [Online]. Available: https://matpower.org/docs/MP-Opt-Model-manual-4.1.pdf  
+    doi: [10.5281/zenodo.7434250](https://doi.org/10.5281/zenodo.7434250)
 
 For a version non-specific citation, use the following citation and DOI,
 with *\<YEAR\>* replaced by the year of the most recent release:

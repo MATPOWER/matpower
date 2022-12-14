@@ -66,11 +66,11 @@ for k = 1:length(cfg)
         t_is(length(out.events), 1, 12, [t 'length(out.events)']);
         t_is(out.events.k, it, 12, [t 'out.events.k']);
         t_is(out.events.idx, 1, 12, [t 'out.events.idx']);
-        t_ok(strcmp(out.events.name, 'TARGET_LAM'), [t 'out.events.name']);
-        t_ok(strcmp(out.done_msg, sprintf('Reached desired lambda 0.7 in %d continuation steps', it)), [t 'out.done_msg']);
+        t_str_match(out.events.name, 'TARGET_LAM', [t 'out.events.name']);
+        t_str_match(out.done_msg, sprintf('Reached desired lambda 0.7 in %d continuation steps', it), [t 'out.done_msg']);
         t_ok(isfield(out, 'corrector'), [t 'out.corrector exists']);
         t_is(out.corrector.iterations, 3, 12, [t 'out.corrector.iterations']);
-        t_ok(strcmp(out.corrector.message, sprintf('Newton''s method converged in %d iterations.', 3)), [t 'out.corrector.message']);
+        t_str_match(out.corrector.message, sprintf('Newton''s method converged in %d iterations.', 3), [t 'out.corrector.message']);
 
         t = sprintf('%s - TARGET_LAM = 0.7 (arc len) : ', name);
         opt.adapt_step = 1;
@@ -91,8 +91,8 @@ for k = 1:length(cfg)
         t_is(length(out.events), 1, 12, [t 'length(out.events)']);
         t_is(out.events.k, it, 12, [t 'out.events.k']);
         t_is(out.events.idx, 1, 12, [t 'out.events.idx']);
-        t_ok(strcmp(out.events.name, 'TARGET_LAM'), [t 'out.events.name']);
-        t_ok(strcmp(out.done_msg, sprintf('Reached desired lambda 0.7 in %d continuation steps', it)), [t 'out.done_msg']);
+        t_str_match(out.events.name, 'TARGET_LAM', [t 'out.events.name']);
+        t_str_match(out.done_msg, sprintf('Reached desired lambda 0.7 in %d continuation steps', it), [t 'out.done_msg']);
 
         t = sprintf('%s - TARGET_LAM = 0.7 (pseudo arc len) : ', name);
         opt.parameterization = 3;
@@ -112,8 +112,8 @@ for k = 1:length(cfg)
         t_is(length(out.events), 1, 12, [t 'length(out.events)']);
         t_is(out.events.k, it, 12, [t 'out.events.k']);
         t_is(out.events.idx, 1, 12, [t 'out.events.idx']);
-        t_ok(strcmp(out.events.name, 'TARGET_LAM'), [t 'out.events.name']);
-        t_ok(strcmp(out.done_msg, sprintf('Reached desired lambda 0.7 in %d continuation steps', it)), [t 'out.done_msg']);
+        t_str_match(out.events.name, 'TARGET_LAM', [t 'out.events.name']);
+        t_str_match(out.done_msg, sprintf('Reached desired lambda 0.7 in %d continuation steps', it), [t 'out.done_msg']);
 
         t = sprintf('%s - FULL : ', name);
         opt.stop_at = 'FULL';
@@ -133,8 +133,8 @@ for k = 1:length(cfg)
         t_is(length(out.events), 1, 12, [t 'length(out.events)']);
         t_is(out.events.k, it, 12, [t 'out.events.k']);
         t_is(out.events.idx, 1, 12, [t 'out.events.idx']);
-        t_ok(strcmp(out.events.name, 'TARGET_LAM'), [t 'out.events.name']);
-        t_ok(strcmp(out.done_msg, sprintf('Traced full continuation curve in %d continuation steps', it)), [t 'out.done_msg']);
+        t_str_match(out.events.name, 'TARGET_LAM', [t 'out.events.name']);
+        t_str_match(out.done_msg, sprintf('Traced full continuation curve in %d continuation steps', it), [t 'out.done_msg']);
 
         t = sprintf('%s - FULL (max_it) : ', name);
         opt.max_it = 25;
@@ -153,7 +153,7 @@ for k = 1:length(cfg)
         t_is(size(out.x_hat), [3,it+1], 12, [t 'size(out.x_hat)']);
         t_is(size(out.steps), [1,it+1], 12, [t 'size(out.steps)']);
         t_is(length(out.events), 0, 12, [t 'length(out.events)']);
-        t_ok(strcmp(out.done_msg, sprintf('Reached maximun number of continuation steps (opt.max_it = %d)', it)), [t 'out.done_msg']);
+        t_str_match(out.done_msg, sprintf('Reached maximun number of continuation steps (opt.max_it = %d)', it), [t 'out.done_msg']);
 
         t = sprintf('%s - NOSE (arc len): ', name);
         opt.stop_at = 'NOSE';
@@ -174,8 +174,8 @@ for k = 1:length(cfg)
         t_is(length(out.events), 1, 12, [t 'length(out.events)']);
         t_is(out.events.k, it, 12, [t 'out.events.k']);
         t_is(out.events.idx, 1, 12, [t 'out.events.idx']);
-        t_ok(strcmp(out.events.name, 'NOSE'), [t 'out.events.name']);
-        t_ok(strcmp(out.done_msg, sprintf('Reached limit in %d continuation steps, lambda = 1.042.', it)), [t 'out.done_msg']);
+        t_str_match(out.events.name, 'NOSE', [t 'out.events.name']);
+        t_str_match(out.done_msg, sprintf('Reached limit in %d continuation steps, lambda = 1.042.', it), [t 'out.done_msg']);
 
         t = sprintf('%s - NOSE (pseudo arc len): ', name);
         opt.parameterization = 3;
@@ -195,8 +195,8 @@ for k = 1:length(cfg)
         t_is(length(out.events), 1, 12, [t 'length(out.events)']);
         t_is(out.events.k, it, 12, [t 'out.events.k']);
         t_is(out.events.idx, 1, 12, [t 'out.events.idx']);
-        t_ok(strcmp(out.events.name, 'NOSE'), [t 'out.events.name']);
-        t_ok(strcmp(out.done_msg, sprintf('Reached limit in %d continuation steps, lambda = 1.042.', it)), [t 'out.done_msg']);
+        t_str_match(out.events.name, 'NOSE', [t 'out.events.name']);
+        t_str_match(out.done_msg, sprintf('Reached limit in %d continuation steps, lambda = 1.042.', it), [t 'out.done_msg']);
 
         t = sprintf('%s - NOSE (opp dir) : ', name);
         y0 = [1;-1];
@@ -217,8 +217,8 @@ for k = 1:length(cfg)
         t_is(length(out.events), 1, 12, [t 'length(out.events)']);
         t_is(out.events.k, it, 12, [t 'out.events.k']);
         t_is(out.events.idx, 1, 12, [t 'out.events.idx']);
-        t_ok(strcmp(out.events.name, 'NOSE'), [t 'out.events.name']);
-        t_ok(strcmp(out.done_msg, sprintf('Reached limit in %d continuation steps, lambda = 1.042.', it)), [t 'out.done_msg']);
+        t_str_match(out.events.name, 'NOSE', [t 'out.events.name']);
+        t_str_match(out.done_msg, sprintf('Reached limit in %d continuation steps, lambda = 1.042.', it), [t 'out.done_msg']);
 
         t = sprintf('%s - FULL warmstart, before SWITCH : ', name);
         opt.parameterization = 3;
@@ -249,8 +249,8 @@ for k = 1:length(cfg)
         t_ok(isstruct(out.events), [t 'out.events is struct']);
         t_is(out.events.k, it, 12, [t 'out.events.k']);
         t_is(out.events.idx, 1, 12, [t 'out.events.idx']);
-        t_ok(strcmp(out.events.name, 'SWITCH!'), [t 'out.events.name']);
-        t_ok(strcmp(out.events.msg, 'ZERO detected for SWITCH! event'), [t 'out.events.msg']);
+        t_str_match(out.events.name, 'SWITCH!', [t 'out.events.name']);
+        t_str_match(out.events.msg, 'ZERO detected for SWITCH! event', [t 'out.events.msg']);
         t_is(out.warmstart.cont_steps, it, 12, [t 'out.warmstart.cont_steps']);
         t_is(out.warmstart.default_step, 0.64432407, 8, [t 'out.warmstart.default_step']);
         t_ok(isa(out.warmstart.parm, 'function_handle'), [t 'out.warmstart.parm is function']);
@@ -261,12 +261,12 @@ for k = 1:length(cfg)
         t_ok(isstruct(out.warmstart.events), [t 'out.warmstart.events is struct']);
         t_is(out.warmstart.events.k, it, 12, [t 'out.warmstart.events.k']);
         t_is(out.warmstart.events.idx, 1, 12, [t 'out.warmstart.events.idx']);
-        t_ok(strcmp(out.warmstart.events.name, 'SWITCH!'), [t 'out.warmstart.events.name']);
-        t_ok(strcmp(out.warmstart.events.msg, 'ZERO detected for SWITCH! event'), [t 'out.warmstart.events.msg']);
-        t_ok(strcmp(out.done_msg, sprintf('Reached switching point in %d continuation steps', it)), [t 'out.done_msg']);
+        t_str_match(out.warmstart.events.name, 'SWITCH!', [t 'out.warmstart.events.name']);
+        t_str_match(out.warmstart.events.msg, 'ZERO detected for SWITCH! event', [t 'out.warmstart.events.msg']);
+        t_str_match(out.done_msg, sprintf('Reached switching point in %d continuation steps', it), [t 'out.done_msg']);
         t_ok(isfield(out, 'corrector'), [t 'out.corrector exists']);
         t_is(out.corrector.iterations, 3, 12, [t 'out.corrector.iterations']);
-        t_ok(strcmp(out.corrector.message, sprintf('Newton''s method converged in %d iterations.', 3)), [t 'out.corrector.message']);
+        t_str_match(out.corrector.message, sprintf('Newton''s method converged in %d iterations.', 3), [t 'out.corrector.message']);
 
         t = sprintf('%s - FULL warmstart, after SWITCH : ', name);
         y0 = [-1;0];
@@ -301,20 +301,20 @@ for k = 1:length(cfg)
         t_is(length(out.events), 3, 12, [t 'length(out.events)']);
         t_is(out.events(1).k, 10, 12, [t 'out.events(1).k']);
         t_is(out.events(1).idx, 1, 12, [t 'out.events(1).idx']);
-        t_ok(strcmp(out.events(1).name, 'SWITCH!'), [t 'out.events(1).name']);
-        t_ok(strcmp(out.events(1).msg, 'ZERO detected for SWITCH! event'), [t 'out.events(1).msg']);
+        t_str_match(out.events(1).name, 'SWITCH!', [t 'out.events(1).name']);
+        t_str_match(out.events(1).msg, 'ZERO detected for SWITCH! event', [t 'out.events(1).msg']);
         t_is(out.events(2).k, 28, 12, [t 'out.events(2).k']);
         t_is(out.events(2).idx, 1, 12, [t 'out.events(2).idx']);
-        t_ok(strcmp(out.events(2).name, 'SNOUT!'), [t 'out.events(2).name']);
-        t_ok(strcmp(out.events(2).msg, 'ZERO detected for SNOUT! event'), [t 'out.events(2).msg']);
+        t_str_match(out.events(2).name, 'SNOUT!', [t 'out.events(2).name']);
+        t_str_match(out.events(2).msg, 'ZERO detected for SNOUT! event', [t 'out.events(2).msg']);
         t_is(out.events(3).k, it, 12, [t 'out.events(3).k']);
         t_is(out.events(3).idx, 1, 12, [t 'out.events(3).idx']);
-        t_ok(strcmp(out.events(3).name, 'TARGET_LAM'), [t 'out.events(3).name']);
-        t_ok(strcmp(out.events(3).msg, 'ZERO detected for TARGET_LAM event'), [t 'out.events(3).msg']);
-        t_ok(strcmp(out.done_msg, sprintf('Traced full continuation curve in %d continuation steps', it)), [t 'out.done_msg']);
+        t_str_match(out.events(3).name, 'TARGET_LAM', [t 'out.events(3).name']);
+        t_str_match(out.events(3).msg, 'ZERO detected for TARGET_LAM event', [t 'out.events(3).msg']);
+        t_str_match(out.done_msg, sprintf('Traced full continuation curve in %d continuation steps', it), [t 'out.done_msg']);
         t_ok(isfield(out, 'corrector'), [t 'out.corrector exists']);
         t_is(out.corrector.iterations, 3, 12, [t 'out.corrector.iterations']);
-        t_ok(strcmp(out.corrector.message, sprintf('Newton''s method converged in %d iterations.', 3)), [t 'out.corrector.message']);
+        t_str_match(out.corrector.message, sprintf('Newton''s method converged in %d iterations.', 3), [t 'out.corrector.message']);
     end
 end
 

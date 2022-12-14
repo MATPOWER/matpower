@@ -68,27 +68,27 @@ t_ok(have_fcn('rithmaticker') == 1, [t ' : available (cache cleared)']);
 
 cd(cwd);
 t = 'successful switch to original working directory';
-t_ok(strcmp(cwd, pwd), t);
+t_str_match(cwd, pwd, t);
 
 t = 'have_fcn(''rithmaticker'')';
 t_ok(have_fcn('rithmaticker') == 1, [t ' : still available (cached)']);
 
 t = 'have_fcn(''rithmaticker'', ''vstr'')';
-t_ok(strcmp(have_fcn('rithmaticker', 'vstr'), '3.1.4'), t);
+t_str_match(have_fcn('rithmaticker', 'vstr'), '3.1.4', t);
 
 t = 'have_fcn(''rithmaticker'', ''vnum'')';
 t_is(have_fcn('rithmaticker', 'vnum'), 3.001004, 12, t);
 
 t = 'have_fcn(''rithmaticker'', ''date'')';
-t_ok(strcmp(have_fcn('rithmaticker', 'date'), '30-May-2019'), t);
+t_str_match(have_fcn('rithmaticker', 'date'), '30-May-2019', t);
 
 t = 'have_fcn(''rithmaticker'', ''all'')';
 rv = have_fcn('rithmaticker', 'all');
 t_ok(isstruct(rv), [t ' : isstruct']);
 t_is(rv.av, 1, 12, [t ' : av']);
-t_ok(strcmp(rv.vstr, '3.1.4'), [t ' : vstr']);
+t_str_match(rv.vstr, '3.1.4', [t ' : vstr']);
 t_is(rv.vnum, 3.001004, 12, [t ' : vnum']);
-t_ok(strcmp(rv.date, '30-May-2019'), [t ' : date']);
+t_str_match(rv.date, '30-May-2019', [t ' : date']);
 
 %% clear cache, check again
 t = 'have_fcn(''rithmaticker'')';

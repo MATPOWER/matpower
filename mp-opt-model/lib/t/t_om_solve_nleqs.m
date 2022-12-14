@@ -99,7 +99,7 @@ for k = 1:length(cfg)
                     otherwise
                         out_alg = alg;
                 end
-                t_ok(strcmp(out.alg, out_alg), [t 'out.alg']);
+                t_str_match(out.alg, out_alg, [t 'out.alg']);
                 eJ = [1 1; 6 1];
                 t_is(jac, eJ, 5.8, [t 'jac']);
 
@@ -125,7 +125,7 @@ for k = 1:length(cfg)
                 t_is(e, 1, 12, [t 'success']);
                 t_is(x, [-3; 4; -2; 1; 3], 8, [t 'x']);
                 t_is(f, 0, 10, [t 'f']);
-                t_ok(strcmp(out.alg, out_alg), [t 'out.alg']);
+                t_str_match(out.alg, out_alg, [t 'out.alg']);
                 eJ = [[1 1; 6 1] zeros(2, 3);
                       zeros(3, 2) A2 ];
                 t_is(jac, eJ, 5.8, [t 'jac']);
@@ -170,7 +170,7 @@ opt.parse_soln = 1;
 t_is(om.soln.x, x, 14, [t 'x']);
 t_is(om.soln.f, f, 14, [t 'f']);
 t_is(om.soln.eflag, e, 14, [t 'eflag']);
-t_ok(strcmp(om.soln.output.alg, out.alg), [t 'output.alg']);
+t_str_match(om.soln.output.alg, out.alg, [t 'output.alg']);
 t_is(om.soln.jac, jac, 14, [t 'jac']);
 
 t = 'om.get_soln(''var'', ''x1'') : ';

@@ -207,7 +207,7 @@ t = 'om.soln.';
 t_is(om.soln.x, x, 14, [t 'x']);
 t_is(om.soln.f, f, 14, [t 'f']);
 t_is(om.soln.eflag, s, 14, [t 'eflag']);
-t_ok(strcmp(om.soln.output.alg, out.alg), [t 'output.alg']);
+t_str_match(om.soln.output.alg, out.alg, [t 'output.alg']);
 t_is(om.soln.lambda.lower, lam.lower, 14, [t 'om.soln.lambda.lower']);
 t_is(om.soln.lambda.upper, lam.upper, 14, [t 'om.soln.lambda.upper']);
 t_is(om.soln.lambda.mu_l, lam.mu_l, 14, [t 'om.soln.lambda.mu_l']);

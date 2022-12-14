@@ -13,8 +13,8 @@ jobs:
       fail-fast: false
       matrix:
         platform: [octave]
-#        os: [macos-10.15, macos-11.0, ubuntu-16.04, ubuntu-18.04, ubuntu-20.04]
-        os: [macos-latest, ubuntu-18.04, ubuntu-20.04]
+#        os: [macos-10.15, macos-11.0, macos-12.0, ubuntu-18.04, ubuntu-20.04, ubuntu-22.04]
+        os: [macos-latest, ubuntu-20.04, ubuntu-22.04]
         include:
         - platform: matlab
           os: ubuntu-latest
@@ -23,7 +23,7 @@ jobs:
 
     steps:
     - name: Check out repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Include IPOPT?
       if: matrix.platform == 'matlab' || matrix.os != 'ubuntu-16.04'
@@ -38,7 +38,7 @@ jobs:
       id: cache-ipopt-libs
       env:
         cache-name: ipopt-libs
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/install
         key: ${{ env.cache-name }}-${{ matrix.os }}
@@ -52,7 +52,7 @@ jobs:
       id: cache-ipopt
       env:
         cache-name: ipopt
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/build/ipopt
         key: ${{ env.cache-name }}-${{ matrix.platform }}-${{ matrix.os }}
@@ -62,7 +62,7 @@ jobs:
       id: cache-osqp
       env:
         cache-name: osqp
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/build/osqp-matlab
         key: ${{ env.cache-name }}-${{ matrix.platform }}-${{ matrix.os }}

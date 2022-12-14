@@ -241,7 +241,8 @@ if verbose
         'dual simplex',
         'interior point',
         'concurrent',
-        'deterministic concurrent'
+        'deterministic concurrent',
+        'deterministic concurrent simplex'
     };
     vn = gurobiver;
     fprintf('Gurobi Version %s -- %s %s solver\n', ...

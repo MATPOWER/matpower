@@ -154,7 +154,7 @@ for k = 1:length(cfg)
     t_is(x, x2, 14, [t 'x']);
     t_is(f, A2*x-b2, 14, [t 'f']);
     t_is(e, 1, 14, [t 'exitflag = 1']);
-    t_ok(strcmp(out.alg, alg), [t 'output']);
+    t_str_match(out.alg, alg, [t 'output']);
     t_is(jac, A2, 14, [t 'jac']);
     opt.parse_soln = 0;
 end
@@ -163,7 +163,7 @@ t = 'om.soln.';
 t_is(om.soln.x, x, 14, [t 'x']);
 t_is(om.soln.f, f, 14, [t 'f']);
 t_is(om.soln.eflag, e, 14, [t 'eflag']);
-t_ok(strcmp(om.soln.output.alg, out.alg), [t 'output.alg']);
+t_str_match(om.soln.output.alg, out.alg, [t 'output.alg']);
 t_is(om.soln.jac, jac, 14, [t 'jac']);
 
 t = 'om.get_soln(''var'', ''x'') : ';

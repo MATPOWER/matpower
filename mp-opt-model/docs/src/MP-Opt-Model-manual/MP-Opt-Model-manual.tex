@@ -140,22 +140,22 @@
 \newcommand{\mptest}[0]{{MP-Test}}
 \newcommand{\mptesturl}[0]{https://github.com/MATPOWER/mptest}
 \newcommand{\mptestlink}[0]{\href{\mptesturl}{\mptest{}}}
-\newcommand{\mptestver}[0]{7.1}
+\newcommand{\mptestver}[0]{8.0b1}
 \newcommand{\mips}[0]{{MIPS}}
 \newcommand{\mipsurl}[0]{https://github.com/MATPOWER/mips}
 \newcommand{\mipslink}[0]{\href{\mipsurl}{\mips{}}}
 \newcommand{\mipsname}[0]{{{\bf M}{\sc atpower} \textbf{I}nterior \textbf{P}oint \textbf{S}olver}}
-\newcommand{\mipsver}[0]{1.4}
+\newcommand{\mipsver}[0]{1.5}
 \newcommand{\mpom}[0]{\mbox{MP-Opt-Model}}
 \newcommand{\mpomurl}[0]{https://github.com/MATPOWER/mp-opt-model}
 \newcommand{\mpomlink}[0]{\href{\mpomurl}{\mpom{}}}
 \newcommand{\mpomname}[0]{\mpom{}}
 % \newcommand{\mpomname}[0]{{{\bf M}{\sc at}{\bf P}{\sc ower} \textbf{Opt}imization \textbf{Model}}}
-\newcommand{\mpomver}[0]{4.1-dev}
+\newcommand{\mpomver}[0]{4.1}
 \newcommand{\most}[0]{{MOST}}
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
-\newcommand{\mostver}[0]{1.1}
+\newcommand{\mostver}[0]{1.2}
 \newcommand{\syngrid}[0]{{SynGrid}}
 \newcommand{\syngridver}[0]{1.0.1}
 \newcommand{\syngridurl}[0]{https://github.com/MATPOWER/mx-syngrid}
@@ -242,7 +242,7 @@
 %\title{\hl{--- DRAFT  ---}\\\hl{\em do not distribute}\\~\\{\huge \bfseries \mpomname{} User's Manual } \\ ~ \\ \LARGE Version \mpomver{}\\
 \title{{\huge \bfseries \mpomname{} User's Manual } \\ ~ \\ \LARGE Version \mpomver{}}
 \author{Ray~D.~Zimmerman}
-\date{October 18, 2021} % comment this line to display the current date
+\date{December 13, 2022} % comment this line to display the current date
 %\date{May 8, 2020\thanks{Second revision. First revision was April 29, 2020}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
@@ -253,7 +253,7 @@
 \vfill
 \begin{center}
 {\scriptsize
-\copyright~2020, 2021~\PSERC{}\\
+\copyright~2020--2022~\PSERC{}\\
 All Rights Reserved}
 \end{center}
 
@@ -327,12 +327,12 @@ POSSIBILITY OF SUCH DAMAGE.
 \subsection{Citing \mpom{}}
 
 We request that publications derived from the use of \mpom{} explicitly acknowledge that fact by citing the \mpomname{} User's Manual~\cite{mpom_manual}.
-The citation and DOI can be version-specific or general, as appropriate. For version 4.0, use:
+The citation and DOI can be version-specific or general, as appropriate. For version 4.1, use:
 
 \begin{quote}
 \footnotesize
-R.~D. Zimmerman. \mpomname{} User's Manual, Version 4.0. 2021. [Online]. Available: \url{https://matpower.org/docs/MP-Opt-Model-manual-4.0.pdf}\\
-\doi{10.5281/zenodo.5576755}
+R.~D. Zimmerman. \mpomname{} User's Manual, Version 4.1. 2022. [Online]. Available: \url{https://matpower.org/docs/MP-Opt-Model-manual-4.1.pdf}\\
+\doi{10.5281/zenodo.7434250}
 \end{quote}
 For a version non-specific citation, use the following citation and DOI,
 with \emph{\textless{}YEAR\textgreater{}} replaced by the year of the most recent release:
@@ -423,7 +423,7 @@ t_om_solve_qps..........ok (81 of 387 skipped)
 t_om_solve_miqps........ok (14 of 118 skipped)
 t_om_solve_nlps.........ok
 All tests successful (3430 passed, 329 skipped of 3759)
-Elapsed time 7.75 seconds.
+Elapsed time 4.22 seconds.
 \end{Code}
 \end{enumerate}
 
@@ -1136,7 +1136,7 @@ fprintf('   %g\n', lambda.ineqnonlin);
 \end{Code}
 \begin{Code}
 >> nlps_master_ex2
-MATPOWER Interior Point Solver -- MIPS, Version 1.4, 08-Oct-2020
+MATPOWER Interior Point Solver -- MIPS, Version 1.5, 12-Dec-2022
  (using built-in linear solver)
  it    objective   step size   feascond     gradcond     compcond     costcond  
 ----  ------------ --------- ------------ ------------ ------------ ------------
@@ -2109,7 +2109,7 @@ fprintf('%4g%4g%4g\n', jac');
 \begin{Code}
 >> pne_ex1
 
-MP-Opt-Model Version 4.0, 18-Oct-2021 -- Predictor/Corrector Continuation Method
+MP-Opt-Model Version 4.1, 13-Dec-2022 -- Predictor/Corrector Continuation Method
 step   0  :                          lambda =  0.000,  6 corrector steps
 step   1  : PAL stepsize = 0.6       lambda =  0.081   2 corrector steps
 step   2  : PAL stepsize = 0.6       lambda =  0.162   2 corrector steps
@@ -4448,24 +4448,14 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.0.pdf}{\mpom{} 4.0 Use
 \end{itemize}
 
 
-\subsection{Version 4.1-dev -- released ??? ?, 202?}
+\subsection{Version 4.1 -- released Dec 13, 2022}
 \label{app:v41}
 
-The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.1.pdf}{\mpom{} 4.1 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MP-Opt-Model-manual-4.0.pdf}}
+The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.1.pdf}{\mpom{} 4.1 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MP-Opt-Model-manual-4.1.pdf}}
 
 \subsubsection*{New Features}
 \begin{itemize}
 \item Add support to \code{qps\_master()} for calling \code{qps\_<my\_solver>()} by setting \code{opt.alg} to \codeq{<MY\_SOLVER>} to allow for custom solvers.
-\item New functions:
-    \begin{itemize}
-    \item \code{foobar()} does whizbang.
-    \end{itemize}
-\end{itemize}
-
-\subsubsection*{Bugs Fixed}
-\begin{itemize}
-\item 
-    \emph{Thanks to Fulano.}
 \end{itemize}
 
 \subsubsection*{Other Changes}
@@ -4525,7 +4515,7 @@ John~W.~Eaton, David~Bateman, S{\o}ren~Hauberg, Rik~Wehbring (2015). \emph{GNU O
 The BSD 3-Clause License. [Online]. Available: \url{https://opensource.org/licenses/BSD-3-Clause}.
 
 \bibitem{mpom_manual}
-R.~D. Zimmerman. \mpomname{} User's Manual. 2021.
+R.~D. Zimmerman. \mpomname{} User's Manual. 2022.
 [Online]. Available: \url{https://matpower.org/docs/MP-Opt-Model-manual.pdf}\\
 \doi{10.5281/zenodo.3818002}
 
@@ -4536,7 +4526,7 @@ Systems, IEEE Transactions on}, vol.~22, no.~3, pp. 1185--1193, August 2007.
 \doi{10.1109/TPWRS.2007.901301}
 
 \bibitem{mips_manual}
-R.~D. Zimmerman, H.~Wang. \mipsname{} (\mips{}) User's Manual. 2020.
+R.~D. Zimmerman, H.~Wang. \mipsname{} (\mips{}) User's Manual. 2022.
 [Online]. Available: \url{https://matpower.org/docs/MIPS-manual.pdf}\\
 \doi{10.5281/zenodo.3236506}
 
