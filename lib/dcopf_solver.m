@@ -56,7 +56,7 @@ function [results, success, raw] = dcopf_solver(om, mpopt)
 mpc = om.get_mpc();
 [baseMVA, bus, gen, branch, gencost] = ...
     deal(mpc.baseMVA, mpc.bus, mpc.gen, mpc.branch, mpc.gencost);
-cp = om.get_cost_params();
+cp = om.params_legacy_cost();
 Bf = om.get_userdata('Bf');
 Pfinj = om.get_userdata('Pfinj');
 [vv, ll] = om.get_idx();

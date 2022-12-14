@@ -6098,16 +6098,6 @@ name & description \\
 \code{~~init\_indexed\_name}	& initializes dimensions for indexed named set of costs, constraints or variables	\\
 \code{~~opf\_model}	& constructor for the \code{opf\_model} class	\\
 \code{~~params\_legacy\_cost}	& returns individual or full set of legacy user cost coefficients	\\
-& \\
-\multicolumn{2}{c}{\emph{deprecated methods -- replaced by methods from \mpomlink{}}} \\
-\code{~~add\_constraints}	& use \code{add\_lin\_constraint} or \code{add\_nln\_constraint} instead\tnote{\ddag}	\\
-\code{~~add\_costs}	& use \code{add\_legacy\_cost}, \code{add\_nln\_cost} or \code{add\_quad\_cost} instead\tnote{\ddag}	\\
-\code{~~add\_vars}	& use \code{add\_var} instead\tnote{\ddag}	\\
-\code{~~build\_cost\_params}	& \emph{no longer needed}	\\
-\code{~~compute\_cost}	& use \code{eval\_legacy\_cost} instead	\\
-\code{~~get\_cost\_params}	& use \code{params\_legacy\_cost} instead	\\
-\code{~~getv}	& use \code{params\_var} instead	\\
-\code{~~linear\_constraints}	& use \code{params\_lin\_constraint} instead	\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
@@ -6236,8 +6226,6 @@ name & description\tnote{\dag} \\
 \code{d2Ibr\_dV2}	& evaluates the 2\textsuperscript{nd} derivatives of $I_{f|t}$ with respect to $V$	\\
 \code{d2Sbr\_dV2}	& evaluates the 2\textsuperscript{nd} derivatives of $S_{f|t}$ with respect to $V$	\\
 \code{d2Abr\_dV2}	& evaluates the 2\textsuperscript{nd} derivatives of $|F_{f|t}|^2$ with respect to $V$	\\
-\code{d2AIbr\_dV2}\tnote{*}	& evaluates the 2\textsuperscript{nd} derivatives of $|I_{f|t}|^2$ with respect to $V$	\\
-\code{d2ASbr\_dV2}\tnote{*}	& evaluates the 2\textsuperscript{nd} derivatives of $|S_{f|t}|^2$ with respect to $V$	\\
 \code{d2Imis\_dV2}	& evaluates the 2\textsuperscript{nd} derivatives of $I_\mathrm{mis}$ with respect to $V$	\\
 \code{d2Imis\_dVdSg}	& evaluates the 2\textsuperscript{nd} derivatives of $I_\mathrm{mis}$ with respect to $V$ and $S_g$.	\\
 \code{d2Sbus\_dV2}	& evaluates the 2\textsuperscript{nd} derivatives of $S_\mathrm{bus}$ with respect to $V$	\\
@@ -6245,7 +6233,6 @@ name & description\tnote{\dag} \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [*] {Deprecated. Please use \code{d2Abr\_dV2} instead.}
  \item [\dag] {$V$ represents complex bus voltages, $S_g$ the complex generator power injections, $I_{f|t}$ complex branch current injections, $S_{f|t}$ complex branch power injections, $I_\mathrm{mis}$ complex bus current injections, $S_\mathrm{bus}$ complex bus power injections} and $F_{f|t}$ refers to branch flows, either $I_{f|t}$ or $S_{f|t}$, depending on the inputs. The second derivatives are all actually partial derivatives of the product of a first derivative matrix and a vector $\lambda$. Please see \TNtwo{}~\cite{zimmerman2010b}, \TNthree{}~\cite{sereeter2018a} and \TNfour{}~\cite{sereeter2018b} for the detailed derivations of the formulas implemented by these functions.
 \end{tablenotes}
 \end{threeparttable}
@@ -8423,6 +8410,21 @@ MP-Opt-Model object is used for power flow and continuation power flow as well a
 \subsubsection*{Incompatible Changes}
 \begin{itemize}
 \item Removed unused \code{mpopt} argument from \code{opf\_gen\_cost\_fcn()} inputs.
+\item Remove deprecated functions:
+    \begin{itemize}
+    \item \code{d2AIbr\_dV2()} -- use \code{dA2br\_dV2()} instead.
+    \item \code{d2ASbr\_dV2()} -- use \code{dA2br\_dV2()} instead.
+    \item Deprecated methods of \code{@opf\_model}:
+        \begin{itemize}
+            \item \code{add\_constraints()} -- use the corresponding one of the following methods instead: \code{add\_lin\_constraint()}, \code{add\_nln\_constraint()}, or\\ \code{init\_indexed\_name()}.
+            \item \code{add\_costs()} -- use the corresponding one of the following methods instead: \code{add\_quad\_cost()},  \code{add\_nln\_cost()}, \code{add\_legacy\_cost()}, or\\ \code{init\_indexed\_name()}.
+            \item \code{add\_vars()} -- use the corresponding one of the following methods instead: \code{add\_var()}, or \code{init\_indexed\_name()}.
+            \item \code{build\_cost\_params()} -- no longer needed, incorporated into\\ \code{params\_legacy\_cost()}.
+            \item \code{get\_cost\_params()} -- use \code{params\_legacy\_cost()} instead.
+            \item \code{getv()} -- use \code{params\_var()} instead.
+            \item \code{linear\_constraints()} -- use \code{params\_lin\_constraint()} instead.
+        \end{itemize}
+    \end{itemize}
 \end{itemize}
 
 

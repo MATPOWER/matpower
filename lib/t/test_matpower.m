@@ -77,7 +77,6 @@ tests{end+1} = 't_pf_radial';
 tests{end+1} = 't_cpf';
 tests{end+1} = 't_islands';
 tests{end+1} = 't_opf_model';
-tests{end+1} = 't_opf_model_legacy';
 tests{end+1} = 't_opf_default';
 if have_feature('fmincon')
     tests{end+1} = 't_opf_fmincon';

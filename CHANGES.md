@@ -13,6 +13,21 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.1
 -----------------
 
+#### 12/14/22
+- Remove deprecated legacy `@opt_model` methods. Summary of deprecated
+  method names, with current alternatives in parenthesis:
+    - `add_constraints` (`add_lin_constraint` or `add_nln_constraint`)
+    - `add_costs` (`add_legacy_cost`, `add_quad_cost` or `add_nln_cost`)
+    - `add_vars` (`add_var`)
+    - `build_cost_params` (no longer needed)
+    - `compute_cost` (`eval_legacy_cost`)
+    - `get_cost_params` (`params_legacy_cost`)
+    - `getv` (`params_var`)
+    - `linear_constraints` (`params_lin_constraint`)
+- Remove deprecated functions:
+    - `d2AIbr_dV2` (use `d2Abr_dV2()`)
+    - `d2ASbr_dV2` (use `d2Abr_dV2()`)
+
 #### 11/8/22
 - Automatically reduce order of polynomial generator costs with higher
   order coefficients equal to zero. Allows the DC OPF to solve cases,

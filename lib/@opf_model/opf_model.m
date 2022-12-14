@@ -18,16 +18,6 @@ classdef opf_model < opt_model
 %       params_legacy_cost
 %       eval_legacy_cost
 %
-%   The following deprecated OPT_MODEL methods, from an older OPF_MODEL
-%   implementation, have also been moved back to OPF_MODEL:
-%       add_costs (use add_quad_cost, add_nln_cost or add_legacy_cost)
-%       add_constraints (use add_lin_constraint or add_nln_constraint)
-%       add_vars (use add_var)
-%       getv (use params_var)
-%       linear_constraints (use params_lin_constraint)
-%       build_cost_params (use params_legacy_cost)
-%       compute_cost (use eval_legacy_cost)
-%
 %   The following is the structure of the data in the OPF model object.
 %
 %   om
@@ -70,7 +60,7 @@ classdef opf_model < opt_model
 %   See also OPT_MODEL.
 
 %   MATPOWER
-%   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2022, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
