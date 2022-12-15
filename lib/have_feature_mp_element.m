@@ -14,7 +14,10 @@ function [TorF, vstr, rdate] = have_feature_mp_element()
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See https://matpower.org for more info.
 
-TorF = exist('+mp/nm_element.m') ~= 0;
+%% requires MATLAB 9.1+ or Octave 6.2+
+TorF = exist('+mp/nm_element.m') ~= 0 && ...
+    ((have_feature('matlab') && have_feature('matlab', 'vnum') >= 9.001) || ...
+     (have_feature('octave') && have_feature('octave', 'vnum') >= 6.002));
 v = mpver('all');
 vstr = v.Version;
 rdate = v.Date;
