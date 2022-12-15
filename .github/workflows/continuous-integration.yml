@@ -13,7 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         platform: [octave]
-        os: [macos-latest, ubuntu-22.04]
+        os: [macos-latest, ubuntu-20.04, ubuntu-22.04]
         include:
         - platform: matlab
           os: ubuntu-latest
@@ -105,18 +105,18 @@ jobs:
       with:
         cached: ${{ steps.cache-osqp.outputs.cache-hit == 'true' }}
 
-    - name: Include MP-Element?
-      if: startsWith(env.OCTAVE_VER, '4') != 1 && startsWith(env.OCTAVE_VER, '5') != 1 && startsWith(env.OCTAVE_VER, '6.1') != 1
-      run: |
-        echo "INCLUDE_MP_ELEMENT=1" >> $GITHUB_ENV
-        echo "MP_ELEMENT_TAG=0.9" >> $GITHUB_ENV
-
     - name: Install MATPOWER
       run: |
         $ML_CMD ver
         $ML_CMD "install_matpower(0,1,1)"
         ln -s ./startup.m .octaverc
         $ML_CMD mpver
+
+    - name: Include MP-Element?
+      run: |
+        export HAVE_MPE=`$ML_CMD "fprintf('%d', have_feature('mp_element'))"`
+        export INCLUDE_MP_ELEMENT=${HAVE_MPE: -1}
+        echo "INCLUDE_MP_ELEMENT=${INCLUDE_MP_ELEMENT}" >> $GITHUB_ENV
 
     - name: Test GLPK availability, print version number
       if: matrix.platform == 'octave'
@@ -139,24 +139,16 @@ jobs:
     - name: Test MP-Opt-Model
       run: $ML_CMD "test_mp_opt_model(0,1)"
 
-    - name: Test MATPOWER
+    - name: Test MATPOWER (MP_ELEMENT=${{ env.INCLUDE_MP_ELEMENT }})
       run: $ML_CMD "test_matpower(0,1)"
 
     - name: Test MOST
       run: $ML_CMD "test_most(0,1)"
 
-    - name: Install MP-Element
-      if: env.INCLUDE_MP_ELEMENT
-      run: |
-        git clone --branch ${MP_ELEMENT_TAG} --depth=1 https://github.com/MATPOWER/mp-element.git ${GITHUB_WORKSPACE}/mp-element
-        rm -rf ./startup.m
-        $ML_CMD "install_matpower(0,1,1)"
-        $ML_CMD "if ~have_feature('mp_element'), exit(1); end"
-
     - name: Test MP-Element
-      if: env.INCLUDE_MP_ELEMENT
+      if: env.INCLUDE_MP_ELEMENT == '1'
       run: $ML_CMD "test_mp_element(0,1)"
 
-    - name: Retest MATPOWER
-      if: env.INCLUDE_MP_ELEMENT
-      run: $ML_CMD "test_matpower(0,1)"
+    - name: Test MATPOWER Legacy
+      if: env.INCLUDE_MP_ELEMENT == '1'
+      run: $ML_CMD "have_feature('mp_element', 0); test_matpower(0,1)"
