@@ -149,12 +149,15 @@ H = makePTDF(mpc, 4, txfr);
 t_is(H, H4, 12, sprintf('H4 (txfr) : full', k));
 
 %% matrix of slacks (all cols)
-Dm = [e4 e1 ones(nb, 1) Pd Pg e4 ones(nb, 1) Pd Pg];
-eHm = [H4(:,1) H1(:,2) Heq(:,3) Hd(:,4) Hg(:,5) H4(:,6) Heq(:,7) Hd(:,8) Hg(:,9)];
-Hm = makePTDF(mpc, Dm);
-t_is(Hm, eHm, 12, 'H (matrix slack) = H (vector slacks) - all cols');
-txfr = eye(nb, nb) - Dm ./ sum(Dm);
-Ht = makePTDF(mpc, [], txfr);
-t_is(Hm, Ht, 12, 'H (matrix slack) = H (equiv transfers) - all cols');
-
+if have_feature('matlab') && have_feature('matlab', 'vnum') < 9
+    t_skip(2, 'MATLAB < 9 does not handle matrix ./ row-vector properly');
+else
+    Dm = [e4 e1 ones(nb, 1) Pd Pg e4 ones(nb, 1) Pd Pg];
+    eHm = [H4(:,1) H1(:,2) Heq(:,3) Hd(:,4) Hg(:,5) H4(:,6) Heq(:,7) Hd(:,8) Hg(:,9)];
+    Hm = makePTDF(mpc, Dm);
+    t_is(Hm, eHm, 12, 'H (matrix slack) = H (vector slacks) - all cols');
+    txfr = eye(nb, nb) - Dm ./ sum(Dm);
+    Ht = makePTDF(mpc, [], txfr);
+    t_is(Hm, Ht, 12, 'H (matrix slack) = H (equiv transfers) - all cols');
+end
 t_end;
