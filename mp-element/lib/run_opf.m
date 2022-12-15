@@ -1,7 +1,14 @@
 function varargout = run_opf(varargin)
+%run_opf  Run an optimal power flow.
+%
+%   run_opf(d, mpopt)
+%   run_opf(d, mpopt, ...)
+%   task = run_opf(...)
+%
+%   See also run_mp.
 
 %   MATPOWER
-%   Copyright (c) 2021, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

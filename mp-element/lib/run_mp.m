@@ -1,19 +1,23 @@
 function task_rv = run_mp(task_class, d, mpopt, varargin)
-%RUN_MP
+%run_mp
+%
+%   run_mp(task_class, d, mpopt)
+%   run_mp(task_class, d, mpopt, ...)
+%   task = run_mp(...)
 %
 %   Inputs:
-%       TASK_CLASS - function handle to constructor of default task class for
+%       task_class - function handle to constructor of default task class for
 %           type of task to be run, e.g. @mp.task_pf for power flow,
 %           @mp.task_cpf for CPF, and @mp.task_opf for OPF
-%       D - input data specification, e.g. MATPOWER case name, case struct, etc.
-%       MPOPT - MATPOWER options struct
+%       d - input data specification, e.g. MATPOWER case name, case struct, etc.
+%       mpopt - MATPOWER options struct
 %       additional <name>, <value> pairs, where <name> can be:
 %           'print_fname' - name for file to save pretty-printed output to
 %           'soln_fname' - name for file to save solved case to
 %           'mpx' - MATPOWER extension or cell array of MATPOWER extensions
 %               to apply
 %   Output:
-%       TASK - task object
+%       task - task object
 
 %   MATPOWER
 %   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
