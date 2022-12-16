@@ -227,6 +227,8 @@
 \newcommand{\results}[0]{\code{results}}
 \newcommand{\mumurl}[0]{https://matpower.org/docs/MATPOWER-manual-\mpver.pdf}
 \newcommand{\mum}[0]{\href{\mumurl}{\matpower{} User's Manual}}
+\newcommand{\mdmurl}[0]{https://matpower.org/documentation/dev-manual}
+\newcommand{\mdm}[0]{\href{\mdmurl}{\matpower{} Developer's Manual}}
 \newcommand{\mipsmanurl}[0]{https://matpower.org/docs/MIPS-manual-\mipsver.pdf}
 \newcommand{\mpommanurl}[0]{https://matpower.org/docs/MP-Opt-Model-manual-\mpomver.pdf}
 \newcommand{\mostmanurl}[0]{https://matpower.org/docs/MOST-manual-\mostver.pdf}
@@ -527,15 +529,20 @@ As a free, open-source tool, \matpower{} development relies on research grants a
 
 \subsection{System Requirements}
 \label{sec:sysreq}
-To use \matpower{} \mpver{} you will need:
+To use all features of \matpower{} \mpver{}, including those based on the new OOP core, you will need:
 \begin{itemize}
-\item \matlab{}\textsuperscript{\tiny \textregistered} version 7.5 (R2007b) or later\footnote{\matlab{} is available from The MathWorks, Inc. (\url{https://www.mathworks.com/}). \matpower{}~7.0 required \matlab{}~7.3 (R2006b), \matpower{}~5 and \matpower{}~6 required \matlab{}~7 (R14), \matpower{}~4 required \matlab{}~6.5 (R13), \matpower{}~3.2 required \matlab{}~6 (R12), \matpower{}~3.0 required \matlab{}~5 and \matpower{}~2.0 and earlier required only \matlab{}~4. \matlab{} is a registered trademark of The MathWorks, Inc.}, or
-\item GNU Octave version 4 or later\footnote{GNU Octave \cite{octave} is free software, available online at \url{https://www.gnu.org/software/octave/}. \matpower{}~5 and \matpower{}~6 required Octave~3.4, \matpower{}~4 required Octave~3.2.}
+\item \matlab{}\textsuperscript{\tiny \textregistered} version 9.1 (R2016b) or later\footnote{\matlab{} is available from The MathWorks, Inc. (\url{https://www.mathworks.com/}). \matlab{} is a registered trademark of The MathWorks, Inc. \matpower{}~7.1 required \matlab{}~7.5 (R2007b), \matpower{}~7.0 required \matlab{}~7.3 (R2006b), \matpower{}~5 and \matpower{}~6 required \matlab{}~7 (R14), \matpower{}~4 required \matlab{}~6.5 (R13), \matpower{}~3.2 required \matlab{}~6 (R12), \matpower{}~3.0 required \matlab{}~5 and \matpower{}~2.0 and earlier required only \matlab{}~4. }, or
+\item GNU Octave version 6.2 or later\footnote{GNU Octave \cite{octave} is free software, available online at \url{https://www.gnu.org/software/octave/}. \matpower{}~7 required Octave~4, \matpower{}~5 and \matpower{}~6 required Octave~3.4, \matpower{}~4 required Octave~3.2.}
+\end{itemize}
+Legacy features only (from \matpower{}~7.1 and earlier) are also available on:
+\begin{itemize}
+\item \matlab{} version 7.5 (R2007b) or later, or
+\item GNU Octave version 4 or later
 \end{itemize}
 
 See Section~\ref{MOSTMAN-sec:sysreq} in the \mostman{} for any requirements specific to \most{}.
 
-For the hardware requirements, please refer to the system requirements for the version of \matlab{}\footnote{\url{https://www.mathworks.com/support/sysreq/previous_releases.html}} or Octave that you are using. If the \matlab{} \ot{} is installed as well, \matpower{} enables an option to use it to solve optimal power flow problems.
+For the hardware requirements, please refer to the system requirements for the version of \matlab{}\footnote{\url{https://www.mathworks.com/support/sysreq/previous_releases.html}} or Octave that you are using. If the \matlab{} \ot{} is installed as well, \matpower{} can use its solvers for certain problems.
 
 In this manual, references to \matlab{} usually apply to Octave as well. At the time of writing, none of the optional MEX-based \matpower{} packages have been built for Octave, but Octave does typically include \glpk{}.
 
@@ -5827,7 +5834,7 @@ omitted from this listing. For more information on each, at the
 the function. For documentation and data files, the filename
 extensions are included.
 
-\subsection{Directory Layout and Documentation Files}
+\subsection{Directory Layout and Miscellaneous Files}
 
 Some of these files appear at the top level of the distribution and others
 in the \code{docs} directory.
@@ -5844,17 +5851,7 @@ in the \code{docs} directory.
 name & description \\
 \midrule
 \code{data/}	& \matpower{} cases (see Section~\ref{sec:matpowercases})	\\
-\code{docker/}	& files related to \href{\matpowerdockerpage}{\matpower{} Docker} image	\\
-\code{~~build\_matpower\_images.sh}	& shell script for building all \matpower{} images	\\
-\code{~~build\_octave\_images.sh}	& shell script for building all Octave base images	\\
-\code{~~Dockerfile}	& for building \matpower{} v7+ Docker images	\\
-\code{~~Dockerfile-octave}	& for building Octave base Docker images	\\
-\code{~~Dockerfile-legacy}	& for building \matpower{} v4-6 Docker images	\\
-\code{~~MATPOWER-Docker.md}	& docs for \href{\matpowerdockerpage}{\matpower{} Docker} image	\\
-\code{~~Octave-Docker.md}	& docs for \href{\octavedockerhub}{\matpower{}'s Octave Docker} image	\\
-\code{~~docker-compose.test.yml}	& configuration for Docker Hub auto test	\\
-\code{~~patches/}	& patches for some older \matpower{} versions\\
-\code{~~matpower\_docker\_tests/}	& scripts for running \matpower{} tests in container	\\
+\code{docker/}	& files related to \href{\matpowerdockerpage}{\matpower{} Docker} image (see Table~\ref{tab:docker})	\\
 \code{docs/}	& \matpower{} documentation	\\
 \code{~~MATPOWER-dev-guide.md}	& \matpower{} Developer's Guide	\\
 \code{~~MATPOWER-manual.pdf}	& \mum{}\tnote{\dag}	\\
@@ -5866,6 +5863,7 @@ name & description \\
 \code{~~TN4-OPF-Derivatives-Cartesian.pdf}	& \TNfour{} ``AC Power Flows and their Derivatives using Complex Matrix Notation and Cartesian Coordinate Voltages''~\cite{sereeter2018b}	\\
 \code{lib/}	& \matpower{} software (see Section~\ref{sec:matpowersw})	\\
 \code{~~caseformat.m}	& help file documenting \matpower{} case format (i.e.~at the command prompt, type \code{help caseformat} to see details)	\\
+\code{~~+mp/}	& \matpower{} classes related to OOP core	\\
 \code{~~t/}	& \matpower{} tests and examples (see Section~\ref{sec:matpowertests})	\\
 \code{mips/}	& integrated \mipslink{} distribution\tnote{\dag}	\\
 \code{most/}	& integrated \mostlink{} distribution\tnote{\dag}	\\
@@ -5886,21 +5884,79 @@ name & description \\
 \end{threeparttable}
 \end{table}
 
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{Docker-related Files}
+\label{tab:docker}
+\footnotesize
+\begin{tabular}{p{0.42\textwidth}p{0.5\textwidth}}
+\toprule
+name & description \\
+\midrule
+\code{docker/}	& files related to \href{\matpowerdockerpage}{\matpower{} Docker} image	\\
+\code{~~build\_matpower\_images.sh}	& shell script for building all \matpower{} images	\\
+\code{~~build\_octave\_images.sh}	& shell script for building all Octave base images	\\
+\code{~~Dockerfile}	& for building \matpower{} v7+ Docker images	\\
+\code{~~Dockerfile-octave}	& for building Octave base Docker images	\\
+\code{~~Dockerfile-legacy}	& for building \matpower{} v4-6 Docker images	\\
+\code{~~MATPOWER-Docker.md}	& docs for \href{\matpowerdockerpage}{\matpower{} Docker} image	\\
+\code{~~Octave-Docker.md}	& docs for \href{\octavedockerhub}{\matpower{}'s Octave Docker} image	\\
+\code{~~docker-compose.test.yml}	& configuration for Docker Hub auto test	\\
+\code{~~patches/}	& patches for some older \matpower{} versions\\
+\code{~~matpower\_docker\_tests/}	& scripts for running \matpower{} tests in container	\\
+\bottomrule
+\end{tabular}
+\end{threeparttable}
+\end{table}
+
+
+
+
 \clearpage
-\subsection{\matpower{} Functions}
+\subsection{\matpower{} Software}
 \label{sec:matpowersw}
 
 All of the functions listed in this section are found in \mppath{/lib},
 unless noted otherwise.
 
+\emph{Note:} The classes related to OOP core all reside in \mppath{/lib/+mp}, but they are not listed individually in this Appendix.
+
 \begin{table}[!ht]
 %\renewcommand{\arraystretch}{1.2}
 \centering
 \begin{threeparttable}
-\caption{Top-Level Simulation Functions}
+\caption{Top-Level Simulation Functions\tnote{*}}
 \label{tab:run}
 \footnotesize
-\begin{tabular}{p{0.15\textwidth}p{0.51\textwidth}}
+\begin{tabular}{p{0.12\textwidth}p{0.6\textwidth}}
+\toprule
+name & description \\
+\midrule
+\code{run\_mp}	& top-level function for running any task (PF, CPF, OPF) with the new OOP core and flexible framework\\
+\code{run\_pf}	& wrapper around \code{run\_mp} for power flow\tnote{\dag}	\\
+\code{run\_cpf}	& wrapper around \code{run\_mp} for AC continuation power flow	\\
+\code{run\_opf}	& wrapper around \code{run\_mp} for optimal power flow\tnote{\dag}	\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+ \scriptsize
+ \item [*] {Based on OOP core and flexible \matpower{} framework.}
+ \item [\dag] {Uses AC model by default.}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{Top-Level Legacy Simulation Functions\tnote{*}}
+\label{tab:run}
+\footnotesize
+\begin{tabular}{p{0.15\textwidth}p{0.6\textwidth}}
 \toprule
 name & description \\
 \midrule
@@ -5917,6 +5973,7 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
+ \item [*] {With the exception of \code{most}, by default these now use the OOP core internally via the legacy \matpower{} framework, though the legacy core from \matpower{} 7.1 and earlier can be selected explicitly via \code{have\_feature(}\codeq{mp\_element}\code{, 0)}}.
  \item [\dag] {Uses AC model by default.}
  \item [\ddag] {Simple wrapper function to set option to use DC model before calling the corresponding general function above.}
  \item [\S] {\most{} and its supporting files and functions in the \code{most/} sub-directory are documented in the \mostman{} and listed in its Appendix~\ref{MOSTMAN-app:functions}.}
@@ -6384,8 +6441,9 @@ name & description \\
 \code{isload}	& checks if generators are actually dispatchable loads	\\
 \code{load2disp}	& converts fixed loads to dispatchable loads	\\
 \code{loadshed}	& computes MW curtailments of dispatchable loads	\\
-\code{mpver}	& prints version information for \matpower{} and optional packages	\\
 \code{modcost}	& modifies \gencost{} by horizontal or vertical scaling or shifting	\\
+\code{mpver}	& prints version information for \matpower{} and optional packages	\\
+\code{mp.table\_class}	& returns handle to \code{table} constructor, if available, otherwise to \code{mp\_table} constructor	\\
 \code{nested\_struct\_copy}\tnote{\ddag}	& copies the contents of nested structs	\\
 \code{poly2pwl}	& creates piecewise linear approximation to polynomial cost function	\\
 \code{polycost}	& evaluates polynomial generator cost and its derivatives	\\
@@ -6424,6 +6482,7 @@ name & description \\
 \code{have\_feature\_sdp\_pf}	& \sdppf{}, applications of SDP relaxation of power flow equations\tnote{\S}	\\
 \code{have\_feature\_smartmarket}	& \code{runmarket} and friends, for running an energy auction\tnote{\S}	\\
 \code{have\_feature\_syngrid}	& \syngridlink{}, Synthetic Grid Creation for \matpower{}\tnote{\S}	\\
+\code{have\_feature\_table}	& availability of \code{table()}	\\
 \code{have\_feature\_tralmopf}	& TRALMOPF, trust region based augmented Langrangian OPF solver\tnote{\ddag}	\\
 \bottomrule
 \end{tabular}
@@ -6469,6 +6528,23 @@ name & description \\
 \code{psse\_parse\_line}	& called by \code{psse\_parse} to parse a single line	\\
 \code{psse\_parse\_section}	& called by \code{psse\_parse} to parse an entire section	\\
 \code{psse\_read}	& reads data from a PSS/E RAW data file	\\
+\bottomrule
+\end{tabular}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
+\caption{Other Classes}
+\label{tab:otherclasses}
+\footnotesize
+\begin{tabular}{p{0.1\textwidth}p{0.8\textwidth}}
+\toprule
+name & description \\
+\midrule
+\code{mp\_table}	& partial implementation of a class compatible with \code{table} \emph{(for use with Octave)} \\
 \bottomrule
 \end{tabular}
 \end{threeparttable}
@@ -8340,29 +8416,40 @@ The \href{https://matpower.org/docs/MATPOWER-manual-7.1.pdf}{\matpower{} 7.1 Use
 
 The \href{https://matpower.org/docs/MATPOWER-manual-8.0.pdf}{\matpower{} 8.0 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MATPOWER-manual-8.0.pdf}}
 
+\subsubsection*{Major Redesign}
+
+\matpower{}~8 introduces a major redesign and rewrite of all of the \matpower{} internals in the form of the flexible, all-new \matpower{} object-oriented core architecture (\emph{OOP Core}) and new two user-level frameworks to access it.\footnote{Previously developed under the name \mpelink{} in a separate repository at \url{\mpeurl}}
+\begin{itemize}
+\item \emph{OOP Core} -- Provides unparalleled flexibility and customization capabilities at all levels. Built around an explicit three-layer modeling structure, with \emph{data}, \emph{network} and \emph{mathematical} model objects and a \emph{task} object to manage them. Facilitates new modeling (e.g. unbalanced multiphase elements, FACTS devices, etc.), new controls (e.g. optimization of transformer taps, PAR angles, etc.), new problem formulations, and more.
+\item \emph{Flexible Framework} -- Provides new top-level functions (note underscores) \code{run\_pf()}, \code{run\_cpf()}, \code{run\_opf()} for running power flow (PF), continuation power flow (CPF) and optimal power flow (OPF), along with new \matpower{} Extension API for user access to the full customization capability of the OOP core.
+\item \emph{Legacy Framework} -- Allows OOP core modeling to be used internally by legacy \code{runpf()}, \code{runcpf()}, \code{runopf()}, etc. Facilitates use of legacy tests, but is restricted to legacy customization mechanisms.
+\end{itemize}
+See the new \mdm{}\footnote{\url{\mdmurl}} and \TNfive{}~\cite{zimmerman2020} for details of the new architecture. The User's Manual has not yet been updated for the flexible framework.
+
+The features based on \mpe{} are available under MATLAB 9.1 or Octave 6.2 or newer, where the legacy framework uses OOP core's new modeling by default for:
+\begin{itemize}
+    \item \code{rundcpf} -- DC power flow
+    \item \code{rundcopf} -- DC optimal power flow
+    \item \code{runpf} -- AC power flow, for all except radial and hybrid Newton-Raphson formulations/solvers
+    \item \code{runcpf} -- AC continuation power flow
+    \item \code{runopf} -- AC OPF, for solvers MIPS, \code{fmincon}, \ipopt{}, and \knitro{}, for all formulations
+\end{itemize}
+Under older versions of \matlab{} or Octave, \matpower{} automatically reverts  to the legacy core code, which is still included and can also be selected manually on newer versions with \code{have\_feature(}\codeq{mp\_element}\code{, 0)}.
+
 \subsubsection*{New Features}
 \begin{itemize}
-\item Experimental support for \mpelink{}\footnote{\url{\mpeurl}}, a new, generalized network and element modeling layer for \matpower{}. See also \TNfive{}. Documentation not yet included in User's Manual. If \mpelink{} is installed, its modeling is used by default for the following (can be turned off with \code{have\_feature(\textquotesingle{}mp\_element\textquotesingle{}, 0)}):
-\begin{itemize}
-    \item DC power flow
-    \item DC optimal power flow
-    \item AC power flow for all except radial and hybrid Newton-Raphson
-    formulations/solvers, including a new \codeq{FSOLVE} option based on
-    \code{fsolve()} function
-    \item AC continuation power flow
-    \item AC OPF for solvers MIPS, \code{fmincon}, \ipopt{}, and \knitro{}, for
-    all formulations
-\end{itemize}
-MP-Opt-Model object is used for power flow and continuation power flow as well as OPF and is added as \code{om} field to power flow and CPF \code{results} struct.
-
-\item New Implicit Z-bus Gauss method power flow for distribution systems.
 \item New options:
 \begin{itemize}
-    \item \code{pf.alg} now accepts \codeq{FSOLVE} to select the \code{fsolve()} function\footnote{Part of the \matlab{} \ot{} and included in Octave. Supported via \mpelink{} only.} as the AC power flow solver
+    \item New AC power flow solver based on \code{fsolve()} function,\footnote{Part of the \matlab{} \ot{} and included in Octave. Supported via \mpelink{} only.} selected by setting \code{pf.alg} option to \codeq{FSOLVE}.
+    \item New Implicit Z-bus Gauss method power flow for distribution systems,\footnote{Support for PV buses is very limited.} selected by setting \code{pf.alg} option to \codeq{ZG}.
 \end{itemize}
 \item New functions/methods:
     \begin{itemize}
-        \item \code{have\_feature\_mp\_element}
+        \item \code{have\_feature\_mp\_element} - Determines availability of MP-Element.
+        \item \code{run\_mp} - Top-level function for running any task (PF, CPF, OPF) with the new OOP core and flexible framework.
+        \item \code{run\_pf} - Wrapper around \code{run\_mp} for running PF.
+        \item \code{run\_cpf} - Wrapper around \code{run\_mp} for running CPF.
+        \item \code{run\_opf} - Wrapper around \code{run\_mp} for running OPF.
     \end{itemize}
 \end{itemize}
 
@@ -8401,7 +8488,7 @@ MP-Opt-Model object is used for power flow and continuation power flow as well a
 \subsubsection*{Bugs Fixed}
 \begin{itemize}
 \item Fatal bug in \code{int2ext()} when called with \code{mpopt} and an \code{int2ext} user callback function.
-\item Bug affecting AC OPF initialization for cases with piecewise linear costs and cartesian voltage representations resulting in improved convergence for affected cases.
+\item Bug affecting AC OPF initialization for cases with piecewise linear costs and cartesian voltage representations. Fix results in improved convergence for affected cases.
 \item Fix generator voltage set points in \code{case9target} to match \code{case9}.
 \item A vector-valued \code{label} passed to \code{apply\_changes()} now throws a useful error.
 \item Fix bug in previously undocumented feature of \code{makePTDF()} where the \code{slack} input is a matrix. \emph{Thanks to Jon Martinez Corral.}

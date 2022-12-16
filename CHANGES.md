@@ -13,6 +13,45 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.1
 -----------------
 
+#### 12/16/22
+- **MASSIVE UPDATE**: Move the contents of [MP-Element][30] from its own
+  separate repo into the main MATPOWER code base. This introduces a major
+  redesign and rewrite of all of the MATPOWER internals, previously
+  developed under the name [MP-Element][30] in a separate repository at
+  [https://github.com/MATPOWER/mp-element][30]). It includes
+  - *OOP Core* -- New flexible object-oriented core architecture,
+    providing unparalleled flexibility and customization
+    capabilities at all levels. Built around an explicit three-layer
+    modeling structure, with *data*, *network*, and *mathematical* model
+    objects, and a *task* object to manage them.
+  - *Flexible Framework* -- Provides new top-level functions (note
+    underscores) `run_pf()`, `run_cpf()`, `run_opf()` for running
+    power flow (PF), continuation power flow (CPF) and optimal power
+    flow (OPF), along with new MATPOWER Extension API for user access
+    to the full customization capability of the OOP core.
+  - *Legacy Framework* -- Allows OOP core modeling to be used internally
+    by legacy `runpf()`, `runcpf()`, `runopf()`, etc. Facilitates use of
+    legacy tests, but is restricted to legacy customization mechanisms.
+
+  See the new [MATPOWER Developer's Manual][34] and [MATPOWER Technical
+  Note 5][31] for details of the new architecture. The User's Manual has
+  not yet been updated for the flexible framework.
+
+  The features based on MP-Element are available under MATLAB 9.1 or
+  Octave 6.2 or newer, where the legacy framework uses OOP core's new
+  modeling by default for:
+  - `rundcpf` -- DC power flow
+  - `rundcopf` -- DC optimal power flow
+  - `runpf` -- AC power flow, for all except radial and hybrid
+     Newton-Raphson formulations/solvers
+  - `runcpf` -- AC continuation power flow
+  - `runopf` -- AC OPF, for solvers MIPS, `fmincon`, IPOPT, and
+    Artelys Knitro, for all formulations
+
+  Under older versions of MATLAB or Octave, MATPOWER automatically reverts
+  to the legacy core code, which is still included and can also be
+  selected manually on newer versions with `have_feature('mp_element', 0)`.
+
 #### 12/14/22
 - Remove deprecated legacy `@opt_model` methods. Summary of deprecated
   method names, with current alternatives in parenthesis:
@@ -3268,3 +3307,4 @@ First Public Release – *Jun 25, 1997*
 [31]: https://doi.org/10.5281/zenodo.4110676
 [32]: https://hub.docker.com/r/matpower/matpower
 [33]: https://hub.docker.com/r/gnuoctave/octave
+[34]: https://matpower.org/documentation/dev-manual/
