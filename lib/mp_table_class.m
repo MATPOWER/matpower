@@ -1,5 +1,5 @@
-function tab_class = table_class()
-%MP.TABLE_CLASS  Returns handle to constructor for TABLE or MP_TABLE
+function tab_class = mp_table_class()
+%MP_TABLE_CLASS  Returns handle to constructor for TABLE or MP_TABLE
 %
 %   Returns a handle to TABLE constructor, if it is available, otherwise to
 %   MP_TABLE constructor.

@@ -223,7 +223,7 @@ classdef dmce_gen_mpc2 < mp.dmc_element % & mp.dmce_gen
                 end
             end
             var_names = {'poly_n', 'poly_coef', 'pwl_n', 'pwl_qty', 'pwl_cost'};
-            table_class = mp.table_class();
+            table_class = mp_table_class();
             tab = table_class(npoly, p, npwl, qty, cst, 'VariableNames', var_names);
         end
 

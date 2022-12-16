@@ -6443,7 +6443,6 @@ name & description \\
 \code{loadshed}	& computes MW curtailments of dispatchable loads	\\
 \code{modcost}	& modifies \gencost{} by horizontal or vertical scaling or shifting	\\
 \code{mpver}	& prints version information for \matpower{} and optional packages	\\
-\code{mp.table\_class}	& returns handle to \code{table} constructor, if available, otherwise to \code{mp\_table} constructor	\\
 \code{nested\_struct\_copy}\tnote{\ddag}	& copies the contents of nested structs	\\
 \code{poly2pwl}	& creates piecewise linear approximation to polynomial cost function	\\
 \code{polycost}	& evaluates polynomial generator cost and its derivatives	\\
@@ -6500,6 +6499,24 @@ name & description \\
 %\renewcommand{\arraystretch}{1.2}
 \centering
 \begin{threeparttable}
+\caption{Table-Related Functions/Classes}
+\label{tab:tableclasses}
+\footnotesize
+\begin{tabular}{p{0.18\textwidth}p{0.6\textwidth}}
+\toprule
+name & description \\
+\midrule
+\code{mp\_table}	& partial implementation of a class compatible with \code{table} \emph{(for use with Octave)} \\
+\code{mp\_table\_class}	& returns handle to \code{table} constructor, if available, otherwise to \code{mp\_table} constructor	\\
+\bottomrule
+\end{tabular}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[!ht]
+%\renewcommand{\arraystretch}{1.2}
+\centering
+\begin{threeparttable}
 \caption{Other Functions}
 \label{tab:otherfcns}
 \footnotesize
@@ -6528,23 +6545,6 @@ name & description \\
 \code{psse\_parse\_line}	& called by \code{psse\_parse} to parse a single line	\\
 \code{psse\_parse\_section}	& called by \code{psse\_parse} to parse an entire section	\\
 \code{psse\_read}	& reads data from a PSS/E RAW data file	\\
-\bottomrule
-\end{tabular}
-\end{threeparttable}
-\end{table}
-
-\begin{table}[!ht]
-%\renewcommand{\arraystretch}{1.2}
-\centering
-\begin{threeparttable}
-\caption{Other Classes}
-\label{tab:otherclasses}
-\footnotesize
-\begin{tabular}{p{0.1\textwidth}p{0.8\textwidth}}
-\toprule
-name & description \\
-\midrule
-\code{mp\_table}	& partial implementation of a class compatible with \code{table} \emph{(for use with Octave)} \\
 \bottomrule
 \end{tabular}
 \end{threeparttable}

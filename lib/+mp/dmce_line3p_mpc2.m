@@ -52,7 +52,7 @@ classdef dmce_line3p_mpc2 < mp.dmc_element % & mp.dmce_line3p
             r = lc(:, 2:7);
             x = lc(:, 8:13);
             c = lc(:, 14:19);
-            table_class = mp.table_class();
+            table_class = mp_table_class();
             tab = table_class(id, r, x, c);
 %             r11 = lc(:, 2);
 %             r21 = lc(:, 3);

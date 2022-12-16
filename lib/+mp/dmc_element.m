@@ -140,7 +140,7 @@ classdef (Abstract) dmc_element < handle
                     end
                 else            %% create dme table from values
                     if ~isempty(vals)
-                        table_class = mp.table_class();
+                        table_class = mp_table_class();
                         dme.tab = table_class(vals{:}, 'VariableNames', var_names);
                     end
 

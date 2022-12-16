@@ -20,7 +20,7 @@ else
     verbose = 1;
 end
 
-table_class = mp.table_class();
+table_class = mp_table_class();
 
 %%  1       2       3       4       5       6
 %%  alpha   beta    uid     gamma   delta   epsilon
