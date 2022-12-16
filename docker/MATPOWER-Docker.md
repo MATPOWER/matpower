@@ -91,8 +91,8 @@ Several images are available with different combinations of
 naming conventions. Here _current release_ means the most recent
 numbered release (currently 7.1 for [MATPOWER][1], and 7.3.0 for
 [Octave][8]) and _latest_ `master` refers to the most recent build from
-the `master` branch of the [MATPOWER][5] and [MATPOWER Extras][6] (and
-possibly [MP-Element][11] GitHub repositories.
+the `master` branch of the [MATPOWER][5] and [MATPOWER Extras][6]
+GitHub repositories.
 
 
 |         tag          |  MATPOWER version  |  Octave version   |
@@ -125,4 +125,3 @@ possibly [MP-Element][11] GitHub repositories.
 [8]: https://octave.org
 [9]: https://hub.docker.com/r/gnuoctave/octave
 [10]: https://www.docker.com/products/docker-desktop
-[11]: https://github.com/MATPOWER/mp-element

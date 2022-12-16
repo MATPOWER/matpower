@@ -5,7 +5,7 @@ function success = test_mp_core(verbose, exit_on_fail)
 %   TEST_MP_CORE(VERBOSE, EXIT_ON_FAIL)
 %   SUCCESS = TEST_MP_CORE(...)
 %
-%   Runs all of the MP-Element tests. If VERBOSE is true (false by default),
+%   Runs all of the MP-Core tests. If VERBOSE is true (false by default),
 %   it prints the details of the individual tests. If EXIT_ON_FAIL is true
 %   (false by default), it will exit MATLAB or Octave with a status of 1
 %   unless T_RUN_TESTS returns ALL_OK.

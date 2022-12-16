@@ -1,8 +1,8 @@
 function [TorF, vstr, rdate] = have_feature_mp_core()
-%HAVE_FEATURE_MP_CORE  Detect whether to use MP-Element by default
+%HAVE_FEATURE_MP_CORE  Detect availability of MP-Core
 %
 %   Feature detection function implementing 'mp_core' tag for HAVE_FEATURE
-%   to availability/version of MP-Element.
+%   to detect availability/version of MP-Core.
 %
 %   See also HAVE_FEATURE.
 

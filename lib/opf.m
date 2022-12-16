@@ -222,20 +222,22 @@ end
 mpc = ext2int(mpc, mpopt);
 
 %%-----  construct OPF model object  -----
-default_to_mpe = have_feature('mp_core');
-    %% if 0, requires mpopt.exp.mpe = 1 to enable MP-Core version
-    %% if 1; requires mpopt.exp.mpe = 0 to disable MP-Core version
-use_mpe = 0;
-if (  default_to_mpe && ~(isfield(mpopt.exp, 'mpe') && mpopt.exp.mpe == 0) ) || ...
-   ( ~default_to_mpe &&   isfield(mpopt.exp, 'mpe') && mpopt.exp.mpe == 1  )
+default_to_mp_core = have_feature('mp_core');
+    %% if 0, requires mpopt.exp.mp_core = 1 to enable MP-Core version
+    %% if 1; requires mpopt.exp.mp_core = 0 to disable MP-Core version
+use_mp_core = 0;
+if (  default_to_mp_core && ~(isfield(mpopt.exp, 'mp_core') && ...
+        mpopt.exp.mp_core == 0) ) || ...
+   ( ~default_to_mp_core &&   isfield(mpopt.exp, 'mp_core') && ...
+        mpopt.exp.mp_core == 1  )
     dc  = strcmp(upper(mpopt.model), 'DC');
     alg = upper(mpopt.opf.ac.solver);
     if dc || ~(strcmp(alg, 'MINOPF') || strcmp(alg, 'PDIPM') || ...
                 strcmp(alg, 'TRALM') || strcmp(alg, 'SDPOPF'))
-        use_mpe = 1;
+        use_mp_core = 1;
     end
 end
-if ~use_mpe
+if ~use_mp_core
     om = opf_setup(mpc, mpopt);
 end
 
@@ -243,7 +245,7 @@ end
 if nargout > 7
     mpopt.opf.return_raw_der = 1;
 end
-if use_mpe
+if use_mp_core
     task_class = @mp.task_opf_legacy;   %% set default task class
 
     %% get and apply extensions

@@ -97,13 +97,15 @@ end
 qlim = mpopt.pf.enforce_q_lims;         %% enforce Q limits on gens?
 dc = strcmp(upper(mpopt.model), 'DC');  %% use DC formulation?
 
-%% use MP-Element based version?
-default_to_mpe = have_feature('mp_core');
-    %% if 0, requires mpopt.exp.mpe = 1 to enable MP-Core version
-    %% if 1; requires mpopt.exp.mpe = 0 to disable MP-Core version
-use_mpe = 0;
-if (  default_to_mpe && ~(isfield(mpopt.exp, 'mpe') && mpopt.exp.mpe == 0) ) || ...
-   ( ~default_to_mpe &&   isfield(mpopt.exp, 'mpe') && mpopt.exp.mpe == 1  )
+%% use MP-Core based version?
+default_to_mp_core = have_feature('mp_core');
+    %% if 0, requires mpopt.exp.mp_core = 1 to enable MP-Core version
+    %% if 1; requires mpopt.exp.mp_core = 0 to disable MP-Core version
+use_mp_core = 0;
+if (  default_to_mp_core && ~(isfield(mpopt.exp, 'mp_core') && ...
+        mpopt.exp.mp_core == 0) ) || ...
+   ( ~default_to_mp_core &&   isfield(mpopt.exp, 'mp_core') && ...
+        mpopt.exp.mp_core == 1  )
     alg = upper(mpopt.pf.alg);
     if dc || (strcmp(alg, 'DEFAULT') || strcmp(alg, 'NR') || ...
               strcmp(alg, 'NR-SP') || strcmp(alg, 'NR-SC') || ...
@@ -112,7 +114,7 @@ if (  default_to_mpe && ~(isfield(mpopt.exp, 'mpe') && mpopt.exp.mpe == 0) ) || 
               strcmp(alg, 'FSOLVE') || strcmp(alg, 'GS') || ...
               strcmp(alg, 'ZG')) && ...
               mpopt.pf.v_cartesian ~= 2
-        use_mpe = 1;
+        use_mp_core = 1;
     end
 end
 
@@ -146,7 +148,7 @@ end
 %% convert to internal indexing
 mpc = ext2int(mpc, mpopt);
 t0 = tic;
-if use_mpe
+if use_mp_core
     task_class = @mp.task_pf_legacy;    %% set default task class
 
     %% get and apply extensions
@@ -459,7 +461,7 @@ else
 end
 [mpc.bus, mpc.gen, mpc.branch] = deal(bus, gen, branch);
 
-end %% if use_mpe
+end %% if use_mp_core
 
 mpc.et = toc(t0);
 mpc.success = success;
@@ -469,7 +471,7 @@ mpc.iterations = its;
 %% convert back to original bus numbering & print results
 results = int2ext(mpc);
 
-if success && use_mpe
+if success && use_mp_core
     results.om = pf.mm;
 end
 

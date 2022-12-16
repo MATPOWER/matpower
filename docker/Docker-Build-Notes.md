@@ -47,15 +47,9 @@ When a new MATPOWER version _X.Y_ is released ...
   docker tag matpower/matpower:<X.Y> matpower/matpower:<X.Y>c
   ```
 
-To build a new MATPOWER image from the latest `master` branch without
-[MP-Element][8] ...
+To build a new MATPOWER image from the latest `master` branch ...
 ```
 docker build --build-arg MP_SRC=github -f docker/Dockerfile -t matpower/matpower:dev-<YYYY-MM-DD> .
-```
-
-... with [MP-Element][8] ...
-```
-docker build --build-arg MP_SRC=github_mpe -f docker/Dockerfile -t matpower/matpower:<YYYY-MM-DD> .
 ```
 
 To build for a specific MATPOWER version (_X.Y_), specify the corresponding GitHub tag
@@ -69,12 +63,12 @@ To build for a specific Octave version (_x.y.z_), specify the tag in `BASE_TAG` 
 docker build --build-arg MP_SRC=github --build-arg BASE_TAG=<x.y.z> --build-arg BRANCH=<X.Y> -f docker/Dockerfile -t matpower:<X.Y>-oct-<x.y.z> .
 ```
 
-See [`build_matpower_images.sh`][9] for examples.
+See [`build_matpower_images.sh`][8] for examples.
 
 MATPOWER Legacy Images ([`matpower/matpower`][7]) (pre v7.0)
 ------------------------------------------------------------
 
-See [`build_matpower_images.sh`][9] for examples.
+See [`build_matpower_images.sh`][8] for examples.
 
 ---
 
@@ -85,5 +79,4 @@ See [`build_matpower_images.sh`][9] for examples.
 [5]: ./MATPOWER-Docker.md
 [6]: ./Octave-Docker.md
 [7]: https://hub.docker.com/r/matpower/matpower
-[8]: https://github.com/MATPOWER/mp-element
-[9]: ./build_matpower_images.sh
+[8]: ./build_matpower_images.sh

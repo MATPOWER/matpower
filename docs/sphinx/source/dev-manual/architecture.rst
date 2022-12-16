@@ -6,9 +6,9 @@ Architecture Overview
 .. toctree::
    :maxdepth: 2
 
-A new *object-oriented* |/MATPOWER/| *core architecture* (OOP core), designed around the concept of a generic system **element**, [#]_ was introduced in |MATPOWER| 8.0, along with two frameworks for employing this new OOP core in |MATPOWER|. This chapter gives an overview of this architecture.
+A new *object-oriented* |/MATPOWER/| *core architecture* (MP-Core), designed around the concept of a generic system **element**, [#]_ was introduced in |MATPOWER| 8.0, along with two frameworks for employing this new MP-Core in |MATPOWER|. This chapter gives an overview of this architecture.
 
-|MATPOWER|'s primary function is to solve steady-state electric power system simulation and optimization problems, such as power flow, continuation power flow and optimal power flow. At the top level of the OOP core is a **task** object that constructs the various layers of modeling for the desired problem type and formulation, solves the problem, and propogates the solution back through the modeling layers to the user.
+|MATPOWER|'s primary function is to solve steady-state electric power system simulation and optimization problems, such as power flow, continuation power flow and optimal power flow. At the top level of MP-Core is a **task** object that constructs the various layers of modeling for the desired problem type and formulation, solves the problem, and propogates the solution back through the modeling layers to the user.
 
 This architecture employs an explicit three-layer modeling structure designed to decouple from one another (1) the user-visible element parameters and quantities, (2) the network connections, states and flows, and (3) the mathematical problem being solved. The three layers are referred to, resepectively, as the **data**, **network**, and **mathematical** (or **math**) modeling layers as shown in :numref:`fig_model_layers`.
 
@@ -27,7 +27,7 @@ Each modeling layer, plus the data conversion service, is organized around a col
 |MATPOWER| Object Instances
 ---------------------------
 
-In any given |MATPOWER| run, a set of object instances are created and used to solve the problem. The structure of these object instances in the *object-oriented* |/MATPOWER/| *core architecture* (OOP core) is show in :numref:`fig_object_instances`. The classes for the various objects may be specific to (1) the type of problem being solved, (2) the problem formulation, (3) the data source, and for individual elements, (4) the type of element. The labels in the white circles in the figure are used by convention throughout the codebase in variable and class names for the corresponding type of object.
+In any given |MATPOWER| run, a set of object instances are created and used to solve the problem. The structure of these object instances in the *object-oriented* |/MATPOWER/| *core architecture* (MP-Core) is show in :numref:`fig_object_instances`. The classes for the various objects may be specific to (1) the type of problem being solved, (2) the problem formulation, (3) the data source, and for individual elements, (4) the type of element. The labels in the white circles in the figure are used by convention throughout the codebase in variable and class names for the corresponding type of object.
 
 .. _fig_object_instances:
 .. figure:: figures/MATPOWER-object-instances.*
@@ -82,7 +82,7 @@ This process is described in more detail in Chapters :numref:`{number} <sec_dat
 |MATPOWER| Class Hierarchies
 ----------------------------
 
-A summary of the class inheritance structure in the OOP core is represented in :numref:`fig_class_hierarchy`, showing class name conventions, with abstract classes displayed with a single border and concrete classes with a double border. A significant portion of OOP core functionality is implemented in abstract base classes, greatly reducing the effort involved in customization.
+A summary of the class inheritance structure in MP-Core is represented in :numref:`fig_class_hierarchy`, showing class name conventions, with abstract classes displayed with a single border and concrete classes with a double border. A significant portion of MP-Core functionality is implemented in abstract base classes, greatly reducing the effort involved in customization.
 
 .. _fig_class_hierarchy:
 .. figure:: figures/MATPOWER-class-hierarchy.*
@@ -105,20 +105,20 @@ Two |MATPOWER| Frameworks
 
 |MATPOWER| currently provides two approaches to utilizing the object-oriented |MATPOWER| core architecture.
 
-The first, which we call the **legacy** |*MATPOWER*| **framework**, wraps the OOP core objects inside the legacy user interface, with its inherent limitations, in order to provide backward compatibility for legacy user customization mechanisms. This allows the OOP core to be used internally to implement all of the legacy PF, CPF and OPF functionality and, even more importantly, to be validated by |MATPOWER|’s extensive legacy test suite.
+The first, which we call the **legacy** |*MATPOWER*| **framework**, wraps MP-Core objects inside the legacy user interface, with its inherent limitations, in order to provide backward compatibility for legacy user customization mechanisms. This allows MP-Core to be used internally to implement all of the legacy PF, CPF and OPF functionality and, even more importantly, to be validated by |MATPOWER|’s extensive legacy test suite.
 
-The second approach, which we call the **flexible** |*MATPOWER*| **framework**, involves an object-oriented design with a new customization architecture, able to make the full scope of flexibility of the OOP core accessible to the end user. For example, this framework is required to take advantage of new modeling capabilities to add multiphase unbalanced and hybrid models. It provides its own version of the top-level user functions, namely :ml:`run_pf`, :ml:`run_cpf`, and :ml:`run_opf` *(note the underscores in the names)*.
+The second approach, which we call the **flexible** |*MATPOWER*| **framework**, involves an object-oriented design with a new customization architecture, able to make the full scope of flexibility of MP-Core accessible to the end user. For example, this framework is required to take advantage of new modeling capabilities to add multiphase unbalanced and hybrid models. It provides its own version of the top-level user functions, namely :ml:`run_pf`, :ml:`run_cpf`, and :ml:`run_opf` *(note the underscores in the names)*.
 
-One of the primary differences between the two frameworks is that the legacy framework converts the |MATPOWER| case data to internal format, removing offline equipment and renumbering buses consecutively using the legacy :ml:`ext2int()` function, *before* creating the task object and running it. After solving, it converts the case back to the external format using :ml:`int2ext()` before returning the result. This conversion is required for the legacy user callback mechanisms, but is not necessary for the OOP core itself, so it is not included in the flexible framework.
+One of the primary differences between the two frameworks is that the legacy framework converts the |MATPOWER| case data to internal format, removing offline equipment and renumbering buses consecutively using the legacy :ml:`ext2int()` function, *before* creating the task object and running it. After solving, it converts the case back to the external format using :ml:`int2ext()` before returning the result. This conversion is required for the legacy user callback mechanisms, but is not necessary for MP-Core itself, so it is not included in the flexible framework.
 
 
 |MATPOWER| Customization
 ------------------------
 
-The primary motivation behind the design of the OOP core was to facilitate customization, both for the end user and for the developer who wants to add new capabilities to |MATPOWER| itself. Given the object-oriented architecture, this is possible by simply subclassing existing classes to modify or override their behavior or adding completely new classes, which can often inherit significant functionality from existing abstract base classes.
+The primary motivation behind the design of MP-Core was to facilitate customization, both for the end user and for the developer who wants to add new capabilities to |MATPOWER| itself. Given the object-oriented architecture, this is possible by simply subclassing existing classes to modify or override their behavior or adding completely new classes, which can often inherit significant functionality from existing abstract base classes.
 
 The flexible |MATPOWER| framework includes a mechanism for defining and using |*MATPOWER*| **extensions** (see :numref:`Chapter {number} <sec_extensions>`). A |MATPOWER| extension is essentially a collection of modifications and additions to be made to the set default classes used to construct the task, model and model element objects.
 
-.. [#] Hence the name *MP-Element* used early on in the development and still appearing some places throughout the code and documentation.
+.. [#] Hence the name *MP-Element* used early on in the development cycle.
 
 .. [#] This code should execute successfully from the command line without modification.

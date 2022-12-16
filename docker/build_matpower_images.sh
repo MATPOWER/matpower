@@ -41,10 +41,10 @@ docker build --build-arg MP_SRC=github --build-arg BRANCH=7.1 --build-arg PATCH_
 docker tag matpower/matpower:7.1c matpower/matpower:latest
 
 ## dev versions from current master branch
-docker build --build-arg MP_SRC=github_mpe --build-arg BASE_TAG=4.4.1 -f docker/Dockerfile -t matpower/matpower:dev-latest-4.4.1 .
-docker build --build-arg MP_SRC=github_mpe --build-arg BASE_TAG=5.2.0 -f docker/Dockerfile -t matpower/matpower:dev-latest-5.2.0 .
-docker build --build-arg MP_SRC=github_mpe -f docker/Dockerfile -t matpower/matpower:dev-2022-01-26 .
-docker build --build-arg MP_SRC=github_mpe -f docker/Dockerfile -t matpower/matpower:dev-latest .
+docker build --build-arg MP_SRC=github --build-arg BASE_TAG=4.4.1 -f docker/Dockerfile -t matpower/matpower:dev-latest-4.4.1 .
+docker build --build-arg MP_SRC=github --build-arg BASE_TAG=5.2.0 -f docker/Dockerfile -t matpower/matpower:dev-latest-5.2.0 .
+docker build --build-arg MP_SRC=github -f docker/Dockerfile -t matpower/matpower:dev-2022-01-26 .
+docker build --build-arg MP_SRC=github -f docker/Dockerfile -t matpower/matpower:dev-latest .
 
 ## local dev build
 # docker build -f docker/Dockerfile -t matpower/matpower:dev-local .

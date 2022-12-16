@@ -112,10 +112,10 @@ jobs:
         ln -s ./startup.m .octaverc
         $ML_CMD mpver
 
-    - name: Include MP-Element?
+    - name: Include MP-Core?
       run: |
-        export HAVE_MPE=`$ML_CMD "fprintf('%d', have_feature('mp_core'))"`
-        export INCLUDE_MP_CORE=${HAVE_MPE: -1}
+        export HAVE_MP_CORE=`$ML_CMD "fprintf('%d', have_feature('mp_core'))"`
+        export INCLUDE_MP_CORE=${HAVE_MP_CORE: -1}
         echo "INCLUDE_MP_CORE=${INCLUDE_MP_CORE}" >> $GITHUB_ENV
 
     - name: Test GLPK availability, print version number
@@ -145,7 +145,7 @@ jobs:
     - name: Test MOST
       run: $ML_CMD "test_most(0,1)"
 
-    - name: Test MP-Element
+    - name: Test MP-Core
       if: env.INCLUDE_MP_CORE == '1'
       run: $ML_CMD "test_mp_core(0,1)"
 

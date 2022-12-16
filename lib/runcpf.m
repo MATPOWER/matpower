@@ -181,13 +181,15 @@ plim        = mpopt.cpf.enforce_p_lims;    %% enforce active limits
 vlim        = mpopt.cpf.enforce_v_lims;    %% enforce voltage magnitude limits
 flim        = mpopt.cpf.enforce_flow_lims; %% enforce branch flow limits
 
-default_to_mpe = have_feature('mp_core');
-    %% if 0, requires mpopt.exp.mpe = 1 to enable MP-Core version
-    %% if 1; requires mpopt.exp.mpe = 0 to disable MP-Core version
-use_mpe = 0;
-if (  default_to_mpe && ~(isfield(mpopt.exp, 'mpe') && mpopt.exp.mpe == 0) ) || ...
-   ( ~default_to_mpe &&   isfield(mpopt.exp, 'mpe') && mpopt.exp.mpe == 1  )
-    use_mpe = 1;
+default_to_mp_core = have_feature('mp_core');
+    %% if 0, requires mpopt.exp.mp_core = 1 to enable MP-Core version
+    %% if 1; requires mpopt.exp.mp_core = 0 to disable MP-Core version
+use_mp_core = 0;
+if (  default_to_mp_core && ~(isfield(mpopt.exp, 'mp_core') && ...
+        mpopt.exp.mp_core == 0) ) || ...
+   ( ~default_to_mp_core &&   isfield(mpopt.exp, 'mp_core') && ...
+        mpopt.exp.mp_core == 1  )
+    use_mp_core = 1;
 end
 
 %% register event functions (for event detection)
@@ -372,7 +374,7 @@ if ~done.flag
     %% build admittance matrices
     [Ybus, Yf, Yt] = makeYbus(mpcb.baseMVA, mpcb.bus, mpcb.branch);
 
-    if use_mpe
+    if use_mp_core
         task_class = @mp.task_cpf_legacy;   %% set default task class
 
         %% get and apply extensions
@@ -691,7 +693,7 @@ if ~done.flag
     mpct = cpf_current_mpc(cb_data.mpc_base, cb_data.mpc_target, Ybus, Yf, Yt, cb_data.ref, cb_data.pv, cb_data.pq, cx.V, cx.lam, mpopt);
     mpct.et = toc(t0);
     mpct.success = success;
-    end     %% if use_mpe
+    end     %% if use_mp_core
 
     %%-----  output results  -----
     %% convert back to original bus numbering & print results
@@ -710,7 +712,7 @@ if ~done.flag
     end
 end
 
-if success && use_mpe
+if success && use_mp_core
     results.om = cpf.mm;
 end
 

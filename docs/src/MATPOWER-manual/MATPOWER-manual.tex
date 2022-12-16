@@ -169,6 +169,7 @@
 \newcommand{\mpomname}[0]{\mpom{}}
 % \newcommand{\mpomname}[0]{{{\bf M}{\sc at}{\bf P}{\sc ower} \textbf{Opt}imization \textbf{Model}}}
 \newcommand{\mpomver}[0]{3.0}
+\newcommand{\mpcore}{{MP-Core}}
 \newcommand{\mpe}{{MP-Element}}
 \newcommand{\mpeurl}[0]{https://github.com/MATPOWER/mp-element}
 \newcommand{\mpelink}[0]{\href{\mpeurl}{\mpe{}}}
@@ -529,7 +530,7 @@ As a free, open-source tool, \matpower{} development relies on research grants a
 
 \subsection{System Requirements}
 \label{sec:sysreq}
-To use all features of \matpower{} \mpver{}, including those based on the new OOP core, you will need:
+To use all features of \matpower{} \mpver{}, including those based on the new \mpcore{}, you will need:
 \begin{itemize}
 \item \matlab{}\textsuperscript{\tiny \textregistered} version 9.1 (R2016b) or later\footnote{\matlab{} is available from The MathWorks, Inc. (\url{https://www.mathworks.com/}). \matlab{} is a registered trademark of The MathWorks, Inc. \matpower{}~7.1 required \matlab{}~7.5 (R2007b), \matpower{}~7.0 required \matlab{}~7.3 (R2006b), \matpower{}~5 and \matpower{}~6 required \matlab{}~7 (R14), \matpower{}~4 required \matlab{}~6.5 (R13), \matpower{}~3.2 required \matlab{}~6 (R12), \matpower{}~3.0 required \matlab{}~5 and \matpower{}~2.0 and earlier required only \matlab{}~4. }, or
 \item GNU Octave version 6.2 or later\footnote{GNU Octave \cite{octave} is free software, available online at \url{https://www.gnu.org/software/octave/}. \matpower{}~7 required Octave~4, \matpower{}~5 and \matpower{}~6 required Octave~3.4, \matpower{}~4 required Octave~3.2.}
@@ -4505,7 +4506,7 @@ This function implements the \codeq{most} tag for \code{have\_feature} to detect
 \subsubsection{\tt have\_feature\_mp\_core}
 \label{sec:have_feature_mp_core}
 
-This function implements the \codeq{mp\_core} tag for \code{have\_feature} to detect availability/version of \mpelink{}.\footnote{\url{\mpeurl}}
+This function implements the \codeq{mp\_core} tag for \code{have\_feature} to detect availability/version of \mpcore{}.
 
 \subsubsection{\tt have\_feature\_pdipmopf}
 \label{sec:have_feature_pdipmopf}
@@ -5863,7 +5864,7 @@ name & description \\
 \code{~~TN4-OPF-Derivatives-Cartesian.pdf}	& \TNfour{} ``AC Power Flows and their Derivatives using Complex Matrix Notation and Cartesian Coordinate Voltages''~\cite{sereeter2018b}	\\
 \code{lib/}	& \matpower{} software (see Section~\ref{sec:matpowersw})	\\
 \code{~~caseformat.m}	& help file documenting \matpower{} case format (i.e.~at the command prompt, type \code{help caseformat} to see details)	\\
-\code{~~+mp/}	& \matpower{} classes related to OOP core	\\
+\code{~~+mp/}	& \matpower{} classes related to \mpcore{}	\\
 \code{~~t/}	& \matpower{} tests and examples (see Section~\ref{sec:matpowertests})	\\
 \code{mips/}	& integrated \mipslink{} distribution\tnote{\dag}	\\
 \code{most/}	& integrated \mostlink{} distribution\tnote{\dag}	\\
@@ -5921,7 +5922,7 @@ name & description \\
 All of the functions listed in this section are found in \mppath{/lib},
 unless noted otherwise.
 
-\emph{Note:} The classes related to OOP core all reside in \mppath{/lib/+mp}, but they are not listed individually in this Appendix.
+\emph{Note:} The classes related to \mpcore{} all reside in \mppath{/lib/+mp}, but they are not listed individually in this Appendix.
 
 \begin{table}[!ht]
 %\renewcommand{\arraystretch}{1.2}
@@ -5934,7 +5935,7 @@ unless noted otherwise.
 \toprule
 name & description \\
 \midrule
-\code{run\_mp}	& top-level function for running any task (PF, CPF, OPF) with the new OOP core and flexible framework\\
+\code{run\_mp}	& top-level function for running any task (PF, CPF, OPF) with the new \mpcore{} and flexible \matpower{} framework\\
 \code{run\_pf}	& wrapper around \code{run\_mp} for power flow\tnote{\dag}	\\
 \code{run\_cpf}	& wrapper around \code{run\_mp} for AC continuation power flow	\\
 \code{run\_opf}	& wrapper around \code{run\_mp} for optimal power flow\tnote{\dag}	\\
@@ -5942,7 +5943,7 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [*] {Based on OOP core and flexible \matpower{} framework.}
+ \item [*] {Based on \mpcore{} and flexible \matpower{} framework.}
  \item [\dag] {Uses AC model by default.}
 \end{tablenotes}
 \end{threeparttable}
@@ -5973,7 +5974,7 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [*] {With the exception of \code{most}, by default these now use the OOP core internally via the legacy \matpower{} framework, though the legacy core from \matpower{} 7.1 and earlier can be selected explicitly via \code{have\_feature(}\codeq{mp\_core}\code{, 0)}}.
+ \item [*] {With the exception of \code{most}, by default these now use \mpcore{} internally via the legacy \matpower{} framework, though the legacy core from \matpower{} 7.1 and earlier can be selected explicitly via \code{have\_feature(}\codeq{mp\_core}\code{, 0)}}.
  \item [\dag] {Uses AC model by default.}
  \item [\ddag] {Simple wrapper function to set option to use DC model before calling the corresponding general function above.}
  \item [\S] {\most{} and its supporting files and functions in the \code{most/} sub-directory are documented in the \mostman{} and listed in its Appendix~\ref{MOSTMAN-app:functions}.}
@@ -6474,7 +6475,7 @@ name & description \\
 \code{have\_feature\_e4st}	& \eastlink{}, \url{\easturl}	\\
 \code{have\_feature\_minopf}	& MINOPF, MINOS-based optimal power flow (OPF) solver	\\
 \code{have\_feature\_most}	& \mostlink{}, \mostname{}\tnote{\dag}	\\
-\code{have\_feature\_mp\_core}	& \mpelink{}	\\
+\code{have\_feature\_mp\_core}	& \mpcore{}	\\
 \code{have\_feature\_pdipmopf}	& PDIPMOPF, primal-dual interior point method OPF solver\tnote{\ddag}	\\
 \code{have\_feature\_regexp\_split}	& support for \codeq{split} argument to \code{regexp()}	\\
 \code{have\_feature\_scpdipmopf}	& SCPDIPMOPF, step-controlled PDIPM OPF solver\tnote{\ddag}	\\
@@ -8418,15 +8419,15 @@ The \href{https://matpower.org/docs/MATPOWER-manual-8.0.pdf}{\matpower{} 8.0 Use
 
 \subsubsection*{Major Redesign}
 
-\matpower{}~8 introduces a major redesign and rewrite of all of the \matpower{} internals in the form of the flexible, all-new \matpower{} object-oriented core architecture (\emph{OOP Core}) and new two user-level frameworks to access it.\footnote{Previously developed under the name \mpelink{} in a separate repository at \url{\mpeurl}}
+\matpower{}~8 introduces a major redesign and rewrite of all of the \matpower{} internals in the form of the flexible, all-new \matpower{} object-oriented core architecture (\emph{\mpcore{}}) and new two user-level frameworks to access it.\footnote{Previously developed under the name \mpelink{} in a separate repository at \url{\mpeurl}}
 \begin{itemize}
-\item \emph{OOP Core} -- Provides unparalleled flexibility and customization capabilities at all levels. Built around an explicit three-layer modeling structure, with \emph{data}, \emph{network} and \emph{mathematical} model objects and a \emph{task} object to manage them. Facilitates new modeling (e.g. unbalanced multiphase elements, FACTS devices, etc.), new controls (e.g. optimization of transformer taps, PAR angles, etc.), new problem formulations, and more.
-\item \emph{Flexible Framework} -- Provides new top-level functions (note underscores) \code{run\_pf()}, \code{run\_cpf()}, \code{run\_opf()} for running power flow (PF), continuation power flow (CPF) and optimal power flow (OPF), along with new \matpower{} Extension API for user access to the full customization capability of the OOP core.
-\item \emph{Legacy Framework} -- Allows OOP core modeling to be used internally by legacy \code{runpf()}, \code{runcpf()}, \code{runopf()}, etc. Facilitates use of legacy tests, but is restricted to legacy customization mechanisms.
+\item \emph{\mpcore{}} -- Provides unparalleled flexibility and customization capabilities at all levels. Built around an explicit three-layer modeling structure, with \emph{data}, \emph{network} and \emph{mathematical} model objects and a \emph{task} object to manage them. Facilitates new modeling (e.g. unbalanced multiphase elements, FACTS devices, etc.), new controls (e.g. optimization of transformer taps, PAR angles, etc.), new problem formulations, and more.
+\item \emph{Flexible Framework} -- Provides new top-level functions (note underscores) \code{run\_pf()}, \code{run\_cpf()}, \code{run\_opf()} for running power flow (PF), continuation power flow (CPF) and optimal power flow (OPF), along with new \matpower{} Extension API for user access to the full customization capability of \mpcore{}.
+\item \emph{Legacy Framework} -- Allows \mpcore{} modeling to be used internally by legacy \code{runpf()}, \code{runcpf()}, \code{runopf()}, etc. Facilitates use of legacy tests, but is restricted to legacy customization mechanisms.
 \end{itemize}
 See the new \mdm{}\footnote{\url{\mdmurl}} and \TNfive{}~\cite{zimmerman2020} for details of the new architecture. The User's Manual has not yet been updated for the flexible framework.
 
-The features based on \mpe{} are available under MATLAB 9.1 or Octave 6.2 or newer, where the legacy framework uses OOP core's new modeling by default for:
+The features based on \mpcore{} are available under MATLAB 9.1 or Octave 6.2 or newer, where the legacy framework uses \mpcore{}'s new modeling by default for:
 \begin{itemize}
     \item \code{rundcpf} -- DC power flow
     \item \code{rundcopf} -- DC optimal power flow
@@ -8440,13 +8441,13 @@ Under older versions of \matlab{} or Octave, \matpower{} automatically reverts t
 \begin{itemize}
 \item New options:
 \begin{itemize}
-    \item New AC power flow solver based on \code{fsolve()} function,\footnote{Part of the \matlab{} \ot{} and included in Octave. Supported via \mpelink{} only.} selected by setting \code{pf.alg} option to \codeq{FSOLVE}.
+    \item New AC power flow solver based on \code{fsolve()} function,\footnote{Part of the \matlab{} \ot{} and included in Octave. Supported via \mpcore{} only.} selected by setting \code{pf.alg} option to \codeq{FSOLVE}.
     \item New Implicit Z-bus Gauss method power flow for distribution systems,\footnote{Support for PV buses is very limited.} selected by setting \code{pf.alg} option to \codeq{ZG}.
 \end{itemize}
 \item New functions/methods:
     \begin{itemize}
-        \item \code{have\_feature\_mp\_core} - Determines availability of MP-Element.
-        \item \code{run\_mp} - Top-level function for running any task (PF, CPF, OPF) with the new OOP core and flexible framework.
+        \item \code{have\_feature\_mp\_core} - Determines availability of \mpcore{}.
+        \item \code{run\_mp} - Top-level function for running any task (PF, CPF, OPF) with the new \mpcore{} and flexible framework.
         \item \code{run\_pf} - Wrapper around \code{run\_mp} for running PF.
         \item \code{run\_cpf} - Wrapper around \code{run\_mp} for running CPF.
         \item \code{run\_opf} - Wrapper around \code{run\_mp} for running OPF.

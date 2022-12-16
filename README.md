@@ -22,7 +22,7 @@ downloaded or cloned from the [MATPOWER GitHub project][2]. The
 System Requirements
 -------------------
 
-For all features, including those based on the new OOP core:
+For all features, including those based on the new MP-Core:
 *   [MATLAB][3] version 9.1 (R2016b) or later, or
 *   [GNU Octave][4] version 6.2 or later
 

@@ -14,12 +14,18 @@ Changes since 7.1
 -----------------
 
 #### 12/16/22
+- Use new name "MP-Core" everywhere in place of "MP-Element" and "OOP core",
+  including:
+  - `mp_element` --> `mp_core`.
+  - `have_feature_mp_element()` --> `have_feature_mp_core()`
+  - `test_mp_element()` --> `test_mp_core()`
+  - `mpopt.exp.mpe` --> `mpopt.exp.mp_core`
 - **MASSIVE UPDATE**: Move the contents of [MP-Element][30] from its own
   separate repo into the main MATPOWER code base. This introduces a major
   redesign and rewrite of all of the MATPOWER internals, previously
   developed under the name [MP-Element][30] in a separate repository at
   [https://github.com/MATPOWER/mp-element][30]). It includes
-  - *OOP Core* -- New flexible object-oriented core architecture,
+  - *MP-Core* -- New flexible object-oriented core architecture,
     providing unparalleled flexibility and customization
     capabilities at all levels. Built around an explicit three-layer
     modeling structure, with *data*, *network*, and *mathematical* model
@@ -28,8 +34,8 @@ Changes since 7.1
     underscores) `run_pf()`, `run_cpf()`, `run_opf()` for running
     power flow (PF), continuation power flow (CPF) and optimal power
     flow (OPF), along with new MATPOWER Extension API for user access
-    to the full customization capability of the OOP core.
-  - *Legacy Framework* -- Allows OOP core modeling to be used internally
+    to the full customization capability of MP-Core.
+  - *Legacy Framework* -- Allows MP-Core modeling to be used internally
     by legacy `runpf()`, `runcpf()`, `runopf()`, etc. Facilitates use of
     legacy tests, but is restricted to legacy customization mechanisms.
 
@@ -37,8 +43,8 @@ Changes since 7.1
   Note 5][31] for details of the new architecture. The User's Manual has
   not yet been updated for the flexible framework.
 
-  The features based on MP-Element are available under MATLAB 9.1 or
-  Octave 6.2 or newer, where the legacy framework uses OOP core's new
+  The features based on MP-Core are available under MATLAB 9.1 or
+  Octave 6.2 or newer, where the legacy framework uses MP-Core's new
   modeling by default for:
   - `rundcpf` -- DC power flow
   - `rundcopf` -- DC optimal power flow
@@ -89,7 +95,8 @@ Changes since 7.1
 - Relax some test tolerances to prevent failure with Gurobi 9.5.
 
 #### 3/31/22
-- Add support for MATPOWER extensions in MP-Element 0.7+.
+- Add support for MATPOWER extensions in MP-Element 0.7+
+  *(later renamed MP-Core)**.
 
 #### 2/11/22
 - Add option for `makePTDF()` function to use a different slack distribution
@@ -110,7 +117,8 @@ Changes since 7.1
 - Fix generator voltage set points in `case9target` to match `case9`.
 
 #### 5/5/21
-- Add experimental support for [MP-Element][30], a new, generalized
+- Add experimental support for [MP-Element][30] *(later renamed MP-Core)*,
+  a new, generalized
   network and element modeling layer for MATPOWER. See also [MATPOWER
   Technical Note 5][31]. Documentation not yet included in User's Manual.
   - If MP-Element is installed, its modeling is used by default for the
