@@ -479,7 +479,7 @@ else
         t_str_match(r.cpf.events(2).name, 'TARGET_LAM', [t 'events(2).name']);
     end
 
-    if have_feature('mp_element')
+    if have_feature('mp_core')
         t_skip(88, 'user callbacks')
     else
     t = '1 user callback : ';
@@ -598,7 +598,7 @@ else
     t_is(r.cpf.cb2.iteration, 2*iterations, 12, [t 'r.cpf.cb2.iterations']);
     t_is(r.cpf.cb2.final, 200, 12, [t 'r.cpf.cb2.final']);
     t_str_match(r.cpf.shared, '21212121212121212121', [t 'r.cpf.shared']);
-    end  %% if mp_element
+    end  %% if mp_core
 
     t = 'case300 w/Q lims : ';
     mpopt = mpoption('out.all', 0, 'verbose', verbose);
@@ -641,8 +641,8 @@ else
     end
 
     t = 'case14 (unsuccessful) : ';
-    if have_feature('mp_element')
-        t_skip(9, [t 'mp_element not affected by angle wrap-around failure']);
+    if have_feature('mp_core')
+        t_skip(9, [t 'MP-Core not affected by angle wrap-around failure']);
     else
     mpopt = mpoption(mpopt, 'cpf.adapt_step', 1);
     mpopt = mpoption(mpopt, 'cpf.enforce_q_lims', 0);

@@ -5,8 +5,6 @@
 #   MP_SRC=local - to copy the local files to install MATPOWER, pulls
 #                  matpower-extras from GitHub
 #          github - (default) to clone matpower and matpower-extras from GitHub
-#          github_mpe - to clone matpower, matpower-extras, and mp_element
-#                       from GitHub
 #   BRANCH=<branch or tag> to specify the branch or tag for GitHub checkouts
 #
 # docker build -f docker/Dockerfile-matpower -t matpower/matpower:latest .
@@ -52,19 +50,6 @@ ONBUILD RUN git clone -b ${BRANCH} --depth=1 https://github.com/MATPOWER/matpowe
     git clone -b ${BRANCH} --depth=1 https://github.com/MATPOWER/matpower-extras.git $HOME/packages/matpower/extras && \
     rm -rf $HOME/packages/matpower/.git && \
     rm -rf $HOME/packages/matpower/extras/.git && \
-    octave-cli --no-gui -p $HOME/packages/matpower --eval "install_matpower(1,1,1)"
-
-# Install MATPOWER files (plus mp-element) from GitHub
-FROM base AS matpower_github_mpe
-ONBUILD ARG MP_SRC
-ONBUILD ARG BRANCH
-ONBUILD COPY ./docker/matpower_docker_tests/matpower_docker_tests_7mpe.sh /usr/local/bin/matpower_docker_tests.sh
-ONBUILD RUN git clone -b ${BRANCH} --depth=1 https://github.com/MATPOWER/matpower.git $HOME/packages/matpower && \
-    git clone -b ${BRANCH} --depth=1 https://github.com/MATPOWER/matpower-extras.git $HOME/packages/matpower/extras && \
-    git clone -b ${BRANCH} --depth=1 https://github.com/MATPOWER/mp-element.git $HOME/packages/matpower/mp-element && \
-    rm -rf $HOME/packages/matpower/.git && \
-    rm -rf $HOME/packages/matpower/extras/.git && \
-    rm -rf $HOME/packages/matpower/mp-element/.git && \
     octave-cli --no-gui -p $HOME/packages/matpower --eval "install_matpower(1,1,1)"
 
 # Select source for MATPOWER files

@@ -4502,10 +4502,10 @@ This function implements the \codeq{minopf} tag for \code{have\_feature} to dete
 
 This function implements the \codeq{most} tag for \code{have\_feature} to detect availability/version of \mostlink{}, \mostname{}.
 
-\subsubsection{\tt have\_feature\_mp\_element}
-\label{sec:have_feature_mp_element}
+\subsubsection{\tt have\_feature\_mp\_core}
+\label{sec:have_feature_mp_core}
 
-This function implements the \codeq{mp\_element} tag for \code{have\_feature} to detect availability/version of \mpelink{}.\footnote{\url{\mpeurl}}
+This function implements the \codeq{mp\_core} tag for \code{have\_feature} to detect availability/version of \mpelink{}.\footnote{\url{\mpeurl}}
 
 \subsubsection{\tt have\_feature\_pdipmopf}
 \label{sec:have_feature_pdipmopf}
@@ -5973,7 +5973,7 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [*] {With the exception of \code{most}, by default these now use the OOP core internally via the legacy \matpower{} framework, though the legacy core from \matpower{} 7.1 and earlier can be selected explicitly via \code{have\_feature(}\codeq{mp\_element}\code{, 0)}}.
+ \item [*] {With the exception of \code{most}, by default these now use the OOP core internally via the legacy \matpower{} framework, though the legacy core from \matpower{} 7.1 and earlier can be selected explicitly via \code{have\_feature(}\codeq{mp\_core}\code{, 0)}}.
  \item [\dag] {Uses AC model by default.}
  \item [\ddag] {Simple wrapper function to set option to use DC model before calling the corresponding general function above.}
  \item [\S] {\most{} and its supporting files and functions in the \code{most/} sub-directory are documented in the \mostman{} and listed in its Appendix~\ref{MOSTMAN-app:functions}.}
@@ -6474,7 +6474,7 @@ name & description \\
 \code{have\_feature\_e4st}	& \eastlink{}, \url{\easturl}	\\
 \code{have\_feature\_minopf}	& MINOPF, MINOS-based optimal power flow (OPF) solver	\\
 \code{have\_feature\_most}	& \mostlink{}, \mostname{}\tnote{\dag}	\\
-\code{have\_feature\_mp\_element}	& \mpelink{}	\\
+\code{have\_feature\_mp\_core}	& \mpelink{}	\\
 \code{have\_feature\_pdipmopf}	& PDIPMOPF, primal-dual interior point method OPF solver\tnote{\ddag}	\\
 \code{have\_feature\_regexp\_split}	& support for \codeq{split} argument to \code{regexp()}	\\
 \code{have\_feature\_scpdipmopf}	& SCPDIPMOPF, step-controlled PDIPM OPF solver\tnote{\ddag}	\\
@@ -8434,7 +8434,7 @@ The features based on \mpe{} are available under MATLAB 9.1 or Octave 6.2 or new
     \item \code{runcpf} -- AC continuation power flow
     \item \code{runopf} -- AC OPF, for solvers MIPS, \code{fmincon}, \ipopt{}, and \knitro{}, for all formulations
 \end{itemize}
-Under older versions of \matlab{} or Octave, \matpower{} automatically reverts  to the legacy core code, which is still included and can also be selected manually on newer versions with \code{have\_feature(}\codeq{mp\_element}\code{, 0)}.
+Under older versions of \matlab{} or Octave, \matpower{} automatically reverts to the legacy core code, which is still included and can also be selected manually on newer versions with \code{have\_feature(}\codeq{mp\_core}\code{, 0)}.
 
 \subsubsection*{New Features}
 \begin{itemize}
@@ -8445,7 +8445,7 @@ Under older versions of \matlab{} or Octave, \matpower{} automatically reverts  
 \end{itemize}
 \item New functions/methods:
     \begin{itemize}
-        \item \code{have\_feature\_mp\_element} - Determines availability of MP-Element.
+        \item \code{have\_feature\_mp\_core} - Determines availability of MP-Element.
         \item \code{run\_mp} - Top-level function for running any task (PF, CPF, OPF) with the new OOP core and flexible framework.
         \item \code{run\_pf} - Wrapper around \code{run\_mp} for running PF.
         \item \code{run\_cpf} - Wrapper around \code{run\_mp} for running CPF.

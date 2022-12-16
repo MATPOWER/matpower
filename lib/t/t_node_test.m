@@ -45,9 +45,9 @@ for k = 1:length(cases)
         end
     end
 
-    have_feature('mp_element', 0);
+    have_feature('mp_core', 0);
     r = runpf(mpc, mpopt0);
-    have_feature('mp_element', 1);
+    have_feature('mp_core', 1);
     evm = r.bus(:, VM);
     eva = r.bus(:, VA);
     epg = r.gen(:, PG);
@@ -67,9 +67,9 @@ for k = 1:length(cases)
     t_is(qg, eqg, 9, [t 'qg']);
 
     t = sprintf('OPF - %s - ', cases{k});
-    have_feature('mp_element', 0);
+    have_feature('mp_core', 0);
     r = runopf(mpc, mpopt0);
-    have_feature('mp_element', 1);
+    have_feature('mp_core', 1);
     t_ok(r.success, [t 'success 1']);
     evm = r.bus(:, VM);
     eva = r.bus(:, VA);

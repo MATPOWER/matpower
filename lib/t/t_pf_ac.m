@@ -27,7 +27,7 @@ cfg = {
     {'GS',      'Gauss-Seidel',                 [],         []  },
     {'ZG',      'Implicit Z-bus Gauss',         [],         []  },
 };
-if have_feature('mp_element')
+if have_feature('mp_core')
     cfg{end+1} = {'FSOLVE',  'fsolve (power-polar)',         'fsolve',   []  };
     cfg{end+1} = {'FSOLVE',  'fsolve (power-cartesian)',     'fsolve',   {'pf.v_cartesian', 1}  };
     cfg{end+1} = {'FSOLVE',  'fsolve (current-polar)',       'fsolve',   {'pf.current_balance', 1, 'pf.tol', 1e-10}  };

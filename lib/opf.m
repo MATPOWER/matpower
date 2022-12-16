@@ -222,9 +222,9 @@ end
 mpc = ext2int(mpc, mpopt);
 
 %%-----  construct OPF model object  -----
-default_to_mpe = have_feature('mp_element');
-    %% if 0, requires mpopt.exp.mpe = 1 to enable mp_element version
-    %% if 1; requires mpopt.exp.mpe = 0 to disable mp_element version
+default_to_mpe = have_feature('mp_core');
+    %% if 0, requires mpopt.exp.mpe = 1 to enable MP-Core version
+    %% if 1; requires mpopt.exp.mpe = 0 to disable MP-Core version
 use_mpe = 0;
 if (  default_to_mpe && ~(isfield(mpopt.exp, 'mpe') && mpopt.exp.mpe == 0) ) || ...
    ( ~default_to_mpe &&   isfield(mpopt.exp, 'mpe') && mpopt.exp.mpe == 1  )

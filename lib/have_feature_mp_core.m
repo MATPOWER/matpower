@@ -1,10 +1,10 @@
-function [TorF, vstr, rdate] = have_feature_mp_element()
-%HAVE_FEATURE_MP_ELEMENT  Detect whether to use MP-Element by default
+function [TorF, vstr, rdate] = have_feature_mp_core()
+%HAVE_FEATURE_MP_CORE  Detect whether to use MP-Element by default
 %
-%   Feature detection function implementing 'mp_element' tag for HAVE_FEATURE
+%   Feature detection function implementing 'mp_core' tag for HAVE_FEATURE
 %   to availability/version of MP-Element.
 %
-%   See also HAVE_FEATURE, MP_ELEMENT.
+%   See also HAVE_FEATURE.
 
 %   MATPOWER
 %   Copyright (c) 2022, Power Systems Engineering Research Center (PSERC)

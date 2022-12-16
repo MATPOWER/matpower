@@ -50,7 +50,7 @@ Changes since 7.1
 
   Under older versions of MATLAB or Octave, MATPOWER automatically reverts
   to the legacy core code, which is still included and can also be
-  selected manually on newer versions with `have_feature('mp_element', 0)`.
+  selected manually on newer versions with `have_feature('mp_core', 0)`.
 
 #### 12/14/22
 - Remove deprecated legacy `@opt_model` methods. Summary of deprecated

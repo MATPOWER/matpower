@@ -98,9 +98,9 @@ qlim = mpopt.pf.enforce_q_lims;         %% enforce Q limits on gens?
 dc = strcmp(upper(mpopt.model), 'DC');  %% use DC formulation?
 
 %% use MP-Element based version?
-default_to_mpe = have_feature('mp_element');
-    %% if 0, requires mpopt.exp.mpe = 1 to enable MP-Element version
-    %% if 1; requires mpopt.exp.mpe = 0 to disable MP-Element version
+default_to_mpe = have_feature('mp_core');
+    %% if 0, requires mpopt.exp.mpe = 1 to enable MP-Core version
+    %% if 1; requires mpopt.exp.mpe = 0 to disable MP-Core version
 use_mpe = 0;
 if (  default_to_mpe && ~(isfield(mpopt.exp, 'mpe') && mpopt.exp.mpe == 0) ) || ...
    ( ~default_to_mpe &&   isfield(mpopt.exp, 'mpe') && mpopt.exp.mpe == 1  )

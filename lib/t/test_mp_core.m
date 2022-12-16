@@ -1,9 +1,9 @@
-function success = test_mp_element(verbose, exit_on_fail)
-%T_MP_ELEMENT  Run all MATPOWER tests.
-%   T_MP_ELEMENT
-%   T_MP_ELEMENT(VERBOSE)
-%   T_MP_ELEMENT(VERBOSE, EXIT_ON_FAIL)
-%   SUCCESS = T_MP_ELEMENT(...)
+function success = test_mp_core(verbose, exit_on_fail)
+%TEST_MP_CORE  Run all MATPOWER tests.
+%   TEST_MP_CORE
+%   TEST_MP_CORE(VERBOSE)
+%   TEST_MP_CORE(VERBOSE, EXIT_ON_FAIL)
+%   SUCCESS = TEST_MP_CORE(...)
 %
 %   Runs all of the MP-Element tests. If VERBOSE is true (false by default),
 %   it prints the details of the individual tests. If EXIT_ON_FAIL is true
@@ -13,7 +13,7 @@ function success = test_mp_element(verbose, exit_on_fail)
 %   See also T_RUN_TESTS.
 
 %   MATPOWER
-%   Copyright (c) 2004-2019, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2022, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
