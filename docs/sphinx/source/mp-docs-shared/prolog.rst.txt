@@ -24,7 +24,10 @@
 .. |MATLAB| replace:: :raw-html:`M<span style="font-size:smaller">ATLAB</span>`:raw-latex:`\matlab{}`
 .. |MATLAB(R)| replace:: :raw-html:`M<span style="font-size:smaller">ATLAB&reg;</span>`:raw-latex:`\matlabr{}`
 
-.. |PSERC| replace:: :raw-html:`PS<span style="font-size:smaller">ERC</span>`:raw-latex:`\pserc{}`
+.. |PSerc| replace:: :raw-html:`PS<span style="font-size:smaller">ERC</span>`:raw-latex:`\pserc{}`
+.. |PSERC| replace:: :raw-html:`Power Systems Engineering Research Center (PS<span style="font-size:smaller">ERC</span>)`:raw-latex:`\PSERC{}`
+.. |Certs| replace:: :raw-html:`C<span style="font-size:smaller">ERTS</span>`:raw-latex:`\certs{}`
+.. |CERTS| replace:: :raw-html:`Consortium for Electric Reliability Technology Solutions (C<span style="font-size:smaller">ERTS</span>)`:raw-latex:`\CERTS{}`
 
 .. |MIPS| replace:: :raw-html:`MIPS`:raw-latex:`\mips{}`
 .. |MIPS>| replace:: :raw-html:`<a href="https://github.com/MATPOWER/mips">MIPS</a>`:raw-latex:`\mipslink{}`

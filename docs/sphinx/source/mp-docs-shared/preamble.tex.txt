@@ -17,6 +17,10 @@
 \newcommand{\matlab}[0]{{\sc Matlab}}
 \newcommand{\matlabr}[0]{{\matlab{} \textsuperscript{\tiny \textregistered}}}
 \newcommand{\pserc}[0]{{\sc PSerc}}
+\newcommand{\PSERC}[0]{{Power Systems Engineering Research Center (\pserc{})}}
+\newcommand{\certs}[0]{{\sc Certs}}
+\newcommand{\CERTS}[0]{{Consortium for Electric Reliability Technology Solutions (\certs{})}}
+
 \newcommand{\mpver}[0]{8.0-dev}
 \newcommand{\mumurl}[0]{https://matpower.org/docs/MATPOWER-manual-\mpver.pdf}
 \newcommand{\mum}[0]{\href{\mumurl}{\matpower{} User's Manual}}
