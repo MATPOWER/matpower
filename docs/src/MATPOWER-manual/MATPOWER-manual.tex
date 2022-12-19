@@ -1659,7 +1659,7 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {AC power flow only.}
+ \item [\dag] AC power flow only.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -1736,8 +1736,8 @@ name & default & description \\
 \begin{tablenotes}
  \scriptsize
 %  \item [\dag] {Automatically sets/overrides \code{pf.current\_balance} and \code{pf.v\_cartesian} options with corresponding values.}
- \item [\dag] {The values \codeq{NR-SP}, \codeq{NR-SC}, \codeq{NR-SH}, \codeq{NR-IP}, \codeq{NR-IC}, \codeq{NR-IH} can also be used as shortcuts to simultaneously select Newton's method and set/override the \code{pf.current\_balance} and \code{pf.v\_cartesian} options with corresponding values, where \codeq{S} and \codeq{I} are for power and current balance, respectively, and \codeq{P}, \codeq{C} and \codeq{H} are for polar, cartesian and hybrid, respectively.}
- \item [\ddag] {Only relevant for Newton AC power flow solver.}
+ \item [\dag] The values \codeq{NR-SP}, \codeq{NR-SC}, \codeq{NR-SH}, \codeq{NR-IP}, \codeq{NR-IC}, \codeq{NR-IH} can also be used as shortcuts to simultaneously select Newton's method and set/override the \code{pf.current\_balance} and \code{pf.v\_cartesian} options with corresponding values, where \codeq{S} and \codeq{I} are for power and current balance, respectively, and \codeq{P}, \codeq{C} and \codeq{H} are for polar, cartesian and hybrid, respectively.
+ \item [\ddag] Only relevant for Newton AC power flow solver.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -1790,7 +1790,7 @@ name & default & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {Overrides individual flags, but (in the case of \code{out.suppress\_detail}) not \code{out.all} = 1.}
+ \item [\dag] Overrides individual flags, but (in the case of \code{out.suppress\_detail}) not \code{out.all} = 1.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -2008,7 +2008,7 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {$n$ is one more than the number of continuation steps, i.e. $n_\mathrm{steps}+1$, so the first element corresponds to the starting point.}
+ \item [\dag] $n$ is one more than the number of continuation steps, i.e. $n_\mathrm{steps}+1$, so the first element corresponds to the starting point.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -2069,7 +2069,7 @@ name & default & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {See \code{help cpf\_default\_callback} for details.}
+ \item [\dag] See \code{help cpf\_default\_callback} for details.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -2130,9 +2130,9 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [*] {See Table~\ref{tab:cpf_state} for details of the CPF state.}
- \item [\ddag] {See \code{cpf\_detect\_events} for details of the \code{evnts} field.}
- \item [\S] {Please note that any callback that modifies the underlying problem is responsible to update the contents of \code{cb\_data} accordingly. E.g. converting a bus from PV to PQ requires updates to \code{mpc\_base}, \code{mpc\_target}, \code{Sbusb}, \code{Sbust}, \code{pv}, \code{pq}, and possibly \code{ref}. So, \code{cb\_data} should only be thought of as static for a fixed base and target case pair.}
+ \item [*] See Table~\ref{tab:cpf_state} for details of the CPF state.
+ \item [\ddag] See \code{cpf\_detect\_events} for details of the \code{evnts} field.
+ \item [\S] Please note that any callback that modifies the underlying problem is responsible to update the contents of \code{cb\_data} accordingly. E.g. converting a bus from PV to PQ requires updates to \code{mpc\_base}, \code{mpc\_target}, \code{Sbusb}, \code{Sbust}, \code{pv}, \code{pq}, and possibly \code{ref}. So, \code{cb\_data} should only be thought of as static for a fixed base and target case pair.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -2159,10 +2159,10 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [*] {See Table~\ref{tab:cpf_state} for details of the CPF state.}
- \item [\dag] {In this case, the callback should also modify the step size or parameterization to be used for the re-try, by setting the \code{this\_step} or \code{this\_parm} fields in \code{cx}.}
- \item [\ddag] {See \code{cpf\_detect\_events} for details of the \code{evnts} field.}
- \item [\S] {It is the job of any callback modifying \code{cb\_data} to ensure that all data in \code{cb\_data} is kept consistent.}
+ \item [*] See Table~\ref{tab:cpf_state} for details of the CPF state.
+ \item [\dag] In this case, the callback should also modify the step size or parameterization to be used for the re-try, by setting the \code{this\_step} or \code{this\_parm} fields in \code{cx}.
+ \item [\ddag] See \code{cpf\_detect\_events} for details of the \code{evnts} field.
+ \item [\S] It is the job of any callback modifying \code{cb\_data} to ensure that all data in \code{cb\_data} is kept consistent.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -2195,8 +2195,8 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [*] {Corresponding to the \code{cpf.parameterization} option in  Table~\ref{tab:cpfoptions}.}
- \item [\dag] {Replaces \code{cb\_state} from \matpower{} 5.}
+ \item [*] Corresponding to the \code{cpf.parameterization} option in  Table~\ref{tab:cpfoptions}.
+ \item [\dag] Replaces \code{cb\_state} from \matpower{} 5.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -2681,8 +2681,8 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {See help for \code{opf\_model} and \code{opt\_model} for more details.}
- \item [\ddag] {See help for \code{opf} for more details.}
+ \item [\dag] See help for \code{opf\_model} and \code{opt\_model} for more details.
+ \item [\ddag] See help for \code{opf} for more details.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -2739,9 +2739,9 @@ name & default & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [*] {Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.}
- \item [\dag] {For MIPS-sc, the step-controlled version of this solver, the \code{mips.step\_control} option must be set to 1.}
- \item [\ddag] {For SC-PDIPM, the step-controlled version of this solver, the \code{pdipm.step\_control} option must be set to 1.}
+ \item [*] Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.
+ \item [\dag] For MIPS-sc, the step-controlled version of this solver, the \code{mips.step\_control} option must be set to 1.
+ \item [\ddag] For SC-PDIPM, the step-controlled version of this solver, the \code{pdipm.step\_control} option must be set to 1.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -2800,9 +2800,9 @@ name & default & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [*] {Deprecated. Use \code{opf.start} instead.}
- \item [\dag] {Using a value between 0 and 1 results in the limits being determined by the corresponding weighted average of the 2 options.}
- \item [\ddag] {Only applies to \code{fmincon}, \ipopt{}, \knitro{} and \mips{} solvers, which use an interior point estimate; others use current state in \matpower{} case, as with \code{opf.start} = 2.}
+ \item [*] Deprecated. Use \code{opf.start} instead.
+ \item [\dag] Using a value between 0 and 1 results in the limits being determined by the corresponding weighted average of the 2 options.
+ \item [\ddag] Only applies to \code{fmincon}, \ipopt{}, \knitro{} and \mips{} solvers, which use an interior point estimate; others use current state in \matpower{} case, as with \code{opf.start} = 2.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -2839,8 +2839,8 @@ name & default & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {Overrides individual flags.}
- \item [\ddag] {Takes values of 0, 1 or 2 as for \code{out.lim.v}.}
+ \item [\dag] Overrides individual flags.
+ \item [\ddag] Takes values of 0, 1 or 2 as for \code{out.lim.v}.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -2908,7 +2908,7 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {If \code{varsets} is empty, \code{x} will be the full optimization vector $\hat{x}$, otherwise it will be a cell array of sub-vectors of $\hat{x}$ for the specified variable sets. Valid names include \codeq{Va}, \codeq{Vm}, \codeq{Pg}, and \codeq{Qg}. It can include others depending on the OPF extensions in use. See the variable names displayed by \code{results.om} for a complete list for your problem.}
+ \item [\dag] If \code{varsets} is empty, \code{x} will be the full optimization vector $\hat{x}$, otherwise it will be a cell array of sub-vectors of $\hat{x}$ for the specified variable sets. Valid names include \codeq{Va}, \codeq{Vm}, \codeq{Pg}, and \codeq{Qg}. It can include others depending on the OPF extensions in use. See the variable names displayed by \code{results.om} for a complete list for your problem.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -3457,7 +3457,7 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {Here $n_{gr}$ is the number of generators belonging to at least one reserve zone.}
+ \item [\dag] Here $n_{gr}$ is the number of generators belonging to at least one reserve zone.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -3487,7 +3487,7 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\ddag] {All zonal reserve result sub-fields are $n_g \times 1$ vectors, where the values are set to zero for units not participating in the provision of reserves.}
+ \item [\ddag] All zonal reserve result sub-fields are $n_g \times 1$ vectors, where the values are set to zero for units not participating in the provision of reserves.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -3558,7 +3558,7 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {Here we assume the objective function has units $u$.}
+ \item [\dag] Here we assume the objective function has units $u$.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -3689,8 +3689,8 @@ name & hard-limit formulation & soft-limit formulation \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {Only applicable for the AC OPF.} 
- \item [\ddag] {Example of a user-defined nonlinear constraint in the AC version.}
+ \item [\dag] Only applicable for the AC OPF.
+ \item [\ddag] Example of a user-defined nonlinear constraint in the AC version.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -3732,10 +3732,10 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [*] {For fields not present, the value of the \codeq{opf.softlims.defaults} option determines whether the corresponding limit is unchanged (= 0) or converted (= 1, default) to a soft limit using default values from Table~\ref{tab:softlimsdefaults}.} 
- \item [\dag] {For bus constraints, \code{idx} overrides \code{busnum} if both are provided.} 
- \item [\ddag] {Only applicable for bus constraints, i.e. \code{<LIM>} is \code{VMIN} or \code{VMAX}.} 
- \item [\S] {Any new, relaxed hard limits are implemented via bounds on the violation variables. See Table~\ref{tab:hlmod} for details.}
+ \item [*] For fields not present, the value of the \codeq{opf.softlims.defaults} option determines whether the corresponding limit is unchanged (= 0) or converted (= 1, default) to a soft limit using default values from Table~\ref{tab:softlimsdefaults}.
+ \item [\dag] For bus constraints, \code{idx} overrides \code{busnum} if both are provided.
+ \item [\ddag] Only applicable for bus constraints, i.e. \code{<LIM>} is \code{VMIN} or \code{VMAX}.
+ \item [\S] Any new, relaxed hard limits are implemented via bounds on the violation variables. See Table~\ref{tab:hlmod} for details.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -3787,7 +3787,7 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {Unless the maximum marginal cost at $P^\mathrm{max}$ across all online generators, which we call $c_g^\mathrm{max}$, exceeds \$1000/MWh, in which case the numerical value of the default cost is $c_g^\mathrm{max}$ instead of 1000 (or $100 \cdot c_g^\mathrm{max}$ instead of 100,000, for \code{VMIN} or \code{VMAX}).}
+ \item [\dag] Unless the maximum marginal cost at $P^\mathrm{max}$ across all online generators, which we call $c_g^\mathrm{max}$, exceeds \$1000/MWh, in which case the numerical value of the default cost is $c_g^\mathrm{max}$ instead of 1000 (or $100 \cdot c_g^\mathrm{max}$ instead of 100,000, for \code{VMIN} or \code{VMAX}).
  \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -3824,7 +3824,7 @@ Table~\ref{tab:hlmod} summarizes the new hard limits and the corresponding bound
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {Plus sign for upper bounds and minus sign for lower bounds.}
+ \item [\dag] Plus sign for upper bounds and minus sign for lower bounds.
  \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -3870,8 +3870,8 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {The dimensions of \code{overload} and \code{ov\_cost} correspond to all buses, branches or generators (depending on \code{<LIM>}), not just those whose limits were converted to soft limits. Entries corresponding to those not included (implicitly or explicitly) in \code{idx} are set to zero.}
- \item [\dag] {For limits that have been converted to soft limits, these are the shadow prices on the soft limit constraints. When there is no violation of the soft limit, this shadow price is the same as it would be for the original hard limit. When there is a violation, it is equal to the corresponding user-supplied violation cost $c_\mathrm{v}^i$, unless an updated hard constraint is also binding.}
+ \item [\dag] The dimensions of \code{overload} and \code{ov\_cost} correspond to all buses, branches or generators (depending on \code{<LIM>}), not just those whose limits were converted to soft limits. Entries corresponding to those not included (implicitly or explicitly) in \code{idx} are set to zero.
+ \item [\dag] For limits that have been converted to soft limits, these are the shadow prices on the soft limit constraints. When there is no violation of the soft limit, this shadow price is the same as it would be for the original hard limit. When there is a violation, it is equal to the corresponding user-supplied violation cost $c_\mathrm{v}^i$, unless an updated hard constraint is also binding.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -4168,7 +4168,7 @@ name & column & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {The change set probability $\pi_k$ is taken from this column of the \emph{first} row for change set~$k$.}
+ \item [\dag] The change set probability $\pi_k$ is taken from this column of the \emph{first} row for change set~$k$.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -4204,7 +4204,7 @@ name & value & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {Preferred method of modifying load, as opposed to manipulating \bus{} and \gen{} tables directly.}
+ \item [\dag] Preferred method of modifying load, as opposed to manipulating \bus{} and \gen{} tables directly.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -4262,8 +4262,8 @@ For load changes, the \code{CT\_COL} column is not a column index, but rather a 
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {Use \code{CT\_CHGTYPE} column = \code{CT\_REL} to scale the cost and \code{CT\_ADD} to shift the cost.}
- \item [\ddag] {Can also be used for \code{CT\_TGENCOST} or \code{CT\_TAREAGENCOST} in addition to the special codes above.}
+ \item [\dag] Use \code{CT\_CHGTYPE} column = \code{CT\_REL} to scale the cost and \code{CT\_ADD} to shift the cost.
+ \item [\ddag] Can also be used for \code{CT\_TGENCOST} or \code{CT\_TAREAGENCOST} in addition to the special codes above.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -4626,7 +4626,7 @@ name & column & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {Included in OPF output, typically not included (or ignored) in input matrix. Here we assume the objective function has units $u$.}
+ \item [\dag] Included in OPF output, typically not included (or ignored) in input matrix. Here we assume the objective function has units $u$.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -4676,9 +4676,9 @@ $\leq 0$ = machine out-of-service \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [*] {Not included in version~1 case format.}
- \item [\dag] {Included in OPF output, typically not included (or ignored) in input matrix. Here we assume the objective function has units $u$.}
- \item [\ddag] {Used to determine voltage setpoint for optimal power flow only if \code{opf.use\_vg} option is non-zero (0 by default). Otherwise generator voltage range is determined by limits set for corresponding bus in \bus{} matrix.}
+ \item [*] Not included in version~1 case format.
+ \item [\dag] Included in OPF output, typically not included (or ignored) in input matrix. Here we assume the objective function has units $u$.
+ \item [\ddag] Used to determine voltage setpoint for optimal power flow only if \code{opf.use\_vg} option is non-zero (0 by default). Otherwise generator voltage range is determined by limits set for corresponding bus in \bus{} matrix.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -4720,10 +4720,10 @@ name & column & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [*] {Used to specify branch flow limits. By default these are limits on apparent power with units in MVA. However, the \codeq{opf.flow\_lim} option can be used to specify that the limits are active power or current, in which case the ratings are specified in MW or (kA$\cdot V_\mathrm{basekV})$, respectively. For current this is equivalent to an MVA value at a 1 p.u. voltage.}
- \item [\dag] {Not included in version~1 case format. The voltage angle difference is taken to be unbounded below if \code{ANGMIN} $\le -360$ and unbounded above if \code{ANGMAX} $\ge 360$. If both parameters are zero, the voltage angle difference is unconstrained.}
- \item [\ddag] {Included in power flow and OPF output, ignored on input.}
- \item [\S] {Included in OPF output, typically not included (or ignored) in input matrix. Here we assume the objective function has units $u$.}
+ \item [*] Used to specify branch flow limits. By default these are limits on apparent power with units in MVA. However, the \codeq{opf.flow\_lim} option can be used to specify that the limits are active power or current, in which case the ratings are specified in MW or (kA$\cdot V_\mathrm{basekV})$, respectively. For current this is equivalent to an MVA value at a 1 p.u. voltage.
+ \item [\dag] Not included in version~1 case format. The voltage angle difference is taken to be unbounded below if \code{ANGMIN} $\le -360$ and unbounded above if \code{ANGMAX} $\ge 360$. If both parameters are zero, the voltage angle difference is unconstrained.
+ \item [\ddag] Included in power flow and OPF output, ignored on input.
+ \item [\S] Included in OPF output, typically not included (or ignored) in input matrix. Here we assume the objective function has units $u$.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -4758,8 +4758,8 @@ name & column & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {If \gen{} has $n_g$ rows, then the first $n_g$ rows of \gencost{} contain the costs for active power produced by the corresponding generators. If \gencost{} has $2 n_g$ rows, then rows $n_g + 1$ through $2 n_g$ contain the reactive power costs in the same format.}
- \item [*] {Not currently used by any \matpower{} functions.}
+ \item [\dag] If \gen{} has $n_g$ rows, then the first $n_g$ rows of \gencost{} contain the costs for active power produced by the corresponding generators. If \gencost{} has $2 n_g$ rows, then rows $n_g + 1$ through $2 n_g$ contain the reactive power costs in the same format.
+ \item [*] Not currently used by any \matpower{} functions.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -4804,9 +4804,9 @@ name & column & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [*] {Requires explicit use of \code{toggle\_dcline}.}
- \item [\dag] {Output column, value updated by power flow or OPF (except \code{PF} in case of simple power flow).}
- \item [\ddag] {Included in OPF output, typically not included (or ignored) in input matrix. Here we assume the objective function has units $u$.}
+ \item [*] Requires explicit use of \code{toggle\_dcline}.
+ \item [\dag] Output column, value updated by power flow or OPF (except \code{PF} in case of simple power flow).
+ \item [\ddag] Included in OPF output, typically not included (or ignored) in input matrix. Here we assume the objective function has units $u$.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -4914,8 +4914,8 @@ name & default & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [*] {Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.}
- \item [\dag] {Requires \matlab{}'s \ot{}, available from The MathWorks, Inc (\url{https://www.mathworks.com/}).}
+ \item [*] Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.
+ \item [\dag] Requires \matlab{}'s \ot{}, available from The MathWorks, Inc (\url{https://www.mathworks.com/}).
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -4988,8 +4988,8 @@ name & default & description \\
 \begin{tablenotes}
  \scriptsize
 %  \item [\dag] {Automatically sets/overrides \code{pf.current\_balance} and \code{pf.v\_cartesian} options with corresponding values.}
- \item [\dag] {The values \codeq{NR-SP}, \codeq{NR-SC}, \codeq{NR-SH}, \codeq{NR-IP}, \codeq{NR-IC}, \codeq{NR-IH} can also be used as shortcuts to simultaneously select Newton's method and set/override the \code{pf.current\_balance} and \code{pf.v\_cartesian} options with corresponding values, where \codeq{S} and \codeq{I} are for power and current balance, respectively, and \codeq{P}, \codeq{C} and \codeq{H} are for polar, cartesian and hybrid, respectively.}
- \item [\ddag] {Only relevant for Newton AC power flow solver.}
+ \item [\dag] The values \codeq{NR-SP}, \codeq{NR-SC}, \codeq{NR-SH}, \codeq{NR-IP}, \codeq{NR-IC}, \codeq{NR-IH} can also be used as shortcuts to simultaneously select Newton's method and set/override the \code{pf.current\_balance} and \code{pf.v\_cartesian} options with corresponding values, where \codeq{S} and \codeq{I} are for power and current balance, respectively, and \codeq{P}, \codeq{C} and \codeq{H} are for polar, cartesian and hybrid, respectively.
+ \item [\ddag] Only relevant for Newton AC power flow solver.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -5050,7 +5050,7 @@ name & default & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {See \code{help cpf\_default\_callback} for details.}
+ \item [\dag] See \code{help cpf\_default\_callback} for details.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -5097,9 +5097,9 @@ name & default & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [*] {Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.}
- \item [\dag] {For MIPS-sc, the step-controlled version of this solver, the \code{mips.step\_control} option must be set to 1.}
- \item [\ddag] {For SC-PDIPM, the step-controlled version of this solver, the \code{pdipm.step\_control} option must be set to 1.}
+ \item [*] Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.
+ \item [\dag] For MIPS-sc, the step-controlled version of this solver, the \code{mips.step\_control} option must be set to 1.
+ \item [\ddag] For SC-PDIPM, the step-controlled version of this solver, the \code{pdipm.step\_control} option must be set to 1.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -5158,9 +5158,9 @@ name & default & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [*] {Deprecated. Use \code{opf.start} instead.}
- \item [\dag] {Using a value between 0 and 1 results in the limits being determined by the corresponding weighted average of the 2 options.}
- \item [\ddag] {Only applies to \code{fmincon}, \ipopt{}, \knitro{} and \mips{} solvers, which use an interior point estimate; others use current state in \matpower{} case, as with \code{opf.start} = 2.}
+ \item [*] Deprecated. Use \code{opf.start} instead.
+ \item [\dag] Using a value between 0 and 1 results in the limits being determined by the corresponding weighted average of the 2 options.
+ \item [\ddag] Only applies to \code{fmincon}, \ipopt{}, \knitro{} and \mips{} solvers, which use an interior point estimate; others use current state in \matpower{} case, as with \code{opf.start} = 2.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -5221,9 +5221,9 @@ name & default & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [*] {This setting is ignored for pretty-printed output to files specified as \code{FNAME} argument in calls to \code{runpf}, \code{runopf}, etc.}
- \item [\dag] {Overrides individual flags, but (in the case of \code{out.suppress\_detail}) not \code{out.all} = 1.}
- \item [\ddag] {Takes values of 0, 1 or 2 as for \code{out.lim.v}.}
+ \item [*] This setting is ignored for pretty-printed output to files specified as \code{FNAME} argument in calls to \code{runpf}, \code{runopf}, etc.
+ \item [\dag] Overrides individual flags, but (in the case of \code{out.suppress\_detail}) not \code{out.all} = 1.
+ \item [\ddag] Takes values of 0, 1 or 2 as for \code{out.lim.v}.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -5257,8 +5257,8 @@ name & default & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {Requires installation of the optional \pardiso{} package. See Appendix~\ref{app:pardiso} for details.}
- \item [\ddag] {Only relevant when \code{mips.step\_control} is on.}
+ \item [\dag] Requires installation of the optional \pardiso{} package. See Appendix~\ref{app:pardiso} for details.
+ \item [\ddag] Only relevant when \code{mips.step\_control} is on.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -5281,8 +5281,8 @@ name & default & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {For \code{opf.dc.solver} option set to \codeq{CLP} only. Requires the installation of the optional \clp{} package. See Appendix~\ref{app:clp} for details.}
- \item [\ddag] {For details, see \code{help clp\_options} or \code{help clp}.}
+ \item [\dag] For \code{opf.dc.solver} option set to \codeq{CLP} only. Requires the installation of the optional \clp{} package. See Appendix~\ref{app:clp} for details.
+ \item [\ddag] For details, see \code{help clp\_options} or \code{help clp}.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -5324,8 +5324,8 @@ name & default & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {For \code{opf.dc.solver} option set to \codeq{CPLEX} only. Requires the installation of the optional \cplex{} package. See Appendix~\ref{app:cplex} for details.}
- \item [\ddag] {For details, see \code{help cplex\_options} and the ``Parameters of \cplex{}'' section of the \cplex{} documentation at \url{http://www.ibm.com/support/knowledgecenter/SSSA5P}.}
+ \item [\dag] For \code{opf.dc.solver} option set to \codeq{CPLEX} only. Requires the installation of the optional \cplex{} package. See Appendix~\ref{app:cplex} for details.
+ \item [\ddag] For details, see \code{help cplex\_options} and the ``Parameters of \cplex{}'' section of the \cplex{} documentation at \url{http://www.ibm.com/support/knowledgecenter/SSSA5P}.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -5361,10 +5361,10 @@ name & default & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {Requires \matlab{}'s \ot{}, available from The MathWorks, Inc (\url{https://www.mathworks.com/}).}
- \item [\ddag] {Does not use sparse matrices, so not applicable for large-scale systems.}
-%  \item [\ddag] {Used only if \code{fmincon.opts} is empty.}
- \item [*] {\code{Display} is set by \code{verbose}, \code{TolCon} by \code{opf.violation}, \code{TolX} by \code{fmincon.tol\_x}, \code{TolFun} by \code{fmincon.tol\_f}, and \code{MaxIter} and \code{MaxFunEvals} by \code{fmincon.max\_it}.}
+ \item [\dag] Requires \matlab{}'s \ot{}, available from The MathWorks, Inc (\url{https://www.mathworks.com/}).
+ \item [\ddag] Does not use sparse matrices, so not applicable for large-scale systems.
+%  \item [\ddag] Used only if \code{fmincon.opts} is empty.
+ \item [*] \code{Display} is set by \code{verbose}, \code{TolCon} by \code{opf.violation}, \code{TolX} by \code{fmincon.tol\_x}, \code{TolFun} by \code{fmincon.tol\_f}, and \code{MaxIter} and \code{MaxFunEvals} by \code{fmincon.max\_it}.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -5387,8 +5387,8 @@ name & default & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {For \code{opf.dc.solver} option set to \codeq{GLPK} only. Requires the installation of the optional \glpk{} package. See Appendix~\ref{app:glpk} for details.}
- \item [\ddag] {For details, see \code{help glpk\_options} or the ``param'' section of the \glpk{} documentation at  \url{https://www.gnu.org/software/octave/doc/interpreter/Linear-Programming.html}.}
+ \item [\dag] For \code{opf.dc.solver} option set to \codeq{GLPK} only. Requires the installation of the optional \glpk{} package. See Appendix~\ref{app:glpk} for details.
+ \item [\ddag] For details, see \code{help glpk\_options} or the ``param'' section of the \glpk{} documentation at  \url{https://www.gnu.org/software/octave/doc/interpreter/Linear-Programming.html}.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -5422,9 +5422,9 @@ name & default & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {For \code{opf.dc.solver} option set to \codeq{GUROBI} only. Requires the installation of the optional \gurobi{} package. See Appendix~\ref{app:gurobi} for details.}
- \item [\S] {Default values in parenthesis refer to defaults assigned by \gurobi{} if called with option equal to 0.}
- \item [\ddag] {For details, see \code{help gurobi\_options} and the ``Parameters'' section of the ``Gurobi Optimizer Reference Manual'' at \url{https://www.gurobi.com/documentation/}.}
+ \item [\dag] For \code{opf.dc.solver} option set to \codeq{GUROBI} only. Requires the installation of the optional \gurobi{} package. See Appendix~\ref{app:gurobi} for details.
+ \item [\S] Default values in parenthesis refer to defaults assigned by \gurobi{} if called with option equal to 0.
+ \item [\ddag] For details, see \code{help gurobi\_options} and the ``Parameters'' section of the ``Gurobi Optimizer Reference Manual'' at \url{https://www.gurobi.com/documentation/}.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -5448,8 +5448,8 @@ name & default & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {For \code{opf.ac.solver} or \code{opf.dc.solver} option set to \codeq{IPOPT} only. Requires the installation of the optional \ipopt{} package~\cite{ipopt}. See Appendix~\ref{app:ipopt} for details.}
- \item [\ddag] {For details, see \code{help ipopt\_options} and the options reference section of the \ipopt{} documentation at \url{http://www.coin-or.org/Ipopt/documentation/}.}
+ \item [\dag] For \code{opf.ac.solver} or \code{opf.dc.solver} option set to \codeq{IPOPT} only. Requires the installation of the optional \ipopt{} package~\cite{ipopt}. See Appendix~\ref{app:ipopt} for details.
+ \item [\ddag] For details, see \code{help ipopt\_options} and the options reference section of the \ipopt{} documentation at \url{http://www.coin-or.org/Ipopt/documentation/}.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -5479,9 +5479,9 @@ name & default & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {For \code{opf.ac.solver} option set to \codeq{KNITRO} only. Requires the installation of the optional \knitro{} package~\cite{knitro}. See Appendix~\ref{app:knitro} for details.}
- \item [\ddag] {Note that \knitro{} uses the \code{opt\_fname} option slightly differently from other optional solvers. Specifically, it is the name of a text file processed directly by \knitro{}, not a \matlab{} function that returns an options struct passed to the solver.}
-% \item [\ddag] {For details, see \code{help knitro\_options} \hl{and ... (note that knitro\_options(), knitro.opts, knitro.opt\_fname are not yet implemented)}}
+ \item [\dag] For \code{opf.ac.solver} option set to \codeq{KNITRO} only. Requires the installation of the optional \knitro{} package~\cite{knitro}. See Appendix~\ref{app:knitro} for details.
+ \item [\ddag] Note that \knitro{} uses the \code{opt\_fname} option slightly differently from other optional solvers. Specifically, it is the name of a text file processed directly by \knitro{}, not a \matlab{} function that returns an options struct passed to the solver.
+% \item [\ddag] For details, see \code{help knitro\_options} \hl{and ... (note that knitro\_options(), knitro.opts, knitro.opt\_fname are not yet implemented)}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -5526,8 +5526,8 @@ name & default\tnote{\ddag} & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {For \code{opf.ac.solver} option set to \codeq{MINOPF} only. Requires the installation of the optional MINOPF package~\cite{minopf}. See Appendix~\ref{app:minopf} for details.}
- \item [\ddag] {Default values in parenthesis refer to defaults assigned in MEX file if called with option equal to 0.}
+ \item [\dag] For \code{opf.ac.solver} option set to \codeq{MINOPF} only. Requires the installation of the optional MINOPF package~\cite{minopf}. See Appendix~\ref{app:minopf} for details.
+ \item [\ddag] Default values in parenthesis refer to defaults assigned in MEX file if called with option equal to 0.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -5570,10 +5570,10 @@ name & default\tnote{\S} & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {For \code{opf.dc.solver} option set to \codeq{MOSEK} only. Requires the installation of the optional \mosek{} package. See Appendix~\ref{app:mosek} for details.}
- \item [\S] {Default values in parenthesis refer to defaults assigned by \mosek{} if called with option equal to 0.}
- \item [*] {The values listed here correspond to those used by MOSEK version 7.x. Version 6.x was different. It is probably safer to write your code using the symbolic constants defined by \code{mosek\_symbcon} rather than using explicit numerical values.}
- \item [\ddag] {For details, see \code{help mosek\_options} and the ``Parameters'' reference in ``The MOSEK optimization toolbox for MATLAB manual'' at \url{http://docs.mosek.com/7.1/toolbox/Parameters.html}.}
+ \item [\dag] For \code{opf.dc.solver} option set to \codeq{MOSEK} only. Requires the installation of the optional \mosek{} package. See Appendix~\ref{app:mosek} for details.
+ \item [\S] Default values in parenthesis refer to defaults assigned by \mosek{} if called with option equal to 0.
+ \item [*] The values listed here correspond to those used by MOSEK version 7.x. Version 6.x was different. It is probably safer to write your code using the symbolic constants defined by \code{mosek\_symbcon} rather than using explicit numerical values.
+ \item [\ddag] For details, see \code{help mosek\_options} and the ``Parameters'' reference in ``The MOSEK optimization toolbox for MATLAB manual'' at \url{http://docs.mosek.com/7.1/toolbox/Parameters.html}.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -5596,8 +5596,8 @@ name & default & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {For \code{opf.dc.solver} option set to \codeq{OSQP} only. Requires the installation of the optional \osqp{} package. See Appendix~\ref{app:osqp} for details.}
- \item [\ddag] {For details, see \code{help osqp\_options} or the ``Solver settings'' page of the \osqp{} documentation at  \url{https://osqp.org/docs/interfaces/solver_settings.html}.}
+ \item [\dag] For \code{opf.dc.solver} option set to \codeq{OSQP} only. Requires the installation of the optional \osqp{} package. See Appendix~\ref{app:osqp} for details.
+ \item [\ddag] For details, see \code{help osqp\_options} or the ``Solver settings'' page of the \osqp{} documentation at  \url{https://osqp.org/docs/interfaces/solver_settings.html}.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -5627,8 +5627,8 @@ name & default & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {Requires installation of the optional TSPOPF package~\cite{tspopf}. See Appendix~\ref{app:tspopf} for details.}
- \item [\ddag] {Only relevant when \code{pdipm.step\_control} is on.}
+ \item [\dag] Requires installation of the optional TSPOPF package~\cite{tspopf}. See Appendix~\ref{app:tspopf} for details.
+ \item [\ddag] Only relevant when \code{pdipm.step\_control} is on.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -5657,7 +5657,7 @@ name & default & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {Requires installation of the optional TSPOPF package~\cite{tspopf}. See Appendix~\ref{app:tspopf} for details.}
+ \item [\dag] Requires installation of the optional TSPOPF package~\cite{tspopf}. See Appendix~\ref{app:tspopf} for details.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -5880,7 +5880,7 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {The \mipsman{} and \mostman{} are found in \mipspath{/docs} and \mostpath{/docs}, respectively.}
+ \item [\dag] The \mipsman{} and \mostman{} are found in \mipspath{/docs} and \mostpath{/docs}, respectively.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -5943,8 +5943,8 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [*] {Based on \mpcore{} and flexible \matpower{} framework.}
- \item [\dag] {Uses AC model by default.}
+ \item [*] Based on \mpcore{} and flexible \matpower{} framework.
+ \item [\dag] Uses AC model by default.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -5974,10 +5974,10 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [*] {With the exception of \code{most}, by default these now use \mpcore{} internally via the legacy \matpower{} framework, though the legacy core from \matpower{} 7.1 and earlier can be selected explicitly via \code{have\_feature(}\codeq{mp\_core}\code{, 0)}}.
- \item [\dag] {Uses AC model by default.}
- \item [\ddag] {Simple wrapper function to set option to use DC model before calling the corresponding general function above.}
- \item [\S] {\most{} and its supporting files and functions in the \code{most/} sub-directory are documented in the \mostman{} and listed in its Appendix~\ref{MOSTMAN-app:functions}.}
+ \item [*] With the exception of \code{most}, by default these now use \mpcore{} internally via the legacy \matpower{} framework, though the legacy core from \matpower{} 7.1 and earlier can be selected explicitly via \code{have\_feature(}\codeq{mp\_core}\code{, 0)}.
+ \item [\dag] Uses AC model by default.
+ \item [\ddag] Simple wrapper function to set option to use DC model before calling the corresponding general function above.
+ \item [\S] \most{} and its supporting files and functions in the \code{most/} sub-directory are documented in the \mostman{} and listed in its Appendix~\ref{MOSTMAN-app:functions}.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -6064,7 +6064,7 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {For radial networks only.}
+ \item [\dag] For radial networks only.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -6129,9 +6129,9 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {Can also be used as a top-level function, run directly from the command line. It provides more calling options than \code{runopf}, primarly for backward compatibility with previous versions of \code{mopf} from MINOPF, but does not offer the option to save the output or the solved case.}
- \item [\ddag] {Wrapper with same calling conventions as \code{opf}.}
- \item [\S] {Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.}
+ \item [\dag] Can also be used as a top-level function, run directly from the command line. It provides more calling options than \code{runopf}, primarly for backward compatibility with previous versions of \code{mopf} from MINOPF, but does not offer the option to save the output or the solved case.
+ \item [\ddag] Wrapper with same calling conventions as \code{opf}.
+ \item [\S] Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -6160,8 +6160,8 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {Private method for internal use only.}
- \item [\ddag] {Or \code{init\_indexed\_name} if simply initializing the dimensions for an indexed named set.}
+ \item [\dag] Private method for internal use only.
+ \item [\ddag] Or \code{init\_indexed\_name} if simply initializing the dimensions for an indexed named set.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -6186,8 +6186,8 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {Handles multiple solvers, depending on which are available.}
- \item [\ddag] {Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.}
+ \item [\dag] Handles multiple solvers, depending on which are available.
+ \item [\ddag] Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -6234,8 +6234,8 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {Used by \code{fmincon}, \mips{}, \ipopt{} and \knitro{} for AC OPF.}
- \item [\ddag] {Used with cartesian coordinate voltage representation only. I.e. \code{opf.v\_cartesian} option set to 1.}
+ \item [\dag] Used by \code{fmincon}, \mips{}, \ipopt{} and \knitro{} for AC OPF.
+ \item [\ddag] Used with cartesian coordinate voltage representation only. I.e. \code{opf.v\_cartesian} option set to 1.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -6291,7 +6291,7 @@ name & description\tnote{\dag} \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {$V$ represents complex bus voltages, $S_g$ the complex generator power injections, $I_{f|t}$ complex branch current injections, $S_{f|t}$ complex branch power injections, $I_\mathrm{mis}$ complex bus current injections, $S_\mathrm{bus}$ complex bus power injections} and $F_{f|t}$ refers to branch flows, either $I_{f|t}$ or $S_{f|t}$, depending on the inputs. The second derivatives are all actually partial derivatives of the product of a first derivative matrix and a vector $\lambda$. Please see \TNtwo{}~\cite{zimmerman2010b}, \TNthree{}~\cite{sereeter2018a} and \TNfour{}~\cite{sereeter2018b} for the detailed derivations of the formulas implemented by these functions.
+ \item [\dag] $V$ represents complex bus voltages, $S_g$ the complex generator power injections, $I_{f|t}$ complex branch current injections, $S_{f|t}$ complex branch power injections, $I_\mathrm{mis}$ complex bus current injections, $S_\mathrm{bus}$ complex bus power injections and $F_{f|t}$ refers to branch flows, either $I_{f|t}$ or $S_{f|t}$, depending on the inputs. The second derivatives are all actually partial derivatives of the product of a first derivative matrix and a vector $\lambda$. Please see \TNtwo{}~\cite{zimmerman2010b}, \TNthree{}~\cite{sereeter2018a} and \TNfour{}~\cite{sereeter2018b} for the detailed derivations of the formulas implemented by these functions.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -6349,8 +6349,8 @@ name & description\tnote{\dag} \\
 % \end{tabular}
 % \begin{tablenotes}
 %  \scriptsize
-%  \item [\P] {The functions in this table are now included as part of separate packages, namely \mipslink{} (see \mipspath{}) and \mpomlink{} (see \mpompath{}).}
-%  \item [\dag] {Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.}
+%  \item [\P] The functions in this table are now included as part of separate packages, namely \mipslink{} (see \mipspath{}) and \mpomlink{} (see \mpompath{}).
+%  \item [\dag] Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.
 % \end{tablenotes}
 % \end{threeparttable}
 % \end{table}
@@ -6373,7 +6373,7 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\P] {The other functions previously listed in this table are now included as part of separate packages, namely \mipslink{} and \mpomlink{}, located in \mipspath{} and \mpompath{}, respectively. They are now listed in Table~\ref{MIPSMAN-tab:files} in the \mipsman{} and Table~\ref{MPOMMAN-tab:solvers} in the \mpomman{}.}
+ \item [\P] The other functions previously listed in this table are now included as part of separate packages, namely \mipslink{} and \mpomlink{}, located in \mipspath{} and \mpompath{}, respectively. They are now listed in Table~\ref{MIPSMAN-tab:files} in the \mipsman{} and Table~\ref{MPOMMAN-tab:solvers} in the \mpomman{}.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -6455,8 +6455,8 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {Now deprecated, but included as part of \mpomlink{} (see \mpompath{}). Instead, please use \code{have\_feature}, included as part of \mptestlink{} (see \mptestpath{}).}
- \item [\ddag] {Now included as part of \mpomlink{} (see \mpompath{}).}
+ \item [\dag] Now deprecated, but included as part of \mpomlink{} (see \mpompath{}). Instead, please use \code{have\_feature}, included as part of \mptestlink{} (see \mptestpath{}).
+ \item [\ddag] Now included as part of \mpomlink{} (see \mpompath{}).
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -6488,10 +6488,10 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [*] {These functions implement new tags and the detection of the corresponding features for \code{have\_feature}, included as part of \mptestlink{} (see \mptestpath{}).}
- \item [\dag] {See \mostpath{}.}
- \item [\ddag] {Part of TSPOPF~\cite{tspopf}.}
- \item [\S] {Part of \matpowerextraslink{}, the \code{extras} subdirectory in \matpower{} ZIP distributions.}
+ \item [*] These functions implement new tags and the detection of the corresponding features for \code{have\_feature}, included as part of \mptestlink{} (see \mptestpath{}).
+ \item [\dag] See \mostpath{}.
+ \item [\ddag] Part of TSPOPF~\cite{tspopf}.
+ \item [\S] Part of \matpowerextraslink{}, the \code{extras} subdirectory in \matpower{} ZIP distributions.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -6592,8 +6592,8 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [*] {Contributed by Florin Capitanescu. Please cite reference \cite{capitanescu2020} when publishing results based on this data.}
- \item [\dag] {Reliability Test System Grid Modernization Lab Consortium data from\\ \url{https://github.com/GridMod/RTS-GMLC}.}
+ \item [*] Contributed by Florin Capitanescu. Please cite reference \cite{capitanescu2020} when publishing results based on this data.
+ \item [\dag] Reliability Test System Grid Modernization Lab Consortium data from\\ \url{https://github.com/GridMod/RTS-GMLC}.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -6639,9 +6639,9 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [*] {All have radial topology, except \code{case16ci} and \code{case70da}.}
-  \item [\dag] {Contributed by Mirko Todorovski.}
-  \item [\ddag] {Contributed by Houssem Bouchekara, et. al.~\cite{bouchekara2019, latreche2020}}
+ \item [*] All have radial topology, except \code{case16ci} and \code{case70da}.
+  \item [\dag] Contributed by Mirko Todorovski.
+  \item [\ddag] Contributed by Houssem Bouchekara, et. al.~\cite{bouchekara2019, latreche2020}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -6674,7 +6674,7 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [*] {These synthetic grid models are fictitious representations that are designed to be statistically and functionally similar to actual electric grids while containing no confidential critical energy infrastructure information (CEII). Please cite reference~\cite{birchfield2017} when publishing results based on this data. More information about these synthetic cases can be found at \url{https://electricgrids.engr.tamu.edu}.}
+ \item [*] These synthetic grid models are fictitious representations that are designed to be statistically and functionally similar to actual electric grids while containing no confidential critical energy infrastructure information (CEII). Please cite reference~\cite{birchfield2017} when publishing results based on this data. More information about these synthetic cases can be found at \url{https://electricgrids.engr.tamu.edu}.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -6703,7 +6703,7 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [*] {Contributed by Roman Korab.}
+ \item [*] Contributed by Roman Korab.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -6730,8 +6730,8 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [*] {Contributed by C\'edric Josz and colleagues from the French Transmission System Operator. Please cite references \cite{josz2016,fliscounakis2013} when publishing results based on this data.}
- \item [\dag] {Contributed by Florin Capitanescu. Please cite references \cite{villella2012,capitanescu2013} when publishing results based on this data.}
+ \item [*] Contributed by C\'edric Josz and colleagues from the French Transmission System Operator. Please cite references \cite{josz2016,fliscounakis2013} when publishing results based on this data.
+ \item [\dag] Contributed by Florin Capitanescu. Please cite references \cite{villella2012,capitanescu2013} when publishing results based on this data.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -6760,7 +6760,7 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [*] {Contributed by C\'edric Josz and colleagues from the French Transmission System Operator. Please cite reference \cite{josz2016} when publishing results based on this data.}
+ \item [*] Contributed by C\'edric Josz and colleagues from the French Transmission System Operator. Please cite reference \cite{josz2016} when publishing results based on this data.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -6802,8 +6802,8 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {These functions are part of \mptestlink{} and are found in \mptestpath{/lib}.}
- \item [\ddag] {Feature detection functions used to define tags for  \code{have\_feature}.}
+ \item [\dag] These functions are part of \mptestlink{} and are found in \mptestpath{/lib}.
+ \item [\ddag] Feature detection functions used to define tags for  \code{have\_feature}.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -6831,7 +6831,7 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {These tests are part of \mipslink{} and are found in \mipspath{/lib/t}.}
+ \item [\dag] These tests are part of \mipslink{} and are found in \mipspath{/lib/t}.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -6867,7 +6867,7 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {These tests are part of \mpomlink{} and are found in \mpompath{/lib/t}.}
+ \item [\dag] These tests are part of \mpomlink{} and are found in \mpompath{/lib/t}.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -6967,8 +6967,8 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.}
- \item [\ddag] {While \code{test\_most} is listed here with other tests, it is actually located in \mostpath{/lib/t}, not \mppath{/lib/t}. \most{} and its supporting files and functions in the \code{most/} sub-directory are documented in the \mostman{} and listed in its Appendix~\ref{MOSTMAN-app:functions}.}
+ \item [\dag] Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.
+ \item [\ddag] While \code{test\_most} is listed here with other tests, it is actually located in \mostpath{/lib/t}, not \mppath{/lib/t}. \most{} and its supporting files and functions in the \code{most/} sub-directory are documented in the \mostman{} and listed in its Appendix~\ref{MOSTMAN-app:functions}.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -7023,7 +7023,7 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [\dag] {Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.}
+ \item [\dag] Requires the installation of an optional package. See Appendix~\ref{app:optional_packages} for details on the corresponding package.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -7334,7 +7334,7 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [*] {Deprecated. Will be removed in a subsequent version.}
+ \item [*] Deprecated. Will be removed in a subsequent version.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
