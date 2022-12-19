@@ -181,14 +181,10 @@ plim        = mpopt.cpf.enforce_p_lims;    %% enforce active limits
 vlim        = mpopt.cpf.enforce_v_lims;    %% enforce voltage magnitude limits
 flim        = mpopt.cpf.enforce_flow_lims; %% enforce branch flow limits
 
-default_to_mp_core = have_feature('mp_core');
-    %% if 0, requires mpopt.exp.mp_core = 1 to enable MP-Core version
-    %% if 1; requires mpopt.exp.mp_core = 0 to disable MP-Core version
+%% use MP-Core?
+have_mp_core = have_feature('mp_core');
 use_mp_core = 0;
-if (  default_to_mp_core && ~(isfield(mpopt.exp, 'mp_core') && ...
-        mpopt.exp.mp_core == 0) ) || ...
-   ( ~default_to_mp_core &&   isfield(mpopt.exp, 'mp_core') && ...
-        mpopt.exp.mp_core == 1  )
+if have_mp_core && ~mpopt.exp.use_legacy_core
     use_mp_core = 1;
 end
 

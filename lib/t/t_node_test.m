@@ -27,7 +27,7 @@ end
 mpopt = mpoption('out.all', 0, 'verbose', 0, 'pf.tol', 1e-10);
 mpopt = mpoption(mpopt, 'opf.ignore_angle_lim', 1);
 mpopt0 = mpopt;
-mpopt0.exp.mp_core = 0;
+mpopt0.exp.use_legacy_core = 1;
 mpopt.exp.mpx = mp.xt_node_test();
 
 for k = 1:length(cases)
@@ -45,9 +45,7 @@ for k = 1:length(cases)
         end
     end
 
-    have_feature('mp_core', 0);
     r = runpf(mpc, mpopt0);
-    have_feature('mp_core', 1);
     evm = r.bus(:, VM);
     eva = r.bus(:, VA);
     epg = r.gen(:, PG);
@@ -67,9 +65,7 @@ for k = 1:length(cases)
     t_is(qg, eqg, 9, [t 'qg']);
 
     t = sprintf('OPF - %s - ', cases{k});
-    have_feature('mp_core', 0);
     r = runopf(mpc, mpopt0);
-    have_feature('mp_core', 1);
     t_ok(r.success, [t 'success 1']);
     evm = r.bus(:, VM);
     eva = r.bus(:, VA);

@@ -487,6 +487,9 @@ function opt = mpoption(varargin)
 %                                           ratio
 %
 %Experimental Options:
+%   exp.use_legacy_core         0           set to 1 to bypass MP-Core and
+%                                           force use of legacy core code for
+%                                           runpf(), runcpf(), runopf().
 %   exp.sys_wide_zip_loads.pw   <empty>     1 x 3 vector of active load fraction
 %                                           to be modeled as constant power,
 %                                           constant current and constant
@@ -637,6 +640,9 @@ if have_opt0
             end
             if opt0.v <= 21         %% convert version 21 to 22
                 opt0.pf.zg.max_it   = opt_d.pf.zg.max_it;
+            end
+            if opt0.v <= 22         %% convert version 22 to 23
+                opt0.exp.use_legacy_core = opt_d.exp.use_legacy_core;
             end
             opt0.v = v;
         end
@@ -1636,6 +1642,7 @@ if ~isstruct(opt)
             'sc',                   struct(...
                 'red_it',               20  )), ...
         'exp',                  struct(... %% experimental options
+            'use_legacy_core', 0, ...
             'sys_wide_zip_loads',   struct(...
                 'pw',                   [], ...
                 'qw',                   []  )) ...
@@ -1669,7 +1676,7 @@ optt = opt;
 %% globals
 %%-------------------------------------------------------------------
 function v = mpoption_version
-v = 22;     %% version number of MATPOWER options struct
+v = 23;     %% version number of MATPOWER options struct
             %% (must be incremented every time structure is updated)
             %% v1   - first version based on struct (MATPOWER 5.0b1)
             %% v2   - added 'linprog' and 'quadprog' fields
@@ -1703,6 +1710,9 @@ v = 22;     %% version number of MATPOWER options struct
             %% v20  - added 'pf.current_balance' and 'pf.v_cartesian'
             %% v21  - added 'osqp' field
             %% v22  - add option 'pf.zg.max_it' for Implicit Z-bus Gauss
+            %% v23  - add option 'exp.use_legacy_core' to bypass MP-Core
+            %%        and force use of legacy core code for runpf(),
+            %%        runcpf(), runopf()
 
 %%-------------------------------------------------------------------
 function db_level = DEBUG

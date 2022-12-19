@@ -5857,6 +5857,7 @@ name & description \\
 \code{~~MATPOWER-dev-guide.md}	& \matpower{} Developer's Guide	\\
 \code{~~MATPOWER-manual.pdf}	& \mum{}\tnote{\dag}	\\
 \code{~~relnotes/}	& \matpower{} release notes	\\
+\code{~~sphinx/}	& Sphinx source for HTML and PDF docs	\\
 \code{~~src/}	& \LaTeX{} source for \mum{}	\\
 \code{~~TN1-OPF-Auctions.pdf}	& \TNone{} ``Uniform Price Auctions and Optimal Power Flow''~\cite{zimmerman2010a}	\\
 \code{~~TN2-OPF-Derivatives.pdf}	& \TNtwo{} ``AC Power Flows, Generalized OPF Costs and their Derivatives using Complex Matrix Notation''~\cite{zimmerman2010b}	\\
@@ -5974,7 +5975,7 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [*] With the exception of \code{most}, by default these now use \mpcore{} internally via the legacy \matpower{} framework, though the legacy core from \matpower{} 7.1 and earlier can be selected explicitly via \code{have\_feature(}\codeq{mp\_core}\code{, 0)}.
+ \item [*] With the exception of \code{most}, by default these now use \mpcore{} internally via the legacy \matpower{} framework, though the legacy core from \matpower{} 7.1 and earlier can be selected explicitly via the \codeq{'exp.use\_legacy\_core'} option or by disabling MP-Core in the legacy framework via \code{have\_feature(\textquotesingle{}mp\_core\textquotesingle{}, 0)}.
  \item [\dag] Uses AC model by default.
  \item [\ddag] Simple wrapper function to set option to use DC model before calling the corresponding general function above.
  \item [\S] \most{} and its supporting files and functions in the \code{most/} sub-directory are documented in the \mostman{} and listed in its Appendix~\ref{MOSTMAN-app:functions}.
@@ -8435,7 +8436,7 @@ The features based on \mpcore{} are available under MATLAB 9.1 or Octave 6.2 or 
     \item \code{runcpf} -- AC continuation power flow
     \item \code{runopf} -- AC OPF, for solvers MIPS, \code{fmincon}, \ipopt{}, and \knitro{}, for all formulations
 \end{itemize}
-Under older versions of \matlab{} or Octave, \matpower{} automatically reverts to the legacy core code, which is still included and can also be selected manually on newer versions with \code{have\_feature(}\codeq{mp\_core}\code{, 0)}.
+Under older versions of \matlab{} or Octave, \matpower{} automatically reverts to the legacy core code, which is still included. The legacy core can also be selected manually on newer versions with the \codeq{exp.use\_legacy\_core} option or by disabling MP-Core in the legacy framework via \code{have\_feature(\textquotesingle{}mp\_core\textquotesingle{}, 0)}.
 
 \subsubsection*{New Features}
 \begin{itemize}
@@ -8443,6 +8444,7 @@ Under older versions of \matlab{} or Octave, \matpower{} automatically reverts t
 \begin{itemize}
     \item New AC power flow solver based on \code{fsolve()} function,\footnote{Part of the \matlab{} \ot{} and included in Octave. Supported via \mpcore{} only.} selected by setting \code{pf.alg} option to \codeq{FSOLVE}.
     \item New Implicit Z-bus Gauss method power flow for distribution systems,\footnote{Support for PV buses is very limited.} selected by setting \code{pf.alg} option to \codeq{ZG}.
+    \item New \codeq{exp.use\_legacy\_core} option to bypass \mpcore{} and force use of legacy core code for \code{runpf()}, \code{runcpf()}, \code{runopf()}.
 \end{itemize}
 \item New functions/methods:
     \begin{itemize}

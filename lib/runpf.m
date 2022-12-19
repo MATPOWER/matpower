@@ -97,15 +97,10 @@ end
 qlim = mpopt.pf.enforce_q_lims;         %% enforce Q limits on gens?
 dc = strcmp(upper(mpopt.model), 'DC');  %% use DC formulation?
 
-%% use MP-Core based version?
-default_to_mp_core = have_feature('mp_core');
-    %% if 0, requires mpopt.exp.mp_core = 1 to enable MP-Core version
-    %% if 1; requires mpopt.exp.mp_core = 0 to disable MP-Core version
+%% use MP-Core?
+have_mp_core = have_feature('mp_core');
 use_mp_core = 0;
-if (  default_to_mp_core && ~(isfield(mpopt.exp, 'mp_core') && ...
-        mpopt.exp.mp_core == 0) ) || ...
-   ( ~default_to_mp_core &&   isfield(mpopt.exp, 'mp_core') && ...
-        mpopt.exp.mp_core == 1  )
+if have_mp_core && ~mpopt.exp.use_legacy_core
     alg = upper(mpopt.pf.alg);
     if dc || (strcmp(alg, 'DEFAULT') || strcmp(alg, 'NR') || ...
               strcmp(alg, 'NR-SP') || strcmp(alg, 'NR-SC') || ...

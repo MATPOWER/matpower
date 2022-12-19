@@ -13,6 +13,11 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.1
 -----------------
 
+#### 12/19/22
+- Add option `exp.use_legacy_core` to bypass MP-Core and force use of
+  legacy core code for `runpf()`, `runcpf()`, `runopf()`.
+  Remove redundant `exp.mp_core` option.
+
 #### 12/16/22
 - Use new name "MP-Core" everywhere in place of "MP-Element" and "OOP core",
   including:
@@ -56,7 +61,8 @@ Changes since 7.1
 
   Under older versions of MATLAB or Octave, MATPOWER automatically reverts
   to the legacy core code, which is still included and can also be
-  selected manually on newer versions with `have_feature('mp_core', 0)`.
+  selected manually on newer versions with the `'exp.mp_core'` (now
+  `'exp.use_legacy_core'`) option or `have_feature('mp_core', 0)`.
 
 #### 12/14/22
 - Remove deprecated legacy `@opt_model` methods. Summary of deprecated
