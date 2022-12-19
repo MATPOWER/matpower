@@ -21,6 +21,7 @@
    net-model
    math-model
    customizing
+   acknowledgments
 
 ..
    contributing
