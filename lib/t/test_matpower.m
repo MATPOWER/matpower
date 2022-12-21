@@ -71,6 +71,26 @@ tests{end+1} = 't_totcost';
 tests{end+1} = 't_modcost';
 tests{end+1} = 't_hasPQcap';
 
+%% MP-Core
+if have_feature('mp_core')
+    tests{end+1} = 't_mp_mapped_array';
+    tests{end+1} = 't_mp_table';
+    tests{end+1} = 't_mp_data_model';
+    tests{end+1} = 't_dmc_element';
+    tests{end+1} = 't_mp_dm_converter_mpc2';
+    tests{end+1} = 't_nm_element';
+    tests{end+1} = 't_port_inj_current_acc';
+    tests{end+1} = 't_port_inj_current_acp';
+    tests{end+1} = 't_port_inj_power_acc';
+    tests{end+1} = 't_port_inj_power_acp';
+    tests{end+1} = 't_node_test';
+    tests{end+1} = 't_run_mp';
+    tests{end+1} = 't_run_mp_3p';
+    tests{end+1} = 't_pretty_print';
+    tests{end+1} = 't_mpxt_reserves';
+end
+
+%% more MATPOWER
 tests{end+1} = 't_pf_ac';
 tests{end+1} = 't_pf_dc';
 tests{end+1} = 't_pf_radial';

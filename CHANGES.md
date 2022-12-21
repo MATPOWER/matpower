@@ -13,6 +13,9 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 Changes since 7.1
 -----------------
 
+#### 12/21/22
+- Add MP-Core tests to `test_matpower`.
+
 #### 12/19/22
 - Add option `exp.use_legacy_core` to bypass MP-Core and force use of
   legacy core code for `runpf()`, `runcpf()`, `runopf()`.
