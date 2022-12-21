@@ -185,13 +185,6 @@ if strcmp(upper(mpopt.opf.ac.solver), 'DEFAULT')
     mpopt = mpoption(mpopt, 'opf.ac.solver', 'MIPS');   %% MIPS
 end
 
-%% handle deprecated 'opf.init_from_mpc' option
-if mpopt.opf.start == 0 && mpopt.opf.init_from_mpc ~= -1
-    %% init_from_mpc = 0 --> start = 1      don't use mpc
-    %% init_from_mpc = 1 --> start = 2      do use mpc
-    mpopt.opf.start = mpopt.opf.init_from_mpc + 1;
-end
-
 %% initialize state with power flow solution, if requested
 if mpopt.opf.start == 3
     mpopt_pf = mpoption(mpopt, 'out.all', 0, 'verbose', max(0, mpopt.verbose-1));

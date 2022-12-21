@@ -242,17 +242,6 @@ function opt = mpoption(varargin)
 %                                       provided
 %       [ 0 - do not include softlims if not explicitly specified           ]
 %       [ 1 - include softlims w/default values if not explicitly specified ]
-%   opf.init_from_mpc       -1          (DEPRECATED: use opf.start instead)
-%                                       specify whether to use current state
-%                                       in MATPOWER case to initialize OPF
-%                                       (currently only supported by fmincon,
-%                                        Ipopt, Knitro and MIPS solvers,
-%                                        others always use mpc)
-%       [  -1 - MATPOWER decides, based on solver/algorithm                 ]
-%       [   0 - ignore current state in MATPOWER case (only applies to      ]
-%       [       fmincon, Ipopt, Knitro and MIPS, which use an interior pt   ]
-%       [       estimate; others use current state as with opf.start = 2)   ]
-%       [   1 - use current state in MATPOWER case                          ]
 %   opf.start               0           strategy for initializing OPF start pt
 %       [   0 - default, MATPOWER decides based on solver                   ]
 %       [       (currently identical to 1)                                  ]
@@ -562,9 +551,9 @@ if have_opt0
             %if opt0.v <= 3          %% convert version 3 to 4
                 %% new mips options were all optional, no conversion needed
             %end
-            if opt0.v <= 4          %% convert version 4 to 5
-                opt0.opf.init_from_mpc = opt_d.opf.init_from_mpc;
-            end
+            %if opt0.v <= 4          %% convert version 4 to 5
+            %    opt0.opf.init_from_mpc = opt_d.opf.init_from_mpc;
+            %end
             if opt0.v <= 5          %% convert version 5 to 6
                 if isfield(opt_d, 'clp')
                     opt0.clp = opt_d.clp;
@@ -1612,7 +1601,6 @@ if ~isstruct(opt)
             'ignore_angle_lim',     0, ...
             'softlims',             struct(...
                 'default',               1  ), ...
-            'init_from_mpc',        -1, ...
             'start',                0, ...
             'return_raw_der',       0   ), ...
         'verbose',              1, ...
@@ -1676,7 +1664,7 @@ optt = opt;
 %% globals
 %%-------------------------------------------------------------------
 function v = mpoption_version
-v = 23;     %% version number of MATPOWER options struct
+v = 24;     %% version number of MATPOWER options struct
             %% (must be incremented every time structure is updated)
             %% v1   - first version based on struct (MATPOWER 5.0b1)
             %% v2   - added 'linprog' and 'quadprog' fields
@@ -1713,6 +1701,7 @@ v = 23;     %% version number of MATPOWER options struct
             %% v23  - add option 'exp.use_legacy_core' to bypass MP-Core
             %%        and force use of legacy core code for runpf(),
             %%        runcpf(), runopf()
+            %% v24  - removed deprecated 'opf.init_from_mpc'
 
 %%-------------------------------------------------------------------
 function db_level = DEBUG

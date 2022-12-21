@@ -2827,12 +2827,6 @@ name & default & description \\
 0 & do \emph{not} include softlims if not explicitly specified  \\
 1 & include softlims with default values if not explicitly specified \\
 \end{tabular}	\\
-\code{opf.init\_from\_mpc}\tnote{*}	& -1	& specify whether to use the current state in \matpower{} case to initialize OPF	\\
-&& \begin{tabular}{r @{ -- } l}
--1 & \matpower{} decides based on solver/algorithm \\
-0 & ignore current state in \matpower{} case\tnote{\ddag} \\
-1 & use current state in \matpower{} case \\
-\end{tabular}	\\
 \code{opf.start}	& 0	& strategy for initializing OPF starting point	\\
 && \begin{tabular}{r @{ -- } p{0.5\textwidth}}
 0 & default, \matpower{} decides based on solver, \emph{(currently identical to 1)} \\
@@ -2845,7 +2839,6 @@ name & default & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [*] Deprecated. Use \code{opf.start} instead.
  \item [\dag] Using a value between 0 and 1 results in the limits being determined by the corresponding weighted average of the 2 options.
  \item [\ddag] Only applies to \code{fmincon}, \ipopt{}, \knitro{} and \mips{} solvers, which use an interior point estimate; others use current state in \matpower{} case, as with \code{opf.start} = 2.
 \end{tablenotes}
@@ -5185,12 +5178,6 @@ name & default & description \\
 0 & do \emph{not} include softlims if not explicitly specified  \\
 1 & include softlims with default values if not explicitly specified \\
 \end{tabular}	\\
-\code{opf.init\_from\_mpc}\tnote{*}	& -1	& specify whether to use the current state in \matpower{} case to initialize OPF	\\
-&& \begin{tabular}{r @{ -- } l}
--1 & \matpower{} decides based on solver/algorithm \\
-0 & ignore current state in \matpower{} case\tnote{\ddag} \\
-1 & use current state in \matpower{} case \\
-\end{tabular}	\\
 \code{opf.start}	& 0	& strategy for initializing OPF starting point	\\
 && \begin{tabular}{r @{ -- } p{0.5\textwidth}}
 0 & default, \matpower{} decides based on solver, \emph{(currently identical to 1)} \\
@@ -5203,7 +5190,6 @@ name & default & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [*] Deprecated. Use \code{opf.start} instead.
  \item [\dag] Using a value between 0 and 1 results in the limits being determined by the corresponding weighted average of the 2 options.
  \item [\ddag] Only applies to \code{fmincon}, \ipopt{}, \knitro{} and \mips{} solvers, which use an interior point estimate; others use current state in \matpower{} case, as with \code{opf.start} = 2.
 \end{tablenotes}
@@ -8560,6 +8546,10 @@ Under older versions of \matlab{} or Octave, \matpower{} automatically reverts t
             \item \code{getv()} -- use \code{params\_var()} instead.
             \item \code{linear\_constraints()} -- use \code{params\_lin\_constraint()} instead.
         \end{itemize}
+    \end{itemize}
+\item Remove deprecated option:
+    \begin{itemize}
+    \item \codeq{opf.init\_from\_mpc} -- use \codeq{opf.start} instead.
     \end{itemize}
 \end{itemize}
 
