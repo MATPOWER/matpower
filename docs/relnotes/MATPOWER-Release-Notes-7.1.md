@@ -34,7 +34,7 @@ previous versions, see Appendix H of the [MATPOWER User's Manual][2].
 - [MP-Test][5] 7.1, with new modular, extensible `have_feature()` function
   for detecting optional functionality. For more details, see the
   [MP-Test 7.1 release notes][13].
-- [MIPS][4] 1.4. For details, see the [MIPS 1.4 release notess][14]
+- [MIPS][4] 1.4. For details, see the [MIPS 1.4 release notes][14]
   *(also in Appendix C in the [MIPS User's Manual][15])*.
 - Support for [OSQP][6] to solve LP and QP problems. Set option
   `opf.dc.solver` to `'OSQP'` to use OSQP to solve the DC OPF. Requires the

@@ -140,7 +140,7 @@
 
 %\hyphenation{matpower}
 
-\newcommand{\mpver}[0]{8.0-dev}
+\newcommand{\mpver}[0]{8.0b1}
 %\newcommand{\matlab}[0]{{Matlab}}
 %\newcommand{\matlab}[0]{{\sc Matlab}\textsuperscript{\tiny \textregistered}}
 \newcommand{\matlab}[0]{{\sc Matlab}}
@@ -157,18 +157,18 @@
 \newcommand{\mptest}[0]{{MP-Test}}
 \newcommand{\mptesturl}[0]{https://github.com/MATPOWER/mptest}
 \newcommand{\mptestlink}[0]{\href{\mptesturl}{\mptest{}}}
-\newcommand{\mptestver}[0]{7.1}
+\newcommand{\mptestver}[0]{8.0b1}
 \newcommand{\mips}[0]{{MIPS}}
 \newcommand{\mipsurl}[0]{https://github.com/MATPOWER/mips}
 \newcommand{\mipslink}[0]{\href{\mipsurl}{\mips{}}}
 \newcommand{\mipsname}[0]{{{\bf M}{\sc atpower} \textbf{I}nterior \textbf{P}oint \textbf{S}olver}}
-\newcommand{\mipsver}[0]{1.4}
+\newcommand{\mipsver}[0]{1.5}
 \newcommand{\mpom}[0]{\mbox{MP-Opt-Model}}
 \newcommand{\mpomurl}[0]{https://github.com/MATPOWER/mp-opt-model}
 \newcommand{\mpomlink}[0]{\href{\mpomurl}{\mpom{}}}
 \newcommand{\mpomname}[0]{\mpom{}}
 % \newcommand{\mpomname}[0]{{{\bf M}{\sc at}{\bf P}{\sc ower} \textbf{Opt}imization \textbf{Model}}}
-\newcommand{\mpomver}[0]{3.0}
+\newcommand{\mpomver}[0]{4.1}
 \newcommand{\mpcore}{{MP-Core}}
 \newcommand{\mpe}{{MP-Element}}
 \newcommand{\mpeurl}[0]{https://github.com/MATPOWER/mp-element}
@@ -177,7 +177,7 @@
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
 \newcommand{\mostlink}[0]{\href{\mosturl}{\most{}}}
-\newcommand{\mostver}[0]{1.1}
+\newcommand{\mostver}[0]{1.2}
 \newcommand{\md}[0]{{\most{} Data struct}}
 \newcommand{\east}[0]{E4ST}
 \newcommand{\eastver}[0]{1.0b2}
@@ -282,7 +282,7 @@
 %\title{\hl{--- DRAFT  ---}\\\hl{\em do not distribute}\\~\\\matpower{} \mpver{}\\User's Manual}
 \title{User's Manual}
 \author{Ray~D.~Zimmerman \and Carlos~E.~Murillo-S\'anchez}
-%\date{October 8, 2020} % comment this line to display the current date
+\date{December 22, 2022} % comment this line to display the current date
 %\date{December 14, 2011\thanks{Second revision. First revision was December 13, 2011}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
@@ -306,7 +306,7 @@
             {\large \@date \par}%
 \vfill
 {\scriptsize
-\copyright~2010--2020~\PSERC\\
+\copyright~2010--2022~\PSERC\\
 All Rights Reserved}
         \end{center}
     \end{titlepage}
@@ -665,70 +665,86 @@ Installation and use of \matpower{} requires familiarity with the basic operatio
 % UPDATE BEFORE RELEASE
 \begin{Code}
 >> test_matpower
-t_test_fcns.............ok
-t_have_feature..........ok
-t_mplinsolve............ok (6 of 66 skipped)
-t_mips..................ok
-t_mips_pardiso..........ok (60 of 60 skipped)
-t_qps_mips..............ok
-t_have_fcn..............ok
-t_nested_struct_copy....ok
-t_nleqs_master..........ok (30 of 150 skipped)
-t_qps_master............ok (324 of 432 skipped)
-t_miqps_master..........ok (288 of 288 skipped)
-t_nlps_master...........ok (378 of 540 skipped)
-t_opt_model.............ok
-t_om_solve_leqs.........ok
-t_om_solve_nleqs........ok (36 of 194 skipped)
-t_om_solve_qps..........ok (270 of 387 skipped)
-t_om_solve_miqps........ok (118 of 118 skipped)
-t_om_solve_nlps.........ok (329 of 504 skipped)
-t_qps_matpower..........ok (288 of 396 skipped)
-t_miqps_matpower........ok (288 of 288 skipped)
-t_feval_w_path..........ok
-t_mpoption..............ok
-t_loadcase..............ok
-t_ext2int2ext...........ok
-t_jacobian..............ok
-t_hessian...............ok
-t_margcost..............ok
-t_totcost...............ok
-t_modcost...............ok
-t_hasPQcap..............ok
-t_pf_ac.................ok
-t_pf_dc.................ok
-t_pf_radial.............ok
-t_cpf...................ok
-t_islands...............ok
-t_opf_model.............ok
-t_opf_model_legacy......ok
-t_opf_default...........ok
-t_opf_mips..............ok (280 of 1308 skipped)
-t_opf_dc_default........ok
-t_opf_dc_mips...........ok
-t_opf_dc_mips_sc........ok
+t_test_fcns...............ok
+t_have_feature............ok
+t_mplinsolve..............ok (8 of 180 skipped)
+t_mips....................ok
+t_mips_pardiso............ok (60 of 60 skipped)
+t_qps_mips................ok
+t_have_fcn................ok
+t_nested_struct_copy......ok
+t_nleqs_master............ok (30 of 150 skipped)
+t_pnes_master.............ok
+t_qps_master..............ok (324 of 432 skipped)
+t_miqps_master............ok (288 of 288 skipped)
+t_nlps_master.............ok (378 of 540 skipped)
+t_opt_model...............ok
+t_om_solve_leqs...........ok
+t_om_solve_nleqs..........ok (36 of 194 skipped)
+t_om_solve_pne............ok
+t_om_solve_qps............ok (270 of 387 skipped)
+t_om_solve_miqps..........ok (118 of 118 skipped)
+t_om_solve_nlps...........ok (329 of 504 skipped)
+t_qps_matpower............ok (288 of 396 skipped)
+t_miqps_matpower..........ok (288 of 288 skipped)
+t_feval_w_path............ok
+t_mpoption................ok
+t_loadcase................ok
+t_ext2int2ext.............ok
+t_jacobian................ok
+t_hessian.................ok
+t_margcost................ok
+t_totcost.................ok
+t_modcost.................ok
+t_hasPQcap................ok
+t_mp_mapped_array.........ok
+t_mp_table................ok
+t_mp_data_model...........ok
+t_dmc_element.............ok
+t_mp_dm_converter_mpc2....ok
+t_nm_element..............ok
+t_port_inj_current_acc....ok
+t_port_inj_current_acp....ok
+t_port_inj_power_acc......ok
+t_port_inj_power_acp......ok
+t_node_test...............ok
 \end{Code}
 \emph{continued from previous page}
 \begin{Code}
-t_opf_userfcns..........ok
-t_opf_softlims..........ok
-t_runopf_w_res..........ok
-t_dcline................ok
-t_get_losses............ok
-t_load2disp.............ok
-t_makePTDF..............ok
-t_makeLODF..............ok
-t_printpf...............ok
-t_vdep_load.............ok
-t_total_load............ok
-t_scale_load............ok
-t_apply_changes.........ok
-t_psse..................ok
-t_off2case..............ok
-t_auction_mips..........ok
-t_runmarket.............ok
-All tests successful (10368 passed, 2695 skipped of 13063)
-Elapsed time 23.98 seconds.
+t_run_mp..................ok
+t_run_mp_3p...............ok
+t_pretty_print............ok
+t_mpxt_reserves...........ok
+t_pf_ac...................ok
+t_pf_dc...................ok
+t_pf_radial...............ok
+t_cpf.....................ok (97 of 415 skipped)
+t_islands.................ok
+t_opf_model...............ok
+t_opf_default.............ok
+t_opf_mips................ok (286 of 1344 skipped)
+t_opf_dc_default..........ok
+t_opf_dc_mips.............ok
+t_opf_dc_mips_sc..........ok
+t_opf_userfcns............ok
+t_opf_softlims............ok
+t_runopf_w_res............ok
+t_dcline..................ok
+t_get_losses..............ok
+t_load2disp...............ok
+t_makePTDF................ok
+t_makeLODF................ok
+t_printpf.................ok
+t_vdep_load...............ok
+t_total_load..............ok
+t_scale_load..............ok
+t_apply_changes...........ok
+t_psse....................ok
+t_off2case................ok
+t_auction_mips............ok
+t_runmarket...............ok
+All tests successful (13079 passed, 2800 skipped of 15879)
+Elapsed time 99.93 seconds.
 \end{Code}
 \end{enumerate}
 
@@ -2279,25 +2295,33 @@ results = runcpf(mpcb, mpct, mpopt);
 \end{Code}
 This should result in something like the following output to the screen.
 \begin{Code}
-MATPOWER Version 7.1, 08-Oct-2020 -- AC Continuation Power Flow
+MATPOWER Version 8.0b1, 22-Dec-2022 -- AC Continuation Power Flow
 step   0  :                      lambda =  0.000,  4 Newton steps
-step   1  : stepsize = 0.2       lambda =  0.181   2 corrector Newton steps
-step   2  : stepsize = 0.2       lambda =  0.359   2 corrector Newton steps
-step   3  : stepsize = 0.2       lambda =  0.530   2 corrector Newton steps
-step   4  : stepsize = 0.2       lambda =  0.693   3 corrector Newton steps
-step   5  : stepsize = 0.2       lambda =  0.839   3 corrector Newton steps
-step   6  : stepsize = 0.2       lambda =  0.952   3 corrector Newton steps
-step   7  : stepsize = 0.2       lambda =  0.988   3 corrector Newton steps
-step   8  : stepsize = 0.2       lambda =  0.899   3 corrector Newton steps
-step   9  : stepsize = 0.2       lambda =  0.776   3 corrector Newton steps
-step  10  : stepsize = 0.2       lambda =  0.654   3 corrector Newton steps
-step  11  : stepsize = 0.2       lambda =  0.533   2 corrector Newton steps
-step  12  : stepsize = 0.2       lambda =  0.413   2 corrector Newton steps
-step  13  : stepsize = 0.2       lambda =  0.294   2 corrector Newton steps
-step  14  : stepsize = 0.2       lambda =  0.176   2 corrector Newton steps
-step  15  : stepsize = 0.2       lambda =  0.060   2 corrector Newton steps
-step  16a : stepsize = 0.2       lambda = -0.054   2 corrector Newton steps ^ ROLLBACK
-step  16  : stepsize = 0.0604    lambda =  0.000   3 corrector Newton steps
+
+MATPOWER Version 8.0b1, 22-Dec-2022
+Continuation Power Flow -- AC-polar-power formulation
+
+MP-Opt-Model Version 4.1, 13-Dec-2022 -- Predictor/Corrector Continuation Method
+step   0  :                          lambda =  0.000,  0 corrector steps
+step   1  : PAL stepsize = 0.2       lambda =  0.181   2 corrector steps
+step   2  : PAL stepsize = 0.2       lambda =  0.359   2 corrector steps
+step   3  : PAL stepsize = 0.2       lambda =  0.530   2 corrector steps
+step   4  : PAL stepsize = 0.2       lambda =  0.693   3 corrector steps
+step   5  : PAL stepsize = 0.2       lambda =  0.839   3 corrector steps
+step   6  : PAL stepsize = 0.2       lambda =  0.952   3 corrector steps
+step   7  : PAL stepsize = 0.2       lambda =  0.988   3 corrector steps
+step   8  : PAL stepsize = 0.2       lambda =  0.899   3 corrector steps
+step   9  : PAL stepsize = 0.2       lambda =  0.776   3 corrector steps
+step  10  : PAL stepsize = 0.2       lambda =  0.654   3 corrector steps
+step  11  : PAL stepsize = 0.2       lambda =  0.533   2 corrector steps
+step  12  : PAL stepsize = 0.2       lambda =  0.413   2 corrector steps
+step  13  : PAL stepsize = 0.2       lambda =  0.294   2 corrector steps
+step  14  : PAL stepsize = 0.2       lambda =  0.176   2 corrector steps
+step  15  : PAL stepsize = 0.2       lambda =  0.060   2 corrector steps
+step  16a : PAL stepsize = 0.2       lambda = -0.054   2 corrector steps ^ ROLLBACK
+step  16  : NAT stepsize = 0.0604    lambda = -0.000   3 corrector steps
+CONTINUATION TERMINATION: Traced full continuation curve in 16 continuation steps
+CPF successful
 CPF TERMINATION: Traced full continuation curve in 16 continuation steps
 \end{Code}
 The results of the continuation power flow are then found in the \code{cpf} field of the returned \results{} struct.
@@ -6007,7 +6031,7 @@ name & description \\
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
- \item [*] With the exception of \code{most}, by default these now use \mpcore{} internally via the legacy \matpower{} framework, though the legacy core from \matpower{} 7.1 and earlier can be selected explicitly via the \codeq{'exp.use\_legacy\_core'} option or by disabling MP-Core in the legacy framework via \code{have\_feature(\textquotesingle{}mp\_core\textquotesingle{}, 0)}.
+ \item [*] With the exception of \code{most}, by default these now use \mpcore{} internally via the legacy \matpower{} framework, though the legacy core from \matpower{} 7.1 and earlier can be selected explicitly via the \codeq{'exp.use\_legacy\_core'} option or by disabling \mpcore{} in the legacy framework via \code{have\_feature(\textquotesingle{}mp\_core\textquotesingle{}, 0)}.
  \item [\dag] Uses AC model by default.
  \item [\ddag] Simple wrapper function to set option to use DC model before calling the corresponding general function above.
  \item [\S] \most{} and its supporting files and functions in the \code{most/} sub-directory are documented in the \mostman{} and listed in its Appendix~\ref{MOSTMAN-app:functions}.
@@ -8445,10 +8469,10 @@ The \href{https://matpower.org/docs/MATPOWER-manual-7.1.pdf}{\matpower{} 7.1 Use
 
 
 \clearpage
-\subsection{Version 8.0 -- released ??? ??, 202?}
+\subsection{Version 8.0b1 -- released Dec 22, 2022}
 \label{app:v80}
 
-The \href{https://matpower.org/docs/MATPOWER-manual-8.0.pdf}{\matpower{} 8.0 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MATPOWER-manual-8.0.pdf}}
+The \href{https://matpower.org/docs/MATPOWER-manual-8.0b1.pdf}{\matpower{} 8.0b1 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MATPOWER-manual-8.0b1.pdf}}
 
 \subsubsection*{Major Redesign}
 
@@ -8456,7 +8480,7 @@ The \href{https://matpower.org/docs/MATPOWER-manual-8.0.pdf}{\matpower{} 8.0 Use
 \begin{itemize}
 \item \emph{\mpcore{}} -- Provides unparalleled flexibility and customization capabilities at all levels. Built around an explicit three-layer modeling structure, with \emph{data}, \emph{network} and \emph{mathematical} model objects and a \emph{task} object to manage them. Facilitates new modeling (e.g. unbalanced multiphase elements, FACTS devices, etc.), new controls (e.g. optimization of transformer taps, PAR angles, etc.), new problem formulations, and more.
 \item \emph{Flexible Framework} -- Provides new top-level functions (note underscores) \code{run\_pf()}, \code{run\_cpf()}, \code{run\_opf()} for running power flow (PF), continuation power flow (CPF) and optimal power flow (OPF), along with new \matpower{} Extension API for user access to the full customization capability of \mpcore{}.
-\item \emph{Legacy Framework} -- Allows \mpcore{} modeling to be used internally by legacy \code{runpf()}, \code{runcpf()}, \code{runopf()}, etc. Facilitates use of legacy tests, but is restricted to legacy customization mechanisms.
+\item \emph{Legacy Framework} -- Allows \mpcore{} modeling to be used internally by legacy \code{runpf()}, \code{runcpf()}, \code{runopf()}, etc. Facilitates use of legacy test suite, but is restricted to legacy customization mechanisms.
 \end{itemize}
 See the new \mdm{}\footnote{\url{\mdmurl}} and \TNfive{}~\cite{zimmerman2020} for details of the new architecture. The User's Manual has not yet been updated for the flexible framework.
 
@@ -8468,10 +8492,14 @@ The features based on \mpcore{} are available under MATLAB 9.1 or Octave 6.2 or 
     \item \code{runcpf} -- AC continuation power flow
     \item \code{runopf} -- AC OPF, for solvers MIPS, \code{fmincon}, \ipopt{}, and \knitro{}, for all formulations
 \end{itemize}
-Under older versions of \matlab{} or Octave, \matpower{} automatically reverts to the legacy core code, which is still included. The legacy core can also be selected manually on newer versions with the \codeq{exp.use\_legacy\_core} option or by disabling MP-Core in the legacy framework via \code{have\_feature(\textquotesingle{}mp\_core\textquotesingle{}, 0)}.
+Under older versions of \matlab{} or Octave, \matpower{} automatically reverts to the legacy core code, which is still included. The legacy core can also be selected manually on newer versions with the \codeq{exp.use\_legacy\_core} option or by disabling \mpcore{} in the legacy framework via \code{have\_feature(\textquotesingle{}mp\_core\textquotesingle{}, 0)}.
 
 \subsubsection*{New Features}
 \begin{itemize}
+\item \mptestlink{} 8.0b1 includes new functions for testing string values and text file contents. For details, see the \href{\mptesturl/blob/master/docs/relnotes/MP-Test-Release-Notes-8.0.md}{\mptest{} 8.0b1 release notes}.
+\item \mipslink{} 1.5 adds to \code{mplinsolve()} the ability to save an LU factorization and reuse it to solve for additional right-hand sides. For details, see the \href{\mipsurl/blob/master/docs/relnotes/MIPS-Release-Notes-1.5.md}{\mips{} 1.5 release notes}.\footnote{See Appendix~\ref{MIPSMAN-app:release_history} in the \mipsman{}.}
+\item \mpomlink{} 4.1 adds support for Artelys Knitro 13.1 and more. For details, see the \href{\mpomurl/blob/master/docs/relnotes/MP-Opt-Model-Release-Notes-4.1.md}{\mpom{} 4.1 release notes}.\footnote{See Appendix~\ref{MPOMMAN-app:release_history} in the \mpomman{}.}
+\item \mostlink{} 1.2 adds calculation of expected temporal locational marginal price (TLMP), includes transitions into first period in ramping reserves, and more. For details, see the \href{\mosturl/blob/master/docs/relnotes/MOST-Release-Notes-1.2.md}{\most{} 1.2 release notes}.\footnote{See Appendix~\ref{MOSTMAN-app:release_history} in the \mostman{}.}
 \item New options:
 \begin{itemize}
     \item New AC power flow solver based on \code{fsolve()} function,\footnote{Part of the \matlab{} \ot{} and included in Octave. Supported via \mpcore{} only.} selected by setting \code{pf.alg} option to \codeq{FSOLVE}.
@@ -8480,11 +8508,16 @@ Under older versions of \matlab{} or Octave, \matpower{} automatically reverts t
 \end{itemize}
 \item New functions/methods:
     \begin{itemize}
-        \item \code{have\_feature\_mp\_core} - Determines availability of \mpcore{}.
-        \item \code{run\_mp} - Top-level function for running any task (PF, CPF, OPF) with the new \mpcore{} and flexible framework.
-        \item \code{run\_pf} - Wrapper around \code{run\_mp} for running PF.
-        \item \code{run\_cpf} - Wrapper around \code{run\_mp} for running CPF.
-        \item \code{run\_opf} - Wrapper around \code{run\_mp} for running OPF.
+        \item MP-Test 8.0b1
+            \begin{itemize}
+                \item \code{t\_str\_match()} -- test that a string matches expected value
+                \item \code{t\_file\_match()} -- test that the content of a text files matches that of another file
+            \end{itemize}
+        \item \code{have\_feature\_mp\_core} -- Determines availability of \mpcore{}.
+        \item \code{run\_mp} -- Top-level function for running any task (PF, CPF, OPF) with the new \mpcore{} and flexible framework.
+        \item \code{run\_pf} -- Wrapper around \code{run\_mp} for running PF.
+        \item \code{run\_cpf} -- Wrapper around \code{run\_mp} for running CPF.
+        \item \code{run\_opf} -- Wrapper around \code{run\_mp} for running OPF.
     \end{itemize}
 \end{itemize}
 
@@ -8502,6 +8535,7 @@ Under older versions of \matlab{} or Octave, \matpower{} automatically reverts t
 
 \subsubsection*{New Documentation}
 \begin{itemize}
+    \item \mdm{}~\cite{dev_manual} -- describes the architecture of the new \mpcore{} and \matpower{} flexible framework
     \item \TNfive{} ``\mpe{}: A Unified \matpower{} Element Model, with Corresponding Functions and Derivatives''~\cite{zimmerman2020}
 \end{itemize}
 
@@ -8512,11 +8546,6 @@ Under older versions of \matlab{} or Octave, \matpower{} automatically reverts t
 \item Each power flow is initialized with the solved voltages of the previous one when changing PV buses to PQ during Q limit enforcement. \emph{Thanks to Tostado-Véliz, Kamel, Jurado.}
 \item The \code{makePTDF()} function can now optionally use a different slack distribution for each bus by specifying the \code{slack} input as a matrix. \emph{Thanks to Jon Martinez Corral.}
 \item Automatically reduce order of polynomial generator costs with higher order coefficients equal to zero. Allows the DC OPF to solve cases, e.g. with cubic costs where the 3rd order term is 0, such as cases exported by PowerWorld. \emph{Thanks to Rajesh Mookerjee.}
-\item \emph{Thanks to ...}
-\item Deprecated functions:
-    \begin{itemize}
-    \item 
-    \end{itemize}
 \end{itemize}
 
 % \pagebreak
@@ -8617,7 +8646,7 @@ R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez, and R.~J. Thomas, ``\matpower{}: Ste
 \doi{10.1109/TPWRS.2010.2051168}
 
 \bibitem{matpower}
-R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2020). \matpower{}\\~
+R.~D. Zimmerman, C.~E. Murillo-S{\'a}nchez (2022). \matpower{}\\~
 [Software]. Available: \url{https://matpower.org}
 \doi{10.5281/zenodo.3236535}
 

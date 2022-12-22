@@ -10,140 +10,147 @@ For change history for [MP-Opt-Model][27], see [mp-opt-model/CHANGES.md](mp-opt-
 For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 
 
-Changes since 7.1
------------------
+Version 8.0b1 - *Dec 22, 2022*
+------------------------------
+
+#### 12/22/22
+  - Release 8.0b1.
 
 #### 12/21/22
-- Add MP-Core tests to `test_matpower`.
-- Remove deprecated `opf.init_from_mpc` option. Use `opf.start`.
+  - Add MP-Core tests to `test_matpower`.
+  - Remove deprecated `opf.init_from_mpc` option. Use `opf.start`.
 
 #### 12/19/22
-- Add option `exp.use_legacy_core` to bypass MP-Core and force use of
-  legacy core code for `runpf()`, `runcpf()`, `runopf()`.
-  Remove redundant `exp.mp_core` option.
+  - Add option `exp.use_legacy_core` to bypass MP-Core and force use of
+    legacy core code for `runpf()`, `runcpf()`, `runopf()`.
+    Remove redundant `exp.mp_core` option.
 
 #### 12/16/22
-- Use new name "MP-Core" everywhere in place of "MP-Element" and "OOP core",
-  including:
-  - `mp_element` --> `mp_core`.
-  - `have_feature_mp_element()` --> `have_feature_mp_core()`
-  - `test_mp_element()` --> `test_mp_core()`
-  - `mpopt.exp.mpe` --> `mpopt.exp.mp_core`
-- **MASSIVE UPDATE**: Move the contents of [MP-Element][30] from its own
-  separate repo into the main MATPOWER code base. This introduces a major
-  redesign and rewrite of all of the MATPOWER internals, previously
-  developed under the name [MP-Element][30] in a separate repository at
-  [https://github.com/MATPOWER/mp-element][30]). It includes
-  - *MP-Core* -- New flexible object-oriented core architecture,
-    providing unparalleled flexibility and customization
-    capabilities at all levels. Built around an explicit three-layer
-    modeling structure, with *data*, *network*, and *mathematical* model
-    objects, and a *task* object to manage them.
-  - *Flexible Framework* -- Provides new top-level functions (note
-    underscores) `run_pf()`, `run_cpf()`, `run_opf()` for running
-    power flow (PF), continuation power flow (CPF) and optimal power
-    flow (OPF), along with new MATPOWER Extension API for user access
-    to the full customization capability of MP-Core.
-  - *Legacy Framework* -- Allows MP-Core modeling to be used internally
-    by legacy `runpf()`, `runcpf()`, `runopf()`, etc. Facilitates use of
-    legacy tests, but is restricted to legacy customization mechanisms.
+  - Use new name "MP-Core" everywhere in place of "MP-Element" and "OOP core",
+    including:
+    - `mp_element` --> `mp_core`.
+    - `have_feature_mp_element()` --> `have_feature_mp_core()`
+    - `test_mp_element()` --> `test_mp_core()`
+    - `mpopt.exp.mpe` --> `mpopt.exp.mp_core`
+  - **MASSIVE UPDATE**: Move the contents of [MP-Element][30] from its own
+    separate repo into the main MATPOWER code base. This introduces a major
+    redesign and rewrite of all of the MATPOWER internals, previously
+    developed under the name [MP-Element][30] in a separate repository at
+    [https://github.com/MATPOWER/mp-element][30]). It includes
+    - *MP-Core* -- New flexible object-oriented core architecture,
+      providing unparalleled flexibility and customization
+      capabilities at all levels. Built around an explicit three-layer
+      modeling structure, with *data*, *network*, and *mathematical* model
+      objects, and a *task* object to manage them.
+    - *Flexible Framework* -- Provides new top-level functions (note
+      underscores) `run_pf()`, `run_cpf()`, `run_opf()` for running
+      power flow (PF), continuation power flow (CPF) and optimal power
+      flow (OPF), along with new MATPOWER Extension API for user access
+      to the full customization capability of MP-Core.
+    - *Legacy Framework* -- Allows MP-Core modeling to be used internally
+      by legacy `runpf()`, `runcpf()`, `runopf()`, etc. Facilitates use of
+      legacy tests, but is restricted to legacy customization mechanisms.
 
-  See the new [MATPOWER Developer's Manual][34] and [MATPOWER Technical
-  Note 5][31] for details of the new architecture. The User's Manual has
-  not yet been updated for the flexible framework.
+    See the new [MATPOWER Developer's Manual][34] and [MATPOWER Technical
+    Note 5][31] for details of the new architecture. The User's Manual has
+    not yet been updated for the flexible framework.
 
-  The features based on MP-Core are available under MATLAB 9.1 or
-  Octave 6.2 or newer, where the legacy framework uses MP-Core's new
-  modeling by default for:
-  - `rundcpf` -- DC power flow
-  - `rundcopf` -- DC optimal power flow
-  - `runpf` -- AC power flow, for all except radial and hybrid
-     Newton-Raphson formulations/solvers
-  - `runcpf` -- AC continuation power flow
-  - `runopf` -- AC OPF, for solvers MIPS, `fmincon`, IPOPT, and
-    Artelys Knitro, for all formulations
+    The features based on MP-Core are available under MATLAB 9.1 or
+    Octave 6.2 or newer, where the legacy framework uses MP-Core's new
+    modeling by default for:
+    - `rundcpf` -- DC power flow
+    - `rundcopf` -- DC optimal power flow
+    - `runpf` -- AC power flow, for all except radial and hybrid
+       Newton-Raphson formulations/solvers
+    - `runcpf` -- AC continuation power flow
+    - `runopf` -- AC OPF, for solvers MIPS, `fmincon`, IPOPT, and
+      Artelys Knitro, for all formulations
 
-  Under older versions of MATLAB or Octave, MATPOWER automatically reverts
-  to the legacy core code, which is still included and can also be
-  selected manually on newer versions with the `'exp.mp_core'` (now
-  `'exp.use_legacy_core'`) option or `have_feature('mp_core', 0)`.
+    Under older versions of MATLAB or Octave, MATPOWER automatically reverts
+    to the legacy core code, which is still included and can also be
+    selected manually on newer versions with the `'exp.mp_core'` (now
+    `'exp.use_legacy_core'`) option or `have_feature('mp_core', 0)`.
 
 #### 12/14/22
-- Remove deprecated legacy `@opt_model` methods. Summary of deprecated
-  method names, with current alternatives in parenthesis:
-    - `add_constraints` (`add_lin_constraint` or `add_nln_constraint`)
-    - `add_costs` (`add_legacy_cost`, `add_quad_cost` or `add_nln_cost`)
-    - `add_vars` (`add_var`)
-    - `build_cost_params` (no longer needed)
-    - `compute_cost` (`eval_legacy_cost`)
-    - `get_cost_params` (`params_legacy_cost`)
-    - `getv` (`params_var`)
-    - `linear_constraints` (`params_lin_constraint`)
-- Remove deprecated functions:
-    - `d2AIbr_dV2` (use `d2Abr_dV2()`)
-    - `d2ASbr_dV2` (use `d2Abr_dV2()`)
+  - Update to [MP-Test][1] 8.0b1.
+  - Update to [MIPS][2] 1.5.
+  - Update to [MP-Opt-Model][27] 4.1.
+  - Update to [MOST][3] 1.2
+  - Remove deprecated legacy `@opt_model` methods. Summary of deprecated
+    method names, with current alternatives in parenthesis:
+      - `add_constraints` (`add_lin_constraint` or `add_nln_constraint`)
+      - `add_costs` (`add_legacy_cost`, `add_quad_cost` or `add_nln_cost`)
+      - `add_vars` (`add_var`)
+      - `build_cost_params` (no longer needed)
+      - `compute_cost` (`eval_legacy_cost`)
+      - `get_cost_params` (`params_legacy_cost`)
+      - `getv` (`params_var`)
+      - `linear_constraints` (`params_lin_constraint`)
+  - Remove deprecated functions:
+      - `d2AIbr_dV2` (use `d2Abr_dV2()`)
+      - `d2ASbr_dV2` (use `d2Abr_dV2()`)
 
 #### 11/8/22
-- Automatically reduce order of polynomial generator costs with higher
-  order coefficients equal to zero. Allows the DC OPF to solve cases,
-  e.g. with cubic costs where the 3rd order term is 0, such as cases
-  exported by PowerWorld.
-  *Thanks to Rajesh Mookerjee.*
+  - Automatically reduce order of polynomial generator costs with higher
+    order coefficients equal to zero. Allows the DC OPF to solve cases,
+    e.g. with cubic costs where the 3rd order term is 0, such as cases
+    exported by PowerWorld.
+    *Thanks to Rajesh Mookerjee.*
 
 #### 9/29/22
-- Silence near singular matrix warnings in some tests that began with
-  MATLAB R2022b.
+  - Silence near singular matrix warnings in some tests that began with
+    MATLAB R2022b.
 
 #### 7/27/22
-- Update MP-Opt-Model to latest for compatibility with Artelys
-  Knitro 13.1 and later.
-- Update MOST to latest to add TLMP capabilities and include ramping reserves
-  and constraints for the transition from the initial state into period 1.
-  See `most/CHANGES.md` for details.
+  - Update MP-Opt-Model to latest for compatibility with Artelys
+    Knitro 13.1 and later.
+  - Update MOST to latest to add TLMP capabilities and include ramping reserves
+    and constraints for the transition from the initial state into period 1.
+    See `most/CHANGES.md` for details.
 
 #### 4/8/22
-- Relax some test tolerances to prevent failure with Gurobi 9.5.
+  - Relax some test tolerances to prevent failure with Gurobi 9.5.
 
 #### 3/31/22
-- Add support for MATPOWER extensions in MP-Element 0.7+
-  *(later renamed MP-Core)**.
+  - Add support for MATPOWER extensions in MP-Element 0.7+
+    *(later renamed MP-Core)**.
 
 #### 2/11/22
-- Add option for `makePTDF()` function to use a different slack distribution
-  for each bus by specifying the `slack` input as a matrix. Fix bug in
-  existing code for this previously undocumented feature.
-  *Thanks to Jon Martinez Corral.*
+  - Add option for `makePTDF()` function to use a different slack distribution
+    for each bus by specifying the `slack` input as a matrix. Fix bug in
+    existing code for this previously undocumented feature.
+    *Thanks to Jon Martinez Corral.*
 
 #### 1/25/22
-- New MATPOWER Docker image (now named [`matpower/matpower`][32]) is based
-  on the official GNU Octave image ([`gnuoctave/octave`][33]) and is
-  available for multiple MATPOWER and Octave versions.
+  - New MATPOWER Docker image (now named [`matpower/matpower`][32]) is based
+    on the official GNU Octave image ([`gnuoctave/octave`][33]) and is
+    available for multiple MATPOWER and Octave versions.
 
 #### 7/12/21
-- A vector-valued `label` passed to `apply_changes()` now throws a useful
-  error.
+  - A vector-valued `label` passed to `apply_changes()` now throws a useful
+    error.
 
 #### 5/17/21
-- Fix generator voltage set points in `case9target` to match `case9`.
+  - Fix generator voltage set points in `case9target` to match `case9`.
 
 #### 5/5/21
-- Add experimental support for [MP-Element][30] *(later renamed MP-Core)*,
-  a new, generalized
-  network and element modeling layer for MATPOWER. See also [MATPOWER
-  Technical Note 5][31]. Documentation not yet included in User's Manual.
-  - If MP-Element is installed, its modeling is used by default for the
-    following (can be turned off with `have_feature('mp_element', 0)`):
-    - DC power flow
-    - DC optimal power flow
-    - AC power flow for all except radial and hybrid Newton-Raphson
-      formulations/solvers, including a new `'FSOLVE'` option based on
-      `fsolve()` function
-    - AC continuation power flow
-    - AC OPF for solvers MIPS, `fmincon`, IPOPT, and Artelys Knitro, for
-      all formulations
-  - MP-Opt-Model object is used for power flow and continuation power flow
-    as well as OPF and is added as `om` field to power flow and CPF
-    `results` struct.
+  - Add experimental support for [MP-Element][30] *(later renamed MP-Core)*,
+    a new, generalized
+    network and element modeling layer for MATPOWER. See also [MATPOWER
+    Technical Note 5][31]. Documentation not yet included in User's Manual.
+    - If MP-Element is installed, its modeling is used by default for the
+      following (can be turned off with `have_feature('mp_element', 0)`):
+      - DC power flow
+      - DC optimal power flow
+      - AC power flow for all except radial and hybrid Newton-Raphson
+        formulations/solvers, including a new `'FSOLVE'` option based on
+        `fsolve()` function
+      - AC continuation power flow
+      - AC OPF for solvers MIPS, `fmincon`, IPOPT, and Artelys Knitro, for
+        all formulations
+    - MP-Opt-Model object is used for power flow and continuation power flow
+      as well as OPF and is added as `om` field to power flow and CPF
+      `results` struct.
 
 #### 4/5/21
   - Fix typo in computation of CPF prediction error that had very minor
@@ -179,8 +186,8 @@ Changes since 7.1
     user callback function.
 
 #### 10/27/20
-- Add Implicit Z-bus Gauss power flow solver for distribution systems.
-  Select by setting `pf.alg` to `'ZG'`.
+  - Add Implicit Z-bus Gauss power flow solver for distribution systems.
+    Select by setting `pf.alg` to `'ZG'`.
 
 
 Version 7.1 - *Oct 8, 2020*
