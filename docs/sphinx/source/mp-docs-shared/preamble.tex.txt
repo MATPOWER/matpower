@@ -21,23 +21,22 @@
 \newcommand{\certs}[0]{{\sc Certs}}
 \newcommand{\CERTS}[0]{{Consortium for Electric Reliability Technology Solutions (\certs{})}}
 
-\newcommand{\mpver}[0]{8.0-dev}
+\newcommand{\mpver}[0]{8.0b1}
 \newcommand{\mumurl}[0]{https://matpower.org/docs/MATPOWER-manual-\mpver.pdf}
 \newcommand{\mum}[0]{\href{\mumurl}{\matpower{} User's Manual}}
 
 \newcommand{\mptest}[0]{{MP-Test}}
 \newcommand{\mptesturl}[0]{{https://github.com/MATPOWER/mptest}}
 \newcommand{\mptestlink}[0]{\href{\mptesturl}{\mptest{}}}
-\newcommand{\mptestname}[0]{{{\bf M}{\sc atpower} \textbf{I}nterior \textbf{P}oint \textbf{S}olver}}
-\newcommand{\mptestver}[0]{1.4}
-\newcommand{\mptestmanurl}[0]{https://matpower.org/docs/MIPS-manual-\mptestver.pdf}
-\newcommand{\mptestman}[0]{\href{\mptestmanurl}{\mptest{} User's Manual}}
+\newcommand{\mptestver}[0]{8.0b1}
+% \newcommand{\mptestmanurl}[0]{https://matpower.org/docs/MP-Test-manual-\mptestver.pdf}
+% \newcommand{\mptestman}[0]{\href{\mptestmanurl}{\mptest{} User's Manual}}
 
 \newcommand{\mips}[0]{{MIPS}}
 \newcommand{\mipsurl}[0]{https://github.com/MATPOWER/mips}
 \newcommand{\mipslink}[0]{\href{\mipsurl}{\mips{}}}
 \newcommand{\mipsname}[0]{{{\bf M}{\sc atpower} \textbf{I}nterior \textbf{P}oint \textbf{S}olver}}
-\newcommand{\mipsver}[0]{1.4}
+\newcommand{\mipsver}[0]{1.5}
 \newcommand{\mipsmanurl}[0]{https://matpower.org/docs/MIPS-manual-\mipsver.pdf}
 \newcommand{\mipsman}[0]{\href{\mipsmanurl}{\mips{} User's Manual}}
 
@@ -45,7 +44,7 @@
 \newcommand{\mpomurl}[0]{https://github.com/MATPOWER/mp-opt-model}
 \newcommand{\mpomlink}[0]{\href{\mpomurl}{\mpom{}}}
 \newcommand{\mpomname}[0]{\mpom{}}
-\newcommand{\mpomver}[0]{3.0}
+\newcommand{\mpomver}[0]{4.1}
 \newcommand{\mpommanurl}[0]{https://matpower.org/docs/MP-Opt-Model-manual-\mpomver.pdf}
 \newcommand{\currentmpommanurl}[0]{https://matpower.org/docs/MP-Opt-Model-manual.pdf}
 \newcommand{\mpomman}[0]{\href{\mpommanurl}{\mpom{} User's Manual}}
@@ -54,7 +53,7 @@
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
 \newcommand{\mostlink}[0]{\href{\mosturl}{\most{}}}
-\newcommand{\mostver}[0]{1.1}
+\newcommand{\mostver}[0]{1.2}
 \newcommand{\mostmanurl}[0]{https://matpower.org/docs/MOST-manual-\mostver.pdf}
 \newcommand{\mostman}[0]{\href{\mostmanurl}{\most{} User's Manual}}
 
