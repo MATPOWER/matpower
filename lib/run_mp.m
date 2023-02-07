@@ -29,7 +29,7 @@ function task_rv = run_mp(task_class, d, mpopt, varargin)
 
 %% assign default inputs
 if nargin < 3
-    mpopt = mpoption
+    mpopt = mpoption;
 end
 print_fname = '';
 soln_fname = '';
