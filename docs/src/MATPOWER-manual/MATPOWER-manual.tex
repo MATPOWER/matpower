@@ -8494,11 +8494,31 @@ The features based on \mpcore{} are available under MATLAB 9.1 or Octave 6.2 or 
 \end{itemize}
 Under older versions of \matlab{} or Octave, \matpower{} automatically reverts to the legacy core code, which is still included. The legacy core can also be selected manually on newer versions with the \codeq{exp.use\_legacy\_core} option or by disabling \mpcore{} in the legacy framework via \code{have\_feature(\textquotesingle{}mp\_core\textquotesingle{}, 0)}.
 
+\subsubsection*{New Three-Phase and Hybrid Proof-of-Concept Examples}
+Prototype examples of PF, CPF, and OPF, built using the new \matpower{} Extension API, for:
+\begin{itemize}
+\item unbalanced three-phase models
+\item hybrid transmission (balanced single-phase) / distribution (unbalanced three-phase) models
+\item multiple problem formulations
+\end{itemize}
+{\bf Note:} These are proof-of-concept only, with much work remaining to define a full set of three-phase model elements and their respective parameters and data formats. \emph{But they do work!}
+
 \subsubsection*{New Features}
 \begin{itemize}
 \item \mptestlink{} 8.0b1 includes new functions for testing string values and text file contents. For details, see the \href{\mptesturl/blob/master/docs/relnotes/MP-Test-Release-Notes-8.0.md}{\mptest{} 8.0b1 release notes}.
 \item \mipslink{} 1.5 adds to \code{mplinsolve()} the ability to save an LU factorization and reuse it to solve for additional right-hand sides. For details, see the \href{\mipsurl/blob/master/docs/relnotes/MIPS-Release-Notes-1.5.md}{\mips{} 1.5 release notes}.\footnote{See Appendix~\ref{MIPSMAN-app:release_history} in the \mipsman{}.}
-\item \mpomlink{} 4.1 adds support for Artelys Knitro 13.1 and more. For details, see the \href{\mpomurl/blob/master/docs/relnotes/MP-Opt-Model-Release-Notes-4.1.md}{\mpom{} 4.1 release notes}.\footnote{See Appendix~\ref{MPOMMAN-app:release_history} in the \mpomman{}.}
+\item \mpomlink{} 4.1 adds support for:
+  \begin{itemize}
+    \item New class of problems -- parameterized nonlinear equations (PNE), providing generalized continuation power flow (CPF) capabilities to \mpcore{}.
+      \begin{itemize}
+      \item Predictor/corrector numerical continuation method for tracing solution curves for PNE problems.
+      \item Plotting of solution curves.
+      \item User-defined event functions and callback functions.
+      \item Warm-start capabilities.
+      \end{itemize}
+    \item Artelys Knitro 13.1 and more.
+  \end{itemize}
+ For details, see the release notes for \mpom{}  \href{\mpomurl/blob/master/docs/relnotes/MP-Opt-Model-Release-Notes-4.0.md}{4.0} and \href{\mpomurl/blob/master/docs/relnotes/MP-Opt-Model-Release-Notes-4.1.md}{4.1}.\footnote{See Appendix~\ref{MPOMMAN-app:release_history} in the \mpomman{}.}
 \item \mostlink{} 1.2 adds calculation of expected temporal locational marginal price (TLMP), includes transitions into first period in ramping reserves, and more. For details, see the \href{\mosturl/blob/master/docs/relnotes/MOST-Release-Notes-1.2.md}{\most{} 1.2 release notes}.\footnote{See Appendix~\ref{MOSTMAN-app:release_history} in the \mostman{}.}
 \item New options:
 \begin{itemize}
@@ -8508,16 +8528,21 @@ Under older versions of \matlab{} or Octave, \matpower{} automatically reverts t
 \end{itemize}
 \item New functions/methods:
     \begin{itemize}
-        \item MP-Test 8.0b1
-            \begin{itemize}
-                \item \code{t\_str\_match()} -- test that a string matches expected value
-                \item \code{t\_file\_match()} -- test that the content of a text files matches that of another file
-            \end{itemize}
         \item \code{have\_feature\_mp\_core} -- Determines availability of \mpcore{}.
         \item \code{run\_mp} -- Top-level function for running any task (PF, CPF, OPF) with the new \mpcore{} and flexible framework.
         \item \code{run\_pf} -- Wrapper around \code{run\_mp} for running PF.
         \item \code{run\_cpf} -- Wrapper around \code{run\_mp} for running CPF.
         \item \code{run\_opf} -- Wrapper around \code{run\_mp} for running OPF.
+        \item MP-Opt-Model 4.1
+            \begin{itemize}
+                \item \code{pnes\_master()} -- unified interface for parameterized nonlinear equation (PNE) solvers
+                \item \code{mpopt2pneopt()} -- creates or modifies an options struct for \code{pnes\_master()} from a MATPOWER options struct
+            \end{itemize}
+        \item MP-Test 8.0b1
+            \begin{itemize}
+                \item \code{t\_str\_match()} -- test that a string matches expected value
+                \item \code{t\_file\_match()} -- test that the content of a text files matches that of another file
+            \end{itemize}
     \end{itemize}
 \end{itemize}
 

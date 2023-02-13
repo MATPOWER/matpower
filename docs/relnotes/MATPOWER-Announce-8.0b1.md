@@ -32,10 +32,24 @@ Note 5*][6] for details of the new architecture. The User's Manual has
 not yet been updated for the flexible framework.
 
 
+#### New Three-Phase and Hybrid Proof-of-Concept Examples
+
+Prototype examples of PF, CPF, and OPF for:
+- unbalanced three-phase models
+- hybrid transmission (single-phase) / distribution (three-phase) models
+- multiple problem formulations
+
+**Note:** These are proof-of-concept only, with much work remaining to
+define a full set of three-phase model elements and their respective 
+parameters and data formats. _But they do work!_
+
 #### New Features:
 
 - [MIPS][7] 1.5 adds to `mplinsolve()` the ability to save an LU
   factorization and reuse it to solve for additional right-hand sides.
+- [MP-Opt-Model][7a] 4.1 adds support for tracing solution curves of
+  general parameterized nonlinear equations (PNE), providing generalized
+  continuation power flow (CPF) capabilities to MP-Core.
 - [MOST][8] 1.2 adds calculation of expected temporal locational marginal
   price (TLMP), includes transitions into first period in ramping
   reserves, and more.
@@ -90,6 +104,7 @@ not yet been updated for the flexible framework.
 [5]: https://matpower.org/documentation/dev-manual/
 [6]: https://matpower.org/docs/TN5-MP-Element.pdf
 [7]: https://github.com/MATPOWER/mips
+[7a]: https://github.com/MATPOWER/mp-opt-model
 [8]: https://github.com/MATPOWER/most
 [9]: https://hub.docker.com/r/matpower/matpower
 [10]: https://hub.docker.com/r/gnuoctave/octave

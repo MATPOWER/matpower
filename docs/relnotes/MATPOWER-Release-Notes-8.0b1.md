@@ -10,7 +10,7 @@ previous versions, see Appendix H of the [MATPOWER User's Manual][2].
 
 #### Major Redesign:
 
-MATPOWERÂ 8 introduces a major redesign and rewrite of all of the MATPOWER
+MATPOWERÊ8 introduces a major redesign and rewrite of all of the MATPOWER
 internals in the form of the flexible, all-new MATPOWER object-oriented core
 architecture (*MP-Core*) and new two user-level frameworks to access it.
 *(Previously developed under the name [MP-Element][3] in a separate repository
@@ -30,7 +30,7 @@ legacy `runpf()`, `runcpf()`, `runopf()`, etc. Facilitates use of legacy
 test suite, but is restricted to legacy customization mechanisms.
 
 See the new [MATPOWER Developer's Manual][4] and [*MATPOWER Technical
-NoteÂ 5*][5] for details of the new architecture. The User's Manual has
+NoteÊ5*][5] for details of the new architecture. The User's Manual has
 not yet been updated for the flexible framework.
 
 The features based on MP-Core are available under MATLAB 9.1 or Octave 6.2
@@ -47,6 +47,17 @@ for:
 Under older versions of MATLAB or Octave, MATPOWER automatically reverts to the legacy core code, which is still included. The legacy core can also be selected manually on newer versions with the `'exp.use_legacy_core'` option or by disabling MP-Core in the legacy framework via `have_feature('mp_core', 0)`.
 
 
+#### New Three-Phase and Hybrid Proof-of-Concept Examples
+
+Prototype examples of PF, CPF, and OPF, built using the new MATPOWER Extension API, for:
+- unbalanced three-phase models
+- hybrid transmission (balanced single-phase) / distribution (unbalanced three-phase) models
+- multiple problem formulations
+
+**Note:** These are proof-of-concept only, with much work remaining to
+define a full set of three-phase model elements and their respective 
+parameters and data formats. _But they do work!_
+
 #### New Features:
 
 - [MP-Test][6] 8.0b1 includes new functions for testing string values
@@ -56,9 +67,19 @@ Under older versions of MATLAB or Octave, MATPOWER automatically reverts to the 
   factorization and reuse it to solve for additional right-hand sides.
   For details, see the [MIPS 1.5 release notes][9]
   *(also in Appendix C in the [MIPS User's Manual][10])*.
-- [MP-Opt-Model][11] 4.1 adds support for Artelys Knitro 13.1 and more.
-  For details, see the [MP-Opt-Model 4.1 release notes][12] *(also in
-  Appendix C in the [MP-Opt-Model User's Manual][13])*.
+- [MP-Opt-Model][11] 4 adds support for:
+  - New class of problems -- parameterized nonlinear equations (PNE),
+    providing generalized continuation power flow (CPF) capabilities to
+    MP-Core.
+    - Predictor/corrector numerical continuation method for tracing solution
+      curves for PNE problems.
+    - Plotting of solution curves.
+    - User-defined event functions and callback functions.
+    - Warm-start capabilities.
+  - Artelys Knitro 13.1 and more.
+
+  For details, see the release notes for MP-Opt-Model [4.0][11a] and
+  [4.1][12] *(also in Appendix C in the [MP-Opt-Model User's Manual][13])*.
 - [MOST][14] 1.2 adds calculation of expected temporal locational marginal
   price (TLMP), includes transitions into first period in ramping
   reserves, and more. For details, see the [MOST 1.2 release notes][15]
@@ -74,16 +95,20 @@ Under older versions of MATLAB or Octave, MATPOWER automatically reverts to the 
   - New `'exp.use_legacy_core'` option to bypass MP-Core and force use of
     legacy core code for `runpf()`, `runcpf()`, `runopf()`.
 - New functions/methods:
-  - MP-Test 8.0b1
-    - `t_str_match()` -- test that a string matches expected value
-    - `t_file_match()` -- test that the content of a text files matches
-      that of another file
   - `have_feature_mp_core` - Determines availability of MP-Core.
   - `run_mp` - Top-level function for running any task (PF, CPF, OPF) with
     the new MP-Core and flexible framework.
   - `run_pf` - Wrapper around `run_mp` for running PF.
   - `run_cpf` - Wrapper around `run_mp` for running CPF.
   - `run_opf` - Wrapper around `run_mp` for running OPF.
+  - MP-Opt-Model 4.1
+    - `pnes_master()` unified interface for parameterized nonlinear equation (PNE) solvers
+    - `mpopt2pneopt()` creates or modifies an options struct for `pnes_master()` from a MATPOWER options struct
+    - other functions used to implment PNE functionality
+  - MP-Test 8.0b1
+    - `t_str_match()` -- test that a string matches expected value
+    - `t_file_match()` -- test that the content of a text files matches
+      that of another file
 
 
 #### New Case Files:
@@ -97,7 +122,7 @@ Under older versions of MATLAB or Octave, MATPOWER automatically reverts to the 
 
 - [MATPOWER Developer's Manual][4] -- describes the architecture of the
   new MP-Core and MATPOWER flexible framework
-- [*MATPOWER Technical NoteÂ 5*][5] "MP-Element: A Unified MATPOWER
+- [*MATPOWER Technical NoteÊ5*][5] "MP-Element: A Unified MATPOWER
   Element Model, with Corresponding Functions and Derivatives"
 
 
@@ -110,7 +135,7 @@ Under older versions of MATLAB or Octave, MATPOWER automatically reverts to the 
   is available for multiple MATPOWER and Octave versions.
 - Each power flow is initialized with the solved voltages of the previous
   one when changing PV buses to PQ during Q limit enforcement.
-  *Thanks to Tostado-VÃ©liz, Kamel, Jurado.*
+  *Thanks to Tostado-VŽliz, Kamel, Jurado.*
 - The `makePTDF()` function can now optionally use a different slack
   distribution for each bus by specifying the `slack` input as a matrix.
   *Thanks to Jon Martinez Corral.*
@@ -169,6 +194,7 @@ Under older versions of MATLAB or Octave, MATPOWER automatically reverts to the 
 [9]: https://github.com/MATPOWER/mips/blob/master/docs/relnotes/MIPS-Release-Notes-1.5.md
 [10]: https://matpower.org/docs/MIPS-manual-1.5.pdf
 [11]: https://github.com/MATPOWER/mp-opt-model
+[11a]: https://github.com/MATPOWER/mp-opt-model/blob/master/docs/relnotes/MP-Opt-Model-Release-Notes-4.0.md
 [12]: https://github.com/MATPOWER/mp-opt-model/blob/master/docs/relnotes/MP-Opt-Model-Release-Notes-4.1.md
 [13]: https://matpower.org/docs/MP-Opt-Model-manual-4.1.pdf
 [14]: https://github.com/MATPOWER/most
