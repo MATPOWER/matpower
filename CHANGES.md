@@ -10,6 +10,15 @@ For change history for [MP-Opt-Model][27], see [mp-opt-model/CHANGES.md](mp-opt-
 For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 
 
+since 8.0b1
+-----------
+
+#### 3/8/23
+  - Add [SimulinkMATPOWER][35], an interface that allows the use of
+    MATPOWER from MATLAB's Simulink environment, to MATPOWER Extras.
+    *Thanks to Lukas Ortmann.*
+
+
 Version 8.0b1 - *Dec 22, 2022*
 ------------------------------
 
@@ -3333,3 +3342,4 @@ First Public Release – *Jun 25, 1997*
 [32]: https://hub.docker.com/r/matpower/matpower
 [33]: https://hub.docker.com/r/gnuoctave/octave
 [34]: https://matpower.org/documentation/dev-manual/
+[35]: https://github.com/MATPOWER/mx-simulink_matpower

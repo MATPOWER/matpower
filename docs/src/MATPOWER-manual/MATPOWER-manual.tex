@@ -7098,25 +7098,27 @@ Unless indicated otherwise in the list below, the \matpowerextraslink{} GitHub r
 
 Some of these could be moved into the main \matpower{} distribution in the future with a bit of polishing and additional documentation. Please contact the developers if you are interested in helping make this happen.
 
-\begin{namelist}{XXXXXXXXXX}
+\begin{namelist}{XXXXXXXXXXX}
 \item [\code{maxloadlim}] An optimal power flow extension, contributed by Camille Hamon, for computing maximum loadability limits. Please see \\
 \code{extras/maxloadlim/manual/maxloadlim\_manual.pdf} \\
-for details on the formulation and implementation. The master repository for this code is at \url{https://github.com/MATPOWER/mx-maxloadlim}\footnote{This is a fork of Camille Hamon's GitHub repository of this code at:\\\url{https://github.com/CamilleH/Max-Load-Lim-matpower}} and is included in \matpower{} Extras as a subrepo.
+for details on the formulation and implementation. The master repository for this code is at \url{https://github.com/MATPOWER/mx-maxloadlim}\footnote{This is a fork of Camille Hamon's GitHub repository of this code at:\\\url{https://github.com/CamilleH/Max-Load-Lim-matpower}} and is included in \matpowerextraslink{} as a subrepo.
 
 \item [\code{misc}] A number of potentially useful functions that are either not yet fully implemented, tested, documented and/or supported. See the help (and the code) in each individual file to understand what it does.\footnote{For more information on \code{qcqp\_opf}, see \cite{josz2016}. For more information on \code{plot\_mpc}, see \cite{cuffe2015}.}
 
-\item [\code{reduction}] A network reduction toolbox that performs a modifed Ward reduction and can be used to produce a smaller approximate equivalent from a larger original system. Code contributed by Yujia Zhu and Daniel Tylavsky. For more details, please see the \code{Network\_Reduction\_Toolbox.pdf} file. The master repository for this code is at \url{https://github.com/MATPOWER/mx-reduction} and is included in \matpower{} Extras as a subrepo.
+\item [\code{reduction}] A network reduction toolbox that performs a modifed Ward reduction and can be used to produce a smaller approximate equivalent from a larger original system. Code contributed by Yujia Zhu and Daniel Tylavsky. For more details, please see the \code{Network\_Reduction\_Toolbox.pdf} file. The master repository for this code is at \url{https://github.com/MATPOWER/mx-reduction} and is included in \matpowerextraslink{} as a subrepo.
 
-\item [\code{sdp\_pf}] Applications of a semidefinite programming programming relaxation of the power flow equations. Code contributed by Dan Molzahn. See Appendix~\ref{app:sdppf} and the documentation in the \mppath{/extras/sdp\_pf/documentation} directory, especially the file \code{sdp\_pf\_documentation.pdf}, for a full description of the functions in this package. The master repository for this code is at \url{https://github.com/MATPOWER/mx-sdp_pf} and is included in \matpower{} Extras as a subrepo.
+\item [\code{sdp\_pf}] Applications of a semidefinite programming programming relaxation of the power flow equations. Code contributed by Dan Molzahn. See Appendix~\ref{app:sdppf} and the documentation in the \mppath{/extras/sdp\_pf/documentation} directory, especially the file \code{sdp\_pf\_documentation.pdf}, for a full description of the functions in this package. The master repository for this code is at \url{https://github.com/MATPOWER/mx-sdp_pf} and is included in \matpowerextraslink{} as a subrepo.
 
-\item [\code{se}] State-estimation code contributed by Rui Bo. Type \code{test\_se}, \code{test\_se\_14bus} or \code{test\_se\_14bus\_err} to run some examples. See \code{se\_intro.pdf} for a brief introduction to this code. The master repository for this code is at \url{https://github.com/MATPOWER/mx-se} and is included in \matpower{} Extras as a subrepo.
+\item [\code{se}] State-estimation code contributed by Rui Bo. Type \code{test\_se}, \code{test\_se\_14bus} or \code{test\_se\_14bus\_err} to run some examples. See \code{se\_intro.pdf} for a brief introduction to this code. The master repository for this code is at \url{https://github.com/MATPOWER/mx-se} and is included in \matpowerextraslink{} as a subrepo.
+
+\item [\code{simulink\_matpower}] SimulinkMATPOWER is an interface that enables the use of \matpower{} from \matlab{}'s Simulink\textsuperscript{\tiny \textregistered} environment.\footnote{See \url{https://www.mathworks.com/products/simulink.html}.} It also adds an optional control layer for tap changers. See the \code{README.md} for more information. The master repository for this code is at \url{https://github.com/MATPOWER/mx-simulink\_matpower}\footnote{This is a fork of Lukas Ortmann's GitHub repository of this code at:\\\url{https://github.com/Lukas738/SimulinkMATPOWER}} and is included in \matpowerextraslink{} as a subrepo. It was contributed by Lukas Ortmann.
 
 \item [\code{smartmarket}] Code that implements a ``smart market'' auction clearing mechanism based on \matpower{}'s optimal power flow solver. See Appendix~\ref{app:smartmarket} for details.
 
 \item [\code{state\_estimator}] Older state estimation example, based on code by James~S.~Thorp.
 
 \item [\code{syngrid}] \syngridlink{} is a synthetic grid creation tool for \matpower{}. See the {\href{\currentsyngridmanurl}{\syngrid{} User's Manual}} for details.
-The master repository for this code is at \url{https://github.com/MATPOWER/mx-syngrid} and is included in \matpower{} Extras as a subrepo.
+The master repository for this code is at \url{https://github.com/MATPOWER/mx-syngrid} and is included in \matpowerextraslink{} as a subrepo.
 \end{namelist}
 
 
@@ -8469,10 +8471,10 @@ The \href{https://matpower.org/docs/MATPOWER-manual-7.1.pdf}{\matpower{} 7.1 Use
 
 
 \clearpage
-\subsection{Version 8.0b1 -- released Dec 22, 2022}
+\subsection{Version 8.0b2 -- released ??? ??, 202?}
 \label{app:v80}
 
-The \href{https://matpower.org/docs/MATPOWER-manual-8.0b1.pdf}{\matpower{} 8.0b1 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MATPOWER-manual-8.0b1.pdf}}
+The \href{https://matpower.org/docs/MATPOWER-manual-8.0b2.pdf}{\matpower{} 8.0b2 User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MATPOWER-manual-8.0b2.pdf}}
 
 \subsubsection*{Major Redesign}
 
@@ -8520,6 +8522,7 @@ Prototype examples of PF, CPF, and OPF, built using the new \matpower{} Extensio
   \end{itemize}
  For details, see the release notes for \mpom{}  \href{\mpomurl/blob/master/docs/relnotes/MP-Opt-Model-Release-Notes-4.0.md}{4.0} and \href{\mpomurl/blob/master/docs/relnotes/MP-Opt-Model-Release-Notes-4.1.md}{4.1}.\footnote{See Appendix~\ref{MPOMMAN-app:release_history} in the \mpomman{}.}
 \item \mostlink{} 1.2 adds calculation of expected temporal locational marginal price (TLMP), includes transitions into first period in ramping reserves, and more. For details, see the \href{\mosturl/blob/master/docs/relnotes/MOST-Release-Notes-1.2.md}{\most{} 1.2 release notes}.\footnote{See Appendix~\ref{MOSTMAN-app:release_history} in the \mostman{}.}
+\item SimulinkMATPOWER,\footnote{See \url{https://github.com/MATPOWER/mx-simulink_matpower}.} included in \matpowerextraslink{}, enables the use of \matpower{} from \matlab{}'s Simulink\textsuperscript{\tiny \textregistered} environment.\footnote{See \url{https://www.mathworks.com/products/simulink.html}.} \emph{Thanks to Lukas Ortmann.}
 \item New options:
 \begin{itemize}
     \item New AC power flow solver based on \code{fsolve()} function,\footnote{Part of the \matlab{} \ot{} and included in Octave. Supported via \mpcore{} only.} selected by setting \code{pf.alg} option to \codeq{FSOLVE}.
