@@ -13,6 +13,10 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 since 8.0b1
 -----------
 
+#### 3/28/23
+  - Remove `check_feasibility.m` from MATPOWER Extras, since last
+    version it worked with was MATPOWER 7.0.
+
 #### 3/8/23
   - Add [SimulinkMATPOWER][35], an interface that allows the use of
     MATPOWER from MATLAB's Simulink environment, to MATPOWER Extras.
