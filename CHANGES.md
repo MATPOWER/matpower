@@ -13,6 +13,10 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 since 8.0b1
 -----------
 
+#### 3/29/23
+  - Fix bug (fatal in Octave 8.1) in pretty-printing of reserve
+    gen constraints when using `mp.xt_reserves`.
+
 #### 3/28/23
   - Remove `check_feasibility.m` from MATPOWER Extras, since last
     version it worked with was MATPOWER 7.0.

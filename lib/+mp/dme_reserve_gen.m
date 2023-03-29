@@ -145,19 +145,19 @@ classdef dme_reserve_gen < mp.dm_element & mp.dme_shared_opf
             else
                 r = '     -  ';
             end
-            if obj.tab.status & (obj.tab.r(k) < obj.tab.r_lb(k) + obj.ctol || ...
+            if obj.tab.status(k) && (obj.tab.r(k) < obj.tab.r_lb(k) + obj.ctol || ...
                     obj.tab.mu_lb(k) > obj.ptol)
                 mu_lb = sprintf('%10.3f', obj.tab.mu_lb(k));
             else
                 mu_lb = '      -   ';
             end
-            if obj.tab.status & (obj.tab.r(k) > obj.tab.r_ub(k) - obj.ctol || ...
+            if obj.tab.status(k) && (obj.tab.r(k) > obj.tab.r_ub(k) - obj.ctol || ...
                     obj.tab.mu_ub(k) > obj.ptol)
                 mu_ub = sprintf('%10.3f', obj.tab.mu_ub(k));
             else
                 mu_ub = '      -   ';
             end
-            if obj.tab.status & obj.tab.mu_pg_ub(k) > obj.ptol
+            if obj.tab.status(k) && obj.tab.mu_pg_ub(k) > obj.ptol
                 mu_pg_ub = sprintf('%10.3f', obj.tab.mu_pg_ub(k));
             else
                 mu_pg_ub = '      -   ';
