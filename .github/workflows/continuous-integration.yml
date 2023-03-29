@@ -107,7 +107,6 @@ jobs:
 
     - name: Install MATPOWER
       run: |
-        $ML_CMD ver
         $ML_CMD "install_matpower(0,1,1)"
         ln -s ./startup.m .octaverc
         $ML_CMD mpver
