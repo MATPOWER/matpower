@@ -1,26 +1,36 @@
 function task_rv = run_mp(task_class, d, mpopt, varargin)
-%run_mp
+% run_mp - Run any |MATPOWER| simulation.
+% ::
 %
 %   run_mp(task_class, d, mpopt)
 %   run_mp(task_class, d, mpopt, ...)
 %   task = run_mp(...)
 %
-%   Inputs:
-%       task_class - function handle to constructor of default task class for
-%           type of task to be run, e.g. @mp.task_pf for power flow,
-%           @mp.task_cpf for CPF, and @mp.task_opf for OPF
-%       d - input data specification, e.g. MATPOWER case name, case struct, etc.
-%       mpopt - MATPOWER options struct
-%       additional <name>, <value> pairs, where <name> can be:
-%           'print_fname' - name for file to save pretty-printed output to
-%           'soln_fname' - name for file to save solved case to
-%           'mpx' - MATPOWER extension or cell array of MATPOWER extensions
-%               to apply
-%   Output:
-%       task - task object
+% Inputs:
+%   task_class (function handle) : handle to constructor of default task
+%       class for type of task to be run, e.g. :ml:`@mp.task_pf` for power
+%       flow, :ml:`@mp.task_cpf` for CPF, and :ml:`@mp.task_opf` for OPF
+%   d : input data specification, currently this is assumed to be a
+%       |MATPOWER| case name or case struct (:ml:`mpc`).
+%   mpopt (struct) : |MATPOWER| options struct
+%
+%       Additional optional inputs can be provided as <name>, <val> pairs,
+%       with the following options:
+%
+%       - :ml:`'print_fname'` - file name for saving pretty-printed output
+%       - :ml:`'soln_fname'` - file name for saving solved case
+%       - :ml:`'mpx'` - |MATPOWER| extension or cell array of |MATPOWER|
+%         extensions to apply
+%
+% Output:
+%   task (mp.task) : task object containing the solved run including the
+%       data, network, and mathematical model objects.
+%
+% See also run_pf (:func:`run_pf`), run_cpf (:func:`run_cpf`),
+% run_opf (:func:`run_opf`), mp.task (:class:`+mp.task`).
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

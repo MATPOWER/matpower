@@ -1,32 +1,73 @@
 classdef (Abstract) task < handle
-%MP.TASK  MATPOWER task abstract base class.
-%   Each task type (e.g. power flow, CPF, OPF) will inherit from MP.TASK.
+% mp.task - |MATPOWER| task abstract base class.
 %
-%   MP.TASK provides properties and methods related to the specific
-%   problem specification being solved (e.g. power flow, continuation
-%   power flow, optimal power flow, etc.). In particular, it coordinates
-%   all interactions between the 3 model layers: data model, network model,
-%   and mathematical model.
+% Each task type (e.g. power flow, CPF, OPF) will inherit from
+% :class:`mp.task`.
 %
-%   Properties
-%       dm - data model
-%       nm - network model
-%       mm - mathematical model
-%       mm_opt - solve options for mathematical model
-%       tag - task tag - e.g. 'PF', 'CPF', 'OPF'
-%       name - task name - e.g. 'Power Flow', etc.
-%       i_dm - iteration counter for data model loop
-%       i_nm - iteration counter for network model loop
-%       i_mm - iteration counter for math model loop
-%       success - success flag, 1 - math model solved, 0 - didn't solve
-%       message - output message
-%       et - elapsed time (seconds) for run() method
+% Provides properties and methods related to the specific problem
+% specification being solved (e.g. power flow, continuation power flow,
+% optimal power flow, etc.). In particular, it coordinates all
+% interactions between the 3 (data, network, mathematical) model layers.
 %
-%   Methods
-%       ?
+% mp.task Properties:
+%    * tag - task tag - e.g. 'PF', 'CPF', 'OPF'
+%    * name - task name - e.g. 'Power Flow', etc.
+%    * dmc - data model converter object
+%    * dm - data model object
+%    * nm - network model object
+%    * mm - mathematical model object
+%    * mm_opt - solve options for mathematical model
+%    * i_dm - iteration counter for data model loop
+%    * i_nm - iteration counter for network model loop
+%    * i_mm - iteration counter for math model loop
+%    * success - success flag, 1 - math model solved, 0 - didn't solve
+%    * message - output message
+%    * et - elapsed time (seconds) for run() method
+%
+% mp.task Methods:
+%    * run - execute the task
+%    * next_mm - controls iterations over mathematical models
+%    * next_nm - controls iterations over over network models
+%    * next_dm - controls iterations over over data models
+%    * run_pre - called at beginning of run() method
+%    * run_post - called at end of run() method
+%    * print_soln - display pretty-printed results
+%    * print_soln_header - display success/failure, elapsed time
+%    * save_soln - save solved case to file
+%    * dm_converter_class - get data model converter constructor
+%    * dm_converter_class_mpc2_default - get default data model converter constructor
+%    * dm_converter_create - create data model converter object
+%    * data_model_class - get data model constructor
+%    * data_model_class_default - get default data model constructor
+%    * data_model_create - create data model object
+%    * data_model_build - create and build data model object
+%    * data_model_build_pre - called at beginning of data_model_build()
+%    * data_model_build_post - called at end of data_model_build() 
+%    * network_model_class - get network model constructor
+%    * network_model_class_default - get default network model constructor
+%    * network_model_create - create network model object
+%    * network_model_build - create and build network model object
+%    * network_model_build_pre - called at beginning of network_model_build()
+%    * network_model_build_post - called at end of network_model_build()
+%    * network_model_x_soln - update network model state from math model solution
+%    * network_model_update - update net model state/soln from math model soln
+%    * math_model_class - get mathematical model constructor
+%    * math_model_class_default - get default mathematical model constructor
+%    * math_model_create - create mathematical model object
+%    * math_model_build - create and build mathematical model object
+%    * math_model_opt - get options struct to pass to mm.solve()
+%
+% See the :ref:`sec_task` section in the :ref:`dev_manual`
+% for more information.
+%
+% See also mp.data_model (:class:`mp.data_model`),
+% mp.net_model (:class:`mp.net_model`),
+% mp.math_model (:class:`mp.math_model`).
+%
+% ---------------------------------------------------------------------
 
 %   MATPOWER
-%   Copyright (c) 2020-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -34,26 +75,51 @@ classdef (Abstract) task < handle
 %   See https://matpower.org for more info.
 
     properties (Abstract)
-        tag     %% task tag - e.g. 'PF', 'CPF', 'OPF'
-        name    %% task name - e.g. 'Power Flow', etc.
+        tag     %% *(char array)* task tag - e.g. 'PF', 'CPF', 'OPF'
+        name    %% *(char array)* task name - e.g. 'Power Flow', etc.
     end
     properties
-        dmc     %% data model converter object
-        dm      %% data model object
-        nm      %% network model object
-        mm      %% mathematical model object
-        mm_opt  %% solve options for mathematical model
-        i_dm    %% iteration counter for data model loop
-        i_nm    %% iteration counter for network model loop
-        i_mm    %% iteration counter for math model loop
-        success %% success flag, 1 - math model solved, 0 - didn't solve
-        message %% output message
-        et      %% elapsed time (seconds) for run() method
+        dmc     %% (:class:`mp.dm_converter`) data model converter object
+        dm      %% (:class:`mp.data_model`) data model object
+        nm      %% (:class:`mp.net_model`) network model object
+        mm      %% (:class:`mp.math_model`) mathematical model object
+        mm_opt  %% *(struct)* solve options for mathematical model
+        i_dm    %% *(integer)* iteration counter for data model loop
+        i_nm    %% *(integer)* iteration counter for network model loop
+        i_mm    %% *(integer)* iteration counter for math model loop
+        success %% *(integer)* success flag, 1 - math model solved, 0 - didn't solve
+        message %% *(char array)* output message
+        et      %% *(double)* elapsed time (seconds) for :meth:`run` method
     end
 
     methods
         %%-----  task methods  -----
         function obj = run(obj, d, mpopt, mpx)
+            % Execute the task.
+            %
+            % Execute the task, creating the data model converter and
+            % the data, network and mathematical model objects, solving
+            % the math model and propagating the solution back to the
+            % data model.
+            % ::
+            %
+            %   obj.run(d, mpopt)
+            %   obj.run(d, mpopt, mpx)
+            %
+            % Inputs:
+            %   d : input data specification, currently assumed to be
+            %       a |MATPOWER| case name or case struct (:ml:`mpc`)
+            %   mpopt (struct) : |MATPOWER| options struct
+            %   mpx (cell array of mp.extension) : |MATPOWER| Extensions
+            %
+            % Output:
+            %   obj (mp.task) : task object containing the solved run
+            %       including the data, network, and mathematical model
+            %       objects.
+            %
+            % See the :ref:`sec_task` section in the :ref:`dev_manual`
+            % for more information.
+
             t0 = tic;       %% start timer
             if nargin < 4
                 mpx = {};   %% no MATPOWER extensions by default
@@ -61,7 +127,7 @@ classdef (Abstract) task < handle
 
             [d, mpopt] = obj.run_pre(d, mpopt);
 
-            dmc = obj.dm_converter_create(d, mpopt, mpx);
+            dmc = obj.dm_converter_build(d, mpopt, mpx);
             obj.dmc = dmc;
 
             %% initialize
@@ -155,27 +221,138 @@ classdef (Abstract) task < handle
         end
 
         function [mm, nm, dm] = next_mm(obj, mm, nm, dm, mpopt, mpx)
+            % Controls iterations over mathematical models.
+            %
+            % Called automatically by :meth:`run` method.
+            % Subclasses can override this method to return a new or
+            % updated math model object for use in the next iteration
+            % or an empty matrix (the default) if finished.
+            % ::
+            %
+            %   [mm, nm, dm] = obj.next_mm(mm, nm, dm, mpoopt, mpx)
+            %
+            % Inputs:
+            %   mm (mp.math_model) : mathmatical model object
+            %   nm (mp.net_model) : network model object
+            %   dm (mp.data_model) : data model object
+            %   mpopt (struct) : |MATPOWER| options struct
+            %   mpx (cell array of mp.extension) : |MATPOWER| Extensions
+            %
+            % Output:
+            %   mm (mp.math_model) : new or updated mathmatical model object,
+            %       or empty matrix
+            %   nm (mp.net_model) : potentially updated network model object
+            %   dm (mp.data_model) : potentially updated data model object
+
             %% return new math model, or empty matrix if finished
             mm = [];
         end
 
         function [nm, dm] = next_nm(obj, mm, nm, dm, mpopt, mpx)
+            % Controls iterations over network models.
+            %
+            % Called automatically by :meth:`run` method.
+            % Subclasses can override this method to return a new or
+            % updated network model object for use in the next iteration
+            % or an empty matrix (the default) if finished.
+            % ::
+            %
+            %   [nm, dm] = obj.next_nm(mm, nm, dm, mpoopt, mpx)
+            %
+            % Inputs:
+            %   mm (mp.math_model) : mathmatical model object
+            %   nm (mp.net_model) : network model object
+            %   dm (mp.data_model) : data model object
+            %   mpopt (struct) : |MATPOWER| options struct
+            %   mpx (cell array of mp.extension) : |MATPOWER| Extensions
+            %
+            % Output:
+            %   nm (mp.net_model) : new or updated network model object,
+            %       or empty matrix
+            %   dm (mp.data_model) : potentially updated data model object
+
             %% return new network model, or empty matrix if finished
             nm = [];
         end
 
         function dm = next_dm(obj, mm, nm, dm, mpopt, mpx)
+            % Controls iterations over data models.
+            %
+            % Called automatically by :meth:`run` method.
+            % Subclasses can override this method to return a new or
+            % updated data model object for use in the next iteration
+            % or an empty matrix (the default) if finished.
+            % ::
+            %
+            %   dm = obj.next_dm(mm, nm, dm, mpoopt, mpx)
+            %
+            % Inputs:
+            %   mm (mp.math_model) : mathmatical model object
+            %   nm (mp.net_model) : network model object
+            %   dm (mp.data_model) : data model object
+            %   mpopt (struct) : |MATPOWER| options struct
+            %   mpx (cell array of mp.extension) : |MATPOWER| Extensions
+            %
+            % Output:
+            %   dm (mp.data_model) : new or updated data model object,
+            %       or empty matrix
+
             %% return new data model, or empty matrix if finished
             dm = [];
         end
 
         function [d, mpopt] = run_pre(obj, d, mpopt)
+            % Called at beginning of :meth:`run` method.
+            %
+            % Subclasses can override this method to update the input
+            % data or options before beginning the run.
+            % ::
+            %
+            %   [d, mpopt] = obj.run_pre(d, mpopt)
+            %
+            % Inputs:
+            %   d : input data specification, currently assumed to be
+            %       a |MATPOWER| case name or case struct (:ml:`mpc`)
+            %   mpopt (struct) : |MATPOWER| options struct
+            %
+            % Outputs:
+            %   d : updated value of corresponding input
+            %   mpopt (struct) : updated value of corresponding input
         end
 
-        function obj = run_post(obj, mm, nm, dm, mpopt);
+        function obj = run_post(obj, mm, nm, dm, mpopt)
+            % Called at end of :meth:`run` method.
+            %
+            % Subclasses can override this method to do any final
+            % processing after the run is complete.
+            % ::
+            %
+            %   obj.run_post(mm, nm, dm, mpopt)
+            %
+            % Inputs:
+            %   mm (mp.math_model) : mathmatical model object
+            %   nm (mp.net_model) : network model object
+            %   dm (mp.data_model) : data model object
+            %   mpopt (struct) : |MATPOWER| options struct
+            %
+            % Output:
+            %   obj (mp.task) : task object
         end
 
         function print_soln(obj, mpopt, fname)
+            % Display the pretty-printed results.
+            %
+            % Display to standard output and/or save to a file the
+            % pretty-printed solved case.
+            % ::
+            %
+            %   obj.print_soln(mpopt)
+            %   obj.print_soln(mpopt, fname)
+            %
+            % Inputs:
+            %   mpopt (struct) : |MATPOWER| options struct
+            %   fname (char array) : file name for saving pretty-printed output
+
             if nargin < 3
                 fname = '';
             end
@@ -196,7 +373,7 @@ classdef (Abstract) task < handle
                 end
             end
 
-            %% print to stdio
+            %% print to standard output
             if mpopt.out.all
                 obj.print_soln_header(mpopt);
                 if obj.success || mpopt.out.force
@@ -206,6 +383,18 @@ classdef (Abstract) task < handle
         end
 
         function print_soln_header(obj, mpopt, fd)
+            % Display solution header information.
+            %
+            % Called by :meth:`print_soln` to print success/failure,
+            % elapsed time, etc. to a file identifier.
+            % ::
+            %
+            %   obj.print_soln_header(mpopt, fd)
+            %
+            % Inputs:
+            %   mpopt (struct) : |MATPOWER| options struct
+            %   fd (integer) : file identifier (1 for standard output)
+
             if nargin < 3
                 fd = 1;     %% print to stdio by default
             end
@@ -223,6 +412,14 @@ classdef (Abstract) task < handle
         end
 
         function save_soln(obj, fname)
+            % Save the solved case to a file.
+            % ::
+            %
+            %   obj.save_soln(fname)
+            %
+            % Input:
+            %   fname (char array) : file name for saving solved case
+
             %% export solution
             if obj.nm.np ~= 0
                 obj.dm.source = obj.dmc.export(obj.dm, obj.dm.source);
@@ -234,6 +431,25 @@ classdef (Abstract) task < handle
 
         %%-----  data model converter methods  -----
         function dmc_class = dm_converter_class(obj, d, mpopt, mpx)
+            % Get data model converter constructor.
+            %
+            % Called by :meth:`dm_converter_create` to determine the class
+            % to use for the data model converter object. Handles any
+            % modifications specified by |MATPOWER| options or extensions.
+            % ::
+            %
+            %   dmc_class = obj.dm_converter_class(d, mpopt, mpx)
+            %
+            % Inputs:
+            %   d : input data specification, currently assumed to be
+            %       a |MATPOWER| case name or case struct (:ml:`mpc`)
+            %   mpopt (struct) : |MATPOWER| options struct
+            %   mpx (cell array of mp.extension) : |MATPOWER| Extensions
+            %
+            % Output:
+            %   dmc_class (function handle) : handle to the constructor to
+            %       be used to instantiate the data model converter object
+
             %% manual override
             if isfield(mpopt.exp, 'dm_converter_class') && ...
                     ~isempty(mpopt.exp.dm_converter_class)
@@ -262,31 +478,82 @@ classdef (Abstract) task < handle
         end
 
         function dmc_class = dm_converter_class_mpc2_default(obj)
+            % Get default data model converter constructor.
+            %
+            % Called by :meth:`dm_converter_class` to determine the
+            % default class to use for the data model converter object
+            % when the input is a version 2 |MATPOWER| case struct.
+            % ::
+            %
+            %   dmc_class = obj.dm_converter_class_mpc2_default()
+
             dmc_class = @mp.dm_converter_mpc2;
         end
 
         function dmc = dm_converter_create(obj, d, mpopt, mpx)
+            % Create data model converter object.
+            %
+            % Called by :meth:`dm_converter_build` method to instantiate
+            % the data model converter object. Handles any modifications
+            % to data model converter elements specified by |MATPOWER|
+            % options or extensions.
+            % ::
+            %
+            %   dmc = obj.dm_converter_create(d, mpopt, mpx)
+            %
+            % Inputs:
+            %   d : input data specification, currently assumed to be
+            %       a |MATPOWER| case name or case struct (:ml:`mpc`)
+            %   mpopt (struct) : |MATPOWER| options struct
+            %   mpx (cell array of mp.extension) : |MATPOWER| Extensions
+            %
+            % Output:
+            %   dmc (mp.dm_converter) : data model converter object,
+            %       ready to build
+
+            dmc_class = obj.dm_converter_class(d, mpopt, mpx);
+            dmc = dmc_class();
+
+            %% apply extensions
+            for k = 1:length(mpx)
+                dmc_elements = mpx{k}.dmc_element_classes(dmc_class, ...
+                                                dmc.format_tag, mpopt);
+                if ~isempty(dmc_elements)
+                    dmc.modify_element_classes(dmc_elements);
+                end
+            end
+
+            %% apply user-supplied dmc.element_classes overrides
+            if isfield(mpopt.exp, 'dmc_element_classes') && ...
+                    ~isempty(mpopt.exp.dmc_element_classes)
+                dmc.modify_element_classes(mpopt.exp.dmc_element_classes);
+            end
+        end
+
+        function dmc = dm_converter_build(obj, d, mpopt, mpx)
+            % Create and build data model converter object.
+            %
+            % Called by :meth:`run` method to instantiate and build
+            % the data model converter object, including any modifications
+            % specified by |MATPOWER| options or extensions.
+            % ::
+            %
+            %   dmc = obj.dm_converter_build(d, mpopt, mpx)
+            %
+            % Inputs:
+            %   d : input data specification, currently assumed to be
+            %       a |MATPOWER| case name or case struct (:ml:`mpc`)
+            %   mpopt (struct) : |MATPOWER| options struct
+            %   mpx (cell array of mp.extension) : |MATPOWER| Extensions
+            %
+            % Output:
+            %   dmc (mp.dm_converter) : data model converter object,
+            %       ready for use
+
             if isa(d, 'mp.data_model')
                 dmc = [];
             else
-                dmc_class = obj.dm_converter_class(d, mpopt, mpx);
-                dmc = dmc_class();
-
-                %% apply extensions
-                for k = 1:length(mpx)
-                    dmc_elements = mpx{k}.dmc_element_classes(dmc_class, ...
-                                                    dmc.format_tag, mpopt);
-                    if ~isempty(dmc_elements)
-                        dmc.modify_element_classes(dmc_elements);
-                    end
-                end
-
-                %% apply user-supplied dmc.element_classes overrides
-                if isfield(mpopt.exp, 'dmc_element_classes') && ...
-                        ~isempty(mpopt.exp.dmc_element_classes)
-                    dmc.modify_element_classes(mpopt.exp.dmc_element_classes);
-                end
-
+                dmc = obj.dm_converter_create(d, mpopt, mpx);
                 dmc.build();
 
                 %% remove excluded elements (results in corresponding elements
@@ -306,6 +573,25 @@ classdef (Abstract) task < handle
 
         %%-----  data model methods  -----
         function dm_class = data_model_class(obj, d, mpopt, mpx)
+            % Get data model constructor.
+            %
+            % Called by :meth:`data_model_create` to determine the class
+            % to use for the data model object. Handles any modifications
+            % specified by |MATPOWER| options or extensions.
+            % ::
+            %
+            %   dm_class = obj.data_model_class(d, mpopt, mpx)
+            %
+            % Inputs:
+            %   d : input data specification, currently assumed to be
+            %       a |MATPOWER| case name or case struct (:ml:`mpc`)
+            %   mpopt (struct) : |MATPOWER| options struct
+            %   mpx (cell array of mp.extension) : |MATPOWER| Extensions
+            %
+            % Output:
+            %   dm_class (function handle) : handle to the constructor to
+            %       be used to instantiate the data model object
+
             %% manual override
             if isfield(mpopt.exp, 'data_model_class') && ...
                     ~isempty(mpopt.exp.data_model_class)
@@ -322,10 +608,36 @@ classdef (Abstract) task < handle
         end
 
         function dm_class = data_model_class_default(obj)
+            % Get default data model constructor.
+            %
+            % Called by :meth:`data_model_class` to determine the
+            % default class to use for the data model object.
+            % ::
+            %
+            %   dm_class = obj.data_model_class_default()
+
             dm_class = @mp.data_model;
         end
 
         function dm = data_model_create(obj, d, mpopt, mpx)
+            % Create data model object.
+            %
+            % Called by :meth:`data_model_build` to instantiate
+            % the data model object. Handles any modifications to data
+            % model elements specified by |MATPOWER| options or extensions.
+            % ::
+            %
+            %   dm = obj.data_model_create(d, mpopt, mpx)
+            %
+            % Inputs:
+            %   d : input data specification, currently assumed to be
+            %       a |MATPOWER| case name or case struct (:ml:`mpc`)
+            %   mpopt (struct) : |MATPOWER| options struct
+            %   mpx (cell array of mp.extension) : |MATPOWER| Extensions
+            %
+            % Output:
+            %   dm (mp.data_model) : data model object, ready to build
+
             dm_class = obj.data_model_class(d, mpopt, mpx);
             dm = dm_class();
 
@@ -345,6 +657,25 @@ classdef (Abstract) task < handle
         end
 
         function dm = data_model_build(obj, d, dmc, mpopt, mpx)
+            % Create and build data model object.
+            %
+            % Called by :meth:`run` method to instantiate and build
+            % the data model object, including any modifications
+            % specified by |MATPOWER| options or extensions.
+            % ::
+            %
+            %   dm = obj.data_model_create(d, dmc, mpopt, mpx)
+            %
+            % Inputs:
+            %   d : input data specification, currently assumed to be
+            %       a |MATPOWER| case name or case struct (:ml:`mpc`)
+            %   dmc (mp.dm_converter) : data model converter object
+            %   mpopt (struct) : |MATPOWER| options struct
+            %   mpx (cell array of mp.extension) : |MATPOWER| Extensions
+            %
+            % Output:
+            %   dm (mp.data_model) : data model object, ready for use
+
             if isa(d, 'mp.data_model')
                 dm = d;
             else
@@ -356,13 +687,66 @@ classdef (Abstract) task < handle
         end
 
         function [dm, d] = data_model_build_pre(obj, dm, d, dmc, mpopt)
+            % Called at beginning of :meth:`data_model_build`.
+            %
+            % Called just *before* calling the data model's
+            % :meth:`build` method. In this base class, this method does
+            % nothing.
+            % ::
+            %
+            %   [dm, d] = obj.data_model_build_pre(dm, d, dmc, mpopt)
+            %
+            % Inputs:
+            %   dm (mp.data_model) : data model object
+            %   d : input data specification, currently assumed to be
+            %       a |MATPOWER| case name or case struct (:ml:`mpc`)
+            %   dmc (mp.dm_converter) : data model converter object
+            %   mpopt (struct) : |MATPOWER| options struct
+            %
+            % Outputs:
+            %   dm (mp.data_model) : updated data model object
+            %   d : updated value of corresponding input
         end
 
         function dm = data_model_build_post(obj, dm, dmc, mpopt)
+            % Called at end of :meth:`data_model_build`.
+            %
+            % Called just *after* calling the data model's
+            % :meth:`build` method. In this base class, this method does
+            % nothing.
+            % ::
+            %
+            %   dm = obj.data_model_build_post(dm, dmc, mpopt)
+            %
+            % Inputs:
+            %   dm (mp.data_model) : data model object
+            %   dmc (mp.dm_converter) : data model converter object
+            %   mpopt (struct) : |MATPOWER| options struct
+            %
+            % Output:
+            %   dm (mp.data_model) : updated data model object
         end
 
         %%-----  network model methods  -----
         function nm_class = network_model_class(obj, dm, mpopt, mpx)
+            % Get network model constructor.
+            %
+            % Called by :meth:`network_model_create` to determine the class
+            % to use for the network model object. Handles any modifications
+            % specified by |MATPOWER| options or extensions.
+            % ::
+            %
+            %   nm_class = obj.network_model_class(dm, mpopt, mpx)
+            %
+            % Inputs:
+            %   dm (mp.data_model) : data model object
+            %   mpopt (struct) : |MATPOWER| options struct
+            %   mpx (cell array of mp.extension) : |MATPOWER| Extensions
+            %
+            % Output:
+            %   nm_class (function handle) : handle to the constructor to
+            %       be used to instantiate the network model object
+
             %% manual override
             if isfield(mpopt.exp, 'network_model_class') && ...
                     ~isempty(mpopt.exp.network_model_class)
@@ -379,10 +763,46 @@ classdef (Abstract) task < handle
         end
 
         function nm_class = network_model_class_default(obj, dm, mpopt)
+            % Get default network model constructor.
+            %
+            % Called by :meth:`network_model_class` to determine the
+            % default class to use for the network model object.
+            %
+            % *Note: This is an abstract method that must be implemented
+            % by a subclass.*
+            % ::
+            %
+            %   nm_class = obj.network_model_class_default(dm, mpopt)
+            %
+            % Inputs:
+            %   dm (mp.data_model) : data model object
+            %   mpopt (struct) : |MATPOWER| options struct
+            %
+            % Output:
+            %   nm_class (function handle) : handle to the constructor to
+            %       be used to instantiate the network model object
+
             error('mp.task/network_model_class_default: must be implemented in subclass');
         end
 
         function nm = network_model_create(obj, dm, mpopt, mpx)
+            % Create network model object.
+            %
+            % Called by :meth:`network_model_build` to instantiate
+            % the network model object. Handles any modifications to network
+            % model elements specified by |MATPOWER| options or extensions.
+            % ::
+            %
+            %   nm = obj.network_model_create(dm, mpopt, mpx)
+            %
+            % Inputs:
+            %   dm (mp.data_model) : data model object
+            %   mpopt (struct) : |MATPOWER| options struct
+            %   mpx (cell array of mp.extension) : |MATPOWER| Extensions
+            %
+            % Output:
+            %   nm (mp.net_model) : network model object, ready to build
+
             nm_class = obj.network_model_class(dm, mpopt, mpx);
             nm = nm_class();
             nm.init_set_types();
@@ -403,6 +823,23 @@ classdef (Abstract) task < handle
         end
 
         function nm = network_model_build(obj, dm, mpopt, mpx)
+            % Create and build network model object.
+            %
+            % Called by :meth:`run` method to instantiate and build
+            % the network model object, including any modifications
+            % specified by |MATPOWER| options or extensions.
+            % ::
+            %
+            %   nm = obj.network_model_build(dm, mpopt, mpx)
+            %
+            % Inputs:
+            %   dm (mp.data_model) : data model object
+            %   mpopt (struct) : |MATPOWER| options struct
+            %   mpx (cell array of mp.extension) : |MATPOWER| Extensions
+            %
+            % Output:
+            %   nm (mp.net_model) : network model object, ready for use
+
             nm = obj.network_model_create(dm, mpopt, mpx);
             nm = obj.network_model_build_pre(nm, dm, mpopt);
             nm.build(dm);
@@ -410,16 +847,76 @@ classdef (Abstract) task < handle
         end
 
         function nm = network_model_build_pre(obj, nm, dm, mpopt)
+            % Called at beginning of :meth:`network_model_build`.
+            %
+            % Called just *before* calling the network model's
+            % :meth:`build` method. In this base class, this method does
+            % nothing.
+            % ::
+            %
+            %   nm = obj.network_model_build_pre(nm, dm, mpopt)
+            %
+            % Inputs:
+            %   nm (mp.net_model) : network model object
+            %   dm (mp.data_model) : data model object
+            %   mpopt (struct) : |MATPOWER| options struct
+            %
+            % Output:
+            %   nm (mp.net_model) : updated network model object
         end
 
         function nm = network_model_build_post(obj, nm, dm, mpopt)
+            % Called at end of :meth:`network_model_build`.
+            %
+            % Called just *after* calling the network model's
+            % :meth:`build` method. In this base class, this method does
+            % nothing.
+            % ::
+            %
+            %   nm = obj.network_model_build_post(nm, dm, mpopt)
+            %
+            % Inputs:
+            %   nm (mp.net_model) : network model object
+            %   dm (mp.data_model) : data model object
+            %   mpopt (struct) : |MATPOWER| options struct
+            %
+            % Output:
+            %   nm (mp.net_model) : updated network model object
         end
 
         function nm = network_model_x_soln(obj, mm, nm)
+            % Update network model state from math model solution.
+            %
+            % Called by :meth:`network_model_update`.
+            % ::
+            %
+            %   nm = obj.network_model_x_soln(mm, nm)
+            %
+            % Inputs:
+            %   mm (mp.math_model) : mathmatical model object
+            %   nm (mp.net_model) : network model object
+            %
+            % Output:
+            %   nm (mp.net_model) : updated network model object
+
             nm = mm.network_model_x_soln(nm);
         end
 
         function nm = network_model_update(obj, mm, nm)
+            % Update network model state, solution values from math model solution.
+            %
+            % Called by :meth:`run` method.
+            % ::
+            %
+            %   nm = obj.network_model_update(mm, nm)
+            %
+            % Inputs:
+            %   mm (mp.math_model) : mathmatical model object
+            %   nm (mp.net_model) : network model object
+            %
+            % Output:
+            %   nm (mp.net_model) : updated network model object
+
             %% save network state solution (convert from math model state)
             obj.network_model_x_soln(mm, nm);
 
@@ -429,6 +926,25 @@ classdef (Abstract) task < handle
 
         %%-----  mathematical model methods  -----
         function mm_class = math_model_class(obj, nm, dm, mpopt, mpx)
+            % Get mathematical model constructor.
+            %
+            % Called by :meth:`math_model_create` to determine the class
+            % to use for the mathematical model object. Handles any
+            % modifications specified by |MATPOWER| options or extensions.
+            % ::
+            %
+            %   mm_class = obj.math_model_class(nm, dm, mpopt, mpx)
+            %
+            % Inputs:
+            %   nm (mp.net_model) : network model object
+            %   dm (mp.data_model) : data model object
+            %   mpopt (struct) : |MATPOWER| options struct
+            %   mpx (cell array of mp.extension) : |MATPOWER| Extensions
+            %
+            % Output:
+            %   mm_class (function handle) : handle to the constructor to
+            %       be used to instantiate the mathematical model object
+
             %% manual override
             if isfield(mpopt.exp, 'math_model_class') && ...
                     ~isempty(mpopt.exp.math_model_class)
@@ -445,10 +961,49 @@ classdef (Abstract) task < handle
         end
 
         function mm_class = math_model_class_default(obj, nm, dm, mpopt)
+            % Get default mathematical model constructor.
+            %
+            % Called by :meth:`math_model_class` to determine the
+            % default class to use for the mathematical model object.
+            %
+            % *Note: This is an abstract method that must be implemented
+            % by a subclass.*
+            % ::
+            %
+            %   mm_class = obj.math_model_class_default(nm, dm, mpopt)
+            %
+            % Inputs:
+            %   nm (mp.net_model) : network model object
+            %   dm (mp.data_model) : data model object
+            %   mpopt (struct) : |MATPOWER| options struct
+            %
+            % Output:
+            %   mm_class (function handle) : handle to the constructor to
+            %       be used to instantiate the mathematical model object
+
             error('mp.task/math_model_class_default: must be implemented in subclass');
         end
 
         function mm = math_model_create(obj, nm, dm, mpopt, mpx)
+            % Create mathematical model object.
+            %
+            % Called by :meth:`math_model_build` to instantiate the
+            % mathematical model object. Handles any modifications to
+            % mathematical model elements specified by |MATPOWER| options
+            % or extensions.
+            % ::
+            %
+            %   mm = obj.math_model_create(nm, dm, mpopt, mpx)
+            %
+            % Inputs:
+            %   nm (mp.net_model) : network model object
+            %   dm (mp.data_model) : data model object
+            %   mpopt (struct) : |MATPOWER| options struct
+            %   mpx (cell array of mp.extension) : |MATPOWER| Extensions
+            %
+            % Output:
+            %   mm (mp.math_model) : mathmatical model object, ready to build
+
             mm_class = obj.math_model_class(nm, dm, mpopt, mpx);
             mm = mm_class();
             mm.init_set_types();
@@ -469,6 +1024,24 @@ classdef (Abstract) task < handle
         end
 
         function mm = math_model_build(obj, nm, dm, mpopt, mpx)
+            % Create and build mathematical model object.
+            %
+            % Called by :meth:`run` method to instantiate and build
+            % the mathematical model object, including any modifications
+            % specified by |MATPOWER| options or extensions.
+            % ::
+            %
+            %   mm = obj.math_model_build(nm, dm, mpopt, mpx)
+            %
+            % Inputs:
+            %   nm (mp.net_model) : network model object
+            %   dm (mp.data_model) : data model object
+            %   mpopt (struct) : |MATPOWER| options struct
+            %   mpx (cell array of mp.extension) : |MATPOWER| Extensions
+            %
+            % Output:
+            %   mm (mp.math_model) : mathmatical model object, ready for use
+
             mm = obj.math_model_create(nm, dm, mpopt, mpx);
 
             if nm.np ~= 0       %% skip for empty model
@@ -485,6 +1058,23 @@ classdef (Abstract) task < handle
 %         end
 
         function opt = math_model_opt(obj, mm, nm, dm, mpopt)
+            % Get the options struct to pass to ``mm.solve()``.
+            %
+            % Called by :meth:`run` method.
+            % ::
+            %
+            %   opt = obj.math_model_opt(mm, nm, dm, mpopt)
+            %
+            % Inputs:
+            %   mm (mp.math_model) : mathmatical model object
+            %   nm (mp.net_model) : network model object
+            %   dm (mp.data_model) : data model object
+            %   mpopt (struct) : |MATPOWER| options struct
+            %
+            % Output:
+            %   opt (struct) : options struct for mathematical model
+            %       :meth:`solve` method
+
             opt = mm.solve_opts(nm, dm, mpopt);
         end
     end     %% methods

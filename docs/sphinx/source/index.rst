@@ -20,6 +20,7 @@
    overview
    users-manual/index
    dev-manual/index
+   ref-manual/index
    mptest/index
    mips/index
    mpom/index

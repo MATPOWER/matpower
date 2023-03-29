@@ -1,13 +1,19 @@
 function tab_class = mp_table_class()
-%MP_TABLE_CLASS  Returns handle to constructor for TABLE or MP_TABLE
+% mp_table_class - Returns handle to constructor for ``table`` or ``mp_table``.
 %
-%   Returns a handle to TABLE constructor, if it is available, otherwise to
-%   MP_TABLE constructor.
+% Returns a handle to :class:`table` constructor, if it is available,
+% otherwise to :class:`mp_table` constructor.
 %
-%   See also TABLE, MP_TABLE.
+% ::
+%
+%   % Works in MATLAB or Octave, which does not support table().
+%   table_class = mp_table_class();
+%   T = table_class(var1, var2, …);
+%
+% See also table (:class:`table`), mp_table (:class:`mp_table`).
 
 %   MATPOWER
-%   Copyright (c) 2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2022-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

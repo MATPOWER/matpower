@@ -1,3 +1,5 @@
+.. _dev_manual:
+
 #############################
 |MATPOWER| Developer's Manual
 #############################
@@ -24,6 +26,6 @@
    acknowledgments
 
 ..
-   contributing
    class-reference
    function-reference
+   test-page

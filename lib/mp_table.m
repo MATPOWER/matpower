@@ -1,8 +1,34 @@
 classdef mp_table
-%MP_TABLE  Very basic TABLE class for Octave or older Matlab.
+% mp_table - Very basic table-compatible class for Octave or older Matlab.
+% ::
+%
+%   T = mp_table(var1, var2, ...);
+%   T = mp_table(..., 'VariableNames', {name1, name2, ...}});
+%   T = mp_table(..., 'RowNames', {name1, name2, ...}});
+%   T = mp_table(..., 'DimensionNames', {name1, name2, ...}});
+%
+% Implements a very basic table array class focused the ability
+% to store and access named variables of different types in a way that
+% is compatible with MATLAB's built-in table class. Other features,
+% such as table joining, etc., are not implemented.
+%
+% mp_table Methods:
+%    * mp_table - construct object
+%    * copy - make copy of object
+%    * istable - true for mp_table objects
+%    * size - dimensions of table
+%    * isempty - true if table has no columns or no rows
+%    * end - used to index last row or variable/column
+%    * subsref - indexing a table to retrieve data
+%    * subsasgn - indexing a table to assign data
+%    * horzcat - concatenate tables horizontally
+%    * vertcat - concatenate tables vertically
+%    * display - display table contents
+%
+% See also table (:class:`table`).
 
 %   MATPOWER
-%   Copyright (c) 2021, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -18,6 +44,13 @@ classdef mp_table
 
     methods
         function obj = mp_table(varargin)
+            % Constructs the object.
+            % ::
+            %
+            %   T = mp_table(var1, var2, ...);
+            %   T = mp_table(..., 'VariableNames', {name1, name2, ...}});
+            %   T = mp_table(..., 'RowNames', {name1, name2, ...}});
+            %   T = mp_table(..., 'DimensionNames', {name1, name2, ...}});
             args = varargin;
 
             if nargin
@@ -62,6 +95,10 @@ classdef mp_table
         end
 
         function new_obj = copy(obj)
+            % Makes a copy of the object.
+            % ::
+            %
+            %   new_T = T.copy();
             new_obj = eval(class(obj));  %% create new object
 
             %% make copies of properties
@@ -87,12 +124,23 @@ classdef mp_table
             end
         end
 
-        %% not really useable until Octave implements istable()
         function TorF = istable(obj)
+            % Returns true.
+            %
+            % Unfortunately, this is not really useful until Octave
+            % implements a built-in istable() that this can override.
+            %
+            % See also istable (:func:`istable`).
             TorF = true;
         end
 
         function varargout = size(obj, dim)
+            % Returns size of table
+            % ::
+            %
+            %   [m, n] = T.size();
+            %   m = T.size(1);
+            %   n = T.size(2);
             varargout = cell(1, nargout);
             w = length(obj.Properties.VariableValues);
             if w
@@ -118,10 +166,16 @@ classdef mp_table
         end
 
         function TorF = isempty(obj)
+            % Returns true if the table has no columns or no rows.
             TorF = prod(size(obj)) == 0;
         end
 
         function N = end(obj, k, n)
+            % Used to index the last row or column of the table.
+            % ::
+            %
+            %   last_var = T{:, end};
+            %   last_row = T(end, :);
             N = size(obj, k);
         end
 
@@ -129,13 +183,30 @@ classdef mp_table
             n = 1;
         end
 
+        % This is needed to avoid an error when doing T{r1:rN, c} = b;
+        % See https://github.com/apjanke/octave-tablicious/issues/80#issuecomment-855198281.
         function n = numel(obj, varargin)
-            %% needed to avoid error when doing T{r1:rN, c} = b;
-            %% see https://github.com/apjanke/octave-tablicious/issues/80#issuecomment-855198281
             n = 1;
         end
 
         function b = subsref(obj, s)
+            % Called when indexing a table to retrieve data.
+            % ::
+            %
+            %   sub_T = T(i, :);
+            %   sub_T = T(:, j);
+            %   sub_T = T(i1:iN, j1:jN);
+            %   var = T.<name>;
+            %   val = T.<name>(i);
+            %   val = T.<name>(i1:iN);
+            %   val = T.<name>{i};
+            %   val = T.<name>{i1:iN};
+            %   val = T.<name>(i, :);
+            %   val = T.<name>(i, j);
+            %   var_j = T{:, j};
+            %   val = T{i, j};
+            %   val = T{i1:iN, j};
+            %   val = T{i1:iN, j1:jN};
             switch s(1).type
                 case '.'
                     if strcmp(s(1).subs, 'Properties')
@@ -178,6 +249,23 @@ classdef mp_table
         end
 
         function obj = subsasgn(obj, s, b)
+            % Called when indexing a table to assign data.
+            % ::
+            %
+            %   T(i, :) = sub_T;
+            %   T(:, j) = sub_T;
+            %   T(i1:iN, j1:jN) = sub_T;
+            %   T.<name> = var;
+            %   T.<name>(i) = val;
+            %   T.<name>(i1:iN) = val;
+            %   T.<name>{i} = val;
+            %   T.<name>{i1:iN} = val;
+            %   T.<name>(i, :) = val;
+            %   T.<name>(i, j) = val;
+            %   T{:, j} = var_j;
+            %   T{i, j} = val;
+            %   T{i1:iN, j} = val;
+            %   T{i1:iN, j1:jN} = val;
             R = length(s) > 1;      %% need to recurse
             switch s(1).type
                 case '.'
@@ -267,6 +355,10 @@ classdef mp_table
         end
 
         function obj = horzcat(obj, varargin)
+            % Concatenate tables horizontally.
+            % ::
+            %
+            %   T = [T1 T2];
             [nr, nv] = size(obj);
             nvn = length(obj.Properties.VariableNames); %% num variable names
             nrn = length(obj.Properties.RowNames);      %% num row names
@@ -326,6 +418,10 @@ classdef mp_table
         end
 
         function obj = vertcat(obj, varargin)
+            % Concatenate tables vertically.
+            % ::
+            %
+            %   T = [T1; T2];
             [nr, nv] = size(obj);
             nvn = length(obj.Properties.VariableNames); %% num variable names
             nrn = length(obj.Properties.RowNames);      %% num row names
@@ -397,29 +493,16 @@ classdef mp_table
             end
         end
 
-        function [var_names, row_names, dim_names, args] = ...
-                extract_named_args(obj, args)
-            var_names = {};
-            row_names = {};
-            dim_names = {};
-            for k = length(args)-1:-1:1
-                if ischar(args{k})
-                    switch args{k}
-                        case 'VariableNames'
-                            var_names = args{k+1};
-                            args(k:k+1) = [];
-                        case 'RowNames'
-                            row_names = args{k+1};
-                            args(k:k+1) = [];
-                        case 'DimensionNames'
-                            dim_names = args{k+1};
-                            args(k:k+1) = [];
-                    end
-                end
-            end
-        end
-
         function display(obj)
+            % Display the table contents.
+            %
+            % This method is called automatically when omitting a semicolon
+            % on a line that retuns an object of this class.
+            %
+            % By default it displays only the first and last 10 rows if
+            % there are more than 25 rows.
+            %
+            % Does not currently display the contents of any nested tables.
             allrows = 1;
 
             [nr, nv] = size(obj);
@@ -558,6 +641,31 @@ classdef mp_table
                 end
             end
             fprintf('\n');
+        end
+    end     %% methods
+
+    methods (Access=protected)
+        function [var_names, row_names, dim_names, args] = ...
+                extract_named_args(obj, args)
+            % used to extract named arguments pass to constructor
+            var_names = {};
+            row_names = {};
+            dim_names = {};
+            for k = length(args)-1:-1:1
+                if ischar(args{k})
+                    switch args{k}
+                        case 'VariableNames'
+                            var_names = args{k+1};
+                            args(k:k+1) = [];
+                        case 'RowNames'
+                            row_names = args{k+1};
+                            args(k:k+1) = [];
+                        case 'DimensionNames'
+                            dim_names = args{k+1};
+                            args(k:k+1) = [];
+                    end
+                end
+            end
         end
     end     %% methods
 end         %% classdef

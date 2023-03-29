@@ -20,11 +20,11 @@ import re
 # -- Project information -----------------------------------------------------
 
 project = 'MATPOWER Documentation'
-copyright = '1996-2022, Power Systems Engineering Research Center (PSERC)'
+copyright = '1996-2023, Power Systems Engineering Research Center (PSERC)'
 author = 'Ray D. Zimmerman, Carlos E. Murillo-Sánchez, Hongye Wang, et. al.'
 
 # The full version, including alpha/beta/rc tags
-release = '0.1'
+release = '8.0b1'
 
 
 # -- General configuration ---------------------------------------------------
@@ -44,8 +44,8 @@ extensions = [
                                 # to load the module it's going to summarize
 ]
 this_dir = os.path.dirname(os.path.abspath(__file__))
-matlab_src_dir = this_dir
-# matlab_src_dir = os.path.abspath(os.path.join(this_dir, '..'))
+# matlab_src_dir = this_dir
+matlab_src_dir = os.path.abspath(os.path.join(this_dir, 'matlab-source'))
 # matlab_src_dir = os.path.abspath(os.path.join(matlab_src_dir, '..'))
 print("this_dir = ", this_dir)
 print("matlab_src_dir = ", matlab_src_dir)
@@ -155,7 +155,8 @@ latex_elements = {
 
 # If true, the current module name will be prepended to all description
 # unit titles (such as .. function::).
-add_module_names = False
+#add_module_names = False
+matlab_keep_package_prefix = False
 #autoclass_content = 'both'         # 'class', 'init', 'both'
 autodoc_member_order = 'bysource'   # 'alphabetical', 'groupwise', 'bysource'
 napoleon_use_param = False
