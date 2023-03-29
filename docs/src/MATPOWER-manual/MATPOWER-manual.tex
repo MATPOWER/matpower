@@ -8574,6 +8574,7 @@ Prototype examples of PF, CPF, and OPF, built using the new \matpower{} Extensio
 \item Each power flow is initialized with the solved voltages of the previous one when changing PV buses to PQ during Q limit enforcement. \emph{Thanks to Tostado-Véliz, Kamel, Jurado.}
 \item The \code{makePTDF()} function can now optionally use a different slack distribution for each bus by specifying the \code{slack} input as a matrix. \emph{Thanks to Jon Martinez Corral.}
 \item Automatically reduce order of polynomial generator costs with higher order coefficients equal to zero. Allows the DC OPF to solve cases, e.g. with cubic costs where the 3rd order term is 0, such as cases exported by PowerWorld. \emph{Thanks to Rajesh Mookerjee.}
+\item Update for compatibility with \matlab{} R2023a (\ot{} 9.5) which removed \code{x0} as a valid input to \code{linprog()}.
 \end{itemize}
 
 % \pagebreak

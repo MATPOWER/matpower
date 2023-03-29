@@ -14,6 +14,9 @@ since 8.0b1
 -----------
 
 #### 3/29/23
+  - Pull latest MP-Opt-Model subrepo with update for compatibility with
+    MATLAB R2023a (Optimization Toolbox 9.5) which removed `x0` as a
+    valid input to `linprog()`.
   - Fix bug (fatal in Octave 8.1) in pretty-printing of reserve
     gen constraints when using `mp.xt_reserves`.
 
