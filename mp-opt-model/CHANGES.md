@@ -2,6 +2,22 @@ Change history for MP-Opt-Model
 ===============================
 
 
+Since version 4.1
+-----------------
+
+#### 3/27/23
+  - Update for compatibility with MATLAB R2023a (Optimization Toolbox 9.5)
+    which removed `x0` as a valid input to `linprog`.
+
+#### 3/7/23
+  - Add `opt_model/is_solved()` method to determine if the model
+    has been solved and contains the solution.
+  - Add `opt_model/display_soln()` method to display the results
+    of a solved model, including values, bounds and shadow prices for
+    variables and linear constraints, values and shadow prices for
+    nonlinear constraints, and individual cost components.
+
+
 Version 4.1 - *Dec 13, 2022*
 ----------------------------
 

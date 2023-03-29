@@ -282,8 +282,13 @@ if isLP
             intlinprog(c, intcon, Ai, bi, Ae, be, xmin, xmax, ot_opt);
         lam = [];
     else
-        [x, f, eflag, output, lam] = ...
-            linprog(c, Ai, bi, Ae, be, xmin, xmax, x0, ot_opt);
+        if have_feature('matlab', 'vnum') > 9.013
+            [x, f, eflag, output, lam] = ...
+                linprog(c, Ai, bi, Ae, be, xmin, xmax, ot_opt);
+        else
+            [x, f, eflag, output, lam] = ...
+                linprog(c, Ai, bi, Ae, be, xmin, xmax, x0, ot_opt);
+        end
     end
 else
     [x, f, eflag, output, lam] = ...

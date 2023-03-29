@@ -284,5 +284,9 @@ classdef opt_model < mp_idx_manager
                 'fcn', es, ...
                 'vs', es );
         end
+
+        function TorF = is_solved(om)
+            TorF = ~isempty(om.soln.eflag);
+        end
     end     %% methods
 end         %% classdef

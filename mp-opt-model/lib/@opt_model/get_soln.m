@@ -56,7 +56,7 @@ function varargout = get_soln(om, set_type, tags, name, idx)
 %       dg_b_2_3 = om.get_soln('nle', 'dg', 'nle_con_b', {2,3});
 %
 %   For a complete set of solution vector values and shadow prices, using
-%   the PARSE_SOLN method may be more effecient.
+%   the PARSE_SOLN method may be more efficient.
 %
 %   See also PARSE_SOLN.
 

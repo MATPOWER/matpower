@@ -187,6 +187,7 @@ else
 end
 %% MATLAB or Octave
 matlab = have_feature('matlab');
+mlver = have_feature('matlab', 'vnum');
 otver = have_feature('quadprog', 'vnum');
 
 %% split up linear constraints
@@ -264,8 +265,13 @@ end
 %% call the solver
 if isLP
     if matlab
-        [x, f, eflag, output, lam] = ...
-            linprog(c, Ai, bi, Ae, be, xmin, xmax, x0, ot_opt);
+        if mlver > 9.013
+            [x, f, eflag, output, lam] = ...
+                linprog(c, Ai, bi, Ae, be, xmin, xmax, ot_opt);
+        else
+            [x, f, eflag, output, lam] = ...
+                linprog(c, Ai, bi, Ae, be, xmin, xmax, x0, ot_opt);
+        end
     else
 % don't use linprog under Octave (using GLPK directly is recommended)
 %         [x, f] = linprog(c, Ai, bi, Ae, be, xmin, xmax);
