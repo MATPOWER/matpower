@@ -49,7 +49,7 @@ for i = 1:length(islands)
     n = 0;
     dfn = sparse(nb, 1, 0); %% order of DFS for each node
     low = sparse(nb, 1, 0); %% lowest order of node's neighbor except parent
-    tarjan(island(1), -1)
+    tarjan(island(1), -1);
 
     bridges{i} = find(br == 2);
     nonbridges{i} = find(br == 1);
