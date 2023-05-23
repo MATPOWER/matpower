@@ -42,9 +42,6 @@ else %% nargin >= 3
         error('MPC is required when mask_bridge is enabled.');
     end
 end
-if ~exist('mask_bridge', 'var')
-    mask_bridge = 0;
-end
 
 [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
     TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...
