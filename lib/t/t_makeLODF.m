@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-ntests = 31;
+ntests = 35;
 t_begin(ntests, quiet);
 
 casefile = 't_auction_case';
@@ -40,10 +40,10 @@ mpopt = mpoption('out.all', 0, 'verbose', verbose);
 [i2e, bus, gen, branch] = ext2int(bus, gen, branch);
 
 %% compute injections and flows
-F0  = branch(:, PF);
+F0 = branch(:, PF);
 
 %% create some PTDF matrices
-H  = makePTDF(baseMVA, bus, branch, 1);
+H = makePTDF(baseMVA, bus, branch, 1);
 
 %% create some PTDF matrices
 s = warning('query', 'MATLAB:divideByZero');
@@ -64,5 +64,16 @@ for k = outages
 
     t_is(LODF(:, k), (F - F0) / F0(k), 6, sprintf('LODF(:, %d)', k));
 end
+
+%% check with masking bridge branches
+mpc.branch = branch0;
+[~, bridges, nonbridges] = find_bridges(mpc);
+t_is(length(bridges), 1, 12, 'length(bridges)')
+t_is(bridges{1}, [13;16;19;21;22;23;24;34], 12, 'bridges');
+t_is(nonbridges{1}, [1:12 14:15 17:18 20 27:33 35:41]', 12, 'nonbridges');
+LODFm = makeLODF(mpc, H, 1);
+LODF(:, bridges{1}) = NaN;
+LODF([25:26], nonbridges{1}) = NaN;
+t_is(LODFm, LODF, 12, 'with mask_bridge');
 
 t_end;

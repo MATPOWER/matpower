@@ -13,6 +13,11 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 since 8.0b1
 -----------
 
+#### 5/30/23
+  - Add makeLODF() option to replace with NaN any columns corresponding
+    to "bridge" branches which, if removed, result in islands.
+    *Thanks to Liangyu Zhang.*
+
 #### 3/29/23
   - Pull latest MP-Opt-Model subrepo with update for compatibility with
     MATLAB R2023a (Optimization Toolbox 9.5) which removed `x0` as a

@@ -4450,10 +4450,12 @@ The \code{makeJac} function forms the power flow Jacobian and, optionally, the s
 \begin{Code}
   PTDF = makePTDF(mpc)
   LODF = makeLODF(mpc.branch, PTDF)
+  LODF = makeLODF(mpc, PTDF)
+  LODF = makeLODF(mpc, PTDF, mask_bridge)
 \end{Code}
 
-The \code{makeLODF} function forms the DC line outage distribution factor matrix for a given PTDF.
-The matrix is $n_{br} \times n_{br}$, where $n_{br}$ is the number of branches.
+The \code{makeLODF} function forms the DC line outage distribution factor matrix for a given PTDF matrix.
+The LODF matrix is $n_{br} \times n_{br}$, where $n_{br}$ is the number of branches. If the optional \code{mask\_bridge} argument is true, columns corresponding to bridge branches (those whose removal result in islanding) are replaced with \code{NaN}.
 See Section~\ref{sec:lsf} on Linear Shift Factors for more details.
 
 
@@ -8575,6 +8577,7 @@ Prototype examples of PF, CPF, and OPF, built using the new \matpower{} Extensio
 \item The \code{makePTDF()} function can now optionally use a different slack distribution for each bus by specifying the \code{slack} input as a matrix. \emph{Thanks to Jon Martinez Corral.}
 \item Automatically reduce order of polynomial generator costs with higher order coefficients equal to zero. Allows the DC OPF to solve cases, e.g. with cubic costs where the 3rd order term is 0, such as cases exported by PowerWorld. \emph{Thanks to Rajesh Mookerjee.}
 \item Update for compatibility with \matlab{} R2023a (\ot{} 9.5) which removed \code{x0} as a valid input to \code{linprog()}.
+\item New option to \code{makeLODF()} to replace with \code{NaN} any columns corresponding to ``bridge'' branches which, if removed, result in islands. \emph{Thanks to Liangyu Zhang.}
 \end{itemize}
 
 % \pagebreak

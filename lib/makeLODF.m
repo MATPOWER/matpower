@@ -1,11 +1,14 @@
 function LODF = makeLODF(branch, PTDF, mask_bridge);
 %MAKELODF   Builds the line outage distribution factor matrix.
-%   LODF = MAKELODF(MPC, PTDF)
 %   LODF = MAKELODF(BRANCH, PTDF)
+%   LODF = MAKELODF(MPC, PTDF)
 %   LODF = MAKELODF(MPC, PTDF, MASK_BRIDGE)
 % 
-%   Returns the DC line outage distribution factor matrix for a given PTDF.
-%   The matrix is nbr x nbr, where nbr is the number of branches.
+%   Returns the DC model line outage distribution factor matrix corresponding
+%   to a given PTDF matrix. The LODF matrix is nbr x nbr, where nbr is the
+%   number of branches. If the optional MASK_BRIDGE argument is true, columns
+%   corresponding to bridge branches (those whose removal result in
+%   islanding) are replaced with NaN.
 %
 %   Example:
 %       H = makePTDF(mpc);
@@ -18,7 +21,7 @@ function LODF = makeLODF(branch, PTDF, mask_bridge);
 %   See also MAKEPTDF, FIND_BRIDGES.
 
 %   MATPOWER
-%   Copyright (c) 2008-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell,
 %   and Liangyu Zhang, Zhejiang University
 %
@@ -37,10 +40,8 @@ end
 
 if nargin < 3
     mask_bridge = 0;
-else %% nargin >= 3
-    if ~exist('mpc', 'var')
-        error('MPC is required when mask_bridge is enabled.');
-    end
+elseif mask_bridge && ~exist('mpc', 'var')
+    error('MPC is required when mask_bridge is enabled.');
 end
 
 [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
@@ -57,12 +58,12 @@ h = diag(H, 0);
 LODF = H ./ (ones(nl, nl) - ones(nl, 1) * h');
 LODF = LODF - diag(diag(LODF)) - eye(nl, nl);
 
-if mask_bridge ~= 0 
+if mask_bridge
     [~, bridges, nonbridges] = find_bridges(mpc);
     for i = 1:length(bridges)
         br = bridges{i};
         nonbr = nonbridges{i};
         LODF(:, br) = NaN;  % mask bridge branch columns
-        LODF(setdiff(1:nb, [br; nonbr;]), nonbr) = NaN; % one island should not affect other islands
+        LODF(setdiff(1:nb, [br; nonbr]), nonbr) = NaN; % one island should not affect other islands
     end
 end
