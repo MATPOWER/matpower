@@ -78,7 +78,7 @@ if have_feature('cplex') || have_feature('gurobi') || ...
         mpopt = mpoption(mpopt, 'gurobi.opts.OptimalityTol', 1e-5);     %% 1e-6
     end
     if have_feature('quadprog_ls')
-        mpopt = mpoption(mpopt, 'quadprog.TolFun', 1e-13);
+        mpopt = mpoption(mpopt, 'quadprog.TolFun', 1e-12);
     end
     if have_feature('mosek')
         mpopt = mpoption(mpopt, 'mosek.num_threads', 2);

@@ -2,6 +2,13 @@ Change history for MOST
 =======================
 
 
+since 1.2
+---------
+
+#### 2/3/23
+  - Remove extra column in ExpectedRampCost and ignore for single period.
+
+
 Version 1.2 - *Dec 13, 2022*
 ----------------------------
 

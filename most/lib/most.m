@@ -2222,12 +2222,14 @@ if mpopt.most.solve_model
       end
     end
     % Expected wear and tear costs per gen and period
-    mdo.results.ExpectedRampCost = zeros(ng, mdo.idx.ntramp+1);
+    mdo.results.ExpectedRampCost = zeros(ng, mdo.idx.ntramp);
     % First do first period wrt to InitialPg.
-    for j = 1:mdi.idx.nj(1)
-      w = mdo.tstep(1).TransMat(j,1); % the probability of going from initial state to jth
-      mdo.results.ExpectedRampCost(:, 1) = mdo.results.ExpectedRampCost(:, 1) ...
-          + 0.5 * w * mdo.RampWearCostCoeff(:,1) .* (mdo.flow(1,j,1).mpc.gen(:,PG) - mdo.InitialPg).^2;
+    if mdo.idx.ntramp > 0
+      for j = 1:mdi.idx.nj(1)
+        w = mdo.tstep(1).TransMat(j,1); % the probability of going from initial state to jth
+        mdo.results.ExpectedRampCost(:, 1) = mdo.results.ExpectedRampCost(:, 1) ...
+            + 0.5 * w * mdo.RampWearCostCoeff(:,1) .* (mdo.flow(1,j,1).mpc.gen(:,PG) - mdo.InitialPg).^2;
+      end
     end
     % Then the remaining periods
     for t = 2:nt
