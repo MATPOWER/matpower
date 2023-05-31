@@ -36,7 +36,7 @@ end
 
 t0 = 'TRALMOPF : ';
 mpopt = mpoption('opf.violation', 1e-6, 'tralm.primaltol', 1e-6, ...
-        'tralm.dualtol', 5e-6, 'tralm.costtol', 1e-7, 'tralm.smooth_ratio', 0.04);
+        'tralm.dualtol', 5e-6, 'tralm.costtol', 1e-7, 'tralm.smooth_ratio', 0.05);
 mpopt = mpoption(mpopt, 'out.all', 0, 'verbose', verbose, 'opf.ac.solver', 'TRALM');
         
 if have_feature('tralmopf')
