@@ -13,6 +13,10 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 since 8.0b1
 -----------
 
+#### 6/6/23
+  - Fix minor bug in `size()` method of `mp.mapped_array.size()` resulting
+    in fatal error if called with two output arguments.
+
 #### 5/30/23
   - Add makeLODF() option to replace with NaN any columns corresponding
     to "bridge" branches which, if removed, result in islands.

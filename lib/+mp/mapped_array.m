@@ -182,6 +182,10 @@ classdef mapped_array < handle
                                 varargout{1} = is_index_name(obj, s(2).subs{:});
                             case 'name2idx'
                                 varargout{1} = name2idx(obj, s(2).subs{:});
+                            case 'length'
+                                varargout{1} = length(obj, s(2).subs{:});
+                            case 'size'
+                                [varargout{1:nargout}] = size(obj, s(2).subs{:});
                             case 'add_names'
                                 varargout{1} = add_names(obj, s(2).subs{:});
                             case 'add_elements'
