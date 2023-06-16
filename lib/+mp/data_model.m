@@ -58,8 +58,15 @@ classdef data_model < mp.element_container
                 obj.elements.add_elements(dme, dme.name);
             end
 
-            %% import data from external format
-            dmc.import(obj, d);
+            dmc.import(obj, d);     %% import data from external format
+            obj.count();            %% count element objects for each class
+            obj.initialize();       %% get IDs, self status
+            obj.update_status();    %% update status wrt connectivity, define on/off
+            obj.build_params();     %% get parameters
+        end
+
+        function obj = count(obj)
+            % 
 
             %% count element objects for each class
             %% remove if count is zero
@@ -69,10 +76,6 @@ classdef data_model < mp.element_container
                     obj.elements.delete_elements(k);
                 end
             end
-
-            obj.initialize();       %% get IDs, self status
-            obj.update_status();    %% update status wrt connectivity, define on/off
-            obj.build_params();     %% get parameters
         end
 
         function obj = initialize(obj)
