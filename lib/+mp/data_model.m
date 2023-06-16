@@ -2,7 +2,7 @@ classdef data_model < mp.element_container
 %MP.DATA_MODEL  Base class for MATPOWER data model
 
 %   MATPOWER
-%   Copyright (c) 1996-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -75,19 +75,19 @@ classdef data_model < mp.element_container
             obj.build_params();     %% get parameters
         end
 
-        function obj = initialize(obj, dm)
+        function obj = initialize(obj)
             for k = 1:length(obj.elements)
                 obj.elements{k}.initialize(obj);
             end
         end
 
-        function obj = update_status(obj, dm)
+        function obj = update_status(obj)
             for k = 1:length(obj.elements)
                 obj.elements{k}.update_status(obj);
             end
         end
 
-        function obj = build_params(obj, dm)
+        function obj = build_params(obj)
             for k = 1:length(obj.elements)
                 obj.elements{k}.build_params(obj);
             end

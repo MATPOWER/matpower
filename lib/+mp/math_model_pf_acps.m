@@ -225,7 +225,7 @@ classdef math_model_pf_acps < mp.math_model_pf & mp.mm_shared_pfcpf_acps
                 if strcmp(alg, 'FDXB')                  %% if XB method
                     dm1.elements.branch.tab.r(:) = 0;   %% zero out line resistance
                 end
-                dm1 = dm1.build_params(dm1);
+                dm1 = dm1.build_params();
             else
                 dm2 = dm.copy();
             end
@@ -237,9 +237,9 @@ classdef math_model_pf_acps < mp.math_model_pf & mp.mm_shared_pfcpf_acps
             end
 
             if nargout > 1      %% for both Bp and Bpp
-                dm2 = dm2.build_params(dm2);
+                dm2 = dm2.build_params();
             else                %% for just Bpp
-                dm1 = dm2.build_params(dm2);
+                dm1 = dm2.build_params();
             end
         end
     end     %% methods
