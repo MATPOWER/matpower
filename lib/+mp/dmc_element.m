@@ -78,7 +78,7 @@ classdef (Abstract) dmc_element < handle
 
         function vmap = table_var_map(obj, dme, d)
             %% initialize with vmap.(<name>) = {'col', []}, for all <name>
-            names = dme.table_var_names();
+            names = dme.main_table_var_names();
             vals = cell(size(names));
             [vals{:}] = deal({'col', []});
             vmap = cell2struct(vals, names, 2);

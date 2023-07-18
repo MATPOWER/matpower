@@ -59,10 +59,6 @@ classdef (Abstract) dm_element < handle
             TorF = ~isempty(obj.tab);
         end
 
-        function names = table_var_names(obj)
-            names = obj.main_table_var_names();
-        end
-
         function names = main_table_var_names(obj)
             names = {'uid', 'name', 'status', 'source_uid'};
         end
