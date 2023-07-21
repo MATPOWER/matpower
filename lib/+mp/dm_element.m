@@ -150,7 +150,6 @@ classdef (Abstract) dm_element < handle
         function obj = rebuild(obj, dm)
             obj.count(dm);
             obj.initialize(dm);
-            obj.init_status(dm);
             obj.build_params(dm);
         end
 
