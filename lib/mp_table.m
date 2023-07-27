@@ -14,7 +14,7 @@ classdef mp_table
 %
 % mp_table Methods:
 %    * mp_table - construct object
-%    * copy - make copy of object
+%    * copy - create a duplicate of the object
 %    * istable - true for mp_table objects
 %    * size - dimensions of table
 %    * isempty - true if table has no columns or no rows
@@ -25,7 +25,7 @@ classdef mp_table
 %    * vertcat - concatenate tables vertically
 %    * display - display table contents
 %
-% See also table (:class:`table`).
+% See also table.
 
 %   MATPOWER
 %   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
@@ -95,7 +95,7 @@ classdef mp_table
         end
 
         function new_obj = copy(obj)
-            % Makes a copy of the object.
+            % Create a duplicate of the object.
             % ::
             %
             %   new_T = T.copy();
@@ -130,12 +130,12 @@ classdef mp_table
             % Unfortunately, this is not really useful until Octave
             % implements a built-in istable() that this can override.
             %
-            % See also istable (:func:`istable`).
+            % See also istable.
             TorF = true;
         end
 
         function varargout = size(obj, dim)
-            % Returns size of table
+            % Returns dimensions of table.
             % ::
             %
             %   [m, n] = T.size();
@@ -166,7 +166,7 @@ classdef mp_table
         end
 
         function TorF = isempty(obj)
-            % Returns true if the table has no columns or no rows.
+            % Returns ``true`` if the table has no columns or no rows.
             TorF = prod(size(obj)) == 0;
         end
 
@@ -196,7 +196,7 @@ classdef mp_table
             %   sub_T = T(i, :);
             %   sub_T = T(:, j);
             %   sub_T = T(i1:iN, j1:jN);
-            %   var = T.<name>;
+            %   val = T.<name>;
             %   val = T.<name>(i);
             %   val = T.<name>(i1:iN);
             %   val = T.<name>{i};
@@ -255,7 +255,7 @@ classdef mp_table
             %   T(i, :) = sub_T;
             %   T(:, j) = sub_T;
             %   T(i1:iN, j1:jN) = sub_T;
-            %   T.<name> = var;
+            %   T.<name> = val;
             %   T.<name>(i) = val;
             %   T.<name>(i1:iN) = val;
             %   T.<name>{i} = val;
@@ -502,7 +502,7 @@ classdef mp_table
             % By default it displays only the first and last 10 rows if
             % there are more than 25 rows.
             %
-            % Does not currently display the contents of any nested tables.
+            % Does not currently display the contents of any nested tables.
             allrows = 1;
 
             [nr, nv] = size(obj);

@@ -8,26 +8,25 @@ function task_rv = run_mp(task_class, d, mpopt, varargin)
 %
 % Inputs:
 %   task_class (function handle) : handle to constructor of default task
-%       class for type of task to be run, e.g. :ml:`@mp.task_pf` for power
-%       flow, :ml:`@mp.task_cpf` for CPF, and :ml:`@mp.task_opf` for OPF
-%   d : input data specification, currently this is assumed to be a
-%       |MATPOWER| case name or case struct (:ml:`mpc`).
+%       class for type of task to be run, e.g. mp.task_pf for power
+%       flow, mp.task_cpf for CPF, and mp.task_opf for OPF
+%   d : data source specification, currently assumed to be a |MATPOWER|
+%       case name or case struct (``mpc``)
 %   mpopt (struct) : |MATPOWER| options struct
 %
 %       Additional optional inputs can be provided as <name>, <val> pairs,
 %       with the following options:
 %
-%       - :ml:`'print_fname'` - file name for saving pretty-printed output
-%       - :ml:`'soln_fname'` - file name for saving solved case
-%       - :ml:`'mpx'` - |MATPOWER| extension or cell array of |MATPOWER|
+%       - ``'print_fname'`` - file name for saving pretty-printed output
+%       - ``'soln_fname'`` - file name for saving solved case
+%       - ``'mpx'`` - |MATPOWER| extension or cell array of |MATPOWER|
 %         extensions to apply
 %
 % Output:
 %   task (mp.task) : task object containing the solved run including the
 %       data, network, and mathematical model objects.
 %
-% See also run_pf (:func:`run_pf`), run_cpf (:func:`run_cpf`),
-% run_opf (:func:`run_opf`), mp.task (:class:`+mp.task`).
+% See also run_pf, run_cpf, run_opf, mp.task.
 
 %   MATPOWER
 %   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)

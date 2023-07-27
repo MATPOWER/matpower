@@ -1,15 +1,28 @@
 classdef task_cpf < mp.task_pf
-%MP.TASK_CPF  MATPOWER task for continuation power flow (CPF).
-%   MP.TASK_CPF provides implementation for continuation power flow problem.
+% mp.task_cpf - |MATPOWER| task for continuation power flow (CPF).
 %
-%   Properties
-%       warmstart
+% Provides task implementation for the continuation power flow problem.
 %
-%   Methods
-%       ?
+% mp.task_cpf Properties:
+%    * warmstart - warm start data
+%
+% mp.task_cpf Methods:
+%    * task_cpf - constructor, inherits from mp.task_pf constructor
+%    * run_pre - call superclass :meth:`run_pre() <mp.task_pf.run_pre>` for base and target inputs
+%    * next_mm - handle warm start of continuation iterations
+%    * dm_converter_class - select data model converter class
+%    * data_model_class_default - select default data model constructor
+%    * data_model_build - build base and target data models
+%    * network_model_build - build base and target network models
+%    * network_model_x_soln - update network model solution
+%    * network_model_update - evaluate port injection solution
+%    * math_model_class_default - select default math model constructor
+%    * math_model_opt - add warmstart parameters to math model solve options
+%
+% See also mp.task, mp.task_pf.
 
 %   MATPOWER
-%   Copyright (c) 2020-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -17,12 +30,19 @@ classdef task_cpf < mp.task_pf
 %   See https://matpower.org for more info.
 
     properties
-        warmstart   %% warm start data
+        % *(struct)* warm start data, with fields:
+        %
+        %     - clam - corrector parameter lambda
+        %     - plam - predictor parameter lambda
+        %     - cV - corrector complex voltage vector
+        %     - pV - predictor complex voltage vector
+        warmstart
     end
 
     methods
-        %% constructor
         function obj = task_cpf()
+            % Constructor, inherits from mp.task_pf constructor.
+
             %% call parent constructor
             obj@mp.task_pf();
 
@@ -32,6 +52,8 @@ classdef task_cpf < mp.task_pf
 
         %%-----  task methods  -----
         function [d, mpopt] = run_pre(obj, d, mpopt)
+            % Call superclass :meth:`run_pre() <mp.task_pf.run_pre>` for
+            % base and target inputs.
             if ~isa(d, 'mp.data_model')
                 if ~iscell(d) || length(d) < 2
                     error('mp.task_cpf/run_pre: input cases must be provided in a 2-element cell array, specifying the base and target cases, respectively')
@@ -42,7 +64,10 @@ classdef task_cpf < mp.task_pf
         end
 
         function [mm, nm, dm] = next_mm(obj, mm, nm, dm, mpopt, mpx)
-            %% return new math model, or empty matrix if finished
+            % Handle warm start of continuation iterations, after problem
+            % data update.
+
+            % return new math model, or empty matrix if finished
             if isfield(mm.soln.output, 'warmstart')
                 %% get warmstart info
                 ad = mm.aux_data;
@@ -88,6 +113,9 @@ classdef task_cpf < mp.task_pf
 
         %%-----  data model converter methods  -----
         function dmc_class = dm_converter_class(obj, d, mpopt, mpx)
+            % Implement selector for data model converter class based on
+            % superclass constructor.
+
             if iscell(d) && length(d) == 2
                 dmc_class = dm_converter_class@mp.task_pf(obj, d{1}, mpopt, mpx);
             else
@@ -97,10 +125,15 @@ classdef task_cpf < mp.task_pf
 
         %%-----  data model methods  -----
         function dm_class = data_model_class_default(obj)
+            % Implement selector for default data model constructor.
+
             dm_class = @mp.data_model_cpf;
         end
 
         function dm = data_model_build(obj, d, dmc, mpopt, mpx)
+            % Call superclass :meth:`data_model_build() <mp.task_pf.data_model_build>`
+            % for base and target models.
+
             if iscell(d) && length(d) == 2
                 dm  = data_model_build@mp.task_pf(obj, d{1}, dmc, mpopt, mpx);
                 dmt = data_model_build@mp.task_pf(obj, d{2}, dmc, mpopt, mpx);
@@ -112,6 +145,9 @@ classdef task_cpf < mp.task_pf
 
         %%-----  network model methods  -----
         function nm = network_model_build(obj, dm, mpopt, mpx)
+            % Call superclass :meth:`network_model_build() <mp.task_pf.network_model_build>`
+            % for base and target models.
+
             dmt = dm.userdata.target;
             nm  = network_model_build@mp.task_pf(obj, dm,  mpopt, mpx);
             nmt = network_model_build@mp.task_pf(obj, dmt, mpopt, mpx);
@@ -119,6 +155,9 @@ classdef task_cpf < mp.task_pf
         end
 
         function nm = network_model_x_soln(obj, mm, nm)
+            % Call superclass :meth:`network_model_x_soln() <mp.task_pf.network_model_x_soln>`
+            % then update solution in target network model.
+
             %% call parent
             nm = network_model_x_soln@mp.task_pf(obj, mm, nm);
 
@@ -127,10 +166,14 @@ classdef task_cpf < mp.task_pf
         end
 
         function nm = network_model_update(obj, mm, nm)
+            % Call superclass :meth:`network_model_update() <mp.task_pf.network_model_update>`
+            % then update port injection solution by interpolating with
+            % parameter lambda.
+
             %% call parent
             nm = network_model_update@mp.task_pf(obj, mm, nm);
 
-            %% update port injection solutin in target network model
+            %% update port injection solution in target network model
             nmt = nm.userdata.target;
             nmt.port_inj_soln();
 
@@ -141,6 +184,10 @@ classdef task_cpf < mp.task_pf
 
         %%-----  mathematical model methods  -----
         function mm_class = math_model_class_default(obj, nm, dm, mpopt)
+            % Implement selector for default mathematical model constructor
+            % depending on ``mpopt.pf.v_cartesian`` and
+            % ``mpopt.pf.current_balance``.
+
             switch upper(mpopt.model)
                 case 'AC'
                     if mpopt.pf.v_cartesian
@@ -162,6 +209,9 @@ classdef task_cpf < mp.task_pf
         end
 
         function opt = math_model_opt(obj, mm, nm, dm, mpopt)
+            % Call superclass :meth:`math_model_opt() <mp.task_pf.math_model_opt>`
+            % then add warmstart parameters, if available.
+
             opt = math_model_opt@mp.task_pf(obj, mm, nm, dm, mpopt);
 
             %% add the warmstart options, if available

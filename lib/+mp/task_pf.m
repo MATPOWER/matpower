@@ -1,21 +1,32 @@
 classdef task_pf < mp.task
-%MP.TASK_PF  MATPOWER task for power flow (PF).
-%   MP.TASK_PF provides implementation for power flow problem.
+% mp.task_pf - |MATPOWER| task for power flow (PF).
 %
-%   Properties
-%       dc
-%       iterations
-%       ref
-%       ref0
-%       va_ref0
-%       fixed_q_idx
-%       fixed_q_qty
+% Provides task implementation for the power flow problem.
 %
-%   Methods
-%       ?
+% mp.task_pf Properties:
+%    * tag - task tag 'PF'
+%    * name - task name 'Power Flow'
+%    * dc - ``true`` if using DC network model
+%    * iterations - total number of power flow iterations
+%    * ref - current ref node indices
+%    * ref0 - initial ref node indices
+%    * va_ref0 - initial ref node voltage angles
+%    * fixed_q_idx - indices of fixed Q gens
+%    * fixed_q_qty - Q output of fixed Q gens
+%
+% mp.task_pf Methods:
+%    * run_pre - set :attr:`dc` property
+%    * next_dm - optionally iterate to enforce generator reactive limits
+%    * enforce_q_lims - implementation of generator reactive limits
+%    * network_model_class_default - select default network model constructor
+%    * network_model_build_post - initialize properties for reactive limits
+%    * network_model_x_soln - correct the voltage angles if necessary
+%    * math_model_class_default - select default math model constructor
+%
+% See also mp.task.
 
 %   MATPOWER
-%   Copyright (c) 2020-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -23,20 +34,22 @@ classdef task_pf < mp.task
 %   See https://matpower.org for more info.
 
     properties
-        tag = 'PF';
-        name = 'Power Flow';
-        dc      %% true if DC network model (cached in run_pre(), from mpopt)
-        iterations
-        ref
-        ref0
-        va_ref0
-        fixed_q_idx
-        fixed_q_qty
+        tag = 'PF';             % 
+        name = 'Power Flow';    % 
+        dc  % ``true`` if using DC network model (from ``mpopt.model``, cached in run_pre())
+        iterations              % *(integer)* total number of power flow iterations
+        ref                     % *(integer)* current ref node indices
+        ref0                    % *(integer)* initial ref node indices
+        va_ref0                 % *(double)* initial ref node voltage angles
+        fixed_q_idx             % *(integer)* indices of fixed Q gens
+        fixed_q_qty             % *(double)* Q output of fixed Q gens
     end
 
     methods
         %%-----  task methods  -----
         function [d, mpopt] = run_pre(obj, d, mpopt)
+            % Set :attr:`dc` property after calling superclass
+            % :meth:`run_pre() <mp.task.run_pre>`.
             [d, mpopt] = run_pre@mp.task(obj, d, mpopt);    %% call parent
 
             %% cache DC model flag
@@ -44,6 +57,8 @@ classdef task_pf < mp.task
         end
 
         function dm = next_dm(obj, mm, nm, dm, mpopt, mpx)
+            % Implement optional iterations to enforce generator reactive
+            % limits.
             if ~obj.dc && mpopt.pf.enforce_q_lims
                 %% adjust iteration count for previous runs
                 obj.iterations = obj.iterations + mm.soln.output.iterations;
@@ -59,7 +74,9 @@ classdef task_pf < mp.task
             end
         end
 
-        function [success, dm] = enforce_q_lims(obj, nm, dm, mpopt);
+        function [success, dm] = enforce_q_lims(obj, nm, dm, mpopt)
+            % Used by next_dm() to implement enforcement of generator
+            % reactive limits.
             gen_dme = dm.elements.gen;
             [mn, mx, both] = gen_dme.violated_q_lims(dm, mpopt);
 
@@ -127,6 +144,8 @@ classdef task_pf < mp.task
 
         %%-----  network model methods  -----
         function nm_class = network_model_class_default(obj, dm, mpopt)
+            % Implement selector for default network model constructor
+            % depending on ``mpopt.model`` and ``mpopt.pf.v_cartesian``.
             switch upper(mpopt.model)
                 case 'AC'
                     if mpopt.pf.v_cartesian
@@ -140,7 +159,8 @@ classdef task_pf < mp.task
         end
 
         function nm = network_model_build_post(obj, nm, dm, mpopt)
-            %% initialize task data, if non-empty AC case with Q lim enforced
+            % Initialize mp.task_pf properties, if non-empty AC case with
+            % generator reactive limits enforced.
             if ~obj.dc && mpopt.pf.enforce_q_lims ~= 0 && nm.np ~= 0
                 if obj.i_nm == 1
                     [ref, ~, ~] = nm.node_types(obj, dm);
@@ -158,10 +178,10 @@ classdef task_pf < mp.task
         end
 
         function nm = network_model_x_soln(obj, mm, nm)
+            % Call superclass :meth:`network_model_x_soln() <mp.task.network_model_x_soln>`
+            % then correct the voltage angle if the ref node has been changed.
             nm = network_model_x_soln@mp.task(obj, mm, nm);
 
-            %% if ref node has been changed, adjust voltage angles
-            %% to make angle at original ref node = specified value
             if ~obj.dc && obj.i_nm > 1 && obj.ref ~= obj.ref0
                 vm = abs(nm.soln.v);
                 va = angle(nm.soln.v);
@@ -172,6 +192,9 @@ classdef task_pf < mp.task
 
         %%-----  mathematical model methods  -----
         function mm_class = math_model_class_default(obj, nm, dm, mpopt)
+            % Implement selector for default mathematical model constructor
+            % depending on ``mpopt.model``, ``mpopt.pf.v_cartesian``, and
+            % ``mpopt.pf.current_balance``.
             switch upper(mpopt.model)
                 case 'AC'
                     if mpopt.pf.v_cartesian

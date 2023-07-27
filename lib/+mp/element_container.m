@@ -1,8 +1,22 @@
 classdef (Abstract) element_container < handle
-%MP.ELEMENT_CONTAINER  Mix-in class to handle named/ordered element object array
+% mp.element_container - Mix-in class to handle named/ordered element object array.
+%
+% Implements an element container that is used for |MATPOWER| model and
+% data model converter objects. Provides the properties to store the
+% constructors for each element and the elements themselves. Also provides
+% a method to modify an existing set of element constructors.
+%
+% mp.element_container Properties:
+%    * element_classes - cell array of element constructors
+%    * elements - a mp.mapped_array to hold the element objects
+%
+% mp.element_container Methods:
+%    * modify_element_classes - modify an existing set of element constructors
+%
+% See also mp.mapped_array.
 
 %   MATPOWER
-%   Copyright (c) 2020-2021, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -10,22 +24,39 @@ classdef (Abstract) element_container < handle
 %   See https://matpower.org for more info.
 
     properties
-        element_classes %% cell array of function handles of
-                        %% constructors for classes for individual
-                        %% element types, filled by subclass constructor
+        % Cell array of function handles of constructors for individual
+        % elements, filled by constructor of concrete subclass.
+        element_classes
+
+        % A mapped array (mp.mapped_array) to hold the element objects
+        % included inside this container object.
         elements
     end     %% properties
 
     methods
         function obj = modify_element_classes(obj, class_list)
-            %% each element in the class_list cell array is either:
-            %%  1 - a handle to a constructor to be appended to
-            %%      obj.element_classes, or
-            %%  2 - a 2-element cell array {A,B} where A is a handle to
-            %%      a constructor to replace any element E in the list for
-            %%      which isa(E(), B) is true, i.e. B is a char array
-            %%  3 - a char array B, where any element E in the list for
-            %%      which isa(E(), B) is true is removed from the list
+            % Modify an existing set of element constructors.
+            % ::
+            %
+            %   obj.modify_element_classes(class_list)
+            %
+            % Input:
+            %   class_list (cell array) : each element is one of the following:
+            %
+            %       1.  a handle to a constructor to **append** to
+            %           ``obj.element_classes``, *or*
+            %       2.  a 2-element cell array ``{A,B}`` where ``A`` is a
+            %           handle to a constructor to **replace** any element ``E``
+            %           in the list for which ``isa(E(), B)`` is ``true``,
+            %           i.e. ``B`` is a char array, *or*
+            %       3.  a char array ``B``, indicating to **remove** any
+            %           element ``E`` in the list for which ``isa(E(), B)``
+            %           is ``true``
+            %
+            % This method can be used to modify the list of element
+            % constructors in the ``element_classes`` property by appending,
+            % replacing, or removing entries.
+
             if ~iscell(class_list)
                 class_list = {class_list};
             end

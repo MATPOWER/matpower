@@ -7,26 +7,26 @@ function varargout = run_opf(varargin)
 %   task = run_opf(...)
 %
 % Inputs:
-%   d : input data specification, currently this is assumed to be a
-%       |MATPOWER| case name or case struct (:ml:`mpc`).
+%   d : data source specification, currently assumed to be a |MATPOWER|
+%       case name or case struct (``mpc``)
 %   mpopt (struct) : |MATPOWER| options struct
 %
 %       Additional optional inputs can be provided as <name>, <val> pairs,
 %       with the following options:
 %
-%       - :ml:`'print_fname'` - file name for saving pretty-printed output
-%       - :ml:`'soln_fname'` - file name for saving solved case
-%       - :ml:`'mpx'` - |MATPOWER| extension or cell array of |MATPOWER|
+%       - ``'print_fname'`` - file name for saving pretty-printed output
+%       - ``'soln_fname'`` - file name for saving solved case
+%       - ``'mpx'`` - |MATPOWER| extension or cell array of |MATPOWER|
 %         extensions to apply
 %
 % Output:
 %   task (mp.task_opf) : task object containing the solved run including the
 %       data, network, and mathematical model objects.
 %
-% This function is a simple wrapper around (:func:`run_mp`), calling it
-% with the first argument set to :ml:`@mp.task_opf`.
+% This function is a simple wrapper around run_mp, calling it
+% with the first argument set to ``@mp.task_opf``.
 %
-% See also run_mp (:func:`run_mp`), mp.task_opf (:class:`mp.task_opf`)..
+% See also run_mp, mp.task_opf.
 
 %   MATPOWER
 %   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)

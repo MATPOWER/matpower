@@ -1,15 +1,25 @@
 classdef task_opf < mp.task
-%MP.TASK_OPF  MATPOWER task for optimal power flow (OPF).
-%   MP.TASK_OPF provides implementation for optimal power flow problem.
+% mp.task_opf - |MATPOWER| task for optimal power flow (OPF).
 %
-%   Properties
-%       ?
+% Provides task implementation for the optimal power flow problem.
 %
-%   Methods
-%       ?
+% mp.task_opf Properties:
+%    * tag - task tag 'OPF'
+%    * name - task name 'Optimal Power Flow'
+%    * dc - ``true`` if using DC network model
+%
+% mp.task_opf Methods:
+%    * run_pre - set :attr:`dc` property
+%    * print_soln_header - add printout of objective function value
+%    * data_model_class_default - select default data model constructor
+%    * data_model_build_post - adjust bus voltage limits, if requested
+%    * network_model_class_default - select default network model constructor
+%    * math_model_class_default - select default math model constructor
+%
+% See also mp.task.
 
 %   MATPOWER
-%   Copyright (c) 2020-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -19,12 +29,15 @@ classdef task_opf < mp.task
     properties
         tag = 'OPF';
         name = 'Optimal Power Flow';
-        dc      %% true if DC network model (cached in run_pre(), from mpopt)
+        dc  % ``true`` if using DC network model (from ``mpopt.model``, cached in run_pre())
     end
 
     methods
         %%-----  task methods  -----
         function [d, mpopt] = run_pre(obj, d, mpopt)
+            % Set :attr:`dc` property after calling superclass
+            % :meth:`run_pre() <mp.task.run_pre>`, then check for
+            % unsupported AC OPF solver selection.
             [d, mpopt] = run_pre@mp.task(obj, d, mpopt);     %% call parent
 
             %% cache DC model flag
@@ -53,6 +66,8 @@ classdef task_opf < mp.task
         end
 
         function print_soln_header(obj, mpopt, fd)
+            % Call superclass :meth:`print_soln_header() <mp.task.print_soln_header>`
+            % the print out the objective function value.
             if nargin < 3
                 fd = 1;     %% print to stdio by default
             end
@@ -64,10 +79,16 @@ classdef task_opf < mp.task
 
         %%-----  data model methods  -----
         function dm_class = data_model_class_default(obj)
+            % Implement selector for default data model constructor.
+
             dm_class = @mp.data_model_opf;
         end
 
         function dm = data_model_build_post(obj, dm, dmc, mpopt)
+            % Call superclass :meth:`data_model_build_post() <mp.task.data_model_build_post>`
+            % then adjust bus voltage magnitude limits based on generator
+            % ``vm_setpoint``, if requested.
+
             %% call parent
             dm = data_model_build_post@mp.task(obj, dm, dmc, mpopt);
 
@@ -83,6 +104,8 @@ classdef task_opf < mp.task
 
         %%-----  network model methods  -----
         function nm_class = network_model_class_default(obj, dm, mpopt)
+            % Implement selector for default network model constructor
+            % depending on ``mpopt.model`` and ``mpopt.opf.v_cartesian``.
             if obj.dc
                 nm_class = @mp.net_model_dc;
             else
@@ -96,6 +119,9 @@ classdef task_opf < mp.task
 
         %%-----  mathematical model methods  -----
         function mm_class = math_model_class_default(obj, nm, dm, mpopt)
+            % Implement selector for default mathematical model constructor
+            % depending on ``mpopt.model``, ``mpopt.opf.v_cartesian``, and
+            % ``mpopt.opf.current_balance``.
             switch upper(mpopt.model)
                 case 'AC'
                     if mpopt.opf.v_cartesian

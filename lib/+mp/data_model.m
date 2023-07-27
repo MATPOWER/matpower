@@ -1,5 +1,52 @@
 classdef data_model < mp.element_container
-%MP.DATA_MODEL  Base class for MATPOWER data model
+% mp.data_model - Base class for |MATPOWER| **data model** objects.
+%
+% The data model object encapsulates the input data provided by the user
+% for the problem of interest and the output data presented back to the user
+% upon completion. It corresponds roughly to the ``mpc`` (|MATPOWER| case)
+% and ``results`` structs used throughout the legacy |MATPOWER| implementation,
+% but encapsulated in an object with additional functionality. It includes
+% tables of data for each type of element in the system.
+%
+% A data model object is primarily a container for data model element
+% (mp.dm_element) objects. Concrete data model classes may be specific to
+% the task.
+%
+% By convention, data model variables are named ``dm`` and data model class
+% names begin with ``mp.data_model``.
+%
+% mp.data_model Properties:
+%    * base_mva - system per unit MVA base
+%    * base_kva - system per unit kVA base
+%    * source - source of data, e.g. ``mpc`` (|MATPOWER| case struct)
+%    * userdata - arbitrary user data
+%
+% mp.data_model Methods:
+%    * data_model - constructor
+%    * copy - make duplicate of object
+%    * build - create, add, and build element objects
+%    * count - count instances of each element and remove if count is zero
+%    * initialize - initialize (online/offline) status of each element
+%    * update_status - update (online/offline) status based on connectivity, etc
+%    * build_params - extract/convert/calculate parameters for online elements
+%    * online - get number of online elements of named type
+%    * display - display the data model object
+%    * pretty_print - pretty print data model to console or file
+%    * pp_flags - from options, build flags to control pretty printed output
+%    * pp_section_label - construct section header lines for output
+%    * pp_section_list - return list of section tags
+%    * pp_have_section - return true if section exists for object
+%    * pp_section - pretty print the given section
+%    * pp_get_headers - construct pretty printed lines for section headers
+%    * pp_get_headers_cnt - construct pretty printed lines for **cnt** section headers
+%    * pp_get_headers_ext - construct pretty printed lines for **ext** section headers
+%    * pp_data - pretty print the data for the given section
+%    * set_bus_v_lims_via_vg - set gen bus voltage limits based on gen voltage setpoints
+%
+% See the :ref:`sec_data_model` section in the :ref:`dev_manual`
+% for more information.
+%
+% See also mp.task, mp.net_model, mp.math_model, mp.dm_converter.
 
 %   MATPOWER
 %   Copyright (c) 1996-2023, Power Systems Engineering Research Center (PSERC)
@@ -10,19 +57,28 @@ classdef data_model < mp.element_container
 %   See https://matpower.org for more info.
 
     properties
-        base_mva        %% system per unit MVA base [1]
-        base_kva        %% system per unit kVA base [2]
-        source          %% source of data (e.g. mpc, MATPOWER case struct)
-        userdata = struct();
+        % *(double)* system per unit MVA base, for balanced single-phase
+        % systems/sections, must be provided if system includes any
+        % ``'bus'`` elements
+        base_mva
+
+        % *(double)* system per unit kVA base, for unbalanced 3-phase
+        % systems/sections, must be provided if system includes any
+        % ``'bus3p'`` elements
+        base_kva
+        source      % source of data, e.g. ``mpc`` (|MATPOWER| case struct)
+        userdata = struct();    % *(struct)* arbitrary user data
     end     %% properties
-    %% [1]  for balanced single-phase systems/sections, must be provided if
-    %%      system includes any 'bus' elements
-    %% [2]  for unbalanced 3-phase systems/sections, must be provided if
-    %%      system includes any 'bus3p' elements
 
     methods
         %% constructor
         function obj = data_model()
+            % Constructor, create an empty data model object and assign
+            % the default data model element classes.
+            % ::
+            %
+            %   dm = mp.data_model();
+
             %% call parent constructor
             obj@mp.element_container();
             obj.element_classes = ...
@@ -31,6 +87,12 @@ classdef data_model < mp.element_container
         end
 
         function new_obj = copy(obj)
+            % Create a duplicate of the data model object, calling the
+            % :meth:`copy() <mp.dm_element.copy>` method on each element.
+            % ::
+            %
+            %   new_dm = dm.copy()
+        
             %% make shallow copy of object
             new_obj = eval(class(obj));  %% create new object
             if have_feature('octave')
@@ -50,6 +112,32 @@ classdef data_model < mp.element_container
         end
 
         function obj = build(obj, d, dmc)
+            % Create and add data model element objects.
+            % ::
+            %
+            %   dm.build(d, dmc)
+            %
+            % Inputs:
+            %   d : data source, type depends on the implementing subclass
+            %       (e.g. |MATPOWER| case struct for mp.dm_converter_mpc2)
+            %   dmc (mp.dm_converter) : data model converter
+            %
+            % Create the data model element objects by instantiating each
+            % class in the :attr:`element_classes <mp.element_container.element_classes>`
+            % property and adding the resulting object to the
+            % :attr:`elements <mp.element_container.elements>` property.
+            % Then proceed through the following additional build stages for
+            % each element.
+            %
+            %   - Import
+            %   - Count
+            %   - Initialize
+            %   - Update status
+            %   - Build parameters
+            %
+            % See the :ref:`sec_building_data_model` section in the
+            % :ref:`dev_manual` for more information.
+
             %% create empty element objects for each class
             obj.elements = mp.mapped_array();
             for k = 1:length(obj.element_classes)
@@ -66,10 +154,21 @@ classdef data_model < mp.element_container
         end
 
         function obj = count(obj)
-            % 
+            % Count instances of each element and remove if count is zero.
+            % ::
+            %
+            %   dm.count()
+            %
+            % Call each element's :meth:`count() <mp.dm_element.count>` method
+            % to determine the number of instances of that element in the data,
+            % and remove the element type from
+            % :attr:`elements <mp.element_container.elements>` if the count
+            % is 0.
+            %
+            % Called by build() to perform its **count** stage. See the
+            % :ref:`sec_building_data_model` section in the :ref:`dev_manual`
+            % for more information.
 
-            %% count element objects for each class
-            %% remove if count is zero
             for k = length(obj.elements):-1:1
                 obj.elements{k}.count(obj);     %% set nr
                 if obj.elements{k}.nr == 0
@@ -79,24 +178,79 @@ classdef data_model < mp.element_container
         end
 
         function obj = initialize(obj)
+            % Initialize (online/offline) status of each element.
+            % ::
+            %
+            %   dm.initialize()
+            %
+            % Call each element's :meth:`initialize() <mp.dm_element.initialize>`
+            % method to initialize statuses and create ID to row index
+            % mappings.
+            %
+            % Called by build() to perform its **initialize** stage. See the
+            % :ref:`sec_building_data_model` section in the :ref:`dev_manual`
+            % for more information.
+
             for k = 1:length(obj.elements)
                 obj.elements{k}.initialize(obj);
             end
         end
 
         function obj = update_status(obj)
+            % Update (online/offline) status based on connectivity, etc.
+            % ::
+            %
+            %   dm.update_status()
+            %
+            % Call each element's :meth:`update_status() <mp.dm_element.update_status>`
+            % method to update statuses based on connectivity or other criteria
+            % and define element properties containing number and row indices
+            % of online elements, indices of offline elements, and mapping of
+            % row indices to indices in online and offline element lists.
+            %
+            % Called by build() to perform its **update status** stage. See the
+            % :ref:`sec_building_data_model` section in the :ref:`dev_manual`
+            % for more information.
+
             for k = 1:length(obj.elements)
                 obj.elements{k}.update_status(obj);
             end
         end
 
         function obj = build_params(obj)
+            % Extract/convert/calculate parameters for online elements.
+            % ::
+            %
+            %   dm.build_params()
+            %
+            % Call each element's :meth:`build_params() <mp.dm_element.build_params>`
+            % method to build parameters as necessary for online elements from
+            % the original data tables (e.g. p.u. conversion, initial
+            % state, etc.) and store them in element-specific properties.
+            %
+            % Called by build() to perform its **build parameters** stage. See
+            % the :ref:`sec_building_data_model` section in the :ref:`dev_manual`
+            % for more information.
+
             for k = 1:length(obj.elements)
                 obj.elements{k}.build_params(obj);
             end
         end
 
         function n = online(obj, name)
+            % Get number of online elements of named type.
+            % ::
+            %
+            %   n = dm.online(name)
+            %
+            % Input:
+            %   name (char array) : name of element type (e.g. ``'bus'``,
+            %       ``'gen'``) as returned by the element's
+            %       :meth:`name() <mp.dm_element.name>` method
+            %
+            % Output:
+            %   n (integer) : number of online elements
+            
             if obj.elements.is_index_name(name)
                 n = obj.elements.(name).n;
             else
@@ -105,6 +259,13 @@ classdef data_model < mp.element_container
         end
 
         function display(obj)
+            % Display the data model object.
+            %
+            % This method is called automatically when omitting a semicolon
+            % on a line that retuns an object of this class.
+            %
+            % Displays the details of the data model elements.
+
 %             if have_feature('octave')
 %                 struct(obj)
 %             else
@@ -139,7 +300,110 @@ classdef data_model < mp.element_container
             end
         end
 
+        function [obj, out_] = pretty_print(obj, mpopt, fd)
+            % Pretty print data model to console or file.
+            % ::
+            %
+            %   dm.pretty_print(mpopt)
+            %   dm.pretty_print(mpopt, fd)
+            %   [dm, out] = dm.pretty_print(mpopt, fd)
+            %
+            % Inputs:
+            %   mpopt (struct) : |MATPOWER| options struct
+            %   fd (integer) : *(optional, default = 1)* file identifier to
+            %       use for printing, (1 for standard output, 2 for standard
+            %       error)
+            %
+            % Outputs:
+            %   dm (mp.data_model) : the data model object
+            %   out (struct) : struct of output control flags
+            %
+            % Displays the model parameters to a pretty-printed text format.
+            % The result can be output either to the console or to a file.
+            %
+            % The output is organized into sections and each element type
+            % controls its own output for each section. The default sections
+            % are:
+            %
+            %   - **cnt** - counts, number of online, offline, and total
+            %     elements of this type
+            %   - **sum** - summary, e.g. total amount of capacity, load,
+            %     line loss, etc.
+            %   - **ext** - extremes, e.g. min and max voltages, nodal prices, etc.
+            %   - **det** - details, table of detailed data, e.g. voltages, prices
+            %     for buses, dispatch, limits for generators, etc.
+
+            if nargin < 3
+                fd = 1;     %% print to stdio by default
+                if nargin < 2
+                    mpopt = mpoption();
+                end
+            end
+
+            %% get output flags
+            out = obj.pp_flags(mpopt);
+
+            if out.any
+                sections = obj.pp_section_list(out);  %% e.g. cnt, sum, ext, det, etc.
+                for s = 1:length(sections)
+                    out_s = out.sec.(sections{s});
+                    if out_s.any && obj.pp_have_section(sections{s}, mpopt)
+                        obj.pp_section(sections{s}, out_s, mpopt, fd);
+                    end
+                end
+            end
+
+            %% return output control flags
+            if nargout > 1
+                out_ = out;
+            end
+        end
+
         function [out, add] = pp_flags(obj, mpopt)
+            % From options, build flags to control pretty printed output.
+            % ::
+            %
+            %   [out, add] = dm.pp_flags(mpopt)
+            %
+            % Input:
+            %   mpopt (struct) : |MATPOWER| options struct
+            %
+            % Outputs:
+            %   out (struct) : struct of output control flags
+            %       ::
+            %
+            %           out
+            %             .all    (-1, 0 or 1)
+            %             .any    (0 or 1)
+            %             .sec
+            %               .cnt
+            %                 .all    (-1, 0 or 1)
+            %                 .any    (0 or 1)
+            %               .sum    (same as cnt)
+            %               .ext    (same as cnt)
+            %               .det
+            %                 .all    (-1, 0 or 1)
+            %                 .any    (0 or 1)
+            %                 .elm
+            %                   .<name>    (0 or 1)
+            %
+            %       where <name> is the name of the corresponding element
+            %       type.
+            %
+            %   add (struct) : additional data for subclasses to use
+            %       ::
+            %
+            %           add
+            %             .s0
+            %               .<name> = 0
+            %             .s1
+            %               .<name> = 1
+            %             .suppress    (-1, 0 or 1)
+            %             .names    (cell array of element names)
+            %             .ne       (number of element names)
+            %
+            % See also pretty_print.
+
             %% output control flags
             ne = length(obj.elements);
             names = cellfun(@(k)obj.elements{k}.name, num2cell(1:ne), ...
@@ -202,6 +466,21 @@ classdef data_model < mp.element_container
         end
 
         function h = pp_section_label(obj, label, blank_line)
+            % Construct pretty printed lines for section label.
+            % ::
+            %
+            %   h = dm.pp_section_label(label, blank_line)
+            %
+            % Inputs:
+            %   label (char array) : label for the section header
+            %   blank_line (boolean) : include a blank line before the section
+            %       label if true
+            %
+            % Output:
+            %   h (cell array of char arrays) : individual lines of section label
+            %
+            % See also pretty_print.
+            
             if nargin < 3
                 blank_line = 1; %% include a blank line before the section label
             end
@@ -216,38 +495,41 @@ classdef data_model < mp.element_container
             end
         end
 
-        function [obj, out_] = pretty_print(obj, mpopt, fd)
-            if nargin < 3
-                fd = 1;     %% print to stdio by default
-                if nargin < 2
-                    mpopt = mpoption();
-                end
-            end
-
-            %% get output flags
-            out = obj.pp_flags(mpopt);
-
-            if out.any
-                sections = obj.pp_section_list(out);  %% e.g. cnt, sum, ext, det, etc.
-                for s = 1:length(sections)
-                    out_s = out.sec.(sections{s});
-                    if out_s.any && obj.pp_have_section(sections{s}, mpopt)
-                        obj.pp_section(sections{s}, out_s, mpopt, fd);
-                    end
-                end
-            end
-
-            %% return output control flags
-            if nargout > 1
-                out_ = out;
-            end
-        end
-
         function sections = pp_section_list(obj, out)
+            % Return list of section tags.
+            % ::
+            %
+            %   sections = dm.pp_section_list(out)
+            %
+            % Input:
+            %   out (struct) : struct of output control flags (see pp_flags()
+            %       for details)
+            %
+            % Output:
+            %   sections (cell array of char arrays) : e.g. ``{'cnt', 'sum',
+            %       'ext', 'det'}``
+            %
+            % See also pretty_print.
+
             sections = {'cnt', 'sum', 'ext', 'det'};
         end
 
         function TorF = pp_have_section(obj, section, mpopt)
+            % Return true if section exists for object with given options.
+            % ::
+            %
+            %   TorF = dm.pp_have_section(section, mpopt)
+            %
+            % Inputs:
+            %   section (char array) : e.g. ``'cnt'``, ``'sum'``,
+            %       ``'ext'``, or ``'det'``
+            %   mpopt (struct) : |MATPOWER| options struct
+            %
+            % Output:
+            %   TorF (boolean) : true if section exists
+            %
+            % See also pretty_print.
+
             %% section per-element info
             for k = 1:length(obj.elements)
                 dme = obj.elements{k};
@@ -259,6 +541,23 @@ classdef data_model < mp.element_container
         end
 
         function obj = pp_section(obj, section, out_s, mpopt, fd)
+            % Pretty print the given section.
+            % ::
+            %
+            %   dm.pp_section(section, out_s, mpopt, fd)
+            %
+            % Inputs:
+            %   section (char array) : e.g. ``'cnt'``, ``'sum'``,
+            %       ``'ext'``, or ``'det'``
+            %   out_s (struct) : output control flags for the section,
+            %       ``out_s = out.sec.(section)``
+            %   mpopt (struct) : |MATPOWER| options struct
+            %   fd (integer) : *(optional, default = 1)* file identifier to
+            %       use for printing, (1 for standard output, 2 for standard
+            %       error)
+            %
+            % See also pretty_print.
+
             %% section title & headers
             h = obj.pp_get_headers(section, out_s, mpopt);
             for k = 1:length(h)
@@ -282,6 +581,24 @@ classdef data_model < mp.element_container
         end
 
         function h = pp_get_headers(obj, section, out_s, mpopt)
+            % Construct pretty printed lines for section headers.
+            % ::
+            %
+            %   h = dm.pp_get_headers(section, out_s, mpopt)
+            %
+            % Inputs:
+            %   section (char array) : e.g. ``'cnt'``, ``'sum'``,
+            %       ``'ext'``, or ``'det'``
+            %   out_s (struct) : output control flags for the section,
+            %       ``out_s = out.sec.(section)``
+            %   mpopt (struct) : |MATPOWER| options struct
+            %
+            % Output:
+            %   h (cell array of char arrays) : individual lines of section
+            %       headers
+            %
+            % See also pretty_print.
+
             switch section
                 case 'cnt'
                     h = obj.pp_get_headers_cnt(out_s, mpopt);
@@ -297,21 +614,79 @@ classdef data_model < mp.element_container
         end
 
         function h = pp_get_headers_cnt(obj, out_s, mpopt)
+            % Construct pretty printed lines for **cnt** section headers.
+            % ::
+            %
+            %   h = dm.pp_get_headers_cnt(out_s, mpopt)
+            %
+            % Inputs:
+            %   out_s (struct) : output control flags for the section,
+            %       ``out_s = out.sec.(section)``
+            %   mpopt (struct) : |MATPOWER| options struct
+            %
+            % Output:
+            %   h (cell array of char arrays) : individual lines of **cnt**
+            %       section headers
+            %
+            % See also pretty_print, pp_get_headers.
+
             h = [ obj.pp_section_label('System Summary', 0) ...
                  {  '  elements                on     off    total', ...
                     ' --------------------- ------- ------- -------' } ];
         end
 
         function h = pp_get_headers_ext(obj, out_s, mpopt)
+            % Construct pretty printed lines for **ext** section headers.
+            % ::
+            %
+            %   h = dm.pp_get_headers_cnt(out_s, mpopt)
+            %
+            % Inputs:
+            %   out_s (struct) : output control flags for the section,
+            %       ``out_s = out.sec.(section)``
+            %   mpopt (struct) : |MATPOWER| options struct
+            %
+            % Output:
+            %   h (cell array of char arrays) : individual lines of **ext**
+            %       section headers
+            %
+            % See also pretty_print, pp_get_headers.
+
             h = {   '', ...
                     '                                           minimum                        maximum', ...
                     '                               -----------------------------  -----------------------------' };
         end
 
         function obj = pp_data(obj, section, out_s, mpopt, fd)
+            % Pretty print the data for the given section.
+            % ::
+            %
+            %   dm.pp_data(section, out_s, mpopt, fd)
+            %
+            % Inputs:
+            %   section (char array) : e.g. ``'cnt'``, ``'sum'``,
+            %       ``'ext'``, or ``'det'``
+            %   out_s (struct) : output control flags for the section,
+            %       ``out_s = out.sec.(section)``
+            %   mpopt (struct) : |MATPOWER| options struct
+            %   fd (integer) : *(optional, default = 1)* file identifier to
+            %       use for printing, (1 for standard output, 2 for standard
+            %       error)
+            %
+            % See also pretty_print, pp_section.
         end
 
         function obj = set_bus_v_lims_via_vg(obj, use_vg)
+            % Set gen bus voltage limits based on gen voltage setpoints.
+            % ::
+            %
+            %   dm.set_bus_v_lims_via_vg(use_vg)
+            %
+            % Input:
+            %   use_vg (double) : 1 if voltage setpoint should be used,
+            %       0 for original bus voltage bounds, or fractional value
+            %       between 0 and 1 for bounds interpolated between the two.
+
             bus_dme = obj.elements.bus;
             gen_dme = obj.elements.gen;
             gbus = bus_dme.i2on(gen_dme.bus(gen_dme.on));   %% buses of online gens
@@ -326,7 +701,7 @@ classdef data_model < mp.element_container
             vm_lb = max(2*Cg - Vbg, [], 2); %% same as vm_ub, except min vm_setpoint of gens @ bus
             vm_lb(ib) = 2 - vm_lb(ib);
 
-            if use_vg == 1      %% use vm_setpoint setpoint directly
+            if use_vg == 1      %% use vm_setpoint directly
                 bus_dme.vm_ub(ib) = vm_ub(ib);  %% ub set by max vm_setpoint @ bus
                 bus_dme.vm_lb(ib) = vm_lb(ib);  %% lb set by min vm_setpoint @ bus
                 bus_dme.vm_start(ib) = vm_ub(ib);

@@ -1,37 +1,52 @@
 classdef (Abstract) nm_element < handle
-%MP.NM_ELEMENT  Abstract base class for MATPOWER network model elements
-%   NME = MP.NM_ELEMENT()
+% mp.nm_element - Abstract base class for |MATPOWER| **network model element** objects.
 %
-%   Each concrete subclass must also inherit from a subclass of MP.FORM.
+% A network model element object encapsulates all of the network model
+% parameters for a particular element type. All network model element classes
+% inherit from mp.nm_element and also, like the container, from a
+% formulation-specific subclass of mp.form. Each element type typically
+% implements its own subclasses, which are further subclassed per formulation.
+% A given network model element object contains the aggregate network model
+% parameters for all online instances of that element type, stored in the set
+% of matrices and vectors that correspond to the formulation.
 %
-%   Properties
-%       np : number of ports per element
-%       nn : number of nodes per element (created by this element type)
-%       nz : number of non-voltage state variables per element
-%       nk : number of elements
-%       C : cell array of sparse element-node incidence matrices,
-%           where C{j}(i,k) is 1 if port j of element k is connected to node i
-%       D : cell array of sparse incidence matrices for Z variables,
-%           where D{j}(i,k) is 1 if j-th Z variable for element k corresponds
-%           to element i of system Z
+% By convention, network model element variables are named ``nme`` and network
+% model element class names begin with ``nme``.
 %
-%   Methods
-%       name() - name of element type (constant across formations)
-%       count() - returns the number of elements of this type in dm, sets nme.nk
-%       get_nv_()
-%       x2vz()
-%       incidence_matrix()
-%       display()
+% mp.mm_element Properties:
+%    * nk - number of elements of this type
+%    * C - stacked sparse element-node incidence matrices
+%    * D - stacked sparse incidence matrices for *z*-variables
+%    * soln - struct for storing solved states, quantities
 %
-%   Abstract Methods
-%       add_nodes()
-%       add_states()
-%       add_vvars()
-%       add_zvars()
+% mp.mm_element Methods:
+%    * name - get name of element type, e.g. ``'bus'``, ``'gen'``
+%    * np - number of ports per element of this type
+%    * nn - number of nodes per element, created by this element type
+%    * nz - number of non-voltage state variables per element of this type
+%    * data_model_element - get the corresponding data model element
+%    * math_model_element - get the corresponding math model element
+%    * count - get number of online elements in ``dm``, set :attr:`nk`
+%    * add_nodes - add nodes to network model
+%    * add_states - add non-voltage states to network model
+%    * add_vvars - add real-valued voltage variables to network object
+%    * add_zvars - add real-valued non-voltage state variables to network object
+%    * build_params - build model parameters from data model
+%    * get_nv_ - get number of *(possibly complex)* voltage variables
+%    * x2vz - get port voltages and non-voltage states from combined state vector
+%    * node_indices - construct node indices from data model element connection info
+%    * incidence_matrix - construct stacked incidence matrix from set of index vectors
+%    * display - display the network model element object
+%
+% See the :ref:`sec_nm_element` section in the :ref:`dev_manual`
+% for more information.
+%
+% See also mp.net_model.
+
 %       build_params() - build model parameters from data model
 
 %   MATPOWER
-%   Copyright (c) 2019-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2019-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -39,35 +54,87 @@ classdef (Abstract) nm_element < handle
 %   See https://matpower.org for more info.
 
     properties
-        nk = 0;     %% number of elements of this type loaded
-        C = [];     %% stacked element-node incidence matrices,
-                    %% where C(i,kk) is 1 if port j of element k is
-                    %% connected to node i, and kk = k + (j-1)*np
-        D = [];     %% stacked sparse incidence matrices for
-                    %% Z variables, where D(i,kk) is 1 if z-variable j
-                    %% of element k is the i-th system z-variable
-                    %% and kk = k + (j-1)*nz
-        soln        %% struct for storing solved states, quantities
+        nk = 0;     % *(integer)* number of elements of this type
+
+        % *(sparse integer matrix)* stacked element-node incidence matrices,
+        % where ``C(i,kk)`` is 1 if port *j* of element *k* is connected to
+        % node *i*, and ``kk = k + (j-1)*np``
+        C = [];
+
+        % *(sparse integer matrix)* stacked incidence matrices for
+        % *z*-variables (non-voltage state variables), where ``D(i,kk)`` is 1
+        % if *z*-variable *j* of element *k* is the *i*-th system *z*-variable
+        % and ``kk = k + (j-1)*nz``
+        D = [];
+        soln        % *(struct)* for storing solved states, quantities
     end
 
     methods
         function name = name(obj)
+            % Get name of element type, e.g. ``'bus'``, ``'gen'``.
+            % ::
+            %
+            %   name = nme.name()
+            %
+            % Output:
+            %   name (char array) : name of element type, must be a valid
+            %       struct field name
+            %
+            % Implementation provided by an element type specific subclass.
+
             name = '';      %% e.g. 'bus', 'gen'
         end
 
         function np = np(obj)
-            np = 0;     %% number of ports per element
+            % Number of ports per element of this type.
+            % ::
+            %
+            %   np = nme.np()
+            %
+            % Output:
+            %   np (integer) : number of ports per element of this type
+
+            np = 0;
         end
 
         function nn = nn(obj)
-            nn = 0;     %% number of nodes per element (created by element)
+            % Number of nodes per element, created by this element type.
+            % ::
+            %
+            %   nn = nme.nn()
+            %
+            % Output:
+            %  nn (integer) : number of ports per element of this type
+
+            nn = 0;
         end
 
         function nz = nz(obj)
+            % Number of non-voltage state variables per element of this type.
+            % ::
+            %
+            %   nz = nme.nz()
+            %
+            % Output:
+            %   nz (integer) : number of non-voltage state variables per
+            %       element of this type
+
             nz = 0;     %% number of (possibly complex) non-voltage states per element
         end
 
         function dme = data_model_element(obj, dm, name)
+            % Get the corresponding data model element.
+            % ::
+            %
+            %   dme = nme.data_model_element(dm, name)
+            %
+            % Inputs:
+            %   dm (mp.data_model) : data model object
+            %   name (char array) : name of element type
+            %
+            % Output:
+            %   dme (mp.dm_element) : data model element object
+
             if nargin < 3
                 name = obj.name;
             end
@@ -75,6 +142,18 @@ classdef (Abstract) nm_element < handle
         end
 
         function mme = math_model_element(obj, mm, name)
+            % Get the corresponding math model element.
+            % ::
+            %
+            %   mme = nme.math_model_element(mm, name)
+            %
+            % Inputs:
+            %   mm (mp.math_model) : math model object
+            %   name (char array) : name of element type
+            %
+            % Output:
+            %   mme (mp.mm_element) : math model element object
+
             if nargin < 3
                 name = obj.name;
             end
@@ -86,11 +165,35 @@ classdef (Abstract) nm_element < handle
         end
 
         function nk = count(obj, dm)
+            % Get number of online elements of this type in ``dm``, set :attr:`nk`.
+            % ::
+            %
+            %   nk = nme.count(dm)
+            %
+            % Input:
+            %   dm (mp.data_model) : data model object
+            %
+            % Output:
+            %   nk (integer) : number of online elements of this type
+
             nk = dm.online(obj.name);
             obj.nk = nk;    %% update the count stored internally
         end
 
         function obj = add_nodes(obj, nm, dm)
+            % Add nodes to network model for this element.
+            % ::
+            %
+            %   nme.add_nodes(nm, dm)
+            %
+            % Inputs:
+            %   nm (mp.net_model) : network model object
+            %   dm (mp.data_model) : data model object
+            %
+            % Add nodes to the network model object, based on value *nn*
+            % returned by nn(). Calls the network model's
+            % :meth:`add_node() <mp.net_model.add_node>` *nn* times.
+
             if obj.nn == 1
                 nm.add_node(obj.name, obj.nk);
             elseif obj.nn > 1
@@ -99,10 +202,22 @@ classdef (Abstract) nm_element < handle
                     nm.add_node(obj.name, {k}, obj.nk);
                 end
             end
-%             nm.add_node(obj.name, obj.nn * obj.nk);
         end
 
         function obj = add_states(obj, nm, dm)
+            % Add non-voltage states to network model for this element.
+            % ::
+            %
+            %   nme.add_states(nm, dm)
+            %
+            % Inputs:
+            %   nm (mp.net_model) : network model object
+            %   dm (mp.data_model) : data model object
+            %
+            % Add non-voltage states to the network model object, based on
+            % value *nz* returned by nz(). Calls the network model's
+            % :meth:`add_state() <mp.net_model.add_state>` *nz* times.
+
             if obj.nz == 1
                 nm.add_state(obj.name, obj.nk);
             elseif obj.nz > 1
@@ -111,17 +226,73 @@ classdef (Abstract) nm_element < handle
                     nm.add_state(obj.name, {k}, obj.nk);
                 end
             end
-%             nm.add_state(obj.name, obj.nz * obj.nk);
         end
 
         function obj = add_vvars(obj, nm, dm, idx)
+            % Add real-valued voltage variables to network object.
+            % ::
+            %
+            %   nme.add_vvars(nm, dm, idx)
+            %
+            % Inputs:
+            %   nm (mp.net_model) : network model object
+            %   dm (mp.data_model) : data model object
+            %
+            % Add real-valued voltage variables (*v*-variables) to the network
+            % model object, for each port. Implementation depends on the
+            % specific formulation (i.e. subclass of mp.form).
+            %
+            % For example, consider an element with *np* ports and an AC
+            % formulation with polar voltage representation. The actual port
+            % voltages are complex, but this method would call the network
+            % model's :meth:`add_var() <mp.net_model.add_var>` twice for each
+            % port, once for the voltage angle variables and once for the
+            % voltage magnitude variables.
+            %
+            % Implemented by a formulation-specific subclass.
         end
 
         function obj = add_zvars(obj, nm, dm, idx)
+            % Add real-valued non-voltage state variables to network object.
+            % ::
+            %
+            %   nme.add_zvars(nm, dm, idx)
+            %
+            % Inputs:
+            %   nm (mp.net_model) : network model object
+            %   dm (mp.data_model) : data model object
+            %
+            % Add real-valued non-voltage state variables (*z*-variables) to
+            % the network model object. Implementation depends on the specific
+            % formulation (i.e. subclass of mp.form).
+            %
+            % For example, consider an element with *nz* z-variables and a
+            % formulation in which these are complex. This method would call
+            % the network model's :meth:`add_var() <mp.net_model.add_var>`
+            % twice for each complex *z*-variable, once for the variables
+            % representing the real part and once for the imaginary part.
+            %
+            % Implemented by a formulation-specific subclass.
         end
 
         function obj = build_params(obj, nm, dm)
-            %% construct incidence matrices
+            % Build model parameters from data model.
+            % ::
+            %
+            %   nme.build_params(nm, dm)
+            %
+            % Inputs:
+            %   nm (mp.net_model) : network model object
+            %   dm (mp.data_model) : data model object
+            %
+            % Construction of incidence matrices :attr:`C` and :attr:`D` are
+            % handled in this base class. Building of the formulation-specific
+            % model parameters must be implemented by a formulation-specific
+            % subclass. The subclass should call its parent in order to
+            % construct the incidence matrices.
+            %
+            % See also incidence_matrix, node_indices.
+
             if obj.np
                 nidx = obj.node_indices(nm, dm);
                 obj.C = obj.incidence_matrix(nm.getN('node'), nidx{:});
@@ -138,8 +309,23 @@ classdef (Abstract) nm_element < handle
             end
         end
 
-        function nv_ = get_nv_(obj, sysx);
-            % sysx : 1 = system x_, 0 = element class x_
+        function nv_ = get_nv_(obj, sysx)
+            % Get number of *(possibly complex)* voltage variables.
+            % ::
+            %
+            %   nv_ = nme.get_nv_(sysx)
+            %
+            % Input:
+            %   sysx (boolean) : if true the state ``x_`` refers to the full
+            %       *(possibly complex)* system state *(all node voltages and
+            %       system non-voltage states)*, otherwise it is the state
+            %       vector for this specific element type *(port voltages and
+            %       element non-voltage states)*
+            %
+            % Output:
+            %   nv_ (integer) : number of *(possibly complex)* voltage variables
+            %       in the state variable ``x_``, whose meaning depends on the
+            %       ``sysx`` input
 
             %% get sizes
             if sysx
@@ -151,10 +337,36 @@ classdef (Abstract) nm_element < handle
             end
         end
 
-        function [v_, z_, vi_] = x2vz(obj, x_, sysx, idx);
-            % sysx : 1 = system x_, 0 = element class x_
-            % if x_ is a matrix, each output will have the same number of
-            % columns, each column considered a separate instance of the vectors
+        function [v_, z_, vi_] = x2vz(obj, x_, sysx, idx)
+            % Get port voltages and non-voltage states from combined state vector.
+            % ::
+            %
+            %   [v_, z_, vi_] = nme.x2vz(x_, sysx, idx)
+            %
+            % Inputs:
+            %   x_ (double) : *possibly complex* state vector
+            %   sysx (boolean) : if true the state ``x_`` refers to the full
+            %       *(possibly complex)* system state *(all node voltages and
+            %       system non-voltage states)*, otherwise it is the state
+            %       vector for this specific element type *(port voltages and
+            %       element non-voltage states)*
+            %   idx (integer) : vector of port indices of interest
+            %
+            % Outputs:
+            %   v_ (double) : vector of *(possibly complex)* port voltages
+            %   z_ (double) : vector of *(possibly complex)* non-voltage state
+            %       variables
+            %   vi_ (double) : vector of *(possibly complex)* port voltages for
+            %       selected ports only, as indexed by ``idx``
+            %
+            % This method extracts voltage and non-voltage states from a
+            % combined state vector, optionally with voltages for specific
+            % ports only.
+            %
+            % Note, that this method can operate on multiple state vectors
+            % simultaneously, by specifying ``x_`` as a matrix. In this case,
+            % each output will have the same number of columns, one for each
+            % column of the input ``x_``.
 
             %% split x_
             nv_ = obj.get_nv_(sysx);
@@ -178,37 +390,46 @@ classdef (Abstract) nm_element < handle
         end
 
         function nidxs = node_indices(obj, nm, dm, cxn_type, cxn_idx_prop, cxn_type_prop)
-            %% nidxs = obj.node_indices(nm, dm, dme, cxn_type, cxn_idx_prop)
-            %% nidxs = obj.node_indices(nm, dm, dme, cxn_type, cxn_idx_prop, cxn_type_prop)
-            %% A connection (cxn) is a mapping of a set of ports of element
-            %% of type A (e.g. 'branch') to set of nodes created by elements
-            %% of types B1, B2, etc. (e.g. 'bus'). We call the node creating
-            %% elements "junction" (jxn) elements. A single connection links
-            %% each type A element to exactly one type B element, where each
-            %% link consists of N ports from A and N nodes from B, and N is
-            %% determined by the number of nodes created by each type B element.
-            %% Each of the following arguments can be a char array or cell
-            %% array of char arrays.
-            %%  cxn_type - name(s) of element type of junction elements to
-            %%      which this element has connections, e.g. 'bus'
-            %%      3 options:
-            %%          1. single type for all connections, cxn_type is
-            %%              a single char array, cxn_type_prop is empty
-            %%          2. each connection has its own type, cxn_type is
-            %%              a cell array of same dimension as cxn_idx_prop,
-            %%              cxn_type_prop is empty
-            %%          3. each individual element has it's own type,
-            %%              cxn_type is a cell array and cxn_type_prop
-            %%              provides the index into cxn_type for each element
-            %%  cxn_idx_prop - name(s) of DME property(ies) containing
-            %%      indices of the junction elements defining the connections,
-            %%      e.g. {'bus_fr', 'bus_to'}; an empty char array signifies
-            %%      a connection from the element to itself, i.e its ports
-            %%      are connected to the nodes it created
-            %%  cxn_type_prop - name(s) of DME property(ies) containing
-            %%      type indices of the junction elements defining the
-            %%      connections, where the type indices are indices into the
-            %%      cxn_type cell array
+            % Construct node indices from data model element connection info.
+            % ::
+            %
+            %   nidxs = nme.node_indices(nm, dm)
+            %   nidxs = nme.node_indices(nm, dm, cxn_type, cxn_idx_prop)
+            %   nidxs = nme.node_indices(nm, dm, cxn_type, cxn_idx_prop, cxn_type_prop)
+            %
+            % Inputs:
+            %   nm (mp.net_model) : network model object
+            %   dm (mp.data_model) : data model object
+            %   cxn_type (char array or cell array of char arrays) : name(s) of
+            %       type(s) of junction elements, i.e. node-creating elements
+            %       (e.g. ``'bus'``), to which this element connects; see
+            %       mp.dm_element.cxn_type for more info
+            %   cxn_idx_prop (char array or cell array of char arrays) : name(s)
+            %       of property(ies) containing indices of junction elements
+            %       that define connections (e.g. ``{'fbus', 'tbus'}``); see
+            %       mp.dm_element.cxn_idx_prop for more info
+            %   cxn_type_prop (char array or cell array of char arrays) :
+            %       name(s) of properties containing type of junction elements
+            %       for each connection, defaults to ``''`` if ``cxn_type`` and
+            %       ``cxn_type_prop`` are provided, but not ``cxn_type_prop``;
+            %       see mp.dm_element.cxn_type_prop for more info
+            %
+            % Output:
+            %   nidxs (cell array) : 1 x *np* cell array of node index vectors
+            %       for each port
+            %
+            % This method constructs the node index vectors for each port. That
+            % is, element *p* of ``nidxs`` is the vector of indices of the
+            % nodes to which port *p* of these elements are connected. These
+            % node indices can be used to construct the element-node incidence
+            % matrices that form :attr:`C <mp.nm_element.C>`.
+            %
+            % By default, the connection information is obtained from the
+            % corresponding data model element, as described in the
+            % :ref:`sec_dm_element_cxn` section in the :ref:`dev_manual`.
+            %
+            % See also incidence_matrix, mp.dm_element.cxn_type,
+            % mp.dm_element.cxn_idx_prop, mp.dm_element.cxn_type_prop.
 
             dme = obj.data_model_element(dm);   %% data model element for obj
 
@@ -328,8 +549,31 @@ classdef (Abstract) nm_element < handle
         end
 
         function CD = incidence_matrix(obj, m, varargin)
-            %% obj.incidence_matrix(m, idx1, idx2, ...)
-            %% m = total number of nodes / states
+            % Construct stacked incidence matrix from set of index vectors.
+            % ::
+            %
+            %   CD = nme.incidence_matrix(m, idx1, idx2, ...)
+            %
+            % Inputs:
+            %   m (integer) : total number of nodes or states
+            %   idx1 (integer) : index vector for nodes corresponding to
+            %       this element's first port, or state variables corresponding
+            %       to this element's first non-voltage state
+            %   idx2 (integer) : same as ``idx1`` for second port or
+            %       non-voltage state, and  so on
+            %
+            % Output:
+            %   CD (sparse matrix) : stacked incidence matrix (``C`` for ports,
+            %       ``D`` for states)
+            %
+            % Forms an *m* x *n* incidence matrix for each input index vector
+            % ``idx``, where *n* is the dimension of ``idx``, and column ``j``
+            % of the corresponding incidence matrix consists of all zeros with
+            % a 1 in row ``idx(j)``.
+            %
+            % These incidence matrices are then stacked horizontally to form
+            % a single matrix return value.
+
             n = length(varargin);   %% number of ports/z-vars
             if n == 1
                 CD = sparse(varargin{1}, 1:obj.nk, 1, m, obj.nk);
@@ -374,6 +618,16 @@ classdef (Abstract) nm_element < handle
 %         end
 
         function display(obj)
+            % Display the network model element object.
+            %
+            % This method is called automatically when omitting a semicolon
+            % on a line that retuns an object of this class.
+            %
+            % Displays the details of the elements, including total number
+            % of elements, nodes per element, ports per element, non-voltage
+            % state per element, formulation name, tag, and class, and names
+            % and dimensions of the model parameters.
+
 %             if have_feature('octave')
 %                 struct(obj)
 %             else
