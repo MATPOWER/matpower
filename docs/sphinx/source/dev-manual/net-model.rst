@@ -14,7 +14,7 @@ One of the unique features of the network model is that the network model object
 - **ports** for connecting to network nodes
 - **states** which fully capture the element's operating condition
 
-There are two types of states that make up the element's full state variable :math:`\X`, voltage states :math:`\V` associated with each port, and optional non-voltage states :math:`\Z`. The network model object uses :class:`mp_idx_manager` from |MPOM>| to track and index the nodes, ports, and states added by its elements, and the corresponding voltage and non-voltage state variables.
+There are two types of states that make up the element's full state variable :math:`\X`, voltage states :math:`\V` associated with each port, and optional non-voltage states :math:`\Z`. The network model object inherits from :class:`mp_idx_manager` from |MPOM>| to track and index the nodes, ports, and states added by its elements, and the corresponding voltage and non-voltage state variables.
 
 A given network model implements a specific network model **formulation**.
 :numref:`fig_ac_net_element_model` shows the structure of an AC network model for an element with :math:`n_p` connection ports and :math:`n_z` non-voltage states.
@@ -45,7 +45,7 @@ Each concrete network model element class, including the container class, inheri
 
    Network Model Formulation Classes
 
-By convention, network model formulation classes begin with :ml:`mp.form`. It is the formulation class that defines the network model's parameters and methods for accessing them. It also defines the form of the state variables, real or complex, and methods for computing injections as a function of the state, and in the case of nonlinear formulations, corresponding derivatives as well.
+By convention, network model formulation class names begin with :ml:`mp.form`. It is the formulation class that defines the network model's parameters and methods for accessing them. It also defines the form of the state variables, real or complex, and methods for computing injections as a function of the state, and in the case of nonlinear formulations, corresponding derivatives as well.
 
 All formulations share a common structure, illustrated in :numref:`fig_ac_net_element_model`, with ports, corresponding voltage states, non-voltage states, and functions of predefined form for computing port injections from the state.
 
@@ -163,7 +163,7 @@ A network model object is primarily a container for network model element object
 
    Network Model Classes
 
-By convention, network model variables are named :ml:`nm` and network model classes begin with :ml:`mp.net_model`.
+By convention, network model variables are named :ml:`nm` and network model class names begin with :ml:`mp.net_model`.
 
 
 Building a Network Model
@@ -194,6 +194,8 @@ Most problems require that certain nodes be given special treatment depending on
 In the current design, each node-creating network model element class implements a :meth:`node_types` method that returns information about the types of the nodes it creates. The container object :meth:`node_types` method assembles that information for the full set of network nodes. It can also optionally, assign a new reference node if one does not exist. There are also methods, namely :meth:`set_node_type_ref`, :meth:`set_node_type_pv`, :meth:`set_node_type_pq`, for setting the type of a network node and having the relevant elements update their corresponding data model elements.
 
 
+.. _sec_nm_element:
+
 Network Model Elements
 ----------------------
 
@@ -201,7 +203,7 @@ A network model element object encapsulates all of the network model parameters 
 
 So, for example, in a system with 1000 in-service transmission lines, the :math:`\YY` parameter in the corresponding AC network model element object would be a 2000 :math:`\times` 2000 matrix for an aggregate 2000-port element, representing the 1000 two-port transmission lines.
 
-By convention, network model element variables are named :ml:`nme` and network model element classes begin with :ml:`nme`. :numref:`fig_net_model_element_classes` shows the inheritance relationships between a few example network model element classes. Here the :class:`mp.nme_bus_acp` and :class:`mp.nme_gen_acp` classes are used for all problems with an AC polar formulation, while the AC cartesian and DC formulations use their own respective subclasses.
+By convention, network model element variables are named :ml:`nme` and network model element class names begin with :ml:`nme`. :numref:`fig_net_model_element_classes` shows the inheritance relationships between a few example network model element classes. Here the :class:`mp.nme_bus_acp` and :class:`mp.nme_gen_acp` classes are used for all problems with an AC polar formulation, while the AC cartesian and DC formulations use their own respective subclasses.
 
 .. _fig_net_model_element_classes:
 .. figure:: figures/net-model-element-classes.*

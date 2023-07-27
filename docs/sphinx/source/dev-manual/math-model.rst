@@ -64,7 +64,7 @@ A math model object is a container for math model element objects and it is also
 
    Math Model Classes
 
-By convention, math model variables are named :ml:`mm` and math model classes begin with :ml:`mp.math_model`.
+By convention, math model variables are named :ml:`mm` and math model class names begin with :ml:`mp.math_model`.
 
 
 Building a Mathematical Model
@@ -118,6 +118,8 @@ The solved math model can then be used to update the solved state of the network
 The math model's :meth:`data_model_update` method cycles through the math model element objects, calling the :meth:`data_model_update` for each element.
 
 
+.. _sec_mm_element:
+
 Mathematical Model Elements
 ---------------------------
 
@@ -125,7 +127,7 @@ A math model element object typically does not contain any data, but only the me
 
 All math model element classes inherit from :class:`mp.mm_element`. Each element type typically implements its own subclasses, which are further subclassed where necessary per task and formulation, as with the container class.
 
-By convention, math model element variables are named :ml:`mme` and math model element classes begin with :ml:`mme`. :numref:`fig_math_model_element_classes` shows the inheritance relationships between a few example math model element classes. Here the :class:`mp.nme_bus_pf_acp` and :class:`mp.nme_bus_opf_acp` classes are used for PF and OPF problems, respectively, with an AC polar formulation. AC cartesian and DC formulations use their own respective task-specific subclasses. And each element type, has a similar set of task and formulation-specific subclasses, such as those for :class:`mp.mme_gen`.
+By convention, math model element variables are named :ml:`mme` and math model element class names begin with :ml:`mme`. :numref:`fig_math_model_element_classes` shows the inheritance relationships between a few example math model element classes. Here the :class:`mp.nme_bus_pf_acp` and :class:`mp.nme_bus_opf_acp` classes are used for PF and OPF problems, respectively, with an AC polar formulation. AC cartesian and DC formulations use their own respective task-specific subclasses. And each element type, has a similar set of task and formulation-specific subclasses, such as those for :class:`mp.mme_gen`.
 
 .. _fig_math_model_element_classes:
 .. figure:: figures/math-model-element-classes.*
