@@ -46,7 +46,7 @@
 \newcommand{\h}{\rvec{h}}
 \newcommand{\HH}{\cvec{h}}      % \H already defined
 
-\newcommand{\x}{\rvec{x}}
+\renewcommand{\x}{\rvec{x}}
 \newcommand{\y}{\rvec{y}}
 \newcommand{\z}{\rvec{z}}
 
