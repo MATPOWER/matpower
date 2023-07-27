@@ -155,9 +155,13 @@ latex_elements = {
 
 # If true, the current module name will be prepended to all description
 # unit titles (such as .. function::).
-#add_module_names = False
-matlab_keep_package_prefix = False
-#autoclass_content = 'both'         # 'class', 'init', 'both'
+# add_module_names = False
+# matlab_keep_package_prefix = False
+matlab_short_links = True
+# matlab_auto_link = "basic"
+matlab_auto_link = "all"
+matlab_show_property_default_value = True
+# autoclass_content = 'both'         # 'class', 'init', 'both'
 autodoc_member_order = 'bysource'   # 'alphabetical', 'groupwise', 'bysource'
 napoleon_use_param = False
 napoleon_use_rtype = False
@@ -185,8 +189,9 @@ numfig_format = {
     'code-block': 'Listing %s',
     'section': 'Section %s' }
 # numfig_secnum_depth = 2
-highlight_language = 'matlab'
-
+# highlight_language = 'matlab'
+highlight_language = 'octave'   # 'matlab' has issues with '...'
+                                # e.g. y = fcn(x, ...)
 math_number_all = True
 math_eqref_format = '({number})'
 

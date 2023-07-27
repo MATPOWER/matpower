@@ -3,9 +3,9 @@
 
 .. automodule:: matpower.+mp
 
-mp.task
--------
+mp.dm_converter
+---------------
 
-.. autoclass:: task
+.. autoclass:: dm_converter
     :show-inheritance:
     :members:

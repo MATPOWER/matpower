@@ -3,9 +3,9 @@
 
 .. automodule:: matpower.+mp
 
-mp.task
--------
+mp.dmc_element
+--------------
 
-.. autoclass:: task
+.. autoclass:: dmc_element
     :show-inheritance:
     :members:

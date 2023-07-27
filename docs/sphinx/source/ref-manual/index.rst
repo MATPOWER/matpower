@@ -7,7 +7,7 @@
    .. image:: ../MATPOWER-md.png
 
 .. toctree::
-   :maxdepth: 3
+   :numbered: 2
 
    functions/index
    classes/index

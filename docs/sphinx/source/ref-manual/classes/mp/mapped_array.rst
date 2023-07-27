@@ -3,9 +3,9 @@
 
 .. automodule:: matpower.+mp
 
-mp.task
--------
+mp.mapped_array
+---------------
 
-.. autoclass:: task
+.. autoclass:: mapped_array
     :show-inheritance:
     :members:

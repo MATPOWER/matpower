@@ -3,9 +3,9 @@
 
 .. automodule:: matpower.+mp
 
-mp.task
--------
+mp.nm_element
+-------------
 
-.. autoclass:: task
+.. autoclass:: nm_element
     :show-inheritance:
     :members:

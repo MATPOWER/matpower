@@ -3,9 +3,9 @@
 
 .. automodule:: matpower.+mp
 
-mp.task
--------
+mp.NODE_TYPE
+------------
 
-.. autoclass:: task
+.. autoclass:: NODE_TYPE
     :show-inheritance:
     :members:

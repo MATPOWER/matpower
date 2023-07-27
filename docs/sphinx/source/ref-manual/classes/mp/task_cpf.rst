@@ -3,9 +3,9 @@
 
 .. automodule:: matpower.+mp
 
-mp.task
--------
+mp.task_cpf
+-----------
 
-.. autoclass:: task
+.. autoclass:: task_cpf
     :show-inheritance:
     :members:

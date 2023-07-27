@@ -3,9 +3,9 @@
 
 .. automodule:: matpower.+mp
 
-mp.task
--------
+mp.net_model
+------------
 
-.. autoclass:: task
+.. autoclass:: net_model
     :show-inheritance:
     :members:

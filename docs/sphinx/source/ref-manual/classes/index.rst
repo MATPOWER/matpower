@@ -3,16 +3,56 @@
 Classes
 =======
 
-.. toctree::
-   :maxdepth: 2
-
 Task Classes
 ------------
 
 .. toctree::
-   :maxdepth: 3
 
    mp/task
+   mp/task_pf
+   mp/task_cpf
+   mp/task_opf
+
+
+Data Model Classes
+------------------
+
+.. toctree::
+
+   mp/data_model
+   mp/dm_element
+
+
+Data Model Converter Classes
+----------------------------
+
+.. toctree::
+
+   mp/dm_converter
+   mp/dmc_element
+
+
+Network Model Classes
+---------------------
+
+.. toctree::
+
+   mp/net_model
+   mp/nm_element
+
+
+Mathematical Model Classes
+--------------------------
+
+.. toctree::
+
+   mp/math_model
+   mp/mm_element
+
+
+Mathematical Model Shared Classes
+---------------------------------
+
 
 Miscellaneous Classes
 ---------------------
@@ -20,6 +60,8 @@ Miscellaneous Classes
 Could include description of this category of classes here.
 
 .. toctree::
-   :maxdepth: 2
 
    mp_table
+   mp/element_container
+   mp/mapped_array
+   mp/NODE_TYPE

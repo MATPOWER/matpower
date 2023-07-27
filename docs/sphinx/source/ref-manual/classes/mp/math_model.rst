@@ -3,9 +3,9 @@
 
 .. automodule:: matpower.+mp
 
-mp.task
--------
+mp.math_model
+-------------
 
-.. autoclass:: task
+.. autoclass:: math_model
     :show-inheritance:
     :members:
