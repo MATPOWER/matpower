@@ -2,7 +2,7 @@ function t_miqps_matpower(quiet)
 %T_MIQPS_MATPOWER  Tests of MIQPS_MATPOWER MIQP solvers.
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.
@@ -21,9 +21,9 @@ if have_feature('gurobi') || have_feature('cplex') || have_feature('mosek')
     does_qp(1) = 1;
 end
 
-n = 48;
+n = 50;
 nqp = 28;
-nmiqp = 6;
+nmiqp = 7;
 t_begin(n*length(algs), quiet);
 
 diff_alg_warn_id = 'optim:linprog:WillRunDiffAlg';
@@ -55,33 +55,32 @@ for k = 1:length(algs)
                 'num_threads', 0, ...
                 'opt', 0 ) ...
         );
-        switch names{k}
-            case 'CPLEX'
-%               alg = 0;        %% default uses barrier method with NaN bug in lower lim multipliers
-                alg = 2;        %% use dual simplex
-                mpopt.cplex.lpmethod = alg;
-                mpopt.cplex.qpmethod = min([4 alg]);
-                opt.cplex_opt = cplex_options([], mpopt);
-            case 'MOSEK'
-%                 sc = mosek_symbcon;
-%                 alg = sc.MSK_OPTIMIZER_DUAL_SIMPLEX;    %% use dual simplex
-%                 alg = sc.MSK_OPTIMIZER_INTPNT;          %% use interior point
-%                 mpopt.mosek.lp_alg = alg;
-                mpopt.mosek.gap_tol = 1e-10;
-%                 mpopt.mosek.opts.MSK_DPAR_INTPNT_TOL_PFEAS = 1e-10;
-%                 mpopt.mosek.opts.MSK_DPAR_INTPNT_TOL_DFEAS = 1e-10;
-%                 mpopt.mosek.opts.MSK_DPAR_INTPNT_TOL_INFEAS = 1e-10;
-%                 mpopt.mosek.opts.MSK_DPAR_INTPNT_TOL_REL_GAP = 1e-10;
-                vnum = have_feature('mosek', 'vnum');
-                if vnum >= 8
-%                     mpopt.mosek.opts.MSK_DPAR_INTPNT_QO_TOL_PFEAS = 1e-10;
-%                     mpopt.mosek.opts.MSK_DPAR_INTPNT_QO_TOL_DFEAS = 1e-10;
-%                     mpopt.mosek.opts.MSK_DPAR_INTPNT_QO_TOL_INFEAS = 1e-10;
-%                     mpopt.mosek.opts.MSK_DPAR_INTPNT_QO_TOL_MU_RED = 1e-10;
-                    mpopt.mosek.opts.MSK_DPAR_INTPNT_QO_TOL_REL_GAP = 1e-10;
-                end
-%                 opt.verbose = 3;
-                opt.mosek_opt = mosek_options([], mpopt);
+        if have_feature('cplex')
+            % alg = 0;        %% default uses barrier method with NaN bug in lower lim multipliers
+            alg = 2;        %% use dual simplex
+            mpopt.cplex.lpmethod = alg;
+            mpopt.cplex.qpmethod = min([4 alg]);
+            opt.cplex_opt = cplex_options([], mpopt);
+        end
+        if have_feature('mosek')
+%             sc = mosek_symbcon;
+%             alg = sc.MSK_OPTIMIZER_DUAL_SIMPLEX;    %% use dual simplex
+%             alg = sc.MSK_OPTIMIZER_INTPNT;          %% use interior point
+%             mpopt.mosek.lp_alg = alg;
+            mpopt.mosek.gap_tol = 1e-10;
+%             mpopt.mosek.opts.MSK_DPAR_INTPNT_TOL_PFEAS = 1e-10;
+%             mpopt.mosek.opts.MSK_DPAR_INTPNT_TOL_DFEAS = 1e-10;
+%             mpopt.mosek.opts.MSK_DPAR_INTPNT_TOL_INFEAS = 1e-10;
+%             mpopt.mosek.opts.MSK_DPAR_INTPNT_TOL_REL_GAP = 1e-10;
+            vnum = have_feature('mosek', 'vnum');
+            if vnum >= 8
+%                 mpopt.mosek.opts.MSK_DPAR_INTPNT_QO_TOL_PFEAS = 1e-10;
+%                 mpopt.mosek.opts.MSK_DPAR_INTPNT_QO_TOL_DFEAS = 1e-10;
+%                 mpopt.mosek.opts.MSK_DPAR_INTPNT_QO_TOL_INFEAS = 1e-10;
+%                 mpopt.mosek.opts.MSK_DPAR_INTPNT_QO_TOL_MU_RED = 1e-10;
+                mpopt.mosek.opts.MSK_DPAR_INTPNT_QO_TOL_REL_GAP = 1e-10;
+            end
+            opt.mosek_opt = mosek_options([], mpopt);
         end
 
         t = sprintf('%s - 3-d LP : ', names{k});
@@ -111,7 +110,7 @@ for k = 1:length(algs)
             x0 = [0; 0; 0];
             [x, f, s, out, lam] = miqps_matpower(H, c, [], [], [], [], [], [], [], opt);
             t_is(s, 1, 12, [t 'success']);
-            t_is(x, [3; 5; 7], 8, [t 'x']);
+            t_is(x, [3; 5; 7], 7, [t 'x']);
             t_is(f, -249, 11, [t 'f']);
             t_ok(isempty(lam.mu_l), [t 'lam.mu_l']);
             t_ok(isempty(lam.mu_u), [t 'lam.mu_u']);
@@ -192,6 +191,7 @@ for k = 1:length(algs)
         [x, f, s, out, lam] = miqps_matpower(p);
         t_is(s, 1, 12, [t 'success']);
         t_is(x, [4; 2], 12, [t 'x']);
+        t_is(f, -14, 12, [t 'f']);
         t_is(lam.mu_l, [0; 0], 12, [t 'lam.mu_l']);
         t_is(lam.mu_u, [0; 0], 12, [t 'lam.mu_u']);
         t_is(lam.lower, [0; 0], 12, [t 'lam.lower']);
@@ -221,6 +221,7 @@ for k = 1:length(algs)
             [x, f, s, out, lam] = miqps_matpower(p);
             t_is(s, 1, 12, [t 'success']);
             t_is(x, [7; 7; 0; 2], 7, [t 'x']);
+            t_is(f, 1618.5, 4, [t 'f']);
             t_is(lam.mu_l, [466; 0; 0], 6, [t 'lam.mu_l']);
             t_is(lam.mu_u, [0; 272; 0], 6, [t 'lam.mu_u']);
             t_is(lam.lower, [0; 0; 349.5; 4350], 5, [t 'lam.lower']);
