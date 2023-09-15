@@ -135,6 +135,11 @@ latex_documents = [
         '\\matpower{} \\textrm{Developers\'s Manual}',
         'Ray Zimmerman',\
         'manual'),
+    (   'ref-manual/index',
+        'matpower_ref_manual.tex',
+        '\\matpower{} \\textrm{Reference Manual}',
+        'Ray Zimmerman',\
+        'manual'),
 #     (   'users-manual-legacy/index',
 #         'matpower_users_manual_legacy.tex',
 #         '\\matpower{} \\textrm{User\'s Manual (Legacy)}',
