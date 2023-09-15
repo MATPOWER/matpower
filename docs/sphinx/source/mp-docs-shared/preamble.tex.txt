@@ -3,6 +3,8 @@
 % \setlength{\cftchapnumwidth}{0.75cm}
 % \setlength{\cftsecindent}{\cftchapnumwidth}
 % \setlength{\cftsecnumwidth}{1.25cm}
+\usepackage{enumitem}
+\setlistdepth{6}
 \usepackage{bm}     %% bold math, for bold italics uppercase Greek characters
 \usepackage{upgreek}
 \usepackage{amsfonts}
