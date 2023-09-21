@@ -3,9 +3,6 @@
 Data Model Object
 =================
 
-.. toctree::
-   :maxdepth: 2
-
 The data model is essentially the internal representation of the input data provided by the user for the given simulation or optimization run and the output presented back to the user upon completion. It corresponds roughly to the :ml:`mpc` (|MATPOWER| case) and :ml:`results` structs used throughout the legacy |MATPOWER| implementation, but encapsulated in an object with additional functionality. It includes tables of data for each type of element in the system.
 
 

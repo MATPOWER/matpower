@@ -3,9 +3,6 @@
 Data Model Converter Object
 ===========================
 
-.. toctree::
-   :maxdepth: 2
-
 A data model converter provides the ability to convert data between a data model and a specific data source or format, such as the PSS/E RAW format or version 2 of the |MATPOWER| case format. It is used, for example, during the **import** stage of the data model build process.
 
 Data Model Converters

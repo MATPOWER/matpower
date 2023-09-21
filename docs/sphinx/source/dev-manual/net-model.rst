@@ -3,9 +3,6 @@
 Network Model Object
 ====================
 
-.. toctree::
-   :maxdepth: 2
-
 The network model defines the states of and connections between network elements, as well as the parameters and functions defining the relationships between states and port injections. This network model with a unified structure is *the key* to a flexible modular design where model elements can simply define a few parameters and all of the mathematics involved in computing injections and their derivatives for a given state is handled automatically.
 
 One of the unique features of the network model is that the network model object, which contains network model elements, **is a** network model element itself. Each network model element can optionally define the following:

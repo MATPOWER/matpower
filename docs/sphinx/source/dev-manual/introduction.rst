@@ -1,9 +1,6 @@
 Introduction
 ============
 
-.. toctree::
-   :maxdepth: 2
-
 .. centered::
    An overview of |MATPOWER| development.
 

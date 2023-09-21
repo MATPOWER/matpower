@@ -1,9 +1,6 @@
 Notation
 ========
 
-.. toctree::
-   :maxdepth: 2
-
 
 **Styles**
 

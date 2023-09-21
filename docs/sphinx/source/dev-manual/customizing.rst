@@ -3,9 +3,6 @@
 Customizing |MATPOWER|
 ======================
 
-.. toctree::
-   :maxdepth: 2
-
 With the *object-oriented* |/MATPOWER/| *core architecture* and its explicit three layer modeling outlined in :numref:`sec_architecture`, the flexibility and customizability of |MATPOWER| has increased dramatically. 
 
 New functionality can be added or existing functionality modified simply by adding new classes and/or subclassing existing ones. This approach can be used to add or modify elements, problem formulations, and tasks.

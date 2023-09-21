@@ -3,9 +3,6 @@
 Mathematical Model Object
 =========================
 
-.. toctree::
-   :maxdepth: 2
-
 The mathematical model, or math model, formulates and defines the mathematical problem to be solved. That is, it determines the variables, constraints, and objective that define the problem. This takes on different forms depending on the task and the formulation.
 
 Power Flow

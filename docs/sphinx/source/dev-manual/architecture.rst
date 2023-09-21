@@ -3,9 +3,6 @@
 Architecture Overview
 =====================
 
-.. toctree::
-   :maxdepth: 2
-
 A new *object-oriented* |/MATPOWER/| *core architecture* (MP-Core), designed around the concept of a generic system **element**, [#]_ was introduced in |MATPOWER| 8.0, along with two frameworks for employing this new MP-Core in |MATPOWER|. This chapter gives an overview of this architecture.
 
 |MATPOWER|'s primary function is to solve steady-state electric power system simulation and optimization problems, such as power flow, continuation power flow and optimal power flow. At the top level of MP-Core is a **task** object that constructs the various layers of modeling for the desired problem type and formulation, solves the problem, and propogates the solution back through the modeling layers to the user.
