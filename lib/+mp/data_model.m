@@ -77,7 +77,7 @@ classdef data_model < mp.element_container
             % the default data model element classes.
             % ::
             %
-            %   dm = mp.data_model();
+            %   dm = mp.data_model()
 
             %% call parent constructor
             obj@mp.element_container();
@@ -655,6 +655,31 @@ classdef data_model < mp.element_container
             h = {   '', ...
                     '                                           minimum                        maximum', ...
                     '                               -----------------------------  -----------------------------' };
+        end
+
+        function h = pp_get_headers_other(obj, section, out_s, mpopt)
+            % Construct pretty printed lines for other section headers.
+            %
+            % Returns nothing in base class, but subclasses can implement
+            % other section types (e.g. ``'lim'`` for OPF).
+            % ::
+            %
+            %   h = dm.pp_get_headers_other(section, out_s, mpopt)
+            %
+            % Inputs:
+            %   section (char array) : e.g. ``'cnt'``, ``'sum'``,
+            %       ``'ext'``, or ``'det'``
+            %   out_s (struct) : output control flags for the section,
+            %       ``out_s = out.sec.(section)``
+            %   mpopt (struct) : |MATPOWER| options struct
+            %
+            % Output:
+            %   h (cell array of char arrays) : individual lines of **ext**
+            %       section headers
+            %
+            % See also pretty_print, pp_get_headers.
+
+            h = {};
         end
 
         function obj = pp_data(obj, section, out_s, mpopt, fd)

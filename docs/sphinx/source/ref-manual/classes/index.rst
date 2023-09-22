@@ -20,6 +20,8 @@ Data Model Classes
 .. toctree::
 
    mp/data_model
+   mp/data_model_cpf
+   mp/data_model_opf
    mp/dm_element
 
 

@@ -1,20 +1,30 @@
 classdef data_model_cpf < mp.data_model
-%MP.DATA_MODEL_CPF  MATPOWER data model for CPF tasks
+% mp.data_model_cpf - |MATPOWER| **data model** for CPF tasks.
+%
+% See also mp.data_model.
 
 %   MATPOWER
-%   Copyright (c) 2020-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See https://matpower.org for more info.
 
-    properties
-    end     %% properties
+%     properties
+%     end     %% properties
 
     methods
         %% constructor
         function obj = data_model_cpf()
+            % Constructor, create an empty data model object and assign
+            % the default data model element classes, which are the same
+            % as those defined by the base class, except for loads and
+            % shunts.
+            % ::
+            %
+            %   dm = mp.data_model_cpf()
+
             %% call parent constructor
             obj@mp.data_model();
             obj.element_classes = ...

@@ -1,8 +1,10 @@
 classdef data_model_opf < mp.data_model
-%MP.DATA_MODEL_OPF  MATPOWER data model class for OPF tasks
+% mp.data_model_opf - |MATPOWER| **data model** for OPF tasks.
+%
+% See also mp.data_model.
 
 %   MATPOWER
-%   Copyright (c) 2020-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -15,6 +17,12 @@ classdef data_model_opf < mp.data_model
     methods
         %% constructor
         function obj = data_model_opf()
+            % Constructor, create an empty data model object and assign
+            % the default data model element classes, each specific to OPF.
+            % ::
+            %
+            %   dm = mp.data_model_opf()
+
             %% call parent constructor
             obj@mp.data_model();
             obj.element_classes = ...
@@ -23,6 +31,10 @@ classdef data_model_opf < mp.data_model
         end
 
         function [out, add] = pp_flags(obj, mpopt)
+            % Add flags for **lim** sections.
+            %
+            % See :meth:`mp.data_model.pp_flags`.
+
             %% call parent
             [out, add_] = pp_flags@mp.data_model(obj, mpopt);
             suppress = add_.suppress;
@@ -67,11 +79,19 @@ classdef data_model_opf < mp.data_model
         end
 
         function sections = pp_section_list(obj, out)
+            % Append ``'lim'`` tag for **lim** section  to default list.
+            %
+            % See :meth:`mp.data_model.pp_section_list`.
+
             sections = pp_section_list@mp.data_model(obj, out);
             sections{end+1} = 'lim';
         end
 
         function h = pp_get_headers_other(obj, section, out_s, mpopt)
+            % Construct pretty printed lines for **lim** section headers.
+            %
+            % See :meth:`mp.data_model.pp_get_headers_other`.
+
             switch section
                 case 'lim'
                     h = {};
