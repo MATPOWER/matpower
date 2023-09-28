@@ -31,6 +31,8 @@ Data Model Converter Classes
 .. toctree::
 
    mp/dm_converter
+   mp/dm_converter_mpc2
+   mp/dm_converter_mpc2_legacy
    mp/dmc_element
 
 

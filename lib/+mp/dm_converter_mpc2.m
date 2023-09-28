@@ -1,8 +1,14 @@
 classdef dm_converter_mpc2 < mp.dm_converter
-%MP.DM_CONVERTER_MPC2  MATPOWER data model converter for MATPOWER case v2.
+% mp.dm_converter_mpc2 - |MATPOWER| **data model converter** for MATPOWER case v2.
+%
+% This concrete class implements importing/exporting of data models for
+% version 2 of the classic |MATPOWER| case format. That is, the *data
+% source* **d** for this class is expected to be a |MATPOWER| case struct.
+%
+% See also mp.dm_converter.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -13,8 +19,9 @@ classdef dm_converter_mpc2 < mp.dm_converter
 %     end     %% properties
 
     methods
-        %% constructor
         function obj = dm_converter_mpc2()
+            % Specify the element classes for handling |MATPOWER| case format.
+
             %% call parent constructor
             obj@mp.dm_converter();
             obj.element_classes = ...
@@ -23,10 +30,14 @@ classdef dm_converter_mpc2 < mp.dm_converter
         end
 
         function tag = format_tag(obj)
+            % Return identifier tag ``'mpc2'`` for version 2 |MATPOWER| case format.
+
             tag = 'mpc2';
         end
 
         function dm = import(obj, dm, d)
+            % Import data from a version 2 |MATPOWER| case struct into a data model.
+
             if ~isstruct(d)
                 d = loadcase(d);
             end
@@ -45,10 +56,14 @@ classdef dm_converter_mpc2 < mp.dm_converter
         end
 
         function d = init_export(obj, dm)
+            % Initialize a |MATPOWER| case struct for export.
+
             d = struct('version', '2', 'baseMVA', dm.base_mva);
         end
 
         function fname_out = save(obj, fname, d)
+            % Save a |MATPOWER| case struct to a file.
+
             fname_out = savecase(fname, d);
         end
     end     %% methods
