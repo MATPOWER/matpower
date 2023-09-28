@@ -1,6 +1,9 @@
 classdef data_model_opf < mp.data_model
 % mp.data_model_opf - |MATPOWER| **data model** for OPF tasks.
 %
+% mp.data_model_opf Methods:
+%    * data_model_opf - constructor
+%
 % See also mp.data_model.
 
 %   MATPOWER
@@ -11,8 +14,8 @@ classdef data_model_opf < mp.data_model
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See https://matpower.org for more info.
 
-    properties
-    end     %% properties
+%     properties
+%     end     %% properties
 
     methods
         %% constructor
