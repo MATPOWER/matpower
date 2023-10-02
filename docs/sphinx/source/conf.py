@@ -210,11 +210,11 @@ mathjax3_config = {
 
 with open('mp-docs-shared/mathCmds.tex.txt', 'r') as f:
     for line in f:
-        macros = re.findall(r'\\newcommand{\\(.*?)}(\[(\d)\])?{(.+)}', line)
+        macros = re.findall(r'\\(re)?newcommand{\\(.*?)}(\[(\d)\])?{(.+)}', line)
         for macro in macros:
-            if len(macro[1]) == 0:
-                mathjax3_config['tex']['macros'][macro[0]] = "{"+macro[3]+"}"
+            if len(macro[2]) == 0:
+                mathjax3_config['tex']['macros'][macro[1]] = "{"+macro[4]+"}"
             else:
-                mathjax3_config['tex']['macros'][macro[0]] = ["{"+macro[3]+"}", int(macro[2])]
+                mathjax3_config['tex']['macros'][macro[1]] = ["{"+macro[4]+"}", int(macro[3])]
 
 # print("MathJax Macros: ", mathjax3_config['tex']['macros'])
