@@ -46,3 +46,5 @@
 .. |MOST>| replace:: :raw-html:`<a href="https://github.com/MATPOWER/most">MOST</a>`:raw-latex:`\mostlink{}`
 .. |MOSTname| replace:: :raw-html:`<b>M</b><span style="font-size:smaller">ATPOWER</span> <b>O</b>ptimal <b>S</b>cheduling <b>T</b>ool`:raw-latex:`\mostname{}`
 .. |MOSTman| replace:: :raw-html:`<a href="https://matpower.org/docs/MOST-manual-1.2.pdf">MOST User's Manual</a>`:raw-latex:`\mostman{}`
+
+.. |TN5|  replace:: :raw-html:`<a href="https://matpower.org/docs/TN5-MP-Element.pdf"><em>M<span style="font-size:smaller">ATPOWER</span> Technical Note 5</em></a>`:raw-latex:`\TNfive{}`

@@ -59,6 +59,9 @@
 \newcommand{\mostmanurl}[0]{https://matpower.org/docs/MOST-manual-\mostver.pdf}
 \newcommand{\mostman}[0]{\href{\mostmanurl}{\most{} User's Manual}}
 
+\newcommand{\TNfiveurl}[0]{https://matpower.org/docs/TN5-MP-Element.pdf}
+\newcommand{\TNfive}[0]{\href{\TNfiveurl}{\it \matpower{} Technical Note~5}}
+
 % used by sphinx role hl to highlight text
 \newcommand{\DUrolehl}{\hl}
 
