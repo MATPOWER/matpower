@@ -7,11 +7,11 @@ classdef (Abstract) element_container < handle
 % a method to modify an existing set of element constructors.
 %
 % mp.element_container Properties:
-%    * element_classes - cell array of element constructors
-%    * elements - a mp.mapped_array to hold the element objects
+%   * element_classes - cell array of element constructors
+%   * elements - a mp.mapped_array to hold the element objects
 %
 % mp.element_container Methods:
-%    * modify_element_classes - modify an existing set of element constructors
+%   * modify_element_classes - modify an existing set of element constructors
 %
 % See also mp.mapped_array.
 

@@ -4,20 +4,20 @@ classdef task_cpf < mp.task_pf
 % Provides task implementation for the continuation power flow problem.
 %
 % mp.task_cpf Properties:
-%    * warmstart - warm start data
+%   * warmstart - warm start data
 %
 % mp.task_cpf Methods:
-%    * task_cpf - constructor, inherits from mp.task_pf constructor
-%    * run_pre - call superclass :meth:`run_pre() <mp.task_pf.run_pre>` for base and target inputs
-%    * next_mm - handle warm start of continuation iterations
-%    * dm_converter_class - select data model converter class
-%    * data_model_class_default - select default data model constructor
-%    * data_model_build - build base and target data models
-%    * network_model_build - build base and target network models
-%    * network_model_x_soln - update network model solution
-%    * network_model_update - evaluate port injection solution
-%    * math_model_class_default - select default math model constructor
-%    * math_model_opt - add warmstart parameters to math model solve options
+%   * task_cpf - constructor, inherits from mp.task_pf constructor
+%   * run_pre - call superclass :meth:`run_pre() <mp.task_pf.run_pre>` for base and target inputs
+%   * next_mm - handle warm start of continuation iterations
+%   * dm_converter_class - select data model converter class
+%   * data_model_class_default - select default data model constructor
+%   * data_model_build - build base and target data models
+%   * network_model_build - build base and target network models
+%   * network_model_x_soln - update network model solution
+%   * network_model_update - evaluate port injection solution
+%   * math_model_class_default - select default math model constructor
+%   * math_model_opt - add warmstart parameters to math model solve options
 %
 % See also mp.task, mp.task_pf.
 

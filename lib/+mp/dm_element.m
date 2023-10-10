@@ -25,52 +25,52 @@ classdef (Abstract) dm_element < handle
 %   - the **index** of the specific junction element
 %
 % mp.dm_element Properties:
-%    * tab - main data table
-%    * nr - total number of rows in table
-%    * n - number of online elements
-%    * ID2i - max(ID) x 1 vector, maps IDs to row indices
-%    * on - ``n`` x 1 vector of row indices of online elements
-%    * off - (``nr``-``n``) x 1 vector of row indices of offline elements
-%    * i2on - ``nr`` x 1 vector mapping row index to index in :attr:`on`/:attr:`off` respectively
+%   * tab - main data table
+%   * nr - total number of rows in table
+%   * n - number of online elements
+%   * ID2i - max(ID) x 1 vector, maps IDs to row indices
+%   * on - ``n`` x 1 vector of row indices of online elements
+%   * off - (``nr``-``n``) x 1 vector of row indices of offline elements
+%   * i2on - ``nr`` x 1 vector mapping row index to index in :attr:`on`/:attr:`off` respectively
 %
 % mp.dm_element Methods:
-%    * name - get name of element type, e.g. ``'bus'``, ``'gen'``
-%    * label - get singular label for element type, e.g. ``'Bus'``, ``'Generator'``
-%    * labels - get plural label for element type, e.g. ``'Buses'``, ``'Generators'``
-%    * cxn_type - type(s) of junction element(s) to which this element connects
-%    * cxn_idx_prop - name(s) of property(ies) containing indices of junction elements
-%    * cxn_type_prop - name(s) of property(ies) containing types of junction elements
-%    * table_exists - check for existence of data in main data table
-%    * main_table_var_names - names of variables (columns) in main data table
-%    * export_vars - names of variables to be exported by DMCE to data source
-%    * dm_converter_element - get corresponding data model converter element
-%    * copy - create a duplicate of the data model element object
-%    * count - determine number of instances of this element in the data
-%    * initialize - initialize (online/offline) status of each element
-%    * ID - return unique ID's for all or indexed rows
-%    * init_status - initialize ``status`` column
-%    * update_status - update (online/offline) status based on connectivity, etc
-%    * build_params - extract/convert/calculate parameters for online elements
-%    * rebuild - rebuild object, calling count(), initialize(), build_params()
-%    * display - display the data model element object
-%    * pretty_print - pretty-print data model element to console or file
-%    * pp_have_section - true if pretty-printing for element has specified section
-%    * pp_rows - indices of rows to include in pretty-printed output
-%    * pp_get_headers - get pretty-printed headers for this element/section
-%    * pp_get_footers - get pretty-printed footers for this element/section
-%    * pp_data - pretty-print the data for this element/section
-%    * pp_have_section_cnt - true if pretty-printing for element has **counts** section
-%    * pp_data_cnt - pretty-print the **counts** data for this element
-%    * pp_have_section_sum - true if pretty-printing for element has **summary** section
-%    * pp_data_sum - pretty-print the **summary** data for this element
-%    * pp_have_section_ext - true if pretty-printing for element has **extremes** section
-%    * pp_data_ext - pretty-print the **extremes** data for this element
-%    * pp_have_section_det - true if pretty-printing for element has **details** section
-%    * pp_get_title_det - get title of **details** section for this element
-%    * pp_get_headers_det - get pretty-printed **details** headers for this element
-%    * pp_get_footers_det - get pretty-printed **details** footers for this element
-%    * pp_data_det - pretty-print the **details** data for this element
-%    * pp_data_row_det - get pretty-printed row of **details** data for this element
+%   * name - get name of element type, e.g. ``'bus'``, ``'gen'``
+%   * label - get singular label for element type, e.g. ``'Bus'``, ``'Generator'``
+%   * labels - get plural label for element type, e.g. ``'Buses'``, ``'Generators'``
+%   * cxn_type - type(s) of junction element(s) to which this element connects
+%   * cxn_idx_prop - name(s) of property(ies) containing indices of junction elements
+%   * cxn_type_prop - name(s) of property(ies) containing types of junction elements
+%   * table_exists - check for existence of data in main data table
+%   * main_table_var_names - names of variables (columns) in main data table
+%   * export_vars - names of variables to be exported by DMCE to data source
+%   * dm_converter_element - get corresponding data model converter element
+%   * copy - create a duplicate of the data model element object
+%   * count - determine number of instances of this element in the data
+%   * initialize - initialize (online/offline) status of each element
+%   * ID - return unique ID's for all or indexed rows
+%   * init_status - initialize ``status`` column
+%   * update_status - update (online/offline) status based on connectivity, etc
+%   * build_params - extract/convert/calculate parameters for online elements
+%   * rebuild - rebuild object, calling count(), initialize(), build_params()
+%   * display - display the data model element object
+%   * pretty_print - pretty-print data model element to console or file
+%   * pp_have_section - true if pretty-printing for element has specified section
+%   * pp_rows - indices of rows to include in pretty-printed output
+%   * pp_get_headers - get pretty-printed headers for this element/section
+%   * pp_get_footers - get pretty-printed footers for this element/section
+%   * pp_data - pretty-print the data for this element/section
+%   * pp_have_section_cnt - true if pretty-printing for element has **counts** section
+%   * pp_data_cnt - pretty-print the **counts** data for this element
+%   * pp_have_section_sum - true if pretty-printing for element has **summary** section
+%   * pp_data_sum - pretty-print the **summary** data for this element
+%   * pp_have_section_ext - true if pretty-printing for element has **extremes** section
+%   * pp_data_ext - pretty-print the **extremes** data for this element
+%   * pp_have_section_det - true if pretty-printing for element has **details** section
+%   * pp_get_title_det - get title of **details** section for this element
+%   * pp_get_headers_det - get pretty-printed **details** headers for this element
+%   * pp_get_footers_det - get pretty-printed **details** footers for this element
+%   * pp_data_det - pretty-print the **details** data for this element
+%   * pp_data_row_det - get pretty-printed row of **details** data for this element
 %
 % See the :ref:`sec_dm_element` section in the :ref:`dev_manual`
 % for more information.

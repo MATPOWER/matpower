@@ -16,32 +16,32 @@ classdef data_model < mp.element_container
 % names begin with ``mp.data_model``.
 %
 % mp.data_model Properties:
-%    * base_mva - system per unit MVA base
-%    * base_kva - system per unit kVA base
-%    * source - source of data, e.g. ``mpc`` (|MATPOWER| case struct)
-%    * userdata - arbitrary user data
+%   * base_mva - system per unit MVA base
+%   * base_kva - system per unit kVA base
+%   * source - source of data, e.g. ``mpc`` (|MATPOWER| case struct)
+%   * userdata - arbitrary user data
 %
 % mp.data_model Methods:
-%    * data_model - constructor
-%    * copy - make duplicate of object
-%    * build - create, add, and build element objects
-%    * count - count instances of each element and remove if count is zero
-%    * initialize - initialize (online/offline) status of each element
-%    * update_status - update (online/offline) status based on connectivity, etc
-%    * build_params - extract/convert/calculate parameters for online elements
-%    * online - get number of online elements of named type
-%    * display - display the data model object
-%    * pretty_print - pretty print data model to console or file
-%    * pp_flags - from options, build flags to control pretty printed output
-%    * pp_section_label - construct section header lines for output
-%    * pp_section_list - return list of section tags
-%    * pp_have_section - return true if section exists for object
-%    * pp_section - pretty print the given section
-%    * pp_get_headers - construct pretty printed lines for section headers
-%    * pp_get_headers_cnt - construct pretty printed lines for **cnt** section headers
-%    * pp_get_headers_ext - construct pretty printed lines for **ext** section headers
-%    * pp_data - pretty print the data for the given section
-%    * set_bus_v_lims_via_vg - set gen bus voltage limits based on gen voltage setpoints
+%   * data_model - constructor, assign  default data model element classes
+%   * copy - make duplicate of object
+%   * build - create, add, and build element objects
+%   * count - count instances of each element and remove if count is zero
+%   * initialize - initialize (online/offline) status of each element
+%   * update_status - update (online/offline) status based on connectivity, etc
+%   * build_params - extract/convert/calculate parameters for online elements
+%   * online - get number of online elements of named type
+%   * display - display the data model object
+%   * pretty_print - pretty print data model to console or file
+%   * pp_flags - from options, build flags to control pretty printed output
+%   * pp_section_label - construct section header lines for output
+%   * pp_section_list - return list of section tags
+%   * pp_have_section - return true if section exists for object
+%   * pp_section - pretty print the given section
+%   * pp_get_headers - construct pretty printed lines for section headers
+%   * pp_get_headers_cnt - construct pretty printed lines for **cnt** section headers
+%   * pp_get_headers_ext - construct pretty printed lines for **ext** section headers
+%   * pp_data - pretty print the data for the given section
+%   * set_bus_v_lims_via_vg - set gen bus voltage limits based on gen voltage setpoints
 %
 % See the :ref:`sec_data_model` section in the :ref:`dev_manual`
 % for more information.

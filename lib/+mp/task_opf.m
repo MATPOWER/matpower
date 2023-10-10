@@ -4,17 +4,17 @@ classdef task_opf < mp.task
 % Provides task implementation for the optimal power flow problem.
 %
 % mp.task_opf Properties:
-%    * tag - task tag 'OPF'
-%    * name - task name 'Optimal Power Flow'
-%    * dc - ``true`` if using DC network model
+%   * tag - task tag 'OPF'
+%   * name - task name 'Optimal Power Flow'
+%   * dc - ``true`` if using DC network model
 %
 % mp.task_opf Methods:
-%    * run_pre - set :attr:`dc` property
-%    * print_soln_header - add printout of objective function value
-%    * data_model_class_default - select default data model constructor
-%    * data_model_build_post - adjust bus voltage limits, if requested
-%    * network_model_class_default - select default network model constructor
-%    * math_model_class_default - select default math model constructor
+%   * run_pre - set :attr:`dc` property
+%   * print_soln_header - add printout of objective function value
+%   * data_model_class_default - select default data model constructor
+%   * data_model_build_post - adjust bus voltage limits, if requested
+%   * network_model_class_default - select default network model constructor
+%   * math_model_class_default - select default math model constructor
 %
 % See also mp.task.
 

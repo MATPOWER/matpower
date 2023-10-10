@@ -13,17 +13,17 @@ classdef mp_table
 % such as table joining, etc., are not implemented.
 %
 % mp_table Methods:
-%    * mp_table - construct object
-%    * copy - create a duplicate of the object
-%    * istable - true for mp_table objects
-%    * size - dimensions of table
-%    * isempty - true if table has no columns or no rows
-%    * end - used to index last row or variable/column
-%    * subsref - indexing a table to retrieve data
-%    * subsasgn - indexing a table to assign data
-%    * horzcat - concatenate tables horizontally
-%    * vertcat - concatenate tables vertically
-%    * display - display table contents
+%   * mp_table - construct object
+%   * copy - create a duplicate of the object
+%   * istable - true for mp_table objects
+%   * size - dimensions of table
+%   * isempty - true if table has no columns or no rows
+%   * end - used to index last row or variable/column
+%   * subsref - indexing a table to retrieve data
+%   * subsasgn - indexing a table to assign data
+%   * horzcat - concatenate tables horizontally
+%   * vertcat - concatenate tables vertically
+%   * display - display table contents
 %
 % See also table.
 

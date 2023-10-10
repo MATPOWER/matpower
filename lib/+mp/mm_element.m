@@ -13,13 +13,13 @@ classdef (Abstract) mm_element < handle
 % element class names begin with ``mme``.
 %
 % mp.mm_element Methods:
-%    * name - get name of element type, e.g. ``'bus'``, ``'gen'``
-%    * data_model_element - get corresponding data model element
-%    * network_model_element - get corresponding network model element
-%    * add_vars - add math model variables for this element
-%    * add_constraints - add math model constraints for this element
-%    * add_costs - add math model costs for this element
-%    * data_model_update - update the corresponding data model element
+%   * name - get name of element type, e.g. ``'bus'``, ``'gen'``
+%   * data_model_element - get corresponding data model element
+%   * network_model_element - get corresponding network model element
+%   * add_vars - add math model variables for this element
+%   * add_constraints - add math model constraints for this element
+%   * add_costs - add math model costs for this element
+%   * data_model_update - update the corresponding data model element
 %
 % See the :ref:`sec_mm_element` section in the :ref:`dev_manual`
 % for more information.

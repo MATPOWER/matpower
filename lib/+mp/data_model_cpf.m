@@ -2,7 +2,7 @@ classdef data_model_cpf < mp.data_model
 % mp.data_model_cpf - |MATPOWER| **data model** for CPF tasks.
 %
 % data_model_cpf Methods:
-%    * data_model_cpf - constructor
+%   * data_model_cpf - constructor, assign default data model element classes
 %
 % See also mp.data_model.
 

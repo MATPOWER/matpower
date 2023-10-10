@@ -2,7 +2,10 @@ classdef data_model_opf < mp.data_model
 % mp.data_model_opf - |MATPOWER| **data model** for OPF tasks.
 %
 % mp.data_model_opf Methods:
-%    * data_model_opf - constructor
+%   * data_model_opf - constructor, assign default data model element classes
+%   * pp_flags - add flags for **lim** sections
+%   * pp_section_list - append ``'lim'`` tag for **lim** sections to default list
+%   * pp_get_headers_other - construct headers for **lim** section headers
 %
 % See also mp.data_model.
 

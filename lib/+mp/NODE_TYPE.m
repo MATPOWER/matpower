@@ -2,13 +2,13 @@ classdef (Sealed) NODE_TYPE
 %mp.NODE_TYPE - Defines enumerated type for node types.
 %
 % mp.NODE_TYPE Properties:
-%    * PQ - PQ node (= 1)
-%    * PV - PV node (= 2)
-%    * REF - reference node (= 3)
-%    * NONE - isolated node (= 4)
+%   * PQ - PQ node (= 1)
+%   * PV - PV node (= 2)
+%   * REF - reference node (= 3)
+%   * NONE - isolated node (= 4)
 %
 % mp.NODE_TYPE Methods:
-%    * is_valid - returns true if the value is a valid node type
+%   * is_valid - returns true if the value is a valid node type
 %
 % All properties are ``Constant`` properties and the class is a ``Sealed``
 % class. So the properties function as global constants which do not create

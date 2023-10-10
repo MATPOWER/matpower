@@ -18,44 +18,43 @@ classdef (Abstract) net_model < mp.nm_element & mp.element_container & mp_idx_ma
 % class class names begin with ``mp.net_model``.
 %
 % mp.net_model Properties:
-%    * the_np - total number of ports
-%    * the_nz - total number of non-voltage states
-%    * nv - total number of (real) voltage variables
-%    * node - mp_idx_manager data for nodes
-%    * port - mp_idx_manager data for ports
-%    * state - mp_idx_manager data for non-voltage states
+%   * the_np - total number of ports
+%   * the_nz - total number of non-voltage states
+%   * nv - total number of (real) voltage variables
+%   * node - mp_idx_manager data for nodes
+%   * port - mp_idx_manager data for ports
+%   * state - mp_idx_manager data for non-voltage states
 %
 % mp.net_model Methods:
-%    * name - return name of this network element type (``'network'``)
-%    * np - return number of ports for this network element
-%    * nz - return number of *(possibly complex)* non-voltage states for
-%      this network element
-%    * build - create, add, and build network model element objects
-%    * add_nodes - elements add nodes, then add corresponding voltage variables
-%    * add_states - elements add states, then add corresponding state variables
-%    * build_params - build incidence matrices, parameters, add ports for each element
-%    * stack_matrix_params - form network matrix parameter by stacking corresponding element parameters
-%    * stack_vector_params - form network vector parameter by stacking corresponding element parameters
-%    * add_vvars - add voltage variable(s) for each network node
-%    * add_zvars - add non-voltage state variable(s) for each network state
-%    * def_set_types - define node, state, and port set types for mp_idx_manager
-%    * init_set_types - initialize structures for tracking/indexing nodes, states, ports
-%    * display - display the network model object
-%    * add_node - add named set of nodes
-%    * add_port - add named set of ports
-%    * add_state - add named set of states
-%    * set_type_idx_map - map node/port/state index back to named set & index within set
-%    * set_type_label - create a user-readable label to identify a node, port, or state
-%    * add_var - add a set of variables to the model
-%    * params_var - return initial value, bounds, and variable type for variables
-%    * get_node_idx - get index information for named node set
-%    * get_port_idx - get index information for named port set
-%    * get_state_idx - get index information for named state set
-%    * node_types - get node type information
-%    * ensure_ref_node - 
-%    * set_node_type_ref - make the specified node a reference node
-%    * set_node_type_pv - make the specified node a PV node
-%    * set_node_type_pq - make the specified node a PQ node
+%   * name - return name of this network element type (``'network'``)
+%   * np - return number of ports for this network element
+%   * nz - return number of *(possibly complex)* non-voltage states for this network element
+%   * build - create, add, and build network model element objects
+%   * add_nodes - elements add nodes, then add corresponding voltage variables
+%   * add_states - elements add states, then add corresponding state variables
+%   * build_params - build incidence matrices, parameters, add ports for each element
+%   * stack_matrix_params - form network matrix parameter by stacking corresponding element parameters
+%   * stack_vector_params - form network vector parameter by stacking corresponding element parameters
+%   * add_vvars - add voltage variable(s) for each network node
+%   * add_zvars - add non-voltage state variable(s) for each network state
+%   * def_set_types - define node, state, and port set types for mp_idx_manager
+%   * init_set_types - initialize structures for tracking/indexing nodes, states, ports
+%   * display - display the network model object
+%   * add_node - add named set of nodes
+%   * add_port - add named set of ports
+%   * add_state - add named set of states
+%   * set_type_idx_map - map node/port/state index back to named set & index within set
+%   * set_type_label - create a user-readable label to identify a node, port, or state
+%   * add_var - add a set of variables to the model
+%   * params_var - return initial value, bounds, and variable type for variables
+%   * get_node_idx - get index information for named node set
+%   * get_port_idx - get index information for named port set
+%   * get_state_idx - get index information for named state set
+%   * node_types - get node type information
+%   * ensure_ref_node - 
+%   * set_node_type_ref - make the specified node a reference node
+%   * set_node_type_pv - make the specified node a PV node
+%   * set_node_type_pq - make the specified node a PQ node
 %
 % See the :ref:`sec_net_model` section in the :ref:`dev_manual`
 % for more information.

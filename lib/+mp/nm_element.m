@@ -14,29 +14,29 @@ classdef (Abstract) nm_element < handle
 % model element class names begin with ``nme``.
 %
 % mp.mm_element Properties:
-%    * nk - number of elements of this type
-%    * C - stacked sparse element-node incidence matrices
-%    * D - stacked sparse incidence matrices for *z*-variables
-%    * soln - struct for storing solved states, quantities
+%   * nk - number of elements of this type
+%   * C - stacked sparse element-node incidence matrices
+%   * D - stacked sparse incidence matrices for *z*-variables
+%   * soln - struct for storing solved states, quantities
 %
 % mp.mm_element Methods:
-%    * name - get name of element type, e.g. ``'bus'``, ``'gen'``
-%    * np - number of ports per element of this type
-%    * nn - number of nodes per element, created by this element type
-%    * nz - number of non-voltage state variables per element of this type
-%    * data_model_element - get the corresponding data model element
-%    * math_model_element - get the corresponding math model element
-%    * count - get number of online elements in ``dm``, set :attr:`nk`
-%    * add_nodes - add nodes to network model
-%    * add_states - add non-voltage states to network model
-%    * add_vvars - add real-valued voltage variables to network object
-%    * add_zvars - add real-valued non-voltage state variables to network object
-%    * build_params - build model parameters from data model
-%    * get_nv_ - get number of *(possibly complex)* voltage variables
-%    * x2vz - get port voltages and non-voltage states from combined state vector
-%    * node_indices - construct node indices from data model element connection info
-%    * incidence_matrix - construct stacked incidence matrix from set of index vectors
-%    * display - display the network model element object
+%   * name - get name of element type, e.g. ``'bus'``, ``'gen'``
+%   * np - number of ports per element of this type
+%   * nn - number of nodes per element, created by this element type
+%   * nz - number of non-voltage state variables per element of this type
+%   * data_model_element - get the corresponding data model element
+%   * math_model_element - get the corresponding math model element
+%   * count - get number of online elements in ``dm``, set :attr:`nk`
+%   * add_nodes - add nodes to network model
+%   * add_states - add non-voltage states to network model
+%   * add_vvars - add real-valued voltage variables to network object
+%   * add_zvars - add real-valued non-voltage state variables to network object
+%   * build_params - build model parameters from data model
+%   * get_nv_ - get number of *(possibly complex)* voltage variables
+%   * x2vz - get port voltages and non-voltage states from combined state vector
+%   * node_indices - construct node indices from data model element connection info
+%   * incidence_matrix - construct stacked incidence matrix from set of index vectors
+%   * display - display the network model element object
 %
 % See the :ref:`sec_nm_element` section in the :ref:`dev_manual`
 % for more information.

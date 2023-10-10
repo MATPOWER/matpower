@@ -10,52 +10,52 @@ classdef (Abstract) task < handle
 % interactions between the 3 (data, network, mathematical) model layers.
 %
 % mp.task Properties:
-%    * tag - task tag - e.g. 'PF', 'CPF', 'OPF'
-%    * name - task name - e.g. 'Power Flow', etc.
-%    * dmc - data model converter object
-%    * dm - data model object
-%    * nm - network model object
-%    * mm - mathematical model object
-%    * mm_opt - solve options for mathematical model
-%    * i_dm - iteration counter for data model loop
-%    * i_nm - iteration counter for network model loop
-%    * i_mm - iteration counter for math model loop
-%    * success - success flag, 1 - math model solved, 0 - didn't solve
-%    * message - output message
-%    * et - elapsed time (seconds) for run() method
+%   * tag - task tag - e.g. 'PF', 'CPF', 'OPF'
+%   * name - task name - e.g. 'Power Flow', etc.
+%   * dmc - data model converter object
+%   * dm - data model object
+%   * nm - network model object
+%   * mm - mathematical model object
+%   * mm_opt - solve options for mathematical model
+%   * i_dm - iteration counter for data model loop
+%   * i_nm - iteration counter for network model loop
+%   * i_mm - iteration counter for math model loop
+%   * success - success flag, 1 - math model solved, 0 - didn't solve
+%   * message - output message
+%   * et - elapsed time (seconds) for run() method
 %
 % mp.task Methods:
-%    * run - execute the task
-%    * next_mm - controls iterations over mathematical models
-%    * next_nm - controls iterations over network models
-%    * next_dm - controls iterations over data models
-%    * run_pre - called at beginning of run() method
-%    * run_post - called at end of run() method
-%    * print_soln - display pretty-printed results
-%    * print_soln_header - display success/failure, elapsed time
-%    * save_soln - save solved case to file
-%    * dm_converter_class - get data model converter constructor
-%    * dm_converter_class_mpc2_default - get default data model converter constructor
-%    * dm_converter_create - create data model converter object
-%    * data_model_class - get data model constructor
-%    * data_model_class_default - get default data model constructor
-%    * data_model_create - create data model object
-%    * data_model_build - create and build data model object
-%    * data_model_build_pre - called at beginning of data_model_build()
-%    * data_model_build_post - called at end of data_model_build() 
-%    * network_model_class - get network model constructor
-%    * network_model_class_default - get default network model constructor
-%    * network_model_create - create network model object
-%    * network_model_build - create and build network model object
-%    * network_model_build_pre - called at beginning of network_model_build()
-%    * network_model_build_post - called at end of network_model_build()
-%    * network_model_x_soln - update network model state from math model solution
-%    * network_model_update - update net model state/soln from math model soln
-%    * math_model_class - get mathematical model constructor
-%    * math_model_class_default - get default mathematical model constructor
-%    * math_model_create - create mathematical model object
-%    * math_model_build - create and build mathematical model object
-%    * math_model_opt - get options struct to pass to :meth:`mm.solve() <opt_model.solve>`
+%   * run - execute the task
+%   * next_mm - controls iterations over mathematical models
+%   * next_nm - controls iterations over network models
+%   * next_dm - controls iterations over data models
+%   * run_pre - called at beginning of run() method
+%   * run_post - called at end of run() method
+%   * print_soln - display pretty-printed results
+%   * print_soln_header - display success/failure, elapsed time
+%   * save_soln - save solved case to file
+%   * dm_converter_class - get data model converter constructor
+%   * dm_converter_class_mpc2_default - get default data model converter constructor
+%   * dm_converter_create - create data model converter object
+%   * data_model_class - get data model constructor
+%   * data_model_class_default - get default data model constructor
+%   * data_model_create - create data model object
+%   * data_model_build - create and build data model object
+%   * data_model_build_pre - called at beginning of data_model_build()
+%   * data_model_build_post - called at end of data_model_build() 
+%   * network_model_class - get network model constructor
+%   * network_model_class_default - get default network model constructor
+%   * network_model_create - create network model object
+%   * network_model_build - create and build network model object
+%   * network_model_build_pre - called at beginning of network_model_build()
+%   * network_model_build_post - called at end of network_model_build()
+%   * network_model_x_soln - update network model state from math model solution
+%   * network_model_update - update net model state/soln from math model soln
+%   * math_model_class - get mathematical model constructor
+%   * math_model_class_default - get default mathematical model constructor
+%   * math_model_create - create mathematical model object
+%   * math_model_build - create and build mathematical model object
+%   * math_model_opt - get options struct to pass to :meth:`mm.solve() <opt_model.solve>`
 %
 % See the :ref:`sec_task` section in the :ref:`dev_manual`
 % for more information.
@@ -784,7 +784,7 @@ classdef (Abstract) task < handle
             % default class to use for the network model object.
             %
             % *Note: This is an abstract method that must be implemented
-            % by a concrete subclass.*
+            % by a subclass.*
 
             error('mp.task/network_model_class_default: must be implemented in subclass');
         end
@@ -983,7 +983,7 @@ classdef (Abstract) task < handle
             % default class to use for the mathematical model object.
             %
             % *Note: This is an abstract method that must be implemented
-            % by a concrete subclass.*
+            % by a subclass.*
 
             error('mp.task/math_model_class_default: must be implemented in subclass');
         end

@@ -13,26 +13,26 @@ classdef (Abstract) dmc_element < handle
 % subclass can be defined simply by implementing the table_var_map() method.
 %
 % mp.dmc_element Methods:
-%    * name - get name of element type, e.g. ``'bus'``, ``'gen'``
-%    * data_model_element - get corresponding data model element
-%    * data_field - get name of field in data source corresponding to default data table
-%    * data_subs - get subscript reference struct for accessing data source
-%    * data_exists - check if default field exists in data source
-%    * get_import_spec - get import specification
-%    * get_export_spec - get export specification
-%    * get_import_size - get dimensions of data to be imported
-%    * get_export_size - get dimensions of data to be exported
-%    * table_var_map - get variable map for import/export
-%    * import - import data from data source into data model element
-%    * import_table_values - import table values for given import specification
-%    * get_input_table_values - get values to insert in data model element table
-%    * import_col - extract and optionally modify values from data source column
-%    * export - export data from data model element to data source
-%    * export_table_values - export table values for given import specification
-%    * init_export_data - initialize data source for export from data model element
-%    * default_export_data_table - create default (empty) data table for data source
-%    * default_export_data_nrows - get number of rows default_export_data_table()
-%    * export_col - export a variable (table column) to the data source
+%   * name - get name of element type, e.g. ``'bus'``, ``'gen'``
+%   * data_model_element - get corresponding data model element
+%   * data_field - get name of field in data source corresponding to default data table
+%   * data_subs - get subscript reference struct for accessing data source
+%   * data_exists - check if default field exists in data source
+%   * get_import_spec - get import specification
+%   * get_export_spec - get export specification
+%   * get_import_size - get dimensions of data to be imported
+%   * get_export_size - get dimensions of data to be exported
+%   * table_var_map - get variable map for import/export
+%   * import - import data from data source into data model element
+%   * import_table_values - import table values for given import specification
+%   * get_input_table_values - get values to insert in data model element table
+%   * import_col - extract and optionally modify values from data source column
+%   * export - export data from data model element to data source
+%   * export_table_values - export table values for given import specification
+%   * init_export_data - initialize data source for export from data model element
+%   * default_export_data_table - create default (empty) data table for data source
+%   * default_export_data_nrows - get number of rows default_export_data_table()
+%   * export_col - export a variable (table column) to the data source
 %
 % See the :ref:`sec_dmc_element` section in the :ref:`dev_manual`
 % for more information.

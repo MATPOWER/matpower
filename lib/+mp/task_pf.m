@@ -4,24 +4,24 @@ classdef task_pf < mp.task
 % Provides task implementation for the power flow problem.
 %
 % mp.task_pf Properties:
-%    * tag - task tag 'PF'
-%    * name - task name 'Power Flow'
-%    * dc - ``true`` if using DC network model
-%    * iterations - total number of power flow iterations
-%    * ref - current ref node indices
-%    * ref0 - initial ref node indices
-%    * va_ref0 - initial ref node voltage angles
-%    * fixed_q_idx - indices of fixed Q gens
-%    * fixed_q_qty - Q output of fixed Q gens
+%   * tag - task tag 'PF'
+%   * name - task name 'Power Flow'
+%   * dc - ``true`` if using DC network model
+%   * iterations - total number of power flow iterations
+%   * ref - current ref node indices
+%   * ref0 - initial ref node indices
+%   * va_ref0 - initial ref node voltage angles
+%   * fixed_q_idx - indices of fixed Q gens
+%   * fixed_q_qty - Q output of fixed Q gens
 %
 % mp.task_pf Methods:
-%    * run_pre - set :attr:`dc` property
-%    * next_dm - optionally iterate to enforce generator reactive limits
-%    * enforce_q_lims - implementation of generator reactive limits
-%    * network_model_class_default - select default network model constructor
-%    * network_model_build_post - initialize properties for reactive limits
-%    * network_model_x_soln - correct the voltage angles if necessary
-%    * math_model_class_default - select default math model constructor
+%   * run_pre - set :attr:`dc` property
+%   * next_dm - optionally iterate to enforce generator reactive limits
+%   * enforce_q_lims - implementation of generator reactive limits
+%   * network_model_class_default - select default network model constructor
+%   * network_model_build_post - initialize properties for reactive limits
+%   * network_model_x_soln - correct the voltage angles if necessary
+%   * math_model_class_default - select default math model constructor
 %
 % See also mp.task.
 

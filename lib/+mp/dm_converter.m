@@ -14,14 +14,14 @@ classdef (Abstract) dm_converter < mp.element_container
 % model converter class names begin with ``mp.dm_converter``.
 %
 % mp.dm_converter Methods:
-%    * format_tag - returns char array identifier for data source/format
-%    * copy - make duplicate of object
-%    * build - create and add element objects
-%    * import - import data from a data source into a data model
-%    * export - export data from a data model to a data source
-%    * init_export - initialize a data source for export
-%    * save - save data source to a file
-%    * display - display the data model converter object
+%   * format_tag - return char array identifier for data source/format
+%   * copy - make duplicate of object
+%   * build - create and add element objects
+%   * import - import data from a data source into a data model
+%   * export - export data from a data model to a data source
+%   * init_export - initialize a data source for export
+%   * save - save data source to a file
+%   * display - display the data model converter object
 %
 % See the :ref:`sec_dm_converter` section in the :ref:`dev_manual`
 % for more information.

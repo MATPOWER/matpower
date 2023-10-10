@@ -30,18 +30,18 @@ classdef mapped_array < handle
 %   ma.is_index_name('color');
 %
 % mp.mapped_array Methods:
-%    * mapped_array - constructor
-%    * copy - create a duplicate of the mapped array object
-%    * length - return number of elements in mapped array
-%    * size - return dimensions of mapped array
-%    * add_names - add or modify names of elements
-%    * add_elements - append elements to the end of the mapped array
-%    * delete_elements - delete elements from the mapped array
-%    * is_index_name - return ``true`` if the name exists in the mapped array
-%    * name2idx - return the index corresponding to a name
-%    * subsref - called when indexing a mapped array to retrieve data
-%    * subsasgn - called when indexing a mapped array to assign data
-%    * display - display the mapped array structure
+%   * mapped_array - constructor
+%   * copy - create a duplicate of the mapped array object
+%   * length - return number of elements in mapped array
+%   * size - return dimensions of mapped array
+%   * add_names - add or modify names of elements
+%   * add_elements - append elements to the end of the mapped array
+%   * delete_elements - delete elements from the mapped array
+%   * is_index_name - return ``true`` if the name exists in the mapped array
+%   * name2idx - return the index corresponding to a name
+%   * subsref - called when indexing a mapped array to retrieve data
+%   * subsasgn - called when indexing a mapped array to assign data
+%   * display - display the mapped array structure
 
 %   MATPOWER
 %   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
