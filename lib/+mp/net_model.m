@@ -392,6 +392,12 @@ classdef (Abstract) net_model < mp.nm_element & mp.element_container & mp_idx_ma
             %
             %   nm.def_set_types()
             %
+            % Define the following set types:
+            %
+            %   - ``'node'`` - NODES
+            %   - ``'state'`` - STATES
+            %   - ``'port'`` - PORTS
+            %
             % See also mp_idx_manager.
 
             obj.set_types = struct(...

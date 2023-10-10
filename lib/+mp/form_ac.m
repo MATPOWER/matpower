@@ -1,32 +1,89 @@
 classdef (Abstract) form_ac < mp.form
-%MP.FORM_AC  MATPOWER Formulation base class for AC formulations
-%   Each concrete Network Model Element class must inherit, at least
-%   indirectly, from both MP.NM_ELEMENT and MP.FORM.
+% mp.form_ac - Abstract base class for |MATPOWER| AC **formulations**.
 %
-%   Subclass of MP.FORM.
-%   MP.FORM provides properties and methods related to the specific
-%   formulation (e.g. DC version, AC polar power version, etc.)
+% Used as a mix-in class for all **network model element** classes
+% with an AC network model formulation. That is, each concrete network model
+% element class with an AC formulation must inherit, at least indirectly, from
+% both mp.nm_element and mp.form_ac.
 %
-%   MP.FORM_AC defines:
-%       linear current injection       = Y v_ + L z_ + i
-%       linear complex power injection = M v_ + N z_ + s
+% mp.form_ac defines the complex port injections as functions of the state
+% variables :math:`\X`, that is, the complex voltages :math:`\V` and
+% non-voltage states :math:`\Z`. The are defined in terms of 3 compoents, the
+% linear current injection and linear power injection components,
+% 
+% .. math::
+% 
+%    \Ilin(\X) &= \left[\begin{array}{cc}\YY & \LL\end{array}\right] \X + \iv \\
+%    &= \YY \V + \LL \Z + \iv
+% 
+% .. math::
+% 
+%    \Slin(\X) &= \left[\begin{array}{cc}\MM & \NN\end{array}\right] \X + \sv \\
+%    &= \MM \V + \NN \Z + \sv,
 %
-%   Properties
-%       (model parameters)
-%       params - cell array of model parameter field names
-%       Y - np*nk x nn matrix
-%       L - np*nk x nz matrix
-%       M - np*nk x nn matrix
-%       N - np*nk x nz matrix
-%       i - np*nk x 1 matrix
-%       s - np*nk x 1 matrix
+% and an arbitrary nonlinear injection component represented by
+% :math:`\Snln(\X)` or :math:`\Inln(\X)`. The full complex power and current
+% port injection functions implemented by mp.form_ac, are respectively 
 %
-%   Methods
-%       model_params() - cell array of names of model parameters
-%                        {'Y', 'L', 'M', 'N', 'i', 's'}
+% .. math::
+%
+%     \GS(\X) &= \dV \conj{\left( \Ilin(\X) \right)} + \Slin(\X) + \Snln(\X) \\
+%     &= \dV \conj{\left( \YY \V + \LL \Z + \iv \right)} + \MM \V + \NN \Z + \sv + \Snln(\X)
+%
+% .. math::
+%
+%   \GI(\X) &= \Ilin(\X) + \cdiag{\Slin(\X)} \inVc + \Inln(\X) \\
+%   &= \YY \V + \LL \Z + \iv + \cdiag{\MM \V + \NN \Z + \sv} \inVc + \Inln(\X)
+%
+% where :math:`\YY`, :math:`\LL`, :math:`\MM`, :math:`\NN`, :math:`\iv`, and
+% :math:`\sv`, along with :math:`\Snln(\X)` or :math:`\Inln(\X)`, are the
+% model parameters.
+%
+% For more details, see the :ref:`sec_nm_formulations_ac` section in the
+% :ref:`dev_manual` and the derivations in |TN5|.
+%
+% mp.form_dc Properties:
+%   * Y - :math:`n_p n_k \times n_n` matrix :math:`\YY` of model parameters
+%   * L - :math:`n_p n_k \times n_\Z` matrix :math:`\LL` of model parameters
+%   * M - :math:`n_p n_k \times n_n` matrix :math:`\MM` of model parameters
+%   * N - :math:`n_p n_k \times n_\Z` matrix :math:`\NN` of model parameters
+%   * i - :math:`n_p n_k \times 1` vector :math:`\iv` of model parameters
+%   * s - :math:`n_p n_k \times 1` vector :math:`\sv` of model parameters
+%   * params_ncols - specify number of columns for each parameter
+%   * inln - function to compute :math:`\Inln(\X)`
+%   * snln - function to compute :math:`\Snln(\X)`
+%   * inln_hess - function to compute Hessian of :math:`\Inln(\X)`
+%   * snln_hess - function to compute Hessian of :math:`\Snln(\X)`
+%
+% mp.form_dc Methods:
+%   * form_name - get char array w/name of formulation (``'AC'``)
+%   * form_tag - get char array w/short label of formulation (``'ac'``)
+%   * model_params - get network model element parameters (``{'Y', 'L', 'M', 'N', 'i', 's'}``)
+%   * model_zvars - get cell array of names of non-voltage state variables (``{'zr', 'zi'}``)
+%   * port_inj_current - compute port current injections from network state
+%   * port_inj_power - compute port power injections from network state
+%   * port_inj_current_hess - compute Hessian of port current injections
+%   * port_inj_power_hess - compute Hessian of port power injections
+%   * port_inj_current_jac - abstract method to compute voltage-related Jacobian terms
+%   * port_inj_current_hess_v - abstract method to compute voltage-related Hessian terms
+%   * port_inj_current_hess_vz - abstract method to compute voltage-related Hessian terms
+%   * port_inj_power_jac - abstract method to compute voltage-related Jacobian terms
+%   * port_inj_power_hess_v - abstract method to compute voltage-related Hessian terms
+%   * port_inj_power_hess_vz - abstract method to compute voltage-related Hessian terms
+%   * port_apparent_power_lim_fcn - compute port squared apparent power injection constraints
+%   * port_active_power_lim_fcn - compute port active power injection constraints
+%   * port_active_power2_lim_fcn - compute port squared active power injection constraints
+%   * port_current_lim_fcn - compute port squared current injection constraints
+%   * port_apparent_power_lim_hess - compute port squared apparent power injection Hessian
+%   * port_active_power_lim_hess - compute port active power injection Hessian
+%   * port_active_power2_lim_hess - compute port squared active power injection Hessian
+%   * port_current_lim_hess - compute port squared current injection Hessian
+%   * aux_data_va_vm - abstract method to return voltage angles/magnitudes from auxiliary data
+%
+% See also mp.form, mp.form_acc, mp.form_acp, mp.form_dc, mp.nm_element.
 
 %   MATPOWER
-%   Copyright (c) 2019-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2019-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -34,44 +91,123 @@ classdef (Abstract) form_ac < mp.form
 %   See https://matpower.org for more info.
 
     properties
-        %% model parameters
-        Y = [];     %% ilin(x_, idx) = Y(idx, :) * v_ + L(idx, :) * z_ + i(idx)
+        % *(double)* :math:`n_p n_k \times n_n` matrix :math:`\YY`
+        % of model parameter coefficients for :math:`\V`
+        Y = [];
+
+        % *(double)* :math:`n_p n_k \times n_\Z` matrix :math:`\LL`
+        % of model parameter coefficients for :math:`\Z`
         L = [];
-        M = [];     %% slin(x_, idx) = M(idx, :) * v_ + N(idx, :) * z_ + s(idx)
+
+        % *(double)* :math:`n_p n_k \times n_n` matrix :math:`\MM`
+        % of model parameter coefficients for :math:`\V`
+        M = [];
+
+        % *(double)* :math:`n_p n_k \times n_\Z` matrix :math:`\NN`
+        % of model parameter coefficients for :math:`\Z`
         N = [];
-        i = [];
-        s = [];
+        i = []; % *(double)* :math:`n_p n_k \times 1` vector :math:`\iv` of model parameters
+        s = []; % *(double)* :math:`n_p n_k \times 1` vector :math:`\sv` of model parameters
+
+        % *(struct)* specify number of columns for each parameter,
+        % where
+        %
+        %   - 1 => single column (i.e. a vector)
+        %   - 2 => :math:`n_p` columns
+        %   - 3 => :math:`n_\Z` columns
         param_ncols = struct('Y', 2, 'L', 3, 'M', 2, 'N', 3, 'i', 1, 's', 1);
-            %% num of columns for each parameter, where 1 = 1, 2 = np, 3 = nz
-        inln = '';      %% fcn handle, i = ilin(x_, idx) + inln(x_, idx)
-        snln = '';      %% fcn handle, s = slin(x_, idx) + snln(x_, idx)
-        inln_hess = ''; %% fcn handle, if empty, Hessian assumed zero
-        snln_hess = ''; %% fcn handle, if empty, Hessian assumed zero
+        inln = '';      % *(function handle)* function to compute :math:`\Inln(\X)`
+        snln = '';      % *(function handle)* function to compute :math:`\Snln(\X)`
+        inln_hess = ''; % *(function handle)* function to compute Hessian of :math:`\Inln(\X)`
+        snln_hess = ''; % *(function handle)* function to compute Hessian of :math:`\Snln(\X)`
     end
 
     methods
         function name = form_name(obj)
+            % Get user-readable name of formulation, i.e. ``'AC'``.
+            %
+            % See :meth:`mp.form.form_name`.
+
             name = 'AC';
         end
 
         function tag = form_tag(obj)
+            % Get short label of formulation, i.e. ``'ac'``.
+            %
+            % See :meth:`mp.form.form_tag`.
+
             tag = 'ac';
         end
 
         function params = model_params(obj)
+            % Get cell array of names of model parameters, i.e. ``{'Y', 'L', 'M', 'N', 'i', 's'}``.
+            %
+            % See :meth:`mp.form.model_params`.
+
            params = {'Y', 'L', 'M', 'N', 'i', 's'};
         end
 
         function vtypes = model_zvars(obj)
+            % Get cell array of names of non-voltage state variables, i.e. ``{'zr', 'zi'}``.
+            %
+            % See :meth:`mp.form.model_zvars`.
+
             vtypes = {'zr', 'zi'};
         end
 
         function [I, Iv1, Iv2, Izr, Izi] = port_inj_current(obj, x_, sysx, idx)
-            % I = obj.port_inj_current(x_, sysx)
-            % I = obj.port_inj_current(x_, sysx, idx)
-            % [I, Iv1, Iv2] = obj.port_inj_current(...)
-            % [I, Iv1, Iv2, Izr, Izi] = obj.port_inj_current(...)
-            % sysx : 1 = system x_, 0 = class aggregate x_
+            % Compute port complex current injections from network state.
+            % ::
+            %
+            %   I = nme.port_inj_current(x_, sysx)
+            %   I = nme.port_inj_current(x_, sysx, idx)
+            %   [I, Iv1, Iv2] = nme.port_inj_current(...)
+            %   [I, Iv1, Iv2, Izr, Izi] = nme.port_inj_current(...)
+            %
+            % Compute the complex current injections for all or a selected
+            % subset of ports and, optionally, the components of the Jacobian,
+            % that is, the sparse matrices of partial derivatives with respect
+            % to each real component of the state. The voltage portion, which
+            % depends on the formulation (polar vs cartesian), is delegated
+            % to the  :meth:`port_inj_current_jac` method implemented by the
+            % appropriate subclass.
+            %
+            % The state can be provided as a stacked aggregate of the state
+            % variables (port voltages and non-voltage states) for the full
+            % collection of network model elements of this type, or as the
+            % combined state for the entire network.
+            %
+            % Inputs:
+            %   x_ (complex double) : state vector :math:`\X`
+            %   sysx (0 or 1) : which state is provided in ``x_``
+            %
+            %       - 0 -- class aggregate state
+            %       - 1 -- *(default)* full system state
+            %   idx (integer) : *(optional)* vector of indices of ports of
+            %       interest, if empty or missing, returns results
+            %       corresponding to all ports
+            %
+            % Outputs:
+            %   I (complex double) : vector of port complex current injections,
+            %       :math:`\GI(\X)`
+            %   Iv1 (complex double) : Jacobian of port complex current
+            %       injections w.r.t 1st voltage component,
+            %       :math:`\GI_\Va` (polar) or :math:`\GI_\Vr`
+            %       (cartesian)
+            %   Iv2 (complex double) : Jacobian of port complex current
+            %       injections w.r.t 2nd voltage component,
+            %       :math:`\GI_\Vm` (polar) or :math:`\GI_\Vi`
+            %       (cartesian)
+            %   Izr (complex double) : Jacobian of port complex current
+            %       injections w.r.t real part of non-voltage state,
+            %       :math:`\GI_\Zr`
+            %   Izi (complex double) : Jacobian of port complex current
+            %       injections w.r.t imaginary part of non-voltage state,
+            %       :math:`\GI_\Zi`
+            %
+            % For details on the derivations of the formulas used, see |TN5|.
+            %
+            % See also port_inj_power.
 
             if nargin < 4
                 idx = [];
@@ -158,12 +294,58 @@ classdef (Abstract) form_ac < mp.form
         end
 
         function [S, Sv1, Sv2, Szr, Szi] = port_inj_power(obj, x_, sysx, idx)
-            % S = obj.port_inj_power(x_, sysx)
-            % S = obj.port_inj_power(x_, sysx, idx)
+            % Compute port complex power injections from network state.
+            % ::
             %
-            % [S, Sv1, Sv2] = obj.port_inj_power(...)
-            % [S, Sv1, Sv2, Szr, Szi] = obj.port_inj_power(...)
-            % sysx : 1 = system x_, 0 = class aggregate x_
+            %   S = nme.port_inj_power(x_, sysx)
+            %   S = nme.port_inj_power(x_, sysx, idx)
+            %   [S, Sv1, Sv2] = nme.port_inj_power(...)
+            %   [S, Sv1, Sv2, Szr, Szi] = nme.port_inj_power(...)
+            %
+            % Compute the complex power injections for all or a selected
+            % subset of ports and, optionally, the components of the Jacobian,
+            % that is, the sparse matrices of partial derivatives with respect
+            % to each real component of the state. The voltage portion, which
+            % depends on the formulation (polar vs cartesian), is delegated
+            % to the  :meth:`port_inj_power_jac` method implemented by the
+            % appropriate subclass.
+            %
+            % The state can be provided as a stacked aggregate of the state
+            % variables (port voltages and non-voltage states) for the full
+            % collection of network model elements of this type, or as the
+            % combined state for the entire network.
+            %
+            % Inputs:
+            %   x_ (complex double) : state vector :math:`\X`
+            %   sysx (0 or 1) : which state is provided in ``x_``
+            %
+            %       - 0 -- class aggregate state
+            %       - 1 -- *(default)* full system state
+            %   idx (integer) : *(optional)* vector of indices of ports of
+            %       interest, if empty or missing, returns results
+            %       corresponding to all ports
+            %
+            % Outputs:
+            %   S (complex double) : vector of port complex power injections,
+            %       :math:`\GS(\X)`
+            %   Sv1 (complex double) : Jacobian of port complex power
+            %       injections w.r.t 1st voltage component,
+            %       :math:`\GS_\Va` (polar) or :math:`\GS_\Vr`
+            %       (cartesian)
+            %   Sv2 (complex double) : Jacobian of port complex power
+            %       injections w.r.t 2nd voltage component,
+            %       :math:`\GS_\Vm` (polar) or :math:`\GS_\Vi`
+            %       (cartesian)
+            %   Szr (complex double) : Jacobian of port complex power
+            %       injections w.r.t real part of non-voltage state,
+            %       :math:`\GS_\Zr`
+            %   Szi (complex double) : Jacobian of port complex power
+            %       injections w.r.t imaginary part of non-voltage state,
+            %       :math:`\GS_\Zi`.
+            %
+            % For details on the derivations of the formulas used, see |TN5|.
+            %
+            % See also port_inj_current.
 
             if nargin < 4
                 idx = [];
@@ -251,9 +433,37 @@ classdef (Abstract) form_ac < mp.form
         end
 
         function H = port_inj_current_hess(obj, x_, lam, sysx, idx)
-            % H = obj.port_inj_current_hess(x_, lam)
-            % H = obj.port_inj_current_hess(x_, lam, sysx)
-            % H = obj.port_inj_current_hess(x_, lam, sysx, idx)
+            % Compute Hessian of port current injections from network state.
+            % ::
+            %
+            %   H = nme.port_inj_current_hess(x_, lam)
+            %   H = nme.port_inj_current_hess(x_, lam, sysx)
+            %   H = nme.port_inj_current_hess(x_, lam, sysx, idx)
+            %
+            % Compute a sparse Hessian matrix for all or a selected subset of
+            % ports. Rather than a full, 3-dimensional Hessian, it computes the
+            % Jacobian of the vector obtained by muliplying the transpose of
+            % the port current injection Jacobian by a vector :math:`\lam`.
+            %
+            % Inputs:
+            %   x_ (complex double) : state vector :math:`\X`
+            %   lam (double) : vector :math:`\lam` of multipliers, one for each port
+            %   sysx (0 or 1) : which state is provided in ``x_``
+            %
+            %       - 0 -- class aggregate state
+            %       - 1 -- *(default)* full system state
+            %   idx (integer) : *(optional)* vector of indices of ports of
+            %       interest, if empty or missing, returns results
+            %       corresponding to all ports
+            %
+            % Outputs:
+            %   H (complex double) : sparse Hessian matrix of port complex
+            %       current injections corresponding to specified
+            %       :math:`\lam`, namely :math:`\GI_{\X\X}(\lam)`
+            %
+            % For details on the derivations of the formulas used, see |TN5|.
+            %
+            % See also port_inj_current.
 
             if nargin < 5
                 idx = [];
@@ -321,9 +531,37 @@ classdef (Abstract) form_ac < mp.form
         end
 
         function H = port_inj_power_hess(obj, x_, lam, sysx, idx)
-            % H = obj.port_inj_power_hess(x_, lam)
-            % H = obj.port_inj_power_hess(x_, lam, sysx)
-            % H = obj.port_inj_power_hess(x_, lam, sysx, idx)
+            % Compute Hessian of port power injections from network state.
+            % ::
+            %
+            %   H = nme.port_inj_power_hess(x_, lam)
+            %   H = nme.port_inj_power_hess(x_, lam, sysx)
+            %   H = nme.port_inj_power_hess(x_, lam, sysx, idx)
+            %
+            % Compute a sparse Hessian matrix for all or a selected subset of
+            % ports. Rather than a full, 3-dimensional Hessian, it computes the
+            % Jacobian of the vector obtained by muliplying the transpose of
+            % the port power injection Jacobian by a vector :math:`\lam`.
+            %
+            % Inputs:
+            %   x_ (complex double) : state vector :math:`\X`
+            %   lam (double) : vector :math:`\lam` of multipliers, one for each port
+            %   sysx (0 or 1) : which state is provided in ``x_``
+            %
+            %       - 0 -- class aggregate state
+            %       - 1 -- *(default)* full system state
+            %   idx (integer) : *(optional)* vector of indices of ports of
+            %       interest, if empty or missing, returns results
+            %       corresponding to all ports
+            %
+            % Outputs:
+            %   H (complex double) : sparse Hessian matrix of port complex
+            %       power injections corresponding to specified
+            %       :math:`\lam`, namely :math:`\GS_{\X\X}(\lam)`
+            %
+            % For details on the derivations of the formulas used, see |TN5|.
+            %
+            % See also port_inj_power.
 
             if nargin < 5
                 idx = [];
@@ -390,10 +628,95 @@ classdef (Abstract) form_ac < mp.form
             end
         end
 
-        function [h, dh] = port_apparent_power_lim_fcn(obj, x_, nm, idx, hmax)
-            %% branch squared apparent power flow constraints
+        function [Iv1, Iv2] = port_inj_current_jac(obj, n, v_, Y, M, invdiagvic, diagSlincJ)
+            % Abstract method to compute voltage-related Jacobian terms.
+            %
+            % Called by port_inj_current() to compute voltage-related Jacobian
+            % terms. See mp.form_acc.port_inj_current_jac and
+            % mp.form_acp.port_inj_current_jac for details.
 
-            %% get port power injections with derivatives
+            error('mp.form_ac/port_inj_current_jac: must be implemented in subclass');
+        end
+
+        function [Iv1v1, Iv1v2, Iv2v2] = port_inj_current_hess_v(obj, x_, lam, v_, z_, diaginvic, Y, M, diagSlincJ, dlamJ)
+            % Abstract method to compute voltage-related Hessian terms.
+            %
+            % Called by port_inj_current_hess() to compute voltage-related Hessian
+            % terms. See mp.form_acc.port_inj_current_hess_v and
+            % mp.form_acp.port_inj_current_hess_v for details.
+
+            error('mp.form_ac/port_inj_current_hess_v: must be implemented in subclass');
+        end
+
+        function [Iv1zr, Iv1zi, Iv2zr, Iv2zi] = port_inj_current_hess_vz(obj, x_, lam, v_, z_, diaginvic, N, dlamJ)
+            % Abstract method to compute voltage-related Hessian terms.
+            %
+            % Called by port_inj_current_hess() to compute
+            % voltage/non-voltage-related Hessian terms. See
+            % mp.form_acc.port_inj_current_hess_vz and
+            % mp.form_acp.port_inj_current_hess_vz for details.
+
+            error('mp.form_ac/port_inj_current_hess_vz: must be implemented in subclass');
+        end
+
+        function [Sv1, Sv2] = port_inj_power_jac(obj, n, v_, Y, M, diagv, diagvi, diagIlincJ)
+            % Abstract method to compute voltage-related Jacobian terms.
+            %
+            % Called by port_inj_power() to compute voltage-related Jacobian
+            % terms. See mp.form_acc.port_inj_power_jac and
+            % mp.form_acp.port_inj_power_jac for details.
+
+            error('mp.form_ac/port_inj_power_jac: must be implemented in subclass');
+        end
+
+        function [Sv1v1, Sv1v2, Sv2v2] = port_inj_power_hess_v(obj, x_, lam, v_, z_, diagvi, Y, M, diagIlincJ, dlamJ)
+            % Abstract method to compute voltage-related Hessian terms.
+            %
+            % Called by port_inj_power_hess() to compute voltage-related Hessian
+            % terms. See mp.form_acc.port_inj_power_hess_v and
+            % mp.form_acp.port_inj_power_hess_v for details.
+
+            error('mp.form_ac/port_inj_power_hess_v: must be implemented in subclass');
+        end
+
+        function [Sv1zr, Sv1zi, Sv2zr, Sv2zi] = port_inj_power_hess_vz(obj, x_, lam, v_, z_, diagvi, L, dlamJ)
+            % Abstract method to compute voltage-related Hessian terms.
+            %
+            % Called by port_inj_power_hess() to compute
+            % voltage/non-voltage-related Hessian terms. See
+            % mp.form_acc.port_inj_power_hess_vz and
+            % mp.form_acp.port_inj_power_hess_vz for details.
+
+            error('mp.form_ac/port_inj_power_hess_vz: must be implemented in subclass');
+        end
+
+        function [h, dh] = port_apparent_power_lim_fcn(obj, x_, nm, idx, hmax)
+            % Compute port squared apparent power injection constraints.
+            % ::
+            %
+            %   h = nme.port_apparent_power_lim_fcn(x_, nm, idx, hmax)
+            %   [h, dh] = nme.port_apparent_power_lim_fcn(x_, nm, idx, hmax)
+            %
+            % Compute constraint function and optionally the Jacobian for
+            % the limit on port squared apparent power injections based on
+            % complex outputs of port_inj_power().
+            %
+            % Inputs:
+            %   x_ (complex double) : state vector :math:`\X`
+            %   nm (mp.net_model) : network model object
+            %   idx (integer) : *(optional)* vector of indices of ports of
+            %       interest, if empty or missing, returns results
+            %       corresponding to all ports
+            %   hmax (double) : vector of squared apparent power limits
+            %
+            % Outputs:
+            %   h (double) : constraint function, :math:`\h^\mathrm{flow}(\x)`
+            %   dh (double) : constraint Jacobian, :math:`\h_\x^\mathrm{flow}`
+            %
+            % For details on the derivations of the formulas used, see |TN5|.
+            %
+            % See also port_inj_power.
+
             if nargout > 1
                 [S, Sv1, Sv2, Szr, Szi] = obj.port_inj_power(x_, 1, idx);
                 Sx = [Sv1 Sv2 Szr Szi];
@@ -407,9 +730,32 @@ classdef (Abstract) form_ac < mp.form
         end
 
         function [h, dh] = port_active_power_lim_fcn(obj, x_, nm, idx, hmax)
-            %% branch active power flow constraints
+            % Compute port active power injection constraints.
+            % ::
+            %
+            %   h = nme.port_active_power_lim_fcn(x_, nm, idx, hmax)
+            %   [h, dh] = nme.port_active_power_lim_fcn(x_, nm, idx, hmax)
+            %
+            % Compute constraint function and optionally the Jacobian for
+            % the limit on port active power injections based on
+            % complex outputs of port_inj_power().
+            %
+            % Inputs:
+            %   x_ (complex double) : state vector :math:`\X`
+            %   nm (mp.net_model) : network model object
+            %   idx (integer) : *(optional)* vector of indices of ports of
+            %       interest, if empty or missing, returns results
+            %       corresponding to all ports
+            %   hmax (double) : vector of active power limits
+            %
+            % Outputs:
+            %   h (double) : constraint function, :math:`\h^\mathrm{flow}(\x)`
+            %   dh (double) : constraint Jacobian, :math:`\h_\x^\mathrm{flow}`
+            %
+            % For details on the derivations of the formulas used, see |TN5|.
+            %
+            % See also port_inj_power.
 
-            %% get port power injections with derivatives
             if nargout > 1
                 [S, Sv1, Sv2, Szr, Szi] = obj.port_inj_power(x_, 1, idx);
                 P = real(S);
@@ -421,9 +767,32 @@ classdef (Abstract) form_ac < mp.form
         end
 
         function [h, dh] = port_active_power2_lim_fcn(obj, x_, nm, idx, hmax)
-            %% branch squared active power flow constraints
+            % Compute port squared active power injection constraints.
+            % ::
+            %
+            %   h = nme.port_active_power2_lim_fcn(x_, nm, idx, hmax)
+            %   [h, dh] = nme.port_active_power2_lim_fcn(x_, nm, idx, hmax)
+            %
+            % Compute constraint function and optionally the Jacobian for
+            % the limit on port squared active power injections based on
+            % complex outputs of port_inj_power().
+            %
+            % Inputs:
+            %   x_ (complex double) : state vector :math:`\X`
+            %   nm (mp.net_model) : network model object
+            %   idx (integer) : *(optional)* vector of indices of ports of
+            %       interest, if empty or missing, returns results
+            %       corresponding to all ports
+            %   hmax (double) : vector of squared active power limits
+            %
+            % Outputs:
+            %   h (double) : constraint function, :math:`\h^\mathrm{flow}(\x)`
+            %   dh (double) : constraint Jacobian, :math:`\h_\x^\mathrm{flow}`
+            %
+            % For details on the derivations of the formulas used, see |TN5|.
+            %
+            % See also port_inj_power.
 
-            %% get port power injections with derivatives
             if nargout > 1
                 [S, Sv1, Sv2, Szr, Szi] = obj.port_inj_power(x_, 1, idx);
                 Sx = [Sv1 Sv2 Szr Szi];
@@ -438,9 +807,32 @@ classdef (Abstract) form_ac < mp.form
         end
 
         function [h, dh] = port_current_lim_fcn(obj, x_, nm, idx, hmax)
-            %% branch squared current constraints
+            % Compute port squared current injection constraints.
+            % ::
+            %
+            %   h = nme.port_current_lim_fcn(x_, nm, idx, hmax)
+            %   [h, dh] = nme.port_current_lim_fcn(x_, nm, idx, hmax)
+            %
+            % Compute constraint function and optionally the Jacobian for
+            % the limit on port squared current injections based on
+            % complex outputs of port_inj_current().
+            %
+            % Inputs:
+            %   x_ (complex double) : state vector :math:`\X`
+            %   nm (mp.net_model) : network model object
+            %   idx (integer) : *(optional)* vector of indices of ports of
+            %       interest, if empty or missing, returns results
+            %       corresponding to all ports
+            %   hmax (double) : vector of squared current limits
+            %
+            % Outputs:
+            %   h (double) : constraint function, :math:`\h^\mathrm{flow}(\x)`
+            %   dh (double) : constraint Jacobian, :math:`\h_\x^\mathrm{flow}`
+            %
+            % For details on the derivations of the formulas used, see |TN5|.
+            %
+            % See also port_inj_current.
 
-            %% get port current injections with derivatives
             if nargout > 1
                 [I, Iv1, Iv2, Izr, Izi] = obj.port_inj_current(x_, 1, idx);
                 Ix = [Iv1 Iv2 Izr Izi];
@@ -454,7 +846,33 @@ classdef (Abstract) form_ac < mp.form
         end
 
         function d2H = port_apparent_power_lim_hess(obj, x_, lam, nm, idx)
-            %% branch squared apparent power flow Hessian
+            % Compute port squared apparent power injection Hessian.
+            % ::
+            %
+            %   d2H = nme.port_apparent_power_lim_hess(x_, lam, nm, idx)
+            %
+            % Compute a sparse Hessian matrix for all or a selected subset of
+            % ports. Rather than a full, 3-dimensional Hessian, it computes the
+            % Jacobian of the vector obtained by muliplying the transpose of
+            % the constraint Jacobian by a vector :math:`\muv`. Results are
+            % based on the complex outputs of port_inj_power() and
+            % port_inj_power_hess().
+            %
+            % Inputs:
+            %   x_ (complex double) : state vector :math:`\X`
+            %   lam (double) : vector :math:`\muv` of multipliers, one for each port
+            %   nm (mp.net_model) : network model object
+            %   idx (integer) : *(optional)* vector of indices of ports of
+            %       interest, if empty or missing, returns results
+            %       corresponding to all ports
+            %
+            % Outputs:
+            %   d2H (double) : sparse constraint Hessian matrix, :math:`\h_{\x\x}^\mathrm{flow}(\muv)`
+            %
+            % For details on the derivations of the formulas used, see |TN5|.
+            %
+            % See also port_inj_power, port_inj_power_hess.
+
             nlam = length(lam);
 
             [S, Sv1, Sv2, Szr, Szi] = obj.port_inj_power(x_, 1, idx);
@@ -468,13 +886,64 @@ classdef (Abstract) form_ac < mp.form
         end
 
         function d2H = port_active_power_lim_hess(obj, x_, lam, nm, idx)
-            %% branch active power flow Hessian
+            % Compute port active power injection Hessian.
+            % ::
+            %
+            %   d2H = nme.port_active_power_lim_hess(x_, lam, nm, idx)
+            %
+            % Compute a sparse Hessian matrix for all or a selected subset of
+            % ports. Rather than a full, 3-dimensional Hessian, it computes the
+            % Jacobian of the vector obtained by muliplying the transpose of
+            % the constraint Jacobian by a vector :math:`\muv`. Results are
+            % based on the complex outputs of port_inj_power() and
+            % port_inj_power_hess().
+            %
+            % Inputs:
+            %   x_ (complex double) : state vector :math:`\X`
+            %   lam (double) : vector :math:`\muv` of multipliers, one for each port
+            %   nm (mp.net_model) : network model object
+            %   idx (integer) : *(optional)* vector of indices of ports of
+            %       interest, if empty or missing, returns results
+            %       corresponding to all ports
+            %
+            % Outputs:
+            %   d2H (double) : sparse constraint Hessian matrix, :math:`\h_{\x\x}^\mathrm{flow}(\muv)`
+            %
+            % For details on the derivations of the formulas used, see |TN5|.
+            %
+            % See also port_inj_power, port_inj_power_hess.
 
             d2H = real( obj.port_inj_power_hess(x_, lam, 1, idx) );
         end
 
         function d2H = port_active_power2_lim_hess(obj, x_, lam, nm, idx)
-            %% branch squared active power flow Hessian
+            % Compute port squared active power injection Hessian.
+            % ::
+            %
+            %   d2H = nme.port_active_power2_lim_hess(x_, lam, nm, idx)
+            %
+            % Compute a sparse Hessian matrix for all or a selected subset of
+            % ports. Rather than a full, 3-dimensional Hessian, it computes the
+            % Jacobian of the vector obtained by muliplying the transpose of
+            % the constraint Jacobian by a vector :math:`\muv`. Results are
+            % based on the complex outputs of port_inj_power() and
+            % port_inj_power_hess().
+            %
+            % Inputs:
+            %   x_ (complex double) : state vector :math:`\X`
+            %   lam (double) : vector :math:`\muv` of multipliers, one for each port
+            %   nm (mp.net_model) : network model object
+            %   idx (integer) : *(optional)* vector of indices of ports of
+            %       interest, if empty or missing, returns results
+            %       corresponding to all ports
+            %
+            % Outputs:
+            %   d2H (double) : sparse constraint Hessian matrix, :math:`\h_{\x\x}^\mathrm{flow}(\muv)`
+            %
+            % For details on the derivations of the formulas used, see |TN5|.
+            %
+            % See also port_inj_power, port_inj_power_hess.
+
             nlam = length(lam);
 
             [S, Sv1, Sv2, Szr, Szi] = obj.port_inj_power(x_, 1, idx);
@@ -488,7 +957,33 @@ classdef (Abstract) form_ac < mp.form
         end
 
         function d2H = port_current_lim_hess(obj, x_, lam, nm, idx)
-            %% branch squared current Hessian
+            % Compute port squared current injection Hessian.
+            % ::
+            %
+            %   d2H = nme.port_current_lim_hess(x_, lam, nm, idx)
+            %
+            % Compute a sparse Hessian matrix for all or a selected subset of
+            % ports. Rather than a full, 3-dimensional Hessian, it computes the
+            % Jacobian of the vector obtained by muliplying the transpose of
+            % the constraint Jacobian by a vector :math:`\muv`. Results are
+            % based on the complex outputs of port_inj_current() and
+            % port_inj_current_hess().
+            %
+            % Inputs:
+            %   x_ (complex double) : state vector :math:`\X`
+            %   lam (double) : vector :math:`\muv` of multipliers, one for each port
+            %   nm (mp.net_model) : network model object
+            %   idx (integer) : *(optional)* vector of indices of ports of
+            %       interest, if empty or missing, returns results
+            %       corresponding to all ports
+            %
+            % Outputs:
+            %   d2H (double) : sparse constraint Hessian matrix, :math:`\h_{\x\x}^\mathrm{flow}(\muv)`
+            %
+            % For details on the derivations of the formulas used, see |TN5|.
+            %
+            % See also port_inj_current, port_inj_current_hess.
+
             nlam = length(lam);
 
             [I, Iv1, Iv2, Izr, Izi] = obj.port_inj_current(x_, 1, idx);
@@ -499,6 +994,27 @@ classdef (Abstract) form_ac < mp.form
 
             d2H = 2 * real( obj.port_inj_power_hess(x_, dIc * lam, 1, idx) + ...
                         Ix.' * dlam * conj(Ix) );
+        end
+
+        function [va, vm] = aux_data_va_vm(obj, ad)
+            % Abstract method to return voltage angles/magnitudes from auxiliary data.
+            % ::
+            %
+            %   [va, vm] = nme.aux_data_va_vm(ad)
+            %
+            % Input:
+            %   ad (struct) : struct of auxiliary data
+            %
+            % Outputs:
+            %   va (double) : vector of voltage angles corresponding to
+            %       voltage information stored in auxiliary data
+            %   vm (double) : vector of voltage magnitudes corresponding to
+            %       voltage information stored in auxiliary data
+            %
+            % Implemented by mp.form_acc.aux_data_va_vm and
+            % mp.form_acp.aux_data_va_vm.
+
+            error('mp.form_ac/aux_data_va_vm: must be implemented in subclass');
         end
     end     %% methods
 end         %% classdef

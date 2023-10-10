@@ -1,9 +1,29 @@
 classdef (Abstract) net_model_ac < mp.net_model % & mp.form_ac
-%MP.NET_MODEL_AC Abstract class, explicitly a subclass of MP.NET_MODEL and
-%              implicitly assumed to be a subclass of MP.FORM_AC as well
+% mp.net_model_ac - Abstract base class for |MATPOWER| AC **network model** objects.
+%
+% Explicitly a subclass of mp.net_model and implicitly assumed to be a subclass
+% of mp.form_ac as well.
+%
+% mp.net_model_ac Properties:
+%   * zr - vector of real part of complex non-voltage states, :math:`\zr`
+%   * zi - vector of imaginary part of complex non-voltage states, :math:`\zi`
+%
+% mp.net_model_ac Methods:
+%   * def_set_types - add non-voltage state variable set types for mp_idx_manager
+%   * build_params - build incidence matrices, parameters, add ports for each element
+%   * port_inj_nln - compute general nonlinear port injection functions and Jacobians
+%   * port_inj_nln_hess - compute general nonlinear port injection Hessian
+%   * nodal_complex_current_balance - compute nodal complex current balance constraints
+%   * nodal_complex_power_balance - compute nodal complex power balance constraints
+%   * nodal_complex_current_balance_hess - compute nodal complex current balance Hessian
+%   * nodal_complex_power_balance_hess - compute nodal complex power balance Hessian
+%   * port_inj_soln - compute the network port power injections at the solution
+%   * get_va - get node voltage angle vector
+%
+% See also mp.net_model, mp.form, mp.form_ac, mp.nm_element.
 
 %   MATPOWER
-%   Copyright (c) 2019-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2019-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -24,12 +44,38 @@ classdef (Abstract) net_model_ac < mp.net_model % & mp.form_ac
 
     methods
         function obj = def_set_types(obj)
+            % Add non-voltage state variable set types for mp_idx_manager.
+            % ::
+            %
+            %   nm.def_set_types()
+            %
+            % Add the following set types:
+            %
+            %   - ``'zr'`` - NON-VOLTAGE VARS REAL (zr)
+            %   - ``'zi'`` - NON-VOLTAGE VARS IMAG (zi)
+            %
+            % See also mp.net_model.def_set_types, mp_idx_manager.
+
             def_set_types@mp.net_model(obj);    %% call parent first
             obj.set_types.zr = 'NON-VOLTAGE VARS REAL (zr)';
             obj.set_types.zi = 'NON-VOLTAGE VARS IMAG (zi)';
         end
 
         function obj = build_params(obj, nm, dm)
+            % Build incidence matrices and parameters, and add ports for each element.
+            % ::
+            %
+            %   nm.build_params(nm, dm)
+            %
+            % Inputs:
+            %   nm (mp.net_model) : network model object
+            %   dm (mp.data_model) : data model object
+            %
+            % Call the parent method to do most of the work, then build
+            % the aggregate network model parameters and add the general
+            % nonlinear function terms, :math:`\Snln(\X)` or :math:`\Inln(\X)`,
+            % for any elements that define them.
+
             %% call parent to build individual element parameters
             build_params@mp.net_model(obj, nm, dm);
 
@@ -71,6 +117,49 @@ classdef (Abstract) net_model_ac < mp.net_model % & mp.form_ac
         end
 
         function [g, gv1, gv2, gzr, gzi] = port_inj_nln(obj, si, x_, sysx, idx)
+            % Compute general nonlinear port injection functions and Jacobians
+            % ::
+            %
+            %   g = nm.port_inj_nln(si, x_, sysx, idx)
+            %   [g, gv1, gv2] = nm.port_inj_nln(si, x_, sysx, idx)
+            %   [g, gv1, gv2, gzr, gzi] = nm.port_inj_nln(si, x_, sysx, idx)
+            %
+            % Compute and assemble the functions, and optionally Jacobians,
+            % for the general nonlinear injection functions :math:`\Snln(\X)`
+            % and :math:`\Inln(\X)` for the full aggregate network model, for
+            % all or a selected subset of ports.
+            %
+            % Inputs:
+            %   si (``'S'`` or ``'I'``) : select power or current injection
+            %       function:
+            %
+            %       - ``'S'`` for complex power :math:`\Snln(\X)`
+            %       - ``'I'`` for complex current :math:`\Inln(\X)`
+            %   x_ (complex double) : state vector :math:`\X`
+            %   sysx (0 or 1) : which state is provided in ``x_``
+            %
+            %       - 0 -- class aggregate state
+            %       - 1 -- *(default)* full system state
+            %   idx (integer) : *(optional)* vector of indices of ports of
+            %       interest, if empty or missing, returns results
+            %       corresponding to all ports
+            %
+            % Outputs:
+            %   g (complex double) : nonlinear injection function,
+            %       :math:`\Snln(\X)` (or  :math:`\Inln(\X)`)
+            %   gv1 (complex double) : Jacobian w.r.t. 1st voltage variable,
+            %       :math:`\Snln_\Va` or :math:`\Snln_\Vr` (or
+            %       :math:`\Inln_\Va` or :math:`\Inln_\Vr`)
+            %   gv2 (complex double) : Jacobian w.r.t. 2nd voltage variable,
+            %       :math:`\Snln_\Vm` or :math:`\Snln_\Vi` (or
+            %       :math:`\Inln_\Vm` or :math:`\Inln_\Vi`)
+            %   gzr (complex double) : Jacobian w.r.t. real non-voltage variable,
+            %       :math:`\Snln_\zr` (or :math:`\Inln_\zr`)
+            %   gzi (complex double) : Jacobian w.r.t. imaginary non-voltage variable,
+            %       :math:`\Snln_\zi` (or :math:`\Inln_\zi`)
+            %
+            % See also port_inj_nln_hess.
+
             if nargin < 5
                 idx = [];
                 if nargin < 4
@@ -184,9 +273,42 @@ classdef (Abstract) net_model_ac < mp.net_model % & mp.form_ac
         end
 
         function H = port_inj_nln_hess(obj, si, x_, lam, sysx, idx)
-            % H = obj.port_inj_power_hess(x_, lam)
-            % H = obj.port_inj_power_hess(x_, lam, sysx)
-            % H = obj.port_inj_power_hess(x_, lam, sysx, idx)
+            % Compute general nonlinear port injection Hessian.
+            % ::
+            %
+            %   H = nm.port_inj_nln_hess(si, x_, lam)
+            %   H = nm.port_inj_nln_hess(si, x_, lam, sysx)
+            %   H = nm.port_inj_nln_hess(si, x_, lam, sysx, idx)
+            %
+            % Compute and assemble the Hessian for the general nonlinear
+            % injection functions :math:`\Snln(\X)` and :math:`\Inln(\X)`
+            % for the full aggregate network model, for all or a selected
+            % subset of ports. Rather than a full, 3-dimensional Hessian, it
+            % computes the Jacobian of the vector obtained by muliplying the
+            % transpose of the corresponding Jacobian by a vector :math:`\lam`.
+            %
+            % Inputs:
+            %   si (``'S'`` or ``'I'``) : select power or current injection
+            %       function:
+            %
+            %       - ``'S'`` for complex power :math:`\Snln(\X)`
+            %       - ``'I'`` for complex current :math:`\Inln(\X)`
+            %   x_ (complex double) : state vector :math:`\X`
+            %   lam (double) : vector :math:`\lam` of multipliers, one for each port
+            %   sysx (0 or 1) : which state is provided in ``x_``
+            %
+            %       - 0 -- class aggregate state
+            %       - 1 -- *(default)* full system state
+            %   idx (integer) : *(optional)* vector of indices of ports of
+            %       interest, if empty or missing, returns results
+            %       corresponding to all ports
+            %
+            % Output:
+            %   H (complex double) : sparse Hessian matrix,
+            %       :math:`\Snln_{\x\x}(\lam)` or :math:`\Inln_{\x\x}(\lam)`
+            %
+            % See also port_inj_nln.
+
             if nargin < 6
                 idx = [];
                 if nargin < 5
@@ -259,6 +381,35 @@ classdef (Abstract) net_model_ac < mp.net_model % & mp.form_ac
         end
 
         function [G, Gv1, Gv2, Gzr, Gzi] = nodal_complex_current_balance(obj, x_)
+            % Compute nodal complex current balance constraints.
+            % ::
+            %
+            %   G = nm.nodal_complex_current_balance(x_)
+            %   [G, Gv1, Gv2, Gzr, Gzi] = nm.nodal_complex_current_balance(x_)
+            %
+            % Compute constraint function and optionally the Jacobian for
+            % the complex current balance equality constraints based on
+            % outputs of mp.form_ac.port_inj_current and the node incidence
+            % matrix.
+            %
+            % Input:
+            %   x_ (complex double) : state vector :math:`\X` (full system state)
+            %
+            % Outputs:
+            %   G (complex double) : nodal complex current balance constraint
+            %       function, :math:`\G^\mathrm{kcl}(\x)`
+            %   Gv1 (complex double) : Jacobian w.r.t. 1st voltage variable,
+            %       :math:`\G^\mathrm{kcl}_\Va` or :math:`\G^\mathrm{kcl}_\Vr`
+            %   Gv2 (complex double) : Jacobian w.r.t. 2nd voltage variable,
+            %       :math:`\G^\mathrm{kcl}_\Vm` or :math:`\G^\mathrm{kcl}_\Vi`
+            %   Gzr (complex double) : Jacobian w.r.t. real non-voltage variable,
+            %       :math:`\G^\mathrm{kcl}_\zr`
+            %   Gzi (complex double) : Jacobian w.r.t. imaginary non-voltage variable,
+            %       :math:`\G^\mathrm{kcl}_\zi`
+            %
+            % See also mp.form_ac.port_inj_current,
+            % nodal_complex_current_balance_hess.
+
             %% node incidence matrix
             C = obj.C;
 
@@ -278,6 +429,35 @@ classdef (Abstract) net_model_ac < mp.net_model % & mp.form_ac
         end
 
         function [G, Gv1, Gv2, Gzr, Gzi] = nodal_complex_power_balance(obj, x_)
+            % Compute nodal complex power balance constraints.
+            % ::
+            %
+            %   G = nm.nodal_complex_power_balance(x_)
+            %   [G, Gv1, Gv2, Gzr, Gzi] = nm.nodal_complex_power_balance(x_)
+            %
+            % Compute constraint function and optionally the Jacobian for
+            % the complex power balance equality constraints based on
+            % outputs of mp.form_ac.port_inj_power and the node incidence
+            % matrix.
+            %
+            % Input:
+            %   x_ (complex double) : state vector :math:`\X` (full system state)
+            %
+            % Outputs:
+            %   G (complex double) : nodal complex power balance constraint
+            %       function, :math:`\G^\mathrm{kcl}(\x)`
+            %   Gv1 (complex double) : Jacobian w.r.t. 1st voltage variable,
+            %       :math:`\G^\mathrm{kcl}_\Va` or :math:`\G^\mathrm{kcl}_\Vr`
+            %   Gv2 (complex double) : Jacobian w.r.t. 2nd voltage variable,
+            %       :math:`\G^\mathrm{kcl}_\Vm` or :math:`\G^\mathrm{kcl}_\Vi`
+            %   Gzr (complex double) : Jacobian w.r.t. real non-voltage variable,
+            %       :math:`\G^\mathrm{kcl}_\zr`
+            %   Gzi (complex double) : Jacobian w.r.t. imaginary non-voltage variable,
+            %       :math:`\G^\mathrm{kcl}_\zi`
+            %
+            % See also mp.form_ac.port_inj_power,
+            % nodal_complex_power_balance_hess.
+
             %% node incidence matrix
             C = obj.C;
 
@@ -297,22 +477,91 @@ classdef (Abstract) net_model_ac < mp.net_model % & mp.form_ac
         end
 
         function d2G = nodal_complex_current_balance_hess(obj, x_, lam)
+            % Compute nodal complex current balance Hessian.
+            % ::
+            %
+            %   d2G = nm.nodal_complex_current_balance_hess(x_, lam)
+            %
+            % Compute the Hessian of the nodal complex current balance
+            % constraint. Rather than a full, 3-dimensional Hessian, it
+            % computes the Jacobian of the vector obtained by muliplying the
+            % transpose of the constraint Jacobian by a vector :math:`\lam`.
+            % Based on mp.form_ac.port_inj_current_hess.
+            %
+            % Inputs:
+            %   x_ (complex double) : state vector :math:`\X` (full system state)
+            %   lam (double) : vector :math:`\lam` of multipliers, one for each node
+            %
+            % Output:
+            %   d2G (complex double) : sparse Hessian matrix,
+            %       :math:`\G^\mathrm{kcl}_{\x\x}(\lam)`
+            %
+            % See also mp.form_ac.port_inj_current_hess,
+            % nodal_complex_current_balance.
+
             %% get port power injection hessians
             d2G = obj.port_inj_current_hess(x_, obj.C' * lam);
         end
 
         function d2G = nodal_complex_power_balance_hess(obj, x_, lam)
+            % Compute nodal complex power balance Hessian.
+            % ::
+            %
+            %   d2G = nm.nodal_complex_power_balance_hess(x_, lam)
+            %
+            % Compute the Hessian of the nodal complex power balance
+            % constraint. Rather than a full, 3-dimensional Hessian, it
+            % computes the Jacobian of the vector obtained by muliplying the
+            % transpose of the constraint Jacobian by a vector :math:`\lam`.
+            % Based on mp.form_ac.port_inj_power_hess.
+            %
+            % Inputs:
+            %   x_ (complex double) : state vector :math:`\X` (full system state)
+            %   lam (double) : vector :math:`\lam` of multipliers, one for each node
+            %
+            % Output:
+            %   d2G (complex double) : sparse Hessian matrix,
+            %       :math:`\G^\mathrm{kcl}_{\x\x}(\lam)`
+            %
+            % See also mp.form_ac.port_inj_power_hess,
+            % nodal_complex_power_balance.
+
             %% get port power injection hessians
             d2G = obj.port_inj_power_hess(x_, obj.C' * lam);
         end
 
         function obj = port_inj_soln(obj)
+            % Compute the network port power injections at the solution.
+            % ::
+            %
+            %   nm.port_inj_soln()
+            %
+            % Takes the solved network state, computes the port power
+            % injections, and saves them in ``nm.soln.gs_``.
+
             %% compute port injections
 %             obj.soln.gi_ = obj.port_inj_current(obj.soln.x);
             obj.soln.gs_ = obj.port_inj_power(obj.soln.x);
         end
 
         function va = get_va(obj, idx)
+            % Get node voltage angle vector.
+            % ::
+            %
+            %   va = nm.get_va()
+            %   va = nm.get_va(idx)
+            %
+            % Get vector of node voltage angles for all or a selected
+            % subset of nodes. Values come from the solution if available,
+            % otherwise from the provided initial voltages.
+            %
+            % Input:
+            %   idx (integer) : index of subset of voltages of interest;
+            %       if missing or empty, include all
+            %
+            % Output:
+            %   va (double) : vector of voltage angles
+
             if isfield(obj.soln, 'v')           %% solved value
                 if nargin < 2 || isempty(idx)
                     va = angle(obj.soln.v);

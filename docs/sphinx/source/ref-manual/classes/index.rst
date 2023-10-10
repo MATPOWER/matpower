@@ -41,7 +41,16 @@ Network Model Classes
 
 .. toctree::
 
+   mp/form
+   mp/form_dc
+   mp/form_ac
+   mp/form_acc
+   mp/form_acp
    mp/net_model
+   mp/net_model_ac
+   mp/net_model_acc
+   mp/net_model_acp
+   mp/net_model_dc
    mp/nm_element
 
 

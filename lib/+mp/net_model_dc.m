@@ -1,7 +1,23 @@
 classdef net_model_dc < mp.net_model & mp.form_dc
+% mp.net_model_dc - Concrete class for |MATPOWER| DC **network model** objects.
+%
+% This network model class and all of its network model element classes are
+% specific to the DC formulation and therefore inherit from mp.form_dc.
+%
+% mp.net_model_dc Properties:
+%   * va - vector of voltage states (voltage angles :math:`\Va`)
+%   * z - vector of non-voltage states :math:`\z`
+%
+% mp.net_model_dc Methods:
+%   * net_model_dc - constructor, assign default network model element classes
+%   * def_set_types - add voltage and non-voltage variable set types for mp_idx_manager
+%   * build_params - build incidence matrices, parameters, add ports for each element
+%   * port_inj_soln - compute the network port injections at the solution
+%
+% See also mp.net_model, mp.form_dc, mp.form, mp.nm_element.
 
 %   MATPOWER
-%   Copyright (c) 2019-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2019-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -9,13 +25,21 @@ classdef net_model_dc < mp.net_model & mp.form_dc
 %   See https://matpower.org for more info.
 
     properties
-        va = [];
-        z  = [];
+        va = [];    % *(double)* vector of voltage states (voltage angles :math:`\Va`)
+        z  = [];    % *(double)* vector of non-voltage states :math:`\z`
     end
 
     methods
-        %% constructor
         function obj = net_model_dc()
+            % Constructor, assign default network model element classes.
+            % ::
+            %
+            %   nm = net_model_dc()
+            %
+            % This network model class and all of its network model element
+            % classes are specific to the DC formulation and therefore
+            % inherit from mp.form_dc.
+
             obj@mp.net_model();
             obj.element_classes = { ...
                 @mp.nme_bus_dc, @mp.nme_gen_dc, @mp.nme_load_dc, ...
@@ -32,12 +56,36 @@ classdef net_model_dc < mp.net_model & mp.form_dc
         end
 
         function obj = def_set_types(obj)
+            % Add voltage and non-voltage variable set types for mp_idx_manager.
+            % ::
+            %
+            %   nm.def_set_types()
+            %
+            % Add the following set types:
+            %
+            %   - ``'va'`` - VOLTAGE VARS (va)
+            %   - ``'z'`` - NON-VOLTAGE VARS (z)
+            %
+            % See also mp.net_model.def_set_types, mp_idx_manager.
+
             def_set_types@mp.net_model(obj);        %% call parent first
             obj.set_types.va = 'VOLTAGE VARS (va)';
             obj.set_types.z  = 'NON-VOLTAGE VARS (z)';
         end
 
         function obj = build_params(obj, nm, dm)
+            % Build incidence matrices and parameters, and add ports for each element.
+            % ::
+            %
+            %   nm.build_params(nm, dm)
+            %
+            % Inputs:
+            %   nm (mp.net_model) : network model object
+            %   dm (mp.data_model) : data model object
+            %
+            % Call the parent method to do most of the work, then build
+            % the aggregate network model parameters.
+
             %% call parent to build individual element parameters
             build_params@mp.net_model(obj, nm, dm);
 
@@ -48,6 +96,14 @@ classdef net_model_dc < mp.net_model & mp.form_dc
         end
 
         function obj = port_inj_soln(obj)
+            % Compute the network port injections at the solution.
+            % ::
+            %
+            %   nm.port_inj_soln()
+            %
+            % Takes the solved network state, computes the port power
+            % injections, and saves them in ``nm.soln.gp``.
+
             %% compute port injections
             obj.soln.gp = obj.port_inj_power(obj.soln.x);
         end

@@ -1,21 +1,38 @@
 classdef form_acc < mp.form_ac
-%MP.FORM_ACC  MATPOWER Formulation class for AC cartesian voltage formulations
-%   Each concrete Network Model Element class must inherit, at least
-%   indirectly, from both MP.NM_ELEMENT and MP.FORM.
+% mp.form_acc - Base class for |MATPOWER| AC cartesian **formulations**.
 %
-%   Subclass of MP.FORM_AC.
-%   MP.FORM provides properties and methods related to the specific
-%   formulation (e.g. DC version, AC polar power version, etc.)
+% Used as a mix-in class for all **network model element** classes
+% with an AC network model formulation with a **cartesian** repesentation for
+% voltages. That is, each concrete network model element class with an AC
+% cartesian formulation must inherit, at least indirectly, from
+% both mp.nm_element and mp.form_acc.
 %
-%   Properties
-%       (model parameters inherited from MP.FORM_AC)
+% Provides implementation of evaluation of voltage-related Jacobian and
+% Hessian terms needed by some mp.form_ac methods.
 %
-%   Methods
-%       form_name() - returns string w/name of formulation ('AC-cartesian formulation')
-%       form_tag() - returns string w/short label for formulation ('acc')
+% mp.form_dc Methods:
+%   * form_name - get char array w/name of formulation (``'AC-cartesian'``)
+%   * form_tag - get char array w/short label of formulation (``'acc'``)
+%   * model_vvars - get cell array of names of voltage state variables (``{'vr', 'vi'}``)
+%   * port_inj_current_jac - compute voltage-related terms of current injection Jacobian
+%   * port_inj_current_hess_v - compute voltage-related terms of current injection Hessian
+%   * port_inj_current_hess_vz - compute voltage/non-voltage-related terms of current injection Hessian
+%   * port_inj_power_jac - compute voltage-related terms of power injection Jacobian
+%   * port_inj_power_hess_v - compute voltage-related terms of power injection Hessian
+%   * port_inj_power_hess_vz - compute voltage/non-voltage-related terms of power injection Hessian
+%   * aux_data_va_vm - return voltage angles/magnitudes from auxiliary data
+%   * va_fcn - compute voltage angle constraints and Jacobian
+%   * va_hess - compute voltage angle Hessian
+%   * vm2_fcn - compute squared voltage magnitude constraints and Jacobian
+%   * vm2_hess - compute squared voltage magnitude Hessian
+%
+% For more details, see the :ref:`sec_nm_formulations_ac` section in the
+% :ref:`dev_manual` and the derivations in |TN5|.
+%
+% See also mp.form, mp.form_ac, mp.form_acp, mp.nm_element.
 
 %   MATPOWER
-%   Copyright (c) 2019-2021, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2019-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -27,20 +44,37 @@ classdef form_acc < mp.form_ac
 
     methods
         function name = form_name(obj)
+            % Get user-readable name of formulation, i.e. ``'AC-cartesian'``.
+            %
+            % See :meth:`mp.form.form_name`.
+
             name = 'AC-cartesian';
         end
 
         function tag = form_tag(obj)
+            % Get short label of formulation, i.e. ``'acc'``.
+            %
+            % See :meth:`mp.form.form_tag`.
+
             tag = 'acc';
         end
 
         function vtypes = model_vvars(obj)
+            % Get cell array of names of voltage state variables, i.e. ``{'vr', 'vi'}``.
+            %
+            % See :meth:`mp.form.model_vvars`.
+
             vtypes = {'vr', 'vi'};
         end
 
-        function [Iu, Iw] = port_inj_current_jac(obj, ...
-                n, v_, Y, M, invdiagvic, diagSlincJ)
-            % [Iu, Iw] = obj.port_inj_current_jac(...)
+        function [Iu, Iw] = port_inj_current_jac(obj, n, v_, Y, M, invdiagvic, diagSlincJ)
+            % Compute voltage-related terms of current injection Jacobian.
+            % ::
+            %
+            %   [Iu, Iw] = nme.port_inj_current_jac(n, v_, Y, M, invdiagvic, diagSlincJ)
+            %
+            % Called by mp.form_ac.port_inj_current to compute
+            % voltage-related Jacobian terms.
 
             %% intermediate terms
             E = invdiagvic * (conj(M) - invdiagvic * diagSlincJ);
@@ -58,10 +92,16 @@ classdef form_acc < mp.form_ac
         end
 
         function [Iuu, Iuw, Iww] = port_inj_current_hess_v(obj, x_, lam, v_, z_, diaginvic, Y, M, diagSlincJ, dlamJ)
-            % [Iuu, Iuw, Iww] = obj.port_inj_current_hess_v(x_, lam)
-            % [Iuu, Iuw, Iww] = obj.port_inj_current_hess_v(x_, lam, sysx)
-            % [Iuu, Iuw, Iww] = obj.port_inj_current_hess_v(x_, lam, sysx, idx)
-            % [...] = obj.port_inj_current_hess_vz(x_, lam, v_, z_, diaginvic, Y, M, diagSlincJ, dlamJ)
+            % Compute voltage-related terms of current injection Hessian.
+            % ::
+            %
+            %   [Iuu, Iuw, Iww] = nme.port_inj_current_hess_v(x_, lam)
+            %   [Iuu, Iuw, Iww] = nme.port_inj_current_hess_v(x_, lam, sysx)
+            %   [Iuu, Iuw, Iww] = nme.port_inj_current_hess_v(x_, lam, sysx, idx)
+            %   [...] = nme.port_inj_current_hess_vz(x_, lam, v_, z_, diaginvic, Y, M, diagSlincJ, dlamJ)
+            %
+            % Called by mp.form_ac.port_inj_current_hess to compute
+            % voltage-related Hessian terms.
 
             if nargin < 10
                 sysx = v_;
@@ -116,10 +156,16 @@ classdef form_acc < mp.form_ac
         end
 
         function [Iuzr, Iuzi, Iwzr, Iwzi] = port_inj_current_hess_vz(obj, x_, lam, v_, z_, diaginvic, N, dlamJ)
-            % [Iuzr, Iuzi, Iwzr, Iwzi] = obj.port_inj_current_hess_vz(x_, lam)
-            % [...] = obj.port_inj_current_hess_vz(x_, lam, sysx)
-            % [...] = obj.port_inj_current_hess_vz(x_, lam, sysx, idx)
-            % [...] = obj.port_inj_current_hess_vz(x_, lam, v_, z_, diaginvic, N, dlamJ)
+            % Compute voltage/non-voltage-related terms of current injection Hessian.
+            % ::
+            %
+            %   [Iuzr, Iuzi, Iwzr, Iwzi] = nme.port_inj_current_hess_vz(x_, lam)
+            %   [...] = nme.port_inj_current_hess_vz(x_, lam, sysx)
+            %   [...] = nme.port_inj_current_hess_vz(x_, lam, sysx, idx)
+            %   [...] = nme.port_inj_current_hess_vz(x_, lam, v_, z_, diaginvic, N, dlamJ)
+            %
+            % Called by mp.form_ac.port_inj_current_hess to compute
+            % voltage/non-voltage-related Hessian terms.
 
             if nargin < 8
                 sysx = v_;
@@ -162,9 +208,14 @@ classdef form_acc < mp.form_ac
             Iwzi = -H;
         end
 
-        function [Su, Sw] = port_inj_power_jac(obj, ...
-                n, v_, Y, M, diagv, diagvi, diagIlincJ)
-            % [Su, Sw] = obj.port_inj_power_jac(...)
+        function [Su, Sw] = port_inj_power_jac(obj, n, v_, Y, M, diagv, diagvi, diagIlincJ)
+            % Compute voltage-related terms of power injection Jacobian.
+            % ::
+            %
+            %   [Su, Sw] = nme.port_inj_power_jac(...)
+            %
+            % Called by mp.form_ac.port_inj_power to compute
+            % voltage-related Jacobian terms.
 
             %% intermediate terms
 %             A = diagIlincJ;
@@ -184,10 +235,16 @@ classdef form_acc < mp.form_ac
         end
 
         function [Suu, Suw, Sww] = port_inj_power_hess_v(obj, x_, lam, v_, z_, diagvi, Y, M, diagIlincJ, dlamJ)
-            % [Suu, Suw, Sww] = obj.port_inj_power_hess_v(x_, lam)
-            % [Suu, Suw, Sww] = obj.port_inj_power_hess_v(x_, lam, sysx)
-            % [Suu, Suw, Sww] = obj.port_inj_power_hess_v(x_, lam, sysx, idx)
-            % [...] = obj.port_inj_power_hess_v(x_, lam, v_, z_, diagvi, Y, M, diagIlincJ, dlamJ)
+            % Compute voltage-related terms of power injection Hessian.
+            % ::
+            %
+            %   [Suu, Suw, Sww] = nme.port_inj_power_hess_v(x_, lam)
+            %   [Suu, Suw, Sww] = nme.port_inj_power_hess_v(x_, lam, sysx)
+            %   [Suu, Suw, Sww] = nme.port_inj_power_hess_v(x_, lam, sysx, idx)
+            %   [...] = nme.port_inj_power_hess_v(x_, lam, v_, z_, diagvi, Y, M, diagIlincJ, dlamJ)
+            %
+            % Called by mp.form_ac.port_inj_power_hess to compute
+            % voltage-related Hessian terms.
 
             if nargin < 10
                 sysx = v_;
@@ -237,10 +294,16 @@ classdef form_acc < mp.form_ac
         end
 
         function [Suzr, Suzi, Swzr, Swzi] = port_inj_power_hess_vz(obj, x_, lam, v_, z_, diagvi, L, dlamJ)
-            % [Suzr, Suzi, Swzr, Swzi] = obj.port_inj_power_hess_vz(x_, lam)
-            % [...] = obj.port_inj_power_hess_vz(x_, lam, sysx)
-            % [...] = obj.port_inj_power_hess_vz(x_, lam, sysx, idx)
-            % [...] = obj.port_inj_power_hess_vz(x_, lam, v_, z_, diagvi, L, dlamJ)
+            % Compute voltage/non-voltage-related terms of power injection Hessian.
+            % ::
+            %
+            %   [Suzr, Suzi, Swzr, Swzi] = nme.port_inj_power_hess_vz(x_, lam)
+            %   [...] = nme.port_inj_power_hess_vz(x_, lam, sysx)
+            %   [...] = nme.port_inj_power_hess_vz(x_, lam, sysx, idx)
+            %   [...] = nme.port_inj_power_hess_vz(x_, lam, v_, z_, diagvi, L, dlamJ)
+            %
+            % Called by mp.form_ac.port_inj_power_hess to compute
+            % voltage/non-voltage-related Hessian terms.
 
             if nargin < 8
                 sysx = v_;
@@ -277,15 +340,51 @@ classdef form_acc < mp.form_ac
         end
 
         function [va, vm] = aux_data_va_vm(obj, ad)
+            % Return voltage angles/magnitudes from auxiliary data.
+            % ::
+            %
+            %   [va, vm] = nme.aux_data_va_vm(ad)
+            %
+            % Connverts from cartesian voltage data stored in ``ad.vr`` and
+            % ``ad.vi``.
+            %
+            % Input:
+            %   ad (struct) : struct of auxiliary data
+            %
+            % Outputs:
+            %   va (double) : vector of voltage angles corresponding to
+            %       voltage information stored in auxiliary data
+            %   vm (double) : vector of voltage magnitudes corresponding to
+            %       voltage information stored in auxiliary data
+
             v_ = ad.vr + 1j * ad.vi;
             va = angle(v_);
             vm = abs(v_);
         end
 
         function [g, dg] = va_fcn(obj, xx, idx, lim)
-            %% lim can be a vector value for equality constraint or
-            %% upper bound on va, or a cell array with {vamin, vamax}
-            %% for double bounds
+            % Compute voltage angle constraints and Jacobian.
+            % ::
+            %
+            %   g = nme.va_fcn(xx, idx, lim)
+            %   [g, dg] = nme.va_fcn(xx, idx, lim)
+            %
+            % Compute constraint function and optionally the Jacobian for
+            % voltage angle limits.
+            %
+            % Inputs:
+            %   xx (1 x 2 cell array) : real part of complex voltage in
+            %       ``xx{1}``, imaginary part in ``xx{2}``
+            %   idx (integer) : index of subset of voltages of interest to
+            %       include in constraint; if empty, include all
+            %   lim (double or cell array of double) : constraint bound(s),
+            %       can be a vector, for equality constraints or an upper
+            %       bound, or a cell array with ``{va_lb, va_ub}`` for
+            %       dual-bound constraints
+            %
+            % Outputs:
+            %   g (double) : constraint function, :math:`\g(\x)`
+            %   dg (double) : constraint Jacobian, :math:`\g_\x`
 
             %% unpack data
             [vr, vi] = deal(xx{:});
@@ -323,6 +422,26 @@ classdef form_acc < mp.form_ac
         end
 
         function d2G = va_hess(obj, xx, lam, idx)
+            % Compute voltage angle Hessian.
+            % ::
+            %
+            %   d2G = nme.va_hess(xx, lam, idx)
+            %
+            % Compute a sparse Hessian matrix for all or a selected subset of
+            % voltages. Rather than a full, 3-dimensional Hessian, it computes
+            % the Jacobian of the vector obtained by muliplying the transpose
+            % of the constraint Jacobian by a vector :math:`\lam`.
+            %
+            % Inputs:
+            %   xx (1 x 2 cell array) : real part of complex voltage in
+            %       ``xx{1}``, imaginary part in ``xx{2}``
+            %   lam (double) : vector :math:`\lam` of multipliers, one for each constraint
+            %   idx (integer) : index of subset of voltages of interest to
+            %       include in constraint; if empty, include all
+            %
+            % Outputs:
+            %   d2G (double) : sparse constraint Hessian, :math:`\g_{\x\x}(\lam)`
+
             %% unpack data
             [vr, vi] = deal(xx{:});
             nn = length(vr);
@@ -354,9 +473,28 @@ classdef form_acc < mp.form_ac
         end
 
         function [g, dg] = vm2_fcn(obj, xx, idx, lim)
-            %% lim can be a scalar value for equality constraint or
-            %% upper bound on vm^2, or a cell array with {vm2min, vm2max}
-            %% for double bounds
+            % Compute squared voltage magnitude constraints and Jacobian.
+            % ::
+            %
+            %   g = nme.vm2_fcn(xx, idx, lim)
+            %   [g, dg] = nme.vm2_fcn(xx, idx, lim)
+            %
+            % Compute constraint function and optionally the Jacobian for
+            % squared voltage magnitude limits.
+            %
+            % Inputs:
+            %   xx (1 x 2 cell array) : real part of complex voltage in
+            %       ``xx{1}``, imaginary part in ``xx{2}``
+            %   idx (integer) : index of subset of voltages of interest to
+            %       include in constraint; if empty, include all
+            %   lim (double or cell array of double) : constraint bound(s),
+            %       can be a vector, for equality constraints or an upper
+            %       bound, or a cell array with ``{vm2_lb, vm2_ub}`` for
+            %       dual-bound constraints
+            %
+            % Outputs:
+            %   g (double) : constraint function, :math:`\g(\x)`
+            %   dg (double) : constraint Jacobian, :math:`\g_\x`
 
             %% unpack data
             [vr, vi] = deal(xx{:});
@@ -393,6 +531,26 @@ classdef form_acc < mp.form_ac
         end
 
         function d2G = vm2_hess(obj, xx, lam, idx)
+            % Compute squared voltage magnitude Hessian.
+            % ::
+            %
+            %   d2G = nme.vm2_hess(xx, lam, idx)
+            %
+            % Compute a sparse Hessian matrix for all or a selected subset of
+            % voltages. Rather than a full, 3-dimensional Hessian, it computes
+            % the Jacobian of the vector obtained by muliplying the transpose
+            % of the constraint Jacobian by a vector :math:`\lam`.
+            %
+            % Inputs:
+            %   xx (1 x 2 cell array) : real part of complex voltage in
+            %       ``xx{1}``, imaginary part in ``xx{2}``
+            %   lam (double) : vector :math:`\lam` of multipliers, one for each constraint
+            %   idx (integer) : index of subset of voltages of interest to
+            %       include in constraint; if empty, include all
+            %
+            % Outputs:
+            %   d2G (double) : sparse constraint Hessian, :math:`\g_{\x\x}(\lam)`
+
             %% unpack data
             [vr, vi] = deal(xx{:});
             nn = length(vr);

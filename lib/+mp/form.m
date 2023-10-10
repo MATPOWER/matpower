@@ -1,24 +1,32 @@
 classdef (Abstract) form < handle
-%MP.FORM  MATPOWER Formulation abstract base class.
-%   Each concrete Network Model Element class must inherit, at least
-%   indirectly, from both MP.NM_ELEMENT and MP.FORM.
+% mp.form - Abstract base class for |MATPOWER| **formulation**.
 %
-%   MP.FORM provides properties and methods related to the specific
-%   formulation (e.g. DC version, AC polar power version, etc.)
+% Used as a mix-in class for all **network model element** classes.
+% That is, each concrete network model element class must inherit, at least
+% indirectly, from both mp.nm_element and mp.form.
 %
-%   Properties
-%       subclasses provide properties for model parameters
+% mp.form provides properties and methods that are specific to the network
+% model formulation (e.g. DC version, AC polar power version, etc.).
 %
-%   Methods
-%       form_name() - returns string w/name of formulation
-%       form_tag() - returns string w/short label for formulation
-%       model_params() - cell array of names of model parameters
-%       get_params() - 
-%       find_form_class() - 
-%       superclass_tab() - 
+% For more details, see the :ref:`sec_net_model_formulations` section in the
+% :ref:`dev_manual` and the derivations in |TN5|.
+% 
+% mp.form Properties:
+%    *subclasses provide properties for model parameters*
+%
+% mp.form Methods:
+%   * form_name - get char array w/name of formulation
+%   * form_tag - get char array w/short label of formulation
+%   * model_params - get cell array of names of model parameters
+%   * model_vvars - get cell array of names of voltage state variables
+%   * model_zvars - get cell array of names of non-voltage state variables
+%   * get_params - get network model element parameters
+%   * find_form_class - get name of network element object's formulation subclass
+%
+% See also mp.nm_element.
 
 %   MATPOWER
-%   Copyright (c) 2019-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2019-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -31,21 +39,113 @@ classdef (Abstract) form < handle
 
     methods
         function name = form_name(obj)
+            % Get user-readable name of formulation, e.g. ``'DC'``, ``'AC-cartesian'``, ``'AC-polar'``.
+            % ::
+            %
+            %   name  = nme.form_name()
+            %
+            % Output:
+            %   name (char array) : name of formulation
+            %
+            % *Note: This is an abstract method that must be implemented
+            % by a subclass.*
+
             error('mp.form/form_name: must be implemented in subclass');
         end
 
         function tag = form_tag(obj)
+            % Get short label of formulation, e.g. ``'dc'``, ``'acc'``, ``'acp'``.
+            % ::
+            %
+            %   tag  = nme.form_tag()
+            %
+            % Output:
+            %   tag (char array) : short label of formulation
+            %
+            % *Note: This is an abstract method that must be implemented
+            % by a subclass.*
+
             error('mp.form/form_tag: must be implemented in subclass');
         end
 
         function params = model_params(obj)
+            % Get cell array of names of model parameters.
+            % ::
+            %
+            %   params  = nme.model_params()
+            %
+            % Output:
+            %   params (cell array of char arrays) : names of object properies
+            %       for model parameters
+            %
+            % *Note: This is an abstract method that must be implemented
+            % by a subclass.*
+
             error('mp.form/model_params: must be implemented in subclass');
         end
 
+        function vtypes = model_vvars(obj)
+            % Get cell array of names of voltage state variables.
+            % ::
+            %
+            %   vtypes = nme.model_vvars()
+            %
+            % Output:
+            %   vtypes (cell array of char arrays) : names of network object
+            %       properties for voltage state variables
+            %
+            % The network model object, which inherits from mp_idx_manager,
+            % uses these values as set types for tracking its voltage
+            % state variables.
+            %
+            % *Note: This is an abstract method that must be implemented
+            % by a subclass.*
+
+            error('mp.form/model_vvars: must be implemented in subclass');
+        end
+
+        function vtypes = model_zvars(obj)
+            % Get cell array of names of non-voltage state variables.
+            % ::
+            %
+            %   vtypes = nme.model_zvars()
+            %
+            % Output:
+            %   vtypes (cell array of char arrays) : names of network object
+            %       properties for voltage state variables
+            %
+            % The network model object, which inherits from mp_idx_manager,
+            % uses these values as set types for tracking its non-voltage
+            % state variables.
+            %
+            % *Note: This is an abstract method that must be implemented
+            % by a subclass.*
+
+            error('mp.form/model_zvars: must be implemented in subclass');
+        end
+
         function varargout = get_params(obj, idx, names)
-            % [p1, p2, ..., pN] = obj.get_params(idx)
-            % pA = obj.get_params(idx, nameA)
-            % [pA, pB, ...] = obj.get_params(idx, {nameA, nameB, ...})
+            % Get network model element parameters.
+            % ::
+            %
+            %   [p1, p2, ..., pN] = nme.get_params(idx)
+            %   pA = nme.get_params(idx, nameA)
+            %   [pA, pB, ...] = nme.get_params(idx, {nameA, nameB, ...})
+            %
+            % Inputs:
+            %   idx (integer) : *(optional)* vector of indices of ports of
+            %       interest, if empty or missing, returns parameters
+            %       corresponding to all ports
+            %   names (char array or cell array of char arrays) : *(optional)*
+            %       name(s) of parameters to return
+            %
+            % Outputs:
+            %   p1, p2, ..., pN : full set of parameters in canonical order
+            %   pA, pB : parameters specified by ``names``
+            %
+            % If a particular parameter in the object is empty, this method
+            % returns a sparse zero matrix or vector of the appropriate size.
+
             if nargin < 3
                 names = obj.model_params();
             end
@@ -87,6 +187,18 @@ classdef (Abstract) form < handle
         end
 
         function form_class = find_form_class(obj)
+            % Get name of network element object's formulation subclass.
+            % ::
+            %
+            %   form_class = nme.find_form_class()
+            %
+            % Output:
+            %   form_class (char array) - name of the mp.form subclass
+            %
+            % Selects from this netork model elements parent classes, the
+            % mp.form subclass, that is not a subclass of mp.nm_element, with
+            % the longest inheritance path back to mp.form.
+
             if isa(obj, 'mp.form')
                 tab = obj.superclass_tab({'mp.form', 'mp.nm_element'});
 
@@ -102,22 +214,37 @@ classdef (Abstract) form < handle
                 form_class = '<none>';
             end
         end
+    end     %% methods
 
+    methods (Access=protected)
         function [tab, ii] = superclass_tab(obj, roots, mcls, tab, ii, level)
-            %% obj - an mp.form object
-            %% roots - cell array of names of root classes to search for
-            %% mcls - meta class object (undocumented MATLAB and Octave) for
-            %%        the class of interest
-            %% tab - struct with fields:
-            %%      name - cell array of class names
-            %%      ii   - matrix where each row corresponds to entry in name
-            %%             field, and column j corresponds to j-th entry in
-            %%             roots, value is generations of inheritance required
-            %%             to reach that root
-            %% ii - row of tab.ii corresponding to mcls on input (before
-            %%      traversing parent classes)
-            %% level - indent level for this class when printing
-            %%         (hard-coded 'verbose' variable not 0)
+            % Called recursively to build the inheritance tree.
+            % ::
+            %
+            %   [tab, ii] = nme.superclass_tab(roots, mcls, tab, ii, level)
+            %
+            % Inputs:
+            %   roots (cell array) : names of root classes to search for
+            %   mcls (object) : meta class object (undocumented MATLAB and
+            %       Octave) for the class of interest
+            %   tab (struct) : with fields:
+            %
+            %       - ``name`` -- cell array of class names
+            %       - ``ii`` -- matrix where each row corresponds to entry in name
+            %         field, and column *j* corresponds to *j*-th entry in
+            %         ``roots``, value is generations of inheritance
+            %         required to reach that root
+            %   ii (integer) : row of ``tab.ii`` corresponding to ``mcls`` on
+            %       input *(before traversing parent classes)*
+            %   level (integer) : indent level for this class when printing
+            %         (i.e. when hard-coded ``'verbose'`` variable not 0)
+            %
+            % Outputs:
+            %   tab (struct) : *see input*
+            %   ii (struct) : *see input*
+            %
+            % Called by find_form_class().
+
             verbose = 0;
             if nargin < 6
                 level = 0;
@@ -174,5 +301,5 @@ classdef (Abstract) form < handle
             tab.name{end+1, 1} = mcls.Name;
             tab.ii(end+1, 1:n) = ii;
         end
-    end     %% methods
+    end     %% methods (Access=protected)
 end         %% classdef

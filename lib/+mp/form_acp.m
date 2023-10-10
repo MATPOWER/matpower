@@ -1,21 +1,34 @@
 classdef form_acp < mp.form_ac
-%MP.FORM_ACP  MATPOWER Formulation class for AC polar voltage formulations
-%   Each concrete Network Model Element class must inherit, at least
-%   indirectly, from both MP.NM_ELEMENT and MP.FORM.
+% mp.form_acp - Base class for |MATPOWER| AC polar **formulations**.
 %
-%   Subclass of MP.FORM_AC.
-%   MP.FORM provides properties and methods related to the specific
-%   formulation (e.g. DC version, AC polar power version, etc.)
+% Used as a mix-in class for all **network model element** classes
+% with an AC network model formulation with a **polar** repesentation for
+% voltages. That is, each concrete network model element class with an AC
+% polar formulation must inherit, at least indirectly, from
+% both mp.nm_element and mp.form_acp.
 %
-%   Properties
-%       (model parameters inherited from MP.FORM_AC)
+% Provides implementation of evaluation of voltage-related Jacobian and
+% Hessian terms needed by some mp.form_ac methods.
 %
-%   Methods
-%       form_name() - returns string w/name of formulation ('AC-polar formulation')
-%       form_tag() - returns string w/short label for formulation ('acp')
+% mp.form_dc Methods:
+%   * form_name - get char array w/name of formulation (``'AC-polar'``)
+%   * form_tag - get char array w/short label of formulation (``'acp'``)
+%   * model_vvars - get cell array of names of voltage state variables (``{'va', 'vm'}``)
+%   * port_inj_current_jac - compute voltage-related terms of current injection Jacobian
+%   * port_inj_current_hess_v - compute voltage-related terms of current injection Hessian
+%   * port_inj_current_hess_vz - compute voltage/non-voltage-related terms of current injection Hessian
+%   * port_inj_power_jac - compute voltage-related terms of power injection Jacobian
+%   * port_inj_power_hess_v - compute voltage-related terms of power injection Hessian
+%   * port_inj_power_hess_vz - compute voltage/non-voltage-related terms of power injection Hessian
+%   * aux_data_va_vm - return voltage angles/magnitudes from auxiliary data
+%
+% For more details, see the :ref:`sec_nm_formulations_ac` section in the
+% :ref:`dev_manual` and the derivations in |TN5|.
+%
+% See also mp.form, mp.form_ac, mp.form_acc, mp.nm_element.
 
 %   MATPOWER
-%   Copyright (c) 2019-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2019-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -27,20 +40,37 @@ classdef form_acp < mp.form_ac
 
     methods
         function name = form_name(obj)
+            % Get user-readable name of formulation, i.e. ``'AC-polar'``.
+            %
+            % See :meth:`mp.form.form_name`.
+
             name = 'AC-polar';
         end
 
         function tag = form_tag(obj)
+            % Get short label of formulation, i.e. ``'acp'``.
+            %
+            % See :meth:`mp.form.form_tag`.
+
             tag = 'acp';
         end
 
         function vtypes = model_vvars(obj)
+            % Get cell array of names of voltage state variables, i.e. ``{'va', 'vm'}``.
+            %
+            % See :meth:`mp.form.model_vvars`.
+
             vtypes = {'va', 'vm'};
         end
 
-        function [Iva, Ivm] = port_inj_current_jac(obj, ...
-                n, v_, Y, M, invdiagvic, diagSlincJ)
-            % [Iva, Ivm] = obj.port_inj_current_jac(...)
+        function [Iva, Ivm] = port_inj_current_jac(obj, n, v_, Y, M, invdiagvic, diagSlincJ)
+            % Compute voltage-related terms of current injection Jacobian.
+            % ::
+            %
+            %   [Iva, Ivm] = nme.port_inj_current_jac(n, v_, Y, M, invdiagvic, diagSlincJ)
+            %
+            % Called by mp.form_ac.port_inj_current to compute
+            % voltage-related Jacobian terms.
 
             %% intermediate terms
             diagv = sparse(1:n, 1:n, v_, n, n);
@@ -62,10 +92,16 @@ classdef form_acp < mp.form_ac
         end
 
         function [Ivava, Ivavm, Ivmvm] = port_inj_current_hess_v(obj, x_, lam, v_, z_, diaginvic, Y, M, diagSlincJ, dlamJ)
-            % [Ivava, Ivavm, Ivmvm] = obj.port_inj_current_hess_v(x_, lam)
-            % [Ivava, Ivavm, Ivmvm] = obj.port_inj_current_hess_v(x_, lam, sysx)
-            % [Ivava, Ivavm, Ivmvm] = obj.port_inj_current_hess_v(x_, lam, sysx, idx)
-            % [...] = obj.port_inj_current_hess_vz(x_, lam, v_, z_, diaginvic, Y, M, diagSlincJ, dlamJ)
+            % Compute voltage-related terms of current injection Hessian.
+            % ::
+            %
+            %   [Ivava, Ivavm, Ivmvm] = nme.port_inj_current_hess_v(x_, lam)
+            %   [Ivava, Ivavm, Ivmvm] = nme.port_inj_current_hess_v(x_, lam, sysx)
+            %   [Ivava, Ivavm, Ivmvm] = nme.port_inj_current_hess_v(x_, lam, sysx, idx)
+            %   [...] = nme.port_inj_current_hess_vz(x_, lam, v_, z_, diaginvic, Y, M, diagSlincJ, dlamJ)
+            %
+            % Called by mp.form_ac.port_inj_current_hess to compute
+            % voltage-related Hessian terms.
 
             if nargin < 10
                 sysx = v_;
@@ -128,10 +164,16 @@ classdef form_acp < mp.form_ac
         end
 
         function [Ivazr, Ivazi, Ivmzr, Ivmzi] = port_inj_current_hess_vz(obj, x_, lam, v_, z_, diaginvic, N, dlamJ)
-            % [Ivazr, Ivazi, Ivmzr, Ivmzi] = obj.port_inj_current_hess_vz(x_, lam)
-            % [...] = obj.port_inj_current_hess_vz(x_, lam, sysx)
-            % [...] = obj.port_inj_current_hess_vz(x_, lam, sysx, idx)
-            % [...] = obj.port_inj_current_hess_vz(x_, lam, v_, z_, diaginvic, N, dlamJ)
+            % Compute voltage/non-voltage-related terms of current injection Hessian.
+            % ::
+            %
+            %   [Ivazr, Ivazi, Ivmzr, Ivmzi] = nme.port_inj_current_hess_vz(x_, lam)
+            %   [...] = nme.port_inj_current_hess_vz(x_, lam, sysx)
+            %   [...] = nme.port_inj_current_hess_vz(x_, lam, sysx, idx)
+            %   [...] = nme.port_inj_current_hess_vz(x_, lam, v_, z_, diaginvic, N, dlamJ)
+            %
+            % Called by mp.form_ac.port_inj_current_hess to compute
+            % voltage/non-voltage-related Hessian terms.
 
             if nargin < 8
                 sysx = v_;
@@ -168,9 +210,14 @@ classdef form_acp < mp.form_ac
             Ivmzi = -1j * Ivmzr;
         end
 
-        function [Sva, Svm] = port_inj_power_jac(obj, ...
-                n, v_, Y, M, diagv, diagvi, diagIlincJ)
-            % [Sva, Svm] = obj.port_inj_power_jac(...)
+        function [Sva, Svm] = port_inj_power_jac(obj, n, v_, Y, M, diagv, diagvi, diagIlincJ)
+            % Compute voltage-related terms of power injection Jacobian.
+            % ::
+            %
+            %   [Sva, Svm] = nme.port_inj_power_jac(...)
+            %
+            % Called by mp.form_ac.port_inj_power to compute
+            % voltage-related Jacobian terms.
 
             %% intermediate terms
             A = diagvi * diagIlincJ;
@@ -194,10 +241,16 @@ classdef form_acp < mp.form_ac
         end
 
         function [Svava, Svavm, Svmvm] = port_inj_power_hess_v(obj, x_, lam, v_, z_, diagvi, Y, M, diagIlincJ, dlamJ)
-            % [Svava, Svavm, Svmvm] = obj.port_inj_power_hess_v(x_, lam)
-            % [Svava, Svavm, Svmvm] = obj.port_inj_power_hess_v(x_, lam, sysx)
-            % [Svava, Svavm, Svmvm] = obj.port_inj_power_hess_v(x_, lam, sysx, idx)
-            % [...] = obj.port_inj_power_hess_v(x_, lam, v_, z_, diagvi, Y, M, diagIlincJ, dlamJ)
+            % Compute voltage-related terms of power injection Hessian.
+            % ::
+            %
+            %   [Svava, Svavm, Svmvm] = nme.port_inj_power_hess_v(x_, lam)
+            %   [Svava, Svavm, Svmvm] = nme.port_inj_power_hess_v(x_, lam, sysx)
+            %   [Svava, Svavm, Svmvm] = nme.port_inj_power_hess_v(x_, lam, sysx, idx)
+            %   [...] = nme.port_inj_power_hess_v(x_, lam, v_, z_, diagvi, Y, M, diagIlincJ, dlamJ)
+            %
+            % Called by mp.form_ac.port_inj_power_hess to compute
+            % voltage-related Hessian terms.
 
             if nargin < 10
                 sysx = v_;
@@ -257,10 +310,16 @@ classdef form_acp < mp.form_ac
         end
 
         function [Svazr, Svazi, Svmzr, Svmzi] = port_inj_power_hess_vz(obj, x_, lam, v_, z_, diagvi, L, dlamJ)
-            % [Svazr, Svazi, Svmzr, Svmzi] = obj.port_inj_power_hess_vz(x_, lam)
-            % [...] = obj.port_inj_power_hess_vz(x_, lam, sysx)
-            % [...] = obj.port_inj_power_hess_vz(x_, lam, sysx, idx)
-            % [...] = obj.port_inj_power_hess_vz(x_, lam, v_, z_, diagvi, L, dlamJ)
+            % Compute voltage/non-voltage-related terms of power injection Hessian.
+            % ::
+            %
+            %   [Svazr, Svazi, Svmzr, Svmzi] = nme.port_inj_power_hess_vz(x_, lam)
+            %   [...] = nme.port_inj_power_hess_vz(x_, lam, sysx)
+            %   [...] = nme.port_inj_power_hess_vz(x_, lam, sysx, idx)
+            %   [...] = nme.port_inj_power_hess_vz(x_, lam, v_, z_, diagvi, L, dlamJ)
+            %
+            % Called by mp.form_ac.port_inj_power_hess to compute
+            % voltage/non-voltage-related Hessian terms.
 
             if nargin < 8
                 sysx = v_;
@@ -299,6 +358,23 @@ classdef form_acp < mp.form_ac
         end
 
         function [va, vm] = aux_data_va_vm(obj, ad)
+            % Return voltage angles/magnitudes from auxiliary data.
+            % ::
+            %
+            %   [va, vm] = nme.aux_data_va_vm(ad)
+            %
+            % Simply returns voltage data stored in ``ad.va`` and
+            % ``ad.vm``.
+            %
+            % Input:
+            %   ad (struct) : struct of auxiliary data
+            %
+            % Outputs:
+            %   va (double) : vector of voltage angles corresponding to
+            %       voltage information stored in auxiliary data
+            %   vm (double) : vector of voltage magnitudes corresponding to
+            %       voltage information stored in auxiliary data
+
             va = ad.va;
             vm = ad.vm;
         end
