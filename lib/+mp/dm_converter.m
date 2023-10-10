@@ -50,7 +50,7 @@ classdef (Abstract) dm_converter < mp.element_container
             % returns ``'mpc2'``.
             %
             % *Note: This is an abstract method that must be implemented
-            % by a concrete subclass.*
+            % by a subclass.*
 
             error('mp.dm_converter/format_tag: must be implemented by sub-class');
         end
@@ -196,7 +196,7 @@ classdef (Abstract) dm_converter < mp.element_container
             %       possibly modified from input (e.g. extension added)
             %
             % *Note: This is an abstract method that must be implemented
-            % by a concrete subclass.*
+            % by a subclass.*
 
             error('mp.dm_converter/save: must be implemented by subclass');
         end

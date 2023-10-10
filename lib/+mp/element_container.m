@@ -25,7 +25,7 @@ classdef (Abstract) element_container < handle
 
     properties
         % Cell array of function handles of constructors for individual
-        % elements, filled by constructor of concrete subclass.
+        % elements, filled by constructor of subclass.
         element_classes
 
         % A mapped array (mp.mapped_array) to hold the element objects
