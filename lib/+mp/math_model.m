@@ -27,8 +27,8 @@ classdef (Abstract) math_model < mp.element_container & opt_model
 %   * form_name - returns network formulation name, e.g. ``'DC'``, ``'AC-polar-power'``
 %   * build - create, add, and build math model element objects
 %   * display - display the math model object
-%   * add_aux_data - builds auxilliary data and adds it to the model
-%   * build_base_aux_data - builds base auxilliary data, including node types & variable initial values
+%   * add_aux_data - builds auxiliary data and adds it to the model
+%   * build_base_aux_data - builds base auxiliary data, including node types & variable initial values
 %   * add_vars - add variables to the model
 %   * add_system_vars - add system variables to the model
 %   * add_constraints - add constraints to the model
@@ -108,7 +108,7 @@ classdef (Abstract) math_model < mp.element_container & opt_model
             %   dm (mp.data_model) : data model object
             %   mpopt (struct) : |MATPOWER| options struct
             %
-            % Create and add network model objects, create and add auxillary
+            % Create and add network model objects, create and add auxiliary
             % data, and add variables, constraints, and costs.
 
             %% Due to a bug related to inheritance in constructors in
@@ -167,7 +167,7 @@ classdef (Abstract) math_model < mp.element_container & opt_model
         end
 
         function obj = add_aux_data(obj, nm, dm, mpopt)
-            % Builds auxilliary data and adds it to the model.
+            % Builds auxiliary data and adds it to the model.
             % ::
             %
             %   mm.add_aux_data(nm, dm, mpopt)
@@ -187,7 +187,7 @@ classdef (Abstract) math_model < mp.element_container & opt_model
         end
 
         function ad = build_base_aux_data(obj, nm, dm, mpopt)
-            % Builds base auxilliary data, including node types & variable initial values.
+            % Builds base auxiliary data, including node types & variable initial values.
             % ::
             %
             %   ad = mm.build_base_aux_data(nm, dm, mpopt)
@@ -198,7 +198,7 @@ classdef (Abstract) math_model < mp.element_container & opt_model
             %   mpopt (struct) : |MATPOWER| options struct
             %
             % Output:
-            %   ad (struct) : struct of auxilliary data
+            %   ad (struct) : struct of auxiliary data
 
             %% get model variables
             vvars = nm.model_vvars();
