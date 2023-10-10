@@ -20,10 +20,11 @@ classdef data_model_cpf < mp.data_model
     methods
         %% constructor
         function obj = data_model_cpf()
-            % Constructor, create an empty data model object and assign
-            % the default data model element classes, which are the same
-            % as those defined by the base class, except for loads and
-            % shunts.
+            % Constructor, assign default data model element classes.
+            %
+            % Create an empty data model object and assign the default
+            % data model element classes, which are the same as those
+            % defined by the base class, except for loads and shunts.
             % ::
             %
             %   dm = mp.data_model_cpf()

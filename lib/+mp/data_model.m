@@ -73,8 +73,7 @@ classdef data_model < mp.element_container
     methods
         %% constructor
         function obj = data_model()
-            % Constructor, create an empty data model object and assign
-            % the default data model element classes.
+            % Constructor, assign default data model element classes.
             % ::
             %
             %   dm = mp.data_model()

@@ -23,8 +23,10 @@ classdef data_model_opf < mp.data_model
     methods
         %% constructor
         function obj = data_model_opf()
-            % Constructor, create an empty data model object and assign
-            % the default data model element classes, each specific to OPF.
+            % Constructor, assign default data model element classes.
+            %
+            % Create an empty data model object and assign the default
+            % data model element classes, each specific to OPF.
             % ::
             %
             %   dm = mp.data_model_opf()
