@@ -24,7 +24,7 @@ A given network model implements a specific network model **formulation**.
 
    AC Model for Element with :math:`n_p` Ports
 
-The `MP-Element technical note <https://matpower.org/docs/TN5-MP-Element.pdf>`_ (|/MATPOWER/| *Technical Note 5* [TN5]_) includes a lot more detail on the network model and especially on the mathematics involved in the model formulations.
+The MP-Element technical note, |TN5| [TN5]_, includes a lot more detail on the network model and especially on the mathematics involved in the model formulations.
 
 
 .. _sec_net_model_formulations:
@@ -341,4 +341,4 @@ Since the model parameters are consistent across all network model elements for 
 For more details on how the aggregation is done, see [TN5]_.
 
 
-.. [TN5] R. D. Zimmerman, “MP-Element: A Unified |MATPOWER| Element Model,” |/MATPOWER/| *Technical Note 5*, October 2020. Available: https://matpower.org/docs/TN5-MP-Element.pdf
+.. [TN5] R. D. Zimmerman, “MP-Element: A Unified |MATPOWER| Element Model,” |TN5|, October 2020. Available: https://matpower.org/docs/TN5-MP-Element.pdf
