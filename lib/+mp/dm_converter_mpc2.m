@@ -1,9 +1,16 @@
 classdef dm_converter_mpc2 < mp.dm_converter
 % mp.dm_converter_mpc2 - |MATPOWER| **data model converter** for MATPOWER case v2.
 %
-% This concrete class implements importing/exporting of data models for
-% version 2 of the classic |MATPOWER| case format. That is, the *data
-% source* **d** for this class is expected to be a |MATPOWER| case struct.
+% This class implements importing/exporting of data models for version 2
+% of the classic |MATPOWER| case format. That is, the *data source* **d**
+% for this class is expected to be a |MATPOWER| case struct.
+%
+% mp.dm_converter_mpc2 Methods:
+%   * dm_converter_mpc2 - constructor
+%   * format_tag - return char array identifier for data source/format (``'mpc2'``)
+%   * import - import data from a |MATPOWER| case struct into a data model
+%   * export - export data from a data model to a |MATPOWER| case struct
+%   * save - save |MATPOWER| case struct to a file
 %
 % See also mp.dm_converter.
 

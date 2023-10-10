@@ -4,6 +4,10 @@ classdef dm_converter_mpc2_legacy < mp.dm_converter_mpc2
 % Adds to mp.dm_converter_mpc2 the ability to handle legacy user
 % customization.
 %
+% mp.dm_converter_mpc2_legacy Methods:
+%   * legacy_user_mod_inputs - pre-process legacy inputs for use-defined customization
+%   * legacy_user_nln_constraints - pre-process legacy inputs for user-defined nonlinear constraints
+%
 % See also mp.dm_converter, mp.dm_converter_mpc2, mp.task_opf_legacy.
 
 %   MATPOWER
@@ -19,10 +23,10 @@ classdef dm_converter_mpc2_legacy < mp.dm_converter_mpc2
 
     methods
         function dm = legacy_user_mod_inputs(obj, dm, mpopt, dc)
-            % Handles pre-processing of inputs related to legacy user-defined
+            % Handle pre-processing of inputs related to legacy user-defined
             % variables, costs, and constraints. This includes optional
             % ``mpc`` fields ``A``, ``l``, ``u``, ``N``, ``fparm``, ``H1``,
-            % ``Cw``, ``z0``, ``zl``, and ``zu``.
+            % ``Cw``, ``z0``, ``zl``, ``zu`` and ``user_constraints``.
 
             %% create (read-only) copies of individual fields for convenience
             mpc = dm.source;
@@ -111,9 +115,11 @@ classdef dm_converter_mpc2_legacy < mp.dm_converter_mpc2
         end
 
         function uc = legacy_user_nln_constraints(obj, dm, mpopt)
-            % Handles pre-processing of inputs related to legacy user-defined
+            % Handle pre-processing of inputs related to legacy user-defined
             % non-linear constraints, specifically optional ``mpc`` fields
             % ``user_constraints.nle`` and ``user_constraints.nli``.
+            %
+            % Called by legacy_user_mod_inputs() method.
 
             mpc = dm.source;
 
