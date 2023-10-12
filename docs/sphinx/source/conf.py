@@ -153,6 +153,13 @@ latex_elements = {
     'fncychap': r'\usepackage[Bjornstrup]{fncychap}',
     'printindex': r'\footnotesize\raggedright\printindex',
     'maxlistdepth': '8',
+    'extrapackages': r"""\usepackage{bm}
+\usepackage{upgreek}
+\usepackage{amsfonts}
+\usepackage{amstext}
+\usepackage{soul}
+\usepackage{relsize}
+""", 
 }
 # latex_show_urls = 'footnote'
 
