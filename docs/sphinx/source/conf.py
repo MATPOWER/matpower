@@ -152,6 +152,7 @@ latex_elements = {
     'preamble': r'\input{preamble.tex.txt}',
     'fncychap': r'\usepackage[Bjornstrup]{fncychap}',
     'printindex': r'\footnotesize\raggedright\printindex',
+    'maxlistdepth': '8',
 }
 # latex_show_urls = 'footnote'
 
