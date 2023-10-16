@@ -3,14 +3,15 @@
 % \setlength{\cftchapnumwidth}{0.75cm}
 % \setlength{\cftsecindent}{\cftchapnumwidth}
 % \setlength{\cftsecnumwidth}{1.25cm}
-\usepackage{enumitem}
-\setlistdepth{6}
-\usepackage{bm}     %% bold math, for bold italics uppercase Greek characters
-\usepackage{upgreek}
-\usepackage{amsfonts}
-\usepackage{amstext}
-\usepackage{soul}
-\usepackage{relsize}
+
+% moved to conf.py, latex_elements = {'extrapackages' ...}
+% \usepackage{bm}     %% bold math, for bold italics uppercase Greek characters
+% \usepackage{upgreek}
+% \usepackage{amsfonts}
+% \usepackage{amstext}
+% \usepackage{soul}
+% \usepackage{relsize}
+
 \newcommand{\matpower}[0]{{M{\smaller{ATPOWER}}}}
 \newcommand{\matpoweri}[0]{{\emph{M{\smaller{ATPOWER}}}}}
 \newcommand{\matpowerb}[0]{{\textbf{M{\smaller{ATPOWER}}}}}
@@ -61,6 +62,11 @@
 
 \newcommand{\TNfiveurl}[0]{https://matpower.org/docs/TN5-MP-Element.pdf}
 \newcommand{\TNfive}[0]{\href{\TNfiveurl}{\it \matpower{} Technical Note~5}}
+
+\newcommand{\devmanurl}[0]{https://matpower.org/documentation/dev-manual/}
+\newcommand{\devman}[0]{\href{\devmanurl}{\it \matpower{} Developer's Manual}}
+\newcommand{\refmanurl}[0]{https://matpower.org/documentation/ref-manual/}
+\newcommand{\refman}[0]{\href{\refmanurl}{\it \matpower{} Reference Manual}}
 
 % used by sphinx role hl to highlight text
 \newcommand{\DUrolehl}{\hl}
