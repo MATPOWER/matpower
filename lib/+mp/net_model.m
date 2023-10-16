@@ -56,8 +56,8 @@ classdef (Abstract) net_model < mp.nm_element & mp.element_container & mp_idx_ma
 %   * set_node_type_pv - make the specified node a PV node
 %   * set_node_type_pq - make the specified node a PQ node
 %
-% See the :ref:`sec_net_model` section in the :ref:`dev_manual`
-% for more information.
+% See the :ref:`sec_net_model` section in the |MATPOWER-Dev-Manual| for more
+% information.
 %
 % See also mp.form, mp.nm_element, mp.task, mp.data_model, mp.math_model.
 

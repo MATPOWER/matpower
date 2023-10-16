@@ -23,8 +23,8 @@ classdef (Abstract) dm_converter < mp.element_container
 %   * save - save data source to a file
 %   * display - display the data model converter object
 %
-% See the :ref:`sec_dm_converter` section in the :ref:`dev_manual`
-% for more information.
+% See the :ref:`sec_dm_converter` section in the |MATPOWER-Dev-Manual| for more
+% information.
 %
 % See also mp.data_model, mp.task.
 

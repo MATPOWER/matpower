@@ -40,7 +40,7 @@ classdef (Abstract) form_ac < mp.form
 % model parameters.
 %
 % For more details, see the :ref:`sec_nm_formulations_ac` section in the
-% :ref:`dev_manual` and the derivations in |TN5|.
+% |MATPOWER-Dev-Manual| and the derivations in |TN5|.
 %
 % mp.form_dc Properties:
 %   * Y - :math:`n_p n_k \times n_n` matrix :math:`\YY` of model parameters

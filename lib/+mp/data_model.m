@@ -43,8 +43,8 @@ classdef data_model < mp.element_container
 %   * pp_data - pretty print the data for the given section
 %   * set_bus_v_lims_via_vg - set gen bus voltage limits based on gen voltage setpoints
 %
-% See the :ref:`sec_data_model` section in the :ref:`dev_manual`
-% for more information.
+% See the :ref:`sec_data_model` section in the |MATPOWER-Dev-Manual| for more
+% information.
 %
 % See also mp.task, mp.net_model, mp.math_model, mp.dm_converter.
 
@@ -135,7 +135,7 @@ classdef data_model < mp.element_container
             %   - Build parameters
             %
             % See the :ref:`sec_building_data_model` section in the
-            % :ref:`dev_manual` for more information.
+            % |MATPOWER-Dev-Manual| for more information.
 
             %% create empty element objects for each class
             obj.elements = mp.mapped_array();
@@ -165,8 +165,8 @@ classdef data_model < mp.element_container
             % is 0.
             %
             % Called by build() to perform its **count** stage. See the
-            % :ref:`sec_building_data_model` section in the :ref:`dev_manual`
-            % for more information.
+            % :ref:`sec_building_data_model` section in the
+            %|MATPOWER-Dev-Manual| for more information.
 
             for k = length(obj.elements):-1:1
                 obj.elements{k}.count(obj);     %% set nr
@@ -187,8 +187,8 @@ classdef data_model < mp.element_container
             % mappings.
             %
             % Called by build() to perform its **initialize** stage. See the
-            % :ref:`sec_building_data_model` section in the :ref:`dev_manual`
-            % for more information.
+            % :ref:`sec_building_data_model` section in the
+            % |MATPOWER-Dev-Manual| for more information.
 
             for k = 1:length(obj.elements)
                 obj.elements{k}.initialize(obj);
@@ -208,8 +208,8 @@ classdef data_model < mp.element_container
             % row indices to indices in online and offline element lists.
             %
             % Called by build() to perform its **update status** stage. See the
-            % :ref:`sec_building_data_model` section in the :ref:`dev_manual`
-            % for more information.
+            % :ref:`sec_building_data_model` section in the
+            % |MATPOWER-Dev-Manual| for more information.
 
             for k = 1:length(obj.elements)
                 obj.elements{k}.update_status(obj);
@@ -228,8 +228,8 @@ classdef data_model < mp.element_container
             % state, etc.) and store them in element-specific properties.
             %
             % Called by build() to perform its **build parameters** stage. See
-            % the :ref:`sec_building_data_model` section in the :ref:`dev_manual`
-            % for more information.
+            % the :ref:`sec_building_data_model` section in the
+            % |MATPOWER-Dev-Manual| more information.
 
             for k = 1:length(obj.elements)
                 obj.elements{k}.build_params(obj);

@@ -18,7 +18,7 @@ classdef form_dc < mp.form
 % where :math:`\BB`, :math:`\KK`, and :math:`\pv` are the model parameters.
 %
 % For more details, see the :ref:`sec_nm_formulations_dc` section in the
-% :ref:`dev_manual` and the derivations in |TN5|.
+% |MATPOWER-Dev-Manual| and the derivations in |TN5|.
 %
 % mp.form_dc Properties:
 %   * B - :math:`n_p n_k \times n_n` matrix :math:`\BB` of model parameters

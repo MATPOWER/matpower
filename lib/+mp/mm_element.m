@@ -21,8 +21,8 @@ classdef (Abstract) mm_element < handle
 %   * add_costs - add math model costs for this element
 %   * data_model_update - update the corresponding data model element
 %
-% See the :ref:`sec_mm_element` section in the :ref:`dev_manual`
-% for more information.
+% See the :ref:`sec_mm_element` section in the |MATPOWER-Dev-Manual| for more
+% information.
 %
 % See also mp.math_model.
 

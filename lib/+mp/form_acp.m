@@ -23,7 +23,7 @@ classdef form_acp < mp.form_ac
 %   * aux_data_va_vm - return voltage angles/magnitudes from auxiliary data
 %
 % For more details, see the :ref:`sec_nm_formulations_ac` section in the
-% :ref:`dev_manual` and the derivations in |TN5|.
+% |MATPOWER-Dev-Manual| and the derivations in |TN5|.
 %
 % See also mp.form, mp.form_ac, mp.form_acc, mp.nm_element.
 

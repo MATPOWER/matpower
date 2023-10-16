@@ -72,8 +72,8 @@ classdef (Abstract) dm_element < handle
 %   * pp_data_det - pretty-print the **details** data for this element
 %   * pp_data_row_det - get pretty-printed row of **details** data for this element
 %
-% See the :ref:`sec_dm_element` section in the :ref:`dev_manual`
-% for more information.
+% See the :ref:`sec_dm_element` section in the |MATPOWER-Dev-Manual| for more
+% information.
 %
 % See also mp.data_model.
 
@@ -162,8 +162,8 @@ classdef (Abstract) dm_element < handle
             %   3. Cell array of valid junction element types, cxn_idx_prop()
             %      return value *not empty*.
             %
-            % See the :ref:`sec_dm_element_cxn` section in the :ref:`dev_manual`
-            % for more information.
+            % See the :ref:`sec_dm_element_cxn` section in the
+            % |MATPOWER-Dev-Manual| for more information.
             %
             % Implementation provided by an element type specific subclass.
             %
@@ -183,8 +183,8 @@ classdef (Abstract) dm_element < handle
             %       property(ies) containing indices of junction elements that
             %       define connections (e.g. ``{'fbus', 'tbus'}``)
             %
-            % See the :ref:`sec_dm_element_cxn` section in the :ref:`dev_manual`
-            % for more information.
+            % See the :ref:`sec_dm_element_cxn` section in the
+            % |MATPOWER-Dev-Manual| for more information.
             %
             % Implementation provided by an element type specific subclass.
             %
@@ -212,8 +212,8 @@ classdef (Abstract) dm_element < handle
             % an empty string and the junction element types for the
             % connections are determined solely by cxn_type().
             %
-            % See the :ref:`sec_dm_element_cxn` section in the :ref:`dev_manual`
-            % for more information.
+            % See the :ref:`sec_dm_element_cxn` section in the
+            % |MATPOWER-Dev-Manual| for more information.
             %
             % Implementation provided by an element type specific subclass.
             %
@@ -339,7 +339,7 @@ classdef (Abstract) dm_element < handle
             % during the **count** stage of a data model build.
             %
             % See the :ref:`sec_building_data_model` section in the
-            % :ref:`dev_manual` for more information.
+            % |MATPOWER-Dev-Manual| for more information.
 
             if isempty(obj.tab)
                 nr = 0;
@@ -368,7 +368,7 @@ classdef (Abstract) dm_element < handle
             % build.
             %
             % See the :ref:`sec_building_data_model` section in the
-            % :ref:`dev_manual` for more information.
+            % |MATPOWER-Dev-Manual| for more information.
 
             %% create ID --> index mapping
             nr = obj.nr;
@@ -444,7 +444,7 @@ classdef (Abstract) dm_element < handle
             % build.
             %
             % See the :ref:`sec_building_data_model` section in the
-            % :ref:`dev_manual` for more information.
+            % |MATPOWER-Dev-Manual| for more information.
 
             status = obj.tab.status;
             if ~isempty(status)
@@ -477,7 +477,7 @@ classdef (Abstract) dm_element < handle
             % model build.
             %
             % See the :ref:`sec_building_data_model` section in the
-            % :ref:`dev_manual` for more information.
+            % |MATPOWER-Dev-Manual| for more information.
             %
             % Does nothing in the base class.
         end

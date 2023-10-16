@@ -57,8 +57,8 @@ classdef (Abstract) task < handle
 %   * math_model_build - create and build mathematical model object
 %   * math_model_opt - get options struct to pass to :meth:`mm.solve() <opt_model.solve>`
 %
-% See the :ref:`sec_task` section in the :ref:`dev_manual`
-% for more information.
+% See the :ref:`sec_task` section in the |MATPOWER-Dev-Manual| for more
+% information.
 %
 % See also mp.data_model, mp.net_model, mp.math_model, mp.dm_converter.
 
@@ -113,7 +113,7 @@ classdef (Abstract) task < handle
             % the math model and propagating the solution back to the
             % data model.
             %
-            % See the :ref:`sec_task` section in the :ref:`dev_manual`
+            % See the :ref:`sec_task` section in the |MATPOWER-Dev-Manual|
             % for more information.
 
             t0 = tic;       %% start timer

@@ -9,7 +9,7 @@ classdef (Abstract) form < handle
 % model formulation (e.g. DC version, AC polar power version, etc.).
 %
 % For more details, see the :ref:`sec_net_model_formulations` section in the
-% :ref:`dev_manual` and the derivations in |TN5|.
+% |MATPOWER-Dev-Manual| and the derivations in |TN5|.
 % 
 % mp.form Properties:
 %    *subclasses provide properties for model parameters*

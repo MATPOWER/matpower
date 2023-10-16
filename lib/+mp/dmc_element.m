@@ -34,8 +34,8 @@ classdef (Abstract) dmc_element < handle
 %   * default_export_data_nrows - get number of rows default_export_data_table()
 %   * export_col - export a variable (table column) to the data source
 %
-% See the :ref:`sec_dmc_element` section in the :ref:`dev_manual`
-% for more information.
+% See the :ref:`sec_dmc_element` section in the |MATPOWER-Dev-Manual| for more
+% information.
 %
 % See also mp.dm_converter.
 
@@ -249,7 +249,7 @@ classdef (Abstract) dmc_element < handle
             %
             % Output:
             %   vmap (struct) : variable map, see :numref:`tab_var_map` in the
-            %       :ref:`dev_manual` for details
+            %       |MATPOWER-Dev-Manual| for details
 
             %% initialize with vmap.(<name>) = {'col', []}, for all <name>
             names = dme.main_table_var_names();

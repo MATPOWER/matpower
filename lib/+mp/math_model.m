@@ -41,8 +41,8 @@ classdef (Abstract) math_model < mp.element_container & opt_model
 %   * data_model_update - update data model from math model solution
 %   * network_model_x_soln - convert solved state from math model to network model solution
 %
-% See the :ref:`sec_math_model` section in the :ref:`dev_manual`
-% for more information.
+% See the :ref:`sec_math_model` section in the |MATPOWER-Dev-Manual| for more
+% information.
 %
 % See also mp.task, mp.data_model, mp.net_model.
 

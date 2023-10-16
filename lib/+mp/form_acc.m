@@ -27,7 +27,7 @@ classdef form_acc < mp.form_ac
 %   * vm2_hess - compute squared voltage magnitude Hessian
 %
 % For more details, see the :ref:`sec_nm_formulations_ac` section in the
-% :ref:`dev_manual` and the derivations in |TN5|.
+% |MATPOWER-Dev-Manual| and the derivations in |TN5|.
 %
 % See also mp.form, mp.form_ac, mp.form_acp, mp.nm_element.
 

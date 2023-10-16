@@ -38,8 +38,8 @@ classdef (Abstract) nm_element < handle
 %   * incidence_matrix - construct stacked incidence matrix from set of index vectors
 %   * display - display the network model element object
 %
-% See the :ref:`sec_nm_element` section in the :ref:`dev_manual`
-% for more information.
+% See the :ref:`sec_nm_element` section in the |MATPOWER-Dev-Manual| for more
+% information.
 %
 % See also mp.net_model.
 
@@ -426,7 +426,7 @@ classdef (Abstract) nm_element < handle
             %
             % By default, the connection information is obtained from the
             % corresponding data model element, as described in the
-            % :ref:`sec_dm_element_cxn` section in the :ref:`dev_manual`.
+            % :ref:`sec_dm_element_cxn` section in the |MATPOWER-Dev-Manual|.
             %
             % See also incidence_matrix, mp.dm_element.cxn_type,
             % mp.dm_element.cxn_idx_prop, mp.dm_element.cxn_type_prop.
