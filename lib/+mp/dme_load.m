@@ -1,8 +1,8 @@
 classdef dme_load < mp.dm_element
-%MP.DME_LOAD  MATPOWER data model class for load data
+% mp.dme_load - Data model element for load.
 
 %   MATPOWER
-%   Copyright (c) 2020-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -10,47 +10,55 @@ classdef dme_load < mp.dm_element
 %   See https://matpower.org for more info.
 
     properties
-        bus     %% bus index vector (all loads)
-        pd      %% active power demand (p.u.) for constant power loads that are on
-        qd      %% reactive power demand (p.u.) for constant power loads that are on
-        pd_i    %% active power demand (p.u.) for constant current loads that are on
-        qd_i    %% reactive power demand (p.u.) for constant current loads that are on
-        pd_z    %% active power demand (p.u.) for constant impedance loads that are on
-        qd_z    %% reactive power demand (p.u.) for constant impedance loads that are on
+        bus     % bus index vector (all loads)
+        pd      % active power demand (p.u.) for constant power loads that are on
+        qd      % reactive power demand (p.u.) for constant power loads that are on
+        pd_i    % active power demand (p.u.) for constant current loads that are on
+        qd_i    % reactive power demand (p.u.) for constant current loads that are on
+        pd_z    % active power demand (p.u.) for constant impedance loads that are on
+        qd_z    % reactive power demand (p.u.) for constant impedance loads that are on
     end     %% properties
 
     methods
         function name = name(obj)
+            %
             name = 'load';
         end
 
         function label = label(obj)
+            %
             label = 'Load';
         end
 
         function label = labels(obj)
+            %
             label = 'Loads';
         end
 
         function name = cxn_type(obj)
+            %
             name = 'bus';
         end
 
         function name = cxn_idx_prop(obj)
+            %
             name = 'bus';
         end
 
         function names = main_table_var_names(obj)
+            %
             names = horzcat( main_table_var_names@mp.dm_element(obj), ...
                 {'bus', 'pd', 'qd', 'pd_i', 'qd_i', 'pd_z', 'qd_z', ...
                 'p', 'q'});
         end
 
         function vars = export_vars(obj)
+            %
             vars = {};
         end
 
         function nr = count(obj, dm)
+            %
             nr = count@mp.dm_element(obj, dm);
             if nr
                 obj.bus = obj.tab.source_uid;
@@ -58,6 +66,8 @@ classdef dme_load < mp.dm_element
         end
 
         function obj = update_status(obj, dm)
+            %
+
             %% get bus status info
             bs = dm.elements.bus.tab.status;    %% bus status
 
@@ -69,6 +79,7 @@ classdef dme_load < mp.dm_element
         end
 
         function obj = build_params(obj, dm)
+            %
             obj.pd   = obj.tab.pd(obj.on) / dm.base_mva;
             obj.qd   = obj.tab.qd(obj.on) / dm.base_mva;
             obj.pd_i = obj.tab.pd_i(obj.on) / dm.base_mva;
@@ -78,10 +89,13 @@ classdef dme_load < mp.dm_element
         end
 
         function TorF = pp_have_section_sum(obj, mpopt, pp_args)
+            %
             TorF = true;
         end
 
         function obj = pp_data_sum(obj, dm, rows, out_e, mpopt, fd, pp_args)
+            %
+
             %% call parent
             pp_data_sum@mp.dm_element(obj, dm, rows, out_e, mpopt, fd, pp_args);
 
@@ -103,10 +117,12 @@ classdef dme_load < mp.dm_element
         end
 
         function TorF = pp_have_section_det(obj, mpopt, pp_args)
+            %
             TorF = true;
         end
 
         function h = pp_get_headers_det(obj, dm, out_e, mpopt, pp_args)
+            %
             h = [ pp_get_headers_det@mp.dm_element(obj, dm, out_e, mpopt, pp_args) ...
                 {   '                             Power Consumption', ...
                     'Load ID    Bus ID   Status   P (MW)   Q (MVAr)', ...
@@ -115,12 +131,14 @@ classdef dme_load < mp.dm_element
         end
 
         function f = pp_get_footers_det(obj, dm, out_e, mpopt, pp_args)
+            %
             f = {'                            --------  --------',
                 sprintf('%18s Total:%10.1f %9.1f', ...
                     '', sum(obj.tab.p(obj.on)), sum(obj.tab.q(obj.on)))};
         end
 
         function str = pp_data_row_det(obj, dm, k, out_e, mpopt, fd, pp_args)
+            %
             if obj.tab.status(k) && abs(obj.tab.p(k)) > 1e-5
                 p = sprintf('%10.1f', obj.tab.p(k));
             else

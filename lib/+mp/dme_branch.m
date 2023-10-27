@@ -1,8 +1,8 @@
 classdef dme_branch < mp.dm_element
-%MP.DME_BRANCH  MATPOWER data model class for branch data
+% mp.dme_branch - Data model element for branch.
 
 %   MATPOWER
-%   Copyright (c) 2020-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -10,41 +10,47 @@ classdef dme_branch < mp.dm_element
 %   See https://matpower.org for more info.
 
     properties
-        fbus    %% bus index vector for "from" port (port 1) (all branches)
-        tbus    %% bus index vector for "to" port (port 2) (all branches)
-        r       %% series resistance (p.u.) for branches that are on
-        x       %% series reactance (p.u.) for branches that are on
-        g_fr    %% shunt conductance (p.u.) at "from" end for branches that are on
-        g_to    %% shunt conductance (p.u.) at "to" end for branches that are on
-        b_fr    %% shunt susceptance (p.u.) at "from" end for branches that are on
-        b_to    %% shunt susceptance (p.u.) at "to" end for branches that are on
-        tm      %% transformer off-nominal turns ratio for branches that are on
-        ta      %% xformer phase-shift angle (radians) for branches that are on
-        rate_a  %% long term flow limit (p.u.) for branches that are on
+        fbus    % bus index vector for "from" port (port 1) (all branches)
+        tbus    % bus index vector for "to" port (port 2) (all branches)
+        r       % series resistance (p.u.) for branches that are on
+        x       % series reactance (p.u.) for branches that are on
+        g_fr    % shunt conductance (p.u.) at "from" end for branches that are on
+        g_to    % shunt conductance (p.u.) at "to" end for branches that are on
+        b_fr    % shunt susceptance (p.u.) at "from" end for branches that are on
+        b_to    % shunt susceptance (p.u.) at "to" end for branches that are on
+        tm      % transformer off-nominal turns ratio for branches that are on
+        ta      % xformer phase-shift angle (radians) for branches that are on
+        rate_a  % long term flow limit (p.u.) for branches that are on
     end     %% properties
 
     methods
         function name = name(obj)
+            %
             name = 'branch';
         end
 
         function label = label(obj)
+            %
             label = 'Branch';
         end
 
         function label = labels(obj)
+            %
             label = 'Branches';
         end
 
         function name = cxn_type(obj)
+            %
             name = 'bus';
         end
 
         function name = cxn_idx_prop(obj)
+            %
             name = {'fbus', 'tbus'};
         end
 
         function names = main_table_var_names(obj)
+            %
             names = horzcat( main_table_var_names@mp.dm_element(obj), ...
                 {'bus_fr', 'bus_to', 'r', 'x', 'g_fr', 'b_fr', ...
                 'g_to', 'b_to', 'sm_ub_a', 'sm_ub_b', 'sm_ub_c', ...
@@ -54,10 +60,12 @@ classdef dme_branch < mp.dm_element
         end
 
         function vars = export_vars(obj)
+            %
             vars = {'pl_fr', 'ql_fr', 'pl_to', 'ql_to'};
         end
 
         function obj = initialize(obj, dm)
+            %
             initialize@mp.dm_element(obj, dm);  %% call parent
 
             %% get bus mapping info
@@ -69,6 +77,8 @@ classdef dme_branch < mp.dm_element
         end
 
         function obj = update_status(obj, dm)
+            %
+
             %% get bus status info
             bs = dm.elements.bus.tab.status;    %% bus status
 
@@ -81,6 +91,7 @@ classdef dme_branch < mp.dm_element
         end
 
         function obj = build_params(obj, dm)
+            %
             obj.r  = obj.tab.r(obj.on);
             obj.x  = obj.tab.x(obj.on);
             obj.g_fr  = obj.tab.g_fr(obj.on);
@@ -93,6 +104,8 @@ classdef dme_branch < mp.dm_element
         end
 
         function obj = pp_data_cnt(obj, dm, rows, out_e, mpopt, fd, pp_args)
+            %
+
             %% call parent
             pp_data_cnt@mp.dm_element(obj, dm, rows, out_e, mpopt, fd, pp_args);
 
@@ -123,10 +136,13 @@ classdef dme_branch < mp.dm_element
         end
 
         function TorF = pp_have_section_sum(obj, mpopt, pp_args)
+            %
             TorF = true;
         end
 
         function obj = pp_data_sum(obj, dm, rows, out_e, mpopt, fd, pp_args)
+            %
+
             %% call parent
             pp_data_sum@mp.dm_element(obj, dm, rows, out_e, mpopt, fd, pp_args);
 
@@ -141,6 +157,7 @@ classdef dme_branch < mp.dm_element
         end
 
         function h = pp_get_headers_det(obj, dm, out_e, mpopt, pp_args)
+            %
             h = [ pp_get_headers_det@mp.dm_element(obj, dm, out_e, mpopt, pp_args) ...
                 {   ' Branch     From       To             From Bus Injection   To Bus Injection', ...
                     '   ID      Bus ID    Bus ID   Status   P (MW)   Q (MVAr)   P (MW)   Q (MVAr)', ...
@@ -149,10 +166,12 @@ classdef dme_branch < mp.dm_element
         end
 
         function TorF = pp_have_section_det(obj, mpopt, pp_args)
+            %
             TorF = true;
         end
 
         function str = pp_data_row_det(obj, dm, k, out_e, mpopt, fd, pp_args)
+            %
             str = sprintf('%7d %9d %9d %6d %10.2f %9.2f %9.2f %9.2f', ...
                 obj.tab.uid(k), obj.tab.bus_fr(k), obj.tab.bus_to(k), ...
                 obj.tab.status(k), ...

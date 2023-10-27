@@ -1,8 +1,8 @@
 classdef dme_gen_opf < mp.dme_gen & mp.dme_shared_opf
-%MP.DME_GEN_OPF  MATPOWER data model class for gen data
+% mp.dme_gen_opf - Data model element for generator for OPF.
 
 %   MATPOWER
-%   Copyright (c) 1996-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %
@@ -15,20 +15,24 @@ classdef dme_gen_opf < mp.dme_gen & mp.dme_shared_opf
 
     methods
         function names = main_table_var_names(obj)
+            %
             names = horzcat( main_table_var_names@mp.dme_gen(obj), ...
                 {'cost_pg', 'cost_qg', 'mu_pg_lb', 'mu_pg_ub', 'mu_qg_lb', 'mu_qg_ub'});
         end
 
         function vars = export_vars(obj)
+            %
             vars = horzcat( export_vars@mp.dme_gen(obj), ...
                 {'vm_setpoint', 'mu_pg_lb', 'mu_pg_ub', 'mu_qg_lb', 'mu_qg_ub'} );
         end
 
         function TorF = have_cost(obj)
+            %
             TorF = 1;
         end
 
         function cost = build_cost_params(obj, dm, dc)
+            %
             base_mva = dm.base_mva;
 
             poly_p = obj.gen_cost_poly_params(base_mva, obj.tab.cost_pg(obj.on, :));
@@ -73,6 +77,7 @@ classdef dme_gen_opf < mp.dme_gen & mp.dme_shared_opf
         end
 
         function p = gen_cost_pwl_params(obj, base_mva, cost, ng, dc)
+            %
             ipwl = find(cost.pwl_n);    %% piece-wise linear costs
             ny = size(ipwl, 1);     %% number of piece-wise linear cost vars
             if dc
@@ -129,6 +134,7 @@ classdef dme_gen_opf < mp.dme_gen & mp.dme_shared_opf
         end
 
         function p = gen_cost_poly_params(obj, base_mva, cost)
+            %
             ng = size(cost, 1);
             have_quad_cost = 0;
             kg = []; cg = []; Qg = [];
@@ -167,6 +173,7 @@ classdef dme_gen_opf < mp.dme_gen & mp.dme_shared_opf
         end
 
         function maxgc = max_pwl_gencost(obj)
+            %
             maxgc = max(max(obj.tab.cost_pg.pwl_cost));
             if ismember('cost_qg', obj.tab.Properties.VariableNames) && ...
                     ~isempty(obj.tab.cost_qg.pwl_cost)
@@ -175,6 +182,7 @@ classdef dme_gen_opf < mp.dme_gen & mp.dme_shared_opf
         end
 
         function obj = pretty_print(obj, dm, section, out_e, mpopt, fd, pp_args)
+            %
             switch section
                 case 'lim'
                     pp_args.gen.pq = 'P';
@@ -188,10 +196,12 @@ classdef dme_gen_opf < mp.dme_gen & mp.dme_shared_opf
         end
 
         function TorF = pp_have_section_lim(obj, mpopt, pp_args)
+            %
             TorF = true;
         end
 
         function rows = pp_binding_rows_lim(obj, dm, out_e, mpopt, pp_args)
+            %
             if pp_args.gen.pq == 'P'
                 rows = find( obj.tab.status & ( ...
                             obj.tab.pg < obj.tab.pg_lb + obj.ctol | ...
@@ -208,6 +218,7 @@ classdef dme_gen_opf < mp.dme_gen & mp.dme_shared_opf
         end
 
         function h = pp_get_headers_lim(obj, dm, out_e, mpopt, pp_args)
+            %
             if pp_args.gen.pq == 'P'
                 h0 = pp_get_headers_lim@mp.dme_shared_opf(obj, dm, out_e, mpopt, pp_args);
                 label = ' Active Power Limits';
@@ -233,6 +244,7 @@ classdef dme_gen_opf < mp.dme_gen & mp.dme_shared_opf
         end
 
         function str = pp_data_row_lim(obj, dm, k, out_e, mpopt, fd, pp_args)
+            %
             if pp_args.gen.pq == 'P'
                 if obj.tab.pg(k) < obj.tab.pg_lb(k) + obj.ctol || ...
                         obj.tab.mu_pg_lb(k) > obj.ptol

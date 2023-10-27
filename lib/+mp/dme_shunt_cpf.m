@@ -1,8 +1,8 @@
 classdef dme_shunt_cpf < mp.dme_shunt
-%MP.DME_SHUNT_CPF  MATPOWER data model class for shunt data
+% mp.dme_shunt_cpf - Data model element for shunt for CPF.
 
 %   MATPOWER
-%   Copyright (c) 2020-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -14,10 +14,12 @@ classdef dme_shunt_cpf < mp.dme_shunt
 
     methods
         function vars = export_vars(obj)
+            %
             vars = horzcat( export_vars@mp.dme_shunt(obj), {'gs', 'bs'} );
         end
 
         function dm = parameterized(obj, dm, dmb, dmt, lam)
+            %
             shunt = dm.elements.shunt;
             b = dmb.elements.shunt.tab;     %% base shunt table
             t = dmt.elements.shunt.tab;     %% target shunt table

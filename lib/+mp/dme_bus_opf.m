@@ -1,8 +1,8 @@
 classdef dme_bus_opf < mp.dme_bus & mp.dme_shared_opf
-%MP.DME_BUS_OPF  MATPOWER data model class for bus data
+% mp.dme_bus_opf - Data model element for bus for OPF.
 
 %   MATPOWER
-%   Copyright (c) 2020-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -14,17 +14,21 @@ classdef dme_bus_opf < mp.dme_bus & mp.dme_shared_opf
 
     methods
         function names = main_table_var_names(obj)
+            %
             names = horzcat( main_table_var_names@mp.dme_bus(obj), ...
                 {'lam_p', 'lam_q', 'mu_vm_lb', 'mu_vm_ub'});
         end
 
         function vars = export_vars(obj)
+            %
             vars = horzcat( export_vars@mp.dme_bus(obj), ...
                 {'vm_lb', 'vm_ub', 'lam_p', 'lam_q', ...
                     'mu_vm_lb', 'mu_vm_ub'} );
         end
 
         function obj = pp_data_ext(obj, dm, rows, out_e, mpopt, fd, pp_args)
+            %
+
             %% call parent
             pp_data_ext@mp.dme_bus(obj, dm, rows, out_e, mpopt, fd, pp_args);
 
@@ -52,6 +56,7 @@ classdef dme_bus_opf < mp.dme_bus & mp.dme_shared_opf
         end
 
         function h = pp_get_headers_det(obj, dm, out_e, mpopt, pp_args)
+            %
             if mpopt.model(1) ~= 'D'    %% AC model
                 h = pp_get_headers_det@mp.dme_bus(obj, dm, out_e, mpopt, pp_args);
                 h{end-2} = [ h{end-2} '            Lambda (LMP)'];
@@ -66,6 +71,7 @@ classdef dme_bus_opf < mp.dme_bus & mp.dme_shared_opf
         end
 
         function str = pp_data_row_det(obj, dm, k, out_e, mpopt, fd, pp_args)
+            %
             if mpopt.model(1) ~= 'D'    %% AC model
                 str = [ ...
                     pp_data_row_det@mp.dme_bus(obj, dm, k, out_e, mpopt, fd, pp_args) ...
@@ -79,10 +85,12 @@ classdef dme_bus_opf < mp.dme_bus & mp.dme_shared_opf
         end
 
         function TorF = pp_have_section_lim(obj, mpopt, pp_args)
+            %
             TorF = true;
         end
 
         function rows = pp_binding_rows_lim(obj, dm, out_e, mpopt, pp_args)
+            %
             rows = find( obj.tab.status & ( ...
                         obj.tab.vm < obj.tab.vm_lb + obj.ctol | ...
                         obj.tab.vm > obj.tab.vm_ub - obj.ctol | ...
@@ -91,6 +99,7 @@ classdef dme_bus_opf < mp.dme_bus & mp.dme_shared_opf
         end
 
         function h = pp_get_headers_lim(obj, dm, out_e, mpopt, pp_args)
+            %
             h = [ pp_get_headers_lim@mp.dme_shared_opf(obj, dm, out_e, mpopt, pp_args) ...
                 {   '                     Voltage Magnitude Limits', ...
                     ' Bus ID     mu LB      LB       vm       UB       mu UB', ...
@@ -99,6 +108,7 @@ classdef dme_bus_opf < mp.dme_bus & mp.dme_shared_opf
         end
 
         function str = pp_data_row_lim(obj, dm, k, out_e, mpopt, fd, pp_args)
+            %
             if obj.tab.vm(k) < obj.tab.vm_lb(k) + obj.ctol || ...
                     obj.tab.mu_vm_lb(k) > obj.ptol
                 mu_lb = sprintf('%10.3f', obj.tab.mu_vm_lb(k));

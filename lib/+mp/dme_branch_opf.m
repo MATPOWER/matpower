@@ -1,8 +1,8 @@
 classdef dme_branch_opf < mp.dme_branch & mp.dme_shared_opf
-%MP.DME_BRANCH_OPF  MATPOWER data model class for branch data
+% mp.dme_branch_opf - Data model element for branch for OPF.
 
 %   MATPOWER
-%   Copyright (c) 2020-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -14,6 +14,7 @@ classdef dme_branch_opf < mp.dme_branch & mp.dme_shared_opf
 
     methods
         function names = main_table_var_names(obj)
+            %
             names = horzcat( main_table_var_names@mp.dme_branch(obj), ...
                 {'mu_flow_fr_ub', 'mu_flow_to_ub', ...
                  'mu_vad_lb', 'mu_vad_ub'} );
@@ -23,12 +24,14 @@ classdef dme_branch_opf < mp.dme_branch & mp.dme_shared_opf
         end
 
         function vars = export_vars(obj)
+            %
             vars = horzcat( export_vars@mp.dme_branch(obj), ...
                 {'mu_flow_fr_ub', 'mu_flow_to_ub', ...
                  'mu_vad_lb', 'mu_vad_ub'} );
         end
 
         function obj = pretty_print(obj, dm, section, out_e, mpopt, fd, pp_args)
+            %
             switch section
                 case 'lim'
                     %% compute flows and limits to pass to parent
@@ -58,10 +61,12 @@ classdef dme_branch_opf < mp.dme_branch & mp.dme_shared_opf
         end
 
         function TorF = pp_have_section_lim(obj, mpopt, pp_args)
+            %
             TorF = true;
         end
 
         function rows = pp_binding_rows_lim(obj, dm, out_e, mpopt, pp_args)
+            %
             fm = pp_args.branch.flow_magnitude;
             rows = find( obj.tab.status & fm.ub ~= 0 & ( ...
                         fm.fr > fm.ub - obj.ctol | ...
@@ -71,6 +76,7 @@ classdef dme_branch_opf < mp.dme_branch & mp.dme_shared_opf
         end
 
         function str = pp_get_title_lim(obj, mpopt, pp_args)
+            %
             switch upper(mpopt.opf.flow_lim(1))
                 case {'P', '2'}     %% active power
                     str = 'P in MW';
@@ -83,6 +89,7 @@ classdef dme_branch_opf < mp.dme_branch & mp.dme_shared_opf
         end
 
         function h = pp_get_headers_lim(obj, dm, out_e, mpopt, pp_args)
+            %
             switch upper(mpopt.opf.flow_lim(1))
                 case {'P', '2'}     %% active power
                     h2 = '   ID      Bus ID    mu_pl_fr   pl_fr    pl_ub    pl_to    mu_pl_to  Bus ID';
@@ -99,6 +106,7 @@ classdef dme_branch_opf < mp.dme_branch & mp.dme_shared_opf
         end
 
         function str = pp_data_row_lim(obj, dm, k, out_e, mpopt, fd, pp_args)
+            %
             fm = pp_args.branch.flow_magnitude;
 
             if fm.ub(k) ~= 0 & (fm.fr(k) > fm.ub(k) - obj.ctol || ...

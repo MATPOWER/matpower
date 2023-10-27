@@ -33,6 +33,27 @@ Elements
    :name: sec_data_model_element_classes
 
    mp/dm_element
+   mp/dme_branch
+   mp/dme_branch_opf
+   mp/dme_bus
+   mp/dme_bus_opf
+   mp/dme_gen
+   mp/dme_gen_opf
+   mp/dme_load
+   mp/dme_load_cpf
+   mp/dme_load_opf
+   mp/dme_shunt_cpf
+   mp/dme_shunt
+   mp/dme_shunt_opf
+
+
+Element Mixins
+++++++++++++++
+
+.. toctree::
+   :name: sec_data_model_element_mixin_classes
+
+   mp/dme_shared_opf
 
 
 Data Model Converter Classes

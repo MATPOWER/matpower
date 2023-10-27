@@ -1,8 +1,8 @@
 classdef dme_gen < mp.dm_element
-%MP.DME_GEN  MATPOWER data model class for gen data
+% mp.dme_gen - Data model element for generator.
 
 %   MATPOWER
-%   Copyright (c) 1996-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %
@@ -11,38 +11,44 @@ classdef dme_gen < mp.dm_element
 %   See https://matpower.org for more info.
 
     properties
-        bus         %% bus index vector (all gens)
-        pg_start    %% initial active power (p.u.) for gens that are on
-        qg_start    %% initial reactive power (p.u.) for gens that are on
-        vm_setpoint %% generator voltage setpoint for gens that are on
-        pg_lb       %% active power lower bound (p.u.) for gens that are on
-        pg_ub       %% active power upper bound (p.u.) for gens that are on
-        qg_lb       %% reactive power lower bound (p.u.) for gens that are on
-        qg_ub       %% reactive power upper bound (p.u.) for gens that are on
+        bus         % bus index vector (all gens)
+        pg_start    % initial active power (p.u.) for gens that are on
+        qg_start    % initial reactive power (p.u.) for gens that are on
+        vm_setpoint % generator voltage setpoint for gens that are on
+        pg_lb       % active power lower bound (p.u.) for gens that are on
+        pg_ub       % active power upper bound (p.u.) for gens that are on
+        qg_lb       % reactive power lower bound (p.u.) for gens that are on
+        qg_ub       % reactive power upper bound (p.u.) for gens that are on
     end     %% properties
 
     methods
         function name = name(obj)
+            %
             name = 'gen';
         end
 
         function label = label(obj)
+            %
             label = 'Generator';
         end
 
         function label = labels(obj)
+            %
             label = 'Generators';
         end
 
         function name = cxn_type(obj)
+            %
             name = 'bus';
         end
 
         function name = cxn_idx_prop(obj)
+            %
             name = 'bus';
         end
 
         function names = main_table_var_names(obj)
+            %
             names = horzcat( main_table_var_names@mp.dm_element(obj), ...
                 {'bus', 'vm_setpoint', 'pg_lb', 'pg_ub', 'qg_lb', 'qg_ub', ...
                 'pg', 'qg', 'in_service', ...
@@ -51,14 +57,17 @@ classdef dme_gen < mp.dm_element
         end
 
         function vars = export_vars(obj)
+            %
             vars = {'pg', 'qg'};
         end
 
         function TorF = have_cost(obj)
+            %
             TorF = 0;
         end
 
         function obj = initialize(obj, dm)
+            %
             initialize@mp.dm_element(obj, dm);    %% call parent
 
             %% get bus mapping info
@@ -69,6 +78,8 @@ classdef dme_gen < mp.dm_element
         end
 
         function obj = update_status(obj, dm)
+            %
+
             %% get bus status info
             bs = dm.elements.bus.tab.status;    %% bus status
 
@@ -80,6 +91,7 @@ classdef dme_gen < mp.dm_element
         end
 
         function obj = build_params(obj, dm)
+            %
             base_mva = dm.base_mva;
 
             gen = obj.tab;
@@ -95,6 +107,8 @@ classdef dme_gen < mp.dm_element
         end
 
         function [mn, mx, both] = violated_q_lims(obj, dm, mpopt)
+            %
+
             %% [mn, mx, both] = obj.violated_q_lims(dm, mpopt)
             %%  indices of online gens with violated Q lims
 
@@ -141,6 +155,7 @@ classdef dme_gen < mp.dm_element
         end
 
         function TorF = isload(obj, idx)
+            %
             if nargin > 1
                 TorF = obj.tab.pg_lb(idx) < 0 & obj.tab.pg_ub(idx) == 0;
             else
@@ -149,10 +164,13 @@ classdef dme_gen < mp.dm_element
         end
 
         function TorF = pp_have_section_sum(obj, mpopt, pp_args)
+            %
             TorF = true;
         end
 
         function obj = pp_data_sum(obj, dm, rows, out_e, mpopt, fd, pp_args)
+            %
+
             %% call parent
             pp_data_sum@mp.dm_element(obj, dm, rows, out_e, mpopt, fd, pp_args);
 
@@ -196,10 +214,12 @@ classdef dme_gen < mp.dm_element
         end
 
         function TorF = pp_have_section_det(obj, mpopt, pp_args)
+            %
             TorF = true;
         end
 
         function h = pp_get_headers_det(obj, dm, out_e, mpopt, pp_args)
+            %
             h = [ pp_get_headers_det@mp.dm_element(obj, dm, out_e, mpopt, pp_args) ...
                 {   '                             Power Generation', ...
                     ' Gen ID    Bus ID   Status   P (MW)   Q (MVAr)', ...
@@ -208,12 +228,14 @@ classdef dme_gen < mp.dm_element
         end
 
         function f = pp_get_footers_det(obj, dm, out_e, mpopt, pp_args)
+            %
             f = {'                            --------  --------',
                 sprintf('%18s Total:%10.1f %9.1f', ...
                     '', sum(obj.tab.pg(obj.on)), sum(obj.tab.qg(obj.on)))};
         end
 
         function str = pp_data_row_det(obj, dm, k, out_e, mpopt, fd, pp_args)
+            %
             if obj.tab.status(k) && abs(obj.tab.pg(k)) > 1e-5
                 pg = sprintf('%10.1f', obj.tab.pg(k));
             else

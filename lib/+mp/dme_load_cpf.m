@@ -1,8 +1,8 @@
 classdef dme_load_cpf < mp.dme_load
-%MP.DME_LOAD_CPF  MATPOWER data model class for load data
+% mp.dme_load_cpf - Data model element for load for CPF.
 
 %   MATPOWER
-%   Copyright (c) 2020-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -14,11 +14,13 @@ classdef dme_load_cpf < mp.dme_load
 
     methods
         function vars = export_vars(obj)
+            %
             vars = horzcat( export_vars@mp.dme_load(obj), ...
                 {'pd', 'qd', 'pd_i', 'qd_i', 'pd_z', 'qd_z'} );
         end
 
         function dm = parameterized(obj, dm, dmb, dmt, lam)
+            %
             load = dm.elements.load;
             b = dmb.elements.load.tab;      %% base load table
             t = dmt.elements.load.tab;      %% target load table
