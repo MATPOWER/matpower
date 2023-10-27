@@ -8,9 +8,4 @@ classdef nme_gizmo_acp < mp.nme_gizmo_ac & mp.form_acp
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See https://matpower.org for more info.
 
-%     properties
-%     end     %% properties
-
-%     methods
-%     end     %% methods
 end         %% classdef
