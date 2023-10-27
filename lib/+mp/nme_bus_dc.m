@@ -1,7 +1,8 @@
 classdef nme_bus_dc < mp.nme_bus & mp.form_dc
+% mp.nme_bus_dc - Network model element for bus for DC formulations.
 
 %   MATPOWER
-%   Copyright (c) 2019-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2019-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -9,11 +10,11 @@ classdef nme_bus_dc < mp.nme_bus & mp.form_dc
 %   See https://matpower.org for more info.
 
 %     properties
-%         name = 'bus';
-%     end
+%     end     %% properties
 
     methods
         function obj = add_vvars(obj, nm, dm, idx)
+            %
             dme = obj.data_model_element(dm);
             nb = obj.nk;
 

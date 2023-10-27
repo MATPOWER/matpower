@@ -1,4 +1,5 @@
 classdef (Abstract) nme_shunt < mp.nm_element
+% mp.nme_shunt - Network model element abstract base class for shunt.
 
 %   MATPOWER
 %   Copyright (c) 2019-2022, Power Systems Engineering Research Center (PSERC)
@@ -13,10 +14,12 @@ classdef (Abstract) nme_shunt < mp.nm_element
 
     methods
         function name = name(obj)
+            %
             name = 'shunt';
         end
 
         function np = np(obj)
+            %
             np = 1;     %% this is a 1 port element
         end
     end     %% methods

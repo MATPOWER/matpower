@@ -1,7 +1,8 @@
 classdef (Abstract) nme_gen < mp.nm_element
+% mp.nme_gen - Network model element abstract base class for generator.
 
 %   MATPOWER
-%   Copyright (c) 2019-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2019-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -9,18 +10,21 @@ classdef (Abstract) nme_gen < mp.nm_element
 %   See https://matpower.org for more info.
 
 %     properties
-%     end
+%     end     %% properties
 
     methods
         function name = name(obj)
+            %
             name = 'gen';
         end
 
         function np = np(obj)
+            %
             np = 1;     %% this is a 1 port element
         end
 
         function nz = nz(obj)
+            %
             nz = 1;     %% 1 (possibly complex) non-voltage state per element
         end
     end     %% methods

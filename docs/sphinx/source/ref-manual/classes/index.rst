@@ -110,6 +110,30 @@ Elements
    :name: sec_net_model_element_classes
 
    mp/nm_element
+   mp/nme_branch_ac
+   mp/nme_branch_acc
+   mp/nme_branch_acp
+   mp/nme_branch_dc
+   mp/nme_branch
+   mp/nme_bus_acc
+   mp/nme_bus_acp
+   mp/nme_bus_dc
+   mp/nme_bus
+   mp/nme_gen_ac
+   mp/nme_gen_acc
+   mp/nme_gen_acp
+   mp/nme_gen_dc
+   mp/nme_gen
+   mp/nme_load_ac
+   mp/nme_load_acc
+   mp/nme_load_acp
+   mp/nme_load_dc
+   mp/nme_load
+   mp/nme_shunt_ac
+   mp/nme_shunt_acc
+   mp/nme_shunt_acp
+   mp/nme_shunt_dc
+   mp/nme_shunt
 
 
 Mathematical Model Classes

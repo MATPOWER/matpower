@@ -1,7 +1,8 @@
 classdef nme_branch_acc < mp.nme_branch_ac & mp.form_acc
+% mp.nme_branch_acc - Network model element for branch for AC cartesian voltage formulations.
 
 %   MATPOWER
-%   Copyright (c) 2018-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2018-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Baljinnyam Sereeter, Delft University of Technology
 %
@@ -9,9 +10,12 @@ classdef nme_branch_acc < mp.nme_branch_ac & mp.form_acc
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See https://matpower.org for more info.
 
+%     properties
+%     end     %% properties
 
     methods
         function [h, dh] = ang_diff_fcn(obj, xx, Aang, lang, uang)
+            %
             if nargout > 1
                 [va, dva] = obj.va_fcn(xx, [], 0);
                 Adva = Aang * dva;
@@ -25,6 +29,8 @@ classdef nme_branch_acc < mp.nme_branch_ac & mp.form_acc
         end
 
         function d2H = ang_diff_hess(obj, xx, lambda, Aang)
+            %
+
             %% unpack data
             [vr, vi] = deal(xx{:});
             nn = length(vr);

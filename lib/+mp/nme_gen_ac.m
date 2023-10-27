@@ -1,7 +1,8 @@
 classdef (Abstract) nme_gen_ac < mp.nme_gen% & mp.form_ac
+% mp.nme_gen_ac - Network model element abstract base class for generator for AC formulations.
 
 %   MATPOWER
-%   Copyright (c) 2019-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2019-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -13,6 +14,7 @@ classdef (Abstract) nme_gen_ac < mp.nme_gen% & mp.form_ac
 
     methods
         function obj = add_zvars(obj, nm, dm, idx)
+            %
             ng = obj.nk;
             dme = obj.data_model_element(dm);
             nm.add_var('zr', 'Pg', ng, dme.pg_start, dme.pg_lb, dme.pg_ub);
@@ -20,6 +22,7 @@ classdef (Abstract) nme_gen_ac < mp.nme_gen% & mp.form_ac
         end
 
         function obj = build_params(obj, nm, dm)
+            %
             build_params@mp.nme_gen(obj, nm, dm);   %% call parent
             obj.N = -speye(obj.nk * obj.nz);
         end

@@ -1,7 +1,8 @@
 classdef nme_bus_acc < mp.nme_bus & mp.form_acc
+% mp.nme_bus_acc - Network model element for bus for AC cartesian voltage formulations.
 
 %   MATPOWER
-%   Copyright (c) 2018-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2018-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Baljinnyam Sereeter, Delft University of Technology
 %
@@ -10,11 +11,11 @@ classdef nme_bus_acc < mp.nme_bus & mp.form_acc
 %   See https://matpower.org for more info.
 
 %     properties
-%         name = 'bus';
-%     end
+%     end     %% properties
 
     methods
         function obj = add_vvars(obj, nm, dm, idx)
+            %
             dme = obj.data_model_element(dm);
             nb = obj.nk;
 

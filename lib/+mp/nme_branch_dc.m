@@ -1,7 +1,8 @@
 classdef nme_branch_dc < mp.nme_branch & mp.form_dc
+% mp.nme_branch_dc - Network model element for branch for DC formulations.
 
 %   MATPOWER
-%   Copyright (c) 2019, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2019-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -9,11 +10,11 @@ classdef nme_branch_dc < mp.nme_branch & mp.form_dc
 %   See https://matpower.org for more info.
 
 %     properties
-%         name = 'branch';
-%     end
+%     end     %% properties
 
     methods
         function obj = build_params(obj, nm, dm)
+            %
             build_params@mp.nme_branch(obj, nm, dm);    %% call parent
 
             dme = obj.data_model_element(dm);

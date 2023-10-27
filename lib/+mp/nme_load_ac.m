@@ -1,7 +1,8 @@
 classdef (Abstract) nme_load_ac < mp.nme_load% & mp.form_ac
+% mp.nme_load_ac - Network model element abstract base class for load for AC formulations.
 
 %   MATPOWER
-%   Copyright (c) 2019-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2019-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -13,6 +14,7 @@ classdef (Abstract) nme_load_ac < mp.nme_load% & mp.form_ac
 
     methods
         function obj = build_params(obj, nm, dm)
+            %
             build_params@mp.nme_load(obj, nm, dm);  %% call parent
 
             dme = obj.data_model_element(dm);
@@ -39,6 +41,7 @@ classdef (Abstract) nme_load_ac < mp.nme_load% & mp.form_ac
         end
 
         function [I, Iv1, Iv2, Izr, Izi] = port_inj_current_nln(obj, Sd, x_, sysx, idx)
+            %
             error('mp.nme_load_ac/port_inj_current_nln: not yet implemented');
 %             if nargin < 5
 %                 idx = [];
@@ -83,6 +86,7 @@ classdef (Abstract) nme_load_ac < mp.nme_load% & mp.form_ac
         end
 
         function [S, Sv1, Sv2, Szr, Szi] = port_inj_power_nln(obj, Sd, x_, sysx, idx)
+            %
             if nargin < 5
                 idx = [];
                 if nargin < 4
