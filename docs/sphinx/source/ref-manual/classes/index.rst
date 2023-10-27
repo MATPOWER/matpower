@@ -162,3 +162,15 @@ Could include description of this category of classes here.
    mp/element_container
    mp/mapped_array
    mp/NODE_TYPE
+
+
+|MATPOWER| Extension Classes
+----------------------------
+
+Base
+++++
+
+.. toctree::
+   :name: sec_xt_classes
+
+   mp/extension
