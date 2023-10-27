@@ -166,7 +166,7 @@ classdef data_model < mp.element_container
             %
             % Called by build() to perform its **count** stage. See the
             % :ref:`sec_building_data_model` section in the
-            %|MATPOWER-Dev-Manual| for more information.
+            % |MATPOWER-Dev-Manual| for more information.
 
             for k = length(obj.elements):-1:1
                 obj.elements{k}.count(obj);     %% set nr
