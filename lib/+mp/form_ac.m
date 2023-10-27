@@ -56,8 +56,6 @@ classdef (Abstract) form_ac < mp.form
 %   * snln_hess - function to compute Hessian of :math:`\Snln(\X)`
 %
 % mp.form_dc Methods:
-%   * form_name - get char array w/name of formulation (``'AC'``)
-%   * form_tag - get char array w/short label of formulation (``'ac'``)
 %   * model_params - get network model element parameters (``{'Y', 'L', 'M', 'N', 'i', 's'}``)
 %   * model_zvars - get cell array of names of non-voltage state variables (``{'zr', 'zi'}``)
 %   * port_inj_current - compute port current injections from network state
@@ -123,22 +121,6 @@ classdef (Abstract) form_ac < mp.form
     end
 
     methods
-        function name = form_name(obj)
-            % Get user-readable name of formulation, i.e. ``'AC'``.
-            %
-            % See :meth:`mp.form.form_name`.
-
-            name = 'AC';
-        end
-
-        function tag = form_tag(obj)
-            % Get short label of formulation, i.e. ``'ac'``.
-            %
-            % See :meth:`mp.form.form_tag`.
-
-            tag = 'ac';
-        end
-
         function params = model_params(obj)
             % Get cell array of names of model parameters, i.e. ``{'Y', 'L', 'M', 'N', 'i', 's'}``.
             %
