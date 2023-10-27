@@ -62,6 +62,8 @@ The task class has methods that determine the classes used to create the data mo
 :numref:`tab_task_methods` shows the methods that determine the classes for each of the 4 objects. Each method returns a handle to a class constructor. In general, the *main* methods (the first 4 in the table) are inherited from :class:`mp.task` and only the *default* methods (the last 4) would be overridden to customize a task with new model or data model converter classes.
 
 
+.. _sec_element_classes:
+
 Element Classes
 ^^^^^^^^^^^^^^^
 
@@ -92,9 +94,6 @@ This is done using **element class modifiers**, specified either by |MATPOWER| e
      - For each element :ml:`E` in the list, if :ml:`isa(E, 'old_class')` is true, element :ml:`E` is replaced with :ml:`@new_class`.
 
 Typically, multiple element class modifiers can be provided in a cell array and they are processed sequentially to modify the existing list by the :meth:`modify_element_classes` from :class:`mp.element_container`.
-
-
-.. _sec_extensions:
 
 
 Customization via |MATPOWER| Options
@@ -130,6 +129,8 @@ In addition to the |MATPOWER| options previously available that affect the formu
      - cell array of names of elements to exclude from all four container objects, i.e. char arrays that match the :attr:`name` property of the element(s) to be excluded
 
 
+.. _sec_extensions:
+
 |MATPOWER| Extensions
 ---------------------
 
@@ -153,23 +154,23 @@ The methods are summarized in :numref:`tab_ext_methods`
 
    * - Method
      - Description
-   * - :meth:`task_class`
+   * - :meth:`task_class() <mp.extension.task_class>`
      - Returns a handle to the constructor for the task object.
-   * - :meth:`dm_converter_class`
+   * - :meth:`dm_converter_class() <mp.extension.dm_converter_class>`
      - Returns a handle to the constructor for the data model converter.
-   * - :meth:`data_model_class`
+   * - :meth:`data_model_class() <mp.extension.data_model_class>`
      - Returns a handle to the constructor for the data model.
-   * - :meth:`network_model_class`
+   * - :meth:`network_model_class() <mp.extension.network_model_class>`
      - Returns a handle to the constructor for the network model.
-   * - :meth:`math_model_class`
+   * - :meth:`math_model_class() <mp.extension.math_model_class>`
      - Returns a handle to the constructor for the math model.
-   * - :meth:`dmc_element_classes`
+   * - :meth:`dmc_element_classes() <mp.extension.dmc_element_classes>`
      - Returns a cell array of element class modifiers for data model converter elements.
-   * - :meth:`dm_element_classes`
+   * - :meth:`dm_element_classes() <mp.extension.dm_element_classes>`
      - Returns a cell array of element class modifiers for data model elements.
-   * - :meth:`nm_element_classes`
+   * - :meth:`nm_element_classes() <mp.extension.nm_element_classes>`
      - Returns a cell array of element class modifiers for network model elements.
-   * - :meth:`mm_element_classes`
+   * - :meth:`mm_element_classes() <mp.extension.mm_element_classes>`
      - Returns a cell array of element class modifiers for math model elements.
 
 Even something as complex as adding three-phase unbalanced buses, lines, loads and generators for multiple formulations of PF, CPF, and OPF problems can be implemented in terms of a single |MATPOWER| extension. Please see :class:`mp.xt_3p` for an example.
