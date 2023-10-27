@@ -174,3 +174,22 @@ Base
    :name: sec_xt_classes
 
    mp/extension
+
+OPF Fixed Zonal Reserves Extension
+++++++++++++++++++++++++++++++++++
+
+.. toctree::
+   :name: sec_xt_reserves_class
+
+   mp/xt_reserves
+
+Other classes belonging to :class:`mp.xt_reserves` extension:
+   .. toctree::
+      :name: sec_xt_reserves_classes
+
+      mp/dmce_reserve_gen_mpc2
+      mp/dmce_reserve_zone_mpc2
+      mp/dme_reserve_gen
+      mp/dme_reserve_zone
+      mp/mme_reserve_gen
+      mp/mme_reserve_zone

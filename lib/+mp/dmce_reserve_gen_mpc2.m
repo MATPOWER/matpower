@@ -1,8 +1,8 @@
 classdef dmce_reserve_gen_mpc2 < mp.dmc_element
-%MP.DMCE_RESERVE_GEN_MPC2  Data model converter for reserve gen elements for MATPOWER case v2.
+% mp.dmce_reserve_gen_mpc2 - Data model converter element for reserve generator for |MATPOWER| case v2.
 
 %   MATPOWER
-%   Copyright (c) 2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2022-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -14,18 +14,22 @@ classdef dmce_reserve_gen_mpc2 < mp.dmc_element
 
     methods
         function name = name(obj)
+            %
             name = 'reserve_gen';
         end
 
         function df = data_field(obj)
+            %
             df = 'reserves';
         end
 
         function s = data_subs(obj)
+            %
             s = struct('type', {'.', '.'}, 'subs', {obj.data_field(), 'cost'});
         end
 
         function [nr, nc, r] = get_import_size(obj, mpc)
+            %
             if isfield(mpc, 'reserves')
                 tab = mpc.reserves.zones;
             else
@@ -50,11 +54,13 @@ classdef dmce_reserve_gen_mpc2 < mp.dmc_element
         end
 
         function [nr, nc, r] = get_export_size(obj, dme)
+            %
             [nr, nc] = size(dme.tab);   %% use size of default table
             r = dme.tab.gen;            %% rows in gen matrix
         end
 
         function vmap = table_var_map(obj, dme, mpc)
+            %
             vmap = table_var_map@mp.dmc_element(obj, dme, mpc);
 
             import_cost_fcn = @(a, b, c, d)import_cost(a, b, c, d);
@@ -81,6 +87,7 @@ classdef dmce_reserve_gen_mpc2 < mp.dmc_element
         end
 
         function val = import_cost(obj, mpc, spec, vn)
+            %
             val = mpc.reserves.cost;
             if length(val) > spec.nr
                 val = val(spec.r);
@@ -88,6 +95,7 @@ classdef dmce_reserve_gen_mpc2 < mp.dmc_element
         end
 
         function val = import_qty(obj, mpc, spec, vn)
+            %
             if isfield(mpc.reserves, 'qty')
                 val = mpc.reserves.qty;
                 if length(val) > spec.nr
@@ -99,6 +107,8 @@ classdef dmce_reserve_gen_mpc2 < mp.dmc_element
         end
 
         function val = import_ramp(obj, mpc, spec, vn)
+            %
+
             %% define named indices into data matrices
             [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
                 MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
@@ -109,6 +119,8 @@ classdef dmce_reserve_gen_mpc2 < mp.dmc_element
         end
 
         function dme = import(obj, dme, mpc, varargin)
+            %
+
             %% check consistency of requirements and zones
             r = mpc.reserves;
             ng0 = size(mpc.gen, 1);     %% number of original gens (+ disp loads)

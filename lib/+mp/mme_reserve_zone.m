@@ -1,7 +1,8 @@
 classdef mme_reserve_zone < mp.mm_element
+% mp.mme_reserve_zone - Mathematical model element for reserve zone.
 
 %   MATPOWER
-%   Copyright (c) 2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2022-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -13,10 +14,12 @@ classdef mme_reserve_zone < mp.mm_element
 
     methods
         function name = name(obj)
+            %
             name = 'reserve_zone';
         end
 
         function obj = add_constraints(obj, mm, nm, dm, mpopt)
+            %
             dme = obj.data_model_element(dm);
             rgen_dme = dm.elements.reserve_gen;
             igr = rgen_dme.gen; %% index of online gen for each online reserve gen
@@ -28,6 +31,7 @@ classdef mme_reserve_zone < mp.mm_element
         end
 
         function obj = data_model_update(obj, mm, nm, dm, mpopt)
+            %
             dme = obj.data_model_element(dm);
 
             %% get reserve zone prices
