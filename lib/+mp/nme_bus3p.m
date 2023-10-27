@@ -1,7 +1,8 @@
 classdef (Abstract) nme_bus3p < mp.nm_element
+% mp.nme_bus3p - Network model element abstract base class for 3-phase bus.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -9,20 +10,28 @@ classdef (Abstract) nme_bus3p < mp.nm_element
 %   See https://matpower.org for more info.
 
 %     properties
-%     end
+%     end     %% properties
 
     methods
         function name = name(obj)
+            %
             name = 'bus3p';
         end
 
         function nn = nn(obj)
+            %
             nn = 3;     %% creates 3 nodes per element
         end
 
         function [ref, pv, pq] = node_types(obj, nm, dm, idx)
-            %% ntv = obj.node_types(nm, dm, idx)
-            %% [ref, pv, pq] = obj.node_types(nm, dm, idx)
+            % ::
+            %
+            %   ntv = nme.node_types(nm, dm, idx)
+            %   [ref, pv, pq] = nme.node_types(nm, dm, idx)
+            %
+            % Called by the :meth:`node_types() <mp.net_model.node_types>`
+            % method of mp.net_model.
+
             dme = obj.data_model_element(dm);
             if nargout > 1
                 ref = find(dme.type == mp.NODE_TYPE.REF);   %% ref node indices

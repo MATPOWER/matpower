@@ -1,8 +1,8 @@
 classdef dme_xfmr3p < mp.dm_element
-%MP.DME_XFMR3P  MATPOWER data model class for 3-phase transformer data
+% mp.dme_xfmr3p - Data model element for 3-phase transformer.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -10,12 +10,12 @@ classdef dme_xfmr3p < mp.dm_element
 %   See https://matpower.org for more info.
 
     properties
-        fbus    %% bus index vector for "from" port (port 1) (all branches)
-        tbus    %% bus index vector for "to" port (port 2) (all branches)
-        r       %% series resistance (p.u.) for branches that are on
-        x       %% series reactance (p.u.) for branches that are on
-        base_kva
-        base_kv
+        fbus    % bus index vector for "from" port (port 1) (all branches)
+        tbus    % bus index vector for "to" port (port 2) (all branches)
+        r       % series resistance (p.u.) for branches that are on
+        x       % series reactance (p.u.) for branches that are on
+        base_kva%
+        base_kv %
 %         g_to    %% shunt conductance (p.u.) at "to" end for branches that are on
 %         b_fr    %% shunt susceptance (p.u.) at "from" end for branches that are on
 %         b_to    %% shunt susceptance (p.u.) at "to" end for branches that are on
@@ -26,26 +26,32 @@ classdef dme_xfmr3p < mp.dm_element
 
     methods
         function name = name(obj)
+            %
             name = 'xfmr3p';
         end
 
         function label = label(obj)
+            %
             label = '3-ph Transformer';
         end
 
         function label = labels(obj)
+            %
             label = '3-ph Transformers';
         end
 
         function name = cxn_type(obj)
+            %
             name = 'bus3p';
         end
 
         function name = cxn_idx_prop(obj)
+            %
             name = {'fbus', 'tbus'};
         end
 
         function names = main_table_var_names(obj)
+            %
             names = horzcat( main_table_var_names@mp.dm_element(obj), ...
                 {'bus_fr', 'bus_to', 'r', 'x', 'base_kva', 'base_kv', ...
                  'pl1_fr', 'ql1_fr', 'pl2_fr', 'ql2_fr', 'pl3_fr', 'ql3_fr', ...
@@ -63,6 +69,7 @@ classdef dme_xfmr3p < mp.dm_element
 %         end
 
         function obj = initialize(obj, dm)
+            %
             initialize@mp.dm_element(obj, dm);  %% call parent
 
             %% get bus mapping info
@@ -74,6 +81,8 @@ classdef dme_xfmr3p < mp.dm_element
         end
 
         function obj = update_status(obj, dm)
+            %
+
             %% get bus status info
             bs = dm.elements.bus3p.tab.status;  %% bus status
 
@@ -86,6 +95,8 @@ classdef dme_xfmr3p < mp.dm_element
         end
 
         function obj = build_params(obj, dm)
+            %
+
             obj.r = obj.tab.r(obj.on);
             obj.x = obj.tab.x(obj.on);
             obj.base_kva = obj.tab.base_kva(obj.on);
@@ -93,6 +104,7 @@ classdef dme_xfmr3p < mp.dm_element
         end
 
         function obj = pretty_print(obj, dm, section, out_e, mpopt, fd, pp_args)
+            %
             switch section
                 case 'det'
                     %% compute currents/powers for pp_args
@@ -128,10 +140,13 @@ classdef dme_xfmr3p < mp.dm_element
         end
 
         function TorF = pp_have_section_sum(obj, mpopt, pp_args)
+            %
             TorF = true;
         end
 
         function obj = pp_data_sum(obj, dm, rows, out_e, mpopt, fd, pp_args)
+            %
+
             %% call parent
             pp_data_sum@mp.dm_element(obj, dm, rows, out_e, mpopt, fd, pp_args);
 
@@ -146,10 +161,12 @@ classdef dme_xfmr3p < mp.dm_element
         end
 
         function TorF = pp_have_section_det(obj, mpopt, pp_args)
+            %
             TorF = true;
         end
 
         function h = pp_get_headers_det(obj, dm, out_e, mpopt, pp_args)
+            %
             cs = pp_args.xfmr3p{1};
             ft = pp_args.xfmr3p{2};
             if cs == 'c' && ft == 'f'
@@ -190,6 +207,7 @@ classdef dme_xfmr3p < mp.dm_element
         end
 
         function str = pp_data_row_det(obj, dm, k, out_e, mpopt, fd, pp_args)
+            %
             switch pp_args.xfmr3p{1}    %% cs
                 case 'c'
                     cm = pp_args.xfmr3p{3}(k, :);

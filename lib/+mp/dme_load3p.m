@@ -1,8 +1,8 @@
 classdef dme_load3p < mp.dm_element
-%MP.DME_LOAD3P  MATPOWER data model class for load data
+% mp.dme_load3p - Data model element for 3-phase load.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -10,37 +10,43 @@ classdef dme_load3p < mp.dm_element
 %   See https://matpower.org for more info.
 
     properties
-        bus     %% bus index vector (all loads)
-        pd1     %% phase 1 active power demand (p.u.) for loads that are on
-        pd2     %% phase 2 active power demand (p.u.) for loads that are on
-        pd3     %% phase 3 active power demand (p.u.) for loads that are on
-        pf1     %% phase 1 power factor for loads that are on
-        pf2     %% phase 2 power factor for loads that are on
-        pf3     %% phase 3 power factor for loads that are on
+        bus     % bus index vector (all loads)
+        pd1     % phase 1 active power demand (p.u.) for loads that are on
+        pd2     % phase 2 active power demand (p.u.) for loads that are on
+        pd3     % phase 3 active power demand (p.u.) for loads that are on
+        pf1     % phase 1 power factor for loads that are on
+        pf2     % phase 2 power factor for loads that are on
+        pf3     % phase 3 power factor for loads that are on
     end     %% properties
 
     methods
         function name = name(obj)
+            %
             name = 'load3p';
         end
 
         function label = label(obj)
+            %
             label = '3-ph Load';
         end
 
         function label = labels(obj)
+            %
             label = '3-ph Loads';
         end
 
         function name = cxn_type(obj)
+            %
             name = 'bus3p';
         end
 
         function name = cxn_idx_prop(obj)
+            %
             name = 'bus';
         end
 
         function names = main_table_var_names(obj)
+            %
             names = horzcat( main_table_var_names@mp.dm_element(obj), ...
                 {'bus', 'pd1', 'pd2', 'pd3', 'pf1', 'pf2', 'pf3'});
         end
@@ -50,6 +56,7 @@ classdef dme_load3p < mp.dm_element
 %         end
 
         function obj = initialize(obj, dm)
+            %
             initialize@mp.dm_element(obj, dm);  %% call parent
 
             %% get bus mapping info
@@ -60,6 +67,8 @@ classdef dme_load3p < mp.dm_element
         end
 
         function obj = update_status(obj, dm)
+            %
+
             %% get bus status info
             bs = dm.elements.bus3p.tab.status;  %% bus status
 
@@ -71,6 +80,7 @@ classdef dme_load3p < mp.dm_element
         end
 
         function obj = build_params(obj, dm)
+            %
             obj.pd1 = obj.tab.pd1(obj.on) / dm.base_kva;
             obj.pd2 = obj.tab.pd2(obj.on) / dm.base_kva;
             obj.pd3 = obj.tab.pd3(obj.on) / dm.base_kva;
@@ -80,10 +90,13 @@ classdef dme_load3p < mp.dm_element
         end
 
         function TorF = pp_have_section_sum(obj, mpopt, pp_args)
+            %
             TorF = true;
         end
 
         function obj = pp_data_sum(obj, dm, rows, out_e, mpopt, fd, pp_args)
+            %
+
             %% call parent
             pp_data_sum@mp.dm_element(obj, dm, rows, out_e, mpopt, fd, pp_args);
 
@@ -96,10 +109,12 @@ classdef dme_load3p < mp.dm_element
         end
 
         function TorF = pp_have_section_det(obj, mpopt, pp_args)
+            %
             TorF = true;
         end
 
         function h = pp_get_headers_det(obj, dm, out_e, mpopt, pp_args)
+            %
             h = [ pp_get_headers_det@mp.dm_element(obj, dm, out_e, mpopt, pp_args) ...
                 {   '  3-ph      3-ph             Phase A Power     Phase B Power     Phase C Power', ...
                     'Load ID    Bus ID   Status   (kW)     (PF)     (kW)     (PF)     (kW)     (PF)', ...
@@ -108,6 +123,7 @@ classdef dme_load3p < mp.dm_element
         end
 
         function str = pp_data_row_det(obj, dm, k, out_e, mpopt, fd, pp_args)
+            %
             str = sprintf('%7d %9d %6d %10.2f %7.4f %9.2f %7.4f %9.2f %7.4f', ...
                 obj.tab.uid(k), obj.tab.bus(k), obj.tab.status(k), ...
                 obj.tab.pd1(k), obj.tab.pf1(k), ...

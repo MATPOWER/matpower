@@ -1,8 +1,8 @@
 classdef dme_bus3p < mp.dm_element
-%MP.DME_BUS3P  MATPOWER data model class for 3-phase bus data
+% mp.dme_bus3p - Data model element for 3-phase bus.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -10,29 +10,33 @@ classdef dme_bus3p < mp.dm_element
 %   See https://matpower.org for more info.
 
     properties
-        type        %% node type vector for buses that are on
-        vm1_start   %% initial phase 1 voltage magnitudes (p.u.) for buses that are on
-        vm2_start   %% initial phase 2 voltage magnitudes (p.u.) for buses that are on
-        vm3_start   %% initial phase 3 voltage magnitudes (p.u.) for buses that are on
-        va1_start   %% initial phase 1 voltage angles (radians) for buses that are on
-        va2_start   %% initial phase 2 voltage angles (radians) for buses that are on
-        va3_start   %% initial phase 3 voltage angles (radians) for buses that are on
+        type        % node type vector for buses that are on
+        vm1_start   % initial phase 1 voltage magnitudes (p.u.) for buses that are on
+        vm2_start   % initial phase 2 voltage magnitudes (p.u.) for buses that are on
+        vm3_start   % initial phase 3 voltage magnitudes (p.u.) for buses that are on
+        va1_start   % initial phase 1 voltage angles (radians) for buses that are on
+        va2_start   % initial phase 2 voltage angles (radians) for buses that are on
+        va3_start   % initial phase 3 voltage angles (radians) for buses that are on
     end     %% properties
 
     methods
         function name = name(obj)
+            %
             name = 'bus3p';
         end
 
         function label = label(obj)
+            %
             label = '3-ph Bus';
         end
 
         function label = labels(obj)
+            %
             label = '3-ph Buses';
         end
 
         function names = main_table_var_names(obj)
+            %
             names = horzcat( main_table_var_names@mp.dm_element(obj), ...
                 {'type', 'base_kv', 'vm1', 'vm2', 'vm3', 'va1', 'va2', 'va3'});
         end
@@ -42,6 +46,8 @@ classdef dme_bus3p < mp.dm_element
 %         end
 
         function obj = init_status(obj, dm)
+            %
+
             %% overrides mp.dm_element/init_status()
 
             %% check that all buses have a valid type
@@ -59,6 +65,8 @@ classdef dme_bus3p < mp.dm_element
         end
 
         function obj = update_status(obj, dm)
+            %
+
             %% call parent to fill in on/off
             update_status@mp.dm_element(obj, dm);
 
@@ -67,12 +75,15 @@ classdef dme_bus3p < mp.dm_element
         end
 
         function [gbus, ig] = gbus_vector(obj, gen_dme)
+            %
+
             %% buses of online gens
             gbus = obj.i2on(gen_dme.bus(gen_dme.on));
             ig = [];
         end
 
         function vm_start = set_vm_start(obj, p, gen_dme, gbus, ig)
+            %
             gen = gen_dme.tab;
             vm_start = obj.tab.(sprintf('vm%d', p))(obj.on);
 
@@ -90,6 +101,8 @@ classdef dme_bus3p < mp.dm_element
         end
 
         function obj = build_params(obj, dm)
+            %
+
             %% initialize voltage from bus table
             bus = obj.tab;
             obj.va1_start = bus.va1(obj.on) * pi/180;
@@ -125,10 +138,12 @@ classdef dme_bus3p < mp.dm_element
         end
 
         function TorF = pp_have_section_det(obj, mpopt, pp_args)
+            %
             TorF = true;
         end
 
         function h = pp_get_headers_det(obj, dm, out_e, mpopt, pp_args)
+            %
             h = [ pp_get_headers_det@mp.dm_element(obj, dm, out_e, mpopt, pp_args) ...
                 {   '  3-ph            Phase A Voltage    Phase B Voltage    Phase C Voltage', ...
                     ' Bus ID   Status   (kV)     (deg)     (kV)     (deg)     (kV)     (deg)', ...
@@ -137,6 +152,7 @@ classdef dme_bus3p < mp.dm_element
         end
 
         function str = pp_data_row_det(obj, dm, k, out_e, mpopt, fd, pp_args)
+            %
             base_kv = obj.tab.base_kv(k) / sqrt(3);
             str = sprintf('%7d %6d %10.4f %8.2f %9.4f %8.2f %9.4f %8.2f', ...
                     obj.tab.uid(k), obj.tab.status(k), ...

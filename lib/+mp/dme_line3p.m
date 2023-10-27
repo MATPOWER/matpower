@@ -1,8 +1,8 @@
 classdef dme_line3p < mp.dm_element
-%MP.DME_LINE3P  MATPOWER data model class for 3-phase line data
+% mp.dme_line3p - Data model element for 3-phase line.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -10,38 +10,44 @@ classdef dme_line3p < mp.dm_element
 %   See https://matpower.org for more info.
 
     properties
-        fbus    %% bus index vector for "from" port (port 1) (all lines)
-        tbus    %% bus index vector for "to" port (port 2) (all lines)
-        freq    %% system frequency, in Hz
-        lc      %% index into lc_tab for lines that are on
-        len     %% length for lines that are on
-        lc_tab  %% line construction table
-        ys      %% cell array of 3x3 series admittance matrices for lc rows
-        yc      %% cell array of 3x3 shunt admittance matrices for lc rows
+        fbus    % bus index vector for "from" port (port 1) (all lines)
+        tbus    % bus index vector for "to" port (port 2) (all lines)
+        freq    % system frequency, in Hz
+        lc      % index into lc_tab for lines that are on
+        len     % length for lines that are on
+        lc_tab  % line construction table
+        ys      % cell array of 3x3 series admittance matrices for lc rows
+        yc      % cell array of 3x3 shunt admittance matrices for lc rows
     end     %% properties
 
     methods
         function name = name(obj)
+            %
             name = 'line3p';
         end
 
         function label = label(obj)
+            %
             label = '3-ph Line';
         end
 
         function label = labels(obj)
+            %
             label = '3-ph Lines';
         end
 
         function name = cxn_type(obj)
+            %
             name = 'bus3p';
         end
 
         function name = cxn_idx_prop(obj)
+            %
             name = {'fbus', 'tbus'};
         end
 
         function names = main_table_var_names(obj)
+            %
             names = horzcat( main_table_var_names@mp.dm_element(obj), ...
                 {'bus_fr', 'bus_to', 'lc', 'len', ...
                  'pl1_fr', 'ql1_fr', 'pl2_fr', 'ql2_fr', 'pl3_fr', 'ql3_fr', ...
@@ -59,6 +65,7 @@ classdef dme_line3p < mp.dm_element
 %         end
 
         function obj = initialize(obj, dm)
+            %
             initialize@mp.dm_element(obj, dm); %% call parent
 
             %% get bus mapping info
@@ -70,6 +77,8 @@ classdef dme_line3p < mp.dm_element
         end
 
         function obj = update_status(obj, dm)
+            %
+
             %% get bus status info
             bs = dm.elements.bus3p.tab.status;  %% bus status
 
@@ -82,6 +91,7 @@ classdef dme_line3p < mp.dm_element
         end
 
         function obj = build_params(obj, dm)
+            %
             nlc = size(obj.lc, 1);
             obj.ys = zeros(nlc, 6);
             obj.yc = zeros(nlc, 6);
@@ -108,18 +118,19 @@ classdef dme_line3p < mp.dm_element
         end
 
         function M = vec2symmat(obj, v)
-            % makes a symmetric matrix from a vector of 6 values
+            % Make a symmetric matrix from a vector of 6 values.
             M = [v(1) v(2) v(3);
                  v(2) v(4) v(5);
                  v(3) v(5) v(6) ];
         end
 
         function v = symmat2vec(obj, M)
-            % extracts a vector of 6 values from a matrix assumed to be symmetric
+            % Extract a vector of 6 values from a matrix assumed to be symmetric.
             v = [M(1, :) M(2,2:3) M(3,3)];
         end
 
         function obj = pretty_print(obj, dm, section, out_e, mpopt, fd, pp_args)
+            %
             switch section
                 case 'det'
                     %% compute currents/powers for pp_args
@@ -155,10 +166,13 @@ classdef dme_line3p < mp.dm_element
         end
 
         function TorF = pp_have_section_sum(obj, mpopt, pp_args)
+            %
             TorF = true;
         end
 
         function obj = pp_data_sum(obj, dm, rows, out_e, mpopt, fd, pp_args)
+            %
+
             %% call parent
             pp_data_sum@mp.dm_element(obj, dm, rows, out_e, mpopt, fd, pp_args);
 
@@ -173,10 +187,12 @@ classdef dme_line3p < mp.dm_element
         end
 
         function TorF = pp_have_section_det(obj, mpopt, pp_args)
+            %
             TorF = true;
         end
 
         function h = pp_get_headers_det(obj, dm, out_e, mpopt, pp_args)
+            %
             cs = pp_args.line3p{1};
             ft = pp_args.line3p{2};
             if cs == 'c' && ft == 'f'
@@ -217,6 +233,7 @@ classdef dme_line3p < mp.dm_element
         end
 
         function str = pp_data_row_det(obj, dm, k, out_e, mpopt, fd, pp_args)
+            %
             switch pp_args.line3p{1}    %% cs
                 case 'c'
                     cm = pp_args.line3p{3}(k, :);

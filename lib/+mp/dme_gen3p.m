@@ -1,8 +1,8 @@
 classdef dme_gen3p < mp.dm_element
-%MP.DME_GEN3P  MATPOWER data model class for 3-phase gen data
+% mp.dme_gen3p - Data model element for 3-phase generator.
 
 %   MATPOWER
-%   Copyright (c) 1996-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %
@@ -11,40 +11,46 @@ classdef dme_gen3p < mp.dm_element
 %   See https://matpower.org for more info.
 
     properties
-        bus         %% bus index vector (all gens)
-        pg1_start   %% initial phase 1 active power (p.u.) for gens that are on
-        pg2_start   %% initial phase 2 active power (p.u.) for gens that are on
-        pg3_start   %% initial phase 3 active power (p.u.) for gens that are on
-        qg1_start   %% initial phase 1 reactive power (p.u.) for gens that are on
-        qg2_start   %% initial phase 2 reactive power (p.u.) for gens that are on
-        qg3_start   %% initial phase 3 reactive power (p.u.) for gens that are on
-        vm1_setpoint%% phase 1 generator voltage setpoint for gens that are on
-        vm2_setpoint%% phase 2 generator voltage setpoint for gens that are on
-        vm3_setpoint%% phase 3 generator voltage setpoint for gens that are on
+        bus         % bus index vector (all gens)
+        pg1_start   % initial phase 1 active power (p.u.) for gens that are on
+        pg2_start   % initial phase 2 active power (p.u.) for gens that are on
+        pg3_start   % initial phase 3 active power (p.u.) for gens that are on
+        qg1_start   % initial phase 1 reactive power (p.u.) for gens that are on
+        qg2_start   % initial phase 2 reactive power (p.u.) for gens that are on
+        qg3_start   % initial phase 3 reactive power (p.u.) for gens that are on
+        vm1_setpoint% phase 1 generator voltage setpoint for gens that are on
+        vm2_setpoint% phase 2 generator voltage setpoint for gens that are on
+        vm3_setpoint% phase 3 generator voltage setpoint for gens that are on
     end     %% properties
 
     methods
         function name = name(obj)
+            %
             name = 'gen3p';
         end
 
         function label = label(obj)
+            %
             label = '3-ph Generator';
         end
 
         function label = labels(obj)
+            %
             label = '3-ph Generators';
         end
 
         function name = cxn_type(obj)
+            %
             name = 'bus3p';
         end
 
         function name = cxn_idx_prop(obj)
+            %
             name = 'bus';
         end
 
         function names = main_table_var_names(obj)
+            %
             names = horzcat( main_table_var_names@mp.dm_element(obj), ...
                 {'bus', 'vm1_setpoint', 'vm2_setpoint', 'vm3_setpoint', ...
                 'pg1', 'pg2', 'pg3', 'qg1', 'qg2', 'qg3'});
@@ -55,6 +61,7 @@ classdef dme_gen3p < mp.dm_element
 %         end
 
         function obj = initialize(obj, dm)
+            %
             initialize@mp.dm_element(obj, dm); %% call parent
 
             %% get bus mapping info
@@ -65,6 +72,8 @@ classdef dme_gen3p < mp.dm_element
         end
 
         function obj = update_status(obj, dm)
+            %
+
             %% get bus status info
             bs = dm.elements.bus3p.tab.status;  %% bus status
 
@@ -76,6 +85,7 @@ classdef dme_gen3p < mp.dm_element
         end
 
         function obj = build_params(obj, dm)
+            %
             base_kva = dm.base_kva;
 
             gen = obj.tab;
@@ -93,10 +103,13 @@ classdef dme_gen3p < mp.dm_element
         end
 
         function TorF = pp_have_section_sum(obj, mpopt, pp_args)
+            %
             TorF = true;
         end
 
         function obj = pp_data_sum(obj, dm, rows, out_e, mpopt, fd, pp_args)
+            %
+
             %% call parent
             pp_data_sum@mp.dm_element(obj, dm, rows, out_e, mpopt, fd, pp_args);
 
@@ -111,10 +124,12 @@ classdef dme_gen3p < mp.dm_element
         end
 
         function TorF = pp_have_section_det(obj, mpopt, pp_args)
+            %
             TorF = true;
         end
 
         function h = pp_get_headers_det(obj, dm, out_e, mpopt, pp_args)
+            %
             h = [ pp_get_headers_det@mp.dm_element(obj, dm, out_e, mpopt, pp_args) ...
                 {   '  3-ph      3-ph             Phase A Power     Phase B Power     Phase C Power', ...
                     ' Gen ID    Bus ID   Status   (kW)    (KVAr)    (kW)    (kVAr)    (kW)    (kVAr)', ...
@@ -123,6 +138,7 @@ classdef dme_gen3p < mp.dm_element
         end
 
         function str = pp_data_row_det(obj, dm, k, out_e, mpopt, fd, pp_args)
+            %
             str = sprintf('%7d %9d %6d %10.2f %7.2f %9.2f %7.2f %9.2f %7.2f', ...
                 obj.tab.uid(k), obj.tab.bus(k), obj.tab.status(k), ...
                 obj.tab.pg1(k), obj.tab.qg1(k), ...

@@ -1,7 +1,8 @@
 classdef (Abstract) nme_buslink < mp.nm_element %& mp.form_ac
+% mp.nme_buslink - Network model element abstract base class for 1-to-3-phase buslink.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -9,22 +10,26 @@ classdef (Abstract) nme_buslink < mp.nm_element %& mp.form_ac
 %   See https://matpower.org for more info.
 
 %     properties
-%     end
+%     end     %% properties
 
     methods
         function name = name(obj)
+            %
             name = 'buslink';
         end
 
         function np = np(obj)
+            %
             np = 4;     %% this is a 4 port element
         end
 
         function nz = nz(obj)
+            %
             nz = 3;     %% 3 complex non-voltage states per element
         end
 
         function obj = add_zvars(obj, nm, dm, idx)
+            %
             p = idx{1};
             ng = obj.nk;
 
@@ -37,6 +42,7 @@ classdef (Abstract) nme_buslink < mp.nm_element %& mp.form_ac
         end
 
         function obj = build_params(obj, nm, dm)
+            %
             build_params@mp.nm_element(obj, nm, dm);    %% call parent
             I = (dm.base_kva / dm.base_mva / 1000) * speye(obj.nk);
             obj.N = [ repmat(I, 1, obj.nz);
@@ -44,6 +50,8 @@ classdef (Abstract) nme_buslink < mp.nm_element %& mp.form_ac
         end
 
         function [A, b_va, b_vm, Istack_] = voltage_constraints(obj)
+            %
+
             %% form constraint matrices for matching voltages
             nk = obj.nk;
 

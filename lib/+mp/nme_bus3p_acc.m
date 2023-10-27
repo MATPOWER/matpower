@@ -1,7 +1,8 @@
 classdef nme_bus3p_acc < mp.nme_bus3p & mp.form_acc
+% mp.nme_bus3p_acc - Network model element for 3-phase bus, AC cartesian voltage formulation.
 
 %   MATPOWER
-%   Copyright (c) 2021, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -9,11 +10,11 @@ classdef nme_bus3p_acc < mp.nme_bus3p & mp.form_acc
 %   See https://matpower.org for more info.
 
 %     properties
-%         name = 'bus3p';
-%     end
+%     end     %% properties
 
     methods
         function obj = add_vvars(obj, nm, dm, idx)
+            %
             dme = obj.data_model_element(dm);
             nb = obj.nk;
             p = idx{1};

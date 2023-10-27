@@ -1,7 +1,8 @@
 classdef mme_buslink_pf_acc < mp.mme_buslink_pf_ac
+% mp.mme_buslink_pf_acc - Math model element for 1-to-3-phase buslink for AC cartesian voltage PF/CPF.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -9,11 +10,11 @@ classdef mme_buslink_pf_acc < mp.mme_buslink_pf_ac
 %   See https://matpower.org for more info.
 
 %     properties
-%         name = 'buslink';
-%     end
+%     end     %% properties
 
     methods
         function obj = add_constraints(obj, mm, nm, dm, mpopt)
+            %
             nme = obj.network_model_element(nm);
 
             %% add constraints for matching
@@ -43,6 +44,8 @@ classdef mme_buslink_pf_acc < mp.mme_buslink_pf_ac
         end
 
         function [g, dg] = pf_va_fcn(obj, nme, xx, A, b)
+            %
+
             %% unpack data
             vr = vertcat(xx{1:8});
             vi = vertcat(xx{9:16});
@@ -57,6 +60,8 @@ classdef mme_buslink_pf_acc < mp.mme_buslink_pf_ac
         end
 
         function [g, dg] = pf_vm_fcn(obj, nme, xx, A, b)
+            %
+
             %% unpack data
             vr = vertcat(xx{1:4});
             vi = vertcat(xx{5:8});

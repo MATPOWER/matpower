@@ -1,7 +1,8 @@
 classdef mme_bus3p_opf_acp < mp.mme_bus3p
+% mp.mme_bus3p_opf_acp - Math model element for 3-phase bus for AC polar voltage OPF.
 
 %   MATPOWER
-%   Copyright (c) 2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2022-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -9,11 +10,11 @@ classdef mme_bus3p_opf_acp < mp.mme_bus3p
 %   See https://matpower.org for more info.
 
 %     properties
-%         name = 'bus';
-%     end
+%     end     %% properties
 
     methods
         function x0 = interior_x0(obj, mm, nm, dm, x0)
+            %
             vv = mm.get_idx();
             vm = 1;     %% voltage magnitude set to 1 p.u.
             %% voltage angles set to angle of 1st ref node

@@ -193,3 +193,77 @@ Other classes belonging to :class:`mp.xt_reserves` extension:
       mp/dme_reserve_zone
       mp/mme_reserve_gen
       mp/mme_reserve_zone
+
+Three-Phase Prototype Extension
++++++++++++++++++++++++++++++++
+
+.. toctree::
+   :name: sec_xt_3p_class
+
+   mp/xt_3p
+
+Data model converter element classes belonging to :class:`mp.xt_3p` extension:
+   .. toctree::
+      :name: sec_xt_3p_dmce_classes
+
+      mp/dmce_bus3p_mpc2
+      mp/dmce_gen3p_mpc2
+      mp/dmce_load3p_mpc2
+      mp/dmce_line3p_mpc2
+      mp/dmce_xfmr3p_mpc2
+      mp/dmce_buslink_mpc2
+
+Data model element classes belonging to :class:`mp.xt_3p` extension:
+   .. toctree::
+      :name: sec_xt_3p_dme_classes
+
+      mp/dme_bus3p
+      mp/dme_gen3p
+      mp/dme_load3p
+      mp/dme_line3p
+      mp/dme_xfmr3p
+      mp/dme_buslink
+      mp/dme_bus3p_opf
+      mp/dme_gen3p_opf
+      mp/dme_load3p_opf
+      mp/dme_line3p_opf
+      mp/dme_xfmr3p_opf
+      mp/dme_buslink_opf
+
+Network model element classes belonging to :class:`mp.xt_3p` extension:
+   .. toctree::
+      :name: sec_xt_3p_nme_classes
+
+      mp/nme_bus3p
+      mp/nme_bus3p_acc
+      mp/nme_bus3p_acp
+      mp/nme_gen3p
+      mp/nme_gen3p_acc
+      mp/nme_gen3p_acp
+      mp/nme_load3p
+      mp/nme_line3p
+      mp/nme_xfmr3p
+      mp/nme_buslink
+      mp/nme_buslink_acc
+      mp/nme_buslink_acp
+
+Mathematical model element classes belonging to :class:`mp.xt_3p` extension:
+   .. toctree::
+      :name: sec_xt_3p_mme_classes
+
+      mp/mme_bus3p
+      mp/mme_gen3p
+      mp/mme_line3p
+      mp/mme_xfmr3p
+      mp/mme_buslink
+      mp/mme_buslink_pf_ac
+      mp/mme_buslink_pf_acc
+      mp/mme_buslink_pf_acp
+      mp/mme_bus3p_opf_acc
+      mp/mme_bus3p_opf_acp
+      mp/mme_gen3p_opf
+      mp/mme_line3p_opf
+      mp/mme_xfmr3p_opf
+      mp/mme_buslink_opf
+      mp/mme_buslink_opf_acc
+      mp/mme_buslink_opf_acp

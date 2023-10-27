@@ -1,7 +1,8 @@
 classdef (Abstract) nme_gen3p < mp.nm_element % & mp.form_ac
+% mp.nme_gen3p - Network model element abstract base class for 3-phase generator.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -9,22 +10,26 @@ classdef (Abstract) nme_gen3p < mp.nm_element % & mp.form_ac
 %   See https://matpower.org for more info.
 
 %     properties
-%     end
+%     end     %% properties
 
     methods
         function name = name(obj)
+            %
             name = 'gen3p';
         end
 
         function np = np(obj)
+            %
             np = 3;     %% this is a 3 port element
         end
 
         function nz = nz(obj)
+            %
             nz = 3;     %% 3 (possibly complex) non-voltage states per element
         end
 
         function obj = add_zvars(obj, nm, dm, idx)
+            %
             p = idx{1};
             ng = obj.nk;
             dme = obj.data_model_element(dm);
@@ -40,6 +45,7 @@ classdef (Abstract) nme_gen3p < mp.nm_element % & mp.form_ac
         end
 
         function obj = build_params(obj, nm, dm)
+            %
             build_params@mp.nm_element(obj, nm, dm);    %% call parent
             obj.N = -speye(obj.nk * obj.nz);
         end

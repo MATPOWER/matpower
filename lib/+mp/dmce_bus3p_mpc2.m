@@ -1,8 +1,8 @@
 classdef dmce_bus3p_mpc2 < mp.dmc_element % & mp.dmce_bus3p
-%MP.DMCE_BUS3P_MPC2  Data model converter for 3-phase bus elements for MATPOWER case v2.
+% mp.dmce_bus3p_mpc2 - Data model converter element for 3-phase bus for |MATPOWER| case v2.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -14,14 +14,17 @@ classdef dmce_bus3p_mpc2 < mp.dmc_element % & mp.dmce_bus3p
 
     methods
         function name = name(obj)
+            %
             name = 'bus3p';
         end
 
         function df = data_field(obj)
+            %
             df = 'bus3p';
         end
 
         function vmap = table_var_map(obj, dme, mpc)
+            %
             vmap = table_var_map@mp.dmc_element(obj, dme, mpc);
 
             bsi_fcn = @(ob, mpc, spec, vn)bus_status_import(ob, mpc, spec, vn, 2);
@@ -42,6 +45,7 @@ classdef dmce_bus3p_mpc2 < mp.dmc_element % & mp.dmce_bus3p
         end
 
         function vals = bus_status_import(obj, mpc, spec, vn, c)
+            %
             if spec.nr
                 if isempty(spec.r)
                     vals = mpc.bus3p(:, 2) ~= 4;

@@ -1,7 +1,8 @@
 classdef nme_xfmr3p < mp.nm_element & mp.form_acp
+% mp.nme_xfmr3p - Network model element for 3-phase transformer.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -9,18 +10,21 @@ classdef nme_xfmr3p < mp.nm_element & mp.form_acp
 %   See https://matpower.org for more info.
 
 %     properties
-%     end
+%     end     %% properties
 
     methods
         function name = name(obj)
+            %
             name = 'xfmr3p';
         end
 
         function np = np(obj)
+            %
             np = 6;     %% this is a 6 port element
         end
 
         function obj = build_params(obj, nm, dm)
+            %
             build_params@mp.nm_element(obj, nm, dm);    %% call parent
 
             dme = obj.data_model_element(dm);

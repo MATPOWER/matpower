@@ -1,7 +1,8 @@
 classdef nme_line3p < mp.nm_element & mp.form_acp
+% mp.nme_line3p - Network model element for 3-phase line.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -9,18 +10,21 @@ classdef nme_line3p < mp.nm_element & mp.form_acp
 %   See https://matpower.org for more info.
 
 %     properties
-%     end
+%     end     %% properties
 
     methods
         function name = name(obj)
+            %
             name = 'line3p';
         end
 
         function np = np(obj)
+            %
             np = 6;     %% this is a 6 port element
         end
 
         function obj = build_params(obj, nm, dm)
+            %
             build_params@mp.nm_element(obj, nm, dm);    %% call parent
 
             dme = obj.data_model_element(dm);
@@ -42,6 +46,8 @@ classdef nme_line3p < mp.nm_element & mp.form_acp
         end
 
         function M = vec2symmat_stacked(obj, vv)
+            %
+
             %% analogous to making a symmetric matrix from a vector of 6 values
             %% M = [v(1) v(2) v(3);
             %%      v(2) v(4) v(5);

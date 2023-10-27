@@ -1,7 +1,8 @@
 classdef (Abstract) mme_buslink_pf_ac < mp.mme_buslink
+% mp.mme_buslink_pf_ac - Math model element abstract base class for 1-to-3-phase buslink for AC PF/CPF.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -9,11 +10,11 @@ classdef (Abstract) mme_buslink_pf_ac < mp.mme_buslink
 %   See https://matpower.org for more info.
 
 %     properties
-%         name = 'buslink';
-%     end
+%     end     %% properties
 
     methods
         function obj = add_vars(obj, mm, nm, dm, mpopt)
+            %
             nme = obj.network_model_element(nm);
 
             mm.init_indexed_name('var', 'Plink', {3});
@@ -36,6 +37,7 @@ classdef (Abstract) mme_buslink_pf_ac < mp.mme_buslink
         end
 
         function obj = add_constraints(obj, mm, nm, dm, mpopt)
+            %
             nme = obj.network_model_element(nm);
 
             %% add Qlink constraints for PV node on 3-phase side
@@ -56,6 +58,8 @@ classdef (Abstract) mme_buslink_pf_ac < mp.mme_buslink
         end
 
         function [A_va_pq, A_va_pv, b_va, A_vm, b_vm] = voltage_constraints(obj, nme, ad)
+            %
+
             %% form constraint matrices for matching
             %%  voltage angles for pv and pq nodes
             %%  voltage magnitudes for pq nodes
@@ -132,6 +136,7 @@ classdef (Abstract) mme_buslink_pf_ac < mp.mme_buslink
         end
 
         function obj = data_model_update(obj, mm, nm, dm, mpopt)
+            %
         end
     end     %% methods
 end         %% classdef

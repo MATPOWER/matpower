@@ -1,7 +1,8 @@
 classdef mme_buslink_opf_acc < mp.mme_buslink_opf
+% mp.mme_buslink_opf_acc - Math model element for 1-to-3-phase buslink for AC cartesian voltage OPF.
 
 %   MATPOWER
-%   Copyright (c) 2021, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -9,11 +10,11 @@ classdef mme_buslink_opf_acc < mp.mme_buslink_opf
 %   See https://matpower.org for more info.
 
 %     properties
-%         name = 'buslink';
-%     end
+%     end     %% properties
 
     methods
         function obj = add_constraints(obj, mm, nm, dm, mpopt)
+            %
             nme = obj.network_model_element(nm);
 
             %% voltage equality constraints
@@ -32,6 +33,8 @@ classdef mme_buslink_opf_acc < mp.mme_buslink_opf
         end
 
         function [g, dg] = va_fcn(obj, nme, xx, A, b)
+            %
+
             %% unpack data
             vr = vertcat(xx{1:4});
             vi = vertcat(xx{5:8});
@@ -46,6 +49,8 @@ classdef mme_buslink_opf_acc < mp.mme_buslink_opf
         end
 
         function d2G = va_hess(obj, nme, xx, lam, A)
+            %
+
             %% unpack data
             vr = vertcat(xx{1:4});
             vi = vertcat(xx{5:8});
@@ -54,6 +59,8 @@ classdef mme_buslink_opf_acc < mp.mme_buslink_opf
         end
 
         function [g, dg] = vm2_fcn(obj, nme, xx, A, b)
+            %
+
             %% unpack data
             vr = vertcat(xx{1:4});
             vi = vertcat(xx{5:8});
@@ -68,6 +75,8 @@ classdef mme_buslink_opf_acc < mp.mme_buslink_opf
         end
 
         function d2G = vm2_hess(obj, nme, xx, lam, A)
+            %
+
             %% unpack data
             vr = vertcat(xx{1:4});
             vi = vertcat(xx{5:8});

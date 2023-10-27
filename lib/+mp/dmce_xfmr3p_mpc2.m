@@ -1,8 +1,8 @@
 classdef dmce_xfmr3p_mpc2 < mp.dmc_element % & mp.dmce_xfmr3p
-%MP.DMCE_XFMR3P_MPC2  Data model converter for 3-phase transformer elements for MATPOWER case v2.
+% mp.dmce_xfmr3p_mpc2 - Data model converter element for 3-phase transformer for |MATPOWER| case v2.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023s, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -14,14 +14,17 @@ classdef dmce_xfmr3p_mpc2 < mp.dmc_element % & mp.dmce_xfmr3p
 
     methods
         function name = name(obj)
+            %
             name = 'xfmr3p';
         end
 
         function df = data_field(obj)
+            %
             df = 'xfmr3p';
         end
 
         function vmap = table_var_map(obj, dme, mpc)
+            %
             vmap = table_var_map@mp.dmc_element(obj, dme, mpc);
 
             %% mapping for each name, default is {'col', []}

@@ -1,7 +1,8 @@
 classdef mme_line3p < mp.mm_element
+% mp.mme_line3p - Math model element for 3-phase line.
 
 %   MATPOWER
-%   Copyright (c) 2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2022-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -9,14 +10,16 @@ classdef mme_line3p < mp.mm_element
 %   See https://matpower.org for more info.
 
 %     properties
-%     end
+%     end     %% properties
 
     methods
         function name = name(obj)
+            %
             name = 'line3p';
         end
 
         function obj = data_model_update(obj, mm, nm, dm, mpopt)
+            %
             dme = obj.data_model_element(dm);
             nme = obj.network_model_element(nm);
 
