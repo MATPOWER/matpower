@@ -1,8 +1,8 @@
 classdef dmce_branch_mpc2 < mp.dmc_element % & mp.dmce_branch
-%MP.DMCE_BRANCH_MPC2  Data model converter for branch elements for MATPOWER case v2.
+% mp.dmce_branch_mpc2 - Data model converter element for branch for |MATPOWER| case v2.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -14,14 +14,17 @@ classdef dmce_branch_mpc2 < mp.dmc_element % & mp.dmce_branch
 
     methods
         function name = name(obj)
+            %
             name = 'branch';
         end
 
         function df = data_field(obj)
+            %
             df = 'branch';
         end
 
         function vmap = table_var_map(obj, dme, mpc)
+            %
             vmap = table_var_map@mp.dmc_element(obj, dme, mpc);
 
             %% define named indices into data matrices
@@ -63,6 +66,8 @@ classdef dmce_branch_mpc2 < mp.dmc_element % & mp.dmce_branch
         end
 
         function dt = default_export_data_table(obj, spec)
+            %
+
             %% define named indices into data matrices
             [F_BUS, T_BUS, BR_R, BR_X, BR_B, RATE_A, RATE_B, RATE_C, ...
                 TAP, SHIFT, BR_STATUS, PF, QF, PT, QT, MU_SF, MU_ST, ...

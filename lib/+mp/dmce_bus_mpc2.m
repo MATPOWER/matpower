@@ -1,8 +1,8 @@
 classdef dmce_bus_mpc2 < mp.dmc_element % & mp.dmce_bus
-%MP.DMCE_BUS_MPC2  Data model converter for bus elements for MATPOWER case v2.
+% mp.dmce_bus_mpc2 - Data model converter element for bus for |MATPOWER| case v2.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -14,14 +14,17 @@ classdef dmce_bus_mpc2 < mp.dmc_element % & mp.dmce_bus
 
     methods
         function name = name(obj)
+            %
             name = 'bus';
         end
 
         function df = data_field(obj)
+            %
             df = 'bus';
         end
 
         function vmap = table_var_map(obj, dme, mpc)
+            %
             vmap = table_var_map@mp.dmc_element(obj, dme, mpc);
 
             %% define named indices into data matrices
@@ -54,6 +57,7 @@ classdef dmce_bus_mpc2 < mp.dmc_element % & mp.dmce_bus
         end
 
         function d = init_export_data(obj, dme, d, spec)
+            %
             d = init_export_data@mp.dmc_element(obj, dme, d, spec); %% call parent
             if ~all(cellfun(@isempty, dme.tab.name))
                 d.bus_name = cell(spec.nr, 1);
@@ -62,6 +66,8 @@ classdef dmce_bus_mpc2 < mp.dmc_element % & mp.dmce_bus
         end
 
         function dt = default_export_data_table(obj, spec)
+            %
+
             %% define named indices into data matrices
             [PQ, PV, REF, NONE, BUS_I, BUS_TYPE, PD, QD, GS, BS, BUS_AREA, VM, ...
                VA, BASE_KV, ZONE, VMAX, VMIN, LAM_P, LAM_Q, MU_VMAX, MU_VMIN] = idx_bus;
@@ -71,6 +77,7 @@ classdef dmce_bus_mpc2 < mp.dmc_element % & mp.dmce_bus
         end
 
         function vals = bus_name_import(obj, mpc, spec, vn, c)
+            %
             if isfield(mpc, 'bus_name')
                 if spec.nr && isempty(spec.r)
                     vals = mpc.bus_name(:, c);
@@ -84,6 +91,7 @@ classdef dmce_bus_mpc2 < mp.dmc_element % & mp.dmce_bus
         end
 
         function mpc = bus_name_export(obj, dme, mpc, spec, vn, ridx, c)
+            %
             if isempty(ridx)
                 bus_names = dme.tab.name;
             else
@@ -107,6 +115,8 @@ classdef dmce_bus_mpc2 < mp.dmc_element % & mp.dmce_bus
         end
 
         function vals = bus_status_import(obj, mpc, spec, vn, c)
+            %
+
             %% define named indices into data matrices
             [PQ, PV, REF, NONE, BUS_I, BUS_TYPE] = idx_bus;
 

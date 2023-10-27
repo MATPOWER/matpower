@@ -1,8 +1,8 @@
 classdef dmce_gen_mpc2 < mp.dmc_element % & mp.dmce_gen
-%MP.DMCE_GEN_MPC2  Data model converter for gen elements for MATPOWER case v2.
+% mp.dmce_gen_mpc2 - Data model converter element for generator for |MATPOWER| case v2.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -10,20 +10,24 @@ classdef dmce_gen_mpc2 < mp.dmc_element % & mp.dmce_gen
 %   See https://matpower.org for more info.
 
     properties
-        pwl1        %% indices of single-block piecewise linear costs, all gens
-                    %% (automatically converted to linear cost)
+        % indices of single-block piecewise linear costs, all gens
+        % *(automatically converted to linear cost)*
+        pwl1
     end     %% properties
 
     methods
         function name = name(obj)
+            %
             name = 'gen';
         end
 
         function df = data_field(obj)
+            %
             df = 'gen';
         end
 
         function vmap = table_var_map(obj, dme, mpc)
+            %
             vmap = table_var_map@mp.dmc_element(obj, dme, mpc);
 
             %% define named indices into data matrices
@@ -70,6 +74,8 @@ classdef dmce_gen_mpc2 < mp.dmc_element % & mp.dmce_gen
         end
 
         function dt = default_export_data_table(obj, spec)
+            %
+
             %% define named indices into data matrices
             [GEN_BUS, PG, QG, QMAX, QMIN, VG, MBASE, GEN_STATUS, PMAX, PMIN, ...
                 MU_PMAX, MU_PMIN, MU_QMAX, MU_QMIN, PC1, PC2, QC1MIN, QC1MAX, ...
@@ -80,6 +86,8 @@ classdef dmce_gen_mpc2 < mp.dmc_element % & mp.dmce_gen
         end
 
         function vals = start_cost_import(obj, mpc, spec, vn)
+            %
+
             %% define named indices into data matrices
             [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
             if isfield(mpc, 'gencost') && spec.nr
@@ -90,6 +98,8 @@ classdef dmce_gen_mpc2 < mp.dmc_element % & mp.dmce_gen
         end
 
         function mpc = start_cost_export(obj, dme, mpc, spec, vn, ridx)
+            %
+
             %% define named indices into data matrices
             [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 
@@ -103,6 +113,7 @@ classdef dmce_gen_mpc2 < mp.dmc_element % & mp.dmce_gen
         end
 
         function val = gen_cost_import(obj, mpc, spec, vn, p_or_q)
+            %
             if isfield(mpc, 'gencost') && spec.nr
                 %% define named indices into data matrices
                 [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
@@ -157,6 +168,8 @@ classdef dmce_gen_mpc2 < mp.dmc_element % & mp.dmce_gen
         end
 
         function mpc = gen_cost_export(obj, dme, mpc, spec, vn, p_or_q, ridx)
+            %
+
             %% define named indices into data matrices
             [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 
@@ -173,6 +186,8 @@ classdef dmce_gen_mpc2 < mp.dmc_element % & mp.dmce_gen
         end
 
         function tab = gencost2cost_table(obj, gencost);
+            %
+
             %% define named indices into data matrices
             [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 
@@ -228,6 +243,8 @@ classdef dmce_gen_mpc2 < mp.dmc_element % & mp.dmce_gen
         end
 
         function gencost = cost_table2gencost(obj, dme, gencost0, cost, ridx)
+            %
+
             %% define named indices into data matrices
             [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 

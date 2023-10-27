@@ -55,6 +55,11 @@ Elements
    :name: sec_data_model_converter_element_classes
 
    mp/dmc_element
+   mp/dmce_branch_mpc2
+   mp/dmce_bus_mpc2
+   mp/dmce_gen_mpc2
+   mp/dmce_load_mpc2
+   mp/dmce_shunt_mpc2
 
 
 Network Model Classes
