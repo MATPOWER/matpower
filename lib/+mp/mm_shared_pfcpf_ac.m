@@ -1,7 +1,11 @@
 classdef (Abstract) mm_shared_pfcpf_ac < mp.mm_shared_pfcpf
+% mp.mm_shared_pfcpf_ac - Mixin class for AC PF/CPF **math model** objects.
+%
+% An abstract mixin class inherited by all AC power flow (PF) and continuation
+% power flow (CPF) **math model** objects.
 
 %   MATPOWER
-%   Copyright (c) 2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2022-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -13,6 +17,8 @@ classdef (Abstract) mm_shared_pfcpf_ac < mp.mm_shared_pfcpf
 
     methods
         function obj = add_system_varset_pf(obj, nm, vvar, typ)
+            %
+
             ad = obj.aux_data;
             st = nm.(vvar);
             d = st.data;
@@ -45,8 +51,10 @@ classdef (Abstract) mm_shared_pfcpf_ac < mp.mm_shared_pfcpf
         end
 
         function z_ = update_z(obj, nm, v_, z_, ad, Sinj, idx)
-            %% update/allocate slack node active power injections
-            %% and slack/PV node reactive power injections
+            % update_z - Update/allocate active/reactive injections at slack/PV nodes.
+            %
+            % Update/allocate slack know active power injections and slack/PV
+            % node reactive power injections.
 
             rpv = [ad.ref; ad.pv];      %% slack and PV nodes
             if nargin < 6 || isempty(Sinj)

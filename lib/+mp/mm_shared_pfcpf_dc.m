@@ -1,7 +1,11 @@
 classdef (Abstract) mm_shared_pfcpf_dc < mp.mm_shared_pfcpf
+% mp.mm_shared_pfcpf_dc - Mixin class for DC power flow (PF) **math model** objects.
+%
+% An abstract mixin class inherited by DC power flow (PF) **math model**
+% objects.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -13,6 +17,8 @@ classdef (Abstract) mm_shared_pfcpf_dc < mp.mm_shared_pfcpf
 
     methods
         function ad = build_aux_data(obj, nm, dm, mpopt)
+            %
+
             %% call parent
             ad = build_aux_data@mp.mm_shared_pfcpf(obj, nm, dm, mpopt);
 
@@ -25,6 +31,8 @@ classdef (Abstract) mm_shared_pfcpf_dc < mp.mm_shared_pfcpf
         end
 
         function obj = add_system_vars_pf(obj, nm, dm, mpopt)
+            %
+
             %% get model variables
             vvars = nm.model_vvars();
 
@@ -52,10 +60,13 @@ classdef (Abstract) mm_shared_pfcpf_dc < mp.mm_shared_pfcpf
         end
 
         function [vx, z, x] = convert_x_m2n(obj, mmx, nm, only_v)
-            %% x = obj.pf_convert(mmx, nm)
-            %% [v, z] = obj.pf_convert(mmx, nm)
-            %% [v, z, x] = obj.pf_convert(mmx, nm)
-            %% ... = obj.pf_convert(mmx, nm, only_v)
+            % convert_x_m2n - Convert math model state to network model state.
+            % ::
+            %
+            %   x = mm.pf_convert(mmx, nm)
+            %   [v, z] = mm.pf_convert(mmx, nm)
+            %   [v, z, x] = mm.pf_convert(mmx, nm)
+            %   ... = mm.pf_convert(mmx, nm, only_v)
 
             %% update v_, z_ from mmx
             nm_vars = obj.update_nm_vars(mmx, nm);
@@ -76,7 +87,7 @@ classdef (Abstract) mm_shared_pfcpf_dc < mp.mm_shared_pfcpf
         end
 
         function z = update_z(obj, nm, v, z, ad)
-            %% update/allocate slack node active power injections
+            % update_z - Update/allocate slack node active power injections.
 
             %% coefficient matrix for power injection states at slack bus
             CC = nm.C(ad.ref, :) * nm.get_params([], 'K') * nm.D';

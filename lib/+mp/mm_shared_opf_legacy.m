@@ -1,17 +1,11 @@
 classdef (Abstract) mm_shared_opf_legacy < handle
-%MP.MM_SHARED_OPF_LEGACY  MATPOWER mathematical model for optimal power flow (OPF) problem.
-%   ?
+% mp.mm_shared_opf_legacy - Mixin class for legacy optimal power flow (OPF) **math model** objects.
 %
-%   MP.MM_SHARED_OPF_LEGACY ... optimal power flow ...
-%
-%   Properties
-%       ? - ?
-%
-%   Methods
-%       ?
+% An abstract mixin class inherited by optimal power flow (OPF) **math model**
+% objects that need to handle legacy user customization mechanisms.
 
 %   MATPOWER
-%   Copyright (c) 2008-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -25,6 +19,8 @@ classdef (Abstract) mm_shared_opf_legacy < handle
 
     methods
         function obj = def_set_types_legacy(obj)
+            %
+
             obj.set_types = struct(...
                     'var',  'VARIABLES', ...
                     'lin',  'LINEAR CONSTRAINTS', ...
@@ -37,6 +33,8 @@ classdef (Abstract) mm_shared_opf_legacy < handle
         end
 
         function obj = init_set_types_legacy(obj)
+            %
+
             %% finish initializing data structures for each type
             es = struct();  %% empty struct
             obj.cost.data = struct( ...
@@ -52,10 +50,14 @@ classdef (Abstract) mm_shared_opf_legacy < handle
         end
 
         function mpc = get_mpc(om)
+            %
+
             mpc = om.mpc;
         end
 
         function obj = build_legacy(obj, nm, dm, mpopt)
+            %
+
             if strcmp(obj.form_tag, 'dc') && toggle_softlims(obj.mpc, 'status')
                 %% user data required by toggle_softlims
                 branch_nme = nm.elements.branch;
@@ -74,6 +76,8 @@ classdef (Abstract) mm_shared_opf_legacy < handle
         end
 
         function add_legacy_user_vars(obj, nm, dm, mpopt)
+            %
+
             %% save data
             obj.userdata.user_vars = obj.legacy_user_var_names();
 
@@ -88,6 +92,8 @@ classdef (Abstract) mm_shared_opf_legacy < handle
         end
 
         function add_legacy_user_costs(obj, nm, dm, dc)
+            %
+
             if isfield(dm.userdata.legacy_opf_user_mods, 'cost') && ...
                     dm.userdata.legacy_opf_user_mods.cost.nw
                 user_cost = dm.userdata.legacy_opf_user_mods.cost;
@@ -141,6 +147,8 @@ classdef (Abstract) mm_shared_opf_legacy < handle
         end
 
         function add_legacy_user_constraints(obj, nm, dm, mpopt)
+            %
+
             %% user-defined linear constraints
             if isfield(dm.userdata.legacy_opf_user_mods, 'lin')
                 lin = dm.userdata.legacy_opf_user_mods.lin;
@@ -152,6 +160,8 @@ classdef (Abstract) mm_shared_opf_legacy < handle
         end
 
         function add_legacy_user_constraints_ac(obj, nm, dm, mpopt)
+            %
+
             obj.add_legacy_user_constraints(nm, dm, mpopt);
 
             if ~isempty(dm.userdata.legacy_opf_user_mods)
@@ -163,6 +173,14 @@ classdef (Abstract) mm_shared_opf_legacy < handle
         end
 
         function om = add_legacy_cost(om, name, idx, varargin)
+            % add_legacy_cost - Add a set of user costs to the model
+            % ::
+            %
+            %   mm.add_legacy_cost(name, cp)
+            %   mm.add_legacy_cost(name, idx, varsets)
+            %   mm.add_legacy_cost(name, idx_list, cp)
+            %   mm.add_legacy_cost(name, idx_list, cp, varsets)
+
             %ADD_LEGACY_COST  Adds a set of user costs to the model.
             %
             %   OM.ADD_LEGACY_COST(NAME, CP);
@@ -285,77 +303,16 @@ classdef (Abstract) mm_shared_opf_legacy < handle
             om.add_named_set('cost', name, idx, nw, cp, varsets);
         end
 
-        function om = add_named_set_legacy(om, set_type, name, idx, N, varargin)
-            %ADD_NAMED_SET  Adds a named set of variables/constraints/costs to the model.
-            %
-            %   -----  PRIVATE METHOD  -----
-            %
-            %   Legacy Cost Set
-            %       OM.ADD_NAMED_SET_LEGACY('cost', NAME, IDX_LIST, N, CP, VARSETS);
-            %
-            %   See also OPT_MODEL, ADD_VAR, ADD_LIN_CONSTRAINT, ADD_NLN_CONSTRAINT
-            %            ADD_QUAD_COST, ADD_NLN_COST and ADD_LEGACY_COST.
-
-            switch set_type
-                case 'cost'         %% cost set
-                    %% add type-specific data for named set
-                    om_ff = om.cost;
-                    om.cost = [];
-
-                    [cp, varsets] = deal(varargin{:});
-
-                    if isempty(idx)
-                        om_ff.data.N.(name)  = cp.N;
-                        om_ff.data.Cw.(name) = cp.Cw;
-                        om_ff.data.vs.(name) = varsets;
-                        if isfield(cp, 'H')
-                            om_ff.data.H.(name)  = cp.H;
-                        end
-                        if isfield(cp, 'dd')
-                            om_ff.data.dd.(name) = cp.dd;
-                        end
-                        if isfield(cp, 'rh')
-                            om_ff.data.rh.(name) = cp.rh;
-                        end
-                        if isfield(cp, 'kk')
-                            om_ff.data.kk.(name) = cp.kk;
-                        end
-                        if isfield(cp, 'mm')
-                            om_ff.data.mm.(name) = cp.mm;
-                        end
-                    else
-                        %% calls to substruct() are relatively expensive, so we pre-build the
-                        %% struct for addressing cell array fields
-                        %% sc = substruct('.', name, '{}', idx);
-                        sc = struct('type', {'.', '{}'}, 'subs', {name, idx});  %% cell array field
-
-                        om_ff.data.N  = subsasgn(om_ff.data.N,  sc, cp.N);
-                        om_ff.data.Cw = subsasgn(om_ff.data.Cw, sc, cp.Cw);
-                        om_ff.data.vs = subsasgn(om_ff.data.vs, sc, varsets);
-                        if isfield(cp, 'H')
-                            om_ff.data.H = subsasgn(om_ff.data.H, sc, cp.H);
-                        end
-                        if isfield(cp, 'dd')
-                            om_ff.data.dd = subsasgn(om_ff.data.dd, sc, cp.dd);
-                        end
-                        if isfield(cp, 'rh')
-                            om_ff.data.rh = subsasgn(om_ff.data.rh, sc, cp.rh);
-                        end
-                        if isfield(cp, 'kk')
-                            om_ff.data.kk = subsasgn(om_ff.data.kk, sc, cp.kk);
-                        end
-                        if isfield(cp, 'mm')
-                            om_ff.data.mm = subsasgn(om_ff.data.mm, sc, cp.mm);
-                        end
-                    end
-                    if ~isempty(om_ff.params)       %% clear cache of aggregated params
-                        om_ff.params = [];
-                    end
-                    om.cost = om_ff;
-            end
-        end
-
         function [f, df, d2f] = eval_legacy_cost(om, x, name, idx)
+            % eval_legacy_cost - Evaluate individual or full set of legacy user costs.
+            % ::
+            %
+            %   f = mm.eval_legacy_cost(x ...)
+            %   [f, df] = mm.eval_legacy_cost(x ...)
+            %   [f, df, d2f] = mm.eval_legacy_cost(x ...)
+            %   [f, df, d2f] = mm.eval_legacy_cost(x, name)
+            %   [f, df, d2f] = mm.eval_legacy_cost(x, name, idx_list)
+
             %EVAL_LEGACY_COST  Evaluates individual or full set of legacy user costs.
             %   F = OM.EVAL_LEGACY_COST(X ...)
             %   [F, DF] = OM.EVAL_LEGACY_COST(X ...)
@@ -434,6 +391,15 @@ classdef (Abstract) mm_shared_opf_legacy < handle
         end
 
         function [cp, vs, i1, iN] = params_legacy_cost(om, name, idx)
+            % params_legacy_cost - Return cost parameters for legacy user-defined costs.
+            % ::
+            %
+            %   cp = mm.params_legacy_cost()
+            %   cp = mm.params_legacy_cost(name)
+            %   cp = mm.params_legacy_cost(name, idx)
+            %   [cp, vs] = mm.params_legacy_cost(...)
+            %   [cp, vs, i1, iN] = mm.params_legacy_cost(...)
+
             %PARAMS_LEGACY_COST  Returns cost parameters for legacy user-defined costs.
             %   CP = OM.PARAMS_LEGACY_COST()
             %   CP = OM.PARAMS_LEGACY_COST(NAME)
@@ -641,4 +607,76 @@ classdef (Abstract) mm_shared_opf_legacy < handle
             end
         end
     end     %% methods
+
+    methods (Access=protected)
+        function om = add_named_set_legacy(om, set_type, name, idx, N, varargin)
+            %ADD_NAMED_SET  Adds a named set of variables/constraints/costs to the model.
+            %
+            %   -----  PRIVATE METHOD  -----
+            %
+            %   Legacy Cost Set
+            %       OM.ADD_NAMED_SET_LEGACY('cost', NAME, IDX_LIST, N, CP, VARSETS);
+            %
+            %   See also OPT_MODEL, ADD_VAR, ADD_LIN_CONSTRAINT, ADD_NLN_CONSTRAINT
+            %            ADD_QUAD_COST, ADD_NLN_COST and ADD_LEGACY_COST.
+
+            switch set_type
+                case 'cost'         %% cost set
+                    %% add type-specific data for named set
+                    om_ff = om.cost;
+                    om.cost = [];
+
+                    [cp, varsets] = deal(varargin{:});
+
+                    if isempty(idx)
+                        om_ff.data.N.(name)  = cp.N;
+                        om_ff.data.Cw.(name) = cp.Cw;
+                        om_ff.data.vs.(name) = varsets;
+                        if isfield(cp, 'H')
+                            om_ff.data.H.(name)  = cp.H;
+                        end
+                        if isfield(cp, 'dd')
+                            om_ff.data.dd.(name) = cp.dd;
+                        end
+                        if isfield(cp, 'rh')
+                            om_ff.data.rh.(name) = cp.rh;
+                        end
+                        if isfield(cp, 'kk')
+                            om_ff.data.kk.(name) = cp.kk;
+                        end
+                        if isfield(cp, 'mm')
+                            om_ff.data.mm.(name) = cp.mm;
+                        end
+                    else
+                        %% calls to substruct() are relatively expensive, so we pre-build the
+                        %% struct for addressing cell array fields
+                        %% sc = substruct('.', name, '{}', idx);
+                        sc = struct('type', {'.', '{}'}, 'subs', {name, idx});  %% cell array field
+
+                        om_ff.data.N  = subsasgn(om_ff.data.N,  sc, cp.N);
+                        om_ff.data.Cw = subsasgn(om_ff.data.Cw, sc, cp.Cw);
+                        om_ff.data.vs = subsasgn(om_ff.data.vs, sc, varsets);
+                        if isfield(cp, 'H')
+                            om_ff.data.H = subsasgn(om_ff.data.H, sc, cp.H);
+                        end
+                        if isfield(cp, 'dd')
+                            om_ff.data.dd = subsasgn(om_ff.data.dd, sc, cp.dd);
+                        end
+                        if isfield(cp, 'rh')
+                            om_ff.data.rh = subsasgn(om_ff.data.rh, sc, cp.rh);
+                        end
+                        if isfield(cp, 'kk')
+                            om_ff.data.kk = subsasgn(om_ff.data.kk, sc, cp.kk);
+                        end
+                        if isfield(cp, 'mm')
+                            om_ff.data.mm = subsasgn(om_ff.data.mm, sc, cp.mm);
+                        end
+                    end
+                    if ~isempty(om_ff.params)       %% clear cache of aggregated params
+                        om_ff.params = [];
+                    end
+                    om.cost = om_ff;
+            end
+        end
+    end     %% methods (Access=protected)
 end         %% classdef

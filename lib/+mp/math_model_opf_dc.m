@@ -1,17 +1,8 @@
 classdef math_model_opf_dc < mp.math_model_opf
-%MP.MATH_MODEL_OPF_DC  MATPOWER mathematical model for DC optimal power flow (OPF) problem.
-%   ?
-%
-%   MP.MATH_MODEL_OPF_DC ... power flow ...
-%
-%   Properties
-%       ? - ?
-%
-%   Methods
-%       ?
+% mp.math_model_opf_dc - Optimal Power flow (OPF) **math model** for DC formulation.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -24,20 +15,28 @@ classdef math_model_opf_dc < mp.math_model_opf
     methods
         %% constructor
         function obj = math_model_opf_dc()
+            %
+
             obj@mp.math_model_opf();
             obj.element_classes = { @mp.mme_bus_opf_dc, @mp.mme_gen_opf_dc, ...
                 @mp.mme_load_pf_dc, @mp.mme_branch_opf_dc, @mp.mme_shunt_pf_dc };
         end
 
         function tag = form_tag(obj)
+            %
+
             tag = 'dc';
         end
 
         function name = form_name(obj)
+            %
+
             name = 'DC';
         end
 
         function [vx, z, x] = convert_x_m2n(obj, mmx, nm)
+            %
+
             nm_vars = obj.update_nm_vars(mmx, nm);
 
             %% convert (real) math model x to network model x
@@ -51,6 +50,8 @@ classdef math_model_opf_dc < mp.math_model_opf
         end
 
         function obj = add_node_balance_constraints(obj, nm, dm, mpopt)
+            %
+
             [B, K, p] = nm.get_params();
 
             %% power balance constraints
@@ -62,6 +63,8 @@ classdef math_model_opf_dc < mp.math_model_opf
         end
 
         function opt = solve_opts(obj, nm, dm, mpopt)
+            %
+
             opt = mpopt2qpopt(mpopt, obj.problem_type());
 
             switch opt.alg

@@ -1,17 +1,8 @@
 classdef (Abstract) math_model_cpf_acp < mp.math_model_cpf
-%MP.MATH_MODEL_CPF_ACP  MATPOWER mathematical model for continuation power flow (CPF) problem.
-%   ?
-%
-%   MP.MATH_MODEL_CPF_ACP ... power flow ...
-%
-%   Properties
-%       ? - ?
-%
-%   Methods
-%       ?
+% mp.math_model_cpf_acp - Abstract base class for AC-polar CPF **math model** objects.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -24,12 +15,16 @@ classdef (Abstract) math_model_cpf_acp < mp.math_model_cpf
     methods
         %% constructor
         function obj = math_model_cpf_acp()
+            %
+
             obj@mp.math_model_cpf();
             obj.element_classes = { @mp.mme_bus_pf_acp, @mp.mme_gen_pf_ac, ...
                 @mp.mme_branch_pf_ac, @mp.mme_load_cpf, @mp.mme_shunt_cpf };
         end
 
         function efv = event_vlim(obj, cx, opt, nm, dm, mpopt)
+            %
+
             %% convert cx.x back to v_
             %% get current node voltage magnitudes and bounds
             [v_, ~] = obj.convert_x_m2n_cpf(cx.x, nm, 1);
@@ -44,6 +39,8 @@ classdef (Abstract) math_model_cpf_acp < mp.math_model_cpf
         end
 
         function [nx, cx, s] = callback_vlim(obj, k, nx, cx, px, s, opt, nm, dm, mpopt)
+            %
+
             %% initialize
             if k == 0   %% check for base case voltage violations
                 %% convert cx.x back to v_

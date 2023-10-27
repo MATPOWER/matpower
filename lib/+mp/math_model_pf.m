@@ -1,17 +1,8 @@
 classdef (Abstract) math_model_pf < mp.math_model
-%MP.MATH_MODEL_PF  MATPOWER mathematical model for power flow (PF) problem.
-%   ?
-%
-%   MP.MATH_MODEL_PF ... power flow ...
-%
-%   Properties
-%       ? - ?
-%
-%   Methods
-%       ?
+% mp.math_model_pf - Abstract base class for power flow (PF) **math model** objects.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -23,23 +14,33 @@ classdef (Abstract) math_model_pf < mp.math_model
 
     methods
         function tag = task_tag(obj)
+            %
+
             tag = 'pf';
         end
 
         function name = task_name(obj)
+            %
+
             name = 'Power Flow';
         end
 
         function obj = add_costs(obj, nm, dm, mpopt)
+            %
+
             %% no costs for PF and CPF
         end
 
         function obj = add_system_vars(obj, nm, dm, mpopt)
+            %
+
             %% implementation in method in mp.mm_shared_pfcpf class hierarchy
             obj.add_system_vars_pf(nm, dm, mpopt);
         end
 
         function opt = solve_opts(obj, nm, dm, mpopt)
+            %
+
             %% for AC power flow only, must override for mp.math_model_pf_dc
             switch mpopt.pf.alg
                 case 'DEFAULT'

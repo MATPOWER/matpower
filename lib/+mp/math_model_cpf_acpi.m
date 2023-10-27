@@ -1,17 +1,8 @@
 classdef math_model_cpf_acpi < mp.math_model_cpf_acp & mp.mm_shared_pfcpf_acpi
-%MP.MATH_MODEL_CPF_ACPI  MATPOWER mathematical model for continuation power flow (CPF) problem.
-%   ?
-%
-%   MP.MATH_MODEL_CPF_ACPI ... power flow ...
-%
-%   Properties
-%       ? - ?
-%
-%   Methods
-%       ?
+% mp.math_model_cpf_acpi - CPF **math model** for AC-polar-current formulation.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -23,14 +14,20 @@ classdef math_model_cpf_acpi < mp.math_model_cpf_acp & mp.mm_shared_pfcpf_acpi
 
     methods
         function tag = form_tag(obj)
+            %
+
             tag = 'acpi';
         end
 
         function name = form_name(obj)
+            %
+
             name = 'AC-polar-current';
         end
 
         function obj = add_node_balance_constraints(obj, nm, dm, mpopt)
+            %
+
             %% power balance constraints
             ad = obj.aux_data;
             npvq = ad.npv+ad.npq;

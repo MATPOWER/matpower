@@ -1,17 +1,8 @@
 classdef (Abstract) math_model_opf < mp.math_model
-%MP.MATH_MODEL_OPF  MATPOWER mathematical model for optimal power flow (OPF) problem.
-%   ?
-%
-%   MP.MATH_MODEL_OPF ... optimal power flow ...
-%
-%   Properties
-%       ? - ?
-%
-%   Methods
-%       ?
+% mp.math_model_opf - Abstract base class for optimal power flow (OPF) **math model** objects.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -23,19 +14,27 @@ classdef (Abstract) math_model_opf < mp.math_model
 
     methods
         function tag = task_tag(obj)
+            %
+
             tag = 'opf';
         end
 
         function name = task_name(obj)
+            %
+
             name = 'Optimal Power Flow';
         end
 
         function ad = build_aux_data(obj, nm, dm, mpopt)
+            %
+
             %% create aux_data struct
             ad = obj.build_base_aux_data(nm, dm, mpopt);
         end
 
         function obj = add_system_vars(obj, nm, dm, mpopt)
+            %
+
             %% add network voltage and non-voltage state variables
             vars = horzcat(nm.model_vvars(), nm.model_zvars());
             for vtype = vars
@@ -71,6 +70,8 @@ classdef (Abstract) math_model_opf < mp.math_model
         end
 
         function x0 = interior_x0(obj, mm, nm, dm, x0)
+            %
+
             if nargin < 5 || isempty(x0)
                 %% generic interior point
                 [x0, xmin, xmax] = mm.params_var();     %% init var & bounds
@@ -98,6 +99,8 @@ classdef (Abstract) math_model_opf < mp.math_model
         end
 
         function varef1 = interior_va(obj, nm, dm)
+            %
+
             %% return scalar va equal to angle of first reference node
             ad = obj.aux_data;
             ref1 = ad.ref(1);

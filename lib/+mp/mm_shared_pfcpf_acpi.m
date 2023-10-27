@@ -1,7 +1,12 @@
 classdef (Abstract) mm_shared_pfcpf_acpi < mp.mm_shared_pfcpf_acp & mp.mm_shared_pfcpf_ac_i
+% mp.mm_shared_pfcpf_acpi - Mixin class for AC-polar-current PF/CPF **math model** objects.
+%
+% An abstract mixin class inherited by AC power flow (PF) and continuation
+% power flow (CPF) **math model** objects that use a polar voltage
+% and current balance formuation.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -13,6 +18,8 @@ classdef (Abstract) mm_shared_pfcpf_acpi < mp.mm_shared_pfcpf_acp & mp.mm_shared
 
     methods
         function ad = build_aux_data(obj, nm, dm, mpopt)
+            %
+
             %% call parent
             ad = build_aux_data@mp.mm_shared_pfcpf_acp(obj, nm, dm, mpopt);
 
@@ -21,6 +28,8 @@ classdef (Abstract) mm_shared_pfcpf_acpi < mp.mm_shared_pfcpf_acp & mp.mm_shared
         end
 
         function obj = add_system_vars_pf(obj, nm, dm, mpopt)
+            %
+
             %% get model variables
             vvars = nm.model_vvars();
 
@@ -47,6 +56,8 @@ classdef (Abstract) mm_shared_pfcpf_acpi < mp.mm_shared_pfcpf_acp & mp.mm_shared
         end
 
         function [f, J] = node_balance_equations(obj, x, nm)
+            %
+
             %% index vector
             ad = obj.aux_data;
             pvq = [ad.pv; ad.pq];

@@ -1,7 +1,15 @@
 classdef (Abstract) mm_shared_pfcpf_ac_i < handle
+% mp.mm_shared_pfcpf_ac_i - Mixin class for AC-current PF/CPF **math model** objects.
+%
+% An abstract mixin class inherited by all AC power flow (PF) and continuation
+% power flow (CPF) **math model** objects that use a current balance
+% formuation.
+%
+% Code shared between AC cartesian and polar formulations with current balance
+% belongs in this class.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -13,6 +21,8 @@ classdef (Abstract) mm_shared_pfcpf_ac_i < handle
 
     methods
         function ad = build_aux_data_i(obj, nm, ad)
+            %
+
             %% build additional aux data
             N = nm.C(ad.pv, :) * nm.N;      %% z coefficients for z @ PV nodes
             [ii, jj, ~] = find(N == -1);    %% find element representing 1st

@@ -1,17 +1,8 @@
 classdef math_model_pf_acps < mp.math_model_pf & mp.mm_shared_pfcpf_acps
-%MP.MATH_MODEL_PF_ACPS  MATPOWER mathematical model for AC power flow (PF) problem.
-%   ?
-%
-%   MP.MATH_MODEL_PF_ACPS ... power flow ...
-%
-%   Properties
-%       ? - ?
-%
-%   Methods
-%       ?
+% mp.math_model_pf_acps - Power flow (PF) **math model** for AC-polar-power formulation.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -24,20 +15,28 @@ classdef math_model_pf_acps < mp.math_model_pf & mp.mm_shared_pfcpf_acps
     methods
         %% constructor
         function obj = math_model_pf_acps()
+            %
+
             obj@mp.math_model_pf();
             obj.element_classes = { @mp.mme_bus_pf_acp, @mp.mme_gen_pf_ac, ...
                 @mp.mme_load_pf_ac, @mp.mme_branch_pf_ac, @mp.mme_shunt_pf_ac };
         end
 
         function tag = form_tag(obj)
+            %
+
             tag = 'acps';
         end
 
         function name = form_name(obj)
+            %
+
             name = 'AC-polar-power';
         end
 
         function obj = add_node_balance_constraints(obj, nm, dm, mpopt)
+            %
+
             alg = mpopt.pf.alg;
             ad = obj.aux_data;
 
@@ -52,6 +51,8 @@ classdef math_model_pf_acps < mp.math_model_pf & mp.mm_shared_pfcpf_acps
         end
 
         function x = gs_x_update(obj, x, f, nm, dm, mpopt);
+            %
+
             alg = mpopt.pf.alg;
             ad = obj.aux_data;
 
@@ -87,6 +88,8 @@ classdef math_model_pf_acps < mp.math_model_pf & mp.mm_shared_pfcpf_acps
         end
 
         function x = zg_x_update(obj, x, f, nm, dm, mpopt);
+            %
+
             alg = mpopt.pf.alg;
             ad = obj.aux_data;
 
@@ -181,6 +184,8 @@ classdef math_model_pf_acps < mp.math_model_pf & mp.mm_shared_pfcpf_acps
         end
 
         function JJ = fd_jac_approx(obj, nm, dm, mpopt)
+            %
+
             alg = mpopt.pf.alg;
 
             %% create copies of data model for building B prime, B double prime
@@ -207,6 +212,8 @@ classdef math_model_pf_acps < mp.math_model_pf & mp.mm_shared_pfcpf_acps
         end
 
         function [dm1, dm2] = fdpf_B_matrix_models(obj, dm, alg)
+            %
+
             %% [dmp, dmpp] = obj.fdpf_B_matrix_models(dm, alg)
             %% dmpp = obj.fdpf_B_matrix_models(dm, alg)
             %% returns copies of dm used for building B prime, B double prime

@@ -1,17 +1,8 @@
 classdef (Abstract) math_model_opf_ac < mp.math_model_opf
-%MP.MATH_MODEL_OPF_AC  MATPOWER mathematical model for AC optimal power flow (OPF) problem.
-%   ?
-%
-%   MP.MATH_MODEL_OPF_AC ... power flow ...
-%
-%   Properties
-%       ? - ?
-%
-%   Methods
-%       ?
+% mp.math_model_opf_ac - Abstract base class for AC OPF **math model** objects.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -23,6 +14,8 @@ classdef (Abstract) math_model_opf_ac < mp.math_model_opf
 
     methods
         function [g, dg] = nodal_current_balance_fcn(obj, x, nm)
+            %
+
             x_ = obj.convert_x_m2n(x, nm);
             if nargout > 1
                 [G, Gv1, Gv2, Gzr, Gzi] = nm.nodal_complex_current_balance(x_);
@@ -37,6 +30,8 @@ classdef (Abstract) math_model_opf_ac < mp.math_model_opf
         end
 
         function [g, dg] = nodal_power_balance_fcn(obj, x, nm)
+            %
+
             x_ = obj.convert_x_m2n(x, nm);
             if nargout > 1
                 [G, Gv1, Gv2, Gzr, Gzi] = nm.nodal_complex_power_balance(x_);
@@ -51,6 +46,8 @@ classdef (Abstract) math_model_opf_ac < mp.math_model_opf
         end
 
         function d2G = nodal_current_balance_hess(obj, x, lam, nm)
+            %
+
             x_ = obj.convert_x_m2n(x, nm);
             nlam = length(lam) / 2;
             lamIr = lam(1:nlam);
@@ -63,6 +60,8 @@ classdef (Abstract) math_model_opf_ac < mp.math_model_opf
         end
 
         function d2G = nodal_power_balance_hess(obj, x, lam, nm)
+            %
+
             x_ = obj.convert_x_m2n(x, nm);
             nlam = length(lam) / 2;
             lam_p = lam(1:nlam);
@@ -75,6 +74,8 @@ classdef (Abstract) math_model_opf_ac < mp.math_model_opf
         end
 
         function opt = solve_opts(obj, nm, dm, mpopt)
+            %
+
             opt = mpopt2nlpopt(mpopt, obj.problem_type());
 
             if mpopt.opf.start < 2      %% initialize interior point

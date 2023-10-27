@@ -1,17 +1,8 @@
 classdef (Abstract) math_model_cpf < mp.math_model_pf
-%MP.MATH_MODEL_CPF  MATPOWER math model for continuation power flow (CPF) problem.
-%   ?
-%
-%   MP.MATH_MODEL_CPF ... continuation power flow ...
-%
-%   Properties
-%       ? - ?
-%
-%   Methods
-%       ?
+% mp.math_model_cpf - Abstract base class for continuation power flow (CPF) **math model** objects.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -23,14 +14,20 @@ classdef (Abstract) math_model_cpf < mp.math_model_pf
 
     methods
         function tag = task_tag(obj)
+            %
+
             tag = 'cpf';
         end
 
         function name = task_name(obj)
+            %
+
             name = 'Continuation Power Flow';
         end
 
         function obj = add_aux_data(obj, nm, dm, mpopt)
+            %
+
             %% create aux_data struct
             obj.aux_data = obj.build_aux_data_cpf(nm, dm, mpopt);
         end
@@ -38,6 +35,8 @@ classdef (Abstract) math_model_cpf < mp.math_model_pf
         %% can't simply override build_aux_data(), since we
         %% need to be able to call the PF version too
         function ad = build_aux_data_cpf(obj, nm, dm, mpopt)
+            %
+
             dmt = dm.userdata.target;
             nmt = nm.userdata.target;
 
@@ -52,6 +51,8 @@ classdef (Abstract) math_model_cpf < mp.math_model_pf
         end
 
         function add_vars(obj, nm, dm, mpopt)
+            %
+
             add_vars@mp.math_model_pf(obj, nm, dm, mpopt);
             %% required for using nmt to compute nm state from mm state
             obj.aux_data.adt.var_map = obj.aux_data.var_map;
@@ -61,6 +62,8 @@ classdef (Abstract) math_model_cpf < mp.math_model_pf
         %% can't simply override convert_x_m2n(), since we
         %% need to be able to call the PF version too
         function [vx_, z_, x_] = convert_x_m2n_cpf(obj, mmx, nm, only_v)
+            %
+
             ad = obj.aux_data;
             nmt = ad.nmt;
             lam = mmx(end);     %% continuation parameter lambda
@@ -95,6 +98,8 @@ classdef (Abstract) math_model_cpf < mp.math_model_pf
         %% can't simply override node_balance_equations(), since we
         %% need to be able to call the PF version too
         function [f, J] = node_balance_equations_cpf(obj, x, nm)
+            %
+
             ad = obj.aux_data;
             nmt = ad.nmt;
             lam = x(end);   %% continuation parameter lambda
@@ -115,12 +120,16 @@ classdef (Abstract) math_model_cpf < mp.math_model_pf
         end
 
         function nm = network_model_x_soln(obj, nm)
+            %
+
             %% convert solved state from math model to network model soln
             [nm.soln.v, nm.soln.z, nm.soln.x] = ...
                 obj.convert_x_m2n_cpf(obj.soln.x, nm);
         end
 
         function opt = solve_opts(obj, nm, dm, mpopt)
+            %
+
             ad = obj.aux_data;
             opt = mpopt2pneopt(mpopt);
             opt.output_fcn = @(varargin)obj.pne_output_fcn(nm, ad, varargin{:});
@@ -130,6 +139,8 @@ classdef (Abstract) math_model_cpf < mp.math_model_pf
         end
 
         function ad = check_xfer(obj, nm, nmt, ad, adt)
+            %
+
             %% ensure base and target parameters are identical,
             %% except for fixed power injections & states
             [L,  N,  i,  s ] = nm.get_params([], {'L', 'N', 'i', 's'});
@@ -183,6 +194,8 @@ classdef (Abstract) math_model_cpf < mp.math_model_pf
         end
 
         function [names, vals] = pne_output_fcn(obj, nm, ad, x, x_hat)
+            %
+
             %% [names, vals] = obj.pne_output_fcn(nm, ad, x, x_hat)
             %% names = obj.pne_output_fcn(nm, ad)
             names = {'V_hat', 'V'};
@@ -194,6 +207,8 @@ classdef (Abstract) math_model_cpf < mp.math_model_pf
         end
 
         function y = plot_yfcn(obj, nm, dm, ad, v_, bus_num)
+            %
+
             %% find node idx from external bus number
             b2i = dm.elements.bus.ID2i;     %% bus num to idx mapping
             nidx = nm.get_node_idx('bus');
@@ -208,6 +223,8 @@ classdef (Abstract) math_model_cpf < mp.math_model_pf
         end
 
         function idx = plot_idx_default(obj, nm, dm, ad)
+            %
+
             %% plot voltage of PQ node with max transfer as default
             nidx = nm.get_node_idx('bus');     %% node indices of buses
             [~, i] = max(abs(ad.xfer(ad.pq)) .* ismember(ad.pq, nidx));
@@ -216,6 +233,8 @@ classdef (Abstract) math_model_cpf < mp.math_model_pf
         end
 
         function opt = add_callbacks(obj, opt, nm, dm, mpopt)
+            %
+
             qlim = mpopt.cpf.enforce_q_lims;    %% enforce reactive limits
             plim = mpopt.cpf.enforce_p_lims;    %% enforce active limits
             vlim = mpopt.cpf.enforce_v_lims;    %% enforce voltage magnitude limits
@@ -271,6 +290,8 @@ classdef (Abstract) math_model_cpf < mp.math_model_pf
         end
 
         function efv = event_flim(obj, cx, opt, nm, dm, mpopt)
+            %
+
             %% get branch flow constraints
             branch_nme = nm.elements.branch;
             branch_dme = branch_nme.data_model_element(dm);
@@ -298,6 +319,8 @@ classdef (Abstract) math_model_cpf < mp.math_model_pf
         end
 
         function efv = event_qlim(obj, cx, opt, nm, dm, mpopt)
+            %
+
             ad = obj.aux_data;
 
             %% convert cx.x back to v_, z_
@@ -320,6 +343,8 @@ classdef (Abstract) math_model_cpf < mp.math_model_pf
         end
 
         function efv = event_plim(obj, cx, opt, nm, dm, mpopt)
+            %
+
             %% convert cx.x back to v_, z_
             [v_, z_] = obj.convert_x_m2n_cpf(cx.x, nm);
 
@@ -337,6 +362,8 @@ classdef (Abstract) math_model_cpf < mp.math_model_pf
         end
 
         function [nx, cx, s] = callback_flim(obj, k, nx, cx, px, s, opt, nm, dm, mpopt)
+            %
+
             %% initialize
             if k == 0   %% check for base case flow violations
                 %% get branch flow constraints
@@ -423,6 +450,8 @@ classdef (Abstract) math_model_cpf < mp.math_model_pf
         end
 
         function [nx, cx, s] = callback_qlim(obj, k, nx, cx, px, s, opt, nm, dm, mpopt)
+            %
+
             %% skip if initialize, finalize or done
             if k <= 0 || s.done
                 return;
@@ -533,6 +562,8 @@ classdef (Abstract) math_model_cpf < mp.math_model_pf
         end
 
         function [nx, cx, s] = callback_plim(obj, k, nx, cx, px, s, opt, nm, dm, mpopt)
+            %
+
             %% skip if finalize or done
             if k < 0 || s.done
                 return;

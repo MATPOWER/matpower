@@ -1,17 +1,8 @@
 classdef math_model_opf_acpi < mp.math_model_opf_acp
-%MP.MATH_MODEL_OPF_ACPI  MATPOWER mathematical model for AC optimal power flow (OPF) problem.
-%   ?
-%
-%   MP.MATH_MODEL_OPF_ACPI ... power flow ...
-%
-%   Properties
-%       ? - ?
-%
-%   Methods
-%       ?
+% mp.math_model_opf_acpi - OPF **math model** for AC-polar-current formulation.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -23,14 +14,20 @@ classdef math_model_opf_acpi < mp.math_model_opf_acp
 
     methods
         function tag = form_tag(obj)
+            %
+
             tag = 'acpi';
         end
 
         function name = form_name(obj)
+            %
+
             name = 'AC-polar-current';
         end
 
         function add_node_balance_constraints(obj, nm, dm, mpopt)
+            %
+
             %% power balance constraints
             nn = nm.node.N;             %% number of nodes
             fcn_mis = @(x)obj.nodal_current_balance_fcn(x, nm);
@@ -39,6 +36,8 @@ classdef math_model_opf_acpi < mp.math_model_opf_acp
         end
 
         function [lam_p, lam_q] = node_power_balance_prices(obj, nm)
+            %
+
             %% shadow prices on node power balance
             nne = obj.get_idx('nle');
 

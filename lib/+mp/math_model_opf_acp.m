@@ -1,17 +1,8 @@
 classdef (Abstract) math_model_opf_acp < mp.math_model_opf_ac
-%MP.MATH_MODEL_OPF_ACP  MATPOWER mathematical model for AC optimal power flow (OPF) problem.
-%   ?
-%
-%   MP.MATH_MODEL_OPF_ACP ... power flow ...
-%
-%   Properties
-%       ? - ?
-%
-%   Methods
-%       ?
+% mp.math_model_opf_acp - Abstract base class for AC-polar OPF **math model** objects.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -24,12 +15,16 @@ classdef (Abstract) math_model_opf_acp < mp.math_model_opf_ac
     methods
         %% constructor
         function obj = math_model_opf_acp()
+            %
+
             obj@mp.math_model_opf_ac();
             obj.element_classes = { @mp.mme_bus_opf_acp, @mp.mme_gen_opf_ac, ...
                 @mp.mme_load_pf_ac, @mp.mme_branch_opf_acp, @mp.mme_shunt_pf_ac };
         end
 
         function [vx_, z_, x_] = convert_x_m2n(obj, mmx, nm)
+            %
+
             nm_vars = obj.update_nm_vars(mmx, nm);
 
             %% convert (real) math model x to (complex) network model x_

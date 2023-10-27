@@ -1,5 +1,5 @@
 classdef (Abstract) math_model < mp.element_container & opt_model
-% mp.math_model - Abstract base class |MATPOWER| **mathematical model** objects.
+% mp.math_model - Abstract base class for |MATPOWER| **mathematical model** objects.
 %
 % The mathematical model, or math model, formulates and defines the
 % mathematical problem to be solved. That is, it determines the variables,

@@ -1,7 +1,12 @@
 classdef (Abstract) mm_shared_pfcpf_acc < mp.mm_shared_pfcpf_ac
+% mp.mm_shared_pfcpf_acc - Mixin class for AC-cartesian PF/CPF **math model** objects.
+%
+% An abstract mixin class inherited by all AC power flow (PF) and continuation
+% power flow (CPF) **math model** objects that use a cartesian voltage
+% formuation.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -13,10 +18,13 @@ classdef (Abstract) mm_shared_pfcpf_acc < mp.mm_shared_pfcpf_ac
 
     methods
         function [vx_, z_, x_] = convert_x_m2n(obj, mmx, nm, only_v)
-            %% x = obj.pf_convert(mmx, nm)
-            %% [v, z] = obj.pf_convert(mmx, nm)
-            %% [v, z, x] = obj.pf_convert(mmx, nm,)
-            %% ... = obj.pf_convert(mmx, nm, only_v)
+            % convert_x_m2n - Convert math model state to network model state.
+            % ::
+            %
+            %   x = mm.pf_convert(mmx, nm)
+            %   [v, z] = mm.pf_convert(mmx, nm)
+            %   [v, z, x] = mm.pf_convert(mmx, nm,)
+            %    ... = mm.pf_convert(mmx, nm, only_v)
 
             %% update v_, z_ from mmx
             nm_vars = obj.update_nm_vars(mmx, nm);

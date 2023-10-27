@@ -1,17 +1,8 @@
 classdef math_model_cpf_acps < mp.math_model_cpf_acp & mp.mm_shared_pfcpf_acps
-%MP.MATH_MODEL_CPF_ACPS  MATPOWER mathematical model for continuation power flow (CPF) problem.
-%   ?
-%
-%   MP.MATH_MODEL_CPF_ACPS ... power flow ...
-%
-%   Properties
-%       ? - ?
-%
-%   Methods
-%       ?
+% mp.math_model_cpf_acps - CPF **math model** for AC-polar-power formulation.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -23,14 +14,20 @@ classdef math_model_cpf_acps < mp.math_model_cpf_acp & mp.mm_shared_pfcpf_acps
 
     methods
         function tag = form_tag(obj)
+            %
+
             tag = 'acps';
         end
 
         function name = form_name(obj)
+            %
+
             name = 'AC-polar-power';
         end
 
         function obj = add_node_balance_constraints(obj, nm, dm, mpopt)
+            %
+
             %% power balance constraints
             ad = obj.aux_data;
             fcn = @(x)node_balance_equations_cpf(obj, x, nm);
@@ -38,6 +35,8 @@ classdef math_model_cpf_acps < mp.math_model_cpf_acp & mp.mm_shared_pfcpf_acps
         end
 
         function varargout = expand_z_warmstart(obj, nm, ad, varargin)
+            %
+
             %% expand input tangent z vectors to all nodes + lambda
             varargout = cell(size(varargin));
             i = [ad.pv; ad.pq; nm.nv/2 + ad.pq; nm.nv+1];
@@ -49,6 +48,8 @@ classdef math_model_cpf_acps < mp.math_model_cpf_acp & mp.mm_shared_pfcpf_acps
         end
 
         function opt = solve_opts_warmstart(obj, opt, ws, nm)
+            %
+
             ad = obj.aux_data;
 
             %% update warm start states and tangent vectors

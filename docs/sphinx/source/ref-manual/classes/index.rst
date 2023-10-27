@@ -96,9 +96,50 @@ Containers
    :name: sec_math_model_container_classes
 
    mp/math_model
+   mp/math_model_pf
+   mp/math_model_pf_acci
+   mp/math_model_pf_accs
+   mp/math_model_pf_acpi
+   mp/math_model_pf_acps
+   mp/math_model_pf_dc
+   mp/math_model_cpf_acc
+   mp/math_model_cpf_acci
+   mp/math_model_cpf_accs
+   mp/math_model_cpf_acp
+   mp/math_model_cpf_acpi
+   mp/math_model_cpf_acps
+   mp/math_model_opf
+   mp/math_model_opf_ac
+   mp/math_model_opf_acc
+   mp/math_model_opf_acci
+   mp/math_model_opf_acci_legacy
+   mp/math_model_opf_accs
+   mp/math_model_opf_accs_legacy
+   mp/math_model_opf_acp
+   mp/math_model_opf_acpi
+   mp/math_model_opf_acpi_legacy
+   mp/math_model_opf_acps
+   mp/math_model_opf_acps_legacy
+   mp/math_model_opf_dc
+   mp/math_model_opf_dc_legacy
 
 Container Mixins
 ++++++++++++++++
+
+.. toctree::
+   :name: sec_math_model_mixin_classes
+
+   mp/mm_shared_pfcpf
+   mp/mm_shared_pfcpf_dc
+   mp/mm_shared_pfcpf_ac
+   mp/mm_shared_pfcpf_ac_i
+   mp/mm_shared_pfcpf_acc
+   mp/mm_shared_pfcpf_acci
+   mp/mm_shared_pfcpf_accs
+   mp/mm_shared_pfcpf_acp
+   mp/mm_shared_pfcpf_acpi
+   mp/mm_shared_pfcpf_acps
+   mp/mm_shared_opf_legacy
 
 Elements
 ++++++++
