@@ -1,7 +1,8 @@
 classdef mme_branch_opf_acc < mp.mme_branch_opf_ac
+% mp.mme_branch_opf_acc - Math model element for branch for AC cartesian voltage OPF.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Baljinnyam Sereeter, Delft University of Technology
 %
@@ -10,11 +11,11 @@ classdef mme_branch_opf_acc < mp.mme_branch_opf_ac
 %   See https://matpower.org for more info.
 
 %     properties
-%         name = 'branch';
-%     end
+%     end     %% properties
 
     methods
         function obj = add_constraints(obj, mm, nm, dm, mpopt)
+            %
             nme = obj.network_model_element(nm);
 
             %% call parent
@@ -33,6 +34,8 @@ classdef mme_branch_opf_acc < mp.mme_branch_opf_ac
         end
 
         function [mu_vad_lb, mu_vad_ub] = ang_diff_prices(obj, mm, nme)
+            %
+
             %% shadow prices on angle difference limits
             iang = mm.userdata.ang_diff_constrained_branch_idx;
             mu_vad_lb = zeros(nme.nk, 1);

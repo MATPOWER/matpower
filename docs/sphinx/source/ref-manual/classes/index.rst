@@ -198,12 +198,42 @@ Elements
    :name: sec_math_model_element_classes
 
    mp/mm_element
+   mp/mme_branch_opf_ac
+   mp/mme_branch_opf_acc
+   mp/mme_branch_opf_acp
+   mp/mme_branch_opf_dc
+   mp/mme_branch_opf
+   mp/mme_branch_pf_ac
+   mp/mme_branch_pf_dc
+   mp/mme_branch
+   mp/mme_bus_opf_ac
+   mp/mme_bus_opf_acc
+   mp/mme_bus_opf_acp
+   mp/mme_bus_opf_dc
+   mp/mme_bus_pf_acc
+   mp/mme_bus_pf_acp
+   mp/mme_bus_pf_dc
+   mp/mme_bus
+   mp/mme_gen_opf_ac
+   mp/mme_gen_opf_dc
+   mp/mme_gen_opf
+   mp/mme_gen_pf_ac
+   mp/mme_gen_pf_dc
+   mp/mme_gen
+   mp/mme_load_cpf
+   mp/mme_load_pf_ac
+   mp/mme_load_pf_dc
+   mp/mme_load
+   mp/mme_shunt_cpf
+   mp/mme_shunt_pf_ac
+   mp/mme_shunt_pf_dc
+   mp/mme_shunt
 
 
 Miscellaneous Classes
 ---------------------
 
-Could include description of this category of classes here.
+:hl:`Include description of this category of classes here.`
 
 .. toctree::
    :name: sec_misc_classes

@@ -1,7 +1,8 @@
 classdef mme_bus_opf_acc < mp.mme_bus_opf_ac
+% mp.mme_bus_opf_acc - Math model element for bus for AC cartesian voltage OPF.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -9,11 +10,11 @@ classdef mme_bus_opf_acc < mp.mme_bus_opf_ac
 %   See https://matpower.org for more info.
 
 %     properties
-%         name = 'bus';
-%     end
+%     end     %% properties
 
     methods
         function add_constraints(obj, mm, nm, dm, mpopt)
+            %
             dme = obj.data_model_element(dm);
             nme = obj.network_model_element(nm);
 
@@ -47,6 +48,7 @@ classdef mme_bus_opf_acc < mp.mme_bus_opf_ac
         end
 
         function x0 = interior_x0(obj, mm, nm, dm, x0)
+            %
             vv = mm.get_idx();
             varef1 = mm.interior_va(nm, dm);
             vm = obj.interior_vm(mm, nm, dm);
@@ -56,6 +58,8 @@ classdef mme_bus_opf_acc < mp.mme_bus_opf_ac
         end
 
         function obj = data_model_update(obj, mm, nm, dm, mpopt)
+            %
+
             %% complex bus voltages
             nn = nm.get_idx('node');
             V = nm.soln.v(nn.i1.bus:nn.iN.bus);

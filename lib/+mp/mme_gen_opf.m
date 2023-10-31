@@ -1,7 +1,8 @@
 classdef (Abstract) mme_gen_opf < mp.mme_gen
+% mp.mme_gen_opf - Math model element abstract base class for generator for OPF.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -9,21 +10,27 @@ classdef (Abstract) mme_gen_opf < mp.mme_gen
 %   See https://matpower.org for more info.
 
     properties
-        cost        %% struct for cost parameters with fields
-                    %%  .poly_p - polynomial costs for active power,
-                    %%            struct with fields:
-                    %%      .have_quad_cost
-                    %%      .i0, .i1, .i2, .i3
-                    %%      .k, .c, .Q
-                    %%  .poly_q - polynomial costs for reactive power,
-                    %%            same struct as .poly_p
-                    %%  .pwl - piecewise linear costs for actve & reactive
-                    %%         struct with fields:
-                    %%      .n, .i, .A, .b
+        % struct for cost parameters with fields:
+        %
+        %   - ``poly_p`` - polynomial costs for active power, struct with
+        %     fields:
+        %
+        %       - ``have_quad_cost``
+        %       - ``i0``, ``i1``, ``i2``, ``i3``
+        %       - ``k``, ``c``, ``Q``
+        %   - ``poly_q`` - polynomial costs for reactive power
+        %     *(same struct as* ``poly_p`` *)*
+        %   - ``pwl`` - piecewise linear costs for actve & reactive struct
+        %     with fields:
+        %
+        %       - ``n``, ``i``, ``A``, ``b``
+        cost
     end
 
     methods
         function obj = add_vars(obj, mm, nm, dm, mpopt)
+            %
+
             %% collect/construct all generator cost parameters
             obj.build_cost_params(dm);
 
@@ -34,6 +41,8 @@ classdef (Abstract) mme_gen_opf < mp.mme_gen
         end
 
         function obj = add_costs(obj, mm, nm, dm, mpopt)
+            %
+
             %% (quadratic) polynomial costs on Pg
             if obj.cost.poly_p.have_quad_cost
                 mm.add_quad_cost('polPg', obj.cost.poly_p.Q, obj.cost.poly_p.c, obj.cost.poly_p.k, {'Pg'});
@@ -53,6 +62,7 @@ classdef (Abstract) mme_gen_opf < mp.mme_gen
         end
 
         function [f, df, d2f] = poly_cost_fcn(obj, xx, x_scale, cost, idx)
+            %
             x = xx{1}(idx) * x_scale;
             n = length(xx{1});
 
@@ -76,6 +86,8 @@ classdef (Abstract) mme_gen_opf < mp.mme_gen
         end
 
         function x0 = interior_x0(obj, mm, nm, dm, x0)
+            %
+
             %% set gen cost variables to something feasible
             if obj.cost.pwl.n > 0
                 vv = mm.get_idx();

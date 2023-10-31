@@ -1,7 +1,8 @@
 classdef (Abstract) mme_bus_opf_ac < mp.mme_bus
+% mp.mme_bus_opf_ac - Math model element abstract base class for bus for AC OPF.
 
 %   MATPOWER
-%   Copyright (c) 2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2022-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -9,11 +10,11 @@ classdef (Abstract) mme_bus_opf_ac < mp.mme_bus
 %   See https://matpower.org for more info.
 
 %     properties
-%         name = 'bus';
-%     end
+%     end     %% properties
 
     methods
         function vm = interior_vm(obj, mm, nm, dm)
+            %
             %% return vm equal to avg of clipped limits
             dme = obj.data_model_element(dm);
             vm_ub = min(dme.vm_ub, 1.5);

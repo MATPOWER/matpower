@@ -1,7 +1,8 @@
 classdef mme_load_pf_dc < mp.mme_load
+% mp.mme_load_pf_dc - Math model element for load for DC power flow.
 
 %   MATPOWER
-%   Copyright (c) 2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2022-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -9,10 +10,12 @@ classdef mme_load_pf_dc < mp.mme_load
 %   See https://matpower.org for more info.
 
 %     properties
-%     end
+%     end     %% properties
 
     methods
         function obj = data_model_update(obj, mm, nm, dm, mpopt)
+            %
+
             %% load active power consumption
             pp = nm.get_idx('port');
             P = nm.soln.gp(pp.i1.load:pp.iN.load) * dm.base_mva;

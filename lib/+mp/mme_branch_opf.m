@@ -1,7 +1,8 @@
 classdef (Abstract) mme_branch_opf < mp.mme_branch
+% mp.mme_branch_opf - Math model element abstract base class for branch for OPF.
 
 %   MATPOWER
-%   Copyright (c) 2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2022-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -9,10 +10,11 @@ classdef (Abstract) mme_branch_opf < mp.mme_branch
 %   See https://matpower.org for more info.
 
 %     properties
-%     end
+%     end     %% properties
 
     methods
         function [A, l, u, i] = ang_diff_params(obj, dm, ignore)
+            %
             dme = obj.data_model_element(dm);
 
             %% from makeAang()
@@ -51,6 +53,8 @@ classdef (Abstract) mme_branch_opf < mp.mme_branch
         end
 
         function [mu_vad_lb, mu_vad_ub] = ang_diff_prices(obj, mm, nme)
+            %
+
             %% shadow prices on angle difference limits
             iang = mm.userdata.ang_diff_constrained_branch_idx;
             mu_vad_lb = zeros(nme.nk, 1);

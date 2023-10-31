@@ -1,7 +1,8 @@
 classdef mme_branch_opf_dc < mp.mme_branch_opf
+% mp.mme_branch_opf_dc - Math model element for branch for DC OPF.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -9,10 +10,12 @@ classdef mme_branch_opf_dc < mp.mme_branch_opf
 %   See https://matpower.org for more info.
 
 %     properties
-%     end
+%     end     %% properties
 
     methods
         function obj = add_constraints(obj, mm, nm, dm, mpopt)
+            %
+
             %% find branches with flow limits
             dme = obj.data_model_element(dm);
             nme = obj.network_model_element(nm);
@@ -41,6 +44,7 @@ classdef mme_branch_opf_dc < mp.mme_branch_opf
         end
 
         function obj = data_model_update(obj, mm, nm, dm, mpopt)
+            %
             dme = obj.data_model_element(dm);
             nme = obj.network_model_element(nm);
 

@@ -1,7 +1,8 @@
 classdef mme_gen_opf_ac < mp.mme_gen_opf
+% mp.mme_gen_opf_ac - Math model element for generator for AC OPF.
 
 %   MATPOWER
-%   Copyright (c) 2021, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -9,11 +10,12 @@ classdef mme_gen_opf_ac < mp.mme_gen_opf
 %   See https://matpower.org for more info.
 
 %     properties
-%         name = 'gen';
-%     end
+%     end     %% properties
 
     methods
         function obj = add_constraints(obj, mm, nm, dm, mpopt)
+            %
+
             %% generator PQ capability curve constraints
             [Apqh, ubpqh, Apql, ubpql, Apqdata] = ...
                 obj.pq_capability_constraint(dm.elements.gen, dm.base_mva);
@@ -37,6 +39,8 @@ classdef mme_gen_opf_ac < mp.mme_gen_opf
         end
 
         function obj = add_costs(obj, mm, nm, dm, mpopt)
+            %
+
             %% call parent
             add_costs@mp.mme_gen_opf(obj, mm, nm, dm, mpopt);
 
@@ -56,8 +60,9 @@ classdef mme_gen_opf_ac < mp.mme_gen_opf
             end
         end
 
-        %% from makeApq()
         function [Ah, uh, Al, ul, data] = pq_capability_constraint(obj, dme, base_mva)
+            % from legacy :func:`makeApq`
+
             gen = dme.tab(dme.on, :);
 
             %% data dimensions
@@ -113,8 +118,9 @@ classdef mme_gen_opf_ac < mp.mme_gen_opf
             data.ipqh = ipqh;
         end
 
-        %% from hasPQcap()
         function TorF = has_pq_cap(obj, gen, upper_lower)
+            % from legacy :func:`hasPQcap`
+
             %% default value
             if nargin < 3
                 upper_lower = 'B';  %% look at both top and bottom by default
@@ -171,8 +177,9 @@ classdef mme_gen_opf_ac < mp.mme_gen_opf
             end
         end
 
-        %% from makeAvl()
         function [A, l, u] = disp_load_constant_pf_constraint(obj, dm)
+            % from legacy :func:`makeAvl`
+
             dme = obj.data_model_element(dm);
 
             %% data dimensions
@@ -229,11 +236,13 @@ classdef mme_gen_opf_ac < mp.mme_gen_opf
         end
 
         function build_cost_params(obj, dm)
+            %
             dme = obj.data_model_element(dm);
             obj.cost = dme.build_cost_params(dm, 0);
         end
 
         function obj = data_model_update(obj, mm, nm, dm, mpopt)
+            %
             dme = obj.data_model_element(dm);
             nme = obj.network_model_element(nm);
 

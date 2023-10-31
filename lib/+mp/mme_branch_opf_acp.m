@@ -1,7 +1,8 @@
 classdef mme_branch_opf_acp < mp.mme_branch_opf_ac
+% mp.mme_branch_opf_acp - Math model element for branch for AC polar voltage OPF.
 
 %   MATPOWER
-%   Copyright (c) 2021-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -9,11 +10,12 @@ classdef mme_branch_opf_acp < mp.mme_branch_opf_ac
 %   See https://matpower.org for more info.
 
 %     properties
-%         name = 'branch';
-%     end
+%     end     %% properties
 
     methods
         function obj = add_constraints(obj, mm, nm, dm, mpopt)
+            %
+
             %% call parent
             add_constraints@mp.mme_branch_opf_ac(obj, mm, nm, dm, mpopt);
 

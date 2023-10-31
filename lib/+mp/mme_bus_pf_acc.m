@@ -1,7 +1,8 @@
 classdef mme_bus_pf_acc < mp.mme_bus
+% mp.mme_bus_pf_acc - Math model element for bus for AC cartesian voltage power flow.
 
 %   MATPOWER
-%   Copyright (c) 2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2022-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -9,10 +10,12 @@ classdef mme_bus_pf_acc < mp.mme_bus
 %   See https://matpower.org for more info.
 
 %     properties
-%     end
+%     end     %% properties
 
     methods
         function obj = data_model_update(obj, mm, nm, dm, mpopt)
+            %
+
             %% complex bus voltages
             nn = nm.get_idx('node');
             V = nm.soln.v(nn.i1.bus:nn.iN.bus);

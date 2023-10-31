@@ -1,7 +1,8 @@
 classdef mme_branch_pf_dc < mp.mme_branch
+% mp.mme_branch_pf_dc - Math model element for branch for DC power flow.
 
 %   MATPOWER
-%   Copyright (c) 2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2022-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -9,10 +10,12 @@ classdef mme_branch_pf_dc < mp.mme_branch
 %   See https://matpower.org for more info.
 
 %     properties
-%     end
+%     end     %% properties
 
     methods
         function obj = data_model_update(obj, mm, nm, dm, mpopt)
+            %
+
             %% branch active power flows
             pp = nm.get_idx('port');
             pl_fr = nm.soln.gp(pp.i1.branch(1):pp.iN.branch(1)) * dm.base_mva;

@@ -1,7 +1,8 @@
 classdef mme_load_cpf < mp.mme_load_pf_ac
+% mp.mme_load_cpf - Math model element for load for CPF.
 
 %   MATPOWER
-%   Copyright (c) 2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2022-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -9,10 +10,12 @@ classdef mme_load_cpf < mp.mme_load_pf_ac
 %   See https://matpower.org for more info.
 
 %     properties
-%     end
+%     end     %% properties
 
     methods
         function obj = data_model_update(obj, mm, nm, dm, mpopt)
+            %
+
             %% call parent to compute injections
             data_model_update@mp.mme_load_pf_ac(obj, mm, nm, dm, mpopt);
 
