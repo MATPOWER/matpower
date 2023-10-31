@@ -185,7 +185,7 @@ classdef dmce_gen_mpc2 < mp.dmc_element % & mp.dmce_gen
             end
         end
 
-        function tab = gencost2cost_table(obj, gencost);
+        function tab = gencost2cost_table(obj, gencost)
             %
 
             %% define named indices into data matrices

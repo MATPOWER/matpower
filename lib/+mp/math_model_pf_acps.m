@@ -50,7 +50,7 @@ classdef math_model_pf_acps < mp.math_model_pf & mp.mm_shared_pfcpf_acps
             obj.add_nln_constraint({'Pmis', 'Qmis'}, [ad.npv+ad.npq;ad.npq], 1, fcn, []);
         end
 
-        function x = gs_x_update(obj, x, f, nm, dm, mpopt);
+        function x = gs_x_update(obj, x, f, nm, dm, mpopt)
             %
 
             alg = mpopt.pf.alg;
@@ -87,7 +87,7 @@ classdef math_model_pf_acps < mp.math_model_pf & mp.mm_shared_pfcpf_acps
             x = [angle(v_([pv; pq])); abs(v_(pq))];
         end
 
-        function x = zg_x_update(obj, x, f, nm, dm, mpopt);
+        function x = zg_x_update(obj, x, f, nm, dm, mpopt)
             %
 
             alg = mpopt.pf.alg;

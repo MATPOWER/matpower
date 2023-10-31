@@ -57,7 +57,7 @@ classdef mme_gen_opf_ac < mp.mme_gen_opf
         end
 
         %% from makeApq()
-        function [Ah, uh, Al, ul, data] = pq_capability_constraint(obj, dme, base_mva);
+        function [Ah, uh, Al, ul, data] = pq_capability_constraint(obj, dme, base_mva)
             gen = dme.tab(dme.on, :);
 
             %% data dimensions
@@ -172,7 +172,7 @@ classdef mme_gen_opf_ac < mp.mme_gen_opf
         end
 
         %% from makeAvl()
-        function [A, l, u] = disp_load_constant_pf_constraint(obj, dm);
+        function [A, l, u] = disp_load_constant_pf_constraint(obj, dm)
             dme = obj.data_model_element(dm);
 
             %% data dimensions

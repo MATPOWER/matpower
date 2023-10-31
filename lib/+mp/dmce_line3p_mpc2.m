@@ -50,7 +50,7 @@ classdef dmce_line3p_mpc2 < mp.dmc_element % & mp.dmce_line3p
             vmap.ql3_to     = {'num', 0};   %% zeros
         end
 
-        function tab = create_line_construction_table(obj, lc);
+        function tab = create_line_construction_table(obj, lc)
             %
             id = lc(:, 1);
             r = lc(:, 2:7);

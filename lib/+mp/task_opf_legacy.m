@@ -28,7 +28,7 @@ classdef task_opf_legacy < mp.task_opf & mp.task_shared_legacy
             [d, mpopt] = run_pre@mp.task_opf(obj, d, mpopt);
         end
 
-        function obj = run_post(obj, mm, nm, dm, mpopt);
+        function obj = run_post(obj, mm, nm, dm, mpopt)
             if obj.nm.np ~= 0
                 obj.dm.source = obj.dmc.export(obj.dm, obj.dm.source);
             end

@@ -1,4 +1,4 @@
-function [VaDif, dVaDif] = opf_branch_ang_fcn(x, Aang, lang, uang);
+function [VaDif, dVaDif] = opf_branch_ang_fcn(x, Aang, lang, uang)
 %OPF_BRANCH_ANG_FCN  Evaluates branch angle difference constraints and gradients.
 %   [VADIF, DVADIF] = OPF_BRANCH_ANG_FCN(X, AANG, LANG, UANG);
 %
