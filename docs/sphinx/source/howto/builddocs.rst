@@ -1,14 +1,5 @@
-Overview
-========
-
-Overview of |MATPOWER| Documentation
-------------------------------------
-
-An overview of the |MATPOWER| Documentation site.
-
-
-How To Compile the Documentation
---------------------------------
+How To Build the Documentation
+==============================
 
 1. Install `Python <https://python.org>`_.
 
@@ -63,9 +54,13 @@ How To Compile the Documentation
 
 4. Install `TeXLive <https://tug.org/texlive>`_ (for building LaTeX/PDF output).
 
-5. In the :file:`docs` directory, type:
+5. In the :file:`docs/sphinx` directory, type:
 
     .. code-block:: console
     
        make html
        make latexpdf
+
+   ... twice. That's right, you re-run ``make html`` after the LaTeX build so it can pick up the links to the PDF and then re-run ``make latexpdf`` to ensure that tables of contents, cross-references, etc. are all up to date.
+   
+   If everything builds properly, you should find the PDF manuals in :file:`docs/sphinx/build/latex` and the HTML documentation in :file:`docs/sphinx/build/html` (start with :file:`index.html`).
