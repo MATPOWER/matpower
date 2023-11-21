@@ -15,6 +15,8 @@
     They should match the corresponding version in premable.tex.txt
     -------------------------------------------------------------------
 
+.. |br| replace:: :raw-html:`<br \>`:raw-latex:`\\`
+
 .. |MATPOWER| replace:: :raw-html:`M<span style="font-size:smaller">ATPOWER</span>`:raw-latex:`\matpower{}`
 .. |/MATPOWER/| replace:: :raw-html:`<em>M<span style="font-size:smaller">ATPOWER</span></em>`:raw-latex:`\matpoweri{}`
 .. |*MATPOWER*| replace:: :raw-html:`<strong>M<span style="font-size:smaller">ATPOWER</span></strong>`:raw-latex:`\matpowerb{}`
@@ -22,7 +24,7 @@
 .. |MUM| replace:: :raw-html:`<a href="https://matpower.org/docs/MATPOWER-manual-8.0b1.pdf">M<span style="font-size:smaller">ATPOWER</span> User's Manual</a>`:raw-latex:`\mum{}`
 
 .. |MATLAB| replace:: :raw-html:`M<span style="font-size:smaller">ATLAB</span>`:raw-latex:`\matlab{}`
-.. |MATLAB(R)| replace:: :raw-html:`M<span style="font-size:smaller">ATLAB&reg;</span>`:raw-latex:`\matlabr{}`
+.. |MATLAB(R)| replace:: :raw-html:`M<span style="font-size:smaller">ATLAB<sup>&reg;</sup></span>`:raw-latex:`\matlabr{}`
 
 .. |PSerc| replace:: :raw-html:`PS<span style="font-size:smaller">ERC</span>`:raw-latex:`\pserc{}`
 .. |PSERC| replace:: :raw-html:`Power Systems Engineering Research Center (PS<span style="font-size:smaller">ERC</span>)`:raw-latex:`\PSERC{}`
@@ -48,8 +50,9 @@
 .. |MOSTman| replace:: :raw-html:`<a href="https://matpower.org/docs/MOST-manual-1.2.pdf">MOST User's Manual</a>`:raw-latex:`\mostman{}`
 
 .. |TN5|  replace:: :raw-html:`<a href="https://matpower.org/docs/TN5-MP-Element.pdf"><em>M<span style="font-size:smaller">ATPOWER</span> Technical Note 5</em></a>`:raw-latex:`\TNfive{}`
-.. |MATPOWER-Dev-Manual|  replace:: :raw-html:`<a class="reference external" href="https://matpower.org/documentation/dev-manual/"><em>Developer’s Manual</em></a>`:raw-latex:`\devman{}`
-.. |MATPOWER-Ref-Manual|  replace:: :raw-html:`<a class="reference external" href="https://matpower.org/documentation/ref-manual/"><em>Reference Manual</em></a>`:raw-latex:`\refman{}`
+.. |MATPOWER-Users-Manual|  replace:: :raw-html:`<a class="reference external" href="https://matpower.org/documentation/users-manual/"><em>M<span style="font-size:smaller">ATPOWER</span> User’s Manual</em></a>`:raw-latex:`\userman{}`
+.. |MATPOWER-Dev-Manual|  replace:: :raw-html:`<a class="reference external" href="https://matpower.org/documentation/dev-manual/"><em>M<span style="font-size:smaller">ATPOWER</span> Developer’s Manual</em></a>`:raw-latex:`\devman{}`
+.. |MATPOWER-Ref-Manual|  replace:: :raw-html:`<a class="reference external" href="https://matpower.org/documentation/ref-manual/"><em>M<span style="font-size:smaller">ATPOWER</span> Reference Manual</em></a>`:raw-latex:`\refman{}`
 
 ..
     .. |MATPOWER-Dev-Manual|  replace:: :ref:`Developer's Manual <dev_manual>`
