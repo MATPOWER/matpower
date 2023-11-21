@@ -97,7 +97,8 @@ Properties
 
 The table below includes additional properties, besides the main table :attr:`tab`, found in all data model elements.
 
-.. list-table:: 
+.. _tab_dme_properties:
+.. list-table:: Data Model Element Properties
    :widths: 12 88
    :header-rows: 1
    :class: longtable

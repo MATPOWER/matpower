@@ -1,6 +1,7 @@
 Notation
 ========
 
+This section introduces and summarizes the mathematical notation used throughout this manual.
 
 **Styles**
 
