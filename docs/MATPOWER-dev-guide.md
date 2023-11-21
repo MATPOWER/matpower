@@ -13,15 +13,20 @@ performance.
 
 The following are some guidelines, in no particular order.
 
-- All functions should include a help section that fully describes
-  the inputs, outputs and what the function does. You can use the
-  help section from [`runpf`](../lib/runpf) as a template.
+- All classes, methods, properties, and functions should include a help
+  section that can be accessed by the `help` and `doc` commands and
+  processed by Sphinx to produce HTML and PDF reference documentation.
+  For classes, it should summarize the purpose and overall functionality and
+  list the properties and methods. For functions and methods, it should
+  describe the inputs, outputs and what the function or method does. You can
+  use the help from [`run_mp`](../lib/run_mp.m) or
+  [`mp.task`](../lib/+mp/task.m) as examples.
 
 - Following the help section, should be a blank line, followed by the
   copyright and license lines, like:
      ```matlab
      %   MATPOWER
-     %   Copyright (c) 2016-2017, Power Systems Engineering Research Center (PSERC)
+     %   Copyright (c) 2016-2023, Power Systems Engineering Research Center (PSERC)
      %   by <Your Name>, <Your Affiliation>
      %
      %   This file is part of MATPOWER.
