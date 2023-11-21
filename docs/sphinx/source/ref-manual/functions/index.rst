@@ -3,10 +3,12 @@
 Functions
 =========
 
+.. _ref_top_level_functions:
+
 Top-Level Simulation Functions
 ------------------------------
 
-Could include description of this category of functions here.
+These are top-level functions intended as user commands for running power flow (PF), continuation power flow (CPF), optimal power flow (OPF) and other custom simulation or optimization tasks.
 
 .. toctree::
 

@@ -13,5 +13,6 @@
 .. toctree::
    :numbered: 2
 
+   introduction
    functions/index
    classes/index

@@ -233,8 +233,6 @@ Elements
 Miscellaneous Classes
 ---------------------
 
-:hl:`Include description of this category of classes here.`
-
 .. toctree::
    :name: sec_misc_classes
 
