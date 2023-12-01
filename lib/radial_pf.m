@@ -34,14 +34,13 @@ if ~isempty(mpc.loop)
     error('radial_pf: power flow algorithm %s can only handle radial networks.', mpopt.pf.alg)
 end
 %% define vectors needed for backward-forward sweep method
-% branch and demand data
-[f, t, Zb, Yb, Sd, Ysh] = ...
+% branch data
+[f, t, Zb, Yb, Ysh] = ...
     deal(mpc.branch(:,F_BUS),mpc.branch(:,T_BUS), ...
          mpc.branch(:,BR_R)+1j*mpc.branch(:,BR_X),1j*mpc.branch(:,BR_B), ...
-         mpc.bus(:,PD)+1j*mpc.bus(:,QD),mpc.bus(:,GS)+1j*mpc.bus(:,BS));
+         mpc.bus(:,GS)+1j*mpc.bus(:,BS));
 nl = size(mpc.branch,1);
 nb = size(mpc.bus,1);
-Sd  =  Sd/mpc.baseMVA;
 Ysh = Ysh/mpc.baseMVA;
 tap = ones(nl, 1);        % default tap ratio = 1
 i = find(mpc.branch(:, TAP)); % indices of non-zero tap ratios
@@ -52,13 +51,26 @@ Ybt = Yb/2 + (1-1./tap) ./ Zb;
     deal(Ybt(mpc.br_reverse), Ybf(mpc.br_reverse)); % reversed branches
 Zb = Zb .* tap;
 Yd = Ysh + (sparse(f, f, Ybf, nb, nb) + sparse(t, t, Ybt, nb, nb)) * ones(nb,1);
+% vector of complex bus power injections
+Sbus = makeSbus(mpc.baseMVA, mpc.bus, mpc.gen);
 % generator data (other than the slack bus)
-pv = mpc.gen(2:end,GEN_BUS);
-Pg = mpc.gen(2:end,PG)/mpc.baseMVA;
-Vg = mpc.gen(2:end,VG);
+[ref, pv, pq] = bustypes(mpc.bus, mpc.gen);
+on = find(mpc.gen(:, GEN_STATUS) > 0);  % which generators are on?
+gbus = mpc.gen(on, GEN_BUS);  % what buses are they at?
+vcb = zeros(nb, 1);  % mask of voltage-controlled buses
+vcb(pv) = 1;  % include PV buses
+k = find(vcb(gbus));  % in-service gens at v-c buses
+Vg = ones(nb, 1);
+Vg(gbus(k)) = mpc.gen(on(k), VG);  % vector of gen set voltages
+Vg = Vg(pv);
+Pg = real(Sbus(pv))*mpc.baseMVA + mpc.bus(pv,PD);
+% load data
+Sd = zeros(nb, 1);
+Sd(pq) = -Sbus(pq);
+Sd(pv) = (mpc.bus(pv,PD) + 1j*mpc.bus(pv, QD))/mpc.baseMVA;
 %% calculate voltages and power flows
 Vslack = mpc.gen(1,VG);
-switch upper(mpopt.pf.alg);
+switch upper(mpopt.pf.alg)
     case 'PQSUM'
         [V, Qpv, Sf, St, Sslack, iterations, success] = calc_v_pq_sum(Vslack,nb,nl,f,Zb,Ybf,Ybt,Yd,Sd,pv,Pg,Vg,mpopt);
     case 'ISUM'
@@ -81,8 +93,27 @@ mpc.branch(:,QT) = -imag(St)*mpc.baseMVA;
 mpc.gen(1,PG) = real(Sslack)*mpc.baseMVA;
 mpc.gen(1,QG) = imag(Sslack)*mpc.baseMVA;
 if ~isempty(pv)
-    mpc.gen(2:end,QG) = Qpv*mpc.baseMVA;
+    C = gbus == pv';  % map gbus to pv
+    Q = C*Qpv;  % Q for generators at gbus
+    k = find(Q);  % update QG in gen for buses with non-zero Qpv
+    mpc.gen(k,QG) = Q(k)*mpc.baseMVA;
 end
+% At this point any buses with more than one generator will have
+% the total Q dispatch for the bus assigned to each generator. This
+% must be split between them using pfsoln.
+temp = mpc;
+% Check whether branches need to be reversed before creating Ybus
+k = mpc.br_reverse;
+if any(k)
+    % We need this in case there are transformers
+    temp.branch(k,BR_R) = tap(k).^2.*temp.branch(k,BR_R);
+    temp.branch(k,BR_X) = tap(k).^2.*temp.branch(k,BR_X);
+    temp.branch(k,TAP) = 1./tap(k);
+end
+[Ybus, Yf, Yt] = makeYbus(temp);
+baseMVA = mpc.baseMVA; bus0 = mpc.bus; gen0 = mpc.gen; branch0 = mpc.branch;
+[~, gen] = pfsoln(baseMVA, bus0, gen0, branch0, Ybus, Yf, Yt, V, ref, pv, pq);
+mpc.gen = gen;
 %% reverse bus and branch ordering
 mpc.bus = mpc.bus(mpc.bus_order_inv,:);
 mpc.bus(:,BUS_I) = mpc.bus_order(mpc.bus(:,BUS_I));
