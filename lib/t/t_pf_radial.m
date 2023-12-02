@@ -127,6 +127,12 @@ for i = 1:length(casefile)
         [Vm, B] = sort(r.bus(:,VM));
         B = B(1:N);
         Vm = Vm(1:N);
+        % Repeat the first M buses K times (K generators per bus)
+        M = floor(N/2);
+        K = 2;
+        B = [repmat(B(1:M),K,1); B(M+1:end)];
+        Vm = [repmat(Vm(1:M),K,1); Vm(M+1:end)];
+        N = size(B,1);
         % add PV generators at buses in B
         % set VG 0.05 pu bigger then voltage at buses in B
         mpc.gen = repmat(mpc.gen,N+1,1);
