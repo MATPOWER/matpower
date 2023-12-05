@@ -18,6 +18,9 @@ since 8.0b1
     numerical error with multiple generators at a bus.
     *Thanks to Mirko Todorovski.*
 
+#### 11/20/23
+  - Add initial MATPOWER Reference Manual to new Sphinx documentation.
+
 #### 6/6/23
   - Fix minor bug in `size()` method of `mp.mapped_array.size()` resulting
     in fatal error if called with two output arguments.
