@@ -8588,6 +8588,7 @@ Prototype examples of PF, CPF, and OPF, built using the new \matpower{} Extensio
 \item Fix generator voltage set points in \code{case9target} to match \code{case9}.
 \item A vector-valued \code{label} passed to \code{apply\_changes()} now throws a useful error.
 \item Fix bug in previously undocumented feature of \code{makePTDF()} where the \code{slack} input is a matrix. \emph{Thanks to Jon Martinez Corral.}
+\item Fix bug \#210 where radial power flow methods resulted in numerical error with multiple generators at a bus. \emph{Thanks to Mirko Todorovski.}
 \end{itemize}
 
 \subsubsection*{Incompatible Changes}
