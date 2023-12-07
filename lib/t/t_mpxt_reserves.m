@@ -41,6 +41,7 @@ casefile = 't_case30_userfcns';
 mpopt = mpoption('opf.violation', 1e-6, 'mips.gradtol', 1e-8, ...
         'mips.comptol', 1e-8, 'mips.costtol', 1e-9);
 mpopt = mpoption(mpopt, 'out.all', 0, 'verbose', verbose, 'opf.ac.solver', 'MIPS');
+mpopt = mpoption(mpopt, 'opf.dc.solver', 'MIPS');
 mpopt = mpoption(mpopt, 'out.gen', 1);
 mpopt = mpoption(mpopt, 'out.lim.all', 2);
 % mpopt = mpoption(mpopt, 'out.lim.all', -1, 'out.sys_sum', 0, 'out.bus', 0, 'out.branch', 0, 'out.gen', 1, 'out.lim.v', 0, 'out.lim.pg', 0, 'out.lim.qg', 0, 'out.lim.line', 0); mpopt.out.load = 0; mpopt.out.shunt = 0; mpopt.out.lim.elm.reserve_gen = 2;
