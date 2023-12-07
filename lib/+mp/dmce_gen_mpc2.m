@@ -36,8 +36,8 @@ classdef dmce_gen_mpc2 < mp.dmc_element % & mp.dmce_gen
                 QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
 
             sci_fcn = @(ob, mpc, spec, vn)start_cost_import(ob, mpc, spec, vn);
-            gcip_fcn = @(ob, mpc, spec, vn)gen_cost_import(ob, mpc, spec, vn, 'P');
-            gciq_fcn = @(ob, mpc, spec, vn)gen_cost_import(ob, mpc, spec, vn, 'Q');
+            gcip_fcn = @(ob, mpc, spec, vn)gen_cost_import(ob, dme, mpc, spec, vn, 'P');
+            gciq_fcn = @(ob, mpc, spec, vn)gen_cost_import(ob, dme, mpc, spec, vn, 'Q');
             sce_fcn = @(ob, dme, mpc, spec, vn, ridx)start_cost_export(ob, dme, mpc, spec, vn, ridx);
             gcep_fcn = @(ob, dme, mpc, spec, vn, ridx)gen_cost_export(ob, dme, mpc, spec, vn, 'P', ridx);
             gceq_fcn = @(ob, dme, mpc, spec, vn, ridx)gen_cost_export(ob, dme, mpc, spec, vn, 'Q', ridx);
@@ -111,7 +111,7 @@ classdef dmce_gen_mpc2 < mp.dmc_element % & mp.dmce_gen
             end
         end
 
-        function val = gen_cost_import(obj, mpc, spec, vn, p_or_q)
+        function val = gen_cost_import(obj, dme, mpc, spec, vn, p_or_q)
             %
             if isfield(mpc, 'gencost') && spec.nr
                 %% define named indices into data matrices
@@ -157,7 +157,7 @@ classdef dmce_gen_mpc2 < mp.dmc_element % & mp.dmce_gen
                         gc(pwl1, COST:COST+1) = [m b];
                     end
 
-                    val = obj.gencost2cost_table(gc);
+                    val = obj.gencost2cost_table(gc, dme);
                 else
                     val = [];
                 end
@@ -184,7 +184,7 @@ classdef dmce_gen_mpc2 < mp.dmc_element % & mp.dmce_gen
             end
         end
 
-        function tab = gencost2cost_table(obj, gencost)
+        function tab = gencost2cost_table(obj, gencost, dme)
             %
 
             %% define named indices into data matrices
@@ -236,9 +236,7 @@ classdef dmce_gen_mpc2 < mp.dmc_element % & mp.dmce_gen
                     cst(ipwl, :) = gencost(ipwl, COST+1:2:m);
                 end
             end
-            var_names = {'poly_n', 'poly_coef', 'pwl_n', 'pwl_qty', 'pwl_cost'};
-            table_class = mp_table_class();
-            tab = table_class(npoly, p, npwl, qty, cst, 'VariableNames', var_names);
+            tab = dme.create_cost_table(npoly, p, npwl, qty, cst);
         end
 
         function gencost = cost_table2gencost(obj, dme, gencost0, cost, ridx)

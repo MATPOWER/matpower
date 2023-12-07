@@ -26,6 +26,18 @@ classdef dme_gen_opf < mp.dme_gen & mp.dme_shared_opf
                 {'vm_setpoint', 'mu_pg_lb', 'mu_pg_ub', 'mu_qg_lb', 'mu_qg_ub'} );
         end
 
+        function names = cost_table_var_names(obj)
+            %
+            names = {'poly_n', 'poly_coef', 'pwl_n', 'pwl_qty', 'pwl_cost'};
+        end
+
+        function tab = create_cost_table(obj, poly_n, poly_coef, pwl_n, pwl_qty, pwl_cost)
+            %
+            table_class = mp_table_class();
+            tab = table_class(poly_n, poly_coef, pwl_n, pwl_qty, pwl_cost, ...
+                            'VariableNames', obj.cost_table_var_names());
+        end
+
         function TorF = have_cost(obj)
             %
             TorF = 1;
