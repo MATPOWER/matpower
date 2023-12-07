@@ -105,8 +105,9 @@ mpc1 = struct( ...
 dmc = mp.dm_converter_mpc2().build();
 dm = mp.data_model_opf().build(mpc1, dmc);
 mpc = dmc.export(dm);
-mpc1.gen(:, MBASE) = 0;
-mpc1.branch(7, BR_STATUS) = 0;
+mpc1.gen(:, MBASE) = 0;         % not included dme_gen
+mpc1.branch(7, BR_STATUS) = 0;  % connected to offline bus
+mpc1.gen(3, GEN_STATUS) = 0;    % connected to offline bus
 t_ok(isequal(mpc, mpc1), [t 'mpc == mpc0']);
 
 t = 'mpc = dmce.export(dme, mpc, ''qcost'') : ';

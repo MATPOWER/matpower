@@ -61,7 +61,6 @@ classdef dmce_gen_mpc2 < mp.dmc_element % & mp.dmce_gen
             vmap.qc2_ub{2}          = QC2MAX;
             vmap.pg{2}              = PG;
             vmap.qg{2}              = QG;
-            vmap.in_service{2}      = GEN_STATUS;
             vmap.startup_cost_cold  = {'fcn', sci_fcn, sce_fcn};
             if isfield(vmap, 'cost_pg')
                 vmap.cost_pg        = {'fcn', gcip_fcn, gcep_fcn};
