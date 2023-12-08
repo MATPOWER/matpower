@@ -50,41 +50,13 @@ classdef dmce_line3p_mpc2 < mp.dmc_element % & mp.dmce_line3p
             vmap.ql3_to     = {'num', 0};   %% zeros
         end
 
-        function tab = create_line_construction_table(obj, lc)
+        function tab = create_line_construction_table(obj, dme, lc)
             %
             id = lc(:, 1);
             r = lc(:, 2:7);
             x = lc(:, 8:13);
             c = lc(:, 14:19);
-            table_class = mp_table_class();
-            tab = table_class(id, r, x, c);
-%             r11 = lc(:, 2);
-%             r21 = lc(:, 3);
-%             r31 = lc(:, 4);
-%             r22 = lc(:, 5);
-%             r32 = lc(:, 6);
-%             r33 = lc(:, 7);
-%             x11 = lc(:, 8);
-%             x21 = lc(:, 9);
-%             x31 = lc(:, 10);
-%             x22 = lc(:, 11);
-%             x32 = lc(:, 12);
-%             x33 = lc(:, 13);
-%             c11 = lc(:, 14);
-%             c21 = lc(:, 15);
-%             c31 = lc(:, 16);
-%             c22 = lc(:, 17);
-%             c32 = lc(:, 18);
-%             c33 = lc(:, 19);
-%             if have_feature('table')
-%                 tab = table(id, r11, r21, r31, r22, r32, r33, ...
-%                                 x11, x21, x31, x22, x32, x33, ...
-%                                 c11, c21, c31, c22, c32, c33);
-%             else
-%                 tab = mp_table( id, r11, r21, r31, r22, r32, r33, ...
-%                                     x11, x21, x31, x22, x32, x33, ...
-%                                     c11, c21, c31, c22, c32, c33);
-%             end
+            tab = dme.create_line_construction_table(id, r, x, c);
         end
 
         function dme = import(obj, dme, mpc, varargin)
@@ -98,7 +70,7 @@ classdef dmce_line3p_mpc2 < mp.dmc_element % & mp.dmce_line3p
                 dme.freq = mpc.freq;
 
                 %% import line construction table
-                dme.lc_tab = create_line_construction_table(obj, mpc.lc);
+                dme.lc_tab = create_line_construction_table(obj, dme, mpc.lc);
             end
         end
     end     %% methods

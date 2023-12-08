@@ -55,6 +55,18 @@ classdef dme_line3p < mp.dm_element
                  });
         end
 
+        function names = lc_table_var_names(obj)
+            %
+            names = {'id', 'r', 'x', 'c'};
+        end
+
+        function tab = create_line_construction_table(obj, id, r, x, c)
+            %
+            table_class = mp_table_class();
+            tab = table_class(id, r, x, c, ...
+                            'VariableNames', obj.lc_table_var_names());
+        end
+
 %         function vars = export_vars(obj)
 %             vars = {'pl1_fr', 'ql1_fr', ...
 %                     'pl2_fr', 'ql2_fr', ...
