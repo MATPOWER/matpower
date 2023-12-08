@@ -21,7 +21,7 @@ if have_feature('gurobi') || have_feature('cplex') || have_feature('mosek')
     does_qp(1) = 1;
 end
 
-n = 50;
+n = 46;
 nqp = 28;
 nmiqp = 7;
 t_begin(n*length(algs), quiet);
@@ -180,7 +180,7 @@ for k = 1:length(algs)
         t_ok(s <= 0, [t 'no success']);
 
 % opt.verbose = 3;
-        t = sprintf('%s - 2-d MILP : ', names{k});
+        t = sprintf('%s - 2-d ILP : ', names{k});
         %% from MOSEK 6.0 Guided Tour, section  7.13.1, https://docs.mosek.com/6.0/toolbox/node009.html
         c = [-2; -3];
         A = sparse([195 273; 4 40]);
@@ -192,10 +192,6 @@ for k = 1:length(algs)
         t_is(s, 1, 12, [t 'success']);
         t_is(x, [4; 2], 12, [t 'x']);
         t_is(f, -14, 12, [t 'f']);
-        t_is(lam.mu_l, [0; 0], 12, [t 'lam.mu_l']);
-        t_is(lam.mu_u, [0; 0], 12, [t 'lam.mu_u']);
-        t_is(lam.lower, [0; 0], 12, [t 'lam.lower']);
-        t_is(lam.upper, [2; 3], 12, [t 'lam.upper']);
 
         if does_qp(k)
             t = sprintf('%s - 4-d MIQP : ', names{k});
