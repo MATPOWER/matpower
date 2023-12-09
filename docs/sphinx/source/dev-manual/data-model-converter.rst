@@ -84,7 +84,7 @@ The default :meth:`import` method for a data model converter element first calls
 
 The import specifications include things like where to find the data in the data source, the number of rows, number of columns, and possibly a row index vector for rows of interest, [#]_ and a map defining how to import each column of the main data table.
 
-This map :samp:`vmap` is a struct returned by the :meth:`table_var_map` method with fields matching the table column names for the corresponding data model element :samp:`dme`. For example, if :samp:`vn` contains a variable, that is column, name, then :samp:`vmap.(vn) = {<value>}` defines how that data table column will be imported or initialized, as summarized in :numref:`tab_var_map` for different types of values.
+This map :samp:`vmap` is a struct returned by the :meth:`table_var_map() <mp.dmc_element.table_var_map>` method with fields matching the table column names for the corresponding data model element :samp:`dme`. For example, if :samp:`vn` contains a variable, that is column, name, then :samp:`vmap.(vn) = {<value>}` defines how that data table column will be imported or initialized, as summarized in :numref:`tab_var_map` for different types of values.
 
 .. _tab_var_map:
 .. list-table:: Variable Map Values
@@ -110,6 +110,8 @@ This map :samp:`vmap` is a struct returned by the :meth:`table_var_map` method w
 
        :ml:`{'fcn', ifn, efn}`
      - Assign the values returned by the import function handle in :samp:`ifn`, where the optional :samp:`efn` is the corresponding export function. The import and export functions are called as :samp:`ifn(dmce, d, spec, vn)` and :samp:`efn(dmce, dme, d, spec, vn, ridx)`, respectively, where :samp:`d` is the data source, :samp:`spec` is the import/export specification, and :samp:`ridx` is an optional vector of row indices.
+
+The :meth:`table_var_map() <mp.dmc_element.table_var_map>` in :class:`mp.dmc_element` initializes each entry to :ml:`{'col', []}` by default, so subclasses only need to assign ``vmap.(vn){2}`` for columns that map directly from a column of the data source.
 
 ..
     .. _tab_var_map2:

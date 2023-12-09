@@ -250,6 +250,10 @@ classdef (Abstract) dmc_element < handle
             % Output:
             %   vmap (struct) : variable map, see :numref:`tab_var_map` in the
             %       |MATPOWER-Dev-Manual| for details
+            %
+            % This method initializes each entry to ``{'col', []}`` by default,
+            % so subclasses only need to assign ``vmap.(vn){2}`` for columns
+            % that map directly from a column of the data source.
 
             %% initialize with vmap.(<name>) = {'col', []}, for all <name>
             names = dme.main_table_var_names();
