@@ -261,6 +261,7 @@ classdef (Abstract) nm_element < handle
             % Inputs:
             %   nm (mp.net_model) : network model object
             %   dm (mp.data_model) : data model object
+            %   idx (cell array) : indices for named and indexed variables
             %
             % Add real-valued non-voltage state variables (*z*-variables) to
             % the network model object. Implementation depends on the specific

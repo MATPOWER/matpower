@@ -374,7 +374,7 @@ classdef (Abstract) net_model < mp.nm_element & mp.element_container & mp_idx_ma
             % Inputs:
             %   nm (mp.net_model) : network model object
             %   dm (mp.data_model) : data model object
-            %   idx (integer) : index for name and indexed variables
+            %   idx (cell array) : indices for named and indexed variables
             %       *(currently unused here)*
             %
             % See also add_vvars, add_states.
