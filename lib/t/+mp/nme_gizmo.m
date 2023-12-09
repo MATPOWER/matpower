@@ -8,9 +8,6 @@ classdef (Abstract) nme_gizmo < mp.nm_element
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See https://matpower.org for more info.
 
-%     properties
-%     end
-
     methods
         function name = name(obj)
             name = 'gizmo';

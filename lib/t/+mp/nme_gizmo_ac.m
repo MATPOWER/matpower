@@ -8,10 +8,6 @@ classdef (Abstract) nme_gizmo_ac < mp.nme_gizmo% & mp.form_ac
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See https://matpower.org for more info.
 
-%     properties
-%         name = 'gizmo';
-%     end
-
     methods
         function obj = add_zvars(obj, nm, dm, idx)
             tab = obj.data_model_element(dm).tab;
