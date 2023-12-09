@@ -1,5 +1,19 @@
 classdef dme_load3p < mp.dm_element
 % mp.dme_load3p - Data model element for 3-phase load.
+%
+% Adds the following columns in the main data table:
+%
+%   ================  =========  =====================================
+%   Name              Type       Description
+%   ================  =========  =====================================
+%   ``bus``           *integer*  bus ID (``uid``) of 3-phase bus
+%   ``pd1``           *double*   phase 1 active power demand *(kW)*
+%   ``pd2``           *double*   phase 2 active power demand *(kW)*
+%   ``pd3``           *double*   phase 3 active power demand *(kW)*
+%   ``pf1``           *double*   phase 1 power factor
+%   ``pf2``           *double*   phase 2 power factor
+%   ``pf3``           *double*   phase 3 power factor
+%   ================  =========  =====================================
 
 %   MATPOWER
 %   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)

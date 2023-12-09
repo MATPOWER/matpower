@@ -1,5 +1,20 @@
 classdef dme_bus3p < mp.dm_element
 % mp.dme_bus3p - Data model element for 3-phase bus.
+%
+% Adds the following columns in the main data table:
+%
+%   ===========  =========  ========================================
+%   Name         Type       Description
+%   ===========  =========  ========================================
+%   ``type``     *integer*  bus type (1 = PQ, 2 = PV, 3 = ref, 4 = isolated)
+%   ``base_kv``  *double*   base voltage *(kV)*
+%   ``vm1``      *double*   phase 1 voltage magnitude *(p.u.)*
+%   ``vm2``      *double*   phase 2 voltage magnitude *(p.u.)*
+%   ``vm3``      *double*   phase 3 voltage magnitude *(p.u.)*
+%   ``va1``      *double*   phase 1 voltage angle *(degrees)*
+%   ``va2``      *double*   phase 2 voltage angle *(degrees)*
+%   ``va3``      *double*   phase 3 voltage angle *(degrees)*
+%   ===========  =========  ========================================
 
 %   MATPOWER
 %   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)

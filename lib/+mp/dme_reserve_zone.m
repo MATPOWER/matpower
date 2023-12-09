@@ -1,5 +1,17 @@
 classdef dme_reserve_zone < mp.dm_element & mp.dme_shared_opf
 % mp.dme_reserve_zone - Data model element for reserve zone.
+%
+% Adds the following columns in the main data table:
+%
+%   =========  =========  ==================================================
+%   Name       Type       Description
+%   =========  =========  ==================================================
+%   ``req``    *double*   zonal reserve requirement *(MW)*
+%   ``zones``  *integer*  matrix defining generators included in the zone
+%   ``prc``    *double*   zonal reserve price *(u/MW)* [#]_
+%   =========  =========  ==================================================
+%
+% .. [#] Here *u* denotes the units of the objective function, e.g. USD.
 
 %   MATPOWER
 %   Copyright (c) 2022-2023, Power Systems Engineering Research Center (PSERC)

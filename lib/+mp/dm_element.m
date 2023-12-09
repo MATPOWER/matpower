@@ -7,6 +7,19 @@ classdef (Abstract) dm_element < handle
 % A given data model element object contains the data for all instances of
 % that element type, stored in one or more table data structures.
 %
+% Defines the following columns in the main data table, which are inherited
+% by all subclasses:
+%
+%   ==============  ============  ==========================================
+%   Name            Type          Description
+%   ==============  ============  ==========================================
+%   ``uid``         *integer*     unique ID
+%   ``name``        *char array*  element name
+%   ``status``      *boolean*     true = online, false = offline
+%   ``source_uid``  *undefined*   intended for any info required to link
+%                                 back to element instance in source data
+%   ==============  ============  ==========================================
+%
 % By convention, data model element variables are named ``dme`` and data model
 % element class names begin with ``dme``.
 %

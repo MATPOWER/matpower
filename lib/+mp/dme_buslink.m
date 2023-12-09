@@ -1,5 +1,14 @@
 classdef dme_buslink < mp.dm_element
 % mp.dme_buslink - Data model element for 1-to-3-phase buslink.
+%
+% Adds the following columns in the main data table:
+%
+%   ===========  =========  ========================================
+%   Name         Type       Description
+%   ===========  =========  ========================================
+%   ``bus``      *integer*  bus ID (``uid``) of single phase bus
+%   ``bus3p``    *integer*  bus ID (``uid``) of 3-phase bus
+%   ===========  =========  ========================================
 
 %   MATPOWER
 %   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)

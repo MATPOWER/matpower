@@ -1,5 +1,22 @@
 classdef dme_bus_opf < mp.dme_bus & mp.dme_shared_opf
 % mp.dme_bus_opf - Data model element for bus for OPF.
+%
+% Adds the following columns in the main data table:
+%
+%   ============  ========  ==============================================
+%   Name          Type      Description
+%   ============  ========  ==============================================
+%   ``lam_p``     *double*  active power nodal price, i.e. shadow price on
+%                           active power balance constraint *(u/MW)* [#]_
+%   ``lam_q``     *double*  reactive power nodal price, i.e. shadow price on
+%                           reactive power balance constraint *(u/MVAr)* [1]_
+%   ``mu_vm_lb``  *double*  shadow price on voltage magnitude lower
+%                           bound *(u/p.u.)* [1]_
+%   ``mu_vm_ub``  *double*  shadow price on voltage magnitude upper
+%                           bound *(u/p.u.)* [1]_
+%   ============  ========  ==============================================
+%
+% .. [#] Here *u* denotes the units of the objective function, e.g. USD.
 
 %   MATPOWER
 %   Copyright (c) 2020-2023, Power Systems Engineering Research Center (PSERC)

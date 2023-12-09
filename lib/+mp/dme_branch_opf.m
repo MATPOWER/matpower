@@ -1,5 +1,24 @@
 classdef dme_branch_opf < mp.dme_branch & mp.dme_shared_opf
 % mp.dme_branch_opf - Data model element for branch for OPF.
+%
+% Adds the following columns in the main data table:
+%
+%   =================  ========  ===================================
+%   Name               Type      Description
+%   =================  ========  ===================================
+%   ``mu_flow_fr_ub``  *double*  shadow price on flow constraint at
+%                                "from" end *(u/MVA)* [#]_
+%   ``mu_flow_to_ub``  *double*  shadow price on flow constraint at
+%                                "to" end *(u/MVA)* [1]_
+%   ``mu_vad_lb``      *double*  shadow price on lower bound of
+%                                voltage angle difference constraint
+%                                *(u/degree)* [1]_
+%   ``mu_vad_ub``      *double*  shadow price on upper bound of
+%                                voltage angle difference constraint
+%                                *(u/degree)* [1]_
+%   =================  ========  ===================================
+%
+% .. [#] Here *u* denotes the units of the objective function, e.g. USD.
 
 %   MATPOWER
 %   Copyright (c) 2020-2023, Power Systems Engineering Research Center (PSERC)

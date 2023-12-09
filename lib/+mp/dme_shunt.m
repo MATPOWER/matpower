@@ -1,5 +1,21 @@
 classdef dme_shunt < mp.dm_element
 % mp.dme_shunt - Data model element for shunt.
+%
+% Adds the following columns in the main data table:
+%
+%   ========  =========  =====================================
+%   Name      Type       Description
+%   ========  =========  =====================================
+%   ``bus``   *integer*  bus ID (``uid``)
+%   ``gs``    *double*   :math:`g_s`, shunt conductance, specified as
+%                        nominal [#]_ active power demand *(MW)*
+%   ``bs``    *double*   :math:`b_s`, shunt susceptance, specified as
+%                        nominal [1]_ reactive power injection *(MVAr)*
+%   ``p``     *double*   :math:`p`, total active power absorbed *(MW)*
+%   ``q``     *double*   :math:`q`, total reactive power absorbed *(MVAr)*
+%   ========  =========  =====================================
+%
+% .. [#] *Nominal* means for a voltage of 1 p.u.
 
 %   MATPOWER
 %   Copyright (c) 2020-2023, Power Systems Engineering Research Center (PSERC)

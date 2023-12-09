@@ -1,5 +1,37 @@
 classdef dme_branch < mp.dm_element
 % mp.dme_branch - Data model element for branch.
+%
+% Adds the following columns in the main data table:
+%
+%   ===========  =========  ========================================
+%   Name         Type       Description
+%   ===========  =========  ========================================
+%   ``bus_fr``   *integer*  bus ID (``uid``) of "from" bus
+%   ``bus_to``   *integer*  bus ID (``uid``) of "to" bus
+%   ``r``        *double*   per unit series resistance
+%   ``x``        *double*   per unit series reactance
+%   ``g_fr``     *double*   per unit shunt conductance at "from" end
+%   ``b_fr``     *double*   per unit shunt susceptance at "from" end
+%   ``g_to``     *double*   per unit shunt conductance at "to" end
+%   ``b_to``     *double*   per unit shunt susceptance at "to" end
+%   ``sm_ub_a``  *double*   long term apparent power rating (MVA)
+%   ``sm_ub_b``  *double*   short term apparent power rating (MVA)
+%   ``sm_ub_c``  *double*   emergency apparent power rating (MVA)
+%   ``cm_ub_a``  *double*   long term current magnitude rating (MVA
+%                           equivalent at 1 p.u. voltage)
+%   ``cm_ub_b``  *double*   short term current magnitude rating (MVA
+%                           equivalent at 1 p.u. voltage)
+%   ``cm_ub_c``  *double*   emergency current magnitude rating (MVA
+%                           equivalent at 1 p.u. voltage)
+%   ``vad_lb``   *double*   voltage angle difference lower bound
+%   ``vad_ub``   *double*   voltage angle difference upper bound
+%   ``tm``       *double*   transformer off-nominal turns ratio
+%   ``ta``       *double*   transformer phase-shift angle (degrees)
+%   ``pl_fr``    *double*   active power injection at "from" end
+%   ``ql_fr``    *double*   reactive power injection at "from" end
+%   ``pl_to``    *double*   active power injection at "to" end
+%   ``ql_to``    *double*   reactive power injection at "to" end
+%   ===========  =========  ========================================
 
 %   MATPOWER
 %   Copyright (c) 2020-2023, Power Systems Engineering Research Center (PSERC)

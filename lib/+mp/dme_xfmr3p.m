@@ -1,5 +1,30 @@
 classdef dme_xfmr3p < mp.dm_element
 % mp.dme_xfmr3p - Data model element for 3-phase transformer.
+%
+% Adds the following columns in the main data table:
+%
+%   ============  =========  =============================================
+%   Name          Type       Description
+%   ============  =========  =============================================
+%   ``bus_fr``    *integer*  bus ID (``uid``) of "from" 3-phase bus
+%   ``bus_to``    *integer*  bus ID (``uid``) of "to" 3-phase bus
+%   ``r``         *double*   series resistance *(p.u.)*
+%   ``x``         *double*   series reactance *(p.u.)*
+%   ``base_kva``  *double*   transformer kVA base *(kVA)*
+%   ``base_kv``   *double*   transformer kV base *(kV)*
+%   ``pl1_fr``    *double*   phase 1 active power injection at "from" end *(kW)*
+%   ``ql1_fr``    *double*   phase 1 reactive power injection at "from" end *(kVAr)*
+%   ``pl2_fr``    *double*   phase 2 active power injection at "from" end *(kW)*
+%   ``ql2_fr``    *double*   phase 2 reactive power injection at "from" end *(kVAr)*
+%   ``pl3_fr``    *double*   phase 3 active power injection at "from" end *(kW)*
+%   ``ql3_fr``    *double*   phase 3 reactive power injection at "from" end *(kVAr)*
+%   ``pl1_to``    *double*   phase 1 active power injection at "to" end *(kW)*
+%   ``ql1_to``    *double*   phase 1 reactive power injection at "to" end *(kVAr)*
+%   ``pl2_to``    *double*   phase 2 active power injection at "to" end *(kW)*
+%   ``ql2_to``    *double*   phase 2 reactive power injection at "to" end *(kVAr)*
+%   ``pl3_to``    *double*   phase 3 active power injection at "to" end *(kW)*
+%   ``ql3_to``    *double*   phase 3 reactive power injection at "to" end *(kVAr)*
+%   ============  =========  =============================================
 
 %   MATPOWER
 %   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
@@ -10,18 +35,18 @@ classdef dme_xfmr3p < mp.dm_element
 %   See https://matpower.org for more info.
 
     properties
-        fbus    % bus index vector for "from" port (port 1) (all branches)
-        tbus    % bus index vector for "to" port (port 2) (all branches)
-        r       % series resistance (p.u.) for branches that are on
-        x       % series reactance (p.u.) for branches that are on
+        fbus    % bus index vector for "from" bus (all transformers)
+        tbus    % bus index vector for "to" bus (all transformers)
+        r       % series resistance (p.u.) for transformers that are on
+        x       % series reactance (p.u.) for transformers that are on
         base_kva%
         base_kv %
-%         g_to    %% shunt conductance (p.u.) at "to" end for branches that are on
-%         b_fr    %% shunt susceptance (p.u.) at "from" end for branches that are on
-%         b_to    %% shunt susceptance (p.u.) at "to" end for branches that are on
-%         tm      %% transformer off-nominal turns ratio for branches that are on
-%         ta      %% xformer phase-shift angle (radians) for branches that are on
-%         rate_a  %% long term flow limit (p.u.) for branches that are on
+%         g_to    %% shunt conductance (p.u.) at "to" end for transformers that are on
+%         b_fr    %% shunt susceptance (p.u.) at "from" end for transformers that are on
+%         b_to    %% shunt susceptance (p.u.) at "to" end for transformers that are on
+%         tm      %% transformer off-nominal turns ratio for transformers that are on
+%         ta      %% xformer phase-shift angle (radians) for transformers that are on
+%         rate_a  %% long term flow limit (p.u.) for transformers that are on
     end     %% properties
 
     methods

@@ -1,5 +1,20 @@
 classdef dme_bus < mp.dm_element
 % mp.dme_bus - Data model element for bus.
+%
+% Adds the following columns in the main data table:
+%
+%   ===========  =========  ========================================
+%   Name         Type       Description
+%   ===========  =========  ========================================
+%   ``base_kv``  *double*   base voltage *(kV)*
+%   ``type``     *integer*  bus type (1 = PQ, 2 = PV, 3 = ref, 4 = isolated)
+%   ``area``     *integer*  area number
+%   ``zone``     *integer*  loss zone
+%   ``vm_lb``    *double*   voltage magnitude lower bound *(p.u.)*
+%   ``vm_ub``    *double*   voltage magnitude upper bound *(p.u.)*
+%   ``va``       *double*   voltage angle *(degrees)*
+%   ``vm``       *double*   voltage magnitude *(p.u.)*
+%   ===========  =========  ========================================
 
 %   MATPOWER
 %   Copyright (c) 2020-2023, Power Systems Engineering Research Center (PSERC)

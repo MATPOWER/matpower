@@ -1,5 +1,33 @@
 classdef dme_gen < mp.dm_element
 % mp.dme_gen - Data model element for generator.
+%
+% Adds the following columns in the main data table:
+%
+%   =====================  =========  =====================================
+%   Name                   Type       Description
+%   =====================  =========  =====================================
+%   ``bus``                *integer*  bus ID (``uid``)
+%   ``vm_setpoint``        *double*   voltage magnitude setpoint *(p.u.)*
+%   ``pg_lb``              *double*   active power output lower bound *(MW)*
+%   ``pg_ub``              *double*   active power output upper bound *(MW)*
+%   ``qg_lb``              *double*   reactive power output lower bound *(MVAr)*
+%   ``qg_ub``              *double*   reactive power output upper bound *(MVAr)*
+%   ``pg``                 *double*   active power output *(MW)*
+%   ``qg``                 *double*   reactive power output *(MVAr)*
+%   ``startup_cost_cold``  *double*   cold startup cost *(USD)*
+%   ``pc1``                *double*   lower active power output of PQ
+%                                     capability curve *(MW)*
+%   ``pc2``                *double*   upper active power output of PQ
+%                                     capability curve *(MW)*
+%   ``qc1_lb``             *double*   lower bound on reactive power output
+%                                     at ``pc1`` *(MVAr)*
+%   ``qc1_ub``             *double*   upper bound on reactive power output
+%                                     at ``pc1`` *(MVAr)*
+%   ``qc2_lb``             *double*   lower bound on reactive power output
+%                                     at ``pc2`` *(MVAr)*
+%   ``qc2_ub``             *double*   upper bound on reactive power output
+%                                     at ``pc2`` *(MVAr)*
+%   =====================  =========  =====================================
 
 %   MATPOWER
 %   Copyright (c) 1996-2023, Power Systems Engineering Research Center (PSERC)

@@ -1,5 +1,22 @@
 classdef dme_gen3p < mp.dm_element
 % mp.dme_gen3p - Data model element for 3-phase generator.
+%
+% Adds the following columns in the main data table:
+%
+%   ================  =========  =====================================
+%   Name              Type       Description
+%   ================  =========  =====================================
+%   ``bus``           *integer*  bus ID (``uid``) of 3-phase bus
+%   ``vm1_setpoint``  *double*   phase 1 voltage magnitude setpoint *(p.u.)*
+%   ``vm2_setpoint``  *double*   phase 2 voltage magnitude setpoint *(p.u.)*
+%   ``vm3_setpoint``  *double*   phase 3 voltage magnitude setpoint *(p.u.)*
+%   ``pg1``           *double*   phase 1 active power output *(kW)*
+%   ``pg2``           *double*   phase 2 active power output *(kW)*
+%   ``pg3``           *double*   phase 3 active power output *(kW)*
+%   ``qg1``           *double*   phase 1 reactive power output *(kVAr)*
+%   ``qg2``           *double*   phase 2 reactive power output *(kVAr)*
+%   ``qg3``           *double*   phase 3 reactive power output *(kVAr)*
+%   ================  =========  =====================================
 
 %   MATPOWER
 %   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)

@@ -1,5 +1,26 @@
 classdef dme_reserve_gen < mp.dm_element & mp.dme_shared_opf
 % mp.dme_reserve_gen - Data model element for reserve generator.
+%
+% Adds the following columns in the main data table:
+%
+%   ==============  =========  =====================================
+%   Name            Type       Description
+%   ==============  =========  =====================================
+%   ``gen``         *integer*  ID (``uid``) of corresponding generator
+%   ``cost``        *double*   reserve cost *(u/MW)* [#]_
+%   ``qty``         *double*   available reserve quantity *(MW)*
+%   ``ramp10``      *double*   10-minute ramp rate *(MW)*
+%   ``r``           *double*   :math:`r`, reserve allocation *(MW)*
+%   ``r_lb``        *double*   lower bound on reserve allocation *(MW)*
+%   ``r_ub``        *double*   upper bound on reserve allocation *(MW)*
+%   ``total_cost``  *double*   total cost of allocated reserves *(u)* [1]_
+%   ``prc``         *double*   reserve price *(u/MVAr)* [1]_
+%   ``mu_lb``       *double*   shadow price on :math:`r` lower bound *(u/MW)* [1]_
+%   ``mu_ub``       *double*   shadow price on :math:`r` upper bound *(u/MW)* [1]_
+%   ``mu_pg_ub``    *double*   shadow price on capacity constraint *(u/MW)* [1]_
+%   ==============  =========  =====================================
+%
+% .. [#] Here *u* denotes the units of the objective function, e.g. USD.
 
 %   MATPOWER
 %   Copyright (c) 2022-2023, Power Systems Engineering Research Center (PSERC)

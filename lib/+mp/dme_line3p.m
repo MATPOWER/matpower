@@ -1,5 +1,44 @@
 classdef dme_line3p < mp.dm_element
 % mp.dme_line3p - Data model element for 3-phase line.
+%
+% Adds the following columns in the main data table:
+%
+%   ===========  =========  =============================================
+%   Name         Type       Description
+%   ===========  =========  =============================================
+%   ``bus_fr``   *integer*  bus ID (``uid``) of "from" 3-phase bus
+%   ``bus_to``   *integer*  bus ID (``uid``) of "to" 3-phase bus
+%   ``lc``       *double*   index into line construction table
+%   ``len``      *double*   line length *(?)*
+%   ``pl1_fr``   *double*   phase 1 active power injection at "from" end *(kW)*
+%   ``ql1_fr``   *double*   phase 1 reactive power injection at "from" end *(kVAr)*
+%   ``pl2_fr``   *double*   phase 2 active power injection at "from" end *(kW)*
+%   ``ql2_fr``   *double*   phase 2 reactive power injection at "from" end *(kVAr)*
+%   ``pl3_fr``   *double*   phase 3 active power injection at "from" end *(kW)*
+%   ``ql3_fr``   *double*   phase 3 reactive power injection at "from" end *(kVAr)*
+%   ``pl1_to``   *double*   phase 1 active power injection at "to" end *(kW)*
+%   ``ql1_to``   *double*   phase 1 reactive power injection at "to" end *(kVAr)*
+%   ``pl2_to``   *double*   phase 2 active power injection at "to" end *(kW)*
+%   ``ql2_to``   *double*   phase 2 reactive power injection at "to" end *(kVAr)*
+%   ``pl3_to``   *double*   phase 3 active power injection at "to" end *(kW)*
+%   ``ql3_to``   *double*   phase 3 reactive power injection at "to" end *(kVAr)*
+%   ===========  =========  =============================================
+%
+% The line construction table in the :attr:`lc` property is defined as a
+% table with the following columns:
+%
+%   ======  =========  ==================================================
+%   Name    Type       Description
+%   ======  =========  ==================================================
+%   ``id``  *integer*  unique line construction ID, referenced from
+%                      ``lc`` column of main data table
+%   ``r``   *double*   6 resistence parameters for forming symmetric 3x3
+%                      series impedance matrix
+%   ``x``   *double*   6 reactance parameters for forming symmetric 3x3
+%                      series impedance matrix
+%   ``c``   *double*   6 susceptance parameters for forming symmetric 3x3
+%                      shunt susceptance matrix
+%   ======  =========  ==================================================
 
 %   MATPOWER
 %   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
@@ -10,8 +49,8 @@ classdef dme_line3p < mp.dm_element
 %   See https://matpower.org for more info.
 
     properties
-        fbus    % bus index vector for "from" port (port 1) (all lines)
-        tbus    % bus index vector for "to" port (port 2) (all lines)
+        fbus    % bus index vector for "from" bus (all lines)
+        tbus    % bus index vector for "to" bus (all lines)
         freq    % system frequency, in Hz
         lc      % index into lc_tab for lines that are on
         len     % length for lines that are on

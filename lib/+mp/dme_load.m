@@ -1,5 +1,30 @@
 classdef dme_load < mp.dm_element
 % mp.dme_load - Data model element for load.
+%
+% Adds the following columns in the main data table:
+%
+%   ========  =========  =====================================
+%   Name      Type       Description
+%   ========  =========  =====================================
+%   ``bus``   *integer*  bus ID (``uid``)
+%   ``pd``    *double*   :math:`p_p`, active constant power demand *(MW)*
+%   ``qd``    *double*   :math:`q_p`, reactive constant power demand *(MVAr)*
+%   ``pd_i``  *double*   :math:`p_i`, active nominal [#]_ constant current demand *(MW)*
+%   ``qd_i``  *double*   :math:`q_i`, reactive nominal [1]_ constant current demand *(MVAr)*
+%   ``pd_z``  *double*   :math:`p_z`, active nominal [1]_ constant impedance demand *(MW)*
+%   ``qd_z``  *double*   :math:`q_z`, reactive nominal [1]_ constant impedance demand *(MVAr)*
+%   ``p``     *double*   :math:`p`, total active demand *(MW)*
+%   ``q``     *double*   :math:`q`, total reactive demand *(MVAr)*
+%   ========  =========  =====================================
+%
+% .. [#] *Nominal* means for a voltage of 1 p.u.
+%
+% Implements a ZIP load model, where each load has three components, and
+% total demand for the load *i* is given by
+%
+% .. math::
+%       \cscal{s} &= \cscal{s}_p + \cscal{s}_i |\cscal{v}| + \cscal{s}_z |\cscal{v}|^2 \\
+%       p + j q &= (p_p + j q_p) + (p_i + j q_i) |\cscal{v}| + (p_z + j q_z) |\cscal{v}|^2
 
 %   MATPOWER
 %   Copyright (c) 2020-2023, Power Systems Engineering Research Center (PSERC)
