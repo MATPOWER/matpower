@@ -41,21 +41,28 @@ classdef (Abstract) element_container < handle
             %   obj.modify_element_classes(class_list)
             %
             % Input:
-            %   class_list (cell array) : each element is one of the following:
+            %   class_list (cell array) : list of **element class modifiers**,
+            %       where each modifier is one of the following:
             %
-            %       1.  a handle to a constructor to **append** to
-            %           ``obj.element_classes``, *or*
-            %       2.  a 2-element cell array ``{A,B}`` where ``A`` is a
-            %           handle to a constructor to **replace** any element ``E``
-            %           in the list for which ``isa(E(), B)`` is ``true``,
-            %           i.e. ``B`` is a char array, *or*
-            %       3.  a char array ``B``, indicating to **remove** any
-            %           element ``E`` in the list for which ``isa(E(), B)``
-            %           is ``true``
+            %         1.  a handle to a constructor to **append** to
+            %             ``obj.element_classes``, *or*
+            %         2.  a char array ``B``, indicating to **remove** any
+            %             element ``E`` in the list for which ``isa(E(), B)``
+            %             is ``true``, *or*
+            %         3.  a 2-element cell array ``{A,B}`` where ``A`` is a
+            %             handle to a constructor to **replace** any element ``E``
+            %             in the list for which ``isa(E(), B)`` is ``true``,
+            %             i.e. ``B`` is a char array
             %
-            % This method can be used to modify the list of element
-            % constructors in the ``element_classes`` property by appending,
-            % replacing, or removing entries.
+            %       Also accepts a single element class modifier of type 1
+            %       or 2 *(A single type 3 modifier has to be enclosed
+            %       in a single-element cell array to keep it from being
+            %       interpreted as a list of 2 modifiers)*.
+            %
+            % Can be used to modify the list of element constructors in the
+            % :attr:`element_classes` property by appending, removing, or
+            % replacing entries. See :numref:`tab_element_class_modifiers`
+            % in the |MATPOWER-Dev-Manual| for more information.
 
             if ~iscell(class_list)
                 class_list = {class_list};

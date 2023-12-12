@@ -67,11 +67,11 @@ The task class has methods that determine the classes used to create the data mo
 Element Classes
 ^^^^^^^^^^^^^^^
 
-Each of the element container objects, that is the data model converter and the 3 model objects, contains a set of *elements*. The classes used to construct these elements are determined by the container class. Each container class inherits from :class:`mp.element_container`, and as such it has an :attr:`element_classes` property, which is a cell array populated by the  constructor with handles to constructors for the elements. This means that a container subclass can, by overriding its constructor, modify the list of element classes provided by its parent.
+Each of the element container objects, that is the data model converter and the 3 model objects, contains a set of *elements*. The classes used to construct these elements are determined by the container class. Each container class inherits from :class:`mp.element_container`, and as such it has an :attr:`element_classes <mp.element_container.element_classes>` property, which is a cell array populated by the  constructor with handles to constructors for the elements. This means that a container subclass can, by overriding its constructor, modify the list of element classes provided by its parent.
 
-The elements are instantiated by a call to the container object's :meth:`build` method, so the resulting set can be customized at runtime by modifying the list in :attr:`element_classes` after the container object is created and before its :meth:`build` method is called.
+The elements are instantiated by a call to the container object's :meth:`build` method, so the resulting set can be customized at runtime by modifying the list in :attr:`element_classes <mp.element_container.element_classes>` after the container object is created and before its :meth:`build` method is called.
 
-This is done using **element class modifiers**, specified either by |MATPOWER| extensions or |MATPOWER| options. There are 3 types of element class modifiers, for adding, deleting or replacing an entry in an :attr:`element_classes` property. The 3 types are described in :numref:`tab_element_class_modifiers`.
+This is done using **element class modifiers**, specified either by |MATPOWER| extensions or |MATPOWER| options. There are 3 types of element class modifiers, for adding, deleting or replacing an entry in an :attr:`element_classes <mp.element_container.element_classes>` property. The 3 types are described in :numref:`tab_element_class_modifiers`.
 
 
 .. _tab_element_class_modifiers:
@@ -88,12 +88,12 @@ This is done using **element class modifiers**, specified either by |MATPOWER| e
      - Appends :ml:`@new_class` to the end of the list.
    * - **delete**
      - :ml:`'old_class'`
-     - For each element :ml:`E` in the list, if :ml:`isa(E, 'old_class')` is true, element :ml:`E` is deleted from the list.
+     - For each element :ml:`E` in the list, if :ml:`isa(E(), 'old_class')` is true, element :ml:`E` is deleted from the list.
    * - **replace**
      - :ml:`{@new_class, 'old_class'}`
-     - For each element :ml:`E` in the list, if :ml:`isa(E, 'old_class')` is true, element :ml:`E` is replaced with :ml:`@new_class`.
+     - For each element :ml:`E` in the list, if :ml:`isa(E(), 'old_class')` is true, element :ml:`E` is replaced with :ml:`@new_class`.
 
-Typically, multiple element class modifiers can be provided in a cell array and they are processed sequentially to modify the existing list by the :meth:`modify_element_classes` from :class:`mp.element_container`.
+Typically, multiple element class modifiers can be provided in a cell array and they are processed sequentially to modify the existing list by the :meth:`modify_element_classes() <mp.element_container.modify_element_classes>` from :class:`mp.element_container`.
 
 
 Customization via |MATPOWER| Options
