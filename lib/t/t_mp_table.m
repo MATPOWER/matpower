@@ -20,7 +20,7 @@ else
     verbose = 1;
 end
 
-nt = 166;
+nt = 169;
 skip_tests_for_tablicious = 1;
 table_classes = {@mp_table};
 class_names = {'mp_table'};
@@ -85,6 +85,14 @@ for k = 1:nc
     t_is(size(T(5,4)), [1 1], 12, [t 'T(i,j) : size']);
     t_is(size(T(4,6)), [1 1], 12, [t 'T(i,j) : size']);
 % show_me(T(5,4));
+
+    t = sprintf('%s : istable()', cls);
+    t_ok(istable(T), t);
+
+    t = sprintf('%s : isempty() : ', cls);
+    t_ok(~isempty(T), [t 'false']);
+    T1 = table_class();
+    t_ok(isempty(T1), [t 'true']);
 
     t = sprintf('%s : constructor - ind vars, w/names : ', cls);
     if skip_oct_tab || skip_ml_tab

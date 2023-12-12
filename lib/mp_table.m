@@ -12,9 +12,14 @@ classdef mp_table
 % is compatible with MATLAB's built-in table class. Other features,
 % such as table joining, etc., are not implemented.
 %
+% .. important::
+%
+%   Since the dot syntax ``T.<var_name>`` is used to access table variables,
+%   you must use a functional syntax ``<method>(T,...)``, as opposed to
+%   the object-oriented ``T.<method>(...)``, to call mp_table methods.
+%
 % mp_table Methods:
 %   * mp_table - construct object
-%   * copy - create a duplicate of the object
 %   * istable - true for mp_table objects
 %   * size - dimensions of table
 %   * isempty - true if table has no columns or no rows
@@ -94,43 +99,14 @@ classdef mp_table
             end
         end
 
-        function new_obj = copy(obj)
-            % Create a duplicate of the object.
-            % ::
-            %
-            %   new_T = T.copy();
-            new_obj = eval(class(obj));  %% create new object
-
-            %% make copies of properties
-            if have_feature('octave')
-                s1 = warning('query', 'Octave:classdef-to-struct');
-                warning('off', 'Octave:classdef-to-struct');
-            end
-            props = fieldnames(obj);
-            if have_feature('octave')
-                warning(s1.state, 'Octave:classdef-to-struct');
-            end
-            for k = 1:length(props)
-                new_obj.(props{k}) = obj.(props{k});
-            end
-
-            %% make copies of values
-            for k = 1:length(obj.Properties.VariableValues)
-                if isobject(obj.Properties.VariableValues{k}) && ...
-                        ismethod(obj.Properties.VariableValues{k}, 'copy')
-                    new_obj.Properties.VariableValues{k} = ...
-                        copy(obj.Properties.VariableValues{k});
-                end
-            end
-        end
-
         function TorF = istable(obj)
             % Returns true.
+            % ::
+            %
+            %   TorF = istable(T);
             %
             % Unfortunately, this is not really useful until Octave
             % implements a built-in istable() that this can override.
-            %
-            % See also istable.
             TorF = true;
         end
 
@@ -138,9 +114,9 @@ classdef mp_table
             % Returns dimensions of table.
             % ::
             %
-            %   [m, n] = T.size();
-            %   m = T.size(1);
-            %   n = T.size(2);
+            %   [m, n] = size(T);
+            %   m = size(T, 1);
+            %   n = size(T, 2);
             varargout = cell(1, nargout);
             w = length(obj.Properties.VariableValues);
             if w
@@ -167,6 +143,9 @@ classdef mp_table
 
         function TorF = isempty(obj)
             % Returns ``true`` if the table has no columns or no rows.
+            % ::
+            %
+            %   TorF = isempty(T)
             TorF = prod(size(obj)) == 0;
         end
 
@@ -642,7 +621,7 @@ classdef mp_table
             end
             fprintf('\n');
         end
-    end     %% methods
+    end     %% methods (public)
 
     methods (Access=protected)
         function [var_names, row_names, dim_names, args] = ...
@@ -667,5 +646,5 @@ classdef mp_table
                 end
             end
         end
-    end     %% methods
+    end     %% methods (protected)
 end         %% classdef
