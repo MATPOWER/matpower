@@ -13,6 +13,14 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 since 8.0b1
 -----------
 
+#### 12/19/23
+  - Add a 533-bus distribution system based on real system data from the
+    local DSO Kraftringen in southern Sweden, including two net-load
+    scenarios.
+    *Thanks to Gabriel Malmer.*
+    - `case533mt_lo` – 533-bus case, DSO Kraftringen, _low_ net-load scenario
+    - `case533mt_lo` – 533-bus case, DSO Kraftringen, _high_ net-load scenario
+
 #### 12/5/23
   - Fix [bug #210][36] where radial power flow methods resulted in 
     numerical error with multiple generators at a bus.
