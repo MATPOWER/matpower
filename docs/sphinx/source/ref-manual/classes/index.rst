@@ -237,6 +237,7 @@ Miscellaneous Classes
    :name: sec_misc_classes
 
    mp_table
+   mp_table_subclass
    mp/element_container
    mp/mapped_array
    mp/NODE_TYPE

@@ -53,15 +53,15 @@ classdef mp_table
             % ::
             %
             %   T = mp_table(var1, var2, ...);
-            %   T = mp_table(..., 'VariableNames', {name1, name2, ...}});
-            %   T = mp_table(..., 'RowNames', {name1, name2, ...}});
-            %   T = mp_table(..., 'DimensionNames', {name1, name2, ...}});
+            %   T = mp_table(..., 'VariableNames', {name1, name2, ...});
+            %   T = mp_table(..., 'RowNames', {name1, name2, ...});
+            %   T = mp_table(..., 'DimensionNames', {name1, name2, ...});
             args = varargin;
 
             if nargin
                 %% extract named arguments
                 [var_names, row_names, dim_names, args] = ...
-                    extract_named_args(obj, args);
+                    mp_table.extract_named_args(args);
 
                 %% set default variable names
                 nv = length(args);          %% number of variables
@@ -623,10 +623,19 @@ classdef mp_table
         end
     end     %% methods (public)
 
-    methods (Access=protected)
+    methods (Static)
         function [var_names, row_names, dim_names, args] = ...
-                extract_named_args(obj, args)
-            % used to extract named arguments pass to constructor
+                extract_named_args(args)
+            % Extracts special named constructor arguments.
+            % ::
+            %
+            %   [var_names, row_names, dim_names, args] = extract_named_args(var1, var2, ...);
+            %   [...] = extract_named_args(..., 'VariableNames', {name1, name2, ...});
+            %   [...] = extract_named_args(..., 'RowNames', {name1, name2, ...});
+            %   [...] = extract_named_args(..., 'DimensionNames', {name1, name2, ...});
+            %
+            % Used to extract named arguments, ``'VariableNames'``, 
+            % ``'RowNames'``, and ``'DimensionNames'``, to pass to constructor.
             var_names = {};
             row_names = {};
             dim_names = {};
