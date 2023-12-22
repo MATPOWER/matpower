@@ -157,7 +157,7 @@ classdef dmce_gen_mpc2 < mp.dmc_element % & mp.dmce_gen
                         gc(pwl1, COST:COST+1) = [m b];
                     end
 
-                    val = obj.gencost2cost_table(gc, dme);
+                    val = mp.dmce_gen_mpc2.gencost2cost_table(gc);
                 else
                     val = [];
                 end
@@ -175,16 +175,20 @@ classdef dmce_gen_mpc2 < mp.dmc_element % & mp.dmce_gen
             if dme.have_cost()
                 [pcost, qcost] = pqcost(mpc.gencost, spec.nr);
                 if p_or_q == 'P'
-                    pcost = obj.cost_table2gencost(dme, pcost, dme.tab.cost_pg, ridx);
+                    pcost = mp.dmce_gen_mpc2.cost_table2gencost( ...
+                                pcost, dme.tab.cost_pg, ridx);
                     mpc.gencost(1:spec.nr, 1:size(pcost, 2)) = pcost;
                 elseif ismember('cost_qg', dme.tab.Properties.VariableNames)
-                    qcost = obj.cost_table2gencost(dme, qcost, dme.tab.cost_qg, ridx);
+                    qcost = mp.dmce_gen_mpc2.cost_table2gencost( ...
+                                qcost, dme.tab.cost_qg, ridx);
                     mpc.gencost(spec.nr+1:2*spec.nr, 1:size(qcost, 2)) = qcost;
                 end
             end
         end
+    end     %% methods
 
-        function tab = gencost2cost_table(obj, gencost, dme)
+    methods (Static)
+        function tab = gencost2cost_table(gencost)
             %
 
             %% define named indices into data matrices
@@ -239,7 +243,7 @@ classdef dmce_gen_mpc2 < mp.dmc_element % & mp.dmce_gen
             tab = mp.cost_table(npoly, p, npwl, qty, cst);
         end
 
-        function gencost = cost_table2gencost(obj, dme, gencost0, cost, ridx)
+        function gencost = cost_table2gencost(gencost0, cost, ridx)
             %
 
             %% define named indices into data matrices
@@ -277,5 +281,5 @@ classdef dmce_gen_mpc2 < mp.dmc_element % & mp.dmce_gen
                 end
             end
         end
-    end     %% methods
+    end     %% methods (Static)
 end         %% classdef
