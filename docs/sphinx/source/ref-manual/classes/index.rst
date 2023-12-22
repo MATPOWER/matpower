@@ -238,6 +238,7 @@ Miscellaneous Classes
 
    mp_table
    mp_table_subclass
+   mp/cost_table
    mp/element_container
    mp/mapped_array
    mp/NODE_TYPE

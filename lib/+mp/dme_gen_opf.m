@@ -3,44 +3,23 @@ classdef dme_gen_opf < mp.dme_gen & mp.dme_shared_opf
 %
 % Adds the following columns in the main data table:
 %
-%   ============  ========  =====================================
-%   Name          Type      Description
-%   ============  ========  =====================================
-%   ``cost_pg``   *table*   active power cost *(u/MW)* [#]_
-%   ``cost_qg``   *table*   reactive power cost *(u/MVAr)* [1]_
-%   ``mu_pg_lb``  *double*  shadow price on active power output lower bound *(u/MW)* [1]_
-%   ``mu_pg_ub``  *double*  shadow price on active power output upper bound *(u/MW)* [1]_
-%   ``mu_qg_lb``  *double*  shadow price on reactive power output lower bound *(u/MVAr)* [1]_
-%   ``mu_qg_ub``  *double*  shadow price on reactive power output upper bound *(u/MVAr)* [1]_
-%   ============  ========  =====================================
+%   ============  ===============  =====================================
+%   Name          Type             Description
+%   ============  ===============  =====================================
+%   ``cost_pg``   *mp.cost_table*  active power cost *(u/MW)* [#]_
+%   ``cost_qg``   *mp.cost_table*  reactive power cost *(u/MVAr)* [1]_
+%   ``mu_pg_lb``  *double*         shadow price on active power output lower bound *(u/MW)* [1]_
+%   ``mu_pg_ub``  *double*         shadow price on active power output upper bound *(u/MW)* [1]_
+%   ``mu_qg_lb``  *double*         shadow price on reactive power output lower bound *(u/MVAr)* [1]_
+%   ``mu_qg_ub``  *double*         shadow price on reactive power output upper bound *(u/MVAr)* [1]_
+%   ============  ===============  =====================================
 %
 % .. [#] Here *u* denotes the units of the objective function, e.g. USD.
 %
 % The cost tables ``cost_pg`` and ``cost_qg`` are defined as tables with the
 % following columns:
 %
-%   =============  =========  =====================================
-%   Name           Type       Description
-%   =============  =========  =====================================
-%   ``poly_n``     *integer*  :math:`n_\mathrm{poly}`, number of coefficients
-%                             in polynomial cost curve,
-%                             :math:`f_\mathrm{poly}(x) = c_0 + c_1 x... + c_N x^N`,
-%                             where :math:`n_\mathrm{poly} = N + 1`
-%   ``poly_coef``  *double*   matrix of coefficients :math:`c_j`, of polynomial
-%                             cost :math:`f_\mathrm{poly}(x)`, where :math:`c_j`
-%                             is found in column :math:`j+1`
-%   ``pwl_n``      *double*   :math:`n_\mathrm{pwl}`, number of data points
-%                             :math:`(x_1, f_1), (x_2, f_2), ..., (x_N, f_N)`
-%                             defining a piecewise linear cost curve,
-%                             :math:`f_\mathrm{pwl}(x)` where
-%                             :math:`N = n_\mathrm{pwl}`
-%   ``pwl_qty``    *double*   matrix of *quantiy* coordinates :math:`x_j` for
-%                             piecwise linear cost :math:`f_\mathrm{pwl}(x)`,
-%                             where :math:`x_j` is found in column :math:`j`
-%   ``pwl_cost``   *double*   matrix of *cost* coordinates :math:`f_j` for
-%                             piecwise linear cost :math:`f_\mathrm{pwl}(x)`,
-%                             where :math:`f_j` is found in column :math:`j`
-%   =============  =========  =====================================
+% See also mp.cost_table.
 
 %   MATPOWER
 %   Copyright (c) 1996-2023, Power Systems Engineering Research Center (PSERC)
@@ -65,18 +44,6 @@ classdef dme_gen_opf < mp.dme_gen & mp.dme_shared_opf
             %
             vars = horzcat( export_vars@mp.dme_gen(obj), ...
                 {'vm_setpoint', 'mu_pg_lb', 'mu_pg_ub', 'mu_qg_lb', 'mu_qg_ub'} );
-        end
-
-        function names = cost_table_var_names(obj)
-            %
-            names = {'poly_n', 'poly_coef', 'pwl_n', 'pwl_qty', 'pwl_cost'};
-        end
-
-        function tab = create_cost_table(obj, poly_n, poly_coef, pwl_n, pwl_qty, pwl_cost)
-            %
-            table_class = mp_table_class();
-            tab = table_class(poly_n, poly_coef, pwl_n, pwl_qty, pwl_cost, ...
-                            'VariableNames', obj.cost_table_var_names());
         end
 
         function TorF = have_cost(obj)

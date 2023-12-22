@@ -236,7 +236,7 @@ classdef dmce_gen_mpc2 < mp.dmc_element % & mp.dmce_gen
                     cst(ipwl, :) = gencost(ipwl, COST+1:2:m);
                 end
             end
-            tab = dme.create_cost_table(npoly, p, npwl, qty, cst);
+            tab = mp.cost_table(npoly, p, npwl, qty, cst);
         end
 
         function gencost = cost_table2gencost(obj, dme, gencost0, cost, ridx)
