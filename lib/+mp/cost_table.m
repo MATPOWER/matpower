@@ -49,9 +49,10 @@ classdef cost_table < mp_table_subclass
 %   See https://matpower.org for more info.
 
     methods
-        function obj = cost_table(poly_n, poly_coef, pwl_n, pwl_qty, pwl_cost)
+        function obj = cost_table(varargin)
             % ::
             %
+            %   T = cost_table()
             %   T = cost_table(poly_n, poly_coef, pwl_n, pwl_qty, pwl_cost)
             %
             % *For descriptions of the inputs, see the corresponding column in
@@ -67,9 +68,15 @@ classdef cost_table < mp_table_subclass
             % Outputs:
             %   T (mp.cost_table) : the cost table object
 
-            obj.tab = mp_table_subclass(poly_n, poly_coef, pwl_n, pwl_qty, pwl_cost, ...
-                'VariableNames', ...
-                {'poly_n', 'poly_coef', 'pwl_n', 'pwl_qty', 'pwl_cost'});
+            if nargin == 0
+                args = {};
+            elseif nargin == 5
+                args = {varargin{:}, 'VariableNames', ...
+                    {'poly_n', 'poly_coef', 'pwl_n', 'pwl_qty', 'pwl_cost'}};
+            else
+                error('mp.cost_table: constructor must be called with 0 or 5 arguments.')
+            end
+            obj@mp_table_subclass(args{:});
         end
     end     %% methods
 end         %% classdef
