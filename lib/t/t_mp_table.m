@@ -21,8 +21,8 @@ else
 end
 
 skip_tests_for_tablicious = 1;
-table_classes = {@mp_table, @mp_table_subclass};
-class_names = {'mp_table', 'mp_table_subclass'};
+table_classes = {@mp_table, @mp_table_subclass, @mp_foo_table};
+class_names = {'mp_table', 'mp_table_subclass', 'mp_foo_table'};
 if have_feature('table')
     table_classes = {@table, table_classes{:}};
     class_names = {'table', class_names{:}};
@@ -71,8 +71,12 @@ for k = 1:nc
     t_is(size(T, 2), 6, 12, [t 'sz = size(T, 2)']);
     [nr, nz] = size(T);
     t_is([nr, nz], [6 6], 12, [t '[nr, nz] = size(T)']);
-    t_ok(isequal(T.Properties.VariableNames, ...
-        {'var1', 'var2', 'var3', 'var4', 'Var5', 'var6'}), [t 'VariableNames'] );
+    if isa(T, 'mp_foo_table')
+        t_skip(1, 'constructor does not capture var names');
+    else
+        t_ok(isequal(T.Properties.VariableNames, ...
+            {'var1', 'var2', 'var3', 'var4', 'Var5', 'var6'}), [t 'VariableNames'] );
+    end
     t_ok(isempty(T.Properties.RowNames), [t 'RowNames'] );
     t_ok(isequal(T.Properties.DimensionNames, {'Row', 'Variables'}), ...
         [t 'DimensionNames'] );
@@ -548,31 +552,36 @@ for k = 1:nc
     for k2 = 1:nc
         nested_table_class = table_classes{k2};
         nstcls = upper(class_names{k2});
-    
+
         t = sprintf('%s . %s : nested tables : ', cls, nstcls);
         T1 = nested_table_class([1;2;3],[4;5;6]);
         T2 = nested_table_class({'one';'two';'three'},{'four';'five';'six'});
-        T3 = table_class([10;20;30],{'uno';'dos';'tres'}, T1, T2, ...
-            'VariableNames', {'v1', 'v2', 'T1', 'T2'});
-        t_ok(isequal(T3.T1, T1), [t 'T.T1 == T1']);
-        t_ok(isequal(T3.T2, T2), [t 'T.T2 == T2']);
-        if have_feature('matlab') && isa(T1, 'mp_table_subclass') && ...
-                                     isa(T3, 'mp_table_subclass')
-            t_skip(4, 'multiple indexing of nested mp_table_subclasses');
+        if have_feature('octave') && isa(T, 'mp_table_subclass') && ...
+                                     isa(T1, 'mp_foo_table')
+            t_skip(8, 'avoid https://savannah.gnu.org/bugs/index.php?65037');
         else
-            t_ok(isequal(T3.T1([1;3], :), T1([1;3], :)), [t 'T.T1(ii, :) == T1(ii, :)']);
-            t_ok(isequal(T3.T2([1;3], :), T2([1;3], :)), [t 'T.T2(ii, :) == T2(ii, :)']);
-            t_ok(isequal(T3.T1.Var1, T1.Var1), [t 'T.T1.Var1 == T1.Var1']);
-            t_ok(isequal(T3.T2.Var2([1;3], :), T2.Var2([1;3], :)), [t 'T.T2.Var2(ii) == T.T2.Var2(ii)']);
-        end
-        %% check for Octave trouble in subsref
-        if (skip_oct_tab && isa(T3, 'table')) || skip_oct_tab2
-            t_skip(2, 'mp_table_subclass does not handle this yet');
-        else
-            T4 = T3(:, :);
-            T5 = T3([1;2;3], :);
-            t_ok(isequal(T3, T4), [t 'T == T(:, :))']);
-            t_ok(isequal(T3, T5), [t 'T == T(ii, :))']);
+            T3 = table_class([10;20;30],{'uno';'dos';'tres'}, T1, T2, ...
+                'VariableNames', {'v1', 'v2', 'T1', 'T2'});
+            t_ok(isequal(T3.T1, T1), [t 'T.T1 == T1']);
+            t_ok(isequal(T3.T2, T2), [t 'T.T2 == T2']);
+            if have_feature('matlab') && isa(T1, 'mp_table_subclass') && ...
+                                         isa(T3, 'mp_table_subclass')
+                t_skip(4, 'multiple indexing of nested mp_table_subclasses');
+            else
+                t_ok(isequal(T3.T1([1;3], :), T1([1;3], :)), [t 'T.T1(ii, :) == T1(ii, :)']);
+                t_ok(isequal(T3.T2([1;3], :), T2([1;3], :)), [t 'T.T2(ii, :) == T2(ii, :)']);
+                t_ok(isequal(T3.T1.Var1, T1.Var1), [t 'T.T1.Var1 == T1.Var1']);
+                t_ok(isequal(T3.T2.Var2([1;3], :), T2.Var2([1;3], :)), [t 'T.T2.Var2(ii) == T.T2.Var2(ii)']);
+            end
+            %% check for Octave trouble in subsref
+            if (skip_oct_tab && isa(T3, 'table')) || skip_oct_tab2
+                t_skip(2, 'mp_table_subclass does not handle this yet');
+            else
+                T4 = T3(:, :);
+                T5 = T3([1;2;3], :);
+                t_ok(isequal(T3, T4), [t 'T == T(:, :))']);
+                t_ok(isequal(T3, T5), [t 'T == T(ii, :))']);
+            end
         end
     end
 end

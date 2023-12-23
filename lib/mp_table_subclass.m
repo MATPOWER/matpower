@@ -21,15 +21,20 @@ classdef mp_table_subclass
 % The class of the contained table object is either :class:`table` or mp_table
 % and is determined by mp_table_class.
 %
-% .. admonition:: Limitation
+% .. admonition:: Limitations
 %
-%   In MATLAB, when nesting an mp_table_subclass object within another
-%   mp_table_subclass object, one cannot use multi-level indexing directly.
-%   E.g. If ``T2`` is a variable in ``T1`` and ``x`` is a variable in ``T2``,
-%   attempting ``x = T1.T2.x`` will result in an error. The indexing must
-%   be done in multiple steps ``T2 = T1.T2; x = T2.x``. Note: This only
-%   applies to MATLAB, where the contained table is a :class:`table`. It works
-%   just fine in Octave, where the contained table is an :class:`mp_table`.
+%   1. The Octave bug mentioned above also affects tables that inherit from
+%      mp_table_subclass. That is, such tables can be nested inside tables
+%      of type :class:`table` or mp_table, but not inside tables that are
+%      or inherit from mp_table_subclass.
+%   2. In MATLAB, when nesting an mp_table_subclass object within another
+%      mp_table_subclass object, one cannot use multi-level indexing directly.
+%      E.g. If ``T2`` is a variable in ``T1`` and ``x`` is a variable in
+%      ``T2``, attempting ``x = T1.T2.x`` will result in an error. The
+%      indexing must be done in multiple steps ``T2 = T1.T2; x = T2.x``.
+%      Note: This only applies to MATLAB, where the contained table is a
+%      :class:`table`. It works just fine in Octave, where the contained
+%      table is an :class:`mp_table`.
 %
 % .. important::
 %
