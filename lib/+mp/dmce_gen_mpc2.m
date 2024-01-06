@@ -36,8 +36,8 @@ classdef dmce_gen_mpc2 < mp.dmc_element % & mp.dmce_gen
                 QC2MIN, QC2MAX, RAMP_AGC, RAMP_10, RAMP_30, RAMP_Q, APF] = idx_gen;
 
             sci_fcn = @(ob, mpc, spec, vn)start_cost_import(ob, mpc, spec, vn);
-            gcip_fcn = @(ob, mpc, spec, vn)gen_cost_import(ob, dme, mpc, spec, vn, 'P');
-            gciq_fcn = @(ob, mpc, spec, vn)gen_cost_import(ob, dme, mpc, spec, vn, 'Q');
+            gcip_fcn = @(ob, mpc, spec, vn)gen_cost_import(ob, mpc, spec, vn, 'P');
+            gciq_fcn = @(ob, mpc, spec, vn)gen_cost_import(ob, mpc, spec, vn, 'Q');
             sce_fcn = @(ob, dme, mpc, spec, vn, ridx)start_cost_export(ob, dme, mpc, spec, vn, ridx);
             gcep_fcn = @(ob, dme, mpc, spec, vn, ridx)gen_cost_export(ob, dme, mpc, spec, vn, 'P', ridx);
             gceq_fcn = @(ob, dme, mpc, spec, vn, ridx)gen_cost_export(ob, dme, mpc, spec, vn, 'Q', ridx);
@@ -111,7 +111,7 @@ classdef dmce_gen_mpc2 < mp.dmc_element % & mp.dmce_gen
             end
         end
 
-        function val = gen_cost_import(obj, dme, mpc, spec, vn, p_or_q)
+        function val = gen_cost_import(obj, mpc, spec, vn, p_or_q)
             %
             if isfield(mpc, 'gencost') && spec.nr
                 %% define named indices into data matrices
@@ -168,9 +168,6 @@ classdef dmce_gen_mpc2 < mp.dmc_element % & mp.dmce_gen
 
         function mpc = gen_cost_export(obj, dme, mpc, spec, vn, p_or_q, ridx)
             %
-
-            %% define named indices into data matrices
-            [PW_LINEAR, POLYNOMIAL, MODEL, STARTUP, SHUTDOWN, NCOST, COST] = idx_cost;
 
             if dme.have_cost()
                 [pcost, qcost] = pqcost(mpc.gencost, spec.nr);
