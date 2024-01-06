@@ -36,10 +36,10 @@ classdef mme_reserve_zone < mp.mm_element
 
             %% get reserve zone prices
             ll = mm.get_idx('lin');
-            prc = mm.soln.lambda.mu_l(ll.i1.Rreq:ll.iN.Rreq) / dm.base_mva;
+            prc = mm.soln.lambda.mu_l(ll.i1.Rreq:ll.iN.Rreq);
 
             %% update in the data model
-            dme.tab.prc(dme.on) = prc;
+            dme.tab.prc(dme.on) = prc / dm.base_mva;
         end
     end     %% methods
 end         %% classdef

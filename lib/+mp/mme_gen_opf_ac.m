@@ -248,16 +248,16 @@ classdef mme_gen_opf_ac < mp.mme_gen_opf
 
             %% generator active power
             ss = nm.get_idx('state');
-            Sg = nm.soln.z(ss.i1.gen:ss.iN.gen) * dm.base_mva;
+            Sg = nm.soln.z(ss.i1.gen:ss.iN.gen);
             vm_setpoint = abs(nme.C' * nm.soln.v);
 
             %% shadow prices on generator limits
             [vv, ll] = mm.get_idx();
             lambda = mm.soln.lambda;
-            mu_pg_ub = lambda.upper(vv.i1.Pg:vv.iN.Pg);
             mu_pg_lb = lambda.lower(vv.i1.Pg:vv.iN.Pg);
-            mu_qg_ub = lambda.upper(vv.i1.Qg:vv.iN.Qg);
+            mu_pg_ub = lambda.upper(vv.i1.Pg:vv.iN.Pg);
             mu_qg_lb = lambda.lower(vv.i1.Qg:vv.iN.Qg);
+            mu_qg_ub = lambda.upper(vv.i1.Qg:vv.iN.Qg);
 
             %% gen PQ capability curve multipliers - based on update_mupq()
             if ll.N.PQh > 0 || ll.N.PQl > 0
@@ -289,8 +289,8 @@ classdef mme_gen_opf_ac < mp.mme_gen_opf
             end
 
             %% update in the data model
-            dme.tab.pg(dme.on) = real(Sg);
-            dme.tab.qg(dme.on) = imag(Sg);
+            dme.tab.pg(dme.on) = real(Sg) * dm.base_mva;
+            dme.tab.qg(dme.on) = imag(Sg) * dm.base_mva;
             dme.tab.vm_setpoint(dme.on) = vm_setpoint;
             dme.tab.mu_pg_lb(dme.on) = mu_pg_lb / dm.base_mva;
             dme.tab.mu_pg_ub(dme.on) = mu_pg_ub / dm.base_mva;

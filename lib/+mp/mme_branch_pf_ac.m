@@ -18,15 +18,15 @@ classdef mme_branch_pf_ac < mp.mme_branch
 
             %% branch complex power flows
             pp = nm.get_idx('port');
-            S_fr = nm.soln.gs_(pp.i1.branch(1):pp.iN.branch(1)) * dm.base_mva;
-            S_to = nm.soln.gs_(pp.i1.branch(2):pp.iN.branch(2)) * dm.base_mva;
+            S_fr = nm.soln.gs_(pp.i1.branch(1):pp.iN.branch(1));
+            S_to = nm.soln.gs_(pp.i1.branch(2):pp.iN.branch(2));
 
             %% update in the data model
             dme = obj.data_model_element(dm);
-            dme.tab.pl_fr(dme.on) = real(S_fr);
-            dme.tab.ql_fr(dme.on) = imag(S_fr);
-            dme.tab.pl_to(dme.on) = real(S_to);
-            dme.tab.ql_to(dme.on) = imag(S_to);
+            dme.tab.pl_fr(dme.on) = real(S_fr) * dm.base_mva;
+            dme.tab.ql_fr(dme.on) = imag(S_fr) * dm.base_mva;
+            dme.tab.pl_to(dme.on) = real(S_to) * dm.base_mva;
+            dme.tab.ql_to(dme.on) = imag(S_to) * dm.base_mva;
         end
     end     %% methods
 end         %% classdef

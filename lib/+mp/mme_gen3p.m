@@ -27,11 +27,11 @@ classdef mme_gen3p < mp.mm_element
 
             for p = 1:nme.nz
                 %% generator active power
-                sg = nm.soln.z(ss.i1.gen3p(p):ss.iN.gen3p(p)) * dm.base_kva;
+                sg = nm.soln.z(ss.i1.gen3p(p):ss.iN.gen3p(p));
 
                 %% update in the data model
-                dme.tab.(sprintf('pg%d', p))(dme.on) = real(sg);
-                dme.tab.(sprintf('qg%d', p))(dme.on) = imag(sg);
+                dme.tab.(sprintf('pg%d', p))(dme.on) = real(sg) * dm.base_kva;
+                dme.tab.(sprintf('qg%d', p))(dme.on) = imag(sg) * dm.base_kva;
             end
         end
     end     %% methods

@@ -18,12 +18,12 @@ classdef mme_gen_pf_ac < mp.mme_gen
 
             %% generator active power
             ss = nm.get_idx('state');
-            Sg = nm.soln.z(ss.i1.gen:ss.iN.gen) * dm.base_mva;
+            Sg = nm.soln.z(ss.i1.gen:ss.iN.gen);
 
             %% update in the data model
             dme = obj.data_model_element(dm);
-            dme.tab.pg(dme.on) = real(Sg);
-            dme.tab.qg(dme.on) = imag(Sg);
+            dme.tab.pg(dme.on) = real(Sg) * dm.base_mva;
+            dme.tab.qg(dme.on) = imag(Sg) * dm.base_mva;
         end
     end     %% methods
 end         %% classdef

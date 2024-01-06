@@ -28,14 +28,14 @@ classdef mme_line3p < mp.mm_element
 
             %% branch active power flow
             for p = 1:nn
-                s_fr = nm.soln.gs_(pp.i1.line3p(p):pp.iN.line3p(p)) * dm.base_kva;
-                s_to = nm.soln.gs_(pp.i1.line3p(p+nn):pp.iN.line3p(p+nn)) * dm.base_kva;
+                s_fr = nm.soln.gs_(pp.i1.line3p(p):pp.iN.line3p(p));
+                s_to = nm.soln.gs_(pp.i1.line3p(p+nn):pp.iN.line3p(p+nn));
 
                 %% update in the data model
-                dme.tab.(sprintf('pl%d_fr', p))(dme.on) = real(s_fr);
-                dme.tab.(sprintf('ql%d_fr', p))(dme.on) = imag(s_fr);
-                dme.tab.(sprintf('pl%d_to', p))(dme.on) = real(s_to);
-                dme.tab.(sprintf('ql%d_to', p))(dme.on) = imag(s_to);
+                dme.tab.(sprintf('pl%d_fr', p))(dme.on) = real(s_fr) * dm.base_kva;
+                dme.tab.(sprintf('ql%d_fr', p))(dme.on) = imag(s_fr) * dm.base_kva;
+                dme.tab.(sprintf('pl%d_to', p))(dme.on) = real(s_to) * dm.base_kva;
+                dme.tab.(sprintf('ql%d_to', p))(dme.on) = imag(s_to) * dm.base_kva;
             end
         end
     end     %% methods

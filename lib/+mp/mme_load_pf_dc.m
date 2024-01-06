@@ -18,11 +18,11 @@ classdef mme_load_pf_dc < mp.mme_load
 
             %% load active power consumption
             pp = nm.get_idx('port');
-            P = nm.soln.gp(pp.i1.load:pp.iN.load) * dm.base_mva;
+            P = nm.soln.gp(pp.i1.load:pp.iN.load);
 
             %% update in the data model
             dme = obj.data_model_element(dm);
-            dme.tab.p(dme.on) = P;
+            dme.tab.p(dme.on) = P * dm.base_mva;
             dme.tab.q(dme.on) = 0;
         end
     end     %% methods

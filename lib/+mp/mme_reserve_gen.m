@@ -52,25 +52,25 @@ classdef mme_reserve_gen < mp.mm_element
 
             %% get reserve allocations, bounds, shadow prices, cost
             [vv, ll] = mm.get_idx('var', 'lin');
-            r = mm.soln.x(vv.i1.R:vv.iN.R) * dm.base_mva;
+            r = mm.soln.x(vv.i1.R:vv.iN.R);
             r_lb = 0;
-            r_ub = dme.r_ub * dm.base_mva;
+            r_ub = dme.r_ub;
             zprc = zeros(rz_dme.nr, 1);
-            zprc(rz_dme.on) = mm.soln.lambda.mu_l(ll.i1.Rreq:ll.iN.Rreq) / dm.base_mva;
+            zprc(rz_dme.on) = mm.soln.lambda.mu_l(ll.i1.Rreq:ll.iN.Rreq);
             prc = rz_dme.tab.zones(:, dme.tab.gen)' * zprc;
-            mu_lb = mm.soln.lambda.lower(vv.i1.R:vv.iN.R) / dm.base_mva;
-            mu_ub = mm.soln.lambda.upper(vv.i1.R:vv.iN.R) / dm.base_mva;
-            mu_pg_ub = mm.soln.lambda.mu_u(ll.i1.Pg_plus_R:ll.iN.Pg_plus_R) / dm.base_mva;
+            mu_lb = mm.soln.lambda.lower(vv.i1.R:vv.iN.R);
+            mu_ub = mm.soln.lambda.upper(vv.i1.R:vv.iN.R);
+            mu_pg_ub = mm.soln.lambda.mu_u(ll.i1.Pg_plus_R:ll.iN.Pg_plus_R);
             total_cost = mm.eval_quad_cost(mm.soln.x, 'Rcost');
 
             %% update in the data model
-            dme.tab.r(dme.on) = r;
-            dme.tab.r_lb(dme.on) = r_lb;
-            dme.tab.r_ub(dme.on) = r_ub;
-            dme.tab.prc = prc;
-            dme.tab.mu_lb(dme.on) = mu_lb;
-            dme.tab.mu_ub(dme.on) = mu_ub;
-            dme.tab.mu_pg_ub(dme.on) = mu_pg_ub;
+            dme.tab.r(dme.on) = r * dm.base_mva;
+            dme.tab.r_lb(dme.on) = r_lb * dm.base_mva;
+            dme.tab.r_ub(dme.on) = r_ub * dm.base_mva;
+            dme.tab.prc = prc / dm.base_mva;
+            dme.tab.mu_lb(dme.on) = mu_lb / dm.base_mva;
+            dme.tab.mu_ub(dme.on) = mu_ub / dm.base_mva;
+            dme.tab.mu_pg_ub(dme.on) = mu_pg_ub / dm.base_mva;
             dme.tab.total_cost(dme.on) = total_cost;
         end
     end     %% methods
