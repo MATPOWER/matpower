@@ -8,7 +8,14 @@ classdef cost_table < mp_table_subclass
 %
 %   Since the dot syntax ``T.<var_name>`` is used to access table variables,
 %   you must use a functional syntax ``<method>(T,...)``, as opposed to
-%   the object-oriented ``T.<method>(...)``, to call mp.cost_table methods.
+%   the object-oriented ``T.<method>(...)``, to call standard
+%   mp.cost_table methods.
+%
+% Aside from the standard table methods inherited from the parent table class,
+% mp.cost_table has other methods defined in mp.cost_table_utils, since
+% methods defined directly in this class would not allow the use of standard
+% table subscripting syntax to access the table. See mp.cost_table_utils for
+% more information.
 %
 % mp.cost_table Methods:
 %   * cost_table - construct object
@@ -38,10 +45,10 @@ classdef cost_table < mp_table_subclass
 %                             where :math:`f_j` is found in column :math:`j`
 %   =============  =========  =====================================
 %
-% See also mp_table, mp_table_subclass.
+% See also mp.cost_table_utils, mp_table_subclass.
 
 %   MATPOWER
-%   Copyright (c) 2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2023-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
