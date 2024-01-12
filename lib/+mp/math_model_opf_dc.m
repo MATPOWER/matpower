@@ -59,7 +59,7 @@ classdef math_model_opf_dc < mp.math_model_opf
             Amis = C * [B*C' K*nm.D'];
             bmis = -C * p;
             obj.add_lin_constraint('Pmis', Amis, bmis, bmis, ...
-                                [nm.va.order; nm.z.order]);
+                                [nm.va.order nm.z.order]);
         end
 
         function opt = solve_opts(obj, nm, dm, mpopt)
