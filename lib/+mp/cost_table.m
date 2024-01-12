@@ -146,4 +146,115 @@ classdef cost_table < mp_table_subclass
             p = mp.cost_table_utils.pwl_params(cost, idx, pu_base, varargin{:});
         end
     end     %% methods
+
+    methods (Static)
+        function [f, df, d2f] = poly_cost_fcn(xx, x_scale, ccm, idx)
+            % ::
+            %
+            %   f = mp.cost_table.poly_cost_fcn(xx, x_scale, ccm, idx)
+            %   [f, df] = mp.cost_table.poly_cost_fcn(...)
+            %   [f, df, d2f] = mp.cost_table.poly_cost_fcn(...)
+            %
+            % Evaluates the sum of a set of polynomial cost functions
+            % :math:`f(x) = \sum_{i \in I}{f_i(x_i)}`, and optionally the
+            % gradient and Hessian.
+            %
+            % Inputs:
+            %   xx (single element cell array of double) : first element is
+            %       a vector of the pre-scaled quantities :math:`x/\alpha`
+            %       used to compute the costs
+            %   x_scale (double) : scalar :math:`\alpha` used to scale the
+            %       quantity value before evaluating the polynomial cost
+            %   ccm (double) : cost coefficient matrix, element *(i,j)* is
+            %       the coefficient of the *(j-1)* order term for cost *i*
+            %   idx (integer) : index vector of subset :math:`I` of rows of
+            %       ``xx{1}`` and ``ccm`` of interest
+            %
+            % Outputs:
+            %   f (double) : value of cost function :math:`f(x)`
+            %   df (vector of double) : (optional) gradient of cost function
+            %   d2f (matrix of double) : (optional) Hessian of cost function
+
+            x = xx{1}(idx) * x_scale;
+            n = length(xx{1});
+
+            %%----- evaluate cost function -----
+            f = sum( mp.cost_table.eval_poly_fcn(ccm(idx, :), x) );
+
+            %%----- evaluate cost gradient -----
+            if nargout > 1
+                %% coefficients of 1st derivative
+                cp = mp.cost_table.diff_poly_fcn(ccm(idx, :));
+                df = zeros(n, 1);
+                df(idx) = x_scale * mp.cost_table.eval_poly_fcn(cp, x);
+
+                %% ---- evaluate cost Hessian -----
+                if nargout > 2
+                    %% coefficients of 2nd derivative
+                    cpp = mp.cost_table.diff_poly_fcn(cp);
+                    d2f = sparse(idx, idx, ...
+                        x_scale^2 * mp.cost_table.eval_poly_fcn(cpp, x), n, n);
+                end
+            end
+        end
+
+        function f = eval_poly_fcn(c, x)
+            % ::
+            %
+            %   f = mp.cost_table.eval_poly_fcn(c, x)
+            %
+            % Evaluate a vector of polynomial functions, where ...
+            % ::
+            %
+            %   f = c(:,1) + c(:,2) .* x + c(:,3) .* x^2 + ...
+            %
+            % Inputs:
+            %   c (matrix of double) : coefficient matrix, element *(i,j)*
+            %       is the coefficient of the *(j-1)* order term for *i*-th
+            %       element of *f*
+            %   x (vector of double) : vector of input values
+            %
+            % Outputs:
+            %   f (vector of double) : value of functions
+
+            if isempty(c)
+                f = zeros(size(x));
+            else
+                f = c(:, 1);        %% constant term
+                for k = 2:size(c, 2)
+                    f = f + c(:, k) .* x .^ (k-1);
+                end
+            end
+        end
+
+        function c = diff_poly_fcn(c)
+            % ::
+            %
+            %   c = mp.cost_table.diff_poly_fcn(c)
+            %
+            % Compute the coefficient matrix for the derivatives of a set
+            % of polynomial functions from the coefficients of the functions.
+            %
+            % Inputs:
+            %   c (matrix of double) : coefficient matrix for the functions,
+            %       element *(i,j)* is the coefficient of the *(j-1)* order
+            %       term of the *i*-th function
+            %
+            % Outputs:
+            %   c (matrix of double) : coefficient matrix for the derivatives
+            %       of the functions, element *(i,j)* is the coefficient of
+            %       the *(j-1)* order term of the derivative of the *i*-th
+            %       function
+
+            n = size(c, 2);     %% number of coefficients (cols in c)
+            if n >= 2
+                c = c(:, 2:n);
+            else
+                c = zeros(size(c, 1), 1);
+            end
+            for k = 2:n-1
+                c(:, k) = k * c(:, k);
+            end
+        end
+    end     %% methods (Static)
 end         %% classdef

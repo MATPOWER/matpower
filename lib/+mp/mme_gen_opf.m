@@ -12,8 +12,8 @@ classdef (Abstract) mme_gen_opf < mp.mme_gen
     properties
         % struct for cost parameters with fields:
         %
-        %   - ``poly_p`` - polynomial costs for active power, struct with
-        %     fields:
+        %   - ``poly_p`` - polynomial costs for active power, struct
+        %     returned by mp.cost_table.poly_params, with fields:
         %
         %       - ``have_quad_cost``
         %       - ``i0``, ``i1``, ``i2``, ``i3``
@@ -21,7 +21,7 @@ classdef (Abstract) mme_gen_opf < mp.mme_gen
         %   - ``poly_q`` - polynomial costs for reactive power
         %     *(same struct as* ``poly_p`` *)*
         %   - ``pwl`` - piecewise linear costs for actve & reactive struct
-        %     with fields:
+        %     returned by mp.cost_table.pwl_params, with fields:
         %
         %       - ``n``, ``i``, ``A``, ``b``
         cost
@@ -51,37 +51,13 @@ classdef (Abstract) mme_gen_opf < mp.mme_gen
             %% (order 3 and higher) polynomial costs on Pg
             if ~isempty(obj.cost.poly_p.i3)
                 dme = obj.data_model_element(dm);
-                cost_Pg = @(xx)obj.poly_cost_fcn(xx, dm.base_mva, dme.tab.cost_pg.poly_coef, obj.cost.poly_p.i3);
+                cost_Pg = @(xx)mp.cost_table.poly_cost_fcn(xx, dm.base_mva, dme.tab.cost_pg.poly_coef, obj.cost.poly_p.i3);
                 mm.add_nln_cost('polPg', 1, cost_Pg, {'Pg'});
             end
 
             %% piecewise linear costs
             if obj.cost.pwl.n
                 mm.add_quad_cost('pwl', [], ones(obj.cost.pwl.n, 1), 0, {'y'});
-            end
-        end
-
-        function [f, df, d2f] = poly_cost_fcn(obj, xx, x_scale, cost, idx)
-            %
-            x = xx{1}(idx) * x_scale;
-            n = length(xx{1});
-
-            %%----- evaluate cost function -----
-            f = sum( eval_poly_fcn(cost(idx, :), x) );
-
-            %%----- evaluate cost gradient -----
-            if nargout > 1
-                %% coefficients of 1st derivative
-                cp = diff_poly_fcn(cost(idx, :));
-                df = zeros(n, 1);
-                df(idx) = x_scale * eval_poly_fcn(cp, x);
-
-                %% ---- evaluate cost Hessian -----
-                if nargout > 2
-                    %% coefficients of 2nd derivative
-                    cpp = diff_poly_fcn(cp);
-                    d2f = sparse(idx, idx, x_scale^2 * eval_poly_fcn(cpp, x), n, n);
-                end
             end
         end
 
@@ -98,26 +74,3 @@ classdef (Abstract) mme_gen_opf < mp.mme_gen
         end
     end     %% methods
 end         %% classdef
-
-function c = diff_poly_fcn(c)
-    n = size(c, 2);     %% number of coefficients (cols in c)
-    if n >= 2
-        c = c(:, 2:n);
-    else
-        c = zeros(size(c, 1), 1);
-    end
-    for k = 2:n-1
-        c(:, k) = k * c(:, k);
-    end
-end
-
-function f = eval_poly_fcn(c, x)
-    if isempty(c)
-        f = zeros(size(x));
-    else
-        f = c(:, 1);        %% constant term
-        for k = 2:size(c, 2)
-            f = f + c(:, k) .* x .^ (k-1);
-        end
-    end
-end

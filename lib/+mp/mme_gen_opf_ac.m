@@ -54,7 +54,7 @@ classdef mme_gen_opf_ac < mp.mme_gen_opf
                 %% (order 3 and higher) polynomial costs on Qg
                 if ~isempty(obj.cost.poly_q.i3)
                     dme = obj.data_model_element(dm);
-                    cost_Qg = @(xx)obj.poly_cost_fcn(xx, dm.base_mva, dme.tab.cost_qg.poly_coef, obj.cost.poly_q.i3);
+                    cost_Qg = @(xx)mp.cost_table.poly_cost_fcn(xx, dm.base_mva, dme.tab.cost_qg.poly_coef, obj.cost.poly_q.i3);
                     mm.add_nln_cost('polQg', 1, cost_Qg, {'Qg'});
                 end
             end
