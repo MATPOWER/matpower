@@ -55,12 +55,12 @@ classdef dme_gen_opf < mp.dme_gen & mp.dme_shared_opf
             %
             base_mva = dm.base_mva;
 
-            poly_p = mp.cost_table_utils.poly_params(obj.tab.cost_pg(obj.on, :), base_mva);
+            poly_p = poly_params(obj.tab.cost_pg, obj.on, base_mva);
             if dc || ~ismember('cost_qg', obj.tab.Properties.VariableNames)
-                pwl = mp.cost_table_utils.pwl_params(obj.tab.cost_pg(obj.on, :), base_mva, obj.n, dc);
+                pwl = pwl_params(obj.tab.cost_pg, obj.on, base_mva, obj.n, dc);
                 poly_q = [];
             else
-                poly_q = mp.cost_table_utils.poly_params(obj.tab.cost_qg(obj.on, :), base_mva);
+                poly_q = poly_params(obj.tab.cost_qg, obj.on, base_mva);
 
                 %% expand cost params as needed
                 polyNp = max(obj.tab.cost_pg.poly_n);
@@ -86,7 +86,7 @@ classdef dme_gen_opf < mp.dme_gen & mp.dme_shared_opf
 
                 %% stack pg & qg cost params first
                 cost = [obj.tab.cost_pg; obj.tab.cost_qg];
-                pwl = mp.cost_table_utils.pwl_params(cost, base_mva, obj.n, dc);
+                pwl = pwl_params(cost, [], base_mva, obj.n, dc);
             end
 
             cost = struct( ...

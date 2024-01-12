@@ -11,14 +11,17 @@ classdef cost_table < mp_table_subclass
 %   the object-oriented ``T.<method>(...)``, to call standard
 %   mp.cost_table methods.
 %
-% Aside from the standard table methods inherited from the parent table class,
-% mp.cost_table has other methods defined in mp.cost_table_utils, since
-% methods defined directly in this class would not allow the use of standard
-% table subscripting syntax to access the table. See mp.cost_table_utils for
-% more information.
+% Standard table subscripting syntax is not available within methods of
+% this class (references built-in :func:`subsref` and :func:`subsasgn`
+% rather than the versions overridden by the table class). For this reason,
+% some method implementations are delegated to static methods in
+% mp.cost_table_utils where that syntax is available, making the code more
+% readable.
 %
 % mp.cost_table Methods:
 %   * cost_table - construct object
+%   * poly_params - create struct of polynomial parameters from mp.cost_table
+%   * pwl_params - create struct of piecewise linear parameters from mp.cost_table
 %
 % An mp.cost_table has the following columns:
 %
@@ -84,6 +87,63 @@ classdef cost_table < mp_table_subclass
                 error('mp.cost_table: constructor must be called with 0 or 5 arguments.')
             end
             obj@mp_table_subclass(args{:});
+        end
+
+        function p = poly_params(cost, idx, pu_base)
+            % ::
+            %
+            %   p = poly_params(cost, idx, pu_base)
+            %
+            % Inputs:
+            %   cost (mp.cost_table) : the cost table
+            %   idx: (integer) : index vector of rows of interest, empty
+            %       for all rows
+            %   pu_base (double) : base used to scale quantities to per unit
+            %
+            % Outputs:
+            %   p (struct) : polynomial cost parameters, struct with fields:
+            %
+            %     - ``have_quad_cost`` - true if any polynmial costs have
+            %       order quadratic or less
+            %     - ``i0`` - row indices for constant costs
+            %     - ``i1`` - row indices for linear costs
+            %     - ``i2`` - row indices for quadratic costs
+            %     - ``i3`` - row indices for order 3 or higher costs
+            %     - ``k`` - constant term for all quadratic and lower order costs
+            %     - ``c`` - linear term for all quadratic and lower order costs
+            %     - ``Q`` - quadratic term for all quadratic and lower order costs
+            %
+            % Implementation in mp.cost_table_utils.poly_params.
+
+            p = mp.cost_table_utils.poly_params(cost, idx, pu_base);
+        end
+
+        function p = pwl_params(cost, idx, pu_base, varargin)
+            % ::
+            %
+            %   p = pwl_params(cost, idx, pu_base)
+            %   p = pwl_params(cost, idx, pu_base, ng, dc)
+            %
+            % Inputs:
+            %   cost (mp.cost_table) : the cost table
+            %   idx: (integer) : index vector of rows of interest, empty
+            %       for all rows
+            %   pu_base (double) : base used to scale quantities to per unit
+            %   ng (integer) : number of units, default is # of rows in cost
+            %   dc (boolean) : true if DC formulation (ng variables),
+            %       otherwise AC formulation (2*ng variables), default is 1
+            %
+            % Outputs:
+            %   p (struct) : piecewise linear cost parameters, struct with fields:
+            %
+            %     - ``n`` - number of piecewise linear costs
+            %     - ``i`` - row indices for piecewise linear costs
+            %     - ``A`` - constraint coefficient matrix for CCV formulation
+            %     - ``b`` - constraint RHS vector for CCV formulation
+            %
+            % Implementation in mp.cost_table_utils.pwl_params.
+
+            p = mp.cost_table_utils.pwl_params(cost, idx, pu_base, varargin{:});
         end
     end     %% methods
 end         %% classdef

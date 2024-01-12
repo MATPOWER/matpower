@@ -1,15 +1,17 @@
 classdef cost_table_utils
 % mp.cost_table_utils - Static methods for mp.cost_table.
 %
-% Ideally, the methods in this class should be in mp.cost_table. However,
-% within classes that inherit from mp_table_subclass, such as mp.cost_table,
-% any subscripting to access the elements of the table must be done through
-% explicit calls to :func:`subsref` and :func:`subsasgn`. That is, the normal
-% table subscripting syntax will not work, so working with the table becomes
-% extremely cumbersome.
+% Contains the implementation of some methods that would ideally belong
+% in mp.cost_table.
 %
-% This purpose of this class is to provide static methods that operate on
-% an mp.cost_table object that **do** allow access to that table via normal
+% Within classes that inherit from mp_table_subclass, such as mp.cost_table,
+% any subscripting to access the elements of the table must be done through
+% explicit calls to the table's :meth:`subsref` and :meth:`subsasgn` methods.
+% That is, the normal table subscripting syntax will not work, so working
+% with the table becomes extremely cumbersome.
+%
+% This purpose of this class is to provide the implementation for
+% mp.cost_table methods that **do** allow access to that table via normal
 % table subscripting syntax.
 %
 % mp.cost_table_util Methods:
@@ -27,27 +29,17 @@ classdef cost_table_utils
 %   See https://matpower.org for more info.
 
     methods (Static)
-        function p = poly_params(cost, pu_base)
+        function p = poly_params(cost, idx, pu_base)
             % ::
             %
-            %   p = poly_params(cost, pu_base)
+            %   p = mp.cost_table_utils.poly_params(cost, idx, pu_base)
             %
-            % Inputs:
-            %   cost (mp.cost_table) : the cost table
-            %   pu_base (double) : base used to scale quantities to per unit
-            %
-            % Outputs:
-            %   p (struct) : polynomial cost parameters, struct with fields:
-            %
-            %     - ``have_quad_cost`` - true if any polynmial costs have
-            %       order quadratic or less
-            %     - ``i0`` - row indices for constant costs
-            %     - ``i1`` - row indices for linear costs
-            %     - ``i2`` - row indices for quadratic costs
-            %     - ``i3`` - row indices for order 3 or higher costs
-            %     - ``k`` - constant term for all quadratic and lower order costs
-            %     - ``c`` - linear term for all quadratic and lower order costs
-            %     - ``Q`` - quadratic term for all quadratic and lower order costs
+            % Implementation for mp.cost_table.poly_params. See
+            % mp.cost_table.poly_params for details.
+
+            if ~isempty(idx)
+                cost = cost(idx, :);
+            end
 
             ng = size(cost, 1);
             have_quad_cost = 0;
@@ -86,28 +78,20 @@ classdef cost_table_utils
                 );
         end
 
-        function p = pwl_params(cost, pu_base, ng, dc)
+        function p = pwl_params(cost, idx, pu_base, ng, dc)
             % ::
             %
-            %   p = pwl_params(cost, pu_base)
-            %   p = pwl_params(cost, pu_base, ng, dc)
+            %   p = mp.cost_table_utils.pwl_params(cost, idx, pu_base)
+            %   p = mp.cost_table_utils.pwl_params(cost, idx, pu_base, ng, dc)
             %
-            % Inputs:
-            %   cost (mp.cost_table) : the cost table
-            %   pu_base (double) : base used to scale quantities to per unit
-            %   ng (integer) : number of units, default is # of rows in cost
-            %   dc (boolean) : true if DC formulation (ng variables),
-            %       otherwise AC formulation (2*ng variables), default is 1
-            %
-            % Outputs:
-            %   p (struct) : piecewise linear cost parameters, struct with fields:
-            %
-            %     - ``n`` - number of piecewise linear costs
-            %     - ``i`` - row indices for piecewise linear costs
-            %     - ``A`` - constraint coefficient matrix for CCV formulation
-            %     - ``b`` - constraint RHS vector for CCV formulation
+            % Implementation for mp.cost_table.pwl_params. See
+            % mp.cost_table.pwl_params for details.
 
-            if nargin < 3
+            if ~isempty(idx)
+                cost = cost(idx, :);
+            end
+
+            if nargin < 4
                 ng = size(cost, 1);
                 dc = 1;
             end
