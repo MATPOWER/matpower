@@ -98,10 +98,10 @@ classdef dme_gen_opf < mp.dme_gen & mp.dme_shared_opf
 
         function maxgc = max_pwl_gencost(obj)
             %
-            maxgc = max(max(obj.tab.cost_pg.pwl_cost));
+            maxgc = max_pwl_cost(obj.tab.cost_pg);
             if ismember('cost_qg', obj.tab.Properties.VariableNames) && ...
                     ~isempty(obj.tab.cost_qg.pwl_cost)
-                maxgc = max(maxgc, max(max(obj.tab.cost_qg.pwl_cost)));
+                maxgc = max(maxgc, max_pwl_cost(obj.tab.cost_qg));
             end
         end
 

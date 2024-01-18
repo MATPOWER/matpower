@@ -13,6 +13,16 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 since 8.0b1
 -----------
 
+#### 1/9/24
+  - Add `mp.cost_table_utils` with static methods for use by `mp.cost_table`.
+
+#### 12/22/23
+  - Add class `mp.cost_table` to allow reuse of cost tables (e.g for
+    `legacy_dcline` example).
+
+#### 12/20/23
+  - Add class `mp_table_subclass`.
+
 #### 12/19/23
   - Add a 533-bus distribution system based on real system data from the
     local DSO Kraftringen in southern Sweden, including two net-load

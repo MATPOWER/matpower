@@ -17,6 +17,7 @@ classdef cost_table_utils
 % mp.cost_table_util Methods:
 %   * poly_params - create struct of polynomial parameters from mp.cost_table
 %   * pwl_params - create struct of piecewise linear parameters from mp.cost_table
+%   * max_pwl_cost - get maximum cost component used to specify pwl costs
 %
 % See also mp.cost_table.
 
@@ -149,6 +150,17 @@ classdef cost_table_utils
             end
 
             p = struct('n', ny, 'i', ipwl, 'A', Ay, 'b', by);
+        end
+
+        function maxc = max_pwl_cost(cost)
+            % ::
+            %
+            %   maxc = mp.cost_table_utils.max_pwl_cost(cost)
+            %
+            % Implementation for mp.cost_table.max_pwl_cost. See
+            % mp.cost_table.max_pwl_cost for details.
+
+            maxc = max(max(cost.pwl_cost));
         end
     end     %% methods (Static)
 end         %% classdef

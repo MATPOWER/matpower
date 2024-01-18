@@ -22,6 +22,7 @@ classdef cost_table < mp_table_subclass
 %   * cost_table - construct object
 %   * poly_params - create struct of polynomial parameters from mp.cost_table
 %   * pwl_params - create struct of piecewise linear parameters from mp.cost_table
+%   * max_pwl_cost - get maximum cost component used to specify pwl costs
 %
 % An mp.cost_table has the following columns:
 %
@@ -89,13 +90,13 @@ classdef cost_table < mp_table_subclass
             obj@mp_table_subclass(args{:});
         end
 
-        function p = poly_params(cost, idx, pu_base)
+        function p = poly_params(obj, idx, pu_base)
             % ::
             %
-            %   p = poly_params(cost, idx, pu_base)
+            %   p = poly_params(obj, idx, pu_base)
             %
             % Inputs:
-            %   cost (mp.cost_table) : the cost table
+            %   obj (mp.cost_table) : the cost table
             %   idx: (integer) : index vector of rows of interest, empty
             %       for all rows
             %   pu_base (double) : base used to scale quantities to per unit
@@ -115,17 +116,17 @@ classdef cost_table < mp_table_subclass
             %
             % Implementation in mp.cost_table_utils.poly_params.
 
-            p = mp.cost_table_utils.poly_params(cost, idx, pu_base);
+            p = mp.cost_table_utils.poly_params(obj, idx, pu_base);
         end
 
-        function p = pwl_params(cost, idx, pu_base, varargin)
+        function p = pwl_params(obj, idx, pu_base, varargin)
             % ::
             %
-            %   p = pwl_params(cost, idx, pu_base)
-            %   p = pwl_params(cost, idx, pu_base, ng, dc)
+            %   p = pwl_params(obj, idx, pu_base)
+            %   p = pwl_params(obj, idx, pu_base, ng, dc)
             %
             % Inputs:
-            %   cost (mp.cost_table) : the cost table
+            %   obj (mp.cost_table) : the cost table
             %   idx: (integer) : index vector of rows of interest, empty
             %       for all rows
             %   pu_base (double) : base used to scale quantities to per unit
@@ -143,7 +144,24 @@ classdef cost_table < mp_table_subclass
             %
             % Implementation in mp.cost_table_utils.pwl_params.
 
-            p = mp.cost_table_utils.pwl_params(cost, idx, pu_base, varargin{:});
+            p = mp.cost_table_utils.pwl_params(obj, idx, pu_base, varargin{:});
+        end
+
+        function maxc = max_pwl_cost(obj)
+            % ::
+            %
+            %   maxc = max_pwl_cost(obj)
+            %
+            % Input:
+            %   obj (mp.cost_table) : the cost table
+            %
+            % Output:
+            %   maxc (double) : maximum cost component of all breakpoints
+            %       used to specify piecewise linear costs
+            %
+            % Implementation in mp.cost_table_utils.max_pwl_cost.
+
+            maxc = mp.cost_table_utils.max_pwl_cost(obj);
         end
     end     %% methods
 
