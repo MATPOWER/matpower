@@ -222,7 +222,7 @@ classdef math_model_pf_acps < mp.math_model_pf & mp.mm_shared_pfcpf_acps
             %% modify data model to form Bp (B prime)
             if nargout > 1      %% for both Bp and Bpp
                 dm1 = dm.copy();
-                if dm1.elements.is_index_name('shunt')
+                if dm1.elements.has_name('shunt')
                     dm1.elements.shunt.tab.bs(:) = 0;   %% zero out shunts at buses
                 end
                 dm2 = dm1.copy();

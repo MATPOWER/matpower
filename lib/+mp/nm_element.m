@@ -157,7 +157,7 @@ classdef (Abstract) nm_element < handle
             if nargin < 3
                 name = obj.name;
             end
-            if mm.elements.is_index_name(name)
+            if mm.elements.has_name(name)
                 mme = mm.elements.(name);
             else
                 mme = [];
@@ -520,7 +520,7 @@ classdef (Abstract) nm_element < handle
                 [nidx{:}] = deal(zeros(dme.n, 1));
 
                 for i = 1:length(cxn_type)
-                    if dm.elements.is_index_name(cxn_type{i})
+                    if dm.elements.has_name(cxn_type{i})
                         jxn_dme = dm.elements.(cxn_type{i});    %% data model element for cxn_type{i}
                         jxn_nme = nm.elements.(cxn_type{i});    %% corresp. net model element
                         ni = nm.get_node_idx(cxn_type{i});      %% corresponding node indices

@@ -562,7 +562,7 @@ classdef (Abstract) task < handle
                         ~isempty(mpopt.exp.exclude_elements)
                     ex = mpopt.exp.exclude_elements;
                     for k = length(ex):-1:1
-                        if ~dmc.elements.is_index_name(ex{k})
+                        if ~dmc.elements.has_name(ex{k})
                             ex(k) = [];     %% skip missing exclusions
                         end
                     end

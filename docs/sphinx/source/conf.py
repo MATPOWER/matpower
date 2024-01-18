@@ -20,7 +20,7 @@ import re
 # -- Project information -----------------------------------------------------
 
 project = 'MATPOWER Documentation'
-copyright = '1996-2023, Power Systems Engineering Research Center (PSERC)'
+copyright = '1996-2024, Power Systems Engineering Research Center (PSERC)'
 author = 'Ray D. Zimmerman, Carlos E. Murillo-Sánchez, Hongye Wang, et. al.'
 
 # The full version, including alpha/beta/rc tags

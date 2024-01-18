@@ -55,11 +55,11 @@ for k = 1:nt
     t_ok(isa(dm.elements, 'mp.mapped_array'), [t 'isa(dm.elements, ''mp.mapped_array'')']);
     t_is(length(dm.elements), 5, 12, [t 'length(dm.elements)']);
     t_ok(isa(dm.elements, 'mp.mapped_array'), [t 'isa(dm.elements, ''mp.mapped_array'')']);
-    t_ok(dm.elements.is_index_name('bus'), [t 'dm.elements.is_index_name(''bus'')']);
-    t_ok(dm.elements.is_index_name('gen'), [t 'dm.elements.is_index_name(''gen'')']);
-    t_ok(dm.elements.is_index_name('load'), [t 'dm.elements.is_index_name(''load'')']);
-    t_ok(dm.elements.is_index_name('branch'), [t 'dm.elements.is_index_name(''branch'')']);
-    t_ok(dm.elements.is_index_name('shunt'), [t 'dm.elements.is_index_name(''shunt'')']);
+    t_ok(dm.elements.has_name('bus'), [t 'dm.elements.has_name(''bus'')']);
+    t_ok(dm.elements.has_name('gen'), [t 'dm.elements.has_name(''gen'')']);
+    t_ok(dm.elements.has_name('load'), [t 'dm.elements.has_name(''load'')']);
+    t_ok(dm.elements.has_name('branch'), [t 'dm.elements.has_name(''branch'')']);
+    t_ok(dm.elements.has_name('shunt'), [t 'dm.elements.has_name(''shunt'')']);
     t_is(dm.elements.name2idx('bus'), 1, 12, [t 'dm.elements.name2idx(''bus'')']);
     t_is(dm.elements.name2idx('gen'), 2, 12, [t 'dm.elements.name2idx(''gen'')']);
     t_is(dm.elements.name2idx('load'), 3, 12, [t 'dm.elements.name2idx(''load'')']);

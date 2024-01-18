@@ -148,7 +148,7 @@ classdef (Abstract) dm_converter < mp.element_container
 
             for k = 1:length(dm.elements)
                 dme = dm.elements{k};
-                if obj.elements.is_index_name(dme.name)
+                if obj.elements.has_name(dme.name)
                     dmce = dme.dm_converter_element(obj);
                     if all_vars
                         vars = dme.main_table_var_names();

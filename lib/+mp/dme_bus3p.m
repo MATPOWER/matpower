@@ -128,7 +128,7 @@ classdef dme_bus3p < mp.dm_element
             obj.vm3_start = bus.vm3(obj.on);
 
             %% update bus type and starting vm based on connected gen status
-            if dm.elements.is_index_name('gen3p')
+            if dm.elements.has_name('gen3p')
                 gen_dme = dm.elements.gen3p;
                 [gbus, ig] = obj.gbus_vector(gen_dme);
                 nb = obj.n;

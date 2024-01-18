@@ -250,7 +250,7 @@ classdef data_model < mp.element_container
             % Output:
             %   n (integer) : number of online elements
             
-            if obj.elements.is_index_name(name)
+            if obj.elements.has_name(name)
                 n = obj.elements.(name).n;
             else
                 n = 0;
@@ -411,7 +411,7 @@ classdef data_model < mp.element_container
             %% suppress output detail (default for large systems)
             suppress = mpopt.out.suppress_detail;
             if suppress == -1
-                if obj.elements.is_index_name('bus') && ...
+                if obj.elements.has_name('bus') && ...
                         obj.elements.bus.nr > 500
                     suppress = 1;
                 else

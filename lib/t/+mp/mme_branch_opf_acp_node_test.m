@@ -15,7 +15,7 @@ classdef mme_branch_opf_acp_node_test < mp.mme_branch_opf_acp
             %% from makeAang()
             nb = 0;
             for k = 1:dme.nbet
-                if dm.elements.is_index_name(dme.cxn_type{k})
+                if dm.elements.has_name(dme.cxn_type{k})
                     nb = nb + dm.elements.(dme.cxn_type{k}).n;
                 end
             end

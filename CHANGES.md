@@ -13,6 +13,9 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 since 8.0b1
 -----------
 
+#### 1/18/24
+  - Rename the `is_index_name()` method of `mp.mapped_array` to `has_name()`.
+
 #### 1/9/24
   - Add `mp.cost_table_utils` with static methods for use by `mp.cost_table`.
 

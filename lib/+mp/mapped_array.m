@@ -27,7 +27,7 @@ classdef mapped_array < handle
 %   ma.delete_elements('height');
 %
 %   % check for named element
-%   ma.is_index_name('color');
+%   ma.has_name('color');
 %
 % mp.mapped_array Methods:
 %   * mapped_array - constructor
@@ -37,7 +37,7 @@ classdef mapped_array < handle
 %   * add_names - add or modify names of elements
 %   * add_elements - append elements to the end of the mapped array
 %   * delete_elements - delete elements from the mapped array
-%   * is_index_name - return ``true`` if the name exists in the mapped array
+%   * has_name - return ``true`` if the name exists in the mapped array
 %   * name2idx - return the index corresponding to a name
 %   * subsref - called when indexing a mapped array to retrieve data
 %   * subsasgn - called when indexing a mapped array to assign data
@@ -251,11 +251,11 @@ classdef mapped_array < handle
             end
         end
 
-        function TorF = is_index_name(obj, name)
+        function TorF = has_name(obj, name)
             % Return ``true`` if the name exists in the mapped array.
             % ::
             %
-            %   TorF = obj.is_index_name(name);
+            %   TorF = obj.has_name(name);
             %
             % Input:
             %   name (char array) : name to check
@@ -298,8 +298,8 @@ classdef mapped_array < handle
                         end
                     else    %% method calls or properties
                         switch s(1).subs
-                            case 'is_index_name'
-                                varargout{1} = is_index_name(obj, s(2).subs{:});
+                            case 'has_name'
+                                varargout{1} = has_name(obj, s(2).subs{:});
                             case 'name2idx'
                                 varargout{1} = name2idx(obj, s(2).subs{:});
                             case 'length'
