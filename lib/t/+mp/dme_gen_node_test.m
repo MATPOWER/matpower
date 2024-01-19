@@ -2,7 +2,7 @@ classdef dme_gen_node_test < mp.dme_gen_opf
 %MP.DME_GEN_NODE_TEST  MATPOWER data model class for gen data for T_NODE_TEST
 
 %   MATPOWER
-%   Copyright (c) 2020-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -79,6 +79,32 @@ classdef dme_gen_node_test < mp.dme_gen_opf
 
             %% call parent to fill in on/off
             update_status@mp.dm_element(obj, dm);
+
+            %% set bus_dme.vm_control for any online gens at PV buses
+            for k = 1:obj.nbet
+                if dm.elements.has_name(obj.cxn_type{k})
+                    bus_dme = dm.elements.(obj.cxn_type{k});
+                    gk = find(obj.bus_etv(obj.on) == bus_dme.bus_eti);
+                    obj.bus_on(gk) = bus_dme.i2on(obj.bus(obj.on(gk)));
+                    bt = bus_dme.type(obj.bus_on(gk));  %% bus type for online gens
+                    i = find(bt == mp.NODE_TYPE.REF | bt == mp.NODE_TYPE.PV);
+                    bus_dme.vm_control(obj.bus_on(gk(i))) = 1;
+                end
+            end
+        end
+
+        function obj = apply_vm_setpoint(obj, dm)
+            %
+
+            % set starting bus voltage, if bus is voltage-controlled
+            for k = 1:obj.nbet
+                if dm.elements.has_name(obj.cxn_type{k})
+                    bus_dme = dm.elements.(obj.cxn_type{k});
+                    gk = find(obj.bus_etv(obj.on) == bus_dme.bus_eti);
+                    i = find(bus_dme.vm_control(obj.bus_on(gk)));
+                    bus_dme.vm_start(obj.bus_on(gk(i))) = obj.vm_setpoint(gk(i));
+                end
+            end
         end
     end     %% methods
 end         %% classdef

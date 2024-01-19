@@ -2,7 +2,7 @@ classdef dme_bus_nld_node_test < mp.dme_bus_opf
 %MP.DME_BUS_NLD_NODE_TEST  MATPOWER data model class for non-load bus data for T_NODE_TEST
 
 %   MATPOWER
-%   Copyright (c) 2020-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -35,12 +35,6 @@ classdef dme_bus_nld_node_test < mp.dme_bus_opf
             if nr
                 obj.bus = obj.tab.source_uid;
             end
-        end
-
-        function [gbus, ig] = gbus_vector(obj, gen_dme)
-            %% buses of online gens
-            ig = find(gen_dme.bus_etv == obj.bus_eti);
-            gbus = obj.i2on(gen_dme.bus(gen_dme.on(gen_dme.bus_etv == obj.bus_eti)));
         end
     end     %% methods
 end         %% classdef

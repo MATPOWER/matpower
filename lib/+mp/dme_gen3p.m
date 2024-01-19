@@ -19,7 +19,7 @@ classdef dme_gen3p < mp.dm_element
 %   ================  =========  =====================================
 
 %   MATPOWER
-%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %
@@ -29,6 +29,7 @@ classdef dme_gen3p < mp.dm_element
 
     properties
         bus         % bus index vector (all gens)
+        bus_on      % vector of indices into online buses for gens that are on
         pg1_start   % initial phase 1 active power (p.u.) for gens that are on
         pg2_start   % initial phase 2 active power (p.u.) for gens that are on
         pg3_start   % initial phase 3 active power (p.u.) for gens that are on
@@ -92,13 +93,31 @@ classdef dme_gen3p < mp.dm_element
             %
 
             %% get bus status info
-            bs = dm.elements.bus3p.tab.status;  %% bus status
+            bus_dme = dm.elements.bus3p;
+            bs = bus_dme.tab.status;    %% bus status
 
             %% update status of gens at isolated/offline buses
             obj.tab.status = obj.tab.status & bs(obj.bus);
 
             %% call parent to fill in on/off
             update_status@mp.dm_element(obj, dm);
+
+            %% set bus_dme.vm_control for any online gens at PV buses
+            obj.bus_on = bus_dme.i2on(obj.bus(obj.on));
+            bt = bus_dme.type(obj.bus_on);  %% bus type for online gens
+            i = find(bt == mp.NODE_TYPE.REF | bt == mp.NODE_TYPE.PV);
+            bus_dme.vm_control(obj.bus_on(i)) = 1;
+        end
+
+        function obj = apply_vm_setpoint(obj, dm)
+            %
+
+            % set starting bus voltage, if bus is voltage-controlled
+            bus_dme = dm.elements.bus3p;
+            i = find(bus_dme.vm_control(obj.bus_on));
+            bus_dme.vm1_start(obj.bus_on(i)) = obj.vm1_setpoint(i);
+            bus_dme.vm2_start(obj.bus_on(i)) = obj.vm2_setpoint(i);
+            bus_dme.vm3_start(obj.bus_on(i)) = obj.vm3_setpoint(i);
         end
 
         function obj = build_params(obj, dm)
@@ -117,6 +136,8 @@ classdef dme_gen3p < mp.dm_element
             obj.vm1_setpoint = gen.vm1_setpoint(obj.on);
             obj.vm2_setpoint = gen.vm2_setpoint(obj.on);
             obj.vm3_setpoint = gen.vm3_setpoint(obj.on);
+
+            obj.apply_vm_setpoint(dm);
         end
 
         function TorF = pp_have_section_sum(obj, mpopt, pp_args)

@@ -30,7 +30,7 @@ classdef dme_gen < mp.dm_element
 %   =====================  =========  =====================================
 
 %   MATPOWER
-%   Copyright (c) 1996-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %
@@ -40,6 +40,7 @@ classdef dme_gen < mp.dm_element
 
     properties
         bus         % bus index vector (all gens)
+        bus_on      % vector of indices into online buses for gens that are on
         pg_start    % initial active power (p.u.) for gens that are on
         qg_start    % initial reactive power (p.u.) for gens that are on
         vm_setpoint % generator voltage setpoint for gens that are on
@@ -109,13 +110,29 @@ classdef dme_gen < mp.dm_element
             %
 
             %% get bus status info
-            bs = dm.elements.bus.tab.status;    %% bus status
+            bus_dme = dm.elements.bus;
+            bs = bus_dme.tab.status;    %% bus status
 
             %% update status of gens at isolated/offline buses
             obj.tab.status = obj.tab.status & bs(obj.bus);
 
             %% call parent to fill in on/off
             update_status@mp.dm_element(obj, dm);
+
+            %% set bus_dme.vm_control for any online gens at PV buses
+            obj.bus_on = bus_dme.i2on(obj.bus(obj.on));
+            bt = bus_dme.type(obj.bus_on);  %% bus type for online gens
+            i = find(bt == mp.NODE_TYPE.REF | bt == mp.NODE_TYPE.PV);
+            bus_dme.vm_control(obj.bus_on(i)) = 1;
+        end
+
+        function obj = apply_vm_setpoint(obj, dm)
+            %
+
+            % set starting bus voltage, if bus is voltage-controlled
+            bus_dme = dm.elements.bus;
+            i = find(bus_dme.vm_control(obj.bus_on));
+            bus_dme.vm_start(obj.bus_on(i)) = obj.vm_setpoint(i);
         end
 
         function obj = build_params(obj, dm)
@@ -132,6 +149,8 @@ classdef dme_gen < mp.dm_element
             obj.qg_lb = gen.qg_lb(obj.on) / base_mva;
             obj.qg_ub = gen.qg_ub(obj.on) / base_mva;
             obj.vm_setpoint = gen.vm_setpoint(obj.on);
+
+            obj.apply_vm_setpoint(dm);
         end
 
         function [mn, mx, both] = violated_q_lims(obj, dm, mpopt)

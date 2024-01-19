@@ -17,7 +17,7 @@ classdef dme_bus < mp.dm_element
 %   ===========  =========  ========================================
 
 %   MATPOWER
-%   Copyright (c) 2020-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -30,6 +30,7 @@ classdef dme_bus < mp.dm_element
         va_start    % initial voltage angles (radians) for buses that are on
         vm_lb       % voltage magnitude lower bounds for buses that are on
         vm_ub       % voltage magnitude upper bounds for buses that are on
+        vm_control  % true if voltage is controlled, for buses that are on
     end     %% properties
 
     methods
@@ -87,30 +88,10 @@ classdef dme_bus < mp.dm_element
 
             %% update bus type property to correspond to online buses only
             obj.type = obj.type(obj.on);
-        end
 
-        function [gbus, ig] = gbus_vector(obj, gen_dme)
-            %
-
-            %% buses of online gens
-            gbus = obj.i2on(gen_dme.bus(gen_dme.on));
-            ig = [];
-        end
-
-        function obj = set_vm_start(obj, gen_dme, gbus, ig)
-            %
-            gen = gen_dme.tab;
-
-            %% pull PV bus voltage magnitudes from gen.vm_setpoint
-            vcb = ones(obj.n, 1);   %% create mask of voltage-controlled buses
-            vcb(obj.type == mp.NODE_TYPE.PQ) = 0;   %% exclude PQ buses
-            %% find indices of online gens at online v-c buses
-            k = find(vcb(gbus));
-            if isempty(ig)
-                obj.vm_start(gbus(k)) = gen.vm_setpoint(gen_dme.on(k));
-            else
-                obj.vm_start(gbus(k)) = gen.vm_setpoint(gen_dme.on(ig(k)));
-            end
+            %% initialize vm_control property to all zeros, to be set
+            %% by other elements, online gens, etc.
+            obj.vm_control = zeros(size(obj.on));
         end
 
         function obj = build_params(obj, dm)
@@ -123,27 +104,13 @@ classdef dme_bus < mp.dm_element
             obj.vm_lb = bus.vm_lb(obj.on);
             obj.vm_ub = bus.vm_ub(obj.on);
 
-            %% update bus type and starting vm based on connected gen status
-            if dm.elements.has_name('gen')
-                gen_dme = dm.elements.gen;
-                [gbus, ig] = obj.gbus_vector(gen_dme);
-                nb = obj.n;
-                ng = length(gbus);
-
-                %% update bus types based on connected generator status
-                %% gen connection matrix, element i, j is 1 if gen j @ bus i is ON
-                Cg = sparse(gbus, (1:ng)', 1, nb, ng);
-                bus_gen_status = Cg * ones(ng, 1);  %% num of gens ON at each bus
-%                obj.type(obj.type == mp.NODE_TYPE.REF & ~bus_gen_status) = ...
-%                    mp.NODE_TYPE.PQ;
-                  % above line would affect OPF (not just PF, CPF) where REF is
-                  % used only as angle reference and does not require an online gen
-                obj.type(obj.type == mp.NODE_TYPE.PV & ~bus_gen_status) = ...
-                    mp.NODE_TYPE.PQ;
-%                obj.ensure_ref_bus();   %% pick a new ref bus if one does not exist
-
-                obj.set_vm_start(gen_dme, gbus, ig);
-            end
+            %% set PV buses without online voltage controls to PQ
+            i = find(obj.type == mp.NODE_TYPE.PV & ~obj.vm_control);
+            obj.type(i) =  mp.NODE_TYPE.PQ; %% direct assignment to type
+                                            %% property (as opposed to use of
+                                            %% set_bus_type_pv() method)
+                                            %% keeps it from propagating to
+                                            %% output tables
         end
 
         function obj = pp_data_cnt(obj, dm, rows, out_e, mpopt, fd, pp_args)
