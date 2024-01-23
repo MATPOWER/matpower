@@ -1,5 +1,5 @@
-function t_opf_default(quiet)
-%T_OPF_DEFAULT  Tests for AC optimal power flow using default solver.
+function t_run_opf_default(quiet)
+%T_RUN_OPF_DEFAULT  Tests for AC optimal power flow using run_opf w/default solver.
 
 %   MATPOWER
 %   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
@@ -13,7 +13,7 @@ if nargin < 1
     quiet = 0;
 end
 
-num_tests = 195;
+num_tests = 163;
 
 t_begin(num_tests, quiet);
 
@@ -106,8 +106,8 @@ end
     t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
     t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
     t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
-    xr = [r.var.val.Va;r.var.val.Vm;r.var.val.Pg;r.var.val.Qg;0;r.var.val.y];
-    t_is(r.x, xr, 8, [t 'raw x returned from OPF']);
+%     xr = [r.var.val.Va;r.var.val.Vm;r.var.val.Pg;r.var.val.Qg;0;r.var.val.y];
+%     t_is(r.x, xr, 8, [t 'raw x returned from OPF']);
 
 %     %% get solved AC OPF case from MAT-file
 %     load soln9_opf_Plim;       %% defines bus_soln, gen_soln, branch_soln, f_soln
@@ -192,70 +192,70 @@ end
     t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
     t_is(r.cost.usr, f, 12, [t 'user cost']);
 
-    %%-----  run OPF with legacy costs and deadzone  -----
-    load soln9_opf;
-    mpc = loadcase(casefile);
-    mpc.N = sparse((1:nb)', (vbas:vend)', ones(nb,1), nb, nxyz);
-    mpc.fparm = ones(nb,1) * [ 2 1.08 0.02 1e8 ];
-    mpc.Cw = ones(nb, 1);
-    t = [t0 'w/legacy cost, in deadzone : '];
-    r = runopf(mpc, mpopt);
-    [f, bus, gen, branch] = deal(r.f, r.bus, r.gen, r.branch);
-    t_ok(r.success, [t 'success']);
-    t_is(f, f_soln, 3, [t 'f']);
-    t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
-    t_is(   bus(:,ib_voltage),    bus_soln(:,ib_voltage),  3, [t 'bus voltage']);
-    t_is(   bus(:,ib_lam    ),    bus_soln(:,ib_lam    ),  3, [t 'bus lambda']);
-    t_is(   bus(:,ib_mu     ),    bus_soln(:,ib_mu     ),  2, [t 'bus mu']);
-    t_is(   gen(:,ig_data   ),    gen_soln(:,ig_data   ), 10, [t 'gen data']);
-    t_is(   gen(:,ig_disp   ),    gen_soln(:,ig_disp   ),  3, [t 'gen dispatch']);
-    t_is(   gen(:,ig_mu     ),    gen_soln(:,ig_mu     ),  3, [t 'gen mu']);
-    t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
-    t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
-    t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
-    t_is(r.cost.usr, 0, 12, [t 'user cost']);
-
-    t = [t0 'w/legacy cost, not in deadzone : '];
-    mpc.fparm = ones(nb,1) * [ 2 1.08 0.01 1e8 ];
-    r = runopf(mpc, mpopt);
-    [f, bus, gen, branch] = deal(r.f, r.bus, r.gen, r.branch);
-    t_ok(r.success, [t 'success']);
-    t_is(f, 9009.0890, 3, [t 'f']);
-    t_is([min(bus(:, VM)) mean(bus(:, VM)) max(bus(:, VM))], ...
-        [1.066624, 1.083980, 1.091698], 5, [t 'bus voltage']);
-    t_is(r.cost.usr, 1673.065465, 5, [t 'user cost']);
-
-    %%-----  run OPF with extra linear user constraints & costs  -----
-    %% single new z variable constrained to be greater than or equal to
-    %% deviation from 1 pu voltage at bus 1, linear cost on this z
-    %% get solved AC OPF case from MAT-file
-    load soln9_opf_extras1;   %% defines bus_soln, gen_soln, branch_soln, f_soln
-    A = sparse([1;1;2;2],[10;25;10;25],[-1;1;1;1],2,25);
-    u = [Inf; Inf];
-    l = [-1; 1];
-
-    N = sparse(1, 25, 1, 1, 25);    %% new z variable only
-    fparm = [1 0 0 1];              %% w = r = z
-    H = sparse(1,1);                %% no quadratic term
-    Cw = 100;
-
-    t = [t0 'w/extra constraints & costs 1 : '];
-    [r, success] = opf(casefile, A, l, u, mpopt, N, fparm, H, Cw);
-    [f, bus, gen, branch] = deal(r.f, r.bus, r.gen, r.branch);
-    t_ok(success, [t 'success']);
-    t_is(f, f_soln, 3, [t 'f']);
-    t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
-    t_is(   bus(:,ib_voltage),    bus_soln(:,ib_voltage),  3, [t 'bus voltage']);
-    t_is(   bus(:,ib_lam    ),    bus_soln(:,ib_lam    ),  3, [t 'bus lambda']);
-    t_is(   bus(:,ib_mu     ),    bus_soln(:,ib_mu     ),  2, [t 'bus mu']);
-    t_is(   gen(:,ig_data   ),    gen_soln(:,ig_data   ), 10, [t 'gen data']);
-    t_is(   gen(:,ig_disp   ),    gen_soln(:,ig_disp   ),  3, [t 'gen dispatch']);
-    t_is(   gen(:,ig_mu     ),    gen_soln(:,ig_mu     ),  3, [t 'gen mu']);
-    t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
-    t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
-    t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
-    t_is(r.var.val.z, 0.025419, 6, [t 'user variable']);
-    t_is(r.cost.usr, 2.5419, 4, [t 'user cost']);
+%     %%-----  run OPF with legacy costs and deadzone  -----
+%     load soln9_opf;
+%     mpc = loadcase(casefile);
+%     mpc.N = sparse((1:nb)', (vbas:vend)', ones(nb,1), nb, nxyz);
+%     mpc.fparm = ones(nb,1) * [ 2 1.08 0.02 1e8 ];
+%     mpc.Cw = ones(nb, 1);
+%     t = [t0 'w/legacy cost, in deadzone : '];
+%     r = runopf(mpc, mpopt);
+%     [f, bus, gen, branch] = deal(r.f, r.bus, r.gen, r.branch);
+%     t_ok(r.success, [t 'success']);
+%     t_is(f, f_soln, 3, [t 'f']);
+%     t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
+%     t_is(   bus(:,ib_voltage),    bus_soln(:,ib_voltage),  3, [t 'bus voltage']);
+%     t_is(   bus(:,ib_lam    ),    bus_soln(:,ib_lam    ),  3, [t 'bus lambda']);
+%     t_is(   bus(:,ib_mu     ),    bus_soln(:,ib_mu     ),  2, [t 'bus mu']);
+%     t_is(   gen(:,ig_data   ),    gen_soln(:,ig_data   ), 10, [t 'gen data']);
+%     t_is(   gen(:,ig_disp   ),    gen_soln(:,ig_disp   ),  3, [t 'gen dispatch']);
+%     t_is(   gen(:,ig_mu     ),    gen_soln(:,ig_mu     ),  3, [t 'gen mu']);
+%     t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
+%     t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
+%     t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
+%     t_is(r.cost.usr, 0, 12, [t 'user cost']);
+% 
+%     t = [t0 'w/legacy cost, not in deadzone : '];
+%     mpc.fparm = ones(nb,1) * [ 2 1.08 0.01 1e8 ];
+%     r = runopf(mpc, mpopt);
+%     [f, bus, gen, branch] = deal(r.f, r.bus, r.gen, r.branch);
+%     t_ok(r.success, [t 'success']);
+%     t_is(f, 9009.0890, 3, [t 'f']);
+%     t_is([min(bus(:, VM)) mean(bus(:, VM)) max(bus(:, VM))], ...
+%         [1.066624, 1.083980, 1.091698], 5, [t 'bus voltage']);
+%     t_is(r.cost.usr, 1673.065465, 5, [t 'user cost']);
+% 
+%     %%-----  run OPF with extra linear user constraints & costs  -----
+%     %% single new z variable constrained to be greater than or equal to
+%     %% deviation from 1 pu voltage at bus 1, linear cost on this z
+%     %% get solved AC OPF case from MAT-file
+%     load soln9_opf_extras1;   %% defines bus_soln, gen_soln, branch_soln, f_soln
+%     A = sparse([1;1;2;2],[10;25;10;25],[-1;1;1;1],2,25);
+%     u = [Inf; Inf];
+%     l = [-1; 1];
+% 
+%     N = sparse(1, 25, 1, 1, 25);    %% new z variable only
+%     fparm = [1 0 0 1];              %% w = r = z
+%     H = sparse(1,1);                %% no quadratic term
+%     Cw = 100;
+% 
+%     t = [t0 'w/extra constraints & costs 1 : '];
+%     [r, success] = opf(casefile, A, l, u, mpopt, N, fparm, H, Cw);
+%     [f, bus, gen, branch] = deal(r.f, r.bus, r.gen, r.branch);
+%     t_ok(success, [t 'success']);
+%     t_is(f, f_soln, 3, [t 'f']);
+%     t_is(   bus(:,ib_data   ),    bus_soln(:,ib_data   ), 10, [t 'bus data']);
+%     t_is(   bus(:,ib_voltage),    bus_soln(:,ib_voltage),  3, [t 'bus voltage']);
+%     t_is(   bus(:,ib_lam    ),    bus_soln(:,ib_lam    ),  3, [t 'bus lambda']);
+%     t_is(   bus(:,ib_mu     ),    bus_soln(:,ib_mu     ),  2, [t 'bus mu']);
+%     t_is(   gen(:,ig_data   ),    gen_soln(:,ig_data   ), 10, [t 'gen data']);
+%     t_is(   gen(:,ig_disp   ),    gen_soln(:,ig_disp   ),  3, [t 'gen dispatch']);
+%     t_is(   gen(:,ig_mu     ),    gen_soln(:,ig_mu     ),  3, [t 'gen mu']);
+%     t_is(branch(:,ibr_data  ), branch_soln(:,ibr_data  ), 10, [t 'branch data']);
+%     t_is(branch(:,ibr_flow  ), branch_soln(:,ibr_flow  ),  3, [t 'branch flow']);
+%     t_is(branch(:,ibr_mu    ), branch_soln(:,ibr_mu    ),  2, [t 'branch mu']);
+%     t_is(r.var.val.z, 0.025419, 6, [t 'user variable']);
+%     t_is(r.cost.usr, 2.5419, 4, [t 'user cost']);
 
     %%-----  test OPF with capability curves  -----
     mpc = loadcase('t_case9_opfv2');
@@ -491,3 +491,19 @@ if have_feature('octave')
 end
 
 t_end;
+
+function varargout = runopf(mpc, mpopt)
+task = run_opf(mpc, mpopt);
+r = task.dmc.export(task.dm, task.dm.source);
+r.f = task.mm.soln.f;
+r.x = task.mm.soln.x;
+r.success = task.success;
+if nargout == 1
+    varargout{1} = r;
+elseif nargout == 2
+    varargout{1} = r;
+    varargout{2} = r.success;
+elseif nargout > 2
+    varargout = {r.baseMVA, r.bus, r.gen, r.gencost, r.branch, ...
+        r.f, r.success, task.mm.soln.output.et};
+end

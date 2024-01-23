@@ -85,6 +85,7 @@ if have_feature('mp_core')
     tests{end+1} = 't_port_inj_power_acp';
     tests{end+1} = 't_node_test';
     tests{end+1} = 't_run_mp';
+    tests{end+1} = 't_run_opf_default';
     tests{end+1} = 't_run_mp_3p';
     tests{end+1} = 't_pretty_print';
     tests{end+1} = 't_mpxt_reserves';

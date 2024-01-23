@@ -13,6 +13,13 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 since 8.0b1
 -----------
 
+#### 1/23/24
+  - Add flexible framework AC OPF tests `t_run_opf_default` with update
+    to high-degree polynomial cost tests that expose two bugs:
+    - Polynomial costs of degree higher than quadratic are indexed
+      incorrectly for cases with offline generators.
+    - Offline elements do not have solution values zeroed out.
+
 #### 1/18/24
   - Rename the `is_index_name()` method of `mp.mapped_array` to `has_name()`.
 
