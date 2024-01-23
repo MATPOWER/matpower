@@ -2,7 +2,7 @@ classdef (Abstract) mme_gen_opf < mp.mme_gen
 % mp.mme_gen_opf - Math model element abstract base class for generator for OPF.
 
 %   MATPOWER
-%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -51,7 +51,10 @@ classdef (Abstract) mme_gen_opf < mp.mme_gen
             %% (order 3 and higher) polynomial costs on Pg
             if ~isempty(obj.cost.poly_p.i3)
                 dme = obj.data_model_element(dm);
-                cost_Pg = @(xx)mp.cost_table.poly_cost_fcn(xx, dm.base_mva, dme.tab.cost_pg.poly_coef, obj.cost.poly_p.i3);
+                cost_Pg = @(xx)mp.cost_table.poly_cost_fcn( ...
+                    xx, dm.base_mva, ...
+                    dme.tab.cost_pg.poly_coef(dme.on, :), ...
+                    obj.cost.poly_p.i3);
                 mm.add_nln_cost('polPg', 1, cost_Pg, {'Pg'});
             end
 

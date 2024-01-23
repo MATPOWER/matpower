@@ -19,6 +19,7 @@ since 8.0b1
     - Polynomial costs of degree higher than quadratic are indexed
       incorrectly for cases with offline generators.
     - Offline elements do not have solution values zeroed out.
+  - Fix the indexing bug mentioned above.
 
 #### 1/18/24
   - Rename the `is_index_name()` method of `mp.mapped_array` to `has_name()`.
