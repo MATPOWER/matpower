@@ -1,5 +1,5 @@
-function t_dcline(quiet)
-%T_DCLINE  Tests for DC line extension in TOGGLE_DCLINE.
+function t_mpxt_legacy_dcline(quiet)
+%T_MPXT_LEGACY_DCLINE  Tests for legacy DC line extension in MP.XT_LEGACY_DCLINE.
 
 %   MATPOWER
 %   Copyright (c) 2011-2024, Power Systems Engineering Research Center (PSERC)
@@ -72,17 +72,16 @@ ibr_angmu   = [MU_ANGMIN MU_ANGMAX];
 mpc0 = loadcase(casefile);
 mpc0 = rmfield(mpc0, 'dclinecost');
 mpc = mpc0;
-mpc = toggle_dcline(mpc, 'on');
-mpc = toggle_dcline(mpc, 'off');
 ndc = size(mpc.dcline, 1);
 
 %% run AC OPF w/o DC lines
 t = 'AC OPF (no DC lines) : ';
 [r0, success] = runopf(mpc0, mpopt);
 t_ok(success, [t 'success']);
-[r,  success] = runopf(mpc, mpopt);
-t_ok(success, [t 'success']);
-t_is(r.f, r0.f, 8, [t 'f']);
+task = run_opf(mpc, mpopt);
+r = task.dmc.export(task.dm, task.dm.source);
+t_ok(task.success, [t 'success']);
+t_is(task.mm.soln.f, r0.f, 8, [t 'f']);
 t_is(   r.bus(:,ib_data   ),    r0.bus(:,ib_data   ), 10, [t 'bus data']);
 t_is(   r.bus(:,ib_voltage),    r0.bus(:,ib_voltage),  3, [t 'bus voltage']);
 t_is(   r.bus(:,ib_lam    ),    r0.bus(:,ib_lam    ),  3, [t 'bus lambda']);
@@ -101,17 +100,18 @@ mpc1 = struct('version', '2', 'baseMVA', [], 'bus', [], 'branch', [], 'gencost',
         r.branch(:, 1:ANGMAX), r.gencost, r.dcline(:, 1:c.LOSS1));
 mpc1.bus(:, VM) = 1;
 mpc1.bus(:, VA) = 0;
-[rp, success] = runpf(mpc1, mpopt);
-t_ok(success, [t 'success']);
+task = run_pf(mpc1, mpopt);
+rp = task.dmc.export(task.dm, task.dm.source);
+t_ok(task.success, [t 'success']);
 t_is(   rp.bus(:,ib_voltage),    r.bus(:,ib_voltage),  3, [t 'bus voltage']);
 t_is(   rp.gen(:,ig_disp   ),    r.gen(:,ig_disp   ),  3, [t 'gen dispatch']);
 t_is(rp.branch(:,ibr_flow  ), r.branch(:,ibr_flow  ),  3, [t 'branch flow']);
 
 %% run with DC lines
 t = 'AC OPF (with DC lines) : ';
-mpc = toggle_dcline(mpc, 'on');
-[r, success] = runopf(mpc, mpopt);
-t_ok(success, [t 'success']);
+task = run_opf(mpc, mpopt, 'mpx', mp.xt_legacy_dcline);
+r = task.dmc.export(task.dm, task.dm.source);
+t_ok(task.success, [t 'success']);
 expected = [
 	10	8.9	-10	10	1.0674	1.0935;
 	2.2776	2.2776	0	0	1.0818	1.0665;
@@ -132,11 +132,11 @@ mpc1 = struct('version', '2', 'baseMVA', [], 'bus', [], 'branch', [], 'gencost',
 [mpc1.baseMVA, mpc1.bus, mpc1.gen, mpc1.branch, mpc1.gencost, mpc1.dcline] = ...
     deal(r.baseMVA, r.bus(:, 1:VMIN), r.gen(:, 1:APF), ...
         r.branch(:, 1:ANGMAX), r.gencost, r.dcline(:, 1:c.LOSS1));
-mpc1 = toggle_dcline(mpc1, 'on');
 mpc1.bus(:, VM) = 1;
 mpc1.bus(:, VA) = 0;
-[rp, success] = runpf(mpc1, mpopt);
-t_ok(success, [t 'success']);
+task = run_pf(mpc1, mpopt, 'mpx', mp.xt_legacy_dcline);
+rp = task.dmc.export(task.dm, task.dm.source);
+t_ok(task.success, [t 'success']);
 t_is(   rp.bus(:,ib_voltage),    r.bus(:,ib_voltage), 3, [t 'bus voltage']);
 t_is(   rp.gen(2,QG)+rp.dcline(1,c.QF), r.gen(2,QG)+r.dcline(1,c.QF), 3, [t 'gen dispatch']);
 rp.gen(2, QG) = r.gen(2, QG);
@@ -165,8 +165,9 @@ for k = 1:ndc
         mpc1.bus(tt, BUS_TYPE) = PV;
     end
 end
-[rp, success] = runpf(mpc1, mpopt);
-t_ok(success, [t 'success']);
+task = run_pf(mpc1, mpopt);
+rp = task.dmc.export(task.dm, task.dm.source);
+t_ok(task.success, [t 'success']);
 t_is(   rp.bus(:,ib_voltage),    r.bus(:,ib_voltage),  3, [t 'bus voltage']);
 t_is(   rp.gen(:,ig_disp   ),    r.gen(:,ig_disp   ),  3, [t 'gen dispatch']);
 t_is(rp.branch(:,ibr_flow  ), r.branch(:,ibr_flow  ),  3, [t 'branch flow']);
@@ -176,9 +177,10 @@ t = 'DC OPF (with DC lines) : ';
 mpc = mpc0;
 mpc.gen(1, PMIN) = 10;
 mpc.branch(5, RATE_A) = 100;
-mpc = toggle_dcline(mpc, 'on');
-[r, success] = rundcopf(mpc, mpopt);
-t_ok(success, [t 'success']);
+mpopt = mpoption(mpopt, 'model', 'DC');
+task = run_opf(mpc, mpopt, 'mpx', mp.xt_legacy_dcline);
+r = task.dmc.export(task.dm, task.dm.source);
+t_ok(task.success, [t 'success']);
 expected = [
 	10	8.9	0	0	1.01	1;
 	2	2	0	0	1	1;
@@ -199,10 +201,10 @@ mpc1 = struct('version', '2', 'baseMVA', [], 'bus', [], 'branch', [], 'gencost',
 [mpc1.baseMVA, mpc1.bus, mpc1.gen, mpc1.branch, mpc1.gencost, mpc1.dcline] = ...
     deal(r.baseMVA, r.bus(:, 1:VMIN), r.gen(:, 1:APF), ...
         r.branch(:, 1:ANGMAX), r.gencost, r.dcline(:, 1:c.LOSS1));
-mpc1 = toggle_dcline(mpc1, 'on');
 mpc1.bus(:, VA) = 0;
-[rp, success] = rundcpf(mpc1, mpopt);
-t_ok(success, [t 'success']);
+task = run_pf(mpc1, mpopt, 'mpx', mp.xt_legacy_dcline);
+rp = task.dmc.export(task.dm, task.dm.source);
+t_ok(task.success, [t 'success']);
 t_is(   rp.bus(:,ib_voltage),    r.bus(:,ib_voltage), 3, [t 'bus voltage']);
 t_is(   rp.gen(:,ig_disp   ),    r.gen(:,ig_disp   ), 3, [t 'gen dispatch']);
 t_is(rp.branch(:,ibr_flow  ), r.branch(:,ibr_flow  ), 3, [t 'branch flow']);
@@ -224,8 +226,9 @@ for k = 1:ndc
         mpc1.bus(tt, BUS_TYPE) = PV;
     end
 end
-[rp, success] = rundcpf(mpc1, mpopt);
-t_ok(success, [t 'success']);
+task = run_pf(mpc1, mpopt);
+rp = task.dmc.export(task.dm, task.dm.source);
+t_ok(task.success, [t 'success']);
 t_is(   rp.bus(:,ib_voltage),    r.bus(:,ib_voltage),  3, [t 'bus voltage']);
 t_is(   rp.gen(:,ig_disp   ),    r.gen(:,ig_disp   ),  3, [t 'gen dispatch']);
 t_is(rp.branch(:,ibr_flow  ), r.branch(:,ibr_flow  ),  3, [t 'branch flow']);
@@ -233,9 +236,10 @@ t_is(rp.branch(:,ibr_flow  ), r.branch(:,ibr_flow  ),  3, [t 'branch flow']);
 %% run with DC lines
 t = 'AC OPF (with DC lines + poly cost) : ';
 mpc = loadcase(casefile);
-mpc = toggle_dcline(mpc, 'on');
-[r, success] = runopf(mpc, mpopt);
-t_ok(success, [t 'success']);
+mpopt = mpoption(mpopt, 'model', 'AC');
+task = run_opf(mpc, mpopt, 'mpx', mp.xt_legacy_dcline);
+r = task.dmc.export(task.dm, task.dm.source);
+t_ok(task.success, [t 'success']);
 expected1 = [
 	10	8.9	-10	10	1.0663	1.0936;
 	7.8429	7.8429	0	0	1.0809	1.0667;
@@ -252,15 +256,17 @@ expected2 = [
 t_is(r.dcline(:, c.MU_PMIN:c.MU_QMAXT), expected2, 3, [t 'mu']);
 
 mpc.dclinecost(4, 1:8) = [2 0 0 4 0 0 7.3 0];
-[r, success] = runopf(mpc, mpopt);
-t_ok(success, [t 'success']);
+task = run_opf(mpc, mpopt, 'mpx', mp.xt_legacy_dcline);
+r = task.dmc.export(task.dm, task.dm.source);
+t_ok(task.success, [t 'success']);
 t_is(r.dcline(:, c.PF:c.VT), expected1, 4, [t 'P Q V']);
 t_is(r.dcline(:, c.MU_PMIN:c.MU_QMAXT), expected2, 3, [t 'mu']);
 
 t = 'AC OPF (with DC lines + pwl cost) : ';
 mpc.dclinecost(4, 1:8) = [1 0 0 2 0 0 10 73];
-[r, success] = runopf(mpc, mpopt);
-t_ok(success, [t 'success']);
+task = run_opf(mpc, mpopt, 'mpx', mp.xt_legacy_dcline);
+r = task.dmc.export(task.dm, task.dm.source);
+t_ok(task.success, [t 'success']);
 t_is(r.dcline(:, c.PF:c.VT), expected1, 4, [t 'P Q V']);
 t_is(r.dcline(:, c.MU_PMIN:c.MU_QMAXT), expected2, 3, [t 'mu']);
 
@@ -270,8 +276,9 @@ mpc.gencost(4:end, COST:end) = 0;
 mpc.gencost(4:end, MODEL) = 2;
 mpc.gencost(4:end, NCOST) = 2;
 mpc.gencost(5, COST+1) = 1;
-[r, success] = runopf(mpc, mpopt);
-t_ok(success, [t 'success']);
+task = run_opf(mpc, mpopt, 'mpx', mp.xt_legacy_dcline);
+r = task.dmc.export(task.dm, task.dm.source);
+t_ok(task.success, [t 'success']);
 t_is(r.dcline(:, c.PF:c.VT), expected1, 4, [t 'P Q V']);
 t_is(r.dcline(:, c.MU_PMIN:c.MU_QMAXT), expected2, 3, [t 'mu']);
 
@@ -286,27 +293,31 @@ mpc.dcline = [
 ];
 mpc.branch(7, BR_STATUS) = 0;
 mpc.bus(2, BUS_TYPE) = REF;
-mpc = toggle_dcline(mpc, 'on');
 
-[r, success] = runopf(mpc, mpopt);
-t_ok(success, [t 'success']);
+task = run_opf(mpc, mpopt, 'mpx', mp.xt_legacy_dcline);
+r = task.dmc.export(task.dm, task.dm.source);
+t_ok(task.success, [t 'success']);
 t_is(r.dcline(:, c.PF:c.VT), [-134.3323 -134.3323 0 0 1.1 1], 4, [t 'P Q V']);
 t_is(r.dcline(:, c.MU_PMIN:c.MU_QMAXT), [0 0 0.1311 0 0 0], 4, [t 'mu']);
 
 t = 'AC PF (isolated gen bus w/DC connection) : ';
-[r, success] = runpf(mpc, mpopt);
-t_ok(success, [t 'success']);
+task = run_pf(mpc, mpopt, 'mpx', mp.xt_legacy_dcline);
+r = task.dmc.export(task.dm, task.dm.source);
+t_ok(task.success, [t 'success']);
 t_is(r.dcline(:, c.PF:c.VT), [-163 -163 -9.6926 0 1.025 1.025], 4, [t 'P Q V']);
 
 t = 'DC OPF (isolated gen bus w/DC connection) : ';
-[r, success] = rundcopf(mpc, mpopt);
-t_ok(success, [t 'success']);
+mpopt = mpoption(mpopt, 'model', 'DC');
+task = run_opf(mpc, mpopt, 'mpx', mp.xt_legacy_dcline);
+r = task.dmc.export(task.dm, task.dm.source);
+t_ok(task.success, [t 'success']);
 t_is(r.dcline(:, c.PF:c.VT), [-134.3776 -134.3776 0 0 1.025 1.025], 4, [t 'P Q V']);
 t_is(r.dcline(:, c.MU_PMIN:c.MU_QMAXT), [0 0 0 0 0 0], 3, [t 'mu']);
 
 t = 'DC PF (isolated gen bus w/DC connection) : ';
-[r, success] = rundcpf(mpc, mpopt);
-t_ok(success, [t 'success']);
+task = run_pf(mpc, mpopt, 'mpx', mp.xt_legacy_dcline);
+r = task.dmc.export(task.dm, task.dm.source);
+t_ok(task.success, [t 'success']);
 t_is(r.dcline(:, c.PF:c.VT), [-163 -163 0 0 1.025 1.025], 4, [t 'P Q V']);
 
 
