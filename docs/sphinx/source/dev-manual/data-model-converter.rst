@@ -23,7 +23,7 @@ By convention, data model converter variables are named :ml:`dmc` and data model
 Building a Data Model Converter
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-A data model converter object is created in two steps. The first is to call the constructor of the desired data model converter class, without arguments. This initializes the :attr:`element_classes` property with a list of data model converter element classes. This list can be modified before the second step, which is to call the :meth:`build` method, also without parameters, which simply instantiates and adds the set of element objects indicated in :attr:`element_classes`. Once it has been created, it is ready to be used for its two primary functions, namely *import* and *export*.
+A data model converter object is created in two steps. The first is to call the constructor of the desired data model converter class, without arguments. This initializes the :attr:`element_classes` property with a list of data model converter element classes. This list can be modified before the second step, which is to call the :meth:`build() <mp.dm_converter.build>` method, also without parameters, which simply instantiates and adds the set of element objects indicated in :attr:`element_classes`. Once it has been created, it is ready to be used for its two primary functions, namely *import* and *export*.
 
 .. _code_data_model_build:
 .. code-block::
@@ -34,7 +34,7 @@ A data model converter object is created in two steps. The first is to call the 
 Importing Data
 ^^^^^^^^^^^^^^
 
-The :meth:`import` method is called automatically by the :meth:`build` method of the data model object. It takes a data model object and a data source and updates the data model by looping through its element objects and calling each element's own :meth:`import` method to import the element's data from the data source into the corresponding data model element. For a |MATPOWER| case struct it would like like this.
+The :meth:`import() <mp.dm_converter.import>` method is called automatically by the :meth:`build() <mp.data_model.build>` method of the data model object. It takes a data model object and a data source and updates the data model by looping through its element objects and calling each element's own :meth:`import() <mp.dmc_element.import>` method to import the element's data from the data source into the corresponding data model element. For a |MATPOWER| case struct it would like like this.
 
 .. _code_dmc_import:
 .. code-block::
@@ -45,14 +45,14 @@ The :meth:`import` method is called automatically by the :meth:`build` method of
 Exporting Data
 ^^^^^^^^^^^^^^
 
-Conversely, the :meth:`export` method takes the same inputs but returns an updated data source, once again looping through its element objects and calling each element's own :meth:`export` method to export data from the corresponding data model element to the respective portion of the data source.
+Conversely, the :meth:`export() <mp.dm_converter.export>` method takes the same inputs but returns an updated data source, once again looping through its element objects and calling each element's own :meth:`export() <mp.dmc_element.export>` method to export data from the corresponding data model element to the respective portion of the data source.
 
 .. _code_dmc_export:
 .. code-block::
 
    mpc = dmc.export(dm, mpc);
 
-Calling :meth:`export` without passing in a data source will initialize one from scratch.
+Calling :meth:`export() <mp.dm_converter.export>` without passing in a data source will initialize one from scratch.
 
 .. _code_dmc_export_init:
 .. code-block::
@@ -80,7 +80,7 @@ By convention, data model converter element variables are named :ml:`dmce` and d
 Data Import Specifications
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The default :meth:`import` method for a data model converter element first calls the :meth:`get_import_spec` method to get a struct containing the specifications that define the details of the import process. This specification is then passed to :meth:`import_table_values` to import the data.
+The default :meth:`import() <mp.dmc_element.import>` method for a data model converter element first calls the :meth:`get_import_spec() <mp.dmc_element.get_import_spec>` method to get a struct containing the specifications that define the details of the import process. This specification is then passed to :meth:`import_table_values() <mp.dmc_element.import_table_values>` to import the data.
 
 The import specifications include things like where to find the data in the data source, the number of rows, number of columns, and possibly a row index vector for rows of interest, [#]_ and a map defining how to import each column of the main data table.
 
@@ -136,11 +136,11 @@ The :meth:`table_var_map() <mp.dmc_element.table_var_map>` in :class:`mp.dmc_ele
 Data Export Specifications
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The default :meth:`export` method first calls the :meth:`get_export_spec` method to get a struct containing the specifications that define the details of the export process. This specification is then passed to :meth:`export_table_values` to export the data.
+The default :meth:`export() <mp.dmc_element.export>` method first calls the :meth:`get_export_spec() <mp.dmc_element.get_export_spec>` method to get a struct containing the specifications that define the details of the export process. This specification is then passed to :meth:`export_table_values() <mp.dmc_element.export_table_values>` to export the data.
 
 The export of data from a data model element back to the original data format is handled by the same variable map as the input, by default.
 
-The :meth:`init_export_data` method is used to initialize the relevant output data structure before exporting to it, if the :meth:`data_exists` method returns false.
+The :meth:`init_export_data() <mp.dmc_element.init_export_data>` method is used to initialize the relevant output data structure before exporting to it, if the :meth:`data_exists() <mp.dmc_element.data_exists>` method returns false.
 
 
 .. [#] For example, when extracting loads from a bus matrix, where only certain buses have corresponding loads.

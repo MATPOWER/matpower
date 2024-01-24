@@ -33,7 +33,7 @@ In any given |MATPOWER| run, a set of object instances are created and used to s
 
    |MATPOWER| Object Instances
 
-A single **task** object is created to manage the overall process. The task is specific to the type of problem being solved, e.g. power flow (PF), continuation power flow (CPF), or optimal power flow (OPF), and it has a :meth:`run` method that sets up and solves the correspnding problem. For example, the following runs an OPF for the 9-bus case.
+A single **task** object is created to manage the overall process. The task is specific to the type of problem being solved, e.g. power flow (PF), continuation power flow (CPF), or optimal power flow (OPF), and it has a :meth:`run() <mp.task.run>` method that sets up and solves the correspnding problem. For example, the following runs an OPF for the 9-bus case.
 
 .. code-block::
 

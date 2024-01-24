@@ -166,7 +166,7 @@ By convention, network model variables are named :ml:`nm` and network model clas
 Building a Network Model
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-A network model object is created in two steps. The first is to call the constructor of the desired network model class, without arguments. This initializes the :attr:`element_classes` property with a list of network model element classes. This list can be modified before the second step, which is to call the :meth:`build` method, passing in the data model object.
+A network model object is created in two steps. The first is to call the constructor of the desired network model class, without arguments. This initializes the :attr:`element_classes` property with a list of network model element classes. This list can be modified before the second step, which is to call the :meth:`build() <mp.net_model.build>` method, passing in the data model object.
 
 .. _code_net_model_build:
 .. code-block::
@@ -174,7 +174,7 @@ A network model object is created in two steps. The first is to call the constru
    nm = mp.net_model_acp();
    nm.build(dm);
 
-The :meth:`build` method proceeds through the following stages sequentially, looping through each element at each stage.
+The :meth:`build() <mp.net_model.build>` method proceeds through the following stages sequentially, looping through each element at each stage.
 
    1. **Create** – Instantiate each element object.
    2. **Count and add** - For each element object, determine the number of online elements from the corresponding data model element and, if nonzero, store it in the object and add the object to the :attr:`elements` property of the :ml:`nm`.
@@ -188,7 +188,7 @@ Node Types
 
 Most problems require that certain nodes be given special treatment depending on their *type*. For example, in the power flow problem, there is typically a single **reference** node, some **PV** nodes, with the rest being **PQ** nodes.
 
-In the current design, each node-creating network model element class implements a :meth:`node_types` method that returns information about the types of the nodes it creates. The container object :meth:`node_types` method assembles that information for the full set of network nodes. It can also optionally, assign a new reference node if one does not exist. There are also methods, namely :meth:`set_node_type_ref`, :meth:`set_node_type_pv`, :meth:`set_node_type_pq`, for setting the type of a network node and having the relevant elements update their corresponding data model elements.
+In the current design, each node-creating network model element class implements a :meth:`node_types() <mp.nm_element.node_types>` method that returns information about the types of the nodes it creates. The container object :meth:`node_types() <mp.nm_element.node_types>` method assembles that information for the full set of network nodes. It can also optionally, assign a new reference node if one does not exist. There are also methods, namely :meth:`set_node_type_ref() <mp.nm_element.set_node_type_ref>`, :meth:`set_node_type_pv() <mp.nm_element.set_node_type_pv>`, :meth:`set_node_type_pq() <mp.nm_element.set_node_type_pq>`, for setting the type of a network node and having the relevant elements update their corresponding data model elements.
 
 
 .. _sec_nm_element:

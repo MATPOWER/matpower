@@ -42,21 +42,21 @@ The task class has methods that determine the classes used to create the data mo
 
    * - Method
      - Description
-   * - :meth:`dm_converter_class`
+   * - :meth:`dm_converter_class() <mp.task.dm_converter_class>`
      - Returns the final class for the data model converter, after any overrides of the default.
-   * - :meth:`data_model_class`
+   * - :meth:`data_model_class() <mp.task.data_model_class>`
      - Returns the final class for the data model, after any overrides of the default.
-   * - :meth:`network_model_class`
+   * - :meth:`network_model_class() <mp.task.network_model_class>`
      - Returns the final class for the network model, after any overrides of the default.
-   * - :meth:`math_model_class`
+   * - :meth:`math_model_class() <mp.task.math_model_class>`
      - Returns the final class for the math model, after any overrides of the default.
-   * - :meth:`dm_converter_class_mpc2_default`
+   * - :meth:`dm_converter_class_mpc2_default() <mp.task.dm_converter_class_mpc2_default>`
      - Returns the *default* class for the data model converter for this task. Note that this is specific to the data format. Each data format would have it's own "default" method.
-   * - :meth:`data_model_class_default`
+   * - :meth:`data_model_class_default() <mp.task.data_model_class_default>`
      - Returns the *default* class for the data model for this task.
-   * - :meth:`network_model_class_default`
+   * - :meth:`network_model_class_default() <mp.task.network_model_class_default>`
      - Returns the *default* class for the network model for this task.
-   * - :meth:`math_model_class_default`
+   * - :meth:`math_model_class_default() <mp.task.math_model_class_default>`
      - Returns the *default* class for the math model for this task.
 
 :numref:`tab_task_methods` shows the methods that determine the classes for each of the 4 objects. Each method returns a handle to a class constructor. In general, the *main* methods (the first 4 in the table) are inherited from :class:`mp.task` and only the *default* methods (the last 4) would be overridden to customize a task with new model or data model converter classes.

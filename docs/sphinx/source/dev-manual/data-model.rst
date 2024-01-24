@@ -27,7 +27,7 @@ By convention, data model variables are named :ml:`dm` and data model class name
 Building a Data Model
 ^^^^^^^^^^^^^^^^^^^^^
 
-There are two steps to building a data model. The first is to call the constructor of the desired data model class, without arguments. This initializes the :attr:`element_classes` property with a list of data model element classes. This list can be modified before the second step, which is to call the :meth:`build` method, passing in the data and a corresponding data model converter object.
+There are two steps to building a data model. The first is to call the constructor of the desired data model class, without arguments. This initializes the :attr:`element_classes` property with a list of data model element classes. This list can be modified before the second step, which is to call the :meth:`build() <mp.data_model.build>` method, passing in the data and a corresponding data model converter object.
 
 .. _code_data_model_build:
 .. code-block::
@@ -36,7 +36,7 @@ There are two steps to building a data model. The first is to call the construct
    dm = mp.data_model();
    dm.build('case9', dmc);
 
-The :meth:`build` method proceeds through the following stages sequentially, looping through each element at every stage.
+The :meth:`build() <mp.data_model.build>` method proceeds through the following stages sequentially, looping through each element at every stage.
 
    1. **Create** – Instantiate each element object and add it to the :attr:`elements` property of the :ml:`dm`.
    2. **Import** – Use the corresponding data model converter element to read the data into each element's table(s).
@@ -55,7 +55,7 @@ There are a few system level parameters such as the system per-unit power base t
 Printing a Data Model
 ^^^^^^^^^^^^^^^^^^^^^
 
-The :class:`mp.data_model` provides a :meth:`pretty_print` method for displaying the model parameters to a pretty-printed text format. The result can be output either to the console or to a file.
+The :class:`mp.data_model` provides a :meth:`pretty_print() <mp.data_model.pretty_print>` method for displaying the model parameters to a pretty-printed text format. The result can be output either to the console or to a file.
 
 The output is organized into sections and each element type controls its own output for each section. The default sections are:
 
@@ -124,17 +124,17 @@ The table below includes additional properties, besides the main table :attr:`ta
 Methods
 ^^^^^^^
 
-A data model element also has a :meth:`name` method that returns the name of the element type under which it is entered in the data model (container) object. For example, the name returned for the :class:`mp.dme_gen` class is :ml:`'gen'`, which means the corresponding data model element object is found in :ml:`dm.elements.gen`.
+A data model element also has a :meth:`name() <mp.dm_element.name>` method that returns the name of the element type under which it is entered in the data model (container) object. For example, the name returned for the :class:`mp.dme_gen` class is :ml:`'gen'`, which means the corresponding data model element object is found in :ml:`dm.elements.gen`.
 
-There are also methods named :meth:`label` and :meth:`labels` which return user visible names for singular and plural instances of the element used when pretty-printing. For :class:`mp.dme_gen`, for example, these return :ml:`'Generator'` and :ml:`'Generators'`, respectively.
+There are also methods named :meth:`label() <mp.dm_element.label>` and :meth:`labels() <mp.dm_element.labels>` which return user visible names for singular and plural instances of the element used when pretty-printing. For :class:`mp.dme_gen`, for example, these return :ml:`'Generator'` and :ml:`'Generators'`, respectively.
 
 .. note::
 
    Given that these name and label methods simply return a character array, it might seem logical to implement them as Constant properties instead of methods, but this would prevent the value from being overridden by a subclass, in effect precluding the option to create a new element type that inherits from an existing one.
 
-The :meth:`main_table_var_names` method returns a cell array of variable names defining the columns of the main data table. These are used by the corresponding data model converter element to import the data.
+The :meth:`main_table_var_names() <mp.dm_element.main_table_var_names>` method returns a cell array of variable names defining the columns of the main data table. These are used by the corresponding data model converter element to import the data.
 
-There are also methods that correspond to the build steps for the data model container object, :meth:`count`, :meth:`initialize`, :meth:`init_status`, :meth:`update_status`, and :meth:`build_params`, as well as those for pretty printing output, :meth:`pretty_print`, etc.
+There are also methods that correspond to the build steps for the data model container object, :meth:`count() <mp.dm_element.count>`, :meth:`initialize() <mp.dm_element.initialize>`, :meth:`init_status() <mp.dm_element.init_status>`, :meth:`update_status() <mp.dm_element.update_status>`, and :meth:`build_params() <mp.dm_element.build_params>`, as well as those for pretty printing output, :meth:`pretty_print() <mp.dm_element.pretty_print>`, etc.
 
 
 .. _sec_dm_element_cxn:

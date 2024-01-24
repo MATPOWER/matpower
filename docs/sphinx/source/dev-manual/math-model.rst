@@ -67,7 +67,7 @@ By convention, math model variables are named :ml:`mm` and math model class name
 Building a Mathematical Model
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-A math model object is created in two steps. The first is to call the constructor of the desired math model class, without arguments. This initializes the :attr:`element_classes` property with a list of math model element classes. This list can be modified before the second step, which is to call the :meth:`build` method, passing in the network and data model objects and a |MATPOWER| options struct.
+A math model object is created in two steps. The first is to call the constructor of the desired math model class, without arguments. This initializes the :attr:`element_classes` property with a list of math model element classes. This list can be modified before the second step, which is to call the :meth:`build() <mp.math_model.build>` method, passing in the network and data model objects and a |MATPOWER| options struct.
 
 .. _code_math_model_build:
 .. code-block::
@@ -75,7 +75,7 @@ A math model object is created in two steps. The first is to call the constructo
    mm = mp.math_model_opf_acps();
    mm.build(nm, dm, mpopt);
 
-The :meth:`build` method proceeds through the following stages sequentially, looping through each element for the last 3 stages.
+The :meth:`build() <mp.math_model.build>` method proceeds through the following stages sequentially, looping through each element for the last 3 stages.
 
    1. **Create** – Instantiate each element object.
    2. **Count and add** - For each element object, determine the number of online elements from the corresponding data model element and, if nonzero, add the object to the :attr:`elements` property of the :ml:`mm`.
@@ -90,7 +90,7 @@ The adding of variables, constraints and costs to the model is done by the math 
 Solving a Math Model
 ^^^^^^^^^^^^^^^^^^^^
 
-Once the math model build is complete and it contains the full set of variables, constraints and costs for the model, the solver options are initialized by calling the :meth:`solve_opts` method and then passed to the :meth:`solve` method.
+Once the math model build is complete and it contains the full set of variables, constraints and costs for the model, the solver options are initialized by calling the :meth:`solve_opts() <mp.math_model.solve_opts>` method and then passed to the :meth:`solve` method.
 
 .. _code_math_model_solve:
 .. code-block::
@@ -104,7 +104,7 @@ The :meth:`solve` method, also inherited from |MPOM>|, invokes the appropriate s
 Updating Network and Data Models
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The solved math model can then be used to update the solved state of the network and data models by calling the :meth:`network_model_x_soln` and :meth:`data_model_update` methods, respectively.
+The solved math model can then be used to update the solved state of the network and data models by calling the :meth:`network_model_x_soln() <mp.math_model.network_model_x_soln>` and :meth:`data_model_update() <mp.math_model.data_model_update>` methods, respectively.
 
 .. _code_math_model_updates:
 .. code-block::
@@ -112,7 +112,7 @@ The solved math model can then be used to update the solved state of the network
    nm = mm.network_model_x_soln(nm);
    dm = mm.data_model_update(nm, dm, mpopt);
 
-The math model's :meth:`data_model_update` method cycles through the math model element objects, calling the :meth:`data_model_update` for each element.
+The math model's :meth:`data_model_update() <mp.math_model.data_model_update>` method cycles through the math model element objects, calling the :meth:`data_model_update() <mp.mm_element.data_model_update>` for each element.
 
 
 .. _sec_mm_element:
