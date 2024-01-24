@@ -75,5 +75,21 @@ classdef (Abstract) mme_gen_opf < mp.mme_gen
                 x0(vv.i1.y:vv.iN.y) = maxgc + 0.1 * abs(maxgc);
             end
         end
+
+        function obj = data_model_update(obj, mm, nm, dm, mpopt)
+            %
+
+            %% call parent
+            data_model_update@mp.mme_gen(obj, mm, nm, dm, mpopt);
+
+            %% zero out solution values for offline elements
+            dme = obj.data_model_element(dm);
+            if ~isempty(dme.off)
+                dme.tab.mu_pg_lb(dme.off) = 0;
+                dme.tab.mu_pg_ub(dme.off) = 0;
+                dme.tab.mu_qg_lb(dme.off) = 0;
+                dme.tab.mu_qg_ub(dme.off) = 0;
+            end
+        end
     end     %% methods
 end         %% classdef

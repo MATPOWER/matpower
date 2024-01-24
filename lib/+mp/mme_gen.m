@@ -17,5 +17,19 @@ classdef (Abstract) mme_gen < mp.mm_element
             %
             name = 'gen';
         end
+
+        function obj = data_model_update(obj, mm, nm, dm, mpopt)
+            %
+
+            %% call parent
+            data_model_update@mp.mm_element(obj, mm, nm, dm, mpopt);
+
+            %% zero out solution values for offline elements
+            dme = obj.data_model_element(dm);
+            if ~isempty(dme.off)
+                dme.tab.pg(dme.off) = 0;
+                dme.tab.qg(dme.off) = 0;
+            end
+        end
     end     %% methods
 end         %% classdef

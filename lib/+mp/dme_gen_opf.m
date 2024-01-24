@@ -170,39 +170,53 @@ classdef dme_gen_opf < mp.dme_gen & mp.dme_shared_opf
         function str = pp_data_row_lim(obj, dm, k, out_e, mpopt, fd, pp_args)
             %
             if pp_args.gen.pq == 'P'
-                if obj.tab.pg(k) < obj.tab.pg_lb(k) + obj.ctol || ...
-                        obj.tab.mu_pg_lb(k) > obj.ptol
+                if obj.tab.status(k) & ...
+                        (obj.tab.pg(k) < obj.tab.pg_lb(k) + obj.ctol || ...
+                         obj.tab.mu_pg_lb(k) > obj.ptol)
                     mu_lb = sprintf('%10.3f', obj.tab.mu_pg_lb(k));
                 else
                     mu_lb = '      -   ';
                 end
-                if obj.tab.pg(k) > obj.tab.pg_ub(k) - obj.ctol || ...
-                        obj.tab.mu_pg_ub(k) > obj.ptol
+                if obj.tab.status(k) & ...
+                        (obj.tab.pg(k) > obj.tab.pg_ub(k) - obj.ctol || ...
+                         obj.tab.mu_pg_ub(k) > obj.ptol)
                     mu_ub = sprintf('%10.3f', obj.tab.mu_pg_ub(k));
                 else
                     mu_ub = '      -   ';
                 end
+                if obj.tab.status(k)
+                    pg = sprintf('%8.2f', obj.tab.pg(k));
+                else
+                    pg = '     -  ';
+                end
 
-                str = sprintf('%7d %9d %10s %8.2f %8.2f %8.2f %10s', ...
+                str = sprintf('%7d %9d %10s %8.2f %8s %8.2f %10s', ...
                     obj.tab.uid(k), obj.tab.bus(k), mu_lb, obj.tab.pg_lb(k), ...
-                    obj.tab.pg(k), obj.tab.pg_ub(k), mu_ub);
+                    pg, obj.tab.pg_ub(k), mu_ub);
             else    % pp_args.gen.pq == 'Q'
-                if obj.tab.qg(k) < obj.tab.qg_lb(k) + obj.ctol || ...
-                        obj.tab.mu_qg_lb(k) > obj.ptol
+                if obj.tab.status(k) & ...
+                        (obj.tab.qg(k) < obj.tab.qg_lb(k) + obj.ctol || ...
+                         obj.tab.mu_qg_lb(k) > obj.ptol)
                     mu_lb = sprintf('%10.3f', obj.tab.mu_qg_lb(k));
                 else
                     mu_lb = '      -   ';
                 end
-                if obj.tab.qg(k) > obj.tab.qg_ub(k) - obj.ctol || ...
-                        obj.tab.mu_qg_ub(k) > obj.ptol
+                if obj.tab.status(k) & ...
+                        (obj.tab.qg(k) > obj.tab.qg_ub(k) - obj.ctol || ...
+                         obj.tab.mu_qg_ub(k) > obj.ptol)
                     mu_ub = sprintf('%10.3f', obj.tab.mu_qg_ub(k));
                 else
                     mu_ub = '      -   ';
                 end
+                if obj.tab.status(k)
+                    qg = sprintf('%8.2f', obj.tab.qg(k));
+                else
+                    qg = '     -  ';
+                end
 
-                str = sprintf('%7d %9d %10s %8.2f %8.2f %8.2f %10s', ...
+                str = sprintf('%7d %9d %10s %8.2f %8s %8.2f %10s', ...
                     obj.tab.uid(k), obj.tab.bus(k), mu_lb, obj.tab.qg_lb(k), ...
-                    obj.tab.qg(k), obj.tab.qg_ub(k), mu_ub);
+                    qg, obj.tab.qg_ub(k), mu_ub);
             end
         end
     end     %% methods

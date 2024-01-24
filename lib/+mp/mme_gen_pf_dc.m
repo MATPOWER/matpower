@@ -16,6 +16,9 @@ classdef mme_gen_pf_dc < mp.mme_gen
         function obj = data_model_update(obj, mm, nm, dm, mpopt)
             %
 
+            %% call parent
+            data_model_update@mp.mme_gen(obj, mm, nm, dm, mpopt);
+
             %% generator active power
             ss = nm.get_idx('state');
             pg = nm.soln.z(ss.i1.gen:ss.iN.gen);

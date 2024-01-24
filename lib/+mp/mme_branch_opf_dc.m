@@ -45,6 +45,10 @@ classdef mme_branch_opf_dc < mp.mme_branch_opf
 
         function obj = data_model_update(obj, mm, nm, dm, mpopt)
             %
+
+            %% call parent
+            data_model_update@mp.mme_branch(obj, mm, nm, dm, mpopt);
+
             dme = obj.data_model_element(dm);
             nme = obj.network_model_element(nm);
 

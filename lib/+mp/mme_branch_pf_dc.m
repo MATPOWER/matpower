@@ -16,6 +16,9 @@ classdef mme_branch_pf_dc < mp.mme_branch
         function obj = data_model_update(obj, mm, nm, dm, mpopt)
             %
 
+            %% call parent
+            data_model_update@mp.mme_branch(obj, mm, nm, dm, mpopt);
+
             %% branch active power flows
             pp = nm.get_idx('port');
             pl_fr = nm.soln.gp(pp.i1.branch(1):pp.iN.branch(1));

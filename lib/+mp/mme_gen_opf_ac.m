@@ -246,6 +246,10 @@ classdef mme_gen_opf_ac < mp.mme_gen_opf
 
         function obj = data_model_update(obj, mm, nm, dm, mpopt)
             %
+
+            %% call parent
+            data_model_update@mp.mme_gen_opf(obj, mm, nm, dm, mpopt);
+
             dme = obj.data_model_element(dm);
             nme = obj.network_model_element(nm);
 
