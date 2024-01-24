@@ -5,7 +5,7 @@ classdef (Abstract) mm_shared_pfcpf_ac < mp.mm_shared_pfcpf
 % power flow (CPF) **math model** objects.
 
 %   MATPOWER
-%   Copyright (c) 2022-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2022-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -149,7 +149,7 @@ classdef (Abstract) mm_shared_pfcpf_ac < mp.mm_shared_pfcpf
 
                 %% find indices of states with largest range at its node
                 r = mx - mn;    %% size of range for each state
-                [rmax, j] = max(-CCrpv * spdiags(r, 0, nm.nz, nm.nz), [], 2);
+                [rmax, j] = max(abs(CCrpv) * spdiags(r, 0, nm.nz, nm.nz), [], 2);
 
                 %% set ranges to 1 for states at nodes where all ranges are 0
                 %% (results in equal limit violations)
@@ -158,7 +158,7 @@ classdef (Abstract) mm_shared_pfcpf_ac < mp.mm_shared_pfcpf
                 if ~isempty(i0)
                     rmax(i0) = 1;           %% set these ranges to one
                     j0 = find(any(CCrpv(i0, :), 1));    %% corresponding states
-                    r(j0) = -CCrpv(i0, j0)' * rmax(i0); %% apply to all states at same node
+                    r(j0) = abs(CCrpv(i0, j0))' * rmax(i0); %% apply to all states at same node
                 end
 
                 %% augment update equation ...
