@@ -36,6 +36,10 @@ classdef (Abstract) nm_element < handle
 %   * x2vz - get port voltages and non-voltage states from combined state vector
 %   * node_indices - construct node indices from data model element connection info
 %   * incidence_matrix - construct stacked incidence matrix from set of index vectors
+%   * node_types - get node type information
+%   * set_node_type_ref - make the specified node a reference node
+%   * set_node_type_pv - make the specified node a PV node
+%   * set_node_type_pq - make the specified node a PQ node
 %   * display - display the network model element object
 %
 % See the :ref:`sec_nm_element` section in the |MATPOWER-Dev-Manual| for more
@@ -617,6 +621,84 @@ classdef (Abstract) nm_element < handle
 %                     sparse(mD, 2*nC) D sparse(mD, nD);
 %                     sparse(mD, 2*nC+nD) D ];
 %         end
+
+        function [ref, pv, pq] = node_types(obj, nm, dm, idx)
+            % Get node type information.
+            % ::
+            %
+            %   ntv           = nme.node_types(nm, dm)
+            %   [ref, pv, pq] = nme.node_types(nm, dm)
+            %             ... = nme.node_types(nm, dm, idx)
+            %
+            % Inputs:
+            %   nm (mp.net_model) : network model object
+            %   dm (mp.data_model) : data model object
+            %   idx (integer) : index *(not used in base method)*
+            %
+            % Outputs:
+            %   ntv (integer) : node type vector, valid element values are:
+            %
+            %       - mp.NODE_TYPE.REF
+            %       - mp.NODE_TYPE.PV
+            %       - mp.NODE_TYPE.PQ
+            %   ref (integer) : vector of indices of reference nodes
+            %   pv (integer) : vector of indices of PV nodes
+            %   pq (integer) : vector of indices of PQ nodes
+            %
+            % See also mp.NODE_TYPE.
+            error('node_types() method not implemented for class ''%s''', class(obj));
+        end
+
+        function set_node_type_ref(obj, dm, idx)
+            % Make the specified node a reference node.
+            % ::
+            %
+            %   nme.set_node_type_ref(dm, idx)
+            %
+            % Inputs:
+            %   dm (mp.data_model) : data model object
+            %   idx (integer) : index of node to modify, this is the internal
+            %       network model element index
+            %
+            % Set the specified node to type mp.NODE_TYPE.REF.
+            %
+            % Implementation provided by node-creating subclass.
+            error('set_node_type_ref() method not implemented for class ''%s''', class(obj));
+        end
+
+        function set_node_type_pv(obj, dm, idx)
+            % Make the specified node a PV node.
+            % ::
+            %
+            %   nme.set_node_type_pv(dm, idx)
+            %
+            % Inputs:
+            %   dm (mp.data_model) : data model object
+            %   idx (integer) : index of node to modify, this is the internal
+            %       network model element index
+            %
+            % Set the specified node to type mp.NODE_TYPE.PV.
+            %
+            % Implementation provided by node-creating subclass.
+            error('set_node_type_pv() method not implemented for class ''%s''', class(obj));
+        end
+
+        function set_node_type_pq(obj, dm, idx)
+            % Make the specified node a PQ node.
+            % ::
+            %
+            %   nme.set_node_type_pq(dm, idx)
+            %
+            % Inputs:
+            %   dm (mp.data_model) : data model object
+            %   idx (integer) : index of node to modify, this is the internal
+            %       network model element index
+            %
+            % Set the specified node to type mp.NODE_TYPE.PQ.
+            %
+            % Implementation provided by node-creating subclass.
+            error('set_node_type_pq() method not implemented for class ''%s''', class(obj));
+        end
 
         function display(obj)
             % Display the network model element object.
