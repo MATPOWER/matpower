@@ -56,6 +56,7 @@ classdef (Abstract) dm_element < handle
 %   * table_exists - check for existence of data in main data table
 %   * main_table_var_names - names of variables (columns) in main data table
 %   * export_vars - names of variables to be exported by DMCE to data source
+%   * export_vars_offline_val - values of export variables for offline elements
 %   * dm_converter_element - get corresponding data model converter element
 %   * copy - create a duplicate of the data model element object
 %   * count - determine number of instances of this element in the data
@@ -91,7 +92,7 @@ classdef (Abstract) dm_element < handle
 % See also mp.data_model.
 
 %   MATPOWER
-%   Copyright (c) 2020-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -288,6 +289,32 @@ classdef (Abstract) dm_element < handle
             % voltages, line flows, etc.
 
             vars = {};
+        end
+
+        function s = export_vars_offline_val(obj)
+            % Values of export variables for offline elements.
+            % ::
+            %
+            %   s = dme.export_vars_offline_val()
+            %
+            % Output:
+            %   s (struct) : keys are export variable names, values are
+            %       the corresponding values to assign to these variables
+            %       for offline elements.
+            %
+            % Returns a struct defining the values of export variables for
+            % offline elements. Called by mp.mm_element.data_model_update
+            % to define how to set export variables for offline elements.
+            %
+            % Export variables not found in the struct are not modified.
+            %
+            % For example, ``s = struct('va', 0, 'vm', 1)`` would assign
+            % the value 0 to the ``va`` variable and 1 to the ``vm`` variable
+            % for any offline elements.
+            %
+            % See also export_vars.
+
+            s = struct();
         end
 
         function dmce = dm_converter_element(obj, dmc, name)

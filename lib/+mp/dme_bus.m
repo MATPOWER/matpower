@@ -61,6 +61,14 @@ classdef dme_bus < mp.dm_element
             vars = {'type', 'vm', 'va'};
         end
 
+        function s = export_vars_offline_val(obj)
+            %
+
+            s = export_vars_offline_val@mp.dm_element(obj);     %% call parent
+            s.vm = 0;
+            s.va = 0;
+        end
+
         function obj = init_status(obj, dm)
             %
 

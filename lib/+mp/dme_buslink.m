@@ -11,7 +11,7 @@ classdef dme_buslink < mp.dm_element
 %   ===========  =========  ========================================
 
 %   MATPOWER
-%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %
@@ -64,6 +64,10 @@ classdef dme_buslink < mp.dm_element
 
 %         function vars = export_vars(obj)
 %             vars = {};
+%         end
+
+%         function s = export_vars_offline_val(obj)
+%             s = export_vars_offline_val@mp.dm_element(obj);     %% call parent
 %         end
 
         function obj = initialize(obj, dm)

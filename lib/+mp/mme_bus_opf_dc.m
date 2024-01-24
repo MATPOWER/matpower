@@ -2,7 +2,7 @@ classdef mme_bus_opf_dc < mp.mme_bus
 % mp.mme_bus_opf_dc - Math model element for bus for DC OPF.
 
 %   MATPOWER
-%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -20,7 +20,7 @@ classdef mme_bus_opf_dc < mp.mme_bus
             x0(vv.i1.Va:vv.iN.Va) = varef1; %% angles set to 1st ref angle
         end
 
-        function obj = data_model_update(obj, mm, nm, dm, mpopt)
+        function obj = data_model_update_on(obj, mm, nm, dm, mpopt)
             %
 
             %% bus voltage angles

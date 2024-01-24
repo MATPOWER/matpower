@@ -78,6 +78,10 @@ classdef dme_gen3p < mp.dm_element
 %             vars = {'pg1', 'pg2', 'pg3', 'qg1', 'qg2', 'qg3'};
 %         end
 
+%         function s = export_vars_offline_val(obj)
+%             s = export_vars_offline_val@mp.dm_element(obj);     %% call parent
+%         end
+
         function obj = initialize(obj, dm)
             %
             initialize@mp.dm_element(obj, dm); %% call parent

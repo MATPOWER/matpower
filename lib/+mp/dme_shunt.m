@@ -18,7 +18,7 @@ classdef dme_shunt < mp.dm_element
 % .. [#] *Nominal* means for a voltage of 1 p.u.
 
 %   MATPOWER
-%   Copyright (c) 2020-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -65,10 +65,15 @@ classdef dme_shunt < mp.dm_element
                 {'bus', 'gs', 'bs', 'p', 'q'});
         end
 
-        function vars = export_vars(obj)
-            %
-            vars = {};
-        end
+%         function vars = export_vars(obj)
+%             %
+%             vars = {};
+%         end
+% 
+%         function s = export_vars_offline_val(obj)
+%             %
+%             s = export_vars_offline_val@mp.dm_element(obj);     %% call parent
+%         end
 
         function nr = count(obj, dm)
             %

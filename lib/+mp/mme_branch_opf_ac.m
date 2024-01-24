@@ -2,7 +2,7 @@ classdef (Abstract) mme_branch_opf_ac < mp.mme_branch_opf
 % mp.mme_branch_opf_ac - Math model element abstract base class for branch for AC OPF.
 
 %   MATPOWER
-%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -64,11 +64,8 @@ classdef (Abstract) mme_branch_opf_ac < mp.mme_branch_opf
             end
         end
 
-        function obj = data_model_update(obj, mm, nm, dm, mpopt)
+        function obj = data_model_update_on(obj, mm, nm, dm, mpopt)
             %
-
-            %% call parent
-            data_model_update@mp.mme_branch(obj, mm, nm, dm, mpopt);
 
             dme = obj.data_model_element(dm);
             nme = obj.network_model_element(nm);

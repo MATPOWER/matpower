@@ -2,7 +2,7 @@ classdef mme_reserve_gen < mp.mm_element
 % mp.mme_reserve_gen - Mathematical model element for reserve generator.
 
 %   MATPOWER
-%   Copyright (c) 2022-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2022-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -45,8 +45,9 @@ classdef mme_reserve_gen < mp.mm_element
             mm.add_lin_constraint('Pg_plus_R', Ar, [], ur, {'Pg', 'R'});
         end
 
-        function obj = data_model_update(obj, mm, nm, dm, mpopt)
+        function obj = data_model_update_on(obj, mm, nm, dm, mpopt)
             %
+
             dme = obj.data_model_element(dm);
             rz_dme = dm.elements.reserve_zone;
 

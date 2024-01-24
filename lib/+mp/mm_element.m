@@ -20,6 +20,8 @@ classdef (Abstract) mm_element < handle
 %   * add_constraints - add math model constraints for this element
 %   * add_costs - add math model costs for this element
 %   * data_model_update - update the corresponding data model element
+%   * data_model_update_off - update offline elements in corresponding data model element
+%   * data_model_update_on - update online elements in corresponding data model element
 %
 % See the :ref:`sec_mm_element` section in the |MATPOWER-Dev-Manual| for more
 % information.
@@ -27,7 +29,7 @@ classdef (Abstract) mm_element < handle
 % See also mp.math_model.
 
 %   MATPOWER
-%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -148,11 +150,69 @@ classdef (Abstract) mm_element < handle
             %   dm (mp.data_model) : data model object
             %   mpopt (struct) : |MATPOWER| options struct
             %
+            % Call data_model_update_off() then data_model_update_on()
+            % to update the data model for this element based on the
+            % math model solution.
+            %
+            % See also data_model_update_off, data_model_update_on.
+
+            %% update offline elements
+            obj.data_model_update_off(mm, nm, dm, mpopt);
+
+            %% update online elements
+            obj.data_model_update_on(mm, nm, dm, mpopt);
+        end
+
+        function obj = data_model_update_off(obj, mm, nm, dm, mpopt)
+            % Update offline elements in the corresponding data model element.
+            % ::
+            %
+            %   mme.data_model_update_off(mm, nm, dm, mpopt)
+            %
+            % Inputs:
+            %   mm (mp.math_model) : mathmatical model object
+            %   nm (mp.net_model) : network model object
+            %   dm (mp.data_model) : data model object
+            %   mpopt (struct) : |MATPOWER| options struct
+            %
+            % Set export variables for offline elements based on specs
+            % returned by mp.dm_element.export_vars_offline_val.
+            %
+            % See also data_model_update, data_model_update_on.
+
+            dme = obj.data_model_element(dm);
+            if ~isempty(dme.off)
+                vars = dme.export_vars();
+                if ~isempty(vars)
+                    s = dme.export_vars_offline_val();
+                    for k = 1:length(vars)
+                        if isfield(s, vars{k})
+                            dme.tab.(vars{k})(dme.off) = s.(vars{k});
+                        end
+                    end
+                end
+            end
+        end
+
+        function obj = data_model_update_on(obj, mm, nm, dm, mpopt)
+            % Update online elements in the corresponding data model element.
+            % ::
+            %
+            %   mme.data_model_update_on(mm, nm, dm, mpopt)
+            %
+            % Inputs:
+            %   mm (mp.math_model) : mathmatical model object
+            %   nm (mp.net_model) : network model object
+            %   dm (mp.data_model) : data model object
+            %   mpopt (struct) : |MATPOWER| options struct
+            %
             % Extract the math model solution relevant to this particular
             % element and update the corresponding data model element
-            % accordingly.
+            % for online elements accordingly.
             %
             % Implementation provided by a subclass.
+            %
+            % See also data_model_update, data_model_update_off.
         end
     end     %% methods
 end         %% classdef

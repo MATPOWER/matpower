@@ -34,5 +34,13 @@ classdef dme_test_widget < mp.dm_element
         function vars = export_vars(obj)
             vars = {'alpha', 'gamma', 'epsilon'};
         end
+
+        function s = export_vars_offline_val(obj)
+            %
+
+            s = export_vars_offline_val@mp.dm_element(obj);     %% call parent
+            s.alpha = 2;
+            s.epsilon = 0;
+        end
     end     %% methods
 end         %% classdef

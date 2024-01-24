@@ -34,7 +34,7 @@ classdef dme_branch < mp.dm_element
 %   ===========  =========  ========================================
 
 %   MATPOWER
-%   Copyright (c) 2020-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -94,6 +94,16 @@ classdef dme_branch < mp.dm_element
         function vars = export_vars(obj)
             %
             vars = {'pl_fr', 'ql_fr', 'pl_to', 'ql_to'};
+        end
+
+        function s = export_vars_offline_val(obj)
+            %
+
+            s = export_vars_offline_val@mp.dm_element(obj);     %% call parent
+            s.pl_fr = 0;
+            s.ql_fr = 0;
+            s.pl_to = 0;
+            s.ql_to = 0;
         end
 
         function obj = initialize(obj, dm)

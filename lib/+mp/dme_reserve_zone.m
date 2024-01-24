@@ -14,7 +14,7 @@ classdef dme_reserve_zone < mp.dm_element & mp.dme_shared_opf
 % .. [#] Here *u* denotes the units of the objective function, e.g. USD.
 
 %   MATPOWER
-%   Copyright (c) 2022-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2022-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %
@@ -52,6 +52,13 @@ classdef dme_reserve_zone < mp.dm_element & mp.dme_shared_opf
         function vars = export_vars(obj)
             %
             vars = {'prc'};
+        end
+
+        function s = export_vars_offline_val(obj)
+            %
+
+            s = export_vars_offline_val@mp.dm_element(obj);     %% call parent
+            s.prc = 0;
         end
 
         function obj = update_status(obj, dm)

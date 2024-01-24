@@ -27,7 +27,7 @@ classdef dme_load < mp.dm_element
 %       p + j q &= (p_p + j q_p) + (p_i + j q_i) |\cscal{v}| + (p_z + j q_z) |\cscal{v}|^2
 
 %   MATPOWER
-%   Copyright (c) 2020-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -77,10 +77,15 @@ classdef dme_load < mp.dm_element
                 'p', 'q'});
         end
 
-        function vars = export_vars(obj)
-            %
-            vars = {};
-        end
+%         function vars = export_vars(obj)
+%             %
+%             vars = {};
+%         end
+% 
+%         function s = export_vars_offline_val(obj)
+%             %
+%             s = export_vars_offline_val@mp.dm_element(obj);     %% call parent
+%         end
 
         function nr = count(obj, dm)
             %

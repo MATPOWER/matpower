@@ -21,7 +21,7 @@ classdef dme_branch_opf < mp.dme_branch & mp.dme_shared_opf
 % .. [#] Here *u* denotes the units of the objective function, e.g. USD.
 
 %   MATPOWER
-%   Copyright (c) 2020-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -47,6 +47,16 @@ classdef dme_branch_opf < mp.dme_branch & mp.dme_shared_opf
             vars = horzcat( export_vars@mp.dme_branch(obj), ...
                 {'mu_flow_fr_ub', 'mu_flow_to_ub', ...
                  'mu_vad_lb', 'mu_vad_ub'} );
+        end
+
+        function s = export_vars_offline_val(obj)
+            %
+
+            s = export_vars_offline_val@mp.dme_branch(obj);     %% call parent
+            s.mu_flow_fr_ub = 0;
+            s.mu_flow_to_ub = 0;
+            s.mu_vad_lb = 0;
+            s.mu_vad_ub = 0;
         end
 
         function obj = pretty_print(obj, dm, section, out_e, mpopt, fd, pp_args)

@@ -19,7 +19,7 @@ classdef dme_bus_opf < mp.dme_bus & mp.dme_shared_opf
 % .. [#] Here *u* denotes the units of the objective function, e.g. USD.
 
 %   MATPOWER
-%   Copyright (c) 2020-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -41,6 +41,16 @@ classdef dme_bus_opf < mp.dme_bus & mp.dme_shared_opf
             vars = horzcat( export_vars@mp.dme_bus(obj), ...
                 {'vm_lb', 'vm_ub', 'lam_p', 'lam_q', ...
                     'mu_vm_lb', 'mu_vm_ub'} );
+        end
+
+        function s = export_vars_offline_val(obj)
+            %
+
+            s = export_vars_offline_val@mp.dme_bus(obj);    %% call parent
+            s.lam_p = 0;
+            s.lam_q = 0;
+            s.mu_vm_lb = 0;
+            s.mu_vm_ub = 0;
         end
 
         function obj = pp_data_ext(obj, dm, rows, out_e, mpopt, fd, pp_args)

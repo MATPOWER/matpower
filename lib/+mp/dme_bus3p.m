@@ -61,6 +61,10 @@ classdef dme_bus3p < mp.dm_element
 %             vars = {'vm1', 'vm2', 'vm3', 'va1', 'va2', 'va3'};
 %         end
 
+%         function s = export_vars_offline_val(obj)
+%             s = export_vars_offline_val@mp.dm_element(obj);     %% call parent
+%         end
+
         function obj = init_status(obj, dm)
             %
 

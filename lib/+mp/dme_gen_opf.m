@@ -22,7 +22,7 @@ classdef dme_gen_opf < mp.dme_gen & mp.dme_shared_opf
 % See also mp.cost_table.
 
 %   MATPOWER
-%   Copyright (c) 1996-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %
@@ -44,6 +44,16 @@ classdef dme_gen_opf < mp.dme_gen & mp.dme_shared_opf
             %
             vars = horzcat( export_vars@mp.dme_gen(obj), ...
                 {'vm_setpoint', 'mu_pg_lb', 'mu_pg_ub', 'mu_qg_lb', 'mu_qg_ub'} );
+        end
+
+        function s = export_vars_offline_val(obj)
+            %
+
+            s = export_vars_offline_val@mp.dme_gen(obj);    %% call parent
+            s.mu_pg_lb = 0;
+            s.mu_pg_ub = 0;
+            s.mu_qg_lb = 0;
+            s.mu_qg_ub = 0;
         end
 
         function TorF = have_cost(obj)

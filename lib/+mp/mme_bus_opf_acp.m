@@ -2,7 +2,7 @@ classdef mme_bus_opf_acp < mp.mme_bus_opf_ac
 % mp.mme_bus_opf_acp - Math model element for bus for AC polar voltage OPF.
 
 %   MATPOWER
-%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -22,7 +22,7 @@ classdef mme_bus_opf_acp < mp.mme_bus_opf_ac
             x0(vv.i1.Vm:vv.iN.Vm) = vm;     %% voltage magnitudes
         end
 
-        function obj = data_model_update(obj, mm, nm, dm, mpopt)
+        function obj = data_model_update_on(obj, mm, nm, dm, mpopt)
             %
 
             %% complex bus voltages

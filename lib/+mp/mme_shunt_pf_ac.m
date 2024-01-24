@@ -2,7 +2,7 @@ classdef mme_shunt_pf_ac < mp.mme_shunt
 % mp.mme_shunt_pf_ac - Math model element for shunt for AC power flow.
 
 %   MATPOWER
-%   Copyright (c) 2022-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2022-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -13,7 +13,7 @@ classdef mme_shunt_pf_ac < mp.mme_shunt
 %     end     %% properties
 
     methods
-        function obj = data_model_update(obj, mm, nm, dm, mpopt)
+        function obj = data_model_update_on(obj, mm, nm, dm, mpopt)
             %
 
             %% shunt complex power consumption

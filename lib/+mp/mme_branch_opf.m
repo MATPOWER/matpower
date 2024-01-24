@@ -2,7 +2,7 @@ classdef (Abstract) mme_branch_opf < mp.mme_branch
 % mp.mme_branch_opf - Math model element abstract base class for branch for OPF.
 
 %   MATPOWER
-%   Copyright (c) 2022-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2022-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -64,22 +64,6 @@ classdef (Abstract) mme_branch_opf < mp.mme_branch
                 lambda = mm.soln.lambda;
                 mu_vad_lb(iang) = lambda.mu_l(ll.i1.ang:ll.iN.ang);
                 mu_vad_ub(iang) = lambda.mu_u(ll.i1.ang:ll.iN.ang);
-            end
-        end
-
-        function obj = data_model_update(obj, mm, nm, dm, mpopt)
-            %
-
-            %% call parent
-            data_model_update@mp.mme_branch(obj, mm, nm, dm, mpopt);
-
-            %% zero out solution values for offline elements
-            dme = obj.data_model_element(dm);
-            if ~isempty(dme.off)
-                dme.tab.mu_flow_fr_ub(dme.off) = 0;
-                dme.tab.mu_flow_to_ub(dme.off) = 0;
-                dme.tab.mu_vad_lb(dme.off) = 0;
-                dme.tab.mu_vad_ub(dme.off) = 0;
             end
         end
     end     %% methods

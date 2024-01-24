@@ -41,7 +41,7 @@ classdef dme_line3p < mp.dm_element
 %   ======  =========  ==================================================
 
 %   MATPOWER
-%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -113,6 +113,10 @@ classdef dme_line3p < mp.dm_element
 %                     'pl1_to', 'ql1_to', ...
 %                     'pl2_to', 'ql2_to', ...
 %                     'pl3_to', 'ql3_to' };
+%         end
+
+%         function s = export_vars_offline_val(obj)
+%             s = export_vars_offline_val@mp.dm_element(obj);     %% call parent
 %         end
 
         function obj = initialize(obj, dm)

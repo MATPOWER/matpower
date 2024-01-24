@@ -2,7 +2,7 @@ classdef mme_gen_opf_dc < mp.mme_gen_opf
 % mp.mme_gen_opf_dc - Math model element for generator for DC OPF.
 
 %   MATPOWER
-%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -31,11 +31,8 @@ classdef mme_gen_opf_dc < mp.mme_gen_opf
             obj.cost = dme.build_cost_params(dm, 1);
         end
 
-        function obj = data_model_update(obj, mm, nm, dm, mpopt)
+        function obj = data_model_update_on(obj, mm, nm, dm, mpopt)
             %
-
-            %% call parent
-            data_model_update@mp.mme_gen_opf(obj, mm, nm, dm, mpopt);
 
             %% generator active power
             ss = nm.get_idx('state');

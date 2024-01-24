@@ -148,9 +148,11 @@ However, generator cost functions and any variables and constraints associated w
 Updating Data Model Elements
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The data in the data model is stored primarily in its individual element objects, so it makes sense that the individual math model element objects would be responsible for extracting the math model solution data relevant to a given element and updating the corresponding data model element. This updating is performed by the :meth:`data_model_update` method.
+The data in the data model is stored primarily in its individual element objects, so it makes sense that the individual math model element objects would be responsible for extracting the math model solution data relevant to a given element and updating the corresponding data model element. This updating is performed by the :meth:`data_model_update() <mp.mm_element.data_model_update>` method.
 
-For example, updating the branch power flows and shadow prices on the flow and angle difference limits in the branch data model element is done by :meth:`data_model_update` in the appropriate subclass of :class:`mp.mme_branch`.
+The updating of each data model element is done in two steps. First :meth:`data_model_update() <mp.mm_element.data_model_update>` calls :meth:`data_model_update_off() <mp.mm_element.data_model_update_off>` to handle any offline units (e.g. to zero out any solution values), then :meth:`data_model_update_on() <mp.mm_element.data_model_update_on>` to handle the online units.
+
+For example, updating the branch power flows and shadow prices on the flow and angle difference limits in the branch data model element is done by :meth:`data_model_update_on() <mp.mm_element.data_model_update_on>` in the appropriate subclass of :class:`mp.mme_branch`.
 
 
 .. _sec_math_model_shared:

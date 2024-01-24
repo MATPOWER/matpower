@@ -90,6 +90,14 @@ classdef dme_gen < mp.dm_element
             vars = {'pg', 'qg'};
         end
 
+        function s = export_vars_offline_val(obj)
+            %
+
+            s = export_vars_offline_val@mp.dm_element(obj);     %% call parent
+            s.pg = 0;
+            s.qg = 0;
+        end
+
         function TorF = have_cost(obj)
             %
             TorF = 0;

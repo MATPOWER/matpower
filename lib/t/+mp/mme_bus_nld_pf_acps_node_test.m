@@ -1,7 +1,7 @@
 classdef mme_bus_nld_pf_acps_node_test < mp.mme_bus_pf_acp
 
 %   MATPOWER
-%   Copyright (c) 2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2022-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -13,7 +13,7 @@ classdef mme_bus_nld_pf_acps_node_test < mp.mme_bus_pf_acp
             name = 'bus_nld';
         end
 
-        function obj = data_model_update(obj, mm, nm, dm, mpopt)
+        function obj = data_model_update_on(obj, mm, nm, dm, mpopt)
             %% complex bus voltages
             nn = nm.get_idx('node');
             V = nm.soln.v(nn.i1.(obj.name):nn.iN.(obj.name));

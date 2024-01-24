@@ -2,7 +2,7 @@ classdef mme_branch_pf_ac < mp.mme_branch
 % mp.mme_branch_pf_ac - Math model element for branch for AC power flow.
 
 %   MATPOWER
-%   Copyright (c) 2022-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2022-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -13,11 +13,8 @@ classdef mme_branch_pf_ac < mp.mme_branch
 %     end     %% properties
 
     methods
-        function obj = data_model_update(obj, mm, nm, dm, mpopt)
+        function obj = data_model_update_on(obj, mm, nm, dm, mpopt)
             %
-
-            %% call parent
-            data_model_update@mp.mme_branch(obj, mm, nm, dm, mpopt);
 
             %% branch complex power flows
             pp = nm.get_idx('port');
