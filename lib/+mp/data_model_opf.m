@@ -46,13 +46,12 @@ classdef data_model_opf < mp.data_model
             %% call parent
             [out, add_] = pp_flags@mp.data_model(obj, mpopt);
             suppress = add_.suppress;
-            s0 = add_.s0;
 
             %% add limit options
             out_s = struct( ...
                 'all', 0, ...
                 'any', 0, ...
-                'elm', s0 );
+                'elm', add_.s1 );
 
             if out.all == 1
                 out_s.all = 2;
