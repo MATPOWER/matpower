@@ -460,7 +460,7 @@ classdef data_model < mp.element_container
             %% return additional data
             if nargout > 1
                 add = struct('s1', s1, 's0', s0, 'suppress', suppress, ...
-                    'names', names, 'ne', ne);
+                    'names', {names}, 'ne', ne);
             end
         end
 
