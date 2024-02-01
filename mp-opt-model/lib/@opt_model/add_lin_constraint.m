@@ -1,11 +1,13 @@
-function om = add_lin_constraint(om, name, idx, A, l, u, varsets)
+function om = add_lin_constraint(om, name, idx, A, l, u, varsets, tr)
 %ADD_LIN_CONSTRAINT  Adds a set of linear constraints to the model.
 %
 %   OM.ADD_LIN_CONSTRAINT(NAME, A, L, U);
 %   OM.ADD_LIN_CONSTRAINT(NAME, A, L, U, VARSETS);
+%   OM.ADD_LIN_CONSTRAINT(NAME, A, L, U, VARSETS, TR);
 %
 %   OM.ADD_LIN_CONSTRAINT(NAME, IDX_LIST, A, L, U);
 %   OM.ADD_LIN_CONSTRAINT(NAME, IDX_LIST, A, L, U, VARSETS);
+%   OM.ADD_LIN_CONSTRAINT(NAME, IDX_LIST, A, L, U, VARSETS, TR);
 %
 %   Linear constraints are of the form L <= A * x <= U, where x is a
 %   vector made of the vars specified in VARSETS (in the order given).
@@ -13,7 +15,9 @@ function om = add_lin_constraint(om, name, idx, A, l, u, varsets)
 %   variables without the need to manually create a lot of zero columns.
 %   If VARSETS is empty, x is taken to be the full vector of all
 %   optimization variables. If L or U are empty, they are assumed to be
-%   appropriately sized vectors of -Inf and Inf, respectively.
+%   appropriately sized vectors of -Inf and Inf, respectively. If TR is
+%   present and true, it means that A' is supplied/stored rather than A.
+%   In some contexts this can be used to save significant memory.
 %
 %   Indexed Named Sets
 %       A constraint set can be identified by a single NAME, as described
@@ -44,7 +48,7 @@ function om = add_lin_constraint(om, name, idx, A, l, u, varsets)
 %   See also OPT_MODEL, PARAMS_LIN_CONSTRAINT.
 
 %   MP-Opt-Model
-%   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.
@@ -53,10 +57,18 @@ function om = add_lin_constraint(om, name, idx, A, l, u, varsets)
 
 %% initialize input arguments
 if iscell(idx)          %% indexed named set
-    if nargin < 7
-        varsets = {};
+    if nargin < 8
+        tr = 0;
+        if nargin < 7
+            varsets = {};
+        end
     end
 else                    %% simple named set
+    if nargin < 7
+        tr = 0;
+    else
+        tr = varsets;
+    end
     if nargin < 6
         varsets = {};
     else
@@ -68,7 +80,11 @@ else                    %% simple named set
     idx = {};
 end
 
-[N, M] = size(A);
+if tr
+    [M, N] = size(A);
+else
+    [N, M] = size(A);
+end
 if isempty(l)                   %% default l is -Inf
     l = -Inf(N, 1);
 elseif N > 1 && length(l) == 1  %% expand from scalar as needed
@@ -95,4 +111,4 @@ if M ~= nv
 end
 
 %% add the named linear constraint set
-om.add_named_set('lin', name, idx, N, A, l, u, varsets);
+om.add_named_set('lin', name, idx, N, A, l, u, varsets, tr);

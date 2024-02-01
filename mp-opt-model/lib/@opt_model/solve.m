@@ -100,6 +100,7 @@ function [x, f, eflag, output, lambda] = solve(om, opt)
 %           0 or negative values = solver specific failure codes
 %       OUTPUT : output struct with the following fields:
 %           alg - algorithm code of solver used
+%           et  - elapsed time (sec)
 %           (others) - solver specific fields
 %       JAC : final Jacobian matrix (if available, for LEQ/NLEQ problems)
 %       LAMBDA : (for all non-NLEQ problem types) struct containing the

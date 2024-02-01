@@ -401,7 +401,7 @@ for i = 1:2
             [ones(i+j,1);-ones(i+j,1)], i+j, 3+2+(i==2 && j==1));
         l = -1; u = [];
         vs = struct('name', {'Pg', 'x'}, 'idx', {{}, {i,j}});
-        om.add_lin_constraint('mylin', {i, j}, A, l, u, vs);
+        om.add_lin_constraint('mylin', {i, j}, A', l, u, vs, 1);
         lNS = lNS + 1; lN = lN + i+j;
         t_ok(om.getN('lin') == lN, sprintf('%s : lin.N  = %d', t, lN));
         t_ok(om.get('lin', 'NS') == lNS, sprintf('%s : lin.NS = %d', t, lNS));
@@ -549,7 +549,7 @@ for i = 1:2
         l3 = -ones(i+j, 1); u = [];
         vvs = struct('name', {'Pg', 'x'}, 'idx', {{}, {i,j}});
         [A, l, u, vs] = om.params_lin_constraint('mylin', {i,j});
-        t_is(A, A3, 14, [t, ' : A']);
+        t_is(A', A3, 14, [t, ' : A']);
         t_is(l, l3, 14, [t, ' : l']);
         t_ok(all(isinf(u)) & all(u > 0), [t, ' : u']);
         t_ok(isequal(vs, vvs), [t, ' : vs']);
@@ -609,7 +609,7 @@ t_is(A, A2, 14, [t ' : A']);
 
 for i = 1:2
     for j = 1:2
-        t = sprintf('om.params_lin_constraint(''mylin'', {%d,%d})', i,j);
+        t = sprintf('om.eval_lin_constraint(''mylin'', {%d,%d})', i,j);
         A3 = sparse([1:(i+j) 1:(i+j)]', [1:(i+j) 5*ones(1,i+j)]', ...
             [ones(i+j,1);-ones(i+j,1)], i+j, 3+2+(i==2 && j==1));
         l3 = -ones(i+j, 1); u = [];
@@ -1359,7 +1359,7 @@ if have_feature('isequaln')
     t_ok(isequaln(struct(om), s), [t 'mylin{2,1}, {u,l}']);
 
     [A, l, u, vs] = om.params_lin_constraint('mylin', {2,2});
-    val = {A(2:3, :), l(2:3), u(2:3)};
+    val = {A(:, 2:3)', l(2:3), u(2:3)};
     try
         om.set_params('lin', 'mylin', {2,2}, 'all', val);
         t_ok(0, [t 'mylin{2,2}, all (wrong size)']);
@@ -1371,7 +1371,7 @@ if have_feature('isequaln')
             me
         end
     end
-    val = {A(2:3, :), l(2:3), u(2:3), vs};
+    val = {A(:, 2:3), l(2:3), u(2:3), vs, 1};
     s.lin.data.A.mylin{2,2} = val{1};
     s.lin.data.l.mylin{2,2} = val{2};
     s.lin.data.u.mylin{2,2} = val{3};
@@ -1537,6 +1537,7 @@ if have_feature('isequaln')
 
     val = sparse(m, n);
     s.qdc.data.Q.qc1 = val;
+    s.qdc.params = [];
     om.set_params('qdc', 'qc1', 'Q', val);
     t_ok(isequaln(struct(om), s), [t 'qc1, Q']);
 

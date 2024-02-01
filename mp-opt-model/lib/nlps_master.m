@@ -239,7 +239,20 @@ switch alg
         [x, f, eflag, output, lambda] = ...
             nlps_knitro(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt);
     otherwise
-        error('nlps_master: ''%s'' is not a valid algorithm code', alg);
+        fcn = ['nlps_' lower(alg)];
+        if exist([fcn '.m']) == 2
+            opt_name = [lower(alg) '_opt'];
+            if isfield(opt, opt_name)
+                alg_opt = opt.(opt_name);
+            else
+                alg_opt = struct();
+            end
+            alg_opt.verbose = verbose;
+            [x, f, eflag, output, lambda] = ...
+                feval(fcn, f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, alg_opt);
+        else
+            error('nlps_master: ''%s'' is not a valid algorithm code', alg);
+        end
 end
 if ~isfield(output, 'alg') || isempty(output.alg)
     output.alg = alg;

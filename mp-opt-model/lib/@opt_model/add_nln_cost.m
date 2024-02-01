@@ -18,7 +18,7 @@ function om = add_nln_cost(om, name, idx, N, fcn, varsets)
 %       F = FCN(X)
 %       [F, DF] = FCN(X)
 %       [F, DF, D2F] = FCN(X)
-%   where F is a scalar with the value of the function, DF is the 1 x NX
+%   where F is a scalar with the value of the function, DF is the NX x 1
 %   gradient, and D2F is the NX x NX Hessian and NX is the number of
 %   elements in X.
 %

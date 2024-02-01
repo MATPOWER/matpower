@@ -2,7 +2,7 @@ function t_om_solve_miqps(quiet)
 %T_OM_SOLVE_MIQPS  Tests of MIQP solvers via OM.SOLVE().
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.
@@ -21,8 +21,8 @@ if have_feature('gurobi') || have_feature('cplex') || have_feature('mosek')
     does_qp(1) = 1;
 end
 
-n = 15;
-nmiqp = 7;
+n = 17;
+nmiqp = 10;
 t_begin(28+n*length(algs), quiet);
 
 diff_alg_warn_id = 'optim:linprog:WillRunDiffAlg';
@@ -54,14 +54,14 @@ for k = 1:length(algs)
                 'num_threads', 0, ...
                 'opt', 0 ) ...
         );
-        if strcmp(names{k}, 'CPLEX')
-%           alg = 0;        %% default uses barrier method with NaN bug in lower lim multipliers
+        if have_feature('cplex')
+            % alg = 0;        %% default uses barrier method with NaN bug in lower lim multipliers
             alg = 2;        %% use dual simplex
             mpopt.cplex.lpmethod = alg;
             mpopt.cplex.qpmethod = min([4 alg]);
             opt.cplex_opt = cplex_options([], mpopt);
         end
-        if strcmp(names{k}, 'MOSEK')
+        if have_feature('mosek')
 %             sc = mosek_symbcon;
 %             alg = sc.MSK_OPTIMIZER_DUAL_SIMPLEX;    %% use dual simplex
 %             alg = sc.MSK_OPTIMIZER_INTPNT;          %% use interior point
@@ -79,12 +79,11 @@ for k = 1:length(algs)
 %                 mpopt.mosek.opts.MSK_DPAR_INTPNT_QO_TOL_MU_RED = 1e-10;
                 mpopt.mosek.opts.MSK_DPAR_INTPNT_QO_TOL_REL_GAP = 1e-10;
             end
-%             opt.verbose = 3;
             opt.mosek_opt = mosek_options([], mpopt);
         end
 
 % opt.verbose = 3;
-        t = sprintf('%s - 2-d MILP : ', names{k});
+        t = sprintf('%s - 2-d ILP : ', names{k});
         %% from MOSEK 6.0 Guided Tour, section  7.13.1, https://docs.mosek.com/6.0/toolbox/node009.html
         c = [-2; -3];
         A = sparse([195 273; 4 40]);
@@ -99,11 +98,27 @@ for k = 1:length(algs)
         t_is(s, 1, 12, [t 'success']);
         t_is(x, [4; 2], 12, [t 'x']);
         t_is(f, -14, 12, [t 'f']);
-        t_is(lam.mu_l, [0; 0], 12, [t 'lam.mu_l']);
-        t_is(lam.mu_u, [0; 0], 12, [t 'lam.mu_u']);
-        t_is(lam.lower, [0; 0], 12, [t 'lam.lower']);
-        t_is(lam.upper, [2; 3], 12, [t 'lam.upper']);
         t_ok(~isfield(om.soln, 'var'), [t 'no parse_soln() outputs']);
+
+        t = sprintf('%s - 6-d ILP : ', names{k});
+        %% from https://doi.org/10.1109/TASE.2020.2998048
+        c = [1; 2; 3; 1; 2; 3];
+        A = [1 3 5 1 3 5;
+             2 1.5 5 2 0.5 1];
+        l = [26; 16];
+        xmin = zeros(6, 1);
+        xmax = 3 * ones(6, 1);
+        vtype = 'I';
+        om = opt_model;
+        om.add_var('x', 6, [], xmin, xmax, vtype);
+        om.add_quad_cost('c', [], c);
+        om.add_lin_constraint('Ax', A, l, u);
+        [x, f, s, out, lam] = om.solve(opt);
+        t_is(s, 1, 12, [t 'success']);
+        t_ok(norm(x - [1; 0; 3; 0; 0; 2], Inf) < 1e-12 || ...
+             norm(x - [0; 0; 3; 1; 0; 2], Inf) < 1e-12 || ...
+             norm(x - [0; 0; 3; 0; 2; 1], Inf) < 1e-12, [t 'x']);
+        t_is(f, 16, 12, [t 'f']);
 
         if does_qp(k)
             t = sprintf('%s - 4-d MIQP : ', names{k});
@@ -131,11 +146,30 @@ for k = 1:length(algs)
             [x, f, s, out, lam] = om.solve(opt);
             t_is(s, 1, 12, [t 'success']);
             t_is(x, [7; 7; 0; 2], 7, [t 'x']);
-            t_is(f, 1618.5, 5, [t 'f']);
+            t_is(f, 1618.5, 4, [t 'f']);
             t_is(lam.mu_l, [466; 0; 0], 6, [t 'lam.mu_l']);
             t_is(lam.mu_u, [0; 272; 0], 6, [t 'lam.mu_u']);
             t_is(lam.lower, [0; 0; 349.5; 4350], 5, [t 'lam.lower']);
             t_is(lam.upper, [0; 0; 0; 0], 7, [t 'lam.upper']);
+
+            t = sprintf('%s - 6-d IQP : ', names{k});
+            %% from Bragin, et. al. https://doi.org/10.1007/s10957-014-0561-3
+            H = sparse(1:6, 1:6, [1 0.2 1 0.2 1 0.2], 6, 6);
+            a = [-5 1 -5 1 -5 1];
+            A = [a/5; a];
+            u = [-48; -250];
+            xmin = zeros(6, 1);
+            vtype = 'I';
+            om = opt_model;
+            om.add_var('x', 6, [], xmin, [], vtype);
+            om.add_quad_cost('c', H, []);
+            om.add_lin_constraint('Ax', A, [], u);
+            [x, f, s, out, lam] = om.solve(opt);
+            t_is(s, 1, 12, [t 'success']);
+            t_ok(norm(x - [16; 0; 17; 0; 17; 0], Inf) < 1e-7 || ...
+                 norm(x - [17; 0; 16; 0; 17; 0], Inf) < 1e-7 || ...
+                 norm(x - [17; 0; 17; 0; 16; 0], Inf) < 1e-7, [t 'x']);
+            t_is(f, 417, 6, [t 'f']);
         else
             t_skip(nmiqp, sprintf('%s does not handle MIQP problems', names{k}));
         end

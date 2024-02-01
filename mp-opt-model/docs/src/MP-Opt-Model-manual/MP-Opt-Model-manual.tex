@@ -151,10 +151,11 @@
 \newcommand{\mpomlink}[0]{\href{\mpomurl}{\mpom{}}}
 \newcommand{\mpomname}[0]{\mpom{}}
 % \newcommand{\mpomname}[0]{{{\bf M}{\sc at}{\bf P}{\sc ower} \textbf{Opt}imization \textbf{Model}}}
-\newcommand{\mpomver}[0]{4.1}
+\newcommand{\mpomver}[0]{4.1+}
 \newcommand{\most}[0]{{MOST}}
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
+\newcommand{\mostlink}[0]{\href{\mosturl}{\most{}}}
 \newcommand{\mostver}[0]{1.2}
 \newcommand{\syngrid}[0]{{SynGrid}}
 \newcommand{\syngridver}[0]{1.0.1}
@@ -242,7 +243,7 @@
 %\title{\hl{--- DRAFT  ---}\\\hl{\em do not distribute}\\~\\{\huge \bfseries \mpomname{} User's Manual } \\ ~ \\ \LARGE Version \mpomver{}\\
 \title{{\huge \bfseries \mpomname{} User's Manual } \\ ~ \\ \LARGE Version \mpomver{}}
 \author{Ray~D.~Zimmerman}
-\date{December 13, 2022} % comment this line to display the current date
+%\date{December 13, 2022} % comment this line to display the current date
 %\date{May 8, 2020\thanks{Second revision. First revision was April 29, 2020}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
@@ -253,7 +254,7 @@
 \vfill
 \begin{center}
 {\scriptsize
-\copyright~2020--2022~\PSERC{}\\
+\copyright~2020--2023~\PSERC{}\\
 All Rights Reserved}
 \end{center}
 
@@ -1026,7 +1027,7 @@ name & default & description \\
 \end{threeparttable}
 \end{table}
 
-The user-defined functions for evaluating the objective function, constraints and Hessian are identical to those required by \mipslink{}j. That is, they identical to those required by \code{fmincon}, with one exception described below for the Hessian evaluation function. Specifically, \code{f\_fcn} should return \code{f} as the scalar objective function value $f(x)$, \code{df} as an $n \times 1$ vector equal to $\nabla f$ and, unless \code{gh\_fcn} is provided and the Hessian is computed by \code{hess\_fcn}, \code{d2f} as an $n \times n$ matrix equal to the Hessian $\der{^2f}{x^2}$. Similarly, the constraint evaluation function \code{gh\_fcn} must return the $m \times 1$ vector of nonlinear equality constraint violations $g(x)$, the $p \times 1$ vector of nonlinear inequality constraint violations $h(x)$ along with their gradients in \code{dg} and \code{dh}. Here \code{dg} is an $n \times m$ matrix whose $j^\mathrm{th}$ column is $\nabla g_j$ and \code{dh} is $n \times p$, with $j^\mathrm{th}$ column equal to $\nabla h_j$. Finally, for cases with nonlinear constraints, \code{hess\_fcn} returns the $n \times n$ Hessian $\der{^2\mathcal{L}}{x^2}$ of the Lagrangian function
+The user-defined functions for evaluating the objective function, constraints and Hessian are identical to those required by \mipslink{}. That is, they are identical to those required by \code{fmincon}, with one exception described below for the Hessian evaluation function. Specifically, \code{f\_fcn} should return \code{f} as the scalar objective function value $f(x)$, \code{df} as an $n \times 1$ vector equal to $\nabla f$ and, unless \code{gh\_fcn} is provided and the Hessian is computed by \code{hess\_fcn}, \code{d2f} as an $n \times n$ matrix equal to the Hessian $\der{^2f}{x^2}$. Similarly, the constraint evaluation function \code{gh\_fcn} must return the $m \times 1$ vector of nonlinear equality constraint violations $g(x)$, the $p \times 1$ vector of nonlinear inequality constraint violations $h(x)$ along with their gradients in \code{dg} and \code{dh}. Here \code{dg} is an $n \times m$ matrix whose $j^\mathrm{th}$ column is $\nabla g_j$ and \code{dh} is $n \times p$, with $j^\mathrm{th}$ column equal to $\nabla h_j$. Finally, for cases with nonlinear constraints, \code{hess\_fcn} returns the $n \times n$ Hessian $\der{^2\mathcal{L}}{x^2}$ of the Lagrangian function
 \begin{equation}
 \mathcal{L}(x, \lambda, \mu, \sigma) = \sigma f(x) + \trans{\lambda} g(x) + \trans{\mu} h(x)
 \end{equation}
@@ -2382,7 +2383,7 @@ f = fcn(x)
 [f, df] = fcn(x)
 [f, df, d2f] = fcn(x)
 \end{Code}
-where \code{f} is a scalar with the value of the function $f(x)$, \code{df} is the $1 \times n_x$ gradient of $f$, and \code{d2f} is the $n_x \times n_x$ Hessian $H$, where $n_x$ is the number of elements in $x$.
+where \code{f} is a scalar with the value of the function $f(x)$, \code{df} is the $n_x \times 1$ gradient of $f$, and \code{d2f} is the $n_x \times n_x$ Hessian $H$, where $n_x$ is the number of elements in $x$.
 
 The first input argument \code{x} takes one of two forms. If the constraint set is added with \code{varsets} empty or missing, then \code{x} will be the full optimization vector. Otherwise it will be a cell array of vectors corresponding to the variable sets specified in \code{varsets}.
 
@@ -3169,7 +3170,7 @@ name & description \\
 \subsection{Indexed Sets}
 \label{sec:indexed_sets}
 
-A variable, constraint or cost set is typically identified simply by a \code{name}, but it is also possible to used indexed names. For example, an optimal scheduling problem with a one week horizon might include a vector variable \textbf{y} for each day, indexed from 1 to 7, and another vector variable \textbf{z} for each hour of each day, indexed from (1, 1) to (7, 24).
+A variable, constraint or cost set is typically identified simply by a \code{name}, but it is also possible to use indexed names. For example, an optimal scheduling problem with a one week horizon might include a vector variable \textbf{y} for each day, indexed from 1 to 7, and another vector variable \textbf{z} for each hour of each day, indexed from (1, 1) to (7, 24).
 
 In this case, we case use a single indexed named set for \textbf{y} and another for \textbf{z}. The dimensions are initialized via the \code{init\_indexed\_name} method before adding the variables to the model.\footnote{The same is true for indexed named sets of constraints or costs.}
 
@@ -3180,8 +3181,8 @@ om.init_indexed_name(set_type, name, dim_list)
 
 \noindent Examples:
 \begin{Code}
-[f, df, d2f] = om.init_indexed_name('var', 'y', {7});
-[f, df, d2f] = om.init_indexed_name('var', 'z', {7, 24});
+om.init_indexed_name('var', 'y', {7});
+om.init_indexed_name('var', 'z', {7, 24});
 \end{Code}
 
 After initializing the dimensions, indexed named sets of variables, constraints or costs can be added by supplying the indices in the \code{idx\_list} argument following the \code{name} argument in the call to the corresponding \code{add\_var}, \code{add\_lin\_constraint}, \code{add\_nln\_constraint}, \code{add\_quad\_cost}, or \code{add\_nln\_cost} method. The \code{idx\_list} argument is simply a cell array containing the indices of interest.
@@ -3516,6 +3517,43 @@ name & description \\
 %%------------------------------------------
 \clearpage
 \section{Utility Functions}
+
+\subsection{\tt convert\_lin\_constraint}
+\begin{Code}
+  [ieq, igt, ilt, Ae, be, Ai, bi] = convert_lin_constraint(A, l, u)
+  [ieq, igt, ilt, A, b] = convert_lin_constraint(A, l, u)
+\end{Code}
+
+This function converts linear constraints from a single set of doubly-bounded inequality constraints
+\begin{equation}
+l \le A x \le u
+\end{equation}
+to separate sets of equality and upper-bounded inequality constraints.
+\begin{align}
+A_e x &= b_e \\
+A_i x &\le b_i
+\end{align}
+
+The first three return values are index vectors which satisfy the following.
+\begin{Code}
+Ae = A(ieq, :);
+be = u(ieq, 1);
+Ai  = [ A(ilt, :); -A(igt, :) ];
+bi  = [ u(ilt, 1); -l(igt, 1) ];
+\end{Code}
+Alternatively, the returned matrices and right hand side vectors can be stacked into a single set with the equalities first, then the inequalities.
+\begin{Code}
+A = [Ae; Ai]
+b = [be; bi]
+\end{Code}
+
+\subsection{\tt convert\_lin\_constraint\_multipliers}
+\begin{Code}
+  [mu_l, mu_u] = convert_lin_constraint_multipliers(lam, mu, ieq, igt, ilt)
+\end{Code}
+
+This function converts the multipliers on linear constraints from separate sets for equality and upper-bounded inequality constraints to those for doubly-bounded inequality constraints.
+
 
 \subsection{\tt have\_fcn}
 
@@ -4474,7 +4512,7 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.1.pdf}{\mpom{} 4.1 Use
 
 \subsubsection*{New Features}
 \begin{itemize}
-\item Add support to \code{qps\_master()} for calling \code{qps\_<my\_solver>()} by setting \code{opt.alg} to \codeq{<MY\_SOLVER>} to allow for custom solvers.
+\item Add support to \code{qps\_master()} for calling \code{qps\_<my\_solver>()} by setting \code{opt.alg} to \codeq{<MY\_SOLVER>} to allow for handling custom LP/QP solvers.
 \end{itemize}
 
 \subsubsection*{Other Changes}
@@ -4492,10 +4530,13 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.2.pdf}{\mpom{} 4.2 Use
 
 \subsubsection*{New Features}
 \begin{itemize}
-\item 
+\item Option for \code{opt\_model/add\_lin\_constraint()} to provide/store the transpose of the $A$ matrix instead of the original. This can potentially save significant memory for sparse matrices with many more columns than rows. E.g. storage constraints in \mostlink{} for 8760 hour planning horizon.
+\item Add support to \code{nlps\_master()} for calling \code{nlps\_<my\_solver>()} by setting \code{opt.alg} to \codeq{<MY\_SOLVER>} to allow for handling custom NLP solvers.
+\item Add support to \code{miqps\_master()} for calling \code{miqps\_<my\_solver>()} by setting \code{opt.alg} to \codeq{<MY\_SOLVER>} to allow for handling custom MILP/MIQP solvers.
 \item New functions:
     \begin{itemize}
-    \item \code{foobar()} does whizbang.
+    \item \code{convert\_lin\_constraint()} converts linear constraints from a single set of doubly-bounded inequality constraints to separate sets of equality and upper-bounded inequality constraints.
+    \item \code{convert\_lin\_constraint\_multipliers()} converts multipliers on linear constraints from separate sets for equality and upper-bounded inequality constraints to those for doubly-bounded inequality constraints.
     \end{itemize}
 \item New \code{opt\_model} methods:
     \begin{itemize}
@@ -4506,6 +4547,7 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.2.pdf}{\mpom{} 4.2 Use
 
 \subsubsection*{Bugs Fixed}
 \begin{itemize}
+\item Clear cached parameters after updating quadratic costs via \code{opt\_model/set\_params()}.
 \item 
     \emph{Thanks to Fulano.}
 \end{itemize}
@@ -4513,6 +4555,8 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.2.pdf}{\mpom{} 4.2 Use
 \subsubsection*{Other Changes}
 \begin{itemize}
 \item Update for compatibility with MATLAB R2023a (Optimization Toolbox 9.5) which removed \code{x0} as a valid input to \code{linprog}.
+\item Always skip price computation stage in \code{miqps\_<solver>()} functions for pure (as opposed to mixed) integer problems.
+
 
 \end{itemize}
 

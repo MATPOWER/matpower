@@ -23,7 +23,9 @@ function label = describe_idx(obj, set_type, idxs)
 
 label = cell(size(idxs));       %% pre-allocate return cell array
 
-s = obj.set_type_idx_map(set_type, idxs);
+if ~isempty(idxs)
+    s = obj.set_type_idx_map(set_type, idxs);
+end
 for i = 1:length(idxs(:))
     idx = s(i).idx;
     if isempty(idx)

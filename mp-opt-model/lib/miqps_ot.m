@@ -203,19 +203,7 @@ else
 end
 
 %% split up linear constraints
-ieq = find( abs(u-l) <= eps );          %% equality
-igt = find( u >=  1e10 & l > -1e10 );   %% greater than, unbounded above
-ilt = find( l <= -1e10 & u <  1e10 );   %% less than, unbounded below
-ibx = find( (abs(u-l) > eps) & (u < 1e10) & (l > -1e10) );
-Ae = A(ieq, :);
-be = u(ieq);
-Ai  = [ A(ilt, :); -A(igt, :); A(ibx, :); -A(ibx, :) ];
-bi  = [ u(ilt);    -l(igt);    u(ibx);    -l(ibx)];
-
-%% grab some dimensions
-nlt = length(ilt);      %% number of upper bounded linear inequalities
-ngt = length(igt);      %% number of lower bounded linear inequalities
-nbx = length(ibx);      %% number of doubly bounded linear inequalities
+[ieq, igt, ilt, Ae, be, Ai, bi] = convert_lin_constraint(A, l, u);
 
 %% mixed integer?
 if isempty(vtype) || isempty(find(vtype == 'B' | vtype == 'I'))
@@ -308,18 +296,7 @@ if isempty(lam) || (isempty(lam.eqlin) && isempty(lam.ineqlin) && ...
         'upper', NaN(nx, 1) ...
     );
 else
-    kl = find(lam.eqlin < 0);   %% lower bound binding
-    ku = find(lam.eqlin > 0);   %% upper bound binding
-
-    mu_l = zeros(nA, 1);
-    mu_l(ieq(kl)) = -lam.eqlin(kl);
-    mu_l(igt) = lam.ineqlin(nlt+(1:ngt));
-    mu_l(ibx) = lam.ineqlin(nlt+ngt+nbx+(1:nbx));
-
-    mu_u = zeros(nA, 1);
-    mu_u(ieq(ku)) = lam.eqlin(ku);
-    mu_u(ilt) = lam.ineqlin(1:nlt);
-    mu_u(ibx) = lam.ineqlin(nlt+ngt+(1:nbx));
+    [mu_l, mu_u] = convert_lin_constraint_multipliers(lam.eqlin, lam.ineqlin, ieq, igt, ilt);
 
     lambda = struct( ...
         'mu_l', mu_l, ...
@@ -330,37 +307,39 @@ else
 end
 
 if mi && eflag == 1 && (~isfield(opt, 'skip_prices') || ~opt.skip_prices)
-    if verbose
-        fprintf('--- Integer stage complete, starting price computation stage ---\n');
-    end
-    if isfield(opt, 'price_stage_warn_tol') && ~isempty(opt.price_stage_warn_tol)
-        tol = opt.price_stage_warn_tol;
-    else
-        tol = 1e-7;
-    end
-    k = intcon;
-    x(k) = round(x(k));
-    xmin(k) = x(k);
-    xmax(k) = x(k);
-    x0 = x;
-%     opt.linprog_opt.Algorithm = 'dual-simplex';     %% dual-simplex
+    if length(intcon) < nx  %% still have some free variables
+        if verbose
+            fprintf('--- Integer stage complete, starting price computation stage ---\n');
+        end
+        if isfield(opt, 'price_stage_warn_tol') && ~isempty(opt.price_stage_warn_tol)
+            tol = opt.price_stage_warn_tol;
+        else
+            tol = 1e-7;
+        end
+        k = intcon;
+        x(k) = round(x(k));
+        xmin(k) = x(k);
+        xmax(k) = x(k);
+        x0 = x;
+    %     opt.linprog_opt.Algorithm = 'dual-simplex';     %% dual-simplex
     
-    [x_, f_, eflag_, output_, lambda] = qps_ot(H, c, A, l, u, xmin, xmax, x0, opt);
-%     output
-%     output.message
-    if eflag ~= eflag_
-        error('miqps_ot: EXITFLAG from price computation stage = %d', eflag_);
+        [x_, f_, eflag_, output_, lambda] = qps_ot(H, c, A, l, u, xmin, xmax, x0, opt);
+    %     output
+    %     output.message
+        if eflag ~= eflag_
+            error('miqps_ot: EXITFLAG from price computation stage = %d', eflag_);
+        end
+        if abs(f - f_)/max(abs(f), 1) > tol
+            warning('miqps_ot: relative mismatch in objective function value from price computation stage = %g', abs(f - f_)/max(abs(f), 1));
+        end
+        xn = abs(x);
+        xn(xn<1) = 1;
+        [mx, k] = max(abs(x - x_) ./ xn);
+        if mx > tol
+            warning('miqps_ot: max relative mismatch in x from price computation stage = %g (%g)', mx, x(k));
+        end
+        output.price_stage = output_;
+    %     output_
+    %     output_.message
     end
-    if abs(f - f_)/max(abs(f), 1) > tol
-        warning('miqps_ot: relative mismatch in objective function value from price computation stage = %g', abs(f - f_)/max(abs(f), 1));
-    end
-    xn = x;
-    xn(abs(xn)<1) = 1;
-    [mx, k] = max(abs(x - x_) ./ xn);
-    if mx > tol
-        warning('miqps_ot: max relative mismatch in x from price computation stage = %g (%g)', mx, x(k));
-    end
-    output.price_stage = output_;
-%     output_
-%     output_.message
 end

@@ -231,14 +231,7 @@ end
 
 %% split l <= A*x <= u into less than, equal to, greater than, and
 %% doubly-bounded sets
-ieq = find( abs(u-l) <= eps );          %% equality
-igt = find( u >=  1e10 & l > -1e10 );   %% greater than, unbounded above
-ilt = find( l <= -1e10 & u <  1e10 );   %% less than, unbounded below
-ibx = find( (abs(u-l) > eps) & (u < 1e10) & (l > -1e10) );
-Af  = [ A(ilt, :); -A(igt, :); A(ibx, :); -A(ibx, :) ];
-bf  = [ u(ilt);   -l(igt);     u(ibx);    -l(ibx)];
-Afeq = A(ieq, :);
-bfeq = u(ieq);
+[ieq, igt, ilt, Afeq, bfeq, Af, bf] = convert_lin_constraint(A, l, u);
 
 %% basic optimset options needed for fmincon
 if isfield(opt, 'fmincon_opt')
@@ -339,23 +332,7 @@ Lambda.lower(ku) = -Lambda.upper(ku);
 Lambda.upper(ku) = 0;
 
 %% package up results
-nlt = length(ilt);
-ngt = length(igt);
-nbx = length(ibx);
-
-%% extract multipliers for linear constraints
-kl = find(Lambda.eqlin < 0);
-ku = find(Lambda.eqlin > 0);
-
-mu_l = zeros(size(u));
-mu_l(ieq(kl)) = -Lambda.eqlin(kl);
-mu_l(igt) = Lambda.ineqlin(nlt+(1:ngt));
-mu_l(ibx) = Lambda.ineqlin(nlt+ngt+nbx+(1:nbx));
-
-mu_u = zeros(size(u));
-mu_u(ieq(ku)) = Lambda.eqlin(ku);
-mu_u(ilt) = Lambda.ineqlin(1:nlt);
-mu_u(ibx) = Lambda.ineqlin(nlt+ngt+(1:nbx));
+[mu_l, mu_u] = convert_lin_constraint_multipliers(Lambda.eqlin, Lambda.ineqlin, ieq, igt, ilt);
 
 lambda = struct( ...
     'lower', Lambda.lower, ...

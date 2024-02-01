@@ -42,7 +42,7 @@ function om = set_params(om, st, name, idx, params, vals)
 %            ADD_QUAD_COST and ADD_NLN_COST.
 
 %   MP-Opt-Model
-%   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.
@@ -60,7 +60,7 @@ switch st
     case 'var'
         default_params = {'N', 'v0', 'vl', 'vu', 'vt'};
     case 'lin'
-        default_params = {'A', 'l', 'u', 'vs'};
+        default_params = {'A', 'l', 'u', 'vs', 'tr'};
     case {'nle', 'nli'}
         default_params = {'N', 'fcn', 'hess', 'vs'};
     case 'nlc'
@@ -180,11 +180,15 @@ switch st
         end
     case 'lin'
         %% get current parameters
-        [A, l, u, vs] = om.params_lin_constraint(name, idx);
-        [N0, M0] = size(A);
+        [A, l, u, vs, ~, ~, tr] = om.params_lin_constraint(name, idx);
+        if tr
+            [M0, N0] = size(A);
+        else
+            [N0, M0] = size(A);
+        end
         if isempty(vs), vs = {vs}; end
-        p = struct('A', A, 'l', l, 'u', u, 'vs', vs);   %% current parameters
-        u = struct('A', 0, 'l', 0, 'u', 0, 'vs',  0);   %% which ones to update
+        p = struct('A', A, 'l', l, 'u', u, 'vs', vs, 'tr', tr); %% current parameters
+        u = struct('A', 0, 'l', 0, 'u', 0, 'vs',  0, 'tr', 0);  %% which ones to update
 
         %% replace with new parameters
         for k = 1:np
@@ -193,16 +197,27 @@ switch st
         end
 
         %% set missing default params for 'all'
-        [N, M] = size(p.A);
+        if p.tr
+            [M, N] = size(p.A);
+        else
+            [N, M] = size(p.A);
+        end
         if is_all
             u.A = 1;            %% always update A
             u.l = 1;            %% alwaus update l
-            if np < 4
-                p.vs = {};
-                u.vs = 1;       %% update vs
-                if np < 3
-                    p.u = Inf(N, 1);
-                    u.u = 1;    %% update u
+            if np < 5
+                if p.tr
+                    p.tr = 0;
+                    u.tr = 1;       %% update tr
+                    [N, M] = deal(M, N);
+                end
+                if np < 4
+                    p.vs = {};
+                    u.vs = 1;       %% update vs
+                    if np < 3
+                        p.u = Inf(N, 1);
+                        u.u = 1;    %% update u
+                    end
                 end
             end
         end
@@ -211,6 +226,10 @@ switch st
         %% no dimension change unless 'all'
         if N ~= N0 && ~is_all
             error('@opt_model/set_params: dimension change for ''%s'' ''%s'' not allowed except for ''all''', st, nameidxstr(name, idx));
+        end
+        %% no transpose change unless providing A
+        if u.tr && ~u.A
+            error('@opt_model/set_params: update to ''tr'' for ''%s'' ''%s'' requires update to ''A''', st, nameidxstr(name, idx));
         end
 
         %% check sizes of new values of l, u
@@ -352,6 +371,9 @@ switch st
                 end
             end
         end
+
+        %% clear cached parameters
+        om.qdc.params = [];
     case {'nle', 'nli'}
         %% get current parameters
         if isempty(idx)

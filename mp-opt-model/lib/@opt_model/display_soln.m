@@ -141,10 +141,15 @@ if om.is_solved()
                     if len == 1
                         c_constant = kk;
                         c_linear = cc' * xx;
-                        c_average = c_total / sum(xx);
+                        if abs(sum(xx)) > 1e-9
+                            c_average = c_total / sum(xx);
+                        else
+                            c_average = NaN;
+                        end
                     else
                         c_linear = cc .* xx;
                         c_average = c_total ./ xx;
+                        c_average(isinf(c_average)) = NaN;
                         if isscalar(kk)
                             c_constant = ones(len, 1)*kk/len;
                         else

@@ -4,8 +4,8 @@ function [x, f, eflag, output, lambda] = miqps_gurobi(H, c, A, l, u, xmin, xmax,
 %       MIQPS_GUROBI(H, C, A, L, U, XMIN, XMAX, X0, VTYPE, OPT)
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = MIQPS_GUROBI(PROBLEM)
 %   A wrapper function providing a standardized interface for using
-%   GUROBI to solve the following QP (quadratic programming)
-%   problem:
+%   GUROBI to solve the following MILP/MIQP (mixed integer linear
+%   programming/mixed integer quadratic programming) problem:
 %
 %       min 1/2 X'*H*X + C'*X
 %        X
@@ -220,21 +220,15 @@ if issparse(c);
 end
 
 %% split up linear constraints
-ieq = find( abs(u-l) <= eps );          %% equality
-igt = find( u >=  1e10 & l > -1e10 );   %% greater than, unbounded above
-ilt = find( l <= -1e10 & u <  1e10 );   %% less than, unbounded below
-ibx = find( (abs(u-l) > eps) & (u < 1e10) & (l > -1e10) );
+[ieq, igt, ilt, AA, bb] = convert_lin_constraint(A, l, u);
 
 %% grab some dimensions
-nlt = length(ilt);      %% number of upper bounded linear inequalities
-ngt = length(igt);      %% number of lower bounded linear inequalities
-nbx = length(ibx);      %% number of doubly bounded linear inequalities
-neq = length(ieq);      %% number of equalities
-niq = nlt+ngt+2*nbx;    %% number of inequalities
+neq = length(ieq);                  %% number of equalities
+niq = length(ilt) + length(igt);    %% number of inequalities
 
 %% set up model
-m.A     = [ A(ieq, :); A(ilt, :); -A(igt, :); A(ibx, :); -A(ibx, :) ];
-m.rhs   = [ u(ieq);    u(ilt);    -l(igt);    u(ibx);    -l(ibx)    ];
+m.A     = AA;
+m.rhs   = bb;
 m.sense = char([ double('=')*ones(1,neq) double('<')*ones(1,niq) ]);
 m.lb = xmin;
 m.ub = xmax;
@@ -341,22 +335,8 @@ kl = find(rc > 0);   %% lower bound binding
 ku = find(rc < 0);   %% upper bound binding
 lam.lower(kl)   =  rc(kl);
 lam.upper(ku)   = -rc(ku);
-lam.eqlin   = pi(1:neq);
-lam.ineqlin = pi(neq+(1:niq));
-mu_l        = zeros(nA, 1);
-mu_u        = zeros(nA, 1);
 
-%% repackage lambdas
-kl = find(lam.eqlin > 0);   %% lower bound binding
-ku = find(lam.eqlin < 0);   %% upper bound binding
-
-mu_l(ieq(kl)) = lam.eqlin(kl);
-mu_l(igt) = -lam.ineqlin(nlt+(1:ngt));
-mu_l(ibx) = -lam.ineqlin(nlt+ngt+nbx+(1:nbx));
-
-mu_u(ieq(ku)) = -lam.eqlin(ku);
-mu_u(ilt) = -lam.ineqlin(1:nlt);
-mu_u(ibx) = -lam.ineqlin(nlt+ngt+(1:nbx));
+[mu_l, mu_u] = convert_lin_constraint_multipliers(-pi(1:neq), -pi(neq+(1:niq)), ieq, igt, ilt);
 
 lambda = struct( ...
     'mu_l', mu_l, ...
@@ -366,14 +346,6 @@ lambda = struct( ...
 );
 
 if mi && eflag == 1 && (~isfield(opt, 'skip_prices') || ~opt.skip_prices)
-    if verbose
-        fprintf('--- Integer stage complete, starting price computation stage ---\n');
-    end
-    if isfield(opt, 'price_stage_warn_tol') && ~isempty(opt.price_stage_warn_tol)
-        tol = opt.price_stage_warn_tol;
-    else
-        tol = 1e-7;
-    end
     if length(vtype) == 1
         if vtype == 'I' || vtype == 'B' || vtype == 'N'
             k = (1:nx);
@@ -384,25 +356,35 @@ if mi && eflag == 1 && (~isfield(opt, 'skip_prices') || ~opt.skip_prices)
         k = find(vtype == 'I' | vtype == 'B' | vtype == 'N' | ...
                 (vtype == 'S' & x' == 0));
     end
+    if length(k) < nx   %% still have some free variables
+        if verbose
+            fprintf('--- Integer stage complete, starting price computation stage ---\n');
+        end
+        if isfield(opt, 'price_stage_warn_tol') && ~isempty(opt.price_stage_warn_tol)
+            tol = opt.price_stage_warn_tol;
+        else
+            tol = 1e-7;
+        end
     
-    x(k) = round(x(k));
-    xmin(k) = x(k);
-    xmax(k) = x(k);
-    x0 = x;
-%     opt.grb_opt.Method = 0;     %% primal simplex
+        x(k) = round(x(k));
+        xmin(k) = x(k);
+        xmax(k) = x(k);
+        x0 = x;
+    %     opt.grb_opt.Method = 0;     %% primal simplex
     
-    [x_, f_, eflag_, output_, lambda] = qps_gurobi(H, c, A, l, u, xmin, xmax, x0, opt);
-    if eflag ~= eflag_
-        error('miqps_gurobi: EXITFLAG from price computation stage = %d', eflag_);
+        [x_, f_, eflag_, output_, lambda] = qps_gurobi(H, c, A, l, u, xmin, xmax, x0, opt);
+        if eflag ~= eflag_
+            error('miqps_gurobi: EXITFLAG from price computation stage = %d', eflag_);
+        end
+        if abs(f - f_)/max(abs(f), 1) > tol
+            warning('miqps_gurobi: relative mismatch in objective function value from price computation stage = %g', abs(f - f_)/max(abs(f), 1));
+        end
+        xn = abs(x);
+        xn(xn<1) = 1;
+        [mx, k] = max(abs(x - x_) ./ xn);
+        if mx > tol
+            warning('miqps_gurobi: max relative mismatch in x from price computation stage = %g (%g)', mx, x(k));
+        end
+        output.price_stage = output_;
     end
-    if abs(f - f_)/max(abs(f), 1) > tol
-        warning('miqps_gurobi: relative mismatch in objective function value from price computation stage = %g', abs(f - f_)/max(abs(f), 1));
-    end
-    xn = x;
-    xn(abs(xn)<1) = 1;
-    [mx, k] = max(abs(x - x_) ./ xn);
-    if mx > tol
-        warning('miqps_gurobi: max relative mismatch in x from price computation stage = %g (%g)', mx, x(k));
-    end
-    output.price_stage = output_;
 end

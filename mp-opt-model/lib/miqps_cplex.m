@@ -4,8 +4,8 @@ function [x, f, eflag, output, lambda] = miqps_cplex(H, c, A, l, u, xmin, xmax, 
 %       MIQPS_CPLEX(H, C, A, L, U, XMIN, XMAX, X0, VTYPE, OPT)
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = MIQPS_CPLEX(PROBLEM)
 %   A wrapper function providing a standardized interface for using
-%   CPLEXQP or CPLEXLP to solve the following QP (quadratic programming)
-%   problem:
+%   CPLEXQP or CPLEXLP to solve the following MILP/MIQP (mixed integer
+%   linear programming/mixed integer quadratic programming) problem:
 %
 %       min 1/2 X'*H*X + C'*X
 %        X
@@ -197,19 +197,7 @@ else
 end
 
 %% split up linear constraints
-ieq = find( abs(u-l) <= eps );          %% equality
-igt = find( u >=  1e10 & l > -1e10 );   %% greater than, unbounded above
-ilt = find( l <= -1e10 & u <  1e10 );   %% less than, unbounded below
-ibx = find( (abs(u-l) > eps) & (u < 1e10) & (l > -1e10) );
-Ae = A(ieq, :);
-be = u(ieq);
-Ai  = [ A(ilt, :); -A(igt, :); A(ibx, :); -A(ibx, :) ];
-bi  = [ u(ilt);    -l(igt);    u(ibx);    -l(ibx)];
-
-%% grab some dimensions
-nlt = length(ilt);      %% number of upper bounded linear inequalities
-ngt = length(igt);      %% number of lower bounded linear inequalities
-nbx = length(ibx);      %% number of doubly bounded linear inequalities
+[ieq, igt, ilt, Ae, be, Ai, bi] = convert_lin_constraint(A, l, u);
 
 %% set up options struct for CPLEX
 if ~isempty(opt) && isfield(opt, 'cplex_opt') && ~isempty(opt.cplex_opt)
@@ -348,17 +336,7 @@ if vnum < 12.003
     lam.ineqlin = -lam.ineqlin;
 end
 
-%% repackage lambdas
-kl = find(lam.eqlin < 0);   %% lower bound binding
-ku = find(lam.eqlin > 0);   %% upper bound binding
-
-mu_l(ieq(kl)) = -lam.eqlin(kl);
-mu_l(igt) = lam.ineqlin(nlt+(1:ngt));
-mu_l(ibx) = lam.ineqlin(nlt+ngt+nbx+(1:nbx));
-
-mu_u(ieq(ku)) = lam.eqlin(ku);
-mu_u(ilt) = lam.ineqlin(1:nlt);
-mu_u(ibx) = lam.ineqlin(nlt+ngt+(1:nbx));
+[mu_l, mu_u] = convert_lin_constraint_multipliers(lam.eqlin, lam.ineqlin, ieq, igt, ilt);
 
 lambda = struct( ...
     'mu_l', mu_l, ...
@@ -368,35 +346,37 @@ lambda = struct( ...
 );
 
 if mi && eflag == 1 && (~isfield(opt, 'skip_prices') || ~opt.skip_prices)
-    if verbose
-        fprintf('--- Integer stage complete, starting price computation stage ---\n');
-    end
-    if isfield(opt, 'price_stage_warn_tol') && ~isempty(opt.price_stage_warn_tol)
-        tol = opt.price_stage_warn_tol;
-    else
-        tol = 1e-7;
-    end
     k = find(vtype == 'I' | vtype == 'B' | vtype == 'N' | ...
             (vtype == 'S' & x' == 0));
-    x(k) = round(x(k));
-    xmin(k) = x(k);
-    xmax(k) = x(k);
-    x0 = x;
-    opt.cplex_opt.lpmethod = 1;     %% primal simplex
-    opt.cplex_opt.qpmethod = 1;     %% primal simplex
+    if length(k) < nx   %% still have some free variables
+        if verbose
+            fprintf('--- Integer stage complete, starting price computation stage ---\n');
+        end
+        if isfield(opt, 'price_stage_warn_tol') && ~isempty(opt.price_stage_warn_tol)
+            tol = opt.price_stage_warn_tol;
+        else
+            tol = 1e-7;
+        end
+        x(k) = round(x(k));
+        xmin(k) = x(k);
+        xmax(k) = x(k);
+        x0 = x;
+        opt.cplex_opt.lpmethod = 2;     %% dual simplex
+        opt.cplex_opt.qpmethod = 1;     %% primal simplex
     
-    [x_, f_, eflag_, output_, lambda] = qps_cplex(H, c, A, l, u, xmin, xmax, x0, opt);
-    if eflag ~= eflag_
-        error('miqps_cplex: EXITFLAG from price computation stage = %d', eflag_);
+        [x_, f_, eflag_, output_, lambda] = qps_cplex(H, c, A, l, u, xmin, xmax, x0, opt);
+        if eflag ~= eflag_
+            error('miqps_cplex: EXITFLAG from price computation stage = %d', eflag_);
+        end
+        if abs(f - f_)/max(abs(f), 1) > tol
+            warning('miqps_cplex: relative mismatch in objective function value from price computation stage = %g', abs(f - f_)/max(abs(f), 1));
+        end
+        xn = abs(x);
+        xn(xn<1) = 1;
+        [mx, k] = max(abs(x - x_) ./ xn);
+        if mx > tol
+            warning('miqps_cplex: max relative mismatch in x from price computation stage = %g (%g)', mx, x(k));
+        end
+        output.price_stage = output_;
     end
-    if abs(f - f_)/max(abs(f), 1) > tol
-        warning('miqps_cplex: relative mismatch in objective function value from price computation stage = %g', abs(f - f_)/max(abs(f), 1));
-    end
-    xn = x;
-    xn(abs(xn)<1) = 1;
-    [mx, k] = max(abs(x - x_) ./ xn);
-    if mx > tol
-        warning('miqps_cplex: max relative mismatch in x from price computation stage = %g (%g)', mx, x(k));
-    end
-    output.price_stage = output_;
 end

@@ -11,7 +11,7 @@ function om = add_named_set(om, set_type, name, idx, N, varargin)
 %       OM.ADD_NAMED_SET('var', NAME, IDX_LIST, N, V0, VL, VU, VT);
 %
 %   Linear Constraint Set
-%       OM.ADD_NAMED_SET('lin', NAME, IDX_LIST, N, A, L, U, VARSETS);
+%       OM.ADD_NAMED_SET('lin', NAME, IDX_LIST, N, A, L, U, VARSETS, TR);
 %
 %   Nonlinear Inequality Constraint Set
 %       OM.ADD_NAMED_SET('nle', NAME, IDX_LIST, N, FCN, HESS, COMPUTED_BY, VARSETS);
@@ -26,7 +26,7 @@ function om = add_named_set(om, set_type, name, idx, N, varargin)
 %            ADD_QUAD_COST and ADD_NLN_COST.
 
 %   MP-Opt-Model
-%   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.
@@ -61,16 +61,18 @@ switch set_type
             om_ff.data.vt = subsasgn(om_ff.data.vt, sc, vt);    %% variable type
         end
     case 'lin'          %% linear constraint set
-        [A, l, u, varsets] = deal(varargin{:});
+        [A, l, u, varsets, tr] = deal(varargin{:});
         if isempty(idx)
             om_ff.data.A.(name)  = A;
             om_ff.data.l.(name)  = l;
             om_ff.data.u.(name)  = u;
+            om_ff.data.tr.(name)  = tr;
             om_ff.data.vs.(name) = varsets;
         else
             om_ff.data.A  = subsasgn(om_ff.data.A, sc, A);
             om_ff.data.l  = subsasgn(om_ff.data.l, sc, l);
             om_ff.data.u  = subsasgn(om_ff.data.u, sc, u);
+            om_ff.data.tr  = subsasgn(om_ff.data.tr, sc, tr);
             om_ff.data.vs = subsasgn(om_ff.data.vs, sc, varsets);
         end
         if ~isempty(om_ff.params)       %% clear cache of aggregated params

@@ -195,7 +195,7 @@ classdef opt_model < mp_idx_manager
 %           .(user defined fields)
 
 %   MP-Opt-Model
-%   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.
@@ -272,6 +272,7 @@ classdef opt_model < mp_idx_manager
                 'A', es, ...
                 'l', es, ...
                 'u', es, ...
+                'tr', es, ...
                 'vs', es );
             om.lin.params = [];
             om.qdc.data = struct( ...

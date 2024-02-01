@@ -266,8 +266,7 @@ switch alg
             qps_ot(H, c, A, l, u, xmin, xmax, x0, opt);
     otherwise
         fcn = ['qps_' lower(alg)];
-        s = which(fcn);
-        if length(s > 2) && all(s(end-1:end) == '.m')
+        if exist([fcn '.m']) == 2
             [x, f, eflag, output, lambda] = ...
                 feval(fcn, H, c, A, l, u, xmin, xmax, x0, opt);
         else

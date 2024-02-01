@@ -2,7 +2,7 @@ function t_om_solve_qps(quiet)
 %T_OM_SOLVE_QPS  Tests of QP solvers via OM.SOLVE().
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.
@@ -49,49 +49,47 @@ for k = 1:length(algs)
                 'num_threads', 0, ...
                 'opt', 0 ) ...
         );
-        switch names{k}
-            case {'DEFAULT', 'MIPS', 'sc-MIPS'}
-                opt.mips_opt.comptol = 1e-8;
-%             case 'linprog/quadprog'
-%                 opt.verbose = 2;
-%                 opt.linprog_opt.Algorithm = 'interior-point';
-%                 opt.linprog_opt.Algorithm = 'active-set';
-%                 opt.linprog_opt.Algorithm = 'simplex';
-%                 opt.linprog_opt.Algorithm = 'dual-simplex';
-%             end
-            case 'CPLEX'
-%               alg = 0;        %% default uses barrier method with NaN bug in lower lim multipliers
-                alg = 2;        %% use dual simplex
-                mpopt.cplex.lpmethod = alg;
-                mpopt.cplex.qpmethod = min([4 alg]);
-                opt.cplex_opt = cplex_options([], mpopt);
-            case 'MOSEK'
-%                 sc = mosek_symbcon;
-%                 alg = sc.MSK_OPTIMIZER_DUAL_SIMPLEX;    %% use dual simplex
-%                 alg = sc.MSK_OPTIMIZER_INTPNT;          %% use interior point
-%                 mpopt.mosek.lp_alg = alg;
-                mpopt.mosek.gap_tol = 1e-10;
-%                 mpopt.mosek.opts.MSK_DPAR_INTPNT_TOL_PFEAS = 1e-10;
-%                 mpopt.mosek.opts.MSK_DPAR_INTPNT_TOL_DFEAS = 1e-10;
-%                 mpopt.mosek.opts.MSK_DPAR_INTPNT_TOL_INFEAS = 1e-10;
-%                 mpopt.mosek.opts.MSK_DPAR_INTPNT_TOL_REL_GAP = 1e-10;
-                vnum = have_feature('mosek', 'vnum');
-                if vnum >= 8
-%                     mpopt.mosek.opts.MSK_DPAR_INTPNT_QO_TOL_PFEAS = 1e-10;
-%                     mpopt.mosek.opts.MSK_DPAR_INTPNT_QO_TOL_DFEAS = 1e-10;
-%                     mpopt.mosek.opts.MSK_DPAR_INTPNT_QO_TOL_INFEAS = 1e-10;
-%                     mpopt.mosek.opts.MSK_DPAR_INTPNT_QO_TOL_MU_RED = 1e-10;
-                    mpopt.mosek.opts.MSK_DPAR_INTPNT_QO_TOL_REL_GAP = 1e-10;
-                end
-%                 opt.verbose = 3;
-                opt.mosek_opt = mosek_options([], mpopt);
-            case 'OSQP'
-                opt.osqp_opt.polish = 1;
-%                 opt.osqp_opt.alpha = 1;
-%                 opt.osqp_opt.eps_abs = 1e-8;
-%                 opt.osqp_opt.eps_rel = 1e-10;
-%                 opt.osqp_opt.eps_prim_inf = 1e-8;
-%                 opt.osqp_opt.eps_dual_inf = 1e-8;
+        opt.mips_opt.comptol = 1e-8;
+%         if have_feature('linprog')
+%             opt.linprog_opt.Algorithm = 'interior-point';
+%             opt.linprog_opt.Algorithm = 'active-set';
+%             opt.linprog_opt.Algorithm = 'simplex';
+%             opt.linprog_opt.Algorithm = 'dual-simplex';
+%         end
+        if have_feature('cplex')
+            % alg = 0;        %% default uses barrier method with NaN bug in lower lim multipliers
+            alg = 2;        %% use dual simplex
+            mpopt.cplex.lpmethod = alg;
+            mpopt.cplex.qpmethod = min([4 alg]);
+            opt.cplex_opt = cplex_options([], mpopt);
+        end
+        if have_feature('mosek')
+%             sc = mosek_symbcon;
+%             alg = sc.MSK_OPTIMIZER_DUAL_SIMPLEX;    %% use dual simplex
+%             alg = sc.MSK_OPTIMIZER_INTPNT;          %% use interior point
+%             mpopt.mosek.lp_alg = alg;
+            mpopt.mosek.gap_tol = 1e-10;
+%             mpopt.mosek.opts.MSK_DPAR_INTPNT_TOL_PFEAS = 1e-10;
+%             mpopt.mosek.opts.MSK_DPAR_INTPNT_TOL_DFEAS = 1e-10;
+%             mpopt.mosek.opts.MSK_DPAR_INTPNT_TOL_INFEAS = 1e-10;
+%             mpopt.mosek.opts.MSK_DPAR_INTPNT_TOL_REL_GAP = 1e-10;
+            vnum = have_feature('mosek', 'vnum');
+            if vnum >= 8
+%                 mpopt.mosek.opts.MSK_DPAR_INTPNT_QO_TOL_PFEAS = 1e-10;
+%                 mpopt.mosek.opts.MSK_DPAR_INTPNT_QO_TOL_DFEAS = 1e-10;
+%                 mpopt.mosek.opts.MSK_DPAR_INTPNT_QO_TOL_INFEAS = 1e-10;
+%                 mpopt.mosek.opts.MSK_DPAR_INTPNT_QO_TOL_MU_RED = 1e-10;
+                mpopt.mosek.opts.MSK_DPAR_INTPNT_QO_TOL_REL_GAP = 1e-10;
+            end
+            opt.mosek_opt = mosek_options([], mpopt);
+        end
+        if have_feature('osqp')
+            opt.osqp_opt.polish = 1;
+%             opt.osqp_opt.alpha = 1;
+%             opt.osqp_opt.eps_abs = 1e-8;
+%             opt.osqp_opt.eps_rel = 1e-10;
+%             opt.osqp_opt.eps_prim_inf = 1e-8;
+%             opt.osqp_opt.eps_dual_inf = 1e-8;
         end
 
         t = sprintf('%s - 3-d LP : ', names{k});

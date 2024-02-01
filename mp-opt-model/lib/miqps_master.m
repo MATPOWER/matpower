@@ -3,8 +3,9 @@ function [x, f, eflag, output, lambda] = miqps_master(H, c, A, l, u, xmin, xmax,
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
 %       MIQPS_MASTER(H, C, A, L, U, XMIN, XMAX, X0, VTYPE, OPT)
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = MIQPS_MASTER(PROBLEM)
-%   A common wrapper function for various QP solvers. 
-%   Solves the following MIQP (quadratic programming) problem:
+%   A common wrapper function for various MILP/MIQP solvers. 
+%   Solves the following MILP/MIQP (mixed integer linear programming/
+%   mixed integer quadratic programming) problem:
 %
 %       min 1/2 X'*H*X + C'*X
 %        X
@@ -218,7 +219,13 @@ switch alg
         [x, f, eflag, output, lambda] = ...
             miqps_ot(H, c, A, l, u, xmin, xmax, x0, vtype, opt);
     otherwise
-        error('miqps_master: ''%s'' is not a valid algorithm code', alg);
+        fcn = ['miqps_' lower(alg)];
+        if exist([fcn '.m']) == 2
+            [x, f, eflag, output, lambda] = ...
+                feval(fcn, H, c, A, l, u, xmin, xmax, x0, vtype, opt);
+        else
+            error('miqps_master: ''%s'' is not a valid algorithm code', alg);
+        end
 end
 if ~isfield(output, 'alg') || isempty(output.alg)
     output.alg = alg;

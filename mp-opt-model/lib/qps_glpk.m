@@ -176,21 +176,13 @@ else
 end
 
 %% split up linear constraints
-ieq = find( abs(u-l) <= eps );          %% equality
-igt = find( u >=  1e10 & l > -1e10 );   %% greater than, unbounded above
-ilt = find( l <= -1e10 & u <  1e10 );   %% less than, unbounded below
-ibx = find( (abs(u-l) > eps) & (u < 1e10) & (l > -1e10) );
-AA = [ A(ieq, :); A(ilt, :); -A(igt, :); A(ibx, :); -A(ibx, :) ];
-bb = [ u(ieq);    u(ilt);    -l(igt);    u(ibx);    -l(ibx)];
+[ieq, igt, ilt, AA, bb] = convert_lin_constraint(A, l, u);
 
 %% grab some dimensions
-nlt = length(ilt);      %% number of upper bounded linear inequalities
-ngt = length(igt);      %% number of lower bounded linear inequalities
-nbx = length(ibx);      %% number of doubly bounded linear inequalities
-neq = length(ieq);      %% number of equalities
-nie = nlt+ngt+2*nbx;    %% number of inequalities
+neq = length(ieq);                  %% number of equalities
+niq = length(ilt) + length(igt);    %% number of inequalities
 
-ctype = [repmat('S', neq, 1); repmat('U', nlt+ngt+2*nbx, 1)];
+ctype = [repmat('S', neq, 1); repmat('U', niq, 1)];
 vtype = repmat('C', nx, 1);
 
 %% set options struct for GLPK
@@ -242,24 +234,13 @@ if isempty(extra) || ~isfield(extra, 'lambda') || isempty(extra.lambda)
         'upper', zeros(nx, 1) ...
     );
 else
-    lam.eqlin = extra.lambda(1:neq);
-    lam.ineqlin = extra.lambda(neq+(1:nie));
     lam.lower = extra.redcosts;
     lam.upper = -extra.redcosts;
     lam.lower(lam.lower < 0) = 0;
     lam.upper(lam.upper < 0) = 0;
-    kl = find(lam.eqlin > 0);   %% lower bound binding
-    ku = find(lam.eqlin < 0);   %% upper bound binding
 
-    mu_l = zeros(nA, 1);
-    mu_l(ieq(kl)) = lam.eqlin(kl);
-    mu_l(igt) = -lam.ineqlin(nlt+(1:ngt));
-    mu_l(ibx) = -lam.ineqlin(nlt+ngt+nbx+(1:nbx));
-
-    mu_u = zeros(nA, 1);
-    mu_u(ieq(ku)) = -lam.eqlin(ku);
-    mu_u(ilt) = -lam.ineqlin(1:nlt);
-    mu_u(ibx) = -lam.ineqlin(nlt+ngt+(1:nbx));
+    [mu_l, mu_u] = convert_lin_constraint_multipliers( ...
+        -extra.lambda(1:neq), -extra.lambda(neq+(1:niq)), ieq, igt, ilt);
 
     lambda = struct( ...
         'mu_l', mu_l, ...

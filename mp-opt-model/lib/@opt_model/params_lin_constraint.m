@@ -1,10 +1,11 @@
-function [A, l, u, vs, i1, iN] = params_lin_constraint(om, name, idx)
+function [A, l, u, vs, i1, iN, tr] = params_lin_constraint(om, name, idx)
 %PARAMS_LIN_CONSTRAINT  Builds and returns linear constraint parameters.
 %   [A, L, U] = OM.PARAMS_LIN_CONSTRAINT()
 %   [A, L, U] = OM.PARAMS_LIN_CONSTRAINT(NAME)
 %   [A, L, U] = OM.PARAMS_LIN_CONSTRAINT(NAME, IDX_LIST)
 %   [A, L, U, VS] = OM.PARAMS_LIN_CONSTRAINT(...)
 %   [A, L, U, VS, I1, IN] = OM.PARAMS_LIN_CONSTRAINT(...)
+%   [A, L, U, VS, I1, IN, TR] = OM.PARAMS_LIN_CONSTRAINT(NAME ...)
 %
 %   With no input parameters, it assembles and returns the parameters
 %   for the aggregate linear constraints from all linear constraint sets
@@ -19,7 +20,9 @@ function [A, l, u, vs, i1, iN] = params_lin_constraint(om, name, idx)
 %   variable sets used by this constraint set. The size of A will be
 %   consistent with VS. Optional 5th and 6th output arguments I1 and IN
 %   indicate the starting and ending row indices of the corresponding
-%   constraint set in the full aggregate constraint matrix.
+%   constraint set in the full aggregate constraint matrix. Finally, TR
+%   will be true if it was the transpose of the A matrix that was
+%   supplied/stored for this set (NAME or NAME/IDX_LIST must be supplied).
 %
 %   Examples:
 %       [A, l, u] = om.params_lin_constraint();
@@ -28,7 +31,7 @@ function [A, l, u, vs, i1, iN] = params_lin_constraint(om, name, idx)
 %   See also OPT_MODEL, ADD_LIN_CONSTRAINT.
 
 %   MP-Opt-Model
-%   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.
@@ -49,6 +52,9 @@ if nargin > 1       %% individual set
                 if nargout > 5
                     i1 = om.lin.idx.i1.(name);      %% starting row index
                     iN = om.lin.idx.iN.(name);      %% ending row index
+                    if nargout > 6
+                        tr = om.lin.data.tr.(name);
+                    end
                 end
             end
         else                                    %% indexing required
@@ -68,6 +74,9 @@ if nargin > 1       %% individual set
                 sn = sc; sn(2).type = '()';         %% num array field
                 i1 = subsref(om.lin.idx.i1, sn);    %% starting row index
                 iN = subsref(om.lin.idx.iN, sn);    %% ending row index
+                if nargout > 6
+                    tr = subsref(om.lin.data.tr, sc);
+                end
             end
         end
     end
@@ -86,23 +95,39 @@ else                %% aggregate
             for k = 1:om.lin.NS
                 name = om.lin.order(k).name;
                 idx  = om.lin.order(k).idx;
-                [Ak, lk, uk, vs, i1, iN] = om.params_lin_constraint(name, idx);
-                [mk, nk] = size(Ak);        %% size of Ak
+                [Ak, lk, uk, vs, i1, iN, tr] = om.params_lin_constraint(name, idx);
+                if tr
+                    [nk, mk] = size(Ak);        %% size of Ak
+                else
+                    [mk, nk] = size(Ak);        %% size of Ak
+                end
                 if mk
                     Akt_full = sparse(nx, nlin);
                     if isempty(vs)
                         if nk == nx     %% full size
-                            Akt_full(:, i1:iN) = Ak';
+                            if tr
+                                Akt_full(:, i1:iN) = Ak;
+                            else
+                                Akt_full(:, i1:iN) = Ak';
+                            end
                         else            %% vars added since adding this constraint set
-                            Ak_all_cols = sparse(mk, nx);
-                            Ak_all_cols(:, 1:nk) = Ak;
-                            Akt_full(:, i1:iN) = Ak_all_cols';
+                            if tr
+                                Akt_full(1:nk, i1:iN) = Ak;
+                            else
+                                Ak_all_cols = sparse(mk, nx);
+                                Ak_all_cols(:, 1:nk) = Ak;
+                                Akt_full(:, i1:iN) = Ak_all_cols';
+                            end
                         end
                     else
                         jj = om.varsets_idx(vs);    %% indices for var set
-                        Ak_all_cols = sparse(mk, nx);
-                        Ak_all_cols(:, jj) = Ak;
-                        Akt_full(:, i1:iN) = Ak_all_cols';
+                        if tr
+                            Akt_full(jj, i1:iN) = Ak;
+                        else
+                            Ak_all_cols = sparse(mk, nx);
+                            Ak_all_cols(:, jj) = Ak;
+                            Akt_full(:, i1:iN) = Ak_all_cols';
+                        end
                     end
                     At = At + Akt_full;
                     l(i1:iN) = lk;
@@ -120,13 +145,24 @@ else                %% aggregate
             for k = 1:om.lin.NS
                 name = om.lin.order(k).name;
                 idx  = om.lin.order(k).idx;
-                [Ak, lk, uk, vs, i1, iN] = om.params_lin_constraint(name, idx);
-                [mk, nk] = size(Ak);        %% size of Ak
+                [Ak, lk, uk, vs, i1, iN, tr] = om.params_lin_constraint(name, idx);
+                if tr
+                    [nk, mk] = size(Ak);        %% size of Ak
+                else
+                    [mk, nk] = size(Ak);        %% size of Ak
+                end
                 if mk
                     % find nonzero sub indices and values
-                    [i, j, v] = find(Ak);
-                    if mk == 1  %% force col vectors for single row Ak
-                        i = i'; j = j'; v = v';
+                    if tr
+                        [j, i, v] = find(Ak);
+                        if nk == 1  %% force col vectors for single col Ak
+                            i = i'; j = j'; v = v';
+                        end
+                    else
+                        [i, j, v] = find(Ak);
+                        if mk == 1  %% force col vectors for single row Ak
+                            i = i'; j = j'; v = v';
+                        end
                     end
 
                     if isempty(vs)

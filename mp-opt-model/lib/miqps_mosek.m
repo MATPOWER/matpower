@@ -4,7 +4,8 @@ function [x, f, eflag, output, lambda] = miqps_mosek(H, c, A, l, u, xmin, xmax, 
 %       MIQPS_MOSEK(H, C, A, L, U, XMIN, XMAX, X0, VTYPE, OPT)
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = MIQPS_MOSEK(PROBLEM)
 %   A wrapper function providing a standardized interface for using
-%   MOSEKOPT to solve the following QP (quadratic programming) problem:
+%   MOSEKOPT to solve the following MILP/MIQP (mixed integer linear
+%   programming/mixed integer quadratic programming) problem:
 %
 %       min 1/2 X'*H*X + C'*X
 %        X
@@ -444,36 +445,38 @@ if nargout > 1
 end
 
 if mi && eflag == 1 && (~isfield(p.opt, 'skip_prices') || ~p.opt.skip_prices)
-    if verbose
-        fprintf('--- Integer stage complete, starting price computation stage ---\n');
+    if length(prob.ints.sub) < nx   %% still have some free variables
+        if verbose
+            fprintf('--- Integer stage complete, starting price computation stage ---\n');
+        end
+        if isfield(p.opt, 'price_stage_warn_tol') && ~isempty(p.opt.price_stage_warn_tol)
+            tol = p.opt.price_stage_warn_tol;
+        else
+            tol = 1e-7;
+        end
+        pp = p;
+        x(prob.ints.sub) = round(x(prob.ints.sub));
+        pp.xmin(prob.ints.sub) = x(prob.ints.sub);
+        pp.xmax(prob.ints.sub) = x(prob.ints.sub);
+        pp.x0 = x;
+        if qp
+            pp.opt.mosek_opt.MSK_IPAR_OPTIMIZER = sc.MSK_OPTIMIZER_FREE;
+        else
+            pp.opt.mosek_opt.MSK_IPAR_OPTIMIZER = sc.MSK_OPTIMIZER_PRIMAL_SIMPLEX;
+        end
+        [x_, f_, eflag_, output_, lambda] = qps_mosek(pp);
+        if eflag ~= eflag_
+            error('miqps_mosek: EXITFLAG from price computation stage = %d', eflag_);
+        end
+        if abs(f - f_)/max(abs(f), 1) > tol
+            warning('miqps_mosek: relative mismatch in objective function value from price computation stage = %g', abs(f - f_)/max(abs(f), 1));
+        end
+        xn = abs(x);
+        xn(xn<1) = 1;
+        [mx, k] = max(abs(x - x_) ./ xn);
+        if mx > tol
+            warning('miqps_mosek: max relative mismatch in x from price computation stage = %g (%g)', mx, x(k));
+        end
+        output.price_stage = output_;
     end
-    if isfield(p.opt, 'price_stage_warn_tol') && ~isempty(p.opt.price_stage_warn_tol)
-        tol = p.opt.price_stage_warn_tol;
-    else
-        tol = 1e-7;
-    end
-    pp = p;
-    x(prob.ints.sub) = round(x(prob.ints.sub));
-    pp.xmin(prob.ints.sub) = x(prob.ints.sub);
-    pp.xmax(prob.ints.sub) = x(prob.ints.sub);
-    pp.x0 = x;
-    if qp
-        pp.opt.mosek_opt.MSK_IPAR_OPTIMIZER = sc.MSK_OPTIMIZER_FREE;
-    else
-        pp.opt.mosek_opt.MSK_IPAR_OPTIMIZER = sc.MSK_OPTIMIZER_PRIMAL_SIMPLEX;
-    end
-    [x_, f_, eflag_, output_, lambda] = qps_mosek(pp);
-    if eflag ~= eflag_
-        error('miqps_mosek: EXITFLAG from price computation stage = %d', eflag_);
-    end
-    if abs(f - f_)/max(abs(f), 1) > tol
-        warning('miqps_mosek: relative mismatch in objective function value from price computation stage = %g', abs(f - f_)/max(abs(f), 1));
-    end
-    xn = x;
-    xn(abs(xn)<1) = 1;
-    [mx, k] = max(abs(x - x_) ./ xn);
-    if mx > tol
-        warning('miqps_mosek: max relative mismatch in x from price computation stage = %g (%g)', mx, x(k));
-    end
-    output.price_stage = output_;
 end

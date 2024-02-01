@@ -4,7 +4,8 @@ function [x, f, eflag, output, lambda] = miqps_glpk(H, c, A, l, u, xmin, xmax, x
 %       MIQPS_GLPK(H, C, A, L, U, XMIN, XMAX, X0, VTYPE, OPT)
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = MIQPS_GLPK(PROBLEM)
 %   A wrapper function providing a standardized interface for using
-%   GLKP to solve the following LP (linear programming) problem:
+%   GLKP to solve the following MILP (mixed integer linear programming)
+%   problem:
 %
 %       min C'*X
 %        X
@@ -194,21 +195,13 @@ else
 end
 
 %% split up linear constraints
-ieq = find( abs(u-l) <= eps );          %% equality
-igt = find( u >=  1e10 & l > -1e10 );   %% greater than, unbounded above
-ilt = find( l <= -1e10 & u <  1e10 );   %% less than, unbounded below
-ibx = find( (abs(u-l) > eps) & (u < 1e10) & (l > -1e10) );
-AA = [ A(ieq, :); A(ilt, :); -A(igt, :); A(ibx, :); -A(ibx, :) ];
-bb = [ u(ieq);    u(ilt);    -l(igt);    u(ibx);    -l(ibx)];
+[ieq, igt, ilt, AA, bb] = convert_lin_constraint(A, l, u);
 
 %% grab some dimensions
-nlt = length(ilt);      %% number of upper bounded linear inequalities
-ngt = length(igt);      %% number of lower bounded linear inequalities
-nbx = length(ibx);      %% number of doubly bounded linear inequalities
-neq = length(ieq);      %% number of equalities
-nie = nlt+ngt+2*nbx;    %% number of inequalities
+neq = length(ieq);                  %% number of equalities
+niq = length(ilt) + length(igt);    %% number of inequalities
 
-ctype = [repmat('S', neq, 1); repmat('U', nlt+ngt+2*nbx, 1)];
+ctype = [repmat('S', neq, 1); repmat('U', niq, 1)];
 
 if isempty(vtype) || isempty(find(vtype == 'B' | vtype == 'I'))
     mi = 0;
@@ -279,24 +272,13 @@ if isempty(extra) || ~isfield(extra, 'lambda') || isempty(extra.lambda)
         'upper', zeros(nx, 1) ...
     );
 else
-    lam.eqlin = extra.lambda(1:neq);
-    lam.ineqlin = extra.lambda(neq+(1:nie));
     lam.lower = extra.redcosts;
     lam.upper = -extra.redcosts;
     lam.lower(lam.lower < 0) = 0;
     lam.upper(lam.upper < 0) = 0;
-    kl = find(lam.eqlin > 0);   %% lower bound binding
-    ku = find(lam.eqlin < 0);   %% upper bound binding
 
-    mu_l = zeros(nA, 1);
-    mu_l(ieq(kl)) = lam.eqlin(kl);
-    mu_l(igt) = -lam.ineqlin(nlt+(1:ngt));
-    mu_l(ibx) = -lam.ineqlin(nlt+ngt+nbx+(1:nbx));
-
-    mu_u = zeros(nA, 1);
-    mu_u(ieq(ku)) = -lam.eqlin(ku);
-    mu_u(ilt) = -lam.ineqlin(1:nlt);
-    mu_u(ibx) = -lam.ineqlin(nlt+ngt+(1:nbx));
+    [mu_l, mu_u] = convert_lin_constraint_multipliers( ...
+        -extra.lambda(1:neq), -extra.lambda(neq+(1:niq)), ieq, igt, ilt);
 
     lambda = struct( ...
         'mu_l', mu_l, ...
@@ -307,37 +289,39 @@ else
 end
 
 if mi && eflag == 1 && (~isfield(opt, 'skip_prices') || ~opt.skip_prices)
-    if verbose
-        fprintf('--- Integer stage complete, starting price computation stage ---\n');
-    end
-    if isfield(opt, 'price_stage_warn_tol') && ~isempty(opt.price_stage_warn_tol)
-        tol = opt.price_stage_warn_tol;
-    else
-        tol = 1e-7;
-    end
     k = find(vtype == 'I' | vtype == 'B');
-    x(k) = round(x(k));
-    xmin(k) = x(k);
-    xmax(k) = x(k);
-    x0 = x;
-    opt.glpk_opt.lpsolver = 1;      %% simplex
-    opt.glpk_opt.dual = 0;          %% primal simplex
-    if have_feature('octave') && have_feature('octave', 'vnum') >= 3.007
-        opt.glpk_opt.dual = 1;      %% primal simplex
-    end
+    if length(k) < nx   %% still have some free variables
+        if verbose
+            fprintf('--- Integer stage complete, starting price computation stage ---\n');
+        end
+        if isfield(opt, 'price_stage_warn_tol') && ~isempty(opt.price_stage_warn_tol)
+            tol = opt.price_stage_warn_tol;
+        else
+            tol = 1e-7;
+        end
+        x(k) = round(x(k));
+        xmin(k) = x(k);
+        xmax(k) = x(k);
+        x0 = x;
+        opt.glpk_opt.lpsolver = 1;      %% simplex
+        opt.glpk_opt.dual = 0;          %% primal simplex
+        if have_feature('octave') && have_feature('octave', 'vnum') >= 3.007
+            opt.glpk_opt.dual = 1;      %% primal simplex
+        end
     
-    [x_, f_, eflag_, output_, lambda] = qps_glpk(H, c, A, l, u, xmin, xmax, x0, opt);
-    if eflag ~= eflag_
-        error('miqps_glpk: EXITFLAG from price computation stage = %d', eflag_);
+        [x_, f_, eflag_, output_, lambda] = qps_glpk(H, c, A, l, u, xmin, xmax, x0, opt);
+        if eflag ~= eflag_
+            error('miqps_glpk: EXITFLAG from price computation stage = %d', eflag_);
+        end
+        if abs(f - f_)/max(abs(f), 1) > tol
+            warning('miqps_glpk: relative mismatch in objective function value from price computation stage = %g', abs(f - f_)/max(abs(f), 1));
+        end
+        xn = abs(x);
+        xn(xn<1) = 1;
+        [mx, k] = max(abs(x - x_) ./ xn);
+        if mx > tol
+            warning('miqps_glpk: max relative mismatch in x from price computation stage = %g (%g)', mx, x(k));
+        end
+        output.price_stage = output_;
     end
-    if abs(f - f_)/max(abs(f), 1) > tol
-        warning('miqps_glpk: relative mismatch in objective function value from price computation stage = %g', abs(f - f_)/max(abs(f), 1));
-    end
-    xn = x;
-    xn(abs(xn)<1) = 1;
-    [mx, k] = max(abs(x - x_) ./ xn);
-    if mx > tol
-        warning('miqps_glpk: max relative mismatch in x from price computation stage = %g (%g)', mx, x(k));
-    end
-    output.price_stage = output_;
 end

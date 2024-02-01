@@ -204,21 +204,15 @@ if issparse(c);
 end
 
 %% split up linear constraints
-ieq = find( abs(u-l) <= eps );          %% equality
-igt = find( u >=  1e10 & l > -1e10 );   %% greater than, unbounded above
-ilt = find( l <= -1e10 & u <  1e10 );   %% less than, unbounded below
-ibx = find( (abs(u-l) > eps) & (u < 1e10) & (l > -1e10) );
+[ieq, igt, ilt, AA, bb] = convert_lin_constraint(A, l, u);
 
 %% grab some dimensions
-nlt = length(ilt);      %% number of upper bounded linear inequalities
-ngt = length(igt);      %% number of lower bounded linear inequalities
-nbx = length(ibx);      %% number of doubly bounded linear inequalities
-neq = length(ieq);      %% number of equalities
-niq = nlt+ngt+2*nbx;    %% number of inequalities
+neq = length(ieq);                  %% number of equalities
+niq = length(ilt) + length(igt);    %% number of inequalities
 
 %% set up model
-m.A     = [ A(ieq, :); A(ilt, :); -A(igt, :); A(ibx, :); -A(ibx, :) ];
-m.rhs   = [ u(ieq);    u(ilt);    -l(igt);    u(ibx);    -l(ibx)    ];
+m.A     = AA;
+m.rhs   = bb;
 m.sense = char([ double('=')*ones(1,neq) double('<')*ones(1,niq) ]);
 m.lb = xmin;
 m.ub = xmax;
@@ -313,22 +307,8 @@ kl = find(rc > 0);   %% lower bound binding
 ku = find(rc < 0);   %% upper bound binding
 lam.lower(kl)   =  rc(kl);
 lam.upper(ku)   = -rc(ku);
-lam.eqlin   = pi(1:neq);
-lam.ineqlin = pi(neq+(1:niq));
-mu_l        = zeros(nA, 1);
-mu_u        = zeros(nA, 1);
 
-%% repackage lambdas
-kl = find(lam.eqlin > 0);   %% lower bound binding
-ku = find(lam.eqlin < 0);   %% upper bound binding
-
-mu_l(ieq(kl)) = lam.eqlin(kl);
-mu_l(igt) = -lam.ineqlin(nlt+(1:ngt));
-mu_l(ibx) = -lam.ineqlin(nlt+ngt+nbx+(1:nbx));
-
-mu_u(ieq(ku)) = -lam.eqlin(ku);
-mu_u(ilt) = -lam.ineqlin(1:nlt);
-mu_u(ibx) = -lam.ineqlin(nlt+ngt+(1:nbx));
+[mu_l, mu_u] = convert_lin_constraint_multipliers(-pi(1:neq), -pi(neq+(1:niq)), ieq, igt, ilt);
 
 lambda = struct( ...
     'mu_l', mu_l, ...

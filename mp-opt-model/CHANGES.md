@@ -5,6 +5,48 @@ Change history for MP-Opt-Model
 Since version 4.1
 -----------------
 
+#### 1/31/24
+  - Add `convert_lin_constraint()` and `convert_lin_constraint_multipliers()`
+    functions to eliminate code duplication for common task of converting
+    linear constraints and their multipliers between a single set of
+    doubly-bounded inequality constraints and separate sets of equality
+    and upper-bounded inequality constraints.
+  - Change solver for CPLEX price computation stage in `miqps_cplex()` from
+    primal simplex to dual simplex (probably no impact, except it was a
+    simple way to get a newly failing test in another project to pass again).
+
+#### 12/8/23
+  - Always skip price computation stage in `miqps_<solver>()` functions for
+    pure (as opposed to mixed) integer problems.
+
+#### 11/29/23
+  - Add support to `miqps_master()` for calling `miqps_<my_solver>()` by
+    setting `opt.alg` to `'<MY_SOLVER>'` to allow for handling custom
+    MILP/MIQP solvers.
+
+#### 11/8/23
+  - Add support to `nlps_master()` for calling `nlps_<my_solver>()` by setting
+    `opt.alg` to `'<MY_SOLVER>'` to allow for handling custom NLP solvers.
+
+#### 11/6/23
+  - Add to `opt_model/add_lin_constraint()` the option to provide/store
+    the transpose of the `A` matrix instead of the original. This can
+    potentially save significant memory for sparse matrices with many more
+    columns than rows. E.g. storage constraints in [MOST][11] for 8760 hour
+    planning horizon.
+
+#### 10/13/23
+  - Update `opt_model/display_soln()` to avoid displaying an infinite
+    average for quadratic costs when corresponding quantity is zero.
+
+#### 9/13/23
+  - Clear cached parameters after updating quadratic costs via
+    `opt_model/set_params()`.
+
+#### 9/12/23
+  - Tweak some MI/QPS solver tests to make them more robust for `'DEFAULT'`
+    solver under different environments.
+
 #### 3/27/23
   - Update for compatibility with MATLAB R2023a (Optimization Toolbox 9.5)
     which removed `x0` as a valid input to `linprog`.
@@ -32,7 +74,7 @@ Version 4.1 - *Dec 13, 2022*
   - Add `runtime` field to `output` argument of `qps_glpk()` and
     `qps_mosek()`.
   - Add support to `qps_master()` for calling `qps_<my_solver>()` by setting
-    `opt.alg` to `'<MY_SOLVER>'` to allow for custom solvers.
+    `opt.alg` to `'<MY_SOLVER>'` to allow for handling custom LP/QP solvers.
 
 #### 7/5/22
   - Update for compatibility with Artelys Knitro 13.1 and later.
@@ -425,3 +467,4 @@ Version 0.7.0 - *Jun 20, 2019*
 [8]: https://github.com/MATPOWER/mptest
 [9]: https://github.com/MATPOWER/mips
 [10]: https://savannah.gnu.org/bugs/?52614
+[11]: https://github.com/MATPOWER/most

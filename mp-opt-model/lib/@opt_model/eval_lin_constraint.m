@@ -19,7 +19,7 @@ function [Ax_u, l_Ax, A] = eval_lin_constraint(om, x, name, idx)
 %   See also OPT_MODEL, ADD_LIN_CONSTRAINT, PARAMS_LIN_CONSTRAINT.
 
 %   MP-Opt-Model
-%   Copyright (c) 2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2023, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.
@@ -30,17 +30,18 @@ if om.lin.N
     %% collect cost parameters
     if nargin < 3                       %% full set
         [A, l, u, vs] = om.params_lin_constraint();
+        tr = 0;
         N = 1;
     elseif nargin < 4 || isempty(idx)   %% name, no idx provided
         dims = size(om.lin.idx.i1.(name));
         if prod(dims) == 1              %% simple named set
-            [A, l, u, vs] = om.params_lin_constraint(name);
+            [A, l, u, vs, ~, ~, tr] = om.params_lin_constraint(name);
             N = om.getN('lin', name);
         else
-            error('@opt_model/eval_quad_cost: quadratic cost set ''%s'' requires an IDX_LIST arg when requesting DF output', name)
+            error('@opt_model/eval_lin_constraint: linear constraint set ''%s'' requires an IDX_LIST arg', name)
         end
     else                                %% indexed named set
-        [A, l, u, vs] = om.params_lin_constraint(name, idx);
+        [A, l, u, vs, ~, ~, tr] = om.params_lin_constraint(name, idx);
         N = om.getN('lin', name, idx);
     end
     
@@ -48,7 +49,14 @@ if om.lin.N
     xx = om.varsets_x(x, vs, 'vector');
 
     %% compute constraints
-    Ax = A * xx;
+    if tr
+        Ax = (xx' * A)';
+        if nargout > 2
+            A = A';
+        end
+    else
+        Ax = A * xx;
+    end
     Ax_u = Ax - u;
     if nargout > 1
         l_Ax = l - Ax;
@@ -57,5 +65,8 @@ else
     Ax_u = [];
     if nargout > 1
         l_Ax = [];
+        if nargout > 2
+            A = [];
+        end
     end
 end

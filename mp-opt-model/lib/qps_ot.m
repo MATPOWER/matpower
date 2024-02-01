@@ -191,19 +191,7 @@ mlver = have_feature('matlab', 'vnum');
 otver = have_feature('quadprog', 'vnum');
 
 %% split up linear constraints
-ieq = find( abs(u-l) <= eps );          %% equality
-igt = find( u >=  1e10 & l > -1e10 );   %% greater than, unbounded above
-ilt = find( l <= -1e10 & u <  1e10 );   %% less than, unbounded below
-ibx = find( (abs(u-l) > eps) & (u < 1e10) & (l > -1e10) );
-Ae = A(ieq, :);
-be = u(ieq);
-Ai  = [ A(ilt, :); -A(igt, :); A(ibx, :); -A(ibx, :) ];
-bi  = [ u(ilt);    -l(igt);    u(ibx);    -l(ibx)];
-
-%% grab some dimensions
-nlt = length(ilt);      %% number of upper bounded linear inequalities
-ngt = length(igt);      %% number of lower bounded linear inequalities
-nbx = length(ibx);      %% number of doubly bounded linear inequalities
+[ieq, igt, ilt, Ae, be, Ai, bi] = convert_lin_constraint(A, l, u);
 
 %% set up options
 if verbose > 1
@@ -299,37 +287,15 @@ if isempty(lam) || (isempty(lam.eqlin) && isempty(lam.ineqlin) && ...
         'upper', NaN(nx, 1) ...
     );
 else
-    kl = find(lam.eqlin < 0);   %% lower bound binding
-    ku = find(lam.eqlin > 0);   %% upper bound binding
-
-    mu_l = zeros(nA, 1);
 %     %% workaround for Octave optim 1.5.0 and earlier, which
 %     %% has opposite sign convention for equality multipliers
 %     if ~matlab && otver <= 1.005
-%         mu_l(ieq(ku)) = lam.eqlin(ku);
-%     else
-        mu_l(ieq(kl)) = -lam.eqlin(kl);
+%         lam.eqlin = -lam.eqlin;
+%         %% there are also issues with variable bounds that are
+%         %% converted to equalities, and maybe other issues
 %     end
-    mu_l(igt) = lam.ineqlin(nlt+(1:ngt));
-    mu_l(ibx) = lam.ineqlin(nlt+ngt+nbx+(1:nbx));
 
-    mu_u = zeros(nA, 1);
-%     %% workaround for Octave optim 1.5.0 and earlier, which
-%     %% has opposite sign convention for equality multipliers
-%     if ~matlab && otver <= 1.005
-%         mu_u(ieq(kl)) = -lam.eqlin(kl);
-%     else
-        mu_u(ieq(ku)) = lam.eqlin(ku);
-%     end
-    mu_u(ilt) = lam.ineqlin(1:nlt);
-    mu_u(ibx) = lam.ineqlin(nlt+ngt+(1:nbx));
-
-    %% workaround for Octave optim 1.5.0 and earlier, which
-    %% has opposite sign convention for equality multipliers
-    % if ~matlab && otver <= 1.005
-        %% there are also issues with variable bounds that are
-        %% converted to equalities, and maybe other issues
-    % end
+    [mu_l, mu_u] = convert_lin_constraint_multipliers(lam.eqlin, lam.ineqlin, ieq, igt, ilt);
 
     lambda = struct( ...
         'mu_l', mu_l, ...
