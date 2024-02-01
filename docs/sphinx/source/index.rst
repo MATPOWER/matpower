@@ -55,8 +55,8 @@ Currently, most of the User's Manuals are still available only as PDF, built fro
    :caption: How To Guides
 
    howto/element
-   howto/constraint
    howto/extension
+   howto/constraint
    howto/builddocs
 
 ------------------------------------
