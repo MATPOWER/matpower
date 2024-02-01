@@ -19,9 +19,9 @@ classdef mme_legacy_dcline_opf_dc < mp.mme_legacy_dcline_opf
             dme = obj.data_model_element(dm);
 
             %% legacy DC line active power
-            ss = nm.get_idx('state');
-            p_fr = nm.soln.z(ss.i1.legacy_dcline(1):ss.iN.legacy_dcline(1));
-            p_to = nm.soln.z(ss.i1.legacy_dcline(2):ss.iN.legacy_dcline(2));
+            pp = nm.get_idx('port');
+            p_fr = nm.soln.gp(pp.i1.legacy_dcline(1):pp.iN.legacy_dcline(1));
+            p_to = nm.soln.gp(pp.i1.legacy_dcline(2):pp.iN.legacy_dcline(2));
 
             %% shadow prices on legacy DC line limits
             vv = mm.get_idx();

@@ -1,4 +1,4 @@
-classdef (Abstract) nme_legacy_dcline_ac < mp.nme_legacy_dcline & mp.form_ac
+classdef (Abstract) nme_legacy_dcline_ac < mp.nme_legacy_dcline
 % mp.nme_legacy_dcline_ac - Network model element abstract base class for legacy DC line for AC formulation.
 
 %   MATPOWER

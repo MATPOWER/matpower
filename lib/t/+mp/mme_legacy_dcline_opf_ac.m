@@ -20,9 +20,9 @@ classdef mme_legacy_dcline_opf_ac < mp.mme_legacy_dcline_opf
             nme = obj.network_model_element(nm);
 
             %% legacy DC line active power
-            ss = nm.get_idx('state');
-            s_fr = nm.soln.z(ss.i1.legacy_dcline(1):ss.iN.legacy_dcline(1));
-            s_to = nm.soln.z(ss.i1.legacy_dcline(2):ss.iN.legacy_dcline(2));
+            pp = nm.get_idx('port');
+            s_fr = nm.soln.gs_(pp.i1.legacy_dcline(1):pp.iN.legacy_dcline(1));
+            s_to = nm.soln.gs_(pp.i1.legacy_dcline(2):pp.iN.legacy_dcline(2));
             vm_setpoint = abs(nme.C' * nm.soln.v);
 
             %% shadow prices on legacy DC line limits

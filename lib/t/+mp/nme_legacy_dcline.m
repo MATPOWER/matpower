@@ -20,7 +20,7 @@ classdef (Abstract) nme_legacy_dcline < mp.nm_element
 
         function np = np(obj)
             %
-            np = 2;     %% this is a 1 port element
+            np = 2;     %% this is a 2 port element
         end
 
         function nz = nz(obj)

@@ -27,8 +27,8 @@ classdef dmce_legacy_dcline_mpc2 < mp.dmc_element % & mp.dmce_legacy_dcline
             %% define named indices into data matrices
             c = idx_dcline;
 
-            gcip_fcn = @(ob, mpc, spec, vn)dcline_cost_import(ob, mpc, spec, vn);
-            gcep_fcn = @(ob, dme, mpc, spec, vn, ridx)dcline_cost_export(ob, dme, mpc, spec, vn, ridx);
+            cip_fcn = @(ob, mpc, spec, vn)dcline_cost_import(ob, mpc, spec, vn);
+            cep_fcn = @(ob, dme, mpc, spec, vn, ridx)dcline_cost_export(ob, dme, mpc, spec, vn, ridx);
 
             %% mapping for each name, default is {'col', []}
             vmap.uid                = {'IDs'};      %% consecutive IDs, starting at 1
@@ -52,7 +52,7 @@ classdef dmce_legacy_dcline_mpc2 < mp.dmc_element % & mp.dmce_legacy_dcline
             vmap.p_to{2}            = c.PT;
             vmap.q_to{2}            = c.QT;
             if isfield(vmap, 'cost')
-                vmap.cost        = {'fcn', gcip_fcn, gcep_fcn};
+                vmap.cost        = {'fcn', cip_fcn, cep_fcn};
                 vmap.mu_p_fr_lb{2}  = c.MU_PMIN;
                 vmap.mu_p_fr_ub{2}  = c.MU_PMAX;
                 vmap.mu_q_fr_lb{2}  = c.MU_QMINF;
