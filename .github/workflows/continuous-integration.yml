@@ -79,6 +79,8 @@ jobs:
     - name: Install MATLAB
       if: matrix.platform == 'matlab'
       uses: matlab-actions/setup-matlab@v2
+      with:
+        products: Optimization_Toolbox
 
     - name: Configure MATLAB
       if: matrix.platform == 'matlab'
