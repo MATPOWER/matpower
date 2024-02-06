@@ -21,8 +21,10 @@ docker build --build-arg VER=6.4.0 -f docker/Dockerfile-octave -t matpower/octav
 docker build --build-arg VER=7.1.0 -f docker/Dockerfile-octave -t matpower/octave:7.1.0 .
 docker build --build-arg VER=7.2.0 -f docker/Dockerfile-octave -t matpower/octave:7.2.0 .
 docker build --build-arg VER=7.3.0 -f docker/Dockerfile-octave -t matpower/octave:7.3.0 .
+docker build --build-arg VER=8.3.0 -f docker/Dockerfile-octave -t matpower/octave:8.3.0 .
+docker build --build-arg VER=8.4.0 -f docker/Dockerfile-octave -t matpower/octave:8.4.0 .
 # docker build -f docker/Dockerfile-octave -t matpower/octave:latest .
-docker tag matpower/octave:7.3.0 matpower/octave:latest
+docker tag matpower/octave:8.4.0 matpower/octave:latest
 
 # for debugging, may want to try:
 #   DOCKER_BUILDKIT=0 docker build ...

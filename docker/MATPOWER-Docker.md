@@ -89,7 +89,7 @@ Versions
 Several images are available with different combinations of
 [MATPOWER][1] and [GNU Octave][8] versions, with the following tags and
 naming conventions. Here _current release_ means the most recent
-numbered release (currently 7.1 for [MATPOWER][1], and 7.3.0 for
+numbered release (currently 7.1 for [MATPOWER][1], and 8.4.0 for
 [Octave][8]) and _latest_ `master` refers to the most recent build from
 the `master` branch of the [MATPOWER][5] and [MATPOWER Extras][6]
 GitHub repositories.

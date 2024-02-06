@@ -1,15 +1,15 @@
 # Builds a Docker image for Octave with IPOPT, OSQP, SDTP3, SeDuMi and
 # YALMIP pre-installed. Use --build-arg VER=x.y.z for a
-# specific version of Octave (default is 6.4.0).
+# specific version of Octave (default is 8.4.0).
 #
 # docker build -f docker/Dockerfile-octave -t matpower/matpower:latest .
-# docker build --build-arg VER=6.4.0 -f docker/Dockerfile-octave -t matpower/octave:6.4.0 .
+# docker build --build-arg VER=8.4.0 -f docker/Dockerfile-octave -t matpower/octave:8.4.0 .
 #
 # Authors:
 # Xiangmin Jiao <xmjiao@gmail.com>
 # Ray Zimmerman <rz10@cornell.edu>
 
-ARG VER=7.3.0
+ARG VER=8.4.0
 ARG SKIP_IPOPT=0
 ARG SKIP_OSQP=0
 FROM gnuoctave/octave:${VER} AS base
