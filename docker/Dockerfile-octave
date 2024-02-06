@@ -109,9 +109,11 @@ ONBUILD ARG SKIP_IPOPT
 ONBUILD ARG SKIP_OSQP
 # Install OSQP
 ONBUILD RUN mkdir -p $HOME/build && \
+    export OSQP_TAG=v0.6.2 && \
+    export OSQP_MATLAB_TAG=master && \
     export OCTAVE_VER=`octave-cli --no-gui --eval "fprintf('%s', ver('octave').Version)"` && \
-    git clone --depth=1 --recursive https://github.com/oxfordcontrol/osqp $HOME/build/osqp && \
-    git clone --depth=1 --recurse-submodules https://github.com/oxfordcontrol/osqp-matlab $HOME/packages/osqp-matlab && \
+    git clone --depth=1 -b ${OSQP_TAG} --recursive https://github.com/oxfordcontrol/osqp $HOME/build/osqp && \
+    git clone --depth=1 -b ${OSQP_MATLAB_TAG} --recurse-submodules https://github.com/oxfordcontrol/osqp-matlab $HOME/packages/osqp-matlab && \
     mkdir $HOME/build/osqp/build && \
     cd $HOME/build/osqp/build && \
     cmake -G "Unix Makefiles" .. && \
