@@ -256,6 +256,8 @@ Base
 
    mp/extension
 
+.. _ref_xt_reserves_classes:
+
 OPF Fixed Zonal Reserves Extension
 ++++++++++++++++++++++++++++++++++
 
@@ -274,6 +276,8 @@ Other classes belonging to :class:`mp.xt_reserves` extension:
       mp/dme_reserve_zone
       mp/mme_reserve_gen
       mp/mme_reserve_zone
+
+.. _ref_xt_3p_classes:
 
 Three-Phase Prototype Extension
 +++++++++++++++++++++++++++++++
@@ -348,3 +352,47 @@ Mathematical model element classes belonging to :class:`mp.xt_3p` extension:
       mp/mme_buslink_opf
       mp/mme_buslink_opf_acc
       mp/mme_buslink_opf_acp
+
+.. _ref_xt_legacy_dcline_classes:
+
+Legacy DC Line Extension
+++++++++++++++++++++++++
+
+.. toctree::
+   :name: sec_xt_legacy_dcline_class
+
+   mp/xt_legacy_dcline
+
+Data model converter element class belonging to :class:`mp.xt_legacy_dcline` extension:
+   .. toctree::
+      :name: sec_xt_legacy_dcline_dmce_classes
+
+      mp/dmce_legacy_dcline_mpc2
+
+Data model element classes belonging to :class:`mp.xt_legacy_dcline` extension:
+   .. toctree::
+      :name: sec_xt_legacy_dcline_dme_classes
+
+      mp/dme_legacy_dcline
+      mp/dme_legacy_dcline_opf
+
+Network model element classes belonging to :class:`mp.xt_legacy_dcline` extension:
+   .. toctree::
+      :name: sec_xt_legacy_dcline_nme_classes
+
+      mp/nme_legacy_dcline
+      mp/nme_legacy_dcline_ac
+      mp/nme_legacy_dcline_acc
+      mp/nme_legacy_dcline_acp
+      mp/nme_legacy_dcline_dc
+
+Mathematical model element classes belonging to :class:`mp.xt_legacy_dcline` extension:
+   .. toctree::
+      :name: sec_xt_legacy_dcline_mme_classes
+
+      mp/mme_legacy_dcline
+      mp/mme_legacy_dcline_pf_ac
+      mp/mme_legacy_dcline_pf_dc
+      mp/mme_legacy_dcline_opf
+      mp/mme_legacy_dcline_opf_ac
+      mp/mme_legacy_dcline_opf_dc

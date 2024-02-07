@@ -1121,7 +1121,7 @@ The complete source for the DC line mathematical model element classes above can
 Using the New Element
 ---------------------
 
-Now that each the element classes for the DC line have been implemented for each of the model layers and the data model converter, these classes need to be included when running a power flow, continuation power flow, or optimal power flow. If this implementation for DC lines were to be added to the set of standard elements, along side of buses, branches, and generators, for example, then the classes would be added to the lists assigned to the :attr:`element_classes` property in the constructor of the appropriate model container class. E.g. :class:`mp.nme_legacy_dcline_dc` in :class:`mp.net_model_dc`, and :class:`mp.mme_legacy_opf_dcline_ac` in :class:`mp.math_model_opf_acc` and :class:`mp.math_model_opf_acp`.
+Now that each of the element classes for the DC line have been implemented for each of the model layers and the data model converter, these classes need to be included when running a power flow, continuation power flow, or optimal power flow. If this implementation for DC lines were to be added to the set of standard elements, along side of buses, branches, and generators, for example, then the classes would be added to the lists assigned to the :attr:`element_classes` property in the constructor of the appropriate model container class. E.g. :class:`mp.nme_legacy_dcline_dc` in :class:`mp.net_model_dc`, and :class:`mp.mme_legacy_opf_dcline_ac` in :class:`mp.math_model_opf_acc` and :class:`mp.math_model_opf_acp`.
 
 However, for user additions that are not being contributed for inclusion in the standard |MATPOWER| distribution, the original |MATPOWER| source need not, and should not, be modified. Instead, we use the |MATPOWER| Extension API.
 
@@ -1136,6 +1136,8 @@ Go to :ref:`howto_extension`.
 
 See Also
 --------
+
+- :ref:`ref_xt_legacy_dcline_classes` (:class:`mp.xt_legacy_dcline`)
 
 .. toctree::
    :maxdepth: 1

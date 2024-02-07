@@ -1,3 +1,5 @@
+.. _howto_gizmo_element:
+
 A Test Gizmo Element Type
 =========================
 

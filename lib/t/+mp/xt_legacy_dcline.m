@@ -1,8 +1,8 @@
 classdef xt_legacy_dcline < mp.extension
 % mp.xt_legacy_dcline - |MATPOWER| extension to add legacy DC line elements.
 %
-% For AC power flow, continuation power flow, and optimial power flow problems,
-% adds a new element type:
+% For AC and DC power flow, continuation power flow, and optimial power flow
+% problems, adds a new element type:
 %
 %   - ``'legacy_dcline'`` - legacy DC line
 %
