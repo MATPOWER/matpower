@@ -13,6 +13,11 @@ For change history for [MOST][3], see [most/CHANGES.md](most/CHANGES.md).
 since 8.0b1
 -----------
 
+#### 2/12/24
+  - Fix [bug #223][37], fatal error in `save2psse()` for cases with
+    dispatchable loads.
+    *Thanks to Ali Jahanbani.*
+
 #### 1/23/24
   - Add flexible framework AC OPF tests `t_run_opf_default` with update
     to high-degree polynomial cost tests that expose two bugs:
@@ -3401,3 +3406,4 @@ First Public Release – *Jun 25, 1997*
 [34]: https://matpower.org/documentation/dev-manual/
 [35]: https://github.com/MATPOWER/mx-simulink_matpower
 [36]: https://github.com/MATPOWER/matpower/issues/210
+[37]: https://github.com/MATPOWER/matpower/issues/223
