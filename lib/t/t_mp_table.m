@@ -61,6 +61,7 @@ for k = 1:nc
     skip_ml_tab2 = (isa(T, 'table') || isa(T, 'mp_table_subclass')) && ...
             have_feature('matlab') && have_feature('matlab', 'vnum') < 9.012;
     skip_mp_table = isa(T, 'mp_table') || (isa(T, 'mp_table_subclass') && isa(my_table_constructor(), 'mp_table'));
+    skip_mp_table = 0;
     t_ok(isa(T, class_names{k}), [t 'class']);
     t_ok(isempty(T), [t 'isempty']);
 

@@ -52,10 +52,10 @@ classdef mp_table
             % Constructs the object.
             % ::
             %
-            %   T = mp_table(var1, var2, ...);
-            %   T = mp_table(..., 'VariableNames', {name1, name2, ...});
-            %   T = mp_table(..., 'RowNames', {name1, name2, ...});
-            %   T = mp_table(..., 'DimensionNames', {name1, name2, ...});
+            %   T = mp_table(var1, var2, ...)
+            %   T = mp_table(..., 'VariableNames', {name1, name2, ...})
+            %   T = mp_table(..., 'RowNames', {name1, name2, ...})
+            %   T = mp_table(..., 'DimensionNames', {name1, name2, ...})
             args = varargin;
 
             if nargin
@@ -103,7 +103,7 @@ classdef mp_table
             % Returns true.
             % ::
             %
-            %   TorF = istable(T);
+            %   TorF = istable(T)
             %
             % Unfortunately, this is not really useful until Octave
             % implements a built-in istable() that this can override.
@@ -114,9 +114,9 @@ classdef mp_table
             % Returns dimensions of table.
             % ::
             %
-            %   [m, n] = size(T);
-            %   m = size(T, 1);
-            %   n = size(T, 2);
+            %   [m, n] = size(T)
+            %   m = size(T, 1)
+            %   n = size(T, 2)
             varargout = cell(1, nargout);
             w = length(obj.Properties.VariableValues);
             if w
@@ -153,8 +153,8 @@ classdef mp_table
             % Used to index the last row or column of the table.
             % ::
             %
-            %   last_var = T{:, end};
-            %   last_row = T(end, :);
+            %   last_var = T{:, end}
+            %   last_row = T(end, :)
             N = size(obj, k);
         end
 
@@ -172,20 +172,31 @@ classdef mp_table
             % Called when indexing a table to retrieve data.
             % ::
             %
-            %   sub_T = T(i, :);
-            %   sub_T = T(:, j);
-            %   sub_T = T(i1:iN, j1:jN);
-            %   val = T.<name>;
-            %   val = T.<name>(i);
-            %   val = T.<name>(i1:iN);
-            %   val = T.<name>{i};
-            %   val = T.<name>{i1:iN};
-            %   val = T.<name>(i, :);
-            %   val = T.<name>(i, j);
-            %   var_j = T{:, j};
-            %   val = T{i, j};
-            %   val = T{i1:iN, j};
-            %   val = T{i1:iN, j1:jN};
+            %   sub_T = T(i, *)
+            %   sub_T = T(i1:iN, *)
+            %   sub_T = T(:, *)
+            %   sub_T = T(*, j)
+            %   sub_T = T(*, j1:jN)
+            %   sub_T = T(*, :)
+            %   sub_T = T(*, <str>)
+            %   sub_T = T(*, <cell>)
+            %   var_<name> = T.<name>
+            %   val = T.<name>(i)
+            %   val = T.<name>(i1:iN)
+            %   val = T.<name>{i}
+            %   val = T.<name>{i1:iN}
+            %   val = T.<name>(*, :)
+            %   val = T.<name>(*, j)
+            %   var_<j> = T{:, j}
+            %   var_<str> = T{:, <str>}
+            %   val = T{i, *}
+            %   val = T{i1:iN, *}
+            %   val = T{:, *}
+            %   val = T{*, j}
+            %   val = T{*, j1:jN}
+            %   val = T{*, :}
+            %   val = T{*, <str>}
+            %   val = T{*, <cell>}
             switch s(1).type
                 case '.'
                     if strcmp(s(1).subs, 'Properties')
@@ -196,11 +207,7 @@ classdef mp_table
                     end
                 case '()'
                     r = s(1).subs{1};
-                    if length(s(1).subs) > 1
-                        c = s(1).subs{2};
-                    else
-                        c = ':';
-                    end
+                    c = make_idx_numeric(obj, s(1).subs{2});
                     var_names = obj.Properties.VariableNames(1,c);
                     %% Octave has issues with this ...
                     % var_vals = cellfun(@(x)x(r,:), ...
@@ -219,7 +226,8 @@ classdef mp_table
                         'VariableNames', var_names, 'RowNames', row_names, ...
                         'DimensionNames', dim_names);
                 case '{}'
-                    a = horzcat(obj.Properties.VariableValues{s(1).subs{2}});
+                    idx = make_idx_numeric(obj, s(1).subs{2});
+                    a = horzcat(obj.Properties.VariableValues{idx});
                     b = a(s(1).subs{1}, :);
             end
             if length(s) > 1    %% recurse
@@ -231,20 +239,31 @@ classdef mp_table
             % Called when indexing a table to assign data.
             % ::
             %
-            %   T(i, :) = sub_T;
-            %   T(:, j) = sub_T;
-            %   T(i1:iN, j1:jN) = sub_T;
-            %   T.<name> = val;
-            %   T.<name>(i) = val;
-            %   T.<name>(i1:iN) = val;
-            %   T.<name>{i} = val;
-            %   T.<name>{i1:iN} = val;
-            %   T.<name>(i, :) = val;
-            %   T.<name>(i, j) = val;
-            %   T{:, j} = var_j;
-            %   T{i, j} = val;
-            %   T{i1:iN, j} = val;
-            %   T{i1:iN, j1:jN} = val;
+            %   T(i, *) = sub_T
+            %   T(i1:iN, *) = sub_T
+            %   T(:, *) = sub_T
+            %   T(*, j) = sub_T
+            %   T(*, j1:jN) = sub_T
+            %   T(*, :) = sub_T
+            %   T(*,  <str>) = sub_T
+            %   T(*,  <cell>) = sub_T
+            %   T.<name> = val
+            %   T.<name>(i) = val
+            %   T.<name>(i1:iN) = val
+            %   T.<name>{i} = val
+            %   T.<name>{i1:iN} = val
+            %   T.<name>(*, :) = val
+            %   T.<name>(*, j) = val
+            %   T{:, j} = var_<j>
+            %   T{:, <str>} = var_<str>
+            %   T{i, *} = val
+            %   T{i1:iN, *} = val
+            %   T{:, *} = val
+            %   T{*, j} = val
+            %   T{*, j} = val
+            %   T{*, j1:jN} = val
+            %   T{*, <str>} = val
+            %   T{*, <cell>} = val
             R = length(s) > 1;      %% need to recurse
             switch s(1).type
                 case '.'
@@ -282,7 +301,7 @@ classdef mp_table
                     end
                 case '()'
                     nv = size(b, 2);
-                    idx = s(1).subs{2};
+                    idx = make_idx_numeric(obj, s(1).subs{2});
                     if ischar(idx)
                         if length(idx) == 1 && idx == ':'
                             idx = [1:nv];
@@ -308,12 +327,10 @@ classdef mp_table
                         error('mp_table/subasgn: sub-indexing following {}-indexing not supported');
                     end
                 case '{}'
-                    idx = s(1).subs{2};
+                    idx = make_idx_numeric(obj, s(1).subs{2});
                     if ischar(idx)
                         if length(idx) == 1 && idx == ':'
                             idx = [1:size(obj, 2)];
-                        else        %% for 'a:b' syntax as a char array
-                            idx = eval(['[' idx ']'])
                         end
                     end
                     j = 1;  %% col index in b
@@ -337,7 +354,7 @@ classdef mp_table
             % Concatenate tables horizontally.
             % ::
             %
-            %   T = [T1 T2];
+            %   T = [T1 T2]
             [nr, nv] = size(obj);
             nvn = length(obj.Properties.VariableNames); %% num variable names
             nrn = length(obj.Properties.RowNames);      %% num row names
@@ -400,7 +417,7 @@ classdef mp_table
             % Concatenate tables vertically.
             % ::
             %
-            %   T = [T1; T2];
+            %   T = [T1; T2]
             [nr, nv] = size(obj);
             nvn = length(obj.Properties.VariableNames); %% num variable names
             nrn = length(obj.Properties.RowNames);      %% num row names
@@ -629,10 +646,10 @@ classdef mp_table
             % Extracts special named constructor arguments.
             % ::
             %
-            %   [var_names, row_names, dim_names, args] = extract_named_args(var1, var2, ...);
-            %   [...] = extract_named_args(..., 'VariableNames', {name1, name2, ...});
-            %   [...] = extract_named_args(..., 'RowNames', {name1, name2, ...});
-            %   [...] = extract_named_args(..., 'DimensionNames', {name1, name2, ...});
+            %   [var_names, row_names, dim_names, args] = extract_named_args(var1, var2, ...)
+            %   [...] = extract_named_args(..., 'VariableNames', {name1, name2, ...})
+            %   [...] = extract_named_args(..., 'RowNames', {name1, name2, ...})
+            %   [...] = extract_named_args(..., 'DimensionNames', {name1, name2, ...})
             %
             % Used to extract named arguments, ``'VariableNames'``, 
             % ``'RowNames'``, and ``'DimensionNames'``, to pass to constructor.
@@ -655,5 +672,16 @@ classdef mp_table
                 end
             end
         end
-    end     %% methods (protected)
+    end     %% methods (Static)
+
+    methods (Access=protected)
+        function idx = make_idx_numeric(obj, idx)
+            if (ischar(idx) || isstring(idx)) && (length(idx) ~= 1 || idx ~= ':')
+                idx = { idx };
+            end
+            if iscell(idx)
+                idx = cellfun(@(c)obj.Properties.Map.(c), idx);
+            end
+        end
+    end     %% methods (Access=protected)
 end         %% classdef

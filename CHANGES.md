@@ -17,6 +17,7 @@ since 8.0b1
   - Fix [bug #223][37], fatal error in `save2psse()` for cases with
     dispatchable loads.
     *Thanks to Ali Jahanbani.*
+  - Implement addressing of variables / columns by name in `mp_table`.
 
 #### 1/23/24
   - Add flexible framework AC OPF tests `t_run_opf_default` with update
