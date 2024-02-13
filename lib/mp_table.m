@@ -260,8 +260,8 @@ classdef mp_table
             %   T{i1:iN, *} = val
             %   T{:, *} = val
             %   T{*, j} = val
-            %   T{*, j} = val
             %   T{*, j1:jN} = val
+            %   T{*, :} = val
             %   T{*, <str>} = val
             %   T{*, <cell>} = val
             R = length(s) > 1;      %% need to recurse
