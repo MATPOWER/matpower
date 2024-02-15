@@ -4,6 +4,9 @@ Classes
 Task Classes
 ------------
 
+Core Task Classes
++++++++++++++++++
+
 .. toctree::
    :name: sec_task_classes
 
@@ -11,6 +14,19 @@ Task Classes
    mp/task_pf
    mp/task_cpf
    mp/task_opf
+
+Legacy Task Classes
++++++++++++++++++++
+
+Used by MP-Core when called by the *legacy* |/MATPOWER/| *framework*.
+
+.. toctree::
+   :name: sec_legacy_task_classes
+
+   mp/task_pf_legacy
+   mp/task_cpf_legacy
+   mp/task_opf_legacy
+   mp/task_shared_legacy
 
 
 Data Model Classes

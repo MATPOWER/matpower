@@ -1,34 +1,69 @@
 classdef task_opf_legacy < mp.task_opf & mp.task_shared_legacy
-%MP.TASK_OPF_LEGACY  MATPOWER task for legacy optimal power flow (OPF).
-%   MP.TASK_OPF_LEGACY provides implementation for optimal power flow problem.
+% mp.task_opf - |MATPOWER| task for legacy optimal power flow (OPF).
 %
-%   Properties
-%       ?
+% Adds functionality needed by the *legacy* |/MATPOWER/| *framework* to the
+% task implementation for the optimal power flow problem.
 %
-%   Methods
-%       ?
+% mp.task_pf Methods:
+%   * run_pre - pre-process inputs that are for legacy framework only
+%   * run_post - export results back to data model source
+%   * dm_converter_class_mpc2_default - set to mp.dm_converter_mpc2_legacy
+%   * data_model_build_post - get data model converter to do more input pre-processing
+%   * math_model_class_default - use legacy math model subclasses
+%   * legacy_post_run - post-process *legacy framework* outputs
 %
-%   See also MP.TASK_OPF
+% See also mp.task_opf, mp.task, mp.task_shared_legacy.
 
 %   MATPOWER
-%   Copyright (c) 2020-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
 %   Covered by the 3-clause BSD License (see LICENSE file for details).
 %   See https://matpower.org for more info.
 
-    properties
-    end
-
     methods
         %%-----  task methods  -----
         function [d, mpopt] = run_pre(obj, d, mpopt)
+            % Pre-process inputs that are for *legacy framework* only.
+            % ::
+            %
+            %   [d, mpopt] = obj.run_pre(d, mpopt)
+            %
+            % Inputs:
+            %   d : data source specification, currently assumed to be a
+            %       |MATPOWER| case name or case struct (``mpc``)
+            %   mpopt (struct) : |MATPOWER| options struct
+            %
+            % Outputs:
+            %   d : updated value of corresponding input
+            %   mpopt (struct) : updated value of corresponding input
+            %
+            % Call :meth:`run_pre_legacy() <mp.task_shared_legacy.run_pre_legacy>`
+            % method before calling parent.
+
             [d, mpopt] = obj.run_pre_legacy(d, mpopt);
             [d, mpopt] = run_pre@mp.task_opf(obj, d, mpopt);
         end
 
         function obj = run_post(obj, mm, nm, dm, mpopt)
+            % Export results back to data model source.
+            % ::
+            %
+            %   obj.run_post(mm, nm, dm, mpopt)
+            %
+            % Inputs:
+            %   mm (mp.math_model) : mathmatical model object
+            %   nm (mp.net_model) : network model object
+            %   dm (mp.data_model) : data model object
+            %   mpopt (struct) : |MATPOWER| options struct
+            %
+            % Output:
+            %   obj (mp.task) : task object
+            %
+            % Calls mp.dm_converter.export and saves the result
+            % in the data model ``source`` property.
+
             if obj.nm.np ~= 0
                 obj.dm.source = obj.dmc.export(obj.dm, obj.dm.source);
             end
@@ -36,11 +71,20 @@ classdef task_opf_legacy < mp.task_opf & mp.task_shared_legacy
 
         %%-----  data model converter methods  -----
         function dmc_class = dm_converter_class_mpc2_default(obj)
+            % Set to mp.dm_converter_mpc2_legacy.
+            % ::
+            %
+            %   dmc_class = obj.dm_converter_class_mpc2_default()
+
             dmc_class = @mp.dm_converter_mpc2_legacy;
         end
 
         %%-----  data model methods  -----
         function dm = data_model_build_post(obj, dm, dmc, mpopt)
+            % Get data model converter to do more input pre-processing
+            % after calling superclass
+            % :meth:`data_model_build_post() <mp.task_opf.data_model_build_post>`.
+
             %% call parent
             dm = data_model_build_post@mp.task_opf(obj, dm, dmc, mpopt);
 
@@ -50,9 +94,14 @@ classdef task_opf_legacy < mp.task_opf & mp.task_shared_legacy
 
         %%-----  mathematical model methods  -----
         function mm_class = math_model_class_default(obj, nm, dm, mpopt)
-            %% mp.mm_shared_opf_legacy (compatible with opf_model) is required
-            %% to support legacy cost functions and callback functions that
-            %% expect to find mpc in mm.mpc.
+            % Use legacy math model subclasses to support legacy costs and callbacks.
+            %
+            % Uses math model variations that inherit from
+            % mp.mm_shared_opf_legacy (compatible with the legacy
+            % :class:`opf_model`), in order to support legacy cost functions
+            % and callback functions that expect to find the |MATPOWER| case
+            % struct in ``mm.mpc``.
+
             switch upper(mpopt.model)
                 case 'AC'
                     if mpopt.opf.v_cartesian
@@ -74,7 +123,29 @@ classdef task_opf_legacy < mp.task_opf & mp.task_shared_legacy
         end
 
         function [results, success, raw] = legacy_post_run(obj, mpopt)
-            %% from opf_execute(), dcopf_solver(), nlpopf_solver()
+            % Post-process *legacy framework* outputs.
+            % ::
+            %
+            %   [results, success, raw] = obj.legacy_post_run(mpopt)
+            %
+            % Input:
+            %   mpopt (struct) : |MATPOWER| options struct
+            %
+            % Outputs:
+            %   results (struct) : results struct for *legacy* |/MATPOWER/|
+            %       *framework*, see Table 6.1 in legacy |MUM|.
+            %   success (integer) : 1 - succeeded, 0 - failed
+            %   raw (struct) : see ``raw`` field in Table 6.1 in legacy
+            %       |MUM|.
+            %
+            % Extract ``results`` and ``success`` and save the
+            % task object in ``results.task`` before returning. This
+            % method also creates and populates numerous other fields
+            % expected in the legacy OPF ``results`` struct, such as
+            % ``f``, ``x``, ``om``, ``mu``, ``g``, ``dg``, ``raw``, 
+            % ``var``, ``nle``, ``nli``, ``lin``, and ``cost``.
+            % Based on code from the legacy functions :func:`opf_execute`,
+            % :func:`dcopf_solver`, and :func:`nlpopf_solver`.
 
             %% unpack data
             mm = obj.mm;

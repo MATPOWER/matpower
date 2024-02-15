@@ -1,5 +1,5 @@
 classdef dm_converter_mpc2_legacy < mp.dm_converter_mpc2
-% mp.dm_converter_mpc2_legacy - |MATPOWER| **data model converter** for MATPOWER case v2.
+% mp.dm_converter_mpc2_legacy - Legacy |MATPOWER| **data model converter** for MATPOWER case v2.
 %
 % Adds to mp.dm_converter_mpc2 the ability to handle legacy user
 % customization.
@@ -11,7 +11,7 @@ classdef dm_converter_mpc2_legacy < mp.dm_converter_mpc2
 % See also mp.dm_converter, mp.dm_converter_mpc2, mp.task_opf_legacy.
 
 %   MATPOWER
-%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
