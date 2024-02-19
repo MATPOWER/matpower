@@ -21,7 +21,7 @@ classdef (Abstract) dm_element < handle
 %   ==============  ============  ==========================================
 %
 % By convention, data model element variables are named ``dme`` and data model
-% element class names begin with ``dme``.
+% element class names begin with ``mp.dme``.
 %
 % In addition to being containers for the data itself, data model elements are
 % responsible for handling the on/off status of each element, preparation of

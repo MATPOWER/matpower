@@ -10,7 +10,7 @@ classdef (Abstract) mm_element < handle
 % where necessary per task and formulation, as with the container class.
 %
 % By convention, math model element variables are named ``mme`` and math model
-% element class names begin with ``mme``.
+% element class names begin with ``mp.mme``.
 %
 % mp.mm_element Methods:
 %   * name - get name of element type, e.g. ``'bus'``, ``'gen'``

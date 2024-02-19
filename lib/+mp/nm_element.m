@@ -11,7 +11,7 @@ classdef (Abstract) nm_element < handle
 % of matrices and vectors that correspond to the formulation.
 %
 % By convention, network model element variables are named ``nme`` and network
-% model element class names begin with ``nme``.
+% model element class names begin with ``mp.nme``.
 %
 % mp.mm_element Properties:
 %   * nk - number of elements of this type

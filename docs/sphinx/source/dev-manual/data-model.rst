@@ -3,7 +3,7 @@
 Data Model Object
 =================
 
-The data model is essentially the internal representation of the input data provided by the user for the given simulation or optimization run and the output presented back to the user upon completion. It corresponds roughly to the :ml:`mpc` (|MATPOWER| case) and :ml:`results` structs used throughout the legacy |MATPOWER| implementation, but encapsulated in an object with additional functionality. It includes tables of data for each type of element in the system.
+The data model is essentially the internal representation of the input data provided by the user for the given simulation or optimization run and the output presented back to the user upon completion. It corresponds roughly to the ``mpc`` (|MATPOWER| case) and ``results`` structs used throughout the legacy |MATPOWER| implementation, but encapsulated in an object with additional functionality. It includes tables of data for each type of element in the system.
 
 
 Data Models
@@ -19,7 +19,7 @@ A data model object is primarily a container for data model element objects. All
 
    Data Model Classes
 
-By convention, data model variables are named :ml:`dm` and data model class names begin with :ml:`mp.data_model`.
+By convention, data model variables are named ``dm`` and data model class names begin with ``mp.data_model``.
 
 
 .. _sec_building_data_model:
@@ -38,7 +38,7 @@ There are two steps to building a data model. The first is to call the construct
 
 The :meth:`build() <mp.data_model.build>` method proceeds through the following stages sequentially, looping through each element at every stage.
 
-   1. **Create** – Instantiate each element object and add it to the :attr:`elements` property of the :ml:`dm`.
+   1. **Create** – Instantiate each element object and add it to the :attr:`elements` property of the ``dm``.
    2. **Import** – Use the corresponding data model converter element to read the data into each element's table(s).
    3. **Count** – Determine the number of instances of each element present in the data, store it in the element's :attr:`nr` property, and remove the element type from :attr:`elements` if the count is 0.
    4. **Initialize** – Initialize the (online/offline) status of each element and create a mapping of ID to row index in the :attr:`ID2i` element property.
@@ -72,7 +72,7 @@ Data Model Elements
 
 A data model element object encapsulates all of the input and output data for a particular element type. All data model element classes inherit from :class:`mp.dm_element` and each element type typically implements its own subclass. A given data model element object contains the data for all instances of that element type, stored in one or more *table* data structures. [#]_ So, for example, the data model element for generators contains a table with the generator data for all generators in the system, where each table row corresponds to an individual generator.
 
-By convention, data model element variables are named :ml:`dme` and data model element class names begin with :ml:`dme`. :numref:`fig_data_model_element_classes` shows the inheritance relationships between a few example data model element classes. Here the :class:`mp.dme_bus`, :class:`mp.dme_gen` and :class:`mp.dme_load` classes are used for PF and CPF runs, while the OPF requires task-specific subclasses of each.
+By convention, data model element variables are named ``dme`` and data model element class names begin with ``mp.dme``. :numref:`fig_data_model_element_classes` shows the inheritance relationships between a few example data model element classes. Here the :class:`mp.dme_bus`, :class:`mp.dme_gen` and :class:`mp.dme_load` classes are used for PF and CPF runs, while the OPF requires task-specific subclasses of each.
 
 .. _fig_data_model_element_classes:
 .. figure:: figures/data-model-element-classes.*
@@ -124,9 +124,9 @@ The table below includes additional properties, besides the main table :attr:`ta
 Methods
 ^^^^^^^
 
-A data model element also has a :meth:`name() <mp.dm_element.name>` method that returns the name of the element type under which it is entered in the data model (container) object. For example, the name returned for the :class:`mp.dme_gen` class is :ml:`'gen'`, which means the corresponding data model element object is found in :ml:`dm.elements.gen`.
+A data model element also has a :meth:`name() <mp.dm_element.name>` method that returns the name of the element type under which it is entered in the data model (container) object. For example, the name returned for the :class:`mp.dme_gen` class is ``'gen'``, which means the corresponding data model element object is found in ``dm.elements.gen``.
 
-There are also methods named :meth:`label() <mp.dm_element.label>` and :meth:`labels() <mp.dm_element.labels>` which return user visible names for singular and plural instances of the element used when pretty-printing. For :class:`mp.dme_gen`, for example, these return :ml:`'Generator'` and :ml:`'Generators'`, respectively.
+There are also methods named :meth:`label() <mp.dm_element.label>` and :meth:`labels() <mp.dm_element.labels>` which return user visible names for singular and plural instances of the element used when pretty-printing. For :class:`mp.dme_gen`, for example, these return ``'Generator'`` and ``'Generators'``, respectively.
 
 .. note::
 

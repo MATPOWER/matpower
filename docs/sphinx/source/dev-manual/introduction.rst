@@ -49,7 +49,7 @@ Conventions
 
 Because |MATPOWER| is intended to run unmodified on either |MATLAB| or GNU Octave, it is important to stick to syntax and functionality that are supported by both.
 
-We use :ml:`classdef` syntax supported by both to define classes and, in methods, we use :ml:`obj` as the variable name representing the object. Most of the classes are defined in the :ml:`mp` package/namespace.
+We use :ml:`classdef` syntax supported by both to define classes and, in methods, we use ``obj`` as the variable name representing the object. Most of the classes are defined in the ``mp`` package/namespace.
 
 All classes, methods, properties, and functions include a help section that can be accessed by the ``help`` and ``doc`` commands *and* processed by Sphinx to produce HTML and PDF reference documentation. For a class, it summarizes the purpose and overall functionality provided by the class along with lists of the properties and methods. For a function or method, it describes the inputs, outputs and what the function or method does. The :func:`run_mp` function and the :class:`mp.task` class provide examples of this reference documentation. *Hint: Click the GitHub icon in the upper right corner of the reference manual page to see the source.*
 

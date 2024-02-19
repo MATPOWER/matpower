@@ -24,9 +24,9 @@ In order to customize the behavior it is important to understand how |MATPOWER| 
 Task Class
 ^^^^^^^^^^
 
-First of all, at the top level, the **task class** is specified directly by the user through the function used to invoke the run. In fact, :func:`run_pf`, :func:`run_cpf`, and :func:`run_opf` are simple one-line wrappers around the :func:`run_mp` function. The only difference between the three is the value of the :ml:`task_class` argument, a handle to the corresponding task constructor, passed into :func:`run_mp`.
+First of all, at the top level, the **task class** is specified directly by the user through the function used to invoke the run. In fact, :func:`run_pf`, :func:`run_cpf`, and :func:`run_opf` are simple one-line wrappers around the :func:`run_mp` function. The only difference between the three is the value of the ``task_class`` argument, a handle to the corresponding task constructor, passed into :func:`run_mp`.
 
-This means that a new task class can be used simply by invoking :func:`run_mp`, either directly or via a new wrapper, with the task constructor as the :ml:`task_class` argument.
+This means that a new task class can be used simply by invoking :func:`run_mp`, either directly or via a new wrapper, with the task constructor as the ``task_class`` argument.
 
 
 Model and Data Converter Classes
@@ -84,14 +84,14 @@ This is done using **element class modifiers**, specified either by |MATPOWER| e
      - Value
      - Description
    * - **add**
-     - :ml:`@new_class`
-     - Appends :ml:`@new_class` to the end of the list.
+     - ``@new_class``
+     - Appends ``@new_class`` to the end of the list.
    * - **delete**
-     - :ml:`'old_class'`
-     - For each element :ml:`E` in the list, if :ml:`isa(E(), 'old_class')` is true, element :ml:`E` is deleted from the list.
+     - ``'old_class'``
+     - For each element ``E`` in the list, if :ml:`isa(E(), 'old_class')` is true, element ``E`` is deleted from the list.
    * - **replace**
-     - :ml:`{@new_class, 'old_class'}`
-     - For each element :ml:`E` in the list, if :ml:`isa(E(), 'old_class')` is true, element :ml:`E` is replaced with :ml:`@new_class`.
+     - ``{@new_class, 'old_class'}``
+     - For each element ``E`` in the list, if :ml:`isa(E(), 'old_class')` is true, element ``E`` is replaced with ``@new_class``.
 
 Typically, multiple element class modifiers can be provided in a cell array and they are processed sequentially to modify the existing list by the :meth:`modify_element_classes() <mp.element_container.modify_element_classes>` from :class:`mp.element_container`.
 
@@ -99,7 +99,7 @@ Typically, multiple element class modifiers can be provided in a cell array and 
 Customization via |MATPOWER| Options
 ------------------------------------
 
-In addition to the |MATPOWER| options previously available that affect the formulation of the problem (e.g. polar vs. cartesian voltage representation, or current vs. power balance), there are several experimental options that can be used to directly modify the classes coming from the default class selection process outlined above. These options, summarized in :numref:`tab_custom_class_options`, are specified by assigning them directly to an existing |MATPOWER| options struct :ml:`mpopt` as optional fields in :ml:`mpopt.exp`. They must be assigned directly, since :func:`mpoption` does not recognize them.
+In addition to the |MATPOWER| options previously available that affect the formulation of the problem (e.g. polar vs. cartesian voltage representation, or current vs. power balance), there are several experimental options that can be used to directly modify the classes coming from the default class selection process outlined above. These options, summarized in :numref:`tab_custom_class_options`, are specified by assigning them directly to an existing |MATPOWER| options struct ``mpopt`` as optional fields in ``mpopt.exp``. They must be assigned directly, since :func:`mpoption` does not recognize them.
 
 .. _tab_custom_class_options:
 .. list-table:: Class Customization Options
@@ -109,23 +109,23 @@ In addition to the |MATPOWER| options previously available that affect the formu
 
    * - Option
      - Description
-   * - :ml:`dm_converter_class`
+   * - ``dm_converter_class``
      - function handle for data model converter constructor
-   * - :ml:`data_model_class`
+   * - ``data_model_class``
      - function handle for data model constructor
-   * - :ml:`network_model_class`
+   * - ``network_model_class``
      - function handle for network model constructor
-   * - :ml:`math_model_class`
+   * - ``math_model_class``
      - function handle for math model constructor
-   * - :ml:`dmc_element_classes`
+   * - ``dmc_element_classes``
      - element class modifier(s) [#]_ for data model converter elements
-   * - :ml:`dm_element_classes`
+   * - ``dm_element_classes``
      - element class modifier(s) [1]_ for data model elements
-   * - :ml:`nm_element_classes`
+   * - ``nm_element_classes``
      - element class modifier(s) [1]_ for network model elements
-   * - :ml:`mm_element_classes`
+   * - ``mm_element_classes``
      - element class modifier(s) [1]_ for math model elements
-   * - :ml:`exclude_elements`
+   * - ``exclude_elements``
      - cell array of names of elements to exclude from all four container objects, i.e. char arrays that match the :attr:`name` property of the element(s) to be excluded
 
 
@@ -136,7 +136,7 @@ In addition to the |MATPOWER| options previously available that affect the formu
 
 The *flexible* |/MATPOWER/| *framework* summarized in :numref:`sec_two_frameworks` introduces a |*MATPOWER*| **extension** API as a way to bundle a set of class additions and modifications together into a single named package.
 
-For example, the :class:`mp.xt_reserves` class and those it references, adds co-optimization of fixed zonal reserves to the standard OPF problem, as previously implemented by :ml:`toggle_reserves()` and :ml:`run_opf_w_res()` in |MATPOWER| 7.1 and earlier using its legacy OPF callback functions. To invoke an OPF with the :class:`mp.xt_reserves` extension, you simply pass the extension object as an optional argument into the :func:`run_opf` function.
+For example, the :class:`mp.xt_reserves` class and those it references, adds co-optimization of fixed zonal reserves to the standard OPF problem, as previously implemented by :func:`toggle_reserves` and :func:`run_opf_w_res` in |MATPOWER| 7.1 and earlier using its legacy OPF callback functions. To invoke an OPF with the :class:`mp.xt_reserves` extension, you simply pass the extension object as an optional argument into the :func:`run_opf` function.
 
 .. code-block::
 

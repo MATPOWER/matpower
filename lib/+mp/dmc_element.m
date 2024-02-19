@@ -7,7 +7,7 @@ classdef (Abstract) dmc_element < handle
 % mp.dmc_element and each element type typically implements its own subclass.
 %
 % By convention, data model converter element variables are named ``dmce``
-% and data model converter element class names begin with ``dmce``.
+% and data model converter element class names begin with ``mp.dmce``.
 %
 % Typically, much of the import/export functionality for a particular concrete
 % subclass can be defined simply by implementing the table_var_map() method.

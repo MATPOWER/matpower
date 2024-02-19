@@ -18,7 +18,7 @@ A data model converter object is primarily a container for data model converter 
 
    Data Model Converter Classes
 
-By convention, data model converter variables are named :ml:`dmc` and data model converter class names begin with :ml:`mp.dm_converter`.
+By convention, data model converter variables are named ``dmc`` and data model converter class names begin with ``mp.dm_converter``.
 
 Building a Data Model Converter
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -67,7 +67,7 @@ Data Model Converter Elements
 
 A data model converter element object implements the functionality needed to import and export a particular element type from and to a given data format. All data model converter element classes inherit from :class:`mp.dmc_element` and each element type typically implements its own subclass.
 
-By convention, data model converter element variables are named :ml:`dmce` and data model converter element class names begin with :ml:`dmce`. :numref:`fig_dm_converter_classes` shows the inheritance relationships between a few example data model converter element classes. Here the PSS/E classes have not yet been implemented, but are shown here for illustration.
+By convention, data model converter element variables are named ``dmce`` and data model converter element class names begin with ``mp.dmce``. :numref:`fig_dm_converter_classes` shows the inheritance relationships between a few example data model converter element classes. Here the PSS/E classes have not yet been implemented, but are shown here for illustration.
 
 .. _fig_dm_converter_element_classes:
 .. figure:: figures/dm-converter-element-classes.*
@@ -84,7 +84,7 @@ The default :meth:`import() <mp.dmc_element.import>` method for a data model con
 
 The import specifications include things like where to find the data in the data source, the number of rows, number of columns, and possibly a row index vector for rows of interest, [#]_ and a map defining how to import each column of the main data table.
 
-This map :samp:`vmap` is a struct returned by the :meth:`table_var_map() <mp.dmc_element.table_var_map>` method with fields matching the table column names for the corresponding data model element :samp:`dme`. For example, if :samp:`vn` contains a variable, that is column, name, then :samp:`vmap.(vn) = {<value>}` defines how that data table column will be imported or initialized, as summarized in :numref:`tab_var_map` for different types of values.
+This map ``vmap`` is a struct returned by the :meth:`table_var_map() <mp.dmc_element.table_var_map>` method with fields matching the table column names for the corresponding data model element ``dme``. For example, if ``vn`` contains a variable, that is column, name, then :samp:`vmap.(vn) = {<value>}` defines how that data table column will be imported or initialized, as summarized in :numref:`tab_var_map` for different types of values.
 
 .. _tab_var_map:
 .. list-table:: Variable Map Values
@@ -94,44 +94,25 @@ This map :samp:`vmap` is a struct returned by the :meth:`table_var_map() <mp.dmc
 
    * - :samp:`{<value>}`
      - Description
-   * - :ml:`{'IDs'}`
+   * - ``{'IDs'}``
      - Assign consecutive IDs starting at 1.
-   * - :ml:`{'col', c}` *or*
+   * - :samp:`\\{'col', {c}\\}` *or*
    
-       :ml:`{'col', c, sf}` *or*
+       :samp:`\\{'col', {c}, {sf}\\}` *or*
    
-       :ml:`{'col', c, sf_fcn}`
-     - Copy the data directly from column :ml:`c` of data source, optionally scaling it by a numerical scale factor :ml:`sf`, or by the value returned by the function handle :samp:`sf_fcn`, called as :samp:`sf_fcn(dmce, vn)`.
-   * - :ml:`{'cell', val}`
-     - Create a cell array with each element initialized with :ml:`val`.
-   * - :ml:`{'num', n}`
-     - Create a numeric vector with each element initialized with numeric scalar :ml:`n`.
-   * - :ml:`{'fcn', ifn}` *or*
+       :samp:`\\{'col', {c}, {sf_fcn}\\}`
+     - Copy the data directly from column :samp:`{c}` of data source, optionally scaling it by a numerical scale factor :samp:`{sf}`, or by the value returned by the function handle :samp:`{sf_fcn}`, called as :samp:`{sf_fcn(dmce, vn)}`.
+   * - :samp:`\\{'cell', {val}\\}`
+     - Create a cell array with each element initialized with :samp:`{val}`.
+   * - :samp:`\\{'num', {n}\\}`
+     - Create a numeric vector with each element initialized with numeric scalar :samp:`{n}`.
+   * - :samp:`\\{'fcn', {ifn}\\}` *or*
 
-       :ml:`{'fcn', ifn, efn}`
-     - Assign the values returned by the import function handle in :samp:`ifn`, where the optional :samp:`efn` is the corresponding export function. The import and export functions are called as :samp:`ifn(dmce, d, spec, vn)` and :samp:`efn(dmce, dme, d, spec, vn, ridx)`, respectively, where :samp:`d` is the data source, :samp:`spec` is the import/export specification, and :samp:`ridx` is an optional vector of row indices.
+       :samp:`\\{'fcn', {ifn}, {efn}\\}`
+     - Assign the values returned by the import function handle in :samp:`{ifn}`, where the optional :samp:`{efn}` is the corresponding export function. The import and export functions are called as :samp:`{ifn(dmce, d, spec, vn)}` and :samp:`{efn(dmce, dme, d, spec, vn, ridx)}`, respectively, where :samp:`{d}` is the data source, :samp:`{spec}` is the import/export specification, and :samp:`{ridx}` is an optional vector of row indices.
 
-The :meth:`table_var_map() <mp.dmc_element.table_var_map>` in :class:`mp.dmc_element` initializes each entry to :ml:`{'col', []}` by default, so subclasses only need to assign ``vmap.(vn){2}`` for columns that map directly from a column of the data source.
+The :meth:`table_var_map() <mp.dmc_element.table_var_map>` in :class:`mp.dmc_element` initializes each entry to ``{'col', []}`` by default, so subclasses only need to assign ``vmap.(vn){2}`` for columns that map directly from a column of the data source.
 
-..
-    .. _tab_var_map2:
-    .. list-table:: Variable Map Values
-       :widths: 30 70
-       :header-rows: 1
-       :class: longtable
-
-       * - :samp:`{<value>}`
-         - Description
-       * - :ml:`{'IDs'}`
-         - consecutive IDs starting at 1
-       * - :ml:`{`:samp:`'col', {j}`:ml:`}`
-         - copy the data directly from column :samp:`{j}` of data source
-       * - :ml:`{`:samp:`'cell', {c}`:ml:`}`
-         - create a cell array with each element initialized with :samp:`{c}`
-       * - :ml:`{`:samp:`'num', {n}`:ml:`}`
-         - create a numeric vector with each element initialized with numeric scalar :samp:`{n}`
-       * - :ml:`{`:samp:`'fcn', {ifn}, {<efn>}`:ml:`}`
-         - assign the values returned by the import function handle in :samp:`{ifn}`, where the optional :samp:`{<efn>}` is the corresponding export function
 
 Data Export Specifications
 ^^^^^^^^^^^^^^^^^^^^^^^^^^

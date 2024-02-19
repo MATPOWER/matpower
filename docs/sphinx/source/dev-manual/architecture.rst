@@ -17,7 +17,7 @@ This architecture employs an explicit three-layer modeling structure designed to
 
    |MATPOWER| Model Layers
 
-The data model layer is further decoupled from any particular data format, such as the legacy |MATPOWER| case struct (:ml:`mpc`) and case file formats, by introducing a data conversion service (**data model converter**) to convert data between the data model and specific external data formats.
+The data model layer is further decoupled from any particular data format, such as the legacy |MATPOWER| case struct (``mpc``) and case file formats, by introducing a data conversion service (**data model converter**) to convert data between the data model and specific external data formats.
 
 Each modeling layer, plus the data conversion service, is organized around a collection of **element** objects, one for each **element type**, enclosed in a **container** object. An element type corresponds to a particular type of device (e.g. bus, generator, transmission line) or some other attribute or service (e.g. transmission interface, reserve requirement) in the system. This structure provides extraordinary flexibility by allowing the user to customize the environment by adding new, or modifying existing, element types independently from the rest.
 
@@ -71,7 +71,7 @@ The task then creates the data model converter object that corresponds to the da
 
 Each of the four main objects created by the task consists of a container object holding a set of corresponding element objects. That is, the data model contains a set of data model elements, the network model, a set of network model elements, etc., one for each element type. Each element type is associated with a **name**, that is a valid struct field name used to identify the corresponding element in each container object. The list of element classes for a given container is defined by the container class, but can be modified after the container's construction and before calling its :meth:`build` method.
 
-The build process of a given container object simply loops through its set of elements, building each one, possibly with access to the respective element of the other model layers. For example, when building the network model (:ml:`nm`), a network model element (:ml:`nme`) is constructed for each type of element, pulling its data from the corresponding data model element (:ml:`dme`). For example, the network model element for generators pulls its data from the data model element for generators.
+The build process of a given container object simply loops through its set of elements, building each one, possibly with access to the respective element of the other model layers. For example, when building the network model (``nm``), a network model element (``nme``) is constructed for each type of element, pulling its data from the corresponding data model element (``dme``). For example, the network model element for generators pulls its data from the data model element for generators.
 
 This process is described in more detail in Chapters :numref:`{number} <sec_data_model>`–:numref:`{number}<sec_math_model>`.
 
@@ -104,9 +104,9 @@ Two |MATPOWER| Frameworks
 
 The first, which we call the **legacy** |*MATPOWER*| **framework**, wraps MP-Core objects inside the legacy user interface, with its inherent limitations, in order to provide backward compatibility for legacy user customization mechanisms. This allows MP-Core to be used internally to implement all of the legacy PF, CPF and OPF functionality and, even more importantly, to be validated by |MATPOWER|’s extensive legacy test suite.
 
-The second approach, which we call the **flexible** |*MATPOWER*| **framework**, involves an object-oriented design with a new customization architecture, able to make the full scope of flexibility of MP-Core accessible to the end user. For example, this framework is required to take advantage of new modeling capabilities to add multiphase unbalanced and hybrid models. It provides its own version of the top-level user functions, namely :ml:`run_pf`, :ml:`run_cpf`, and :ml:`run_opf` *(note the underscores in the names)*.
+The second approach, which we call the **flexible** |*MATPOWER*| **framework**, involves an object-oriented design with a new customization architecture, able to make the full scope of flexibility of MP-Core accessible to the end user. For example, this framework is required to take advantage of new modeling capabilities to add multiphase unbalanced and hybrid models. It provides its own version of the top-level user functions, namely :func:`run_pf`, :func:`run_cpf`, and :func:`run_opf` *(note the underscores in the names)*.
 
-One of the primary differences between the two frameworks is that the legacy framework converts the |MATPOWER| case data to internal format, removing offline equipment and renumbering buses consecutively using the legacy :ml:`ext2int()` function, *before* creating the task object and running it. After solving, it converts the case back to the external format using :ml:`int2ext()` before returning the result. This conversion is required for the legacy user callback mechanisms, but is not necessary for MP-Core itself, so it is not included in the flexible framework.
+One of the primary differences between the two frameworks is that the legacy framework converts the |MATPOWER| case data to internal format, removing offline equipment and renumbering buses consecutively using the legacy :func:`ext2int` function, *before* creating the task object and running it. After solving, it converts the case back to the external format using :func:`int2ext` before returning the result. This conversion is required for the legacy user callback mechanisms, but is not necessary for MP-Core itself, so it is not included in the flexible framework.
 
 
 |MATPOWER| Customization

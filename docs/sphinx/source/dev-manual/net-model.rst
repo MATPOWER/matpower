@@ -42,7 +42,7 @@ Each concrete network model element class, including the container class, inheri
 
    Network Model Formulation Classes
 
-By convention, network model formulation class names begin with :ml:`mp.form`. It is the formulation class that defines the network model's parameters and methods for accessing them. It also defines the form of the state variables, real or complex, and methods for computing injections as a function of the state, and in the case of nonlinear formulations, corresponding derivatives as well.
+By convention, network model formulation class names begin with ``mp.form``. It is the formulation class that defines the network model's parameters and methods for accessing them. It also defines the form of the state variables, real or complex, and methods for computing injections as a function of the state, and in the case of nonlinear formulations, corresponding derivatives as well.
 
 All formulations share a common structure, illustrated in :numref:`fig_ac_net_element_model`, with ports, corresponding voltage states, non-voltage states, and functions of predefined form for computing port injections from the state.
 
@@ -160,7 +160,7 @@ A network model object is primarily a container for network model element object
 
    Network Model Classes
 
-By convention, network model variables are named :ml:`nm` and network model class names begin with :ml:`mp.net_model`.
+By convention, network model variables are named ``nm`` and network model class names begin with ``mp.net_model``.
 
 
 Building a Network Model
@@ -177,7 +177,7 @@ A network model object is created in two steps. The first is to call the constru
 The :meth:`build() <mp.net_model.build>` method proceeds through the following stages sequentially, looping through each element at each stage.
 
    1. **Create** – Instantiate each element object.
-   2. **Count and add** - For each element object, determine the number of online elements from the corresponding data model element and, if nonzero, store it in the object and add the object to the :attr:`elements` property of the :ml:`nm`.
+   2. **Count and add** - For each element object, determine the number of online elements from the corresponding data model element and, if nonzero, store it in the object and add the object to the :attr:`elements` property of the ``nm``.
    3. **Add nodes** – Allow each element to add network nodes, then add voltage variables for each node.
    4. **Add states** – Allow each element to add non-voltage states, then add non-voltage variables for each state.
    5. **Build parameters** – Construct the formulation-specific model parameters for each element, including mappings of element port to network node and element non-voltage state to system non-voltage variable. Add ports to the container object for each element to track per-element port indexing.
@@ -200,7 +200,7 @@ A network model element object encapsulates all of the network model parameters 
 
 So, for example, in a system with 1000 in-service transmission lines, the :math:`\YY` parameter in the corresponding AC network model element object would be a 2000 :math:`\times` 2000 matrix for an aggregate 2000-port element, representing the 1000 two-port transmission lines.
 
-By convention, network model element variables are named :ml:`nme` and network model element class names begin with :ml:`nme`. :numref:`fig_net_model_element_classes` shows the inheritance relationships between a few example network model element classes. Here the :class:`mp.nme_bus_acp` and :class:`mp.nme_gen_acp` classes are used for all problems with an AC polar formulation, while the AC cartesian and DC formulations use their own respective subclasses.
+By convention, network model element variables are named ``nme`` and network model element class names begin with ``mp.nme``. :numref:`fig_net_model_element_classes` shows the inheritance relationships between a few example network model element classes. Here the :class:`mp.nme_bus_acp` and :class:`mp.nme_gen_acp` classes are used for all problems with an AC polar formulation, while the AC cartesian and DC formulations use their own respective subclasses.
 
 .. _fig_net_model_element_classes:
 .. figure:: figures/net-model-element-classes.*

@@ -61,7 +61,7 @@ A math model object is a container for math model element objects and it is also
 
    Math Model Classes
 
-By convention, math model variables are named :ml:`mm` and math model class names begin with :ml:`mp.math_model`.
+By convention, math model variables are named ``mm`` and math model class names begin with ``mp.math_model``.
 
 
 Building a Mathematical Model
@@ -78,7 +78,7 @@ A math model object is created in two steps. The first is to call the constructo
 The :meth:`build() <mp.math_model.build>` method proceeds through the following stages sequentially, looping through each element for the last 3 stages.
 
    1. **Create** – Instantiate each element object.
-   2. **Count and add** - For each element object, determine the number of online elements from the corresponding data model element and, if nonzero, add the object to the :attr:`elements` property of the :ml:`mm`.
+   2. **Count and add** - For each element object, determine the number of online elements from the corresponding data model element and, if nonzero, add the object to the :attr:`elements` property of the ``mm``.
    3. **Add auxiliary data** – Add auxiliary data, e.g. network node types, for use by the model.
    4. **Add variables** – Add variables and allow each element to add their own variables to the model.
    5. **Add constraints** – Add constraints and allow each element to add their own constraints to the model.
@@ -124,7 +124,7 @@ A math model element object typically does not contain any data, but only the me
 
 All math model element classes inherit from :class:`mp.mm_element`. Each element type typically implements its own subclasses, which are further subclassed where necessary per task and formulation, as with the container class.
 
-By convention, math model element variables are named :ml:`mme` and math model element class names begin with :ml:`mme`. :numref:`fig_math_model_element_classes` shows the inheritance relationships between a few example math model element classes. Here the :class:`mp.nme_bus_pf_acp` and :class:`mp.nme_bus_opf_acp` classes are used for PF and OPF problems, respectively, with an AC polar formulation. AC cartesian and DC formulations use their own respective task-specific subclasses. And each element type, has a similar set of task and formulation-specific subclasses, such as those for :class:`mp.mme_gen`.
+By convention, math model element variables are named ``mme`` and math model element class names begin with ``mp.mme``. :numref:`fig_math_model_element_classes` shows the inheritance relationships between a few example math model element classes. Here the :class:`mp.nme_bus_pf_acp` and :class:`mp.nme_bus_opf_acp` classes are used for PF and OPF problems, respectively, with an AC polar formulation. AC cartesian and DC formulations use their own respective task-specific subclasses. And each element type, has a similar set of task and formulation-specific subclasses, such as those for :class:`mp.mme_gen`.
 
 .. _fig_math_model_element_classes:
 .. figure:: figures/math-model-element-classes.*
@@ -138,7 +138,7 @@ By convention, math model element variables are named :ml:`mme` and math model e
 Adding Variables, Constraints, and Costs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Both the :ml:`mm` container object and the :ml:`mme` element objects can add their own variables, costs and constraints to the model.
+Both the ``mm`` container object and the ``mme`` element objects can add their own variables, costs and constraints to the model.
 
 For a standard optimal power flow, for example, the optimization variables are added by the container object, since they are determined directly from state variables of the *(container)* network model object. Similarly, the nodal power or current balance constraints are added by the container since they are built directly from the port injection functions of the aggregate network model.
 
@@ -161,6 +161,6 @@ For example, updating the branch power flows and shadow prices on the flow and a
 Shared Classes
 --------------
 
-In some cases, there is code shared between math model classes across differnt tasks, e.g. PF and CPF. In order to avoid code duplication, another hierarchy of abstract mix-in classes is used to implement methods for this shared functionality. By convention, the names of these classes begin with :ml:`mp.mm_shared_`.
+In some cases, there is code shared between math model classes across differnt tasks, e.g. PF and CPF. In order to avoid code duplication, another hierarchy of abstract mix-in classes is used to implement methods for this shared functionality. By convention, the names of these classes begin with ``mp.mm_shared_``.
 
 For example, a method to evaluate the node balance equations and corresponding Jacobian are used by both the PF and CPF. Putting this method in a shared class, allows its functionality to be inherited by concrete math model classes for both PF and CPF.
