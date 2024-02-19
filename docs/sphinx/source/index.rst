@@ -56,7 +56,6 @@ Currently, most of the User's Manuals are still available only as PDF, built fro
 
    howto/element
    howto/extension
-   howto/constraint
    howto/builddocs
 
 ------------------------------------
@@ -78,6 +77,7 @@ Currently, most of the User's Manuals are still available only as PDF, built fro
        :maxdepth: 2
        :caption: Other Junk
 
+       howto/constraint
        users-manual-legacy/index
        _installation
        _reference
