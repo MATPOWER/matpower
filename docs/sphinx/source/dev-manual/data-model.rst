@@ -153,5 +153,3 @@ It is also possible to define a connection where the junction element type is in
 
 .. [#] Implemented using the built-in :class:`table` and included :class:`mp_table` classes, respectively, under |MATLAB| and GNU Octave. See also :func:`mp_table_class`.
 
-.. [CTM] Carleton Coffrin, et. al., "The Common Electric Power Transmission System Model," *work in progress*. Available at: https://www.overleaf.com/project/5d94e3765cb3ba000129df3c.
-

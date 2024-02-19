@@ -3,6 +3,8 @@ Notation
 
 This section introduces and summarizes the mathematical notation used throughout this manual.
 
+This notation is consistent with what was used in the MP-Element technical note, |TN5| [TN5]_ where you can find more detail.
+
 **Styles**
 
 .. list-table::

@@ -24,6 +24,7 @@
    math-model
    customizing
    acknowledgments
+   references
 
 ..
    class-reference

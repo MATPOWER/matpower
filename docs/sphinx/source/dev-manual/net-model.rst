@@ -340,5 +340,3 @@ Since the model parameters are consistent across all network model elements for 
 
 For more details on how the aggregation is done, see [TN5]_.
 
-
-.. [TN5] R. D. Zimmerman, “MP-Element: A Unified |MATPOWER| Element Model,” |TN5|, October 2020. Available: https://matpower.org/docs/TN5-MP-Element.pdf
