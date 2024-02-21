@@ -56,6 +56,7 @@ Currently, most of the User's Manuals are still available only as PDF, built fro
 
    howto/element
    howto/extension
+   howto/three-phase
    howto/builddocs
 
 ------------------------------------
