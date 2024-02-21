@@ -427,7 +427,7 @@ classdef (Abstract) nm_element < handle
             % is, element *p* of ``nidxs`` is the vector of indices of the
             % nodes to which port *p* of these elements are connected. These
             % node indices can be used to construct the element-node incidence
-            % matrices that form :attr:`C <mp.nm_element.C>`.
+            % matrices that form :attr:`C`.
             %
             % By default, the connection information is obtained from the
             % corresponding data model element, as described in the

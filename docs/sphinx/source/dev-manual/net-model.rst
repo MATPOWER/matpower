@@ -166,7 +166,7 @@ By convention, network model variables are named ``nm`` and network model class 
 Building a Network Model
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-A network model object is created in two steps. The first is to call the constructor of the desired network model class, without arguments. This initializes the :attr:`element_classes` property with a list of network model element classes. This list can be modified before the second step, which is to call the :meth:`build() <mp.net_model.build>` method, passing in the data model object.
+A network model object is created in two steps. The first is to call the constructor of the desired network model class, without arguments. This initializes the :attr:`element_classes <mp.element_container.element_classes>` property with a list of network model element classes. This list can be modified before the second step, which is to call the :meth:`build() <mp.net_model.build>` method, passing in the data model object.
 
 .. _code_net_model_build:
 .. code-block::
@@ -177,7 +177,7 @@ A network model object is created in two steps. The first is to call the constru
 The :meth:`build() <mp.net_model.build>` method proceeds through the following stages sequentially, looping through each element at each stage.
 
    1. **Create** – Instantiate each element object.
-   2. **Count and add** - For each element object, determine the number of online elements from the corresponding data model element and, if nonzero, store it in the object and add the object to the :attr:`elements` property of the ``nm``.
+   2. **Count and add** - For each element object, determine the number of online elements from the corresponding data model element and, if nonzero, store it in the object and add the object to the :attr:`elements <mp.element_container.elements>` property of the ``nm``.
    3. **Add nodes** – Allow each element to add network nodes, then add voltage variables for each node.
    4. **Add states** – Allow each element to add non-voltage states, then add non-voltage variables for each state.
    5. **Build parameters** – Construct the formulation-specific model parameters for each element, including mappings of element port to network node and element non-voltage state to system non-voltage variable. Add ports to the container object for each element to track per-element port indexing.

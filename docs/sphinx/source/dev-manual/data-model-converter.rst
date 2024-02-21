@@ -23,7 +23,7 @@ By convention, data model converter variables are named ``dmc`` and data model c
 Building a Data Model Converter
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-A data model converter object is created in two steps. The first is to call the constructor of the desired data model converter class, without arguments. This initializes the :attr:`element_classes` property with a list of data model converter element classes. This list can be modified before the second step, which is to call the :meth:`build() <mp.dm_converter.build>` method, also without parameters, which simply instantiates and adds the set of element objects indicated in :attr:`element_classes`. Once it has been created, it is ready to be used for its two primary functions, namely *import* and *export*.
+A data model converter object is created in two steps. The first is to call the constructor of the desired data model converter class, without arguments. This initializes the :attr:`element_classes <mp.element_container.element_classes>` property with a list of data model converter element classes. This list can be modified before the second step, which is to call the :meth:`build() <mp.dm_converter.build>` method, also without parameters, which simply instantiates and adds the set of element objects indicated in :attr:`element_classes <mp.element_container.element_classes>`. Once it has been created, it is ready to be used for its two primary functions, namely *import* and *export*.
 
 .. _code_data_model_build:
 .. code-block::

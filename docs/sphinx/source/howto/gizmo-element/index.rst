@@ -57,7 +57,7 @@ Data Model Element
 
 We begin with the data model element for a **gizmo**. The data for each gizmo consists of the three buses to which its ports are connected, values of the two non-voltage states, and the 8 parameters shown in :numref:`fig_gizmo_model` and :numref:`tab_gizmo_components` above. For the complex values, we specify the real and imaginary parts as separate parameters.
 
-This data is stored in the main data table in the :attr:`tab` property of the data model element object of type :class:`mp.dme_gizmo`. This is a MATLAB |table|_ object, or an :class:`mp_table` object if running in Octave. The names of the columns in :attr:`tab` are shown in :numref:`tab_gizmo_data_model` below. Each row in :attr:`tab` corresponds to an individual gizmo, which means there is a single instance of a gizmo data model element object to hold the data for all gizmos in the system.
+This data is stored in the main data table in the :attr:`tab <mp.dm_element.tab>` property of the data model element object of type :class:`mp.dme_gizmo`. This is a MATLAB |table|_ object, or an :class:`mp_table` object if running in Octave. The names of the columns in :attr:`tab <mp.dm_element.tab>` are shown in :numref:`tab_gizmo_data_model` below. Each row in :attr:`tab <mp.dm_element.tab>` corresponds to an individual gizmo, which means there is a single instance of a gizmo data model element object to hold the data for all gizmos in the system.
 
 .. _tab_gizmo_data_model:
 .. list-table:: Gizmo Data Model
@@ -167,7 +167,7 @@ The :meth:`initialize() <mp.dm_element.initialize>` method takes advantage of th
 
 Finally, :meth:`update_status() <mp.dm_element.update_status>` updates the default online/offline status, which has already been initialized from the ``status`` column of the main data table, to remove from service any gizmo that is connected to an offline bus.
 
-Note that both :meth:`initialize() <mp.dm_element.initialize>` and :meth:`update_status() <mp.dm_element.update_status>` rely on the fact that the corresponding methods have already been called for ``'bus'`` objects before ``'gizmo'`` objects. The order corresponds to their order in :attr:`dm.element_classes` which is determined by the default defined by the data model class and any |MATPOWER| extensions or options used to modify that default.
+Note that both :meth:`initialize() <mp.dm_element.initialize>` and :meth:`update_status() <mp.dm_element.update_status>` rely on the fact that the corresponding methods have already been called for ``'bus'`` objects before ``'gizmo'`` objects. The order corresponds to their order in :attr:`dm.element_classes <mp.element_container.element_classes>` which is determined by the default defined by the data model class and any |MATPOWER| extensions or options used to modify that default.
 
 The :class:`mp.dme_gizmo` class is also where you would override any of the pretty-printing methods to implement gizmo sections in your pretty-printed output. Until such methods are added to this example, you can look at the data model element classes for other element types for examples (e.g. :class:`mp.dme_bus`, :class:`mp.dme_branch`, :class:`mp.dme_gen`, :class:`mp.dme_load`, etc.)
 

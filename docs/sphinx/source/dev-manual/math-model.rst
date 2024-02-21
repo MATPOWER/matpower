@@ -67,7 +67,7 @@ By convention, math model variables are named ``mm`` and math model class names 
 Building a Mathematical Model
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-A math model object is created in two steps. The first is to call the constructor of the desired math model class, without arguments. This initializes the :attr:`element_classes` property with a list of math model element classes. This list can be modified before the second step, which is to call the :meth:`build() <mp.math_model.build>` method, passing in the network and data model objects and a |MATPOWER| options struct.
+A math model object is created in two steps. The first is to call the constructor of the desired math model class, without arguments. This initializes the :attr:`element_classes <mp.element_container.element_classes>` property with a list of math model element classes. This list can be modified before the second step, which is to call the :meth:`build() <mp.math_model.build>` method, passing in the network and data model objects and a |MATPOWER| options struct.
 
 .. _code_math_model_build:
 .. code-block::
@@ -78,7 +78,7 @@ A math model object is created in two steps. The first is to call the constructo
 The :meth:`build() <mp.math_model.build>` method proceeds through the following stages sequentially, looping through each element for the last 3 stages.
 
    1. **Create** – Instantiate each element object.
-   2. **Count and add** - For each element object, determine the number of online elements from the corresponding data model element and, if nonzero, add the object to the :attr:`elements` property of the ``mm``.
+   2. **Count and add** - For each element object, determine the number of online elements from the corresponding data model element and, if nonzero, add the object to the :attr:`elements <mp.element_container.elements>` property of the ``mm``.
    3. **Add auxiliary data** – Add auxiliary data, e.g. network node types, for use by the model.
    4. **Add variables** – Add variables and allow each element to add their own variables to the model.
    5. **Add constraints** – Add constraints and allow each element to add their own constraints to the model.

@@ -27,7 +27,7 @@ By convention, data model variables are named ``dm`` and data model class names 
 Building a Data Model
 ^^^^^^^^^^^^^^^^^^^^^
 
-There are two steps to building a data model. The first is to call the constructor of the desired data model class, without arguments. This initializes the :attr:`element_classes` property with a list of data model element classes. This list can be modified before the second step, which is to call the :meth:`build() <mp.data_model.build>` method, passing in the data and a corresponding data model converter object.
+There are two steps to building a data model. The first is to call the constructor of the desired data model class, without arguments. This initializes the :attr:`element_classes <mp.element_container.element_classes>` property with a list of data model element classes. This list can be modified before the second step, which is to call the :meth:`build() <mp.data_model.build>` method, passing in the data and a corresponding data model converter object.
 
 .. _code_data_model_build:
 .. code-block::
@@ -38,18 +38,18 @@ There are two steps to building a data model. The first is to call the construct
 
 The :meth:`build() <mp.data_model.build>` method proceeds through the following stages sequentially, looping through each element at every stage.
 
-   1. **Create** – Instantiate each element object and add it to the :attr:`elements` property of the ``dm``.
+   1. **Create** – Instantiate each element object and add it to the :attr:`elements <mp.element_container.elements>` property of the ``dm``.
    2. **Import** – Use the corresponding data model converter element to read the data into each element's table(s).
-   3. **Count** – Determine the number of instances of each element present in the data, store it in the element's :attr:`nr` property, and remove the element type from :attr:`elements` if the count is 0.
-   4. **Initialize** – Initialize the (online/offline) status of each element and create a mapping of ID to row index in the :attr:`ID2i` element property.
-   5. **Update status** – Update status of each element based on connectivity or other criteria and define element properties containing number and row indices of online elements (:attr:`n` and :attr:`on`), indices of offline elements (:attr:`off`), and mapping (:attr:`i2on`) of row indices to corresponding entries in :attr:`on` or :attr:`off`.
+   3. **Count** – Determine the number of instances of each element present in the data, store it in the element's :attr:`nr <mp.dm_element.nr>` property, and remove the element type from :attr:`elements <mp.element_container.elements>` if the count is 0.
+   4. **Initialize** – Initialize the (online/offline) status of each element and create a mapping of ID to row index in the :attr:`ID2i <mp.dm_element.ID2i>` element property.
+   5. **Update status** – Update status of each element based on connectivity or other criteria and define element properties containing number and row indices of online elements (:attr:`n <mp.dm_element.n>` and :attr:`on <mp.dm_element.on>`), indices of offline elements (:attr:`off <mp.dm_element.off>`), and mapping (:attr:`i2on <mp.dm_element.i2on>`) of row indices to corresponding entries in :attr:`on <mp.dm_element.on>` or :attr:`off <mp.dm_element.off>`.
    6. **Build parameters** – Extract/convert/calculate parameters as necessary for online elements from the original data tables (e.g. p.u. conversion, initial state, etc.) and store them in element-specific properties.
 
 
 System Level Parameters
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-There are a few system level parameters such as the system per-unit power base that are stored in data model properties. Balanced single-phase model elements, typical in transmission systems, use an MVA base found in :attr:`base_mva`. Unbalanced three-phase model elements, typical in distribution systems, use a kVA base found in :attr:`base_kva`. Models with both types of elements, therefore, use both properties.
+There are a few system level parameters such as the system per-unit power base that are stored in data model properties. Balanced single-phase model elements, typical in transmission systems, use an MVA base found in :attr:`base_mva <mp.data_model.base_mva>`. Unbalanced three-phase model elements, typical in distribution systems, use a kVA base found in :attr:`base_kva <mp.data_model.base_mva>`. Models with both types of elements, therefore, use both properties.
 
 
 Printing a Data Model
@@ -85,7 +85,7 @@ By convention, data model element variables are named ``dme`` and data model ele
 Data Tables
 ^^^^^^^^^^^
 
-Typically, a data model element has at least one main table, stored in the :attr:`tab` property. Each row in the table corresponds to an individual element and the columns are the parameters. In general, |MATPOWER| attempts to follow the parameter naming conventions outlined in *The Common Electric Power Transmission System Model* (CTM) [CTM]_. The following parameters (table columns) are shared by all data model elements.
+Typically, a data model element has at least one main table, stored in the :attr:`tab <mp.dm_element.tab>` property. Each row in the table corresponds to an individual element and the columns are the parameters. In general, |MATPOWER| attempts to follow the parameter naming conventions outlined in *The Common Electric Power Transmission System Model* (CTM) [CTM]_. The following parameters (table columns) are shared by all data model elements.
 
   - **uid** – positive integer serving as a unique identifier for the element
   - **name** – optional string identifier for the element
@@ -95,7 +95,7 @@ Typically, a data model element has at least one main table, stored in the :attr
 Properties
 ^^^^^^^^^^
 
-The table below includes additional properties, besides the main table :attr:`tab`, found in all data model elements.
+The table below includes additional properties, besides the main table :attr:`tab <mp.dm_element.tab>`, found in all data model elements.
 
 .. _tab_dme_properties:
 .. list-table:: Data Model Element Properties
@@ -105,20 +105,20 @@ The table below includes additional properties, besides the main table :attr:`ta
 
    * - Property
      - Description
-   * - :attr:`nr`
+   * - :attr:`nr <mp.dm_element.nr>`
      - number of rows in the table, i.e. the *total* number of elements of the type
-   * - :attr:`n`
+   * - :attr:`n <mp.dm_element.n>`
      - number of *online* elements of the type
-   * - :attr:`on`
+   * - :attr:`on <mp.dm_element.on>`
      - vector of row indices of online elements
-   * - :attr:`off`
+   * - :attr:`off <mp.dm_element.off>`
      - vector of row indices of offline elements
-   * - :attr:`ID2i`
+   * - :attr:`ID2i <mp.dm_element.ID2i>`
      - :math:`M \times 1` vector mapping IDs to row indices, where :math:`M` is the largest ID value
-   * - :attr:`i2on`
-     - :math:`n_r \times 1` vector mapping row indices to the corresponding index into the :attr:`on`
-       vector *(for online elements)* or :attr:`off` vector *(for offline elements)*
-   * - :attr:`tab`
+   * - :attr:`i2on <mp.dm_element.i2on>`
+     - :math:`n_r \times 1` vector mapping row indices to the corresponding index into the :attr:`on <mp.dm_element.on>`
+       vector *(for online elements)* or :attr:`off <mp.dm_element.off>` vector *(for offline elements)*
+   * - :attr:`tab <mp.dm_element.tab>`
      - main data table
 
 Methods
@@ -146,7 +146,7 @@ As described in the :ref:`sec_net_model` section, the network model consists of 
 
 A **connection** in this context refers to a mapping of a set of ports of an element of type *A* (e.g. *from bus* and *to bus* ports of a *branch*) to a set of nodes created by elements of type *B* (e.g. *bus*). We call the node-creating elements **junction** elements. A single connection links all type *A* elements to corresponding type *B* junction elements. For example, a three-phase branch could define two connections, a *from bus* connection and a *to bus* connection, where each connection defines a mapping of 3 ports per branch to the 3 nodes of each corresponding bus.
 
-A data model element class defines its connections by implementing a couple of methods. The :meth:`cxn_type() <mp.dm_element.cxn_type>` method returns the name of the junction element(s) for the connection(s). The :meth:`cxn_idx_prop() <mp.dm_element.cxn_idx_prop>` method returns the name(s) of the property(ies) containing the indices of the corresponding junction elements. For example, if :meth:`cxn_type() <mp.dm_element.cxn_type>` for a branch element class returns ``'bus'`` and :meth:`cxn_idx_prop() <mp.dm_element.cxn_idx_prop>` returns ``{'fbus', 'tbus'}``, that means it is defining two connections, both to ``'bus'`` elements. The :attr:`fbus` and :attr:`tbus`  properties of the branch object are each vectors of indices into the set of ``'bus'`` objects, and will be used automatically to generate the connectivity for the network model.
+A data model element class defines its connections by implementing a couple of methods. The :meth:`cxn_type() <mp.dm_element.cxn_type>` method returns the name of the junction element(s) for the connection(s). The :meth:`cxn_idx_prop() <mp.dm_element.cxn_idx_prop>` method returns the name(s) of the property(ies) containing the indices of the corresponding junction elements. For example, if :meth:`cxn_type() <mp.dm_element.cxn_type>` for a branch element class returns ``'bus'`` and :meth:`cxn_idx_prop() <mp.dm_element.cxn_idx_prop>` returns ``{'fbus', 'tbus'}``, that means it is defining two connections, both to ``'bus'`` elements. The :attr:`fbus <mp.dme_branch.fbus>` and :attr:`tbus <mp.dme_branch.tbus>`  properties of the branch object are each vectors of indices into the set of ``'bus'`` objects, and will be used automatically to generate the connectivity for the network model.
 
 It is also possible to define a connection where the junction element type is instance-specific. For example, if you had two types of buses, and a load element that could connect to either type, then each load would have to indicate both which type of bus and which bus of that type it is connected to. This is done by having :meth:`cxn_type() <mp.dm_element.cxn_type>` return a cell array of the valid junction element type sand :meth:`cxn_type_prop() <mp.dm_element.cxn_type_prop>` return the name(s) of the property(ies) containing vector(s) of indices into the junction element type cell array.
 

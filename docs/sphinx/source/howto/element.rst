@@ -137,13 +137,13 @@ This data is stored in the main data table in the :attr:`tab <mp.dm_element.tab>
        end     %% methods
    end         %% classdef
 
-For element types that connect to one or more buses, it is typical to define a property for each port in the data model element class. In our case, there are two properties, :attr:`fbus` and :attr:`tbus`, which will hold bus index vectors for ports 1 and 2, respectively. That is ``dme.tbus(k)`` will refer to the index of the bus connected to port 2, the *to* bus, of the DC line defined in row *k* of the data table.
+For element types that connect to one or more buses, it is typical to define a property for each port in the data model element class. In our case, there are two properties, :attr:`fbus <mp.dme_legacy_dcline.fbus>` and :attr:`tbus <mp.dme_legacy_dcline.tbus>`, which will hold bus index vectors for ports 1 and 2, respectively. That is ``dme.tbus(k)`` will refer to the index of the bus connected to port 2, the *to* bus, of the DC line defined in row *k* of the data table.
 
 .. note::
 
-   The contents of :attr:`fbus` and :attr:`tbus` are not bus IDs, that is external bus numbers, but rather internal indices of the corresponding buses, that is, row indices into ``dm.elements.bus.tab``, the table of all buses in the bus data model element object.
+   The contents of :attr:`fbus <mp.dme_legacy_dcline.fbus>` and :attr:`tbus <mp.dme_legacy_dcline.tbus>` are not bus IDs, that is external bus numbers, but rather internal indices of the corresponding buses, that is, row indices into ``dm.elements.bus.tab``, the table of all buses in the bus data model element object.
 
-The :attr:`fbus_on` and :attr:`tbus_on` properties, on the other, hand map in-service DC lines to the in-service buses. That is ``dme.fbus_on(k)`` is the index into the list of in-service buses for the bus connected to port 1, the *from* bus, of the *k*-th in-service DC line.
+The :attr:`fbus_on <mp.dme_legacy_dcline.fbus_on>` and :attr:`tbus_on <mp.dme_legacy_dcline.tbus_on>` properties, on the other, hand map in-service DC lines to the in-service buses. That is ``dme.fbus_on(k)`` is the index into the list of in-service buses for the bus connected to port 1, the *from* bus, of the *k*-th in-service DC line.
 
 The other properties correspond to the respective columns in the data table, but after removing DC lines that are out-of-service and, in some cases, converting to per unit. Those that end in ``_start`` are for the initial value of the respective variable.
 
@@ -171,7 +171,7 @@ The :meth:`name() <mp.dm_element.name>` method returns ``'legacy_dcline'``, the 
 Connectivity
 ^^^^^^^^^^^^
 
-The :meth:`cxn_type() <mp.dm_element.cxn_type>` and :meth:`cxn_idx_prop() <mp.dm_element.cxn_idx_prop>` methods specify that ``'legacy_dcline'`` objects connect to ``'bus'`` objects, and that the corresponding bus indices for ports 1 and 2 can be found in properties  :attr:`fbus` and :attr:`tbus`, respectively.
+The :meth:`cxn_type() <mp.dm_element.cxn_type>` and :meth:`cxn_idx_prop() <mp.dm_element.cxn_idx_prop>` methods specify that ``'legacy_dcline'`` objects connect to ``'bus'`` objects, and that the corresponding bus indices for ports 1 and 2 can be found in properties :attr:`fbus <mp.dme_legacy_dcline.fbus>` and :attr:`tbus <mp.dme_legacy_dcline.tbus>`, respectively.
 
 .. _code_dme_legacy_dcline_cxn:
 .. code-block::
@@ -231,7 +231,7 @@ Building the Element in Stages
 
 When a data model object and its elements are created, they are built in the stages described in :ref:`sec_building_data_model` in the |MATPOWER-Dev-Manual|.
 
-The :meth:`initialize() <mp.dm_element.initialize>` method is called during the **initialize** stage. It takes advantage of the bus ID-to-index mapping available from the ``'bus'`` data model element object to populate the  :attr:`fbus` and :attr:`tbus` properties from the corresponding columns in the main data table.
+The :meth:`initialize() <mp.dm_element.initialize>` method is called during the **initialize** stage. It takes advantage of the bus ID-to-index mapping available from the ``'bus'`` data model element object to populate the  :attr:`fbus <mp.dme_legacy_dcline.fbus>` and :attr:`tbus <mp.dme_legacy_dcline.tbus>` properties from the corresponding columns in the main data table.
 
 .. _code_dme_legacy_dcline_initialize:
 .. code-block::
@@ -247,7 +247,7 @@ The :meth:`initialize() <mp.dm_element.initialize>` method is called during the 
                obj.tbus = b2i(obj.tab.bus_to);
            end
 
-The :meth:`update_status() <mp.dm_element.update_status>` method, called during the **update status** stage, updates the default online/offline status, which has already been initialized from the ``status`` column of the main data table, to remove from service any DC line that is connected to an offline bus. After calling the parent method to populate the :attr:`on` and :attr:`off` properties, this method also updates some data in the bus data model element object to set the bus type for DC terminal buses to PV and turn on their voltage-controlled flag.
+The :meth:`update_status() <mp.dm_element.update_status>` method, called during the **update status** stage, updates the default online/offline status, which has already been initialized from the ``status`` column of the main data table, to remove from service any DC line that is connected to an offline bus. After calling the parent method to populate the :attr:`on <mp.dm_element.on>` and :attr:`off <mp.dm_element.off>` properties, this method also updates some data in the bus data model element object to set the bus type for DC terminal buses to PV and turn on their voltage-controlled flag.
 
 .. _code_dme_legacy_dcline_update_status:
 .. code-block::
@@ -421,7 +421,7 @@ While we could have put the limit parameters themselves in the OPF subclass, sin
 
 The other addition in the OPF subclass is an optional cost on the active power flow in the DC line. This cost is specified in the same way as a generator cost, either as a set of polynomial coefficients, or as a set of breakpoints in a piecewise linear function. It appears as a column in the main table and is of type :class:`mp.cost_table`.
 
-There is also a :meth:`have_cost` method that returns true for OPF subclass and false in the base class. It is used by the export routines of the data model converter element to determine whether or not to export cost data.
+There is also a :meth:`have_cost() <mp.dme_legacy_dcline_opf.have_cost>` method that returns true for OPF subclass and false in the base class. It is used by the export routines of the data model converter element to determine whether or not to export cost data.
 
 .. _code_dme_legacy_dcline_opf_have_cost:
 .. code-block::
@@ -430,7 +430,7 @@ There is also a :meth:`have_cost` method that returns true for OPF subclass and 
                TorF = 1;
            end
 
-The :meth:`build_cost_params` method is called during the creation of an OPF mathematical model to extract the costs from the data and put it in a form more convenient for adding to the math model. The implementation is built on the same :class:`mp.cost_table` and :class:`mp.cost_table_utils` classes used for generator costs.
+The :meth:`build_cost_params() <mp.dme_legacy_dcline_opf.build_cost_params>` method is called during the creation of an OPF mathematical model to extract the costs from the data and put it in a form more convenient for adding to the math model. The implementation is built on the same :class:`mp.cost_table` and :class:`mp.cost_table_utils` classes used for generator costs.
 
 .. _code_dme_legacy_dcline_opf_build_cost_params:
 .. code-block::
@@ -449,7 +449,7 @@ The :meth:`build_cost_params` method is called during the creation of an OPF mat
                end
            end
 
-Finally, there are several methods for handling the pretty-printing of the limits (**lim**) section, which is only relevant for the OPF. The :meth:`pretty_print() <mp.dm_element.pretty_pring>` method is overridden to set up some data for limit sections, namely flows and shadow prices, to be passed via ``pp_args`` to the methods that do the printing.
+Finally, there are several methods for handling the pretty-printing of the limits (**lim**) section, which is only relevant for the OPF. The :meth:`pretty_print() <mp.dm_element.pretty_print>` method is overridden to set up some data for limit sections, namely flows and shadow prices, to be passed via ``pp_args`` to the methods that do the printing.
 
 .. _code_dme_legacy_dcline_opf_pretty_print:
 .. code-block::
@@ -926,7 +926,7 @@ For the OPF, there are a number of additions, including the constraint on the "f
        end     %% methods
    end         %% classdef
 
-This class adds a :attr:`cost` property which holds the necessary cost data in a form that is convenient for constructing the math model costs. This field is populated by the :meth:`build_cost_params` method by calling a method of the same name in the corresponding data model element.
+This class adds a :attr:`cost <mp.mme_legacy_dcline_opf.cost>` property which holds the necessary cost data in a form that is convenient for constructing the math model costs. This field is populated by the :meth:`build_cost_params() <mp.mme_legacy_dcline_opf.build_cost_params>` method by calling a method of the same name in the corresponding data model element.
 
 
 .. _code_mme_legacy_dcline_opf_build_cost_params:
@@ -1121,7 +1121,7 @@ The complete source for the DC line mathematical model element classes above can
 Using the New Element
 ---------------------
 
-Now that each of the element classes for the DC line have been implemented for each of the model layers and the data model converter, these classes need to be included when running a power flow, continuation power flow, or optimal power flow. If this implementation for DC lines were to be added to the set of standard elements, along side of buses, branches, and generators, for example, then the classes would be added to the lists assigned to the :attr:`element_classes` property in the constructor of the appropriate model container class. E.g. :class:`mp.nme_legacy_dcline_dc` in :class:`mp.net_model_dc`, and :class:`mp.mme_legacy_opf_dcline_ac` in :class:`mp.math_model_opf_acc` and :class:`mp.math_model_opf_acp`.
+Now that each of the element classes for the DC line have been implemented for each of the model layers and the data model converter, these classes need to be included when running a power flow, continuation power flow, or optimal power flow. If this implementation for DC lines were to be added to the set of standard elements, along side of buses, branches, and generators, for example, then the classes would be added to the lists assigned to the :attr:`element_classes <mp.element_container.element_classes>` property in the constructor of the appropriate model container class. E.g. :class:`mp.nme_legacy_dcline_dc` in :class:`mp.net_model_dc`, and :class:`mp.mme_legacy_opf_dcline_ac` in :class:`mp.math_model_opf_acc` and :class:`mp.math_model_opf_acp`.
 
 However, for user additions that are not being contributed for inclusion in the standard |MATPOWER| distribution, the original |MATPOWER| source need not, and should not, be modified. Instead, we use the |MATPOWER| Extension API.
 

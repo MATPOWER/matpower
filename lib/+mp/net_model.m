@@ -351,7 +351,7 @@ classdef (Abstract) net_model < mp.nm_element & mp.element_container & mp_idx_ma
             %   idx (integer) : index for name and indexed variables
             %       *(currently unused here)*
             %
-            % Also updates the :attr:`nv <mp.net_model.nv>` property.
+            % Also updates the :attr:`nv` property.
             %
             % See also add_zvars, add_nodes.
 
