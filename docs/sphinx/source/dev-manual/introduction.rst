@@ -53,7 +53,9 @@ We use :ml:`classdef` syntax supported by both to define classes and, in methods
 
 All classes, methods, properties, and functions include a help section that can be accessed by the ``help`` and ``doc`` commands *and* processed by Sphinx to produce HTML and PDF reference documentation. For a class, it summarizes the purpose and overall functionality provided by the class along with lists of the properties and methods. For a function or method, it describes the inputs, outputs and what the function or method does. The :func:`run_mp` function and the :class:`mp.task` class provide examples of this reference documentation. *Hint: Click the GitHub icon in the upper right corner of the reference manual page to see the source.*
 
-All functionality should be covered by at least one of the automated tests. 
+All functionality should be covered by at least one of the automated tests.
+
+See the |Contrib_Guide|_ for more information on contributing to the |MATPOWER| project.
 
 
 .. |gh-matpower| replace:: **matpower**
@@ -70,3 +72,5 @@ All functionality should be covered by at least one of the automated tests.
 .. _gh-matpower-extras: https://github.com/MATPOWER/matpower-extras
 .. |gh-mp-docs-shared| replace:: **mp-docs-shared**
 .. _gh-mp-docs-shared: https://github.com/MATPOWER/mp-docs-shared
+.. |Contrib_Guide| replace:: |MATPOWER| Contributors Guide
+.. _Contrib_Guide: https://github.com/MATPOWER/matpower/blob/master/CONTRIBUTING.md
