@@ -1,4 +1,4 @@
-classdef mme_bus_nld_pf_acps_node_test < mp.mme_bus_pf_acp
+classdef mme_bus_nld_pf_acps_node_test < mp.mme_bus_pf_ac
 
 %   MATPOWER
 %   Copyright (c) 2022-2024, Power Systems Engineering Research Center (PSERC)

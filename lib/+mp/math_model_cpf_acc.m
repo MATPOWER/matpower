@@ -5,7 +5,7 @@ classdef (Abstract) math_model_cpf_acc < mp.math_model_cpf
 %   * math_model_cpf_acc - constructor, assign default math model element classes
 
 %   MATPOWER
-%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -23,7 +23,7 @@ classdef (Abstract) math_model_cpf_acc < mp.math_model_cpf
             %   mm = math_model_cpf_acc()
 
             obj@mp.math_model_cpf();
-            obj.element_classes = { @mp.mme_bus_pf_acc, @mp.mme_gen_pf_ac, ...
+            obj.element_classes = { @mp.mme_bus_pf_ac, @mp.mme_gen_pf_ac, ...
                 @mp.mme_branch_pf_ac, @mp.mme_load_cpf, @mp.mme_shunt_cpf };
         end
     end     %% methods

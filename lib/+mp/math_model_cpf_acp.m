@@ -2,7 +2,7 @@ classdef (Abstract) math_model_cpf_acp < mp.math_model_cpf
 % mp.math_model_cpf_acp - Abstract base class for AC-polar CPF **math model** objects.
 
 %   MATPOWER
-%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -18,7 +18,7 @@ classdef (Abstract) math_model_cpf_acp < mp.math_model_cpf
             %
 
             obj@mp.math_model_cpf();
-            obj.element_classes = { @mp.mme_bus_pf_acp, @mp.mme_gen_pf_ac, ...
+            obj.element_classes = { @mp.mme_bus_pf_ac, @mp.mme_gen_pf_ac, ...
                 @mp.mme_branch_pf_ac, @mp.mme_load_cpf, @mp.mme_shunt_cpf };
         end
 

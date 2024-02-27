@@ -1,8 +1,8 @@
-classdef math_model_pf_acci < mp.math_model_pf & mp.mm_shared_pfcpf_acci
+classdef math_model_pf_acci < mp.math_model_pf_ac & mp.mm_shared_pfcpf_acci
 % mp.math_model_pf_acci - Power flow (PF) **math model** for AC-cartesian-current formulation.
 
 %   MATPOWER
-%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -13,15 +13,6 @@ classdef math_model_pf_acci < mp.math_model_pf & mp.mm_shared_pfcpf_acci
 %     end
 
     methods
-        %% constructor
-        function obj = math_model_pf_acci()
-            %
-
-            obj@mp.math_model_pf();
-            obj.element_classes = { @mp.mme_bus_pf_acc, @mp.mme_gen_pf_ac, ...
-                @mp.mme_load_pf_ac, @mp.mme_branch_pf_ac, @mp.mme_shunt_pf_ac };
-        end
-
         function tag = form_tag(obj)
             %
 

@@ -1,5 +1,5 @@
-classdef mme_bus_pf_acp < mp.mme_bus
-% mp.mme_bus_pf_acp - Math model element for bus for AC polar voltage power flow.
+classdef mme_bus_pf_ac < mp.mme_bus
+% mp.mme_bus_pf_ac - Math model element for bus for AC power flow.
 
 %   MATPOWER
 %   Copyright (c) 2022-2024, Power Systems Engineering Research Center (PSERC)

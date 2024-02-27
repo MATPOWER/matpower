@@ -109,10 +109,10 @@ Containers
    :name: sec_net_model_container_classes
 
    mp/form
-   mp/form_dc
    mp/form_ac
    mp/form_acc
    mp/form_acp
+   mp/form_dc
    mp/net_model
    mp/net_model_ac
    mp/net_model_acc
@@ -126,30 +126,30 @@ Elements
    :name: sec_net_model_element_classes
 
    mp/nm_element
+   mp/nme_branch
    mp/nme_branch_ac
    mp/nme_branch_acc
    mp/nme_branch_acp
    mp/nme_branch_dc
-   mp/nme_branch
+   mp/nme_bus
    mp/nme_bus_acc
    mp/nme_bus_acp
    mp/nme_bus_dc
-   mp/nme_bus
+   mp/nme_gen
    mp/nme_gen_ac
    mp/nme_gen_acc
    mp/nme_gen_acp
    mp/nme_gen_dc
-   mp/nme_gen
+   mp/nme_load
    mp/nme_load_ac
    mp/nme_load_acc
    mp/nme_load_acp
    mp/nme_load_dc
-   mp/nme_load
+   mp/nme_shunt
    mp/nme_shunt_ac
    mp/nme_shunt_acc
    mp/nme_shunt_acp
    mp/nme_shunt_dc
-   mp/nme_shunt
 
 
 Mathematical Model Classes
@@ -163,6 +163,7 @@ Containers
 
    mp/math_model
    mp/math_model_pf
+   mp/math_model_pf_ac
    mp/math_model_pf_acci
    mp/math_model_pf_accs
    mp/math_model_pf_acpi
@@ -196,7 +197,6 @@ Container Mixins
    :name: sec_math_model_mixin_classes
 
    mp/mm_shared_pfcpf
-   mp/mm_shared_pfcpf_dc
    mp/mm_shared_pfcpf_ac
    mp/mm_shared_pfcpf_ac_i
    mp/mm_shared_pfcpf_acc
@@ -205,6 +205,7 @@ Container Mixins
    mp/mm_shared_pfcpf_acp
    mp/mm_shared_pfcpf_acpi
    mp/mm_shared_pfcpf_acps
+   mp/mm_shared_pfcpf_dc
    mp/mm_shared_opf_legacy
 
 Elements
@@ -214,36 +215,35 @@ Elements
    :name: sec_math_model_element_classes
 
    mp/mm_element
+   mp/mme_branch
+   mp/mme_branch_pf_ac
+   mp/mme_branch_pf_dc
+   mp/mme_branch_opf
    mp/mme_branch_opf_ac
    mp/mme_branch_opf_acc
    mp/mme_branch_opf_acp
    mp/mme_branch_opf_dc
-   mp/mme_branch_opf
-   mp/mme_branch_pf_ac
-   mp/mme_branch_pf_dc
-   mp/mme_branch
+   mp/mme_bus
+   mp/mme_bus_pf_ac
+   mp/mme_bus_pf_dc
    mp/mme_bus_opf_ac
    mp/mme_bus_opf_acc
    mp/mme_bus_opf_acp
    mp/mme_bus_opf_dc
-   mp/mme_bus_pf_acc
-   mp/mme_bus_pf_acp
-   mp/mme_bus_pf_dc
-   mp/mme_bus
-   mp/mme_gen_opf_ac
-   mp/mme_gen_opf_dc
-   mp/mme_gen_opf
+   mp/mme_gen
    mp/mme_gen_pf_ac
    mp/mme_gen_pf_dc
-   mp/mme_gen
-   mp/mme_load_cpf
+   mp/mme_gen_opf
+   mp/mme_gen_opf_ac
+   mp/mme_gen_opf_dc
+   mp/mme_load
    mp/mme_load_pf_ac
    mp/mme_load_pf_dc
-   mp/mme_load
-   mp/mme_shunt_cpf
+   mp/mme_load_cpf
+   mp/mme_shunt
    mp/mme_shunt_pf_ac
    mp/mme_shunt_pf_dc
-   mp/mme_shunt
+   mp/mme_shunt_cpf
 
 
 Miscellaneous Classes
