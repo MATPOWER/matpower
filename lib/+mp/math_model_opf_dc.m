@@ -1,8 +1,16 @@
 classdef math_model_opf_dc < mp.math_model_opf
 % mp.math_model_opf_dc - Optimal Power flow (OPF) **math model** for DC formulation.
+%
+% Provides formulation-specific and OPF-specific subclasses for elements.
+%
+% Provides implementation of nodal balance constraint method and setup
+% of solver options.
+%
+% Implements convert_x_m2n() to convert from math model state to network
+% model state.
 
 %   MATPOWER
-%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

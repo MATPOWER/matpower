@@ -1,8 +1,11 @@
 classdef (Abstract) math_model_opf < mp.math_model
 % mp.math_model_opf - Abstract base class for optimal power flow (OPF) **math model** objects.
+%
+% Provide implementations for adding system variables to the mathematical
+% model and creating an interior starting point.
 
 %   MATPOWER
-%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

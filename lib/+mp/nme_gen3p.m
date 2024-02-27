@@ -1,8 +1,14 @@
 classdef (Abstract) nme_gen3p < mp.nm_element % & mp.form_ac
 % mp.nme_gen3p - Network model element abstract base class for 3-phase generator.
+%
+% Implements the network model element for 3-phase generator elements, with
+% 3 ports and 3 non-voltage states per 3-phase generator.
+%
+% Adds non-voltage state variables ``Pg3`` and ``Qg3`` to the network model
+% and builds the parameter :math:`\NN`.
 
 %   MATPOWER
-%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

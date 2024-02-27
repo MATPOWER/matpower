@@ -1,7 +1,10 @@
 classdef dme_reserve_gen < mp.dm_element & mp.dme_shared_opf
 % mp.dme_reserve_gen - Data model element for reserve generator.
 %
-% Adds the following columns in the main data table:
+% Implements the data element model for reserve generator elements.
+%
+% Adds the following columns in the main data table, found in the
+% :attr:`tab` property:
 %
 %   ==============  =========  =====================================
 %   Name            Type       Description

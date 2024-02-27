@@ -1,7 +1,11 @@
 classdef dme_gen_opf < mp.dme_gen & mp.dme_shared_opf
 % mp.dme_gen_opf - Data model element for generator for OPF.
 %
-% Adds the following columns in the main data table:
+% To parent class :class:`mp.dme_gen`, adds costs, shadow prices on active
+% and reactive generation limits, and pretty-printing for **lim** sections.
+%
+% Adds the following columns in the main data table, found in the
+% :attr:`tab` property:
 %
 %   ============  ===============  =====================================
 %   Name          Type             Description

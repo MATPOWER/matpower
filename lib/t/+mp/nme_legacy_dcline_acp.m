@@ -1,5 +1,7 @@
 classdef nme_legacy_dcline_acp < mp.nme_legacy_dcline_ac & mp.form_acp
 % mp.nme_legacy_dcline_acp - Network model element for legacy DC line for for AC polar voltage formulations.
+%
+% Inherits from mp.form_acp.
 
 %   MATPOWER
 %   Copyright (c) 2019-2024, Power Systems Engineering Research Center (PSERC)

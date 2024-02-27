@@ -1,5 +1,8 @@
 classdef nme_legacy_dcline_dc < mp.nme_legacy_dcline & mp.form_dc
 % mp.nme_legacy_dcline_dc - Network model element for legacy DC line for DC formulation.
+%
+% Adds non-voltage state variables ``Pdcf`` and ``Pdct`` to the network
+% model and builds the parameter :math:`\KK`.
 
 %   MATPOWER
 %   Copyright (c) 2019-2024, Power Systems Engineering Research Center (PSERC)

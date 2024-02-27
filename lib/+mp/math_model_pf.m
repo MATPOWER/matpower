@@ -1,8 +1,10 @@
 classdef (Abstract) math_model_pf < mp.math_model
 % mp.math_model_pf - Abstract base class for power flow (PF) **math model** objects.
+%
+% Implements setting up of solver options from |MATPOWER| options struct.
 
 %   MATPOWER
-%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

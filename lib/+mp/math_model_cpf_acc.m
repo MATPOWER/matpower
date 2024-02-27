@@ -1,8 +1,7 @@
 classdef (Abstract) math_model_cpf_acc < mp.math_model_cpf
-% mp.math_model_cpf_acc - Abstract base class for AC-cartesian CPF **math model** objects.
+% mp.math_model_cpf_acc - Abstract base class for AC cartesian CPF **math model** objects.
 %
-% math_model_cpf_acc Methods:
-%   * math_model_cpf_acc - constructor, assign default math model element classes
+% Provides formulation-specific and CPF-specific subclasses for elements.
 
 %   MATPOWER
 %   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)

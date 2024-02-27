@@ -1,7 +1,10 @@
 classdef dme_bus < mp.dm_element
 % mp.dme_bus - Data model element for bus.
 %
-% Adds the following columns in the main data table:
+% Implements the data element model for bus elements.
+%
+% Adds the following columns in the main data table, found in the
+% :attr:`tab` property:
 %
 %   ===========  =========  ========================================
 %   Name         Type       Description

@@ -1,8 +1,10 @@
 classdef math_model_cpf_acci < mp.math_model_cpf_acc & mp.mm_shared_pfcpf_acci
 % mp.math_model_cpf_acci - CPF **math model** for AC-cartesian-current formulation.
+%
+% Implements formulation-specific and CPF-specific node balance constraint.
 
 %   MATPOWER
-%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

@@ -1,5 +1,10 @@
 classdef mme_gen_pf_ac < mp.mme_gen
 % mp.mme_gen_pf_ac - Math model element for generator for AC power flow.
+%
+% Math model element class for generator elements for AC power flow problems.
+%
+% Implements method for updating the output data in the corresponding data
+% model element for in-service generators from the math model solution.
 
 %   MATPOWER
 %   Copyright (c) 2022-2024, Power Systems Engineering Research Center (PSERC)

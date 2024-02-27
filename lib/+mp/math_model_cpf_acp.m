@@ -1,5 +1,9 @@
 classdef (Abstract) math_model_cpf_acp < mp.math_model_cpf
-% mp.math_model_cpf_acp - Abstract base class for AC-polar CPF **math model** objects.
+% mp.math_model_cpf_acp - Abstract base class for AC polar CPF **math model** objects.
+%
+% Provides formulation-specific and CPF-specific subclasses for elements
+% and implementations of event and callback functions for handling voltage
+% limits.
 
 %   MATPOWER
 %   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
@@ -15,7 +19,10 @@ classdef (Abstract) math_model_cpf_acp < mp.math_model_cpf
     methods
         %% constructor
         function obj = math_model_cpf_acp()
+            % Constructor, assign default network model element classes.
+            % ::
             %
+            %   mm = math_model_cpf_acp()
 
             obj@mp.math_model_cpf();
             obj.element_classes = { @mp.mme_bus_pf_ac, @mp.mme_gen_pf_ac, ...

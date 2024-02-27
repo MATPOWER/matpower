@@ -1,7 +1,10 @@
 classdef dme_reserve_zone < mp.dm_element & mp.dme_shared_opf
 % mp.dme_reserve_zone - Data model element for reserve zone.
 %
-% Adds the following columns in the main data table:
+% Implements the data element model for reserve zone elements.
+%
+% Adds the following columns in the main data table, found in the
+% :attr:`tab` property:
 %
 %   =========  =========  ==================================================
 %   Name       Type       Description

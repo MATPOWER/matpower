@@ -1,5 +1,12 @@
 classdef mme_bus_opf_acp < mp.mme_bus_opf_ac
 % mp.mme_bus_opf_acp - Math model element for bus for AC polar voltage OPF.
+%
+% Math model element class for bus elements for AC polar voltage OPF
+% problems.
+%
+% Implements methods for forming an interior initial point and for updating
+% the output data in the corresponding data model element for in-service
+% buses from the math model solution.
 
 %   MATPOWER
 %   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)

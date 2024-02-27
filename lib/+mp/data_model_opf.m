@@ -1,6 +1,9 @@
 classdef data_model_opf < mp.data_model
 % mp.data_model_opf - |MATPOWER| **data model** for OPF tasks.
 %
+% The purpose of this class is to include OPF-specific subclasses for its
+% elements and to handle pretty-printing output for **lim** sections.
+%
 % mp.data_model_opf Methods:
 %   * data_model_opf - constructor, assign default data model element classes
 %   * pp_flags - add flags for **lim** sections
@@ -10,7 +13,7 @@ classdef data_model_opf < mp.data_model
 % See also mp.data_model.
 
 %   MATPOWER
-%   Copyright (c) 2020-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

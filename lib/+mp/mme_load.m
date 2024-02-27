@@ -1,8 +1,10 @@
 classdef (Abstract) mme_load < mp.mm_element
 % mp.mme_load - Math model element abstract base class for load.
+%
+% Abstract math model element base class for load elements.
 
 %   MATPOWER
-%   Copyright (c) 2022-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2022-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

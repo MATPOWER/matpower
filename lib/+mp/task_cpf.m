@@ -3,6 +3,10 @@ classdef task_cpf < mp.task_pf
 %
 % Provides task implementation for the continuation power flow problem.
 %
+% This includes the iterative solving of the mathematical model (using
+% warm restarts) after updating the problem data, e.g. when enforcing
+% certain limits.
+%
 % mp.task_cpf Properties:
 %   * warmstart - warm start data
 %
@@ -22,7 +26,7 @@ classdef task_cpf < mp.task_pf
 % See also mp.task, mp.task_pf.
 
 %   MATPOWER
-%   Copyright (c) 2020-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

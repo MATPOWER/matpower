@@ -1,5 +1,8 @@
 classdef math_model_pf_acpi < mp.math_model_pf_ac & mp.mm_shared_pfcpf_acpi
 % mp.math_model_pf_acpi - Power flow (PF) **math model** for AC-polar-current formulation.
+%
+% Implements formulation-specific node balance constraints and inherits
+% from formulation-specific class for shared PF/CPF code.
 
 %   MATPOWER
 %   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)

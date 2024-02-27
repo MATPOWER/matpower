@@ -1,5 +1,10 @@
 classdef mme_line3p < mp.mm_element
 % mp.mme_line3p - Math model element for 3-phase line.
+%
+% Math model element base class for 3-phase line elements.
+%
+% Implements method for updating the output data in the corresponding data
+% model element for in-service 3-phase lines from the math model solution.
 
 %   MATPOWER
 %   Copyright (c) 2022-2024, Power Systems Engineering Research Center (PSERC)

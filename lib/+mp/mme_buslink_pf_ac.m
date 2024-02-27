@@ -1,8 +1,14 @@
 classdef (Abstract) mme_buslink_pf_ac < mp.mme_buslink
 % mp.mme_buslink_pf_ac - Math model element abstract base class for 1-to-3-phase buslink for AC PF/CPF.
+%
+% Abstract math model element base class for 1-to-3-phase buslink elements
+% for AC power flow and CPF problems.
+%
+% Implements methods for adding per-phase active and reactive power variables
+% and for forming and adding voltage and reactive power constraints.
 
 %   MATPOWER
-%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

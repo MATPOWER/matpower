@@ -1,8 +1,11 @@
 classdef (Abstract) nme_branch < mp.nm_element
 % mp.nme_branch - Network model element abstract base class for branch.
+%
+% Implements the network model element for branch elements, including
+% transmission lines and transformers, with 2 ports per branch.
 
 %   MATPOWER
-%   Copyright (c) 2019-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2019-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

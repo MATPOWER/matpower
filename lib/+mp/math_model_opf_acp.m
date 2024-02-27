@@ -1,8 +1,13 @@
 classdef (Abstract) math_model_opf_acp < mp.math_model_opf_ac
-% mp.math_model_opf_acp - Abstract base class for AC-polar OPF **math model** objects.
+% mp.math_model_opf_acp - Abstract base class for AC polar OPF **math model** objects.
+%
+% Provides formulation-specific and OPF-specific subclasses for elements.
+%
+% Implements convert_x_m2n() to convert from math model state to network
+% model state.
 
 %   MATPOWER
-%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

@@ -1,5 +1,10 @@
 classdef mme_shunt_cpf < mp.mme_shunt_pf_ac
 % mp.mme_shunt_cpf - Math model element for shunt for CPF.
+%
+% Math model element class for shunt elements for AC CPF problems.
+%
+% Implements method for updating the output data in the corresponding data
+% model element for in-service shunts from the math model solution.
 
 %   MATPOWER
 %   Copyright (c) 2022-2024, Power Systems Engineering Research Center (PSERC)

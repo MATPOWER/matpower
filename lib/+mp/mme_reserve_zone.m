@@ -1,5 +1,11 @@
 classdef mme_reserve_zone < mp.mm_element
 % mp.mme_reserve_zone - Mathematical model element for reserve zone.
+%
+% Math model element class for reserve zone elements.
+%
+% Implements methods for adding reserve zone constraints, and for updating
+% the output data in the corresponding data model element for in-service
+% reserve zones from the math model solution.
 
 %   MATPOWER
 %   Copyright (c) 2022-2024, Power Systems Engineering Research Center (PSERC)

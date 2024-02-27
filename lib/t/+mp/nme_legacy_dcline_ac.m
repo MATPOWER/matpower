@@ -1,5 +1,8 @@
 classdef (Abstract) nme_legacy_dcline_ac < mp.nme_legacy_dcline
 % mp.nme_legacy_dcline_ac - Network model element abstract base class for legacy DC line for AC formulation.
+%
+% Adds non-voltage state variables ``Pdcf``, ``Qdcf``, ``Pdct``, and ``Qdct``
+% to the network model and builds the parameter :math:`\NN`.
 
 %   MATPOWER
 %   Copyright (c) 2019-2024, Power Systems Engineering Research Center (PSERC)

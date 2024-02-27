@@ -1,5 +1,8 @@
 classdef (Abstract) nme_legacy_dcline < mp.nm_element
 % mp.nme_legacy_dcline - Network model element abstract base class for legacy DC line.
+%
+% Implements the network model element for legacy DC line elements, with
+% 2 ports and 2 non-voltage states per DC line.
 
 %   MATPOWER
 %   Copyright (c) 2019-2024, Power Systems Engineering Research Center (PSERC)

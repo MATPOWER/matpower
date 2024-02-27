@@ -1,8 +1,10 @@
 classdef (Abstract) nme_branch_ac < mp.nme_branch% & mp.form_ac
 % mp.nme_branch_ac - Network model element abstract base class for branch for AC formulations.
+%
+% Implements building of the admittance parameter :math:`\YY` for branches.
 
 %   MATPOWER
-%   Copyright (c) 2019-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2019-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -14,7 +16,8 @@ classdef (Abstract) nme_branch_ac < mp.nme_branch% & mp.form_ac
 
     methods
         function obj = build_params(obj, nm, dm)
-            %
+            % Builds the admittance parameter :math:`\YY` for branches.
+
             build_params@mp.nme_branch(obj, nm, dm);    %% call parent
 
             dme = obj.data_model_element(dm);

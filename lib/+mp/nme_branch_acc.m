@@ -1,8 +1,11 @@
 classdef nme_branch_acc < mp.nme_branch_ac & mp.form_acc
 % mp.nme_branch_acc - Network model element for branch for AC cartesian voltage formulations.
+%
+% Implements functions for the voltage angle difference limits and their
+% derivatives and inherits from mp.form_acc.
 
 %   MATPOWER
-%   Copyright (c) 2018-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2018-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Baljinnyam Sereeter, Delft University of Technology
 %

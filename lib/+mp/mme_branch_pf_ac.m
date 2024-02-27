@@ -1,5 +1,11 @@
 classdef mme_branch_pf_ac < mp.mme_branch
 % mp.mme_branch_pf_ac - Math model element for branch for AC power flow.
+%
+% Math model element class for branch elements, including transmission lines
+% and transformers, for AC power flow problems.
+%
+% Implements updating the output data in the corresponding data model
+% element for in-service branches from the math model solution.
 
 %   MATPOWER
 %   Copyright (c) 2022-2024, Power Systems Engineering Research Center (PSERC)

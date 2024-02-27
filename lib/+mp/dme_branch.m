@@ -1,7 +1,11 @@
 classdef dme_branch < mp.dm_element
 % mp.dme_branch - Data model element for branch.
 %
-% Adds the following columns in the main data table:
+% Implements the data element model for branch elements, including
+% transmission lines and transformers.
+%
+% Adds the following columns in the main data table, found in the
+% :attr:`tab` property:
 %
 %   ===========  =========  ========================================
 %   Name         Type       Description

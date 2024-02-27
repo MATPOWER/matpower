@@ -1,5 +1,11 @@
 classdef mme_bus_opf_dc < mp.mme_bus
 % mp.mme_bus_opf_dc - Math model element for bus for DC OPF.
+%
+% Math model element class for bus elements for DC OPF problems.
+%
+% Implements methods for forming an interior initial point and for updating
+% the output data in the corresponding data model element for in-service
+% buses from the math model solution.
 
 %   MATPOWER
 %   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)

@@ -1,5 +1,12 @@
 classdef (Abstract) mme_branch_opf_ac < mp.mme_branch_opf
 % mp.mme_branch_opf_ac - Math model element abstract base class for branch for AC OPF.
+%
+% Math model element abstract base class for branch elements, including
+% transmission lines and transformers, for AC OPF problems.
+%
+% Implements methods for adding of branch flow constraints and for updating
+% the output data in the corresponding data model element for in-service
+% branches from the math model solution.
 
 %   MATPOWER
 %   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)

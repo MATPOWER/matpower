@@ -1,8 +1,11 @@
 classdef (Abstract) nme_shunt < mp.nm_element
 % mp.nme_shunt - Network model element abstract base class for shunt.
+%
+% Implements the network model element for shunt elements, with 1 port per
+% shunt.
 
 %   MATPOWER
-%   Copyright (c) 2019-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2019-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

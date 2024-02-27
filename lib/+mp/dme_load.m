@@ -1,7 +1,11 @@
 classdef dme_load < mp.dm_element
 % mp.dme_load - Data model element for load.
 %
-% Adds the following columns in the main data table:
+% Implements the data element model for load elements, using a ZIP load
+% model.
+%
+% Adds the following columns in the main data table, found in the
+% :attr:`tab` property:
 %
 %   ========  =========  =====================================
 %   Name      Type       Description

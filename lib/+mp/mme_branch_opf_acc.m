@@ -1,8 +1,15 @@
 classdef mme_branch_opf_acc < mp.mme_branch_opf_ac
 % mp.mme_branch_opf_acc - Math model element for branch for AC cartesian voltage OPF.
+%
+% Math model element class for branch elements, including transmission lines
+% and transformers, for AC cartesian voltage OPF problems.
+%
+% Implements method for adding branch angle difference constraints and
+% overrides method to extract shadow prices for these constraints from
+% the math model solution.
 
 %   MATPOWER
-%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Baljinnyam Sereeter, Delft University of Technology
 %

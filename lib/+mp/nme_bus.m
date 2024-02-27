@@ -1,8 +1,12 @@
 classdef (Abstract) nme_bus < mp.nm_element
 % mp.nme_bus - Network model element abstract base class for bus.
+%
+% Implements the network model element for bus elements, with 1 node per bus.
+%
+% Implements node type methods.
 
 %   MATPOWER
-%   Copyright (c) 2019-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2019-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

@@ -1,8 +1,10 @@
 classdef (Abstract) nme_load < mp.nm_element
 % mp.nme_load - Network model element abstract base class for load.
+%
+% Implements the network model element for load elements, with 1 port per load.
 
 %   MATPOWER
-%   Copyright (c) 2019-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2019-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

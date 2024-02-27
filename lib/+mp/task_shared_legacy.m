@@ -2,7 +2,8 @@ classdef (Abstract) task_shared_legacy < handle
 % mp.task_shared_legacy - Shared legacy task functionality.
 %
 % Provides legacy task functionality shared across different tasks
-% (e.g. PF, CPF, OPF).
+% (e.g. PF, CPF, OPF), specifically, the pre-processing of input data
+% for the experimental system-wide ZIP load data.
 %
 % mp.task_pf Methods:
 %   * run_pre_legacy - handle experimental system-wide ZIP load inputs
@@ -22,7 +23,7 @@ classdef (Abstract) task_shared_legacy < handle
             % Handle experimental system-wide ZIP load inputs.
             % ::
             %
-            %   [d, mpopt] = obj.run_pre_legacy(d, mpopt)
+            %   [d, mpopt] = task.run_pre_legacy(d, mpopt)
             %
             % Inputs:
             %   d : data source specification, currently assumed to be a
@@ -33,7 +34,7 @@ classdef (Abstract) task_shared_legacy < handle
             %   d : updated value of corresponding input
             %   mpopt (struct) : updated value of corresponding input
             %
-            % Moves the legacy experimental system-wide load data from
+            % Moves the legacy experimental system-wide ZIP load data from
             % ``mpopt.exp.sys_wide_zip_loads`` to ``d.sys_wide_zip_loads``
             % to make it available to the data model converter
             % (mp.dmce_load_mpc2).

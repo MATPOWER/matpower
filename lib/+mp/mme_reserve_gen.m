@@ -1,5 +1,12 @@
 classdef mme_reserve_gen < mp.mm_element
 % mp.mme_reserve_gen - Mathematical model element for reserve generator.
+%
+% Math model element class for reserve generator elements.
+%
+% Implements methods for adding reserve variables, costs, and per-generator
+% reserve constraints, and for updating the output data in the corresponding
+% data model element for in-service reserve generators from the math model
+% solution.
 
 %   MATPOWER
 %   Copyright (c) 2022-2024, Power Systems Engineering Research Center (PSERC)

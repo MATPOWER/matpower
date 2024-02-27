@@ -1,8 +1,10 @@
 classdef (Abstract) nme_shunt_ac < mp.nme_shunt% & mp.form_ac
 % mp.nme_shunt_ac - Network model element abstract base class for shunt for AC formulations.
+%
+% Builds the parameter :math:`\YY`.
 
 %   MATPOWER
-%   Copyright (c) 2019-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2019-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

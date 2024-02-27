@@ -1,7 +1,11 @@
 classdef dme_branch_opf < mp.dme_branch & mp.dme_shared_opf
 % mp.dme_branch_opf - Data model element for branch for OPF.
 %
-% Adds the following columns in the main data table:
+% To parent class :class:`mp.dme_branch`, adds shadow prices on flow and
+% angle difference limits, and pretty-printing for **lim** sections.
+%
+% Adds the following columns in the main data table, found in the
+% :attr:`tab` property:
 %
 %   =================  ========  ===================================
 %   Name               Type      Description

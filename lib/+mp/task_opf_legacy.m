@@ -2,7 +2,9 @@ classdef task_opf_legacy < mp.task_opf & mp.task_shared_legacy
 % mp.task_opf - |MATPOWER| task for legacy optimal power flow (OPF).
 %
 % Adds functionality needed by the *legacy* |/MATPOWER/| *framework* to the
-% task implementation for the optimal power flow problem.
+% task implementation for the optimal power flow problem. This consists
+% of pre-processing some input data and exporting and packaging result data,
+% as well as using some legacy specific model sub-classes.
 %
 % mp.task_pf Methods:
 %   * run_pre - pre-process inputs that are for legacy framework only
@@ -28,7 +30,7 @@ classdef task_opf_legacy < mp.task_opf & mp.task_shared_legacy
             % Pre-process inputs that are for *legacy framework* only.
             % ::
             %
-            %   [d, mpopt] = obj.run_pre(d, mpopt)
+            %   [d, mpopt] = task.run_pre(d, mpopt)
             %
             % Inputs:
             %   d : data source specification, currently assumed to be a
@@ -50,7 +52,7 @@ classdef task_opf_legacy < mp.task_opf & mp.task_shared_legacy
             % Export results back to data model source.
             % ::
             %
-            %   obj.run_post(mm, nm, dm, mpopt)
+            %   task.run_post(mm, nm, dm, mpopt)
             %
             % Inputs:
             %   mm (mp.math_model) : mathmatical model object
@@ -59,7 +61,7 @@ classdef task_opf_legacy < mp.task_opf & mp.task_shared_legacy
             %   mpopt (struct) : |MATPOWER| options struct
             %
             % Output:
-            %   obj (mp.task) : task object
+            %   task (mp.task) : task object
             %
             % Calls mp.dm_converter.export and saves the result
             % in the data model ``source`` property.
@@ -74,7 +76,7 @@ classdef task_opf_legacy < mp.task_opf & mp.task_shared_legacy
             % Set to mp.dm_converter_mpc2_legacy.
             % ::
             %
-            %   dmc_class = obj.dm_converter_class_mpc2_default()
+            %   dmc_class = task.dm_converter_class_mpc2_default()
 
             dmc_class = @mp.dm_converter_mpc2_legacy;
         end
@@ -126,7 +128,7 @@ classdef task_opf_legacy < mp.task_opf & mp.task_shared_legacy
             % Post-process *legacy framework* outputs.
             % ::
             %
-            %   [results, success, raw] = obj.legacy_post_run(mpopt)
+            %   [results, success, raw] = task.legacy_post_run(mpopt)
             %
             % Input:
             %   mpopt (struct) : |MATPOWER| options struct

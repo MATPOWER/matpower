@@ -1,5 +1,34 @@
 classdef dme_legacy_dcline < mp.dm_element
 % mp.dme_legacy_dcline - Data model element for legacy DC line.
+%
+% Implements the data element model for legacy DC line elements, with linear
+% line losses.
+%
+%   :math:`p_\mathrm{loss} = \param{l}_0 + \param{l}_1 p_\mathrm{fr}`
+%
+% Adds the following columns in the main data table, found in the
+% :attr:`tab` property:
+%
+%   ==================  =========  ========================================
+%   Name                Type       Description
+%   ==================  =========  ========================================
+%   ``bus_fr``          *integer*  bus ID (``uid``) of "from" bus
+%   ``bus_to``          *integer*  bus ID (``uid``) of "to" bus
+%   ``loss0``           *double*   :math:`\param{l}_0`, constant term of loss function (MW)
+%   ``loss1``           *double*   :math:`\param{l}_1`, linear coefficient of loss function (MW/MW)
+%   ``vm_setpoint_fr``  *double*   per unit "from" bus voltage magnitude setpoint
+%   ``vm_setpoint_to``  *double*   per unit "to" bus voltage magnitude setpoint
+%   ``p_fr_lb``         *double*   lower bound on MW flow at "from" port
+%   ``p_fr_ub``         *double*   upper bound on MW flow at "from" port
+%   ``q_fr_lb``         *double*   lower bound on MVAr injection into "from" bus
+%   ``q_fr_ub``         *double*   upper bound on MVAr injection into "from" bus
+%   ``q_to_lb``         *double*   lower bound on MVAr injection into "to" bus
+%   ``q_to_ub``         *double*   upper bound on MVAr injection into "to" bus
+%   ``p_fr``            *double*   MW flow at "from" end ("from" --> "to")
+%   ``q_fr``            *double*   MVAr injection into "from" bus
+%   ``p_to``            *double*   MW flow at "to" end ("from" --> "to")
+%   ``q_to``            *double*   MVAr injection into "to" bus
+%   ==================  =========  ========================================
 
 %   MATPOWER
 %   Copyright (c) 2020-2024, Power Systems Engineering Research Center (PSERC)

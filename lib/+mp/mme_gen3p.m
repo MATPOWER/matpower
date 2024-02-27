@@ -1,5 +1,10 @@
 classdef mme_gen3p < mp.mm_element
 % mp.mme_gen3p - Math model element for 3-phase generator.
+%
+% Math model element base class for 3-phase generator elements.
+%
+% Implements method for updating the output data in the corresponding data
+% model element for in-service 3-phase generators from the math model solution.
 
 %   MATPOWER
 %   Copyright (c) 2022-2024, Power Systems Engineering Research Center (PSERC)

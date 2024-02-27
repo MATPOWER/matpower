@@ -1,7 +1,10 @@
 classdef dme_line3p < mp.dm_element
 % mp.dme_line3p - Data model element for 3-phase line.
 %
-% Adds the following columns in the main data table:
+% Implements the data element model for 3-phase distribution line elements.
+%
+% Adds the following columns in the main data table, found in the
+% :attr:`tab` property:
 %
 %   ===========  =========  =============================================
 %   Name         Type       Description
@@ -24,7 +27,7 @@ classdef dme_line3p < mp.dm_element
 %   ``ql3_to``   *double*   phase 3 reactive power injection at "to" end *(kVAr)*
 %   ===========  =========  =============================================
 %
-% The line construction table in the :attr:`lc` property is defined as a
+% The line construction table in the :attr:`lc_tab` property is defined as a
 % table with the following columns:
 %
 %   ======  =========  ==================================================
@@ -52,7 +55,7 @@ classdef dme_line3p < mp.dm_element
         fbus    % bus index vector for "from" bus (all lines)
         tbus    % bus index vector for "to" bus (all lines)
         freq    % system frequency, in Hz
-        lc      % index into lc_tab for lines that are on
+        lc      % index into :attr:`lc_tab` for lines that are on
         len     % length for lines that are on
         lc_tab  % line construction table
         ys      % cell array of 3x3 series admittance matrices for lc rows

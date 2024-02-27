@@ -1,5 +1,32 @@
 classdef dme_legacy_dcline_opf < mp.dme_legacy_dcline & mp.dme_shared_opf
 % mp.dme_legacy_dcline_opf - Data model element for legacy DC line for OPF.
+%
+% To parent class :class:`mp.dme_legacy_dcline`, adds costs, shadow prices
+% on active and reactive flow limits, and pretty-printing for **lim**
+% sections.
+%
+% Adds the following columns in the main data table, found in the
+% :attr:`tab` property:
+%
+%   ==============  ===============  ===================================
+%   Name            Type             Description
+%   ==============  ===============  ===================================
+%   ``cost_pg``     *mp.cost_table*  cost of active power flow *(u/MW)* [#]_
+%   ``mu_p_fr_lb``  *double*         shadow price on MW flow lower bound at
+%                                    "from" end *(u/MW)* [1]_
+%   ``mu_p_fr_ub``  *double*         shadow price on MW flow upper bound at
+%                                    "from" end *(u/MW)* [1]_
+%   ``mu_q_fr_lb``  *double*         shadow price on lower bound of MVAr
+%                                    injection at "from" bus *(u/degree)* [1]_
+%   ``mu_q_fr_ub``  *double*         shadow price on upper bound of MVAr
+%                                    injection at "from" bus *(u/degree)* [1]_
+%   ``mu_q_to_lb``  *double*         shadow price on lower bound of MVAr
+%                                    injection at "to" bus *(u/degree)* [1]_
+%   ``mu_q_to_ub``  *double*         shadow price on upper bound of MVAr
+%                                    injection at "to" bus *(u/degree)* [1]_
+%   ==============  ===============  ===================================
+%
+% .. [#] Here *u* denotes the units of the objective function, e.g. USD.
 
 %   MATPOWER
 %   Copyright (c) 2020-2024, Power Systems Engineering Research Center (PSERC)

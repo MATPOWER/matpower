@@ -1,5 +1,10 @@
 classdef mme_legacy_dcline_opf_dc < mp.mme_legacy_dcline_opf
 % mp.mme_legacy_dcline_opf_dc - Math model element for legacy DC line for DC OPF.
+%
+% Math model element class for legacy DC line elements for DC OPF problems.
+%
+% Implements method for updating the output data in the corresponding data
+% model element for in-service DC lines from the math model solution.
 
 %   MATPOWER
 %   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)

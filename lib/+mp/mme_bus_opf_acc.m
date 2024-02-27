@@ -1,5 +1,14 @@
 classdef mme_bus_opf_acc < mp.mme_bus_opf_ac
 % mp.mme_bus_opf_acc - Math model element for bus for AC cartesian voltage OPF.
+%
+% Math model element class for bus elements for AC cartesian voltage OPF
+% problems.
+%
+% Implements methods for adding constraints for reference voltage angle,
+% fixed voltage magnitudes and voltage magnitude limits, for forming an
+% interior initial point and for updating the output data in the
+% corresponding data model element for in-service buses from the math
+% model solution.
 
 %   MATPOWER
 %   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)

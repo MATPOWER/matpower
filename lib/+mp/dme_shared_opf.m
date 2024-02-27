@@ -1,10 +1,11 @@
 classdef (Abstract) dme_shared_opf < handle
 % mp.dme_shared_opf - Mixin class for OPF **data model element** objects.
 %
-% For all elements of mp.data_model_opf.
+% For all elements of mp.data_model_opf, adds shared functionality for
+% pretty-printing of **lim** sections.
 
 %   MATPOWER
-%   Copyright (c) 2022-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2022-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

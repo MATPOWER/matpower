@@ -1,5 +1,8 @@
 classdef (Abstract) mme_branch < mp.mm_element
 % mp.mme_branch - Math model element abstract base class for branch.
+%
+% Abstract math model element base class for branch elements, including
+% transmission lines and transformers.
 
 %   MATPOWER
 %   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)

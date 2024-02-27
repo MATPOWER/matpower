@@ -1,8 +1,14 @@
 classdef mme_buslink_opf_acc < mp.mme_buslink_opf
 % mp.mme_buslink_opf_acc - Math model element for 1-to-3-phase buslink for AC cartesian voltage OPF.
+%
+% Math model element class for 1-to-3-phase buslink elements for AC cartesian
+% OPF problems.
+%
+% Implements methods for adding constraints to match voltages across each
+% buslink.
 
 %   MATPOWER
-%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

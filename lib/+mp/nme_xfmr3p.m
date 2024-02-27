@@ -1,8 +1,14 @@
 classdef nme_xfmr3p < mp.nm_element & mp.form_acp
 % mp.nme_xfmr3p - Network model element for 3-phase transformer.
+%
+% Implements the network model element for 3-phase transformer elements,
+% with 6 ports per transformer.
+%
+% Implements building of the admittance parameter :math:`\YY` for 3-phase
+% transformers and inherits from mp.form_acp.
 
 %   MATPOWER
-%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

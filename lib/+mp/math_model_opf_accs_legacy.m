@@ -1,8 +1,11 @@
 classdef math_model_opf_accs_legacy < mp.math_model_opf_accs & mp.mm_shared_opf_legacy
 % mp.math_model_opf_accs_legacy - OPF **math model** for AC-cartesian-power formulation w/legacy extensions.
+%
+% Provides formluation-specific methods for handling legacy user
+% customization of OPF problem.
 
 %   MATPOWER
-%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

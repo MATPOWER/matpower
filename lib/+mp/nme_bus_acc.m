@@ -1,8 +1,11 @@
 classdef nme_bus_acc < mp.nme_bus & mp.form_acc
 % mp.nme_bus_acc - Network model element for bus for AC cartesian voltage formulations.
+%
+% Adds voltage variables ``Vr`` and ``Vi`` to the network model and inherits
+% from mp.form_acc.
 
 %   MATPOWER
-%   Copyright (c) 2018-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2018-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Baljinnyam Sereeter, Delft University of Technology
 %

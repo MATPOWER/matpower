@@ -1,8 +1,11 @@
 classdef math_model_opf_accs < mp.math_model_opf_acc
 % mp.math_model_opf_accs - OPF **math model** for AC-cartesian-power formulation.
+%
+% Implements formulation-specific and OPF-specific node balance constraint
+% and node balance price methods.
 
 %   MATPOWER
-%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

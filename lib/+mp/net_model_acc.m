@@ -1,5 +1,5 @@
 classdef net_model_acc < mp.net_model_ac & mp.form_acc
-% mp.net_model_acc - Concrete class for |MATPOWER| AC-cartesian **network model** objects.
+% mp.net_model_acc - Concrete class for |MATPOWER| AC cartesian **network model** objects.
 %
 % This network model class and all of its network model element classes are
 % specific to the AC cartesian formulation and therefore inherit from
@@ -18,7 +18,7 @@ classdef net_model_acc < mp.net_model_ac & mp.form_acc
 % mp.nm_element.
 
 %   MATPOWER
-%   Copyright (c) 2019-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2019-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

@@ -6,6 +6,13 @@ function task_rv = run_mp(task_class, d, mpopt, varargin)
 %   run_mp(task_class, d, mpopt, ...)
 %   task = run_mp(...)
 %
+% This is **the** main function in the **flexible framework** for running
+% |MATPOWER|. It creates the task object, applying any specified extensions,
+% runs the task, and prints or saves the solution, if desired.
+%
+% It is typically called from one of the wrapper functions such as run_pf,
+% run_cpf, or run_opf.
+%
 % Inputs:
 %   task_class (function handle) : handle to constructor of default task
 %       class for type of task to be run, e.g. mp.task_pf for power
@@ -14,7 +21,7 @@ function task_rv = run_mp(task_class, d, mpopt, varargin)
 %       case name or case struct (``mpc``)
 %   mpopt (struct) : |MATPOWER| options struct
 %
-%       Additional optional inputs can be provided as <name>, <val> pairs,
+%       Additional optional inputs can be provided as *<name>, <val>* pairs,
 %       with the following options:
 %
 %       - ``'print_fname'`` - file name for saving pretty-printed output
@@ -26,10 +33,18 @@ function task_rv = run_mp(task_class, d, mpopt, varargin)
 %   task (mp.task) : task object containing the solved run including the
 %       data, network, and mathematical model objects.
 %
+% Solution results are available in the data model, and its elements,
+% contained in the returned task object. For example:
+% ::
+%
+%   task = run_opf('case9');
+%   lam_p = task.dm.elements.bus.tab.lam_p  % nodal price
+%   pg = task.dm.elements.gen.tab.pg        % generator active dispatch
+%
 % See also run_pf, run_cpf, run_opf, mp.task.
 
 %   MATPOWER
-%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

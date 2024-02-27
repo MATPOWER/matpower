@@ -1,5 +1,11 @@
 classdef math_model_pf_acps < mp.math_model_pf_ac & mp.mm_shared_pfcpf_acps
 % mp.math_model_pf_acps - Power flow (PF) **math model** for AC-polar-power formulation.
+%
+% Implements formulation-specific node balance constraints and inherits
+% from formulation-specific class for shared PF/CPF code.
+%
+% Also includes implementations of methods specific to fast-decoupled
+% power flow.
 
 %   MATPOWER
 %   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)

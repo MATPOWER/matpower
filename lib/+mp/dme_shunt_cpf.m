@@ -1,8 +1,12 @@
 classdef dme_shunt_cpf < mp.dme_shunt
 % mp.dme_shunt_cpf - Data model element for shunt for CPF.
+%
+% To parent class :class:`mp.dme_shunt`, adds method for adjusting model
+% parameters based on value of continuation parameter :math:`\lambda`, and
+% overrides export_vars() to export these updated parameter values.
 
 %   MATPOWER
-%   Copyright (c) 2020-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

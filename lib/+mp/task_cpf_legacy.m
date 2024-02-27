@@ -2,7 +2,8 @@ classdef task_cpf_legacy < mp.task_cpf & mp.task_shared_legacy
 % mp.task_cpf - |MATPOWER| task for legacy continuation power flow (CPF).
 %
 % Adds functionality needed by the *legacy* |/MATPOWER/| *framework* to the
-% task implementation for the continuation power flow problem.
+% task implementation for the continuation power flow problem. This consists
+% of pre-processing some input data and exporting and packaging result data.
 %
 % mp.task_pf Methods:
 %   * run_pre - pre-process inputs that are for legacy framework only
@@ -25,7 +26,7 @@ classdef task_cpf_legacy < mp.task_cpf & mp.task_shared_legacy
             % Pre-process inputs that are for *legacy framework* only.
             % ::
             %
-            %   [d, mpopt] = obj.run_pre(d, mpopt)
+            %   [d, mpopt] = task.run_pre(d, mpopt)
             %
             % Inputs:
             %   d : data source specification, currently assumed to be a
@@ -48,7 +49,7 @@ classdef task_cpf_legacy < mp.task_cpf & mp.task_shared_legacy
             % Export results back to data model source.
             % ::
             %
-            %   obj.run_post(mm, nm, dm, mpopt)
+            %   task.run_post(mm, nm, dm, mpopt)
             %
             % Inputs:
             %   mm (mp.math_model) : mathmatical model object
@@ -57,7 +58,7 @@ classdef task_cpf_legacy < mp.task_cpf & mp.task_shared_legacy
             %   mpopt (struct) : |MATPOWER| options struct
             %
             % Output:
-            %   obj (mp.task) : task object
+            %   task (mp.task) : task object
             %
             % Calls mp.dm_converter.export and saves the result
             % in the data model ``source`` property.
@@ -72,7 +73,7 @@ classdef task_cpf_legacy < mp.task_cpf & mp.task_shared_legacy
             % Post-process *legacy framework* outputs.
             % ::
             %
-            %   [results, success] = obj.legacy_post_run(mpopt)
+            %   [results, success] = task.legacy_post_run(mpopt)
             %
             % Input:
             %   mpopt (struct) : |MATPOWER| options struct

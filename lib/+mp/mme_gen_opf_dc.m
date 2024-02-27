@@ -1,5 +1,11 @@
 classdef mme_gen_opf_dc < mp.mme_gen_opf
 % mp.mme_gen_opf_dc - Math model element for generator for DC OPF.
+%
+% Math model element class for generator elements for DC OPF problems.
+%
+% Implements methods for buliding cost parameters, adding piecewise linear
+% cost constraints, and for updating the output data in the corresponding
+% data model element for in-service generators from the math model solution.
 
 %   MATPOWER
 %   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)

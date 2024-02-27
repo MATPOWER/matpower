@@ -1,5 +1,5 @@
 classdef net_model_acp < mp.net_model_ac & mp.form_acp
-% mp.net_model_acp - Concrete class for |MATPOWER| AC-polar **network model** objects.
+% mp.net_model_acp - Concrete class for |MATPOWER| AC polar **network model** objects.
 %
 % This network model class and all of its network model element classes are
 % specific to the AC polar formulation and therefore inherit from mp.form_acp.
@@ -17,7 +17,7 @@ classdef net_model_acp < mp.net_model_ac & mp.form_acp
 % mp.nm_element.
 
 %   MATPOWER
-%   Copyright (c) 2019-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2019-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

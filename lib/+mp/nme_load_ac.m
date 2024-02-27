@@ -1,8 +1,11 @@
 classdef (Abstract) nme_load_ac < mp.nme_load% & mp.form_ac
 % mp.nme_load_ac - Network model element abstract base class for load for AC formulations.
+%
+% Builds the parameters :math:`\sv` and :math:`\YY` and nonlinear functions
+% :math:`\Snln(\X)` and :math:`\Inln(\X)`.
 
 %   MATPOWER
-%   Copyright (c) 2019-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2019-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

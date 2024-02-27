@@ -1,7 +1,10 @@
 classdef dme_xfmr3p < mp.dm_element
 % mp.dme_xfmr3p - Data model element for 3-phase transformer.
 %
-% Adds the following columns in the main data table:
+% Implements the data element model for 3-phase transformer elements.
+%
+% Adds the following columns in the main data table, found in the
+% :attr:`tab` property:
 %
 %   ============  =========  =============================================
 %   Name          Type       Description

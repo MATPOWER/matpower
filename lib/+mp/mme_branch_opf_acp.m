@@ -1,8 +1,13 @@
 classdef mme_branch_opf_acp < mp.mme_branch_opf_ac
 % mp.mme_branch_opf_acp - Math model element for branch for AC polar voltage OPF.
+%
+% Math model element class for branch elements, including transmission lines
+% and transformers, for AC polar voltage OPF problems.
+%
+% Implements method for adding branch angle difference constraints.
 
 %   MATPOWER
-%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

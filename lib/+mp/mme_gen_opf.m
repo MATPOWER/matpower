@@ -1,5 +1,11 @@
 classdef (Abstract) mme_gen_opf < mp.mme_gen
 % mp.mme_gen_opf - Math model element abstract base class for generator for OPF.
+%
+% Math model element abstract base class for generator elements for OPF
+% problems.
+%
+% Implements methods to add costs, including piecewise linear cost variables,
+% and to form an interior initial point for cost variables.
 
 %   MATPOWER
 %   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)

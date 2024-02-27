@@ -1,8 +1,13 @@
 classdef mme_bus3p_opf_acc < mp.mme_bus3p
 % mp.mme_bus3p_opf_acc - Math model element for 3-phase bus for AC cartesian voltage OPF.
+%
+% Math model element class for 3-phase bus elements for AC cartesian voltage
+% OPF problems.
+%
+% Implements method for forming an interior initial point.
 
 %   MATPOWER
-%   Copyright (c) 2022-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2022-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

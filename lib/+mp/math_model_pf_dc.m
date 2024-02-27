@@ -1,8 +1,13 @@
 classdef math_model_pf_dc < mp.math_model_pf & mp.mm_shared_pfcpf_dc
 % mp.math_model_pf_dc - Power flow (PF) **math model** for DC formulation.
+%
+% Provides formulation-specific and PF-specific subclasses for elements
+% and implements formulation-specific node balance constraints.
+%
+% Overrides the default solve_opts() method.
 
 %   MATPOWER
-%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

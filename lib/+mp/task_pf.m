@@ -3,6 +3,9 @@ classdef task_pf < mp.task
 %
 % Provides task implementation for the power flow problem.
 %
+% This includes the handling of iterative runs to enforce generator
+% reactive power limits, if requested.
+%
 % mp.task_pf Properties:
 %   * tag - task tag 'PF'
 %   * name - task name 'Power Flow'
@@ -26,7 +29,7 @@ classdef task_pf < mp.task
 % See also mp.task.
 
 %   MATPOWER
-%   Copyright (c) 2020-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

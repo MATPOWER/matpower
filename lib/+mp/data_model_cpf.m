@@ -1,13 +1,18 @@
 classdef data_model_cpf < mp.data_model
 % mp.data_model_cpf - |MATPOWER| **data model** for CPF tasks.
 %
+% The purpose of this class is to include CPF-specific subclasses for the
+% load and shunt elements, which need to be able to provide versions of
+% their model parameters that are parameterized by the continuation
+% parameter :math:`\lambda`.
+%
 % data_model_cpf Methods:
 %   * data_model_cpf - constructor, assign default data model element classes
 %
 % See also mp.data_model.
 
 %   MATPOWER
-%   Copyright (c) 2020-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

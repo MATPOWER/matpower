@@ -1,8 +1,13 @@
 classdef (Abstract) mme_buslink_opf < mp.mme_buslink
 % mp.mme_buslink_opf - Math model element abstract base class for 1-to-3-phase buslink for OPF.
+%
+% Abstract math model element base class for 1-to-3-phase buslink elements
+% for OPF problems.
+%
+% Implements (currently empty) method for forming an interior initial point.
 
 %   MATPOWER
-%   Copyright (c) 2022-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2022-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

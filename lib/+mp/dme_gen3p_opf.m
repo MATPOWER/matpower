@@ -1,8 +1,11 @@
 classdef dme_gen3p_opf < mp.dme_gen3p & mp.dme_shared_opf
 % mp.dme_gen3p_opf - Data model element for 3-phase generator for OPF.
+%
+% To parent class :class:`mp.dme_gen3p`, adds pretty-printing for **lim**
+% sections.
 
 %   MATPOWER
-%   Copyright (c) 2022-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2022-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

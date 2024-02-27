@@ -9,6 +9,10 @@ classdef (Abstract) task < handle
 % optimal power flow, etc.). In particular, it coordinates all
 % interactions between the 3 (data, network, mathematical) model layers.
 %
+% The model objects, and indirectly their elements, as well as the solution
+% success flag and messages from the mathematical model solver, are available
+% in the properties of the task object.
+%
 % mp.task Properties:
 %   * tag - task tag - e.g. 'PF', 'CPF', 'OPF'
 %   * name - task name - e.g. 'Power Flow', etc.
@@ -63,7 +67,7 @@ classdef (Abstract) task < handle
 % See also mp.data_model, mp.net_model, mp.math_model, mp.dm_converter.
 
 %   MATPOWER
-%   Copyright (c) 2020-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
@@ -94,8 +98,8 @@ classdef (Abstract) task < handle
             % Execute the task.
             % ::
             %
-            %   obj.run(d, mpopt)
-            %   obj.run(d, mpopt, mpx)
+            %   task.run(d, mpopt)
+            %   task.run(d, mpopt, mpx)
             %
             % Inputs:
             %   d : data source specification, currently assumed to be a
@@ -104,7 +108,7 @@ classdef (Abstract) task < handle
             %   mpx (cell array of mp.extension) : |MATPOWER| Extensions
             %
             % Output:
-            %   obj (mp.task) : task object containing the solved run
+            %   task (mp.task) : task object containing the solved run
             %       including the data, network, and mathematical model
             %       objects.
             %
@@ -220,7 +224,7 @@ classdef (Abstract) task < handle
             % Controls iterations over mathematical models.
             % ::
             %
-            %   [mm, nm, dm] = obj.next_mm(mm, nm, dm, mpoopt, mpx)
+            %   [mm, nm, dm] = task.next_mm(mm, nm, dm, mpoopt, mpx)
             %
             % Inputs:
             %   mm (mp.math_model) : mathmatical model object
@@ -248,7 +252,7 @@ classdef (Abstract) task < handle
             % Controls iterations over network models.
             % ::
             %
-            %   [nm, dm] = obj.next_nm(mm, nm, dm, mpoopt, mpx)
+            %   [nm, dm] = task.next_nm(mm, nm, dm, mpoopt, mpx)
             %
             % Inputs:
             %   mm (mp.math_model) : mathmatical model object
@@ -275,7 +279,7 @@ classdef (Abstract) task < handle
             % Controls iterations over data models.
             % ::
             %
-            %   dm = obj.next_dm(mm, nm, dm, mpoopt, mpx)
+            %   dm = task.next_dm(mm, nm, dm, mpoopt, mpx)
             %
             % Inputs:
             %   mm (mp.math_model) : mathmatical model object
@@ -301,7 +305,7 @@ classdef (Abstract) task < handle
             % Called at beginning of run() method.
             % ::
             %
-            %   [d, mpopt] = obj.run_pre(d, mpopt)
+            %   [d, mpopt] = task.run_pre(d, mpopt)
             %
             % Inputs:
             %   d : data source specification, currently assumed to be a
@@ -320,7 +324,7 @@ classdef (Abstract) task < handle
             % Called at end of run() method.
             % ::
             %
-            %   obj.run_post(mm, nm, dm, mpopt)
+            %   task.run_post(mm, nm, dm, mpopt)
             %
             % Inputs:
             %   mm (mp.math_model) : mathmatical model object
@@ -329,7 +333,7 @@ classdef (Abstract) task < handle
             %   mpopt (struct) : |MATPOWER| options struct
             %
             % Output:
-            %   obj (mp.task) : task object
+            %   task (mp.task) : task object
             %
             % Subclasses can override this method to do any final
             % processing after the run is complete.
@@ -339,8 +343,8 @@ classdef (Abstract) task < handle
             % Display the pretty-printed results.
             % ::
             %
-            %   obj.print_soln(mpopt)
-            %   obj.print_soln(mpopt, fname)
+            %   task.print_soln(mpopt)
+            %   task.print_soln(mpopt, fname)
             %
             % Inputs:
             %   mpopt (struct) : |MATPOWER| options struct
@@ -382,7 +386,7 @@ classdef (Abstract) task < handle
             % Display solution header information.
             % ::
             %
-            %   obj.print_soln_header(mpopt, fd)
+            %   task.print_soln_header(mpopt, fd)
             %
             % Inputs:
             %   mpopt (struct) : |MATPOWER| options struct
@@ -411,7 +415,7 @@ classdef (Abstract) task < handle
             % Save the solved case to a file.
             % ::
             %
-            %   obj.save_soln(fname)
+            %   task.save_soln(fname)
             %
             % Input:
             %   fname (char array) : file name for saving solved case
@@ -430,7 +434,7 @@ classdef (Abstract) task < handle
             % Get data model converter constructor.
             % ::
             %
-            %   dmc_class = obj.dm_converter_class(d, mpopt, mpx)
+            %   dmc_class = task.dm_converter_class(d, mpopt, mpx)
             %
             % Inputs:
             %   d : data source specification, currently assumed to be a
@@ -477,7 +481,7 @@ classdef (Abstract) task < handle
             % Get default data model converter constructor.
             % ::
             %
-            %   dmc_class = obj.dm_converter_class_mpc2_default()
+            %   dmc_class = task.dm_converter_class_mpc2_default()
             %
             % Output:
             %   dmc_class (function handel) : handle to default constructor to
@@ -494,7 +498,7 @@ classdef (Abstract) task < handle
             % Create data model converter object.
             % ::
             %
-            %   dmc = obj.dm_converter_create(d, mpopt, mpx)
+            %   dmc = task.dm_converter_create(d, mpopt, mpx)
             %
             % Inputs:
             %   d : data source specification, currently assumed to be a
@@ -534,7 +538,7 @@ classdef (Abstract) task < handle
             % Create and build data model converter object.
             % ::
             %
-            %   dmc = obj.dm_converter_build(d, mpopt, mpx)
+            %   dmc = task.dm_converter_build(d, mpopt, mpx)
             %
             % Inputs:
             %   d : data source specification, currently assumed to be a
@@ -576,7 +580,7 @@ classdef (Abstract) task < handle
             % Get data model constructor.
             % ::
             %
-            %   dm_class = obj.data_model_class(d, mpopt, mpx)
+            %   dm_class = task.data_model_class(d, mpopt, mpx)
             %
             % Inputs:
             %   d : data source specification, currently assumed to be a
@@ -611,7 +615,7 @@ classdef (Abstract) task < handle
             % Get default data model constructor.
             % ::
             %
-            %   dm_class = obj.data_model_class_default()
+            %   dm_class = task.data_model_class_default()
             %
             % Output:
             %   dm_class (function handel) : handle to default constructor to
@@ -627,7 +631,7 @@ classdef (Abstract) task < handle
             % Create data model object.
             % ::
             %
-            %   dm = obj.data_model_create(d, mpopt, mpx)
+            %   dm = task.data_model_create(d, mpopt, mpx)
             %
             % Inputs:
             %   d : data source specification, currently assumed to be a
@@ -664,7 +668,7 @@ classdef (Abstract) task < handle
             % Create and build data model object.
             % ::
             %
-            %   dm = obj.data_model_create(d, dmc, mpopt, mpx)
+            %   dm = task.data_model_create(d, dmc, mpopt, mpx)
             %
             % Inputs:
             %   d : data source specification, currently assumed to be a
@@ -694,7 +698,7 @@ classdef (Abstract) task < handle
             % Called at beginning of data_model_build().
             % ::
             %
-            %   [dm, d] = obj.data_model_build_pre(dm, d, dmc, mpopt)
+            %   [dm, d] = task.data_model_build_pre(dm, d, dmc, mpopt)
             %
             % Inputs:
             %   dm (mp.data_model) : data model object
@@ -716,7 +720,7 @@ classdef (Abstract) task < handle
             % Called at end of data_model_build().
             % ::
             %
-            %   dm = obj.data_model_build_post(dm, dmc, mpopt)
+            %   dm = task.data_model_build_post(dm, dmc, mpopt)
             %
             % Inputs:
             %   dm (mp.data_model) : data model object
@@ -736,7 +740,7 @@ classdef (Abstract) task < handle
             % Get network model constructor.
             % ::
             %
-            %   nm_class = obj.network_model_class(dm, mpopt, mpx)
+            %   nm_class = task.network_model_class(dm, mpopt, mpx)
             %
             % Inputs:
             %   dm (mp.data_model) : data model object
@@ -770,7 +774,7 @@ classdef (Abstract) task < handle
             % Get default network model constructor.
             % ::
             %
-            %   nm_class = obj.network_model_class_default(dm, mpopt)
+            %   nm_class = task.network_model_class_default(dm, mpopt)
             %
             % Inputs:
             %   dm (mp.data_model) : data model object
@@ -793,7 +797,7 @@ classdef (Abstract) task < handle
             % Create network model object.
             % ::
             %
-            %   nm = obj.network_model_create(dm, mpopt, mpx)
+            %   nm = task.network_model_create(dm, mpopt, mpx)
             %
             % Inputs:
             %   dm (mp.data_model) : data model object
@@ -830,7 +834,7 @@ classdef (Abstract) task < handle
             % Create and build network model object.
             % ::
             %
-            %   nm = obj.network_model_build(dm, mpopt, mpx)
+            %   nm = task.network_model_build(dm, mpopt, mpx)
             %
             % Inputs:
             %   dm (mp.data_model) : data model object
@@ -854,7 +858,7 @@ classdef (Abstract) task < handle
             % Called at beginning of network_model_build().
             % ::
             %
-            %   nm = obj.network_model_build_pre(nm, dm, mpopt)
+            %   nm = task.network_model_build_pre(nm, dm, mpopt)
             %
             % Inputs:
             %   nm (mp.net_model) : network model object
@@ -873,7 +877,7 @@ classdef (Abstract) task < handle
             % Called at end of network_model_build().
             % ::
             %
-            %   nm = obj.network_model_build_post(nm, dm, mpopt)
+            %   nm = task.network_model_build_post(nm, dm, mpopt)
             %
             % Inputs:
             %   nm (mp.net_model) : network model object
@@ -892,7 +896,7 @@ classdef (Abstract) task < handle
             % Update network model state from math model solution.
             % ::
             %
-            %   nm = obj.network_model_x_soln(mm, nm)
+            %   nm = task.network_model_x_soln(mm, nm)
             %
             % Inputs:
             %   mm (mp.math_model) : mathmatical model object
@@ -910,7 +914,7 @@ classdef (Abstract) task < handle
             % Update network model state, solution values from math model solution.
             % ::
             %
-            %   nm = obj.network_model_update(mm, nm)
+            %   nm = task.network_model_update(mm, nm)
             %
             % Inputs:
             %   mm (mp.math_model) : mathmatical model object
@@ -933,7 +937,7 @@ classdef (Abstract) task < handle
             % Get mathematical model constructor.
             % ::
             %
-            %   mm_class = obj.math_model_class(nm, dm, mpopt, mpx)
+            %   mm_class = task.math_model_class(nm, dm, mpopt, mpx)
             %
             % Inputs:
             %   nm (mp.net_model) : network model object
@@ -968,7 +972,7 @@ classdef (Abstract) task < handle
             % Get default mathematical model constructor.
             % ::
             %
-            %   mm_class = obj.math_model_class_default(nm, dm, mpopt)
+            %   mm_class = task.math_model_class_default(nm, dm, mpopt)
             %
             % Inputs:
             %   nm (mp.net_model) : network model object
@@ -992,7 +996,7 @@ classdef (Abstract) task < handle
             % Create mathematical model object.
             % ::
             %
-            %   mm = obj.math_model_create(nm, dm, mpopt, mpx)
+            %   mm = task.math_model_create(nm, dm, mpopt, mpx)
             %
             % Inputs:
             %   nm (mp.net_model) : network model object
@@ -1031,7 +1035,7 @@ classdef (Abstract) task < handle
             % Create and build mathematical model object.
             % ::
             %
-            %   mm = obj.math_model_build(nm, dm, mpopt, mpx)
+            %   mm = task.math_model_build(nm, dm, mpopt, mpx)
             %
             % Inputs:
             %   nm (mp.net_model) : network model object
@@ -1065,7 +1069,7 @@ classdef (Abstract) task < handle
             % Get the options struct to pass to ``mm.solve()``.
             % ::
             %
-            %   opt = obj.math_model_opt(mm, nm, dm, mpopt)
+            %   opt = task.math_model_opt(mm, nm, dm, mpopt)
             %
             % Inputs:
             %   mm (mp.math_model) : mathmatical model object

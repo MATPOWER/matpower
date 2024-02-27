@@ -1,5 +1,11 @@
 classdef mme_legacy_dcline_pf_dc < mp.mme_legacy_dcline
 % mp.mme_legacy_dcline_pf_dc - Math model element for legacy DC line for DC power flow.
+%
+% Math model element class for legacy DC line elements for DC power flow
+% problems.
+%
+% Implements method for updating the output data in the corresponding data
+% model element for in-service DC lines from the math model solution.
 
 %   MATPOWER
 %   Copyright (c) 2022-2024, Power Systems Engineering Research Center (PSERC)

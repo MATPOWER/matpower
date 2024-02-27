@@ -1,5 +1,10 @@
 classdef mme_bus_pf_ac < mp.mme_bus
 % mp.mme_bus_pf_ac - Math model element for bus for AC power flow.
+%
+% Math model element class for bus elements for AC power flow problems.
+%
+% Implements method for updating the output data in the corresponding data
+% model element for in-service buses from the math model solution.
 
 %   MATPOWER
 %   Copyright (c) 2022-2024, Power Systems Engineering Research Center (PSERC)

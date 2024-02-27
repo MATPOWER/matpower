@@ -1,5 +1,11 @@
 classdef mme_xfmr3p < mp.mm_element
 % mp.mme_xfmr3p - Math model element for 3-phase transformer.
+%
+% Math model element base class for 3-phase transformer elements.
+%
+% Implements method for updating the output data in the corresponding data
+% model element for in-service 3-phase transformers from the math model
+% solution.
 
 %   MATPOWER
 %   Copyright (c) 2022-2024, Power Systems Engineering Research Center (PSERC)

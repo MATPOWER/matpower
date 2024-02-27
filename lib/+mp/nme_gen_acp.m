@@ -1,8 +1,10 @@
 classdef nme_gen_acp < mp.nme_gen_ac & mp.form_acp
 % mp.nme_gen_acp - Network model element for generator for AC polar voltage formulations.
+%
+% Inherits from mp.form_acp.
 
 %   MATPOWER
-%   Copyright (c) 2019-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2019-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

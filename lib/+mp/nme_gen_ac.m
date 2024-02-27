@@ -1,8 +1,11 @@
 classdef (Abstract) nme_gen_ac < mp.nme_gen% & mp.form_ac
 % mp.nme_gen_ac - Network model element abstract base class for generator for AC formulations.
+%
+% Adds non-voltage state variables ``Pg`` and ``Qg`` to the network model
+% and builds the parameter :math:`\NN`.
 
 %   MATPOWER
-%   Copyright (c) 2019-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2019-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

@@ -1,8 +1,14 @@
 classdef nme_line3p < mp.nm_element & mp.form_acp
 % mp.nme_line3p - Network model element for 3-phase line.
+%
+% Implements the network model element for 3-phase line elements, with
+% 6 ports per 3-phase line.
+%
+% Implements building of the admittance parameter :math:`\YY` for 3-phase
+% lines and inherits from mp.form_acp.
 
 %   MATPOWER
-%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

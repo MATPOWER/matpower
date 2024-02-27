@@ -1,5 +1,12 @@
 classdef mme_branch_opf_dc < mp.mme_branch_opf
 % mp.mme_branch_opf_dc - Math model element for branch for DC OPF.
+%
+% Math model element class for branch elements, including transmission lines
+% and transformers, for DC OPF problems.
+%
+% Implements methods for adding of branch flow and angle difference
+% constraints and for updating the output data in the corresponding data
+% model element for in-service branches from the math model solution.
 
 %   MATPOWER
 %   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)

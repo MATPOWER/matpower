@@ -1,5 +1,12 @@
 classdef mme_gen_opf_ac < mp.mme_gen_opf
 % mp.mme_gen_opf_ac - Math model element for generator for AC OPF.
+%
+% Math model element class for generator elements for AC OPF problems.
+%
+% Implements methods for buliding and adding PQ capability constraints,
+% dispatchable load power factor constraints, polynomial costs, and for
+% updating the output data in the corresponding data model element for
+% in-service generators from the math model solution.
 
 %   MATPOWER
 %   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)

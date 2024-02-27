@@ -1,8 +1,11 @@
 classdef dme_shunt_opf < mp.dme_shunt & mp.dme_shared_opf
 % mp.dme_shunt_opf - Data model element for shunt for OPF.
+%
+% To parent class :class:`mp.dme_shunt`, adds pretty-printing for **lim**
+% sections.
 
 %   MATPOWER
-%   Copyright (c) 2022-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2022-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

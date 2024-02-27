@@ -1,7 +1,11 @@
 classdef dme_bus_opf < mp.dme_bus & mp.dme_shared_opf
 % mp.dme_bus_opf - Data model element for bus for OPF.
 %
-% Adds the following columns in the main data table:
+% To parent class :class:`mp.dme_bus`, adds shadow prices on power balance
+% and voltage magnitude limits, and pretty-printing for **lim** sections.
+%
+% Adds the following columns in the main data table, found in the
+% :attr:`tab` property:
 %
 %   ============  ========  ==============================================
 %   Name          Type      Description

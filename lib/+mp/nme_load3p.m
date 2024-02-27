@@ -1,8 +1,13 @@
 classdef nme_load3p < mp.nm_element & mp.form_acp
 % mp.nme_load3p - Network model element for 3-phase load.
+%
+% Implements the network model element for 3-phase load elements, with
+% 3 ports per 3-phase load.
+%
+% Builds the parameter :math:`\sv` and inherits from mp.form_acp.
 
 %   MATPOWER
-%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

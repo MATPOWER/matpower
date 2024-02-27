@@ -6,12 +6,18 @@ function varargout = run_pf(varargin)
 %   run_pf(d, mpopt, ...)
 %   task = run_pf(...)
 %
+% This is the main function used to run power flow (PF) problems via the
+% **flexible** |*MATPOWER*| **framework**.
+%
+% This function is a simple wrapper around run_mp, calling it
+% with the first argument set to ``@mp.task_pf``.
+%
 % Inputs:
 %   d : data source specification, currently assumed to be a |MATPOWER|
 %       case name or case struct (``mpc``)
 %   mpopt (struct) : |MATPOWER| options struct
 %
-%       Additional optional inputs can be provided as <name>, <val> pairs,
+%       Additional optional inputs can be provided as *<name>, <val>* pairs,
 %       with the following options:
 %
 %       - ``'print_fname'`` - file name for saving pretty-printed output
@@ -23,13 +29,18 @@ function varargout = run_pf(varargin)
 %   task (mp.task_pf) : task object containing the solved run including the
 %       data, network, and mathematical model objects.
 %
-% This function is a simple wrapper around run_mp, calling it
-% with the first argument set to ``@mp.task_pf``.
+% Solution results are available in the data model, and its elements,
+% contained in the returned task object. For example:
+% ::
+%
+%   task = run_pf('case9');
+%   va = task.dm.elements.bus.tab.va    % bus voltage angles
+%   pg = task.dm.elements.gen.tab.pg    % generator active dispatch
 %
 % See also run_mp, mp.task_pf.
 
 %   MATPOWER
-%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

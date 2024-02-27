@@ -1,7 +1,10 @@
 classdef dme_gen3p < mp.dm_element
 % mp.dme_gen3p - Data model element for 3-phase generator.
 %
-% Adds the following columns in the main data table:
+% Implements the data element model for 3-phase generator elements.
+%
+% Adds the following columns in the main data table, found in the
+% :attr:`tab` property:
 %
 %   ================  =========  =====================================
 %   Name              Type       Description

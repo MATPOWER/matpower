@@ -1,5 +1,12 @@
 classdef (Abstract) mme_branch_opf < mp.mme_branch
 % mp.mme_branch_opf - Math model element abstract base class for branch for OPF.
+%
+% Math model element abstract base class for branch elements, including
+% transmission lines and transformers, for OPF problems.
+%
+% Implements methods to prepare data required for angle difference limit
+% constraints and to extract shadow prices for these constraints from
+% the math model solution.
 
 %   MATPOWER
 %   Copyright (c) 2022-2024, Power Systems Engineering Research Center (PSERC)

@@ -1,7 +1,10 @@
 classdef dme_shunt < mp.dm_element
 % mp.dme_shunt - Data model element for shunt.
 %
-% Adds the following columns in the main data table:
+% Implements the data element model for shunt elements.
+%
+% Adds the following columns in the main data table, found in the
+% :attr:`tab` property:
 %
 %   ========  =========  =====================================
 %   Name      Type       Description

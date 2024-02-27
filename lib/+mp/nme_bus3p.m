@@ -1,8 +1,13 @@
 classdef (Abstract) nme_bus3p < mp.nm_element
 % mp.nme_bus3p - Network model element abstract base class for 3-phase bus.
+%
+% Implements the network model element for 3-phase bus elements, with 3 nodes
+% per 3-phase bus.
+%
+% Implements node_types() method.
 
 %   MATPOWER
-%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

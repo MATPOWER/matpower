@@ -1,5 +1,10 @@
 classdef mme_shunt_pf_dc < mp.mme_shunt
 % mp.mme_shunt_pf_dc - Math model element for shunt for DC power flow.
+%
+% Math model element class for shunt elements for DC power flow problems.
+%
+% Implements method for updating the output data in the corresponding data
+% model element for in-service shunts from the math model solution.
 
 %   MATPOWER
 %   Copyright (c) 2022-2024, Power Systems Engineering Research Center (PSERC)

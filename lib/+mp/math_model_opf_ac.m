@@ -1,8 +1,11 @@
 classdef (Abstract) math_model_opf_ac < mp.math_model_opf
 % mp.math_model_opf_ac - Abstract base class for AC OPF **math model** objects.
+%
+% Provide implementation of nodal current and power balance functions
+% and their derivatives, and setup of solver options.
 
 %   MATPOWER
-%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

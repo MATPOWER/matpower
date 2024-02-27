@@ -1,8 +1,11 @@
 classdef nme_bus_dc < mp.nme_bus & mp.form_dc
 % mp.nme_bus_dc - Network model element for bus for DC formulations.
+%
+% Adds voltage variable ``Va`` to the network model and inherits from
+% mp.form_dc.
 
 %   MATPOWER
-%   Copyright (c) 2019-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2019-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.

@@ -1,8 +1,10 @@
 classdef (Abstract) mme_buslink < mp.mm_element
 % mp.mme_buslink - Math model element abstract base class for 1-to-3-phase buslink.
+%
+% Abstract math model element base class for 1-to-3-phase buslink elements.
 
 %   MATPOWER
-%   Copyright (c) 2021-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2021-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MATPOWER.
