@@ -1,7 +1,7 @@
 How to Build the Documentation
 ==============================
 
-1. Install `Python <https://python.org>`_.
+1. Install `Python <https://www.python.org/>`_.
 
 2. Create and activate a `virtual environment <https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/#creating-a-virtual-environment>`_ *(optional, but recommended)*
 

@@ -208,6 +208,7 @@ highlight_language = 'octave'   # 'matlab' has issues with '...'
 math_number_all = True
 math_eqref_format = '({number})'
 
+
 # -- MathJax Macro Setup -----------------------------------------------------
 # -- based on https://stackoverflow.com/questions/9728292/creating-latex-math-macros-within-sphinx#comment124804327_60497853
 mathjax3_config = {

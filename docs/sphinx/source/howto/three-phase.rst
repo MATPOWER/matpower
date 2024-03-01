@@ -254,7 +254,7 @@ The five and six bus cases connect this 4-bus three-phase case to 1 or 2 single-
 
 .. [#] https://sourceforge.net/p/electricdss/code/HEAD/tree/trunk/Distrib/IEEETestCases/4Bus-YY-Bal/4Bus-YY-Bal.DSS
 .. _t_run_mp_3p_m: https://github.com/MATPOWER/matpower/blob/master/lib/t/t_run_mp_3p.m
-.. _lib_t: https://github.com/MATPOWER/matpower/blob/master/lib/t/
+.. _lib_t: https://github.com/MATPOWER/matpower/tree/master/lib/t
 .. _case9: https://github.com/MATPOWER/matpower/blob/master/data/case9.m
 .. _4Bus_YY_Bal_DSS: https://sourceforge.net/p/electricdss/code/HEAD/tree/trunk/Distrib/IEEETestCases/4Bus-YY-Bal/4Bus-YY-Bal.DSS
 .. _t_case3p_a: https://github.com/MATPOWER/matpower/blob/master/lib/t/t_case3p_a.m

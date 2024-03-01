@@ -12,7 +12,7 @@ For reference documentation on each class and function in |MATPOWER|, see the
 Development Environment
 -----------------------
 
-|MATPOWER| is implemented in the Matlab language, designed for scientific computing. It requires either |MATLAB(R)|, a commercial product from `The MathWorks <https://mathworks.com>`_, or the free, open-source `GNU Octave <https://www.octave.org>`_ to run.
+|MATPOWER| is implemented in the Matlab language, designed for scientific computing. It requires either |MATLAB(R)|, a commercial product from `The MathWorks <https://www.mathworks.com/>`_, or the free, open-source `GNU Octave <https://www.octave.org>`_ to run.
 
 |MATPOWER| and its related software packages are developed as open-source projects on GitHub under the `MATPOWER Development <https://github.com/MATPOWER>`_ GitHub organization. Some projects are included in others using `git subrepo <https://github.com/ingydotnet/git-subrepo>`_.
 
