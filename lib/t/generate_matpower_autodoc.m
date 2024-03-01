@@ -1,14 +1,14 @@
-function generate_matpower_autodoc(matpower_dir)
+function generate_matpower_autodoc(install_dir)
 % generate_matpower_autodoc - Generate the stubs and symlinks for Ref Manual.
 % ::
 %
-%   generate_matpower_autodoc(matpower_dir)
+%   generate_matpower_autodoc(install_dir)
 %
 % Inputs:
-%   matpower_dir (char array) : path to the MATPOWER install directory
+%   install_dir (char array) : path to the install directory for the package
 %
 % Creates the .rst stubs and symlinks to the source files for all functions
-% and classes to be included in the |MATPOWER-Ref-Manual|. Creates all of the
+% and classes to be included in the Reference Manual. Creates all of the
 % inputs (lists of functions and classes) to pass to generate_autodoc_stubs
 % and generate_source_symlinks.
 
