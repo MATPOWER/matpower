@@ -13,12 +13,19 @@
 % \usepackage{relsize}
 
 \newcommand{\matpower}[0]{{M{\smaller{ATPOWER}}}}
+\newcommand{\matpowerurl}[0]{https://matpower.org}
+\newcommand{\matpowerlink}[0]{\href{\matpowerurl}{\matpower{}}}
 \newcommand{\matpoweri}[0]{{\emph{M{\smaller{ATPOWER}}}}}
 \newcommand{\matpowerb}[0]{{\textbf{M{\smaller{ATPOWER}}}}}
 % \newcommand{\matpoweri}[0]{{\emph{M}{\smaller{\emph{ATPOWER}}}}}
 % \newcommand{\matpower}[0]{{\sc Matpower}}
 \newcommand{\matlab}[0]{{\sc Matlab}}
 \newcommand{\matlabr}[0]{{\matlab{} \textsuperscript{\tiny \textregistered}}}
+\newcommand{\matlaburl}[0]{https://www.mathworks.com}
+\newcommand{\matlablink}[0]{\href{\matlaburl}{\matlab{}}}
+\newcommand{\octave}[0]{GNU Octave}
+\newcommand{\octaveurl}[0]{https://www.octave.org}
+\newcommand{\octavelink}[0]{\href{\octaveurl}{\octave{}}}
 \newcommand{\pserc}[0]{{\sc PSerc}}
 \newcommand{\PSERC}[0]{{Power Systems Engineering Research Center (\pserc{})}}
 \newcommand{\certs}[0]{{\sc Certs}}
