@@ -1,22 +1,34 @@
 function all_ok_ = t_run_tests(test_names, verbose)
-%T_RUN_TESTS  Run a series of tests.
-%   ALL_OK = T_RUN_TESTS(TEST_NAMES, VERBOSE)
+% t_run_tests - Run a series of tests.
+% ::
 %
-%   Runs a set of tests whose names are given in the cell array TEST_NAMES.
-%   If the optional parameter VERBOSE is true, it prints the details of the
-%   individual tests. Optionally returns an ALL_OK flag, equal to 1 if all
-%   tests pass (and the number matches the expected number), 0 otherwise.
+%   all_ok = t_run_tests(test_names, verbose)
 %
-%   Example:
-%       tests{end+1} = 't_loadcase';
-%       tests{end+1} = 't_jacobian';
-%       tests{end+1} = 't_hessian';
-%       t_run_tests( tests, verbose );
+% Inputs:
+%   test_names (cell array) : cell array with names of individual test
+%       scripts to run
+%   verbose (integer) : *(optional, default = 0)* level of detail of output
 %
-%   See also T_BEGIN, T_END.
+%       - 0 -- print a single line for each test, plus summary line
+%       - 1 -- print full output for each test, plus summary section
+%
+% Output:
+%   all_ok (boolean) : *(optional)* true if all tests passed and the number
+%       of tests matches the expected number, false otherwise
+%
+% Runs a set of tests whose names are given in the cell array ``test_names``.
+%
+% Example::
+%
+%   tests{end+1} = 't_loadcase';
+%   tests{end+1} = 't_jacobian';
+%   tests{end+1} = 't_hessian';
+%   t_run_tests( tests, verbose );
+%
+% See also t_begin, t_end.
 
 %   MP-Test
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Test.

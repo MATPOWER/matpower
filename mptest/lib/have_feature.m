@@ -1,71 +1,116 @@
 function rv = have_feature(tag, rtype)
-%HAVE_FEATURE  Test for optional functionality / version info.
-%   TORF = HAVE_FEATURE(TAG)
-%   TORF = HAVE_FEATURE(TAG, TOGGLE)
-%   VER_STR = HAVE_FEATURE(TAG, 'vstr')
-%   VER_NUM = HAVE_FEATURE(TAG, 'vnum')
-%   DATE    = HAVE_FEATURE(TAG, 'date')
-%   INFO    = HAVE_FEATURE(TAG, 'all')
-%   HAVE_FEATURE(TAG, 'clear_cache')
-%   HAVE_FEATURE('all', 'clear_cache')
+% have_feature  Test for optional functionality / version info.
+% ::
 %
-%   Returns availability, version and release information for optional
-%   functionality. All information is cached, and the cached values
-%   returned on subsequent calls. If the functionality exists, an attempt is
-%   made to determine the release date and version number. The second
-%   argument defines which value is returned, as follows:
-%       <none>      1 = optional functionality is available, 0 = not available
-%       'vstr'      version number as a string (e.g. '3.11.4')
-%       'vnum'      version number as numeric value (e.g. 3.011004)
-%       'date'      release date as a string (e.g. '21-Sep-2020')
-%       'all'       struct with fields named 'av' (for 'availability'), 'vstr',
-%                   'vnum' and 'date', and values corresponding to the above,
-%                   respectively.
+%   TorF = have_feature(tag)
+%   TorF = have_feature(tag, toggle)
+%   ver_str = have_feature(tag, 'vstr')
+%   ver_num = have_feature(tag, 'vnum')
+%   rdate = have_feature(tag, 'date')
+%   all_info = have_feature(tag, 'all')
+%   have_feature(tag, 'clear_cache')
+%   have_feature('all', 'clear_cache')
 %
-%   For functionality that is not available, all calls with a string-valued
-%   second argument will return an empty value.
+% Returns availability, version and release information for optional
+% functionality. All information is cached, and the cached values
+% returned on subsequent calls. If the functionality exists, an attempt is
+% made to determine the release date and version number.
 %
-%   Alternatively, the optional functionality specified by TAG can be toggled
-%   OFF or ON by calling HAVE_FEATURE with a numeric second argument TOGGLE
-%   with one of the following values:
-%       0 - turn OFF the optional functionality
-%       1 - turn ON the optional functionality (if available)
-%      -1 - toggle the ON/OFF state of the optional functionality
+% Inputs:
+%   tag (char array) : name to identify optional functionality
+%   toggle (-1, 0, 1) : numeric second argument, to turn optional functionality on or off
 %
-%   Finally, passing 'clear_cache' as the second argument will cause the
-%   cached information to be cleared for the specified TAG or, if the first
-%   argument is 'all', for all optional functionality. When calling with
-%   'clear_cache' no return value is defined.
+%       ==========  ============  ========================================
+%       ``toggle``  return type   description and return value
+%       ==========  ============  ========================================
+%       *<none>*    *boolean*     check availability, return true if available, false if not
+%       0           *boolean*     **turn off** optional functionality, return false
+%       1           *boolean*     **turn on** optional functionality, return
+%                                 true if available, false if not
+%       -1          *boolean*     **toggle** on/off state of optional
+%                                 functionality, return true if available,
+%                                 false if not
+%       ==========  ============  ========================================
+%   rtype (char array) : string valued second argument determines which
+%       value is returned for available functionality, as follows:
 %
-%   For each valid value of TAG, there is a corresponding feature detection
-%   function named HAVE_FEATURE_<TAG>, where <TAG> is the TAG value for the
-%   feature in question. This makes HAVE_FEATURE modular and extensible.
-%   Each feature detection function takes no input values, but returns
-%   three outputs
-%       TORF - 1 = feature is available, 0 = feature is not available
-%       VSTR - version number as a string (e.g. '3.11.4')
-%       RDATE - release date as a string (e.g. '21-Sep-2020')
+%       =================  ============  ========================================
+%       ``rtype``          return type   description and return value
+%       =================  ============  ========================================
+%       ``'vstr'``         *char array*  version number as a string
+%       ``'vnum'``         *double*      version number as numeric value
+%       ``'date'``         *char array*  release date
+%       ``'all'``          *struct*      struct with all info (availablity, version numbers, release date)
+%       ``'clear_cache'``  *<none>*      clears the cached information
+%       =================  ============  ========================================
 %
-%   TAG values for HAVE_FEATURE detection functions included in MP-Test:
-%       matlab      - code is running under MATLAB, as opposed to Octave
-%       octave      - code is running under GNU Octave, as opposed to MATLAB
+% Output:
+%   TorF (boolean) : true if optional functionality is available,
+%       false otherwise
+%   ver_str (char array) : version number as a string (e.g. ``'3.11.4'``)
+%   ver_num (double) : version number as numeric value (e.g. ``3.011004``)
+%   rdate (char array) : release date as a string (e.g. ``'29-Feb-2024'``)
+%   all_info (struct) : struct with fields:
 %
-%   Examples:
-%       if have_feature('matlab')
-%           disp(['Running MATLAB version ', have_feature('matlab', 'vstr')])
-%       else
-%           disp(['Running Octave version ', have_feature('octave', 'vstr')])
-%       end
+%        - ``av`` -- availability, true if available, false otherwise
+%        - ``vstr`` -- version as string
+%        - ``vnum`` -- version as numeric value
+%        - ``date`` -- release date as string
 %
-%   See also HAVE_FEATURE_MATLAB, HAVE_FEATURE_OCTAVE
+% The optional functionality specified by ``tag`` can be toggled **off**
+% or **on** by calling have_feature with a numeric second argument
+% ``toggle`` with one of the following values:
+%
+%   - 0 -- turn **off** the optional functionality
+%   - 1 -- turn **on** the optional functionality (if available)
+%   - -1 -- **toggle** the on/off state of the optional functionality
+%
+% Specifying the appropriate string value for the second argument allows
+% have_feature to return specific information about the functionality,
+% if it is available. This includes the version number as a string or
+% numeric value, the release date, or a struct with all of the above.
+% For functionality that is not available, all calls with a string-valued
+% second argument (except ``'all'``) will return an empty value.
+%
+% Finally, passing ``'clear_cache'`` as the second argument will cause the
+% cached information to be cleared for the specified ``tag`` or, if the first
+% argument is ``'all'``, for all optional functionality. When calling with
+% ``'clear_cache'`` no return value is defined.
+%
+% For each valid value of ``tag``, there is a corresponding feature detection
+% function named :samp:`have_feature_{<tag>}`, where :samp:`{<tag>}` is the
+% ``tag`` value for the feature in question. This makes have_feature modular
+% and extensible. Each feature detection function takes no input values, but
+% returns three outputs:
+%
+%   - ``TorF`` -- 1 = feature is available, 0 = feature is not available
+%   - ``vstr`` -- version number as a string (e.g. ``'3.11.4'``)
+%   - ``rdate`` -- release date as a string (e.g. ``'29-Feb-2024'``)
+%
+% ``tag`` values for have_feature detection functions included in MP-Test:
+%
+%   - ``'matlab'`` -- code is running under MATLAB, as opposed to Octave
+%   - ``'octave'`` -- code is running under GNU Octave, as opposed to MATLAB
+%
+% Examples::
+%
+%   if have_feature('matlab')
+%       disp(['Running MATLAB version ', have_feature('matlab', 'vstr')])
+%   else
+%       disp(['Running Octave version ', have_feature('octave', 'vstr')])
+%   end
+%
+% See also have_feature_matlab, have_feature_octave.
 
-%   The following calling syntaxes are also implemented to set and get the
-%   entire cache struct and are used during testing only.
-%       CACHE = HAVE_FEATURE('all', 'get_cache')
-%       HAVE_FEATURE(CACHE, 'set_cache')
+% The following calling syntaxes are also implemented to set and get the
+% entire cache struct and are used during testing only.
+% ::
+%
+%     cache = have_feature('all', 'get_cache')
+%     have_feature(cache, 'set_cache')
 
 %   MP-Test
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Test.

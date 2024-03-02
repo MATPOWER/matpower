@@ -23,7 +23,7 @@ jobs:
 
     steps:
     - name: Check out repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Install Octave (Linux)
       if: matrix.platform == 'octave' && startsWith(matrix.os, 'ubuntu')
@@ -35,11 +35,11 @@ jobs:
 
     - name: Install MATLAB
       if: matrix.platform == 'matlab'
-      uses: matlab-actions/setup-matlab@v1
+      uses: matlab-actions/setup-matlab@v2
 
     - name: Configure MATLAB
       if: matrix.platform == 'matlab'
-      uses: MATPOWER/action-configure-matlab@v1
+      uses: MATPOWER/action-configure-matlab@v2
 
     - name: ${{ env.ML_NAME }} ${{ env.ML_VER }} Installed
       run: $ML_CMD ver

@@ -1,23 +1,32 @@
 function t_skip(cnt, msg)
-%T_SKIP  Skips a number of tests.
-%   T_SKIP(CNT, MSG) increments the global test count and skipped tests
-%   count. Prints 'skipped x..y : ' followed by the MSG, unless
-%   T_BEGIN was called with input QUIET equal true. Intended to be
-%   called between calls to T_BEGIN and T_END.
+% t_skip - Skips a number of tests.
+% ::
 %
-%   Example:
-%       quiet = 0;
-%       t_begin(5, quiet);
-%       t_ok(pi > 3, 'size of pi');
-%       t_skip(3, 'not yet written');
-%       t_is(2+2, 4, 12, '2+2 still equals 4');
-%       t_end;
+%   t_skip(cnt, msg)
 %
-%   See also T_OK, T_IS, T_BEGIN, T_END, T_RUN_TESTS.
-
+% Inputs:
+%   cnt (integer) : number of tests to skip
+%   msg (char array) : message to display for this set of skipped tests
+%
+% Increments the global test count and skipped tests count. Prints
+% *"skipped x..y : "* followed by the ``msg``, unless t_begin was called
+% with input ``quiet`` equal true.
+%
+% Intended to be called between calls to t_begin and t_end.
+%
+% Example::
+%
+%   quiet = 0;
+%   t_begin(5, quiet);
+%   t_ok(pi > 3, 'size of pi');
+%   t_skip(3, 'not yet written');
+%   t_is(2+2, 4, 12, '2+2 still equals 4');
+%   t_end;
+%
+% See also t_ok, t_is, t_file_match, t_str_match, t_begin, t_end, t_run_tests.
 
 %   MP-Test
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Test.

@@ -1,32 +1,47 @@
 function ok = t_is(got, expected, prec, msg)
-%T_IS  Tests if two matrices are identical to some tolerance.
-%   T_IS(GOT, EXPECTED, PREC, MSG) increments the global test count
-%   and if the maximum difference between corresponding elements of
-%   GOT and EXPECTED is less than 10^(-PREC) then it increments the
-%   passed tests count, otherwise increments the failed tests count.
-%   Prints 'ok' or 'not ok' followed by the MSG, unless T_BEGIN was
-%   called with input QUIET equal true. The input values can be real or
-%   complex, and they can be scalar, vector, or 2-d or higher matrices.
-%   If GOT is a vector or matrix and EXPECTED is a scalar or NaN, all
-%   elements must match the scalar. Intended to be called between calls
-%   to T_BEGIN and T_END.
+% t_is - Tests if two matrices are identical to some tolerance.
+% ::
 %
-%   Optionally returns a true or false value indicating whether or
-%   not the test succeeded. NaN values are considered to be equal to
-%   each other.
+%   t_is(got, expected, prec, msg)
+%   ok = t_is(got, expected, prec, msg)
 %
-%   Example:
-%       quiet = 0;
-%       t_begin(5, quiet);
-%       t_ok(pi > 3, 'size of pi');
-%       t_skip(3, 'not yet written');
-%       t_is(2+2, 4, 12, '2+2 still equals 4');
-%       t_end;
+% Test passes if the maximum difference between corresponding elements of
+% ``got`` and ``expected`` is less than :math:`10^{-prec}`.
 %
-%   See also T_OK, T_SKIP, T_BEGIN, T_END, T_RUN_TESTS.
+% Inputs:
+%   got (double) : numerical matrix of actual test results
+%   expected (double) : numerical matrix of expected test results
+%   prec (double) : defines the match tolerance, :math:`10^{-prec}`
+%   msg (char array) : message to display for this test
+%
+% Output:
+%   ok (boolean) : *(optional)* true if test passed, false if failed
+%
+% Increments the global test count and, if the test passes, then it
+% increments the passed tests count, otherwise  increments the failed
+% tests count. Prints *"ok"* or *"not ok"* followed by the ``msg``,
+% unless t_begin was called with input ``quiet`` equal true.
+%
+% The input values can be real or complex, and they can be scalar, vector,
+% or 2-d or higher matrices. If ``got`` is a vector or matrix and
+% ``expected`` is a scalar or *NaN*, all elements must match the scalar.
+% *NaN* values are considered to be equal to each other.
+%
+% Intended to be called between calls to t_begin and t_end.
+%
+% Example::
+%
+%   quiet = 0;
+%   t_begin(5, quiet);
+%   t_ok(pi > 3, 'size of pi');
+%   t_skip(3, 'not yet written');
+%   t_is(2+2, 4, 12, '2+2 still equals 4');
+%   t_end;
+%
+% See also t_ok, t_file_match, t_str_match, t_skip, t_begin, t_end, t_run_tests.
 
 %   MP-Test
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Test.

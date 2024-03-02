@@ -1,13 +1,13 @@
 function [TorF, vstr, rdate] = have_feature_matlab()
-%HAVE_FEATURE_MATLAB  Detect availability/version info for MATLAB
+% have_feature_matlab - Detect availability/version info for MATLAB.
 %
-%   Feature detection function implementing 'matlab' tag for HAVE_FEATURE
-%   to detect whether code is running under MATLAB.
+% Private feature detection function implementing ``'matlab'`` tag for
+% have_feature to detect whether code is running under MATLAB.
 %
-%   See also HAVE_FEATURE.
+%   See also have_feature.
 
 %   MP-Test
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Test.

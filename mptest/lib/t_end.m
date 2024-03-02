@@ -1,20 +1,26 @@
 function t_end
-%T_END  Finish running tests and print statistics.
-%   T_END checks the global counters that were updated by calls to
-%   T_OK, T_IS and T_SKIP and prints out a summary of the test results.
+% t_end - Finish running tests and print statistics.
+% ::
 %
-%   Example:
-%       quiet = 0;
-%       t_begin(5, quiet);
-%       t_ok(pi > 3, 'size of pi');
-%       t_skip(3, 'not yet written');
-%       t_is(2+2, 4, 12, '2+2 still equals 4');
-%       t_end;
+%   t_end
 %
-%   See also T_BEGIN, T_OK, T_IS, T_SKIP, T_RUN_TESTS.
+% Checks the global counters that were updated by calls to the individual
+% test functions t_ok, t_is, t_file_match, t_str_match and t_skip, and
+% prints out a summary of the test results.
+%
+% Example::
+%
+%   quiet = 0;
+%   t_begin(5, quiet);
+%   t_ok(pi > 3, 'size of pi');
+%   t_skip(3, 'not yet written');
+%   t_is(2+2, 4, 12, '2+2 still equals 4');
+%   t_end;
+%
+% See also t_begin, t_ok, t_is, t_str_match, t_file_match, t_skip, t_run_tests.
 
 %   MP-Test
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Test.

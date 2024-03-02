@@ -1,19 +1,21 @@
 function success = test_mptest(verbose, exit_on_fail)
-%TEST_MPTEST  Run all MPTEST tests.
-%   TEST_MPTEST
-%   TEST_MPTEST(VERBOSE)
-%   TEST_MPTEST(VERBOSE, EXIT_ON_FAIL)
-%   SUCCESS = TEST_MPTEST(...)
+%test_mptest - Run all MP-Test tests.
+% ::
 %
-%   Runs all of the MPTEST tests. If VERBOSE is true (false by default),
-%   it prints the details of the individual tests. If EXIT_ON_FAIL is true
-%   (false by default), it will exit MATLAB or Octave with a status of 1
-%   unless T_RUN_TESTS returns ALL_OK.
+%   test_mptest
+%   test_mptest(verbose)
+%   test_mptest(verbose, exit_on_fail)
+%   success = test_mptest(...)
 %
-%   See also T_RUN_TESTS.
+% Runs all of the MP-Test tests. If ``verbose`` is true *(false by default)*,
+% it prints the details of the individual tests. If ``exit_on_fail`` is true
+% *(false by default)*, it will exit MATLAB or Octave with a status of 1
+% unless t_run_tests returns ``all_ok`` true.
+%
+% See also t_run_tests.
 
 %   MP-Test
-%   Copyright (c) 2016, 2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2016-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Test.
