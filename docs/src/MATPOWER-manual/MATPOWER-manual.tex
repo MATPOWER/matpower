@@ -5638,7 +5638,7 @@ name & default\tnote{\S} & description \\
  \item [\dag] For \code{opf.dc.solver} option set to \codeq{MOSEK} only. Requires the installation of the optional \mosek{} package. See Appendix~\ref{app:mosek} for details.
  \item [\S] Default values in parenthesis refer to defaults assigned by \mosek{} if called with option equal to 0.
  \item [*] The values listed here correspond to those used by MOSEK version 7.x. Version 6.x was different. It is probably safer to write your code using the symbolic constants defined by \code{mosek\_symbcon} rather than using explicit numerical values.
- \item [\ddag] For details, see \code{help mosek\_options} and the ``Parameters'' reference in ``The MOSEK optimization toolbox for MATLAB manual'' at \url{http://docs.mosek.com/7.1/toolbox/Parameters.html}.
+ \item [\ddag] For details, see \code{help mosek\_options} and the ``Parameters'' reference in ``The MOSEK optimization toolbox for MATLAB manual'' at \url{https://docs.mosek.com/latest/toolbox/param-groups.html}.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -7520,7 +7520,7 @@ Builds are available for Linux (32-bit), Mac OS X (PPC, Intel 32-bit) and Window
 
 Although \mosek{} is a commercial package, at the time of this writing there is a free academic license available. See \url{https://www.mosek.com/products/academic-licenses/} for more details.
 
-When the \matlab{} interface to \mosek{} is installed, the \mosek{} LP and QP solvers can be used to solve DC OPF problems by setting the \code{opf.dc.solver} option equal to \codeq{MOSEK}. The solution algorithm for LP problems can be controlled by \matpower{}'s \code{mosek.lp\_alg} option. See Table~\ref{tab:mosekoptions} for other \mosek{}-related \matpower{} options. A ``\mosek{} user options'' function can also be specified via \code{mosek.opt\_fname} to override the defaults for any of the many \mosek{} parameters. For details see \code{help mosek\_options} and the ``Parameters'' reference in ``The MOSEK optimization toolbox for MATLAB manual'' at \url{http://docs.mosek.com/7.1/toolbox/Parameters.html}. You may also find it helpful to use the symbolic constants defined by \code{mosek\_symbcon}.
+When the \matlab{} interface to \mosek{} is installed, the \mosek{} LP and QP solvers can be used to solve DC OPF problems by setting the \code{opf.dc.solver} option equal to \codeq{MOSEK}. The solution algorithm for LP problems can be controlled by \matpower{}'s \code{mosek.lp\_alg} option. See Table~\ref{tab:mosekoptions} for other \mosek{}-related \matpower{} options. A ``\mosek{} user options'' function can also be specified via \code{mosek.opt\_fname} to override the defaults for any of the many \mosek{} parameters. For details see \code{help mosek\_options} and the ``Parameters'' reference in ``The MOSEK optimization toolbox for MATLAB manual'' at \url{https://docs.mosek.com/latest/toolbox/param-groups.html}. You may also find it helpful to use the symbolic constants defined by \code{mosek\_symbcon}.
 
 It can also be used to solve general LP and QP problems via \matpower{}'s common QP solver interface \code{qps\_master}, or MILP and MIQP problems via \code{miqps\_master}, with the algorithm option set to \codeq{MOSEK} (or 600 for backward compatibility), or by calling \code{qps\_mosek} or \code{miqps\_mosek} directly.
 
