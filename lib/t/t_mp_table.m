@@ -197,7 +197,11 @@ for k = 1:nc
     t_ok(isequal(T{:, 2:2:6}, [v2 v4 v6]), [t 'T{:, j1:2:jN}']);
 
     t_ok(isequal(T{:, 'igr'}, v1), [t 'T{:, ''igr''} == v1']);
-    t_ok(isequal(T{:, 'flt'}, v2), [t 'T{:, ''flt''} == v2']);
+    if have_feature('matlab') && have_feature('matlab', 'vnum') < 9.005 % R2018b
+        t_ok(isequal(T{:, 'flt'}, v2), [t 'T{:, ''flt''} == v2']);
+    else
+        t_ok(isequal(T{:, "flt"}, v2), [t 'T{:, "flt"} == v2']);
+    end
     t_ok(isequal(T{:, 'str'}, v3), [t 'T{:, ''str''} == v3']);
     t_ok(isequal(T{:, 'dbl'}, v4), [t 'T{:, ''dbl''} == v4']);
     t_ok(isequal(T{:, 'boo'}, v5), [t 'T{:, ''boo''} == v5']);
