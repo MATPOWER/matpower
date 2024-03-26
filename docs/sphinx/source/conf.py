@@ -12,7 +12,6 @@
 #
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
-import os
 import sphinx_rtd_theme
 import re
 
@@ -43,12 +42,7 @@ extensions = [
 #    'sphinx.ext.autosummary',  # seems work only with Python since it attempts
                                 # to load the module it's going to summarize
 ]
-this_dir = os.path.dirname(os.path.abspath(__file__))
-# matlab_src_dir = this_dir
-matlab_src_dir = os.path.abspath(os.path.join(this_dir, 'matlab-source'))
-# matlab_src_dir = os.path.abspath(os.path.join(matlab_src_dir, '..'))
-print("this_dir = ", this_dir)
-print("matlab_src_dir = ", matlab_src_dir)
+matlab_src_dir = 'matlab-source'
 primary_domain = 'mat'
 
 # Add any paths that contain templates here, relative to this directory.
