@@ -107,8 +107,13 @@ for k = 1:length(stub_types)
         names = stub_type.list(m).names;
         for f = 1:length(names)
             %% create symlink
-            sl_src = sprintf('%s.m', names{f});
-            sl_tgt = sprintf('%s/%s.m', tgt_dir, names{f});
+            if names{f}(1) == '@'
+                sl_src = sprintf('%s', names{f});
+                sl_tgt = sprintf('%s/%s', tgt_dir, names{f});
+            else
+                sl_src = sprintf('%s.m', names{f});
+                sl_tgt = sprintf('%s/%s.m', tgt_dir, names{f});
+            end
             if exist(sl_tgt)
                 fprintf('    %s/%s\n', stub_type.list(m).src_path, sl_src);
                 if exist(['./' sl_src])

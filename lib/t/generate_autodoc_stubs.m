@@ -110,10 +110,21 @@ for k = 1:length(stub_types)
             else
                 pkg_str = [strjoin(pkgs, '/') '/'];
             end
+            if names{f}(1) == '@'   %% class folder
+                is_class_folder = 1;
+                names{f} = names{f}(2:end); %% strip the @
+            else
+                is_class_folder = 0;
+            end
+
             fprintf('    %s%s.rst\n', pkg_str, names{f});
             fname = fullfile(pkg_dir, [names{f} '.rst']);
             fullname = strjoin({pkgs{:}, names{f}}, '.');
-            relpath = strjoin({rel_paths{:}, names{f}}, '/');
+            if is_class_folder
+                relpath = strjoin({rel_paths{:}, ['@' names{f}], names{f}}, '/');
+            else
+                relpath = strjoin({rel_paths{:}, names{f}}, '/');
+            end
             [fd, msg] = fopen(fname, 'wt');
 %             fprintf(fd, '.. toctree::\n');
 %             fprintf(fd, '   :maxdepth: 2\n');
@@ -126,7 +137,11 @@ for k = 1:length(stub_types)
             fprintf(fd, '%s\n', fullname);
             fprintf(fd, '%s\n', repmat('-', 1, length(fullname)));
             fprintf(fd, '\n');
-            fprintf(fd, '.. auto%s:: %s\n', stub_types{k}, names{f});
+            if is_class_folder
+                fprintf(fd, '.. auto%s:: %s.@%s.%s\n', stub_types{k}, mod, names{f}, names{f});
+            else
+                fprintf(fd, '.. auto%s:: %s\n', stub_types{k}, names{f});
+            end
             switch stub_types{k}
             case 'class'
                 fprintf(fd, '    :show-inheritance:\n');
