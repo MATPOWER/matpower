@@ -1,6 +1,7 @@
 # Configuration file for the Sphinx documentation builder.
 #
-# For the full list of built-in configuration values, see the documentation:
+# This file only contains a selection of the most common options. For a full
+# list see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
 # -- Path setup --------------------------------------------------------------
@@ -9,9 +10,6 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
-import os
 import sphinx_rtd_theme
 import re
 
@@ -20,19 +18,25 @@ import re
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'MP-Test'
-copyright = '1996-2022, Power Systems Engineering Research Center (PSERC)'
+copyright = '1996-2024, Power Systems Engineering Research Center (PSERC)'
 author = 'Ray D. Zimmerman'
-release = '7.2'
+
+# The full version, including alpha/beta/rc tags
+release = '8.0b1+'
+
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
     'sphinxcontrib.matlab',
+    'sphinx.ext.autodoc',
     'sphinx.ext.extlinks',
+    'sphinx.ext.napoleon',
     'sphinx_rtd_theme',
     'sphinx_tabs.tabs',
 ]
+matlab_src_dir = 'matlab-source'
 primary_domain = 'mat'
 
 templates_path = ['_templates']
@@ -63,6 +67,21 @@ html_theme_options = {
 
 # -- Other Options -----------------------------------------------------------
 
+matlab_short_links = True
+# matlab_auto_link = "basic"
+matlab_auto_link = "all"
+matlab_show_property_default_value = True
+# autoclass_content = 'both'         # 'class', 'init', 'both'
+autodoc_member_order = 'bysource'   # 'alphabetical', 'groupwise', 'bysource'
+napoleon_use_param = False
+napoleon_use_rtype = False
+napoleon_custom_sections = [
+    ('Input', 'params_style'),
+    ('Inputs', 'params_style'),
+    ('Output', 'params_style'),
+    ('Outputs', 'params_style'),
+]
+
 rst_prolog = """
 .. include:: /mp-docs-shared/prolog.rst.txt
 """
@@ -76,7 +95,8 @@ numfig_format = {
     'figure': 'Figure %s',
     'code-block': 'Listing %s',
     'section': 'Section %s' }
-highlight_language = 'matlab'
+highlight_language = 'octave'   # 'matlab' has issues with '...'
+                                # e.g. y = fcn(x, ...)
 math_number_all = True
 math_eqref_format = '({number})'
 
@@ -91,9 +111,9 @@ mathjax3_config = {
 
 with open('mp-docs-shared/mathCmds.tex.txt', 'r') as f:
     for line in f:
-        macros = re.findall(r'\\newcommand{\\(.*?)}(\[(\d)\])?{(.+)}', line)
+        macros = re.findall(r'\\(re)?newcommand{\\(.*?)}(\[(\d)\])?{(.+)}', line)
         for macro in macros:
-            if len(macro[1]) == 0:
-                mathjax3_config['tex']['macros'][macro[0]] = "{"+macro[3]+"}"
+            if len(macro[2]) == 0:
+                mathjax3_config['tex']['macros'][macro[1]] = macro[4]
             else:
-                mathjax3_config['tex']['macros'][macro[0]] = ["{"+macro[3]+"}", int(macro[2])]
+                mathjax3_config['tex']['macros'][macro[1]] = [macro[4], int(macro[3])]

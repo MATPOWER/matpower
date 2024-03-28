@@ -2,7 +2,7 @@ MP-Test
 =======
 
 MP-Test is a set of functions for implementing unit testing in MATLAB or
-Octave. It was initially developed for [MATPOWER][1], and is used by
+GNU Octave. It was initially developed for [MATPOWER][1], and is used by
 [MATPOWER][1], [MATPOWER Interior Point Solver (MIPS)][2], [MP-Opt-Model][7]
 and [MATPOWER Optimal Scheduling Tool (MOST)][3]. It also includes a
 function `have_feature` for detecting support for optional functionality.
@@ -42,8 +42,9 @@ of MATLAB or Octave, including setting up your MATLAB/Octave path.
 Usage
 -----
 
-*   Write test functions of the following form, where `t_ok` and `t_is` are
-    used to test for specific conditions or matches, respectively.
+*   Write test functions of the following form, where `t_ok`, `t_is`,
+    `t_str_match`, and `t_file_match` are used to test for specific
+    conditions or matches.
 ```matlab
   function mptest_ex1(quiet)
   if nargin < 1

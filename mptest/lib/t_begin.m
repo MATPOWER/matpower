@@ -1,22 +1,34 @@
 function t_begin(num_of_tests, quiet)
-%T_BEGIN  Begin running tests.
-%   T_BEGIN(NUM_OF_TESTS, QUIET) initializes the global test counters,
-%   setting everything up to execute NUM_OF_TESTS tests using T_OK
-%   and T_IS. If QUIET is true, it will not print anything for the
-%   individual tests, only a summary when T_END is called.
+% t_begin - Begin running tests.
+% ::
 %
-%   Example:
-%       quiet = 0;
-%       t_begin(5, quiet);
-%       t_ok(pi > 3, 'size of pi');
-%       t_skip(3, 'not yet written');
-%       t_is(2+2, 4, 12, '2+2 still equals 4');
-%       t_end;
+%   t_begin(num_of_tests)
+%   t_begin(num_of_tests, quiet)
 %
-%   See also T_END, T_OK, T_IS, T_SKIP, T_RUN_TESTS.
+% Initializes the global test counters, setting everything up to execute
+% ``num_of_tests`` tests using the individual test functions t_ok, t_is,
+% t_file_match, t_str_match and t_skip. If ``quiet`` is true, it will not
+% print anything for the individual tests, only a summary when t_end is
+% called.
+%
+% Inputs:
+%   num_of_tests (integer) : number of tests expected
+%   quiet (boolean) : *(optional, default = false)* if true, prevents
+%       printing individual tests results
+%
+% Example::
+%
+%   quiet = 0;
+%   t_begin(5, quiet);
+%   t_ok(pi > 3, 'size of pi');
+%   t_skip(3, 'not yet written');
+%   t_is(2+2, 4, 12, '2+2 still equals 4');
+%   t_end;
+%
+% See also t_end, t_ok, t_is, t_str_match, t_file_match, t_skip, t_run_tests.
 
 %   MP-Test
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Test.

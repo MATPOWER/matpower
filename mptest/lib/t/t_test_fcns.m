@@ -1,8 +1,15 @@
 function t_test_fcns(quiet)
-%T_TEST_FCNS  Test T_OK and T_IS and manually check output of failed tests.
+% t_test_fcns - Test MP-Test's individual test functions.
+% ::
+%
+%   t_test_fcns
+%   t_test_fcns(quiet)
+%
+% Test t_ok, t_is, t_str_match, t_file_match and manually check output of
+% failed tests.
 
 %   MP-Test
-%   Copyright (c) 2015, 2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Test.

@@ -1,13 +1,20 @@
 function rv = mptestver(varargin)
-%MPTESTVER  Prints or returns MP-Test version info.
-%   V = MPTESTVER returns the current MP-Test version numbers.
-%   V = MPTESTVER('all') returns a struct with the fields Name, Version,
-%   Release and Date (all char arrays). Calling MPTESTVER without assigning
-%   the return value prints the version and release date of the current
-%   installation of MP-Test.
+%mptestver - Prints or returns installed MP-Test version info.
+% ::
+%
+%   mptestver
+%   v = mptestver
+%   v = mptestver('all')
+%
+% When called with an output argument and no input argument, mptestver
+% returns the current MP-Test version numbers. With an input argument
+% (e.g. ``'all'``) it returns  a struct with the fields ``Name``,
+% ``Version``, ``Release``, and ``Date`` *(all char arrays)*. Calling
+% mptestver without assigning the return value prints the version and
+% release date of the current installation of MP-Test.
 
 %   MP-Test
-%   Copyright (c) 2010-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Test.
