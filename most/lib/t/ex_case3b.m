@@ -1,13 +1,16 @@
 function mpc = ex_case3b
-%EX_CASE3B  Three bus example system for stochastic unit commitment.
-%   Same as EX_CASE3A with the following changes:
-%       - Non-zero PMIN values for generators
-%       - Linear (vs quadratic) generator costs
-%       - Includes some STARTUP and SHUTDOWN costs
-%   Please see CASEFORMAT for details on the case file format.
+% ex_case3b - Three bus example system for stochastic unit commitment.
+%
+% Same as ex_case3a with the following changes:
+%
+%   - Non-zero ``PMIN`` values for generators
+%   - Linear (vs quadratic) generator costs
+%   - Includes some ``STARTUP`` and ``SHUTDOWN`` costs
+%
+% Please see caseformat for details on the case file format.
 
 %   MOST
-%   Copyright (c) 2015-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

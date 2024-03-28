@@ -1,8 +1,8 @@
 function most_ex2_dcopf(quiet)
-%MOST_EX2_DCOPF  Examples of deterministic DC optimal power flow.
+% most_ex2_dcopf - Examples of deterministic DC optimal power flow.
 
 %   MOST
-%   Copyright (c) 2015-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

@@ -1,19 +1,21 @@
 function success = test_most(verbose, exit_on_fail)
-%TEST_MOST  Run all MOST tests.
-%   TEST_MOST
-%   TEST_MOST(VERBOSE)
-%   TEST_MOST(VERBOSE, EXIT_ON_FAIL)
-%   SUCCESS = TEST_MOST(...)
+% test_most - Run all MOST tests.
+% ::
 %
-%   Runs all of the MOST tests. If VERBOSE is true (false by default),
-%   it prints the details of the individual tests. If EXIT_ON_FAIL is true
-%   (false by default), it will exit MATLAB or Octave with a status of 1
-%   unless T_RUN_TESTS returns ALL_OK.
+%   test_most
+%   test_most(verbose)
+%   test_most(verbose, exit_on_fail)
+%   success = test_most(...)
 %
-%   See also T_RUN_TESTS.
+% Runs all of the MOST tests. If ``verbose`` is true *(false by default)*,
+% it prints the details of the individual tests. If ``exit_on_fail`` is true
+% *(false by default)*, it will exit MATLAB or Octave with a status of 1
+% unless t_run_tests returns ``all_ok`` true.
+%
+% See also t_run_tests.
 
 %   MOST
-%   Copyright (c) 2004-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

@@ -1,9 +1,10 @@
 function mpc = t_case_tlmp_storage
-%T_CASE_TLMP_STORAGE  Single bus, 1-gen, 1-storage case for TLMP example from Cong Chen
-%   Please see CASEFORMAT for details on the case file format.
+% t_case_tlmp_storage - Single bus, 1-gen, 1-storage case for TLMP example from Cong Chen
+%
+% Please see caseformat for details on the case file format.
 
 %   MOST
-%   Copyright (c) 2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2022-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

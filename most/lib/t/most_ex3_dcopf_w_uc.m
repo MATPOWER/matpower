@@ -1,8 +1,8 @@
 function most_ex3_dcopf_w_uc(quiet)
-%MOST_EX3_DCOPF_W_UC  Examples of deterministic DC optimal power flow with UC.
+% most_ex3_dcopf_w_uc - Examples of deterministic DC optimal power flow with UC.
 
 %   MOST
-%   Copyright (c) 2015-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

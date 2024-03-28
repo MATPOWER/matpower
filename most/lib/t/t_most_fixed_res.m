@@ -1,8 +1,8 @@
 function t_most_fixed_res(quiet)
-%T_MOST_FIXED_RES  Tests MOST with fixed reserve requirements.
+% t_most_fixed_res - Tests MOST with fixed reserve requirements.
 
 %   MOST
-%   Copyright (c) 2012-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2012-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

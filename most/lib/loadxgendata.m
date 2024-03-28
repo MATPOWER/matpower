@@ -1,5 +1,6 @@
 function xgd = loadxgendata(xgd_table, mpc)
-%LOADXGENDATA   Load xGenData table into xGenData struct.
+% loadxgendata - Load xGenData table into xGenData struct.
+% ::
 %
 %   XGD = LOADXGENDATA(XGD_TABLE)
 %   XGD = LOADXGENDATA(XGD_TABLE, GEN)
@@ -63,7 +64,7 @@ function xgd = loadxgendata(xgd_table, mpc)
 %       ** Requires CommitKey be present and non-empty.
 
 %   MOST
-%   Copyright (c) 2013-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2013-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

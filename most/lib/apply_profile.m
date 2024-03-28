@@ -1,5 +1,6 @@
 function argout = apply_profile(profile, argin, dim)
-%APPLY_PROFILE  Applies changes defined in a profile to a data structure.
+% apply_profile - Applies changes defined in a profile to a data structure.
+% ::
 %
 %   CHGTABS = APPLY_PROFILE( PROFILE, CHGTABSI )
 %   XGD     = APPLY_PROFILE( PROFILE, XGDI, DIM )
@@ -99,7 +100,7 @@ function argout = apply_profile(profile, argin, dim)
 % Created by Daniel Munoz-Alvarez (4/18/2013)
 
 %   MOST
-%   Copyright (c) 2013-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2013-2024, Power Systems Engineering Research Center (PSERC)
 %   by Daniel Munoz-Alvarez, PSERC Cornell
 %
 %   This file is part of MOST.

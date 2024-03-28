@@ -1,15 +1,22 @@
 function rv = mostver(varargin)
-%MOSTVER  Prints or returns MOST version info for current installation.
-%   V = MOSTVER returns the current MOST version number.
-%   V = MOSTVER('all') returns a struct with the fields Name, Version,
-%   Release and Date (all strings). Calling MOSTVER without assigning the
-%   return value prints the version and release date of the current
-%   installation of MOST.
+% mostver - Prints or returns installed MOST version info.
+% ::
 %
-%   See also MPVER.
+%   mostver
+%   v = mostver
+%   v = mostver('all')
+%
+% When called with an output argument and no input argument, mostver
+% returns the current MOST version numbers. With an input argument
+% (e.g. ``'all'``) it returns  a struct with the fields ``Name``,
+% ``Version``, ``Release``, and ``Date`` *(all char arrays)*. Calling
+% mostver without assigning the return value prints the version and
+% release date of the current installation of MOST.
+%
+% See also mpver.
 
 %   MOST
-%   Copyright (c) 2010-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.
@@ -19,7 +26,7 @@ function rv = mostver(varargin)
 v = struct( 'Name',     'MOST', ...
             'Version',  '1.2+', ...
             'Release',  '', ...
-            'Date',     '30-May-2023' );
+            'Date',     '15-Mar-2024' );
 if nargout > 0
     if nargin > 0
         rv = v;

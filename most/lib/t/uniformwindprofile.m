@@ -1,5 +1,6 @@
-function profiles = uniformwindprofile(nt, nj, n);
-%UNIFORMWINDPROFILE Creates a wind profile with evenly spaced capacity values.
+function profiles = uniformwindprofile(nt, nj, n)
+% uniformwindprofile - Creates a wind profile with evenly spaced capacity values.
+% ::
 %
 %   PROFILES = UNIFORMWINDPROFILE(NT, NJ, N)
 %
@@ -8,10 +9,10 @@ function profiles = uniformwindprofile(nt, nj, n);
 %   factors are evenly spaced from 0 to 1. All inputs are optional.
 %   Defaults are NT = 24, NJ = 5, N = 1.
 %
-%   See also IDX_PROFILE, GET_PROFILES.
+% See also idx_profile, getprofiles.
 
 %   MOST
-%   Copyright (c) 2013-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2013-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

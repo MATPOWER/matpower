@@ -1,5 +1,6 @@
 function hh = plot_storage(md, idx, varargin)
-%PLOT_STORAGE   Plot storage unit results
+% plot_storage - Plot storage unit results
+% ::
 %
 %   PLOT_STORAGE(MD)
 %   PLOT_STORAGE(MD, IDX)
@@ -40,7 +41,7 @@ function hh = plot_storage(md, idx, varargin)
 %   TO DO: Do initial invisible plot to get v axis parameters.
 
 %   MOST
-%   Copyright (c) 2013-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2013-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

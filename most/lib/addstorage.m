@@ -1,5 +1,6 @@
 function [idx, new_mpc, new_xgd, new_sd] = addstorage(storage, mpc, xgd, sd)
-%ADDWIND   Adds storage units and corresponding xGen/StorageData to existing data.
+% addstorage - Adds storage units and corresponding xGen/StorageData to existing data.
+% ::
 %
 %   [IDX, NEW_MPC] = ADDSTORAGE(STORAGE, MPC)
 %   [IDX, NEW_MPC, NEW_XGD, NEW_SD] = ADDSTORAGE(STORAGE, MPC)
@@ -37,10 +38,10 @@ function [idx, new_mpc, new_xgd, new_sd] = addstorage(storage, mpc, xgd, sd)
 %       NEW_XGD : XGD with xGenData for new storage units appended.
 %       NEW_SD  : SD with StorageData for new storage units appended.
 %
-%   See also LOADSTORAGEDATA, LOADXGENDATA.
+% See also loadstoragedata, loadxgendata.
 
 %   MOST
-%   Copyright (c) 2013-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2013-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

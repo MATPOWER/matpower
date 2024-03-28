@@ -1,8 +1,8 @@
 function xgd_table = ex_xgd_res(mpc)
-%EX_XGD_RES  Example xGenData table for stochastic OPF w/reserve costs.
+% ex_xgd_res - Example xGenData table for stochastic OPF w/reserve costs.
 
 %   MOST
-%   Copyright (c) 2015-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

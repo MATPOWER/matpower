@@ -1,8 +1,8 @@
 function most_ex4_dcopf_ss(quiet)
-%MOST_EX4_DCOPF_SS  Examples of secure and stochastic DC OPF problems.
+% most_ex4_dcopf_ss - Examples of secure and stochastic DC OPF problems.
 
 %   MOST
-%   Copyright (c) 2015-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

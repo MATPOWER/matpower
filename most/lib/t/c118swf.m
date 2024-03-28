@@ -1,5 +1,7 @@
 function mpc = c118swf
-%CASE118    Power flow data for IEEE 118 bus test case.
+% c118swf - Power flow data for IEEE 118 bus test case.
+% ::
+%
 %   Please see CASEFORMAT for details on the case file format.
 %   This data was converted from IEEE Common Data Format
 %   (ieee118cdf.txt) on 20-Sep-2004 by cdf2matp, rev. 1.11
@@ -12,7 +14,7 @@ function mpc = c118swf
 %
 %  08/25/93 UW ARCHIVE           100.0  1961 W IEEE 118 Bus Test Case
 %
-% Updates: Sep 15'2010 by CM and CZ. Buses grouped on four areas;
+%  Updates: Sep 15'2010 by CM and CZ. Buses grouped on four areas;
 %        Branch thermal limits incorporated based on: KV level, same
 %        cable, and safe security factor (assuming bundled config on 345KV
 %        and double circuit on 161 and 138KV lines).
@@ -20,7 +22,7 @@ function mpc = c118swf
 %        Split data for parallel lines that initially had aggregated params
 %        RAMP_AGC,RAMP_10 & RAMP_30 set to 20% of PMAX for each generator
 %        function change of name to c118
-% Aug 13'2012 by CM and DM.
+%  Aug 13'2012 by CM and DM.
 %         The 118-bus test system was modified in order to allow the
 %         loading factor to be considerably increased without compromising
 %         the feasibility of the system. The procedure followed is

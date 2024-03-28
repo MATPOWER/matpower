@@ -1,5 +1,6 @@
 function hh = plot_uc(md, varargin)
-%PLOT_UC   Plot generator commitment summary
+% plot_uc - Plot generator commitment summary
+% ::
 %
 %   PLOT_UC(MD)
 %   PLOT_UC(MD, IDX)
@@ -42,7 +43,7 @@ function hh = plot_uc(md, varargin)
 %   Returns handle to current figure window.
 
 %   MOST
-%   Copyright (c) 2015-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

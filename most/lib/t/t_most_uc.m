@@ -1,5 +1,6 @@
 function t_most_uc(quiet, create_plots, create_pdfs, savedir)
-%T_MOST_UC  Tests of deteministic unit commitment optimizations
+% t_most_uc - Tests of deteministic unit commitment optimizations
+% ::
 %
 %   T_MOST_UC(QUIET, CREATE_PLOTS, CREATE_PDFS, SAVEDIR)
 %   Can generate summary plots and save them as PDFs in a directory of
@@ -7,7 +8,7 @@ function t_most_uc(quiet, create_plots, create_pdfs, savedir)
 %   E.g. t_most_uc(0, 1, 1, '~/Downloads/uc_plots')
 
 %   MOST
-%   Copyright (c) 2015-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.
@@ -43,7 +44,7 @@ fcn = {'cplex', 'glpk', 'gurobi', 'mosek', 'intlinprog'};
 % fcn = {'gurobi'};
 % solvers = {'MOSEK'};
 % fcn = {'mosek'};
-ntests = 68;
+ntests = 69;
 t_begin(ntests*length(solvers), quiet);
 
 if quiet
@@ -235,6 +236,10 @@ for s = 1:length(solvers)
             plot_case('+ DC Network', mdo, ms, 500, 100, savedir, pp, fname);
         end
         % keyboard;
+        mdi.Delta_T = 2;
+        mdo = most(mdi, mpopt);
+        ms = most_summary(mdo);
+        t_is(ms.f, 2 * ex.f, 8, [t '(Delta_T = 2) : f']);
 
         t = sprintf('%s : + startup/shutdown costs : ', solvers{s});
         if mpopt.out.all

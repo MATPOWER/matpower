@@ -1,8 +1,10 @@
 function mpc = t_case30_most
-%T_CASE30_MOST   Modified case30.m for security constrained OPF.
-%   Please see CASEFORMAT for details on the case file format.
+% t_case30_most - Modified case30.m for security constrained OPF.
+%
+% Please see caseformat for details on the case file format.
 %
 % This is case30V19.m with the following modifications:
+%
 %   1. Generator costs (not including dispatchable loads) have
 %      been converted back to single segment piece-wise linear
 %      in order to test the automatic convert to polynomial

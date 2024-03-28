@@ -1,8 +1,8 @@
 function most_ex1_ed(quiet)
-%MOST_EX1_ED  Examples of deterministic economic dispatch.
+% most_ex1_ed - Examples of deterministic economic dispatch.
 
 %   MOST
-%   Copyright (c) 2015-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

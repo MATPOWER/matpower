@@ -1,5 +1,6 @@
 function var = loadgenericdata(varfile, vartype, fields, varname, args)
-%LOADGENERICDATA Loads data of a specified type from file or data structure.
+% loadgenericdata - Loads data of a specified type from file or data structure.
+% ::
 %
 %   VAR = LOADGENERICDATA(VARFILE, VARTYPE)
 %   VAR = LOADGENERICDATA(VARFILE, VARTYPE, FIELDS)
@@ -35,7 +36,7 @@ function var = loadgenericdata(varfile, vartype, fields, varname, args)
 %       VAR : Returned data structure of the first matching VARTYPE.
 
 %   MOST
-%   Copyright (c) 2013-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2013-2024, Power Systems Engineering Research Center (PSERC)
 %   by Daniel Munoz-Alvarez and Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

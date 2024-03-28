@@ -1,10 +1,10 @@
 function t_most_mpopf(quiet)
-%T_MOST_MPOPF  Tests of deterministic multiperiod DC OPF problems
+% t_most_mpopf - Tests of deterministic multiperiod DC OPF problems
 %
-%   Cases taken from most_ex5_mpopf.m.
+%   Cases taken from most_ex5_mpopf.
 
 %   MOST
-%   Copyright (c) 2015-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

@@ -1,12 +1,14 @@
 function md = md_init
-%MD_INIT  MOST Data structure Initialization
+% md_init - MOST Data structure Initialization
+% ::
+%
 %   MD = MD_INIT
 %
 %   Creates an empty MOST Data struct (MD) with all fields required for
 %   MOST, both input and output fields.
 
 %   MOST
-%   Copyright (c) 2010-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %   and Ray Zimmerman, PSERC Cornell
 %

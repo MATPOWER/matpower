@@ -1,5 +1,6 @@
 function t_most_sp(quiet, create_plots, create_pdfs, savedir)
-%T_MOST_SP  Tests of single-period continuous optimizations
+% t_most_sp - Tests of single-period continuous optimizations
+% ::
 %
 %   T_MOST_SP(QUIET, CREATE_PLOTS, CREATE_PDFS, SAVEDIR)
 %   Can generate summary plots and save them as PDFs in a directory of
@@ -7,7 +8,7 @@ function t_most_sp(quiet, create_plots, create_pdfs, savedir)
 %   E.g. t_most_sp(0, 1, 1, '~/Downloads/sp_plots')
 
 %   MOST
-%   Copyright (c) 2015-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

@@ -1,56 +1,68 @@
 function md = loadmd(mpci, transmati, xgdi, storagei, contabi, profilesi, trajdatai)
-%LOADMD   Loads all required data and constructs MD for MOST.
+% loadmd - Loads all required data and constructs MD for MOST.
+% ::
 %
-%   MD = LOADMD(MPC)
-%   MD = LOADMD(MPC, TRANSMAT)
-%   MD = LOADMD(MPC, TRANSMAT, XGD)
-%   MD = LOADMD(MPC, TRANSMAT, XGD, SD)
-%   MD = LOADMD(MPC, TRANSMAT, XGD, SD, CONTAB)
-%   MD = LOADMD(MPC, TRANSMAT, XGD, SD, CONTAB, PROFILES)
-%   MD = LOADMD(MPC, TRANSMAT, XGD, SD, CONTAB, PROFILES, TRAJDATA)
-%   MD = LOADMD(MPC, NT, ...)
+%   md = loadmd(mpc)
+%   md = loadmd(mpc, transmat)
+%   md = loadmd(mpc, transmat, xgd)
+%   md = loadmd(mpc, transmat, xgd, sd)
+%   md = loadmd(mpc, transmat, xgd, sd, contab)
+%   md = loadmd(mpc, transmat, xgd, sd, contab, profiles)
+%   md = loadmd(mpc, transmat, xgd, sd, contab, profiles, trajdata)
+%   md = loadmd(mpc, nt, ...)
 %
-%   All inputs can have the format described below or can be given as
-%   strings containing the name of the MAT-file or M-file that contains the
-%   data in the proper format.
+% All inputs can have the format described below or can be given as
+% strings containing the name of the MAT-file or M-file that contains the
+% data in the proper format.
 %
-%   Inputs:
-%       MPC:       a standard MATPOWER case struct, optionally with
-%                  additional fields such as 'genfuel' and 'i<type>'
-%                  NOTE: Bus numbers must be consecutive beginning at 1
-%                        (i.e. internal ordering).
-%       TRANSMAT:  (optional) NT dimensional cell array of matrices, where
-%                  TRANSMAT{t} is an NJ(t) x NJ(t-1) matrix containing the
-%                  transition probabilities from period t-1 to period t. The
-%                  first element TRANSMAT{1} is a column vector of transition
-%                  probabilities from period 0 (NJ(0) = 1) to period 1. For
-%                  deterministic cases, TRANSMAT can be specified simply as
-%                  an integer NT (number of periods), which gets expanded
-%                  internally to a cell array of 1's. Default value is 1.
-%       XGD:       (optional) xGenData struct, see LOADXGENDATA for details.
-%       SD:        (optional) StorageData struct, see LOADSTORAGEDATA for
-%                  details.
-%       CONTAB:    (optional) contingency table with master set of
-%                  contingencies used for security throughout entire horizon
-%       PROFILES:  (optional) a struct array of Profiles (see IDX_PROFILE
-%                  and APPLY_PROFLE for details), specifying changes in the
-%                  system and operational conditions, xGenData, StorageData
-%                  and/or contingencies across time periods and scenarios.
-%                  Alternatively, for backward compatibility with the
-%                  older centroids format, PROFILES can take the form of
-%                  a struct with the following fields:
-%                     .wind:  3-dim array (NT x NJ_MAX x num wind sites)
-%                     .load:  3-dim array (NT x NJ_MAX x num load zones)
-%                  If empty, no changes are made across time.
-%       TRAJDATA:  (optional) struct array in same format as PROFILES
-%                  specifying a set of trajectories for a stage 2 solution.
-%                  The J dimension of the profile in this case indexes the
-%                  trajectories.
+% Inputs:
+%     mpc (struct) : a standard |MATPOWER| case struct, optionally with
+%       additional fields such as ``genfuel`` and :samp:`i{<type>}`
+%
+%       **Note:** Bus numbers must be consecutive beginning at 1
+%       *(i.e. internal ordering).*
+%     transmat (cell array) : *(optional)* :math:`n_t` dimensional cell array
+%       of matrices, where ``transmat{t}`` is an :math:`n_j^t \times n_j^{t-1}`
+%       matrix containing the transition probabilities from period :math:`t-1`
+%       to period :math:`t`. The first element ``transmat{1}`` is a column
+%       vector of transition probabilities from period 0 (:math:`n_j^0 = 1`)
+%       to period 1. Default value is the integer 1 (see ``nt`` below).
+%     nt (integer) : *(optional)* For deterministic cases, ``transmat`` can
+%       be specified simply as an integer ``nt`` (:math:`n_t`, number of
+%       periods), which gets expanded internally to a cell array of 1's.
+%       Default value is 1.
+%     xgd (struct) : *(optional)* xGenData struct, see loadxgendata for details.
+%     sd (struct) : *(optional)* StorageData struct, see loadstoragedata for
+%       details.
+%     contab (double) : *(optional)* contingency table with master set of
+%       contingencies used for security throughout entire horizon
+%     profiles (struct array) : *(optional)* a struct array of Profiles
+%       (see idx_profile and apply_profile for details), specifying changes
+%       in the system and operational conditions, xGenData, StorageData
+%       and/or contingencies across time periods and scenarios. Alternatively,
+%       for backward compatibility with the older centroids format,
+%       ``profiles`` can take the form of a struct with the following fields:
+%
+%           - ``wind`` -  3-dim array (:math:`n_t \times n_j^{max} \times n_w`),
+%             :math:`n_w` is the number of wind sites
+%           - ``load`` -  3-dim array (:math:`n_t \times n_j^{max} \times n_z`),
+%             :math:`n_z` is the number of load zones
+%
+%       If empty, no changes are made across time.
+%     trajdata (struct) : *(optional)* struct array in same format as
+%       ``profiles`` specifying a set of trajectories for a stage 2 solution.
+%       The :math:`j` dimension of the profile in this case indexes the
+%       trajectories.
+%
+% Output:
+%   md (struct) : MOST data structure (see |MOSTman| for details)
+%
+% See also most.
 
 % Created by Daniel Munoz-Alvarez (2/28/2013)
 
 %   MOST
-%   Copyright (c) 2013-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2013-2024, Power Systems Engineering Research Center (PSERC)
 %   by Daniel Munoz-Alvarez and Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

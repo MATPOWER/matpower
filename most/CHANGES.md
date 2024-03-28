@@ -5,8 +5,32 @@ Change history for MOST
 since 1.2
 ---------
 
+#### 3/21/24
+  - Add Sphinx-based Reference documentation.
+
+#### 11/8/23
+  - Speed up building unit commitment (min up/down time) constraints.
+    Improvement can be quite substantial on large problems.
+
+#### 11/6/23
+  - Reduce memory requirements for long horizon cases with storage by
+    forming/storing transposes of matrices for storage constraints.
+    _Requires [MP-Opt-Model][11] version > 4.1._
+
+#### 10/25/23
+  - Fix [issue #39][10] in which the value of `mdi.Delta_T`, the number of
+    hours represented by each period, was not being accounted for in most
+    of the terms in the objective function.
+    *Thanks to Stefano Nicolin.*
+
+#### 10/4/23
+  - Fix [issue #37][9] which caused a fatal error in storage input checks
+    with multiple storage units under some circumstances.
+    *Thanks to Keir Steegstra.*
+
 #### 2/3/23
-  - Remove extra column in ExpectedRampCost and ignore for single period.
+  - Remove extra column in mdo.results.ExpectedRampCost and ignore for
+    single period.
 
 
 Version 1.2 - *Dec 13, 2022*
@@ -24,8 +48,8 @@ Version 1.2 - *Dec 13, 2022*
   MATLAB R2022b.
 
 #### 8/30/22
-  - Fix [issue #29][8], where a type caused  a check on `md.UC.MinDown`
-    >= 1 to be skipped.
+  - Fix [issue #29][8], where a typo caused a check on
+    `md.UC.MinDown` >= 1 to be skipped.
     *Thanks to Talha Iqbal.*
 
 #### 6/15/22
@@ -304,3 +328,6 @@ Version 1.0 - *Jun 1, 2016*
 [6]: https://doi.org/10.1109/TPWRS.2020.3045162
 [7]: https://arxiv.org/abs/2204.08140
 [8]: https://github.com/MATPOWER/most/issues/29
+[9]: https://github.com/MATPOWER/most/issues/37
+[10]: https://github.com/MATPOWER/most/issues/39
+[11]: https://github.com/MATPOWER/mp-opt-model

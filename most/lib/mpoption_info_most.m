@@ -1,5 +1,6 @@
 function opt = mpoption_info_most(selector)
-%MPOPTION_INFO_MOST  Returns MATPOWER option info for MOST.
+% mpoption_info_most - Returns MATPOWER option info for MOST.
+% ::
 %
 %   DEFAULT_OPTS = MPOPTION_INFO_MOST('D')
 %   VALID_OPTS   = MPOPTION_INFO_MOST('V')
@@ -15,10 +16,10 @@ function opt = mpoption_info_most(selector)
 %   of option names or modify option setting/copying behavior for this
 %   subset of optional MATPOWER options.
 %
-%   See also MPOPTION.
+% See also mpoption.
 
 %   MOST
-%   Copyright (c) 2014-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2014-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

@@ -1,8 +1,8 @@
 function xgd_table = ex_xgd_uc(mpc)
-%EX_XGD_UC  Example xGenData table for stochastic unit commitment.
+% ex_xgd_uc - Example xGenData table for stochastic unit commitment.
 
 %   MOST
-%   Copyright (c) 2015-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

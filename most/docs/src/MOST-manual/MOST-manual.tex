@@ -159,7 +159,7 @@
 \newcommand{\mostname}[0]{{{\bf M}{\sc atpower} \textbf{O}ptimal \textbf{S}cheduling \textbf{T}ool}}
 \newcommand{\mosturl}[0]{https://github.com/MATPOWER/most}
 \newcommand{\mostlink}[0]{\href{\mosturl}{\most{}}}
-\newcommand{\mostver}[0]{1.2}
+\newcommand{\mostver}[0]{1.2+}
 \newcommand{\md}[0]{{\most{} Data struct}}
 \newcommand{\powerweb}[0]{{\sc PowerWeb}}
 \newcommand{\pserc}[0]{{\sc PSerc}}
@@ -240,7 +240,7 @@ User's Manual}
 %%% BEFORE PUBLISHING A NEW VERSION:
 %%%   Update the publication year for \bibitem{matpower} and
 %%%   \bibitem{matpower_manual} to the year of the latest release
-\date{December 13, 2022} % comment this line to display the current date
+%\date{December 13, 2022} % comment this line to display the current date
 %\date{December 14, 2011\thanks{Second revision. First revision was December 13, 2011}} % comment this line to display the current date
 
 %%% BEGIN DOCUMENT
@@ -250,7 +250,7 @@ User's Manual}
 \vfill
 \begin{center}
 {\scriptsize
-\copyright~2011--2022~\PSERC{}\\
+\copyright~2011--2023~\PSERC{}\\
 All Rights Reserved}
 \end{center}
 
@@ -858,30 +858,30 @@ Each part is expressed in terms of the individual optimization variables as foll
 \item[--] expected cost of active power dispatch and redispatch
 \end{itemize}
 \begin{align}
-f_p(p,p_+,p_-) &= \sum_{t\in T} \sum_{j\in J^t} \sum_{k\in K^{tj}} \psi_\alpha^{tjk} \sum_{i\in I^{tjk}}
+f_p(p,p_+,p_-) &= \Delta \cdot \sum_{t\in T} \sum_{j\in J^t} \sum_{k\in K^{tj}} \psi_\alpha^{tjk} \sum_{i\in I^{tjk}}
     \Bigl[\widetilde{C}_P^{ti}(p^{tijk}) + C_{P+}^{ti}(p_+^{tijk}) + C_{P-}^{ti}(p_-^{tijk}) \Bigr]
 \label{eq:most_energy_cost}
 \end{align}
 \begin{itemize}
 \item[--] cost of zonal reserves\footnotemark[\value{footnote}]
 \begin{equation}
-f_z(r_z) = \sum_{t\in T} \sum_{j\in J^t} \sum_{k\in K^{tj}} \psi_\alpha^{tjk} \sum_{i\in I^{tjk}} C_z^{ti}(r_z^{tijk})
+f_z(r_z) = \Delta \cdot \sum_{t\in T} \sum_{j\in J^t} \sum_{k\in K^{tj}} \psi_\alpha^{tjk} \sum_{i\in I^{tjk}} C_z^{ti}(r_z^{tijk})
 \label{eq:most_zres_cost}
 \end{equation}
 \item[--] cost of endogenous contingency reserves\footnotemark[\value{footnote}]
 \begin{equation}
-f_r(r_+, r_-) = \sum_{t\in T}  \gamma^t  \sum_{i\in I^t} \left[C_{R+}^{ti}(r_+^{ti}) + C_{R-}^{ti}(r_-^{ti}) \right]
+f_r(r_+, r_-) = \Delta \cdot \sum_{t\in T}  \gamma^t  \sum_{i\in I^t} \left[C_{R+}^{ti}(r_+^{ti}) + C_{R-}^{ti}(r_-^{ti}) \right]
 \label{eq:most_cres_cost}
 \end{equation}
 \item[--] expected cost of load-following ramping (wear and tear)
 \begin{equation}
-f_\delta(p) = \sum_{t\in T} \! \gamma^t \!\!\!\!\! \sum_{\begin{aligned}\scriptstyle j_1 &\scriptstyle \in J^{t-1}\\[-6pt] \scriptstyle j_2 &\scriptstyle \in J^t\end{aligned}} \!\!\!\!\!
+f_\delta(p) = \Delta \cdot \sum_{t\in T} \! \gamma^t \!\!\!\!\! \sum_{\begin{aligned}\scriptstyle j_1 &\scriptstyle \in J^{t-1}\\[-6pt] \scriptstyle j_2 &\scriptstyle \in J^t\end{aligned}} \!\!\!\!\!
         \phi^{t j_2 j_1} \!\!\!\! \sum_{i\in I^{tj_2 0}} \!\!\! C_\delta^i(p^{tij_20} - p^{(t-1)ij_10})
 \label{eq:rampcost}
 \end{equation}
 \item[--] cost of load-following ramp reserves
 \begin{equation}
-f_{\rm lf}(\delta_+, \delta_-) = \sum_{t\in T}  \gamma^t  \sum_{i\in I^t} \left[C_{\delta+}^{ti}(\delta_+^{ti}) + C_{\delta-}^{ti}(\delta_-^{ti}) \right]
+f_{\rm lf}(\delta_+, \delta_-) = \Delta \cdot \sum_{t\in T}  \gamma^t  \sum_{i\in I^t} \left[C_{\delta+}^{ti}(\delta_+^{ti}) + C_{\delta-}^{ti}(\delta_-^{ti}) \right]
 \label{eq:most_rampres_cost}
 \end{equation}
 \item[--] cost of initial stored energy and value (since it is negative) of expected leftover stored energy in terminal states
@@ -890,7 +890,7 @@ f_s(s_0, p_{\rm sc}, p_{\rm sd}) = \trans{C_{s0}} s_0 - (\trans{C_{\rm ts0}} s_0
 \end{equation}
 \item[--] no load, startup and shutdown costs
 \begin{equation}
-f_{\rm uc}(u,v,w) = \sum_{t\in T} \gamma^t \sum_{i\in I^t} \Bigl( C_P^{ti}(0) u^{ti} + C_v^{ti} v^{ti} +  C_w^{ti} w^{ti} \Bigr)
+f_{\rm uc}(u,v,w) = \sum_{t\in T} \gamma^t \sum_{i\in I^t} \Bigl( \Delta \cdot C_P^{ti}(0) u^{ti} + C_v^{ti} v^{ti} +  C_w^{ti} w^{ti} \Bigr)
 \end{equation}
 \end{itemize}
 
@@ -1469,7 +1469,7 @@ name & default\tnote{\dag} & description \\
  \item [*] {All fields are $n_g \times 1$ vectors of per-generator values.}
  \item [\dag] {These are defaults provided by \code{loadxgendata}. If \code{gen} is provided, either directly or as the \code{gen} field of \mpc{}, then \code{P = gen(:, PG)}, \code{C = gen(:, GEN\_STATUS)} and \code{R = 2*(gen(:, PMAX) - MIN(0, gen(:, PMIN)))}, otherwise $\code{C}~=~1$, $\code{R}~=~0$ and no default is provided for \code{P} (corresponding field is not optional).}
  \item [\dag\dag] {Ramping costs/restrictions from the initial dispatch at $t=0$ are ignored for single-period problems.}
- \item [\ddag] {Each of these costs $C(\cdot)$ is presented in the formulation as a general function, but is implmented as a simple linear function of the form $C(x) = a x$, where the linear coefficient being supplied is $a$. The only exception is the ramping cost, which has the quadratic form $C_\delta^i(x) = a x^2$.}
+ \item [\ddag] {Each of these costs $C(\cdot)$ is presented in the formulation as a general function, but is implmented as a simple linear function of the form $C(x) = a x$, where the linear coefficient being supplied is $a$. The only exception is the ramping cost, which has the quadratic form $C_\delta^i(x) = \frac{1}{\Delta^2} a x^2$.}
  \item [\S] {Requires that \code{CommitKey} be present and non-empty.}
  \item [\P] {Sign is based on \code{C}\tnote{\dag}, i.e. $+\infty$ for \code{C} = 1, $-\infty$ for \code{C} = 0.}
 \end{tablenotes}
@@ -1722,7 +1722,7 @@ name & type\tnote{*} & default & description \\
 \code{mpc}	& I	 & 	 & base system data, standard \matpower{} case struct\tnote{\ddag}, with \baseMVA{}, \bus{}, \gen{}, \branch{} and \gencost{} fields \\
 \code{offer(t)}	& I	 & 	 & struct with offer data for period~$t$, see Table~\ref{tab:md_inputoffer} for details of sub-fields \\
 \code{OpenEnded}	& I	 & 1	 & ignore terminal dispatch ramp constraints, \emph{deprecated} \\
-\code{RampWearCostCoeff(i,t)}	& I	 & 0	 & $n_g \times n_t$, cost of ramping of generator~$i$ from period~$t-1$ to $t$, coefficient $C_\delta^i$ for square of dispatch difference in \eqref{eq:rampcost} \\
+\code{RampWearCostCoeff(i,t)}	& I	 & 0	 & $n_g \times n_t$, cost of ramping of generator~$i$ from period~$t-1$ to $t$, coefficient $C_\delta^i$ for square of dispatch difference in \eqref{eq:rampcost}\tnote{\S} \\
 \code{Storage}	& B	 & 	 & struct with parameters for storage units, see Table~\ref{tab:md_inputstorage} for the input fields \\
 \code{TerminalPg(i)}	& I	 & 	 & $n_g \times 1$, injection of generator~$i$ at $t = n_t$, \emph{deprecated, untested} \\
 \code{tstep(t)}	& B	 & 	 &  $n_t \times 1$ struct of parameters related to period~$t$ \\
@@ -1736,6 +1736,7 @@ name & type\tnote{*} & default & description \\
  \item [*] {I = input, O = output, B = both, opt = taken from \matpower{} options.}
  \item [\dag] {See Section~\ref{sec:contab} for details. Note that, while \code{loadmd} assigns the same \code{contab} to all $t$ and $j$, it is possible to set different \code{contab} values manually and they will be respected by \code{most}.}
  \item [\ddag] {See Appendix~\ref{MUM-app:caseformat} in the \mum{} for details.}
+ \item [\S] {More precisely, $C_\delta^i(x) = \frac{1}{\Delta^2} a x^2$}, where $a$ is the corresponding value of \code{RampWearCostCoeff(i,t)}.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -3426,6 +3427,37 @@ excluded for single-period problems.\\
 \eqref{eq:most_rampres_cost}, where $\gamma^t$ is now correct.
 Previously it should have been $\gamma^{t+1}$, as it was in the code.
 \end{itemize}
+
+
+\subsection{Version 1.2.x -- released xxx xx, 202x}
+\label{app:v12x}
+
+The \href{https://matpower.org/docs/MOST-manual-1.2.x.pdf}{\most{} 1.2.x User's Manual} is available online.\footnote{\url{https://matpower.org/docs/MOST-manual-1.2.pdf}}
+
+\subsubsection*{New Features}
+\begin{itemize}
+\item Add Sphinx-based Reference documentation.
+\end{itemize}
+
+\subsubsection*{Changes}
+\begin{itemize}
+\item Reduce memory requirements for long horizon cases with storage by forming/storing transposes of matrices for storage constraints.\\
+\emph{Requires \mpomlink{} version~$>$~4.1.}
+\item Speed up building unit commitment (min up/down time) constraints. Improvement can be quite substantial on large problems.
+
+\end{itemize}
+
+\subsubsection*{Bugs Fixed}
+\begin{itemize}
+\item Fix issue \#39 in which the value of \code{mdi.Delta\_T}, the number of hours represented by each period, was not being accounted for in most of the terms in the objective function. \emph{Thanks to Stefano Nicolin.}
+\item Fix issue \#37 which caused a fatal error in storage input checks with multiple storage units under some circumstances. \emph{Thanks to Keir Steegstra.}
+\end{itemize}
+
+\subsubsection*{Incompatible Changes}
+\begin{itemize}
+\item Remove extra column in \code{mdo.results.ExpectedRampCost} and ignore for single period.
+\end{itemize}
+
 
 % \subsection{Version 1.2 -- released ??? ?, 2022}
 % \label{app:v12}

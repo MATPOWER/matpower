@@ -1,5 +1,7 @@
 function md = filter_ramp_transitions(md0, threshold)
-%FILTER_RAMP_TRANSITIONS  Creates a transition mask for ramp reserves.
+% filter_ramp_transitions - Creates a transition mask for ramp reserves.
+% ::
+%
 %   MD = FILTER_RAMP_TRANSITIONS(MD0, THRESHOLD)
 %
 %   Creates a transition mask for ramping reserves, including only transitions
@@ -9,7 +11,7 @@ function md = filter_ramp_transitions(md0, threshold)
 %   probability of being in state j1, given that you've made it to period t.
 
 %   MOST
-%   Copyright (c) 2012-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2012-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

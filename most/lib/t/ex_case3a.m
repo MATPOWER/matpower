@@ -1,9 +1,10 @@
 function mpc = ex_case3a
-%EX_CASE3A  Three bus example system.
-%   Please see CASEFORMAT for details on the case file format.
+% ex_case3a - Three bus example system.
+%
+% Please see caseformat for details on the case file format.
 
 %   MOST
-%   Copyright (c) 2015-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

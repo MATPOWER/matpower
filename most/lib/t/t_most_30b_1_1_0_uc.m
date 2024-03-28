@@ -1,8 +1,8 @@
 function t_most_30b_1_1_0_uc(quiet)
-%T_MOST_30B_1_1_0_UC  Tests for MOST.
+% t_most_30b_1_1_0_uc - Tests for MOST, 30-bus, 1 period, no contingencies, UC.
 
 %   MOST
-%   Copyright (c) 2009-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

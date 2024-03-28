@@ -1,8 +1,8 @@
 function loadprofile = ex_load_profile
-%EX_LOAD_PROFILE  Example load profile data file for stochastic unit commitment.
+% ex_load_profile - Example load profile data file for stochastic unit commitment.
 
 %   MOST
-%   Copyright (c) 2015-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

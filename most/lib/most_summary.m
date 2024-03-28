@@ -1,32 +1,50 @@
 function mso = most_summary(mdo)
-%MOST_SUMMARY  Collects and optionally prints a summary of MOST results.
-%   MS = MOST_SUMMARY(MDO)
+% most_summary - Collects and optionally prints a summary of MOST results.
+% ::
 %
-%   Note: Consider this function experimental. It is included because it
-%         is often better than nothing, though it is very incomplete.
+%   ms = most_summary(mdo)
 %
-%   Given a MOST data struct returned by MOST, returns a struct with the
-%   following fields:
-%       f       - objective function value
-%       nb      - number of buses
-%       ng      - number of generators (incl. storage, disp. load, etc.)
-%       nl      - number of branches
-%       nt      - number of periods in planning horizon
-%       nj_max  - max number of scenarios per period
-%       nc_max  - max number of contingencies per scenario in any period
-%       Pg      - ng x nt x nj_max x (nc_max+1), real power generation
-%       Rup     - ng x nt, upward ramping reserve quantities
-%       Rdn     - ng x nt, downward ramping reserve quantities
-%       Pf      - nl x nt x nj_max x (nc_max+1), real power generation
-%       u       - ng x nt x nj_max x (nc_max+1), generator commitment status
-%       lamP    - nb x nt x nj_max x (nc_max+1), shadow price on power balance
-%       muF     - nl x nt x nj_max x (nc_max+1), shadow price on flow limits
+% .. note:: Consider this function experimental. It is included because
+%   it is often better than nothing, though it is very incomplete.
 %
-%   Printing to the console is currently controlled by the MDO.QP.opt.verbose
-%   flag.
+% Input:
+%   mdo (struct) : MOST data structure, output (see |MOSTman| for details)
+%
+% Output:
+%   ms (struct) : MOST summary struct with the following fields:
+%
+%       ======  =======================================================
+%        name   description
+%       ======  =======================================================
+%       f       objective function value
+%       nb      :math:`n_b`, number of buses
+%       ng      :math:`n_g`, number of generators *(including storage,
+%               dispatchable load, etc.)*
+%       nl      :math:`n_l`, number of branches
+%       nt      :math:`n_t`, number of periods in planning horizon
+%       nj_max  :math:`n_j^{max}`, max number of scenarios per period
+%       nc_max  :math:`n_c^{max}`, max number of contingencies per scenario
+%               in any period
+%       Pg      :math:`n_g \times n_t \times n_j^{max} \times (n_c^{max}+1)`,
+%               real power generation (MW)
+%       Rup     :math:`n_g \times n_t`, upward ramping reserve quantities (MW)
+%       Rdn     :math:`n_g \times n_t`, downward ramping reserve quantities
+%               (MW)
+%       Pf      :math:`n_l \times n_t \times n_j^{max} \times (n_c^{max}+1)`,
+%               real power branch flow (MW)
+%       u       :math:`n_g \times n_t \times n_j^{max} \times (n_c^{max}+1)`,
+%               generator commitment status (0 or 1)
+%       lamP    :math:`n_b \times n_t \times n_j^{max} \times (n_c^{max}+1)`,
+%               shadow price on power balance ($/MWh)
+%       muF     :math:`n_l \times n_t \times n_j^{max} \times (n_c^{max}+1)`,
+%               shadow price on flow limits ($/MWh)
+%       ======  =======================================================
+%
+% Printing to the console is currently controlled by the
+% ``mdo.qp.opt.verbose`` flag.
 
 %   MOST
-%   Copyright (c) 2015-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

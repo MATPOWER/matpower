@@ -1,64 +1,68 @@
 function mdo = most(mdi, mpopt)
-%MOST MATPOWER Optimal Scheduling Tool
-%   MDO = MOST(MDI)
-%   MDO = MOST(MDI, MPOPT)
+% most - The |MOSTname| (MOST)
+% ::
 %
-%   Solves a multiperiod, stochastic, contingency constrained, optimal
-%   power flow problem with linear constraints and unit commitment.
-%   Depending on inputs it may include DC power flow constraints or
-%   a simple total power balance condition.
+%   mdo = most(mdi)
+%   mdo = most(mdi, mpopt)
 %
-%   Inputs:
-%       MDI   MOST data structure, input
-%           (see MOST User's Manual for details)
-%       MPOPT   MATPOWER options struct, relevant fields are (default
-%               value in parens):
-%           verbose - see 'help mpoption'
-%           <solver specific options> - e.g. cplex, gurobi, etc,
-%                     see 'help mpoption'
-%           most.build_model (1) - build the MIQP, both constraints and
-%                   standard costs (not coordination cost) and store in
-%                   QP field of MDO
-%           most.solve_model (1) - solve the MIQP; if coordination
-%                   cost exists, update it; requires either 'most.build_model'
-%                   set to 1 or MDI.QP must contain previously built model
-%           most.resolve_new_cost (0) - use when MIQP is already built and
-%                   unchanged except for new coordination cost
-%           most.dc_model (1) - use DC flow network model as opposed to simple
-%                   generation = demand constraint
-%           most.fixed_res (-1) - include fixed zonal reserve contstraints,
-%                   -1 = if present, 1 = always include, 0 = never include
-%           most.q_coordination (0) - create Qg variables for reactive power
-%                   coordination
-%           most.security_constraints (-1) - include contingency contstraints,
-%                   -1 = if present, 1 = always include, 0 = never include
-%           most.storage.terminal_target (-1) - constrain the expected terminal
-%                   storage to target value, if present (1 = always, 0 = never)
-%           most.storage.cyclic (0) - if 1, then initial storage is a variable
-%                   constrained to = final expected storage; can't be
-%                   simultaneously true with most.storage.terminal_target
-%           most.uc.run (-1) - flag to indicate whether to perform unit
-%                   commitment; 0 = do NOT perform UC, 1 = DO perform UC,
-%                   -1 = perform UC if MDI.UC.CommitKey is present/non-empty
-%           most.uc.cyclic (0) - commitment restrictions (e.g. min up/down
-%                   times) roll over from end of horizon back to beginning
-%           most.alpha (0) - 0 = contingencies happen at beginning of period,
-%                   1 = at end of period
-%           most.solver ('DEFAULT') - see ALG argument to OPT_MODEL/SOLVE
-%                   (i.e. MIQPS_MASTER or QPS_MASTER) for details
-%           most.skip_prices (0) - skip price computation stage for mixed
-%                   integer problems, see MIQPS_MASTER for details
-%           most.price_stage_warn_tol (1e-7) - tolerance on the objective fcn
-%               value and primal variable relative match required to avoid
-%               mis-match warning message, see MIQPS_MASTER for details
+% MOST solves a multiperiod, stochastic, contingency constrained,
+% optimal power flow problem with linear constraints and unit commitment.
+% Depending on inputs it may include DC power flow constraints or
+% a simple total power balance condition.
 %
-%   Outputs:
-%       MDO   MOST data structure, output
-%           (see MOST User's Manual for details)
-
+% Inputs:
+%   mdi (struct) : MOST data structure, input (see |MOSTman| for details)
+%   mpopt (struct) : |MATPOWER| options struct, relevant fields are
+%       *(default value in parens)*:
+%
+%       - ``verbose`` - see ``'help mpoption'``
+%       - :samp:`{<solver specific options>}` - e.g. cplex, gurobi, etc,
+%         see ``'help mpoption'``
+%       - ``most.build_model`` *(1)* - build the MIQP, both constraints and
+%         standard costs (not coordination cost) and store in
+%         QP field of ``mdo``
+%       - ``most.solve_model`` *(1)* - solve the MIQP; if coordination
+%         cost exists, update it; requires either ``'most.build_model'``
+%         set to 1 or ``mdi.qp`` must contain previously built model
+%       - ``most.resolve_new_cost`` *(0)* - use when MIQP is already built
+%         and unchanged except for new coordination cost
+%       - ``most.dc_model`` *(1)* - use DC flow network model as opposed to
+%         simple *generation = demand* constraint
+%       - ``most.fixed_res`` *(-1)* - include fixed zonal reserve contstraints,
+%         -1 = if present, 1 = always include, 0 = never include
+%       - ``most.q_coordination`` *(0)* - create ``Qg`` variables for
+%         reactive power coordination
+%       - ``most.security_constraints`` *(-1)* - include contingency
+%         contstraints, -1 = if present, 1 = always include, 0 = never include
+%       - ``most.storage.terminal_target`` *(-1)* - constrain the expected
+%         terminal storage to target value, -1 = if present, 1 = always,
+%         0 = never
+%       - ``most.storage.cyclic`` *(0)* - if 1, then initial storage is a
+%         variable constrained to = final expected storage; can't be
+%         simultaneously true with ``most.storage.terminal_target``
+%       - ``most.uc.run`` *(-1)* - flag to indicate whether to perform unit
+%         commitment; 0 = do *not* perform UC, 1 = *do* perform UC,
+%         -1 = perform UC if ``mdi.uc.CommitKey`` is present/non-empty
+%       - ``most.uc.cyclic`` *(0)* - commitment restrictions (e.g. min
+%         up/down times) roll over from end of horizon back to beginning
+%       - ``most.alpha`` *(0)* - 0 = contingencies happen at beginning of
+%         period, 1 = at end of period
+%       - ``most.solver`` *(* ``'DEFAULT'`` *)* - see ``alg`` argument to
+%         :meth:`opt_model.solve` (i.e. miqps_master or qps_master) for
+%         details
+%       - ``most.skip_prices`` *(0)* - skip price computation stage for mixed
+%         integer problems, see miqps_master for details
+%       - ``most.price_stage_warn_tol`` *(1e-7)* - tolerance on the objective
+%         function value and primal variable relative match required to avoid
+%         mis-match warning message, see miqps_master for details
+%
+% Outputs:
+%   mdo (struct) : MOST data structure, output (see |MOSTman| for details)
+%
+% See also loadmd.
 
 %   MOST
-%   Copyright (c) 2010-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Carlos E. Murillo-Sanchez, PSERC Cornell & Universidad Nacional de Colombia
 %   and Ray Zimmerman, PSERC Cornell
 %
@@ -82,7 +86,7 @@ if verbose
     fprintf(  '                       -----  Built on MATPOWER  -----\n');
     fprintf(  '  by Carlos E. Murillo-Sanchez, Universidad Nacional de Colombia--Manizales\n');
     fprintf(  '                  and Ray D. Zimmerman, Cornell University\n');
-    fprintf(  '       (c) 2012-2022 Power Systems Engineering Research Center (PSERC)       \n');
+    fprintf(  '       (c) 2012-2023 Power Systems Engineering Research Center (PSERC)       \n');
     fprintf(  '=============================================================================\n');
 end
 
@@ -275,7 +279,7 @@ if ns
       mdi.Storage.InitialStorageLowerBound = mdi.Storage.InitialStorage;
     end
   elseif max(mdi.idx.nj) == 1 && ~mo.ForceCyclicStorage && ...
-        mdi.Storage.InitialStorageLowerBound ~= mdi.Storage.InitialStorage
+        any(mdi.Storage.InitialStorageLowerBound ~= mdi.Storage.InitialStorage)
     warning('Deterministic problem with ForceCyclicStorage = 0, setting InitialStorageLowerBound = InitialStorage')
     mdi.Storage.InitialStorageLowerBound = mdi.Storage.InitialStorage;
   end
@@ -286,7 +290,7 @@ if ns
       mdi.Storage.InitialStorageUpperBound = mdi.Storage.InitialStorage;
     end
   elseif max(mdi.idx.nj) == 1 && ~mo.ForceCyclicStorage && ...
-        mdi.Storage.InitialStorageUpperBound ~= mdi.Storage.InitialStorage
+        any(mdi.Storage.InitialStorageUpperBound ~= mdi.Storage.InitialStorage)
     warning('Deterministic problem with ForceCyclicStorage = 0, setting InitialStorageUpperBound = InitialStorage')
     mdi.Storage.InitialStorageUpperBound = mdi.Storage.InitialStorage;
   end
@@ -509,7 +513,7 @@ if mpopt.most.build_model
           for k = 1:mdi.idx.nc(t,j)+1
             mpc = mdi.flow(t,j,k).mpc;
             c00tjk = totcost(mpc.gencost, zeros(ng,1));
-            mdi.UC.c00(:, t) = mdi.UC.c00(:, t) + mdi.CostWeightsAdj(k, j, t) * c00tjk;
+            mdi.UC.c00(:, t) = mdi.UC.c00(:, t) + mdi.Delta_T * mdi.CostWeightsAdj(k, j, t) * c00tjk;
             c0col = COST + mpc.gencost(:,NCOST) - 1;
             ipoly = find(mpc.gencost(:, MODEL) == POLYNOMIAL);
             ipwl  = find(mpc.gencost(:, MODEL) == PW_LINEAR);
@@ -885,17 +889,17 @@ if mpopt.most.build_model
     vv = om.get_idx();
     for t = 1:nt
       nsxnjt = ns*mdi.idx.nj(t);
-      % Form G(t), H(t), B1(t), B2(t)
-      G = sparse(nsxnjt, nvars);
-      H = sparse(nsxnjt, nvars);
+      % Form G(t)', H(t)', B1(t), B2(t)
+      G = sparse(nvars, nsxnjt);
+      H = sparse(nvars, nsxnjt);
       B1 = sparse(nsxnjt, nsxnjt);
       B2 = sparse(nsxnjt, nsxnjt);
       for j = 1:mdi.idx.nj(t)
         ii  = ((1:ns)'-1)*mdi.idx.nj(t)+j;
         jj1 = (vv.i1.Psc(t,j,1):vv.iN.Psc(t,j,1))';
         jj2 = (vv.i1.Psd(t,j,1):vv.iN.Psd(t,j,1))';
-        G = G + sparse(ii, jj1, -mdi.Delta_T  *  InEff(:,t), nsxnjt, nvars);
-        H = H + sparse(ii, jj2, -mdi.Delta_T ./ OutEff(:,t), nsxnjt, nvars);
+        G = G + sparse(jj1, ii, -mdi.Delta_T  *  InEff(:,t), nvars, nsxnjt);
+        H = H + sparse(jj2, ii, -mdi.Delta_T ./ OutEff(:,t), nvars, nsxnjt);
         B1 = B1 + sparse(ii, ii, beta1(:,t), nsxnjt, nsxnjt);
         B2 = B2 + sparse(ii, ii, beta2(:,t), nsxnjt, nsxnjt);
       end
@@ -905,12 +909,13 @@ if mpopt.most.build_model
         for i=1:ns
           jlist = [ jlist; i*ones(mdi.idx.nj(t),1) ];
         end
-        mdi.tstep(t).Li  = sparse((1:nsxnjt)', jlist, 1, nsxnjt, ns);
-        mdi.tstep(t).Lf  = B1 * mdi.tstep(t).Li;
-        mdi.tstep(t).Mg  = sparse(nsxnjt, nvars);   % Initial one is all zeros
-        mdi.tstep(t).Mh  = sparse(nsxnjt, nvars);   % Initial one is all zeros
-        mdi.tstep(t).Ng  = B2 * G;
-        mdi.tstep(t).Nh  = B2 * H;
+        % initialize transposes of Li, Lf, Mg, Mh, Ng, Nh
+        mdi.tstep(t).Li  = sparse(jlist, (1:nsxnjt)', 1, ns, nsxnjt);
+        mdi.tstep(t).Lf  = mdi.tstep(t).Li * B1;
+        mdi.tstep(t).Mg  = sparse(nvars, nsxnjt);   % Initial one is all zeros
+        mdi.tstep(t).Mh  = sparse(nvars, nsxnjt);   % Initial one is all zeros
+        mdi.tstep(t).Ng  = G * B2;
+        mdi.tstep(t).Nh  = H * B2;
       else
         % Form D(t)
         D = sparse(nsxnjt, ns*mdi.idx.nj(t-1));
@@ -921,15 +926,16 @@ if mpopt.most.build_model
                 sparse(mdi.tstep(t).TransMat) * ...
                 spdiags(p1, 0, mdi.idx.nj(t-1), mdi.idx.nj(t-1));
         for i = 1:ns
-          D((i-1)*mdi.idx.nj(t)+1:i*mdi.idx.nj(t), (i-1)*mdi.idx.nj(t-1)+1:i*mdi.idx.nj(t-1)) = Di;
+          D((i-1)*mdi.idx.nj(t  )+1:i*mdi.idx.nj(t), ...
+            (i-1)*mdi.idx.nj(t-1)+1:i*mdi.idx.nj(t-1)) = Di;
         end
-        % Apply recursion, form Li, Lf, Mg, Mh, Ng, Nh
-        mdi.tstep(t).Li = D  * mdi.tstep(t-1).Lf;
-        mdi.tstep(t).Lf = B1 * mdi.tstep(t).Li;
-        mdi.tstep(t).Mg = D * mdi.tstep(t-1).Ng;
-        mdi.tstep(t).Mh = D * mdi.tstep(t-1).Nh;
-        mdi.tstep(t).Ng = B1 * mdi.tstep(t).Mg + B2 * G;
-        mdi.tstep(t).Nh = B1 * mdi.tstep(t).Mh + B2 * H;
+        % Apply recursion, form transposes of  Li, Lf, Mg, Mh, Ng, Nh
+        mdi.tstep(t).Li = mdi.tstep(t-1).Lf * D';
+        mdi.tstep(t).Lf = mdi.tstep(t).Li * B1;
+        mdi.tstep(t).Mg = mdi.tstep(t-1).Ng * D';
+        mdi.tstep(t).Mh = mdi.tstep(t-1).Nh * D';
+        mdi.tstep(t).Ng = mdi.tstep(t).Mg * B1 + G * B2;
+        mdi.tstep(t).Nh = mdi.tstep(t).Mh * B1 + H * B2;
       end
       mdi.tstep(t).G = G;
       mdi.tstep(t).H = H;
@@ -1278,24 +1284,24 @@ if mpopt.most.build_model
     % where s_I(t,j) = L_I(t,j) * s0 + (Mg(t,j)+Mh(t,j)) * x
     for t = 2:nt
       for j = 1:mdi.idx.nj(t)
-        Mj = mdi.tstep(t).Mg( j:mdi.idx.nj(t):(ns-1)*mdi.idx.nj(t)+j, :) + ...
-             mdi.tstep(t).Mh( j:mdi.idx.nj(t):(ns-1)*mdi.idx.nj(t)+j, :);
-        Lij = mdi.tstep(t).Li( j:mdi.idx.nj(t):(ns-1)*mdi.idx.nj(t)+j, :);
+        Mj = (mdi.tstep(t).Mg(:, j:mdi.idx.nj(t):(ns-1)*mdi.idx.nj(t)+j) + ...
+              mdi.tstep(t).Mh(:, j:mdi.idx.nj(t):(ns-1)*mdi.idx.nj(t)+j));
+        Lij = mdi.tstep(t).Li(:, j:mdi.idx.nj(t):(ns-1)*mdi.idx.nj(t)+j);
         diag1minusRhoBeta1 = spdiags((1-rho(:,t)) .* beta1(:,t), 0, ns, ns);
-        A = sparse([1:ns,1:ns,1:ns,1:ns]', ...
-                   [vv.i1.Psc(t,j,1):vv.iN.Psc(t,j,1), vv.i1.Psd(t,j,1):vv.iN.Psd(t,j,1), vv.i1.Sm(t-1):vv.iN.Sm(t-1), vv.i1.Sm(t):vv.iN.Sm(t)]', ...
+        A = sparse([vv.i1.Psc(t,j,1):vv.iN.Psc(t,j,1), vv.i1.Psd(t,j,1):vv.iN.Psd(t,j,1), vv.i1.Sm(t-1):vv.iN.Sm(t-1), vv.i1.Sm(t):vv.iN.Sm(t)]', ...
+                   [1:ns,1:ns,1:ns,1:ns]', ...
                    [beta2EtaIn(:,t); beta2overEtaOut(:,t); -beta1(:,t).*rho(:,t); ones(ns,1)], ...
-                   ns, nvars) ...
-                - diag1minusRhoBeta1 * Mj;
+                   nvars, ns) ...
+                - Mj * diag1minusRhoBeta1;
         if mdi.Storage.ForceCyclicStorage
-          As0 = sparse(ns, nvars);
-          As0(:, vv.i1.S0:vv.iN.S0) = -diag1minusRhoBeta1 * Lij;
+          As0 = sparse(nvars, ns);
+          As0(vv.i1.S0:vv.iN.S0, :) = -Lij * diag1minusRhoBeta1;
           A = A + As0;
           u = zeros(ns, 1);
         else
-          u = full(diag1minusRhoBeta1 * Lij * mdi.Storage.InitialStorage/baseMVA);
+          u = full(mdi.Storage.InitialStorage'/baseMVA * Lij * diag1minusRhoBeta1)';
         end
-        om.add_lin_constraint('Sm', {t,j}, A, [], u);
+        om.add_lin_constraint('Sm', {t,j}, A, [], u, {}, 1);    % add transpose
       end
     end
     % Do the same we did for sm(t) for sp(t). First the initial step ...
@@ -1323,24 +1329,24 @@ if mpopt.most.build_model
     % where s_I(t,j) = L_I(t,j) * s0 + (Mg(t,j)+Mh(t,j)) * x
     for t = 2:nt
       for j = 1:mdi.idx.nj(t)
-        Mj = mdi.tstep(t).Mg( j:mdi.idx.nj(t):(ns-1)*mdi.idx.nj(t)+j, :) + ...
-             mdi.tstep(t).Mh( j:mdi.idx.nj(t):(ns-1)*mdi.idx.nj(t)+j, :);
-        Lij = mdi.tstep(t).Li( j:mdi.idx.nj(t):(ns-1)*mdi.idx.nj(t)+j, :);
+        Mj = (mdi.tstep(t).Mg(:, j:mdi.idx.nj(t):(ns-1)*mdi.idx.nj(t)+j) + ...
+              mdi.tstep(t).Mh(:, j:mdi.idx.nj(t):(ns-1)*mdi.idx.nj(t)+j));
+        Lij = mdi.tstep(t).Li(:, j:mdi.idx.nj(t):(ns-1)*mdi.idx.nj(t)+j);
         diag1minusRhoBeta1 = spdiags((1-rho(:,t)) .* beta1(:,t), 0, ns, ns);
-        A = sparse([1:ns,1:ns,1:ns,1:ns]', ...
-                   [vv.i1.Psc(t,j,1):vv.iN.Psc(t,j,1), vv.i1.Psd(t,j,1):vv.iN.Psd(t,j,1), vv.i1.Sp(t-1):vv.iN.Sp(t-1), vv.i1.Sp(t):vv.iN.Sp(t)]', ...
+        A = sparse([vv.i1.Psc(t,j,1):vv.iN.Psc(t,j,1), vv.i1.Psd(t,j,1):vv.iN.Psd(t,j,1), vv.i1.Sp(t-1):vv.iN.Sp(t-1), vv.i1.Sp(t):vv.iN.Sp(t)]', ...
+                   [1:ns,1:ns,1:ns,1:ns]', ...
                    [-beta2EtaIn(:,t); -beta2overEtaOut(:,t); beta1(:,t).*rho(:,t); -ones(ns,1)], ...
-                   ns, nvars) ...
-                + diag1minusRhoBeta1 * Mj;
+                   nvars, ns) ...
+                + Mj * diag1minusRhoBeta1;
         if mdi.Storage.ForceCyclicStorage
-          As0 = sparse(ns, nvars);
-          As0(:, vv.i1.S0:vv.iN.S0) = diag1minusRhoBeta1 * Lij;
+          As0 = sparse(nvars, ns);
+          As0(vv.i1.S0:vv.iN.S0, :) = Lij * diag1minusRhoBeta1;
           A = A + As0;
           u = zeros(ns, 1);
         else
-          u = full(-diag1minusRhoBeta1 * Lij * mdi.Storage.InitialStorage/baseMVA);
+          u = full(-mdi.Storage.InitialStorage'/baseMVA * Lij * diag1minusRhoBeta1)';
         end
-        om.add_lin_constraint('Sp', {t,j}, A, [], u);
+        om.add_lin_constraint('Sp', {t,j}, A, [], u, {}, 1);    % add transpose
       end
     end
     % Now go on and limit the amount of energy that can be used if a
@@ -1371,9 +1377,9 @@ if mpopt.most.build_model
     for t = 2:nt
       for j = 1:mdi.idx.nj(t)
         for k = 2:mdi.idx.nc(t,j)+1
-          Mj = mdi.tstep(t).Mg( j:mdi.idx.nj(t):(ns-1)*mdi.idx.nj(t)+j, :) + ...
-               mdi.tstep(t).Mh( j:mdi.idx.nj(t):(ns-1)*mdi.idx.nj(t)+j, :);
-          Lij = mdi.tstep(t).Li( j:mdi.idx.nj(t):(ns-1)*mdi.idx.nj(t)+j, :);
+          Mj = (mdi.tstep(t).Mg(:, j:mdi.idx.nj(t):(ns-1)*mdi.idx.nj(t)+j) + ...
+                mdi.tstep(t).Mh(:, j:mdi.idx.nj(t):(ns-1)*mdi.idx.nj(t)+j))';
+          Lij = mdi.tstep(t).Li(:, j:mdi.idx.nj(t):(ns-1)*mdi.idx.nj(t)+j)';
           diag1minusRhoBeta5 = spdiags((1-rho(:,t)) .* beta5(:,t), 0, ns, ns);
           A = sparse([1:ns,1:ns,1:ns,1:ns,1:ns]', ...
                      [vv.i1.Psc(t,j,1):vv.iN.Psc(t,j,1), vv.i1.Psd(t,j,1):vv.iN.Psd(t,j,1), vv.i1.Psc(t,j,k):vv.iN.Psc(t,j,k), vv.i1.Psd(t,j,k):vv.iN.Psd(t,j,k), vv.i1.Sm(t-1):vv.iN.Sm(t-1)]', ...
@@ -1419,9 +1425,9 @@ if mpopt.most.build_model
     for t = 2:nt
       for j = 1:mdi.idx.nj(t)
         for k = 2:mdi.idx.nc(t,j)+1
-          Mj = mdi.tstep(t).Mg( j:mdi.idx.nj(t):(ns-1)*mdi.idx.nj(t)+j, :) + ...
-               mdi.tstep(t).Mh( j:mdi.idx.nj(t):(ns-1)*mdi.idx.nj(t)+j, :);
-          Lij = mdi.tstep(t).Li( j:mdi.idx.nj(t):(ns-1)*mdi.idx.nj(t)+j, :);
+          Mj = (mdi.tstep(t).Mg(:, j:mdi.idx.nj(t):(ns-1)*mdi.idx.nj(t)+j) + ...
+               mdi.tstep(t).Mh(:, j:mdi.idx.nj(t):(ns-1)*mdi.idx.nj(t)+j))';
+          Lij = mdi.tstep(t).Li(:, j:mdi.idx.nj(t):(ns-1)*mdi.idx.nj(t)+j)';
           diag1minusRhoBeta5 = spdiags((1-rho(:,t)) .* beta5(:,t), 0, ns, ns);
           A = sparse([1:ns,1:ns,1:ns,1:ns,1:ns]', ...
                      [vv.i1.Psc(t,j,1):vv.iN.Psc(t,j,1), vv.i1.Psd(t,j,1):vv.iN.Psd(t,j,1), vv.i1.Psc(t,j,k):vv.iN.Psc(t,j,k), vv.i1.Psd(t,j,k):vv.iN.Psd(t,j,k), vv.i1.Sp(t-1):vv.iN.Sp(t-1)]', ...
@@ -1454,9 +1460,9 @@ if mpopt.most.build_model
       A = sparse(ns, nvars);
       b = zeros(ns, 1);
       for j = 1:mdi.idx.nj(nt)
-        Ngj = mdi.tstep(nt).Ng( j:mdi.idx.nj(nt):(ns-1)*mdi.idx.nj(nt)+j, :);
-        Nhj = mdi.tstep(nt).Nh( j:mdi.idx.nj(nt):(ns-1)*mdi.idx.nj(nt)+j, :);
-        Lfj = mdi.tstep(nt).Lf( j:mdi.idx.nj(nt):(ns-1)*mdi.idx.nj(nt)+j, :);
+        Ngj = mdi.tstep(nt).Ng(:, j:mdi.idx.nj(nt):(ns-1)*mdi.idx.nj(nt)+j)';
+        Nhj = mdi.tstep(nt).Nh(:, j:mdi.idx.nj(nt):(ns-1)*mdi.idx.nj(nt)+j)';
+        Lfj = mdi.tstep(nt).Lf(:, j:mdi.idx.nj(nt):(ns-1)*mdi.idx.nj(nt)+j)';
         A = A + mdi.CostWeights(1,j,nt) * (Ngj + Nhj);
         b = b + mdi.CostWeights(1,j,nt) * (Lfj * mdi.Storage.InitialStorage) / baseMVA;
       end
@@ -1470,14 +1476,14 @@ if mpopt.most.build_model
       % 2) Constrain the initial storage (a variable) to be the same as the final expected storage
       A = sparse(ns, nvars);
       for j = 1:mdi.idx.nj(nt)
-        Ngj = mdi.tstep(nt).Ng( j:mdi.idx.nj(nt):(ns-1)*mdi.idx.nj(nt)+j, :);
-        Nhj = mdi.tstep(nt).Nh( j:mdi.idx.nj(nt):(ns-1)*mdi.idx.nj(nt)+j, :);
+        Ngj = mdi.tstep(nt).Ng(:, j:mdi.idx.nj(nt):(ns-1)*mdi.idx.nj(nt)+j)';
+        Nhj = mdi.tstep(nt).Nh(:, j:mdi.idx.nj(nt):(ns-1)*mdi.idx.nj(nt)+j)';
         A = A + mdi.CostWeights(1,j,nt) * (Ngj + Nhj);
       end
       endprob = sum(mdi.CostWeights(1,1:mdi.idx.nj(nt),nt)');
       A = (1/endprob) * A;
       for j = 1:mdi.idx.nj(nt)
-        Lfj = mdi.tstep(nt).Lf(j:mdi.idx.nj(nt):(ns-1)*mdi.idx.nj(nt)+j, :);
+        Lfj = mdi.tstep(nt).Lf(:, j:mdi.idx.nj(nt):(ns-1)*mdi.idx.nj(nt)+j)';
         A(:, vv.i1.S0:vv.iN.S0) = A(:, vv.i1.S0:vv.iN.S0) ...
                   + mdi.CostWeights(1,j,nt) * Lfj;
       end
@@ -1573,59 +1579,109 @@ if mpopt.most.build_model
       end
       om.add_lin_constraint('uvw', {t}, A, b, b, vs);
     end
-    % Then continue with minimimum up time constraints. Again, two
-    % different forms depending on whether the horizon is cyclical or not
-    om.init_indexed_name('lin', 'minup', {nt, ng});
+    % Continue with minimimum up time constraints, with option for
+    % cyclical horizon.
+    om.init_indexed_name('lin', 'minup', {nt});
+    % Sum of startups in "min up window" (win) must be <= u
     for t = 1:nt
-      for i = 1:ng
-        ti = t-mdi.UC.MinUp(i)+1:t;
-        if mdi.UC.CyclicCommitment     % window is circular
-          for tt = 1:length(ti)
-            if ti(tt) < 1
-              ti(tt) = nt + ti(tt);
-            end
-          end
+      % beginning of win
+      w0 = t - mdi.UC.MinUp + 1;    % full win(t,i) is w0(i):t
+      if mdi.UC.CyclicCommitment    % window is circular
+        % any window that starts before t=1 wraps back to end of horizon
+        w0(w0 < 1) = w0(w0 < 1) + nt;
+        % if we wrap all the way back to before t=1 again,
+        % include entire horizon, i.e. always ON
+        if t < nt
+          w0(w0 < 1) = t + 1;
+        else
+          w0(w0 < 1) = 1;
         end
-        % limit to positive time
-        % even with CyclicCommitment, in case MinUp is longer than horizon
-        % (which implies always ON or always OFF)
-        ti = ti(ti>0);
-        vs = struct('name', {'u'}, 'idx', {{t}});
-        A = sparse(1, i, -1, 1, ng);
-        for tt = 1:length(ti)
-            vs(end+1).name = 'v';
-            vs(end).idx  = {ti(tt)};
-            A = [A sparse(1, i, 1, 1, ng)];
-        end
-        om.add_lin_constraint('minup', {t, i}, A, [], 0, vs);
+      else
+        % clip non-positive w0
+        w0(w0 < 1) = 1;
       end
+
+      % b = -(sum of startups in win before t=1)
+      b = zeros(ng, 1);
+      % next line not necessary, since it is handled above by direct bounds on u
+      % b(mdi.UC.InitialState > 0 & w0 <= -mdi.UC.InitialState +1) = -1;
+
+      % period index list from t back to beginning of biggest win
+      if any(w0 > t)    % w/wrapping back to end of horizon
+        max_win = [t:-1:1 nt:-1:min(w0(w0 > t))];
+      else              % no wrapping back to end of horizon
+        max_win = [t:-1:min(w0)];
+      end
+
+      vs = struct('name', {'u'}, 'idx', {{t}});
+      A = [-speye(ng, ng) sparse(ng, ng*length(max_win))];
+      for tt = 1:length(max_win)
+          vs(end+1).name = 'v';
+          vs(end).idx  = {max_win(tt)};
+      end
+      for i = 1:ng
+        if w0(i) > t
+          win = [t:-1:1 nt:-1:w0(i)];
+        else
+          win = [t:-1:w0(i)];
+        end
+        for tt = 1:length(win)
+          A(i, ng*tt+i) = 1;
+        end
+      end
+      om.add_lin_constraint('minup', {t}, A, [], b, vs);
     end
-    % Continue with minimimum downtime constraints. Two
-    % different forms depending on whether the horizon is cyclical or not
-    om.init_indexed_name('lin', 'mindown', {nt, ng});
+    % Continue with minimimum downtime constraints, with option for
+    % cyclical horizon.
+    om.init_indexed_name('lin', 'mindown', {nt});
+    % Sum of shutdowns in "min down window" (win) must be <= (1-u)
     for t = 1:nt
-      for i = 1:ng
-        ti = t-mdi.UC.MinDown(i)+1:t;
-        if mdi.UC.CyclicCommitment     % window is circular
-          for tt = 1:length(ti)
-            if ti(tt) < 1
-              ti(tt) = nt + ti(tt);
-            end
-          end
+      % beginning of win
+      w0 = t - mdi.UC.MinDown + 1;  % full win(t,i) is w0(i):t
+      if mdi.UC.CyclicCommitment    % window is circular
+        % any window that starts before t=1 wraps back to end of horizon
+        w0(w0 < 1) = w0(w0 < 1) + nt;
+        % if we wrap all the way back to before t=1 again,
+        % include entire horizon, i.e. always ON
+        if t < nt
+          w0(w0 < 1) = t + 1;
+        else
+          w0(w0 < 1) = 1;
         end
-        % limit to positive time
-        % even with CyclicCommitment, in case MinDown is longer than horizon
-        % (which implies always ON or always OFF)
-        ti = ti(ti>0);
-        vs = struct('name', {'u'}, 'idx', {{t}});
-        A = sparse(1, i, 1, 1, ng);
-        for tt = 1:length(ti)
-            vs(end+1).name = 'w';
-            vs(end).idx  = {ti(tt)};
-            A = [A sparse(1, i, 1, 1, ng)];
-        end
-        om.add_lin_constraint('mindown', {t, i}, A, [], 1, vs);
+      else
+        % clip non-positive w0
+        w0(w0 < 1) = 1;
       end
+
+      % b = 1-(sum of shutdowns in win before t=1)
+      b = ones(ng, 1);
+      % next line not necessary, since it is handled above by direct bounds on u
+      % b(mdi.UC.InitialState < 0 & w0 <= -mdi.UC.InitialState +1) = 0;
+
+      % period index list from t back to beginning of biggest win
+      if any(w0 > t)    % w/wrapping back to end of horizon
+        max_win = [t:-1:1 nt:-1:min(w0(w0 > t))];
+      else              % no wrapping back to end of horizon
+        max_win = [t:-1:min(w0)];
+      end
+
+      vs = struct('name', {'u'}, 'idx', {{t}});
+      A = [speye(ng, ng) sparse(ng, ng*length(max_win))];
+      for tt = 1:length(max_win)
+          vs(end+1).name = 'w';
+          vs(end).idx  = {max_win(tt)};
+      end
+      for i = 1:ng
+        if w0(i) > t
+          win = [t:-1:1 nt:-1:w0(i)];
+        else
+          win = [t:-1:w0(i)];
+        end
+        for tt = 1:length(win)
+          A(i, ng*tt+i) = 1;
+        end
+      end
+      om.add_lin_constraint('mindown', {t}, A, [], b, vs);
     end
     % Limit generation ranges based on commitment status; first Pmax;
     % p - u*Pmax <= 0
@@ -1723,19 +1779,19 @@ if mpopt.most.build_model
     om.init_indexed_name('qdc', 'RampWear', {nt+1, nj_max, nj_max});
   end
   for j = 1:mdi.idx.nj(1)
-    w = mdi.tstep(1).TransMat(j,1);  % the probability of going from initial state to jth
-    Q = spdiags(w * baseMVA^2 * mdi.RampWearCostCoeff(:,1), 0, ng, ng);
+    w = mdi.Delta_T * mdi.tstep(1).TransMat(j,1);  % the probability of going from initial state to jth
+    Q = spdiags(w * baseMVA^2 * mdi.RampWearCostCoeff(:,1) / mdi.Delta_T^2, 0, ng, ng);
     c = -w * baseMVA * mdi.RampWearCostCoeff(:,1) .* mdi.InitialPg;
-    vs = struct('name', {'Pg'}, 'idx', {{1,j,1}});
     k0 = w * 0.5 * mdi.RampWearCostCoeff(:,1)' * mdi.InitialPg.^2;
+    vs = struct('name', {'Pg'}, 'idx', {{1,j,1}});
     om.add_quad_cost('RampWear', {1,j,1}, Q, c, k0, vs);
   end
   % Then the remaining periods
   for t = 2:nt
     for j2 = 1:mdi.idx.nj(t)
       for j1 = 1:mdi.idx.nj(t-1)
-        w = mdi.tstep(t).TransMat(j2,j1) * mdi.CostWeights(1, j1, t-1);
-        h = w * baseMVA^2 * mdi.RampWearCostCoeff(:,t);
+        w = mdi.Delta_T * mdi.tstep(t).TransMat(j2,j1) * mdi.CostWeights(1, j1, t-1);
+        h = w * baseMVA^2 * mdi.RampWearCostCoeff(:,t) / mdi.Delta_T^2;
         i = (1:ng)';
         j = ng+(1:ng)';
         Q = sparse([i;j;i;j], [i;i;j;j], [h;-h;-h;h], 2*ng, 2*ng);
@@ -1750,11 +1806,11 @@ if mpopt.most.build_model
   % that makes sense for nt+1; all other fields in mdi.tstep(nt+1) can be empty.
   if ~mdi.OpenEnded
     for j = 1:mdi.idx.nj(nt)
-      w = mdi.tstep(nt+1).TransMat(1, j) * mdi.CostWeights(1, j, nt);
-      Q = spdiags(w * baseMVA^2 * mdi.RampWearCostCoeff(:,nt+1), 0, ng, ng);
+      w = mdi.Delta_T * mdi.tstep(nt+1).TransMat(1, j) * mdi.CostWeights(1, j, nt);
+      Q = spdiags(w * baseMVA^2 * mdi.RampWearCostCoeff(:,nt+1) / mdi.Delta_T^2, 0, ng, ng);
       c = -w * baseMVA * mdi.RampWearCostCoeff(:,nt+1) .* mdi.TerminalPg;
-      vs = struct('name', {'Pg'}, 'idx', {{nt,j,1}});
       k0 = w * 0.5 * mdi.RampWearCostCoeff(:,nt+1)' * mdi.TerminalPg.^2;
+      vs = struct('name', {'Pg'}, 'idx', {{nt,j,1}});
       om.add_quad_cost('RampWear', {nt+1,j,1}, Q, c, k0, vs);
     end
   end
@@ -1773,7 +1829,7 @@ if mpopt.most.build_model
   for t = 1:nt
     for j = 1:mdi.idx.nj(t)
       for k = 1:mdi.idx.nc(t,j)+1
-        w = mdi.CostWeightsAdj(k,j,t);     %% NOTE (k,j,t) order !!!
+        w = mdi.Delta_T * mdi.CostWeightsAdj(k,j,t);    %% NOTE (k,j,t) order !!!
 
         % weighted polynomial energy costs for committed units
         gc = mdi.flow(t,j,k).mpc.gencost;
@@ -1841,10 +1897,10 @@ if mpopt.most.build_model
     end
 
     % contingency reserve costs
-    c = baseMVA * mdi.StepProb(t) * mdi.offer(t).PositiveActiveReservePrice(:);
+    c = mdi.Delta_T * baseMVA * mdi.StepProb(t) * mdi.offer(t).PositiveActiveReservePrice(:);
     vs = struct('name', {'Rpp'}, 'idx', {{t}});
     om.add_quad_cost('Crpp', {t}, [], c, 0, vs);
-    c = baseMVA * mdi.StepProb(t) * mdi.offer(t).NegativeActiveReservePrice(:);
+    c = mdi.Delta_T * baseMVA * mdi.StepProb(t) * mdi.offer(t).NegativeActiveReservePrice(:);
     vs = struct('name', {'Rpm'}, 'idx', {{t}});
     om.add_quad_cost('Crpm', {t}, [], c, 0, vs);
   end
@@ -1852,10 +1908,10 @@ if mpopt.most.build_model
   om.init_indexed_name('qdc', 'Crrp', {mdi.idx.ntramp});
   om.init_indexed_name('qdc', 'Crrm', {mdi.idx.ntramp});
   for t = 1:mdi.idx.ntramp
-    c = baseMVA * mdi.StepProb(t) * mdi.offer(t).PositiveLoadFollowReservePrice(:);
+    c = mdi.Delta_T * baseMVA * mdi.StepProb(t) * mdi.offer(t).PositiveLoadFollowReservePrice(:);
     vs = struct('name', {'Rrp'}, 'idx', {{t}});
     om.add_quad_cost('Crrp', {t}, [], c, 0, vs);
-    c = baseMVA * mdi.StepProb(t) * mdi.offer(t).NegativeLoadFollowReservePrice(:);
+    c = mdi.Delta_T * baseMVA * mdi.StepProb(t) * mdi.offer(t).NegativeLoadFollowReservePrice(:);
     vs = struct('name', {'Rrm'}, 'idx', {{t}});
     om.add_quad_cost('Crrm', {t}, [], c, 0, vs);
   end
@@ -1885,12 +1941,12 @@ if mpopt.most.build_model
   % Finally, assign any value to leftover stored energy
   if ns
     A1 = sparse(ns, ns);
-    A2 = sparse(ns, nvars);
-    A3 = sparse(ns, nvars);
-    A4 = sparse(ns, nvars);
-    A5 = sparse(ns, nvars);
-    A6 = sparse(ns, nvars);
-    A7 = sparse(ns, nvars);
+    A2 = sparse(nvars, ns);     % use transposes for A2-A7
+    A3 = sparse(nvars, ns);
+    A4 = sparse(nvars, ns);
+    A5 = sparse(nvars, ns);
+    A6 = sparse(nvars, ns);
+    A7 = sparse(nvars, ns);
     % The following code assumes that no more variables will be added
     vv = om.get_idx();
     for t = 1:nt
@@ -1898,39 +1954,39 @@ if mpopt.most.build_model
       % after a contingency
       for j = 1:mdi.idx.nj(t)
         % pick rows for jth base injections
-        Gtj0  = mdi.tstep(t).G(  j:mdi.idx.nj(t):(ns-1)*mdi.idx.nj(t)+j, :);
-        Htj0  = mdi.tstep(t).H(  j:mdi.idx.nj(t):(ns-1)*mdi.idx.nj(t)+j, :);
-        Litj0 = mdi.tstep(t).Li( j:mdi.idx.nj(t):(ns-1)*mdi.idx.nj(t)+j, :);
-        Mgtj0 = mdi.tstep(t).Mg( j:mdi.idx.nj(t):(ns-1)*mdi.idx.nj(t)+j, :);
-        Mhtj0 = mdi.tstep(t).Mh( j:mdi.idx.nj(t):(ns-1)*mdi.idx.nj(t)+j, :);
         sum_psi_tjk = sum(mdi.CostWeights(2:mdi.idx.nc(t,j)+1,j,t));
+        Gtj0  = mdi.tstep(t).G(:,  j:mdi.idx.nj(t):(ns-1)*mdi.idx.nj(t)+j);
+        Htj0  = mdi.tstep(t).H(:,  j:mdi.idx.nj(t):(ns-1)*mdi.idx.nj(t)+j);
+        Litj0 = mdi.tstep(t).Li(:, j:mdi.idx.nj(t):(ns-1)*mdi.idx.nj(t)+j);
+        Mgtj0 = mdi.tstep(t).Mg(:, j:mdi.idx.nj(t):(ns-1)*mdi.idx.nj(t)+j);
+        Mhtj0 = mdi.tstep(t).Mh(:, j:mdi.idx.nj(t):(ns-1)*mdi.idx.nj(t)+j);
         if t == nt
-          A1 = A1 + mdi.CostWeights(1,j,t) * spdiags(OutEff(:,t) .* beta1(:,t), 0, ns, ns) * Litj0;
-          A2 = A2 + mdi.CostWeights(1,j,t) * spdiags(OutEff(:,t) .* beta1(:,t), 0, ns, ns) * Mgtj0;
-          A3 = A3 + mdi.CostWeights(1,j,t) * spdiags(OutEff(:,t) .* beta1(:,t), 0, ns, ns) * Mhtj0;
-          A4 = A4 + mdi.CostWeights(1,j,t) * spdiags(OutEff(:,t) .* beta2(:,t), 0, ns, ns) * Gtj0;
-          A5 = A5 + mdi.CostWeights(1,j,t) * spdiags(OutEff(:,t) .* beta2(:,t), 0, ns, ns) * Htj0;
+          A1 = A1 + mdi.CostWeights(1,j,t) * Litj0 * spdiags(OutEff(:,t) .* beta1(:,t), 0, ns, ns);
+          A2 = A2 + mdi.CostWeights(1,j,t) * Mgtj0 * spdiags(OutEff(:,t) .* beta1(:,t), 0, ns, ns);
+          A3 = A3 + mdi.CostWeights(1,j,t) * Mhtj0 * spdiags(OutEff(:,t) .* beta1(:,t), 0, ns, ns);
+          A4 = A4 + mdi.CostWeights(1,j,t) * Gtj0 * spdiags(OutEff(:,t) .* beta2(:,t), 0, ns, ns);
+          A5 = A5 + mdi.CostWeights(1,j,t) * Htj0 * spdiags(OutEff(:,t) .* beta2(:,t), 0, ns, ns);
         end
-        A1 = A1 + sum_psi_tjk * spdiags(OutEff(:,t) .* beta5(:,t), 0, ns, ns) * Litj0;
-        A2 = A2 + sum_psi_tjk * (spdiags(OutEff(:,t) .* beta5(:,t), 0, ns, ns) * Mgtj0 + spdiags(OutEff(:,t) .* beta4(:,t), 0, ns, ns) * Gtj0);
-        A3 = A3 + sum_psi_tjk * (spdiags(OutEff(:,t) .* beta5(:,t), 0, ns, ns) * Mhtj0 + spdiags(OutEff(:,t) .* beta4(:,t), 0, ns, ns) * Htj0);
+        A1 = A1 + Litj0 * sum_psi_tjk * spdiags(OutEff(:,t) .* beta5(:,t), 0, ns, ns);
+        A2 = A2 + sum_psi_tjk * (Mgtj0 * spdiags(OutEff(:,t) .* beta5(:,t), 0, ns, ns) + Gtj0 * spdiags(OutEff(:,t) .* beta4(:,t), 0, ns, ns));
+        A3 = A3 + sum_psi_tjk * (Mhtj0 * spdiags(OutEff(:,t) .* beta5(:,t), 0, ns, ns) + Htj0 * spdiags(OutEff(:,t) .* beta4(:,t), 0, ns, ns));
         for k = 2:mdi.idx.nc(t,j)+1
           ii  = (1:ns)';
           jj1 = (vv.i1.Psc(t,j,k):vv.iN.Psc(t,j,k))';
           jj2 = (vv.i1.Psd(t,j,k):vv.iN.Psd(t,j,k))';
-          Gtjk = sparse(ii, jj1, -mdi.Delta_T  *  InEff(:,t), ns, nvars);
-          Htjk = sparse(ii, jj2, -mdi.Delta_T ./ OutEff(:,t), ns, nvars);
-          A6 = A6 + mdi.CostWeights(k,j,t) * spdiags(OutEff(:,t) .* beta3(:,t), 0, ns, ns) * Gtjk;
-          A7 = A7 + mdi.CostWeights(k,j,t) * spdiags(OutEff(:,t) .* beta3(:,t), 0, ns, ns) * Htjk;
+          Gtjk = sparse(jj1, ii, -mdi.Delta_T  *  InEff(:,t), nvars, ns);
+          Htjk = sparse(jj2, ii, -mdi.Delta_T ./ OutEff(:,t), nvars, ns);
+          A6 = A6 + mdi.CostWeights(k,j,t) * Gtjk * spdiags(OutEff(:,t) .* beta3(:,t), 0, ns, ns);
+          A7 = A7 + mdi.CostWeights(k,j,t) * Htjk * spdiags(OutEff(:,t) .* beta3(:,t), 0, ns, ns);
         end
       end
     end
     Cfstor = -baseMVA * ...
-       (mdi.Storage.TerminalStoragePrice'      * (A2 + A3) + ...
-        mdi.Storage.TerminalChargingPrice0'    * A4 + ...
-        mdi.Storage.TerminalDischargingPrice0' * A5 + ...
-        mdi.Storage.TerminalChargingPriceK'    * A6 + ...
-        mdi.Storage.TerminalDischargingPriceK' * A7);
+       (( A2 + A3) * mdi.Storage.TerminalStoragePrice + ...
+                A4 * mdi.Storage.TerminalChargingPrice0 + ...
+                A5 * mdi.Storage.TerminalDischargingPrice0 + ...
+                A6 * mdi.Storage.TerminalChargingPriceK + ...
+                A7 * mdi.Storage.TerminalDischargingPriceK )';
     if mdi.Storage.ForceCyclicStorage
       % If the horizon model for the storage is cyclic and therefore s0 is a
       % variable, then that initial storage must come at a cost,
@@ -2268,9 +2324,9 @@ if mpopt.most.solve_model
       for t = 1:nt
         pp = sum(mdo.CostWeights(1,1:mdo.idx.nj(t),t)');    %% gamma(t+1)
         for j = 1:mdo.idx.nj(t)
-          Lfj = mdo.tstep(t).Lf( j:mdo.idx.nj(t):(ns-1)*mdo.idx.nj(t)+j, :);
-          Ngj = mdo.tstep(t).Ng( j:mdo.idx.nj(t):(ns-1)*mdo.idx.nj(t)+j, :);
-          Nhj = mdo.tstep(t).Nh( j:mdo.idx.nj(t):(ns-1)*mdo.idx.nj(t)+j, :);
+          Lfj = mdo.tstep(t).Lf(:, j:mdo.idx.nj(t):(ns-1)*mdo.idx.nj(t)+j)';
+          Ngj = mdo.tstep(t).Ng(:, j:mdo.idx.nj(t):(ns-1)*mdo.idx.nj(t)+j)';
+          Nhj = mdo.tstep(t).Nh(:, j:mdo.idx.nj(t):(ns-1)*mdo.idx.nj(t)+j)';
           mdo.Storage.ExpectedStorageState(:,t) = ...
               mdo.Storage.ExpectedStorageState(:,t) + ...
                   baseMVA * mdo.CostWeights(1,j,t)/pp * ...

@@ -1,5 +1,6 @@
 function [mpco, NewGenIdx] = addgen2mpc(mpci, gen, gencost, fuel)
-%ADDGEN2MPC Adds a set of generators to a MATPOWER case struct.
+% addgen2mpc - Adds a set of generators to a MATPOWER case struct.
+% ::
 %
 %   [NEW_MPC, IDX] = ADDGEN2MPC(MPC, GEN, GENCOST, GEN_TYPE)
 %
@@ -27,7 +28,7 @@ function [mpco, NewGenIdx] = addgen2mpc(mpci, gen, gencost, fuel)
 %       IDX : generator indices of the newly added generators
 
 %   MOST
-%   Copyright (c) 2013-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2013-2024, Power Systems Engineering Research Center (PSERC)
 %   by Daniel Munoz-Alvarez and Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

@@ -1,5 +1,6 @@
 function profiles = getprofiles(profilesi, profiles0, idx)
-%GETPROFILES  Loads profiles, optionally updating 'rows' via an index mapping.
+% getprofiles - Loads profiles, optionally updating 'rows' via an index mapping.
+% ::
 %
 %   PROFILES = GETPROFILES(PROFILESI);
 %   PROFILES = GETPROFILES(PROFILESI, PROFILES0);
@@ -34,10 +35,10 @@ function profiles = getprofiles(profilesi, profiles0, idx)
 %       profiles = getprofiles('mywindprofile', iwind);
 %       md = loadmd(mpc, 'mytransmat', xgd, [], [], profiles);
 %
-%   See also APPLY_PROFILE, IDX_PROFILE.
+% See also apply_profile, idx_profile.
 
 %   MOST
-%   Copyright (c) 2012-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2012-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

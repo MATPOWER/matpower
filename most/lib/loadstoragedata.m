@@ -1,5 +1,6 @@
 function sd = loadstoragedata(sd_table, mpc)
-%LOADSTORAGEDATA   Load StorageData table into StorageData struct.
+% loadstoragedata - Load StorageData table into StorageData struct.
+% ::
 %
 %   SD = LOADSTORAGEDATA(SD_TABLE)
 %   SD = LOADSTORAGEDATA(SD_TABLE, GEN)
@@ -63,7 +64,7 @@ function sd = loadstoragedata(sd_table, mpc)
 %           .rho                                (ns x 1) or (1 x 1)
 
 %   MOST
-%   Copyright (c) 2013-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2013-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

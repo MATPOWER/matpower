@@ -1,5 +1,6 @@
 function [idx, new_mpc, new_xgd] = addwind(wind, mpc, xgd)
-%ADDWIND   Adds wind generators and corresponding xGenData to existing data.
+% addwind - Adds wind generators and corresponding xGenData to existing data.
+% ::
 %
 %   [IDX, NEW_MPC] = ADDWIND(WIND, MPC)
 %   [IDX, NEW_MPC, NEW_XGD] = ADDWIND(WIND, MPC)
@@ -29,10 +30,10 @@ function [idx, new_mpc, new_xgd] = addwind(wind, mpc, xgd)
 %                 MPC.GENFUEL (= 'wind').
 %       NEW_XGD : XGD with xGenData for new wind units appended.
 %
-%   See also LOADXGENDATA.
+% See also loadxgendata.
 
 %   MOST
-%   Copyright (c) 2013-2016, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2013-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.

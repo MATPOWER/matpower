@@ -1,8 +1,8 @@
 function t_most_tlmp(quiet)
-%T_MOST_TLMP  Tests of TLMP for ramping and storage
+% t_most_tlmp - Tests of TLMP for ramping and storage
 
 %   MOST
-%   Copyright (c) 2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2022-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MOST.
