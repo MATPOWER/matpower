@@ -1,73 +1,91 @@
 function [x, f] = mplinsolve(A, b, solver, opt)
-%MPLINSOLVE  Solves A * x = b using specified solver
-%   X = MPLINSOLVE(A, B)
-%   X = MPLINSOLVE(A, B, SOLVER)
-%   X = MPLINSOLVE(A, B, SOLVER, OPT)
-%   X = MPLINSOLVE(FACTORS, B, ...)
-%   FACTORS = MPLINSOLVE(A)
-%   FACTORS = MPLINSOLVE(A, [], ...)
-%   [X, FACTORS] = MPLINSOLVE(A, B, 'LU' ...)
+% mplinsolve - Solve A * x = b using specified solver.
+% ::
 %
-%   Solves the linear system of equations A * x == b, using the selected
-%   solver.
+%   x = mplinsolve(A, b)
+%   x = mplinsolve(A, b, solver)
+%   x = mplinsolve(A, b, solver, opt)
+%   x = mplinsolve(factors, b, ...)
+%   factors = mplinsolve(A)
+%   factors = mplinsolve(A, [], ...)
+%   [x, factors] = mplinsolve(A, b, 'lu' ...)
 %
-%   Inputs:
-%       A       : sparse matrix
-%       FACTORS : struct containing (e.g. LU) factors of A, from previous
-%           call to MPLINSOLVE, includes the field:
-%               type - number identifying which of the following sets of
-%                      additional fields are included:
-%               1:  L, U, p, qa     - 3 output Gilbert-Peierls, perm vectors
-%               2:  L, U, P, Qa     - 3 output Gilbert-Peierls, perm matrices
-%               3:  L, U, p, q      - 4 output UMFPACK, perm vectors
-%               4:  L, U, P, Q      - 4 output UMFPACK, perm matrices
-%               5:  L, U, p, q, R   - 5 output UMFPACK, perm vec, row scaling
-%               6:  L, U, P, Q, R   - 5 output UMFPACK, perm mat, row scaling
-%       B       : full vector or matrix
-%       SOLVER  : ('') selected linear system solver
-%           ''  - use default solver, currently this is
-%                   always the built-in backslash operator
-%           '\' - built-in backslash operator
-%           'LU' - use explicit LU decomposition and back substitution
-%               The following are also provided as short-cuts, with less
-%               overhead and thus better performance on small systems, as
-%               alternatives for 'LU' with the following options:
-%                           OPT.lu.nout     OPT.lu.vec      OPT.lu.thresh
-%                   'LU3'       3               1               1.0
-%                   'LU3a'      3               1
-%                   'LU4'       4               1
-%                   'LU5'       5               1
-%                   'LU3m'      3               0               1.0
-%                   'LU3am'     3               0
-%                   'LU4m'      4               0
-%                   'LU5m'      5               0
-%           'PARDISO' - PARDISO
-%       OPT    : struct of options for certain solvers (e.g. LU and PARDISO)
-%           lu : struct of options to determine form of call to LU solver,
-%                 with the following possible fields (default value in parens):
-%               nout (4) - number of output args for call to LU, UMFPACK is
-%                   used for 4 or 5 output args, Gilbert-Peierls algorithm
-%                   with AMD ordering for 3 output args.
-%               vec (1)  - use permutation vectors instead of matrices
-%                   (permutation matrices used by default for MATLAB < 7.3)
-%               thresh   - pivot threshold, see 'help lu' for details
-%           pardiso : struct of PARDISO options (default shown in parens),
-%                 see PARDISO documentation for details
-%               verbose (0) - true or false
-%               mtype (11)  - matrix type (default is real and nonsymmetric)
-%               solver (0)  - solver method (default is sparse direct)
-%               iparm ([])  - n x 2 matrix of integer parameters
-%                   1st, 2nd columns are index, value of parameter respectively
-%               dparm ([])  - n x 2 matrix of double parameters
-%                  1st, 2nd columns are index, value of parameter respectively
-%           tr (0) : if true, solve transposed system A' * x = b
+% Solves the linear system of equations ``A * x == b`` for ``x``
+% using the selected solver.
 %
-%   Outputs:
-%       X : solution vector satisfying A * x == b
-%       FACTORS : see description under Inputs
+% Inputs:
+%     A (double): sparse matrix
+%     factors (struct) : contains (e.g. LU) factors of ``A`` from previous
+%       call to mplinsolve, with a ``type`` field to identify which of the
+%       following sets of additional fields are included:
+%
+%       ========  =================  ========================================
+%       ``type``  add'l fields       description
+%       ========  =================  ========================================
+%          1      ``L, U, p, qa``    3 output Gilbert-Peierls, permutation vectors
+%          2      ``L, U, P, Qa``    3 output Gilbert-Peierls, permutation matrices
+%          3      ``L, U, p, q``     4 output UMFPACK, permutation vectors
+%          4      ``L, U, P, Q``     4 output UMFPACK, permutation matrices
+%          5      ``L, U, p, q, R``  same as 3, with row scaling
+%          6      ``L, U, P, Q, R``  same as 4, with row scaling
+%       ========  =================  ========================================
+%     b (double) : RHS vector (or full matrix)
+%     solver (char array) : *(optional, default* ``''`` *)* selected linear
+%       system solver
+%
+%         - ``''``  -- use default solver, currently this is
+%           always the built-in backslash operator
+%         - ``'\'`` -- built-in backslash operator
+%         - ``'LU'`` -- use explicit LU decomposition and back substitution
+%
+%           The following are also provided as short-cuts, with less
+%           overhead and thus better performance on small systems, as
+%           alternatives for ``'LU'`` with the following options:
+%
+%             ===========  ===============  ==============  ================
+%             ``solver``   ``opt.lu.nout``  ``opt.lu.vec``  ``opt.lu.thresh``
+%             ===========  ===============  ==============  ================
+%             ``'LU3'``        3               1               1.0
+%             ``'LU3a'``       3               1
+%             ``'LU4'``        4               1
+%             ``'LU5'``        5               1
+%             ``'LU3m'``       3               0               1.0
+%             ``'LU3am'``      3               0
+%             ``'LU4m'``       4               0
+%             ``'LU5m'``       5               0
+%             ===========  ===============  ==============  ================
+%         - ``'PARDISO'`` -- PARDISO
+%     opt (struct) : options for certain solvers (e.g. :func:`lu` and PARDISO),
+%       with fields:
+%
+%         - ``lu`` : struct of options to determine form of call to :func:`lu`
+%           solver, with the following possible fields *(default value in
+%           parens)*:
+%
+%             - ``nout`` *(4)* - number of output args for call to :func:`lu`,
+%               UMFPACK is used for 4 or 5 output args, Gilbert-Peierls
+%               algorithm with AMD ordering for 3 output args.
+%             - ``vec`` *(1)*  - use permutation vectors instead of matrices
+%               (permutation matrices used by default for MATLAB < 7.3)
+%             - ``thresh``   - pivot threshold, see ``help lu`` for details
+%         - ``pardiso`` : struct of PARDISO options *(default shown in parens)*,
+%           see PARDISO documentation for details
+%
+%             - ``verbose`` *(0)* - true or false
+%             - ``mtype`` *(11, i.e. real and nonsymmetric)*  - matrix type
+%             - ``solver`` *(0, i.e. sparse direct)*  - solver method
+%             - ``iparm`` *([])*  - :math:`n \by 2` matrix of integer parameters
+%               1st, 2nd columns are index, value of parameter respectively
+%             - ``dparm`` *([])*  - :math:`n \by 2` matrix of double parameters
+%               1st, 2nd columns are index, value of parameter respectively
+%         - ``tr`` *(0)* : if true, solve transposed system ``A' * x = b``
+%
+% Outputs:
+%     x : solution vector (or matrix) satisfying ``A * x == b``
+%     factors : see description under Inputs
 
 %   MIPS
-%   Copyright (c) 2015-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MIPS.

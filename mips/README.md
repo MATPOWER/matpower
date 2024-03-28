@@ -101,7 +101,7 @@ The citation and DOI can be version-specific or general, as appropriate.
 For version 1.5, use:
 
 >   R. D. Zimmerman, H. Wang. *MATPOWER Interior Point Solver (MIPS)
-    User's Manual, Version 1.5*. 2020. [Online].
+    User's Manual, Version 1.5*. 2022. [Online].
     Available: https://matpower.org/docs/MIPS-manual-1.5.pdf  
     doi: [10.5281/zenodo.7430306](https://doi.org/10.5281/zenodo.7430306)
 

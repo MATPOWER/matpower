@@ -2,6 +2,13 @@ Change history for MIPS
 =======================
 
 
+since 1.5
+---------
+
+#### 3/12/24
+  - Add Sphinx-based Reference documentation.
+
+
 Version 1.5 - *Dec 12, 2022*
 ----------------------------
 

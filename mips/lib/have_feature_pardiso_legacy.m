@@ -1,14 +1,14 @@
 function [TorF, vstr, rdate] = have_feature_pardiso_legacy()
-%HAVE_FEATURE_PARDISO_LEGACY  Detect availability/version info for PARDISO (legacy interface)
+% have_feature_pardiso_legacy - Detect availability/version info for PARDISO (legacy interface).
 %
-%   Feature detection function implementing 'pardiso_legacy' tag for
-%   HAVE_FEATURE to detect support for the legacy (v5.x) PARDISO interface,
-%   with individual MEX files for factor, solve, etc.
+% Private feature detection function implementing ``'pardiso_legacy'`` tag
+% for have_feature to detect support for the legacy (v5.x) PARDISO interface,
+% with individual MEX files for factor, solve, etc.
 %
-%   See also HAVE_FEATURE, HAVE_FEATURE_PARDISO, HAVE_FEATURE_PARDISO_OBJECT.
+% See also have_feature, have_feature_pardiso, have_feature_pardiso_object.
 
 %   MIPS
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MIPS.

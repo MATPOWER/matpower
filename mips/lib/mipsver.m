@@ -1,15 +1,22 @@
 function rv = mipsver(varargin)
-%MIPSVER  Prints or returns MIPS version info for current installation.
-%   V = MIPSVER returns the current MIPS version number.
-%   V = MIPSVER('all') returns a struct with the fields Name, Version,
-%   Release and Date (all strings). Calling MIPSVER without assigning the
-%   return value prints the version and release date of the current
-%   installation of MIPS.
+% mipsver - Prints or returns installed MIPS version info.
+% ::
 %
-%   See also MPVER.
+%   mipsver
+%   v = mipsver
+%   v = mipsver('all')
+%
+% When called with an output argument and no input argument, mipsver
+% returns the current MIPS version numbers. With an input argument
+% (e.g. ``'all'``) it returns  a struct with the fields ``Name``,
+% ``Version``, ``Release``, and ``Date`` *(all char arrays)*. Calling
+% mipsver without assigning the return value prints the version and
+% release date of the current installation of MIPS.
+%
+% See also mpver.
 
 %   MIPS
-%   Copyright (c) 2010-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MIPS.
@@ -17,9 +24,9 @@ function rv = mipsver(varargin)
 %   See https://github.com/MATPOWER/mips for more info.
 
 v = struct( 'Name',     'MIPS', ... 
-            'Version',  '1.5', ...
+            'Version',  '1.5+', ...
             'Release',  '', ...
-            'Date',     '12-Dec-2022' );
+            'Date',     '12-Mar-2024' );
 if nargout > 0
     if nargin > 0
         rv = v;

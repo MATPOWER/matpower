@@ -1,8 +1,12 @@
 function t_mplinsolve(quiet)
-%T_MPLINSOLVE  Tests of MIPS/MATPOWER linear solvers.
+% t_mplinsolve - Tests of mplinsolve, MIPS/|MATPOWER| linear solvers.
+% ::
+%
+%   t_mplinsolve
+%   t_mplinsolve(quiet)
 
 %   MIPS
-%   Copyright (c) 2015-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MIPS.

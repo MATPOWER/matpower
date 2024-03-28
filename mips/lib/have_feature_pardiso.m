@@ -1,15 +1,15 @@
 function [TorF, vstr, rdate] = have_feature_pardiso()
-%HAVE_FEATURE_PARDISO  Detect availability/version info for PARDISO
+% have_feature_pardiso - Detect availability/version info for PARDISO.
 %
-%   Feature detection function implementing 'pardiso' tag for HAVE_FEATURE
-%   to detect availability/version of PARDISO, Parallel Sparse Direct &
-%   Iterative Linear Solver (https://pardiso-project.org).
+% Private feature detection function implementing ``'pardiso'`` tag for
+% have_feature to detect availability/version of PARDISO, Parallel Sparse
+% Direct & Iterative Linear Solver (https://pardiso-project.org).
 %
-%   See also HAVE_FEATURE, HAVE_FEATURE_PARDISO_LEGACY,
-%   HAVE_FEATURE_PARDISO_OBJECT.
+% See also have_feature, have_feature_pardiso_legacy,
+% have_feature_pardiso_object.
 
 %   MIPS
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MIPS.

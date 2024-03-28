@@ -1,187 +1,223 @@
 function [x, f, eflag, output, lambda] = mips(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt)
-%MIPS  MATPOWER Interior Point Solver.
-%   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
-%       MIPS(F_FCN, X0, A, L, U, XMIN, XMAX, GH_FCN, HESS_FCN, OPT)
-%   Primal-dual interior point method for NLP (nonlinear programming).
-%   Minimize a function F(X) beginning from a starting point X0, subject to
-%   optional linear and nonlinear constraints and variable bounds.
+% mips - MATPOWER Interior Point Solver (|MIPS>|).
+% ::
 %
-%       min F(X)
-%        X
+%   [x, f, exitflag, output, lambda] = ...
+%       mips(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt);
 %
-%   subject to
+%   x = mips(f_fcn, x0)
+%   x = mips(f_fcn, x0, A, l)
+%   x = mips(f_fcn, x0, A, l, u)
+%   x = mips(f_fcn, x0, A, l, u, xmin)
+%   x = mips(f_fcn, x0, A, l, u, xmin, xmax)
+%   x = mips(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn)
+%   x = mips(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt)
+%   x = mips(problem)
+%           where problem is a struct with fields:
+%               f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt
+%               all fields except f_fcn and x0 are optional
+%   x = mips(...)
+%   [x, f] = mips(...)
+%   [x, f, exitflag] = mips(...)
+%   [x, f, exitflag, output] = mips(...)
+%   [x, f, exitflag, output, lambda] = mips(...)
 %
-%       G(X) = 0            (nonlinear equalities)
-%       H(X) <= 0           (nonlinear inequalities)
-%       L <= A*X <= U       (linear constraints)
-%       XMIN <= X <= XMAX   (variable bounds)
+% Primal-dual interior point method for NLP (nonlinear programming).
+% Minimize a function :math:`f(\x)` beginning from a starting point
+% ``x0``, subject to optional linear and nonlinear constraints and
+% variable bounds.
 %
-%   Inputs (all optional except F_FCN and X0):
-%       F_FCN : handle to function that evaluates the objective function,
-%           its gradients and Hessian for a given value of X. If there
-%           are nonlinear constraints, the Hessian information is
-%           provided by the HESS_FCN function passed in the 9th argument
-%           and is not required here. Calling syntax for this function:
-%               [F, DF, D2F] = F_FCN(X)
-%       X0 : starting value of optimization vector X
-%       A, L, U : define the optional linear constraints. Default
-%           values for the elements of L and U are -Inf and Inf,
-%           respectively.
-%       XMIN, XMAX : optional lower and upper bounds on the
-%           X variables, defaults are -Inf and Inf, respectively.
-%       GH_FCN : handle to function that evaluates the optional
-%           nonlinear constraints and their gradients for a given
-%           value of X. Calling syntax for this function is:
-%               [H, G, DH, DG] = GH_FCN(X)
-%           where the columns of DH and DG are the gradients of the
-%           corresponding elements of H and G, i.e. DH and DG are
-%           transposes of the Jacobians of H and G, respectively.
-%       HESS_FCN : handle to function that computes the Hessian of the
-%           Lagrangian for given values of X, lambda and mu, where
-%           lambda and mu are the multipliers on the equality and
-%           inequality constraints, g and h, respectively. The calling
-%           syntax for this function is:
-%               LXX = HESS_FCN(X, LAM)
-%           where lambda = LAM.eqnonlin and mu = LAM.ineqnonlin.
-%       OPT : optional options structure with the following fields,
-%           all of which are also optional (default values shown in
-%           parentheses)
-%           verbose (0) - controls level of progress output displayed
-%               0 = no progress output
-%               1 = some progress output
-%               2 = verbose progress output
-%           linsolver ('') - linear system solver for solving update steps
-%               ''          = default solver (currently same as '\')
-%               '\'         = built-in \ operator
-%               'PARDISO'   = PARDISO solver (if available)
-%           feastol (1e-6) - termination tolerance for feasibility
-%               condition
-%           gradtol (1e-6) - termination tolerance for gradient
-%               condition
-%           comptol (1e-6) - termination tolerance for complementarity
-%               condition
-%           costtol (1e-6) - termination tolerance for cost condition
-%           max_it (150) - maximum number of iterations
-%           step_control (0) - set to 1 to enable step-size control
-%           sc.red_it (20) - maximum number of step-size reductions if
-%               step-control is on
-%           cost_mult (1) - cost multiplier used to scale the objective
-%               function for improved conditioning. Note: This value is
-%               also passed as the 3rd argument to the Hessian evaluation
-%               function so that it can appropriately scale the
-%               objective function term in the Hessian of the
-%               Lagrangian.
-%           xi (0.99995) - constant used in alpha updates*
-%           sigma (0.1) - centering parameter*
-%           z0 (1) - used to initialize slack variables*
-%           alpha_min (1e-8) - returns EXITFLAG = -1 if either alpha
-%               parameter becomes smaller than this value*
-%           rho_min (0.95) - lower bound on rho_t*
-%           rho_max (1.05) - upper bound on rho_t*
-%           mu_threshold (1e-5) - KT multipliers smaller than this value
-%               for non-binding constraints are forced to zero
-%           max_stepsize (1e10) - returns EXITFLAG = -1 if the 2-norm of
-%               the reduced Newton step exceeds this value*
-%               * see the corresponding Appendix in the manual for details
-%       PROBLEM : The inputs can alternatively be supplied in a single
-%           PROBLEM struct with fields corresponding to the input arguments
-%           described above: f_fcn, x0, A, l, u, xmin, xmax,
-%                            gh_fcn, hess_fcn, opt
+% .. math:: \min_\x f(\x)
+%   :label: eq_mips_obj_fcn
 %
-%   Outputs:
-%       X : solution vector
-%       F : final objective function value
-%       EXITFLAG : exit flag
-%           1 = first order optimality conditions satisfied
-%           0 = maximum number of iterations reached
-%           -1 = numerically failed
-%       OUTPUT : output struct with fields:
-%           iterations - number of iterations performed
-%           hist - struct array with trajectories of the following:
-%                   feascond, gradcond, compcond, costcond, gamma,
-%                   stepsize, obj, alphap, alphad
-%           message - exit message
-%       LAMBDA : struct containing the Langrange and Kuhn-Tucker
-%           multipliers on the constraints, with fields:
-%           eqnonlin - nonlinear equality constraints
-%           ineqnonlin - nonlinear inequality constraints
-%           mu_l - lower (left-hand) limit on linear constraints
-%           mu_u - upper (right-hand) limit on linear constraints
-%           lower - lower bound on optimization variables
-%           upper - upper bound on optimization variables
+% subject to
 %
-%   Note the calling syntax is almost identical to that of FMINCON
-%   from MathWorks' Optimization Toolbox. The main difference is that
-%   the linear constraints are specified with A, L, U instead of
-%   A, B, Aeq, Beq. The functions for evaluating the objective
-%   function, constraints and Hessian are identical.
+% .. math:: \g(\x) = 0
+% .. math:: \h(\x) \le 0
+% .. math:: \param{\rvec{l}} \le \param{\rmat{A}} \x \le \param{\rvec{u}}
+%   :label: eq_mips_lin_constraint
+% .. math:: \param{\x}_\mathrm{min} \le \x \le \param{\x}_\mathrm{max}
+%   :label: eq_mips_var_bounds
 %
-%   Calling syntax options:
-%       [x, f, exitflag, output, lambda] = ...
-%           mips(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt);
+% where :eq:`eq_mips_obj_fcn`--:eq:`eq_mips_var_bounds` are,
+% respectively, the objective function, nonlinear equality constraints,
+% nonlinear inequality constraints, linear constraints, and variable bounds.
 %
-%       x = mips(f_fcn, x0);
-%       x = mips(f_fcn, x0, A, l);
-%       x = mips(f_fcn, x0, A, l, u);
-%       x = mips(f_fcn, x0, A, l, u, xmin);
-%       x = mips(f_fcn, x0, A, l, u, xmin, xmax);
-%       x = mips(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn);
-%       x = mips(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn);
-%       x = mips(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt);
-%       x = mips(problem);
-%               where problem is a struct with fields:
-%                   f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt
-%                   all fields except 'f_fcn' and 'x0' are optional
-%       x = mips(...);
-%       [x, f] = mips(...);
-%       [x, f, exitflag] = mips(...);
-%       [x, f, exitflag, output] = mips(...);
-%       [x, f, exitflag, output, lambda] = mips(...);
+% Inputs:
+%   : *(all optional except* ``f_fcn`` *and* ``x0`` *)*
+%   f_fcn (function handle) : handle to function that evaluates the
+%       objective function :math:`f(\x)`, its gradients and Hessian for
+%       a given value of :math:`x`. If there are nonlinear constraints,
+%       the Hessian information is provided by the ``hess_fcn`` function
+%       passed in the 9th argument and is not required here. Calling
+%       syntax for this function::
 %
-%   Example: (problem from https://en.wikipedia.org/wiki/Nonlinear_programming)
-%       function [f, df, d2f] = f2(x)
-%       f = -x(1)*x(2) - x(2)*x(3);
-%       if nargout > 1           %% gradient is required
-%           df = -[x(2); x(1)+x(3); x(2)];
-%           if nargout > 2       %% Hessian is required
-%               d2f = -[0 1 0; 1 0 1; 0 1 0];   %% actually not used since
-%           end                                 %% 'hess_fcn' is provided
-%       end
-%       
-%       function [h, g, dh, dg] = gh2(x)
-%       h = [ 1 -1 1; 1 1 1] * x.^2 + [-2; -10];
-%       dh = 2 * [x(1) x(1); -x(2) x(2); x(3) x(3)];
-%       g = []; dg = [];
-%       
-%       function Lxx = hess2(x, lam, cost_mult)
-%       if nargin < 3, cost_mult = 1; end
-%       mu = lam.ineqnonlin;
-%       Lxx = cost_mult * [0 -1 0; -1 0 -1; 0 -1 0] + ...
-%               [2*[1 1]*mu 0 0; 0 2*[-1 1]*mu 0; 0 0 2*[1 1]*mu];
-%       
-%       problem = struct( ...
-%           'f_fcn',    @(x)f2(x), ...
-%           'gh_fcn',   @(x)gh2(x), ...
-%           'hess_fcn', @(x, lam, cost_mult)hess2(x, lam, cost_mult), ...
-%           'x0',       [1; 1; 0], ...
-%           'opt',      struct('verbose', 2) ...
-%       );
-%       [x, f, exitflag, output, lambda] = mips(problem);
+%           [f, df, d2f] = f_fcn(x)
 %
-%   Ported by Ray Zimmerman from C code written by H. Wang for his
-%   PhD dissertation:
-%     "On the Computation and Application of Multi-period
-%     Security-Constrained Optimal Power Flow for Real-time
-%     Electricity Market Operations", Cornell University, May 2007.
+%   x0 (double) : starting value of optimization vector :math:`\x`
+%   A, l, u (double) : *(optional, respective defaults*
+%       :math:`[empty, -\infty, +\infty]` *)* matrix :math:`\param{\cmat{A}}`
+%       and vectors :math:`\param{\rvec{l}}` and :math:`\param{\rvec{u}}`
+%       to define the linear constraints in :eq:`eq_mips_lin_constraint`
+%   xmin, xmax (double) : *(optional, respective defaults*
+%       :math:`[-\infty, +\infty]` *)*  lower and upper bounds,
+%       :math:`\param{\x}_\mathrm{min}` and :math:`\param{\x}_\mathrm{max}`,
+%       on the optimization variables :math:`\x`
+%   gh_fcn (function handle) : *(optional)* handle to function that
+%       evaluates the nonlinear constraints :math:`\g(\x)` and :math:`\h(\x)`
+%       and their gradients for a given value of :math:`x`. Calling syntax
+%       for this function is::
 %
-%   See also:
-%     H. Wang, C. E. Murillo-Sanchez, R. D. Zimmerman, R. J. Thomas,
-%     "On Computational Issues of Market-Based Optimal Power Flow",
-%     IEEE Transactions on Power Systems, Vol. 22, No. 3, Aug. 2007,
-%     pp. 1185-1193.
+%           [h, g, dh, dg] = gh_fcn(x)
+%
+%       where the columns of ``dh`` and ``dg`` are the gradients of the
+%       corresponding elements of ``h`` and ``g``, i.e. ``dh`` and ``dg``
+%       are transposes of the Jacobians of ``h`` and ``g``, respectively.
+%   hess_fcn (function handle) : *(optional)* handle to function that
+%       computes the Hessian of the Lagrangian for given values of
+%       :math:`\x`, :math:`\lam` and :math:`\muv`, where
+%       :math:`\lam` and :math:`\muv` are the multipliers on the equality
+%       and inequality constraints, :math:`\g` and :math:`\h`, respectively.
+%       The calling syntax for this function is::
+%
+%           Lxx = hess_fcn(x, lam)
+%
+%       where :math:`\lam` = ``lam.eqnonlin`` and :math:`\muv` =
+%       ``lam.ineqnonlin``.
+%   opt (struct) : *(optional)* options structure with the following fields,
+%       all of which are also optional *(default values shown in
+%       parentheses)*
+%
+%       - ``verbose`` *(0)* - controls level of progress output displayed
+%
+%           - 0 = no progress output
+%           - 1 = some progress output
+%           - 2 = verbose progress output
+%       - ``linsolver`` *(* ``''`` *)* - linear system solver for solving
+%         update steps
+%
+%           - ``''`` = default solver (currently same as ``'\'``)
+%           - ``'\'`` = built-in ``\`` operator
+%           - ``'PARDISO'`` = PARDISO solver *(if available)*
+%       - ``feastol`` *(1e-6)* - termination tolerance for feasibility
+%         condition
+%       - ``gradtol`` *(1e-6)* - termination tolerance for gradient
+%         condition
+%       - ``comptol`` *(1e-6)* - termination tolerance for complementarity
+%         condition
+%       - ``costtol`` *(1e-6)* - termination tolerance for cost condition
+%       - ``max_it`` *(150)* - maximum number of iterations
+%       - ``step_control`` *(0)* - set to 1 to enable step-size control
+%       - ``sc.red_it`` *(20)* - maximum number of step-size reductions if
+%         step-control is on
+%       - ``cost_mult`` *(1)* - cost multiplier used to scale the objective
+%         function for improved conditioning. *Note: This value is
+%         also passed as the 3rd argument to the Hessian evaluation
+%         function so that it can appropriately scale the
+%         objective function term in the Hessian of the
+%         Lagrangian.*
+%       - ``xi`` *(0.99995)* - constant :math:`\xi` used in :math:`alpha`
+%         updates [#]_
+%       - ``sigma`` *(0.1)* - centering parameter :math:`\sigma` [1]_
+%       - ``z0`` *(1)* - used to initialize slack variables [1]_
+%       - ``alpha_min`` *(1e-8)* - returns ``exitflag`` = -1 if either alpha
+%         parameter, :math:`\alpha_p` or :math:`\alpha_d` becomes smaller
+%         than this value [1]_
+%       - ``rho_min`` *(0.95)* - lower bound on ``rho_t`` [1]_
+%       - ``rho_max`` *(1.05)* - upper bound on ``rho_t`` [1]_
+%       - ``mu_threshold`` *(1e-5)* - KT multipliers smaller than this value
+%         for non-binding constraints are forced to zero
+%       - ``max_stepsize`` *(1e10)* - returns ``exitflag`` = -1 if the
+%         2-norm of the reduced Newton step exceeds this value [1]_
+%   problem (struct) : The inputs can alternatively be supplied in a single
+%       ``problem`` struct with fields corresponding to the input arguments
+%       described above, namely, ``f_fcn``, ``x0``, ``A``, ``l``, ``u``,
+%       ``xmin``, ``xmax``, ``gh_fcn``, ``hess_fcn``, and ``opt``, where
+%       all except ``f_fcn`` and ``x0`` are optional
+%
+% .. [#] See the "Primal-Dual Interior Point Algorithm" chapter in the
+%    |MIPSman| for details.
+%
+% Outputs:
+%   x (double) : solution vector, :math:`\x`
+%   f (double) : final objective function value, :math:`f(\x)`
+%   exitflag (integer) : exit flag
+%
+%       - 1 = first order optimality conditions satisfied
+%       - 0 = maximum number of iterations reached
+%       - -1 = numerically failed
+%   output (struct) : output struct with fields:
+%
+%       - ``iterations`` - number of iterations performed
+%       - ``hist`` - struct array with trajectories of the following:
+%
+%         - ``feascond``, ``gradcond``, ``compcond``, ``costcond``,
+%           ``gamma``, ``stepsize``, ``obj``, ``alphap``, ``alphad``
+%       - ``message`` - exit message
+%   lambda (struct) : struct containing the Langrange and Kuhn-Tucker
+%       multipliers on the constraints, with fields:
+%
+%       - ``eqnonlin`` - nonlinear equality constraints
+%       - ``ineqnonlin`` - nonlinear inequality constraints
+%       - ``mu_l`` - lower (left-hand) limit on linear constraints
+%       - ``mu_u`` - upper (right-hand) limit on linear constraints
+%       - ``lower`` - lower bound on optimization variables
+%       - ``upper`` - upper bound on optimization variables
+%
+% **Note:** The calling syntax is almost identical to that of :func:`fmincon`
+% from MathWorks' Optimization Toolbox. The main difference is that
+% the linear constraints are specified with ``A``, ``l``, ``u`` instead of
+% ``A``, ``B``, ``Aeq``, ``Beq``. The functions for evaluating the objective
+% function, constraints and Hessian are identical.
+%
+% **Example:** (problem from https://en.wikipedia.org/wiki/Nonlinear_programming)::
+%
+%   function [f, df, d2f] = f2(x)
+%   f = -x(1)*x(2) - x(2)*x(3);
+%   if nargout > 1           % gradient is required
+%       df = -[x(2); x(1)+x(3); x(2)];
+%       if nargout > 2       % Hessian is required
+%           d2f = -[0 1 0; 1 0 1; 0 1 0];   % actually not used since
+%       end                                 % 'hess_fcn' is provided
+%   end
+%   
+%   function [h, g, dh, dg] = gh2(x)
+%   h = [ 1 -1 1; 1 1 1] * x.^2 + [-2; -10];
+%   dh = 2 * [x(1) x(1); -x(2) x(2); x(3) x(3)];
+%   g = []; dg = [];
+%   
+%   function Lxx = hess2(x, lam, cost_mult)
+%   if nargin < 3, cost_mult = 1; end
+%   mu = lam.ineqnonlin;
+%   Lxx = cost_mult * [0 -1 0; -1 0 -1; 0 -1 0] + ...
+%           [2*[1 1]*mu 0 0; 0 2*[-1 1]*mu 0; 0 0 2*[1 1]*mu];
+%   
+%   problem = struct( ...
+%       'f_fcn',    @(x)f2(x), ...
+%       'gh_fcn',   @(x)gh2(x), ...
+%       'hess_fcn', @(x, lam, cost_mult)hess2(x, lam, cost_mult), ...
+%       'x0',       [1; 1; 0], ...
+%       'opt',      struct('verbose', 2) ...
+%   );
+%   [x, f, exitflag, output, lambda] = mips(problem);
+%
+% Ported by Ray Zimmerman from C code written by H. Wang for his
+% PhD dissertation:
+%
+%   H. Wang, *On the Computation and Application of Multi-period
+%   Security-Constrained Optimal Power Flow for Real-time
+%   Electricity Market Operations,* Ph.D. thesis, Electrical and
+%   Computer Engineering, Cornell University, May 2007.
+%
+% Please see also:
+%
+%   H. Wang, C. E. Murillo-Sanchez, R. D. Zimmerman, R. J. Thomas,
+%   "On Computational Issues of Market-Based Optimal Power Flow",
+%   *IEEE Transactions on Power Systems*, Vol. 22, No. 3, Aug. 2007,
+%   pp. 1185-1193. :doi:`10.1109/TPWRS.2007.901301`
 
 %   MIPS
-%   Copyright (c) 2009-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2009-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MIPS.

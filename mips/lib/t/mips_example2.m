@@ -1,4 +1,15 @@
 function mips_example2
+% mips_example2 - Example of constrained nonlinear optimization.
+%
+% Example of solving the following problem.
+%
+% .. math:: \min_{x_1,x_2,x_3} -x_1 x_2 - x_2 x_3
+%
+% subject to
+%
+% .. math:: x_1^2 - x_2^2 + x_3^2 - 2 \le 0
+% .. math:: x_1^2 + x_2^2 + x_3^2 - 10 \le 0
+
 problem = struct( ...
     'f_fcn',    @(x)f2(x), ...
     'gh_fcn',   @(x)gh2(x), ...

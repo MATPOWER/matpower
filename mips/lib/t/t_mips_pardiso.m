@@ -1,8 +1,12 @@
 function t_mips_pardiso(quiet)
-%T_MIPS_PARDISO  Tests of MIPS NLP solver, using PARDISO as linear solver.
+% t_mips_pardiso - Tests of mips, MIPS NLP solver, using PARDISO as linear solver.
+% ::
+%
+%   t_mips_pardiso
+%   t_mips_pardiso(quiet)
 
 %   MIPS
-%   Copyright (c) 2010-2018, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MIPS.

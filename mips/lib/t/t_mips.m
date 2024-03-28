@@ -1,8 +1,12 @@
 function t_mips(quiet)
-%T_MIPS  Tests of MIPS NLP solver.
+% t_mips - Tests of mips, MIPS NLP solver.
+% ::
+%
+%   t_mips
+%   t_mips(quiet)
 
 %   MIPS
-%   Copyright (c) 2010-2018, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MIPS.

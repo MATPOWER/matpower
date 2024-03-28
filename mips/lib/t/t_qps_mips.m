@@ -1,8 +1,12 @@
 function t_qps_mips(quiet)
-%T_QPS_MIPS  Tests of QPS_MIPS QP solver.
+% t_qps_mips - Tests of qps_mips, QP solver.
+% ::
+%
+%   t_qps_mips
+%   t_qps_mips(quiet)
 
 %   MIPS
-%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MIPS.
