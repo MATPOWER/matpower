@@ -1,5 +1,7 @@
 function varargout = get_soln(om, set_type, tags, name, idx)
-%GET_SOLN  Fetch solution values for specific named/indexed sets.
+% get_soln - Fetch solution values for specific named/indexed sets.
+% ::
+%
 %   VALS = OM.GET_SOLN(SET_TYPE, NAME)
 %   VALS = OM.GET_SOLN(SET_TYPE, NAME, IDX)
 %   VALS = OM.GET_SOLN(SET_TYPE, TAGS, NAME)
@@ -58,10 +60,10 @@ function varargout = get_soln(om, set_type, tags, name, idx)
 %   For a complete set of solution vector values and shadow prices, using
 %   the PARSE_SOLN method may be more efficient.
 %
-%   See also PARSE_SOLN.
+% See also parse_soln.
 
 %   MP-Opt-Model
-%   Copyright (c) 2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

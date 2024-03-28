@@ -1,5 +1,7 @@
 classdef opt_model < mp_idx_manager
-%OPT_MODEL  Constructor for optimization model class.
+% opt_model - Constructor for optimization model class.
+% ::
+%
 %   OM = OPT_MODEL
 %   OM = OPT_MODEL(S)
 %
@@ -12,7 +14,7 @@ classdef opt_model < mp_idx_manager
 %   Below are the list of available methods for use with the Opt Model class.
 %   Please see the help on each individual method for more details:
 %
-%   Modify the OPF formulation by adding named blocks of costs, constraints
+%   Modify the OPF formulation by adding named blocks of costs, constraints,
 %   or variables:
 %       add_quad_cost
 %       add_nln_cost
@@ -21,25 +23,42 @@ classdef opt_model < mp_idx_manager
 %       add_var
 %       init_indexed_name
 %
-%   Return the number of linear constraints, nonlinear constraints or
+%   Modify parameters of existing costs, constraints, or variables:
+%       set_params
+%
+%   Return the number of linear constraints, nonlinear constraints, or
 %   variables, optionally for a single named block:
 %       getN
-%
-%   Return the intial values, bounds and type for optimization variables:
-%       params_var
-%
-%   Build and return full set of linear constraints:
-%       params_lin_constraint
 %
 %   Return index structure for variables, linear and nonlinear constraints
 %   and costs:
 %       get_idx
 %
-%   Build and return cost parameters and evaluate user-defined costs:
+%   Return the intial values, bounds and type for optimization variables:
+%       params_var
+%
+%   Build and return constraint parameters and evaluate constraints:
+%       params_lin_constraint
+%       params_nln_constraint
+%       eval_nln_constraint
+%       eval_nln_constraint_hess
+%
+%   Build and return cost parameters and evaluate costs:
 %       params_nln_cost
 %       params_quad_cost
 %       eval_nln_cost
 %       eval_quad_cost
+%
+%   Determine model type:
+%       problem_type
+%
+%   Solve the model, access, and display the solution:
+%       solve
+%       display_soln
+%       get_soln
+%       parse_soln
+%       is_solved
+%       has_parsed_soln
 %
 %   Retreive user data in the model object:
 %       get_userdata
@@ -47,6 +66,12 @@ classdef opt_model < mp_idx_manager
 %   Display the object (called automatically when you omit the semicolon
 %   at the command-line):
 %       display
+%
+%   Utility methods for dealing with varsets:
+%       varsets_cell2struct
+%       varsets_idx
+%       varsets_len
+%       varsets_x
 %
 %   Return the value of an individual field:
 %       get
@@ -193,9 +218,11 @@ classdef opt_model < mp_idx_manager
 %           .lambda - Lagrange and Kuhn-Tucker multipliers on constraints
 %       .userdata   - any user defined data
 %           .(user defined fields)
+%
+% See also mp_idx_manager.
 
 %   MP-Opt-Model
-%   Copyright (c) 2008-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.
@@ -210,7 +237,9 @@ classdef opt_model < mp_idx_manager
         qdc             %% quadratic costs
         nlc             %% general nonlinear costs
         prob_type = ''; %% problem type
-        soln = struct( ...  %% results of solve()
+        
+        %% results of solve()
+        soln = struct( ...
             'eflag', [], ...    %% exit flag
             'output', [], ...   %% algorithm code & solver-specific fields
             'x', [], ...        %% solution vector
@@ -220,8 +249,14 @@ classdef opt_model < mp_idx_manager
     end     %% properties
 
     methods
-        %% constructor
         function om = opt_model(varargin)
+            % Constructor.
+            % ::
+            %
+            %   om = opt_model()
+            %   om = opt_model(a_struct)
+            %   om = opt_model(an_om)
+
             %% call parent constructor
             om@mp_idx_manager(varargin{:});
 
@@ -237,6 +272,8 @@ classdef opt_model < mp_idx_manager
         end
 
         function om = def_set_types(om)
+            % Define set types ``var``, ``lin``, ``nle``, ``nli``, ``qdc``, ``nlc``.
+
             om.set_types = struct(...
                     'var', 'VARIABLES', ...
                     'lin', 'LINEAR CONSTRAINTS', ...
@@ -248,6 +285,8 @@ classdef opt_model < mp_idx_manager
         end
 
         function om = init_set_types(om)
+            % Initialize data structures for each set type.
+
             %% call parent to create base data structures for each type
             init_set_types@mp_idx_manager(om);
 
@@ -287,7 +326,15 @@ classdef opt_model < mp_idx_manager
         end
 
         function TorF = is_solved(om)
+            % Return true if model has been solved.
+
             TorF = ~isempty(om.soln.eflag);
+        end
+
+        function TorF = has_parsed_soln(om)
+            % Return true if model has a parsed solution.
+
+            TorF = isfield(om.soln, 'var');
         end
     end     %% methods
 end         %% classdef

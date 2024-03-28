@@ -1,5 +1,7 @@
 function reg_cb = pne_register_callbacks(my_cbacks, reg_cb)
-%PNE_REGISTER_CALLBACKS  Register callback functions
+% pne_register_callbacks - Register PNE callback functions.
+% ::
+%
 %   REG_CB = PNE_REGISTER_CALLBACKS(MY_CBACKS)
 %   REG_CB = PNE_REGISTER_CALLBACKS(MY_CBACKS, REG_CB)
 %
@@ -32,11 +34,11 @@ function reg_cb = pne_register_callbacks(my_cbacks, reg_cb)
 %       (e.g. OPT.callbacks) to PNES_MASTER, which takes the same form as
 %       MY_CBACKS above.
 %
-%   See also PNES_MASTER, PNE_CALLBACK_DEFAULT, PNE_CALLBACK_NOSE,
-%       PNE_CALLBACK_TARGET_LAM.
+% See also pnes_master, pne_callback_default, pne_callback_nose,
+% pne_callback_target_lam.
 
 %   MP-Opt-Model
-%   Copyright (c) 2016-2021, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2016-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Shrirang Abhyankar, Argonne National Laboratory
 %

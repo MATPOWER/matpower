@@ -1,5 +1,7 @@
 function [f, df, d2f] = eval_nln_cost(om, x, name, idx)
-%EVAL_NLN_COST  Evaluates individual or full set of general nonlinear costs.
+% eval_nln_cost - Evaluates individual or full set of general nonlinear costs.
+% ::
+%
 %   [F, DF, D2F] = OM.EVAL_NLN_COST(X)
 %   [F, DF, D2F] = OM.EVAL_NLN_COST(X, NAME)
 %   [F, DF, D2F] = OM.EVAL_NLN_COST(X, NAME, IDX_LIST)
@@ -12,10 +14,10 @@ function [f, df, d2f] = eval_nln_cost(om, x, name, idx)
 %       [f, df, d2f] = om.eval_nln_cost(x, name)
 %       [f, df, d2f] = om.eval_nln_cost(x, name, idx_list)
 %
-%   See also OPT_MODEL, ADD_NLN_COST, PARAMS_NLN_COST.
+% See also opt_model, add_nln_cost, params_nln_cost.
 
 %   MP-Opt-Model
-%   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

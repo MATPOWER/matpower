@@ -1,8 +1,8 @@
 function t_om_solve_leqs(quiet)
-%T_OM_SOLVE_LEQS  Tests of LEQ solvers via OM.SOLVE().
+% t_om_solve_leqs - Tests of LEQ solvers via opt_model.solve.
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.
@@ -108,7 +108,7 @@ n3 = size(A3, 2);
 
 n = 10;
 
-t_begin(10+n*length(cfg), quiet);
+t_begin(11+n*length(cfg), quiet);
 
 for k = 1:length(cfg)
     alg   = cfg{k}{1};
@@ -125,7 +125,7 @@ for k = 1:length(cfg)
     end
     x = om.solve(opt);
     t_is(x, x1, 14, [t 'x']);
-    t_ok(~isfield(om.soln, 'var'), [t 'no parse_soln() outputs']);
+    t_ok(~om.has_parsed_soln(), [t 'has_parsed_soln() is false']);
     
     t = sprintf('%s - sparse (nearly-singular) A matrix : ', name);
     om = opt_model;
@@ -142,7 +142,7 @@ for k = 1:length(cfg)
     warning(warn_state);
     t_is(f, A3*x-b3, 14, [t 'f']);
     t_is(e, 0, 14, [t 'exitflag = 0']);
-    t_ok(~isfield(om.soln, 'var'), [t 'no parse_soln() outputs']);
+    t_ok(~om.has_parsed_soln(), [t 'has_parsed_soln() is false']);
     
     t = sprintf('%s - sparse A matrix : ', name);
     om = opt_model;
@@ -182,6 +182,7 @@ g = om.get_soln('lin', 'l_Ax', 'A3');
 t_is(g, f(3), 14, [t 'l3 - A3 * x']);
 
 t = 'parse_soln : ';
+t_ok(om.has_parsed_soln(), [t 'has_parsed_soln() is true']);
 t_is(om.soln.var.val.x, om.get_soln('var', 'x'), 14, [t 'var.val.x']);
 
 t_end;

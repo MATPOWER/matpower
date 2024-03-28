@@ -1,5 +1,6 @@
 function d = nested_struct_copy(d, s, opt, parent)
-%NESTED_STRUCT_COPY  Copies values from one nested struct to another.
+% nested_struct_copy - Copies values from one nested struct to another.
+% ::
 %
 %   DS = NESTED_STRUCT_COPY(D, S)
 %   DS = NESTED_STRUCT_COPY(D, S, OPT)
@@ -53,7 +54,7 @@ function d = nested_struct_copy(d, s, opt, parent)
 %           an invalid field so that mpoption can refer to it as option foo.
 
 %   MP-Opt-Model
-%   Copyright (c) 2013-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2013-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

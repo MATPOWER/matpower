@@ -1,5 +1,7 @@
 function xx = varsets_x(om, x, vs, want_vector)
-%VARSETS_X  Returns a cell array of sub-vectors of X specified by VARSETS
+% varsets_x - Returns a cell array of sub-vectors of X specified by VARSETS
+% ::
+%
 %   X = OM.VARSETS_X(X, VARSETS)
 %   X = OM.VARSETS_X(X, VARSETS, 'vector')
 %
@@ -9,10 +11,10 @@ function xx = varsets_x(om, x, vs, want_vector)
 %   If a 3rd argument is present (value is ignored) the returned value is
 %   a single numeric vector with the individual components stacked vertically.
 %
-%   See also VARSET_LEN
+% See also varsets_len.
 
 %   MP-Opt-Model
-%   Copyright (c) 2017-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2017-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

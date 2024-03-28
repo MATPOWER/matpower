@@ -1,5 +1,6 @@
 function obj = init_indexed_name(obj, set_type, name, dim_list)
-%INIT_INDEXED_NAME  Initializes the dimensions for an indexed named set.
+% init_indexed_name - Initializes the dimensions for an indexed named set.
+% ::
 %
 %   OBJ.INIT_INDEXED_NAME(SET_TYPE, NAME, DIM_LIST)
 %
@@ -29,12 +30,12 @@ function obj = init_indexed_name(obj, set_type, name, dim_list)
 %         end
 %       end
 %
-%   See also OPT_MODEL, and its methods INIT_INDEXED_NAME, ADD_VAR,
+%   See OPT_MODEL, and its methods INIT_INDEXED_NAME, ADD_VAR,
 %           ADD_LIN_CONSTRAINT, ADD_NLN_CONSTRAINT, ADD_QUAD_COST and
 %           ADD_NLN_COST.
 
 %   MP-Opt-Model
-%   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

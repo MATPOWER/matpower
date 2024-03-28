@@ -1,21 +1,21 @@
 function [mu_l, mu_u] = convert_lin_constraint_multipliers(lam, mu, ieq, igt, ilt)
-%convert_lin_constraint_multipliers - Convert multipliers for eq/ineq pair to bounded.
+% convert_lin_constraint_multipliers - Convert multipliers for eq/ineq pair to bounded.
 % ::
 %
 %   [mu_l, mu_u] = convert_lin_constraint_multipliers(lam, mu, ieq, igt, ilt)
 %
-% Convert multipliers back for constraints converted by
-% convert_lin_constraint(). That is, we assume a set of constraints that have
-% been converted from the form:
+% Convert multipliers back for constraints converted by convert_lin_constraint.
+% That is, we assume a set of constraints that have been converted from the
+% form::
 %
-%   l <= A x <= u       (1)
+%   l <= A * x <= u       (1)
 %
-% to:
+% to::
 %
-%   Ae x = be           (2)
-%   Ai x <= bi          (3)
+%   Ae * x = be           (2)
+%   Ai * x <= bi          (3)
 %
-% where
+% where::
 %
 %   Ae = A(ieq, :);
 %   be = u(ieq, 1);
@@ -36,7 +36,7 @@ function [mu_l, mu_u] = convert_lin_constraint_multipliers(lam, mu, ieq, igt, il
 %   mu_l (double) : vector of multipliers on lower bound of (1)
 %   mu_u (double) : vector of multipliers on upper bound of (1)
 %
-%   See also convert_lin_constraint.
+% See also convert_lin_constraint.
 
 %   MP-Opt-Model
 %   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)

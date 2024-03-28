@@ -1,12 +1,13 @@
 function display(om, varargin)
-%DISPLAY  Displays the object.
-%   Called when semicolon is omitted at the command-line. Displays the details
-%   of the variables, constraints, costs included in the model.
+% display - Displays the object.
 %
-%   See also OPT_MODEL.
+% Called when semicolon is omitted at the command-line. Displays the details
+% of the variables, constraints, costs included in the model.
+%
+% See also opt_model.
 
 %   MP-Opt-Model
-%   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

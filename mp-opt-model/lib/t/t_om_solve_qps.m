@@ -1,8 +1,8 @@
 function t_om_solve_qps(quiet)
-%T_OM_SOLVE_QPS  Tests of QP solvers via OM.SOLVE().
+% t_om_solve_qps - Tests of QP solvers via opt_model.solve.
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.
@@ -20,7 +20,7 @@ does_qp = [1 1 1 1 1 1 1 1 1 1 0 1];
 
 n = 30;
 nqp = 21;
-t_begin(27+n*length(algs), quiet);
+t_begin(28+n*length(algs), quiet);
 
 diff_alg_warn_id = 'optim:linprog:WillRunDiffAlg';
 if have_feature('quadprog') && have_feature('quadprog', 'vnum') == 7.005
@@ -118,7 +118,7 @@ for k = 1:length(algs)
             t_is(lam.lower, [1;0;0], 9, [t 'lam.lower']);
             t_is(lam.upper, zeros(size(x)), 9, [t 'lam.upper']);
         end
-        t_ok(~isfield(om.soln, 'var'), [t 'no parse_soln() outputs']);
+        t_ok(~om.has_parsed_soln(), [t 'has_parsed_soln() is false']);
 
         if does_qp(k)
             t = sprintf('%s - unconstrained 3-d quadratic : ', names{k});
@@ -268,6 +268,7 @@ df = om.get_soln('qdc', 'df', 'c');
 t_is(df, H*x+c, 14, [t 'df']);
 
 t = 'parse_soln : ';
+t_ok(om.has_parsed_soln(), [t 'has_parsed_soln() is true']);
 t_is(om.soln.var.val.x, om.get_soln('var', 'x'), 14, [t 'var.val.x']);
 t_is(om.soln.var.mu_l.x, om.get_soln('var', 'mu_l', 'x'), 14, [t 'var.mu_l.x']);
 t_is(om.soln.var.mu_u.x, om.get_soln('var', 'mu_u', 'x'), 14, [t 'var.mu_u.x']);

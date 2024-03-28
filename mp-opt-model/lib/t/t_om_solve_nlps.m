@@ -1,8 +1,8 @@
 function t_om_solve_nlps(quiet)
-%T_OM_SOLVE_NLPS  Tests of NLP solvers via OM.SOLVE().
+% t_om_solve_nlps - Tests of NLP solvers via opt_model.solve.
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.
@@ -35,7 +35,7 @@ end
 
 n = 47;
 
-t_begin(34+n*length(cfg), quiet);
+t_begin(35+n*length(cfg), quiet);
 
 for k = 1:length(cfg)
     alg   = cfg{k}{1};
@@ -170,7 +170,7 @@ for k = 1:length(cfg)
             t_ok(isempty(lam.mu_u), [t 'lam.mu_u']);
             t_is(lam.lower, zeros(size(x)), 13, [t 'lam.lower']);
             t_is(lam.upper, zeros(size(x)), 13, [t 'lam.upper']);
-            t_ok(~isfield(om.soln, 'var'), [t 'no parse_soln() outputs']);
+            t_ok(~om.has_parsed_soln(), [t 'has_parsed_soln() is false']);
         end
 
         t = sprintf('%s - constrained 4-d nonlinear : ', name);
@@ -261,6 +261,7 @@ df = om.get_soln('nlc', 'df', 'f');
 t_is(df, edf, 14, [t 'df']);
 
 t = 'parse_soln : ';
+t_ok(om.has_parsed_soln(), [t 'has_parsed_soln() is true']);
 t_is(om.soln.var.val.x, om.get_soln('var', 'x'), 14, [t 'var.val.x']);
 t_is(om.soln.var.mu_l.x, om.get_soln('var', 'mu_l', 'x'), 14, [t 'var.mu_l.x']);
 t_is(om.soln.var.mu_u.x, om.get_soln('var', 'mu_u', 'x'), 14, [t 'var.mu_u.x']);

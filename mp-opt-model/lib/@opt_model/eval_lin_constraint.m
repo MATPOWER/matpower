@@ -1,5 +1,7 @@
 function [Ax_u, l_Ax, A] = eval_lin_constraint(om, x, name, idx)
-%EVAL_LIN_CONSTRAINT  Builds and returns full set of linear constraints.
+% eval_lin_constraint - Builds and returns full set of linear constraints.
+% ::
+%
 %   AX_U = OM.EVAL_LIN_CONSTRAINT(X)
 %   AX_U = OM.EVAL_LIN_CONSTRAINT(X, NAME)
 %   AX_U = OM.EVAL_LIN_CONSTRAINT(X, NAME, IDX_LIST)
@@ -16,10 +18,10 @@ function [Ax_u, l_Ax, A] = eval_lin_constraint(om, x, name, idx)
 %   Example:
 %       [Ax_u, l_Ax, A] = om.eval_lin_constraint(x)
 %
-%   See also OPT_MODEL, ADD_LIN_CONSTRAINT, PARAMS_LIN_CONSTRAINT.
+% See also opt_model, add_lin_constraint, params_lin_constraint.
 
 %   MP-Opt-Model
-%   Copyright (c) 2020-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

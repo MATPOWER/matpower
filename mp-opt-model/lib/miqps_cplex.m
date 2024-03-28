@@ -1,5 +1,7 @@
 function [x, f, eflag, output, lambda] = miqps_cplex(H, c, A, l, u, xmin, xmax, x0, vtype, opt)
-%MIQPS_CPLEX  Mixed Integer Quadratic Program Solver based on CPLEX.
+% miqps_cplex - Mixed Integer Quadratic Program Solver based on CPLEX.
+% ::
+%
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
 %       MIQPS_CPLEX(H, C, A, L, U, XMIN, XMAX, X0, VTYPE, OPT)
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = MIQPS_CPLEX(PROBLEM)
@@ -101,11 +103,10 @@ function [x, f, eflag, output, lambda] = miqps_cplex(H, c, A, l, u, xmin, xmax, 
 %       opt = struct('verbose', 2);
 %       [x, f, s, out, lambda] = miqps_cplex(H, c, A, l, u, xmin, [], x0, vtype, opt);
 %
-%   See also MIQPS_MASTER, CPLEXMIQP, CPLEXMILP, CPLEXQP, CPLEXLP,
-%   CPLEX_OPTIONS.
+% See also miqps_master, cplexmiqp, cplexmilp, cplexqp, cplexlp, cplex_options.
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

@@ -1,5 +1,7 @@
 function [x, f, eflag, output, lambda] = solve(om, opt)
-%SOLVE  Solve the optimization model.
+% solve - Solve the optimization model.
+% ::
+%
 %   X = OM.SOLVE()
 %   [X, F] = OM.SOLVE()
 %   [X, F, EXITFLAG] = OM.SOLVE()
@@ -113,10 +115,11 @@ function [x, f, eflag, output, lambda] = solve(om, opt)
 %           lower - lower bound on optimization variables
 %           upper - upper bound on optimization variables
 %
-%   See also OPT_MODEL, QPS_MASTER, MIQPS_MASTER, NLPS_MASTER
+% See also opt_model, qps_master, miqps_master, nlps_master, nleqs_master,
+% pnes_master, mp_linsolve.
 
 %   MP-Opt-Model
-%   Copyright (c) 2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.
@@ -255,8 +258,7 @@ end
 
 %% parse solution
 if isfield(opt, 'parse_soln') && opt.parse_soln
-    ps = om.parse_soln();
-    om.soln = nested_struct_copy(om.soln, ps, struct('copy_mode', '='));
+    om.parse_soln(true);
 end
 om.soln.output.et = toc(t0);    %% stop timer
 

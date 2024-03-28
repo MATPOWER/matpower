@@ -1,5 +1,7 @@
 function om = add_nln_cost(om, name, idx, N, fcn, varsets)
-%ADD_NLN_COST  Adds a set of general nonlinear costs to the model.
+% add_nln_cost - Adds a set of general nonlinear costs to the model.
+% ::
+%
 %   OM.ADD_NLN_COST(NAME, N, FCN);
 %   OM.ADD_NLN_COST(NAME, N, FCN, VARSETS);
 %   OM.ADD_NLN_COST(NAME, IDX_LIST, N, FCN);
@@ -55,10 +57,10 @@ function om = add_nln_cost(om, name, idx, N, fcn, varsets)
 %         end
 %       end
 %
-%   See also OPT_MODEL, EVAL_NLN_COST.
+% See also opt_model, eval_nln_cost.
 
 %   MP-Opt-Model
-%   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

@@ -1,5 +1,7 @@
 function [ev, i] = pne_detected_event(event_log, name, zero)
-%PNE_DETECTED_EVENT  Returns the detected event of a particular name
+% pne_detected_event - Returns the detected event of a particular name.
+% ::
+%
 %   EV = PNE_DETECTED_EVENT(EVENT_LOG, NAME)
 %   EV = PNE_DETECTED_EVENT(EVENT_LOG, NAME, ZERO)
 %   [EV, I] = PNE_DETECTED_EVENT(...)
@@ -23,11 +25,11 @@ function [ev, i] = pne_detected_event(event_log, name, zero)
 %            detected events
 %       I : index of EV in EVENT_LOG
 %
-%   See PNE_DETECT_EVENTS for details on the fields in the EVENT_LOG and EV
-%   structs.
+% See pne_detect_events for details on the fields in the ``event_log`` and
+% ``ev`` structs.
 
 %   MP-Opt-Model
-%   Copyright (c) 2016-2021, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2016-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Shrirang Abhyankar, Argonne National Laboratory
 %

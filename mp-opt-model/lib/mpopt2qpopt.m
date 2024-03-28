@@ -1,5 +1,6 @@
 function qpopt = mpopt2qpopt(mpopt, model, alg)
-%MPOPT2QPOPT   Create/modify MI/QPS_MASTER options struct from MPOPT.
+% mpopt2qpopt - Create/modify qps_master/miqps_master options struct from ``mpopt``.
+% ::
 %
 %   QPOPT = MPOPT2QPOPT(MPOPT, MODEL)
 %   QPOPT = MPOPT2QPOPT(MPOPT, MODEL, ALG)
@@ -30,10 +31,10 @@ function qpopt = mpopt2qpopt(mpopt, model, alg)
 %       QPOPT : an options struct for use by QPS_MASTER or MIQPS_MASTER
 %               and friends
 %
-%   See QPS_MASTER, MIQPS_MASTER, MPOPTION.
+% See also qps_master, miqps_master, mpoption.
 
 %   MP-Opt-Model
-%   Copyright (c) 2015-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

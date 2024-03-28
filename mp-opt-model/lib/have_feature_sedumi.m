@@ -1,14 +1,14 @@
 function [TorF, vstr, rdate] = have_feature_sedumi()
-%HAVE_FEATURE_SEDUMI  Detect availability/version info for SeDuMi
+% have_feature_sedumi - Detect availability/version info for SeDuMi.
 %
-%   Feature detection function implementing 'sedumi' tag for HAVE_FEATURE
-%   to detect availability/version of SeDuMi SDP solver
-%   (http://sedumi.ie.lehigh.edu).
+% Private feature detection function implementing ``'sedumi'`` tag for
+% have_feature to detect availability/version of SeDuMi SDP solver
+% (http://sedumi.ie.lehigh.edu).
 %
-%   See also HAVE_FEATURE, SEDUMI.
+% See also have_feature, sedumi.
 
 %   MP-Opt-Model
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

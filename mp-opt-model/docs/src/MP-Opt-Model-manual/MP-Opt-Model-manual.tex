@@ -2934,12 +2934,20 @@ $\le 0$ & solver-specific failure code \\
 \code{~~~~~~.mu\_u} & linear constraint upper bound	\\
 \code{~~~~~~.eqnonlin} & nonlinear equality constraints	\\
 \code{~~~~~~.ineqnonlin} & nonlinear inequality constraints	\\
+\\
+\multicolumn{2}{l}{\emph{Parsed Solution}\tnote{\dag}} \\
+\code{~~~.var} & parsed solution for variables\tnote{\ddag} \\
+\code{~~~.lin} & parsed solution for linear constraints\tnote{\ddag} \\
+\code{~~~.nle} & parsed solution for nonlinear equality constraints\tnote{\ddag} \\
+\code{~~~.nli} & parsed solution for nonlinear inequality constraints\tnote{\ddag} \\
 & \\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
  \scriptsize
  \item [*] {Objective function value for optimization problems, constraint function value for sets of equations.}
+ \item [\dag] {Only available after calling \code{parse\_soln(true)} or calling \code{solve()} with the \code{opt.parse\_soln} option set to 1.}
+ \item [\ddag] {See Table~\ref{tab:parse_soln} for details.}
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -3063,6 +3071,7 @@ set type & valid tag values & description \\
 \label{sec:parse_soln}
 \begin{Code}
 ps = om.parse_soln()
+om.parse_soln(stash)
 \end{Code}
 
 The \code{parse\_soln} method returns a struct of parsed solution vector and shadow price values for each named set of variables and constraints. The returned \code{ps} (parsed solution) struct has the format shown in Table~\ref{tab:parse_soln}, where each of the terminal elements is a struct with fields corresponding to the respective named sets.
@@ -3101,6 +3110,16 @@ fields & description \\
 
 The value of each element in the returned struct can be obtained
 via the \code{get\_soln} method as well, but \code{parse\_soln} is generally more efficient if a complete set of values is needed.
+
+If the optional \code{stash} input argument is present and true, the fields of the return struct are copied to \code{om.soln} where they are available with others listed in Table~\ref{tab:soln}.
+
+\subsubsection*{\code{has\_parsed\_soln}}
+\label{sec:has_parsed_soln}
+\begin{Code}
+TorF = om.has_parsed_soln()
+\end{Code}
+
+The \code{has\_parsed\_soln} method returns \code{1} if the model has a parsed solution available in \code{om.soln}, \code{0} otherwise.
 
 
 \clearpage
@@ -3477,6 +3496,7 @@ name & description \\
 \code{~~eval\_nln\_cost}	& evaluates nonlinear cost function and its derivatives\tnote{\ddag}, see Section~\ref{sec:eval_nln_cost}	\\
 \code{~~eval\_quad\_cost}	& evaluates quadratic cost function and its derivatives\tnote{\ddag}, see Section~\ref{sec:eval_quad_cost}	\\
 \code{~~get\_soln}	& returns named/indexed results for solved model	\\
+\code{~~has\_parsed\_soln}	& returns 1 if model has a parsed solution available, 0 otherwise	\\
 \code{~~is\_mixed\_integer}	& returns 1 if any of the variables are binary or integer, 0 otherwise	\\
 \code{~~is\_solved}	& returns 1 if model has been solved, 0 otherwise	\\
 \code{~~params\_lin\_constraint}	& assembles and returns parameters for linear constraints\tnote{\ddag}	\\
@@ -4533,6 +4553,7 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.2.pdf}{\mpom{} 4.2 Use
 \item Option for \code{opt\_model/add\_lin\_constraint()} to provide/store the transpose of the $A$ matrix instead of the original. This can potentially save significant memory for sparse matrices with many more columns than rows. E.g. storage constraints in \mostlink{} for 8760 hour planning horizon.
 \item Add support to \code{nlps\_master()} for calling \code{nlps\_<my\_solver>()} by setting \code{opt.alg} to \codeq{<MY\_SOLVER>} to allow for handling custom NLP solvers.
 \item Add support to \code{miqps\_master()} for calling \code{miqps\_<my\_solver>()} by setting \code{opt.alg} to \codeq{<MY\_SOLVER>} to allow for handling custom MILP/MIQP solvers.
+\item Add to the \code{parse\_soln()} method of \code{opt\_model} an optional \code{stash} input argument that, if present and true, causes the parsed solution to be stored back in the object, as the \code{solve()} method was already doing when \code{opt.parse\_soln} is true.
 \item New functions:
     \begin{itemize}
     \item \code{convert\_lin\_constraint()} converts linear constraints from a single set of doubly-bounded inequality constraints to separate sets of equality and upper-bounded inequality constraints.
@@ -4540,7 +4561,8 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.2.pdf}{\mpom{} 4.2 Use
     \end{itemize}
 \item New \code{opt\_model} methods:
     \begin{itemize}
-      \item \code{is\_solved()} determines whether the model has been solved.
+      \item \code{is\_solved()} indicatess whether the model has been solved.
+      \item \code{has\_parsed\_soln()} indicatess whether a parsed solution is available in the model.
       \item \code{display\_soln()} display the results of a solved model, including values, bounds and shadow prices for variables and linear constraints, values and shadow prices for nonlinear constraints, and individual cost components.
     \end{itemize}
 \end{itemize}
@@ -4554,6 +4576,8 @@ The \href{https://matpower.org/docs/MP-Opt-Model-manual-4.2.pdf}{\mpom{} 4.2 Use
 
 \subsubsection*{Other Changes}
 \begin{itemize}
+\item Update \code{have\_feature\_ipopt()} to recognize \ipopt{} MEX installations from Enrico Bertolazzi's \href{https://github.com/ebertolazzi/mexIPOPT}{mexIPOPT}\footnote{\href{https://github.com/ebertolazzi/mexIPOPT}{mexIPOPT} is available at \url{https://github.com/ebertolazzi/mexIPOPT}.}, which include MEX files that have been renamed to architecture-specific names along with an \code{ipopt.m} wrapper function to call the appropriate one. \emph{Thanks to Carlos Murillo-S{\'a}nchez.} \\
+\emph{{\bf Note:} While MATPOWER no longer requires this, my recommendation is still to simply rename the MEX file to \code{ipopt.<mexext>}, with the appropriate architecture-specific extension, and delete the unnecessary \code{ipopt.m} entirely.}
 \item Update for compatibility with MATLAB R2023a (Optimization Toolbox 9.5) which removed \code{x0} as a valid input to \code{linprog}.
 \item Always skip price computation stage in \code{miqps\_<solver>()} functions for pure (as opposed to mixed) integer problems.
 

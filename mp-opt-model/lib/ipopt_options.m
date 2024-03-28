@@ -1,5 +1,6 @@
 function opt = ipopt_options(overrides, mpopt)
-%IPOPT_OPTIONS  Sets options for IPOPT.
+% ipopt_options - Sets options for IPOPT.
+% ::
 %
 %   OPT = IPOPT_OPTIONS
 %   OPT = IPOPT_OPTIONS(OVERRIDES)
@@ -9,10 +10,9 @@ function opt = ipopt_options(overrides, mpopt)
 %   Sets the values for the options.ipopt struct normally passed to
 %   IPOPT.
 %
-%   Please note that if there is a file named 'ipopt.opt' in your
-%   current working directory, it will override any options passed
-%   to the IPOPT MEX file, including any options returned by this
-%   function.
+%   Please note that if there is a file named 'ipopt.opt' in your current
+%   working directory, it will override any options passed to the IPOPT
+%   MEX file, including any options returned by this function.
 %
 %   Inputs are all optional, second argument must be either a string
 %   (FNAME) or a struct (MPOPT):
@@ -67,10 +67,10 @@ function opt = ipopt_options(overrides, mpopt)
 %
 %       http://www.coin-or.org/Ipopt/documentation/
 %
-%   See also IPOPT, MPOPTION.
+% See also ipopt, mpoption.
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

@@ -1,5 +1,7 @@
 function s = set_type_idx_map(obj, set_type, idxs, group_by_name)
-%SET_TYPE_IDX_MAP  Maps index for set type back to named set & index within set
+% set_type_idx_map - Maps index for set type back to named set & index within set
+% ::
+%
 %   S = OBJ.SET_TYPE_IDX_MAP(SET_TYPE, IDXS)
 %   S = OBJ.SET_TYPE_IDX_MAP(SET_TYPE)
 %   S = OBJ.SET_TYPE_IDX_MAP(SET_TYPE, IDXS, GROUP_BY_NAME)
@@ -26,10 +28,10 @@ function s = set_type_idx_map(obj, set_type, idxs, group_by_name)
 %       s = obj.set_type_idx_map('var'));
 %       s = obj.set_type_idx_map('var', [], 1));
 %
-%   See also DESCRIBE_IDX, OPT_MODEL.
+%   See also describe_idx, opt_model.
 
 %   MP-Opt-Model
-%   Copyright (c) 2012-2021, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2012-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

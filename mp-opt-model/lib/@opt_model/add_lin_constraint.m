@@ -1,5 +1,6 @@
 function om = add_lin_constraint(om, name, idx, A, l, u, varsets, tr)
-%ADD_LIN_CONSTRAINT  Adds a set of linear constraints to the model.
+% add_lin_constraint - Adds a set of linear constraints to the model.
+% ::
 %
 %   OM.ADD_LIN_CONSTRAINT(NAME, A, L, U);
 %   OM.ADD_LIN_CONSTRAINT(NAME, A, L, U, VARSETS);
@@ -45,10 +46,10 @@ function om = add_lin_constraint(om, name, idx, A, l, u, varsets, tr)
 %         end
 %       end
 %
-%   See also OPT_MODEL, PARAMS_LIN_CONSTRAINT.
+% See also opt_model, params_lin_constraint.
 
 %   MP-Opt-Model
-%   Copyright (c) 2008-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

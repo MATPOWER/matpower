@@ -1,4 +1,20 @@
 function nleqs_master_ex1(alg)
+% nleqs_master_ex1 - Example 1 of nonlinear equation solving.
+% ::
+%
+%   nleqs_master_ex1()
+%   nleqs_master_ex1('NEWTON')
+%
+% Example of solving the following set of nonlinear equations using
+% nleqs_master.
+%
+% .. math::
+%
+%   \rvec{f}(\x) = \left[\begin{array}{c}
+%           x_1 + x_2 - 1 \\
+%           -x_1^2 + x_2 + 5
+%       \end{array}\right] = 0
+
 if nargin < 1
     alg = 'DEFAULT';
 end

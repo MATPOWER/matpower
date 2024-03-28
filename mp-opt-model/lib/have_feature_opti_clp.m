@@ -1,15 +1,15 @@
 function [TorF, vstr, rdate] = have_feature_opti_clp()
-%HAVE_FEATURE_OPTI_CLP  Detect availability/version info for OPTI_CLP
+% have_feature_opti_clp - Detect availability/version info for OPTI_CLP.
 %
-%   Feature detection function implementing 'opti_clp' tag for HAVE_FEATURE
-%   to detect availability/version of the version of CLP (COIN-OR Linear
-%   Programming solver) distributed with OPTI Toolbox
-%   (https://www.inverseproblem.co.nz/OPTI/).
+% Private feature detection function implementing ``'opti_clp'`` tag for
+% have_feature to detect availability/version of the version of CLP
+% (COIN-OR Linear Programming solver) distributed with OPTI Toolbox
+% (https://www.inverseproblem.co.nz/OPTI/).
 %
-%   See also HAVE_FEATURE, HAVE_FEATURE_CLP, QPS_MASTER, CLP.
+% See also have_feature, have_feature_clp, qps_master, clp.
 
 %   MP-Opt-Model
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

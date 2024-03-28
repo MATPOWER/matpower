@@ -1,8 +1,8 @@
 function t_om_solve_nleqs(quiet)
-%T_OM_SOLVE_NLEQS  Tests of NLEQ solvers via OM.SOLVE().
+% t_om_solve_nleqs - Tests of NLEQ solvers via opt_model.solve.
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.
@@ -58,7 +58,7 @@ end
 
 n = 18;
 
-t_begin(14+n*length(cfg), quiet);
+t_begin(15+n*length(cfg), quiet);
 
 for k = 1:length(cfg)
     alg   = cfg{k}{1};
@@ -142,7 +142,7 @@ for k = 1:length(cfg)
         t_is(e, 1, 12, [t 'success']);
         t_is(x, [2; 3], 8, [t 'x']);
         t_is(f, 0, 10, [t 'f']);
-        t_ok(~isfield(om.soln, 'var'), [t 'no parse_soln() outputs']);
+        t_ok(~om.has_parsed_soln(), [t 'has_parsed_soln() is false']);
 
         opt.max_it = 3;
         t = sprintf('%s - 2-d function2 (max_it) : ', name);
@@ -194,6 +194,7 @@ t_is(g, f(1:2), 14, [t 'f']);
 t_is(dg, jac(1:2, 1:2), 14, [t 'jac']);
 
 t = 'parse_soln : ';
+t_ok(om.has_parsed_soln(), [t 'has_parsed_soln() is true']);
 t_is(om.soln.var.val.x1, om.get_soln('var', 'x1'), 14, [t 'var.val.x1']);
 t_is(om.soln.var.val.x2, om.get_soln('var', 'x2'), 14, [t 'var.val.x2']);
 

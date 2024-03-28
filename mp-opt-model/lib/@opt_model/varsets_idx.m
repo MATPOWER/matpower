@@ -1,14 +1,16 @@
 function kk = varsets_idx(om, vs)
-%VARSETS_IDX  Returns a vector of indices into X specified by VARSETS
+% varsets_idx - Returns a vector of indices into X specified by VARSETS
+% ::
+%
 %   K = OM.VARSETS_IDX(VARSETS)
 %
 %   Returns a vector of indices into X corresponding to the variable
 %   sets specified by VARSETS.
 %
-%   See also VARSET_X
+% See also varsets_x.
 
 %   MP-Opt-Model
-%   Copyright (c) 2017-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2017-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

@@ -23,7 +23,7 @@ jobs:
 
     steps:
     - name: Check out repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Include IPOPT?
       if: matrix.platform == 'matlab' || matrix.os != 'ubuntu-16.04'
@@ -38,7 +38,7 @@ jobs:
       id: cache-ipopt-libs
       env:
         cache-name: ipopt-libs
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/install
         key: ${{ env.cache-name }}-${{ matrix.os }}
@@ -52,7 +52,7 @@ jobs:
       id: cache-ipopt
       env:
         cache-name: ipopt
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/build/ipopt
         key: ${{ env.cache-name }}-${{ matrix.platform }}-${{ matrix.os }}
@@ -62,7 +62,7 @@ jobs:
       id: cache-osqp
       env:
         cache-name: osqp
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/build/osqp-matlab
         key: ${{ env.cache-name }}-${{ matrix.platform }}-${{ matrix.os }}
@@ -79,11 +79,13 @@ jobs:
 
     - name: Install MATLAB
       if: matrix.platform == 'matlab'
-      uses: matlab-actions/setup-matlab@v1
+      uses: matlab-actions/setup-matlab@v2
+      with:
+        products: Optimization_Toolbox
 
     - name: Configure MATLAB
       if: matrix.platform == 'matlab'
-      uses: MATPOWER/action-configure-matlab@v1
+      uses: MATPOWER/action-configure-matlab@v2
       with:
         os: ${{ matrix.os }}
         ipopt: ${{ env.INCLUDE_IPOPT == 1 }}

@@ -1,15 +1,22 @@
 function rv = osqpver(varargin)
-%OSQPVER  Prints or returns OSQP version info.
-%   V = OSQPVER returns the current OSQP version numbers.
-%   V = OSQPVER('all') returns a struct with the fields Name, Version,
-%   Release and Date (all strings). Calling OSQPVER without assigning the
-%   return value prints the version and release date of the current
-%   installation of OSQP.
+% osqpver - Prints or returns installed OSQP version info.
+% ::
 %
-%   See also MPVER, OSQP.
+%   osqpver
+%   v = osqpver
+%   v = osqpver('all')
+%
+% When called with an output argument and no input argument, osqpver
+% returns the current OSQP version numbers. With an input argument
+% (e.g. ``'all'``) it returns  a struct with the fields ``Name``,
+% ``Version``, ``Release``, and ``Date`` *(all char arrays)*. Calling
+% osqpver without assigning the return value prints the version and
+% release date of the current installation of OSQP.
+%
+% See also mpver, osqp.
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

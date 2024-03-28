@@ -1,14 +1,14 @@
 function [TorF, vstr, rdate] = have_feature_osqp()
-%HAVE_FEATURE_OSQP  Detect availability/version info for OSQP
+%have_feature_osqp - Detect availability/version info for OSQP.
 %
-%   Feature detection function implementing 'osqp' tag for HAVE_FEATURE
-%   to detect availability/version of OSQP, (Operator Splitting QP solver)
-%   (https://osqp.org)
+% Private feature detection function implementing ``'osqp'`` tag for
+% have_feature to detect availability/version of OSQP, (Operator Splitting
+% QP solver) (https://osqp.org)
 %
-%   See also HAVE_FEATURE, QPS_MASTER, OSQP.
+% See also have_feature, qps_master, osqp.
 
 %   MP-Opt-Model
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

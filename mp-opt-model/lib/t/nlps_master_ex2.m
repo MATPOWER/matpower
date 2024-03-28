@@ -1,4 +1,22 @@
 function nlps_master_ex2(alg)
+% nlps_master_ex2 - Example of constrained nonlinear optimization.
+% ::
+%
+%   nlps_master_ex2()
+%   nlps_master_ex2('MIPS')
+%   nlps_master_ex2('FMINCON')
+%   nlps_master_ex2('IPOPT')
+%   nlps_master_ex2('KNITRO')
+%
+% Example of solving the following problem using nlps_master.
+%
+% .. math:: \min_{x_1,x_2,x_3} -x_1 x_2 - x_2 x_3
+%
+% subject to
+%
+% .. math:: x_1^2 - x_2^2 + x_3^2 - 2 \le 0
+% .. math:: x_1^2 + x_2^2 + x_3^2 - 10 \le 0
+
 if nargin < 1
     alg = 'DEFAULT';
 end

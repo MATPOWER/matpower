@@ -1,5 +1,7 @@
 function [x, f, eflag, varargout] = nleqs_fsolve(fcn, x0, opt)
-%NLEQS_FSOLVE  Nonlinear Equation Solver based on Newton's method.
+% nleqs_fsolve-  Nonlinear Equation Solver based on Newton's method.
+% ::
+%
 %   [X, F, EXITFLAG, OUTPUT, JAC] = NLEQS_FSOLVE(FCN, X0, OPT)
 %   [X, F, EXITFLAG, OUTPUT, JAC] = NLEQS_FSOLVE(PROBLEM)
 %   A wrapper function providing a standardized interface for using
@@ -76,10 +78,10 @@ function [x, f, eflag, varargout] = nleqs_fsolve(fcn, x0, opt)
 %       );
 %       [x, f, exitflag, output, jac] = nleqs_fsolve(problem);
 %
-%   See also NLEQS_MASTER, FSOLVE.
+% See also nleqs_master, fsolve.
 
 %   MP-Opt-Model
-%   Copyright (c) 2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

@@ -1,5 +1,6 @@
 function rv = get_userdata(obj, name)
-%GET_USERDATA  Used to retrieve values of user data.
+% get_userdata - Used to retrieve values of user data.
+% ::
 %
 %   VAL = OBJ.GET_USERDATA(NAME) returns the value specified by the given name
 %   or an empty matrix if userdata with NAME does not exist.
@@ -13,10 +14,10 @@ function rv = get_userdata(obj, name)
 %   constructed when adding some variables or constraints. This indexing data
 %   can be stored and used later to "unpack" the results of the solved case.
 %
-%   See also OPT_MODEL.
+% See also opt_model.
 
 %   MP-Opt-Model
-%   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

@@ -1,5 +1,7 @@
 function reg_ev = pne_register_events(my_events, opt, reg_ev)
-%PNE_REGISTER_EVENTS  Register event functions
+% pne_register_events - Register PNE event functions.
+% ::
+%
 %   REG_EV = PNE_REGISTER_EVENTS(MY_EVENTS, OPT)
 %   REG_EV = PNE_REGISTER_EVENTS(MY_EVENTS, OPT, REG_EV)
 %
@@ -29,10 +31,10 @@ function reg_ev = pne_register_events(my_events, opt, reg_ev)
 %       'events' option (OPT.events) to PNES_MASTER, which takes the same
 %       form as MY_EVENTS above.
 %
-%   See also PNES_MASTER, PNE_EVENT_NOSE, PNE_EVENT_TARGET_LAM.
+% See also pnes_master, pne_event_nose, pne_event_target_lam.
 
 %   MP-Opt-Model
-%   Copyright (c) 2016-2021, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2016-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Shrirang Abhyankar, Argonne National Laboratory
 %

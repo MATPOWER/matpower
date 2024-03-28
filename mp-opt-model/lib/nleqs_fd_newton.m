@@ -1,5 +1,7 @@
 function [x, f, eflag, output, J] = nleqs_fd_newton(fcn, x0, opt)
-%NLEQS_FD_NEWTON  Nonlinear Equation Solver based on Newton's method.
+% nleqs_fd_newton - Nonlinear Equation Solver based on Newton's method.
+% ::
+%
 %   [X, F, EXITFLAG, OUTPUT, JAC] = NLEQS_FD_NEWTON(FCN, X0, OPT)
 %   [X, F, EXITFLAG, OUTPUT, JAC] = NLEQS_FD_NEWTON(PROBLEM)
 %   A function providing a standardized interface for using Newton's
@@ -84,10 +86,10 @@ function [x, f, eflag, output, J] = nleqs_fd_newton(fcn, x0, opt)
 %                   'jac_approx_fcn', @jac_approx_fcn2 )));
 %       [x, f, exitflag, output, jac] = nleqs_fd_newton(problem);
 %
-%   See also NLEQS_MASTER.
+% See also nleqs_master.
 
 %   MP-Opt-Model
-%   Copyright (c) 1996-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

@@ -1,5 +1,7 @@
 function [p, dp] = pne_pfcn_pseudo_arc_len(x, xp, step, zp)
-%PNE_PFCN_PSEUDO_ARC_LEN  Pseudo arc length parameterization function for PNE
+% pne_pfcn_pseudo_arc_len - Pseudo arc length parameterization function for PNE.
+% ::
+%
 %   [P, DP] = PNE_PFCN_PSEUDO_ARC_LEN(X, XP, STEP, ZP)
 %
 %   Inputs:
@@ -17,10 +19,10 @@ function [p, dp] = pne_pfcn_pseudo_arc_len(x, xp, step, zp)
 %       P : value of parameterization function
 %       DP : Jacobian of paramerization function (transpose of gradient)
 %
-%   See also PNE_PFCN_NATURAL, PNE_PFCN_ARC_LEN.
+% See also pne_pfcn_natural, pne_pfcn_arc_len.
 
 %   MP-Opt-Model
-%   Copyright (c) 2013-2021, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2013-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Shrirang Abhyankar, Argonne National Laboratory
 %

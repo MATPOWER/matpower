@@ -1,5 +1,7 @@
 function [N, fcn, hess, vs, include] = params_nln_constraint(om, iseq, name, idx)
-%PARAMS_NLN_CONSTRAINT  Returns parameters for general nonlinear constraints.
+% params_nln_constraint - Returns parameters for general nonlinear constraints.
+% ::
+%
 %   N = OM.PARAMS_NLN_CONSTRAINT(ISEQ, NAME)
 %   N = OM.PARAMS_NLN_CONSTRAINT(ISEQ, NAME, IDX_LIST)
 %   [N, FCN] = OM.PARAMS_NLN_CONSTRAINT(...)
@@ -21,10 +23,10 @@ function [N, fcn, hess, vs, include] = params_nln_constraint(om, iseq, name, idx
 %   cell array of set names in the 'name' field and an array of
 %   corresponding dimensions in the 'N' field.
 %
-%   See also OPT_MODEL, ADD_NLN_CONSTRAINT, EVAL_NLN_CONSTRAINT.
+% See also opt_model, add_nln_constraint, eval_nln_constraint.
 
 %   MP-Opt-Model
-%   Copyright (c) 2017-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2017-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

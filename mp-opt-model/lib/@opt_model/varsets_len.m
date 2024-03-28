@@ -1,14 +1,16 @@
 function nv = varsets_len(om, vs)
-%VARSETS_LEN  Returns the total number of variables in VARSETS
+% varsets_len - Returns the total number of variables in VARSETS
+% ::
+%
 %   NV = OM.VARSETS_LEN(VARSETS)
 %
 %   Returns the total number of elements in the optimization sub-vector
 %   specified by VARSETS.
 %
-%   See also VARSETS_CELL2STRUCT
+% See also varsets_cell2struct.
 
 %   MP-Opt-Model
-%   Copyright (c) 2017-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2017-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

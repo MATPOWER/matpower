@@ -1,14 +1,14 @@
 function [TorF, vstr, rdate] = have_feature_yalmip()
-%HAVE_FEATURE_YALMIP  Detect availability/version info for YALMIP
+% have_feature_yalmip - Detect availability/version info for YALMIP.
 %
-%   Feature detection function implementing 'yalmip' tag for HAVE_FEATURE
-%   to detect availability/version of YALMIP modeling platform
-%   (https://yalmip.github.io).
+% Private feature detection function implementing ``'yalmip'`` tag for
+% have_feature to detect availability/version of YALMIP modeling platform
+% (https://yalmip.github.io).
 %
-%   See also HAVE_FEATURE, YALMIP.
+% See also have_feature, yalmip.
 
 %   MP-Opt-Model
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

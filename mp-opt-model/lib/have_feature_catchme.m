@@ -1,13 +1,14 @@
 function [TorF, vstr, rdate] = have_feature_catchme()
-%HAVE_FEATURE_CATCHME  Detect availability/version info for CATCH(ME) syntax.
+% have_feature_catchme - Detect availability/version info for ``catch me`` syntax.
 %
-%   Feature detection function implementing 'catchme' tag for HAVE_FEATURE
-%   to detect support for CATCH ME syntax in TRY/CATCH constructs.
+% Private feature detection function implementing ``'catchme'`` tag for
+% have_feature to detect support for ``catch me`` syntax in ``try``/``catch``
+% constructs.
 %
-%   See also HAVE_FEATURE, TRY, CATCH.
+% See also have_feature, try, catch.
 
 %   MP-Opt-Model
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

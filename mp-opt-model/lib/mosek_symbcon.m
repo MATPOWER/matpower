@@ -1,5 +1,7 @@
 function sc = mosek_symbcon
-%MOSEK_SYMBCON  Returns struct containing MOSEK's symbolic constants
+% mosek_symbcon - Returns struct containing MOSEK's symbolic constants
+% ::
+%
 %   SC = MOSEK_SYMBCON
 %
 %   Returns a stuct containing all of MOSEk's symbolic constants, such
@@ -19,7 +21,7 @@ function sc = mosek_symbcon
 %                           'mosek_lp_alg', sc.MSK_OPTIMIZER_DUAL_SIMPLEX);
 
 %   MP-Opt-Model
-%   Copyright (c) 2015-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

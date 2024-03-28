@@ -1,8 +1,8 @@
 function t_nlps_master(quiet)
-%T_NLPS_MASTER  Tests of NLP solvers via NLPS_MASTER().
+% t_nlps_master - Tests of NLP solvers via nlps_master.
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2022, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

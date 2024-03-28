@@ -1,4 +1,22 @@
 function nleqs_master_ex2(alg)
+% nleqs_master_ex2 - Example 2 of nonlinear equation solving.
+% ::
+%
+%   nleqs_master_ex2()
+%   nleqs_master_ex2('NEWTON')
+%   nleqs_master_ex2('GS')
+%   nleqs_master_ex2('FD')
+%
+% Example of solving the following set of nonlinear equations using
+% nleqs_master.
+%
+% .. math::
+%
+%   \rvec{f}(\x) = \left[\begin{array}{c}
+%           x_1^2 + x_1 x_2 - 10 \\
+%           x_2 + 3 x_1 x_2^2 - 57
+%       \end{array}\right] = 0
+
 if nargin < 1
     alg = 'DEFAULT';
 end

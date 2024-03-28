@@ -1,5 +1,6 @@
 function opt = gurobi_options(overrides, mpopt)
-%GUROBI_OPTIONS  Sets options for GUROBI (version 5.x and greater).
+% gurobi_options - Sets options for GUROBI (version 5.x and greater).
+% ::
 %
 %   OPT = GUROBI_OPTIONS
 %   OPT = GUROBI_OPTIONS(OVERRIDES)
@@ -68,10 +69,10 @@ function opt = gurobi_options(overrides, mpopt)
 %
 %       https://www.gurobi.com/documentation/
 %
-%   See also GUROBI, MPOPTION.
+% See also gurobi, mpoption.
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

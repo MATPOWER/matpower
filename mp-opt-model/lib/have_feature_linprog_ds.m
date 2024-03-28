@@ -1,15 +1,15 @@
 function [TorF, vstr, rdate] = have_feature_linprog_ds()
-%HAVE_FEATURE_LINPROG_DS  Detect availblty/ver info for LINPROG w/dual simplex
+% have_feature_linprog_ds - Detect availblty/ver info for :func:`linprog` w/dual simplex.
 %
-%   Feature detection function implementing 'linprog_ds' tag for HAVE_FEATURE
-%   to detect availability/version of LINPROG with support for the dual
-%   simplex method, from the MATLAB Optimization Toolbox 7.1 (R2014b) and
-%   later.
+% Private feature detection function implementing ``'linprog_ds'`` tag for
+% have_feature to detect availability/version of :func:`linprog` with
+% support for the dual simplex method, from the MATLAB Optimization
+% Toolbox 7.1 (R2014b) and later.
 %
-%   See also HAVE_FEATURE, HAVE_FEATURE_LINPROG, QPS_MASTER, LINPROG.
+% See also have_feature, have_feature_linprog, qps_master, linprog.
 
 %   MP-Opt-Model
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

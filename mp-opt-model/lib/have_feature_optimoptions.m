@@ -1,14 +1,14 @@
 function [TorF, vstr, rdate] = have_feature_optimoptions()
-%HAVE_FEATURE_OPTIMOPTIONS  Detect availability/version info for OPTIMOPTIONS
+% have_feature_optimoptions - Detect availability/version info for :func:`optimoptions`.
 %
-%   Feature detection function implementing 'optimoptions' tag for HAVE_FEATURE
-%   to detect support for OPTIMOPTIONS, option setting function for MATLAB
-%   Optimization Toolbox 6.3 and later.
+% Private feature detection function implementing ``'optimoptions'`` tag for
+% have_feature to detect support for :func:`optimoptions`, option setting
+% function for MATLAB Optimization Toolbox 6.3 and later.
 %
-%   See also HAVE_FEATURE, HAVE_FEATURE_OPTIM, OPTIMOPTIONS.
+% See also have_feature, have_feature_optim, optimoptions.
 
 %   MP-Opt-Model
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

@@ -1,5 +1,6 @@
 function opt = cplex_options(overrides, mpopt)
-%CPLEX_OPTIONS  Sets options for CPLEX.
+% cplex_options - Sets options for CPLEX.
+% ::
 %
 %   OPT = CPLEX_OPTIONS
 %   OPT = CPLEX_OPTIONS(OVERRIDES)
@@ -66,10 +67,10 @@ function opt = cplex_options(overrides, mpopt)
 %
 %       http://www.ibm.com/support/knowledgecenter/SSSA5P
 %
-%   See also CPLEXLP, CPLEXQP, MPOPTION.
+% See also cplexlp, cplexqp, mpoption.
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

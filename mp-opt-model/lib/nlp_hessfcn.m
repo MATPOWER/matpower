@@ -1,5 +1,7 @@
 function Lxx = nlp_hessfcn(om, x, lambda, cost_mult, Hs)
-%NLP_HESSFCN  Evaluates Hessian of Lagrangian.
+% nlp_hessfcn - Evaluates Hessian of Lagrangian.
+% ::
+%
 %   LXX = NLP_HESSFCN(OM, X, LAMBDA, COST_MULT)
 %   LXX = NLP_HESSFCN(OM, X, LAMBDA, COST_MULT, HS)
 %
@@ -23,10 +25,10 @@ function Lxx = nlp_hessfcn(om, x, lambda, cost_mult, Hs)
 %       Lxx = nlp_hessfcn(om, x, lambda, cost_mult);
 %       Lxx = nlp_hessfcn(om, x, lambda, cost_mult, Hs);
 %
-%   See also NLP_COSTFCN, NLP_CONSFCN.
+% See also nlp_costfcn, nlp_consfcn.
 
 %   MP-Opt-Model
-%   Copyright (c) 1996-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

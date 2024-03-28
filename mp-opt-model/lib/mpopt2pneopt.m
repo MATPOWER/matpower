@@ -1,5 +1,6 @@
 function pneopt = mpopt2pneopt(mpopt, model, alg)
-%MPOPT2PNEOPT   Create/modify PNES_MASTER options struct from MPOPT.
+% mpopt2pneopt  Create/modify pnes_master options struct from ``mpopt``.
+% ::
 %
 %   PNEOPT = MPOPT2PNEOPT(MPOPT, MODEL)
 %   PNEOPT = MPOPT2PNEOPT(MPOPT, MODEL, ALG)
@@ -20,10 +21,10 @@ function pneopt = mpopt2pneopt(mpopt, model, alg)
 %   Output:
 %       PNEOPT : an options struct for use by PNES_MASTER and friends
 %
-%   See PNES_MASTER, MPOPTION.
+% See also pnes_master, mpoption.
 
 %   MP-Opt-Model
-%   Copyright (c) 2015-2021, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

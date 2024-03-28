@@ -1,5 +1,6 @@
 function str = valid_named_set_type(obj, set_type)
-%VALID_NAMED_SET_TYPE  Returns a label for the given named set type or empty.
+% valid_named_set_type - Returns a label for the given named set type or empty.
+% ::
 %
 %   -----  PRIVATE METHOD  -----
 %
@@ -28,7 +29,7 @@ function str = valid_named_set_type(obj, set_type)
 %       'lin'       'linear constraint'
 
 %   MP-Opt-Model
-%   Copyright (c) 2017-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2017-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

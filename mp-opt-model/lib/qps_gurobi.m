@@ -1,5 +1,7 @@
 function [x, f, eflag, output, lambda] = qps_gurobi(H, c, A, l, u, xmin, xmax, x0, opt)
-%QPS_GUROBI  Quadratic Program Solver based on GUROBI.
+% qps_gurobi - Quadratic Program Solver based on GUROBI.
+% ::
+%
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
 %       QPS_GUROBI(H, C, A, L, U, XMIN, XMAX, X0, OPT)
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = QPS_GUROBI(PROBLEM)
@@ -92,10 +94,10 @@ function [x, f, eflag, output, lambda] = qps_gurobi(H, c, A, l, u, xmin, xmax, x
 %       opt = struct('verbose', 2);
 %       [x, f, s, out, lambda] = qps_gurobi(H, c, A, l, u, xmin, [], x0, opt);
 %
-%   See also QPS_MASTER, GUROBI.
+% See also qps_master, gurobi.
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

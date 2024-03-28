@@ -1,14 +1,14 @@
 function [TorF, vstr, rdate] = have_feature_sdpt3()
-%HAVE_FEATURE_SDPT3  Detect availability/version info for SDPT3
+% have_feature_sdpt3 -  Detect availability/version info for SDPT3.
 %
-%   Feature detection function implementing 'sdpt3' tag for HAVE_FEATURE
-%   to detect availability/version of SDPT3 SDP solver
-%   (https://github.com/sqlp/sdpt3)
+% Private feature detection function implementing ``'sdpt3'`` tag for
+% have_feature to detect availability/version of SDPT3 SDP solver
+% (https://github.com/sqlp/sdpt3)
 %
-%   See also HAVE_FEATURE, SDPT3.
+% See also have_feature, sdpt3.
 
 %   MP-Opt-Model
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

@@ -1,5 +1,6 @@
 function opt = glpk_options(overrides, mpopt)
-%GLPK_OPTIONS  Sets options for GLPK.
+% glpk_options - Sets options for GLPK.
+% ::
 %
 %   OPT = GLPK_OPTIONS
 %   OPT = GLPK_OPTIONS(OVERRIDES)
@@ -55,10 +56,10 @@ function opt = glpk_options(overrides, mpopt)
 %
 %   or by typing 'help glpk'.
 %
-%   See also GLPK, MPOPTION.
+% See also glpk, mpoption.
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

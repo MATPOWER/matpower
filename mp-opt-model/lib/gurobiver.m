@@ -1,15 +1,22 @@
 function rv = gurobiver(varargin)
-%GUROBIVER  Prints or returns GUROBI version info.
-%   V = GUROBIVER returns the current GUROBI version numbers.
-%   V = GUROBIVER('all') returns a struct with the fields Name, Version,
-%   Release and Date (all strings). Calling GUROBIVER without assigning the
-%   return value prints the version and release date of the current
-%   installation of GUROBI.
+% gurobiver - Prints or returns installed GUROBI version info.
+% ::
 %
-%   See also MPVER, GUROBI.
+%   gurobiver
+%   v = gurobiver
+%   v = gurobiver('all')
+%
+% When called with an output argument and no input argument, gurobiver
+% returns the current GUROBI version numbers. With an input argument
+% (e.g. ``'all'``) it returns  a struct with the fields ``Name``,
+% ``Version``, ``Release``, and ``Date`` *(all char arrays)*. Calling
+% gurobiver without assigning the return value prints the version and
+% release date of the current installation of GUROBI.
+%
+% See also mpver, gurobi.
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

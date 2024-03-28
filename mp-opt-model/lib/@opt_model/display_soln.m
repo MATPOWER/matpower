@@ -1,5 +1,7 @@
 function om = display_soln(om, set_type, name, idx)
-%DISPLAY_SOLN  Display solution values.
+% display_soln - Display solution values.
+% ::
+%
 %   OM.DISPLAY_SOLN()
 %   OM.DISPLAY_SOLN(SET_TYPE)
 %   OM.DISPLAY_SOLN(SET_TYPE, NAME)
@@ -34,10 +36,10 @@ function om = display_soln(om, set_type, name, idx)
 %       om.display_soln('lin', 'lin_con_1');
 %       om.display_soln('nle', 'nle_con_b', {2,3});
 %
-%   See also GET_SOLN, PARSE_SOLN.
+% See also get_soln, parse_soln.
 
 %   MP-Opt-Model
-%   Copyright (c) 2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

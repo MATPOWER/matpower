@@ -1,8 +1,8 @@
 function t_nested_struct_copy(quiet)
-%T_NESTED_STUCT_COPY  Tests for NESTED_STUCT_COPY.
+% t_nested_struct_copy - Tests for nested_struct_copy.
 
 %   MP-Opt-Model
-%   Copyright (c) 2013-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2013-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

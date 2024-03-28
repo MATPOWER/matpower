@@ -1,5 +1,6 @@
 function om = set_params(om, st, name, idx, params, vals)
-%SET_PARAMS  Modifies parameters for variable, cost or constraint in model
+% set_params - Modifies parameters for variable, cost or constraint in model
+% ::
 %
 %   This method can be used to modify parameters for an existing variable,
 %   constraint or cost in the model.
@@ -38,11 +39,11 @@ function om = set_params(om, st, name, idx, params, vals)
 %       om.set_params('lin', 'y', {2,3}, {'l', 'u'}, {l, u});
 %       om.set_params('nle', 'Pmis', 'all', {N, @fcn, @hess, vs});
 %
-%   See also OPT_MODEL, ADD_VAR, ADD_LIN_CONSTRAINT, ADD_NLN_CONSTRAINT
-%            ADD_QUAD_COST and ADD_NLN_COST.
+% See also opt_model, add_var, add_lin_constraint, add_nln_constraint,
+% add_quad_cost, add_nln_cost.
 
 %   MP-Opt-Model
-%   Copyright (c) 2008-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

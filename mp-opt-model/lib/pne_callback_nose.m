@@ -1,5 +1,7 @@
 function [nx, cx, s] = pne_callback_nose(k, nx, cx, px, s, opt)
-%PNE_CALLBACK_NOSE  Callback to handle NOSE events
+% pne_callback_nose - Callback to handle NOSE events.
+% ::
+%
 %   [NX, CX, S] = PNE_CALLBACK_NOSE(K, NX, CX, PX, S, OPT)
 %
 %   Callback to handle NOSE events, triggered by event function PNE_EVENT_NOSE
@@ -9,10 +11,10 @@ function [nx, cx, s] = pne_callback_nose(k, nx, cx, px, s, opt)
 %   This function sets the msg field of the event when the nose point has
 %   been found, raises the S.done flag and sets S.done_msg.
 %
-%   See PNE_CALLBACK_DEFAULT for details of the input and output arguments.
+% See pne_callback_default for details of the input and output arguments.
 
 %   MP-Opt-Model
-%   Copyright (c) 2016-2021, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2016-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Shrirang Abhyankar, Argonne National Laboratory
 %

@@ -1,5 +1,7 @@
 function [x, f, eflag, output, lambda] = nlps_ipopt(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt)
-%NLPS_IPOPT  Nonlinear programming (NLP) Solver based on IPOPT.
+% nlps_ipopt - Nonlinear programming (NLP) Solver based on IPOPT.
+% ::
+%
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
 %       NLPS_IPOPT(F_FCN, X0, A, L, U, XMIN, XMAX, GH_FCN, HESS_FCN, OPT)
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = NLPS_IPOPT(PROBLEM)
@@ -81,11 +83,11 @@ function [x, f, eflag, output, lambda] = nlps_ipopt(f_fcn, x0, A, l, u, xmin, xm
 %           lower - lower bound on optimization variables
 %           upper - upper bound on optimization variables
 %
-%   Note the calling syntax is almost identical to that of FMINCON
-%   from MathWorks' Optimization Toolbox. The main difference is that
-%   the linear constraints are specified with A, L, U instead of
-%   A, B, Aeq, Beq. The functions for evaluating the objective
-%   function, constraints and Hessian are identical.
+%   Note the calling syntax is almost identical to that of FMINCON from
+%   MathWorks' Optimization Toolbox. The main difference is that the linear
+%   constraints are specified with A, L, U instead of A, B, Aeq, Beq. The
+%   functions for evaluating the objective function, constraints and Hessian
+%   are identical.
 %
 %   Calling syntax options:
 %       [x, f, exitflag, output, lambda] = ...
@@ -139,10 +141,10 @@ function [x, f, eflag, output, lambda] = nlps_ipopt(f_fcn, x0, A, l, u, xmin, xm
 %       );
 %       [x, f, exitflag, output, lambda] = nlps_ipopt(problem);
 %
-%   See also NLPS_MASTER, IPOPT.
+% See also nlps_master, ipopt.
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

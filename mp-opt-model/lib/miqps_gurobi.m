@@ -1,5 +1,7 @@
 function [x, f, eflag, output, lambda] = miqps_gurobi(H, c, A, l, u, xmin, xmax, x0, vtype, opt)
-%MIQPS_GUROBI  Mixed Integer Quadratic Program Solver based on GUROBI.
+% miqps_gurobi - Mixed Integer Quadratic Program Solver based on GUROBI.
+% ::
+%
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
 %       MIQPS_GUROBI(H, C, A, L, U, XMIN, XMAX, X0, VTYPE, OPT)
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = MIQPS_GUROBI(PROBLEM)
@@ -104,10 +106,10 @@ function [x, f, eflag, output, lambda] = miqps_gurobi(H, c, A, l, u, xmin, xmax,
 %       opt = struct('verbose', 2);
 %       [x, f, s, out, lambda] = miqps_gurobi(H, c, A, l, u, xmin, [], x0, vtype, opt);
 %
-%   See also MIQPS_MASTER, GUROBI.
+% See also miqps_master, gurobi.
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

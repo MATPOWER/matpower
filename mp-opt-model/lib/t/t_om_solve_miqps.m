@@ -1,8 +1,8 @@
 function t_om_solve_miqps(quiet)
-%T_OM_SOLVE_MIQPS  Tests of MIQP solvers via OM.SOLVE().
+% t_om_solve_miqps - Tests of MIQP solvers via opt_model.solve.
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.
@@ -23,7 +23,7 @@ end
 
 n = 17;
 nmiqp = 10;
-t_begin(28+n*length(algs), quiet);
+t_begin(29+n*length(algs), quiet);
 
 diff_alg_warn_id = 'optim:linprog:WillRunDiffAlg';
 if have_feature('quadprog') && have_feature('quadprog', 'vnum') == 7.005
@@ -98,7 +98,7 @@ for k = 1:length(algs)
         t_is(s, 1, 12, [t 'success']);
         t_is(x, [4; 2], 12, [t 'x']);
         t_is(f, -14, 12, [t 'f']);
-        t_ok(~isfield(om.soln, 'var'), [t 'no parse_soln() outputs']);
+        t_ok(~om.has_parsed_soln(), [t 'has_parsed_soln() is false']);
 
         t = sprintf('%s - 6-d ILP : ', names{k});
         %% from https://doi.org/10.1109/TASE.2020.2998048
@@ -232,13 +232,14 @@ if have_miqp_solver()
     t_is(df, c, 14, [t 'df']);
 
     t = 'parse_soln : ';
+    t_ok(om.has_parsed_soln(), [t 'has_parsed_soln() is true']);
     t_is(om.soln.var.val.x, om.get_soln('var', 'x'), 14, [t 'var.val.x']);
     t_is(om.soln.var.mu_l.x, om.get_soln('var', 'mu_l', 'x'), 14, [t 'var.mu_l.x']);
     t_is(om.soln.var.mu_u.x, om.get_soln('var', 'mu_u', 'x'), 14, [t 'var.mu_u.x']);
     t_is(om.soln.lin.mu_l.Ax, om.get_soln('lin', 'mu_l', 'Ax'), 14, [t 'lin.mu_l.Ax']);
     t_is(om.soln.lin.mu_u.Ax, om.get_soln('lin', 'mu_u', 'Ax'), 14, [t 'lin.mu_u.Ax']);
 else
-    t_skip(28, 'no MILP/MIQP solver installed');
+    t_skip(29, 'no MILP/MIQP solver installed');
 end
 
 if have_feature('quadprog') && have_feature('quadprog', 'vnum') == 7.005

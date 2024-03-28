@@ -1,5 +1,7 @@
 function om = add_quad_cost(om, name, idx, Q, c, k, varsets)
-%ADD_QUAD_COST  Adds a set of user costs to the model.
+% add_quad_cost - Adds a set of user costs to the model.
+% ::
+%
 %   OM.ADD_QUAD_COST(NAME, Q, C);
 %   OM.ADD_QUAD_COST(NAME, Q, C, K);
 %   OM.ADD_QUAD_COST(NAME, Q, C, K, VARSETS);
@@ -42,10 +44,10 @@ function om = add_quad_cost(om, name, idx, Q, c, k, varsets)
 %         end
 %       end
 %
-%   See also OPT_MODEL, PARAMS_QUAD_COST, EVAL_QUAD_COST.
+% See also opt_model, params_quad_cost, eval_quad_cost.
 
 %   MP-Opt-Model
-%   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.
@@ -94,7 +96,7 @@ if MQ
     end
     nx = MQ;
 else
-    if ~Mc
+    if nv && ~Mc
         error('@opt_model/add_quad_cost: Q and c cannot both be empty');
     end
     nx = Mc;

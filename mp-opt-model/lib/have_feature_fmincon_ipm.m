@@ -1,14 +1,14 @@
 function [TorF, vstr, rdate] = have_feature_fmincon_ipm()
-%HAVE_FEATURE_FMINCON_IPM  Detect availability/ver info for FMINCON w/Int Pt Mtd
+% have_feature_fmincon_ipm - Detect availability/ver info for :func:`fmincon` w/Int Pt Mtd.
 %
-%   Feature detection function implementing 'fmincon_ipm' tag for HAVE_FEATURE
-%   to detect availability/version of FMINCON with Interior Point solver, from
-%   the MATLAB Optimization Toolbox 4.x and later.
+% Private feature detection function implementing ``'fmincon_ipm'`` tag for
+% have_feature to detect availability/version of :func:`fmincon` with
+% Interior Point solver, from the MATLAB Optimization Toolbox 4.x and later.
 %
-%   See also HAVE_FEATURE, NLPS_MASTER, FMINCON.
+% See also have_feature, nlps_master, fmincon.
 
 %   MP-Opt-Model
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

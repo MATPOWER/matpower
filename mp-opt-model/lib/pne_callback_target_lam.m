@@ -1,5 +1,7 @@
 function [nx, cx, s] = pne_callback_target_lam(k, nx, cx, px, s, opt)
-%PNE_CALLBACK_TARGET_LAM  Callback function to handle TARGET_LAM events
+% pne_callback_target_lam - Callback function to handle TARGET_LAM events.
+% ::
+%
 %   [NX, CX, S] = PNE_CALLBACK_TARGET_LAM(K, NX, CX, PX, S, OPT)
 %
 %   Callback to handle TARGET_LAM events, triggered by event function
@@ -12,10 +14,10 @@ function [nx, cx, s] = pne_callback_target_lam(k, nx, cx, px, s, opt)
 %   the step size to be exactly what is needed to reach the target, and sets
 %   that step to use natural parameterization.
 %
-%   See PNE_CALLBACK_DEFAULT for details of the input and output arguments.
+% See pne_callback_default for details of the input and output arguments.
 
 %   MP-Opt-Model
-%   Copyright (c) 2016-2021, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2016-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Shrirang Abhyankar, Argonne National Laboratory
 %

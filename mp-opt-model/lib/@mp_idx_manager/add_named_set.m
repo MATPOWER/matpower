@@ -1,11 +1,12 @@
 function obj = add_named_set(obj, set_type, name, idx, N, varargin)
-%ADD_NAMED_SET  Adds a named set of a particular type to the object.
+% add_named_set - Adds a named set of a particular type to the object.
+% ::
 %
 %   -----  PRIVATE METHOD  -----
 %
 %   This method is intended to be a private method, used internally by
-%   the public methods for each set type, e.g.  ADD_VAR, ADD_LIN_CONSTRAINT.
-%   This method handles the indexing part. The set-type-specific methods
+%   the public methods for each set type, e.g. ADD_VAR, ADD_LIN_CONSTRAINT,
+%   etc. This method handles the indexing part. The set-type-specific methods
 %   that call it need to handle any data that goes with each set added.
 %
 %   E.g.
@@ -28,11 +29,13 @@ function obj = add_named_set(obj, set_type, name, idx, N, varargin)
 %   General Nonlinear Cost Set
 %       OBJ.ADD_NAMED_SET('nlc', NAME, IDX_LIST, N, FCN, VARSETS);
 %
-%   See also OPT_MODEL and its methods ADD_VAR, ADD_LIN_CONSTRAINT,
-%           ADD_NLN_CONSTRAINT, ADD_QUAD_COST and ADD_NLN_COST.
+%   See OPT_MODEL and its methods ADD_VAR, ADD_LIN_CONSTRAINT,
+%       ADD_NLN_CONSTRAINT, ADD_QUAD_COST and ADD_NLN_COST.
+%
+% See also opt_model.
 
 %   MP-Opt-Model
-%   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

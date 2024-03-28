@@ -1,5 +1,7 @@
 function [h, g, dh, dg] = nlp_consfcn(om, x, dhs, dgs)
-%NLP_CONSFCN  Evaluates nonlinear constraints and their Jacobian.
+% nlp_consfcn - Evaluates nonlinear constraints and their Jacobian.
+% ::
+%
 %   [H, G] = NLP_CONSFCN(OM, X)
 %   [H, G, DH, DG] = NLP_CONSFCN(OM, X)
 %   [H, G, DH, DG] = NLP_CONSFCN(OM, X, DHS, DGS)
@@ -28,10 +30,10 @@ function [h, g, dh, dg] = nlp_consfcn(om, x, dhs, dgs)
 %       [h, g, dh, dg] = nlp_consfcn(om, x);
 %       [...] = nlp_consfcn(om, x, dhs, dgs);
 %
-%   See also NLP_COSTFCN, NLP_HESSFCN.
+% See also nlp_costfcn, nlp_hessfcn.
 
 %   MP-Opt-Model
-%   Copyright (c) 1996-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

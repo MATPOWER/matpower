@@ -1,5 +1,7 @@
 function d2G = eval_nln_constraint_hess(om, x, lam, iseq)
-%EVAL_NLN_CONSTRAINT_HESS  Builds and returns Hessian of nonlinear constraints.
+% eval_nln_constraint_hess - Builds and returns Hessian of nonlinear constraints.
+% ::
+%
 %   D2G = OM.EVAL_NLN_CONSTRAINT_HESS(X, LAM, ISEQ)
 %   Builds the Hessian of the full set of nonlinear equality or inequality
 %   constraints (ISEQ equal to 1 or 0, respectively) for given values of
@@ -13,10 +15,10 @@ function d2G = eval_nln_constraint_hess(om, x, lam, iseq)
 %       d2G = om.eval_nln_constraint_hess(x, lam, 1)
 %       d2H = om.eval_nln_constraint_hess(x, lam, 0)
 %
-%   See also OPT_MODEL, ADD_NLN_CONSTRAINT, EVAL_NLN_CONSTRAINT.
+% See also opt_model, add_nln_constraint, eval_nln_constraint.
 
 %   MP-Opt-Model
-%   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

@@ -1,15 +1,22 @@
 function rv = mpomver(varargin)
-%MPOMVER  Prints or returns MP-Opt-Model version info for current installation.
-%   V = MPOMVER returns the current MP-Opt-Model version number.
-%   V = MPOMVER('all') returns a struct with the fields Name, Version,
-%   Release and Date (all strings). Calling MPOMVER without assigning the
-%   return value prints the version and release date of the current
-%   installation of MP-Opt-Model.
+% mpomver - Prints or returns installed MP-Opt-Model version info.
+% ::
 %
-%   See also MPVER.
+%   mpomver
+%   v = mpomver
+%   v = mpomver('all')
+%
+% When called with an output argument and no input argument, mpomver
+% returns the current MP-Opt-Model version numbers. With an input argument
+% (e.g. ``'all'``) it returns  a struct with the fields ``Name``,
+% ``Version``, ``Release``, and ``Date`` *(all char arrays)*. Calling
+% mpomver without assigning the return value prints the version and
+% release date of the current installation of MP-Opt-Model.
+%
+% See also mpver.
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.
@@ -19,7 +26,7 @@ function rv = mpomver(varargin)
 v = struct( 'Name',     'MP-Opt-Model', ... 
             'Version',  '4.1+', ...
             'Release',  '', ...
-            'Date',     '31-Jan-2024' );
+            'Date',     '26-Mar-2024' );
 if nargout > 0
     if nargin > 0
         rv = v;

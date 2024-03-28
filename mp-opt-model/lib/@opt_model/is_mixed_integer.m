@@ -1,15 +1,17 @@
 function TorF = is_mixed_integer(om)
-%IS_MIXED_INTEGER  Return true if model is mixed integer, false otherwise.
+% is_mixed_integer - Return true if model is mixed integer, false otherwise.
+% ::
+%
 %   TorF = OM.IS_MIXED_INTEGER()
 %
 %   Outputs:
 %       TorF : 1 or 0, indicating whether any of the variables are
 %              binary or integer
 %
-%   See also OPT_MODEL
+% See also opt_model.
 
 %   MP-Opt-Model
-%   Copyright (c) 2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

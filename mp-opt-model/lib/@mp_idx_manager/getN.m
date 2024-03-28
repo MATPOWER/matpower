@@ -1,5 +1,7 @@
 function N = getN(obj, set_type, name, idx)
-%GETN  Returns the number of elements of a given set type.
+% getN - Returns the number of elements of a given set type.
+% ::
+%
 %   N = OBJ.GETN(SET_TYPE)
 %   N = OBJ.GETN(SET_TYPE, NAME)
 %   N = OBJ.GETN(SET_TYPE, NAME, IDX_LIST)
@@ -15,10 +17,10 @@ function N = getN(obj, set_type, name, idx)
 %       N = obj.getN('lin', name)    : # of linear constraints in named set
 %       N = obj.getN('var', name, idx) : # of variables in indexed named set
 %
-%   See also OPT_MODEL.
+% See also opt_model.
 
 %   MP-Opt-Model
-%   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

@@ -1,14 +1,14 @@
 function [TorF, vstr, rdate] = have_feature_mosek()
-%HAVE_FEATURE_MOSEK  Detect availability/version info for MOSEK
+% have_feature_mosek - Detect availability/version info for MOSEK.
 %
-%   Feature detection function implementing 'mosek' tag for HAVE_FEATURE
-%   to detect availability/version of MOSEK, LP/QP/MILP/MIQP solver
-%   (https://www.mosek.com/).
+% Private feature detection function implementing ``'mosek'`` tag for
+% have_feature to detect availability/version of MOSEK, LP/QP/MILP/MIQP solver
+% (https://www.mosek.com/).
 %
-%   See also HAVE_FEATURE, QPS_MASTER, MIQPS_MASTER, MOSEKOPT.
+% See also have_feature, qps_master, miqps_master, mosekopt.
 
 %   MP-Opt-Model
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

@@ -1,5 +1,7 @@
 function prob = problem_type(om, recheck)
-%PROBLEM_TYPE  Return a string identifying the type of mathematical program
+% problem_type - Return a string identifying the type of mathematical program
+% ::
+%
 %   PROB_TYPE = OM.PROBLEM_TYPE()
 %   PROB_TYPE = OM.PROBLEM_TYPE(RECHECK)
 %
@@ -31,10 +33,10 @@ function prob = problem_type(om, recheck)
 %   case the problem type has changed due to modifying the variables,
 %   constraints or costs in the model.
 %
-%   See also OPT_MODEL
+% See also opt_model.
 
 %   MP-Opt-Model
-%   Copyright (c) 2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2020-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

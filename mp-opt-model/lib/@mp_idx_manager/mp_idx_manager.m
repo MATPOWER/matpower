@@ -1,5 +1,6 @@
 classdef mp_idx_manager < handle
-%MP_IDX_MANAGER  MATPOWER Index Manager abstract class
+% mp_idx_manager - |MATPOWER| Index Manager abstract class
+% ::
 %
 %   A MATPOWER Index Manager object can be used to manage the indexing of
 %   various named and indexed blocks of various set types, such as variables,
@@ -9,7 +10,7 @@ classdef mp_idx_manager < handle
 %   The types of named sets to be managed by the class are defined by the
 %   DEF_SET_TYPES method, which assigns a struct to the 'set_types' field.
 %
-%   Properties:
+%   Properties
 %       set_types   - a struct defined by DEF_SET_TYPES method
 %       userdata    - a struct containing arbitrary data added by the user
 %
@@ -108,7 +109,7 @@ classdef mp_idx_manager < handle
 %           .(user defined fields)
 
 %   MP-Opt-Model
-%   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.
@@ -123,8 +124,14 @@ classdef mp_idx_manager < handle
     end     %% properties
 
     methods
-        %% constructor
         function obj = mp_idx_manager(s)
+            % Constructor.
+            % ::
+            %
+            %   obj = mp_idx_manager()
+            %   obj = mp_idx_manager(a_struct)
+            %   obj = mp_idx_manager(an_obj)
+
             if nargin > 0
                 if isa(s, 'mp_idx_manager')
                     %% this copy constructor will not be inheritable under
@@ -171,6 +178,8 @@ classdef mp_idx_manager < handle
         end
 
         function obj = init_set_types(obj)
+            % Initialize indexing structures for each set type.
+
             %% base data struct for each type
             es = struct();
             ds = struct( ...
@@ -192,6 +201,8 @@ classdef mp_idx_manager < handle
         end
 
         function new_obj = copy(obj)
+            % Duplicate the object.
+
             %% make shallow copy of object
             new_obj = eval(class(obj));  %% create new object
             if have_feature('octave')
@@ -208,6 +219,8 @@ classdef mp_idx_manager < handle
         end
 
         function display_set(obj, stype, sname)
+            % Display indexing information for a given set type.
+
             if nargin < 3
                 sname = obj.set_types.(stype);
             end
@@ -251,6 +264,8 @@ classdef mp_idx_manager < handle
         N = getN(obj, set_type, name, idx)
         
         obj = init_indexed_name(obj, set_type, name, dim_list)
+        
+        s = set_type_idx_map(obj, set_type, idxs, group_by_name)
         
         str = valid_named_set_type(obj, set_type)
     end     %% methods

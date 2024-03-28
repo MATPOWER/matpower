@@ -1,5 +1,7 @@
 function [x, f, eflag, output, lambda] = qps_bpmpd(H, c, A, l, u, xmin, xmax, x0, opt)
-%QPS_BPMPD  Quadratic Program Solver based on BPMPD_MEX.
+% qps_bpmpd - Quadratic Program Solver based on BPMPD_MEX.
+% ::
+%
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
 %       QPS_BPMPD(H, C, A, L, U, XMIN, XMAX, X0, OPT)
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = QPS_BPMPD(PROBLEM)
@@ -93,10 +95,12 @@ function [x, f, eflag, output, lambda] = qps_bpmpd(H, c, A, l, u, xmin, xmax, x0
 %       opt = struct('verbose', 2);
 %       [x, f, s, out, lambda] = qps_bpmpd(H, c, A, l, u, xmin, [], x0, opt);
 %
-%   See also QPS_MASTER, BPMPD_MEX, http://www.pserc.cornell.edu/bpmpd/.
+% See BPMPD_MEX, http://www.pserc.cornell.edu/bpmpd/.
+%
+% See also qps_master.
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

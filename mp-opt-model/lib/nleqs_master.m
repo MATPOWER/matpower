@@ -1,5 +1,7 @@
 function varargout = nleqs_master(fcn, x0, opt)
-%NLEQS_MASTER  Nonlinear Equation Solver wrapper function.
+% nleqs_master - Nonlinear Equation Solver wrapper function.
+% ::
+%
 %   [X, F, EXITFLAG, OUTPUT, JAC] = NLEQS_MASTER(FCN, X0, OPT)
 %   [X, F, EXITFLAG, OUTPUT, JAC] = NLEQS_MASTER(PROBLEM)
 %   A common wrapper function for various nonlinear equation solvers.
@@ -85,11 +87,11 @@ function varargout = nleqs_master(fcn, x0, opt)
 %       );
 %       [x, f, exitflag, output, jac] = nleqs_master(problem);
 %
-%   See also NLEQS_NEWTON, NLEQS_CORE, NLEQS_FD_NEWTON, NLEQS_FSOLVE,
-%   NLEQS_GAUSS_SEIDEL, FSOLVE.
+% See also nleqs_newton, nleqs_core, nleqs_fd_newton, nleqs_fsolve,
+% nleqs_gauss_seidel, fsolve.
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

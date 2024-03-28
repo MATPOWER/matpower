@@ -1,8 +1,8 @@
 function t_nleqs_master(quiet)
-%T_NLEQS_MASTER  Tests of NLEQ solvers via NLEQS_MASTER().
+% t_nleqs_master - Tests of NLEQ solvers via nleqs_master.
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

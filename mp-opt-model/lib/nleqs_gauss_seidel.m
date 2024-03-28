@@ -1,5 +1,7 @@
 function varargout = nleqs_gauss_seidel(varargin)
-%NLEQS_GAUSS_SEIDEL  Nonlinear Equation Solver based on Gauss-Seidel method.
+% nleqs_gauss_seidel - Nonlinear Equation Solver based on Gauss-Seidel method.
+% ::
+%
 %   [X, F, EXITFLAG, OUTPUT] = NLEQS_GAUSS_SEIDEL(FCN, X0, OPT)
 %   [X, F, EXITFLAG, OUTPUT] = NLEQS_GAUSS_SEIDEL(PROBLEM)
 %   A function providing a standardized interface for using Gauss-Seidel
@@ -77,10 +79,10 @@ function varargout = nleqs_gauss_seidel(varargin)
 %                   'x_update_fcn', @x_update_fcn2 )));
 %       [x, f, exitflag, output] = nleqs_gauss_seidel(problem);
 %
-%   See also NLEQS_MASTER, NLEQS_CORE.
+% See also nleqs_master, nleqs_core.
 
 %   MP-Opt-Model
-%   Copyright (c) 1996-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

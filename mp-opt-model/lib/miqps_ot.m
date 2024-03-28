@@ -1,5 +1,7 @@
 function [x, f, eflag, output, lambda] = miqps_ot(H, c, A, l, u, xmin, xmax, x0, vtype, opt)
-%MIQPS_OT  Mixed Integer Linear Program Solver based on INTLINPROG.
+% miqps_ot - Mixed Integer Linear Program Solver based on INTLINPROG.
+% ::
+%
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
 %       MIQPS_OT(H, C, A, L, U, XMIN, XMAX, X0, VTYPE, OPT)
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = MIQPS_OT(PROBLEM)
@@ -103,10 +105,10 @@ function [x, f, eflag, output, lambda] = miqps_ot(H, c, A, l, u, xmin, xmax, x0,
 %       opt = struct('verbose', 2);
 %       [x, f, s, out, lambda] = miqps_ot(H, c, A, l, u, xmin, [], x0, vtype, opt);
 %
-%   See also MIQPS_MASTER, INTLINPROG, QUADPROG, LINPROG.
+% See also miqps_master, intlinprog, quadprog, linprog.
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

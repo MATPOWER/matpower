@@ -1,14 +1,14 @@
 function [TorF, vstr, rdate] = have_feature_quadprog()
-%HAVE_FEATURE_QUADPROG  Detect availability/version info for QUADPROG
+% have_feature_quadprog - Detect availability/version info for :func:`quadprog`.
 %
-%   Feature detection function implementing 'quadprog' tag for HAVE_FEATURE
-%   to detect availability/version of QUADPROG, QP solver from the MATLAB
-%   Optimization Toolbox.
+% Private feature detection function implementing ``'quadprog'`` tag for
+% have_feature to detect availability/version of :func:`quadprog`, QP
+% solver from the MATLAB Optimization Toolbox.
 %
-%   See also HAVE_FEATURE, HAVE_FEATURE_QUADPROG_LS, QPS_MASTER, QUADPROG.
+% See also have_feature, have_feature_quadprog_ls, qps_master, quadprog.
 
 %   MP-Opt-Model
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

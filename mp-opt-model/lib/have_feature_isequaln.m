@@ -1,13 +1,13 @@
 function [TorF, vstr, rdate] = have_feature_isequaln()
-%HAVE_FEATURE_ISEQUALN  Detect availability/version info for ISEQUALN
+% have_feature_isequaln - Detect availability/version info for :func:`isequaln`.
 %
-%   Feature detection function implementing 'isequaln' tag for HAVE_FEATURE
-%   to detect support for ISEQUALN function.
+% Private feature detection function implementing ``'isequaln'`` tag for
+% have_feature to detect support for :func:`isequaln` function.
 %
-%   See also HAVE_FEATURE, ISEQUALN.
+% See also have_feature, isequaln.
 
 %   MP-Opt-Model
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

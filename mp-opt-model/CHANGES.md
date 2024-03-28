@@ -5,6 +5,25 @@ Change history for MP-Opt-Model
 Since version 4.1
 -----------------
 
+#### 3/21/24
+  - Add to the `parse_soln()` method of `opt_model` an optional `stash`
+    input argument that, if present and true, causes the parsed solution
+    to be stored back in the object, as the `solve()` method was already
+    doing when `opt.parse_soln` is true.
+  - Add new method `has_parsed_soln()` to `opt_model` to check for
+    availability of a parsed solution in the model.
+
+#### 3/1/24
+  - Update `have_feature_ipopt()` to recognize IPOPT MEX installations from
+    Enrico Bertolazzi's [mexIPOPT][12], which include MEX files that have
+    been renamed to architecture-specific names along with an `ipopt.m`
+    wrapper function to call the appropriate one.
+    *Thanks to Carlos Murillo-Sánchez.*  
+    _**Note:** While MATPOWER no longer requires this, my recommendation
+     is still to simply rename the MEX file to `ipopt.<mexext>`, with the
+     appropriate architecture-specific extension, and delete the
+     unnecessary `ipopt.m` entirely._
+
 #### 1/31/24
   - Add `convert_lin_constraint()` and `convert_lin_constraint_multipliers()`
     functions to eliminate code duplication for common task of converting
@@ -468,3 +487,4 @@ Version 0.7.0 - *Jun 20, 2019*
 [9]: https://github.com/MATPOWER/mips
 [10]: https://savannah.gnu.org/bugs/?52614
 [11]: https://github.com/MATPOWER/most
+[12]: https://github.com/ebertolazzi/mexIPOPT

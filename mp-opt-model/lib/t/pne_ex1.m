@@ -1,4 +1,16 @@
 function pne_ex1
+% pne_ex1 - Example of parameterized nonlinear equation solution tracing.
+%
+% Example of tracing the solution of the following set of parameterized
+% nonlinear equations, first using opt_model and opt_model.solve, then
+% directly using pnes_master.
+%
+% .. math::
+%
+%   \rvec{f}(\x, \lambda) = \left[\begin{array}{c}
+%           x_1 + x_2 + 6 \lambda - 1 \\
+%           -x_1^2 + x_2 + 5
+%       \end{array}\right] = 0
 
 %% variable initial values
 y0 = [-1; 0];

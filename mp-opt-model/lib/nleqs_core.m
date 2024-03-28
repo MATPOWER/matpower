@@ -1,5 +1,7 @@
 function [x, f, eflag, output, J] = nleqs_core(sp, fcn, x0, opt)
-%NLEQS_CORE  Core Nonlinear Equation Solver with arbitrary update function.
+% nleqs_core - Core Nonlinear Equation Solver with arbitrary update function.
+% ::
+%
 %   [X, F, EXITFLAG, OUTPUT, JAC] = NLEQS_CORE(SP, FCN, X0, OPT)
 %   A function providing the core code for a standardized interface for
 %   various methods of solving the nonlinear equation f(x) = 0, beginning
@@ -77,10 +79,10 @@ function [x, f, eflag, output, J] = nleqs_core(sp, fcn, x0, opt)
 %           )
 %       [x, f, exitflag, output, jac] = nleqs_core(sp, fcn, x0, opt);
 %
-%   See also NLEQS_MASTER, NLEQS_NEWTON, NLEQS_GAUSS_SEIDEL.
+% See also nleqs_master, nleqs_newton, nleqs_gauss_seidel.
 
 %   MP-Opt-Model
-%   Copyright (c) 1996-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

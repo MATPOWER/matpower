@@ -1,5 +1,7 @@
 function varargout = nleqs_newton(varargin)
-%NLEQS_NEWTON  Nonlinear Equation Solver based on Newton's method.
+% nleqs_newton - Nonlinear Equation Solver based on Newton's method.
+% ::
+%
 %   [X, F, EXITFLAG, OUTPUT, JAC] = NLEQS_NEWTON(FCN, X0, OPT)
 %   [X, F, EXITFLAG, OUTPUT, JAC] = NLEQS_NEWTON(PROBLEM)
 %   A function providing a standardized interface for using Newton's
@@ -89,10 +91,10 @@ function varargout = nleqs_newton(varargin)
 %       );
 %       [x, f, exitflag, output, jac] = nleqs_newton(problem);
 %
-%   See also NLEQS_MASTER, NLEQS_CORE.
+% See also nleqs_master, nleqs_core.
 
 %   MP-Opt-Model
-%   Copyright (c) 1996-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

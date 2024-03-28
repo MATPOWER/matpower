@@ -1,5 +1,7 @@
 function [nx, cx, s] = pne_callback_default(k, nx, cx, px, s, opt)
-%PNE_CALLBACK_DEFAULT   Default callback function for PNES_MASTER
+% pne_callback_default - Default callback function for pnes_master.
+% ::
+%
 %   [NX, CX, S] = PNE_CALLBACK_DEFAULT(K, NX, CX, PX, S, OPT)
 %
 %   Default callback function used by PNES_MASTER, collects the results
@@ -80,10 +82,10 @@ function [nx, cx, s] = pne_callback_default(k, nx, cx, px, s, opt)
 %       PNE_CALLBACK_DEFAULT. These are specified via OPT.callbacks which
 %       takes the same form as the MY_CBACKS input to PNE_REGISTER_CALLBACKS.
 %
-%   See also PNES_MASTER, PNE_REGISTER_CALLBACKS.
+% See also pnes_master, pne_register_callbacks.
 
 %   MP-Opt-Model
-%   Copyright (c) 2013-2021, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2013-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

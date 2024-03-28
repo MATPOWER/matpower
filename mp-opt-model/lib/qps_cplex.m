@@ -1,5 +1,7 @@
 function [x, f, eflag, output, lambda] = qps_cplex(H, c, A, l, u, xmin, xmax, x0, opt)
-%QPS_CPLEX  Quadratic Program Solver based on CPLEX.
+% qps_cplex - Quadratic Program Solver based on CPLEX.
+% ::
+%
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
 %       QPS_CPLEX(H, C, A, L, U, XMIN, XMAX, X0, OPT)
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = QPS_CPLEX(PROBLEM)
@@ -89,10 +91,10 @@ function [x, f, eflag, output, lambda] = qps_cplex(H, c, A, l, u, xmin, xmax, x0
 %       opt = struct('verbose', 2);
 %       [x, f, s, out, lambda] = qps_cplex(H, c, A, l, u, xmin, [], x0, opt);
 %
-%   See also QPS_MASTER, CPLEXQP, CPLEXLP, CPLEX_OPTIONS.
+% See also qps_master, cplexqp, cplexlp, cplex_options.
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

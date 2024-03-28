@@ -1,5 +1,6 @@
 function nlpopt = mpopt2nlpopt(mpopt, model, alg)
-%MPOPT2NLPOPT   Create/modify NLPS_MASTER options struct from MPOPT.
+% mpopt2nlpopt - Create/modify nlps_master options struct from ``mpopt``.
+% ::
 %
 %   NLPOPT = MPOPT2NLPOPT(MPOPT, MODEL)
 %   NLPOPT = MPOPT2NLPOPT(MPOPT, MODEL, ALG)
@@ -23,10 +24,10 @@ function nlpopt = mpopt2nlpopt(mpopt, model, alg)
 %   Output:
 %       NLPOPT : an options struct for use by NLPS_MASTER and friends
 %
-%   See NLPS_MASTER, MPOPTION.
+% See also nlps_master, mpoption.
 
 %   MP-Opt-Model
-%   Copyright (c) 2015-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2015-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

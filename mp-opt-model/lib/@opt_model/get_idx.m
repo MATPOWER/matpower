@@ -1,5 +1,7 @@
 function varargout = get_idx(om, varargin)
-%GET_IDX  Returns the idx struct for vars, lin/nonlin constraints, costs.
+% get_idx - Returns the idx struct for vars, lin/nonlin constraints, costs.
+% ::
+%
 %   VV = OM.GET_IDX()
 %   [VV, LL] = OM.GET_IDX()
 %   [VV, LL, NNE] = OM.GET_IDX()
@@ -58,11 +60,11 @@ function varargout = get_idx(om, varargin)
 %       replace them with something like 'z(i,j)', 'foo(i,j,k)'
 %       or 'bar(i)' in the examples above.
 %
-%   See also OPT_MODEL, ADD_VAR, ADD_LIN_CONSTRAINT, ADD_NLN_CONSTRAINT,
-%            ADD_QUAD_COST, and ADD_NLN_COST.
+% See also opt_model, add_var, add_lin_constraint, add_nln_constraint,
+% add_quad_cost, add_nln_cost.
 
 %   MP-Opt-Model
-%   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

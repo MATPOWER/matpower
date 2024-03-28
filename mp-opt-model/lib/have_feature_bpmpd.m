@@ -1,13 +1,14 @@
 function [TorF, vstr, rdate] = have_feature_bpmpd()
-%HAVE_FEATURE_BPMPD  Detect availability/version info for BPMPD
+% have_feature_bpmpd - Detect availability/version info for BPMPD.
 %
-%   Feature detection function implementing 'bpmpd' tag for HAVE_FEATURE
-%   to detect availability/version of BPMPD_MEX (interior point LP/QP solver).
+% Private feature detection function implementing ``'bpmpd'`` tag for
+% have_feature to detect availability/version of BPMPD_MEX (interior point
+% LP/QP solver).
 %
-%   See also HAVE_FEATURE, QPS_MASTER, BP, BPOPT.
+% See also have_feature, qps_master, bp, bpopt.
 
 %   MP-Opt-Model
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

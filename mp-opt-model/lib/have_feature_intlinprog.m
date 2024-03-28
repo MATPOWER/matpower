@@ -1,14 +1,14 @@
 function [TorF, vstr, rdate] = have_feature_intlinprog()
-%HAVE_FEATURE_INTLINPROG  Detect availability/version info for INTLINPROG
+% have_feature_intlinprog - Detect availability/version info for :func:`intlinprog`.
 %
-%   Feature detection function implementing 'intlinprog' tag for HAVE_FEATURE
-%   to detect availability/version of INTLINPROG, MILP solver from MATLAB
-%   Optimization Toolbox 7.0 (R2014a) and later.
+% Private feature detection function implementing ``'intlinprog'`` tag for
+% have_feature to detect availability/version of :func:`intlinprog`, MILP
+% solver from MATLAB Optimization Toolbox 7.0 (R2014a) and later.
 %
-%   See also HAVE_FEATURE, MIQPS_MASTER, INTLINPROG.
+% See also have_feature, miqps_master, intlinprog.
 
 %   MP-Opt-Model
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

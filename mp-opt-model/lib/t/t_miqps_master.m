@@ -1,8 +1,8 @@
 function t_miqps_master(quiet)
-%T_MIQPS_MASTER  Tests of MILP/MIQP solvers via MIQPS_MASTER().
+% t_miqps_master - Tests of MILP/MIQP solvers via miqps_master.
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

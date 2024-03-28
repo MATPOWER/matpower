@@ -1,14 +1,14 @@
 function [TorF, vstr, rdate] = have_feature_glpk()
-%HAVE_FEATURE_GLPK  Detect availability/version info for GLPK
+% have_feature_glpk - Detect availability/version info for GLPK.
 %
-%   Feature detection function implementing 'glpk' tag for HAVE_FEATURE
-%   to detect availability/version of GLPK (GNU Linear Programming Kit),
-%   LP/MILP solver.
+% Private feature detection function implementing ``'glpk'`` tag for
+% have_feature to detect availability/version of GLPK (GNU Linear
+% Programming Kit), LP/MILP solver.
 %
-%   See also HAVE_FEATURE, QPS_MASTER, MIQPS_MASTER, GLPK.
+% See also have_feature, qps_master, miqps_master, glpk.
 
 %   MP-Opt-Model
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

@@ -1,5 +1,7 @@
 function [v0, vl, vu, vt] = params_var(om, name, idx)
-%PARAMS_VAR  Returns initial value, lower bound and upper bound for opt variables.
+% params_var - Returns initial value, lower bound and upper bound for opt variables.
+% ::
+%
 %   [V0, VL, VU] = OM.PARAMS_VAR()
 %   [V0, VL, VU] = OM.PARAMS_VAR(NAME)
 %   [V0, VL, VU] = OM.PARAMS_VAR(NAME, IDX_LIST)
@@ -15,10 +17,10 @@ function [v0, vl, vu, vt] = params_var(om, name, idx)
 %       [Pg0, Pmin, Pmax] = om.params_var('Pg');
 %       [zij0, zijmin, zijmax, ztype] = om.params_var('z', {i, j});
 %   
-%   See also OPT_MODEL.
+% See also opt_model.
 
 %   MP-Opt-Model
-%   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

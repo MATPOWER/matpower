@@ -1,5 +1,7 @@
 function varargout = pnes_master(fcn, x0, opt)
-%PNES_MASTER  Parameterized Nonlinear Equation Solver wrapper function.
+% pnes_master - Parameterized Nonlinear Equation Solver wrapper function.
+% ::
+%
 %   [X, F, EXITFLAG, OUTPUT, JAC] = PNES_MASTER(FCN, X0, OPT)
 %   [X, F, EXITFLAG, OUTPUT, JAC] = PNES_MASTER(PROBLEM)
 %   A common wrapper function for numerical continuation methods for
@@ -177,10 +179,10 @@ function varargout = pnes_master(fcn, x0, opt)
 %       );
 %       [x, f, exitflag, output, jac] = pnes_master(problem);
 %
-%   See also PNE_CALLBACK_DEFAULT, PNE_REGISTER_CALLBACKS, PNE_REGISTER_EVENTS
+% See also pne_callback_default, pne_register_callbacks, pne_register_events.
 
 %   MP-Opt-Model
-%   Copyright (c) 2013-2021, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2013-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell,
 %   Shrirang Abhyankar, Argonne National Laboratory,
 %   and Alexander Flueck, IIT

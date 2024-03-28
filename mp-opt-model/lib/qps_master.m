@@ -1,5 +1,7 @@
 function [x, f, eflag, output, lambda] = qps_master(H, c, A, l, u, xmin, xmax, x0, opt)
-%QPS_MASTER  Quadratic Program Solver wrapper function.
+% qps_master - Quadratic Program Solver wrapper function.
+% ::
+%
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
 %       QPS_MASTER(H, C, A, L, U, XMIN, XMAX, X0, OPT)
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = QPS_MASTER(PROBLEM)
@@ -119,7 +121,7 @@ function [x, f, eflag, output, lambda] = qps_master(H, c, A, l, u, xmin, xmax, x
 %       [x, f, s, out, lambda] = qps_master(H, c, A, l, u, xmin, [], x0, opt);
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

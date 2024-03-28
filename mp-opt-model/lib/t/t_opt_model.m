@@ -1,8 +1,8 @@
 function t_opt_model(quiet)
-%T_OPT_MODEL Tests for OPT_MODEL.
+% t_opt_model - Tests for opt_model.
 
 %   MP-Opt-Model
-%   Copyright (c) 2012-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2012-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

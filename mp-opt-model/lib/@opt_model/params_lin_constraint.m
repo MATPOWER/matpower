@@ -1,5 +1,7 @@
 function [A, l, u, vs, i1, iN, tr] = params_lin_constraint(om, name, idx)
-%PARAMS_LIN_CONSTRAINT  Builds and returns linear constraint parameters.
+% params_lin_constraint - Builds and returns linear constraint parameters.
+% ::
+%
 %   [A, L, U] = OM.PARAMS_LIN_CONSTRAINT()
 %   [A, L, U] = OM.PARAMS_LIN_CONSTRAINT(NAME)
 %   [A, L, U] = OM.PARAMS_LIN_CONSTRAINT(NAME, IDX_LIST)
@@ -28,10 +30,10 @@ function [A, l, u, vs, i1, iN, tr] = params_lin_constraint(om, name, idx)
 %       [A, l, u] = om.params_lin_constraint();
 %       [A, l, u, vs, i1, iN] = om.params_lin_constraint('Pmis');
 %
-%   See also OPT_MODEL, ADD_LIN_CONSTRAINT.
+% See also opt_model, add_lin_constraint.
 
 %   MP-Opt-Model
-%   Copyright (c) 2008-2023, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

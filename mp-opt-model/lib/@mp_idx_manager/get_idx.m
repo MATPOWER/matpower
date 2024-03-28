@@ -1,5 +1,6 @@
 function varargout = get_idx(obj, varargin)
-%GET_IDX  Returns the idx struct for the various set types.
+% get_idx - Returns the idx struct for the various set types.
+% ::
 %
 %   IDX = OBJ.GET_IDX(SET_TYPE)
 %   [IDX1, IDX2, ...] = OBJ.GET_IDX(SET_TYPE1, SET_TYPE2, ...)
@@ -48,12 +49,12 @@ function varargout = get_idx(obj, varargin)
 %       vv = obj.get_idx()          % for variables
 %       [vv, ll] = obj.get_idx()    % for linear constraints
 %
-%   See also OPT_MODEL, and its methods GET_IDX, ADD_VAR,
+%   See OPT_MODEL, and its methods GET_IDX, ADD_VAR,
 %           ADD_LIN_CONSTRAINT, ADD_NLN_CONSTRAINT, ADD_QUAD_COST and
 %           ADD_NLN_COST.
 
 %   MP-Opt-Model
-%   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

@@ -1,14 +1,14 @@
 function [TorF, vstr, rdate] = have_feature_knitro()
-%HAVE_FEATURE_KNITRO  Detect availability/version info for Artelys Knitro
+% have_feature_knitro - Detect availability/version info for Artelys Knitro.
 %
-%   Feature detection function implementing 'knitro' tag for HAVE_FEATURE
-%   to detect availability/version of Artelys Knitro, a nonlinear
-%   programming solver (https://www.artelys.com/solvers/knitro/).
+% Private feature detection function implementing ``'knitro'`` tag for
+% have_feature to detect availability/version of Artelys Knitro, a
+% nonlinear programming solver (https://www.artelys.com/solvers/knitro/).
 %
-%   See also HAVE_FEATURE, NLPS_MASTER, KNITROMATLAB.
+% See also have_feature, nlps_master, knitromatlab.
 
 %   MP-Opt-Model
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

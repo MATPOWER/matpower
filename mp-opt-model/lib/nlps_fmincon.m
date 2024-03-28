@@ -1,5 +1,7 @@
 function [x, f, eflag, output, lambda] = nlps_fmincon(f_fcn, x0, A, l, u, xmin, xmax, gh_fcn, hess_fcn, opt)
-%NLPS_FMINCON  Nonlinear programming (NLP) Solver based on FMINCON.
+% nlps_fmincon - Nonlinear programming (NLP) Solver based on FMINCON.
+% ::
+%
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
 %       NLPS_FMINCON(F_FCN, X0, A, L, U, XMIN, XMAX, GH_FCN, HESS_FCN, OPT)
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = NLPS_FMINCON(PROBLEM)
@@ -89,11 +91,11 @@ function [x, f, eflag, output, lambda] = nlps_fmincon(f_fcn, x0, A, l, u, xmin, 
 %           lower - lower bound on optimization variables
 %           upper - upper bound on optimization variables
 %
-%   Note the calling syntax is almost identical to that of FMINCON
-%   from MathWorks' Optimization Toolbox. The main difference is that
-%   the linear constraints are specified with A, L, U instead of
-%   A, B, Aeq, Beq. The functions for evaluating the objective
-%   function, constraints and Hessian are identical.
+%   Note the calling syntax is almost identical to that of FMINCON from
+%   MathWorks' Optimization Toolbox. The main difference is that the linear
+%   constraints are specified with A, L, U instead of A, B, Aeq, Beq. The
+%   functions for evaluating the objective function, constraints and Hessian
+%   are identical.
 %
 %   Calling syntax options:
 %       [x, f, exitflag, output, lambda] = ...
@@ -147,10 +149,10 @@ function [x, f, eflag, output, lambda] = nlps_fmincon(f_fcn, x0, A, l, u, xmin, 
 %       );
 %       [x, f, exitflag, output, lambda] = nlps_fmincon(problem);
 %
-%   See also NLPS_MASTER, FMINCON.
+% See also nlps_master, fmincon.
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

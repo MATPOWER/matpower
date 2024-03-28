@@ -1,19 +1,21 @@
 function success = test_mp_opt_model(verbose, exit_on_fail)
-%TEST_MP_OPT_MODEL  Run all MP-Opt-Model tests.
-%   TEST_MP_OPT_MODEL
-%   TEST_MP_OPT_MODEL(VERBOSE)
-%   TEST_MP_OPT_MODEL(VERBOSE, EXIT_ON_FAIL)
-%   SUCCESS = TEST_MP_OPT_MODEL(...)
+% test_mp_opt_model - Run all MP-Opt-Model tests.
+% ::
 %
-%   Runs all of the MP-Opt-Model tests. If VERBOSE is true (false by default),
-%   it prints the details of the individual tests. If EXIT_ON_FAIL is true
-%   (false by default), it will exit MATLAB or Octave with a status of 1
-%   unless T_RUN_TESTS returns ALL_OK.
+%   test_mp_opt_model
+%   test_mp_opt_model(verbose)
+%   test_mp_opt_model(verbose, exit_on_fail)
+%   success = test_mp_opt_model(...)
 %
-%   See also T_RUN_TESTS.
+% Runs all of the MP-Opt-Model tests. If ``verbose`` is true *(false by
+% default)*, it prints the details of the individual tests. If
+% ``exit_on_fail`` is true *(false by default)*, it will exit MATLAB or
+% Octave with a status of 1 unless t_run_tests returns ``all_ok`` true.
+%
+% See also t_run_tests.
 
 %   MP-Opt-Model
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

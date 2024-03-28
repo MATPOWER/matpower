@@ -1,5 +1,6 @@
 function om = add_nln_constraint(om, name, idx, N, iseq, fcn, hess, varsets)
-%ADD_NLN_CONSTRAINT  Adds a set of nonlinear constraints to the model.
+% add_nln_constraint - Adds a set of nonlinear constraints to the model.
+% ::
 %
 %   OM.ADD_NLN_CONSTRAINT(NAME, N, ISEQ, FCN, HESS);
 %   OM.ADD_NLN_CONSTRAINT(NAME, N, ISEQ, FCN, HESS, VARSETS);
@@ -69,10 +70,10 @@ function om = add_nln_constraint(om, name, idx, N, iseq, fcn, hess, varsets)
 %         end
 %       end
 %
-%   See also OPT_MODEL, EVAL_NLN_CONSTRAINT.
+% See also opt_model, eval_nln_constraint.
 
 %   MP-Opt-Model
-%   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

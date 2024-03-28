@@ -1,5 +1,7 @@
 function [N, fcn, vs] = params_nln_cost(om, name, idx)
-%PARAMS_NLN_COST  Returns cost parameters for general nonlinear costs.
+% params_nln_cost - Returns cost parameters for general nonlinear costs.
+% ::
+%
 %   [N, FCN] = OM.PARAMS_NLN_COST(NAME)
 %   [N, FCN] = OM.PARAMS_NLN_COST(NAME, IDX_LIST)
 %   [N, FCN, VS] = OM.PARAMS_NLN_COST(...)
@@ -11,10 +13,10 @@ function [N, fcn, vs] = params_nln_cost(om, name, idx)
 %   An optional 3rd output argument VS indicates the variable sets used by
 %   this cost set.
 %
-%   See also OPT_MODEL, ADD_NLN_COST, EVAL_NLN_COST.
+% See also opt_model, add_nln_cost, eval_nln_cost.
 
 %   MP-Opt-Model
-%   Copyright (c) 2017-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2017-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

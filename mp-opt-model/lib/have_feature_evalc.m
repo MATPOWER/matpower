@@ -1,13 +1,13 @@
 function [TorF, vstr, rdate] = have_feature_evalc()
-%HAVE_FEATURE_EVALC  Detect availability/version info for EVALC
+% have_feature_evalc - Detect availability/version info for :func:`evalc`.
 %
-%   Feature detection function implementing 'evalc' tag for HAVE_FEATURE
-%   to detect support for EVALC function.
+% Private feature detection function implementing ``'evalc'`` tag for
+% have_feature to detect support for :func:`evalc` function.
 %
-%   See also HAVE_FEATURE, EVALC.
+% See also have_feature, evalc.
 
 %   MP-Opt-Model
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

@@ -1,5 +1,6 @@
 function opt = mosek_options(overrides, mpopt)
-%MOSEK_OPTIONS  Sets options for MOSEK.
+% mosek_options - Sets options for MOSEK.
+% ::
 %
 %   OPT = MOSEK_OPTIONS
 %   OPT = MOSEK_OPTIONS(OVERRIDES)
@@ -64,12 +65,12 @@ function opt = mosek_options(overrides, mpopt)
 %   for MATLAB manaul" for details on the available options. You may also
 %   want to use the symbolic constants defined by MOSEK_SYMBCON.
 %
-%       http://docs.mosek.com/7.1/toolbox/Parameters.html
+%       https://docs.mosek.com/latest/toolbox/param-groups.html
 %
-%   See also MOSEK_SYMBCON, MOSEKOPT, MPOPTION.
+% See also mosek_symbcon, mosekopt, mpoption.
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

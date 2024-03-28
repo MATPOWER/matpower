@@ -1,5 +1,7 @@
 function label = describe_idx(obj, set_type, idxs)
-%DESCRIBE_IDX  Identifies element indices for a give set type.
+% describe_idx - Identifies element indices for a give set type.
+% ::
+%
 %   LABEL = OBJ.DESCRIBE_IDX(SET_TYPE, IDXS)
 %
 %   Returns strings describing (name and index) the element of the
@@ -11,10 +13,10 @@ function label = describe_idx(obj, set_type, idxs)
 %       label = obj.describe_idx('var', 87));
 %       labels = obj.describe_idx('lin', [38; 49; 93]));
 %
-%   See also SET_TYPE_IDX_MAP, OPT_MODEL.
+% See also set_type_idx_map, opt_model.
 
 %   MP-Opt-Model
-%   Copyright (c) 2012-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2012-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

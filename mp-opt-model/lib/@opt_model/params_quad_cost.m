@@ -1,5 +1,7 @@
 function [Q, c, K, vs] = params_quad_cost(om, name, idx)
-%PARAMS_QUAD_COST  Returns the cost parameters for quadratic costs.
+% params_quad_cost - Returns the cost parameters for quadratic costs.
+% ::
+%
 %   [Q, C] = OM.PARAMS_QUAD_COST()
 %   [Q, C] = OM.PARAMS_QUAD_COST(NAME)
 %   [Q, C] = OM.PARAMS_QUAD_COST(NAME, IDX_LIST)
@@ -22,10 +24,10 @@ function [Q, c, K, vs] = params_quad_cost(om, name, idx)
 %   An optional 4th output argument VS indicates the variable sets used by
 %   this cost set. The size of Q and C will be consistent with VS.
 %
-%   See also OPT_MODEL, ADD_QUAD_COST.
+% See also opt_model, add_quad_cost.
 
 %   MP-Opt-Model
-%   Copyright (c) 2017-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2017-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

@@ -1,5 +1,7 @@
 function efv = pne_event_target_lam(cx, opt)
-%PNE_EVENT_TARGET_LAM  Event function to detect a target lambda value
+% pne_event_target_lam - Event function to detect a target lambda value.
+% ::
+%
 %   EFV = PNE_EVENT_TARGET_LAM(CX, OPT)
 %
 %   PNES_MASTER event function to detect the completion of the continuation
@@ -16,10 +18,10 @@ function efv = pne_event_target_lam(cx, opt)
 %   Outputs:
 %       EFV : event function value
 %
-%   See also PNES_MASTER, PNE_REGISTER_EVENTS, PNE_EVENT_NOSE.
+% See also pnes_master, pne_register_events, pne_event_nose.
 
 %   MP-Opt-Model
-%   Copyright (c) 2016-2021, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2016-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Shrirang Abhyankar, Argonne National Laboratory
 %

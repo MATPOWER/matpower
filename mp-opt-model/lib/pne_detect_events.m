@@ -1,5 +1,7 @@
 function [rollback, ev, nefv] = pne_detect_events(reg_ev, nefv, cefv, step)
-%PNE_DETECT_EVENTS  Detect events from event function values
+% pne_detect_events - Detect events from event function values.
+% ::
+%
 %   [ROLLBACK, CRITICAL_EVENTS, NEFV] = ...
 %       PNE_DETECT_EVENTS(REG_EV, NEFV, CEFV, STEP)
 %
@@ -40,7 +42,7 @@ function [rollback, ev, nefv] = pne_detect_events(reg_ev, nefv, cefv, step)
 %           an interval following a zero detection)
 
 %   MP-Opt-Model
-%   Copyright (c) 2016-2021, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2016-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %   and Shrirang Abhyankar, Argonne National Laboratory
 %

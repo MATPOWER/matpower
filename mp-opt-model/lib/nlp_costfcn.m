@@ -1,5 +1,7 @@
 function [f, df, d2f] = nlp_costfcn(om, x)
-%NLP_COSTFCN  Evaluates objective function, gradient and Hessian.
+% nlp_costfcn - Evaluates objective function, gradient and Hessian.
+% ::
+%
 %   [F, DF, D2F] = NLP_COSTFCN(OM, X)
 %
 %   Objective function evaluation routine, suitable for use with MIPS,
@@ -19,10 +21,10 @@ function [f, df, d2f] = nlp_costfcn(om, x)
 %       [f, df] = nlp_costfcn(om, x);
 %       [f, df, d2f] = nlp_costfcn(om, x);
 %
-%   See also NLP_CONSFCN, NLP_HESSFCN.
+% See also nlp_consfcn, nlp_hessfcn.
 
 %   MP-Opt-Model
-%   Copyright (c) 1996-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 1996-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

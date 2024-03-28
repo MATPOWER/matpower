@@ -1,13 +1,14 @@
 function [TorF, vstr, rdate] = have_feature_cplex()
-%HAVE_FEATURE_CPLEX  Detect availability/version info for CPLEX
+% have_feature_cplex - Detect availability/version info for CPLEX.
 %
-%   Feature detection function implementing 'cplex' tag for HAVE_FEATURE
-%   to detect availability/version of CPLEX (IBM ILOG CPLEX Optimizer).
+% Private feature detection function implementing ``'cplex'`` tag for
+% have_feature to detect availability/version of CPLEX (IBM ILOG CPLEX
+% Optimizer).
 %
-%   See also HAVE_FEATURE, QPS_MASTER, MIQPS_MASTER, CPLEX, CPLEXQP, CPLEXLP.
+% See also have_feature, qps_master, miqps_master, cplex, cplexqp, cplexlp.
 
 %   MP-Opt-Model
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

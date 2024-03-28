@@ -1,5 +1,7 @@
 function [g, dg] = eval_nln_constraint(om, x, iseq, name, idx)
-%EVAL_NLN_CONSTRAINT  Builds and returns full set of nonlinear constraints.
+% eval_nln_constraint - Builds and returns full set of nonlinear constraints.
+% ::
+%
 %   G = OM.EVAL_NLN_CONSTRAINT(X, ISEQ)
 %   G = OM.EVAL_NLN_CONSTRAINT(X, ISEQ, NAME)
 %   G = OM.EVAL_NLN_CONSTRAINT(X, ISEQ, NAME, IDX_LIST)
@@ -16,10 +18,10 @@ function [g, dg] = eval_nln_constraint(om, x, iseq, name, idx)
 %       [g, dg] = om.eval_nln_constraint(x, 1)
 %       [h, dh] = om.eval_nln_constraint(x, 0)
 %
-%   See also OPT_MODEL, ADD_NLN_CONSTRAINT, EVAL_NLN_CONSTRAINT_HESS.
+% See also opt_model, add_nln_constraint, eval_nln_constraint_hess.
 
 %   MP-Opt-Model
-%   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

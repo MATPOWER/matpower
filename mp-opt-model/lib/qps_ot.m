@@ -1,5 +1,7 @@
 function [x, f, eflag, output, lambda] = qps_ot(H, c, A, l, u, xmin, xmax, x0, opt)
-%QPS_OT  Quadratic Program Solver based on QUADPROG/LINPROG.
+% qps_ot - Quadratic Program Solver based on QUADPROG/LINPROG.
+% ::
+%
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = ...
 %       QPS_OT(H, C, A, L, U, XMIN, XMAX, X0, OPT)
 %   [X, F, EXITFLAG, OUTPUT, LAMBDA] = QPS_OT(PROBLEM)
@@ -91,10 +93,10 @@ function [x, f, eflag, output, lambda] = qps_ot(H, c, A, l, u, xmin, xmax, x0, o
 %       opt = struct('verbose', 2);
 %       [x, f, s, out, lambda] = qps_ot(H, c, A, l, u, xmin, [], x0, opt);
 %
-%   See also QPS_MASTER, QUADPROG, LINPROG.
+% See also qps_master, quadprog, linprog.
 
 %   MP-Opt-Model
-%   Copyright (c) 2010-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2010-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

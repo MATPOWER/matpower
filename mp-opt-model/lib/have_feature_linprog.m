@@ -1,14 +1,14 @@
 function [TorF, vstr, rdate] = have_feature_linprog()
-%HAVE_FEATURE_LINPROG  Detect availability/version info for LINPROG
+% have_feature_linprog - Detect availability/version info for :func:`linprog`.
 %
-%   Feature detection function implementing 'linprog' tag for HAVE_FEATURE
-%   to detect availability/version of LINPROG, LP solver from the MATLAB
-%   Optimization Toolbox.
+% Private feature detection function implementing ``'linprog'`` tag for
+% have_feature to detect availability/version of :func:`linprog`, LP
+% solver from the MATLAB Optimization Toolbox.
 %
-%   See also HAVE_FEATURE, HAVE_FEATURE_LINPROG_DS, QPS_MASTER, LINPROG.
+% See also have_feature, have_feature_linprog_ds, qps_master, linprog.
 
 %   MP-Opt-Model
-%   Copyright (c) 2004-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2004-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.

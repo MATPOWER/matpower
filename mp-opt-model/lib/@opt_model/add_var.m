@@ -1,5 +1,7 @@
 function om = add_var(om, name, idx, varargin)
-%ADD_VAR  Adds a set of variables to the model.
+% add_var - Adds a set of variables to the model.
+% ::
+%
 %   OM.ADD_VAR(NAME, N, V0, VL, VU, VT)
 %   OM.ADD_VAR(NAME, N, V0, VL, VU)
 %   OM.ADD_VAR(NAME, N, V0, VL)
@@ -34,10 +36,10 @@ function om = add_var(om, name, idx, varargin)
 %         end
 %       end
 %
-%   See also OPT_MODEL, PARAMS_VAR.
+% See also opt_model, params_var.
 
 %   MP-Opt-Model
-%   Copyright (c) 2008-2020, Power Systems Engineering Research Center (PSERC)
+%   Copyright (c) 2008-2024, Power Systems Engineering Research Center (PSERC)
 %   by Ray Zimmerman, PSERC Cornell
 %
 %   This file is part of MP-Opt-Model.
